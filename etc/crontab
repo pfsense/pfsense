@@ -10,4 +10,3 @@ HOME=/var/log
 30	5	1	*	*	root	periodic monthly
 1,31	0-5	*	*	*	root	adjkerntz -a
 */3000	*	*	*	*	root	/usr/bin/fetch -o /etc/bogons "http://www.cymru.com/Documents/bogon-bn-nonagg.txt" >/dev/null 2>&1
-1	*/4	*	*	*	root	/etc/rc.sweeppackages

@@ -144,7 +144,7 @@ function filter_configure() {
                 mwexec("/bin/mv /tmp/ipfw.rules /tmp/ipfw.rules_old >/dev/null 2>&1");
 		mwexec("/sbin/ipfw delete 25 >/dev/null 2>&1\n");
 	} else {
-		if(!isset($config['captiveportal']['enable'])
+		if(!isset($config['captiveportal']['enable']))
 			mwexec("/sbin/kldunload ipfw.ko");
 	}
 

@@ -346,19 +346,26 @@ foreach ($packages_to_install as $id) {
                  * and uncompress if needed.
                  */
                 if ($package_conf['additional_files_needed'] <> "") {
-                            foreach($package_conf['additional_files_needed']['item'] as $afn) {
-                                        update_progress_bar($pb_percent);
-                                        $pb_percent += 10;
-                                        $filename = get_filename_from_url($afn);
-                                        fwrite($fd_log, "Downloading additional files needed for package " . $filename . " ...\n");
-                                        update_status("Downloading additional files needed for package " . $filename . " ...\n");
-                                        system("cd /usr/local/pkg && /usr/bin/fetch " .  $afn . " 2>/dev/null");
-                                        if(stristr($filename, ".tgz") <> "") {
-                                                    update_status("Extracting tgz archive to -C for " . $filename);
-                                                    fwrite($fd_log, "Extracting tgz archive to -C for " . $filename . " ...\n");
-                                                    system("/usr/bin/tar xzvf /usr/local/pkg/" . $filename . " -C / >/dev/null 2>&1");
-                                        }
-                            }
+                    foreach($package_conf['additional_files_needed'] as $afn) {
+                        update_progress_bar($pb_percent);
+                        $pb_percent += 10;
+                        $filename = get_filename_from_url($afn['item']);
+                        fwrite($fd_log, "Downloading additional files needed for package " . $filename . " ...\n");
+                        update_status("Downloading additional files needed for package " . $filename . " ...\n");
+                        $prefix = "/usr/local/pkg/";
+                        if($afn['chmod'] <> "")
+                            $pkg_chmod = $afn['chmod'];
+                        if($afn['prefix'] <> "")
+                            $prefix = $afn['prefix'];
+                        system("cd {$prefix} && /usr/bin/fetch " .  $afn . " 2>/dev/null");
+                        if(stristr($filename, ".tgz") <> "") {
+                            update_status("Extracting tgz archive to -C for " . $filename);
+                            fwrite($fd_log, "Extracting tgz archive to -C for " . $filename . " ...\n");
+                            system("/usr/bin/tar xzvf /usr/local/pkg/" . $filename . " -C / >/dev/null 2>&1");
+                        }
+                        if($pkg_chmod <> "")
+                            system("/bin/chmod ${pkg_chmod} {$prefix}{$filename}");
+                    }
                 }
 
                 /*
@@ -367,25 +374,25 @@ foreach ($packages_to_install as $id) {
                 */
                 if(is_array($package_conf['menu']))
                     foreach ($package_conf['menu'] as $menu) {
-                                // install menu item into the ext folder
-                                fwrite($fd_log, "Adding menu option to " . $menu['section'] . "/" . $menu['name'] . "\n");
-                                $fd = fopen("{$g['www_path']}/ext/" . $menu['section'] . "/" . $menu['name'] , "w");
-                                if($menu['url'] <> "") {
-                                            // override $myurl for script.
-                                            $toeval = "\$myurl = \"" . getenv("HTTP_HOST") . "\"; \n";
-                                            eval($toeval);
-                                            // eval url so that above $myurl item can be processed if need be.
-                                            $urltmp = $menu['url'];
-                                            $toeval = "\$url = \"" . $urltmp . "\"; \n";
-                                            eval($toeval);
-                                            fwrite($fd, $url . "\n");
-                                } else {
-                                            $xml = "";
-                                            if(stristr($menu['configfile'],".xml") == "") $xml = ".xml";
-                                            fwrite($fd, "/pkg.php?xml=" . $menu['configfile'] . $xml . "\n");
-                                }
-                                fclose($fd);
-                }
+                        // install menu item into the ext folder
+                        fwrite($fd_log, "Adding menu option to " . $menu['section'] . "/" . $menu['name'] . "\n");
+                        $fd = fopen("{$g['www_path']}/ext/" . $menu['section'] . "/" . $menu['name'] , "w");
+                        if($menu['url'] <> "") {
+                                    // override $myurl for script.
+                                    $toeval = "\$myurl = \"" . getenv("HTTP_HOST") . "\"; \n";
+                                    eval($toeval);
+                                    // eval url so that above $myurl item can be processed if need be.
+                                    $urltmp = $menu['url'];
+                                    $toeval = "\$url = \"" . $urltmp . "\"; \n";
+                                    eval($toeval);
+                                    fwrite($fd, $url . "\n");
+                        } else {
+                                    $xml = "";
+                                    if(stristr($menu['configfile'],".xml") == "") $xml = ".xml";
+                                    fwrite($fd, "/pkg.php?xml=" . $menu['configfile'] . $xml . "\n");
+                        }
+                        fclose($fd);
+                    }
     } else {
                 update_output_window("WARNING! /usr/local/pkg/" . $pkgent['name'] . ".xml" . " does not exist!\n");
                 fwrite($fd_log, "WARNING! /usr/local/pkg/" . $pkgent['name'] . ".xml" . " does not exist!\n");

@@ -1351,7 +1351,7 @@ EOD;
 			}
 
 			if($rule['returngateway'] <> "") {
-				$line .= "reply-to (" . $rule['returngateway'] . ") ";
+				$line .= "reply-to " . $rule['returngateway'] . " ";
 			}
 
 			if (isset($rule['protocol'])) {

@@ -1,9 +1,12 @@
 #!/usr/local/bin/php
 <?php
 /*
-	reboot.php
-	part of m0n0wall (http://m0n0.ch/wall)
+	halt.php
+	part of pfSense
+	Copyright (C) 2004 Scott Ullrich
+	All rights reserved.
 
+	part of m0n0wall as reboot.php (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 

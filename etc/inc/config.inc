@@ -498,7 +498,7 @@ function convert_config() {
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
 
 	if ($g['booting'])
-		echo "done\n";
+		echo "Done\n";
 }
 
 /* save the system configuration */
@@ -924,11 +924,12 @@ function system_start_ftp_helpers() {
 	global $g;
 	if($config['system']['disableftpproxy'] <> "") return;
 	if ($g['booting'])
-		echo "Starting INETD and FTP Helpers for FTP-PROXY...\n";
+		echo "Starting INETD and FTP Helpers for FTP-PROXY...";
 	$wanif = get_real_wan_interface();
 	mwexec("/usr/sbin/inetd -wW -C 60");
 	mwexec("/usr/bin/killall ftpsesame 2>/dev/null");
 	mwexec("/usr/local/sbin/ftpsesame -i {$wanif} -q ftpproxy");
+	echo "Done.\n";
 }
 
 

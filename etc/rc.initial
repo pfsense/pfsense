@@ -80,7 +80,7 @@ case ${opmode} in
         /etc/rc.initial.ping
         ;;
 8)
-        set prompt = "\n`/bin/hostname -s`# "
+	set prompt="%n\@%m\:%~# "
         /bin/tcsh
         ;;
 9)

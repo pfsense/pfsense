@@ -342,6 +342,8 @@ function filter_generate_aliases() {
 	$aliases .= "# System Aliases \n";
 	$aliases .= "lan = \"{ " . $config['interfaces']['lan']['if'] . " }\"\n";
 	$aliases .= "wan = \"{ " . get_real_wan_interface() . " }\"\n";
+	$aliases .= "pptp = \"{  }\"\n";
+
 	$ifdescrs = array();
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 		$ifdescrs['opt' . $j] = "opt" . $j;
@@ -822,7 +824,7 @@ function filter_nat_rules_generate() {
 
 # PPTP
 #rdr on $wanif proto gre from any to any port 0 -> $pptpdtarget
-rdr on $wanif proto tcp from any to any port 1723 -> $pptpdtarget label "pptp port 1723"
+rdr on $wanif proto tcp from any to any port 1723 -> $pptpdtarget
 
 EOD;
 		}
@@ -1247,13 +1249,13 @@ EOD;
 
 			if ($ispptp) {
 				$line .= "on ng" . ($iif+1) . " ";
+			} else {
+				// translate wan, man, lan, opt to real interface.
+				$interface = $rule['interface'];
+				$temp = filter_get_opt_interface_descr($interface);
+				if($temp <> "") $interface = $temp;
+				$line .= "on \$" . $interface . " ";
 			}
-
-			// translate wan, man, lan, opt to real interface.
-			$interface = $rule['interface'];
-			$temp = filter_get_opt_interface_descr($interface);
-			if($temp <> "") $interface = $temp;
-			$line .= "on \$" . $interface . " ";
 
 			if (isset($rule['protocol'])) {
 				if($rule['protocol'] == "tcp/udp")

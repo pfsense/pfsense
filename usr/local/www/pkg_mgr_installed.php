@@ -64,7 +64,7 @@ include("fbegin.inc");
 
 		<?php
 		 $i = 0;
-                 if($config['installedpackages']['package']) {
+                 if($config['installedpackages']['package'] != "") {
 		    foreach ($config['installedpackages']['package'] as $pkg) {
                         if($pkg['name'] <> "") {
                             ?>
@@ -78,7 +78,10 @@ include("fbegin.inc");
                                 <td class="listlr">
                                     <?php
                                         $latest_version = get_latest_package_version($pkg['name']);
-                                        if($pkg['version'] <> $latest_version) {
+					if($latest_version == -1) {
+						// We can't determine this package's version status.
+						echo "Current version unkown.<br>Installed: " . $pkg['version'];
+                                        } elseif($pkg['version'] <> $latest_version) {
                                             /* a new version of the package is available */
                                             $id = get_pkg_id($pkg['name']);
                                             echo "Upgrade: <a href='pkg_mgr_delete.php?upgrade=true&id={$id}'>" . $latest_version . "</a>";

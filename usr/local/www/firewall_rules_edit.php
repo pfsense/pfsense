@@ -141,6 +141,7 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['log'] = isset($a_filter[$id]['log']);
 	$pconfig['frags'] = isset($a_filter[$id]['frags']);
 	$pconfig['descr'] = $a_filter[$id]['descr'];
+	$pconfig['creategif'] = $a_filter[$id]['creategif'];
 
 } else {
 	/* defaults */
@@ -279,6 +280,7 @@ if ($_POST) {
 		$filterent = array();
 		$filterent['type'] = $_POST['type'];
 		$filterent['interface'] = $_POST['interface'];
+		$filterent['creategif'] = $_POST['creategif'];
 
 		if ($_POST['proto'] != "any")
 			$filterent['protocol'] = $_POST['proto'];
@@ -746,6 +748,13 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 		    </select><br><span class="vexpl">To enable traffic shaping on this rule, select a queue above.</span>
 		    <br><span class="vexpl"><input type="checkbox" name="autocreatequeue"> Automatically create a new queue for this rule.</span>
 		    </td>
+                </tr>
+
+                <tr>
+                  <td width="22%" valign="top" class="vncell">Multi-Tunnel routing</td>
+                  <td width="78%" class="vtable">
+                    <input name="creategif" type="checkbox" id="creategif" size="40" value="<? if($pconfig['creategif']) echo " CHECKED"; ?>"><b> Turn on multi-subnet routing.</b>
+                    <br> <span class="vexpl">If you would like to route multiple subnets across this VPN, check this.</span></td>
                 </tr>
 
                 <tr>

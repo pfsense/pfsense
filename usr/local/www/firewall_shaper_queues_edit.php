@@ -37,6 +37,9 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
+$wan_sched = $config['interfaces']['wan']['schedulertype'];
+$lan_sched = $config['interfaces']['lan']['schedulertype'];
+
 if (isset($id) && $a_queues[$id]) {
 	$pconfig['bandwidth'] = $a_queues[$id]['bandwidth'] . $a_queues[$id]['bandwidthtype'];
 	$pconfig['priority'] = $a_queues[$id]['priority'];
@@ -56,7 +59,7 @@ if (isset($id) && $a_queues[$id]) {
 	$pconfig['options']['linkshare1'] = $a_queues[$id]['options']['linkshare1'];
 	$pconfig['options']['linkshare2'] = $a_queues[$id]['options']['linkshare2'];
 	$pconfig['options']['linkshare3'] = $a_queues[$id]['options']['linkshare3'];
-	$pconfig['options']['schedulertype'] = $a_queues[$id]['options']['schedulertype'];
+	$pconfig['schedulertype'] = $a_queues[$id]['schedulertype'];
 	$pconfig['bandwidth'] = $a_queues[$id]['bandwidth'];
 	$pconfig['bandwidthtype'] = $a_queues[$id]['bandwidthtype'];
 }
@@ -79,7 +82,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$queue = array();
-		$queue['options']['schedulertype'] = $_POST['schedulertype'];
+		$queue['schedulertype'] = $_POST['schedulertype'];
 		$queue['bandwidth'] = $_POST['bandwidth'];
 		$queue['bandwidthtype'] = $_POST['bandwidthtype'];
 		$queue['priority'] = $_POST['priority'];
@@ -122,8 +125,17 @@ if ($_POST) {
 <link href="gui.css" rel="stylesheet" type="text/css">
 
 <script language="JavaScript">
+<!--
 function sync_scheduler_options() {
-	if(document.forms[0].scheduler.value == 'priq') {
+	var wan = '<?=$wan_sched?>';
+	var lan = '<?=$lan_sched?>';
+	var indexNum = document.forms[0].associatedrule.selectedIndex;
+	var associatedrule = document.forms[0].associatedrule.options[indexNum].text;
+	var tmp = associatedrule.split(" - ");
+	var interface_type_a = '' + eval(tmp[0]) + '';
+	var interface_type = String(interface_type_a);
+	alert(interface_type);
+	if(interface_type == 'priq') {
 		document.forms[0].defaultqueue.disabled = 0;
 		document.forms[0].parentqueue.disabled = 1;
 		document.forms[0].red.disabled = 0;
@@ -142,7 +154,7 @@ function sync_scheduler_options() {
 		document.forms[0].linkshare3.disabled = 1;
 		document.forms[0].childqueue.disabled = 1;
 		document.forms[0].priority.disabled = 0;
-	} else if(document.forms[0].schedulertype.value == 'cbq') {
+	} else if(interface_type == 'cbq') {
 		document.forms[0].defaultqueue.disabled = 0;
 		document.forms[0].parentqueue.disabled = 0;
 		document.forms[0].red.disabled = 0;
@@ -161,7 +173,7 @@ function sync_scheduler_options() {
 		document.forms[0].linkshare3.disabled = 1;
 		document.forms[0].childqueue.disabled = 0;
 		document.forms[0].priority.disabled = 0;
-	} else if(document.forms[0].schedulertype.value == 'hfsc') {
+	} else if(interface_type == 'hfsc') {
 		document.forms[0].red.disabled = 0;
 		document.forms[0].ecn.disabled = 0;
 		document.forms[0].defaultqueue.disabled = 0;
@@ -182,6 +194,7 @@ function sync_scheduler_options() {
 		document.forms[0].priority.disabled = 0;
 	}
 }
+-->
 </script>
 </head>
 
@@ -206,12 +219,28 @@ function sync_scheduler_options() {
 	$parentqueue = $pconfig['options']["parentqueue"];
 	$defaultqueue = $pconfig['options']["defaultqueue"];
 	$parent = $pconfig['options']["parent"];
-	$schedulertype = $pconfig['options']["schedulertype"];
+	$schedulertype = $pconfig["schedulertype"];
 ?>
 <p class="pgtitle">Firewall: Traffic shaper: Edit queue</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 	<form action="firewall_shaper_queues_edit.php" method="post" name="iform" id="iform">
 	  <table width="100%" border="0" cellpadding="6" cellspacing="0">
+
+	    <tr>
+	      <td valign="top" class="vncellreq">Associate with rule</td>
+	      <td class="vtable">
+		<select name="associatedrule" onChange="sync_scheduler_options();">
+		<?php
+			foreach ($config['filter']['rule'] as $rule) {
+				echo "<option value=\"" . $rule['descr'] ."\">" .  $rule['interface'] . " -  " . $rule['descr'] . "</option>";
+			}
+		?>
+		</select>
+	      		<br>
+		<span class="vexpl">Choose which rule to attach this queue to.
+		</span></td>
+	    </tr>
+
 	    <tr>
 	      <td valign="top" class="vncellreq">Bandwidth</td>
 	      <td class="vtable"> <input name="bandwidth" class="formfld" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">
@@ -236,26 +265,6 @@ function sync_scheduler_options() {
 	      <td width="22%" valign="top" class="vncell"><b>Name</b></td>
 	      <td width="78%" class="vtable"> <input name="name" type="text" class="formfld" id="name" size="40" value="<?=htmlspecialchars($pconfig['name']);?>">
 		<br> <span class="vexpl">Enter the name of the queue here.  Do not use spaces!
-		</span></td>
-	    </tr>
-
-	    <tr>
-	      <td width="22%" valign="top" class="vncell"><b>Scheduler</b> </td>
-	      <td width="78%" class="vtable">
-		<select id="schedulertype" name="schedulertype" onChange="javascript:sync_scheduler_options();">
-		<?php
-			if($schedulertype == 'priq')
-				echo "<option value=\"priq\">Priority based queueing</option>";
-			if($schedulertype == 'cbq')
-				echo "<option value=\"cbq\">Class based queueing</option>";
-			if($schedulertype == 'hfsc')
-				echo "<option value=\"hfsc\">Hierarchical Fair Service Curve queueing</option>";
-		?>
-			<option value="priq">Priority based queueing</option>
-			<option value="cbq">Class based queueing</option>
-			<option value="hfsc">Hierarchical Fair Service Curve queueing</option>
-		</select>
-		<br> <span class="vexpl">Select which type of queueing you would like to use
 		</span></td>
 	    </tr>
 	    <tr>

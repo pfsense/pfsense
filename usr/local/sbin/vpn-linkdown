@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# record logout
+/usr/bin/logger -p local3.info "logout,$1,,$3"
+
+# resync ipfilter
+/sbin/ipf -y

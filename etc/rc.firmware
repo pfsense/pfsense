@@ -1,0 +1,55 @@
+#!/bin/sh
+
+# /etc/rc.firmware
+# part of m0n0wall (http://neon1.net/m0n0wall)
+#
+# Copyright (C) 2003 Manuel Kasper <mk@neon1.net>.
+# All rights reserved.
+
+CFDEVICE=`cat /var/etc/cfdevice`
+
+if [ $1 != "upgrade" ]; then
+	/sbin/umount -f /ftmp > /dev/null 2>&1
+fi
+
+case $1 in
+enable)
+	/sbin/mount_mfs -s 15360 -T qp120at -b 8192 -f 1024 dummy /ftmp \
+		> /dev/null 2>&1
+	;;
+upgrade)
+	# wait 5 seconds before beginning
+	sleep 5
+
+	exec </dev/console >/dev/console 2>/dev/console
+
+	echo
+	echo "Firmware upgrade in progress..."
+
+	# backup config
+	mkdir /tmp/configbak
+	cp -p /conf/* /tmp/configbak
+
+	# unmount /cf
+	/sbin/umount -f /cf
+
+	# dd image onto card
+	if [ -r $2 ]; then
+		/usr/bin/gunzip -S "" -c $2 | dd of=/dev/r$CFDEVICE bs=16k > /dev/null 2>&1
+		echo "Image installed."
+	fi
+
+	# mount /cf
+	/sbin/mount -w -o noatime /cf
+
+	# restore config
+	cp -p /tmp/configbak/* /conf
+
+	# remount /cf ro
+	/sbin/umount -f /cf
+	/sbin/mount -r /cf
+
+	echo "Done - rebooting system..."	
+	/sbin/reboot
+	;;
+esac

@@ -1,0 +1,117 @@
+#!/usr/local/bin/php -f
+<?php
+/*
+	rc.initial.setlanip
+	part of m0n0wall (http://m0n0.ch/wall)
+	
+	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	All rights reserved.
+	
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
+	
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
+	
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
+	
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
+*/
+
+	/* parse the configuration and include all functions used below */
+	require_once("config.inc");
+	require_once("functions.inc");
+	
+	$fp = fopen('php://stdin', 'r');
+	
+	do {
+		echo "\nEnter the new LAN IP address: ";
+		$lanip = chop(fgets($fp));
+		if ($lanip === "") {
+			exit(0);
+		}
+	} while (!is_ipaddr($lanip));
+
+	echo "\nSubnet masks are entered as bit counts (as in CIDR notation) in m0n0wall.\n";
+	echo "e.g. 255.255.255.0 = 24\n";
+	echo "     255.255.0.0   = 16\n";
+	echo "     255.0.0.0     = 8\n\n";
+	
+	do {
+		echo "Enter the new LAN subnet bit count: ";
+		$lanbits = chop(fgets($fp));
+		if ($lanbits === "") {
+			exit(0);
+		}
+	} while (!is_numeric($lanbits) || ($lanbits < 1) || ($lanbits > 31));
+	
+	$config['interfaces']['lan']['ipaddr'] = $lanip;
+	$config['interfaces']['lan']['subnet'] = $lanbits;
+	
+	echo "\nDo you want to enable the DHCP server on LAN? (y/n) ";
+	
+	if (strcasecmp(chop(fgets($fp)), "y") == 0) {
+		do {
+			echo "Enter the start address of the client address range: ";
+			$dhcpstartip = chop(fgets($fp));
+			if ($dhcpstartip === "") {
+				exit(0);
+			}
+		} while (!is_ipaddr($dhcpstartip));
+		
+		do {
+			echo "Enter the end address of the client address range: ";
+			$dhcpendip = chop(fgets($fp));
+			if ($dhcpendip === "") {
+				exit(0);
+			}
+		} while (!is_ipaddr($dhcpendip));
+		
+		$config['dhcpd']['lan']['enable'] = true;
+		$config['dhcpd']['lan']['range']['from'] = $dhcpstartip;
+		$config['dhcpd']['lan']['range']['to'] = $dhcpendip;
+	} else {
+		unset($config['dhcpd']['lan']['enable']);
+	}
+	
+	if ($config['system']['webgui']['protocol'] == "https") {
+	
+		echo "\nDo you want to revert to HTTP as the webGUI protocol? (y/n) ";
+		
+		if (strcasecmp(chop(fgets($fp)), "y") == 0)
+			$config['system']['webgui']['protocol'] = "http";
+	}
+	
+	if (isset($config['system']['webgui']['noantilockout'])) {
+		echo "\nNote: the anti-lockout rule on LAN has been re-enabled.\n";
+		unset($config['system']['webgui']['noantilockout']);
+	}
+	
+	write_config();
+	interfaces_lan_configure();
+	
+	echo <<<EOD
+	
+The LAN IP address has been set to $lanip/$lanbits.
+You can now access the webGUI by opening the following URL
+in your browser:
+
+http://$lanip/
+
+Press ENTER to continue.
+
+EOD;
+
+	fgets($fp);
+?>

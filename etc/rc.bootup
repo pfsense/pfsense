@@ -1,0 +1,147 @@
+#!/usr/local/bin/php -f
+<?php
+/*
+	rc.bootup
+	part of m0n0wall (http://m0n0.ch/wall)
+	
+	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	All rights reserved.
+	
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
+	
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
+	
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
+	
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
+*/
+
+	require_once("globals.inc");
+
+	/* let the other functions know we're booting */
+	$g['booting'] = TRUE;
+	touch("{$g['varrun_path']}/booting");
+
+	/* parse the configuration and include all functions used below */
+	require_once("config.inc");
+	require_once("functions.inc");
+	
+	/* convert configuration, if necessary */
+	convert_config();
+	
+	/* run any early shell commands specified in config.xml */
+	system_do_shell_commands(1);
+	
+	/* save dmesg output to file */
+	system_dmesg_save();
+	
+	/* set up our timezone */
+	system_timezone_configure();
+	
+	/* set up our hostname */
+	system_hostname_configure();
+	
+	/* make hosts file */
+	system_hosts_generate();
+	
+	/* generate resolv.conf */
+	system_resolvconf_generate();
+	
+	/* start pccardd */
+	if (!in_array($g['platform'], $g['nopccard_platforms']))
+		system_pccard_start();
+	
+	/* establish ipfilter ruleset */
+	filter_configure();
+	
+	/* configure loopback interface */
+	interfaces_loopback_configure();
+	
+	/* set up VLAN virtual interfaces */
+	interfaces_vlan_configure();
+	
+	/* set up LAN interface */
+	interfaces_lan_configure();
+	
+	/* set up WAN interface */
+	interfaces_wan_configure();
+	
+	/* set up Optional interfaces */
+	interfaces_optional_configure();
+		
+	/* start OpenVPN server & clients */
+	ovpn_configure();
+	
+	/* resync ipfilter */
+	filter_resync();
+	
+	/* start ipmon */
+	filter_ipmon_start();
+	
+	/* set up static routes */
+	system_routing_configure();
+	
+	/* enable routing */
+	system_routing_enable();
+	
+	/* start syslogd */
+	system_syslogd_start();
+	
+	/* start web server */
+	system_webgui_start();
+	
+	/* configure console menu */
+	system_console_configure();
+	
+	/* start dnsmasq service */
+	services_dnsmasq_configure();
+	
+	/* start dyndns service */
+	services_dyndns_configure();
+	
+	/* start DHCP service */
+	services_dhcpd_configure();
+	
+	/* start SNMP service */
+	services_snmpd_configure();
+	
+	/* start proxy ARP service */
+	services_proxyarp_configure();
+
+	/* start the NTP client */
+	system_ntp_configure();
+	
+	/* start pptpd */
+	vpn_pptpd_configure();
+	
+	/* start traffic shaper */
+	shaper_configure();
+	
+	/* start IPsec tunnels */
+	vpn_ipsec_configure();
+	
+	/* start the captive portal */
+	captiveportal_configure();
+	
+	/* execute the rc scripts of extensions */
+	system_do_extensions();
+	
+	/* run any shell commands specified in config.xml */
+	system_do_shell_commands();
+	
+	/* done */
+	unlink("{$g['varrun_path']}/booting");
+?>

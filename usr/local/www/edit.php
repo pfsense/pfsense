@@ -1,0 +1,128 @@
+#!/usr/local/bin/php
+<?php
+if (($_POST['submit'] == "Load") && file_exists($_POST['savetopath'])) {
+	$fd = fopen($_POST['savetopath'], "r");
+	$content = fread($fd, filesize($_POST['savetopath']));
+	fclose($fd);
+	$edit_area="";
+	$ulmsg = "Loaded text from " . $_POST['savetopath'];
+} else if (($_POST['submit'] == "Save")) {
+	$content = ereg_replace("\r","",$_POST['content']) ;
+	$fd = fopen($_POST['savetopath'], "w");
+	fwrite($fd, $content);
+	fclose($fd);
+	$edit_area="";
+	$ulmsg = "Saved text to " . $_POST['savetopath'];
+} else if (($_POST['submit'] == "Load") && !file_exists($_POST['savetopath'])) {
+	$ulmsg = "File not found " . $_POST['savetopath'];
+	$content = "";
+	$_POST['savetopath'] = "";
+}
+
+if($_POST['rows'] <> "")
+	$rows = $_POST['rows'];
+else
+	$rows = 40;
+
+if($_POST['cols'] <> "")
+	$cols = $_POST['cols'];
+else
+	$cols = 80;
+?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<?php
+
+/*
+	Exec+ v1.02-000 - Copyright 2001-2003, All rights reserved
+	Created by technologEase (http://www.technologEase.com).
+	(modified for m0n0wall by Manuel Kasper <mk@neon1.net>)
+        (modified for pfSense Edit/Save file by Scott Ullrich, Copyright 2004)
+*/
+
+// Function: is Blank
+// Returns true or false depending on blankness of argument.
+
+function isBlank( $arg ) { return ereg( "^\s*$", $arg ); }
+
+// Function: Puts
+// Put string, Ruby-style.
+
+function puts( $arg ) { echo "$arg\n"; }
+
+// "Constants".
+
+$Version    = '';
+$ScriptName = $HTTP_SERVER_VARS['SCRIPT_NAME'];
+$Title      = 'pfSense: edit file';
+
+// Get year.
+
+$arrDT   = localtime();
+$intYear = $arrDT[5] + 1900;
+
+?>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title><?=$Title ?></title>
+<link href="gui.css" rel="stylesheet" type="text/css">
+<style>
+<!--
+
+input {
+   font-family: courier new, courier;
+   font-weight: normal;
+   font-size: 9pt;
+}
+
+pre {
+   border: 2px solid #435370;
+   background: #F0F0F0;
+   padding: 1em;
+   font-family: courier new, courier;
+   white-space: pre;
+   line-height: 10pt;
+   font-size: 10pt;
+}
+
+.label {
+   font-family: tahoma, verdana, arial, helvetica;
+   font-size: 11px;
+   font-weight: bold;
+}
+
+.button {
+   font-family: tahoma, verdana, arial, helvetica;
+   font-weight: bold;
+   font-size: 11px;
+}
+
+-->
+</style>
+</head>
+<body>
+<p><span class="pgtitle"><?=$Title ?></span>
+<?php if ($ulmsg) echo "<p><strong>" . $ulmsg . "</strong></p>\n"; ?>
+
+<form action="<?=$ScriptName ?>" method="POST">
+  <table>
+    <tr>
+      <td>
+        Save/Load from path: <input name="savetopath" value="<?php echo $_POST['savetopath']; ?>">
+	Rows: <input size="3" name="rows" value="<? echo $rows; ?>">
+	Cols: <input size="3" name="cols" value="<? echo $cols; ?>">
+        <input name="submit" type="submit"  class="button" id="Load" value="Load">
+	<br><hr noshade width=100%>
+        </td>
+    </tr>
+    <tr>
+      <td valign="top" class="label">
+	<textarea rows="<?php echo $rows; ?>" cols="<?php echo $cols; ?>" name="content"><?php echo $content; ?></textarea><br>
+        <p>
+	<center><input name="submit" type="submit"  class="button" id="Save" value="Save"></center></td>
+    </tr>
+  </table>
+</form>
+</body>
+</html>
+

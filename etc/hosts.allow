@@ -1,0 +1,5 @@
+#
+# hosts.allow access control file for "tcp wrapped" applications.
+#
+ALL : ALL : allow
+

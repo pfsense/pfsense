@@ -1,0 +1,76 @@
+#!/bin/sh
+
+# /etc/rc.initial
+# part of m0n0wall (http://neon1.net/m0n0wall)
+#
+# Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+# All rights reserved.
+
+# make sure the user can't kill us by pressing Ctrl-C
+trap : 2
+trap : 3
+trap : 4
+
+if [ -r /var/etc/disableconsole ]; then
+
+while : ; do
+
+echo
+echo
+echo "*** Console menu disabled. ***"
+echo
+
+read tmp
+
+done
+
+else 
+
+# endless loop
+while : ; do
+
+/etc/rc.banner
+
+# display a cheap menu
+echo "m0n0wall console setup"
+echo "**********************"
+echo "1) Interfaces: assign network ports"
+echo "2) Set up LAN IP address"
+echo "3) Reset webGUI password"
+echo "4) Reset to factory defaults"
+echo "5) Reboot system"
+echo "6) Ping host"
+echo "7) Shell"
+echo
+
+read -p "Enter a number: " opmode
+
+# see what the user has chosen
+case ${opmode} in
+1)
+	/etc/rc.initial.setports
+ 	;;
+2)
+	/etc/rc.initial.setlanip
+ 	;;
+3)
+	/etc/rc.initial.password
+	;;
+4)
+	/etc/rc.initial.defaults
+	;;
+5)
+	/etc/rc.initial.reboot
+	;;
+6)
+	/etc/rc.initial.ping
+	;;
+7)
+	set prompt = "\n`/bin/hostname -s`# "
+	/bin/sh
+	;;
+esac
+
+done
+
+fi

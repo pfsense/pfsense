@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# copy cache file to /conf for permanent storage
+/sbin/umount -f /cf
+/sbin/mount -w -o noatime /cf
+/bin/cp /var/db/ez-ipupdate.cache /conf
+/sbin/umount -f /cf
+/sbin/mount -r /cf

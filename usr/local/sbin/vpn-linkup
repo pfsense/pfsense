@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# record login
+/usr/bin/logger -p local3.info "login,$1,$4,$5"
+
+# resync ipfilter
+/sbin/ipf -y

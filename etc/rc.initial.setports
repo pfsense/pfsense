@@ -1,0 +1,303 @@
+#!/usr/local/bin/php -f
+<?php
+/*
+	rc.initial.setports
+	part of m0n0wall (http://m0n0.ch/wall)
+	
+	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	All rights reserved.
+	
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
+	
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
+	
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
+	
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
+*/
+
+	/* parse the configuration and include all functions used below */
+	require_once("config.inc");
+	require_once("functions.inc");
+	
+	$fp = fopen('php://stdin', 'r');
+	
+	$iflist = get_interface_list();
+	
+	echo <<<EOD
+
+Valid interfaces are:
+
+
+EOD;
+
+	foreach ($iflist as $iface => $ifa) {
+		echo sprintf("% -8s%s%s\n", $iface, $ifa['mac'],
+			$ifa['up'] ? "   (up)" : "");
+	}
+	
+	echo <<<EOD
+
+Do you want to set up VLANs first?
+If you're not going to use VLANs, or only for optional interfaces, you
+should say no here and use the webGUI to configure VLANs later, if required.
+
+Do you want to set up VLANs now? (y/n) 
+EOD;
+	
+	if (strcasecmp(chop(fgets($fp)), "y") == 0)
+		vlan_setup();
+	
+	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+		
+		echo "\n\nVLAN interfaces:\n\n";
+		$i = 0;
+		foreach ($config['vlans']['vlan'] as $vlan) {
+			
+			echo sprintf("% -8s%s\n", "vlan{$i}",
+				"VLAN tag {$vlan['tag']}, interface {$vlan['if']}");
+				
+			$iflist['vlan' . $i] = array();
+			$i++;
+		}
+	}
+	
+	echo <<<EOD
+
+If you don't know the names of your interfaces, you may choose to use
+auto-detection. In that case, disconnect all interfaces before you begin,
+and reconnect each one when prompted to do so.
+
+EOD;
+	
+	do {
+		echo "\nEnter the LAN interface name or 'a' for auto-detection: ";
+		$lanif = chop(fgets($fp));
+		if ($lanif === "") {
+			exit(0);
+		}
+		
+		if ($lanif === "a")
+			$lanif = autodetect_interface("LAN", $fp);
+		else if (!array_key_exists($lanif, $iflist)) {
+			echo "\nInvalid interface name '{$lanif}'\n";
+			unset($lanif);
+			continue;
+		}
+	} while (!$lanif);
+	
+	do {
+		echo "\nEnter the WAN interface name or 'a' for auto-detection: ";
+		$wanif = chop(fgets($fp));
+		if ($wanif === "") {
+			exit(0);
+		}
+		if ($wanif === "a")
+			$wanif = autodetect_interface("WAN", $fp);
+		else if (!array_key_exists($wanif, $iflist)) {
+			echo "\nInvalid interface name '{$wanif}'\n";
+			unset($wanif);
+			continue;
+		}
+	} while (!$wanif);
+	
+	/* optional interfaces */
+	$i = 0;
+	$optif = array();
+	
+	while (1) {
+		if ($optif[$i])
+			$i++;
+		$i1 = $i + 1;
+		echo "\nEnter the Optional {$i1} interface name or 'a' for auto-detection\n" .
+			"(or nothing if finished): ";
+		$optif[$i] = chop(fgets($fp));
+		
+		if ($optif[$i]) {
+			if ($optif[$i] === "a") {
+				$ad = autodetect_interface("Optional " . $i1, $fp);
+				if ($ad)
+					$optif[$i] = $ad;
+				else
+					unset($optif[$i]);
+			} else if (!array_key_exists($optif[$i], $iflist)) {
+				echo "\nInvalid interface name '{$optif[$i]}'\n";
+				unset($optif[$i]);
+				continue;
+			}
+		} else {
+			unset($optif[$i]);
+			break;
+		}
+	}
+	
+	/* check for double assignments */
+	$ifarr = array_merge(array($lanif, $wanif), $optif);
+	
+	for ($i = 0; $i < (count($ifarr)-1); $i++) {
+		for ($j = ($i+1); $j < count($ifarr); $j++) {
+			if ($ifarr[$i] == $ifarr[$j]) {
+				echo <<<EOD
+	
+Error: you can't assign the same interface name twice!
+
+EOD;
+
+				exit(0);
+			}
+		}
+	}
+	
+	echo <<<EOD
+	
+The interfaces will be assigned as follows:
+
+LAN  -> {$lanif}
+WAN  -> {$wanif}
+
+EOD;
+
+	for ($i = 0; $i < count($optif); $i++) {
+		echo "OPT" . ($i+1) . " -> " . $optif[$i] . "\n";
+	}
+
+echo <<<EOD
+
+The firewall will reboot after saving the changes.
+
+Do you want to proceed? (y/n) 
+EOD;
+	
+	if (strcasecmp(chop(fgets($fp)), "y") == 0) {
+	
+		$config['interfaces']['lan']['if'] = $lanif;
+		if (preg_match("/^(wi|awi|an)/", $lanif)) {
+			if (!is_array($config['interfaces']['lan']['wireless']))
+				$config['interfaces']['lan']['wireless'] = array();
+		} else {
+			unset($config['interfaces']['lan']['wireless']);
+		}
+		
+		$config['interfaces']['wan']['if'] = $wanif;
+		if (preg_match("/^(wi|awi|an)/", $wanif)) {
+			if (!is_array($config['interfaces']['wan']['wireless']))
+				$config['interfaces']['wan']['wireless'] = array();
+		} else {
+			unset($config['interfaces']['wan']['wireless']);
+		}
+		
+		for ($i = 0; $i < count($optif); $i++) {
+			if (!is_array($config['interfaces']['opt' . ($i+1)]))
+				$config['interfaces']['opt' . ($i+1)] = array();
+			
+			$config['interfaces']['opt' . ($i+1)]['if'] = $optif[$i];
+			
+			/* wireless interface? */
+			if (preg_match("/^(wi|awi|an)/", $optif[$i])) {
+				if (!is_array($config['interfaces']['opt' . ($i+1)]['wireless']))
+					$config['interfaces']['opt' . ($i+1)]['wireless'] = array();
+			} else {
+				unset($config['interfaces']['opt' . ($i+1)]['wireless']);
+			}
+			
+			unset($config['interfaces']['opt' . ($i+1)]['enable']);
+			$config['interfaces']['opt' . ($i+1)]['descr'] = "OPT" . ($i+1);
+		}
+		
+		/* remove all other (old) optional interfaces */
+		for (; isset($config['interfaces']['opt' . ($i+1)]); $i++)
+			unset($config['interfaces']['opt' . ($i+1)]);
+		
+		write_config();
+		
+		echo <<<EOD
+
+The firewall is rebooting now.
+
+EOD;
+	
+		system_reboot_sync();
+	}
+	
+	function autodetect_interface($ifname, $fp) {
+		$iflist_prev = get_interface_list();
+		echo <<<EOD
+
+Connect the {$ifname} interface now and make sure that the link is up.
+Then press ENTER to continue.
+
+EOD;
+		fgets($fp);
+		$iflist = get_interface_list();
+		
+		foreach ($iflist_prev as $ifn => $ifa) {
+			if (!$ifa['up'] && $iflist[$ifn]['up']) {
+				echo "Detected link-up on interface {$ifn}.\n";
+				return $ifn;
+			}
+		}
+		
+		echo "No link-up detected.\n";
+		
+		return null;
+	}
+	
+	function vlan_setup() {
+		global $iflist, $config, $g, $fp;
+		
+		if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+		
+		echo <<<EOD
+
+WARNING: all existing VLANs will be cleared if you proceed!
+
+Do you want to proceed? (y/n) 
+EOD;
+	
+		if (strcasecmp(chop(fgets($fp)), "y") != 0)
+			return;
+		}
+		
+		$config['vlans']['vlan'] = array();
+		echo "\n";
+		
+		while (1) {
+			$vlan = array();
+			
+			echo "\nEnter the parent interface name for the new VLAN (or nothing if finished): ";
+			$vlan['if'] = chop(fgets($fp));
+			
+			if ($vlan['if']) {
+				if (!array_key_exists($vlan['if'], $iflist)) {
+					echo "\nInvalid interface name '{$vlan['if']}'\n";
+					continue;
+				}
+			} else {
+				break;
+			}
+			
+			echo "Enter the VLAN tag (1-4094): ";
+			$vlan['tag'] = chop(fgets($fp));
+			
+			if (!is_numericint($vlan['tag']) || ($vlan['tag'] < 1) || ($vlan['tag'] > 4094)) {
+				echo "\nInvalid VLAN tag '{$vlan['tag']}'\n";
+				continue;
+			}
+			
+			$config['vlans']['vlan'][] = $vlan;
+		}
+	}
+?>

@@ -205,6 +205,8 @@ if ($_POST) {
 			<?php
 			if(isset($pconfig['pfqueueing']['childqueue'])
 				echo "<option value=\"" . $pconfig['pfqueueing']['childqueue'] . "\">" . $pconfig['pfqueueing']['childqueue'] . "</option>";
+			else
+				echo "<option value=\"\"></option>";
 			 if (is_array($config['pfqueueing']['queue'])) {
 			 	foreach ($config['pfqueueing']['queue'] as $queue) {
 			 		if(is_subqueue($queue['name']) == 0)

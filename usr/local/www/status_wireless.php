@@ -4,7 +4,7 @@
 	status_wireless.php
 	part of m0n0wall (http://m0n0.ch/wall)
 	
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+$pgtitle = array("Status", "Wireless");
 require("guiconfig.inc");
 
 function get_wireless_info($ifdescr) {
@@ -63,15 +64,20 @@ function get_wireless_info($ifdescr) {
 		array_shift($aslist);
 		foreach ($aslist as $as) {
 			if ($as) {
-				$asa = preg_split("/\s+/", $as);
-				$aslent = array();
-				$aslent['mac'] = $asa[0];
-				$aslent['rates'] = substr($asa[4], strpos($asa[4], "<")+1,
-					strpos($asa[4], ">")-strpos($asa[4], "<")-1);
-				$aslent['sig'] = substr($asa[5], strpos($asa[5], "=")+1);
-				$ifinfo['aslist'][] = $aslent;
+				if (preg_match("/^ap/", $as)) {
+					if (is_array($aslent) && count($aslent))
+						$ifinfo['aslist'][] = $aslent;
+					$aslent = array();
+				} else if (preg_match("/BSSID:\s*\[ (.*) \]/", $as, $matches)) {
+					$aslent['bssid'] = $matches[1];
+				} else if (preg_match("/\[dBm\]:\s*\[ .* \/ (.*) \/ (.*) \]/", $as, $matches)) {
+					$aslent['sig'] = $matches[1];
+					$aslent['noise'] = $matches[2];
+				}
 			}
 		}
+		if (is_array($aslent) && count($aslent))
+			$ifinfo['aslist'][] = $aslent;
 	}
 	
 	return $ifinfo;
@@ -81,32 +87,33 @@ function get_wireless_info($ifdescr) {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title><?=gentitle("Status: Wireless");?></title>
+<title><?=gentitle("pfSense webGUI");?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
 
+<form>
+
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-      <p class="pgtitle">Status: Wireless</p>
-              <?php $i = 0; $ifdescrs = array();
-			  
-			  		if (is_array($config['interfaces']['wan']['wireless']) &&
-							strstr($config['interfaces']['wan']['if'], "wi"))
-							$ifdescrs['wan'] = 'WAN';
-							
-			  		if (is_array($config['interfaces']['lan']['wireless']) &&
-							strstr($config['interfaces']['lan']['if'], "wi"))
-							$ifdescrs['lan'] = 'LAN';
-					
-			  		for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-						if (is_array($config['interfaces']['opt' . $j]['wireless']) &&
-							isset($config['interfaces']['opt' . $j]['enable']) &&
-							strstr($config['interfaces']['opt' . $j]['if'], "wi"))
-							$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
-					}
-						
-					if (count($ifdescrs) > 0): ?>
+<?php $i = 0; $ifdescrs = array();
+
+	if (is_array($config['interfaces']['wan']['wireless']) &&
+			(strstr($config['interfaces']['wan']['if'], "wi") || strstr($config['interfaces']['wan']['if'], "ath")))
+			$ifdescrs['wan'] = 'WAN';
+			
+	if (is_array($config['interfaces']['lan']['wireless']) &&
+			(strstr($config['interfaces']['lan']['if'], "wi") || strstr($config['interfaces']['lan']['if'], "ath")))
+			$ifdescrs['lan'] = 'LAN';
+	
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+		if (is_array($config['interfaces']['opt' . $j]['wireless']) &&
+			isset($config['interfaces']['opt' . $j]['enable']) &&
+			(strstr($config['interfaces']['opt' . $j]['if'], "wi") || strstr($config['interfaces']['opt' . $j]['if'], "ath")))
+			$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
+	}
+		
+	if (count($ifdescrs) > 0): ?>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <?php
 			      foreach ($ifdescrs as $ifdescr => $ifname): 
@@ -122,7 +129,7 @@ function get_wireless_info($ifdescr) {
                   <?=htmlspecialchars($ifname);?> interface (SSID &quot;<?=htmlspecialchars($config['interfaces'][$ifdescr]['wireless']['ssid']);?>&quot;)</td>
               </tr>
               <tr> 
-                <td width="22%" valign="top" class="listhdrr">Signal strength 
+                <td width="22%" valign="top" class="vncellt">Signal strength 
                   cache</td>
                 <td width="78%" class="listrpad"> 
                   <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -155,25 +162,25 @@ function get_wireless_info($ifdescr) {
                   </table></td>
               </tr><?php if ($ifinfo['aslist']): ?>
               <tr> 
-                <td width="22%" valign="top" class="listhdrr">Associated stations 
+                <td width="22%" valign="top" class="vncellt">Associated stations 
                 </td>
                 <td width="78%" class="listrpad"> 
                   <table width="100%" border="0" cellpadding="0" cellspacing="0">
                     <tr> 
-                      <td width="40%" class="listhdrr">MAC address</td>
-                      <td width="40%" class="listhdrr">TX rates</td>
-                      <td width="20%" class="listhdrr">Signal</td>
+                      <td width="40%" class="listhdrr">BSSID</td>
+                      <td width="30%" class="listhdrr">Signal</td>
+                      <td width="30%" class="listhdrr">Noise</td>
                     </tr>
                     <?php foreach ($ifinfo['aslist'] as $as): ?>
                     <tr> 
                       <td class="listlr"> 
-                        <?=htmlspecialchars($as['mac']);?>
+                        <?=htmlspecialchars($as['bssid']);?>
                       </td>
                       <td class="listr"> 
-                        <?=htmlspecialchars($as['rates']);?>
+                        <?=htmlspecialchars($as['sig']);?> dBm
                       </td>
                       <td class="listr"> 
-                        <?=htmlspecialchars($as['sig']);?>
+                        <?=htmlspecialchars($as['noise']);?> dBm
                       </td>
                     </tr>
                     <?php endforeach; ?>
@@ -182,8 +189,6 @@ function get_wireless_info($ifdescr) {
               <?php $i++; endforeach; ?>
             </table>
 <?php else: ?>
-<p><strong>No supported wireless interfaces were found for status display.</strong></p>
+<strong>No supported wireless interfaces were found for status display (only cards that use the wi[n] or ath[n] driver are supported).</strong>
 <?php endif; ?>
 <?php include("fend.inc"); ?>
-</body>
-</html>

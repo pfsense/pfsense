@@ -313,7 +313,6 @@ The default is to use the IP of the firewall as the gateway.  Specify an alterna
                             </span></p></td>
                       </tr>
                     </table>
-              </table><br>
 
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>

@@ -898,4 +898,13 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
     }
     // if($show_message == true) print ".";
 }
+
+/*
+ * make_dirs($path, $mode = 0755)
+ * create directory tree recursively (mkdir -p)
+ */
+function make_dirs($path, $mode = 0755)
+{
+   return is_dir($path) || (make_dirs(dirname($path), $mode) && mkdir($path, $mode));
+}
 ?>

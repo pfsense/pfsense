@@ -152,7 +152,6 @@ if(!$pkg_config['packages']) {
   </tr>
 </table>
 </form>
-<p>Please note that pfSense does not adjust firewall rules when a package is installed.  This is left for the end user.</p>
 <?php include("fend.inc"); ?>
 </body>
 </html>

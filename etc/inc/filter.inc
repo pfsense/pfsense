@@ -640,13 +640,16 @@ function filter_flush_state_table() {
 function filter_nat_rules_generate_if($if, $src, $dst, $target) {
 	global $config;
 
-	if ($target)
-		$tgt = $target . "/32";
-	else
-		$tgt = "0/32";
+        if ($target)
+                $tgt = $target . "/32";
+        else
+                $tgt = "($if)";
+
+	if ($dst == "")
+		$dst = "any";
 
 	$natrule = <<<EOD
-nat on $if from $src to any -> ($if)
+nat on $if from $src to $dst -> $tgt
 
 EOD;
 	return $natrule;
@@ -724,17 +727,14 @@ function filter_nat_rules_generate() {
 		/* advanced outbound rules */
 		if (is_array($config['nat']['advancedoutbound']['rule'])) {
 			foreach ($config['nat']['advancedoutbound']['rule'] as $obent) {
-				$dst = "";
-				$src = "";
+
+				$src = $obent['source']['network'];
 				if (!isset($obent['destination']['any'])) {
-					$src = "from ";
 					if (isset($obent['destination']['not']))
-						$dst = "! to ";
+						$dst = "!" . $obent['destination']['network'];
 					else
-						$dst = "to ";
-					$dst .= $obent['destination']['network'];
+						$dst = $obent['destination']['network'];
 				}
-				$src .= $obent['source']['network'];
 
 				if (!$obent['interface'] || ($obent['interface'] == "wan"))
 					$natif = $wanif;

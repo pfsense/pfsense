@@ -539,38 +539,40 @@ function resync_all_package_configs_bootup($show_message) {
     global $config;
     log_error("Resyncing configuration for all packages.");
     if(!$config['installedpackages']['package']) return;
+    if($show_message == true) print "Syncing packages:";
     foreach($config['installedpackages']['package'] as $package) {
-	if($show_message == true) print "Syncing " . $package['name'] . ".\n";
         if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
-	    if($show_message == true) print "Fetching " . $package['configurationfile'] . ".\n";
-	    log_error("Fetching missing configuration XML for " . $package['name']);
-	    system("/usr/bin/fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationfile']);
-        }
-	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
-        if($pkg_config['custom_php_command_before_form'] <> "")
-	    eval($pkg_config['custom_php_command_before_form']);
-	if($pkg_config['custom_php_resync_config_command'] <> "")
-	    eval($pkg_config['custom_php_resync_config_command']);
-	if($show_message == true) print "Synced " . $package['name'] . ".\n";
-	if($pkg_config['additional_files_needed'] != "") {
-		foreach($pkg_config['additional_files_needed']['0']['item'] as $item) {
-			$pkg_name = substr(strrchr($item, "/"),1);
-			if(!preg_match("/\.xml/i", $pkg_name)) break;
-			if(!file_exists("/usr/local/pkg/" . $pkg_name)) {
-				if($show_message == true) print "Fetching " . $pkg_name . ".\n";
-				log_error("Fetching missing configuration XML for " . $pkg_name);
-				system("/usr/bin/fetch -o /usr/local/pkg/" . $pkg_name . " " . $item);
-			}
-			$item_config = parse_xml_config_pkg("/usr/local/pkg/" . $pkg_name, "packagegui");
-			if($show_message == true) print "Syncing " . $item_config['name'] . ".\n";
-			if($item_config['custom_php_command_before_form'] <> "")
-			    eval($item_config['custom_php_command_before_form']);
-			if($item_config['custom_php_resync_config_command'] <> "")
-			    eval($item_config['custom_php_resync_config_command']);
-			if($show_message == true) print "Synced " . $item_config['name'] . ".\n";
-		}
+            if($show_message == true) print "\n\nFetching " . $package['configurationfile'] . ".\n";
+            log_error("Fetching missing configuration XML for " . $package['name']);
+            system("/usr/bin/fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationfile']);
+       	    print "\n\n";
 	}
+        $pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
+        if($pkg_config['custom_php_command_before_form'] <> "")
+            eval($pkg_config['custom_php_command_before_form']);
+        if($pkg_config['custom_php_resync_config_command'] <> "")
+            eval($pkg_config['custom_php_resync_config_command']);  
+        if($show_message == true) print " " . $package['name'];
+        if($pkg_config['additional_files_needed'] != "") {
+                foreach($pkg_config['additional_files_needed']['0']['item'] as $item) {
+                        $pkg_name = substr(strrchr($item, "/"),1);
+                        if(!preg_match("/\.xml/i", $pkg_name)) break;
+                        if(!file_exists("/usr/local/pkg/" . $pkg_name)) {
+                                if($show_message == true) print "\n\nFetching " . $pkg_name . ".\n";
+                                log_error("Fetching missing configuration XML for " . $pkg_name);
+                                system("/usr/bin/fetch -o /usr/local/pkg/" . $pkg_name . " " . $item);
+				print "\n\n";
+                        }
+                        $item_config = parse_xml_config_pkg("/usr/local/pkg/" . $pkg_name, "packagegui");
+                        if($item_config['custom_php_command_before_form'] <> "")
+                            eval($item_config['custom_php_command_before_form']);
+                        if($item_config['custom_php_resync_config_command'] <> "")
+                            eval($item_config['custom_php_resync_config_command']);
+                        if($show_message == true) print " " . $item_config['name'];
+                }
+        }
     }
+    print ".\n";
 }
 
 /*

@@ -401,8 +401,10 @@ foreach ($packages_to_install as $id) {
     $pb_percent += 10;
 
     if($package_conf['custom_php_install_command']) {
-        fwrite($fd_log, "Executing post install commands...\n");
         update_status("Executing post install commands...\n");
+        fwrite($fd_log, "Executing post install commands...\n");
+        if($package_conf['custom_php_command_before_form'] <> "")
+          eval($package_conf['custom_php_command_before_form']);
         $pb_percent += 50;
         update_progress_bar(50);
         eval($package_conf['custom_php_install_command']);

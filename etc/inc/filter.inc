@@ -54,7 +54,7 @@ function filter_configure() {
 
 	/* generate aliases */
 	$aliases = filter_generate_aliases();
-	/* generate pfctl rules */
+	/* generate nat rules */
 	$natrules = filter_nat_rules_generate();
 	/* generate pfctl rules */
 	$pfrules = filter_rules_generate();

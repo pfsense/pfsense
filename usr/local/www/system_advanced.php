@@ -135,7 +135,7 @@ if ($_POST) {
 		} else {
 			unset($config['system']['alt_pkgconfig_url']);
 		}
-	
+
 		$config['system']['webgui']['expanddiags'] = $_POST['expanddiags'] ? true : false;
 		$config['system']['optimization'] = $_POST['optimization'];
 		$config['system']['disablerendevouz'] = $_POST['disablerendevouz'];
@@ -425,17 +425,9 @@ function enable_altpkgconfigurl(enable_over) {
 		  <td width="22%" valign="top" class="vncell">Traffic Shaper Scheduler</td>
 		  <td width="78%" class="vtable">
 		    <select id="schedulertype" name="schedulertype" <?= $style ?>>
-		    <?php
-			    if($pconfig['schedulertype'] == 'priq')
-				    echo "<option value=\"priq\">Priority based queueing</option>";
-			    if($pconfig['schedulertype'] == 'cbq')
-				    echo "<option value=\"cbq\">Class based queueing</option>";
-			    if($pconfig['schedulertype'] == 'hfsc')
-				    echo "<option value=\"hfsc\">Hierarchical Fair Service Curve queueing</option>";
-		    ?>
-			    <option value="priq">Priority based queueing</option>
-			    <option value="cbq">Class based queueing</option>
-			    <option value="hfsc">Hierarchical Fair Service Curve queueing</option>
+			    <option value="priq"<?php if($pconfig['schedulertype'] == 'priq') echo " SELECTED"; ?>>Priority based queueing</option>
+			    <option value="cbq"<?php if($pconfig['schedulertype'] == 'cbq') echo " SELECTED"; ?>>Class based queueing</option>
+			    <option value="hfsc"<?php if($pconfig['schedulertype'] == 'hfsc') echo " SELECTED"; ?>>Hierarchical Fair Service Curve queueing</option>
 		    </select>
 		    <br> <span class="vexpl"><b>Select which type of queueing you would like to use</b>
 		  <?php if (is_array($config['shaper']['queue']) > 0): ?>

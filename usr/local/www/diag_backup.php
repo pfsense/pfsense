@@ -76,7 +76,7 @@ if ($_POST) {
 					header("Content-Disposition: attachment; filename=$fn");
 					header("Content-Length: $fs");
 					readfile($g['tmp_path'] . "/backup_section.txt","w");
-					unlink($g['tmp_path'] . "/backup_section.txt","w");
+					unlink($g['tmp_path'] . "/backup_section.txt");
 				} else {
 					$fs = filesize($g['conf_path'] . "/config.xml");
 					header("Content-Type: application/octet-stream");

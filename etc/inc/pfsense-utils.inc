@@ -769,8 +769,6 @@ function backup_config_section($section) {
  */
 function restore_config_section($section, $new_contents) {
     global $config;
-    conf_mount_rw();
-    config_lock();
     $fout = fopen("{$g['tmp_path']}/tmpxml","w");
     fwrite($fout, $new_contents);
     fclose($fout);
@@ -778,8 +776,6 @@ function restore_config_section($section, $new_contents) {
     $config[$section] = &$section_xml;
     unlink($g['tmp_path'] . "/tmpxml");
     write_config("Restored {$section} of config file (maybe from CARP partner)");
-    conf_mount_ro();
-    config_unlock();
     return;
 }
 

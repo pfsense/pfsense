@@ -179,6 +179,31 @@ EOD;
 	return 0;
 }
 
+function interfaces_staticarp_configure() {
+        global $config, $g;
+        
+        $lancfg = $config['interfaces']['lan'];
+
+        /* Enable staticarp, if enabled */
+        if(isset($config['staticarp']['enablestaticarp'])) {
+                mwexec("/sbin/ifconfig " . escapeshellarg($lancfg['if']) . " staticarp " );
+                mwexec("/usr/sbin/arp -ad > /dev/null 2>&1 ");
+                if (is_array($config['dhcpd']['lan']['staticmap'])) {
+
+                        foreach ($config['dhcpd']['lan']['staticmap'] as $arpent) {
+                                mwexec("/usr/sbin/arp -s " . escapeshellarg($arpent['ipaddr']) . " " . escapeshellarg($arpent['mac']));
+
+                        }
+                        
+                }
+        } else {
+                mwexec("/sbin/ifconfig " . escapeshellarg($lancfg['if']) . " -staticarp " );
+                mwexec("/usr/sbin/arp -ad > /dev/null 2>&1 ");
+        }
+
+        return 0;
+}
+
 function services_dhcrelay_configure() {
 	global $config, $g;
 

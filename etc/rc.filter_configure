@@ -1,4 +1,4 @@
-#!/usr/local/bin/php
+#!/usr/local/bin/php -f
 <?php
 /*
     rc.filter_configure

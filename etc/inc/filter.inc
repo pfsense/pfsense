@@ -438,6 +438,9 @@ function filter_nat_rules_generate() {
 rdr on $wanif proto gre from any to any port 0 -> $pptpdtarget
 rdr on $wanif proto tcp from any to any port 1723 -> $pptpdtarget
 
+# auto-proxy
+rdr on $lanif proto tcp from any to any port 21 -> 127.0.0.1 port 8021
+
 EOD;
 		}
 	}
@@ -514,7 +517,6 @@ pass in quick on lo0 all
 pass out quick on lo0 all
 
 # enable ftp-proxy
-rdr on $lanif proto tcp from any to any port 21 -> 127.0.0.1 port 8021
 pass in on $wanif inet proto tcp from port 20 to ($wanif) user proxy flags S/SA keep state
 
 # allow access to DHCP server on LAN

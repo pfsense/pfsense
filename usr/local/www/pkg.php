@@ -49,8 +49,8 @@ if($pkg['donotsave'] <> "") {
 	header("Location:  pkg_edit.php?xml=" . $xml);
 }
 
-$package_name = $pkg['menu']['name'];
-$section      = $pkg['menu']['section'];
+$package_name = $pkg['menu'][0]['name'];
+$section      = $pkg['menu'][0]['section'];
 $config_path  = $pkg['configpath'];
 $title        = $section . ": " . $package_name;
 

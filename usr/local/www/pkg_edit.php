@@ -50,8 +50,8 @@ if($xml == "") {
             $pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
 }
 
-$package_name = $pkg['menu']['name'];
-$section      = $pkg['menu']['section'];
+$package_name = $pkg['menu'][0]['name'];
+$section      = $pkg['menu'][0]['section'];
 $config_path  = $pkg['configpath'];
 $title        = $section . ": " . $package_name;
 

@@ -146,4 +146,4 @@ if(!$pkg_config['packages']) {
 </body>
 </html>
 
-<?php system("rm {$g['tmp_path']}/pkg*"); ?>
+<?php unlink_if_exists("{$g['tmp_path']}/pkg*"); ?>

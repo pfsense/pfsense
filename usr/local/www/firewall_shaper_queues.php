@@ -164,16 +164,7 @@ if ($_GET['act'] == "del") {
 			</td>
                         <td class="listbg">
                           <font color="#FFFFFF"><?=htmlspecialchars($queue['name']);?>
-                          &nbsp;<br>
-<?php
-			$cpuUsage = 0;
-			echo "<img src='bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
-			echo "<img src='bar_blue.gif' height='15' name='queue{$i}widtha' id='queue{$i}widtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
-			echo "<img src='bar_gray.gif' height='15' name='queue{$i}widthb' id='queue{$i}widthb' width='" . (100 - $cpuUsage) . "' border='0' align='absmiddle'>";
-			echo "<nobr><img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
-			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='25' name='queue{$i}meter' id='queue{$i}meter' value='( Loading )'></nobr>";
-?>
-
+                          &nbsp;
 			</td>
                         <td valign="middle" nowrap class="list"> <a href="firewall_shaper_queues_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a>
                           &nbsp;<a href="firewall_shaper_queues.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this queue?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
@@ -197,62 +188,3 @@ if ($_GET['act'] == "del") {
 <?php include("fend.inc"); ?>
 </body>
 </html>
-
-<?php
-
-sleep(3);
-
-$counter = 0;
-While(!Connection_Aborted()) {
-
-	$stats_array = gather_altq_queue_stats(true);
-
-	/* calculate total packets being moved through all queues. */
-	$total_packets_s = 0;
-	foreach($stats_array as $stats_line) {
-		$stat_line_split = split("\|", $stats_line);
-		$total_packets_s = $total_packets_s + intval($stat_line_split[2]);
-	}
-
-	$i = 0;
-	foreach($stats_array as $stats_line) {
-		if($stat_line_split[2] == "" and $counter > 1) {
-			mwexec("/usr/bin/killall -9 pfctl php");
-			exit;
-		}
-
-		$stat_line_split = split("\|", $stats_line);
-		$packet_sampled = intval($stat_line_split[2]);
-		$speed = $stat_line_split[1];
-		$borrows = intval($stat_line_split[3]);
-
-		echo "<script language='javascript'>\n";
-
-		$packet_s = round(100 * (1 - $packet_sampled / $total_packets_s), 0);
-
-		echo "document.queue{$i}widthb.style.width='{$packet_s}';\n";
-		echo "document.queue{$i}widtha.style.width='" . (100 - $packet_s) . "';\n";
-		$borrows_txt = "";
-		if(intval($borrows > 0))
-			$borrows_txt = " - {$borrows} borrows";
-		echo "document.forms[0].queue{$i}meter.value = '" . $packet_sampled . "/pps - " . $speed . "{$borrows_txt}';\n";
-		echo "</script>\n";
-		$i++;
-	}
-
-	/*
-	 *   prevent user from running out of ram.
-	 *   firefox and ie can be a bear on ram usage!
-         */
-	$counter++;
-	if($counter > 40) {
-		echo "Redirecting to <a href=\"firewall_shaper_queues.php\">Firewall Shaper Queues</a>.<p>";
-		echo "<meta http-equiv=\"refresh\" content=\"1;url=firewall_shaper_queues.php\">";
-		mwexec("/usr/bin/killall -9 pfctl");
-		exit;
-	}
-}
-
-mwexec("/usr/bin/killall -9 pfctl php");
-
-?>

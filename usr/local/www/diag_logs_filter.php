@@ -120,7 +120,10 @@ function conv_clog($logfile, $tail) {
 
 function convert_port_period_to_colon($addr) {
 	$addr_split = split("\.", $addr);
-	$newvar = $addr_split[0] . "." . $addr_split[1] . "." . $addr_split[2] . "." . $addr_split[3] . ":" . $addr_split[4];
+	if($addr_split[4] == "")
+		$newvar = $addr_split[0] . "." . $addr_split[1] . "." . $addr_split[2] . "." . $addr_split[3];
+	else
+		$newvar = $addr_split[0] . "." . $addr_split[1] . "." . $addr_split[2] . "." . $addr_split[3] . ":" . $addr_split[4];
 	return $newvar;
 }
 
@@ -166,11 +169,11 @@ function format_ipf_ip($ipfip) {
 			</tr>
 			<tr>
 			  <td width="10%" class="listhdrr">Act</td>
-			  <td width="20%" class="listhdrr">Time</td>
-			  <td width="10%" class="listhdrr">If</td>
-			  <td width="20%" class="listhdrr">Source</td>
-			  <td width="20%" class="listhdrr">Destination</td>
-			  <td width="10%" class="listhdrr">Proto</td>
+			  <td width="10%" class="listhdrr">Time</td>
+			  <td width="15%" class="listhdrr">If</td>
+			  <td width="25%" class="listhdrr">Source</td>
+			  <td width="25%" class="listhdrr">Destination</td>
+			  <td width="15%" class="listhdrr">Proto</td>
 			</tr><?php foreach ($filterlog as $filterent): ?>
 			<tr>
 			  <td class="listlr" nowrap>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?> 
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <pfsensewizard>
 <totalsteps>8</totalsteps>
 <step>
@@ -29,7 +29,7 @@
 			<type>input</type>
 			<bindstofield>system->domain</bindstofield>
 			<description>EXAMPLE: mydomain.com</description>
-		</field>		
+		</field>
 		<field>
 			<name>Primary DNS Server</name>
 			<type>input</type>
@@ -37,7 +37,7 @@
 			<!-- we must unset the fields because this is an array. -->
 			<unsetfield>yes</unsetfield>
 			<arraynum>0</arraynum>
-		</field>		
+		</field>
 		<field>
 			<name>Secondary DNS Server</name>
 			<type>input</type>
@@ -49,7 +49,7 @@
 			<type>submit</type>
 		</field>
 	</fields>
-</step>	
+</step>
 <step>
 	<id>3</id>
 	<title>Time Server Information</title>
@@ -1717,7 +1717,7 @@
 		<field>
 			<name>Next</name>
 			<type>submit</type>
-		</field>				
+		</field>
 	</fields>
 </step>
 <step>
@@ -1740,12 +1740,12 @@
 			selectedItem = 4;
 			document.forms[0].ipaddress.value = '';
 		} else {
-			selectedItem = 0;		
+			selectedItem = 0;
 		}
 		enableitems(selectedItem);
-	</javascriptafterformdisplay>		
+	</javascriptafterformdisplay>
 	<fields>
-		<field>		
+		<field>
 			<name>SelectedType</name>
 			<type>select</type>
 			<donotdisable>true</donotdisable>
@@ -1754,28 +1754,28 @@
 					<name>Static</name>
 					<value>Static</value>
 					<enablefields>ipaddress,subnetmask,gateway</enablefields>
-				</option>				
+				</option>
 				<option>
 					<name>DHCP</name>
 					<value>dhcp</value>
-					<enablefields>dhcphostname</enablefields>					
+					<enablefields>dhcphostname</enablefields>
 				</option>
 				<option>
 					<name>PPPoE</name>
 					<value>PPPoE</value>
-					<enablefields>pppoeusername,pppoepassword,pppoeservicename,pppoedialondemand,pppoeidletimeout</enablefields>					
+					<enablefields>pppoeusername,pppoepassword,pppoeservicename,pppoedialondemand,pppoeidletimeout</enablefields>
 				</option>
 				<option>
 					<name>PPTP</name>
 					<value>PPTP</value>
 					<enablefields>pptpusername,pptppassword,pptplocalipaddress,pptplocalsubnet,pptpremoteipaddress,pptpdialondemand,pptpidletimeout
-					</enablefields>					
-				</option>	
+					</enablefields>
+				</option>
 				<option>
 					<name>BigPond</name>
 					<value>BigPond</value>
 					<enablefields>bigpondusername,bigpondpassword,bigpondauthenticationserver,bigpondauthenticationdomain,bigpondminheartbeatinterval</enablefields>
-				</option>			
+				</option>
 			</options>
 		</field>
 		<field>
@@ -1788,7 +1788,7 @@
 			<bindstofield>interfaces->wan->spoofmac</bindstofield>
 			<type>input</type>
 			<description> This field can be used to modify ("spoof") the MAC address of the WAN interface (may be required with some cable connections) Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx or leave blank</description>
-		</field>		
+		</field>
 		<field>
 			<donotdisable>true</donotdisable>
 			<name>MTU</name>
@@ -1810,7 +1810,7 @@
 		<field>
 			<combinefieldsend>true</combinefieldsend>
 			<dontdisplayname>true</dontdisplayname>
-			<dontcombinecells>true</dontcombinecells>			
+			<dontcombinecells>true</dontcombinecells>
 			<name>Subnet Mask</name>
 			<bindstofield>interfaces->wan->subnet</bindstofield>
 			<type>select</type>
@@ -1949,7 +1949,7 @@
 			<name>Gateway</name>
 			<bindstofield>interfaces->wan->gateway</bindstofield>
 			<type>input</type>
-		</field>		
+		</field>
 		<field>
 			<name>Bandwidth Management (Traffic Shaping)</name>
 			<type>listtopic</type>
@@ -1980,7 +1980,7 @@
 			<type>select</type>
 			<combinefieldsend>true</combinefieldsend>
 			<dontdisplayname>true</dontdisplayname>
-			<dontcombinecells>true</dontcombinecells>			
+			<dontcombinecells>true</dontcombinecells>
 			<bindstofield>interfaces->wan->bandwidthtype</bindstofield>
 			<options>
 				<option>
@@ -1991,7 +1991,7 @@
 				</option>
 				<option>
 					<name>Megabit/s</name>
-				</option>				
+				</option>
 				<option>
 					<name>Gigabit/s</name>
 				</option>
@@ -2000,7 +2000,7 @@
 		<field>
 			<name>DHCP client configuration</name>
 			<type>listtopic</type>
-		</field>		
+		</field>
 		<field>
 			<name>DHCP Hostname</name>
 			<type>input</type>
@@ -2010,7 +2010,7 @@
 		<field>
 			<name>PPPoE configuration</name>
 			<type>listtopic</type>
-		</field>		
+		</field>
 		<field>
 			<name>PPPoE Username</name>
 			<type>input</type>
@@ -2031,7 +2031,7 @@
 			<typehint>Enable Dial-On-Demand mode</typehint>
 			<type>checkbox</type>
 			<description>This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.</description>
-		</field>		
+		</field>
 		<field>
 			<name>PPPoE Idle timeout</name>
 			<type>input</type>
@@ -2040,7 +2040,7 @@
 		<field>
 			<name>PPTP configuration</name>
 			<type>listtopic</type>
-		</field>		
+		</field>
 		<field>
 			<name>PPTP Username</name>
 			<type>input</type>
@@ -2193,8 +2193,19 @@
 				<option>
 						<name>32</name>
 						<value>32</value>
-				</option>				
+				</option>
 			</options>
+			<stepsubmitbeforesave>
+				if($_POST['selectedtype'] == "DHCP") {
+					$_POST['ipaddress'] = "dhcp";
+				} else if($_POST['selectedtype'] == "PPPoE") {
+					$_POST['ipaddress'] = "pppoe";
+				} else if($_POST['selectedtype'] == "PPTP") {
+					$_POST['ipaddress'] = "pptp";
+				} else if($_POST['selectedtype'] == "BigPond") {
+					$_POST['ipaddress'] = "bigpond";
+				}
+			</stepsubmitbeforesave>
 		</field>
 		<field>
 			<name>PPTP Remote IP Address</name>
@@ -2205,7 +2216,7 @@
 			<typehint>Enable Dial-On-Demand mode</typehint>
 			<type>checkbox</type>
 			<description>This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.</description>
-		</field>		
+		</field>
 		<field>
 			<name>PPTP Idle timeout</name>
 			<type>input</type>
@@ -2214,7 +2225,7 @@
 		<field>
 			<name>BigPond configuration</name>
 			<type>listtopic</type>
-		</field>		
+		</field>
 		<field>
 			<name>BigPond Username</name>
 			<type>input</type>
@@ -2259,7 +2270,7 @@
 		<field>
 			<name>Next</name>
 			<type>submit</type>
-		</field>				
+		</field>
 	</fields>
 </step>
 <step>
@@ -2411,7 +2422,7 @@
 		<field>
 			<name>Next</name>
 			<type>submit</type>
-		</field>		
+		</field>
 	</fields>
 </step>
 <step>
@@ -2430,10 +2441,10 @@
 			if($_POST['adminpassword'] != "") {
 				if($_POST['adminpassword'] == $_POST['adminpasswordagain']) {
 					$fd = popen("/usr/sbin/pw usermod -n root -H 0", "w");
-					$salt = md5(time());				
+					$salt = md5(time());
 					$crypted_pw = crypt($_POST['adminpassword'],$salt);
 					fwrite($fd, $crypted_pw);
-					pclose($fd);				
+					pclose($fd);
 				} else {
 					print_info_box_np("Passwords do not match!");
 					die;
@@ -2444,7 +2455,7 @@
 		<field>
 			<name>Next</name>
 			<type>submit</type>
-		</field>		
+		</field>
 	</fields>
 </step>
 <step>
@@ -2466,6 +2477,6 @@
 	<description>A reboot is now in progress. Please wait.</description>
 	<stepafterformdisplay>
 		system("/sbin/shutdown -r now");
-	</stepafterformdisplay>	
+	</stepafterformdisplay>
 </step>
 </pfsensewizard>

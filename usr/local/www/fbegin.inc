@@ -11,7 +11,7 @@
 				$description = fread($fdt, 1024);
 				fclose($fdt);
 				echo "<!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/pkg.php?xml=" . strtolower($extd) . ".xml\" class=\"navlnk\">" . $extd . "</a><br> -->\n";
-				$htmltext .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"" . $fdt . "\" class=\"navlnk\">" . $extd . "</a><br>\n";
+				$htmltext .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"" . $description . "\" class=\"navlnk\">" . $extd . "</a><br>\n";
 			}
 			closedir($dh);
 		}
@@ -130,7 +130,7 @@ function showhide(tspan, tri) {
 				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/edit.php" class="navlnk">Edit File</a><br>
 				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/exec.php" class="navlnk">Command Prompt</a><br>
 				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/reboot.php" class="navlnk">Reboot system</a><br>
-
+				  <?php echo return_ext_menu("Diagnostics"); ?>
 			  </span>
 			  </font></span>
             </td>

@@ -514,7 +514,7 @@ function write_config($desc="Non-described system change") {
 	if (isset($config['system']['version_control'])) {
 		$fd = fopen("{$g['cf_conf_path']}/bak/config-{$lastchange}.xml", "w");
 		if (!$fd)
-			die("Unable to open config{$config['lastchange']}.xml for writing in write_config()\n");
+			die("Unable to open {$g['cf_conf_path']}/bak/config-{$config['lastchange']}.xml for writing in write_config()\n");
 		fwrite($fd, $xmlconfig);
 		fclose($fd);
 	}
@@ -523,7 +523,7 @@ function write_config($desc="Non-described system change") {
 	$fd = fopen("{$g['cf_conf_path']}/config.xml", "w");
 
 	if (!$fd)
-		die("Unable to open "{$g['cf_conf_path']}/config.xml for writing in write_config()\n");
+		die("Unable to open {$g['cf_conf_path']}/config.xml for writing in write_config()\n");
 
 	fwrite($fd, $xmlconfig);
 	fclose($fd);

@@ -288,7 +288,7 @@ function mwexec_bg($command) {
 /* unlink a file, if it exists */
 function unlink_if_exists($fn) {
 	$to_do = glob($fn);
-	if(is_array($to_do) {
+	if(is_array($to_do)) {
 		foreach($to_do as $filename)
 			if (file_exists($filename)) unlink($filename);
 	} else {

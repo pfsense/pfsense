@@ -20,7 +20,10 @@ echo
 echo "Starting pfSense ..."
 echo
 
+/sbin/dumpon -v /dev/ad0s1b
 /sbin/mount -a || fsck -y && mount -a
+mkdir -p /usr/savecore 2>/dev/null
+/sbin/savecore /usr/savecore /dev/ad0s1b
 
 set -T
 trap "echo 'Reboot interrupted'; exit 1" 3

@@ -1,22 +1,22 @@
 #!/usr/local/bin/php
-<?php 
+<?php
 /*
 	interfaces_opt.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -36,7 +36,7 @@ if ($_GET['index'])
 	$index = $_GET['index'];
 else if ($_POST['index'])
 	$index = $_POST['index'];
-	
+
 if (!$index)
 	exit;
 
@@ -45,6 +45,10 @@ $pconfig['descr'] = $optcfg['descr'];
 $pconfig['bridge'] = $optcfg['bridge'];
 $pconfig['ipaddr'] = $optcfg['ipaddr'];
 $pconfig['subnet'] = $optcfg['subnet'];
+
+$pconfig['bandwidth'] = $optcfg['bandwidth'];
+$pconfig['bandwidthtype'] = $optcfg['bandwidthtype'];
+
 $pconfig['enable'] = isset($optcfg['enable']);
 
 /* Wireless interface? */
@@ -60,7 +64,7 @@ if ($_POST) {
 
 	/* input validation */
 	if ($_POST['enable']) {
-	
+
 		/* description unique? */
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 			if ($i != $index) {
@@ -69,17 +73,17 @@ if ($_POST) {
 				}
 			}
 		}
-		
+
 		if ($_POST['bridge']) {
 			/* double bridging? */
 			for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 				if ($i != $index) {
 					if ($config['interfaces']['opt' . $i]['bridge'] == $_POST['bridge']) {
-						$input_errors[] = "Optional interface {$i} " . 
+						$input_errors[] = "Optional interface {$i} " .
 							"({$config['interfaces']['opt' . $i]['descr']}) is already bridged to " .
 							"the specified interface.";
 					} else if ($config['interfaces']['opt' . $i]['bridge'] == "opt{$index}") {
-						$input_errors[] = "Optional interface {$i} " . 
+						$input_errors[] = "Optional interface {$i} " .
 							"({$config['interfaces']['opt' . $i]['descr']}) is already bridged to " .
 							"this interface.";
 					}
@@ -96,9 +100,9 @@ if ($_POST) {
 		} else {
 			$reqdfields = explode(" ", "descr ipaddr subnet");
 			$reqdfieldsn = explode(",", "Description,IP address,Subnet bit count");
-		
+
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-		
+
 			if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
 				$input_errors[] = "A valid IP address must be specified.";
 			}
@@ -107,7 +111,7 @@ if ($_POST) {
 			}
 		}
 	}
-	
+
 	/* Wireless interface? */
 	if (isset($optcfg['wireless'])) {
 		$wi_input_errors = wireless_config_post();
@@ -115,23 +119,25 @@ if ($_POST) {
 			$input_errors = array_merge($input_errors, $wi_input_errors);
 		}
 	}
-	
+
 	if (!$input_errors) {
 		$optcfg['descr'] = $_POST['descr'];
 		$optcfg['ipaddr'] = $_POST['ipaddr'];
 		$optcfg['subnet'] = $_POST['subnet'];
 		$optcfg['bridge'] = $_POST['bridge'];
 		$optcfg['enable'] = $_POST['enable'] ? true : false;
-			
+		$optcfg['bandwidth'] = $_POST['bandwidth'];
+		$optcfg['bandwidthtype'] = $_POST['bandwidthtype'];
+
 		write_config();
-		
+
 		$retval = 0;
 		if (!file_exists($d_sysrebootreqd_path)) {
 			config_lock();
 			$retval = interfaces_optional_configure();
-			
+
 			/* is this the captive portal interface? */
-			if (isset($config['captiveportal']['enable']) && 
+			if (isset($config['captiveportal']['enable']) &&
 				($config['captiveportal']['interface'] == ('opt' . $index))) {
 				captiveportal_configure();
 			}
@@ -165,7 +171,7 @@ function gen_bits(ipaddr) {
             return 0;
         if (adr[0] == 0 && adr[1] == 0 && adr[2] == 0 && adr[3] == 0)
             return 0;
-		
+
 		if (adr[0] <= 127)
 			return 23;
 		else if (adr[0] <= 191)
@@ -191,26 +197,26 @@ function ipaddr_change() {
 <?php if ($optcfg['if']): ?>
             <form action="interfaces_opt.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable">
 <input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
                     <strong>Enable Optional <?=$index;?> interface</strong></td>
 				</tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld" id="descr" size="30" value="<?=htmlspecialchars($pconfig['descr']);?>">
 					<br> <span class="vexpl">Enter a description (name) for the interface here.</span>
 				 </td>
 				</tr>
-                <tr> 
+                <tr>
                   <td colspan="2" valign="top" height="16"></td>
 				</tr>
-				<tr> 
+				<tr>
                   <td colspan="2" valign="top" class="vnsepcell">IP configuration</td>
 				</tr>
-				<tr> 
+				<tr>
                   <td width="22%" valign="top" class="vncellreq">Bridge with</td>
                   <td width="78%" class="vtable">
 <select name="bridge" class="formfld" id="bridge" onChange="enable_change(false)">
@@ -222,15 +228,15 @@ function ipaddr_change() {
 									$config['interfaces']['opt' . $i]['descr'] . ")";
 						}
 					foreach ($opts as $opt => $optname): ?>
-                      <option <?php if ($opt == $pconfig['bridge']) echo "selected";?> value="<?=htmlspecialchars($opt);?>"> 
+                      <option <?php if ($opt == $pconfig['bridge']) echo "selected";?> value="<?=htmlspecialchars($opt);?>">
                       <?=htmlspecialchars($optname);?>
                       </option>
                       <?php endforeach; ?>
                     </select> </td>
 				</tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">IP address</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="ipaddr" type="text" class="formfld" id="ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>" onchange="ipaddr_change()">
                     /
                 	<select name="subnet" class="formfld" id="subnet">
@@ -244,21 +250,31 @@ function ipaddr_change() {
 				if (isset($optcfg['wireless']))
 					wireless_config_print();
 				?>
-                <tr> 
+                  <td class="vtable"> <input name="bandwidth" type="text" class="formfld" id="bandwidth" size="30" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">
+			<select name="bandwidthtype">
+				<option value="<?=htmlspecialchars($pconfig['bandwidthtype']);?>"><?=htmlspecialchars($pconfig['bandwidthtype']);?></option>
+				<option value="b">bit/s</option>
+				<option value="Kb">Kilobit/s</option>
+				<option value="Mb">Megabit/s</option>
+				<option value="Gb">Gigabit/s</option>
+			</select>
+			<br> The bandwidth setting will define the speed of the interface for traffic shaping.
+		  </td>
+                <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
-                    <input name="index" type="hidden" value="<?=$index;?>"> 
-				  <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)"> 
+                  <td width="78%">
+                    <input name="index" type="hidden" value="<?=$index;?>">
+				  <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
                   </td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"><span class="vexpl"><span class="red"><strong>Note:<br>
-                    </strong></span>be sure to add firewall rules to permit traffic 
-                    through the interface. Firewall rules for an interface in 
-                    bridged mode have no effect on packets to hosts other than 
-                    m0n0wall itself, unless &quot;Enable filtering bridge&quot; 
-                    is checked on the <a href="system_advanced.php">System: 
+                    </strong></span>be sure to add firewall rules to permit traffic
+                    through the interface. Firewall rules for an interface in
+                    bridged mode have no effect on packets to hosts other than
+                    m0n0wall itself, unless &quot;Enable filtering bridge&quot;
+                    is checked on the <a href="system_advanced.php">System:
                     Advanced functions</a> page.</span></td>
                 </tr>
               </table>

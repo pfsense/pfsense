@@ -36,6 +36,9 @@ $optcfg = &$config['interfaces']['lan'];
 $pconfig['ipaddr'] = $config['interfaces']['lan']['ipaddr'];
 $pconfig['subnet'] = $config['interfaces']['lan']['subnet'];
 
+$pconfig['bandwidth'] = $config['interfaces']['lan']['bandwidth'];
+$pconfig['bandwidthtype'] = $config['interfaces']['lan']['bandwidthtype'];
+
 /* Wireless interface? */
 if (isset($optcfg['wireless'])) {
 	require("interfaces_wlan.inc");

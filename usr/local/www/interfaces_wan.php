@@ -78,6 +78,8 @@ if ($wancfg['ipaddr'] == "dhcp") {
 $pconfig['blockpriv'] = isset($wancfg['blockpriv']);
 $pconfig['spoofmac'] = $wancfg['spoofmac'];
 $pconfig['mtu'] = $wancfg['mtu'];
+$pconfig['bandwidth'] = $wancfg['bandwidth'];
+$pconfig['bandwidthtype'] = $wancfg['bandwidthtype'];
 
 /* Wireless interface? */
 if (isset($optcfg['wireless'])) {

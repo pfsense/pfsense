@@ -34,12 +34,14 @@
 
 require("guiconfig.inc");
 
+$pptp_logfile = "{$g['varlog_path']}/vpn.log";
+
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) {
-	exec("/usr/sbin/clog -i -s 65536 /var/log/vpn.log");
+	exec("/usr/sbin/clog -i -s 262144 {$pptp_logfile}");
 }
 
 function dump_clog($logfile, $tail) {
@@ -47,7 +49,7 @@ function dump_clog($logfile, $tail) {
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
-	exec("/usr/sbin/clog " . $logfile . " | tail {$sor} -n " . $tail, $logarr);
+	exec("/usr/sbin/clog {$logfile} | tail {$sor} -n {$tail}", $logarr);
 
 	foreach ($logarr as $logent) {
 		$logent = preg_split("/\s+/", $logent, 6);
@@ -71,22 +73,22 @@ function dump_clog($logfile, $tail) {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title><?=gentitle("Diagnostics: System logs");?></title>
+<title><?=gentitle("Diagnostics: System logs: PPTP VPN");?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">Diagnostics: System logs</p>
+<p class="pgtitle">Diagnostics: System logs: PPTP VPN</p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
   <ul id="tabnav">
     <li class="tabinact"><a href="diag_logs.php">System</a></li>
-    <li class="tabinact"><a href="diag_logs_ipsec.php">IPSEC Vpn</a></li>
     <li class="tabinact"><a href="diag_logs_filter.php">Firewall</a></li>
     <li class="tabinact"><a href="diag_logs_dhcp.php">DHCP</a></li>
     <li class="tabinact"><a href="diag_logs_auth.php">Portal Auth</a></li>
+    <li class="tabinact"><a href="diag_logs_ipsec.php">IPSEC VPN</a></li>
     <li class="tabact">PPTP VPN</li>
     <li class="tabinact"><a href="diag_logs_settings.php">Settings</a></li>
   </ul>
@@ -95,7 +97,7 @@ function dump_clog($logfile, $tail) {
     <td class="tabcont">
 		<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr>
 		  <td colspan="4" class="listtopic">
-			    Last <?=$nentries;?> firewall log entries</td>
+			    Last <?=$nentries;?> PPTP log entries</td>
 			</tr>
 			<tr>
 			  <td class="listhdrr">Time</td>
@@ -103,7 +105,7 @@ function dump_clog($logfile, $tail) {
 			  <td class="listhdrr">User</td>
 			  <td class="listhdrr">IP address</td>
 			</tr>
-			<?php dump_clog("/var/log/vpn.log", $nentries); ?>
+			<?php dump_clog($pptp_logfile, $nentries); ?>
           </table>
 		<br><form action="diag_logs_vpn.php" method="post">
 <input name="clear" type="submit" class="formbtn" value="Clear log">

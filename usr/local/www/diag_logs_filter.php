@@ -33,15 +33,15 @@
 
 require("guiconfig.inc");
 
-exec("/usr/sbin/tcpdump -n -e -ttt -r /var/log/pflog | logger -t pf -p local0.info ");
+$filter_logfile = "{$g['varlog_path']}/filter.log";
+exec("/usr/sbin/tcpdump -n -e -ttt -r {$g['varlog_path']}/pflog | logger -t pf -p local0.info ");
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) {
-	exec("/usr/sbin/clog " . $logfile . " | tail {$sor} -n " . $tail, $logarr);
-	exec("/usr/sbin/clog -i -s 262144 /var/log/filter.log");
+	exec("/usr/sbin/clog -i -s 262144 {$filter_logfile}");
 }
 
 function dump_clog($logfile, $tail, $withorig = true) {
@@ -49,7 +49,7 @@ function dump_clog($logfile, $tail, $withorig = true) {
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
-	exec("/usr/sbin/clog " . $logfile . " | tail {$sor} -n " . "15000", $logarr);
+	exec("/usr/sbin/clog {$logfile}  | tail {$sor} -n {$tail}", $logarr);
 
 	foreach ($logarr as $logent) {
 		$logent = preg_split("/\s+/", $logent, 6);
@@ -65,6 +65,7 @@ function dump_clog($logfile, $tail, $withorig = true) {
 	}
 }
 
+/* format filter logs */
 function conv_clog($logfile, $tail) {
 	global $g, $config;
 
@@ -81,7 +82,7 @@ function conv_clog($logfile, $tail) {
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
-	exec("/usr/sbin/clog " . $logfile . " | tail {$sor} -n 250000", $logarr);
+	exec("/usr/sbin/clog {$filter_logfile} | tail {$sor} -n {$tail}", $logarr);
 
 	$filterlog = array();
 
@@ -157,22 +158,22 @@ function format_ipf_ip($ipfip) {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title><?=gentitle("Diagnostics: System logs");?></title>
+<title><?=gentitle("Diagnostics: System logs: Firewall");?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">Diagnostics: System logs</p>
+<p class="pgtitle">Diagnostics: System logs: Firewall</p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
   <ul id="tabnav">
     <li class="tabinact"><a href="diag_logs.php">System</a></li>
-    <li class="tabinact"><a href="diag_logs_ipsec.php">IPSEC Vpn</a></li>
     <li class="tabact">Firewall</li>
     <li class="tabinact"><a href="diag_logs_dhcp.php">DHCP</a></li>
     <li class="tabinact"><a href="diag_logs_auth.php">Portal Auth</a></li>
+    <li class="tabinact"><a href="diag_logs_ipsec.php">IPSEC VPN</a></li>
     <li class="tabinact"><a href="diag_logs_vpn.php">PPTP VPN</a></li>
     <li class="tabinact"><a href="diag_logs_settings.php">Settings</a></li>
   </ul>
@@ -180,7 +181,7 @@ function format_ipf_ip($ipfip) {
   <tr>
     <td class="tabcont">
 <?php if (!isset($config['syslog']['rawfilter'])):
-	$filterlog = conv_clog("/var/log/filter.log", $nentries);
+	$filterlog = conv_clog($filter_logfile, $nentries);
 ?>
 		<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr>
 		  <td colspan="6" class="listtopic">
@@ -216,7 +217,7 @@ function format_ipf_ip($ipfip) {
 			<td colspan="2" class="listtopic">
 			  Last <?=$nentries;?> firewall log entries</td>
 		  </tr>
-		  <?php dump_clog("/var/log/filter.log", $nentries, false); ?>
+		  <?php dump_clog($filter_logfile, $nentries, false); ?>
 		</table>
 <?php endif; ?>
 		<br><form action="diag_logs_filter.php" method="post">

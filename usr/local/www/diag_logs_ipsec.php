@@ -34,12 +34,14 @@
 
 require("guiconfig.inc");
 
+$ipsec_logfile = "{$g['varlog_path']}/system.log";
+
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) {
-	exec("/usr/sbin/clog -i -s 262144 {$g['varlog_path']}/system.log");
+	exec("/usr/sbin/clog -i -s 262144 {$ipsec_logfile}");
 }
 
 function dump_clog($logfile, $tail, $withorig = true) {
@@ -47,7 +49,7 @@ function dump_clog($logfile, $tail, $withorig = true) {
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
-	exec("/usr/sbin/clog " . $logfile . " | grep racoon | /usr/bin/tail {$sor} -n " . $tail, $logarr);
+	exec("/usr/sbin/clog {$logfile} | /usr/bin/grep racoon | /usr/bin/tail {$sor} -n {$tail}", $logarr);
 
 	foreach ($logarr as $logent) {
 		$logent = preg_split("/\s+/", $logent, 6);
@@ -67,22 +69,22 @@ function dump_clog($logfile, $tail, $withorig = true) {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title><?=gentitle("Diagnostics: System logs");?></title>
+<title><?=gentitle("Diagnostics: System logs: IPSEC VPN");?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">Diagnostics: System logs</p>
+<p class="pgtitle">Diagnostics: System logs: IPSEC VPN</p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
   <ul id="tabnav">
     <li class="tabinact"><a href="diag_logs.php">System</a></li>
-    <li class="tabact">ISPEC Vpn</li>
     <li class="tabinact"><a href="diag_logs_filter.php">Firewall</a></li>
     <li class="tabinact"><a href="diag_logs_dhcp.php">DHCP</a></li>
     <li class="tabinact"><a href="diag_logs_auth.php">Portal Auth</a></li>
+    <li class="tabact">IPSEC VPN</li>
     <li class="tabinact"><a href="diag_logs_vpn.php">PPTP VPN</a></li>
     <li class="tabinact"><a href="diag_logs_settings.php">Settings</a></li>
   </ul>
@@ -92,9 +94,9 @@ function dump_clog($logfile, $tail, $withorig = true) {
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		  <tr>
 			<td colspan="2" class="listtopic">
-			  Last <?=$nentries;?> system log entries</td>
+			  Last <?=$nentries;?> IPSEC log entries</td>
 		  </tr>
-		  <?php dump_clog("{$g['varlog_path']}/system.log", $nentries); ?>
+		  <?php dump_clog($ipsec_logfile, $nentries); ?>
 		</table>
 		<br><form action="diag_logs.php" method="post">
 <input name="clear" type="submit" class="formbtn" value="Clear log">

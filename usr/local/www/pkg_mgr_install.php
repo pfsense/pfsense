@@ -336,11 +336,19 @@ if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
                     }
                 }
             }
-            // install menu item into the ext folder
-            fwrite($fd_log, "Adding menu option to " . $package_conf['menu']['section'] . "/" . $package_conf['menu']['name'] . "\n");
-            $fd = fopen("/usr/local/www/ext/" . $package_conf['menu']['section'] . "/" . $package_conf['menu']['name'] , "w");
-            fwrite($fd, "/pkg.php?xml=" . $package_conf['name'] . ".xml\n");
-            fclose($fd);
+            // loop through menu installation items
+            // installing multiple items if need be.
+            foreach ($package_conf['menu'] as $menu) {
+                        // install menu item into the ext folder
+                        fwrite($fd_log, "Adding menu option to " . $menu['section'] . "/" . $menu['name'] . "\n");
+                        $fd = fopen("/usr/local/www/ext/" . $menu['section'] . "/" . $menu['name'] , "w");
+                        if($menu['url'] <> "") {
+                                    fwrite($fd, $menu['url'] . "\n");
+                        } else {
+                                    fwrite($fd, "/pkg.php?xml=" . $menu['name'] . ".xml\n");
+                        }
+                        fclose($fd);
+            }
 } else {
             update_output_window("WARNING! /usr/local/pkg/" . $pkgent['name'] . ".xml" . " does not exist!\n");
             fwrite($fd_log, "WARNING! /usr/local/pkg/" . $pkgent['name'] . ".xml" . " does not exist!\n");

@@ -670,18 +670,18 @@ function reverse_strrchr($haystack, $needle) {
  */
 function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $return_nosync = 1) {
         global $config;
-        foreach($config['installedpackages']['package'] as $package) {
-                if ($package['name'] == $pkg_name) {
-                        $package_xml = $package;
-                        if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) { // If the package's config file doesn't exist, log an error and fetch it.
-                                log_error("Fetching missing configuration XML for " . $pkg_name);
-                                mwexec("/usr/bin/fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationf
-ile']);
-                        }
-                        break;
-                }
+	if(!is_numeric($pkg_name)) {
+                $pkg_name = get_pkg_id($pkg_name);
+                if($pkg_id == -1) return -1; // This package doesn't really exist - exit the function.
+        } else {
+                if(!isset($config['installedpackages'][$pkg_id])) return; // No package belongs to the pkg_id passed to this function.
         }
-        $pkg_xml = parse_xml_config_pkg("/usr/local/pkg/" . $package_xml['configurationfile'], "packagegui");
+        $package = $config['installedpackages'][$pkg_id];
+        if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) { // If the package's config file doesn't exist, log an error and fetch it.
+		log_error("Fetching missing configuration XML for " . $package['name']);
+		mwexec("/usr/bin/fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationfile']);
+	}
+        $pkg_xml = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
         if($pkg_xml['additional_files_needed'] != "") {
                 foreach($pkg_xml['additional_files_needed'] as $item) {
 			if (($return_nosync == 0) && (isset($item['nosync']))) continue; // Do not return depends with nosync set if not required.

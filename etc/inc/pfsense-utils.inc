@@ -995,4 +995,51 @@ function auto_upgrade() {
         exec_rc_script_async("/etc/rc.firmware_auto {$firmwareurl} {$firmwarename} {$http_auth_username} {$http_auth_password}");
 }
 
+/*
+ * check_firmware_version(): Check whether the current firmware installed is the most recently released.
+ */
+function check_firmware_version() {
+        global $g;
+        $versioncheck_base_url = $g['versioncheckbaseurl'];
+        $versioncheck_path = $g['versioncheckpath'];
+        if(isset($config['system']['alt_firmware_url']['enabled']) and isset($config['system']['alt_firmware_url']['versioncheck_base_url'])) {
+                $versioncheck_base_url = $config['system']['alt_firmware_url']['versioncheck_base_url'];
+                $versioncheck_path = '/checkversion.php';
+        }
+        $post = "platform=" . rawurlencode($g['platform']) .
+                "&version=" . rawurlencode(trim(file_get_contents("/etc/version")));
+        $rfd = @fsockopen($versioncheck_base_url, 80, $errno, $errstr, 3);
+        if ($rfd) {
+                $hdr = "POST {$versioncheck_path} HTTP/1.0\r\n";
+                $hdr .= "Content-Type: application/x-www-form-urlencoded\r\n";
+                $hdr .= "User-Agent: pfSense-webConfigurator/1.0\r\n";
+                $hdr .= "Host: www.pfSense.com\r\n";
+                $hdr .= "Content-Length: " . strlen($post) . "\r\n\r\n";
+
+                fwrite($rfd, $hdr);
+                fwrite($rfd, $post);
+
+                $inhdr = true;
+                $resp = "";
+                while (!feof($rfd)) {
+                        $line = fgets($rfd);
+                        if ($inhdr) {
+                                if (trim($line) == "")
+                                        $inhdr = false;
+                        } else {
+                                $resp .= $line;
+                        }
+                }
+        
+                fclose($rfd);
+        
+                if($_GET['autoupgrade'] <> "")
+                    return;
+        
+                return $resp;
+        }
+
+        return null;
+}
+
 ?>

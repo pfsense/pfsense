@@ -142,6 +142,9 @@ if (!$noparseconfig) {
 					echo "on reboot.\n";
 				} else {
 					echo "XML configuration file not found.  pfSense cannot continue booting.\n";
+					echo "\n\nDropping to a shell for inspection.\n";
+					mwexec("/bin/tcsh");
+					echo "\n\nThe system is now halting.\n\n";
 					mwexec("/sbin/halt");
 					exit;
 				}

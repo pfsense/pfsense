@@ -49,6 +49,7 @@ $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
 
 $pconfig['schedulertype'] = $config['system']['schedulertype'];
+$pconfig['maximumstates'] = $config['system']['maximumstates'];
 
 if ($_POST) {
 
@@ -58,6 +59,9 @@ if ($_POST) {
 	/* input validation */
 	if ($_POST['ipv6nat_enable'] && !is_ipaddr($_POST['ipv6nat_ipaddr'])) {
 		$input_errors[] = "You must specify an IP address to NAT IPv6 packets.";
+	}
+	if ($_POST['maximumstates'] && !is_numericint($_POST['maximumstates'])) {
+		$input_errors[] = "The Firewall Maximum States value must be an integer.";
 	}
 	if ($_POST['tcpidletimeout'] && !is_numericint($_POST['tcpidletimeout'])) {
 		$input_errors[] = "The TCP idle timeout must be an integer.";
@@ -100,9 +104,10 @@ if ($_POST) {
 			$config['system']['harddiskstandby'] = $_POST['harddiskstandby'];
 		}
 		$config['system']['webgui']['noantilockout'] = $_POST['noantilockout'] ? true : false;
-		$config['filter']['tcpidletimeout'] = $_POST['tcpidletimeout'];
 
+		/* Firewall and ALTQ options */
 		$config['system']['schedulertype'] = $_POST['schedulertype'];
+		$config['system']['maximumstates'] = $_POST['maximumstates'];
 
 		write_config();
 
@@ -356,6 +361,14 @@ function enable_change(enable_over) {
                     <input name="disablefilter" type="checkbox" id="disablefilter" value="yes" <?php if (isset($config['system']['disablefilter'])) echo "checked"; ?> onclick="enable_change(false)">
                     <strong>Disable the firewalls filter altogether.</strong><br>
                     <span class="vexpl">NOTE!  This basically converts pfSense into a routing only platform!</span></td>
+                </tr>
+
+                <tr>
+                  <td width="22%" valign="top" class="vncell">Firewall Maximum States</td>
+                  <td width="78%" class="vtable">
+                    <input name="maximumstates" type="input" id="maximumstates" value="<?php echo $pconfig['maximumstates']; ?>" onclick="enable_change(false)"><br>
+                    <strong>Maximum number of connections to hold in the firewall state table.</strong><br>
+                    <span class="vexpl">NOTE!  Leave this blank for the default of 10000</span></td>
                 </tr>
 
                 <tr>

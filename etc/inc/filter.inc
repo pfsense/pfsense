@@ -66,13 +66,6 @@ function filter_configure() {
 	if ($g['booting'])
 		echo "Configuring firewall... ";
 
-	/* set TCP timeouts */
-	$tcpidletimeout = 9000;
-	if ($config['filter']['tcpidletimeout'])
-		$tcpidletimeout = $config['filter']['tcpidletimeout'];
-	mwexec("/sbin/sysctl net.inet.ipf.fr_tcpidletimeout={$tcpidletimeout}");
-	mwexec("/sbin/sysctl net.inet.ipf.fr_tcphalfclosed=480");
-
 	/* generate pfctl rules */
 	$natrules = filter_nat_rules_generate();
 	/* generate pfctl rules */
@@ -106,6 +99,11 @@ function filter_configure() {
 	$optimization = "normal";
 	if($config['system']['optimization'] <> "") $optimization = $config['system']['optimization'];
         fwrite($fd, "set optimization " . $optimization . " " . $mssclamp . "\n");
+	if($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
+		/* User defined maximum states in Advanced menu. */
+		$maximumstates = $config['system']['maximumstates'];
+		fwrite($fd, "set limit states " . $maximumstates . "\n");
+	}
 	fwrite($fd, "\nscrub in all\n");
 	fwrite($fd, $altq_ints);
 	fwrite($fd, $altq_queues);
@@ -116,7 +114,14 @@ function filter_configure() {
 
 	mwexec("chmod a+x /tmp/rules.debug");
 	mwexec("/sbin/pfctl -f /tmp/rules.debug");
-
+	/* Load ALTQ Rules */
+	mwexec("/sbin/pfctl -Af /tmp/rules.debug");
+	/* Load NAT Rules */
+	mwexec("/sbin/pfctl -Nf /tmp/rules.debug");
+	/* Load ? Rules */
+	mwexec("/sbin/pfctl -Of /tmp/rules.debug");
+	/* Load FILTER Rules */
+	mwexec("/sbin/pfctl -Rf /tmp/rules.debug");
 
 	if ($g['booting'])
 		echo "done\n";

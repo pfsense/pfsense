@@ -32,11 +32,11 @@ require("guiconfig.inc");
 require("xmlparse_pkg.inc");
 
 /* /usr/local/pkg/ is where xml package files are stored. */
-if(!file_exists("/usr/local/pkg/")) mwexec("mkdir -p /usr/local/pkg/");
+make_dirs("/usr/local/pkg");
 /* /usr/local/pkg/pf is where custom php hook packages live to alter the rules when needed */
-if(!file_exists("/usr/local/pkg/pf")) mwexec("mkdir -p /usr/local/pkg/pf");
+make_dirs("/usr/local/pkg/pf");
 /* /usr/local/www/ext is where package links live for the left hand pane */
-if(!file_exists("/usr/local/www/ext/")) mwexec("mkdir -p /usr/local/www/ext");
+make_dirs("/usr/local/www/ext");
 
 $pb_percent = 1;
 
@@ -170,14 +170,14 @@ foreach ($packages_to_install as $id) {
      */
 
     // Ensure directories are in place for pkg_add.
-    mwexec("mkdir {$g['www_path']}/ext/Services >/dev/null 2>&1");
-    mwexec("mkdir {$g['www_path']}/ext/System >/dev/null 2>&1");
-    mwexec("mkdir {$g['www_path']}/ext/Interfaces >/dev/null 2>&1");
-    mwexec("mkdir {$g['www_path']}/ext/Firewall >/dev/null 2>&1");
-    mwexec("mkdir {$g['www_path']}/ext/VPN >/dev/null 2>&1");
-    mwexec("mkdir {$g['www_path']}/ext/Status >/dev/null 2>&1");
-    mwexec("mkdir {$g['www_path']}/ext/Diagnostics >/dev/null 2>&1");
-    mwexec("mkdir /usr/local/pkg >/dev/null 2>&1");
+    safe_mkdir("{$g['www_path']}/ext/Services", 0755);
+    safe_mkdir("{$g['www_path']}/ext/System", 0755);
+    safe_mkdir("{$g['www_path']}/ext/Interfaces", 0755);
+    safe_mkdir("{$g['www_path']}/ext/Firewall", 0755);
+    safe_mkdir("{$g['www_path']}/ext/VPN", 0755);
+    safe_mkdir("{$g['www_path']}/ext/Status", 0755);
+    safe_mkdir("{$g['www_path']}/ext/Diagnostics", 0755);
+    safe_mkdir("/usr/local/pkg", 0755);
 
     update_progress_bar($pb_percent);
     $pb_percent += 10;

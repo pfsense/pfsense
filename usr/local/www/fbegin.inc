@@ -30,7 +30,7 @@ function showhide(tspan, tri) {
 <table width="750" border="0" cellspacing="0" cellpadding="2">
   <tr valign="bottom">
     <td width="150" height="65" align="center" valign="middle"> <strong><a href="/"><img src="/logo.gif" border="0"></a></strong></td>
-    <td height="65" bgcolor="#7F3B00">
+    <td height="65" bgcolor="#990000">
 	<table border="0" cellspacing="0" cellpadding="0" width="100%">
 	<tr><td align="left" valign="bottom"><span class="tfrtitle">&nbsp;webConfigurator</span></td>
 	  <td align="right" valign="bottom">

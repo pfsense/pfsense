@@ -227,9 +227,9 @@ function get_pkg_id($pkg_name) {
 function get_latest_package_version($pkg_name) {
     fetch_latest_pkg_config();
     $pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
-    foreach($pkg_config as $pkg) {
-	if($pkg_config['name'] == $pkg_name) {
-	    return $pkg_config['version'];
+    foreach($pkg_config['package']['packages'] as $pkg) {
+	if($pkg['name'] == $pkg_name) {
+	    return $pkg['version'];
 	}
     }
     return;

@@ -54,6 +54,7 @@ if($xml == "") {
 
 $title          = $pkg['step'][$stepid]['title'];
 $description    = $pkg['step'][$stepid]['description'];
+$totalsteps     = $pkg['totalsteps'];
 
 if ($_POST) {
     foreach ($pkg['step'][$stepid]['fields']['field'] as $field) {
@@ -64,8 +65,9 @@ if ($_POST) {
 		$fieldname = strtolower($fieldname);
 		// update field with posted values.
                 if($field['unsetfield'] <> "") $unset_fields = "yes";
+		if($field['arraynum'] <> "") $arraynum = $field['arraynum'];
 		if($field['bindstofield'])
-			update_config_field( $field['bindstofield'], $_POST[$fieldname], $unset_fields);
+			update_config_field( $field['bindstofield'], $_POST[$fieldname], $unset_fields, $arraynum);
         }
         if($pkg['step'][$stepid]['stepsubmitphpaction']) {
 		// run custom php code embedded in xml config.
@@ -74,9 +76,13 @@ if ($_POST) {
 	write_config();
     }
     $stepid++;
+    if($stepid > $totalsteps) $stepid = $totalsteps;
 }
 
-function update_config_field($field, $updatetext, $unset) {
+$title          = $pkg['step'][$stepid]['title'];
+$description    = $pkg['step'][$stepid]['description'];
+
+function update_config_field($field, $updatetext, $unset, $arraynum) {
 	global $config;
 	$field_split = split("->",$field);
 	foreach ($field_split as $f) $field_conv .= "['" . $f . "']";
@@ -84,10 +90,14 @@ function update_config_field($field, $updatetext, $unset) {
 	if($unset <> "") {
 		$text = "unset(\$config" . $field_conv . ");";
 		eval($text);
-		$text = "\$config" . $field_conv . "[] = \"" . $updatetext . "\";";
+		$text = "\$config" . $field_conv . "[" . $arraynum . "] = \"" . $updatetext . "\";";
 		eval($text);
 	} else {
-		$text = "\$config" . $field_conv . "[] = \"" . $updatetext . "\";";
+		if($arraynum <> "") {
+			$text = "\$config" . $field_conv . "[" . $arraynum . "] = \"" . $updatetext . "\";";
+		} else {
+			$text = "\$config" . $field_conv . " = \"" . $updatetext . "\";";
+		}
 		eval($text);
 	}
 }
@@ -165,7 +175,9 @@ function update_config_field($field, $updatetext, $unset) {
                         if($field['multiple'] == "yes") $multiple = "MULTIPLE ";
                         echo "<select " . $multiple . $size . "id='" . $field['fieldname'] . "' name='" . $name . "'>\n";
                         foreach ($field['options']['option'] as $opt) {
-                            echo "\t<option name='" . $opt['name'] . "' value='" . $opt['value'] . "'>" . $opt['name'] . "</option>\n";
+				$selected = "";
+				if($value == $opt['value']) $selected = " SELECTED";
+                            echo "\t<option name='" . $opt['name'] . "' value='" . $opt['value'] . "'" . $selected . ">" . $opt['name'] . "</option>\n";
                         }
                         echo "</select>\n";
                     } else if ($field['type'] == "textarea") {

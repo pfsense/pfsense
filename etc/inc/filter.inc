@@ -529,6 +529,7 @@ EOD;
 pass in quick on {$oc['if']} proto udp from any port = 68 to 255.255.255.255 port = 67
 pass in quick on {$oc['if']} proto udp from any port = 68 to {$oc['ip']} port = 67
 pass out quick on {$oc['if']} proto udp from {$oc['ip']} port = 67 to any port = 68
+pass out on {$oc['if']} proto icmp from any to any keep state
 
 EOD;
 		}

@@ -41,12 +41,15 @@ function log_error($error) {
  * return_dir_as_array($dir): returns $dir contents as an array
  */
 function return_dir_as_array($dir) {
+    $dir_array = array();
     if (is_dir($dir)) {
-	$dir_array = array();
 	if ($dh = opendir($dir)) {
 	    while (($file = readdir($dh)) !== false) {
-		array_push($dir_array, $file);
-		//echo "filename: $file : filetype: " . filetype($dir . $file) . "\n";
+		$canadd = 0;
+		if($file == ".") $canadd = 1;
+		if($file == "..") $canadd = 1;
+		if($canadd == 0)
+		    array_push($dir_array, $file);
 	    }
 	    closedir($dh);
 	}
@@ -59,7 +62,7 @@ function return_dir_as_array($dir) {
  */
 function return_filename_as_string($filename) {
     $tmp = "";
-    $fd = popen($filename, "r");
+    $fd = fopen($filename, "r");
     while(!feof($fd)) {
 	$tmp .= fread($fd,49);
     }

@@ -139,10 +139,16 @@ function filter_configure() {
 	} else {
 		/* process packager manager custom rules */
 		$files = return_dir_as_array("/usr/local/pkg/pf/");
-		foreach ($files as $file) {
-			$text = return_filename_as_string($file);
-			eval($text);
+		if($files <> "") {
+			foreach ($files as $file) {
+				if($file <> "") {
+					$text = return_filename_as_string($file);
+					if($text != "")
+						eval($text);
+				}
+			}
 		}
+
 		return 0;
 	}
 }
@@ -949,10 +955,12 @@ function filter_rules_generate() {
 	$ipfrules .= <<<EOD
 
 # loopback
+anchor "loopback"
 pass in quick on lo0 all label "pass loopback"
 pass out quick on lo0 all label "pass loopback"
 
 # pass traffic from firewall -> out
+anchor "firewallout"
 pass out quick on $wanif inet proto tcp from $wanif to any keep state
 
 # enable ftp-proxy
@@ -974,6 +982,7 @@ EOD;
 			$ipfrules .= <<<EOD
 
 # allow access to DHCP server on {$on}
+anchor "dhcpserver"
 pass in quick on {$oc['if']} proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server"
 pass in quick on {$oc['if']} proto udp from any port = 68 to {$oc['ip']} port = 67 label "allow access to DHCP server"
 pass out quick on {$oc['if']} proto udp from {$oc['ip']} port = 67 to any port = 68 label "allow access to DHCP server"
@@ -1034,6 +1043,7 @@ EOD;
 	$ipfrules .= <<<EOD
 
 # WAN spoof check
+anchor "wanspoof"
 block in $log quick on $wanif from $lansa/$lansn to any label "WAN spoof check"
 
 EOD;
@@ -1062,6 +1072,7 @@ EOD;
 # allow our DHCP client out to the WAN
 # XXX - should be more restrictive
 # (not possible at the moment - need 'me' like in ipfw)
+anchor "wandhcp"
 pass out quick on $wanif proto udp from any port = 68 to any port = 67 label "allow dhcp client out wan"
 block in $log quick on $wanif proto udp from any port = 67 to $lansa/$lansn port = 68 label "allow dhcp client out wan"
 pass in quick on $wanif proto udp from any port = 67 to any port = 68 label "allow dhcp client out wan"

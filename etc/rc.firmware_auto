@@ -1,0 +1,22 @@
+#!/bin/sh
+
+echo "Downloading latest.tgz ..."
+cd /tmp && fetch http://www.pfSense.com/latest.tgz
+echo "Downloading latest.tgz.md5 ..."
+cd /tmp && fetch http://www.pfSense.com/latest.tgz.md5
+
+PMD=`cat /tmp/latest.tgz.md5 | cut -d" " -f4 `;
+MD=`/sbin/md5 /tmp/latest.tgz | cut -d" " -f4`;
+
+echo "   Package MD5: ${PMD}"
+echo "Downloaded MD5: ${MD}"
+
+if test "$PMD" = "$MD"
+	echo "MD5's match."
+        /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz
+then
+        echo "MD5's do not match."
+        exit 0
+fi
+
+

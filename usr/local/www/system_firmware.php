@@ -31,6 +31,11 @@
 
 $d_isfwfile = 1; require("guiconfig.inc");
 
+if($_GET['autoupgrade'] <> "") {
+    exec_rc_script_async("/etc/rc.firmware_auto");
+    $savemsg = "pfSense is now auto upgrading.  The firewall will automatically reboot if it succeeds.";
+}
+
 /* checks with m0n0.ch to see if a newer firmware version is available;
    returns any HTML message it gets from the server */
 function check_firmware_version() {
@@ -200,6 +205,21 @@ print_info_box($sig_warning);
                     has started. The firewall will reboot automatically after
                     storing the new firmware. The configuration will be maintained.</span></td>
                 </tr>
+
+		<tr>
+		 <td colspan="2">&nbsp;</td>
+		</tr>
+		<tr>
+		 <td colspan="2" class="listtopic">Invoke pfSense Auto Upgrade</td>
+		</tr>
+		<tr>
+		  <td width="22%" valign="baseline" class="vncell">&nbsp;</td>
+		  <td width="78%" class="vtable">
+		  <p> Click this button to reinstall all system packages.  This may wake a while.<br>
+		  <br>
+		  <a href="system_firmware.php?autoupgrade=true">Invoke Auto Upgrade</a>
+		</tr>
+
               </table>
 </form>
 <?php endif; endif; ?>

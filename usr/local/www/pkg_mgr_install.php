@@ -273,6 +273,7 @@ if($pkg_config['packages']['package'][$id]['config_file'] <> "") {
     mwexec("cd /usr/local/pkg/ && fetch " . $pkg_config['packages']['package'][$id]['config_file']);
     if(!file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
         update_output_window("ERROR!  Could not fetch " . $pkg_config['packages']['package'][$id]['config_file'] . "\n");
+        exit;
     }
 }
 

@@ -48,6 +48,25 @@ for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 	$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 }
 
+if ($_POST['apply'] || $_POST['submit']) {
+	$config['shaper']['enable'] = true;
+	write_config();
+
+	$retval = 0;
+	$savemsg = get_std_save_message($retval);
+	/* Setup pf rules since the user may have changed the optimization value */
+	//config_lock();
+	$retval = filter_configure();
+	//config_unlock();
+	if(stristr($retval, "error") <> true)
+	    $savemsg = get_std_save_message($retval);
+	else
+	    $savemsg = $retval;
+
+	if(file_exists($d_shaperconfdirty_path))
+	  unlink($d_shaperconfdirty_path);
+}
+
 if ($_GET['act'] == "del") {
 	if ($a_queues[$_GET['id']]) {
 		/* check that no rule references this queue */

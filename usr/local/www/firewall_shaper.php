@@ -56,6 +56,8 @@ if ($_POST) {
 	}
 
 	if ($_POST['apply'] || $_POST['submit']) {
+		$config['shaper']['enable'] = true;
+		write_config();		
 		$retval = 0;
 		$savemsg = get_std_save_message($retval);
 		/* Setup pf rules since the user may have changed the optimization value */

@@ -783,8 +783,8 @@ function restore_config_section($section, $new_contents) {
 }
 
 /*
- * http_post($server, po$port, $url, $vars): does an http post to a web server
- *                                           posting the vars array.
+ * http_post($server, $port, $url, $vars): does an http post to a web server
+ *                                         posting the vars array.
  * written by nf@bigpond.net.au
  */
 function http_post($server, $port, $url, $vars) {

@@ -25,12 +25,12 @@ echo "Downloaded MD5: ${MD}"  | logger -p daemon.info -i -t AutoUpgrade
 
 if [ "$PMD" = "" ]; then
     echo "Package MD5 is null md5. Require proxy auth?"  | logger -p daemon.info -i -t AutoUpgrade
-    exit 0
+    exit 1
 fi
 
 if [ "$MD" = "" ]; then
     echo "Downloaded MD5 is null md5. Require proxy auth?"  | logger -p daemon.info -i -t AutoUpgrade
-    exit 0
+    exit 1
 fi
 
 if [ "$PMD" = "$MD" ]; then
@@ -39,5 +39,5 @@ if [ "$PMD" = "$MD" ]; then
         exit 0
 fi
 
-echo "MD5's do not match."  | logger -p daemon.info -i -t AutoUpgrade
-exit 0
+echo "MD5's do not match.  Upgrade aborted."  | logger -p daemon.info -i -t AutoUpgrade
+exit 1

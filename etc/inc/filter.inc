@@ -1392,7 +1392,7 @@ EOD;
 					}
 				}
                                 /* OS signatures */
-                                if ($rule['protocol'] == "tcp" && isset($rule['os']))
+                                if (($rule['protocol'] == "tcp") && ($rule['os'] <> ""))
                                         $line .= "os {$rule['os']} ";
 			
 			}

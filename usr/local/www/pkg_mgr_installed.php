@@ -81,7 +81,7 @@ $config = $config_tmp;
                                 <td class="listlr">
                                     <?php
                                         $latest_version = get_latest_package_version($pkg['name']);
-                                        if($pkg['version']) <> $latest_version) {
+                                        if($pkg['version'] <> $latest_version) {
                                             /* a new version of the package is available */
                                             $id = get_pkg_id($pkg['name']);
                                             echo "Upgrade: <a href='pkg_mgr_delete.php?upgrade=true&id={$id}'>" . $latest_version . "</a>";

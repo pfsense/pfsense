@@ -430,8 +430,9 @@ foreach ($packages_to_install as $id) {
                                         fwrite($fd_log, "Downloading additional files needed for package " . $filename . " ...\n");
                                         update_status("Downloading additional files needed for package " . $filename . " ...\n");
                                         system("cd /usr/local/pkg && /usr/bin/fetch " .  $afn . " 2>/dev/null");
-                                        if(stristr($filename, '.tgz') <> "") {
+                                        if(stristr($filename, ".tgz") <> "") {
                                                     update_status("Extracting tgz archive to -C for " . $filename);
+                                                    fwrite($fd_log, "Extracting tgz archive to -C for " . $filename . " ...\n");
                                                     system("cd /usr/local/pkg && tar xzvf " . $filename . " -C / >/dev/null 2>&1");
                                         }
                             }

@@ -44,27 +44,6 @@ if ($_POST['clear']) {
 	exec("/usr/sbin/clog -i -s 262144 {$ipsec_logfile}");
 }
 
-function dump_clog($logfile, $tail, $withorig = true) {
-	global $g, $config;
-
-	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
-
-	exec("/usr/sbin/clog {$logfile} | /usr/bin/grep racoon | /usr/bin/tail {$sor} -n {$tail}", $logarr);
-
-	foreach ($logarr as $logent) {
-		$logent = preg_split("/\s+/", $logent, 6);
-		echo "<tr valign=\"top\">\n";
-
-		if ($withorig) {
-			echo "<td class=\"listlr\" nowrap>" . htmlspecialchars(join(" ", array_slice($logent, 0, 3))) . "</td>\n";
-			echo "<td class=\"listr\">" . htmlspecialchars($logent[4] . " " . $logent[5]) . "</td>\n";
-		} else {
-			echo "<td class=\"listlr\" colspan=\"2\">" . htmlspecialchars($logent[5]) . "</td>\n";
-		}
-		echo "</tr>\n";
-	}
-}
-
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -96,7 +75,7 @@ function dump_clog($logfile, $tail, $withorig = true) {
 			<td colspan="2" class="listtopic">
 			  Last <?=$nentries;?> IPSEC log entries</td>
 		  </tr>
-		  <?php dump_clog($ipsec_logfile, $nentries); ?>
+		  <?php dump_clog($ipsec_logfile, $nentries, "racoon"); ?>
 		</table>
 		<br><form action="diag_logs.php" method="post">
 <input name="clear" type="submit" class="formbtn" value="Clear log">

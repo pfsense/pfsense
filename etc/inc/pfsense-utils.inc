@@ -570,10 +570,10 @@ function update_progress_bar($percent) {
 }
 
 /*
- * resync_all_package_configs_bootup() Force packages to setup their configuration and rc.d files at bootup.
- * This function also prints output to the terminal indicating progress.
+ * resync_all_package_configs() Force packages to setup their configuration and rc.d files.
+ * This function may also print output to the terminal indicating progress.
  */
-function resync_all_package_configs_bootup($show_message) {
+function resync_all_package_configs($show_message == false) {
     global $config;
     $i = 0;
     log_error("Resyncing configuration for all packages.");

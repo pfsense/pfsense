@@ -648,9 +648,10 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
                 $pkg_name = get_pkg_id($pkg_name);
                 if($pkg_id == -1) return -1; // This package doesn't really exist - exit the function.
         } else {
-                if(!isset($config['installedpackages'][$pkg_id])) return; // No package belongs to the pkg_id passed to this function.
+                if(!isset($config['installedpackages']['package'][$pkg_id])) return; // No package belongs to the pkg_id passed to this function.
         }
-        $package = $config['installedpackages'][$pkg_id];
+        $package = $config['installedpackages']['package'][$pkg_id];
+	print '$package done.';
         if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) { // If the package's config file doesn't exist, log an error and fetch it.
 		log_error("Fetching missing configuration XML for " . $package['name']);
 		mwexec("/usr/bin/fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationfile']);
@@ -848,17 +849,19 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 		if($pkg_id == -1) return -1; // This package doesn't really exist - exit the function.
 	} else {
 		$pkg_id = $pkg_name;
-		if(!isset($config['installedpackages'][$pkg_id])) return; // No package belongs to the pkg_id passed to this function.
+		if(!isset($config['installedpackages']['package'][$pkg_id])) {
+			return;  // No package belongs to the pkg_id passed to this function.
+		}
 	}
-	$package = $config['installedpackages'][$pkg_id];
+	$package = $config['installedpackages']['package'][$pkg_id];
 	if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
 		//if($show_message == true) print "(f)"; Don't mess with this until the package system has settled.
 		log_error("Fetching missing configuration XML for " . $package['name']);
 		mwexec("/usr/bin/fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationfile']);
         }
         $pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
-        if(isset($pkg_config['nosync'])) continue;
-	if($show_message == true) print "Syncing " . $pkg_name;
+	if(isset($pkg_config['nosync'])) continue;
+	//if($show_message == true) print "Syncing " . $pkg_name;
         if($pkg_config['custom_php_command_before_form'] <> "") {
 		eval($pkg_config['custom_php_command_before_form']);
 	}
@@ -866,19 +869,21 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 	   	eval($pkg_config['custom_php_resync_config_command']);
         }
         if($sync_depends == true) {
-		$depends = get_pkg_depends($package['name'], ".xml", "files", 0); // Call dependency handler and do a little more error checking.
+		$depends = get_pkg_depends($pkg_name, ".xml", "files", 1); // Call dependency handler and do a little more error checking.
         	if(is_array($depends)) {
             		foreach($depends as $item) {
 				$item_config = parse_xml_config_pkg("/usr/local/pkg/" . $item, "packagegui");
 				if(isset($item_config['nosync'])) continue;
 				if($item_config['custom_php_command_before_form'] <> "")
 					eval($item_config['custom_php_command_before_form']);
+					print "Evaled dependency.";
 				if($item_config['custom_php_resync_config_command'] <> "")
 					eval($item_config['custom_php_resync_config_command']);
+					print "Evaled dependency.";
 				if($show_message == true) print " " . $item_config['name'];
 			}
 		}
 	}
-	if($show_message == true) print ".";
+	// if($show_message == true) print ".";
 }
 ?>

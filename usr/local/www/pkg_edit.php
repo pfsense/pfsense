@@ -1,7 +1,7 @@
 #!/usr/local/bin/php
 <?php
 /*
-    pkg.php
+    pkg_edit.php
     Copyright (C) 2004 Scott Ullrich
     All rights reserved.
 
@@ -38,6 +38,7 @@ function gentitle_pkg($pgname) {
 	return $pfSense_config['system']['hostname'] . "." . $pfSense_config['system']['domain'] . " - " . $pgname;
 }
 
+// XXX: Make this input safe.
 $xml = $_GET['xml'];
 
 if($xml == "") {
@@ -45,13 +46,13 @@ if($xml == "") {
             print_info_box_np("ERROR:  Could not open " . $xml . ".");
             die;
 } else {
-            $pkg = parse_xml_config("/usr/local/pkg/" . $xml, "packagegui");
+            $pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
 }
 
 $package_name = $pkg['menu']['name'];
 $section      = $pkg['menu']['section'];
 $config_path  = $pkg['configpath'];
-$title        = $section . ": " . $package_name
+$title        = $section . ": Edit " . $package_name
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -72,41 +73,58 @@ $config = $config_tmp;
 <p class="pgtitle"><?=$title?></p>
 <form action="firewall_nat_out_load_balancing.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+
+<table width="100%" border="0" cellpadding="6" cellspacing="0">
   <tr>
-    <td class="tabcont">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr>
-                <?php
-                $cols = 0;
-                foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
-                        echo "<td class=\"listhdrr\">" . $column['fielddescr'] . "</td>";
-                        $cols++;
-                }
-                echo "</tr>";
-                if($pfSense_config[$config_path]['item']) {
-                        foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) { ?>
-                                   <tr valign="top">
-                                    <td class="listlr">
-                                            XXX: TODO
-                                    </td>
-                                    <td valign="middle" class="list" nowrap>
-                                       &nbsp;<a href="pkg_del.php?xml=<?=$xml?>&act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this item?')"><img src="x.gif" width="17" height="17" border="0"></a>
-                                    </td>
-				    <td>
-				       <a href="pkg_edit.php?xml=<?=$xml?>&id=<?=$i?>"><img src="plus.gif" width="17" height="17" border="0"></a>
-				    </td>
-                                </tr>
-                                <?php
-                        }
-               }
-               $i++;
-               ?>
-               <tr><td colspan="<?=$cols?>"></td><td><a href="pkg_edit.php?xml=<?=$xml?>"><img src="plus.gif" width="17" height="17" border="0"></a></td></tr>
-        </table>
+  <?php
+  $cols = 0;
+  foreach ($pkg['fields']['field'] as $pkg) { ?>
+      </tr>
+      <tr valign="top">
+       <td width="22%" class="vncellreq">
+	  <?= $pkg['fielddescr'] ?>
+       </td>
+       <td class="vtable">
+	  <?php
+	      if($pkg['type'] == "input") {
+		  // XXX: TODO: set $value
+		  echo "<input name='" . $pkg['fieldname'] . "' value='" . $value . "'>\n";
+		  echo "<br>" . $pkg['description'] . "\n";
+	      } else if($pkg['type'] == "select") {
+		  // XXX: TODO: set $selected
+                  if($pkg['size']) $size = " size='" . $pkg['size'] . "' ";
+		  if($pkg['multiple'] == "yes") $multiple = "MULTIPLE ";
+		  echo "<select " . $multiple . $size . "id='" . $pkg['fieldname'] . "' name='" . $pkg['fieldname'] . "'>\n";
+		  foreach ($pkg['options']['option'] as $opt) {
+		      echo "\t<option name='" . $opt['name'] . "' value='" . $opt['value'] . "'>" . $opt['name'] . "</option>\n";
+		  }
+		  echo "</select>\n";
+		  echo "<br>" . $pkg['description'] . "\n";
+	      } else if($pkg['type'] == "checkbox") {
+		  echo "<input type='checkbox' name='" . $pkg['fieldname'] . "' value='" . $value . "'>\n";
+		  echo "<br>" . $pkg['description'] . "\n";
+	      } else if($pkg['type'] == "textarea") {
+		  echo "<textarea name='" . $pkg['fieldname'] . "'>" . $value . "</textarea>\n";
+		  echo "<br>" . $pkg['description'] . "\n";
+	      }
+	  ?>
+       </td>
+      </tr>
+      <?php
+      $i++;
+  }
+ ?>
+  <tr>
+    <td width="22%" valign="top">&nbsp;</td>
+    <td width="78%">
+      <input name="Submit" type="submit" class="formbtn" value="Save">
+      <?php if (isset($id) && $a_pkg[$id]): ?>
+      <input name="id" type="hidden" value="<?=$id;?>">
+      <?php endif; ?>
     </td>
   </tr>
 </table>
+
 </form>
 <?php include("fend.inc"); ?>
 </body>

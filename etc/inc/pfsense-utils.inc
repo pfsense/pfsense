@@ -343,8 +343,8 @@ function remove_text_from_file($file, $text) {
  */
 function is_package_installed($packagename) {
     global $config;
-    foreach($config['installedpackages']['package'] as $package) {
-	if($package['name'] == $packagename) return 1;
+    foreach ($config['installedpackages']['package'] as $pkg) {
+	if($pkg['name'] == "squid") return 1;
     }
     return 0;
 }

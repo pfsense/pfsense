@@ -458,7 +458,7 @@ function update_changedesc($update) {
  * orig = original value
  * new = new value
  */
-function update_if_changed($varname, $orig, $new) {
+function update_if_changed($varname, & $orig, $new) {
 	if ($orig != $new) {
 		update_changedesc("{$varname}: \"{$orig}\" -> \"{$new}\"");
 		$orig = $new;

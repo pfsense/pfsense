@@ -107,16 +107,16 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		update_if_changed("hostname", &$config['system']['hostname'], strtolower($_POST['hostname']));
-		update_if_changed("domain", &$config['system']['domain'], strtolower($_POST['domain']));
-		update_if_changed("username", &$config['system']['username'], $_POST['username']);
+		update_if_changed("hostname", $config['system']['hostname'], strtolower($_POST['hostname']));
+		update_if_changed("domain", $config['system']['domain'], strtolower($_POST['domain']));
+		update_if_changed("username", $config['system']['username'], $_POST['username']);
 
-		if (update_if_changed("webgui protocol", &$config['system']['webgui']['protocol'], $pconfig['webguiproto'])  || update_if_changed("webgui port", &$config['system']['webgui']['port'], $pconfig['webguiport']))
+		if (update_if_changed("webgui protocol", $config['system']['webgui']['protocol'], $pconfig['webguiproto'])  || update_if_changed("webgui port", $config['system']['webgui']['port'], $pconfig['webguiport']))
 			$restart_webgui = true;
 
-		update_if_changed("timezone", &$config['system']['timezone'], $_POST['timezone']);
-		update_if_changed("NTP servers", &$config['system']['timeservers'], strtolower($_POST['timeservers']));
-		update_if_changed("NTP update interval", &$config['system']['time-update-interval'], $_POST['timeupdateinterval']);
+		update_if_changed("timezone", $config['system']['timezone'], $_POST['timezone']);
+		update_if_changed("NTP servers", $config['system']['timeservers'], strtolower($_POST['timeservers']));
+		update_if_changed("NTP update interval", $config['system']['time-update-interval'], $_POST['timeupdateinterval']);
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
 		unset($config['system']['dnsserver']);

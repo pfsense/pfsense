@@ -88,13 +88,7 @@ $fd_log = fopen("/tmp/pkg_mgr.log", "w");
 if(!$fd_log) log_error("Warning, could not open /tmp/pkg_mgr.log for writing");
 fwrite($fd_log, "Begin of Package Manager installation session.\n");
 
-if(!file_exists("/tmp/pkg_config.xml")) {
-            mwexec("cd {$g['tmp_path']} && /usr/bin/fetch \"http://www.pfsense.com/packages/pkg_config.xml\" >/dev/null 2>&1 ");
-            if(!file_exists("{$g['tmp_path']}/pkg_config.xml")) {
-                        print_info_box_np("Could not download pkg_config.xml from pfSense.com.  Check your DNS settings.");
-                        die;
-            }
-}
+fetch_latest_pkg_config();
 
 $pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
 

@@ -220,6 +220,37 @@ function get_pkg_id($pkg_name) {
             return -1;
 }
 
+
+/*
+ * Lookup pkg_id in pkg_config.xml
+ */
+function get_available_pkg_id($pkg_name) {
+    fetch_latest_pkg_config();
+    $pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
+    $id = 0;
+    foreach($pkg_config as $pkg) {
+	if($pkg_config['name'] == $pkg_name) {
+	    return $id;
+	}
+	$id++;
+    }
+    return;
+}
+
+/*
+ * fetch_latest_pkg_config: download the latest pkg_config.xml to /tmp/ directory
+ */
+function fetch_latest_pkg_config() {
+    if(!file_exists("/tmp/pkg_config.xml")) {
+	mwexec("cd {$g['tmp_path']} && /usr/bin/fetch \"" . $config_location . "\" >/dev/null 2>&1 ");
+	if(!file_exists("{$g['tmp_path']}/pkg_config.xml")) {
+	    print_info_box_np("Could not download pkg_config.xml from pfSense.com.  Check your DNS settings.");
+	    die;
+	}
+    }
+    return;
+}
+
 /*
  * add_text_to_file($file, $text): adds $text to $file.
  * replaces the text if it already exists.

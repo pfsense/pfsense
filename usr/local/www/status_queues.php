@@ -54,7 +54,7 @@ $a_queues = &$config['shaper']['queue'];
 <form action="status_queues.php" method="post">
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
                       <tr>
-                        <td class="listhdr">Name</td>
+                        <td class="listhdr">Queue Stats</td>
                       </tr>
                       <?php $i = 0; foreach ($a_queues as $queue): ?>
                       <tr valign="top">
@@ -111,6 +111,7 @@ While(!Connection_Aborted()) {
 		$packet_sampled = intval($stat_line_split[2]);
 		$speed = $stat_line_split[1];
 		$borrows = intval($stat_line_split[3]);
+		$suspends = intval($stat_line_split[4]);
 
 		echo "<script language='javascript'>\n";
 
@@ -119,8 +120,7 @@ While(!Connection_Aborted()) {
 		echo "document.queue{$i}widthb.style.width='{$packet_s}';\n";
 		echo "document.queue{$i}widtha.style.width='" . (400 - $packet_s) . "';\n";
 		$borrows_txt = "";
-		if(intval($borrows > 0))
-			$borrows_txt = " - {$borrows} borrows";
+		$borrows_txt = " - {$borrows} borrows - {$suspends} suspends";
 		echo "document.forms[0].queue{$i}meter.value = '" . $packet_sampled . "/pps - " . $speed . "{$borrows_txt}';\n";
 		echo "</script>\n";
 		$i++;

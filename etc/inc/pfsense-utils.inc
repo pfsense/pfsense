@@ -365,8 +365,8 @@ function get_pkg_id($pkg_name) {
 }
 
 /*
- *  get_latest_package_version($pkgname): get current version of a package.
- *  returns latest package version
+ *  get_latest_package_version($pkgname): Get current version of a package. Returns latest package version or -1
+ *  					  if package isn't defined in the currently used pkg_config.xml.
  */
 function get_latest_package_version($pkg_name) {
     global $g;
@@ -377,7 +377,7 @@ function get_latest_package_version($pkg_name) {
 	    return $pkg['version'];
 	}
     }
-    return;
+    return -1;
 }
 
 /*

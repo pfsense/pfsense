@@ -31,6 +31,9 @@ SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
 
 /usr/local/bin/php -f /etc/rc.conf_mount_rw
 
+/etc/rc.d/initrandom start >/dev/null
+/etc/rc.d/random start >/dev/null
+
 rm -rf /var/run/*
 rm -rf /tmp/*
 

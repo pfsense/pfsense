@@ -291,6 +291,19 @@ if ($pkgent['pfsense_package_base_url'] <> "") {
     fwrite($fd_log, "Executing: cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base_url'] . "/" . $pkgent['pfsense_package'] . "\n" . $text);
 }
 
+$status = exec_command_and_return_text("ls /var/db/pkg | grep " . $pkgent['name']);
+fwrite($fd_log, "ls /var/db/pkg | grep " . $pkgent['name'] . "\n" . $status);
+if($status <> "") {
+            update_status("Package installed.  Lets finish up.");
+            fwrite($fd_log, "Package installed.  Lets finish up.\n");
+} else {
+            fwrite($fd_log, "Package WAS NOT installed properly.\n");
+            fclose($fd_log);
+            $filecontents = exec_command_and_return_text("cat " . $file);
+            update_status("Package WAS NOT installed properly...Something went wrong..\n" . $filecontents);
+            die;
+}
+
 update_progress_bar($pb_percent);
 $pb_percent += 10;
 

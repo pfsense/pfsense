@@ -362,7 +362,7 @@ foreach ($packages_to_install as $id) {
                         if(stristr($filename, ".tgz") <> "") {
                             update_status("Extracting tgz archive to -C for " . $filename);
                             fwrite($fd_log, "Extracting tgz archive to -C for " . $filename . " ...\n");
-                            system("/usr/bin/tar xzvf /usr/local/pkg/" . $filename . " -C / >/dev/null 2>&1");
+                            system("/usr/bin/tar xzvf " . $prefix . $filename . " -C / >/dev/null 2>&1");
                         }
                         if($pkg_chmod <> "") {
                             fwrite($fd_log, "Changing file mode for {$pkg_chmod} {$prefix}{$filename}\n");

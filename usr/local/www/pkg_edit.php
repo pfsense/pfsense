@@ -102,7 +102,7 @@ if ($_POST) {
 		}
 	} else {
 		if($pkg['custom_add_php_command']) {
-			if($pkg['donotsave'] <> "") {
+			if($pkg['donotsave'] <> "" or $pkg['preoutput'] <> "") {
 				?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>

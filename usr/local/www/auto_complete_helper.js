@@ -1,14 +1,15 @@
 
 /* ---- Variables ---- */
 var actb_timeOut = -1; // Autocomplete Timeout in ms (-1: autocomplete never time out)
-var actb_lim = 1;    // Number of elements autocomplete can show (-1: no limit)
+var actb_lim = 5;    // Number of elements autocomplete can show (-1: no limit)
 var actb_firstText = false; // should the auto complete be limited to the beginning of keyword?
 /* ---- Variables ---- */
 
 /* --- Styles --- */
-var actb_bgColor = '#888888';
-var actb_textColor = '#FFFFFF';
-var actb_hColor = '#000000';
+var actb_bgColor = '#FFFFFF';
+var actb_textColor = '#000000';
+var actb_hBgColor = '#990000';
+var actb_htextColor = '#FFFFFF';
 var actb_fFamily = 'Courier';
 var actb_fSize = '14px';
 var actb_hStyle = 'text-decoration:underline;font-weight="bold"';
@@ -27,8 +28,6 @@ var actb_pre = 0;
 var actb_toid;
 var actb_tomake = true;
 /* ---- Constants ---- */
-
-alert(navigator.appName);
 
 function actb_parse(n){
     var t = escape(actb_curr.value);
@@ -74,6 +73,7 @@ function actb_generate(){
     a = document.createElement('table');
     a.cellSpacing='1px';
     a.cellPadding='2px';
+    a.style.border = '1px solid #990000';
     a.style.zIndex = 5;
     a.style.position='absolute';
     a.style.top = eval(curTop() + actb_curr.offsetHeight) + "px";
@@ -93,19 +93,33 @@ function actb_generate(){
             counter++;
             r = a.insertRow(-1);
             if (first && !actb_tomake){
-                r.style.backgroundColor = actb_hColor;
+                r.style.backgroundColor = actb_hBgColor;
                 first = false;
                 actb_pos = counter;
             }else if(actb_pre == i){
-                r.style.backgroundColor = actb_hColor;
+                r.style.backgroundColor = actb_hBgColor;
                 first = false;
                 actb_pos = counter;
             }else{
                 r.style.backgroundColor = actb_bgColor;
+                r.style.color = actb_bgColor;
             }
             r.id = 'tat_tr'+(j);
             c = r.insertCell(-1);
             c.style.color = actb_textColor;
+            counter = 0;
+            first = true;
+            if (first && !actb_tomake){
+                c.style.color = actb_htextColor;
+                first = false;
+                actb_pos = counter;
+            }else if(actb_pre == i){
+                c.style.color = actb_htextColor;
+                first = false;
+                actb_pos = counter;
+            }else{
+                c.style.color = actb_textColor;
+            }
             c.style.fontFamily = actb_fFamily;
             a.style.zIndex = 5;
             c.style.fontSize = actb_fSize;
@@ -155,7 +169,7 @@ function curLeft(){
     }
     return actb_toreturn;
 }
-function actb_remake(){
+function actb_remake() {
     document.body.removeChild(document.getElementById('tat_table'));
     if(navigator.appName == "Microsoft Internet Explorer") {
         document.body.removeChild(document.getElementById('tat_frame'));
@@ -229,7 +243,6 @@ function actb_remake(){
         height = height + c.height;
         width = c.width;
     }
-    alert(height);
     if(navigator.appName == "Microsoft Internet Explorer") {
         frame.width=width
         frame.height=height;
@@ -239,9 +252,11 @@ function actb_goup(){
     if (!actb_display) return;
     if (actb_pos == 1) return;
     document.getElementById('tat_tr'+actb_pos).style.backgroundColor = actb_bgColor;
+    document.getElementById('tat_td'+actb_pos).style.color = actb_textColor;
     actb_pos--;
     if (actb_pos < actb_rangeu) actb_moveup();
-    document.getElementById('tat_tr'+actb_pos).style.backgroundColor = actb_hColor;
+    document.getElementById('tat_tr'+actb_pos).style.backgroundColor = actb_hBgColor;
+    document.getElementById('tat_td'+actb_pos).style.color = actb_htextColor;
     if (actb_toid) clearTimeout(actb_toid);
     if (actb_timeOut > 0) actb_toid = setTimeout("actb_removedisp()",actb_timeOut);
 }
@@ -249,9 +264,11 @@ function actb_godown(){
     if (!actb_display) return;
     if (actb_pos == actb_total) return;
     document.getElementById('tat_tr'+actb_pos).style.backgroundColor = actb_bgColor;
+    document.getElementById('tat_td'+actb_pos).style.color = actb_textColor;
     actb_pos++;
     if (actb_pos > actb_ranged) actb_movedown();
-    document.getElementById('tat_tr'+actb_pos).style.backgroundColor = actb_hColor;
+    document.getElementById('tat_tr'+actb_pos).style.backgroundColor = actb_hBgColor;
+    document.getElementById('tat_td'+actb_pos).style.color= actb_htextColor;
     if (actb_toid) clearTimeout(actb_toid);
     if (actb_timeOut > 0) actb_toid = setTimeout("actb_removedisp()",actb_timeOut);
 }

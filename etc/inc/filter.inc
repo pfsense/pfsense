@@ -42,8 +42,6 @@ function is_carp_defined() {
 	}
 	fclose($fd);
 
-	return 0;
-
 	if($tmp == "")
 		return 0;
 	else

@@ -576,10 +576,20 @@ function resync_all_package_configs_bootup($show_message) {
 	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
 	if(isset($pkg_config['nosync'])) continue;
 	if($show_message == true) print " " . $package['name'];
-        if($pkg_config['custom_php_command_before_form'] <> "")
-            eval($pkg_config['custom_php_command_before_form']);
-        if($pkg_config['custom_php_resync_config_command'] <> "")
-            eval($pkg_config['custom_php_resync_config_command']);
+        if($pkg_config['custom_php_command_before_form'] <> "") {
+	    if(php_check_syntax($pkg_config['custom_php_command_before_form'])) {
+		eval($pkg_config['custom_php_command_before_form']);
+	    } else {
+		print "(!)";
+	    }
+	}
+        if($pkg_config['custom_php_resync_config_command'] <> "") {
+            if(php_check_syntax($pkg_config['custom_php_resync_config_command'])) {
+		eval($pkg_config['custom_php_resync_config_command']);
+	    } else {
+		print "(!)";
+	    }
+	}
 	$depends = get_pkg_depends($package['name'], ".xml", "files", 0); // Call dependency handler and do a little more error checking.
         if(is_array($depends))
 	    foreach($depends as $item) {

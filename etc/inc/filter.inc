@@ -624,7 +624,7 @@ function filter_generate_altq_rules() {
         }
 
 	$rulei++;
-	$shaperrules .= $line;
+	//$shaperrules .= $line;
 
 	return $shaperrules;
 }

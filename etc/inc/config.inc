@@ -228,6 +228,9 @@ function convert_config() {
 	if ($g['booting'])
 		echo "Converting configuration... ";
 
+	// Save off config version
+	$prev_version = $config['version'];
+
 	/* convert 1.0 -> 1.1 */
 	if ($config['version'] == "1.0") {
 		$opti = 1;
@@ -478,14 +481,15 @@ function convert_config() {
 		$config['version'] = "1.6";
 	}
 
-	write_config();
+	if ($prev_version != $config['version'])
+		write_config("Upgraded firmware from {$prev_version} to {$config['version']}");
 
 	if ($g['booting'])
 		echo "done\n";
 }
 
 /* save the system configuration */
-function write_config($desc="system created") {
+function write_config($desc="Non-described system change") {
 
 	global $config, $g;
 	$lastchange = $config['lastchange'];

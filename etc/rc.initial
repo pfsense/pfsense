@@ -1,7 +1,8 @@
 #!/bin/sh
 
 # /etc/rc.initial
-# part of m0n0wall (http://neon1.net/m0n0wall)
+# part of pfSense by Scott Ullrich
+# based on m0n0wall (http://neon1.net/m0n0wall)
 #
 # Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 # All rights reserved.
@@ -24,7 +25,7 @@ read tmp
 
 done
 
-else 
+else
 
 # endless loop
 while : ; do
@@ -32,7 +33,7 @@ while : ; do
 /etc/rc.banner
 
 # display a cheap menu
-echo "m0n0wall console setup"
+echo "pfSense console setup"
 echo "**********************"
 echo "1) Interfaces: assign network ports"
 echo "2) Set up LAN IP address"

@@ -22,9 +22,10 @@ function doCmdT($title, $command) {
 		if ($fd) {
 			while (!feof($fd)) {
 				$line = fgets($fd);
-				/* remove password tag contents */
+				/* remove sensitive contents */
 				$line = preg_replace("/<password>.*?<\\/password>/", "<password>xxxxx</password>", $line);
 				$line = preg_replace("/<pre-shared-key>.*?<\\/pre-shared-key>/", "<pre-shared-key>xxxxx</pre-shared-key>", $line);
+				$line = preg_replace("/<rocommunity>.*?<\\/rocommunity>/", "<rocommunity>xxxxx</rocommunity>", $line);
 				$line = str_replace("\t", "    ", $line);
 				echo htmlspecialchars($line,ENT_NOQUOTES);
 			}

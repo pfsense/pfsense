@@ -50,7 +50,7 @@ if(isset($_POST['save'])){
 		}
 	}
 	if($_POST['username']=="" || trim($_POST['password1'])==""){
-		$input_errors[] = "username and password must not be empty!";
+		$input_errors[] = "Username and password must not be empty!";
 		$_GET['act']="new";
 	} else {
 		write_config();
@@ -114,35 +114,35 @@ if($_GET['act']=="new" || $_GET['act']=="edit"){
                   <td width="78%" class="vtable">
                     <input name="username" type="text" class="formfld" id="username" size="20" value="<? echo $_GET['username']; ?>">
                     <br>
-                    <span class="vexpl">Username to be used</span></td>
+                    <span class="vexpl">Enter the desired username.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Password</td>
                   <td width="78%" class="vtable">
                     <input name="password1" type="password" class="formfld" id="password1" size="20" value="<?php echo ($_GET['act']=='edit' ? "********" : "" ); ?>">
                     <br>
-                    <span class="vexpl">Password for the user</span></td>
+                    <span class="vexpl">Enter the desired password.</span></td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">confirm Password</td>
+                  <td width="22%" valign="top" class="vncellreq">Password confirmation</td>
                   <td width="78%" class="vtable">
                     <input name="password2" type="password" class="formfld" id="password2" size="20" value="<?php echo ($_GET['act']=='edit' ? "********" : "" ); ?>">
                     <br>
-                    <span class="vexpl">Confirm the above Password</span></td>
+                    <span class="vexpl">Confirm the above password.</span></td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncell">Full Name</td>
+                  <td width="22%" valign="top" class="vncell">Full name</td>
                   <td width="78%" class="vtable">
                     <input name="fullname" type="text" class="formfld" id="fullname" size="20" value="<? echo $user['fullname']; ?>">
                     <br>
-                    Full Name of current user, for your own information only</td>
+                    Enter the user's full name.</td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Expiration Date</td>
                   <td width="78%" class="vtable">
                     <input name="expirationdate" type="text" class="formfld" id="expirationdate" size="10" value="<? echo $user['expirationdate']; ?>">
                     <a href="javascript:NewCal('expirationdate','mmddyyyy')"><img src="cal.gif" width="16" height="16" border="0" alt="Pick a date"></a>
-                    <br> <span class="vexpl">enter nothing if account doesnt expire, otherwhise enter the expiration date in us-format: mm/dd/yyyy</span></td>
+                    <br> <span class="vexpl">Enter this acocunt's expiration date in us-format (mm/dd/yyyy) or leave this field empty for no expiration.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
@@ -178,7 +178,7 @@ END;
                     <?php echo $user['expirationdate']; ?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list"> <a href="services_usermanager.php?act=edit&username=<?php echo $username; ?>"><img src="e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="services_usermanager.php?act=delete&username=<?php echo $username; ?>" onclick="return confirm('Do you really want to delete this User?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
+                     &nbsp;<a href="services_usermanager.php?act=delete&username=<?php echo $username; ?>" onclick="return confirm('Do you really want to delete this user?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
 		</tr>
 <?php
 		}

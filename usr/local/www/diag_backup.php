@@ -32,6 +32,7 @@
 /* omit no-cache headers because it confuses IE with file downloads */
 $omit_nocacheheaders = true;
 require("guiconfig.inc");
+require("xmlparse_pkg.inc");
 
 if ($_POST) {
 	unset($input_errors);
@@ -110,9 +111,9 @@ if ($_POST) {
 				if($_POST['restorearea'] <> "") {
 					/* restore a specific area of the configuration */
 					$rules = return_filename_as_string($_FILES['conffile']['tmp_name']);
-					restore_config_section("filter", $rules);
-					system_reboot();
-					$savemsg = "The configuration has been restored. The firewall is now rebooting.";
+					restore_config_section($_POST['restorearea'], $rules);
+					filter_configure();
+					$savemsg = "The configuration area has been restored.";
 				} else {
 					/* restore the entire configuration */
 					if (config_install($_FILES['conffile']['tmp_name']) == 0) {

@@ -62,7 +62,7 @@ if ($_POST) {
 			if (is_uploaded_file($_FILES['conffile']['tmp_name'])) {
 				if (config_install($_FILES['conffile']['tmp_name']) == 0) {
 					$command = "/sbin/sysctl -a | grep carp";
-					$fd = fopen($_FILES['conffile']['tmp_name']);
+					$fd = fopen($_FILES['conffile']['tmp_name'], "r");
 					if(!$fd) {
 						log_error("Warning, could not open " . $_FILES['conffile']['tmp_name']);
 						return 1;

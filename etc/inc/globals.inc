@@ -53,6 +53,8 @@ $g = array(
     "latest_config" => "1.5",
     "nopccard_platforms" => array("wrap", "net48xx"),
     "pkg_config_location" => "http://www.pfsense.com/packages/pkg_config.xml",
+    "pkg_config_base_url" => "http://www.pfsense.com/packages/",
+    "pkg_config_filename" => "pkg_config.xml",
     "firmwarebaseurl" => "http://www.pfsense.com/",
     "firmwarefilename" => "latest.tgz"
 );

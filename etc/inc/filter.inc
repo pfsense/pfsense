@@ -1122,6 +1122,7 @@ table <bogons> persist file "/etc/bogons"
 block in $log quick on $wanif from <bogons> to any label "block bogon networks from wan"
 
 EOD;
+	}
 
 	$ipfrules .= <<<EOD
 

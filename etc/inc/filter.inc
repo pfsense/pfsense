@@ -1299,7 +1299,7 @@ EOD;
 						$canadd = 1;
 				}
 				if($canadd == 0)
-					$line .= "on \$" . $interface . " ";
+					$line .= "on " . $interface . " ";
 			}
 
 			if (isset($rule['protocol'])) {

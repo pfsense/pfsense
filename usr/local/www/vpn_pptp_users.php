@@ -109,18 +109,30 @@ if ($_GET['act'] == "del") {
                   <td class="listr">
                     <?=htmlspecialchars($secretent['ip']);?>&nbsp;
                   </td>
-                  <td class="list" nowrap> <a href="vpn_pptp_users_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="vpn_pptp_users.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this user?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
-				</tr>
-			  <?php $i++; endforeach; ?>
+                  <td class="list" nowrap>
+                    <table border="0" cellspacing="0" cellpadding="1">
+                      <tr>
+                        <td valign="middle"><a href="vpn_pptp_users_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a></td>
+                        <td valign="middle"><a href="vpn_pptp_users.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this user?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
+                      </tr>
+                    </table>
+                  </td>
+		</tr>
+		<?php $i++; endforeach; ?>
                 <tr> 
                   <td class="list" colspan="2"></td>
-                  <td class="list"> <a href="vpn_pptp_users_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
-				</tr>
+                  <td class="list">
+                    <table border="0" cellspacing="0" cellpadding="1">
+                      <tr>
+                        <td valign="middle"><a href="vpn_pptp_users_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
+                      </tr>
+                    </table>
+                  </td>
+		</tr>
               </table>
-			</td>
-	</tr>
-</table>
+            </td>
+          </tr>
+        </table>
 </form>
 <?php include("fend.inc"); ?>
 </body>

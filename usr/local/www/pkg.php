@@ -197,15 +197,28 @@ if ($pkg['tabs'] <> "") {
 				}
 			?>
 			<td valign="middle" class="list" nowrap>
-			    &nbsp;<a href="pkg_edit.php?xml=<?=$xml?>&act=edit&id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a>
-			    &nbsp;<a href="pkg.php?xml=<?=$xml?>&act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this item?')"><img src="x.gif" width="17" height="17" border="0"></a>
+                          <table border="0" cellspacing="0" cellpadding="1">
+                            <tr>
+                              <td valign="middle"><a href="pkg_edit.php?xml=<?=$xml?>&act=edit&id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a></td>
+			      <td valign="middle"><a href="pkg.php?xml=<?=$xml?>&act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this item?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
+                            </tr>
+                          </table>
 			</td>
 			<?php
 			echo "</tr>\n";
 			$i++;
 		    }
 		?>
-               <tr><td colspan="<?=$cols?>"></td><td><a href="pkg_edit.php?xml=<?=$xml?>"><img src="plus.gif" width="17" height="17" border="0"></a></td></tr>
+               <tr>
+                 <td colspan="<?=$cols?>"></td>
+                 <td>
+                    <table border="0" cellspacing="0" cellpadding="1">
+                      <tr>
+                        <td valign="middle"><a href="pkg_edit.php?xml=<?=$xml?>"><img src="plus.gif" width="17" height="17" border="0"></a></td>
+                     </tr>
+                   </table>
+                 </td>
+               </tr>
         </table>
     </td>
   </tr>

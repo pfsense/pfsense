@@ -34,28 +34,35 @@ $omit_nocacheheaders = true;
 require("guiconfig.inc");
 
 if ($_POST) {
-
 	unset($input_errors);
-
 	if (stristr($_POST['Submit'], "Restore"))
 		$mode = "restore";
 	else if (stristr($_POST['Submit'], "Reinstall"))
 		$mode = "reinstallpackages";
 	else if (stristr($_POST['Submit'], "Download"))
 		$mode = "download";
+	if ($_POST['Submit']["nopackages"])
+		$options = "nopackages";
 
 	if ($mode) {
 		if ($mode == "download") {
 			config_lock();
-
 			$fn = "config-" . $config['system']['hostname'] . "." .
 				$config['system']['domain'] . "-" . date("YmdHis") . ".xml";
-
+			if($options == "nopackages") {
+				exec("sed '/<installedpackages>/,/<\/installedpackages>/d' /conf/config.xml > /tmp/config.xml.nopkg");
+				$fs = filesize("/tmp/config.xml.nopkg");
+				header("Content-Type: application/octet-stream");
+                        	header("Content-Disposition: attachment; filename=$fn");
+                        	header("Content-Length: $fs");
+				readfile("/tmp/config.xml.nopkg");
+			} else {
 			$fs = filesize($g['conf_path'] . "/config.xml");
 			header("Content-Type: application/octet-stream");
 			header("Content-Disposition: attachment; filename=$fn");
 			header("Content-Length: $fs");
 			readfile($g['conf_path'] . "/config.xml");
+			}
 			config_unlock();
 			exit;
 		} else if ($mode == "restore") {
@@ -118,6 +125,7 @@ if ($_POST) {
                     <p> Click this button to download the system configuration
                       in XML format.<br>
                       <br>
+		      <input name="Submit" type="checkbox" class="formcheckbox" id="nopackages">Do not backup package information.<br><br> 
                       <input name="Submit" type="submit" class="formbtn" id="download" value="Download configuration"></td>
                 </tr>
                 <tr>

@@ -3,4 +3,4 @@
 sleep 1
 
 /sbin/shutdown -r now
-#/sbin/reboot
+

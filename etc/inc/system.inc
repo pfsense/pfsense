@@ -448,6 +448,14 @@ function system_ntp_configure() {
 		echo "done\n";
 }
 
+function system_halt() {
+	global $g;
+
+	system_reboot_cleanup();
+
+	mwexec("nohup /etc/rc.halt > /dev/null 2>&1 &");
+}
+
 function system_reboot() {
 	global $g;
 

@@ -127,9 +127,6 @@ function interfaces_lan_configure() {
 		/* reload ipfilter (address may have changed) */
 		filter_configure();
 
-		/* reload shaper (subnet may have changed) */
-		shaper_configure();
-
 		/* reload IPsec tunnels */
 		vpn_ipsec_configure();
 
@@ -409,9 +406,6 @@ function interfaces_wan_configure() {
 
 		/* reload ipfilter */
 		filter_configure();
-
-		/* reload shaper */
-		shaper_configure();
 
 		/* reload ipsec tunnels */
 		vpn_ipsec_configure();

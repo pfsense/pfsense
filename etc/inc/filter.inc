@@ -880,10 +880,8 @@ EOD;
 		}
 	}
 
-	$squid_installed = run_command_return_string("/bin/ls {$g['vardb_path']}/pkg/ | grep squid");
-	if ($squid_installed <> "") {
+	if (is_package_installed("squid") == 1)
 		$natrules .= "rdr on " . $lanif . " inet proto tcp from any to !{$lanip} port www -> 127.0.0.1 port 3128\n";
-	}
 
 	return $natrules;
 }
@@ -1356,7 +1354,7 @@ EOD;
 			if($rule['returngateway'] <> "") {
 				$line .= "reply-to (" . $rule['returngateway'] . ") ";
 			}
-	
+
 			if (isset($rule['protocol'])) {
 				if($rule['protocol'] == "tcp/udp")
 					$line .= "proto { tcp udp } ";

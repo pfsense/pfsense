@@ -339,6 +339,17 @@ function remove_text_from_file($file, $text) {
 }
 
 /*
+ *  is_package_installed($packgename): returns 1 if a package is installed, 0 otherwise.
+ */
+function is_package_installed($packagename) {
+    global $config;
+    foreach($config['installedpackages']['package'] as $package) {
+	if($package['name'] == "squid") return 1;
+    }
+    return 0;
+}
+
+/*
  * lookup pkg array id#
  */
 function get_pkg_id($pkg_name) {
@@ -875,12 +886,14 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
             		foreach($depends as $item) {
 				$item_config = parse_xml_config_pkg("/usr/local/pkg/" . $item, "packagegui");
 				if(isset($item_config['nosync'])) continue;
-				if($item_config['custom_php_command_before_form'] <> "")
+				if($item_config['custom_php_command_before_form'] <> "") {
 					eval($item_config['custom_php_command_before_form']);
 					print "Evaled dependency.";
-				if($item_config['custom_php_resync_config_command'] <> "")
+				}
+				if($item_config['custom_php_resync_config_command'] <> "") {
 					eval($item_config['custom_php_resync_config_command']);
 					print "Evaled dependency.";
+				}
 				if($show_message == true) print " " . $item_config['name'];
 			}
 		}

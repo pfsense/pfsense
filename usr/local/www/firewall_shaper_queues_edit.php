@@ -255,16 +255,16 @@ if ($_POST) {
 		<td width="78%" class="vtable">
 		   <select id="childqueue" name="childqueue">
 			<?php
-			if(isset($pconfig['shaper']['childqueue']))
+			if(is_subqueue($config['shaper']['queue']))
 				echo "<option value=\"" . $pconfig['shaper']['childqueue'] . "\">" . $pconfig['shaper']['childqueue'] . "</option>";
 			else
 				echo "<option value=\"\"></option>";
-			 if (is_array($config['shaper']['queue'])) {
+			if (is_array($config['shaper']['queue'])) {
 			 	foreach ($config['shaper']['queue'] as $queue) {
-			 		if(is_subqueue($queue['name']) == 1)
+					if($queue['parentqueue'] <> "")
 			 			echo "<option value=\"" . $queue['name'] . "\">" . $queue['name'] . "</option>";
 			 	}
-			 }
+			}
 			?>
 		   </select>
 		</td>

@@ -609,7 +609,7 @@ function gather_altq_queue_stats($dont_return_root_queues) {
             $measured = $match_array[1][0];
 	    if($dont_return_root_queues == true)
 		if(stristr($queue_name,"root_") == false)
-		    array_push($queue_stats, "{$queue_name}|{$speed}|{$measured}|{$borrows}|{$suspends}|${drops}");
+		    array_push($queue_stats, "{$queue_name}|{$speed}|{$measured}|{$borrows}|{$suspends}|{$drops}");
         }
     }
     return $queue_stats;

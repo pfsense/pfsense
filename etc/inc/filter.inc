@@ -1632,7 +1632,10 @@ function create_firewall_outgoing_rules_to_itself() {
 			/* XXX - billm: temp fix for pppoe, needs better fix */
 			if($config['interfaces'][$ifname]['ipaddr'] != "")
 				$rule .="pass out quick on {$int} inet from {$int} to any keep state\n";
+			else
+				$rule .="pass out quick on {$int} inet from ({$int}) to any keep state\n";			
 		}
+			
 	}
 	return $rule;
 }

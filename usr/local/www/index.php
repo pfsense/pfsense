@@ -139,7 +139,7 @@ if ($fd) {
                 <td width="75%" class="listr">
 <?php
 $cpuTicks = explode(" ", `/sbin/sysctl -n kern.cp_time`);
-sleep(1);
+sleep(3);
 $cpuTicks2 = explode(" ", `/sbin/sysctl -n kern.cp_time`);
 
 $diff = array();

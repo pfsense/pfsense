@@ -69,7 +69,7 @@ if ($_POST) {
 		$queue['schedulertype'] = $_POST['scheduler'];
 		$queue['bandwidth'] = $_POST['bandwidth'];
 		$queue['priority'] = $_POST['priority'];
-		$queue['name'] = $_POST['name'];
+		$queue['name'] = ereg_replace(" ", "", $_POST['name']);
 
 		$scheduleroptions="";
 		if($_POST['red'] == "on")

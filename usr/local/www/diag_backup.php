@@ -41,7 +41,7 @@ if ($_POST) {
 		$mode = "reinstallpackages";
 	else if (stristr($_POST['Submit'], "Download"))
 		$mode = "download";
-	if ($_POST['Submit']["nopackages"])
+	if ($_POST["nopackages"] <> "")
 		$options = "nopackages";
 
 	if ($mode) {
@@ -125,7 +125,7 @@ if ($_POST) {
                     <p> Click this button to download the system configuration
                       in XML format.<br>
                       <br>
-		      <input name="Submit" type="checkbox" class="formcheckbox" id="nopackages">Do not backup package information.<br><br> 
+		      <input name="nopackages" type="checkbox" class="formcheckbox" id="nopackages">Do not backup package information.<br><br> 
                       <input name="Submit" type="submit" class="formbtn" id="download" value="Download configuration"></td>
                 </tr>
                 <tr>

@@ -1,7 +1,7 @@
 #!/usr/local/bin/php
 <?php
 /*
-    pkg_edit.php
+    wizard.php
     Copyright (C) 2004 Scott Ullrich
     All rights reserved.
 

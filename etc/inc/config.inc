@@ -155,9 +155,8 @@ if (!$noparseconfig) {
 					echo "file is inserted. If it isn't, your configuration changes will be lost\n";
 					echo "on reboot.\n";
 				} else {
-					echo "XML configuration file not found.  pfSense cannot continue booting.\n";
-					echo "\n\nDropping to a shell for inspection.\n";
-					mwexec("/bin/sh");
+					echo "XML configuration {$g['conf_path']}/config.xml file not found.  pfSense cannot continue booting.\n";
+					sleep 5;
 					echo "\n\nThe system is now halting.\n\n";
 					mwexec("/sbin/halt");
 					exit;

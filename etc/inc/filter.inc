@@ -33,6 +33,20 @@
 /* include all configuration functions */
 require_once("functions.inc");
 
+function is_carp_defined() {
+	/* is carp compiled into the kernel and userland? */
+	$command = "sysctl -a | grep carp";
+	$fd = popen($command . " 2>&1 ", "r");
+	while(!feof($fd)) {
+		    $tmp .= fread($fd,49);
+	}
+	fclose($fd);
+	if($tmp == "")
+		return 0;
+	else
+		return 1;
+}
+
 function filter_resync() {
 	global $config, $g;
 
@@ -97,6 +111,7 @@ function filter_configure() {
 	else
 		$mssclamp = 0;
 
+	/* XXX: convert these to PF or dump */
 	mwexec("/sbin/sysctl net.inet.ipf.fr_mssif={$wanif}");
 	mwexec("/sbin/sysctl net.inet.ipf.fr_mssclamp={$mssclamp}");
 
@@ -510,6 +525,13 @@ function filter_rules_generate() {
 
 	# BEGIN OF firewall rules
 	$ipfrules="";
+	
+	/* if carp is defined, lets pass the traffic */
+	if(is_carp_defined() == 1) {
+		$ipfrules .= "pass on " . $lanif . " proto carp keep state\n";
+		$ipfrules .= "pass on " . $wanif . " proto carp keep state\n";
+	}
+	
 	$ipfrules .= <<<EOD
 
 # loopback

@@ -860,7 +860,7 @@ function system_start_ftp_helpers() {
 	global $g;
 	if($config['system']['disableftpproxy'] <> "") return;
 	if ($g['booting'])
-		echo "Starting INETD and FTP Helpers for FTP-PROXY...";
+		echo "Starting INETD and FTP Helpers for FTP-PROXY...\n";
 	$wanif = get_real_wan_interface();
 	mwexec("/usr/sbin/inetd -wW -C 60");
 	mwexec("/usr/bin/killall ftpsesame 2>/dev/null");

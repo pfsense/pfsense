@@ -97,7 +97,7 @@ if ($_POST) {
 					$fn = $_POST['backuparea'] . "-" . $fn;
 					header("Content-Disposition: attachment; filename=$fn");
 					header("Content-Length: $fs");
-					readfile($g['tmp_path'] . "/backup_section.txt","w");
+					readfile($g['tmp_path'] . "/backup_section.txt");
 					unlink($g['tmp_path'] . "/backup_section.txt");
 				} else {
 					$fs = filesize($g['conf_path'] . "/config.xml");

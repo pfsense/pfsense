@@ -562,7 +562,7 @@ function resync_all_package_configs_bootup($show_message) {
         if($pkg_config['custom_php_command_before_form'] <> "")
             eval($pkg_config['custom_php_command_before_form']);
         if($pkg_config['custom_php_resync_config_command'] <> "")
-            eval($pkg_config['custom_php_resync_config_command']);  
+            eval($pkg_config['custom_php_resync_config_command']);
         if($show_message == true) print " " . $package['name'];
         if($pkg_config['additional_files_needed'] != "") {
                 foreach($pkg_config['additional_files_needed']['0']['item'] as $item) {
@@ -640,10 +640,10 @@ function is_service_running($service_name) {
     $status = `/bin/ps ax | grep {$service_name}`;
     $status_split = split("\n", $service_name);
     $counter = 0;
-    foreach ($status_split as $ss) $counter++
+    foreach ($status_split as $ss) $counter++;
     if($counter > 1) return 1;
     return 0;
-	
+
 }
 
 ?>

@@ -555,11 +555,12 @@ function resync_all_package_configs_bootup($show_message) {
 }
 
 /*
- * gather_altq_queue_stats():  gater alq queue stats and return an array that
+ * gather_altq_queue_stats():  gather alq queue stats and return an array that
  *                             is queuename|qlength|measured_packets
  *                             NOTE: this commandt takes 5 seconds to run
  */
 function gather_altq_queue_stats() {
+    mwexec("/usr/bin/killall pfctl");
     $stats = `/sbin/pfctl -vvsq & sleep 5;killall pfctl 2>/dev/null`;
     $stats_array = split("\n", $stats);
     $queue_stats = array();

@@ -173,6 +173,7 @@ function ipaddr_change() {
 				<option value="Kb">Kilobit/s</option>
 				<option value="Mb">Megabit/s</option>
 				<option value="Gb">Gigabit/s</option>
+				<option value=""></option>
 			</select>
 			<br> The bandwidth setting will define the speed of the interface for traffic shaping.
 		  </td>

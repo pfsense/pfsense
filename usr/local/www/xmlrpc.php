@@ -94,14 +94,28 @@ function restore_config_section_xmlrpc($raw_params) {
 	return new XML_RPC_Response(new XML_RPC_Value(true, 'boolean'));
 }
 
+$filter_configure_doc = 'Basic XMLRPC wrapper for filter_configure. This method must be called with one paramater: a string containing the local system\'s password. This function returns true upon completion.';
+$filter_configure_sig = array(array(boolean, string));
+
+function filter_configure_xmlrpc($raw_params) {
+	global $config;
+	$params = xmlrpc_params_to_php($raw_params);
+	if(crypt($params[0], $config['system']['password']) != $config['system']['password']) return; // Basic authentication.
+	filter_configure();
+	return new XML_PRC_Response(new XML_RPC_Value(true, 'boolean'));
+}
+
 $server = new XML_RPC_Server(
         array(
-            'pfsense.backup_config_section' => array('function' => 'backup_config_section_xmlrpc',
+            'pfsense.backup_config_section' => 	array('function' => 'backup_config_section_xmlrpc',
 							'signature' => $backup_config_section_sig,
 							'docstring' => $backup_config_section_doc),
 	    'pfsense.restore_config_section' => array('function' => 'restore_config_section_xmlrpc',
 							'signature' => $restore_config_section_sig,
-							'docstring' => $restore_config_section_doc)
+							'docstring' => $restore_config_section_doc),
+	    'pfsense.filter_configure' => 	array('function' => 'filter_configure_xmlrpc',
+							'signature' => $filter_configure_sig,
+							'docstring' => $filter_configure_doc)
         )
 );
 ?>

@@ -28,6 +28,8 @@ var actb_toid;
 var actb_tomake = true;
 /* ---- Constants ---- */
 
+alert(navigator.appName);
+
 function actb_parse(n){
     var t = escape(actb_curr.value);
     var tobuild = '';
@@ -55,18 +57,21 @@ function actb_parse(n){
     return tobuild;
 }
 function actb_generate(){
-    if (document.getElementById('tat_frame')) document.body.removeChild(document.getElementById('tat_frame'));
+    if(navigator.appName == "Microsoft Internet Explorer")
+        if (document.getElementById('tat_frame')) document.body.removeChild(document.getElementById('tat_frame'));
     if (document.getElementById('tat_table')) document.body.removeChild(document.getElementById('tat_table'));
-    frame = document.createElement('iframe');
+    if(navigator.appName == "Microsoft Internet Explorer") {
+        frame = document.createElement('iframe');
+        frame.cellSpacing='1px';
+        frame.cellPadding='2px';
+        frame.style.zIndex = 3;
+        frame.style.position='absolute';
+        frame.style.top = eval(curTop() + actb_curr.offsetHeight) + "px";
+        frame.style.left = curLeft() + "px";
+        frame.style.backgroundColor=actb_bgColor;
+        frame.id = 'tat_frame';
+    }
     a = document.createElement('table');
-    frame.cellSpacing='1px';
-    frame.cellPadding='2px';
-    frame.style.zIndex = 3;
-    frame.style.position='absolute';
-    frame.style.top = eval(curTop() + actb_curr.offsetHeight) + "px";
-    frame.style.left = curLeft() + "px";
-    frame.style.backgroundColor=actb_bgColor;
-    frame.id = 'tat_frame';
     a.cellSpacing='1px';
     a.cellPadding='2px';
     a.style.zIndex = 5;
@@ -75,7 +80,8 @@ function actb_generate(){
     a.style.left = curLeft() + "px";
     a.style.backgroundColor=actb_bgColor;
     a.id = 'tat_table';
-    document.body.appendChild(frame);
+    if(navigator.appName == "Microsoft Internet Explorer")
+        document.body.appendChild(frame);
     document.body.appendChild(a);
     var i;
     var first = true;
@@ -126,8 +132,10 @@ function actb_generate(){
     actb_ranged = j-1;
     actb_display = true;
     if (actb_pos <= 0) actb_pos = 1;
-    frame.width=width;
-    frame.height=height;
+    if(navigator.appName == "Microsoft Internet Explorer") {
+        frame.width=width;
+        frame.height=height;
+    }
 }
 function curTop(){
     actb_toreturn = 0;
@@ -149,17 +157,18 @@ function curLeft(){
 }
 function actb_remake(){
     document.body.removeChild(document.getElementById('tat_table'));
-    document.body.removeChild(document.getElementById('tat_frame'));
-    frame = document.createElement('iframe');
-    frame.cellSpacing='2px';
-    frame.cellPadding='3px';
-    frame.style.position='absolute';
-    frame.style.zIndex = 5;
-    frame.style.top = eval(curTop() + actb_curr.offsetHeight) + "px";
-    frame.style.left = curLeft() + "px";
-    frame.style.backgroundColor=actb_bgColor;
-    frame.id = 'tat_frame';
-
+    if(navigator.appName == "Microsoft Internet Explorer") {
+        document.body.removeChild(document.getElementById('tat_frame'));
+        frame = document.createElement('iframe');
+        frame.cellSpacing='2px';
+        frame.cellPadding='3px';
+        frame.style.position='absolute';
+        frame.style.zIndex = 5;
+        frame.style.top = eval(curTop() + actb_curr.offsetHeight) + "px";
+        frame.style.left = curLeft() + "px";
+        frame.style.backgroundColor=actb_bgColor;
+        frame.id = 'tat_frame';
+    }
     a = document.createElement('table');
     a.cellSpacing='2px';
     a.cellPadding='3px';
@@ -169,7 +178,8 @@ function actb_remake(){
     a.style.left = curLeft() + "px";
     a.style.backgroundColor=actb_bgColor;
     a.id = 'tat_table';
-    document.body.appendChild(frame);
+    if(navigator.appName == "Microsoft Internet Explorer")
+        document.body.appendChild(frame);
     document.body.appendChild(a);
     var width = 0;
     var height = 0;
@@ -220,8 +230,10 @@ function actb_remake(){
         width = c.width;
     }
     alert(height);
-    frame.width=width
-    frame.height=height;
+    if(navigator.appName == "Microsoft Internet Explorer") {
+        frame.width=width
+        frame.height=height;
+    }
 }
 function actb_goup(){
     if (!actb_display) return;
@@ -271,7 +283,8 @@ function actb_penter(){
 }
 function actb_removedisp(){
     actb_display = 0;
-    if (document.getElementById('tat_frame')) document.body.removeChild(document.getElementById('tat_frame'));
+    if(navigator.appName == "Microsoft Internet Explorer")
+        if (document.getElementById('tat_frame')) document.body.removeChild(document.getElementById('tat_frame'));
     if (document.getElementById('tat_table')) document.body.removeChild(document.getElementById('tat_table'));
     if (actb_toid) clearTimeout(actb_toid);
 }

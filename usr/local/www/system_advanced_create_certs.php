@@ -197,7 +197,7 @@ if ($_POST) {
 		    <tr>
 		      <td width="35%" valign="top">&nbsp;</td>
 		      <td width="78%">
-			<input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
+			<input name="Submit" type="submit" class="formbtn" value="Save">
 		      </td>
 		    </tr>
 

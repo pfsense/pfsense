@@ -322,8 +322,34 @@ function is_subqueue($name) {
         return 0;
 }
 
+function filter_opt_interface_to_real($opt) {
+	global $config;
+	return $config['interfaces'][$opt]['if'];
+}
+
+function filter_get_opt_interface_descr($opt) {
+	global $config;
+	return $config['interfaces'][$opt]['descr'];
+}
+
 function filter_generate_aliases() {
 	global $config;
+
+	$aliases = "";
+
+	$i = 0;
+
+	$aliases .= "lan = \"{ " . $config['interfaces']['lan']['if'] . " }\"\n";
+	$aliases .= "wan = \"{ " . get_real_wan_interface() . " }\"\n";
+
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+		$ifdescrs['opt' . $j] = "opt" . $j;
+	}
+
+	foreach ($ifdescrs as $ifdescr => $ifname) {
+		$aliases .= "# " . $ifname . "\n";
+		$aliases .= filter_get_opt_interface_descr($ifname) . " = \"{ " . filter_opt_interface_to_real($ifname) . " }\"\n";
+	}
 
 	/* Setup pf groups */
 	if (isset($config['aliases']['alias'])) {
@@ -1224,10 +1250,8 @@ EOD;
 				$line .= "on ng" . ($iif+1) . " ";
 			}
 
-			//if($rule['protocol'] == "tcp/udp")
-			//	$line .= "proto { tcp udp } ";
-			//else
-			//	$line .= "proto {$rule['protocol']} ";
+			// translate wan, man, lan, opt to real interface.
+			$line .= "on \$" . $rule['interface'] . " ";
 
 			if (isset($rule['protocol'])) {
 				if($rule['protocol'] == "tcp/udp")

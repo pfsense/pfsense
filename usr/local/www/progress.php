@@ -53,30 +53,47 @@ if (!$X) {
 </HEAD>
 <BODY BGCOLOR="#FFFFFF">
 
-Uploading files...
+<table height="100%" width="100%" cellPadding="4" cellSpacing="4" style="border:1px solid #000066;">
+<tr><td>
 
-<table WIDTH="100%" cellPadding=0 cellSpacing=0 style='border:1px dashed #000066; BORDER-BOTTOM: 0px inset; BORDER-LEFT: 0px inset; BORDER-RIGHT: 0px inset; BORDER-TOP: 0px inset'> <tr><td>
-  <table border=0 WIDTH="100%" COLS="34"><tr>
+   <font face="arial"><b><center>Uploading files...</b></center>
 
-  <?
+   <br>
 
-     for ($i=0; $i<100; $i+=3) {
-	$color = ($i<$meter) ? " bgcolor='#00007F' " : '';
-	$width = ($i+3<100)   ? "3" : 100-$i;
-	echo("<td $color class='uplmtr' WIDTH='$width%'>&nbsp;</td>\n");
-     }
-  ?>
+   <table WIDTH="100%" cellPadding="1" cellSpacing="2" style='border:1px dashed #000066; BORDER-BOTTOM: 1px inset; BORDER-LEFT: 1px inset; BORDER-RIGHT: 1px inset; BORDER-TOP: 1px inset'> <tr><td>
+     <table border=0 WIDTH="100%" COLS="34"><tr>
 
-</tr></table>
-</td></tr></table>
+     <?
 
-<TABLE WIDTH=100%><TR><TD>
-<?=$eta?> left (at <?=$speed?>KB/sec)
-</TD><TD ALIGN=right>
-<?=$upl?>/<?=$total?>(<?=$meter?>%)
-</TD></TR><TR><TD>
+	for ($i=0; $i<100; $i+=3) {
+	   $color = ($i<$meter) ? " bgcolor='#00007F' " : '';
+	   $width = ($i+3<100)   ? "3" : 100-$i;
+	   echo("<td $color class='uplmtr' WIDTH='$width%'>&nbsp;</td>\n");
+	}
+     ?>
 
-</TD></TR></TABLE>
+   </tr></table>
+   </td></tr></table>
+
+   <br>
+   
+   <TABLE WIDTH=100%>
+   <tr>
+   <td align="right"><font face="arial"><b>Time Remaining:</td><td><font face="arial"><?=$eta?></td>
+   <td align="right"><font face="arial"><b>Speed:</td><td><font face="arial"><font face="arial"><?=$speed?>KB/sec</td>
+   </tr>
+
+   <tr>
+   <td align="right"><font face="arial"><b>Uploaded:</td><td><font face="arial"><?=$upl?></td>
+   <td align="right"><font face="arial"><b>File Size:</td><td><font face="arial"><?=$total?></td>
+   </tr>
+
+   <tr>
+   <td align="right"><font face="arial"><b>Completed:</td><td><font face="arial"><?=$meter?>%</td>
+   </tr>
+
+</td></tr>
+</table>
 
 </BODY>
 </HTML>

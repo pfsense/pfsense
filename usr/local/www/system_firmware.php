@@ -189,7 +189,7 @@ $dir = ini_get('upload_progress_meter.file.filename_template');
 <!--
 generated new UPLOAD_IDENTIFIER = <?=$id?>
 php-config.upload_progress_meter.store_method = <?=$mth?>
-php-config.upload_progress_meter.file.filename_template = <?=$dir?>     
+php-config.upload_progress_meter.file.filename_template = <?=$dir?>
 -->
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">System: Firmware</p>
@@ -248,7 +248,7 @@ print_info_box($sig_warning);
 					<input name="ulfile" type="file" class="formfld">
                     <br><br>
 
-                    <input name="Submit" type="submit" class="formbtn" value="Upgrade firmware" onClick="window.open('progress.php?UPLOAD_IDENTIFIER=<?=$id?>','UploadMeter','width=370,height=115', true); return true; ">
+                    <input name="Submit" type="submit" class="formbtn" value="Upgrade firmware" onClick="window.open('progress.php?UPLOAD_IDENTIFIER=<?=$id?>','UploadMeter','width=400,height=200', true); return true; ">
 				  <?php endif; else: ?>
 				    <strong>You must reboot the system before you can upgrade the firmware.</strong>
 				  <?php endif; ?>

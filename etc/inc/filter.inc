@@ -1389,7 +1389,7 @@ EOD;
 
 			$rg = $config['interfaces'][$rule['interface']]['gateway'];
 			$ri = filter_translate_type_to_real_interface($rule['interface']);
-			if($rg <> "" and $ri <> "") {
+			if($rg <> "" and $ri <> "" and stristr($rule['interface'],"opt" == true)) {
 				$line .= "reply-to (" . $ri . " " . $rg . ") ";
 			}
 

@@ -485,7 +485,7 @@ function convert_config() {
 }
 
 /* save the system configuration */
-function write_config() {
+function write_config($desc="system created") {
 
 	global $config, $g;
 	$lastchange = $config['lastchange'];
@@ -496,6 +496,8 @@ function write_config() {
 
 	if (time() > mktime(0, 0, 0, 9, 1, 2004))	/* make sure the clock settings is plausible */
 		$config['lastchange'] = time();
+
+	$config['lastchangedesc'] = $desc;
 
 	/* generate configuration XML */
 	$xmlconfig = dump_xml_config($config, $g['xml_rootobj']);

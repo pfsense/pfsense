@@ -132,8 +132,11 @@ if (isset($config['system']['version_control'])) {
 			while (($file = readdir($dh)) !== false) {
 				if ($file != "." && $file != "..") {
 					if (ereg("config-([0-9]+).xml", $file, $regs)) {
-						$conf_date=date("Y-m-d H:i:s", $regs[1]);
-						array_push(&$old_versions, $conf_date);
+						$old_ver = array();
+						$old_ver['date']=date("Y-m-d H:i:s", $regs[1]);
+						$old_ver['desc']= "XXX - description not used yet";
+						
+						array_push(&$old_versions, $old_ver);
 					}
                                 }
                         }
@@ -221,8 +224,8 @@ if (isset($config['system']['version_control'])) {
               </tr>
 <?php foreach ($old_versions as $ver): ?>
               <tr>
-		<td width="22%" valign="baseline" class="vncell"><?php echo $ver; ?></td>
-                <td width="56%" valign="baseline" class="vtable"><?php echo "description" ?></td>
+		<td width="22%" valign="baseline" class="vncell"><?php echo $ver['date']; ?></td>
+                <td width="56%" valign="baseline" class="vtable"><?php echo $ver['desc']; ?></td>
                 <td width="22%" valign="baseline" align="right" class="vtable"><input name="ver" type="radio" class="formfld" value="<?php echo $ver; ?>"></td>
               </tr>
 <?php endforeach; ?>

@@ -40,6 +40,12 @@ if (!is_array($config['pfqueueing']['queue'])) {
 $a_queues = &$config['pfqueueing']['queue'];
 $a_pipe = &$config['pfqueueing']['pipe'];
 
+$iflist = array("lan" => "LAN", "wan" => "WAN");
+
+for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+	$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+}
+
 if ($_GET['act'] == "del") {
 	if ($a_queues[$_GET['id']]) {
 		/* check that no rule references this queue */
@@ -93,8 +99,16 @@ if ($_GET['act'] == "del") {
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
   <ul id="tabnav">
-    <li class="tabinact"><a href="firewall_rules.php">Rules</a></li>
-    <li class="tabact">Queues</li>
+<?php foreach ($iflist as $ifent => $ifname):
+	if ($ifent == $if): ?>
+    <li class="tabinact"><?=htmlspecialchars($ifname);?></li>
+<?php else: ?>
+    <li class="tabinact"><a href="firewall_rules.php?if=<?=$ifent;?>"><?=htmlspecialchars($ifname);?></a></li>
+<?php endif; ?>
+<?php endforeach; ?>
+  </ul>
+  <ul id="tabnav">
+    <li class="tabact"><a href="firewall_shaper_queues.php">Queues</a></li>
   </ul>
   </td></tr>
   <tr>

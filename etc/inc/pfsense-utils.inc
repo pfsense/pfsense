@@ -150,6 +150,14 @@ function get_carp_interface_status($carpinterface) {
 }
 
 /*
+ * get_pfsync_interface_status($pfsyncinterface): returns the status of a pfsync
+ */
+function get_pfsync_interface_status($pfsyncinterface) {
+    $status = exec_command("/sbin/ifconfig {$pfsyncinterface} | grep \"pfsync:\" | cut -d\" \" -f5");
+    return $status;
+}
+
+/*
  * find_carp_interface($ip): return the carp interface where an ip is defined
  */
 function find_carp_interface($ip) {

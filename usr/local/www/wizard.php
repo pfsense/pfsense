@@ -331,6 +331,7 @@ if($pkg['step'][$stepid]['javascriptafterformdisplay'] <> "") {
  */
 
 function fixup_string($string) {
+	global $config;
 	// fixup #1: $myurl -> http[s]://ip_address:port/
 	$https = "";
 	$port = "";
@@ -340,7 +341,17 @@ function fixup_string($string) {
 	if($config['system']['webguiproto'] == "https") $https = "s";
 	$myurl = "http" . $https . "://" . getenv("HTTP_HOST") . $urlportport;
 	$newstring = str_replace("\$myurl", $myurl, $string);
-	// fixup #2: fix'er'up here.
+	$string = $newstring;
+	// fixup #2: $wanip
+	$curwanip = get_current_wan_address();
+	$newstring = str_replace("\$wanip", $curwanip, $string);
+	$string = $newstring;
+	// fixup #3: $lanip
+	$lancfg = $config['interfaces']['lan'];
+	$lanip = $lancfg['ipaddr'];
+	$newstring = str_replace("\$lanip", $lanip, $string);
+	$string = $newstring;
+	// fixup #4: fix'r'up here.
 	return $newstring;
 }
 

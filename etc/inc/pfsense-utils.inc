@@ -832,7 +832,7 @@ if (!function_exists('php_check_syntax')){
 	$fout = fopen("/tmp/codetocheck.php","w");
 	fwrite($fout, $code_to_check);
 	$command = 'php -l ' . "/tmp/codetocheck.php";
-	$output = shell_exec($command);
+	$output = system($command);
 	if (strpos($output, 'No syntax errors detected in') !== false){
 	    $errormessage = '';
 	    return(true);
@@ -849,7 +849,7 @@ if (!function_exists('php_check_syntax')){
 if (!function_exists('php_check_filename_syntax')){
    function php_check_filename_syntax($filename, &$errormessage){
        $command = 'php -l ' . $filename;
-       $output = shell_exec($command);
+       $output = system($command);
        if (strpos($output, 'No syntax errors detected in') !== false){
            $errormessage = '';
            return(true);

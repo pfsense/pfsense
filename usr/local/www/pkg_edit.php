@@ -235,10 +235,18 @@ if ($pkg['tabs'] <> "") {
     foreach($pkg['tabs']['tab'] as $tab) {
 	$active = "tabinact";
 	if(isset($tab['active'])) $active = "tabact";
-	$url = "";
+
+	$urltmp = "";
 	$title = $tab['text'];
-	if($tab['url'] <> "") $url = $tab['url'];
-	if($tab['xml'] <> "") $url = "pkg_edit.php?xml=" . $tab['xml'];
+	if($tab['url'] <> "") $urltmp = $tab['url'];
+	if($tab['xml'] <> "") $urltmp = "pkg_edit.php?xml=" . $tab['xml'];
+
+	$toeval = "\$myurl = \"" . getenv("HTTP_HOST") . "\"; \n";
+	eval($toeval);
+	// eval url so that above $myurl item can be processed if need be.
+	$toeval = "\$url = \"" . $urltmp . "\"; \n";
+	eval($toeval);
+
 	if($active == "tabinact") {
 	    echo "<li class=\"{$active}\">";
 	    echo "<a href=\"";

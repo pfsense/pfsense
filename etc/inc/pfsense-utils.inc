@@ -413,6 +413,7 @@ function fetch_latest_pkg_config() {
 	    print_info_box_np("Could not download pkg_config.xml from " . $pkg_config_base_url . ". Check your DNS settings.");
 	    die;
 	}
+    	}
     }
     return;
 }

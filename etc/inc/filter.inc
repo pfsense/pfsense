@@ -1044,7 +1044,7 @@ EOD;
 
 	foreach ($optcfg as $oc) {
 		if (!$oc['bridge'])
-			$ipfrules .= "block in $log quick on $wanif from {$oc['sa']}/{$oc['sn']} to any label \"interface spoopf check\"\n";
+			$ipfrules .= "block in $log quick on $wanif from {$oc['sa']}/{$oc['sn']} to any label \"interface spoof check\"\n";
 	}
 
 	/* allow PPTP traffic if PPTP client is enabled on WAN */

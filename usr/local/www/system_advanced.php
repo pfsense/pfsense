@@ -129,13 +129,13 @@ if ($_POST) {
 		if (!file_exists($d_sysrebootreqd_path)) {
 			config_lock();
 			$retval = filter_configure();
+			if(stristr($retval, "error") <> true)
+			    $savemsg = get_std_save_message($retval);
+			else
+			    $savemsg = $retval;
 			$retval |= interfaces_optional_configure();
 			config_unlock();
 		}
-		if(stristr($retval, "error") <> true)
-		    $savemsg = get_std_save_message($retval);
-		else
-		    $savemsg = $retval;
 
 		/* Setup pf rules since the user may have changed the optimization value */
 		config_lock();

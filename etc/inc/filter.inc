@@ -143,7 +143,11 @@ function filter_configure() {
 
 	if($rules_loading <> 0) {
 		$rules_error = exec_command("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
-		return "There was an error loading the rules.<p><pre>" . $rules_error . "</pre>";
+		$line_error = split("\:", $rules_error);
+		$line_number = $line_error[1];
+		$line_split = split("\n", `cat /tmp/rules.debug`);
+		$line_error = "The line in question reads: " . $line_split($line_number);
+		return "There was an error loading the rules.<p><pre>" . $rules_error . "\n" . $line_error . "</pre>";
 	} else {
 		/* process packager manager custom rules */
 		$files = return_dir_as_array("/usr/local/pkg/pf/");
@@ -156,7 +160,6 @@ function filter_configure() {
 				}
 			}
 		}
-
 		return 0;
 	}
 }

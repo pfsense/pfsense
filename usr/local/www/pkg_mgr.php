@@ -76,7 +76,7 @@ $config_location = "http://www.pfsense.com/packages/pkg_config.xml";
 if($config['package_location'])
 	    $config_location = $config['package_location'];
 
-if(!file_exists("/tmp/pkg_config.xml")) {
+if(!file_exists("{$g['tmp_path']}/pkg_config.xml")) {
             mwexec("cd {$g['tmp_path']} && /usr/bin/fetch \"" . $config_location . "\" >/dev/null 2>&1 ");
             if(!file_exists("{$g['tmp_path']}/pkg_config.xml")) {
                         print_info_box_np("Could not download pkg_config.xml from pfSense.com.  Check your DNS settings.");
@@ -156,5 +156,5 @@ if(!$pkg_config['packages']) {
 </body>
 </html>
 
-<?php system("rm /tmp/pkg*"); ?>
+<?php system("rm {$g['tmp_path']}/pkg*"); ?>
 

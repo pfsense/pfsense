@@ -52,6 +52,9 @@ sysctl net.inet.tcp.sack.enable=0
 
 mount_devfs devfs /dev
 
+echo Syncing master.passwd ...
+/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd
+
 # Create an initial utmp file
 cd /var/run && cp /dev/null utmp && chmod 644 utmp
 

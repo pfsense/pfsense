@@ -153,9 +153,10 @@ if ($_POST) {
             <?php if ($savemsg) print_info_box($savemsg); ?>
 	    <p>One moment please...
 	<?php
-	    //mwexec("cd /tmp && openssl req -nodes -new > cert.csr && openssl rsa -in privkey.pem -out key.pem && openssl x509 -in cert.csr -out cert.pem -req -signkey key.pem -days 365");
 	    mwexec("cd /tmp/ && /usr/bin/openssl req -new -x509 -keyout cakey.pem -out cacert.pem -days 3650 -config /etc/ssl/openssl.cnf -passin pass:test -nodes");
-	    $fd = fopen("/tmp/cacert.pem", "r");
+	    //mwexec("cd /tmp/ && /usr/bin/openssl req -config openssl.cnf -new -nodes > cacert.pem ");
+	    //mwexec("cd /tmp/ && /usr/bin/openssl x509 -in cert.csr -out cert.pem -req -signkey cakey.pem");
+    	    $fd = fopen("/tmp/cacert.pem", "r");
 	    $cacert = fread($fd,8096);
 	    fclose($fd);
 	    $fd = fopen("/tmp/cakey.pem", "r");

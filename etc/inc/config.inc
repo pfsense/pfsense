@@ -556,6 +556,7 @@ function set_networking_interfaces_ports() {
 	global $noreboot;
 	global $config;
 	global $g;
+	global $fp;
 
 	$fp = fopen('php://stdin', 'r');
 
@@ -782,50 +783,51 @@ EOD;
 		return null;
 	}
 
-	function vlan_setup() {
-		global $iflist, $config, $g, $fp;
+}
 
-		if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+function vlan_setup() {
+	global $iflist, $config, $g, $fp;
 
-		echo <<<EOD
+	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+
+	echo <<<EOD
 
 WARNING: all existing VLANs will be cleared if you proceed!
 
 Do you want to proceed [y|n]?
 EOD;
 
-		if (strcasecmp(chop(fgets($fp)), "y") != 0)
-			return;
-		}
+	if (strcasecmp(chop(fgets($fp)), "y") != 0)
+		return;
+	}
 
-		$config['vlans']['vlan'] = array();
-		echo "\n";
+	$config['vlans']['vlan'] = array();
+	echo "\n";
 
-		while (1) {
-			$vlan = array();
+	while (1) {
+		$vlan = array();
 
-			echo "\nEnter the parent interface name for the new VLAN (or nothing if finished): ";
-			$vlan['if'] = chop(fgets($fp));
+		echo "\nEnter the parent interface name for the new VLAN (or nothing if finished): ";
+		$vlan['if'] = chop(fgets($fp));
 
-			if ($vlan['if']) {
-				if (!array_key_exists($vlan['if'], $iflist)) {
-					echo "\nInvalid interface name '{$vlan['if']}'\n";
-					continue;
-				}
-			} else {
-				break;
-			}
-
-			echo "Enter the VLAN tag (1-4094): ";
-			$vlan['tag'] = chop(fgets($fp));
-
-			if (!is_numericint($vlan['tag']) || ($vlan['tag'] < 1) || ($vlan['tag'] > 4094)) {
-				echo "\nInvalid VLAN tag '{$vlan['tag']}'\n";
+		if ($vlan['if']) {
+			if (!array_key_exists($vlan['if'], $iflist)) {
+				echo "\nInvalid interface name '{$vlan['if']}'\n";
 				continue;
 			}
-
-			$config['vlans']['vlan'][] = $vlan;
+		} else {
+			break;
 		}
+
+		echo "Enter the VLAN tag (1-4094): ";
+		$vlan['tag'] = chop(fgets($fp));
+
+		if (!is_numericint($vlan['tag']) || ($vlan['tag'] < 1) || ($vlan['tag'] > 4094)) {
+			echo "\nInvalid VLAN tag '{$vlan['tag']}'\n";
+			continue;
+		}
+
+		$config['vlans']['vlan'][] = $vlan;
 	}
 }
 

@@ -1,4 +1,5 @@
 <?php
+/* $Id$ */
 /*
 	xmlparse.inc
 	functions to parse/dump configuration files in XML format

@@ -1,4 +1,5 @@
 <?php
+/* $Id$ */
 /*
 	config.inc
 	Copyright (C) 2004 Scott Ullrich

@@ -1,4 +1,5 @@
 <?php
+/* $Id$ */
 /*
     functions.inc
     Copyright (C) 2004 Scott Ullrich

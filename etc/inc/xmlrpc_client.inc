@@ -1,6 +1,6 @@
 <?php
-
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+/* $Id$ */
 
 /**
  * PHP implementation of the XML-RPC protocol

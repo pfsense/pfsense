@@ -1,4 +1,5 @@
 <?php
+/* $Id$ */
 /*
 	openvpn.inc
 	

@@ -733,20 +733,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 		    <option value="out">OUT</option>
 		    </select>
                     <br> <span class="vexpl">If you need fine grained control on direction, select an option here.
-		    <p> Queue: <select name="queue">
-		    <?php
-			if($pconfig['queue'] <> "") echo "<option value=\"" . $pconfig['queue'] . "\">" . $pconfig['queue'] . "</option>";
-			echo "<option value=\"\"></option>";
-			if (is_array($config['pfqueueing']['queue'])) {
-				foreach ($config['pfqueueing']['queue'] as $queue) {
-					if(is_subqueue($queue['name']) == 0) {
-						echo "<option value=\"" . $queue['name'] . "\">" . $queue['name'] . "</option>";
-					}
-				}
-			}
-		    ?>
-		    </select><br><span class="vexpl">To enable traffic shaping on this rule, select a queue above.</span>
-		    <br><span class="vexpl"><input type="checkbox" name="autocreatequeue"> Automatically create a new queue for this rule.</span>
+		    <p><span class="vexpl"><input type="checkbox" name="autocreatequeue"> Automatically create a new queue for this rule.</span>
 		    </td>
                 </tr>
 

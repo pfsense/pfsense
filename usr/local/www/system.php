@@ -199,7 +199,7 @@ if ($_POST) {
                       <input name="dnsallowoverride" type="checkbox" id="dnsallowoverride" value="yes" <?php if ($pconfig['dnsallowoverride']) echo "checked"; ?>>
                       <strong>Allow DNS server list to be overridden by DHCP/PPP
                       on WAN</strong><br>
-                      If this option is set, m0n0wall will use DNS servers assigned
+                      If this option is set, pfSense will use DNS servers assigned
                       by a DHCP/PPP server on WAN for its own purposes (including
                       the DNS forwarder). They will not be assigned to DHCP and
                       PPTP VPN clients, though.</span></p></td>

@@ -3,20 +3,20 @@
 /*
 	services_proxyarp.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -39,7 +39,7 @@ $a_proxyarp = &$config['proxyarp']['proxyarpnet'];
 
 if ($_POST) {
 	$pconfig = $_POST;
-	
+
 	$retval = 0;
 	if (!file_exists($d_sysrebootreqd_path)) {
 		config_lock();
@@ -120,14 +120,14 @@ if ($_GET['act'] == "del") {
                      &nbsp;<a href="services_proxyarp.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this network?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
-                <tr> 
+                <tr>
                   <td class="list" colspan="3"></td>
                   <td class="list"> <a href="services_proxyarp_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
 				</tr>
               </table>
             </form>
             <p class="vexpl"><span class="red"><strong>Note:<br>
-                      </strong></span>Proxy ARP can be used if you need m0n0wall to send ARP
+                      </strong></span>Proxy ARP can be used if you need pfSense to send ARP
 					  replies on an interface for other IP addresses than its own (e.g. for 1:1, advanced outbound or server NAT). It is not
 					  necessary on the WAN interface if you have a subnet routed to you or if you use PPPoE/PPTP, and it only works on the WAN interface if it's configured with a static IP address or DHCP.</p>
             <?php include("fend.inc"); ?>

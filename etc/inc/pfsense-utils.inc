@@ -574,7 +574,7 @@ function resync_all_package_configs_bootup($show_message) {
        	    print "\n\n";
 	}
 	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
-	if($pkg_config['nosync'] != "") continue;
+	if(isset($pkg_config['nosync'])) continue;
 	if($show_message == true) print " " . $package['name'];
         if($pkg_config['custom_php_command_before_form'] <> "")
             eval($pkg_config['custom_php_command_before_form']);
@@ -676,7 +676,7 @@ ile']);
         $pkg_xml = parse_xml_config_pkg("/usr/local/pkg/" . $package_xml['configurationfile'], "packagegui");
         if($pkg_xml['additional_files_needed'] != "") {
                 foreach($pkg_xml['additional_files_needed'] as $item) {
-			if ($item['nosync'] != "") continue;
+			if (isset($item['nosync'])) continue;
                         $depend_file = substr(strrchr($item['item']['0'], '/'),1); // Strip URLs down to filenames.
                         $depend_name = substr(substr($depend_file,0,strpos($depend_file,".")+1),0,-1); // Strip filename down to dependency name.
                         print $depend_name;

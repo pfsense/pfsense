@@ -791,7 +791,20 @@ EOD;
 		}
 	}
 
+	if (run_command_return_string("ls /var/db/pkg/ | grep squid") <> "") {
+		$natrules .= "rdr on " . $lanif . " inet proto tcp from any to any port www -> 127.0.0.1 port 3128\n";
+	}
+
 	return $natrules;
+}
+
+function run_command_return_string($cmd) {
+	$fd = popen($cmd, "r");
+	while(!feof($fd)) {
+		$tmp .= fread($fd,49);
+	}
+	fclose($fd);
+	return $tmp;
 }
 
 function filter_rules_generate() {
@@ -857,10 +870,18 @@ function filter_rules_generate() {
 	# BEGIN OF firewall rules
 	$ipfrules="";
 
+	/* XXX: create a plugin rule modification system */
+
 	/* if carp is defined, lets pass the traffic */
 	if(is_carp_defined() == 1) {
 		$ipfrules .= "pass on " . $lanif . " proto carp keep state\n";
 		$ipfrules .= "pass on " . $wanif . " proto carp keep state\n";
+	}
+
+	/* if squid is installed, lets install its rule */
+	if (run_command_return_string("ls /var/db/pkg/ | grep squid") <> "") {
+		$ipfrules .= "pass in on " . $lanif . " inet proto tcp from any to 127.0.0.1 port 3128 keep state\n";
+		$ipfrules .= "pass out on " . $wanif . "  inet proto tcp from any to any port www keep state\n";
 	}
 
 	$ipfrules .= <<<EOD

@@ -146,7 +146,7 @@ function filter_configure() {
 		$line_error = split("\:", $rules_error);
 		$line_number = $line_error[1];
 		$line_split = split("\n", `cat /tmp/rules.debug`);
-		$line_error = "The line in question reads: " . $line_split($line_number);
+		$line_error = "The line in question reads: " . $line_split[$line_number];
 		return "There was an error loading the rules.<p><pre>" . $rules_error . "\n" . $line_error . "</pre>";
 	} else {
 		/* process packager manager custom rules */
@@ -1397,7 +1397,7 @@ EOD;
                                 /* OS signatures */
                                 if (($rule['protocol'] == "tcp") && ($rule['os'] <> ""))
                                         $line .= "os {$rule['os']} ";
-			
+
 			}
 
 			/* destination address */

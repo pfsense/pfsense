@@ -77,6 +77,12 @@ function return_filename_as_array($filename) {
     if(!file_exists($filename)) return $file;
     $text = return_filename_as_string($filename);
     $text_split = split("\n", $text);
+    $counter = 0;
+    foreach($text_split as $line) {
+	if(strpos($line, "#") == 0)
+	    unset($text_split($counter));
+	    $counter++;
+    }
     return $text_split;
 }
 

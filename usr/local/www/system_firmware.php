@@ -30,74 +30,13 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$d_isfwfile = 1; require("guiconfig.inc");
-
-/* checks with pfSense to see if a newer firmware version is available;
-   returns any HTML message it gets from the server */
-function check_firmware_version() {
-	global $g;
-	$versioncheck_base_url = $g['versioncheckbaseurl'];
-	$versioncheck_path = $g['versioncheckpath'];
-	if(isset($config['system']['alt_firmware_url']['enabled']) and isset($config['system']['alt_firmware_url']['versioncheck_base_url'])) {
-		$versioncheck_base_url = $config['system']['alt_firmware_url']['versioncheck_base_url'];
-        	$versioncheck_path = '/checkversion.php';
-	}
-	$post = "platform=" . rawurlencode($g['platform']) .
-		"&version=" . rawurlencode(trim(file_get_contents("/etc/version")));
-	$rfd = @fsockopen($versioncheck_base_url, 80, $errno, $errstr, 3);
-	if ($rfd) {
-		$hdr = "POST {$versioncheck_path} HTTP/1.0\r\n";
-		$hdr .= "Content-Type: application/x-www-form-urlencoded\r\n";
-		$hdr .= "User-Agent: pfSense-webConfigurator/1.0\r\n";
-		$hdr .= "Host: www.pfSense.com\r\n";
-		$hdr .= "Content-Length: " . strlen($post) . "\r\n\r\n";
-
-		fwrite($rfd, $hdr);
-		fwrite($rfd, $post);
-
-		$inhdr = true;
-		$resp = "";
-		while (!feof($rfd)) {
-			$line = fgets($rfd);
-			if ($inhdr) {
-				if (trim($line) == "")
-					$inhdr = false;
-			} else {
-				$resp .= $line;
-			}
-		}
-
-		fclose($rfd);
-
-		if($_GET['autoupgrade'] <> "")
-		    return;
-
-		return $resp;
-	}
-
-	return null;
-}
+$d_isfwfile = 1;
+require("guiconfig.inc");
 
 /* Handle auto upgrade */
 if($_POST) {
 	if (stristr($_POST['autoupgrade'], "Auto")) {
-		$http_auth_username = "";
-		$http_auth_password = "";
-		if($config['system']['proxy_auth_username'])
-			$http_auth_username = $config['system']['proxy_auth_username'];
-		if($config['system']['proxy_auth_password'])
-			$http_auth_password = $config['system']['proxy_auth_password'];
-
-		/* custom firmware option */
-		if (isset($config['system']['alt_firmware_url']['enabled'])) {
-			$firmwareurl=$config['system']['alt_firmware_url']['firmware_base_url'];
-			$firmwarename=$config['system']['alt_firmware_url']['firmware_filename'];
-		} else {
-			$firmwareurl=$g['firmwarebaseurl'];
-			$firmwarename=$g['firmwarefilename'];
-		}
-
-		exec_rc_script_async("/etc/rc.firmware_auto {$firmwareurl} {$firmwarename} {$http_auth_username} {$http_auth_password}");
+		auto_upgrade();
 		$savemsg = "pfSense is now auto upgrading.  The firewall will automatically reboot if it succeeds.";
 	}
 }

@@ -2,8 +2,8 @@
 <?php
 /*
 	graph.php
-	part of m0n0wall (http://m0n0.ch/wall)
-
+	Copyright (C) 2004 Scott Ullrich
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2004 T. Lechat <dev@lechat.org> and Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 

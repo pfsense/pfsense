@@ -1,7 +1,7 @@
 
 /* ---- Variables ---- */
 var actb_timeOut = -1; // Autocomplete Timeout in ms (-1: autocomplete never time out)
-var actb_lim = 4;    // Number of elements autocomplete can show (-1: no limit)
+var actb_lim = 1;    // Number of elements autocomplete can show (-1: no limit)
 var actb_firstText = false; // should the auto complete be limited to the beginning of keyword?
 /* ---- Variables ---- */
 
@@ -16,7 +16,7 @@ var actb_hStyle = 'text-decoration:underline;font-weight="bold"';
 
 /* ---- Constants ---- */
 var actb_keywords = new Array();
-var actb_display = false;
+var actb_display = true;
 var actb_pos = 0;
 var actb_total = 0;
 var actb_curr = null;
@@ -25,18 +25,19 @@ var actb_ranged = 0;
 var actb_bool = new Array();
 var actb_pre = 0;
 var actb_toid;
-var actb_tomake = false;
+var actb_tomake = true;
 /* ---- Constants ---- */
 
 function actb_parse(n){
     var t = escape(actb_curr.value);
     var tobuild = '';
     var i;
+    var re = "";
 
     if (actb_firstText){
-        var re = new RegExp("^" + t, "i");
+        re = new RegExp("^" + t, "i");
     }else{
-        var re = new RegExp(t, "i");
+        re = new RegExp(t, "i");
     }
     var p = n.search(re);
 
@@ -54,20 +55,32 @@ function actb_parse(n){
     return tobuild;
 }
 function actb_generate(){
+    if (document.getElementById('tat_frame')) document.body.removeChild(document.getElementById('tat_frame'));
     if (document.getElementById('tat_table')) document.body.removeChild(document.getElementById('tat_table'));
+    frame = document.createElement('iframe');
     a = document.createElement('table');
+    frame.cellSpacing='1px';
+    frame.cellPadding='2px';
+    frame.style.zIndex = 3;
+    frame.style.position='absolute';
+    frame.style.top = eval(curTop() + actb_curr.offsetHeight) + "px";
+    frame.style.left = curLeft() + "px";
+    frame.style.backgroundColor=actb_bgColor;
+    frame.id = 'tat_frame';
     a.cellSpacing='1px';
     a.cellPadding='2px';
+    a.style.zIndex = 5;
     a.style.position='absolute';
     a.style.top = eval(curTop() + actb_curr.offsetHeight) + "px";
     a.style.left = curLeft() + "px";
     a.style.backgroundColor=actb_bgColor;
     a.id = 'tat_table';
+    document.body.appendChild(frame);
     document.body.appendChild(a);
     var i;
     var first = true;
     var j = 1;
-
+    var height = 0;
     var counter = 0;
     for (i=0;i<actb_keywords.length;i++){
         if (actb_bool[i]){
@@ -88,9 +101,12 @@ function actb_generate(){
             c = r.insertCell(-1);
             c.style.color = actb_textColor;
             c.style.fontFamily = actb_fFamily;
+            a.style.zIndex = 5;
             c.style.fontSize = actb_fSize;
             c.innerHTML = actb_parse(actb_keywords[i]);
             c.id = 'tat_td'+(j);
+            height = height + c.offsetHeight;
+            width = c.offsetWidth;
             j++;
         }
         if (j - 1 == actb_lim && j < actb_total){
@@ -98,6 +114,7 @@ function actb_generate(){
             r.style.backgroundColor = actb_bgColor;
             c = r.insertCell(-1);
             c.style.color = actb_textColor;
+            a.style.zIndex = 5;
             c.style.fontFamily = 'arial narrow';
             c.style.fontSize = actb_fSize;
             c.align='center';
@@ -109,6 +126,8 @@ function actb_generate(){
     actb_ranged = j-1;
     actb_display = true;
     if (actb_pos <= 0) actb_pos = 1;
+    frame.width=width;
+    frame.height=height;
 }
 function curTop(){
     actb_toreturn = 0;
@@ -130,15 +149,30 @@ function curLeft(){
 }
 function actb_remake(){
     document.body.removeChild(document.getElementById('tat_table'));
+    document.body.removeChild(document.getElementById('tat_frame'));
+    frame = document.createElement('iframe');
+    frame.cellSpacing='2px';
+    frame.cellPadding='3px';
+    frame.style.position='absolute';
+    frame.style.zIndex = 5;
+    frame.style.top = eval(curTop() + actb_curr.offsetHeight) + "px";
+    frame.style.left = curLeft() + "px";
+    frame.style.backgroundColor=actb_bgColor;
+    frame.id = 'tat_frame';
+
     a = document.createElement('table');
     a.cellSpacing='2px';
     a.cellPadding='3px';
     a.style.position='absolute';
+    a.style.zIndex = 5;
     a.style.top = eval(curTop() + actb_curr.offsetHeight) + "px";
     a.style.left = curLeft() + "px";
     a.style.backgroundColor=actb_bgColor;
     a.id = 'tat_table';
+    document.body.appendChild(frame);
     document.body.appendChild(a);
+    var width = 0;
+    var height = 0;
     var i;
     var first = true;
     var j = 1;
@@ -148,6 +182,7 @@ function actb_remake(){
         c = r.insertCell(-1);
         c.style.color = actb_textColor;
         c.style.fontFamily = 'arial narrow';
+        a.style.zIndex = 5;
         c.style.fontSize = actb_fSize;
         c.align='center';
         c.innerHTML = '/\\';
@@ -161,6 +196,7 @@ function actb_remake(){
                 c = r.insertCell(-1);
                 c.style.color = actb_textColor;
                 c.style.fontFamily = actb_fFamily;
+                a.style.zIndex = 5;
                 c.style.fontSize = actb_fSize;
                 c.innerHTML = actb_parse(actb_keywords[i]);
                 c.id = 'tat_td'+(j);
@@ -180,7 +216,12 @@ function actb_remake(){
         c.style.fontSize = actb_fSize;
         c.align='center';
         c.innerHTML = '\\/';
+        height = height + c.height;
+        width = c.width;
     }
+    alert(height);
+    frame.width=width
+    frame.height=height;
 }
 function actb_goup(){
     if (!actb_display) return;
@@ -230,10 +271,11 @@ function actb_penter(){
 }
 function actb_removedisp(){
     actb_display = 0;
+    if (document.getElementById('tat_frame')) document.body.removeChild(document.getElementById('tat_frame'));
     if (document.getElementById('tat_table')) document.body.removeChild(document.getElementById('tat_table'));
     if (actb_toid) clearTimeout(actb_toid);
 }
-function actb_checkkey(evt){
+function actb_checkkey(evt, sndr){
     a = evt.keyCode;
     if (a == 38){ // up key
         actb_goup();
@@ -250,7 +292,7 @@ function actb_tocomplete(sndr,evt,arr){
     if (actb_display){
         var word = 0;
         var c = 0;
-        for (var i=0;i<=actb_keywords.length;i++){
+        for (i=0;i<=actb_keywords.length;i++){
             if (actb_bool[i]) c++;
             if (c == actb_pos){
                 word = i;
@@ -260,7 +302,7 @@ function actb_tocomplete(sndr,evt,arr){
         actb_pre = word;//actb_pos;
     }else{ actb_pre = -1};
 
-    if (!sndr) var sndr = evt.srcElement;
+    if (!sndr) sndr = evt.srcElement;
     actb_curr = sndr;
 
     if (sndr.value == ''){
@@ -268,10 +310,11 @@ function actb_tocomplete(sndr,evt,arr){
         return;
     }
     var t = sndr.value;
+    var re = "";
     if (actb_firstText){
-        var re = new RegExp("^" + t, "i");
+        re = new RegExp("^" + t, "i");
     }else{
-        var re = new RegExp(t, "i");
+        re = new RegExp(t, "i");
     }
 
     actb_total = 0;

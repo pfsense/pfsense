@@ -67,9 +67,11 @@ function filter_configure() {
 	/* generate altq queues */
 	$altq_queues = filter_generate_altq_queues();
 
-	mwexec("/sbin/pfctl -e");
-	mwexec("/sbin/pfctl -F nat");
-	mwexec("/sbin/pfctl -F rules");
+	if(!isset($config['system']['disablefilter']) {
+		mwexec("/sbin/pfctl -e");
+		mwexec("/sbin/pfctl -F nat");
+		mwexec("/sbin/pfctl -F rules");
+	}
 
 	/* get our wan interface? */
 	$wanif = get_real_wan_interface();

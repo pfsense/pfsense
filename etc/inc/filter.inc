@@ -1448,6 +1448,7 @@ EOD;
 					if($rule['statetype'] == "modulate state" or $rule['statetype'] == "synproxy state") {
 						if($rule['protocol'] == "tcp")
 							$line .= $rule['statetype'] . " ";
+					} elseif ($rule['statetype'] == "none") {
 					} else {
 						if($rule['statetype'] <> "")
 							$line .= $rule['statetype'] . " ";

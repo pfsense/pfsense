@@ -41,7 +41,7 @@ if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) {
-	exec("/usr/sbin/clog -i -s 262144 {$filter_logfile}");
+	exec("/usr/sbin/clog -i -s 262144 /var/log/filter.log");
 }
 
 /* format filter logs */
@@ -61,7 +61,7 @@ function conv_clog($logfile, $tail) {
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
-	exec("/usr/sbin/clog {$filter_logfile} | tail {$sor} -n {$tail}", $logarr);
+	exec("/usr/sbin/clog /var/log/filter.log | tail {$sor} -n {$tail}", $logarr);
 
 	$filterlog = array();
 
@@ -89,7 +89,6 @@ function conv_clog($logfile, $tail) {
 		$int = ereg_replace(":", "", $flent['interface']);
 		$int = ereg_replace(" ", "", $int);
 		$flent['interface'] = $int . " - " . convert_real_interface_to_friendly_interface_name($int);
-
 
 		if($second_split[11] == "udp" or $second_split[11] == "tcp" or $second_split[11] == "icmp" or $second_split[11] == "igmp") $flent['proto'] = $second_split[11];
 

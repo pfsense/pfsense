@@ -646,7 +646,6 @@ function filter_nat_rules_generate_if($if, $src, $dst, $target) {
 		$tgt = "0/32";
 
 	$natrule = <<<EOD
-
 nat on $if from $src to any -> ($if)
 
 EOD;
@@ -701,9 +700,6 @@ function filter_nat_rules_generate() {
 	$natrules = "";
 
 	$natrules .= "nat-anchor \"natrules/*\"\n";
-
-	if(!isset($config['system']['disableftpproxy']))
-		$natrules .= "rdr on " . $lanif . " proto tcp from any to any port 21 -> 127.0.0.1 port 8021\n";
 
 	/* any 1:1 mappings? */
 	if (is_array($config['nat']['onetoone'])) {
@@ -780,6 +776,10 @@ function filter_nat_rules_generate() {
 			}
 		}
 	}
+
+	if(!isset($config['system']['disableftpproxy']))
+		$natrules .= "rdr on " . $lanif . " proto tcp from any to any port 21 -> 127.0.0.1 port 8021\n";
+
 
 	/* DIAG: add ipv6 NAT, if requested */
 	if (isset($config['diag']['ipv6nat']['enable'])) {

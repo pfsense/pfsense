@@ -1444,17 +1444,17 @@ EOD;
 	if(is_array($config['ipsec']['tunnel'])) {
 		foreach ($config['ipsec']['tunnel'] as $tunnel) {
 			$remote_gateway = $tunnel['remote-gateway'];
-			$ipfrules .= "pass quick on " . $wanif . " proto udp from " . $wan_ip . " to " . $remote_gateway . " port = 500 keep state label \"". $tunnel['descr'] ." udp\"\n";
+			$ipfrules .= "pass quick on " . $wanif . " proto udp from " . $wan_ip . " to " . $remote_gateway . " port = 500 keep state label \"IPSEC: ". $tunnel['descr'] ." udp\"\n";
 			$ipfrules .= "pass quick on " . $wanif . " proto udp from " . $remote_gateway . " to " . $wan_ip  . " port = 500 keep state label \"". $tunnel['descr'] ." udp\"\n";
 
-			$ipfrules .= "pass quick on " . $wanif . " proto esp from " . $wan_ip . " to " . $remote_gateway . " keep state label \"". $tunnel['descr'] ." esp proto\"\n";
-			$ipfrules .= "pass quick on " . $wanif . " proto esp from " . $remote_gateway . " to " . $wan_ip  . " keep state label \"". $tunnel['descr'] ." esp proto\"\n";
+			$ipfrules .= "pass quick on " . $wanif . " proto esp from " . $wan_ip . " to " . $remote_gateway . " keep state label \"IPSEC: ". $tunnel['descr'] ." esp proto\"\n";
+			$ipfrules .= "pass quick on " . $wanif . " proto esp from " . $remote_gateway . " to " . $wan_ip  . " keep state label \"IPSEC: ". $tunnel['descr'] ." esp proto\"\n";
 
-			$ipfrules .= "pass quick on " . $wanif . " proto ah from " . $wan_ip . " to " . $remote_gateway . " keep state label \"". $tunnel['descr'] ." ah proto\"\n";
-			$ipfrules .= "pass quick on " . $wanif . " proto ah from " . $remote_gateway . " to " . $wan_ip  . " keep state label \"". $tunnel['descr'] ." ah proto\"\n";
+			$ipfrules .= "pass quick on " . $wanif . " proto ah from " . $wan_ip . " to " . $remote_gateway . " keep state label \"IPSEC: ". $tunnel['descr'] ." ah proto\"\n";
+			$ipfrules .= "pass quick on " . $wanif . " proto ah from " . $remote_gateway . " to " . $wan_ip  . " keep state label \"IPSEC: ". $tunnel['descr'] ." ah proto\"\n";
 
-			$ipfrules .= "pass quick on " . $lanif . " from " . $tunnel['remote-subnet'] . " to " . $internal_subnet  . " keep state\n";
-			$ipfrules .= "pass quick on " . $lanif . " from " . $internal_subnet . " to " . $tunnel['remote-subnet'] . " keep state\n";
+			$ipfrules .= "pass quick on " . $lanif . " from " . $tunnel['remote-subnet'] . " to " . $internal_subnet  . " keep state label \"IPSEC:  " . $tunnel['descr'] ."\"\n";
+			$ipfrules .= "pass quick on " . $lanif . " from " . $internal_subnet . " to " . $tunnel['remote-subnet'] . " keep state label \"IPSEC:  " . $tunnel['descr'] ."\"\n";
 		}
 	}
 

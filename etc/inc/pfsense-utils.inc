@@ -507,7 +507,7 @@ function execute_command_return_output($command) {
 function convert_friendly_interface_to_real_interface_name($interface) {
     global $config;
     if($interface == "lan") return $config['interfaces']['lan']['if'];
-    if($interface == "wan") return $config['interfaces']['lan']['if'];
+    if($interface == "wan") return $config['interfaces']['wan']['if'];
     foreach($config['interfaces'] as $int) {
 	if($int['descr'] == $interface)
 	    return $int['if'];
@@ -634,7 +634,7 @@ function gather_altq_queue_stats($dont_return_root_queues) {
 }
 
 /*
- * reverse_strrchr($haystack, $needle):  Return everything in $haystack up to the *last* instance of $needle. 
+ * reverse_strrchr($haystack, $needle):  Return everything in $haystack up to the *last* instance of $needle.
  *					 Useful for finding paths and stripping file extensions.
  */
 function reverse_strrchr($haystack, $needle) {

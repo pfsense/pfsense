@@ -62,11 +62,11 @@ function return_dir_as_array($dir) {
  */
 function enable_hardware_offloading($interface) {
     $supported_ints = array('fxp');
-    foreach($support_ints as $int) {
+    foreach($supported_ints as $int) {
 	if(stristr($interface,$int) != FALSE) {
 	    mwexec("/sbin/ifconfig $interfface link0");
 	}
-    }   
+    }
 }
 
 /*

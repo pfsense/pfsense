@@ -144,7 +144,7 @@ function interfaces_lan_configure() {
 	}
 
 	enable_hardware_offloading($lancfg['if']);
-	
+
 	if ($g['booting'])
 		echo "done\n";
 
@@ -254,7 +254,7 @@ function interfaces_optional_configure_if($opti) {
 			" delete down");
 	}
 
-	enable_hardware_offloading(escapeshellarg($optcfg['if']);
+	enable_hardware_offloading(escapeshellarg($optcfg['if']));
 
 	if ($g['booting'])
 		echo "done\n";

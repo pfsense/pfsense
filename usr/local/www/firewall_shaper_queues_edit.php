@@ -161,30 +161,47 @@ if ($_POST) {
 		<br> <span class="vexpl">Select which type of queueing you would like to use
 		</span></td>
 	    </tr>
-
-
-
-
 	    <tr>
 	      <td width="22%" valign="top" class="vncell">Scheduler options</td>
 	      <td width="78%" class="vtable">
 	      <?php
 		$red = strpos($pconfig['options'], "red");
 		$ecn = strpos($pconfig['options'], "ecn");
+		$upperlimit = strpos($pconfig['options'], "upperlimit");
+		$realtime = strpos($pconfig['options'], "realtime");
+		$parentqueue = strpos($pconfig['options'], "parentqueue");
+		$linkshare = strpos($pconfig['options'], "linkshare");
 		$default = strpos($pconfig['options'], "default");
 	      ?>
+	        <input type=checkbox name="default" <?php if($default) echo " CHECKED";?> > Default (Classed based queueing only)<br>
+		<input type=checkbox name="parentqueue" <?php if($parentqueue) echo " CHECKED";?> > This is a parent queue of HFSC/CBQ<br>
 		<input type=checkbox name="red" <?php if($red) echo " CHECKED";?> > Random Early Detection<br>
 		<input type=checkbox name="ecn" <?php if($ecn) echo " CHECKED";?> > Explicit Congestion Notification<br>
-		<input type=checkbox name="default" <?php if($default) echo " CHECKED";?> > Default (Classed based queueing only)<br>
+		<input type=checkbox name="upperlimit" <?php if($upperlimit) echo " CHECKED";?> > Upperlimit: <input size="3" name="upperlimit1"> <input size="3" name="upperlimit2"> <input size="3" name="upperlimit3"> <br>
+		<input type=checkbox name="realtime" <?php if($realtime) echo " CHECKED";?> > Real time: <input size="3" name="realtime1"> <input size="3" name="realtime2"> <input size="3" name="realtime3"><br>
+		<input type=checkbox name="linkshare" <?php if($linkshare) echo " CHECKED";?> > Link share: <input size="3" name="linkshare1"> <input size="3" name="linkshare2"> <input size="3" name="linkshare3"><br>				
 		<br> <span class="vexpl">Select options for this queue
 		</span></td>
 	    </tr>
 
+	    <tr>
+		<td width="22%" valign="top" class="vncell">Parent queue (CBQ or HFSC only):</td>
+		<td width="78%" class="vtable">
+		   <select name="childqueue">
+			<?php
+			 if (is_array($config['pfqueueing']['queue'])) {
+			 	foreach ($config['pfqueueing']['queue'] as $queue) {
+			 		if(is_subqueue($queue['name']) == 0)
+			 			echo "<option value=\"" . $queue['name'] . "\">" . $queue['name'] . "</option>";
+			 	}
+			 }
+			?>
+		   </select>
+		</td>
+	    </tr>
 
-		<!-- XXX: add javascript to show/hide queueing options such as low bandwidth (hfsc, cbq) -->
+	<!-- XXX: add javascript to show/hide queueing options such as low bandwidth (hfsc, cbq) -->
 
-
-		
 	    <tr>
 	      <td width="22%" valign="top">&nbsp;</td>
 	      <td width="78%"> <input name="Submit" type="submit" class="formbtn" value="Save">

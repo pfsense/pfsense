@@ -829,35 +829,44 @@ Content-Length: $content_length
  */
 if (!function_exists('php_check_syntax')){
    function php_check_syntax($code_to_check, &$errormessage){
-	$fout = fopen("/tmp/codetocheck.php","w");
-	fwrite($fout, $code_to_check);
-	$command = 'php -l ' . "/tmp/codetocheck.php";
-	$output = system($command);
-	if (strpos($output, 'No syntax errors detected in') !== false){
-	    $errormessage = '';
-	    return(true);
-	} else {
-	    $errormessage = $output;
-	    return(false);
-	}
+        $fout = fopen("/tmp/codetocheck.php","w");
+        $code = $_POST['content'];
+        $code = str_replace("<?php", "", $code);
+        $code = str_replace("?>", "", $code);
+        fwrite($fout, "<?php\n\n");
+        fwrite($fout, $code);
+        fwrite($fout, "\n\n?>\n");
+        fclose($fout);
+        $command = "/usr/local/bin/php -l /tmp/codetocheck.php";
+        $output = exec_command($command);
+        if (stristr($output, "Errors parsing") == false) {
+            echo "false\n";
+            $errormessage = '';
+            return(false);
+        } else {
+            $errormessage = $output;
+            return(true);
+        }
     }
 }
 
 /*
  *  php_check_filename_syntax($filename, $errormessage): checks the file $filename for errors
  */
-if (!function_exists('php_check_filename_syntax')){
-   function php_check_filename_syntax($filename, &$errormessage){
-       $command = 'php -l ' . $filename;
-       $output = system($command);
-       if (strpos($output, 'No syntax errors detected in') !== false){
-           $errormessage = '';
-           return(true);
-       } else {
-           $errormessage = $output;
-           return(false);
-       }
-   }
+if (!function_exists('php_check_syntax')){
+   function php_check_syntax($code_to_check, &$errormessage){
+        $command = "/usr/local/bin/php -l " . $code_to_check;
+        $output = exec_command($command);
+        if (stristr($output, "Errors parsing") == false) {
+            echo "false\n";
+            $errormessage = '';
+            return(false);
+        } else {
+            $errormessage = $output;
+            return(true);
+        }
+    }
 }
+
 
 ?>

@@ -215,25 +215,29 @@ echo "<input style='border: 0px solid white;' size='30' name='swapusagemeter' id
 </html>
 <?php
 
-sleep(1);
-$cpuTicks = explode(" ", `/sbin/sysctl -n kern.cp_time`);
-sleep(2);
-$cpuTicks2 = explode(" ", `/sbin/sysctl -n kern.cp_time`);
+While(!Connection_Aborted()) {
 
-$diff = array();
-$diff['user'] = ($cpuTicks2[0] - $cpuTicks[0])+1;
-$diff['nice'] = ($cpuTicks2[1] - $cpuTicks[1])+1;
-$diff['sys'] = ($cpuTicks2[2] - $cpuTicks[2])+1;
-$diff['intr'] = ($cpuTicks2[3] - $cpuTicks[3])+1;
-$diff['idle'] = ($cpuTicks2[4] - $cpuTicks[4])+1;
-$totalDiff = $diff['user'] + $diff['nice'] + $diff['sys'] + $diff['intr'] + $diff['idle'];
-$cpuUsage = round(100 * (1 - $diff['idle'] / $totalDiff), 0);
+    sleep(1);
+    $cpuTicks = explode(" ", `/sbin/sysctl -n kern.cp_time`);
+    sleep(2);
+    $cpuTicks2 = explode(" ", `/sbin/sysctl -n kern.cp_time`);
 
-echo "<script language='javascript'>\n";
-echo "document.cpuwidtha.style.width='" . $cpuUsage . "';\n";
-echo "document.cpuwidthb.style.width='" . (100 - $cpuUsage) . "';\n";
-echo "document.forms[0].cpumeter.value = '" . $cpuUsage . "%';\n";
-echo "</script>\n";
+    $diff = array();
+    $diff['user'] = ($cpuTicks2[0] - $cpuTicks[0])+1;
+    $diff['nice'] = ($cpuTicks2[1] - $cpuTicks[1])+1;
+    $diff['sys'] = ($cpuTicks2[2] - $cpuTicks[2])+1;
+    $diff['intr'] = ($cpuTicks2[3] - $cpuTicks[3])+1;
+    $diff['idle'] = ($cpuTicks2[4] - $cpuTicks[4])+1;
+    $totalDiff = $diff['user'] + $diff['nice'] + $diff['sys'] + $diff['intr'] + $diff['idle'];
+    $cpuUsage = round(100 * (1 - $diff['idle'] / $totalDiff), 0);
+
+    echo "<script language='javascript'>\n";
+    echo "document.cpuwidtha.style.width='" . $cpuUsage . "';\n";
+    echo "document.cpuwidthb.style.width='" . (100 - $cpuUsage) . "';\n";
+    echo "document.forms[0].cpumeter.value = '" . $cpuUsage . "%';\n";
+    echo "</script>\n";
+
+}
 
 ?>
 

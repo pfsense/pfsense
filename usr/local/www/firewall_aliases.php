@@ -128,7 +128,7 @@ if ($_GET['act'] == "del") {
 </tr>
 <tr>
   <td class="tabcont" colspan="3">
-   <p><span class="vexpl"><span class="red"><strong>Note:<br></strong></span>Aliases act as placeholders for real Hosts, Networks or Ports. They can be used to minimize the number of changes that have to be made if a host, network or port changes. You can enter the name of an alias instead of the host, network or port in all fields that have a red background. The alias will be resolved to the alias settings according to the list below. If an alias cannot be resolved (e.g. because you deleted it), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped.</span></p>
+   <p><span class="vexpl"><span class="red"><strong>Note:<br></strong></span>Aliases act as placeholders for real Hosts, Networks or Ports. They can be used to minimize the number of changes that have to be made if a host, network or port changes. You can enter the name of an alias instead of the host, network or port in all fields that have a red background. The alias will be resolved according to the list above. If an alias cannot be resolved (e.g. because you deleted it), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped.</span></p>
   </td>
 </tr>
 </table>

@@ -579,15 +579,16 @@ function resync_all_package_configs_bootup($show_message) {
         if($pkg_config['custom_php_resync_config_command'] <> "")
             eval($pkg_config['custom_php_resync_config_command']);
 	$depends = get_pkg_depends($package['name']); // Call dependency handler and do a little more error checking.
-	foreach($depends as $item) {
-                        $item_config = parse_xml_config_pkg("/usr/local/pkg/" . $item, "packagegui");
-                        if($item_config['custom_php_command_before_form'] <> "")
-                            eval($item_config['custom_php_command_before_form']);
-                        if($item_config['custom_php_resync_config_command'] <> "")
-                            eval($item_config['custom_php_resync_config_command']);
-                        if($show_message == true) print " " . $item_config['name'];
-                }
-        }
+        if(is_array($depends))
+	    foreach($depends as $item) {
+			    $item_config = parse_xml_config_pkg("/usr/local/pkg/" . $item, "packagegui");
+			    if($item_config['custom_php_command_before_form'] <> "")
+				eval($item_config['custom_php_command_before_form']);
+			    if($item_config['custom_php_resync_config_command'] <> "")
+				eval($item_config['custom_php_resync_config_command']);
+			    if($show_message == true) print " " . $item_config['name'];
+		    }
+	    }
 	print ".\n";
 }
 

@@ -80,7 +80,6 @@ function dump_clog($logfile, $tail, $withorig = true) {
     <li class="tabact">System</li>
     <li class="tabinact"><a href="diag_logs_filter.php">IPSEC Vpn</a></li>
     <li class="tabinact"><a href="diag_logs_filter.php">Firewall</a></li>
-    <li class="tabinact"><a href="diag_logs_ipsec.php">IPSEC</a></li>
     <li class="tabinact"><a href="diag_logs_dhcp.php">DHCP</a></li>
     <li class="tabinact"><a href="diag_logs_auth.php">Portal Auth</a></li>
     <li class="tabinact"><a href="diag_logs_vpn.php">PPTP VPN</a></li>

@@ -871,7 +871,7 @@ if (!function_exists('php_check_syntax')){
 /*
  * sync_package($pkg_name, $show_message) Force a package to setup its configuration and rc.d files.
  */
-function sync_package($pkg_name, $sync_depends = true, $show_message = true) {
+function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
     global $config;                                        
     if(!$config['installedpackages']['package']) return;   
     foreach($config['installedpackages']['package'] as $package) {

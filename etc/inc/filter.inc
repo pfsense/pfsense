@@ -637,7 +637,7 @@ function filter_flush_state_table() {
 	return mwexec("/sbin/pfctl -F state");
 }
 
-function filter_nat_rules_generate_if($if, $src, $dst, $target) {
+function filter_nat_rules_generate_if($if, $src, $srcport, $dst, $natport, $target) {
 	global $config;
 
         if ($target)
@@ -648,10 +648,20 @@ function filter_nat_rules_generate_if($if, $src, $dst, $target) {
 	if ($dst == "")
 		$dst = "any";
 
-	$natrule = <<<EOD
+        if ($srcport && $dstport) {
+		$src .= " port " . $srcport;
+		$tgt .= " port " . $dstport;
+	} else if ($srcport && !$dstport) {
+		$src .= " port " . $srcport;
+	} else if (!$srcport && $dstport) {
+		$tgt .= " port " . $dstport;
+	}
+		
+        $natrule = <<<EOD
 nat on $if from $src to $dst -> $tgt
 
 EOD;
+
 	return $natrule;
 }
 
@@ -739,14 +749,14 @@ function filter_nat_rules_generate() {
 				else
 					$natif = $config['interfaces'][$obent['interface']]['if'];
 
-				$natrules .= filter_nat_rules_generate_if($natif, $src, $dst,
+				$natrules .= filter_nat_rules_generate_if($natif, $src, $obent['sourceport'], $dst, $obent['natport'],
 					$obent['target']);
 			}
 		}
 	} else {
 		/* standard outbound rules (one for each interface) */
 		$natrules .= filter_nat_rules_generate_if($wanif,
-			$lansa . "/" . $lancfg['subnet'], "", null);
+			$lansa . "/" . $lancfg['subnet'], null, "", null, null);
 
 		/* optional interfaces */
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
@@ -755,14 +765,14 @@ function filter_nat_rules_generate() {
 			if (isset($optcfg['enable']) && !$optcfg['bridge']) {
 				$optsa = gen_subnet($optcfg['ipaddr'], $optcfg['subnet']);
 				$natrules .= filter_nat_rules_generate_if($wanif,
-					$optsa . "/" . $optcfg['subnet'], "", null);
+					$optsa . "/" . $optcfg['subnet'], null, "", null, null);
 			}
 		}
 
 		/* PPTP subnet */
 		if ($pptpdcfg['mode'] == "server") {
 			$natrules .= filter_nat_rules_generate_if($wanif,
-				$pptpdcfg['remoteip'] . "/" . $g['pptp_subnet'], "", null);
+				$pptpdcfg['remoteip'] . "/" . $g['pptp_subnet'], null, "", null, null);
 		}
 
 		/* static routes */
@@ -770,7 +780,7 @@ function filter_nat_rules_generate() {
 			foreach ($config['staticroutes']['route'] as $route) {
 				if ($route['interface'] != "wan")
 					$natrules .= filter_nat_rules_generate_if($wanif,
-						$route['network'], "", null);
+						$route['network'], null, "", null, null);
 			}
 		}
 	}

@@ -56,19 +56,40 @@ $title          = $pkg['step'][$stepid]['title'];
 $description    = $pkg['step'][$stepid]['description'];
 
 if ($_POST) {
-    foreach ($pkg['step'][$stepid]['fields'] as $field) {
-        if($field['bindtofield'] <> "") {
-            // update field with posted values.
-
+    foreach ($pkg['step'][$stepid]['fields']['field'] as $field) {
+        if($field['bindstofield'] <> "" and $field['type'] <> "submit") {
+		$fieldname = $field['name'];
+		$unset_fields = "";
+		$fieldname = ereg_replace(" ", "", $fieldname);
+		$fieldname = strtolower($fieldname);
+		// update field with posted values.
+                if($field['unsetfield'] <> "") $unset_fields = "yes";
+		if($field['bindstofield'])
+			update_config_field( $field['bindstofield'], $_POST[$fieldname], $unset_fields);
         }
         if($pkg['step'][$stepid]['stepsubmitphpaction']) {
-            eval($pkg['step'][$stepid]['stepsubmitphpaction']);
+		// run custom php code embedded in xml config.
+		eval($pkg['step'][$stepid]['stepsubmitphpaction']);
         }
+	write_config();
     }
+    $stepid++;
 }
 
-function update_config_field($field, $updatetext) {
-    $config[$field] = $updatetext;
+function update_config_field($field, $updatetext, $unset) {
+	global $config;
+	$field_split = split("->",$field);
+	foreach ($field_split as $f) $field_conv .= "['" . $f . "']";
+	if($field_conv == "") return;
+	if($unset <> "") {
+		$text = "unset(\$config" . $field_conv . ");";
+		eval($text);
+		$text = "\$config" . $field_conv . "[] = \"" . $updatetext . "\";";
+		eval($text);
+	} else {
+		$text = "\$config" . $field_conv . "[] = \"" . $updatetext . "\";";
+		eval($text);
+	}
 }
 
 ?>
@@ -81,19 +102,18 @@ function update_config_field($field, $updatetext) {
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php
-$config_tmp = $config;
-$config = $pfSense_config;
-include("fbegin.inc");
-$config = $config_tmp;
-?>
-<p class="pgtitle"><?=$title?></p>
 <form action="wizard.php" method="post">
 <input type="hidden" name="xml" value="<?= $xml ?>">
-<input type="hidden" name="stepid" value="<?= $stepid+1 ?>">
+<input type="hidden" name="stepid" value="<?= $stepid ?>">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
-<table width="100%" border="1" cellpadding="6" cellspacing="0">
+<center>
+
+&nbsp;<br>
+
+<img src="/logo.gif"><p>
+
+<table width="500" border="1" cellpadding="6" cellspacing="0">
   <tr>
     <td bgcolor="#990000">
         <font color="white"><center><b><?= $title ?></b></center></font>
@@ -142,7 +162,7 @@ $config = $config_tmp;
 			echo ":</td><td>";
                         echo "<textarea name='" . $name . ">" . $value . "</textarea>\n";
                     } else if ($field['type'] == "submit") {
-			echo "<tr><td>&nbsp;</td></tr>";
+			echo "<tr><td>&nbsp;<br></td></tr>";
 			echo "<tr><td colspan='2'><center>";
 			echo "<input type='submit' name='" . $name . "' value='" . $field['name'] . "'>\n";
 			echo "</td><td>";
@@ -152,12 +172,11 @@ $config = $config_tmp;
                 }
             ?>
         </table>
-	  &nbsp;<br>&nbsp;
+	&nbsp;<br>&nbsp;
     </td>
   </tr>
 </table>
 
 </form>
-<?php include("fend.inc"); ?>
 </body>
 </html>

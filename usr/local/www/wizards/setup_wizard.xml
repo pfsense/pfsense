@@ -1,13 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?> 
-<pfSenseWizard>
+<pfsensewizard>
 <totalsteps>2</totalsteps>
 <step>
 	<id>1</id>
 	<title>pfSense Setup Wizard</title>
 	<description>This wizard will guide you through installing pfSense initially.</description>
 	<fields>
-		<name>Next</name>
-		<type>submit</type>
+		<field>
+			<name>Next</name>
+			<type>submit</type>
+		</field>
 	</fields>
 </step>
 <step>
@@ -18,10 +20,14 @@
 		<field>
 			<name>Primary DNS Server</name>
 			<type>input</type>
+			<bindstofield>system->dnsserver</bindstofield>
+			<!-- we must unset the fields because this is an array. -->
+			<unsetfield>yes</unsetfield>
 		</field>
 		<field>
 			<name>Secondary DNS Server</name>
 			<type>input</type>
+			<bindstofield>system->dnsserver</bindstofield>
 		</field>
 		<field>
 			<name>Next</name>
@@ -1696,16 +1702,16 @@
 		</field>				
 	</fields>
         <stepsubmitphpaction>
-            mwxec("date " . $_POST['Date'] . $_POST['Time']);
+            system("date " . $_POST['Date'] . $_POST['Time']);
         </stepsubmitphpaction>
 </step>
 <step>
 	<id>4</id>
-	<title>Configure WAN</title>
+	<title>Configure WAN Interface</title>
 	<description>On this screen we will configure the Wide Area Network information.</description>
 	<fields>
 		<field>
-			<name>WAN IP Address:</name>
+			<name>WAN IP Address</name>
 			<type>input</type>
 		</field>
 		<field>
@@ -1850,11 +1856,11 @@
 </step>
 <step>
 	<id>5</id>
-	<title>Configure LAN</title>
+	<title>Configure LAN Interface</title>
 	<description>On this screen we will configure the Local Area Network information.</description>
 	<fields>
 		<field>
-			<name>LAN IP Address:</name>
+			<name>LAN IP Address</name>
 			<type>input</type>
 		</field>
 				<field>
@@ -1989,7 +1995,6 @@
 						<name>32</name>
 						<value>32</value>
 				</option>
-				
 			</options>
 		</field>
 	</fields>
@@ -2020,4 +2025,4 @@
 		</field>
 	</fields>
 </step>
-</pfSenseWizard>
+</pfsensewizard>

@@ -329,7 +329,7 @@ foreach ($packages_to_install as $id) {
     }
 
     update_status("Downloading and installing " . $pkgent['name'] . " - " . $pkgent['pfsense_package'] . " and its dependencies ... This could take a moment ...");
-    fwrite($fd_log, "Downloading and installing " . $pkgent['name'] . " ... \n");
+    fwrite($fd_log, "Downloading and installing " . $pkgent['name'] . " - " . $pkgent['pfsense_package'] . " ... \n");
 
     update_progress_bar($pb_percent);
     $pb_percent += 10;
@@ -388,8 +388,11 @@ foreach ($packages_to_install as $id) {
     update_progress_bar($pb_percent);
     $pb_percent += 10;
 
-    if(!$_GET['mode'] == "reinstallall")
+    if(!$_GET['mode'] == "reinstallall") {
+        update_output_window("Saving updated package information ...");
+        fwrite($fd_log, "Saving updated package information ...");
         write_config();
+    }
 
     update_progress_bar($pb_percent);
     $pb_percent += 10;
@@ -471,13 +474,17 @@ foreach ($packages_to_install as $id) {
     // return dependency list to output later.
     $command = "TODELETE=`ls /var/db/pkg | grep " . $name . "` && /usr/sbin/pkg_info -r \$TODELETE | grep Dependency: | cut -d\" \" -f2";
     $dependencies = exec_command_and_return_text($command);
-    fwrite($fd_log, "Installed " . $name . " and the following dependencies:\n" . $dependencies);
+    if($dependencies == "")
+        fwrite($fd_log, "Installed package " . $name);
+    else
+        fwrite($fd_log, "Installed package " . $name . " and the following dependencies:\n" . $dependencies);
 
     update_progress_bar($pb_percent);
     $pb_percent += 10;
 
     if($package_conf['custom_php_install_command']) {
-        update_status("Executing post install commands...");
+        fwrite($fd_log, "Executing post install commands...\n  " . $package_conf['custom_php_install_command']);
+        update_status("Executing post install commands...\n  " . $package_conf['custom_php_install_command']);
         $pb_percent += 50;
         update_progress_bar(50);
         eval($package_conf['custom_php_install_command']);

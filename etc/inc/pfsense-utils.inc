@@ -559,7 +559,7 @@ function resync_all_package_configs_bootup($show_message) {
  *                             is queuename|qlength|measured_packets
  *                             NOTE: this commandt takes 5 seconds to run
  */
-function gather_altq_queue_stats() {
+function gather_altq_queue_stats($dont_return_root_queues) {
     mwexec("/usr/bin/killall pfctl");
     $stats = `/sbin/pfctl -vvsq & sleep 5;killall pfctl 2>/dev/null`;
     $stats_array = split("\n", $stats);
@@ -571,8 +571,9 @@ function gather_altq_queue_stats() {
             $speed = $match_array[1][0];
         if (preg_match_all("/measured:\s+(.*)packets/",$stats_line,$match_array)) {
             $measured = $match_array[1][0];
-	    if(stristr($queue_name,"root_") == false)
-		array_push($queue_stats, "{$queue_name}|{$speed}|{$measured}");
+	    if($dont_return_root_queues == true)
+		if(stristr($queue_name,"root_") == false)
+		    array_push($queue_stats, "{$queue_name}|{$speed}|{$measured}");
         }
     }
     return $queue_stats;

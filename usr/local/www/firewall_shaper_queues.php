@@ -193,7 +193,7 @@ if ($_GET['act'] == "del") {
 $counter = 0;
 While(!Connection_Aborted()) {
 
-	$stats_array = gather_altq_queue_stats();
+	$stats_array = gather_altq_queue_stats(true);
 
 	/* calculate total packets being moved through all queues. */
 	$total_packets_s = 0;

@@ -43,39 +43,6 @@ function get_file_contents($filename) {
     return "File not found " . $filename;
 }
 
-function execute_command_return_output($command) {
-    $fd = popen($command . " 2>&1 ", "r");
-    echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"\";</script>";
-    $counter = 0;
-    $counter2 = 0;
-    while(!feof($fd)) {
-	$tmp = fread($fd,49);
-	$tmp1 = ereg_replace("\n","\\n", $tmp);
-	$text = ereg_replace("\"","'", $tmp1);
-	if($lasttext == "..") {
-	    $text = "";
-	    $lasttext = "";
-	    $counter=$counter-2;
-	} else {
-	    $lasttext .= $text;
-	}
-	if($counter > 51) {
-	    $counter = 0;
-	    $extrabreak = "\\n";
-	} else {
-	    $extrabreak = "";
-	    $counter++;
-	}
-	if($counter2 > 600) {
-	    echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"\";</script>";
-	    $counter2 = 0;
-	} else
-	    $counter2++;
-	echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = this.document.forms[0].output.value + \"" . $text . $extrabreak .  "\"; f('output'); </script>";
-    }
-    fclose($fd);
-}
-
 $fd = fopen("/etc/ssl/openssl.cnf", "r");
 $openssl = fread($fd,8096);
 fclose($fd);

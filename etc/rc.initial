@@ -42,6 +42,7 @@ echo "4) Reset to factory defaults"
 echo "5) Reboot system"
 echo "6) Ping host"
 echo "7) Shell"
+echo "8) PFtop"
 echo
 
 read -p "Enter a number: " opmode
@@ -70,6 +71,8 @@ case ${opmode} in
 	set prompt = "\n`/bin/hostname -s`# "
 	/bin/sh
 	;;
+8)
+	/usr/local/sbin/pftop
 esac
 
 done

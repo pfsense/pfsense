@@ -123,25 +123,26 @@ include("fbegin.inc");
 		    if($evaledvar)
 		    foreach ($evaledvar as $ip) {
 			echo "<tr valign=\"top\">\n";
-			foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
-			   ?>
-				<td class="listlr">
-					<?php
-					    $toeval="\$fieldname = \$ip['" . xml_safe_fieldname($column['fieldname']) . "'];";
-					    eval($toeval);
-					    if($column['type'] == "checkbox") {
-						if($fieldname == "") {
-						    echo "No";
-						} else {
-						    echo "Yes";
-						}
-					    } else {
-						echo $fieldname;
-					    }
-					?>
-				</td>
-			   <?php
-			}
+			if($pkg['adddeleteeditpagefields']['columnitem'] <> "")			
+				foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
+				   ?>
+					<td class="listlr">
+						<?php
+						    $toeval="\$fieldname = \$ip['" . xml_safe_fieldname($column['fieldname']) . "'];";
+						    eval($toeval);
+						    if($column['type'] == "checkbox") {
+							if($fieldname == "") {
+							    echo "No";
+							} else {
+							    echo "Yes";
+							}
+						    } else {
+							echo $fieldname;
+						    }
+						?>
+					</td>
+				   <?php
+				}
 			?>
 			<td valign="middle" class="list" nowrap>
 			    &nbsp;<a href="pkg_edit.php?xml=<?=$xml?>&act=edit&id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a>

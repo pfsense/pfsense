@@ -64,16 +64,12 @@ if ($_POST) {
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php
-$config_tmp = $config;
-$config = $pfSense_config;
 include("fbegin.inc");
-$config = $config_tmp;
 ?>
 <p class="pgtitle">System: Package Manager</p>
 <form action="firewall_nat_out_load_balancing.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
-$configa = $config;
 
 // Allow package location to be overriden
 $config_location = "http://www.pfsense.com/packages/pkg_config.xml";
@@ -88,7 +84,7 @@ if(!file_exists("/tmp/pkg_config.xml")) {
             }
 }
 
-$pkg_config = parse_xml_config("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
+$pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
 
 if(!$pkg_config['packages']) {
             print_info_box_np("Could not find any packages in pkg_config.xml");

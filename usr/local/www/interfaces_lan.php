@@ -73,33 +73,21 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		if (($lancfg['ipaddr'] != $_POST['ipaddr']) || ($lancfg['subnet'] != $_POST['subnet'])) {
-			if (($pconfig['ipaddr'] != $_POST['ipaddr'])) {
-				$changedesc .= " IP changed from {$lancfg['ipaddr']} to {$_POST['ipaddr']}";
-				$lancfg['ipaddr'] = $_POST['ipaddr'];
-			}
-			if (($lancfg['subnet'] != $_POST['subnet'])) {
-				$changedesc .= " subnet changed from {$lancfg['subnet']} to {$_POST['subnet']}";
-				$lancfg['subnet'] = $_POST['subnet'];
-			}
+			updatechanged("IP Address", &$lancfg['ipaddr'], $_POST['ipaddr']);
+			updatechanged("subnet", &$lancfg['subnet'], $_POST['subnet']);
 
 			/* We'll need to reboot after this */
 			touch($d_sysrebootreqd_path);
 		}
 
-		if ($lancfg['bandwidth'] != $_POST['bandwidth']) {
-			$changedesc .= " bandwidth changed from {$lancfg['bandwidth']} to {$_POST['bandwidth']}";
-			$lancfg['bandwidth'] = $_POST['bandwidth'];
-		}
-		if ($lancfg['bandwidthtype'] != $_POST['bandwidthtype']) {
-			$changedesc .= " bandwidth type changed from {$lancfg['bandwidthtype']} to {$_POST['bandwidth']}";
-			$lancfg['bandwidthtype'] = $_POST['bandwidthtype'];
-		}
+		updatechanged("bandwidth", &$lancfg['bandwidth'], $_POST['bandwidth']);
+		updatechanged("bandwidth type", &$lancfg['bandwidthtype'], $_POST['bandwidthtype']);
 
 		$dhcpd_was_enabled = 0;
 		if (isset($config['dhcpd']['enable'])) {
 			unset($config['dhcpd']['enable']);
 			$dhcpd_was_enabled = 1;
-			$changedesc .= " DHCP was disabled";
+			$changedesc .= " DHCP disabled";
 		}
 
 		write_config($changedesc);

@@ -252,7 +252,7 @@ function enable_change(enable_over) {
                   <td class="vtable">
                     <input name="disablefirmwarecheck" type="checkbox" id="disablefirmwarecheck" value="yes" <?php if ($pconfig['disablefirmwarecheck']) echo "checked"; ?>>
                     <strong>Disable firmware version check</strong><span class="vexpl"><br>
-    This will cause m0n0wall not to check for newer firmware versions when the <a href="system_firmware.php">System: Firmware</a> page is viewed.</span></td>
+    This will cause pfSense not to check for newer firmware versions when the <a href="system_firmware.php">System: Firmware</a> page is viewed.</span></td>
 			    </tr>
 				<tr>
                   <td valign="top" class="vncell">TCP idle timeout </td>

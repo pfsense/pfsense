@@ -30,7 +30,7 @@
 #
 # If console is marked "insecure", then init will ask for the root password
 # when going to single-user mode.
-console	none				unknown	off secure
+console	none				unknown	off	secure
 #
 ttyd0	"/usr/libexec/getty std.9600"	unknown on	secure
 console "/bin/sh /etc/rc.initial"	cons25	on	secure

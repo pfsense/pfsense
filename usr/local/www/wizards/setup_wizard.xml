@@ -16,12 +16,18 @@
 	<description>Please enter the time, date and time zone.</description>
 	<fields>
 		<field>
-			<name></name>
-			<description></description>
-			<type></type>
+			<name>Date</name>
+			<description>Enter the date in MM/DD/YY format.</description>
+			<type>input</type>
 		</field>
+		<field>
+			<name>Time</name>
+			<description>Enter the time in HH:MM format.</description>
+			<type>input</type>
+		</field>                
 	</fields>
-	<step_submit_php_action>
-	</step_submit_php_action>
+        <stepsubmitphpaction>
+            mwxec("date " . $_POST['Date'] . $_POST['Time']);
+        </stepsubmitphpaction>
 </step>
 </pfSenseWizard>

@@ -35,14 +35,20 @@ require("guiconfig.inc");
 
 if ($_POST) {
 	unset($input_errors);
-	if (stristr($_POST['Submit'], "Restore"))
+	if (stristr($_POST['Submit'], "Restore configuration"))
 		$mode = "restore";
 	else if (stristr($_POST['Submit'], "Reinstall"))
 		$mode = "reinstallpackages";
 	else if (stristr($_POST['Submit'], "Download"))
 		$mode = "download";
+	else if (stristr($_POST['Submit'], "Restore version"))
+		$mode = "restore_ver";
+
 	if ($_POST["nopackages"] <> "")
 		$options = "nopackages";
+
+	if ($_POST["ver"] <> "")
+		$ver2restore = $_POST["ver"];
 
 	if ($mode) {
 		if ($mode == "download") {
@@ -97,13 +103,26 @@ if ($_POST) {
 		} else if ($mode == "reinstallpackages") {
 			header("Location: pkg_mgr_install.php?mode=reinstallall");
 			exit;
+                } else if ($mode == "restore_ver") {
+			$input_errors[] = "XXX - this feature is not yet functional - billm";
+			$input_errors[] = "XXX - this feature may hose your config (do NOT backrev configs!) - billm";
+			if ($ver2restore <> "") {
+				$conf_file = "{$g['cf_conf_path']}/bak/config-" . strtotime($ver2restore) . ".xml";
+                                if (config_install($conf_file) == 0) {
+                                        system_reboot();
+                                        $savemsg = "The configuration has been restored. The firewall is now rebooting.";
+                                } else {
+                                        $input_errors[] = "The configuration could not be restored.";
+                                }
+                        } else {
+                                $input_errors[] = "No version selected.";
+                        }
 		}
 	}
 }
 
 
 /* XXX - billm: begginnings of version control code
- * This code sucks and is really more of a PoC - it needs cleanup (and doesn't work)
  * don't set system/version_control :)
  */
 if (isset($config['system']['version_control'])) {
@@ -203,11 +222,15 @@ if (isset($config['system']['version_control'])) {
               </tr>
 <?php foreach ($old_versions as $ver): ?>
               <tr>
-		<td width="22%" valign="baseline" class="vncell"><? echo $ver; ?></td>
-                <td width="56%" valign="baseline" class="vtable"><? echo "description" ?></td>
-                <td width="22%" valign="baseline" class="vtable"><input name="restore" type="submit" class="formbtn" id="restore" value="Restore version"></td>
+		<td width="22%" valign="baseline" class="vncell"><?php echo $ver; ?></td>
+                <td width="56%" valign="baseline" class="vtable"><?php echo "description" ?></td>
+                <td width="22%" valign="baseline" align="right" class="vtable"><input name="ver" type="radio" class="formfld" value="<?php echo $ver; ?>"></td>
               </tr>
 <?php endforeach; ?>
+	   <tr>
+		<td colspan="2" valign="baseline" class="vtable"></td>
+                <td width="22%" valign="baseline"><input name="Submit" type="submit" class="formbtn" id="ver_restore" value="Restore version"></td>
+	   </tr>
            </table>
            </form>
 <?php }; ?>

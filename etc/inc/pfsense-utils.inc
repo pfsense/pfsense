@@ -907,4 +907,23 @@ function make_dirs($path, $mode = 0755)
 {
    return is_dir($path) || (make_dirs(dirname($path), $mode) && mkdir($path, $mode));
 }
+
+/*
+ * rmdirRecursive($path,$followLinks=false)
+ * Recursively remove a directory tree (rm -rf path)
+ * This is for directories _only_
+ */
+function rmdir_recursive($path,$follow_links=false) {
+	$dir = opendir($path) ;
+
+	while ($entry = readdir($dir)) {
+		if (is_file("$path/$entry") || ((!$follow_links) && is_link("$path/$entry")))
+			unlink("$path/$entry");
+       		elseif (is_dir("$path/$entry") && $entry!='.' && $entry!='..')
+			rmdir_recursive("$path/$entry");
+	}
+	closedir($dir) ;
+	return rmdir($path);
+}
+
 ?>

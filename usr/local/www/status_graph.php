@@ -1,22 +1,22 @@
 #!/usr/local/bin/php
-<?php 
+<?php
 /*
 	status_graph.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -31,10 +31,20 @@
 
 require("guiconfig.inc");
 
+if ($_POST['width'])
+	$width = $_POST['width'];
+else
+	$width = "550";
+
+if ($_POST['y'])
+	$height = $_POST['height'];
+else
+	$height = "275";
+
 $curif = "wan";
 if ($_GET['if'])
 	$curif = $_GET['if'];
-	
+
 if ($curif == "wan")
 	$ifnum = get_real_wan_interface();
 else
@@ -53,13 +63,13 @@ else
 <p class="pgtitle">Status: Traffic graph</p>
 <?php
 $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
-	
+
 for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 	$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
 }
 ?>
 <form name="form1" action="" method="get" style="padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid #999999">
-Interface: 
+Interface:
 <select name="if" class="formfld" onchange="document.form1.submit()">
 <?php
 foreach ($ifdescrs as $ifn => $ifd) {
@@ -72,9 +82,11 @@ foreach ($ifdescrs as $ifn => $ifd) {
 </form>
 <div align="center">
 <embed src="graph.php?ifnum=<?=$ifnum;?>&ifname=<?=rawurlencode($ifdescrs[$curif]);?>" type="image/svg+xml"
-		width="550" height="275" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
+		width="<? echo $width; ?>" height="<? echo $height; ?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
 </div>
 <p><span class="red"><strong>Note:</strong></span> the <a href="http://www.adobe.com/svg/viewer/install/" target="_blank">Adobe SVG viewer</a> is required to view the graph.
+<p><form method="post" action="status_graph.php">
+Graph Width: <input name="width" value="<? echo $width; ?>"> Height: <input name="height" value="<? echo $height; ?>"> <input type="submit" value="Change Graph Size"></p>
 <?php include("fend.inc"); ?>
 </body>
 </html>

@@ -752,6 +752,12 @@ function filter_nat_rules_generate() {
 		}
 	} else {
 		/* standard outbound rules (one for each interface) */
+
+		/* create ipsec passthru rule if requested */
+		if (isset($config['nat']['ipsecpassthru']['enable'])) {
+			$natrules .= filter_nat_rules_generate_if($wanif,
+				$lansa . "/" . $lancfg['subnet'], 500, "", 500, null);
+		}
 		$natrules .= filter_nat_rules_generate_if($wanif,
 			$lansa . "/" . $lancfg['subnet'], null, "", null, null);
 

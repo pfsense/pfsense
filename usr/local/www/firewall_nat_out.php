@@ -45,7 +45,6 @@ if ($_POST) {
 
     if ($_POST['apply']) {
 
-        $config['nat']['advancedoutbound']['enable'] = ($_POST['enable']) ? true : false;
         write_config();
 
         $retval = 0;
@@ -64,6 +63,28 @@ if ($_POST) {
                 unlink($d_filterconfdirty_path);
         }
     }
+}
+
+
+
+if (isset($_POST['save'])) {
+    if ($_POST['ipsecpassthru'] == true) {
+            $config['nat']['ipsecpassthru']['enable'] = true;
+            $config['nat']['advancedoutbound']['enable'] = false;
+    }
+    if ($_POST['advancedoutbound'] == true) {
+            $config['nat']['advancedoutbound']['enable'] = true;
+            $config['nat']['ipsecpassthru']['enable'] = false;
+    }
+    if ($_POST['ipsecpassthru'] == false)
+            $config['nat']['ipsecpassthru']['enable'] = false;
+    if ($_POST['advancedoutbound'] == false)
+            $config['nat']['advancedoutbound']['enable'] = false;
+
+    write_config();
+    touch($d_natconfdirty_path);
+    header("Location: firewall_nat_out.php");
+    exit;
 }
 
 if (isset($_POST['del_x'])) {
@@ -135,7 +156,7 @@ if (isset($_POST['del_x'])) {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Firewall: NAT: Outbound</p>
-<form action="firewall_nat_out.php" method="post">
+<form action="firewall_nat_out.php" method="post" name="iform">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_natconfdirty_path)): ?><p>
 <?php print_info_box_np("The NAT configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
@@ -153,15 +174,19 @@ if (isset($_POST['del_x'])) {
   <tr>
     <td class="tabcont">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr>
+              <tr>
                   <td class="vtable"><p>
-                      <input name="enable" type="checkbox" id="enable" value="yes" <?php if (isset($config['nat']['advancedoutbound']['enable'])) echo "checked";?>>
-                      <strong>Enable advanced outbound NAT<br>
-                      </strong></p>
+                      <input name="ipsecpassthru" type="checkbox" id="ipsecpassthru" value="yes" onClick="document.iform.advancedoutbound.checked=false" <?php if (isset($config['nat']['ipsecpassthru']['enable'])) echo "checked";?>>
+                      <strong>Enable IPSec passthru</strong></p>
                   </td>
                 </tr>
                 <tr>
-                  <td> <input name="submit" type="submit" class="formbtn" value="Save">
+                  <td class="vtable"><p>
+                      <input name="advancedoutbound" type="checkbox" id="advancedoutbound" value="yes" onClick="document.iform.ipsecpassthru.checked=false" <?php if (isset($config['nat']['advancedoutbound']['enable'])) echo "checked";?>>
+                      <strong>Enable advanced outbound NAT</strong></p></td>
+                </tr>
+                <tr>
+                  <td> <input name="save" type="submit" class="formbtn" value="Save">
                   </td>
                 </tr>
                 <tr>

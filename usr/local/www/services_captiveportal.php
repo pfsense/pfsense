@@ -214,6 +214,14 @@ function enable_change(enable_change) {
 	document.iform.key.disabled = endis;
 	document.iform.logoutwin_enable.disabled = endis;
 	document.iform.nomacfilter.disabled = endis;
+	document.iform.peruserbw.disabled = endis;
+        document.iform.bwauthmacdn.disabled = endis;
+	document.iform.bwauthmacup.disabled = endis;
+	document.iform.bwauthipdn.disabled = endis;
+	document.iform.bwauthipup.disabled = endis;
+	document.iform.bwdefaultdn.disabled = endis;
+	document.iform.bwdefaultup.disabled = endis;
+	document.iform.radiusacctport.disabled = endis;
 	document.iform.htmlfile.disabled = endis;
 	document.iform.errfile.disabled = endis;
 

@@ -106,11 +106,6 @@ if ($_GET['act'] == "del") {
                       <strong>Enable advanced outbound NAT<br>
                       </strong></p>
                   </td>
-                  <td class="vtable"><p>
-                        <input name="enableoutboundloadbalancing" type="checkbox" id="enableoutboundloadbalancing" value="yes" <?php if (isset($config['nat']['enableoutboundloadbalancing'])) echo "checked";?>>
-                        <strong>Enable outbound NAT load balancing.<br>
-                        </strong></p>
-                  </td>
                 </tr>
                 <tr>
                   <td> <input name="submit" type="submit" class="formbtn" value="Save">

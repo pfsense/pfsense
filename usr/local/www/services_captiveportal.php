@@ -179,7 +179,7 @@ if ($_POST) {
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
 
-<form method="post">
+<form method="post" name="iform" id="iform">
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>

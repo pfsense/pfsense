@@ -73,13 +73,14 @@ function filter_configure() {
 	$natrules = filter_nat_rules_generate();
 	/* generate pfctl rules */
 	$pfrules = filter_rules_generate();
-	/* generate altq interface setup parms */
-	$altq_ints = filter_setup_altq_interfaces();
-	/* generate altq queues */
-	$altq_queues = filter_generate_altq_queues($altq_ints);
-	/* generate altq rules */
-	$altq_rules = filter_generate_altq_rules();
-
+	if(isset($config['shaper']['enable'])) {
+		/* generate altq interface setup parms */
+		$altq_ints = filter_setup_altq_interfaces();
+		/* generate altq queues */
+		$altq_queues = filter_generate_altq_queues($altq_ints);
+		/* generate altq rules */
+		$altq_rules = filter_generate_altq_rules();
+	}
 	if( !isset( $config['system']['disablefilter'] ) ) {
 		mwexec("/sbin/pfctl -e");
 		mwexec("/sbin/pfctl -F nat");

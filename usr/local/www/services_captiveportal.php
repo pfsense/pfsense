@@ -219,6 +219,24 @@ function enable_https() {
 	}
 }
 
+function enable_peruserbw() {
+	if (document.iform.peruserbw.checked == false) {
+		document.iform.bwauthmacdn.disabled = 1;
+		document.iform.bwauthmacup.disabled = 1;
+		document.iform.bwauthipdn.disabled = 1;
+		document.iform.bwauthipup.disabled = 1;
+		document.iform.bwdefaultdn.disabled = 1;
+		document.iform.bwdefaultup.disabled = 1;
+	} else {
+		document.iform.bwauthmacdn.disabled = 0;
+                document.iform.bwauthmacup.disabled = 0;
+                document.iform.bwauthipdn.disabled = 0;
+                document.iform.bwauthipup.disabled = 0;
+                document.iform.bwdefaultdn.disabled = 0;
+                document.iform.bwdefaultup.disabled = 0;
+	}
+}
+
 function enable_change(enable_change) {
 	var endis;
 	endis = !(document.iform.enable.checked || enable_change);
@@ -260,6 +278,7 @@ function enable_change(enable_change) {
 
 	auth_method_change();
 	enable_https();
+	enable_peruserbw();
 
 }
 //-->
@@ -340,7 +359,7 @@ to access after they've authenticated.</td>
 	  <tr>
       <td valign="top" class="vncell">Per-user bandwidth restriction</td>
       <td class="vtable">
-		  <input name="peruserbw" type="checkbox" class="formfld" id="peruserbw" value="yes" <?php if ($pconfig['peruserbw']) echo "checked"; ?>>
+		  <input name="peruserbw" type="checkbox" class="formfld" id="peruserbw" value="yes" <?php if ($pconfig['peruserbw']) echo "checked"; ?> onClick="enable_peruserbw()">
           <strong>Enable per-user bandwidth restriction	</strong><br><br>
 		<table cellpadding="0" cellspacing="0">
 		<tr>

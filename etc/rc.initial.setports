@@ -229,7 +229,8 @@ pfSense is rebooting now.
 
 EOD;
 
-		system_reboot_sync();
+		if($noreboot <> true)
+			system_reboot_sync();
 	}
 
 	function autodetect_interface($ifname, $fp) {

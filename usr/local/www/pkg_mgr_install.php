@@ -305,9 +305,9 @@ if ($pkgent['additional_files_needed'] <> "") {
             foreach($pkgent['additional_files_needed']['item'] as $afn) {
                         update_progress_bar($pb_percent);
                         $pb_percent += 10;
-                        $filename = get_filename_from_url($afn['url']);
+                        $filename = get_filename_from_url($afn);
                         update_status("Downloading additional files needed for package " . $filename . " ...");
-                        system("cd /usr/local/pkg && /usr/bin/fetch " .  $afn['url']);
+                        system("cd /usr/local/pkg && /usr/bin/fetch " .  $afn);
                         if(stristr($filename, '.tgz') <> "")
                                     system("cd /usr/local/pkg && tar xzvf " . $filename);
             }

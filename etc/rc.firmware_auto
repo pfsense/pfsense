@@ -1,21 +1,26 @@
 #!/bin/sh
 
-echo "Downloading latest.tgz ..."
-cd /tmp && fetch http://www.pfSense.com/latest.tgz
-echo "Downloading latest.tgz.md5 ..."
-cd /tmp && fetch http://www.pfSense.com/latest.tgz.md5
+# wait 5 seconds before beginning
+sleep 5
+
+logger -p daemon.info -i -t AutoUpgrade "Auto Upgrade started"
+
+echo "Downloading latest.tgz ..." | logger -p daemon.info -i -t AutoUpgrade
+cd /tmp && fetch http://www.pfSense.com/latest.tgz  | logger -p daemon.info -i -t AutoUpgrade
+echo "Downloading latest.tgz.md5 ..."  | logger -p daemon.info -i -t AutoUpgrade
+cd /tmp && fetch http://www.pfSense.com/latest.tgz.md5  | logger -p daemon.info -i -t AutoUpgrade
 
 PMD=`cat /tmp/latest.tgz.md5 | cut -d" " -f4 `;
 MD=`/sbin/md5 /tmp/latest.tgz | cut -d" " -f4`;
 
-echo "   Package MD5: ${PMD}"
-echo "Downloaded MD5: ${MD}"
+echo "   Package MD5: ${PMD}" | logger -p daemon.info -i -t AutoUpgrade
+echo "Downloaded MD5: ${MD}"  | logger -p daemon.info -i -t AutoUpgrade
 
-if test "$PMD" = "$MD"
-	echo "MD5's match."
+if [ "$PMD" = "$MD" ]; then
+	echo "MD5's match."  | logger -p daemon.info -i -t AutoUpgrade
         /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz
 then
-        echo "MD5's do not match."
+        echo "MD5's do not match."  | logger -p daemon.info -i -t AutoUpgrade
         exit 0
 fi
 

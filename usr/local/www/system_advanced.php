@@ -132,7 +132,10 @@ if ($_POST) {
 			$retval |= interfaces_optional_configure();
 			config_unlock();
 		}
-		$savemsg = get_std_save_message($retval);
+		if(stristr($retval, "error") <> true)
+		    $savemsg = get_std_save_message($retval);
+		else
+		    $savemsg = $retval;
 
 		/* Setup pf rules since the user may have changed the optimization value */
 		config_lock();

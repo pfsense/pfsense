@@ -1,25 +1,25 @@
 #!/usr/local/bin/php
-<?php 
+<?php
 /*
 	services_usermanager.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 	Copyright (C) 2005 Pascal Suter <monodev@psuter.ch>.
-	All rights reserved. 
+	All rights reserved.
 	(files was created by Pascal based on the source code of services_captiveportal.php from Manuel)
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -77,6 +77,14 @@ if(is_array($config['users'])){
 }
 
 ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title><?=gentitle("pfSense webGUI");?></title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="gui.css" rel="stylesheet" type="text/css">
+</head>
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <script language="javascript" type="text/javascript" src="datetimepicker.js">
 //Date Time Picker script- by TengYong Ng of http://www.rainforestnet.com
@@ -101,45 +109,45 @@ if($_GET['act']=="new" || $_GET['act']=="edit"){
 ?>
 	<form action="services_usermanager.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">Username</td>
-                  <td width="78%" class="vtable"> 
-                    <input name="username" type="text" class="formfld" id="username" size="20" value="<? echo $_GET['username']; ?>"> 
+                  <td width="78%" class="vtable">
+                    <input name="username" type="text" class="formfld" id="username" size="20" value="<? echo $_GET['username']; ?>">
                     <br>
                     <span class="vexpl">Username to be used</span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">Password</td>
-                  <td width="78%" class="vtable"> 
-                    <input name="password1" type="password" class="formfld" id="password1" size="20" value="<?php echo ($_GET['act']=='edit' ? "********" : "" ); ?>"> 
+                  <td width="78%" class="vtable">
+                    <input name="password1" type="password" class="formfld" id="password1" size="20" value="<?php echo ($_GET['act']=='edit' ? "********" : "" ); ?>">
                     <br>
                     <span class="vexpl">Password for the user</span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">confirm Password</td>
-                  <td width="78%" class="vtable"> 
-                    <input name="password2" type="password" class="formfld" id="password2" size="20" value="<?php echo ($_GET['act']=='edit' ? "********" : "" ); ?>"> 
+                  <td width="78%" class="vtable">
+                    <input name="password2" type="password" class="formfld" id="password2" size="20" value="<?php echo ($_GET['act']=='edit' ? "********" : "" ); ?>">
                     <br>
                     <span class="vexpl">Confirm the above Password</span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncell">Full Name</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="fullname" type="text" class="formfld" id="fullname" size="20" value="<? echo $user['fullname']; ?>">
                     <br>
                     Full Name of current user, for your own information only</td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncell">Expiration Date</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="expirationdate" type="text" class="formfld" id="expirationdate" size="10" value="<? echo $user['expirationdate']; ?>">
-                    <a href="javascript:NewCal('expirationdate','mmddyyyy')"><img src="cal.gif" width="16" height="16" border="0" alt="Pick a date"></a> 
+                    <a href="javascript:NewCal('expirationdate','mmddyyyy')"><img src="cal.gif" width="16" height="16" border="0" alt="Pick a date"></a>
                     <br> <span class="vexpl">enter nothing if account doesnt expire, otherwhise enter the expiration date in us-format: mm/dd/yyyy</span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
-                    <input name="save" type="submit" class="formbtn" value="Save"> 
+                  <td width="78%">
+                    <input name="save" type="submit" class="formbtn" value="Save">
                     <input name="old_username" type="hidden" value="<? echo $_GET['username'];?>">
                   </td>
                 </tr>
@@ -176,7 +184,7 @@ END;
 		}
 	}
 	echo <<<END
-		<tr> 
+		<tr>
                   <td class="list" colspan="3"></td>
                   <td class="list"> <a href="services_usermanager.php?act=new"><img src="plus.gif" width="17" height="17" border="0"></a></td>
 	        </tr>
@@ -184,7 +192,7 @@ END;
 END;
 }
 ?>
-     
+
   </td>
   </tr>
   </table>

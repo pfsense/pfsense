@@ -311,7 +311,7 @@ function enable_altfirmwareurl(enable_over) {
 		<tr>
                   <td valign="top" class="vncell">Alternate firmware URL</td>
                   <td class="vtable">
-                    <input name="altfirmwareurl" type="checkbox" id="altfirmwareurl" value="yes" onClick="enable_altfirmwareurl(false)" <?php if ($pconfig['altfirmwareurl']) echo "checked"; ?>> Use a different URL for firmware upgrades<br>
+                    <input name="altfirmwareurl" type="checkbox" id="altfirmwareurl" value="yes" onClick="enable_altfirmwareurl()" <?php if (isset($pconfig['altfirmwareurl'])) echo "checked"; ?>> Use a different URL for firmware upgrades<br>
                     Base URL: <input name="firmwareurl" type="input" id="firmwareurl" size="64" value="<?php if ($pconfig['firmwareurl']) echo $pconfig['firmwareurl']; else echo $g['firmwarebaseurl']; ?>"><br>
                     Filename: <input name="firmwarename" type="input" id="firmwarename" size="32" value="<?php if ($pconfig['firmwarename']) echo $pconfig['firmwarename']; else echo $g['firmwarefilename']; ?>">
                     <span class="vexpl"><br>
@@ -452,6 +452,7 @@ function enable_altfirmwareurl(enable_over) {
             <script language="JavaScript">
 <!--
 enable_change(false);
+enable_altfirmwareurl(false);
 //-->
 </script>
 <?php include("fend.inc"); ?>

@@ -166,7 +166,7 @@ function link_ip_to_carp_interface($ip) {
                         $interface = filter_opt_interface_to_real($ifname);
 			if($ft_ip == $carp_ft_ip)
 			    if(stristr($carp_ints,$carp_int) == FALSE)
-				$carp_ints .= " (" . $carp_int . ")";
+				$carp_ints .= $carp_int;
                 }
         }
 	return $carp_ints;

@@ -314,7 +314,7 @@ function enable_change(enable_over) {
                 </tr>
 
 		<tr>
-		  <td width="22%" valign="top" class="vncell"><b>Traffic Shaper Scheduler</b> </td>
+		  <td width="22%" valign="top" class="vncell">Traffic Shaper Scheduler</td>
 		  <td width="78%" class="vtable">
 		    <select id="schedulertype" name="schedulertype" <?= $style ?>>
 		    <?php
@@ -329,7 +329,7 @@ function enable_change(enable_over) {
 			    <option value="cbq">Class based queueing</option>
 			    <option value="hfsc">Hierarchical Fair Service Curve queueing</option>
 		    </select>
-		    <br> <span class="vexpl">Select which type of queueing you would like to use
+		    <br> <span class="vexpl"><b>Select which type of queueing you would like to use</b>
 		  <?php if (is_array($config['shaper']['queue']) > 0): ?>
 			<script language="javascript">
 			document.iform.schedulertype.disabled = 1;
@@ -349,8 +349,7 @@ function enable_change(enable_over) {
 			<option value="aggressive"<?php if($config['system']['optimization']=="aggressive") echo " SELECTED"; ?>>aggressive - expires idle connections earlier than default; using less memory and CPU time while possibly dropping some legitimate connections.</option>
 			<option value="conservative"<?php if($config['system']['optimization']=="conservative") echo " SELECTED"; ?>>conservative - tries to avoid dropping any legitimate connections at the expense of increased memory usage and CPU utilization.</option>
 		    </select>
-                    <strong>Disable webGUI anti-lockout rule</strong><br>
-					the &quot;set LAN IP address&quot; option in the console menu  resets this setting as well.</td>
+		    <br> <span class="vexpl"><b>Select which type of state table optimization your would like to use</b></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Disable Firewall</td>

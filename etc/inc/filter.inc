@@ -571,7 +571,7 @@ function filter_generate_altq_rules() {
 				$line .= "tos " . $rule['iptos'] . " ";
 
 			// label
-                        if($rule['desc'] <> "") $line .= "label " . $rule['desc'] . " ";
+                        if($rule['descr'] <> "") $line .= "label \"" . $rule['descr'] . "\" ";
 
 			$line .= "\n";
 
@@ -1395,7 +1395,7 @@ EOD;
 				$line .= "tos " . $rule['iptos'] . " ";
 
 			// label
-                        if($rule['desc'] <> "") $line .= "label " . $rule['desc'] . " ";
+                        if($rule['name'] <> "") $line .= "label \"" . $rule['name'] . "\" ";
 
 			$line .= "\n";
 

@@ -39,8 +39,6 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
-$wan_sched = $config['interfaces']['wan']['schedulertype'];
-$lan_sched = $config['interfaces']['lan']['schedulertype'];
 $pconfig['schedulertype'] = $config['system']['schedulertype'];
 $schedulertype = $config['system']['schedulertype'];
 

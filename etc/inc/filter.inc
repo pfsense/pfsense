@@ -38,6 +38,10 @@ function is_carp_defined() {
 	/* is carp compiled into the kernel and userland? */
 	$command = "/sbin/sysctl -a | grep carp";
 	$fd = popen($command . " 2>&1 ", "r");
+	if(!$fd) {
+		syslog(LOG_WARNING, "Warning, could not execute command ");
+		return 0;
+	}
 	while(!feof($fd)) {
 		    $tmp .= fread($fd,49);
 	}
@@ -285,7 +289,7 @@ function filter_setup_altq_interfaces() {
 					if($is_first) $queue_names .= ", ";
 					$queue_names .= $queue['name'];
 					$is_first = "1";
-				}				
+				}
 			}
 		}
 

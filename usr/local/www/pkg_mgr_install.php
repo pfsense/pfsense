@@ -362,7 +362,7 @@ if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
                         if($menu['url'] <> "") {
                                     fwrite($fd, $menu['url'] . "\n");
                         } else {
-                                    fwrite($fd, "/pkg.php?xml=" . strtolower($menu['name']) . ".xml\n");
+                                    fwrite($fd, "/pkg.php?xml=" . strtolower($menu['configfile']) . ".xml\n");
                         }
                         fclose($fd);
             }

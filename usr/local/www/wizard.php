@@ -45,11 +45,16 @@ $xml = $_GET['xml'];
 if($_POST['xml']) $xml = $_POST['xml'];
 
 if($xml == "") {
-            $xml = "not_defined";
-            print_info_box_np("ERROR:  Could not open " . $xml . ".");
-            die;
+	$xml = "not_defined";
+	print_info_box_np("ERROR:  Could not open " . $xml . ".");
+	die;
 } else {
-            $pkg = parse_xml_config_pkg("/usr/local/www/wizards/" . $xml, "pfsensewizard");
+	if (file_exists("{$g['www_path']}/wizards/{$xml}")) 
+		$pkg = parse_xml_config_pkg("{$g['www_path']}/wizards/" . $xml, "pfsensewizard");
+	else {
+		print_info_box_np("ERROR:  Could not open " . $xml . ".");
+		die;
+	}
 }
 
 $title          = $pkg['step'][$stepid]['title'];

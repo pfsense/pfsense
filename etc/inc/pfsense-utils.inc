@@ -758,6 +758,7 @@ function backup_config_section($section) {
     $new_section = &$config[$section];
     /* generate configuration XML */
     $xmlconfig = dump_xml_config($new_section, $section);
+    $xmlconfig = str_replace("<?xml version=\"1.0\"?>", "", $xmlconfig);
     return $xmlconfig;
 }
 

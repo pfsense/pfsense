@@ -314,7 +314,7 @@ foreach ($packages_to_install as $id) {
     if(!$_GET['mode'] == "reinstallall") {
         update_output_window("Saving updated package information ...");
         fwrite($fd_log, "Saving updated package information ...\n");
-        write_config();
+        write_config("Installed package {$pkgent['name']}");
     }
 
     update_progress_bar($pb_percent);

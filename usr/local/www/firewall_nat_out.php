@@ -37,41 +37,93 @@ if (!is_array($config['nat']['advancedoutbound']['rule']))
     $config['nat']['advancedoutbound']['rule'] = array();
 
 $a_out = &$config['nat']['advancedoutbound']['rule'];
-nat_out_rules_sort();
+//nat_out_rules_sort();
 
 if ($_POST) {
 
     $pconfig = $_POST;
 
-    $config['nat']['advancedoutbound']['enable'] = ($_POST['enable']) ? true : false;
-    write_config();
+    if ($_POST['apply']) {
 
-    $retval = 0;
-
-    if (!file_exists($d_sysrebootreqd_path)) {
-		config_lock();
-        $retval |= filter_configure();
-		config_unlock();
-    }
-    $savemsg = get_std_save_message($retval);
-
-    if ($retval == 0) {
-        if (file_exists($d_natconfdirty_path))
-            unlink($d_natconfdirty_path);
-        if (file_exists($d_filterconfdirty_path))
-            unlink($d_filterconfdirty_path);
-    }
-}
-
-if ($_GET['act'] == "del") {
-    if ($a_out[$_GET['id']]) {
-        unset($a_out[$_GET['id']]);
+        $config['nat']['advancedoutbound']['enable'] = ($_POST['enable']) ? true : false;
         write_config();
-        touch($d_natconfdirty_path);
-        header("Location: firewall_nat_out.php");
-        exit;
+
+        $retval = 0;
+
+        if (!file_exists($d_sysrebootreqd_path)) {
+		config_lock();
+            $retval |= filter_configure();
+    		config_unlock();
+        }
+        $savemsg = get_std_save_message($retval);
+
+        if ($retval == 0) {
+            if (file_exists($d_natconfdirty_path))
+                unlink($d_natconfdirty_path);
+            if (file_exists($d_filterconfdirty_path))
+                unlink($d_filterconfdirty_path);
+        }
     }
 }
+
+if (isset($_POST['del_x'])) {
+        /* delete selected rules */
+        if (is_array($_POST['rule']) && count($_POST['rule'])) {
+                foreach ($_POST['rule'] as $rulei) {
+                        unset($a_out[$rulei]);
+                }
+                write_config();
+                touch($d_natconfdirty_path);
+                header("Location: firewall_nat_out.php");
+                exit;
+        }
+
+} else {
+        /* yuck - IE won't send value attributes for image buttons, while Mozilla does -
+           so we use .x/.y to fine move button clicks instead... */
+        unset($movebtn);
+        foreach ($_POST as $pn => $pd) {
+                if (preg_match("/move_(\d+)_x/", $pn, $matches)) {
+                        $movebtn = $matches[1];
+                        break;
+                }
+        }
+        /* move selected rules before this rule */
+        if (isset($movebtn) && is_array($_POST['rule']) && count($_POST['rule'])) {
+                $a_out_new = array();
+
+                /* copy all rules < $movebtn and not selected */
+                for ($i = 0; $i < $movebtn; $i++) {
+                        if (!in_array($i, $_POST['rule']))
+                                $a_out_new[] = $a_out[$i];
+                }
+
+                /* copy all selected rules */
+                for ($i = 0; $i < count($a_out); $i++) {
+                        if ($i == $movebtn)
+                                continue;
+                        if (in_array($i, $_POST['rule']))
+                                $a_out_new[] = $a_out[$i];
+                }
+
+                /* copy $movebtn rule */
+                if ($movebtn < count($a_out))
+                        $a_out_new[] = $a_out[$movebtn];
+
+                /* copy all rules > $movebtn and not selected */
+                for ($i = $movebtn+1; $i < count($a_out); $i++) {
+                        if (!in_array($i, $_POST['rule']))
+                                $a_out_new[] = $a_out[$i];
+                }
+                $a_out = $a_out_new;
+                write_config();
+                touch($d_natconfdirty_path);
+                header("Location: firewall_nat_out.php");
+                exit;
+        }
+}
+
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -137,7 +189,7 @@ if ($_GET['act'] == "del") {
                   <td width="25%" class="listhdr">Description</td>
                   <td width="5%" class="list"></td>
                 </tr>
-              <?php $i = 0; foreach ($a_out as $natent): ?>
+              <?php $nnats = $i = 0; foreach ($a_out as $natent): ?>
                 <tr>
                   <td class="listlr">
                     <?php
@@ -188,13 +240,30 @@ if ($_GET['act'] == "del") {
                   <td class="listbg">
                     <font color="#FFFFFF"><?=htmlspecialchars($natent['descr']);?>&nbsp;
                   </td>
-                  <td class="list" nowrap> <a href="firewall_nat_out_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="firewall_nat_out.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this mapping?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
-                </tr>
-              <?php $i++; endforeach; ?>
+                  <td class="list" valign="middle" nowrap>
+                    <table border="0" cellspacing="0" cellpadding="1">
+                      <tr>
+                        <td><a href="firewall_nat_out_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a></td>
+                        <td><input type="checkbox" name="rule[]" value="<?=$i;?>" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
+                      </tr>
+                      <tr>
+                        <td><input onmouseover="fr_insline(0, true)" onmouseout="fr_insline(0, false)" name="move_<?=$i;?>" src="left.gif" title="move selected rules before this rule" height="17" type="image" width="17" border="0"></td>
+                        <!-- <billm><td><a href="firewall_nat_out_edit.php?dup=<?=$i;?>"><img src="plus.gif" title="add a new nat based on this one" width="17" height="17" border="0"></a></td><billm> -->
+                      </tr>
+                    </table>
+              <?php $i++; $nnats++; endforeach; ?>
                 <tr>
                   <td class="list" colspan="7"></td>
-                  <td class="list"> <a href="firewall_nat_out_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
+                  <td class="list" valign="middle" nowrap>
+                    <table border="0" cellspacing="0" cellpadding="1">
+                      <tr>
+                        <td><?php if ($nnats == 0): ?><img src="left_d.gif" width="17" height="17" title="move selected mappings to end" border="0"><?php else: ?><input name="move_<?=$i;?>" type="image" src="left.gif" width="17" height="17" title="move selected mappings to end" border="0"><?php endif; ?></td>
+                        <td><a href="firewall_nat_out_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
+                      </tr>
+                      <tr>
+                        <td><?php if ($nnats == 0): ?><img src="x_d.gif" width="17" height="17" title="delete selected rules" border="0"><?php else: ?><input name="del" type="image" src="x.gif" width="17" height="17" title="delete selected mappings" onclick="return confirm('Do you really want to delete the selected mappings?')"><?php endif; ?></td>
+                      </tr>
+                    </table></td>
                 </tr>
               </table>
 </td>

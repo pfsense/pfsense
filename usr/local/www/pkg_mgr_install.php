@@ -379,8 +379,8 @@ if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
                                     eval($toeval);
                                     fwrite($fd, $url . "\n");
                         } else {
-                                    $xml = "";
-                                    if(stristr($menu['configfile'],".xml") == "") $xml = ".xml";
+                                    $xml = $menu['configfile'];
+                                    if(stristr($menu['configfile'],".xml") == "") $xml .= ".xml";
                                     fwrite($fd, "/pkg.php?xml=" . $menu['configfile'] . $xml . "\n");
                         }
                         fclose($fd);

@@ -459,5 +459,4 @@ function updatechanged($varname, $orig, $new) {
 	return false;
 }
 
-
 ?>

@@ -83,9 +83,9 @@ if($_POST) {
 			$http_auth_password = $config['system']['proxy_auth_password'];
 
 		/* custom firmware option */
-		if (isset($config['system']['altfirmwareurl'])) {
-			$firmwareurl=$config['system']['firmwareurl'];
-			$firmwarename=$config['system']['firmwarename'];
+		if (isset($config['system']['alt_firmware_url']['enabled'])) {
+			$firmwareurl=$config['system']['alt_firmware_url']['firmware_base_url'];
+			$firmwarename=$config['system']['alt_firmware_url']['firmware_filename'];
 		} else {
 			$firmwareurl=$g['firmwarebaseurl'];
 			$firmwarename=$g['firmwarefilename'];
@@ -168,7 +168,7 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 		if(!isset($config['system']['altfirmwareurl']))
 			$fwinfo = check_firmware_version();
 		else
-			$fwinfo = "Using alternate firmware URL, cannot determine if {$config['system']['firmwareurl']}{$config['system']['firmwarename']} is newer than current.";
+			$fwinfo = "Using alternate firmware URL, cannot determine if {$config['system']['alt_firmware_url']['firmware_base_url']}{$config['system']['alt_firmware_url']['firmware_filename']} is newer than current.";
 }
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">

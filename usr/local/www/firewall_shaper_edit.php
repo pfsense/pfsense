@@ -714,7 +714,6 @@ function dst_rep_change() {
                     <span class="vexpl">Use this to match packets according to their IP TOS values.
                     </span></td>
                 </tr>
-		<!--
                 <tr>
                   <td width="22%" valign="top" class="vncell">IP packet length</td>
                   <td width="78%" class="vtable"><input name="iplen" type="text" id="iplen" size="10" value="<?=htmlspecialchars($pconfig['iplen']);?>">
@@ -723,7 +722,6 @@ function dst_rep_change() {
                     (either a single value or a range in the syntax <em>from-to</em>,
                     e.g. 0-80). </td>
                 </tr>
-		-->
                 <tr>
                   <td width="22%" valign="top" class="vncell">TCP flags</td>
                   <td width="78%" class="vtable"> <table border="0" cellspacing="0" cellpadding="0">

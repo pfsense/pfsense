@@ -31,6 +31,7 @@ require("guiconfig.inc");
 require("xmlparse_pkg.inc");
 
 if(!file_exists("/usr/local/pkg/")) mwexec("mkdir -p /usr/local/pkg/");
+if(!file_exists("/usr/local/www/ext/")) mwexec("mkdir -p /usr/local/www/ext");
 
 $pb_percent = 1;
 
@@ -249,7 +250,7 @@ if($pkg_config['packages']['package'][$id]['logging']) {
     // logging facilities.
     $pkgent['logging']['facility'] = $pkg_config['packages']['package'][$id]['logging']['facility'];
     $pkgent['logging']['logfile_name'] = $pkg_config['packages']['package'][$id]['logging']['logfile_name'];
-    mwexec("clog -i -s 32768 /var/log/" . $pkgent['logging']['logfile_name']);
+    mwexec("/usr/sbin/clog -i -s 32768 /var/log/" . $pkgent['logging']['logfile_name']);
     mwexec("chmod 0600 /var/log/" . $pkgent['logging']['logfile_name']);
     add_text_to_file("/etc/syslog.conf",$pkgent['logging']['facility'] . "\t\t\t" . $pkgent['logging']['logfile_name']);
     mwexec("/usr/bin/killall -HUP syslogd");
@@ -396,6 +397,7 @@ echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='h
 echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
 
 function add_text_to_file($file, $text) {
+    global $fd_log;
     fwrite($fd_log, "Adding needed text items:\n");
     $filecontents = exec_command_and_return_text("cat " . $file);
     $text = ereg_replace($text, "", $filecontents);

@@ -61,10 +61,14 @@ function return_dir_as_array($dir) {
  * enable_hardware_offloading() enables hardware features of nics if they are supported
  */
 function enable_hardware_offloading($interface) {
-    $supported_ints = array('fxp');
-    foreach($supported_ints as $int) {
-	if(stristr($interface,$int) != false) {
-	    mwexec("/sbin/ifconfig $interface link0");
+    global $config;
+    global $g;
+    if($g['booting']) {
+	$supported_ints = array('fxp');
+	foreach($supported_ints as $int) {
+	    if(stristr($interface,$int) != false) {
+		mwexec("/sbin/ifconfig $interface link0");
+	    }
 	}
     }
 }

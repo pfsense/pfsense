@@ -402,7 +402,7 @@ function filter_generate_altq_rules() {
 			if (isset($rule['log']))
 				$line .= "log ";
 
-			//$line .= "quick ";
+			$line .= "quick ";
 
 			if ($ispptp) {
 				$line .= "on ng" . ($iif+1) . " ";

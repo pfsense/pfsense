@@ -85,8 +85,8 @@ function filter_configure() {
 	$wanif = get_real_wan_interface();
 
 	/* set up MSS clamping */
-	if ($config['interfaces']['wan']['mtu'] <> "")
-		$mssclamp = "max-mss " . $config['interfaces']['wan']['mtu'] - 40;
+	if ($config['interfaces']['wan']['mtu'] <> "" and is_integer($config['interfaces']['wan']['mtu']))
+		$mssclamp = "max-mss " . (intval($config['interfaces']['wan']['mtu'] - 40));
 	else if ($config['interfaces']['wan']['ipaddr'] == "pppoe")
 		$mssclamp = "max-mss 1452";
 	else

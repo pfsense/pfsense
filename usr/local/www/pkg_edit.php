@@ -239,8 +239,14 @@ $config = $config_tmp;
 			echo "<br>" . $pkga['description'] . "\n";
 		  } else if($pkga['type'] == "interfaces_selection") {
 			$size = "";
+			$multiple = "";
+			$fieldname = $pkga['fieldname'];
 			if($pkga['size'] <> "") $size = " size=\"" . $pkga['size'] . "\"";
-			echo "<select name='" . $pkga['fieldname'] . "'" . $size . ">\n";
+			if($pkga['multiple'] <> "") {
+			  $multiple = " multiple=\"multiple\"";
+			  $fieldname .= "[]";
+			}
+			echo "<select name='" . $fieldname . "'" . $size . $multiple . ">\n";
 			foreach ($config['interfaces'] as $ifname => $iface) {
 			  if ($iface['descr'])
 				  $ifdescr = $iface['descr'];

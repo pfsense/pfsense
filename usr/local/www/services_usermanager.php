@@ -99,7 +99,7 @@ if(is_array($config['users'])){
 	<li class="tabinact1"><a href="services_captiveportal.php">Captive portal</a></li>
 	<li class="tabinact"><a href="services_captiveportal_mac.php">Pass-through MAC</a></li>
 	<li class="tabinact"><a href="services_captiveportal_ip.php">Allowed IP addresses</a></li>
-	<li class="tabact">Allowed IP addresses</li>
+	<li class="tabact">User Manager</li>
   </ul>
   </td></tr>
   <tr>

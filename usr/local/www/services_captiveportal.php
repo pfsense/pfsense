@@ -222,7 +222,7 @@ function enable_change(enable_change) {
 	<li class="tabact">Captive portal</li>
 	<li class="tabinact"><a href="services_captiveportal_mac.php">Pass-through MAC</a></li>
 	<li class="tabinact"><a href="services_captiveportal_ip.php">Allowed IP addresses</a></li>
-	<li class="tabinact"><a href="services_usermanager.php">Allowed IP addresses</a></li>
+	<li class="tabinact"><a href="services_usermanager.php">User Manager</a></li>
   </ul>
   </td></tr>
   <tr>

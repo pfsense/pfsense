@@ -92,7 +92,7 @@ if ($_GET['act'] == "del") {
 	<li class="tabinact1"><a href="services_captiveportal.php">Captive portal</a></li>
 	<li class="tabinact"><a href="services_captiveportal_mac.php">Pass-through MAC</a></li>
 	<li class="tabact">Allowed IP addresses</li>
-	<li class="tabinact"><a href="services_usermanager.php">Allowed IP addresses</a></li>
+	<li class="tabinact"><a href="services_usermanager.php">User Manager</a></li>
   </ul>
   </td></tr>
   <tr>

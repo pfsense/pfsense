@@ -141,7 +141,7 @@ if ($_GET['act'] == "del") {
                           <?=($i+1);?>
 			</td>
                         <td class="listr">
-                          <?=$queue['priority'];?>
+                          <?=$queue['priority'];?>&nbsp;
 			</td>
 			<td class="listr">
 			  <?php

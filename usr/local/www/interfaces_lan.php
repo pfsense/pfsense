@@ -32,11 +32,11 @@
 require("guiconfig.inc");
 
 $lancfg = &$config['interfaces']['lan'];
-$pconfig['ipaddr'] = $config['interfaces']['lan']['ipaddr'];
-$pconfig['subnet'] = $config['interfaces']['lan']['subnet'];
+$pconfig['ipaddr'] = $lancfg['ipaddr'];
+$pconfig['subnet'] = $lancfg['subnet'];
 
-$pconfig['bandwidth'] = $config['interfaces']['lan']['bandwidth'];
-$pconfig['bandwidthtype'] = $config['interfaces']['lan']['bandwidthtype'];
+$pconfig['bandwidth'] = $lancfg['bandwidth'];
+$pconfig['bandwidthtype'] = $lancfg['bandwidthtype'];
 
 /* Wireless interface? */
 if (isset($lancfg['wireless'])) {
@@ -71,10 +71,10 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		$config['interfaces']['lan']['ipaddr'] = $_POST['ipaddr'];
-		$config['interfaces']['lan']['subnet'] = $_POST['subnet'];
-		$config['interfaces']['lan']['bandwidth'] = $_POST['bandwidth'];
-		$config['interfaces']['lan']['bandwidthtype'] = $_POST['bandwidthtype'];
+		$lancfg['ipaddr'] = $_POST['ipaddr'];
+		$lancfg['subnet'] = $_POST['subnet'];
+		$lancfg['bandwidth'] = $_POST['bandwidth'];
+		$lancfg['bandwidthtype'] = $_POST['bandwidthtype'];
 
 		$dhcpd_was_enabled = 0;
 		if (isset($config['dhcpd']['enable'])) {

@@ -31,7 +31,7 @@
 
 /*
  * log_error: send string to syslog
- */ 
+ */
 function log_error($error) {
     syslog(LOG_WARNING, $error);
     return;
@@ -90,6 +90,65 @@ function is_carp_defined() {
 		return false;
 	else
 		return true;
+}
+
+/*
+ * exec_command($command): execute command return string of result
+ */
+function exec_command($command) {
+            $counter = 0;
+            $tmp = "";
+            $fd = popen($command . " 2>&1 ", "r");
+            while(!feof($fd)) {
+                        $tmp .= fread($fd,49);
+            }
+            fclose($fd);
+            return $tmp;
+}
+
+/*
+ * convert_ip_to_network_format($ip, $subnet): converts an ip address to network form
+ */
+function convert_ip_to_network_format($ip, $subnet) {
+    $ipsplit = split('[.]', $ip);
+    $string = $ipsplit[0] . "." . $ipsplit[1] . "." . $ipsplit[2] . ".0/" . $subnet;
+    return $string;
+}
+
+/*
+ * find_ip_interface($ip): return the interface where an ip is defined
+ */
+function find_ip_interface($ip) {
+	$i = 0;
+	$ifdescrs = array('wan', 'lan');
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+		$ifdescrs['opt' . $j] = "opt" . $j;
+	}
+	foreach ($ifdescrs as $ifdescr => $ifname) {
+	    $int = filter_translate_type_to_real_interface($ifname);
+	    $ifconfig = exec_command("/sbin/ifconfig {$int}");
+	    if(stristr($ifconfig,$ip) <> false)
+		return $int;
+	}
+	return false;
+}
+
+/*
+ * find_carp_interface($ip): return the carp interface where an ip is defined
+ */
+function find_carp_interface($ip) {
+    for($x=0; $x<99; $x++) {
+	$ifconfig = exec_command("/sbin/ifconfig {$int}");
+	if(stristr($ifconfig,$ip) <> false)
+	    return "carp" . $x;
+    }
+}
+
+/*
+ * add_rule_to_anchor($anchor, $rule): adds the specified rule to an anchor
+ */
+function add_rule_to_anchor($anchor, $rule) {
+    mwexec($rule . " | pfctl -a " . $anchor . " -f -");
 }
 
 ?>

@@ -153,17 +153,6 @@ function filter_configure() {
 	}
 }
 
-function exec_command($command) {
-            $counter = 0;
-            $tmp = "";
-            $fd = popen($command . " 2>&1 ", "r");
-            while(!feof($fd)) {
-                        $tmp .= fread($fd,49);
-            }
-            fclose($fd);
-            return $tmp;
-}
-
 function filter_get_altq_queue_scheduler_type($associatedrule) {
 	global $config;
 	return $config['system']['schedulertype'];

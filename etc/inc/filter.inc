@@ -943,7 +943,6 @@ function filter_rules_generate() {
 		$ipfrules .= "pass out quick on " . $wanif . "  inet proto tcp from any to any port www keep state label \"transparent proxy\"\n";
 	}
 
-
 	$ipfrules .= create_firewall_outgoing_rules_to_itself();
 
 	$ipfrules .= <<<EOD
@@ -1439,13 +1438,13 @@ EOD;
 						do not use state mechanisms to keep track. this is only useful if your doing advanced
 						queueing in certain situations. please check the faq.
 				*/
-				if(isset($rule['statetype']) && $rule['statetype'] != "") {
+				if(isset($rule['statetype']) && $rule['statetype'] <> "") {
 					if($rule['statetype'] == "modulate state" or $rule['statetype'] == "synproxy state") {
 						if($rule['protocol'] == "tcp")
-							$line .= $rule['statetype'] ;
+							$line .= $rule['statetype'] . " ";
 					} else {
-						if(!$rule['statetype'] == "none")
-							$line .= $rule['statetype'] ;
+						if($rule['statetype'] <> "")
+							$line .= $rule['statetype'] . " ";
 					}
 				} else {
 					$line .= "keep state ";

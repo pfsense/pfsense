@@ -67,7 +67,7 @@ function filter_configure() {
 	/* generate altq queues */
 	$altq_queues = filter_generate_altq_queues();
 
-	if(!isset($config['system']['disablefilter']) {
+	if( !isset( $config['system']['disablefilter'] ) ) {
 		mwexec("/sbin/pfctl -e");
 		mwexec("/sbin/pfctl -F nat");
 		mwexec("/sbin/pfctl -F rules");
@@ -938,16 +938,20 @@ EOD;
 			}
 
 			if ($type == "pass") {
+
+				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states'] ) {
+					$line .= "flags S/SA ";
+
 				$line .= "keep state ";
-				
-				if(isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states']) {
+
+				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states'] ) {
 					$line .= "( ";
-					if(isset($rule['source-track'])
-						$line .= " source-track";
-					if(isset($rule['max-src-nodes'])
-						$line .= " max-src-nodes " . $rule['max-src-nodes'];
-					if(isset($rule['max-src-states'])
-						$line .= " max-src-states" . $rule['max-src-states'];
+					if(isset($rule['source-track']))
+						$line .= "source-track rule ";
+					if(isset($rule['max-src-nodes']))
+						$line .= "max-src-nodes " . $rule['max-src-nodes'] . " ";
+					if(isset($rule['max-src-states']))
+						$line .= "max-src-states" . $rule['max-src-states'] . " ";
 					$line .= " ) ";
 				}
 

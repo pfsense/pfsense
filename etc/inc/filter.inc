@@ -516,8 +516,16 @@ function filter_generate_altq_rules() {
 
 			if ($type == "pass") {
 
-				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states']) )
-					$line .= "flags S/SA ";
+				/* process needed flags */
+				if(isset($rule['tcpflags'])) {
+					$line .= " flags ";
+					if(is_array($rule['tcpflags']))
+						foreach ($rule['tcpflags'] as $flag) {
+							if($flag == "ack") $line .= "S/SA";
+						}
+					else
+						if($rule['tcpflags'] == "ack") $line .= "S/SA ";
+				}
 
 				/*
 					# keep state

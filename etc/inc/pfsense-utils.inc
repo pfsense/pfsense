@@ -665,14 +665,15 @@ function get_package_xml_depends($pkg_name) {
 	if($pkg_xml['additional_files_needed'] != "") {
 		foreach($pkg_xml['additional_files_needed'] as $item) {
 			$depend_file = substr(strrchr($item['item'], "/"),1); // Strip URLs down to filenames.
-			$depend_name = reverse_strrchr($depend_file, "."); // Strip filename down to dependency name.
 			if(!preg_match("/\.xml/i", $depend_file)) break; // If the file doesn't end in .xml (case-insensitive) exit the loop.
 			if(!file_exists("/usr/local/pkg/" . $pkg_name)) {
+				$depend_name = reverse_strrchr($depend_file, "."); // Strip filename down to dependency name.
 				log_error("Fetching missing dependency \(" . $depend_name . "\) for " . $pkg_name);
 				mwexec("/usr/bin/fetch -o /usr/local/pkg/" . $depend_file . " " . $item['item']);
 			}
 			if ($format = "names") {
-				$depends[] = $depend_name;
+				$depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
+				$depends[] = $depend_xml['name'];
 			} else {
 				$depends[] = $depend_file;
 			}

@@ -339,13 +339,14 @@ function remove_text_from_file($file, $text) {
 }
 
 /*
- *  is_package_installed($packgename): returns 1 if a package is installed, 0 otherwise.
+ *  is_package_installed($packagename): returns 1 if a package is installed, 0 otherwise.
  */
 function is_package_installed($packagename) {
     global $config;
-    foreach ($config['installedpackages']['package'] as $pkg) {
-	if($pkg['name'] == $packagename) return 1;
-    }
+    if($config['installedpackages']['package'] <> "")
+	foreach ($config['installedpackages']['package'] as $pkg) {
+	    if($pkg['name'] == $packagename) return 1;
+	}
     return 0;
 }
 

@@ -29,6 +29,11 @@
 
 require("guiconfig.inc");
 
+if($_GET['reset'] <> "") {
+	mwexec("killall -9 pfctl php");
+	exit;
+}
+
 if (!is_array($config['shaper']['queue'])) {
 	$config['shaper']['queue'] = array();
 }
@@ -71,9 +76,10 @@ $a_queues = &$config['shaper']['queue'];
                     </table>
 		    <p>
                     <strong><span class="red">Note:</span></strong><strong><br></strong>
-		      1)  Queue graphs take 5 seconds to sample data.
+		      Queue graphs take 5 seconds to sample data.
 		    </p>
             </form>
+<br><a href="status_queues.php?reset=true">Reset</a> queues if they do not load.
 <?php include("fend.inc"); ?>
 </body>
 </html>

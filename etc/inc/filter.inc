@@ -798,8 +798,10 @@ function filter_nat_rules_generate() {
 	$natrules .= "\# spam table \n";
 	$natrules .= "table <spamd> persist\n\n";
 
-	if(!isset($config['system']['disableftpproxy']))
-		$natrules .= "rdr on " . $lanif . " proto tcp from any to any port 21 -> 127.0.0.1 port 8021\n";
+	if(!isset($config['system']['disableftpproxy'])) {
+		$natrules .= "# FTP proxy\n";
+		$natrules .= "rdr on " . $lanif . " proto tcp from any to any port 21 -> 127.0.0.1 port 8021\n\n";
+	}
 
 	/* DIAG: add ipv6 NAT, if requested */
 	if (isset($config['diag']['ipv6nat']['enable'])) {
@@ -951,8 +953,8 @@ function filter_rules_generate() {
 	/* if squid is installed, lets install its rule */
 	$squid_installed = run_command_return_string("/bin/ls /var/db/pkg/ | grep squid");
 	if ($squid_installed <> "") {
-		$ipfrules .= "pass in quick on " . $lanif . " inet proto tcp from any to 127.0.0.1 port 3128 keep state label \"transparent proxy\"\n";
-		$ipfrules .= "pass out quick on " . $wanif . "  inet proto tcp from any to any port www keep state label \"transparent proxy\"\n";
+		$ipfrules .= "pass in quick on " . $lanif . " inet proto tcp from any to 127.0.0.1 port 3128 flags S/SA keep state label \"transparent proxy\"\n";
+		$ipfrules .= "pass out quick on " . $wanif . "  inet proto tcp from ($wanif) to any port www flags S/SA keep state label \"transparent proxy\"\n";
 	}
 
 	$ipfrules .= create_firewall_outgoing_rules_to_itself();
@@ -1067,8 +1069,8 @@ EOD;
 anchor "pptpclient"
 pass in quick on {$wancfg['if']} proto gre from any to any keep state label "allow PPTP client"
 pass out quick on {$wancfg['if']} proto gre from any to any  keep state label "allow PPTP client"
-pass in quick on {$wancfg['if']} proto tcp from any port = 1723 to any  keep state label "allow PPTP client"
-pass out quick on {$wancfg['if']} proto tcp from any to any port = 1723 keep state label "allow PPTP client"
+pass in quick on {$wancfg['if']} proto tcp from any port = 1723 to any  flags S/SA keep state label "allow PPTP client"
+pass out quick on {$wancfg['if']} proto tcp from any to any port = 1723 flags S/SA keep state label "allow PPTP client"
 
 EOD;
 	}

@@ -37,6 +37,7 @@
 			<subnet>24</subnet>
 			<media></media>
 			<mediaopt></mediaopt>
+			<schedulertype>hfsc</schedulertype>
 			<!--
 			<wireless>
 				*see below (opt[n])*
@@ -54,6 +55,7 @@
 			<dhcphostname></dhcphostname>
 			<media></media>
 			<mediaopt></mediaopt>
+			<schedulertype>hfsc</schedulertype>
 			<!--
 			<wireless>
 				*see below (opt[n])*

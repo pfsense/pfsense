@@ -25,6 +25,11 @@
         CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
         ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
         POSSIBILITY OF SUCH DAMAGE.
+
+	TODO:
+		* Expose more functions.
+		* Write handlers for authentication and PHP -> XML_RPC_Value.
+		* xmlrpc_params_to_php currently does *not* handle structs.
 */
 
 require_once("xmlrpc_server.inc");

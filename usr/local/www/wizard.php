@@ -73,12 +73,13 @@ if ($_POST) {
 		if($field['bindstofield'])
 			update_config_field( $field['bindstofield'], $_POST[$fieldname], $unset_fields, $arraynum);
         }
-		// run custom php code embedded in xml config.
-        if($pkg['step'][$stepid]['stepsubmitphpaction']) {
-				eval($pkg['step'][$stepid]['stepsubmitphpaction']);
-        }
-	write_config();
+
     }
+    // run custom php code embedded in xml config.
+    if($pkg['step'][$stepid]['stepsubmitphpaction'] <> "") {
+		eval($pkg['step'][$stepid]['stepsubmitphpaction']);
+    }
+	write_config();
     $stepid++;
     if($stepid > $totalsteps) $stepid = $totalsteps;
 }

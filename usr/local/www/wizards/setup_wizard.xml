@@ -2435,29 +2435,29 @@
 		<field>
 			<name>Admin Password AGAIN</name>
 			<type>password</type>
-			<stepsubmitphpaction>
-			if($_POST['adminpassword'] != "") {
-				if($_POST['adminpassword'] == $_POST['adminpasswordagain']) {
-					$fd = popen("/usr/sbin/pw usermod -n root -H 0", "w");
-					$salt = md5(time());
-					$crypted_pw = crypt($_POST['adminpassword'],$salt);
-					fwrite($fd, $crypted_pw);
-					pclose($fd);
-					$config['system']['password'] = crypt($_POST['adminpassword']);
-					write_config();
-					system_password_configure();
-				} else {
-					print_info_box_np("Passwords do not match!  Please press back in your browser window and correct.");
-					die;
-				}
-			}
-			</stepsubmitphpaction>
 		</field>
 		<field>
 			<name>Next</name>
 			<type>submit</type>
 		</field>
 	</fields>
+	<stepsubmitphpaction>
+	if($_POST['adminpassword'] != "") {
+		if($_POST['adminpassword'] == $_POST['adminpasswordagain']) {
+			$fd = popen("/usr/sbin/pw usermod -n root -H 0", "w");
+			$salt = md5(time());
+			$crypted_pw = crypt($_POST['adminpassword'],$salt);
+			fwrite($fd, $crypted_pw);
+			pclose($fd);
+			$config['system']['password'] = crypt($_POST['adminpassword']);
+			write_config();
+			system_password_configure();
+		} else {
+			print_info_box_np("Passwords do not match!  Please press back in your browser window and correct.");
+			die;
+		}
+	}
+	</stepsubmitphpaction>
 </step>
 <step>
 	<id>7</id>

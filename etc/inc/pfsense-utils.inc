@@ -864,13 +864,14 @@ if (!function_exists('php_check_syntax')){
 /*
  * sync_package($pkg_name, $show_message) Force a package to setup its configuration and rc.d files.
  */
-function sync_package($pkg_name, $sync_depends = true, $pkg_id, $show_message = false) {
+function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 	global $config;                                        
 	if(!$config['installedpackages']['package']) return;
-	if($pkg_id == "") {
+	if(!is_numeric($pkg_name)) {
 		$pkg_id = get_pkg_id($pkg_name);
 		if($pkg_id == -1) return -1; // This package doesn't really exist - exit the function.
 	} else {
+		$pkg_id = $pkg_name;
 		if(!isset($config['installedpackages'][$pkg_id])) return; // No package belongs to the pkg_id passed to this function.
 	}
 	$package = $config['installedpackages'][$pkg_id];

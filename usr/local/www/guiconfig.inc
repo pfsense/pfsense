@@ -459,8 +459,9 @@ function dump_clog($logfile, $tail, $grepfor = "", $grepinvert = false, $withori
 
         if($grepfor <> "") {
 		$size = count($grepfor);
+		$i = 0;
 		foreach($grepfor as $agrep) {
-                	if($grepinvert[$size - count($grepfor)] == true) {
+                	if($grepinvert[$i] == true) {
 				if($size > 1) {
 					$grep .= "grep -v {$agrep} | ";
 				} else {
@@ -475,13 +476,13 @@ function dump_clog($logfile, $tail, $grepfor = "", $grepinvert = false, $withori
 				}
 				$size--;
                 	}
+			$i++;
 		}
 		exec("/usr/sbin/clog {$logfile} | {$grep} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
         } else {
                 exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
         }
         foreach ($logarr as $logent) {
-		print $logent[0];
                 $logent = preg_split("/\s+/", $logent, 6);
                 echo "<tr valign=\"top\">\n";
 

@@ -76,7 +76,7 @@ function filter_configure() {
 	/* generate altq interface setup parms */
 	$altq_ints = filter_setup_altq_interfaces();
 	/* generate altq queues */
-	$altq_queues = filter_generate_altq_queues();
+	$altq_queues = filter_generate_altq_queues($altq_ints);
 	/* generate altq rules */
 	$altq_rules = filter_generate_altq_rules();
 
@@ -179,51 +179,54 @@ function filter_get_rule_interface($associatedrulenumber) {
 	return $config['shaper']['rule'][$associatedrulenumber]['interface'];
 }
 
-function filter_generate_altq_queues() {
+function filter_generate_altq_queues($altq_ints) {
 	global $config;
 	$altq_rules = "";
 	if (is_array($config['shaper']['queue'])) {
 		foreach ($config['shaper']['queue'] as $rule) {
 			$options = "";
-			$altq_rules .= "queue " . $rule['name'] . " ";
-			if (isset($rule['bandwidth']) and $rule['bandwidth'] <> "")
-				$altq_rules .= "bandwidth " . $rule['bandwidth'] . $rule['bandwidthtype'] . " ";
-			if (isset($rule['priority']) and $rule['priority'] <> "")
-				$altq_rules .= "priority " .  $rule['priority']  . " ";
-			if(isset($rule['red']) and $rule['red'] <> "")
-				$options .= " red";
-			if(isset($rule['borrow']) and $rule['borrow'] <> "")
-				$options .= " borrow";
-			if(isset($rule['ecn']) and $rule['ecn'] <> "")
-				$options .= " ecn";
-			if(isset($rule['rio']) and $rule['rio'] <> "")
-				$options .= " rio";
-			if(isset($rule['defaultqueue']) and $rule['defaultqueue'] <> "")
-				$options .= " default";
-			if(isset($rule['upperlimit']) and $rule['upperlimit'] <> "") {
-				$options .= " upperlimit(" . $rule['upperlimit1'] . " " . $rule['upperlimit2'] . " " . $rule['upperlimit3'] . ")";
-			}
-			if(isset($rule['linkshare']) and $rule['linkshare'] <> "") {
-				$options .= " linkshare(" . $rule['linkshare1'] . " " . $rule['linkshare2'] . " " . $rule['linkshare3'] . ")";
-			}
-			if(isset($rule['realtime']) and $rule['realtime'] <> "") {
-				$options .= " realtime(" . $rule['realtime1'] . " " . $rule['realtime2'] . " " . $rule['realtime3'] . ")";
-			}
-			$scheduler_type = $config['system']['schedulertype'];
-			$altq_rules .= $scheduler_type . " ";
-			if($options)
-				$altq_rules .= "(". $options . " )";
-			if (isset($rule['subqueue'])) {
-				$altq_rules .= "{ ";
-				$fsq = "";
-				foreach ($rule['subqueue'] as $sq) {
-					if($fsq) $altq_rules .= ",";
-					$altq_rules .= $sq['name'];
-					$fsq = "1";
+			// check to make sure we're actually using this queue.
+			if(stristr($altq_ints, $rule['name']) !== FALSE) {
+				$altq_rules .= "queue " . $rule['name'] . " ";
+				if (isset($rule['bandwidth']) and $rule['bandwidth'] <> "")
+					$altq_rules .= "bandwidth " . $rule['bandwidth'] . $rule['bandwidthtype'] . " ";
+				if (isset($rule['priority']) and $rule['priority'] <> "")
+					$altq_rules .= "priority " .  $rule['priority']  . " ";
+				if(isset($rule['red']) and $rule['red'] <> "")
+					$options .= " red";
+				if(isset($rule['borrow']) and $rule['borrow'] <> "")
+					$options .= " borrow";
+				if(isset($rule['ecn']) and $rule['ecn'] <> "")
+					$options .= " ecn";
+				if(isset($rule['rio']) and $rule['rio'] <> "")
+					$options .= " rio";
+				if(isset($rule['defaultqueue']) and $rule['defaultqueue'] <> "")
+					$options .= " default";
+				if(isset($rule['upperlimit']) and $rule['upperlimit'] <> "") {
+					$options .= " upperlimit(" . $rule['upperlimit1'] . " " . $rule['upperlimit2'] . " " . $rule['upperlimit3'] . ")";
 				}
-				$altq_rules .= " }";
+				if(isset($rule['linkshare']) and $rule['linkshare'] <> "") {
+					$options .= " linkshare(" . $rule['linkshare1'] . " " . $rule['linkshare2'] . " " . $rule['linkshare3'] . ")";
+				}
+				if(isset($rule['realtime']) and $rule['realtime'] <> "") {
+					$options .= " realtime(" . $rule['realtime1'] . " " . $rule['realtime2'] . " " . $rule['realtime3'] . ")";
+				}
+				$scheduler_type = $config['system']['schedulertype'];
+				$altq_rules .= $scheduler_type . " ";
+				if($options)
+					$altq_rules .= "(". $options . " )";
+				if (isset($rule['subqueue'])) {
+					$altq_rules .= "{ ";
+					$fsq = "";
+					foreach ($rule['subqueue'] as $sq) {
+						if($fsq) $altq_rules .= ",";
+						$altq_rules .= $sq['name'];
+						$fsq = "1";
+					}
+					$altq_rules .= " }";
+				}
+				$altq_rules .= "\n";
 			}
-			$altq_rules .= "\n";
 		}
 	}
 	return $altq_rules;
@@ -281,8 +284,7 @@ function filter_setup_altq_interfaces() {
 					if($is_first) $queue_names .= ", ";
 					$queue_names .= $queue['name'];
 					$is_first = "1";
-				} else {
-				}
+				}				
 			}
 		}
 

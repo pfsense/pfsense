@@ -116,6 +116,10 @@ include("fbegin.inc");
 
 		write_config();
 
+		if($pkg['custom_add_php_command_late'] <> "") {
+		    eval($pkg['custom_add_php_command_late']);
+		}
+
 		header("Location:  pkg.php?xml=" . $xml);
 	}
 }
@@ -187,7 +191,7 @@ $config = $config_tmp;
 	      } else if($pkga['type'] == "radio") {
 		  echo "<input type='radio' name='" . $pkga['fieldname'] . "' value='" . $value . "'>";
 	      }
-	      
+
 	      if($pkga['typehint']) echo " " . $pkga['typehint'];
 	  ?>
        </td>

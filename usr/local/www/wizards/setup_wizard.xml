@@ -29,6 +29,8 @@
 			<type>input</type>
 			<bindstofield>system->domain</bindstofield>
 			<description>EXAMPLE: mydomain.com</description>
+			<validate>^[a-z0-9.]+$</validate>
+			<message>Domain name field is invalid</message>
 		</field>
 		<field>
 			<name>Primary DNS Server</name>

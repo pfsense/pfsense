@@ -120,6 +120,17 @@ if($pkg['step'][$stepid]['stepbeforeformdisplay'] <> "") {
 <title><?=gentitle_pkg($title);?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="gui.css" rel="stylesheet" type="text/css">
+
+<script Language="JavaScript">
+<!-- 
+function FieldValidate(userinput, regexp, message)
+{
+        if(!userinput.match(regexp))
+                alert(message);
+}
+//-->
+</script>
+
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -181,7 +192,11 @@ if($pkg['step'][$stepid]['stepbeforeformdisplay'] <> "") {
 			}
 			if(!$field['dontcombinecells'])
 				echo "<td class=\"vtable\">\n";
-			echo "<input id='" . $name . "' name='" . $name . "' value='" . $value . "'>\n";
+
+			echo "<input id='" . $name . "' name='" . $name . "' value='" . $value . "'";
+			if($field['validate'])
+				echo " onChange='FieldValidate(this.value, \"{$field['validate']}\", \"{$field['message']}\");'";
+			echo ">\n";
 		    } else if ($field['type'] == "password") {
 			if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";

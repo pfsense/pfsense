@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# $Id$
+
 sleep 1
 
 /sbin/shutdown -h now

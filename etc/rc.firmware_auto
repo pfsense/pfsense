@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# $Id$
+
 FMBASEURL=$1
 FMFILENAME=$2
 FETCHFILENAME=$1/$2

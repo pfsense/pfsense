@@ -1,5 +1,6 @@
 #!/usr/local/bin/php -f
 <?php
+/* $Id$ */
 /*
 	rc.bootup
 	part of pfSense by Scott Ullrich

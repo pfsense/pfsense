@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# $Id$
+
 stty status '^T'
 
 # Set shell to ignore SIGINT (2), but not children;

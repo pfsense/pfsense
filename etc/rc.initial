@@ -1,5 +1,6 @@
 #!/bin/sh
 
+# $Id$
 # /etc/rc.initial
 # part of pfSense by Scott Ullrich
 # Copyright (C) 2004 Scott Ullrich, All rights reserved.

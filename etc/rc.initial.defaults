@@ -1,5 +1,6 @@
 #!/usr/local/bin/php -f
 <?php
+/* $Id$ */
 /*
 	rc.initial.defaults
 	part of m0n0wall (http://m0n0.ch/wall)

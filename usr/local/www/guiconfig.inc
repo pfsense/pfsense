@@ -167,7 +167,7 @@ function verify_gzip_file($fname) {
 
 function print_info_box_np($msg) {
 	echo "<table border=\"0\" cellspacing=\"0\" cellpadding=\"4\" width=\"100%\">\n";
-	echo "<tr><td bgcolor=\"#7F3B00\" align=\"center\" valign=\"top\" width=\"36\"><img src=\"/exclam.gif\" width=\"28\" height=\"32\"></td>\n";
+	echo "<tr><td bgcolor=\"#990000\" align=\"center\" valign=\"top\" width=\"36\"><img src=\"/exclam.gif\" width=\"28\" height=\"32\"></td>\n";
 	echo "<td bgcolor=\"#00000\" style=\"padding-left: 8px\"><font color=\"#ffffff\">";
 	echo $msg;
 	echo "</td></tr></table><br>";

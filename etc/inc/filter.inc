@@ -93,11 +93,19 @@ function filter_configure() {
 	/* get our wan interface? */
 	$wanif = get_real_wan_interface();
 
+	/* set up MSS clamping */
+	if ($config['interfaces']['wan']['mtu'])
+		$mssclamp = "max-mss " . $config['interfaces']['wan']['mtu'] - 40;
+	else if ($config['interfaces']['wan']['ipaddr'] == "pppoe")
+		$mssclamp = "max-mss 1452";
+	else
+		$mssclamp = "";
+
         $fd = fopen("/tmp/rules.debug", "w");
 	fwrite($fd, "set loginterface $wanif \n");
 	$optimization = "normal";
 	if($config['system']['optimization'] <> "") $optimization = $config['system']['optimization'];
-        fwrite($fd, "set optimization " . $optimization . "\n");
+        fwrite($fd, "set optimization " . $optimization . " " . $mssclamp . "\n");
 	fwrite($fd, "\nscrub in all\n");
 	fwrite($fd, $altq_ints);
 	fwrite($fd, $altq_queues);
@@ -108,6 +116,7 @@ function filter_configure() {
 
 	mwexec("chmod a+x /tmp/rules.debug");
 	mwexec("/sbin/pfctl -f /tmp/rules.debug");
+
 
 	if ($g['booting'])
 		echo "done\n";

@@ -194,7 +194,7 @@ function f(ta_id){
 	    echo "<script language=\"JavaScript\">document.forms[0].status.value=\"Creating CA...\";</script>";
 	    mwexec("rm -rf /tmp/*");
 	    //mwexec("rm -rf /tmp/newcerts");
-	    mkdir("/tmp/newcerts", 0755);
+	    safe_mkdir("/tmp/newcerts", 0755);
 	    touch("/tmp/index.txt");
 	    $fd = fopen("/tmp/serial","w");
 	    fwrite($fd, "01\n");

@@ -764,7 +764,7 @@ function restore_config_section($section, $new_contents) {
     write_config();
     conf_mount_ro();
     config_unlock();
-    return
+    return;
 }
 
 /*

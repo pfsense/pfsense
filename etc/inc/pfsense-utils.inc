@@ -562,42 +562,15 @@ function update_progress_bar($percent) {
  * This function also prints output to the terminal indicating progress.
  */
 function resync_all_package_configs_bootup($show_message) {
-    global $config;
-    log_error("Resyncing configuration for all packages.");
-    if(!$config['installedpackages']['package']) return;
-    if($show_message == true) print "Syncing packages:";
-    foreach($config['installedpackages']['package'] as $package) {
-	if(isset($pkg_config['nosync'])) continue;
-	if($show_message == true) print " " . $package['name'];
-	$error_message = '';
-        if($pkg_config['custom_php_command_before_form'] <> "") {
-	    if(php_check_syntax($pkg_config['custom_php_command_before_form'], $error_message) === true) {
-		eval($pkg_config['custom_php_command_before_form']);
-	    } else {
-		print "(!)";
-		continue;
-	    }
+	global $config;
+	$i = 0;
+	log_error("Resyncing configuration for all packages.");
+	if(!$config['installedpackages']['package']) return;
+	if($show_message == true) print "Syncing packages:";
+	foreach($config['installedpackages']['package'] as $package) {
+		if($show_message == true) print " " . $package['name'];
+		sync_package($i, true, true);
 	}
-        if($pkg_config['custom_php_resync_config_command'] <> "") {
-        //    if(php_check_syntax($pkg_config['custom_php_resync_config_command'], $error_message) === true) {
-		eval($pkg_config['custom_php_resync_config_command']);
-	//  } else {
-	//	print "(!)";
-	//	continue;
-	//  }
-	}
-	$depends = get_pkg_depends($package['name'], ".xml", "files", 0); // Call dependency handler and do a little more error checking.
-        if(is_array($depends))
-	    foreach($depends as $item) {
-			    $item_config = parse_xml_config_pkg("/usr/local/pkg/" . $item, "packagegui");
-			    if (isset($item_config['nosync'])) continue;
-			    if($item_config['custom_php_command_before_form'] <> "")
-				eval($item_config['custom_php_command_before_form']);
-			    if($item_config['custom_php_resync_config_command'] <> "")
-				eval($item_config['custom_php_resync_config_command']);
-			    if($show_message == true) print " " . $item_config['name'];
-		    }
-	    }
 	if($show_message == true) print ".\n";
 }
 
@@ -862,7 +835,7 @@ if (!function_exists('php_check_syntax')){
 }
 
 /*
- * sync_package($pkg_name, $show_message) Force a package to setup its configuration and rc.d files.
+ * sync_package($pkg_name, $sync_depends = true, $show_message = false) Force a package to setup its configuration and rc.d files.
  */
 function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 	global $config;                                        

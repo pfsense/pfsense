@@ -34,7 +34,7 @@ require("guiconfig.inc");
 if (!is_array($config['nat']['rule'])) {
 	$config['nat']['rule'] = array();
 }
-nat_rules_sort();
+//nat_rules_sort();
 $a_nat = &$config['nat']['rule'];
 
 $id = $_GET['id'];

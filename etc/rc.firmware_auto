@@ -17,11 +17,10 @@ echo "   Package MD5: ${PMD}" | logger -p daemon.info -i -t AutoUpgrade
 echo "Downloaded MD5: ${MD}"  | logger -p daemon.info -i -t AutoUpgrade
 
 if [ "$PMD" = "$MD" ]; then
-	echo "MD5's match."  | logger -p daemon.info -i -t AutoUpgrade
+        echo "MD5's match."  | logger -p daemon.info -i -t AutoUpgrade
         /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz
-then
-        echo "MD5's do not match."  | logger -p daemon.info -i -t AutoUpgrade
         exit 0
 fi
 
-
+echo "MD5's do not match."  | logger -p daemon.info -i -t AutoUpgrade
+exit 0

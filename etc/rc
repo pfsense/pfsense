@@ -50,6 +50,10 @@ adjkerntz -i
 
 sysctl net.inet.tcp.sack.enable=0
 
+# Start PF.  We are now using GENERIC kernel
+# so freebsd update can do its job correctly.
+/sbin/kldload pf.ko
+
 #mount_devfs devfs /dev
 
 # Create an initial utmp file

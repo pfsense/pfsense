@@ -554,6 +554,8 @@ function config_unlock() {
 
 function set_networking_interfaces_ports() {
 	global $noreboot;
+	global $config;
+	global $g;
 
 	$fp = fopen('php://stdin', 'r');
 

@@ -464,22 +464,13 @@ function dst_rep_change() {
                   <td valign="top" class="vncellreq">Target</td>
                   <td class="vtable"> <select name="target" class="formfld">
                       <?php
-					  foreach ($config['shaper']['pipe'] as $pipei => $pipe): ?>
-                      <option value="<?="targetpipe:$pipei";?>" <?php if ("targetpipe:$pipei" == $pconfig['target']) echo "selected"; ?>>
-                      <?php
-					  	echo htmlspecialchars("Pipe " . ($pipei + 1));
-						if ($pipe['descr'])
-							echo htmlspecialchars(" (" . $pipe['descr'] . ")");
-					  ?>
-                      </option>
-                      <?php endforeach;
 					  foreach ($config['shaper']['queue'] as $queuei => $queue): ?>
-                      <option value="<?="targetqueue:$queuei";?>" <?php if ("targetqueue:$queuei" == $pconfig['target']) echo "selected"; ?>>
-                      <?php
+                      <option value="<?=$queue['name'];?>" <?php if ($queue['name'] == $pconfig['targetqueue']) echo "selected"; ?>>
+                        <?php
 					  	echo htmlspecialchars("Queue " . ($queuei + 1));
 						if ($queue['name'])
 							echo htmlspecialchars(" (" . $queue['name'] . ")");
-					  ?>
+			?>
                       </option>
                       <?php endforeach; ?>
                     </select> <br>

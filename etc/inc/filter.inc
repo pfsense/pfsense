@@ -117,16 +117,16 @@ function filter_configure() {
         fwrite($fd, $pfrules);
         fclose($fd);
 
-	system("/sbin/pfctl -f /tmp/rules.debug 2>/tmp/pf_boot_errors.txt");
+	system("/sbin/pfctl -f /tmp/rules.debug");
 
 	/* load ipfw+altq module */
 	if (isset($config['shaper']['enable'])) {
-		mwexec("/sbin/kldload ipfw >/dev/null 2>&1");
+		mwexec("/sbin/kldload ipfw");
                 /* change one_pass to 1 so ipfw stops checking after
                    a rule has matched */
-                mwexec("/sbin/sysctl net.inet.ip.fw.one_pass=1 >/dev/null 2>&1");
+                mwexec("/sbin/sysctl net.inet.ip.fw.one_pass=1");
                 /* load shaper rules */
-                mwexec("/sbin/ipfw -f delete set 4 >/dev/null 2>&1");
+                mwexec("/sbin/ipfw -f delete set 4");
                 /* XXX - seems like ipfw cannot accept rules directly on stdin,
                    so we have to write them to a temporary file first */
                 $fd = fopen("/tmp/ipfw.rules", "w");
@@ -136,14 +136,16 @@ function filter_configure() {
                 }
                 fwrite($fd, $altq_rules);
                 fclose($fd);
-                mwexec("/sbin/ipfw /tmp/ipfw.rules >/tmp/ipfw_errors.txt 2>&1");
-		mwexec("/sbin/ipfw enable altq >/dev/null 2>&1\n");
-                mwexec("/bin/mv /tmp/ipfw.rules /tmp/ipfw.rules_old >/dev/null 2>&1");
+                mwexec("/sbin/ipfw /tmp/ipfw.rules");
+		mwexec("/sbin/ipfw enable altq");
+                mwexec("/bin/mv /tmp/ipfw.rules /tmp/ipfw.rules_old");
 	} else {
 		mwexec("/sbin/ipfw -f flush");
 		if(!isset($config['captiveportal']['enable']))
 			mwexec("/sbin/kldunload ipfw.ko");
 	}
+
+	//system("/etc/rc.filter_configure");
 
 	return 0;
 }
@@ -151,16 +153,6 @@ function filter_configure() {
 function filter_get_altq_queue_scheduler_type($associatedrule) {
 	global $config;
 	return $config['system']['schedulertype'];
-}
-
-function filter_get_rule_real_interface($associatedrulenumber) {
-        global $config;
-        $x=0;
-        foreach($config['shaper']['rule'] as $rule) {
-                if($x == $associatedrulenumber)
-                        return $rule['interface'];
-                $x++;
-        }
 }
 
 function filter_get_rule_interface($associatedrulenumber) {
@@ -221,20 +213,28 @@ function filter_generate_altq_queues() {
 	return $altq_rules;
 }
 
-function filter_translate_real_interface_to_type($interface) {
-        global $config;
-        $int = "na";
-        if($config['interfaces']['wan']['if'] == $interface) $int = "wan";
-        if($config['interfaces']['lan']['if'] == $interface) $int = "lan";
-        return $int;
-}
-
 function filter_translate_type_to_real_interface($interface) {
         global $config;
-        $int = "na";
-        if($interface == "wan") return $config['interfaces']['wan']['if'];
-        if($interface == "lan") return $config['interfaces']['lan']['if'];
-        return $int;
+	return $config['interfaces'][$interface]['if'];
+}
+
+function filter_get_rule_real_interface($associatedrulenumber) {
+        global $config;
+        $x=0;
+        foreach($config['shaper']['rule'] as $rule) {
+                if($x == $associatedrulenumber)
+                        return $rule['interface'];
+                $x++;
+        }
+}
+
+function filter_is_queue_being_used_on_interface($queuename, $interface) {
+	global $config;
+	foreach($config['shaper']['rule'] as $rule) {
+		if($rule['targetqueue'] == $queuename && $rule['interface'] == $interface)
+			return $interface;
+	}
+	return;
 }
 
 function filter_setup_altq_interfaces() {
@@ -242,34 +242,43 @@ function filter_setup_altq_interfaces() {
 	$altq_rules  = "";
 	$queue_names = "";
 	$is_first = "";
-	foreach ($config['interfaces'] as $ifname) {
+
+	if(!is_array($config['shaper']['queue'])) return;
+
+	$i = 0;
+	$ifdescrs = array('wan', 'lan');
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+		$ifdescrs['opt' . $j] = "opt" . $j;
+	}
+
+	foreach ($ifdescrs as $ifdescr => $ifname) {
+
 		$queue_names = "";
 		$is_first = "";
-		if (is_array($config['shaper']['queue'])) {
-			foreach ($config['shaper']['queue'] as $queue) {
-				$rule_interface = filter_get_rule_real_interface($queue['associatedrule']);
-				$workting_with_interface = filter_translate_real_interface_to_type($ifname['if']);
-				if ($rule_interface == $workting_with_interface) {
-					if(is_subqueue($queue['name']) == 0) {
-						if($is_first) $queue_names .= ", ";
-						$queue_names .= $queue['name'];
-						$is_first = "1";
-					}
+
+		$workting_with_interface = $ifname;
+
+		foreach ($config['shaper']['queue'] as $queue) {
+			$rule_interface = filter_is_queue_being_used_on_interface($queue['name'], $workting_with_interface);
+			if ($rule_interface == $workting_with_interface) {
+				if(is_subqueue($queue['name']) == 0) {
+					if($is_first) $queue_names .= ", ";
+					$queue_names .= $queue['name'];
+					$is_first = "1";
+				} else {
 				}
 			}
 		}
 
-		$subnet = $ifname['ipaddr'] . "/" . $ifname['subnet'];
+		$subnet = $ifname['ipaddr'] . "/" . $config['interfaces'][$ifname]['subnet'];
 		if($queue_names <> ""){
-			$altq_rules .= "altq on " . $ifname['if'] . " ";
-			if($ifname['bandwidth'] <> "")
-				$bandwidth = " bandwidth " . $ifname['bandwidth'] . $ifname['bandwidthtype'];
+			$altq_rules .= "altq on " . $config['interfaces'][$ifname]['if'] . " ";
+			if($config['interfaces'][$ifname]['bandwidth'] <> "")
+				$bandwidth = " bandwidth " . $config['interfaces'][$ifname]['bandwidth'] . $config['interfaces'][$ifname]['bandwidthtype'];
 			$altq_rules .=  $config['system']['schedulertype'] . $bandwidth  . " ";
 			$altq_rules .= "queue { " . $queue_names . " }";
 		}
 		$altq_rules .= "\n";
-		$is_first = "";
-		$queue_names = "";
 
 	}
 	return $altq_rules;

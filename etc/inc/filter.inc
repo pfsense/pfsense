@@ -301,6 +301,11 @@ function filter_nat_rules_generate() {
 		}
 	}
 
+	/* Setup pf groups */
+	if (isset($config['aliases']['alias'] as $alias) {
+		$natrules .= $alias['name'] . " = { " . $alias['address'] . " }\n";
+	}
+
 	/* Setup outgoing NAT load balancing */
 	if (isset($config['nat']['outgoingloadbalancing']['rule'])) {
 		$natrules .= "pass in on " . $lanif . " route-to { ";

@@ -130,9 +130,9 @@ if ($_GET['act'] == "del") {
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
                       <tr>
                         <td width="10%" class="listhdrr">No.</td>
-                        <td width="5%" class="listhdrr">Priority</td>
-			<td width="5%" class="listhdr">Default</td>
-                        <td width="30%" class="listhdr">Name</td>
+                        <td width="20%" class="listhdrr">Priority</td>
+			<td width="20%" class="listhdr">Default</td>
+                        <td width="40%" class="listhdr">Name</td>
                         <td width="10%" class="list"></td>
                       </tr>
                       <?php $i = 0; foreach ($a_queues as $queue): ?>
@@ -154,23 +154,65 @@ if ($_GET['act'] == "del") {
 			</td>
                         <td class="listbg">
                           <font color="#FFFFFF"><?=htmlspecialchars($queue['name']);?>
-                          &nbsp;
+                          &nbsp;<br>
+<?php
+			$cpuUsage = 0;
+			echo "<img src='bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
+			echo "<img src='bar_blue.gif' height='15' name='queue{$i}widtha' id='queue{$i}widtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
+			echo "<img src='bar_gray.gif' height='15' name='queue{$i}widthb' id='queue{$i}widthb' width='" . (100 - $cpuUsage) . "' border='0' align='absmiddle'>";
+			echo "<img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
+			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='10' name='queue{$i}meter' id='queue{$i}meter' value='{$cpuUsage}'>";
+?>
+
 			</td>
                         <td valign="middle" nowrap class="list"> <a href="firewall_shaper_queues_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a>
                           &nbsp;<a href="firewall_shaper_queues.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this queue?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
                       </tr>
-                      <?php $i++; endforeach; ?>
+                      <?php $i++; endforeach; $total_queues = $i; ?>
                       <tr>
                         <td class="list" colspan="5"></td>
                         <td class="list"> <a href="firewall_shaper_queues_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>
-			        <p>
+		    <p>
                     <strong><span class="red">Note:</span></strong><strong><br></strong>
-                      a queue can only be deleted if it is not referenced by any rules.</td></p>
+                      1)  A queue can only be deleted if it is not referenced by any rules.<br>
+		      2)  Queue graphs take 5 seconds to sample data.
+		      </td>
+		    </p>
 	</tr>
 </table>
             </form>
 <?php include("fend.inc"); ?>
 </body>
 </html>
+
+
+<?php
+
+While(!Connection_Aborted()) {
+
+	$stats_array = gather_altq_queue_stats();
+
+	/* calculate total packets being moved through all queues. */
+	$total_packets_s = 0;
+	foreach($stats_array as $stats_line) {
+		$stat_line_split = split("\|", $stats_line);
+		$total_packets_s = $total_packets_s + intval($stat_line_split[2]);
+	}
+
+	$i = 0;
+	foreach($stats_array as $stats_line) {
+		$stat_line_split = split("\|", $stats_line);
+		$packet_s = intval($stat_line_split[2]);
+		echo "<script language='javascript'>\n";
+		echo "document.queue{$i}widtha.style.width='{$packet_s}';\n";
+		echo "document.queue{$i}widthb.style.width='" . (100 - $packet_s) . "';\n";
+		echo "document.forms[0].queue{$i}meter.value = '" . $packet_s . "/s';\n";
+		echo "</script>\n";
+		$i++;
+	}
+
+}
+
+?>

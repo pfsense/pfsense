@@ -47,13 +47,27 @@ if($xml == "") {
             print_info_box_np("ERROR:  Could not open " . $xml . ".");
             die;
 } else {
-            $pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
+            $pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "pfSenseWizard");
 }
 
 $package_name = $pkg['menu']['name'];
 $section      = $pkg['menu']['section'];
 $config_path  = $pkg['configpath'];
 $title        = $section . ": Edit " . $package_name;
+
+$id = $_GET['id'];
+if (isset($_POST['id']))
+	$id = $_POST['id'];
+	
+$a_pkg = &$config['installedpackages']['package'];
+
+if (isset($id) && $a_pkg[$id]) {
+	foreach ($pkg['fields'] as $fields) {
+		$fieldname = $pconfig['$fields']['fieldname'];
+		$fieldvalue = $_POST[$fieldname];
+		$pconfig[$fieldname] = $fieldvalue;
+	}
+}
 
 if ($_POST) {
     if($_POST['act'] == "del") {
@@ -68,6 +82,25 @@ if ($_POST) {
 	}
 	// XXX: add the xml value to config
     }
+}
+
+// store values in xml configration file.
+if (!$input_errors) {
+	$pkgarr = array();
+	
+	if (isset($id) && $a_pkg[$id])
+		$a_pkg[$id] = $pkgarr;
+	else
+		$a_pkg[] = $pkgarr;
+	
+	foreach ($pkg['fields'] as $fields) {
+		$pkgarr[$fields['fieldname']]  = $fields['fieldname'];
+		$pkgarr[$fields['fieldvalue']] = $_POST[$fields['fieldname']]; 
+	}
+	
+	$config['installedpackages']['package']['config'][] = $filterent;
+	
+	write_config();
 }
 
 ?>

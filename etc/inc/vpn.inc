@@ -38,7 +38,6 @@ function find_last_gif_device() {
         pclose($fp);
         $ifconfig_array = split(" ", $ifconfig_data);
         foreach ($ifconfig_array as $ifconfig) {
-                echo $ifconfig . "\n";
                 ereg("gif(.)", $ifconfig, $regs);
                 if($regs[0]) {
                         if($regs[0] > $last_gif_found)

@@ -44,7 +44,7 @@ echo "5) Reboot system"
 echo "6) Ping host"
 echo "7) Shell"
 echo "8) PFtop"
-echo "9) Access web GUI using links"
+echo "9) Access web GUI using Links"
 echo
 
 read -p "Enter a number: " opmode

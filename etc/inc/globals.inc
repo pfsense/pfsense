@@ -58,7 +58,7 @@ $g = array(
     "pkg_config_filename" => "pkg_config.xml",
     "firmwarebaseurl" => "http://www.pfsense.com/",
     "firmwarefilename" => "latest.tgz",
-    "versioncheckbaseurl" => "http://www.pfsense.com",
+    "versioncheckbaseurl" => "www.pfsense.com",
     "versioncheckpath" => "/pfSense/checkversion.php",
     "embeddedbootupslice" => "/dev/ad0a"
 );

@@ -5,6 +5,13 @@ sleep 5
 
 logger -p daemon.info -i -t AutoUpgrade "Auto Upgrade started"
 
+HTTP_AUTH=""
+
+# if username and password is passed, let fetch utilize.
+if [ $# -gt 1 ]; then
+HTTP_AUTH="basic:*:$1:$2"
+fi
+
 echo "Downloading latest.tgz ..." | logger -p daemon.info -i -t AutoUpgrade
 cd /tmp && fetch http://www.pfSense.com/latest.tgz  | logger -p daemon.info -i -t AutoUpgrade
 echo "Downloading latest.tgz.md5 ..."  | logger -p daemon.info -i -t AutoUpgrade

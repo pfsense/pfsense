@@ -32,7 +32,13 @@
 $d_isfwfile = 1; require("guiconfig.inc");
 
 if($_GET['autoupgrade'] <> "") {
-    exec_rc_script_async("/etc/rc.firmware_auto");
+    $http_auth_username = "";
+    $http_auth_password = "";
+    if($config['system']['proxy_auth_username'])
+	$http_auth_username = $config['system']['proxy_auth_username'];
+    if($config['system']['proxy_auth_password'])
+	$http_auth_password = $config['system']['proxy_auth_password'];
+    exec_rc_script_async("/etc/rc.firmware_auto {$http_auth_username} {$http_auth_password}");
     $savemsg = "pfSense is now auto upgrading.  The firewall will automatically reboot if it succeeds.";
 }
 

@@ -256,17 +256,17 @@ if ($_POST) {
 		$_POST['dstendport'] = 0;
 	}
 
-	if (($_POST['srcbeginport'] && !is_port($_POST['srcbeginport']))) {
-		$input_errors[] = "The start source port must be an integer between 1 and 65535.";
+	if (($_POST['srcbeginport'] && !alias_expand($_POST['srcbeginport']) && !is_port($_POST['srcbeginport']))) {
+		$input_errors[] = "The start source port must be an alias or integer between 1 and 65535.";
 	}
-	if (($_POST['srcendport'] && !is_port($_POST['srcendport']))) {
-		$input_errors[] = "The end source port must be an integer between 1 and 65535.";
+	if (($_POST['srcendport'] && !alias_expand($_POST['srcendport']) && !is_port($_POST['srcendport']))) {
+		$input_errors[] = "The end source port must be an alias or integer between 1 and 65535.";
 	}
-	if (($_POST['dstbeginport'] && !is_port($_POST['dstbeginport']))) {
-		$input_errors[] = "The start destination port must be an integer between 1 and 65535.";
+	if (($_POST['dstbeginport'] && !alias_expand($_POST['dstbeginport']) && !is_port($_POST['dstbeginport']))) {
+		$input_errors[] = "The start destination port must be an alias or integer between 1 and 65535.";
 	}
-	if (($_POST['dstendport'] && !is_port($_POST['dstendport']))) {
-		$input_errors[] = "The end destination port must be an integer between 1 and 65535.";
+	if (($_POST['dstendport'] && !alias_expand($_POST['dstbeginport']) && !is_port($_POST['dstendport']))) {
+		$input_errors[] = "The end destination port must be an alias or integer between 1 and 65535.";
 	}
 
 	if (!is_specialnet($_POST['srctype'])) {
@@ -550,7 +550,7 @@ function dst_rep_change() {
                       </tr>
                       <tr>
                         <td>Address:&nbsp;&nbsp;</td>
-                        <td><input name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>">
+                        <td><input autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);'  onkeydown='actb_checkkey(event, this);' onkeyup='actb_tocomplete(this,event,addressarray)' name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>">
                           /
                           <select name="srcmask" class="formfld" id="srcmask">
                             <?php for ($i = 31; $i > 0; $i--): ?>
@@ -579,7 +579,7 @@ function dst_rep_change() {
                             <?=htmlspecialchars($wkportdesc);?>
                             </option>
                             <?php endforeach; ?>
-                          </select> <input name="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo $pconfig['srcbeginport']; ?>"></td>
+                          </select> <input autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);'  onkeydown='actb_checkkey(event, this);' onkeyup='actb_tocomplete(this,event,customarray)' class="formfldalias" name="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo $pconfig['srcbeginport']; ?>"></td>
                       </tr>
                       <tr>
                         <td>to:</td>
@@ -594,7 +594,7 @@ function dst_rep_change() {
                             <?=htmlspecialchars($wkportdesc);?>
                             </option>
                             <?php endforeach; ?>
-                          </select> <input name="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo $pconfig['srcendport']; ?>"></td>
+                          </select> <input autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);'  onkeydown='actb_checkkey(event, this);' onkeyup='actb_tocomplete(this,event,customarray)' class="formfldalias" name="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo $pconfig['srcendport']; ?>"></td>
                       </tr>
                     </table>
                     <br> <span class="vexpl">Specify the port or port range for
@@ -630,7 +630,7 @@ function dst_rep_change() {
                       </tr>
                       <tr>
                         <td>Address:&nbsp;&nbsp;</td>
-                        <td><input name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
+                        <td><input name="dst" autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);'  onkeydown='actb_checkkey(event, this);' onkeyup='actb_tocomplete(this,event,addressarray)' type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
                           /
                           <select name="dstmask" class="formfld" id="dstmask">
                             <?php for ($i = 31; $i > 0; $i--): ?>
@@ -659,7 +659,7 @@ function dst_rep_change() {
                             <?=htmlspecialchars($wkportdesc);?>
                             </option>
                             <?php endforeach; ?>
-                          </select> <input name="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo $pconfig['dstbeginport']; ?>"></td>
+                          </select> <input autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);'  onkeydown='actb_checkkey(event, this);' onkeyup='actb_tocomplete(this,event,customarray)' class="formfldalias" name="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo $pconfig['dstbeginport']; ?>"></td>
                       </tr>
                       <tr>
                         <td>to:</td>
@@ -674,7 +674,7 @@ function dst_rep_change() {
                             <?=htmlspecialchars($wkportdesc);?>
                             </option>
                             <?php endforeach; ?>
-                          </select> <input name="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo $pconfig['dstendport']; ?>"></td>
+                          </select> <input autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);'  onkeydown='actb_checkkey(event, this);' onkeyup='actb_tocomplete(this,event,customarray)' class="formfldalias" name="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo $pconfig['dstendport']; ?>"></td>
                       </tr>
                     </table>
                     <br> <span class="vexpl">Specify the port or port range for
@@ -766,11 +766,37 @@ function dst_rep_change() {
 ext_change();
 typesel_change();
 proto_change();
-//-->
+-->
 </script>
 <?php else: ?>
 <p><strong>You need to create a queue before you can add a new rule.</strong></p>
 <?php endif; ?>
+<?php
+$isfirst = 0;
+$aliases = "";
+$addrisfirst = 0;
+$aliasesaddr = "";
+foreach($config['aliases']['alias'] as $alias_name) {
+	if(!stristr($alias_name['address'], ".")) {
+		if($isfirst == 1) $aliases .= ",";
+		$aliases .= "'" . $alias_name['name'] . "'";
+		$isfirst = 1;
+	} else {
+		if($addrisfirst == 1) $aliasesaddr .= ",";
+		$aliasesaddr .= "'" . $alias_name['name'] . "'";
+		$addrisfirst = 1;
+	}
+}
+?>
+
+<script language="JavaScript">
+<!--
+var addressarray=new Array(<?php echo $aliasesaddr; ?>);
+var customarray=new Array(<?php echo $aliases; ?>);
+//-->
+</script>
+<script type="text/javascript" language="javascript" src="auto_complete_helper.js">
+</script>
 <?php include("fend.inc"); ?>
 </body>
 </html>

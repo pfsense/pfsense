@@ -65,6 +65,10 @@ eval($toeval);
 $toeval = "\$a_pkg = &\$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'];";
 eval($toeval);
 
+if($pkg['custom_php_command_before_form'] <> "")
+  eval($pkg['custom_php_command_before_form']);
+
+
 if ($_POST) {
 	if($_POST['act'] == "del") {
 		if($pkg['custom_delete_php_command']) {

@@ -87,6 +87,9 @@ if ($_GET['act'] == "del") {
 $toeval = "\$evaledvar = \$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'];";
 eval($toeval);
 
+if($pkg['custom_php_command_before_form'] <> "")
+  eval($pkg['custom_php_command_before_form']);
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>

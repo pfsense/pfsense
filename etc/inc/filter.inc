@@ -117,7 +117,7 @@ function filter_configure() {
         fwrite($fd, $pfrules);
         fclose($fd);
 
-	system("/sbin/pfctl -f /tmp/rules.debug");
+	$rules_loading = mwexec("/sbin/pfctl -f /tmp/rules.debug");
 
 	/* load ipfw+altq module */
 	if (isset($config['shaper']['enable'])) {
@@ -145,9 +145,23 @@ function filter_configure() {
 			mwexec("/sbin/kldunload ipfw.ko");
 	}
 
-	//system("/etc/rc.filter_configure");
+	if($rules_loading <> 0) {
+		$rules_error = exec_command("/sbin/pfctl -f /tmp/rules.debug");
+		return "There was an error loading the rules.<p><pre>" . $rules_error . "</pre>";
+	}
 
 	return 0;
+}
+
+function exec_command($command) {
+            $counter = 0;
+            $tmp = "";
+            $fd = popen($command . " 2>&1 ", "r");
+            while(!feof($fd)) {
+                        $tmp .= fread($fd,49);
+            }
+            fclose($fd);
+            return $tmp;
 }
 
 function filter_get_altq_queue_scheduler_type($associatedrule) {

@@ -66,7 +66,10 @@ if ($_POST) {
 			$retval = filter_configure();
 			config_unlock();
 		}
-		$savemsg = get_std_save_message($retval);
+		if($retval == 0)
+		    $savemsg = get_std_save_message($retval);
+		else
+		    $savemsg = $retval;
 		if ($retval == 0) {
 			if (file_exists($d_natconfdirty_path))
 				unlink($d_natconfdirty_path);

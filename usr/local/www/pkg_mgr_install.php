@@ -2,7 +2,7 @@
 <?php
 /*
     pkg_mgr_install.php
-    Part of pfSense (www.pfSense.com)
+    part of pfSense (http://www.pfSense.com)
     Copyright (C) 2004 Scott Ullrich
     All rights reserved.
 
@@ -76,8 +76,10 @@ function get_dir($dir) {
 function exec_command_and_return_text_array($command) {
             $counter = 0;
             $fd = popen($command . " 2>&1 ", "r");
+            echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = '';</script>\n";
             while(!feof($fd)) {
                         $tmp .= fread($fd,49);
+                        echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = this.document.forms[0].output.value + \"" . $tmp . $extrabreak .  "\"; </script>";
             }
             fclose($fd);
             $temp_array = split("\n", $tmp);
@@ -91,8 +93,10 @@ function exec_command_and_return_text($command) {
             $counter = 0;
             $tmp = "";
             $fd = popen($command . " 2>&1 ", "r");
+            echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = '';</script>\n";
             while(!feof($fd)) {
                         $tmp .= fread($fd,49);
+                        echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = this.document.forms[0].output.value + \"" . $tmp . $extrabreak .  "\"; </script>";
             }
             fclose($fd);
             return $tmp;
@@ -114,26 +118,7 @@ function execute_command_return_output($command) {
         fwrite($fd_log, $tmp);
 	$tmp1 = ereg_replace("\n","\\n", $tmp);
 	$text = ereg_replace("\"","'", $tmp1);
-	if($lasttext == "..") {
-	    $text = "";
-	    $lasttext = "";
-	    $counter=$counter-2;
-	} else {
-	    $lasttext .= $text;
-	}
-	if($counter > 51) {
-	    $counter = 0;
-	    $extrabreak = "\\n";
-	} else {
-	    $extrabreak = "";
-	    $counter++;
-	}
-	if($counter2 > 600) {
-	    echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"\";</script>";
-	    $counter2 = 0;
-	} else
-	    $counter2++;
-	echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = this.document.forms[0].output.value + \"" . $text . $extrabreak .  "\"; f('output'); </script>";
+	echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = this.document.forms[0].output.value + \"" . $tmp . $extrabreak .  "\"; f('output'); </script>";
     }
     $pb_percent++;
     fclose($fd);

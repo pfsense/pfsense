@@ -216,6 +216,8 @@ function find_ip_interface($ip) {
  * get_carp_interface_status($carpinterface): returns the status of a carp ip
  */
 function get_carp_interface_status($carpinterface) {
+    $result = does_interface_exist($carpinterface);
+    if($result <> true) return;
     $status = exec_command("/sbin/ifconfig {$carpinterface} | grep \"carp:\" | cut -d\" \" -f2");
     return $status;
 }
@@ -224,6 +226,8 @@ function get_carp_interface_status($carpinterface) {
  * get_pfsync_interface_status($pfsyncinterface): returns the status of a pfsync
  */
 function get_pfsync_interface_status($pfsyncinterface) {
+    $result = does_interface_exist($pfsyncinterface);
+    if($result <> true) return;    
     $status = exec_command("/sbin/ifconfig {$pfsyncinterface} | grep \"pfsync:\" | cut -d\" \" -f5");
     return $status;
 }
@@ -233,6 +237,8 @@ function get_pfsync_interface_status($pfsyncinterface) {
  */
 function find_carp_interface($ip) {
     for($x=0; $x<99; $x++) {
+        $result = does_interface_exist("carp{$x}");
+	if($result <> true) return;
 	$ifconfig = exec_command("/sbin/ifconfig carp{$x}");
 	if(stristr($ifconfig,$ip))
 	    return "carp" . $x;

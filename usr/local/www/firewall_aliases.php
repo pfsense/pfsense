@@ -89,7 +89,7 @@ if ($_GET['act'] == "del") {
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr>
   <td width="25%" class="listhdrr">Name</td>
-  <td width="30%" class="listhdrr">Address</td>
+  <td width="30%" class="listhdrr">Address(s)/Port(s)</td>
   <td width="35%" class="listhdr">Description</td>
   <td width="10%" class="list"></td>
 </tr>

@@ -577,14 +577,14 @@ function resync_all_package_configs_bootup($show_message) {
 	if(isset($pkg_config['nosync'])) continue;
 	if($show_message == true) print " " . $package['name'];
         if($pkg_config['custom_php_command_before_form'] <> "") {
-	    if(php_check_syntax($pkg_config['custom_php_command_before_form'])) {
+	    if(php_check_syntax($pkg_config['custom_php_command_before_form'], $error_message)) {
 		eval($pkg_config['custom_php_command_before_form']);
 	    } else {
 		print "(!)";
 	    }
 	}
         if($pkg_config['custom_php_resync_config_command'] <> "") {
-            if(php_check_syntax($pkg_config['custom_php_resync_config_command'])) {
+            if(php_check_syntax($pkg_config['custom_php_resync_config_command'], $error_message)) {
 		eval($pkg_config['custom_php_resync_config_command']);
 	    } else {
 		print "(!)";

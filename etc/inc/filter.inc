@@ -40,7 +40,7 @@ function filter_resync() {
 function filter_ipmon_start() {
 	global $config, $g;
 
-	mwexec("/pflogd -sD");
+	mwexec("ifconfig pflog0 up && pflogd -sD");
 }
 
 function filter_configure() {
@@ -75,6 +75,7 @@ function filter_configure() {
         $fd = fopen("/tmp/rules.debug", "w");
 	fwrite($fd, "set loginterface $wanif \n");
         fwrite($fd, "set optimization aggressive\n");
+	fwrite($fd, "\nscrub in all\n");
 	fwrite($fd, $altq_ints);
 	fwrite($fd, $altq_queues);
 	fwrite($fd, $natrules);
@@ -412,23 +413,6 @@ function filter_rules_generate() {
 
 	# BEGIN OF firewall rules
 	$ipfrules="";
-	$ipfrules .= "\n# VPN Rules\n";
-	$internal_subnet = "any";
-	if(is_array($config['ipsec']['tunnel'])) {
-		foreach ($config['ipsec']['tunnel'] as $tunnel) {
-			if(isset($tunnel['local-subnet']['address'])) {
-				$internal_subnet = $tunnel['local-subnet']['address'];
-			} else {
-				$internal_subnet = "any";
-			}
-			$ipfrules .= "pass in on " . $wanif . " proto tcp from " . $tunnel['remote-subnet'] . " to " . $internal_subnet  . " keep state\n";
-			if(isset($tunnel['local-subnet']['address'])) {
-				$ipfrules .= "pass in on " . $wanif . " proto tcp from " . $tunnel['local-subnet']['address'] . " to " . $tunnel['remote-subnet'] . " keep state\n";
-			}
-		}
-
-	}
-
 	$ipfrules .= <<<EOD
 
 # loopback
@@ -567,11 +551,6 @@ EOD;
 				$ipfrules .= filter_rules_ipsec_generate($oc['if'], $oc['ip']);
 		}
 	}
-
-	/* XXX - the first section is only needed because pfctl refuses to
-		parse rules that have "flags S/SAFR" and proto "tcp/udp" set because
-		UDP does not have flags, but we still want to offer the TCP/UDP protocol
-		option to the user */
 
 	$ipfrules .= <<<EOD
 
@@ -899,6 +878,21 @@ EOD;
 		$i++;
 	}
 
+	$ipfrules .= "\n# VPN Rules\n";
+	$lan_ip = $config['interfaces']['lan']['ipaddr'];
+	$lan_subnet = $config['interfaces']['lan']['subnet'];
+	$wan_ip = $config['interfaces']['wan']['ipaddr'];
+	$internal_subnet = gen_subnet($lan_ip, $lan_subnet) . "/" . $config['interfaces']['lan']['subnet'];
+	if(is_array($config['ipsec']['tunnel'])) {
+		foreach ($config['ipsec']['tunnel'] as $tunnel) {
+			$remote_gateway = $tunnel['remote-gateway'];
+			$ipfrules .= "pass quick on " . $wanif . " from " . $wan_ip . " to " . $remote_gateway . " keep state\n";
+			$ipfrules .= "pass quick on " . $wanif . " from " . $remote_gateway . " to " . $wan_ip  . " keep state\n";
+			$ipfrules .= "pass quick on " . $lanif . " from " . $tunnel['remote-subnet'] . " to " . $internal_subnet  . " keep state\n";
+			$ipfrules .= "pass quick on " . $lanif . " from " . $internal_subnet . " to " . $tunnel['remote-subnet'] . " keep state\n";
+		}
+	}
+
 	$ipfrules .= <<<EOD
 
 #---------------------------------------------------------------------------
@@ -933,7 +927,7 @@ function filter_rules_spoofcheck_generate($ifname, $if, $sa, $sn, $log) {
 				$n--;
 			}
 		}
-		$ipfrules .= "skip 1 in on $if from $sa/$sn to any\n";
+		$ipfrules .= "#skip 1 in on $if from $sa/$sn to any\n";
 		$ipfrules .= "#block in $log quick on $if all\n";
 	} else {
 		$ipfrules .= "#block in $log quick on $if from ! $sa/$sn to any\n";

@@ -15,7 +15,7 @@ function doCmdT($title, $command) {
     echo "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\n";
     echo "<tr><td class=\"listtopic\">" . $title . "</td></tr>\n";
     echo "<tr><td class=\"listlr\"><pre>";		/* no newline after pre */
-	
+
 	if ($command == "dumpconfigxml") {
 		$fd = @fopen("/conf/config.xml", "r");
 		if ($fd) {
@@ -90,6 +90,7 @@ defCmdT("ipfw show", "/sbin/ipfw show");
 defCmdT("pfctl -s nat ", "/sbin/pfctl -s nat");
 defCmdT("pfctl -s rules", "/sbin/pfctl -s rules");
 defCmdT("pfctl -s all"," /sbin/pfctl -s all");
+defCmdT("pfctl -s rules -v"," /sbin/pfctl -s rules -v");
 
 defCmdT("resolv.conf","cat /etc/resolv.conf");
 
@@ -137,8 +138,8 @@ pre {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <p><span class="pgtitle"><?=$pageTitle;?></span><br>
 <strong><?=$currentDate;?></strong>
-<p><span class="red"><strong>Note: make sure to remove any sensitive information 
-(passwords, maybe also IP addresses) before posting 
+<p><span class="red"><strong>Note: make sure to remove any sensitive information
+(passwords, maybe also IP addresses) before posting
 information from this page in public places (like mailing lists)!</strong></span><br>
 Passwords in config.xml have been automatically removed.
 

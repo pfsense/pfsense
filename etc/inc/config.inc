@@ -447,6 +447,9 @@ function convert_config() {
 		$config['version'] = "1.5";
 	}
 
+	/* Convert 1.5 -> 1.6 */
+
+
 	write_config();
 
 	if ($g['booting'])

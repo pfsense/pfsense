@@ -108,9 +108,9 @@ pre {
   <table>
     <tr>
       <td>
-        Save/Load from path: <input size="45" name="savetopath" value="<?php echo $_POST['savetopath']; ?>">
-	Rows: <input size="3" name="rows" value="<? echo $rows; ?>">
-	Cols: <input size="3" name="cols" value="<? echo $cols; ?>">
+        Save/Load from path: <input size="42" name="savetopath" value="<?php echo $_POST['savetopath']; ?>"> |
+	Rows: <input size="3" name="rows" value="<? echo $rows; ?>"> |
+	Cols: <input size="3" name="cols" value="<? echo $cols; ?>"> |
         <input name="submit" type="submit"  class="button" id="Load" value="Load"> | <input name="submit" type="submit"  class="button" id="Save" value="Save">
 	<br><hr noshade width=100%>
         </td>

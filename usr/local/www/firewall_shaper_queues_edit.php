@@ -85,7 +85,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$queue = array();
-		
+
 		$queue['schedulertype'] = $_POST['schedulertype'];
 		$queue['bandwidth'] = $_POST['bandwidth'];
 		$queue['bandwidthtype'] = $_POST['bandwidthtype'];
@@ -234,7 +234,7 @@ function sync_scheduler_options() {
 	$red = $pconfig['options']["red"];
 	$ecn = $pconfig['options']["ecn"];
 	$rio = $pconfig['options']["rio"];
-	$borrow = $pconfig['borrow']["borrow"];
+	$borrow = $pconfig['options']["borrow"];
 	$upperlimit = $pconfig['options']["upperlimit"];
 	$upperlimit1 = $pconfig['options']["upperlimit1"];
 	$upperlimit2 = $pconfig['options']["upperlimit2"];
@@ -306,7 +306,7 @@ function sync_scheduler_options() {
 	        <input type="checkbox" id="defaultqueue" name="defaultqueue" <?php if($defaultqueue) echo " CHECKED";?> > Default queue<br>
 		<input type="checkbox" id="borrow" name="borrow" <?php if($borrow) echo " CHECKED";?> > Borrow from other queues when evailable<br>
 		<input type="checkbox" id="red" name="red" <?php if($red) echo " CHECKED";?> > Random Early Detection<br>
-		<input type="checkbox" id="ecn" name="rio" <?php if($ecn) echo " CHECKED";?> > Random Early Detection In and Out<br>
+		<input type="checkbox" id="rio" name="rio" <?php if($rio) echo " CHECKED";?> > Random Early Detection In and Out<br>
 		<input type="checkbox" id="ecn" name="ecn" <?php if($ecn) echo " CHECKED";?> > Explicit Congestion Notification<br>
 		<input type="checkbox" id="parentqueue" name="parentqueue" <?php if($parentqueue) echo " CHECKED";?> > This is a parent queue of HFSC/CBQ<br>
 		<input type="checkbox" id="upperlimit" name="upperlimit" <?php if($upperlimit) echo " CHECKED";?> > Upperlimit: <input size="3" value="<?=htmlspecialchars($upperlimit1);?>" name="upperlimit1"> <input size="3" value="<?=htmlspecialchars($upperlimit2);?>" name="upperlimit2"> <input size="3" value="<?=htmlspecialchars($upperlimit3);?>" name="upperlimit3"> <br>

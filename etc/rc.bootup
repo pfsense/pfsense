@@ -65,7 +65,7 @@
 	if (!in_array($g['platform'], $g['nopccard_platforms']))
 		system_pccard_start();
 
-	/* establish ipfilter ruleset */
+	/* establish pf and altq ruleset */
 	filter_configure();
 
 	/* configure loopback interface */
@@ -127,9 +127,6 @@
 
 	/* start pptpd */
 	vpn_pptpd_configure();
-
-	/* start traffic shaper */
-	/* shaper_configure(); */
 
 	/* start IPsec tunnels */
 	vpn_ipsec_configure();

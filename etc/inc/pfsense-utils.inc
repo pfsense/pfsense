@@ -680,11 +680,11 @@ function get_package_xml_depends($pkg_name) {
  *                                    if the service is running returns 1.
  */
 function is_service_running($service_name) {
-    $status = `/bin/ps ax | grep {$service_name}`;
+    $status = `/bin/ps ax | grep {$service_name} | grep -v grep`;
     $status_split = split("\n", $service_name);
     $counter = 0;
     foreach ($status_split as $ss) $counter++;
-    if($counter > 1) return 1;
+    if($counter > 0) return 1;
     return 0;
 }
 ?>

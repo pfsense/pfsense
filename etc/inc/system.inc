@@ -416,8 +416,6 @@ function system_timezone_configure() {
 
 	$syscfg = $config['system'];
 
-	conf_mount_rw();
-
 	if ($g['booting'])
 		echo "Initializing timezone... ";
 
@@ -426,11 +424,13 @@ function system_timezone_configure() {
 	if (!$timezone)
 		$timezone = "Etc/UTC";
 
+	conf_mount_rw();
+
 	exec("/usr/bin/tar xzfO /usr/share/zoneinfo.tgz " .
 		escapeshellarg($timezone) . " > /etc/localtime");
 
 	conf_mount_ro();
-	
+
 	if ($g['booting'])
 		echo "done\n";
 }

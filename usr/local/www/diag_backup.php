@@ -106,7 +106,7 @@ if ($_POST) {
                 <tr> 
                   <td width="22%" valign="baseline" class="vncell">&nbsp;</td>
                   <td width="78%" class="vtable"> 
-                    Open a m0n0wall configuration XML file and click the button 
+                    Open a pfSense configuration XML file and click the button 
                       below to restore the configuration.<br>
                       <br>
                       <strong><span class="red">Note:</span></strong><br>

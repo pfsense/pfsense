@@ -494,7 +494,7 @@ function convert_config() {
 	}
 
 	if ($prev_version != $config['version'])
-		write_config("Upgraded firmware from {$prev_version} to {$config['version']}");
+		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
 
 	if ($g['booting'])
 		echo "done\n";

@@ -32,4 +32,4 @@
 # when going to single-user mode.
 console  "/usr/libexec/getty Pc"         cons25  on  secure
 #
-#ttyv0   "/usr/libexec/getty Pc"         cons25  on  secure
+#ttyv0   "/usr/libexec/getty Pc"         cons25  off  secure

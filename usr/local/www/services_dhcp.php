@@ -55,6 +55,7 @@ $pconfig['maxtime'] = $config['dhcpd'][$if]['maxleasetime'];
 list($pconfig['wins1'],$pconfig['wins2']) = $config['dhcpd'][$if]['winsserver'];
 $pconfig['enable'] = isset($config['dhcpd'][$if]['enable']);
 $pconfig['denyunknown'] = isset($config['dhcpd'][$if]['denyunknown']);
+$pconfig['staticarp'] = isset($config['dhcpd'][$if]['staticarp']);
 
 $ifcfg = $config['interfaces'][$if];
 
@@ -68,12 +69,6 @@ $a_maps = &$config['dhcpd'][$if]['staticmap'];
 if ($_POST) {
 
 	unset($input_errors);
-
-        if ($_POST['enablestaticarp'] == "") {
-                unset($config['staticarp']['enablestaticarp']);
-                } else {
-                $config['staticarp']['enablestaticarp'] = "enabled";
-        }       
 
 	$pconfig = $_POST;
 
@@ -137,8 +132,14 @@ if ($_POST) {
 			
 		$config['dhcpd'][$if]['gateway'] = $_POST['gateway'];
 
+		$config['dhcpd'][$if]['staticarp'] = $_POST['staticarp'] ? true : false;
+
+	
 		write_config();
-                interfaces_staticarp_configure();
+
+		/* static arp configuration */
+                if (isset($config['dhcpd'][$if]['staticarp']))
+			interfaces_staticarp_configure($if);
 		
 		$retval = 0;
 		if (!file_exists($d_sysrebootreqd_path)) {
@@ -291,7 +292,8 @@ The default is to use the IP of the firewall as the gateway.  Specify an alterna
                       </tr>
                       <tr>
                         <td width="22%" valign="top" class="vncell">Static ARP</td>
-                        <td width="78%" class="vtable"><input type="checkbox" name="enablestaticarp" id="enablestaticarp" <?php if($config['staticarp']['enablestaticarp'] == "enabled") echo " checked"; ?>>&nbsp; <b>Enable Static ARP entries</b></td>
+                        <td width="78%" class="vtable"><input type="checkbox" value="yes" name="staticarp" id="staticarp" <?php if($pconfig['staticarp']) echo " checked"; ?>>&nbsp; <b>Enable Static ARP entries</b><br>
+<span class="red"><strong>Note:</strong></span> This feature is under development.  Only the machines listed below will be able to communicate with the firewall on this NIC.  Disabling this has been tested to be broken, a reboot will be required to disable.  Be warned!</td>
                       </tr>
                       <tr> 
                         <td width="22%" valign="top">&nbsp;</td>

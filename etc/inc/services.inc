@@ -179,25 +179,25 @@ EOD;
 	return 0;
 }
 
-function interfaces_staticarp_configure() {
+function interfaces_staticarp_configure($if) {
         global $config, $g;
         
-        $lancfg = $config['interfaces']['lan'];
+        $ifcfg = $config['interfaces'][$if];
 
         /* Enable staticarp, if enabled */
-        if(isset($config['staticarp']['enablestaticarp'])) {
-                mwexec("/sbin/ifconfig " . escapeshellarg($lancfg['if']) . " staticarp " );
+        if(isset($config['dhcpd'][$if]['staticarp'])) {
+                mwexec("/sbin/ifconfig " . escapeshellarg($ifcfg['if']) . " staticarp " );
                 mwexec("/usr/sbin/arp -ad > /dev/null 2>&1 ");
-                if (is_array($config['dhcpd']['lan']['staticmap'])) {
+                if (is_array($config['dhcpd'][$if]['staticmap'])) {
 
-                        foreach ($config['dhcpd']['lan']['staticmap'] as $arpent) {
+                        foreach ($config['dhcpd'][$if]['staticmap'] as $arpent) {
                                 mwexec("/usr/sbin/arp -s " . escapeshellarg($arpent['ipaddr']) . " " . escapeshellarg($arpent['mac']));
 
                         }
                         
                 }
         } else {
-                mwexec("/sbin/ifconfig " . escapeshellarg($lancfg['if']) . " -staticarp " );
+                mwexec("/sbin/ifconfig " . escapeshellarg($ifcfg['if']) . " -staticarp " );
                 mwexec("/usr/sbin/arp -ad > /dev/null 2>&1 ");
         }
 

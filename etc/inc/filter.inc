@@ -312,14 +312,17 @@ function filter_nat_rules_generate() {
 
 	/* Setup outgoing NAT load balancing */
 	if (isset($config['nat']['outgoingloadbalancing']['rule'])) {
-		$natrules .= "pass in on " . $lanif . " route-to { ";
+		$tmprules .= "pass in on " . $lanif . " route-to { ";
 		$isfirst = 0;
 		foreach ($config['nat']['outgoingloadbalancing']['rule'] as $rule) {
-			if(isfirst == 1) $natrules .= ", ";
-			$natrules .= " (" . $wanif . " " . $rule['gatewayip'] . ") ";
-			$isfirst = 1;
+			if($rule['gatewayip'] <> "") {
+				if(isfirst == 1) $tmprules .= ", ";
+				$tmprules .= " (" . $wanif . " " . $rule['gatewayip'] . ") ";
+				$isfirst = 1;
+			}
 		}
-		$natrules .= "} round-robin proto tcp from " . $lansa ." to any flags S/SA modulate state\n";
+		$tmprules .= "} round-robin proto tcp from " . $lansa ." to any flags S/SA modulate state\n";
+		if($isfirst == 1) $natrules .= $tmprules;
 	}
 
 	/* outbound rules - advanced or standard */

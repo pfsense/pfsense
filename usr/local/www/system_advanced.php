@@ -257,13 +257,6 @@ function enable_change(enable_over) {
     This will cause pfSense not to check for newer firmware versions when the <a href="system_firmware.php">System: Firmware</a> page is viewed.</span></td>
 			    </tr>
 				<tr>
-                  <td valign="top" class="vncell">TCP idle timeout </td>
-                  <td class="vtable">                    <span class="vexpl">
-                    <input name="tcpidletimeout" type="text" class="formfld" id="tcpidletimeout" size="8" value="<?=htmlspecialchars($pconfig['tcpidletimeout']);?>">
-                    seconds<br>
-    Idle TCP connections will be removed from the state table after no packets have been received for the specified number of seconds. Don't set this too high or your state table could become full of connections that have been improperly shut down. The default is 2.5 hours.</span></td>
-			    </tr>
-				<tr>
                   <td width="22%" valign="top" class="vncell">Hard disk standby time </td>
                   <td width="78%" class="vtable">
                     <select name="harddiskstandby" class="formfld">

@@ -182,7 +182,8 @@ function enable_change(enable_over) {
 		<tr>
 		  <td width="22%" valign="top" class="vncell"><b>Scheduler</b> </td>
 		  <td width="78%" class="vtable">
-		    <select id="schedulertype" name="schedulertype">
+
+		    <select id="schedulertype" name="schedulertype" <?= $style ?>>
 		    <?php
 			    if($pconfig['schedulertype'] == 'priq')
 				    echo "<option value=\"priq\">Priority based queueing</option>";
@@ -196,6 +197,13 @@ function enable_change(enable_over) {
 			    <option value="hfsc">Hierarchical Fair Service Curve queueing</option>
 		    </select>
 		    <br> <span class="vexpl">Select which type of queueing you would like to use
+		  <?php if (is_array($config['shaper']['queue']) > 0): ?>
+			<script language="javascript">
+			document.iform.schedulertype.disabled = 1;
+			</script>
+			<br>
+			NOTE: This option is disabled since there are queues defined.
+		  <?php endif; ?>
 		    </span></td>
 		</tr>
                 <tr>

@@ -10,6 +10,10 @@
 /* Execute a command, with a title, and generate an HTML table
  * showing the results.
  */
+
+/* include all configuration functions */
+require_once("functions.inc");
+
 function doCmdT($title, $command) {
     echo "<p>\n";
     echo "<a name=\"" . $title . "\">\n";
@@ -82,6 +86,8 @@ function execCmds() {
     }
 }
 
+global $g;
+
 /* Set up all of the commands we want to execute. */
 defCmdT("System uptime","uptime");
 defCmdT("Interfaces","/sbin/ifconfig -a");
@@ -123,7 +129,7 @@ defCmdT("last 50 filter log entries","/usr/sbin/clog /var/log/filter.log 2>&1 | 
 defCmd("ls /conf");
 defCmd("ls /var/run");
 
-defCmdT("cat /tmp/rules.debug","cat /tmp/rules.debug");
+defCmdT("cat {$g['tmp_path']}/rules.debug","cat {$g['tmp_path']}/rules.debug");
 
 defCmdT("config.xml","dumpconfigxml");
 

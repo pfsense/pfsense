@@ -112,6 +112,7 @@ While(!Connection_Aborted()) {
 		$speed = $stat_line_split[1];
 		$borrows = intval($stat_line_split[3]);
 		$suspends = intval($stat_line_split[4]);
+		$drops = intval($stat_line_split[5]);
 
 		echo "<script language='javascript'>\n";
 
@@ -120,7 +121,7 @@ While(!Connection_Aborted()) {
 		echo "document.queue{$i}widthb.style.width='{$packet_s}';\n";
 		echo "document.queue{$i}widtha.style.width='" . (400 - $packet_s) . "';\n";
 		$borrows_txt = "";
-		$borrows_txt = " - {$borrows} borrows - {$suspends} suspends";
+		$borrows_txt = " - {$borrows} borrows - {$suspends} suspends - ${drops} drops";
 		echo "document.forms[0].queue{$i}meter.value = '" . $packet_sampled . "/pps - " . $speed . "{$borrows_txt}';\n";
 		echo "</script>\n";
 		$i++;

@@ -587,11 +587,13 @@ function gather_altq_queue_stats($dont_return_root_queues) {
             $borrows = $match_array[1][0];
         if (preg_match_all("/suspends:\s+(.*)/",$stats_line,$match_array))
             $suspends = $match_array[1][0];
+        if (preg_match_all("/dropped pkts:\s+(.*)/",$stats_line,$match_array))
+            $drops = $match_array[1][0];
         if (preg_match_all("/measured:\s+(.*)packets/",$stats_line,$match_array)) {
             $measured = $match_array[1][0];
 	    if($dont_return_root_queues == true)
 		if(stristr($queue_name,"root_") == false)
-		    array_push($queue_stats, "{$queue_name}|{$speed}|{$measured}|{$borrows}|{$suspends}");
+		    array_push($queue_stats, "{$queue_name}|{$speed}|{$measured}|{$borrows}|{$suspends}|${drops}");
         }
     }
     return $queue_stats;

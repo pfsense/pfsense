@@ -1,21 +1,21 @@
 #!/usr/local/bin/php
-<?php 
+<?php
 /*
 	vpn_openvpn.php
 
 	Copyright (C) 2004 Peter Curran (peter@closeconsultants.com).
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -58,44 +58,44 @@ if ($_POST) {
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	}
-	
+
 	/* need a test here to make sure prefix and max_clients are coherent */
-	
+
 	/* Sort out the cert+key files */
 	if (is_null($_POST['ca_cert']))
 		$input_errors[] = "You must provide a CA certificate file";
 	elseif (!strstr($_POST['ca_cert'], "BEGIN CERTIFICATE") || !strstr($_POST['ca_cert'], "END CERTIFICATE"))
 		$input_errors[] = "The CA certificate does not appear to be valid.";
-		
+
 	if (is_null($_POST['srv_cert']))
 		$input_errors[] = "You must provide a server certificate file";
 	elseif (!strstr($_POST['srv_cert'], "BEGIN CERTIFICATE") || !strstr($_POST['srv_cert'], "END CERTIFICATE"))
 		$input_errors[] = "The server certificate does not appear to be valid.";
-		
+
 	if (is_null($_POST['srv_key']))
 		$input_errors[] = "You must provide a server key file";
 	elseif (!strstr($_POST['srv_key'], "BEGIN RSA PRIVATE KEY") || !strstr($_POST['srv_key'], "END RSA PRIVATE KEY"))
 		$input_errors[] = "The server key does not appear to be valid.";
-		
+
 	if (is_null($_POST['dh_param']))
 		$input_errors[] = "You must provide a DH parameters file";
 	elseif (!strstr($_POST['dh_param'], "BEGIN DH PARAMETERS") || !strstr($_POST['dh_param'], "END DH PARAMETERS"))
 		$input_errors[] = "The DH parameters do not appear to be valid.";
-				
+
 	if (!$input_errors) {
 		$server =& $config['ovpn']['server'];
 		$server['enable'] = $_POST['enable'] ? true : false;
-		
+
 		/* Make sure that the tunnel interface type has not changed */
-		if ($server['tun_iface'] != $_POST['tun_iface']){ 
+		if ($server['tun_iface'] != $_POST['tun_iface']){
 			$server['tun_iface'] = $_POST['tun_iface'];
 			touch($d_sysrebootreqd_path);
 		}
-		
+
 		$server['bind_iface'] = $_POST['bind_iface'];
 		$server['port'] = $_POST['port'];
 		$server['proto'] = $_POST['proto'];
-		
+
 		/* Make sure the IP address and/or prefix have not changed */
 		if ($server['ipblock'] != $_POST['ipblock']){
 			$server['ipblock'] = $_POST['ipblock'];
@@ -105,7 +105,7 @@ if ($_POST) {
 			$server['prefix'] = $_POST['prefix'];
 			touch($d_sysrebootreqd_path);
 		}
-		
+
 		$server['maxcli'] = $_POST['maxcli'];
 		$server['crypto'] = $_POST['crypto'];
 		$server['cli2cli'] = $_POST['cli2cli'] ? true : false;
@@ -125,8 +125,8 @@ if ($_POST) {
 		$server['ca_cert'] = base64_encode($_POST['ca_cert']);
 		$server['srv_cert'] = base64_encode($_POST['srv_cert']);
 		$server['srv_key'] = base64_encode($_POST['srv_key']);
-		$server['dh_param'] = base64_encode($_POST['dh_param']);	
-			
+		$server['dh_param'] = base64_encode($_POST['dh_param']);
+
 		write_config();
 
 		$retval = 0;
@@ -164,7 +164,7 @@ $pconfig = $config['ovpn']['server'];
 <form action="vpn_openvpn.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
-  <ul id="tabnav">	        
+  <ul id="tabnav">
 	<li class="tabact">Server</li>
 	<li class="tabinact"><a href="vpn_openvpn_cli.php">Client</a></li>
   </ul>
@@ -181,7 +181,7 @@ $pconfig = $config['ovpn']['server'];
       <input name="enable" type="checkbox" value="yes" <?php if (isset($pconfig['enable'])) echo "checked"; ?>>
       <strong>Enable OpenVPN server </strong></td>
    </tr>
-   
+
    <tr>
      <td width="22%" valign="top" class="vncellreq">Tunnel type</td>
      <td width="78%" class="vtable">
@@ -191,7 +191,7 @@ $pconfig = $config['ovpn']['server'];
           TAP
       </td>
     </tr>
-    
+
     <tr>
       <td width="22%" valign="top" class="vncell">OpenVPN protocol/port</td>
       <td width="78%" class="vtable">
@@ -199,16 +199,16 @@ $pconfig = $config['ovpn']['server'];
            UDP&nbsp;
         <input type="radio" name="proto" class="formfld" value="TCP" <?php if ($pconfig['proto'] == 'TCP') echo "checked"; ?>>
            TCP<br><br>
-        Port: 
+        Port:
         <input name="port" type="text" class="formfld" size="5" maxlength="5" value="<?= $pconfig['port']; ?>"><br>
         Enter the port number to use for the server (default is 5000).</td>
     </tr>
-    
+
     <tr>
       <td width="22%" valign="top" class="vncellreq">Interface binding</td>
       <td width="78%" class="vtable">
 	<select name="bind_iface" class="formfld">
-        <?php 
+        <?php
 	$interfaces = ovpn_real_interface_list();
 	foreach ($interfaces as $key => $iface):
         ?>
@@ -219,12 +219,12 @@ $pconfig = $config['ovpn']['server'];
         <span class="vexpl"><br>
         Choose an interface for the OpenVPN server to listen on.</span></td>
     </tr>
-		
-    <tr> 
+
+    <tr>
       <td width="22%" valign="top" class="vncellreq">IP address block</td>
-      <td width="78%" class="vtable"> 
+      <td width="78%" class="vtable">
         <input name="ipblock" type="text" class="formfld" size="20" value="<?=htmlspecialchars($pconfig['ipblock']);?>">
-        / 
+        /
         <select name="prefix" class="formfld">
           <?php for ($i = 29; $i > 19; $i--): ?>
           <option value="<?=$i;?>" <?php if ($i == $pconfig['prefix']) echo "selected"; ?>>
@@ -235,42 +235,42 @@ $pconfig = $config['ovpn']['server'];
         <br>
         Enter the IP address block for the OpenVPN server and clients to use.<br>
         <br>
-	Maximum number of simultaneous clients: 
+	Maximum number of simultaneous clients:
 	<input name="maxcli" type="text" class="formfld" size="3" maxlength="3" value="<?=htmlspecialchars($pconfig['maxcli']);?>">
 	</td>
     </tr>
-    
-    <tr> 
+
+    <tr>
       <td width="22%" valign="top" class="vncellreq">CA certificate</td>
-      <td width="78%" class="vtable"> 
+      <td width="78%" class="vtable">
       <textarea name="ca_cert" cols="65" rows="4" class="formpre"><?=htmlspecialchars(base64_decode($pconfig['ca_cert']));?></textarea>
       <br>
-      Paste a CA certificate in X.509 PEM format here.</td>
+      Paste a CA certificate in X.509 PEM format here. <a target="_new" href='vpn_openvpn_create_certs.php'>Create</a> all certificates.</td>
     </tr>
-		
-    <tr> 
+
+    <tr>
       <td width="22%" valign="top" class="vncellreq">Server certificate</td>
       <td width="78%" class="vtable">
         <textarea name="srv_cert" cols="65" rows="4" class="formpre"><?=htmlspecialchars(base64_decode($pconfig['srv_cert']));?></textarea>
         <br>
         Paste a server certificate in X.509 PEM format here.</td>
      </tr>
-     
-     <tr> 
+
+     <tr>
        <td width="22%" valign="top" class="vncellreq">Server key</td>
-       <td width="78%" class="vtable"> 
+       <td width="78%" class="vtable">
          <textarea name="srv_key" cols="65" rows="4" class="formpre"><?=htmlspecialchars(base64_decode($pconfig['srv_key']));?></textarea>
          <br>Paste the server RSA private key here.</td>
       </tr>
-      
-      <tr> 
+
+      <tr>
         <td width="22%" valign="top" class="vncellreq">DH parameters</td>
-        <td width="78%" class="vtable"> 
+        <td width="78%" class="vtable">
 	  <textarea name="dh_param" cols="65" rows="4" class="formpre"><?=htmlspecialchars(base64_decode($pconfig['dh_param']));?></textarea>
-          <br>          
+          <br>
           Paste the Diffie-Hellman parameters in PEM format here.</td>
       </tr>
-      
+
       <tr>
         <td width="22%" valign="top" class="vncell">Crypto</td>
         <td width="78%" class="vtable">
@@ -288,7 +288,7 @@ $pconfig = $config['ovpn']['server'];
 	  <br>
 	  Select a data channel encryption cipher.</td>
       </tr>
-      
+
       <tr>
         <td width="22%" valign="top" class="vncell">Internal routing mode</td>
         <td width="78%" class="vtable">
@@ -296,7 +296,7 @@ $pconfig = $config['ovpn']['server'];
           <strong>Enable client-to-client routing</strong><br>
           If this option is on,  clients are allowed to talk to each other.</td>
       </tr>
-      
+
       <tr>
         <td width="22%" valign="top" class="vncell">Client authentication</td>
         <td width="78%" class="vtable">
@@ -304,7 +304,7 @@ $pconfig = $config['ovpn']['server'];
           <strong>Permit duplicate client certificates</strong><br>
 	  If this option is on, clients with duplicate certificates will not be disconnected.</td>
       </tr>
-	 
+
       <tr>
         <td width="22%" valign="top" class="vncell">Client-push options</td>
         <td width="78%" class="vtable">

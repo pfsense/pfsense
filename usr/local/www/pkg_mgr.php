@@ -136,8 +136,8 @@ if(!$pkg_config['packages']) {
                                 </td>
                             </tr>
                             <?php
-                            $i++;
                         }
+			$i++;
 		    }
                     if($i == 0) {
                         echo "<tr><td colspan=\"3\"><center>There are currently no available packages for installation.</td></tr>";

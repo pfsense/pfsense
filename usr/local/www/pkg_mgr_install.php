@@ -277,7 +277,7 @@ fwrite($fd_log, "End of Package Manager installation session.\n");
 // return dependency list to output later.
 $command = "TODELETE=`ls /var/db/pkg | grep " . $name . "` && /usr/sbin/pkg_info -r \$TODELETE | grep Dependency: | cut -d\" \" -f2";
 $dependencies = exec_command_and_return_text($command);
-fwrite($fd_log, "Installed " . $name . " and the following depdencies:\n" . $dependencies);
+fwrite($fd_log, "Installed " . $name . " and the following dependencies:\n" . $dependencies);
 
 $status = exec_command_and_return_text("ls /var/db/pkg | grep " . $pkgent['name']);
 fwrite($fd_log, "ls /var/db/pkg | grep " . $pkgent['name'] . "\n" . $status);

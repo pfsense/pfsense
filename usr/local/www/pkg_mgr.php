@@ -5,10 +5,6 @@
     Copyright (C) 2004 Scott Ullrich
     All rights reserved.
 
-    originally part of m0n0wall (http://m0n0.ch/wall)
-    Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-    All rights reserved.
-
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
 
@@ -130,10 +126,8 @@ if(!$pkg_config['packages']) {
                                 </td>
                                 <td valign="middle" class="list" nowrap>
                                     <a onclick="return confirm('Do you really want to install this package?')" href="pkg_mgr_install.php?id=<?=$i;?>"><img src="plus.gif" width="17" height="17" border="0"></a>
-
                                 </td>
                             </tr>
-
                             <?php
                             $i++;
                         }
@@ -151,5 +145,5 @@ if(!$pkg_config['packages']) {
 </body>
 </html>
 
-<?php mwexec("rm /tmp/pkg_config.xml"); ?>
+
 

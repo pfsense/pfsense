@@ -28,6 +28,7 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
+
 */
 
 /* include all configuration functions */
@@ -120,16 +121,13 @@ function filter_configure() {
 
 	/* load ipfw+altq module */
 	if (isset($config['shaper']['enable'])) {
-		if ($g['booting']) {
-			echo " IPFW+ALTQ ";
-		}
-		system("/sbin/kldload ipfw >/dev/null 2>&1");
-		system("/sbin/ipfw add 25 pass all from any to any >/dev/null 2>&1\n");
+		mwexec("/sbin/kldload ipfw >/dev/null 2>&1");
+		mwexec("/sbin/ipfw add 25 pass all from any to any >/dev/null 2>&1\n");
                 /* change one_pass to 1 so ipfw stops checking after
                    a rule has matched */
-                system("/sbin/sysctl net.inet.ip.fw.one_pass=1 >/dev/null 2>&1");
+                mwexec("/sbin/sysctl net.inet.ip.fw.one_pass=1 >/dev/null 2>&1");
                 /* load shaper rules */
-                system("/sbin/ipfw -f delete set 4 >/dev/null 2>&1");
+                mwexec("/sbin/ipfw -f delete set 4 >/dev/null 2>&1");
                 /* XXX - seems like ipfw cannot accept rules directly on stdin,
                    so we have to write them to a temporary file first */
                 $fd = fopen("/tmp/ipfw.rules", "w");
@@ -139,14 +137,14 @@ function filter_configure() {
                 }
                 fwrite($fd, $altq_rules);
                 fclose($fd);
-                system("/sbin/ipfw /tmp/ipfw.rules >/tmp/ipfw_errors.txt 2>&1");
-		system("/sbin/ipfw /tmp/ipfw.rules >/tmp/ipfw_errors.txt 2>&1");
-		system("/sbin/ipfw add $rulei set 4 pass all from any to any\n");
-		system("/sbin/ipfw enable altq\n");
-                system("/bin/mv /tmp/ipfw.rules /tmp/ipfw.rules_old");
-		system("/sbin/ipfw delete 25\n");
+                mwexec("/sbin/ipfw /tmp/ipfw.rules >/tmp/ipfw_errors.txt 2>&1");
+		mwexec("/sbin/ipfw /tmp/ipfw.rules >/tmp/ipfw_errors.txt 2>&1");
+		mwexec("/sbin/ipfw add $rulei set 4 pass all from any to any >/dev/null 2>&1\n");
+		mwexec("/sbin/ipfw enable altq >/dev/null 2>&1\n");
+                mwexec("/bin/mv /tmp/ipfw.rules /tmp/ipfw.rules_old >/dev/null 2>&1");
+		mwexec("/sbin/ipfw delete 25 >/dev/null 2>&1\n");
 	} else {
-		system("/sbin/kldunload ipfw.ko");
+		mwexec("/sbin/kldunload ipfw.ko");
 	}
 
 	return 0;

@@ -310,7 +310,11 @@ if($status <> "") {
             fwrite($fd_log, "Package WAS NOT installed properly.\n");
             fclose($fd_log);
             $filecontents = exec_command_and_return_text("cat " . $file);
+            update_progress_bar(100);
+            echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
+            echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
             update_status("Package WAS NOT installed properly...Something went wrong..\n" . $filecontents);
+            update_output_window("Error during package installation.");
             sleep(1);
             die;
 }

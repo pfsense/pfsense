@@ -973,8 +973,7 @@ anchor "carp"
 
 # enable ftp-proxy
 anchor "ftpproxy"
-pass in quick on $wanif inet proto tcp from port 20 to ($wanif) user proxy flags S/SA keep state
-pass in quick on $wanif inet proto tcp from any to $wanif port > 49000 user proxy keep state
+pass in quick on $wanif inet proto tcp from port 20 to ($wanif) port > 49000 user proxy flags S/SA keep state
 
 # allow access to DHCP server on LAN
 anchor "dhcpserverlan"

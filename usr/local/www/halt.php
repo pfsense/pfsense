@@ -33,7 +33,7 @@ require("guiconfig.inc");
 
 if ($_POST) {
 	if ($_POST['Submit'] != " No ") {
-		system_reboot();
+		system_halt();
 		$rebootmsg = "The system is halting now. This may take one minute.";
 	} else {
 		header("Location: index.php");

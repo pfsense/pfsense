@@ -67,8 +67,8 @@ cd /var/run && cp /dev/null utmp && chmod 644 utmp
 # let the PHP-based configuration subsystem set up the system now
 /etc/rc.bootup
 
-/sbin/pfctl -f /tmp/rules.debug >/dev/null 2>&1
 /sbin/pfctl -e >/dev/null 2>&1
+/sbin/pfctl -f /tmp/rules.debug >/dev/null 2>&1
 /etc/rc.filter_configure >/dev/null 2>&1
 
 echo Starting INETD for FTP-PROXY...

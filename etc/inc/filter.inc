@@ -112,8 +112,15 @@ function filter_generate_altq_queues() {
 			$altq_rules .= "bandwidth " . $rule['bandwidth'] . " ";
 			if (isset($rule['priority']))
 			$altq_rules .= "priority " .  $rule['priority']  . " ";
-			if (isset($rule['options'])) /* XXX turn options into an xml array */
-				$altq_rules .= $rule['schedulertype'] . "(". $rule['options'] . ")";
+			$options = "";
+			if(isset($rule['options']['red']))
+				$options .= " red";
+			if(isset($rule['options']['ecn']))
+				$options .= " ecn";
+			if(isset($rule['options']['default']))
+				$options .= " default";
+			if($options)
+				$altq_rules .= $rule['schedulertype'] . "(". $options . " )";
 			if (isset($rule['subqueue'])) {
 				$altq_rules .= "{ ";
 				$fsq = "";

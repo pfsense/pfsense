@@ -43,8 +43,23 @@ if (isset($id) && $a_queues[$id]) {
 	$pconfig['mask'] = $a_queues[$id]['mask'];
 	$pconfig['name'] = $a_queues[$id]['name'];
 	$pconfig['options'] = $a_queues[$id]['options'];
+
+	if(isset($pconfig['options']['red'])) {
+		$pconfig['options']['red'] = $queue['options']['red'];
+		$red = "on";
+	}
+	if(isset($pconfig['options']['ecn'])) {
+		$pconfig['options']['ecn'] = $queue['options']['ecn'];
+		$ecn = "on";
+	}
+	if(isset($pconfig['options']['default'])) {
+		$pconfig['options']['default'] = $queue['options']['default'];
+		$default = "on"l
+	}
+
 	$pconfig['bandwidth'] = $a_queues[$id]['bandwidth'];
 	$pconfig['bandwidthtype'] = $a_queues[$id]['bandwidthtype'];
+
 }
 
 if ($_POST) {
@@ -73,15 +88,13 @@ if ($_POST) {
 
 		$scheduleroptions="";
 		if($_POST['red'] == "on")
-			$scheduleroptions .= "red ";
+			$queue['options']['red'] = "enabled";
 
 		if($_POST['ecn'] == "on")
-			$scheduleroptions .= "ecn ";
+			$queue['options']['ecn'] = "enabled";
 
 		if($_POST['default'] == "on")
-			$scheduleroptions .= "default";
-
-		$queue['options'] = $scheduleroptions;
+			$queue['options']['default'] = "eanbled";
 
 		if (isset($id) && $a_queues[$id])
 			$a_queues[$id] = $queue;

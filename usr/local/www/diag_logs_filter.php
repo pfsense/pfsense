@@ -104,6 +104,7 @@ function conv_clog($logfile, $tail) {
 		if($second_split[11] == "udp" or $second_split[11] == "tcp" or $second_split[11] == "icmp" or $second_split[11] == "igmp") $flent['proto'] = $second_split[11];
 
 		$flent['proto'] = ereg_replace(":", "", $flent['proto']);
+		$flent['proto'] = ereg_replace(",", "", $flent['proto']);
 
 		if($flent['proto'] == "S" or $flent['proto'] == "NBT" or $flent['proto'] == "." or $flent['proto'] == "R" or $flent['proto'] == ">") $dontdisplay = 1;
 

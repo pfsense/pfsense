@@ -1705,7 +1705,7 @@ function create_firewall_outgoing_rules_to_itself() {
 		else
 			$replyto = "";
 		if($ip <> "") {
-			$rule .="pass out quick on {$int} {$replyto} all keep state\n";
+			//$rule .="pass out quick on {$int} {$replyto} all keep state\n";
 			/* XXX - billm: temp fix for pppoe, needs better fix */
 			if($config['interfaces'][$ifname]['ipaddr'] != "")
 				$rule .="pass out quick on {$int} {$replyto} all keep state\n";

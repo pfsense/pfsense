@@ -130,7 +130,8 @@ if ($_GET['act'] == "del") {
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
                       <tr>
                         <td width="10%" class="listhdrr">No.</td>
-                        <td width="20%" class="listhdrr">Priority</td>
+			<td width="10%" class="listhdrr">Flags</td>
+                        <td width="10%" class="listhdrr">Priority</td>
 			<td width="10%" class="listhdr">Default</td>
                         <td width="50%" class="listhdr">Name</td>
                         <td width="10%" class="list"></td>
@@ -139,6 +140,14 @@ if ($_GET['act'] == "del") {
                       <tr valign="top">
                         <td class="listlr">
                           <?=($i+1);?>
+			</td>
+			<td class="listlr">
+			  <?php
+			     if($queue['red'] <> "") echo " RED";
+			     if($queue['ecn'] <> "") echo " ECN";
+			     if($queue['borrow'] <> "") echo " Borrow";
+			  ?>
+			  &nbsp;
 			</td>
                         <td class="listr">
                           <?=$queue['priority'];?>&nbsp;

@@ -1379,7 +1379,8 @@ EOD;
 			}
 
 			/* Setup outgoing load balancing */
-			if (isset($config['nat']['outgoingloadbalancing']['rule'])
+			if ($config['nat']['outgoingloadbalancing']['rule'] <> "" and
+			    isset($config['nat']['outgoingloadbalancing']['enabled'])
 				and $rule['interface'] == "lan") {
 				$tmprules = " route-to { ";
 				$isfirst = 0;

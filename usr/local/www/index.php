@@ -32,6 +32,8 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+require("guiconfig.inc");
+
 if(file_exists("/usr/local/www/trigger_initial_wizard")) {
 	conf_mount_rw();
 	unlink("/usr/local/www/trigger_initial_wizard");
@@ -44,8 +46,6 @@ if(file_exists("/usr/local/www/trigger_initial_wizard")) {
 	echo "<meta http-equiv=\"refresh\" content=\"1;url=wizard.php?xml=setup_wizard.xml\">";
 	exit;
 }
-
-require("guiconfig.inc");
 
 /* find out whether there's hardware encryption (hifn) */
 unset($hwcrypto);
@@ -105,7 +105,6 @@ $cpuUsage = round(100 * (1 - $diff['idle'] / $totalDiff), 0);
 
 return $cpuUsage;
 }
-
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">

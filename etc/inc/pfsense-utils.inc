@@ -730,4 +730,31 @@ function is_service_running($service_name) {
     if($counter > 0) return 1;
     return 0;
 }
+
+/*
+ *  backup_config_section($section): returns as an array the configuration section
+ */
+function backup_config_section($section) {
+    global $config;
+    $new_section = &$config['section'];
+    return $new_section;
+}
+
+/*
+ *  restore_config_section($section, new_contents): restore a configuration section,
+ *                                                  and write the configuration out
+ *                                                  to disk/cf.
+ */
+function restore_config_section($section, $new_contents) {
+    global $config;
+    conf_mount_rw();
+    config_lock();
+    &$config[$section] = $new_contents;
+    write_config();
+    conf_mount_ro();
+    config_unlock();
+    return;
+}
+
+
 ?>

@@ -143,8 +143,8 @@ include("fbegin.inc");
 			}
 			?>
 			<td valign="middle" class="list" nowrap>
-			&nbsp;<a href="pkg_edit.php?xml=<?=$xml?>&act=edit&id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a>
-			&nbsp;<a href="pkg.php?xml=<?=$xml?>&act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this item?')"><img src="x.gif" width="17" height="17" border="0"></a>
+			    &nbsp;<a href="pkg_edit.php?xml=<?=$xml?>&act=edit&id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a>
+			    &nbsp;<a href="pkg.php?xml=<?=$xml?>&act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this item?')"><img src="x.gif" width="17" height="17" border="0"></a>
 			</td>
 			<?php
 			echo "</tr>\n";

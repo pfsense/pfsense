@@ -74,16 +74,17 @@ function enable_hardware_offloading($interface) {
  */
 function return_filename_as_array($filename) {
     $file = array();
-    if(!file_exists($filename)) return $file;
-    $text = return_filename_as_string($filename);
-    $text_split = split("\n", $text);
-    $counter = 0;
-    foreach($text_split as $line) {
-	if(strpos($line, "#") == 0)
-	    unset($text_split($counter));
-	    $counter++;
+    if(file_exists($filename)) {
+        $text = return_filename_as_string($filename);
+        $text_split = split("\n", $text);
+
+        /* Strip out comments */
+        while (($line = array_shift($text_split)) != NULL) {
+            if(strpos($line, "#") !== 0)
+                array_push($file, $line);
+        }
     }
-    return $text_split;
+    return $file;
 }
 
 /*

@@ -1,22 +1,22 @@
 #!/usr/local/bin/php
-<?php 
+<?php
 /*
 	system_firmware.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -29,15 +29,15 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$d_isfwfile = 1; require("guiconfig.inc"); 
+$d_isfwfile = 1; require("guiconfig.inc");
 
 /* checks with m0n0.ch to see if a newer firmware version is available;
    returns any HTML message it gets from the server */
 function check_firmware_version() {
 	global $g;
-	$post = "platform=" . rawurlencode($g['platform']) . 
+	$post = "platform=" . rawurlencode($g['platform']) .
 		"&version=" . rawurlencode(trim(file_get_contents("/etc/version")));
-		
+
 	$rfd = @fsockopen("m0n0.ch", 80, $errno, $errstr, 3);
 	if ($rfd) {
 		$hdr = "POST /wall/checkversion.php HTTP/1.0\r\n";
@@ -45,10 +45,10 @@ function check_firmware_version() {
 		$hdr .= "User-Agent: m0n0wall-webGUI/1.0\r\n";
 		$hdr .= "Host: m0n0.ch\r\n";
 		$hdr .= "Content-Length: " . strlen($post) . "\r\n\r\n";
-		
+
 		fwrite($rfd, $hdr);
 		fwrite($rfd, $post);
-		
+
 		$inhdr = true;
 		$resp = "";
 		while (!feof($rfd)) {
@@ -60,12 +60,12 @@ function check_firmware_version() {
 				$resp .= $line;
 			}
 		}
-		
+
 		fclose($rfd);
-		
+
 		return $resp;
 	}
-	
+
 	return null;
 }
 
@@ -73,7 +73,7 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 
 	unset($input_errors);
 	unset($sig_warning);
-	
+
 	if (stristr($_POST['Submit'], "Enable"))
 		$mode = "enable";
 	else if (stristr($_POST['Submit'], "Disable"))
@@ -82,7 +82,7 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 		$mode = "upgrade";
 	else if ($_POST['sig_no'])
 		unlink("{$g['ftmp_path']}/firmware.img");
-		
+
 	if ($mode) {
 		if ($mode == "enable") {
 			exec_rc_script("/etc/rc.firmware enable");
@@ -105,17 +105,17 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 				} else {
 					/* move the image so PHP won't delete it */
 					rename($_FILES['ulfile']['tmp_name'], "{$g['ftmp_path']}/firmware.img");
-					
+
 					/* check digital signature */
 					$sigchk = verify_digital_signature("{$g['ftmp_path']}/firmware.img");
-					
+
 					if ($sigchk == 1)
 						$sig_warning = "The digital signature on this image is invalid.";
 					else if ($sigchk == 2)
 						$sig_warning = "This image is not digitally signed.";
 					else if (($sigchk == 3) || ($sigchk == 4))
 						$sig_warning = "There has been an error verifying the signature on this image.";
-				
+
 					if (!verify_gzip_file("{$g['ftmp_path']}/firmware.img")) {
 						$input_errors[] = "The image file is corrupt.";
 						unlink("{$g['ftmp_path']}/firmware.img");
@@ -123,11 +123,11 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 				}
 			}
 
-			if (!$input_errors && !file_exists($d_firmwarelock_path) && (!$sig_warning || $_POST['sig_override'])) {			
+			if (!$input_errors && !file_exists($d_firmwarelock_path) && (!$sig_warning || $_POST['sig_override'])) {
 				/* fire up the update script in the background */
 				touch($d_firmwarelock_path);
-				exec_rc_script_async("/etc/rc.firmware upgrade {$g['ftmp_path']}/firmware.img");
-				
+				exec_rc_script_async("/etc/rc.firmware pfSenseupgrade {$g['ftmp_path']}/firmware.img");
+
 				$savemsg = "The firmware is now being installed. The firewall will reboot automatically.";
 			}
 		}
@@ -155,7 +155,7 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 <p><strong>Firmware uploading is not supported on this platform.</strong></p>
 <?php elseif ($sig_warning && !$input_errors): ?>
 <form action="system_firmware.php" method="post">
-<?php 
+<?php
 $sig_warning = "<strong>" . $sig_warning . "</strong><br>This means that the image you uploaded " .
 	"is not an official/supported image and may lead to unexpected behavior or security " .
 	"compromises. Only install images that come from sources that you trust, and make sure ".
@@ -168,15 +168,15 @@ print_info_box($sig_warning);
 </form>
 <?php else: ?>
             <?php if (!file_exists($d_firmwarelock_path)): ?>
-            <p>Click &quot;Enable firmware 
+            <p>Click &quot;Enable firmware
               upload&quot; below, then choose the image file (<?=$g['platform'];?>-*.img)
-			  to be uploaded.<br>Click &quot;Upgrade firmware&quot; 
+			  to be uploaded.<br>Click &quot;Upgrade firmware&quot;
               to start the upgrade process.</p>
             <form action="system_firmware.php" method="post" enctype="multipart/form-data">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr> 
+                <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
+                  <td width="78%">
                     <?php if (!file_exists($d_sysrebootreqd_path)): ?>
                     <?php if (!file_exists($d_fwupenabled_path)): ?>
                     <input name="Submit" type="submit" class="formbtn" value="Enable firmware upload">
@@ -191,11 +191,11 @@ print_info_box($sig_warning);
 				  <?php endif; ?>
                   </td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"><span class="vexpl"><span class="red"><strong>Warning:<br>
-                    </strong></span>DO NOT abort the firmware upgrade once it 
-                    has started. The firewall will reboot automatically after 
+                    </strong></span>DO NOT abort the firmware upgrade once it
+                    has started. The firewall will reboot automatically after
                     storing the new firmware. The configuration will be maintained.</span></td>
                 </tr>
               </table>

@@ -49,7 +49,38 @@ upgrade)
 	/sbin/umount -f /cf
 	/sbin/mount -r /cf
 
-	echo "Done - rebooting system..."	
+	echo "Done - rebooting system..."
+	/sbin/reboot
+	;;
+pfSenseupgrade)
+	# wait 5 seconds before beginning
+	sleep 5
+
+	exec </dev/console >/dev/console 2>/dev/console
+
+	echo
+	echo "Firmware upgrade in progress..."
+
+	# backup config
+	mkdir /tmp/configbak
+	cp -p /conf/* /tmp/configbak
+	# mount /cf
+	/sbin/mount -w -o noatime /cf
+
+	# tar explode image onto hd
+	if [ -r $2 ]; then
+		tar xzvPf $2 -C / > /dev/null 2>&1
+		echo "Image installed."
+	fi
+
+	# restore config
+	cp -p /tmp/configbak/* /conf
+
+	# remount /cf ro
+	/sbin/umount -f /cf
+	/sbin/mount -r /cf
+
+	echo "Done - rebooting system..."
 	/sbin/reboot
 	;;
 esac

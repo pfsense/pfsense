@@ -1011,26 +1011,8 @@ EOD;
 
 	}
 
-	/* IPsec enabled? */
-	if (isset($config['ipsec']['enable']) &&
-		((is_array($config['ipsec']['tunnel']) &&
-		count($config['ipsec']['tunnel'])) ||
-			isset($config['ipsec']['mobileclients']['enable']))) {
-
-		$curwanip = get_current_wan_address();
-
-		if ($curwanip)
-			$ipfrules .= filter_rules_ipsec_generate($wanif, $curwanip);
-
-		$ipfrules .= filter_rules_ipsec_generate($lanif, $lanip);
-
-		foreach ($optcfg as $on => $oc) {
-			if ($oc['ip'])
-				$ipfrules .= filter_rules_ipsec_generate($oc['if'], $oc['ip']);
-		}
-	}
-
 	$ipfrules .= <<<EOD
+
 
 
 # let out anything from the firewall host itself and decrypted IPsec traffic
@@ -1407,8 +1389,15 @@ EOD;
 	if(is_array($config['ipsec']['tunnel'])) {
 		foreach ($config['ipsec']['tunnel'] as $tunnel) {
 			$remote_gateway = $tunnel['remote-gateway'];
-			$ipfrules .= "pass quick on " . $wanif . " from " . $wan_ip . " to " . $remote_gateway . " keep state\n";
-			$ipfrules .= "pass quick on " . $wanif . " from " . $remote_gateway . " to " . $wan_ip  . " keep state\n";
+			$ipfrules .= "pass quick on " . $wanif . " proto udp from " . $wan_ip . " to " . $remote_gateway . " port = 500 keep state label \"". $tunnel['descr'] ." udp \"\n";
+			$ipfrules .= "pass quick on " . $wanif . " proto udp from " . $remote_gateway . " to " . $wan_ip  . " port = 500 keep state label \"". $tunnel['descr'] ." udp \"\n";
+
+			$ipfrules .= "pass quick on " . $wanif . " proto esp from " . $wan_ip . " to " . $remote_gateway . " keep state label \"". $tunnel['descr'] ." esp proto\"\n";
+			$ipfrules .= "pass quick on " . $wanif . " proto esp from " . $remote_gateway . " to " . $wan_ip  . " keep state label \"". $tunnel['descr'] ." esp proto\"\n";
+
+			$ipfrules .= "pass quick on " . $wanif . " proto ah from " . $wan_ip . " to " . $remote_gateway . " keep state label \"". $tunnel['descr'] ." ah proto\"\n";
+			$ipfrules .= "pass quick on " . $wanif . " proto ah from " . $remote_gateway . " to " . $wan_ip  . " keep state label \"". $tunnel['descr'] ." ah proto\"\n";
+
 			$ipfrules .= "pass quick on " . $lanif . " from " . $tunnel['remote-subnet'] . " to " . $internal_subnet  . " keep state\n";
 			$ipfrules .= "pass quick on " . $lanif . " from " . $internal_subnet . " to " . $tunnel['remote-subnet'] . " keep state\n";
 		}
@@ -1453,27 +1442,6 @@ function filter_rules_spoofcheck_generate($ifname, $if, $sa, $sn, $log) {
 	} else {
 		$ipfrules .= "#block in $log quick on $if from ! $sa/$sn to any\n";
 	}
-
-	return $ipfrules;
-}
-
-function filter_rules_ipsec_generate($ifname, $ip) {
-
-	$ipfrules = <<<EOD
-
-# Pass IKE packets
-pass in quick on {$ifname} proto udp from any to {$ip} port = 500
-pass out quick on {$ifname} proto udp from {$ip} port = 500 to any
-
-# Pass ESP packets
-pass in quick on {$ifname} proto esp from any to {$ip}
-pass out quick on {$ifname} proto esp from {$ip} to any
-
-# Pass AH packets
-pass in quick on {$ifname} proto ah from any to {$ip}
-pass out quick on {$ifname} proto ah from {$ip} to any
-
-EOD;
 
 	return $ipfrules;
 }

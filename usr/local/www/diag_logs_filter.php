@@ -48,7 +48,7 @@ function dump_clog($logfile, $tail, $withorig = true) {
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
-	exec("/usr/sbin/clog " . $logfile . " | tail {$sor} -n " . $tail, $logarr);
+	exec("/usr/sbin/clog " . $logfile . " | tail {$sor} -n " . "15000", $logarr);
 
 	foreach ($logarr as $logent) {
 		$logent = preg_split("/\s+/", $logent, 6);
@@ -79,6 +79,8 @@ function conv_clog($logfile, $tail) {
 	exec("/usr/sbin/clog " . $logfile . " | tail {$sor} -n " . $tail, $logarr);
 
 	$filterlog = array();
+
+	$counter = 0;
 
 	foreach ($logarr as $logent) {
 		$dontdisplay = 0;
@@ -115,6 +117,9 @@ function conv_clog($logfile, $tail) {
 
 		if($dontdisplay == 0)
 			$filterlog[] = $flent;
+
+		if($counter > $nentries)
+			break;
 	}
 
 	return $filterlog;

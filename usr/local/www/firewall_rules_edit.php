@@ -436,6 +436,18 @@ function src_rep_change() {
 function dst_rep_change() {
 	document.iform.dstendport.selectedIndex = document.iform.dstbeginport.selectedIndex;
 }
+function assignaliastofield(dst, dstsrc, dstype) {
+	dst.value = dstsrc.value;
+	dstsrc.value = "";
+	if(dstype == 'src') {
+		this.iform.srctype.selectedIndex = 1;
+		this.iform.src.disabled = 0;
+	} else {
+		this.iform.dsttype.selectedIndex = 1;
+		this.iform.dst.disabled = 0;
+	}
+
+}
 //-->
 </script>
 </head>
@@ -568,6 +580,14 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 						<option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected"; ?>><?=$i;?></option>
 						<?php endfor; ?>
 						</select>
+
+						 <select name="assignaliasa" id="assignaliasa" onChange="assignaliastofield(src, this, 'src');"><option></option>
+						<?php
+						foreach ($config['aliases']['alias'] as $alias) {
+							echo "<option value=\"" . $alias['name'] . "\">" . $alias['name'] . "</option>\n";
+						}
+						?>
+						</select>
 						</td>
 					  </tr>
                     </table></td>
@@ -648,6 +668,12 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 						<?php for ($i = 31; $i > 0; $i--): ?>
 						<option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo "selected"; ?>><?=$i;?></option>
 						<?php endfor; ?>
+						</select>  <select name="assignaliasb" id="assignaliasb" onChange="assignaliastofield(dst, this, 'dst');"><option></option>
+						<?php
+						foreach ($config['aliases']['alias'] as $alias) {
+							echo "<option value=\"" . $alias['name'] . "\">" . $alias['name'] . "</option>\n";
+						}
+						?>
 						</select></td>
                       </tr>
                     </table></td>

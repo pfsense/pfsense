@@ -63,39 +63,64 @@ if ($_POST) {
                         	header("Content-Length: $fs");
 				readfile("/tmp/config.xml.nopkg");
 			} else {
-			$fs = filesize($g['conf_path'] . "/config.xml");
-			header("Content-Type: application/octet-stream");
-			header("Content-Disposition: attachment; filename=$fn");
-			header("Content-Length: $fs");
-			readfile($g['conf_path'] . "/config.xml");
+				if($_POST['backuparea'] <> "") {
+					/* user wishes to backup specific area of configuration */
+					$current_trafficshaper_section = backup_config_section($_POST['backuparea']);
+					/* generate aliases xml */
+					$fout = fopen("{$g['tmp_path']}/backup_section.txt","w");
+					fwrite($fout, $current_trafficshaper_section);
+					fclose($fout);
+					$fs = filesize($g['tmp_path'] . "/backup_section.txt");
+					header("Content-Type: application/octet-stream");
+					$fn = $_POST['backuparea'] . "-" . $fn;
+					header("Content-Disposition: attachment; filename=$fn");
+					header("Content-Length: $fs");
+					readfile($g['tmp_path'] . "/backup_section.txt","w");
+					unlink($g['tmp_path'] . "/backup_section.txt","w");
+				} else {
+					$fs = filesize($g['conf_path'] . "/config.xml");
+					header("Content-Type: application/octet-stream");
+					header("Content-Disposition: attachment; filename=$fn");
+					header("Content-Length: $fs");
+					readfile($g['conf_path'] . "/config.xml");
+				}
 			}
 			config_unlock();
 			exit;
 		} else if ($mode == "restore") {
 			if (is_uploaded_file($_FILES['conffile']['tmp_name'])) {
-				if (config_install($_FILES['conffile']['tmp_name']) == 0) {
-					$command = "/sbin/sysctl -a | grep carp";
-					$fd = fopen($_FILES['conffile']['tmp_name'], "r");
-					if(!$fd) {
-						log_error("Warning, could not open " . $_FILES['conffile']['tmp_name']);
-						return 1;
-					}
-					while(!feof($fd)) {
-						    $tmp .= fread($fd,49);
-					}
+				$command = "/sbin/sysctl -a | grep carp";
+				$fd = fopen($_FILES['conffile']['tmp_name'], "r");
+				if(!$fd) {
+					log_error("Warning, could not open " . $_FILES['conffile']['tmp_name']);
+					return 1;
+				}
+				while(!feof($fd)) {
+					    $tmp .= fread($fd,49);
+				}
+				fclose($fd);
+				if(stristr($tmp, "m0n0wall" != false)) {
+					log_error("Upgrading m0n0wall configuration to pfsense.");
+					/* m0n0wall was found in config.  convert it. */
+					$upgradedconfig = str_replace("m0n0wall", "pfsense", $tmp);
+					fopen($_FILES['conffile']['tmp_name'], "w");
+					fwrite($fd, $upgradedconfig);
 					fclose($fd);
-					if(stristr($tmp, "m0n0wall" != FALSE)) {
-						log_error("Upgrading m0n0wall configuration to pfsense.");
-						/* m0n0wall was found in config.  convert it. */
-						$upgradedconfig = str_replace("m0n0wall", "pfsense", $tmp);
-						fopen($_FILES['conffile']['tmp_name'], "w");
-						fwrite($fd, $upgradedconfig);
-						fclose($fd);
-					}
+				}
+				if($_POST['restorearea'] <> "") {
+					/* restore a specific area of the configuration */
+					$rules = return_filename_as_string($_FILES['conffile']['tmp_name']);
+					restore_config_section("filter", $rules);
 					system_reboot();
 					$savemsg = "The configuration has been restored. The firewall is now rebooting.";
 				} else {
-					$input_errors[] = "The configuration could not be restored.";
+					/* restore the entire configuration */
+					if (config_install($_FILES['conffile']['tmp_name']) == 0) {
+						system_reboot();
+						$savemsg = "The configuration has been restored. The firewall is now rebooting.";
+					} else {
+						$input_errors[] = "The configuration could not be restored.";
+					}
 				}
 			} else {
 				$input_errors[] = "The configuration could not be restored (file upload error).";
@@ -135,7 +160,7 @@ if (isset($config['system']['version_control'])) {
 						$old_ver = array();
 						$old_ver['date']=date("Y-m-d H:i:s", $regs[1]);
 						$old_ver['desc']= "XXX - description not used yet";
-						
+
 						array_push(&$old_versions, $old_ver);
 					}
                                 }
@@ -170,7 +195,13 @@ if (isset($config['system']['version_control'])) {
                     <p> Click this button to download the system configuration
                       in XML format.<br>
                       <br>
-		      <input name="nopackages" type="checkbox" class="formcheckbox" id="nopackages">Do not backup package information.<br><br>
+		      Backup area:
+		      <select name="backuparea">
+			<option VALUE="">ALL</option>
+			<option VALUE="shaper">Traffic Shaper</option>
+		      </select>
+		      <p>
+		      <input name="nopackages" type="checkbox" class="formcheckbox" id="nopackages">Do not backup package information.<p>
                       <input name="Submit" type="submit" class="formbtn" id="download" value="Download configuration"></td>
                 </tr>
                 <tr>
@@ -188,9 +219,15 @@ if (isset($config['system']['version_control'])) {
                       <strong><span class="red">Note:</span></strong><br>
                       The firewall will reboot after restoring the configuration.<br>
                       <br>
+		      Restore area:
+		      <select name="restorearea">
+			<option VALUE="">ALL</option>
+			<option VALUE="shaper">Traffic Shaper</option>
+		      </select>
+		      <p>
                       <input name="conffile" type="file" class="formfld" id="conffile" size="40">
-                      <br>
-                      <br>
+                      <p>
+
                       <input name="Submit" type="submit" class="formbtn" id="restore" value="Restore configuration">
                   </td>
                 </tr>

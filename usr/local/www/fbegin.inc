@@ -124,6 +124,7 @@ function showhide(tspan, tri) {
 			  <span id="diag" style="display: none">
 			  <?php endif; ?>
 				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_logs.php" class="navlnk">System logs</a><br>
+				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_pkglogs.php" class="navlnk">Package logs</a><br>
 				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_dhcp_leases.php" class="navlnk">DHCP leases</a><br>
 				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_ipsec_sad.php" class="navlnk">IPsec</a><br>
 				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_ping.php" class="navlnk">Ping</a><br>

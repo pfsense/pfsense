@@ -200,9 +200,22 @@ function auth_method_change() {
 		document.iform.radiusacctport.disabled = 0;
 	}
 }
+
 function radacct_change() {
 	if (document.iform.radacct_enable.checked) {
 		auth_method_change();
+	}
+}
+
+function enable_https() {
+	if (document.iform.httpslogin_enable.checked == false) {
+		document.iform.httpsname.disabled = 1;
+		document.iform.cert.disabled = 1;
+		document.iform.key.disabled = 1;
+	} else {
+		document.iform.httpsname.disabled = 0;
+		document.iform.cert.disabled = 0;
+		document.iform.key.disabled = 0;
 	}
 }
 
@@ -246,6 +259,7 @@ function enable_change(enable_change) {
 	}
 
 	auth_method_change();
+	enable_https();
 
 }
 //-->
@@ -388,7 +402,7 @@ to access after they've authenticated.</td>
 	<tr>
       <td valign="top" class="vncell">HTTPS login</td>
       <td class="vtable">
-        <input name="httpslogin_enable" type="checkbox" class="formfld" id="httpslogin_enable" value="yes" <?php if($pconfig['httpslogin_enable']) echo "checked"; ?> onClick="enable_https(false)">
+        <input name="httpslogin_enable" type="checkbox" class="formfld" id="httpslogin_enable" value="yes" <?php if($pconfig['httpslogin_enable']) echo "checked"; ?> onClick="enable_https()">
         <strong>Enable HTTPS login</strong><br>
     If enabled, the username and password will be transmitted over an HTTPS connection to protect against eavesdroppers. This option only applies when RADIUS authentication is used. A server name, certificate and matching private key must also be specified below.</td>
 	  </tr>

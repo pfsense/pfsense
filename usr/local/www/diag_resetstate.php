@@ -1,22 +1,24 @@
 #!/usr/local/bin/php
-<?php 
+<?php
 /*
 	diag_resetstate.php
-	part of m0n0wall (http://m0n0.ch/wall)
-	
+	Copyright (C) 2004 Scott Ullrich
+	All rights reserved.
+
+	originially part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -61,33 +63,33 @@ if ($_POST) {
 <?php if ($savemsg) print_info_box($savemsg); ?>
             <form action="diag_resetstate.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
-                  <td width="78%" class="vtable"> <p> 
+                  <td width="78%" class="vtable"> <p>
                       <input name="nattable" type="checkbox" id="nattable" value="yes" checked>
                       <strong>NAT table</strong><br>
                       <input name="statetable" type="checkbox" id="statetable" value="yes" checked>
                       <strong>Firewall state table</strong><br>
                       <span class="vexpl"><br>
-                      Resetting the state tables will remove all entries from 
-                      the corresponding tables. This means that all open connections 
-                      will be broken and will have to be re-established. This 
-                      may be necessary after making substantial changes to the 
-                      firewall and/or NAT rules, especially if there are IP protocol 
+                      Resetting the state tables will remove all entries from
+                      the corresponding tables. This means that all open connections
+                      will be broken and will have to be re-established. This
+                      may be necessary after making substantial changes to the
+                      firewall and/or NAT rules, especially if there are IP protocol
                       mappings (e.g. for PPTP or IPv6) with open connections.<br>
                       <br>
-                      </span><span class="vexpl">The firewall will normally leave 
+                      </span><span class="vexpl">The firewall will normally leave
                       the state tables intact when changing rules.<br>
                       <br>
-                      NOTE: If you reset the firewall state table, the browser 
-                      session may appear to be hung after clicking &quot;Reset&quot;. 
+                      NOTE: If you reset the firewall state table, the browser
+                      session may appear to be hung after clicking &quot;Reset&quot;.
                       Simply refresh the page to continue.</span></p>
                     </td>
 				</tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Reset"> 
+                  <td width="78%">
+                    <input name="Submit" type="submit" class="formbtn" value="Reset">
                   </td>
                 </tr>
               </table>

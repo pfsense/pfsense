@@ -1,22 +1,24 @@
 #!/usr/local/bin/php
-<?php 
+<?php
 /*
 	diag_logs_vpn.php
-	part of m0n0wall (http://m0n0.ch/wall)
-	
+	Copyright (C) 2004 Scott Ullrich
+	All rights reserved.
+
+	originially part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -45,19 +47,19 @@ function dump_clog($logfile, $tail) {
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
 	exec("/usr/sbin/clog " . $logfile . " | tail {$sor} -n " . $tail, $logarr);
-	
+
 	foreach ($logarr as $logent) {
 		$logent = preg_split("/\s+/", $logent, 6);
 		$llent = explode(",", $logent[5]);
-		
+
 		echo "<tr>\n";
 		echo "<td class=\"listlr\" nowrap>" . htmlspecialchars(join(" ", array_slice($logent, 0, 3))) . "</td>\n";
-		
+
 		if ($llent[0] == "login")
 			echo "<td class=\"listr\"><img src=\"in.gif\" width=\"11\" height=\"11\" title=\"login\"></td>\n";
 		else
 			echo "<td class=\"listr\"><img src=\"out.gif\" width=\"11\" height=\"11\" title=\"logout\"></td>\n";
-		
+
 		echo "<td class=\"listr\">" . htmlspecialchars($llent[3]) . "</td>\n";
 		echo "<td class=\"listr\">" . htmlspecialchars($llent[2]) . "&nbsp;</td>\n";
 		echo "</tr>\n";
@@ -90,7 +92,7 @@ function dump_clog($logfile, $tail) {
   <tr>
     <td class="tabcont">
 		<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr>
-		  <td colspan="4" class="listtopic"> 
+		  <td colspan="4" class="listtopic">
 			    Last <?=$nentries;?> firewall log entries</td>
 			</tr>
 			<tr>

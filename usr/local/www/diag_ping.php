@@ -2,8 +2,10 @@
 <?php
 /*
 	diag_ping.php
-	part of m0n0wall (http://m0n0.ch/wall)
+	Copyright (C) 2004 Scott Ullrich
+	All rights reserved.
 
+	originially part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Bob Zoller (bob@kludgebox.com) and Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -76,7 +78,7 @@ if (!isset($do_ping)) {
 			  <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
 				  <td width="22%" valign="top" class="vncellreq">Host</td>
-				  <td width="78%" class="vtable"> 
+				  <td width="78%" class="vtable">
                     <input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>"></td>
 				</tr>
 				<tr>
@@ -90,7 +92,7 @@ if (!isset($do_ping)) {
 				</tr>
 				<tr>
 				  <td width="22%" valign="top">&nbsp;</td>
-				  <td width="78%"> 
+				  <td width="78%">
                     <input name="Submit" type="submit" class="formbtn" value="Ping">
 				</td>
 				</tr>

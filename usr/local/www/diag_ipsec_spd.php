@@ -1,22 +1,24 @@
 #!/usr/local/bin/php
-<?php 
+<?php
 /*
 	diag_ipsec_spd.php
-	part of m0n0wall (http://m0n0.ch/wall)
-	
+	Copyright (C) 2004 Scott Ullrich
+	All rights reserved.
+
+	originially part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -49,7 +51,7 @@ require("guiconfig.inc");
 	<li class="tabact">SPD</li>
   </ul>
   </td></tr>
-  <tr> 
+  <tr>
     <td class="tabcont">
 <?php
 
@@ -128,20 +130,20 @@ foreach ($spd as $sp): ?>
 		?>
 		  <a href="diag_ipsec_spd.php?act=del&<?=$args;?>" onclick="return confirm('Do you really want to delete this security policy?')"><img src="x.gif" width="17" height="17" border="0"></a>
 		</td>
-				
+
 	</tr>
 <?php endforeach; ?>
 </table>
 <br>
 <table border="0" cellspacing="0" cellpadding="0">
-  <tr> 
+  <tr>
 	<td width="16"><img src="in.gif" width="11" height="11"></td>
 	<td>incoming (as seen by firewall)</td>
   </tr>
-  <tr> 
+  <tr>
 	<td colspan="5" height="4"></td>
   </tr>
-  <tr> 
+  <tr>
 	<td><img src="out.gif" width="11" height="11"></td>
 	<td>outgoing (as seen by firewall)</td>
   </tr>

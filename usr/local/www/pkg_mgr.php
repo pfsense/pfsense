@@ -126,6 +126,8 @@ if(!$pkg_config['packages']) {
                                 </td>
                                 <td class="listlr">
                                     <?= $pkg['category'] ?>
+									<br>
+									<?= $pkg['status'] ?>
                                 </td>
                                 <td class="listbg">
                                     <font color="#FFFFFFF">

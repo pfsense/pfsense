@@ -61,7 +61,8 @@ if ($_POST) {
                 to factory defaults and will reboot immediately. The entire system
                 configuration will be overwritten. The LAN IP address will be
                 reset to 192.168.1.1, the system will be configured as a DHCP
-                server, and the password will be set to 'mono'.<br>
+                server, the WAN interface will be set to obtain an address from a DHCP server
+		and the password will be set to 'pfsense'.<br>
                 <br>
                 Are you sure you want to proceed?</strong></p>
         <p>

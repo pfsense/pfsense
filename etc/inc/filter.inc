@@ -115,7 +115,7 @@ function filter_configure() {
 	}
 
 	$rules.= "\n";
-	$rules.= "scrub on {$wanif} reassemble tcp random-id " . $mssclamp ."\n"; // reassemble all directions
+	$rules.= "scrub on {$wanif} all " . $mssclamp ."\n"; // reassemble all directions
 	$rules.= $altq_ints . "\n";
 	$rules.= $altq_queues . "\n";
 	$rules.= $natrules . "\n";
@@ -1705,12 +1705,12 @@ function create_firewall_outgoing_rules_to_itself() {
 		else
 			$replyto = "";
 		if($ip <> "") {
-			$rule .="pass out quick on {$int} {$replyto} inet from any to any keep state\n";
+			$rule .="pass out quick on {$int} {$replyto} all keep state\n";
 			/* XXX - billm: temp fix for pppoe, needs better fix */
 			if($config['interfaces'][$ifname]['ipaddr'] != "")
-				$rule .="pass out quick on {$int} {$replyto} inet from {$int} to any keep state\n";
-			else
-				$rule .="pass out quick on {$int} {$replyto} inet from ({$int}) to any keep state\n";
+				$rule .="pass out quick on {$int} {$replyto} all keep state\n";
+			else           //pass out quick on vr1 all keep state
+				$rule .="pass out quick on {$int} {$replyto} all keep state\n";
 		}
 
 	}

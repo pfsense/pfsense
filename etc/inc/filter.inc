@@ -98,13 +98,13 @@ function filter_configure() {
 	fwrite($fd, "set loginterface $wanif \n");
 	$optimization = "normal";
 	if($config['system']['optimization'] <> "") $optimization = $config['system']['optimization'];
-        fwrite($fd, "set optimization " . $optimization . " " . $mssclamp . "\n");
+        fwrite($fd, "set optimization " . $optimization . "\n");
 	if($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
 		/* User defined maximum states in Advanced menu. */
 		$maximumstates = $config['system']['maximumstates'];
 		fwrite($fd, "set limit states " . $maximumstates . "\n");
 	}
-	fwrite($fd, "\nscrub all\n"); // reassemble all directions
+	fwrite($fd, "\nscrub all " . $mssclamp ."\n"); // reassemble all directions
 	fwrite($fd, $altq_ints);
 
 	/*

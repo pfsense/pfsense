@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!-- pfSense default system configuration -->
-<pfsense>
+<m0n0wall>
 	<version>1.4</version>
 	<lastchange></lastchange>
 	<system>
@@ -521,4 +521,4 @@
 	</wol>
 	<installedpackages>
 	</installedpackages>
-</pfsense>
+</m0n0wall>

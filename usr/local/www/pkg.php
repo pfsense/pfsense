@@ -158,10 +158,12 @@ if ($pkg['tabs'] <> "") {
                 <tr>
                 <?php
                 $cols = 0;
-                foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
-		    echo "<td class=\"listhdrr\">" . $column['fielddescr'] . "</td>";
-		    $cols++;
-                }
+		if($pkg['adddeleteeditpagefields']['columnitem'] <> "") {
+		    foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
+			echo "<td class=\"listhdrr\">" . $column['fielddescr'] . "</td>";
+			$cols++;
+		    }
+		}
                 echo "</tr>";
 		    $i=0;
 		    if($evaledvar)

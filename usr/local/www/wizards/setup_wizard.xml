@@ -1762,18 +1762,18 @@
 				</option>
 				<option>
 					<name>PPPoE</name>
-					<value>PPPoE</value>
+					<value>pppoe</value>
 					<enablefields>pppoeusername,pppoepassword,pppoeservicename,pppoedialondemand,pppoeidletimeout</enablefields>
 				</option>
 				<option>
 					<name>PPTP</name>
-					<value>PPTP</value>
+					<value>pptp</value>
 					<enablefields>pptpusername,pptppassword,pptplocalipaddress,pptplocalsubnet,pptpremoteipaddress,pptpdialondemand,pptpidletimeout
 					</enablefields>
 				</option>
 				<option>
 					<name>BigPond</name>
-					<value>BigPond</value>
+					<value>bigpond</value>
 					<enablefields>bigpondusername,bigpondpassword,bigpondauthenticationserver,bigpondauthenticationdomain,bigpondminheartbeatinterval</enablefields>
 				</option>
 			</options>
@@ -2196,14 +2196,8 @@
 				</option>
 			</options>
 			<stepsubmitbeforesave>
-				if($_POST['selectedtype'] == "DHCP") {
-					$_POST['ipaddress'] = "dhcp";
-				} else if($_POST['selectedtype'] == "PPPoE") {
-					$_POST['ipaddress'] = "pppoe";
-				} else if($_POST['selectedtype'] == "PPTP") {
-					$_POST['ipaddress'] = "pptp";
-				} else if($_POST['selectedtype'] == "BigPond") {
-					$_POST['ipaddress'] = "bigpond";
+				if(!$_POST['selectedtype'] == "Static") {
+					$_POST['ipaddress'] = $_POST['selectedtype'];
 				}
 			</stepsubmitbeforesave>
 		</field>

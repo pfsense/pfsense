@@ -816,7 +816,7 @@ EOD;
 				$line = $type;
 			}
 
-			if(!isset($rule['direction'])) {
+			if(!isset($rule['direction']) and $rule['direction'] <> "") {
 				$line .= " in ";
 			} else {
 				$line .= " " . $rule['direction'] . " ";
@@ -977,13 +977,15 @@ EOD;
 					}
 				}
 
-				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states'] ) ) {
+				if( isset($rule['source-track']) and $rule['source-track'] <> "" or
+				  isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "" or
+				   isset($rule['max-src-states']) and $rule['max-src-states'] <> "" ) {
 					$line .= "( ";
-					if(isset($rule['source-track']))
+					if(isset($rule['source-track']) & $rule['source-track'] <> "")
 						$line .= "source-track rule ";
-					if(isset($rule['max-src-nodes']))
-						$line .= "max-src-nodes " . $rule['max-src-nodes'] . " ";
-					if(isset($rule['max-src-states']))
+					if(isset($rule['max-src-nodes']) & $rule['max-src-nodes'] <> "")
+						$line .= "max-src-nodes " . $rule['max-src-nodes'] . "";
+					if(isset($rule['max-src-states']) & $rule['max-src-states'] <> "")
 						$line .= "max-src-states" . $rule['max-src-states'] . " ";
 					$line .= " ) ";
 				}

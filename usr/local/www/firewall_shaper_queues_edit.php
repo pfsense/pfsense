@@ -92,7 +92,7 @@ if ($_POST) {
 		$queue['bandwidthtype'] = $_POST['bandwidthtype'];
 		$queue['priority'] = $_POST['priority'];
 		$queue['name'] = ereg_replace(" ", "", $_POST['name']);
-		$queue['name'] = substr($queue['name'], 0, 14);
+		$queue['name'] = substr($queue['name'], 0, 15);
 		$queue['borrow'] = $_POST['borrow'];
 		$queue['linkshare'] = $_POST['linkshare'];
 		$queue['linkshare3'] = $_POST['linkshare3'];

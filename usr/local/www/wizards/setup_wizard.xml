@@ -2425,15 +2425,15 @@
 </step>
 <step>
 	<id>6</id>
-	<title>Set ADMIN Password</title>
+	<title>Set Admin WebGUI Password</title>
 	<description>On this screen we will set the Admin password.</description>
 	<fields>
 		<field>
-			<name>ADMIN Password</name>
+			<name>Admin Password</name>
 			<type>password</type>
 		</field>
 		<field>
-			<name>ADMIN Password AGAIN</name>
+			<name>Admin Password AGAIN</name>
 			<type>password</type>
 			<stepsubmitphpaction>
 			if($_POST['adminpassword'] != "") {
@@ -2443,6 +2443,8 @@
 					$crypted_pw = crypt($_POST['adminpassword'],$salt);
 					fwrite($fd, $crypted_pw);
 					pclose($fd);
+					$config['system']['password'] = crypt($_POST['adminpassword']);
+					write_config();
 				} else {
 					print_info_box_np("Passwords do not match!");
 					die;

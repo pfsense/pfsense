@@ -31,7 +31,11 @@
 require("guiconfig.inc");
 require("xmlparse_pkg.inc");
 
+/* /usr/local/pkg/ is where xml package files are stored. */
 if(!file_exists("/usr/local/pkg/")) mwexec("mkdir -p /usr/local/pkg/");
+/* /usr/local/pkg/pf is where custom php hook packages live to alter the rules when needed */
+if(!file_exists("/usr/local/pkg/pf")) mwexec("mkdir -p /usr/local/pkg/pf");
+/* /usr/local/www/ext is where package links live for the left hand pane */
 if(!file_exists("/usr/local/www/ext/")) mwexec("mkdir -p /usr/local/www/ext");
 
 $pb_percent = 1;

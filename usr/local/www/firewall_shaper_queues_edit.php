@@ -176,8 +176,8 @@ if ($_POST) {
 	      <td class="vtable">
 		<?php
 			if($schedulertype == "hfsc") echo "Hierarchical Fair Service Curve queueing";
-			else if($schedulertype == "priq") echo "Priority based queueing";
-			else if($schedulertype == "cbq") echo "Class based queueing";
+			else if($schedulertype == "priq") echo "<a target=\"_new\" href=\"http://www.openbsd.org/faq/pf/queueing.html#priq\">Priority based queueing</a>";
+			else if($schedulertype == "cbq") echo "<a target=\"_new\" href=\"http://www.openbsd.org/faq/pf/queueing.html#cbq\">Class based queueing</a>";
 		?>
 	      </td>
 	    </tr>

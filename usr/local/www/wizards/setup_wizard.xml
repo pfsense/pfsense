@@ -2426,7 +2426,7 @@
 <step>
 	<id>6</id>
 	<title>Set Admin WebGUI Password</title>
-	<description>On this screen we will set the Admin password.</description>
+	<description>On this screen we will set the Admin password which is used to access the WebGUI and also SSH services if you wish to enable.</description>
 	<fields>
 		<field>
 			<name>Admin Password</name>

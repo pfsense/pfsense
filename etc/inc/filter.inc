@@ -104,6 +104,11 @@ function filter_configure() {
 
 	$rules .= setup_logging_interfaces();
 
+	if ($config['nat']['outgoingloadbalancing']['rule'] <> "" and
+		isset($config['nat']['outgoingloadbalancing']['enable'])) {
+			$rules.= "set state-policy if-bound\n";
+	}
+
 	$optimization = "normal";
 	if($config['system']['optimization'] <> "") $optimization = $config['system']['optimization'];
         $rules.= "set optimization " . $optimization . "\n";

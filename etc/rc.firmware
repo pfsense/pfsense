@@ -69,7 +69,7 @@ pfSenseupgrade)
 
 	# tar explode image onto hd
 	if [ -r $2 ]; then
-		tar xzvPf $2 -C / > /dev/null 2>&1
+		tar xzvPf $2 -U -C / > /dev/null 2>&1
 		echo "Image installed."
 	fi
 

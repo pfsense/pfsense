@@ -945,7 +945,10 @@ EOD;
 				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states']) )
 					$line .= "flags S/SA ";
 
-				$line .= "keep state ";
+				if( !isset($rule['statetype'] )
+					$line .= "keep state ";
+				else
+					$line .= $rule['statetype'] . " ";
 
 				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states'] ) ) {
 					$line .= "( ";

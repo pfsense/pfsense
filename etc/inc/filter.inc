@@ -102,6 +102,19 @@ function filter_configure() {
 	return 0;
 }
 
+function filter_get_altq_queue_scheduler_type($associatedrule) {
+	global $config;
+	$schedulertype = "";
+	/* XXX: assign all the OPT interfaces */
+	foreach ($config['filter']['rule'] as $rule) {
+		if($rule['descr'] == $associatedrule) {
+			if($rule['interface'] == "wan") $schedulertpye = $config['interfaces']['wan']['schedulertype'];
+			if($rule['interface'] == "lan") $schedulertpye = $config['interfaces']['lan']['schedulertype'];
+		}
+	}
+	return $schedulertpye;
+}
+
 function filter_generate_altq_queues() {
 	global $config;
 	$altq_rules = "";
@@ -109,19 +122,20 @@ function filter_generate_altq_queues() {
 		foreach ($config['pfqueueing']['queue'] as $rule) {
 			$options = "";
 			$altq_rules .= "queue " . $rule['name'] . " ";
-			if (isset($rule['bandwidth']))
-				$altq_rules .= "bandwidth " . $rule['bandwidth'] . " ";
-			if (isset($rule['priority']))
+			if (isset($rule['bandwidth']) and $rule['bandwidth'] <> "")
+				$altq_rules .= "bandwidth " . $rule['bandwidth'] . $rule['bandwidthtype'] . " ";
+			if (isset($rule['priority']) and $rule['priority'] <> "")
 				$altq_rules .= "priority " .  $rule['priority']  . " ";
-			if(isset($rule['options']['red']))
+			if(isset($rule['options']['red']) and $rule['options']['red'] <> "")
 				$options .= " red";
-			if(isset($rule['options']['ecn']))
+			if(isset($rule['options']['ecn']) and $rule['options']['ecn'] <> "")
 				$options .= " ecn";
-			if(isset($rule['options']['default']))
+			if(isset($rule['options']['defaultqueue']) and $rule['options']['defaultqueue'] <> "")
 				$options .= " default";
-			$altq_rules .= $rule['schedulertype'];
-			if($options)
-				$altq_rules .= " (". $options . " )";
+			if($options) {
+				$scheduler_type = filter_get_altq_queue_scheduler_type($rule['options']['associatedrule']);
+				$altq_rules .= $scheduler_type . "(". $options . " )";
+			}
 			if (isset($rule['subqueue'])) {
 				$altq_rules .= "{ ";
 				$fsq = "";
@@ -143,23 +157,27 @@ function filter_setup_altq_interfaces() {
 	$altq_rules  = "";
 	$queue_names = "";
 	$is_first = "";
-	if (is_array($config['pfqueueing']['queue'])) {
-		foreach ($config['pfqueueing']['queue'] as $queue) {
-			if(is_subqueue($queue['name']) == 0) {
-				if($is_first) $queue_names .= ", ";
-				$queue_names .= $queue['name'];
-				$is_first = "1";
-			}
-		}
-	}
 	if (is_array($config['interfaces'])) {
 		foreach ($config['interfaces'] as $ifname) {
+			if (is_array($config['pfqueueing']['queue'])) {
+				foreach ($config['pfqueueing']['queue'] as $queue) {
+					$schedulertype = $ifname['schedulertype'];
+					if(filter_get_altq_queue_scheduler_type($queue['options']['associatedrule']) == $schedulertype) {
+						if(is_subqueue($queue['name']) == 0) {
+							if($is_first) $queue_names .= ", ";
+							$queue_names .= $queue['name'];
+							$is_first = "1";
+						}
+					}
+				}
+			}
 			if(isset($ifname['bandwidth'])) {
 				$subnet = $ifname['ipaddr'] . "/" . $ifname['subnet'];
-				$altq_rules .= "altq on " . $ifname['if'] . " ";
-				$altq_rules .=  $ifname['schedulertype'] . " bandwidth " . $ifname['bandwidth'] . " ";
-				if($queue_names <> "")
+				if($queue_names <> ""){
+					$altq_rules .= "altq on " . $ifname['if'] . " ";
+					$altq_rules .=  $ifname['schedulertype'] . " bandwidth " . $ifname['bandwidth'] . $ifname['bandwidthtype'] . " ";
 					$altq_rules .= "queue { " . $queue_names . " }";
+				}
 				$altq_rules .= "\n";
 			}
 		}
@@ -181,6 +199,7 @@ function is_subqueue($name) {
         }
         return 0;
 }
+
 
 function filter_flush_nat_table() {
 	global $config, $g;

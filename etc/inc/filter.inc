@@ -939,6 +939,17 @@ EOD;
 
 			if ($type == "pass") {
 				$line .= "keep state ";
+				
+				if(isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states']) {
+					$line .= "( ";
+					if(isset($rule['source-track'])
+						$line .= " source-track";
+					if(isset($rule['max-src-nodes'])
+						$line .= " max-src-nodes " . $rule['max-src-nodes'];
+					if(isset($rule['max-src-states'])
+						$line .= " max-src-states" . $rule['max-src-states'];
+					$line .= " ) ";
+				}
 
 				if (isset($rule['frags']))
 					$line .= "keep frags ";

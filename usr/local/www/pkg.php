@@ -45,6 +45,10 @@ if($xml == "") {
             $pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
 }
 
+if($pkg['donotsave'] <> "") {
+	header("Location:  pkg_edit.php?xml=" . $xml);
+}
+
 $package_name = $pkg['menu']['name'];
 $section      = $pkg['menu']['section'];
 $config_path  = $pkg['configpath'];

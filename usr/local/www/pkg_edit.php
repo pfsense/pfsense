@@ -53,7 +53,7 @@ if($xml == "") {
 $package_name = $pkg['menu']['name'];
 $section      = $pkg['menu']['section'];
 $config_path  = $pkg['configpath'];
-$title        = $section . ": Edit " . $package_name;
+$title        = $section . ": " . $package_name;
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
@@ -73,9 +73,30 @@ if ($_POST) {
 		write_config();
 	} else {
 		if($pkg['custom_add_php_command']) {
-		    eval($pkg['custom_add_php_command']);
+			if($pkg['donotsave'] <> "") {
+				?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title><?=gentitle_pkg($title);?></title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="gui.css" rel="stylesheet" type="text/css">
+</head>
+
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<?php
+include("fbegin.inc");
+?>
+<p class="pgtitle"><?=$title?></p>
+				<?php
+			}
+			if($pkg['preoutput']) echo "<pre>";
+			eval($pkg['custom_add_php_command']);
+			if($pkg['preoutput']) echo "</pre>";
 		}
 	}
+
+	if($pkg['donotsave'] <> "") exit;
 
 	// store values in xml configration file.
 	if (!$input_errors) {
@@ -120,45 +141,54 @@ $config = $config_tmp;
 <input type="hidden" name="xml" value="<?= $xml ?>">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
+&nbsp;<br>
+
 <table width="100%" border="0" cellpadding="6" cellspacing="0">
   <tr>
   <?php
   $cols = 0;
-  foreach ($pkg['fields']['field'] as $pkg) { ?>
+  $savevalue = "Save";
+  if($pkg['savetext'] <> "") $savevalue = $pkg['savetext'];
+  foreach ($pkg['fields']['field'] as $pkga) { ?>
       </tr>
       <tr valign="top">
        <td width="22%" class="vncellreq">
-	  <?= $pkg['fielddescr'] ?>
+	  <?= $pkga['fielddescr'] ?>
        </td>
        <td class="vtable">
 	  <?php
-	      if($pkg['type'] == "input") {
+
+	      if($pkga['type'] == "input") {
 		  // XXX: TODO: set $value
-                  if($pkg['size']) $size = " size='" . $pkg['size'] . "' ";
-		  echo "<input " . $size . " name='" . $pkg['fieldname'] . "' value='" . $value . "'>\n";
-		  echo "<br>" . $pkg['description'] . "\n";
-	      } else if($pkg['type'] == "password") {
-		  echo "<input type='password' " . $size . " name='" . $pkg['fieldname'] . "' value='" . $value . "'>\n";
-		  echo "<br>" . $pkg['description'] . "\n";
-	      } else if($pkg['type'] == "select") {
+                  if($pkga['size']) $size = " size='" . $pkga['size'] . "' ";
+		  echo "<input " . $size . " name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
+		  echo "<br>" . $pkga['description'] . "\n";
+	      } else if($pkga['type'] == "password") {
+		  echo "<input type='password' " . $size . " name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
+		  echo "<br>" . $pkga['description'] . "\n";
+	      } else if($pkga['type'] == "select") {
 		  // XXX: TODO: set $selected
-                  if($pkg['size']) $size = " size='" . $pkg['size'] . "' ";
-		  if($pkg['multiple'] == "yes") $multiple = "MULTIPLE ";
-		  echo "<select " . $multiple . $size . "id='" . $pkg['fieldname'] . "' name='" . $pkg['fieldname'] . "'>\n";
-		  foreach ($pkg['options']['option'] as $opt) {
+                  if($pkga['size']) $size = " size='" . $pkga['size'] . "' ";
+		  if($pkga['multiple'] == "yes") $multiple = "MULTIPLE ";
+		  echo "<select " . $multiple . $size . "id='" . $pkga['fieldname'] . "' name='" . $pkga['fieldname'] . "'>\n";
+		  foreach ($pkga['options']['option'] as $opt) {
 		      echo "\t<option name='" . $opt['name'] . "' value='" . $opt['value'] . "'>" . $opt['name'] . "</option>\n";
 		  }
 		  echo "</select>\n";
-		  echo "<br>" . $pkg['description'] . "\n";
-	      } else if($pkg['type'] == "checkbox") {
-		  echo "<input type='checkbox' name='" . $pkg['fieldname'] . "' value='" . $value . "'>\n";
-		  echo "<br>" . $pkg['description'] . "\n";
-	      } else if($pkg['type'] == "textarea") {
-		  if($pkg['rows']) $rows = " rows='" . $pkg['rows'] . "' ";
-		  if($pkg['cols']) $cols = " cols='" . $pkg['cols'] . "' ";
-		  echo "<textarea " . $rows . $cols . " name='" . $pkg['fieldname'] . "'>" . $value . "</textarea>\n";
-		  echo "<br>" . $pkg['description'] . "\n";
+		  echo "<br>" . $pkga['description'] . "\n";
+	      } else if($pkga['type'] == "checkbox") {
+		  echo "<input type='checkbox' name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
+		  echo "<br>" . $pkga['description'] . "\n";
+	      } else if($pkga['type'] == "textarea") {
+		  if($pkga['rows']) $rows = " rows='" . $pkga['rows'] . "' ";
+		  if($pkga['cols']) $cols = " cols='" . $pkga['cols'] . "' ";
+		  echo "<textarea " . $rows . $cols . " name='" . $pkga['fieldname'] . "'>" . $value . "</textarea>\n";
+		  echo "<br>" . $pkga['description'] . "\n";
+	      } else if($pkga['type'] == "radio") {
+		  echo "<input type='radio' name='" . $pkga['fieldname'] . "' value='" . $value . "'>";
 	      }
+	      
+	      if($pkga['typehint']) echo " " . $pkga['typehint'];
 	  ?>
        </td>
       </tr>
@@ -169,7 +199,7 @@ $config = $config_tmp;
   <tr>
     <td width="22%" valign="top">&nbsp;</td>
     <td width="78%">
-      <input name="Submit" type="submit" class="formbtn" value="Save">
+      <input name="Submit" type="submit" class="formbtn" value="<?= $savevalue ?>">
       <?php if (isset($id) && $a_pkg[$id]): ?>
       <input name="id" type="hidden" value="<?=$id;?>">
       <?php endif; ?>

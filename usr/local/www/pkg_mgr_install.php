@@ -228,6 +228,7 @@ mwexec("mkdir /usr/local/www/ext/Interfaces >/dev/null 2>&1");
 mwexec("mkdir /usr/local/www/ext/Firewall >/dev/null 2>&1");
 mwexec("mkdir /usr/local/www/ext/VPN >/dev/null 2>&1");
 mwexec("mkdir /usr/local/www/ext/Status >/dev/null 2>&1");
+mwexec("mkdir /usr/local/www/ext/Diagnostics >/dev/null 2>&1");
 
 update_progress_bar($pb_percent);
 $pb_percent += 10;
@@ -338,7 +339,7 @@ if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
             // install menu item into the ext folder
             fwrite($fd_log, "Adding menu option to " . $package_conf['menu']['section'] . "/" . $package_conf['menu']['name'] . "\n");
             $fd = fopen("/usr/local/www/ext/" . $package_conf['menu']['section'] . "/" . $package_conf['menu']['name'] , "w");
-            fwrite($fd, "/usr/local/www/pkg.php?xml=" . $package_conf['name'] . ".xml\n");
+            fwrite($fd, "/pkg.php?xml=" . $package_conf['name'] . ".xml\n");
             fclose($fd);
 } else {
             update_output_window("WARNING! /usr/local/pkg/" . $pkgent['name'] . ".xml" . " does not exist!\n");
@@ -385,7 +386,7 @@ while(!feof($fd_log)) {
 }
 fclose($fd_log);
 $log = ereg_replace("\n", "\\n", $tmp);
-echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"" . $log . "\";</script>";
+//echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"" . $log . "\";</script>";
 
 update_progress_bar(100);
 

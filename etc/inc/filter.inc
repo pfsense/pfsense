@@ -918,8 +918,6 @@ function filter_rules_generate() {
 	# BEGIN OF firewall rules
 	$ipfrules="anchor \"firewallrules\"\n";
 
-	$ipfrules .= "block in log quick from <sshlockout> to any 22 label \"sshlockout\"\n\n";
-
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 		$oc = $config['interfaces']['opt' . $i];
 
@@ -1550,6 +1548,8 @@ EOD;
 			$ipfrules .= $line;
 		}
 
+		$ipfrules .= "block in log quick from <sshlockout> to any 22 label \"sshlockout\"\n\n";
+
 		$i++;
 	}
 
@@ -1638,9 +1638,9 @@ function create_firewall_outgoing_rules_to_itself() {
 			if($config['interfaces'][$ifname]['ipaddr'] != "")
 				$rule .="pass out quick on {$int} inet from {$int} to any keep state\n";
 			else
-				$rule .="pass out quick on {$int} inet from ({$int}) to any keep state\n";			
+				$rule .="pass out quick on {$int} inet from ({$int}) to any keep state\n";
 		}
-			
+
 	}
 	return $rule;
 }

@@ -1,22 +1,23 @@
 #!/usr/local/bin/php
-<?php 
+<?php
 /*
 	diag_logs_filter.php
-	part of m0n0wall (http://m0n0.ch/wall)
-	
+	part of pfSesne by Scott Ullrich
+	based originally on m0n0wall (http://m0n0.ch/wall)
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -31,11 +32,14 @@
 
 require("guiconfig.inc");
 
+exec("/usr/sbin/tcpdump -n -e -ttt -r /var/log/pflog | logger -t pf -p local0.info ");
+
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) {
+	exec("/usr/sbin/clog " . $logfile . " | tail {$sor} -n " . $tail, $logarr);
 	exec("/usr/sbin/clog -i -s 262144 /var/log/filter.log");
 }
 
@@ -45,11 +49,11 @@ function dump_clog($logfile, $tail, $withorig = true) {
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
 	exec("/usr/sbin/clog " . $logfile . " | tail {$sor} -n " . $tail, $logarr);
-	
+
 	foreach ($logarr as $logent) {
 		$logent = preg_split("/\s+/", $logent, 6);
 		echo "<tr valign=\"top\">\n";
-		
+
 		if ($withorig) {
 			echo "<td class=\"listlr\" nowrap>" . htmlspecialchars(join(" ", array_slice($logent, 0, 3))) . "</td>\n";
 			echo "<td class=\"listr\">" . htmlspecialchars($logent[4] . " " . $logent[5]) . "</td>\n";
@@ -62,7 +66,7 @@ function dump_clog($logfile, $tail, $withorig = true) {
 
 function conv_clog($logfile, $tail) {
 	global $g, $config;
-	
+
 	/* make interface/port table */
 	$iftable = array();
 	$iftable[$config['interfaces']['lan']['if']] = "LAN";
@@ -73,37 +77,35 @@ function conv_clog($logfile, $tail) {
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
 	exec("/usr/sbin/clog " . $logfile . " | tail {$sor} -n " . $tail, $logarr);
-	
+
 	$filterlog = array();
-	
+
 	foreach ($logarr as $logent) {
-		$logent = preg_split("/\s+/", $logent, 6);
-		$ipfa = explode(" ", $logent[5]);
-		
+		$dontdisplay = 1;
+
+		$master_split = preg_split("/rule/", $logent);
+		$first_split  = preg_split("/\s+/", $master_split[0]);
+		$second_split = preg_split("/\s+/", $master_split[1]);
+
 		$flent = array();
-		$i = 0;
-		$flent['time'] = $ipfa[$i];
-		$i++;
-		if (substr($ipfa[$i], -1) == "x") {
-			$flent['count'] = substr($ipfa[$i], 0, -1);
-			$i++;
-		}
-		if ($iftable[$ipfa[$i]])
-			$flent['interface'] = $iftable[$ipfa[$i]];
-		else
-			$flent['interface'] = $ipfa[$i];
-		$i += 2;
-		$flent['act'] = $ipfa[$i];
-		$i++;
-		$flent['src'] = format_ipf_ip($ipfa[$i]);
-		$i += 2;
-		$flent['dst'] = format_ipf_ip($ipfa[$i]);
-		$i += 2;
-		$flent['proto'] = strtoupper($ipfa[$i]);
-		
-		$filterlog[] = $flent;
+
+		$flent['time'] = $first_split[0] . ", " . $first_split[1] . " " . $first_split[2];
+		$flent['interface'] = $second_split[5];
+		$flent['proto'] = $second_split[11];
+		$flent['act'] = $second_split[1];
+		$flent['src'] = format_ipf_ip($second_split[7]);
+		$flent['dst'] = format_ipf_ip($second_split[9]);
+
+		$flent['act'] = ereg_replace(":", "", $flent['act']);
+		$flent['dst'] = ereg_replace(":", "", $flent['dst']);
+		$flent['interface'] = ereg_replace(":", "", $flent['interface']);
+
+		if($second_split[11] == "UDP" or $second_split[11] == "TCP") $dontdisplay = 0;
+
+		if($dontdisplay == 0)
+			$filterlog[] = $flent;
 	}
-	
+
 	return $filterlog;
 }
 
@@ -111,7 +113,7 @@ function format_ipf_ip($ipfip) {
 	list($ip,$port) = explode(",", $ipfip);
 	if (!$port)
 		return $ip;
-	
+
 	return $ip . ", port " . $port;
 }
 
@@ -143,7 +145,7 @@ function format_ipf_ip($ipfip) {
 	$filterlog = conv_clog("/var/log/filter.log", $nentries);
 ?>
 		<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr>
-		  <td colspan="6" class="listtopic"> 
+		  <td colspan="6" class="listtopic">
 			    Last <?=$nentries;?> firewall log entries</td>
 			</tr>
 			<tr>
@@ -158,7 +160,7 @@ function format_ipf_ip($ipfip) {
 			  <td class="listlr" nowrap>
 			  <?php if (strstr(strtolower($filterent['act']), "p"))
 			  			$img = "pass.gif";
-					 else 
+					 else
 					 	$img = "block.gif";
 			 	?>
 			  <img src="<?=$img;?>" width="11" height="11" align="absmiddle">
@@ -172,8 +174,8 @@ function format_ipf_ip($ipfip) {
                     </table>
 <?php else: ?>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		  <tr> 
-			<td colspan="2" class="listtopic"> 
+		  <tr>
+			<td colspan="2" class="listtopic">
 			  Last <?=$nentries;?> firewall log entries</td>
 		  </tr>
 		  <?php dump_clog("/var/log/filter.log", $nentries, false); ?>

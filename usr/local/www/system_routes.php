@@ -97,12 +97,14 @@ if ($_GET['act'] == "del") {
 <input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
 <?php endif; ?>
 
-	     <table width="100%" border="0" cellpadding="0" cellspacing="0">
-		<?php if($config['system']['disablefilter'] <> "") :?>
+	     <?php if($config['system']['disablefilter'] <> "") :?>
+	       <table width="100%" border="0" cellpadding="0" cellspacing="0">
+
 		<tr><td width="2%"><input type="checkbox" name="enablefastrouting" id="enablefastrouting" <?php if($config['staticroutes']['enablefastrouting'] == "enabled") echo " checked"; ?>></td><td><b>Enable fast routing</td></tr>
-		<?php endif ?>
+
 		<tr><td colspan=2><hr><input type="submit" value="Save"></td></tr>
-	     </table><br>
+	       </table><br>
+	     <?php endif ?>
 
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>

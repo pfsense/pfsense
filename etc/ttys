@@ -33,5 +33,5 @@
 console	none				unknown	off	secure
 #
 ttyv0	"/usr/libexec/getty Pc"		cons25	on  	secure
-ttyd0	"/usr/libexec/getty std.9600"	unknown on	secure
+ttyd0	"/usr/libexec/getty std.9600"	unknown off	secure
 console "/bin/sh /etc/rc.initial"	cons25	on	secure

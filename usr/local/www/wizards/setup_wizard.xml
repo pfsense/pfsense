@@ -4,6 +4,7 @@
 <step>
 	<id>1</id>
 	<title>pfSense Setup Wizard</title>
+	<disableheader>true</disableheader>
 	<description>This wizard will guide you through installing pfSense initially.</description>
 	<fields>
 		<field>
@@ -1721,16 +1722,79 @@
 </step>
 <step>
 	<id>4</id>
+	<disableallfieldsbydefault>true</disableallfieldsbydefault>
 	<title>Configure WAN Interface</title>
 	<description>On this screen we will configure the Wide Area Network information.</description>
+	<javascriptafterformdisplay>
+		enableitems(document.forms[0].selectedtype.selectedIndex);
+	</javascriptafterformdisplay>		
 	<fields>
-		<field>
-			<name>WAN IP Address</name>
-			<bindstofield>interfaces->wan->ipaddr</bindstofield>
-			<type>input</type>
-			<description>Type dhcp if this interface uses dhcp to obtain its ip address.</description>
+		<field>		
+			<name>SelectedType</name>
+			<type>select</type>
+			<donotdisable>true</donotdisable>
+			<options>
+				<option>
+					<name>Static</name>
+					<value>Static</value>
+					<enablefields>ipaddress,subnetmask,gateway</enablefields>
+				</option>				
+				<option>
+					<name>DHCP</name>
+					<value>dhcp</value>
+					<enablefields>dhcphostname</enablefields>					
+				</option>
+				<option>
+					<name>PPPoE</name>
+					<value>PPPoE</value>
+					<enablefields>pppoeusername,pppoepassword,pppoeservicename,pppoedialondemand,pppoeidletimeout</enablefields>					
+				</option>
+				<option>
+					<name>PPTP</name>
+					<value>PPTP</value>
+					<enablefields>pptpusername,pptppassword,pptplocalipaddress,pptplocalsubnet,pptpremoteipaddress,pptpdialondemand,pptpidletimeout
+					</enablefields>					
+				</option>	
+				<option>
+					<name>BigPond</name>
+					<value>BigPond</value>
+					<enablefields>bigpondusername,bigpondpassword,bigpondauthenticationserver,bigpondauthenticationdomain,bigpondminheartbeatinterval</enablefields>
+				</option>			
+			</options>
 		</field>
 		<field>
+			<name>General configuration</name>
+			<type>listtopic</type>
+		</field>
+		<field>
+			<donotdisable>true</donotdisable>
+			<name>MAC Address</name>
+			<bindstofield>interfaces->wan->spoofmac</bindstofield>
+			<type>input</type>
+			<description> This field can be used to modify ("spoof") the MAC address of the WAN interface (may be required with some cable connections) Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx or leave blank</description>
+		</field>		
+		<field>
+			<donotdisable>true</donotdisable>
+			<name>MTU</name>
+			<type>input</type>
+			<bindstofield>interfaces->wan->mtu</bindstofield>
+			<description> If you enter a value in this field, then MSS clamping for TCP connections to the value entered above minus 40 (TCP/IP header size) will be in effect. If you leave this field blank, an MTU of 1492 bytes for PPPoE and 1500 bytes for all other connection types will be assumed.</description>
+		</field>
+		<field>
+			<name>Static IP Configuration</name>
+			<type>listtopic</type>
+		</field>
+		<field>
+			<name>IP Address</name>
+			<bindstofield>interfaces->wan->ipaddr</bindstofield>
+			<type>input</type>
+			<typehint> / </typehint>
+			<combinefieldsbegin>true</combinefieldsbegin>
+		</field>
+		<field>
+			<combinefieldsend>true</combinefieldsend>
+			<dontdisplayname>true</dontdisplayname>
+			<dontcombinecells>true</dontcombinecells>			
 			<name>Subnet Mask</name>
 			<bindstofield>interfaces->wan->subnet</bindstofield>
 			<type>select</type>
@@ -1864,6 +1928,317 @@
 						<value>32</value>
 				</option>
 			</options>
+		</field>
+		<field>
+			<name>Gateway</name>
+			<bindstofield>interfaces->wan->gateway</bindstofield>
+			<type>input</type>
+		</field>		
+		<field>
+			<name>Bandwidth Management (Traffic Shaping)</name>
+			<type>listtopic</type>
+		</field>
+		<field>
+			<name>Scheduler</name>
+			<donotdisable>true</donotdisable>
+			<type>select</type>
+			<bindstofield>interfaces->wan->schedulertype</bindstofield>
+			<description>Select which type of queueing you would like to use</description>
+			<options>
+				<option><name>Priority Based Queueing</name><value>priq</value></option>
+				<option><name>Class Based Queueing</name><value>cbq</value></option>
+				<option><name>Hierarchical Fair Service Curve queueing</name><value>hfsc</value></option>
+			</options>
+		</field>
+		<field>
+			<combinefieldsbegin>true</combinefieldsbegin>
+			<donotdisable>true</donotdisable>
+			<name>Interface Bandwidth Speed</name>
+			<type>input</type>
+			<typehint> | </typehint>
+			<bindstofield>interfaces->wan->bandwidth</bindstofield>
+		</field>
+		<field>
+			<name>Speed Type</name>
+			<donotdisable>true</donotdisable>
+			<type>select</type>
+			<combinefieldsend>true</combinefieldsend>
+			<dontdisplayname>true</dontdisplayname>
+			<dontcombinecells>true</dontcombinecells>			
+			<bindstofield>interfaces->wan->bandwidthtype</bindstofield>
+			<options>
+				<option>
+					<name>bit/s</name>
+				</option>
+				<option>
+					<name>Kilobit/s</name>
+				</option>
+				<option>
+					<name>Megabit/s</name>
+				</option>				
+				<option>
+					<name>Gigabit/s</name>
+				</option>
+			</options>
+		</field>
+		<field>
+			<name>DHCP client configuration</name>
+			<type>listtopic</type>
+		</field>		
+		<field>
+			<name>DHCP Hostname</name>
+			<type>input</type>
+			<bindstofield>interfaces->wan->dhcphostname</bindstofield>
+			<description> The value in this field is sent as the DHCP client identifier and hostname when requesting a DHCP lease. Some ISPs may require this (for client identification).</description>
+		</field>
+		<field>
+			<name>PPPoE configuration</name>
+			<type>listtopic</type>
+		</field>		
+		<field>
+			<name>PPPoE Username</name>
+			<type>input</type>
+			<bindstofield>pppoe->username</bindstofield>
+		</field>
+		<field>
+			<name>PPPoE Password</name>
+			<type>input</type>
+			<bindstofield>pppoe->password</bindstofield>
+		</field>
+		<field>
+			<name>PPPoE Service name</name>
+			<type>input</type>
+			<description>Hint: this field can usually be left empty</description>
+		</field>
+		<field>
+			<name>PPPoE Dial on demand</name>
+			<typehint>Enable Dial-On-Demand mode</typehint>
+			<type>checkbox</type>
+			<description>This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.</description>
+		</field>		
+		<field>
+			<name>PPPoE Idle timeout</name>
+			<type>input</type>
+			<description>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</description>
+		</field>
+		<field>
+			<name>PPTP configuration</name>
+			<type>listtopic</type>
+		</field>		
+		<field>
+			<name>PPTP Username</name>
+			<type>input</type>
+			<bindstofield>pptp->username</bindstofield>
+		</field>
+		<field>
+			<name>PPTP Password</name>
+			<type>input</type>
+			<bindstofield>pptp->password</bindstofield>
+		</field>
+		<field>
+			<combinefieldsbegin>true</combinefieldsbegin>
+			<name>PPTP Local IP Address</name>
+			<type>input</type>
+			<typehint> / </typehint>
+			<bindstofield>pptp->local</bindstofield>
+		</field>
+		<field>
+			<combinefieldsend>true</combinefieldsend>
+			<dontdisplayname>true</dontdisplayname>
+			<dontcombinecells>true</dontcombinecells>
+			<name>pptplocalsubnet</name>
+			<bindstofield>pptp->subnet</bindstofield>
+			<type>select</type>
+			<options>
+				<option>
+						<name>1</name>
+						<value>1</value>
+				</option>
+				<option>
+						<name>2</name>
+						<value>2</value>
+				</option>
+				<option>
+						<name>3</name>
+						<value>3</value>
+				</option>
+				<option>
+						<name>4</name>
+						<value>4</value>
+				</option>
+				<option>
+						<name>5</name>
+						<value>5</value>
+				</option>
+				<option>
+						<name>6</name>
+						<value>6</value>
+				</option>
+				<option>
+						<name>7</name>
+						<value>7</value>
+				</option>
+				<option>
+						<name>8</name>
+						<value>8</value>
+				</option>
+				<option>
+						<name>9</name>
+						<value>9</value>
+				</option>
+				<option>
+						<name>10</name>
+						<value>10</value>
+				</option>
+				<option>
+						<name>11</name>
+						<value>11</value>
+				</option>
+				<option>
+						<name>12</name>
+						<value>12</value>
+				</option>
+				<option>
+						<name>13</name>
+						<value>13</value>
+				</option>
+				<option>
+						<name>14</name>
+						<value>14</value>
+				</option>
+				<option>
+						<name>15</name>
+						<value>15</value>
+				</option>
+				<option>
+						<name>16</name>
+						<value>16</value>
+				</option>
+				<option>
+						<name>17</name>
+						<value>17</value>
+				</option>
+				<option>
+						<name>18</name>
+						<value>18</value>
+				</option>
+				<option>
+						<name>19</name>
+						<value>19</value>
+				</option>
+				<option>
+						<name>20</name>
+						<value>20</value>
+				</option>
+				<option>
+						<name>21</name>
+						<value>21</value>
+				</option>
+				<option>
+						<name>22</name>
+						<value>22</value>
+				</option>
+				<option>
+						<name>23</name>
+						<value>23</value>
+				</option>
+				<option>
+						<name>24</name>
+						<value>24</value>
+				</option>
+				<option>
+						<name>25</name>
+						<value>25</value>
+				</option>
+				<option>
+						<name>26</name>
+						<value>26</value>
+				</option>
+				<option>
+						<name>27</name>
+						<value>27</value>
+				</option>
+				<option>
+						<name>28</name>
+						<value>28</value>
+				</option>
+				<option>
+						<name>29</name>
+						<value>29</value>
+				</option>
+				<option>
+						<name>30</name>
+						<value>30</value>
+				</option>
+				<option>
+						<name>31</name>
+						<value>31</value>
+				</option>
+				<option>
+						<name>32</name>
+						<value>32</value>
+				</option>				
+			</options>
+		</field>
+		<field>
+			<name>PPTP Remote IP Address</name>
+			<type>input</type>
+		</field>
+		<field>
+			<name>PPTP Dial on demand</name>
+			<typehint>Enable Dial-On-Demand mode</typehint>
+			<type>checkbox</type>
+			<description>This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.</description>
+		</field>		
+		<field>
+			<name>PPTP Idle timeout</name>
+			<type>input</type>
+			<description>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</description>
+		</field>
+		<field>
+			<name>BigPond configuration</name>
+			<type>listtopic</type>
+		</field>		
+		<field>
+			<name>BigPond Username</name>
+			<type>input</type>
+			<bindstofield>bigpond->username</bindstofield>
+		</field>
+		<field>
+			<name>BigPond Password</name>
+			<type>input</type>
+			<bindstofield>bigpond->password</bindstofield>
+		</field>
+		<field>
+			<name>BigPond Authentication server</name>
+			<type>input</type>
+			<bindstofield>bigpond->authserver</bindstofield>
+			<description>If this field is left empty, the default ("dce-server") is used.</description>
+		</field>
+		<field>
+			<name>BigPond Authentication domain</name>
+			<type>input</type>
+			<bindstofield>bigpond->authdomain</bindstofield>
+			<description>If this field is left empty, the domain name assigned via DHCP will be used.  Note: the BigPond client implicitly sets the "Allow DNS server list to be overridden by DHCP/PPP on WAN" on the System: General setup page.</description>
+		</field>
+		<field>
+			<name>BigPond min heartbeat interval</name>
+			<type>input</type>
+			<typehint>seconds</typehint>
+			<bindstofield>bigpond->minheartbeatinterval</bindstofield>
+			<description> Setting this to a sensible value (e.g. 60 seconds) can protect against DoS attacks.</description>
+		</field>
+		<field>
+			<name>RFC1918 Networks</name>
+			<type>listtopic</type>
+		</field>
+		<field>
+			<donotdisable>true</donotdisable>
+			<name>Block RFC1918 Private Networks</name>
+			<description> When set, this option blocks traffic from IP addresses that are reserved for private networks as per RFC 1918 (10/8, 172.16/12, 192.168/16) as well as loopback addresses (127/8). You should generally leave this option turned on, unless your WAN network lies in such a private address space, too.</description>
+			<type>checkbox</type>
+			<bindstofield>interfaces->wan->blockpriv</bindstofield>
+			<typehint>Block private networks from entering via WAN</typehint>
 		</field>
 		<field>
 			<name>Next</name>
@@ -2059,6 +2434,7 @@
 <step>
 	<id>7</id>
 	<title>Reboot</title>
+	<disableheader>true</disableheader>
 	<description>On this screen we will reboot pfSense so your changes will take affect..</description>
 	<fields>
 		<field>
@@ -2067,13 +2443,13 @@
 			<type>submit</type>
 		</field>
 	</fields>
-	<stepsubmitphpaction>
-		system("/sbin/shutdown -r now");
-	</stepsubmitphpaction>
 </step>
 <step>
 	<id>8</id>
 	<title>Reboot in progress</title>
-	<description>A reboot is now in progress.</description>
+	<description>A reboot is now in progress. Please wait.</description>
+	<stepafterformdisplay>
+		system("/sbin/shutdown -r now");
+	</stepafterformdisplay>	
 </step>
 </pfsensewizard>

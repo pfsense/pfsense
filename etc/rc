@@ -59,7 +59,7 @@ cd /var/run && cp /dev/null utmp && chmod 644 utmp
 #dev_mkdb
 
 # Run ldconfig
-/sbin/ldconfig -elf /usr/lib
+/sbin/ldconfig -elf /usr/lib /usr/local/lib
 
 # let the PHP-based configuration subsystem set up the system now
 /etc/rc.bootup

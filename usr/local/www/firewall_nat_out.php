@@ -79,8 +79,7 @@ if (isset($_POST['del_x'])) {
         }
 
 } else {
-        /* yuck - IE won't send value attributes for image buttons, while Mozilla does -
-           so we use .x/.y to fine move button clicks instead... */
+        /* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */
         unset($movebtn);
         foreach ($_POST as $pn => $pd) {
                 if (preg_match("/move_(\d+)_x/", $pn, $matches)) {

@@ -126,7 +126,7 @@ if(!$pkg_config['packages']) {
                             ?>
                             <tr valign="top">
                                 <td class="listlr">
-                                    <?= $pkg['name'] ?>
+                                    <?= $pkg['fancyname'] ?>
                                 </td>
                                 <td class="listlr">
                                     <?= $pkg['category'] ?>

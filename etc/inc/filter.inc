@@ -996,7 +996,7 @@ EOD;
 		$ipfrules .= <<<EOD
 
 # Fix sites that violate RFC 959 which specifies that the data connection
-# be sourced from the command port - 1 (typicaly port 20)
+# be sourced from the command port - 1 (typically port 20)
 # This workaround doesn't expose us to any extra risk as we'll still only allow
 # connections to the firewall on a port that ftp-proxy is listening on
 pass in quick on $wanif inet proto tcp from any to ($wanif) port > 49000 user proxy flags S/SA keep state label "FTP PROXY: RFC959 violation workaround"

@@ -321,7 +321,7 @@ function enable_change(enable_over) {
                   <td width="22%" valign="top" class="vncell">FTP RFC 959 data port violation workaround</td>
                   <td width="78%" class="vtable">
                     <input name="rfc959workaround" type="checkbox" id="rfc959workaround" value="yes" <?php if (isset($config['system']['rfc959workaround'])) echo "checked"; ?> onclick="enable_change(false)">
-                    <strong class="vexpl">Workaround for sites that violate RFC 959 which specifies that the data connection be sourced from the command port - 1 (typicaly port 20).  This workaround doesn't expose you to any extra risk as the firewall will still only allow connections on a port that the ftp-proxy is listening on.</strong><br>
+                    <strong class="vexpl">Workaround for sites that violate RFC 959 which specifies that the data connection be sourced from the command port - 1 (typically port 20).  This workaround doesn't expose you to any extra risk as the firewall will still only allow connections on a port that the ftp-proxy is listening on.</strong><br>
                 </tr>
 
 		<tr>

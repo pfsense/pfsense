@@ -110,7 +110,7 @@ if ($_GET['act'] == "del") {
   </td></tr>
   <tr>
     <td class="tabcont">
-		        <table width="100%" border="0" cellpadding="6" cellspacing="0">
+		<table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td class="vtable"><p><span class="vexpl"> </span>
                       <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] == "yes") echo "checked";?>>

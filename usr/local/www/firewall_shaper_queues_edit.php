@@ -54,7 +54,7 @@ if (isset($id) && $a_queues[$id]) {
 	}
 	if(isset($pconfig['options']['default'])) {
 		$pconfig['options']['default'] = $queue['options']['default'];
-		$default = "on"l
+		$default = "on";
 	}
 
 	$pconfig['bandwidth'] = $a_queues[$id]['bandwidth'];
@@ -154,9 +154,9 @@ if ($_POST) {
 	      <td width="22%" valign="top" class="vncell"><b>Scheduler</b> </td>
 	      <td width="78%" class="vtable">
 		<select name="scheduler">
-			<--<option value="priq">Priority based queueing</option>-->
-			<option value="cbq">Class based queueing</option>
-			<--<option value="hfsc">Hierarchical Fair Service Curve queueing</option>-->
+			<option value="priq">Priority based queueing</option>
+			<!--<option value="cbq">Class based queueing</option>-->
+			<!--<option value="hfsc">Hierarchical Fair Service Curve queueing</option>-->
 		</select>
 		<br> <span class="vexpl">Select which type of queueing you would like to use
 		</span></td>

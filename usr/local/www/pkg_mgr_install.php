@@ -206,7 +206,7 @@ foreach ($packages_to_install as $id) {
         $pkgent['logging']['facility'] = $pkg_config['packages']['package'][$id]['logging']['facility'];
         $pkgent['logging']['logfile_name'] = $pkg_config['packages']['package'][$id]['logging']['logfile_name'];
         mwexec("/usr/sbin/clog -i -s 32768 {$g['varlog_path']}" . $pkgent['logging']['logfile_name']);
-        mwexec("chmod 0600 {$g['varlog_path']}" . $pkgent['logging']['logfile_name']);
+        chmod($g['varlog_path'] . $pkgent['logging']['logfile_name'], 0600);
         fwrite($fd_log, "Adding text to file /etc/syslog.conf\n");
         add_text_to_file("/etc/syslog.conf", $pkgent['logging']['facilityname'] . "\t\t\t" . $pkgent['logging']['logfilename']);
         mwexec("/usr/bin/killall -HUP syslogd");
@@ -367,6 +367,7 @@ foreach ($packages_to_install as $id) {
                         if($pkg_chmod <> "") {
                             fwrite($fd_log, "Changing file mode for {$pkg_chmod} {$prefix}{$filename}\n");
                             system("/bin/chmod {$pkg_chmod} {$prefix}{$filename}");
+                            chmod($prefix . $filename, $pkg_chmod);
                         }
                     }
                 }

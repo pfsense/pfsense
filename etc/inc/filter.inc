@@ -122,7 +122,6 @@ function filter_configure() {
 	/* load ipfw+altq module */
 	if (isset($config['shaper']['enable'])) {
 		mwexec("/sbin/kldload ipfw >/dev/null 2>&1");
-		mwexec("/sbin/ipfw add 25 pass all from any to any >/dev/null 2>&1\n");
                 /* change one_pass to 1 so ipfw stops checking after
                    a rule has matched */
                 mwexec("/sbin/sysctl net.inet.ip.fw.one_pass=1 >/dev/null 2>&1");
@@ -138,11 +137,8 @@ function filter_configure() {
                 fwrite($fd, $altq_rules);
                 fclose($fd);
                 mwexec("/sbin/ipfw /tmp/ipfw.rules >/tmp/ipfw_errors.txt 2>&1");
-		mwexec("/sbin/ipfw /tmp/ipfw.rules >/tmp/ipfw_errors.txt 2>&1");
-		mwexec("/sbin/ipfw add $rulei set 4 pass all from any to any >/dev/null 2>&1\n");
 		mwexec("/sbin/ipfw enable altq >/dev/null 2>&1\n");
                 mwexec("/bin/mv /tmp/ipfw.rules /tmp/ipfw.rules_old >/dev/null 2>&1");
-		mwexec("/sbin/ipfw delete 25 >/dev/null 2>&1\n");
 	} else {
 		if(!isset($config['captiveportal']['enable']))
 			mwexec("/sbin/kldunload ipfw.ko");

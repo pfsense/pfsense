@@ -27,6 +27,10 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
+
+	This version of index.php has been modified by Rob Parker
+	<rob.parker@keycom.co.uk>. Changes made are in relation to Per-User Bandwidth
+	Management based on returned RADIUS attributes, and are (c) 2004 Keycom PLC.
 */
 
 require("globals.inc");
@@ -44,7 +48,6 @@ $orig_host = $_ENV['HTTP_HOST'];
 $orig_request = $_ENV['CAPTIVE_REQPATH'];
 $lockfile = "{$g['varrun_path']}/captiveportal.lock";
 $clientip = $_ENV['REMOTE_ADDR'];
-$portalip = $_ENV['SERVER_ADDR'];
 
 if (!$clientip) {
 	/* not good - bail out */
@@ -58,44 +61,43 @@ if (!$clientmac && !isset($config['captiveportal']['nomacfilter'])) {
 	exit;
 }
 
-/* find MAC address for portal */
-$iflist = get_interface_list();
-$portalmac = $iflist[ $config['interfaces'][$config['captiveportal']['interface']]['if'] ]['mac'];
-
 if ($clientmac && portal_mac_fixed($clientmac)) {
 	/* punch hole in ipfw for pass thru mac addresses */
-	portal_allow($clientip, $clientmac, "unauthenticated");
+	// KEYCOM: passthru mac bandwidth control]
+	if (isset($config['captiveportal']['peruserbw'])) {
+		portal_allow($clientip, $clientmac, "unauthenticated",$config['captiveportal']['bwauthmacup'],$config['captiveportal']['bwauthmacdn']);
+	} else {
+		portal_allow($clientip, $clientmac, "unauthenticated",0,0);
+	}
 
 } else if ($_POST['accept'] && file_exists("{$g['vardb_path']}/captiveportal_radius.db")) {
 
 	/* authenticate against radius server */
 	$radiusservers = captiveportal_get_radius_servers();
 	
-	/* determine port type */
-	$port_type = 15; // default to ethernet
-	if ($config['interfaces'][ $config['captiveportal']['interface'] ]['wireless']) {
-		$port_type = 19;	// wireless
-	}
-	
 	if ($_POST['auth_user'] && $_POST['auth_pass']) {
 		$auth_val = RADIUS_AUTHENTICATION($_POST['auth_user'],
 										  $_POST['auth_pass'],
-										  $port_type,
 							  			  $radiusservers[0]['ipaddr'],
 							  			  $radiusservers[0]['port'],
 							  			  $radiusservers[0]['key']);
+		$auth_returns = explode("/", $auth_val);
+		$auth_val = $auth_returns[0];
+		$bw_up = $auth_returns[1];
+		$bw_down = $auth_returns[2];
 		if ($auth_val == 2) {
-			$sessionid = portal_allow($clientip, $clientmac, $_POST['auth_user']);
+			if (isset($config['captiveportal']['peruserbw'])) {
+				$sessionid = portal_allow($clientip, $clientmac, $_POST['auth_user'],$bw_up,$bw_down);
+			} else {
+				$sessionid = portal_allow($clientip, $clientmac, $_POST['auth_user'],0,0);
+			}
 			if (isset($config['captiveportal']['radacct_enable']) && isset($radiusservers[0])) {
 				$auth_val = RADIUS_ACCOUNTING_START($_POST['auth_user'],
 													$sessionid,
-													$port_type,
-													$clientmac,
-													$clientip,
-													$portalmac,
 													$radiusservers[0]['ipaddr'],
 													$radiusservers[0]['acctport'],
-													$radiusservers[0]['key']);
+													$radiusservers[0]['key'],
+													$clientip);
 			}
 		} else {
 			readfile("{$g['varetc_path']}/captiveportal-error.html");
@@ -104,8 +106,34 @@ if ($clientmac && portal_mac_fixed($clientmac)) {
 		readfile("{$g['varetc_path']}/captiveportal-error.html");
 	}
 
+} else if ($_POST['accept'] && $config['captiveportal']['auth_method']=="local") {
+	//check against local usermanager
+	
+	//erase expired accounts
+	if(trim($config['users'][$_POST['auth_user']]['expirationdate'])!="" && strtotime("-1 day")>strtotime($config['users'][$_POST['auth_user']]['expirationdate'])){
+		unset($config['users'][$_POST['auth_user']]);
+		write_config();
+	}
+	if($config['users'][$_POST['auth_user']]['password']==md5($_POST['auth_pass'])){
+		portal_allow($clientip, $clientmac,$_POST['auth_user'],0,0);
+	} else {
+		readfile("{$g['varetc_path']}/captiveportal-error.html");
+	}
 } else if ($_POST['accept'] && $clientip) {
-	portal_allow($clientip, $clientmac, "unauthenticated");
+	//KEYCOM: authorised up and down bandwidth defaults (set from webgui). If not set, use 128/128
+	if (isset($config['captiveportal']['peruserbw'])) {
+		$bw_up=$config['captiveportal']['bwauthipup'];
+		$bw_down=$config['captiveportal']['bwauthipdn'];
+		if(!isset($bw_up)) {
+			$bw_up=128;
+		}
+		if(!isset($bw_down)) {
+			$bw_down=128;
+		}
+		portal_allow($clientip, $clientmac, "unauthenticated",$bw_up,$bw_down);
+	} else {
+		portal_allow($clientip, $clientmac, "unauthenticated",0,0);
+	}
 } else if ($_POST['logout_id']) {
 	disconnect_client($_POST['logout_id']);
 	echo <<<EOD
@@ -135,7 +163,7 @@ EOD;
 	if (isset($config['captiveportal']['httpslogin']))
 		$htmltext = str_replace("\$PORTAL_ACTION\$", "https://{$config['captiveportal']['httpsname']}:8001/", $htmltext);
 	else
-		$htmltext = str_replace("\$PORTAL_ACTION\$", "http://{$config['interfaces'][$config['captiveportal']['interface']]['ipaddr']}:8000/", $htmltext);
+		$htmltext = str_replace("\$PORTAL_ACTION\$", "", $htmltext);
 	
 	if (preg_match("/redirurl=(.*)/", $orig_request, $matches))
 		$redirurl = urldecode($matches[1]);
@@ -169,7 +197,7 @@ function portal_mac_fixed($clientmac) {
 	return FALSE ;
 }	
 
-function portal_allow($clientip,$clientmac,$clientuser) {
+function portal_allow($clientip,$clientmac,$clientuser,$bw_up,$bw_down) {
 
 	global $orig_host, $orig_request, $g, $config;
 
@@ -191,6 +219,26 @@ function portal_allow($clientip,$clientmac,$clientuser) {
 	/* add ipfw rules for layer 3 */
 	exec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from $clientip to any in");
 	exec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from any to $clientip out");
+
+	/* KEYCOM: add ipfw rules for dummynet based on bw_up and bw_down */
+	//we're just copying them by adding on some and hoping no collision will occur
+	//2000 users would be expecting a bit much from a WAP ;)
+
+	//we're using fixed rule numbers which are 'a step above' the m0n0 ones
+	//this makes sure we always know where our rules are, and taht they are deleted when m0n0's are
+	//they're set so they shouldn't hit anything important, and also so they are in roughly the right position in the fw.
+
+	//of course, we only need to do this if it's enabled in the config
+	if (isset($config['captiveportal']['peruserbw'])) {
+		$up_rule_number = $ruleno + 40500;
+		$down_rule_number = $ruleno + 45500;
+		$lanif = $config['interfaces']['lan']['if'];
+		exec("/sbin/ipfw add $up_rule_number set 4 pipe $up_rule_number ip from $clientip to any via $lanif");
+		exec("/sbin/ipfw add $down_rule_number set 4 pipe $down_rule_number ip from any to $clientip via $lanif");
+		exec("/sbin/ipfw pipe $up_rule_number config bw " . trim($bw_up) . "Kbit/s queue 10");
+		exec("/sbin/ipfw pipe $down_rule_number config bw " . trim($bw_down) . "Kbit/s queue 10");
+	}
+	/* done */
 	
 	/* add ipfw rules for layer 2 */
 	if (!isset($config['captiveportal']['nomacfilter'])) {
@@ -219,21 +267,23 @@ function portal_allow($clientip,$clientmac,$clientuser) {
 	for ($i = 0; $i < count($cpdb); $i++) {
 		if(!strcasecmp($cpdb[$i][2],$clientip)) {
 			if(isset($config['captiveportal']['radacct_enable']) && isset($radiusservers[0])) {
-				$port_type = 15; // default to ethernet
-				if (isset($config['interfaces'][ $config['captiveportal']['interface'] ]['wireless'])) {
-					$port_type = 19; // wireless
-				}
-			
 				RADIUS_ACCOUNTING_STOP($cpdb[$i][1], // ruleno
 									   $cpdb[$i][4], // username
 									   $cpdb[$i][5], // sessionid
 									   $cpdb[$i][0], // start time
-									   $port_type,
 									   $radiusservers[0]['ipaddr'],
 									   $radiusservers[0]['acctport'],
-									   $radiusservers[0]['key']);
+									   $radiusservers[0]['key'],
+									   $clientip);
 			}
-			mwexec("/sbin/ipfw delete " . $cpdb[$i][1] . " " . ($cpdb[$i][1]+10000));
+			//KEYCOM: we need to delete +40500 and +45500 as well...
+			//these are the rule numbers we use to control traffic shaping for each logged in user via captive portal
+			mwexec("/sbin/ipfw delete " . $cpdb[$i][1]);
+			//we only need to remove our rules if peruserbw is turned on.
+			if(isset($config['captiveportal']['peruserbw'])) {
+				mwexec("/sbin/ipfw delete " . ($cpdb[$i][1]+40500));
+				mwexec("/sbin/ipfw delete " . ($cpdb[$i][1]+45500));
+			}
 			unset($cpdb[$i]);
 			break;
 		}
@@ -401,23 +451,21 @@ function disconnect_client($sessionid) {
 		if ($cpdb[$i][5] == $sessionid) {
 			/* this client needs to be deleted - remove ipfw rules */
 			if(isset($config['captiveportal']['radacct_enable']) && isset($radiusservers[0])) {
-
-			/* determine port type */
-			$port_type = 15; // default to ethernet
-			if ($config['interfaces'][ $config['captiveportal']['interface'] ]['wireless']) {
-				$port_type = 19;	// wireless
-			}
-	
 				RADIUS_ACCOUNTING_STOP($cpdb[$i][1], // ruleno
 									   $cpdb[$i][4], // username
 									   $cpdb[$i][5], // sessionid
 									   $cpdb[$i][0], // start time
-									   $port_type,
 									   $radiusservers[0]['ipaddr'],
 									   $radiusservers[0]['acctport'],
-									   $radiusservers[0]['key']);
+									   $radiusservers[0]['key'],
+									   $clientip);
 			}
+			//again we need to remve +40500 and +45500 as well, if they exist
 			mwexec("/sbin/ipfw delete " . $cpdb[$i][1] . " " . ($cpdb[$i][1]+10000));
+			if(isset($config['captiveportal']['peruserbw'])) {
+				mwexec("/sbin/ipfw delete " . ($cpdb[$i][1]+40500));
+				mwexec("/sbin/ipfw delete " . ($cpdb[$i][1]+45500));
+			}
 			unset($cpdb[$i]);
 			break;
 		}

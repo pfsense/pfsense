@@ -1,22 +1,22 @@
 #!/usr/local/bin/php
-<?php
+<?php 
 /*
 	services_captiveportal.php
 	part of m0n0wall (http://m0n0.ch/wall)
-
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	
+	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-
+	
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-
+	
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-
+	
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-
+	
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -29,6 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+$pgtitle = array("Services", "Captive portal");
 require("guiconfig.inc");
 
 if (!is_array($config['captiveportal'])) {
@@ -49,6 +50,7 @@ $pconfig['cinterface'] = $config['captiveportal']['interface'];
 $pconfig['timeout'] = $config['captiveportal']['timeout'];
 $pconfig['idletimeout'] = $config['captiveportal']['idletimeout'];
 $pconfig['enable'] = isset($config['captiveportal']['enable']);
+$pconfig['auth_method'] = $config['captiveportal']['auth_method'];
 $pconfig['radacct_enable'] = isset($config['captiveportal']['radacct_enable']);
 $pconfig['httpslogin_enable'] = isset($config['captiveportal']['httpslogin']);
 $pconfig['httpsname'] = $config['captiveportal']['httpsname'];
@@ -56,6 +58,13 @@ $pconfig['cert'] = base64_decode($config['captiveportal']['certificate']);
 $pconfig['key'] = base64_decode($config['captiveportal']['private-key']);
 $pconfig['logoutwin_enable'] = isset($config['captiveportal']['logoutwin_enable']);
 $pconfig['nomacfilter'] = isset($config['captiveportal']['nomacfilter']);
+$pconfig['peruserbw'] = isset($config['captiveportal']['peruserbw']);
+$pconfig['bwauthmacup'] = $config['captiveportal']['bwauthmacup'];
+$pconfig['bwauthmacdn'] = $config['captiveportal']['bwauthmacdn'];
+$pconfig['bwauthipup'] = $config['captiveportal']['bwauthipup'];
+$pconfig['bwauthipdn'] = $config['captiveportal']['bwauthipdn'];
+$pconfig['bwdefaultup'] = $config['captiveportal']['bwdefaultup'];
+$pconfig['bwdefaultdn'] = $config['captiveportal']['bwdefaultdn'];
 $pconfig['redirurl'] = $config['captiveportal']['redirurl'];
 $pconfig['radiusip'] = $config['captiveportal']['radiusip'];
 $pconfig['radiusport'] = $config['captiveportal']['radiusport'];
@@ -71,9 +80,9 @@ if ($_POST) {
 	if ($_POST['enable']) {
 		$reqdfields = explode(" ", "cinterface");
 		$reqdfieldsn = explode(",", "Interface");
-
+		
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-
+		
 		/* make sure no interfaces are bridged */
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 			$coptif = &$config['interfaces']['opt' . $i];
@@ -82,7 +91,7 @@ if ($_POST) {
 				break;
 			}
 		}
-
+		
 		if ($_POST['httpslogin_enable']) {
 		 	if (!$_POST['cert'] || !$_POST['key']) {
 				$input_errors[] = "Certificate and key must be specified for HTTPS login.";
@@ -92,13 +101,13 @@ if ($_POST) {
 				if (!strstr($_POST['key'], "BEGIN RSA PRIVATE KEY") || !strstr($_POST['key'], "END RSA PRIVATE KEY"))
 					$input_errors[] = "This key does not appear to be valid.";
 			}
-
+			
 			if (!$_POST['httpsname'] || !is_domain($_POST['httpsname'])) {
 				$input_errors[] = "The HTTPS server name must be specified for HTTPS login.";
 			}
 		}
 	}
-
+	
 	if ($_POST['timeout'] && (!is_numeric($_POST['timeout']) || ($_POST['timeout'] < 1))) {
 		$input_errors[] = "The timeout must be at least 1 minute.";
 	}
@@ -120,27 +129,35 @@ if ($_POST) {
 		$config['captiveportal']['timeout'] = $_POST['timeout'];
 		$config['captiveportal']['idletimeout'] = $_POST['idletimeout'];
 		$config['captiveportal']['enable'] = $_POST['enable'] ? true : false;
+		$config['captiveportal']['auth_method'] = $_POST['auth_method'];
 		$config['captiveportal']['radacct_enable'] = $_POST['radacct_enable'] ? true : false;
 		$config['captiveportal']['httpslogin'] = $_POST['httpslogin_enable'] ? true : false;
 		$config['captiveportal']['httpsname'] = $_POST['httpsname'];
 		$config['captiveportal']['certificate'] = base64_encode($_POST['cert']);
 		$config['captiveportal']['private-key'] = base64_encode($_POST['key']);
 		$config['captiveportal']['logoutwin_enable'] = $_POST['logoutwin_enable'] ? true : false;
+		$config['captiveportal']['peruserbw'] = $_POST['peruserbw'] ? true : false;
+		$config['captiveportal']['bwauthmacup'] = $_POST['bwauthmacup'];
+		$config['captiveportal']['bwauthmacdn'] = $_POST['bwauthmacdn'];
+		$config['captiveportal']['bwauthipup'] = $_POST['bwauthipup'];
+		$config['captiveportal']['bwauthipdn'] = $_POST['bwauthipdn'];
+		$config['captiveportal']['bwdefaultup'] = $_POST['bwdefaultup'];
+		$config['captiveportal']['bwdefaultdn'] = $_POST['bwdefaultdn'];
 		$config['captiveportal']['nomacfilter'] = $_POST['nomacfilter'] ? true : false;
 		$config['captiveportal']['redirurl'] = $_POST['redirurl'];
 		$config['captiveportal']['radiusip'] = $_POST['radiusip'];
 		$config['captiveportal']['radiusport'] = $_POST['radiusport'];
 		$config['captiveportal']['radiusacctport'] = $_POST['radiusacctport'];
 		$config['captiveportal']['radiuskey'] = $_POST['radiuskey'];
-
+		
 		/* file upload? */
 		if (is_uploaded_file($_FILES['htmlfile']['tmp_name']))
 			$config['captiveportal']['page']['htmltext'] = base64_encode(file_get_contents($_FILES['htmlfile']['tmp_name']));
 		if (is_uploaded_file($_FILES['errfile']['tmp_name']))
 			$config['captiveportal']['page']['errtext'] = base64_encode(file_get_contents($_FILES['errfile']['tmp_name']));
-
+			
 		write_config();
-
+		
 		$retval = 0;
 		if (!file_exists($d_sysrebootreqd_path)) {
 			config_lock();
@@ -151,24 +168,26 @@ if ($_POST) {
 	}
 }
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("Services: Captive portal");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
+<?php include("fbegin.inc"); ?>
 <script language="JavaScript">
 <!--
+function auth_method_change() {
+	if (document.iform.auth_method[0].checked == false) {
+		document.iform.logoutwin_enable.checked = 1;
+	} else {
+		document.iform.logoutwin_enable.checked = 0;
+	}
+}
 function radacct_change() {
 	if (document.iform.radacct_enable.checked) {
-		document.iform.logoutwin_enable.checked = 1;
-	}
+		auth_method_change();
+	} 
 }
 
 function enable_change(enable_change) {
 	var endis;
 	endis = !(document.iform.enable.checked || enable_change);
-	document.iform.radiusacctport.disabled = endis;
+	
 	document.iform.cinterface.disabled = endis;
 	document.iform.idletimeout.disabled = endis;
 	document.iform.timeout.disabled = endis;
@@ -177,6 +196,9 @@ function enable_change(enable_change) {
 	document.iform.radiusport.disabled = endis;
 	document.iform.radiuskey.disabled = endis;
 	document.iform.radacct_enable.disabled = endis;
+	document.iform.auth_method[0].disabled = endis;
+	document.iform.auth_method[1].disabled = endis;
+	document.iform.auth_method[2].disabled = endis;
 	document.iform.httpslogin_enable.disabled = endis;
 	document.iform.httpsname.disabled = endis;
 	document.iform.cert.disabled = endis;
@@ -185,23 +207,21 @@ function enable_change(enable_change) {
 	document.iform.nomacfilter.disabled = endis;
 	document.iform.htmlfile.disabled = endis;
 	document.iform.errfile.disabled = endis;
-
+	
 	if (enable_change && document.iform.radacct_enable.checked) {
+		document.iform.logoutwin_enable.checked = 1;
+	}
+	if (enable_change && document.iform.auth_method[0].checked == false) {
 		document.iform.logoutwin_enable.checked = 1;
 	}
 }
 //-->
 </script>
-</head>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<p class="pgtitle">Services: Captive portal</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <form action="services_captiveportal.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr><td>
+  <tr><td class="tabnavtbl">
   <ul id="tabnav">
 	<li class="tabact">Captive portal</li>
 	<li class="tabinact"><a href="services_captiveportal_mac.php">Pass-through MAC</a></li>
@@ -211,13 +231,13 @@ function enable_change(enable_change) {
   <tr>
   <td class="tabcont">
   <table width="100%" border="0" cellpadding="6" cellspacing="0">
-	<tr>
+	<tr> 
 	  <td width="22%" valign="top" class="vtable">&nbsp;</td>
 	  <td width="78%" class="vtable">
 		<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
 		<strong>Enable captive portal </strong></td>
 	</tr>
-	<tr>
+	<tr> 
 	  <td width="22%" valign="top" class="vncellreq">Interface</td>
 	  <td width="78%" class="vtable">
 		<select name="cinterface" class="formfld" id="cinterface">
@@ -227,7 +247,7 @@ function enable_change(enable_change) {
 				$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 		  }
 		  foreach ($interfaces as $iface => $ifacename): ?>
-		  <option value="<?=$iface;?>" <?php if ($iface == $pconfig['cinterface']) echo "selected"; ?>>
+		  <option value="<?=$iface;?>" <?php if ($iface == $pconfig['cinterface']) echo "selected"; ?>> 
 		  <?=htmlspecialchars($ifacename);?>
 		  </option>
 		  <?php endforeach; ?>
@@ -241,16 +261,16 @@ function enable_change(enable_change) {
 minutes<br>
 Clients will be disconnected after this amount of inactivity. They may log in again immediately, though. Leave this field blank for no idle timeout.</td>
 	</tr>
-	<tr>
+	<tr> 
 	  <td width="22%" valign="top" class="vncell">Hard timeout</td>
-	  <td width="78%" class="vtable">
-		<input name="timeout" type="text" class="formfld" id="timeout" size="6" value="<?=htmlspecialchars($pconfig['timeout']);?>">
+	  <td width="78%" class="vtable"> 
+		<input name="timeout" type="text" class="formfld" id="timeout" size="6" value="<?=htmlspecialchars($pconfig['timeout']);?>"> 
 		minutes<br>
 	  Clients will be disconnected after this amount of time, regardless of activity. They may log in again immediately, though. Leave this field blank for no hard timeout (not recommended unless an idle timeout is set).</td>
 	</tr>
-	<tr>
+	<tr> 
 	  <td width="22%" valign="top" class="vncell">Logout popup window</td>
-	  <td width="78%" class="vtable">
+	  <td width="78%" class="vtable"> 
 		<input name="logoutwin_enable" type="checkbox" class="formfld" id="logoutwin_enable" value="yes" <?php if($pconfig['logoutwin_enable']) echo "checked"; ?>>
 		<strong>Enable logout popup window</strong><br>
 	  If enabled, a popup window will appear when clients are allowed through the captive portal. This allows clients to explicitly disconnect themselves before the idle or hard timeout occurs. When RADIUS accounting is  enabled, this option is implied.</td>
@@ -268,12 +288,49 @@ to access after they've authenticated.</td>
       <td class="vtable">
         <input name="nomacfilter" type="checkbox" class="formfld" id="nomacfilter" value="yes" <?php if ($pconfig['nomacfilter']) echo "checked"; ?>>
         <strong>Disable MAC filtering</strong><br>
-    If this option is set, no attempts will be made to ensure that the MAC address of clients stays the same while they're logged in. This is required when the MAC address of cannot be determined (usually because there are routers between m0n0wall and the clients).</td>
+    If this option is set, no attempts will be made to ensure that the MAC address of clients stays the same while they're logged in. This is required when the MAC address cannot be determined (usually because there are routers between m0n0wall and the clients).</td>
 	  </tr>
-	<tr>
-	  <td width="22%" valign="top" class="vncell">RADIUS server</td>
-	  <td width="78%" class="vtable">
+	  <tr>
+      <td valign="top" class="vncell">Per-user bandwidth restriction</td>
+      <td class="vtable">
+		  <input name="peruserbw" type="checkbox" class="formfld" id="peruserbw" value="yes" <?php if ($pconfig['peruserbw']) echo "checked"; ?>>
+          <strong>Enable per-user bandwidth restriction	</strong><br><br>
 		<table cellpadding="0" cellspacing="0">
+		<tr>
+		<td>Pass-through MAC download&nbsp;&nbsp;</td>
+		<td><input type="text" class="formfld" id="bwauthmacdn" size="5" value="<?=htmlspecialchars($pconfig['bwauthmacdn']);?>"> Kbit/s</td>
+		</tr><tr>
+		<td>Pass-through MAC upload</td>
+		<td><input type="text" class="formfld" id="bwauthmacdn" size="5" value="<?=htmlspecialchars($pconfig['bwauthmacup']);?>"> Kbit/s</td>
+		</tr><tr>
+		<td>Pass-through IP download</td>
+		<td><input type="text" class="formfld" id="bwauthipdn" size="5" value="<?=htmlspecialchars($pconfig['bwauthipdn']);?>"> Kbit/s</td>
+		</tr><tr>
+		<td>Pass-through IP upload</td>
+		<td><input type="text" class="formfld" id="bwauthipup" size="5" value="<?=htmlspecialchars($pconfig['bwauthipup']);?>"> Kbit/s</td>
+		</tr><tr>
+		<td>Default download</td>
+		<td><input type="text" class="formfld" id="bwdefaultdn" size="5" value="<?=htmlspecialchars($pconfig['bwdefaultdn']);?>"> Kbit/s</td>
+		</tr><tr>
+		<td>Default upload</td>
+		<td><input type="text" class="formfld" id="bwdefaultup" size="5" value="<?=htmlspecialchars($pconfig['bwdefaultup']);?>"> Kbit/s</td>
+		</tr></table>
+        <br>
+    If this option is set, the captive portal will restrict each user who logs in to a specific bandwidth as set in RADIUS. Your RADIUS server must return the attributes Nomadix-Bw-Up and Nomadix-Bw-Down (1 and 2 VSAs from Vendor 3309, Nomadix) along with Access-Accept for this to work. Bandwidth is set in Kbit/s. You can control pass-through and default bandwidths above.</td>
+	  </tr>
+	<tr> 
+	  <td width="22%" valign="top" class="vncell">RADIUS server</td>
+	  <td width="78%" class="vtable"> 
+		<table cellpadding="0" cellspacing="0">
+		<td>No Authentication:&nbsp;&nbsp;</td>
+ 		<td><input name="auth_method" type="radio" id="auth_method" value="none" <?php if($pconfig['auth_method']!="local" || $pconfig['auth_method']!="radius") echo "checked"; ?> onClick="auth_method_change()"></td>
+		</tr>
+		<td>Local <a href="services_usermanager.php">Usermanager</a>:&nbsp;&nbsp;</td>
+ 		<td><input name="auth_method" type="radio" id="auth_method" value="local" <?php if($pconfig['auth_method']=="local") echo "checked"; ?> onClick="auth_method_change()"></td>
+		</tr>
+		<td>RADIUS Authentication:&nbsp;&nbsp;</td>
+ 		<td><input name="auth_method" type="radio" id="auth_method" value="radius" <?php if($pconfig['auth_method']=="radius") echo "checked"; ?> onClick="auth_method_change()"></td>
+		</tr>
 		<tr>
 		<td>IP address:</td>
 		<td><input name="radiusip" type="text" class="formfld" id="radiusip" size="20" value="<?=htmlspecialchars($pconfig['radiusip']);?>"></td>
@@ -313,7 +370,7 @@ to access after they've authenticated.</td>
       <td class="vtable">
         <textarea name="cert" cols="65" rows="7" id="cert" class="formpre"><?=htmlspecialchars($pconfig['cert']);?></textarea>
         <br>
-    Paste a signed certificate in X.509 PEM format here.   <A target="_new" HREF='system_advanced_create_certs.php'>Create</a> certificates automatically.</td>
+    Paste a signed certificate in X.509 PEM format here.</td>
 	  </tr>
 	<tr>
       <td valign="top" class="vncell">HTTPS private key</td>
@@ -322,12 +379,12 @@ to access after they've authenticated.</td>
         <br>
     Paste an RSA private key in PEM format here.</td>
 	  </tr>
-	<tr>
+	<tr> 
 	  <td width="22%" valign="top" class="vncellreq">Portal page contents</td>
-	  <td width="78%" class="vtable">
-		<input type="file" name="htmlfile" class="formfld" id="htmlfile"><br>
+	  <td width="78%" class="vtable">    
+		<?=$mandfldhtml;?><input type="file" name="htmlfile" class="formfld" id="htmlfile"><br>
 		<?php if ($config['captiveportal']['page']['htmltext']): ?>
-		<a href="?act=viewhtml" target="_blank">View current page</a>
+		<a href="?act=viewhtml" target="_blank">View current page</a>                      
 		  <br>
 		  <br>
 		<?php endif; ?>
@@ -348,19 +405,19 @@ with a submit button (name=&quot;accept&quot;) and a hidden field with name=&quo
 	  <td class="vtable">
 		<input name="errfile" type="file" class="formfld" id="errfile"><br>
 		<?php if ($config['captiveportal']['page']['errtext']): ?>
-		<a href="?act=viewerrhtml" target="_blank">View current page</a>
+		<a href="?act=viewerrhtml" target="_blank">View current page</a>                      
 		  <br>
 		  <br>
 		<?php endif; ?>
 The contents of the HTML file that you upload here are displayed when a RADIUS authentication error occurs.</td>
 	</tr>
-	<tr>
+	<tr> 
 	  <td width="22%" valign="top">&nbsp;</td>
-	  <td width="78%">
-		<input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change(true)">
+	  <td width="78%"> 
+		<input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change(true)"> 
 	  </td>
 	</tr>
-	<tr>
+	<tr> 
 	  <td width="22%" valign="top">&nbsp;</td>
 	  <td width="78%"><span class="vexpl"><span class="red"><strong>Note:<br>
 		</strong></span>Changing any settings on this page will disconnect all clients! Don't forget to enable the DHCP server on your captive portal interface! Make sure that the default/maximum DHCP lease time is higher than the timeout entered on this page. Also, the DNS forwarder needs to be enabled for DNS lookups by unauthenticated clients to work. </span></td>
@@ -376,5 +433,3 @@ enable_change(false);
 //-->
 </script>
 <?php include("fend.inc"); ?>
-</body>
-</html>

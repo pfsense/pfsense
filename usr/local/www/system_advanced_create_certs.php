@@ -99,7 +99,12 @@ if ($_POST) {
             <?php if ($savemsg) print_info_box($savemsg); ?>
 	    <p>One moment please...
 	<?php
-	    mwexec("cd /tmp && openssl req -nodes -new > cert.csr && openssl rsa -in privkey.pem -out key.pem && openssl x509 -in cert.csr -out cert.pem -req -signkey key.pem -days 365");
+	    //openssl genrsa -des3 -out privkey.pem 2048
+	    //openssl req -new -x509 -nodes -key privkey.pem -out cacert.pem -days 100
+	    mwexec("cd /tmp && openssl genrsa -passout pass:test -des3 -out privkey.pem 1024 && cat /tmp/privkey.pem");
+	    mwexec("cd /tmp && openssl req -nodes -new > cert.csr");
+	    mwexec("cd /tmp && openssl rsa -in privkey.pem -out key.pem");
+	    mwexec("cd /tmp && openssl x509 -in cert.csr -out cert.pem -req -signkey key.pem -days 365");
 	    $fd = fopen("/tmp/cert.pem", "r");
 	    $cacert = fread($fd,8096);
 	    fclose($fd);
@@ -117,7 +122,7 @@ if ($_POST) {
 	    var cakey='<?=$cakey?>';
 	    opener.document.forms[0].cert.value=cacert;
 	    opener.document.forms[0].key.value=cakey;
-	    this.close();
+	    //this.close();
 	-->
 	</script>
 

@@ -2,6 +2,12 @@ body,td,th,input,select {
 	font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
 	font-size: 11px;
 }
+rebootbox {
+	a:link {color: #FFFFFF; text-decoration: underline; }
+	a:active {color: #FFFFFF; text-decoration: underline; }
+	a:visited {color: #FFFFFF; text-decoration: underline; }
+	a:hover {color: #FFFF00; text-decoration: none; }
+}
 form {
 	margin: 0px;
 }

@@ -81,6 +81,7 @@ if ($_POST) {
 		$queue = array();
 		$queue['options']['schedulertype'] = $_POST['schedulertype'];
 		$queue['bandwidth'] = $_POST['bandwidth'];
+		$queue['bandwidthtype'] = $_POST['bandwidthtype'];
 		$queue['priority'] = $_POST['priority'];
 		$queue['name'] = ereg_replace(" ", "", $_POST['name']);
 		$queue['options']['linkshare'] = $_POST['linkshare'];

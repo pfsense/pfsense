@@ -167,10 +167,10 @@ function verify_gzip_file($fname) {
 
 function print_info_box_np($msg) {
 	echo "<table border=\"0\" cellspacing=\"0\" cellpadding=\"4\" width=\"100%\">\n";
-	echo "<tr><td bgcolor=\"#687BA4\" align=\"center\" valign=\"top\" width=\"36\"><img src=\"/exclam.gif\" width=\"28\" height=\"32\"></td>\n";
-	echo "<td bgcolor=\"#D9DEE8\" style=\"padding-left: 8px\">";
+	echo "<tr><td bgcolor=\"#7F3B00\" align=\"center\" valign=\"top\" width=\"36\"><img src=\"/exclam.gif\" width=\"28\" height=\"32\"></td>\n";
+	echo "<td bgcolor=\"#00000\" style=\"padding-left: 8px\"><font color=\"#ffffff\">";
 	echo $msg;
-	echo "</td></tr></table>";
+	echo "</td></tr></table><br>";
 }
 
 function print_info_box($msg) {
@@ -196,7 +196,7 @@ function get_std_save_message($ok) {
 
 	if ($ok == 0) {
 		if (file_exists($d_sysrebootreqd_path))
-			return "The changes have been saved. You must <a href=\"/reboot.php\">reboot</a> your firewall for changes to take effect.";
+			return "The changes have been saved. You must <a class=\"navlnk\" href=\"/reboot.php\">reboot</a> your firewall for changes to take effect.";
 		else
 			return "The changes have been applied successfully.";
 	} else {

@@ -1,22 +1,22 @@
 #!/usr/local/bin/php
-<?php 
+<?php
 /*
 	interfaces_lan.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -50,16 +50,16 @@ if ($_POST) {
 	/* input validation */
 	$reqdfields = explode(" ", "ipaddr subnet");
 	$reqdfieldsn = explode(",", "IP address,Subnet bit count");
-	
+
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-	
+
 	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
 		$input_errors[] = "A valid IP address must be specified.";
 	}
 	if (($_POST['subnet'] && !is_numeric($_POST['subnet']))) {
 		$input_errors[] = "A valid subnet bit count must be specified.";
 	}
-	
+
 	/* Wireless interface? */
 	if (isset($optcfg['wireless'])) {
 		$wi_input_errors = wireless_config_post();
@@ -71,18 +71,20 @@ if ($_POST) {
 	if (!$input_errors) {
 		$config['interfaces']['lan']['ipaddr'] = $_POST['ipaddr'];
 		$config['interfaces']['lan']['subnet'] = $_POST['subnet'];
-		
+		$config['interfaces']['lan']['bandwidth'] = $_POST['bandwidth'];
+		$config['interfaces']['lan']['bandwidthtype'] = $_POST['bandwidthtype'];
+
 		$dhcpd_was_enabled = 0;
 		if (isset($config['dhcpd']['enable'])) {
 			unset($config['dhcpd']['enable']);
 			$dhcpd_was_enabled = 1;
 		}
-			
+
 		write_config();
 		touch($d_sysrebootreqd_path);
-		
+
 		$savemsg = get_std_save_message(0);
-		
+
 		if ($dhcpd_was_enabled)
 			$savemsg .= "<br>Note that the DHCP server has been disabled.<br>Please review its configuration " .
 				"and enable it again prior to rebooting.";
@@ -104,7 +106,7 @@ function gen_bits(ipaddr) {
             return "";
         if (adr[0] == 0 && adr[1] == 0 && adr[2] == 0 && adr[3] == 0)
             return "";
-		
+
 		if (adr[0] <= 127)
 			return "8";
 		else if (adr[0] <= 191)
@@ -129,11 +131,11 @@ function ipaddr_change() {
 <?php if ($savemsg) print_info_box($savemsg); ?>
             <form action="interfaces_lan.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">IP address</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="ipaddr" type="text" class="formfld" id="hostname" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>" onchange="ipaddr_change()">
-                    / 
+                    /
                     <select name="subnet" class="formfld" id="subnet">
                       <?php for ($i = 31; $i > 0; $i--): ?>
                       <option value="<?=$i;?>" <?php if ($i == $pconfig['subnet']) echo "selected"; ?>>
@@ -146,19 +148,32 @@ function ipaddr_change() {
 				if (isset($optcfg['wireless']))
 					wireless_config_print();
 				?>
-                <tr> 
+                <tr>
+                  <td valign="top" class="vncell">Interface Bandwidth Speed</td>
+                  <td class="vtable"> <input name="bandwidth" type="text" class="formfld" id="bandwidth" size="30" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">
+			<select name="bandwidthtype">
+				<option value="<?=htmlspecialchars($pconfig['bandwidthtype']);?>"><?=htmlspecialchars($pconfig['bandwidthtype']);?></option>
+				<option value="b">bit/s</option>
+				<option value="Kb">Kilobit/s</option>
+				<option value="Mb">Megabit/s</option>
+				<option value="Gb">Gigabit/s</option>
+			</select>
+			<br> The bandwidth setting will define the speed of the interface for traffic shaping.
+		  </td>
+                </tr>
+                <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> 
+                  <td width="78%">
+                    <input name="Submit" type="submit" class="formbtn" value="Save">
                   </td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"><span class="vexpl"><span class="red"><strong>Warning:<br>
-                    </strong></span>after you click &quot;Save&quot;, you must 
-                    reboot your firewall for changes to take effect. You may also 
-                    have to do one or more of the following steps before you can 
-                    access your firewall again: 
+                    </strong></span>after you click &quot;Save&quot;, you must
+                    reboot your firewall for changes to take effect. You may also
+                    have to do one or more of the following steps before you can
+                    access your firewall again:
                     <ul>
                       <li>change the IP address of your computer</li>
                       <li>renew its DHCP lease</li>

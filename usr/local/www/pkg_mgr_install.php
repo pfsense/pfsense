@@ -299,20 +299,6 @@ if ($pkgent['depends_on_package_base_url'] <> "") {
             fwrite($fd_log, "cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package'] . "\n" . $text);;
 }
 
-// fetch additional files needed for package if defined
-// and uncompress if needed.
-if ($pkgent['additional_files_needed'] <> "") {
-            foreach($pkgent['additional_files_needed']['item'] as $afn) {
-                        update_progress_bar($pb_percent);
-                        $pb_percent += 10;
-                        $filename = get_filename_from_url($afn);
-                        update_status("Downloading additional files needed for package " . $filename . " ...");
-                        system("cd /usr/local/pkg && /usr/bin/fetch " .  $afn);
-                        if(stristr($filename, '.tgz') <> "")
-                                    system("cd /usr/local/pkg && tar xzvf " . $filename);
-            }
-}
-
 update_progress_bar($pb_percent);
 $pb_percent += 10;
 
@@ -353,6 +339,21 @@ if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
                     }
                 }
             }
+
+            // fetch additional files needed for package if defined
+            // and uncompress if needed.
+            if ($package_conf['additional_files_needed'] <> "") {
+                        foreach($package_conf['additional_files_needed']['item'] as $afn) {
+                                    update_progress_bar($pb_percent);
+                                    $pb_percent += 10;
+                                    $filename = get_filename_from_url($afn);
+                                    update_status("Downloading additional files needed for package " . $filename . " ...");
+                                    system("cd /usr/local/pkg && /usr/bin/fetch " .  $afn);
+                                    if(stristr($filename, '.tgz') <> "")
+                                                system("cd /usr/local/pkg && tar xzvf " . $filename);
+                        }
+            }
+
             // loop through menu installation items
             // installing multiple items if need be.
             foreach ($package_conf['menu'] as $menu) {

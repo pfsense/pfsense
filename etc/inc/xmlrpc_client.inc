@@ -1460,6 +1460,7 @@ class XML_RPC_Value extends XML_RPC_Base
                 $rs .= "<${typ}>" . ($val ? '1' : '0') . "</${typ}>";
                 break;
             case $XML_RPC_String:
+		if(is_array($val)) $val = 'array';
                 $rs .= "<${typ}>" . htmlspecialchars($val). "</${typ}>";
                 break;
             default:

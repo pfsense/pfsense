@@ -422,7 +422,7 @@ foreach ($packages_to_install as $id) {
     update_progress_bar($pb_percent);
     $pb_percent += 10;
 
-    if($package_conf['custom_php_install_command']) {
+    if($package_conf['custom_php_install_command'] <> "") {
 	if($package_conf['custom_php_global_functions'] <> "")
 	    if(php_check_syntax($package_conf['custom_php_global_functions'], $error_message) == false)
 		eval($package_conf['custom_php_global_functions']);

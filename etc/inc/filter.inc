@@ -943,29 +943,15 @@ function filter_rules_generate() {
 		$ipfrules .= "pass out quick on " . $wanif . "  inet proto tcp from any to any port www keep state label \"transparent proxy\"\n";
 	}
 
-	$ipfrules .= <<<EOA
+
+	$ipfrules .= create_firewall_outgoing_rules_to_itself();
+
+	$ipfrules .= <<<EOD
 
 # loopback
 anchor "loopback"
 pass in quick on lo0 all label "pass loopback"
 pass out quick on lo0 all label "pass loopback"
-
-# pass traffic from firewall -> out
-anchor "firewallout"
-EOA;
-
-$i = 0;
-$ifdescrs = array('wan', 'lan');
-for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-	$ifdescrs['opt' . $j] = "opt" . $j;
-}
-foreach ($ifdescrs as $ifdescr => $ifname) {
-	$int = filter_translate_type_to_real_interface($ifname);
-	echo "pass out quick on {$ifname} inet from {$ifname} to any keep state";
-	return $int;
-}
-
-$ipfrules .= <<<EOD
 
 # enable ftp-proxy
 anchor "ftpproxy"
@@ -1578,6 +1564,22 @@ function setup_logging_interfaces() {
 	    $rules.= "set loginterface {$int} \n";
 	}
 	return $rules;
+}
+
+function create_firewall_outgoing_rules_to_itself() {
+	global $config;
+	$i = 0;
+	$rule .= "# pass traffic from firewall -> out\n";
+	$rule .= "anchor \"firewallout\"\n";
+	$ifdescrs = array('wan', 'lan');
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+		$ifdescrs['opt' . $j] = "opt" . $j;
+	}
+	foreach ($ifdescrs as $ifdescr => $ifname) {
+		$int = filter_translate_type_to_real_interface($ifname);
+		$rule .="pass out quick on {$int} inet from {$int} to any keep state\n";
+	}
+	return $rule;
 }
 
 ?>

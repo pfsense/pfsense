@@ -89,6 +89,8 @@ if($pkg['custom_php_command_before_form'] <> "")
 if ($_POST) {
 	if($_POST['act'] == "del") {
 		if($pkg['custom_delete_php_command']) {
+		    if($pkg['custom_php_command_before_form'] <> "")
+			    eval($pkg['custom_php_command_before_form']);
 		    eval($pkg['custom_delete_php_command']);
 		}
 		write_config();

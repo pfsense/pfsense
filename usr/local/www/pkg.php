@@ -74,6 +74,8 @@ if ($_GET['act'] == "del") {
 
 	    if ($a_pkg[$_GET['id']]) {
 		if($pkg['custom_delete_php_command'] <> "") {
+		    if($pkg['custom_php_command_before_form'] <> "")
+			eval($pkg['custom_php_command_before_form']);
 		    eval($pkg['custom_delete_php_command']);
 		}
 

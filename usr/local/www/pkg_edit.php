@@ -99,6 +99,9 @@ include("fbegin.inc");
 	// donotsave is enabled.  lets simply exit.
 	if($pkg['donotsave'] <> "") exit;
 
+	$firstfield = "";
+	$rows = 0;
+
 	// store values in xml configration file.
 	if (!$input_errors) {
 		$pkgarr = array();
@@ -107,10 +110,17 @@ include("fbegin.inc");
 				// save rowhelper items.
 				for($x=0; $x<99; $x++) { // XXX: this really should be passed from the form.
 					foreach($fields['rowhelper']['rowhelperfield'] as $rowhelperfield) {
+						if($firstfield == "")  {
+						  $firstfield = $rowhelperfield['fieldname'];
+						} else {
+						  if($firstfield == $rowhelperfield['fieldname']) $rows++;
+						}
 						$comd = "\$value = \$_POST['" . $rowhelperfield['fieldname'] . $x . "'];";
+						//echo($comd . "<br>");
 						eval($comd);
 						if($value <> "") {
-							$comd = "\$pkgarr['rowhelper']['" . $rowhelperfield['fieldname'] . $y . "']['rowhelpervalue'][] = \"" . $value . "\";";
+							$comd = "\$pkgarr['row'][" . $x . "]['" . $rowhelperfield['fieldname'] . "'] = \"" . $value . "\";";
+							//echo($comd . "<br>");
 							eval($comd);
 						}
 					}
@@ -185,33 +195,32 @@ $config = $config_tmp;
 	  <?php
 
 	      if($pkga['type'] == "input") {
-		  // XXX: TODO: set $value
-                  if($pkga['size']) $size = " size='" . $pkga['size'] . "' ";
-		  echo "<input " . $size . " name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
-		  echo "<br>" . $pkga['description'] . "\n";
+			if($pkga['size']) $size = " size='" . $pkga['size'] . "' ";
+			echo "<input " . $size . " name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
+			echo "<br>" . $pkga['description'] . "\n";
 	      } else if($pkga['type'] == "password") {
-		  echo "<input type='password' " . $size . " name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
-		  echo "<br>" . $pkga['description'] . "\n";
+			echo "<input type='password' " . $size . " name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
+			echo "<br>" . $pkga['description'] . "\n";
 	      } else if($pkga['type'] == "select") {
 		  // XXX: TODO: set $selected
                   if($pkga['size']) $size = " size='" . $pkga['size'] . "' ";
 		  if($pkga['multiple'] == "yes") $multiple = "MULTIPLE ";
-		  echo "<select " . $multiple . $size . "id='" . $pkga['fieldname'] . "' name='" . $pkga['fieldname'] . "'>\n";
+			echo "<select " . $multiple . $size . "id='" . $pkga['fieldname'] . "' name='" . $pkga['fieldname'] . "'>\n";
 		  foreach ($pkga['options']['option'] as $opt) {
 		      echo "\t<option name='" . $opt['name'] . "' value='" . $opt['value'] . "'>" . $opt['name'] . "</option>\n";
 		  }
-		  echo "</select>\n";
-		  echo "<br>" . $pkga['description'] . "\n";
+		   echo "</select>\n";
+		   echo "<br>" . $pkga['description'] . "\n";
 	      } else if($pkga['type'] == "checkbox") {
-		  echo "<input type='checkbox' name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
-		  echo "<br>" . $pkga['description'] . "\n";
+			echo "<input type='checkbox' name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
+			echo "<br>" . $pkga['description'] . "\n";
 	      } else if($pkga['type'] == "textarea") {
 		  if($pkga['rows']) $rows = " rows='" . $pkga['rows'] . "' ";
 		  if($pkga['cols']) $cols = " cols='" . $pkga['cols'] . "' ";
-		  echo "<textarea " . $rows . $cols . " name='" . $pkga['fieldname'] . "'>" . $value . "</textarea>\n";
-		  echo "<br>" . $pkga['description'] . "\n";
+			echo "<textarea " . $rows . $cols . " name='" . $pkga['fieldname'] . "'>" . $value . "</textarea>\n";
+			echo "<br>" . $pkga['description'] . "\n";
 	      } else if($pkga['type'] == "radio") {
-		  echo "<input type='radio' name='" . $pkga['fieldname'] . "' value='" . $value . "'>";
+			echo "<input type='radio' name='" . $pkga['fieldname'] . "' value='" . $value . "'>";
 	      } else if($pkga['type'] == "rowhelper") {
 		?>
 			<script type="text/javascript" language='javascript'>
@@ -231,9 +240,14 @@ $config = $config_tmp;
 			</script>
 
 			<table name="maintable" id="maintable">
-			   <tbody>
-
+			<tr>
 			<?php
+			foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
+			  echo "<td><b>" . $rowhelper['fielddescr'] . "</td>\n";
+			}
+				echo "</tr>";
+				echo "<tbody>";
+
 				echo "<tr>";
 				  // XXX: traverse saved fields, add back needed rows.
 				echo "</tr>";
@@ -246,15 +260,17 @@ $config = $config_tmp;
 					foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
 						$temp = "";
 						$text = "";
+						$value = "";
+						if($rowhelper['value'] <> "") $value = $rowhelper['value'];
 						echo "<td>\n";
 						if($rowhelper['type'] == "input") {
-							echo "<input name='" . $rowhelper['fieldname'] . $trc . "' value=''>\n";
+							echo "<input size='8' name='" . $rowhelper['fieldname'] . "0" . "' value='" . $value . "'>\n";
 						} else if($rowhelper['type'] == "password") {
-							echo "<input type='password' name='" . $rowhelper['fieldname'] . $trc . "' value=''>\n";
+							echo "<input type='password' name='" . $rowhelper['fieldname'] . "0" . "' value='" . $value . "'>\n";
 						} else if($rowhelper['type'] == "textarea") {
-							echo "<textarea name='" . $rowhelper['fieldname'] . $trc . "'></textarea>\n";
+							echo "<textarea name='" . $rowhelper['fieldname'] . "0" . "'>" . $value . "</textarea>\n";
 						} else if($rowhelper['type'] == "select") {
-							echo "<select name='" . $rowhelper['fieldname'] . $trc . "'>\n";
+							echo "<select name='" . $rowhelper['fieldname'] . "0" . "'>\n";
 							foreach($rowhelper['options']['option'] as $rowopt) {
 								$text .= "<option value='" . $rowopt['value'] . "'>" . $rowopt['name'] . "</option>";
 								echo "<option value='" . $rowopt['value'] . "'>" . $rowopt['name'] . "</option>\n";
@@ -269,7 +285,7 @@ $config = $config_tmp;
 						echo "</script>\n";
 						$trc++;
 					}
-					$rowcounter++;
+					$rowcounter=0;
 					echo "<td>";
 					echo "<input type=\"button\" onclick=\"removeRow(this); typesel_change();\" value=\"Delete\">";
 					echo "</td>\n";
@@ -304,6 +320,9 @@ $config = $config_tmp;
       $i++;
   }
  ?>
+  <tr>
+	<td>&nbsp;</td>
+  </tr>
   <tr>
     <td width="22%" valign="top">&nbsp;</td>
     <td width="78%">

@@ -30,7 +30,7 @@ var addRowTo = (function() {
 		} else if(rowtype[i] == 'checkbox') {
 			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input type='checkbox' name='" + rowname[i] + totalrows + "'></input> ";
 		} else if(rowtype[i] == 'input') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input name='" + rowname[i] + totalrows + "'></input> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input size='8' name='" + rowname[i] + totalrows + "'></input> ";
 		} else if(rowtype[i] == 'password') {
 			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input type='password' name='" + rowname[i] + totalrows + "'></input> ";
 		}

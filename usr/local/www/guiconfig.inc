@@ -443,6 +443,7 @@ function gentitle($pgname) {
 }
 
 /* Check if variable has changed, update and log if it has
+ * returns true if var changed
  * varname = variable name in plain text
  * orig = original value
  * new = new value
@@ -453,7 +454,9 @@ function updatechanged($varname, $orig, $new) {
 	if ($orig != $new) {
 		$changedesc .= " {$varname}: \"{$orig}\" -> \"{$new}\"";
 		$orig = $new;
+		return true;
 	}
+	return false;
 }
 
 

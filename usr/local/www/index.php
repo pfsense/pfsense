@@ -215,6 +215,8 @@ echo "<input style='border: 0px solid white;' size='30' name='swapusagemeter' id
 </html>
 <?php
 
+$counter = 0;
+
 While(!Connection_Aborted()) {
 
     sleep(1);
@@ -236,6 +238,18 @@ While(!Connection_Aborted()) {
     echo "document.cpuwidthb.style.width='" . (100 - $cpuUsage) . "';\n";
     echo "document.forms[0].cpumeter.value = '" . $cpuUsage . "%';\n";
     echo "</script>\n";
+
+    /*
+     *   prevent user from running out of ram.
+     *   firefox and ie can be a bear on ram usage!
+     */
+    $counter++;
+    if($counter > 120) {
+	    echo "Redirecting to <a href=\"status_queues.php\">Main Status</a>.<p>";
+	    echo "<meta http-equiv=\"refresh\" content=\"1;url=index.php\">";
+	    mwexec("/usr/bin/killall -9 pfctl");
+	    exit;
+    }
 
 }
 

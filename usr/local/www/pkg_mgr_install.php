@@ -303,7 +303,7 @@ if ($pkgent['depends_on_package_base_url'] <> "") {
 if ($pkgent['additional_files_needed'] <> "") {
             foreach($pkgent['additional_files_needed']['item'] as $afn) {
                         update_progress_bar($pb_percent);
-                        $pb_percent += 10;                        
+                        $pb_percent += 10;
                         $filename = get_filename_from_url($afn['url']);
                         update_status("Downloading additional files needed for package " . $filename . " ...");
                         system("cd /usr/local/pkg && /usr/bin/fetch " .  $afn['url']);
@@ -361,7 +361,7 @@ if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
                         if($menu['url'] <> "") {
                                     fwrite($fd, $menu['url'] . "\n");
                         } else {
-                                    fwrite($fd, "/pkg.php?xml=" . $menu['name'] . ".xml\n");
+                                    fwrite($fd, "/pkg.php?xml=" . strtolower($menu['name']) . ".xml\n");
                         }
                         fclose($fd);
             }
@@ -431,7 +431,7 @@ function add_text_to_file($file, $text) {
 
 function get_filename_from_url($url) {
             $filenamesplit = split("/", $url);
-            foreach($filenamesplit as $fn) $filename = $fn;              
+            foreach($filenamesplit as $fn) $filename = $fn;
             return $filename;
 }
 

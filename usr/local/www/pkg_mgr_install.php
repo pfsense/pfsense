@@ -297,6 +297,8 @@ foreach ($packages_to_install as $id) {
 
     fwrite($fd_log, "Begining (" . $id. ") " . $pkgent['name'] . " package installation.\n" . $status);
 
+    syslog(LOG_WARNING, "Begining (" . $id. ") " . $pkgent['name'] . " package installation.");
+
     update_progress_bar($pb_percent);
     $pb_percent += 10;
 
@@ -480,9 +482,11 @@ foreach ($packages_to_install as $id) {
         if($status <> "") {
                     update_status("Package installation completed.");
                     fwrite($fd_log, "Package installation completed.\n");
+                    syslog(LOG_WARNING, "Package " . $pkgent['name'] . " installation completed okay.");
         } else {
                     update_status("Package WAS NOT installed properly.");
                     fwrite($fd_log, "Package WAS NOT installed properly.\n");
+                    syslog(LOG_WARNING, "Package " . $pkgent['name'] . " did not install correctly.");
         }
     } else {
         update_status("Package installation completed.");

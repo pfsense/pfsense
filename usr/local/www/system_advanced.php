@@ -51,6 +51,7 @@ $pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
 
 $pconfig['schedulertype'] = $config['system']['schedulertype'];
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
+$pconfig['disablerendevouz'] = $config['system']['disablerendevouz'];
 
 if ($_POST) {
 
@@ -101,8 +102,8 @@ if ($_POST) {
 		$config['system']['disableconsolemenu'] = $_POST['disableconsolemenu'] ? true : false;
 		$config['system']['disablefirmwarecheck'] = $_POST['disablefirmwarecheck'] ? true : false;
 		$config['system']['webgui']['expanddiags'] = $_POST['expanddiags'] ? true : false;
-
 		$config['system']['optimization'] = $_POST['optimization'];
+		$config['system']['disablerendevouz'] = $_POST['disablerendevouz'];
 
 		if ($g['platform'] == "generic-pc") {
 			$oldharddiskstandby = $config['system']['harddiskstandby'];
@@ -175,6 +176,26 @@ function enable_change(enable_over) {
               and there's <strong>NO</strong> support for them.</span></p><br>
 
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
+
+                <tr>
+                  <td colspan="2" valign="top" class="listtopic">Disable Rendezvous</td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncell">&nbsp;</td>
+                  <td width="78%" class="vtable">
+                    <input name="disablerendevouz" type="checkbox" id="disablerendevouz" value="yes" <?php if ($pconfig['disablerendevouz']) echo "checked"; ?> onclick="enable_change(false)">
+                    <strong>Disable the Rendevouz automatic discovery protocol.</strong>
+                    </td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top">&nbsp;</td>
+                  <td width="78%">
+                    <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2" class="list" height="12"></td>
+                </tr>
 
                 <tr>
                   <td colspan="2" valign="top" class="listtopic">IPv6 tunneling</td>

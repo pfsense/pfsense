@@ -464,7 +464,7 @@ function type_change(enable_change,enable_change_pptp) {
                   <td class="vtable"> <input name="ipaddr" type="text" class="formfld" id="ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>">
                     /
                     <select name="subnet" class="formfld" id="subnet">
-                      <?php for ($i = 31; $i > 0; $i--): ?>
+                      <?php for ($i = 32; $i > 0; $i--): ?>
                       <option value="<?=$i;?>" <?php if ($i == $pconfig['subnet']) echo "selected"; ?>>
                       <?=$i;?>
                       </option>
@@ -585,7 +585,7 @@ function type_change(enable_change,enable_change_pptp) {
                   <td class="vtable"> <input name="pptp_local" type="text" class="formfld" id="pptp_local" size="20" value="<?=htmlspecialchars($pconfig['pptp_local']);?>">
                     /
                     <select name="pptp_subnet" class="formfld" id="pptp_subnet">
-                      <?php for ($i = 31; $i > 0; $i--): ?>
+                      <?php for ($i = 32; $i > 0; $i--): ?>
                       <option value="<?=$i;?>" <?php if ($i == $pconfig['pptp_subnet']) echo "selected"; ?>>
                       <?=$i;?>
                       </option>

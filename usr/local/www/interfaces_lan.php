@@ -143,7 +143,7 @@ function ipaddr_change() {
                     <input name="ipaddr" type="text" class="formfld" id="hostname" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>" onchange="ipaddr_change()">
                     /
                     <select name="subnet" class="formfld" id="subnet">
-                      <?php for ($i = 31; $i > 0; $i--): ?>
+                      <?php for ($i = 32; $i > 0; $i--): ?>
                       <option value="<?=$i;?>" <?php if ($i == $pconfig['subnet']) echo "selected"; ?>>
                       <?=$i;?>
                       </option>

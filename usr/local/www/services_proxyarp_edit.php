@@ -188,7 +188,7 @@ function typesel_change() {
                         <td><input name="subnet" type="text" class="formfld" id="subnet" size="20" value="<?=htmlspecialchars($pconfig['subnet']);?>">
                   /
                           <select name="subnet_bits" class="formfld" id="select">
-                            <?php for ($i = 31; $i >= 0; $i--): ?>
+                            <?php for ($i = 32; $i >= 0; $i--): ?>
                             <option value="<?=$i;?>" <?php if ($i == $pconfig['subnet_bits']) echo "selected"; ?>>
                             <?=$i;?>
                       </option>

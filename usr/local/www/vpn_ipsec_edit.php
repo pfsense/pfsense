@@ -8,7 +8,7 @@
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 
@@ -333,7 +333,7 @@ function typesel_change() {
                         <td><input name="localnet" type="text" class="formfld" id="localnet" size="20" value="<?php if (!is_specialnet($pconfig['localnet'])) echo htmlspecialchars($pconfig['localnet']);?>">
                           /
                           <select name="localnetmask" class="formfld" id="localnetmask">
-                            <?php for ($i = 31; $i >= 0; $i--): ?>
+                            <?php for ($i = 32; $i >= 0; $i--): ?>
                             <option value="<?=$i;?>" <?php if ($i == $pconfig['localnetmask']) echo "selected"; ?>>
                             <?=$i;?>
                             </option>

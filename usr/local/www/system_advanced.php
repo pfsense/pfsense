@@ -32,6 +32,7 @@
 require("guiconfig.inc");
 
 $pconfig['disablefilter'] = $config['system']['disablefilter'];
+$pconfig['disableftpproxy'] = $config['system']['disableftpproxy'];
 $pconfig['filteringbridge_enable'] = isset($config['bridge']['filteringbridge']);
 $pconfig['ipv6nat_enable'] = isset($config['diag']['ipv6nat']['enable']);
 $pconfig['ipv6nat_ipaddr'] = $config['diag']['ipv6nat']['ipaddr'];
@@ -67,11 +68,15 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		echo $_POST['disablefilter'];
 		if($_POST['disablefilter'] == "yes") {
 			$config['system']['disablefilter'] = "enabled";
 		} else {
 			unset($config['system']['disablefilter']);
+		}
+		if($_POST['disableftpproxy'] == "yes") {
+			$config['system']['disableftpproxy'] = "enabled";
+		} else {
+			unset($config['system']['disableftpproxy']);
 		}
 		$config['bridge']['filteringbridge'] = $_POST['filteringbridge_enable'] ? true : false;
 		$config['diag']['ipv6nat']['enable'] = $_POST['ipv6nat_enable'] ? true : false;
@@ -147,7 +152,15 @@ function enable_change(enable_over) {
               and there's <strong>NO</strong> support for them.</span></p><br>
 
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-
+                <tr>
+                  <td colspan="2" valign="top" class="listtopic">FTP Proxy</td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncell">&nbsp;</td>
+                  <td width="78%" class="vtable">
+                    <input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if (isset($config['system']['disableftpproxy'])) echo "checked"; ?> onclick="enable_change(false)">
+                    <strong class="vexpl">Disable the userland FTP-Proxy application</strong><br>
+                </tr>
                 <tr>
                   <td colspan="2" valign="top" class="listtopic">Disable Firewalling</td>
                 </tr>

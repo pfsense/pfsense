@@ -29,6 +29,11 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+if(file_exists("/usr/local/www/trigger_initial_wizard")) {
+	system("rm /usr/local/www/trigger_initial_wizard");
+	header("Location:  wizard.xml?xml=setup_wizard.xml");
+}
+
 require("guiconfig.inc");
 
 /* find out whether there's hardware encryption (hifn) */

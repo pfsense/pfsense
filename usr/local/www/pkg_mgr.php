@@ -73,8 +73,8 @@ include("fbegin.inc");
 
 // Allow package location to be overriden
 $config_location = "http://www.pfsense.com/packages/pkg_config.xml";
-if($configa['package_location'])
-	    $config_location = $configa['package_location'];
+if($config['package_location'])
+	    $config_location = $config['package_location'];
 
 if(!file_exists("/tmp/pkg_config.xml")) {
             mwexec("cd {$g['tmp_path']} && /usr/bin/fetch \"" . $config_location . "\" >/dev/null 2>&1 ");
@@ -109,13 +109,15 @@ if(!$pkg_config['packages']) {
 		<?php
 		 $i = 0;
 		    foreach ($pkg_config['packages']['package'] as $pkg) {
-                        if(is_array($configa['installedpackages']['package'])) {
-                            foreach ($configa['installedpackages']['package'] as $installed) {
+			$pkgname = "";
+			$pkgname = $pkg['name'];
+                        if($config['installedpackages']['package']) {
+                            foreach ($config['installedpackages']['package'] as $installed) {
                                         if($installed['name'] == $pkg['name'])
-                                                    $pkg['name'] = "";
+                                                    $pkgname = "";
                             }
                         }
-                        if($pkg['name'] <> "") {
+                        if($pkgname <> "") {
                             ?>
                             <tr valign="top">
                                 <td class="listlr">

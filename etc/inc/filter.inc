@@ -409,7 +409,10 @@ function filter_generate_altq_rules() {
 			$line .= $interface;
 
 			if (isset($rule['protocol'])) {
-				$line .= "proto {$rule['protocol']} ";
+				if($rule['protocol'] == "tcp/udp") 
+					$line .= "proto { tcp udp } ";	
+				else
+					$line .= "proto {$rule['protocol']} ";
 			} else {
 				if($rule['source']['port'] <> "" || $rule['destination']['port'] <> "") {
 					$line .= "proto tcp ";
@@ -746,12 +749,22 @@ function filter_nat_rules_generate() {
 			$lanif = $lancfg['if'];
 
 			if ((!$extport[1]) || ($extport[0] == $extport[1])) {
-				$natrules .=
-				 "rdr on $natif proto " . $rule['protocol'] . " from any to any port {$extport[0]} -> {$target} \n";
+				if($rule['protocol'] == "tcp/udp")
+					$natrules .=
+					"rdr on $natif proto { tcp udp } from any to any port {$extport[0]} -> {$target} \n";
+				else
+					$natrules .=
+					"rdr on $natif proto " . $rule['protocol'] . " from any to any port {$extport[0]} -> {$target} \n";
+				
 			} else {
-				$natrules .=
-				 "rdr on $natif proto " . $rule['protocol']. " from any to any port {$extport[0]}:{$extport[1]} " .
-				 "-> {$target} \n";
+				if($rule['protocol'] == "tcp/udp")
+					$natrules .=
+					 "rdr on $natif proto { tcp udp } from any to any port {$extport[0]}:{$extport[1]} " .
+					 "-> {$target} \n";
+				else
+					$natrules .=
+					 "rdr on $natif proto " . $rule['protocol']. " from any to any port {$extport[0]}:{$extport[1]} " .
+					 "-> {$target} \n";				
 			}
 
 			$natrules .= "\n";
@@ -1186,9 +1199,21 @@ EOD;
 			if ($ispptp) {
 				$line .= "on ng" . ($iif+1) . " ";
 			}
+			
+			//if($rule['protocol'] == "tcp/udp") 
+			//	$line .= "proto { tcp udp } ";	
+			//else
+			//	$line .= "proto {$rule['protocol']} ";
 
 			if (isset($rule['protocol'])) {
-				$line .= "proto {$rule['protocol']} ";
+				if($rule['protocol'] == "tcp/udp") 
+					$line .= "proto { tcp udp } ";	
+				else
+					$line .= "proto {$rule['protocol']} ";
+			} else {
+				if($rule['source']['port'] <> "" || $rule['destination']['port'] <> "") {
+					$line .= "proto tcp ";
+				}
 			}
 
 			/* source address */

@@ -241,11 +241,11 @@ if ($_POST) {
                 </tr>
                 <tr>
                   <td valign="top" class="vncell">webGUI port</td>
-                  <td class="vtable"> <input name="webguiport" type="text" class="formfld" id="webguiport" onchange="alert('webGUI port changes will take effect immediately after clicking save');" size="5" value="<?=htmlspecialchars($pconfig['webguiport']);?>">
+                  <td class="vtable"> <input name="webguiport" type="text" class="formfld" id="webguiport" "size="5" value="<?=htmlspecialchars($pconfig['webguiport']);?>">
                     <br>
                     <span class="vexpl">Enter a custom port number for the webGUI
                     above if you want to override the default (80 for HTTP, 443
-                    for HTTPS).</span></td>
+                    for HTTPS). Changes will take effect immediately after save.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Time zone</td>

@@ -458,7 +458,7 @@ function dump_clog($logfile, $tail, $grepfor = "", $grepinvert = false, $withori
         $sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
 	exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
-
+	if(!is_array($grepfor)) $grepfor = array($grepfor);
         if($grepfor <> "") {
 		$i = 0;
 		foreach($grepfor as $agrep) {
@@ -475,7 +475,6 @@ function dump_clog($logfile, $tail, $grepfor = "", $grepinvert = false, $withori
         foreach ($logarr as $logent) {
                 $logent = preg_split("/\s+/", $logent, 6);
                 echo "<tr valign=\"top\">\n";
-
                 if ($withorig) {
                         echo "<td class=\"listlr\" nowrap>" . htmlspecialchars(join(" ", array_slice($logent, 0, 3))) . "</td>\n";
                         echo "<td class=\"listr\">" . htmlspecialchars($logent[4] . " " . $logent[5]) . "</td>\n";

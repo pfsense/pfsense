@@ -248,7 +248,7 @@ if($pkg_config['packages']['package'][$id]['logging']) {
     $pkgent['logging']['logfile_name'] = $pkg_config['packages']['package'][$id]['logging']['logfile_name'];
     mwexec("/usr/sbin/clog -i -s 32768 /var/log/" . $pkgent['logging']['logfile_name']);
     mwexec("chmod 0600 /var/log/" . $pkgent['logging']['logfile_name']);
-    add_text_to_file("/etc/syslog.conf",$pkgent['logging']['facility'] . "\t\t\t" . $pkgent['logging']['logfile_name']);
+    add_text_to_file("/etc/syslog.conf", $pkgent['logging']['facilityname'] . "\t\t\t" . $pkgent['logging']['logfilename']);
     mwexec("/usr/bin/killall -HUP syslogd");
 }
 $a_out = &$config['packages']['package']; // save item to installedpkgs
@@ -337,7 +337,7 @@ if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
             }
             // install menu item into the ext folder
             fwrite($fd_log, "Adding menu option to " . $package_conf['menu']['section'] . "/" . $package_conf['menu']['name'] . "\n");
-            $fd = fopen("/usr/local/www/ext/" . $package_conf['menu']['section'] . "/" . $package_conf['name'] , "w");
+            $fd = fopen("/usr/local/www/ext/" . $package_conf['menu']['section'] . "/" . $package_conf['menu']['name'] , "w");
             fwrite($fd, "/usr/local/www/pkg.php?xml=" . $package_conf['menu']['name'] . "\n");
             fclose($fd);
 } else {
@@ -396,8 +396,8 @@ function add_text_to_file($file, $text) {
     global $fd_log;
     fwrite($fd_log, "Adding needed text items:\n");
     $filecontents = exec_command_and_return_text("cat " . $file);
-    $textTMP = str_replace($text, "", $filecontents);
-    $text .= $textTMP . $text;
+    $filecontents = str_replace($text, "", $filecontents);
+    $text = $filecontents . $text;
     fwrite($fd_log, $text . "\n");
     $fd = fopen($file, "w");
     fwrite($fd, $text . "\n");

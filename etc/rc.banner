@@ -37,7 +37,6 @@
 	$buildtime = chop(file_get_contents("{$g['etc_path']}/version.buildtime"));
 
 	echo <<<EOD
-
 *** This is pfSense version {$version}
     Copyright 2004 Scott Ullrich.  All rights reserved.
     Originally based on m0n0wall, version 1.2b1

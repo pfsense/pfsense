@@ -795,8 +795,8 @@ function filter_nat_rules_generate() {
 		}
 	}
 
-	$natrules .= "# spam table \n";
-	$natrules .= "table \"spamd\" persist\n\n";
+	//$natrules .= "# spam table \n";
+	//$natrules .= "table \"spamd\" persist\n\n";
 
 	if(!isset($config['system']['disableftpproxy']))
 		$natrules .= "rdr on " . $lanif . " proto tcp from any to any port 21 -> 127.0.0.1 port 8021\n";

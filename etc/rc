@@ -52,7 +52,7 @@ sysctl net.inet.tcp.sack.enable=0
 
 mount_devfs devfs /dev
 
-echo Syncing master.passwd ...
+echo Syncing master.passwd...
 /usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd
 
 # Create an initial utmp file
@@ -73,15 +73,18 @@ cd /var/run && cp /dev/null utmp && chmod 644 utmp
 echo Starting INETD for FTP-PROXY...
 /usr/sbin/inetd -wW -C 60
 
-echo Starting Secure Shell Services ...
+echo Starting Secure Shell Services...
 /etc/sshd
 
-/usr/sbin/cron 2>/dev/null
+echo Starting USB...
+/usr/sbin/usbd 2>>/tmp/bootup_messages
+
+/usr/sbin/cron 2>>/tmp/bootup_messages
 
 for FILE in /usr/local/etc/rc.d/*.sh; do
     if [ -e $FILE ]; then
         echo "Starting ${FILE}..."
-        sh $FILE
+        sh $FILE 2>>/tmp/bootup_messages
     fi
 done
 

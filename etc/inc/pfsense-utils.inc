@@ -483,6 +483,25 @@ function execute_command_return_output($command) {
 }
 
 /*
+ * convert_real_interface_to_friendly_interface_name($interface): convert fxp0 -> wan, etc.
+ */
+function convert_real_interface_to_friendly_interface_name($interface) {
+	global $config;
+	$i = 0;
+	$ifdescrs = array('wan', 'lan');
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+		$ifdescrs['opt' . $j] = "opt" . $j;
+	}
+	foreach ($ifdescrs as $ifdescr => $ifname) {
+	    $int = filter_translate_type_to_real_interface($ifname);
+	    $ifconfig = exec_command("/sbin/ifconfig {$int}");
+	    if(stristr($ifconfig,$interface) <> false)
+		return $ifname;
+	}
+	return $interface;
+}
+
+/*
  * update_progress_bar($percent): updates the javascript driven progress bar.
  */
 function update_progress_bar($percent) {

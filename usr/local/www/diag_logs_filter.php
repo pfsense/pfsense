@@ -81,7 +81,7 @@ function conv_clog($logfile, $tail) {
 	$filterlog = array();
 
 	foreach ($logarr as $logent) {
-		$dontdisplay = 1;
+		$dontdisplay = 0;
 
 		$master_split = preg_split("/rule/", $logent);
 		$first_split  = preg_split("/\s+/", $master_split[0]);
@@ -91,7 +91,8 @@ function conv_clog($logfile, $tail) {
 
 		$flent['time'] = $first_split[0] . ", " . $first_split[1] . " " . $first_split[2];
 		$flent['interface'] = $second_split[5];
-		$flent['proto'] = $second_split[11];
+		
+		$flent['proto'] = $second_split[10];
 		$flent['act'] = $second_split[1];
 		$flent['src'] = format_ipf_ip($second_split[7]);
 		$flent['dst'] = format_ipf_ip($second_split[9]);
@@ -100,7 +101,9 @@ function conv_clog($logfile, $tail) {
 		$flent['dst'] = ereg_replace(":", "", $flent['dst']);
 		$flent['interface'] = ereg_replace(":", "", $flent['interface']);
 
-		if($second_split[11] == "UDP" or $second_split[11] == "TCP") $dontdisplay = 0;
+		if($second_split[11] == "udp" or $second_split[11] == "tcp" or $second_split[11] == "icmp" or $second_split[11] == "igmp") $flent['proto'] = $second_split[11];
+
+		if($flent['proto'] == "S" or $flent['proto'] == "R") $dontdisplay = 1;
 
 		if($dontdisplay == 0)
 			$filterlog[] = $flent;
@@ -167,7 +170,7 @@ function format_ipf_ip($ipfip) {
 			  <img src="<?=$img;?>" width="11" height="11" align="absmiddle">
 			  <?php if ($filterent['count']) echo $filterent['count'];?></td>
 			  <td class="listr" nowrap><?=htmlspecialchars($filterent['time']);?></td>
-			  <td class="listr" nowrap><?=htmlspecialchars($filterent['interface']);?></td>
+			  <td class="listr" nowrap><?=htmlspecialchars(convert_real_interface_to_friendly_interface_name($filterent['interface']));?></td>
 			  <td class="listr" nowrap><?=htmlspecialchars($filterent['src']);?></td>
 			  <td class="listr" nowrap><?=htmlspecialchars($filterent['dst']);?></td>
 			  <td class="listr" nowrap><?=htmlspecialchars($filterent['proto']);?></td>

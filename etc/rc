@@ -20,11 +20,12 @@ echo
 echo "Starting pfSense ..."
 echo
 
-/sbin/dumpon -v /dev/ad0s1b
+SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
+/sbin/dumpon -v $SWAPDEVICE
 /sbin/mount -a || fsck -y && mount -a
 /sbin/swapon -a
 /bin/mkdir -p /usr/savecore 2>/dev/null
-/sbin/savecore /usr/savecore /dev/ad0s1b
+/sbin/savecore /usr/savecore $SWAPDEVICE
 
 rm -rf /var/run/*
 rm -rf /tmp/*

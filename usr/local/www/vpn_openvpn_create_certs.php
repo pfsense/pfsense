@@ -195,7 +195,7 @@ function f(ta_id){
 	    mwexec("rm -rf /tmp/*");
 	    //mwexec("rm -rf /tmp/newcerts");
 	    mkdir("/tmp/newcerts", 0755);
-	    mwexec("touch /tmp/index.txt");
+	    touch("/tmp/index.txt");
 	    $fd = fopen("/tmp/serial","w");
 	    fwrite($fd, "01\n");
 	    fclose($fd);

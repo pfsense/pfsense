@@ -51,8 +51,9 @@ function vpn_ipsec_configure($ipchg = false) {
 	global $config, $g;
 
 	if(isset($config['ipsec']['preferredoldsa'])) {
-		// Set sysctl -w net.key.preferred_oldsa=0
-		mwexec("sysctl -w net.key.preferred_oldsa=0");
+		mwexec("/sbin/sysctl net.key.preferred_oldsa=0");
+	} else {
+		mwexec("/sbin/sysctl -w net.key.preferred_oldsa=-30");
 	}
 
 	$number_of_gifs = find_last_gif_device();
@@ -88,9 +89,6 @@ function vpn_ipsec_configure($ipchg = false) {
 	/* flush SPD and SAD */
 	mwexec("/usr/sbin/setkey -FP");
 	mwexec("/usr/sbin/setkey -F");
-
-	/* prefer old SAs only for 30 seconds, then use the new one */
-	mwexec("/sbin/sysctl -w net.key.preferred_oldsa=-30");
 
 	if (isset($ipseccfg['enable'])) {
 

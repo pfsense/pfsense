@@ -402,6 +402,7 @@ function filter_generate_altq_rules() {
            so the user cannot lock himself out of the webGUI */
         $shaperrules = "add $rulei set 4 pass all from $lanip to any\n"; $rulei++;
         $shaperrules .= "add $rulei set 4 pass all from any to $lanip\n"; $rulei++;
+	$shaperrules .= "add $rulei set 4 pass carp from any to any\n"; $rulei++;
 
         /* generate rules */
         if (isset($config['shaper']['rule']))

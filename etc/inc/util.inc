@@ -292,7 +292,7 @@ function unlink_if_exists($fn) {
 		foreach($to_do as $filename)
 			if (file_exists($filename)) unlink($filename);
 	} else {
-		if (file_exists($to_do)) unlink($to_do);
+		if (file_exists($fn)) unlink($fn);
 	}
 }
 

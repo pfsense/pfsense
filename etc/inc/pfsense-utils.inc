@@ -532,10 +532,9 @@ function update_progress_bar($percent) {
 }
 
 /*
- *  resync_all_package_configs_bootup() Force packages to setup their configuration and rc.d files at bootup.
- *  This function also prints output to the terminal indicating progress.
+ * resync_all_package_configs_bootup() Force packages to setup their configuration and rc.d files at bootup.
+ * This function also prints output to the terminal indicating progress.
  */
-
 function resync_all_package_configs_bootup($show_message) {
     global $config;
     log_error("Resyncing configuration for all packages.");
@@ -553,6 +552,21 @@ function resync_all_package_configs_bootup($show_message) {
 	if($show_message == true) print "Synced " . $package['name'] . ".\n";
     }
 }
+
+/*
+ * sweep_package_processes() Periodically kill a package's unnecessary processes that may still be running (a server that does not automatically timeout, for example)
+ */
+function sweep_package_processes() {
+    global $config;
+    if(!$config['installedpackages']['package']) return;
+    foreach($config['installedpackages']['package'] as $package) {
+        $pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
+        if($pkg_config['swept_processes'] <> "") {
+                mwexec("killall" . $pkg_config['swept_processes']);
+                log_error("Killed " . $package['name'] . "'s unnecessary processes.");
+        }           
+    }
+} 
 
 /*
  * gather_altq_queue_stats():  gather alq queue stats and return an array that
@@ -580,6 +594,4 @@ function gather_altq_queue_stats($dont_return_root_queues) {
     }
     return $queue_stats;
 }
-
-
 ?>

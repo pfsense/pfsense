@@ -1380,7 +1380,7 @@ EOD;
 
 			/* Setup outgoing load balancing */
 			if ($config['nat']['outgoingloadbalancing']['rule'] <> "" and
-			    isset($config['nat']['outgoingloadbalancing']['enabled'])
+			    isset($config['nat']['outgoingloadbalancing']['enable'])
 				and $rule['interface'] == "lan") {
 				$tmprules = " route-to { ";
 				$isfirst = 0;
@@ -1392,7 +1392,7 @@ EOD;
 						$isfirst = 1;
 					}
 				}
-				$tmprules .= "} ";
+				$tmprules .= "} round-robin sticky-address ";
 				$line .= $tmprules;
 			}
 

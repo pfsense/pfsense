@@ -78,6 +78,9 @@ echo Starting USB...
 
 /usr/sbin/cron 2>>/tmp/bootup_messages
 
+echo Syncing packages...
+/etc/rc_packages
+
 echo Executing rc.d items...
 for FILE in /usr/local/etc/rc.d/*.sh; do
     if [ -e $FILE ]; then

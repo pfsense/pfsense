@@ -142,7 +142,7 @@ function filter_configure() {
 		if($files <> "") {
 			foreach ($files as $file) {
 				if($file <> "") {
-					$text = return_filename_as_string($file);
+					$text = return_filename_as_string("/usr/local/pkg/pf/" . $file);
 					if($text != "")
 						eval($text);
 				}

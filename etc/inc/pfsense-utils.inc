@@ -587,7 +587,8 @@ function resync_all_package_configs_bootup($show_message) {
 }
 
 /*
- * sweep_package_processes() Periodically kill a package's unnecessary processes that may still be running (a server that does not automatically timeout, for example)
+ * sweep_package_processes(): Periodically kill a package's unnecessary processes
+ *			      that may still be running (a server that does not automatically timeout, for example)
  */
 function sweep_package_processes() {
     global $config;
@@ -604,7 +605,7 @@ function sweep_package_processes() {
 /*
  * gather_altq_queue_stats():  gather alq queue stats and return an array that
  *                             is queuename|qlength|measured_packets
- *                             NOTE: this commandt takes 5 seconds to run
+ *                             NOTE: this command takes 5 seconds to run
  */
 function gather_altq_queue_stats($dont_return_root_queues) {
     mwexec("/usr/bin/killall -9 pfctl");
@@ -633,6 +634,48 @@ function gather_altq_queue_stats($dont_return_root_queues) {
 }
 
 /*
+ * reverse_strrchr($haystack, $needle):  Return everything in $haystack up to the *last* instance of $needle. 
+ *					 Useful for finding paths and stripping file extensions.
+ */
+function reverse_strrchr($haystack, $needle) {
+	$pos = strrpos($haystack, $needle);
+	if($post === false) {
+		return $haystack;
+	}
+	return substr($haystack, 0, $post + 1);
+}
+
+/*
+ * get_package_xml_depends($pkg_name):  Return a package's XML dependencies (additional tabs etc)
+ */
+function get_package_xml_depends($pkg_name) {
+	global $config;
+	if ($config['installedpackages'][$pkg_name] != "") { // Make sure this package really exists before continuing.
+		$package = $config['installedpackages'][$pkg_name];
+		if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) { // If the package's config file doesn't exist, log an error and fetch it.
+			log_error("Fetching missing configuration XML for " . $pkg_name);
+			mwexec("/usr/bin/fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationfile']);
+		}
+	} else {
+		return; // This package isn't installed.
+	}
+	$pkg_xml = parse_xml_config_pkg("/usr/local/pkg" . $package['configurationfile'], "packagegui");
+	if($pkg_xml['additional_files_needed'] != "") {
+		foreach($pkg_xml['additional_files_needed'] as $item) {
+			$depend_file = substr(strrchr($item['item'], "/"),1); // Strip URLs down to filenames.
+			if(!preg_match("/\.xml/i", $depend_file)) break; // If the file doesn't end in .xml (case-insensitive) exit the loop.
+			if(!file_exists("/usr/local/pkg/" . $pkg_name)) {
+				$depend_name = reverse_strrchr($depend_file, "."); // Strip filename down to (guessed) dependency name.
+				log_error("Fetching missing dependency \(" . $depend_name . "\) for " . $pkg_name);
+				mwexec("/usr/bin/fetch -o /usr/local/pkg/" . $depend_file . " " . $item['item']);
+			}
+			$depends[] = $depend_file;
+		}
+	}
+	return $depends;
+}
+
+/*
  * is_service_running($service_name): checks to see if a service is running.
  *                                    if the service is running returns 1.
  */
@@ -643,7 +686,5 @@ function is_service_running($service_name) {
     foreach ($status_split as $ss) $counter++;
     if($counter > 1) return 1;
     return 0;
-
 }
-
 ?>

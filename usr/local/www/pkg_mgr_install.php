@@ -224,6 +224,8 @@ if(!$pkg_config['packages'])
 
 <?php
 
+
+
 if($_GET['mode'] == "reinstallall") {
     /*
      *  Loop through installed packages and if name matches
@@ -260,7 +262,7 @@ foreach ($packages_to_install as $id) {
 
     /*
      * install the package
-    */
+     */
 
     // Ensure directories are in place for pkg_add.
     mwexec("mkdir /usr/local/www/ext/Services >/dev/null 2>&1");
@@ -299,7 +301,6 @@ foreach ($packages_to_install as $id) {
         mwexec("/usr/bin/killall -HUP syslogd");
     }
     $a_out = &$config['packages']['package']; // save item to installedpkgs
-
     fwrite($fd_log, "Begining (" . $id. ") " . $pkgent['name'] . " package installation.\n" . $status);
 
     log_error("Begining (" . $id. ") " . $pkgent['name'] . " package installation.");
@@ -321,6 +322,7 @@ foreach ($packages_to_install as $id) {
         $pb_percent += 10;
         mwexec("cd /usr/local/pkg/ && fetch " . $pkg_config['packages']['package'][$id]['config_file']);
         if(!file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
+            fwrite($fd_log, "ERROR!  Could not fetch " . $pkg_config['packages']['package'][$id]['config_file']);
             update_output_window("ERROR!  Could not fetch " . $pkg_config['packages']['package'][$id]['config_file'] . "\n");
             exit;
         }

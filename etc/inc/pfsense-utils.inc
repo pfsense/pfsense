@@ -30,7 +30,7 @@
 */
 
 function log_error($error) {
-    log_error($error);
+    syslog(LOG_WARNING, $error);
     return;
 }
 

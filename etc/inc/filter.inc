@@ -115,6 +115,15 @@ function filter_get_altq_queue_scheduler_type($associatedrule) {
 	return $schedulertpye;
 }
 
+function filter_get_rule_interface($associatedrule) {
+	global $config;
+	foreach ($config['filter']['rule'] as $rule) {
+		if($rule['descr'] == $associatedrule)
+			return $rule['interface'];
+	}
+	return "";
+}
+
 function filter_generate_altq_queues() {
 	global $config;
 	$altq_rules = "";

@@ -447,6 +447,7 @@ foreach ($packages_to_install as $id) {
 
     if($package_conf['custom_php_install_command']) {
         update_status("Executing post install commands...");
+        $pb_percent += 50;
         eval($package_conf['custom_php_install_command']);
     }
 

@@ -105,8 +105,8 @@ $config = $config_tmp;
 		  echo "<input type='checkbox' name='" . $pkg['fieldname'] . "' value='" . $value . "'>\n";
 		  echo "<br>" . $pkg['description'] . "\n";
 	      } else if($pkg['type'] == "textarea") {
-		  if($pkg['rows']) $size = " size='" . $pkg['rows'] . "' ";
-		  if($pkg['cols']) $size = " size='" . $pkg['cols'] . "' ";
+		  if($pkg['rows']) $rows = " rows='" . $pkg['rows'] . "' ";
+		  if($pkg['cols']) $cols = " cols='" . $pkg['cols'] . "' ";
 		  echo "<textarea " . $rows . $cols . " name='" . $pkg['fieldname'] . "'>" . $value . "</textarea>\n";
 		  echo "<br>" . $pkg['description'] . "\n";
 	      }

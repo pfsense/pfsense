@@ -175,13 +175,14 @@ print_info_box($sig_warning);
 </form>
 <?php else: ?>
             <?php if (!file_exists($d_firmwarelock_path)): ?>
+<form action="system_firmware.php" method="post" enctype="multipart/form-data">
+<?php if($savemsg == ""): ?>
             <p>Click &quot;Enable firmware
               upload&quot; below, then choose the image file (<?=$g['platform'];?>-*.img)
 			  to be uploaded.<br>Click &quot;Upgrade firmware&quot;
               to start the upgrade process.</p>
-            <form action="system_firmware.php" method="post" enctype="multipart/form-data">
+
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-<?php if($savemsg == ""): ?>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
@@ -220,9 +221,9 @@ print_info_box($sig_warning);
 		  <br>
 		  <a href="system_firmware.php?autoupgrade=true">Invoke Auto Upgrade</a>
 		</tr>
-
-<?php endif ?>
               </table>
+<?php endif ?>
+
 </form>
 <?php endif; endif; ?>
 <?php include("fend.inc"); ?>

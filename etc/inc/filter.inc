@@ -145,7 +145,8 @@ function filter_configure() {
 		$rules_error = exec_command("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
 		$line_error = split("\:", $rules_error);
 		$line_number = $line_error[1];
-		$line_split = split("\n", `/bin/cat /tmp/rules.debug`);
+		$rules_file = `/bin/cat /tmp/rules.debug`;
+		$line_split = split("\n", $rules_file);
 		if(is_array($line_split))
 			$line_error = "The line in question reads: " . $line_split[$line_number];
 		return "There was an error loading the rules.<p><pre>" . $rules_error . "\n" . $line_error . "</pre>";

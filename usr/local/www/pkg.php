@@ -54,6 +54,9 @@ $toeval = "\$evaledvar = \$config['installedpackages']['" . xml_safe_fieldname($
 eval($toeval);
 
 if ($_GET['act'] == "del") {
+	    // loop through our fieldnames and automatically setup the fieldnames
+	    // in the environment.  ie: a fieldname of username with a value of
+            // testuser would automatically eval $username = "testuser";
 	    foreach ($evaledvar as $ip) {
 		    foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
 			    $toeval = "\$" . xml_safe_fieldname($column['fielddescr']) . " = " . "\$ip['" . xml_safe_fieldname($column['fieldname']) . "'];";

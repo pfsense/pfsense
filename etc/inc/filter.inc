@@ -844,7 +844,7 @@ function filter_nat_rules_generate() {
 		}
 	}
 
-	if ($dcfg['mode'] && $pptpdcfg['mode'] != "off") {
+	if ($pptpdcfg['mode'] && $pptpdcfg['mode'] != "off") {
 
 		if ($pptpdcfg['mode'] == "server")
 			$pptpdtarget = "127.0.0.1";

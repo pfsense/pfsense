@@ -244,7 +244,7 @@ EOD;
 		$iflist = get_interface_list();
 
 		foreach ($iflist_prev as $ifn => $ifa) {
-			if (!$ifa[$ifn]['up'] && $iflist[$ifn]['up']) {
+			if (!$ifa['up'] && $iflist[$ifn]['up']) {
 				echo "Detected link-up on interface {$ifn}.\n";
 				return $ifn;
 			}
@@ -264,7 +264,7 @@ EOD;
 
 WARNING: all existing VLANs will be cleared if you proceed!
 
-Do you want to proceed [y|n]? 
+Do you want to proceed [y|n]?
 EOD;
 
 		if (strcasecmp(chop(fgets($fp)), "y") != 0)

@@ -515,7 +515,7 @@ function execute_command_return_output($command) {
  */
 function convert_friendly_interface_to_real_interface_name($interface) {
     global $config;
-    $interface = strtolower($interface);
+    $lc_interface = strtolower($interface);
     if($config['interfaces'][$interface]['if'] <> "")
 	return $config['interfaces'][$interface]['if'];
     $i = 0;
@@ -524,7 +524,8 @@ function convert_friendly_interface_to_real_interface_name($interface) {
 	    $ifdescrs['opt' . $j] = "opt" . $j;
     }
     foreach ($ifdescrs as $ifdescr => $ifname) {
-	if($config['interfaces'][$ifname]['descr'] == $interface)
+	if($config['interfaces'][$ifname]['descr'] == $lc_interface or
+	    $config['interfaces'][$ifname]['descr'] == $interface)
 	    return $config['interfaces'][$ifname]['if'];
     }
     return $interface;

@@ -50,6 +50,11 @@ function find_last_gif_device() {
 function vpn_ipsec_configure($ipchg = false) {
 	global $config, $g;
 
+	if(isset($config['ipsec']['key.preferred_oldsa'])) {
+		// Set sysctl -w net.key.preferred_oldsa=0
+		mwexec("sysctl -w net.key.preferred_oldsa=0");
+	}
+	
 	$number_of_gifs = find_last_gif_device();
 	for($x=0; $x<$number_of_gifs; $x++) {
 		mwexec("/sbin/ifconfig gif" . $x . " delete");

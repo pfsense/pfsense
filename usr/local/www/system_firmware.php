@@ -36,12 +36,19 @@ $d_isfwfile = 1; require("guiconfig.inc");
    returns any HTML message it gets from the server */
 function check_firmware_version() {
 	global $g;
+	$versioncheck_base_url = $g['versioncheckbaseurl'];
+"versioncheckbaseurl" => "http://www.pfsense.com",     
+    "versioncheckpath" => "/pfSense/checkversion.php",
+	if(isset($config['system']['alt_firmware_url']['enabled'])) {
+		$pkg_config_location = $config['system']['alt_pkgconfig_url']['pkgconfig_base_url'] . $config['system']['alt_pkgconfig_url']['pkgconfig_filename'];
+		$pkg_config_base_url = $config['system']['alt_pkgconfig_url']['pkgconfig_base_url'];
+        }
 	$post = "platform=" . rawurlencode($g['platform']) .
 		"&version=" . rawurlencode(trim(file_get_contents("/etc/version")));
 
 	$rfd = @fsockopen("www.pfSense.com", 80, $errno, $errstr, 3);
 	if ($rfd) {
-		$hdr = "POST /pfSense/checkversion.php HTTP/1.0\r\n";
+		$hdr = "POST  HTTP/1.0\r\n";
 		$hdr .= "Content-Type: application/x-www-form-urlencoded\r\n";
 		$hdr .= "User-Agent: pfSense-webConfigurator/1.0\r\n";
 		$hdr .= "Host: www.pfSense.com\r\n";

@@ -72,7 +72,9 @@ if (file_exists($d_firmwarelock_path)) {
 $wkports = array(3389 => "MS RDP", 21 => "FTP", 22 => "SSH", 23 => "Telnet", 25 => "SMTP",
 		53 => "DNS", 80 => "HTTP", 110 => "POP3", 143 => "IMAP", 443 => "HTTPS");
 
-$iptos = array("lowdelay", "throughput", "reliability", "mincost", "congestion");
+/* IP TOS flags */
+$iptos = array("lowdelay", "throughput", "reliability", "congestion");
+
 /* TCP flags */
 $tcpflags = array("fin", "syn", "rst", "psh", "ack", "urg");
 

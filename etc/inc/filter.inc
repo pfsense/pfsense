@@ -568,7 +568,22 @@ function filter_generate_altq_rules() {
 				#$line .= "group $groupnum ";
 			}
 
-			$line .= "queue " . filter_altq_get_queuename($rule['targetqueue']);
+			$line .= "queue " . filter_altq_get_queuename($rule['targetqueue']). " ";
+
+			// tos
+			$iniptos = explode(",", $pconfig['iptos']);
+			$tos .= "tos ";
+			if($iptos <> "")
+				foreach ($iptos as $tos){
+					$isfirst = 0;
+					if (array_search($tos, $iniptos) !== false) {
+						$tos .= $tos . " ";
+					}
+				}
+			if($tos <> "tos ") $line .= $tos;
+
+			// label
+                        if($rule['desc'] <> "") $line .= "label " . $rule['desc'] . " ";
 
 			$line .= "\n";
 
@@ -1395,6 +1410,22 @@ EOD;
 					}
 				}
 			}
+
+			// tos
+			$iniptos = explode(",", $pconfig['iptos']);
+			$tos .= "tos ";
+			if($iptos <> "")
+				foreach ($iptos as $tos){
+					$isfirst = 0;
+					if (array_search($tos, $iniptos) !== false) {
+						$tos .= $tos . " ";
+					}
+				}
+
+			if($tos <> "tos ") $line .= $tos;
+
+			// label
+                        if($rule['desc'] <> "") $line .= "label " . $rule['desc'] . " ";
 
 			$line .= "\n";
 

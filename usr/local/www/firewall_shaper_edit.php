@@ -682,15 +682,27 @@ function dst_rep_change() {
                     on the interface specified above (as seen from the firewall's
                     perspective). </td>
                 </tr>
-
-
-                <tr>
-                  <td width="22%" valign="top" class="vncell">IP packet length</td>
-                  <td width="78%" class="vtable"><input name="iplen" type="text" id="iplen" size="10" value="<?=htmlspecialchars($pconfig['iplen']);?>">
-                    <br>
-                    Setting this makes the rule match packets of a given length
-                    (either a single value or a range in the syntax <em>from-to</em>,
-                    e.g. 0-80). </td>
+		<tr>
+                  <td width="22%" valign="top" class="vncell">IP Type of Service (TOS)</td>
+                  <td width="78%" class="vtable"> <table border="0" cellspacing="0" cellpadding="0">
+                      <?php
+                                  $iniptos = explode(",", $pconfig['iptos']);
+                                  foreach ($iptos as $tos): $dontcare = true; ?>
+                      <tr>
+                        <td width="80" nowrap><strong>
+                          <?echo $tos;?>
+                          </strong></td>
+                        <td nowrap> <input type="radio" name="iptos_<?=$tos;?>" value="on" <?php if (array_search($tos, $iniptos) !== false) { echo "checked"; $dontcare = false; }?>>
+                          yes&nbsp;&nbsp;&nbsp;</td>
+                        <td nowrap> <input type="radio" name="iptos_<?=$tos;?>" value="off" <?php if (array_search("!" . $tos, $iniptos) !== false) { echo "checked"; $dontcare = false; }?>>
+                          no&nbsp;&nbsp;&nbsp;</td>
+                        <td nowrap> <input type="radio" name="iptos_<?=$tos;?>" value="" <?php if ($dontcare) echo "checked";?>>
+                          don't care</td>
+                      </tr>
+                      <?php endforeach; ?>
+                    </table>
+                    <span class="vexpl">Use this to match packets according to their IP TOS values.
+                    </span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">TCP flags</td>

@@ -167,7 +167,13 @@ include("fbegin.inc");
 		    eval($pkg['custom_php_resync_config_command']);
 		}
 
-		header("Location:  pkg.php?xml=" . $xml);
+		parse_package_templates();
+
+		if($pkg['aftersaveredirect'] <> "") {
+		    header("Location:  " . $pkg['aftersaveredirect']);
+		} else {
+		    header("Location:  pkg.php?xml=" . $xml);
+		}
 		exit;
 	}
 }
@@ -475,6 +481,87 @@ function fixup_string($string) {
 	$string = $newstring;
 	// fixup #4: fix'r'up here.
 	return $newstring;
+}
+
+/*
+ *  Parse templates if they are defined
+ */
+function parse_package_templates() {
+	global $pkg, $config;
+	if($pkg['templates']['template'] <> "")
+	    foreach($pkg['templates']['template'] as $pkg_template_row) {
+		$filename = $pkg_template_row['filename'];
+		$template_text = $pkg_template_row['templatecontents'];
+
+		/* calculate total row helpers count */
+		foreach ($pkg['fields']['field'] as $fields) {
+			if($fields['type'] == "rowhelper") {
+				// save rowhelper items.
+                                $row_helper_total_rows = 0;
+				for($x=0; $x<99; $x++) { // XXX: this really should be passed from the form.
+					foreach($fields['rowhelper']['rowhelperfield'] as $rowhelperfield) {
+						if($firstfield == "")  {
+						  $firstfield = $rowhelperfield['fieldname'];
+						} else {
+						  if($firstfield == $rowhelperfield['fieldname']) $rows++;
+						}
+						$comd = "\$value = \$_POST['" . $rowhelperfield['fieldname'] . $x . "'];";
+						eval($comd);
+						if($value <> "") {
+						    //$template_text = str_replace($fieldname . "_fieldvalue", $fieldvalue, $template_text);
+						} else {
+						    $row_helper_total_rows = $rows;
+						    break;
+						}
+					}
+				}
+			}
+		}
+
+		/* replace $domain_total_rows with total rows */
+		$template_text = str_replace("$domain_total_rows", $row_helper_total_rows, $template_text);
+
+		/* change fields defined as fieldname_fieldvalue to their value */
+		foreach ($pkg['fields']['field'] as $fields) {
+			if($fields['type'] == "rowhelper") {
+				// save rowhelper items.
+				for($x=0; $x<99; $x++) { // XXX: this really should be passed from the form.
+					$row_helper_data = "";
+					foreach($fields['rowhelper']['rowhelperfield'] as $rowhelperfield) {
+						if($firstfield == "")  {
+						  $firstfield = $rowhelperfield['fieldname'];
+						} else {
+						  if($firstfield == $rowhelperfield['fieldname']) $rows++;
+						}
+						$comd = "\$value = \$_POST['" . $rowhelperfield['fieldname'] . $x . "'];";
+						eval($comd);
+						if($value <> "") {
+						    $row_helper_data .= $value . "  " ;
+						}
+						ereg($rowhelperfield['fieldname'] . "_fieldvalue\[(.*)\]", $template_text, $sep);
+						foreach ($sep as $se) $seperator = $se;
+						if($seperator <> "") {
+						    $row_helper_data = ereg_replace("  ", $seperator, $row_helper_data);
+						    $template_text = ereg_replace("\[" . $seperator . "\]", "", $template_text);
+						}
+						$template_text = str_replace($rowhelperfield['fieldname'] . "_fieldvalue", $row_helper_data, $template_text);
+					}
+				}
+			} else {
+				$fieldname  = $fields['fieldname'];
+				$fieldvalue = $_POST[$fieldname];
+				$template_text = str_replace($fieldname . "_fieldvalue", $fieldvalue, $template_text);
+			}
+		}
+
+		/* replace cr's */
+		$template_text = str_replace("\\n", "\n", $template_text);
+
+		/* write out new template file */
+		$fout = fopen($filename,"w");
+		fwrite($fout, $template_text);
+		fclose($fout);
+	    }
 }
 
 ?>

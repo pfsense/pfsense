@@ -49,6 +49,12 @@ function filter_pflog_start() {
 function filter_configure() {
 	global $config, $g;
 
+	$lan_if = $config['interfaces']['lan']['if']);
+	$wan_if = get_real_wan_interface();
+
+	if(does_interface_exist($lan_if) == false) return;
+	if(does_interface_exist($wan_if) == false) return;
+
 	if ($g['booting'])
 		echo "Configuring firewall... ";
 

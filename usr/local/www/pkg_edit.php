@@ -59,6 +59,10 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
+// grab the installedpackages->package_name section.
+$toeval = "\$a_pkg = &\$config['installedpackages']['" . $package_name . "']['config'];";
+eval($toeval);
+
 $toeval = "if (!is_array(\$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'])) \$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'] = array();";
 eval($toeval);
 
@@ -204,13 +208,21 @@ $config = $config_tmp;
 
 	  <?php
 	  if(!$pkga['dontdisplayname']) {
-       echo "<td width=\"22%\" class=\"vncellreq\">";
-	   echo $pkga['fielddescr'];
-       echo "</td>";
+		echo "<td width=\"22%\" class=\"vncellreq\">";
+		echo $pkga['fielddescr'];
+		echo "</td>";
 	  }
 
 	  if(!$pkga['dontcombinecells'])
 		echo "<td class=\"vtable\">";
+
+		// if user is editing a record, load in the data.
+		if (isset($id) && $a_pkg[$id]) {
+			$fieldname = $pkga['fieldname'];
+			$toeval = "\$value = \$a_pkg[" . $id . "]['" . $fieldname . "'];";
+			echo "<!-- eval: " . $toeval . "-->\n";
+			eval($toeval);
+		}
 
 	      if($pkga['type'] == "input") {
 			if($pkga['size']) $size = " size='" . $pkga['size'] . "' ";
@@ -221,11 +233,13 @@ $config = $config_tmp;
 			echo "<br>" . $pkga['description'] . "\n";
 	      } else if($pkga['type'] == "select") {
 		  // XXX: TODO: set $selected
+                  $selected = "";
                   if($pkga['size']) $size = " size='" . $pkga['size'] . "' ";
 		  if($pkga['multiple'] == "yes") $multiple = "MULTIPLE ";
 			echo "<select " . $multiple . $size . "id='" . $pkga['fieldname'] . "' name='" . $pkga['fieldname'] . "'>\n";
 		  foreach ($pkga['options']['option'] as $opt) {
-		      echo "\t<option name='" . $opt['name'] . "' value='" . $opt['value'] . "'>" . $opt['name'] . "</option>\n";
+			if($opt['value'] == $value) $selected = " SELECTED";
+		        echo "\t<option name='" . $opt['name'] . "' value='" . $opt['value'] . "'" . $selected . ">" . $opt['name'] . "</option>\n";
 		  }
 		   echo "</select>\n";
 		   echo "<br>" . $pkga['description'] . "\n";
@@ -279,9 +293,9 @@ $config = $config_tmp;
 			<table name="maintable" id="maintable">
 			<tr>
 			<?php
-			foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
-			  echo "<td><b>" . $rowhelper['fielddescr'] . "</td>\n";
-			}
+				foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
+				  echo "<td><b>" . $rowhelper['fielddescr'] . "</td>\n";
+				}
 				echo "</tr>";
 				echo "<tbody>";
 
@@ -289,44 +303,54 @@ $config = $config_tmp;
 				  // XXX: traverse saved fields, add back needed rows.
 				echo "</tr>";
 
-				if($rowcounter == 0) {
-					// nothing saved.  manually add the first row.
-                                        echo "<tr>\n";
-					$rowcounter = 0;
-					$trc = 0;
-					foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
-						$temp = "";
-						$text = "";
-						$value = "";
-						if($rowhelper['value'] <> "") $value = $rowhelper['value'];
-						echo "<td>\n";
-						if($rowhelper['type'] == "input") {
-							echo "<input size='8' name='" . $rowhelper['fieldname'] . "0" . "' value='" . $value . "'>\n";
-						} else if($rowhelper['type'] == "password") {
-							echo "<input type='password' name='" . $rowhelper['fieldname'] . "0" . "' value='" . $value . "'>\n";
-						} else if($rowhelper['type'] == "textarea") {
-							echo "<textarea name='" . $rowhelper['fieldname'] . "0" . "'>" . $value . "</textarea>\n";
-						} else if($rowhelper['type'] == "select") {
-							echo "<select name='" . $rowhelper['fieldname'] . "0" . "'>\n";
-							foreach($rowhelper['options']['option'] as $rowopt) {
-								$text .= "<option value='" . $rowopt['value'] . "'>" . $rowopt['name'] . "</option>";
-								echo "<option value='" . $rowopt['value'] . "'>" . $rowopt['name'] . "</option>\n";
-							}
-							echo "</select>\n";
+				echo "<tr>\n";
+				$rowcounter = 0;
+				$trc = 0;
+				if(isset($a_pkg[$id]['row'])) {
+					foreach($a_pkg[$id]['row'] as $row) {
+					/*
+					 * loop through saved data for record if it exists, populating rowhelper
+					 */					
+						foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
+							if($rowhelper['value'] <> "") $value = $rowhelper['value'];
+							$fieldname = $rowhelper['fieldname'];
+							// if user is editing a record, load in the data.
+							if (isset($id) && $a_pkg[$id]) {							
+								$toeval = "\$value = \$row['" . $fieldname . "'];";
+								echo "<!-- eval: " . $toeval . "-->\n";
+								eval($toeval);
+								echo "<!-- value: " . $value . "-->\n";
+							}						
+							$options = "";
+							$type = $rowhelper['type'];
+							$fieldname = $rowhelper['fieldname'];
+							if($type == "option") $options = &$rowhelper['options']['option'];
+							display_row($trc, $value, $fieldname, $type, $rowhelper);
 						}
-						echo "</td>\n";
-						echo "<script language=\"JavaScript\">\n";
-						echo "<!--\n";
-						echo "newrow[" . $trc . "] = \"" . $text . "\";\n";
-						echo "-->\n";
-						echo "</script>\n";
 						$trc++;
+						$rowcounter++;
+						echo "<td>";
+						echo "<input type=\"image\" src=\"/x.gif\" onclick=\"removeRow(this); return false;\" value=\"Delete\">";
+						echo "</td>\n";
+						echo "</tr>\n";
 					}
-					$rowcounter=0;
-					echo "<td>";
-					echo "<input type=\"image\" src=\"/x.gif\" onclick=\"removeRow(this); return false;\" value=\"Delete\">";
-					echo "</td>\n";
-					echo "</tr>\n";
+				}
+				if($trc == 0) {
+					/*
+					 *  no records loaded.
+                                         *  just show a generic line non-populated with saved data
+                                         */
+                                        foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
+						if($rowhelper['value'] <> "") $value = $rowhelper['value'];
+						$fieldname = $rowhelper['fieldname'];						
+						$options = "";
+						$type = $rowhelper['type'];
+						$fieldname = $rowhelper['fieldname'];
+						if($type == "option") $options = &$rowhelper['options']['option'];
+						display_row($trc, $value, $fieldname, $type, $rowhelper);
+						$trc++;
+						$rowcounter++;
+					}
 				}
 			?>
 
@@ -373,3 +397,39 @@ $config = $config_tmp;
 </body>
 </html>
 
+
+<?php
+
+/*
+ * ROW Helpers function
+ */
+function display_row($trc, $value, $fieldname, $type, $rowhelper) {
+	$temp = "";
+	$text = "";
+	echo "<td>\n";
+	if($type == "input") {
+		echo "<input size='8' name='" . $fieldname . $trc . "' value='" . $value . "'>\n";
+	} else if($type == "password") {
+		echo "<input type='password' name='" . $fieldname . $trc . "' value='" . $value . "'>\n";
+	} else if($type == "textarea") {
+		echo "<textarea name='" . $fieldname . $trc . "'>" . $value . "</textarea>\n";
+	} else if($type == "select") {
+		echo "<select name='" . $fieldname . $trc . "'>\n";
+		foreach($rowhelper['options']['option'] as $rowopt) {
+			$selected = "";
+			if($rowopt['value'] == $value) $selected = " SELECTED";
+			$text .= "<option value='" . $rowopt['value'] . "'" . $selected . ">" . $rowopt['name'] . "</option>";
+			echo "<option value='" . $rowopt['value'] . "'" . $selected . ">" . $rowopt['name'] . "</option>\n";
+		}
+		echo "</select>\n";
+	}
+	// javascript helpers for row_helper_dynamic.js
+	echo "</td>\n";
+	echo "<script language=\"JavaScript\">\n";
+	echo "<!--\n";
+	echo "newrow[" . $trc . "] = \"" . $text . "\";\n";
+	echo "-->\n";
+	echo "</script>\n";
+}
+
+?>

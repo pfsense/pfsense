@@ -72,6 +72,9 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
+if($pkg['custom_php_global_functions'] <> "")
+        eval($pkg['custom_php_global_functions']);
+
 // grab the installedpackages->package_name section.
 $toeval = "\$a_pkg = &\$config['installedpackages']['" . $name . "']['config'];";
 eval($toeval);
@@ -82,8 +85,6 @@ eval($toeval);
 $toeval = "\$a_pkg = &\$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'];";
 eval($toeval);
 
-if($pkg['custom_php_global_functions'] <> "")
-        eval($pkg['custom_php_global_functions']);
 
 if($pkg['custom_php_command_before_form'] <> "")
 	eval($pkg['custom_php_command_before_form']);

@@ -81,8 +81,8 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 	else if (stristr($_POST['Submit'], "Upgrade") || $_POST['sig_override'])
 		$mode = "upgrade";
 	else if ($_POST['sig_no']) {
-		if(file_exists("{$g['ftmp_path']}/firmware.img"))
-				unlink("{$g['ftmp_path']}/firmware.img");
+		if(file_exists("{$g['tmp_path']}/firmware.tgz"))
+				unlink("{$g['tmp_path']}/firmware.tgz");
     }
 
 	if ($mode) {
@@ -106,10 +106,10 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 						unlink($d_fwupenabled_path);
 				} else {
 					/* move the image so PHP won't delete it */
-					rename($_FILES['ulfile']['tmp_name'], "{$g['ftmp_path']}/firmware.img");
+					rename($_FILES['ulfile']['tmp_name'], "{$g['tmp_path']}/firmware.tgz");
 
 					/* check digital signature */
-					$sigchk = verify_digital_signature("{$g['ftmp_path']}/firmware.img");
+					$sigchk = verify_digital_signature("{$g['tmp_path']}/firmware.tgz");
 
 					if ($sigchk == 1)
 						$sig_warning = "The digital signature on this image is invalid.";
@@ -118,9 +118,9 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 					else if (($sigchk == 3) || ($sigchk == 4))
 						$sig_warning = "There has been an error verifying the signature on this image.";
 
-					if (!verify_gzip_file("{$g['ftmp_path']}/firmware.img")) {
+					if (!verify_gzip_file("{$g['tmp_path']}/firmware.tgz")) {
 						$input_errors[] = "The image file is corrupt.";
-						unlink("{$g['ftmp_path']}/firmware.img");
+						unlink("{$g['tmp_path']}/firmware.tgz");
 					}
 				}
 			}
@@ -128,7 +128,7 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 			if (!$input_errors && !file_exists($d_firmwarelock_path) && (!$sig_warning || $_POST['sig_override'])) {
 				/* fire up the update script in the background */
 				touch($d_firmwarelock_path);
-				exec_rc_script_async("/etc/rc.firmware pfSenseupgrade {$g['ftmp_path']}/firmware.img");
+				exec_rc_script_async("/etc/rc.firmware pfSenseupgrade {$g['tmp_path']}/firmware.tgz");
 
 				$savemsg = "The firmware is now being installed. The firewall will reboot automatically.";
 			}

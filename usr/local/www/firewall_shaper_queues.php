@@ -170,7 +170,7 @@ if ($_GET['act'] == "del") {
 			echo "<img src='bar_blue.gif' height='15' name='queue{$i}widtha' id='queue{$i}widtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
 			echo "<img src='bar_gray.gif' height='15' name='queue{$i}widthb' id='queue{$i}widthb' width='" . (100 - $cpuUsage) . "' border='0' align='absmiddle'>";
 			echo "<nobr><img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
-			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='25' name='queue{$i}meter' id='queue{$i}meter' value='{$cpuUsage}'></nobr>";
+			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='25' name='queue{$i}meter' id='queue{$i}meter' value='( Loading )'></nobr>";
 ?>
 
 			</td>
@@ -243,7 +243,7 @@ While(!Connection_Aborted()) {
 	 *   firefox and ie can be a bear on ram usage!
          */
 	$counter++;
-	if($counter > 20) {
+	if($counter > 40) {
 		echo "Redirecting to <a href=\"firewall_shaper_queues.php\">Firewall Shaper Queues</a>.<p>";
 		echo "<meta http-equiv=\"refresh\" content=\"1;url=firewall_shaper_queues.php\">";
 		mwexec("/usr/bin/killall -9 pfctl");

@@ -149,6 +149,9 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['log'] = isset($a_filter[$id]['log']);
 	$pconfig['frags'] = isset($a_filter[$id]['frags']);
 	$pconfig['descr'] = $a_filter[$id]['descr'];
+        $pconfig['max-src-nodes'] = $a_filter[$id]['max-src-nodes'];
+        $pconfig['max-src-states'] = $a_filter[$id]['max-src-states'];
+        $pconfig['statetype'] = $a_filter[$id]['statetype'];
 	$pconfig['statetimeout'] = $a_filter[$id]['statetimeout'];
 
 } else {
@@ -301,6 +304,7 @@ if ($_POST) {
 		$filterent['max-src-nodes'] = $_POST['max-src-nodes'];
 		$filterent['max-src-states'] = $_POST['max-src-states'];
 		$filterent['statetimeout'] = $_POST['statetimeout'];
+		$filterent['statetype'] = $_POST['statetype'];
 
 		if ($_POST['proto'] != "any")
 			$filterent['protocol'] = $_POST['proto'];

@@ -229,6 +229,10 @@ if ($_POST) {
 			$config['bigpond']['minheartbeatinterval'] = $_POST['bigpond_minheartbeatinterval'];
 		}
 
+		$wancfg['schedulertype'] = $_POST['schedulertype'];
+		$wancfg['bandwidth'] = $_POST['bandwidth'];
+		$wancfg['bandwidthtype'] = $_POST['bandwidthtype'];
+
 		$wancfg['blockpriv'] = $_POST['blockpriv'] ? true : false;
 		$wancfg['spoofmac'] = $_POST['spoofmac'];
 		$wancfg['mtu'] = $_POST['mtu'];
@@ -519,7 +523,7 @@ function type_change(enable_change,enable_change_pptp) {
 		  </td>
                 </tr>
                 <tr>
-                  <td colspan="2" valign="top" class="listtopic">Bandwidth Management (Traffic Shaping)</td>
+                  <td colspan="2" valign="top" height="16"></td>
                 </tr>
                 <tr>
                   <td colspan="2" valign="top" class="listtopic">DHCP client configuration</td>

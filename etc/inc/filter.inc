@@ -607,10 +607,12 @@ function filter_generate_altq_rules() {
                         if ($ispptp) {
                                 $line .= "via ng" . ($iif+1);
                         } else {
+				$if = $config['interfaces'][$rule['interface']]['if'];
+
                                 if ($rule['interface'] == "wan")
                                         $if = $wanif;
-                                else
-                                        $if = $config['interfaces'][$rule['interface']]['if'];
+                                else if($rule['interface'] == "lan")
+					$if = $wanif;
 
                                 $line .= "via {$if}";
                         }

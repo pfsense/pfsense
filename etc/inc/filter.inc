@@ -112,10 +112,10 @@ function filter_configure() {
 		$rules.= "set limit states " . $maximumstates . "\n";
 	}
 	$rules.= "\nscrub all " . $mssclamp ."\n"; // reassemble all directions
-	$rules.= $altq_ints;
+	$rules.= $altq_ints . "\n";
 	$rules.= $altq_queues . "\n";
-	$rules.= $natrules;
-        $rules.= $pfrules;
+	$rules.= $natrules . "\n";
+        $rules.= $pfrules . "\n";
 	fwrite($fd, $rules);
         fclose($fd);
 

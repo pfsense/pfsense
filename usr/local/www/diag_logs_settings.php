@@ -192,7 +192,7 @@ function enable_change(enable_over) {
                         <td width="78%"><strong><span class="red">Note:</span></strong><br>
                           syslog sends UDP datagrams to port 514 on the specified
                           remote syslog server. Be sure to set syslogd on the
-                          remote server to accept syslog messages from m0n0wall.
+                          remote server to accept syslog messages from pfSense.
                         </td>
                       </tr>
                     </table>

@@ -216,13 +216,14 @@ print_info_box($sig_warning);
 		  <br>
 		  <input name="autoupgrade" type="submit" class="formbtn" value="Invoke Auto Upgrade">
 		</tr>
+		<tr><td>&nbsp;</td></tr>
                 <tr>
 		 <td colspan="2" class="listtopic">Invoke pfSense Manual Upgrade</td>
 		</tr>
 		  <td width="22%" valign="baseline" class="vncell">&nbsp;</td>
                   <td width="78%">
             <p>Click &quot;Enable firmware
-              upload&quot; below, then choose the image file (<?=$g['platform'];?>-*.img)
+              upload&quot; below, then choose the image file (<?=$g['platform'];?>-*.tgz)
 			  to be uploaded.<br>Click &quot;Upgrade firmware&quot;
               to start the upgrade process.</p>
                     <?php if (!file_exists($d_sysrebootreqd_path)): ?>

@@ -63,6 +63,10 @@ function return_dir_as_array($dir) {
 function return_filename_as_string($filename) {
     $tmp = "";
     $fd = fopen($filename, "r");
+    if(!$fd) {
+	log_error("Could not open {$filename}");
+	return;
+    }
     while(!feof($fd)) {
 	$tmp .= fread($fd,49);
     }

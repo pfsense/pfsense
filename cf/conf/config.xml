@@ -11,7 +11,7 @@
 		<username>admin</username>
 		<password>$1$2xGLA75j$W/jiJc00HYBZX7kFjxjQv0</password>
 		<timezone>Etc/UTC</timezone>
-		<time-update-interval>400</time-update-interval>
+		<time-update-interval>300</time-update-interval>
 		<timeservers>pool.ntp.org</timeservers>
 		<webgui>
 			<protocol>http</protocol>

@@ -51,7 +51,10 @@ if ($_POST) {
 			$retval = filter_configure();
 			config_unlock();
 		}
-		$savemsg = get_std_save_message($retval);
+		if(stristr($retval, "error") <> true)
+		    $savemsg = get_std_save_message($retval);
+		else
+		    $savemsg = $retval;
 		if ($retval == 0) {
 			if (file_exists($d_aliasesdirty_path))
 				unlink($d_aliasesdirty_path);

@@ -148,9 +148,9 @@ function filter_configure() {
 	if($rules_loading <> 0) {
 		$rules_error = exec_command("/sbin/pfctl -f /tmp/rules.debug");
 		return "There was an error loading the rules.<p><pre>" . $rules_error . "</pre>";
+	} else {
+		return 0;
 	}
-
-	return 0;
 }
 
 function exec_command($command) {

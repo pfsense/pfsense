@@ -29,10 +29,29 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*
+ * log_error: send string to syslog
+ */ 
 function log_error($error) {
     syslog(LOG_WARNING, $error);
     return;
 }
 
+/*
+ * return_dir_as_array($dir): returns $dir contents as an array
+ */
+function return_dir_as_array($dir) {
+    if (is_dir($dir)) {
+	$dir_array = array();
+	if ($dh = opendir($dir)) {
+	    while (($file = readdir($dh)) !== false) {
+		array_push($dir_array, $file);
+		//echo "filename: $file : filetype: " . filetype($dir . $file) . "\n";
+	    }
+	    closedir($dh);
+	}
+    }
+    return $dir_array;
+}
 
 ?>

@@ -64,7 +64,7 @@ function enable_hardware_offloading($interface) {
     $supported_ints = array('fxp');
     foreach($supported_ints as $int) {
 	if(stristr($interface,$int) != FALSE) {
-	    mwexec("/sbin/ifconfig $interfface link0");
+	    mwexec("/sbin/ifconfig $interface link0");
 	}
     }
 }

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?> 
 <pfsensewizard>
-<totalsteps>2</totalsteps>
+<totalsteps>8</totalsteps>
 <step>
 	<id>1</id>
 	<title>pfSense Setup Wizard</title>
@@ -18,13 +18,25 @@
 	<description>On this screen you will set the General pfSense paramaters.</description>
 	<fields>
 		<field>
+			<name>Hostname</name>
+			<type>input</type>
+			<bindstofield>system->hostname</bindstofield>
+			<description>EXAMPLE: myserver</description>
+		</field>
+		<field>
+			<name>Domain</name>
+			<type>input</type>
+			<bindstofield>system->domain</bindstofield>
+			<description>EXAMPLE: mydomain.com</description>
+		</field>		
+		<field>
 			<name>Primary DNS Server</name>
 			<type>input</type>
 			<bindstofield>system->dnsserver</bindstofield>
 			<!-- we must unset the fields because this is an array. -->
 			<unsetfield>yes</unsetfield>
 			<arraynum>0</arraynum>
-		</field>
+		</field>		
 		<field>
 			<name>Secondary DNS Server</name>
 			<type>input</type>
@@ -39,22 +51,25 @@
 </step>	
 <step>
 	<id>3</id>
-	<title>Time and Date</title>
+	<title>Time Server Information</title>
 	<description>Please enter the time, date and time zone.</description>
 	<fields>
 		<field>
-			<name>Date</name>
-			<description>Enter the date in MM/DD/YY format.</description>
+			<name>Time server update frequency</name>
+			<description>Enter the amount in minutes.</description>
 			<type>input</type>
+			<bindstofield>system->time-update-interval</bindstofield>
 		</field>
 		<field>
-			<name>Time</name>
-			<description>Enter the time in HH:MM format.</description>
+			<name>Time server dns name</name>
+			<description>Enter the name of the time server.</description>
 			<type>input</type>
+			<bindstofield>system->timeservers</bindstofield>
 		</field>
 		<field>
 			<name>Timezone</name>
 			<type>select</type>
+			<bindstofield>system->timezone</bindstofield>
 			<options>
 				<option>
 						<name>Africa/Abidjan</name>
@@ -1703,9 +1718,6 @@
 			<type>submit</type>
 		</field>				
 	</fields>
-        <stepsubmitphpaction>
-            system("date " . $_POST['Date'] . $_POST['Time']);
-        </stepsubmitphpaction>
 </step>
 <step>
 	<id>4</id>
@@ -1714,10 +1726,13 @@
 	<fields>
 		<field>
 			<name>WAN IP Address</name>
+			<bindstofield>interfaces->wan->ipaddr</bindstofield>
 			<type>input</type>
+			<description>Type dhcp if this interface uses dhcp to obtain its ip address.</description>
 		</field>
 		<field>
 			<name>Subnet Mask</name>
+			<bindstofield>interfaces->wan->subnet</bindstofield>
 			<type>select</type>
 			<options>
 				<option>
@@ -1864,10 +1879,13 @@
 		<field>
 			<name>LAN IP Address</name>
 			<type>input</type>
+			<bindstofield>interfaces->lan->ipaddr</bindstofield>
+			<description>Type dhcp if this interface uses dhcp to obtain its ip address.</description>
 		</field>
 				<field>
 			<name>Subnet Mask</name>
 			<type>select</type>
+			<bindstofield>interfaces->lan->subnet</bindstofield>
 			<options>
 				<option>
 						<name>1</name>
@@ -1999,6 +2017,10 @@
 				</option>
 			</options>
 		</field>
+		<field>
+			<name>Next</name>
+			<type>submit</type>
+		</field>		
 	</fields>
 </step>
 <step>
@@ -2009,6 +2031,22 @@
 		<field>
 			<name>ADMIN Password</name>
 			<type>password</type>
+		</field>
+		<field>
+			<name>ADMIN Password AGAIN</name>
+			<type>password</type>
+			<stepsubmitphpaction>
+				if($_POST['adminpassword'] == $_POST['adminpasswordagain']) {
+					$fd = popen("/usr/sbin/pw usermod -n root -H 0", "w");
+					$salt = md5(time());				
+					$crypted_pw = crypt($_POST['adminpassword'],$salt);
+					fwrite($fd, $crypted_pw);
+					pclose($fd);				
+				} else {
+					print_info_box_np("Passwords do not match!");
+					die;
+				}
+			</stepsubmitphpaction>
 		</field>
 		<field>
 			<name>Next</name>
@@ -2022,9 +2060,18 @@
 	<description>On this screen we will reboot pfSense so your changes will take affect..</description>
 	<fields>
 		<field>
+			<stepsubmitphpaction>/sbin/shutdown -r now</stepsubmitphpaction>
 			<name>Reboot</name>
 			<type>submit</type>
 		</field>
 	</fields>
+	<stepsubmitphpaction>
+		system("/sbin/shutdown -r now");
+	</stepsubmitphpaction>
+</step>
+<step>
+	<id>8</id>
+	<title>Reboot in progress</title>
+	<description>A reboot is now in progress.</description>
 </step>
 </pfsensewizard>

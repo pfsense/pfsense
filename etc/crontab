@@ -1,0 +1,12 @@
+SHELL=/bin/sh
+PATH=/etc:/bin:/sbin:/usr/bin:/usr/sbin
+HOME=/var/log
+#minute hour    mday    month   wday    who     command
+*/5	*	*	*	*	root	/usr/libexec/atrun
+*/11	*	*	*	*	operator	/usr/libexec/save-entropy
+0	*	*	*	*	root	newsyslog
+1	3	*	*	*	root	periodic daily
+15	4	*	*	6	root	periodic weekly
+30	5	1	*	*	root	periodic monthly
+1,31	0-5	*	*	*	root	adjkerntz -a
+12	12	*	*	*	root	/usr/bin/fetch -o /etc/bogons "http://www.cymru.com/Documents/bogon-bn-nonagg.txt" >/dev/null 2>&1

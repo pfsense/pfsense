@@ -1358,12 +1358,10 @@ EOD;
 					$line .= "on \$" . $interface . " ";
 			}
 
-			if($config['interfaces'][$rule]['interface']['gateway'] <> "") {
-				$rg = $config['interfaces'][$rule][$rule['interface']]['gateway'];
-				$ri = filter_translate_type_to_real_interface($rule['interface']);
-				if($rg <> "" and $ri <> "") {
-					$line .= "reply-to (" . $ri . " " . $rg . ") ";
-				}
+			$rg = $config['interfaces'][$rule['interface']]['gateway'];
+			$ri = filter_translate_type_to_real_interface($rule['interface']);
+			if($rg <> "" and $ri <> "") {
+				$line .= "reply-to (" . $ri . " " . $rg . ") ";
 			}
 
 			if (isset($rule['protocol'])) {

@@ -360,7 +360,14 @@ if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
                         fwrite($fd_log, "Adding menu option to " . $menu['section'] . "/" . $menu['name'] . "\n");
                         $fd = fopen("/usr/local/www/ext/" . $menu['section'] . "/" . $menu['name'] , "w");
                         if($menu['url'] <> "") {
-                                    fwrite($fd, $menu['url'] . "\n");
+                                    // override $myurl for script.
+                                    $toeval = "\$myurl = \"" . getenv("SERVER_ADDR") . "\"; \n";
+                                    eval($toeval);
+                                    // eval url so that above $myurl item can be processed if need be.
+                                    $urltmp = $menu['url']
+                                    $toeval = "\$url = \"" . $urltmp . "\"; \n";
+                                    eval($toeval);
+                                    fwrite($fd, $url . "\n");
                         } else {
                                     $xml = "";
                                     if(stristr($menu['configfile'],".xml") == "") $xml = ".xml";

@@ -39,11 +39,13 @@ fi
 
 if [ "$PMD" = "$MD" ]; then
         echo "MD5's match."  | logger -p daemon.info -i -t AutoUpgrade
+        /etc/rc.conf_mount_rw
         if [ -r "/tmp/custom.tgz" ]; then
             /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz /tmp/custom.tgz
         else
             /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz
         fi
+        /etc/rc.conf_mount_rw
         exit 0
 fi
 

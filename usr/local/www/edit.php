@@ -2,7 +2,7 @@
 <?php
 /*
     edit.php
-    Copyright (C) 2004 Scott Ullrich
+    Copyright (C) 2004, 2005 Scott Ullrich
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -67,7 +67,7 @@ else
 	Exec+ v1.02-000 - Copyright 2001-2003, All rights reserved
 	Created by technologEase (http://www.technologEase.com).
 	(modified for m0n0wall by Manuel Kasper <mk@neon1.net>)
-        (modified for pfSense Edit/Save file by Scott Ullrich, Copyright 2004)
+        (modified for pfSense Edit/Save file by Scott Ullrich, Copyright 2004, 2005)
 */
 
 include("fbegin.inc");

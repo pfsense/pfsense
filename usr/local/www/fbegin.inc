@@ -130,6 +130,7 @@ function showhide(tspan, tri) {
 				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/edit.php" class="navlnk">Edit File</a><br>
 				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/exec.php" class="navlnk">Command Prompt</a><br>
 				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/reboot.php" class="navlnk">Reboot system</a><br>
+				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/halt.php" class="navlnk">Halt system</a><br>
 				  <?php echo return_ext_menu("Diagnostics"); ?>
 			  </span>
 			  </font></span>

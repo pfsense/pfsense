@@ -127,11 +127,7 @@ if (isset($id) && $a_shaper[$id]) {
 		$pconfig['dstmask'], $pconfig['dstnot'],
 		$pconfig['dstbeginport'], $pconfig['dstendport']);
 
-	if (isset($a_shaper[$id]['targetpipe'])) {
-		$pconfig['target'] = "targetpipe:" . $a_shaper[$id]['targetpipe'];
-	} else if (isset($a_shaper[$id]['targetqueue'])) {
-		$pconfig['target'] = "targetqueue:" . $a_shaper[$id]['targetqueue'];
-	}
+	$pconfig['targetqueue'] = $a_shaper[$id]['targetqueue'];
 
 	$pconfig['direction'] = $a_shaper[$id]['direction'];
 	$pconfig['iptos'] = $a_shaper[$id]['iptos'];
@@ -327,8 +323,7 @@ if ($_POST) {
 		$shaperent['descr'] = $_POST['descr'];
 		$shaperent['disabled'] = $_POST['disabled'] ? true : false;
 
-		list($targettype,$target) = explode(":", $_POST['target']);
-		$shaperent[$targettype] = $target;
+		$shaperent['targetqueue'] = $_POST['target'];
 
 		if (isset($id) && $a_shaper[$id])
 			$a_shaper[$id] = $shaperent;

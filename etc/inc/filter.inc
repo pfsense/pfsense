@@ -881,8 +881,8 @@ function filter_rules_generate() {
 	/* if squid is installed, lets install its rule */
 	$squid_installed = run_command_return_string("/bin/ls /var/db/pkg/ | grep squid");
 	if ($squid_installed <> "") {
-		$ipfrules .= "pass in on " . $lanif . " inet proto tcp from any to 127.0.0.1 port 3128 keep state label \"transparent proxy\"\n";
-		$ipfrules .= "pass out on " . $wanif . "  inet proto tcp from any to any port www keep state label \"transparent proxy\"\n";
+		$ipfrules .= "pass in quick on " . $lanif . " inet proto tcp from any to 127.0.0.1 port 3128 keep state label \"transparent proxy\"\n";
+		$ipfrules .= "pass out quick on " . $wanif . "  inet proto tcp from any to any port www keep state label \"transparent proxy\"\n";
 	}
 
 	$ipfrules .= <<<EOD
@@ -891,8 +891,12 @@ function filter_rules_generate() {
 pass in quick on lo0 all label "pass loopback"
 pass out quick on lo0 all label "pass loopback"
 
+# pass traffic from firewall -> out
+pass out quick on $wanif inet proto tcp from $wanif to any keep state
+
 # enable ftp-proxy
-pass in on $wanif inet proto tcp from port 20 to ($wanif) user proxy flags S/SA keep state
+pass in quick on $wanif inet proto tcp from port 20 to ($wanif) user proxy flags S/SA keep state
+pass in quick on $wanif inet proto tcp from any to $wanif port > 49000 user proxy keep state
 
 # allow access to DHCP server on LAN
 pass in quick on $lanif proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server on LAN"

@@ -43,8 +43,11 @@
 		touch("/var/log/lastlog");
 	}
 
-	// Make the root password the same as the admin password of m0n0.
+	// Make the root/admin passwords are the same as the web admin password.
 	$fd = popen("/usr/sbin/pw usermod -n root -H 0", "w");
+	fwrite($fd, $config['system']['password']);
+	pclose($fd);
+	$fd = popen("/usr/sbin/pw usermod -n admin -H 0", "w");
 	fwrite($fd, $config['system']['password']);
 	pclose($fd);
 
@@ -56,7 +59,7 @@
 	}
 
 	// And finally ...
-	system("sshd");
+	system("/usr/sbin/sshd");
 	fwrite($stderr, "Done.\n");
 ?>
 

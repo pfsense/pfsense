@@ -22,4 +22,4 @@ www:*:80:80::0:0:World Wide Web Owner:/nonexistent:/usr/sbin/nologin
 nobody:*:65534:65534::0:0:Unprivileged user:/nonexistent:/usr/sbin/nologin
 distcc:*:1001:1001::0:0:Distcc:/home/distcc:/sbin/nologin
 dhcpd:*:1002:1002::0:0:DHCP Daemon:/nonexistent:/sbin/nologin
-admin:*:101:101::0:0:Admin User:/home/admin:/etc/rc.initial
+admin:*:0:0::0:0:Admin User:/root:/etc/rc.initial

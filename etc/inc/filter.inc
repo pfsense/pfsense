@@ -857,7 +857,7 @@ function filter_nat_rules_generate() {
 					 "rdr on $natif proto " . $rule['protocol']. " from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
 			}
 
-			$natrules .= "\n";nope
+			$natrules .= "\n";
 		}
 	}
 

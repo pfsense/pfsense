@@ -165,7 +165,7 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 } else {
 	/* Only check firmware version if we're setup to go against pfsense.org  and user wants us to */
 	if (!isset($config['system']['disablefirmwarecheck']))
-		if(!isset($config['system']['altfirmwareurl']))
+		if(!isset($config['system']['alt_firmware_url']['enabled']))
 			$fwinfo = check_firmware_version();
 		else
 			$fwinfo = "Using alternate firmware URL, cannot determine if {$config['system']['alt_firmware_url']['firmware_base_url']}{$config['system']['alt_firmware_url']['firmware_filename']} is newer than current.";

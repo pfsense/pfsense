@@ -23,11 +23,13 @@
 			<bindstofield>system->dnsserver</bindstofield>
 			<!-- we must unset the fields because this is an array. -->
 			<unsetfield>yes</unsetfield>
+			<arraynum>0</arraynum>
 		</field>
 		<field>
 			<name>Secondary DNS Server</name>
 			<type>input</type>
 			<bindstofield>system->dnsserver</bindstofield>
+			<arraynum>1</arraynum>
 		</field>
 		<field>
 			<name>Next</name>

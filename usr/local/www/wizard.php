@@ -134,6 +134,16 @@ function update_config_field($field, $updatetext, $unset) {
 		    $name = ereg_replace(" ", "", $name);
 		    $name = strtolower($name);
 
+		    if($field['bindstofield'] <> "") {
+			$arraynum = "";
+			$field_conv = "";
+			$field_split = split("->", $field['bindstofield']);
+			if($field['arraynum'] <> "") $arraynum = "[" . $field['arraynum'] . "]";
+			foreach ($field_split as $f) $field_conv .= "['" . $f . "']";
+			$toeval = "\$value = \$config" . $field_conv . $arraynum . ";";
+			eval($toeval);
+		    }
+
                     if ($field['type'] == "input") {
 			echo "<tr><td align='right'>";
 			echo $field['name'];

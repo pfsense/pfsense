@@ -27,6 +27,8 @@ SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
 /bin/mkdir -p /usr/savecore 2>/dev/null
 /sbin/savecore /usr/savecore $SWAPDEVICE
 
+/etc/rc.config_unlock
+
 rm -rf /var/run/*
 rm -rf /tmp/*
 
@@ -89,6 +91,8 @@ done
 # one more pass to give package plugins a chance to adjust
 echo Final firewall setup in progress...
 /etc/rc.filter_configure
+
+/etc/rc.config_lock
 
 exit 0
 

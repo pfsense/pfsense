@@ -59,7 +59,7 @@ function execute_command_return_output($command) {
 	} else {
 	    $lasttext .= $text;
 	}
-	if($counter > 55) {
+	if($counter > 51) {
 	    $counter = 0;
 	    $extrabreak = "\\n";
 	} else {

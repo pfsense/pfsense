@@ -85,5 +85,8 @@ for FILE in /usr/local/etc/rc.d/*.sh; do
     fi
 done
 
+echo Configure firewall filter...
+/etc/rc.filter_configure
+
 exit 0
 

@@ -448,7 +448,7 @@ function gentitle($pgname) {
  * orig = original value
  * new = new value
  */
-function updatechanged($varname, $orig, $new) {
+function update_if_changed($varname, $orig, $new) {
 	global $changedesc;
 
 	if ($orig != $new) {

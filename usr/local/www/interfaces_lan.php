@@ -73,15 +73,15 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		if (($lancfg['ipaddr'] != $_POST['ipaddr']) || ($lancfg['subnet'] != $_POST['subnet'])) {
-			updatechanged("IP Address", &$lancfg['ipaddr'], $_POST['ipaddr']);
-			updatechanged("subnet", &$lancfg['subnet'], $_POST['subnet']);
+			update_if_changed("IP Address", &$lancfg['ipaddr'], $_POST['ipaddr']);
+			update_if_changed("subnet", &$lancfg['subnet'], $_POST['subnet']);
 
 			/* We'll need to reboot after this */
 			touch($d_sysrebootreqd_path);
 		}
 
-		updatechanged("bandwidth", &$lancfg['bandwidth'], $_POST['bandwidth']);
-		updatechanged("bandwidth type", &$lancfg['bandwidthtype'], $_POST['bandwidthtype']);
+		update_if_changed("bandwidth", &$lancfg['bandwidth'], $_POST['bandwidth']);
+		update_if_changed("bandwidth type", &$lancfg['bandwidthtype'], $_POST['bandwidthtype']);
 
 		$dhcpd_was_enabled = 0;
 		if (isset($config['dhcpd']['enable'])) {

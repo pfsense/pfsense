@@ -1726,7 +1726,23 @@
 	<title>Configure WAN Interface</title>
 	<description>On this screen we will configure the Wide Area Network information.</description>
 	<javascriptafterformdisplay>
-		enableitems(document.forms[0].selectedtype.selectedIndex);
+		var selectedItem = 0;
+		if(document.forms[0].ipaddress.value == 'dhcp') {
+			selectedItem = 1;
+			document.forms[0].ipaddress.value = '';
+		} else if(document.forms[0].ipaddress.value == 'PPPoE') {
+			selectedItem = 2;
+			document.forms[0].ipaddress.value = '';
+		} else if(document.forms[0].ipaddress.value == 'PPTP') {
+			selectedItem = 3;
+			document.forms[0].ipaddress.value = '';
+		} else if(document.forms[0].ipaddress.value == 'BigPond') {
+			selectedItem = 4;
+			document.forms[0].ipaddress.value = '';
+		} else {
+			selectedItem = 0;		
+		}
+		enableitems(selectedItem);
 	</javascriptafterformdisplay>		
 	<fields>
 		<field>		

@@ -1508,7 +1508,8 @@ EOD;
 	$ipfrules .= "\n# VPN Rules\n";
 	$lan_ip = $config['interfaces']['lan']['ipaddr'];
 	$lan_subnet = $config['interfaces']['lan']['subnet'];
-	$wan_ip = $config['interfaces']['wan']['ipaddr'];
+	$wanif = get_real_wan_interface();
+	$wan_ip = find_interface_ip($wanif);
 	$internal_subnet = gen_subnet($lan_ip, $lan_subnet) . "/" . $config['interfaces']['lan']['subnet'];
 	/* Is IP Compression enabled? */
 	if(isset($config['ipsec']['ipcomp']))

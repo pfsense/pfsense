@@ -65,6 +65,20 @@ function get_dir($dir) {
 }
 
 /*
+ *   exec_command_and_return_text_array: execute command and return output
+ */
+function exec_command_and_return_text_array($command) {
+            $counter = 0;
+            $fd = popen($command . " 2>&1 ", "r");
+            while(!feof($fd)) {
+                        $tmp .= fread($fd,49);
+            }
+            fclose($fd);
+            $temp_array = split("\n", $tmp);
+            return $tmp_array;
+}
+
+/*
  *   exec_command_and_return_text: execute command and return output
  */
 function exec_command_and_return_text($command) {
@@ -181,6 +195,14 @@ if(!$pkg_config['packages']) {
 
 /* install the package */
 
+// Ensure directories are in place for pkg_add.
+mwexec("mkdir /usr/local/www/ext/Services >/dev/null 2>&1");
+mwexec("mkdir /usr/local/www/ext/System >/dev/null 2>&1");
+mwexec("mkdir /usr/local/www/ext/Interfaces >/dev/null 2>&1");
+mwexec("mkdir /usr/local/www/ext/Firewall >/dev/null 2>&1");
+mwexec("mkdir /usr/local/www/ext/VPN >/dev/null 2>&1");
+mwexec("mkdir /usr/local/www/ext/Status >/dev/null 2>&1");
+
 $a_out = &$pkg_config['packages']['package'];
 $pkgent = array();
 $pkgent['name'] = $pkg_config['packages']['package'][$id]['name'];
@@ -242,11 +264,6 @@ if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
                         }
             }
             // install menu item into the ext folder
-            mwexec("mkdir /usr/local/www/ext/System >/dev/null 2>&1");
-            mwexec("mkdir /usr/local/www/ext/Interfaces >/dev/null 2>&1");
-            mwexec("mkdir /usr/local/www/ext/Firewall >/dev/null 2>&1");
-            mwexec("mkdir /usr/local/www/ext/VPN >/dev/null 2>&1");
-            mwexec("mkdir /usr/local/www/ext/Status >/dev/null 2>&1");
             fwrite($fd_log, "Adding menu option to " . $config['menu']['section'] . "/" . $config['name'] . ":\n");
             $fd = fopen("/usr/local/www/ext/" . $config['menu']['section'] . "/" . $config['name'] , "w");
             fwrite($fd, "/usr/local/www/pkg.php?xml=" . $config['name'] . "\n");

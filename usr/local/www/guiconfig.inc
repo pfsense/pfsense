@@ -452,6 +452,34 @@ function update_changedesc($update) {
 	$changecount++;
 }
 
+function dump_clog($logfile, $tail, $grepfor, $grepinvert = false, $withorig = true) {
+        global $g, $config;
+
+        $sor = isset($config['syslog']['reverse']) ? "-r" : "";
+
+        if($grepfor <> "") {
+                if($grepinvert == true) {
+                        exec("/usr/sbin/clog {$logfile} | /usr/bin/grep -v {$grepfor} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+                } else {
+                        exec("/usr/sbin/clog {$logfile} | /usr/bin/grep {$grepfor} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+                }
+        } else {
+                exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+        }
+        foreach ($logarr as $logent) {
+                $logent = preg_split("/\s+/", $logent, 6);
+                echo "<tr valign=\"top\">\n";
+
+                if ($withorig) {
+                        echo "<td class=\"listlr\" nowrap>" . htmlspecialchars(join(" ", array_slice($logent, 0, 3))) . "</td>\n";
+                        echo "<td class=\"listr\">" . htmlspecialchars($logent[4] . " " . $logent[5]) . "</td>\n";
+                } else {
+                        echo "<td class=\"listlr\" colspan=\"2\">" . htmlspecialchars($logent[5]) . "</td>\n";
+                }
+                echo "</tr>\n";
+        }
+}
+
 /* Check if variable has changed, update and log if it has
  * returns true if var changed
  * varname = variable name in plain text

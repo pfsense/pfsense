@@ -234,11 +234,11 @@ $config = $config_tmp;
 			echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "select") {
 		  // XXX: TODO: set $selected
-                  $selected = "";
                   if($pkga['size']) $size = " size='" . $pkga['size'] . "' ";
 		  if($pkga['multiple'] == "yes") $multiple = "MULTIPLE ";
 			echo "<select " . $multiple . $size . "id='" . $pkga['fieldname'] . "' name='" . $pkga['fieldname'] . "'>\n";
 		  foreach ($pkga['options']['option'] as $opt) {
+			$selected = "";
 			if($opt['value'] == $value) $selected = " SELECTED";
 		        echo "\t<option name='" . $opt['name'] . "' value='" . $opt['value'] . "'" . $selected . ">" . $opt['name'] . "</option>\n";
 		  }

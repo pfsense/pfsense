@@ -2265,7 +2265,6 @@
 	</fields>
 	<stepsubmitbeforesave>
 		if($_POST['selectedtype'] == "Static") { } else {
-			echo $_POST['selectedtype'] . " ";
 			$_POST['ipaddress'] = $_POST['selectedtype'];
 			$config['interfaces']['wan']['ipaddr'] = $_POST['selectedtype'];
 			write_config();

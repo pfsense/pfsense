@@ -870,7 +870,7 @@ EOD;
 		}
 	}
 
-	$squid_installed = run_command_return_string("/bin/ls /var/db/pkg/ | grep squid");
+	$squid_installed = run_command_return_string("/bin/ls {$g['vardb_path']}/pkg/ | grep squid");
 	if ($squid_installed <> "") {
 		$natrules .= "rdr on " . $lanif . " inet proto tcp from any to !{$lanip} port www -> 127.0.0.1 port 3128\n";
 	}
@@ -951,7 +951,7 @@ function filter_rules_generate() {
 		$log = "";
 
 	/* if squid is installed, lets install its rule */
-	$squid_installed = run_command_return_string("/bin/ls /var/db/pkg/ | grep squid");
+	$squid_installed = run_command_return_string("/bin/ls {$g['vardb_path']}/pkg/ | grep squid");
 	if ($squid_installed <> "") {
 		$ipfrules .= "pass in quick on " . $lanif . " inet proto tcp from any to 127.0.0.1 port 3128 flags S/SA keep state label \"transparent proxy\"\n";
 		$ipfrules .= "pass out quick on " . $wanif . "  inet proto tcp from ($wanif) to any port www flags S/SA keep state label \"transparent proxy\"\n";

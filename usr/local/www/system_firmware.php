@@ -171,8 +171,8 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 			$fwinfo = "Using alternate firmware URL, cannot determine if {$config['system']['alt_firmware_url']['firmware_base_url']}{$config['system']['alt_firmware_url']['firmware_filename']} is newer than current.";
 }
 
+/* upload progress bar id */
 $id = rand() . '.' . time();
-
 $mth = ini_get('upload_progress_meter.store_method');
 $dir = ini_get('upload_progress_meter.file.filename_template');
 
@@ -186,6 +186,11 @@ $dir = ini_get('upload_progress_meter.file.filename_template');
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<!--
+generated new UPLOAD_IDENTIFIER = <?=$id?>
+php-config.upload_progress_meter.store_method = <?=$mth?>
+php-config.upload_progress_meter.file.filename_template = <?=$dir?>     
+-->
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">System: Firmware</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -208,7 +213,7 @@ print_info_box($sig_warning);
 </form>
 <?php else: ?>
             <?php if (!file_exists($d_firmwarelock_path)): ?>
-<form action="system_firmware.php" method="post" enctype="multipart/form-data">
+<form action="system_firmware.php?UPLOAD_IDENTIFIER=<?=$id?>" method="post" enctype="multipart/form-data">
 <?php if($savemsg == ""): ?>
 
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -238,9 +243,12 @@ print_info_box($sig_warning);
 				  <?php else: ?>
 				   <input name="Submit" type="submit" class="formbtn" value="Disable firmware upload">
                     <br><br>
-					<strong>Firmware image file: </strong>&nbsp;<input name="ulfile" type="file" class="formfld">
+					<strong>Firmware image file: </strong>&nbsp;
+					<input type="hidden" name="UPLOAD_IDENTIFIER" value="<?=$id?>">
+					<input name="ulfile" type="file" class="formfld">
                     <br><br>
-                    <input name="Submit" type="submit" class="formbtn" value="Upgrade firmware" onClick="window.open('progress.php?ulfile=<?=$id?>','UploadMeter','width=370,height=115', true); return true; ">
+
+                    <input name="Submit" type="submit" class="formbtn" value="Upgrade firmware" onClick="window.open('progress.php?UPLOAD_IDENTIFIER=<?=$id?>','UploadMeter','width=370,height=115', true); return true; ">
 				  <?php endif; else: ?>
 				    <strong>You must reboot the system before you can upgrade the firmware.</strong>
 				  <?php endif; ?>

@@ -2,7 +2,7 @@
 
 <?php
 
-$url = 'progress.php?ulfile='.  $_GET["ulfile"] .'&e=1';
+$url = 'progress.php?UPLOAD_IDENTIFIER='.  $_GET["UPLOAD_IDENTIFIER"] .'&e=1';
 
 function nice_value($x) {
    if ($x < 100)  $x;
@@ -12,11 +12,12 @@ function nice_value($x) {
 }
 
 
-$X = upload_progress_meter_get_info( $_GET["ulfile"] );
+$X = upload_progress_meter_get_info( $_GET["UPLOAD_IDENTIFIER"] );
 if (!$X) {
 
    if ( array_key_exists( "e", $_GET ) ) {
-      echo ('<HTML><BODY onLoad="window.close()"> Invalid meter ID!</BODY></HTML>');
+      echo "<HTML><BODY onLoad='window.close();'>Invalid Meter ID! {$_GET["UPLOAD_IDENTIFIER"]}";
+      echo ('</BODY></HTML>');
    }else{
       echo ('<HTML><meta HTTP-EQUIV="Refresh" CONTENT="1; url='. $url .'"><BODY></BODY></HTML>');
    }
@@ -50,11 +51,11 @@ if (!$X) {
 <style type='text/css'> td {font-size: 10pt } td.uplmtr {font-size:6pt; height:12px}</style>
 
 </HEAD>
-<BODY BGCOLOR="#C0C0C0">
+<BODY BGCOLOR="#FFFFFF">
 
 Uploading files...
 
-<table border=1 WIDTH="100%" cellPadding=0 cellSpacing=0 style='BORDER-BOTTOM: 0px inset; BORDER-LEFT: 0px inset; BORDER-RIGHT: 0px inset; BORDER-TOP: 0px inset'> <tr><td>
+<table WIDTH="100%" cellPadding=0 cellSpacing=0 style='border:1px dashed #000066; BORDER-BOTTOM: 0px inset; BORDER-LEFT: 0px inset; BORDER-RIGHT: 0px inset; BORDER-TOP: 0px inset'> <tr><td>
   <table border=0 WIDTH="100%" COLS="34"><tr>
 
   <?

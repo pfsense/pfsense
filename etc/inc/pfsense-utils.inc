@@ -188,7 +188,7 @@ function find_carp_interface($ip) {
  * add_rule_to_anchor($anchor, $rule): adds the specified rule to an anchor
  */
 function add_rule_to_anchor($anchor, $rule) {
-    mwexec($rule . " | pfctl -a " . $anchor . " -f -");
+    mwexec("echo " . $rule . " | pfctl -a anchor:" . $anchor . " -f -");
 }
 
 /*

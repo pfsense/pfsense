@@ -36,6 +36,7 @@ $pconfig['nentries'] = $config['syslog']['nentries'];
 $pconfig['remoteserver'] = $config['syslog']['remoteserver'];
 $pconfig['filter'] = isset($config['syslog']['filter']);
 $pconfig['dhcp'] = isset($config['syslog']['dhcp']);
+$pconfig['portalauth'] = isset($config['syslog']['portalauth']);
 $pconfig['vpn'] = isset($config['syslog']['vpn']);
 $pconfig['system'] = isset($config['syslog']['system']);
 $pconfig['enable'] = isset($config['syslog']['enable']);
@@ -64,6 +65,7 @@ if ($_POST) {
 		$config['syslog']['remoteserver'] = $_POST['remoteserver'];
 		$config['syslog']['filter'] = $_POST['filter'] ? true : false;
 		$config['syslog']['dhcp'] = $_POST['dhcp'] ? true : false;
+		$config['syslog']['portalauth'] = $_POST['portalauth'] ? true : false;
 		$config['syslog']['vpn'] = $_POST['vpn'] ? true : false;
 		$config['syslog']['system'] = $_POST['system'] ? true : false;
 		$config['syslog']['enable'] = $_POST['enable'] ? true : false;
@@ -99,12 +101,14 @@ function enable_change(enable_over) {
 		document.iform.remoteserver.disabled = 0;
 		document.iform.filter.disabled = 0;
 		document.iform.dhcp.disabled = 0;
+		document.iform.portalauth.disabled = 0;
 		document.iform.vpn.disabled = 0;
 		document.iform.system.disabled = 0;
 	} else {
 		document.iform.remoteserver.disabled = 1;
 		document.iform.filter.disabled = 1;
 		document.iform.dhcp.disabled = 1;
+		document.iform.portalauth.disabled = 1;
 		document.iform.vpn.disabled = 1;
 		document.iform.system.disabled = 1;
 	}
@@ -125,6 +129,7 @@ function enable_change(enable_over) {
     <li class="tabinact"><a href="diag_logs.php">System</a></li>
     <li class="tabinact"><a href="diag_logs_filter.php">Firewall</a></li>
     <li class="tabinact"><a href="diag_logs_dhcp.php">DHCP</a></li>
+    <li class="tabinact"><a href="diag_logs_auth.php">Portal Auth</a></li>
     <li class="tabinact"><a href="diag_logs_vpn.php">PPTP VPN</a></li>
     <li class="tabact">Settings</li>
   </ul>
@@ -171,7 +176,8 @@ function enable_change(enable_over) {
                           IP address of remote syslog server<br> <br> <input name="system" id="system" type="checkbox" value="yes" onclick="enable_change(false)" <?php if ($pconfig['system']) echo "checked"; ?>>
                           system events <br> <input name="filter" id="filter" type="checkbox" value="yes" <?php if ($pconfig['filter']) echo "checked"; ?>>
                           firewall events<br> <input name="dhcp" id="dhcp" type="checkbox" value="yes" <?php if ($pconfig['dhcp']) echo "checked"; ?>>
-                          DHCP service events<br> <input name="vpn" id="vpn" type="checkbox" value="yes" <?php if ($pconfig['vpn']) echo "checked"; ?>>
+                          DHCP service events<br> <input name="portalauth" id="portalauth" type="checkbox" value="yes" <?php if ($pconfig['portalauth']) echo "checked"; ?>>
+                          Portal Auth<br> <input name="vpn" id="vpn" type="checkbox" value="yes" <?php if ($pconfig['vpn']) echo "checked"; ?>>
                           PPTP VPN events</td>
                       </tr>
                       <tr> 

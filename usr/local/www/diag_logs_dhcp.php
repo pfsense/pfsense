@@ -78,6 +78,7 @@ function dump_clog($logfile, $tail, $withorig = true) {
     <li class="tabinact"><a href="diag_logs.php">System</a></li>
     <li class="tabinact"><a href="diag_logs_filter.php">Firewall</a></li>
     <li class="tabact">DHCP</li>
+    <li class="tabinact"><a href="diag_logs_auth.php">Portal Auth</a></li>
     <li class="tabinact"><a href="diag_logs_vpn.php">PPTP VPN</a></li>
     <li class="tabinact"><a href="diag_logs_settings.php">Settings</a></li>
   </ul>

@@ -35,7 +35,8 @@ clog -i -s 262144 /var/log/system.log
 clog -i -s 262144 /var/log/filter.log
 clog -i -s 32768 /var/log/dhcpd.log
 clog -i -s 32768 /var/log/vpn.log
-chmod 0600 /var/log/system.log /var/log/filter.log /var/log/dhcpd.log /var/log/vpn.log
+clog -i -s 32768 /var/log/portalauth.log
+chmod 0600 /var/log/system.log /var/log/filter.log /var/log/dhcpd.log /var/log/vpn.log /var/log/portalauth.log
 
 adjkerntz -i
 

@@ -34,6 +34,7 @@ require("util.inc");
 require("config.inc");
 require("radius_authentication.inc") ;
 require("radius_accounting.inc") ;
+require("portal_log.inc") ;
 
 header("Expires: 0");
 header("Cache-Control: no-store, no-cache, must-revalidate");
@@ -73,6 +74,7 @@ if ($clientmac && portal_mac_fixed($clientmac)) {
 							  			  $radiusservers[0]['port'],
 							  			  $radiusservers[0]['key']);
 		if ($auth_val == 2) {
+			captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,TRUE);
 			$sessionid = portal_allow($clientip, $clientmac, $_POST['auth_user']);
 			if (isset($config['captiveportal']['radacct_enable']) && isset($radiusservers[0])) {
 				$auth_val = RADIUS_ACCOUNTING_START($_POST['auth_user'],
@@ -82,6 +84,7 @@ if ($clientmac && portal_mac_fixed($clientmac)) {
 													$radiusservers[0]['key']);
 			}
 		} else {
+			captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,FALSE);
 			readfile("{$g['varetc_path']}/captiveportal-error.html");
 		}
 	} else {

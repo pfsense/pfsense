@@ -723,7 +723,7 @@ function is_service_running($service_name) {
  */
 function backup_config_section($section) {
     global $config;
-    $new_section = &$config['filter'];
+    $new_section = &$config[$section];
     /* generate configuration XML */
     $xmlconfig = dump_xml_config($new_section, $section);
     return $xmlconfig;

@@ -163,7 +163,7 @@ if($pkg['step'][$stepid]['stepbeforeformdisplay'] <> "") {
 					$toeval = "\$value = \$config" . $field_conv . $arraynum . ";";
 					eval($toeval);
 					if ($field['type'] == "checkbox") {
-						$toeval = "if(isset(" . $field_conv . $arraynum . ") \$value = \$config" . $field_conv . $arraynum . ";";
+						$toeval = "if(isset(\$config" . $field_conv . $arraynum . ")) \$value = \" CHECKED\";";
 						eval($toeval);
 					}
 		    }

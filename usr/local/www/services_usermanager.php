@@ -94,9 +94,12 @@ if(is_array($config['users'])){
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr><td>
+  <tr><td class="tabnavtbl">
   <ul id="tabnav">
-	<li class="tabact">User Manager</li>
+	<li class="tabinact1"><a href="services_captiveportal.php">Captive portal</a></li>
+	<li class="tabinact"><a href="services_captiveportal_mac.php">Pass-through MAC</a></li>
+	<li class="tabinact"><a href="services_captiveportal_ip.php">Allowed IP addresses</a></li>
+	<li class="tabact">Allowed IP addresses</li>
   </ul>
   </td></tr>
   <tr>

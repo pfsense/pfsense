@@ -61,13 +61,15 @@ if ($_POST['clear']) {
 	foreach($config['installedpackages']['package'] as $package) {
 		$pkgname = $package['name'];
         	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
-		if(is_array($pkg_config['logging']) and isset($pkg_config['logging']['logtab'])) {
+		if(is_array($pkg_config['logging'])) {
 			if($apkg == false) $apkg = $pkgname;
+			$logtab = $pkg_config['logging']['logtab'];
+			if(!isset($pkg_config['logging']['logtab'])) $logtab = $pkgname;
 			if($apkg == $pkgname) { ?>
 				<li class="tabact"><?= $pkg_config['name']; ?></li>
     <?php
 			} else { ?>
-				<li class="tabinact"><a href="diag_pkglogs.php?pkg=<?= $pkgname; ?>"><?= $pkg_config['logging']['logtab']; ?></a></li>
+				<li class="tabinact"><a href="diag_pkglogs.php?pkg=<?= $pkgname; ?>"><?= $logtab; ?></a></li>
     <?php
 			}
 		}

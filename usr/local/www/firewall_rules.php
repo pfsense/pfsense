@@ -1,22 +1,22 @@
 #!/usr/local/bin/php
-<?php 
+<?php
 /*
 	firewall_rules.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -40,7 +40,7 @@ $a_filter = &$config['filter']['rule'];
 $if = $_GET['if'];
 if ($_POST['if'])
 	$if = $_POST['if'];
-	
+
 $iflist = array("lan" => "LAN", "wan" => "WAN");
 
 if ($config['pptpd']['mode'] == "server")
@@ -94,7 +94,7 @@ if (isset($_POST['del_x'])) {
 		exit;
 	}
 } else {
-	/* yuck - IE won't send value attributes for image buttons, while Mozilla does - 
+	/* yuck - IE won't send value attributes for image buttons, while Mozilla does -
 	   so we use .x/.y to fine move button clicks instead... */
 	unset($movebtn);
 	foreach ($_POST as $pn => $pd) {
@@ -106,13 +106,13 @@ if (isset($_POST['del_x'])) {
 	/* move selected rules before this rule */
 	if (isset($movebtn) && is_array($_POST['rule']) && count($_POST['rule'])) {
 		$a_filter_new = array();
-		
+
 		/* copy all rules < $movebtn and not selected */
 		for ($i = 0; $i < $movebtn; $i++) {
 			if (!in_array($i, $_POST['rule']))
 				$a_filter_new[] = $a_filter[$i];
 		}
-		
+
 		/* copy all selected rules */
 		for ($i = 0; $i < count($a_filter); $i++) {
 			if ($i == $movebtn)
@@ -120,17 +120,17 @@ if (isset($_POST['del_x'])) {
 			if (in_array($i, $_POST['rule']))
 				$a_filter_new[] = $a_filter[$i];
 		}
-		
+
 		/* copy $movebtn rule */
 		if ($movebtn < count($a_filter))
 			$a_filter_new[] = $a_filter[$movebtn];
-		
+
 		/* copy all rules > $movebtn and not selected */
 		for ($i = $movebtn+1; $i < count($a_filter); $i++) {
 			if (!in_array($i, $_POST['rule']))
 				$a_filter_new[] = $a_filter[$i];
 		}
-		
+
 		$a_filter = $a_filter_new;
 		write_config();
 		touch($d_filterconfdirty_path);
@@ -168,8 +168,12 @@ if (isset($_POST['del_x'])) {
 <?php endif; ?>
 <?php endforeach; ?>
   </ul>
+  <ul id="tabnav">
+    <li class="tabact">Rules</li>
+    <li class="tabinact"><a href="firewall_shaper_queues.php">Queues</a></li>
+  </ul>
   </td></tr>
-  <tr> 
+  <tr>
     <td class="tabcont">
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
@@ -215,7 +219,7 @@ if (isset($_POST['del_x'])) {
 				  <br><img src="<?=$iconfn;?>.gif" width="11" height="15" border="0">
 				  <?php endif; ?>
 				  </td>
-                  <td class="listlr"> 
+                  <td class="listlr">
                     <?=$textss;?><?php if (isset($filterent['protocol'])) echo strtoupper($filterent['protocol']); else echo "*"; ?><?=$textse;?>
                   </td>
                   <td class="listr">
@@ -224,13 +228,13 @@ if (isset($_POST['del_x'])) {
                   <td class="listr">
                     <?=$textss;?><?php echo htmlspecialchars(pprint_port($filterent['source']['port'])); ?><?=$textse;?>
                   </td>
-                  <td class="listr"> 
+                  <td class="listr">
 				    <?=$textss;?><?php echo htmlspecialchars(pprint_address($filterent['destination'])); ?><?=$textse;?>
                   </td>
-                  <td class="listr"> 
+                  <td class="listr">
                     <?=$textss;?><?php echo htmlspecialchars(pprint_port($filterent['destination']['port'])); ?><?=$textse;?>
                   </td>
-                  <td class="listbg"> 
+                  <td class="listbg">
                     <?=$textss;?><?=htmlspecialchars($filterent['descr']);?>&nbsp;<?=$textse;?>
                   </td>
                   <td valign="middle" nowrap class="list">
@@ -256,7 +260,7 @@ if (isset($_POST['del_x'])) {
 			  Click the <a href="firewall_rules_edit.php?if=<?=$if;?>"><img src="plus.gif" title="add new rule" border="0" width="17" height="17" align="absmiddle"></a> button to add a new rule.</span>
 			  </td>
 			  <?php endif; ?>
-                <tr> 
+                <tr>
                   <td class="list" colspan="7"></td>
                   <td class="list">
 				    <table border="0" cellspacing="0" cellpadding="1">
@@ -274,7 +278,7 @@ if (isset($_POST['del_x'])) {
 				</tr>
               </table>
 			  <table border="0" cellspacing="0" cellpadding="0">
-                <tr> 
+                <tr>
                   <td width="16"><img src="pass.gif" width="11" height="11"></td>
                   <td>pass</td>
                   <td width="14"></td>
@@ -290,7 +294,7 @@ if (isset($_POST['del_x'])) {
                 <tr>
                   <td colspan="5" height="4"></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td><img src="pass_d.gif" width="11" height="11"></td>
                   <td>pass (disabled)</td>
                   <td></td>
@@ -309,10 +313,10 @@ if (isset($_POST['del_x'])) {
 </table>
   <p>
   <strong><span class="red">Hint:<br>
-  </span></strong>rules are evaluated on a first-match basis (i.e. 
-  the action of the first rule to match a packet will be executed). 
-  This means that if you use block rules, you'll have to pay attention 
-  to the rule order. Everything that isn't explicitly passed is blocked 
+  </span></strong>rules are evaluated on a first-match basis (i.e.
+  the action of the first rule to match a packet will be executed).
+  This means that if you use block rules, you'll have to pay attention
+  to the rule order. Everything that isn't explicitly passed is blocked
   by default.</p>
 <input type="hidden" name="if" value="<?=$if;?>">
 </form>

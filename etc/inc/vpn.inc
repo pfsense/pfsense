@@ -165,7 +165,22 @@ function vpn_ipsec_configure($ipchg = false) {
 				return 1;
 			}
 
-			$racoonconf = "path pre_shared_key \"{$g['varetc_path']}/psk.txt\";\n\n";
+			$racoonconf = "";
+
+			if($config['ipsec']['interface'] <> "") {
+				if(does_interface_exist($config['ipsec']['interface']) == true) {
+					$interface_ip = find_interface_ip($config['ipsec']['interface']);
+					$racoonconf .= <<<EOD
+listen {
+	isakmp {$interface_ip} [500];
+}
+
+EOD;
+				}
+
+			}
+
+			$racoonconf .= "path pre_shared_key \"{$g['varetc_path']}/psk.txt\";\n\n";
 
 			if (is_array($ipseccfg['tunnel']) && count($ipseccfg['tunnel']))
 				foreach ($ipseccfg['tunnel'] as $tunnel) {

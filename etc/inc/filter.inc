@@ -140,6 +140,7 @@ function filter_configure() {
 		mwexec("/sbin/ipfw enable altq >/dev/null 2>&1\n");
                 mwexec("/bin/mv /tmp/ipfw.rules /tmp/ipfw.rules_old >/dev/null 2>&1");
 	} else {
+		mwexec("/sbin/ipfw -f flush");
 		if(!isset($config['captiveportal']['enable']))
 			mwexec("/sbin/kldunload ipfw.ko");
 	}

@@ -78,6 +78,8 @@ if ($_POST) {
 
 	/* input validation */
 	if ($_POST['enable']) {
+		$config['captiveportal']['enable'] = $_POST['enable'] ? true : false;
+
 		$reqdfields = explode(" ", "cinterface");
 		$reqdfieldsn = explode(",", "Interface");
 
@@ -176,7 +178,7 @@ if ($_POST) {
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
 
-<form>
+<form method="post">
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>

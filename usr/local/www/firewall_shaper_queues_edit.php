@@ -251,7 +251,7 @@ if ($_POST) {
 				echo "<option value=\"\"></option>";
 			 if (is_array($config['shaper']['queue'])) {
 			 	foreach ($config['shaper']['queue'] as $queue) {
-			 		if(is_subqueue($queue['name']) == 0)
+			 		if(is_subqueue($queue['name']) == 1)
 			 			echo "<option value=\"" . $queue['name'] . "\">" . $queue['name'] . "</option>";
 			 	}
 			 }

@@ -919,8 +919,15 @@ EOD;
 		}
 	}
 
+	/* XXX: Move this into a /usr/local/pkg/pf/ helper */
 	if (is_package_installed("squid") == 1)
 		$natrules .= "rdr on " . $lanif . " inet proto tcp from any to !{$lanip} port www -> 127.0.0.1 port 3128\n";
+
+	/* XXX: Move this into a /usr/local/pkg/pf/ helper */
+	if (is_package_installed("frickin") == 1) {
+		$natrules .= "rdr on " . $lanif . " inet proto tcp from any to !{$lanip} port 1723 -> 127.0.0.1 port 1723\n";
+		$natrules .= "rdr on " . $lanif . " inet proto gre from any to !{$lanip} -> 127.0.0.1\n";
+	}
 
 	return $natrules;
 }

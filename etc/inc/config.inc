@@ -448,7 +448,20 @@ function convert_config() {
 	}
 
 	/* Convert 1.5 -> 1.6 */
+	if ($config['version'] == "1.5") {
+		/* Alternate firmware URL moved */
+		if (isset($config['system']['firmwareurl']) && isset($config['system']['firmwarename'])) { // Only convert if *both* are defined.
+			$config['system']['alt_firmware_url'] = array();
+			$config['system']['alt_firmware_url']['enabled'] = "";
+			$config['system']['alt_firmware_url']['firmware_base_url'] = $config['system']['firmwareurl'];
+			$config['system']['alt_firmware_url']['firmware_filename'] = $config['system']['firmwarename'];
+			unset($config['system']['firmwareurl'], $config['system']['firmwarename']);
+		} else {
+			unset($config['system']['firmwareurl'], $config['system']['firmwarename']);
+		}
 
+		$config['version'] = "1.6";
+	}
 
 	write_config();
 

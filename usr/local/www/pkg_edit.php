@@ -88,7 +88,8 @@ $config = $config_tmp;
 	  <?php
 	      if($pkg['type'] == "input") {
 		  // XXX: TODO: set $value
-		  echo "<input name='" . $pkg['fieldname'] . "' value='" . $value . "'>\n";
+                  if($pkg['size']) $size = " size='" . $pkg['size'] . "' ";
+		  echo "<input " . $size . " name='" . $pkg['fieldname'] . "' value='" . $value . "'>\n";
 		  echo "<br>" . $pkg['description'] . "\n";
 	      } else if($pkg['type'] == "select") {
 		  // XXX: TODO: set $selected
@@ -104,7 +105,9 @@ $config = $config_tmp;
 		  echo "<input type='checkbox' name='" . $pkg['fieldname'] . "' value='" . $value . "'>\n";
 		  echo "<br>" . $pkg['description'] . "\n";
 	      } else if($pkg['type'] == "textarea") {
-		  echo "<textarea name='" . $pkg['fieldname'] . "'>" . $value . "</textarea>\n";
+		  if($pkg['rows']) $size = " size='" . $pkg['rows'] . "' ";
+		  if($pkg['cols']) $size = " size='" . $pkg['cols'] . "' ";
+		  echo "<textarea " . $rows . $cols . " name='" . $pkg['fieldname'] . "'>" . $value . "</textarea>\n";
 		  echo "<br>" . $pkg['description'] . "\n";
 	      }
 	  ?>

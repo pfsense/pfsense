@@ -123,7 +123,7 @@ function is_carp_defined() {
  * find_number_of_created_carp_interfaces() returns the number of currently created carp interfaces
  */
 function find_number_of_created_carp_interfaces() {
-	$command = "/sbin/ifconfig | grep \"carp*:\" | wc -l";
+	$command = "/sbin/ifconfig | /usr/bin/grep \"carp*:\" | /usr/bin/wc -l";
 	$fd = popen($command . " 2>&1 ", "r");
 	if(!$fd) {
 		log_error("Warning, could not execute command {$command}");
@@ -133,7 +133,7 @@ function find_number_of_created_carp_interfaces() {
 		    $tmp .= fread($fd,49);
 	}
 	fclose($fd);
-	$tmp=$tmp-1;
+	$tmp = intval($tmp) -1;
 	return $tmp;
 }
 
@@ -141,6 +141,8 @@ function find_number_of_created_carp_interfaces() {
  * link_ip_to_carp_interface($ip): finds where a carp interface links to.
 */
 function link_ip_to_carp_interface($ip) {
+	global $config;
+	if($ip == "") return;
         $i = 0;
 
         $ifdescrs = array('wan', 'lan');
@@ -210,7 +212,7 @@ function convert_ip_to_network_format($ip, $subnet) {
  */
 function find_interface_ip($interface) {
     if(does_interface_exist($interface) == false) return;
-    $ip = exec_command("/sbin/ifconfig {$interface} | grep -w \"inet\" | cut -d\" \" -f 2");
+    $ip = exec_command("/sbin/ifconfig {$interface} | /usr/bin/grep -w \"inet\" | /usr/bin/cut -d\" \" -f 2");
     $ip = str_replace("\n","",$ip);
     return $ip;
 }
@@ -229,6 +231,7 @@ function filter_get_opt_interface_descr($opt) {
  * find_ip_interface($ip): return the interface where an ip is defined
  */
 function find_ip_interface($ip) {
+	global $config;
 	$i = 0;
 	$ifdescrs = array('wan', 'lan');
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
@@ -249,7 +252,7 @@ function find_ip_interface($ip) {
 function get_carp_interface_status($carpinterface) {
     $result = does_interface_exist($carpinterface);
     if($result <> true) return;
-    $status = exec_command("/sbin/ifconfig {$carpinterface} | grep \"carp:\" | cut -d\" \" -f2");
+    $status = exec_command("/sbin/ifconfig {$carpinterface} | /usr/bin/grep \"carp:\" | /usr/bin/cut -d\" \" -f2");
     return $status;
 }
 
@@ -259,7 +262,7 @@ function get_carp_interface_status($carpinterface) {
 function get_pfsync_interface_status($pfsyncinterface) {
     $result = does_interface_exist($pfsyncinterface);
     if($result <> true) return;
-    $status = exec_command("/sbin/ifconfig {$pfsyncinterface} | grep \"pfsync:\" | cut -d\" \" -f5");
+    $status = exec_command("/sbin/ifconfig {$pfsyncinterface} | /usr/bin/grep \"pfsync:\" | /usr/bin/cut -d\" \" -f5");
     return $status;
 }
 

@@ -58,7 +58,7 @@ $title        = $section . ": Edit " . $package_name;
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
-	
+
 $a_pkg = &$config['installedpackages']['package'];
 
 if (isset($id) && $a_pkg[$id]) {
@@ -78,7 +78,6 @@ if ($_POST) {
     } else {
 	if($pkg['custom_add_php_command']) {
 	    eval($pkg['custom_add_php_command']);
-	    $savemsg = "User has been added.";
 	}
 	// XXX: add the xml value to config
     }
@@ -87,19 +86,19 @@ if ($_POST) {
 // store values in xml configration file.
 if (!$input_errors) {
 	$pkgarr = array();
-	
+
 	if (isset($id) && $a_pkg[$id])
 		$a_pkg[$id] = $pkgarr;
 	else
 		$a_pkg[] = $pkgarr;
-	
+
 	foreach ($pkg['fields'] as $fields) {
 		$pkgarr[$fields['fieldname']]  = $fields['fieldname'];
-		$pkgarr[$fields['fieldvalue']] = $_POST[$fields['fieldname']]; 
+		$pkgarr[$fields['fieldvalue']] = $_POST[$fields['fieldname']];
 	}
-	
+
 	$config['installedpackages']['package']['config'][] = $filterent;
-	
+
 	write_config();
 }
 

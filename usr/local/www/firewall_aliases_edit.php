@@ -166,7 +166,7 @@ function typesel_change() {
 			break;
 		case 2:	/* port */
 			var cmd;
-			document.iform.address_subnet.disabled = 0;
+			document.iform.address_subnet.disabled = 1;
 			newrows = totalrows+1;
 			for(i=2; i<newrows; i++) {
 				comd = 'document.iform.address_subnet' + i + '.disabled = 1;';
@@ -184,11 +184,10 @@ function update_box_type() {
 	if(selected == 'Network(s)') {
 		document.getElementById ("addressnetworkport").firstChild.data = "Network(s)";
 		document.getElementById ("address_subnet").visible = true;
-	} else if(selected == 'Hosts(s)') {
-		ument.getElementById ("addressnetworkport").firstChild.data = "Host(s)";
+	} else if(selected == 'Host(s)') {
+		document.getElementById ("addressnetworkport").firstChild.data = "Host(s)";
 		document.getElementById ("address_subnet").visible = false;
 	} else if(selected == 'Port(s)') {
-
 		document.getElementById ("addressnetworkport").firstChild.data = "Port(s)";
 		document.getElementById ("address_subnet").visible = false;
 	}

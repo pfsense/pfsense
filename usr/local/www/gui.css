@@ -165,6 +165,9 @@ a {
 	padding-top: 5px;
 	padding-bottom: 5px;
 }
+.listhdr a {
+	color: #000000;
+}
 .listhdrr {
 	background-color: #BBBBBB;
 	padding-right: 16px;
@@ -175,6 +178,9 @@ a {
 	font-size: 11px;
 	padding-top: 5px;
 	padding-bottom: 5px;
+}
+.listhdrr a {
+	color: #000000;
 }
 .listlr {
 	background-color: #FFFFFF;
@@ -251,12 +257,21 @@ a {
 	color: #FFFFFF;
 	font-weight: bold;
 }
+.tabnavtbl {
+}
 ul#tabnav {
 	font-size: 11px;
 	font-weight: bold;
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
+}
+ul#tabnav li.tabinact1 {
+	float: left;
+	background-color: #777777;
+	color: #FFFFFF;
+	padding: 0;
+	white-space: nowrap;
 }
 ul#tabnav li.tabinact {
 	float: left;
@@ -267,6 +282,13 @@ ul#tabnav li.tabinact {
 	white-space: nowrap;
 }
 ul#tabnav li.tabinact a {
+	float: left;
+	display: block;
+	text-decoration: none;
+	padding: 5px 8px 5px 8px;
+	color: #FFFFFF;
+}
+ul#tabnav li.tabinact1 a {
 	float: left;
 	display: block;
 	text-decoration: none;

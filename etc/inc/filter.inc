@@ -1098,6 +1098,9 @@ EOD;
 	if (isset($config['interfaces']['wan']['blockpriv'])) {
 		$ipfrules .= <<<EOD
 
+# spamd anchor used by package
+anchor "spamd"
+
 # block anything from private networks on WAN interface
 anchor "spoofing"
 block in $log quick on $wanif from 10.0.0.0/8 to any label "block private networks from wan block 10/8"

@@ -170,6 +170,12 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 		else
 			$fwinfo = "Using alternate firmware URL, cannot determine if {$config['system']['alt_firmware_url']['firmware_base_url']}{$config['system']['alt_firmware_url']['firmware_filename']} is newer than current.";
 }
+
+$id = rand() . '.' . time();
+
+$mth = ini_get('upload_progress_meter.store_method');
+$dir = ini_get('upload_progress_meter.file.filename_template');
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -234,7 +240,7 @@ print_info_box($sig_warning);
                     <br><br>
 					<strong>Firmware image file: </strong>&nbsp;<input name="ulfile" type="file" class="formfld">
                     <br><br>
-                    <input name="Submit" type="submit" class="formbtn" value="Upgrade firmware">
+                    <input name="Submit" type="submit" class="formbtn" value="Upgrade firmware" onClick="window.open('progress.php?ulfile=<?=$id?>','UploadMeter','width=370,height=115', true); return true; ">
 				  <?php endif; else: ?>
 				    <strong>You must reboot the system before you can upgrade the firmware.</strong>
 				  <?php endif; ?>

@@ -965,7 +965,7 @@ foreach ($ifdescrs as $ifdescr => $ifname) {
 	return $int;
 }
 
-$ipfrules .= <<<EOD;
+$ipfrules .= <<<EOD
 
 # enable ftp-proxy
 anchor "ftpproxy"

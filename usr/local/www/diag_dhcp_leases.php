@@ -1,5 +1,6 @@
 #!/usr/local/bin/php
 <?php
+/* $Id$ */
 /*
 	diag_dhcp_leases.php
 	Copyright (C) 2004 Scott Ullrich

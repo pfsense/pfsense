@@ -1,5 +1,6 @@
 #!/usr/local/bin/php -f
 <?php
+/* $Id$ */
 /*
 	graph.php
 	Copyright (C) 2004 Scott Ullrich

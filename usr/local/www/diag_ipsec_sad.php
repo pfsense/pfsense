@@ -1,5 +1,6 @@
 #!/usr/local/bin/php
 <?php
+/* $Id$ */
 /*
 	diag_ipsec_sad.php
 	Copyright (C) 2004 Scott Ullrich

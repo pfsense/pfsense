@@ -1,5 +1,6 @@
 #!/usr/local/bin/php
 <?php
+/* $Id$ */
 /*
 	halt.php
 	part of pfSense

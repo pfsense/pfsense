@@ -1,5 +1,6 @@
 #!/usr/local/bin/php
 <?php
+/* $Id$ */
 /*
 	firewall_nat.php
 	Copyright (C) 2004 Scott Ullrich
@@ -147,7 +148,7 @@ if (isset($_POST['del_x'])) {
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
   <ul id="tabnav">
-    <li class="tabact">Inbound</li>
+    <li class="tabact"><a href="">Inbound</a></li>
     <li class="tabinact"><a href="firewall_nat_server.php">Server NAT</a></li>
     <li class="tabinact"><a href="firewall_nat_1to1.php">1:1</a></li>
     <li class="tabinact"><a href="firewall_nat_out.php">Outbound</a></li>

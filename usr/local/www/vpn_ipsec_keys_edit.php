@@ -1,5 +1,6 @@
 #!/usr/local/bin/php
 <?php
+/* $Id$ */
 /*
 	vpn_ipsec_keys_edit.php
 	part of m0n0wall (http://m0n0.ch/wall)

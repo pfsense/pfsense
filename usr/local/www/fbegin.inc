@@ -1,4 +1,5 @@
 <?php
+/* $Id$ */
 	function return_ext_menu($section) {
 		global $g;
 		$htmltext = "";

@@ -1,5 +1,6 @@
 #!/usr/local/bin/php
 <?php
+/* $Id$ */
 /*
 	diag_logs_filter.php
 	part of pfSesne by Scott Ullrich

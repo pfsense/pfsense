@@ -1,5 +1,6 @@
 #!/usr/local/bin/php
 <?php
+/* $Id$ */
 /*
     pkg_mgr.php
     Copyright (C) 2004, 2005 Scott Ullrich

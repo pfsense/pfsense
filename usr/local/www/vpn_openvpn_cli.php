@@ -1,5 +1,6 @@
 #!/usr/local/bin/php
 <?php 
+/* $Id$ */
 /*
 	vpn_openvpn_cli.php
 

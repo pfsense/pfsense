@@ -1,5 +1,6 @@
 #!/usr/local/bin/php
 <?php
+/* $Id$ */
 /*
 	status_queues.php
 	Copyright (C) 2004, 2005 Scott Ullrich

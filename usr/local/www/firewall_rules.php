@@ -1,5 +1,6 @@
 #!/usr/local/bin/php
 <?php
+/* $Id$ */
 /*
 	firewall_rules.php
 	part of m0n0wall (http://m0n0.ch/wall)

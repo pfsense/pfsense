@@ -1,5 +1,6 @@
 #!/usr/local/bin/php
 <?php
+/* $Id$ */
 /*
     pkg_mgr_install.php
     part of pfSense (http://www.pfSense.com)

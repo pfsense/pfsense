@@ -1,4 +1,5 @@
 <?php 
+/* $Id$ */
 /*
 	interfaces_wlan.inc
 	part of m0n0wall (http://m0n0.ch/wall)

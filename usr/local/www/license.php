@@ -1,5 +1,7 @@
 #!/usr/local/bin/php
-<?php require("guiconfig.inc");
+<?php
+/* $Id$ */
+require("guiconfig.inc");
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>

@@ -1,5 +1,6 @@
 #!/usr/local/bin/php
 <?php
+/* $Id$ */
 /*
     edit.php
     Copyright (C) 2004, 2005 Scott Ullrich

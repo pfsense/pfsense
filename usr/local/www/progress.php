@@ -1,6 +1,6 @@
 #!/usr/local/bin/php
-
 <?php
+/* $Id$ */
 
 $url = 'progress.php?UPLOAD_IDENTIFIER='.  $_GET["UPLOAD_IDENTIFIER"] .'&e=1';
 

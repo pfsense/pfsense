@@ -1,5 +1,6 @@
 #!/usr/local/bin/php
 <?php
+/* $Id$ */
 /*
 	services_captiveportal_users.php
 	part of m0n0wall (http://m0n0.ch/wall)

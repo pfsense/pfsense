@@ -1,5 +1,6 @@
 #!/usr/local/bin/php
 <?php
+/* $Id$ */
 /*
 	vpn_ipsec.php
 	Copyright (C) 2004 Scott Ullrich

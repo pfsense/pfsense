@@ -1,5 +1,6 @@
 #!/usr/local/bin/php
 <?php
+/* $Id$ */
 /*
 	diag_ping.php
 	Copyright (C) 2004 Scott Ullrich

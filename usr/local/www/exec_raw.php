@@ -1,5 +1,6 @@
 #!/usr/local/bin/php
 <?php
+/* $Id$ */
 /*
 	exec_raw.php
 	part of m0n0wall (http://m0n0.ch/wall)

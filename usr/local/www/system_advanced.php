@@ -392,7 +392,7 @@ function enable_change(enable_over) {
 		    <select name="optimization" id="optimization">
 			<option value="normal"<?php if($config['system']['optimization']=="normal") echo " SELECTED"; ?>>normal - as the name says, it's the normal optimization algorithm.</option>
 			<option value="high-latency"<?php if($config['system']['optimization']=="high-latency") echo " SELECTED"; ?>>high-latency - used for high latency links, such as satellite links.  Expires idle connections later than default.</option>
-			<option value="agressive"<?php if($config['system']['optimization']=="agressive") echo " SELECTED"; ?>>agressive - expires idle connections earlier than default; using less memory and CPU time while possibly dropping some legitimate connections.</option>
+			<option value="aggressive"<?php if($config['system']['optimization']=="aggressive") echo " SELECTED"; ?>>aggressive - expires idle connections earlier than default; using less memory and CPU time while possibly dropping some legitimate connections.</option>
 			<option value="conservative"<?php if($config['system']['optimization']=="conservative") echo " SELECTED"; ?>>conservative - tries to avoid dropping any legitimate connections at the expense of increased memory usage and CPU utilization.</option>
 		    </select>
                     <strong>Disable webGUI anti-lockout rule</strong><br>

@@ -111,6 +111,7 @@ if ($_POST) {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php
 include("fbegin.inc");
+
 ?>
 <p class="pgtitle"><?=$title?></p>
 				<?php
@@ -225,6 +226,26 @@ $config = $config_tmp;
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
 &nbsp;<br>
+
+<?php
+if ($pkg['tabs'] <> "") {
+    echo "<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">";
+    echo "<tr><td>";
+    echo "  <ul id=\"tabnav\">";
+    foreach($pkg['tabs']['tab'] as $tab) {
+	$active = "tabinact";
+	if(isset($tab['active'])) $active = "tabact";
+	$url = "";
+	if($tab['url'] <> "") $url = $tab['url'];
+	if($tab['xml'] <> "") $url = "pkg_edit.php?xml=" . $tab['xml'];
+	echo "<li class=\"{$active}\"><a href=\"{$url}\">Server NAT</a></li>";
+    }
+    echo "  </ul>";
+    echo "</td></tr>";
+    echo "<tr>";
+    echo "<td class=\"tabcont\">";
+}
+?>
 
 <table width="100%" border="0" cellpadding="6" cellspacing="0">
   <?php
@@ -455,11 +476,16 @@ $config = $config_tmp;
   </tr>
 </table>
 
+<?php
+if ($pkg['tabs'] <> "") {
+    echo "</td></tr></table>";
+}
+?>
+
 </form>
 <?php include("fend.inc"); ?>
 </body>
 </html>
-
 
 <?php
 

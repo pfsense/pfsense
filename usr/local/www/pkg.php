@@ -107,6 +107,27 @@ include("fbegin.inc");
 <form action="firewall_nat_out_load_balancing.php" method="post">
 <? if($_GET['savemsg'] <> "") $savemsg = $_GET['savemsg']; ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
+
+<?php
+if ($pkg['tabs'] <> "") {
+    echo "<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">";
+    echo "<tr><td>";
+    echo "  <ul id=\"tabnav\">";
+    foreach($pkg['tabs']['tab'] as $tab) {
+	$active = "tabinact";
+	if(isset($tab['active'])) $active = "tabact";
+	$url = "";
+	if($tab['url'] <> "") $url = $tab['url'];
+	if($tab['xml'] <> "") $url = "pkg_edit.php?xml=" . $tab['xml'];
+	echo "<li class=\"{$active}\"><a href=\"{$url}\">Server NAT</a></li>";
+    }
+    echo "  </ul>";
+    echo "</td></tr>";
+    echo "<tr>";
+    echo "<td class=\"tabcont\">";
+}
+?>
+
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td class="tabcont">
@@ -123,7 +144,7 @@ include("fbegin.inc");
 		    if($evaledvar)
 		    foreach ($evaledvar as $ip) {
 			echo "<tr valign=\"top\">\n";
-			if($pkg['adddeleteeditpagefields']['columnitem'] <> "")			
+			if($pkg['adddeleteeditpagefields']['columnitem'] <> "")
 				foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
 				   ?>
 					<td class="listlr">

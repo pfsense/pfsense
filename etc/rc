@@ -52,8 +52,8 @@ echo
 # let the PHP-based configuration subsystem set up the system now
 /etc/rc.bootup
 
-/usr/sbin/pfctl -f /tmp/rules.debug 
-/usr/sbin/pfctl -e 
+/sbin/pfctl -f /tmp/rules.debug >/dev/null 2>&1
+/sbin/pfctl -e >/dev/null 2>&1
 
 echo Starting Secure Shell Services ...
 /etc/sshd

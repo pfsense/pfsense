@@ -1411,6 +1411,11 @@ EOD;
 	$lan_subnet = $config['interfaces']['lan']['subnet'];
 	$wan_ip = $config['interfaces']['wan']['ipaddr'];
 	$internal_subnet = gen_subnet($lan_ip, $lan_subnet) . "/" . $config['interfaces']['lan']['subnet'];
+	/* Is IP Compression enabled? */
+	if(isset($config['ipsec']['ipcomp'])
+		exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=1");
+	else
+		exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=0");
 	if(is_array($config['ipsec']['tunnel'])) {
 		foreach ($config['ipsec']['tunnel'] as $tunnel) {
 			$remote_gateway = $tunnel['remote-gateway'];

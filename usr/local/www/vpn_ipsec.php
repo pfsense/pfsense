@@ -8,7 +8,7 @@
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 
@@ -41,6 +41,7 @@ $wancfg = &$config['interfaces']['wan'];
 
 $pconfig['enable'] = isset($config['ipsec']['enable']);
 $pconfig['preferredoldsa'] = isset($config['ipsec']['preferredoldsa']);
+$pconfig['ipcomp'] = isset($config['ipsec']['ipcomp']);
 
 if ($_POST) {
 
@@ -58,6 +59,7 @@ if ($_POST) {
 
 		$config['ipsec']['enable'] = $_POST['enable'] ? true : false;
 		$config['ipsec']['preferredoldsa'] = $_POST['preferredoldsa'] ? true : false;
+		$config['ipsec']['ipcomp'] = $_POST['ipcomp'] ? true : false;
 
 		write_config();
 
@@ -122,6 +124,11 @@ if ($_GET['act'] == "del") {
 		  <td class="vtable"><p><span class="vexpl"> </span>
 		      <input name="preferredoldsa" type="checkbox" id="preferredoldsa" value="yes" <?php if ($pconfig['preferredoldsa'] == "yes") echo "checked";?>>
 		      <strong>Prefer newer SA's.<br>
+		      </strong></p>
+		  </td>
+		  <td class="vtable"><p><span class="vexpl"> </span>
+		      <input name="ipcomp" type="checkbox" id="ipcomp" value="yes" <?php if ($pconfig['ipcomp'] == "yes") echo "checked";?>>
+		      <strong>Enable VPN IP Compression<br>
 		      </strong></p>
 		  </td>
                 </tr>

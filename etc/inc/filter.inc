@@ -88,7 +88,9 @@ function filter_configure() {
 
         $fd = fopen("/tmp/rules.debug", "w");
 	$rules = $aliases . " \n";
-	$rules.= "set loginterface $wanif \n";
+
+	$rules .= setup_logging_interfaces();
+
 	$optimization = "normal";
 	if($config['system']['optimization'] <> "") $optimization = $config['system']['optimization'];
         $rules.= "set optimization " . $optimization . "\n";
@@ -1257,11 +1259,8 @@ EOD;
 				$line = $type;
 			}
 
-			if(isset($rule['direction']) && $rule['direction'] <> "") {
-				$line .= "in ";
-			} else {
-				$line .= $rule['direction'] . " ";
-			}
+			/* ensure the direction is in */
+			$line .= " in ";
 
 			if (isset($rule['log']))
 				$line .= "log ";
@@ -1441,7 +1440,7 @@ EOD;
 						do not use state mechanisms to keep track. this is only useful if your doing advanced
 						queueing in certain situations. please check the faq.
 				*/
-				if( !isset($rule['statetype'] ) ) {
+				if(!isset($rule['statetype']) && $rule['statetype'] != "") {
 					$line .= "keep state ";
 				} else {
 					if($rule['statetype'] == "modulate state" or $rule['statetype'] == "synproxy state") {
@@ -1551,6 +1550,21 @@ function filter_rules_spoofcheck_generate($ifname, $if, $sa, $sn, $log) {
 
 	return $ipfrules;
 
+}
+
+function setup_logging_interfaces() {
+	global $config;
+	$rules = "";
+	$i = 0;
+	$ifdescrs = array('wan', 'lan');
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+		$ifdescrs['opt' . $j] = "opt" . $j;
+	}
+	foreach ($ifdescrs as $ifdescr => $ifname) {
+	    $int = filter_translate_type_to_real_interface($ifname);
+	    $rules.= "set loginterface {$int} \n";
+	}
+	return $rules;
 }
 
 ?>

@@ -78,16 +78,37 @@ function captiveportal_configure() {
 			/* example/template page */
 			$htmltext = <<<EOD
 <html>
+<title>pfSense's captive portal</title>
 <head>
-<title>m0n0wall captive portal</title>
+ <STYLE type="text/css">
+.listhdrr {
+	background-color: #BBBBBB;
+	padding-right: 16px;
+	padding-left: 6px;
+	font-weight: bold;
+	border-right: 1px solid #999999;
+	border-bottom: 1px solid #999999;
+	font-size: 11px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+ </STYLE>
 </head>
-<body>
-<h2>m0n0wall captive portal</h2>
-<p>This is the default captive portal page. Please upload your own custom HTML file on the <em>Services: Captive portal</em> screen in the m0n0wall webGUI.</p>
-<form method="post" action="\$PORTAL_ACTION\$">
-  <input name="accept" type="submit" value="Continue">
-  <input name="redirurl" type="hidden" value="\$PORTAL_REDIRURL\$">
+<body bgcolor="#990000">
+<center>
+<font color="white" face="arial" size="+1">Welcome to pfSense's captive portal!</font>
+<p>
+<form method="post" action="$PORTAL_ACTION$">
+<table border="0" cellpadding="6" cellspacing="0">
+<tr><td align="right" class="listhdrr"><font color="white">Username:</td><td class="listhdrr"><input name="auth_user" type="text"></td></tr>
+<tr><td align="right" class="listhdrr"><font color="white">Password:</td><td class="listhdrr"><input name="auth_pass" type="password"></td></tr>
+<input name="redirurl" type="hidden" value="$PORTAL_REDIRURL$">
+</table>
+<p>
+<center><input name="accept" type="submit" value="Continue">
 </form>
+</center>
 </body>
 </html>
 

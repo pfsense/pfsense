@@ -29,7 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 $if = $_GET['if'];
 if ($_POST['if'])
@@ -52,6 +52,7 @@ $pconfig['range_from'] = $config['dhcpd'][$if]['range']['from'];
 $pconfig['range_to'] = $config['dhcpd'][$if]['range']['to'];
 $pconfig['deftime'] = $config['dhcpd'][$if]['defaultleasetime'];
 $pconfig['maxtime'] = $config['dhcpd'][$if]['maxleasetime'];
+$pconfig['gateway'] = $config['dhcpd'][$if]['gateway'];
 list($pconfig['wins1'],$pconfig['wins2']) = $config['dhcpd'][$if]['winsserver'];
 $pconfig['enable'] = isset($config['dhcpd'][$if]['enable']);
 $pconfig['denyunknown'] = isset($config['dhcpd'][$if]['denyunknown']);
@@ -82,6 +83,8 @@ if ($_POST) {
 		if (($_POST['range_to'] && !is_ipaddr($_POST['range_to']))) {
 			$input_errors[] = "A valid range must be specified.";
 		}
+		if (($_POST['gateway'] && !is_ipaddr($_POST['gateway'])))
+			$input_errors[] = "A valid IP address must be specified for the gateway.";
 		if (($_POST['wins1'] && !is_ipaddr($_POST['wins1'])) || ($_POST['wins2'] && !is_ipaddr($_POST['wins2']))) {
 			$input_errors[] = "A valid IP address must be specified for the primary/secondary WINS server.";
 		}
@@ -125,6 +128,8 @@ if ($_POST) {
 		if ($_POST['wins2'])
 			$config['dhcpd'][$if]['winsserver'][] = $_POST['wins2'];
 			
+		$config['dhcpd'][$if]['gateway'] = $_POST['gateway'];
+
 		write_config();
 		
 		$retval = 0;
@@ -170,13 +175,14 @@ function enable_change(enable_over) {
 	document.iform.wins2.disabled = endis;
 	document.iform.deftime.disabled = endis;
 	document.iform.maxtime.disabled = endis;
+	document.iform.gateway.disabled = endis;
 }
 //-->
 </script>
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php include_once("fbegin.inc"); ?>
 <p class="pgtitle">Services: DHCP server</p>
 <form action="services_dhcp.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -248,6 +254,11 @@ function enable_change(enable_over) {
                         <td width="78%" class="vtable"> 
                           <input name="wins1" type="text" class="formfld" id="wins1" size="20" value="<?=htmlspecialchars($pconfig['wins1']);?>"><br>
                           <input name="wins2" type="text" class="formfld" id="wins2" size="20" value="<?=htmlspecialchars($pconfig['wins2']);?>"></td>
+                      </tr>
+                      <tr> 
+                        <td width="22%" valign="top" class="vncell">Gateway</td>
+                        <td width="78%" class="vtable"> 
+                          <input name="gateway" type="text" class="formfld" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>"><br>
                       </tr>
                       <tr> 
                         <td width="22%" valign="top" class="vncell">Default lease 
@@ -326,6 +337,6 @@ function enable_change(enable_over) {
 enable_change(false);
 //-->
 </script>
-<?php include("fend.inc"); ?>
+<?php include_once("fend.inc"); ?>
 </body>
 </html>

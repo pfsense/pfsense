@@ -291,7 +291,6 @@ function filter_generate_altq_rules() {
 
 	if (isset($config['shaper']['rule']))
 		foreach ($config['shaper']['rule'] as $rule) {
-		echo $rule['descr'] . "\n";
 		/* don't include disabled rules */
 		if (isset($rule['disabled'])) {
 			$i++;

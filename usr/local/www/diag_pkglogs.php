@@ -1,7 +1,8 @@
 #!/usr/local/bin/php
 <?php
-/* $Id$ */
 /*
+	$Id$
+
 	diag_pkglogs.php
 	Copyright (C) 2005 Colin Smith
 	All rights reserved.
@@ -39,6 +40,22 @@ if ($_POST['clear']) {
 	exec("/usr/sbin/clog -i -s 262144 {$system_logfile}");
 }
 
+$i = 0;
+$apkg = $_POST['pkg'];
+if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, locate the first package that handles logging.
+	foreach($config['installedpackages']['package'] as $package) {
+		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
+		if(is_array($pkg_config['logging'])) {
+			$apkg = $package['name'];
+			$apkgid = $i;
+			break;
+		}
+		$i++;
+	}
+} else {
+	$apkgid = get_pkg_id($apkg);
+}
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -55,14 +72,10 @@ if ($_POST['clear']) {
   <tr><td>
   <ul id="tabnav">
     <?php
-	$i = 0;
-	$apkg = $_POST['pkg'];
-	if(!isset($_POST['pkg'])) $apkg = false;
 	foreach($config['installedpackages']['package'] as $package) {
-		$pkgname = $package['name'];
         	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
 		if(is_array($pkg_config['logging'])) {
-			if($apkg == false) $apkg = $pkgname;
+			$pkgname = $package['name'];
 			$logtab = $pkg_config['logging']['logtab'];
 			if(!isset($pkg_config['logging']['logtab'])) $logtab = $pkgname;
 			if($apkg == $pkgname) { ?>
@@ -73,7 +86,6 @@ if ($_POST['clear']) {
     <?php
 			}
 		}
-        	$i++;
         }
     ?> 
   </ul>
@@ -83,10 +95,9 @@ if ($_POST['clear']) {
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		  <tr>
 			<td colspan="2" class="listtopic">
-			  Last <?=$nentries;?> <?=$apkg;?> entries</td>
+			  Last <?=$nentries;?> <?=$apkg;?> log entries</td>
 		  </tr>
 		  <?php
-			$apkgid = get_pkg_id($apkg);
 			$apkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $config['installedpackages']['package'][$apkgid]['configurationfile'], "packagegui");
 			if(isset($apkg_config['logging']['logfile'])) {
 				$logfile = $apkg_config['logging']['logfile'];

@@ -286,11 +286,8 @@ function filter_nat_rules_generate() {
 
 	$natrules = "";
 
-	$natrules .= <<<EODR
-# auto-proxy
-rdr on $lanif proto tcp from any to any port 21 -> 127.0.0.1 port 8021
-EODR
-	
+	$natrules .= "rdr on " . $lanif . "proto tcp from any to any port 21 -> 127.0.0.1 port 8021\n";
+
 	/* any 1:1 mappings? */
 	if (is_array($config['nat']['onetoone'])) {
 		foreach ($config['nat']['onetoone'] as $natent) {

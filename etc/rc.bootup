@@ -48,7 +48,7 @@
 	if(does_interface_exist($lan_if) == false) $do_assign = 1;
 	if(does_interface_exist($wan_if) == false) $do_assign = 1;
 
-	if($do_assign == 1) mwexec("/etc/rc.initial.setports");
+	if($do_assign == 1) system("/etc/rc.initial.setports");
 
 	/* convert configuration, if necessary */
 	convert_config();

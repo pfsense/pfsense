@@ -98,7 +98,7 @@
 		unset($config['system']['webgui']['noantilockout']);
 	}
 
-	write_config();
+	write_config("LAN IP configuration from console menu");
 	interfaces_lan_configure();
 
 	echo <<<EOD

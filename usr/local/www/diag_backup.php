@@ -80,11 +80,11 @@ if ($_POST) {
 				$config['system']['domain'] . "-" . date("YmdHis") . ".xml";
 			if($options == "nopackages") {
 				exec("sed '/<installedpackages>/,/<\/installedpackages>/d' /conf/config.xml > /tmp/config.xml.nopkg");
-				$fs = filesize("/tmp/config.xml.nopkg");
+				$fs = filesize("{$g['tmp_path']}/config.xml.nopkg");
 				header("Content-Type: application/octet-stream");
                         	header("Content-Disposition: attachment; filename=$fn");
                         	header("Content-Length: $fs");
-				readfile("/tmp/config.xml.nopkg");
+				readfile("{$g['tmp_path']}/config.xml.nopkg");
 			} else {
 				if($_POST['backuparea'] <> "") {
 					/* user wishes to backup specific area of configuration */

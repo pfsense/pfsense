@@ -142,6 +142,14 @@ function find_ip_interface($ip) {
 }
 
 /*
+ * get_carp_interface_status($carpinterface): returns the status of a carp ip
+ */
+function get_carp_interface_status($carpinterface) {
+    $status = exec_command("/sbin/ifconfig {$carpinterface} | grep \"carp:\" | cut -d\" \" -f2");
+    return $status;
+}
+
+/*
  * find_carp_interface($ip): return the carp interface where an ip is defined
  */
 function find_carp_interface($ip) {

@@ -106,19 +106,6 @@ if ($clientmac && portal_mac_fixed($clientmac)) {
 		readfile("{$g['varetc_path']}/captiveportal-error.html");
 	}
 
-} else if ($_POST['accept'] && $config['captiveportal']['auth_method']=="local") {
-	//check against local usermanager
-	
-	//erase expired accounts
-	if(trim($config['users'][$_POST['auth_user']]['expirationdate'])!="" && strtotime("-1 day")>strtotime($config['users'][$_POST['auth_user']]['expirationdate'])){
-		unset($config['users'][$_POST['auth_user']]);
-		write_config();
-	}
-	if($config['users'][$_POST['auth_user']]['password']==md5($_POST['auth_pass'])){
-		portal_allow($clientip, $clientmac,$_POST['auth_user'],0,0);
-	} else {
-		readfile("{$g['varetc_path']}/captiveportal-error.html");
-	}
 } else if ($_POST['accept'] && $clientip) {
 	//KEYCOM: authorised up and down bandwidth defaults (set from webgui). If not set, use 128/128
 	if (isset($config['captiveportal']['peruserbw'])) {

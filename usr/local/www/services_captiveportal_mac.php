@@ -29,6 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+$pgtitle = array("Services", "Captive portal");
 require("guiconfig.inc");
 
 if (!is_array($config['captiveportal']['passthrumac']))
@@ -67,17 +68,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("Services: Captive portal");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">Services: Captive portal: Pass-through MAC addresses</p>
 <form action="services_captiveportal_mac.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_passthrumacsdirty_path)): ?><p>
@@ -85,9 +76,9 @@ if ($_GET['act'] == "del") {
 <input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr><td>
+  <tr><td class="tabnavtbl">
   <ul id="tabnav">
-	<li class="tabinact"><a href="services_captiveportal.php">Captive portal</a></li>
+	<li class="tabinact1"><a href="services_captiveportal.php">Captive portal</a></li>
 	<li class="tabact">Pass-through MAC</li>
 	<li class="tabinact"><a href="services_captiveportal_ip.php">Allowed IP addresses</a></li>
   </ul>
@@ -129,5 +120,3 @@ if ($_GET['act'] == "del") {
   </table>
 </form>
 <?php include("fend.inc"); ?>
-</body>
-</html>

@@ -383,140 +383,21 @@
 		</field>
 				<field>
 			<name>Subnet Mask</name>
-			<type>select</type>
+			<type>subnet_select</type>
 			<bindstofield>interfaces->lan->subnet</bindstofield>
-			<options>
-				<option>
-						<name>1</name>
-						<value>1</value>
-				</option>
-				<option>
-						<name>2</name>
-						<value>2</value>
-				</option>
-				<option>
-						<name>3</name>
-						<value>3</value>
-				</option>
-				<option>
-						<name>4</name>
-						<value>4</value>
-				</option>
-				<option>
-						<name>5</name>
-						<value>5</value>
-				</option>
-				<option>
-						<name>6</name>
-						<value>6</value>
-				</option>
-				<option>
-						<name>7</name>
-						<value>7</value>
-				</option>
-				<option>
-						<name>8</name>
-						<value>8</value>
-				</option>
-				<option>
-						<name>9</name>
-						<value>9</value>
-				</option>
-				<option>
-						<name>10</name>
-						<value>10</value>
-				</option>
-				<option>
-						<name>11</name>
-						<value>11</value>
-				</option>
-				<option>
-						<name>12</name>
-						<value>12</value>
-				</option>
-				<option>
-						<name>13</name>
-						<value>13</value>
-				</option>
-				<option>
-						<name>14</name>
-						<value>14</value>
-				</option>
-				<option>
-						<name>15</name>
-						<value>15</value>
-				</option>
-				<option>
-						<name>16</name>
-						<value>16</value>
-				</option>
-				<option>
-						<name>17</name>
-						<value>17</value>
-				</option>
-				<option>
-						<name>18</name>
-						<value>18</value>
-				</option>
-				<option>
-						<name>19</name>
-						<value>19</value>
-				</option>
-				<option>
-						<name>20</name>
-						<value>20</value>
-				</option>
-				<option>
-						<name>21</name>
-						<value>21</value>
-				</option>
-				<option>
-						<name>22</name>
-						<value>22</value>
-				</option>
-				<option>
-						<name>23</name>
-						<value>23</value>
-				</option>
-				<option>
-						<name>24</name>
-						<value>24</value>
-				</option>
-				<option>
-						<name>25</name>
-						<value>25</value>
-				</option>
-				<option>
-						<name>26</name>
-						<value>26</value>
-				</option>
-				<option>
-						<name>27</name>
-						<value>27</value>
-				</option>
-				<option>
-						<name>28</name>
-						<value>28</value>
-				</option>
-				<option>
-						<name>29</name>
-						<value>29</value>
-				</option>
-				<option>
-						<name>30</name>
-						<value>30</value>
-				</option>
-				<option>
-						<name>32</name>
-						<value>32</value>
-				</option>
-			</options>
 		</field>
 		<field>
 			<name>Next</name>
 			<type>submit</type>
 		</field>
 	</fields>
+	<stepsubmitphpaction>
+		$ip = $_POST['adminpassword'];
+		$ft = split("\.", $ip);
+		$ft_ip = $ft[0] . "." . $ft[1] . "." . $ft[2] . ".";
+		$config['dhcpd']['lan']['range']['from'] = $ft_ip . ".100";
+		$config['dhcpd']['lan']['range']['to'] = $ft_ip . ".250";
+	</stepsubmitphpaction>
 </step>
 <step>
 	<id>6</id>

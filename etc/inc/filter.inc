@@ -123,13 +123,13 @@ function filter_configure() {
 		if ($g['booting']) {
 			echo " IPFW+ALTQ ";
 		}
-		system("/sbin/kldload ipfw");
-		system("/sbin/ipfw add 25 pass all from any to any\n");
+		system("/sbin/kldload ipfw >/dev/null 2>&1");
+		system("/sbin/ipfw add 25 pass all from any to any >/dev/null 2>&1\n");
                 /* change one_pass to 1 so ipfw stops checking after
                    a rule has matched */
-                system("/sbin/sysctl net.inet.ip.fw.one_pass=1");
+                system("/sbin/sysctl net.inet.ip.fw.one_pass=1 >/dev/null 2>&1");
                 /* load shaper rules */
-                system("/sbin/ipfw -f delete set 4");
+                system("/sbin/ipfw -f delete set 4 >/dev/null 2>&1");
                 /* XXX - seems like ipfw cannot accept rules directly on stdin,
                    so we have to write them to a temporary file first */
                 $fd = fopen("/tmp/ipfw.rules", "w");

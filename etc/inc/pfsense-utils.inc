@@ -58,7 +58,18 @@ function return_dir_as_array($dir) {
 }
 
 /*
- * return_dir_as_array($filenaem): returns $filename contents as a string
+ * return_filename_as_array($filename): returns $filename contents as a string
+ */
+function return_filename_as_array($filename) {
+    $file = array();
+    if(!file_exists($filename)) return $file;
+    $text = return_filename_as_string($filename);
+    $text_split = split("\n", $text);
+    return $text_split;
+}
+
+/*
+ * return_dir_as_array($filename): returns $filename contents as a string
  */
 function return_filename_as_string($filename) {
     $tmp = "";

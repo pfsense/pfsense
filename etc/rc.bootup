@@ -43,6 +43,9 @@
 	/* convert configuration, if necessary */
 	convert_config();
 
+	/* read in /etc/sysctl.conf and set values if needed */
+	system_setup_sysctl();
+
 	/* run any early shell commands specified in config.xml */
 	system_do_shell_commands(1);
 

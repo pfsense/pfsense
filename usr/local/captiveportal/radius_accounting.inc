@@ -26,10 +26,16 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
+
+	// This version of radius_accounting.inc has been modified by
+	// Rob Parker <rob.parker@keycom.co.uk>. Changes made include:
+	// * now sends Framed-IP-Address (client IP)
+	// * now sends Called-Station-ID (NAS IP)
+	// * now sends Calling-Station-ID (client IP)
 */
 
 
-function RADIUS_ACCOUNTING_START($username,$sessionid,$port_type,$stationid,$ipaddr,$portalmac,$radiusip,$radiusport,$radiuskey) {
+function RADIUS_ACCOUNTING_START($username,$sessionid,$radiusip,$radiusport,$radiuskey,$clientip) {
 	$sharedsecret=$radiuskey ;
 	# $debug = 1 ;
 
@@ -43,6 +49,14 @@ function RADIUS_ACCOUNTING_START($username,$sessionid,$port_type,$stationid,$ipa
 	
 	/* set 5 second timeout on socket i/o */
 	stream_set_timeout($fd, 5) ;
+
+	$nas_ip_address=get_current_wan_address();
+
+	if(!isset($clientip)) {
+		//if there's no client ip, we'll need to use the NAS ip
+		$clientip=get_current_wan_address();
+	}
+	$ip_exp=explode(".",$clientip);
 
 	if ($debug)
 	    echo "<br>radius-port: $radiusport<br>radius-host: $radiusip<br>username: $username<hr>\n";
@@ -59,167 +73,41 @@ function RADIUS_ACCOUNTING_START($username,$sessionid,$port_type,$stationid,$ipa
 		6+				// Acct Status Type
 		6+				// Acct RADIUS Authenticated
 		2+strlen($sessionid)+	// Acct SessionID
-		2+strlen($stationid)+	// Calling-Station-Id
-		2+strlen($portalmac)+	// Called-Station-Id
 		6;				// Framed-IP-Address
 
-	//          v   v   v     v   v   v     v     v     v     1   1   1   v
-	// Line #   1   2   3     4   5   6     7     8     9     0   1   2   E
-	$data=pack("CCCCNNNNCCCCCCCCa*CCa*CCCCCCCCCCCCCCCCCCCCCCCCCCa*CCa*CCa*CCN",
+	//          v   v   v     v   v   v     v     v     v     1   v
+	// Line #   1   2   3     4   5   6     7     8     9     0   E
+	$data=pack("CCCCNNNNCCCCCCCCa*CCa*CCCCCCCCCCCCCCCCCCCCCCCCCCa*CCCCCC",
 	    4,$thisidentifier,$length/256,$length%256,		// header
 	    0,0,0,0,						// authcode
 	    6,6,0,0,0,1,					// service type
 	    1,2+strlen($username),$username,			// username
 	    32,2+strlen($nasHostname[0]),$nasHostname[0],	// nasIdentifier
 	    5,6,0,0,0,0,						// nasPort
-	    61,6,0,0,0,$port_type,				// nasPortType
+	    61,6,0,0,0,15,						// nasPortType = Ethernet
 		40,6,0,0,0,1,						// Acct Status Type = Start
 		45,6,0,0,0,1,						// Acct RADIUS Authenticated
 		44,2+strlen($sessionid),$sessionid,	// Acct Session ID
-		31,2+strlen($stationid),$stationid,	// Calling Station 
-		30,2+strlen($portalmac),$portalmac,	// Called Station
-		8,6,ip2long($ipaddr)				// Framed-IP-Address
+		8,6,$ip_exp[0],$ip_exp[1],$ip_exp[2],$ip_exp[3]	//Framed-IP-Address
 	    );
 
 	/* Generate Accounting Request Authenticator */
 	$RA = md5($data.$radiuskey) ;
 
-	//          v   v v     v   v   v     v     v     v     1   1   1   v
-	// Line #   1   2 3     4   5   6     7     8     9     0   1   2   E
-	$data=pack("CCCCH*CCCCCCCCa*CCa*CCCCCCCCCCCCCCCCCCCCCCCCCCa*CCa*CCa*CCN",
+	//          v   v v     v   v   v     v     v     v     1   v
+	// Line #   1   2 3     4   5   6     7     8     9     0   E
+	$data=pack("CCCCH*CCCCCCCCa*CCa*CCCCCCCCCCCCCCCCCCCCCCCCCCa*CCCCCC",
 	    4,$thisidentifier,$length/256,$length%256,		// header
 	    $RA,						// authcode
 	    6,6,0,0,0,1,					// service type
 	    1,2+strlen($username),$username,			// username
 	    32,2+strlen($nasHostname[0]),$nasHostname[0],	// nasIdentifier
 	    5,6,0,0,0,0,						// nasPort
-	    61,6,0,0,0,$port_type,				// nasPortType
+	    61,6,0,0,0,15,						// nasPortType = Ethernet
 		40,6,0,0,0,1,						// Acct Status Type = Start
 		45,6,0,0,0,1,						// Acct RADIUS Authenticated
 		44,2+strlen($sessionid),$sessionid,	// Acct Session ID
-		31,2+strlen($stationid),$stationid,	// Calling Station
-		30,2+strlen($portalmac),$portalmac,	// Called Station
-		8,6,ip2long($ipaddr)				// Framed-IP-Address
-	    );
-
-	if($debug) {
-		echo "username is $username with len " . strlen($username) ."\n" ;
-		echo "nasHostname is {$nasHostname[0]} with len " . strlen($nasHostname[0]) ."\n" ;
-	}
-
-	$ret = fwrite($fd,$data) ;
-	if( !$ret || ($ret != $length) ) 
-		return 1; /* error return */
-
-	if ($debug)
-	    echo "<br>writing $length bytes<hr>\n";
-
-	$readdata = fgets($fd,2) ; /* read 1 byte */
-	$status = socket_get_status($fd) ;
-	fclose($fd) ;
-
-	if($status['timed_out'])
-		$retvalue = 1 ;
-	else
-		$retvalue = ord($readdata) ;
-
-	return $retvalue ;
-	// 5 -> Accounting-Response
-	// See RFC2866 for this.
-}
-
-function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$port_type,$radiusip,$radiusport,$radiuskey) {
-	$sharedsecret=$radiuskey ;
-	# $debug = 1 ;
-
-	exec("/bin/hostname", $nasHostname) ;
-	if(!$nasHostname[0])
-		$nasHostname[0] = "m0n0wall" ;
-
-	$input_pkts = $input_bytes = $output_pkts = $output_bytes = 0 ;
-
-	exec("/sbin/ipfw show {$ruleno}", $ipfw) ;	
-	preg_match("/(\d+)\s+(\d+)\s+(\d+)\s+skipto/", $ipfw[0], $matches) ;
-	$output_pkts = $matches[2] ;
-	$output_bytes = $matches[3] ;
-
-	unset($matches) ;
-	preg_match("/(\d+)\s+(\d+)\s+(\d+)\s+skipto/", $ipfw[1], $matches) ;
-	$input_pkts = $matches[2] ;
-	$input_bytes = $matches[3] ;
-
-	$fd = @fsockopen("udp://$radiusip",$radiusport,$errno,$errstr,3) ;
-	if(!$fd) 
-		return 1 ; /* error return */
-	
-	/* set 5 second timeout on socket i/o */
-	stream_set_timeout($fd, 5) ;
-
-	if ($debug)
-	    echo "<br>radius-port: $radiusport<br>radius-host: $radiusip<br>username: $username<hr>\n";
-
-	$thisidentifier=rand()%256;
-
-	$length=4+				// header
-		16+				// auth code
-		6+				// service type
-		2+strlen($username)+		// username
-		2+strlen($nasHostname[0])+			// nasIdentifier
-		6+				// nasPort
-		6+				// nasPortType
-		6+				// Acct Status Type
-		6+				// Acct RADIUS Authenticated
-		2+strlen($sessionid)+	// Acct SessionID
-		6+				// Acct terminate
-		6+				// Session time
-		6+				// input bytes
-		6+				// input packets
-		6+				// output bytes
-		6;				// output packets
-
-	//          v   v   v     v   v   v     v     v     v     1   1  1  1  1  1  1  v
-	// Line #   1   2   3     4   5   6     7     8     9     0   1  2  3  4  5  6  E
-	$data=pack("CCCCNNNNCCCCCCCCa*CCa*CCCCCCCCCCCCCCCCCCCCCCCCCCa*CCNCCNCCNCCNCCNCCN",
-	    4,$thisidentifier,$length/256,$length%256,		// header
-	    0,0,0,0,						// authcode
-	    6,6,0,0,0,1,					// service type
-	    1,2+strlen($username),$username,			// username
-	    32,2+strlen($nasHostname[0]),$nasHostname[0],	// nasIdentifier
-	    5,6,0,0,0,0,						// nasPort
-	    61,6,0,0,0,$port_type,				// nasPortType
-		40,6,0,0,0,2,						// Acct Status Type = Stop
-		45,6,0,0,0,1,						// Acct RADIUS Authenticated
-		44,2+strlen($sessionid),$sessionid,	// Acct Session ID
-		49,6,1,		// Acct Terminate = User Request
-		46,6,time() - $start_time,			// Session Time
-		42,6,$input_bytes,	// Input Octets
-		47,6,$input_pkts,	// Input Packets
-		43,6,$output_bytes, // Output Octets
-		48,6,$output_pkts	// Output Packets
-	    );
-
-	/* Generate Accounting Request Authenticator */
-	$RA = md5($data.$radiuskey) ;
-
-	//          v   v v     v   v   v     v     v     v     1   1  1  1  1  1  1  v
-	// Line #   1   2 3     4   5   6     7     8     9     0   1  2  3  4  5  6  E
-	$data=pack("CCCCH*CCCCCCCCa*CCa*CCCCCCCCCCCCCCCCCCCCCCCCCCa*CCNCCNCCNCCNCCNCCN",
-	    4,$thisidentifier,$length/256,$length%256,		// header
-	    $RA,						// authcode
-	    6,6,0,0,0,1,					// service type
-	    1,2+strlen($username),$username,			// username
-	    32,2+strlen($nasHostname[0]),$nasHostname[0],	// nasIdentifier
-	    5,6,0,0,0,0,						// nasPort
-	    61,6,0,0,0,$port_type,				// nasPortType
-		40,6,0,0,0,2,						// Acct Status Type = Stop
-		45,6,0,0,0,1,						// Acct RADIUS Authenticated
-		44,2+strlen($sessionid),$sessionid,	// Acct Session ID
-		49,6,1,		// Acct Terminate = User Request
-		46,6,time() - $start_time,			// Session Time
-		42,6,$input_bytes,	// Input Octets
-		47,6,$input_pkts,	// Input Packets
-		43,6,$output_bytes, // Output Octets
-		48,6,$output_pkts	// Output Packets
+		8,6,$ip_exp[0],$ip_exp[1],$ip_exp[2],$ip_exp[3]	//Framed-IP-Address
 	    );
 
 	if($debug) {
@@ -242,6 +130,144 @@ function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$port_t
 		$retvalue = 1 ;
 	else
 		$retvalue = ord($readdata) ;
+
+	syslog(LOG_INFO,"Sent Accounting-Request Start packet to RADIUS for $username");
+
+	return $retvalue ;
+	// 5 -> Accounting-Response
+	// See RFC2866 for this.
+}
+
+function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radiusip,$radiusport,$radiuskey,$clientip) {
+	$sharedsecret=$radiuskey ;
+	# $debug = 1 ;
+
+	exec("/bin/hostname", $nasHostname) ;
+	if(!$nasHostname[0])
+		$nasHostname[0] = "quewall" ;
+
+	$input_pkts = $input_bytes = $output_pkts = $output_bytes = 0 ;
+
+	exec("/sbin/ipfw show {$ruleno}", $ipfw) ;	
+	preg_match("/(\d+)\s+(\d+)\s+(\d+)\s+skipto/", $ipfw[0], $matches) ;
+	$output_pkts = $matches[2] ;
+	$output_bytes = $matches[3] ;
+
+	unset($matches) ;
+	preg_match("/(\d+)\s+(\d+)\s+(\d+)\s+skipto/", $ipfw[1], $matches) ;
+	$input_pkts = $matches[2] ;
+	$input_bytes = $matches[3] ;
+
+	$fd = @fsockopen("udp://$radiusip",$radiusport,$errno,$errstr,3) ;
+	if(!$fd) 
+		return 1 ; /* error return */
+	
+	/* set 5 second timeout on socket i/o */
+	stream_set_timeout($fd, 5) ;
+
+	$nas_ip_address=get_current_wan_address();
+
+	if(!isset($clientip)) {
+		//if there's no client ip, we'll need to use the NAS ip
+		$clientip=get_current_wan_address();
+	}
+	$ip_exp=explode(".",$clientip);
+
+	if ($debug)
+	    echo "<br>radius-port: $radiusport<br>radius-host: $radiusip<br>username: $username<hr>\n";
+
+	$thisidentifier=rand()%256;
+
+	$length=4+				// header
+		16+				// auth code
+		6+				// service type
+		2+strlen($username)+		// username
+		2+strlen($nasHostname[0])+			// nasIdentifier
+		6+				// nasPort
+		6+				// nasPortType
+		6+				// Acct Status Type
+		6+				// Acct RADIUS Authenticated
+		2+strlen($sessionid)+	// Acct SessionID
+		6+				// Acct terminate
+		6+				// Session time
+		6+				// input bytes
+		6+				// input packets
+		6+				// output bytes
+		6+				// output packets
+		2+strlen($nas_ip_address)+		//Called-Station-ID
+		2+strlen($clientip);	//Calling-Station-ID
+
+	//          v   v   v     v   v   v     v     v     v     1   1  1  1  1  1  1  v
+	// Line #   1   2   3     4   5   6     7     8     9     0   1  2  3  4  5  6  E
+	$data=pack("CCCCNNNNCCCCCCCCa*CCa*CCCCCCCCCCCCCCCCCCCCCCCCCCa*CCNCCNCCNCCNCCNCCNCCa*CCa*",
+	    4,$thisidentifier,$length/256,$length%256,		// header
+	    0,0,0,0,						// authcode
+	    6,6,0,0,0,1,					// service type
+	    1,2+strlen($username),$username,			// username
+	    32,2+strlen($nasHostname[0]),$nasHostname[0],	// nasIdentifier
+	    5,6,0,0,0,0,						// nasPort
+	    61,6,0,0,0,15,						// nasPortType = Ethernet
+		40,6,0,0,0,2,						// Acct Status Type = Stop
+		45,6,0,0,0,1,						// Acct RADIUS Authenticated
+		44,2+strlen($sessionid),$sessionid,	// Acct Session ID
+		49,6,1,		// Acct Terminate = User Request
+		46,6,time() - $start_time,			// Session Time
+		42,6,$input_bytes,	// Input Octets
+		47,6,$input_pkts,	// Input Packets
+		43,6,$output_bytes, // Output Octets
+		48,6,$output_pkts,	// Output Packets
+		30,2+strlen($nas_ip_address),$nas_ip_address,	//Called-Station-ID
+		31,2+strlen($clientip),$clientip				//Calling-Station-ID
+	    );
+
+	/* Generate Accounting Request Authenticator */
+	$RA = md5($data.$radiuskey) ;
+
+	//          v   v v     v   v   v     v     v     v     1   1  1  1  1  1  1  v
+	// Line #   1   2 3     4   5   6     7     8     9     0   1  2  3  4  5  6  E
+	$data=pack("CCCCH*CCCCCCCCa*CCa*CCCCCCCCCCCCCCCCCCCCCCCCCCa*CCNCCNCCNCCNCCNCCNCCa*CCa*",
+	    4,$thisidentifier,$length/256,$length%256,		// header
+	    $RA,						// authcode
+	    6,6,0,0,0,1,					// service type
+	    1,2+strlen($username),$username,			// username
+	    32,2+strlen($nasHostname[0]),$nasHostname[0],	// nasIdentifier
+	    5,6,0,0,0,0,						// nasPort
+	    61,6,0,0,0,15,						// nasPortType = Ethernet
+		40,6,0,0,0,2,						// Acct Status Type = Stop
+		45,6,0,0,0,1,						// Acct RADIUS Authenticated
+		44,2+strlen($sessionid),$sessionid,	// Acct Session ID
+		49,6,1,		// Acct Terminate = User Request
+		46,6,time() - $start_time,			// Session Time
+		42,6,$input_bytes,	// Input Octets
+		47,6,$input_pkts,	// Input Packets
+		43,6,$output_bytes, // Output Octets
+		48,6,$output_pkts,	// Output Packets
+		30,2+strlen($nas_ip_address),$nas_ip_address,	//Called-Station-ID
+		31,2+strlen($clientip),$clientip				//Calling-Station-ID
+	    );
+
+	if($debug) {
+		echo "username is $username with len " . strlen($username) ."\n" ;
+		echo "nasHostname is {$nasHostname[0]} with len " . strlen($nasHostname[0]) ."\n" ;
+	}	
+
+	$ret = fwrite($fd,$data) ;
+	if( !$ret || ($ret != $length) ) 
+		return 1; /* error return */
+
+	if ($debug)
+	    echo "<br>writing $length bytes<hr>\n";
+
+	$readdata = fgets($fd,2) ; /* read 1 byte */
+	$status = socket_get_status($fd) ;
+	fclose($fd) ;
+
+	if($status['timed_out'])
+		$retvalue = 1 ;
+	else
+		$retvalue = ord($readdata) ;
+
+	syslog(LOG_INFO,"Sent Accounting-Request Stop packet to RADIUS for $username");
 
 	return $retvalue ;
 	// 5 -> Accounting-Response

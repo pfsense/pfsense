@@ -1460,7 +1460,7 @@ EOD;
 					if(isset($rule['source-track']) & $rule['source-track'] <> "")
 						$line .= "source-track rule ";
 					if(isset($rule['max-src-nodes']) & $rule['max-src-nodes'] <> "")
-						$line .= "max-src-nodes " . $rule['max-src-nodes'] . "";
+						$line .= "max-src-nodes " . $rule['max-src-nodes'] . " ";
 					if(isset($rule['max-src-states']) & $rule['max-src-states'] <> "")
 						$line .= "max-src-states " . $rule['max-src-states'] . " ";
 					if(isset($rule['statetimeout']) & $rule['statetimeout'] <> "")

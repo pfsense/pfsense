@@ -46,12 +46,14 @@ $pconfig['disablefirmwarecheck'] = isset($config['system']['disablefirmwarecheck
 $pconfig['altfirmwareurl'] = $config['system']['altfirmwareurl']['enabled'];
 $pconfig['firmware_base_url'] = $config['system']['alt_firmware_url']['firmware_base_url'];
 $pconfig['firmwarename'] = $config['system']['alt_firmware_url']['firmware_filename'];
+$pconfig['altpkgconfigurl'] = $config['system']['alt_pkgconfig_url']['enabled'];
+$pconfig['pkgconfig_base_url'] = $config['system']['alt_pkgconfig_url']['pkgconfig_base_url'];
+$pconfig['pkgconfig_filename'] = $config['system']['alt_pkgconfig_url']['pkgconfig_filename'];
 $pconfig['expanddiags'] = isset($config['system']['webgui']['expanddiags']);
 if ($g['platform'] == "generic-pc")
 	$pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
-
 $pconfig['schedulertype'] = $config['system']['schedulertype'];
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
 $pconfig['disablerendevouz'] = $config['system']['disablerendevouz'];
@@ -118,6 +120,18 @@ if ($_POST) {
 		} else {
 			unset($config['system']['alt_firmware_url']);
 		}
+
+		if ($_POST['altpkgconfigurl']) {
+			$config['system']['alt_pkgconfig_url'] = array();
+			$config['system']['alt_pkgconfig_url']['enabled'] = "";
+			$config['system']['alt_pkgconfig_url']['pkgconfig_base_url'] = $_POST['pkgconfig_base_url'];
+			$config['system']['alt_pkgconfig_url']['pkgconfig_filename'] = $_POST['pkgconfig_filename'];
+		} elseif (isset($config['system']['alt_pkgconfig_url']['pkgconfig_base_url']) || isset($config['system']['alt_pkgconfig_url']['pkgconfig_filename'])) {
+			unset($config['system']['alt_pkgconfig_url']['enabled']);
+		} else {
+			unset($config['system']['alt_pkgconfig_url']);
+		}
+	
 		$config['system']['webgui']['expanddiags'] = $_POST['expanddiags'] ? true : false;
 		$config['system']['optimization'] = $_POST['optimization'];
 		$config['system']['disablerendevouz'] = $_POST['disablerendevouz'];
@@ -186,6 +200,15 @@ function enable_altfirmwareurl(enable_over) {
                 document.iform.firmwareurl.disabled = 1;
                 document.iform.firmwarename.disabled = 1;
         }
+}
+function enable_altpkgconfigurl(enable_over) {
+	if (document.iform.altpkgconfig.checked || enable_over) {
+		document.iform.pkgconfig_base_url.disabled = 0;
+		document.iform.pkgconfig_filename.disabled = 0;
+	} else {
+		document.iform.pkgconfig_base_url.disabled = 1;
+		document.iform.pkgconfig_filename.disabled = 1;
+	}
 }
 
 // -->
@@ -322,6 +345,17 @@ function enable_altfirmwareurl(enable_over) {
                     <span class="vexpl">
     This is where pfSense will check for newer firmware versions when <a href="system_firmware.php">System: Firmware</a> page is viewed.</span></td>
 		</tr>
+                <tr>
+                  <td valign="top" class="vncell">Alternate pkg_config.xml URL</td>
+                  <td class="vtable">
+                    <input name="altfirmwareurl" type="checkbox" id="altpkgconfigeurl" value="yes" onClick="enable_altpkgconfigurl()" <?php if (isset($pconfig['altpkgconfigurl'])) echo "checked"; ?>> Retrieve the package list from a different URL<br>
+                    <table>
+                    <tr><td>Base URL:</td><td><input name="pkgconfig_base_url" type="input" id="pkgconfig_base_url" size="64" value="<?php if ($pconfig['pkg_config_base_url']) echo $pconfig['pkg_config_base_url']; else echo $g['pkg_config_base_url']; ?>"></td></tr>
+                    <tr><td>Filename:</td><td><input name="pkg_config_filename" type="input" id="pkg_config_filename" size="32" value="<?php if ($pconfig['pkg_config_filename']) echo $pconfig['pkg_config_filename']; else echo $g['pkg_config_filename']; ?>"></td></tr>
+                    </table>
+                    <span class="vexpl">
+    This is where pfSense will fetch its package list from.</span></td>
+                </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell">Hard disk standby time </td>
                   <td width="78%" class="vtable">

@@ -73,7 +73,7 @@ include("fbegin.inc");
 
 // Allow package location to be overriden
 $config_location = "http://www.pfsense.com/packages/pkg_config.xml";
-if(isset($config['system']['alt_pkg_url']['enabled']))
+if(isset($config['system']['alt_pkgconfig_url']['enabled']))
 	    $config_location = $config['system']['alt_pkgconfig_url']['pkgconfig_base_url'] . $config['system']['alt_pkgconfig_url']['pkgconfig_filename'];
 
 if(!file_exists("{$g['tmp_path']}/pkg_config.xml")) {

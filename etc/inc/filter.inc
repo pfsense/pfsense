@@ -376,6 +376,8 @@ function filter_generate_aliases() {
 		$ifdescrs['opt' . $j] = "opt" . $j;
 	}
 	foreach ($ifdescrs as $ifdescr => $ifname) {
+		/* do not process tun interfaces */
+		if(stristr(filter_opt_interface_to_real($ifname), "tun") == true) continue;
 		$aliases .= filter_get_opt_interface_descr($ifname) . " = \"{ " . filter_opt_interface_to_real($ifname) . " }\"\n";
 	}
 	$aliases .= "# User Aliases \n";
@@ -1684,8 +1686,10 @@ function setup_logging_interfaces() {
 		$ifdescrs['opt' . $j] = "opt" . $j;
 	}
 	foreach ($ifdescrs as $ifdescr => $ifname) {
-	    $int = filter_translate_type_to_real_interface($ifname);
-	    $rules.= "set loginterface {$int} \n";
+		/* do not work with tun interfaces */
+		if(stristr(filter_translate_type_to_real_interface($ifname), "tun") == true) continue;
+		$int = filter_translate_type_to_real_interface($ifname);
+		$rules.= "set loginterface {$int} \n";
 	}
 	return $rules;
 }

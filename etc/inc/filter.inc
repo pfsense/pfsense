@@ -1274,6 +1274,7 @@ EOD;
 				if (strstr($rule['source']['network'], "opt")) {
 					$src = $optcfg[$rule['source']['network']]['sa'] . "/" .
 						$optcfg[$rule['source']['network']]['sn'];
+					if (isset($rule['source']['not'])) $src = "!" . $src;
 				} else {
 					switch ($rule['source']['network']) {
 						case 'lan':
@@ -1283,6 +1284,7 @@ EOD;
 							$src = "$pptpsa/$pptpsn";
 							break;
 					}
+					if (isset($rule['source']['not'])) $src = "!" . $src;
 				}
 			} else if ($rule['source']['address']) {
 				$not = "";
@@ -1332,6 +1334,7 @@ EOD;
 				if (strstr($rule['destination']['network'], "opt")) {
 					$dst = $optcfg[$rule['destination']['network']]['sa'] . "/" .
 						$optcfg[$rule['destination']['network']]['sn'];
+					if (isset($rule['destination']['not'])) $dst = " !" . $dst;
 				} else {
 					switch ($rule['destination']['network']) {
 						case 'lan':
@@ -1342,6 +1345,7 @@ EOD;
 							break;
 					}
 				}
+				if (isset($rule['destination']['not'])) $dst = " !" . $dst;
 			} else if ($rule['destination']['address']) {
 				$not = "";
 				if (isset($rule['destination']['not'])) $not = "! ";

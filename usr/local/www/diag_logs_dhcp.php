@@ -39,7 +39,7 @@ if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) {
-	exec("/usr/sbin/clog -i -s 32768 /var/log/dhcpd.log");
+	exec("/usr/sbin/clog -i -s 32768 {$g['varlog_path']}/dhcpd.log");
 }
 
 function dump_clog($logfile, $tail, $withorig = true) {
@@ -94,7 +94,7 @@ function dump_clog($logfile, $tail, $withorig = true) {
 			<td colspan="2" class="listtopic">
 			  Last <?=$nentries;?> DHCP service log entries</td>
 		  </tr>
-		  <?php dump_clog("/var/log/dhcpd.log", $nentries); ?>
+		  <?php dump_clog("{$g['varlog_path']}/dhcpd.log", $nentries); ?>
 		</table>
 		<br><form action="diag_logs_dhcp.php" method="post">
 <input name="clear" type="submit" class="formbtn" value="Clear log">

@@ -494,9 +494,7 @@ function convert_real_interface_to_friendly_interface_name($interface) {
 	}
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 	    $int = filter_translate_type_to_real_interface($ifname);
-	    $ifconfig = exec_command("/sbin/ifconfig {$int}");
-	    if(stristr($ifconfig,$interface) <> false)
-		return $ifname;
+	    if($config['interfaces'][$ifname]['if'] == $interface) return $ifname;
 	}
 	return $interface;
 }

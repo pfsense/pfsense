@@ -683,7 +683,8 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 	    if(!file_exists($prefix . $pkg_name)) {
 		log_error("Fetching missing dependency (" . $depend_name . ") for " . $pkg_name);
 		mwexec("/usr/local/bin/fetch -o " . $prefix . $depend_file . " " . $item['name']['0']);
-		if($item['chmod'] != "") mwexec("/bin/chmod " . $item['chmod'] . $prefix . $depend_file); // Handle chmods.
+		if($item['chmod'] != "")
+		    chmod($prefix . $depend_file, $item['chmod']); // Handle chmods.
 	    }
 	    switch ($format) {
 	    case "files":

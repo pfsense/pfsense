@@ -82,7 +82,7 @@ echo Executing rc.d items...
 for FILE in /usr/local/etc/rc.d/*.sh; do
     if [ -e $FILE ]; then
         echo "Starting ${FILE}..."
-        sh $FILE 2>/tmp/bootup_messages
+        sh $FILE >>/tmp/bootup_messages 2>&1
     fi
 done
 

@@ -1371,7 +1371,7 @@ EOD;
 				$line .= "tos " . $rule['iptos'] . " ";
 
 			// label
-                        if($rule['descr'] <> "") $line .= "label \"" . $rule['descr'] . "\" ";
+                        if($rule['descr'] <> "") $line .= "label \"USER_RULE: " . $rule['descr'] . "\" ";
 
 			$line .= "\n";
 

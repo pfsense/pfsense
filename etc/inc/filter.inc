@@ -903,10 +903,12 @@ pass out quick on lo0 all label "pass loopback"
 pass out quick on $wanif inet proto tcp from $wanif to any keep state
 
 # enable ftp-proxy
+anchor "ftpproxy"
 pass in quick on $wanif inet proto tcp from port 20 to ($wanif) user proxy flags S/SA keep state
 pass in quick on $wanif inet proto tcp from any to $wanif port > 49000 user proxy keep state
 
 # allow access to DHCP server on LAN
+anchor "allowdhcpserverlan"
 pass in quick on $lanif proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server on LAN"
 pass in quick on $lanif proto udp from any port = 68 to $lanip port = 67 label "allow access to DHCP server on LAN"
 pass out quick on $lanif proto udp from $lanip port = 67 to any port = 68 label "allow access to DHCP server on LAN"
@@ -965,6 +967,7 @@ EOD;
 
 			if ($sa) {
 				$ipfrules .= <<<EOD
+anchor "staticroutedsubnets"
 pass in quick on {$if} from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"
 pass in quick on {$if} from {$route['network']} to {$sa}/{$sn} label "pass traffic between statically routed subnets"
 pass out quick on {$if} from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"
@@ -992,6 +995,7 @@ EOD;
 		$ipfrules .= <<<EOD
 
 # allow PPTP client
+anchor "pptpclient"
 pass in quick on {$wancfg['if']} proto gre from any to any label "allow PPTP client"
 pass out quick on {$wancfg['if']} proto gre from any to any label "allow PPTP client"
 pass in quick on {$wancfg['if']} proto tcp from any port = 1723 to any label "allow PPTP client"
@@ -1027,6 +1031,7 @@ EOD;
 		$ipfrules .= <<<EOD
 
 # block anything from private networks on WAN interface
+anchor "spoofing"
 block in $log quick on $wanif from 10.0.0.0/8 to any label "block private networks from wan block 10/8"
 block in $log quick on $wanif from 127.0.0.0/8 to any label "block private networks from wan block 127/8"
 block in $log quick on $wanif from 172.16.0.0/12 to any label "block private networks from wan block 172.16/12"
@@ -1041,7 +1046,7 @@ EOD;
 
 
 # let out anything from the firewall host itself and decrypted IPsec traffic
-pass out quick on $wanif all keep state label "let out anything from firewall host itself"
+#pass out quick on $wanif all keep state label "let out anything from firewall host itself"
 
 EOD;
 
@@ -1065,6 +1070,7 @@ EOD;
 	$ipfrules .= <<<EOD
 
 # make sure the user cannot lock himself out of the webGUI
+anchor "anti-lockout"
 pass in quick from $lansa/$lansn to $lanip keep state label "anti-lockout web rule"
 
 EOD;
@@ -1081,6 +1087,7 @@ EOD;
 		$ipfrules .= <<<EOD
 
 # PPTP rules
+anchor "pptp"
 pass in quick proto gre from any to $pptpdtarget keep state label "allow gre pptp"
 pass in quick proto tcp from any to $pptpdtarget port = 1723 keep state label "allow $pptpdtarget"
 
@@ -1093,8 +1100,8 @@ EOD;
 		$ipfrules .= <<<EOD
 
 # BigPond heartbeat rules
+anchor "bigpond"
 pass in quick proto udp from any to any port = 5050 keep state label "BigPond heartbeat"
-# group 200
 
 EOD;
 	}

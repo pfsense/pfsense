@@ -199,7 +199,7 @@ if ($_GET['act'] == "del") {
                     <?=$textss;?><?php echo htmlspecialchars(pprint_port($filterent['destination']['port'])); ?><?=$textse;?>
                   </td>
                   <td class="listbg">
-                    <?=$textss;?><?=htmlspecialchars($filterent['name']);?>&nbsp;<?=$textse;?>
+                    <?=$textss;?><?=htmlspecialchars($filterent['descr']);?>&nbsp;<?=$textse;?>
                   </td>
                   <td valign="middle" nowrap class="list">
 				    <a href="firewall_rules_edit.php?id=<?=$i;?>"><img src="e.gif" title="edit rule" width="17" height="17" border="0"></a>

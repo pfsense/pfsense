@@ -577,17 +577,9 @@ function resync_all_package_configs_bootup($show_message) {
             eval($pkg_config['custom_php_command_before_form']);
         if($pkg_config['custom_php_resync_config_command'] <> "")
             eval($pkg_config['custom_php_resync_config_command']);
-        if($pkg_config['additional_files_needed'] != "") {
-                foreach($pkg_config['additional_files_needed']['0']['item'] as $item) {
-                        $pkg_name = substr(strrchr($item, "/"),1);
-                        if(!preg_match("/\.xml/i", $pkg_name)) break;
-                        if(!file_exists("/usr/local/pkg/" . $pkg_name)) {
-                                if($show_message == true) print "\n\nFetching " . $pkg_name . ".\n";
-                                log_error("Fetching missing configuration XML for " . $pkg_name);
-                                system("/usr/bin/fetch -o /usr/local/pkg/" . $pkg_name . " " . $item);
-				print "\n\n";
-                        }
-                        $item_config = parse_xml_config_pkg("/usr/local/pkg/" . $pkg_name, "packagegui");
+	$depends = get_pkg_xml_depends($package['name']); // Call dependency handler and do a little more error checking.
+	foreach($depends as $item) {
+                        $item_config = parse_xml_config_pkg("/usr/local/pkg/" . $item, "packagegui");
                         if($item_config['custom_php_command_before_form'] <> "")
                             eval($item_config['custom_php_command_before_form']);
                         if($item_config['custom_php_resync_config_command'] <> "")
@@ -595,8 +587,7 @@ function resync_all_package_configs_bootup($show_message) {
                         if($show_message == true) print " " . $item_config['name'];
                 }
         }
-    }
-    print ".\n";
+	print ".\n";
 }
 
 /*
@@ -659,11 +650,11 @@ function reverse_strrchr($haystack, $needle) {
 }
 
 /*
- * get_package_xml_depends($pkg_name, $format = "files"):  Return a package's XML dependencies.
- *                                                         $format: "files" = filenames
- *                                                                  "names" = stripped filenames
+ * get_package_depends($pkg_name, $filetype = ".xml", $format = "files"):  Return a package's XML dependencies.
+ *                                                              "files" = filenames
+ *                                                              "names" = stripped filenames
  */
-function get_package_xml_depends($pkg_name) {
+function get_package_depends($pkg_name, $filetype = ".xml", $format = "files") {
         global $config;
         foreach($config['installedpackages']['package'] as $package) {
                 if ($package['name'] == $pkg_name) {
@@ -679,18 +670,28 @@ function get_package_xml_depends($pkg_name) {
         if($pkg_xml['additional_files_needed'] != "") {
                 foreach($pkg_xml['additional_files_needed']['0'] as $item) {
                         $depend_file = substr(strrchr($item['0'], "/"),1); // Strip URLs down to filenames.
-                        if(!preg_match("/\.xml/i", $depend_file)) break; // If the file doesn't end in .xml (case-insensitive) exit the loop.
+                        if ($filetype != "all" && !preg_match("/\{$filetype}/i", $depend_file)) break; // If the file doesn't end in desired extension (case-insensitive) exit the loop.
                         if(!file_exists("/usr/local/pkg/" . $pkg_name)) {
                                 $depend_name = reverse_strrchr($depend_file, "."); // Strip filename down to dependency name.
                                 log_error("Fetching missing dependency \(" . $depend_name . "\) for " . $pkg_name);
-                                mwexec("/usr/bin/fetch -o /usr/local/pkg/" . $depend_file . " " . $item['0']);
+				if($item['prefix'] != "") { // Use the prefix defined in XML if applicable.
+					$prefix = $item['prefix'];
+					mwexec("/usr/local/bin/fetch -o " . $item['prefix'] . $depend_file . " " . $item['0']);
+                                } else {
+					$prefix = "/usr/local/pkg/"; // Default to /usr/local/pkg otherwise.
+					mwexec("/usr/local/bin/fetch -o " . $prefix . $depend_file . " " . $item['0']);
+				}
+				if($item['chmod'] != "") mwexec("/bin/chmod " . $item['chmod'] . $prefix . $depend_file); // Handle chmods.
                         }
-                        if ($format == "names") {
-                                $depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
-                                $depends[] = $depend_xml['name'];
-                        } else {
-                                $depends[] = $depend_file;
-                        }
+			switch ($format) {
+			case "files":
+				$depends[] = $depend_file;
+				break;
+			case "names":
+				$depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
+				$depends[] = $depend_xml['name'];
+				break;
+			}
                 }
         return $depends;
         }

@@ -910,20 +910,33 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 }
 
 /*
- * rmdir_recursive($path,$followLinks=false)
+ * rmdir_recursive($path,$follow_links=false)
  * Recursively remove a directory tree (rm -rf path)
  * This is for directories _only_
  */
 function rmdir_recursive($path,$follow_links=false) {
-	$dir = opendir($path) ;
-
-	while ($entry = readdir($dir)) {
-		if (is_file("$path/$entry") || ((!$follow_links) && is_link("$path/$entry")))
-			unlink("$path/$entry");
-       		elseif (is_dir("$path/$entry") && $entry!='.' && $entry!='..')
-			rmdir_recursive("$path/$entry");
+	$to_do = glob($path);
+	if(!is_array($to_do)) {
+		$dir = opendir($path);
+		while ($entry = readdir($dir)) {
+			if (is_file("$path/$entry") || ((!$follow_links) && is_link("$path/$entry")))
+				unlink("$path/$entry");
+       			elseif (is_dir("$path/$entry") && $entry!='.' && $entry!='..')
+				rmdir_recursive("$path/$entry");
+		}
+		closedir($dir);
+	} else {
+		foreach($to_do as $workingdir) { // Handle wildcards by foreaching.
+			$dir = opendir($workingdir);
+			while ($entry = readdir($dir)) {
+                        if (is_file("$workingdir/$entry") || ((!$follow_links) && is_link("$workingdir/$entry")))  
+                                unlink("$workingdir/$entry");
+                        elseif (is_dir("$workingdir/$entry") && $entry!='.' && $entry!='..')
+                                rmdir_recursive("$workingdir/$entry");
+			}
+			closedir($dir);
+                }
 	}
-	closedir($dir) ;
 	return rmdir($path);
 }
 

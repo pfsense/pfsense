@@ -35,6 +35,8 @@ $fd = fopen("/etc/ssl/openssl.cnf", "r");
 $openssl = fread($fd,8096);
 fclose($fd);
 
+/* Lets match the fileds in the read in file and
+   populate the variables for the form */
 preg_match('/\nC\=(.*)\n/', $openssl, $countrycodeA);
 preg_match('/\nST\=(.*)\n/', $openssl, $stateorprovinceA);
 preg_match('/\nL\=(.*)\n/', $openssl, $citynameA);
@@ -51,7 +53,7 @@ $commonname = $commonnameA[1];
 
 if ($_POST) {
 
-    /* Create a new openssl.cnf */
+    /* Grab posted variables and create a new openssl.cnf */
     $countrycode=$_POST['countrycode'];
     $stateorprovince=$_POST['stateorprovince'];
     $cityname=$_POST['cityname'];
@@ -59,6 +61,7 @@ if ($_POST) {
     $orginizationdepartment=$_POST['orginizationdepartment'];
     $commonname=$_POST['commonname'];
 
+    /* Write out /etc/ssl/openssl.cnf */
     $fd = fopen("/etc/ssl/openssl.cnf", "w");
     fwrite($fd, "");
     fwrite($fd, "[ req ]\n");

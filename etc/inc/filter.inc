@@ -989,7 +989,7 @@ function filter_rules_spoofcheck_generate($ifname, $if, $sa, $sn, $log) {
 		/* output skip rules */
 		foreach ($config['staticroutes']['route'] as $route) {
 			if ($route['interface'] == $ifname) {
-				$ipfrules .= "skip $n in on $if from {$route['network']} to any\n";
+				//$ipfrules .= "skip $n in on $if from {$route['network']} to any\n";
 				$n--;
 			}
 		}

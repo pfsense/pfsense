@@ -1672,11 +1672,11 @@ function create_firewall_outgoing_rules_to_itself() {
                         $int = "ng0";
 		$ip = find_interface_ip($int);
 		if($return_gateway <> "")
-			$replyto = "reply-to ({$int} {$return_gateway} ";
+			$replyto = "reply-to ({$int} {$return_gateway}";
 		else
-			$replyto = " ";
+			$replyto = "";
 		if($ip <> "") {
-			$rule .="pass out quick on {$int} {$replyto}inet from any to any keep state\n";
+			$rule .="pass out quick on {$int} {$replyto} inet from any to any keep state\n";
 			/* XXX - billm: temp fix for pppoe, needs better fix */
 			if($config['interfaces'][$ifname]['ipaddr'] != "")
 				$rule .="pass out quick on {$int} {$replyto} inet from {$int} to any keep state\n";

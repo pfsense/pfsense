@@ -976,4 +976,23 @@ function make_dirs($path, $mode = 0755)
 	return is_dir($path) || (make_dirs(dirname($path), $mode) && safe_mkdir($path, $mode));
 }
 
+/*
+ * auto_upgrade(): Upgrade pfSense to the latest firmware version.
+ */
+function auto_upgrade() {
+        global $config;
+        $http_auth_username = "";
+        $http_auth_password = "";
+        if($config['system']['proxy_auth_username']) $http_auth_username = $config['system']['proxy_auth_username'];
+        if($config['system']['proxy_auth_password']) $http_auth_password = $config['system']['proxy_auth_password'];
+        if (isset($config['system']['alt_firmware_url']['enabled'])) {
+                $firmwareurl=$config['system']['alt_firmware_url']['firmware_base_url'];
+                $firmwarename=$config['system']['alt_firmware_url']['firmware_filename'];
+        } else {
+                $firmwareurl=$g['firmwarebaseurl'];
+                $firmwarename=$g['firmwarefilename'];
+        }
+        exec_rc_script_async("/etc/rc.firmware_auto {$firmwareurl} {$firmwarename} {$http_auth_username} {$http_auth_password}");
+}
+
 ?>

@@ -110,6 +110,7 @@ function restore_config_section_xmlrpc($raw_params) {
 	if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", 'string'));
 	foreach($params[0] as $section) {
 		restore_config_section($section, $params[1][$i]);
+		$i++;
 	}
 	return new XML_RPC_Response(new XML_RPC_Value(true, 'boolean'));
 }

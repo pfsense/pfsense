@@ -106,6 +106,7 @@ if(!$pkg_config['packages']) {
                 <tr>
                   <td width="25%" class="listhdrr">Package Name</td>
                   <td width="25%" class="listhdrr">Category</td>
+				  <td width="5%" class="listhdrr">Status</td>
                   <td width="50%" class="listhdr">Description</td>
                 </tr>
 
@@ -126,9 +127,9 @@ if(!$pkg_config['packages']) {
                                 </td>
                                 <td class="listlr">
                                     <?= $pkg['category'] ?>
-									<p>
+    							</td>
+                                <td class="listlr">
 									<?= $pkg['status'] ?>
-									</p>
                                 </td>
                                 <td class="listbg">
                                     <font color="#FFFFFFF">

@@ -80,7 +80,7 @@ case ${opmode} in
         ;;
 8)
         set prompt = "\n`/bin/hostname -s`# "
-        /bin/csh
+        su -f root
         ;;
 9)
         /usr/local/sbin/pftop

@@ -41,6 +41,9 @@ function is_carp_defined() {
 		    $tmp .= fread($fd,49);
 	}
 	fclose($fd);
+
+	return 0;
+
 	if($tmp == "")
 		return 0;
 	else
@@ -525,13 +528,13 @@ function filter_rules_generate() {
 
 	# BEGIN OF firewall rules
 	$ipfrules="";
-	
+
 	/* if carp is defined, lets pass the traffic */
 	if(is_carp_defined() == 1) {
 		$ipfrules .= "pass on " . $lanif . " proto carp keep state\n";
 		$ipfrules .= "pass on " . $wanif . " proto carp keep state\n";
 	}
-	
+
 	$ipfrules .= <<<EOD
 
 # loopback

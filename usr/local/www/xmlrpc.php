@@ -96,7 +96,7 @@ $backup_config_section_sig = array(array(string, string, string));
 function backup_config_section_xmlrpc($raw_params) {
 	$params = xmlrpc_params_to_php($raw_params); // Convert XML_RPC_Value objects to a PHP array of values.
 	if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", 'string'));
-	$val = new XML_RPC_Value(backup_config_section($params[1]), 'string'); 
+	$val = new XML_RPC_Value(backup_config_section($params[0]), 'string'); 
 	return new XML_RPC_Response($val);
 }
 

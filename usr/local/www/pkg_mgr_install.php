@@ -183,6 +183,12 @@ foreach ($packages_to_install as $id) {
     $pb_percent += 10;
 
     $a_out = &$pkg_config['packages']['package'];
+
+    if($pkg_config['packages']['package'][$id]['verifyinstalledpkg'] <> "")
+        $package_to_verify = $pkg_config['packages']['package'][$id]['verifyinstalledpkg'];
+    else
+        $package_to_verify = $pkg_config['packages']['package'][$id]['name'];
+
     $pkgent = array();
     $pkgent['name'] = $pkg_config['packages']['package'][$id]['name'];
     $pkgent['descr'] = $pkg_config['packages']['package'][$id]['descr'];
@@ -213,7 +219,7 @@ foreach ($packages_to_install as $id) {
     update_progress_bar($pb_percent);
     $pb_percent += 10;
 
-    fwrite($fd_log, "ls /var/db/pkg | grep " . $pkgent['name'] . "\n" . $status);
+    fwrite($fd_log, "ls /var/db/pkg | grep " . $package_to_verify . "\n" . $status);
     if($status <> "") {
                 // package is already installed!?
                 if(!$_GET['mode'] == "reinstallall")
@@ -268,8 +274,8 @@ foreach ($packages_to_install as $id) {
     }
 
     if ($pkgent['depends_on_package_base_url'] <> "" or $pkgent['pfsense_package_base_url'] <> "") {
-        $status = exec_command_and_return_text("ls /var/db/pkg | grep " . $pkgent['name']);
-        fwrite($fd_log, "ls /var/db/pkg | grep " . $pkgent['name'] . "\n" . $status);
+        $status = exec_command_and_return_text("ls /var/db/pkg | grep " . $package_to_verify);
+        fwrite($fd_log, "ls /var/db/pkg | grep " . $package_to_verify . "\n" . $status);
         if($status <> "") {
                     update_status("Package installed.  Lets finish up.");
                     fwrite($fd_log, "Package installed.  Lets finish up.\n");
@@ -414,19 +420,19 @@ foreach ($packages_to_install as $id) {
     update_progress_bar($pb_percent);
 
     if ($pkgent['depends_on_package_base_url'] <> "" or $pkgent['pfsense_package_base_url'] <> "") {
-        $package_to_verify = $pkgent['name'];
-        if($pkgent['verifyinstalledpkg'] <> "")
-            $package_to_verify = $pkgent['verifyinstalledpkg'];
         $status = exec_command_and_return_text("ls /var/db/pkg | grep " . $package_to_verify);
         fwrite($fd_log, "ls /var/db/pkg | grep " . $package_to_verify . "\n" . $status);
         if($status <> "") {
                     update_status("Package installation completed.");
                     fwrite($fd_log, "Package installation completed.\n");
                     log_error("Package " . $pkgent['name'] . " installation completed okay.");
+                    update_progress_bar(100);
         } else {
                     update_status("Package WAS NOT installed properly.");
+                    update_output_window("Package WAS NOT installed properly.");
                     fwrite($fd_log, "Package WAS NOT installed properly.\n");
                     log_error("Package " . $pkgent['name'] . " did not install correctly.");
+                    update_progress_bar(100);
         }
     } else {
         update_status("Package installation completed.");

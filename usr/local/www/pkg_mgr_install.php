@@ -31,6 +31,8 @@
 require("guiconfig.inc");
 require("xmlparse_pkg.inc");
 
+conf_mount_rw();
+
 /* /usr/local/pkg/ is where xml package files are stored. */
 make_dirs("/usr/local/pkg");
 /* /usr/local/pkg/pf is where custom php hook packages live to alter the rules when needed */
@@ -471,6 +473,6 @@ echo "<p><center>Installation completed.  Show <a href=\"pkg_mgr_install.php?sho
 echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
 echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
 
-
+conf_mount_ro();
 
 ?>

@@ -30,6 +30,8 @@
 require("guiconfig.inc");
 require("xmlparse_pkg.inc");
 
+conf_mount_rw();
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -115,6 +117,9 @@ include("fbegin.inc");
 </body>
 </html>
 
+<?php
+    conf_mount_ro();
+?>
 
 
 

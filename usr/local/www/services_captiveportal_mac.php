@@ -3,20 +3,20 @@
 /*
 	services_captiveportal_mac.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2004 Dinesh Nair <dinesh@alphaque.com>
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -68,6 +68,17 @@ if ($_GET['act'] == "del") {
 	}
 }
 ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title><?=gentitle("pfSense webGUI");?></title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="gui.css" rel="stylesheet" type="text/css">
+</head>
+
+<form>
+
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="services_captiveportal_mac.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -103,7 +114,7 @@ if ($_GET['act'] == "del") {
 		 &nbsp;<a href="services_captiveportal_mac.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this host?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
 	</tr>
   <?php $i++; endforeach; ?>
-	<tr> 
+	<tr>
 	  <td class="list" colspan="2">&nbsp;</td>
 	  <td class="list"> <a href="services_captiveportal_mac_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
 	</tr>

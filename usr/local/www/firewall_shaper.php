@@ -201,11 +201,8 @@ if ($_GET['act'] == "del") {
                         <td class="listr"><?=$textss;?>
                           <?php
 							if (isset($shaperent['targetqueue'])) {
-								if ($a_queue[$shaperent['targetqueue']]['name'])
-									$desc = htmlspecialchars($a_queue[$shaperent['targetqueue']]['name']);
-								else
-									$desc = "Queue " . ($shaperent['targetpipe']+1);
-								echo "<a href=\"firewall_shaper_pipes_edit.php?id={$shaperent['targetqueue']}\">{$desc}</a>";
+								$desc = htmlspecialchars($shaperent['targetqueue']);
+							    echo "<a href=\"firewall_shaper_pipes_edit.php?id={$shaperent['targetqueue']}\">{$desc}</a>";
 							}
 						  ?><?=$textse;?>
                         </td>

@@ -324,7 +324,7 @@ $config = $config_tmp;
 					}
 					$rowcounter=0;
 					echo "<td>";
-					echo "<input type=\"button\" onclick=\"removeRow(this); typesel_change();\" value=\"Delete\">";
+					echo "<input type=\"image\" src=\"/x.gif\" onclick=\"removeRow(this); return false;\" value=\"Delete\">";
 					echo "</td>\n";
 					echo "</tr>\n";
 				}
@@ -333,15 +333,14 @@ $config = $config_tmp;
 			  </tbody>
 			</table>
 
-		<br><input type="button" onclick="addRowTo('maintable'); typesel_change();" value="Add">
-
+		<br><a onClick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="/plus.gif"></a>
 		<script language="JavaScript">
 		<!--
 		field_counter_js = <?= $fieldcounter ?>;
 		rows = <?= $rowcounter ?>;
 		totalrows = <?php echo $rowcounter; ?>;
 		loaded = <?php echo $rowcounter; ?>;
-		typesel_change();
+		//typesel_change();
 		//-->
 		</script>
 

@@ -280,7 +280,7 @@ rowtype[2] = "select";
 			</select>
 			  <?php
 				if($counter > 0)
-					echo "<input type=\"button\" onclick=\"removeRow(this); typesel_change();\" value=\"Delete\">";
+					echo "<input type=\"image\" src=\"/x.gif\" onclick=\"removeRow(this); return false;\" value=\"Delete\">";
 			  ?>
 
 			</td></tr>
@@ -288,7 +288,7 @@ rowtype[2] = "select";
 
 		     </tbody>
 		    </table>
-			<input type="button" onclick="addRowTo('maintable'); typesel_change();" value="Add">
+			<a onClick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="/plus.gif"></a>
 		    </td>
                 </tr>
                 <tr>

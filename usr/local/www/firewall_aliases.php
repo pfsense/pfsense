@@ -49,7 +49,6 @@ if ($_POST) {
 			config_lock();
 			/* reload all components that use aliases */
 			$retval = filter_configure();
-			$retval |= shaper_configure();
 			config_unlock();
 		}
 		$savemsg = get_std_save_message($retval);

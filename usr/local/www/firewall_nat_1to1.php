@@ -127,14 +127,26 @@ if ($_GET['act'] == "del") {
                   <td class="listbg">
                     <font color="#ffffff"><?=htmlspecialchars($natent['descr']);?>&nbsp;
                   </td>
-                  <td class="list" nowrap> <a href="firewall_nat_1to1_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="firewall_nat_1to1.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this mapping?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
-				</tr>
-			  <?php $i++; endforeach; ?>
+                  <td class="list" nowrap>
+                    <table border="0" cellspacing="0" cellpadding="1">
+                      <tr>
+                        <td valign="middle"><a href="firewall_nat_1to1_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a></td>
+                        <td valign="middle"><a href="firewall_nat_1to1.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this mapping?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+		<?php $i++; endforeach; ?>
                 <tr>
                   <td class="list" colspan="4"></td>
-                  <td class="list"> <a href="firewall_nat_1to1_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
-				</tr>
+                  <td class="list">
+                    <table border="0" cellspacing="0" cellpadding="1">
+                      <tr>
+                        <td valign="middle"><a href="firewall_nat_1to1_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
               </table>
 			  			        <p><span class="vexpl"><span class="red"><strong>Note:<br>
                       </strong></span>Depending on the way your WAN connection is setup, you may also need <a href="services_proxyarp.php">proxy ARP</a>.</span></p>

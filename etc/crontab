@@ -9,4 +9,5 @@ HOME=/var/log
 15	4	*	*	6	root	periodic weekly
 30	5	1	*	*	root	periodic monthly
 1,31	0-5	*	*	*	root	adjkerntz -a
+*/5	*	*	*	*	root	nice -n20 /etc/rc.prunecaptiveportal
 */3000	*	*	*	*	root	/usr/bin/fetch -o /etc/bogons "http://www.cymru.com/Documents/bogon-bn-nonagg.txt" >/dev/null 2>&1 && /sbin/pfctl -t bogons -T replace -f /etc/bogons >/dev/null 2>&1

@@ -580,10 +580,11 @@ function resync_all_package_configs_bootup($show_message) {
             eval($pkg_config['custom_php_command_before_form']);
         if($pkg_config['custom_php_resync_config_command'] <> "")
             eval($pkg_config['custom_php_resync_config_command']);
-	$depends = get_pkg_depends($package['name']); // Call dependency handler and do a little more error checking.
+	$depends = get_pkg_depends($package['name'], ".xml", "files", 0); // Call dependency handler and do a little more error checking.
         if(is_array($depends))
 	    foreach($depends as $item) {
 			    $item_config = parse_xml_config_pkg("/usr/local/pkg/" . $item, "packagegui");
+			    if (isset($item_config['nosync'])) continue;
 			    if($item_config['custom_php_command_before_form'] <> "")
 				eval($item_config['custom_php_command_before_form']);
 			    if($item_config['custom_php_resync_config_command'] <> "")
@@ -654,13 +655,14 @@ function reverse_strrchr($haystack, $needle) {
 }
 
 /*
- * get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files"):  Return a package's XML dependencies.
+ * get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", return_nosync = 1):  Return a package's XML dependencies.
  *
  * $filetype = "all" || ".xml", ".tgz", etc.
  * $format = "files" (full filenames) || "names" (stripped / parsed depend names)
+ * $return_nosync = 1 (return depends that have nosync set) | 0 (ignore packages with nosync)
  *
  */
-function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files") {
+function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $return_nosync = 1) {
         global $config
         foreach($config['installedpackages']['package'] as $package) {
                 if ($package['name'] == $pkg_name) {
@@ -676,10 +678,9 @@ ile']);
         $pkg_xml = parse_xml_config_pkg("/usr/local/pkg/" . $package_xml['configurationfile'], "packagegui");
         if($pkg_xml['additional_files_needed'] != "") {
                 foreach($pkg_xml['additional_files_needed'] as $item) {
-			if (isset($item['nosync'])) continue;
+			if (($return_nosync == 0) && (isset($item['nosync'])) continue; // Do not return depends with nosync set if not required.
                         $depend_file = substr(strrchr($item['item']['0'], '/'),1); // Strip URLs down to filenames.
                         $depend_name = substr(substr($depend_file,0,strpos($depend_file,".")+1),0,-1); // Strip filename down to dependency name.
-                        print $depend_name;
                         if (($filetype != "all") && (!preg_match("/${filetype}/i", $depend_file))) continue;
                         if ($item['prefix'] != "") {
                                 $prefix = $item['prefix'];

@@ -877,6 +877,8 @@ if (!function_exists('php_check_syntax')){
  */
 function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
     global $config;
+
+    if(!folder_exists("/usr/local/pkg")) mwexec("/bin/mkdir -p /usr/local/pkg/pf");
     if(!$config['installedpackages']['package']) return;
     if(!is_numeric($pkg_name)) {
 	$pkg_id = get_pkg_id($pkg_name);

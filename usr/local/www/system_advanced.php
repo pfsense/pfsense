@@ -46,6 +46,8 @@ if ($g['platform'] == "generic-pc")
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
 
+$pconfig['schedulertype'] = $config['system']['schedulertype'];
+
 if ($_POST) {
 
 	unset($input_errors);
@@ -88,6 +90,7 @@ if ($_POST) {
 		$config['system']['disableconsolemenu'] = $_POST['disableconsolemenu'] ? true : false;
 		$config['system']['disablefirmwarecheck'] = $_POST['disablefirmwarecheck'] ? true : false;
 		$config['system']['webgui']['expanddiags'] = $_POST['expanddiags'] ? true : false;
+		$config['system']['schedulertype'] = $_POST['schedulertype'];
 		if ($g['platform'] == "generic-pc") {
 			$oldharddiskstandby = $config['system']['harddiskstandby'];
 			$config['system']['harddiskstandby'] = $_POST['harddiskstandby'];
@@ -169,7 +172,41 @@ function enable_change(enable_over) {
                 </tr>
                 <tr>
                   <td colspan="2" class="list" height="12"></td>
-                </tr>                <tr>
+                </tr>
+
+                <tr>
+                  <td colspan="2" valign="top" class="listtopic">Traffic Shaper Scheduler Type</td>
+                </tr>
+		<tr>
+		  <td width="22%" valign="top" class="vncell"><b>Scheduler</b> </td>
+		  <td width="78%" class="vtable">
+		    <select id="schedulertype" name="schedulertype">
+		    <?php
+			    if($pconfig['schedulertype'] == 'priq')
+				    echo "<option value=\"priq\">Priority based queueing</option>";
+			    if($pconfig['schedulertype'] == 'cbq')
+				    echo "<option value=\"cbq\">Class based queueing</option>";
+			    if($pconfig['schedulertype'] == 'hfsc')
+				    echo "<option value=\"hfsc\">Hierarchical Fair Service Curve queueing</option>";
+		    ?>
+			    <option value="priq">Priority based queueing</option>
+			    <option value="cbq">Class based queueing</option>
+			    <option value="hfsc">Hierarchical Fair Service Curve queueing</option>
+		    </select>
+		    <br> <span class="vexpl">Select which type of queueing you would like to use
+		    </span></td>
+		</tr>
+                <tr>
+                  <td width="22%" valign="top">&nbsp;</td>
+                  <td width="78%">
+                    <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
+                  </td>
+                </tr>		
+                <tr>
+                  <td colspan="2" class="list" height="12"></td>
+                </tr>
+		
+		<tr>
                   <td colspan="2" valign="top" class="listtopic">Disable Firewalling</td>
                 </tr>
                 <tr>

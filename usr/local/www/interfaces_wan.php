@@ -229,7 +229,6 @@ if ($_POST) {
 			$config['bigpond']['minheartbeatinterval'] = $_POST['bigpond_minheartbeatinterval'];
 		}
 
-		$wancfg['schedulertype'] = $_POST['schedulertype'];
 		$wancfg['bandwidth'] = $_POST['bandwidth'];
 		$wancfg['bandwidthtype'] = $_POST['bandwidthtype'];
 
@@ -502,25 +501,6 @@ function type_change(enable_change,enable_change_pptp) {
                 <tr>
                   <td colspan="2" valign="top" class="listtopic">Bandwidth Management (Traffic Shaping)</td>
                 </tr>
-		<tr>
-		  <td width="22%" valign="top" class="vncell"><b>Scheduler</b> </td>
-		  <td width="78%" class="vtable">
-		    <select id="schedulertype" name="schedulertype">
-		    <?php
-			    if($schedulertype == 'priq')
-				    echo "<option value=\"priq\">Priority based queueing</option>";
-			    if($schedulertype == 'cbq')
-				    echo "<option value=\"cbq\">Class based queueing</option>";
-			    if($schedulertype == 'hfsc')
-				    echo "<option value=\"hfsc\">Hierarchical Fair Service Curve queueing</option>";
-		    ?>
-			    <option value="priq">Priority based queueing</option>
-			    <option value="cbq">Class based queueing</option>
-			    <option value="hfsc">Hierarchical Fair Service Curve queueing</option>
-		    </select>
-		    <br> <span class="vexpl">Select which type of queueing you would like to use
-		    </span></td>
-		</tr>
                 <tr>
                   <td valign="top" class="vncell">Interface Bandwidth Speed</td>
                   <td class="vtable"> <input name="bandwidth" type="text" class="formfld" id="bandwidth" size="30" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">

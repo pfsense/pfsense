@@ -48,8 +48,6 @@ $pconfig['subnet'] = $optcfg['subnet'];
 
 $pconfig['bandwidth'] = $optcfg['bandwidth'];
 $pconfig['bandwidthtype'] = $optcfg['bandwidthtype'];
-$pconfig['schedulertype'] = $optcfg['schedulertype'];
-
 
 $pconfig['enable'] = isset($optcfg['enable']);
 
@@ -130,7 +128,6 @@ if ($_POST) {
 		$optcfg['enable'] = $_POST['enable'] ? true : false;
 		$optcfg['bandwidth'] = $_POST['bandwidth'];
 		$optcfg['bandwidthtype'] = $_POST['bandwidthtype'];
-		$optcfg['schedulertype'] = $_POST['schedulertype'];
 
 		write_config();
 
@@ -191,9 +188,6 @@ function ipaddr_change() {
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<?php
-	$schedulertype = $pconfig['schedulertype'];
-?>
 <p class="pgtitle">Interfaces: Optional <?=$index;?> (<?=htmlspecialchars($optcfg['descr']);?>)</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -264,25 +258,6 @@ function ipaddr_change() {
                 <tr>
                   <td colspan="2" valign="top" class="vnsepcell">Bandwidth Management (Traffic Shaping)</td>
                 </tr>
-		<tr>
-		  <td width="22%" valign="top" class="vncell"><b>Scheduler</b> </td>
-		  <td width="78%" class="vtable">
-		    <select id="schedulertype" name="schedulertype">
-		    <?php
-			    if($schedulertype == 'priq')
-				    echo "<option value=\"priq\">Priority based queueing</option>";
-			    if($schedulertype == 'cbq')
-				    echo "<option value=\"cbq\">Class based queueing</option>";
-			    if($schedulertype == 'hfsc')
-				    echo "<option value=\"hfsc\">Hierarchical Fair Service Curve queueing</option>";
-		    ?>
-			    <option value="priq">Priority based queueing</option>
-			    <option value="cbq">Class based queueing</option>
-			    <option value="hfsc">Hierarchical Fair Service Curve queueing</option>
-		    </select>
-		    <br> <span class="vexpl">Select which type of queueing you would like to use
-		    </span></td>
-		</tr>
                 <tr>
                   <td valign="top" class="vncell">Interface Bandwidth Speed</td>
                   <td class="vtable"> <input name="bandwidth" type="text" class="formfld" id="bandwidth" size="30" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">

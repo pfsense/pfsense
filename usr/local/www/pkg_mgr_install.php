@@ -353,6 +353,7 @@ foreach ($packages_to_install as $id) {
                         fwrite($fd_log, "Downloading additional files needed for package " . $filename . " ...\n");
                         update_status("Downloading additional files needed for package " . $filename . " ...\n");
                         $prefix = "/usr/local/pkg/";
+                        $pkg_chmod = "";
                         if($afn['chmod'] <> "")
                             $pkg_chmod = $afn['chmod'];
                         if($afn['prefix'] <> "")

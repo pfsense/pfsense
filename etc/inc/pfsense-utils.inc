@@ -550,6 +550,22 @@ function resync_all_package_configs_bootup($show_message) {
         if($pkg_config['custom_php_command_before_form'] <> "") eval($pkg_config['custom_php_command_before_form']);
 	if($pkg_config['custom_php_resync_config_command'] <> "") eval($pkg_config['custom_php_resync_config_command']);
 	if($show_message == true) print "Synced " . $package['name'] . ".\n";
+	if($pkg_config['additional_files_needed'] != "") {
+		foreach($pkg_config['additional_files_needed']['item'] as $item) {
+			$pkg_name = strrchr($item, "/");
+			if(!preg_match("/.xml/i", $pkg_name)) break;
+			if(!file_exists("/usr/local/pkg/" . $pkg_name)) {
+				if($show_message == true) print "Fetching " . $pkg_name . ".\n";
+				log_error("Fetching missing configuration XML for " . $pkg_name);
+				system("/usr/bin/fetch -o /usr/local/pkg/" . $pkg_name . " " . $item);
+			}
+			$item_config = parse_xml_config_pkg("/usr/local/pkg" . $pkg_name, "packagegui");
+			if($show_message == true) print "Syncing " . $item_config['name'] . ".\n";
+			if($item_config['custom_php_command_before_form'] <> "") eval($item_config['custom_php_command_before_form']);
+			if($item_config['custom_php_resync_config_command'] <> "") eval($item_config['custom_php_resync_config_command']);
+			if($show_message == true) print "Synced " . $item_config['name'] . ".\n";
+		}
+	}
     }
 }
 

@@ -99,16 +99,12 @@ if ($_POST) {
             <?php if ($savemsg) print_info_box($savemsg); ?>
 	    <p>One moment please...
 	<?php
-	    //openssl genrsa -des3 -out privkey.pem 2048
-	    //openssl req -new -x509 -nodes -key privkey.pem -out cacert.pem -days 100
-	    mwexec("cd /tmp && openssl genrsa -passout pass:test -des3 -out privkey.pem 1024 && cat /tmp/privkey.pem");
-	    mwexec("cd /tmp && openssl req -nodes -new > cert.csr");
-	    mwexec("cd /tmp && openssl rsa -in privkey.pem -out key.pem");
-	    mwexec("cd /tmp && openssl x509 -in cert.csr -out cert.pem -req -signkey key.pem -days 365");
-	    $fd = fopen("/tmp/cert.pem", "r");
+	    //mwexec("cd /tmp && openssl req -nodes -new > cert.csr && openssl rsa -in privkey.pem -out key.pem && openssl x509 -in cert.csr -out cert.pem -req -signkey key.pem -days 365");
+	    mwexec("cd /tmp/ && /usr/bin/openssl req -new -x509 -keyout cakey.pem -out cacert.pem -days 3650 -config /etc/ssl/openssl.cnf -passin pass:test -nodes");
+	    $fd = fopen("/tmp/cacert.pem", "r");
 	    $cacert = fread($fd,8096);
 	    fclose($fd);
-	    $fd = fopen("/tmp/key.pem", "r");
+	    $fd = fopen("/tmp/cakey.pem", "r");
 	    $cakey = fread($fd,8096);
 	    fclose($fd);
 	    $cacertA = ereg_replace("\r","",$cacert);
@@ -122,7 +118,7 @@ if ($_POST) {
 	    var cakey='<?=$cakey?>';
 	    opener.document.forms[0].cert.value=cacert;
 	    opener.document.forms[0].key.value=cakey;
-	    //this.close();
+	    this.close();
 	-->
 	</script>
 

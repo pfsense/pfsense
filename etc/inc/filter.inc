@@ -115,8 +115,8 @@ function filter_configure() {
 	fwrite($fd, $natrules);
         fwrite($fd, $pfrules);
         fclose($fd);
-	
-	system("/sbin/pfctl -f /tmp/rules.debug");
+
+	system("/sbin/pfctl -f /tmp/rules.debug 2>/tmp/pf_boot_errors.txt");
 
 	/* load ipfw+altq module */
 	if (isset($config['shaper']['enable'])) {
@@ -124,6 +124,7 @@ function filter_configure() {
 			echo " IPFW+ALTQ ";
 		}
 		system("/sbin/kldload ipfw");
+		system("/sbin/ipfw add 25 pass all from any to any\n");
                 /* change one_pass to 1 so ipfw stops checking after
                    a rule has matched */
                 system("/sbin/sysctl net.inet.ip.fw.one_pass=1");
@@ -138,12 +139,12 @@ function filter_configure() {
                 }
                 fwrite($fd, $altq_rules);
                 fclose($fd);
-		sleep(1);
                 system("/sbin/ipfw /tmp/ipfw.rules >/tmp/ipfw_errors.txt 2>&1");
 		system("/sbin/ipfw /tmp/ipfw.rules >/tmp/ipfw_errors.txt 2>&1");
 		system("/sbin/ipfw add $rulei set 4 pass all from any to any\n");
 		system("/sbin/ipfw enable altq\n");
                 system("/bin/mv /tmp/ipfw.rules /tmp/ipfw.rules_old");
+		system("/sbin/ipfw delete 25\n");
 	} else {
 		system("/sbin/kldunload ipfw.ko");
 	}

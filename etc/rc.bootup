@@ -168,4 +168,6 @@
 
 	/* done */
 	unlink("{$g['varrun_path']}/booting");
+	$g['booting'] = FALSE;
+
 ?>

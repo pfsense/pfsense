@@ -668,19 +668,24 @@ EOD;
 	return $natrule;
 }
 
-function is_one_to_one_or_server_nat_rule($target) {
+function is_one_to_one_or_server_nat_rule($iptocheck) {
 	global $config;
 
 	if($config['nat']['onetoone'] <> "")
 		foreach($config['nat']['onetoone'] as $onetoone) {
+			if(ip_in_subnet($iptocheck,$onetoone['internal']."/".$onetoone['subnet']) == true)
+				return true;
 			if($onetoone['internal'] == $target)
-				return TRUE;
+				return true;
 		}
 
 	if($config['nat']['servernat'] <> "")
 		foreach($config['nat']['servernat'] as $onetoone) {
+			$int = explode("/", $onetoone['ipaddr']);
+				if(ip_in_subnet($iptocheck,$onetoone['ipaddr']."/".$onetoone['subnet']) == true)
+					return true;
 			if($onetoone['ipaddr'] == $target)
-				return TRUE;
+				return true;
 		}
 
 	return FALSE;

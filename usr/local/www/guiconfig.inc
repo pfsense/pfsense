@@ -1,5 +1,5 @@
 <?php
-/* $Header$ */
+/* $Id$ */
 /*
 	guiconfig.inc
 	by Scott Ullrich, Copyright 2004, All rights reserved.

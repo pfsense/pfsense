@@ -178,8 +178,8 @@ function get_pfsync_interface_status($pfsyncinterface) {
  */
 function find_carp_interface($ip) {
     for($x=0; $x<99; $x++) {
-	$ifconfig = exec_command("/sbin/ifconfig {$int}");
-	if(stristr($ifconfig,$ip) <> false)
+	$ifconfig = exec_command("/sbin/ifconfig carp{$x}");
+	if(stristr($ifconfig,$ip))
 	    return "carp" . $x;
     }
 }

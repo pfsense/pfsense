@@ -225,9 +225,9 @@ if ($_POST) {
 	<?php if ($schedulertype == "cbq"): ?>
 		<input type="checkbox" id="borrow" name="borrow" <?php if($borrow) echo " CHECKED";?> > Borrow from other queues when available<br>
 	<? endif; ?>
-		<input type="checkbox" id="red" name="red" <?php if($red) echo " CHECKED";?> > Random Early Detection<br>
-		<input type="checkbox" id="rio" name="rio" <?php if($rio) echo " CHECKED";?> > Random Early Detection In and Out<br>
-		<input type="checkbox" id="ecn" name="ecn" <?php if($ecn) echo " CHECKED";?> > Explicit Congestion Notification<br>
+		<input type="checkbox" id="red" name="red" <?php if($red) echo " CHECKED";?> > <a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#red">Random Early Detection</a><br>
+		<input type="checkbox" id="rio" name="rio" <?php if($rio) echo " CHECKED";?> > <a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#red">Random Early Detection In and Out</a><br>
+		<input type="checkbox" id="ecn" name="ecn" <?php if($ecn) echo " CHECKED";?> > <a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#ecn">Explicit Congestion Notification</a><br>
 	<?php if ($schedulertype == "hfsc" or $schedulertype == "cbq"): ?>
 		<input type="checkbox" id="parentqueue" name="parentqueue" <?php if($parentqueue) echo " CHECKED";?> > This is a parent queue of HFSC/CBQ<br>
 	<?php endif; ?>

@@ -79,7 +79,7 @@ if ($g['booting']) {
 					if (file_exists("{$g['cf_conf_path']}/config.xml")) {
 						/* found it */
 						$cfgdevice = $mountdisk;
-						$cfgpartition = $cfgdevice . "a";
+						$cfgpartition = $cfgdevice . "d";
 						$cfgfstype = "ufs";
 						echo "Found configuration on $cfgdevice.\n";
 					}

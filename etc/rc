@@ -23,7 +23,7 @@ echo
 /sbin/mount -a || fsck -y && mount -a
 SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
 /sbin/dumpon -v $SWAPDEVICE 2>/dev/null
-/sbin/swapon -a
+/sbin/swapon -a 2>/dev/null
 /bin/mkdir -p /usr/savecore 2>/dev/null
 /sbin/savecore /usr/savecore $SWAPDEVICE
 

@@ -53,6 +53,7 @@ if($xml == "") {
 $package_name = $pkg['menu'][0]['name'];
 $section      = $pkg['menu'][0]['section'];
 $config_path  = $pkg['configpath'];
+$name         = $pkg['name'];
 $title        = $section . ": " . $package_name;
 
 $id = $_GET['id'];
@@ -60,7 +61,7 @@ if (isset($_POST['id']))
 	$id = $_POST['id'];
 
 // grab the installedpackages->package_name section.
-$toeval = "\$a_pkg = &\$config['installedpackages']['" . $package_name . "']['config'];";
+$toeval = "\$a_pkg = &\$config['installedpackages']['" . $name . "']['config'];";
 eval($toeval);
 
 $toeval = "if (!is_array(\$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'])) \$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'] = array();";
@@ -310,24 +311,33 @@ $config = $config_tmp;
 					foreach($a_pkg[$id]['row'] as $row) {
 					/*
 					 * loop through saved data for record if it exists, populating rowhelper
-					 */					
+					 */
 						foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
 							if($rowhelper['value'] <> "") $value = $rowhelper['value'];
 							$fieldname = $rowhelper['fieldname'];
 							// if user is editing a record, load in the data.
-							if (isset($id) && $a_pkg[$id]) {							
+							if (isset($id) && $a_pkg[$id]) {
 								$toeval = "\$value = \$row['" . $fieldname . "'];";
 								echo "<!-- eval: " . $toeval . "-->\n";
 								eval($toeval);
 								echo "<!-- value: " . $value . "-->\n";
-							}						
+							}
 							$options = "";
 							$type = $rowhelper['type'];
 							$fieldname = $rowhelper['fieldname'];
 							if($type == "option") $options = &$rowhelper['options']['option'];
-							display_row($trc, $value, $fieldname, $type, $rowhelper);
+							display_row($rowcounter, $value, $fieldname, $type, $rowhelper);
+							// javascript helpers for row_helper_dynamic.js
+							echo "</td>\n";
+							echo "<script language=\"JavaScript\">\n";
+							echo "<!--\n";
+							echo "newrow[" . $trc . "] = \"" . $text . "\";\n";
+							echo "-->\n";
+							echo "</script>\n";
+							$text = "";
+							$trc++;
 						}
-						$trc++;
+
 						$rowcounter++;
 						echo "<td>";
 						echo "<input type=\"image\" src=\"/x.gif\" onclick=\"removeRow(this); return false;\" value=\"Delete\">";
@@ -342,15 +352,24 @@ $config = $config_tmp;
                                          */
                                         foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
 						if($rowhelper['value'] <> "") $value = $rowhelper['value'];
-						$fieldname = $rowhelper['fieldname'];						
+						$fieldname = $rowhelper['fieldname'];
 						$options = "";
 						$type = $rowhelper['type'];
 						$fieldname = $rowhelper['fieldname'];
 						if($type == "option") $options = &$rowhelper['options']['option'];
-						display_row($trc, $value, $fieldname, $type, $rowhelper);
+						display_row($rowcounter, $value, $fieldname, $type, $rowhelper);
+						// javascript helpers for row_helper_dynamic.js
+						echo "</td>\n";
+						echo "<script language=\"JavaScript\">\n";
+						echo "<!--\n";
+						echo "newrow[" . $trc . "] = \"" . $text . "\";\n";
+						echo "-->\n";
+						echo "</script>\n";
+						$text = "";
 						$trc++;
-						$rowcounter++;
 					}
+
+					$rowcounter++;
 				}
 			?>
 
@@ -404,8 +423,7 @@ $config = $config_tmp;
  * ROW Helpers function
  */
 function display_row($trc, $value, $fieldname, $type, $rowhelper) {
-	$temp = "";
-	$text = "";
+	global $text;
 	echo "<td>\n";
 	if($type == "input") {
 		echo "<input size='8' name='" . $fieldname . $trc . "' value='" . $value . "'>\n";
@@ -423,13 +441,6 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper) {
 		}
 		echo "</select>\n";
 	}
-	// javascript helpers for row_helper_dynamic.js
-	echo "</td>\n";
-	echo "<script language=\"JavaScript\">\n";
-	echo "<!--\n";
-	echo "newrow[" . $trc . "] = \"" . $text . "\";\n";
-	echo "-->\n";
-	echo "</script>\n";
 }
 
 ?>

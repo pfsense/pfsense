@@ -503,9 +503,9 @@ function type_change(enable_change,enable_change_pptp) {
                 </tr>
                 <tr>
                   <td valign="top" class="vncell">Interface Bandwidth Speed</td>
-                  <td class="vtable"> <input name="bandwidth" type="text" class="formfld" id="bandwidth" size="30" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">
+                  <td class="vtable"> <input name="bandwidth" type="text" class="formfld" id="bandwidth" size="30" value="<?=htmlspecialchars($wancfg['bandwidth']);?>">
 			<select name="bandwidthtype">
-				<option value="<?=htmlspecialchars($pconfig['bandwidthtype']);?>"><?=htmlspecialchars($pconfig['bandwidthtype']);?></option>
+				<option value="<?=htmlspecialchars($wancfg['bandwidthtype']);?>"><?=htmlspecialchars($wancfg['bandwidthtype']);?></option>
 				<option value="b">bit/s</option>
 				<option value="Kb">Kilobit/s</option>
 				<option value="Mb">Megabit/s</option>

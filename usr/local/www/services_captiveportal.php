@@ -313,7 +313,7 @@ to access after they've authenticated.</td>
       <td class="vtable">
         <textarea name="cert" cols="65" rows="7" id="cert" class="formpre"><?=htmlspecialchars($pconfig['cert']);?></textarea>
         <br>
-    Paste a signed certificate in X.509 PEM format here.</td>
+    Paste a signed certificate in X.509 PEM format here.   <A target="_new" HREF='system_advanced_create_certs.php'>Create</a> certificates automatically.</td>
 	  </tr>
 	<tr>
       <td valign="top" class="vncell">HTTPS private key</td>

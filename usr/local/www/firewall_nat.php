@@ -241,7 +241,7 @@ if (isset($_POST['del_x'])) {
                 </tr>              </table>
                     <p><span class="vexpl"><span class="red"><strong>Note:<br>
                       </strong></span>It is not possible to access NATed services
-                      using the WAN IP address from within LAN (or an optional
+                      using the WAN IP address from within the LAN (or an optional
                       network).</span></p></td>
   </tr>
 </table>

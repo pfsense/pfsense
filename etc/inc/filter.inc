@@ -955,6 +955,9 @@ anchor "loopback"
 pass in quick on lo0 all label "pass loopback"
 pass out quick on lo0 all label "pass loopback"
 
+# package manager early specific hook
+anchor "packageearly"
+
 # carp
 anchor "carp"
 
@@ -1161,6 +1164,9 @@ EOD;
 # BigPond heartbeat rules
 anchor "bigpond"
 pass in quick proto udp from any to any port = 5050 keep state label "BigPond heartbeat"
+
+# package manager late specific hook
+anchor "packagelate"
 
 EOD;
 	}

@@ -354,7 +354,7 @@ function add_default_pptp_rule() {
 	$filterent['disabled'] = false;
 	$filterent['log'] = false;
 	$filterent['frags'] = false;
-	$filterent['descr'] = "Default PPTP -&gt; any";
+	$filterent['descr'] = "Default PPTP -> any";
 	$a_filter[] = $filterent;
 	write_config();
 

@@ -566,13 +566,12 @@ function gather_altq_queue_stats() {
     foreach ($stats_array as $stats_line) {
         if (preg_match_all("/queue\s+(\w+)\s+/",$stats_line,$match_array))
             $queue_name = $match_array[1][0];
-	    #\n+\/\n+
-        if (preg_match_all("/qlength:\s+([0-99999]\/\s+[0-99999])\s+]/",$stats_line,$match_array))
-            $qlength = $match_array[1][0];
+        if (preg_match_all("/measured:\s+.*packets\/s\,\s(.*)\s+\]/",$stats_line,$match_array))
+            $speed = $match_array[1][0];
         if (preg_match_all("/measured:\s+(.*)packets/",$stats_line,$match_array)) {
             $measured = $match_array[1][0];
 	    if(stristr($queue_name,"root_") == false)
-		array_push($queue_stats, "{$queue_name}|{$qlength}|{$measured}");
+		array_push($queue_stats, "{$queue_name}|{$speed}|{$measured}");
         }
     }
     return $queue_stats;

@@ -131,8 +131,8 @@ if ($_GET['act'] == "del") {
                       <tr>
                         <td width="10%" class="listhdrr">No.</td>
                         <td width="20%" class="listhdrr">Priority</td>
-			<td width="20%" class="listhdr">Default</td>
-                        <td width="40%" class="listhdr">Name</td>
+			<td width="10%" class="listhdr">Default</td>
+                        <td width="50%" class="listhdr">Name</td>
                         <td width="10%" class="list"></td>
                       </tr>
                       <?php $i = 0; foreach ($a_queues as $queue): ?>
@@ -161,7 +161,7 @@ if ($_GET['act'] == "del") {
 			echo "<img src='bar_blue.gif' height='15' name='queue{$i}widtha' id='queue{$i}widtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
 			echo "<img src='bar_gray.gif' height='15' name='queue{$i}widthb' id='queue{$i}widthb' width='" . (100 - $cpuUsage) . "' border='0' align='absmiddle'>";
 			echo "<img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
-			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='10' name='queue{$i}meter' id='queue{$i}meter' value='{$cpuUsage}'>";
+			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}meter' id='queue{$i}meter' value='{$cpuUsage}'>";
 ?>
 
 			</td>
@@ -190,6 +190,7 @@ if ($_GET['act'] == "del") {
 
 <?php
 
+$counter = 0;
 While(!Connection_Aborted()) {
 
 	$stats_array = gather_altq_queue_stats();
@@ -204,13 +205,28 @@ While(!Connection_Aborted()) {
 	$i = 0;
 	foreach($stats_array as $stats_line) {
 		$stat_line_split = split("\|", $stats_line);
-		$packet_s = intval($stat_line_split[2]);
+		$packet_sampled = intval($stat_line_split[2]);
+		$speed = $stat_line_split[1];
 		echo "<script language='javascript'>\n";
-		echo "document.queue{$i}widtha.style.width='{$packet_s}';\n";
-		echo "document.queue{$i}widthb.style.width='" . (100 - $packet_s) . "';\n";
-		echo "document.forms[0].queue{$i}meter.value = '" . $packet_s . "/s';\n";
+
+		$packet_s = round(100 * (1 - $packet_sampled / $total_packets_s), 0);
+
+		echo "document.queue{$i}widthb.style.width='{$packet_s}';\n";
+		echo "document.queue{$i}widtha.style.width='" . (100 - $packet_s) . "';\n";
+		echo "document.forms[0].queue{$i}meter.value = '" . $packet_sampled . " - " . $speed . "';\n";
 		echo "</script>\n";
 		$i++;
+	}
+
+	/*
+	 *   prevent user from running out of ram.
+	 *   firefox and ie can be a bear on ram usage!
+         */
+	$counter++;
+	if($counter > 10000) {
+		echo "Redirecting to <a href=\"firewall_shaper_queues.php\">Firewall Shaper Queues</a>.<p>";
+		echo "<meta http-equiv=\"refresh\" content=\"1;url=firewall_shaper_queues.php\">";
+		exit;
 	}
 
 }

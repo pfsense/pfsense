@@ -570,6 +570,7 @@ function resync_all_package_configs_bootup($show_message) {
 	foreach($config['installedpackages']['package'] as $package) {
 		if($show_message == true) print " " . $package['name'];
 		sync_package($i, true, true);
+		$i++;
 	}
 	if($show_message == true) print ".\n";
 }

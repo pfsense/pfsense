@@ -39,7 +39,7 @@ function is_carp_defined() {
 	$command = "/sbin/sysctl -a | grep carp";
 	$fd = popen($command . " 2>&1 ", "r");
 	if(!$fd) {
-		syslog(LOG_WARNING, "Warning, could not execute command ");
+		log_error("Warning, could not execute command ");
 		return 0;
 	}
 	while(!feof($fd)) {

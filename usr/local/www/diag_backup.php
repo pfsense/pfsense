@@ -64,7 +64,7 @@ if ($_POST) {
 					$command = "/sbin/sysctl -a | grep carp";
 					$fd = fopen($_FILES['conffile']['tmp_name']);
 					if(!$fd) {
-						syslog(LOG_WARNING, "Warning, could not open " . $_FILES['conffile']['tmp_name']);
+						log_error("Warning, could not open " . $_FILES['conffile']['tmp_name']);
 						return 1;
 					}
 					while(!feof($fd)) {
@@ -72,7 +72,7 @@ if ($_POST) {
 					}
 					fclose($fd);
 					if(stristr($tmp, "m0n0wall" != FALSE)) {
-						syslog(LOG_WARNING, "Upgrading m0n0wall configuration to pfsense.");
+						log_error("Upgrading m0n0wall configuration to pfsense.");
 						/* m0n0wall was found in config.  convert it. */
 						$onlyconsonants = str_replace("m0n0wall", "pfsense", $tmp);
 						fopen($_FILES['conffile']['tmp_name'], "w");

@@ -67,6 +67,10 @@ function dump_clog($logfile, $tail, $withorig = true) {
 function conv_clog($logfile, $tail) {
 	global $g, $config;
 
+	$nentries = $config['syslog']['nentries'];
+	if (!$nentries)
+		$nentries = 50;
+
 	/* make interface/port table */
 	$iftable = array();
 	$iftable[$config['interfaces']['lan']['if']] = "LAN";
@@ -76,7 +80,7 @@ function conv_clog($logfile, $tail) {
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
-	exec("/usr/sbin/clog " . $logfile . " | tail {$sor} -n " . $tail, $logarr);
+	exec("/usr/sbin/clog " . $logfile . " | tail {$sor} -n 250000", $logarr);
 
 	$filterlog = array();
 
@@ -115,11 +119,14 @@ function conv_clog($logfile, $tail) {
 
 		if($flent['proto'] == "S" or $flent['proto'] == "NBT" or $flent['proto'] == "." or $flent['proto'] == "R" or $flent['proto'] == ">") $dontdisplay = 1;
 
-		if($dontdisplay == 0)
+		if($dontdisplay == 0) {
 			$filterlog[] = $flent;
 
-		if($counter > $nentries)
-			break;
+			if($counter > $nentries)
+				return $filterlog;
+
+			$counter++;
+		}
 	}
 
 	return $filterlog;

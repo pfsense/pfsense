@@ -86,7 +86,7 @@ function filter_configure() {
 	else
 		$mssclamp = "";
 
-        $fd = fopen("/tmp/rules.debug", "w");
+        $fd = fopen("{$g['tmp_path']}/rules.debug", "w");
 	$rules = $aliases . " \n";
 
 	$rules .= setup_logging_interfaces();
@@ -107,7 +107,7 @@ function filter_configure() {
 	fwrite($fd, $rules);
         fclose($fd);
 
-        $rules_loading = mwexec("/sbin/pfctl -f /tmp/rules.debug");
+        $rules_loading = mwexec("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
 
 	/* load ipfw+altq module */
 	if (isset($config['shaper']['enable'])) {
@@ -119,16 +119,16 @@ function filter_configure() {
                 mwexec("/sbin/ipfw -f delete set 4");
                 /* XXX - seems like ipfw cannot accept rules directly on stdin,
                    so we have to write them to a temporary file first */
-                $fd = fopen("/tmp/ipfw.rules", "w");
+                $fd = fopen("{$g['tmp_path']}/ipfw.rules", "w");
                 if (!$fd) {
                         printf("Cannot open ipfw.rules in filter_configure()\n");
                         return 1;
                 }
                 fwrite($fd, $altq_rules);
                 fclose($fd);
-                mwexec("/sbin/ipfw /tmp/ipfw.rules");
+                mwexec("/sbin/ipfw {$g['tmp_path']}/ipfw.rules");
 		mwexec("/sbin/ipfw enable altq");
-                mwexec("/bin/mv /tmp/ipfw.rules /tmp/ipfw.rules_old");
+                mwexec("/bin/mv {$g['tmp_path']}/ipfw.rules {$g['tmp_path']}/ipfw.rules_old");
 	} else {
 		mwexec("/sbin/ipfw -f flush");
 		if(!isset($config['captiveportal']['enable']))
@@ -136,7 +136,7 @@ function filter_configure() {
 	}
 
 	if($rules_loading <> 0) {
-		$rules_error = exec_command("/sbin/pfctl -f /tmp/rules.debug");
+		$rules_error = exec_command("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
 		return "There was an error loading the rules.<p><pre>" . $rules_error . "</pre>";
 	} else {
 		/* process packager manager custom rules */

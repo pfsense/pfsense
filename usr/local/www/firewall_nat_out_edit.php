@@ -105,6 +105,11 @@ if ($_POST) {
             $input_errors[] = "A valid destination bit count must be specified.";
         }
     }
+    if ($_POST['destination_type'] != "any") {
+	if ($_POST['destination_not'])
+		$input_errors[] = "Negating destination address of \"any\" is invalid.";
+    }
+
     if ($_POST['target'] && !is_ipaddr($_POST['target'])) {
         $input_errors[] = "A valid target IP address must be specified.";
     }

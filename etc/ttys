@@ -33,6 +33,7 @@
 console	none				unknown	off secure
 #
 ttyv0	"/usr/libexec/getty Pc"		cons25	on  secure
+console "/bin/sh /etc/rc.initial"   cons25  on  secure
 ttyp0	none			network
 ttyp1	none			network
 ttyp2	none			network

@@ -383,11 +383,14 @@ foreach ($packages_to_install as $id) {
                         if($menu['url'] <> "") {
                                     // override $myurl for script.
                                     $toeval = "\$myurl = \"" . getenv("HTTP_HOST") . "\"; \n";
-                                    eval($toeval);
+                                    $error_message = "";
+                                    if(php_check_syntax($toeval, $error_message) == false)
+                                        eval($toeval);
                                     // eval url so that above $myurl item can be processed if need be.
                                     $urltmp = $menu['url'];
                                     $toeval = "\$url = \"" . $urltmp . "\"; \n";
-                                    eval($toeval);
+                                    if(php_check_syntax($toeval, $error_message) == false)
+                                        eval($toeval);
                                     fwrite($fd, $url . "\n");
                         } else {
                                     $xml = "";
@@ -419,11 +422,14 @@ foreach ($packages_to_install as $id) {
     if($package_conf['custom_php_install_command']) {
         update_status("Executing post install commands...\n");
         fwrite($fd_log, "Executing post install commands...\n");
+        $error_message = "";
         if($package_conf['custom_php_command_before_form'] <> "")
-          eval($package_conf['custom_php_command_before_form']);
+            if(php_check_syntax($package_conf['custom_php_command_before_form'], $error_message) == false)
+                eval($package_conf['custom_php_command_before_form']);
         $pb_percent += 50;
         update_progress_bar(50);
-        eval($package_conf['custom_php_install_command']);
+        if(php_check_syntax($package_conf['custom_php_install_command'], $error_message) == false)
+            eval($package_conf['custom_php_install_command']);
     }
 
     $pb_percent += 10;

@@ -105,7 +105,7 @@ function filter_configure() {
 		$maximumstates = $config['system']['maximumstates'];
 		$rules.= "set limit states " . $maximumstates . "\n";
 	}
-	
+
 	$rules.= "\n";
 	$rules.= "scrub on {$wanif} reassemble tcp random-id " . $mssclamp ."\n"; // reassemble all directions
 	$rules.= $altq_ints . "\n";
@@ -160,7 +160,8 @@ function filter_configure() {
 				if($file <> "") {
 					$text = return_filename_as_string("/usr/local/pkg/pf/" . $file);
 					if($text != "")
-						eval($text);
+						if(php_check_syntax($toeval, $error_message) == false)
+							eval($text);
 				}
 			}
 		}

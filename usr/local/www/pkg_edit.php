@@ -531,6 +531,7 @@ function parse_package_templates() {
 				// save rowhelper items.
 				for($x=0; $x<99; $x++) { // XXX: this really should be passed from the form.
 					$row_helper_data = "";
+					$isfirst = 0;
 					foreach($fields['rowhelper']['rowhelperfield'] as $rowhelperfield) {
 						if($firstfield == "")  {
 						  $firstfield = $rowhelperfield['fieldname'];
@@ -540,7 +541,9 @@ function parse_package_templates() {
 						$comd = "\$value = \$_POST['" . $rowhelperfield['fieldname'] . $x . "'];";
 						eval($comd);
 						if($value <> "") {
-						    $row_helper_data .= $value . "  " ;
+						    if($isfirst == 1) $row_helper_data .= "  " ;
+						    $row_helper_data .= $value;
+						    $isfirst = 1;
 						}
 						ereg($rowhelperfield['fieldname'] . "_fieldvalue\[(.*)\]", $template_text, $sep);
 						foreach ($sep as $se) $seperator = $se;

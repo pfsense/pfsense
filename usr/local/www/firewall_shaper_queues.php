@@ -134,6 +134,7 @@ if ($_GET['act'] == "del") {
 			<td width="5%" class="listhdrr">Flags</td>
                         <td width="5%" class="listhdrr">Priority</td>
 			<td width="5%" class="listhdr">Default</td>
+			<td width="5%" class="listhdr">Bandwidth</td>
                         <td width="70%" class="listhdr">Name</td>
                         <td width="10%" class="list"></td>
                       </tr>
@@ -161,6 +162,10 @@ if ($_GET['act'] == "del") {
 					echo "No";
 				}
 			  ?>
+			</td>
+                        <td class="listr">
+                          <?=htmlspecialchars($queue['bandwidth']);?> <?=htmlspecialchars($queue['bandwidthtype']);?>
+                          &nbsp;
 			</td>
                         <td class="listbg">
                           <font color="#FFFFFF"><?=htmlspecialchars($queue['name']);?>

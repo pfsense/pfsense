@@ -74,5 +74,7 @@ cd /var/run && cp /dev/null utmp && chmod 644 utmp
 echo Starting Secure Shell Services ...
 /etc/sshd
 
+/usr/sbin/cron 2>/dev/null
+
 exit 0
 

@@ -61,6 +61,24 @@ if ($_POST) {
 		} else if ($mode == "restore") {
 			if (is_uploaded_file($_FILES['conffile']['tmp_name'])) {
 				if (config_install($_FILES['conffile']['tmp_name']) == 0) {
+					$command = "/sbin/sysctl -a | grep carp";
+					$fd = fopen($_FILES['conffile']['tmp_name']);
+					if(!$fd) {
+						syslog(LOG_WARNING, "Warning, could not open " . $_FILES['conffile']['tmp_name']);
+						return 1;
+					}
+					while(!feof($fd)) {
+						    $tmp .= fread($fd,49);
+					}
+					fclose($fd);
+					if(stristr($tmp, "m0n0wall" != FALSE)) {
+						syslog(LOG_WARNING, "Upgrading m0n0wall configuration to pfsense.");
+						/* m0n0wall was found in config.  convert it. */
+						$onlyconsonants = str_replace("m0n0wall", "pfsense", $tmp);
+						fopen($_FILES['conffile']['tmp_name'], "w");
+						fwrite($fd, $tmp);
+						fclose($fd);
+					}
 					system_reboot();
 					$savemsg = "The configuration has been restored. The firewall is now rebooting.";
 				} else {

@@ -220,6 +220,20 @@ function get_pkg_id($pkg_name) {
             return -1;
 }
 
+/*
+ *  get_latest_package_version($pkgname): get current version of a package.
+ *  returns latest package version
+ */
+function get_latest_package_version($pkg_name) {
+    fetch_latest_pkg_config();
+    $pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
+    foreach($pkg_config as $pkg) {
+	if($pkg_config['name'] == $pkg_name) {
+	    return $pkg_config['version'];
+	}
+    }
+    return;
+}
 
 /*
  * Lookup pkg_id in pkg_config.xml

@@ -60,8 +60,9 @@ $config = $config_tmp;
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td width="25%" class="listhdrr">Package Name</td>
-                  <td width="25%" class="listhdrr">Category</td>
-                  <td width="50%" class="listhdr">Description</td>
+                  <td width="20%" class="listhdrr">Category</td>
+                  <td width="10%" class="listhdrr">Version</td>
+                  <td width="45%" class="listhdr">Description</td>
                 </tr>
 
 		<?php
@@ -76,6 +77,19 @@ $config = $config_tmp;
                                 </td>
                                 <td class="listlr">
                                     <?= $pkg['category'] ?>
+                                </td>
+                                <td class="listlr">
+                                    <?php
+                                        $latest_version = get_latest_package_version($pkg['name']);
+                                        if($pkg['version']) <> $latest_version) {
+                                            /* a new version of the package is available */
+                                            $id = get_pkg_id($pkg['name']);
+                                            echo "Upgrade: <a href='pkg_mgr_delete.php?upgrade=true&id={$id}'>" . $latest_version . "</a>";
+                                            echo "<br>Installed: " . $pkg['version'];
+                                        } else {
+                                            echo $pkg['version'];
+                                        }
+                                    ?>
                                 </td>
                                 <td class="listbg">
                                     <font color="#FFFFFFF">

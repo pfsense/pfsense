@@ -273,6 +273,15 @@ function find_ip_interface($ip) {
 }
 
 /*
+ *  filter_translate_type_to_real_interface($interface): returns the real interface name
+ *                                                       for a friendly interface.  ie: wan
+ */
+function filter_translate_type_to_real_interface($interface) {
+        global $config;
+	return $config['interfaces'][$interface]['if'];
+}
+
+/*
  * get_carp_interface_status($carpinterface): returns the status of a carp ip
  */
 function get_carp_interface_status($carpinterface) {
@@ -506,13 +515,7 @@ function execute_command_return_output($command) {
  */
 function convert_friendly_interface_to_real_interface_name($interface) {
     global $config;
-    if($interface == "lan") return $config['interfaces']['lan']['if'];
-    if($interface == "wan") return $config['interfaces']['wan']['if'];
-    foreach($config['interfaces'] as $int) {
-	if($int['descr'] == $interface)
-	    return $int['if'];
-    }
-    return;
+    return $config['interfaces'][$interface]['if'];
 }
 
 /*
@@ -527,7 +530,8 @@ function convert_real_interface_to_friendly_interface_name($interface) {
 	}
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 	    $int = filter_translate_type_to_real_interface($ifname);
-	    if($int == $interface) return $ifname;
+	    echo $ifname . " - " . $interface ."\n";
+	    if($ifname == $interface) return $ifname;
 	}
 	return $interface;
 }

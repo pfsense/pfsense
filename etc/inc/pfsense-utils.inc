@@ -116,18 +116,18 @@ function is_carp_defined() {
     $command = "/sbin/sysctl -a | grep carp";
     $fd = popen($command . " 2>&1 ", "r");
     if(!$fd) {
-	    log_error("Warning, could not execute command {$command}");
-	    return 0;
+	log_error("Warning, could not execute command {$command}");
+	return 0;
     }
     while(!feof($fd)) {
-		$tmp .= fread($fd,49);
+	$tmp .= fread($fd,49);
     }
     fclose($fd);
 
     if($tmp == "")
-	    return false;
+	return false;
     else
-	    return true;
+	return true;
 }
 
 /*
@@ -137,11 +137,11 @@ function find_number_of_created_carp_interfaces() {
     $command = "/sbin/ifconfig | /usr/bin/grep \"carp*:\" | /usr/bin/wc -l";
     $fd = popen($command . " 2>&1 ", "r");
     if(!$fd) {
-	    log_error("Warning, could not execute command {$command}");
-	    return 0;
+	log_error("Warning, could not execute command {$command}");
+	return 0;
     }
     while(!feof($fd)) {
-		$tmp .= fread($fd,49);
+	$tmp .= fread($fd,49);
     }
     fclose($fd);
     $tmp = intval($tmp);
@@ -158,7 +158,7 @@ function link_ip_to_carp_interface($ip) {
 
     $ifdescrs = array('wan', 'lan');
     for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-	    $ifdescrs['opt' . $j] = "opt" . $j;
+	$ifdescrs['opt' . $j] = "opt" . $j;
     }
 
     $ft = split("\.", $ip);
@@ -167,18 +167,18 @@ function link_ip_to_carp_interface($ip) {
     $carp_ints = "";
     $num_carp_ints = find_number_of_created_carp_interfaces();
     foreach ($ifdescrs as $ifdescr => $ifname) {
-	    for($x=0; $x<$num_carp_ints; $x++) {
-		    $carp_int = "carp{$x}";
-		    $carp_ip = find_interface_ip($carp_int);
-		    $carp_ft = split("\.", $carp_ip);
-		    $carp_ft_ip = $carp_ft[0] . "." . $carp_ft[1] . "." . $carp_ft[2] . ".";
-		    $result = does_interface_exist($carp_int);
-		    if($result <> true) break;
-		    $interface = filter_opt_interface_to_real($ifname);
-		    if($ft_ip == $carp_ft_ip)
-			if(stristr($carp_ints,$carp_int) == false)
-			    $carp_ints .= " " . $carp_int;
-	    }
+	for($x=0; $x<$num_carp_ints; $x++) {
+	    $carp_int = "carp{$x}";
+	    $carp_ip = find_interface_ip($carp_int);
+	    $carp_ft = split("\.", $carp_ip);
+	    $carp_ft_ip = $carp_ft[0] . "." . $carp_ft[1] . "." . $carp_ft[2] . ".";
+	    $result = does_interface_exist($carp_int);
+	    if($result <> true) break;
+	    $interface = filter_opt_interface_to_real($ifname);
+	    if($ft_ip == $carp_ft_ip)
+		if(stristr($carp_ints,$carp_int) == false)
+		    $carp_ints .= " " . $carp_int;
+	}
     }
     return $carp_ints;
 }
@@ -192,7 +192,7 @@ function exec_command($command) {
     $tmp = "";
     $fd = popen($command . " 2>&1 ", "r");
     while(!feof($fd)) {
-		$tmp .= fread($fd,49);
+	$tmp .= fread($fd,49);
     }
     fclose($fd);
     return $tmp;
@@ -244,7 +244,7 @@ function get_friendly_interface_list_as_array() {
     $i = 0;
     $ifdescrs = array('wan', 'lan');
     for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-	    $ifdescrs['opt' . $j] = "opt" . $j;
+	$ifdescrs['opt' . $j] = "opt" . $j;
     }
     $ifdescrs = get_interface_list();
     foreach ($ifdescrs as $ifdescr => $ifname) {
@@ -261,7 +261,7 @@ function find_ip_interface($ip) {
     $i = 0;
     $ifdescrs = array('wan', 'lan');
     for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-	    $ifdescrs['opt' . $j] = "opt" . $j;
+	$ifdescrs['opt' . $j] = "opt" . $j;
     }
     foreach ($ifdescrs as $ifdescr => $ifname) {
 	$int = filter_translate_type_to_real_interface($ifname);
@@ -277,8 +277,8 @@ function find_ip_interface($ip) {
  *                                                       for a friendly interface.  ie: wan
  */
 function filter_translate_type_to_real_interface($interface) {
-        global $config;
-	return $config['interfaces'][$interface]['if'];
+    global $config;
+    return $config['interfaces'][$interface]['if'];
 }
 
 /*
@@ -357,8 +357,8 @@ function get_pkg_id($pkg_name) {
     global $pkg_config;
     $i=0;
     foreach ($config['installedpackages']['package'] as $pkg) {
-		if($pkg['name'] == $pkg_name) return $i;
-		$i++;
+	if($pkg['name'] == $pkg_name) return $i;
+	$i++;
     }
     return -1;
 }
@@ -450,7 +450,7 @@ function get_dir($dir) {
     $dir_array = array();
     $d = dir($dir);
     while (false !== ($entry = $d->read())) {
-		array_push($dir_array, $entry);
+	array_push($dir_array, $entry);
     }
     $d->close();
     return $dir_array;
@@ -460,7 +460,7 @@ function get_dir($dir) {
  *   update_output_window: update top textarea dynamically.
  */
 function update_status($status) {
-            echo "\n<script language=\"JavaScript\">document.forms[0].status.value=\"" . $status . "\";</script>";
+    echo "\n<script language=\"JavaScript\">document.forms[0].status.value=\"" . $status . "\";</script>";
 }
 
 /*
@@ -470,7 +470,7 @@ function exec_command_and_return_text_array($command) {
     $counter = 0;
     $fd = popen($command . " 2>&1 ", "r");
     while(!feof($fd)) {
-		$tmp .= fread($fd,49);
+	$tmp .= fread($fd,49);
     }
     fclose($fd);
     $temp_array = split("\n", $tmp);
@@ -481,7 +481,7 @@ function exec_command_and_return_text_array($command) {
  *   exec_command_and_return_text: execute command and return output
  */
 function exec_command_and_return_text($command) {
-	    return exec_command($command);
+    return exec_command($command);
 }
 
 /*
@@ -580,9 +580,9 @@ function resync_all_package_configs_bootup($show_message) {
     if(!$config['installedpackages']['package']) return;
     if($show_message == true) print "Syncing packages:";
     foreach($config['installedpackages']['package'] as $package) {
-	    if($show_message == true) print " " . $package['name'];
-	    sync_package($i, true, true);
-	    $i++;
+	if($show_message == true) print " " . $package['name'];
+	sync_package($i, true, true);
+	$i++;
     }
     if($show_message == true) print ".\n";
 }
@@ -597,8 +597,8 @@ function sweep_package_processes() {
     foreach($config['installedpackages']['package'] as $package) {
         $pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
         if($pkg_config['swept_processes'] <> "") {
-                mwexec("/usr/bin/killall " . $pkg_config['swept_processes']);
-                log_error("Killed " . $package['name'] . "'s unnecessary processes.");
+            mwexec("/usr/bin/killall " . $pkg_config['swept_processes']);
+            log_error("Killed " . $package['name'] . "'s unnecessary processes.");
         }
     }
 }
@@ -641,7 +641,7 @@ function gather_altq_queue_stats($dont_return_root_queues) {
 function reverse_strrchr($haystack, $needle) {
     $pos = strrpos($haystack, $needle);
     if($post === false) {
-	    return $haystack;
+	return $haystack;
     }
     return substr($haystack, 0, $post + 1);
 }
@@ -657,59 +657,59 @@ function reverse_strrchr($haystack, $needle) {
 function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $return_nosync = 1) {
     global $config;
     if(!is_numeric($pkg_name)) {
-	    $pkg_name = get_pkg_id($pkg_name);
-	    if($pkg_id == -1) return -1; // This package doesn't really exist - exit the function.
+	$pkg_name = get_pkg_id($pkg_name);
+	if($pkg_id == -1) return -1; // This package doesn't really exist - exit the function.
     } else {
-	    if(!isset($config['installedpackages']['package'][$pkg_id])) return; // No package belongs to the pkg_id passed to this function.
+	if(!isset($config['installedpackages']['package'][$pkg_id])) return; // No package belongs to the pkg_id passed to this function.
     }
     $package = $config['installedpackages']['package'][$pkg_id];
     print '$package done.';
     if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) { // If the package's config file doesn't exist, log an error and fetch it.
-	    log_error("Fetching missing configuration XML for " . $package['name']);
-	    mwexec("/usr/bin/fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationfile']);
+	log_error("Fetching missing configuration XML for " . $package['name']);
+	mwexec("/usr/bin/fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationfile']);
     }
     $pkg_xml = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
     if($pkg_xml['additional_files_needed'] != "") {
-	    foreach($pkg_xml['additional_files_needed'] as $item) {
-		    if (($return_nosync == 0) && (isset($item['nosync']))) continue; // Do not return depends with nosync set if not required.
-		    $depend_file = substr(strrchr($item['item']['0'], '/'),1); // Strip URLs down to filenames.
-		    $depend_name = substr(substr($depend_file,0,strpos($depend_file,".")+1),0,-1); // Strip filename down to dependency name.
-		    if (($filetype != "all") && (!preg_match("/${filetype}/i", $depend_file))) continue;
-		    if ($item['prefix'] != "") {
-			    $prefix = $item['prefix'];
-		    } else {
-			    $prefix = "/usr/local/pkg/";
-		    }
-		    if(!file_exists($prefix . $pkg_name)) {
-			    log_error("Fetching missing dependency (" . $depend_name . ") for " . $pkg_name);
-			    mwexec("/usr/local/bin/fetch -o " . $prefix . $depend_file . " " . $item['name']['0']);
-			    if($item['chmod'] != "") mwexec("/bin/chmod " . $item['chmod'] . $prefix . $depend_file); // Handle chmods.
-		    }
-		    switch ($format) {
-		    case "files":
-			    $depends[] = $depend_file;
-			    break;
-		    case "names":
-			    switch ($filetype) {
-			    case "all":
-				    if(preg_match("/\.xml/i", $depend_file)) {
-					    $depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
-					    $depends[] = $depend_xml['name'];
-					    break;
-				    } else {
-					    $depends[] = $depend_name; // If this dependency isn't package XML, use the stripped filename.
-					    break;
-				    }
-			    case ".xml":
-				    $depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
-				    $depends[] = $depend_xml['name'];
-				    break;
-			    default:
-				    $depends[] = $depend_name; // If we aren't looking for XML, use the stripped filename (it's all we have).
-				    break;
-			    }
-		    }
+	foreach($pkg_xml['additional_files_needed'] as $item) {
+	    if (($return_nosync == 0) && (isset($item['nosync']))) continue; // Do not return depends with nosync set if not required.
+	    $depend_file = substr(strrchr($item['item']['0'], '/'),1); // Strip URLs down to filenames.
+	    $depend_name = substr(substr($depend_file,0,strpos($depend_file,".")+1),0,-1); // Strip filename down to dependency name.
+	    if (($filetype != "all") && (!preg_match("/${filetype}/i", $depend_file))) continue;
+	    if ($item['prefix'] != "") {
+		$prefix = $item['prefix'];
+	    } else {
+		$prefix = "/usr/local/pkg/";
 	    }
+	    if(!file_exists($prefix . $pkg_name)) {
+		log_error("Fetching missing dependency (" . $depend_name . ") for " . $pkg_name);
+		mwexec("/usr/local/bin/fetch -o " . $prefix . $depend_file . " " . $item['name']['0']);
+		if($item['chmod'] != "") mwexec("/bin/chmod " . $item['chmod'] . $prefix . $depend_file); // Handle chmods.
+	    }
+	    switch ($format) {
+	    case "files":
+		$depends[] = $depend_file;
+		break;
+	    case "names":
+		switch ($filetype) {
+		case "all":
+		    if(preg_match("/\.xml/i", $depend_file)) {
+			$depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
+			$depends[] = $depend_xml['name'];
+			break;
+		    } else {
+			$depends[] = $depend_name; // If this dependency isn't package XML, use the stripped filename.
+			break;
+		    }
+		case ".xml":
+		    $depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
+		    $depends[] = $depend_xml['name'];
+		    break;
+		default:
+		    $depends[] = $depend_name; // If we aren't looking for XML, use the stripped filename (it's all we have).
+		    break;
+		}
+	    }
+	}
 	return $depends;
     }
 }
@@ -769,7 +769,7 @@ function http_post($server, $port, $url, $vars) {
     $user_agent = "Mozilla/4.0 (compatible; MSIE 5.5; Windows 98)";
     $urlencoded = "";
     while (list($key,$value) = each($vars))
-	    $urlencoded.= urlencode($key) . "=" . urlencode($value) . "&";
+	$urlencoded.= urlencode($key) . "=" . urlencode($value) . "&";
     $urlencoded = substr($urlencoded,0,-1);
 
     $content_length = strlen($urlencoded);
@@ -788,7 +788,7 @@ Content-Length: $content_length
 
     $fp = fsockopen($server, $port, $errno, $errstr);
     if (!$fp) {
-	    return false;
+	return false;
     }
 
     fputs($fp, $headers);
@@ -796,7 +796,7 @@ Content-Length: $content_length
 
     $ret = "";
     while (!feof($fp))
-	    $ret.= fgets($fp, 1024);
+	$ret.= fgets($fp, 1024);
 
     fclose($fp);
 
@@ -857,46 +857,43 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
     global $config;
     if(!$config['installedpackages']['package']) return;
     if(!is_numeric($pkg_name)) {
-	    $pkg_id = get_pkg_id($pkg_name);
-	    if($pkg_id == -1) return -1; // This package doesn't really exist - exit the function.
+	$pkg_id = get_pkg_id($pkg_name);
+	if($pkg_id == -1) return -1; // This package doesn't really exist - exit the function.
     } else {
-	    $pkg_id = $pkg_name;
-	    if(!isset($config['installedpackages']['package'][$pkg_id])) {
-		    return;  // No package belongs to the pkg_id passed to this function.
-	    }
+	$pkg_id = $pkg_name;
+	if(!isset($config['installedpackages']['package'][$pkg_id]))
+	    return;  // No package belongs to the pkg_id passed to this function.
     }
     $package = $config['installedpackages']['package'][$pkg_id];
     if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
-	    //if($show_message == true) print "(f)"; Don't mess with this until the package system has settled.
-	    log_error("Fetching missing configuration XML for " . $package['name']);
-	    mwexec("/usr/bin/fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationfile']);
+	//if($show_message == true) print "(f)"; Don't mess with this until the package system has settled.
+	log_error("Fetching missing configuration XML for " . $package['name']);
+	mwexec("/usr/bin/fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationfile']);
     }
     $pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
     if(isset($pkg_config['nosync'])) continue;
     //if($show_message == true) print "Syncing " . $pkg_name;
-    if($pkg_config['custom_php_command_before_form'] <> "") {
-	    eval($pkg_config['custom_php_command_before_form']);
-    }
-    if($pkg_config['custom_php_resync_config_command'] <> "") {
-	    eval($pkg_config['custom_php_resync_config_command']);
-    }
+    if($pkg_config['custom_php_command_before_form'] <> "")
+	eval($pkg_config['custom_php_command_before_form']);
+    if($pkg_config['custom_php_resync_config_command'] <> "")
+	eval($pkg_config['custom_php_resync_config_command']);
     if($sync_depends == true) {
-	    $depends = get_pkg_depends($pkg_name, ".xml", "files", 1); // Call dependency handler and do a little more error checking.
-	    if(is_array($depends)) {
-		    foreach($depends as $item) {
-			    $item_config = parse_xml_config_pkg("/usr/local/pkg/" . $item, "packagegui");
-			    if(isset($item_config['nosync'])) continue;
-			    if($item_config['custom_php_command_before_form'] <> "") {
-				    eval($item_config['custom_php_command_before_form']);
-				    print "Evaled dependency.";
-			    }
-			    if($item_config['custom_php_resync_config_command'] <> "") {
-				    eval($item_config['custom_php_resync_config_command']);
-				    print "Evaled dependency.";
-			    }
-			    if($show_message == true) print " " . $item_config['name'];
-		    }
+	$depends = get_pkg_depends($pkg_name, ".xml", "files", 1); // Call dependency handler and do a little more error checking.
+	if(is_array($depends)) {
+	    foreach($depends as $item) {
+		$item_config = parse_xml_config_pkg("/usr/local/pkg/" . $item, "packagegui");
+		if(isset($item_config['nosync'])) continue;
+		if($item_config['custom_php_command_before_form'] <> "") {
+		    eval($item_config['custom_php_command_before_form']);
+		    print "Evaled dependency.";
+		}
+		if($item_config['custom_php_resync_config_command'] <> "") {
+		    eval($item_config['custom_php_resync_config_command']);
+		    print "Evaled dependency.";
+		}
+		if($show_message == true) print " " . $item_config['name'];
 	    }
+	}
     }
     // if($show_message == true) print ".";
 }

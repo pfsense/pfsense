@@ -159,7 +159,7 @@ if ($_POST) {
 	      ?>
 		<input type=checkbox name="red" <?php if($red) echo " CHECKED";?> > Random Early Detection<br>
 		<input type=checkbox name="ecn" <?php if($ecn) echo " CHECKED";?> > Explicit Congestion Notification<br>
-		<input type=checkbox name="default" <?php if($default) echo " CHECKED";?> > Default (Clasee based queueing only)<br>
+		<input type=checkbox name="default" <?php if($default) echo " CHECKED";?> > Default (Classed based queueing only)<br>
 		<br> <span class="vexpl">Select options for this queue
 		</span></td>
 	    </tr>

@@ -62,10 +62,11 @@ if ($_GET['act'] == "del") {
 	    // in the environment.  ie: a fieldname of username with a value of
             // testuser would automatically eval $username = "testuser";
 	    foreach ($evaledvar as $ip) {
-		    foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
-			    $toeval = "\$" . xml_safe_fieldname($column['fielddescr']) . " = " . "\$ip['" . xml_safe_fieldname($column['fieldname']) . "'];";
-			    eval($toeval);
-		    }
+			if($pkg['adddeleteeditpagefields']['columnitem'])
+			  foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
+				  $toeval = "\$" . xml_safe_fieldname($column['fielddescr']) . " = " . "\$ip['" . xml_safe_fieldname($column['fieldname']) . "'];";
+				  eval($toeval);
+			  }
 	    }
 
 	    $toeval = "\$a_pkg = &\$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'];";

@@ -682,7 +682,7 @@ function is_one_to_one_or_server_nat_rule($target) {
 			if($onetoone['ipaddr'] == $target)
 				return TRUE;
 		}
-		
+
 	return FALSE;
 }
 
@@ -717,7 +717,7 @@ function filter_nat_rules_generate() {
 			else
 				$natif = $config['interfaces'][$natent['interface']]['if'];
 
-			$natrules .= "binat on {$natif} from {$natent['internal']}/{$sn} to any -> {$natent['external']}\n";
+			$natrules .= "binat on {$natif} from {$natent['internal']}/{$sn} to any -> {$natent['external']}/{$sn}\n";
 		}
 	}
 

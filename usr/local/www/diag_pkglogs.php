@@ -27,6 +27,15 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
+
+	<logging>
+		<logtab>arpwatch</logtab>
+		<grepfor>arpwatch</logtab>
+	</logging>
+
+		<invertgrep/>
+		<logfile>/var/log/arpwatch.log</logfile>
+
 */
 
 require("guiconfig.inc");
@@ -72,6 +81,19 @@ if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, loca
   <tr><td>
   <ul id="tabnav">
     <?php
+	if($apkgid == -1) {
+                print_info_box_np("The specified package, {$apkg}, is not installed.");
+		include("fend.inc"); ?>
+		</html>
+    <?php	exit();
+		}
+	if($i == 0) {
+		print_info_box_np("No packages are currently installed.");
+		include("fend.inc"); ?>
+		</html>
+    <?php	exit();
+	
+	
 	foreach($config['installedpackages']['package'] as $package) {
         	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
 		if(is_array($pkg_config['logging'])) {

@@ -424,10 +424,13 @@ foreach ($packages_to_install as $id) {
                                         update_progress_bar($pb_percent);
                                         $pb_percent += 10;
                                         $filename = get_filename_from_url($afn);
+                                        fwrite($fd_log, "Downloading additional files needed for package " . $filename . " ...");
                                         update_status("Downloading additional files needed for package " . $filename . " ...");
                                         system("cd /usr/local/pkg && /usr/bin/fetch " .  $afn . " 2>/dev/null");
-                                        if(stristr($filename, '.tgz') <> "")
+                                        if(stristr($filename, '.tgz') <> "") {
+                                                    update_status("Extracting tgz archive to -C for " . $filename);
                                                     system("cd /usr/local/pkg && tar xzvf " . $filename . " -C / >/dev/null 2>&1");
+                                        }
                             }
                 }
 

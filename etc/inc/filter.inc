@@ -104,17 +104,23 @@ function filter_configure() {
 		$maximumstates = $config['system']['maximumstates'];
 		fwrite($fd, "set limit states " . $maximumstates . "\n");
 	}
-	fwrite($fd, "\nscrub all\n");
+	fwrite($fd, "\nscrub all\n"); // reassemble all directions
+        fwrite($fd, "\anchor \"altqints\"\n"); // add altqints anchor
 	fwrite($fd, $altq_ints);
-	fwrite($fd, "\anchor \"altq\"\n");
+	/*
+	 *  Anchors will be used to allow scripts and or users
+	 *  to add or subtract rules from the system using shellcmd.
+         */
+	fwrite($fd, "\anchor \"altq\"\n"); // add a altq anchor
 	fwrite($fd, $altq_queues);
-	fwrite($fd, "\anchor \"nat\"\n");
+	fwrite($fd, "\anchor \"nat\"\n"); // add a nat anchor
 	fwrite($fd, $natrules);
-	fwrite($fd, "\anchor \"filter\"\n");
+	fwrite($fd, "\anchor \"filter\"\n"); // add a filter anchor
         fwrite($fd, $pfrules);
         fclose($fd);
 
 	mwexec("chmod a+x /tmp/rules.debug");
+
 	mwexec("/sbin/pfctl -f /tmp/rules.debug");
 	/* Load ALTQ Rules */
 	mwexec("/sbin/pfctl -Af /tmp/rules.debug");
@@ -126,7 +132,7 @@ function filter_configure() {
 	mwexec("/sbin/pfctl -Rf /tmp/rules.debug");
 
 	if ($g['booting'])
-		echo "done\n";
+		echo "pfSense boot complete.\n\nWelcome to pfSense!";
 
 	return 0;
 }

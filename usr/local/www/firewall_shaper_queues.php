@@ -102,14 +102,14 @@ if ($_GET['act'] == "del") {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title><?=gentitle("Firewall: Traffic shaper");?></title>
+<title><?=gentitle("Firewall: Traffic shaper: Queues");?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">Firewall: Traffic shaper Queues</p>
+<p class="pgtitle">Firewall: Traffic shaper: Queues</p>
 <form action="firewall_shaper_queues.php" method="post">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -166,8 +166,8 @@ if ($_GET['act'] == "del") {
                       </tr>
                     </table>
 			        <p>
-                    <strong><span class="red">Note:</span></strong> a queue can
-                    only be deleted if it is not referenced by any rules.</td></p>
+                    <strong><span class="red">Note:</span></strong><strong><br></strong>
+                      a queue can only be deleted if it is not referenced by any rules.</td></p>
 	</tr>
 </table>
             </form>

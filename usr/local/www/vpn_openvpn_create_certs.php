@@ -194,7 +194,7 @@ function f(ta_id){
 	    echo "<script language=\"JavaScript\">document.forms[0].status.value=\"Creating CA...\";</script>";
 	    mwexec("rm -rf /tmp/*");
 	    //mwexec("rm -rf /tmp/newcerts");
-	    mwexec("mkdir /tmp/newcerts");
+	    mkdir("/tmp/newcerts", 0755);
 	    mwexec("touch /tmp/index.txt");
 	    $fd = fopen("/tmp/serial","w");
 	    fwrite($fd, "01\n");
@@ -222,17 +222,17 @@ function f(ta_id){
 		key vpnkey.pem
            */
 
-	    execute_command_return_output("cd /tmp/ && openssl req -nodes -new -x509 -keyout cakey.pem -out cacert.pem -config /etc/ssl/openssl.cnf");
+	    execute_command_return_output("/usr/bin/openssl req -nodes -new -x509 -keyout /tmp/cakey.pem -out /tmp/cacert.pem -config /etc/ssl/openssl.cnf");
 
 	    echo "\n<script language=\"JavaScript\">document.forms[0].status.value=\"Creating Server Certificates...\";</script>";
 
-	    execute_command_return_output("cd /tmp/ && openssl req -nodes -new -keyout vpnkey.pem -out vpncert-req.pem -config /etc/ssl/openssl.cnf");
+	    execute_command_return_output("/usr/bin/openssl req -nodes -new -keyout /tmp/vpnkey.pem -out /tmp/vpncert-req.pem -config /etc/ssl/openssl.cnf");
 
-	    execute_command_return_output("cd /tmp/ && openssl ca -out vpncert.pem -in vpncert-req.pem -batch");
+	    execute_command_return_output("/usr/bin/openssl ca -out /tmp/vpncert.pem -in /tmp/vpncert-req.pem -batch");
 
 	    echo "\n<script language=\"JavaScript\">document.forms[0].status.value=\"Creating DH Parms...\";</script>";
 
-	    execute_command_return_output("cd /tmp/ && openssl dhparam -out dh1024.pem 1024");
+	    execute_command_return_output("/usr/bin/openssl dhparam -out /tmp/dh1024.pem 1024");
 
 	    echo "\n<script language=\"JavaScript\">document.forms[0].status.value=\"Done!\";</script>";
 

@@ -157,4 +157,3 @@ if(!$pkg_config['packages']) {
 </html>
 
 <?php system("rm {$g['tmp_path']}/pkg*"); ?>
-

@@ -449,36 +449,36 @@ function services_proxyarp_configure() {
 
 		/* group by interface */
 		foreach ($config['proxyarp']['proxyarpnet'] as $paent) {
-                       if ($paent['interface'])
-                               $if = $paent['interface'];
-                       else
-                               $if = "wan";
+			if ($paent['interface'])
+				$if = $paent['interface'];
+			else
+				$if = "wan";
 
-                       if (!is_array($paa[$if]))
-                               $paa[$if] = array();
+			if (!is_array($paa[$if]))
+				$paa[$if] = array();
 
-                       $paa[$if][] = $paent;
-               }
+			$paa[$if][] = $paent;
+		}
 
-               foreach ($paa as $paif => $paents) {
-                       if ($paif == "wan" && !(is_ipaddr($config['interfaces']['wan']['ipaddr']) ||
+		foreach ($paa as $paif => $paents) {
+			if ($paif == "wan" && !(is_ipaddr($config['interfaces']['wan']['ipaddr']) ||
                                        ($config['interfaces']['wan']['ipaddr'] == "dhcp") ||
                                        ($config['interfaces']['wan']['ipaddr'] == "bigpond")))
                                continue;
 
-                       $args = $config['interfaces'][$paif]['if'] . " auto";
+			$args = $config['interfaces'][$paif]['if'] . " auto";
 
-                       foreach ($paents as $paent) {
+			foreach ($paents as $paent) {
 
-			if (isset($paent['network']))
-				$args .= " " . escapeshellarg($paent['network']);
-			else if (isset($paent['range']))
-				$args .= " " . escapeshellarg($paent['range']['from'] . "-" .
-					$paent['range']['to']);
+				if (isset($paent['network']))
+					$args .= " " . escapeshellarg($paent['network']);
+				else if (isset($paent['range']))
+					$args .= " " . escapeshellarg($paent['range']['from'] . "-" .
+						$paent['range']['to']);
+			}
+
+			mwexec_bg("/usr/local/sbin/choparp " . $args);
 		}
-
-		mwexec_bg("/usr/local/sbin/choparp " . $args);
-	}
 	}
 }
 

@@ -521,7 +521,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                   <td width="22%" valign="top" class="vncellreq">Protocol</td>
                   <td width="78%" class="vtable">
 <select name="proto" class="formfld" onchange="proto_change()">
-                      <?php $protocols = explode(" ", "TCP UDP TCP/UDP ICMP ESP AH GRE IPv6 IGMP any"); foreach ($protocols as $proto): ?>
+                      <?php $protocols = explode(" ", "TCP UDP TCP/UDP ICMP ICMP6 ESP AH GRE IPv6 IGMP any"); foreach ($protocols as $proto): ?>
                       <option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['proto']) echo "selected"; ?>>
                       <?=htmlspecialchars($proto);?>
                       </option>

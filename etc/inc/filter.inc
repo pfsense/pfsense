@@ -515,6 +515,7 @@ pass out quick on lo0 all
 
 # enable ftp-proxy
 rdr on $lanif proto tcp from any to any port 21 -> 127.0.0.1 port 8021
+pass in on $wanif inet proto tcp from port 20 to ($wanif) user proxy flags S/SA keep state
 
 # allow access to DHCP server on LAN
 pass in quick on $lanif proto udp from any port = 68 to 255.255.255.255 port = 67

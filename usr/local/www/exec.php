@@ -49,7 +49,7 @@ function puts( $arg ) { echo "$arg\n"; }
 
 $Version    = '';
 $ScriptName = $HTTP_SERVER_VARS['SCRIPT_NAME'];
-$Title      = 'm0n0wall: execute command';
+$Title      = 'pfSense: execute command';
 
 // Get year.
 

@@ -174,7 +174,14 @@ if ($_GET['act'] == "del") {
                       network).</span></p></td>
   </tr>
 </table>
-            </form>
+
+<?php
+if ($pkg['tabs'] <> "") {
+    echo "</td></tr></table>";
+}
+?>
+
+</form>
 <?php include("fend.inc"); ?>
 </body>
 </html>

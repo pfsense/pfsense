@@ -236,9 +236,22 @@ if ($pkg['tabs'] <> "") {
 	$active = "tabinact";
 	if(isset($tab['active'])) $active = "tabact";
 	$url = "";
+	$title = $tab['text'];
 	if($tab['url'] <> "") $url = $tab['url'];
 	if($tab['xml'] <> "") $url = "pkg_edit.php?xml=" . $tab['xml'];
-	echo "<li class=\"{$active}\"><a href=\"{$url}\">Server NAT</a></li>";
+	if($active == "tabinact") {
+	    echo "<li class=\"{$active}\">";
+	    echo "<a href=\"";
+	    echo $url;
+	    echo "\">";
+	    echo $title;
+	    echo "</a>";
+	    echo "</li>";
+	} else {
+	    echo "<li class=\"{$active}\">";
+	    echo $title;
+	    echo "</li>";
+	}
     }
     echo "  </ul>";
     echo "</td></tr>";

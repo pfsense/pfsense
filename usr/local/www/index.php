@@ -1,22 +1,22 @@
 #!/usr/local/bin/php
-<?php 
+<?php
 /*
 	index.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -57,51 +57,51 @@ if ($fd) {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
-              <tr align="center" valign="top"> 
+              <tr align="center" valign="top">
                 <td height="10" colspan="2">&nbsp;</td>
               </tr>
-              <tr align="center" valign="top"> 
-                <td height="170" colspan="2"><img src="logobig.gif" width="520" height="149"></td>
+              <tr align="center" valign="top">
+                <td height="170" colspan="2"><img src="logobig.gif"></td>
               </tr>
-              <tr> 
+              <tr>
                 <td colspan="2" class="listtopic">System information</td>
               </tr>
-              <tr> 
+              <tr>
                 <td width="25%" class="vncellt">Name</td>
                 <td width="75%" class="listr">
                   <?php echo $config['system']['hostname'] . "." . $config['system']['domain']; ?>
                 </td>
               </tr>
-              <tr> 
+              <tr>
                 <td width="25%" valign="top" class="vncellt">Version</td>
-                <td width="75%" class="listr"> <strong> 
+                <td width="75%" class="listr"> <strong>
                   <?php readfile("/etc/version"); ?>
                   </strong><br>
-                  built on 
+                  built on
                   <?php readfile("/etc/version.buildtime"); ?>
                 </td>
               </tr>
-              <tr> 
+              <tr>
                 <td width="25%" class="vncellt">Platform</td>
-                <td width="75%" class="listr"> 
+                <td width="75%" class="listr">
                   <?=htmlspecialchars($g['platform']);?>
                 </td>
               </tr><?php if ($hwcrypto): ?>
-              <tr> 
+              <tr>
                 <td width="25%" class="vncellt">Hardware crypto</td>
-                <td width="75%" class="listr"> 
+                <td width="75%" class="listr">
                   <?=htmlspecialchars($hwcrypto);?>
                 </td>
               </tr><?php endif; ?>
-              <tr> 
+              <tr>
                 <td width="25%" class="vncellt">Uptime</td>
-                <td width="75%" class="listr"> 
+                <td width="75%" class="listr">
                   <?php
 				  	exec("/sbin/sysctl -n kern.boottime", $boottime);
 					preg_match("/sec = (\d+)/", $boottime[0], $matches);
 					$boottime = $matches[1];
 					$uptime = time() - $boottime;
-					
+
 					if ($uptime > 60)
 						$uptime += 30;
 					$updays = (int)($uptime / 86400);
@@ -109,7 +109,7 @@ if ($fd) {
 					$uphours = (int)($uptime / 3600);
 					$uptime %= 3600;
 					$upmins = (int)($uptime / 60);
-					
+
 					$uptimestr = "";
 					if ($updays > 1)
 						$uptimestr .= "$updays days, ";
@@ -120,13 +120,13 @@ if ($fd) {
 				  ?>
                 </td>
               </tr><?php if ($config['lastchange']): ?>
-              <tr> 
+              <tr>
                 <td width="25%" class="vncellt">Last config change</td>
-                <td width="75%" class="listr"> 
+                <td width="75%" class="listr">
                   <?=htmlspecialchars(date("D M j G:i:s T Y", $config['lastchange']));?>
                 </td>
               </tr><?php endif; ?>
-			  <tr> 
+			  <tr>
                 <td width="25%" class="vncellt">CPU usage</td>
                 <td width="75%" class="listr">
 <?php
@@ -144,7 +144,7 @@ $diff['idle'] = $cpuTicks2[4] - $cpuTicks[4];
 $totalDiff = $diff['user'] + $diff['nice'] + $diff['sys'] + $diff['intr'] + $diff['idle'];
 
 $cpuUsage = round(100 * (1 - $diff['idle'] / $totalDiff), 0);
-									
+
 echo "<img src='bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
 echo "<img src='bar_blue.gif' height='15' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
 echo "<img src='bar_gray.gif' height='15' width='" . (100 - $cpuUsage) . "' border='0' align='absmiddle'>";
@@ -153,7 +153,7 @@ echo $cpuUsage . "%";
 ?>
                 </td>
               </tr>
-			  <tr> 
+			  <tr>
                 <td width="25%" class="vncellt">Memory usage</td>
                 <td width="75%" class="listr">
 <?php
@@ -165,7 +165,7 @@ $totalMem = $memory[0] + $memory[1] + $memory[2] + $memory[3] + $memory[4];
 $freeMem = $memory[4];
 $usedMem = $totalMem - $freeMem;
 $memUsage = round(($usedMem * 100) / $totalMem, 0);
-		  
+
 echo " <img src='bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
 echo "<img src='bar_blue.gif' height='15' width='" . $memUsage . "' border='0' align='absmiddle'>";
 echo "<img src='bar_gray.gif' height='15' width='" . (100 - $memUsage) . "' border='0' align='absmiddle'>";

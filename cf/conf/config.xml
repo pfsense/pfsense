@@ -4,7 +4,7 @@
 	<version>1.4</version>
 	<lastchange></lastchange>
 	<system>
-		<hostname>m0n0wall</hostname>
+		<hostname>pfSense</hostname>
 		<domain>local</domain>
 		<dnsserver></dnsserver>
 		<dnsallowoverride/>
@@ -357,13 +357,13 @@
 			<icmptype></icmptype>
 			<source>
 				<not/>
-				
+
 				<address>xxx.xxx.xxx.xxx(/xx) or alias</address>
 				*or*
 				<network>lan|opt[n]|pptp</network>
 				*or*
 				<any/>
-				
+
 				<port>a[-b]</port>
 			</source>
 			<destination>
@@ -380,29 +380,29 @@
 		<rule>
 			<disabled/>
 			<descr></descr>
-			
+
 			<targetpipe>number (zero based)</targetpipe>
 			*or*
 			<targetqueue>number (zero based)</targetqueue>
-			
+
 			<interface>lan|wan|opt[n]|pptp</interface>
 			<protocol>tcp|udp</protocol>
 			<direction>in|out</direction>
 			<source>
 				<not/>
-				
+
 				<address>xxx.xxx.xxx.xxx(/xx)</address>
 				*or*
 				<network>lan|opt[n]|pptp</network>
 				*or*
 				<any/>
-				
+
 				<port>a[-b]</port>
 			</source>
 			<destination>
 				*same as for source*
 			</destination>
-			
+
 			<iplen>from[-to]</iplen>
 			<iptos>(!)lowdelay,throughput,reliability,mincost,congestion</iptos>
 			<tcpflags>(!)fin,syn,rst,psh,ack,urg</tcpflags>

@@ -310,7 +310,7 @@ to access after they've authenticated.</td>
 		<td><input type="text" class="formfld" id="bwauthmacdn" size="5" value="<?=htmlspecialchars($pconfig['bwauthmacdn']);?>"> Kbit/s</td>
 		</tr><tr>
 		<td>Pass-through MAC upload</td>
-		<td><input type="text" class="formfld" id="bwauthmacdn" size="5" value="<?=htmlspecialchars($pconfig['bwauthmacup']);?>"> Kbit/s</td>
+		<td><input type="text" class="formfld" id="bwauthmacup" size="5" value="<?=htmlspecialchars($pconfig['bwauthmacup']);?>"> Kbit/s</td>
 		</tr><tr>
 		<td>Pass-through IP download</td>
 		<td><input type="text" class="formfld" id="bwauthipdn" size="5" value="<?=htmlspecialchars($pconfig['bwauthipdn']);?>"> Kbit/s</td>

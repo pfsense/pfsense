@@ -238,6 +238,8 @@ if ($_POST) {
 		<br> <span class="vexpl">Select options for this queue
 		</span></td>
 	    </tr>
+	<?php endif; ?>
+	<?php if ($schedulertype == "hfsc" or $schedulertype == "cbq"): ?>
 	    <tr>
 		<td width="22%" valign="top" class="vncell">Parent queue (CBQ or HFSC only):</td>
 		<td width="78%" class="vtable">

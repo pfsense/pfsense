@@ -28,26 +28,26 @@ function showhide(tspan, tri) {
 -->
 </script>
 <table width="750" border="0" cellspacing="0" cellpadding="2">
-  <tr valign="bottom"> 
+  <tr valign="bottom">
     <td width="150" height="65" align="center" valign="middle"> <strong><a href="/" target="_blank"><img src="/logo.gif" width="150" height="47" border="0"></a></strong></td>
-    <td height="65" bgcolor="#435370">
+    <td height="65" bgcolor="#7F3B00">
 	<table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr><td align="left" valign="bottom"><span class="tfrtitle">&nbsp;webGUI 
+	<tr><td align="left" valign="bottom"><span class="tfrtitle">&nbsp;webGUI
       Configuration</span></td>
 	  <td align="right" valign="bottom">
 	  <span class="hostname"><?=$config['system']['hostname'] . "." . $config['system']['domain'];?>&nbsp;</span>
 	  </td></tr></table>
 	</td>
   </tr>
-  <tr valign="top"> 
-    <td width="150" bgcolor="#9D9D9D">
+  <tr valign="top">
+    <td width="150" bgcolor="#000000">
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
         <tr>
-          <td><span class="navlnk"><font color="#FFFFFF"> <strong>System</strong> 
+          <td><span class="navlnk"><font color="#FFFFFF"> <strong>System</strong>
               <br>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system.php" class="navlnk">General 
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system.php" class="navlnk">General
               setup</a><br>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_routes.php" class="navlnk">Static 
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_routes.php" class="navlnk">Static
               routes</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_firmware.php" class="navlnk">Firmware</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_advanced.php" class="navlnk">Advanced</a><br>
@@ -67,7 +67,7 @@ function showhide(tspan, tri) {
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/firewall_aliases.php" class="navlnk">Aliases</a><br>
               <strong>Services</strong><br>
 			  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_dnsmasq.php" class="navlnk">DNS forwarder</a><br>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_dyndns.php" class="navlnk">Dynamic 
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_dyndns.php" class="navlnk">Dynamic
               DNS</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_dhcp.php" class="navlnk">DHCP server</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_dhcp_relay.php" class="navlnk">DHCP relay</a><br>
@@ -111,17 +111,17 @@ endif;
 			  <a href="javascript:showhide('diag','tri_diag')"><img src="/tri_c.gif" id="tri_diag" width="14" height="10" border="0"></a><strong><a href="javascript:showhide('diag','tri_diag')" class="navlnk">Diagnostics</a></strong><br>
 			  <span id="diag" style="display: none">
 			  <?php endif; ?>
-				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_logs.php" class="navlnk">System 
+				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_logs.php" class="navlnk">System
 				  logs</a><br>
 				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_dhcp_leases.php" class="navlnk">DHCP leases</a><br>
 				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_ipsec_sad.php" class="navlnk">IPsec</a><br>
 				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_ping.php" class="navlnk">Ping</a><br>
-				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_resetstate.php" class="navlnk">Reset 
+				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_resetstate.php" class="navlnk">Reset
 				  state</a><br>
 				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_backup.php" class="navlnk">Backup/Restore</a><br>
-				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_defaults.php" class="navlnk">Factory 
+				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_defaults.php" class="navlnk">Factory
 				  defaults </a><br>
-				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/reboot.php" class="navlnk">Reboot 
+				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/reboot.php" class="navlnk">Reboot
 				  system</a>
 			  </span>
 			  </font></span>

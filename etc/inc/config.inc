@@ -574,7 +574,7 @@ EOD;
 	echo <<<EOD
 
 Do you want to set up VLANs first?
-If you're not going to use VLANs, or only for optional interfaces, you
+If you are not going to use VLANs, or only for optional interfaces, you
 should say no here and use the webGUI to configure VLANs later, if required.
 
 Do you want to set up VLANs now [y|n]?
@@ -599,7 +599,7 @@ EOD;
 
 	echo <<<EOD
 
-If you don't know the names of your interfaces, you may choose to use
+If you do not know the names of your interfaces, you may choose to use
 auto-detection. In that case, disconnect all interfaces before you begin,
 and reconnect each one when prompted to do so.
 
@@ -674,7 +674,7 @@ EOD;
 			if ($ifarr[$i] == $ifarr[$j]) {
 				echo <<<EOD
 
-Error: you can't assign the same interface name twice!
+Error: you cannot assign the same interface name twice!
 
 EOD;
 

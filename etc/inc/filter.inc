@@ -1111,12 +1111,13 @@ EOD;
 
 	/* block bogon networks on WAN */
 	/* http://www.cymru.com/Documents/bogon-bn-nonagg.txt */
-	/* XXX - pull from www.cymru.com at some point so we don't have to manually update */
+	/* file is automatically in cron every 3000 minutes */
 	if (isset($config['interfaces']['wan']['blockbogons'])) {
 		$ipfrules .= <<<EOD
 
 # block bogon networks
 # http://www.cymru.com/Documents/bogon-bn-nonagg.txt
+anchor "wanbogons"
 table <bogons> persist file "/etc/bogons"
 block in $log quick on $wanif from <bogons> to any label "block bogon networks from wan"
 
@@ -1148,7 +1149,7 @@ EOD;
 
 	$ipfrules .= <<<EOD
 
-# make sure the user cannot lock himself out of the webGUI
+# make sure the user cannot lock himself out of the webGUI or SSH
 anchor "anti-lockout"
 pass in quick from $lansa/$lansn to $lanip keep state label "anti-lockout web rule"
 

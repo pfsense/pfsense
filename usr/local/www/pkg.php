@@ -148,4 +148,3 @@ include("fbegin.inc");
 </body>
 </html>
 
-<?php system("rm /tmp/pkg*"); ?>

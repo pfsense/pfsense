@@ -442,4 +442,19 @@ function gentitle($pgname) {
 	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
 }
 
+/* Check if variable has changed, update and log if it has
+ * varname = variable name in plain text
+ * orig = original value
+ * new = new value
+ */
+function updatechanged($varname, $orig, $new) {
+	global $changedesc;
+
+	if ($orig != $new) {
+		$changedesc .= " {$varname}: \"{$orig}\" -> \"{$new}\"";
+		$orig = $new;
+	}
+}
+
+
 ?>

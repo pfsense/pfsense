@@ -44,22 +44,21 @@ if (isset($id) && $a_queues[$id]) {
 	$pconfig['name'] = $a_queues[$id]['name'];
 	$pconfig['options'] = $a_queues[$id]['options'];
 
-	if(isset($pconfig['options']['red'])) {
-		$pconfig['options']['red'] = $queue['options']['red'];
-		$red = "on";
-	}
-	if(isset($pconfig['options']['ecn'])) {
-		$pconfig['options']['ecn'] = $queue['options']['ecn'];
-		$ecn = "on";
-	}
-	if(isset($pconfig['options']['default'])) {
-		$pconfig['options']['default'] = $queue['options']['default'];
-		$default = "on";
-	}
-
+	$pconfig['options']['red'] = $a_queues[$id]['options']['red'];
+	$pconfig['options']['ecn'] = $a_queues[$id]['options']['ecn'];
+	$pconfig['options']['default'] = $a_queues[$id]['options']['default'];
+	$pconfig['options']['parentqueue'] = $a_queues[$id]['options']['parentqueue'];
+	$pconfig['options']['upperlimit1'] = $a_queues[$id]['options']['upperlimit1'];
+	$pconfig['options']['upperlimit2'] = $a_queues[$id]['options']['upperlimit2'];
+	$pconfig['options']['upperlimit3'] = $a_queues[$id]['options']['upperlimit3'];
+	$pconfig['options']['realtime1'] = $a_queues[$id]['options']['realtime1'];
+	$pconfig['options']['realtime2'] = $a_queues[$id]['options']['realtime2'];
+	$pconfig['options']['realtime3'] = $a_queues[$id]['options']['realtime3'];
+	$pconfig['options']['linkshare1'] = $a_queues[$id]['options']['linkshare1'];
+	$pconfig['options']['linkshare2'] = $a_queues[$id]['options']['linkshare2'];
+	$pconfig['options']['linkshare3'] = $a_queues[$id]['options']['linkshare3'];
 	$pconfig['bandwidth'] = $a_queues[$id]['bandwidth'];
 	$pconfig['bandwidthtype'] = $a_queues[$id]['bandwidthtype'];
-
 }
 
 if ($_POST) {
@@ -80,22 +79,27 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$queue = array();
-
 		$queue['schedulertype'] = $_POST['scheduler'];
 		$queue['bandwidth'] = $_POST['bandwidth'];
 		$queue['priority'] = $_POST['priority'];
 		$queue['name'] = ereg_replace(" ", "", $_POST['name']);
-
+		$queue['options']['linkshare'] = $_POST['linkshare'];
+		$queue['options']['linkshare3'] = $_POST['linkshare3'];
+		$queue['options']['linkshare2'] = $_POST['linkshare2'];
+		$queue['options']['linkshare1'] = $_POST['linkshare1'];
+		$queue['options']['realtime'] = $_POST['realtime'];
+		$queue['options']['realtime3'] = $_POST['realtime3'];
+		$queue['options']['realtime2'] = $_POST['realtime2'];
+		$queue['options']['realtime1'] = $_POST['realtime1'];
+		$queue['options']['upperlimit'] = $_POST['upperlimit'];
+		$queue['options']['upperlimit3'] = $_POST['upperlimit3'];
+		$queue['options']['upperlimit2'] = $_POST['upperlimit2'];
+		$queue['options']['upperlimit1'] = $_POST['upperlimit1'];
+		$queue['options']['parentqueue'] = $_POST['parentqueue'];
 		$scheduleroptions="";
-		if($_POST['red'] == "on")
-			$queue['options']['red'] = "enabled";
-
-		if($_POST['ecn'] == "on")
-			$queue['options']['ecn'] = "enabled";
-
-		if($_POST['default'] == "on")
-			$queue['options']['default'] = "eanbled";
-
+		$queue['options']['red'] = "enabled";
+		$queue['options']['ecn'] = "enabled";
+		$queue['options']['default'] = "eanbled";
 		if (isset($id) && $a_queues[$id])
 			$a_queues[$id] = $queue;
 		else
@@ -165,21 +169,31 @@ if ($_POST) {
 	      <td width="22%" valign="top" class="vncell">Scheduler options</td>
 	      <td width="78%" class="vtable">
 	      <?php
-		$red = strpos($pconfig['options'], "red");
-		$ecn = strpos($pconfig['options'], "ecn");
-		$upperlimit = strpos($pconfig['options'], "upperlimit");
-		$realtime = strpos($pconfig['options'], "realtime");
-		$parentqueue = strpos($pconfig['options'], "parentqueue");
-		$linkshare = strpos($pconfig['options'], "linkshare");
-		$default = strpos($pconfig['options'], "default");
+		$red = $pconfig['options']["red"];
+		$ecn = $pconfig['options']["ecn"];
+		$upperlimit = $pconfig['options']["upperlimit"];
+		$upperlimit1 = $pconfig['options']["upperlimit1"];
+		$upperlimit2 = $pconfig['options']["upperlimit2"];
+		$upperlimit3 = $pconfig['options']["upperlimit3"];
+		$realtime = $pconfig['options']["realtime"];
+		$realtime1 = $pconfig['options']["realtime1"];
+		$realtime2 = $pconfig['options']["realtime2"];
+		$realtime3 = $pconfig['options']["realtime3"];
+		$linkshare = $pconfig['options']["linkshare"];
+		$linkshare1 = $pconfig['options']["linkshare1"];
+		$linkshare2 = $pconfig['options']["linkshare2"];
+		$linkshare3 = $pconfig['options']["linkshare3"];
+		$parentqueue = $pconfig['options']["parentqueue"];
+		$default = $pconfig['options']["default"];
+		$parent = $pconfig['options']["parent"];
 	      ?>
-	        <input type=checkbox name="default" <?php if($default) echo " CHECKED";?> > Default (Classed based queueing only)<br>
+	        <input type=checkbox name="default" <?php if($default) echo " CHECKED";?> > Default queue<br>
 		<input type=checkbox name="parentqueue" <?php if($parentqueue) echo " CHECKED";?> > This is a parent queue of HFSC/CBQ<br>
 		<input type=checkbox name="red" <?php if($red) echo " CHECKED";?> > Random Early Detection<br>
 		<input type=checkbox name="ecn" <?php if($ecn) echo " CHECKED";?> > Explicit Congestion Notification<br>
-		<input type=checkbox name="upperlimit" <?php if($upperlimit) echo " CHECKED";?> > Upperlimit: <input size="3" name="upperlimit1"> <input size="3" name="upperlimit2"> <input size="3" name="upperlimit3"> <br>
-		<input type=checkbox name="realtime" <?php if($realtime) echo " CHECKED";?> > Real time: <input size="3" name="realtime1"> <input size="3" name="realtime2"> <input size="3" name="realtime3"><br>
-		<input type=checkbox name="linkshare" <?php if($linkshare) echo " CHECKED";?> > Link share: <input size="3" name="linkshare1"> <input size="3" name="linkshare2"> <input size="3" name="linkshare3"><br>				
+		<input type=checkbox name="upperlimit" <?php if($upperlimit) echo " CHECKED";?> > Upperlimit: <input size="3" value="<?=htmlspecialchars($upperlimit1);?>" name="upperlimit1"> <input size="3" value="<?=htmlspecialchars($upperlimit2);?>" name="upperlimit2"> <input size="3" value="<?=htmlspecialchars($upperlimit3);?>" name="upperlimit3"> <br>
+		<input type=checkbox name="realtime" <?php if($realtime) echo " CHECKED";?> > Real time: <input size="3" value="<?=htmlspecialchars($realtime1);?>" name="realtime1"> <input size="3" value="<?=htmlspecialchars($realtime2); ?>" name="realtime2"> <input size="3" value="<?=htmlspecialchars($realtime3);?>" name="realtime3"><br>
+		<input type=checkbox name="linkshare" <?php if($linkshare) echo " CHECKED";?> > Link share: <input size="3" value="<?=htmlspecialchars($linkshare1);?>" value="<?=htmlspecialchars($linkshare1);?>" name="linkshare1"> <input size="3" value="<?=htmlspecialchars($linkshare2);?>" name="linkshare2"> <input size="3" value="<?=htmlspecialchars($linkshare3);?>" name="linkshare3"><br>
 		<br> <span class="vexpl">Select options for this queue
 		</span></td>
 	    </tr>
@@ -189,6 +203,8 @@ if ($_POST) {
 		<td width="78%" class="vtable">
 		   <select name="childqueue">
 			<?php
+			if(isset($pconfig['pfqueueing']['childqueue'])
+				echo "<option value=\"" . $pconfig['pfqueueing']['childqueue'] . "\">" . $pconfig['pfqueueing']['childqueue'] . "</option>";
 			 if (is_array($config['pfqueueing']['queue'])) {
 			 	foreach ($config['pfqueueing']['queue'] as $queue) {
 			 		if(is_subqueue($queue['name']) == 0)

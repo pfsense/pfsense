@@ -92,6 +92,7 @@ defCmdT("pfctl -s nat ", "/sbin/pfctl -s nat");
 defCmdT("pfctl -s rules", "/sbin/pfctl -s rules");
 defCmdT("pfctl -s all"," /sbin/pfctl -s all");
 defCmdT("pfctl -s rules -v"," /sbin/pfctl -s rules -v");
+defCmdT("pfctl -si","/sbin/pfctl -si");
 
 defCmdT("resolv.conf","cat /etc/resolv.conf");
 

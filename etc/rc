@@ -35,6 +35,10 @@ rm -rf /tmp/*
 set -T
 trap "echo 'Reboot interrupted'; exit 1" 3
 
+# Create uploadbar tmp directory
+mkdir /tmp/uploadbar
+chmod 777 /tmp/uploadbar
+
 # make some directories in /var
 mkdir /var/run /var/log /var/etc /var/db/ipf 2>/dev/null
 chmod 0755 /var/db/ipf

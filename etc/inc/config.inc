@@ -208,6 +208,12 @@ function conf_mount_rw() {
 	   (doesn't sync the files properly and /bin/sync won't help either) */
 	mwexec("/sbin/umount -f {$g['cf_path']}");
 	mwexec("/sbin/mount -w -o noatime {$g['cf_path']}");
+	/* if the platform is soekris or wrap, lets mount the
+	   compact flash card. */
+	if($g['platform'] == "wrap" or $g['platform'] == "net45xx") {
+		mwexec("/sbin/umount -f {$g['embeddedbootupslice']}");
+		mwexec("/sbin/mount -w -o noatime {$g['embeddedbootupslice']}");
+	}
 }
 
 /* mount flash card read only */
@@ -216,6 +222,12 @@ function conf_mount_ro() {
 
 	mwexec("/sbin/umount -f {$g['cf_path']}");
 	mwexec("/sbin/mount -r {$g['cf_path']}");
+	/* if the platform is soekris or wrap, lets unmount the
+	   compact flash card. */
+	if($g['platform'] == "wrap" or $g['platform'] == "net45xx") {
+		mwexec("/sbin/umount -f {$g['embeddedbootupslice']}");
+		mwexec("/sbin/mount -r -o noatime {$g['embeddedbootupslice']}");
+	}
 }
 
 /* convert configuration, if necessary */

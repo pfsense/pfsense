@@ -121,6 +121,8 @@ function link_ip_to_carp_interface($ip) {
 	$ft = split("\.", $ip);
 	$ft_ip = $ft[0] . "." . $ft[1] . "." . $ft[2] . ".";
 
+	$carp_ints = "";
+
         foreach ($ifdescrs as $ifdescr => $ifname) {
                 for($x=0; $x<99; $x++) {
                         $carp_int = "carp{$x}";
@@ -131,9 +133,11 @@ function link_ip_to_carp_interface($ip) {
                         if($result <> true) break;
                         $interface = filter_opt_interface_to_real($ifname);
 			if($ft_ip == $carp_ft_ip)
-			    return $carp_int;
+			    if(stristr($carp_ints,$carp_int) == FALSE)
+				$carp_ints .= " " . $carp_int;
                 }
         }
+	return $carp_ints;
 }
 
 

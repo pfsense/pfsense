@@ -105,23 +105,17 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		if ($config['system']['hostname'] != strtolower($_POST['hostname'])) {
-			$changedesc .= " changed hostname: \"{$config['system']['hostname']}\" -> \"" . strtolower($_POST['hostname']) . "\"";
-			$config['system']['hostname'] = strtolower($_POST['hostname']);
-		}
-		if ($config['system']['domain'] != strtolower($_POST['domain'])) {
-			$changedesc .= " changed domain: \"{$config['system']['domain']}\" -> \"" . strtolower($_POST['domain']) . "\"";
-			$config['system']['domain'] = strtolower($_POST['domain']);
-		}
-		$oldwebguiproto = $config['system']['webgui']['protocol'];
-		$config['system']['username'] = $_POST['username'];
-		$config['system']['webgui']['protocol'] = $pconfig['webguiproto'];
-		$oldwebguiport = $config['system']['webgui']['port'];
-		$config['system']['webgui']['port'] = $pconfig['webguiport'];
-		$config['system']['timezone'] = $_POST['timezone'];
-		$config['system']['timeservers'] = strtolower($_POST['timeservers']);
-		$config['system']['time-update-interval'] = $_POST['timeupdateinterval'];
+		updatechanged("hostname", &$config['system']['hostname'], strtolower($_POST['hostname']));
+		updatechanged("domain", &$config['system']['domain'], strtolower($_POST['domain']));
+		updatechanged("username", &$config['system']['username'], $_POST['username']);
 
+		$restart_webgui = updatechanged("webgui protocol", &$config['system']['webgui']['protocol'], $pconfig['webguiproto']);
+		$restart_webgui = updatechanged("webgui port", &$config['system']['webgui']['port'], $pconfig['webguiport']);
+		updatechanged("timezone", &$config['system']['timezone'], $_POST['timezone']);
+		updatechanged("NTP servers", &$config['system']['timeservers'], strtolower($_POST['timeservers']));
+		updatechanged("NTP update interval", &$config['system']['time-update-interval'], $_POST['timeupdateinterval']);
+
+		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
 		unset($config['system']['dnsserver']);
 		if ($_POST['dns1'])
 			$config['system']['dnsserver'][] = $_POST['dns1'];
@@ -143,8 +137,7 @@ if ($_POST) {
 		write_config($changedesc);
 
 		// restart webgui if proto or port changed
-		if (($oldwebguiproto != $config['system']['webgui']['protocol']) ||
-			($oldwebguiport != $config['system']['webgui']['port'])) {
+		if ($restart_webgui) {
 			global $_SERVER;
 			system_webgui_start();
 			if ($pconfig['webguiport'])

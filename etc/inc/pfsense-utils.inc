@@ -544,6 +544,7 @@ function convert_real_interface_to_friendly_interface_name($interface) {
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 	    $int = filter_translate_type_to_real_interface($ifname);
 	    if($ifname == $interface) return $ifname;
+	    if($int == $interface) return $ifname;
 	}
 	return $interface;
 }

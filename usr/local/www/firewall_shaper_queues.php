@@ -83,7 +83,7 @@ if ($_GET['act'] == "del") {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Firewall: Traffic shaper Queues</p>
-<form action="firewall_shaper.php" method="post">
+<form action="firewall_shaper_queues.php" method="post">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_shaperconfdirty_path)): ?><p>

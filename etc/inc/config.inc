@@ -488,6 +488,7 @@ function convert_config() {
 function write_config() {
 
 	global $config, $g;
+	$lastchange = $config['lastchange'];
 
 	config_lock();
 
@@ -498,6 +499,19 @@ function write_config() {
 
 	/* generate configuration XML */
 	$xmlconfig = dump_xml_config($config, $g['xml_rootobj']);
+
+	/* archive off old config */
+	/* XXX: billm beginning of version control functionality
+	 * needs it's own directory, a front end, a way to prompt for change comments, and much more
+	 * really just stubbing this in, not for use!
+	 */
+	if (isset($config['system']['version_control'])) {
+		$fd = fopen("{$g['cf_conf_path']}/bak/config-{$lastchange}.xml", "w");
+		if (!$fd)
+			die("Unable to open config{$config['lastchange']}.xml for writing in write_config()\n");
+		fwrite($fd, $xmlconfig);
+		fclose($fd);
+	}
 
 	/* write configuration */
 	$fd = fopen("{$g['cf_conf_path']}/config.xml", "w");

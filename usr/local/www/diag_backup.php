@@ -100,6 +100,27 @@ if ($_POST) {
 		}
 	}
 }
+
+
+/* XXX - billm: begginnings of version control code
+ * This code sucks and is really more of a PoC - it needs cleanup (and doesn't work)
+ * don't set system/version_control :)
+ */
+if (isset($config['system']['version_control'])) {
+	$dir="{$g['cf_conf_path']}/bak";
+	$old_versions = array();
+	if (is_dir($dir)) {
+		if ($dh = opendir($dir)) {
+			while (($file = readdir($dh)) !== false) {
+				if ($file != "." && $file != "..") {
+					array_push(&$old_versions, $file);
+                                }
+                        }
+                        closedir($dh);
+                }
+	}
+}
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -164,6 +185,29 @@ if ($_POST) {
 		</tr>
               </table>
             </form>
+<?php
+	/* XXX - billm: begginnings of version control code
+	 * This code sucks and is really more of a PoC - it needs cleanup (and doesn't work)
+	 * don't set system/version_control :)
+	 */
+	if (isset($config['system']['version_control'])) {
+?>
+	    <br>
+            <form action="diag_backup.php" method="post" name="version_control" id="version_control">
+            <table width="100%" border="0" cellspacing="0" cellpadding="6">
+              <tr>
+                <td colspan="3" class="listtopic">Config backups</td>
+              </tr>
+<?php foreach ($old_versions as $ver): ?>
+              <tr>
+		<td width="22%" valign="baseline" class="vncell">Filename</td>
+                <td width="56%" class="vtable"><? echo $ver; ?></td
+                <td width="22%" class="vtable"><input name="restore" type="submit" class="formbtn" id="restore" value="Restore version"></td>
+              </tr>
+<?php endforeach; ?>
+           </table>
+           </form>
+<?php }; ?>
 <?php include("fend.inc"); ?>
 </body>
 </html>

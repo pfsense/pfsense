@@ -796,6 +796,7 @@ Content-Length: $content_length
  */
 if (!function_exists('php_check_syntax')){
    function php_check_syntax($code_to_check, &$errormessage){
+	return false;
         $fout = fopen("/tmp/codetocheck.php","w");
         $code = $_POST['content'];
         $code = str_replace("<?php", "", $code);
@@ -822,6 +823,7 @@ if (!function_exists('php_check_syntax')){
  */
 if (!function_exists('php_check_syntax')){
    function php_check_syntax($code_to_check, &$errormessage){
+	return false;
         $command = "/usr/local/bin/php -l " . $code_to_check;
         $output = exec_command($command);
         if (stristr($output, "Errors parsing") == false) {
@@ -839,7 +841,7 @@ if (!function_exists('php_check_syntax')){
  * sync_package($pkg_name, $sync_depends = true, $show_message = false) Force a package to setup its configuration and rc.d files.
  */
 function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
-	global $config;                                        
+	global $config;
 	if(!$config['installedpackages']['package']) return;
 	if(!is_numeric($pkg_name)) {
 		$pkg_id = get_pkg_id($pkg_name);

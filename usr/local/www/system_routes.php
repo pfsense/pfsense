@@ -39,9 +39,18 @@ $a_routes = &$config['staticroutes']['route'];
 
 if ($_POST) {
 
+	if ($_POST['enablefastrouting'] == "") {
+		unset($config['staticroutes']['enablefastrouting']);
+		write_config();
+	} else {
+		$config['staticroutes']['enablefastrouting'] = "enabled";
+		write_config();
+	}
+
 	$pconfig = $_POST;
 
 	if ($_POST['apply']) {
+
 		$retval = 0;
 		if (!file_exists($d_sysrebootreqd_path)) {
 			$retval = system_routing_configure();
@@ -56,14 +65,7 @@ if ($_POST) {
 			}
 		}
 	}
-}
 
-if ($_POST['enablefastrouting'] == "on") {
-	$config['staticroutes']['enablefastrouting'] = "enabled";
-	write_config();
-} else {
-	unset($config['staticroutes']['enablefastrouting']);
-	write_config();
 }
 
 if ($_GET['act'] == "del") {
@@ -88,6 +90,7 @@ if ($_GET['act'] == "del") {
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">System: Static routes</p>
 <form action="system_routes.php" method="post">
+<input type="hidden" name="y1" value="1">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_staticroutesdirty_path)): ?><p>
 <?php print_info_box_np("The static route configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
@@ -95,7 +98,7 @@ if ($_GET['act'] == "del") {
 <?php endif; ?>
 
 	     <table width="100%" border="0" cellpadding="0" cellspacing="0">
-		<tr><td width="2%"><input type="checkbox" name="enablefastrouting" id="enablefastrouting" <?php if(isset($config['staticroutes']['enablefastrouting'])) echo " checked"; ?>></td><td><b>Enable fast routing</td></tr>
+		<tr><td width="2%"><input type="checkbox" name="enablefastrouting" id="enablefastrouting" <?php if($config['staticroutes']['enablefastrouting'] == "enabled") echo " checked"; ?>></td><td><b>Enable fast routing</td></tr>
 		<tr><td colspan=2><hr><input type="submit" value="Save"></td></tr>
 	     </table><br>
 

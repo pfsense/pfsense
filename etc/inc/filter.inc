@@ -154,8 +154,19 @@ function filter_generate_altq_queues() {
 				$options .= " borrow";
 			if(isset($rule['options']['ecn']) and $rule['options']['ecn'] <> "")
 				$options .= " ecn";
+			if(isset($rule['options']['rio']) and $rule['options']['rio'] <> "")
+				$options .= " rio";
 			if(isset($rule['options']['defaultqueue']) and $rule['options']['defaultqueue'] <> "")
 				$options .= " default";
+			if(isset($rule['options']['upperlimit']) and $rule['options']['upperlimit'] <> "") {
+				$options .= " upperlimit(" . $rule['options']['upperlimit1'] . " " . $rule['options']['upperlimit2'] . " " . $rule['options']['upperlimit3'] . ")";
+			}
+			if(isset($rule['options']['linkshare']) and $rule['options']['linkshare'] <> "") {
+				$options .= " linkshare(" . $rule['options']['linkshare1'] . " " . $rule['options']['linkshare2'] . " " . $rule['options']['linkshare3'] . ")";
+			}
+			if(isset($rule['options']['realtime']) and $rule['options']['realtime'] <> "") {
+				$options .= " realtime(" . $rule['options']['realtime1'] . " " . $rule['options']['realtime2'] . " " . $rule['options']['realtime3'] . ")";
+			}
 			if($options) {
 				$scheduler_type = filter_get_altq_queue_scheduler_type($rule['options']['associatedrule']);
 				$altq_rules .= $scheduler_type . "(". $options . " )";

@@ -1,22 +1,22 @@
 #!/usr/local/bin/php
-<?php 
+<?php
 /*
 	interfaces_vlan.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -43,19 +43,19 @@ function vlan_inuse($num) {
 		return true;
 	if ($config['interfaces']['wan']['if'] == "vlan{$num}")
 		return true;
-	
+
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 		if ($config['interfaces']['opt' . $i]['if'] == "vlan{$num}")
 			return true;
 	}
-	
+
 	return false;
 }
 
 function renumber_vlan($if, $delvlan) {
 	if (!preg_match("/^vlan/", $if))
 		return $if;
-	
+
 	$vlan = substr($if, 4);
 	if ($vlan > $delvlan)
 		return "vlan" . ($vlan - 1);
@@ -69,13 +69,13 @@ if ($_GET['act'] == "del") {
 		$input_errors[] = "This VLAN cannot be deleted because it is still being used as an interface.";
 	} else {
 		unset($a_vlans[$_GET['id']]);
-		
+
 		/* renumber all interfaces that use VLANs */
 		$config['interfaces']['lan']['if'] = renumber_vlan($config['interfaces']['lan']['if'], $_GET['id']);
 		$config['interfaces']['wan']['if'] = renumber_vlan($config['interfaces']['wan']['if'], $_GET['id']);
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
 			$config['interfaces']['opt' . $i]['if'] = renumber_vlan($config['interfaces']['opt' . $i]['if'], $_GET['id']);
-		
+
 		write_config();
 		touch($d_sysrebootreqd_path);
 		header("Location: interfaces_vlan.php");
@@ -104,7 +104,7 @@ if ($_GET['act'] == "del") {
     <li class="tabact">VLANs</li>
   </ul>
   </td></tr>
-  <tr> 
+  <tr>
     <td class="tabcont">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
@@ -128,7 +128,7 @@ if ($_GET['act'] == "del") {
                      &nbsp;<a href="interfaces_vlan.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this VLAN?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
-                <tr> 
+                <tr>
                   <td class="list" colspan="3">&nbsp;</td>
                   <td class="list"> <a href="interfaces_vlan_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
 				</tr>
@@ -136,7 +136,7 @@ if ($_GET['act'] == "del") {
 				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
 				  Note:<br>
 				  </strong></span>
-				  Not all drivers/NICs support 802.1Q VLAN tagging properly. On cards that do not explicitly support it, VLAN tagging will still work, but the reduced MTU may cause problems. See the m0n0wall homepage for information on supported cards. </p>
+				  Not all drivers/NICs support 802.1Q VLAN tagging properly. On cards that do not explicitly support it, VLAN tagging will still work, but the reduced MTU may cause problems. See the pfSense handbook for information on supported cards. </p>
 				  </td>
 				<td class="list">&nbsp;</td>
 				</tr>

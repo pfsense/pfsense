@@ -348,7 +348,7 @@ if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
                                     $pb_percent += 10;
                                     $filename = get_filename_from_url($afn);
                                     update_status("Downloading additional files needed for package " . $filename . " ...");
-                                    system("cd /usr/local/pkg && /usr/bin/fetch " .  $afn);
+                                    system("cd /usr/local/pkg && /usr/bin/fetch " .  $afn . " 2>/dev/null");
                                     if(stristr($filename, '.tgz') <> "")
                                                 system("cd /usr/local/pkg && tar xzvf " . $filename);
                         }

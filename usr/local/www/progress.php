@@ -66,7 +66,7 @@ if (!$X) {
      <?
 
 	for ($i=0; $i<100; $i+=3) {
-	   $color = ($i<$meter) ? " bgcolor='#00007F' " : '';
+	   $color = ($i<$meter) ? " bgcolor='#990000' " : '';
 	   $width = ($i+3<100)   ? "3" : 100-$i;
 	   echo("<td $color class='uplmtr' WIDTH='$width%'>&nbsp;</td>\n");
 	}
@@ -76,7 +76,7 @@ if (!$X) {
    </td></tr></table>
 
    <br>
-   
+
    <TABLE WIDTH=100%>
    <tr>
    <td align="right"><font face="arial"><b>Time Remaining:</td><td><font face="arial"><?=$eta?></td>

@@ -952,8 +952,6 @@ function filter_rules_generate() {
 	else
 		$log = "";
 
-	/* XXX: create a plugin rule modification system */
-
 	/* if carp is defined, lets pass the traffic */
 	if(is_carp_defined() == 1) {
 		$ipfrules .= "pass on " . $lanif . " proto carp keep state label \"carp\"\n";

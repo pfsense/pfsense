@@ -788,6 +788,8 @@ EOD;
 function vlan_setup() {
 	global $iflist, $config, $g, $fp;
 
+	$iflist = get_interface_list();
+
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 
 	echo <<<EOD

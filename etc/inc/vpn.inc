@@ -2,20 +2,20 @@
 /*
 	vpn.inc
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -27,121 +27,151 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-	
+
 /* include all configuration functions */
 require_once("functions.inc");
-	
+
+function find_last_gif_device() {
+        $last_gif_found = -1;
+        if (!($fp = popen("/sbin/ifconfig -l", "r"))) return -1;
+        $ifconfig_data = fread($fp, 4096);
+        pclose($fp);
+        $ifconfig_array = split(" ", $ifconfig_data);
+        foreach ($ifconfig_array as $ifconfig) {
+                echo $ifconfig . "\n";
+                ereg("gif(.)", $ifconfig, $regs);
+                if($regs[0]) {
+                        if($regs[0] > $last_gif_found)
+                                $last_gif_found = $regs[1];
+                }
+        }
+        return $last_gif_found;
+}
+
 function vpn_ipsec_configure($ipchg = false) {
 	global $config, $g;
-	
+
+	$number_of_gifs = find_last_gif_device();
+	for($x=0; $x<$number_of_gifs; $x++) {
+		mwexec("/sbin/ifconfig gif" . $x . " delete");
+	}
+
 	$curwanip = get_current_wan_address();
-	
+
 	$syscfg = $config['system'];
 	$ipseccfg = $config['ipsec'];
 	$lancfg = $config['interfaces']['lan'];
 	$lanip = $lancfg['ipaddr'];
 	$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
 	$lansn = $lancfg['subnet'];
-	
+
 	if ($g['booting']) {
 		if (!isset($ipseccfg['enable']))
 			return 0;
-		
+
 		echo "Configuring IPsec VPN... ";
 	} else {
 		/* kill racoon */
 		killbypid("{$g['varrun_path']}/racoon.pid");
-		
+
 		/* wait for process to die */
 		sleep(2);
-		
+
 		/* send a SIGKILL to be sure */
 		sigkillbypid("{$g['varrun_path']}/racoon.pid", "KILL");
 	}
-	
+
 	/* flush SPD and SAD */
 	mwexec("/usr/sbin/setkey -FP");
 	mwexec("/usr/sbin/setkey -F");
-	
+
 	/* prefer old SAs only for 30 seconds, then use the new one */
 	mwexec("/sbin/sysctl -w net.key.preferred_oldsa=-30");
-	
+
 	if (isset($ipseccfg['enable'])) {
-		
+
 		if (!$curwanip) {
 			/* IP address not configured yet, exit */
 			if ($g['booting'])
 				echo "done\n";
 			return 0;
 		}
-		
+
 		if ((is_array($ipseccfg['tunnel']) && count($ipseccfg['tunnel'])) ||
 				isset($ipseccfg['mobileclients']['enable'])) {
-		
+
 			if (is_array($ipseccfg['tunnel']) && count($ipseccfg['tunnel'])) {
-			
+
 				/* generate spd.conf */
 				$fd = fopen("{$g['varetc_path']}/spd.conf", "w");
 				if (!$fd) {
 					printf("Error: cannot open spd.conf in vpn_ipsec_configure().\n");
 					return 1;
 				}
-					
+
 				$spdconf = "";
-				
+
 				$spdconf .= "spdadd {$lansa}/{$lansn} {$lanip}/32 any -P in none;\n";
 				$spdconf .= "spdadd {$lanip}/32 {$lansa}/{$lansn} any -P out none;\n";
-				
+
 				foreach ($ipseccfg['tunnel'] as $tunnel) {
-				
+
 					if (isset($tunnel['disabled']))
 						continue;
-				
+
 					$ep = vpn_endpoint_determine($tunnel, $curwanip);
 					if (!$ep)
 						continue;
-					
+
 					vpn_localnet_determine($tunnel['local-subnet'], $sa, $sn);
-					
-					$spdconf .= "spdadd {$sa}/{$sn} " . 
-						"{$tunnel['remote-subnet']} any -P out ipsec " . 
+
+					if(isset($tunnel['creategif'])) {
+						$number_of_gifs = find_last_gif_device();
+						$number_of_gifs++;
+						$curwanip = get_current_wan_address();
+						mwexec("/sbin/ifconfig gif" . $number_of_gifs . " tunnel" . $curwanip . " " . $tunnel['remote-gateway']);
+						mwexec("/sbin/ifconfig gif" . $number_of_gifs . " {$lansa}/{$lansn} {$lanip}/32");
+					}
+
+					$spdconf .= "spdadd {$sa}/{$sn} " .
+						"{$tunnel['remote-subnet']} any -P out ipsec " .
 						"{$tunnel['p2']['protocol']}/tunnel/{$ep}-" .
 						"{$tunnel['remote-gateway']}/unique;\n";
-						
-					$spdconf .= "spdadd {$tunnel['remote-subnet']} " . 
-						"{$sa}/{$sn} any -P in ipsec " . 
+
+					$spdconf .= "spdadd {$tunnel['remote-subnet']} " .
+						"{$sa}/{$sn} any -P in ipsec " .
 						"{$tunnel['p2']['protocol']}/tunnel/{$tunnel['remote-gateway']}-" .
 						"{$ep}/unique;\n";
 				}
-				
+
 				fwrite($fd, $spdconf);
 				fclose($fd);
-			
+
 				/* load SPD */
 				mwexec("/usr/sbin/setkey -c < {$g['varetc_path']}/spd.conf");
 			}
-			
+
 			/* generate racoon.conf */
 			$fd = fopen("{$g['varetc_path']}/racoon.conf", "w");
 			if (!$fd) {
 				printf("Error: cannot open racoon.conf in vpn_ipsec_configure().\n");
 				return 1;
 			}
-				
+
 			$racoonconf = "path pre_shared_key \"{$g['varetc_path']}/psk.txt\";\n\n";
-			
+
 			if (is_array($ipseccfg['tunnel']) && count($ipseccfg['tunnel']))
 				foreach ($ipseccfg['tunnel'] as $tunnel) {
-			
+
 				if (isset($tunnel['disabled']))
 					continue;
-				
+
 				$ep = vpn_endpoint_determine($tunnel, $curwanip);
 				if (!$ep)
 					continue;
-			
+
 				vpn_localnet_determine($tunnel['local-subnet'], $sa, $sn);
-			
+
 				if (isset($tunnel['p1']['myident']['myaddress'])) {
 					$myidentt = "address";
 					$myident = $ep;
@@ -155,7 +185,7 @@ function vpn_ipsec_configure($ipchg = false) {
 					$myidentt = "user_fqdn";
 					$myident = $tunnel['p1']['myident']['ufqdn'];
  				}
-			
+
 				$racoonconf .= <<<EOD
 remote {$tunnel['remote-gateway']} \{
 	exchange_mode {$tunnel['p1']['mode']};
@@ -174,17 +204,17 @@ remote {$tunnel['remote-gateway']} \{
 EOD;
 				if ($tunnel['p1']['lifetime'])
 					$racoonconf .= "		lifetime time {$tunnel['p1']['lifetime']} secs;\n";
-				
+
 				$racoonconf .= "	}\n";
-				
+
 				if ($tunnel['p1']['lifetime'])
 					$racoonconf .= "	lifetime time {$tunnel['p1']['lifetime']} secs;\n";
-					
+
 				$racoonconf .= "}\n\n";
-				
+
 				$p2ealgos = join(",", $tunnel['p2']['encryption-algorithm-option']);
 				$p2halgos = join(",", $tunnel['p2']['hash-algorithm-option']);
-				
+
 				$racoonconf .= <<<EOD
 sainfo address {$sa}/{$sn} any address {$tunnel['remote-subnet']} any \{
 	encryption_algorithm {$p2ealgos};
@@ -195,18 +225,18 @@ EOD;
 
 				if ($tunnel['p2']['pfsgroup'])
 					$racoonconf .= "	pfs_group {$tunnel['p2']['pfsgroup']};\n";
-					
+
 				if ($tunnel['p2']['lifetime'])
 					$racoonconf .= "	lifetime time {$tunnel['p2']['lifetime']} secs;\n";
-					
+
 				$racoonconf .= "}\n\n";
 			}
-			
+
 			/* mobile clients? */
 			if (isset($ipseccfg['mobileclients']['enable'])) {
-				
+
 				$tunnel = $ipseccfg['mobileclients'];
-				
+
 				if (isset($tunnel['p1']['myident']['myaddress'])) {
 					$myidentt = "address";
 					$myident = $curwanip;
@@ -220,7 +250,7 @@ EOD;
 					$myidentt = "user_fqdn";
 					$myident = $tunnel['p1']['myident']['ufqdn'];
  				}
-			
+
 				$racoonconf .= <<<EOD
 remote anonymous \{
 	exchange_mode {$tunnel['p1']['mode']};
@@ -240,17 +270,17 @@ remote anonymous \{
 EOD;
 				if ($tunnel['p1']['lifetime'])
 					$racoonconf .= "		lifetime time {$tunnel['p1']['lifetime']} secs;\n";
-				
+
 				$racoonconf .= "	}\n";
-				
+
 				if ($tunnel['p1']['lifetime'])
 					$racoonconf .= "	lifetime time {$tunnel['p1']['lifetime']} secs;\n";
-					
+
 				$racoonconf .= "}\n\n";
-				
+
 				$p2ealgos = join(",", $tunnel['p2']['encryption-algorithm-option']);
 				$p2halgos = join(",", $tunnel['p2']['hash-algorithm-option']);
-				
+
 				$racoonconf .= <<<EOD
 sainfo anonymous \{
 	encryption_algorithm {$p2ealgos};
@@ -261,25 +291,25 @@ EOD;
 
 				if ($tunnel['p2']['pfsgroup'])
 					$racoonconf .= "	pfs_group {$tunnel['p2']['pfsgroup']};\n";
-					
+
 				if ($tunnel['p2']['lifetime'])
 					$racoonconf .= "	lifetime time {$tunnel['p2']['lifetime']} secs;\n";
-					
+
 				$racoonconf .= "}\n\n";
 			}
-			
+
 			fwrite($fd, $racoonconf);
 			fclose($fd);
-			
+
 			/* generate psk.txt */
 			$fd = fopen("{$g['varetc_path']}/psk.txt", "w");
 			if (!$fd) {
 				printf("Error: cannot open psk.txt in vpn_ipsec_configure().\n");
 				return 1;
 			}
-			
+
 			$pskconf = "";
-			
+
 			if (is_array($ipseccfg['tunnel'])) {
 				foreach ($ipseccfg['tunnel'] as $tunnel) {
 					if (isset($tunnel['disabled']))
@@ -287,21 +317,21 @@ EOD;
 					$pskconf .= "{$tunnel['remote-gateway']}	 {$tunnel['p1']['pre-shared-key']}\n";
 				}
 			}
-			
+
 			/* add PSKs for mobile clients */
 			if (is_array($ipseccfg['mobilekey'])) {
 				foreach ($ipseccfg['mobilekey'] as $key) {
 					$pskconf .= "{$key['ident']}	{$key['pre-shared-key']}\n";
 				}
 			}
-			
+
 			fwrite($fd, $pskconf);
 			fclose($fd);
 			chmod("{$g['varetc_path']}/psk.txt", 0600);
-			
+
 			/* start racoon */
 			mwexec("/usr/local/sbin/racoon -d -f {$g['varetc_path']}/racoon.conf");
-			
+
 			foreach ($ipseccfg['tunnel'] as $tunnel) {
 				if (isset($tunnel['auto'])) {
 					$remotehost = substr($tunnel['remote-subnet'],0,strpos($tunnel['remote-subnet'],"/"));
@@ -312,57 +342,57 @@ EOD;
 			}
 		}
 	}
-	
+
 	if (!$g['booting']) {
 		/* reload the filter */
 		filter_configure();
 	}
-	
+
 	if ($g['booting'])
 		echo "done\n";
-	
+
 	return 0;
 }
 
 function vpn_pptpd_configure() {
 	global $config, $g;
-	
+
 	$syscfg = $config['system'];
 	$pptpdcfg = $config['pptpd'];
-	
+
 	if ($g['booting']) {
 		if (!$pptpdcfg['mode'] || ($pptpdcfg['mode'] == "off"))
 			return 0;
-		
+
 		echo "Configuring PPTP VPN service... ";
-	} else {	
+	} else {
 		/* kill mpd */
 		killbypid("{$g['varrun_path']}/mpd-vpn.pid");
-		
+
 		/* wait for process to die */
 		sleep(2);
-		
+
 		/* remove mpd.conf, if it exists */
 		unlink_if_exists("{$g['varetc_path']}/mpd-vpn/mpd.conf");
 		unlink_if_exists("{$g['varetc_path']}/mpd-vpn/mpd.links");
 		unlink_if_exists("{$g['varetc_path']}/mpd-vpn/mpd.secret");
 	}
-		
+
 	/* make sure mpd-vpn directory exists */
 	if (!file_exists("{$g['varetc_path']}/mpd-vpn"))
 		mkdir("{$g['varetc_path']}/mpd-vpn");
-		
+
 	switch ($pptpdcfg['mode']) {
-		
+
 		case 'server':
-			
+
 			/* write mpd.conf */
 			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.conf", "w");
 			if (!$fd) {
 				printf("Error: cannot open mpd.conf in vpn_pptpd_configure().\n");
 				return 1;
 			}
-				
+
 			$mpdconf = <<<EOD
 pptpd:
 
@@ -371,12 +401,12 @@ EOD;
 			for ($i = 0; $i < $g['n_pptp_units']; $i++) {
 				$mpdconf .= "	load pt{$i}\n";
 			}
-			
+
 			for ($i = 0; $i < $g['n_pptp_units']; $i++) {
-			
+
 				$clientip = long2ip(ip2long($pptpdcfg['remoteip']) + $i);
 				$ngif = "ng" . ($i+1);
-			
+
 				$mpdconf .= <<<EOD
 
 pt{$i}:
@@ -386,7 +416,7 @@ pt{$i}:
 
 EOD;
 			}
-			
+
 			$mpdconf .= <<<EOD
 
 pts:
@@ -410,7 +440,7 @@ pts:
 	set ccp yes mpp-stateless
 
 EOD;
-			
+
 			if (!isset($pptpdcfg['req128'])) {
 				$mpdconf .= <<<EOD
 	set ccp yes mpp-e40
@@ -418,7 +448,7 @@ EOD;
 
 EOD;
 			}
-			
+
 			if (isset($config['dnsmasq']['enable'])) {
 				$mpdconf .= "	set ipcp dns " . $config['interfaces']['lan']['ipaddr'];
 				if ($syscfg['dnsserver'][0])
@@ -427,7 +457,7 @@ EOD;
 			} else if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
 				$mpdconf .= "	set ipcp dns " . join(" ", $syscfg['dnsserver']) . "\n";
 			}
-			
+
 			if (isset($pptpdcfg['radius']['enable'])) {
 				$mpdconf .= <<<EOD
 	set radius server {$pptpdcfg['radius']['server']} "{$pptpdcfg['radius']['secret']}"
@@ -448,16 +478,16 @@ EOD;
 
 			fwrite($fd, $mpdconf);
 			fclose($fd);
-			
+
 			/* write mpd.links */
 			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.links", "w");
 			if (!$fd) {
 				printf("Error: cannot open mpd.links in vpn_pptpd_configure().\n");
 				return 1;
 			}
-			
+
 			$mpdlinks = "";
-			
+
 			for ($i = 0; $i < $g['n_pptp_units']; $i++) {
 				$mpdlinks .= <<<EOD
 
@@ -473,16 +503,16 @@ EOD;
 
 			fwrite($fd, $mpdlinks);
 			fclose($fd);
-			
+
 			/* write mpd.secret */
 			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.secret", "w");
 			if (!$fd) {
 				printf("Error: cannot open mpd.secret in vpn_pptpd_configure().\n");
 				return 1;
 			}
-			
+
 			$mpdsecret = "";
-			
+
 			if (is_array($pptpdcfg['user'])) {
 				foreach ($pptpdcfg['user'] as $user)
 					$mpdsecret .= "{$user['name']} \"{$user['password']}\" {$user['ip']}\n";
@@ -491,24 +521,24 @@ EOD;
 			fwrite($fd, $mpdsecret);
 			fclose($fd);
 			chmod("{$g['varetc_path']}/mpd-vpn/mpd.secret", 0600);
-			
+
 			/* fire up mpd */
 			mwexec("/usr/local/sbin/mpd -b -d {$g['varetc_path']}/mpd-vpn -p {$g['varrun_path']}/mpd-vpn.pid pptpd");
-			
+
 			break;
-			
+
 		case 'redir':
 			break;
 	}
-	
+
 	if (!$g['booting']) {
 		/* reload the filter */
 		filter_configure();
 	}
-	
+
 	if ($g['booting'])
 		echo "done\n";
-	
+
 	return 0;
 }
 
@@ -516,7 +546,7 @@ function vpn_localnet_determine($adr, &$sa, &$sn) {
 	global $config, $g;
 
 	if (isset($adr)) {
-		if ($adr['network']) {			
+		if ($adr['network']) {
 			switch ($adr['network']) {
 				case 'lan':
 					$sn = $config['interfaces']['lan']['subnet'];
@@ -535,9 +565,9 @@ function vpn_localnet_determine($adr, &$sa, &$sn) {
 }
 
 function vpn_endpoint_determine($tunnel, $curwanip) {
-	
+
 	global $g, $config;
-	
+
 	if ((!$tunnel['interface']) || ($tunnel['interface'] == "wan")) {
 		if ($curwanip)
 			return $curwanip;
@@ -547,13 +577,13 @@ function vpn_endpoint_determine($tunnel, $curwanip) {
 		return $config['interfaces']['lan']['ipaddr'];
 	} else {
 		$oc = $config['interfaces'][$tunnel['interface']];
-		
+
 		if (isset($oc['enable']) && $oc['if']) {
 			return $oc['ipaddr'];
 		}
 	}
-	
+
 	return null;
 }
-	
+
 ?>

@@ -120,6 +120,7 @@ snp	109	SNP		# Sitara Networks Protocol
 compaq-peer	110	Compaq-Peer	# Compaq Peer Protocol
 ipx-in-ip	111	IPX-in-IP	# IPX in IP
 carp    112     CARP    vrrp    # Common Address Redundancy Protocol
+pfsync	240	PFSYNC		# PF Synchronization
 pgm	113	PGM		# PGM Reliable Transport Protocol
 #	114			# any 0-hop protocol
 l2tp	115	L2TP		# Layer Two Tunneling Protocol

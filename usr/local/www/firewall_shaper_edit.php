@@ -469,7 +469,7 @@ function dst_rep_change() {
                       </option>
                       <?php endforeach; ?>
                     </select> <br>
-                    <span class="vexpl">Choose a pipe or queue where packets that
+                    <span class="vexpl">Choose a queue where packets that
                     match this rule should be sent.</span></td>
                 </tr>
                 <tr>

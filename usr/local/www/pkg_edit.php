@@ -257,7 +257,7 @@ $config = $config_tmp;
 			$multiple = "";
 			$fieldname = $pkga['fieldname'];
 			if($pkga['size'] <> "") $size = " size=\"" . $pkga['size'] . "\"";
-			if($pkga['multiple'] <> "") {
+			if($pkga['multiple'] <> "" and $pkga['multiple'] <> "0") {
 			  $multiple = " multiple=\"multiple\"";
 			  $fieldname .= "[]";
 			}

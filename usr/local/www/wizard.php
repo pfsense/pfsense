@@ -56,6 +56,10 @@ $title          = $pkg['step'][$stepid]['title'];
 $description    = $pkg['step'][$stepid]['description'];
 $totalsteps     = $pkg['totalsteps'];
 
+if($pkg['step'][$stepid]['stepsubmitbeforesave']) {
+		eval($pkg['step'][$stepid]['stepsubmitbeforesave']);
+}
+
 if ($_POST) {
     foreach ($pkg['step'][$stepid]['fields']['field'] as $field) {
         if($field['bindstofield'] <> "" and $field['type'] <> "submit") {
@@ -69,9 +73,9 @@ if ($_POST) {
 		if($field['bindstofield'])
 			update_config_field( $field['bindstofield'], $_POST[$fieldname], $unset_fields, $arraynum);
         }
-        if($pkg['step'][$stepid]['stepsubmitphpaction']) {
 		// run custom php code embedded in xml config.
-		eval($pkg['step'][$stepid]['stepsubmitphpaction']);
+        if($pkg['step'][$stepid]['stepsubmitphpaction']) {
+				eval($pkg['step'][$stepid]['stepsubmitphpaction']);
         }
 	write_config();
     }

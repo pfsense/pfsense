@@ -48,6 +48,7 @@ if (isset($id) && $a_queues[$id]) {
 	$pconfig['options'] = $a_queues[$id]['options'];
 	$pconfig['options']['red'] = $a_queues[$id]['options']['red'];
 	$pconfig['options']['ecn'] = $a_queues[$id]['options']['ecn'];
+	$pconfig['options']['borrow'] = $a_queues[$id]['options']['borrow'];
 	$pconfig['options']['defaultqueue'] = $a_queues[$id]['options']['defaultqueue'];
 	$pconfig['options']['parentqueue'] = $a_queues[$id]['options']['parentqueue'];
 	$pconfig['options']['upperlimit1'] = $a_queues[$id]['options']['upperlimit1'];
@@ -89,6 +90,7 @@ if ($_POST) {
 		$queue['bandwidthtype'] = $_POST['bandwidthtype'];
 		$queue['priority'] = $_POST['priority'];
 		$queue['name'] = ereg_replace(" ", "", $_POST['name']);
+		$queue['options']['borrow'] = $_POST['borrow'];
 		$queue['options']['linkshare'] = $_POST['linkshare'];
 		$queue['options']['linkshare3'] = $_POST['linkshare3'];
 		$queue['options']['linkshare2'] = $_POST['linkshare2'];
@@ -152,6 +154,7 @@ function sync_scheduler_options() {
 		document.forms[0].bandwidth.value = "";
 		document.forms[0].bandwidthtype.value = "";
 		document.forms[0].defaultqueue.disabled = 0;
+		document.forms[0].borrow.disabled = 1;
 		document.forms[0].parentqueue.disabled = 1;
 		document.forms[0].red.disabled = 0;
 		document.forms[0].ecn.disabled = 0;
@@ -170,6 +173,7 @@ function sync_scheduler_options() {
 		document.forms[0].childqueue.disabled = 1;
 		document.forms[0].priority.disabled = 0;
 	} else if(interface_type == 'cbq') {
+		document.forms[0].borrow.disabled = 0;
 		document.forms[0].bandwidth.disabled = 0;
 		document.forms[0].bandwidthtype.disabled = 0;
 		document.forms[0].defaultqueue.disabled = 0;
@@ -191,6 +195,7 @@ function sync_scheduler_options() {
 		document.forms[0].childqueue.disabled = 0;
 		document.forms[0].priority.disabled = 0;
 	} else if(interface_type == 'hfsc') {
+		document.forms[0].borrow.disabled = 0;
 		document.forms[0].bandwidth.disabled = 0;
 		document.forms[0].bandwidthtype.disabled = 0;
 		document.forms[0].red.disabled = 0;
@@ -223,6 +228,7 @@ function sync_scheduler_options() {
 <?php
 	$red = $pconfig['options']["red"];
 	$ecn = $pconfig['options']["ecn"];
+	$borrow = $pconfig['borrow']["borrow"];
 	$upperlimit = $pconfig['options']["upperlimit"];
 	$upperlimit1 = $pconfig['options']["upperlimit1"];
 	$upperlimit2 = $pconfig['options']["upperlimit2"];
@@ -292,13 +298,14 @@ function sync_scheduler_options() {
 	    <tr>
 	      <td width="22%" valign="top" class="vncell">Scheduler options</td>
 	      <td width="78%" class="vtable">
-	        <input type=checkbox id="defaultqueue" name="defaultqueue" <?php if($defaultqueue) echo " CHECKED";?> > Default queue<br>
-		<input type=checkbox id="red" name="red" <?php if($red) echo " CHECKED";?> > Random Early Detection<br>
-		<input type=checkbox id="ecn" name="ecn" <?php if($ecn) echo " CHECKED";?> > Explicit Congestion Notification<br>
-		<input type=checkbox id="parentqueue" name="parentqueue" <?php if($parentqueue) echo " CHECKED";?> > This is a parent queue of HFSC/CBQ<br>
-		<input type=checkbox id="upperlimit" name="upperlimit" <?php if($upperlimit) echo " CHECKED";?> > Upperlimit: <input size="3" value="<?=htmlspecialchars($upperlimit1);?>" name="upperlimit1"> <input size="3" value="<?=htmlspecialchars($upperlimit2);?>" name="upperlimit2"> <input size="3" value="<?=htmlspecialchars($upperlimit3);?>" name="upperlimit3"> <br>
-		<input type=checkbox id="realtime" name="realtime" <?php if($realtime) echo " CHECKED";?> > Real time: <input size="3" value="<?=htmlspecialchars($realtime1);?>" name="realtime1"> <input size="3" value="<?=htmlspecialchars($realtime2); ?>" name="realtime2"> <input size="3" value="<?=htmlspecialchars($realtime3);?>" name="realtime3"><br>
-		<input type=checkbox id="linkshare" id="linkshare" name="linkshare" <?php if($linkshare) echo " CHECKED";?> > Link share: <input size="3" value="<?=htmlspecialchars($linkshare1);?>" value="<?=htmlspecialchars($linkshare1);?>" id="linkshare1" name="linkshare1"> <input size="3" value="<?=htmlspecialchars($linkshare2);?>" id="linkshare2" name="linkshare2"> <input size="3" value="<?=htmlspecialchars($linkshare3);?>" id="linkshare3" name="linkshare3"><br>
+	        <input type="checkbox" id="defaultqueue" name="defaultqueue" <?php if($defaultqueue) echo " CHECKED";?> > Default queue<br>
+		<input type="checkbox" id="borrow" name="borrow" <?php if($borrow) echo " CHECKED";?> > Borrow from other queues when evailable<br>
+		<input type="checkbox" id="red" name="red" <?php if($red) echo " CHECKED";?> > Random Early Detection<br>
+		<input type="checkbox" id="ecn" name="ecn" <?php if($ecn) echo " CHECKED";?> > Explicit Congestion Notification<br>
+		<input type="checkbox" id="parentqueue" name="parentqueue" <?php if($parentqueue) echo " CHECKED";?> > This is a parent queue of HFSC/CBQ<br>
+		<input type="checkbox" id="upperlimit" name="upperlimit" <?php if($upperlimit) echo " CHECKED";?> > Upperlimit: <input size="3" value="<?=htmlspecialchars($upperlimit1);?>" name="upperlimit1"> <input size="3" value="<?=htmlspecialchars($upperlimit2);?>" name="upperlimit2"> <input size="3" value="<?=htmlspecialchars($upperlimit3);?>" name="upperlimit3"> <br>
+		<input type="checkbox" id="realtime" name="realtime" <?php if($realtime) echo " CHECKED";?> > Real time: <input size="3" value="<?=htmlspecialchars($realtime1);?>" name="realtime1"> <input size="3" value="<?=htmlspecialchars($realtime2); ?>" name="realtime2"> <input size="3" value="<?=htmlspecialchars($realtime3);?>" name="realtime3"><br>
+		<input type="checkbox" id="linkshare" id="linkshare" name="linkshare" <?php if($linkshare) echo " CHECKED";?> > Link share: <input size="3" value="<?=htmlspecialchars($linkshare1);?>" value="<?=htmlspecialchars($linkshare1);?>" id="linkshare1" name="linkshare1"> <input size="3" value="<?=htmlspecialchars($linkshare2);?>" id="linkshare2" name="linkshare2"> <input size="3" value="<?=htmlspecialchars($linkshare3);?>" id="linkshare3" name="linkshare3"><br>
 		<br> <span class="vexpl">Select options for this queue
 		</span></td>
 	    </tr>

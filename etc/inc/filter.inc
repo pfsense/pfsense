@@ -150,6 +150,8 @@ function filter_generate_altq_queues() {
 				$altq_rules .= "priority " .  $rule['priority']  . " ";
 			if(isset($rule['options']['red']) and $rule['options']['red'] <> "")
 				$options .= " red";
+			if(isset($rule['options']['borrow']) and $rule['options']['borrow'] <> "")
+				$options .= " borrow";
 			if(isset($rule['options']['ecn']) and $rule['options']['ecn'] <> "")
 				$options .= " ecn";
 			if(isset($rule['options']['defaultqueue']) and $rule['options']['defaultqueue'] <> "")

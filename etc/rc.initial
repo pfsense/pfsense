@@ -7,6 +7,8 @@
 # Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 # All rights reserved.
 
+CONFIG="/cf/conf/config.xml"
+WORD="https"
 # make sure the user can't kill us by pressing Ctrl-C
 trap : 2
 trap : 3
@@ -35,16 +37,16 @@ while : ; do
 # display a cheap menu
 echo "pfSense console setup"
 echo "**********************"
-echo "0) Logout if accessing via SSH"
-echo "1) Interfaces: assign network ports"
-echo "2) Set up LAN IP address"
-echo "3) Reset webGUI password"
-echo "4) Reset to factory defaults"
-echo "5) Reboot system"
-echo "6) Halt system"
-echo "7) Ping host"
-echo "8) Shell"
-echo "9) PFtop"
+echo "0)  Logout if accessing via SSH"
+echo "1)  Interfaces: assign network ports"
+echo "2)  Set up LAN IP address"
+echo "3)  Reset webGUI password"
+echo "4)  Reset to factory defaults"
+echo "5)  Reboot system"
+echo "6)  Halt system"
+echo "7)  Ping host"
+echo "8)  Shell"
+echo "9)  PFtop"
 echo "10) Access web GUI using Links"
 echo
 
@@ -54,39 +56,44 @@ echo
 # see what the user has chosen
 case ${opmode} in
 0)
-	exit && exit && logout
-	;;
+        exit && exit && logout
+        ;;
 1)
-	/etc/rc.initial.setports
- 	;;
+        /etc/rc.initial.setports
+        ;;
 2)
-	/etc/rc.initial.setlanip
- 	;;
+        /etc/rc.initial.setlanip
+        ;;
 3)
-	/etc/rc.initial.password
-	;;
+        /etc/rc.initial.password
+        ;;
 4)
-	/etc/rc.initial.defaults
-	;;
+        /etc/rc.initial.defaults
+        ;;
 5)
-	/etc/rc.initial.reboot
-	;;
+        /etc/rc.initial.reboot
+        ;;
 6)
-	/etc/rc.initial.halt
-	;;
+        /etc/rc.initial.halt
+        ;;
 7)
-	/etc/rc.initial.ping
-	;;
+        /etc/rc.initial.ping
+        ;;
 8)
-	set prompt = "\n`/bin/hostname -s`# "
-	/bin/sh
-	;;
+        set prompt = "\n`/bin/hostname -s`# "
+        /bin/sh
+        ;;
 9)
-	/usr/local/sbin/pftop
-	;;
+        /usr/local/sbin/pftop
+        ;;
 10)
-	links "http://localhost"
-	;;
+        if grep "$WORD" "$CONFIG"
+        then
+        	links "https://localhost"
+        else
+        	links "http://localhost"
+        fi
+        ;;
 esac
 
 done

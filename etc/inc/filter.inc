@@ -635,7 +635,7 @@ function filter_nat_rules_generate() {
 
 	$natrules = "";
 
-	if(isset($config['system']['disableftpproxy']))
+	if(!isset($config['system']['disableftpproxy']))
 		$natrules .= "rdr on " . $lanif . " proto tcp from any to any port 21 -> 127.0.0.1 port 8021\n";
 
 	/* any 1:1 mappings? */

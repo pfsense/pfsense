@@ -1002,8 +1002,6 @@ function filter_rules_generate() {
 		$ipfrules .= "pass out quick on " . $wanif . "  inet proto tcp from ($wanif) to any port www flags S/SA keep state label \"transparent proxy\"\n";
 	}
 
-	$ipfrules .= create_firewall_outgoing_rules_to_itself();
-
 	$ipfrules .= <<<EOD
 
 # loopback
@@ -1200,9 +1198,11 @@ EOD;
 	$ipfrules .= <<<EOD
 
 # let out anything from the firewall host itself and decrypted IPsec traffic
-pass out quick on $wanif all keep state label "let out anything from firewall host itself"
+# pass out quick on $wanif all keep state label "let out anything from firewall host itself"
 
 EOD;
+
+	$ipfrules .= create_firewall_outgoing_rules_to_itself();
 
 	/* group heads for optional interfaces */
 	foreach ($optcfg as $on => $oc) {
@@ -1709,9 +1709,9 @@ function create_firewall_outgoing_rules_to_itself() {
 			//$rule .="pass out quick on {$int} {$replyto} all keep state\n";
 			/* XXX - billm: temp fix for pppoe, needs better fix */
 			if($config['interfaces'][$ifname]['ipaddr'] != "")
-				$rule .="pass out quick on {$int} {$replyto} all keep state\n";
+				$rule .="pass out quick on {$int} {$replyto} all keep state label \"let out anything from firewall host itself\"\n";
 			else           //pass out quick on vr1 all keep state
-				$rule .="pass out quick on {$int} {$replyto} all keep state\n";
+				$rule .="pass out quick on {$int} {$replyto} all keep state label \"let out anything from firewall host itself\"\n";
 		}
 
 	}

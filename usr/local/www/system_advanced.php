@@ -170,16 +170,6 @@ function enable_change(enable_over) {
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 
                 <tr>
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2" class="list" height="12"></td>
-                </tr>
-
-                <tr>
                   <td colspan="2" valign="top" class="listtopic">IPv6 tunneling</td>
                 </tr>
                 <tr>

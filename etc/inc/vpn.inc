@@ -401,8 +401,7 @@ function vpn_pptpd_configure() {
 	}
 
 	/* make sure mpd-vpn directory exists */
-	if (!file_exists("{$g['varetc_path']}/mpd-vpn"))
-		mkdir("{$g['varetc_path']}/mpd-vpn");
+	safe_mkdir("{$g['varetc_path']}/mpd-vpn");
 
 	switch ($pptpdcfg['mode']) {
 

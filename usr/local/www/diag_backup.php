@@ -216,9 +216,6 @@ if (isset($config['system']['version_control'])) {
                     Open a pfSense configuration XML file and click the button
                       below to restore the configuration.<br>
                       <br>
-                      <strong><span class="red">Note:</span></strong><br>
-                      The firewall will reboot after restoring the configuration.<br>
-                      <br>
 		      Restore area:
 		      <select name="restorearea">
 			<option VALUE="">ALL</option>
@@ -227,8 +224,10 @@ if (isset($config['system']['version_control'])) {
 		      <p>
                       <input name="conffile" type="file" class="formfld" id="conffile" size="40">
                       <p>
-
                       <input name="Submit" type="submit" class="formbtn" id="restore" value="Restore configuration">
+                      <p>
+                      <strong><span class="red">Note:</span></strong><br>
+                      The firewall will reboot after restoring the configuration.<br>
                   </td>
                 </tr>
 		<tr>

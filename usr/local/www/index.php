@@ -279,11 +279,14 @@ While(!Connection_Aborted()) {
     echo "document.memwidthb.style.width='" . (100 - $memUsage) . "';\n";
     echo "document.forms[0].memusagemeter.value = '" . $memUsage . "%';\n";
 
-    /* Update temp. meter */
-    $Temp = rtrim(`/usr/local/sbin/env4801 | grep Temp |cut -c24-25`);
-    echo "document.Tempwidtha.style.width='" . $Temp . "';\n";
-    echo "document.Tempwidthb.style.width='" . (100 - $Temp) . "';\n";
-    echo "document.forms[0].Tempmeter.value = '" . $Temp . "C';\n";
+    if (file_exists("/etc/48xx")) {
+      /* Update temp. meter */
+      $Temp = rtrim(`/usr/local/sbin/env4801 | grep Temp |cut -c24-25`);
+      echo "document.Tempwidtha.style.width='" . $Temp . "';\n";
+      echo "document.Tempwidthb.style.width='" . (100 - $Temp) . "';\n";
+      echo "document.forms[0].Tempmeter.value = '" . $Temp . "C';\n";
+    }
+
     echo "</script>\n";
 
     /*

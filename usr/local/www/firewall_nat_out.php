@@ -130,7 +130,9 @@ if ($_GET['act'] == "del") {
                 <tr>
                   <td width="10%" class="listhdrr">Interface</td>
                   <td width="20%" class="listhdrr">Source</td>
+                  <td width="20%" class="listhdrr">Source Port</td>
                   <td width="20%" class="listhdrr">Destination</td>
+                  <td width="20%" class="listhdrr">NAT Port</td>
                   <td width="20%" class="listhdrr">Target</td>
                   <td width="25%" class="listhdr">Description</td>
                   <td width="5%" class="list"></td>
@@ -150,6 +152,14 @@ if ($_GET['act'] == "del") {
                   </td>
                   <td class="listr">
                     <?php
+                      if (!$natent['sourceport'])
+                          echo "*";
+                      else
+                          echo $natent['sourceport'];
+                    ?>
+                  </td>
+                  <td class="listr">
+                    <?php
                       if (isset($natent['destination']['any']))
                           echo "*";
                       else {
@@ -157,6 +167,14 @@ if ($_GET['act'] == "del") {
                               echo "!&nbsp;";
                           echo $natent['destination']['network'];
                       }
+                    ?>
+                  </td>
+                  <td class="listr">
+                    <?php
+                      if (!$natent['natport'])
+                          echo "*";
+                      else
+                          echo $natent['natport'];
                     ?>
                   </td>
                   <td class="listr">
@@ -175,7 +193,7 @@ if ($_GET['act'] == "del") {
                 </tr>
               <?php $i++; endforeach; ?>
                 <tr>
-                  <td class="list" colspan="5"></td>
+                  <td class="list" colspan="7"></td>
                   <td class="list"> <a href="firewall_nat_out_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
                 </tr>
               </table>

@@ -228,8 +228,6 @@ $config = $config_tmp;
 <input type="hidden" name="xml" value="<?= $xml ?>">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
-&nbsp;<br>
-
 <?php
 if ($pkg['tabs'] <> "") {
     echo "<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">";

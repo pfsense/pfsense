@@ -354,7 +354,7 @@ if ($pkg['tabs'] <> "") {
 			  $ifname = $iface['if'];
 			  $SELECTED = "";
 			  if($value == $ifname) $SELECTED = " SELECTED";
-			  echo "<option value='" . $ifname . "'" . $SELECTED . ">" . $ifdescr . "</option>\n";
+			  echo "<option value='" . $ifdescr . "'" . $SELECTED . ">" . $ifdescr . "</option>\n";
 			}
 			echo "</select>\n";
 			echo "<br>" . fixup_string($pkga['description']) . "\n";

@@ -251,20 +251,12 @@ $counter = 0;
 
 While(!Connection_Aborted()) {
 
-    echo "<script language='javascript'>\n";
-    /* Update uptime */
-    echo "document.forms[0].uptime.value = '" . get_uptime() . "';\n";
-
     /* Update CPU meter */
     sleep(1);
     $cpuTicks = get_cputicks();
     sleep(2);
     $cpuTicks2 = get_cputicks();
     $cpuUsage = get_cpuusage($cpuTicks, $cpuTicks2);
-
-    echo "document.cpuwidtha.style.width='" . $cpuUsage . "';\n";
-    echo "document.cpuwidthb.style.width='" . (100 - $cpuUsage) . "';\n";
-    echo "document.forms[0].cpumeter.value = '" . $cpuUsage . "%';\n";
 
     /* Update memory usage */
     exec("/sbin/sysctl -n vm.stats.vm.v_active_count vm.stats.vm.v_inactive_count " .
@@ -274,6 +266,13 @@ While(!Connection_Aborted()) {
     $freeMem = $memory[4];
     $usedMem = $totalMem - $freeMem;
     $memUsage = round(($usedMem * 100) / $totalMem, 0);
+
+    echo "<script language='javascript'>\n";
+    echo "document.forms[0].uptime.value = '" . get_uptime() . "';\n";
+    
+    echo "document.cpuwidtha.style.width='" . $cpuUsage . "';\n";
+    echo "document.cpuwidthb.style.width='" . (100 - $cpuUsage) . "';\n";
+    echo "document.forms[0].cpumeter.value = '" . $cpuUsage . "%';\n";
 
     echo "document.memwidtha.style.width='" . $memUsage . "';\n";
     echo "document.memwidthb.style.width='" . (100 - $memUsage) . "';\n";

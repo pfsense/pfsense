@@ -2446,7 +2446,7 @@
 					$config['system']['password'] = crypt($_POST['adminpassword']);
 					write_config();
 				} else {
-					print_info_box_np("Passwords do not match!");
+					print_info_box_np("Passwords do not match!  Please press back in your browser window and correct.");
 					die;
 				}
 			}

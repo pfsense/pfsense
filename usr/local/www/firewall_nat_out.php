@@ -233,6 +233,7 @@ if (isset($_POST['del_x'])) {
 					else
 						htmlspecialchars($config['interfaces'][$natent['interface']]['descr']);
 					?>
+                                        &nbsp;
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>">
                     <?=$natent['source']['network'];?>

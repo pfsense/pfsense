@@ -523,7 +523,7 @@ function write_config($desc="Non-described system change") {
 	$fd = fopen("{$g['cf_conf_path']}/config.xml", "w");
 
 	if (!$fd)
-		die("Unable to open config.xml for writing in write_config()\n");
+		die("Unable to open "{$g['cf_conf_path']}/config.xml for writing in write_config()\n");
 
 	fwrite($fd, $xmlconfig);
 	fclose($fd);
@@ -820,7 +820,7 @@ EOD;
 		for (; isset($config['interfaces']['opt' . ($i+1)]); $i++)
 			unset($config['interfaces']['opt' . ($i+1)]);
 
-		write_config();
+		write_config("NIC reconfigure");
 
 		if(!$noreboot) echo "\npfSense is now rebooting.\n";
 

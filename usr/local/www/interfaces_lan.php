@@ -192,8 +192,9 @@ function ipaddr_change() {
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"><span class="vexpl"><span class="red"><strong>Warning:<br>
-                    </strong></span>after you click &quot;Save&quot;, you must
-                    reboot your firewall for changes to take effect. You may also
+                    </strong></span>after you click &quot;Save&quot;, you will need
+                    reboot your firewall for changes to take effect if you changed the
+                    IP address or subnet of this interface. You may also
                     have to do one or more of the following steps before you can
                     access your firewall again:
                     <ul>

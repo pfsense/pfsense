@@ -803,7 +803,7 @@ function filter_nat_rules_generate() {
 			if ($rule['external-address'])
 				$extaddr = $rule['external-address'] . "/32";
 			else
-				$extaddr = "0/0";
+				$extaddr = get_current_wan_address();
 
 			if (!$rule['interface'] || ($rule['interface'] == "wan"))
 				$natif = $wanif;
@@ -815,19 +815,19 @@ function filter_nat_rules_generate() {
 			if ((!$extport[1]) || ($extport[0] == $extport[1])) {
 				if($rule['protocol'] == "tcp/udp")
 					$natrules .=
-					"rdr on $natif proto { tcp udp } from any to {$rule['target']} port {$extport[0]} -> {$target} \n";
+					"rdr on $natif proto { tcp udp } from any to {$extaddr} port {$extport[0]} -> {$target} port {$rule['local-port']}\n";
 				else
 					$natrules .=
-					"rdr on $natif proto " . $rule['protocol'] . " from any to {$rule['target']} port {$extport[0]} -> {$target} \n";
+					"rdr on $natif proto " . $rule['protocol'] . " from any to {$extaddr} port {$extport[0]} -> {$target} port {$rule['local-port']}\n";
 
 			} else {
 				if($rule['protocol'] == "tcp/udp")
 					$natrules .=
-					 "rdr on $natif proto { tcp udp } from any to {$rule['target']} port {$extport[0]}:{$extport[1]} " .
+					 "rdr on $natif proto { tcp udp } from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:{$extport[1]}" .
 					 "-> {$target} \n";
 				else
 					$natrules .=
-					 "rdr on $natif proto " . $rule['protocol']. " from any to {$rule['target']} port {$extport[0]}:{$extport[1]} " .
+					 "rdr on $natif proto " . $rule['protocol']. " from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:{$extport[1]}" .
 					 "-> {$target} \n";
 			}
 

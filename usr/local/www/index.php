@@ -61,6 +61,8 @@ if ($fd) {
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
 
+<form>
+
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -139,7 +141,6 @@ if ($fd) {
                 <td width="75%" class="listr">
 <?php
 $cpuTicks = explode(" ", `/sbin/sysctl -n kern.cp_time`);
-sleep(3);
 $cpuTicks2 = explode(" ", `/sbin/sysctl -n kern.cp_time`);
 
 $diff = array();
@@ -148,16 +149,15 @@ $diff['nice'] = $cpuTicks2[1] - $cpuTicks[1];
 $diff['sys'] = $cpuTicks2[2] - $cpuTicks[2];
 $diff['intr'] = $cpuTicks2[3] - $cpuTicks[3];
 $diff['idle'] = $cpuTicks2[4] - $cpuTicks[4];
-
 $totalDiff = $diff['user'] + $diff['nice'] + $diff['sys'] + $diff['intr'] + $diff['idle'];
-
 $cpuUsage = round(100 * (1 - $diff['idle'] / $totalDiff), 0);
 
 echo "<img src='bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
-echo "<img src='bar_blue.gif' height='15' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
-echo "<img src='bar_gray.gif' height='15' width='" . (100 - $cpuUsage) . "' border='0' align='absmiddle'>";
+echo "<img src='bar_blue.gif' height='15' name='cpuwidtha' id='cpuwidtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
+echo "<img src='bar_gray.gif' height='15' name='cpuwidthb' id='cpuwidthb' width='" . (100 - $cpuUsage) . "' border='0' align='absmiddle'>";
 echo "<img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
-echo $cpuUsage . "%";
+echo "<input style='border: 0px solid white;' size='4' name='cpumeter' id='cpumeter' value='{$cpuUsage}%'>";
+//echo $cpuUsage . "%";
 ?>
                 </td>
               </tr>
@@ -178,7 +178,8 @@ echo " <img src='bar_left.gif' height='15' width='4' border='0' align='absmiddle
 echo "<img src='bar_blue.gif' height='15' width='" . $memUsage . "' border='0' align='absmiddle'>";
 echo "<img src='bar_gray.gif' height='15' width='" . (100 - $memUsage) . "' border='0' align='absmiddle'>";
 echo "<img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
-echo $memUsage . "%";
+echo "<input style='border: 0px solid white;' size='4' name='memusagemeter' id='memusagemeter' value='{$memUsage}%'>";
+//echo $memUsage . "%";
 ?>
                 </td>
               </tr>
@@ -196,7 +197,8 @@ echo "<img src='bar_left.gif' height='15' width='4' border='0' align='absmiddle'
 echo "<img src='bar_blue.gif' height='15' width='" . $swapUsage . "' border='0' align='absmiddle'>";
 echo "<img src='bar_gray.gif' height='15' width='" . (100 - $swapUsage) . "' border='0' align='absmiddle'>";
 echo "<img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
-echo $swapUsage . "%";
+echo "<input style='border: 0px solid white;' size='4' name='swapusagemeter' id='swapusagemeter' value='{$swapUsage}%'>";
+//echo $swapUsage . "%";
 
 ?>
 
@@ -208,5 +210,27 @@ echo $swapUsage . "%";
             <?php include("fend.inc"); ?>
 </body>
 </html>
+<?php
 
+sleep(1);
+$cpuTicks = explode(" ", `/sbin/sysctl -n kern.cp_time`);
+sleep(2);
+$cpuTicks2 = explode(" ", `/sbin/sysctl -n kern.cp_time`);
+
+$diff = array();
+$diff['user'] = $cpuTicks2[0] - $cpuTicks[0];
+$diff['nice'] = $cpuTicks2[1] - $cpuTicks[1];
+$diff['sys'] = $cpuTicks2[2] - $cpuTicks[2];
+$diff['intr'] = $cpuTicks2[3] - $cpuTicks[3];
+$diff['idle'] = $cpuTicks2[4] - $cpuTicks[4];
+$totalDiff = $diff['user'] + $diff['nice'] + $diff['sys'] + $diff['intr'] + $diff['idle'];
+$cpuUsage = round(100 * (1 - $diff['idle'] / $totalDiff), 0);
+
+echo "<script language='javascript'>\n";
+echo "document.cpuwidtha.style.width='" . $cpuUsage . "';\n";
+echo "document.cpuwidthb.style.width='" . (100 - $cpuUsage) . "';\n";
+echo "document.forms[0].cpumeter.value = '" . $cpuUsage . "%';\n";
+echo "</script>\n";
+
+?>
 

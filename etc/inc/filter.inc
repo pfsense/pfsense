@@ -319,7 +319,7 @@ function filter_nat_rules_generate() {
 			$natrules .= " (" . $wanif . " " . $rule['gatewayip'] . ") ";
 			$isfirst = 1;
 		}
-		$natrules .= "} round-robin proto tcp from {$lansa} to any flags S/SA modulate state\n";
+		$natrules .= "} round-robin proto tcp from " . $lansa ." to any flags S/SA modulate state\n";
 	}
 
 	/* outbound rules - advanced or standard */

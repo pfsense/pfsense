@@ -109,18 +109,6 @@ function filter_configure() {
 	mwexec("chmod a+x /tmp/rules.debug");
 	mwexec("/sbin/pfctl -f /tmp/rules.debug");
 
-	/* set up MSS clamping */
-	if ($config['interfaces']['wan']['mtu'])
-		$mssclamp = $config['interfaces']['wan']['mtu'] - 40;
-	else if ($config['interfaces']['wan']['ipaddr'] == "pppoe")
-		$mssclamp = 1452;
-	else
-		$mssclamp = 0;
-
-	/* XXX: convert these to PF or dump */
-	mwexec("/sbin/sysctl net.inet.ipf.fr_mssif={$wanif}");
-	mwexec("/sbin/sysctl net.inet.ipf.fr_mssclamp={$mssclamp}");
-
 	if ($g['booting'])
 		echo "done\n";
 

@@ -1,5 +1,5 @@
 #!/usr/local/bin/php
-<?php require("guiconfig.inc"); 
+<?php require("guiconfig.inc");
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -12,72 +12,77 @@
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">License</p>
-            <p><strong>m0n0wall is Copyright &copy; 2002-2004 by Manuel Kasper 
+
+            <p><strong>pfSense is Copyright &copy; 2004, 2005 by Scott Ullrich
+              (<a href="mailto:geekgod@geekgod.com">geekgod@geekgod.com</a>).<br>
+              All rights reserved.</strong></p>
+
+            <p><strong>m0n0wall is Copyright &copy; 2002-2004 by Manuel Kasper
               (<a href="mailto:mk@neon1.net">mk@neon1.net</a>).<br>
               All rights reserved.</strong></p>
             <p> Redistribution and use in source and binary forms, with or without<br>
-              modification, are permitted provided that the following conditions 
+              modification, are permitted provided that the following conditions
               are met:<br>
               <br>
-              1. Redistributions of source code must retain the above copyright 
+              1. Redistributions of source code must retain the above copyright
               notice,<br>
               this list of conditions and the following disclaimer.<br>
               <br>
               2. Redistributions in binary form must reproduce the above copyright<br>
-              notice, this list of conditions and the following disclaimer in 
+              notice, this list of conditions and the following disclaimer in
               the<br>
               documentation and/or other materials provided with the distribution.<br>
               <br>
-              <strong>THIS SOFTWARE IS PROVIDED &quot;AS IS'' AND ANY EXPRESS 
+              <strong>THIS SOFTWARE IS PROVIDED &quot;AS IS'' AND ANY EXPRESS
               OR IMPLIED WARRANTIES,<br>
               INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY<br>
-              AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT 
+              AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
               SHALL THE<br>
-              AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+              AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
               EXEMPLARY,<br>
-              OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT 
+              OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
               OF<br>
-              SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR 
+              SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
               BUSINESS<br>
-              INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER 
+              INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
               IN<br>
               CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)<br>
-              ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
+              ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
               OF THE<br>
               POSSIBILITY OF SUCH DAMAGE</strong>.</p>
             <hr size="1">
             <p>The following persons have contributed code to m0n0wall:</p>
             <p>Bob Zoller (<a href="mailto:bob@kludgebox.com">bob@kludgebox.com</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">Diagnostics: Ping 
+              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">Diagnostics: Ping
               function; WLAN channel auto-select; DNS forwarder</font></em><br>
               <br>
               Michael Mee (<a href="mailto:mikemee2002@pobox.com">mikemee2002@pobox.com</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">Timezone and NTP 
+              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">Timezone and NTP
               client support</font></em><br>
               <br>
               Magne Andreassen (<a href="mailto:magne.andreassen@bluezone.no">magne.andreassen@bluezone.no</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">Remote syslog'ing; 
+              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">Remote syslog'ing;
               some code bits for DHCP server on optional interfaces</font></em><br>
               <br>
               Rob Whyte (<a href="mailto:rob@g-labs.com">rob@g-labs.com</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">Idea/code bits 
+              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">Idea/code bits
               for encrypted webGUI passwords; minimalized SNMP agent</font></em><br>
               <br>
               Petr Verner (<a href="mailto:verner@ipps.cz">verner@ipps.cz</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">Advanced outbound 
+              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">Advanced outbound
               NAT: destination selection</font></em><br>
               <br>
               Bruce A. Mah (<a href="mailto:bmah@acm.org">bmah@acm.org</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">Filtering bridge 
+              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">Filtering bridge
               patches </font></em><br>
               <br>
               Jim McBeath (<a href="mailto:monowall@j.jimmc.org">monowall@j.jimmc.org</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">Filter rule patches 
+              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">Filter rule patches
               (ordering, block/pass, disabled); better status page;<br>
               &nbsp;&nbsp;&nbsp;&nbsp;webGUI assign network ports page </font></em><br>
               <br>
               Chris Olive (<a href="mailto:chris@technologEase.com">chris@technologEase.com</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">enhanced &quot;execute 
+              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">enhanced &quot;execute
               command&quot; page</font></em><br>
               <br>
               Pauline Middelink (<a href="mailto:middelink@polyware.nl">middelink@polyware.nl</a>)<br>
@@ -118,9 +123,9 @@
               Peter Curran (<a href="mailto:peter@closeconsultants.com">peter@closeconsultants.com</a>)<br>
               &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">OpenVPN support</font></em></p>
             <hr size="1">
-            <p>m0n0wall is based upon/includes various free software packages, 
+            <p>m0n0wall is based upon/includes various free software packages,
               listed below.<br>
-              The author of m0n0wall would like to thank the authors of these 
+              The author of m0n0wall would like to thank the authors of these
               software packages for their efforts.</p>
             <p>FreeBSD (<a href="http://www.freebsd.org" target="_blank">http://www.freebsd.org</a>)<br>
               Copyright &copy; 1994-2003 FreeBSD, Inc. All rights reserved.<br>
@@ -129,11 +134,11 @@
               Copyright &copy; 1999 - 2003 The PHP Group. All rights reserved.<br>
               <br>
               mini_httpd (<a href="http://www.acme.com/software/mini_httpd" target="_blank">http://www.acme.com/software/mini_httpd)</a><br>
-              Copyright &copy; 1999, 2000 by Jef Poskanzer &lt;jef@acme.com&gt;. 
+              Copyright &copy; 1999, 2000 by Jef Poskanzer &lt;jef@acme.com&gt;.
               All rights reserved.<br>
               <br>
               ISC DHCP server (<a href="http://www.isc.org/products/DHCP/" target="_blank">http://www.isc.org/products/DHCP</a>)<br>
-              Copyright &copy; 1996-2003 Internet Software Consortium. All rights 
+              Copyright &copy; 1996-2003 Internet Software Consortium. All rights
               reserved.<br>
               <br>
               ipfilter (<a href="http://www.ipfilter.org" target="_blank">http://www.ipfilter.org</a>)<br>
@@ -156,16 +161,16 @@ All rights reserved.<br>
               Copyright &copy; 1995-2002 WIDE Project. All rights reserved.<br>
               <br>
               msntp (<a href="http://www.hpcf.cam.ac.uk/export" target="_blank">http://www.hpcf.cam.ac.uk/export</a>)<br>
-              Copyright &copy; 1996, 1997, 2000 N.M. Maclaren, University of Cambridge. 
+              Copyright &copy; 1996, 1997, 2000 N.M. Maclaren, University of Cambridge.
               All rights reserved.<br>
               <br>
               UCD-SNMP (<a href="http://www.ece.ucdavis.edu/ucd-snmp" target="_blank">http://www.ece.ucdavis.edu/ucd-snmp</a>)<br>
               Copyright &copy; 1989, 1991, 1992 by Carnegie Mellon University.<br>
-              Copyright &copy; 1996, 1998-2000 The Regents of the University of 
+              Copyright &copy; 1996, 1998-2000 The Regents of the University of
               California. All rights reserved.<br>
-              Copyright &copy; 2001-2002, Network Associates Technology, Inc. 
+              Copyright &copy; 2001-2002, Network Associates Technology, Inc.
               All rights reserved.<br>
-              Portions of this code are copyright &copy; 2001-2002, Cambridge 
+              Portions of this code are copyright &copy; 2001-2002, Cambridge
               Broadband Ltd. All rights reserved.<br>
               <br>
               choparp (<a href="http://choparp.sourceforge.net/" target="_blank">http://choparp.sourceforge.net</a>)<br>

@@ -119,6 +119,9 @@ defCmdT("last 50 filter log entries","/usr/sbin/clog /var/log/filter.log 2>&1 | 
 
 defCmd("ls /conf");
 defCmd("ls /var/run");
+
+defCmdT("cat /tmp/rules.debug","cat /tmp/rules.debug");
+
 defCmdT("config.xml","dumpconfigxml");
 
 $pageTitle = "pfSense: status";

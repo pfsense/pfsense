@@ -762,15 +762,17 @@ $isfirst = 0;
 $aliases = "";
 $addrisfirst = 0;
 $aliasesaddr = "";
-foreach($config['aliases']['alias'] as $alias_name) {
-	if(!stristr($alias_name['address'], ".")) {
-		if($isfirst == 1) $aliases .= ",";
-		$aliases .= "'" . $alias_name['name'] . "'";
-		$isfirst = 1;
-	} else {
-		if($addrisfirst == 1) $aliasesaddr .= ",";
-		$aliasesaddr .= "'" . $alias_name['name'] . "'";
-		$addrisfirst = 1;
+if(is_array($config['aliases']['alias'])) {
+	foreach($config['aliases']['alias'] as $alias_name) {
+		if(!stristr($alias_name['address'], ".")) {
+			if($isfirst == 1) $aliases .= ",";
+			$aliases .= "'" . $alias_name['name'] . "'";
+			$isfirst = 1;
+		} else {
+			if($addrisfirst == 1) $aliasesaddr .= ",";
+			$aliasesaddr .= "'" . $alias_name['name'] . "'";
+			$addrisfirst = 1;
+		}
 	}
 }
 ?>

@@ -16,8 +16,10 @@ HOME=/
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 export HOME PATH
 
+version=`cat /etc/version`
+
 echo
-echo "Starting pfSense ..."
+echo "Welcome to pfSense ${version} ..."
 echo
 
 /sbin/mount -a || fsck -y && mount -a
@@ -75,30 +77,35 @@ cd /var/run && cp /dev/null utmp && chmod 644 utmp
 
 /usr/local/bin/php -f /etc/rc.conf_mount_rw
 
-echo Starting Secure Shell Services...
+echo -n Starting Secure Shell Services...
 /etc/sshd
 
-echo Starting USB...
+echo -n "Starting USB..."
 /usr/sbin/usbd 2>>/tmp/bootup_messages
+echo Done.
 
 /usr/sbin/cron 2>>/tmp/bootup_messages
 
-echo Syncing package configurations...
+echo -n "Syncing package configurations..."
 /etc/rc.packages
+echo Done.
 
-echo Executing rc.d items...
+echo "Executing rc.d items..."
 for FILE in /usr/local/etc/rc.d/*.sh; do
     if [ -e $FILE ]; then
-        echo "Starting ${FILE}..."
+        echo -n " Starting ${FILE}..."
         sh $FILE >>/tmp/bootup_messages 2>&1
+	echo "Done."
     fi
 done
 
 # one more pass to give package plugins a chance to adjust
-echo Final firewall setup in progress...
+echo -n "Final firewall setup in progress..."
 /etc/rc.filter_configure
+echo "Done."
 
 /usr/local/bin/php -f /etc/rc.conf_mount_ro
 
-exit 0
+echo "Bootup complete"
 
+exit 0

@@ -933,12 +933,6 @@ function filter_rules_generate() {
 	else
 		$log = "";
 
-	/* if carp is defined, lets pass the traffic */
-	if(is_carp_defined() == true) {
-		$ipfrules .= "pass on " . $lanif . " proto carp from $lanif:network to 224.0.0.18 keep state (no-sync) label \"carp\"\n";
-		$ipfrules .= "pass on " . $wanif . " proto carp from $wanif:network to 224.0.0.18 keep state (no-sync) label \"carp\"\n";
-	}
-
 	/* if squid is installed, lets install its rule */
 	$squid_installed = run_command_return_string("/bin/ls /var/db/pkg/ | grep squid");
 	if ($squid_installed <> "") {

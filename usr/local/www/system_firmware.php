@@ -31,17 +31,6 @@
 
 $d_isfwfile = 1; require("guiconfig.inc");
 
-if($_GET['autoupgrade'] <> "") {
-    $http_auth_username = "";
-    $http_auth_password = "";
-    if($config['system']['proxy_auth_username'])
-	$http_auth_username = $config['system']['proxy_auth_username'];
-    if($config['system']['proxy_auth_password'])
-	$http_auth_password = $config['system']['proxy_auth_password'];
-    exec_rc_script_async("/etc/rc.firmware_auto {$http_auth_username} {$http_auth_password}");
-    $savemsg = "pfSense is now auto upgrading.  The firewall will automatically reboot if it succeeds.";
-}
-
 /* checks with pfSense to see if a newer firmware version is available;
    returns any HTML message it gets from the server */
 function check_firmware_version() {
@@ -83,6 +72,21 @@ function check_firmware_version() {
 	return null;
 }
 
+/* Handle auto upgrade */
+if($_POST) {
+	if (stristr($_POST['autoupgrade'], "Auto")) {
+		$http_auth_username = "";
+		$http_auth_password = "";
+		if($config['system']['proxy_auth_username'])
+			$http_auth_username = $config['system']['proxy_auth_username'];
+		if($config['system']['proxy_auth_password'])
+			$http_auth_password = $config['system']['proxy_auth_password'];
+		exec_rc_script_async("/etc/rc.firmware_auto {$http_auth_username} {$http_auth_password}");
+		$savemsg = "pfSense is now auto upgrading.  The firewall will automatically reboot if it succeeds.";
+	}
+}
+
+/* Handle manual upgrade */
 if ($_POST && !file_exists($d_firmwarelock_path)) {
 
 	unset($input_errors);
@@ -186,15 +190,27 @@ print_info_box($sig_warning);
             <?php if (!file_exists($d_firmwarelock_path)): ?>
 <form action="system_firmware.php" method="post" enctype="multipart/form-data">
 <?php if($savemsg == ""): ?>
+
+              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+		<tr>
+		 <td colspan="2" class="listtopic">Invoke pfSense Auto Upgrade</td>
+		</tr>
+		<tr>
+		  <td width="22%" valign="baseline" class="vncell">&nbsp;</td>
+		  <td width="78%" class="vtable">
+		  <p> Click this button to automatically upgrade pfSense in the background.  This may take a while.<br>
+		  <br>
+		  <input name="autoupgrade" type="submit" class="formbtn" value="Invoke Auto Upgrade">
+		</tr>
+                <tr>
+		 <td colspan="2" class="listtopic">Invoke pfSense Manual Upgrade</td>
+		</tr>
+		  <td width="22%" valign="baseline" class="vncell">&nbsp;</td>
+                  <td width="78%">
             <p>Click &quot;Enable firmware
               upload&quot; below, then choose the image file (<?=$g['platform'];?>-*.img)
 			  to be uploaded.<br>Click &quot;Upgrade firmware&quot;
               to start the upgrade process.</p>
-
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr>
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%">
                     <?php if (!file_exists($d_sysrebootreqd_path)): ?>
                     <?php if (!file_exists($d_fwupenabled_path)): ?>
                     <input name="Submit" type="submit" class="formbtn" value="Enable firmware upload">
@@ -217,19 +233,6 @@ print_info_box($sig_warning);
                     storing the new firmware. The configuration will be maintained.</span></td>
                 </tr>
 
-		<tr>
-		 <td colspan="2">&nbsp;</td>
-		</tr>
-		<tr>
-		 <td colspan="2" class="listtopic">Invoke pfSense Auto Upgrade</td>
-		</tr>
-		<tr>
-		  <td width="22%" valign="baseline" class="vncell">&nbsp;</td>
-		  <td width="78%" class="vtable">
-		  <p> Click this button to automatically upgrade pfSense in the background.  This may take a while.<br>
-		  <br>
-		  <a href="system_firmware.php?autoupgrade=true">Invoke Auto Upgrade</a>
-		</tr>
               </table>
 <?php endif ?>
 

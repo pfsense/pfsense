@@ -44,29 +44,39 @@ $lan_sched = $config['interfaces']['lan']['schedulertype'];
 $pconfig['schedulertype'] = $config['system']['schedulertype'];
 $schedulertype = $config['system']['schedulertype'];
 
-if (isset($id) && $a_queues[$id]) {
-	$pconfig['priority'] = $a_queues[$id]['priority'];
-	$pconfig['mask'] = $a_queues[$id]['mask'];
-	$pconfig['name'] = $a_queues[$id]['name'];
-	$pconfig = $a_queues[$id];
-	$pconfig['red'] = $a_queues[$id]['red'];
-	$pconfig['ecn'] = $a_queues[$id]['ecn'];
-	$pconfig['rio'] = $a_queues[$id]['rio'];
-	$pconfig['borrow'] = $a_queues[$id]['borrow'];
-	$pconfig['defaultqueue'] = $a_queues[$id]['defaultqueue'];
-	$pconfig['parentqueue'] = $a_queues[$id]['parentqueue'];
-	$pconfig['upperlimit1'] = $a_queues[$id]['upperlimit1'];
-	$pconfig['upperlimit2'] = $a_queues[$id]['upperlimit2'];
-	$pconfig['upperlimit3'] = $a_queues[$id]['upperlimit3'];
-	$pconfig['realtime1'] = $a_queues[$id]['realtime1'];
-	$pconfig['realtime2'] = $a_queues[$id]['realtime2'];
-	$pconfig['realtime3'] = $a_queues[$id]['realtime3'];
-	$pconfig['linkshare1'] = $a_queues[$id]['linkshare1'];
-	$pconfig['linkshare2'] = $a_queues[$id]['linkshare2'];
-	$pconfig['linkshare3'] = $a_queues[$id]['linkshare3'];
-	$pconfig['bandwidth'] = $a_queues[$id]['bandwidth'];
-	$pconfig['bandwidthtype'] = $a_queues[$id]['bandwidthtype'];
-	$pconfig['associatedrule'] = $a_queues[$id]['associatedrule'];
+if (isset($id)) {
+	if (!is_numeric($id)) {
+		$i = 0;
+		foreach($config['shaper']['queue'] as $queue) {
+			if ($queue['name'] == $id)
+				$id = $i;
+			$i++;
+		}
+	}
+	if ($a_queues[$id]) {
+		$pconfig['priority'] = $a_queues[$id]['priority'];
+		$pconfig['mask'] = $a_queues[$id]['mask'];
+		$pconfig['name'] = $a_queues[$id]['name'];
+		$pconfig = $a_queues[$id];
+		$pconfig['red'] = $a_queues[$id]['red'];
+		$pconfig['ecn'] = $a_queues[$id]['ecn'];
+		$pconfig['rio'] = $a_queues[$id]['rio'];
+		$pconfig['borrow'] = $a_queues[$id]['borrow'];
+		$pconfig['defaultqueue'] = $a_queues[$id]['defaultqueue'];
+		$pconfig['parentqueue'] = $a_queues[$id]['parentqueue'];
+		$pconfig['upperlimit1'] = $a_queues[$id]['upperlimit1'];
+		$pconfig['upperlimit2'] = $a_queues[$id]['upperlimit2'];
+		$pconfig['upperlimit3'] = $a_queues[$id]['upperlimit3'];
+		$pconfig['realtime1'] = $a_queues[$id]['realtime1'];
+		$pconfig['realtime2'] = $a_queues[$id]['realtime2'];
+		$pconfig['realtime3'] = $a_queues[$id]['realtime3'];
+		$pconfig['linkshare1'] = $a_queues[$id]['linkshare1'];
+		$pconfig['linkshare2'] = $a_queues[$id]['linkshare2'];
+		$pconfig['linkshare3'] = $a_queues[$id]['linkshare3'];
+		$pconfig['bandwidth'] = $a_queues[$id]['bandwidth'];
+		$pconfig['bandwidthtype'] = $a_queues[$id]['bandwidthtype'];
+		$pconfig['associatedrule'] = $a_queues[$id]['associatedrule'];
+	}
 }
 
 if ($_POST) {

@@ -27,7 +27,7 @@ SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
 /bin/mkdir -p /usr/savecore 2>/dev/null
 /sbin/savecore /usr/savecore $SWAPDEVICE
 
-/etc/rc.conf_mount_rw
+/usr/local/bin/php -f /etc/rc.conf_mount_rw
 
 rm -rf /var/run/*
 rm -rf /tmp/*
@@ -92,7 +92,7 @@ done
 echo Final firewall setup in progress...
 /etc/rc.filter_configure
 
-/etc/rc.conf_mount_ro
+/usr/local/bin/php -f /etc/rc.conf_mount_ro
 
 exit 0
 

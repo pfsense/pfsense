@@ -76,7 +76,7 @@ function filter_configure() {
 	$altq_queues = filter_generate_altq_queues();
 	/* generate altq rules */
 	$altq_rules = filter_generate_altq_rules();
-	
+
 	if( !isset( $config['system']['disablefilter'] ) ) {
 		mwexec("/sbin/pfctl -e");
 		mwexec("/sbin/pfctl -F nat");
@@ -105,16 +105,14 @@ function filter_configure() {
 		fwrite($fd, "set limit states " . $maximumstates . "\n");
 	}
 	fwrite($fd, "\nscrub all\n"); // reassemble all directions
-        fwrite($fd, "\anchor \"altqints\"\n"); // add altqints anchor
 	fwrite($fd, $altq_ints);
-	
+
 	/*
 	 *  Anchors will be used to allow scripts and or users
 	 *  to add or subtract rules from the system using shellcmd.
          */
-	fwrite($fd, "\anchor \"nat\"\n"); // add a nat anchor
+	fwrite($fd, $altq_queues . "\n");
 	fwrite($fd, $natrules);
-	fwrite($fd, "\anchor \"filter\"\n"); // add a filter anchor
         fwrite($fd, $pfrules);
         fclose($fd);
 
@@ -131,7 +129,7 @@ function filter_configure() {
 	/* load ipfw+altq module */
 	if (isset($config['shaper']['enable'])) {
 		if ($g['booting'])
-			echo "Loading IPFW+ALTQ... ";		
+			echo "Loading IPFW+ALTQ... ";
 		mwexec("/sbin/kldload ipfw");
                 /* change one_pass to 1 so ipfw stops checking after
                    a rule has matched */
@@ -148,7 +146,7 @@ function filter_configure() {
                 fwrite($fd, $altq_rules);
                 fclose($fd);
                 mwexec("/sbin/ipfw {$g['tmp_path']}/ipfw.rules");
-                unlink("{$g['tmp_path']}/ipfw.rules");		
+                #unlink("{$g['tmp_path']}/ipfw.rules");
 	}
 
 	if ($g['booting'])
@@ -408,10 +406,11 @@ function filter_generate_altq_rules() {
                 }
 
                 for ($iif = 0; $iif < $nif; $iif++) {
-		
-			$line = "add $rulei set 4 pass altq " . $rule['descr'] . "  ";
+
+			$queuename = filter_altq_get_queuename($rule['queue']);
+			$line = "add $rulei set 4 pass altq " . $queuename . " ";
 			$rulei++;
-			
+
                        if (isset($rule['protocol'])) {
                                 $line .= "{$rule['protocol']} ";
                         } else {
@@ -540,10 +539,11 @@ function filter_generate_altq_rules() {
 
                 $i++;
         }
-	
-	$line = "add allow all from any to any\n";
+
+	$line = "add $rulei set 4 pass all from any to any\n";
+	$rulei++;
 	$shaperrules .= $line;
-	
+
 	return $shaperrules;
 }
 
@@ -864,7 +864,7 @@ pass in quick on $wanif inet proto tcp from port 20 to ($wanif) user proxy flags
 pass in quick on $wanif inet proto tcp from any to $wanif port > 49000 user proxy keep state
 
 # allow access to DHCP server on LAN
-anchor "allowdhcpserverlan"
+anchor "dhcpserverlan"
 pass in quick on $lanif proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server on LAN"
 pass in quick on $lanif proto udp from any port = 68 to $lanip port = 67 label "allow access to DHCP server on LAN"
 pass out quick on $lanif proto udp from $lanip port = 67 to any port = 68 label "allow access to DHCP server on LAN"

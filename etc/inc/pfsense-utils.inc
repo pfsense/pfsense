@@ -514,6 +514,7 @@ function update_progress_bar($percent) {
  */
 function resync_all_packages_config() {
     log_error("Resyncing configuration for all packages.");
+    if(!$config['installedpackages']['package']) return;
     foreach($config['installedpackages']['package'] as $package) {
         if(file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
             $pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "pfsensepkgs");

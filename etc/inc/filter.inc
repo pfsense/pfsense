@@ -560,8 +560,8 @@ function filter_generate_altq_rules() {
 				$line .= "flags S/SA ";
 			}
 
-			if (isset($rule['flags'])) {
-				$line .= "flags " . $rule['flags'] . " ";
+			if (isset($rule['flags']) && $rule['flags'] <> "") {
+				//$line .= "flags " . $rule['flags'] . " ";
 			}
 
 			if (!$ispptp) {
@@ -1386,8 +1386,8 @@ EOD;
 				$line .= "flags S/SA ";
 			}
 
-			if (isset($rule['flags'])) {
-				$line .= "flags " . $rule['flags'] . " ";
+			if (isset($rule['flags']) && $rule['flags'] <> "") {
+				//$line .= "flags " . $rule['flags'] . " ";
 			}
 
 			if (!$ispptp) {

@@ -333,10 +333,13 @@ class XML_RPC_Server
                     if ($p->kindOf() == 'scalar') {
                         $pt = $p->scalartyp();
                     } else {
+			$fout = fopen("/tmp/blah.log", "w");
                         $pt = $p->kindOf();
+			fwrite($fout, $p->kindOf());
+			fclose($fout);
                     }
                     // $n+1 as first type of sig is return type
-                    if ($pt != $cursig[$n+1]) {
+                    if ($pt != strtolower($cursig[$n+1])) {
                         $itsOK = 0;
                         $pno = $n+1;
                         $wanted = $cursig[$n+1];

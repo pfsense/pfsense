@@ -450,9 +450,11 @@ function gentitle($pgname) {
  */
 function update_if_changed($varname, $orig, $new) {
 	global $changedesc;
+	global $changecount;
 
 	if ($orig != $new) {
 		$changedesc .= " {$varname}: \"{$orig}\" -> \"{$new}\"";
+		$changecount++;
 		$orig = $new;
 		return true;
 	}

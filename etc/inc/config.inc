@@ -832,4 +832,16 @@ EOD;
 	}
 }
 
+function system_start_ftp_helpers() {
+	global $config;
+	if(!$config['system']['disableftpproxy']) return;
+	if ($g['booting'])
+		echo "Starting INETD and FTP Helpers for FTP-PROXY...";
+	$wanif = get_real_wan_interface();
+	mwexec("/usr/sbin/inetd -wW -C 60");
+	mwexec("/usr/bin/killall ftpsesame 2>/dev/null");
+	mwexec("/usr/local/sbin/ftpsesame -i {$wanif} -q ftpproxy");
+}
+
+
 ?>

@@ -161,6 +161,9 @@
 	/* run any shell commands specified in config.xml */
 	system_do_shell_commands();
 
+	/* start ftp proxy helpers if they are enabled */
+	system_start_ftp_helpers();	
+
 	/* done */
 	unlink("{$g['varrun_path']}/booting");
 ?>

@@ -67,9 +67,6 @@ cd /var/run && cp /dev/null utmp && chmod 644 utmp
 # let the PHP-based configuration subsystem set up the system now
 /etc/rc.bootup
 
-echo Starting INETD for FTP-PROXY...
-/usr/sbin/inetd -wW -C 60
-
 echo Starting Secure Shell Services...
 /etc/sshd
 

@@ -112,7 +112,7 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 	if (!isset($config['system']['disablefirmwarecheck'])) {
 		$fwinfo = check_firmware_version();
 		if(is_null($fwinfo)) {
-			$fwinfo = "Using alternate firmware URL, cannot determine if {$config['system']['alt_firmware_url']['firmware_base_url']}{$config['system']['alt_firmware_url']['firmware_filename']} is newer than current.";
+			$fwinfo = "Unable to determine if a new firmware version is available.";
 		}
 	}
 }

@@ -42,7 +42,7 @@ function check_firmware_version() {
 	if ($rfd) {
 		$hdr = "POST /pfSense/checkversion.php HTTP/1.0\r\n";
 		$hdr .= "Content-Type: application/x-www-form-urlencoded\r\n";
-		$hdr .= "User-Agent: m0n0wall-webGUI/1.0\r\n";
+		$hdr .= "User-Agent: pfSense-webConfigurator/1.0\r\n";
 		$hdr .= "Host: m0n0.ch\r\n";
 		$hdr .= "Content-Length: " . strlen($post) . "\r\n\r\n";
 

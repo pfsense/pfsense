@@ -43,7 +43,7 @@ $pconfig['cert'] = base64_decode($config['system']['webgui']['certificate']);
 $pconfig['key'] = base64_decode($config['system']['webgui']['private-key']);
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['disablefirmwarecheck'] = isset($config['system']['disablefirmwarecheck']);
-$pconfig['altfirmwareurl'] = $config['system']['altfirmwareurl'];
+$pconfig['altfirmwareurl'] = $config['system']['altfirmwareurl']['enabled'];
 $pconfig['firmware_base_url'] = $config['system']['alt_firmware_url']['firmware_base_url'];
 $pconfig['firmwarename'] = $config['system']['alt_firmware_url']['firmware_filename'];
 $pconfig['expanddiags'] = isset($config['system']['webgui']['expanddiags']);
@@ -108,11 +108,13 @@ if ($_POST) {
 		$config['system']['disableconsolemenu'] = $_POST['disableconsolemenu'] ? true : false;
 		$config['system']['disablefirmwarecheck'] = $_POST['disablefirmwarecheck'] ? true : false;
 		$config['system']['altfirmwareurl'] = $_POST['altfirmwareurl'] ? true : false;
-		if ($config['system']['altfirmwareurl']) {
+		if ($_POST['altfirmwareurl']) {
 			$config['system']['alt_firmware_url'] = array();
 			$config['system']['alt_firmware_url']['enabled'] = "";
 			$config['system']['alt_firmware_url']['firmware_base_url'] = $_POST['firmwareurl'];
 			$config['system']['alt_firmware_url']['firmware_filename'] = $_POST['firmwarename'];
+		} elseif (isset($config['system']['alt_firmware_url']['firmware_base_url']) || isset($config['system']['alt_firmware_url']['firmware_filename'])) {
+			unset($config['system']['alt_firmware_url']['enabled']);
 		} else {
 			unset($config['system']['alt_firmware_url']);
 		}

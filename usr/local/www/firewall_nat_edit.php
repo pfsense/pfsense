@@ -222,7 +222,7 @@ function ext_rep_change() {
                   <td width="78%" class="vtable">
 					<select name="interface" class="formfld">
 						<?php
-						$interfaces = array('wan' => 'WAN');
+						$interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
 						for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 							$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 						}

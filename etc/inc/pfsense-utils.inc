@@ -573,8 +573,9 @@ function resync_all_package_configs_bootup($show_message) {
             system("/usr/bin/fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationfile']);
        	    print "\n\n";
 	}
+	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
+	if($pkg_config['nosync'] != "") continue;
 	if($show_message == true) print " " . $package['name'];
-        $pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
         if($pkg_config['custom_php_command_before_form'] <> "")
             eval($pkg_config['custom_php_command_before_form']);
         if($pkg_config['custom_php_resync_config_command'] <> "")
@@ -660,7 +661,7 @@ function reverse_strrchr($haystack, $needle) {
  *
  */
 function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files") {
-        global $config;
+        global $config
         foreach($config['installedpackages']['package'] as $package) {
                 if ($package['name'] == $pkg_name) {
                         $package_xml = $package;
@@ -675,6 +676,7 @@ ile']);
         $pkg_xml = parse_xml_config_pkg("/usr/local/pkg/" . $package_xml['configurationfile'], "packagegui");
         if($pkg_xml['additional_files_needed'] != "") {
                 foreach($pkg_xml['additional_files_needed'] as $item) {
+			if ($item['nosync'] != "") continue;
                         $depend_file = substr(strrchr($item['item']['0'], '/'),1); // Strip URLs down to filenames.
                         $depend_name = substr(substr($depend_file,0,strpos($depend_file,".")+1),0,-1); // Strip filename down to dependency name.
                         print $depend_name;

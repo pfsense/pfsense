@@ -57,6 +57,10 @@ if ($_POST) {
 				unlink($d_filterconfdirty_path);
 		}
 	}
+
+	$pconfig['nat']['enableoutboundloadbalancing'] = $_POST['enableoutboundloadbalancing'] ? true : false;
+	write_config();
+
 }
 
 if ($_GET['act'] == "del") {
@@ -95,6 +99,15 @@ if ($_GET['act'] == "del") {
     <li class="tabinact"><a href="firewall_nat_out.php">Outbound</a></li>
   </ul>
   </td></tr>
+
+  <tr>
+    <td class="tabcont"><p><span class="vexpl"> </span>
+     <input name="enableoutboundloadbalancing" type="checkbox" id="enableoutboundloadbalancing" value="yes" <?php if ($pconfig['enableoutboundloadbalancing'] == "yes") echo "checked";?>>
+     <strong>Enable outbound load balancing.<hr>
+     </strong></p><input name="submit" type="submit" class="formbtn" value="Save">
+    </td>
+  </tr>
+
   <tr>
     <td class="tabcont">
               <table width="100%" border="0" cellpadding="0" cellspacing="0">

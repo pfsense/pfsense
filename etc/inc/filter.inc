@@ -240,16 +240,24 @@ function filter_flush_state_table() {
 }
 
 function filter_nat_rules_generate_if($if, $src, $dst, $target) {
+	global $config;
 
 	if ($target)
 		$tgt = $target . "/32";
 	else
 		$tgt = "0/32";
 
+	if($config['nat']['enableoutboundloadbalancing']) {
+	$natrule = <<<EOD
+nat on $if from $src to any -> ($if)
+
+EOD;
+	} else {
 	$natrule = <<<EOD
 nat on $if from $src to any -> $if
 
 EOD;
+	}
 
 	return $natrule;
 }

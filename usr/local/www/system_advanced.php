@@ -461,12 +461,12 @@ function update_description(itemnum) {
 			<option value="aggressive"<?php if($config['system']['optimization']=="aggressive") echo " SELECTED"; ?>>aggressive</option>
 			<option value="conservative"<?php if($config['system']['optimization']=="conservative") echo " SELECTED"; ?>>conservative</option>
 			</select>
-			<textarea cols="60" rows="2" id="info" name="info"style=" background-color: #ffffff; color: #000000; font-size: 8pt; border:1px;">
+			<textarea cols="60" rows="2" id="info" name="info"style="border:1px dashed #000066; background-color: #ffffff; color: #000000; font-size: 8pt;">
 			</textarea>
 			<script language="javascript">
 			update_description(document.forms[0].optimization.selectedIndex);
 			</script>
-		    <br> <span class="vexpl"><b>Select which type of state table optimization your would like to use</b></td>
+			<br><span class="vexpl"><b>Select which type of state table optimization your would like to use</b></td>
                 </tr>
 
                 <tr>

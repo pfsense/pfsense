@@ -143,7 +143,7 @@ function FieldValidate(userinput, regexp, message)
 
 &nbsp;<br>
 
-<a href="http://<?= getenv("HTTP_HOST") ?>"><img border="0" src="/logo.gif"></a>
+<a href="/"><img border="0" src="/logo.gif"></a>
 <p>
 
 <table width="600" cellspacing="0" cellpadding="3">

@@ -322,6 +322,14 @@ if ($_POST) {
 		$filterent['frags'] = $_POST['frags'] ? true : false;
 		$filterent['descr'] = $_POST['descr'];
 
+		/* ALTQ */
+		$filterent['direction'] = $_POST['direction'];
+		$filterent['queue'] = $_POST['queue'];
+
+		/* Advanced options */
+		$filterent['max-src-nodes'] = $_POST['max-src-nodes'];
+		$filterent['max-src-states'] = $_POST['max-src-states'];
+
 		if (isset($id) && $a_filter[$id])
 			$a_filter[$id] = $filterent;
 		else {
@@ -330,14 +338,6 @@ if ($_POST) {
 			else
 				$a_filter[] = $filterent;
 		}
-
-		/* ALTQ */
-		$filterent['direction'] = $_POST['direction'];
-		$filterent['queue'] = $_POST['queue'];
-
-		/* Advanced options */
-		$filterent['max-src-nodes'] = $_POST['max-src-nodes'];
-		$filterent['max-src-states'] = $_POST['max-src-states'];
 
 		write_config();
 		touch($d_filterconfdirty_path);
@@ -652,7 +652,7 @@ function dst_rep_change() {
                           </select> <input name="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo $pconfig['srcendport']; ?>"></td>
                       </tr>
                     </table>
-		    <span class="vexpl">Specify the port or port range for 
+		    <span class="vexpl">Specify the port or port range for
 		    the source of the packet for this rule. This is usually not equal to the destination port range (and is often &quot;any&quot;). <br>
                     Hint: you can leave the <em>'to'</em> field empty if you only
                     want to filter a single port</span></td>

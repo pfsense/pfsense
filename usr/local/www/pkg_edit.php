@@ -59,93 +59,44 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
-$toeval = "\$a_pkg = &\$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'];";
+$toeval = "if (!is_array(\$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'])) \$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'] = array();";
 eval($toeval);
 
-if (isset($id) && $a_pkg[$id]) {
-	foreach ($pkg['fields'] as $fields) {
-		$fieldname  		= $fields['fieldname'];
-		$fieldvalue 		= $fields[$_POST[$fieldname]];
-		$toeval = "\$pconfig[" . $fieldname . "] = \"" . $fieldvalue . "\";";
-		//echo $toeval . "\n";
-		//eval($toeval);
-	}
-}
+$toeval = "\$a_pkg = &\$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'];";
+eval($toeval);
 
 if ($_POST) {
 	if($_POST['act'] == "del") {
 		if($pkg['custom_delete_php_command']) {
 		    eval($pkg['custom_delete_php_command']);
 		}
+		write_config();
 	} else {
 		if($pkg['custom_add_php_command']) {
 		    eval($pkg['custom_add_php_command']);
 		}
 	}
-	
+
 	// store values in xml configration file.
 	if (!$input_errors) {
 		$pkgarr = array();
-		
-		/*
-		if (isset($id) && $a_pkg[$id])
-			$pkgarr[$id] = $pkgarr;
-		else
-			$pkgarr[] = $pkgarr;
-		*/
-		
+
 		foreach ($pkg['fields']['field'] as $fields) {
 			$fieldname  		= $fields['fieldname'];
 			$fieldvalue 		= $_POST[$fieldname];
 			$toeval = "\$pkgarr['" . $fieldname . "'] 	= \"" . $fieldvalue . "\";";
-			//echo $toeval . "\n";
 			eval($toeval);
-			
 		}
-		
-		//$toeval = "\$config['installedpackages']['package']['" . $pkg['name'] . "']['config'][] = \$pkgarr;";
-		$toeval = "\$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'] = \$pkgarr;";
-		echo $toeval;
-		eval($toeval);
-		
-		write_config();
-	}
-}
 
-function xml_safe_fieldname($fieldname) {
-	$fieldname = str_replace("/","",$fieldname);
-	$fieldname = str_replace("-","",$fieldname);
-	$fieldname = str_replace(" ","",$fieldname);
-	$fieldname = str_replace("!","",$fieldname);
-	$fieldname = str_replace("@","",$fieldname);
-	$fieldname = str_replace("#","",$fieldname);
-	$fieldname = str_replace("$","",$fieldname);
-	$fieldname = str_replace("%","",$fieldname);
-	$fieldname = str_replace("^","",$fieldname);
-	$fieldname = str_replace("&","",$fieldname);
-	$fieldname = str_replace("*","",$fieldname);
-	$fieldname = str_replace("(","",$fieldname);
-	$fieldname = str_replace(")","",$fieldname);
-	$fieldname = str_replace("_","",$fieldname);
-	$fieldname = str_replace("+","",$fieldname);
-	$fieldname = str_replace("=","",$fieldname);
-	$fieldname = str_replace("{","",$fieldname);
-	$fieldname = str_replace("}","",$fieldname);
-	$fieldname = str_replace("[","",$fieldname);
-	$fieldname = str_replace("]","",$fieldname);
-	$fieldname = str_replace("|","",$fieldname);
-	$fieldname = str_replace("\\","",$fieldname);
-	$fieldname = str_replace("/","",$fieldname);
-	$fieldname = str_replace("<","",$fieldname);
-	$fieldname = str_replace(">","",$fieldname);
-	$fieldname = str_replace("?","",$fieldname);
-	$fieldname = str_replace(":","",$fieldname);
-	$fieldname = str_replace(",","",$fieldname);
-	$fieldname = str_replace(".","",$fieldname);
-	$fieldname = str_replace("'","",$fieldname);
-	$fieldname = str_replace("\"","",$fieldname);
-	$fieldname = strtolower($fieldname);
-	return $fieldname;
+		if (isset($id) && $a_pkg[$id])
+			$a_pkg[$id] = $pkgarr;
+		else
+			$a_pkg[] = $pkgarr;
+
+		write_config();
+
+		header("Location:  pkg.php?xml=" . $xml);
+	}
 }
 
 ?>

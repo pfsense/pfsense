@@ -30,12 +30,9 @@
 require("guiconfig.inc");
 require("xmlparse_pkg.inc");
 
-$pfSense_config = $config; // copy this since we will be parsing
-                           // another xml file which will be clobbered.
-
 function gentitle_pkg($pgname) {
-	global $pfSense_config;
-	return $pfSense_config['system']['hostname'] . "." . $pfSense_config['system']['domain'] . " - " . $pgname;
+	global $config;
+	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
 }
 
 $xml = $_GET['xml'];
@@ -45,13 +42,42 @@ if($xml == "") {
             print_info_box_np("ERROR:  Could not open " . $xml . ".");
             die;
 } else {
-            $pkg = parse_xml_config("/usr/local/pkg/" . $xml, "packagegui");
+            $pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
 }
 
 $package_name = $pkg['menu']['name'];
 $section      = $pkg['menu']['section'];
 $config_path  = $pkg['configpath'];
-$title        = $section . ": " . $package_name
+$title        = $section . ": " . $package_name;
+
+$toeval = "\$evaledvar = \$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'];";
+eval($toeval);
+
+if ($_GET['act'] == "del") {
+	    foreach ($evaledvar as $ip) {
+		    foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
+			    $toeval = "\$" . xml_safe_fieldname($column['fielddescr']) . " = " . "\$ip['" . xml_safe_fieldname($column['fieldname']) . "'];";
+			    eval($toeval);
+		    }
+	    }
+
+	    $toeval = "\$a_pkg = &\$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'];";
+	    eval($toeval);
+
+	    if ($a_pkg[$_GET['id']]) {
+		if($pkg['custom_delete_php_command'] <> "") {
+		    eval($pkg['custom_delete_php_command']);
+		}
+
+		unset($a_pkg[$_GET['id']]);
+		write_config();
+		header("Location:  pkg.php?xml=" . $xml);
+		exit;
+	    }
+}
+
+$toeval = "\$evaledvar = \$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'];";
+eval($toeval);
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -64,10 +90,7 @@ $title        = $section . ": " . $package_name
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php
-$config_tmp = $config;
-$config = $pfSense_config;
 include("fbegin.inc");
-$config = $config_tmp;
 ?>
 <p class="pgtitle"><?=$title?></p>
 <form action="firewall_nat_out_load_balancing.php" method="post">
@@ -84,24 +107,30 @@ $config = $config_tmp;
                         $cols++;
                 }
                 echo "</tr>";
-                if($pfSense_config[$config_path]['item']) {
-                        foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) { ?>
-                                   <tr valign="top">
-                                    <td class="listlr">
-                                            XXX: TODO
-                                    </td>
-                                    <td valign="middle" class="list" nowrap>
-                                       &nbsp;<a href="pkg_del.php?xml=<?=$xml?>&act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this item?')"><img src="x.gif" width="17" height="17" border="0"></a>
-                                    </td>
-				    <td>
-				       <a href="pkg_edit.php?xml=<?=$xml?>&id=<?=$i?>"><img src="plus.gif" width="17" height="17" border="0"></a>
+			$i=0;
+			if($evaledvar)
+			foreach ($evaledvar as $ip) {
+				    echo "<tr valign=\"top\">\n";
+				    foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
+				       ?>
+						<td class="listlr">
+							<?php
+							    $toeval="echo \$ip['" . xml_safe_fieldname($column['fieldname']) . "'];";
+							    eval($toeval);
+							?>
+						</td>
+				       <?php
+				    }
+				    ?>
+				    <td valign="middle" class="list" nowrap>
+				    &nbsp;<a href="pkg.php?xml=<?=$xml?>&act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this item?')"><img src="x.gif" width="17" height="17" border="0"></a>
 				    </td>
-                                </tr>
-                                <?php
-                        }
-               }
-               $i++;
-               ?>
+				    <?php
+				    echo "</tr>\n";
+				    $i++;
+			}
+				    ?>
+
                <tr><td colspan="<?=$cols?>"></td><td><a href="pkg_edit.php?xml=<?=$xml?>"><img src="plus.gif" width="17" height="17" border="0"></a></td></tr>
         </table>
     </td>

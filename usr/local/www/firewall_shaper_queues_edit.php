@@ -250,6 +250,9 @@ function sync_scheduler_options() {
 	      <td class="vtable">
 		<select name="associatedrule" onChange="sync_scheduler_options();">
 		<?php
+			if($pconfig['options']['associatedrule']) {
+				echo "<option value=\"" . $pconfig['options']['associatedrule'] ."\">" . filter_get_rule_interface($pconfig['options']['associatedrule']) . " - " . filter_get_altq_queue_scheduler_type($pconfig['options']['associatedrule']) . " - " . $pconfig['options']['associatedrule'] . "</option>";
+			}
 			foreach ($config['filter']['rule'] as $rule) {
 				echo "<option value=\"" . $rule['descr'] ."\">" . $rule['interface'] . " - " . filter_get_altq_queue_scheduler_type($rule['descr']) . " - " . $rule['descr'] . "</option>";
 			}

@@ -795,7 +795,7 @@ function filter_nat_rules_generate() {
 		}
 	}
 
-	$natrules .= "\# spam table \n";
+	$natrules .= "\n# spam table \n";
 	$natrules .= "table <spamd> persist\n\n";
 
 	if(!isset($config['system']['disableftpproxy'])) {

@@ -3,20 +3,20 @@
 /*
 	vpn_ipsec_edit.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -41,10 +41,10 @@ $specialsrcdst = explode(" ", "lan");
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
-	
+
 function is_specialnet($net) {
 	global $specialsrcdst;
-	
+
 	if (in_array($net, $specialsrcdst))
 		return true;
 	else
@@ -52,7 +52,7 @@ function is_specialnet($net) {
 }
 
 function address_to_pconfig($adr, &$padr, &$pmask) {
-		
+
 	if ($adr['network'])
 		$padr = $adr['network'];
 	else if ($adr['address']) {
@@ -63,9 +63,9 @@ function address_to_pconfig($adr, &$padr, &$pmask) {
 }
 
 function pconfig_to_address(&$adr, $padr, $pmask) {
-	
+
 	$adr = array();
-	
+
 	if (is_specialnet($padr))
 		$adr['network'] = $padr;
 	else {
@@ -78,21 +78,22 @@ function pconfig_to_address(&$adr, $padr, $pmask) {
 if (isset($id) && $a_ipsec[$id]) {
 	$pconfig['disabled'] = isset($a_ipsec[$id]['disabled']);
 	$pconfig['auto'] = isset($a_ipsec[$id]['auto']);
-
+	$pconfig['creategif'] = $a_filter[$id]['creategif'];
+	
 	if (!isset($a_ipsec[$id]['local-subnet']))
 		$pconfig['localnet'] = "lan";
 	else
 		address_to_pconfig($a_ipsec[$id]['local-subnet'], $pconfig['localnet'], $pconfig['localnetmask']);
-		
+
 	if ($a_ipsec[$id]['interface'])
 		$pconfig['interface'] = $a_ipsec[$id]['interface'];
 	else
 		$pconfig['interface'] = "wan";
-		
+
 	list($pconfig['remotenet'],$pconfig['remotebits']) = explode("/", $a_ipsec[$id]['remote-subnet']);
 	$pconfig['remotegw'] = $a_ipsec[$id]['remote-gateway'];
 	$pconfig['p1mode'] = $a_ipsec[$id]['p1']['mode'];
-	
+
 	if (isset($a_ipsec[$id]['p1']['myident']['myaddress']))
 		$pconfig['p1myidentt'] = 'myaddress';
 	else if (isset($a_ipsec[$id]['p1']['myident']['address'])) {
@@ -105,7 +106,7 @@ if (isset($id) && $a_ipsec[$id]) {
 		$pconfig['p1myidentt'] = 'user_fqdn';
 		$pconfig['p1myident'] = $a_ipsec[$id]['p1']['myident']['ufqdn'];
  	}
-	
+
 	$pconfig['p1ealgo'] = $a_ipsec[$id]['p1']['encryption-algorithm'];
 	$pconfig['p1halgo'] = $a_ipsec[$id]['p1']['hash-algorithm'];
 	$pconfig['p1dhgroup'] = $a_ipsec[$id]['p1']['dhgroup'];
@@ -117,7 +118,7 @@ if (isset($id) && $a_ipsec[$id]) {
 	$pconfig['p2pfsgroup'] = $a_ipsec[$id]['p2']['pfsgroup'];
 	$pconfig['p2lifetime'] = $a_ipsec[$id]['p2']['lifetime'];
 	$pconfig['descr'] = $a_ipsec[$id]['descr'];
-	
+
 } else {
 	/* defaults */
 	$pconfig['interface'] = "wan";
@@ -140,16 +141,16 @@ if ($_POST) {
 	} else if ($_POST['localnettype'] == "single") {
 		$_POST['localnetmask'] = 32;
 	}
-	
+
 	unset($input_errors);
 	$pconfig = $_POST;
 
 	/* input validation */
 	$reqdfields = explode(" ", "localnet remotenet remotebits remotegw p1pskey p2ealgos p2halgos");
 	$reqdfieldsn = explode(",", "Local network,Remote network,Remote network bits,Remote gateway,Pre-Shared Key,P2 Encryption Algorithms,P2 Hash Algorithms");
-	
+
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-	
+
 	if (!is_specialnet($_POST['localnettype'])) {
 		if (($_POST['localnet'] && !is_ipaddr($_POST['localnet']))) {
 			$input_errors[] = "A valid local network IP address must be specified.";
@@ -181,10 +182,10 @@ if ($_POST) {
 	}
 	if ($_POST['p1myidentt'] == "user_fqdn") {
 		$ufqdn = explode("@",$_POST['p1myident']);
-		if (!is_domain($ufqdn[1])) 
+		if (!is_domain($ufqdn[1]))
 			$input_errors[] = "A valid User FQDN in the form of user@my.domain.com for 'My identifier' must be specified.";
 	}
-	
+
 	if ($_POST['p1myidentt'] == "myaddress")
 		$_POST['p1myident'] = "";
 
@@ -196,7 +197,7 @@ if ($_POST) {
 		$ipsecent['remote-subnet'] = $_POST['remotenet'] . "/" . $_POST['remotebits'];
 		$ipsecent['remote-gateway'] = $_POST['remotegw'];
 		$ipsecent['p1']['mode'] = $_POST['p1mode'];
-		
+
 		$ipsecent['p1']['myident'] = array();
 		switch ($_POST['p1myidentt']) {
 			case 'myaddress':
@@ -212,7 +213,7 @@ if ($_POST) {
 				$ipsecent['p1']['myident']['ufqdn'] = $_POST['p1myident'];
 				break;
 		}
-		
+
 		$ipsecent['p1']['encryption-algorithm'] = $_POST['p1ealgo'];
 		$ipsecent['p1']['hash-algorithm'] = $_POST['p1halgo'];
 		$ipsecent['p1']['dhgroup'] = $_POST['p1dhgroup'];
@@ -224,15 +225,15 @@ if ($_POST) {
 		$ipsecent['p2']['pfsgroup'] = $_POST['p2pfsgroup'];
 		$ipsecent['p2']['lifetime'] = $_POST['p2lifetime'];
 		$ipsecent['descr'] = $_POST['descr'];
-		
+
 		if (isset($id) && $a_ipsec[$id])
 			$a_ipsec[$id] = $ipsecent;
 		else
 			$a_ipsec[] = $ipsecent;
-		
+
 		write_config();
 		touch($d_ipsecconfdirty_path);
-		
+
 		header("Location: vpn_ipsec.php");
 		exit;
 	}
@@ -275,26 +276,26 @@ function typesel_change() {
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="vpn_ipsec_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">Mode</td>
                   <td width="78%" class="vtable"> Tunnel</td>
                 </tr>
-				<tr> 
+				<tr>
                   <td width="22%" valign="top" class="vncellreq">Disabled</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked"; ?>>
                     <strong>Disable this tunnel</strong><br>
                     <span class="vexpl">Set this option to disable this tunnel without
 					removing it from the list.</span></td>
                 </tr>
-				<tr> 
+				<tr>
 				  <td width="22%" valign="top" class="vncellreq">Auto-establish</td>
-				  <td width="78%" class="vtable"> 
+				  <td width="78%" class="vtable">
 					<input name="auto" type="checkbox" id="auto" value="yes" <?php if ($pconfig['auto']) echo "checked"; ?>>
 					<strong>Automatically establish this tunnel</strong><br>
 					<span class="vexpl">Set this option to automatically re-establish this tunnel after reboots/reconfigures. If this is not set, the tunnel is established on demand.</span></td>
 				</tr>
-				<tr> 
+				<tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable"> <select name="interface" class="formfld">
                       <?php $interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
@@ -302,33 +303,33 @@ function typesel_change() {
 					  	$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 					  }
 					  foreach ($interfaces as $iface => $ifacename): ?>
-                      <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>> 
+                      <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
                       <?=htmlspecialchars($ifacename);?>
                       </option>
                       <?php endforeach; ?>
                     </select> <br>
                     <span class="vexpl">Select the interface for the local endpoint of this tunnel.</span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">Local subnet</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <table border="0" cellspacing="0" cellpadding="0">
-                      <tr> 
+                      <tr>
                         <td>Type:&nbsp;&nbsp;</td>
                         <td><select name="localnettype" class="formfld" onChange="typesel_change()">
                             <?php $sel = is_specialnet($pconfig['localnet']); ?>
-                            <option value="single" <?php if (($pconfig['localnetmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>> 
+                            <option value="single" <?php if (($pconfig['localnetmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>>
                             Single host</option>
-                            <option value="network" <?php if (!$sel) echo "selected"; ?>> 
+                            <option value="network" <?php if (!$sel) echo "selected"; ?>>
                             Network</option>
-                            <option value="lan" <?php if ($pconfig['localnet'] == "lan") { echo "selected"; } ?>> 
+                            <option value="lan" <?php if ($pconfig['localnet'] == "lan") { echo "selected"; } ?>>
                             LAN subnet</option>
                           </select></td>
                       </tr>
-                      <tr> 
+                      <tr>
                         <td>Address:&nbsp;&nbsp;</td>
                         <td><input name="localnet" type="text" class="formfld" id="localnet" size="20" value="<?php if (!is_specialnet($pconfig['localnet'])) echo htmlspecialchars($pconfig['localnet']);?>">
-                          / 
+                          /
                           <select name="localnetmask" class="formfld" id="localnetmask">
                             <?php for ($i = 31; $i >= 0; $i--): ?>
                             <option value="<?=$i;?>" <?php if ($i == $pconfig['localnetmask']) echo "selected"; ?>>
@@ -339,179 +340,194 @@ function typesel_change() {
                       </tr>
                     </table></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">Remote subnet</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="remotenet" type="text" class="formfld" id="remotenet" size="20" value="<?=$pconfig['remotenet'];?>">
-                    / 
+                    /
                     <select name="remotebits" class="formfld" id="remotebits">
                       <?php for ($i = 32; $i > 0; $i--): ?>
-                      <option value="<?=$i;?>" <?php if ($i == $pconfig['remotebits']) echo "selected"; ?>> 
+                      <option value="<?=$i;?>" <?php if ($i == $pconfig['remotebits']) echo "selected"; ?>>
                       <?=$i;?>
                       </option>
                       <?php endfor; ?>
                     </select></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">Remote gateway</td>
-                  <td width="78%" class="vtable"> 
-                    <input name="remotegw" type="text" class="formfld" id="remotegw" size="20" value="<?=$pconfig['remotegw'];?>"> 
+                  <td width="78%" class="vtable">
+                    <input name="remotegw" type="text" class="formfld" id="remotegw" size="20" value="<?=$pconfig['remotegw'];?>">
                     <br>
                     Enter the public IP address of the remote gateway</td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
-                  <td width="78%" class="vtable"> 
-                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>"> 
-                    <br> <span class="vexpl">You may enter a description here 
+                  <td width="78%" class="vtable">
+                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+                    <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td colspan="2" class="list" height="12"></td>
                 </tr>
-                <tr> 
-                  <td colspan="2" valign="top" class="listtopic">Phase 1 proposal 
+                <tr>
+                  <td colspan="2" valign="top" class="listtopic">Phase 1 proposal
                     (Authentication)</td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">Negotiation mode</td>
                   <td width="78%" class="vtable">
 <select name="p1mode" class="formfld">
                       <?php $modes = explode(" ", "main aggressive"); foreach ($modes as $mode): ?>
-                      <option value="<?=$mode;?>" <?php if ($mode == $pconfig['p1mode']) echo "selected"; ?>> 
+                      <option value="<?=$mode;?>" <?php if ($mode == $pconfig['p1mode']) echo "selected"; ?>>
                       <?=htmlspecialchars($mode);?>
                       </option>
                       <?php endforeach; ?>
-                    </select> <br> <span class="vexpl">Aggressive is faster, but 
+                    </select> <br> <span class="vexpl">Aggressive is faster, but
                     less secure.</span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">My identifier</td>
                   <td width="78%" class="vtable">
 <select name="p1myidentt" class="formfld">
                       <?php foreach ($my_identifier_list as $mode => $modename): ?>
-                      <option value="<?=$mode;?>" <?php if ($mode == $pconfig['p1myidentt']) echo "selected"; ?>> 
+                      <option value="<?=$mode;?>" <?php if ($mode == $pconfig['p1myidentt']) echo "selected"; ?>>
                       <?=htmlspecialchars($modename);?>
                       </option>
                       <?php endforeach; ?>
-                    </select> <input name="p1myident" type="text" class="formfld" id="p1myident" size="30" value="<?=$pconfig['p1myident'];?>"> 
+                    </select> <input name="p1myident" type="text" class="formfld" id="p1myident" size="30" value="<?=$pconfig['p1myident'];?>">
                   </td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">Encryption algorithm</td>
                   <td width="78%" class="vtable">
 <select name="p1ealgo" class="formfld">
                       <?php foreach ($p1_ealgos as $algo => $algoname): ?>
-                      <option value="<?=$algo;?>" <?php if ($algo == $pconfig['p1ealgo']) echo "selected"; ?>> 
+                      <option value="<?=$algo;?>" <?php if ($algo == $pconfig['p1ealgo']) echo "selected"; ?>>
                       <?=htmlspecialchars($algoname);?>
                       </option>
                       <?php endforeach; ?>
-                    </select> <br> <span class="vexpl">Must match the setting 
+                    </select> <br> <span class="vexpl">Must match the setting
                     chosen on the remote side. </span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">Hash algorithm</td>
                   <td width="78%" class="vtable">
 <select name="p1halgo" class="formfld">
                       <?php foreach ($p1_halgos as $algo => $algoname): ?>
-                      <option value="<?=$algo;?>" <?php if ($algo == $pconfig['p1halgo']) echo "selected"; ?>> 
+                      <option value="<?=$algo;?>" <?php if ($algo == $pconfig['p1halgo']) echo "selected"; ?>>
                       <?=htmlspecialchars($algoname);?>
                       </option>
                       <?php endforeach; ?>
-                    </select> <br> <span class="vexpl">Must match the setting 
+                    </select> <br> <span class="vexpl">Must match the setting
                     chosen on the remote side. </span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">DH key group</td>
                   <td width="78%" class="vtable">
 <select name="p1dhgroup" class="formfld">
                       <?php $keygroups = explode(" ", "1 2 5"); foreach ($keygroups as $keygroup): ?>
-                      <option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['p1dhgroup']) echo "selected"; ?>> 
+                      <option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['p1dhgroup']) echo "selected"; ?>>
                       <?=htmlspecialchars($keygroup);?>
                       </option>
                       <?php endforeach; ?>
-                    </select> <br> <span class="vexpl"><em>1 = 768 bit, 2 = 1024 
+                    </select> <br> <span class="vexpl"><em>1 = 768 bit, 2 = 1024
                     bit, 5 = 1536 bit</em><br>
                     Must match the setting chosen on the remote side. </span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncell">Lifetime</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="p1lifetime" type="text" class="formfld" id="p1lifetime" size="20" value="<?=$pconfig['p1lifetime'];?>">
                     seconds</td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">Pre-Shared Key</td>
-                  <td width="78%" class="vtable"> 
-                    <input name="p1pskey" type="text" class="formfld" id="p1pskey" size="40" value="<?=htmlspecialchars($pconfig['p1pskey']);?>"> 
+                  <td width="78%" class="vtable">
+                    <input name="p1pskey" type="text" class="formfld" id="p1pskey" size="40" value="<?=htmlspecialchars($pconfig['p1pskey']);?>">
                   </td>
                 </tr>
-                <tr> 
+                <tr>
                   <td colspan="2" class="list" height="12"></td>
                 </tr>
-                <tr> 
-                  <td colspan="2" valign="top" class="listtopic">Phase 2 proposal 
+                <tr>
+                  <td colspan="2" valign="top" class="listtopic">Phase 2 proposal
                     (SA/Key Exchange)</td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">Protocol</td>
                   <td width="78%" class="vtable">
 <select name="p2proto" class="formfld">
                       <?php foreach ($p2_protos as $proto => $protoname): ?>
-                      <option value="<?=$proto;?>" <?php if ($proto == $pconfig['p2proto']) echo "selected"; ?>> 
+                      <option value="<?=$proto;?>" <?php if ($proto == $pconfig['p2proto']) echo "selected"; ?>>
                       <?=htmlspecialchars($protoname);?>
                       </option>
                       <?php endforeach; ?>
-                    </select> <br> <span class="vexpl">ESP is encryption, AH is 
+                    </select> <br> <span class="vexpl">ESP is encryption, AH is
                     authentication only </span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">Encryption algorithms</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <?php foreach ($p2_ealgos as $algo => $algoname): ?>
-                    <input type="checkbox" name="p2ealgos[]" value="<?=$algo;?>" <?php if (in_array($algo, $pconfig['p2ealgos'])) echo "checked"; ?>> 
+                    <input type="checkbox" name="p2ealgos[]" value="<?=$algo;?>" <?php if (in_array($algo, $pconfig['p2ealgos'])) echo "checked"; ?>>
                     <?=htmlspecialchars($algoname);?>
-                    <br> 
+                    <br>
                     <?php endforeach; ?>
                     <br>
-                    Hint: use 3DES for best compatibility or if you have a hardware 
-                    crypto accelerator card. Blowfish is usually the fastest in 
+                    Hint: use 3DES for best compatibility or if you have a hardware
+                    crypto accelerator card. Blowfish is usually the fastest in
                     software encryption. </td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">Hash algorithms</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <?php foreach ($p2_halgos as $algo => $algoname): ?>
-                    <input type="checkbox" name="p2halgos[]" value="<?=$algo;?>" <?php if (in_array($algo, $pconfig['p2halgos'])) echo "checked"; ?>> 
+                    <input type="checkbox" name="p2halgos[]" value="<?=$algo;?>" <?php if (in_array($algo, $pconfig['p2halgos'])) echo "checked"; ?>>
                     <?=htmlspecialchars($algoname);?>
-                    <br> 
+                    <br>
                     <?php endforeach; ?>
 				  </td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">PFS key group</td>
                   <td width="78%" class="vtable">
 <select name="p2pfsgroup" class="formfld">
                       <?php foreach ($p2_pfskeygroups as $keygroup => $keygroupname): ?>
-                      <option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['p2pfsgroup']) echo "selected"; ?>> 
+                      <option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['p2pfsgroup']) echo "selected"; ?>>
                       <?=htmlspecialchars($keygroupname);?>
                       </option>
                       <?php endforeach; ?>
-                    </select> <br> <span class="vexpl"><em>1 = 768 bit, 2 = 1024 
+                    </select> <br> <span class="vexpl"><em>1 = 768 bit, 2 = 1024
                     bit, 5 = 1536 bit</em></span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncell">Lifetime</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="p2lifetime" type="text" class="formfld" id="p2lifetime" size="20" value="<?=$pconfig['p2lifetime'];?>">
                     seconds</td>
                 </tr>
-                <tr> 
+
+
+                <tr>
+                  <td colspan="2" class="list" height="12"></td>
+                </tr>
+		<tr>
+                  <td colspan="2" valign="top" class="listtopic">Misc</td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncell">Multi-Tunnel routing</td>
+                  <td width="78%" class="vtable">
+                    <input name="creategif" type="checkbox" id="creategif" size="40" value="<? if($pconfig['creategif']) echo " CHECKED"; ?>"><b> Turn on multi-subnet routing.</b>
+                    <br> <span class="vexpl">If you would like to route multiple subnets across this VPN, check this.</span></td>
+                </tr>
+
+                <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> 
+                  <td width="78%">
+                    <input name="Submit" type="submit" class="formbtn" value="Save">
                     <?php if (isset($id) && $a_ipsec[$id]): ?>
-                    <input name="id" type="hidden" value="<?=$id;?>"> 
+                    <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>
                   </td>
                 </tr>

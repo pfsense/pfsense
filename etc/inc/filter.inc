@@ -168,6 +168,8 @@ function filter_setup_altq_interfaces() {
 	$is_first = "";
 	if (is_array($config['interfaces'])) {
 		foreach ($config['interfaces'] as $ifname) {
+			$queue_names = "";
+			$is_first = "";
 			if (is_array($config['pfqueueing']['queue'])) {
 				foreach ($config['pfqueueing']['queue'] as $queue) {
 					$schedulertype = $ifname['schedulertype'];
@@ -902,8 +904,11 @@ EOD;
 				#$line .= "group $groupnum ";
 			}
 
-			if (isset($rule['queuename'])) {
-				$line .= "queue " . $rule['queuename'];
+			foreach ($config['pfqueueing']['queue'] as $que) {
+				if($que['options']['associatedrule'] == $rule['descr']) {
+					$line .= "queue " . $que['name'];
+					break;
+				}
 			}
 
 			$line .= "\n";

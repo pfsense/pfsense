@@ -103,7 +103,7 @@ if ($_GET['act'] == "del") {
                       <tr>
                         <td width="10%" class="listhdrr">No.</td>
                         <td width="5%" class="listhdrr">Priority</td>
-                        <td width="20%" class="listhdrr">Options</td>
+                        <td width="20%" class="listhdrr">Assigned Queue</td>
                         <td width="30%" class="listhdr">Description</td>
                         <td width="10%" class="list"></td>
                       </tr>
@@ -114,9 +114,9 @@ if ($_GET['act'] == "del") {
                         <td class="listr">
                           <?=$queue['priority'];?></td>
                         <td class="listr">
-                          <?php if ($queue['options']): ?>
-                          <?=$queue['options'];?>
-                          <?php endif; ?>
+                          <?php echo $queue['options']['associatedrule']; ?>
+
+
                           &nbsp; </td>
                         <td class="listbg">
                           <?=htmlspecialchars($queue['name']);?>

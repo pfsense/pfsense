@@ -835,7 +835,7 @@ function filter_nat_rules_generate() {
 		}
 	}
 
-	if ($pptpdcfg['mode'] && $pptpdcfg['mode'] != "off") {
+	if ($dcfg['mode'] && $pptpdcfg['mode'] != "off") {
 
 		if ($pptpdcfg['mode'] == "server")
 			$pptpdtarget = "127.0.0.1";
@@ -847,7 +847,7 @@ function filter_nat_rules_generate() {
 		$natrules .= <<<EOD
 
 # PPTP
-#rdr on $wanif proto gre from any to any port 0 -> $pptpdtarget
+rdr on $wanif proto gre from any to any -> $pptpdtarget
 rdr on $wanif proto tcp from any to any port 1723 -> $pptpdtarget
 
 EOD;
@@ -1052,10 +1052,10 @@ EOD;
 
 # allow PPTP client
 anchor "pptpclient"
-pass in quick on {$wancfg['if']} proto gre from any to any label "allow PPTP client"
-pass out quick on {$wancfg['if']} proto gre from any to any label "allow PPTP client"
-pass in quick on {$wancfg['if']} proto tcp from any port = 1723 to any label "allow PPTP client"
-pass out quick on {$wancfg['if']} proto tcp from any to any port = 1723 label "allow PPTP client"
+pass in quick on {$wancfg['if']} proto gre from any to any keep state label "allow PPTP client"
+pass out quick on {$wancfg['if']} proto gre from any to any  keep state label "allow PPTP client"
+pass in quick on {$wancfg['if']} proto tcp from any port = 1723 to any  keep state label "allow PPTP client"
+pass out quick on {$wancfg['if']} proto tcp from any to any port = 1723 keep state label "allow PPTP client"
 
 EOD;
 	}
@@ -1144,8 +1144,8 @@ EOD;
 
 # PPTP rules
 anchor "pptp"
-pass in quick proto gre from any to $pptpdtarget keep state label "allow gre pptp"
-pass in quick proto tcp from any to $pptpdtarget port = 1723 keep state label "allow $pptpdtarget"
+pass quick proto gre from any to $pptpdtarget keep state label "allow gre pptp"
+pass quick proto tcp from any to $pptpdtarget port = 1723 keep state label "allow pptp $pptpdtarget"
 
 EOD;
 	}

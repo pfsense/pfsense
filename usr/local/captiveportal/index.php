@@ -44,6 +44,7 @@ $orig_host = $_ENV['HTTP_HOST'];
 $orig_request = $_ENV['CAPTIVE_REQPATH'];
 $lockfile = "{$g['varrun_path']}/captiveportal.lock";
 $clientip = $_ENV['REMOTE_ADDR'];
+$portalip = $_ENV['SERVER_ADDR'];
 
 if (!$clientip) {
 	/* not good - bail out */
@@ -57,6 +58,10 @@ if (!$clientmac && !isset($config['captiveportal']['nomacfilter'])) {
 	exit;
 }
 
+/* find MAC address for portal */
+$iflist = get_interface_list();
+$portalmac = $iflist[ $config['interfaces'][$config['captiveportal']['interface']]['if'] ]['mac'];
+
 if ($clientmac && portal_mac_fixed($clientmac)) {
 	/* punch hole in ipfw for pass thru mac addresses */
 	portal_allow($clientip, $clientmac, "unauthenticated");
@@ -66,9 +71,16 @@ if ($clientmac && portal_mac_fixed($clientmac)) {
 	/* authenticate against radius server */
 	$radiusservers = captiveportal_get_radius_servers();
 	
+	/* determine port type */
+	$port_type = 15; // default to ethernet
+	if ($config['interfaces'][ $config['captiveportal']['interface'] ]['wireless']) {
+		$port_type = 19;	// wireless
+	}
+	
 	if ($_POST['auth_user'] && $_POST['auth_pass']) {
 		$auth_val = RADIUS_AUTHENTICATION($_POST['auth_user'],
 										  $_POST['auth_pass'],
+										  $port_type,
 							  			  $radiusservers[0]['ipaddr'],
 							  			  $radiusservers[0]['port'],
 							  			  $radiusservers[0]['key']);
@@ -77,6 +89,10 @@ if ($clientmac && portal_mac_fixed($clientmac)) {
 			if (isset($config['captiveportal']['radacct_enable']) && isset($radiusservers[0])) {
 				$auth_val = RADIUS_ACCOUNTING_START($_POST['auth_user'],
 													$sessionid,
+													$port_type,
+													$clientmac,
+													$clientip,
+													$portalmac,
 													$radiusservers[0]['ipaddr'],
 													$radiusservers[0]['acctport'],
 													$radiusservers[0]['key']);
@@ -203,10 +219,16 @@ function portal_allow($clientip,$clientmac,$clientuser) {
 	for ($i = 0; $i < count($cpdb); $i++) {
 		if(!strcasecmp($cpdb[$i][2],$clientip)) {
 			if(isset($config['captiveportal']['radacct_enable']) && isset($radiusservers[0])) {
+				$port_type = 15; // default to ethernet
+				if (isset($config['interfaces'][ $config['captiveportal']['interface'] ]['wireless'])) {
+					$port_type = 19; // wireless
+				}
+			
 				RADIUS_ACCOUNTING_STOP($cpdb[$i][1], // ruleno
 									   $cpdb[$i][4], // username
 									   $cpdb[$i][5], // sessionid
 									   $cpdb[$i][0], // start time
+									   $port_type,
 									   $radiusservers[0]['ipaddr'],
 									   $radiusservers[0]['acctport'],
 									   $radiusservers[0]['key']);
@@ -379,10 +401,18 @@ function disconnect_client($sessionid) {
 		if ($cpdb[$i][5] == $sessionid) {
 			/* this client needs to be deleted - remove ipfw rules */
 			if(isset($config['captiveportal']['radacct_enable']) && isset($radiusservers[0])) {
+
+			/* determine port type */
+			$port_type = 15; // default to ethernet
+			if ($config['interfaces'][ $config['captiveportal']['interface'] ]['wireless']) {
+				$port_type = 19;	// wireless
+			}
+	
 				RADIUS_ACCOUNTING_STOP($cpdb[$i][1], // ruleno
 									   $cpdb[$i][4], // username
 									   $cpdb[$i][5], // sessionid
 									   $cpdb[$i][0], // start time
+									   $port_type,
 									   $radiusservers[0]['ipaddr'],
 									   $radiusservers[0]['acctport'],
 									   $radiusservers[0]['key']);

@@ -28,7 +28,7 @@
 	// was also fixed and patches submitted to Edwin. This bug would
 	// have caused authentication to fail on every access.
 
-function RADIUS_AUTHENTICATION($username,$password,$radiusip,$radiusport,$radiuskey) {
+function RADIUS_AUTHENTICATION($username,$password,$port_type,$radiusip,$radiusport,$radiuskey) {
 	$sharedsecret=$radiuskey ;
 	# $debug = 1 ;
 
@@ -74,7 +74,7 @@ function RADIUS_AUTHENTICATION($username,$password,$radiusip,$radiusport,$radius
 	    2,2+strlen($encryptedpassword),$encryptedpassword,	// userpassword
 	    32,2+strlen($nasHostname[0]),$nasHostname[0],	// nasIdentifier
 	    5,6,0,0,0,0,						// nasPort
-	    61,6,0,0,0,15						// nasPortType = Ethernet
+	    61,6,0,0,0,$port_type				// nasPortType
 	    );
 
 	if($debug) {

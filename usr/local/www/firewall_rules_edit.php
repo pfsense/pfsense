@@ -228,8 +228,8 @@ if ($_POST) {
 
 
 	if($_POST['statetype'] == "modulate state" or $_POST['statetype'] == "synproxy state")
-		if( $_POST['proto'] == "udp" or $_POST['proto'] == "tcp/udp" or $_POST['proto'] == "icmp")
-			$input_errors[] = "You cannot select udp or icmp when using modulate state or synproxy state.";
+		if( $_POST['proto'] != "tcp" )
+			$input_errors[] = "{$_POST['statetype']} is only valid with protocol tcp.";
 
 
 	if (!(is_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single"))) {

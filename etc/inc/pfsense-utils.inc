@@ -577,7 +577,7 @@ function resync_all_package_configs_bootup($show_message) {
             eval($pkg_config['custom_php_command_before_form']);
         if($pkg_config['custom_php_resync_config_command'] <> "")
             eval($pkg_config['custom_php_resync_config_command']);
-	$depends = get_pkg_xml_depends($package['name']); // Call dependency handler and do a little more error checking.
+	$depends = get_pkg_depends($package['name']); // Call dependency handler and do a little more error checking.
 	foreach($depends as $item) {
                         $item_config = parse_xml_config_pkg("/usr/local/pkg/" . $item, "packagegui");
                         if($item_config['custom_php_command_before_form'] <> "")

@@ -321,8 +321,8 @@ function filter_generate_aliases() {
 	$wan_aliases = " " . link_ip_to_carp_interface($wanip);
 
 	$aliases .= "# System Aliases \n";
-	$aliases .= "lan = \"{ (" . $config['interfaces']['lan']['if'] . "){$lan_aliases} }\"\n";
-	$aliases .= "wan = \"{ (" . get_real_wan_interface() . "){$wan_aliases} }\"\n";
+	$aliases .= "lan = \"{ " . $config['interfaces']['lan']['if'] . "{$lan_aliases} }\"\n";
+	$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";
 	$aliases .= "pptp = \"{  }\"\n";
 
 	$ifdescrs = array();
@@ -339,7 +339,7 @@ function filter_generate_aliases() {
 			$extraalias = "";
 			$ip = find_interface_ip($alias['address']);
 			$extraalias = " " . link_ip_to_carp_interface($ip);
-			$aliases .= $alias['name'] . " = \"{ (" . $alias['address'] . "){$extralias} }\"\n";
+			$aliases .= $alias['name'] . " = \"{ " . $alias['address'] . "{$extralias} }\"\n";
 		}
 	}
 
@@ -783,12 +783,12 @@ function filter_nat_rules_generate() {
 	}
 
 	if(!isset($config['system']['disableftpproxy']))
-		$natrules .= "rdr on lan proto tcp from any to any port 21 -> 127.0.0.1 port 8021\n";
+		$natrules .= "rdr on " . $lanif . " proto tcp from any to any port 21 -> 127.0.0.1 port 8021\n";
 
 
 	/* DIAG: add ipv6 NAT, if requested */
 	if (isset($config['diag']['ipv6nat']['enable'])) {
-		$natrules .= "rdr on wan proto ipv6 from any to any port 0 -> " .
+		$natrules .= "rdr on $wanif proto ipv6 from any to any port 0 -> " .
 		"{$config['diag']['ipv6nat']['ipaddr']}\n";
 	}
 
@@ -846,8 +846,8 @@ function filter_nat_rules_generate() {
 		$natrules .= <<<EOD
 
 # PPTP
-rdr on wan proto gre from any to any -> $pptpdtarget
-rdr on wan proto tcp from any to any port 1723 -> $pptpdtarget
+rdr on $wanif proto gre from any to any -> $pptpdtarget
+rdr on $wanif proto tcp from any to any port 1723 -> $pptpdtarget
 
 EOD;
 		}
@@ -855,7 +855,7 @@ EOD;
 
 	$squid_installed = run_command_return_string("/bin/ls /var/db/pkg/ | grep squid");
 	if ($squid_installed <> "") {
-		$natrules .= "rdr on lan inet proto tcp from any to any port www -> 127.0.0.1 port 3128\n";
+		$natrules .= "rdr on " . $lanif . " inet proto tcp from any to any port www -> 127.0.0.1 port 3128\n";
 	}
 
 	return $natrules;
@@ -936,8 +936,8 @@ function filter_rules_generate() {
 	/* if squid is installed, lets install its rule */
 	$squid_installed = run_command_return_string("/bin/ls /var/db/pkg/ | grep squid");
 	if ($squid_installed <> "") {
-		$ipfrules .= "pass in quick on lan inet proto tcp from any to 127.0.0.1 port 3128 keep state label \"transparent proxy\"\n";
-		$ipfrules .= "pass out quick on wan  inet proto tcp from any to any port www keep state label \"transparent proxy\"\n";
+		$ipfrules .= "pass in quick on " . $lanif . " inet proto tcp from any to 127.0.0.1 port 3128 keep state label \"transparent proxy\"\n";
+		$ipfrules .= "pass out quick on " . $wanif . "  inet proto tcp from any to any port www keep state label \"transparent proxy\"\n";
 	}
 
 	$ipfrules .= create_firewall_outgoing_rules_to_itself();
@@ -946,8 +946,8 @@ function filter_rules_generate() {
 
 # loopback
 anchor "loopback"
-pass in quick on (lo0) all label "pass loopback"
-pass out quick on (lo0) all label "pass loopback"
+pass in quick on lo0 all label "pass loopback"
+pass out quick on lo0 all label "pass loopback"
 
 # package manager early specific hook
 anchor "packageearly"
@@ -957,14 +957,14 @@ anchor "carp"
 
 # enable ftp-proxy
 anchor "ftpproxy"
-pass in quick on wan inet proto tcp from port 20 to wan user proxy flags S/SA keep state
-pass in quick on wan inet proto tcp from any to wan port > 49000 user proxy keep state
+pass in quick on $wanif inet proto tcp from port 20 to ($wanif) user proxy flags S/SA keep state
+pass in quick on $wanif inet proto tcp from any to $wanif port > 49000 user proxy keep state
 
 # allow access to DHCP server on LAN
 anchor "dhcpserverlan"
-pass in quick on lan proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server on LAN"
-pass in quick on lan proto udp from any port = 68 to $lanip port = 67 label "allow access to DHCP server on LAN"
-pass out quick on lan proto udp from $lanip port = 67 to any port = 68 label "allow access to DHCP server on LAN"
+pass in quick on $lanif proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server on LAN"
+pass in quick on $lanif proto udp from any port = 68 to $lanip port = 67 label "allow access to DHCP server on LAN"
+pass out quick on $lanif proto udp from $lanip port = 67 to any port = 68 label "allow access to DHCP server on LAN"
 
 EOD;
 
@@ -975,10 +975,10 @@ EOD;
 
 # allow access to DHCP server on {$on}
 anchor "dhcpserver"
-pass in quick on ({$oc['if']}) proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server"
-pass in quick on ({$oc['if']}) proto udp from any port = 68 to {$oc['ip']} port = 67 label "allow access to DHCP server"
-pass out quick on ({$oc['if']}) proto udp from {$oc['ip']} port = 67 to any port = 68 label "allow access to DHCP server"
-pass out on ({$oc['if']}) proto icmp from any to any keep state label "allow access to DHCP server"
+pass in quick on {$oc['if']} proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server"
+pass in quick on {$oc['if']} proto udp from any port = 68 to {$oc['ip']} port = 67 label "allow access to DHCP server"
+pass out quick on {$oc['if']} proto udp from {$oc['ip']} port = 67 to any port = 68 label "allow access to DHCP server"
+pass out on {$oc['if']} proto icmp from any to any keep state label "allow access to DHCP server"
 
 EOD;
 		}
@@ -1022,10 +1022,10 @@ EOD;
 			if ($sa) {
 				$ipfrules .= <<<EOD
 anchor "staticrouted"
-pass in quick on ({$if}) from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"
-pass in quick on ({$if}) from {$route['network']} to {$sa}/{$sn} label "pass traffic between statically routed subnets"
-pass out quick on ({$if}) from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"
-pass out quick on ({$if}) from {$route['network']} to {$sa}/{$sn} label "pass traffic between statically routed subnets"
+pass in quick on {$if} from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"
+pass in quick on {$if} from {$route['network']} to {$sa}/{$sn} label "pass traffic between statically routed subnets"
+pass out quick on {$if} from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"
+pass out quick on {$if} from {$route['network']} to {$sa}/{$sn} label "pass traffic between statically routed subnets"
 
 EOD;
 			}
@@ -1036,13 +1036,13 @@ EOD;
 
 # WAN spoof check
 anchor "wanspoof"
-block in $log quick on wan from $lansa/$lansn to any label "WAN spoof check"
+block in $log quick on $wanif from $lansa/$lansn to any label "WAN spoof check"
 
 EOD;
 
 	foreach ($optcfg as $oc) {
 		if (!$oc['bridge'])
-			$ipfrules .= "block in $log quick on wan from {$oc['sa']}/{$oc['sn']} to any label \"interface spoof check\"\n";
+			$ipfrules .= "block in $log quick on $wanif from {$oc['sa']}/{$oc['sn']} to any label \"interface spoof check\"\n";
 	}
 
 	/* allow PPTP traffic if PPTP client is enabled on WAN */
@@ -1051,10 +1051,10 @@ EOD;
 
 # allow PPTP client
 anchor "pptpclient"
-pass in quick on wan proto gre from any to any keep state label "allow PPTP client"
-pass out quick on wan proto gre from any to any  keep state label "allow PPTP client"
-pass in quick on wan proto tcp from any port = 1723 to any  keep state label "allow PPTP client"
-pass out quick on wan proto tcp from any to any port = 1723 keep state label "allow PPTP client"
+pass in quick on {$wancfg['if']} proto gre from any to any keep state label "allow PPTP client"
+pass out quick on {$wancfg['if']} proto gre from any to any  keep state label "allow PPTP client"
+pass in quick on {$wancfg['if']} proto tcp from any port = 1723 to any  keep state label "allow PPTP client"
+pass out quick on {$wancfg['if']} proto tcp from any to any port = 1723 keep state label "allow PPTP client"
 
 EOD;
 	}
@@ -1065,9 +1065,9 @@ EOD;
 # XXX - should be more restrictive
 # (not possible at the moment - need 'me' like in ipfw)
 anchor "wandhcp"
-pass out quick on wan proto udp from any port = 68 to any port = 67 label "allow dhcp client out wan"
-block in $log quick on wan proto udp from any port = 67 to $lansa/$lansn port = 68 label "allow dhcp client out wan"
-pass in quick on wan proto udp from any port = 67 to any port = 68 label "allow dhcp client out wan"
+pass out quick on $wanif proto udp from any port = 68 to any port = 67 label "allow dhcp client out wan"
+block in $log quick on $wanif proto udp from any port = 67 to $lansa/$lansn port = 68 label "allow dhcp client out wan"
+pass in quick on $wanif proto udp from any port = 67 to any port = 68 label "allow dhcp client out wan"
 
 # LAN/OPT spoof check (needs to be after DHCP because of broadcast addresses)
 
@@ -1088,10 +1088,10 @@ EOD;
 
 # block anything from private networks on WAN interface
 anchor "spoofing"
-block in $log quick on wan from 10.0.0.0/8 to any label "block private networks from wan block 10/8"
-block in $log quick on wan from 127.0.0.0/8 to any label "block private networks from wan block 127/8"
-block in $log quick on wan from 172.16.0.0/12 to any label "block private networks from wan block 172.16/12"
-block in $log quick on wan from 192.168.0.0/16 to any label "block private networks from wan block 192.168/16"
+block in $log quick on $wanif from 10.0.0.0/8 to any label "block private networks from wan block 10/8"
+block in $log quick on $wanif from 127.0.0.0/8 to any label "block private networks from wan block 127/8"
+block in $log quick on $wanif from 172.16.0.0/12 to any label "block private networks from wan block 172.16/12"
+block in $log quick on $wanif from 192.168.0.0/16 to any label "block private networks from wan block 192.168/16"
 
 EOD;
 
@@ -1102,7 +1102,7 @@ EOD;
 
 
 # let out anything from the firewall host itself and decrypted IPsec traffic
-pass out quick on wan all keep state label "let out anything from firewall host itself"
+pass out quick on $wanif all keep state label "let out anything from firewall host itself"
 
 EOD;
 
@@ -1115,7 +1115,7 @@ EOD;
 
 
 # let out anything from the firewall host itself and decrypted IPsec traffic
-pass out quick on ({$oc['if']}) all keep state label "let out anything from firewall host itself"
+pass out quick on {$oc['if']} all keep state label "let out anything from firewall host itself"
 
 EOD;
 
@@ -1272,7 +1272,7 @@ EOD;
 			$line .= "quick ";
 
 			if ($ispptp) {
-				$line .= "on (ng" . ($iif+1) . ") ";
+				$line .= "on ng" . ($iif+1) . " ";
 			} else {
 				// translate wan, man, lan, opt to real interface.
 				$interface = $rule['interface'];
@@ -1287,7 +1287,7 @@ EOD;
 						$canadd = 1;
 				}
 				if($canadd == 0)
-					$line .= "on (\$" . $interface . ") ";
+					$line .= "on \$" . $interface . " ";
 			}
 
 			if (isset($rule['protocol'])) {
@@ -1521,17 +1521,17 @@ EOD;
 	if(is_array($config['ipsec']['tunnel'])) {
 		foreach ($config['ipsec']['tunnel'] as $tunnel) {
 			$remote_gateway = $tunnel['remote-gateway'];
-			$ipfrules .= "pass quick on wan proto udp from " . $wan_ip . " to " . $remote_gateway . " port = 500 keep state label \"IPSEC: ". $tunnel['descr'] ." udp\"\n";
-			$ipfrules .= "pass quick on wan proto udp from " . $remote_gateway . " to " . $wan_ip  . " port = 500 keep state label \"". $tunnel['descr'] ." udp\"\n";
+			$ipfrules .= "pass quick on " . $wanif . " proto udp from " . $wan_ip . " to " . $remote_gateway . " port = 500 keep state label \"IPSEC: ". $tunnel['descr'] ." udp\"\n";
+			$ipfrules .= "pass quick on " . $wanif . " proto udp from " . $remote_gateway . " to " . $wan_ip  . " port = 500 keep state label \"". $tunnel['descr'] ." udp\"\n";
 
-			$ipfrules .= "pass quick on wan proto esp from " . $wan_ip . " to " . $remote_gateway . " keep state label \"IPSEC: ". $tunnel['descr'] ." esp proto\"\n";
-			$ipfrules .= "pass quick on wan proto esp from " . $remote_gateway . " to " . $wan_ip  . " keep state label \"IPSEC: ". $tunnel['descr'] ." esp proto\"\n";
+			$ipfrules .= "pass quick on " . $wanif . " proto esp from " . $wan_ip . " to " . $remote_gateway . " keep state label \"IPSEC: ". $tunnel['descr'] ." esp proto\"\n";
+			$ipfrules .= "pass quick on " . $wanif . " proto esp from " . $remote_gateway . " to " . $wan_ip  . " keep state label \"IPSEC: ". $tunnel['descr'] ." esp proto\"\n";
 
-			$ipfrules .= "pass quick on wan proto ah from " . $wan_ip . " to " . $remote_gateway . " keep state label \"IPSEC: ". $tunnel['descr'] ." ah proto\"\n";
-			$ipfrules .= "pass quick on wan proto ah from " . $remote_gateway . " to " . $wan_ip  . " keep state label \"IPSEC: ". $tunnel['descr'] ." ah proto\"\n";
+			$ipfrules .= "pass quick on " . $wanif . " proto ah from " . $wan_ip . " to " . $remote_gateway . " keep state label \"IPSEC: ". $tunnel['descr'] ." ah proto\"\n";
+			$ipfrules .= "pass quick on " . $wanif . " proto ah from " . $remote_gateway . " to " . $wan_ip  . " keep state label \"IPSEC: ". $tunnel['descr'] ." ah proto\"\n";
 
-			$ipfrules .= "pass quick on lan from " . $tunnel['remote-subnet'] . " to " . $internal_subnet  . " keep state label \"IPSEC:  " . $tunnel['descr'] ."\"\n";
-			$ipfrules .= "pass quick on lan from " . $internal_subnet . " to " . $tunnel['remote-subnet'] . " keep state label \"IPSEC:  " . $tunnel['descr'] ."\"\n";
+			$ipfrules .= "pass quick on " . $lanif . " from " . $tunnel['remote-subnet'] . " to " . $internal_subnet  . " keep state label \"IPSEC:  " . $tunnel['descr'] ."\"\n";
+			$ipfrules .= "pass quick on " . $lanif . " from " . $internal_subnet . " to " . $tunnel['remote-subnet'] . " keep state label \"IPSEC:  " . $tunnel['descr'] ."\"\n";
 		}
 	}
 
@@ -1584,11 +1584,11 @@ function create_firewall_outgoing_rules_to_itself() {
 	}
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		$int = filter_translate_type_to_real_interface($ifname);
-		$rule .="pass out quick on ({$int}) inet from any to any keep state\n";
+		$rule .="pass out quick on {$int} inet from any to any keep state\n";
                 /* XXX - billm: temp fix for pppoe, needs better fix */
                 if ($config['interfaces'][$ifname]['ipaddr'] == "pppoe")
                         $int = "ng0";
-		$rule .="pass out quick on ({$int}) inet from ({$int}) to any keep state\n";
+		$rule .="pass out quick on {$int} inet from {$int} to any keep state\n";
 	}
 	return $rule;
 }

@@ -33,7 +33,12 @@
 
 if(file_exists("/usr/local/www/trigger_initial_wizard")) {
 	unlink("/usr/local/www/trigger_initial_wizard");
-	header("Location:  wizard.php?xml=setup_wizard.xml");
+	echo "<center>";
+	echo "Welcome to pfSense!<p>";
+	echo "One moment while we start the initial setup wizard.<p>";
+	echo "Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal gui.<p>";
+	echo "To bypass the wizard, click on the pfSense wizard on the initial page.";
+	echo "<meta http-equiv=\"refresh\" content=\"1;url=wizard.php?xml=setup_wizard.xml\">";
 }
 
 require("guiconfig.inc");
@@ -269,7 +274,7 @@ While(!Connection_Aborted()) {
 
     echo "<script language='javascript'>\n";
     echo "document.forms[0].uptime.value = '" . get_uptime() . "';\n";
-    
+
     echo "document.cpuwidtha.style.width='" . $cpuUsage . "';\n";
     echo "document.cpuwidthb.style.width='" . (100 - $cpuUsage) . "';\n";
     echo "document.forms[0].cpumeter.value = '" . $cpuUsage . "%';\n";

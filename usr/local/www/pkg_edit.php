@@ -142,6 +142,7 @@ include("fbegin.inc");
 				// simply loop through all field names looking for posted
 				// values matching the fieldnames.  if found, save to package
 				// configuration area.
+
 				$fieldname  = $fields['fieldname'];
 				$fieldvalue = $_POST[$fieldname];
 				$toeval = "\$pkgarr['" . $fieldname . "'] 	= \"" . $fieldvalue . "\";";
@@ -252,7 +253,7 @@ $config = $config_tmp;
 		    echo "</select>\n";
 		    echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "checkbox") {
-			echo "<input type='checkbox' name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
+			echo "<input type='checkbox' name='" . $pkga['fieldname'] . "'>\n";
 			echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "textarea") {
 		  if($pkga['rows']) $rows = " rows='" . $pkga['rows'] . "' ";

@@ -134,9 +134,10 @@ if ($_POST) {
 
 		write_config();
 
+		// restart webgui if proto changed
 		if (($oldwebguiproto != $config['system']['webgui']['protocol']) ||
 			($oldwebguiport != $config['system']['webgui']['port']))
-			touch($d_sysrebootreqd_path);
+			system_webgui_start();
 
 		$retval = 0;
 		if (!file_exists($d_sysrebootreqd_path)) {
@@ -222,8 +223,8 @@ if ($_POST) {
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">webGUI protocol</td>
-                  <td width="78%" class="vtable"> <input name="webguiproto" type="radio" value="http" <?php if ($pconfig['webguiproto'] == "http") echo "checked"; ?>>
-                    HTTP &nbsp;&nbsp;&nbsp; <input type="radio" name="webguiproto" value="https" <?php if ($pconfig['webguiproto'] == "https") echo "checked"; ?>>
+                  <td width="78%" class="vtable"> <input name="webguiproto" type="radio" value="http" onclick="alert('webGUI protocol changes will take effect immediately after clicking save')" <?php if ($pconfig['webguiproto'] == "http") echo "checked"; ?>>
+                    HTTP &nbsp;&nbsp;&nbsp; <input type="radio" name="webguiproto" value="https" onclick="alert('webGUI protocol changes will take effect immediately after clicking save')" <?php if ($pconfig['webguiproto'] == "https") echo "checked"; ?>>
                     HTTPS</td>
                 </tr>
                 <tr>

@@ -901,16 +901,7 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 }
 
 /*
- * make_dirs($path, $mode = 0755)
- * create directory tree recursively (mkdir -p)
- */
-function make_dirs($path, $mode = 0755)
-{
-   return is_dir($path) || (make_dirs(dirname($path), $mode) && mkdir($path, $mode));
-}
-
-/*
- * rmdirRecursive($path,$followLinks=false)
+ * rmdir_recursive($path,$followLinks=false)
  * Recursively remove a directory tree (rm -rf path)
  * This is for directories _only_
  */
@@ -925,6 +916,26 @@ function rmdir_recursive($path,$follow_links=false) {
 	}
 	closedir($dir) ;
 	return rmdir($path);
+}
+
+/*
+ * safe_mkdir($path, $mode = 0755)
+ * create directory if it doesn't already exist and isn't a file!
+ */
+function safe_mkdir($path, $mode=0755) {
+	if (!is_file($path) && !is_dir($path))
+		return mkdir($path, $mode);
+	else
+		return false;
+}
+
+/*
+ * make_dirs($path, $mode = 0755)
+ * create directory tree recursively (mkdir -p)
+ */
+function make_dirs($path, $mode = 0755)
+{
+	return is_dir($path) || (make_dirs(dirname($path), $mode) && safe_mkdir($path, $mode));
 }
 
 ?>

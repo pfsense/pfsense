@@ -109,6 +109,8 @@ function conv_clog($logfile, $tail) {
 		$flent['src'] = convert_port_period_to_colon($flent['src']);
 		$flent['dst'] = convert_port_period_to_colon($flent['dst']);
 
+		if($flent['dst'] == "HBH...") $dontdisplay = 1;
+
 		if($flent['proto'] == "S" or $flent['proto'] == "NBT" or $flent['proto'] == "." or $flent['proto'] == "R" or $flent['proto'] == ">") $dontdisplay = 1;
 
 		if($dontdisplay == 0)

@@ -42,6 +42,7 @@ if ($_POST) {
     $pconfig = $_POST;
 
     $config['nat']['advancedoutbound']['enable'] = ($_POST['enable']) ? true : false;
+    $pconfig['nat']['enableoutboundloadbalancing'] = $_POST['enableoutboundloadbalancing'] ? true : false;
     write_config();
 
     $retval = 0;
@@ -103,14 +104,20 @@ if ($_GET['act'] == "del") {
                   <td class="vtable"><p>
                       <input name="enable" type="checkbox" id="enable" value="yes" <?php if (isset($config['nat']['advancedoutbound']['enable'])) echo "checked";?>>
                       <strong>Enable advanced outbound NAT<br>
-                      </strong></p></td>
+                      </strong></p>
+                  </td>
+                  <td class="vtable"><p>
+                        <input name="enableoutboundloadbalancing" type="checkbox" id="enableoutboundloadbalancing" value="yes" <?php if ($pconfig['enableoutboundloadbalancing'] == "yes") echo "checked";?>>
+                        <strong>Enable outbound load balancing.<br>
+                        </strong></p>
+                  </td>
                 </tr>
                 <tr>
                   <td> <input name="submit" type="submit" class="formbtn" value="Save">
                   </td>
                 </tr>
                 <tr>
-                  <td><p><span class="vexpl"><span class="red"><strong>Note:<br>
+                  <td colspan="2"><p><span class="vexpl"><span class="red"><strong>Note:<br>
                       </strong></span>If advanced outbound NAT is enabled, no outbound NAT
                       rules will be automatically generated anymore. Instead, only the mappings
                       you specify below will be used. With advanced outbound NAT disabled,

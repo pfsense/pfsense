@@ -225,6 +225,7 @@ function get_pkg_id($pkg_name) {
  *  returns latest package version
  */
 function get_latest_package_version($pkg_name) {
+    global $config;
     fetch_latest_pkg_config();
     $pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
     foreach($pkg_config['package']['packages'] as $pkg) {
@@ -255,6 +256,7 @@ function get_available_pkg_id($pkg_name) {
  * fetch_latest_pkg_config: download the latest pkg_config.xml to /tmp/ directory
  */
 function fetch_latest_pkg_config() {
+    global $g;
     if(!file_exists("/tmp/pkg_config.xml")) {
 	mwexec("/usr/bin/fetch -o {$g['tmp_path']}/pkg_config.xml {$g['pkg_config_location']}");
 	if(!file_exists("{$g['tmp_path']}/pkg_config.xml")) {

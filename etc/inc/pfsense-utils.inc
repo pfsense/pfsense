@@ -656,7 +656,7 @@ function reverse_strrchr($haystack, $needle) {
  * get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files"):  Return a package's XML dependencies.
  *
  * $filetype = "all" || ".xml", ".tgz", etc.
- * $format = "files" (full filenames) ||
+ * $format = "files" (full filenames) || "names" (stripped / parsed depend names)
  *
  */
 function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files") {
@@ -666,52 +666,53 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files") {
                         $package_xml = $package;
                         if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) { // If the package's config file doesn't exist, log an error and fetch it.
                                 log_error("Fetching missing configuration XML for " . $pkg_name);
-                                mwexec("/usr/bin/fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationfile']);
+                                mwexec("/usr/bin/fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationf
+ile']);
                         }
                         break;
                 }
         }
         $pkg_xml = parse_xml_config_pkg("/usr/local/pkg/" . $package_xml['configurationfile'], "packagegui");
         if($pkg_xml['additional_files_needed'] != "") {
-                foreach($pkg_xml['additional_files_needed']['0'] as $item) {
-                        $depend_file = substr(strrchr($item['0'], "/"),1); // Strip URLs down to filenames.
-			$depend_name = reverse_strrchr($depend_file, "."); // Strip filename down to dependency name.
-                        if ($filetype != "all" && !preg_match("/\{$filetype}/i", $depend_file)) break; // If the file doesn't end in desired extension (case-insensitive) exit the loop.
-                        if(!file_exists("/usr/local/pkg/" . $pkg_name)) {
-                                log_error("Fetching missing dependency \(" . $depend_name . "\) for " . $pkg_name);
-				if($item['prefix'] != "") { // Use the prefix defined in XML if applicable.
-					$prefix = $item['prefix'];
-					mwexec("/usr/local/bin/fetch -o " . $item['prefix'] . $depend_file . " " . $item['0']);
-                                } else {
-					$prefix = "/usr/local/pkg/"; // Default to /usr/local/pkg otherwise.
-					mwexec("/usr/local/bin/fetch -o " . $prefix . $depend_file . " " . $item['0']);
-				}
-				if($item['chmod'] != "") mwexec("/bin/chmod " . $item['chmod'] . $prefix . $depend_file); // Handle chmods.
+                foreach($pkg_xml['additional_files_needed'] as $item) {
+                        $depend_file = substr(strrchr($item['item']['0'], '/'),1); // Strip URLs down to filenames.
+                        $depend_name = substr(substr($depend_file,0,strpos($depend_file,".")+1),0,-1); // Strip filename down to dependency name.
+                        print $depend_name;
+                        if (($filetype != "all") && (!preg_match("/${filetype}/i", $depend_file))) continue;
+                        if ($item['prefix'] != "") {
+                                $prefix = $item['prefix'];
+                        } else {
+                                $prefix = "/usr/local/pkg/";
                         }
-			switch ($format) {
-			case "files":
-				$depends[] = $depend_file;
-				break;
-			case "names":
-				switch ($filetype) {
-				case "all":
-					if(preg_match("/\.xml/i", $depend_file)) {
-						$depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
-						$depends[] = $depend_xml['name'];
-						break;
-					} else {
-						$depends[] = $depend_name; // If this dependency isn't package XML, use the stripped filename.
-						break;
-					}
-				case ".xml":
-					$depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
-					$depends[] = $depend_xml['name'];
-					break;
-				default:
-					$depends[] = $depend_name; // If we aren't looking for XML, use the stripped filename (it's all we have).
-					break;
-				}
-			}
+                        if(!file_exists($prefix . $pkg_name)) {
+                                log_error("Fetching missing dependency (" . $depend_name . ") for " . $pkg_name);
+                                mwexec("/usr/local/bin/fetch -o " . $prefix . $depend_file . " " . $item['name']['0']);
+                                if($item['chmod'] != "") mwexec("/bin/chmod " . $item['chmod'] . $prefix . $depend_file); // Handle chmods.
+                        }
+                        switch ($format) {
+                        case "files":
+                                $depends[] = $depend_file;
+                                break;
+                        case "names":
+                                switch ($filetype) {
+                                case "all":
+                                        if(preg_match("/\.xml/i", $depend_file)) {
+                                                $depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
+                                                $depends[] = $depend_xml['name'];
+                                                break;
+                                        } else {
+                                                $depends[] = $depend_name; // If this dependency isn't package XML, use the stripped filename.
+                                                break;
+                                        }
+                                case ".xml":
+                                        $depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
+                                        $depends[] = $depend_xml['name'];
+                                        break;
+                                default:
+                                        $depends[] = $depend_name; // If we aren't looking for XML, use the stripped filename (it's all we have).
+                                        break;
+                                }
+                        }
                 }
         return $depends;
         }

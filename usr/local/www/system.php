@@ -53,6 +53,8 @@ if (!$pconfig['timezone'])
 if (!$pconfig['timeservers'])
 	$pconfig['timeservers'] = "pool.ntp.org";
 
+$changedesc = "System: ";
+
 function is_timezone($elt) {
 	return !preg_match("/\/$/", $elt);
 }
@@ -103,8 +105,14 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		$config['system']['hostname'] = strtolower($_POST['hostname']);
-		$config['system']['domain'] = strtolower($_POST['domain']);
+		if ($config['system']['hostname'] != strtolower($_POST['hostname'])) {
+			$changedesc .= " changed hostname: \"{$config['system']['hostname']}\" -> \"" . strtolower($_POST['hostname']) . "\"";
+			$config['system']['hostname'] = strtolower($_POST['hostname']);
+		}
+		if ($config['system']['domain'] != strtolower($_POST['domain'])) {
+			$changedesc .= " changed domain: \"{$config['system']['domain']}\" -> \"" . strtolower($_POST['domain']) . "\"";
+			$config['system']['domain'] = strtolower($_POST['domain']);
+		}
 		$oldwebguiproto = $config['system']['webgui']['protocol'];
 		$config['system']['username'] = $_POST['username'];
 		$config['system']['webgui']['protocol'] = $pconfig['webguiproto'];
@@ -132,7 +140,7 @@ if ($_POST) {
 			pclose($fd);
 		}
 
-		write_config();
+		write_config($changedesc);
 
 		// restart webgui if proto or port changed
 		if (($oldwebguiproto != $config['system']['webgui']['protocol']) ||

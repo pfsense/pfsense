@@ -341,7 +341,9 @@ $config = $config_tmp;
 							$type = $rowhelper['type'];
 							$fieldname = $rowhelper['fieldname'];
 							if($type == "option") $options = &$rowhelper['options']['option'];
-							display_row($rowcounter, $value, $fieldname, $type, $rowhelper);
+							$size = "8";
+							if($rowhelper['size'] <> "") $size = $rowhelper['size'];
+							display_row($rowcounter, $value, $fieldname, $type, $rowhelper, $size);
 							// javascript helpers for row_helper_dynamic.js
 							echo "</td>\n";
 							echo "<script language=\"JavaScript\">\n";
@@ -372,7 +374,9 @@ $config = $config_tmp;
 						$type = $rowhelper['type'];
 						$fieldname = $rowhelper['fieldname'];
 						if($type == "option") $options = &$rowhelper['options']['option'];
-						display_row($rowcounter, $value, $fieldname, $type, $rowhelper);
+						$size = "8";
+						if($rowhelper['size'] <> "") $size = $rowhelper['size'];
+						display_row($rowcounter, $value, $fieldname, $type, $rowhelper, $size);
 						// javascript helpers for row_helper_dynamic.js
 						echo "</td>\n";
 						echo "<script language=\"JavaScript\">\n";
@@ -437,15 +441,15 @@ $config = $config_tmp;
 /*
  * ROW Helpers function
  */
-function display_row($trc, $value, $fieldname, $type, $rowhelper) {
+function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 	global $text;
 	echo "<td>\n";
 	if($type == "input") {
-		echo "<input size='8' name='" . $fieldname . $trc . "' value='" . $value . "'>\n";
+		echo "<input size='" . $size . "' name='" . $fieldname . $trc . "' value='" . $value . "'>\n";
 	} else if($type == "password") {
-		echo "<input type='password' name='" . $fieldname . $trc . "' value='" . $value . "'>\n";
+		echo "<input size='" . $size . "' type='password' name='" . $fieldname . $trc . "' value='" . $value . "'>\n";
 	} else if($type == "textarea") {
-		echo "<textarea name='" . $fieldname . $trc . "'>" . $value . "</textarea>\n";
+		echo "<textarea rows='2' cols='12' name='" . $fieldname . $trc . "'>" . $value . "</textarea>\n";
 	} else if($type == "select") {
 		echo "<select name='" . $fieldname . $trc . "'>\n";
 		foreach($rowhelper['options']['option'] as $rowopt) {

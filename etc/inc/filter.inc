@@ -95,7 +95,9 @@ function filter_configure() {
 
         $fd = fopen("/tmp/rules.debug", "w");
 	fwrite($fd, "set loginterface $wanif \n");
-        fwrite($fd, "set optimization aggressive\n");
+	$optimization = "normal";
+	if($config['system']['optimization'] <> "") $optimization = $config['system']['optimization'];
+        fwrite($fd, "set optimization " . $optimization . "\n");
 	fwrite($fd, "\nscrub in all\n");
 	fwrite($fd, $altq_ints);
 	fwrite($fd, $altq_queues);
@@ -127,16 +129,7 @@ function filter_configure() {
 
 function filter_get_altq_queue_scheduler_type($associatedrule) {
 	global $config;
-	$schedulertype = "";
-	/* XXX: assign all the OPT interfaces */
-	foreach ($config['shaper']['rule'] as $rule) {
-		if($rule['descr'] == $associatedrule) {
-			if($rule['interface'] == "wan") $schedulertpye = $config['system']['schedulertype'];
-			if($rule['interface'] == "lan") $schedulertpye = $config['system']['schedulertype'];
-			$schedulertpye = $config['system']['schedulertype'];
-		}
-	}
-	return $schedulertpye;
+	return $config['system']['schedulertype'];
 }
 
 function filter_get_rule_real_interface($associatedrulenumber) {
@@ -187,10 +180,10 @@ function filter_generate_altq_queues() {
 			if(isset($rule['realtime']) and $rule['realtime'] <> "") {
 				$options .= " realtime(" . $rule['realtime1'] . " " . $rule['realtime2'] . " " . $rule['realtime3'] . ")";
 			}
-			if($options) {
-				$scheduler_type = $config['system']['schedulertype'];
-				$altq_rules .= $scheduler_type . "(". $options . " )";
-			}
+			$scheduler_type = $config['system']['schedulertype'];
+			$altq_rules .= $scheduler_type . " ";
+			if($options)
+				$altq_rules .= "(". $options . " )";
 			if (isset($rule['subqueue'])) {
 				$altq_rules .= "{ ";
 				$fsq = "";

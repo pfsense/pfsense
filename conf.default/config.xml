@@ -4,6 +4,7 @@
 	<version>1.4</version>
 	<lastchange></lastchange>
 	<system>
+		<optimization>default</optimization>
 		<schedulertype>priq</schedulertype>
 		<hostname>pfSense</hostname>
 		<domain>local</domain>

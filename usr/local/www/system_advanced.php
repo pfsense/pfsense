@@ -2,8 +2,10 @@
 <?php
 /*
 	system_advanced.php
-	part of m0n0wall (http://m0n0.ch/wall)
+        part of pfSense
+        Copyright (C) 2005 Scott Ullrich
 
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -91,6 +93,8 @@ if ($_POST) {
 		$config['system']['disablefirmwarecheck'] = $_POST['disablefirmwarecheck'] ? true : false;
 		$config['system']['webgui']['expanddiags'] = $_POST['expanddiags'] ? true : false;
 
+		$config['system']['optimization'] = $_POST['optimization'];
+
 		if ($g['platform'] == "generic-pc") {
 			$oldharddiskstandby = $config['system']['harddiskstandby'];
 			$config['system']['harddiskstandby'] = $_POST['harddiskstandby'];
@@ -138,6 +142,7 @@ if ($_POST) {
 function enable_change(enable_over) {
 	if (document.iform.ipv6nat_enable.checked || enable_over) {
 		document.iform.ipv6nat_ipaddr.disabled = 0;
+		document.iform.schedulertype.disabled = 0;
 	} else {
 		document.iform.ipv6nat_ipaddr.disabled = 1;
 	}
@@ -179,10 +184,10 @@ function enable_change(enable_over) {
                 <tr>
                   <td colspan="2" valign="top" class="listtopic">Traffic Shaper Scheduler Type</td>
                 </tr>
+
 		<tr>
 		  <td width="22%" valign="top" class="vncell"><b>Scheduler</b> </td>
 		  <td width="78%" class="vtable">
-
 		    <select id="schedulertype" name="schedulertype" <?= $style ?>>
 		    <?php
 			    if($pconfig['schedulertype'] == 'priq')
@@ -206,6 +211,8 @@ function enable_change(enable_over) {
 		  <?php endif; ?>
 		    </span></td>
 		</tr>
+
+
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
@@ -357,7 +364,7 @@ function enable_change(enable_over) {
                     <input name="expanddiags" type="checkbox" id="expanddiags" value="yes" <?php if ($pconfig['expanddiags']) echo "checked"; ?>>
                     <strong>Keep diagnostics in navigation expanded </strong></td>
                 </tr>
-				<tr>
+		<tr>
                   <td width="22%" valign="top" class="vncell">webGUI anti-lockout</td>
                   <td width="78%" class="vtable">
                     <input name="noantilockout" type="checkbox" id="noantilockout" value="yes" <?php if ($pconfig['noantilockout']) echo "checked"; ?>>
@@ -372,6 +379,34 @@ function enable_change(enable_over) {
                     <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
                   </td>
                 </tr>
+
+		<tr>
+                  <td width="22%" valign="top" class="vncell">PF Optimization Options</td>
+                  <td width="78%" class="vtable">
+		    <select name="optimization" id="optimization">
+			<option value="normal"<?php if($config['system']['optimization']=="normal") echo " SELECTED"; ?>>normal - as the name says, it's the normal optimization algorithm.</option>
+			<option value="high-latency"<?php if($config['system']['optimization']=="high-latency") echo " SELECTED"; ?>>high-latency - used for high latency links, such as satellite links.  Expires idle connections later than default.</option>
+			<option value="agressive"<?php if($config['system']['optimization']=="agressive") echo " SELECTED"; ?>>agressive - expires idle connections earlier than default; using less memory and CPU time while possibly dropping some legitimate connections.</option>
+			<option value="conservative"<?php if($config['system']['optimization']=="conservative") echo " SELECTED"; ?>>conservative - tries to avoid dropping any legitimate connections at the expense of increased memory usage and CPU utilization.</option>
+		    </select>
+                    <strong>Disable webGUI anti-lockout rule</strong><br>
+					the &quot;set LAN IP address&quot; option in the console menu  resets this setting as well.</td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top">&nbsp;</td>
+                  <td width="78%">
+                    <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
+                  </td>
+                </tr>
+
+
+
+
+
+
+
+
+
               </table>
 </form>
             <script language="JavaScript">

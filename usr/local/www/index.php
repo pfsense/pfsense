@@ -159,7 +159,7 @@ echo "<img src='bar_left.gif' height='15' width='4' border='0' align='absmiddle'
 echo "<img src='bar_blue.gif' height='15' name='cpuwidtha' id='cpuwidtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
 echo "<img src='bar_gray.gif' height='15' name='cpuwidthb' id='cpuwidthb' width='" . (100 - $cpuUsage) . "' border='0' align='absmiddle'>";
 echo "<img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
-echo "<input style='border: 0px solid white;' size='4' name='cpumeter' id='cpumeter' value='{$cpuUsage}%'>";
+echo "<input style='border: 0px solid white;' size='30' name='cpumeter' id='cpumeter' value='{$cpuUsage}% (Updating in 3 seconds)'>";
 //echo $cpuUsage . "%";
 ?>
                 </td>
@@ -181,7 +181,7 @@ echo " <img src='bar_left.gif' height='15' width='4' border='0' align='absmiddle
 echo "<img src='bar_blue.gif' height='15' width='" . $memUsage . "' border='0' align='absmiddle'>";
 echo "<img src='bar_gray.gif' height='15' width='" . (100 - $memUsage) . "' border='0' align='absmiddle'>";
 echo "<img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
-echo "<input style='border: 0px solid white;' size='4' name='memusagemeter' id='memusagemeter' value='{$memUsage}%'>";
+echo "<input style='border: 0px solid white;' size='30' name='memusagemeter' id='memusagemeter' value='{$memUsage}%'>";
 //echo $memUsage . "%";
 ?>
                 </td>
@@ -200,7 +200,7 @@ echo "<img src='bar_left.gif' height='15' width='4' border='0' align='absmiddle'
 echo "<img src='bar_blue.gif' height='15' width='" . $swapUsage . "' border='0' align='absmiddle'>";
 echo "<img src='bar_gray.gif' height='15' width='" . (100 - $swapUsage) . "' border='0' align='absmiddle'>";
 echo "<img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
-echo "<input style='border: 0px solid white;' size='4' name='swapusagemeter' id='swapusagemeter' value='{$swapUsage}%'>";
+echo "<input style='border: 0px solid white;' size='30' name='swapusagemeter' id='swapusagemeter' value='{$swapUsage}%'>";
 //echo $swapUsage . "%";
 
 ?>

@@ -1,21 +1,21 @@
 <?php
 /*
-	radius_accounting.inc 
+	radius_accounting.inc
 	part of m0n0wall (http://m0n0.ch/wall)
-
+	
 	Copyright (C) 2004 Dinesh Nair <dinesh@alphaque.com>
 	All rights reserved.
-
+	
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-
+	
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-
+	
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-
+	
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -44,9 +44,9 @@ function RADIUS_ACCOUNTING_START($username,$sessionid,$radiusip,$radiusport,$rad
 		$nasHostname[0] = "m0n0wall" ;
 
 	$fd = @fsockopen("udp://$radiusip",$radiusport,$errno,$errstr,3) ;
-	if(!$fd)
+	if(!$fd) 
 		return 1 ; /* error return */
-
+	
 	/* set 5 second timeout on socket i/o */
 	stream_set_timeout($fd, 5) ;
 
@@ -113,10 +113,10 @@ function RADIUS_ACCOUNTING_START($username,$sessionid,$radiusip,$radiusport,$rad
 	if($debug) {
 		echo "username is $username with len " . strlen($username) ."\n" ;
 		echo "nasHostname is {$nasHostname[0]} with len " . strlen($nasHostname[0]) ."\n" ;
-	}
+	}	
 
 	$ret = fwrite($fd,$data) ;
-	if( !$ret || ($ret != $length) )
+	if( !$ret || ($ret != $length) ) 
 		return 1; /* error return */
 
 	if ($debug)
@@ -148,7 +148,7 @@ function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radius
 
 	$input_pkts = $input_bytes = $output_pkts = $output_bytes = 0 ;
 
-	exec("/sbin/ipfw show {$ruleno}", $ipfw) ;
+	exec("/sbin/ipfw show {$ruleno}", $ipfw) ;	
 	preg_match("/(\d+)\s+(\d+)\s+(\d+)\s+skipto/", $ipfw[0], $matches) ;
 	$output_pkts = $matches[2] ;
 	$output_bytes = $matches[3] ;
@@ -159,9 +159,9 @@ function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radius
 	$input_bytes = $matches[3] ;
 
 	$fd = @fsockopen("udp://$radiusip",$radiusport,$errno,$errstr,3) ;
-	if(!$fd)
+	if(!$fd) 
 		return 1 ; /* error return */
-
+	
 	/* set 5 second timeout on socket i/o */
 	stream_set_timeout($fd, 5) ;
 
@@ -249,10 +249,10 @@ function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radius
 	if($debug) {
 		echo "username is $username with len " . strlen($username) ."\n" ;
 		echo "nasHostname is {$nasHostname[0]} with len " . strlen($nasHostname[0]) ."\n" ;
-	}
+	}	
 
 	$ret = fwrite($fd,$data) ;
-	if( !$ret || ($ret != $length) )
+	if( !$ret || ($ret != $length) ) 
 		return 1; /* error return */
 
 	if ($debug)

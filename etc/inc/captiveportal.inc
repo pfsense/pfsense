@@ -2,20 +2,20 @@
 /*
 	captiveportal.inc
 	part of m0n0wall (http://m0n0.ch/wall)
-
+	
 	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-
+	
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-
+	
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-
+	
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-
+	
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -33,34 +33,34 @@
 	added rules which may have been created by other per-user code (index.php, etc).
 	These changes are (c) 2004 Keycom PLC.
 */
-
+	
 /* include all configuration functions */
 require_once("functions.inc");
 require_once("radius_accounting.inc") ;
 
 function captiveportal_configure() {
 	global $config, $g;
-
+	
 	if (isset($config['captiveportal']['enable']) &&
 		(($config['captiveportal']['interface'] == "lan") ||
 			isset($config['interfaces'][$config['captiveportal']['interface']]['enable']))) {
-
+	
 		if ($g['booting'])
 			echo "Starting captive portal... ";
-
+		
 		/* kill any running mini_httpd */
 		killbypid("{$g['varrun_path']}/mini_httpd.cp.pid");
 		killbypid("{$g['varrun_path']}/mini_httpd.cps.pid");
-
+		
 		/* kill any running minicron */
 		killbypid("{$g['varrun_path']}/minicron.pid");
-
+		
 		/* generate ipfw rules */
 		$cprules = captiveportal_rules_generate();
-
+		
 		/* make sure ipfw is loaded */
 		mwexec("/sbin/kldload ipfw");
-
+		
 		/* stop accounting on all clients */
 		captiveportal_radius_stop_all() ;
 
@@ -70,7 +70,7 @@ function captiveportal_configure() {
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_mac.db");
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_ip.db");
 		unlink_if_exists("{$g['vardb_path']}/captiveportal_radius.db");
-
+		
 		/* write portal page */
 		if ($config['captiveportal']['page']['htmltext'])
 			$htmltext = base64_decode($config['captiveportal']['page']['htmltext']);
@@ -78,40 +78,18 @@ function captiveportal_configure() {
 			/* example/template page */
 			$htmltext = <<<EOD
 <html>
-<title>pfSense's captive portal</title>
 <head>
- <STYLE type="text/css">
-.listhdrr {
-        background-color: #BBBBBB;
-        padding-right: 16px;
-        padding-left: 6px;
-        font-weight: bold;
-        border-right: 1px solid #999999;
-        border-bottom: 1px solid #999999;
-        font-size: 11px;
-        padding-top: 5px;
-        padding-bottom: 5px;
-}
-
- </STYLE>
+<title>m0n0wall captive portal</title>
 </head>
-<body bgcolor="#990000">
-<center>
-<font color="white" face="arial" size="+1">Welcome to pfSense's captive portal!</font>
-<p>
-<form method="post" action="$PORTAL_ACTION$">
-<table border="0" cellpadding="6" cellspacing="0">
-<tr><td align="right" class="listhdrr"><font color="white">Username:</td><td class="listhdrr"><input name="auth_user" type="text"></td></tr>
-<tr><td align="right" class="listhdrr"><font color="white">Password:</td><td class="listhdrr"><input name="auth_pass" type="password"></td></tr>
-<input name="redirurl" type="hidden" value="$PORTAL_REDIRURL$">
-</table>
-<p>
-<center><input name="accept" type="submit" value="Continue">
+<body>
+<h2>m0n0wall captive portal</h2>
+<p>This is the default captive portal page. Please upload your own custom HTML file on the <em>Services: Captive portal</em> screen in the m0n0wall webGUI.</p>
+<form method="post" action="\$PORTAL_ACTION\$">
+  <input name="accept" type="submit" value="Continue">
+  <input name="redirurl" type="hidden" value="\$PORTAL_REDIRURL\$">
 </form>
-</center>
 </body>
 </html>
-
 
 EOD;
 		}
@@ -119,9 +97,9 @@ EOD;
 		$fd = @fopen("{$g['varetc_path']}/captiveportal.html", "w");
 		if ($fd) {
 			fwrite($fd, $htmltext);
-			fclose($fd);
+			fclose($fd);	
 		}
-
+		
 		/* write error page */
 		if ($config['captiveportal']['page']['errtext'])
 			$errtext = base64_decode($config['captiveportal']['page']['errtext']);
@@ -148,14 +126,14 @@ EOD;
 		$fd = @fopen("{$g['varetc_path']}/captiveportal-error.html", "w");
 		if ($fd) {
 			fwrite($fd, $errtext);
-			fclose($fd);
+			fclose($fd);	
 		}
 
 		/* load rules */
 		mwexec("/sbin/ipfw -f delete set 1");
 		mwexec("/sbin/ipfw -f delete set 2");
 		mwexec("/sbin/ipfw -f delete set 3");
-
+		
 		/* XXX - seems like ipfw cannot accept rules directly on stdin,
 		   so we have to write them to a temporary file first */
 		$fd = @fopen("{$g['tmp_path']}/ipfw.cp.rules", "w");
@@ -163,30 +141,30 @@ EOD;
 			printf("Cannot open ipfw.cp.rules in captiveportal_configure()\n");
 			return 1;
 		}
-
+			
 		fwrite($fd, $cprules);
 		fclose($fd);
-
+		
 		mwexec("/sbin/ipfw {$g['tmp_path']}/ipfw.cp.rules");
-
+		
 		unlink("{$g['tmp_path']}/ipfw.cp.rules");
-
+		
 		/* filter on layer2 as well so we can check MAC addresses */
 		mwexec("/sbin/sysctl net.link.ether.ipfw=1");
-
+		
 		chdir($g['captiveportal_path']);
-
+		
 		/* start web server */
 		mwexec("/usr/local/sbin/mini_httpd -a -M 0 -u root -maxproc 16" .
 			" -p 8000 -i {$g['varrun_path']}/mini_httpd.cp.pid");
-
+		
 		/* fire up another one for HTTPS if requested */
 		if (isset($config['captiveportal']['httpslogin']) &&
 			$config['captiveportal']['certificate'] && $config['captiveportal']['private-key']) {
-
+			
 			$cert = base64_decode($config['captiveportal']['certificate']);
 			$key = base64_decode($config['captiveportal']['private-key']);
-
+			
 			$fd = fopen("{$g['varetc_path']}/cert-portal.pem", "w");
 			if (!$fd) {
 				printf("Error: cannot open cert-portal.pem in system_webgui_start().\n");
@@ -197,16 +175,16 @@ EOD;
 			fwrite($fd, "\n");
 			fwrite($fd, $key);
 			fclose($fd);
-
+			
 			mwexec("/usr/local/sbin/mini_httpd -S -a -M 0 -E {$g['varetc_path']}/cert-portal.pem" .
 				" -u root -maxproc 16 -p 8001" .
 				" -i {$g['varrun_path']}/mini_httpd.cps.pid");
 		}
-
+			
 		/* start pruning process (interval = 60 seconds) */
 		mwexec("/usr/local/bin/minicron 60 {$g['varrun_path']}/minicron.pid " .
 			"/etc/rc.prunecaptiveportal");
-
+		
 		/* generate passthru mac database */
 		captiveportal_passthrumac_configure() ;
 		/* create allowed ip database and insert ipfw rules to make it so */
@@ -241,7 +219,7 @@ EOD;
 
 		if ($g['booting'])
 			echo "done\n";
-
+		
 	} else {
 		killbypid("{$g['varrun_path']}/mini_httpd.cp.pid");
 		killbypid("{$g['varrun_path']}/minicron.pid");
@@ -257,13 +235,13 @@ EOD;
 			mwexec("/sbin/ipfw -f delete set 3");
 		}
 	}
-
+	
 	return 0;
 }
 
 function captiveportal_rules_generate() {
 	global $config, $g;
-
+	
 	$cpifn = $config['captiveportal']['interface'];
 	$cpif = $config['interfaces'][$cpifn]['if'];
 	$cpip = $config['interfaces'][$cpifn]['ipaddr'];
@@ -272,7 +250,7 @@ function captiveportal_rules_generate() {
 	   clients as skipto 50000 rules to make traffic shaping work */
 
 	$cprules = "";
-
+	
 	/* captive portal on LAN interface? */
 	if ($cpifn == "lan") {
 		/* add anti-lockout rules */
@@ -320,7 +298,7 @@ add 1305 set 1 pass tcp from $cpip 8001 to any out
 
 EOD;
 	}
-
+	
 	$cprules .= <<<EOD
 
 # ... 10000-19899: rules per authenticated client go here...
@@ -345,47 +323,47 @@ EOD;
 /* remove clients that have been around for longer than the specified amount of time */
 /* db file structure: timestamp,ipfw_rule_no,clientip,clientmac,username,sessionid */
 function captiveportal_prune_old() {
-
+	
 	global $g, $config;
-
+	
 	/* check for expired entries */
 	if ($config['captiveportal']['timeout'])
 		$timeout = $config['captiveportal']['timeout'] * 60;
 	else
 		$timeout = 0;
-
+		
 	if ($config['captiveportal']['idletimeout'])
 		$idletimeout = $config['captiveportal']['idletimeout'] * 60;
 	else
 		$idletimeout = 0;
-
+	
 	if (!$timeout && !$idletimeout)
 		return;
-
+	
 	captiveportal_lock();
-
+	
 	/* read database */
 	$cpdb = captiveportal_read_db();
-
+	
 	$radiusservers = captiveportal_get_radius_servers();
-
+	
 	for ($i = 0; $i < count($cpdb); $i++) {
-
+		
 		$timedout = false;
-
+		
 		/* hard timeout? */
 		if ($timeout) {
 			if ((time() - $cpdb[$i][0]) >= $timeout)
-				$timedout = true;
+				$timedout = true;	
 		}
-
+		
 		/* if an idle timeout is specified, get last activity timestamp from ipfw */
 		if (!$timedout && $idletimeout) {
 			$lastact = captiveportal_get_last_activity($cpdb[$i][1]);
 			if ($lastact && ((time() - $lastact) >= $idletimeout))
 				$timedout = true;
 		}
-
+		
 		if ($timedout) {
 			/* this client needs to be deleted - remove ipfw rules */
 			if (isset($config['captiveportal']['radacct_enable']) && isset($radiusservers[0])) {
@@ -410,25 +388,25 @@ function captiveportal_prune_old() {
 			unset($cpdb[$i]);
 		}
 	}
-
+	
 	/* write database */
 	captiveportal_write_db($cpdb);
-
+	
 	captiveportal_unlock();
 }
 
 /* remove a single client by ipfw rule number */
 function captiveportal_disconnect_client($id) {
-
+	
 	global $g, $config;
-
+	
 	captiveportal_lock();
-
+	
 	/* read database */
 	$cpdb = captiveportal_read_db();
 	$radiusservers = captiveportal_get_radius_servers();
-
-	/* find entry */
+	
+	/* find entry */	
 	for ($i = 0; $i < count($cpdb); $i++) {
 		if ($cpdb[$i][1] == $id) {
 			/* this client needs to be deleted - remove ipfw rules */
@@ -453,10 +431,10 @@ function captiveportal_disconnect_client($id) {
 			break;
 		}
 	}
-
+	
 	/* write database */
 	captiveportal_write_db($cpdb);
-
+	
 	captiveportal_unlock();
 }
 
@@ -466,9 +444,9 @@ function captiveportal_radius_stop_all() {
 
 	captiveportal_lock() ;
 	$cpdb = captiveportal_read_db() ;
-
+	
 	$radiusservers = captiveportal_get_radius_servers();
-
+	
 	if (isset($radiusservers[0])) {
 		for ($i = 0; $i < count($cpdb); $i++) {
 			RADIUS_ACCOUNTING_STOP($cpdb[$i][1], // ruleno
@@ -486,34 +464,34 @@ function captiveportal_radius_stop_all() {
 
 function captiveportal_passthrumac_configure() {
 	global $config, $g;
-
+	
 	/* clear out passthru macs, if necessary */
 	if (file_exists("{$g['vardb_path']}/captiveportal_mac.db")) {
 		unlink("{$g['vardb_path']}/captiveportal_mac.db");
 	}
-
+	
 	if (is_array($config['captiveportal']['passthrumac'])) {
-
+		
 		$fd = @fopen("{$g['vardb_path']}/captiveportal_mac.db", "w");
 		if (!$fd) {
 			printf("Error: cannot open passthru mac DB file in captiveportal_passthrumac_configure().\n");
-			return 1;
+			return 1;		
 		}
-
+		
 		foreach ($config['captiveportal']['passthrumac'] as $macent) {
 			/* record passthru mac so it can be recognized and let thru */
 			fwrite($fd, $macent['mac'] . "\n");
 		}
-
-		fclose($fd);
+		
+		fclose($fd); 
 	}
-
+	
 	return 0;
 }
 
 function captiveportal_allowedip_configure() {
 	global $config, $g;
-
+	
 	captiveportal_lock() ;
 
 	/* clear out existing allowed ips, if necessary */
@@ -525,7 +503,7 @@ function captiveportal_allowedip_configure() {
 				if($line) {
 					list($ip,$rule) = explode(",",$line);
 					mwexec("/sbin/ipfw delete $rule") ;
-				}
+				}	
 			}
 		}
 		fclose($fd) ;
@@ -537,16 +515,16 @@ function captiveportal_allowedip_configure() {
 		$ruleno = trim(file_get_contents("{$g['vardb_path']}/captiveportal.nextrule"));
 	if (!$ruleno)
 		$ruleno = 10000;	/* first rule number */
-
+	
 	if (is_array($config['captiveportal']['allowedip'])) {
-
+		
 		$fd = @fopen("{$g['vardb_path']}/captiveportal_ip.db", "w");
 		if (!$fd) {
 			printf("Error: cannot open allowed ip DB file in captiveportal_allowedip_configure().\n");
 			captiveportal_unlock() ;
-			return 1;
+			return 1;		
 		}
-
+		
 		foreach ($config['captiveportal']['allowedip'] as $ipent) {
 			/* record allowed ip so it can be recognized and removed later */
 			fwrite($fd, $ipent['ip'] . "," . $ruleno ."\n");
@@ -562,8 +540,8 @@ function captiveportal_allowedip_configure() {
 			if ($ruleno > 19899)
 				$ruleno = 10000;
 		}
-
-		fclose($fd);
+		
+		fclose($fd); 
 
 		/* write next rule number */
 		$fd = @fopen("{$g['vardb_path']}/captiveportal.nextrule", "w");
@@ -572,31 +550,31 @@ function captiveportal_allowedip_configure() {
 			fclose($fd);
 		}
 	}
-
+	
 	captiveportal_unlock() ;
 	return 0;
 }
 
 /* get last activity timestamp given ipfw rule number */
 function captiveportal_get_last_activity($ruleno) {
-
+	
 	exec("/sbin/ipfw -T list {$ruleno} 2>/dev/null", $ipfwoutput);
-
+	
 	/* in */
 	if ($ipfwoutput[0]) {
 		$ri = explode(" ", $ipfwoutput[0]);
 		if ($ri[1])
 			return $ri[1];
 	}
-
+	
 	return 0;
 }
 
 /* read captive portal DB into array */
 function captiveportal_read_db() {
-
+	
 	global $g;
-
+	
 	$cpdb = array();
 	$fd = @fopen("{$g['vardb_path']}/captiveportal.db", "r");
 	if ($fd) {
@@ -604,7 +582,7 @@ function captiveportal_read_db() {
 			$line = trim(fgets($fd));
 			if ($line) {
 				$cpdb[] = explode(",", $line);
-			}
+			}	
 		}
 		fclose($fd);
 	}
@@ -613,9 +591,9 @@ function captiveportal_read_db() {
 
 /* write captive portal DB */
 function captiveportal_write_db($cpdb) {
-
+	
 	global $g;
-
+	
 	$fd = @fopen("{$g['vardb_path']}/captiveportal.db", "w");
 	if ($fd) {
 		foreach ($cpdb as $cpent) {
@@ -627,9 +605,9 @@ function captiveportal_write_db($cpdb) {
 
 /* read RADIUS servers into array */
 function captiveportal_get_radius_servers() {
-
+	
 	global $g;
-
+	
 	if (file_exists("{$g['vardb_path']}/captiveportal_radius.db")) {
 	   	$fd = @fopen("{$g['vardb_path']}/captiveportal_radius.db","r");
 		if ($fd) {
@@ -643,22 +621,22 @@ function captiveportal_get_radius_servers() {
 				}
 			}
 			fclose($fd);
-
+			
 			return $radiusservers;
 		}
 	}
-
+	
 	return false;
 }
 
 /* lock captive portal information, decide that the lock file is stale after
    10 seconds */
 function captiveportal_lock() {
-
+	
 	global $g;
-
+	
 	$lockfile = "{$g['varrun_path']}/captiveportal.lock";
-
+	
 	$n = 0;
 	while ($n < 10) {
 		/* open the lock file in append mode to avoid race condition */
@@ -676,11 +654,11 @@ function captiveportal_lock() {
 
 /* unlock configuration file */
 function captiveportal_unlock() {
-
+	
 	global $g;
-
+	
 	$lockfile = "{$g['varrun_path']}/captiveportal.lock";
-
+	
 	if (file_exists($lockfile))
 		unlink($lockfile);
 }

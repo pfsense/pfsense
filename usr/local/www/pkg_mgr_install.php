@@ -366,7 +366,6 @@ foreach ($packages_to_install as $id) {
                         }
                         if($pkg_chmod <> "") {
                             fwrite($fd_log, "Changing file mode for {$pkg_chmod} {$prefix}{$filename}\n");
-                            system("/bin/chmod {$pkg_chmod} {$prefix}{$filename}");
                             chmod($prefix . $filename, $pkg_chmod);
                         }
                     }

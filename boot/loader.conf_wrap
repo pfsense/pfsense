@@ -1,6 +1,4 @@
+console=comsonsole
+hw.ata.atapi_dma="0"
+hw.ata.ata_dma="0"
 autoboot_delay="0"
-loader_color="YES"
-hw.pci.allow_unsupported_io_range="1"
-mfsroot_load="YES"
-mfsroot_type="mfs_root"
-mfsroot_name="/boot/mfsroot"

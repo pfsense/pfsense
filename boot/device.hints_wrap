@@ -1,0 +1,4 @@
+hint.sio.0.flags="0x30"
+hint.sc.0.disabled="1"
+hint.atkbdc.0.disabled="1"
+hint.vga.0.disabled="1"

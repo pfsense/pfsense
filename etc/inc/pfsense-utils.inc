@@ -127,7 +127,7 @@ function convert_ip_to_network_format($ip, $subnet) {
  * find_interface_ip($interface): return the interface ip (first found)
  */
 function find_interface_ip($interface) {
-    $ip = system("/sbin/ifconfig {$interface} | grep \"inet \" | cut -d\" \" -f 2");
+    $ip = exec_command("/sbin/ifconfig {$interface} | grep \"inet \" | cut -d\" \" -f 2");
     return $ip;
 }
 

@@ -32,7 +32,6 @@
 require("guiconfig.inc");
 
 $lancfg = &$config['interfaces']['lan'];
-$optcfg = &$config['interfaces']['lan'];
 $pconfig['ipaddr'] = $config['interfaces']['lan']['ipaddr'];
 $pconfig['subnet'] = $config['interfaces']['lan']['subnet'];
 
@@ -40,7 +39,7 @@ $pconfig['bandwidth'] = $config['interfaces']['lan']['bandwidth'];
 $pconfig['bandwidthtype'] = $config['interfaces']['lan']['bandwidthtype'];
 
 /* Wireless interface? */
-if (isset($optcfg['wireless'])) {
+if (isset($lancfg['wireless'])) {
 	require("interfaces_wlan.inc");
 	wireless_config_init();
 }
@@ -64,7 +63,7 @@ if ($_POST) {
 	}
 
 	/* Wireless interface? */
-	if (isset($optcfg['wireless'])) {
+	if (isset($lancfg['wireless'])) {
 		$wi_input_errors = wireless_config_post();
 		if ($wi_input_errors) {
 			$input_errors = array_merge($input_errors, $wi_input_errors);
@@ -153,7 +152,7 @@ function ipaddr_change() {
                     </select></td>
                 </tr>
 				<?php /* Wireless interface? */
-				if (isset($optcfg['wireless']))
+				if (isset($lancfg['wireless']))
 					wireless_config_print();
 				?>
 

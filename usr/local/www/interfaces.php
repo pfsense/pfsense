@@ -32,7 +32,6 @@
 require("guiconfig.inc");
 
 $wancfg = &$config['interfaces']['wan'];
-$optcfg = &$config['interfaces']['wan'];
 
 $pconfig['username'] = $config['pppoe']['username'];
 $pconfig['password'] = $config['pppoe']['password'];
@@ -78,7 +77,7 @@ $pconfig['spoofmac'] = $wancfg['spoofmac'];
 $pconfig['mtu'] = $wancfg['mtu'];
 
 /* Wireless interface? */
-if (isset($optcfg['wireless'])) {
+if (isset($wancfg['wireless'])) {
 	require("interfaces_wlan.inc");
 	wireless_config_init();
 }
@@ -164,7 +163,7 @@ if ($_POST) {
 	}
 
 	/* Wireless interface? */
-	if (isset($optcfg['wireless'])) {
+	if (isset($wancfg['wireless'])) {
 		$wi_input_errors = wireless_config_post();
 		if ($wi_input_errors) {
 			$input_errors = array_merge($input_errors, $wi_input_errors);
@@ -650,7 +649,7 @@ function type_change(enable_change,enable_change_pptp) {
     Setting this to a sensible value (e.g. 60 seconds) can protect against DoS attacks. </td>
                 </tr>
                 <?php /* Wireless interface? */
-				if (isset($optcfg['wireless']))
+				if (isset($wancfg['wireless']))
 					wireless_config_print();
 				?>
                 <tr>

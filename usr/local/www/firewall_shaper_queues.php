@@ -236,7 +236,7 @@ While(!Connection_Aborted()) {
 	 *   firefox and ie can be a bear on ram usage!
          */
 	$counter++;
-	if($counter > 10000) {
+	if($counter > 100) {
 		echo "Redirecting to <a href=\"firewall_shaper_queues.php\">Firewall Shaper Queues</a>.<p>";
 		echo "<meta http-equiv=\"refresh\" content=\"1;url=firewall_shaper_queues.php\">";
 		exit;

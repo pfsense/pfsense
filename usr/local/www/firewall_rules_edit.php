@@ -775,29 +775,13 @@ function dst_rep_change() {
                     (see the <a href="diag_logs_settings.php">Diagnostics: System
                     logs: Settings</a> page).</span></td>
                 </tr>
+
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
-                </tr>
-
-
-                <tr>
-                  <td width="22%" valign="top" class="vncell">Traffic Queuing / Shaping</td>
-                  <td width="78%" class="vtable">
-		    Direction: <select name="direction">
-		    <?php if($pconfig['direction'] <> "")
-			echo "<option value=\"" . htmlspecialchars($pconfig['direction']) . "\">" . htmlspecialchars($pconfig['direction']) . "</option>";
-		    ?>
-		    <option value="">DONT CARE</option>
-		    <option value="in">IN</option>
-		    <option value="out">OUT</option>
-		    </select>
-                    <br> <span class="vexpl">If you need fine grained control on direction, select an option here.
-		    <p><span class="vexpl"><input type="checkbox" name="autocreatequeue"> Automatically create a new queue for this rule.</span>
-		    </td>
                 </tr>
 
                <tr>

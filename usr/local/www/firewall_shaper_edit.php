@@ -459,7 +459,7 @@ function dst_rep_change() {
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Firewall: Traffic shaper: Edit rule</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if (is_array($config['shaper']['pipe']) && (count($config['shaper']['pipe']) > 0)): ?>
+
             <form action="firewall_shaper_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
@@ -694,28 +694,8 @@ function dst_rep_change() {
                     on the interface specified above (as seen from the firewall's
                     perspective). </td>
                 </tr>
-				<tr>
-                  <td width="22%" valign="top" class="vncell">IP Type of Service (TOS)</td>
-                  <td width="78%" class="vtable"> <table border="0" cellspacing="0" cellpadding="0">
-                      <?php
-				  $iniptos = explode(",", $pconfig['iptos']);
-				  foreach ($iptos as $tos): $dontcare = true; ?>
-                      <tr>
-                        <td width="80" nowrap><strong>
-			  <?echo $tos;?>
-                          </strong></td>
-                        <td nowrap> <input type="radio" name="iptos_<?=$tos;?>" value="on" <?php if (array_search($tos, $iniptos) !== false) { echo "checked"; $dontcare = false; }?>>
-                          yes&nbsp;&nbsp;&nbsp;</td>
-                        <td nowrap> <input type="radio" name="iptos_<?=$tos;?>" value="off" <?php if (array_search("!" . $tos, $iniptos) !== false) { echo "checked"; $dontcare = false; }?>>
-                          no&nbsp;&nbsp;&nbsp;</td>
-                        <td nowrap> <input type="radio" name="iptos_<?=$tos;?>" value="" <?php if ($dontcare) echo "checked";?>>
-                          don't care</td>
-                      </tr>
-                      <?php endforeach; ?>
-                    </table>
-                    <span class="vexpl">Use this to match packets according to their IP TOS values.
-                    </span></td>
-                </tr>
+		
+		
                 <tr>
                   <td width="22%" valign="top" class="vncell">IP packet length</td>
                   <td width="78%" class="vtable"><input name="iplen" type="text" id="iplen" size="10" value="<?=htmlspecialchars($pconfig['iplen']);?>">
@@ -770,9 +750,6 @@ typesel_change();
 proto_change();
 //-->
 </script>
-<?php else: ?>
-<p><strong>You need to create a pipe or queue before you can add a new rule.</strong></p>
-<?php endif; ?>
 <?php include("fend.inc"); ?>
 </body>
 </html>

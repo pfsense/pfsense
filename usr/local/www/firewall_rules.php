@@ -170,9 +170,6 @@ if (isset($_POST['del_x'])) {
 <?php endif; ?>
 <?php endforeach; ?>
   </ul>
-  <ul id="tabnav">
-    <li class="tabinact"><a href="firewall_shaper_queues.php">Queues</a></li>
-  </ul>
   </td></tr>
   <tr>
     <td class="tabcont">

@@ -101,16 +101,9 @@ if ($_GET['act'] == "del") {
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
   <ul id="tabnav">
-<?php foreach ($iflist as $ifent => $ifname):
-	if ($ifent == $if): ?>
-    <li class="tabinact"><?=htmlspecialchars($ifname);?></li>
-<?php else: ?>
-    <li class="tabinact"><a href="firewall_rules.php?if=<?=$ifent;?>"><?=htmlspecialchars($ifname);?></a></li>
-<?php endif; ?>
-<?php endforeach; ?>
-  </ul>
-  <ul id="tabnav">
-    <li class="tabact"><a href="firewall_shaper_queues.php">Queues</a></li>
+    <li class="tabinact"><a href="firewall_shaper.php">Rules</a></li>
+    <li class="tabact">Queues</a></li>
+    <li class="tabinact"><a href="firewall_shaper_magic.php">Magic shaper wizard</a></li>
   </ul>
   </td></tr>
   <tr>

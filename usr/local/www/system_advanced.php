@@ -156,8 +156,7 @@ function enable_change(enable_over) {
                   <td width="78%" class="vtable">
                     <input name="disablefilter" type="checkbox" id="disablefilter" value="yes" <?php if (isset($config['system']['disablefilter'])) echo "checked"; ?> onclick="enable_change(false)">
                     <strong>Disable the firewalls filter altogether.</strong><br>
-                    <span class="vexpl"><br>
-                    NOTE!  This basically converts pfSense into a routing only platform!</span></td>
+                    <span class="vexpl">NOTE!  This basically converts pfSense into a routing only platform!</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

@@ -6,7 +6,7 @@
 
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	Copyright (C) 2005 Pascal Suter <monodev@psuter.ch>.
+	Copyright (C) 2005 Pascal Suter <d-pfsense-dev@psuter.ch>.
 	All rights reserved.
 	(files was created by Pascal based on the source code of services_captiveportal.php from Manuel)
 

@@ -1000,6 +1000,22 @@ function filter_rules_generate() {
 		$ipfrules .= "pass out quick on " . $wanif . "  inet proto tcp from ($wanif) to any port www flags S/SA keep state label \"transparent proxy\"\n";
 	}
 
+	/* Setup outgoing NAT load balancing */
+	if (isset($config['nat']['outgoingloadbalancing']['rule'])) {
+		$tmprules .= "pass in quick on " . $lanif . " route-to { ";
+		$isfirst = 0;
+		foreach ($config['nat']['outgoingloadbalancing']['rule'] as $rule) {
+			if($rule['gatewayip'] <> "") {
+				if($isfirst == 1) $tmprules .= ", ";
+				$lbinf = guess_interface_from_ip($rule['gatewayip']);
+				$tmprules .= " (" . $lbinf . " " . $rule['gatewayip'] . ") ";
+				$isfirst = 1;
+			}
+		}
+		$tmprules .= "} round-robin from " . $lansa ."/" . $config['interfaces']['lan']['subnet'] . " to any flags S/SA modulate state label \"outgoing nat load balancing\"\n";
+		if($isfirst == 1) $ipfrules .= $tmprules;
+	}
+
 	$ipfrules .= <<<EOD
 
 # loopback
@@ -1009,6 +1025,7 @@ pass out quick on lo0 all label "pass loopback"
 
 # package manager early specific hook
 anchor "packageearly"
+
 
 # carp
 anchor "carp"
@@ -1062,21 +1079,6 @@ pass out on {$oc['if']} proto icmp from any to any keep state label "allow acces
 
 EOD;
 		}
-	}
-
-	/* Setup outgoing NAT load balancing */
-	if (isset($config['nat']['outgoingloadbalancing']['rule'])) {
-		$tmprules .= "pass in on " . $lanif . " route-to { ";
-		$isfirst = 0;
-		foreach ($config['nat']['outgoingloadbalancing']['rule'] as $rule) {
-			if($rule['gatewayip'] <> "") {
-				if(isfirst == 1) $tmprules .= ", ";
-				$tmprules .= " (" . $wanif . " " . $rule['gatewayip'] . ") ";
-				$isfirst = 1;
-			}
-		}
-		$tmprules .= "} round-robin proto tcp from " . $lansa ." to any flags S/SA modulate state label \"outgoing nat load balancing\"\n";
-		if($isfirst == 1) $ipfrules .= $tmprules;
 	}
 
 	/* pass traffic between statically routed subnets and the subnet on the

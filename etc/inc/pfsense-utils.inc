@@ -183,7 +183,6 @@ function link_ip_to_carp_interface($ip) {
     return $carp_ints;
 }
 
-
 /*
  * exec_command($command): execute command return string of result
  */
@@ -226,6 +225,19 @@ function find_interface_ip($interface) {
     $ip = exec_command("/sbin/ifconfig {$interface} | /usr/bin/grep -w \"inet\" | /usr/bin/cut -d\" \" -f 2");
     $ip = str_replace("\n","",$ip);
     return $ip;
+}
+
+function guess_interface_from_ip($ipaddress) {
+    $ints = `/sbin/ifconfig -l`;
+    $ints_split = split(" ", $ints);
+    $ip_subnet_split = split("\.", $ipaddress);
+    $ip_subnet = $ip_subnet_split[0] . "." . $ip_subnet_split[1] . "." . $ip_subnet_split[2] . ".";
+    foreach($ints_split as $int) {
+        $ip = find_interface_ip($int);
+        $ip_split = split("\.", $ip);
+        $ip_tocheck = $ip_split[0] . "." . $ip_split[1] . "." . $ip_split[2] . ".";
+        if(stristr($ip_tocheck, $ip_subnet) != false) return $int;
+    }
 }
 
 function filter_opt_interface_to_real($opt) {
@@ -931,7 +943,7 @@ function rmdir_recursive($path,$follow_links=false) {
 		foreach($to_do as $workingdir) { // Handle wildcards by foreaching.
 			$dir = opendir($workingdir);
 			while ($entry = readdir($dir)) {
-                        if (is_file("$workingdir/$entry") || ((!$follow_links) && is_link("$workingdir/$entry")))  
+                        if (is_file("$workingdir/$entry") || ((!$follow_links) && is_link("$workingdir/$entry")))
                                 unlink("$workingdir/$entry");
                         elseif (is_dir("$workingdir/$entry") && $entry!='.' && $entry!='..')
                                 rmdir_recursive("$workingdir/$entry");

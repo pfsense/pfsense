@@ -442,9 +442,10 @@ function typesel_change() {
                     seconds</td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Pre-Shared Key<br>ASCII characters only!</td>
+                  <td width="22%" valign="top" class="vncellreq">Pre-Shared Key</td>
                   <td width="78%" class="vtable">
                     <input name="p1pskey" type="text" class="formfld" id="p1pskey" size="40" value="<?=htmlspecialchars($pconfig['p1pskey']);?>">
+		    <br>ASCII characters only!
                   </td>
                 </tr>
                 <tr>

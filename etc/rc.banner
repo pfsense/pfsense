@@ -50,8 +50,9 @@
 EOD;
 
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
-		echo "    OPT{$i}   ->   {$config['interfaces']['opt' . $i]['if']}   ->   " . $config['interfaces']['opt' . $i]['ipaddr'] .
-			"({$config['interfaces']['opt' . $i]['descr']})\n";
+		echo "\n   OPT{$i}   ->   {$config['interfaces']['opt' . $i]['if']}   ->   " . $config['interfaces']['opt' . $i]['ipaddr'] .
+			"({$config['interfaces']['opt' . $i]['descr']})";
 ?>
+
 
 

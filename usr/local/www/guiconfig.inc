@@ -452,7 +452,7 @@ function update_changedesc($update) {
 	$changecount++;
 }
 
-function dump_clog($logfile, $tail, $grepfor, $grepinvert = false, $withorig = true) {
+function dump_clog($logfile, $tail, $grepfor = "", $grepinvert = false, $withorig = true) {
         global $g, $config;
 
         $sor = isset($config['syslog']['reverse']) ? "-r" : "";

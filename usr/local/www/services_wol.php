@@ -39,7 +39,7 @@ $a_wol = &$config['wol']['wolentry'];
 
 if ($_POST || $_GET['mac']) {
 	unset($input_errors);
-	
+
 	if ($_GET['mac']) {
 		$mac = $_GET['mac'];
 		$if = $_GET['if'];
@@ -54,11 +54,11 @@ if ($_POST || $_GET['mac']) {
 	if (!$if)
 		$input_errors[] = "A valid interface must be specified.";
 
-	if (!$input_errors) {		
+	if (!$input_errors) {
 		/* determine broadcast address */
 		$bcip = gen_subnet_max($config['interfaces'][$if]['ipaddr'],
 			$config['interfaces'][$if]['subnet']);
-		
+
 		mwexec("/usr/local/bin/wol -i {$bcip} {$mac}");
 		$savemsg = "Sent magic packet to {$mac}.";
 	}
@@ -88,7 +88,7 @@ if ($_GET['act'] == "del") {
 <?php if ($savemsg) print_info_box($savemsg); ?>
 			<form action="services_wol.php" method="post" name="iform" id="iform">
 			  <table width="100%" border="0" cellpadding="6" cellspacing="0">
-			  <tr> 
+			  <tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
 <select name="interface" class="formfld">
@@ -99,7 +99,7 @@ if ($_GET['act'] == "del") {
 					  		$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 					  }
 					  foreach ($interfaces as $iface => $ifacename): ?>
-                      <option value="<?=$iface;?>" <?php if ($iface == $if) echo "selected"; ?>> 
+                      <option value="<?=$iface;?>" <?php if ($iface == $if) echo "selected"; ?>>
                       <?=htmlspecialchars($ifacename);?>
                       </option>
                       <?php endforeach; ?>
@@ -114,14 +114,14 @@ if ($_GET['act'] == "del") {
                       Enter a MAC address <span class="vexpl"> in the following format: xx:xx:xx:xx:xx:xx</span></td></tr>
 				<tr>
 				  <td width="22%" valign="top">&nbsp;</td>
-				  <td width="78%"> 
+				  <td width="78%">
                     <input name="Submit" type="submit" class="formbtn" value="Send">
 				</td>
 				</tr>
 			</table>
 			<span class="vexpl"><span class="red"><strong>Note:<br>
             </strong></span>This service can be used to wake up (power on) computers by sending special &quot;Magic Packets&quot;. The NIC in the computer that is to be woken up must support Wake on LAN and has to be configured properly (WOL cable, BIOS settings). </span><br>
-                      <br> 
+                      <br>
                       You may store MAC addresses below for your convenience.
 Click the MAC address to wake up a computer. <br>
 &nbsp;
@@ -145,13 +145,13 @@ Click the MAC address to wake up a computer. <br>
                     <a href="?mac=<?=$wolent['mac'];?>&if=<?=$wolent['interface'];?>"><?=strtolower($wolent['mac']);?></a>&nbsp;
                   </td>
                   <td class="listbg">
-                    <?=htmlspecialchars($wolent['descr']);?>&nbsp;
+                    <font color="#FFFFFF"><?=htmlspecialchars($wolent['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list"> <a href="services_wol_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a>
                      &nbsp;<a href="services_wol.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this entry?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
-                <tr> 
+                <tr>
                   <td class="list" colspan="3"></td>
                   <td class="list"> <a href="services_wol_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
 				</tr>

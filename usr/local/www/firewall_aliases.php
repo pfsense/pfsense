@@ -3,20 +3,20 @@
 /*
 	firewall_aliases.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -101,26 +101,26 @@ if ($_GET['act'] == "del") {
                     <?=htmlspecialchars($alias['address']);?>
                   </td>
                   <td class="listbg">
-                    <?=htmlspecialchars($alias['descr']);?>&nbsp;
+                    <font color="#FFFFFF"><?=htmlspecialchars($alias['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list"> <a href="firewall_aliases_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a>
                      &nbsp;<a href="firewall_aliases.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this alias? All elements that still use it will become invalid (e.g. filter rules)!')"><img src="x.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
-                <tr> 
+                <tr>
                   <td class="list" colspan="3"></td>
                   <td class="list"> <a href="firewall_aliases_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
 				</tr>
               </table>
             </form>
 <p><span class="vexpl"><span class="red"><strong>Note:<br>
-                </strong></span>Aliases act as placeholders for real IP addresses 
-                and can be used to minimize the number of changes that have to 
-                be made if a host or network address changes. You can enter the 
-                name of an alias instead of an IP address in all address fields 
-                that have a blue background. The alias will be resolved to its 
-                current address according to the list below. If an alias cannot 
-                be resolved (e.g. because you deleted it), the corresponding element 
+                </strong></span>Aliases act as placeholders for real IP addresses
+                and can be used to minimize the number of changes that have to
+                be made if a host or network address changes. You can enter the
+                name of an alias instead of an IP address in all address fields
+                that have a blue background. The alias will be resolved to its
+                current address according to the list below. If an alias cannot
+                be resolved (e.g. because you deleted it), the corresponding element
                 (e.g. filter/NAT/shaper rule) will be considered invalid and skipped.</span></p>
 <?php include("fend.inc"); ?>
 </body>

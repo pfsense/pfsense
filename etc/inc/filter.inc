@@ -824,7 +824,7 @@ function filter_nat_rules_generate() {
 			} else {
 				if($rule['protocol'] == "tcp/udp")
 					$natrules .=
-					 "rdr on $natif proto { tcp udp } from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*"; 
+					 "rdr on $natif proto { tcp udp } from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
 				else
 					$natrules .=
 					 "rdr on $natif proto " . $rule['protocol']. " from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
@@ -954,6 +954,9 @@ function filter_rules_generate() {
 anchor "loopback"
 pass in quick on lo0 all label "pass loopback"
 pass out quick on lo0 all label "pass loopback"
+
+# carp
+anchor "carp"
 
 # enable ftp-proxy
 anchor "ftpproxy"

@@ -74,7 +74,8 @@ if ($_POST) {
 		$input_errors[] = "The alias name may only consist of the characters a-z, A-Z, 0-9.";
 	}
 	if (($_POST['address'] && !is_ipaddr($_POST['address']))) {
-		$input_errors[] = "A valid address must be specified.";
+// XXX: fixup this to detect correct type of data that should be posted.
+//		$input_errors[] = "A valid address must be specified.";
 	}
 	if (($_POST['address_subnet'] && !is_numeric($_POST['address_subnet']))) {
 		$input_errors[] = "A valid subnet bit count must be specified.";
@@ -108,7 +109,7 @@ if ($_POST) {
 			$comd = "\$subnet_address = \$_POST['address_subnet" . $x . "'];";
 			eval($comd);
 			if($subnet <> "") {
-				$address .= ", ";
+				$address .= " ";
 				$address .= $subnet;
 				if($subnet_address <> "") $address .= "/" . $subnet_address;
 			}
@@ -263,7 +264,7 @@ rowtype[2] = "select";
 			<?php
 			$counter = 0;
 			$address = $a_aliases[$id]['address'];
-			$item = explode(", ", $address);
+			$item = explode(" ", $address);
 			foreach($item as $ww) {
 				$address = $item[$counter];
 				$address_subnet = "";
@@ -293,7 +294,7 @@ rowtype[2] = "select";
 
 		     </tbody>
 		    </table>
-			<a onClick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="/plus.gif"></a>
+			<a onClick="javascript:addRowTo('maintable'); typesel_change(); return false;" href="#"><img border="0" src="/plus.gif"></a>
 		    </td>
                 </tr>
                 <tr>

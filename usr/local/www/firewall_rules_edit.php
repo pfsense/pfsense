@@ -84,8 +84,12 @@ function address_to_pconfig($adr, &$padr, &$pmask, &$pnot, &$pbeginport, &$pendp
 		if (!$pendport)
 			$pendport = $pbeginport;
 	} else {
-		$pbeginport = "any";
-		$pendport = "any";
+		if(alias_expand($pbeginport) <> "" || alias_expand($pendport) <> "") {
+			/* Item is a port alias */
+		} else {
+			$pbeginport = "any";
+			$pendport = "any";
+		}
 	}
 }
 
@@ -110,6 +114,10 @@ function pconfig_to_address(&$adr, $padr, $pmask, $pnot, $pbeginport, $pendport)
 			$adr['port'] = $pbeginport . "-" . $pendport;
 		else
 			$adr['port'] = $pbeginport;
+	}
+
+	if(alias_expand($pbeginport)) {
+		$adr['port'] = $pbeginport;
 	}
 }
 
@@ -241,16 +249,16 @@ if ($_POST) {
 		$_POST['dstendport'] = 0;
 	}
 
-	if (($_POST['srcbeginport'] && !is_port($_POST['srcbeginport']))) {
+	if (($_POST['srcbeginport'] && !alias_expand($_POST['srcbeginport']) && !is_port($_POST['srcbeginport']))) {
 		$input_errors[] = "The start source port must be an integer between 1 and 65535.";
 	}
-	if (($_POST['srcendport'] && !is_port($_POST['srcendport']))) {
+	if (($_POST['srcendport'] && !alias_expand($_POST['srcendport']) && !is_port($_POST['srcendport']))) {
 		$input_errors[] = "The end source port must be an integer between 1 and 65535.";
 	}
-	if (($_POST['dstbeginport'] && !is_port($_POST['dstbeginport']))) {
+	if (($_POST['dstbeginport'] && !alias_expand($_POST['dstbeginport']) && !is_port($_POST['dstbeginport']))) {
 		$input_errors[] = "The start destination port must be an integer between 1 and 65535.";
 	}
-	if (($_POST['dstendport'] && !is_port($_POST['dstendport']))) {
+	if (($_POST['dstendport'] && !alias_expand($_POST['dstbeginport']) && !is_port($_POST['dstendport']))) {
 		$input_errors[] = "The end destination port must be an integer between 1 and 65535.";
 	}
 
@@ -567,7 +575,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                       </tr>
                       <tr>
                         <td>Address:&nbsp;&nbsp;</td>
-                        <td><input name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>">
+                        <td><input autocomplete='off' onblur='actb_removedisp()'  onkeydown='actb_checkkey(event);' onkeyup='actb_tocomplete(this,event,addressarray)' name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>">
                         /
 						<select name="srcmask" class="formfld" id="srcmask">
 						<?php for ($i = 31; $i > 0; $i--): ?>
@@ -596,7 +604,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                             <?=htmlspecialchars($wkportdesc);?>
                             </option>
                             <?php endforeach; ?>
-                          </select> <input name="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo $pconfig['srcbeginport']; ?>"></td>
+                          </select> <input autocomplete='off' onblur='actb_removedisp()'  onkeydown='actb_checkkey(event);' onkeyup='actb_tocomplete(this,event,customarray)' class="formfldalias" name="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo $pconfig['srcbeginport']; ?>"></td>
                       </tr>
                       <tr>
                         <td>to:</td>
@@ -611,7 +619,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                             <?=htmlspecialchars($wkportdesc);?>
                             </option>
                             <?php endforeach; ?>
-                          </select> <input name="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo $pconfig['srcendport']; ?>"></td>
+                          </select> <input autocomplete='off' onblur='actb_removedisp()'  onkeydown='actb_checkkey(event);' onkeyup='actb_tocomplete(this,event,customarray)' class="formfldalias" name="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo $pconfig['srcendport']; ?>"></td>
                       </tr>
                     </table>
                     <br>
@@ -649,7 +657,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                       </tr>
                       <tr>
                         <td>Address:&nbsp;&nbsp;</td>
-                        <td><input name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
+                        <td><input name="dst" autocomplete='off' onblur='actb_removedisp()'  onkeydown='actb_checkkey(event);' onkeyup='actb_tocomplete(this,event,addressarray)' type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
                           /
                           <select name="dstmask" class="formfld" id="dstmask">
 						<?php for ($i = 31; $i > 0; $i--): ?>
@@ -677,7 +685,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                             <?=htmlspecialchars($wkportdesc);?>
                             </option>
                             <?php endforeach; ?>
-                          </select> <input name="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo $pconfig['dstbeginport']; ?>"></td>
+                          </select> <input autocomplete='off' onblur='actb_removedisp()' onkeydown='actb_checkkey(event);' onkeyup='actb_tocomplete(this,event,customarray)' class="formfldalias" name="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo $pconfig['dstbeginport']; ?>"></td>
                       </tr>
                       <tr>
                         <td>to:</td>
@@ -692,7 +700,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                             <?=htmlspecialchars($wkportdesc);?>
                             </option>
                             <?php endforeach; ?>
-                          </select> <input name="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo $pconfig['dstendport']; ?>"></td>
+                          </select> <input autocomplete='off' onblur='actb_removedisp()' onkeydown='actb_checkkey(event);' onkeyup='actb_tocomplete(this,event,customarray)' class="formfldalias" name="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo $pconfig['dstendport']; ?>"></td>
                       </tr>
                     </table>
                     <br> <span class="vexpl">Specify the port or port range for
@@ -785,6 +793,321 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 ext_change();
 typesel_change();
 proto_change();
+
+<?php
+$isfirst = 0;
+$aliases = "";
+$addrisfirst = 0;
+$aliasesaddr = "";
+foreach($config['aliases']['alias'] as $alias_name) {
+	if(!stristr($alias_name['address'], ".")) {
+		if($isfirst == 1) $aliases .= ",";
+		$aliases .= "'" . $alias_name['name'] . "'";
+		$isfirst = 1;
+	}
+	if(stristr($alias_name['address'], ".")) {
+		if($addrisfirst == 1) $aliasesaddr .= ",";
+		$aliasesaddr .= "'" . $alias_name['name'] . "'";
+		$addrisfirst = 1;
+	}
+}
+?>
+
+var addressarray=new Array(<?php echo $aliasesaddr; ?>);
+var customarray=new Array(<?php echo $aliases; ?>);
+
+/* ---- Variables ---- */
+var actb_timeOut = -1; // Autocomplete Timeout in ms (-1: autocomplete never time out)
+var actb_lim = 4;    // Number of elements autocomplete can show (-1: no limit)
+var actb_firstText = false; // should the auto complete be limited to the beginning of keyword?
+/* ---- Variables ---- */
+
+/* --- Styles --- */
+var actb_bgColor = '#888888';
+var actb_textColor = '#FFFFFF';
+var actb_hColor = '#000000';
+var actb_fFamily = 'Verdana';
+var actb_fSize = '11px';
+var actb_hStyle = 'text-decoration:underline;font-weight="bold"';
+/* --- Styles --- */
+
+/* ---- Constants ---- */
+var actb_keywords = new Array();
+var actb_display = false;
+var actb_pos = 0;
+var actb_total = 0;
+var actb_curr = null;
+var actb_rangeu = 0;
+var actb_ranged = 0;
+var actb_bool = new Array();
+var actb_pre = 0;
+var actb_toid;
+var actb_tomake = false;
+/* ---- Constants ---- */
+
+function actb_parse(n){
+    var t = escape(actb_curr.value);
+    var tobuild = '';
+    var i;
+
+    if (actb_firstText){
+        var re = new RegExp("^" + t, "i");
+    }else{
+        var re = new RegExp(t, "i");
+    }
+    var p = n.search(re);
+
+    for (i=0;i<p;i++){
+        tobuild += n.substr(i,1);
+    }
+    tobuild += ""
+    for (i=p;i<t.length+p;i++){
+        tobuild += n.substr(i,1);
+    }
+    tobuild += "";
+    for (i=t.length+p;i<n.length;i++){
+        tobuild += n.substr(i,1);
+    }
+    return tobuild;
+}
+function actb_generate(){
+    if (document.getElementById('tat_table')) document.body.removeChild(document.getElementById('tat_table'));
+    a = document.createElement('table');
+    a.cellSpacing='1px';
+    a.cellPadding='2px';
+    a.style.position='absolute';
+    a.style.top = eval(curTop() + actb_curr.offsetHeight) + "px";
+    a.style.left = curLeft() + "px";
+    a.style.backgroundColor=actb_bgColor;
+    a.id = 'tat_table';
+    document.body.appendChild(a);
+    var i;
+    var first = true;
+    var j = 1;
+
+    var counter = 0;
+    for (i=0;i<actb_keywords.length;i++){
+        if (actb_bool[i]){
+            counter++;
+            r = a.insertRow(-1);
+            if (first && !actb_tomake){
+                r.style.backgroundColor = actb_hColor;
+                first = false;
+                actb_pos = counter;
+            }else if(actb_pre == i){
+                r.style.backgroundColor = actb_hColor;
+                first = false;
+                actb_pos = counter;
+            }else{
+                r.style.backgroundColor = actb_bgColor;
+            }
+            r.id = 'tat_tr'+(j);
+            c = r.insertCell(-1);
+            c.style.color = actb_textColor;
+            c.style.fontFamily = actb_fFamily;
+            c.style.fontSize = actb_fSize;
+            c.innerHTML = actb_parse(actb_keywords[i]);
+            c.id = 'tat_td'+(j);
+            j++;
+        }
+        if (j - 1 == actb_lim && j < actb_total){
+            r = a.insertRow(-1);
+            r.style.backgroundColor = actb_bgColor;
+            c = r.insertCell(-1);
+            c.style.color = actb_textColor;
+            c.style.fontFamily = 'arial narrow';
+            c.style.fontSize = actb_fSize;
+            c.align='center';
+            c.innerHTML = '\\/';
+            break;
+        }
+    }
+    actb_rangeu = 1;
+    actb_ranged = j-1;
+    actb_display = true;
+    if (actb_pos <= 0) actb_pos = 1;
+}
+function curTop(){
+    actb_toreturn = 0;
+    obj = actb_curr;
+    while(obj){
+        actb_toreturn += obj.offsetTop;
+        obj = obj.offsetParent;
+    }
+    return actb_toreturn;
+}
+function curLeft(){
+    actb_toreturn = 0;
+    obj = actb_curr;
+    while(obj){
+        actb_toreturn += obj.offsetLeft;
+        obj = obj.offsetParent;
+    }
+    return actb_toreturn;
+}
+function actb_remake(){
+    document.body.removeChild(document.getElementById('tat_table'));
+    a = document.createElement('table');
+    a.cellSpacing='1px';
+    a.cellPadding='2px';
+    a.style.position='absolute';
+    a.style.top = eval(curTop() + actb_curr.offsetHeight) + "px";
+    a.style.left = curLeft() + "px";
+    a.style.backgroundColor=actb_bgColor;
+    a.id = 'tat_table';
+    document.body.appendChild(a);
+    var i;
+    var first = true;
+    var j = 1;
+    if (actb_rangeu > 1){
+        r = a.insertRow(-1);
+        r.style.backgroundColor = actb_bgColor;
+        c = r.insertCell(-1);
+        c.style.color = actb_textColor;
+        c.style.fontFamily = 'arial narrow';
+        c.style.fontSize = actb_fSize;
+        c.align='center';
+        c.innerHTML = '/\\';
+    }
+    for (i=0;i<actb_keywords.length;i++){
+        if (actb_bool[i]){
+            if (j >= actb_rangeu && j <= actb_ranged){
+                r = a.insertRow(-1);
+                r.style.backgroundColor = actb_bgColor;
+                r.id = 'tat_tr'+(j);
+                c = r.insertCell(-1);
+                c.style.color = actb_textColor;
+                c.style.fontFamily = actb_fFamily;
+                c.style.fontSize = actb_fSize;
+                c.innerHTML = actb_parse(actb_keywords[i]);
+                c.id = 'tat_td'+(j);
+                j++;
+            }else{
+                j++;
+            }
+        }
+        if (j > actb_ranged) break;
+    }
+    if (j-1 < actb_total){
+        r = a.insertRow(-1);
+        r.style.backgroundColor = actb_bgColor;
+        c = r.insertCell(-1);
+        c.style.color = actb_textColor;
+        c.style.fontFamily = 'arial narrow';
+        c.style.fontSize = actb_fSize;
+        c.align='center';
+        c.innerHTML = '\\/';
+    }
+}
+function actb_goup(){
+    if (!actb_display) return;
+    if (actb_pos == 1) return;
+    document.getElementById('tat_tr'+actb_pos).style.backgroundColor = actb_bgColor;
+    actb_pos--;
+    if (actb_pos < actb_rangeu) actb_moveup();
+    document.getElementById('tat_tr'+actb_pos).style.backgroundColor = actb_hColor;
+    if (actb_toid) clearTimeout(actb_toid);
+    if (actb_timeOut > 0) actb_toid = setTimeout("actb_removedisp()",actb_timeOut);
+}
+function actb_godown(){
+    if (!actb_display) return;
+    if (actb_pos == actb_total) return;
+    document.getElementById('tat_tr'+actb_pos).style.backgroundColor = actb_bgColor;
+    actb_pos++;
+    if (actb_pos > actb_ranged) actb_movedown();
+    document.getElementById('tat_tr'+actb_pos).style.backgroundColor = actb_hColor;
+    if (actb_toid) clearTimeout(actb_toid);
+    if (actb_timeOut > 0) actb_toid = setTimeout("actb_removedisp()",actb_timeOut);
+}
+function actb_movedown(){
+    actb_rangeu++;
+    actb_ranged++;
+    actb_remake();
+}
+function actb_moveup(){
+    actb_rangeu--;
+    actb_ranged--;
+    actb_remake();
+}
+function actb_penter(){
+    if (!actb_display) return;
+    actb_display = 0;
+    var word = '';
+    var c = 0;
+    for (var i=0;i<=actb_keywords.length;i++){
+        if (actb_bool[i]) c++;
+        if (c == actb_pos){
+            word = actb_keywords[i];
+            break;
+        }
+    }
+    a = word;//actb_keywords[actb_pos-1];//document.getElementById('tat_td'+actb_pos).;
+    actb_curr.value = a;
+    actb_removedisp();
+}
+function actb_removedisp(){
+    actb_display = 0;
+    if (document.getElementById('tat_table')) document.body.removeChild(document.getElementById('tat_table'));
+    if (actb_toid) clearTimeout(actb_toid);
+}
+function actb_checkkey(evt){
+    a = evt.keyCode;
+    if (a == 38){ // up key
+        actb_goup();
+    }else if(a == 40){ // down key
+        actb_godown();
+    }else if(a == 13){
+        actb_penter();
+    }
+}
+function actb_tocomplete(sndr,evt,arr){
+    if (arr) actb_keywords = arr;
+    if (evt.keyCode == 38 || evt.keyCode == 40 || evt.keyCode == 13) return;
+    var i;
+    if (actb_display){
+        var word = 0;
+        var c = 0;
+        for (var i=0;i<=actb_keywords.length;i++){
+            if (actb_bool[i]) c++;
+            if (c == actb_pos){
+                word = i;
+                break;
+            }
+        }
+        actb_pre = word;//actb_pos;
+    }else{ actb_pre = -1};
+
+    if (!sndr) var sndr = evt.srcElement;
+    actb_curr = sndr;
+
+    if (sndr.value == ''){
+        actb_removedisp();
+        return;
+    }
+    var t = sndr.value;
+    if (actb_firstText){
+        var re = new RegExp("^" + t, "i");
+    }else{
+        var re = new RegExp(t, "i");
+    }
+
+    actb_total = 0;
+    actb_tomake = false;
+    for (i=0;i<actb_keywords.length;i++){
+        actb_bool[i] = false;
+        if (re.test(actb_keywords[i])){
+            actb_total++;
+            actb_bool[i] = true;
+            if (actb_pre == i) actb_tomake = true;
+        }
+    }
+    if (actb_toid) clearTimeout(actb_toid);
+    if (actb_timeOut > 0) actb_toid = setTimeout("actb_removedisp()",actb_timeOut);
+    actb_generate(actb_bool);
+}
+
+
+
 //-->
 </script>
 <?php include("fend.inc"); ?>

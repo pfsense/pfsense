@@ -443,15 +443,25 @@ function filter_generate_altq_rules() {
                         }
 
                         if (!isset($rule['protocol']) || in_array($rule['protocol'], array("tcp","udp"))) {
-
                                 if ($rule['source']['port']) {
-                                        $srcport = explode("-", $rule['source']['port']);
-
-                                        if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
-                                                $line .= "{$srcport[0]} ";
-                                        } else {
-                                                $line .= "{$srcport[0]}-{$srcport[1]} ";
-                                        }
+					/*
+					 * Check to see if port is a alias.  If so grab it and
+                                         * enclose it in { } to pass to pf.
+                                         *
+                                         * Otherwise combine the portrange into one if its only
+                                         * one item.
+					 */
+					$src = alias_expand($rule['source']['port']);
+					if($src <> "") {
+						$line .= "{ " . $src . " }";
+					} else {
+						$srcport = explode("-", $rule['source']['port']);
+						if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
+							$line .= "{$srcport[0]} ";
+						} else {
+							$line .= "{$srcport[0]}-{$srcport[1]} ";
+						}
+					}
                                 }
                         }
 
@@ -489,15 +499,25 @@ function filter_generate_altq_rules() {
                         }
 
                         if (!isset($rule['protocol']) || in_array($rule['protocol'], array("tcp","udp"))) {
-
                                 if ($rule['destination']['port']) {
-                                        $dstport = explode("-", $rule['destination']['port']);
-
-                                        if ((!$dstport[1]) || ($dstport[0] == $dstport[1])) {
-                                                $line .= "{$dstport[0]} ";
-                                        } else {
-                                                $line .= "{$dstport[0]}-{$dstport[1]} ";
-                                        }
+					$dst = alias_expand($rule['destination']['port']);
+					/*
+					 * Check to see if port is a alias.  If so grab it and
+                                         * enclose it in { } to pass to pf.
+                                         *
+                                         * Otherwise combine the portrange into one if its only
+                                         * one item.
+					 */
+					if($dst <> "") {
+						$line .= "{ " . $dst . " }";
+					} else {
+						$dstport = explode("-", $rule['destination']['port']);
+						if ((!$dstport[1]) || ($dstport[0] == $dstport[1])) {
+							$line .= "{$dstport[0]} ";
+						} else {
+							$line .= "{$dstport[0]}-{$dstport[1]} ";
+						}
+					}
                                 }
                         }
 
@@ -1153,9 +1173,9 @@ EOD;
 			}
 
 			if(!isset($rule['direction']) and $rule['direction'] <> "") {
-				$line .= " in ";
+				$line .= "in ";
 			} else {
-				$line .= " " . $rule['direction'] . " ";
+				$line .= $rule['direction'] . " ";
 			}
 
 			if (isset($rule['log']))
@@ -1202,7 +1222,7 @@ EOD;
 					}
 				}
 			} else if ($rule['source']['address']) {
-				$src = alias_expand($rule['source']['address']);
+				$src = "{ " . alias_expand($rule['source']['address']). " }";
 			}
 
 			if (!$src || ($src == "/")) {
@@ -1220,9 +1240,15 @@ EOD;
 
 				if ($rule['source']['port']) {
 					$srcport = explode("-", $rule['source']['port']);
-
+					if(alias_expand($srcport[0]))
+						$srcporta = alias_expand($srcport[0]);
+					else
+						$srcporta = $srcport[0];
 					if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
-						$line .= "port = {$srcport[0]} ";
+						if(alias_expand($srcport[0]))
+							$line .= "port { {$srcporta} } ";
+						else
+							$line .= "port = {$srcporta} ";
 					} else if (($srcport[0] == 1) && ($srcport[1] == 65535)) {
 						/* no need for a port statement here */
 					} else if ($srcport[1] == 65535) {
@@ -1256,7 +1282,7 @@ EOD;
 					}
 				}
 			} else if ($rule['destination']['address']) {
-				$dst = alias_expand($rule['destination']['address']);
+				$dst = "{ " . alias_expand($rule['destination']['address']) . " }";
 			}
 
 			if (!$dst || ($dst == "/")) {
@@ -1274,9 +1300,15 @@ EOD;
 
 				if ($rule['destination']['port']) {
 					$dstport = explode("-", $rule['destination']['port']);
-
+					if(alias_expand($dstport[0]))
+						$dstporta = alias_expand($dstport[0]);
+					else
+						$dstporta = $dstport[0];
 					if ((!$dstport[1]) || ($dstport[0] == $dstport[1])) {
-						$line .= "port = {$dstport[0]} ";
+						if(alias_expand($dstport[0]))
+							$line .= "port { {$dstporta} }";
+						else
+							$line .= "port = {$dstporta} ";
 					} else if (($dstport[0] == 1) && ($dstport[1] == 65535)) {
 						/* no need for a port statement here */
 					} else if ($dstport[1] == 65535) {

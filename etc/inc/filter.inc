@@ -410,7 +410,7 @@ function filter_generate_altq_rules() {
                 for ($iif = 0; $iif < $nif; $iif++) {
 
 			$queuename = filter_altq_get_queuename($rule['targetqueue']);
-			$line = "add $rulei set 4 pass altq " . $queuename . " ";
+			$line = "add $rulei set 4 pass altq " . $rule['targetqueue'] . " ";
 			$rulei++;
 
                        if (isset($rule['protocol'])) {

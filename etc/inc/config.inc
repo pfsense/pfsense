@@ -85,7 +85,7 @@ if ($g['booting']) {
 *******************************************************************************
 * FATAL ERROR                                                                 *
 * The device that contains the configuration file (config.xml) could not be   *
-* found. m0n0wall cannot continue booting.                                    *
+* found. pfSense cannot continue booting.                                     *
 *******************************************************************************
 
 
@@ -126,6 +126,7 @@ if (!$noparseconfig) {
 
 		/* read cache */
 		$config = unserialize(file_get_contents("{$g['tmp_path']}/config.cache"));
+
 	} else {
 
 		if (!file_exists("{$g['conf_path']}/config.xml")) {
@@ -139,7 +140,7 @@ if (!$noparseconfig) {
 					echo "file is inserted. If it isn't, your configuration changes will be lost\n";
 					echo "on reboot.\n";
 				} else {
-					echo "XML configuration file not found. m0n0wall cannot continue booting.\n";
+					echo "XML configuration file not found.  pfSense cannot continue booting.\n";
 					mwexec("/sbin/halt");
 					exit;
 				}
@@ -158,9 +159,9 @@ if (!$noparseconfig) {
 
 *******************************************************************************
 * WARNING!                                                                    *
-* The current configuration has been created with a newer version of m0n0wall *
+* The current configuration has been created with a newer version of pfSense  *
 * than this one! This can lead to serious misbehavior and even security       *
-* holes! You are urged to either upgrade to a newer version of m0n0wall or    *
+* holes! You are urged to either upgrade to a newer version of pfSense or     *
 * revert to the default configuration immediately!                            *
 *******************************************************************************
 
@@ -203,7 +204,7 @@ function conf_mount_ro() {
 
 /* convert configuration, if necessary */
 function convert_config() {
-	global $config, $g;
+	global $config, $pkg_config, $g;
 
 	if ($config['version'] == $g['latest_config'])
 		return;		/* already at latest version */

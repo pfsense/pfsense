@@ -50,6 +50,7 @@ function showhide(tspan, tri) {
               routes</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_firmware.php" class="navlnk">Firmware</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_advanced.php" class="navlnk">Advanced</a><br>
+	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/pkg_mgr.php" class="navlnk">Package Manager</a><br>
               <strong>Interfaces</strong>
 			  <?php if (!isset($config['system']['webgui']['noassigninterfaces'])): ?>
 			  <a href="/interfaces_assign.php" class="navlnks">(assign)</a>

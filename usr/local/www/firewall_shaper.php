@@ -150,7 +150,7 @@ if ($_GET['act'] == "del") {
 
 		$a_shaper = $a_shaper_new;
 		write_config();
-		touch($d_filterconfdirty_path);
+		touch($d_shaperconfdirty_path);
 		header("Location: firewall_shaper.php");
 		exit;
 	}

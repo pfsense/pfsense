@@ -288,7 +288,7 @@ foreach ($packages_to_install as $id) {
                     update_progress_bar(100);
                     echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
                     echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
-                    update_status("Package WAS NOT installed properly...Something went wrong..\n" . $filecontents);
+                    update_status("Package WAS NOT installed properly...Something went wrong.." . $filecontents);
                     update_output_window("Error during package installation.");
                     sleep(1);
                     die;
@@ -353,7 +353,7 @@ foreach ($packages_to_install as $id) {
                         $pb_percent += 10;
                         $filename = get_filename_from_url($afn['item'][0]);
                         fwrite($fd_log, "Downloading additional files needed for package " . $filename . " ...\n");
-                        update_status("Downloading additional files needed for package " . $filename . " ...\n");
+                        update_status("Downloading additional files needed for package " . $filename . " ...");
                         $prefix = "/usr/local/pkg/";
                         $pkg_chmod = "";
                         if($afn['chmod'] <> "")
@@ -426,7 +426,7 @@ foreach ($packages_to_install as $id) {
 	if($package_conf['custom_php_global_functions'] <> "")
 	    if(php_check_syntax($package_conf['custom_php_global_functions'], $error_message) == false)
 		eval($package_conf['custom_php_global_functions']);
-        update_status("Executing post install commands...\n");
+        update_status("Executing post install commands...");
         fwrite($fd_log, "Executing post install commands...\n");
         $error_message = "";
         if($package_conf['custom_php_command_before_form'] <> "")

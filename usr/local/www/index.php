@@ -32,13 +32,16 @@
 */
 
 if(file_exists("/usr/local/www/trigger_initial_wizard")) {
+	conf_mount_rw();
 	unlink("/usr/local/www/trigger_initial_wizard");
+	conf_mount_ro();
 	echo "<center>";
 	echo "Welcome to pfSense!<p>";
 	echo "One moment while we start the initial setup wizard.<p>";
 	echo "Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal gui.<p>";
 	echo "To bypass the wizard, click on the pfSense wizard on the initial page.";
 	echo "<meta http-equiv=\"refresh\" content=\"1;url=wizard.php?xml=setup_wizard.xml\">";
+	exit;
 }
 
 require("guiconfig.inc");

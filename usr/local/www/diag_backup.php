@@ -194,6 +194,11 @@ if (isset($config['system']['version_control'])) {
 	}
 }
 
+$id = rand() . '.' . time();
+
+$mth = ini_get('upload_progress_meter.store_method');
+$dir = ini_get('upload_progress_meter.file.filename_template');
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -206,7 +211,7 @@ if (isset($config['system']['version_control'])) {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
       <p class="pgtitle">Diagnostics: Backup/restore</p>
-            <form action="diag_backup.php" method="post" enctype="multipart/form-data">
+            <form action="diag_backup.php" method="post" enctype="multipart/form-data" onSubmit="window.open('progress.php?conffile=<?=$id?>','UploadMeter','width=370,height=115', true); return true; ">
             <?php if ($input_errors) print_input_errors($input_errors); ?>
             <?php if ($savemsg) print_info_box($savemsg); ?>
               <table width="100%" border="0" cellspacing="0" cellpadding="6">

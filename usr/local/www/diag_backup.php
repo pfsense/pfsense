@@ -253,7 +253,7 @@ if (isset($config['system']['version_control'])) {
 		<tr>
 		  <td width="22%" valign="baseline" class="vncell">&nbsp;</td>
 		  <td width="78%" class="vtable">
-		  <p> Click this button to reinstall all system packages.  This may wake a while.<br>
+		  <p> Click this button to reinstall all system packages.  This may take a while.<br>
 		  <br>
 		  <input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="Reinstall packages"></td>
 		</tr>

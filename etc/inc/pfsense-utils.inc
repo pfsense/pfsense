@@ -651,8 +651,10 @@ function reverse_strrchr($haystack, $needle) {
 
 /*
  * get_package_depends($pkg_name, $filetype = ".xml", $format = "files"):  Return a package's XML dependencies.
- *                                                              "files" = filenames
- *                                                              "names" = stripped filenames
+ *
+ * $filetype = "all" || ".xml", ".tgz", etc.
+ * $format = "files" (full filenames) || 
+ *
  */
 function get_package_depends($pkg_name, $filetype = ".xml", $format = "files") {
         global $config;
@@ -670,9 +672,9 @@ function get_package_depends($pkg_name, $filetype = ".xml", $format = "files") {
         if($pkg_xml['additional_files_needed'] != "") {
                 foreach($pkg_xml['additional_files_needed']['0'] as $item) {
                         $depend_file = substr(strrchr($item['0'], "/"),1); // Strip URLs down to filenames.
+			$depend_name = reverse_strrchr($depend_file, "."); // Strip filename down to dependency name.
                         if ($filetype != "all" && !preg_match("/\{$filetype}/i", $depend_file)) break; // If the file doesn't end in desired extension (case-insensitive) exit the loop.
                         if(!file_exists("/usr/local/pkg/" . $pkg_name)) {
-                                $depend_name = reverse_strrchr($depend_file, "."); // Strip filename down to dependency name.
                                 log_error("Fetching missing dependency \(" . $depend_name . "\) for " . $pkg_name);
 				if($item['prefix'] != "") { // Use the prefix defined in XML if applicable.
 					$prefix = $item['prefix'];
@@ -688,9 +690,24 @@ function get_package_depends($pkg_name, $filetype = ".xml", $format = "files") {
 				$depends[] = $depend_file;
 				break;
 			case "names":
-				$depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
-				$depends[] = $depend_xml['name'];
-				break;
+				switch ($filetype) {
+				case "all":
+					if(preg_match("/\.xml/i", $depend_file)) {
+						$depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
+						$depends[] = $depend_xml['name'];
+						break;
+					} else {
+						$depends[] = $depend_name; // If this dependency isn't package XML, use the stripped filename.
+						break;
+					}
+				case ".xml":
+					$depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
+					$depends[] = $depend_xml['name'];
+					break;
+				default:
+					$depends[] = $depend_name; // If we aren't looking for XML, use the stripped filename (it's all we have).
+					break;
+				}
 			}
                 }
         return $depends;

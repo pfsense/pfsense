@@ -84,7 +84,7 @@ if($_GET['showlog'] <> "") {
 /*
  *   open logging facility
  */
-$fd_log = fopen("/tmp/pkg_mgr.log", "w");
+$fd_log = fopen("{$g['tmp_path']}/pkg_mgr.log", "w");
 if(!$fd_log) log_error("Warning, could not open {$g['tmp_path']}/pkg_mgr.log for writing");
 fwrite($fd_log, "Begin of Package Manager installation session.\n");
 

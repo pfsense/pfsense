@@ -29,7 +29,9 @@
 
 	TODO:
 		* Expose more functions.
-		* Write handlers for authentication and PHP -> XML_RPC_Value.
+		* Add syslog handling of errors.
+		* Define XML_RPC_erruser.
+		* Write handlers for PHP -> XML_RPC_Value.
 		* xmlrpc_params_to_php currently does *not* handle structs.
 */
 
@@ -38,6 +40,18 @@ require_once("config.inc");
 require_once("functions.inc");
 
 // Helper functions.
+/*
+ *   xmlrpc_auth: Handle basic crypt() authentication of the XMLRPC request. This function assumes that
+ *                $params[0] contains the local system's plaintext password and removes the password from
+ *		  the array before returning it.
+ */
+function xmlrpc_auth(&$params) {
+	global $config;
+	if (crypt($params[0], $config['system']['password']) != $config['system']['password'])
+		return false; // Password didn't match.
+	array_shift($params); // Shift the password parameter off of the array.
+	return true; // Password matched.
+}
 
 /*
  *   xmlrpc_params_to_php: Convert params array passed from XMLRPC server into a PHP array and return it.
@@ -46,7 +60,6 @@ require_once("functions.inc");
  */
 function xmlrpc_params_to_php($params) {
 	$array = array();
-	$param_length = $params->getNumParams();
 	for($i = 0; $i < $params->getNumParams(); $i++) {
 		$value = $params->getParam($i);
 		if($value->kindOf() == "scalar") {
@@ -81,10 +94,8 @@ $backup_config_section_doc = 'XMLRPC wrapper for backup_config_section. This met
 $backup_config_section_sig = array(array(string, string, string));
 
 function backup_config_section_xmlrpc($raw_params) {
-	global $config;
 	$params = xmlrpc_params_to_php($raw_params); // Convert XML_RPC_Value objects to a PHP array of values.
-	if(crypt($params[0], $config['system']['password']) != $config['system']['password'])
-		return new XML_RPC_Response(new XML_RPC_Value("FAILURE.", 'string'));
+	if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", 'string'));
 	$val = new XML_RPC_Value(backup_config_section($params[1]), 'string'); 
 	return new XML_RPC_Response($val);
 }
@@ -93,10 +104,9 @@ $restore_config_section_doc = 'XMLRPC wrapper for restore_config_section. This m
 $restore_config_section_sig = array(array(boolean, string, string, string));
 
 function restore_config_section_xmlrpc($raw_params) {
-	global $config;
 	$params = xmlrpc_params_to_php($raw_params);
-	if(crypt($params[0], $config['system']['password']) != $config['system']['password']) return; // Basic authentication.
-	restore_config_section($params[1], $params[2]);
+	if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", 'string'));
+	restore_config_section($params[0], $params[1]);
 	return new XML_RPC_Response(new XML_RPC_Value(true, 'boolean'));
 }
 
@@ -104,9 +114,8 @@ $filter_configure_doc = 'Basic XMLRPC wrapper for filter_configure. This method 
 $filter_configure_sig = array(array(boolean, string));
 
 function filter_configure_xmlrpc($raw_params) {
-	global $config;
 	$params = xmlrpc_params_to_php($raw_params);
-	if(crypt($params[0], $config['system']['password']) != $config['system']['password']) return; // Basic authentication.
+	if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", 'string'));
 	filter_configure();
 	return new XML_PRC_Response(new XML_RPC_Value(true, 'boolean'));
 }

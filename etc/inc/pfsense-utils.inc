@@ -135,6 +135,7 @@ function convert_ip_to_network_format($ip, $subnet) {
  */
 function find_interface_ip($interface) {
     $ip = exec_command("/sbin/ifconfig {$interface} | grep -w \"inet\" | cut -d\" \" -f 2");
+    $ip = str_replace("\n","",$ip);
     return $ip;
 }
 

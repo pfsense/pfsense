@@ -43,6 +43,9 @@ $pconfig['cert'] = base64_decode($config['system']['webgui']['certificate']);
 $pconfig['key'] = base64_decode($config['system']['webgui']['private-key']);
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['disablefirmwarecheck'] = isset($config['system']['disablefirmwarecheck']);
+$pconfig['altfirmwareurl'] = $config['system']['altfirmwareurl'];
+$pconfig['firmwareurl'] = $config['system']['firmwareurl'];
+$pconfig['firmwarename'] = $config['system']['firmwarename'];
 $pconfig['expanddiags'] = isset($config['system']['webgui']['expanddiags']);
 if ($g['platform'] == "generic-pc")
 	$pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
@@ -75,6 +78,9 @@ if ($_POST) {
 			$input_errors[] = "This certificate does not appear to be valid.";
 		if (!strstr($_POST['key'], "BEGIN RSA PRIVATE KEY") || !strstr($_POST['key'], "END RSA PRIVATE KEY"))
 			$input_errors[] = "This key does not appear to be valid.";
+	if ($_POST['altfirmwareurl'])
+		if ($_POST['firmwareurl'] == "" || $_POST['firmwarename'] == "")
+		$input_errors[] = "You must specify a base URL and a filename for the alternate firmware.";
 	}
 
 	if (!$input_errors) {
@@ -101,6 +107,14 @@ if ($_POST) {
 		$config['system']['webgui']['private-key'] = base64_encode($_POST['key']);
 		$config['system']['disableconsolemenu'] = $_POST['disableconsolemenu'] ? true : false;
 		$config['system']['disablefirmwarecheck'] = $_POST['disablefirmwarecheck'] ? true : false;
+		$config['system']['altfirmwareurl'] = $_POST['altfirmwareurl'] ? true : false;
+		if ($config['system']['altfirmwareurl']) {
+			$config['system']['firmwareurl'] = $_POST['firmwareurl'];
+			$config['system']['firmwarename'] = $_POST['firmwarename'];
+		} else {
+			unset($config['system']['firmwareurl']);
+			unset($config['system']['firmwarename']);
+		}
 		$config['system']['webgui']['expanddiags'] = $_POST['expanddiags'] ? true : false;
 		$config['system']['optimization'] = $_POST['optimization'];
 		$config['system']['disablerendevouz'] = $_POST['disablerendevouz'];
@@ -161,6 +175,16 @@ function enable_change(enable_over) {
 		document.iform.ipv6nat_ipaddr.disabled = 1;
 	}
 }
+function enable_altfirmwareurl(enable_over) {
+        if (document.iform.altfirmwareurl.checked || enable_over) {
+                document.iform.firmwareurl.disabled = 0;
+                document.iform.firmwarename.disabled = 0;
+        } else {
+                document.iform.firmwareurl.disabled = 1;
+                document.iform.firmwarename.disabled = 1;
+        }
+}
+
 // -->
 </script>
 </head>
@@ -277,14 +301,23 @@ function enable_change(enable_over) {
                     <strong>Disable console menu</strong><span class="vexpl"><br>
                     Changes to this option will take effect after a reboot.</span></td>
                 </tr>
-				<tr>
+		<tr>
                   <td valign="top" class="vncell">Firmware version check </td>
                   <td class="vtable">
                     <input name="disablefirmwarecheck" type="checkbox" id="disablefirmwarecheck" value="yes" <?php if ($pconfig['disablefirmwarecheck']) echo "checked"; ?>>
                     <strong>Disable firmware version check</strong><span class="vexpl"><br>
     This will cause pfSense not to check for newer firmware versions when the <a href="system_firmware.php">System: Firmware</a> page is viewed.</span></td>
-			    </tr>
-				<tr>
+		</tr>
+		<tr>
+                  <td valign="top" class="vncell">Alternate firmware URL</td>
+                  <td class="vtable">
+                    <input name="altfirmwareurl" type="checkbox" id="altfirmwareurl" value="yes" onClick="enable_altfirmwareurl(false)" <?php if ($pconfig['altfirmwareurl']) echo "checked"; ?>> Use a different URL for firmware upgrades<br>
+                    Base URL: <input name="firmwareurl" type="input" id="firmwareurl" size="64" value="<?php if ($pconfig['firmwareurl']) echo $pconfig['firmwareurl']; else echo $g['firmwarebaseurl']; ?>"><br>
+                    Filename: <input name="firmwarename" type="input" id="firmwarename" size="32" value="<?php if ($pconfig['firmwarename']) echo $pconfig['firmwarename']; else echo $g['firmwarefilename']; ?>">
+                    <span class="vexpl"><br>
+    This is where pfSense will check for newer firmware versions when <a href="system_firmware.php">System: Firmware</a> page is viewed.</span></td>
+		</tr>
+		<tr>
                   <td width="22%" valign="top" class="vncell">Hard disk standby time </td>
                   <td width="78%" class="vtable">
                     <select name="harddiskstandby" class="formfld">

@@ -553,7 +553,7 @@ function resync_all_package_configs_bootup($show_message) {
 	if($pkg_config['additional_files_needed'] != "") {
 		foreach($pkg_config['additional_files_needed']['item'] as $item) {
 			$pkg_name = strrchr($item, "/");
-			if(!preg_match("/.xml/i", $pkg_name)) break;
+			if(!preg_match("/\.xml/", $pkg_name)) break;
 			if(!file_exists("/usr/local/pkg/" . $pkg_name)) {
 				if($show_message == true) print "Fetching " . $pkg_name . ".\n";
 				log_error("Fetching missing configuration XML for " . $pkg_name);
@@ -578,11 +578,11 @@ function sweep_package_processes() {
     foreach($config['installedpackages']['package'] as $package) {
         $pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
         if($pkg_config['swept_processes'] <> "") {
-                mwexec("killall" . $pkg_config['swept_processes']);
+                mwexec("/usr/bin/killall " . $pkg_config['swept_processes']);
                 log_error("Killed " . $package['name'] . "'s unnecessary processes.");
-        }           
+        }
     }
-} 
+}
 
 /*
  * gather_altq_queue_stats():  gather alq queue stats and return an array that
@@ -614,4 +614,5 @@ function gather_altq_queue_stats($dont_return_root_queues) {
     }
     return $queue_stats;
 }
+
 ?>

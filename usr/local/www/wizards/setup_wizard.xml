@@ -2264,8 +2264,6 @@
 		</field>
 	</fields>
 	<stepsubmitbeforesave>
-		echo " IN STEP SUBMIT BEFORE SAVE!" ;
-		echo " " . $_POST['selectedtype'];
 		if($_POST['selectedtype'] == "Static") { } else {
 			echo $_POST['selectedtype'] . " ";
 			$_POST['ipaddress'] = $_POST['selectedtype'];

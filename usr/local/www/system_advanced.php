@@ -261,7 +261,6 @@ function enable_change(enable_over) {
                     seconds<br>
     Idle TCP connections will be removed from the state table after no packets have been received for the specified number of seconds. Don't set this too high or your state table could become full of connections that have been improperly shut down. The default is 2.5 hours.</span></td>
 			    </tr>
-<?php if ($g['platform'] == "generic-pc"): ?>
 				<tr>
                   <td width="22%" valign="top" class="vncell">Hard disk standby time </td>
                   <td width="78%" class="vtable">
@@ -283,7 +282,6 @@ function enable_change(enable_over) {
                     Puts the hard disk into standby mode when the selected amount of time after the last
                     access has elapsed. <em>Do not set this for CF cards.</em></td>
 				</tr>
-<?php endif; ?>
 				<tr>
                   <td width="22%" valign="top" class="vncell">Navigation</td>
                   <td width="78%" class="vtable">

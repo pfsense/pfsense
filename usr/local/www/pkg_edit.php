@@ -238,11 +238,12 @@ $config = $config_tmp;
 			echo "<textarea " . $rows . $cols . " name='" . $pkga['fieldname'] . "'>" . $value . "</textarea>\n";
 			echo "<br>" . $pkga['description'] . "\n";
 		  } else if($pkga['type'] == "interfaces_selection") {
-			echo "<select name='" . $pkga['fieldname'] . "'>\n";
+			$size = "";
+			if($pkga['size'] <> "") $size = " size=\"" . $pkga['size'] . "\"";
+			echo "<select name='" . $pkga['fieldname'] . "'" . $size . ">\n";
 			foreach ($config['interfaces'] as $ifname => $iface) {
 			  if ($iface['descr'])
 				  $ifdescr = $iface['descr'];
-
 			  else
 				  $ifdescr = strtoupper($ifname);
 				$ifname = $iface['if'];

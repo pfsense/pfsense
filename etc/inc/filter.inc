@@ -688,6 +688,15 @@ function is_one_to_one_or_server_nat_rule($iptocheck) {
 				return true;
 		}
 
+	if($config['nat']['rule'] <> "")
+		foreach($config['nat']['rule'] as $onetoone) {
+			$int = explode("/", $onetoone['target']);
+				if(ip_in_subnet($iptocheck,$onetoone['target']."/".$onetoone['subnet']) == true)
+					return true;
+			if($onetoone['target'] == $target)
+				return true;
+		}
+
 	return FALSE;
 }
 

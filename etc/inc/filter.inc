@@ -107,20 +107,21 @@ function filter_generate_altq_queues() {
 	$altq_rules = "";
 	if (is_array($config['pfqueueing']['queue'])) {
 		foreach ($config['pfqueueing']['queue'] as $rule) {
+			$options = "";
 			$altq_rules .= "queue " . $rule['name'] . " ";
 			if (isset($rule['bandwidth']))
-			$altq_rules .= "bandwidth " . $rule['bandwidth'] . " ";
+				$altq_rules .= "bandwidth " . $rule['bandwidth'] . " ";
 			if (isset($rule['priority']))
-			$altq_rules .= "priority " .  $rule['priority']  . " ";
-			$options = "";
+				$altq_rules .= "priority " .  $rule['priority']  . " ";
 			if(isset($rule['options']['red']))
 				$options .= " red";
 			if(isset($rule['options']['ecn']))
 				$options .= " ecn";
 			if(isset($rule['options']['default']))
 				$options .= " default";
+			$altq_rules .= $rule['schedulertype'];
 			if($options)
-				$altq_rules .= $rule['schedulertype'] . "(". $options . " )";
+				$altq_rules .= " (". $options . " )";
 			if (isset($rule['subqueue'])) {
 				$altq_rules .= "{ ";
 				$fsq = "";

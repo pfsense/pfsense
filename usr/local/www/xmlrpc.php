@@ -71,8 +71,8 @@ function xmlrpc_array_to_php($array) {
 
 // Exposed functions.
 
-$backup_config_section_doc = 'backup_config_section_xmlrpc: XMLRPC wrapper for backup_config_section. This method must be called with two parameters: a string containing the local system\'s password followed by a string containing the section to be backed up.';
-$backup_config_section_sig = array(array($xmlrpcString, $xmlrpcString, $xmlrpcString));
+$backup_config_section_doc = 'XMLRPC wrapper for backup_config_section. This method must be called with two parameters: a string containing the local system\'s password followed by a string containing the section to be backed up.';
+$backup_config_section_sig = array(array(string, string, string));
 
 function backup_config_section_xmlrpc($raw_params) {
 	global $config;
@@ -83,8 +83,8 @@ function backup_config_section_xmlrpc($raw_params) {
 	return new XML_RPC_Response($val);
 }
 
-$restore_config_section_doc = 'restore_config_section_xmlrpc: XMLRPC wrapper for restore_config_section. This method must be called with three parameters: a string containing the local system\'s password, a string containing the section to be restored, and a string containing the returned value of backup_config_section() for that section. This function returns true upon completion.';
-$restore_config_section_sig = array(array($xmlrpcBoolean, $xmlrpcString, $xmlrpcString, $xmlrpcString));
+$restore_config_section_doc = 'XMLRPC wrapper for restore_config_section. This method must be called with three parameters: a string containing the local system\'s password, a string containing the section to be restored, and a string containing the returned value of backup_config_section() for that section. This function returns true upon completion.';
+$restore_config_section_sig = array(array(boolean, string, string, string));
 
 function restore_config_section_xmlrpc($raw_params) {
 	global $config;
@@ -96,16 +96,6 @@ function restore_config_section_xmlrpc($raw_params) {
 
 $server = new XML_RPC_Server(
         array(
-            'pfsense.backup_config_section' => array('function' => 'backup_config_section_xmlrpc'),
-            'pfsense.restore_config_section' => array('function' => 'restore_config_section_xmlrpc')
-        )
-);
-
-/*
-XXX: Fix signature handling.
-
-$server = new XML_RPC_Server(
-        array(
             'pfsense.backup_config_section' => array('function' => 'backup_config_section_xmlrpc',
 							'signature' => $backup_config_section_sig,
 							'docstring' => $backup_config_section_doc),
@@ -114,5 +104,4 @@ $server = new XML_RPC_Server(
 							'docstring' => $restore_config_section_doc)
         )
 );
-*/
 ?>

@@ -35,7 +35,7 @@ fi
 
 if [ "$PMD" = "$MD" ]; then
         echo "MD5's match."  | logger -p daemon.info -i -t AutoUpgrade
-        if [ -e "/tmp/custom.tgz" ]; then
+        if [ -r "/tmp/custom.tgz" ]; then
             /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz /tmp/custom.tgz
         else
             /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz

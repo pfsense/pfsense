@@ -148,7 +148,7 @@ function actb_generate(){
     if (actb_pos <= 0) actb_pos = 1;
     if(navigator.appName == "Microsoft Internet Explorer") {
         frame.width=width;
-        frame.height=height;
+        frame.height=height + 5;
     }
 }
 function curTop(){

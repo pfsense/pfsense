@@ -71,17 +71,8 @@ include("fbegin.inc");
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
 
-// Allow package location to be overriden
-$config_location = "http://www.pfsense.com/packages/pkg_config.xml";
-if(isset($config['system']['alt_pkgconfig_url']['enabled']))
-	    $config_location = $config['system']['alt_pkgconfig_url']['pkgconfig_base_url'] . $config['system']['alt_pkgconfig_url']['pkgconfig_filename'];
-
 if(!file_exists("{$g['tmp_path']}/pkg_config.xml")) {
-            mwexec("cd {$g['tmp_path']} && /usr/bin/fetch \"" . $config_location . "\" >/dev/null 2>&1 ");
-            if(!file_exists("{$g['tmp_path']}/pkg_config.xml")) {
-                        print_info_box_np("Could not download pkg_config.xml from pfSense.com.  Check your DNS settings.");
-                        die;
-            }
+	fetch_latest_pkg_config();
 }
 
 $pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
@@ -109,9 +100,8 @@ if(!$pkg_config['packages']) {
 		<?php
 		 $i = 0;
 		    foreach ($pkg_config['packages']['package'] as $pkg) {
-			$pkgname = "";
 			$pkgname = $pkg['name'];
-                        if($config['installedpackages']['package']) {
+                        if($config['installedpackages']['package'] != "") {
                             foreach ($config['installedpackages']['package'] as $installed) {
                                         if($installed['name'] == $pkg['name'])
                                                     $pkgname = "";

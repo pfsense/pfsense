@@ -302,8 +302,10 @@ function filter_nat_rules_generate() {
 	}
 
 	/* Setup pf groups */
-	if (isset($config['aliases']['alias'] as $alias) {
-		$natrules .= $alias['name'] . " = { " . $alias['address'] . " }\n";
+	if (isset($config['aliases']['alias'])) {
+		foreach ($config['aliases']['alias'] as $alias) {
+			$natrules .= $alias['name'] . " = { " . $alias['address'] . " }\n";
+		}
 	}
 
 	/* Setup outgoing NAT load balancing */

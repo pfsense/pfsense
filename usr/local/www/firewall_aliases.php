@@ -89,14 +89,17 @@ if ($_GET['act'] == "del") {
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr>
   <td width="25%" class="listhdrr">Name</td>
-  <td width="30%" class="listhdrr">Address(s)/Port(s)</td>
-  <td width="35%" class="listhdr">Description</td>
+  <td width="25%" class="listhdrr">Values</td>
+  <td width="25%" class="listhdr">Description</td>
   <td width="10%" class="list"></td>
 </tr>
 	  <?php $i = 0; foreach ($a_aliases as $alias): ?>
 <tr>
   <td class="listlr">
     <?=htmlspecialchars($alias['name']);?>
+  </td>
+  <td class="listr">
+    <?=htmlspecialchars($alias['type']);?>
   </td>
   <td class="listr">
     <?=htmlspecialchars($alias['address']);?>

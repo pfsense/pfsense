@@ -213,7 +213,7 @@ While(!Connection_Aborted()) {
 
 		echo "document.queue{$i}widthb.style.width='{$packet_s}';\n";
 		echo "document.queue{$i}widtha.style.width='" . (100 - $packet_s) . "';\n";
-		echo "document.forms[0].queue{$i}meter.value = '" . $packet_sampled . " - " . $speed . "';\n";
+		echo "document.forms[0].queue{$i}meter.value = '" . $packet_sampled . "/pps - " . $speed . "';\n";
 		echo "</script>\n";
 		$i++;
 	}

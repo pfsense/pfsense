@@ -104,7 +104,6 @@ if ($_POST) {
 			header("Location: pkg_mgr_install.php?mode=reinstallall");
 			exit;
                 } else if ($mode == "restore_ver") {
-			$input_errors[] = "XXX - this feature is not yet functional - billm";
 			$input_errors[] = "XXX - this feature may hose your config (do NOT backrev configs!) - billm";
 			if ($ver2restore <> "") {
 				$conf_file = "{$g['cf_conf_path']}/bak/config-" . strtotime($ver2restore) . ".xml";

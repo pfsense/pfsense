@@ -553,6 +553,8 @@ function config_unlock() {
 }
 
 function set_networking_interfaces_ports() {
+	global $noreboot;
+
 	$fp = fopen('php://stdin', 'r');
 
 	$iflist = get_interface_list();
@@ -694,9 +696,9 @@ EOD;
 		echo "OPT" . ($i+1) . " -> " . $optif[$i] . "\n";
 	}
 
-echo <<<EOD
+	if(!$noreboot) echo "\npfSense will reboot after saving the changes.\n";
 
-pfSense will reboot after saving the changes.
+echo <<<EOD
 
 Do you want to proceed [y|n]?
 EOD;
@@ -743,9 +745,11 @@ EOD;
 
 		write_config();
 
+		if(!$noreboot) echo "\npfSense is now rebooting.\n";
+
 		echo <<<EOD
 
-pfSense is rebooting now.
+
 
 EOD;
 

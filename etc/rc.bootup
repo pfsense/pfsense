@@ -50,6 +50,7 @@
 
 	if($do_assign == 1) {
 		$noreboot = true;
+		echo "\n\n\nInterface mistmatch.  Running Interface assignment option.\n";
 		set_networking_interfaces_ports();
 	}
 

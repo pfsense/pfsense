@@ -723,10 +723,10 @@ function is_service_running($service_name) {
  */
 function backup_config_section($section) {
     global $config;
-    $new_section = &$config['section'];
+    $new_section = &$config['filter'];
     /* generate configuration XML */
     $xmlconfig = dump_xml_config($new_section, $section);
-    return $new_section;
+    return $xmlconfig;
 }
 
 /*
@@ -739,9 +739,9 @@ function restore_config_section($section, $new_contents) {
     conf_mount_rw();
     config_lock();
     $fout = fopen("{$g['tmp_path']}/tmpxml","w");
-    fwrite($fout, $current_rules_section);
+    fwrite($fout, $new_contents);
     fclose($fout);
-    $section_xml = parse_xml_config_pkg($g['tmp_path'] . "/tmpxml", "packagegui");
+    $section_xml = parse_xml_config_pkg($g['tmp_path'] . "/tmpxml", $section);
     $config[$section] = &$section_xml;
     unlink($g['tmp_path'] . "/tmpxml");
     write_config();

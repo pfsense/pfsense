@@ -31,14 +31,14 @@ require("guiconfig.inc");
 require("xmlparse_pkg.inc");
 
 function gentitle_pkg($pgname) {
-	global $pfSense_config;
-	return $pfSense_config['system']['hostname'] . "." . $pfSense_config['system']['domain'] . " - " . $pgname;
+	global $config;
+	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
 }
 
 $stepid = $_GET['stepid'];
 if (isset($_POST['stepid']))
     $stepid = $_POST['stepid'];
-if (!$stepid) $stepid = "1";
+if (!$stepid) $stepid = "0";
 
 // XXX: Make this input safe.
 $xml = $_GET['xml'];
@@ -49,7 +49,7 @@ if($xml == "") {
             print_info_box_np("ERROR:  Could not open " . $xml . ".");
             die;
 } else {
-            $pkg = parse_xml_config_pkg("/usr/local/www/wizard/" . $xml, "packagegui");
+            $pkg = parse_xml_config_pkg("/usr/local/www/wizards/" . $xml, "pfsensewizard");
 }
 
 $title          = $pkg['step'][$stepid]['title'];
@@ -59,12 +59,12 @@ if ($_POST) {
     foreach ($pkg['step'][$stepid]['fields'] as $field) {
         if($field['bindtofield'] <> "") {
             // update field with posted values.
-            
+
         }
         if($pkg['step'][$stepid]['stepsubmitphpaction']) {
             eval($pkg['step'][$stepid]['stepsubmitphpaction']);
         }
-    } 
+    }
 }
 
 function update_config_field($field, $updatetext) {
@@ -90,46 +90,69 @@ $config = $config_tmp;
 <p class="pgtitle"><?=$title?></p>
 <form action="wizard.php" method="post">
 <input type="hidden" name="xml" value="<?= $xml ?>">
+<input type="hidden" name="stepid" value="<?= $stepid+1 ?>">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
-<table width="100%" border="0" cellpadding="6" cellspacing="0">
+<table width="100%" border="1" cellpadding="6" cellspacing="0">
   <tr>
-    <td bgcolor="#FF0000">
-        <font color="white"><?= $title ?></font>
+    <td bgcolor="#990000">
+        <font color="white"><center><b><?= $title ?></b></center></font>
     </td>
-    <td>
+   </tr>
+   <tr>
+    <td><center>
         <table>
             <!-- wizard goes here -->
-            <tr><td colspan='2'><center><?= $description ?></center></td></tr>
+            <tr><td>&nbsp;</td></tr>
+            <tr><td colspan='2'><center><b><?= $description ?></b></center></td></tr><tr><td>&nbsp;</td></tr>
             <?php
-                foreach ($pkg['step'][$stepid]['fields'] as $field) {
-                    echo "<tr><td>";
-                    echo $field['name'];
-                    echo "</td><td>";
+                foreach ($pkg['step'][$stepid]['fields']['field'] as $field) {
 
-                    $value = "";
+                    $value = $field['value'];
+		    $name  = $field['name'];
+
+		    $name = ereg_replace(" ", "", $name);
+		    $name = strtolower($name);
 
                     if ($field['type'] == "input") {
-                        echo "<input name='" . $field['name'] . " value='" . $value . "'>\n";
+			echo "<tr><td align='right'>";
+			echo $field['name'];
+			echo ":</td><td>";
+                        echo "<input name='" . $name . "' value='" . $value . "'>\n";
                     } else if ($field['type'] == "password") {
-                        echo "<input name='" . $field['name'] . " value='" . $value . "' type='password'>\n";
+			echo "<tr><td align='right'>";
+			echo $field['name'];
+			echo ":</td><td>";
+                        echo "<input name='" . $name . "' value='" . $value . "' type='password'>\n";
                     } else if ($field['type'] == "select") {
+			echo "<tr><td align='right'>";
+			echo $field['name'];
+			echo ":</td><td>";
                         // XXX: TODO: set $selected
                         if($field['size']) $size = " size='" . $field['size'] . "' ";
                         if($field['multiple'] == "yes") $multiple = "MULTIPLE ";
-                        echo "<select " . $multiple . $size . "id='" . $field['fieldname'] . "' name='" . $field['fieldname'] . "'>\n";
+                        echo "<select " . $multiple . $size . "id='" . $field['fieldname'] . "' name='" . $name . "'>\n";
                         foreach ($field['options']['option'] as $opt) {
                             echo "\t<option name='" . $opt['name'] . "' value='" . $opt['value'] . "'>" . $opt['name'] . "</option>\n";
                         }
-                        echo "</select>\n";                       
+                        echo "</select>\n";
                     } else if ($field['type'] == "textarea") {
-                        echo "<textarea name='" . $field['name'] . ">" . $value . "</textarea>\n";
-                    }
+			echo "<tr><td align='right'>";
+			echo $field['name'];
+			echo ":</td><td>";
+                        echo "<textarea name='" . $name . ">" . $value . "</textarea>\n";
+                    } else if ($field['type'] == "submit") {
+			echo "<tr><td>&nbsp;</td></tr>";
+			echo "<tr><td colspan='2'><center>";
+			echo "<input type='submit' name='" . $name . "' value='" . $field['name'] . "'>\n";
+			echo "</td><td>";
+		    }
 
                     echo "</td></tr>";
                 }
             ?>
         </table>
+	  &nbsp;<br>&nbsp;
     </td>
   </tr>
 </table>

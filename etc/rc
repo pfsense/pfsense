@@ -25,6 +25,10 @@ echo
 /bin/mkdir -p /usr/savecore 2>/dev/null
 /sbin/savecore /usr/savecore /dev/ad0s1b
 
+if [ -e /var/run/sysreboot.reqd ]; then
+    rm /var/run/sysreboot.reqd
+fi
+
 set -T
 trap "echo 'Reboot interrupted'; exit 1" 3
 

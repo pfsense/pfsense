@@ -152,5 +152,5 @@ if(!$pkg_config['packages']) {
 </body>
 </html>
 
-
+<?php system("rm /tmp/pkg*"); ?>
 

@@ -1391,7 +1391,7 @@ EOD;
 						$isfirst = 1;
 					}
 				}
-				$tmprules .= "} round-robin ";
+				$tmprules .= "} ";
 				$line .= $tmprules;
 			}
 

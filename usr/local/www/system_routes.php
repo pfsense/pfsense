@@ -56,12 +56,14 @@ if ($_POST) {
 			}
 		}
 	}
+}
 
-	if ($_POST['enablefastrouting']) {
-		$config['staticroutes']['enablefastrouting'] = "enabled";
-		write_config();
-	}
-
+if ($_POST['enablefastrouting'] == "on") {
+	$config['staticroutes']['enablefastrouting'] = "enabled";
+	write_config();
+} else {
+	unset($config['staticroutes']['enablefastrouting']);
+	write_config();
 }
 
 if ($_GET['act'] == "del") {

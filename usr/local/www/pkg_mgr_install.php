@@ -2,6 +2,7 @@
 <?php
 /*
     pkg_mgr_install.php
+    Part of pfSense (www.pfSense.com)
     Copyright (C) 2004 Scott Ullrich
     All rights reserved.
 
@@ -229,6 +230,7 @@ mwexec("mkdir /usr/local/www/ext/Firewall >/dev/null 2>&1");
 mwexec("mkdir /usr/local/www/ext/VPN >/dev/null 2>&1");
 mwexec("mkdir /usr/local/www/ext/Status >/dev/null 2>&1");
 mwexec("mkdir /usr/local/www/ext/Diagnostics >/dev/null 2>&1");
+mwexec("mkdir /usr/local/pkg >/dev/null 2>&1");
 
 update_progress_bar($pb_percent);
 $pb_percent += 10;
@@ -290,10 +292,24 @@ update_progress_bar($pb_percent);
 $pb_percent += 10;
 
 if ($pkgent['depends_on_package_base_url'] <> "") {
-            update_status("Downloading and installing " . $pkgent['name'] . " - " . $pkgent['depends_on_package_base_url'] . " and its dependencies ... This could take a moment ...");
+            update_status("Downloading and installing " . $pkgent['name'] . " and its dependencies ... This could take a moment ...");
             $text = exec_command_and_return_text("cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package']);
             update_output_window($text);
             fwrite($fd_log, "cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package'] . "\n" . $text);;
+}
+
+// fetch additional files needed for package if defined
+// and uncompress if needed.
+if ($pkgent['additional_files_needed'] <> "") {
+            foreach($pkgent['additional_files_needed']['item'] as $afn) {
+                        update_progress_bar($pb_percent);
+                        $pb_percent += 10;                        
+                        $filename = get_filename_from_url($afn['url']);
+                        update_status("Downloading additional files needed for package " . $filename . " ...");
+                        system("cd /usr/local/pkg && /usr/bin/fetch " .  $afn['url']);
+                        if(stristr($filename, '.tgz') <> "")
+                                    system("cd /usr/local/pkg && tar xzvf " . $filename);
+            }
 }
 
 update_progress_bar($pb_percent);
@@ -411,6 +427,12 @@ function add_text_to_file($file, $text) {
     $fd = fopen($file, "w");
     fwrite($fd, $text . "\n");
     fclose($fd);
+}
+
+function get_filename_from_url($url) {
+            $filenamesplit = split("/", $url);
+            foreach($filenamesplit as $fn) $filename = $fn;              
+            return $filename;
 }
 
 ?>

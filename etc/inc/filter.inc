@@ -982,7 +982,7 @@ anchor "carp"
 
 # enable ftp-proxy
 anchor "ftpproxy"
-pass in quick on $wanif inet proto tcp from port 20 to ($wanif) port > 49000 user proxy flags S/SA keep state "FTP PROXY: PASV mode data connection"
+pass in quick on $wanif inet proto tcp from port 20 to ($wanif) port > 49000 user proxy flags S/SA keep state label "FTP PROXY: PASV mode data connection"
 # Fix sites that violate RFC 959 which specifies that the data connection
 # be sourced from the command port - 1 (typicaly port 20)
 # This workaround doesn't expose us to any extra risk as we'll still only allow

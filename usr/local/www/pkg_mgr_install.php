@@ -357,7 +357,7 @@ if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
                                     update_status("Downloading additional files needed for package " . $filename . " ...");
                                     system("cd /usr/local/pkg && /usr/bin/fetch " .  $afn . " 2>/dev/null");
                                     if(stristr($filename, '.tgz') <> "")
-                                                system("cd /usr/local/pkg && tar xzvf " . $filename);
+                                                system("cd /usr/local/pkg && tar xzvf " . $filename . " -C / >/dev/null 2>&1");
                         }
             }
 

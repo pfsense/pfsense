@@ -47,7 +47,7 @@ if($xml == "") {
             print_info_box_np("ERROR:  Could not open " . $xml . ".");
             die;
 } else {
-            $pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "pfSenseWizard");
+            $pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
 }
 
 $package_name = $pkg['menu']['name'];
@@ -59,47 +59,93 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
-$a_pkg = &$config['installedpackages']['package'];
+$toeval = "\$a_pkg = &\$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'];";
+eval($toeval);
 
 if (isset($id) && $a_pkg[$id]) {
 	foreach ($pkg['fields'] as $fields) {
-		$fieldname = $pconfig['$fields']['fieldname'];
-		$fieldvalue = $_POST[$fieldname];
-		$pconfig[$fieldname] = $fieldvalue;
+		$fieldname  		= $fields['fieldname'];
+		$fieldvalue 		= $fields[$_POST[$fieldname]];
+		$toeval = "\$pconfig[" . $fieldname . "] = \"" . $fieldvalue . "\";";
+		//echo $toeval . "\n";
+		//eval($toeval);
 	}
 }
 
 if ($_POST) {
-    if($_POST['act'] == "del") {
-	if($pkg['custom_delete_php_command']) {
-	    eval($pkg['custom_delete_php_command']);
+	if($_POST['act'] == "del") {
+		if($pkg['custom_delete_php_command']) {
+		    eval($pkg['custom_delete_php_command']);
+		}
+	} else {
+		if($pkg['custom_add_php_command']) {
+		    eval($pkg['custom_add_php_command']);
+		}
 	}
-	// XXX: unset the xml value to config
-    } else {
-	if($pkg['custom_add_php_command']) {
-	    eval($pkg['custom_add_php_command']);
+	
+	// store values in xml configration file.
+	if (!$input_errors) {
+		$pkgarr = array();
+		
+		/*
+		if (isset($id) && $a_pkg[$id])
+			$pkgarr[$id] = $pkgarr;
+		else
+			$pkgarr[] = $pkgarr;
+		*/
+		
+		foreach ($pkg['fields']['field'] as $fields) {
+			$fieldname  		= $fields['fieldname'];
+			$fieldvalue 		= $_POST[$fieldname];
+			$toeval = "\$pkgarr['" . $fieldname . "'] 	= \"" . $fieldvalue . "\";";
+			//echo $toeval . "\n";
+			eval($toeval);
+			
+		}
+		
+		//$toeval = "\$config['installedpackages']['package']['" . $pkg['name'] . "']['config'][] = \$pkgarr;";
+		$toeval = "\$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'] = \$pkgarr;";
+		echo $toeval;
+		eval($toeval);
+		
+		write_config();
 	}
-	// XXX: add the xml value to config
-    }
 }
 
-// store values in xml configration file.
-if (!$input_errors) {
-	$pkgarr = array();
-
-	if (isset($id) && $a_pkg[$id])
-		$a_pkg[$id] = $pkgarr;
-	else
-		$a_pkg[] = $pkgarr;
-
-	foreach ($pkg['fields'] as $fields) {
-		$pkgarr[$fields['fieldname']]  = $fields['fieldname'];
-		$pkgarr[$fields['fieldvalue']] = $_POST[$fields['fieldname']];
-	}
-
-	$config['installedpackages']['package']['config'][] = $filterent;
-
-	write_config();
+function xml_safe_fieldname($fieldname) {
+	$fieldname = str_replace("/","",$fieldname);
+	$fieldname = str_replace("-","",$fieldname);
+	$fieldname = str_replace(" ","",$fieldname);
+	$fieldname = str_replace("!","",$fieldname);
+	$fieldname = str_replace("@","",$fieldname);
+	$fieldname = str_replace("#","",$fieldname);
+	$fieldname = str_replace("$","",$fieldname);
+	$fieldname = str_replace("%","",$fieldname);
+	$fieldname = str_replace("^","",$fieldname);
+	$fieldname = str_replace("&","",$fieldname);
+	$fieldname = str_replace("*","",$fieldname);
+	$fieldname = str_replace("(","",$fieldname);
+	$fieldname = str_replace(")","",$fieldname);
+	$fieldname = str_replace("_","",$fieldname);
+	$fieldname = str_replace("+","",$fieldname);
+	$fieldname = str_replace("=","",$fieldname);
+	$fieldname = str_replace("{","",$fieldname);
+	$fieldname = str_replace("}","",$fieldname);
+	$fieldname = str_replace("[","",$fieldname);
+	$fieldname = str_replace("]","",$fieldname);
+	$fieldname = str_replace("|","",$fieldname);
+	$fieldname = str_replace("\\","",$fieldname);
+	$fieldname = str_replace("/","",$fieldname);
+	$fieldname = str_replace("<","",$fieldname);
+	$fieldname = str_replace(">","",$fieldname);
+	$fieldname = str_replace("?","",$fieldname);
+	$fieldname = str_replace(":","",$fieldname);
+	$fieldname = str_replace(",","",$fieldname);
+	$fieldname = str_replace(".","",$fieldname);
+	$fieldname = str_replace("'","",$fieldname);
+	$fieldname = str_replace("\"","",$fieldname);
+	$fieldname = strtolower($fieldname);
+	return $fieldname;
 }
 
 ?>

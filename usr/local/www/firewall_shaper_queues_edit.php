@@ -43,7 +43,6 @@ if (isset($id) && $a_queues[$id]) {
 	$pconfig['mask'] = $a_queues[$id]['mask'];
 	$pconfig['name'] = $a_queues[$id]['name'];
 	$pconfig['options'] = $a_queues[$id]['options'];
-
 	$pconfig['options']['red'] = $a_queues[$id]['options']['red'];
 	$pconfig['options']['ecn'] = $a_queues[$id]['options']['ecn'];
 	$pconfig['options']['defaultqueue'] = $a_queues[$id]['options']['defaultqueue'];
@@ -57,6 +56,7 @@ if (isset($id) && $a_queues[$id]) {
 	$pconfig['options']['linkshare1'] = $a_queues[$id]['options']['linkshare1'];
 	$pconfig['options']['linkshare2'] = $a_queues[$id]['options']['linkshare2'];
 	$pconfig['options']['linkshare3'] = $a_queues[$id]['options']['linkshare3'];
+	$pconfig['options']['schedulertype'] = $a_queues[$id]['options']['schedulertype'];
 	$pconfig['bandwidth'] = $a_queues[$id]['bandwidth'];
 	$pconfig['bandwidthtype'] = $a_queues[$id]['bandwidthtype'];
 }
@@ -67,8 +67,8 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "priority");
-	$reqdfieldsn = explode(",", "Priority");
+	//$reqdfields = explode(" ", "priority");
+	//$reqdfieldsn = explode(",", "Priority");
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -79,7 +79,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$queue = array();
-		$queue['schedulertype'] = $_POST['scheduler'];
+		$queue['options']['schedulertype'] = $_POST['schedulertype'];
 		$queue['bandwidth'] = $_POST['bandwidth'];
 		$queue['priority'] = $_POST['priority'];
 		$queue['name'] = ereg_replace(" ", "", $_POST['name']);
@@ -97,9 +97,9 @@ if ($_POST) {
 		$queue['options']['upperlimit1'] = $_POST['upperlimit1'];
 		$queue['options']['parentqueue'] = $_POST['parentqueue'];
 		$scheduleroptions="";
-		$queue['options']['red'] = "enabled";
-		$queue['options']['ecn'] = "enabled";
-		$queue['options']['defaultqueue'] = "eanbled";
+		$queue['options']['red'] = $_POST['red'];
+		$queue['options']['ecn'] = $_POST['ecn'];
+		$queue['options']['defaultqueue'] = $_POST['defaultqueue'];
 		if (isset($id) && $a_queues[$id])
 			$a_queues[$id] = $queue;
 		else
@@ -141,7 +141,7 @@ function sync_scheduler_options() {
 		document.forms[0].linkshare3.disabled = 1;
 		document.forms[0].childqueue.disabled = 1;
 		document.forms[0].priority.disabled = 0;
-	} else if(document.forms[0].scheduler.value == 'cbq') {
+	} else if(document.forms[0].schedulertype.value == 'cbq') {
 		document.forms[0].defaultqueue.disabled = 0;
 		document.forms[0].parentqueue.disabled = 0;
 		document.forms[0].red.disabled = 0;
@@ -160,7 +160,7 @@ function sync_scheduler_options() {
 		document.forms[0].linkshare3.disabled = 1;
 		document.forms[0].childqueue.disabled = 0;
 		document.forms[0].priority.disabled = 0;
-	} else if(document.forms[0].scheduler.value == 'hfsc') {
+	} else if(document.forms[0].schedulertype.value == 'hfsc') {
 		document.forms[0].red.disabled = 0;
 		document.forms[0].ecn.disabled = 0;
 		document.forms[0].defaultqueue.disabled = 0;
@@ -178,7 +178,7 @@ function sync_scheduler_options() {
 		document.forms[0].linkshare2.disabled = 0;
 		document.forms[0].linkshare3.disabled = 0;
 		document.forms[0].childqueue.disabled = 0;
-		document.forms[0].priority.disabled = 1;
+		document.forms[0].priority.disabled = 0;
 	}
 }
 </script>
@@ -187,6 +187,26 @@ function sync_scheduler_options() {
 <body onLoad="sync_scheduler_options();" link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
 <?php include("fbegin.inc"); ?>
+<?php
+	$red = $pconfig['options']["red"];
+	$ecn = $pconfig['options']["ecn"];
+	$upperlimit = $pconfig['options']["upperlimit"];
+	$upperlimit1 = $pconfig['options']["upperlimit1"];
+	$upperlimit2 = $pconfig['options']["upperlimit2"];
+	$upperlimit3 = $pconfig['options']["upperlimit3"];
+	$realtime = $pconfig['options']["realtime"];
+	$realtime1 = $pconfig['options']["realtime1"];
+	$realtime2 = $pconfig['options']["realtime2"];
+	$realtime3 = $pconfig['options']["realtime3"];
+	$linkshare = $pconfig['options']["linkshare"];
+	$linkshare1 = $pconfig['options']["linkshare1"];
+	$linkshare2 = $pconfig['options']["linkshare2"];
+	$linkshare3 = $pconfig['options']["linkshare3"];
+	$parentqueue = $pconfig['options']["parentqueue"];
+	$defaultqueue = $pconfig['options']["defaultqueue"];
+	$parent = $pconfig['options']["parent"];
+	$schedulertype = $pconfig['options']["schedulertype"];
+?>
 <p class="pgtitle">Firewall: Traffic shaper: Edit queue</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 	<form action="firewall_shaper_queues_edit.php" method="post" name="iform" id="iform">
@@ -221,7 +241,15 @@ function sync_scheduler_options() {
 	    <tr>
 	      <td width="22%" valign="top" class="vncell"><b>Scheduler</b> </td>
 	      <td width="78%" class="vtable">
-		<select id="scheduler" name="scheduler" onChange="javascript:sync_scheduler_options();">
+		<select id="schedulertype" name="schedulertype" onChange="javascript:sync_scheduler_options();">
+		<?php
+			if($schedulertype == 'priq')
+				echo "<option value=\"priq\">Priority based queueing</option>";
+			if($schedulertype == 'cbq')
+				echo "<option value=\"cbq\">Class based queueing</option>";
+			if($schedulertype == 'hfsc')
+				echo "<option value=\"hfsc\">Hierarchical Fair Service Curve queueing</option>";
+		?>
 			<option value="priq">Priority based queueing</option>
 			<option value="cbq">Class based queueing</option>
 			<option value="hfsc">Hierarchical Fair Service Curve queueing</option>
@@ -232,25 +260,6 @@ function sync_scheduler_options() {
 	    <tr>
 	      <td width="22%" valign="top" class="vncell">Scheduler options</td>
 	      <td width="78%" class="vtable">
-	      <?php
-		$red = $pconfig['options']["red"];
-		$ecn = $pconfig['options']["ecn"];
-		$upperlimit = $pconfig['options']["upperlimit"];
-		$upperlimit1 = $pconfig['options']["upperlimit1"];
-		$upperlimit2 = $pconfig['options']["upperlimit2"];
-		$upperlimit3 = $pconfig['options']["upperlimit3"];
-		$realtime = $pconfig['options']["realtime"];
-		$realtime1 = $pconfig['options']["realtime1"];
-		$realtime2 = $pconfig['options']["realtime2"];
-		$realtime3 = $pconfig['options']["realtime3"];
-		$linkshare = $pconfig['options']["linkshare"];
-		$linkshare1 = $pconfig['options']["linkshare1"];
-		$linkshare2 = $pconfig['options']["linkshare2"];
-		$linkshare3 = $pconfig['options']["linkshare3"];
-		$parentqueue = $pconfig['options']["parentqueue"];
-		$defaultqueue = $pconfig['options']["defaultqueue"];
-		$parent = $pconfig['options']["parent"];
-	      ?>
 	        <input type=checkbox id="defaultqueue" name="defaultqueue" <?php if($defaultqueue) echo " CHECKED";?> > Default queue<br>
 		<input type=checkbox id="red" name="red" <?php if($red) echo " CHECKED";?> > Random Early Detection<br>
 		<input type=checkbox id="ecn" name="ecn" <?php if($ecn) echo " CHECKED";?> > Explicit Congestion Notification<br>

@@ -483,6 +483,13 @@ function execute_command_return_output($command) {
 }
 
 /*
+ * convert_friendly_interface_to_real_interface_name($interface): convert WAN to FXP0
+ */
+function convert_friendly_interface_to_real_interface_name($interface) {
+    return $config['interfaces'][$interface]['if'];    
+}
+
+/*
  * convert_real_interface_to_friendly_interface_name($interface): convert fxp0 -> wan, etc.
  */
 function convert_real_interface_to_friendly_interface_name($interface) {

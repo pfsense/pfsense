@@ -458,15 +458,30 @@ function dump_clog($logfile, $tail, $grepfor = "", $grepinvert = false, $withori
         $sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
         if($grepfor <> "") {
-                if($grepinvert == true) {
-                        exec("/usr/sbin/clog {$logfile} | /usr/bin/grep -v {$grepfor} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
-                } else {
-                        exec("/usr/sbin/clog {$logfile} | /usr/bin/grep {$grepfor} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
-                }
+		$size = count($grepfor);
+		foreach($grepfor as $agrep) {
+                	if($grepinvert[$size - count($grepfor)] == true) {
+				if($size > 1) {
+					$grep .= "grep -v {$agrep} | ";
+				} else {
+					$grep .= "grep -v {$agrep}";
+				}
+				$size--;
+                	} else {
+				if($size > 1) {
+					$grep .= "grep {$agrep} | ";
+				} else {
+					$grep .= "grep {$agrep}";
+				}
+				$size--;
+                	}
+		}
+		exec("/usr/sbin/clog {$logfile} | {$grep} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
         } else {
                 exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
         }
         foreach ($logarr as $logent) {
+		print $logent[0];
                 $logent = preg_split("/\s+/", $logent, 6);
                 echo "<tr valign=\"top\">\n";
 

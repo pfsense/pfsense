@@ -1575,7 +1575,7 @@ EOD;
 		$i++;
 	}
 
-	$ipfrules .= "\n# SSH lockout\n"
+	$ipfrules .= "\n# SSH lockout\n";
 	$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port 22 label \"sshlockout\"\n\n";
 
 	$ipfrules .= "\n# VPN Rules\n";

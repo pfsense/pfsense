@@ -49,7 +49,7 @@ $g = array(
     "pppoe_interface" => "ng0",
     "n_pptp_units" => 16,
     "pptp_subnet" => 28,
-    "debug" => true,
+    "debug" => false,
     "latest_config" => "1.4",
     "nopccard_platforms" => array("wrap", "net48xx")
 );

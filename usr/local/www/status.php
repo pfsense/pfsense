@@ -88,11 +88,12 @@ defCmdT("Interfaces","/sbin/ifconfig -a");
 defCmdT("Routing tables","netstat -nr");
 
 defCmdT("ipfw show", "/sbin/ipfw show");
-defCmdT("pfctl -s nat ", "/sbin/pfctl -s nat");
-defCmdT("pfctl -s rules", "/sbin/pfctl -s rules");
-defCmdT("pfctl -s all"," /sbin/pfctl -s all");
+defCmdT("pfctl -sn", "/sbin/pfctl -sn");
+defCmdT("pfctl -sr", "/sbin/pfctl -sr");
+defCmdT("pfctl -ss", "/sbin/pfctl -ss");
+defCmdT("pfctl -si", "/sbin/pfctl -si");
+defCmdT("pfctl -sa"," /sbin/pfctl -sa");
 defCmdT("pfctl -s rules -v"," /sbin/pfctl -s rules -v");
-defCmdT("pfctl -si","/sbin/pfctl -si");
 
 defCmdT("resolv.conf","cat /etc/resolv.conf");
 

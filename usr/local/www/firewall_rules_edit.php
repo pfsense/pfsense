@@ -752,17 +752,18 @@ function dst_rep_change() {
                     the destination of the packet for this rule.<br>
                     Hint: you can leave the <em>'to'</em> field empty if you only
                     want to filter a single port</span></td>
-
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Fragments</td>
-                  <td width="78%" class="vtable">
-                    <input name="frags" type="checkbox" id="frags" value="yes" <?php if ($pconfig['frags']) echo "checked"; ?>>
-                    <strong>Allow fragmented packets</strong><br>
-                    <span class="vexpl">Hint: this option puts additional load
-                    on the firewall and may make it vulnerable to DoS attacks.
-                    In most cases, it is not needed. Try enabling it if you have
-                    troubles connecting to certain sites.</span></td>
-                </tr>
+		<!--
+			<tr>
+			  <td width="22%" valign="top" class="vncellreq">Fragments</td>
+			  <td width="78%" class="vtable">
+			    <input name="frags" type="checkbox" id="frags" value="yes" <?php if ($pconfig['frags']) echo "checked"; ?>>
+			    <strong>Allow fragmented packets</strong><br>
+			    <span class="vexpl">Hint: this option puts additional load
+			    on the firewall and may make it vulnerable to DoS attacks.
+			    In most cases, it is not needed. Try enabling it if you have
+			    troubles connecting to certain sites.</span></td>
+			</tr>
+		-->
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Log</td>
                   <td width="78%" class="vtable">

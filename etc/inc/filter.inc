@@ -919,10 +919,12 @@ EOD;
 				#$line .= "group $groupnum ";
 			}
 
-			foreach ($config['pfqueueing']['queue'] as $que) {
-				if($que['options']['associatedrule'] == $rule['descr']) {
-					$line .= "queue " . $que['name'];
-					break;
+			if(isset($config['pfqueueing']['queue'])) {
+				foreach ($config['pfqueueing']['queue'] as $que) {
+					if($que['options']['associatedrule'] == $rule['descr']) {
+						$line .= "queue " . $que['name'];
+						break;
+					}
 				}
 			}
 

@@ -646,7 +646,9 @@ function reverse_strrchr($haystack, $needle) {
 }
 
 /*
- * get_package_xml_depends($pkg_name):  Return a package's XML dependencies (additional tabs etc)
+ * get_package_xml_depends($pkg_name, $format = "files"):  Return a package's XML dependencies.
+ *							   $format: "files" = filenames
+ *							   	    "names" = stripped filenames
  */
 function get_package_xml_depends($pkg_name) {
 	global $config;
@@ -663,16 +665,20 @@ function get_package_xml_depends($pkg_name) {
 	if($pkg_xml['additional_files_needed'] != "") {
 		foreach($pkg_xml['additional_files_needed'] as $item) {
 			$depend_file = substr(strrchr($item['item'], "/"),1); // Strip URLs down to filenames.
+			$depend_name = reverse_strrchr($depend_file, "."); // Strip filename down to dependency name.
 			if(!preg_match("/\.xml/i", $depend_file)) break; // If the file doesn't end in .xml (case-insensitive) exit the loop.
 			if(!file_exists("/usr/local/pkg/" . $pkg_name)) {
-				$depend_name = reverse_strrchr($depend_file, "."); // Strip filename down to (guessed) dependency name.
 				log_error("Fetching missing dependency \(" . $depend_name . "\) for " . $pkg_name);
 				mwexec("/usr/bin/fetch -o /usr/local/pkg/" . $depend_file . " " . $item['item']);
 			}
-			$depends[] = $depend_file;
+			if ($format = "names") {
+				$depends[] = $depend_name;
+			} else {
+				$depends[] = $depend_file;
+			}
 		}
-	}
 	return $depends;
+	}
 }
 
 /*

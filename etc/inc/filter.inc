@@ -119,14 +119,7 @@ function filter_configure() {
 	fwrite($fd, $rules);
         fclose($fd);
 
-        $rules_loading = popen("/sbin/pfctl -f - > /dev/null 2>&1", "w");
-        if (!$rules_loading) {
-                printf("Cannot open /sbin/pfctl in filter_configure()\n");
-                return 1;
-        }
-
-	fwrite($rules_loading, $rules);
-	pclose($rules_loading);
+        $rules_loading = mwexec("/sbin/pfctl -f /tmp/rules.debug");
 
 	/* load ipfw+altq module */
 	if (isset($config['shaper']['enable'])) {

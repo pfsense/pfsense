@@ -515,6 +515,7 @@ function execute_command_return_output($command) {
  */
 function convert_friendly_interface_to_real_interface_name($interface) {
     global $config;
+    $lc_interface = strtolower($interface);
     if($config['interfaces'][$interface]['if'] <> "")
 	return $config['interfaces'][$interface]['if'];
     $i = 0;
@@ -653,7 +654,7 @@ function reverse_strrchr($haystack, $needle) {
  * get_package_depends($pkg_name, $filetype = ".xml", $format = "files"):  Return a package's XML dependencies.
  *
  * $filetype = "all" || ".xml", ".tgz", etc.
- * $format = "files" (full filenames) || 
+ * $format = "files" (full filenames) ||
  *
  */
 function get_package_depends($pkg_name, $filetype = ".xml", $format = "files") {

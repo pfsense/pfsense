@@ -409,8 +409,8 @@ function filter_generate_altq_rules() {
 			$line .= $interface;
 
 			if (isset($rule['protocol'])) {
-				if($rule['protocol'] == "tcp/udp") 
-					$line .= "proto { tcp udp } ";	
+				if($rule['protocol'] == "tcp/udp")
+					$line .= "proto { tcp udp } ";
 				else
 					$line .= "proto {$rule['protocol']} ";
 			} else {
@@ -755,7 +755,7 @@ function filter_nat_rules_generate() {
 				else
 					$natrules .=
 					"rdr on $natif proto " . $rule['protocol'] . " from any to any port {$extport[0]} -> {$target} \n";
-				
+
 			} else {
 				if($rule['protocol'] == "tcp/udp")
 					$natrules .=
@@ -764,7 +764,7 @@ function filter_nat_rules_generate() {
 				else
 					$natrules .=
 					 "rdr on $natif proto " . $rule['protocol']. " from any to any port {$extport[0]}:{$extport[1]} " .
-					 "-> {$target} \n";				
+					 "-> {$target} \n";
 			}
 
 			$natrules .= "\n";
@@ -1199,15 +1199,15 @@ EOD;
 			if ($ispptp) {
 				$line .= "on ng" . ($iif+1) . " ";
 			}
-			
-			//if($rule['protocol'] == "tcp/udp") 
-			//	$line .= "proto { tcp udp } ";	
+
+			//if($rule['protocol'] == "tcp/udp")
+			//	$line .= "proto { tcp udp } ";
 			//else
 			//	$line .= "proto {$rule['protocol']} ";
 
 			if (isset($rule['protocol'])) {
-				if($rule['protocol'] == "tcp/udp") 
-					$line .= "proto { tcp udp } ";	
+				if($rule['protocol'] == "tcp/udp")
+					$line .= "proto { tcp udp } ";
 				else
 					$line .= "proto {$rule['protocol']} ";
 			} else {
@@ -1412,7 +1412,7 @@ EOD;
 	$wan_ip = $config['interfaces']['wan']['ipaddr'];
 	$internal_subnet = gen_subnet($lan_ip, $lan_subnet) . "/" . $config['interfaces']['lan']['subnet'];
 	/* Is IP Compression enabled? */
-	if(isset($config['ipsec']['ipcomp'])
+	if(isset($config['ipsec']['ipcomp']))
 		exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=1");
 	else
 		exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=0");

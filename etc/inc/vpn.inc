@@ -179,8 +179,6 @@ listen {
 }
 
 EOD;
-				}
-
 			}
 
 			$racoonconf .= "path pre_shared_key \"{$g['varetc_path']}/psk.txt\";\n\n";

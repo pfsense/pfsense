@@ -72,10 +72,6 @@ function filter_configure() {
 		/* generate altq rules */
 		$altq_rules = filter_generate_altq_rules();
 	}
-        if (isset($config['nat']['outgoingloadbalancing']['enable'])) 
-		/* generate altq rules */
-		$lb_rules = filter_generate_lb_rules();
-	
 	if( !isset( $config['system']['disablefilter'] ) ) {
 		mwexec("/sbin/pfctl -e");
 		mwexec("/sbin/pfctl -F nat");
@@ -120,45 +116,25 @@ function filter_configure() {
         $rules_loading = mwexec("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
 
 	/* load ipfw+altq module */
-	if (isset($config['shaper']['enable']) || isset($config['nat']['outgoingloadbalancing']['enable'])) {
+	if (isset($config['shaper']['enable'])) {
 		mwexec("/sbin/kldload ipfw");
                 /* change one_pass to 1 so ipfw stops checking after
                    a rule has matched */
                 mwexec("/sbin/sysctl net.inet.ip.fw.one_pass=1");
                 /* load shaper rules */
-                if (isset($config['shaper']['enable'])) {
-                    mwexec("/sbin/ipfw -f delete set 4");
+                mwexec("/sbin/ipfw -f delete set 4");
                 /* XXX - seems like ipfw cannot accept rules directly on stdin,
                    so we have to write them to a temporary file first */
-                    $fd = fopen("{$g['tmp_path']}/ipfw.rules", "w");
-                    if (!$fd) {
-                            printf("Cannot open ipfw.rules in filter_configure()\n");
-                            return 1;
-                    }
-                    fwrite($fd, $altq_rules);
-                    fclose($fd);
-                    mwexec("/sbin/ipfw {$g['tmp_path']}/ipfw.rules");
-                    mwexec("/sbin/ipfw enable altq");
-                    mwexec("/bin/mv {$g['tmp_path']}/ipfw.rules {$g['tmp_path']}/ipfw.rules_old");
+                $fd = fopen("{$g['tmp_path']}/ipfw.rules", "w");
+                if (!$fd) {
+                        printf("Cannot open ipfw.rules in filter_configure()\n");
+                        return 1;
                 }
-                /*load lb rules */
-                if (isset($config['nat']['outgoingloadbalancing']['enable'])) {
-                    mwexec("/sbin/ipfw -f delete set 5");
-                    /* this uses ~32MB for session states */
-                    mwexec("/sbin/sysctl net.inet.ip.fw.dyn_max=65536");
-                    mwexec("/sbin/sysctl net.inet.ip.fw.dyn_buckets=32768");
-                /* XXX - seems like ipfw cannot accept rules directly on stdin,
-                   so we have to write them to a temporary file first */
-                    $fd = fopen("{$g['tmp_path']}/ipfw_lb.rules", "w");
-                    if (!$fd) {
-                            printf("Cannot open ipfw.rules in filter_configure()\n");
-                            return 1;
-                    }
-                    fwrite($fd, $lb_rules);
-                    fclose($fd);
-                    mwexec("/sbin/ipfw {$g['tmp_path']}/ipfw_lb.rules");
-                    mwexec("/bin/mv {$g['tmp_path']}/ipfw_lb.rules {$g['tmp_path']}/ipfw_lb.rules_old");
-                }
+                fwrite($fd, $altq_rules);
+                fclose($fd);
+                mwexec("/sbin/ipfw {$g['tmp_path']}/ipfw.rules");
+		mwexec("/sbin/ipfw enable altq");
+                mwexec("/bin/mv {$g['tmp_path']}/ipfw.rules {$g['tmp_path']}/ipfw.rules_old");
 	} else {
 		mwexec("/sbin/ipfw -f flush");
 		if(!isset($config['captiveportal']['enable']))
@@ -383,74 +359,6 @@ function filter_generate_aliases() {
 	return $aliases;
 }
 
-function filter_generate_lb_rules() {
-        global $config, $g;
-
-        $wancfg = $config['interfaces']['wan'];
-        $lancfg = $config['interfaces']['lan'];
-
-        $lanif = $lancfg['if'];
-        $wanif = get_real_wan_interface();
-
-        $lanip = $lancfg['ipaddr'];
-        $lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
-        $lansn = $lancfg['subnet'];
-
-	$ruleconf = &$config['nat']['outgoingloadbalancing']['rule'];
-
-	/* Lets turn away some rule writting */
-        $out_flow = ' ip from '.$lancfg['ipaddr'].'/'.$lancfg['subnet'].' to not '. $lancfg['ipaddr'].'/'.$lancfg['subnet'];
-        $in_flow = 'ip from not '.$lancfg['ipaddr'].'/'.$lancfg['subnet'].' to '.$lancfg['ipaddr'].'/'.$lancfg['subnet'];
-	
-	/* LB Rules Return Script */
-	$lbrules = "";
-//	print_r($ruleconf);	
-	/* generate rules */
-        if (isset($ruleconf)) {
-	        
-	        $i = 0;
-        	$gatenum = count($ruleconf);
-		reset($ruleconf);
-                foreach ($ruleconf as $rule) {
-
-			$gwmac = arp_get_mac_by_ip($rule['gatewayip']);
-			print_r($rule);
-			print_r($gwmac);
-                	/* don't include disabled rules and non reachable gateways*/
-                	if (($rule['enabled']===0) || ($gwmac===false)) {
-                        	$i++;
-                        	continue;
-      	         	}
-
-			$rulelines = "";	
-			$in_num = 10000 + $i;
-			$out_num = 11000 + $i;
-			$skipto_num = 50000 + $i*10;
-
-			/* Compute denominator of probability value 
-			(consist of enabled|reachable gateways) */				
-			$denom[$i] = 0;
-			for($j=$i;$j<$gatenum;$j++) 
-				if (($ruleconf[$j]['enabled']==1) && (arp_get_mac_by_ip($ruleconf[$j]['gatewayip'])!==false)) $denom[$i]++;
-
-			$prob = round(1/$denom[$i],2);
-		
-			$rulelines .= "add $in_num set 5 skipto $skipto_num $in_flow mac any $gwmac in recv $wanif keep-state\n";
-					
-			$rulelines .= "add $out_num set 5 prob $prob skipto $skipto_num $out_flow in recv $lanif keep-state\n";
-					
-			$rulelines .= "add $skipto_num set 5 fwd ".$rule['gatewayip']." $out_flow in recv $lanif\n";
-			$skipto_num++;
-			$rulelines .= "add $skipto_num set 5 skipto 65535 ip from any to any\n";
-
-			$lbrules .=$rulelines;
-			$i++;
-		} // foreach 
-	
-	} // if
-	return $lbrules;
-}
-
 function filter_generate_altq_rules() {
         global $config, $g;
 
@@ -488,12 +396,13 @@ function filter_generate_altq_rules() {
                 $pptpsn = $g['pptp_subnet'];
         }
 
-        $rulei = 1000;
+        $rulei = 50000;
 
         /* add a rule to pass all traffic from/to the firewall,
            so the user cannot lock himself out of the webGUI */
         $shaperrules = "add $rulei set 4 pass all from $lanip to any\n"; $rulei++;
         $shaperrules .= "add $rulei set 4 pass all from any to $lanip\n"; $rulei++;
+	$shaperrules .= "add $rulei set 4 pass carp from any to any\n"; $rulei++;
 
         /* generate rules */
         if (isset($config['shaper']['rule']))
@@ -699,10 +608,12 @@ function filter_generate_altq_rules() {
                         if ($ispptp) {
                                 $line .= "via ng" . ($iif+1);
                         } else {
+				$if = $config['interfaces'][$rule['interface']]['if'];
+
                                 if ($rule['interface'] == "wan")
                                         $if = $wanif;
-                                else
-                                        $if = $config['interfaces'][$rule['interface']]['if'];
+                                else if($rule['interface'] == "lan")
+					$if = $wanif;
 
                                 $line .= "via {$if}";
                         }

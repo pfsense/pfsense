@@ -259,6 +259,7 @@ function enable_change(enable_over) {
                         <td width="22%" valign="top" class="vncell">Gateway</td>
                         <td width="78%" class="vtable"> 
                           <input name="gateway" type="text" class="formfld" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>"><br>
+The default is to use the IP of the firewall as the gateway.  Specify an alternate gateway here if this is not the correct gateway for your network.
                       </tr>
                       <tr> 
                         <td width="22%" valign="top" class="vncell">Default lease 

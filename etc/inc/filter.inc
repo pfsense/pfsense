@@ -247,7 +247,7 @@ function filter_nat_rules_generate_if($if, $src, $dst, $target) {
 	else
 		$tgt = "0/32";
 
-	if($config['nat']['enableoutboundloadbalancing']) {
+	if(isset($config['nat']['enableoutboundloadbalancing'])) {
 	$natrule = <<<EOD
 nat on $if from $src to any -> ($if)
 

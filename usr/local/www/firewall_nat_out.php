@@ -42,7 +42,7 @@ if ($_POST) {
     $pconfig = $_POST;
 
     $config['nat']['advancedoutbound']['enable'] = ($_POST['enable']) ? true : false;
-    $pconfig['nat']['enableoutboundloadbalancing'] = $_POST['enableoutboundloadbalancing'] ? true : false;
+    $config['nat']['enableoutboundloadbalancing'] = $_POST['enableoutboundloadbalancing'] ? true : false;
     write_config();
 
     $retval = 0;
@@ -107,7 +107,7 @@ if ($_GET['act'] == "del") {
                       </strong></p>
                   </td>
                   <td class="vtable"><p>
-                        <input name="enableoutboundloadbalancing" type="checkbox" id="enableoutboundloadbalancing" value="yes" <?php if ($pconfig['enableoutboundloadbalancing'] == "yes") echo "checked";?>>
+                        <input name="enableoutboundloadbalancing" type="checkbox" id="enableoutboundloadbalancing" value="yes" <?php if (isset($config['nat']['enableoutboundloadbalancing'])) echo "checked";?>>
                         <strong>Enable outbound load balancing.<br>
                         </strong></p>
                   </td>

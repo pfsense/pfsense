@@ -181,7 +181,31 @@ echo $memUsage . "%";
 ?>
                 </td>
               </tr>
+			  <tr>
+                <td width="25%" class="vncellt">SWAP usage</td>
+                <td width="75%" class="listr">
+
+<?php
+
+$swapUsage = `/usr/sbin/swapinfo | cut -c45-55 | grep "%"`;
+$swapUsage = ereg_replace('%', "", $swapUsage);
+$swapUsage = ereg_replace(' ', "", $swapUsage);
+
+echo "<img src='bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
+echo "<img src='bar_blue.gif' height='15' width='" . $swapUsage . "' border='0' align='absmiddle'>";
+echo "<img src='bar_gray.gif' height='15' width='" . (100 - $swapUsage) . "' border='0' align='absmiddle'>";
+echo "<img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
+echo $swapUsage . "%";
+
+?>
+
+                </td>
+              </tr>
+
+
             </table>
             <?php include("fend.inc"); ?>
 </body>
 </html>
+
+

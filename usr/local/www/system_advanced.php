@@ -90,13 +90,15 @@ if ($_POST) {
 		$config['system']['disableconsolemenu'] = $_POST['disableconsolemenu'] ? true : false;
 		$config['system']['disablefirmwarecheck'] = $_POST['disablefirmwarecheck'] ? true : false;
 		$config['system']['webgui']['expanddiags'] = $_POST['expanddiags'] ? true : false;
-		$config['system']['schedulertype'] = $_POST['schedulertype'];
+
 		if ($g['platform'] == "generic-pc") {
 			$oldharddiskstandby = $config['system']['harddiskstandby'];
 			$config['system']['harddiskstandby'] = $_POST['harddiskstandby'];
 		}
 		$config['system']['webgui']['noantilockout'] = $_POST['noantilockout'] ? true : false;
 		$config['filter']['tcpidletimeout'] = $_POST['tcpidletimeout'];
+
+		$config['system']['schedulertype'] = $_POST['schedulertype'];
 
 		write_config();
 
@@ -201,11 +203,11 @@ function enable_change(enable_over) {
                   <td width="78%">
                     <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
                   </td>
-                </tr>		
+                </tr>
                 <tr>
                   <td colspan="2" class="list" height="12"></td>
                 </tr>
-		
+
 		<tr>
                   <td colspan="2" valign="top" class="listtopic">Disable Firewalling</td>
                 </tr>

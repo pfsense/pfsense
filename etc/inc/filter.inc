@@ -81,6 +81,8 @@ function filter_configure() {
 	$altq_ints = filter_setup_altq_interfaces();
 	/* generate altq queues */
 	$altq_queues = filter_generate_altq_queues();
+	/* generate altq rules */
+	$altq_rules = filter_generate_altq_rules();
 
 	if( !isset( $config['system']['disablefilter'] ) ) {
 		mwexec("/sbin/pfctl -e");
@@ -98,6 +100,7 @@ function filter_configure() {
 	fwrite($fd, $altq_ints);
 	fwrite($fd, $altq_queues);
 	fwrite($fd, $natrules);
+	fwrite($fd, $altq_rules);
         fwrite($fd, $pfrules);
         fclose($fd);
 
@@ -126,67 +129,67 @@ function filter_get_altq_queue_scheduler_type($associatedrule) {
 	global $config;
 	$schedulertype = "";
 	/* XXX: assign all the OPT interfaces */
-	foreach ($config['filter']['rule'] as $rule) {
+	foreach ($config['shaper']['rule'] as $rule) {
 		if($rule['descr'] == $associatedrule) {
-			if($rule['interface'] == "wan") $schedulertpye = $config['interfaces']['wan']['schedulertype'];
-			if($rule['interface'] == "lan") $schedulertpye = $config['interfaces']['lan']['schedulertype'];
+			if($rule['interface'] == "wan") $schedulertpye = $config['system']['schedulertype'];
+			if($rule['interface'] == "lan") $schedulertpye = $config['system']['schedulertype'];
+			$schedulertpye = $config['system']['schedulertype'];
 		}
 	}
 	return $schedulertpye;
 }
 
-function filter_get_rule_real_interface($associatedrule) {
-	global $config;
-	foreach ($config['filter']['rule'] as $rule) {
-		if($rule['descr'] == $associatedrule) {
-			$interface = $rule['interface'];
-			return $config['interfaces'][$interface]['if'];
-		}
-	}
-	return "";
+function filter_get_rule_real_interface($associatedrulenumber) {
+        global $config;
+        $x=0;
+        foreach($config['shaper']['rule'] as $rule) {
+                if($x == $associatedrulenumber)
+                        return $rule['interface'];
+                $x++;
+        }
 }
 
 
-function filter_get_rule_interface($associatedrule) {
+function filter_get_rule_interface($associatedrulenumber) {
 	global $config;
-	foreach ($config['filter']['rule'] as $rule) {
+	foreach ($config['shaper']['rule'] as $rule) {
 		if($rule['descr'] == $associatedrule) return $rule['interface'];
 	}
-	return "";
+	return $config['shaper']['rule'][$associatedrulenumber]['interface'];
 }
 
 function filter_generate_altq_queues() {
 	global $config;
 	$altq_rules = "";
-	if (is_array($config['pfqueueing']['queue'])) {
-		foreach ($config['pfqueueing']['queue'] as $rule) {
+	if (is_array($config['shaper']['queue'])) {
+		foreach ($config['shaper']['queue'] as $rule) {
 			$options = "";
 			$altq_rules .= "queue " . $rule['name'] . " ";
 			if (isset($rule['bandwidth']) and $rule['bandwidth'] <> "")
 				$altq_rules .= "bandwidth " . $rule['bandwidth'] . $rule['bandwidthtype'] . " ";
 			if (isset($rule['priority']) and $rule['priority'] <> "")
 				$altq_rules .= "priority " .  $rule['priority']  . " ";
-			if(isset($rule['options']['red']) and $rule['options']['red'] <> "")
+			if(isset($rule['red']) and $rule['red'] <> "")
 				$options .= " red";
-			if(isset($rule['options']['borrow']) and $rule['options']['borrow'] <> "")
+			if(isset($rule['borrow']) and $rule['borrow'] <> "")
 				$options .= " borrow";
-			if(isset($rule['options']['ecn']) and $rule['options']['ecn'] <> "")
+			if(isset($rule['ecn']) and $rule['ecn'] <> "")
 				$options .= " ecn";
-			if(isset($rule['options']['rio']) and $rule['options']['rio'] <> "")
+			if(isset($rule['rio']) and $rule['rio'] <> "")
 				$options .= " rio";
-			if(isset($rule['options']['defaultqueue']) and $rule['options']['defaultqueue'] <> "")
+			if(isset($rule['defaultqueue']) and $rule['defaultqueue'] <> "")
 				$options .= " default";
-			if(isset($rule['options']['upperlimit']) and $rule['options']['upperlimit'] <> "") {
-				$options .= " upperlimit(" . $rule['options']['upperlimit1'] . " " . $rule['options']['upperlimit2'] . " " . $rule['options']['upperlimit3'] . ")";
+			if(isset($rule['upperlimit']) and $rule['upperlimit'] <> "") {
+				$options .= " upperlimit(" . $rule['upperlimit1'] . " " . $rule['upperlimit2'] . " " . $rule['upperlimit3'] . ")";
 			}
-			if(isset($rule['options']['linkshare']) and $rule['options']['linkshare'] <> "") {
-				$options .= " linkshare(" . $rule['options']['linkshare1'] . " " . $rule['options']['linkshare2'] . " " . $rule['options']['linkshare3'] . ")";
+			if(isset($rule['linkshare']) and $rule['linkshare'] <> "") {
+				$options .= " linkshare(" . $rule['linkshare1'] . " " . $rule['linkshare2'] . " " . $rule['linkshare3'] . ")";
 			}
-			if(isset($rule['options']['realtime']) and $rule['options']['realtime'] <> "") {
-				$options .= " realtime(" . $rule['options']['realtime1'] . " " . $rule['options']['realtime2'] . " " . $rule['options']['realtime3'] . ")";
+			if(isset($rule['realtime']) and $rule['realtime'] <> "") {
+				$options .= " realtime(" . $rule['realtime1'] . " " . $rule['realtime2'] . " " . $rule['realtime3'] . ")";
 			}
 			if($options) {
-				$scheduler_type = filter_get_altq_queue_scheduler_type($rule['options']['associatedrule']);
+				$scheduler_type = $config['system']['schedulertype'];
 				$altq_rules .= $scheduler_type . "(". $options . " )";
 			}
 			if (isset($rule['subqueue'])) {
@@ -205,40 +208,45 @@ function filter_generate_altq_queues() {
 	return $altq_rules;
 }
 
+function filter_translate_real_interface_to_type($interface) {
+        global $config;
+        $int = "na";
+        if($config['interfaces']['wan']['if'] == $interface) $int = "wan";
+        if($config['interfaces']['lan']['if'] == $interface) $int = "lan";
+        return $int;
+}
+
 function filter_setup_altq_interfaces() {
 	global $config;
 	$altq_rules  = "";
 	$queue_names = "";
 	$is_first = "";
-	$queue_names = "";
-	$is_first = "";
-	if (is_array($config['interfaces'])) {
-		foreach ($config['interfaces'] as $ifname) {
-			if (is_array($config['pfqueueing']['queue'])) {
-				foreach ($config['pfqueueing']['queue'] as $queue) {
-					$schedulertype = $ifname['schedulertype'];
-					if(filter_get_altq_queue_scheduler_type($queue['options']['associatedrule']) == $schedulertype) {
-						if (filter_get_rule_real_interface($queue['options']['associatedrule']) == $ifname['if']) {
-							if(is_subqueue($queue['name']) == 0) {
-								if($is_first) $queue_names .= ", ";
-								$queue_names .= $queue['name'];
-								$is_first = "1";
-							}
-						}
+	foreach ($config['interfaces'] as $ifname) {
+		$queue_names = "";
+		$is_first = "";
+		if (is_array($config['shaper']['queue'])) {
+			foreach ($config['shaper']['queue'] as $queue) {
+				$rule_interface = filter_get_rule_real_interface($queue['associatedrule']);
+				$workting_with_interface = filter_translate_real_interface_to_type($ifname['if']);
+				if ($rule_interface == $workting_with_interface) {
+					if(is_subqueue($queue['name']) == 0) {
+						if($is_first) $queue_names .= ", ";
+						$queue_names .= $queue['name'];
+						$is_first = "1";
 					}
 				}
 			}
-			if(isset($ifname['bandwidth'])) {
-				$subnet = $ifname['ipaddr'] . "/" . $ifname['subnet'];
-				if($queue_names <> ""){
-					$altq_rules .= "altq on " . $ifname['if'] . " ";
-					$altq_rules .=  $ifname['schedulertype'] . " bandwidth " . $ifname['bandwidth'] . $ifname['bandwidthtype'] . " ";
-					$altq_rules .= "queue { " . $queue_names . " }";
-				}
-				$altq_rules .= "\n";
-				$is_first = "";
-				$queue_names = "";
+		}
+		if(isset($ifname['bandwidth'])) {
+			$subnet = $ifname['ipaddr'] . "/" . $ifname['subnet'];
+			if($queue_names <> ""){
+				$altq_rules .= "altq on " . $ifname['if'] . " ";
+				$altq_rules .=  $config['system']['schedulertype'] . " bandwidth " . $ifname['bandwidth'] . $ifname['bandwidthtype'] . " ";
+				$altq_rules .= "queue { " . $queue_names . " }";
 			}
+			$altq_rules .= "\n";
+			$is_first = "";
+			$queue_names = "";
 		}
 	}
 	return $altq_rules;
@@ -247,8 +255,8 @@ function filter_setup_altq_interfaces() {
 function is_subqueue($name) {
         global $config;
         $status = "";
-        if (is_array($config['pfqueueing']['queue'])) {
-                foreach ($config['pfqueueing']['queue'] as $queue) {
+        if (is_array($config['shaper']['queue'])) {
+                foreach ($config['shaper']['queue'] as $queue) {
                         if(is_array($queue['subqueue'])) {
                                 foreach ($queue['subqueue'] as $sq) {
                                         if($sq['name'] == $name) return 1;
@@ -259,6 +267,320 @@ function is_subqueue($name) {
         return 0;
 }
 
+function filter_generate_altq_rules() {
+	global $config, $g;
+
+	$wancfg = $config['interfaces']['wan'];
+	$lancfg = $config['interfaces']['lan'];
+	$pptpdcfg = $config['pptpd'];
+
+	$lanif = $lancfg['if'];
+	$wanif = get_real_wan_interface();
+
+	/* rule groups (optional interfaces: see below) */
+	$ifgroups = array("lan" => 100, "wan" => 200);
+
+	$lanip = $lancfg['ipaddr'];
+	$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
+	$lansn = $lancfg['subnet'];
+
+	/* optional interfaces */
+	$optcfg = array();
+
+	$i = 0;
+
+	if (isset($config['shaper']['rule']))
+		foreach ($config['shaper']['rule'] as $rule) {
+		echo $rule['descr'] . "\n";
+		/* don't include disabled rules */
+		if (isset($rule['disabled'])) {
+			$i++;
+			continue;
+		}
+
+		/* does the rule deal with a PPTP interface? */
+		if ($rule['interface'] == "pptp") {
+
+			if ($pptpdcfg['mode'] != "server") {
+				$i++;
+				continue;
+			}
+
+			$nif = $g['n_pptp_units'];
+			$ispptp = true;
+		} else {
+
+			if (strstr($rule['interface'], "opt")) {
+				if (!array_key_exists($rule['interface'], $optcfg)) {
+					$i++;
+					continue;
+				}
+			}
+
+			$nif = 1;
+			$ispptp = false;
+		}
+
+		if ($pptpdcfg['mode'] != "server") {
+			if (($rule['source']['network'] == "pptp") ||
+				($rule['destination']['network'] == "pptp")) {
+					$i++;
+					continue;
+				}
+		}
+
+		if ($rule['source']['network'] && strstr($rule['source']['network'], "opt")) {
+			if (!array_key_exists($rule['source']['network'], $optcfg)) {
+				$i++;
+				continue;
+			}
+		}
+		if ($rule['destination']['network'] && strstr($rule['destination']['network'], "opt")) {
+			if (!array_key_exists($rule['destination']['network'], $optcfg)) {
+				$i++;
+				continue;
+			}
+		}
+
+		/* check for unresolvable aliases */
+		if ($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
+			$i++;
+			continue;
+		}
+		if ($rule['destination']['address'] && !alias_expand($rule['destination']['address'])) {
+			$i++;
+			continue;
+		}
+
+		for ($iif = 0; $iif < $nif; $iif++) {
+
+			if (!$ispptp) {
+
+				$groupnum = $ifgroups[$rule['interface']];
+
+				if (!$groupnum) {
+					printf("Invalid interface name in rule $i\n");
+					break;
+				}
+			}
+
+			$type = $rule['type'];
+			if ($type != "pass" && $type != "block" && $type != "reject") {
+				/* default (for older rules) is pass */
+				$type = "pass";
+			}
+
+			if ($type == "reject") {
+				/* special reject packet */
+				if ($rule['protocol'] == "tcp") {
+					$line = "block return-rst";
+				} else if ($rule['protocol'] == "udp") {
+					$line = "block return-icmp";
+				} else {
+					$line = "block";
+				}
+			} else {
+				$line = $type;
+			}
+
+			if(!isset($rule['direction']) and $rule['direction'] <> "") {
+				$line .= " in ";
+			} else {
+				$line .= " " . $rule['direction'] . " ";
+			}
+
+			if (isset($rule['log']))
+				$line .= "log ";
+
+			$line .= "quick ";
+
+			if ($ispptp) {
+				$line .= "on ng" . ($iif+1) . " ";
+			}
+
+			if (isset($rule['protocol'])) {
+				$line .= "proto {$rule['protocol']} ";
+			}
+
+			/* source address */
+			if (isset($rule['source']['any'])) {
+				$src = "any";
+			} else if ($rule['source']['network']) {
+
+				if (strstr($rule['source']['network'], "opt")) {
+					$src = $optcfg[$rule['source']['network']]['sa'] . "/" .
+						$optcfg[$rule['source']['network']]['sn'];
+				} else {
+					switch ($rule['source']['network']) {
+						case 'lan':
+							$src = "$lansa/$lansn";
+							break;
+						case 'pptp':
+							$src = "$pptpsa/$pptpsn";
+							break;
+					}
+				}
+			} else if ($rule['source']['address']) {
+				$src = alias_expand($rule['source']['address']);
+			}
+
+			if (!$src || ($src == "/")) {
+				//printf("No source address found in rule $i\n");
+				break;
+			}
+
+			if (isset($rule['source']['not'])) {
+				$line .= "from !$src ";
+			} else {
+				$line .= "from $src ";
+			}
+
+			if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
+
+				if ($rule['source']['port']) {
+					$srcport = explode("-", $rule['source']['port']);
+
+					if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
+						$line .= "port = {$srcport[0]} ";
+					} else if (($srcport[0] == 1) && ($srcport[1] == 65535)) {
+						/* no need for a port statement here */
+					} else if ($srcport[1] == 65535) {
+						$line .= "port >= {$srcport[0]} ";
+					} else if ($srcport[0] == 1) {
+						$line .= "port <= {$srcport[1]} ";
+					} else {
+						$srcport[0]--;
+						$srcport[1]++;
+						$line .= "port {$srcport[0]} >< {$srcport[1]} ";
+					}
+				}
+			}
+
+			/* destination address */
+			if (isset($rule['destination']['any'])) {
+				$dst = "any";
+			} else if ($rule['destination']['network']) {
+
+				if (strstr($rule['destination']['network'], "opt")) {
+					$dst = $optcfg[$rule['destination']['network']]['sa'] . "/" .
+						$optcfg[$rule['destination']['network']]['sn'];
+				} else {
+					switch ($rule['destination']['network']) {
+						case 'lan':
+							$dst = "$lansa/$lansn";
+							break;
+						case 'pptp':
+							$dst = "$pptpsa/$pptpsn";
+							break;
+					}
+				}
+			} else if ($rule['destination']['address']) {
+				$dst = alias_expand($rule['destination']['address']);
+			}
+
+			if (!$dst || ($dst == "/")) {
+				//printf("No destination address found in rule $i\n");
+				break;
+			}
+
+			if (isset($rule['destination']['not'])) {
+				$line .= "to !$dst ";
+			} else {
+				$line .= "to $dst ";
+			}
+
+			if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
+
+				if ($rule['destination']['port']) {
+					$dstport = explode("-", $rule['destination']['port']);
+
+					if ((!$dstport[1]) || ($dstport[0] == $dstport[1])) {
+						$line .= "port = {$dstport[0]} ";
+					} else if (($dstport[0] == 1) && ($dstport[1] == 65535)) {
+						/* no need for a port statement here */
+					} else if ($dstport[1] == 65535) {
+						$line .= "port >= {$dstport[0]} ";
+					} else if ($dstport[0] == 1) {
+						$line .= "port <= {$dstport[1]} ";
+					}  else {
+						$dstport[0]--;
+						$dstport[1]++;
+						$line .= "port {$dstport[0]} >< {$dstport[1]} ";
+					}
+				}
+			}
+
+			if (($rule['protocol'] == "icmp") && $rule['icmptype']) {
+				$line .= "icmp-type {$rule['icmptype']} ";
+			}
+
+			if ($type == "pass") {
+
+				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states']) )
+					$line .= "flags S/SA ";
+
+				/*
+					# keep state
+						works with TCP, UDP, and ICMP.
+					# modulate state
+						works only with TCP. pfSense will generate strong Initial Sequence Numbers (ISNs)
+						for packets matching this rule.
+					# synproxy state
+						proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods.
+						This option includes the functionality of keep state and modulate state combined.
+					# none
+						do not use state mechanisms to keep track. this is only useful if your doing advanced
+						queueing in certain situations. please check the faq.
+				*/
+				if( !isset($rule['statetype'] ) ) {
+					$line .= "keep state ";
+				} else {
+					if($rule['statetype'] == "modulate state" or $rule['statetype'] == "synproxy state") {
+						if($rule['protocol'] == "tcp")
+							$line .= $rule['statetype'] ;
+					} else {
+						if(!$rule['statetype'] == "none")
+							$line .= $rule['statetype'] ;
+					}
+				}
+
+			}
+
+			if ($type == "reject" && $rule['protocol'] == "tcp") {
+				/* special reject packet */
+				$line .= "flags S/SA ";
+			}
+
+			if (isset($rule['flags'])) {
+				$line .= "flags " . $rule['flags'] . " ";
+			}
+
+			if (!$ispptp) {
+				#$line .= "group $groupnum ";
+			}
+
+			$line .= "queue " . filter_altq_get_queuename($que['associatedrule']);
+
+			$line .= "\n";
+
+			$ipfrules .= $line;
+		}
+
+		$i++;
+	}
+
+	return $ipfrules;
+}
+
+function filter_altq_get_queuename($queuenum) {
+        global $config;
+        $x=0;
+        foreach($config['shaper']['queue'] as $rule) {
+                if($x == $associatedrulenumber)
+                        return $rule['name'];
+                $x++;
+        }
+}
 
 function filter_flush_nat_table() {
 	global $config, $g;
@@ -1033,9 +1355,9 @@ EOD;
 				#$line .= "group $groupnum ";
 			}
 
-			if(isset($config['pfqueueing']['queue'])) {
-				foreach ($config['pfqueueing']['queue'] as $que) {
-					if($que['options']['associatedrule'] == $rule['descr']) {
+			if(isset($config['shaper']['queue'])) {
+				foreach ($config['shaper']['queue'] as $que) {
+					if($que['associatedrule'] == $rule['descr']) {
 						$line .= "queue " . $que['name'];
 						break;
 					}

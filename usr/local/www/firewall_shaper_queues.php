@@ -33,14 +33,14 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['pfqueueing']['pipe'])) {
-	$config['pfqueueing']['pipe'] = array();
+if (!is_array($config['shaper']['pipe'])) {
+	$config['shaper']['pipe'] = array();
 }
-if (!is_array($config['pfqueueing']['queue'])) {
-	$config['pfqueueing']['queue'] = array();
+if (!is_array($config['shaper']['queue'])) {
+	$config['shaper']['queue'] = array();
 }
-$a_queues = &$config['pfqueueing']['queue'];
-$a_pipe = &$config['pfqueueing']['pipe'];
+$a_queues = &$config['shaper']['queue'];
+$a_pipe = &$config['shaper']['pipe'];
 
 $iflist = array("lan" => "LAN", "wan" => "WAN");
 
@@ -51,8 +51,8 @@ for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 if ($_GET['act'] == "del") {
 	if ($a_queues[$_GET['id']]) {
 		/* check that no rule references this queue */
-		if (is_array($config['pfqueueing']['rule'])) {
-			foreach ($config['pfqueueing']['rule'] as $rule) {
+		if (is_array($config['shaper']['rule'])) {
+			foreach ($config['shaper']['rule'] as $rule) {
 				if (isset($rule['targetqueue']) && ($rule['targetqueue'] == $_GET['id'])) {
 					$input_errors[] = "This queue cannot be deleted because it is still referenced by a rule.";
 					break;
@@ -64,9 +64,9 @@ if ($_GET['act'] == "del") {
 			unset($a_queues[$_GET['id']]);
 
 			/* renumber all rules */
-			if (is_array($config['pfqueueing']['rule'])) {
-				for ($i = 0; isset($config['pfqueueing']['rule'][$i]); $i++) {
-					$currule = &$config['pfqueueing']['rule'][$i];
+			if (is_array($config['shaper']['rule'])) {
+				for ($i = 0; isset($config['shaper']['rule'][$i]); $i++) {
+					$currule = &$config['shaper']['rule'][$i];
 					if (isset($currule['targetqueue']) && ($currule['targetqueue'] > $_GET['id']))
 						$currule['targetqueue']--;
 				}
@@ -112,24 +112,31 @@ if ($_GET['act'] == "del") {
                       <tr>
                         <td width="10%" class="listhdrr">No.</td>
                         <td width="5%" class="listhdrr">Priority</td>
-                        <td width="20%" class="listhdrr">Assigned Queue</td>
-                        <td width="30%" class="listhdr">Description</td>
+			<td width="5%" class="listhdr">Default</td>
+                        <td width="30%" class="listhdr">Name</td>
                         <td width="10%" class="list"></td>
                       </tr>
                       <?php $i = 0; foreach ($a_queues as $queue): ?>
                       <tr valign="top">
                         <td class="listlr">
-                          <?=($i+1);?></td>
+                          <?=($i+1);?>
+			</td>
                         <td class="listr">
-                          <?=$queue['priority'];?></td>
-                        <td class="listr">
-                          <?php echo $queue['options']['associatedrule']; ?>
-
-
-                          &nbsp; </td>
+                          <?=$queue['priority'];?>
+			</td>
+			<td class="listr">
+			  <?php
+				if($queue['default'] <> "") {
+					echo "Yes";
+				} else {
+					echo "No";
+				}
+			  ?>
+			</td>
                         <td class="listbg">
                           <font color="#FFFFFF"><?=htmlspecialchars($queue['name']);?>
-                          &nbsp; </td>
+                          &nbsp;
+			</td>
                         <td valign="middle" nowrap class="list"> <a href="firewall_shaper_queues_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a>
                           &nbsp;<a href="firewall_shaper_queues.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this queue?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
                       </tr>

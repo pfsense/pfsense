@@ -33,26 +33,25 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['pfqueueing']['rule'])) {
-	$config['pfqueueing']['rule'] = array();
+if (!is_array($config['shaper']['rule'])) {
+	$config['shaper']['rule'] = array();
 }
-if (!is_array($config['pfqueueing']['pipe'])) {
-	$config['pfqueueing']['pipe'] = array();
+if (!is_array($config['shaper']['pipe'])) {
+	$config['shaper']['pipe'] = array();
 }
-if (!is_array($config['pfqueueing']['queue'])) {
-	$config['pfqueueing']['queue'] = array();
+if (!is_array($config['shaper']['queue'])) {
+	$config['shaper']['queue'] = array();
 }
-$a_shaper = &$config['pfqueueing']['rule'];
-$a_pipe = &$config['pfqueueing']['pipe'];
-$a_queue = &$config['pfqueueing']['queue'];
+$a_shaper = &$config['shaper']['rule'];
+$a_queue = &$config['shaper']['queue'];
 
-$pconfig['enable'] = isset($config['pfqueueing']['enable']);
+$pconfig['enable'] = isset($config['shaper']['enable']);
 
 if ($_POST) {
 
 	if ($_POST['submit']) {
 		$pconfig = $_POST;
-		$config['pfqueueing']['enable'] = $_POST['enable'] ? true : false;
+		$config['shaper']['enable'] = $_POST['enable'] ? true : false;
 		write_config();
 	}
 
@@ -199,22 +198,16 @@ if ($_GET['act'] == "del") {
                         </td>
                         <td class="listr"><?=$textss;?>
                           <?php
-							if (isset($shaperent['targetpipe'])) {
-								if ($a_pipe[$shaperent['targetpipe']]['descr'])
-									$desc = htmlspecialchars($a_pipe[$shaperent['targetpipe']]['descr']);
+							if (isset($shaperent['targetqueue'])) {
+								if ($a_queue[$shaperent['targetqueue']]['name'])
+									$desc = htmlspecialchars($a_queue[$shaperent['targetqueue']]['name']);
 								else
-									$desc = "Pipe " . ($shaperent['targetpipe']+1);
-								echo "<a href=\"firewall_shaper_pipes_edit.php?id={$shaperent['targetpipe']}\">{$desc}</a>";
-							} else if (isset($shaperent['targetqueue'])) {
-								if ($a_queue[$shaperent['targetqueue']]['descr'])
-									$desc = htmlspecialchars($a_queue[$shaperent['targetqueue']]['descr']);
-								else
-									$desc = "Queue " . ($shaperent['targetqueue']+1);
-								echo "<a href=\"firewall_shaper_queues_edit.php?id={$shaperent['targetqueue']}\">{$desc}</a>";
+									$desc = "Queue " . ($shaperent['targetpipe']+1);
+								echo "<a href=\"firewall_shaper_pipes_edit.php?id={$shaperent['targetqueue']}\">{$desc}</a>";
 							}
 						  ?><?=$textse;?>
                         </td>
-                        <td class="listbg">
+                        <td class="listbg"><font color="white">
                           <?=$textss;?><?=htmlspecialchars($shaperent['descr']);?><?=$textse;?>
                           &nbsp; </td>
                         <td valign="middle" nowrap class="list"> <a href="firewall_shaper_edit.php?id=<?=$i;?>"><img src="e.gif" title="edit rule" width="17" height="17" border="0"></a>

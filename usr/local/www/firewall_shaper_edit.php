@@ -129,11 +129,7 @@ if (isset($id) && $a_shaper[$id]) {
 		$pconfig['dstmask'], $pconfig['dstnot'],
 		$pconfig['dstbeginport'], $pconfig['dstendport']);
 
-	if (isset($a_shaper[$id]['targetpipe'])) {
-		$pconfig['target'] = "targetpipe:" . $a_shaper[$id]['targetpipe'];
-	} else if (isset($a_shaper[$id]['targetqueue'])) {
-		$pconfig['target'] = "targetqueue:" . $a_shaper[$id]['targetqueue'];
-	}
+		$pconfig['target'] =  $a_shaper[$id]['targetqueue'];
 
 	$pconfig['direction'] = $a_shaper[$id]['direction'];
 	$pconfig['iptos'] = $a_shaper[$id]['iptos'];
@@ -459,6 +455,7 @@ function dst_rep_change() {
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Firewall: Traffic shaper: Edit rule</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
+<?php if (is_array($config['shaper']['queue']) > 0): ?>
 
             <form action="firewall_shaper_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -466,21 +463,12 @@ function dst_rep_change() {
                   <td valign="top" class="vncellreq">Target</td>
                   <td class="vtable"> <select name="target" class="formfld">
                       <?php
-					  foreach ($config['shaper']['pipe'] as $pipei => $pipe): ?>
-                      <option value="<?="targetpipe:$pipei";?>" <?php if ("targetpipe:$pipei" == $pconfig['target']) echo "selected"; ?>>
-                      <?php
-					  	echo htmlspecialchars("Pipe " . ($pipei + 1));
-						if ($pipe['descr'])
-							echo htmlspecialchars(" (" . $pipe['descr'] . ")");
-					  ?>
-                      </option>
-                      <?php endforeach;
 					  foreach ($config['shaper']['queue'] as $queuei => $queue): ?>
-                      <option value="<?="targetqueue:$queuei";?>" <?php if ("targetqueue:$queuei" == $pconfig['target']) echo "selected"; ?>>
+                      <option value="<?="$queuei";?>" <?php if ("$queuei" == $pconfig['target']) echo "selected"; ?>>
                       <?php
 					  	echo htmlspecialchars("Queue " . ($queuei + 1));
-						if ($queue['descr'])
-							echo htmlspecialchars(" (" . $queue['descr'] . ")");
+						if ($queue['name'])
+							echo htmlspecialchars(" (" . $queue['name'] . ")");
 					  ?>
                       </option>
                       <?php endforeach; ?>
@@ -694,8 +682,8 @@ function dst_rep_change() {
                     on the interface specified above (as seen from the firewall's
                     perspective). </td>
                 </tr>
-		
-		
+
+
                 <tr>
                   <td width="22%" valign="top" class="vncell">IP packet length</td>
                   <td width="78%" class="vtable"><input name="iplen" type="text" id="iplen" size="10" value="<?=htmlspecialchars($pconfig['iplen']);?>">
@@ -750,6 +738,9 @@ typesel_change();
 proto_change();
 //-->
 </script>
+<?php else: ?>
+<p><strong>You need to create a queue before you can add a new rule.</strong></p>
+<?php endif; ?>
 <?php include("fend.inc"); ?>
 </body>
 </html>

@@ -237,6 +237,18 @@ $config = $config_tmp;
 		  if($pkga['cols']) $cols = " cols='" . $pkga['cols'] . "' ";
 			echo "<textarea " . $rows . $cols . " name='" . $pkga['fieldname'] . "'>" . $value . "</textarea>\n";
 			echo "<br>" . $pkga['description'] . "\n";
+		  } else if($pkga['type'] == "interfaces_selection") {
+			echo "<select name='" . $pkga['fieldname'] . "'>\n";
+			foreach ($config['interfaces'] as $ifname => $iface) {
+			  if ($iface['descr'])
+				  $ifdescr = $iface['descr'];
+
+			  else
+				  $ifdescr = strtoupper($ifname);
+				$ifname = $iface['if'];
+				echo "<option value='" . $ifname . "'>" . $ifdescr . "</option>\n";
+			}
+			echo "</select>\n";
 	      } else if($pkga['type'] == "radio") {
 			echo "<input type='radio' name='" . $pkga['fieldname'] . "' value='" . $value . "'>";
 	      } else if($pkga['type'] == "rowhelper") {

@@ -113,7 +113,7 @@ if ($_GET['act'] == "del") {
 							echo $arpent['range']['from'] . "-" . $arpent['range']['to'];
                     ?>&nbsp;
                   </td>
-                  <td class="listbg">
+                  <td class="listbg"><font color="white">
                     <?=htmlspecialchars($arpent['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list"> <a href="services_proxyarp_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a>

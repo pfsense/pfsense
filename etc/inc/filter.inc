@@ -710,6 +710,7 @@ function filter_nat_rules_generate() {
 	$wanif = get_real_wan_interface();
 
 	$lanif = $config['interfaces']['lan']['if'];
+	$lanip = $config['interfaces']['lan']['ipaddr'];
 
 	$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
 
@@ -870,7 +871,7 @@ EOD;
 
 	$squid_installed = run_command_return_string("/bin/ls /var/db/pkg/ | grep squid");
 	if ($squid_installed <> "") {
-		$natrules .= "rdr on " . $lanif . " inet proto tcp from any to any port www -> 127.0.0.1 port 3128\n";
+		$natrules .= "rdr on " . $lanif . " inet proto tcp from any to !{$lanip} port www -> 127.0.0.1 port 3128\n";
 	}
 
 	return $natrules;

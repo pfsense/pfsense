@@ -117,9 +117,7 @@ if ($_POST) {
 		write_config();
 
 		foreach($config['filter']['rule'] as $rule) {
-			echo $rule['descr'] . "<br>";
 			if($rule['descr'] == $_POST['associatedrule']) {
-				echo "FOUND IT<br>";
 				$rule['queue'] = $_POST['associatedrule'];
 			}
 		}

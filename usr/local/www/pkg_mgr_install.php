@@ -357,6 +357,10 @@ $pb_percent += 10;
 // close log
 fclose($fd_log);
 
+if($pkgent['custom_php_install_command']) {
+    exec($pkgent['custom_php_install_command']);
+}
+
 // reopen and read log in
 $fd_log = fopen("/tmp/pkg_mgr.log", "r");
 $tmp = "";

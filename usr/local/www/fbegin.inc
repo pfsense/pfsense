@@ -10,8 +10,8 @@
 				$fdt = fopen("{$g['www_path']}/ext/" . $section . "/" . $extd, "r");
 				$description = fread($fdt, 1024);
 				fclose($fdt);
-				echo "<!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/pkg.php?xml=" . strtolower($extd) . ".xml\" class=\"navlnk\">" . $description . "</a><br> -->\n";
-				$htmltext .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/pkg.php?xml=" . strtolower($extd) . ".xml\" class=\"navlnk\">" . $description . "</a><br>\n";
+				echo "<!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/pkg.php?xml=" . strtolower($extd) . ".xml\" class=\"navlnk\">" . $extd . "</a><br> -->\n";
+				$htmltext .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/pkg.php?xml=" . strtolower($extd) . ".xml\" class=\"navlnk\">" . $extd . "</a><br>\n";
 			}
 			closedir($dh);
 		}

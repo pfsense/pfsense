@@ -54,6 +54,20 @@ $section      = $pkg['menu']['section'];
 $config_path  = $pkg['configpath'];
 $title        = $section . ": Edit " . $package_name
 
+if ($_POST) {
+    if($_GET['act'] == "del") {
+	if($pkg['custom_delete_php_command']) {
+	    eval($pkg['custom_delete_php_command']);
+	}
+	// XXX: unset the xml value to config
+    } else {
+	if($pkg['custom_add_php_command']) {
+	    eval($pkg['custom_add_php_command']);
+	}
+	// XXX: add the xml value to config
+    }
+}
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -90,6 +104,9 @@ $config = $config_tmp;
 		  // XXX: TODO: set $value
                   if($pkg['size']) $size = " size='" . $pkg['size'] . "' ";
 		  echo "<input " . $size . " name='" . $pkg['fieldname'] . "' value='" . $value . "'>\n";
+		  echo "<br>" . $pkg['description'] . "\n";
+	      } else if($pkg['type'] == "password") {
+		  echo "<input type='password' " . $size . " name='" . $pkg['fieldname'] . "' value='" . $value . "'>\n";
 		  echo "<br>" . $pkg['description'] . "\n";
 	      } else if($pkg['type'] == "select") {
 		  // XXX: TODO: set $selected

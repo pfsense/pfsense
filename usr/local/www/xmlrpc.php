@@ -106,8 +106,11 @@ $restore_config_section_sig = array(array(boolean, string, string, string));
 
 function restore_config_section_xmlrpc($raw_params) {
 	$params = xmlrpc_params_to_php($raw_params);
+	$i = 0;
 	if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", 'string'));
-	restore_config_section($params[0], $params[1]);
+	foreach($params[0] as $section) {
+		restore_config_section($section, $params[1][$i]);
+	}
 	return new XML_RPC_Response(new XML_RPC_Value(true, 'boolean'));
 }
 

@@ -136,12 +136,6 @@ if ($_POST) {
 			$retval |= interfaces_optional_configure();
 			config_unlock();
 		}
-
-		/* Setup pf rules since the user may have changed the optimization value */
-		config_lock();
-		$retval = filter_configure();
-		config_unlock();
-
 	}
 }
 ?>

@@ -145,7 +145,7 @@ if ($_GET['act'] == "del") {
 			</td>
 			<td class="listr">
 			  <?php
-				if($queue['default'] <> "") {
+				if($queue['defaultqueue'] <> "") {
 					echo "Yes";
 				} else {
 					echo "No";

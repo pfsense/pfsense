@@ -254,6 +254,7 @@ function filter_get_rule_real_interface($associatedrulenumber) {
 
 function filter_is_queue_being_used_on_interface($queuename, $interface) {
 	global $config;
+	if(!is_array($config['shaper']['rule'])) return;
 	foreach($config['shaper']['rule'] as $rule) {
 		if($rule['targetqueue'] == $queuename && $rule['interface'] == $interface)
 			return $interface;
@@ -1249,7 +1250,10 @@ EOD;
 			}
 
 			// translate wan, man, lan, opt to real interface.
-			$line .= "on \$" . $rule['interface'] . " ";
+			$interface = $rule['interface'];
+			$temp = filter_get_opt_interface_descr($interface);
+			if($temp <> "") $interface = $temp;
+			$line .= "on \$" . $interface . " ";
 
 			if (isset($rule['protocol'])) {
 				if($rule['protocol'] == "tcp/udp")

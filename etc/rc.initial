@@ -47,6 +47,7 @@ echo "8) PFtop"
 echo
 
 read -p "Enter a number: " opmode
+echo
 
 # see what the user has chosen
 case ${opmode} in

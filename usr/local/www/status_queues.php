@@ -52,7 +52,7 @@ $a_queues = &$config['shaper']['queue'];
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Status: Traffic shaper: Queues</p>
 <form action="status_queues.php" method="post">
-              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <table border="0" cellpadding="0" cellspacing="0">
                       <tr>
                         <td class="listhdr">Queue Stats</td>
                       </tr>

@@ -291,6 +291,16 @@ if ($pkgent['pfsense_package_base_url'] <> "") {
     fwrite($fd_log, "Executing: cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base_url'] . "/" . $pkgent['pfsense_package'] . "\n" . $text);
 }
 
+update_progress_bar($pb_percent);
+$pb_percent += 10;
+
+if ($pkgent['depends_on_package_base_url'] <> "") {
+            update_status("Downloading and installing " . $pkgent['name'] . " and its dependencies ... This could take a moment ...");
+            $text = exec_command_and_return_text("cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package']);
+            update_output_window($text);
+            fwrite($fd_log, "cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package'] . "\n" . $text);;
+}
+
 $status = exec_command_and_return_text("ls /var/db/pkg | grep " . $pkgent['name']);
 fwrite($fd_log, "ls /var/db/pkg | grep " . $pkgent['name'] . "\n" . $status);
 if($status <> "") {
@@ -301,17 +311,8 @@ if($status <> "") {
             fclose($fd_log);
             $filecontents = exec_command_and_return_text("cat " . $file);
             update_status("Package WAS NOT installed properly...Something went wrong..\n" . $filecontents);
+            sleep(1);
             die;
-}
-
-update_progress_bar($pb_percent);
-$pb_percent += 10;
-
-if ($pkgent['depends_on_package_base_url'] <> "") {
-            update_status("Downloading and installing " . $pkgent['name'] . " and its dependencies ... This could take a moment ...");
-            $text = exec_command_and_return_text("cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package']);
-            update_output_window($text);
-            fwrite($fd_log, "cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package'] . "\n" . $text);;
 }
 
 update_progress_bar($pb_percent);

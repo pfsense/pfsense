@@ -277,7 +277,7 @@ While(!Connection_Aborted()) {
 
     echo "document.memwidtha.style.width='" . $memUsage . "';\n";
     echo "document.memwidthb.style.width='" . (100 - $memUsage) . "';\n";
-    echo "document.forms[0].memmeter.value = '" . $memUsage . "%';\n";
+    echo "document.forms[0].memusagemeter.value = '" . $memUsage . "%';\n";
 
     /* Update temp. meter */
     $Temp = rtrim(`/usr/local/sbin/env4801 | grep Temp |cut -c24-25`);

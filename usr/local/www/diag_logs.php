@@ -38,7 +38,7 @@ if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) {
-	exec("/usr/sbin/clog -i -s 262144 /var/log/system.log");
+	exec("/usr/sbin/clog -i -s 262144 {$g['varlog_path']}/system.log");
 }
 
 function dump_clog($logfile, $tail, $withorig = true) {
@@ -46,7 +46,7 @@ function dump_clog($logfile, $tail, $withorig = true) {
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
-	exec("/usr/sbin/clog " . $logfile . " | tail {$sor} -n " . $tail, $logarr);
+	exec("/usr/sbin/clog " . $logfile . " | /usr/bin/tail {$sor} -n " . $tail, $logarr);
 
 	foreach ($logarr as $logent) {
 		$logent = preg_split("/\s+/", $logent, 6);
@@ -92,7 +92,7 @@ function dump_clog($logfile, $tail, $withorig = true) {
 			<td colspan="2" class="listtopic">
 			  Last <?=$nentries;?> system log entries</td>
 		  </tr>
-		  <?php dump_clog("/var/log/system.log", $nentries); ?>
+		  <?php dump_clog("{$g['varlog_path']}/system.log", $nentries); ?>
 		</table>
 		<br><form action="diag_logs.php" method="post">
 <input name="clear" type="submit" class="formbtn" value="Clear log">

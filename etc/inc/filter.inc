@@ -909,6 +909,9 @@ function filter_rules_generate() {
 	/* optional interfaces */
 	$optcfg = array();
 
+	# BEGIN OF firewall rules
+	$ipfrules="anchor \"firewallrules\"\n";
+
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 		$oc = $config['interfaces']['opt' . $i];
 
@@ -948,9 +951,6 @@ function filter_rules_generate() {
 		$log = "log";
 	else
 		$log = "";
-
-	# BEGIN OF firewall rules
-	$ipfrules="";
 
 	/* XXX: create a plugin rule modification system */
 

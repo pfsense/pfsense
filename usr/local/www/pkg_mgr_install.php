@@ -40,95 +40,6 @@ if(!file_exists("/usr/local/www/ext/")) mwexec("mkdir -p /usr/local/www/ext");
 
 $pb_percent = 1;
 
-/*
- *   update_output_window: update top textarea dynamically.
- */
-function update_status($status) {
-            echo "\n<script language=\"JavaScript\">document.forms[0].status.value=\"" . $status . "\";</script>";
-}
-
-/*
- *   update_output_window: update bottom textarea dynamically.
- */
-function update_output_window($text) {
-            $log = ereg_replace("\n", "\\n", $text);
-            echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"" . $log . "\";</script>";
-}
-
-/*
- *   get_dir: return an array of $dir
- */
-function get_dir($dir) {
-            $dir_array = array();
-            $d = dir($dir);
-            while (false !== ($entry = $d->read())) {
-                        array_push($dir_array, $entry);
-            }
-            $d->close();
-            return $dir_array;
-}
-
-/*
- *   exec_command_and_return_text_array: execute command and return output
- */
-function exec_command_and_return_text_array($command) {
-            $counter = 0;
-            $fd = popen($command . " 2>&1 ", "r");
-            echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = '';</script>\n";
-            while(!feof($fd)) {
-                        $tmp .= fread($fd,49);
-                        echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = this.document.forms[0].output.value + \"" . $tmp . $extrabreak .  "\"; </script>";
-            }
-            fclose($fd);
-            $temp_array = split("\n", $tmp);
-            return $tmp_array;
-}
-
-/*
- *   exec_command_and_return_text: execute command and return output
- */
-function exec_command_and_return_text($command) {
-            $counter = 0;
-            $tmp = "";
-            $fd = popen($command . " 2>&1 ", "r");
-            echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = '';</script>\n";
-            while(!feof($fd)) {
-                        $tmp .= fread($fd,49);
-                        echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = this.document.forms[0].output.value + \"" . $tmp . $extrabreak .  "\"; </script>";
-            }
-            fclose($fd);
-            return $tmp;
-}
-
-/*
- *   exec_command_and_return_text: execute command and update output window dynamically
- */
-function execute_command_return_output($command) {
-    global $fd_log, $pb_percent;
-    if($pb_percent > 100) $pb_percent = 1;
-    update_progress_bar($pb_percent);
-    $fd = popen($command . " 2>&1 ", "r");
-    echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"\";</script>";
-    $counter = 0;
-    $counter2 = 0;
-    while(!feof($fd)) {
-	$tmp = fread($fd, 50);
-        fwrite($fd_log, $tmp);
-	$tmp1 = ereg_replace("\n","\\n", $tmp);
-	$text = ereg_replace("\"","'", $tmp1);
-	echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = this.document.forms[0].output.value + \"" . $tmp . $extrabreak .  "\"; f('output'); </script>";
-    }
-    $pb_percent++;
-    fclose($fd);
-}
-
-function update_progress_bar($percent) {
-            if($percent > 100) $percent = 1;
-            echo "\n<script type=\"text/javascript\" language=\"javascript\">";
-            echo "\ndocument.progressbar.style.width='" . $percent . "%';";
-            echo "\n</script>";
-}
-
 $a_out = &$pkg_config['packages'];
 
 $packages_to_install = Array();
@@ -523,23 +434,7 @@ echo "<p><center>Installation completed.  Show <a href=\"pkg_mgr_install.php?sho
 echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
 echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
 
-function add_text_to_file($file, $text) {
-    global $fd_log;
-    fwrite($fd_log, "Adding needed text items:\n");
-    $filecontents = exec_command_and_return_text("cat " . $file);
-    $filecontents = str_replace($text, "", $filecontents);
-    $text = $filecontents . $text;
-    fwrite($fd_log, $text . "\n");
-    $fd = fopen($file, "w");
-    fwrite($fd, $text . "\n");
-    fclose($fd);
-}
 
-function get_filename_from_url($url) {
-            $filenamesplit = split("/", $url);
-            foreach($filenamesplit as $fn) $filename = $fn;
-            return $filename;
-}
 
 ?>
 

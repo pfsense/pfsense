@@ -179,4 +179,156 @@ function add_rule_to_anchor($anchor, $rule) {
     mwexec($rule . " | pfctl -a " . $anchor . " -f -");
 }
 
+/*
+ * remove_text_from_file
+ * remove $text from file $file
+ */
+function remove_text_from_file($file, $text) {
+    global $fd_log;
+    fwrite($fd_log, "Adding needed text items:\n");
+    $filecontents = exec_command_and_return_text("cat " . $file);
+    $textTMP = str_replace($text, "", $filecontents);
+    $text .= $textTMP;
+    fwrite($fd_log, $text . "\n");
+    $fd = fopen($file, "w");
+    fwrite($fd, $text);
+    fclose($fd);
+}
+
+/*
+ * lookup pkg array id#
+ */
+function get_pkg_id($pkg_name) {
+            global $config;
+            global $pkg_config;
+            $i=0;
+            foreach ($config['installedpackages']['package'] as $pkg) {
+                        if($pkg['name'] == $pkg_name) return $i;
+                        $i++;
+            }
+            return -1;
+}
+
+/*
+ * add_text_to_file($file, $text): adds $text to $file.
+ * replaces the text if it already exists.
+ */
+function add_text_to_file($file, $text) {
+    global $fd_log;
+    fwrite($fd_log, "Adding needed text items:\n");
+    $filecontents = exec_command_and_return_text("cat " . $file);
+    $filecontents = str_replace($text, "", $filecontents);
+    $text = $filecontents . $text;
+    fwrite($fd_log, $text . "\n");
+    $fd = fopen($file, "w");
+    fwrite($fd, $text . "\n");
+    fclose($fd);
+}
+
+/*
+ * get_filename_from_url($url): converts a url to its filename.
+ */
+function get_filename_from_url($url) {
+            $filenamesplit = split("/", $url);
+            foreach($filenamesplit as $fn) $filename = $fn;
+            return $filename;
+}
+
+/*
+ *   update_output_window: update bottom textarea dynamically.
+ */
+function update_output_window($text) {
+            $log = ereg_replace("\n", "\\n", $text);
+            echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"" . $log . "\";</script>";
+}
+
+/*
+ *   get_dir: return an array of $dir
+ */
+function get_dir($dir) {
+            $dir_array = array();
+            $d = dir($dir);
+            while (false !== ($entry = $d->read())) {
+                        array_push($dir_array, $entry);
+            }
+            $d->close();
+            return $dir_array;
+}
+
+/*
+ *   update_output_window: update top textarea dynamically.
+ */
+function update_status($status) {
+            echo "\n<script language=\"JavaScript\">document.forms[0].status.value=\"" . $status . "\";</script>";
+}
+
+/*
+ *   exec_command_and_return_text_array: execute command and return output
+ */
+function exec_command_and_return_text_array($command) {
+            $counter = 0;
+            $fd = popen($command . " 2>&1 ", "r");
+            while(!feof($fd)) {
+                        $tmp .= fread($fd,49);
+            }
+            fclose($fd);
+            $temp_array = split("\n", $tmp);
+            return $tmp_array;
+}
+
+/*
+ *   exec_command_and_return_text: execute command and return output
+ */
+function exec_command_and_return_text($command) {
+	    return exec_command($command);
+}
+
+/*
+ *   exec_command_and_return_text: execute command and update output window dynamically
+ */
+function execute_command_return_output($command) {
+    global $fd_log;
+    $fd = popen($command . " 2>&1 ", "r");
+    echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"\";</script>";
+    $counter = 0;
+    $counter2 = 0;
+    while(!feof($fd)) {
+	$tmp = fread($fd, 50);
+	$tmp1 = ereg_replace("\n","\\n", $tmp);
+	$text = ereg_replace("\"","'", $tmp1);
+	if($lasttext == "..") {
+	    $text = "";
+	    $lasttext = "";
+	    $counter=$counter-2;
+	} else {
+	    $lasttext .= $text;
+	}
+	if($counter > 51) {
+	    $counter = 0;
+	    $extrabreak = "\\n";
+	} else {
+	    $extrabreak = "";
+	    $counter++;
+	}
+	if($counter2 > 600) {
+	    echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"\";</script>";
+	    $counter2 = 0;
+	} else
+	    $counter2++;
+	echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = this.document.forms[0].output.value + \"" . $text . $extrabreak .  "\"; f('output'); </script>";
+    }
+    fclose($fd);
+}
+
+/*
+ * update_progress_bar($percent): updates the javascript driven progress bar.
+ */
+function update_progress_bar($percent) {
+            if($percent > 100) $percent = 1;
+            echo "\n<script type=\"text/javascript\" language=\"javascript\">";
+            echo "\ndocument.progressbar.style.width='" . $percent . "%';";
+            echo "\n</script>";
+}
+
+
 ?>

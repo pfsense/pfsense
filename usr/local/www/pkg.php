@@ -185,7 +185,7 @@ if ($pkg['tabs'] <> "") {
 							    echo "Yes";
 							}
 						    } else {
-							echo $fieldname;
+							echo $column['prefix'] . $fieldname . $column['suffix'];
 						    }
 						?>
 					</td>

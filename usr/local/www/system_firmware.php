@@ -38,9 +38,9 @@ function check_firmware_version() {
 	$post = "platform=" . rawurlencode($g['platform']) .
 		"&version=" . rawurlencode(trim(file_get_contents("/etc/version")));
 
-	$rfd = @fsockopen("m0n0.ch", 80, $errno, $errstr, 3);
+	$rfd = @fsockopen("pfSense", 80, $errno, $errstr, 3);
 	if ($rfd) {
-		$hdr = "POST /wall/checkversion.php HTTP/1.0\r\n";
+		$hdr = "POST /pfSense/checkversion.php HTTP/1.0\r\n";
 		$hdr .= "Content-Type: application/x-www-form-urlencoded\r\n";
 		$hdr .= "User-Agent: m0n0wall-webGUI/1.0\r\n";
 		$hdr .= "Host: m0n0.ch\r\n";

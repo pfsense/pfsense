@@ -718,6 +718,7 @@ function filter_nat_rules_generate() {
 				$natif = $config['interfaces'][$natent['interface']]['if'];
 
 			$natrules .= "binat on {$natif} from {$natent['internal']}/{$sn} to any -> {$natent['external']}/{$sn}\n";
+			$natrules .= "binat on {$natif} from {$natent['external']}/{$sn} to any -> {$natent['internal']}/{$sn}\n";
 		}
 	}
 

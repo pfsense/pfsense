@@ -1,22 +1,22 @@
 #!/usr/local/bin/php
-<?php 
+<?php
 /*
-	index.php
+	index.php 
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -74,7 +74,7 @@ if ($clientmac && portal_mac_fixed($clientmac)) {
 
 	/* authenticate against radius server */
 	$radiusservers = captiveportal_get_radius_servers();
-	
+
 	if ($_POST['auth_user'] && $_POST['auth_pass']) {
 		$auth_val = RADIUS_AUTHENTICATION($_POST['auth_user'],
 										  $_POST['auth_pass'],
@@ -145,19 +145,19 @@ EOD;
 } else {
 	/* display captive portal page */
 	$htmltext = file_get_contents("{$g['varetc_path']}/captiveportal.html");
-	
+
 	/* substitute variables */
 	if (isset($config['captiveportal']['httpslogin']))
 		$htmltext = str_replace("\$PORTAL_ACTION\$", "https://{$config['captiveportal']['httpsname']}:8001/", $htmltext);
 	else
 		$htmltext = str_replace("\$PORTAL_ACTION\$", "", $htmltext);
-	
+
 	if (preg_match("/redirurl=(.*)/", $orig_request, $matches))
 		$redirurl = urldecode($matches[1]);
 	else
 		$redirurl = "http://{$orig_host}{$orig_request}";
 	$htmltext = str_replace("\$PORTAL_REDIRURL\$", htmlspecialchars($redirurl), $htmltext);
-	
+
 	echo $htmltext;
 }
 
@@ -165,7 +165,7 @@ exit;
 
 function portal_mac_fixed($clientmac) {
 	global $g ;
-	
+
 	/* open captive portal mac db */
 	if (file_exists("{$g['vardb_path']}/captiveportal_mac.db")) {
 		$fd = @fopen("{$g['vardb_path']}/captiveportal_mac.db","r") ;
@@ -182,7 +182,7 @@ function portal_mac_fixed($clientmac) {
 		fclose($fd) ;
 	}
 	return FALSE ;
-}	
+}
 
 function portal_allow($clientip,$clientmac,$clientuser,$bw_up,$bw_down) {
 
@@ -190,7 +190,7 @@ function portal_allow($clientip,$clientmac,$clientuser,$bw_up,$bw_down) {
 
 	/* user has accepted AUP - let him in */
 	portal_lock();
-	
+
 	/* get next ipfw rule number */
 	if (file_exists("{$g['vardb_path']}/captiveportal.nextrule"))
 		$ruleno = trim(file_get_contents("{$g['vardb_path']}/captiveportal.nextrule"));
@@ -198,11 +198,11 @@ function portal_allow($clientip,$clientmac,$clientuser,$bw_up,$bw_down) {
 		$ruleno = 10000;	/* first rule number */
 
 	$saved_ruleno = $ruleno;
-	
+
 	/* generate unique session ID */
 	$tod = gettimeofday();
 	$sessionid = substr(md5(mt_rand() . $tod['sec'] . $tod['usec'] . $clientip . $clientmac), 0, 16);
-	
+
 	/* add ipfw rules for layer 3 */
 	exec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from $clientip to any in");
 	exec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from any to $clientip out");
@@ -226,14 +226,14 @@ function portal_allow($clientip,$clientmac,$clientuser,$bw_up,$bw_down) {
 		exec("/sbin/ipfw pipe $down_rule_number config bw " . trim($bw_down) . "Kbit/s queue 10");
 	}
 	/* done */
-	
+
 	/* add ipfw rules for layer 2 */
 	if (!isset($config['captiveportal']['nomacfilter'])) {
 		$l2ruleno = $ruleno + 10000;
 		exec("/sbin/ipfw add $l2ruleno set 3 deny all from $clientip to any not MAC any $clientmac layer2 in");
 		exec("/sbin/ipfw add $l2ruleno set 3 deny all from any to $clientip not MAC $clientmac any layer2 out");
 	}
-	
+
 	/* read in client database */
 	$cpdb = array();
 
@@ -243,11 +243,11 @@ function portal_allow($clientip,$clientmac,$clientuser,$bw_up,$bw_down) {
 			$line = trim(fgets($fd)) ;
 			if($line) {
 				$cpdb[] = explode(",",$line);
-			}	
+			}
 		}
 		fclose($fd);
 	}
-	
+
 	$radiusservers = captiveportal_get_radius_servers();
 
 	/* find an existing entry and delete it */
@@ -274,7 +274,7 @@ function portal_allow($clientip,$clientmac,$clientuser,$bw_up,$bw_down) {
 			unset($cpdb[$i]);
 			break;
 		}
-	}	
+	}
 
 	/* rewrite information to database */
 	$fd = @fopen("{$g['vardb_path']}/captiveportal.db", "w");
@@ -286,7 +286,7 @@ function portal_allow($clientip,$clientmac,$clientuser,$bw_up,$bw_down) {
 		fwrite($fd, time().",{$ruleno},{$clientip},{$clientmac},{$clientuser},{$sessionid}\n") ;
 		fclose($fd);
 	}
-	
+
 	/* write next rule number */
 	$fd = @fopen("{$g['vardb_path']}/captiveportal.nextrule", "w");
 	if ($fd) {
@@ -296,9 +296,9 @@ function portal_allow($clientip,$clientmac,$clientuser,$bw_up,$bw_down) {
 		fwrite($fd, $ruleno);
 		fclose($fd);
 	}
-	
+
 	portal_unlock();
-	
+
 	/* redirect user to desired destination */
 	if ($config['captiveportal']['redirurl'])
 		$redirurl = $config['captiveportal']['redirurl'];
@@ -306,14 +306,14 @@ function portal_allow($clientip,$clientmac,$clientuser,$bw_up,$bw_down) {
 		$redirurl = $_POST['redirurl'];
 	else
 		$redirurl = "http://{$orig_host}{$orig_request}";
-	
+
 	if(isset($config['captiveportal']['logoutwin_enable'])) {
-		
+
 		if (isset($config['captiveportal']['httpslogin']))
 			$logouturl = "https://{$config['captiveportal']['httpsname']}:8001/";
 		else
 			$logouturl = "http://{$config['interfaces'][$config['captiveportal']['interface']]['ipaddr']}:8000/";
-		
+
 		echo <<<EOD
 <HTML>
 <HEAD><TITLE>Redirecting...</TITLE></HEAD>
@@ -347,17 +347,17 @@ document.location.href="{$redirurl}";
 
 EOD;
 	} else {
-		header("Location: " . $redirurl); 
+		header("Location: " . $redirurl);
 	}
-	
+
 	return $sessionid;
 }
 
 /* read RADIUS servers into array */
 function captiveportal_get_radius_servers() {
-	
+
 	global $g;
-	
+
 	if (file_exists("{$g['vardb_path']}/captiveportal_radius.db")) {
 	   	$fd = @fopen("{$g['vardb_path']}/captiveportal_radius.db","r");
 		if ($fd) {
@@ -371,20 +371,20 @@ function captiveportal_get_radius_servers() {
 				}
 			}
 			fclose($fd);
-			
+
 			return $radiusservers;
 		}
 	}
-	
+
 	return false;
 }
 
 /* lock captive portal information, decide that the lock file is stale after
    10 seconds */
 function portal_lock() {
-	
+
 	global $lockfile;
-	
+
 	$n = 0;
 	while ($n < 10) {
 		/* open the lock file in append mode to avoid race condition */
@@ -402,9 +402,9 @@ function portal_lock() {
 
 /* unlock captive portal information file */
 function portal_unlock() {
-	
+
 	global $lockfile;
-	
+
 	if (file_exists($lockfile))
 		unlink($lockfile);
 }
@@ -413,11 +413,11 @@ function portal_unlock() {
    by Dinesh Nair
  */
 function disconnect_client($sessionid) {
-	
+
 	global $g, $config;
-	
+
 	portal_lock();
-	
+
 	/* read database */
 	$cpdb = array() ;
 	$fd = @fopen("{$g['vardb_path']}/captiveportal.db", "r");
@@ -426,14 +426,14 @@ function disconnect_client($sessionid) {
 			$line = trim(fgets($fd)) ;
 			if($line) {
 				$cpdb[] = explode(",",$line);
-			}	
+			}
 		}
 		fclose($fd);
 	}
-	
+
 	$radiusservers = captiveportal_get_radius_servers();
-	
-	/* find entry */	
+
+	/* find entry */
 	for ($i = 0; $i < count($cpdb); $i++) {
 		if ($cpdb[$i][5] == $sessionid) {
 			/* this client needs to be deleted - remove ipfw rules */
@@ -457,7 +457,7 @@ function disconnect_client($sessionid) {
 			break;
 		}
 	}
-	
+
 	/* rewrite information to database */
 	$fd = @fopen("{$g['vardb_path']}/captiveportal.db", "w");
 	if ($fd) {
@@ -466,7 +466,7 @@ function disconnect_client($sessionid) {
 		}
 		fclose($fd);
 	}
-	
+
 	portal_unlock();
 }
 ?>

@@ -68,6 +68,9 @@ function check_firmware_version() {
 
 		fclose($rfd);
 
+		if($_GET['autoupgrade'] <> "")
+		    return;
+
 		return $resp;
 	}
 

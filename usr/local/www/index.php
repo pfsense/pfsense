@@ -247,7 +247,6 @@ While(!Connection_Aborted()) {
     if($counter > 120) {
 	    echo "Redirecting to <a href=\"index.php\">Main Status</a>.<p>";
 	    echo "<meta http-equiv=\"refresh\" content=\"1;url=index.php\">";
-	    mwexec("/usr/bin/killall -9 pfctl");
 	    exit;
     }
 

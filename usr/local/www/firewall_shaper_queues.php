@@ -129,11 +129,11 @@ if ($_GET['act'] == "del") {
     <td class="tabcont">
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
                       <tr>
-                        <td width="10%" class="listhdrr">No.</td>
-			<td width="10%" class="listhdrr">Flags</td>
-                        <td width="10%" class="listhdrr">Priority</td>
-			<td width="10%" class="listhdr">Default</td>
-                        <td width="50%" class="listhdr">Name</td>
+                        <td width="5%" class="listhdrr">No.</td>
+			<td width="5%" class="listhdrr">Flags</td>
+                        <td width="5%" class="listhdrr">Priority</td>
+			<td width="5%" class="listhdr">Default</td>
+                        <td width="70%" class="listhdr">Name</td>
                         <td width="10%" class="list"></td>
                       </tr>
                       <?php $i = 0; foreach ($a_queues as $queue): ?>
@@ -170,7 +170,7 @@ if ($_GET['act'] == "del") {
 			echo "<img src='bar_blue.gif' height='15' name='queue{$i}widtha' id='queue{$i}widtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
 			echo "<img src='bar_gray.gif' height='15' name='queue{$i}widthb' id='queue{$i}widthb' width='" . (100 - $cpuUsage) . "' border='0' align='absmiddle'>";
 			echo "<img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
-			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='18' name='queue{$i}meter' id='queue{$i}meter' value='{$cpuUsage}'>";
+			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='25' name='queue{$i}meter' id='queue{$i}meter' value='{$cpuUsage}'>";
 ?>
 
 			</td>
@@ -216,13 +216,17 @@ While(!Connection_Aborted()) {
 		$stat_line_split = split("\|", $stats_line);
 		$packet_sampled = intval($stat_line_split[2]);
 		$speed = $stat_line_split[1];
+		$borrows = intval($stat_line_split[3]);
 		echo "<script language='javascript'>\n";
 
 		$packet_s = round(100 * (1 - $packet_sampled / $total_packets_s), 0);
 
 		echo "document.queue{$i}widthb.style.width='{$packet_s}';\n";
 		echo "document.queue{$i}widtha.style.width='" . (100 - $packet_s) . "';\n";
-		echo "document.forms[0].queue{$i}meter.value = '" . $packet_sampled . "/pps - " . $speed . "';\n";
+		$borrows_txt = "";
+		if(intval($borrows > 0))
+			$borrows_txt = " - {$borrows} borrows";
+		echo "document.forms[0].queue{$i}meter.value = '" . $packet_sampled . "/pps - " . $speed . "{$borrows_txt}';\n";
 		echo "</script>\n";
 		$i++;
 	}
@@ -238,6 +242,12 @@ While(!Connection_Aborted()) {
 		exit;
 	}
 
+	if(Connection_Aborted()) {
+		mwexec("/usr/bin/killall -9 pfctl");
+		mwexec("/usr/bin/killall -9 php");
+	}
 }
+
+mwexec("/usr/bin/killall -9 pfctl php");
 
 ?>

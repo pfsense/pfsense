@@ -32,6 +32,8 @@
 require("guiconfig.inc");
 
 $a_queues = &$config['pfqueueing']['queue'];
+filter_rules_sort();
+$a_filter = &$config['filter']['rule'];
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
@@ -62,6 +64,7 @@ if (isset($id) && $a_queues[$id]) {
 	$pconfig['schedulertype'] = $a_queues[$id]['schedulertype'];
 	$pconfig['bandwidth'] = $a_queues[$id]['bandwidth'];
 	$pconfig['bandwidthtype'] = $a_queues[$id]['bandwidthtype'];
+	$pconfig['associatedrule'] = $a_queues[$id]['associatedrule'];
 }
 
 if ($_POST) {
@@ -82,6 +85,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$queue = array();
+
 		$queue['schedulertype'] = $_POST['schedulertype'];
 		$queue['bandwidth'] = $_POST['bandwidth'];
 		$queue['bandwidthtype'] = $_POST['bandwidthtype'];
@@ -100,6 +104,7 @@ if ($_POST) {
 		$queue['options']['upperlimit2'] = $_POST['upperlimit2'];
 		$queue['options']['upperlimit1'] = $_POST['upperlimit1'];
 		$queue['options']['parentqueue'] = $_POST['parentqueue'];
+		$queue['options']['associatedrule'] = $_POST['associatedrule'];
 		$scheduleroptions="";
 		$queue['options']['red'] = $_POST['red'];
 		$queue['options']['ecn'] = $_POST['ecn'];
@@ -110,6 +115,17 @@ if ($_POST) {
 			$a_queues[] = $queue;
 
 		write_config();
+
+		foreach($config['filter']['rule'] as $rule) {
+			echo $rule['descr'] . "<br>";
+			if($rule['descr'] == $_POST['associatedrule']) {
+				echo "FOUND IT<br>";
+				$rule['queue'] = $_POST['associatedrule'];
+			}
+		}
+
+		write_config();
+
 		touch($d_shaperconfdirty_path);
 
 		header("Location: firewall_shaper_queues.php");
@@ -134,8 +150,11 @@ function sync_scheduler_options() {
 	var tmp = associatedrule.split(" - ");
 	var interface_type_a = '' + eval(tmp[0]) + '';
 	var interface_type = String(interface_type_a);
-	alert(interface_type);
 	if(interface_type == 'priq') {
+		document.forms[0].bandwidth.disabled = 1;
+		document.forms[0].bandwidthtype.disabled = 1;
+		document.forms[0].bandwidth.value = "";
+		document.forms[0].bandwidthtype.value = "";
 		document.forms[0].defaultqueue.disabled = 0;
 		document.forms[0].parentqueue.disabled = 1;
 		document.forms[0].red.disabled = 0;
@@ -155,6 +174,8 @@ function sync_scheduler_options() {
 		document.forms[0].childqueue.disabled = 1;
 		document.forms[0].priority.disabled = 0;
 	} else if(interface_type == 'cbq') {
+		document.forms[0].bandwidth.disabled = 0;
+		document.forms[0].bandwidthtype.disabled = 0;
 		document.forms[0].defaultqueue.disabled = 0;
 		document.forms[0].parentqueue.disabled = 0;
 		document.forms[0].red.disabled = 0;
@@ -174,6 +195,8 @@ function sync_scheduler_options() {
 		document.forms[0].childqueue.disabled = 0;
 		document.forms[0].priority.disabled = 0;
 	} else if(interface_type == 'hfsc') {
+		document.forms[0].bandwidth.disabled = 0;
+		document.forms[0].bandwidthtype.disabled = 0;
 		document.forms[0].red.disabled = 0;
 		document.forms[0].ecn.disabled = 0;
 		document.forms[0].defaultqueue.disabled = 0;
@@ -232,7 +255,7 @@ function sync_scheduler_options() {
 		<select name="associatedrule" onChange="sync_scheduler_options();">
 		<?php
 			foreach ($config['filter']['rule'] as $rule) {
-				echo "<option value=\"" . $rule['descr'] ."\">" .  $rule['interface'] . " -  " . $rule['descr'] . "</option>";
+				echo "<option value=\"" . $rule['descr'] ."\">" . $rule['interface'] . " - " . $rule['descr'] . "</option>";
 			}
 		?>
 		</select>

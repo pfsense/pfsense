@@ -29,7 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-require_once("guiconfig.inc");
+require("guiconfig.inc");
 
 $if = $_GET['if'];
 if ($_POST['if'])
@@ -52,7 +52,6 @@ $pconfig['range_from'] = $config['dhcpd'][$if]['range']['from'];
 $pconfig['range_to'] = $config['dhcpd'][$if]['range']['to'];
 $pconfig['deftime'] = $config['dhcpd'][$if]['defaultleasetime'];
 $pconfig['maxtime'] = $config['dhcpd'][$if]['maxleasetime'];
-$pconfig['gateway'] = $config['dhcpd'][$if]['gateway'];
 list($pconfig['wins1'],$pconfig['wins2']) = $config['dhcpd'][$if]['winsserver'];
 $pconfig['enable'] = isset($config['dhcpd'][$if]['enable']);
 $pconfig['denyunknown'] = isset($config['dhcpd'][$if]['denyunknown']);
@@ -65,9 +64,17 @@ if (!is_array($config['dhcpd'][$if]['staticmap'])) {
 staticmaps_sort($if);
 $a_maps = &$config['dhcpd'][$if]['staticmap'];
 
+
 if ($_POST) {
 
 	unset($input_errors);
+
+        if ($_POST['enablestaticarp'] == "") {
+                unset($config['staticarp']['enablestaticarp']);
+                } else {
+                $config['staticarp']['enablestaticarp'] = "enabled";
+        }       
+
 	$pconfig = $_POST;
 
 	/* input validation */
@@ -131,6 +138,7 @@ if ($_POST) {
 		$config['dhcpd'][$if]['gateway'] = $_POST['gateway'];
 
 		write_config();
+                interfaces_staticarp_configure();
 		
 		$retval = 0;
 		if (!file_exists($d_sysrebootreqd_path)) {
@@ -182,7 +190,7 @@ function enable_change(enable_over) {
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include_once("fbegin.inc"); ?>
+<?php include("fbegin.inc"); ?>
 <p class="pgtitle">Services: DHCP server</p>
 <form action="services_dhcp.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -255,10 +263,10 @@ function enable_change(enable_over) {
                           <input name="wins1" type="text" class="formfld" id="wins1" size="20" value="<?=htmlspecialchars($pconfig['wins1']);?>"><br>
                           <input name="wins2" type="text" class="formfld" id="wins2" size="20" value="<?=htmlspecialchars($pconfig['wins2']);?>"></td>
                       </tr>
-                      <tr> 
-                        <td width="22%" valign="top" class="vncell">Gateway</td>
-                        <td width="78%" class="vtable"> 
-                          <input name="gateway" type="text" class="formfld" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>"><br>
+                     <tr> 
+                       <td width="22%" valign="top" class="vncell">Gateway</td>
+                       <td width="78%" class="vtable"> 
+                         <input name="gateway" type="text" class="formfld" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>"><br>
 The default is to use the IP of the firewall as the gateway.  Specify an alternate gateway here if this is not the correct gateway for your network.
                       </tr>
                       <tr> 
@@ -303,6 +311,12 @@ The default is to use the IP of the firewall as the gateway.  Specify an alterna
                     </table>
 					&nbsp;<br>
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                        <tr><td colspan=3><hr></td></tr>
+                        <tr><td width="2%"><input type="checkbox" name="enablestaticarp" id="enablestaticarp" <?php if($config['staticarp']['enablestaticarp'] == "enabled") echo " checked"; ?>></td><td><b>Enable LAN StaticArp</td><td align="right"><input type="submit" value="Save"></td></tr>
+                        <tr><td colspan=3><hr></td></tr>
+              </table><br>
+
+              <table width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="35%" class="listhdrr">MAC address </td>
                   <td width="20%" class="listhdrr">IP address</td>
@@ -338,6 +352,6 @@ The default is to use the IP of the firewall as the gateway.  Specify an alterna
 enable_change(false);
 //-->
 </script>
-<?php include_once("fend.inc"); ?>
+<?php include("fend.inc"); ?>
 </body>
 </html>

@@ -1350,7 +1350,8 @@ EOD;
 					$line .= "on \$" . $interface . " ";
 			}
 
-			if($rule['returngateway'] <> "") {
+			$return_gateway = $config['interfaces'][$rule['interface']]['gateway'];
+			if($return_gateway <> "") {
 				$return_interface = filter_translate_type_to_real_interface($interface);
 				$line .= "reply-to (" . $return_interface . " " . $rule['returngateway'] . ") ";
 			}

@@ -45,6 +45,7 @@ $pconfig['descr'] = $optcfg['descr'];
 $pconfig['bridge'] = $optcfg['bridge'];
 $pconfig['ipaddr'] = $optcfg['ipaddr'];
 $pconfig['subnet'] = $optcfg['subnet'];
+$pconfig['gateway'] = $optcfg['gateway'];
 
 $pconfig['bandwidth'] = $optcfg['bandwidth'];
 $pconfig['bandwidthtype'] = $optcfg['bandwidthtype'];
@@ -128,7 +129,8 @@ if ($_POST) {
 		$optcfg['enable'] = $_POST['enable'] ? true : false;
 		$optcfg['bandwidth'] = $_POST['bandwidth'];
 		$optcfg['bandwidthtype'] = $_POST['bandwidthtype'];
-
+		$optcfg['gateway'] = $_POST['gateway'];
+		
 		write_config();
 
 		$retval = 0;
@@ -184,7 +186,7 @@ function ipaddr_change() {
                 <tr>
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable">
-<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
+			<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
                     <strong>Enable Optional <?=$index;?> interface</strong></td>
 				</tr>
                 <tr>
@@ -203,7 +205,7 @@ function ipaddr_change() {
 				<tr>
                   <td width="22%" valign="top" class="vncellreq">Bridge with</td>
                   <td width="78%" class="vtable">
-<select name="bridge" class="formfld" id="bridge" onChange="enable_change(false)">
+			<select name="bridge" class="formfld" id="bridge" onChange="enable_change(false)">
 				  	<option <?php if (!$pconfig['bridge']) echo "selected";?> value="">none</option>
                       <?php $opts = array('lan' => "LAN", 'wan' => "WAN");
 					  	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
@@ -239,6 +241,13 @@ function ipaddr_change() {
 				if (isset($optcfg['wireless']))
 					wireless_config_print();
 				?>
+		<tr>
+                  <td width="22%" valign="top" class="vncellreq">Gateway</td>
+                  <td width="78%" class="vtable">
+			<input name="gateway" value="<?php echo $pconfig['gateway']; ?>">
+		  </td>
+		</tr>
+			
                 <tr>
                   <td colspan="2" valign="top" height="16"></td>
                 </tr>

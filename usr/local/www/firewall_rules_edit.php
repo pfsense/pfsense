@@ -833,15 +833,6 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 		    </td>
 		</tr>
 
-		<tr>
-                  <td width="22%" valign="top" class="vncell">Return gateway</td>
-                  <td width="78%" class="vtable">
-			<input name="returngateway" value="<?php echo $pconfig['returngateway'] ?>">
-			<p><strong>Leave blank for default.  Enter the next-hop gateway for the return path.
-			</strong>
-		    </td>
-		</tr>
-
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">

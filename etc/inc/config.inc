@@ -834,6 +834,7 @@ EOD;
 
 function system_start_ftp_helpers() {
 	global $config;
+	global $g;
 	if($config['system']['disableftpproxy'] <> "") return;
 	if ($g['booting'])
 		echo "Starting INETD and FTP Helpers for FTP-PROXY...";

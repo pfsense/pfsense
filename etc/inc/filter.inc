@@ -321,8 +321,8 @@ function filter_generate_aliases() {
 	$wan_aliases = " " . link_ip_to_carp_interface($wanip);
 
 	$aliases .= "# System Aliases \n";
-	$aliases .= "lan = \"{ " . $config['interfaces']['lan']['if'] . "{$lan_aliases} }\"\n";
-	$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";
+	$aliases .= "lan = \"{ (" . $config['interfaces']['lan']['if'] . "){$lan_aliases} }\"\n";
+	$aliases .= "wan = \"{ (" . get_real_wan_interface() . "){$wan_aliases} }\"\n";
 	$aliases .= "pptp = \"{  }\"\n";
 
 	$ifdescrs = array();
@@ -339,7 +339,7 @@ function filter_generate_aliases() {
 			$extraalias = "";
 			$ip = find_interface_ip($alias['address']);
 			$extraalias = " " . link_ip_to_carp_interface($ip);
-			$aliases .= $alias['name'] . " = \"{ " . $alias['address'] . "{$extralias} }\"\n";
+			$aliases .= $alias['name'] . " = \"{ (" . $alias['address'] . "){$extralias} }\"\n";
 		}
 	}
 

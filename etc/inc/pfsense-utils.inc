@@ -58,6 +58,18 @@ function return_dir_as_array($dir) {
 }
 
 /*
+ * enable_hardware_offloading() enables hardware features of nics if they are supported
+ */
+function enable_hardware_offloading($interface) {
+    $supported_ints = array('fxp');
+    foreach($support_ints as $int) {
+	if(stristr($interface,$int) != FALSE) {
+	    mwexec("/sbin/ifconfig $interfface link0");
+	}
+    }   
+}
+
+/*
  * return_filename_as_array($filename): returns $filename contents as a string
  */
 function return_filename_as_array($filename) {
@@ -93,7 +105,7 @@ function is_carp_defined() {
 	$command = "/sbin/sysctl -a | grep carp";
 	$fd = popen($command . " 2>&1 ", "r");
 	if(!$fd) {
-		log_error("Warning, could not execute command ");
+		log_error("Warning, could not execute command {$command}");
 		return 0;
 	}
 	while(!feof($fd)) {
@@ -105,6 +117,24 @@ function is_carp_defined() {
 		return false;
 	else
 		return true;
+}
+
+/*
+ * find_number_of_created_carp_interfaces() returns the number of currently created carp interfaces
+ */
+function find_number_of_created_carp_interfaces() {
+	$command = "/sbin/ifconfig | grep \"carp*:\" | wc -l";
+	$fd = popen($command . " 2>&1 ", "r");
+	if(!$fd) {
+		log_error("Warning, could not execute command {$command}");
+		return 0;
+	}
+	while(!feof($fd)) {
+		    $tmp .= fread($fd,49);
+	}
+	fclose($fd);
+	$tmp=$tmp-1;
+	return $tmp;
 }
 
 /*
@@ -122,9 +152,9 @@ function link_ip_to_carp_interface($ip) {
 	$ft_ip = $ft[0] . "." . $ft[1] . "." . $ft[2] . ".";
 
 	$carp_ints = "";
-
+	$num_carp_ints = find_number_of_created_carp_interfaces();
         foreach ($ifdescrs as $ifdescr => $ifname) {
-                for($x=0; $x<99; $x++) {
+                for($x=0; $x<$num_carp_ints; $x++) {
                         $carp_int = "carp{$x}";
 			$carp_ip = find_interface_ip($carp_int);
 			$carp_ft = split("\.", $carp_ip);
@@ -134,7 +164,7 @@ function link_ip_to_carp_interface($ip) {
                         $interface = filter_opt_interface_to_real($ifname);
 			if($ft_ip == $carp_ft_ip)
 			    if(stristr($carp_ints,$carp_int) == FALSE)
-				$carp_ints .= " " . $carp_int;
+				$carp_ints .= " (" . $carp_int . ")";
                 }
         }
 	return $carp_ints;
@@ -237,7 +267,8 @@ function get_pfsync_interface_status($pfsyncinterface) {
  * find_carp_interface($ip): return the carp interface where an ip is defined
  */
 function find_carp_interface($ip) {
-    for($x=0; $x<99; $x++) {
+    $num_carp_ints = find_number_of_created_carp_interfaces();
+    for($x=0; $x<$num_carp_ints; $x++) {
         $result = does_interface_exist("carp{$x}");
 	if($result <> true) return;
 	$ifconfig = exec_command("/sbin/ifconfig carp{$x}");

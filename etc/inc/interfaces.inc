@@ -143,6 +143,8 @@ function interfaces_lan_configure() {
 		captiveportal_configure();
 	}
 
+	enable_hardware_offloading($lancfg['if']);
+	
 	if ($g['booting'])
 		echo "done\n";
 
@@ -251,6 +253,8 @@ function interfaces_optional_configure_if($opti) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) .
 			" delete down");
 	}
+
+	enable_hardware_offloading(escapeshellarg($optcfg['if']);
 
 	if ($g['booting'])
 		echo "done\n";
@@ -414,6 +418,8 @@ function interfaces_wan_configure() {
 		/* restart dnsmasq */
 		services_dnsmasq_configure();
 	}
+
+	enable_hardware_offloading($wancfg['if']);
 
 	if ($g['booting'])
 		echo "done\n";

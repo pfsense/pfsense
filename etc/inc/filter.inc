@@ -170,7 +170,7 @@ function filter_configure() {
 						if(stristr($file, ".sh") == true) {
 							mwexec("/usr/local/pkg/pf/" . $file);
 						} else {
-							if(php_check_syntax($text, $error_message) == false)
+							//if(php_check_syntax($text, $error_message) == false)
 								eval($text);
 						}
 					}

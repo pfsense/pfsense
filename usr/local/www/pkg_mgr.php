@@ -123,7 +123,7 @@ if(!$pkg_config['packages']) {
                             ?>
                             <tr valign="top">
                                 <td class="listlr">
-                                    <?= $pkg['name'] ?>
+                                    <A target="_new" href="<?= $pkg['website'] ?>"><?= $pkg['name'] ?></a>
                                 </td>
                                 <td class="listlr">
                                     <?= $pkg['category'] ?>

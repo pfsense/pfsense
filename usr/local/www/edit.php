@@ -131,7 +131,10 @@ pre {
 -->
 </style>
 </head>
-<body>
+<script language="Javascript">
+function sf() { document.forms[0].savetopath.focus(); }
+</script>
+<body onLoad="sf();">
 <p><span class="pgtitle"><?=$Title ?></span>
 <?php if ($ulmsg) echo "<p><strong>" . $ulmsg . "</strong></p>\n"; ?>
 
@@ -139,7 +142,7 @@ pre {
   <table>
     <tr>
       <td>
-        Save/Load from path: <input size="42" name="savetopath" value="<?php echo $_POST['savetopath']; ?>"> |
+        Save/Load from path: <input size="42" id="savetopath" name="savetopath" value="<?php echo $_POST['savetopath']; ?>"> |
 	Rows: <input size="3" name="rows" value="<? echo $rows; ?>"> |
 	Cols: <input size="3" name="cols" value="<? echo $cols; ?>"> |
         <input name="submit" type="submit"  class="button" id="Load" value="Load"> | <input name="submit" type="submit"  class="button" id="Save" value="Save">
@@ -157,3 +160,7 @@ pre {
 </body>
 </html>
 
+
+<script language="Javascript">
+sf();
+</script>

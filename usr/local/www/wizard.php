@@ -153,15 +153,15 @@ if($pkg['step'][$stepid]['stepbeforeformdisplay'] <> "") {
 		    $name = strtolower($name);
 
 		    if($field['bindstofield'] <> "") {
-			$arraynum = "";
-			$field_conv = "";
-			$field_split = split("->", $field['bindstofield']);
-			// arraynum is used in cases where there is an array of the same field
-			// name such as dnsserver (2 of them)
-			if($field['arraynum'] <> "") $arraynum = "[" . $field['arraynum'] . "]";
-			foreach ($field_split as $f) $field_conv .= "['" . $f . "']";
-			$toeval = "\$value = \$config" . $field_conv . $arraynum . ";";
-			eval($toeval);
+				$arraynum = "";
+				$field_conv = "";
+				$field_split = split("->", $field['bindstofield']);
+				// arraynum is used in cases where there is an array of the same field
+				// name such as dnsserver (2 of them)
+				if($field['arraynum'] <> "") $arraynum = "[" . $field['arraynum'] . "]";
+				foreach ($field_split as $f) $field_conv .= "['" . $f . "']";
+					$toeval = "\$value = \$config" . $field_conv . $arraynum . ";";
+					eval($toeval);
 		    }
 
 		    if(!$field['combinefieldsend'])

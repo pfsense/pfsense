@@ -1742,6 +1742,7 @@
 		} else {
 			selectedItem = 0;
 		}
+		document.forms[0].selectedtype.selectedIndex = selectedItem;
 		enableitems(selectedItem);
 	</javascriptafterformdisplay>
 	<fields>
@@ -2195,11 +2196,7 @@
 						<value>32</value>
 				</option>
 			</options>
-			<stepsubmitbeforesave>
-				if(!$_POST['selectedtype'] == "Static") {
-					$_POST['ipaddress'] = $_POST['selectedtype'];
-				}
-			</stepsubmitbeforesave>
+
 		</field>
 		<field>
 			<name>PPTP Remote IP Address</name>
@@ -2266,6 +2263,16 @@
 			<type>submit</type>
 		</field>
 	</fields>
+	<stepsubmitbeforesave>
+		echo " IN STEP SUBMIT BEFORE SAVE!" ;
+		echo " " . $_POST['selectedtype'];
+		if($_POST['selectedtype'] == "Static") { } else {
+			echo $_POST['selectedtype'] . " ";
+			$_POST['ipaddress'] = $_POST['selectedtype'];
+			$config['interfaces']['wan']['ipaddr'] = $_POST['selectedtype'];
+			write_config();
+		}
+	</stepsubmitbeforesave>
 </step>
 <step>
 	<id>5</id>

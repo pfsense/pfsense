@@ -289,22 +289,24 @@ if ($pkgent['depends_on_package_base_url'] <> "") {
             fwrite($fd_log, "cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package'] . "\n" . $text);;
 }
 
-$status = exec_command_and_return_text("ls /var/db/pkg | grep " . $pkgent['name']);
-fwrite($fd_log, "ls /var/db/pkg | grep " . $pkgent['name'] . "\n" . $status);
-if($status <> "") {
-            update_status("Package installed.  Lets finish up.");
-            fwrite($fd_log, "Package installed.  Lets finish up.\n");
-} else {
-            fwrite($fd_log, "Package WAS NOT installed properly.\n");
-            fclose($fd_log);
-            $filecontents = exec_command_and_return_text("cat " . $file);
-            update_progress_bar(100);
-            echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
-            echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
-            update_status("Package WAS NOT installed properly...Something went wrong..\n" . $filecontents);
-            update_output_window("Error during package installation.");
-            sleep(1);
-            die;
+if ($pkgent['depends_on_package_base_url'] <> "" or $pkgent['pfsense_package_base_url'] <> "") {
+    $status = exec_command_and_return_text("ls /var/db/pkg | grep " . $pkgent['name']);
+    fwrite($fd_log, "ls /var/db/pkg | grep " . $pkgent['name'] . "\n" . $status);
+    if($status <> "") {
+                update_status("Package installed.  Lets finish up.");
+                fwrite($fd_log, "Package installed.  Lets finish up.\n");
+    } else {
+                fwrite($fd_log, "Package WAS NOT installed properly.\n");
+                fclose($fd_log);
+                $filecontents = exec_command_and_return_text("cat " . $file);
+                update_progress_bar(100);
+                echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
+                echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
+                update_status("Package WAS NOT installed properly...Something went wrong..\n" . $filecontents);
+                update_output_window("Error during package installation.");
+                sleep(1);
+                die;
+    }
 }
 
 update_progress_bar($pb_percent);
@@ -408,14 +410,19 @@ fwrite($fd_log, "Installed " . $name . " and the following dependencies:\n" . $d
 update_progress_bar($pb_percent);
 $pb_percent += 10;
 
-$status = exec_command_and_return_text("ls /var/db/pkg | grep " . $pkgent['name']);
-fwrite($fd_log, "ls /var/db/pkg | grep " . $pkgent['name'] . "\n" . $status);
-if($status <> "") {
-            update_status("Package installation completed.");
-            fwrite($fd_log, "Package installation completed.\n");
+if ($pkgent['depends_on_package_base_url'] <> "" or $pkgent['pfsense_package_base_url'] <> "") {
+    $status = exec_command_and_return_text("ls /var/db/pkg | grep " . $pkgent['name']);
+    fwrite($fd_log, "ls /var/db/pkg | grep " . $pkgent['name'] . "\n" . $status);
+    if($status <> "") {
+                update_status("Package installation completed.");
+                fwrite($fd_log, "Package installation completed.\n");
+    } else {
+                update_status("Package WAS NOT installed properly.");
+                fwrite($fd_log, "Package WAS NOT installed properly.\n");
+    }
 } else {
-            update_status("Package WAS NOT installed properly.");
-            fwrite($fd_log, "Package WAS NOT installed properly.\n");
+    update_status("Package installation completed.");
+    fwrite($fd_log, "Package installation completed.\n");
 }
 
 update_progress_bar($pb_percent);

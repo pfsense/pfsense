@@ -338,19 +338,16 @@ function filter_generate_aliases() {
 	$aliases = "";
 
 	$i = 0;
-
+	$aliases .= "# System Aliases \n";
 	$aliases .= "lan = \"{ " . $config['interfaces']['lan']['if'] . " }\"\n";
 	$aliases .= "wan = \"{ " . get_real_wan_interface() . " }\"\n";
-
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 		$ifdescrs['opt' . $j] = "opt" . $j;
 	}
-
 	foreach ($ifdescrs as $ifdescr => $ifname) {
-		$aliases .= "# " . $ifname . "\n";
 		$aliases .= filter_get_opt_interface_descr($ifname) . " = \"{ " . filter_opt_interface_to_real($ifname) . " }\"\n";
 	}
-
+	$aliases .= "# User Aliases \n";
 	/* Setup pf groups */
 	if (isset($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $alias) {
@@ -499,7 +496,7 @@ function filter_generate_altq_rules() {
                                         }
                                 }
                         } else if ($rule['source']['address']) {
-                                $src = alias_expand($rule['source']['address']);
+                                $src = $rule['source']['address'];
                         }
 
                         if (!$src) {
@@ -524,7 +521,7 @@ function filter_generate_altq_rules() {
 					 */
 					$src = alias_expand($rule['source']['port']);
 					if($src <> "") {
-						$line .= "{ " . $src . " }";
+						$line .= $rule['destination']['port'];
 					} else {
 						$srcport = explode("-", $rule['source']['port']);
 						if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
@@ -555,7 +552,7 @@ function filter_generate_altq_rules() {
                                         }
                                 }
                         } else if ($rule['destination']['address']) {
-                                $dst = alias_expand($rule['destination']['address']);
+                                $dst = $rule['destination']['address'];
                         }
 
                         if (!$dst) {
@@ -580,7 +577,7 @@ function filter_generate_altq_rules() {
                                          * one item.
 					 */
 					if($dst <> "") {
-						$line .= "{ " . $dst . " }";
+						$line .= $rule['destination']['port'];
 					} else {
 						$dstport = explode("-", $rule['destination']['port']);
 						if ((!$dstport[1]) || ($dstport[0] == $dstport[1])) {

@@ -169,7 +169,6 @@ if (isset($_POST['del_x'])) {
 <?php endforeach; ?>
   </ul>
   <ul id="tabnav">
-    <li class="tabact">Rules</li>
     <li class="tabinact"><a href="firewall_shaper_queues.php">Queues</a></li>
   </ul>
   </td></tr>
@@ -234,7 +233,7 @@ if (isset($_POST['del_x'])) {
                   <td class="listr">
                     <?=$textss;?><?php echo htmlspecialchars(pprint_port($filterent['destination']['port'])); ?><?=$textse;?>
                   </td>
-                  <td class="listbg">
+                  <td class="listbg"><font color="#FFFFFF">
                     <?=$textss;?><?=htmlspecialchars($filterent['descr']);?>&nbsp;<?=$textse;?>
                   </td>
                   <td valign="middle" nowrap class="list">

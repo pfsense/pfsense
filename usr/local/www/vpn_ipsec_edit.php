@@ -79,7 +79,7 @@ if (isset($id) && $a_ipsec[$id]) {
 	$pconfig['disabled'] = isset($a_ipsec[$id]['disabled']);
 	$pconfig['auto'] = isset($a_ipsec[$id]['auto']);
 	$pconfig['creategif'] = $a_filter[$id]['creategif'];
-	
+
 	if (!isset($a_ipsec[$id]['local-subnet']))
 		$pconfig['localnet'] = "lan";
 	else
@@ -442,7 +442,7 @@ function typesel_change() {
                     seconds</td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Pre-Shared Key</td>
+                  <td width="22%" valign="top" class="vncellreq">Pre-Shared Key<br>ASCII characters only!</td>
                   <td width="78%" class="vtable">
                     <input name="p1pskey" type="text" class="formfld" id="p1pskey" size="40" value="<?=htmlspecialchars($pconfig['p1pskey']);?>">
                   </td>

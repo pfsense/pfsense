@@ -558,12 +558,12 @@ function resync_all_package_configs_bootup($show_message) {
             system("/usr/bin/fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationfile']);
        	    print "\n\n";
 	}
+	if($show_message == true) print " " . $package['name'];
         $pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
         if($pkg_config['custom_php_command_before_form'] <> "")
             eval($pkg_config['custom_php_command_before_form']);
         if($pkg_config['custom_php_resync_config_command'] <> "")
             eval($pkg_config['custom_php_resync_config_command']);
-        if($show_message == true) print " " . $package['name'];
         if($pkg_config['additional_files_needed'] != "") {
                 foreach($pkg_config['additional_files_needed']['0']['item'] as $item) {
                         $pkg_name = substr(strrchr($item, "/"),1);

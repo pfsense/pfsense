@@ -67,6 +67,8 @@ function filter_configure() {
 	if ($g['booting'])
 		echo "Configuring firewall... ";
 
+	/* generate aliases */
+	$aliases = filter_generate_aliases();
 	/* generate pfctl rules */
 	$natrules = filter_nat_rules_generate();
 	/* generate pfctl rules */
@@ -96,6 +98,7 @@ function filter_configure() {
 		$mssclamp = "";
 
         $fd = fopen("/tmp/rules.debug", "w");
+	fwrite($fd, $aliases . " \n");
 	fwrite($fd, "set loginterface $wanif \n");
 	$optimization = "normal";
 	if($config['system']['optimization'] <> "") $optimization = $config['system']['optimization'];
@@ -311,6 +314,19 @@ function is_subqueue($name) {
                 }
         }
         return 0;
+}
+
+function filter_generate_aliases() {
+	global $config;
+
+	/* Setup pf groups */
+	if (isset($config['aliases']['alias'])) {
+		foreach ($config['aliases']['alias'] as $alias) {
+			$aliases .= $alias['name'] . " = \"{ " . $alias['address'] . " }\"\n";
+		}
+	}
+
+	return $aliases;
 }
 
 function filter_generate_altq_rules() {
@@ -653,14 +669,6 @@ function filter_nat_rules_generate() {
 			$natrules .= "binat on {$natif} from {$natent['internal']}/{$sn} to any -> {$natent['external']}\n";
 		}
 	}
-
-	/* Setup pf groups */
-	if (isset($config['aliases']['alias'])) {
-		foreach ($config['aliases']['alias'] as $alias) {
-			$natrules .= $alias['name'] . " = \"{ " . $alias['address'] . " }\"\n";
-		}
-	}
-
 
 	/* outbound rules - advanced or standard */
 	if (isset($config['nat']['advancedoutbound']['enable'])) {

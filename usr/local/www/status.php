@@ -93,7 +93,8 @@ defCmdT("pfctl -sr", "/sbin/pfctl -sr");
 defCmdT("pfctl -ss", "/sbin/pfctl -ss");
 defCmdT("pfctl -si", "/sbin/pfctl -si");
 defCmdT("pfctl -sa"," /sbin/pfctl -sa");
-defCmdT("pfctl -s rules -v"," /sbin/pfctl -s rules -v");
+defCmdT("pfctl -s rules -v","/sbin/pfctl -s rules -v");
+defCmdT("pfctl -s queue -v","/sbin/pfctl -s queue -v");
 
 defCmdT("resolv.conf","cat /etc/resolv.conf");
 

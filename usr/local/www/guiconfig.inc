@@ -457,31 +457,21 @@ function dump_clog($logfile, $tail, $grepfor = "", $grepinvert = false, $withori
 
         $sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
+	exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+
         if($grepfor <> "") {
-		$size = count($grepfor);
 		$i = 0;
 		foreach($grepfor as $agrep) {
+			$regexp = "/" . $agrep . "/i";
                 	if($grepinvert[$i] == true) {
-				if($size > 1) {
-					$grep .= "grep -v {$agrep} | ";
-				} else {
-					$grep .= "grep -v {$agrep}";
-				}
-				$size--;
-                	} else {
-				if($size > 1) {
-					$grep .= "grep {$agrep} | ";
-				} else {
-					$grep .= "grep {$agrep}";
-				}
-				$size--;
-                	}
+                		$logarr = preg_grep($regexp, $logarr, PREG_GREP_INVERT);
+			} else {
+				$logarr = preg_grep($regexp, $logarr);
+			}
 			$i++;
 		}
-		exec("/usr/sbin/clog {$logfile} | {$grep} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
-        } else {
-                exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
-        }
+	}
+
         foreach ($logarr as $logent) {
                 $logent = preg_split("/\s+/", $logent, 6);
                 echo "<tr valign=\"top\">\n";

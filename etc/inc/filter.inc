@@ -104,11 +104,13 @@ function filter_configure() {
 		$maximumstates = $config['system']['maximumstates'];
 		fwrite($fd, "set limit states " . $maximumstates . "\n");
 	}
-	fwrite($fd, "\nscrub in all\n");
+	fwrite($fd, "\nscrub all\n");
 	fwrite($fd, $altq_ints);
+	fwrite($fd, "\anchor \"altq\"\n");
 	fwrite($fd, $altq_queues);
+	fwrite($fd, "\anchor \"nat\"\n");
 	fwrite($fd, $natrules);
-	fwrite($fd, $altq_rules);
+	fwrite($fd, "\anchor \"filter\"\n");
         fwrite($fd, $pfrules);
         fclose($fd);
 

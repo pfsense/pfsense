@@ -461,16 +461,28 @@ function type_change(enable_change,enable_change_pptp) {
                   <td class="vtable"> <input name="ipaddr" type="text" class="formfld" id="ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>">
                     /
                     <select name="subnet" class="formfld" id="subnet">
+					<?php
+					for ($i = 32; $i > 0; $i--) {
+						if($i <> 31) {
+							echo "<option value=\"{$i}\" ";
+							if ($i == $pconfig['subnet']) echo "selected";
+							echo ">" . $i . "</option>";
+						}
+					}
+					?>
                     <?php
+					/*
                       if (isset($wancfg['ispointtopoint']))
                       	$snmax = 32;
                       else
                       	$snmax = 31;
                       for ($i = $snmax; $i > 0; $i--): ?>
-                      <option value="<?=$i;?>" <?php if ($i == $pconfig['subnet']) echo "selected"; ?>>
+					  <?php if(i$ <> 31) ?><option value="<?=$i;?>" <?php if ($i == $pconfig['subnet']) echo "selected"; ?>><?php end if; ?>
                       <?=$i;?>
                       </option>
                       <?php endfor; ?>
+					*/
+					?>
                     </select></td>
                 </tr><?php if (isset($wancfg['ispointtopoint'])): ?>
                 <tr>

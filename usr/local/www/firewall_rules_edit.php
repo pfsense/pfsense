@@ -608,9 +608,13 @@ function dst_rep_change() {
                         <td><input name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>">
                         /
 				<select name="srcmask" class="formfld" id="srcmask">
-				<?php for ($i = 32; $i > 0; $i--): ?>
-				<option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected"; ?>><?=$i;?></option>
-				<?php endfor; ?>
+				<?php
+				for ($i = 32; $i > 0; $i--) {
+					echo "<option value=\"{$i}\" ";
+					if ($i == $pconfig['subnet']) echo "selected";
+					echo ">" . $i . "</option>";
+				}
+				?>
 				</select>
 				</td>
 			  </tr>
@@ -694,9 +698,15 @@ function dst_rep_change() {
                         <td><input name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
                           /
                           <select name="dstmask" class="formfld" id="dstmask";>
-				<?php for ($i = 32; $i > 0; $i--): ?>
-				<option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo "selected"; ?>><?=$i;?></option>
-				<?php endfor; ?>
+				<?php
+				for ($i = 32; $i > 0; $i--) {
+					if($i <> 31) {
+						echo "<option value=\"{$i}\" ";
+						if ($i == $pconfig['subnet']) echo "selected";
+						echo ">" . $i . "</option>";
+					}
+				}
+				?>
 				</select>
 			</td>
                       </tr>

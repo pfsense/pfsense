@@ -156,6 +156,12 @@ function filter_configure() {
 		$rules_error = exec_command("/sbin/pfctl -f /tmp/rules.debug");
 		return "There was an error loading the rules.<p><pre>" . $rules_error . "</pre>";
 	} else {
+		/* process packager manager custom rules */
+		$files = return_dir_as_array("/usr/local/pkg/pf/");
+		foreach ($files as $file) {
+			$text = return_filename_as_string($file);
+			eval($text);
+		}
 		return 0;
 	}
 }
@@ -662,6 +668,7 @@ function filter_nat_rules_generate_if($if, $src, $dst, $target) {
 		$tgt = "0/32";
 
 	$natrule = <<<EOD
+
 nat on $if from $src to any -> ($if)
 
 EOD;
@@ -714,6 +721,8 @@ function filter_nat_rules_generate() {
 	$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
 
 	$natrules = "";
+
+	$natrules .= "nat-anchor \"natrules/*\"\n";
 
 	if(!isset($config['system']['disableftpproxy']))
 		$natrules .= "rdr on " . $lanif . " proto tcp from any to any port 21 -> 127.0.0.1 port 8021\n";

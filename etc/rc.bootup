@@ -40,7 +40,7 @@
 	require_once("config.inc");
 	require_once("functions.inc");
 
-	$lan_if = $config['interfaces']['lan']['if']);
+	$lan_if = $config['interfaces']['lan']['if'];
 	$wan_if = get_real_wan_interface();
 
 	$do_assign = 0;

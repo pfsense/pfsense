@@ -56,8 +56,10 @@ function actb_parse(n){
     return tobuild;
 }
 function actb_generate(){
-    if(navigator.appName == "Microsoft Internet Explorer")
+    if(navigator.appName == "Microsoft Internet Explorer") {
+        if(actb_keywords.length < 1) return; // if no items setup, do not invoke code.  prevent ie crashing.
         if (document.getElementById('tat_frame')) document.body.removeChild(document.getElementById('tat_frame'));
+    }
     if (document.getElementById('tat_table')) document.body.removeChild(document.getElementById('tat_table'));
     if(navigator.appName == "Microsoft Internet Explorer") {
         frame = document.createElement('iframe');

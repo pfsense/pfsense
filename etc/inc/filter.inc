@@ -35,7 +35,7 @@ require_once("functions.inc");
 
 function is_carp_defined() {
 	/* is carp compiled into the kernel and userland? */
-	$command = "sysctl -a | grep carp";
+	$command = "/sbin/sysctl -a | grep carp";
 	$fd = popen($command . " 2>&1 ", "r");
 	while(!feof($fd)) {
 		    $tmp .= fread($fd,49);
@@ -560,10 +560,6 @@ function filter_generate_altq_rules() {
 				$line .= "flags S/SA ";
 			}
 
-			if (!$ispptp) {
-				#$line .= "group $groupnum ";
-			}
-
 			$line .= "queue " . filter_altq_get_queuename($rule['targetqueue']). " ";
 
 			// tos
@@ -774,7 +770,7 @@ function filter_nat_rules_generate() {
 		$natrules .= <<<EOD
 
 # PPTP
-rdr on $wanif proto gre from any to any port 0 -> $pptpdtarget
+#rdr on $wanif proto gre from any to any port 0 -> $pptpdtarget
 rdr on $wanif proto tcp from any to any port 1723 -> $pptpdtarget
 
 EOD;
@@ -1063,7 +1059,6 @@ EOD;
 
 # make sure the user cannot lock himself out of the webGUI
 pass in quick from $lansa/$lansn to $lanip keep state
-# group 100
 
 EOD;
 	}
@@ -1080,9 +1075,7 @@ EOD;
 
 # PPTP rules
 pass in quick proto gre from any to $pptpdtarget keep state
-# group 200
 pass in quick proto tcp from any to $pptpdtarget port = 1723 keep state
-# group 200
 
 EOD;
 	}

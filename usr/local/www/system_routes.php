@@ -36,16 +36,9 @@ if (!is_array($config['staticroutes']['route']))
 
 staticroutes_sort();
 $a_routes = &$config['staticroutes']['route'];
+$changedesc = "Static Routes: ";
 
 if ($_POST) {
-
-	if ($_POST['enablefastrouting'] == "") {
-		unset($config['staticroutes']['enablefastrouting']);
-		write_config();
-	} else {
-		$config['staticroutes']['enablefastrouting'] = "enabled";
-		write_config();
-	}
 
 	$pconfig = $_POST;
 
@@ -64,14 +57,29 @@ if ($_POST) {
 				config_unlock();
 			}
 		}
+	} else {
+		if ($_POST['enablefastrouting'] == "") {
+			/* Only update config if something changed */
+			if (isset($config['staticroutes']['enablefastrouting'])) {
+				$changedesc .= " disable fast routing";
+				unset($config['staticroutes']['enablefastrouting']);
+				write_config($changedesc);
+			}
+		} else {
+			/* Only update config if something changed */
+			if (!isset($config['staticroutes']['enablefastrouting'])) {
+				$changedesc .= " enable fast routing";
+				$config['staticroutes']['enablefastrouting'] = "enabled";
+				write_config($changedesc);
+			}
+		}
 	}
-
 }
 
 if ($_GET['act'] == "del") {
 	if ($a_routes[$_GET['id']]) {
 		unset($a_routes[$_GET['id']]);
-		write_config();
+		write_config("Static Routes: removed route to {$_GET['id']}");
 		touch($d_staticroutesdirty_path);
 		header("Location: system_routes.php");
 		exit;

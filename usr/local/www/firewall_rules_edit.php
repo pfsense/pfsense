@@ -154,7 +154,6 @@ if (isset($id) && $a_filter[$id]) {
 
 	$pconfig['disabled'] = isset($a_filter[$id]['disabled']);
 	$pconfig['log'] = isset($a_filter[$id]['log']);
-	$pconfig['frags'] = isset($a_filter[$id]['frags']);
 	$pconfig['descr'] = $a_filter[$id]['descr'];
         $pconfig['max-src-nodes'] = $a_filter[$id]['max-src-nodes'];
         $pconfig['max-src-states'] = $a_filter[$id]['max-src-states'];
@@ -340,7 +339,6 @@ if ($_POST) {
 
 		$filterent['disabled'] = $_POST['disabled'] ? true : false;
 		$filterent['log'] = $_POST['log'] ? true : false;
-		$filterent['frags'] = $_POST['frags'] ? true : false;
 		$filterent['descr'] = $_POST['descr'];
 		$filterent['returngateway'] = $_POST['returngateway'];
 		$filterent['returninterface'] = $_POST['returninterface'];
@@ -764,16 +762,6 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                     the destination of the packet for this rule.<br>
                     Hint: you can leave the <em>'to'</em> field empty if you only
                     want to filter a single port</span></td>
-
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Fragments</td>
-                  <td width="78%" class="vtable">
-                    <input name="frags" type="checkbox" id="frags" value="yes" <?php if ($pconfig['frags']) echo "checked"; ?>>
-                    <strong>Allow fragmented packets</strong><br>
-                    <span class="vexpl">Hint: this option puts additional load
-                    on the firewall and may make it vulnerable to DoS attacks.
-                    In most cases, it is not needed. Try enabling it if you have
-                    troubles connecting to certain sites.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Log</td>

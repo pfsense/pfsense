@@ -160,7 +160,7 @@ function filter_configure() {
 				if($file <> "") {
 					$text = return_filename_as_string("/usr/local/pkg/pf/" . $file);
 					if($text != "")
-						if(php_check_syntax($toeval, $error_message) == false)
+						if(php_check_syntax($text, $error_message) == false)
 							eval($text);
 				}
 			}

@@ -1,22 +1,22 @@
 #!/usr/local/bin/php
-<?php 
+<?php
 /*
 	firewall_nat_edit.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -63,19 +63,19 @@ if ($_POST) {
 		$_POST['endport'] = $_POST['endport_cust'];
 	if ($_POST['localbeginport_cust'] && !$_POST['localbeginport'])
 		$_POST['localbeginport'] = $_POST['localbeginport_cust'];
-		
+
 	if (!$_POST['endport'])
 		$_POST['endport'] = $_POST['beginport'];
-	
+
 	unset($input_errors);
 	$pconfig = $_POST;
 
 	/* input validation */
 	$reqdfields = explode(" ", "interface proto beginport localip localbeginport");
 	$reqdfieldsn = explode(",", "Interface,Protocol,Start port,NAT IP,Local port");
-	
+
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-	
+
 	if (($_POST['beginport'] && !is_port($_POST['beginport']))) {
 		$input_errors[] = "The start port must be an integer between 1 and 65535.";
 	}
@@ -88,19 +88,19 @@ if ($_POST) {
 	if (($_POST['localip'] && !is_ipaddroralias($_POST['localip']))) {
 		$input_errors[] = "A valid NAT IP address or host alias must be specified.";
 	}
-	
+
 	if ($_POST['beginport'] > $_POST['endport']) {
 		/* swap */
 		$tmp = $_POST['endport'];
 		$_POST['endport'] = $_POST['beginport'];
 		$_POST['beginport'] = $tmp;
 	}
-	
+
 	if (!$input_errors) {
 		if (($_POST['endport'] - $_POST['beginport'] + $_POST['localbeginport']) > 65535)
 			$input_errors[] = "The target port range must lie between 1 and 65535.";
 	}
-	
+
 	/* check for overlaps */
 	foreach ($a_nat as $natent) {
 		if (isset($id) && ($a_nat[$id]) && ($a_nat[$id] === $natent))
@@ -109,14 +109,14 @@ if ($_POST) {
 			continue;
 		if ($natent['external-address'] != $_POST['extaddr'])
 			continue;
-		
+
 		list($begp,$endp) = explode("-", $natent['external-port']);
 		if (!$endp)
 			$endp = $begp;
-		
+
 		if (!(   (($_POST['beginport'] < $begp) && ($_POST['endport'] < $begp))
 		      || (($_POST['beginport'] > $endp) && ($_POST['endport'] > $endp)))) {
-			
+
 			$input_errors[] = "The external port range overlaps with an existing entry.";
 			break;
 		}
@@ -127,49 +127,49 @@ if ($_POST) {
 		if ($_POST['extaddr'])
 			$natent['external-address'] = $_POST['extaddr'];
 		$natent['protocol'] = $_POST['proto'];
-		
+
 		if ($_POST['beginport'] == $_POST['endport'])
 			$natent['external-port'] = $_POST['beginport'];
 		else
 			$natent['external-port'] = $_POST['beginport'] . "-" . $_POST['endport'];
-		
+
 		$natent['target'] = $_POST['localip'];
 		$natent['local-port'] = $_POST['localbeginport'];
 		$natent['interface'] = $_POST['interface'];
 		$natent['descr'] = $_POST['descr'];
-		
+
 		if (isset($id) && $a_nat[$id])
 			$a_nat[$id] = $natent;
 		else
 			$a_nat[] = $natent;
-		
+
 		touch($d_natconfdirty_path);
-		
+
 		if ($_POST['autoadd']) {
 			/* auto-generate a matching firewall rule */
-			$filterent = array();		
+			$filterent = array();
 			$filterent['interface'] = $_POST['interface'];
 			$filterent['protocol'] = $_POST['proto'];
 			$filterent['source']['any'] = "";
 			$filterent['destination']['address'] = $_POST['localip'];
-			
+
 			$dstpfrom = $_POST['localbeginport'];
 			$dstpto = $dstpfrom + $_POST['endport'] - $_POST['beginport'];
-			
+
 			if ($dstpfrom == $dstpto)
 				$filterent['destination']['port'] = $dstpfrom;
 			else
 				$filterent['destination']['port'] = $dstpfrom . "-" . $dstpto;
-			
+
 			$filterent['descr'] = "NAT " . $_POST['descr'];
-			
+
 			$config['filter']['rule'][] = $filterent;
-			
+
 			touch($d_filterconfdirty_path);
 		}
-		
+
 		write_config();
-		
+
 		header("Location: firewall_nat.php");
 		exit;
 	}
@@ -235,9 +235,9 @@ function ext_rep_change() {
                      <span class="vexpl">Choose which interface this rule applies to.<br>
                      Hint: in most cases, you'll want to use WAN here.</span></td>
                 </tr>
-			    <tr> 
+			    <tr>
                   <td width="22%" valign="top" class="vncellreq">External address</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <select name="extaddr" class="formfld">
 					  <option value="" <?php if (!$pconfig['extaddr']) echo "selected"; ?>>Interface address</option>
                       <?php
@@ -251,23 +251,23 @@ function ext_rep_change() {
 					select it here (you need to define IP addresses on the
 					<a href="firewall_nat_server.php">Server NAT</a> page first).</span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">Protocol</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <select name="proto" class="formfld">
                       <?php $protocols = explode(" ", "TCP UDP TCP/UDP"); foreach ($protocols as $proto): ?>
                       <option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['proto']) echo "selected"; ?>><?=htmlspecialchars($proto);?></option>
                       <?php endforeach; ?>
-                    </select> <br> <span class="vexpl">Choose which IP protocol 
+                    </select> <br> <span class="vexpl">Choose which IP protocol
                     this rule should match.<br>
                     Hint: in most cases, you should specify <em>TCP</em> &nbsp;here.</span></td>
                 </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">External port 
+                <tr>
+                  <td width="22%" valign="top" class="vncellreq">External port
                     range </td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <table border="0" cellspacing="0" cellpadding="0">
-                      <tr> 
+                      <tr>
                         <td>from:&nbsp;&nbsp;</td>
                         <td><select name="beginport" class="formfld" onChange="ext_rep_change();ext_change()">
                             <option value="">(other)</option>
@@ -281,7 +281,7 @@ function ext_rep_change() {
                             <?php endforeach; ?>
                           </select> <input name="beginport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['beginport']; ?>"></td>
                       </tr>
-                      <tr> 
+                      <tr>
                         <td>to:</td>
                         <td><select name="endport" class="formfld" onChange="ext_change()">
                             <option value="">(other)</option>
@@ -296,22 +296,22 @@ function ext_rep_change() {
                           </select> <input name="endport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['endport']; ?>"></td>
                       </tr>
                     </table>
-                    <br> <span class="vexpl">Specify the port or port range on 
+                    <br> <span class="vexpl">Specify the port or port range on
                     the firewall's external address for this mapping.<br>
-                    Hint: you can leave the <em>'to'</em> field empty if you only 
+                    Hint: you can leave the <em>'to'</em> field empty if you only
                     want to map a single port</span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">NAT IP</td>
-                  <td width="78%" class="vtable"> 
-                    <input name="localip" type="text" class="formfldalias" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>"> 
-                    <br> <span class="vexpl">Enter the internal IP address of 
+                  <td width="78%" class="vtable">
+                    <input autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);' onkeydown='actb_checkkey(event, this)' onkeyup='actb_tocomplete(this,event,addressarray);' name="localip" type="text" class="formfldalias" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>">
+                    <br> <span class="vexpl">Enter the internal IP address of
                     the server on which you want to map the ports.<br>
                     e.g. <em>192.168.1.12</em></span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">Local port</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <select name="localbeginport" class="formfld" onChange="ext_change()">
                       <option value="">(other)</option>
                       <?php $bfound = 0; foreach ($wkports as $wkport => $wkportdesc): ?>
@@ -322,34 +322,34 @@ function ext_rep_change() {
 					  <?=htmlspecialchars($wkportdesc);?>
 					  </option>
                       <?php endforeach; ?>
-                    </select> <input name="localbeginport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['localbeginport']; ?>"> 
+                    </select> <input name="localbeginport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['localbeginport']; ?>">
                     <br>
-                    <span class="vexpl">Specify the port on the machine with the 
-                    IP address entered above. In case of a port range, specify 
-                    the beginning port of the range (the end port will be calculated 
+                    <span class="vexpl">Specify the port on the machine with the
+                    IP address entered above. In case of a port range, specify
+                    the beginning port of the range (the end port will be calculated
                     automatically).<br>
                     Hint: this is usually identical to the 'from' port above</span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
-                  <td width="78%" class="vtable"> 
-                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>"> 
-                    <br> <span class="vexpl">You may enter a description here 
+                  <td width="78%" class="vtable">
+                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+                    <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
                 </tr><?php if (!(isset($id) && $a_nat[$id])): ?>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
+                  <td width="78%">
                     <input name="autoadd" type="checkbox" id="autoadd" value="yes">
-                    <strong>Auto-add a firewall rule to permit traffic through 
+                    <strong>Auto-add a firewall rule to permit traffic through
                     this NAT rule</strong></td>
                 </tr><?php endif; ?>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> 
+                  <td width="78%">
+                    <input name="Submit" type="submit" class="formbtn" value="Save">
                     <?php if (isset($id) && $a_nat[$id]): ?>
-                    <input name="id" type="hidden" value="<?=$id;?>"> 
+                    <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>
                   </td>
                 </tr>
@@ -359,6 +359,31 @@ function ext_rep_change() {
 <!--
 ext_change();
 //-->
+</script>
+<?php
+$isfirst = 0;
+$aliases = "";
+$addrisfirst = 0;
+$aliasesaddr = "";
+foreach($config['aliases']['alias'] as $alias_name) {
+	if(!stristr($alias_name['address'], ".")) {
+		if($isfirst == 1) $aliases .= ",";
+		$aliases .= "'" . $alias_name['name'] . "'";
+		$isfirst = 1;
+	} else {
+		if($addrisfirst == 1) $aliasesaddr .= ",";
+		$aliasesaddr .= "'" . $alias_name['name'] . "'";
+		$addrisfirst = 1;
+	}
+}
+?>
+<script language="JavaScript">
+<!--
+var addressarray=new Array(<?php echo $aliasesaddr; ?>);
+var customarray=new Array(<?php echo $aliases; ?>);
+//-->
+</script>
+<script type="text/javascript" language="javascript" src="auto_complete_helper.js">
 </script>
 <?php include("fend.inc"); ?>
 </body>

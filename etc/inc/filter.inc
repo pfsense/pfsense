@@ -1351,7 +1351,8 @@ EOD;
 			}
 
 			if($rule['returngateway'] <> "") {
-				$line .= "reply-to " . $rule['returngateway'] . " ";
+				$return_interface = filter_translate_type_to_real_interface($rule['returninterface']);
+				$line .= "reply-to (" . $return_interface . " " . $rule['returngateway'] . ") ";
 			}
 
 			if (isset($rule['protocol'])) {

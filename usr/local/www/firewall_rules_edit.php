@@ -149,7 +149,8 @@ if (isset($id) && $a_filter[$id]) {
 		$pconfig['dstbeginport'], $pconfig['dstendport']);
 
 	$pconfig['returngateway'] = $a_filter[$id]['returngateway'];
-	
+	$pconfig['returninterface'] = $a_filter[$id]['returninterface'];
+
 	$pconfig['disabled'] = isset($a_filter[$id]['disabled']);
 	$pconfig['log'] = isset($a_filter[$id]['log']);
 	$pconfig['frags'] = isset($a_filter[$id]['frags']);
@@ -341,6 +342,7 @@ if ($_POST) {
 		$filterent['frags'] = $_POST['frags'] ? true : false;
 		$filterent['descr'] = $_POST['descr'];
 		$filterent['returngateway'] = $_POST['returngateway'];
+		$filterent['returninterface'] = $_POST['returninterface'];
 
 		if (isset($id) && $a_filter[$id])
 			$a_filter[$id] = $filterent;
@@ -834,6 +836,18 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 		<tr>
                   <td width="22%" valign="top" class="vncell">Return gateway</td>
                   <td width="78%" class="vtable">
+			<select name="returninterface">
+				<?php foreach ($config['interfaces'] as $ifname => $iface):
+					if ($iface['descr'])
+						$ifdescr = $iface['descr'];
+					else
+						$ifdescr = strtoupper($ifname);
+				?>
+				<option value="<?php echo $ifdescr; ?>"<?php if($pconfig['returninterface'] == $ifdescr) echo " SELECTED"; ?>>
+				<?php echo $ifdescr; ?>
+				</option>
+				<?php endforeach; ?>
+			</select>
 			<input name="returngateway" value="<?php echo $pconfig['returngateway'] ?>">
 			<p><strong>Leave blank for default.  Enter the next-hop gateway for the return path.
 			</strong>
@@ -863,17 +877,18 @@ $isfirst = 0;
 $aliases = "";
 $addrisfirst = 0;
 $aliasesaddr = "";
-foreach($config['aliases']['alias'] as $alias_name) {
-	if(!stristr($alias_name['address'], ".")) {
-		if($isfirst == 1) $aliases .= ",";
-		$aliases .= "'" . $alias_name['name'] . "'";
-		$isfirst = 1;
-	} else {
-		if($addrisfirst == 1) $aliasesaddr .= ",";
-		$aliasesaddr .= "'" . $alias_name['name'] . "'";
-		$addrisfirst = 1;
+if($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias']))
+	foreach($config['aliases']['alias'] as $alias_name) {
+		if(!stristr($alias_name['address'], ".")) {
+			if($isfirst == 1) $aliases .= ",";
+			$aliases .= "'" . $alias_name['name'] . "'";
+			$isfirst = 1;
+		} else {
+			if($addrisfirst == 1) $aliasesaddr .= ",";
+			$aliasesaddr .= "'" . $alias_name['name'] . "'";
+			$addrisfirst = 1;
+		}
 	}
-}
 ?>
 
 var addressarray=new Array(<?php echo $aliasesaddr; ?>);

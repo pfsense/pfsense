@@ -836,18 +836,6 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 		<tr>
                   <td width="22%" valign="top" class="vncell">Return gateway</td>
                   <td width="78%" class="vtable">
-			<select name="returninterface">
-				<?php foreach ($config['interfaces'] as $ifname => $iface):
-					if ($iface['descr'])
-						$ifdescr = $iface['descr'];
-					else
-						$ifdescr = strtoupper($ifname);
-				?>
-				<option value="<?php echo $ifdescr; ?>"<?php if($pconfig['returninterface'] == $ifdescr) echo " SELECTED"; ?>>
-				<?php echo $ifdescr; ?>
-				</option>
-				<?php endforeach; ?>
-			</select>
 			<input name="returngateway" value="<?php echo $pconfig['returngateway'] ?>">
 			<p><strong>Leave blank for default.  Enter the next-hop gateway for the return path.
 			</strong>

@@ -410,7 +410,26 @@ function filter_rules_generate() {
 	else
 		$log = "";
 
-	$ipfrules = <<<EOD
+	# BEGIN OF firewall rules
+	$ipfrules="";
+	$ipfrules .= "\n# VPN Rules\n";
+	$internal_subnet = "any";
+	if(is_array($config['ipsec']['tunnel'])) {
+		foreach ($config['ipsec']['tunnel'] as $tunnel) {
+			if(isset($tunnel['local-subnet']['address'])) {
+				$internal_subnet = $tunnel['local-subnet']['address'];
+			} else {
+				$internal_subnet = "any";
+			}
+			$ipfrules .= "pass in on " . $wanif . " proto tcp from " . $tunnel['remote-subnet'] . " to " . $internal_subnet  . " keep state\n";
+			if(isset($tunnel['local-subnet']['address'])) {
+				$ipfrules .= "pass in on " . $wanif . " proto tcp from " . $tunnel['local-subnet']['address'] . " to " . $tunnel['remote-subnet'] . " keep state\n";
+			}
+		}
+
+	}
+
+	$ipfrules .= <<<EOD
 
 # loopback
 pass in quick on lo0 all
@@ -527,6 +546,7 @@ block in $log quick on $wanif from 172.16.0.0/12 to any
 block in $log quick on $wanif from 192.168.0.0/16 to any
 
 EOD;
+
 	}
 
 	/* IPsec enabled? */

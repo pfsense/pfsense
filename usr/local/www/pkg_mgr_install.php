@@ -231,7 +231,7 @@ if($_GET['mode'] == "reinstallall") {
 foreach ($packages_to_install as $id) {
 
     $pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
-    
+
     update_progress_bar($pb_percent);
     $pb_percent += 10;
 
@@ -445,6 +445,14 @@ foreach ($packages_to_install as $id) {
     update_progress_bar($pb_percent);
     $pb_percent += 10;
 
+    if($package_conf['custom_php_install_command']) {
+        update_status("Executing post install commands...");
+        eval($package_conf['custom_php_install_command']);
+    }
+
+    update_progress_bar($pb_percent);
+    $pb_percent += 10;
+
     if ($pkgent['depends_on_package_base_url'] <> "" or $pkgent['pfsense_package_base_url'] <> "") {
         $status = exec_command_and_return_text("ls /var/db/pkg | grep " . $pkgent['name']);
         fwrite($fd_log, "ls /var/db/pkg | grep " . $pkgent['name'] . "\n" . $status);
@@ -458,14 +466,6 @@ foreach ($packages_to_install as $id) {
     } else {
         update_status("Package installation completed.");
         fwrite($fd_log, "Package installation completed.\n");
-    }
-
-    update_progress_bar($pb_percent);
-    $pb_percent += 10;
-
-
-    if($package_conf['custom_php_install_command']) {
-        eval($package_conf['custom_php_install_command']);
     }
 
     update_progress_bar(100);

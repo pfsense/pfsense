@@ -204,9 +204,26 @@ echo "<input style='border: 0px solid white;' size='30' name='swapusagemeter' id
 //echo $swapUsage . "%";
 
 ?>
-
                 </td>
               </tr>
+<?php
+	/* XXX - Stub in the HW monito for net4801 - needs to use platform var's once we start using them */
+	if (file_exists("/etc/48xx")) {
+echo "			  <tr>";
+echo "                <td width='25%' class='vncellt'>Temperature: </td>";
+echo "                <td width='75%' class='listr'>";
+// Initialize hw monitor
+exec("/usr/local/sbin/env4801 -i");
+$Temp = `/usr/local/sbin/env4801 | grep Temp |cut -c24-25`;
+echo "<img src='bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
+echo "<img src='bar_blue.gif' height='15' width='" . $Temp . "' border='0' align='absmiddle'>";
+echo "<img src='bar_gray.gif' height='15' width='" . (100 - $Temp) . "' border='0' align='absmiddle'>";
+echo "<img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
+echo "<input style='border: 0px solid white;' size='30' name='Tempmeter' id='Tempmeter' value='{$Temp}C'>";
+echo "                </td>";
+echo "              </tr>";
+	}
+?>
 
 
             </table>

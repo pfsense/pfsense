@@ -258,6 +258,16 @@ foreach ($packages_to_install as $id) {
     fwrite($fd, "y\n");
     fwrite($fd, "y\n");
     fwrite($fd, "y\n");
+    fwrite($fd, "y\n");
+    fwrite($fd, "y\n");
+    fwrite($fd, "y\n");
+    fwrite($fd, "y\n");
+    fwrite($fd, "y\n");
+    fwrite($fd, "y\n");
+    fwrite($fd, "y\n");
+    fwrite($fd, "y\n");
+    fwrite($fd, "y\n");
+    fwrite($fd, "y\n");
     fclose($fd);
 
     if ($pkgent['pfsense_package_base_url'] <> "") {
@@ -271,7 +281,7 @@ foreach ($packages_to_install as $id) {
 
     if ($pkgent['depends_on_package_base_url'] <> "") {
                 update_status("Downloading and installing " . $pkgent['name'] . " and its dependencies ... This could take a moment ...");
-                $text = exec_command_and_return_text("cd {$g['tmp_path']}/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package']);
+                $text = exec_command_and_return_text("cd {$g['tmp_path']}/ && cat {$g['tmp_path']}/y && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package']);
                 update_output_window($text);
                 fwrite($fd_log, "cd {$g['tmp_path']}/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package'] . "\n" . $text);;
     }

@@ -73,7 +73,7 @@ $wkports = array(3389 => "MS RDP", 21 => "FTP", 22 => "SSH", 23 => "Telnet", 25 
 		53 => "DNS", 80 => "HTTP", 110 => "POP3", 143 => "IMAP", 443 => "HTTPS");
 
 /* IP TOS flags */
-$iptos = array("diffserv_voice", "diffserv_signaling", "lowdelay", "throughput", "reliability", "congestion");
+$iptos = array("lowdelay", "throughput", "reliability", "congestion");
 
 /* TCP flags */
 $tcpflags = array("fin", "syn", "rst", "psh", "ack", "urg");

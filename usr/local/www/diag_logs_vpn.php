@@ -44,7 +44,7 @@ if ($_POST['clear']) {
 	exec("/usr/sbin/clog -i -s 262144 {$pptp_logfile}");
 }
 
-function dump_clog($logfile, $tail) {
+function dump_clog_vpn($logfile, $tail) {
 	global $g, $config;
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
@@ -105,7 +105,7 @@ function dump_clog($logfile, $tail) {
 			  <td class="listhdrr">User</td>
 			  <td class="listhdrr">IP address</td>
 			</tr>
-			<?php dump_clog($pptp_logfile, $nentries); ?>
+			<?php dump_clog_vpn($pptp_logfile, $nentries); ?>
           </table>
 		<br><form action="diag_logs_vpn.php" method="post">
 <input name="clear" type="submit" class="formbtn" value="Clear log">

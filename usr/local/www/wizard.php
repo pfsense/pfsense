@@ -162,6 +162,10 @@ if($pkg['step'][$stepid]['stepbeforeformdisplay'] <> "") {
 				foreach ($field_split as $f) $field_conv .= "['" . $f . "']";
 					$toeval = "\$value = \$config" . $field_conv . $arraynum . ";";
 					eval($toeval);
+					if ($field['type'] == "checkbox") {
+						$toeval = "if(isset(" . $field_conv . $arraynum . ") \$value = \$config" . $field_conv . $arraynum . ";";
+						eval($toeval);
+					}
 		    }
 
 		    if(!$field['combinefieldsend'])
@@ -232,7 +236,7 @@ if($pkg['step'][$stepid]['stepbeforeformdisplay'] <> "") {
 				echo ":</td>";
 			}
 			$checked = "";
-			if($value) $checked = " CHECKED";
+			if($value <> "") $checked = " CHECKED";
 			echo "<td class=\"vtable\"><input type='checkbox' id='" . $name . "' name='" . $name . "' " . $checked . ">\n";
 		    }
 

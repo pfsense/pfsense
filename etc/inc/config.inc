@@ -759,30 +759,29 @@ EOD;
 		if($noreboot <> true)
 			system_reboot_sync();
 	}
+}
 
-	function autodetect_interface($ifname, $fp) {
-		$iflist_prev = get_interface_list();
-		echo <<<EOD
+function autodetect_interface($ifname, $fp) {
+	$iflist_prev = get_interface_list();
+	echo <<<EOD
 
 Connect the {$ifname} interface now and make sure that the link is up.
 Then press ENTER to continue.
 
 EOD;
-		fgets($fp);
-		$iflist = get_interface_list();
+	fgets($fp);
+	$iflist = get_interface_list();
 
-		foreach ($iflist_prev as $ifn => $ifa) {
-			if (!$ifa['up'] && $iflist[$ifn]['up']) {
-				echo "Detected link-up on interface {$ifn}.\n";
-				return $ifn;
-			}
+	foreach ($iflist_prev as $ifn => $ifa) {
+		if (!$ifa['up'] && $iflist[$ifn]['up']) {
+			echo "Detected link-up on interface {$ifn}.\n";
+			return $ifn;
 		}
-
-		echo "No link-up detected.\n";
-
-		return null;
 	}
 
+	echo "No link-up detected.\n";
+
+	return null;
 }
 
 function vlan_setup() {

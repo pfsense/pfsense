@@ -74,6 +74,7 @@ if (isset($id)) {
 		$pconfig['bandwidth'] = $a_queues[$id]['bandwidth'];
 		$pconfig['bandwidthtype'] = $a_queues[$id]['bandwidthtype'];
 		$pconfig['associatedrule'] = $a_queues[$id]['associatedrule'];
+		$pconfig['attachtoqueue'] = $a_queues[$id]['attachtoqueue'];
 	}
 }
 
@@ -115,6 +116,7 @@ if ($_POST) {
 		$queue['upperlimit2'] = $_POST['upperlimit2'];
 		$queue['upperlimit1'] = $_POST['upperlimit1'];
 		$queue['parentqueue'] = $_POST['parentqueue'];
+		$queue['attachtoqueue'] = $_POST['attachtoqueue'];
 		$queue['associatedrule'] = $_POST['associatedrule'];
 		$scheduleroptions="";
 		$queue['rio'] = $_POST['rio'];
@@ -173,6 +175,7 @@ if ($_POST) {
 	$linkshare3 = $pconfig["linkshare3"];
 	$parentqueue = $pconfig["parentqueue"];
 	$defaultqueue = $pconfig["defaultqueue"];
+	$attachtoqueue = $pconfig['attachtoqueue'];
 	$parent = $pconfig["parent"];
 ?>
 <p class="pgtitle">Firewall: Traffic shaper: Edit queue</p>
@@ -251,10 +254,10 @@ if ($_POST) {
 	    <tr>
 		<td width="22%" valign="top" class="vncell">Parent queue (CBQ or HFSC only):</td>
 		<td width="78%" class="vtable">
-		   <select id="childqueue" name="childqueue">
+		   <select id="attachtoqueue" name="attachtoqueue">
 			<?php
-			if(is_subqueue($config['shaper']['queue']))
-				echo "<option value=\"" . $pconfig['shaper']['childqueue'] . "\">" . $pconfig['shaper']['childqueue'] . "</option>";
+			if($pconfig['attachtoqueue'] <> "")
+				echo "<option value=\"" . $pconfig['attachtoqueue'] . "\">" . $pconfig['attachtoqueue'] . "</option>";
 			else
 				echo "<option value=\"\"></option>";
 			if (is_array($config['shaper']['queue'])) {

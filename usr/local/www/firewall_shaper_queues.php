@@ -196,8 +196,9 @@ if ($_GET['act'] == "del") {
 </body>
 </html>
 
-
 <?php
+
+sleep(3);
 
 $counter = 0;
 While(!Connection_Aborted()) {
@@ -213,10 +214,16 @@ While(!Connection_Aborted()) {
 
 	$i = 0;
 	foreach($stats_array as $stats_line) {
+		if($stat_line_split[2] == "" and $counter > 1) {
+			mwexec("/usr/bin/killall -9 pfctl php");
+			exit;
+		}
+
 		$stat_line_split = split("\|", $stats_line);
 		$packet_sampled = intval($stat_line_split[2]);
 		$speed = $stat_line_split[1];
 		$borrows = intval($stat_line_split[3]);
+
 		echo "<script language='javascript'>\n";
 
 		$packet_s = round(100 * (1 - $packet_sampled / $total_packets_s), 0);
@@ -236,7 +243,7 @@ While(!Connection_Aborted()) {
 	 *   firefox and ie can be a bear on ram usage!
          */
 	$counter++;
-	if($counter > 100) {
+	if($counter > 20) {
 		echo "Redirecting to <a href=\"firewall_shaper_queues.php\">Firewall Shaper Queues</a>.<p>";
 		echo "<meta http-equiv=\"refresh\" content=\"1;url=firewall_shaper_queues.php\">";
 		mwexec("/usr/bin/killall -9 pfctl");

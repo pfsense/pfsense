@@ -40,6 +40,16 @@
 	require_once("config.inc");
 	require_once("functions.inc");
 
+	$lan_if = $config['interfaces']['lan']['if']);
+	$wan_if = get_real_wan_interface();
+
+	$do_assign = 0;
+
+	if(does_interface_exist($lan_if) == false) $do_assign = 1;
+	if(does_interface_exist($wan_if) == false) $do_assign = 1;
+
+	if($do_assign == 1) mwexec("/etc/rc.initial.setports");
+
 	/* convert configuration, if necessary */
 	convert_config();
 

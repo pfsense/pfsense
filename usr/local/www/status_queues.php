@@ -67,11 +67,11 @@ $a_queues = &$config['shaper']['queue'];
 			echo "<img src='bar_blue.gif' height='15' name='queue{$i}widtha' id='queue{$i}widtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
 			echo "<img src='bar_gray.gif' height='15' name='queue{$i}widthb' id='queue{$i}widthb' width='" . (400 - $cpuUsage) . "' border='0' align='absmiddle'>";
 			echo "<nobr><img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
-			echo "<br><input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}pps' id='queue{$i}pps' value='( Loading )'>";
-			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}bps' id='queue{$i}bps' value=''>";
-			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}borrows' id='queue{$i}borrows' value=''>";
-			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}suspends' id='queue{$i}suspends' value=''>";
-			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}drops' id='queue{$i}drops' value=''></nobr>";
+			echo "<br><input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}pps' id='queue{$i}pps' value='( Loading )' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}bps' id='queue{$i}bps' value='' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}borrows' id='queue{$i}borrows' value='' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}suspends' id='queue{$i}suspends' value='' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}drops' id='queue{$i}drops' value='' align='right'></nobr>";
 ?>
 
 			</td>

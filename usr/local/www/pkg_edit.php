@@ -198,7 +198,8 @@ include("fbegin.inc");
 		if($pkg['aftersaveredirect'] <> "") {
 		    header("Location:  " . $pkg['aftersaveredirect']);
 		} else {
-		    header("Location:  pkg.php?xml=" . $xml);
+		    if(!$pkg['preoutput'])
+			header("Location:  pkg.php?xml=" . $xml);
 		}
 		exit;
 	}

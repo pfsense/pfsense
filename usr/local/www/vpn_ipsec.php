@@ -37,7 +37,6 @@ if (!is_array($config['ipsec']['tunnel'])) {
 	$config['ipsec']['tunnel'] = array();
 }
 $a_ipsec = &$config['ipsec']['tunnel'];
-$wancfg = &$config['interfaces']['wan'];
 
 $pconfig['enable'] = isset($config['ipsec']['enable']);
 $pconfig['preferredoldsa'] = isset($config['ipsec']['preferredoldsa']);

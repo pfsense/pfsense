@@ -1946,7 +1946,7 @@
 		</field>
 		<field>
 			<name>Gateway</name>
-			<bindstofield>interfaces->wan->gateway</bindstofield>
+			<bindstofield>system->gateway</bindstofield>
 			<type>input</type>
 		</field>
 		<field>

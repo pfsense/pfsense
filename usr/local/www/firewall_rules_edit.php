@@ -337,7 +337,7 @@ if ($_POST) {
 <script language="JavaScript">
 <!--
 var portsenabled = 1;
-
+var goingtofire = 1;
 function ext_change() {
 	if ((document.iform.srcbeginport.selectedIndex == 0) && portsenabled) {
 		document.iform.srcbeginport_cust.disabled = 0;
@@ -377,7 +377,9 @@ function ext_change() {
 	}
 }
 
-function typesel_change() {
+function typesel_change(dstype) {
+	if(goingtofire != 0) return;
+	goingtofire = 1;
 	switch (document.iform.srctype.selectedIndex) {
 		case 1:	/* single */
 			document.iform.src.disabled = 0;
@@ -412,6 +414,18 @@ function typesel_change() {
 			document.iform.dstmask.disabled = 1;
 			break;
 	}
+	if(dstype == "src") {
+		var selected = document.iform.srctype.selectedIndex;
+		var selectedtext = document.iform.srctype.options[selected].value;
+		document.iform.src.value = selectedtext;
+		document.iform.srctype.options[1].selected = true;
+	} else {
+		var selected = document.iform.dsttype.selectedIndex;
+		var selectedtext = document.iform.dsttype.options[selected].value;
+		document.iform.dst.value = selectedtext;
+		document.iform.dsttype.options[1].selected = true;
+	}
+	goingtofire = 0;
 }
 
 function proto_change() {
@@ -435,18 +449,6 @@ function src_rep_change() {
 }
 function dst_rep_change() {
 	document.iform.dstendport.selectedIndex = document.iform.dstbeginport.selectedIndex;
-}
-function assignaliastofield(dst, dstsrc, dstype) {
-	dst.value = dstsrc.value;
-	dstsrc.value = "";
-	if(dstype == 'src') {
-		this.iform.srctype.selectedIndex = 1;
-		this.iform.src.disabled = 0;
-	} else {
-		this.iform.dsttype.selectedIndex = 1;
-		this.iform.dst.disabled = 0;
-	}
-
 }
 //-->
 </script>
@@ -553,7 +555,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                     <table border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>Type:&nbsp;&nbsp;</td>
-                        <td><select name="srctype" class="formfld" onChange="typesel_change()">
+                        <td><select id="srctype" name="srctype" class="formfld" onChange="typesel_change('src');">
 							<?php $sel = is_specialnet($pconfig['src']); ?>
                             <option value="any" <?php if ($pconfig['src'] == "any") { echo "selected"; } ?>>
                             any</option>
@@ -569,27 +571,24 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                             <option value="opt<?=$i;?>" <?php if ($pconfig['src'] == "opt" . $i) { echo "selected"; } ?>>
                             <?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?> subnet</option>
 							<?php endfor; ?>
+				<?php
+				foreach ($config['aliases']['alias'] as $alias) {
+					echo "<option value=\"" . $alias['name'] . "\">alias:" . $alias['name'] . "</option>\n";
+				}
+				?>
                           </select></td>
                       </tr>
                       <tr>
                         <td>Address:&nbsp;&nbsp;</td>
                         <td><input name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>">
                         /
-						<select name="srcmask" class="formfld" id="srcmask">
-						<?php for ($i = 31; $i > 0; $i--): ?>
-						<option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected"; ?>><?=$i;?></option>
-						<?php endfor; ?>
-						</select>
-
-						 <select name="assignaliasa" id="assignaliasa" onChange="assignaliastofield(src, this, 'src');"><option></option>
-						<?php
-						foreach ($config['aliases']['alias'] as $alias) {
-							echo "<option value=\"" . $alias['name'] . "\">" . $alias['name'] . "</option>\n";
-						}
-						?>
-						</select>
-						</td>
-					  </tr>
+				<select name="srcmask" class="formfld" id="srcmask">
+				<?php for ($i = 31; $i > 0; $i--): ?>
+				<option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected"; ?>><?=$i;?></option>
+				<?php endfor; ?>
+				</select>
+				</td>
+			  </tr>
                     </table></td>
                 </tr>
                 <tr>
@@ -642,7 +641,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                     <table border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>Type:&nbsp;&nbsp;</td>
-                        <td><select name="dsttype" class="formfld" onChange="typesel_change()">
+                        <td><select id="dsttype" name="dsttype" class="formfld" onChange="typesel_change('dst');">
                             <?php $sel = is_specialnet($pconfig['dst']); ?>
                             <option value="any" <?php if ($pconfig['dst'] == "any") { echo "selected"; } ?>>
                             any</option>
@@ -658,23 +657,23 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                             <option value="opt<?=$i;?>" <?php if ($pconfig['dst'] == "opt" . $i) { echo "selected"; } ?>>
                             <?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?> subnet</option>
 							<?php endfor; ?>
+				<?php
+				foreach ($config['aliases']['alias'] as $alias) {
+					echo "<option value=\"" . $alias['name'] . "\">alias:" . $alias['name'] . "</option>\n";
+				}
+				?>
                           </select></td>
                       </tr>
                       <tr>
                         <td>Address:&nbsp;&nbsp;</td>
                         <td><input name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
                           /
-                          <select name="dstmask" class="formfld" id="dstmask">
-						<?php for ($i = 31; $i > 0; $i--): ?>
-						<option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo "selected"; ?>><?=$i;?></option>
-						<?php endfor; ?>
-						</select>  <select name="assignaliasb" id="assignaliasb" onChange="assignaliastofield(dst, this, 'dst');"><option></option>
-						<?php
-						foreach ($config['aliases']['alias'] as $alias) {
-							echo "<option value=\"" . $alias['name'] . "\">" . $alias['name'] . "</option>\n";
-						}
-						?>
-						</select></td>
+                          <select name="dstmask" class="formfld" id="dstmask";>
+				<?php for ($i = 31; $i > 0; $i--): ?>
+				<option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo "selected"; ?>><?=$i;?></option>
+				<?php endfor; ?>
+				</select>
+			</td>
                       </tr>
                     </table></td>
                 </tr>
@@ -783,6 +782,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 ext_change();
 typesel_change();
 proto_change();
+goingtofire = 0;
 //-->
 </script>
 <?php include("fend.inc"); ?>

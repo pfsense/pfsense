@@ -165,11 +165,11 @@ function interfaces_optional_configure() {
 		mwexec("/sbin/sysctl net.link.ether.bridge_cfg=" . $bridgeconfig);
 
 		if (isset($config['bridge']['filteringbridge']))
-			mwexec("/sbin/sysctl net.link.ether.bridge_ipf=1");
+			mwexec("/sbin/sysctl net.link.ether.bridge.pf=1");
 
 		mwexec("/sbin/sysctl net.link.ether.bridge=1");
 	} else {
-		mwexec("/sbin/sysctl net.link.ether.bridge_ipf=0");
+		mwexec("/sbin/sysctl net.link.ether.bridge.pf=0");
 		mwexec("/sbin/sysctl net.link.ether.bridge=0");
 	}
 
@@ -527,7 +527,7 @@ EOD;
 
 EOD;
 	}
-	
+
 	$mpdconf .= <<<EOD
 	open iface
 
@@ -627,7 +627,7 @@ EOD;
 	set ipcp ranges 0.0.0.0/0 0.0.0.0/0
 
 EOD;
-	
+
 	if (isset($config['system']['dnsallowoverride'])) {
 		$mpdconf .= <<<EOD
 	set ipcp enable req-pri-dns
@@ -635,7 +635,7 @@ EOD;
 
 EOD;
 	}
-	
+
 	$mpdconf .= <<<EOD
 	open
 

@@ -161,21 +161,15 @@ if ($_GET['act'] == "del") {
 <script language="JavaScript">
 <!--
 function enable_change(enable_over) {
-	if (document.iform.enable.checked || enable_over) {
-		document.iform.range_from.disabled = 0;
-		document.iform.range_to.disabled = 0;
-		document.iform.wins1.disabled = 0;
-		document.iform.wins2.disabled = 0;
-		document.iform.deftime.disabled = 0;
-		document.iform.maxtime.disabled = 0;
-	} else {
-		document.iform.range_from.disabled = 1;
-		document.iform.range_to.disabled = 1;
-		document.iform.wins1.disabled = 1;
-		document.iform.wins2.disabled = 1;
-		document.iform.deftime.disabled = 1;
-		document.iform.maxtime.disabled = 1;
-	}
+	var endis;
+	endis = !(document.iform.enable.checked || enable_over);
+	
+	document.iform.range_from.disabled = endis;
+	document.iform.range_to.disabled = endis;
+	document.iform.wins1.disabled = endis;
+	document.iform.wins2.disabled = endis;
+	document.iform.deftime.disabled = endis;
+	document.iform.maxtime.disabled = endis;
 }
 //-->
 </script>
@@ -204,7 +198,7 @@ function enable_change(enable_over) {
   </ul>
   </td></tr>
   <tr> 
-    <td class="tabcont">			
+    <td class="tabcont">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                       <tr> 
                         <td width="22%" valign="top" class="vtable">&nbsp;</td>

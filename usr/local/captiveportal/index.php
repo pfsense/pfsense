@@ -34,7 +34,6 @@ require("util.inc");
 require("config.inc");
 require("radius_authentication.inc") ;
 require("radius_accounting.inc") ;
-require("portal_log.inc") ;
 
 header("Expires: 0");
 header("Cache-Control: no-store, no-cache, must-revalidate");
@@ -74,7 +73,6 @@ if ($clientmac && portal_mac_fixed($clientmac)) {
 							  			  $radiusservers[0]['port'],
 							  			  $radiusservers[0]['key']);
 		if ($auth_val == 2) {
-			captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,TRUE);
 			$sessionid = portal_allow($clientip, $clientmac, $_POST['auth_user']);
 			if (isset($config['captiveportal']['radacct_enable']) && isset($radiusservers[0])) {
 				$auth_val = RADIUS_ACCOUNTING_START($_POST['auth_user'],
@@ -84,7 +82,6 @@ if ($clientmac && portal_mac_fixed($clientmac)) {
 													$radiusservers[0]['key']);
 			}
 		} else {
-			captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,FALSE);
 			readfile("{$g['varetc_path']}/captiveportal-error.html");
 		}
 	} else {
@@ -122,7 +119,7 @@ EOD;
 	if (isset($config['captiveportal']['httpslogin']))
 		$htmltext = str_replace("\$PORTAL_ACTION\$", "https://{$config['captiveportal']['httpsname']}:8001/", $htmltext);
 	else
-		$htmltext = str_replace("\$PORTAL_ACTION\$", "", $htmltext);
+		$htmltext = str_replace("\$PORTAL_ACTION\$", "http://{$config['interfaces'][$config['captiveportal']['interface']]['ipaddr']}:8000/", $htmltext);
 	
 	if (preg_match("/redirurl=(.*)/", $orig_request, $matches))
 		$redirurl = urldecode($matches[1]);

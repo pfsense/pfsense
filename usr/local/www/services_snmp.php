@@ -81,15 +81,11 @@ if ($_POST) {
 <script language="JavaScript">
 <!--
 function enable_change(enable_change) {
-	if (document.iform.enable.checked || enable_change) {
-		document.iform.syslocation.disabled = 0;
-		document.iform.syscontact.disabled = 0;
-		document.iform.rocommunity.disabled = 0;
-	} else {
-		document.iform.syslocation.disabled = 1;
-		document.iform.syscontact.disabled = 1;
-		document.iform.rocommunity.disabled = 1;
-	}
+	var endis;
+	endis = !(document.iform.enable.checked || enable_change);
+	document.iform.syslocation.disabled = endis;
+	document.iform.syscontact.disabled = endis;
+	document.iform.rocommunity.disabled = endis;
 }
 //-->
 </script>

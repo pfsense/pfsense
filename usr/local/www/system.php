@@ -120,6 +120,7 @@ if ($_POST) {
 		if ($_POST['dns2'])
 			$config['system']['dnsserver'][] = $_POST['dns2'];
 		
+		$olddnsallowoverride = $config['system']['dnsallowoverride'];
 		$config['system']['dnsallowoverride'] = $_POST['dnsallowoverride'] ? true : false;
 		
 		if ($_POST['password']) {
@@ -142,6 +143,10 @@ if ($_POST) {
 			$retval |= services_dnsmasq_configure();
 			$retval |= system_timezone_configure();
  			$retval |= system_ntp_configure();
+ 			
+ 			if ($olddnsallowoverride != $config['system']['dnsallowoverride'])
+ 				$retval |= interfaces_wan_configure();
+ 			
 			config_unlock();
 		}
 		
@@ -186,7 +191,7 @@ if ($_POST) {
                       <span class="vexpl">IP addresses; these are also used for 
                       the DHCP service, DNS forwarder and for PPTP VPN clients<br>
                       <br>
-                      <input name="dnsallowoverride" type="checkbox" id="dnsallowoverride" value="yes" <?php if ($pconfig['dnsallowoverride'] == "yes") echo "checked"; ?>>
+                      <input name="dnsallowoverride" type="checkbox" id="dnsallowoverride" value="yes" <?php if ($pconfig['dnsallowoverride']) echo "checked"; ?>>
                       <strong>Allow DNS server list to be overridden by DHCP/PPP 
                       on WAN</strong><br>
                       If this option is set, m0n0wall will use DNS servers assigned 

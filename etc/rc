@@ -78,7 +78,7 @@ echo Starting INETD for FTP-PROXY...
 
 /usr/sbin/cron 2>/dev/null
 
-for each FILE in /usr/local/etc/rc.d/* ; do
+for FILE in /usr/local/etc/rc.d/* ; do
     echo "Starting ${FILE}..."
     sh $FILE
 done

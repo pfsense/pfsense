@@ -239,10 +239,22 @@ foreach ($packages_to_install as $id) {
     update_progress_bar($pb_percent);
     $pb_percent += 10;
 
+    /*
+     * Open a /tmp/y file which will basically tell the
+     * pkg_delete script to delete users and such if it asks.
+     */
+    $fd = fopen("/tmp/y", "w");
+    fwrite($fd, "y\n");
+    fwrite($fd, "y\n");
+    fwrite($fd, "y\n");
+    fwrite($fd, "y\n");
+    fwrite($fd, "y\n");
+    fclose($fd);
+
     if ($pkgent['pfsense_package_base_url'] <> "") {
-        $text = exec_command_and_return_text("cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base_url'] . "/" . $pkgent['pfsense_package']);
-        update_output_window($text);
         fwrite($fd_log, "Executing: cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base_url'] . "/" . $pkgent['pfsense_package'] . "\n" . $text);
+        $text = exec_command_and_return_text("cd /tmp/ && cat /tmp/y | /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base_url'] . "/" . $pkgent['pfsense_package']);
+        update_output_window($text);
     }
 
     update_progress_bar($pb_percent);
@@ -431,12 +443,3 @@ echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hi
 
 
 ?>
-
-
-
-
-
-
-
-
-

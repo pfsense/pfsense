@@ -50,7 +50,7 @@ if($xml == "") {
 	print_info_box_np("ERROR:  Could not open " . $xml . ".");
 	die;
 } else {
-	if (file_exists("{$g['www_path']}/wizards/{$xml}")) 
+	if (file_exists("{$g['www_path']}/wizards/{$xml}"))
 		$pkg = parse_xml_config_pkg("{$g['www_path']}/wizards/" . $xml, "pfsensewizard");
 	else {
 		print_info_box_np("ERROR:  Could not open " . $xml . ".");
@@ -61,6 +61,10 @@ if($xml == "") {
 $title          = $pkg['step'][$stepid]['title'];
 $description    = $pkg['step'][$stepid]['description'];
 $totalsteps     = $pkg['totalsteps'];
+
+exec('/usr/bin/tar -tzf /usr/share/zoneinfo.tgz', $timezonelist);
+$timezonelist = array_filter($timezonelist, 'is_timezone');
+sort($timezonelist);
 
 if($pkg['step'][$stepid]['stepsubmitbeforesave']) {
 		eval($pkg['step'][$stepid]['stepsubmitbeforesave']);
@@ -252,6 +256,39 @@ function FieldValidate(userinput, regexp, message)
 		    } else if ($field['type'] == "listtopic") {
 			echo "<td>&nbsp;</td><tr>";
 			echo "<tr><td colspan=\"2\" class=\"listtopic\">" . $field['name'] . "<br></td>\n";
+		    } else if ($field['type'] == "subnet_select") {
+			if(!$field['dontdisplayname']) {
+				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
+				echo fixup_string($field['name']);
+				echo ":</td>";
+			}
+			if(!$field['dontcombinecells'])
+				echo "<td class=\"vtable\">";
+			echo "<select name='{$name}'>\n";
+			for($x=1; $x<33; $x++) {
+				$CHECKED = "";
+				if($value == $x) $CHECKED = " SELECTED";
+				if($x <> 31)
+					echo "<option value='{$x}' {$CHECKED}>{$x}</option>\n";
+			}
+			echo "</select>\n";
+		    } else if ($field['type'] == "timezone_select") {
+			if(!$field['dontdisplayname']) {
+				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
+				echo fixup_string($field['name']);
+				echo ":</td>";
+			}
+			if(!$field['dontcombinecells'])
+				echo "<td class=\"vtable\">";
+			echo "<select name='{$name}'>\n";
+			foreach ($timezonelist as $tz) {
+				$SELECTED = "";
+				if ($value == $tz) $SELECTED = " SELECTED";
+				echo "<option value='" . htmlspecialchars($tz) . "' {$SELECTED}>";
+				echo htmlspecialchars($tz);
+				echo "</option>\n";
+			}
+			echo "</select>\n";
 		    } else if ($field['type'] == "checkbox") {
 			if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
@@ -376,5 +413,8 @@ function fixup_string($string) {
 	return $newstring;
 }
 
-?>
+function is_timezone($elt) {
+	return !preg_match("/\/$/", $elt);
+}
 
+?>

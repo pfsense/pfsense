@@ -30,6 +30,8 @@
 require("guiconfig.inc");
 require("xmlparse_pkg.inc");
 
+$pb_percent = 1;
+
 /*
  *   open logging facility
  */
@@ -96,7 +98,9 @@ function exec_command_and_return_text($command) {
  *   exec_command_and_return_text: execute command and update output window dynamically
  */
 function execute_command_return_output($command) {
-    global $fd_log;
+    global $fd_log, $pb_percent;
+    if($pb_percent > 100) $pb_percent = 1;
+    update_progress_bar($pb_percent);
     $fd = popen($command . " 2>&1 ", "r");
     echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"\";</script>";
     $counter = 0;
@@ -127,7 +131,15 @@ function execute_command_return_output($command) {
 	    $counter2++;
 	echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = this.document.forms[0].output.value + \"" . $text . $extrabreak .  "\"; f('output'); </script>";
     }
+    $pb_percent++;
     fclose($fd);
+}
+
+function update_progress_bar($percent) {
+            if($percent > 100) $percent = 1;
+            echo "\n<script type=\"text/javascript\" language=\"javascript\">";
+            echo "\ndocument.progressbar.style.width='" . $percent . "%';";
+            echo "\n</script>";
 }
 
 $a_out = &$pkg_config['packages'];
@@ -183,8 +195,15 @@ if(!$pkg_config['packages']) {
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                <tr>
                  <td>
-	             <textarea cols="100%" rows="1" name="status" id="status" wrap="hard">One moment please... This will take a while!</textarea>
-	             <textarea cols="100%" rows="25" name="output" id="output" wrap="hard"></textarea>
+                     <!-- progress bar -->
+                     <center>
+                     <table id="progholder" name="progholder" height='20' border='1' bordercolor='black' width='420' bordercolordark='#000000' bordercolorlight='#000000' style='border-collapse: collapse' colspacing='2' cellpadding='2' cellspacing='2'><tr><td><img border='0' src='progress_bar.gif' width='280' height='23' name='progressbar' id='progressbar'></td></tr></table>
+                     <br>
+	             <!-- status box -->
+                     <textarea cols="60" rows="1" name="status" id="status" wrap="hard">One moment please... This will take a while!</textarea>
+                     <!-- command output box -->
+	             <textarea cols="60" rows="25" name="output" id="output" wrap="hard"></textarea>
+                     </center>
                  </td>
                </tr>
         </table>
@@ -196,7 +215,10 @@ if(!$pkg_config['packages']) {
 </body>
 </html>
 
-<?
+<?php
+
+update_progress_bar($pb_percent);
+$pb_percent += 10;
 
 /* install the package */
 
@@ -207,6 +229,9 @@ mwexec("mkdir /usr/local/www/ext/Interfaces >/dev/null 2>&1");
 mwexec("mkdir /usr/local/www/ext/Firewall >/dev/null 2>&1");
 mwexec("mkdir /usr/local/www/ext/VPN >/dev/null 2>&1");
 mwexec("mkdir /usr/local/www/ext/Status >/dev/null 2>&1");
+
+update_progress_bar($pb_percent);
+$pb_percent += 10;
 
 $a_out = &$pkg_config['packages']['package'];
 $pkgent = array();
@@ -220,6 +245,9 @@ $pkgent['pfsense_package_base'] = $a_out[$id]['pfsense_package_base'];
 $pkgent['configurationfile'] = $a_out[$id]['configurationfile'];
 $a_out = &$config['packages']['package'];
 
+update_progress_bar($pb_percent);
+$pb_percent += 10;
+
 fwrite($fd_log, "ls /var/db/pkg | grep " . $pkgent['name'] . "\n" . $status);
 if($status <> "") {
             // package is already installed!?
@@ -229,9 +257,15 @@ if($status <> "") {
 update_status("Downloading and installing " . $pkgent['name'] . " - " . $pkgent['pfsense_package'] . " and its dependencies ... This could take a moment ...");
 fwrite($fd_log, "Downloading and installing " . $pkgent['name'] . " ... \n");
 
+update_progress_bar($pb_percent);
+$pb_percent += 10;
+
 $text = exec_command_and_return_text("cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base'] . "/" . $pkgent['pfsense_package']);
 update_output_window($text);
 fwrite($fd_log, "Executing: cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base'] . "/" . $pkgent['pfsense_package'] . "\n" . $text);
+
+update_progress_bar($pb_percent);
+$pb_percent += 10;
 
 if ($pkgent['pfsense_package_base']) {
             update_status("Downloading and installing " . $pkgent['name'] . " - " . $pkgent['depends_on_package_base'] . " and its dependencies ... This could take a moment ...");
@@ -240,7 +274,13 @@ if ($pkgent['pfsense_package_base']) {
             fwrite($fd_log, "cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base'] . "/" . $pkgent['depends_on_package'] . "\n" . $text);;
 }
 
+update_progress_bar($pb_percent);
+$pb_percent += 10;
+
 $config = parse_xml_config("{$g['conf_path']}/config.xml", $g['xml_rootobj']);
+
+update_progress_bar($pb_percent);
+$pb_percent += 10;
 
 $config['installedpackages']['package'][] = $pkgent;
 
@@ -249,14 +289,25 @@ if (isset($id) && $a_out[$id])
 else
         $a_out[] = $pkgent;
 
+update_progress_bar($pb_percent);
+$pb_percent += 10;
+
 write_config();
 
+update_progress_bar($pb_percent);
+$pb_percent += 10;
+
 $name = $pkgent['name'];
+
+update_progress_bar($pb_percent);
+$pb_percent++;
 
 // parse the config file for this package and install neededtext items.
 if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
             $config = parse_xml_config("/usr/local/pkg/" . $pkgent['name'] . ".xml", "packagegui");
             foreach ($config['modify_system']['item'] as $ms) {
+                        update_progress_bar($pb_percent);
+                        $pb_percent += 10;
                         if($ms['textneeded']) {
                                   fwrite($fd_log, "Adding needed text items:\n");
                                   $filecontents = exec_command_and_return_text("cat " . $ms['modifyfilename']);
@@ -279,10 +330,16 @@ if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
 }
 fwrite($fd_log, "End of Package Manager installation session.\n");
 
+update_progress_bar($pb_percent);
+$pb_percent += 10;
+
 // return dependency list to output later.
 $command = "TODELETE=`ls /var/db/pkg | grep " . $name . "` && /usr/sbin/pkg_info -r \$TODELETE | grep Dependency: | cut -d\" \" -f2";
 $dependencies = exec_command_and_return_text($command);
 fwrite($fd_log, "Installed " . $name . " and the following dependencies:\n" . $dependencies);
+
+update_progress_bar($pb_percent);
+$pb_percent += 10;
 
 $status = exec_command_and_return_text("ls /var/db/pkg | grep " . $pkgent['name']);
 fwrite($fd_log, "ls /var/db/pkg | grep " . $pkgent['name'] . "\n" . $status);
@@ -293,6 +350,9 @@ if($status <> "") {
             update_status("Package WAS NOT installed properly.");
             fwrite($fd_log, "Package WAS NOT installed properly.\n");
 }
+
+update_progress_bar($pb_percent);
+$pb_percent += 10;
 
 // close log
 fclose($fd_log);
@@ -306,6 +366,11 @@ while(!feof($fd_log)) {
 fclose($fd_log);
 $log = ereg_replace("\n", "\\n", $tmp);
 echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"" . $log . "\";</script>";
+
+update_progress_bar(100);
+
+echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
+echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
 
 ?>
 

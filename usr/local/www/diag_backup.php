@@ -34,6 +34,27 @@ $omit_nocacheheaders = true;
 require("guiconfig.inc");
 require("xmlparse_pkg.inc");
 
+function spit_out_select_items() {
+	$select = <<<EOD
+	<select name="backuparea">
+		<option VALUE="">ALL</option>
+		<option VALUE="shaper">Traffic Shaper</option>
+		<option VALUE="filter">Firewall Rules</option>
+		<option VALUE="nat">NAT</option>
+		<option VALUE="pptpd">PPTP Server</option>
+		<option VALUE="ipsec">IPSEC VPN</option>
+		<option VALUE="captiveportal">Captive Portal</option>
+		<option VALUE="installedpackages">Package Manager</option>
+		<option VALUE="interfaces">Interfaces</option>
+		<option VALUE="dhcpd">DHCP Server</option>
+		<option VALUE="syslog">Syslog</option>
+		<option VALUE="system">System</option>
+	</select>
+EOD;
+	echo $select;
+
+}
+
 if ($_POST) {
 	unset($input_errors);
 	if (stristr($_POST['Submit'], "Restore configuration"))
@@ -196,11 +217,7 @@ if (isset($config['system']['version_control'])) {
                     <p> Click this button to download the system configuration
                       in XML format.<br>
                       <br>
-		      Backup area:
-		      <select name="backuparea">
-			<option VALUE="">ALL</option>
-			<option VALUE="shaper">Traffic Shaper</option>
-		      </select>
+		      Backup area: <?php spit_out_select_items(); ?>
 		      <p>
 		      <input name="nopackages" type="checkbox" class="formcheckbox" id="nopackages">Do not backup package information.<p>
                       <input name="Submit" type="submit" class="formbtn" id="download" value="Download configuration"></td>
@@ -217,11 +234,7 @@ if (isset($config['system']['version_control'])) {
                     Open a pfSense configuration XML file and click the button
                       below to restore the configuration.<br>
                       <br>
-		      Restore area:
-		      <select name="restorearea">
-			<option VALUE="">ALL</option>
-			<option VALUE="shaper">Traffic Shaper</option>
-		      </select>
+		      Restore area: <?php spit_out_select_items(); ?>
 		      <p>
                       <input name="conffile" type="file" class="formfld" id="conffile" size="40">
                       <p>

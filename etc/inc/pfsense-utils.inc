@@ -663,7 +663,7 @@ function reverse_strrchr($haystack, $needle) {
  *
  */
 function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $return_nosync = 1) {
-        global $config
+        global $config;
         foreach($config['installedpackages']['package'] as $package) {
                 if ($package['name'] == $pkg_name) {
                         $package_xml = $package;

@@ -648,14 +648,11 @@ function filter_nat_rules_generate_if($if, $src, $srcport, $dst, $natport, $targ
 	if ($dst == "")
 		$dst = "any";
 
-        if ($srcport && $dstport) {
+        if ($srcport)
 		$src .= " port " . $srcport;
-		$tgt .= " port " . $dstport;
-	} else if ($srcport && !$dstport) {
-		$src .= " port " . $srcport;
-	} else if (!$srcport && $dstport) {
-		$tgt .= " port " . $dstport;
-	}
+
+	if ($natport)
+		$tgt .= " port " . $natport;
 
         $natrule = <<<EOD
 nat on $if from $src to $dst -> $tgt

@@ -141,7 +141,8 @@ if (isset($id) && $a_filter[$id]) {
 		$pconfig['srcmask'], $pconfig['srcnot'],
 		$pconfig['srcbeginport'], $pconfig['srcendport']);
 
-	$pconfig['os'] = $a_filter[$id]['os'];
+	if($a_filter[$id]['os'] <> "")
+		$pconfig['os'] = $a_filter[$id]['os'];
 
 	address_to_pconfig($a_filter[$id]['destination'], $pconfig['dst'],
 		$pconfig['dstmask'], $pconfig['dstnot'],

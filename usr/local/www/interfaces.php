@@ -80,6 +80,7 @@ $pconfig['spoofmac'] = $wancfg['spoofmac'];
 $pconfig['mtu'] = $wancfg['mtu'];
 $pconfig['bandwidth'] = $wancfg['bandwidth'];
 $pconfig['bandwidthtype'] = $wancfg['bandwidthtype'];
+$pconfig['schedulertype'] = $wancfg['schedulertype'];
 
 /* Wireless interface? */
 if (isset($optcfg['wireless'])) {
@@ -179,6 +180,7 @@ if ($_POST) {
 		unset($wancfg['gateway']);
 		unset($wancfg['bandwidth']);
 		unset($wancfg['bandwidthtype']);
+		unset($wancfg['schedulertype']);
 		unset($wancfg['dhcphostname']);
 		unset($config['pppoe']['username']);
 		unset($config['pppoe']['password']);
@@ -232,7 +234,7 @@ if ($_POST) {
 			$config['bigpond']['authdomain'] = $_POST['bigpond_authdomain'];
 			$config['bigpond']['minheartbeatinterval'] = $_POST['bigpond_minheartbeatinterval'];
 		}
-
+		$wancfg['schedulertype'] = $_POST['schedulertype'];
 		$wancfg['blockpriv'] = $_POST['blockpriv'] ? true : false;
 		$wancfg['spoofmac'] = $_POST['spoofmac'];
 		$wancfg['mtu'] = $_POST['mtu'];
@@ -408,6 +410,7 @@ function type_change(enable_change,enable_change_pptp) {
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<?php $schedulertype = $config['interfaces']['wan']['schedulertype']; ?>
 <p class="pgtitle">Interfaces: WAN</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -430,21 +433,6 @@ function type_change(enable_change,enable_change_pptp) {
                 <tr>
                   <td colspan="2" valign="top" class="vnsepcell">General configuration</td>
                 </tr>
-
-                <tr>
-                  <td valign="top" class="vncell">Interface Bandwidth Speed</td>
-                  <td class="vtable"> <input name="bandwidth" type="text" class="formfld" id="bandwidth" size="30" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">
-			<select name="bandwidthtype">
-				<option value="<?=htmlspecialchars($pconfig['bandwidthtype']);?>"><?=htmlspecialchars($pconfig['bandwidthtype']);?></option>
-				<option value="b">bit/s</option>
-				<option value="Kb">Kilobit/s</option>
-				<option value="Mb">Megabit/s</option>
-				<option value="Gb">Gigabit/s</option>
-			</select>
-			<br> The bandwidth setting will define the speed of the interface for traffic shaping.
-		  </td>
-                </tr>
-
                 <tr>
                   <td valign="top" class="vncell">MAC address</td>
                   <td class="vtable"> <input name="spoofmac" type="text" class="formfld" id="spoofmac" size="30" value="<?=htmlspecialchars($pconfig['spoofmac']);?>">
@@ -488,6 +476,45 @@ function type_change(enable_change,enable_change_pptp) {
                   <td class="vtable"> <input name="gateway" type="text" class="formfld" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>">
                   </td>
                 </tr>
+                <tr>
+                  <td colspan="2" valign="top" height="16"></td>
+                </tr>
+                <tr>
+                  <td colspan="2" valign="top" class="vnsepcell">Bandwidth Management (Traffic Shaping)</td>
+                </tr>
+		<tr>
+		  <td width="22%" valign="top" class="vncell"><b>Scheduler</b> </td>
+		  <td width="78%" class="vtable">
+		    <select id="schedulertype" name="schedulertype">
+		    <?php
+			    if($schedulertype == 'priq')
+				    echo "<option value=\"priq\">Priority based queueing</option>";
+			    if($schedulertype == 'cbq')
+				    echo "<option value=\"cbq\">Class based queueing</option>";
+			    if($schedulertype == 'hfsc')
+				    echo "<option value=\"hfsc\">Hierarchical Fair Service Curve queueing</option>";
+		    ?>
+			    <option value="priq">Priority based queueing</option>
+			    <option value="cbq">Class based queueing</option>
+			    <option value="hfsc">Hierarchical Fair Service Curve queueing</option>
+		    </select>
+		    <br> <span class="vexpl">Select which type of queueing you would like to use
+		    </span></td>
+		</tr>
+                <tr>
+                  <td valign="top" class="vncell">Interface Bandwidth Speed</td>
+                  <td class="vtable"> <input name="bandwidth" type="text" class="formfld" id="bandwidth" size="30" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">
+			<select name="bandwidthtype">
+				<option value="<?=htmlspecialchars($pconfig['bandwidthtype']);?>"><?=htmlspecialchars($pconfig['bandwidthtype']);?></option>
+				<option value="b">bit/s</option>
+				<option value="Kb">Kilobit/s</option>
+				<option value="Mb">Megabit/s</option>
+				<option value="Gb">Gigabit/s</option>
+			</select>
+			<br> The bandwidth setting will define the speed of the interface for traffic shaping.
+		  </td>
+                </tr>
+
                 <tr>
                   <td colspan="2" valign="top" height="16"></td>
                 </tr>
@@ -620,6 +647,8 @@ function type_change(enable_change,enable_change_pptp) {
                     seconds<br>
     Setting this to a sensible value (e.g. 60 seconds) can protect against DoS attacks. </td>
                 </tr>
+
+
                 <?php /* Wireless interface? */
 				if (isset($optcfg['wireless']))
 					wireless_config_print();

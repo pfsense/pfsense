@@ -38,6 +38,7 @@ $pconfig['subnet'] = $config['interfaces']['lan']['subnet'];
 
 $pconfig['bandwidth'] = $config['interfaces']['lan']['bandwidth'];
 $pconfig['bandwidthtype'] = $config['interfaces']['lan']['bandwidthtype'];
+$pconfig['schedulertype'] = $config['interfaces']['lan']['schedulertype'];
 
 /* Wireless interface? */
 if (isset($optcfg['wireless'])) {
@@ -76,6 +77,7 @@ if ($_POST) {
 		$config['interfaces']['lan']['subnet'] = $_POST['subnet'];
 		$config['interfaces']['lan']['bandwidth'] = $_POST['bandwidth'];
 		$config['interfaces']['lan']['bandwidthtype'] = $_POST['bandwidthtype'];
+		$config['interfaces']['lan']['schedulertype'] = $_POST['schedulertype'];
 
 		$dhcpd_was_enabled = 0;
 		if (isset($config['dhcpd']['enable'])) {
@@ -93,6 +95,7 @@ if ($_POST) {
 				"and enable it again prior to rebooting.";
 	}
 }
+$schedulertype = $config['interfaces']['lan']['schedulertype'];
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -151,6 +154,33 @@ function ipaddr_change() {
 				if (isset($optcfg['wireless']))
 					wireless_config_print();
 				?>
+
+                <tr>
+                  <td colspan="2" valign="top" height="16"></td>
+                </tr>
+
+                <tr>
+                  <td colspan="2" valign="top" class="vnsepcell">Bandwidth Management (Traffic Shaping)</td>
+                </tr>
+		<tr>
+		  <td width="22%" valign="top" class="vncell"><b>Scheduler</b> </td>
+		  <td width="78%" class="vtable">
+		    <select id="schedulertype" name="schedulertype">
+		    <?php
+			    if($schedulertype == 'priq')
+				    echo "<option value=\"priq\">Priority based queueing</option>";
+			    if($schedulertype == 'cbq')
+				    echo "<option value=\"cbq\">Class based queueing</option>";
+			    if($schedulertype == 'hfsc')
+				    echo "<option value=\"hfsc\">Hierarchical Fair Service Curve queueing</option>";
+		    ?>
+			    <option value="priq">Priority based queueing</option>
+			    <option value="cbq">Class based queueing</option>
+			    <option value="hfsc">Hierarchical Fair Service Curve queueing</option>
+		    </select>
+		    <br> <span class="vexpl">Select which type of queueing you would like to use
+		    </span></td>
+		</tr>
                 <tr>
                   <td valign="top" class="vncell">Interface Bandwidth Speed</td>
                   <td class="vtable"> <input name="bandwidth" type="text" class="formfld" id="bandwidth" size="30" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">

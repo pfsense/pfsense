@@ -925,6 +925,8 @@ function rmdir_recursive($path,$follow_links=false) {
 				rmdir_recursive("$path/$entry");
 		}
 		closedir($dir);
+		rmdir($path);
+		return;
 	} else {
 		foreach($to_do as $workingdir) { // Handle wildcards by foreaching.
 			$dir = opendir($workingdir);
@@ -935,9 +937,11 @@ function rmdir_recursive($path,$follow_links=false) {
                                 rmdir_recursive("$workingdir/$entry");
 			}
 			closedir($dir);
+			rmdir($workingdir);
                 }
+		return;
 	}
-	return rmdir($path);
+	return;
 }
 
 /*

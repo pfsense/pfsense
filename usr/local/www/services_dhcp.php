@@ -289,6 +289,10 @@ The default is to use the IP of the firewall as the gateway.  Specify an alterna
                           for a specific expiration time.<br>
                           The default is 86400 seconds.</td>
                       </tr>
+                      <tr>
+                        <td width="22%" valign="top" class="vncell">Static ARP</td>
+                        <td width="78%" class="vtable"><input type="checkbox" name="enablestaticarp" id="enablestaticarp" <?php if($config['staticarp']['enablestaticarp'] == "enabled") echo " checked"; ?>>&nbsp; <b>Enable Static ARP entries</b></td>
+                      </tr>
                       <tr> 
                         <td width="22%" valign="top">&nbsp;</td>
                         <td width="78%"> 
@@ -309,11 +313,6 @@ The default is to use the IP of the firewall as the gateway.  Specify an alterna
                             </span></p></td>
                       </tr>
                     </table>
-					&nbsp;<br>
-              <table width="100%" border="0" cellpadding="0" cellspacing="0">
-                        <tr><td colspan=3><hr></td></tr>
-                        <tr><td width="2%"><input type="checkbox" name="enablestaticarp" id="enablestaticarp" <?php if($config['staticarp']['enablestaticarp'] == "enabled") echo " checked"; ?>></td><td><b>Enable LAN StaticArp</td><td align="right"><input type="submit" value="Save"></td></tr>
-                        <tr><td colspan=3><hr></td></tr>
               </table><br>
 
               <table width="100%" border="0" cellpadding="0" cellspacing="0">

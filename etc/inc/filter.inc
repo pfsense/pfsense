@@ -1553,7 +1553,7 @@ EOD;
 			$ipfrules .= $line;
 		}
 
-		$ipfrules .= "block in log quick from <sshlockout> to any 22 label \"sshlockout\"\n\n";
+		$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port 22 label \"sshlockout\"\n\n";
 
 		$i++;
 	}

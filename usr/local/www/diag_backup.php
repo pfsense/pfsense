@@ -129,10 +129,10 @@ if ($_POST) {
 					fwrite($fd, $upgradedconfig);
 					fclose($fd);
 				}
-				if($_POST['restorearea'] <> "") {
+				if($_POST['backuparea'] <> "") {
 					/* restore a specific area of the configuration */
 					$rules = return_filename_as_string($_FILES['conffile']['tmp_name']);
-					restore_config_section($_POST['restorearea'], $rules);
+					restore_config_section($_POST['backuparea'], $rules);
 					filter_configure();
 					$savemsg = "The configuration area has been restored.";
 				} else {

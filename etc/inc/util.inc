@@ -2,20 +2,20 @@
 /*
 	util.inc
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -49,7 +49,7 @@ function killbyname($procname) {
 function gen_subnet($ipaddr, $bits) {
 	if (!is_ipaddr($ipaddr) || !is_numeric($bits))
 		return "";
-	
+
 	return long2ip(ip2long($ipaddr) & gen_subnet_mask_long($bits));
 }
 
@@ -57,7 +57,7 @@ function gen_subnet($ipaddr, $bits) {
 function gen_subnet_max($ipaddr, $bits) {
 	if (!is_ipaddr($ipaddr) || !is_numeric($bits))
 		return "";
-	
+
 	return long2ip(ip2long($ipaddr) | ~gen_subnet_mask_long($bits));
 }
 
@@ -84,10 +84,10 @@ function is_numericint($arg) {
 function is_ipaddr($ipaddr) {
 	if (!is_string($ipaddr))
 		return false;
-		
+
 	$ip_long = ip2long($ipaddr);
 	$ip_reverse = long2ip($ip_long);
- 
+
 	if ($ipaddr == $ip_reverse)
 		return true;
 	else
@@ -96,9 +96,9 @@ function is_ipaddr($ipaddr) {
 
 /* returns true if $ipaddr is a valid dotted IPv4 address or an alias thereof */
 function is_ipaddroralias($ipaddr) {
-	
+
 	global $aliastable;
-	
+
 	if (isset($aliastable[$ipaddr]) && is_ipaddr($aliastable[$ipaddr]))
 		return true;
 	else
@@ -107,9 +107,9 @@ function is_ipaddroralias($ipaddr) {
 
 /* returns true if $ipaddr is a valid dotted IPv4 address or any alias */
 function is_ipaddroranyalias($ipaddr) {
-	
+
 	global $aliastable;
-	
+
 	if (isset($aliastable[$ipaddr]))
 		return true;
 	else
@@ -120,23 +120,23 @@ function is_ipaddroranyalias($ipaddr) {
 function is_subnet($subnet) {
 	if (!is_string($subnet))
 		return false;
-		
+
 	list($hp,$np) = explode('/', $subnet);
-	
+
 	if (!is_ipaddr($hp))
 		return false;
-	
+
 	if (!is_numeric($np) || ($np < 1) || ($np > 32))
 		return false;
-		
+
 	return true;
 }
 
 /* returns true if $subnet is a valid subnet in CIDR format or an alias thereof */
 function is_subnetoralias($subnet) {
-	
+
 	global $aliastable;
-	
+
 	if (isset($aliastable[$subnet]) && is_subnet($aliastable[$subnet]))
 		return true;
 	else
@@ -147,7 +147,7 @@ function is_subnetoralias($subnet) {
 function is_hostname($hostname) {
 	if (!is_string($hostname))
 		return false;
-		
+
 	if (preg_match("/^[a-z0-9\-]+$/i", $hostname))
 		return true;
 	else
@@ -158,7 +158,7 @@ function is_hostname($hostname) {
 function is_domain($domain) {
 	if (!is_string($domain))
 		return false;
-		
+
 	if (preg_match("/^([a-z0-9\-]+\.?)*$/i", $domain))
 		return true;
 	else
@@ -169,7 +169,7 @@ function is_domain($domain) {
 function is_dyndns_username($uname) {
 	if (!is_string($uname))
 		return false;
-		
+
 	if (preg_match("/[^a-z0-9\-.@_]/i", $uname))
 		return false;
 	else
@@ -180,18 +180,18 @@ function is_dyndns_username($uname) {
 function is_macaddr($macaddr) {
 	if (!is_string($macaddr))
 		return false;
-		
+
 	$maca = explode(":", $macaddr);
 	if (count($maca) != 6)
 		return false;
-	
+
 	foreach ($maca as $macel) {
 		if (($macel === "") || (strlen($macel) > 2))
 			return false;
 		if (preg_match("/[^0-9a-f]/i", $macel))
 			return false;
 	}
-	
+
 	return true;
 }
 
@@ -207,7 +207,7 @@ function is_validaliasname($name) {
 function is_port($port) {
 	if (!is_numericint($port))
 		return false;
-		
+
 	if (($port < 1) || ($port > 65535))
 		return false;
 	else
@@ -217,32 +217,32 @@ function is_port($port) {
 /* returns a list of interfaces with MAC addresses
    (skips VLAN and other virtual interfaces) */
 function get_interface_list() {
-	
+
 	global $g;
-	
+
 	/* build interface list with netstat */
 	exec("/usr/bin/netstat -inW -f link", $linkinfo);
 	array_shift($linkinfo);
-	
+
 	$iflist = array();
-	
+
 	foreach ($linkinfo as $link) {
 		$alink = preg_split("/\s+/", $link);
 		$ifname = chop($alink[0]);
-		
+
 		if (substr($ifname, -1) == "*")
 			$ifname = substr($ifname, 0, strlen($ifname) - 1);
-		
+
 		if (!preg_match("/^(ppp|sl|gif|faith|lo|ng|vlan)/", $ifname)) {
 			$iflist[$ifname] = array();
-			
+
 			$iflist[$ifname]['mac'] = chop($alink[3]);
 			$iflist[$ifname]['up'] = false;
-			
+
 			/* find out if the link on this interface is up */
 			unset($ifinfo);
 			exec("/sbin/ifconfig {$ifname}", $ifinfo);
-			
+
 			foreach ($ifinfo as $ifil) {
 				if (preg_match("/status: (.*)$/", $ifil, $matches)) {
 					if ($matches[1] == "active")
@@ -252,7 +252,7 @@ function get_interface_list() {
 			}
 		}
 	}
-	
+
 	return $iflist;
 }
 
@@ -260,7 +260,7 @@ function get_interface_list() {
 function mwexec($command) {
 
 	global $g;
-	
+
 	if ($g['debug']) {
 		if (!$_SERVER['REMOTE_ADDR'])
 			echo "mwexec(): $command\n";
@@ -268,20 +268,20 @@ function mwexec($command) {
 	} else {
 		exec("$command > /dev/null 2>&1", $oarr, $retval);
 	}
-	
-	return $retval; 
+
+	return $retval;
 }
 
 /* wrapper for exec() in background */
 function mwexec_bg($command) {
 
 	global $g;
-	
+
 	if ($g['debug']) {
 		if (!$_SERVER['REMOTE_ADDR'])
 			echo "mwexec(): $command\n";
 	}
-	
+
 	exec("nohup $command > /dev/null 2>&1 &");
 }
 
@@ -293,11 +293,11 @@ function unlink_if_exists($fn) {
 
 /* make a global alias table (for faster lookups) */
 function alias_make_table() {
-	
+
 	global $config, $g, $aliastable;
-	
+
 	$aliastable = array();
-	
+
 	if (is_array($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $alias) {
 			if ($alias['name'])
@@ -308,17 +308,17 @@ function alias_make_table() {
 
 /* check if an alias exists */
 function is_alias($name) {
-	
+
 	global $aliastable;
-	
+
 	return isset($aliastable[$name]);
 }
 
 /* expand a host or network alias, if necessary */
 function alias_expand($name) {
-	
+
 	global $aliastable;
-	
+
 	if (isset($aliastable[$name]))
 		return $aliastable[$name];
 	else if (is_ipaddr($name) || is_subnet($name))
@@ -329,9 +329,9 @@ function alias_expand($name) {
 
 /* expand a host alias, if necessary */
 function alias_expand_host($name) {
-	
+
 	global $aliastable;
-	
+
 	if (isset($aliastable[$name]) && is_ipaddr($aliastable[$name]))
 		return $aliastable[$name];
 	else if (is_ipaddr($name))
@@ -342,9 +342,9 @@ function alias_expand_host($name) {
 
 /* expand a network alias, if necessary */
 function alias_expand_net($name) {
-	
+
 	global $aliastable;
-	
+
 	if (isset($aliastable[$name]) && is_subnet($aliastable[$name]))
 		return $aliastable[$name];
 	else if (is_subnet($name))
@@ -365,10 +365,10 @@ function check_subnets_overlap($subnet1, $bits1, $subnet2, $bits2) {
 		$relbits = $bits1;
 	else
 		$relbits = $bits2;
-	
+
 	$sn1 = gen_subnet_mask_long($relbits) & ip2long($subnet1);
 	$sn2 = gen_subnet_mask_long($relbits) & ip2long($subnet2);
-	
+
 	if ($sn1 == $sn2)
 		return true;
 	else
@@ -405,7 +405,7 @@ function verify_digital_signature($fname) {
 /* obtain MAC address given an IP address by looking at the ARP table */
 function arp_get_mac_by_ip($ip) {
 	exec("/usr/sbin/arp -n {$ip}", $arpoutput);
-	
+
 	if ($arpoutput[0]) {
 		$arpi = explode(" ", $arpoutput[0]);
 		$macaddr = $arpi[3];
@@ -414,8 +414,45 @@ function arp_get_mac_by_ip($ip) {
 		else
 			return false;
 	}
-	
+
 	return false;
+}
+
+/* return a fieldname that is safe for xml usage */
+function xml_safe_fieldname($fieldname) {
+	$fieldname = str_replace("/","",$fieldname);
+	$fieldname = str_replace("-","",$fieldname);
+	$fieldname = str_replace(" ","",$fieldname);
+	$fieldname = str_replace("!","",$fieldname);
+	$fieldname = str_replace("@","",$fieldname);
+	$fieldname = str_replace("#","",$fieldname);
+	$fieldname = str_replace("$","",$fieldname);
+	$fieldname = str_replace("%","",$fieldname);
+	$fieldname = str_replace("^","",$fieldname);
+	$fieldname = str_replace("&","",$fieldname);
+	$fieldname = str_replace("*","",$fieldname);
+	$fieldname = str_replace("(","",$fieldname);
+	$fieldname = str_replace(")","",$fieldname);
+	$fieldname = str_replace("_","",$fieldname);
+	$fieldname = str_replace("+","",$fieldname);
+	$fieldname = str_replace("=","",$fieldname);
+	$fieldname = str_replace("{","",$fieldname);
+	$fieldname = str_replace("}","",$fieldname);
+	$fieldname = str_replace("[","",$fieldname);
+	$fieldname = str_replace("]","",$fieldname);
+	$fieldname = str_replace("|","",$fieldname);
+	$fieldname = str_replace("\\","",$fieldname);
+	$fieldname = str_replace("/","",$fieldname);
+	$fieldname = str_replace("<","",$fieldname);
+	$fieldname = str_replace(">","",$fieldname);
+	$fieldname = str_replace("?","",$fieldname);
+	$fieldname = str_replace(":","",$fieldname);
+	$fieldname = str_replace(",","",$fieldname);
+	$fieldname = str_replace(".","",$fieldname);
+	$fieldname = str_replace("'","",$fieldname);
+	$fieldname = str_replace("\"","",$fieldname);
+	$fieldname = strtolower($fieldname);
+	return $fieldname;
 }
 
 ?>

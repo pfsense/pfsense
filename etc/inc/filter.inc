@@ -162,6 +162,8 @@ function filter_configure() {
 				}
 			}
 		}
+		if ($g['booting'])
+			echo "done\n";
 		return 0;
 	}
 }

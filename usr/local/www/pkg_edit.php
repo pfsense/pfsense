@@ -291,8 +291,10 @@ $config = $config_tmp;
 				  $ifdescr = $iface['descr'];
 			  else
 				  $ifdescr = strtoupper($ifname);
-				$ifname = $iface['if'];
-				echo "<option value='" . $ifname . "'>" . $ifdescr . "</option>\n";
+			  $ifname = $iface['if'];
+			  $SELECTED = "";
+			  if($value == $ifname) $SELECTED = " SELECTED";
+			  echo "<option value='" . $ifname . "'" . $SELECTED . ">" . $ifdescr . "</option>\n";
 			}
 			echo "</select>\n";
 			echo "<br>" . fixup_string($pkga['description']) . "\n";

@@ -46,7 +46,7 @@ if (isset($id) && $a_queues[$id]) {
 
 	$pconfig['options']['red'] = $a_queues[$id]['options']['red'];
 	$pconfig['options']['ecn'] = $a_queues[$id]['options']['ecn'];
-	$pconfig['options']['default'] = $a_queues[$id]['options']['default'];
+	$pconfig['options']['defaultqueue'] = $a_queues[$id]['options']['defaultqueue'];
 	$pconfig['options']['parentqueue'] = $a_queues[$id]['options']['parentqueue'];
 	$pconfig['options']['upperlimit1'] = $a_queues[$id]['options']['upperlimit1'];
 	$pconfig['options']['upperlimit2'] = $a_queues[$id]['options']['upperlimit2'];
@@ -99,7 +99,7 @@ if ($_POST) {
 		$scheduleroptions="";
 		$queue['options']['red'] = "enabled";
 		$queue['options']['ecn'] = "enabled";
-		$queue['options']['default'] = "eanbled";
+		$queue['options']['defaultqueue'] = "eanbled";
 		if (isset($id) && $a_queues[$id])
 			$a_queues[$id] = $queue;
 		else
@@ -119,9 +119,73 @@ if ($_POST) {
 <title><?=gentitle("Firewall: Traffic shaper: Edit queue");?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="gui.css" rel="stylesheet" type="text/css">
+
+<script language="JavaScript">
+function sync_scheduler_options() {
+	if(document.forms[0].scheduler.value == 'priq') {
+		document.forms[0].defaultqueue.disabled = 0;
+		document.forms[0].parentqueue.disabled = 1;
+		document.forms[0].red.disabled = 0;
+		document.forms[0].ecn.disabled = 0;
+		document.forms[0].upperlimit.disabled = 1;
+		document.forms[0].upperlimit1.disabled = 1;
+		document.forms[0].upperlimit2.disabled = 1;
+		document.forms[0].upperlimit3.disabled = 1;
+		document.forms[0].realtime.disabled = 1;
+		document.forms[0].realtime1.disabled = 1;
+		document.forms[0].realtime2.disabled = 1;
+		document.forms[0].realtime3.disabled = 1;
+		document.forms[0].linkshare.disabled = 1;
+		document.forms[0].linkshare1.disabled = 1;
+		document.forms[0].linkshare2.disabled = 1;
+		document.forms[0].linkshare3.disabled = 1;
+		document.forms[0].childqueue.disabled = 1;
+		document.forms[0].priority.disabled = 0;
+	} else if(document.forms[0].scheduler.value == 'cbq') {
+		document.forms[0].defaultqueue.disabled = 0;
+		document.forms[0].parentqueue.disabled = 0;
+		document.forms[0].red.disabled = 0;
+		document.forms[0].ecn.disabled = 0;
+		document.forms[0].upperlimit.disabled = 1;
+		document.forms[0].upperlimit1.disabled = 1;
+		document.forms[0].upperlimit2.disabled = 1;
+		document.forms[0].upperlimit3.disabled = 1;
+		document.forms[0].realtime.disabled = 1;
+		document.forms[0].realtime1.disabled = 1;
+		document.forms[0].realtime2.disabled = 1;
+		document.forms[0].realtime3.disabled = 1;
+		document.forms[0].linkshare.disabled = 1;
+		document.forms[0].linkshare1.disabled = 1;
+		document.forms[0].linkshare2.disabled = 1;
+		document.forms[0].linkshare3.disabled = 1;
+		document.forms[0].childqueue.disabled = 0;
+		document.forms[0].priority.disabled = 0;
+	} else if(document.forms[0].scheduler.value == 'hfsc') {
+		document.forms[0].red.disabled = 0;
+		document.forms[0].ecn.disabled = 0;
+		document.forms[0].defaultqueue.disabled = 0;
+		document.forms[0].parentqueue.disabled = 0;
+		document.forms[0].upperlimit.disabled = 0;
+		document.forms[0].upperlimit1.disabled = 0;
+		document.forms[0].upperlimit2.disabled = 0;
+		document.forms[0].upperlimit3.disabled = 0;
+		document.forms[0].realtime.disabled = 0;
+		document.forms[0].realtime1.disabled = 0;
+		document.forms[0].realtime2.disabled = 0;
+		document.forms[0].realtime3.disabled = 0;
+		document.forms[0].linkshare.disabled = 0;
+		document.forms[0].linkshare1.disabled = 0;
+		document.forms[0].linkshare2.disabled = 0;
+		document.forms[0].linkshare3.disabled = 0;
+		document.forms[0].childqueue.disabled = 0;
+		document.forms[0].priority.disabled = 1;
+	}
+}
+</script>
 </head>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<body onLoad="sync_scheduler_options();" link="#0000CC" vlink="#0000CC" alink="#0000CC">
+
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Firewall: Traffic shaper: Edit queue</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -157,10 +221,10 @@ if ($_POST) {
 	    <tr>
 	      <td width="22%" valign="top" class="vncell"><b>Scheduler</b> </td>
 	      <td width="78%" class="vtable">
-		<select name="scheduler">
+		<select id="scheduler" name="scheduler" onChange="javascript:sync_scheduler_options();">
 			<option value="priq">Priority based queueing</option>
-			<!--<option value="cbq">Class based queueing</option>-->
-			<!--<option value="hfsc">Hierarchical Fair Service Curve queueing</option>-->
+			<option value="cbq">Class based queueing</option>
+			<option value="hfsc">Hierarchical Fair Service Curve queueing</option>
 		</select>
 		<br> <span class="vexpl">Select which type of queueing you would like to use
 		</span></td>
@@ -184,16 +248,16 @@ if ($_POST) {
 		$linkshare2 = $pconfig['options']["linkshare2"];
 		$linkshare3 = $pconfig['options']["linkshare3"];
 		$parentqueue = $pconfig['options']["parentqueue"];
-		$default = $pconfig['options']["default"];
+		$defaultqueue = $pconfig['options']["defaultqueue"];
 		$parent = $pconfig['options']["parent"];
 	      ?>
-	        <input type=checkbox name="default" <?php if($default) echo " CHECKED";?> > Default queue<br>
-		<input type=checkbox name="parentqueue" <?php if($parentqueue) echo " CHECKED";?> > This is a parent queue of HFSC/CBQ<br>
-		<input type=checkbox name="red" <?php if($red) echo " CHECKED";?> > Random Early Detection<br>
-		<input type=checkbox name="ecn" <?php if($ecn) echo " CHECKED";?> > Explicit Congestion Notification<br>
-		<input type=checkbox name="upperlimit" <?php if($upperlimit) echo " CHECKED";?> > Upperlimit: <input size="3" value="<?=htmlspecialchars($upperlimit1);?>" name="upperlimit1"> <input size="3" value="<?=htmlspecialchars($upperlimit2);?>" name="upperlimit2"> <input size="3" value="<?=htmlspecialchars($upperlimit3);?>" name="upperlimit3"> <br>
-		<input type=checkbox name="realtime" <?php if($realtime) echo " CHECKED";?> > Real time: <input size="3" value="<?=htmlspecialchars($realtime1);?>" name="realtime1"> <input size="3" value="<?=htmlspecialchars($realtime2); ?>" name="realtime2"> <input size="3" value="<?=htmlspecialchars($realtime3);?>" name="realtime3"><br>
-		<input type=checkbox name="linkshare" <?php if($linkshare) echo " CHECKED";?> > Link share: <input size="3" value="<?=htmlspecialchars($linkshare1);?>" value="<?=htmlspecialchars($linkshare1);?>" name="linkshare1"> <input size="3" value="<?=htmlspecialchars($linkshare2);?>" name="linkshare2"> <input size="3" value="<?=htmlspecialchars($linkshare3);?>" name="linkshare3"><br>
+	        <input type=checkbox id="defaultqueue" name="defaultqueue" <?php if($defaultqueue) echo " CHECKED";?> > Default queue<br>
+		<input type=checkbox id="red" name="red" <?php if($red) echo " CHECKED";?> > Random Early Detection<br>
+		<input type=checkbox id="ecn" name="ecn" <?php if($ecn) echo " CHECKED";?> > Explicit Congestion Notification<br>
+		<input type=checkbox id="parentqueue" name="parentqueue" <?php if($parentqueue) echo " CHECKED";?> > This is a parent queue of HFSC/CBQ<br>
+		<input type=checkbox id="upperlimit" name="upperlimit" <?php if($upperlimit) echo " CHECKED";?> > Upperlimit: <input size="3" value="<?=htmlspecialchars($upperlimit1);?>" name="upperlimit1"> <input size="3" value="<?=htmlspecialchars($upperlimit2);?>" name="upperlimit2"> <input size="3" value="<?=htmlspecialchars($upperlimit3);?>" name="upperlimit3"> <br>
+		<input type=checkbox id="realtime" name="realtime" <?php if($realtime) echo " CHECKED";?> > Real time: <input size="3" value="<?=htmlspecialchars($realtime1);?>" name="realtime1"> <input size="3" value="<?=htmlspecialchars($realtime2); ?>" name="realtime2"> <input size="3" value="<?=htmlspecialchars($realtime3);?>" name="realtime3"><br>
+		<input type=checkbox id="linkshare" id="linkshare" name="linkshare" <?php if($linkshare) echo " CHECKED";?> > Link share: <input size="3" value="<?=htmlspecialchars($linkshare1);?>" value="<?=htmlspecialchars($linkshare1);?>" id="linkshare1" name="linkshare1"> <input size="3" value="<?=htmlspecialchars($linkshare2);?>" id="linkshare2" name="linkshare2"> <input size="3" value="<?=htmlspecialchars($linkshare3);?>" id="linkshare3" name="linkshare3"><br>
 		<br> <span class="vexpl">Select options for this queue
 		</span></td>
 	    </tr>
@@ -201,9 +265,9 @@ if ($_POST) {
 	    <tr>
 		<td width="22%" valign="top" class="vncell">Parent queue (CBQ or HFSC only):</td>
 		<td width="78%" class="vtable">
-		   <select name="childqueue">
+		   <select id="childqueue" name="childqueue">
 			<?php
-			if(isset($pconfig['pfqueueing']['childqueue'])
+			if(isset($pconfig['pfqueueing']['childqueue']))
 				echo "<option value=\"" . $pconfig['pfqueueing']['childqueue'] . "\">" . $pconfig['pfqueueing']['childqueue'] . "</option>";
 			else
 				echo "<option value=\"\"></option>";
@@ -231,5 +295,8 @@ if ($_POST) {
 	  </table>
 </form>
 <?php include("fend.inc"); ?>
+<script language="JavaScript">
+sync_scheduler_options();
+</script>
 </body>
 </html>

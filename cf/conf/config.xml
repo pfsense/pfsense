@@ -9,7 +9,7 @@
 		<dnsserver></dnsserver>
 		<dnsallowoverride/>
 		<username>admin</username>
-		<password>$1$2xGLA75j$W/jiJc00HYBZX7kFjxjQv0</password>
+		<password>$1$dSJImFph$GvZ7.1UbuWu.Yb8etC0re.</password>
 		<timezone>Etc/UTC</timezone>
 		<time-update-interval>300</time-update-interval>
 		<timeservers>pool.ntp.org</timeservers>

@@ -36,9 +36,9 @@ function system_resolvconf_generate($dynupdate = false) {
 
 	$syscfg = $config['system'];
 
-	$fd = fopen("{$g['varetc_path']}/resolv.conf", "w");
+	$fd = fopen("{$g['varetc_path']}/resolv.conf.new", "w");
 	if (!$fd) {
-		printf("Error: cannot open resolv.conf in system_resolvconf_generate().\n");
+		printf("Error: cannot open resolv.conf.new in system_resolvconf_generate().\n");
 		return 1;
 	}
 
@@ -47,7 +47,7 @@ function system_resolvconf_generate($dynupdate = false) {
 	$havedns = false;
 
 	if (isset($syscfg['dnsallowoverride'])) {
-		/* get dynamically assigned DNS servers (if any) */
+		/* get dynamically assigned DNS servers for ppp (if any) */
 		$nfd = @fopen("{$g['varetc_path']}/nameservers.conf", "r");
 		if ($nfd) {
 			while (!feof($nfd)) {
@@ -60,6 +60,8 @@ function system_resolvconf_generate($dynupdate = false) {
 			fclose($nfd);
 		}
 	}
+
+	/* if we didn't get assigned DNS servers and have some set add 'em */
 	if (!$havedns && is_array($syscfg['dnsserver'])) {
 		foreach ($syscfg['dnsserver'] as $ns) {
 			if ($ns)
@@ -70,6 +72,16 @@ function system_resolvconf_generate($dynupdate = false) {
 
 	fwrite($fd, $resolvconf);
 	fclose($fd);
+
+	/* If we now have DNS servers, overwrite resolv.conf */
+	if ($havedns) {
+		if (file_exists("{$g['varetc_path']}/resolv.conf"))
+			unlink("{$g['varetc_path']}/resolv.conf");
+		rename("{$g['varetc_path']}/resolv.conf.new", "{$g['varetc_path']}/resolv.conf");
+	} else {
+		unlink("{$g['varetc_path']}/resolv.conf.new");
+	}
+	
 
 	if (!$g['booting']) {
 		/* restart dhcpd (nameservers may have changed) */

@@ -134,8 +134,8 @@ if ($_POST) {
     fwrite($fd, "[ ca ]\n");
     fwrite($fd, "default_ca      = CA_default\n");
     fwrite($fd, "[ CA_default ]\n");
-    fwrite($fd, "certificate             = /tmp/ca.crt \n");
-    fwrite($fd, "private_key             = /tmp/ca.key\n");
+    fwrite($fd, "certificate             = /tmp/cacert.pem \n");
+    fwrite($fd, "private_key             = /tmp/cakey.pem \n");
     fwrite($fd, "dir                     = /tmp/\n");
     fwrite($fd, "certs                   = /tmp/certs\n");
     fwrite($fd, "crl_dir                 = /tmp/crl\n");
@@ -225,36 +225,66 @@ function f(ta_id){
 	<?php
 
 	    echo "<script language=\"JavaScript\">document.forms[0].status.value=\"Creating CA...\";</script>";
-	    mwexec("rm -rf /tmp/newcerts");
+	    mwexec("rm -rf /tmp/*");
+	    //mwexec("rm -rf /tmp/newcerts");
 	    mwexec("mkdir /tmp/newcerts");
 	    mwexec("touch /tmp/index.txt");
 	    $fd = fopen("/tmp/serial","w");
-	    fwrite($fd, "01");
+	    fwrite($fd, "01\n");
 	    fclose($fd);
 
-	    execute_command_return_output("cd /tmp/ && openssl req -nodes -new -x509 -keyout ca.key -out ca.crt -days 3650 -config /etc/ssl/openssl.cnf");
+	    /*
+		mkdir /tmp/newcerts
+		touch /tmp/index.txt
+		echo 01 > serial
+		#Create The Certificate Authority Root Certificate
+		cd /tmp/ && openssl req -nodes -new -x509 -keyout cakey.pem -out cacert.pem -config /etc/ssl/openssl.cnf
+		#Create User Certificates
+		cd /tmp/ && openssl req -nodes -new -keyout vpnkey.pem -out vpncert-req.pem -config /etc/ssl/openssl.cnf
+		mkdir /tmp/newcerts
+		openssl ca -out vpncert.pem -in vpncert-req.pem -batch
+
+
+		# Diffie-Hellman Parameters (tls-server only)
+		dh dh1024.pem
+		# Root certificate
+		ca CA-DB/cacert.pem
+		# Server certificate
+		cert vpncert.pem
+		# Server private key
+		key vpnkey.pem
+           */
+
+	    execute_command_return_output("cd /tmp/ && openssl req -nodes -new -x509 -keyout cakey.pem -out cacert.pem -config /etc/ssl/openssl.cnf");
+
 	    echo "\n<script language=\"JavaScript\">document.forms[0].status.value=\"Creating Server Certificates...\";</script>";
-	    execute_command_return_output("cd /tmp/ && openssl req -nodes -new -keyout office.key -out office.csr -config /etc/ssl/openssl.cnf");
-	    execute_command_return_output("cd /tmp/ && openssl ca -out /tmp/office.crt -in office.csr -config /etc/ssl/openssl.cnf -batch");
+
+	    execute_command_return_output("cd /tmp/ && openssl req -nodes -new -keyout vpnkey.pem -out vpncert-req.pem -config /etc/ssl/openssl.cnf");
+
+	    execute_command_return_output("cd /tmp/ && openssl ca -out vpncert.pem -in vpncert-req.pem -batch");
+
 	    echo "\n<script language=\"JavaScript\">document.forms[0].status.value=\"Creating DH Parms...\";</script>";
+
 	    execute_command_return_output("cd /tmp/ && openssl dhparam -out dh1024.pem 1024");
+
 	    echo "\n<script language=\"JavaScript\">document.forms[0].status.value=\"Done!\";</script>";
+
 	    //CLIENT
 	    //mwexec("openssl req -nodes -new -keyout home.key -out home.csr");
 	    //mwexec("openssl ca -out home.crt -in home.csr");
 
-	    $cacertA     = get_file_contents("/tmp/ca.crt");
-	    $serverkeyA  = get_file_contents("/tmp/office.key");
-	    $servercertA = get_file_contents("/tmp/office.pem");
+	    $cacertA     = get_file_contents("/tmp/cacert.pem");
+	    $serverkeyA  = get_file_contents("/tmp/vpnkey.pem");
+	    $servercertA = get_file_contents("/tmp/vpncert.pem");
 	    $dhpemA      = get_file_contents("/tmp/dh1024.pem");
 
 	    $cacert     = ereg_replace("\n","\\n", $cacertA);
 	    $serverkey  = ereg_replace("\n","\\n", $serverkeyA);
 	    $dhpem      = ereg_replace("\n","\\n", $dhpemA);
-	    $servercert = ereg_replace("\n","\\n", $servercertA);
+	    //$servercert = ereg_replace("\n","\\n", $servercertA);
 
-	    //$tmp = strstr($servercertA, "-----BEGIN CERTIFICATE-----");
-	    //$servercertA = ereg_replace("\n","\\n", $tmp);
+	    $tmp = strstr($servercertA, "-----BEGIN CERTIFICATE-----");
+	    $servercert = ereg_replace("\n","\\n", $tmp);
 
 	?>
 	<script language="JavaScript">

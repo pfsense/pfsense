@@ -340,6 +340,7 @@ if ($_POST) {
 		$filterent['log'] = $_POST['log'] ? true : false;
 		$filterent['frags'] = $_POST['frags'] ? true : false;
 		$filterent['descr'] = $_POST['descr'];
+		$filterent['returngateway'] = $_POST['returngateway'];
 
 		if (isset($id) && $a_filter[$id])
 			$a_filter[$id] = $filterent;

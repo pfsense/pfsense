@@ -1358,7 +1358,7 @@ EOD;
 					$line .= "on \$" . $interface . " ";
 			}
 
-			$return_gateway = $config['interfaces'][$rule]['interface']]['gateway'];
+			$return_gateway = $config['interfaces'][$rule]['interface']['gateway'];
 			$return_interface = filter_translate_type_to_real_interface($interface);
 
 			if($return_gateway <> "" and $return_interface <> "") {

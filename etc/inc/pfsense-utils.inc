@@ -58,14 +58,10 @@ function return_dir_as_array($dir) {
 }
 
 /*
- * return_filename_as_array($filename): returns $filename contents as a string
+ * return_dir_as_array($filenaem): returns $filename contents as a string
  */
 function return_filename_as_string($filename) {
     $tmp = "";
-    if(!file_exists($filename)) {
-	log_error("Could not open {$filename}");
-	return;
-    }
     $fd = fopen($filename, "r");
     if(!$fd) {
 	log_error("Could not open {$filename}");
@@ -127,7 +123,7 @@ function convert_ip_to_network_format($ip, $subnet) {
  * find_interface_ip($interface): return the interface ip (first found)
  */
 function find_interface_ip($interface) {
-    $ip = exec_command("/sbin/ifconfig {$interface} | grep \"inet \" | cut -d\" \" -f2 | head -n 1");
+    $ip = exec_command("/sbin/ifconfig {$interface} | grep -w \"inet\" | cut -d\" \" -f 2");
     return $ip;
 }
 

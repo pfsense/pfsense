@@ -166,9 +166,14 @@ function filter_configure() {
 			foreach ($files as $file) {
 				if($file <> "") {
 					$text = return_filename_as_string("/usr/local/pkg/pf/" . $file);
-					if($text != "")
-						if(php_check_syntax($text, $error_message) == false)
-							eval($text);
+					if($text != "") {
+						if(stristr($file, ".sh") == true) {
+							mwexec("/usr/local/pkg/pf/" . $file . " &");
+						} else {
+							if(php_check_syntax($text, $error_message) == false)
+								eval($text);
+						}
+					}
 				}
 			}
 		}

@@ -33,18 +33,22 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['nat']['rule'])) {
+if (!is_array($config['nat']['rule']))
 	$config['nat']['rule'] = array();
-}
-nat_rules_sort();
+	
 $a_nat = &$config['nat']['rule'];
+nat_rules_sort();
 
 if ($_POST) {
 
 	$pconfig = $_POST;
 
 	if ($_POST['apply']) {
+
+		write_config();
+
 		$retval = 0;
+
 		if (!file_exists($d_sysrebootreqd_path)) {
 			config_lock();
 			$retval |= filter_configure();
@@ -62,9 +66,6 @@ if ($_POST) {
 				unlink($d_filterconfdirty_path);
 		}
 	}
-
-
-
 }
 
 if ($_GET['act'] == "del") {

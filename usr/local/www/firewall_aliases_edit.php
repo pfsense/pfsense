@@ -145,6 +145,7 @@ function typesel_change() {
 			var cmd;
 			document.iform.address_subnet.disabled = 1;
 			document.iform.address_subnet.value = "";
+			document.iform.address_subnet.selected = 0;
 			newrows = totalrows+1;
 			for(i=2; i<newrows; i++) {
 				comd = 'document.iform.address_subnet' + i + '.disabled = 1;';
@@ -156,6 +157,7 @@ function typesel_change() {
 		case 1:	/* network */
 			var cmd;
 			document.iform.address_subnet.disabled = 0;
+			document.iform.address_subnet.value = "";
 			newrows = totalrows+1;
 			for(i=2; i<newrows; i++) {
 				comd = 'document.iform.address_subnet' + i + '.disabled = 0;';
@@ -167,6 +169,7 @@ function typesel_change() {
 		case 2:	/* port */
 			var cmd;
 			document.iform.address_subnet.disabled = 1;
+			document.iform.address_subnet.value = "";
 			newrows = totalrows+1;
 			for(i=2; i<newrows; i++) {
 				comd = 'document.iform.address_subnet' + i + '.disabled = 1;';
@@ -184,12 +187,15 @@ function update_box_type() {
 	if(selected == 'Network(s)') {
 		document.getElementById ("addressnetworkport").firstChild.data = "Network(s)";
 		document.getElementById ("address_subnet").visible = true;
+		document.getElementById ("address_subnet").disabled = true;
 	} else if(selected == 'Host(s)') {
 		document.getElementById ("addressnetworkport").firstChild.data = "Host(s)";
 		document.getElementById ("address_subnet").visible = false;
+		document.getElementById ("address_subnet").disabled = false;
 	} else if(selected == 'Port(s)') {
 		document.getElementById ("addressnetworkport").firstChild.data = "Port(s)";
 		document.getElementById ("address_subnet").visible = false;
+		document.getElementById ("address_subnet").disabled = true;
 	}
 }
 

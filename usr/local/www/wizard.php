@@ -122,7 +122,7 @@ if($pkg['step'][$stepid]['stepbeforeformdisplay'] <> "") {
 <link href="gui.css" rel="stylesheet" type="text/css">
 
 <script Language="JavaScript">
-<!-- 
+<!--
 function FieldValidate(userinput, regexp, message)
 {
         if(!userinput.match(regexp))

@@ -349,7 +349,7 @@ foreach ($packages_to_install as $id) {
                     foreach($package_conf['additional_files_needed'] as $afn) {
                         update_progress_bar($pb_percent);
                         $pb_percent += 10;
-                        $filename = get_filename_from_url($afn['item']);
+                        $filename = get_filename_from_url($afn['item'][0]);
                         fwrite($fd_log, "Downloading additional files needed for package " . $filename . " ...\n");
                         update_status("Downloading additional files needed for package " . $filename . " ...\n");
                         $prefix = "/usr/local/pkg/";
@@ -358,14 +358,16 @@ foreach ($packages_to_install as $id) {
                             $pkg_chmod = $afn['chmod'];
                         if($afn['prefix'] <> "")
                             $prefix = $afn['prefix'];
-                        system("cd {$prefix} && /usr/bin/fetch " .  $afn . " 2>/dev/null");
+                        system("cd {$prefix} && /usr/bin/fetch " .  $afn['item'][0] . " 2>/dev/null");
                         if(stristr($filename, ".tgz") <> "") {
                             update_status("Extracting tgz archive to -C for " . $filename);
                             fwrite($fd_log, "Extracting tgz archive to -C for " . $filename . " ...\n");
                             system("/usr/bin/tar xzvf /usr/local/pkg/" . $filename . " -C / >/dev/null 2>&1");
                         }
-                        if($pkg_chmod <> "")
-                            system("/bin/chmod ${pkg_chmod} {$prefix}{$filename}");
+                        if($pkg_chmod <> "") {
+                            fwrite($fd_log, "Changing file mode for {$pkg_chmod} {$prefix}{$filename}\n");
+                            system("/bin/chmod {$pkg_chmod} {$prefix}{$filename}");
+                        }
                     }
                 }
 

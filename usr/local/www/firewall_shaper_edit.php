@@ -771,7 +771,7 @@ proto_change();
 //-->
 </script>
 <?php else: ?>
-<p><strong>You need to create a pipe or queue before you can add a new rule.</strong></p>
+<p><strong>You need to create a queue before you can add a new rule.</strong></p>
 <?php endif; ?>
 <?php include("fend.inc"); ?>
 </body>

@@ -1000,22 +1000,6 @@ function filter_rules_generate() {
 		$ipfrules .= "pass out quick on " . $wanif . "  inet proto tcp from ($wanif) to any port www flags S/SA keep state label \"transparent proxy\"\n";
 	}
 
-	/* Setup outgoing NAT load balancing */
-	if (isset($config['nat']['outgoingloadbalancing']['rule'])) {
-		$tmprules .= "pass in quick on " . $lanif . " route-to { ";
-		$isfirst = 0;
-		foreach ($config['nat']['outgoingloadbalancing']['rule'] as $rule) {
-			if($rule['gatewayip'] <> "") {
-				if($isfirst == 1) $tmprules .= ", ";
-				$lbinf = guess_interface_from_ip($rule['gatewayip']);
-				$tmprules .= " (" . $lbinf . " " . $rule['gatewayip'] . ") ";
-				$isfirst = 1;
-			}
-		}
-		$tmprules .= "} round-robin from " . $lansa ."/" . $config['interfaces']['lan']['subnet'] . " to any flags S/SA modulate state label \"outgoing nat load balancing\"\n";
-		if($isfirst == 1) $ipfrules .= $tmprules;
-	}
-
 	$ipfrules .= <<<EOD
 
 # loopback
@@ -1392,6 +1376,22 @@ EOD;
 			$ri = filter_translate_type_to_real_interface($rule['interface']);
 			if($rg <> "" and $ri <> "") {
 				$line .= "reply-to (" . $ri . " " . $rg . ") ";
+			}
+
+			/* Setup outgoing load balancing */
+			if (isset($config['nat']['outgoingloadbalancing']['rule'])) {
+				$tmprules = " route-to { ";
+				$isfirst = 0;
+				foreach ($config['nat']['outgoingloadbalancing']['rule'] as $rules) {
+					if($rules['gatewayip'] <> "") {
+						if($isfirst == 1) $tmprules .= ", ";
+						$lbinf = guess_interface_from_ip($rules['gatewayip']);
+						$tmprules .= " (" . $lbinf . " " . $rules['gatewayip'] . ") ";
+						$isfirst = 1;
+					}
+				}
+				$tmprules .= "} round-robin ";
+				$line .= $tmprules;
 			}
 
 			if (isset($rule['protocol'])) {

@@ -519,6 +519,7 @@ function convert_friendly_interface_to_real_interface_name($interface) {
     if($config['interfaces'][$interface]['if'] <> "")
 	return $config['interfaces'][$interface]['if'];
     $i = 0;
+    $ifdescrs = array();
     for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 	    $ifdescrs['opt' . $j] = "opt" . $j;
     }

@@ -408,11 +408,11 @@ function fetch_latest_pkg_config() {
 	if(isset($config['system']['alt_pkgconfig_url']['enabled'])) {
 	    $pkg_config_location = $config['system']['alt_pkgconfig_url']['pkgconfig_base_url'] . $config['system']['alt_pkgconfig_url']['pkgconfig_filename'];
 	    $pkg_config_base_url = $config['system']['alt_pkgconfig_url']['pkgconfig_base_url'];
+	}
 	mwexec("/usr/bin/fetch -o {$g['tmp_path']}/pkg_config.xml {$pkg_config_location}");
 	if(!file_exists("{$g['tmp_path']}/pkg_config.xml")) {
 	    print_info_box_np("Could not download pkg_config.xml from " . $pkg_config_base_url . ". Check your DNS settings.");
 	    die;
-	}
     	}
     }
     return;

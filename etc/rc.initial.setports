@@ -244,7 +244,7 @@ EOD;
 		$iflist = get_interface_list();
 
 		foreach ($iflist_prev as $ifn => $ifa) {
-			if (!$ifa['up'] && $iflist[$ifn]['up']) {
+			if (!$ifa[$ifn]['up'] && $iflist[$ifn]['up']) {
 				echo "Detected link-up on interface {$ifn}.\n";
 				return $ifn;
 			}

@@ -149,7 +149,6 @@ function filter_get_rule_real_interface($associatedrulenumber) {
         }
 }
 
-
 function filter_get_rule_interface($associatedrulenumber) {
 	global $config;
 	foreach ($config['shaper']['rule'] as $rule) {
@@ -216,6 +215,14 @@ function filter_translate_real_interface_to_type($interface) {
         return $int;
 }
 
+function filter_translate_type_to_real_interface($interface) {
+        global $config;
+        $int = "na";
+        if($interface == "wan") return $config['interfaces']['wan']['if'];
+        if($interface == "lan") return $config['interfaces']['lan']['if'];
+        return $int;
+}
+
 function filter_setup_altq_interfaces() {
 	global $config;
 	$altq_rules  = "";
@@ -237,17 +244,19 @@ function filter_setup_altq_interfaces() {
 				}
 			}
 		}
-		if(isset($ifname['bandwidth'])) {
-			$subnet = $ifname['ipaddr'] . "/" . $ifname['subnet'];
-			if($queue_names <> ""){
-				$altq_rules .= "altq on " . $ifname['if'] . " ";
-				$altq_rules .=  $config['system']['schedulertype'] . " bandwidth " . $ifname['bandwidth'] . $ifname['bandwidthtype'] . " ";
-				$altq_rules .= "queue { " . $queue_names . " }";
-			}
-			$altq_rules .= "\n";
-			$is_first = "";
-			$queue_names = "";
+
+		$subnet = $ifname['ipaddr'] . "/" . $ifname['subnet'];
+		if($queue_names <> ""){
+			$altq_rules .= "altq on " . $ifname['if'] . " ";
+			if($ifname['bandwidth'] <> "")
+				$bandwidth = " bandwidth " . $ifname['bandwidth'] . $ifname['bandwidthtype'];
+			$altq_rules .=  $config['system']['schedulertype'] . $bandwidth  . " ";
+			$altq_rules .= "queue { " . $queue_names . " }";
 		}
+		$altq_rules .= "\n";
+		$is_first = "";
+		$queue_names = "";
+
 	}
 	return $altq_rules;
 }
@@ -296,6 +305,8 @@ function filter_generate_altq_rules() {
 			$i++;
 			continue;
 		}
+
+		$ipfrules .= "# " . $rule['descr'] . "\n";
 
 		/* does the rule deal with a PPTP interface? */
 		if ($rule['interface'] == "pptp") {
@@ -397,8 +408,17 @@ function filter_generate_altq_rules() {
 				$line .= "on ng" . ($iif+1) . " ";
 			}
 
+			$interface = "";
+			if($rule['interface'] <> "")
+				$interface = "on " . filter_translate_type_to_real_interface($rule['interface']) . " ";
+			$line .= $interface;
+
 			if (isset($rule['protocol'])) {
 				$line .= "proto {$rule['protocol']} ";
+			} else {
+				if($rule['source']['port'] <> "" || $rule['destination']['port'] <> "") {
+					$line .= "proto tcp ";
+				}
 			}
 
 			/* source address */
@@ -428,32 +448,26 @@ function filter_generate_altq_rules() {
 				break;
 			}
 
+
+
 			if (isset($rule['source']['not'])) {
 				$line .= "from !$src ";
 			} else {
 				$line .= "from $src ";
 			}
 
-			if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
+                       if (!isset($rule['protocol']) || in_array($rule['protocol'], array("tcp","udp"))) {
 
-				if ($rule['source']['port']) {
-					$srcport = explode("-", $rule['source']['port']);
+                                if ($rule['source']['port'] <> "") {
+                                        $srcport = explode("-", $rule['source']['port']);
 
-					if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
-						$line .= "port = {$srcport[0]} ";
-					} else if (($srcport[0] == 1) && ($srcport[1] == 65535)) {
-						/* no need for a port statement here */
-					} else if ($srcport[1] == 65535) {
-						$line .= "port >= {$srcport[0]} ";
-					} else if ($srcport[0] == 1) {
-						$line .= "port <= {$srcport[1]} ";
-					} else {
-						$srcport[0]--;
-						$srcport[1]++;
-						$line .= "port {$srcport[0]} >< {$srcport[1]} ";
-					}
-				}
-			}
+                                        if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
+                                                $line .= "port = {$srcport[0]} ";
+                                        } else {
+                                                $line .= "port {$srcport[0]} >< {$srcport[1]} ";
+                                        }
+                                }
+                        }
 
 			/* destination address */
 			if (isset($rule['destination']['any'])) {
@@ -488,26 +502,19 @@ function filter_generate_altq_rules() {
 				$line .= "to $dst ";
 			}
 
-			if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
+                        if (!isset($rule['protocol']) || in_array($rule['protocol'], array("tcp","udp"))) {
 
-				if ($rule['destination']['port']) {
-					$dstport = explode("-", $rule['destination']['port']);
+                                if ($rule['destination']['port'] <> "") {
+                                        $srcport = explode("-", $rule['destination']['port']);
 
-					if ((!$dstport[1]) || ($dstport[0] == $dstport[1])) {
-						$line .= "port = {$dstport[0]} ";
-					} else if (($dstport[0] == 1) && ($dstport[1] == 65535)) {
-						/* no need for a port statement here */
-					} else if ($dstport[1] == 65535) {
-						$line .= "port >= {$dstport[0]} ";
-					} else if ($dstport[0] == 1) {
-						$line .= "port <= {$dstport[1]} ";
-					}  else {
-						$dstport[0]--;
-						$dstport[1]++;
-						$line .= "port {$dstport[0]} >< {$dstport[1]} ";
-					}
-				}
-			}
+                                        if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
+                                                $line .= "port = {$srcport[0]} ";
+                                        } else {
+                                                $line .= "port {$srcport[0]} >< {$srcport[1]} ";
+                                        }
+                                }
+                        }
+
 
 			if (($rule['protocol'] == "icmp") && $rule['icmptype']) {
 				$line .= "icmp-type {$rule['icmptype']} ";
@@ -566,7 +573,7 @@ function filter_generate_altq_rules() {
 				#$line .= "group $groupnum ";
 			}
 
-			$line .= "queue " . filter_altq_get_queuename($que['associatedrule']);
+			$line .= "queue " . filter_altq_get_queuename($rule['targetqueue']);
 
 			$line .= "\n";
 
@@ -583,7 +590,7 @@ function filter_altq_get_queuename($queuenum) {
         global $config;
         $x=0;
         foreach($config['shaper']['queue'] as $rule) {
-                if($x == $associatedrulenumber)
+                if($x == $queuenum)
                         return $rule['name'];
                 $x++;
         }

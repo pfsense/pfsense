@@ -513,7 +513,7 @@ if ($pkg['tabs'] <> "") {
 }
 ?>
 
-<?php if($pkga['note'] <> "") echo "<br><center>" . $pka['note'] . "</center>"; ?>
+<?php if($pkga['note'] <> "") echo "<br><center>" . $pkga['note'] . "</center>"; ?>
 
 </form>
 <?php include("fend.inc"); ?>

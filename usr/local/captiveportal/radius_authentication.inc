@@ -34,12 +34,12 @@ function RADIUS_AUTHENTICATION($username,$password,$port_type,$radiusip,$radiusp
 
 	exec("/bin/hostname", $nasHostname) ;
 	if(!$nasHostname[0])
-		$nasHostname[0] = "pfSense" ;
+		$nasHostname[0] = "m0n0wall" ;
 
 	$fd = @fsockopen("udp://$radiusip",$radiusport,$errno,$errstr,3) ;
-	if(!$fd)
+	if(!$fd) 
 		return 1 ; /* error return */
-
+	
 	/* set 5 second timeout on socket i/o */
 	stream_set_timeout($fd, 5) ;
 
@@ -81,10 +81,10 @@ function RADIUS_AUTHENTICATION($username,$password,$port_type,$radiusip,$radiusp
 		echo "username is $username with len " . strlen($username) ."\n" ;
 		echo "encryptedpassword is $encryptedpassword with len " . strlen($encryptedpassword) ."\n" ;
 		echo "nasHostname is {$nasHostname[0]} with len " . strlen($nasHostname[0]) ."\n" ;
-	}
+	}	
 
 	$ret = fwrite($fd,$data) ;
-	if( !$ret || ($ret != $length) )
+	if( !$ret || ($ret != $length) ) 
 		return 1; /* error return */
 
 	if ($debug)

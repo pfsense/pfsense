@@ -169,6 +169,14 @@ include("fbegin.inc");
 
 		parse_package_templates();
 
+		/* if start_command is defined, restart w/ this */
+		if($pkg['start_command'] <> "")
+		    exec($pkg['start_command'] . ">/dev/null 2&>1");
+
+		/* if restart_command is defined, restart w/ this */
+		if($pkg['restart_command'] <> "")
+		    exec($pkg['restart_command'] . ">/dev/null 2&>1");
+
 		if($pkg['aftersaveredirect'] <> "") {
 		    header("Location:  " . $pkg['aftersaveredirect']);
 		} else {

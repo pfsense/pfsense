@@ -179,6 +179,7 @@ function convert_ip_to_network_format($ip, $subnet) {
  * find_interface_ip($interface): return the interface ip (first found)
  */
 function find_interface_ip($interface) {
+    if(does_interface_exist($interface) == false) return;
     $ip = exec_command("/sbin/ifconfig {$interface} | grep -w \"inet\" | cut -d\" \" -f 2");
     $ip = str_replace("\n","",$ip);
     return $ip;
@@ -227,7 +228,7 @@ function get_carp_interface_status($carpinterface) {
  */
 function get_pfsync_interface_status($pfsyncinterface) {
     $result = does_interface_exist($pfsyncinterface);
-    if($result <> true) return;    
+    if($result <> true) return;
     $status = exec_command("/sbin/ifconfig {$pfsyncinterface} | grep \"pfsync:\" | cut -d\" \" -f5");
     return $status;
 }

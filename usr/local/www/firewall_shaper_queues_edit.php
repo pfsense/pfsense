@@ -48,6 +48,7 @@ if (isset($id) && $a_queues[$id]) {
 	$pconfig['options'] = $a_queues[$id]['options'];
 	$pconfig['options']['red'] = $a_queues[$id]['options']['red'];
 	$pconfig['options']['ecn'] = $a_queues[$id]['options']['ecn'];
+	$pconfig['options']['rio'] = $a_queues[$id]['options']['rio'];
 	$pconfig['options']['borrow'] = $a_queues[$id]['options']['borrow'];
 	$pconfig['options']['defaultqueue'] = $a_queues[$id]['options']['defaultqueue'];
 	$pconfig['options']['parentqueue'] = $a_queues[$id]['options']['parentqueue'];
@@ -84,7 +85,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$queue = array();
-
+		
 		$queue['schedulertype'] = $_POST['schedulertype'];
 		$queue['bandwidth'] = $_POST['bandwidth'];
 		$queue['bandwidthtype'] = $_POST['bandwidthtype'];
@@ -106,6 +107,7 @@ if ($_POST) {
 		$queue['options']['parentqueue'] = $_POST['parentqueue'];
 		$queue['options']['associatedrule'] = $_POST['associatedrule'];
 		$scheduleroptions="";
+		$queue['options']['rio'] = $_POST['rio'];
 		$queue['options']['red'] = $_POST['red'];
 		$queue['options']['ecn'] = $_POST['ecn'];
 		$queue['options']['defaultqueue'] = $_POST['defaultqueue'];
@@ -149,6 +151,7 @@ function sync_scheduler_options() {
 	var interface_type_a = '' + eval(tmp[0]) + '';
 	var interface_type = String(interface_type_a);
 	if(interface_type == 'priq') {
+		document.forms[0].rio.disabled = 0;
 		document.forms[0].bandwidth.disabled = 1;
 		document.forms[0].bandwidthtype.disabled = 1;
 		document.forms[0].bandwidth.value = "";
@@ -173,6 +176,7 @@ function sync_scheduler_options() {
 		document.forms[0].childqueue.disabled = 1;
 		document.forms[0].priority.disabled = 0;
 	} else if(interface_type == 'cbq') {
+		document.forms[0].rio.disabled = 0;
 		document.forms[0].borrow.disabled = 0;
 		document.forms[0].bandwidth.disabled = 0;
 		document.forms[0].bandwidthtype.disabled = 0;
@@ -195,6 +199,7 @@ function sync_scheduler_options() {
 		document.forms[0].childqueue.disabled = 0;
 		document.forms[0].priority.disabled = 0;
 	} else if(interface_type == 'hfsc') {
+		document.forms[0].rio.disabled = 0;
 		document.forms[0].borrow.disabled = 0;
 		document.forms[0].bandwidth.disabled = 0;
 		document.forms[0].bandwidthtype.disabled = 0;
@@ -228,6 +233,7 @@ function sync_scheduler_options() {
 <?php
 	$red = $pconfig['options']["red"];
 	$ecn = $pconfig['options']["ecn"];
+	$rio = $pconfig['options']["rio"];
 	$borrow = $pconfig['borrow']["borrow"];
 	$upperlimit = $pconfig['options']["upperlimit"];
 	$upperlimit1 = $pconfig['options']["upperlimit1"];
@@ -250,7 +256,6 @@ function sync_scheduler_options() {
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 	<form action="firewall_shaper_queues_edit.php" method="post" name="iform" id="iform">
 	  <table width="100%" border="0" cellpadding="6" cellspacing="0">
-
 	    <tr>
 	      <td valign="top" class="vncellreq">Associate with rule</td>
 	      <td class="vtable">
@@ -268,7 +273,6 @@ function sync_scheduler_options() {
 		<span class="vexpl">Choose which rule to attach this queue to.
 		</span></td>
 	    </tr>
-
 	    <tr>
 	      <td valign="top" class="vncellreq">Bandwidth</td>
 	      <td class="vtable"> <input name="bandwidth" class="formfld" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">
@@ -302,6 +306,7 @@ function sync_scheduler_options() {
 	        <input type="checkbox" id="defaultqueue" name="defaultqueue" <?php if($defaultqueue) echo " CHECKED";?> > Default queue<br>
 		<input type="checkbox" id="borrow" name="borrow" <?php if($borrow) echo " CHECKED";?> > Borrow from other queues when evailable<br>
 		<input type="checkbox" id="red" name="red" <?php if($red) echo " CHECKED";?> > Random Early Detection<br>
+		<input type="checkbox" id="ecn" name="rio" <?php if($ecn) echo " CHECKED";?> > Random Early Detection In and Out<br>
 		<input type="checkbox" id="ecn" name="ecn" <?php if($ecn) echo " CHECKED";?> > Explicit Congestion Notification<br>
 		<input type="checkbox" id="parentqueue" name="parentqueue" <?php if($parentqueue) echo " CHECKED";?> > This is a parent queue of HFSC/CBQ<br>
 		<input type="checkbox" id="upperlimit" name="upperlimit" <?php if($upperlimit) echo " CHECKED";?> > Upperlimit: <input size="3" value="<?=htmlspecialchars($upperlimit1);?>" name="upperlimit1"> <input size="3" value="<?=htmlspecialchars($upperlimit2);?>" name="upperlimit2"> <input size="3" value="<?=htmlspecialchars($upperlimit3);?>" name="upperlimit3"> <br>
@@ -310,7 +315,6 @@ function sync_scheduler_options() {
 		<br> <span class="vexpl">Select options for this queue
 		</span></td>
 	    </tr>
-
 	    <tr>
 		<td width="22%" valign="top" class="vncell">Parent queue (CBQ or HFSC only):</td>
 		<td width="78%" class="vtable">
@@ -330,9 +334,6 @@ function sync_scheduler_options() {
 		   </select>
 		</td>
 	    </tr>
-
-	<!-- XXX: add javascript to show/hide queueing options such as low bandwidth (hfsc, cbq) -->
-
 	    <tr>
 	      <td width="22%" valign="top">&nbsp;</td>
 	      <td width="78%"> <input name="Submit" type="submit" class="formbtn" value="Save">

@@ -46,7 +46,7 @@ cd /var/run && cp /dev/null utmp && chmod 644 utmp
 /sbin/ldconfig -elf /usr/lib
 
 echo
-echo "Starting LiveBSD.com's m0n0wall 1.2b2 PF ..."
+echo "Starting pfSense ..."
 echo
 
 # let the PHP-based configuration subsystem set up the system now

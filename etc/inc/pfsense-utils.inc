@@ -875,6 +875,8 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
     $pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
     if(isset($pkg_config['nosync'])) continue;
     //if($show_message == true) print "Syncing " . $pkg_name;
+    if($pkg['custom_php_global_functions'] <> "")
+        eval($pkg['custom_php_global_functions']);
     if($pkg_config['custom_php_command_before_form'] <> "")
 	eval($pkg_config['custom_php_command_before_form']);
     if($pkg_config['custom_php_resync_config_command'] <> "")

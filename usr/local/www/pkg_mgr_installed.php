@@ -94,6 +94,7 @@ $config = $config_tmp;
                             $i++;
                         }
 		    }
+                    if($i == 0) echo "<tr><td colspan=\"3\"><center>There are currently no packages installed.</td></tr>";
                  }
 		?>
         </table>

@@ -33,7 +33,7 @@
 /* include globals/utility/XML parser files */
 require_once("globals.inc");
 require_once("util.inc");
-require_once("pfsense-util.inc");
+require_once("pfsense-utils.inc");
 require_once("xmlparse.inc");
 
 /* read platform */

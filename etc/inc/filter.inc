@@ -105,7 +105,9 @@ function filter_configure() {
 		$maximumstates = $config['system']['maximumstates'];
 		$rules.= "set limit states " . $maximumstates . "\n";
 	}
-	$rules.= "\nscrub all " . $mssclamp ."\n"; // reassemble all directions
+	
+	$rules.= "\n";
+	$rules.= "scrub on {$wanif} reassemble tcp random-id " . $mssclamp ."\n"; // reassemble all directions
 	$rules.= $altq_ints . "\n";
 	$rules.= $altq_queues . "\n";
 	$rules.= $natrules . "\n";

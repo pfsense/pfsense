@@ -137,54 +137,54 @@ if ($_POST) {
     <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
     <form action="system_advanced_create_certs.php" method="post" name="iform" id="iform">
     <?php include("fbegin.inc"); ?>
-	  <p class="pgtitle">System: Advanced functions - Create Certificates</p>
+	  <p class="pgtitle">System: Advanced - Create Certificates</p>
 
-	  <table>
+	  <table width="100%" border="0" cellpadding="6" cellspacing="0">
 		    <tr>
-		      <td width="22%" valign="top" class="vncell">Country Code (2 Letters)</td>
+		      <td width="35%" valign="top" class="vncell"><B>Country Code (2 Letters)</td>
 		      <td width="78%" class="vtable">
 			<input name="countrycode" value="<?=$countrycode?>">
 			</span></td>
 		    </tr>
 
 		    <tr>
-		      <td width="22%" valign="top" class="vncell">State or Province name</td>
+		      <td width="35%" valign="top" class="vncell"><B>State or Province name</td>
 		      <td width="78%" class="vtable">
 			<input name="stateorprovince" value="<?=$stateorprovince?>">
 			</span></td>
 		    </tr>
 
 		    <tr>
-		      <td width="22%" valign="top" class="vncell">City name</td>
+		      <td width="35%" valign="top" class="vncell"><B>City name</td>
 		      <td width="78%" class="vtable">
 			<input name="cityname" value="<?=$cityname?>">
 			</span></td>
 		    </tr>
 
 		    <tr>
-		      <td width="22%" valign="top" class="vncell">Organization name</td>
+		      <td width="35%" valign="top" class="vncell"><B>Organization name</td>
 		      <td width="78%" class="vtable">
 			<input name="orginizationname" value="<?=$orginizationname?>">
 			</span></td>
 		    </tr>
 
 		    <tr>
-		      <td width="22%" valign="top" class="vncell">Organization department</td>
+		      <td width="35%" valign="top" class="vncell"><B>Organization department</td>
 		      <td width="78%" class="vtable">
 			<input name="orginizationdepartment" value="<?=$orginizationdepartment?>">
 			</span></td>
 		    </tr>
 
 		    <tr>
-		      <td width="22%" valign="top" class="vncell">Common Name (Your name)</td>
+		      <td width="35%" valign="top" class="vncell"><B>Common Name (Your name)</td>
 		      <td width="78%" class="vtable">
 			<input name="commonname" value="<?=$commonname?>">
 			</span></td>
 		    </tr>
-		    
+
 		    <!--
 		    <tr>
-		      <td width="22%" valign="top" class="vncell">E-Mail address</td>
+		      <td width="35%" valign="top" class="vncell"><B>E-Mail address</td>
 		      <td width="78%" class="vtable">
 			<input name="email" value="<?=$email?>">
 			</span></td>
@@ -192,7 +192,7 @@ if ($_POST) {
 		    -->
 
 		    <tr>
-		      <td width="22%" valign="top">&nbsp;</td>
+		      <td width="35%" valign="top">&nbsp;</td>
 		      <td width="78%">
 			<input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
 		      </td>

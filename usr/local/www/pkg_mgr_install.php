@@ -242,6 +242,9 @@ $pkgent = array();
 $pkgent['name'] = $pkg_config['packages']['package'][$id]['name'];
 $pkgent['descr'] = $pkg_config['packages']['package'][$id]['descr'];
 $pkgent['category'] = $pkg_config['packages']['package'][$id]['category'];
+
+$pkgent['version'] = $pkg_config['packages']['package'][$id]['version'];
+
 $pkgent['depends_on_package'] = $a_out[$id]['depends_on_package'];
 $pkgent['depends_on_package_base_url'] = $a_out[$id]['depends_on_package_base_url'];
 $pkgent['pfsense_package'] = $a_out[$id]['pfsense_package'];

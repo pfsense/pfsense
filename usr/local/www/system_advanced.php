@@ -144,7 +144,7 @@ function enable_change(enable_over) {
             <?php if ($savemsg) print_info_box($savemsg); ?>
             <p><span class="vexpl"><span class="red"><strong>Note: </strong></span>the
               options on this page are intended for use by advanced users only,
-              and there's <strong>NO</strong> support for them.</span></p>
+              and there's <strong>NO</strong> support for them.</span></p><br>
 
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 

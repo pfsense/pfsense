@@ -811,4 +811,40 @@ Content-Length: $content_length
 
 }
 
+/*
+ *  php_check_syntax($code_tocheck, $errormessage): checks $code_to_check for errors
+ */
+if (!function_exists('php_check_syntax')){
+   function php_check_syntax($code_to_check, &$errormessage){
+	$fout = fopen("/tmp/codetocheck.php","w");
+	fwrite($fout, $code_to_check);
+	$command = 'php -l ' . "/tmp/codetocheck.php";
+	$output = shell_exec($command);
+	if (strpos($output, 'No syntax errors detected in') !== false){
+	    $errormessage = '';
+	    return(true);
+	} else {
+	    $errormessage = $output;
+	    return(false);
+	}
+    }
+}
+
+/*
+ *  php_check_filename_syntax($filename, $errormessage): checks the file $filename for errors
+ */
+if (!function_exists('php_check_filename_syntax')){
+   function php_check_filename_syntax($filename, &$errormessage){
+       $command = 'php -l ' . $filename;
+       $output = shell_exec($command);
+       if (strpos($output, 'No syntax errors detected in') !== false){
+           $errormessage = '';
+           return(true);
+       } else {
+           $errormessage = $output;
+           return(false);
+       }
+   }
+}
+
 ?>

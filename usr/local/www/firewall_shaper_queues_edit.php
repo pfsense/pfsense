@@ -42,10 +42,9 @@ if (isset($_POST['id']))
 $wan_sched = $config['interfaces']['wan']['schedulertype'];
 $lan_sched = $config['interfaces']['lan']['schedulertype'];
 $pconfig['schedulertype'] = $config['system']['schedulertype'];
-$schedulertype = $pconfig['schedulertype'];
+$schedulertype = $config['system']['schedulertype'];
 
 if (isset($id) && $a_queues[$id]) {
-	$pconfig['bandwidth'] = $a_queues[$id]['bandwidth'] . $a_queues[$id]['bandwidthtype'];
 	$pconfig['priority'] = $a_queues[$id]['priority'];
 	$pconfig['mask'] = $a_queues[$id]['mask'];
 	$pconfig['name'] = $a_queues[$id]['name'];
@@ -167,7 +166,6 @@ if ($_POST) {
 	$parentqueue = $pconfig["parentqueue"];
 	$defaultqueue = $pconfig["defaultqueue"];
 	$parent = $pconfig["parent"];
-	$schedulertype = $pconfig["schedulertype"];
 ?>
 <p class="pgtitle">Firewall: Traffic shaper: Edit queue</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>

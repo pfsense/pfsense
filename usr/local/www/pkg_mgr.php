@@ -72,10 +72,6 @@ $config = $config_tmp;
 <p class="pgtitle">System: Package Manager</p>
 <form action="firewall_nat_out_load_balancing.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_natconfdirty_path)): ?><p>
-<?php print_info_box_np("The Package Manager configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
-<input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
-<?php endif; ?>
 <?php
 $configa = $config;
 

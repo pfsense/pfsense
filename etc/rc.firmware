@@ -75,6 +75,13 @@ pfSenseupgrade)
 		echo "Image installed." | logger -p daemon.info -i -t Upgrade
 	fi
 
+        # process custom image if its passed
+        if [ -r $3 ]; then
+            echo "Custom image $3 found." | logger -p daemon.info -i -t Upgrade
+            tar xzPf $3 -U -C / | logger -p daemon.info -i -t Upgrade
+            echo "Custom image $3 installed." | logger -p daemon.info -i -t Upgrade
+        fi
+
 	# restore config
 	cp -p /tmp/configbak/* /conf
 

@@ -105,7 +105,10 @@ function conv_clog($logfile, $tail) {
 
 		$flent['act'] = ereg_replace(":", "", $flent['act']);
 		$flent['dst'] = ereg_replace(":", "", $flent['dst']);
-		$flent['interface'] = ereg_replace(":", "", $flent['interface']);
+		$int = ereg_replace(":", "", $flent['interface']);
+		$int = ereg_replace(" ", "", $int);
+		$flent['interface'] = $int . " - " . convert_real_interface_to_friendly_interface_name($int);
+
 
 		if($second_split[11] == "udp" or $second_split[11] == "tcp" or $second_split[11] == "icmp" or $second_split[11] == "igmp") $flent['proto'] = $second_split[11];
 

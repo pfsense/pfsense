@@ -341,6 +341,7 @@ function filter_generate_aliases() {
 	$aliases .= "# System Aliases \n";
 	$aliases .= "lan = \"{ " . $config['interfaces']['lan']['if'] . " }\"\n";
 	$aliases .= "wan = \"{ " . get_real_wan_interface() . " }\"\n";
+	$ifdescrs = array();
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 		$ifdescrs['opt' . $j] = "opt" . $j;
 	}

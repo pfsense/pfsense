@@ -144,11 +144,14 @@ $cpuTicks = explode(" ", `/sbin/sysctl -n kern.cp_time`);
 $cpuTicks2 = explode(" ", `/sbin/sysctl -n kern.cp_time`);
 
 $diff = array();
-$diff['user'] = $cpuTicks2[0] - $cpuTicks[0];
-$diff['nice'] = $cpuTicks2[1] - $cpuTicks[1];
-$diff['sys'] = $cpuTicks2[2] - $cpuTicks[2];
-$diff['intr'] = $cpuTicks2[3] - $cpuTicks[3];
-$diff['idle'] = $cpuTicks2[4] - $cpuTicks[4];
+$diff['user'] = ($cpuTicks2[0] - $cpuTicks[0])+1;
+$diff['nice'] = ($cpuTicks2[1] - $cpuTicks[1])+1;
+$diff['sys'] = ($cpuTicks2[2] - $cpuTicks[2])+1;
+$diff['intr'] = ($cpuTicks2[3] - $cpuTicks[3])+1;
+$diff['idle'] = ($cpuTicks2[4] - $cpuTicks[4])+1;
+
+echo "<-- user: {$diff['user']}  nice {$diff['nice']}  sys {$diff['sys']}  intr {$diff['intr']}  idle {$diff['idle']} -->";
+
 $totalDiff = $diff['user'] + $diff['nice'] + $diff['sys'] + $diff['intr'] + $diff['idle'];
 $cpuUsage = round(100 * (1 - $diff['idle'] / $totalDiff), 0);
 
@@ -218,11 +221,11 @@ sleep(2);
 $cpuTicks2 = explode(" ", `/sbin/sysctl -n kern.cp_time`);
 
 $diff = array();
-$diff['user'] = $cpuTicks2[0] - $cpuTicks[0];
-$diff['nice'] = $cpuTicks2[1] - $cpuTicks[1];
-$diff['sys'] = $cpuTicks2[2] - $cpuTicks[2];
-$diff['intr'] = $cpuTicks2[3] - $cpuTicks[3];
-$diff['idle'] = $cpuTicks2[4] - $cpuTicks[4];
+$diff['user'] = ($cpuTicks2[0] - $cpuTicks[0])+1;
+$diff['nice'] = ($cpuTicks2[1] - $cpuTicks[1])+1;
+$diff['sys'] = ($cpuTicks2[2] - $cpuTicks[2])+1;
+$diff['intr'] = ($cpuTicks2[3] - $cpuTicks[3])+1;
+$diff['idle'] = ($cpuTicks2[4] - $cpuTicks[4])+1;
 $totalDiff = $diff['user'] + $diff['nice'] + $diff['sys'] + $diff['intr'] + $diff['idle'];
 $cpuUsage = round(100 * (1 - $diff['idle'] / $totalDiff), 0);
 

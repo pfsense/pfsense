@@ -81,9 +81,9 @@ if ($_POST) {
 					if(stristr($tmp, "m0n0wall" != FALSE)) {
 						log_error("Upgrading m0n0wall configuration to pfsense.");
 						/* m0n0wall was found in config.  convert it. */
-						$onlyconsonants = str_replace("m0n0wall", "pfsense", $tmp);
+						$upgradedconfig = str_replace("m0n0wall", "pfsense", $tmp);
 						fopen($_FILES['conffile']['tmp_name'], "w");
-						fwrite($fd, $tmp);
+						fwrite($fd, $upgradedconfig);
 						fclose($fd);
 					}
 					system_reboot();
@@ -125,7 +125,7 @@ if ($_POST) {
                     <p> Click this button to download the system configuration
                       in XML format.<br>
                       <br>
-		      <input name="nopackages" type="checkbox" class="formcheckbox" id="nopackages">Do not backup package information.<br><br> 
+		      <input name="nopackages" type="checkbox" class="formcheckbox" id="nopackages">Do not backup package information.<br><br>
                       <input name="Submit" type="submit" class="formbtn" id="download" value="Download configuration"></td>
                 </tr>
                 <tr>

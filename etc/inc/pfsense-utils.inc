@@ -516,16 +516,16 @@ function execute_command_return_output($command) {
 function convert_friendly_interface_to_real_interface_name($interface) {
     global $config;
     $lc_interface = strtolower($interface);
-    if($config['interfaces'][$interface]['if'] <> "")
-	return $config['interfaces'][$interface]['if'];
+    if($lc_interface == "lan") return $config['interfaces']['lan']['if'];
+    if($lc_interface == "wan") return $config['interfaces']['wan']['if'];
     $i = 0;
-    $ifdescrs = array('wan','lan');
-    for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-	    $ifdescrs['opt' . $j] = "opt" . $j;
-    }
+    $ifdescrs = array();
+    for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
+	$ifdescrs['opt' . $j] = "opt" . $j;
     foreach ($ifdescrs as $ifdescr => $ifname) {
-	if($config['interfaces'][$ifname]['descr'] == $lc_interface or
-	    $config['interfaces'][$ifname]['descr'] == $interface)
+	if(strtolower($ifname) == $lc_interface)
+	    return $config['interfaces'][$ifname]['if'];
+	if(strtolower($config['interfaces'][$ifname]['descr']) == $lc_interface)
 	    return $config['interfaces'][$ifname]['if'];
     }
     return $interface;
@@ -538,9 +538,8 @@ function convert_real_interface_to_friendly_interface_name($interface) {
 	global $config;
 	$i = 0;
 	$ifdescrs = array('wan', 'lan');
-	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-		$ifdescrs['opt' . $j] = "opt" . $j;
-	}
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
+	    $ifdescrs['opt' . $j] = "opt" . $j;
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 	    $int = filter_translate_type_to_real_interface($ifname);
 	    if($ifname == $interface) return $ifname;

@@ -45,13 +45,19 @@
 
 	$do_assign = 0;
 
-	if(does_interface_exist($lan_if) == false) $do_assign = 1;
+	if(does_interface_exist($lan_if) == false) {
+		echo "\n\n\nLAN {$lan_if} interface mismatch.";
+		$do_assign = 1;
+	}
 	if($config['interfaces']['wan']['ipaddr'] <> "pppoe" && $config['interfaces']['wan']['ipaddr'] <> "pptp" && $do_assign == 0)
-		if(does_interface_exist($wan_if) == false) $do_assign = 1;
+		if(does_interface_exist($wan_if) == false) {
+			echo "\n\n\nWAN {$wan_if} interface mismatch.";
+			$do_assign = 1;
+	}
 
 	if($do_assign == 1) {
 		$noreboot = true;
-		echo "\n\n\nInterface mismatch.  Running interface assignment option.\n";
+		echo " -- Running interface assignment option.\n";
 		set_networking_interfaces_ports();
 	}
 

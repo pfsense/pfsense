@@ -102,47 +102,43 @@ include("fbegin.inc");
 	// store values in xml configration file.
 	if (!$input_errors) {
 		$pkgarr = array();
-		
 		foreach ($pkg['fields']['field'] as $fields) {
 			if($fields['type'] == "rowhelper") {
 				// save rowhelper items.
-                                $rowhelperarray = array();
-                                foreach($fields['rowhelper']['rowhelperfield'] as $rowhelperfield) {
-					array_push($rowhelperarray, $rowhelperfield['fieldname']);
-				}
 				for($x=0; $x<99; $x++) { // XXX: this really should be passed from the form.
-					foreach($rowhelperarrray as $rha) {
-						$comd = "\$value = \$_POST['" . $rha . $x . "'];";
+					foreach($fields['rowhelper']['rowhelperfield'] as $rowhelperfield) {
+						$comd = "\$value = \$_POST['" . $rowhelperfield['fieldname'] . $x . "'];";
 						eval($comd);
 						if($value <> "") {
-							$comd = "pkgarr['rowhelper']['" . $rha . "'] = \"" . $value . "\";";
+							$comd = "\$pkgarr['rowhelper']['" . $rowhelperfield['fieldname'] . $y . "']['rowhelpervalue'][] = \"" . $value . "\";";
 							eval($comd);
 						}
 					}
 				}
 			} else {
 				// simply loop through all field names looking for posted
-                                // values matching the fieldnames.  if found, save to package
-                                // configuration area.
+				// values matching the fieldnames.  if found, save to package
+				// configuration area.
 				$fieldname  = $fields['fieldname'];
 				$fieldvalue = $_POST[$fieldname];
 				$toeval = "\$pkgarr['" . $fieldname . "'] 	= \"" . $fieldvalue . "\";";
 				eval($toeval);
 			}
 		}
-		
+
 		if (isset($id) && $a_pkg[$id])
 			$a_pkg[$id] = $pkgarr;
 		else
 			$a_pkg[] = $pkgarr;
-		
+
 		write_config();
-		
+
 		if($pkg['custom_add_php_command_late'] <> "") {
 		    eval($pkg['custom_add_php_command_late']);
 		}
-		
+
 		header("Location:  pkg.php?xml=" . $xml);
+		exit;
 	}
 }
 
@@ -220,7 +216,7 @@ $config = $config_tmp;
 		?>
 			<script type="text/javascript" language='javascript'>
 			<!--
-			
+
 			<?php
 				$rowcounter = 0;
 				$fieldcounter = 0;
@@ -230,18 +226,18 @@ $config = $config_tmp;
 					$fieldcounter++;
 				}
 			?>
-			
+
 			-->
 			</script>
-			
+
 			<table name="maintable" id="maintable">
-			   <tbody>		
+			   <tbody>
 
 			<?php
 				echo "<tr>";
 				  // XXX: traverse saved fields, add back needed rows.
 				echo "</tr>";
-				
+
 				if($rowcounter == 0) {
 					// nothing saved.  manually add the first row.
                                         echo "<tr>\n";
@@ -260,7 +256,7 @@ $config = $config_tmp;
 						} else if($rowhelper['type'] == "select") {
 							echo "<select name='" . $rowhelper['fieldname'] . $trc . "'>\n";
 							foreach($rowhelper['options']['option'] as $rowopt) {
-								$text .= "<option value='" . $rowopt['name'] . "'>" . $rowopt['value'] . "</option>";
+								$text .= "<option value='" . $rowopt['value'] . "'>" . $rowopt['name'] . "</option>";
 								echo "<option value='" . $rowopt['value'] . "'>" . $rowopt['name'] . "</option>\n";
 							}
 							echo "</select>\n";
@@ -276,16 +272,16 @@ $config = $config_tmp;
 					$rowcounter++;
 					echo "<td>";
 					echo "<input type=\"button\" onclick=\"removeRow(this); typesel_change();\" value=\"Delete\">";
-					echo "</td>\n";					
+					echo "</td>\n";
 					echo "</tr>\n";
 				}
 			?>
-				
+
 			  </tbody>
 			</table>
-			
+
 		<br><input type="button" onclick="addRowTo('maintable'); typesel_change();" value="Add">
-		
+
 		<script language="JavaScript">
 		<!--
 		field_counter_js = <?= $fieldcounter ?>;
@@ -293,7 +289,7 @@ $config = $config_tmp;
 		totalrows = <?php echo $rowcounter; ?>;
 		loaded = <?php echo $rowcounter; ?>;
 		typesel_change();
-		
+
 		//-->
 		</script>
 

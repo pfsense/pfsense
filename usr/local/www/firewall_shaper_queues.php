@@ -172,13 +172,25 @@ if ($_GET['act'] == "del") {
                           <font color="#FFFFFF"><?=htmlspecialchars($queue['name']);?>
                           &nbsp;
 			</td>
-                        <td valign="middle" nowrap class="list"> <a href="firewall_shaper_queues_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a>
-                          &nbsp;<a href="firewall_shaper_queues.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this queue?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
+                        <td valign="middle" nowrap class="list">
+                          <table border="0" cellspacing="0" cellpadding="1">
+                            <tr>
+                              <td valign="middle"><a href="firewall_shaper_queues_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a></td>
+                              <td valign="middle"><a href="firewall_shaper_queues.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this queue?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
+                            </tr>
+                         </table>
+                        </td>
                       </tr>
                       <?php $i++; endforeach; $total_queues = $i; ?>
                       <tr>
                         <td class="list" colspan="6"></td>
-                        <td class="list"> <a href="firewall_shaper_queues_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
+                        <td class="list">
+                          <table border="0" cellspacing="0" cellpadding="1">
+                            <tr>
+                              <td valign="middle"><a href="firewall_shaper_queues_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
+                            </tr>
+                          </table>
+                        </td>
                       </tr>
                     </table>
 		    <p>

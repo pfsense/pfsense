@@ -69,6 +69,7 @@ cd /var/run && cp /dev/null utmp && chmod 644 utmp
 
 /sbin/pfctl -f /tmp/rules.debug >/dev/null 2>&1
 /sbin/pfctl -e >/dev/null 2>&1
+/etc/rc.filter_configure >/dev/null 2>&1
 
 echo Starting INETD for FTP-PROXY...
 /usr/sbin/inetd -wW -C 60

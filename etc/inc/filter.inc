@@ -115,42 +115,38 @@ function filter_configure() {
 	fwrite($fd, $natrules);
         fwrite($fd, $pfrules);
         fclose($fd);
-
-	mwexec("/sbin/pfctl -f /tmp/rules.debug");
-	/* Load ALTQ Queue Definitions */
-	mwexec("/sbin/pfctl -Af /tmp/rules.debug");
-	/* Load NAT Rules */
-	mwexec("/sbin/pfctl -Nf /tmp/rules.debug");
-	/* Load ? Rules */
-	mwexec("/sbin/pfctl -Of /tmp/rules.debug");
-	/* Load FILTER Rules */
-	mwexec("/sbin/pfctl -Rf /tmp/rules.debug");
+	
+	system("/sbin/pfctl -f /tmp/rules.debug");
 
 	/* load ipfw+altq module */
 	if (isset($config['shaper']['enable'])) {
-		if ($g['booting'])
-			echo "Loading IPFW+ALTQ... ";
-		mwexec("/sbin/kldload ipfw");
+		if ($g['booting']) {
+			echo " IPFW+ALTQ ";
+		}
+		system("/sbin/kldload ipfw");
                 /* change one_pass to 1 so ipfw stops checking after
                    a rule has matched */
-                mwexec("/sbin/sysctl net.inet.ip.fw.one_pass=1");
+                system("/sbin/sysctl net.inet.ip.fw.one_pass=1");
                 /* load shaper rules */
-                mwexec("/sbin/ipfw -f delete set 4");
+                system("/sbin/ipfw -f delete set 4");
                 /* XXX - seems like ipfw cannot accept rules directly on stdin,
                    so we have to write them to a temporary file first */
-                $fd = fopen("{$g['tmp_path']}/ipfw.rules", "w");
+                $fd = fopen("/tmp/ipfw.rules", "w");
                 if (!$fd) {
-                        printf("Cannot open ipfw.rules in shaper_configure()\n");
+                        printf("Cannot open ipfw.rules in filter_configure()\n");
                         return 1;
                 }
                 fwrite($fd, $altq_rules);
                 fclose($fd);
-                mwexec("/sbin/ipfw {$g['tmp_path']}/ipfw.rules");
-                #unlink("{$g['tmp_path']}/ipfw.rules");
+		sleep(1);
+                system("/sbin/ipfw /tmp/ipfw.rules >/tmp/ipfw_errors.txt 2>&1");
+		system("/sbin/ipfw /tmp/ipfw.rules >/tmp/ipfw_errors.txt 2>&1");
+		system("/sbin/ipfw add $rulei set 4 pass all from any to any\n");
+		system("/sbin/ipfw enable altq\n");
+                system("/bin/mv /tmp/ipfw.rules /tmp/ipfw.rules_old");
+	} else {
+		system("/sbin/kldunload ipfw.ko");
 	}
-
-	if ($g['booting'])
-		echo "pfSense boot complete.\n\nWelcome to pfSense!\n";
 
 	return 0;
 }
@@ -540,7 +536,6 @@ function filter_generate_altq_rules() {
                 $i++;
         }
 
-	$line = "add $rulei set 4 pass all from any to any\n";
 	$rulei++;
 	$shaperrules .= $line;
 
@@ -1002,7 +997,7 @@ EOD;
 
 
 # let out anything from the firewall host itself and decrypted IPsec traffic
-#pass out quick on $wanif all keep state label "let out anything from firewall host itself"
+pass out quick on $wanif all keep state label "let out anything from firewall host itself"
 
 EOD;
 

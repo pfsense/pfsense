@@ -213,7 +213,7 @@ print_info_box($sig_warning);
 </form>
 <?php else: ?>
             <?php if (!file_exists($d_firmwarelock_path)): ?>
-<form action="system_firmware.php?UPLOAD_IDENTIFIER=<?=$id?>" method="post" enctype="multipart/form-data">
+<form action="system_firmware.php" method="post" enctype="multipart/form-data">
 <?php if($savemsg == ""): ?>
 
               <table width="100%" border="0" cellpadding="6" cellspacing="0">

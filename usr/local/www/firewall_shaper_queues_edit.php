@@ -278,6 +278,7 @@ function sync_scheduler_options() {
 			<option value="Kb">Kilobit/s</option>
 			<option value="Mb">Megabit/s</option>
 			<option value="Gb">Gigabit/s</option>
+			<option value="%">Percent</option>
 		</select>
 	      		<br>
 		<span class="vexpl">Choose the amount of bandwidth for this queue

@@ -446,6 +446,13 @@ function proto_change() {
 		portsenabled = 0;
 	}
 
+	/* Disable OS knob if the proto is not TCP. */
+	if (document.iform.proto.selectedIndex < 1) {
+		document.forms[0].os.disabled = 0;
+	} else {
+		document.forms[0].os.disabled = 1;
+	}
+
 	if (document.iform.proto.selectedIndex == 3) {
 		document.iform.icmptype.disabled = 0;
 	} else {
@@ -645,7 +652,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Source OS</td>
                   <td width="78%" class="vtable">OS Type:&nbsp;
-                    <select name="os" class="formfld">
+                    <select name="os" id="os" class="formfld">
                       <?php
                                           $ostypes = array(
 						"" => "any",

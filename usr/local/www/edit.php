@@ -156,6 +156,7 @@ function sf() { document.forms[0].savetopath.focus(); }
     </td>
     </tr>
   </table>
+<?php include("fend.inc"); ?>
 </form>
 </body>
 </html>

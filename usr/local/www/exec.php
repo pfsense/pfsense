@@ -1,5 +1,12 @@
 #!/usr/local/bin/php
 <?php
+/*
+	Exec+ v1.02-000 - Copyright 2001-2003, All rights reserved
+	Created by technologEase (http://www.technologEase.com).
+
+	(modified for m0n0wall by Manuel Kasper <mk@neon1.net>)
+*/
+
 if (($_POST['submit'] == "Download") && file_exists($_POST['dlPath'])) {
 	session_cache_limiter('public');
 	$fd = fopen($_POST['dlPath'], "rb");
@@ -15,18 +22,16 @@ if (($_POST['submit'] == "Download") && file_exists($_POST['dlPath'])) {
 	$ulmsg = "Uploaded file to /tmp/" . htmlentities($_FILES['ulfile']['name']);
 	unset($_POST['txtCommand']);
 }
+
+require("guiconfig.inc");
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
 <?php
 
-/*
-	Exec+ v1.02-000 - Copyright 2001-2003, All rights reserved
-	Created by technologEase (http://www.technologEase.com).
-
-	(modified for m0n0wall by Manuel Kasper <mk@neon1.net>)
-*/
+include("fbegin.inc");
 
 // Function: is Blank
 // Returns true or false depending on blankness of argument.
@@ -235,6 +240,7 @@ if (!isBlank($_POST['txtCommand'])) {
         <input name="submit" type="submit"  class="button" id="upload" value="Upload"></td>
     </tr>
   </table>
+<?php include("fend.inc"); ?>
 </form>
 <script language="Javascript">
 document.forms[0].txtCommand.focus();

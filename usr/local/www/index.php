@@ -38,6 +38,17 @@ if(file_exists("/usr/local/www/trigger_initial_wizard")) {
 	conf_mount_rw();
 	unlink("/usr/local/www/trigger_initial_wizard");
 	conf_mount_ro();
+?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title><?=gentitle("pfSense webGUI");?></title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="gui.css" rel="stylesheet" type="text/css">
+</head>
+<form>
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<?php
 	echo "<center>";
 	echo "Welcome to pfSense!<p>";
 	echo "One moment while we start the initial setup wizard.<p>";

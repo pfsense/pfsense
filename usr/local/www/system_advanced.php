@@ -83,6 +83,10 @@ if ($_POST) {
 	if ($_POST['altfirmwareurl'])
 		if ($_POST['firmwareurl'] == "" || $_POST['firmwarename'] == "")
 		$input_errors[] = "You must specify a base URL and a filename for the alternate firmware.";
+
+	if ($_POST['altpkgconfigurl'])
+		if ($_POST['pkgconfig_base_url'] == "" || $_POST['pkgconfig_filename'] == "")
+		$input_errors[] = "You must specifiy and base URL and a filename before using an alternate pkg_config.xml.";
 	}
 
 	if (!$input_errors) {
@@ -154,7 +158,7 @@ if ($_POST) {
 		} else if (($g['platform'] == "generic-pc") && ($config['system']['harddiskstandby'] != $oldharddiskstandby)) {
 			if (!$config['system']['harddiskstandby']) {
 				// Reboot needed to deactivate standby due to a stupid ATA-protocol
-				touch($d_sysrebootreqd_path);
+				Touch($d_sysrebootreqd_path);
 				unset($config['system']['harddiskstandby']);
 			} else {
 				// No need to set the standby-time if a reboot is needed anyway
@@ -202,7 +206,7 @@ function enable_altfirmwareurl(enable_over) {
         }
 }
 function enable_altpkgconfigurl(enable_over) {
-	if (document.iform.altpkgconfig.checked || enable_over) {
+	if (document.iform.altpkgconfigurl.checked || enable_over) {
 		document.iform.pkgconfig_base_url.disabled = 0;
 		document.iform.pkgconfig_filename.disabled = 0;
 	} else {
@@ -348,10 +352,10 @@ function enable_altpkgconfigurl(enable_over) {
                 <tr>
                   <td valign="top" class="vncell">Alternate pkg_config.xml URL</td>
                   <td class="vtable">
-                    <input name="altfirmwareurl" type="checkbox" id="altpkgconfigeurl" value="yes" onClick="enable_altpkgconfigurl()" <?php if (isset($pconfig['altpkgconfigurl'])) echo "checked"; ?>> Retrieve the package list from a different URL<br>
+                    <input name="altpkgconfigurl" type="checkbox" id="altpkgconfigurl" value="yes" onClick="enable_altpkgconfigurl()" <?php if (isset($pconfig['altpkgconfigurl'])) echo "checked"; ?>> Retrieve the package list from a different URL<br>
                     <table>
                     <tr><td>Base URL:</td><td><input name="pkgconfig_base_url" type="input" id="pkgconfig_base_url" size="64" value="<?php if ($pconfig['pkg_config_base_url']) echo $pconfig['pkg_config_base_url']; else echo $g['pkg_config_base_url']; ?>"></td></tr>
-                    <tr><td>Filename:</td><td><input name="pkg_config_filename" type="input" id="pkg_config_filename" size="32" value="<?php if ($pconfig['pkg_config_filename']) echo $pconfig['pkg_config_filename']; else echo $g['pkg_config_filename']; ?>"></td></tr>
+                    <tr><td>Filename:</td><td><input name="pkgconfig_filename" type="input" id="pkgconfig_filename" size="32" value="<?php if ($pconfig['pkg_config_filename']) echo $pconfig['pkg_config_filename']; else echo $g['pkg_config_filename']; ?>"></td></tr>
                     </table>
                     <span class="vexpl">
     This is where pfSense will fetch its package list from.</span></td>
@@ -492,6 +496,7 @@ function enable_altpkgconfigurl(enable_over) {
 <!--
 enable_change(false);
 enable_altfirmwareurl(false);
+enable_altpkgconfigurl(false);
 //-->
 </script>
 <?php include("fend.inc"); ?>

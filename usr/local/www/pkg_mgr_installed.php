@@ -41,10 +41,7 @@ require("xmlparse_pkg.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php
-$config_tmp = $config;
-$config = $pfSense_config;
 include("fbegin.inc");
-$config = $config_tmp;
 ?>
 <p class="pgtitle">System: Package Manager</p>
 <form action="firewall_nat_out_load_balancing.php" method="post">

@@ -484,7 +484,6 @@ fclose($fd_log);
 echo "<p><center>Installation completed.  Show <a href=\"pkg_mgr_install.php?showlog=true\">install log</a></center>";
 
 echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
-echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
 
 conf_mount_ro();
 

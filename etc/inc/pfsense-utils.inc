@@ -993,6 +993,7 @@ function auto_upgrade() {
                 $firmwarename=$g['firmwarefilename'];
         }
         exec_rc_script_async("/etc/rc.firmware_auto {$firmwareurl} {$firmwarename} {$http_auth_username} {$http_auth_password}");
+	return;
 }
 
 /*

@@ -216,6 +216,17 @@ function enable_altpkgconfigurl(enable_over) {
 	}
 }
 
+var descs=new Array(5);
+descs[0]="as the name says, it's the normal optimization algorithm";
+descs[1]="used for high latency links, such as satellite links.  Expires idle connections later than default";
+descs[2]="expires idle connections quicker. more efficient use of CPU and memory but can drop legitimate connections";
+descs[3]="tries to avoid dropping any legitimate connections at the expense of increased memory usage and CPU utilization.";
+
+function update_description(itemnum) {
+        document.forms[0].info.value=descs[itemnum];
+
+}
+
 // -->
 </script>
 </head>
@@ -444,14 +455,20 @@ function enable_altpkgconfigurl(enable_over) {
 		<tr>
                   <td width="22%" valign="top" class="vncell">Firewall Optimization Options</td>
                   <td width="78%" class="vtable">
-		    <select name="optimization" id="optimization">
-			<option value="normal"<?php if($config['system']['optimization']=="normal") echo " SELECTED"; ?>>normal - as the name says, it's the normal optimization algorithm.</option>
-			<option value="high-latency"<?php if($config['system']['optimization']=="high-latency") echo " SELECTED"; ?>>high-latency - used for high latency links, such as satellite links.  Expires idle connections later than default.</option>
-			<option value="aggressive"<?php if($config['system']['optimization']=="aggressive") echo " SELECTED"; ?>>aggressive - expires idle connections earlier than default; using less memory and CPU time while possibly dropping some legitimate connections.</option>
-			<option value="conservative"<?php if($config['system']['optimization']=="conservative") echo " SELECTED"; ?>>conservative - tries to avoid dropping any legitimate connections at the expense of increased memory usage and CPU utilization.</option>
-		    </select>
+			<select onChange="update_description(this.selectedIndex);" name="optimization" id="optimization">
+			<option value="normal"<?php if($config['system']['optimization']=="normal") echo " SELECTED"; ?>>normal</option>
+			<option value="high-latency"<?php if($config['system']['optimization']=="high-latency") echo " SELECTED"; ?>>high-latency</option>
+			<option value="aggressive"<?php if($config['system']['optimization']=="aggressive") echo " SELECTED"; ?>>aggressive</option>
+			<option value="conservative"<?php if($config['system']['optimization']=="conservative") echo " SELECTED"; ?>>conservative</option>
+			</select>
+			<textarea cols="60" rows="2" id="info" name="info"style=" background-color: #ffffff; color: #000000; font-size: 8pt; border:1px;">
+			</textarea>
+			<script language="javascript">
+			update_description(document.forms[0].optimization.selectedIndex);
+			</script>
 		    <br> <span class="vexpl"><b>Select which type of state table optimization your would like to use</b></td>
                 </tr>
+
                 <tr>
                   <td width="22%" valign="top" class="vncell">Disable Firewall</td>
                   <td width="78%" class="vtable">

@@ -1672,7 +1672,7 @@ function create_firewall_outgoing_rules_to_itself() {
                         $int = "ng0";
 		$ip = find_interface_ip($int);
 		if($return_gateway <> "")
-			$replyto = "reply-to ({$int} {$return_gateway}";
+			$replyto = "reply-to ({$int} {$return_gateway})";
 		else
 			$replyto = "";
 		if($ip <> "") {

@@ -65,6 +65,8 @@ function vpn_ipsec_configure($ipchg = false) {
 	}
 
 	$curwanip = get_current_wan_address();
+		if($config['ipsec']['ip'] <> "")
+			$curwanip = $config['ipsec']['ip'];
 
 	$syscfg = $config['system'];
 	$ipseccfg = $config['ipsec'];

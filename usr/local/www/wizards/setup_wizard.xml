@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<pfSenseWizard>
+<totalsteps>2</totalsteps>
+<step>
+	<id>1</id>
+	<title>pfSense Setup Wizard</title>
+	<description>This wizard will guide you through installing pfSense initially.</description>
+	<fields>
+		<name>Next</name>
+		<type>submit</type>
+	</fields>
+</step>
+<step>
+	<id>2</id>
+	<title>Time and Date</title>
+	<description>Please enter the time, date and time zone.</description>
+	<fields>
+		<field>
+			<name></name>
+			<description></description>
+			<type></type>
+		</field>
+	</fields>
+	<step_submit_php_action>
+	</step_submit_php_action>
+</step>
+</pfSenseWizard>

@@ -176,7 +176,7 @@ if(!file_exists("/tmp/pkg_config.xml")) {
             }
 }
 
-$pkg_config = parse_xml_config("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
+$pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
 
 $id = $_GET['id'];
 
@@ -239,11 +239,20 @@ $pkgent['name'] = $pkg_config['packages']['package'][$id]['name'];
 $pkgent['descr'] = $pkg_config['packages']['package'][$id]['descr'];
 $pkgent['category'] = $pkg_config['packages']['package'][$id]['category'];
 $pkgent['depends_on_package'] = $a_out[$id]['depends_on_package'];
-$pkgent['depends_on_package_base'] = $a_out[$id]['depends_on_package_base'];
+$pkgent['depends_on_package_base_url'] = $a_out[$id]['depends_on_package_base_url'];
 $pkgent['pfsense_package'] = $a_out[$id]['pfsense_package'];
-$pkgent['pfsense_package_base'] = $a_out[$id]['pfsense_package_base'];
+$pkgent['pfsense_package_base_url'] = $a_out[$id]['pfsense_package_base_url'];
 $pkgent['configurationfile'] = $a_out[$id]['configurationfile'];
-$a_out = &$config['packages']['package'];
+if($pkg_config['packages']['package'][$id]['logging']) {
+    // logging facilities.
+    $pkgent['logging']['facility'] = $pkg_config['packages']['package'][$id]['logging']['facility'];
+    $pkgent['logging']['logfile_name'] = $pkg_config['packages']['package'][$id]['logging']['logfile_name'];
+    mwexec("clog -i -s 32768 /var/log/" . $pkgent['logging']['logfile_name']);
+    mwexec("chmod 0600 /var/log/" . $pkgent['logging']['logfile_name']);
+    add_text_to_file("/etc/syslog.conf",$pkgent['logging']['facility'] . "\t\t\t" . $pkgent['logging']['logfile_name']);
+    mwexec("/usr/bin/killall -HUP syslogd");
+}
+$a_out = &$config['packages']['package']; // save item to installedpkgs
 
 update_progress_bar($pb_percent);
 $pb_percent += 10;
@@ -254,24 +263,37 @@ if($status <> "") {
             print_info_box_np("NOTICE! " . $pkgent['name'] . " is already installed!  Installation will be registered.");
 }
 
+if($pkg_config['packages']['package'][$id]['config_file'] <> "") {
+    update_status("Downloading configuration file.");
+    fwrite($fd_log, "Downloading configuration file " . $pkg_config['packages']['package'][$id]['config_file'] . " ... \n");
+    update_progress_bar($pb_percent);
+    $pb_percent += 10;
+    mwexec("cd /usr/local/pkg/ && fetch " . $pkg_config['packages']['package'][$id]['config_file']);
+    if(!file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
+        update_output_window("ERROR!  Could not fetch " . $pkg_config['packages']['package'][$id]['config_file'] . "\n");
+    }
+}
+
 update_status("Downloading and installing " . $pkgent['name'] . " - " . $pkgent['pfsense_package'] . " and its dependencies ... This could take a moment ...");
 fwrite($fd_log, "Downloading and installing " . $pkgent['name'] . " ... \n");
 
 update_progress_bar($pb_percent);
 $pb_percent += 10;
 
-$text = exec_command_and_return_text("cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base'] . "/" . $pkgent['pfsense_package']);
-update_output_window($text);
-fwrite($fd_log, "Executing: cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base'] . "/" . $pkgent['pfsense_package'] . "\n" . $text);
+if ($pkgent['pfsense_package_base_url'] <> "") {
+    $text = exec_command_and_return_text("cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base_url'] . "/" . $pkgent['pfsense_package']);
+    update_output_window($text);
+    fwrite($fd_log, "Executing: cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base_url'] . "/" . $pkgent['pfsense_package'] . "\n" . $text);
+}
 
 update_progress_bar($pb_percent);
 $pb_percent += 10;
 
-if ($pkgent['pfsense_package_base']) {
-            update_status("Downloading and installing " . $pkgent['name'] . " - " . $pkgent['depends_on_package_base'] . " and its dependencies ... This could take a moment ...");
-            $text = exec_command_and_return_text("cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base'] . "/" . $pkgent['depends_on_package']);
+if ($pkgent['depends_on_package_base_url'] <> "") {
+            update_status("Downloading and installing " . $pkgent['name'] . " - " . $pkgent['depends_on_package_base_url'] . " and its dependencies ... This could take a moment ...");
+            $text = exec_command_and_return_text("cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package']);
             update_output_window($text);
-            fwrite($fd_log, "cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base'] . "/" . $pkgent['depends_on_package'] . "\n" . $text);;
+            fwrite($fd_log, "cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package'] . "\n" . $text);;
 }
 
 update_progress_bar($pb_percent);
@@ -304,25 +326,20 @@ $pb_percent++;
 
 // parse the config file for this package and install neededtext items.
 if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
-            $config = parse_xml_config("/usr/local/pkg/" . $pkgent['name'] . ".xml", "packagegui");
-            foreach ($config['modify_system']['item'] as $ms) {
-                        update_progress_bar($pb_percent);
-                        $pb_percent += 10;
-                        if($ms['textneeded']) {
-                                  fwrite($fd_log, "Adding needed text items:\n");
-                                  $filecontents = exec_command_and_return_text("cat " . $ms['modifyfilename']);
-                                  $text = ereg_replace($ms['textneeded'], "", $filecontents);
-                                  $text .= $ms['textneeded'];
-                                  fwrite($fd_log, $ms['textneeded'] . "\n");
-                                  $fd = fopen($ms['modifyfilename'], "w");
-                                  fwrite($fd, $text . "\n");
-                                  fclose($fd);
-                        }
+            $package_conf = parse_xml_config_pkg("/usr/local/pkg/" . $pkgent['name'] . ".xml", "packagegui");
+            if($package_conf['modify_system']['item'] <> "") {
+                foreach ($package_conf['modify_system']['item'] as $ms) {
+                    update_progress_bar($pb_percent);
+                    $pb_percent += 10;
+                    if($ms['textneeded']) {
+                        add_text_to_file($ms['modifyfilename'],$ms['textneeded']);
+                    }
+                }
             }
             // install menu item into the ext folder
-            fwrite($fd_log, "Adding menu option to " . $config['menu']['section'] . "/" . $config['name'] . ":\n");
-            $fd = fopen("/usr/local/www/ext/" . $config['menu']['section'] . "/" . $config['name'] , "w");
-            fwrite($fd, "/usr/local/www/pkg.php?xml=" . $config['name'] . "\n");
+            fwrite($fd_log, "Adding menu option to " . $package_conf['menu']['section'] . "/" . $config['name'] . "\n");
+            $fd = fopen("/usr/local/www/ext/" . $package_conf['menu']['section'] . "/" . $package_conf['name'] , "w");
+            fwrite($fd, "/usr/local/www/pkg.php?xml=" . $package_conf['menu']['name'] . "\n");
             fclose($fd);
 } else {
             update_output_window("WARNING! /usr/local/pkg/" . $pkgent['name'] . ".xml" . " does not exist!\n");
@@ -357,8 +374,8 @@ $pb_percent += 10;
 // close log
 fclose($fd_log);
 
-if($pkgent['custom_php_install_command']) {
-    exec($pkgent['custom_php_install_command']);
+if($package_conf['custom_php_install_command']) {
+    eval($package_conf['custom_php_install_command']);
 }
 
 // reopen and read log in
@@ -375,6 +392,17 @@ update_progress_bar(100);
 
 echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
 echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
+
+function add_text_to_file($file, $text) {
+    fwrite($fd_log, "Adding needed text items:\n");
+    $filecontents = exec_command_and_return_text("cat " . $file);
+    $text = ereg_replace($text, "", $filecontents);
+    $text .= $text;
+    fwrite($fd_log, $text . "\n");
+    $fd = fopen($file, "w");
+    fwrite($fd, $text . "\n");
+    fclose($fd);
+}
 
 ?>
 

@@ -40,6 +40,7 @@ function gentitle_pkg($pgname) {
 
 // XXX: Make this input safe.
 $xml = $_GET['xml'];
+if($_POST['xml']) $xml = $_POST['xml'];
 
 if($xml == "") {
             $xml = "not_defined";
@@ -52,10 +53,10 @@ if($xml == "") {
 $package_name = $pkg['menu']['name'];
 $section      = $pkg['menu']['section'];
 $config_path  = $pkg['configpath'];
-$title        = $section . ": Edit " . $package_name
+$title        = $section . ": Edit " . $package_name;
 
 if ($_POST) {
-    if($_GET['act'] == "del") {
+    if($_POST['act'] == "del") {
 	if($pkg['custom_delete_php_command']) {
 	    eval($pkg['custom_delete_php_command']);
 	}
@@ -63,6 +64,7 @@ if ($_POST) {
     } else {
 	if($pkg['custom_add_php_command']) {
 	    eval($pkg['custom_add_php_command']);
+	    $savemsg = "User has been added.";
 	}
 	// XXX: add the xml value to config
     }
@@ -85,7 +87,8 @@ include("fbegin.inc");
 $config = $config_tmp;
 ?>
 <p class="pgtitle"><?=$title?></p>
-<form action="firewall_nat_out_load_balancing.php" method="post">
+<form action="pkg_edit.php" method="post">
+<input type="hidden" name="xml" value="<?= $xml ?>">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
 <table width="100%" border="0" cellpadding="6" cellspacing="0">

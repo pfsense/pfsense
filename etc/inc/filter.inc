@@ -968,7 +968,7 @@ EOD;
 
 			if ($sa) {
 				$ipfrules .= <<<EOD
-anchor "staticroutedsubnets"
+anchor "staticrouted"
 pass in quick on {$if} from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"
 pass in quick on {$if} from {$route['network']} to {$sa}/{$sn} label "pass traffic between statically routed subnets"
 pass out quick on {$if} from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"

@@ -2,6 +2,7 @@
 
 FMBASEURL=$1
 FMFILENAME=$2
+FETCHFILENAME=$1/$2
 
 # wait 5 seconds before beginning
 sleep 5
@@ -15,10 +16,10 @@ if [ $# -gt 3 ]; then
 HTTP_AUTH="basic:*:$3:$4"
 fi
 
-echo "Downloading ${FMFILENAME} from ${FMBASEURL} ..." | logger -p daemon.info -i -t AutoUpgrade
-/usr/bin/fetch -o /tmp/latest.tgz ${FMBASEURL}/${FMFILENAME} | logger -p daemon.info -i -t AutoUpgrade
-echo "Downloading ${FMFILENAME}.md5 from ${FMBASEURL} ..."  | logger -p daemon.info -i -t AutoUpgrade
-/usr/bin/fetch -o /tmp/latest.tgz.md5 ${FMBASEURL}/${FMFILENAME}.md5 | logger -p daemon.info -i -t AutoUpgrade
+echo "Downloading $FMFILENAME from $FMBASEURL ..." | logger -p daemon.info -i -t AutoUpgrade
+/usr/bin/fetch -o /tmp/latest.tgz $FETCHFILENAME | logger -p daemon.info -i -t AutoUpgrade
+echo "Downloading $FMFILENAME.md5 from $FMBASEURL ..."  | logger -p daemon.info -i -t AutoUpgrade
+/usr/bin/fetch -o /tmp/latest.tgz.md5 $FETCHFILENAME.md5 | logger -p daemon.info -i -t AutoUpgrade
 
 PMD=`/bin/cat /tmp/latest.tgz.md5 | cut -d" " -f4 `;
 MD=`/sbin/md5 /tmp/latest.tgz | cut -d" " -f4`;

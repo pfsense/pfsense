@@ -983,8 +983,10 @@ function auto_upgrade() {
         global $config, $g;
         $http_auth_username = "";
         $http_auth_password = "";
-        if($config['system']['proxy_auth_username'] <> "") $http_auth_username = $config['system']['proxy_auth_username'];
-        if($config['system']['proxy_auth_password'] <> "") $http_auth_password = $config['system']['proxy_auth_password'];
+        if($config['system']['proxy_auth_username'] <> "")
+	    $http_auth_username = $config['system']['proxy_auth_username'];
+        if($config['system']['proxy_auth_password'] <> "")
+	    $http_auth_password = $config['system']['proxy_auth_password'];
         if (isset($config['system']['alt_firmware_url']['enabled'])) {
                 $firmwareurl=$config['system']['alt_firmware_url']['firmware_base_url'];
                 $firmwarename=$config['system']['alt_firmware_url']['firmware_filename'];

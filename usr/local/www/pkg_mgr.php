@@ -129,7 +129,7 @@ if(!$pkg_config['packages']) {
                                     <?= $pkg['descr'] ?>
                                 </td>
                                 <td valign="middle" class="list" nowrap>
-                                    <a href="pkg_mgr_install.php?id=<?=$i;?>"><img src="plus.gif" width="17" height="17" border="0"></a>
+                                    <a onclick="return confirm('Do you really want to install this package?')" href="pkg_mgr_install.php?id=<?=$i;?>"><img src="plus.gif" width="17" height="17" border="0"></a>
 
                                 </td>
                             </tr>
@@ -148,12 +148,5 @@ if(!$pkg_config['packages']) {
 </body>
 </html>
 
-
-
-
-
-
-
-
-
+<?php mwexec("rm /tmp/pkg_config.xml"); ?>
 

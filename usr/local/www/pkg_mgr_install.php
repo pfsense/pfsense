@@ -30,17 +30,38 @@
 require("guiconfig.inc");
 require("xmlparse_pkg.inc");
 
+$fd_log = fopen("/tmp/pkg_mgr.log", "w");
+fwrite($fd_log, "Begin of Package Manager installation session.\n");
+
 function update_status($status) {
             echo "\n<script language=\"JavaScript\">document.forms[0].status.value=\"" . $status . "\";</script>";
 }
 
+function exec_command_and_return_text($command) {
+            $counter = 0;
+            $tmp = "";
+            $fd = popen($command . " 2>&1 ", "r");
+            while(!feof($fd)) {
+                $tmp .= fread($fd,49);
+            }
+            fclose($fd);
+            return $tmp;
+}
+
+function update_output_window($text) {
+            $log = ereg_replace("\n", "\\n", $text);
+            echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"" . $log . "\";</script>";
+}
+
 function execute_command_return_output($command) {
+    global $fd_log;
     $fd = popen($command . " 2>&1 ", "r");
     echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"\";</script>";
     $counter = 0;
     $counter2 = 0;
     while(!feof($fd)) {
-	$tmp = fread($fd,49);
+	$tmp = fread($fd, 50);
+        fwrite($fd_log, $tmp);
 	$tmp1 = ereg_replace("\n","\\n", $tmp);
 	$text = ereg_replace("\"","'", $tmp1);
 	if($lasttext == "..") {
@@ -115,8 +136,8 @@ if(!$pkg_config['packages']) {
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                <tr>
                  <td>
-	             <textarea cols="55" rows="1" name="status" id="status" wrap="hard">One moment please... This will take a while!</textarea>
-	             <textarea cols="55" rows="25" name="output" id="output" wrap="hard"></textarea>
+	             <textarea cols="100%" rows="1" name="status" id="status" wrap="hard">One moment please... This will take a while!</textarea>
+	             <textarea cols="100%" rows="25" name="output" id="output" wrap="hard"></textarea>
                  </td>
                </tr>
         </table>
@@ -141,16 +162,27 @@ $pkgent['depends_on_package'] = $a_out[$id]['depends_on_package'];
 $pkgent['depends_on_package_base'] = $a_out[$id]['depends_on_package_base'];
 $pkgent['pfsense_package'] = $a_out[$id]['pfsense_package'];
 $pkgent['pfsense_package_base'] = $a_out[$id]['pfsense_package_base'];
+$pkgent['configurationfile'] = $a_out[$id]['configurationfile'];
 $a_out = &$config['packages']['package'];
 
+fwrite($fd_log, "ls /var/db/pkg | grep " . $pkgent['name'] . "\n" . $status . "\n");
+if($status <> "") {
+            // package is already installed!?
+            print_info_box_np("NOTICE! " . $pkgent['name'] . " is already installed!  Installation will be registered.");
+}
+
 update_status("Downloading and installing " . $pkgent['name'] . " ... ");
+fwrite($fd_log, "Downloading and installing " . $pkgent['name'] . " ... \n");
 
-execute_command_return_output("cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base'] . "/" . $pkgent['pfsense_package']);
+$text = exec_command_and_return_text("cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base'] . "/" . $pkgent['pfsense_package']);
+update_output_window($text);
+fwrite($fd_log, "Executing: cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base'] . "/" . $pkgent['pfsense_package'] . "\n" . $text . "\n");
 
-if ($pkgent['pfsense_package_base'])
-            execute_command_return_output("cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base'] . "/" . $pkgent['depends_on_package']);
-
-// XXX: ensure package is REALLY installed before doing below...
+if ($pkgent['pfsense_package_base']) {
+            $text = exec_command_and_return_text("cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base'] . "/" . $pkgent['depends_on_package']);
+            update_output_window($text);
+            fwrite($fd_log, "cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base'] . "/" . $pkgent['depends_on_package'] . "\n" . $text . "\n");
+}
 
 $config = parse_xml_config("{$g['conf_path']}/config.xml", $g['xml_rootobj']);
 
@@ -163,7 +195,54 @@ else
 
 write_config();
 
-update_status("Package installation completed.");
+$status = exec_command_and_return_text("ls /var/db/pkg | grep " . $pkgent['name']);
+fwrite($fd_log, "ls /var/db/pkg | grep " . $pkgent['name'] . "\n" . $status . "\n");
+if($status <> "") {
+            update_status("Package installation completed.");
+            fwrite($fd_log, "Package installation completed.\n");
+} else {
+            update_status("Package WAS NOT installed properly.");
+            fwrite($fd_log, "Package WAS NOT installed properly.\n");
+}
+
+// parse the config file for this package and install neededtext items.
+$config = parse_xml_config("{$g['conf_path']}/usr/local/pkg/" . $pkgent['name'], "packagegui");
+foreach ($config['modify_system']['item'] as $ms) {
+            if($ms['textneeded']) {
+                      fwrite($fd_log, "Adding needed text items:\n");
+                      $filecontents = exec_command_and_return_text("cat " . $ms['modifyfilename']);
+                      $text = ereg_replace($ms['textneeded'], "", $filecontents);
+                      $text .= $ms['textneeded'];
+                      fwrite($fd_log, $ms['textneeded'] . "\n");
+                      $fd = fopen($ms['modifyfilename'], "w");
+                      fwrite($fd, $text . "\n");
+                      fclose($fd);
+            }
+}
+
+// install menu item into the ext folder
+mwexec("mkdir /usr/local/www/ext/System >/dev/null 2>&1");
+mwexec("mkdir /usr/local/www/ext/Interfaces >/dev/null 2>&1");
+mwexec("mkdir /usr/local/www/ext/Firewall >/dev/null 2>&1");
+mwexec("mkdir /usr/local/www/ext/VPN >/dev/null 2>&1");
+mwexec("mkdir /usr/local/www/ext/Status >/dev/null 2>&1");
+fwrite($fd_log, "Adding menu option to " . $config['menu']['section'] . "/" . $config['name'] . ":\n");
+$fd = fopen("/usr/local/www/ext/" . $config['menu']['section'] . "/" . $config['name'] , "w");
+fwrite($fd, "/usr/local/www/pkg.php?xml=" . $config['name'] . "\n");
+fclose($fd);
+
+fwrite($fd_log, "End of Package Manager installation session.");
+
+fclose($fd_log);
+
+$fd_log = fopen("/tmp/pkg_mgr.log", "r");
+$tmp = "";
+while(!feof($fd_log)) {
+            $tmp .= fread($fd_log,49);
+}
+$log = ereg_replace("\n", "\\n", $tmp);
+echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"" . $log . "\";</script>";
+
 ?>
 
 

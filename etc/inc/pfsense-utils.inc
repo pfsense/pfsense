@@ -505,7 +505,14 @@ function execute_command_return_output($command) {
  * convert_friendly_interface_to_real_interface_name($interface): convert WAN to FXP0
  */
 function convert_friendly_interface_to_real_interface_name($interface) {
-    return $config['interfaces'][$interface]['if'];
+    global $config;
+    if($interface == "lan") return $config['interfaces']['lan']['if'];
+    if($interface == "wan") return $config['interfaces']['lan']['if'];
+    foreach($config['interfaces'] as $int) {
+	if($int['descr'] == $interface)
+	    return $int['if'];
+    }
+    return;
 }
 
 /*

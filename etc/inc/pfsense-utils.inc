@@ -636,7 +636,7 @@ function reverse_strrchr($haystack, $needle) {
 }
 
 /*
- * get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", return_nosync = 1):  Return a package's XML dependencies.
+ * get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", return_nosync = 1):  Return a package's dependencies.
  *
  * $filetype = "all" || ".xml", ".tgz", etc.
  * $format = "files" (full filenames) || "names" (stripped / parsed depend names)

@@ -41,10 +41,11 @@ echo "2) Set up LAN IP address"
 echo "3) Reset webGUI password"
 echo "4) Reset to factory defaults"
 echo "5) Reboot system"
-echo "6) Ping host"
-echo "7) Shell"
-echo "8) PFtop"
-echo "9) Access web GUI using Links"
+echo "6) Halt system"
+echo "7) Ping host"
+echo "8) Shell"
+echo "9) PFtop"
+echo "10) Access web GUI using Links"
 echo
 
 read -p "Enter a number: " opmode
@@ -71,16 +72,19 @@ case ${opmode} in
 	/etc/rc.initial.reboot
 	;;
 6)
-	/etc/rc.initial.ping
+	/etc/rc.initial.halt
 	;;
 7)
+	/etc/rc.initial.ping
+	;;
+8)
 	set prompt = "\n`/bin/hostname -s`# "
 	/bin/sh
 	;;
-8)
+9)
 	/usr/local/sbin/pftop
 	;;
-9)
+10)
 	links "http://localhost"
 	;;
 esac

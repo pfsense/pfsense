@@ -1109,9 +1109,20 @@ EOD;
 
 	}
 
+	/* block bogon networks on WAN */
+	/* http://www.cymru.com/Documents/bogon-bn-nonagg.txt */
+	/* XXX - pull from www.cymru.com at some point so we don't have to manually update */
+	if (isset($config['interfaces']['wan']['blockbogons'])) {
+		$ipfrules .= <<<EOD
+
+# block bogon networks
+# http://www.cymru.com/Documents/bogon-bn-nonagg.txt
+table <bogons> persist file "/etc/bogons"
+block in $log quick on $wanif from <bogons> to any label "block bogon networks from wan"
+
+EOD;
+
 	$ipfrules .= <<<EOD
-
-
 
 # let out anything from the firewall host itself and decrypted IPsec traffic
 pass out quick on $wanif all keep state label "let out anything from firewall host itself"

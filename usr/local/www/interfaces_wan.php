@@ -73,6 +73,7 @@ if ($wancfg['ipaddr'] == "dhcp") {
 }
 
 $pconfig['blockpriv'] = isset($wancfg['blockpriv']);
+$pconfig['blockbogons'] = isset($wancfg['blockbogons']);
 $pconfig['spoofmac'] = $wancfg['spoofmac'];
 $pconfig['mtu'] = $wancfg['mtu'];
 
@@ -233,6 +234,7 @@ if ($_POST) {
 		$wancfg['bandwidthtype'] = $_POST['bandwidthtype'];
 
 		$wancfg['blockpriv'] = $_POST['blockpriv'] ? true : false;
+		$wancfg['blockbogons'] = $_POST['blockbogons'] ? true : false;
 		$wancfg['spoofmac'] = $_POST['spoofmac'];
 		$wancfg['mtu'] = $_POST['mtu'];
 
@@ -666,6 +668,13 @@ function type_change(enable_change,enable_change_pptp) {
                     unless your WAN network<br>
                     lies in such a private address space, too.</td>
                 </tr>
+                <tr>
+                  <td valign="middle">&nbsp;</td>
+                  <td class="vtable"> <input name="blockbogons" type="checkbox" id="blockbogons" value="yes" <?php if ($pconfig['blockbogons']) echo "checked"; ?>>
+                    <strong>Block bogon networks</strong><br>
+                    When set, this option blocks traffic from IP addresses that
+                    are reserved (but not RFC 1918) or not yet assigned by IANA.<br>
+                    Bogons are prefixes that should never appear in the Internet routing table, and obviously should not appear as the source address in any packets you receive.</td>
                 <tr>
                   <td width="100" valign="top">&nbsp;</td>
                   <td> &nbsp;<br> <input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change_pptp(true)&&enable_change(true)">

@@ -34,9 +34,9 @@ $omit_nocacheheaders = true;
 require("guiconfig.inc");
 require("xmlparse_pkg.inc");
 
-function spit_out_select_items() {
+function spit_out_select_items($area) {
 	$select = <<<EOD
-	<select name="backuparea">
+	<select name="{$area}">
 		<option VALUE="">ALL</option>
 		<option VALUE="shaper">Traffic Shaper</option>
 		<option VALUE="filter">Firewall Rules</option>
@@ -217,7 +217,7 @@ if (isset($config['system']['version_control'])) {
                     <p> Click this button to download the system configuration
                       in XML format.<br>
                       <br>
-		      Backup area: <?php spit_out_select_items(); ?>
+		      Backup area: <?php spit_out_select_items("backuparea"); ?>
 		      <p>
 		      <input name="nopackages" type="checkbox" class="formcheckbox" id="nopackages">Do not backup package information.<p>
                       <input name="Submit" type="submit" class="formbtn" id="download" value="Download configuration"></td>
@@ -234,7 +234,7 @@ if (isset($config['system']['version_control'])) {
                     Open a pfSense configuration XML file and click the button
                       below to restore the configuration.<br>
                       <br>
-		      Restore area: <?php spit_out_select_items(); ?>
+		      Restore area: <?php spit_out_select_items("restorearea"); ?>
 		      <p>
                       <input name="conffile" type="file" class="formfld" id="conffile" size="40">
                       <p>

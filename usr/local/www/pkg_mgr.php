@@ -104,7 +104,7 @@ if(!$pkg_config['packages']) {
     <td class="tabcont">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
-                  <td width="25%" class="listhdrr">Package Name</td>
+                  <td width="10%" class="listhdrr">Package Name</td>
                   <td width="25%" class="listhdrr">Category</td>
 				  <td width="5%" class="listhdrr">Status</td>
                   <td width="50%" class="listhdr">Description</td>

@@ -263,7 +263,7 @@ function filter_nat_rules_generate_if($if, $src, $dst, $target) {
 		$tgt = "0/32";
 
 	$natrule = <<<EOD
-nat on $if from $src to any -> $if
+nat on $if from $src to any -> ($if)
 
 EOD;
 	return $natrule;

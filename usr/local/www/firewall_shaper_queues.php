@@ -119,7 +119,7 @@ if ($_GET['act'] == "del") {
 
                           &nbsp; </td>
                         <td class="listbg">
-                          <?=htmlspecialchars($queue['name']);?>
+                          <font color="#FFFFFF"><?=htmlspecialchars($queue['name']);?>
                           &nbsp; </td>
                         <td valign="middle" nowrap class="list"> <a href="firewall_shaper_queues_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a>
                           &nbsp;<a href="firewall_shaper_queues.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this queue?')"><img src="x.gif" width="17" height="17" border="0"></a></td>

@@ -2036,6 +2036,7 @@
 			<name>ADMIN Password AGAIN</name>
 			<type>password</type>
 			<stepsubmitphpaction>
+			if($_POST['adminpassword'] != "") {
 				if($_POST['adminpassword'] == $_POST['adminpasswordagain']) {
 					$fd = popen("/usr/sbin/pw usermod -n root -H 0", "w");
 					$salt = md5(time());				
@@ -2046,6 +2047,7 @@
 					print_info_box_np("Passwords do not match!");
 					die;
 				}
+			}
 			</stepsubmitphpaction>
 		</field>
 		<field>

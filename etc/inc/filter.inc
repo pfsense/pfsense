@@ -790,7 +790,8 @@ EOD;
 		}
 	}
 
-	if (run_command_return_string("ls /var/db/pkg/ | grep squid") <> "") {
+	$squid_installed = run_command_return_string("/bin/ls /var/db/pkg/ | grep squid");
+	if ($squid_installed <> "") {
 		$natrules .= "rdr on " . $lanif . " inet proto tcp from any to any port www -> 127.0.0.1 port 3128\n";
 	}
 
@@ -878,7 +879,8 @@ function filter_rules_generate() {
 	}
 
 	/* if squid is installed, lets install its rule */
-	if (run_command_return_string("ls /var/db/pkg/ | grep squid") <> "") {
+	$squid_installed = run_command_return_string("/bin/ls /var/db/pkg/ | grep squid");
+	if ($squid_installed <> "") {
 		$ipfrules .= "pass in on " . $lanif . " inet proto tcp from any to 127.0.0.1 port 3128 keep state\n";
 		$ipfrules .= "pass out on " . $wanif . "  inet proto tcp from any to any port www keep state\n";
 	}

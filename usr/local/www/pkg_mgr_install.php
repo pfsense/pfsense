@@ -373,25 +373,26 @@ if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
              * loop through menu installation items
              * installing multiple items if need be.
             */
-            foreach ($package_conf['menu'] as $menu) {
-                        // install menu item into the ext folder
-                        fwrite($fd_log, "Adding menu option to " . $menu['section'] . "/" . $menu['name'] . "\n");
-                        $fd = fopen("/usr/local/www/ext/" . $menu['section'] . "/" . $menu['name'] , "w");
-                        if($menu['url'] <> "") {
-                                    // override $myurl for script.
-                                    $toeval = "\$myurl = \"" . getenv("HTTP_HOST") . "\"; \n";
-                                    eval($toeval);
-                                    // eval url so that above $myurl item can be processed if need be.
-                                    $urltmp = $menu['url'];
-                                    $toeval = "\$url = \"" . $urltmp . "\"; \n";
-                                    eval($toeval);
-                                    fwrite($fd, $url . "\n");
-                        } else {
-                                    $xml = "";
-                                    if(stristr($menu['configfile'],".xml") == "") $xml = ".xml";
-                                    fwrite($fd, "/pkg.php?xml=" . $menu['configfile'] . $xml . "\n");
-                        }
-                        fclose($fd);
+            if(is_array($package_conf['menu']))
+                foreach ($package_conf['menu'] as $menu) {
+                            // install menu item into the ext folder
+                            fwrite($fd_log, "Adding menu option to " . $menu['section'] . "/" . $menu['name'] . "\n");
+                            $fd = fopen("/usr/local/www/ext/" . $menu['section'] . "/" . $menu['name'] , "w");
+                            if($menu['url'] <> "") {
+                                        // override $myurl for script.
+                                        $toeval = "\$myurl = \"" . getenv("HTTP_HOST") . "\"; \n";
+                                        eval($toeval);
+                                        // eval url so that above $myurl item can be processed if need be.
+                                        $urltmp = $menu['url'];
+                                        $toeval = "\$url = \"" . $urltmp . "\"; \n";
+                                        eval($toeval);
+                                        fwrite($fd, $url . "\n");
+                            } else {
+                                        $xml = "";
+                                        if(stristr($menu['configfile'],".xml") == "") $xml = ".xml";
+                                        fwrite($fd, "/pkg.php?xml=" . $menu['configfile'] . $xml . "\n");
+                            }
+                            fclose($fd);
             }
 } else {
             update_output_window("WARNING! /usr/local/pkg/" . $pkgent['name'] . ".xml" . " does not exist!\n");

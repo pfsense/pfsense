@@ -857,7 +857,7 @@ function filter_nat_rules_generate() {
 					 "rdr on $natif proto " . $rule['protocol']. " from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
 			}
 
-			$natrules .= "\n";
+			$natrules .= "\n";nope
 		}
 	}
 
@@ -1202,10 +1202,10 @@ EOD;
 
 		$ipfrules .= <<<EOD
 
-# PPTP rules
+# PPTPd rules
 anchor "pptp"
-pass quick proto gre from any to $pptpdtarget keep state label "allow gre pptp"
-pass quick proto tcp from any to $pptpdtarget port = 1723 keep state label "allow pptp $pptpdtarget"
+pass quick proto gre from any to $pptpdtarget keep state label "allow gre pptpd"
+pass quick proto tcp from any to $pptpdtarget port = 1723 keep state label "allow pptpd $pptpdtarget"
 
 EOD;
 	}

@@ -38,14 +38,10 @@ if($_GET['reset'] <> "") {
 	exit;
 }
 
-if (!is_array($config['shaper']['pipe'])) {
-	$config['shaper']['pipe'] = array();
-}
 if (!is_array($config['shaper']['queue'])) {
 	$config['shaper']['queue'] = array();
 }
 $a_queues = &$config['shaper']['queue'];
-$a_pipe = &$config['shaper']['pipe'];
 
 $iflist = array("lan" => "LAN", "wan" => "WAN");
 

@@ -157,6 +157,56 @@ if (isset($_POST['del_x'])) {
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Firewall: Rules</p>
 <form action="firewall_rules.php" method="post">
+<script language="JavaScript">
+<!--
+function fr_toggle(id) {
+	var checkbox = document.getElementById('frc' + id);
+	checkbox.checked = !checkbox.checked;
+	fr_bgcolor(id);
+}
+function fr_bgcolor(id) {
+	var row = document.getElementById('fr' + id);
+	var checkbox = document.getElementById('frc' + id);
+	var cells = row.getElementsByTagName("td");
+
+	for (i = 2; i <= 6; i++) {
+		cells[i].style.backgroundColor = checkbox.checked ? "#FFFFBB" : "#FFFFFF";
+	}
+	cells[7].style.backgroundColor = checkbox.checked ? "#FFFFBB" : "#D9DEE8";
+}
+function fr_insline(id, on) {
+	var row = document.getElementById('fr' + id);
+	if (id != 0) {
+		var prevrow = document.getElementById('fr' + (id-1));
+	} else {
+		var prevrow = document.getElementById('frheader');
+	}
+
+	var cells = row.getElementsByTagName("td");
+	var prevcells = prevrow.getElementsByTagName("td");
+
+	for (i = 2; i <= 7; i++) {
+		if (on) {
+			prevcells[i].style.borderBottom = "3px solid #999999";
+			prevcells[i].style.paddingBottom = (id != 0) ? 2 : 3;
+		} else {
+			prevcells[i].style.borderBottomWidth = "1px";
+			prevcells[i].style.paddingBottom = (id != 0) ? 4 : 5;
+		}
+	}
+
+	for (i = 2; i <= 7; i++) {
+		if (on) {
+			cells[i].style.borderTop = "2px solid #999999";
+			cells[i].style.paddingTop = 2;
+		} else {
+			cells[i].style.borderTopWidth = 0;
+			cells[i].style.paddingTop = 4;
+		}
+	}
+}
+// -->
+</script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_filterconfdirty_path)): ?><p>
 <?php print_info_box_np("The firewall rule configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
@@ -177,7 +227,7 @@ if (isset($_POST['del_x'])) {
   <tr>
     <td class="tabcont">
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
-                <tr>
+                <tr id="frheader">
                   <td width="5%" class="list">&nbsp;</td>
                   <td width="10%" class="listhdrr">Proto</td>
                   <td width="15%" class="listhdrr">Source</td>
@@ -245,7 +295,7 @@ if (isset($_POST['del_x'])) {
 					  <td align="center" valign="middle"><input type="checkbox" name="rule[]" value="<?=$i;?>" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
 					</tr>
 					<tr>
-					  <td><input name="move_<?=$i;?>" type="image" src="left.gif" width="17" height="17" title="move selected rules before this rule"></td>
+					  <td><input onMouseOver="fr_insline(0, true)" onMouseOut="fr_insline(0, false)" name="move_<?=$i;?>" type="image" src="left.gif" width="17" height="17" title="move selected rules before this rule"></td>
 					  <td><a href="firewall_rules_edit.php?dup=<?=$i;?>"><img src="plus.gif" title="add a new rule based on this one" width="17" height="17" border="0"></a></td>
 					</tr>
 					</table>

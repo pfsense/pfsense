@@ -307,25 +307,22 @@ function is_subqueue($name) {
         return 0;
 }
 
-function filter_opt_interface_to_real($opt) {
-	global $config;
-	return $config['interfaces'][$opt]['if'];
-}
-
-function filter_get_opt_interface_descr($opt) {
-	global $config;
-	return $config['interfaces'][$opt]['descr'];
-}
-
 function filter_generate_aliases() {
 	global $config;
 
 	$aliases = "";
 
 	$i = 0;
+
+	$lanip = find_interface_ip($config['interfaces']['lan']['if']);
+	$wanip = find_interface_ip(get_real_wan_interface());
+
+	$lan_aliases = " " . link_ip_to_carp_interface($lanip);
+	$wan_aliases = " " . link_ip_to_carp_interface($wanip);
+
 	$aliases .= "# System Aliases \n";
-	$aliases .= "lan = \"{ " . $config['interfaces']['lan']['if'] . " }\"\n";
-	$aliases .= "wan = \"{ " . get_real_wan_interface() . " }\"\n";
+	$aliases .= "lan = \"{ " . $config['interfaces']['lan']['if'] . "{$lan_aliases} }\"\n";
+	$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";
 	$aliases .= "pptp = \"{  }\"\n";
 
 	$ifdescrs = array();
@@ -339,7 +336,10 @@ function filter_generate_aliases() {
 	/* Setup pf groups */
 	if (isset($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $alias) {
-			$aliases .= $alias['name'] . " = \"{ " . $alias['address'] . " }\"\n";
+			$extraalias = "";
+			$ip = find_interface_ip($alias['address']);
+			$extraalias = " " . link_ip_to_carp_interface($ip);
+			$aliases .= $alias['name'] . " = \"{ " . $alias['address'] . "{$extralias} }\"\n";
 		}
 	}
 

@@ -108,6 +108,36 @@ function is_carp_defined() {
 }
 
 /*
+ * link_ip_to_carp_interface($ip): finds where a carp interface links to.
+*/
+function link_ip_to_carp_interface($ip) {
+        $i = 0;
+
+        $ifdescrs = array('wan', 'lan');
+        for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+                $ifdescrs['opt' . $j] = "opt" . $j;
+        }
+
+	$ft = split("\.", $ip);
+	$ft_ip = $ft[0] . "." . $ft[1] . "." . $ft[2] . ".";
+
+        foreach ($ifdescrs as $ifdescr => $ifname) {
+                for($x=0; $x<99; $x++) {
+                        $carp_int = "carp{$x}";
+			$carp_ip = find_interface_ip($carp_int);
+			$carp_ft = split("\.", $carp_ip);
+			$carp_ft_ip = $carp_ft[0] . "." . $carp_ft[1] . "." . $carp_ft[2] . ".";
+                        $result = does_interface_exist($carp_int);
+                        if($result <> true) break;
+                        $interface = filter_opt_interface_to_real($ifname);
+			if($ft_ip == $carp_ft_ip)
+			    return $carp_int;
+                }
+        }
+}
+
+
+/*
  * exec_command($command): execute command return string of result
  */
 function exec_command($command) {
@@ -119,6 +149,17 @@ function exec_command($command) {
             }
             fclose($fd);
             return $tmp;
+}
+
+/*
+ * does_interface_exist($interface): return true or false if a interface is detected.
+ */
+function does_interface_exist($interface) {
+    $ints = exec_command("/sbin/ifconfig -l");
+    if(stristr($ints, $interface) !== FALSE)
+	return true;
+    else
+	return false;
 }
 
 /*
@@ -137,6 +178,16 @@ function find_interface_ip($interface) {
     $ip = exec_command("/sbin/ifconfig {$interface} | grep -w \"inet\" | cut -d\" \" -f 2");
     $ip = str_replace("\n","",$ip);
     return $ip;
+}
+
+function filter_opt_interface_to_real($opt) {
+	global $config;
+	return $config['interfaces'][$opt]['if'];
+}
+
+function filter_get_opt_interface_descr($opt) {
+	global $config;
+	return $config['interfaces'][$opt]['descr'];
 }
 
 /*

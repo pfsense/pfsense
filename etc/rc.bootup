@@ -49,11 +49,11 @@
 	if($config['interfaces']['wan']['ipaddr'] <> "pppoe" && $config['interfaces']['wan']['ipaddr'] <> "pptp" && $do_assign == 0)
 		if(does_interface_exist($wan_if) == false) $do_assign = 1;
 
-	if($do_assign == 1) {
-		$noreboot = true;
-		echo "\n\n\nInterface mismatch.  Running interface assignment option.\n";
-		set_networking_interfaces_ports();
-	}
+	//if($do_assign == 1) {
+	//	$noreboot = true;
+	//	echo "\n\n\nInterface mismatch.  Running interface assignment option.\n";
+	//	set_networking_interfaces_ports();
+	//}
 
 	/* convert configuration, if necessary */
 	convert_config();

@@ -67,7 +67,11 @@ $a_queues = &$config['shaper']['queue'];
 			echo "<img src='bar_blue.gif' height='15' name='queue{$i}widtha' id='queue{$i}widtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
 			echo "<img src='bar_gray.gif' height='15' name='queue{$i}widthb' id='queue{$i}widthb' width='" . (400 - $cpuUsage) . "' border='0' align='absmiddle'>";
 			echo "<nobr><img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
-			echo "<br><input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='100' name='queue{$i}meter' id='queue{$i}meter' value='( Loading )'></nobr>";
+			echo "<br><input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}pps' id='queue{$i}pps' value='( Loading )'>";
+			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}bps' id='queue{$i}bps' value=''>";
+			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}borrows' id='queue{$i}borrows' value=''>";
+			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}suspends' id='queue{$i}suspends' value=''>";
+			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}drops' id='queue{$i}drops' value=''></nobr>";
 ?>
 
 			</td>
@@ -120,9 +124,14 @@ While(!Connection_Aborted()) {
 
 		echo "document.queue{$i}widthb.style.width='{$packet_s}';\n";
 		echo "document.queue{$i}widtha.style.width='" . (400 - $packet_s) . "';\n";
-		$borrows_txt = "";
-		$borrows_txt = " - {$borrows} borrows - {$suspends} suspends - ${drops} drops";
-		echo "document.forms[0].queue{$i}meter.value = '" . $packet_sampled . "/pps - " . $speed . "{$borrows_txt}';\n";
+		$borrows_txt = "{$borrows} borrows";
+		$suspends_txt = "{$suspends} suspends";
+		$drops_txt = "${drops} drops";
+		echo "document.forms[0].queue{$i}pps.value = '{$packet_sampled}/pps';\n";
+		echo "document.forms[0].queue{$i}bps.value = '{$speed}';\n";
+		echo "document.forms[0].queue{$i}borrows.value = '{$borrows_txt}';\n";
+		echo "document.forms[0].queue{$i}suspends.value = '{$suspends_txt}';\n";
+		echo "document.forms[0].queue{$i}drops.value = '{$drops_txt}';\n";
 		echo "</script>\n";
 		$i++;
 	}

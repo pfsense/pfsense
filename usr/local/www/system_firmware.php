@@ -109,11 +109,12 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 	}
 } else {
 	/* Only check firmware version if we're setup to go against pfsense.org  and user wants us to */
-	if (!isset($config['system']['disablefirmwarecheck']))
-		if(!isset($config['system']['alt_firmware_url']['enabled']))
-			$fwinfo = check_firmware_version();
-		else
+	if (!isset($config['system']['disablefirmwarecheck'])) {
+		$fwinfo = check_firmware_version();
+		if(is_null($fwinfo)) {
 			$fwinfo = "Using alternate firmware URL, cannot determine if {$config['system']['alt_firmware_url']['firmware_base_url']}{$config['system']['alt_firmware_url']['firmware_filename']} is newer than current.";
+		}
+	}
 }
 
 /* upload progress bar id */

@@ -78,7 +78,7 @@ include("fbegin.inc");
                                 <td class="listlr">
                                     <?php
                                         $latest_version = get_latest_package_version($pkg['name']);
-					if($latest_version == -1) {
+					if($latest_version == false) {
 						// We can't determine this package's version status.
 						echo "Current version unkown.<br>Installed: " . $pkg['version'];
                                         } elseif($pkg['version'] <> $latest_version) {

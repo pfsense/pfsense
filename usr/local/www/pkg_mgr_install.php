@@ -396,8 +396,8 @@ function add_text_to_file($file, $text) {
     global $fd_log;
     fwrite($fd_log, "Adding needed text items:\n");
     $filecontents = exec_command_and_return_text("cat " . $file);
-    $text = ereg_replace($text, "", $filecontents);
-    $text .= $text;
+    $textTMP = replace($text, "", $filecontents);
+    $text .= $textTMP . $text;
     fwrite($fd_log, $text . "\n");
     $fd = fopen($file, "w");
     fwrite($fd, $text . "\n");

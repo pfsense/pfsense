@@ -116,6 +116,14 @@ function convert_ip_to_network_format($ip, $subnet) {
 }
 
 /*
+ * find_interface_ip($interface): return the interface ip (first found)
+ */
+function find_interface_ip($interface) {
+    $ip = system("/sbin/ifconfig {$interface} | grep \"inet \" | cut -d\" \" -f 2");
+    return $ip;
+}
+
+/*
  * find_ip_interface($ip): return the interface where an ip is defined
  */
 function find_ip_interface($ip) {

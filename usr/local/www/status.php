@@ -4,6 +4,7 @@
  * Jim McBeath <jimmc@macrovision.com> Nov 2003
  *
  * (modified for m0n0wall by Manuel Kasper <mk@neon1.net>)
+ * (modified for pfSense by Scott Ullrich geekgod@pfsense.com)
  */
 
 /* Execute a command, with a title, and generate an HTML table
@@ -111,7 +112,7 @@ defCmd("ls /conf");
 defCmd("ls /var/run");
 defCmdT("config.xml","dumpconfigxml");
 
-$pageTitle = "m0n0wall: status";
+$pageTitle = "pfSense: status";
 
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];

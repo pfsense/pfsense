@@ -1391,7 +1391,7 @@ EOD;
 					   type traffic lets check if its in use and if so leave
                                            off the interface */
 					if(is_one_to_one_or_server_nat_rule($rule['destination']['address']))
-						$canadd = 1;
+						$canadd = 0;
 				}
 				if($canadd == 0)
 					$line .= "on \$" . $interface . " ";

@@ -51,8 +51,7 @@ $pconfig['altpkgconfigurl'] = $config['system']['alt_pkgconfig_url']['enabled'];
 $pconfig['pkgconfig_base_url'] = $config['system']['alt_pkgconfig_url']['pkgconfig_base_url'];
 $pconfig['pkgconfig_filename'] = $config['system']['alt_pkgconfig_url']['pkgconfig_filename'];
 $pconfig['expanddiags'] = isset($config['system']['webgui']['expanddiags']);
-if ($g['platform'] == "generic-pc")
-	$pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
+$pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
 $pconfig['schedulertype'] = $config['system']['schedulertype'];

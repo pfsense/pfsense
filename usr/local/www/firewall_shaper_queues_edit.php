@@ -162,6 +162,9 @@ if ($_POST) {
 		</span></td>
 	    </tr>
 
+
+
+
 	    <tr>
 	      <td width="22%" valign="top" class="vncell">Scheduler options</td>
 	      <td width="78%" class="vtable">
@@ -177,8 +180,11 @@ if ($_POST) {
 		</span></td>
 	    </tr>
 
+
 		<!-- XXX: add javascript to show/hide queueing options such as low bandwidth (hfsc, cbq) -->
 
+
+		
 	    <tr>
 	      <td width="22%" valign="top">&nbsp;</td>
 	      <td width="78%"> <input name="Submit" type="submit" class="formbtn" value="Save">

@@ -35,6 +35,7 @@ while : ; do
 # display a cheap menu
 echo "pfSense console setup"
 echo "**********************"
+echo "0) Logout if accessing via SSH"
 echo "1) Interfaces: assign network ports"
 echo "2) Set up LAN IP address"
 echo "3) Reset webGUI password"
@@ -49,6 +50,9 @@ read -p "Enter a number: " opmode
 
 # see what the user has chosen
 case ${opmode} in
+0)
+	exit && exit && logout
+	;;
 1)
 	/etc/rc.initial.setports
  	;;

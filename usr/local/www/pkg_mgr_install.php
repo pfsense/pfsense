@@ -317,6 +317,8 @@ foreach ($packages_to_install as $id) {
         update_output_window("Saving updated package information ...");
         fwrite($fd_log, "Saving updated package information ...\n");
         write_config("Installed package {$pkgent['name']}");
+        // remount rw after write_config() since it will mount ro.
+        conf_mount_rw();
     }
 
     update_progress_bar($pb_percent);

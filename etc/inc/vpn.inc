@@ -137,6 +137,8 @@ function vpn_ipsec_configure($ipchg = false) {
 						$number_of_gifs = find_last_gif_device();
 						$number_of_gifs++;
 						$curwanip = get_current_wan_address();
+						if($config['ipsec']['ip'] <> "")
+							$curwanip = $config['ipsec']['ip'];
 						mwexec("/sbin/ifconfig gif" . $number_of_gifs . " tunnel" . $curwanip . " " . $tunnel['remote-gateway']);
 						mwexec("/sbin/ifconfig gif" . $number_of_gifs . " {$lansa}/{$lansn} {$lanip}/32");
 					}
@@ -168,10 +170,10 @@ function vpn_ipsec_configure($ipchg = false) {
 
 			$racoonconf = "";
 
-			if($config['ipsec']['interface'] <> "") {
-				if(does_interface_exist($config['ipsec']['interface']) == true) {
-					$interface_ip = find_interface_ip($config['ipsec']['interface']);
-					$racoonconf .= <<<EOD
+			if($config['ipsec']['ip'] <> "") {
+
+				$interface_ip = $config['ipsec']['ip'];
+				$racoonconf .= <<<EOD
 listen {
 	isakmp {$interface_ip} [500];
 }

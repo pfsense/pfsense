@@ -46,7 +46,7 @@ function dump_clog($logfile, $tail, $withorig = true) {
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
-	exec("/usr/sbin/clog " . $logfile . " | /usr/bin/tail {$sor} -n " . $tail, $logarr);
+	exec("/usr/sbin/clog " . $logfile . " | grep -v racoon | /usr/bin/tail {$sor} -n " . $tail, $logarr);
 
 	foreach ($logarr as $logent) {
 		$logent = preg_split("/\s+/", $logent, 6);
@@ -77,8 +77,10 @@ function dump_clog($logfile, $tail, $withorig = true) {
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
   <ul id="tabnav">
-	<li class="tabact">System</li>
+    <li class="tabact">System</li>
+    <li class="tabinact"><a href="diag_logs_filter.php">IPSEC Vpn</a></li>
     <li class="tabinact"><a href="diag_logs_filter.php">Firewall</a></li>
+    <li class="tabinact"><a href="diag_logs_ipsec.php">IPSEC</a></li>
     <li class="tabinact"><a href="diag_logs_dhcp.php">DHCP</a></li>
     <li class="tabinact"><a href="diag_logs_auth.php">Portal Auth</a></li>
     <li class="tabinact"><a href="diag_logs_vpn.php">PPTP VPN</a></li>

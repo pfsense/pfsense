@@ -165,6 +165,7 @@ function format_ipf_ip($ipfip) {
   <tr><td>
   <ul id="tabnav">
     <li class="tabinact"><a href="diag_logs.php">System</a></li>
+    <li class="tabinact"><a href="diag_logs.php">IPSEC</a></li>
     <li class="tabact">Firewall</li>
     <li class="tabinact"><a href="diag_logs_dhcp.php">DHCP</a></li>
     <li class="tabinact"><a href="diag_logs_auth.php">Portal Auth</a></li>

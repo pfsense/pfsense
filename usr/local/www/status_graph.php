@@ -44,14 +44,14 @@ if ($_POST['height'])
 else
 	$height = "275";
 
-$curif = "wan";
-if ($_GET['if'])
+if ($_GET['if']) {
 	$curif = $_GET['if'];
-
-if ($curif == "wan")
-	$ifnum = get_real_wan_interface();
-else
 	$ifnum = $config['interfaces'][$curif]['if'];
+} else {
+	$curif = "wan";
+	$ifnum = get_real_wan_interface();
+}
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>

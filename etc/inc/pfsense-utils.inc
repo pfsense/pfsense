@@ -647,39 +647,40 @@ function reverse_strrchr($haystack, $needle) {
 
 /*
  * get_package_xml_depends($pkg_name, $format = "files"):  Return a package's XML dependencies.
- *							   $format: "files" = filenames
- *							   	    "names" = stripped filenames
+ *                                                         $format: "files" = filenames
+ *                                                                  "names" = stripped filenames
  */
 function get_package_xml_depends($pkg_name) {
-	global $config;
-	if ($config['installedpackages'][$pkg_name] != "") { // Make sure this package really exists before continuing.
-		$package = $config['installedpackages'][$pkg_name];
-		if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) { // If the package's config file doesn't exist, log an error and fetch it.
-			log_error("Fetching missing configuration XML for " . $pkg_name);
-			mwexec("/usr/bin/fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationfile']);
-		}
-	} else {
-		return; // This package isn't installed.
-	}
-	$pkg_xml = parse_xml_config_pkg("/usr/local/pkg" . $package['configurationfile'], "packagegui");
-	if($pkg_xml['additional_files_needed'] != "") {
-		foreach($pkg_xml['additional_files_needed'] as $item) {
-			$depend_file = substr(strrchr($item['item'], "/"),1); // Strip URLs down to filenames.
-			if(!preg_match("/\.xml/i", $depend_file)) break; // If the file doesn't end in .xml (case-insensitive) exit the loop.
-			if(!file_exists("/usr/local/pkg/" . $pkg_name)) {
-				$depend_name = reverse_strrchr($depend_file, "."); // Strip filename down to dependency name.
-				log_error("Fetching missing dependency \(" . $depend_name . "\) for " . $pkg_name);
-				mwexec("/usr/bin/fetch -o /usr/local/pkg/" . $depend_file . " " . $item['item']);
-			}
-			if ($format = "names") {
-				$depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
-				$depends[] = $depend_xml['name'];
-			} else {
-				$depends[] = $depend_file;
-			}
-		}
-	return $depends;
-	}
+        global $config;
+        foreach($config['installedpackages']['package'] as $package) {
+                if ($package['name'] == $pkg_name) {
+                        $package_xml = $package;
+                        if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) { // If the package's config file doesn't exist, log an error and fetch it.
+                                log_error("Fetching missing configuration XML for " . $pkg_name);
+                                mwexec("/usr/bin/fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationfile']);
+                        }
+                        break;
+                }
+        }
+        $pkg_xml = parse_xml_config_pkg("/usr/local/pkg/" . $package_xml['configurationfile'], "packagegui");
+        if($pkg_xml['additional_files_needed'] != "") {
+                foreach($pkg_xml['additional_files_needed']['0'] as $item) {
+                        $depend_file = substr(strrchr($item['0'], "/"),1); // Strip URLs down to filenames.
+                        if(!preg_match("/\.xml/i", $depend_file)) break; // If the file doesn't end in .xml (case-insensitive) exit the loop.
+                        if(!file_exists("/usr/local/pkg/" . $pkg_name)) {
+                                $depend_name = reverse_strrchr($depend_file, "."); // Strip filename down to dependency name.
+                                log_error("Fetching missing dependency \(" . $depend_name . "\) for " . $pkg_name);
+                                mwexec("/usr/bin/fetch -o /usr/local/pkg/" . $depend_file . " " . $item['0']);
+                        }
+                        if ($format == "names") {
+                                $depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
+                                $depends[] = $depend_xml['name'];
+                        } else {
+                                $depends[] = $depend_file;
+                        }
+                }
+        return $depends;
+        }
 }
 
 /*

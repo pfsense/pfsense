@@ -114,35 +114,43 @@ include("fbegin.inc");
                 <?php
                 $cols = 0;
                 foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
-                        echo "<td class=\"listhdrr\">" . $column['fielddescr'] . "</td>";
-                        $cols++;
+		    echo "<td class=\"listhdrr\">" . $column['fielddescr'] . "</td>";
+		    $cols++;
                 }
                 echo "</tr>";
-			$i=0;
-			if($evaledvar)
-			foreach ($evaledvar as $ip) {
-				    echo "<tr valign=\"top\">\n";
-				    foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
-				       ?>
-						<td class="listlr">
-							<?php
-							    $toeval="echo \$ip['" . xml_safe_fieldname($column['fieldname']) . "'];";
-							    eval($toeval);
-							?>
-						</td>
-				       <?php
-				    }
-				    ?>
-				    <td valign="middle" class="list" nowrap>
-				    &nbsp;<a href="pkg_edit.php?xml=<?=$xml?>&act=edit&id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a>
-				    &nbsp;<a href="pkg.php?xml=<?=$xml?>&act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this item?')"><img src="x.gif" width="17" height="17" border="0"></a>
-				    </td>
-				    <?php
-				    echo "</tr>\n";
-				    $i++;
+		    $i=0;
+		    if($evaledvar)
+		    foreach ($evaledvar as $ip) {
+			echo "<tr valign=\"top\">\n";
+			foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
+			   ?>
+				<td class="listlr">
+					<?php
+					    $toeval="\$fieldname = \$ip['" . xml_safe_fieldname($column['fieldname']) . "'];";
+					    eval($toeval);
+					    if($column['type'] == "checkbox") {
+						if($fieldname == "") {
+						    echo "No";
+						} else {
+						    echo "Yes";
+						}
+					    } else {
+						echo $fieldname;
+					    }
+					?>
+				</td>
+			   <?php
 			}
-				    ?>
-
+			?>
+			<td valign="middle" class="list" nowrap>
+			&nbsp;<a href="pkg_edit.php?xml=<?=$xml?>&act=edit&id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a>
+			&nbsp;<a href="pkg.php?xml=<?=$xml?>&act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this item?')"><img src="x.gif" width="17" height="17" border="0"></a>
+			</td>
+			<?php
+			echo "</tr>\n";
+			$i++;
+		    }
+		?>
                <tr><td colspan="<?=$cols?>"></td><td><a href="pkg_edit.php?xml=<?=$xml?>"><img src="plus.gif" width="17" height="17" border="0"></a></td></tr>
         </table>
     </td>

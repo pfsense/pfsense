@@ -68,6 +68,8 @@ if ($_POST) {
 
 
 if (isset($_POST['save'])) {
+
+    /* mutually exclusive settings - if user wants advanced NAT, we don't help with IPSec */
     if ($_POST['ipsecpassthru'] == true) {
             $config['nat']['ipsecpassthru']['enable'] = true;
             $config['nat']['advancedoutbound']['enable'] = false;

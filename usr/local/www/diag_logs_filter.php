@@ -196,7 +196,7 @@ function format_ipf_ip($ipfip) {
 			<td colspan="2" class="listtopic">
 			  Last <?=$nentries;?> firewall log entries</td>
 		  </tr>
-		  <?php dump_clog($filter_logfile, $nentries, false); ?>
+		  <?php dump_clog($filter_logfile, $nentries); ?>
 		</table>
 <?php endif; ?>
 		<br><form action="diag_logs_filter.php" method="post">

@@ -16,7 +16,7 @@
 <step>
 	<id>2</id>
 	<title>General Information</title>
-	<description>On this screen you will set the General pfSense paramaters.</description>
+	<description>On this screen you will set the General pfSense parameters.</description>
 	<fields>
 		<field>
 			<name>Hostname</name>

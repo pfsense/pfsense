@@ -63,7 +63,12 @@ $title        = $section . ": " . $package_name
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php
+$config_tmp = $config;
+$config = $pfSense_config;
+include("fbegin.inc");
+$config = $config_tmp;
+?>
 <p class="pgtitle"><?=$title?></p>
 <form action="firewall_nat_out_load_balancing.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>

@@ -27,6 +27,8 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+require("guiconfig.inc");
+
 if (($_POST['submit'] == "Load") && file_exists($_POST['savetopath'])) {
 	$fd = fopen($_POST['savetopath'], "r");
 	$content = fread($fd, filesize($_POST['savetopath']));
@@ -68,6 +70,8 @@ else
         (modified for pfSense Edit/Save file by Scott Ullrich, Copyright 2004)
 */
 
+include("fbegin.inc");
+
 // Function: is Blank
 // Returns true or false depending on blankness of argument.
 
@@ -82,7 +86,7 @@ function puts( $arg ) { echo "$arg\n"; }
 
 $Version    = '';
 $ScriptName = $HTTP_SERVER_VARS['SCRIPT_NAME'];
-$Title      = 'pfSense: edit file';
+$Title      = gentitle("edit file");
 
 // Get year.
 

@@ -63,7 +63,12 @@ if ($_POST) {
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php
+$config_tmp = $config;
+$config = $pfSense_config;
+include("fbegin.inc");
+$config = $config_tmp;
+?>
 <p class="pgtitle">System: Package Manager</p>
 <form action="firewall_nat_out_load_balancing.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -73,8 +78,14 @@ if ($_POST) {
 <?php endif; ?>
 <?php
 $configa = $config;
+
+// Allow package location to be overriden
+$config_location = "http://www.pfsense.com/packages/pkg_config.xml";
+if($configa['package_location'])
+	    $config_location = $configa['package_location'];
+
 if(!file_exists("/tmp/pkg_config.xml")) {
-            mwexec("cd {$g['tmp_path']} && /usr/bin/fetch \"http://www.pfsense.com/packages/pkg_config.xml\" >/dev/null 2>&1 ");
+            mwexec("cd {$g['tmp_path']} && /usr/bin/fetch \"" . $config_location . "\" >/dev/null 2>&1 ");
             if(!file_exists("{$g['tmp_path']}/pkg_config.xml")) {
                         print_info_box_np("Could not download pkg_config.xml from pfSense.com.  Check your DNS settings.");
                         die;

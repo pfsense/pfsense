@@ -1,5 +1,5 @@
 <?php
-	function return_menu($section) {
+	function return_ext_menu($section) {
 		global $g;
 		$htmltext = "";
 		$dh = @opendir($g['www_path'] . "/ext/" . $section);
@@ -72,7 +72,7 @@ function showhide(tspan, tri) {
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_firmware.php" class="navlnk">Firmware</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_advanced.php" class="navlnk">Advanced</a><br>
 	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/pkg_mgr.php" class="navlnk">Package Manager</a><br>
-	      <?php echo return_menu("System"); ?>
+	      <?php echo return_ext_menu("System"); ?>
               <strong>Interfaces</strong>
 			  <?php if (!isset($config['system']['webgui']['noassigninterfaces'])): ?>
 			  <a href="/interfaces_assign.php" class="navlnks">(assign)</a>
@@ -83,12 +83,12 @@ function showhide(tspan, tri) {
 			  <?php for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): if (!isset($config['interfaces']['opt' . $i]['ovpn'])): ?>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/interfaces_opt.php?index=<?=$i;?>" class="navlnk"><?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?></a><br>
 			  <?php endif; endfor; ?>
-	      <?php echo return_menu("Interfaces"); ?>
+	      <?php echo return_ext_menu("Interfaces"); ?>
               <strong>Firewall</strong><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/firewall_rules.php" class="navlnk">Rules</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/firewall_nat.php" class="navlnk">NAT</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/firewall_aliases.php" class="navlnk">Aliases</a><br>
-	      <?php echo return_menu("Firewall"); ?>
+	      <?php echo return_ext_menu("Firewall"); ?>
               <strong>Services</strong><br>
 			  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_dnsmasq.php" class="navlnk">DNS forwarder</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_dyndns.php" class="navlnk">Dynamic
@@ -99,7 +99,7 @@ function showhide(tspan, tri) {
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_proxyarp.php" class="navlnk">Proxy ARP</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_captiveportal.php" class="navlnk">Captive portal</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_wol.php" class="navlnk">Wake on LAN</a><br>
-	      <?php echo return_menu("Services"); ?>
+	      <?php echo return_ext_menu("Services"); ?>
               <strong>VPN</strong><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/vpn_ipsec.php" class="navlnk">IPsec</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/vpn_pptp.php" class="navlnk">PPTP</a><br>
@@ -112,7 +112,7 @@ function showhide(tspan, tri) {
 			  <?php if (isset($config['captiveportal']['enable'])): ?>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_captiveportal.php" class="navlnk">Captive portal</a><br>
 			  <?php endif; ?>
-	      <?php echo return_menu("Status"); ?>
+	      <?php echo return_ext_menu("Status"); ?>
 			  <?php if (isset($config['system']['webgui']['expanddiags']) || strstr($_SERVER['SCRIPT_FILENAME'], "diag_") || strstr($_SERVER['SCRIPT_FILENAME'], "reboot")): ?>
 			  <a href="javascript:showhide('diag','tri_diag')"><img src="/tri_o.gif" id="tri_diag" width="14" height="10" border="0"></a><strong><a href="javascript:showhide('diag','tri_diag')" class="navlnk">Diagnostics</a></strong><br>
 			  <span id="diag">

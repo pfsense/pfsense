@@ -526,7 +526,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 					  $icmptypes = array(
 					  	"" => "any",
 					  	"unreach" => "Destination unreachable",
-						"echo" => "Echo",
+						"echoreq" => "Echo",
 						"echorep" => "Echo reply",
 						"squench" => "Source quench",
 						"redir" => "Redirect",

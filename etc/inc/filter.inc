@@ -1323,6 +1323,8 @@ EOD;
 			if (isset($rule['protocol'])) {
 				if($rule['protocol'] == "tcp/udp")
 					$line .= "proto { tcp udp } ";
+				elseif($rule['protocol'] == "icmp")
+					$line .= "inet proto icmp ";
 				else
 					$line .= "proto {$rule['protocol']} ";
 			} else {

@@ -55,7 +55,7 @@ Do you want to set up VLANs first?
 If you're not going to use VLANs, or only for optional interfaces, you
 should say no here and use the webGUI to configure VLANs later, if required.
 
-Do you want to set up VLANs now? (y/n)
+Do you want to set up VLANs now [y|n]?
 EOD;
 
 	if (strcasecmp(chop(fgets($fp)), "y") == 0)
@@ -178,7 +178,7 @@ echo <<<EOD
 
 pfSense will reboot after saving the changes.
 
-Do you want to proceed? (y/n)
+Do you want to proceed [y|n]?
 EOD;
 
 	if (strcasecmp(chop(fgets($fp)), "y") == 0) {
@@ -264,7 +264,7 @@ EOD;
 
 WARNING: all existing VLANs will be cleared if you proceed!
 
-Do you want to proceed? (y/n)
+Do you want to proceed [y|n]? 
 EOD;
 
 		if (strcasecmp(chop(fgets($fp)), "y") != 0)

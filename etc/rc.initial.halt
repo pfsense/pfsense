@@ -41,7 +41,7 @@
 
 pfSense will shutdown and halt system. This may take one minute.
 
-Do you want to proceed? (y/n)
+Do you want to proceed [y|n]? 
 EOD;
 
 	if (strcasecmp(chop(fgets($fp)), "y") == 0) {

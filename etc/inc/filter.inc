@@ -943,7 +943,7 @@ function filter_rules_generate() {
 		$ipfrules .= "pass out quick on " . $wanif . "  inet proto tcp from any to any port www keep state label \"transparent proxy\"\n";
 	}
 
-	$ipfrules .= <<<EOD
+	$ipfrules .= <<<EOA
 
 # loopback
 anchor "loopback"
@@ -952,7 +952,20 @@ pass out quick on lo0 all label "pass loopback"
 
 # pass traffic from firewall -> out
 anchor "firewallout"
-pass out quick on $wanif inet proto tcp from $wanif to any keep state
+EOA;
+
+$i = 0;
+$ifdescrs = array('wan', 'lan');
+for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+	$ifdescrs['opt' . $j] = "opt" . $j;
+}
+foreach ($ifdescrs as $ifdescr => $ifname) {
+	$int = filter_translate_type_to_real_interface($ifname);
+	echo "pass out quick on {$ifname} inet proto tcp from {$ifname} to any keep state";
+	return $int;
+}
+
+$ipfrules .= <<<EOD;
 
 # enable ftp-proxy
 anchor "ftpproxy"

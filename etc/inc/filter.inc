@@ -800,6 +800,9 @@ function filter_nat_rules_generate() {
 		}
 	}
 
+	$natrules .= "#SSH Lockout Table\n";
+	$natrules .= "table <sshlockout> persist\n\n";
+
 	$natrules .= "\n# spam table \n";
 	$natrules .= "table <spamd> persist\n\n";
 
@@ -914,6 +917,8 @@ function filter_rules_generate() {
 
 	# BEGIN OF firewall rules
 	$ipfrules="anchor \"firewallrules\"\n";
+
+	$ipfrules .= "block in log quick from <sshlockout> to any 22 label \"sshlockout\"\n\n";
 
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 		$oc = $config['interfaces']['opt' . $i];

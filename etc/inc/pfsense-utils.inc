@@ -509,5 +509,24 @@ function update_progress_bar($percent) {
             echo "\n</script>";
 }
 
+/*
+ *  resync_all_packages_config() Forces packages to setup their configuration and rc.d files
+ */
+function resync_all_packages_config() {
+    log_error("Resyncing configuration for all packages.");
+    foreach($config['installedpackages']['package'] as $package) {
+        if(file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
+            $pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "pfsensepkgs");
+        } else {
+            // XXX: FETCH configuration file.
+            $pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "pfsensepkgs");
+        }
+        if($pkg_config['custom_php_command_before_form'] <> "") eval($pkg_config['custom_php_command_before_form']);
+        if($pkg_config['custom_add_php_command'] <> "") eval($pkg_config['custom_add_php_command']);
+        if($pkg_config['custom_add_php_command_late'] <> "") eval($pkg_config['custom_add_php_command_late']);
+        if($pkg_config['custom_php_install_command'] <> "") eval($pkg_config['custom_php_install_command']);
+        // XXX: process template as well.
+    }
+}
 
 ?>

@@ -515,7 +515,17 @@ function execute_command_return_output($command) {
  */
 function convert_friendly_interface_to_real_interface_name($interface) {
     global $config;
-    return $config['interfaces'][$interface]['if'];
+    if($config['interfaces'][$interface]['if'] <> "")
+	return $config['interfaces'][$interface]['if'];
+    $i = 0;
+    for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+	    $ifdescrs['opt' . $j] = "opt" . $j;
+    }
+    foreach ($ifdescrs as $ifdescr => $ifname) {
+	if($config['interfaces'][$ifname]['descr'] == $interface)
+	    return $config['interfaces'][$ifname]['if'];
+    }
+    return $interface;
 }
 
 /*
@@ -530,7 +540,6 @@ function convert_real_interface_to_friendly_interface_name($interface) {
 	}
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 	    $int = filter_translate_type_to_real_interface($ifname);
-	    echo $ifname . " - " . $interface ."\n";
 	    if($ifname == $interface) return $ifname;
 	}
 	return $interface;

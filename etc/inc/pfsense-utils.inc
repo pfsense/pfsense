@@ -140,7 +140,7 @@ function find_number_of_created_carp_interfaces() {
 		    $tmp .= fread($fd,49);
 	}
 	fclose($fd);
-	$tmp = intval($tmp) -1;
+	$tmp = intval($tmp);
 	return $tmp;
 }
 

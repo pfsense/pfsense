@@ -1440,9 +1440,7 @@ EOD;
 						do not use state mechanisms to keep track. this is only useful if your doing advanced
 						queueing in certain situations. please check the faq.
 				*/
-				if(!isset($rule['statetype']) && $rule['statetype'] != "") {
-					$line .= "keep state ";
-				} else {
+				if(isset($rule['statetype']) && $rule['statetype'] != "") {
 					if($rule['statetype'] == "modulate state" or $rule['statetype'] == "synproxy state") {
 						if($rule['protocol'] == "tcp")
 							$line .= $rule['statetype'] ;
@@ -1450,6 +1448,8 @@ EOD;
 						if(!$rule['statetype'] == "none")
 							$line .= $rule['statetype'] ;
 					}
+				} else {
+					$line .= "keep state ";
 				}
 
 				if( isset($rule['source-track']) and $rule['source-track'] <> "" or

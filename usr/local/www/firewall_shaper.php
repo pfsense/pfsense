@@ -214,7 +214,7 @@ if ($_GET['act'] == "del") {
                       <tr valign="top" id="fr<?=$nrules;?>">
                         <td class="listt"><input type="checkbox" id="frc<?=$nrules;?>" name="rule[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$nrules;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
                         <td class="listt" align="center"></td>
-                        <td class="listlr">
+                        <td class="listlr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>">
                           <?php
 				  $dis = "";
 				  if (isset($shaperent['disabled'])) {

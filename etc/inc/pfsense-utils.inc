@@ -515,11 +515,11 @@ function execute_command_return_output($command) {
  */
 function convert_friendly_interface_to_real_interface_name($interface) {
     global $config;
-    $lc_interface = strtolower($interface);
+    $interface = strtolower($interface);
     if($config['interfaces'][$interface]['if'] <> "")
 	return $config['interfaces'][$interface]['if'];
     $i = 0;
-    $ifdescrs = array();
+    $ifdescrs = array('wan','lan');
     for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 	    $ifdescrs['opt' . $j] = "opt" . $j;
     }

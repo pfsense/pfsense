@@ -43,9 +43,9 @@ function xmlrpc_params_to_php($params) {
 	$param_length = $params->getNumParams();
 	for($i = 0; $i < $params->getNumParams(); $i++) {
 		$value = $params->getParam($i);
-		if($value->kindOf == "scalar") {
+		if($value->kindOf() == "scalar") {
 			$array[] = $value->scalarval();
-		} elseif($value->kindOf == "array") {
+		} elseif($value->kindOf() == "array") {
 			$array[] = xmlrpc_array_to_php($value);
 		}
 	}
@@ -60,9 +60,9 @@ function xmlrpc_array_to_php($array) {
 	$array_length = $array->arraysize();
 	for($i = 0; $i < $array->arraysize(); $i++) {
 		$value = $array->arraymem($i);
-		if($value->kindOf == "scalar") {
+		if($value->kindOf() == "scalar") {
 			$return[] = $value->scalarval();
-		} elseif($value->kindOf == "array") {
+		} elseif($value->kindOf() == "array") {
 			$return[] = xmlrpc_array_to_php($value);
 		}
 	}
@@ -74,10 +74,11 @@ function xmlrpc_array_to_php($array) {
 $backup_config_section_doc = 'backup_config_section_xmlrpc: XMLRPC wrapper for backup_config_section. This method must be called with two parameters: a string containing the local system\'s password followed by a string containing the section to be backed up.';
 $backup_config_section_sig = array(array($xmlrpcString, $xmlrpcString, $xmlrpcString));
 
-function backup_config_section_xmlrpc($params) {
+function backup_config_section_xmlrpc($raw_params) {
 	global $config;
-	$params = xmlrpc_params_to_php($params); // Convert XML_RPC_Value objects to a PHP array of values.
-	if(crypt($params[0], $config['system']['password']) != $config['system']['password']) return; // Basic authentication.
+	$params = xmlrpc_params_to_php($raw_params); // Convert XML_RPC_Value objects to a PHP array of values.
+	if(crypt($params[0], $config['system']['password']) != $config['system']['password'])
+		return new XML_RPC_Response(new XML_RPC_Value("FAILURE.", 'string'));
 	$val = new XML_RPC_Value(backup_config_section($params[1]), 'string'); 
 	return new XML_RPC_Response($val);
 }
@@ -85,9 +86,9 @@ function backup_config_section_xmlrpc($params) {
 $restore_config_section_doc = 'restore_config_section_xmlrpc: XMLRPC wrapper for restore_config_section. This method must be called with three parameters: a string containing the local system\'s password, a string containing the section to be restored, and a string containing the returned value of backup_config_section() for that section. This function returns true upon completion.';
 $restore_config_section_sig = array(array($xmlrpcBoolean, $xmlrpcString, $xmlrpcString, $xmlrpcString));
 
-function restore_config_section_xmlrpc($params) {
+function restore_config_section_xmlrpc($raw_params) {
 	global $config;
-	$params = xmlrpc_params_to_php($params);
+	$params = xmlrpc_params_to_php($raw_params);
 	if(crypt($params[0], $config['system']['password']) != $config['system']['password']) return; // Basic authentication.
 	restore_config_section($params[1], $params[2]);
 	return new XML_RPC_Response(new XML_RPC_Value(true, 'boolean'));
@@ -96,7 +97,7 @@ function restore_config_section_xmlrpc($params) {
 $server = new XML_RPC_Server(
         array(
             'pfsense.backup_config_section' => array('function' => 'backup_config_section_xmlrpc'),
-            'pfsense.restore_config_section' => array('function' => 'restore_config_section_xmlrpc'),
+            'pfsense.restore_config_section' => array('function' => 'restore_config_section_xmlrpc')
         )
 );
 
@@ -112,6 +113,6 @@ $server = new XML_RPC_Server(
 							'signature' => $restore_config_section_sig,
 							'docstring' => $restore_config_section_doc)
         )
-*/
 );
+*/
 ?>

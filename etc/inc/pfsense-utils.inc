@@ -370,10 +370,11 @@ function get_pkg_id($pkg_name) {
     global $config;
     global $pkg_config;
     $i=0;
-    foreach ($config['installedpackages']['package'] as $pkg) {
-	if($pkg['name'] == $pkg_name) return $i;
-	$i++;
-    }
+    if(is_array($config['installedpackages']['package']))
+	foreach ($config['installedpackages']['package'] as $pkg) {
+	    if($pkg['name'] == $pkg_name) return $i;
+	    $i++;
+	}
     return -1;
 }
 

@@ -159,6 +159,8 @@ if (isset($_POST['del_x'])) {
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Firewall: NAT: Outbound</p>
 <form action="firewall_nat_out.php" method="post" name="iform">
+<script type="text/javascript" language="javascript" src="row_toggle.js">
+</script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_natconfdirty_path)): ?><p>
 <?php print_info_box_np("The NAT configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
@@ -205,7 +207,9 @@ if (isset($_POST['del_x'])) {
               </table>
               &nbsp;<br>
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
-                <tr>
+                <tr id="frheader">
+                  <td width="3%" class="list">&nbsp;</td>
+                  <td width="3%" class="list">&nbsp;</td>
                   <td width="10%" class="listhdrr">Interface</td>
                   <td width="20%" class="listhdrr">Source</td>
                   <td width="20%" class="listhdrr">Source Port</td>
@@ -216,8 +220,10 @@ if (isset($_POST['del_x'])) {
                   <td width="5%" class="list"></td>
                 </tr>
               <?php $nnats = $i = 0; foreach ($a_out as $natent): ?>
-                <tr>
-                  <td class="listlr">
+                <tr valign="top" id="fr<?=$nnats;?>">
+                  <td class="listt"><input type="checkbox" id="frc<?=$nnats;?>" name="rule[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$nnats;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
+                  <td class="listt" align="center">
+                  <td class="listlr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>">
                     <?php
 					if (!$natent['interface'] || ($natent['interface'] == "wan"))
 					  	echo "WAN";
@@ -225,10 +231,10 @@ if (isset($_POST['del_x'])) {
 						htmlspecialchars($config['interfaces'][$natent['interface']]['descr']);
 					?>
                   </td>
-                  <td class="listr">
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>">
                     <?=$natent['source']['network'];?>
                   </td>
-                  <td class="listr">
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>">
                     <?php
                       if (!$natent['sourceport'])
                           echo "*";
@@ -236,7 +242,7 @@ if (isset($_POST['del_x'])) {
                           echo $natent['sourceport'];
                     ?>
                   </td>
-                  <td class="listr">
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>">
                     <?php
                       if (isset($natent['destination']['any']))
                           echo "*";
@@ -247,7 +253,7 @@ if (isset($_POST['del_x'])) {
                       }
                     ?>
                   </td>
-                  <td class="listr">
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>">
                     <?php
                       if (!$natent['natport'])
                           echo "*";
@@ -255,7 +261,7 @@ if (isset($_POST['del_x'])) {
                           echo $natent['natport'];
                     ?>
                   </td>
-                  <td class="listr">
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>">
                     <?php
                       if (!$natent['target'])
                           echo "*";
@@ -270,16 +276,15 @@ if (isset($_POST['del_x'])) {
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
                         <td><a href="firewall_nat_out_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a></td>
-                        <td><input type="checkbox" name="rule[]" value="<?=$i;?>" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
                       </tr>
                       <tr>
-                        <td><input onmouseover="fr_insline(0, true)" onmouseout="fr_insline(0, false)" name="move_<?=$i;?>" src="left.gif" title="move selected rules before this rule" height="17" type="image" width="17" border="0"></td>
+                        <td><input onmouseover="fr_insline(<?=$nnats;?>, true)" onmouseout="fr_insline(<?=$nnats;?>, false)" name="move_<?=$i;?>" src="left.gif" title="move selected rules before this rule" height="17" type="image" width="17" border="0"></td>
                         <!-- <billm><td><a href="firewall_nat_out_edit.php?dup=<?=$i;?>"><img src="plus.gif" title="add a new nat based on this one" width="17" height="17" border="0"></a></td><billm> -->
                       </tr>
                     </table>
               <?php $i++; $nnats++; endforeach; ?>
                 <tr>
-                  <td class="list" colspan="7"></td>
+                  <td class="list" colspan="9"></td>
                   <td class="list" valign="middle" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>

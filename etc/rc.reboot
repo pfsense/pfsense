@@ -2,4 +2,5 @@
 
 sleep 1
 
-/sbin/reboot
+/sbin/shutdown -r now
+#/sbin/reboot

@@ -67,4 +67,26 @@ function return_filename_as_string($filename) {
     return $tmp;
 }
 
+/*
+ * is_carp_defined: returns true if carp is detected in kernel
+ */
+function is_carp_defined() {
+	/* is carp compiled into the kernel and userland? */
+	$command = "/sbin/sysctl -a | grep carp";
+	$fd = popen($command . " 2>&1 ", "r");
+	if(!$fd) {
+		log_error("Warning, could not execute command ");
+		return 0;
+	}
+	while(!feof($fd)) {
+		    $tmp .= fread($fd,49);
+	}
+	fclose($fd);
+
+	if($tmp == "")
+		return false;
+	else
+		return true;
+}
+
 ?>

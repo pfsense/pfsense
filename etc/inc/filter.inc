@@ -34,25 +34,6 @@
 /* include all configuration functions */
 require_once("functions.inc");
 
-function is_carp_defined() {
-	/* is carp compiled into the kernel and userland? */
-	$command = "/sbin/sysctl -a | grep carp";
-	$fd = popen($command . " 2>&1 ", "r");
-	if(!$fd) {
-		log_error("Warning, could not execute command ");
-		return 0;
-	}
-	while(!feof($fd)) {
-		    $tmp .= fread($fd,49);
-	}
-	fclose($fd);
-
-	if($tmp == "")
-		return 0;
-	else
-		return 1;
-}
-
 function filter_resync() {
 	global $config, $g;
 
@@ -953,7 +934,7 @@ function filter_rules_generate() {
 		$log = "";
 
 	/* if carp is defined, lets pass the traffic */
-	if(is_carp_defined() == 1) {
+	if(is_carp_defined() == true) {
 		$ipfrules .= "pass on " . $lanif . " proto carp keep state label \"carp\"\n";
 		$ipfrules .= "pass on " . $wanif . " proto carp keep state label \"carp\"\n";
 	}

@@ -101,9 +101,6 @@ if ($_GET['act'] == "del") {
     <?=htmlspecialchars($alias['name']);?>
   </td>
   <td class="listr">
-    <?=htmlspecialchars($alias['type']);?>
-  </td>
-  <td class="listr">
     <?=htmlspecialchars($alias['address']);?>
   </td>
   <td class="listbg">

@@ -197,7 +197,7 @@ if ($_POST) {
 			if (!$_POST['dstendport'])
 				$_POST['dstendport'] = $_POST['dstbeginport'];
 		}
-		
+
 		if ($_POST['dstendport'] == "any")
 			$_POST['dstendport'] = $_POST['dstbeginport'];
 	}
@@ -487,16 +487,15 @@ function dst_rep_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Action</td>
                   <td width="78%" class="vtable">
-<select name="type" class="formfld">
+		     <select name="type" class="formfld">
                       <?php $types = explode(" ", "Pass Block Reject"); foreach ($types as $type): ?>
                       <option value="<?=strtolower($type);?>" <?php if (strtolower($type) == strtolower($pconfig['type'])) echo "selected"; ?>>
                       <?=htmlspecialchars($type);?>
                       </option>
                       <?php endforeach; ?>
                     </select> <br>
-                    <span class="vexpl">Choose what to do with packets that match
-					the criteria specified below.<br>
-Hint: the difference between block and reject is that with reject, a packet (TCP RST or ICMP port unreachable for UDP) is returned to the sender, whereas with block the packet is dropped silently. In either case, the original packet is discarded. Reject only works when the protocol is set to either TCP or UDP (but not &quot;TCP/UDP&quot;) below.</span></td>
+                    <span class="vexpl">Choose what to do with packets that match the criteria specified below.<br>
+			Hint: the difference between block and reject is that with reject, a packet (TCP RST or ICMP port unreachable for UDP) is returned to the sender, whereas with block the packet is dropped silently. In either case, the original packet is discarded. Reject only works when the protocol is set to either TCP or UDP (but not &quot;TCP/UDP&quot;) below.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Disabled</td>
@@ -509,7 +508,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
-<select name="interface" class="formfld">
+		    <select name="interface" class="formfld">
                       <?php $interfaces = array('wan' => 'WAN', 'lan' => 'LAN', 'pptp' => 'PPTP');
 					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 					  	$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
@@ -526,7 +525,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Protocol</td>
                   <td width="78%" class="vtable">
-<select name="proto" class="formfld" onchange="proto_change()">
+		    <select name="proto" class="formfld" onchange="proto_change()">
                       <?php $protocols = explode(" ", "TCP UDP TCP/UDP ICMP ESP AH GRE IPv6 IGMP any"); foreach ($protocols as $proto): ?>
                       <option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['proto']) echo "selected"; ?>>
                       <?=htmlspecialchars($proto);?>
@@ -572,7 +571,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Source</td>
                   <td width="78%" class="vtable">
-<input name="srcnot" type="checkbox" id="srcnot" value="yes" <?php if ($pconfig['srcnot']) echo "checked"; ?>>
+		    <input name="srcnot" type="checkbox" id="srcnot" value="yes" <?php if ($pconfig['srcnot']) echo "checked"; ?>>
                     <strong>not</strong><br>
                     Use this option to invert the sense of the match.<br>
                     <br>

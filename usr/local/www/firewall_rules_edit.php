@@ -250,16 +250,16 @@ if ($_POST) {
 	}
 
 	if (($_POST['srcbeginport'] && !alias_expand($_POST['srcbeginport']) && !is_port($_POST['srcbeginport']))) {
-		$input_errors[] = "The start source port must be an integer between 1 and 65535.";
+		$input_errors[] = "The start source port must be an alias or integer between 1 and 65535.";
 	}
 	if (($_POST['srcendport'] && !alias_expand($_POST['srcendport']) && !is_port($_POST['srcendport']))) {
-		$input_errors[] = "The end source port must be an integer between 1 and 65535.";
+		$input_errors[] = "The end source port must be an alias or integer between 1 and 65535.";
 	}
 	if (($_POST['dstbeginport'] && !alias_expand($_POST['dstbeginport']) && !is_port($_POST['dstbeginport']))) {
-		$input_errors[] = "The start destination port must be an integer between 1 and 65535.";
+		$input_errors[] = "The start destination port must be an alias or integer between 1 and 65535.";
 	}
 	if (($_POST['dstendport'] && !alias_expand($_POST['dstbeginport']) && !is_port($_POST['dstendport']))) {
-		$input_errors[] = "The end destination port must be an integer between 1 and 65535.";
+		$input_errors[] = "The end destination port must be an alias or integer between 1 and 65535.";
 	}
 
 	if (!is_specialnet($_POST['srctype'])) {

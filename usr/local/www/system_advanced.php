@@ -31,6 +31,7 @@
 
 require("guiconfig.inc");
 
+$pconfig['disablefilter'] = $config['system']['disablefilter'];
 $pconfig['filteringbridge_enable'] = isset($config['bridge']['filteringbridge']);
 $pconfig['ipv6nat_enable'] = isset($config['diag']['ipv6nat']['enable']);
 $pconfig['ipv6nat_ipaddr'] = $config['diag']['ipv6nat']['ipaddr'];
@@ -66,6 +67,12 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
+		echo $_POST['disablefilter'];
+		if($_POST['disablefilter'] == "yes") {
+			$config['system']['disablefilter'] = "enabled";
+		} else {
+			unset($config['system']['disablefilter']);
+		}
 		$config['bridge']['filteringbridge'] = $_POST['filteringbridge_enable'] ? true : false;
 		$config['diag']['ipv6nat']['enable'] = $_POST['ipv6nat_enable'] ? true : false;
 		$config['diag']['ipv6nat']['ipaddr'] = $_POST['ipv6nat_ipaddr'];
@@ -140,6 +147,27 @@ function enable_change(enable_over) {
               and there's <strong>NO</strong> support for them.</span></p>
 
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
+
+                <tr>
+                  <td colspan="2" valign="top" class="listtopic">Disable Firewalling</td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncell">&nbsp;</td>
+                  <td width="78%" class="vtable">
+                    <input name="disablefilter" type="checkbox" id="disablefilter" value="yes" <?php if (isset($config['system']['disablefilter'])) echo "checked"; ?> onclick="enable_change(false)">
+                    <strong>Disable the firewalls filter altogether.</strong><br>
+                    <span class="vexpl"><br>
+                    NOTE!  This basically converts pfSense into a routing only platform!</span></td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top">&nbsp;</td>
+                  <td width="78%">
+                    <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
+                  </td>
+                <tr>
+                  <td colspan="2" class="list" height="12"></td>
+                </tr>
+
                 <tr>
                   <td colspan="2" valign="top" class="listtopic">IPv6 tunneling</td>
                 </tr>
@@ -161,7 +189,7 @@ function enable_change(enable_over) {
                 <tr>
                   <td colspan="2" class="list" height="12"></td>
                 </tr>
-				<tr>
+		<tr>
                   <td colspan="2" valign="top" class="listtopic">Filtering bridge</td>
                 </tr>
                 <tr>

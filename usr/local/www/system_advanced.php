@@ -168,77 +168,7 @@ function enable_change(enable_over) {
               and there's <strong>NO</strong> support for them.</span></p><br>
 
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr>
-                  <td colspan="2" valign="top" class="listtopic">FTP Proxy</td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">&nbsp;</td>
-                  <td width="78%" class="vtable">
-                    <input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if (isset($config['system']['disableftpproxy'])) echo "checked"; ?> onclick="enable_change(false)">
-                    <strong class="vexpl">Disable the userland FTP-Proxy application</strong><br>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2" class="list" height="12"></td>
-                </tr>
 
-                <tr>
-                  <td colspan="2" valign="top" class="listtopic">Traffic Shaper Scheduler Type</td>
-                </tr>
-
-		<tr>
-		  <td width="22%" valign="top" class="vncell"><b>Scheduler</b> </td>
-		  <td width="78%" class="vtable">
-		    <select id="schedulertype" name="schedulertype" <?= $style ?>>
-		    <?php
-			    if($pconfig['schedulertype'] == 'priq')
-				    echo "<option value=\"priq\">Priority based queueing</option>";
-			    if($pconfig['schedulertype'] == 'cbq')
-				    echo "<option value=\"cbq\">Class based queueing</option>";
-			    if($pconfig['schedulertype'] == 'hfsc')
-				    echo "<option value=\"hfsc\">Hierarchical Fair Service Curve queueing</option>";
-		    ?>
-			    <option value="priq">Priority based queueing</option>
-			    <option value="cbq">Class based queueing</option>
-			    <option value="hfsc">Hierarchical Fair Service Curve queueing</option>
-		    </select>
-		    <br> <span class="vexpl">Select which type of queueing you would like to use
-		  <?php if (is_array($config['shaper']['queue']) > 0): ?>
-			<script language="javascript">
-			document.iform.schedulertype.disabled = 1;
-			</script>
-			<br>
-			NOTE: This option is disabled since there are queues defined.
-		  <?php endif; ?>
-		    </span></td>
-		</tr>
-
-
-                <tr>
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2" class="list" height="12"></td>
-                </tr>
-
-		<tr>
-                  <td colspan="2" valign="top" class="listtopic">Disable Firewalling</td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">&nbsp;</td>
-                  <td width="78%" class="vtable">
-                    <input name="disablefilter" type="checkbox" id="disablefilter" value="yes" <?php if (isset($config['system']['disablefilter'])) echo "checked"; ?> onclick="enable_change(false)">
-                    <strong>Disable the firewalls filter altogether.</strong><br>
-                    <span class="vexpl">NOTE!  This basically converts pfSense into a routing only platform!</span></td>
-                </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
@@ -385,9 +315,48 @@ function enable_change(enable_over) {
                     <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
                   </td>
                 </tr>
+                <tr>
+                  <td colspan="2" class="list" height="12"></td>
+                </tr>
+                <tr>
+                  <td colspan="2" valign="top" class="listtopic">Traffic Shaper and Firewall Advanced</td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncell">FTP Helper</td>
+                  <td width="78%" class="vtable">
+                    <input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if (isset($config['system']['disableftpproxy'])) echo "checked"; ?> onclick="enable_change(false)">
+                    <strong class="vexpl">Disable the userland FTP-Proxy application</strong><br>
+                </tr>
 
 		<tr>
-                  <td width="22%" valign="top" class="vncell">PF Optimization Options</td>
+		  <td width="22%" valign="top" class="vncell"><b>Traffic Shaper Scheduler</b> </td>
+		  <td width="78%" class="vtable">
+		    <select id="schedulertype" name="schedulertype" <?= $style ?>>
+		    <?php
+			    if($pconfig['schedulertype'] == 'priq')
+				    echo "<option value=\"priq\">Priority based queueing</option>";
+			    if($pconfig['schedulertype'] == 'cbq')
+				    echo "<option value=\"cbq\">Class based queueing</option>";
+			    if($pconfig['schedulertype'] == 'hfsc')
+				    echo "<option value=\"hfsc\">Hierarchical Fair Service Curve queueing</option>";
+		    ?>
+			    <option value="priq">Priority based queueing</option>
+			    <option value="cbq">Class based queueing</option>
+			    <option value="hfsc">Hierarchical Fair Service Curve queueing</option>
+		    </select>
+		    <br> <span class="vexpl">Select which type of queueing you would like to use
+		  <?php if (is_array($config['shaper']['queue']) > 0): ?>
+			<script language="javascript">
+			document.iform.schedulertype.disabled = 1;
+			</script>
+			<br>
+			NOTE: This option is disabled since there are queues defined.
+		  <?php endif; ?>
+		    </span></td>
+		</tr>
+
+		<tr>
+                  <td width="22%" valign="top" class="vncell">Firewall Optimization Options</td>
                   <td width="78%" class="vtable">
 		    <select name="optimization" id="optimization">
 			<option value="normal"<?php if($config['system']['optimization']=="normal") echo " SELECTED"; ?>>normal - as the name says, it's the normal optimization algorithm.</option>
@@ -399,14 +368,22 @@ function enable_change(enable_over) {
 					the &quot;set LAN IP address&quot; option in the console menu  resets this setting as well.</td>
                 </tr>
                 <tr>
+                  <td width="22%" valign="top" class="vncell">Disable Firewall</td>
+                  <td width="78%" class="vtable">
+                    <input name="disablefilter" type="checkbox" id="disablefilter" value="yes" <?php if (isset($config['system']['disablefilter'])) echo "checked"; ?> onclick="enable_change(false)">
+                    <strong>Disable the firewalls filter altogether.</strong><br>
+                    <span class="vexpl">NOTE!  This basically converts pfSense into a routing only platform!</span></td>
+                </tr>
+
+                <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
                     <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
                   </td>
                 </tr>
-
-
-
+                <tr>
+                  <td colspan="2" class="list" height="12"></td>
+                </tr>
 
 
 

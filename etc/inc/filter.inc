@@ -729,12 +729,11 @@ function filter_nat_rules_generate() {
 			foreach ($config['nat']['advancedoutbound']['rule'] as $obent) {
 
 				$src = $obent['source']['network'];
-				if (!isset($obent['destination']['any'])) {
-					if (isset($obent['destination']['not']))
-						$dst = "!" . $obent['destination']['network'];
-					else
-						$dst = $obent['destination']['network'];
-				}
+				if (isset($obent['destination']['not']) && !isset($obent['destination']['any']))
+					$dst = "!" . $obent['destination']['network'];
+				else
+					$dst = $obent['destination']['network'];
+				
 
 				if (!$obent['interface'] || ($obent['interface'] == "wan"))
 					$natif = $wanif;

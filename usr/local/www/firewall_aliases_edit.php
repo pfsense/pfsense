@@ -162,6 +162,18 @@ function typesel_change() {
 				eval(comd);
 			}
 			break;
+		case 2:	/* port */
+			var cmd;
+			document.iform.address_subnet.disabled = 0;
+			newrows = totalrows+1;
+			for(i=2; i<newrows; i++) {
+				comd = 'document.iform.address_subnet' + i + '.disabled = 1;';
+				eval(comd);
+				comd = 'document.iform.address_subnet' + i + '.value = "32";';
+				eval(comd);
+			}
+			break;
+
 
 	}
 }

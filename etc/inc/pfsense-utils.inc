@@ -651,13 +651,13 @@ function reverse_strrchr($haystack, $needle) {
 }
 
 /*
- * get_package_depends($pkg_name, $filetype = ".xml", $format = "files"):  Return a package's XML dependencies.
+ * get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files"):  Return a package's XML dependencies.
  *
  * $filetype = "all" || ".xml", ".tgz", etc.
  * $format = "files" (full filenames) ||
  *
  */
-function get_package_depends($pkg_name, $filetype = ".xml", $format = "files") {
+function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files") {
         global $config;
         foreach($config['installedpackages']['package'] as $package) {
                 if ($package['name'] == $pkg_name) {

@@ -337,7 +337,7 @@ if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
             }
             // install menu item into the ext folder
             fwrite($fd_log, "Adding menu option to " . $package_conf['menu']['section'] . "/" . $package_conf['menu']['name'] . "\n");
-            $fd = fopen("/usr/local/www/ext/" . $package_conf['menu']['section'] . "/" . $package_conf['menu']['name'] , "w");
+            $fd = fopen("/usr/local/www/ext/" . $package_conf['menu']['section'] . "/" . $package_conf['name'] , "w");
             fwrite($fd, "/usr/local/www/pkg.php?xml=" . $package_conf['menu']['name'] . "\n");
             fclose($fd);
 } else {

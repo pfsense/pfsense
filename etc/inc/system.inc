@@ -2,20 +2,20 @@
 /*
 	system.inc
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -30,22 +30,22 @@
 
 /* include all configuration functions */
 require_once("functions.inc");
-	
+
 function system_resolvconf_generate($dynupdate = false) {
 	global $config, $g;
-	
+
 	$syscfg = $config['system'];
-	
+
 	$fd = fopen("{$g['varetc_path']}/resolv.conf", "w");
 	if (!$fd) {
 		printf("Error: cannot open resolv.conf in system_resolvconf_generate().\n");
 		return 1;
 	}
-		
+
 	$resolvconf = "domain {$syscfg['domain']}\n";
-	
+
 	$havedns = false;
-	
+
 	if (isset($syscfg['dnsallowoverride'])) {
 		/* get dynamically assigned DNS servers (if any) */
 		$nfd = @fopen("{$g['varetc_path']}/nameservers.conf", "r");
@@ -67,22 +67,22 @@ function system_resolvconf_generate($dynupdate = false) {
 			$havedns = true;
 		}
 	}
-		
+
 	fwrite($fd, $resolvconf);
 	fclose($fd);
-	
+
 	if (!$g['booting']) {
 		/* restart dhcpd (nameservers may have changed) */
 		if (!$dynupdate)
 			services_dhcpd_configure();
 	}
-	
+
 	return 0;
 }
 
 function system_hosts_generate() {
 	global $config, $g;
-	
+
 	$syscfg = $config['system'];
 	$lancfg = $config['interfaces']['lan'];
 	$dnsmasqcfg = $config['dnsmasq'];
@@ -91,19 +91,19 @@ function system_hosts_generate() {
 		$dnsmasqcfg['hosts'] = array();
 	}
 	$hostscfg = $dnsmasqcfg['hosts'];
-	
+
 	$fd = fopen("{$g['varetc_path']}/hosts", "w");
 	if (!$fd) {
 		printf("Error: cannot open hosts file in system_hosts_generate().\n");
 		return 1;
 	}
-		
+
 	$hosts = <<<EOD
 127.0.0.1	localhost localhost.{$syscfg['domain']}
 {$lancfg['ipaddr']}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}
 
 EOD;
-	
+
 	foreach ($hostscfg as $host) {
 		if ($host['host'])
 			$hosts .= "{$host['ip']}	{$host['host']}.{$host['domain']} {$host['host']}\n";
@@ -112,15 +112,15 @@ EOD;
 	}
 	fwrite($fd, $hosts);
 	fclose($fd);
-	
+
 	return 0;
 }
 
 function system_hostname_configure() {
 	global $config, $g;
-	
+
 	$syscfg = $config['system'];
-	
+
 	/* set hostname */
 	return mwexec("/bin/hostname " .
 		escapeshellarg("{$syscfg['hostname']}.{$syscfg['domain']}"));
@@ -128,13 +128,17 @@ function system_hostname_configure() {
 
 function system_routing_configure() {
 	global $config, $g;
-	
+
+	/* Enable fast routing, if enabled */
+	if(isset($config['staticroutes']['enablefastrouting']))
+		mwexec("/sbin/sysctl net.inet.ip.fastforwarding=1");
+
 	/* clear out old routes, if necessary */
 	if (file_exists("{$g['vardb_path']}/routes.db")) {
 		$fd = fopen("{$g['vardb_path']}/routes.db", "r");
 		if (!$fd) {
 			printf("Error: cannot open routes DB file in system_routing_configure().\n");
-			return 1;		
+			return 1;
 		}
 		while (!feof($fd)) {
 			$oldrt = fgets($fd);
@@ -144,45 +148,45 @@ function system_routing_configure() {
 		fclose($fd);
 		unlink("{$g['vardb_path']}/routes.db");
 	}
-	
+
 	if (is_array($config['staticroutes']['route'])) {
-		
+
 		$fd = fopen("{$g['vardb_path']}/routes.db", "w");
 		if (!$fd) {
 			printf("Error: cannot open routes DB file in system_routing_configure().\n");
-			return 1;		
+			return 1;
 		}
-		
+
 		foreach ($config['staticroutes']['route'] as $rtent) {
-			mwexec("/sbin/route add " . escapeshellarg($rtent['network']) . 
+			mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
 				" " . escapeshellarg($rtent['gateway']));
-			
+
 			/* record route so it can be easily removed later (if necessary) */
 			fwrite($fd, $rtent['network'] . "\n");
 		}
-		
-		fclose($fd); 
+
+		fclose($fd);
 	}
-	
+
 	return 0;
 }
 
 function system_routing_enable() {
 	global $config, $g;
-	
+
 	return mwexec("/sbin/sysctl net.inet.ip.forwarding=1");
 }
 
 function system_syslogd_start() {
 	global $config, $g;
-	
+
 	$syslogcfg = $config['syslog'];
 
-	if ($g['booting']) 
+	if ($g['booting'])
 		echo "Starting syslog service... ";
 	else
 		killbypid("{$g['varrun_path']}/syslog.pid");
-			
+
 	if (isset($syslogcfg['enable'])) {
 
 		/* write syslog.conf */
@@ -191,7 +195,7 @@ function system_syslogd_start() {
 			printf("Error: cannot open syslog.conf in system_syslogd_start().\n");
 			return 1;
 		}
-		
+
 		$syslogconf = <<<EOD
 local0.*					%/var/log/filter.log
 local3.*					%/var/log/vpn.log
@@ -210,7 +214,7 @@ local0.*					@{$syslogcfg['remoteserver']}
 
 EOD;
 		}
-		
+
 		if (isset($syslogcfg['vpn'])) {
 			$syslogconf .= <<<EOD
 local3.*					@{$syslogcfg['remoteserver']}
@@ -243,63 +247,63 @@ EOD;
 
 		fwrite($fd, $syslogconf);
 		fclose($fd);
-		
+
 		$retval = mwexec("/usr/sbin/syslogd -s -f {$g['varetc_path']}/syslog.conf");
 
 	} else {
 		$retval = mwexec("/usr/sbin/syslogd -ss");
 	}
-	
+
 	if ($g['booting'])
 		echo "done\n";
-		
+
 	return $retval;
 }
 
 function system_pccard_start() {
 	global $config, $g;
-	
+
 	if ($g['booting'])
 		echo "Initializing PC cards... ";
-	
+
 	/* kill any running pccardd */
 	killbypid("{$g['varrun_path']}/pccardd.pid");
-	
+
 	/* fire up pccardd */
 	$res = mwexec("/usr/sbin/pccardd -z -f {$g['etc_path']}/pccard.conf");
-	
+
 	if ($g['booting']) {
 		if ($res == 0)
 			echo "done\n";
 		else
 			echo "failed (probably no PC card controller present)\n";
 	}
-		
+
 	return $res;
 }
 
 function system_webgui_start() {
 	global $config, $g;
-	
+
 	if ($g['booting'])
 		echo "Starting webGUI... ";
-	
+
 	/* kill any running mini_httpd */
 	killbypid("{$g['varrun_path']}/mini_httpd.pid");
-	
+
 	/* generate password file */
 	system_password_configure();
-	
+
 	chdir($g['www_path']);
-	
+
 	/* non-standard port? */
 	if ($config['system']['webgui']['port'])
 		$portarg = "-p {$config['system']['webgui']['port']}";
 	else
 		$portarg = "";
-	
+
 	if ($config['system']['webgui']['protocol'] == "https") {
-	
+
 		if ($config['system']['webgui']['certificate'] && $config['system']['webgui']['private-key']) {
 			$cert = base64_decode($config['system']['webgui']['certificate']);
 			$key = base64_decode($config['system']['webgui']['private-key']);
@@ -339,7 +343,7 @@ CsF1s0TdJLi/wzNQRAL37A8vqCeVFR/ng3Xpg96Yg+8Z
 
 EOD;
 		}
-		
+
 		$fd = fopen("{$g['varetc_path']}/cert.pem", "w");
 		if (!$fd) {
 			printf("Error: cannot open cert.pem in system_webgui_start().\n");
@@ -350,7 +354,7 @@ EOD;
 		fwrite($fd, "\n");
 		fwrite($fd, $key);
 		fclose($fd);
-	
+
 		$res = mwexec("/usr/local/sbin/mini_httpd -S -E {$g['varetc_path']}/cert.pem" .
 			" -c \"**.php|**.cgi\" -u root -maxproc 16 $portarg" .
 			" -i {$g['varrun_path']}/mini_httpd.pid");
@@ -358,35 +362,35 @@ EOD;
 		$res = mwexec("/usr/local/sbin/mini_httpd -c \"**.php|**.cgi\" -u root" .
 			" -maxproc 16 $portarg -i {$g['varrun_path']}/mini_httpd.pid");
 	}
-	
+
 	if ($g['booting']) {
 		if ($res == 0)
 			echo "done\n";
 		else
 			echo "failed\n";
 	}
-	
+
 	return $res;
 }
 
 function system_password_configure() {
 	global $config, $g;
-	
+
 	$fd = fopen("{$g['varrun_path']}/htpasswd", "w");
 	if (!$fd) {
 		printf("Error: cannot open htpasswd in system_password_configure().\n");
 		return 1;
 	}
-	
+
 	if ($config['system']['username'])
 		$username = $config['system']['username'];
 	else
 		$username = "admin";
-	
+
 	fwrite($fd, $username . ":" . $config['system']['password'] . "\n");
 	fclose($fd);
 	chmod("{$g['varrun_path']}/htpasswd", 0600);
-	
+
 	return 0;
 }
 
@@ -402,8 +406,8 @@ function system_timezone_configure() {
 	$timezone = $syscfg['timezone'];
 	if (!$timezone)
 		$timezone = "Etc/UTC";
-		
-	exec("/usr/bin/tar xzfO /usr/share/zoneinfo.tgz " . 
+
+	exec("/usr/bin/tar xzfO /usr/share/zoneinfo.tgz " .
 		escapeshellarg($timezone) . " > /etc/localtime");
 
 	if ($g['booting'])
@@ -424,39 +428,39 @@ function system_ntp_configure() {
 
 	/* start ntp client if needed - needs to be forced into background */
 	$updateinterval = $syscfg['time-update-interval'];
-	
+
 	if ($updateinterval > 0) {
 		if ($updateinterval < 6)
 			$updateinterval = 6;
-		
+
 		$timeservers = "";
 		foreach (explode(' ', $syscfg['timeservers']) as $ts)
 			$timeservers .= " " . $ts;
-		
+
 		mwexec_bg("/usr/local/bin/runmsntp.sh " .
 			escapeshellarg("{$g['varrun_path']}/runmsntp.pid") . " " .
 			escapeshellarg("{$g['varrun_path']}/msntp.pid") . " " .
 			escapeshellarg($updateinterval) . " " .
 			escapeshellarg($timeservers));
 	}
-		
+
 	if ($g['booting'])
 		echo "done\n";
 }
 
 function system_reboot() {
 	global $g;
-	
+
 	system_reboot_cleanup();
-	
+
 	mwexec("nohup /etc/rc.reboot > /dev/null 2>&1 &");
 }
 
 function system_reboot_sync() {
 	global $g;
-	
+
 	system_reboot_cleanup();
-	
+
 	mwexec("/etc/rc.reboot > /dev/null 2>&1");
 }
 
@@ -466,14 +470,14 @@ function system_reboot_cleanup() {
 
 function system_do_shell_commands($early = 0) {
 	global $config, $g;
-	
+
 	if ($early)
 		$cmdn = "earlyshellcmd";
 	else
 		$cmdn = "shellcmd";
-	
+
 	if (is_array($config['system'][$cmdn])) {
-		
+
 		foreach ($config['system'][$cmdn] as $cmd) {
 			exec($cmd);
 		}
@@ -482,10 +486,10 @@ function system_do_shell_commands($early = 0) {
 
 function system_do_extensions() {
 	global $config, $g;
-	
+
 	if (!is_dir("{$g['etc_path']}/inc/ext"))
 		return;
-	
+
 	$dh = @opendir("{$g['etc_path']}/inc/ext");
 	if ($dh) {
 		while (($extd = readdir($dh)) !== false) {
@@ -501,7 +505,7 @@ function system_do_extensions() {
 
 function system_console_configure() {
 	global $config, $g;
-	
+
 	if (isset($config['system']['disableconsolemenu'])) {
 		touch("{$g['varetc_path']}/disableconsole");
 	} else {
@@ -511,28 +515,28 @@ function system_console_configure() {
 
 function system_dmesg_save() {
 	global $g;
-	
+
 	exec("/sbin/dmesg", $dmesg);
-	
+
 	/* find last copyright line (output from previous boots may be present) */
 	$lastcpline = 0;
-	
+
 	for ($i = 0; $i < count($dmesg); $i++) {
 		if (strstr($dmesg[$i], "Copyright (c) 1992-"))
 			$lastcpline = $i;
 	}
-	
+
 	$fd = fopen("{$g['varlog_path']}/dmesg.boot", "w");
 	if (!$fd) {
 		printf("Error: cannot open dmesg.boot in system_dmesg_save().\n");
 		return 1;
 	}
-	
+
 	for ($i = $lastcpline; $i < count($dmesg); $i++)
 		fwrite($fd, $dmesg[$i] . "\n");
-	
+
 	fclose($fd);
-	
+
 	return 0;
 }
 

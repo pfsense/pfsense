@@ -56,6 +56,12 @@ if ($_POST) {
 			}
 		}
 	}
+
+	if ($_POST['enablefastrouting']) {
+		$config['staticroutes']['enablefastrouting'] = "enabled";
+		write_config();
+	}
+
 }
 
 if ($_GET['act'] == "del") {
@@ -85,6 +91,12 @@ if ($_GET['act'] == "del") {
 <?php print_info_box_np("The static route configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
 <?php endif; ?>
+
+	     <table width="100%" border="0" cellpadding="0" cellspacing="0">
+		<tr><td width="2%"><input type="checkbox" name="enablefastrouting" id="enablefastrouting" <?php if(isset($config['staticroutes']['enablefastrouting'])) echo " checked"; ?>></td><td><b>Enable fast routing</td></tr>
+		<tr><td colspan=2><hr><input type="submit" value="Save"></td></tr>
+	     </table><br>
+
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="15%" class="listhdrr">Interface</td>

@@ -148,6 +148,8 @@ if (isset($id) && $a_filter[$id]) {
 		$pconfig['dstmask'], $pconfig['dstnot'],
 		$pconfig['dstbeginport'], $pconfig['dstendport']);
 
+	$pconfig['returngateway'] = $a_filter[$id]['returngateway'];
+	
 	$pconfig['disabled'] = isset($a_filter[$id]['disabled']);
 	$pconfig['log'] = isset($a_filter[$id]['log']);
 	$pconfig['frags'] = isset($a_filter[$id]['frags']);
@@ -267,6 +269,9 @@ if ($_POST) {
 	if (($_POST['dstendport'] && !alias_expand($_POST['dstbeginport']) && !is_port($_POST['dstendport']))) {
 		$input_errors[] = "The end destination port must be an alias or integer between 1 and 65535.";
 	}
+
+	if (($_POST['returngateway'] && !is_ipaddroranyalias($_POST['returngateway'])))
+		$input_errors[] = "A valid return gateway IP address or alias must be specified.";
 
 	if (!is_specialnet($_POST['srctype'])) {
 		if (($_POST['src'] && !is_ipaddroranyalias($_POST['src']))) {
@@ -821,6 +826,15 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                   <td width="78%" class="vtable">
 			<input name="statetimeout" value="<?php echo $pconfig['frags'] ?>">
 			<p><strong>Leave blank for default.  Amount is in seconds.
+			</strong>
+		    </td>
+		</tr>
+
+		<tr>
+                  <td width="22%" valign="top" class="vncell">Return gateway</td>
+                  <td width="78%" class="vtable">
+			<input name="returngateway" value="<?php echo $pconfig['returngateway'] ?>">
+			<p><strong>Leave blank for default.  Enter the next-hop gateway for the return path.
 			</strong>
 		    </td>
 		</tr>

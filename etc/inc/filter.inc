@@ -1353,6 +1353,10 @@ EOD;
 					$line .= "on \$" . $interface . " ";
 			}
 
+			if($rule['returngateway'] <> "") {
+				$line .= "reply-to (" . $rule['returngateway'] . ") ";
+			}
+	
 			if (isset($rule['protocol'])) {
 				if($rule['protocol'] == "tcp/udp")
 					$line .= "proto { tcp udp } ";

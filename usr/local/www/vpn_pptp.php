@@ -268,7 +268,7 @@ function enable_change(enable_over) {
                       <br>
                       <input name="radacct_enable" type="checkbox" id="radacct_enable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radacct_enable'] == "yes") echo "checked"; ?>>
                       <strong>Enable RADIUS accounting <br>
-                      </strong>Sends accounting packets to the RADIUS server. </p></td>
+                      </strong>Send accounting packets to the RADIUS server. </p></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">RADIUS server </td>
@@ -295,9 +295,9 @@ function enable_change(enable_over) {
                   <td width="78%" class="vtable">
                     <input name="req128" type="checkbox" id="req128" value="yes" <?php if ($pconfig['req128'] == "yes") echo "checked"; ?>>
                     <strong>Require 128-bit encryption</strong><br>
-                    When set, 128-bit encryption will be accepted. Otherwise,
-                    40-bit and 56-bit encryption will be accepted, too. Note that
-                    encryption will always be forced on PPTP connections (i.e.
+                    When set, 128-bit encryption will be required. Otherwise
+                    40-bit and 56-bit encryption will also be accepted. Note that
+                    encryption will always be forced on PPTP connections (
                     unencrypted connections will not be accepted).</td>
                 </tr>
                 <tr>
@@ -309,7 +309,7 @@ function enable_change(enable_over) {
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"><span class="vexpl"><span class="red"><strong>Note:<br>
-                    </strong></span>don't forget to add a firewall rule to permit
+                    </strong></span>Don't forget to add a firewall rule to permit
                     traffic from PPTP clients!</span></td>
                 </tr>
               </table>

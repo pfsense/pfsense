@@ -85,13 +85,12 @@ $config = $config_tmp;
                                     <a onclick="return confirm('Do you really want to remove this package?')" href="pkg_mgr_delete.php?id=<?=$i;?>"><img src="x.gif" width="17" height="17" border="0"></a>
                                 </td>
                             </tr>
-
                             <?php
                             $i++;
                         }
 		    }
-                    if($i == 0) echo "<tr><td colspan=\"3\"><center>There are currently no packages installed.</td></tr>";
                  }
+                 if($i == 0) echo "<tr><td colspan=\"3\"><center>There are currently no packages installed.</td></tr>";
 		?>
         </table>
     </td>

@@ -424,13 +424,20 @@ function typesel_change(dstype) {
 	if(dstype == "src") {
 		var selected = document.iform.srctype.selectedIndex;
 		var selectedtext = document.iform.srctype.options[selected].value;
-		document.iform.src.value = selectedtext;
-		document.iform.srctype.options[1].selected = true;
+		var boxtext = document.iform.srctype.options[selected].text;
+		if(boxtext.indexOf("alias:") != -1) {
+
+			document.iform.src.value = selectedtext;
+			document.iform.srctype.options[1].selected = true;
+		}
 	} else {
 		var selected = document.iform.dsttype.selectedIndex;
 		var selectedtext = document.iform.dsttype.options[selected].value;
-		document.iform.dst.value = selectedtext;
-		document.iform.dsttype.options[1].selected = true;
+		var boxtext = document.iform.dsttype.options[selected].text;
+		if(boxtext.indexOf("alias:") != -1) {
+			document.iform.dst.value = selectedtext;
+			document.iform.dsttype.options[1].selected = true;
+		}
 	}
 	goingtofire = 0;
 }

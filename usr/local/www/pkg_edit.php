@@ -268,9 +268,7 @@ $config = $config_tmp;
 		    echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "checkbox") {
 			$checkboxchecked = "";
-			$toeval="\$fieldname = \$pkga['fieldname'];";
-			eval($toeval);			
-			if($fieldname <> "") $checkboxchecked = " CHECKED";
+			if($value == "on") $checkboxchecked = " CHECKED";
 			echo "<input type='checkbox' name='" . $pkga['fieldname'] . "'" . $checkboxchecked . ">\n";
 			echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "textarea") {

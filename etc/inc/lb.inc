@@ -142,6 +142,7 @@ require_once("functions.inc");
 		$rules ="";
 		$num = 1;
 		$i=0;
+		$gates = count($lb['gateway']);
 		foreach($lb['gateway'] as $tgate){
 			$num++;
 			$in_num = 10000+$num;
@@ -156,8 +157,8 @@ require_once("functions.inc");
 					.' '.$in_flow.' mac any '.arp_get_mac_by_ip($tgate['gateway'])
 					.' in recv '.$wancfg['if'].' keep-state\n';
 					
-			$rules .='/sbin/ipfw add $out_num set 6 skipto '.$skipto
-					.' prob '.$prob.' '.$out_flow.' in recv '. $lancfg['if'].' keep-state\n';
+			$rules .='/sbin/ipfw add $out_num set 6 prob '.$prob.' skipto '.$skipto
+				.' '.$out_flow.' in recv '. $lancfg['if'].' keep-state\n';
 					
 			$rules .='/sbin/ipfw add $skipto set 6 fwd '.$tgate['gateway']
 					.' '.$out_flow.' in recv '.$lancfg['if'].'\n';

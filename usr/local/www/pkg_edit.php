@@ -250,6 +250,7 @@ $config = $config_tmp;
 			echo "\t<option value=\"" . $vpn['descr'] . "\">" . $vpn['descr'] . "</option>\n";
 		    }
 		    echo "</select>\n";
+		    echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "checkbox") {
 			echo "<input type='checkbox' name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
 			echo "<br>" . fixup_string($pkga['description']) . "\n";
@@ -277,6 +278,7 @@ $config = $config_tmp;
 				echo "<option value='" . $ifname . "'>" . $ifdescr . "</option>\n";
 			}
 			echo "</select>\n";
+			echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "radio") {
 			echo "<input type='radio' name='" . $pkga['fieldname'] . "' value='" . $value . "'>";
 	      } else if($pkga['type'] == "rowhelper") {

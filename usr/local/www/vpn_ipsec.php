@@ -38,6 +38,7 @@ $a_ipsec = &$config['ipsec']['tunnel'];
 $wancfg = &$config['interfaces']['wan'];
 
 $pconfig['enable'] = isset($config['ipsec']['enable']);
+$pconfig['preferredoldsa'] = isset($config['ipsec']['preferredoldsa']);
 
 if ($_POST) {
 
@@ -54,6 +55,7 @@ if ($_POST) {
 		$pconfig = $_POST;
 
 		$config['ipsec']['enable'] = $_POST['enable'] ? true : false;
+		$config['ipsec']['preferredoldsa'] = $_POST['preferredoldsa'] ? true : false;
 
 		write_config();
 
@@ -113,7 +115,13 @@ if ($_GET['act'] == "del") {
                   <td class="vtable"><p><span class="vexpl"> </span>
                       <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] == "yes") echo "checked";?>>
                       <strong>Enable IPsec<br>
-                      </strong></p></td>
+                      </strong></p>
+		  </td>
+		  <td class="vtable"><p><span class="vexpl"> </span>
+		      <input name="preferredoldsa" type="checkbox" id="preferredoldsa" value="yes" <?php if ($pconfig['preferredoldsa'] == "yes") echo "checked";?>>
+		      <strong>Prefer newer SA's.<br>
+		      </strong></p>
+		  </td>
                 </tr>
                 <tr>
                   <td> <input name="submit" type="submit" class="formbtn" value="Save">

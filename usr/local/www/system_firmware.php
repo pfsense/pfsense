@@ -80,8 +80,10 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 		$mode = "disable";
 	else if (stristr($_POST['Submit'], "Upgrade") || $_POST['sig_override'])
 		$mode = "upgrade";
-	else if ($_POST['sig_no'])
-		unlink("{$g['ftmp_path']}/firmware.img");
+	else if ($_POST['sig_no']) {
+		if(file_exists("{$g['ftmp_path']}/firmware.img"))
+				unlink("{$g['ftmp_path']}/firmware.img");
+    }
 
 	if ($mode) {
 		if ($mode == "enable") {

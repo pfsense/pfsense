@@ -79,6 +79,7 @@ case ${opmode} in
 	;;
 8)
 	/usr/local/sbin/pftop
+	;;
 9)
 	links "http://localhost"
 	;;

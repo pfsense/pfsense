@@ -3,20 +3,20 @@
 /*
 	graph.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2004 T. Lechat <dev@lechat.org> and Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -47,16 +47,16 @@ $fetch_link = "ifstats.cgi?$ifnum";
 //Style
 $style['bg']="fill:white;stroke:none;stroke-width:0;opacity:1;";
 $style['axis']="fill:black;stroke:black;stroke-width:1;";
-$style['in']="fill:#435370; font-family:Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size:7;";
-$style['out']="fill:#8092B3; font-family:Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size:7;";
-$style['graph_in']="fill:none;stroke:#435370;stroke-width:1;opacity:0.8;";
-$style['graph_out']="fill:none;stroke:#8092B3;stroke-width:1;opacity:0.8;";
+$style['in']="fill:#CC0000; font-family:Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size:7;";
+$style['out']="fill:#000000; font-family:Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size:7;";
+$style['graph_in']="fill:none;stroke:#CC0000;stroke-width:1;opacity:0.8;";
+$style['graph_out']="fill:none;stroke:#000000;stroke-width:1;opacity:0.8;";
 $style['legend']="fill:black; font-family:Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size:4;";
-$style['graphname']="fill:#435370; font-family:Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size:8;";
+$style['graphname']="fill:#CC0000; font-family:Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size:8;";
 $style['grid_txt']="fill:gray; font-family:Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size:6;";
 $style['grid']="stroke:gray;stroke-width:1;opacity:0.5;";
-$style['switch_unit']="fill:#435370; font-family:Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size:4; text-decoration:underline;";
-$style['switch_scale']="fill:#435370; font-family:Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size:4; text-decoration:underline;";
+$style['switch_unit']="fill:#CC0000; font-family:Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size:4; text-decoration:underline;";
+$style['switch_scale']="fill:#CC0000; font-family:Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size:4; text-decoration:underline;";
 $style['error']="fill:blue; font-family:Arial; font-size:4;";
 $style['collect_initial']="fill:gray; font-family:Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size:4;";
 
@@ -140,7 +140,7 @@ function urlcallback(obj) {
 	now = new Date();
 
 	//Show datetimelegend
-	var datetime = (now.getMonth()+1) + "/" + now.getDate() + "/" + now.getFullYear() + ' ' + 
+	var datetime = (now.getMonth()+1) + "/" + now.getDate() + "/" + now.getFullYear() + ' ' +
 		LZ(now.getHours()) + ":" + LZ(now.getMinutes()) + ":" + LZ(now.getSeconds());
 	SVGDoc.getElementById('datetime').getFirstChild().setData(datetime);
 
@@ -178,7 +178,7 @@ function urlcallback(obj) {
 		diff_ugmt  = ugmt - last_ugmt;
 		diff_ifin  = ifin - last_ifin;
 		diff_ifout = ifout - last_ifout;
-		
+
 		if (diff_ugmt == 0)
 			diff_ugmt = 1;	/* avoid division by zero */
 
@@ -199,12 +199,12 @@ function urlcallback(obj) {
 		SVGDoc.getElementById('graph_in_txt').getFirstChild().setData(formatSpeed(plot_in[index_plot],unit));
 		SVGDoc.getElementById('graph_out_txt').getFirstChild().setData(formatSpeed(plot_out[index_plot],unit));
 
-		/* determine peak for sensible scaling */		
+		/* determine peak for sensible scaling */
 		if (scale_type == 'up') {
 			if (plot_in[index_plot] > max)
 				max = plot_in[index_plot];
 			if (plot_out[index_plot] > max)
-				max = plot_out[index_plot];		
+				max = plot_out[index_plot];
 		} else if (scale_type == 'follow') {
 			i = 0;
 			max = 0;
@@ -218,7 +218,7 @@ function urlcallback(obj) {
 		}
 
 		var rmax;
-		
+
 		if (unit == 'bits') {
 			/* round up max, such that
 		   		100 kbps -> 200 kbps -> 400 kbps -> 800 kbps -> 1 Mbps -> 2 Mbps -> ... */
@@ -242,21 +242,21 @@ function urlcallback(obj) {
 					rmax *= 1.25;
 				else
 					rmax *= 2;
-				
+
 				if (i == 8)
 					rmax *= 1.024;
 			}
 		}
-		
+
 		scale = <?=$height?> / rmax;
-		
+
 		/* change labels accordingly */
 		SVGDoc.getElementById('grid_txt1').getFirstChild().setData(formatSpeed(3*rmax/4,unit));
 		SVGDoc.getElementById('grid_txt2').getFirstChild().setData(formatSpeed(2*rmax/4,unit));
 		SVGDoc.getElementById('grid_txt3').getFirstChild().setData(formatSpeed(rmax/4,unit));
-		
+
 		i = 0;
-		
+
 		while (i <= index_plot)
 		{
 			var x = step * i;

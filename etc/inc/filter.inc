@@ -82,8 +82,6 @@ function filter_configure() {
 	}
 	if( !isset( $config['system']['disablefilter'] ) ) {
 		mwexec("/sbin/pfctl -e");
-		mwexec("/sbin/pfctl -F nat");
-		mwexec("/sbin/pfctl -F rules");
 	} else {
 		mwexec("/sbin/pfctl -d");
 		return;

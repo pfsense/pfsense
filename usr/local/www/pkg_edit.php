@@ -96,30 +96,52 @@ include("fbegin.inc");
 		}
 	}
 
+	// donotsave is enabled.  lets simply exit.
 	if($pkg['donotsave'] <> "") exit;
 
 	// store values in xml configration file.
 	if (!$input_errors) {
 		$pkgarr = array();
-
+		
 		foreach ($pkg['fields']['field'] as $fields) {
-			$fieldname  		= $fields['fieldname'];
-			$fieldvalue 		= $_POST[$fieldname];
-			$toeval = "\$pkgarr['" . $fieldname . "'] 	= \"" . $fieldvalue . "\";";
-			eval($toeval);
+			if($fields['type'] == "rowhelper") {
+				// save rowhelper items.
+                                $rowhelperarray = array();
+                                foreach($fields['rowhelper']['rowhelperfield'] as $rowhelperfield) {
+					array_push($rowhelperarray, $rowhelperfield['fieldname']);
+				}
+				for($x=0; $x<99; $x++) { // XXX: this really should be passed from the form.
+					foreach($rowhelperarrray as $rha) {
+						$comd = "\$value = \$_POST['" . $rha . $x . "'];";
+						eval($comd);
+						if($value <> "") {
+							$comd = "pkgarr['rowhelper']['" . $rha . "'] = \"" . $value . "\";";
+							eval($comd);
+						}
+					}
+				}
+			} else {
+				// simply loop through all field names looking for posted
+                                // values matching the fieldnames.  if found, save to package
+                                // configuration area.
+				$fieldname  = $fields['fieldname'];
+				$fieldvalue = $_POST[$fieldname];
+				$toeval = "\$pkgarr['" . $fieldname . "'] 	= \"" . $fieldvalue . "\";";
+				eval($toeval);
+			}
 		}
-
+		
 		if (isset($id) && $a_pkg[$id])
 			$a_pkg[$id] = $pkgarr;
 		else
 			$a_pkg[] = $pkgarr;
-
+		
 		write_config();
-
+		
 		if($pkg['custom_add_php_command_late'] <> "") {
 		    eval($pkg['custom_add_php_command_late']);
 		}
-
+		
 		header("Location:  pkg.php?xml=" . $xml);
 	}
 }
@@ -134,6 +156,10 @@ include("fbegin.inc");
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+
+<script type="text/javascript" language="javascript" src="row_helper_dynamic.js">
+</script>
+
 <?php
 $config_tmp = $config;
 $config = $pfSense_config;
@@ -190,6 +216,88 @@ $config = $config_tmp;
 		  echo "<br>" . $pkga['description'] . "\n";
 	      } else if($pkga['type'] == "radio") {
 		  echo "<input type='radio' name='" . $pkga['fieldname'] . "' value='" . $value . "'>";
+	      } else if($pkga['type'] == "rowhelper") {
+		?>
+			<script type="text/javascript" language='javascript'>
+			<!--
+			
+			<?php
+				$rowcounter = 0;
+				$fieldcounter = 0;
+				foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
+					echo "rowname[" . $fieldcounter . "] = \"" . $rowhelper['fieldname'] . "\";\n";
+					echo "rowtype[" . $fieldcounter . "] = \"" . $rowhelper['type'] . "\";\n";
+					$fieldcounter++;
+				}
+			?>
+			
+			-->
+			</script>
+			
+			<table name="maintable" id="maintable">
+			   <tbody>		
+
+			<?php
+				echo "<tr>";
+				  // XXX: traverse saved fields, add back needed rows.
+				echo "</tr>";
+				
+				if($rowcounter == 0) {
+					// nothing saved.  manually add the first row.
+                                        echo "<tr>\n";
+					$rowcounter = 0;
+					$trc = 0;
+					foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
+						$temp = "";
+						$text = "";
+						echo "<td>\n";
+						if($rowhelper['type'] == "input") {
+							echo "<input name='" . $rowhelper['fieldname'] . $trc . "' value=''>\n";
+						} else if($rowhelper['type'] == "password") {
+							echo "<input type='password' name='" . $rowhelper['fieldname'] . $trc . "' value=''>\n";
+						} else if($rowhelper['type'] == "textarea") {
+							echo "<textarea name='" . $rowhelper['fieldname'] . $trc . "'></textarea>\n";
+						} else if($rowhelper['type'] == "select") {
+							echo "<select name='" . $rowhelper['fieldname'] . $trc . "'>\n";
+							foreach($rowhelper['options']['option'] as $rowopt) {
+								$text .= "<option value='" . $rowopt['name'] . "'>" . $rowopt['value'] . "</option>";
+								echo "<option value='" . $rowopt['value'] . "'>" . $rowopt['name'] . "</option>\n";
+							}
+							echo "</select>\n";
+						}
+						echo "</td>\n";
+						echo "<script language=\"JavaScript\">\n";
+						echo "<!--\n";
+						echo "newrow[" . $trc . "] = \"" . $text . "\";\n";
+						echo "-->\n";
+						echo "</script>\n";
+						$trc++;
+					}
+					$rowcounter++;
+					echo "<td>";
+					echo "<input type=\"button\" onclick=\"removeRow(this); typesel_change();\" value=\"Delete\">";
+					echo "</td>\n";					
+					echo "</tr>\n";
+				}
+			?>
+				
+			  </tbody>
+			</table>
+			
+		<br><input type="button" onclick="addRowTo('maintable'); typesel_change();" value="Add">
+		
+		<script language="JavaScript">
+		<!--
+		field_counter_js = <?= $fieldcounter ?>;
+		rows = <?= $rowcounter ?>;
+		totalrows = <?php echo $rowcounter; ?>;
+		loaded = <?php echo $rowcounter; ?>;
+		typesel_change();
+		
+		//-->
+		</script>
+
+		<?php
 	      }
 
 	      if($pkga['typehint']) echo " " . $pkga['typehint'];

@@ -242,7 +242,7 @@ function ipaddr_change() {
 					wireless_config_print();
 				?>
 		<tr>
-                  <td width="22%" valign="top" class="vncellreq">Gateway</td>
+                  <td width="22%" valign="top" class="vncell">Gateway</td>
                   <td width="78%" class="vtable">
 			<input name="gateway" value="<?php echo $pconfig['gateway']; ?>">
 		  </td>

@@ -404,6 +404,7 @@ function verify_digital_signature($fname) {
 
 /* obtain MAC address given an IP address by looking at the ARP table */
 function arp_get_mac_by_ip($ip) {
+	mwexec("/sbin/ping -c 1 -t 1 {$ip}");
 	exec("/usr/sbin/arp -n {$ip}", $arpoutput);
 
 	if ($arpoutput[0]) {

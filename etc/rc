@@ -78,10 +78,11 @@ echo Starting USB...
 
 /usr/sbin/cron 2>>/tmp/bootup_messages
 
+echo Executing rc.d items...
 for FILE in /usr/local/etc/rc.d/*.sh; do
     if [ -e $FILE ]; then
         echo "Starting ${FILE}..."
-        sh $FILE 2>>/tmp/bootup_messages
+        sh $FILE 2>/tmp/bootup_messages
     fi
 done
 

@@ -528,14 +528,12 @@ function resync_all_package_configs_bootup($show_message) {
     foreach($config['installedpackages']['package'] as $package) {
 	if($show_message == true) print "Syncing " . $package['name'] . ".\n";
         if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
-	    log_error("Fetching missing configuration XML for " . $package);
+	    if($show_message == true) print "Fetching " . $package['configurationfile'] . ".\n";
+	    log_error("Fetching missing configuration XML for " . $package['name']);
 	    system("/usr/bin/fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationfile']);
         }
 	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
         if($pkg_config['custom_php_command_before_form'] <> "") eval($pkg_config['custom_php_command_before_form']);
-        if($pkg_config['custom_add_php_command'] <> "") eval($pkg_config['custom_add_php_command']);
-        if($pkg_config['custom_add_php_command_late'] <> "") eval($pkg_config['custom_add_php_command_late']);
-        if($pkg_config['custom_php_install_command'] <> "") eval($pkg_config['custom_php_install_command']);
 	if($pkg_config['custom_php_resync_config_command'] <> "") eval($pkg_config['custom_php_resync_config_command']);
 	if($show_message == true) print "Synced " . $package['name'] . ".\n";
     }

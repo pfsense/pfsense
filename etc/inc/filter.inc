@@ -1285,7 +1285,9 @@ EOD;
 					}
 				}
 			} else if ($rule['source']['address']) {
-				$src = "{ " . alias_expand($rule['source']['address']). " }";
+				$not = "";
+				if (isset($rule['source']['not'])) $not = "!";
+				$src = "{ " . $not .  alias_expand($rule['source']['address']). " }";
 			}
 
 			if (!$src || ($src == "/")) {
@@ -1293,11 +1295,7 @@ EOD;
 				break;
 			}
 
-			if (isset($rule['source']['not'])) {
-				$line .= "from !$src ";
-			} else {
-				$line .= "from $src ";
-			}
+			$line .= "from $src ";
 
 			if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
 
@@ -1345,7 +1343,9 @@ EOD;
 					}
 				}
 			} else if ($rule['destination']['address']) {
-				$dst = "{ " . alias_expand($rule['destination']['address']) . " }";
+				$not = "";
+				if (isset($rule['destination']['not'])) $not = "! ";
+				$dst = "{ " . $not . alias_expand($rule['destination']['address']) . " }";
 			}
 
 			if (!$dst || ($dst == "/")) {
@@ -1353,11 +1353,7 @@ EOD;
 				break;
 			}
 
-			if (isset($rule['destination']['not'])) {
-				$line .= "to !$dst ";
-			} else {
-				$line .= "to $dst ";
-			}
+			$line .= "to $dst ";
 
 			if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
 

@@ -1,7 +1,7 @@
 #!/usr/local/bin/php
 <?php
 /*
-	index.php 
+	index.php
 	part of m0n0wall (http://m0n0.ch/wall)
 
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
@@ -128,7 +128,7 @@ if ($clientmac && portal_mac_fixed($clientmac)) {
 <HEAD><TITLE>Disconnecting...</TITLE></HEAD>
 <BODY BGCOLOR="#435370">
 <SPAN STYLE="color: #ffffff; font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">
-<B>You've been disconnected.</B>
+<B>You have been disconnected.</B>
 </SPAN>
 <SCRIPT LANGUAGE="JavaScript">
 <!--

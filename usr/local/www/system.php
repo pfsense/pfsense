@@ -111,7 +111,7 @@ if ($_POST) {
 		update_if_changed("domain", &$config['system']['domain'], strtolower($_POST['domain']));
 		update_if_changed("username", &$config['system']['username'], $_POST['username']);
 
-		if (update_if_changed("webgui protocol", &$config['system']['webgui']['protocol'], $pconfig['webguiproto'])  || update_if_changed("webgui port", &$config['system']['webgui']['port'], $pconfig['webguiport'])
+		if (update_if_changed("webgui protocol", &$config['system']['webgui']['protocol'], $pconfig['webguiproto'])  || update_if_changed("webgui port", &$config['system']['webgui']['port'], $pconfig['webguiport']))
 			$restart_webgui = true;
 
 		update_if_changed("timezone", &$config['system']['timezone'], $_POST['timezone']);

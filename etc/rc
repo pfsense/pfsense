@@ -70,17 +70,19 @@ cd /var/run && cp /dev/null utmp && chmod 644 utmp
 /sbin/pfctl -f /tmp/rules.debug >/dev/null 2>&1
 /sbin/pfctl -e >/dev/null 2>&1
 
-echo Starting Secure Shell Services ...
-/etc/sshd
-
 echo Starting INETD for FTP-PROXY...
 /usr/sbin/inetd -wW -C 60
 
+echo Starting Secure Shell Services ...
+/etc/sshd
+
 /usr/sbin/cron 2>/dev/null
 
-for FILE in /usr/local/etc/rc.d/* ; do
-    echo "Starting ${FILE}..."
-    sh $FILE
+for FILE in /usr/local/etc/rc.d/*.sh; do
+    if [ -e $FILE ]; then
+        echo "Starting ${FILE}..."
+        sh $FILE
+    fi
 done
 
 exit 0

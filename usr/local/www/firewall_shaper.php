@@ -58,10 +58,11 @@ if ($_POST) {
 	if ($_POST['apply'] || $_POST['submit']) {
 		$retval = 0;
 		$savemsg = get_std_save_message($retval);
-		if ($retval == 0) {
-			if (file_exists($d_shaperconfdirty_path))
-				unlink($d_shaperconfdirty_path);
-		}
+		/* Setup pf rules since the user may have changed the optimization value */
+		config_lock();
+		$retval = filter_configure();
+		config_unlock();
+		exec("rm " . $d_shaperconfdirty_path);
 	}
 }
 

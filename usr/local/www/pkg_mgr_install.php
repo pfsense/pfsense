@@ -390,7 +390,7 @@ foreach ($packages_to_install as $id) {
 
     if(!$_GET['mode'] == "reinstallall") {
         update_output_window("Saving updated package information ...");
-        fwrite($fd_log, "Saving updated package information ...");
+        fwrite($fd_log, "Saving updated package information ...\n");
         write_config();
     }
 
@@ -427,8 +427,8 @@ foreach ($packages_to_install as $id) {
                                         update_progress_bar($pb_percent);
                                         $pb_percent += 10;
                                         $filename = get_filename_from_url($afn);
-                                        fwrite($fd_log, "Downloading additional files needed for package " . $filename . " ...");
-                                        update_status("Downloading additional files needed for package " . $filename . " ...");
+                                        fwrite($fd_log, "Downloading additional files needed for package " . $filename . " ...\n");
+                                        update_status("Downloading additional files needed for package " . $filename . " ...\n");
                                         system("cd /usr/local/pkg && /usr/bin/fetch " .  $afn . " 2>/dev/null");
                                         if(stristr($filename, '.tgz') <> "") {
                                                     update_status("Extracting tgz archive to -C for " . $filename);
@@ -483,8 +483,8 @@ foreach ($packages_to_install as $id) {
     $pb_percent += 10;
 
     if($package_conf['custom_php_install_command']) {
-        fwrite($fd_log, "Executing post install commands...\n  " . $package_conf['custom_php_install_command']);
-        update_status("Executing post install commands...\n  " . $package_conf['custom_php_install_command']);
+        fwrite($fd_log, "Executing post install commands...\n");
+        update_status("Executing post install commands...\n");
         $pb_percent += 50;
         update_progress_bar(50);
         eval($package_conf['custom_php_install_command']);

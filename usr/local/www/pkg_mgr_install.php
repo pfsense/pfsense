@@ -133,6 +133,8 @@ function update_progress_bar($percent) {
 
 $a_out = &$pkg_config['packages'];
 
+$packages_to_install = Array();
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -163,11 +165,9 @@ if(!file_exists("/tmp/pkg_config.xml")) {
 
 $pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
 
-$id = $_GET['id'];
+if(!$pkg_config['packages'])
+    print_info_box_np("Could not find any packages in pkg_config.xml");
 
-if(!$pkg_config['packages']) {
-            print_info_box_np("Could not find any packages in pkg_config.xml");
-}
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
   <ul id="tabnav">
@@ -202,239 +202,278 @@ if(!$pkg_config['packages']) {
 
 <?php
 
-update_progress_bar($pb_percent);
-$pb_percent += 10;
+if($_GET['mode'] == "reinstallall") {
+    /*
+     *  Loop through installed packages and if name matches
+     *  push the package id onto array to reinstall
+     */
+    $counter = 0;
+    foreach($pkg_config['packages']['package'] as $available_package) {
+        foreach($config['installedpackages']['package'] as $package) {
+            if($package['name'] == $available_package['name']) {
+                array_push($packages_to_install, $counter);
+                update_status("Adding package " . $package['name']);
+                fwrite($fd_log, "Adding (" . $counter . ") " . $package['name'] . " to package installation array.\n" . $status);
+            }
+        }
+        $counter++;
+    }
+} else {
+    /*
+     * Push the desired package id onto the install packages array
+     */
+    array_push($packages_to_install, $_GET['id']);
+}
 
 /*
- * install the package
-*/
+ *  Loop through packages_to_install, installing needed packages
+ */
+foreach ($packages_to_install as $id) {
 
-// Ensure directories are in place for pkg_add.
-mwexec("mkdir /usr/local/www/ext/Services >/dev/null 2>&1");
-mwexec("mkdir /usr/local/www/ext/System >/dev/null 2>&1");
-mwexec("mkdir /usr/local/www/ext/Interfaces >/dev/null 2>&1");
-mwexec("mkdir /usr/local/www/ext/Firewall >/dev/null 2>&1");
-mwexec("mkdir /usr/local/www/ext/VPN >/dev/null 2>&1");
-mwexec("mkdir /usr/local/www/ext/Status >/dev/null 2>&1");
-mwexec("mkdir /usr/local/www/ext/Diagnostics >/dev/null 2>&1");
-mwexec("mkdir /usr/local/pkg >/dev/null 2>&1");
-
-update_progress_bar($pb_percent);
-$pb_percent += 10;
-
-$a_out = &$pkg_config['packages']['package'];
-$pkgent = array();
-$pkgent['name'] = $pkg_config['packages']['package'][$id]['name'];
-$pkgent['descr'] = $pkg_config['packages']['package'][$id]['descr'];
-$pkgent['category'] = $pkg_config['packages']['package'][$id]['category'];
-
-$pkgent['version'] = $pkg_config['packages']['package'][$id]['version'];
-
-$pkgent['depends_on_package'] = $a_out[$id]['depends_on_package'];
-$pkgent['depends_on_package_base_url'] = $a_out[$id]['depends_on_package_base_url'];
-$pkgent['pfsense_package'] = $a_out[$id]['pfsense_package'];
-$pkgent['pfsense_package_base_url'] = $a_out[$id]['pfsense_package_base_url'];
-$pkgent['configurationfile'] = $a_out[$id]['configurationfile'];
-if($pkg_config['packages']['package'][$id]['logging']) {
-    // logging facilities.
-    $pkgent['logging']['facility'] = $pkg_config['packages']['package'][$id]['logging']['facility'];
-    $pkgent['logging']['logfile_name'] = $pkg_config['packages']['package'][$id]['logging']['logfile_name'];
-    mwexec("/usr/sbin/clog -i -s 32768 /var/log/" . $pkgent['logging']['logfile_name']);
-    mwexec("chmod 0600 /var/log/" . $pkgent['logging']['logfile_name']);
-    add_text_to_file("/etc/syslog.conf", $pkgent['logging']['facilityname'] . "\t\t\t" . $pkgent['logging']['logfilename']);
-    mwexec("/usr/bin/killall -HUP syslogd");
-}
-$a_out = &$config['packages']['package']; // save item to installedpkgs
-
-update_progress_bar($pb_percent);
-$pb_percent += 10;
-
-fwrite($fd_log, "ls /var/db/pkg | grep " . $pkgent['name'] . "\n" . $status);
-if($status <> "") {
-            // package is already installed!?
-            print_info_box_np("NOTICE! " . $pkgent['name'] . " is already installed!  Installation will be registered.");
-}
-
-if($pkg_config['packages']['package'][$id]['config_file'] <> "") {
-    update_status("Downloading configuration file.");
-    fwrite($fd_log, "Downloading configuration file " . $pkg_config['packages']['package'][$id]['config_file'] . " ... \n");
+    $pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
+    
     update_progress_bar($pb_percent);
     $pb_percent += 10;
-    mwexec("cd /usr/local/pkg/ && fetch " . $pkg_config['packages']['package'][$id]['config_file']);
-    if(!file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
-        update_output_window("ERROR!  Could not fetch " . $pkg_config['packages']['package'][$id]['config_file'] . "\n");
-        exit;
+
+    /*
+     * install the package
+    */
+
+    // Ensure directories are in place for pkg_add.
+    mwexec("mkdir /usr/local/www/ext/Services >/dev/null 2>&1");
+    mwexec("mkdir /usr/local/www/ext/System >/dev/null 2>&1");
+    mwexec("mkdir /usr/local/www/ext/Interfaces >/dev/null 2>&1");
+    mwexec("mkdir /usr/local/www/ext/Firewall >/dev/null 2>&1");
+    mwexec("mkdir /usr/local/www/ext/VPN >/dev/null 2>&1");
+    mwexec("mkdir /usr/local/www/ext/Status >/dev/null 2>&1");
+    mwexec("mkdir /usr/local/www/ext/Diagnostics >/dev/null 2>&1");
+    mwexec("mkdir /usr/local/pkg >/dev/null 2>&1");
+
+    update_progress_bar($pb_percent);
+    $pb_percent += 10;
+
+    $a_out = &$pkg_config['packages']['package'];
+    $pkgent = array();
+    $pkgent['name'] = $pkg_config['packages']['package'][$id]['name'];
+    $pkgent['descr'] = $pkg_config['packages']['package'][$id]['descr'];
+    $pkgent['category'] = $pkg_config['packages']['package'][$id]['category'];
+
+    $pkgent['version'] = $pkg_config['packages']['package'][$id]['version'];
+
+    $pkgent['depends_on_package'] = $a_out[$id]['depends_on_package'];
+    $pkgent['depends_on_package_base_url'] = $a_out[$id]['depends_on_package_base_url'];
+    $pkgent['pfsense_package'] = $a_out[$id]['pfsense_package'];
+    $pkgent['pfsense_package_base_url'] = $a_out[$id]['pfsense_package_base_url'];
+    $pkgent['configurationfile'] = $a_out[$id]['configurationfile'];
+    if($pkg_config['packages']['package'][$id]['logging']) {
+        // logging facilities.
+        $pkgent['logging']['facility'] = $pkg_config['packages']['package'][$id]['logging']['facility'];
+        $pkgent['logging']['logfile_name'] = $pkg_config['packages']['package'][$id]['logging']['logfile_name'];
+        mwexec("/usr/sbin/clog -i -s 32768 /var/log/" . $pkgent['logging']['logfile_name']);
+        mwexec("chmod 0600 /var/log/" . $pkgent['logging']['logfile_name']);
+        add_text_to_file("/etc/syslog.conf", $pkgent['logging']['facilityname'] . "\t\t\t" . $pkgent['logging']['logfilename']);
+        mwexec("/usr/bin/killall -HUP syslogd");
     }
-}
+    $a_out = &$config['packages']['package']; // save item to installedpkgs
 
-update_status("Downloading and installing " . $pkgent['name'] . " - " . $pkgent['pfsense_package'] . " and its dependencies ... This could take a moment ...");
-fwrite($fd_log, "Downloading and installing " . $pkgent['name'] . " ... \n");
+    fwrite($fd_log, "Begining (" . $id. ") " . $pkgent['name'] . " package installation.\n" . $status);
 
-update_progress_bar($pb_percent);
-$pb_percent += 10;
+    update_progress_bar($pb_percent);
+    $pb_percent += 10;
 
-if ($pkgent['pfsense_package_base_url'] <> "") {
-    $text = exec_command_and_return_text("cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base_url'] . "/" . $pkgent['pfsense_package']);
-    update_output_window($text);
-    fwrite($fd_log, "Executing: cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base_url'] . "/" . $pkgent['pfsense_package'] . "\n" . $text);
-}
-
-update_progress_bar($pb_percent);
-$pb_percent += 10;
-
-if ($pkgent['depends_on_package_base_url'] <> "") {
-            update_status("Downloading and installing " . $pkgent['name'] . " and its dependencies ... This could take a moment ...");
-            $text = exec_command_and_return_text("cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package']);
-            update_output_window($text);
-            fwrite($fd_log, "cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package'] . "\n" . $text);;
-}
-
-if ($pkgent['depends_on_package_base_url'] <> "" or $pkgent['pfsense_package_base_url'] <> "") {
-    $status = exec_command_and_return_text("ls /var/db/pkg | grep " . $pkgent['name']);
     fwrite($fd_log, "ls /var/db/pkg | grep " . $pkgent['name'] . "\n" . $status);
     if($status <> "") {
-                update_status("Package installed.  Lets finish up.");
-                fwrite($fd_log, "Package installed.  Lets finish up.\n");
-    } else {
-                fwrite($fd_log, "Package WAS NOT installed properly.\n");
-                fclose($fd_log);
-                $filecontents = exec_command_and_return_text("cat " . $file);
-                update_progress_bar(100);
-                echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
-                echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
-                update_status("Package WAS NOT installed properly...Something went wrong..\n" . $filecontents);
-                update_output_window("Error during package installation.");
-                sleep(1);
-                die;
+                // package is already installed!?
+                if(!$_GET['mode'] == "reinstallall")
+                    print_info_box_np("NOTICE! " . $pkgent['name'] . " is already installed!  Installation will be registered.");
     }
-}
 
-update_progress_bar($pb_percent);
-$pb_percent += 10;
+    if($pkg_config['packages']['package'][$id]['config_file'] <> "") {
+        update_status("Downloading configuration file.");
+        fwrite($fd_log, "Downloading configuration file " . $pkg_config['packages']['package'][$id]['config_file'] . " ... \n");
+        update_progress_bar($pb_percent);
+        $pb_percent += 10;
+        mwexec("cd /usr/local/pkg/ && fetch " . $pkg_config['packages']['package'][$id]['config_file']);
+        if(!file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
+            update_output_window("ERROR!  Could not fetch " . $pkg_config['packages']['package'][$id]['config_file'] . "\n");
+            exit;
+        }
+    }
 
-$config = parse_xml_config("{$g['conf_path']}/config.xml", $g['xml_rootobj']);
+    update_status("Downloading and installing " . $pkgent['name'] . " - " . $pkgent['pfsense_package'] . " and its dependencies ... This could take a moment ...");
+    fwrite($fd_log, "Downloading and installing " . $pkgent['name'] . " ... \n");
 
-update_progress_bar($pb_percent);
-$pb_percent += 10;
+    update_progress_bar($pb_percent);
+    $pb_percent += 10;
 
-$config['installedpackages']['package'][] = $pkgent;
+    if ($pkgent['pfsense_package_base_url'] <> "") {
+        $text = exec_command_and_return_text("cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base_url'] . "/" . $pkgent['pfsense_package']);
+        update_output_window($text);
+        fwrite($fd_log, "Executing: cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base_url'] . "/" . $pkgent['pfsense_package'] . "\n" . $text);
+    }
 
-if (isset($id) && $a_out[$id])
-        $a_out[$id] = $pkgent;
-else
-        $a_out[] = $pkgent;
+    update_progress_bar($pb_percent);
+    $pb_percent += 10;
 
-update_progress_bar($pb_percent);
-$pb_percent += 10;
+    if ($pkgent['depends_on_package_base_url'] <> "") {
+                update_status("Downloading and installing " . $pkgent['name'] . " and its dependencies ... This could take a moment ...");
+                $text = exec_command_and_return_text("cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package']);
+                update_output_window($text);
+                fwrite($fd_log, "cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package'] . "\n" . $text);;
+    }
 
-write_config();
+    if ($pkgent['depends_on_package_base_url'] <> "" or $pkgent['pfsense_package_base_url'] <> "") {
+        $status = exec_command_and_return_text("ls /var/db/pkg | grep " . $pkgent['name']);
+        fwrite($fd_log, "ls /var/db/pkg | grep " . $pkgent['name'] . "\n" . $status);
+        if($status <> "") {
+                    update_status("Package installed.  Lets finish up.");
+                    fwrite($fd_log, "Package installed.  Lets finish up.\n");
+        } else {
+                    fwrite($fd_log, "Package WAS NOT installed properly.\n");
+                    fclose($fd_log);
+                    $filecontents = exec_command_and_return_text("cat " . $file);
+                    update_progress_bar(100);
+                    echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
+                    echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
+                    update_status("Package WAS NOT installed properly...Something went wrong..\n" . $filecontents);
+                    update_output_window("Error during package installation.");
+                    sleep(1);
+                    die;
+        }
+    }
 
-update_progress_bar($pb_percent);
-$pb_percent += 10;
+    update_progress_bar($pb_percent);
+    $pb_percent += 10;
 
-$name = $pkgent['name'];
+    $config = parse_xml_config("{$g['conf_path']}/config.xml", $g['xml_rootobj']);
 
-update_progress_bar($pb_percent);
-$pb_percent++;
+    update_progress_bar($pb_percent);
+    $pb_percent += 10;
 
-/*
- * parse the config file for this package and install neededtext items.
- *
-*/
-if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
-            $package_conf = parse_xml_config_pkg("/usr/local/pkg/" . $pkgent['name'] . ".xml", "packagegui");
-            if($package_conf['modify_system']['item'] <> "") {
-                foreach ($package_conf['modify_system']['item'] as $ms) {
-                    update_progress_bar($pb_percent);
-                    $pb_percent += 10;
-                    if($ms['textneeded']) {
-                        add_text_to_file($ms['modifyfilename'],$ms['textneeded']);
+    $config['installedpackages']['package'][] = $pkgent;
+
+    if (isset($id) && $a_out[$id])
+            $a_out[$id] = $pkgent;
+    else
+            $a_out[] = $pkgent;
+
+    update_progress_bar($pb_percent);
+    $pb_percent += 10;
+
+    if(!$_GET['mode'] == "reinstallall")
+        write_config();
+
+    update_progress_bar($pb_percent);
+    $pb_percent += 10;
+
+    $name = $pkgent['name'];
+
+    update_progress_bar($pb_percent);
+    $pb_percent++;
+
+    /*
+     * parse the config file for this package and install neededtext items.
+     *
+    */
+    if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
+                $package_conf = parse_xml_config_pkg("/usr/local/pkg/" . $pkgent['name'] . ".xml", "packagegui");
+                if($package_conf['modify_system']['item'] <> "") {
+                    foreach ($package_conf['modify_system']['item'] as $ms) {
+                        update_progress_bar($pb_percent);
+                        $pb_percent += 10;
+                        if($ms['textneeded']) {
+                            add_text_to_file($ms['modifyfilename'],$ms['textneeded']);
+                        }
                     }
                 }
-            }
 
-            /*
-             * fetch additional files needed for package if defined
-             * and uncompress if needed.
-             */
-            if ($package_conf['additional_files_needed'] <> "") {
-                        foreach($package_conf['additional_files_needed']['item'] as $afn) {
-                                    update_progress_bar($pb_percent);
-                                    $pb_percent += 10;
-                                    $filename = get_filename_from_url($afn);
-                                    update_status("Downloading additional files needed for package " . $filename . " ...");
-                                    system("cd /usr/local/pkg && /usr/bin/fetch " .  $afn . " 2>/dev/null");
-                                    if(stristr($filename, '.tgz') <> "")
-                                                system("cd /usr/local/pkg && tar xzvf " . $filename . " -C / >/dev/null 2>&1");
-                        }
-            }
-
-            /*
-             * loop through menu installation items
-             * installing multiple items if need be.
-            */
-            if(is_array($package_conf['menu']))
-                foreach ($package_conf['menu'] as $menu) {
-                            // install menu item into the ext folder
-                            fwrite($fd_log, "Adding menu option to " . $menu['section'] . "/" . $menu['name'] . "\n");
-                            $fd = fopen("/usr/local/www/ext/" . $menu['section'] . "/" . $menu['name'] , "w");
-                            if($menu['url'] <> "") {
-                                        // override $myurl for script.
-                                        $toeval = "\$myurl = \"" . getenv("HTTP_HOST") . "\"; \n";
-                                        eval($toeval);
-                                        // eval url so that above $myurl item can be processed if need be.
-                                        $urltmp = $menu['url'];
-                                        $toeval = "\$url = \"" . $urltmp . "\"; \n";
-                                        eval($toeval);
-                                        fwrite($fd, $url . "\n");
-                            } else {
-                                        $xml = "";
-                                        if(stristr($menu['configfile'],".xml") == "") $xml = ".xml";
-                                        fwrite($fd, "/pkg.php?xml=" . $menu['configfile'] . $xml . "\n");
+                /*
+                 * fetch additional files needed for package if defined
+                 * and uncompress if needed.
+                 */
+                if ($package_conf['additional_files_needed'] <> "") {
+                            foreach($package_conf['additional_files_needed']['item'] as $afn) {
+                                        update_progress_bar($pb_percent);
+                                        $pb_percent += 10;
+                                        $filename = get_filename_from_url($afn);
+                                        update_status("Downloading additional files needed for package " . $filename . " ...");
+                                        system("cd /usr/local/pkg && /usr/bin/fetch " .  $afn . " 2>/dev/null");
+                                        if(stristr($filename, '.tgz') <> "")
+                                                    system("cd /usr/local/pkg && tar xzvf " . $filename . " -C / >/dev/null 2>&1");
                             }
-                            fclose($fd);
-            }
-} else {
-            update_output_window("WARNING! /usr/local/pkg/" . $pkgent['name'] . ".xml" . " does not exist!\n");
-            fwrite($fd_log, "WARNING! /usr/local/pkg/" . $pkgent['name'] . ".xml" . " does not exist!\n");
-}
-fwrite($fd_log, "End of Package Manager installation session.\n");
+                }
 
-update_progress_bar($pb_percent);
-$pb_percent += 10;
-
-// return dependency list to output later.
-$command = "TODELETE=`ls /var/db/pkg | grep " . $name . "` && /usr/sbin/pkg_info -r \$TODELETE | grep Dependency: | cut -d\" \" -f2";
-$dependencies = exec_command_and_return_text($command);
-fwrite($fd_log, "Installed " . $name . " and the following dependencies:\n" . $dependencies);
-
-update_progress_bar($pb_percent);
-$pb_percent += 10;
-
-if ($pkgent['depends_on_package_base_url'] <> "" or $pkgent['pfsense_package_base_url'] <> "") {
-    $status = exec_command_and_return_text("ls /var/db/pkg | grep " . $pkgent['name']);
-    fwrite($fd_log, "ls /var/db/pkg | grep " . $pkgent['name'] . "\n" . $status);
-    if($status <> "") {
-                update_status("Package installation completed.");
-                fwrite($fd_log, "Package installation completed.\n");
+                /*
+                 * loop through menu installation items
+                 * installing multiple items if need be.
+                */
+                if(is_array($package_conf['menu']))
+                    foreach ($package_conf['menu'] as $menu) {
+                                // install menu item into the ext folder
+                                fwrite($fd_log, "Adding menu option to " . $menu['section'] . "/" . $menu['name'] . "\n");
+                                $fd = fopen("/usr/local/www/ext/" . $menu['section'] . "/" . $menu['name'] , "w");
+                                if($menu['url'] <> "") {
+                                            // override $myurl for script.
+                                            $toeval = "\$myurl = \"" . getenv("HTTP_HOST") . "\"; \n";
+                                            eval($toeval);
+                                            // eval url so that above $myurl item can be processed if need be.
+                                            $urltmp = $menu['url'];
+                                            $toeval = "\$url = \"" . $urltmp . "\"; \n";
+                                            eval($toeval);
+                                            fwrite($fd, $url . "\n");
+                                } else {
+                                            $xml = "";
+                                            if(stristr($menu['configfile'],".xml") == "") $xml = ".xml";
+                                            fwrite($fd, "/pkg.php?xml=" . $menu['configfile'] . $xml . "\n");
+                                }
+                                fclose($fd);
+                }
     } else {
-                update_status("Package WAS NOT installed properly.");
-                fwrite($fd_log, "Package WAS NOT installed properly.\n");
+                update_output_window("WARNING! /usr/local/pkg/" . $pkgent['name'] . ".xml" . " does not exist!\n");
+                fwrite($fd_log, "WARNING! /usr/local/pkg/" . $pkgent['name'] . ".xml" . " does not exist!\n");
     }
-} else {
-    update_status("Package installation completed.");
-    fwrite($fd_log, "Package installation completed.\n");
-}
+    fwrite($fd_log, "End of Package Manager installation session.\n");
 
-update_progress_bar($pb_percent);
-$pb_percent += 10;
+    update_progress_bar($pb_percent);
+    $pb_percent += 10;
+
+    // return dependency list to output later.
+    $command = "TODELETE=`ls /var/db/pkg | grep " . $name . "` && /usr/sbin/pkg_info -r \$TODELETE | grep Dependency: | cut -d\" \" -f2";
+    $dependencies = exec_command_and_return_text($command);
+    fwrite($fd_log, "Installed " . $name . " and the following dependencies:\n" . $dependencies);
+
+    update_progress_bar($pb_percent);
+    $pb_percent += 10;
+
+    if ($pkgent['depends_on_package_base_url'] <> "" or $pkgent['pfsense_package_base_url'] <> "") {
+        $status = exec_command_and_return_text("ls /var/db/pkg | grep " . $pkgent['name']);
+        fwrite($fd_log, "ls /var/db/pkg | grep " . $pkgent['name'] . "\n" . $status);
+        if($status <> "") {
+                    update_status("Package installation completed.");
+                    fwrite($fd_log, "Package installation completed.\n");
+        } else {
+                    update_status("Package WAS NOT installed properly.");
+                    fwrite($fd_log, "Package WAS NOT installed properly.\n");
+        }
+    } else {
+        update_status("Package installation completed.");
+        fwrite($fd_log, "Package installation completed.\n");
+    }
+
+    update_progress_bar($pb_percent);
+    $pb_percent += 10;
+
+
+    if($package_conf['custom_php_install_command']) {
+        eval($package_conf['custom_php_install_command']);
+    }
+
+    update_progress_bar(100);
+
+}
 
 // close log
 fclose($fd_log);
-
-if($package_conf['custom_php_install_command']) {
-    eval($package_conf['custom_php_install_command']);
-}
 
 // reopen and read log in
 $fd_log = fopen("/tmp/pkg_mgr.log", "r");
@@ -446,7 +485,6 @@ fclose($fd_log);
 $log = ereg_replace("\n", "\\n", $tmp);
 //echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"" . $log . "\";</script>";
 
-update_progress_bar(100);
 
 echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
 echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";

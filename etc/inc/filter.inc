@@ -158,8 +158,8 @@ function filter_configure() {
 		$rules_file = `/bin/cat /tmp/rules.debug`;
 		$line_split = split("\n", $rules_file);
 		if(is_array($line_split))
-			$line_error = "The line in question reads: " . $line_split[$line_number];
-		return "There was an error loading the rules.<p><pre>" . $rules_error . "\n" . $line_error . "</pre>";
+			$line_error = "The line in question reads [{$line_number}]:<br>" . $line_split[$line_number];
+		return "There was error(s) loading the rules:<p><pre>" . $rules_error . "\n" . $line_error . "</pre>";
 	} else {
 		/* process packager manager custom rules */
 		$files = return_dir_as_array("/usr/local/pkg/pf/");
@@ -199,7 +199,7 @@ function filter_generate_altq_queues($altq_ints) {
 		foreach ($config['shaper']['queue'] as $rule) {
 			$options = "";
 			// check to make sure we're actually using this queue.
-			if(stristr($altq_ints, $rule['name']) !== FALSE) {
+			//if(stristr($altq_ints, $rule['name']) !== FALSE) {
 				$altq_rules .= "queue " . $rule['name'] . " ";
 				if (isset($rule['bandwidth']) and $rule['bandwidth'] <> "")
 					$altq_rules .= "bandwidth " . $rule['bandwidth'] . $rule['bandwidthtype'] . " ";
@@ -228,18 +228,21 @@ function filter_generate_altq_queues($altq_ints) {
 				$altq_rules .= $scheduler_type . " ";
 				if($options)
 					$altq_rules .= "(". $options . " )";
-				if (isset($rule['subqueue'])) {
-					$altq_rules .= "{ ";
-					$fsq = "";
-					foreach ($rule['subqueue'] as $sq) {
-						if($fsq) $altq_rules .= ",";
-						$altq_rules .= $sq['name'];
+				$fsq="";
+				foreach($config['shaper']['queue'] as $q) {
+					if($q['attachtoqueue'] == $rule['name']) {
+						if($fsq == "")
+							$altq_rules .= "{ ";
+						else if($fsq == "1")
+							$altq_rules .= ", ";
+						$altq_rules .= $q['name'];
 						$fsq = "1";
 					}
-					$altq_rules .= " }";
 				}
+				if($fsq == "1")
+					$altq_rules .= " }";
 				$altq_rules .= "\n";
-			}
+			//}
 		}
 	}
 	return $altq_rules;
@@ -288,8 +291,12 @@ function filter_setup_altq_interfaces() {
 
 		foreach ($config['shaper']['queue'] as $queue) {
 			$rule_interface = filter_is_queue_being_used_on_interface($queue['name'], $workting_with_interface);
+			$rule_interface = queue_interface_recursive($queue['name']);
 			if ($rule_interface == $workting_with_interface) {
-				if(is_subqueue($queue['name']) == 0) {
+				$status_is_subqueue = is_subqueue($queue['name']);
+				$status_is_attached = is_queue_attached_children($queue['name']);
+				if($queue['attachtoqueue'] <> "") $status_is_attached = 0;
+				if($status_is_subqueue == 0 or $status_is_attached == 1) {
 					if($is_first) $queue_names .= ", ";
 					$queue_names .= $queue['name'];
 					$is_first = "1";
@@ -311,18 +318,40 @@ function filter_setup_altq_interfaces() {
 	return $altq_rules;
 }
 
+function is_queue_attached_children($name) {
+        global $config;
+        $status = "";
+        if (!is_array($config['shaper']['queue'])) return 0;
+	foreach ($config['shaper']['queue'] as $queue) {
+		if($queue['attachtoqueue'] == $name) return 1;
+	}
+	return 0;
+}
+
+function queue_interface_recursive($queuename) {
+        global $config;
+        foreach($config['shaper']['queue'] as $queue) {
+                if($queue['attachtoqueue'] == $queuename) {
+                        $status = queue_interface_recursive($queue['name']);
+                        if($status <> "") return $status;
+                }
+                foreach($config['shaper']['rule'] as $rule) {
+                        if($rule['targetqueue'] == $queuename)
+                                 return $rule['interface'];
+                }
+        }
+}
+
+
+
 function is_subqueue($name) {
         global $config;
         $status = "";
         if (!is_array($config['shaper']['queue'])) return 0;
 	foreach ($config['shaper']['queue'] as $queue) {
-		if(is_array($queue['subqueue'])) {
-			foreach ($queue['subqueue'] as $sq) {
-				if($sq['name'] == $name) return 1;
-			}
-		}
+		if($queue['attachtoqueue'] <> "") return 1;
 	}
-        return 0;
+	return 0;
 }
 
 function filter_generate_aliases() {

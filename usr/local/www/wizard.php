@@ -167,7 +167,10 @@ function update_config_field($field, $updatetext, $unset) {
 			echo "<input type='submit' name='" . $name . "' value='" . $field['name'] . "'>\n";
 			echo "</td><td>";
 		    }
-
+		    if($field['description'] <> "") {
+			echo "<br>" . $field['description'];
+			echo "</td></tr><tr><td>&nbsp;</td></tr>";
+		    }
                     echo "</td></tr>";
                 }
             ?>

@@ -43,7 +43,8 @@ if (file_exists("{$g['etc_path']}/platform")) {
 	$g['platform'] = "unknown";
 }
 
-if ($g['booting']) {
+/* if our config file exists bail out, we're already set. */
+if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
 	/* find the device where config.xml resides and write out an fstab */
 	unset($cfgdevice);
 
@@ -155,9 +156,7 @@ if (!$noparseconfig) {
 					echo "file is inserted. If it isn't, your configuration changes will be lost\n";
 					echo "on reboot.\n";
 				} else {
-					echo "XML configuration {$g['conf_path']}/config.xml file not found.  pfSense cannot continue booting.\n";
-					sleep(5);
-					echo "\n\nThe system is now halting.\n\n";
+					echo "XML configuration file not found.  pfSense cannot continue booting.\n";
 					mwexec("/sbin/halt");
 					exit;
 				}

@@ -165,14 +165,12 @@ function interfaces_optional_configure() {
 	if ($bridgeconfig) {
 		/* Set the system bridge configuration and enable bridging. */
 		mwexec("/sbin/sysctl net.link.ether.bridge_cfg=" . $bridgeconfig);
-
+		mwexec("/sbin/sysctl net.link.ether.bridge.enable=1");
 		if (isset($config['bridge']['filteringbridge']))
 			mwexec("/sbin/sysctl net.link.ether.bridge.pf=1");
-
-		mwexec("/sbin/sysctl net.link.ether.bridge=1");
 	} else {
 		mwexec("/sbin/sysctl net.link.ether.bridge.pf=0");
-		mwexec("/sbin/sysctl net.link.ether.bridge=0");
+		mwexec("/sbin/sysctl net.link.ether.bridge.enable=0");
 	}
 
 	if (!$g['booting']) {

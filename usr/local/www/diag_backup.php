@@ -178,10 +178,12 @@ if (isset($config['system']['version_control'])) {
 		if ($dh = opendir($dir)) {
 			while (($file = readdir($dh)) !== false) {
 				if ($file != "." && $file != "..") {
-					if (ereg("config-([0-9]+).xml", $file, $regs)) {
+					if (ereg("config-([0-9]+).xml", $file, $fname_array)) {
 						$old_ver = array();
-						$old_ver['date']=date("Y-m-d H:i:s", $regs[1]);
-						$old_ver['desc']= "XXX - description not used yet";
+						$conf = return_filename_as_string("{$g['cf_conf_path']}/bak/" .$file);
+						ereg("<lastchangedesc>(.*)</lastchangedesc>", $conf, $desc_array);
+						$old_ver['date']=date("Y-m-d H:i:s", $fname_array[1]);
+						$old_ver['desc']=$desc_array[1];
 
 						array_push(&$old_versions, $old_ver);
 					}

@@ -215,7 +215,7 @@ print_info_box($sig_warning);
 		<tr>
 		  <td width="22%" valign="baseline" class="vncell">&nbsp;</td>
 		  <td width="78%" class="vtable">
-		  <p> Click this button to automatically upgrade pfSense in the background.  This may wake a while.<br>
+		  <p> Click this button to automatically upgrade pfSense in the background.  This may take a while.<br>
 		  <br>
 		  <a href="system_firmware.php?autoupgrade=true">Invoke Auto Upgrade</a>
 		</tr>

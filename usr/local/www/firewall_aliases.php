@@ -100,10 +100,20 @@ if ($_GET['act'] == "del") {
     <?=htmlspecialchars($alias['name']);?>
   </td>
   <td class="listr">
-    <?=htmlspecialchars($alias['address']);?>
+      <?php
+	$address = htmlspecialchars($alias['address']);
+	$address = explode(" ", $address);
+	$isfirst = 0;
+	foreach ($address as $addy) {
+		if($isfirst == 1) echo "<br>";
+		echo $addy;
+		$isfirst = 1;
+	}
+    ?>
   </td>
   <td class="listbg">
-    <font color="#FFFFFF"><?=htmlspecialchars($alias['descr']);?>&nbsp;
+    <font color="#FFFFFF">
+    <?=htmlspecialchars($alias['descr']);?>&nbsp;
   </td>
   <td valign="middle" nowrap class="list"> <a href="firewall_aliases_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a>
      &nbsp;<a href="firewall_aliases.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this alias? All elements that still use it will become invalid (e.g. filter rules)!')"><img src="x.gif" width="17" height="17" border="0"></a></td>

@@ -622,8 +622,8 @@ function dst_rep_change() {
                       <tr>
                         <td>from:&nbsp;&nbsp;</td>
                         <td><select name="srcbeginport" class="formfld" onchange="src_rep_change();ext_change()">
+			    <option value="any" <?php $bfound = 0; if ($pconfig['srcbeginport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
                             <option value="">(other)</option>
-                            <option value="any" <?php $bfound = 0; if ($pconfig['srcbeginport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
                             <?php foreach ($wkports as $wkport => $wkportdesc): ?>
                             <option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcbeginport']) {
 																echo "selected";
@@ -637,8 +637,8 @@ function dst_rep_change() {
                       <tr>
                         <td>to:</td>
                         <td><select name="srcendport" class="formfld" onchange="ext_change()">
+			    <option value="any" <?php $bfound = 0; if ($pconfig['srcendport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
                             <option value="">(other)</option>
-                            <option value="any" <?php $bfound = 0; if ($pconfig['srcendport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
                             <?php foreach ($wkports as $wkport => $wkportdesc): ?>
                             <option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcendport']) {
 																echo "selected";

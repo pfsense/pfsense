@@ -36,19 +36,19 @@ if($_GET['autoupgrade'] <> "") {
     $savemsg = "pfSense is now auto upgrading.  The firewall will automatically reboot if it succeeds.";
 }
 
-/* checks with m0n0.ch to see if a newer firmware version is available;
+/* checks with pfSense to see if a newer firmware version is available;
    returns any HTML message it gets from the server */
 function check_firmware_version() {
 	global $g;
 	$post = "platform=" . rawurlencode($g['platform']) .
 		"&version=" . rawurlencode(trim(file_get_contents("/etc/version")));
 
-	$rfd = @fsockopen("pfSense", 80, $errno, $errstr, 3);
+	$rfd = @fsockopen("www.pfSense.com", 80, $errno, $errstr, 3);
 	if ($rfd) {
 		$hdr = "POST /pfSense/checkversion.php HTTP/1.0\r\n";
 		$hdr .= "Content-Type: application/x-www-form-urlencoded\r\n";
 		$hdr .= "User-Agent: pfSense-webConfigurator/1.0\r\n";
-		$hdr .= "Host: m0n0.ch\r\n";
+		$hdr .= "Host: www.pfSense.com\r\n";
 		$hdr .= "Content-Length: " . strlen($post) . "\r\n\r\n";
 
 		fwrite($rfd, $hdr);
@@ -157,7 +157,7 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 <p class="pgtitle">System: Firmware</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if ($fwinfo) echo $fwinfo; ?>
+<?php if ($fwinfo <> "") print_info_box($fwinfo); ?>
 <?php if (!in_array($g['platform'], $fwupplatforms)): ?>
 <p><strong>Firmware uploading is not supported on this platform.</strong></p>
 <?php elseif ($sig_warning && !$input_errors): ?>

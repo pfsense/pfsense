@@ -54,4 +54,17 @@ function return_dir_as_array($dir) {
     return $dir_array;
 }
 
+/*
+ * return_dir_as_array($filenaem): returns $filename contents as a string
+ */
+function return_filename_as_string($filename) {
+    $tmp = "";
+    $fd = popen($filename, "r");
+    while(!feof($fd)) {
+	$tmp .= fread($fd,49);
+    }
+    fclose($fd);
+    return $tmp;
+}
+
 ?>

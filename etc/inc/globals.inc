@@ -51,7 +51,8 @@ $g = array(
     "pptp_subnet" => 25,
     "debug" => false,
     "latest_config" => "1.4",
-    "nopccard_platforms" => array("wrap", "net48xx")
+    "nopccard_platforms" => array("wrap", "net48xx"),
+    "pkg_config_location" => "http://www.pfsense.com/packages/pkg_config.xml"
 );
 
 ?>

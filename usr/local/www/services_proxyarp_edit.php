@@ -2,8 +2,8 @@
 <?php
 /*
 	services_proxyarp_edit.php
-	part of m0n0wall (http://m0n0.ch/wall)
-
+	Copyright (C) 2004 Scott Ullrich
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -116,6 +116,9 @@ if ($_POST) {
 		else
 			$a_proxyarp[] = $arpent;
 
+		if($_POST['interface'])
+			$arpent['interface'] = $_POST['interface'];
+
 		touch($d_proxyarpdirty_path);
 
 		write_config();
@@ -217,7 +220,8 @@ function typesel_change() {
 			  <?php endif; endfor; ?>
 		  </td>
 		</tr>
-				<tr>
+
+		<tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">

@@ -63,7 +63,7 @@ function return_dir_as_array($dir) {
 function enable_hardware_offloading($interface) {
     $supported_ints = array('fxp');
     foreach($supported_ints as $int) {
-	if(stristr($interface,$int) != FALSE) {
+	if(stristr($interface,$int) != false) {
 	    mwexec("/sbin/ifconfig $interface link0");
 	}
     }
@@ -172,7 +172,7 @@ function link_ip_to_carp_interface($ip) {
                         if($result <> true) break;
                         $interface = filter_opt_interface_to_real($ifname);
 			if($ft_ip == $carp_ft_ip)
-			    if(stristr($carp_ints,$carp_int) == FALSE)
+			    if(stristr($carp_ints,$carp_int) == false)
 				$carp_ints .= $carp_int;
                 }
         }
@@ -199,7 +199,7 @@ function exec_command($command) {
  */
 function does_interface_exist($interface) {
     $ints = exec_command("/sbin/ifconfig -l");
-    if(stristr($ints, $interface) !== FALSE)
+    if(stristr($ints, $interface) !== false)
 	return true;
     else
 	return false;
@@ -258,7 +258,7 @@ function find_ip_interface($ip) {
  */
 function get_carp_interface_status($carpinterface) {
     $result = does_interface_exist($carpinterface);
-    if($result <> true) return;
+    if($result <> true) return false;
     $status = exec_command("/sbin/ifconfig {$carpinterface} | /usr/bin/grep \"carp:\" | /usr/bin/cut -d\" \" -f2");
     return $status;
 }

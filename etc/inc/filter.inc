@@ -715,7 +715,7 @@ function filter_nat_rules_generate() {
 	$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
 
 	$natrules = "";
-
+	$natrules .= "nat-anchor \"natearly/*\"\n";
 	$natrules .= "nat-anchor \"natrules/*\"\n";
 
 	/* any 1:1 mappings? */

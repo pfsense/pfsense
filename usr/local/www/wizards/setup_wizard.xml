@@ -2463,7 +2463,7 @@
 <step>
 	<id>8</id>
 	<title>Reboot in progress</title>
-	<description>A reboot is now in progress. Please wait.</description>
+	<description>A reboot is now in progress.  Please wait. &lt;p&gt; The system will automatically try to access $myurl in 120 seconds. &lt;p&gt; You can click on the icon above to access the site quicker.       &lt;meta http-equiv="refresh" content="120; url=$myurl" &gt;</description>
 	<stepafterformdisplay>
 		system("/sbin/shutdown -r now");
 	</stepafterformdisplay>

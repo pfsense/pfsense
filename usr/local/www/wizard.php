@@ -132,15 +132,16 @@ if($pkg['step'][$stepid]['stepbeforeformdisplay'] <> "") {
 
 &nbsp;<br>
 
-<img src="/logo.gif"><p>
+<a href="http://<?= getenv("HTTP_HOST") ?>"><img border="0" src="/logo.gif"></a>
+<p>
 
 <table width="600" cellspacing="0" cellpadding="3">
     <!-- wizard goes here -->
     <tr><td>&nbsp;</td></tr>
-    <tr><td colspan='2'><center><b><?= $description ?></b></center></td></tr><tr><td>&nbsp;</td></tr>
+    <tr><td colspan='2'><center><b><?= fixup_string($description) ?></b></center></td></tr><tr><td>&nbsp;</td></tr>
     <?php
 	if(!$pkg['step'][$stepid]['disableheader'])
-		echo "<tr><td colspan=\"2\" class=\"listtopic\">" . $title . "</td></tr>";
+		echo "<tr><td colspan=\"2\" class=\"listtopic\">" . fixup_string($title) . "</td></tr>";
     ?>
 
     <?php
@@ -175,7 +176,7 @@ if($pkg['step'][$stepid]['stepbeforeformdisplay'] <> "") {
 		    if ($field['type'] == "input") {
 			if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
-				echo $field['name'];
+				echo fixup_string($field['name']);
 				echo ":</td>\n";
 			}
 			if(!$field['dontcombinecells'])
@@ -184,7 +185,7 @@ if($pkg['step'][$stepid]['stepbeforeformdisplay'] <> "") {
 		    } else if ($field['type'] == "password") {
 			if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
-				echo $field['name'];
+				echo fixup_string($field['name']);
 				echo ":</td>\n";
 			}
 			if(!$field['dontcombinecells'])
@@ -193,7 +194,7 @@ if($pkg['step'][$stepid]['stepbeforeformdisplay'] <> "") {
 		    } else if ($field['type'] == "select") {
 			if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
-				echo $field['name'];
+				echo fixup_string($field['name']);
 				echo ":</td>\n";
 			}
 			// XXX: TODO: set $selected
@@ -217,7 +218,7 @@ if($pkg['step'][$stepid]['stepbeforeformdisplay'] <> "") {
 		    } else if ($field['type'] == "textarea") {
 			if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
-				echo $field['name'];
+				echo fixup_string($field['name']);
 				echo ":</td>";
 			}
 			if(!$field['dontcombinecells'])
@@ -325,4 +326,23 @@ if($pkg['step'][$stepid]['javascriptafterformdisplay'] <> "") {
 	echo "</script>\n\n";
 }
 
+/*
+ *  HELPER FUNCTIONS
+ */
+
+function fixup_string($string) {
+	// fixup #1: $myurl -> http[s]://ip_address:port/
+	$https = "";
+	$port = "";
+	$urlport = "";
+	$port = $config['system']['webguiport'];
+	if($port <> "443" and $port <> "80") $urlport = ":" . $port;
+	if($config['system']['webguiproto'] == "https") $https = "s";
+	$myurl = "http" . $https . "://" . getenv("HTTP_HOST") . $urlportport;
+	$newstring = str_replace("\$myurl", $myurl, $string);
+	// fixup #2: fix'er'up here.
+	return $newstring;
+}
+
 ?>
+

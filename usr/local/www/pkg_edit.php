@@ -210,7 +210,7 @@ $config = $config_tmp;
 	  <?php
 	  if(!$pkga['dontdisplayname']) {
 		echo "<td width=\"22%\" class=\"vncellreq\">";
-		echo $pkga['fielddescr'];
+		echo fixup_string($pkga['fielddescr']);
 		echo "</td>";
 	  }
 
@@ -228,10 +228,10 @@ $config = $config_tmp;
 	      if($pkga['type'] == "input") {
 			if($pkga['size']) $size = " size='" . $pkga['size'] . "' ";
 			echo "<input " . $size . " name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
-			echo "<br>" . $pkga['description'] . "\n";
+			echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "password") {
 			echo "<input type='password' " . $size . " name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
-			echo "<br>" . $pkga['description'] . "\n";
+			echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "select") {
 		  // XXX: TODO: set $selected
                   $selected = "";
@@ -243,15 +243,15 @@ $config = $config_tmp;
 		        echo "\t<option name='" . $opt['name'] . "' value='" . $opt['value'] . "'" . $selected . ">" . $opt['name'] . "</option>\n";
 		  }
 		   echo "</select>\n";
-		   echo "<br>" . $pkga['description'] . "\n";
+		   echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "checkbox") {
 			echo "<input type='checkbox' name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
-			echo "<br>" . $pkga['description'] . "\n";
+			echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "textarea") {
 		  if($pkga['rows']) $rows = " rows='" . $pkga['rows'] . "' ";
 		  if($pkga['cols']) $cols = " cols='" . $pkga['cols'] . "' ";
 			echo "<textarea " . $rows . $cols . " name='" . $pkga['fieldname'] . "'>" . $value . "</textarea>\n";
-			echo "<br>" . $pkga['description'] . "\n";
+			echo "<br>" . fixup_string($pkga['description']) . "\n";
 		  } else if($pkga['type'] == "interfaces_selection") {
 			$size = "";
 			$multiple = "";
@@ -295,7 +295,7 @@ $config = $config_tmp;
 			<tr>
 			<?php
 				foreach($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
-				  echo "<td><b>" . $rowhelper['fielddescr'] . "</td>\n";
+				  echo "<td><b>" . fixup_string($rowhelper['fielddescr']) . "</td>\n";
 				}
 				echo "</tr>";
 				echo "<tbody>";
@@ -441,6 +441,20 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper) {
 		}
 		echo "</select>\n";
 	}
+}
+
+function fixup_string($string) {
+	// fixup #1: $myurl -> http[s]://ip_address:port/
+	$https = "";
+	$port = "";
+	$urlport = "";
+	$port = $config['system']['webguiport'];
+	if($port <> "443" and $port <> "80") $urlport = ":" . $port;
+	if($config['system']['webguiproto'] == "https") $https = "s";
+	$myurl = "http" . $https . "://" . getenv("HTTP_HOST") . $urlportport;
+	$newstring = str_replace("\$myurl", $myurl, $string);
+	// fixup #2: fix'er'up here.
+	return $newstring;
 }
 
 ?>

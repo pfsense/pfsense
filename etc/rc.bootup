@@ -129,7 +129,7 @@
 	vpn_pptpd_configure();
 
 	/* start traffic shaper */
-	shaper_configure();
+	/* shaper_configure(); */
 
 	/* start IPsec tunnels */
 	vpn_ipsec_configure();

@@ -1,5 +1,8 @@
 #!/bin/sh
 
+FMBASEURL=$1
+FMFILENAME=$2
+
 # wait 5 seconds before beginning
 sleep 5
 
@@ -8,16 +11,16 @@ logger -p daemon.info -i -t AutoUpgrade "Auto Upgrade started"
 HTTP_AUTH=""
 
 # if username and password is passed, let fetch utilize.
-if [ $# -gt 1 ]; then
-HTTP_AUTH="basic:*:$1:$2"
+if [ $# -gt 3 ]; then
+HTTP_AUTH="basic:*:$3:$4"
 fi
 
-echo "Downloading latest.tgz ..." | logger -p daemon.info -i -t AutoUpgrade
-cd /tmp && fetch http://www.pfSense.com/latest.tgz  | logger -p daemon.info -i -t AutoUpgrade
-echo "Downloading latest.tgz.md5 ..."  | logger -p daemon.info -i -t AutoUpgrade
-cd /tmp && fetch http://www.pfSense.com/latest.tgz.md5  | logger -p daemon.info -i -t AutoUpgrade
+echo "Downloading ${FMFILENAME} from ${FMBASEURL} ..." | logger -p daemon.info -i -t AutoUpgrade
+/usr/bin/fetch ${FMBASEURL}/${FMFILENAME} -o /tmp/latest.tgz | logger -p daemon.info -i -t AutoUpgrade
+echo "Downloading ${FMFILENAME}.md5 from ${FMBASEURL} ..."  | logger -p daemon.info -i -t AutoUpgrade
+/usr/bin/fetch ${FMBASEURL}/${FMFILENAME}.md5 -o /tmp/latest.tgz.md5  | logger -p daemon.info -i -t AutoUpgrade
 
-PMD=`cat /tmp/latest.tgz.md5 | cut -d" " -f4 `;
+PMD=`/bin/cat /tmp/latest.tgz.md5 | cut -d" " -f4 `;
 MD=`/sbin/md5 /tmp/latest.tgz | cut -d" " -f4`;
 
 echo "   Package MD5: ${PMD}" | logger -p daemon.info -i -t AutoUpgrade

@@ -191,12 +191,56 @@ function auth_method_change() {
 	} else {
 		document.iform.logoutwin_enable.checked = 0;
 	}
+	if (document.iform.auth_method[2].checked == false) {
+		document.iform.radiusip.disabled = 1;
+  	        document.iform.radiusport.disabled = 1;
+  	        document.iform.radiuskey.disabled = 1;
+  	        document.iform.radacct_enable.disabled = 1;
+  	        document.iform.radiusacctport.disabled = 1;
+	} else {
+		document.iform.radiusip.disabled = 0;
+  	        document.iform.radiusport.disabled = 0;
+  	        document.iform.radiuskey.disabled = 0;
+  	        document.iform.radacct_enable.disabled = 0;
+  	        document.iform.radiusacctport.disabled = 0;
+	}
 }
+
 function radacct_change() {
 	if (document.iform.radacct_enable.checked) {
 		auth_method_change();
 	}
 }
+
+function enable_https() {
+        if (document.iform.httpslogin_enable.checked == false) {
+                document.iform.httpsname.disabled = 1;
+                document.iform.cert.disabled = 1;
+                document.iform.key.disabled = 1;
+        } else {
+                document.iform.httpsname.disabled = 0;
+                document.iform.cert.disabled = 0;
+                document.iform.key.disabled = 0;
+        }
+}
+
+function enable_peruserbw() {
+        if (document.iform.peruserbw.checked == false) {
+                document.iform.bwauthmacdn.disabled = 1;
+                document.iform.bwauthmacup.disabled = 1;
+                document.iform.bwauthipdn.disabled = 1;
+                document.iform.bwauthipup.disabled = 1;
+                document.iform.bwdefaultdn.disabled = 1;
+                document.iform.bwdefaultup.disabled = 1;
+        } else {
+                document.iform.bwauthmacdn.disabled = 0;
+                document.iform.bwauthmacup.disabled = 0;
+                document.iform.bwauthipdn.disabled = 0;
+                document.iform.bwauthipup.disabled = 0;
+                document.iform.bwdefaultdn.disabled = 0;
+                document.iform.bwdefaultup.disabled = 0;
+        }
+} 
 
 function enable_change(enable_change) {
 	var endis;
@@ -228,6 +272,11 @@ function enable_change(enable_change) {
 	if (enable_change && document.iform.auth_method[0].checked == false) {
 		document.iform.logoutwin_enable.checked = 1;
 	}
+
+	auth_method_change();
+	enable_https();
+	enable_peruserbw();
+
 }
 //-->
 </script>
@@ -308,7 +357,7 @@ to access after they've authenticated.</td>
 	  <tr>
       <td valign="top" class="vncell">Per-user bandwidth restriction</td>
       <td class="vtable">
-		  <input name="peruserbw" type="checkbox" class="formfld" id="peruserbw" value="yes" <?php if ($pconfig['peruserbw']) echo "checked"; ?>>
+		  <input name="peruserbw" type="checkbox" class="formfld" id="peruserbw" value="yes" <?php if ($pconfig['peruserbw']) echo "checked"; ?> onClick="enable_peruserbw()">
           <strong>Enable per-user bandwidth restriction	</strong><br><br>
 		<table cellpadding="0" cellspacing="0">
 		<tr>
@@ -316,7 +365,7 @@ to access after they've authenticated.</td>
 		<td><input type="text" class="formfld" id="bwauthmacdn" size="5" value="<?=htmlspecialchars($pconfig['bwauthmacdn']);?>"> Kbit/s</td>
 		</tr><tr>
 		<td>Pass-through MAC upload</td>
-		<td><input type="text" class="formfld" id="bwauthmacdn" size="5" value="<?=htmlspecialchars($pconfig['bwauthmacup']);?>"> Kbit/s</td>
+		<td><input type="text" class="formfld" id="bwauthmacup" size="5" value="<?=htmlspecialchars($pconfig['bwauthmacup']);?>"> Kbit/s</td>
 		</tr><tr>
 		<td>Pass-through IP download</td>
 		<td><input type="text" class="formfld" id="bwauthipdn" size="5" value="<?=htmlspecialchars($pconfig['bwauthipdn']);?>"> Kbit/s</td>
@@ -370,7 +419,7 @@ to access after they've authenticated.</td>
 	<tr>
       <td valign="top" class="vncell">HTTPS login</td>
       <td class="vtable">
-        <input name="httpslogin_enable" type="checkbox" class="formfld" id="httpslogin_enable" value="yes" <?php if($pconfig['httpslogin_enable']) echo "checked"; ?>>
+        <input name="httpslogin_enable" type="checkbox" class="formfld" id="httpslogin_enable" value="yes" <?php if($pconfig['httpslogin_enable']) echo "checked"; ?> onClick="enable_https()">
         <strong>Enable HTTPS login</strong><br>
     If enabled, the username and password will be transmitted over an HTTPS connection to protect against eavesdroppers. This option only applies when RADIUS authentication is used. A server name, certificate and matching private key must also be specified below.</td>
 	  </tr>

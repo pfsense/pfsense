@@ -102,7 +102,7 @@ function backup_config_section_xmlrpc($raw_params) {
 }
 
 $restore_config_section_doc = 'XMLRPC wrapper for restore_config_section. This method must be called with three parameters: a string containing the local system\'s password, a string containing the section to be restored, and a string containing the returned value of backup_config_section() for that section. This function returns true upon completion.';
-$restore_config_section_sig = array(array(boolean, string, string, string));
+$restore_config_section_sig = array(array(boolean, string, array(), array()));
 
 function restore_config_section_xmlrpc($raw_params) {
 	$params = xmlrpc_params_to_php($raw_params);
@@ -122,7 +122,7 @@ function filter_configure_xmlrpc($raw_params) {
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", 'string'));
 	filter_configure();
-	return new XML_PRC_Response(new XML_RPC_Value(true, 'boolean'));
+	return new XML_RPC_Response(new XML_RPC_Value(true, 'boolean'));
 }
 
 $server = new XML_RPC_Server(

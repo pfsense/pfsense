@@ -16,6 +16,16 @@ MD=`/sbin/md5 /tmp/latest.tgz | cut -d" " -f4`;
 echo "   Package MD5: ${PMD}" | logger -p daemon.info -i -t AutoUpgrade
 echo "Downloaded MD5: ${MD}"  | logger -p daemon.info -i -t AutoUpgrade
 
+if [ "$PMD" = "" ]; then
+    echo "Package MD5 is null md5. Require proxy auth?"  | logger -p daemon.info -i -t AutoUpgrade
+    exit 0
+fi
+
+if [ "$MD" = "" ]; then
+    echo "Downloaded MD5 is null md5. Require proxy auth?"  | logger -p daemon.info -i -t AutoUpgrade
+    exit 0
+fi
+
 if [ "$PMD" = "$MD" ]; then
         echo "MD5's match."  | logger -p daemon.info -i -t AutoUpgrade
         /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz

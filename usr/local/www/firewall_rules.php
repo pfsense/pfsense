@@ -220,19 +220,19 @@ if (isset($_POST['del_x'])) {
 				  <br><img src="<?=$iconfn;?>.gif" width="11" height="15" border="0">
 				  <?php endif; ?>
 				  </td>
-                  <td class="listlr" onClick="fr_toggle(<?=$nrules;?>)">
+                  <td class="listlr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>">
                     <?=$textss;?><?php if (isset($filterent['protocol'])) echo strtoupper($filterent['protocol']); else echo "*"; ?><?=$textse;?>
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nrules;?>)">
+                  <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>">
 				    <?=$textss;?><?php echo htmlspecialchars(pprint_address($filterent['source'])); ?><?=$textse;?>
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nrules;?>)">
+                  <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>">
                     <?=$textss;?><?php echo htmlspecialchars(pprint_port($filterent['source']['port'])); ?><?=$textse;?>
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nrules;?>)">
+                  <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>">
 				    <?=$textss;?><?php echo htmlspecialchars(pprint_address($filterent['destination'])); ?><?=$textse;?>
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nrules;?>)">
+                  <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>">
                     <?=$textss;?><?php echo htmlspecialchars(pprint_port($filterent['destination']['port'])); ?><?=$textse;?>
                   </td>
                   <td class="listbg" onClick="fr_toggle(<?=$nrules;?>)" bcolor="#990000"><font color="white">

@@ -6,10 +6,13 @@ function fr_toggle(id) {
 function fr_bgcolor(id) {
 	var row = document.getElementById('fr' + id);
 	var checkbox = document.getElementById('frc' + id);
-	var cells = row.getElementsByTagName("td");
+	var cells = row.getElementsByTagName('td');
+	var cellcnt = cells.length;
 
-	for (i = 2; i <= 6; i++) {
-		cells[i].style.backgroundColor = checkbox.checked ? "#FFFFBB" : "#FFFFFF";
+	for (i = 2; i <= cellcnt; i++) {
+		// Check for cells with frd id only
+		if (cells[i].id == "frd" + id)
+			cells[i].style.backgroundColor = checkbox.checked ? "#FFFFBB" : "#FFFFFF";
 	}
 	//cells[7].style.backgroundColor = checkbox.checked ? "#FFFFBB" : "#990000";
 }

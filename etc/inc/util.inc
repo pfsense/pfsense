@@ -287,10 +287,13 @@ function mwexec_bg($command) {
 
 /* unlink a file, if it exists */
 function unlink_if_exists($fn) {
-	%filename = $fn;
-//	foreach(glob($fn) as $filename) {
-		if (file_exists($filename)) unlink($filename);
-//	}
+	$to_do = glob($fn);
+	if(is_array($to_do) {
+		foreach($to_do as $filename)
+			if (file_exists($filename)) unlink($filename);
+	} else {
+		if (file_exists($to_do)) unlink($to_do);
+	}
 }
 
 /* make a global alias table (for faster lookups) */

@@ -237,7 +237,7 @@ EOD;
 
 		if (isset($syslogcfg['system'])) {
 			$syslogconf .= <<<EOD
-*.notice;kern.debug;lpr.info;mail.crit;news.err;local0.none;local3.none;local4.none;local7.none @{$syslogcfg['remoteserver']}
+*.notice;kern.debug;lpr.info;mail.crit;news.err;local0.none;local3.none;local7.none @{$syslogcfg['remoteserver']}
 security.*					@{$syslogcfg['remoteserver']}
 auth.info;authpriv.info;daemon.info		@{$syslogcfg['remoteserver']}
 *.emerg						@{$syslogcfg['remoteserver']}
@@ -484,7 +484,7 @@ function system_do_shell_commands($early = 0) {
 	}
 }
 
-function system_do_extensions() {
+function system_do_extensions($early = false) {
 	global $config, $g;
 
 	if (!is_dir("{$g['etc_path']}/inc/ext"))
@@ -495,7 +495,7 @@ function system_do_extensions() {
 		while (($extd = readdir($dh)) !== false) {
 			if (($extd === ".") || ($extd === ".."))
 				continue;
-			$rcfile = "{$g['etc_path']}/inc/ext/" . $extd . "/rc";
+			$rcfile = "{$g['etc_path']}/inc/ext/" . $extd . "/" . ($early ? "rc.early" : "rc");
 			if (file_exists($rcfile))
 				passthru($rcfile);
 		}

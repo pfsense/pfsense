@@ -418,17 +418,33 @@ function services_proxyarp_configure() {
 	/* kill any running choparp */
 	killbyname("choparp");
 
-	if (is_array($config['proxyarp']) && count($config['proxyarp']) &&
-			(is_ipaddr($config['interfaces']['wan']['ipaddr']) ||
-			($config['interfaces']['wan']['ipaddr'] == "dhcp") ||
-			($config['interfaces']['wan']['ipaddr'] == "bigpond"))) {
+	if (is_array($config['proxyarp']) && count($config['proxyarp'])) {
 
-		if(isset($config['proxyarp']['proxyarpnet']['interface']))
-			$args = $config['proxyarp']['proxyarpnet']['interface'];
-		else
-			$args = $config['interfaces']['wan']['if'] . " auto";
+		$paa = array();
 
+		/* group by interface */
 		foreach ($config['proxyarp']['proxyarpnet'] as $paent) {
+                       if ($paent['interface'])
+                               $if = $paent['interface'];
+                       else
+                               $if = "wan";
+
+                       if (!is_array($paa[$if]))
+                               $paa[$if] = array();
+
+                       $paa[$if][] = $paent;
+               }
+
+               foreach ($paa as $paif => $paents) {
+                       if ($paif == "wan" && !(is_ipaddr($config['interfaces']['wan']['ipaddr']) ||
+                                       ($config['interfaces']['wan']['ipaddr'] == "dhcp") ||
+                                       ($config['interfaces']['wan']['ipaddr'] == "bigpond")))
+                               continue;
+
+                       $args = $config['interfaces'][$paif]['if'] . " auto";
+
+                       foreach ($paents as $paent) {
+
 			if (isset($paent['network']))
 				$args .= " " . escapeshellarg($paent['network']);
 			else if (isset($paent['range']))
@@ -438,6 +454,77 @@ function services_proxyarp_configure() {
 
 		mwexec_bg("/usr/local/sbin/choparp " . $args);
 	}
+	}
+}
+
+function services_dnsupdate_process() {
+	global $config, $g;
+	
+	/* Dynamic DNS updating active? */
+	if (isset($config['dnsupdate']['enable'])) {
+		
+		$wanip = get_current_wan_address();
+		if ($wanip) {
+			
+			$keyname = $config['dnsupdate']['keyname'];
+			/* trailing dot */
+			if (substr($keyname, -1) != ".")
+				$keyname .= ".";
+			
+			$hostname = $config['dnsupdate']['host'];
+			/* trailing dot */
+			if (substr($hostname, -1) != ".")
+				$hostname .= ".";
+			
+			/* write private key file
+			   this is dumb - public and private keys are the same for HMAC-MD5,
+			   but nsupdate insists on having both */
+			$fd = fopen("{$g['varetc_path']}/K{$keyname}+157+00000.private", "w");
+			$privkey .= <<<EOD
+Private-key-format: v1.2
+Algorithm: 157 (HMAC)
+Key: {$config['dnsupdate']['keydata']}
+
+EOD;
+			fwrite($fd, $privkey);
+			fclose($fd);
+			
+			/* write public key file */
+			if ($config['dnsupdate']['keytype'] == "zone") {
+				$flags = 257;
+				$proto = 3;
+			} else if ($config['dnsupdate']['keytype'] == "host") {
+				$flags = 513;
+				$proto = 3;
+			} else if ($config['dnsupdate']['keytype'] == "user") {
+				$flags = 0;
+				$proto = 2;
+			}
+			
+			$fd = fopen("{$g['varetc_path']}/K{$keyname}+157+00000.key", "w");
+			fwrite($fd, "{$keyname} IN KEY {$flags} {$proto} 157 {$config['dnsupdate']['keydata']}\n");
+			fclose($fd);
+			
+			/* generate update instructions */
+			$upinst =  "update delete {$config['dnsupdate']['host']} A\n";
+			$upinst .= "update add {$config['dnsupdate']['host']} {$config['dnsupdate']['ttl']} A {$wanip}\n";
+			$upinst .= "\n";	/* mind that trailing newline! */
+			
+			$fd = fopen("{$g['varetc_path']}/nsupdatecmds", "w");
+			fwrite($fd, $upinst);
+			fclose($fd);
+			
+			/* invoke nsupdate */
+			$cmd = "/usr/sbin/nsupdate -k {$g['varetc_path']}:{$keyname}";
+			if (isset($config['dnsupdate']['usetcp']))
+				$cmd .= " -v";
+			$cmd .= " {$g['varetc_path']}/nsupdatecmds";
+			
+			mwexec_bg($cmd);
+		}
+	}
+	
+	return 0;
 }
 
 ?>

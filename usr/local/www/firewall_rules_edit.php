@@ -151,6 +151,8 @@ if (isset($id) && $a_filter[$id]) {
 
 } else {
 	/* defaults */
+	if ($_GET['if'])
+		$pconfig['interface'] = $_GET['if'];
 	$pconfig['type'] = "pass";
 	$pconfig['src'] = "any";
 	$pconfig['dst'] = "any";
@@ -340,7 +342,7 @@ if ($_POST) {
 		write_config();
 		touch($d_filterconfdirty_path);
 
-		header("Location: firewall_rules.php");
+		header("Location: firewall_rules.php?if=" . $_POST['interface']);
 		exit;
 	}
 }
@@ -650,8 +652,8 @@ function dst_rep_change() {
                           </select> <input name="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo $pconfig['srcendport']; ?>"></td>
                       </tr>
                     </table>
-                    <br> <span class="vexpl">Specify the port or port range for
-                    the source of the packet for this rule.<br>
+		    <span class="vexpl">Specify the port or port range for 
+		    the source of the packet for this rule. This is usually not equal to the destination port range (and is often &quot;any&quot;). <br>
                     Hint: you can leave the <em>'to'</em> field empty if you only
                     want to filter a single port</span></td>
                 <tr>

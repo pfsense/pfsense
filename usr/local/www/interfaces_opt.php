@@ -159,13 +159,10 @@ if ($_POST) {
 <script language="JavaScript">
 <!--
 function enable_change(enable_over) {
-	if ((document.iform.bridge.selectedIndex == 0) || enable_over) {
-		document.iform.ipaddr.disabled = 0;
-		document.iform.subnet.disabled = 0;
-	} else {
-		document.iform.ipaddr.disabled = 1;
-		document.iform.subnet.disabled = 1;
-	}
+	var endis;
+	endis = !((document.iform.bridge.selectedIndex == 0) || enable_over);
+	document.iform.ipaddr.disabled = endis;
+	document.iform.subnet.disabled = endis;
 }
 function gen_bits(ipaddr) {
     if (ipaddr.search(/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/) != -1) {
@@ -220,7 +217,7 @@ function ipaddr_change() {
                   <td colspan="2" valign="top" height="16"></td>
 				</tr>
 				<tr>
-                  <td colspan="2" valign="top" class="vnsepcell">IP configuration</td>
+                  <td colspan="2" valign="top" class="listtopic">IP configuration</td>
 				</tr>
 				<tr>
                   <td width="22%" valign="top" class="vncellreq">Bridge with</td>

@@ -1,22 +1,22 @@
 #!/usr/local/bin/php
-<?php
+<?php 
 /*
 	interfaces_wan.php
 	part of m0n0wall (http://m0n0.ch/wall)
-
+	
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-
+	
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-
+	
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-
+	
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-
+	
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -37,11 +37,7 @@ $optcfg = &$config['interfaces']['wan'];
 $pconfig['username'] = $config['pppoe']['username'];
 $pconfig['password'] = $config['pppoe']['password'];
 $pconfig['provider'] = $config['pppoe']['provider'];
-
-$pconfig['bandwidth'] = $config['bandwidth'];
-$pconfig['bandwidthtype'] = $config['bandwidthtype'];
-
-$pconfig['pppoe_dialondemand'] = $config['pppoe']['ondemand'];
+$pconfig['pppoe_dialondemand'] = isset($config['pppoe']['ondemand']);
 $pconfig['pppoe_idletimeout'] = $config['pppoe']['timeout'];
 
 $pconfig['pptp_username'] = $config['pptp']['username'];
@@ -49,7 +45,7 @@ $pconfig['pptp_password'] = $config['pptp']['password'];
 $pconfig['pptp_local'] = $config['pptp']['local'];
 $pconfig['pptp_subnet'] = $config['pptp']['subnet'];
 $pconfig['pptp_remote'] = $config['pptp']['remote'];
-$pconfig['pptp_dialondemand'] = $config['pptp']['ondemand'];
+$pconfig['pptp_dialondemand'] = isset($config['pptp']['ondemand']);
 $pconfig['pptp_idletimeout'] = $config['pptp']['timeout'];
 
 $pconfig['bigpond_username'] = $config['bigpond']['username'];
@@ -73,14 +69,12 @@ if ($wancfg['ipaddr'] == "dhcp") {
 	$pconfig['ipaddr'] = $wancfg['ipaddr'];
 	$pconfig['subnet'] = $wancfg['subnet'];
 	$pconfig['gateway'] = $wancfg['gateway'];
+	$pconfig['pointtopoint'] = $wancfg['pointtopoint'];
 }
 
 $pconfig['blockpriv'] = isset($wancfg['blockpriv']);
 $pconfig['spoofmac'] = $wancfg['spoofmac'];
 $pconfig['mtu'] = $wancfg['mtu'];
-$pconfig['bandwidth'] = $wancfg['bandwidth'];
-$pconfig['bandwidthtype'] = $wancfg['bandwidthtype'];
-$pconfig['schedulertype'] = $wancfg['schedulertype'];
 
 /* Wireless interface? */
 if (isset($optcfg['wireless'])) {
@@ -121,7 +115,7 @@ if ($_POST) {
 		$reqdfieldsn = explode(",", "BigPond username,BigPond password");
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	}
-
+	
 	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
 		$input_errors[] = "A valid IP address must be specified.";
 	}
@@ -131,10 +125,13 @@ if ($_POST) {
 	if (($_POST['gateway'] && !is_ipaddr($_POST['gateway']))) {
 		$input_errors[] = "A valid gateway must be specified.";
 	}
+	if (($_POST['pointtopoint'] && !is_ipaddr($_POST['pointtopoint']))) {
+		$input_errors[] = "A valid point-to-point IP address must be specified.";
+	}
 	if (($_POST['provider'] && !is_domain($_POST['provider']))) {
 		$input_errors[] = "The service name contains invalid characters.";
 	}
-	if ($_POST['pppoe_idletimeout'] && !is_numericint($_POST['pppoe_idletimeout'])) {
+	if (($_POST['pppoe_idletimeout'] != "") && !is_numericint($_POST['pppoe_idletimeout'])) {
 		$input_errors[] = "The idle timeout value must be an integer.";
 	}
 	if (($_POST['pptp_local'] && !is_ipaddr($_POST['pptp_local']))) {
@@ -146,7 +143,7 @@ if ($_POST) {
 	if (($_POST['pptp_remote'] && !is_ipaddr($_POST['pptp_remote']))) {
 		$input_errors[] = "A valid PPTP remote IP address must be specified.";
 	}
-	if ($_POST['pptp_idletimeout'] && !is_numericint($_POST['pptp_idletimeout'])) {
+	if (($_POST['pptp_idletimeout'] != "") && !is_numericint($_POST['pptp_idletimeout'])) {
 		$input_errors[] = "The idle timeout value must be an integer.";
 	}
 	if (($_POST['bigpond_authserver'] && !is_domain($_POST['bigpond_authserver']))) {
@@ -164,7 +161,7 @@ if ($_POST) {
 	if ($_POST['mtu'] && (($_POST['mtu'] < 576) || ($_POST['mtu'] > 1500))) {
 		$input_errors[] = "The MTU must be between 576 and 1500 bytes.";
 	}
-
+	
 	/* Wireless interface? */
 	if (isset($optcfg['wireless'])) {
 		$wi_input_errors = wireless_config_post();
@@ -174,13 +171,11 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-
+	
 		unset($wancfg['ipaddr']);
 		unset($wancfg['subnet']);
 		unset($wancfg['gateway']);
-		unset($wancfg['bandwidth']);
-		unset($wancfg['bandwidthtype']);
-		unset($wancfg['schedulertype']);
+		unset($wancfg['pointtopoint']);
 		unset($wancfg['dhcphostname']);
 		unset($config['pppoe']['username']);
 		unset($config['pppoe']['password']);
@@ -199,14 +194,13 @@ if ($_POST) {
 		unset($config['bigpond']['authserver']);
 		unset($config['bigpond']['authdomain']);
 		unset($config['bigpond']['minheartbeatinterval']);
-
-		$wancfg['bandwidth'] = $_POST['bandwidth'];
-		$wancfg['bandwidthtype'] = $_POST['bandwidthtype'];
-
+	
 		if ($_POST['type'] == "Static") {
 			$wancfg['ipaddr'] = $_POST['ipaddr'];
 			$wancfg['subnet'] = $_POST['subnet'];
 			$wancfg['gateway'] = $_POST['gateway'];
+			if (isset($wancfg['ispointtopoint']))
+				$wancfg['pointtopoint'] = $_POST['pointtopoint'];
 		} else if ($_POST['type'] == "DHCP") {
 			$wancfg['ipaddr'] = "dhcp";
 			$wancfg['dhcphostname'] = $_POST['dhcphostname'];
@@ -215,7 +209,7 @@ if ($_POST) {
 			$config['pppoe']['username'] = $_POST['username'];
 			$config['pppoe']['password'] = $_POST['password'];
 			$config['pppoe']['provider'] = $_POST['provider'];
-			$config['pppoe']['ondemand'] = $_POST['pppoe_dialondemand'];
+			$config['pppoe']['ondemand'] = $_POST['pppoe_dialondemand'] ? true : false;
 			$config['pppoe']['timeout'] = $_POST['pppoe_idletimeout'];
 		} else if ($_POST['type'] == "PPTP") {
 			$wancfg['ipaddr'] = "pptp";
@@ -224,7 +218,7 @@ if ($_POST) {
 			$config['pptp']['local'] = $_POST['pptp_local'];
 			$config['pptp']['subnet'] = $_POST['pptp_subnet'];
 			$config['pptp']['remote'] = $_POST['pptp_remote'];
-			$config['pptp']['ondemand'] = $_POST['pptp_dialondemand'];
+			$config['pptp']['ondemand'] = $_POST['pptp_dialondemand'] ? true : false;
 			$config['pptp']['timeout'] = $_POST['pptp_idletimeout'];
 		} else if ($_POST['type'] == "BigPond") {
 			$wancfg['ipaddr'] = "bigpond";
@@ -234,13 +228,13 @@ if ($_POST) {
 			$config['bigpond']['authdomain'] = $_POST['bigpond_authdomain'];
 			$config['bigpond']['minheartbeatinterval'] = $_POST['bigpond_minheartbeatinterval'];
 		}
-		$wancfg['schedulertype'] = $_POST['schedulertype'];
+		
 		$wancfg['blockpriv'] = $_POST['blockpriv'] ? true : false;
 		$wancfg['spoofmac'] = $_POST['spoofmac'];
 		$wancfg['mtu'] = $_POST['mtu'];
-
+			
 		write_config();
-
+		
 		$retval = 0;
 		if (!file_exists($d_sysrebootreqd_path)) {
 			config_lock();
@@ -410,73 +404,83 @@ function type_change(enable_change,enable_change_pptp) {
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<?php $schedulertype = $config['interfaces']['wan']['schedulertype']; ?>
 <p class="pgtitle">Interfaces: WAN</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
             <form action="interfaces_wan.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr>
+                <tr> 
                   <td valign="middle"><strong>Type</strong></td>
                   <td> <select name="type" class="formfld" id="type" onchange="type_change()">
                       <?php $opts = split(" ", "Static DHCP PPPoE PPTP BigPond");
 				foreach ($opts as $opt): ?>
-                      <option <?php if ($opt == $pconfig['type']) echo "selected";?>>
+                      <option <?php if ($opt == $pconfig['type']) echo "selected";?>> 
                       <?=htmlspecialchars($opt);?>
                       </option>
                       <?php endforeach; ?>
                     </select></td>
                 </tr>
-                <tr>
+                <tr> 
                   <td colspan="2" valign="top" height="4"></td>
                 </tr>
-                <tr>
-                  <td colspan="2" valign="top" class="vnsepcell">General configuration</td>
+                <tr> 
+                  <td colspan="2" valign="top" class="listtopic">General configuration</td>
                 </tr>
-                <tr>
+                <tr> 
                   <td valign="top" class="vncell">MAC address</td>
-                  <td class="vtable"> <input name="spoofmac" type="text" class="formfld" id="spoofmac" size="30" value="<?=htmlspecialchars($pconfig['spoofmac']);?>">
+                  <td class="vtable"> <input name="spoofmac" type="text" class="formfld" id="spoofmac" size="30" value="<?=htmlspecialchars($pconfig['spoofmac']);?>"> 
                     <br>
-                    This field can be used to modify (&quot;spoof&quot;) the MAC
+                    This field can be used to modify (&quot;spoof&quot;) the MAC 
                     address of the WAN interface<br>
                     (may be required with some cable connections)<br>
-                    Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx
+                    Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx 
                     or leave blank</td>
                 </tr>
-                <tr>
+                <tr> 
                   <td valign="top" class="vncell">MTU</td>
-                  <td class="vtable"> <input name="mtu" type="text" class="formfld" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>">
+                  <td class="vtable"> <input name="mtu" type="text" class="formfld" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>"> 
                     <br>
-                    If you enter a value in this field, then MSS clamping for
-                    TCP connections to the value entered above minus 40 (TCP/IP
-                    header size) will be in effect. If you leave this field blank,
-                    an MTU of 1492 bytes for PPPoE and 1500 bytes for all other
+                    If you enter a value in this field, then MSS clamping for 
+                    TCP connections to the value entered above minus 40 (TCP/IP 
+                    header size) will be in effect. If you leave this field blank, 
+                    an MTU of 1492 bytes for PPPoE and 1500 bytes for all other 
                     connection types will be assumed.</td>
                 </tr>
-                <tr>
+                <tr> 
                   <td colspan="2" valign="top" height="16"></td>
                 </tr>
-                <tr>
-                  <td colspan="2" valign="top" class="vnsepcell">Static IP configuration</td>
+                <tr> 
+                  <td colspan="2" valign="top" class="listtopic">Static IP configuration</td>
                 </tr>
-                <tr>
+                <tr> 
                   <td width="100" valign="top" class="vncellreq">IP address</td>
                   <td class="vtable"> <input name="ipaddr" type="text" class="formfld" id="ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>">
-                    /
+                    / 
                     <select name="subnet" class="formfld" id="subnet">
-                      <?php for ($i = 32; $i > 0; $i--): ?>
-                      <option value="<?=$i;?>" <?php if ($i == $pconfig['subnet']) echo "selected"; ?>>
+                    <?php
+                      if (isset($wancfg['ispointtopoint']))
+                      	$snmax = 32;
+                      else
+                      	$snmax = 31;
+                      for ($i = $snmax; $i > 0; $i--): ?>
+                      <option value="<?=$i;?>" <?php if ($i == $pconfig['subnet']) echo "selected"; ?>> 
                       <?=$i;?>
                       </option>
                       <?php endfor; ?>
                     </select></td>
-                </tr>
+                </tr><?php if (isset($wancfg['ispointtopoint'])): ?>
                 <tr>
+                  <td valign="top" class="vncellreq">Point-to-point IP address </td>
+                  <td class="vtable">
+                    <input name="pointtopoint" type="text" class="formfld" id="pointtopoint" size="20" value="<?=htmlspecialchars($pconfig['pointtopoint']);?>">
+                  </td>
+                </tr><?php endif; ?>
+                <tr> 
                   <td valign="top" class="vncellreq">Gateway</td>
-                  <td class="vtable"> <input name="gateway" type="text" class="formfld" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>">
+                  <td class="vtable"> <input name="gateway" type="text" class="formfld" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>"> 
                   </td>
                 </tr>
-                <tr>
+                <tr> 
                   <td colspan="2" valign="top" height="16"></td>
                 </tr>
                 <tr>
@@ -514,46 +518,42 @@ function type_change(enable_change,enable_change_pptp) {
 			<br> The bandwidth setting will define the speed of the interface for traffic shaping.
 		  </td>
                 </tr>
-
-                <tr>
-                  <td colspan="2" valign="top" height="16"></td>
+                <tr> 
+                  <td colspan="2" valign="top" class="listtopic">DHCP client configuration</td>
                 </tr>
-                <tr>
-                  <td colspan="2" valign="top" class="vnsepcell">DHCP client configuration</td>
-                </tr>
-                <tr>
+                <tr> 
                   <td valign="top" class="vncell">Hostname</td>
                   <td class="vtable"> <input name="dhcphostname" type="text" class="formfld" id="dhcphostname" size="40" value="<?=htmlspecialchars($pconfig['dhcphostname']);?>">
                     <br>
-                    The value in this field is sent as the DHCP client identifier
-                    and hostname when requesting a DHCP lease. Some ISPs may require
+                    The value in this field is sent as the DHCP client identifier 
+                    and hostname when requesting a DHCP lease. Some ISPs may require 
                     this (for client identification).</td>
                 </tr>
-                <tr>
+                <tr> 
                   <td colspan="2" valign="top" height="16"></td>
                 </tr>
-                <tr>
-                  <td colspan="2" valign="top" class="vnsepcell">PPPoE configuration</td>
+                <tr> 
+                  <td colspan="2" valign="top" class="listtopic">PPPoE configuration</td>
                 </tr>
-                <tr>
+                <tr> 
                   <td valign="top" class="vncellreq">Username</td>
-                  <td class="vtable"><input name="username" type="text" class="formfld" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
+                  <td class="vtable"><input name="username" type="text" class="formfld" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>"> 
                   </td>
                 </tr>
-                <tr>
+                <tr> 
                   <td valign="top" class="vncellreq">Password</td>
-                  <td class="vtable"><input name="password" type="text" class="formfld" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
+                  <td class="vtable"><input name="password" type="text" class="formfld" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>"> 
                   </td>
                 </tr>
-                <tr>
+                <tr> 
                   <td valign="top" class="vncell">Service name</td>
-                  <td class="vtable"><input name="provider" type="text" class="formfld" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>">
-                    <br> <span class="vexpl">Hint: this field can usually be left
+                  <td class="vtable"><input name="provider" type="text" class="formfld" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>"> 
+                    <br> <span class="vexpl">Hint: this field can usually be left 
                     empty</span></td>
                 </tr>
-                <tr>
+                <tr> 
                   <td valign="top" class="vncell">Dial on demand</td>
-                  <td class="vtable"><input name="pppoe_dialondemand" type="checkbox" id="pppoe_dialondemand" value="enable" <?php if ($pconfig['pppoe_dialondemand'] == "enable") echo "checked"; ?> onClick="enable_change(false)" >
+                  <td class="vtable"><input name="pppoe_dialondemand" type="checkbox" id="pppoe_dialondemand" value="enable" <?php if ($pconfig['pppoe_dialondemand']) echo "checked"; ?> onClick="enable_change(false)" > 
                     <strong>Enable Dial-On-Demand mode</strong><br>
 		    This option causes the interface to operate in dial-on-demand mode, allowing you to have a <i>virtual full time</i> connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.</td>
                 </tr>
@@ -564,42 +564,42 @@ function type_change(enable_change,enable_change_pptp) {
                     seconds<br>
     If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</td>
                 </tr>
-                <tr>
+                <tr> 
                   <td colspan="2" valign="top" height="16"></td>
                 </tr>
-                <tr>
-                  <td colspan="2" valign="top" class="vnsepcell">PPTP configuration</td>
+                <tr> 
+                  <td colspan="2" valign="top" class="listtopic">PPTP configuration</td>
                 </tr>
-                <tr>
+                <tr> 
                   <td valign="top" class="vncellreq">Username</td>
-                  <td class="vtable"><input name="pptp_username" type="text" class="formfld" id="pptp_username" size="20" value="<?=htmlspecialchars($pconfig['pptp_username']);?>">
+                  <td class="vtable"><input name="pptp_username" type="text" class="formfld" id="pptp_username" size="20" value="<?=htmlspecialchars($pconfig['pptp_username']);?>"> 
                   </td>
                 </tr>
-                <tr>
+                <tr> 
                   <td valign="top" class="vncellreq">Password</td>
-                  <td class="vtable"><input name="pptp_password" type="text" class="formfld" id="pptp_password" size="20" value="<?=htmlspecialchars($pconfig['pptp_password']);?>">
+                  <td class="vtable"><input name="pptp_password" type="text" class="formfld" id="pptp_password" size="20" value="<?=htmlspecialchars($pconfig['pptp_password']);?>"> 
                   </td>
                 </tr>
-                <tr>
+                <tr> 
                   <td width="100" valign="top" class="vncellreq">Local IP address</td>
                   <td class="vtable"> <input name="pptp_local" type="text" class="formfld" id="pptp_local" size="20" value="<?=htmlspecialchars($pconfig['pptp_local']);?>">
-                    /
+                    / 
                     <select name="pptp_subnet" class="formfld" id="pptp_subnet">
-                      <?php for ($i = 32; $i > 0; $i--): ?>
-                      <option value="<?=$i;?>" <?php if ($i == $pconfig['pptp_subnet']) echo "selected"; ?>>
+                      <?php for ($i = 31; $i > 0; $i--): ?>
+                      <option value="<?=$i;?>" <?php if ($i == $pconfig['pptp_subnet']) echo "selected"; ?>> 
                       <?=$i;?>
                       </option>
                       <?php endfor; ?>
                     </select></td>
                 </tr>
-                <tr>
+                <tr> 
                   <td width="100" valign="top" class="vncellreq">Remote IP address</td>
-                  <td class="vtable"> <input name="pptp_remote" type="text" class="formfld" id="pptp_remote" size="20" value="<?=htmlspecialchars($pconfig['pptp_remote']);?>">
+                  <td class="vtable"> <input name="pptp_remote" type="text" class="formfld" id="pptp_remote" size="20" value="<?=htmlspecialchars($pconfig['pptp_remote']);?>"> 
                   </td>
                 </tr>
-                <tr>
+                <tr> 
                   <td valign="top" class="vncell">Dial on demand</td>
-                  <td class="vtable"><input name="pptp_dialondemand" type="checkbox" id="pptp_dialondemand" value="enable" <?php if ($pconfig['pptp_dialondemand'] == "enable") echo "checked"; ?> onClick="enable_change_pptp(false)" >
+                  <td class="vtable"><input name="pptp_dialondemand" type="checkbox" id="pptp_dialondemand" value="enable" <?php if ($pconfig['pptp_dialondemand']) echo "checked"; ?> onClick="enable_change_pptp(false)" > 
                     <strong>Enable Dial-On-Demand mode</strong><br>
 		    This option causes the interface to operate in dial-on-demand mode, allowing you to have a <i>virtual full time</i> connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.</td>
                 </tr>
@@ -610,29 +610,29 @@ function type_change(enable_change,enable_change_pptp) {
                     seconds<br>
     If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</td>
                 </tr>
-                <tr>
+                <tr> 
                   <td colspan="2" valign="top" height="16"></td>
                 </tr>
-                <tr>
-                  <td colspan="2" valign="top" class="vnsepcell">BigPond Cable configuration</td>
+                <tr> 
+                  <td colspan="2" valign="top" class="listtopic">BigPond Cable configuration</td>
                 </tr>
-                <tr>
+                <tr> 
                   <td valign="top" class="vncellreq">Username</td>
-                  <td class="vtable"><input name="bigpond_username" type="text" class="formfld" id="bigpond_username" size="20" value="<?=htmlspecialchars($pconfig['bigpond_username']);?>">
+                  <td class="vtable"><input name="bigpond_username" type="text" class="formfld" id="bigpond_username" size="20" value="<?=htmlspecialchars($pconfig['bigpond_username']);?>"> 
                   </td>
                 </tr>
-                <tr>
+                <tr> 
                   <td valign="top" class="vncellreq">Password</td>
-                  <td class="vtable"><input name="bigpond_password" type="text" class="formfld" id="bigpond_password" size="20" value="<?=htmlspecialchars($pconfig['bigpond_password']);?>">
+                  <td class="vtable"><input name="bigpond_password" type="text" class="formfld" id="bigpond_password" size="20" value="<?=htmlspecialchars($pconfig['bigpond_password']);?>"> 
                   </td>
                 </tr>
-                <tr>
+                <tr> 
                   <td valign="top" class="vncell">Authentication server</td>
                   <td class="vtable"><input name="bigpond_authserver" type="text" class="formfld" id="bigpond_authserver" size="20" value="<?=htmlspecialchars($pconfig['bigpond_authserver']);?>">
                     <br>
                   <span class="vexpl">If this field is left empty, the default (&quot;dce-server&quot;) is used. </span></td>
                 </tr>
-                <tr>
+                <tr> 
                   <td valign="top" class="vncell">Authentication domain</td>
                   <td class="vtable"><input name="bigpond_authdomain" type="text" class="formfld" id="bigpond_authdomain" size="20" value="<?=htmlspecialchars($pconfig['bigpond_authdomain']);?>">
                     <br>
@@ -647,30 +647,28 @@ function type_change(enable_change,enable_change_pptp) {
                     seconds<br>
     Setting this to a sensible value (e.g. 60 seconds) can protect against DoS attacks. </td>
                 </tr>
-
-
                 <?php /* Wireless interface? */
 				if (isset($optcfg['wireless']))
 					wireless_config_print();
 				?>
-                <tr>
+                <tr> 
                   <td height="16" colspan="2" valign="top"></td>
                 </tr>
-                <tr>
+                <tr> 
                   <td valign="middle">&nbsp;</td>
-                  <td class="vtable"> <input name="blockpriv" type="checkbox" id="blockpriv" value="yes" <?php if ($pconfig['blockpriv'] == "yes") echo "checked"; ?>>
+                  <td class="vtable"> <input name="blockpriv" type="checkbox" id="blockpriv" value="yes" <?php if ($pconfig['blockpriv']) echo "checked"; ?>> 
                     <strong>Block private networks</strong><br>
-                    When set, this option blocks traffic from IP addresses that
+                    When set, this option blocks traffic from IP addresses that 
                     are reserved for private<br>
-                    networks as per RFC 1918 (10/8, 172.16/12, 192.168/16) as
+                    networks as per RFC 1918 (10/8, 172.16/12, 192.168/16) as 
                     well as loopback addresses<br>
-                    (127/8). You should generally leave this option turned on,
+                    (127/8). You should generally leave this option turned on, 
                     unless your WAN network<br>
                     lies in such a private address space, too.</td>
                 </tr>
-                <tr>
+                <tr> 
                   <td width="100" valign="top">&nbsp;</td>
-                  <td> &nbsp;<br> <input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change_pptp(true)&&enable_change(true)">
+                  <td> &nbsp;<br> <input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change_pptp(true)&&enable_change(true)"> 
                   </td>
                 </tr>
               </table>

@@ -43,6 +43,11 @@ form {
 	font-size: 13px;
 	font-weight: bold;
 }
+.formbtns {
+	font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+}
 .vvcell {
 	background-color: #FFFFC6;
 }
@@ -125,7 +130,7 @@ a {
 	border-right: 1px solid #999999;
 	border-bottom: 1px solid #999999;
 	font-size: 11px;
-	padding-right: 16px;
+	padding-right: 6px;
 	padding-left: 6px;
 	padding-top: 4px;
 	padding-bottom: 4px;
@@ -183,7 +188,7 @@ a {
 	border-bottom: 1px solid #999999;
 	border-left: 1px solid #999999;
 	font-size: 11px;
-	padding-right: 16px;
+	padding-right: 6px;
 	padding-left: 6px;
 	padding-top: 4px;
 	padding-bottom: 4px;
@@ -206,7 +211,6 @@ a {
 .listt {
 	font-size: 11px;
 	padding-top: 5px;
-	padding-left: 4px;
 }
 .listhdrrns {
 	background-color: #BBBBBB;
@@ -239,6 +243,19 @@ a {
 	font-weight: bold;
 	padding-top: 5px;
 	padding-bottom: 5px;
+}
+.optsect_t {
+	border-right: 1px solid #999999;
+	background-color: #435370;
+	padding-right: 6px;
+	padding-left: 6px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.optsect_s {
+	font-size: 11px;
+	color: #FFFFFF;
+	font-weight: bold;
 }
 ul#tabnav {
 	font-size: 11px;

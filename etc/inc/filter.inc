@@ -308,15 +308,14 @@ function filter_setup_altq_interfaces() {
 function is_subqueue($name) {
         global $config;
         $status = "";
-        if (is_array($config['shaper']['queue'])) {
-                foreach ($config['shaper']['queue'] as $queue) {
-                        if(is_array($queue['subqueue'])) {
-                                foreach ($queue['subqueue'] as $sq) {
-                                        if($sq['name'] == $name) return 1;
-                                }
-                        }
-                }
-        }
+        if (!is_array($config['shaper']['queue'])) return 0;
+	foreach ($config['shaper']['queue'] as $queue) {
+		if(is_array($queue['subqueue'])) {
+			foreach ($queue['subqueue'] as $sq) {
+				if($sq['name'] == $name) return 1;
+			}
+		}
+	}
         return 0;
 }
 

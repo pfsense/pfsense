@@ -134,10 +134,13 @@ if ($_POST) {
 
 		write_config();
 
-		// restart webgui if proto changed
+		// restart webgui if proto or port changed
 		if (($oldwebguiproto != $config['system']['webgui']['protocol']) ||
-			($oldwebguiport != $config['system']['webgui']['port']))
+			($oldwebguiport != $config['system']['webgui']['port'])) {
+			global $_SERVER;
 			system_webgui_start();
+			header("Location: {$config['system']['webgui']['protocol']}://{$_SERVER['SERVER_NAME']}/system.php");
+		}
 
 		$retval = 0;
 		if (!file_exists($d_sysrebootreqd_path)) {

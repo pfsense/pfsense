@@ -236,11 +236,6 @@ function filter_generate_altq_queues($altq_ints) {
 	return $altq_rules;
 }
 
-function filter_translate_type_to_real_interface($interface) {
-        global $config;
-	return $config['interfaces'][$interface]['if'];
-}
-
 function filter_get_rule_real_interface($associatedrulenumber) {
         global $config;
         $x=0;

@@ -113,7 +113,10 @@ if (isset($config['system']['version_control'])) {
 		if ($dh = opendir($dir)) {
 			while (($file = readdir($dh)) !== false) {
 				if ($file != "." && $file != "..") {
-					array_push(&$old_versions, $file);
+					if (ereg("config-([0-9]+).xml", $file, $regs)) {
+						$conf_date=date("Y-m-d H:i:s", $regs[1]);
+						array_push(&$old_versions, $conf_date);
+					}
                                 }
                         }
                         closedir($dh);
@@ -200,9 +203,9 @@ if (isset($config['system']['version_control'])) {
               </tr>
 <?php foreach ($old_versions as $ver): ?>
               <tr>
-		<td width="22%" valign="baseline" class="vncell">Filename</td>
-                <td width="56%" class="vtable"><? echo $ver; ?></td
-                <td width="22%" class="vtable"><input name="restore" type="submit" class="formbtn" id="restore" value="Restore version"></td>
+		<td width="22%" valign="baseline" class="vncell"><? echo $ver; ?></td>
+                <td width="56%" valign="baseline" class="vtable"><? echo "description" ?></td>
+                <td width="22%" valign="baseline" class="vtable"><input name="restore" type="submit" class="formbtn" id="restore" value="Restore version"></td>
               </tr>
 <?php endforeach; ?>
            </table>

@@ -88,7 +88,7 @@ function showhide(tspan, tri) {
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/firewall_rules.php" class="navlnk">Rules</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/firewall_nat.php" class="navlnk">NAT</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/firewall_aliases.php" class="navlnk">Aliases</a><br>
-	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/firewall_shaper.php" class="navlnk">Traffic Shaper</a><br>	      
+	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/firewall_shaper.php" class="navlnk">Traffic Shaper</a><br>
 	      <?php echo return_ext_menu("Firewall"); ?>
               <strong>Services</strong><br>
 			  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_dnsmasq.php" class="navlnk">DNS forwarder</a><br>
@@ -99,6 +99,7 @@ function showhide(tspan, tri) {
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_snmp.php" class="navlnk">SNMP</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_proxyarp.php" class="navlnk">Proxy ARP</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_captiveportal.php" class="navlnk">Captive portal</a><br>
+	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_usermanager.php" class="navlnk">User Manager</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_wol.php" class="navlnk">Wake on LAN</a><br>
 	      <?php echo return_ext_menu("Services"); ?>
               <strong>VPN</strong><br>

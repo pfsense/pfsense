@@ -509,6 +509,8 @@ if ($pkg['tabs'] <> "") {
 }
 ?>
 
+<?php if($pka['note'] <> "") echo "<br><center>" . $pka['note'] . "</center>"; ?>
+
 </form>
 <?php include("fend.inc"); ?>
 </body>

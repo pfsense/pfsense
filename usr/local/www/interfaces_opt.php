@@ -131,7 +131,7 @@ if ($_POST) {
 		$optcfg['bandwidth'] = $_POST['bandwidth'];
 		$optcfg['bandwidthtype'] = $_POST['bandwidthtype'];
 		$optcfg['gateway'] = $_POST['gateway'];
-		
+
 		write_config();
 
 		$retval = 0;
@@ -246,9 +246,11 @@ function ipaddr_change() {
                   <td width="22%" valign="top" class="vncell">Gateway</td>
                   <td width="78%" class="vtable">
 			<input name="gateway" value="<?php echo $pconfig['gateway']; ?>">
+			<br>
+			If you have multiple WAN connections, enter the next hop gateway (router) here.  Otherwise, leave this option blank.
 		  </td>
 		</tr>
-			
+
                 <tr>
                   <td colspan="2" valign="top" height="16"></td>
                 </tr>

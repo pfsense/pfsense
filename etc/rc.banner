@@ -38,7 +38,7 @@
 
 	echo <<<EOD
 
-*** This is pfSese version {$version}
+*** This is pfSense version {$version}
     Copyright 2004 Scott Ullrich.  All rights reserved.
     Originally based on m0n0wall, version 1.2b1
     m0n0wall is Copyright 2002-2004 by Manuel Kasper. All rights reserved

@@ -391,7 +391,7 @@ function interfaces_wan_configure() {
 			}
 			/* install default route */
 			mwexec("/sbin/route delete default");
-			mwexec("/sbin/route add default " . escapeshellarg($wancfg['gateway']));
+			mwexec("/sbin/route add default " . escapeshellarg($config['system']['gateway']));
 
 			/* resync ipfilter (done automatically for DHCP/PPPoE/PPTP) */
 			filter_resync();

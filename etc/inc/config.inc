@@ -424,6 +424,29 @@ function convert_config() {
 		$config['version'] = "1.4";
 	}
 
+	/* Convert 1.4 -> 1.5 */
+	if ($config['version'] == "1.4") {
+
+		/* Default route moved */
+		if (isset($config['interfaces']['wan']['gateway']))
+			if ($config['interfaces']['wan']['gateway'] <> "")
+				$config['system']['gateway'] = $config['interfaces']['wan']['gateway'];
+		unset($config['interfaces']['wan']['gateway']);
+
+                /* Queues are no longer interface specific */
+                if (isset($config['interfaces']['lan']['schedulertype']))
+                        unset($config['interfaces']['lan']['schedulertype']);
+                if (isset($config['interfaces']['wan']['schedulertype']))
+                        unset($config['interfaces']['wan']['schedulertype']);
+
+                for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+                        if(isset($config['interfaces']['opt' . $i]['schedulertype']))
+                                unset($config['interfaces']['opt' . $i]['schedulertype']);
+                }
+
+		$config['version'] = "1.5";
+	}
+
 	write_config();
 
 	if ($g['booting'])

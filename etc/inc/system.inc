@@ -81,7 +81,7 @@ function system_resolvconf_generate($dynupdate = false) {
 	} else {
 		unlink("{$g['varetc_path']}/resolv.conf.new");
 	}
-	
+
 
 	if (!$g['booting']) {
 		/* restart dhcpd (nameservers may have changed) */
@@ -416,6 +416,8 @@ function system_timezone_configure() {
 
 	$syscfg = $config['system'];
 
+	conf_mount_rw();
+
 	if ($g['booting'])
 		echo "Initializing timezone... ";
 
@@ -427,6 +429,8 @@ function system_timezone_configure() {
 	exec("/usr/bin/tar xzfO /usr/share/zoneinfo.tgz " .
 		escapeshellarg($timezone) . " > /etc/localtime");
 
+	conf_mount_ro();
+	
 	if ($g['booting'])
 		echo "done\n";
 }

@@ -312,8 +312,10 @@ function enable_altfirmwareurl(enable_over) {
                   <td valign="top" class="vncell">Alternate firmware URL</td>
                   <td class="vtable">
                     <input name="altfirmwareurl" type="checkbox" id="altfirmwareurl" value="yes" onClick="enable_altfirmwareurl()" <?php if (isset($pconfig['altfirmwareurl'])) echo "checked"; ?>> Use a different URL for firmware upgrades<br>
-                    Base URL: <input name="firmwareurl" type="input" id="firmwareurl" size="64" value="<?php if ($pconfig['firmwareurl']) echo $pconfig['firmwareurl']; else echo $g['firmwarebaseurl']; ?>"><br>
-                    Filename: <input name="firmwarename" type="input" id="firmwarename" size="32" value="<?php if ($pconfig['firmwarename']) echo $pconfig['firmwarename']; else echo $g['firmwarefilename']; ?>">
+		    <table>
+                    <tr><td>Base URL:</td><td><input name="firmwareurl" type="input" id="firmwareurl" size="64" value="<?php if ($pconfig['firmwareurl']) echo $pconfig['firmwareurl']; else echo $g['firmwarebaseurl']; ?>"></td></tr>
+                    <tr><td>Filename:</td><td><input name="firmwarename" type="input" id="firmwarename" size="32" value="<?php if ($pconfig['firmwarename']) echo $pconfig['firmwarename']; else echo $g['firmwarefilename']; ?>"></td></tr>
+		    </table>
                     <span class="vexpl"><br>
     This is where pfSense will check for newer firmware versions when <a href="system_firmware.php">System: Firmware</a> page is viewed.</span></td>
 		</tr>

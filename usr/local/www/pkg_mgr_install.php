@@ -361,10 +361,10 @@ if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
                         $fd = fopen("/usr/local/www/ext/" . $menu['section'] . "/" . $menu['name'] , "w");
                         if($menu['url'] <> "") {
                                     // override $myurl for script.
-                                    $toeval = "\$myurl = \"" . getenv("SERVER_ADDR") . "\"; \n";
+                                    $toeval = "\$myurl = \"" . getenv("HTTP_HOST") . "\"; \n";
                                     eval($toeval);
                                     // eval url so that above $myurl item can be processed if need be.
-                                    $urltmp = $menu['url']
+                                    $urltmp = $menu['url'];
                                     $toeval = "\$url = \"" . $urltmp . "\"; \n";
                                     eval($toeval);
                                     fwrite($fd, $url . "\n");

@@ -71,6 +71,10 @@ if ($_POST) {
 		    eval($pkg['custom_delete_php_command']);
 		}
 		write_config();
+		// resync the configuration file code if defined.
+		if($pkg['custom_php_resync_config_command'] <> "") {
+		    eval($pkg['custom_php_resync_config_command']);
+		}
 	} else {
 		if($pkg['custom_add_php_command']) {
 			if($pkg['donotsave'] <> "") {
@@ -143,8 +147,14 @@ include("fbegin.inc");
 
 		write_config();
 
+		// late running code
 		if($pkg['custom_add_php_command_late'] <> "") {
 		    eval($pkg['custom_add_php_command_late']);
+		}
+
+		// resync the configuration file code if defined.
+		if($pkg['custom_php_resync_config_command'] <> "") {
+		    eval($pkg['custom_php_resync_config_command']);
 		}
 
 		header("Location:  pkg.php?xml=" . $xml);
@@ -180,19 +190,23 @@ $config = $config_tmp;
 &nbsp;<br>
 
 <table width="100%" border="0" cellpadding="6" cellspacing="0">
-  <tr>
   <?php
   $cols = 0;
   $savevalue = "Save";
   if($pkg['savetext'] <> "") $savevalue = $pkg['savetext'];
   foreach ($pkg['fields']['field'] as $pkga) { ?>
-      </tr>
-      <tr valign="top">
-       <td width="22%" class="vncellreq">
-	  <?= $pkga['fielddescr'] ?>
-       </td>
-       <td class="vtable">
+
+	  <?php if(!$pkga['combinefieldsend']) echo "<tr valign=\"top\">"; ?>
+
 	  <?php
+	  if(!$pkga['dontdisplayname']) {
+       echo "<td width=\"22%\" class=\"vncellreq\">";
+	   echo $pkga['fielddescr'];
+       echo "</td>";
+	  }
+
+	  if(!$pkga['dontcombinecells'])
+		echo "<td class=\"vtable\">";
 
 	      if($pkga['type'] == "input") {
 			if($pkga['size']) $size = " size='" . $pkga['size'] . "' ";
@@ -305,18 +319,16 @@ $config = $config_tmp;
 		totalrows = <?php echo $rowcounter; ?>;
 		loaded = <?php echo $rowcounter; ?>;
 		typesel_change();
-
 		//-->
 		</script>
 
 		<?php
 	      }
-
 	      if($pkga['typehint']) echo " " . $pkga['typehint'];
-	  ?>
-       </td>
-      </tr>
+	     ?>
+
       <?php
+	  if(!$pkga['combinefieldsbegin']) echo "</td></tr>";
       $i++;
   }
  ?>

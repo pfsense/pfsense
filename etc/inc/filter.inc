@@ -663,20 +663,6 @@ function filter_nat_rules_generate() {
 		}
 	}
 
-	/* Setup outgoing NAT load balancing */
-	if (isset($config['nat']['outgoingloadbalancing']['rule'])) {
-		$tmprules .= "pass in on " . $lanif . " route-to { ";
-		$isfirst = 0;
-		foreach ($config['nat']['outgoingloadbalancing']['rule'] as $rule) {
-			if($rule['gatewayip'] <> "") {
-				if(isfirst == 1) $tmprules .= ", ";
-				$tmprules .= " (" . $wanif . " " . $rule['gatewayip'] . ") ";
-				$isfirst = 1;
-			}
-		}
-		$tmprules .= "} round-robin proto tcp from " . $lansa ." to any flags S/SA modulate state\n";
-		if($isfirst == 1) $natrules .= $tmprules;
-	}
 
 	/* outbound rules - advanced or standard */
 	if (isset($config['nat']['advancedoutbound']['enable'])) {
@@ -919,6 +905,21 @@ pass out on {$oc['if']} proto icmp from any to any keep state
 
 EOD;
 		}
+	}
+
+	/* Setup outgoing NAT load balancing */
+	if (isset($config['nat']['outgoingloadbalancing']['rule'])) {
+		$tmprules .= "pass in on " . $lanif . " route-to { ";
+		$isfirst = 0;
+		foreach ($config['nat']['outgoingloadbalancing']['rule'] as $rule) {
+			if($rule['gatewayip'] <> "") {
+				if(isfirst == 1) $tmprules .= ", ";
+				$tmprules .= " (" . $wanif . " " . $rule['gatewayip'] . ") ";
+				$isfirst = 1;
+			}
+		}
+		$tmprules .= "} round-robin proto tcp from " . $lansa ." to any flags S/SA modulate state\n";
+		if($isfirst == 1) $ipfrules .= $tmprules;
 	}
 
 	/* pass traffic between statically routed subnets and the subnet on the

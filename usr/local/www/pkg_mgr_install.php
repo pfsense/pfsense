@@ -68,7 +68,7 @@ if($_GET['showlog'] <> "") {
             echo "<tr><td>";
             echo "<pre>";
             // reopen and read log in
-            $fd = fopen("/tmp/pkg_mgr.log", "r");
+            $fd = fopen("{$g['tmp_path']}/pkg_mgr.log", "r");
             $tmp = "";
             while(!feof($fd)) {
                         $tmp .= fread($fd,49);
@@ -85,7 +85,7 @@ if($_GET['showlog'] <> "") {
  *   open logging facility
  */
 $fd_log = fopen("/tmp/pkg_mgr.log", "w");
-if(!$fd_log) log_error("Warning, could not open /tmp/pkg_mgr.log for writing");
+if(!$fd_log) log_error("Warning, could not open {$g['tmp_path']}/pkg_mgr.log for writing");
 fwrite($fd_log, "Begin of Package Manager installation session.\n");
 
 fetch_latest_pkg_config();
@@ -170,13 +170,13 @@ foreach ($packages_to_install as $id) {
      */
 
     // Ensure directories are in place for pkg_add.
-    mwexec("mkdir /usr/local/www/ext/Services >/dev/null 2>&1");
-    mwexec("mkdir /usr/local/www/ext/System >/dev/null 2>&1");
-    mwexec("mkdir /usr/local/www/ext/Interfaces >/dev/null 2>&1");
-    mwexec("mkdir /usr/local/www/ext/Firewall >/dev/null 2>&1");
-    mwexec("mkdir /usr/local/www/ext/VPN >/dev/null 2>&1");
-    mwexec("mkdir /usr/local/www/ext/Status >/dev/null 2>&1");
-    mwexec("mkdir /usr/local/www/ext/Diagnostics >/dev/null 2>&1");
+    mwexec("mkdir {$g['www_path']}/ext/Services >/dev/null 2>&1");
+    mwexec("mkdir {$g['www_path']}/ext/System >/dev/null 2>&1");
+    mwexec("mkdir {$g['www_path']}/ext/Interfaces >/dev/null 2>&1");
+    mwexec("mkdir {$g['www_path']}/ext/Firewall >/dev/null 2>&1");
+    mwexec("mkdir {$g['www_path']}/ext/VPN >/dev/null 2>&1");
+    mwexec("mkdir {$g['www_path']}/ext/Status >/dev/null 2>&1");
+    mwexec("mkdir {$g['www_path']}/ext/Diagnostics >/dev/null 2>&1");
     mwexec("mkdir /usr/local/pkg >/dev/null 2>&1");
 
     update_progress_bar($pb_percent);
@@ -205,8 +205,8 @@ foreach ($packages_to_install as $id) {
         // logging facilities.
         $pkgent['logging']['facility'] = $pkg_config['packages']['package'][$id]['logging']['facility'];
         $pkgent['logging']['logfile_name'] = $pkg_config['packages']['package'][$id]['logging']['logfile_name'];
-        mwexec("/usr/sbin/clog -i -s 32768 /var/log/" . $pkgent['logging']['logfile_name']);
-        mwexec("chmod 0600 /var/log/" . $pkgent['logging']['logfile_name']);
+        mwexec("/usr/sbin/clog -i -s 32768 {$g['varlog_path']}" . $pkgent['logging']['logfile_name']);
+        mwexec("chmod 0600 {$g['varlog_path']}" . $pkgent['logging']['logfile_name']);
         fwrite($fd_log, "Adding text to file /etc/syslog.conf\n");
         add_text_to_file("/etc/syslog.conf", $pkgent['logging']['facilityname'] . "\t\t\t" . $pkgent['logging']['logfilename']);
         mwexec("/usr/bin/killall -HUP syslogd");
@@ -219,7 +219,7 @@ foreach ($packages_to_install as $id) {
     update_progress_bar($pb_percent);
     $pb_percent += 10;
 
-    fwrite($fd_log, "ls /var/db/pkg | grep " . $package_to_verify . "\n" . $status);
+    fwrite($fd_log, "ls {$g['vardb_path']}/pkg | grep " . $package_to_verify . "\n" . $status);
     if($status <> "") {
                 // package is already installed!?
                 if(!$_GET['mode'] == "reinstallall")
@@ -249,7 +249,7 @@ foreach ($packages_to_install as $id) {
      * Open a /tmp/y file which will basically tell the
      * pkg_delete script to delete users and such if it asks.
      */
-    $fd = fopen("/tmp/y", "w");
+    $fd = fopen("{$g['tmp_path']}/y", "w");
     fwrite($fd, "y\n");
     fwrite($fd, "y\n");
     fwrite($fd, "y\n");
@@ -258,8 +258,8 @@ foreach ($packages_to_install as $id) {
     fclose($fd);
 
     if ($pkgent['pfsense_package_base_url'] <> "") {
-        fwrite($fd_log, "Executing: cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base_url'] . "/" . $pkgent['pfsense_package'] . "\n" . $text);
-        $text = exec_command_and_return_text("cd /tmp/ && cat /tmp/y | /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base_url'] . "/" . $pkgent['pfsense_package']);
+        fwrite($fd_log, "Executing: cd {$g['tmp_path']}/ && /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base_url'] . "/" . $pkgent['pfsense_package'] . "\n" . $text);
+        $text = exec_command_and_return_text("cd {$g['tmp_path']}/ && cat {$g['tmp_path']}/y | /usr/sbin/pkg_add -r " . $pkgent['pfsense_package_base_url'] . "/" . $pkgent['pfsense_package']);
         update_output_window($text);
     }
 
@@ -268,14 +268,14 @@ foreach ($packages_to_install as $id) {
 
     if ($pkgent['depends_on_package_base_url'] <> "") {
                 update_status("Downloading and installing " . $pkgent['name'] . " and its dependencies ... This could take a moment ...");
-                $text = exec_command_and_return_text("cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package']);
+                $text = exec_command_and_return_text("cd {$g['tmp_path']}/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package']);
                 update_output_window($text);
-                fwrite($fd_log, "cd /tmp/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package'] . "\n" . $text);;
+                fwrite($fd_log, "cd {$g['tmp_path']}/ && /usr/sbin/pkg_add -r " . $pkgent['depends_on_package_base_url'] . "/" . $pkgent['depends_on_package'] . "\n" . $text);;
     }
 
     if ($pkgent['depends_on_package_base_url'] <> "" or $pkgent['pfsense_package_base_url'] <> "") {
-        $status = exec_command_and_return_text("ls /var/db/pkg | grep " . $package_to_verify);
-        fwrite($fd_log, "ls /var/db/pkg | grep " . $package_to_verify . "\n" . $status);
+        $status = exec_command_and_return_text("ls {$g['vardb_path']}/pkg | grep " . $package_to_verify);
+        fwrite($fd_log, "ls {$g['vardb_path']}/pkg | grep " . $package_to_verify . "\n" . $status);
         if($status <> "") {
                     update_status("Package installed.  Lets finish up.");
                     fwrite($fd_log, "Package installed.  Lets finish up.\n");
@@ -369,7 +369,7 @@ foreach ($packages_to_install as $id) {
                     foreach ($package_conf['menu'] as $menu) {
                                 // install menu item into the ext folder
                                 fwrite($fd_log, "Adding menu option to " . $menu['section'] . "/" . $menu['name'] . "\n");
-                                $fd = fopen("/usr/local/www/ext/" . $menu['section'] . "/" . $menu['name'] , "w");
+                                $fd = fopen("{$g['www_path']}/ext/" . $menu['section'] . "/" . $menu['name'] , "w");
                                 if($menu['url'] <> "") {
                                             // override $myurl for script.
                                             $toeval = "\$myurl = \"" . getenv("HTTP_HOST") . "\"; \n";
@@ -420,8 +420,8 @@ foreach ($packages_to_install as $id) {
     update_progress_bar($pb_percent);
 
     if ($pkgent['depends_on_package_base_url'] <> "" or $pkgent['pfsense_package_base_url'] <> "") {
-        $status = exec_command_and_return_text("ls /var/db/pkg | grep " . $package_to_verify);
-        fwrite($fd_log, "ls /var/db/pkg | grep " . $package_to_verify . "\n" . $status);
+        $status = exec_command_and_return_text("ls {$g['vardb_path']}/pkg | grep " . $package_to_verify);
+        fwrite($fd_log, "ls {$g['vardb_path']}/pkg | grep " . $package_to_verify . "\n" . $status);
         if($status <> "") {
                     update_status("Package installation completed.");
                     fwrite($fd_log, "Package installation completed.\n");

@@ -1015,8 +1015,11 @@ EOD;
 					$line .= " ) ";
 				}
 
-				if (isset($rule['frags']))
+				/*
+				  XXX: fragment packets supported?
+				  if (isset($rule['frags']))
 					$line .= "keep frags ";
+                                */
 			}
 
 			if ($type == "reject" && $rule['protocol'] == "tcp") {

@@ -81,7 +81,7 @@ echo Starting USB...
 
 /usr/sbin/cron 2>>/tmp/bootup_messages
 
-sleep 5
+sleep 10
 /sbin/pfctl -f /tmp/rules.debug
 
 for FILE in /usr/local/etc/rc.d/*.sh; do

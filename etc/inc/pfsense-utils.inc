@@ -256,7 +256,7 @@ function get_available_pkg_id($pkg_name) {
  */
 function fetch_latest_pkg_config() {
     if(!file_exists("/tmp/pkg_config.xml")) {
-	mwexec("cd {$g['tmp_path']} && /usr/bin/fetch \"" . $config_location . "\" >/dev/null 2>&1 ");
+	mwexec("/usr/bin/fetch -o {$g['tmp_path']}/pkg_config.xml {$g['pkg_config_location']}");
 	if(!file_exists("{$g['tmp_path']}/pkg_config.xml")) {
 	    print_info_box_np("Could not download pkg_config.xml from pfSense.com.  Check your DNS settings.");
 	    die;

@@ -939,12 +939,12 @@ EOD;
 
 			if ($type == "pass") {
 
-				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states'] ) {
+				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states']) ) {
 					$line .= "flags S/SA ";
 
 				$line .= "keep state ";
 
-				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states'] ) {
+				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states'] ) ) {
 					$line .= "( ";
 					if(isset($rule['source-track']))
 						$line .= "source-track rule ";

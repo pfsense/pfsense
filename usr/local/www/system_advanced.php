@@ -35,6 +35,7 @@ require("guiconfig.inc");
 
 $pconfig['disablefilter'] = $config['system']['disablefilter'];
 $pconfig['disableftpproxy'] = $config['system']['disableftpproxy'];
+$pconfig['rfc959workaround'] = $config['system']['rfc959workaround'];
 $pconfig['filteringbridge_enable'] = isset($config['bridge']['filteringbridge']);
 $pconfig['ipv6nat_enable'] = isset($config['diag']['ipv6nat']['enable']);
 $pconfig['ipv6nat_ipaddr'] = $config['diag']['ipv6nat']['ipaddr'];
@@ -83,8 +84,12 @@ if ($_POST) {
 		}
 		if($_POST['disableftpproxy'] == "yes") {
 			$config['system']['disableftpproxy'] = "enabled";
+			unset($config['system']['rfc959workaround']);
 		} else {
 			unset($config['system']['disableftpproxy']);
+		}
+		if($_POST['rfc959workaround'] == "yes") {
+			$config['system']['rfc959workaround'] = "enabled";
 		}
 		$config['bridge']['filteringbridge'] = $_POST['filteringbridge_enable'] ? true : false;
 		$config['diag']['ipv6nat']['enable'] = $_POST['ipv6nat_enable'] ? true : false;
@@ -311,6 +316,12 @@ function enable_change(enable_over) {
                   <td width="78%" class="vtable">
                     <input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if (isset($config['system']['disableftpproxy'])) echo "checked"; ?> onclick="enable_change(false)">
                     <strong class="vexpl">Disable the userland FTP-Proxy application</strong><br>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncell">FTP RFC 959 data port violation workaround</td>
+                  <td width="78%" class="vtable">
+                    <input name="rfc959workaround" type="checkbox" id="rfc959workaround" value="yes" <?php if (isset($config['system']['rfc959workaround'])) echo "checked"; ?> onclick="enable_change(false)">
+                    <strong class="vexpl">Workaround for sites that violate RFC 959 which specifies that the data connection be sourced from the command port - 1 (typicaly port 20).  This workaround doesn't expose you to any extra risk as the firewall will still only allow connections on a port that the ftp-proxy is listening on.</strong><br>
                 </tr>
 
 		<tr>

@@ -60,6 +60,8 @@ if ($_POST) {
 		$config['ipsec']['enable'] = $_POST['enable'] ? true : false;
 		$config['ipsec']['preferredoldsa'] = $_POST['preferredoldsa'] ? true : false;
 		$config['ipsec']['ipcomp'] = $_POST['ipcomp'] ? true : false;
+		if($_POST['interface'] <> "")
+			$config['ipsec']['interface'] = $_POST['interface'];
 
 		write_config();
 
@@ -129,6 +131,24 @@ if ($_GET['act'] == "del") {
 		  <td class="vtable"><p><span class="vexpl"> </span>
 		      <input name="ipcomp" type="checkbox" id="ipcomp" value="yes" <?php if ($pconfig['ipcomp'] == "yes") echo "checked";?>>
 		      <strong>Enable VPN IP Compression<br>
+		      </strong></p>
+		  </td>
+		  <td class="vtable"><p><span class="vexpl"> </span>
+			<select name="interface">
+			<?php
+			 $iflist = get_friendly_interface_list_as_array();
+			 <option value="">ALL</option>
+			 foreach ($iflist as $ifa): ?>
+				<?php
+					$friendly = convert_real_interface_to_friendly_interface_name($ifa);
+					$ip = find_interface_ip($ifa);
+					$SELECTED="";
+					if($config['ipsec']['interface'] == $ifa) $SELECTED = " SELECTED";
+				?>
+				<option value="<?php echo $ifa; ?>"<?=$SELECTED?>><?=$ip?> - <?=$friendly?> - <?=$ifa?></option>
+			<?php endforeach; ?>
+			</select>
+		      <strong>Listening interface<br>
 		      </strong></p>
 		  </td>
                 </tr>

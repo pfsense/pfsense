@@ -582,7 +582,8 @@ function system_set_harddisk_standby() {
 function system_setup_sysctl() {
 	$sysctl = return_filename_as_array("/etc/sysctl.conf");
 	foreach($sysctl as $sysc) {
-		mewexec("sysctl {$sysc}";
+		if($sysc <> "")
+			mwexec("sysctl {$sysc}");
 	}
 }
 

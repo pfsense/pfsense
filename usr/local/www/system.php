@@ -1,5 +1,6 @@
 #!/usr/local/bin/php
 <?php
+/* $Id$ */
 /*
 	system.php
 	part of m0n0wall (http://m0n0.ch/wall)
@@ -54,6 +55,7 @@ if (!$pconfig['timeservers'])
 	$pconfig['timeservers'] = "pool.ntp.org";
 
 $changedesc = "System: ";
+$changecount = 0;
 
 function is_timezone($elt) {
 	return !preg_match("/\/$/", $elt);
@@ -132,9 +134,11 @@ if ($_POST) {
 			$crypted_pw = crypt($_POST['password'],$salt);
 			fwrite($fd, $crypted_pw);
 			pclose($fd);
+			update_changedesc("password changed");
 		}
 
-		write_config($changedesc);
+		if ($changecount > 0)
+			write_config($changedesc);
 
 		// restart webgui if proto or port changed
 		if ($restart_webgui) {

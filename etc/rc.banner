@@ -2,8 +2,11 @@
 <?php
 /*
 	rc.banner
-	part of m0n0wall (http://m0n0.ch/wall)
+	part of pfSense
+	Copyright (C) 2004 Scott Ullrich
+	All rights reserved
 
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -42,12 +45,8 @@
     Originally based on m0n0wall, version 1.2b1
     m0n0wall is Copyright 2002-2004 by Manuel Kasper. All rights reserved
 
-    LAN IP address: {$config['interfaces']['lan']['ipaddr']}
-
-    Port configurations:
-
-    LAN   -> {$config['interfaces']['lan']['if']}
-    WAN   -> {$config['interfaces']['wan']['if']}
+    LAN   -> {$config['interfaces']['lan']['if']}  {$config['interfaces']['wan']['ipaddr']}
+    WAN   -> {$config['interfaces']['wan']['if']}  {$config['interfaces']['lan']['ipaddr']}
 EOD;
 
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)

@@ -33,16 +33,16 @@ require_once("functions.inc");
 
 /*
  *  backup_config_section_xmlrpc: XMLRPC wrapper for backup_config_section.
- *  This method must be called with two parameters: a string containing the md5 of
- *  the local system's password followed by a string containing the section to be backed up.
+ *  This method must be called with two parameters: a string containing the local
+ *  system's password followed by a string containing the section to be backed up.
  */
-$backup_config_section_sig = array(array($xmlrpcString, $xmlrpcString, $xmlrpcString));
+//$backup_config_section_sig = array(array($xmlrpcString, $xmlrpcString, $xmlrpcString));
 function backup_config_section_xmlrpc($params) {
 	global $config;
 	if($params->getNumParams() != 2) return; // Make sure we have 2 params.
 	$param1 = $params->getParam(0);
-	$md5 = $param1->scalarval();
-	if($md5 != md5($config['system']['password'])) return; // Basic authentication.
+	$password = $param1->scalarval();
+	if(crypt($password, $config['system']['password']) != $config['system']['password']) return; // Basic authentication.
 	$param2 = $params->getParam(1);
 	$section = $param2->scalarval();
 	$val = new XML_RPC_Value(backup_config_section($section), 'string'); 
@@ -51,18 +51,18 @@ function backup_config_section_xmlrpc($params) {
 
 /*
  *  restore_config_section_xmlrpc: XMLRPC wrapper for restore_config_section.
- *  This method must be called with three parameters: a string containing the md5 of
+ *  This method must be called with three parameters: a string containing
  *  the local system's password, a string containing the section to be restored,
  *  and a string containing the returned value of backup_config_section() for that
  *  section. This function returns 
  */
-$restore_config_section_sig = array(array($xmlrpcBoolean, $xmlrpcString, $xmlrpcString, $xmlrpcString));
+//$restore_config_section_sig = array(array($xmlrpcBoolean, $xmlrpcString, $xmlrpcString, $xmlrpcString));
 function restore_config_section_xmlrpc($params) {
 	global $config;
 	if($params->getNumParams() != 3) return; // Make sure we have 3 params.
 	$param1 = $params->getParam(0);
-	$md5 = $param1->scalarval();
-	if($md5 != md5($config['system']['password'])) return; // Basic authentication.
+	$password = $param1->scalarval();
+	if(crypt($password, $config['system']['password']) != $config['system']['password']) return; // Basic authentication.
 	$param2 = $params->getParam(1);
 	$section - $param2->scalarval();
 	$param3 = $params->getParam(2);
@@ -73,10 +73,10 @@ function restore_config_section_xmlrpc($params) {
 
 $server = new XML_RPC_Server(
         array(
-            'pfsense.backup_config_section' => array('function' => 'backup_config_section_xmlrpc',
-							'signature' => $backup_config_section_sig),
-	    'pfsense.restore_config_section' => array('function' => 'restore_config_section_xmlrpc',
-							'signature' => $restore_config_section_sig)
+            'pfsense.backup_config_section' => array('function' => 'backup_config_section_xmlrpc'),
+//							'signature' => $backup_config_section_sig),
+	    'pfsense.restore_config_section' => array('function' => 'restore_config_section_xmlrpc')
+//							'signature' => $restore_config_section_sig)
         )
 );
 ?>

@@ -791,19 +791,19 @@ function filter_nat_rules_generate() {
 			if ((!$extport[1]) || ($extport[0] == $extport[1])) {
 				if($rule['protocol'] == "tcp/udp")
 					$natrules .=
-					"rdr on $natif proto { tcp udp } from any to any port {$extport[0]} -> {$target} \n";
+					"rdr on $natif proto { tcp udp } from any to {$rule['target']} port {$extport[0]} -> {$target} \n";
 				else
 					$natrules .=
-					"rdr on $natif proto " . $rule['protocol'] . " from any to any port {$extport[0]} -> {$target} \n";
+					"rdr on $natif proto " . $rule['protocol'] . " from any to {$rule['target']} port {$extport[0]} -> {$target} \n";
 
 			} else {
 				if($rule['protocol'] == "tcp/udp")
 					$natrules .=
-					 "rdr on $natif proto { tcp udp } from any to any port {$extport[0]}:{$extport[1]} " .
+					 "rdr on $natif proto { tcp udp } from any to {$rule['target']} port {$extport[0]}:{$extport[1]} " .
 					 "-> {$target} \n";
 				else
 					$natrules .=
-					 "rdr on $natif proto " . $rule['protocol']. " from any to any port {$extport[0]}:{$extport[1]} " .
+					 "rdr on $natif proto " . $rule['protocol']. " from any to {$rule['target']} port {$extport[0]}:{$extport[1]} " .
 					 "-> {$target} \n";
 			}
 

@@ -50,6 +50,7 @@ $pconfig['cinterface'] = $config['captiveportal']['interface'];
 $pconfig['timeout'] = $config['captiveportal']['timeout'];
 $pconfig['idletimeout'] = $config['captiveportal']['idletimeout'];
 $pconfig['enable'] = isset($config['captiveportal']['enable']);
+$pconfig['auth_method'] = $config['captiveportal']['auth_method'];
 $pconfig['radacct_enable'] = isset($config['captiveportal']['radacct_enable']);
 $pconfig['httpslogin_enable'] = isset($config['captiveportal']['httpslogin']);
 $pconfig['httpsname'] = $config['captiveportal']['httpsname'];
@@ -128,6 +129,7 @@ if ($_POST) {
 		$config['captiveportal']['timeout'] = $_POST['timeout'];
 		$config['captiveportal']['idletimeout'] = $_POST['idletimeout'];
 		$config['captiveportal']['enable'] = $_POST['enable'] ? true : false;
+		$config['captiveportal']['auth_method'] = $_POST['auth_method'];
 		$config['captiveportal']['radacct_enable'] = $_POST['radacct_enable'] ? true : false;
 		$config['captiveportal']['httpslogin'] = $_POST['httpslogin_enable'] ? true : false;
 		$config['captiveportal']['httpsname'] = $_POST['httpsname'];
@@ -180,9 +182,16 @@ if ($_POST) {
 <?php include("fbegin.inc"); ?>
 <script language="JavaScript">
 <!--
+function auth_method_change() {
+	if (document.iform.auth_method[0].checked == false) {
+		document.iform.logoutwin_enable.checked = 1;
+	} else {
+		document.iform.logoutwin_enable.checked = 0;
+	}
+}
 function radacct_change() {
 	if (document.iform.radacct_enable.checked) {
-		document.iform.logoutwin_enable.checked = 1;
+		auth_method_change();
 	}
 }
 
@@ -198,6 +207,9 @@ function enable_change(enable_change) {
 	document.iform.radiusport.disabled = endis;
 	document.iform.radiuskey.disabled = endis;
 	document.iform.radacct_enable.disabled = endis;
+	document.iform.auth_method[0].disabled = endis;
+	document.iform.auth_method[1].disabled = endis;
+	document.iform.auth_method[2].disabled = endis;
 	document.iform.httpslogin_enable.disabled = endis;
 	document.iform.httpsname.disabled = endis;
 	document.iform.cert.disabled = endis;
@@ -208,6 +220,9 @@ function enable_change(enable_change) {
 	document.iform.errfile.disabled = endis;
 
 	if (enable_change && document.iform.radacct_enable.checked) {
+		document.iform.logoutwin_enable.checked = 1;
+	}
+	if (enable_change && document.iform.auth_method[0].checked == false) {
 		document.iform.logoutwin_enable.checked = 1;
 	}
 }
@@ -222,6 +237,7 @@ function enable_change(enable_change) {
 	<li class="tabact">Captive portal</li>
 	<li class="tabinact"><a href="services_captiveportal_mac.php">Pass-through MAC</a></li>
 	<li class="tabinact"><a href="services_captiveportal_ip.php">Allowed IP addresses</a></li>
+	<li class="tabinact"><a href="services_captiveportal_users.php">Users</a></li>
   </ul>
   </td></tr>
   <tr>
@@ -318,6 +334,15 @@ to access after they've authenticated.</td>
 	  <td width="22%" valign="top" class="vncell">RADIUS server</td>
 	  <td width="78%" class="vtable">
 		<table cellpadding="0" cellspacing="0">
+		<td>No Authentication:&nbsp;&nbsp;</td>
+ 		<td><input name="auth_method" type="radio" id="auth_method" value="none" <?php if($pconfig['auth_method']!="local" || $pconfig['auth_method']!="radius") echo "checked"; ?> onClick="auth_method_change()"></td>
+		</tr>
+		<td>Local <a href="services_captiveportal_users.php">Usermanager</a>:&nbsp;&nbsp;</td>
+ 		<td><input name="auth_method" type="radio" id="auth_method" value="local" <?php if($pconfig['auth_method']=="local") echo "checked"; ?> onClick="auth_method_change()"></td>
+		</tr>
+		<td>RADIUS Authentication:&nbsp;&nbsp;</td>
+ 		<td><input name="auth_method" type="radio" id="auth_method" value="radius" <?php if($pconfig['auth_method']=="radius") echo "checked"; ?> onClick="auth_method_change()"></td>
+		</tr>
 		<tr>
 		<td>IP address:</td>
 		<td><input name="radiusip" type="text" class="formfld" id="radiusip" size="20" value="<?=htmlspecialchars($pconfig['radiusip']);?>"></td>

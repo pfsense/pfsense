@@ -212,7 +212,7 @@ EOD;
 		captiveportal_allowedip_configure() ;
 
 		/* generate radius server database */
-		if($config['captiveportal']['radiusip']) {
+		if($config['captiveportal']['radiusip'] && $config['captiveportal']['auth_method']=="radius") {
 			$radiusip = $config['captiveportal']['radiusip'] ;
 
 			if($config['captiveportal']['radiusport'])

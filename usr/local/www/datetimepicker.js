@@ -30,15 +30,15 @@ var TimeMode=24;//default TimeMode value. 12 or 24
 
 var ShowLongMonth=true;//Show long month name in Calendar header. example: "January".
 var ShowMonthYear=true;//Show Month and Year in Calendar header.
-var MonthYearColor="#cc0033";//Font Color of Month and Year in Calendar header.
-var WeekHeadColor="#0099CC";//Background Color in Week header.
-var SundayColor="#6699FF";//Background color of Sunday.
-var SaturdayColor="#CCCCFF";//Background color of Saturday.
+var MonthYearColor="#435370";//Font Color of Month and Year in Calendar header.
+var WeekHeadColor="#777777";//Background Color in Week header.
+var SundayColor="#D9DEE8";//Background color of Sunday.
+var SaturdayColor="#D9DEE8";//Background color of Saturday.
 var WeekDayColor="white";//Background color of weekdays.
-var FontColor="blue";//color of font in Calendar day cell.
+var FontColor="black";//color of font in Calendar day cell.
 var TodayColor="#FFFF33";//Background color of today.
-var SelDateColor="#FFFF99";//Backgrond color of selected date in textbox.
-var YrSelColor="#cc0033";//color of font of Year selector.
+var SelDateColor="red";//Backgrond color of selected date in textbox.
+var YrSelColor="black";//color of font of Year selector.
 var ThemeBg="";//Background image of Calendar window.
 //end Configurable parameters
 //end Global variable
@@ -118,7 +118,7 @@ function NewCal(pCtrl,pFormat,pShowTime,pTimeMode)
 			Cal.SetSecond(strSecond);
 		}	
 	}
-	winCal=window.open("","DateTimePicker","toolbar=0,status=0,menubar=0,fullscreen=no,width=195,height=245,resizable=0,top="+cnTop+",left="+cnLeft);
+	winCal=window.open("","DateTimePicker","toolbar=0,status=0,menubar=0,fullscreen=no,width=195,height=200,resizable=0,top="+cnTop+",left="+cnLeft);
 	docCal=winCal.document;
 	RenderCal();
 }
@@ -137,9 +137,13 @@ function RenderCal()
 	docCal.open();
 	docCal.writeln("<html><head><title>"+WindowTitle+"</title>");
 	docCal.writeln("<script>var winMain=window.opener;</script>");
+	docCal.writeln("<style>");
+	docCal.writeln("body,td,th,input,select {font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;font-size: 11px;}");
+	docCal.writeln("a {text-decoration: none;}");
+	docCal.writeln("</style>");
 	docCal.writeln("</head><body background='"+ThemeBg+"' link="+FontColor+" vlink="+FontColor+"><form name='Calendar'>");
 
-	vCalHeader="<table border=1 cellpadding=1 cellspacing=1 width='100%' align=\"center\" valign=\"top\">\n";
+	vCalHeader="<table border=1 cellpadding=1 cellspacing=1 align=\"center\" valign=\"top\" bgcolor='#EEEEEE' style=\"border-color:#999999; border-style:solid; border-collapse:collapse\">\n";
 	//Month Selector
 	vCalHeader+="<tr>\n<td colspan='7'><table border=0 width='100%' cellpadding=0 cellspacing=0><tr><td align='left'>\n";
 	vCalHeader+="<select name=\"MonthSelector\" onChange=\"javascript:winMain.Cal.SwitchMth(this.selectedIndex);winMain.RenderCal();\">\n";

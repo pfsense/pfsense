@@ -123,6 +123,9 @@ if (isset($id) && $a_filter[$id]) {
 	else
 		$pconfig['type'] = $a_filter[$id]['type'];
 
+	$pconfig['max-src-states'] = $a_filter[$id]['max-src-states'];
+	$pconfig['max-src-nodes'] = $a_filter[$id]['max-src-nodes'];
+
 	if (isset($a_filter[$id]['protocol']))
 		$pconfig['proto'] = $a_filter[$id]['protocol'];
 	else
@@ -319,6 +322,10 @@ if ($_POST) {
 		/* ALTQ */
 		$filterent['direction'] = $_POST['direction'];
 		$filterent['queue'] = $_POST['queue'];
+
+		/* Advanced options */
+		$filterent['max-src-nodes'] = $_POST['max-src-nodes'];
+		$filterent['max-src-states'] = $_POST['max-src-states'];
 
 		write_config();
 		touch($d_filterconfdirty_path);
@@ -583,7 +590,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                         <td><input name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>">
                         /
 				<select name="srcmask" class="formfld" id="srcmask">
-				<?php for ($i = 31; $i > 0; $i--): ?>
+				<?php for ($i = 32; $i > 0; $i--): ?>
 				<option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected"; ?>><?=$i;?></option>
 				<?php endfor; ?>
 				</select>
@@ -669,7 +676,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                         <td><input name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
                           /
                           <select name="dstmask" class="formfld" id="dstmask";>
-				<?php for ($i = 31; $i > 0; $i--): ?>
+				<?php for ($i = 32; $i > 0; $i--): ?>
 				<option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo "selected"; ?>><?=$i;?></option>
 				<?php endfor; ?>
 				</select>
@@ -763,6 +770,15 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 		    <p><span class="vexpl"><input type="checkbox" name="autocreatequeue"> Automatically create a new queue for this rule.</span>
 		    </td>
                 </tr>
+
+               <tr>
+                  <td width="22%" valign="top" class="vncell">Advanced Options</td>
+                  <td width="78%" class="vtable">
+			<input name="max-src-nodes" id="max-src-nodes" value="<?php echo $pconfig['max-src-nodes'] ?>"><br> Simultaneous client connection limit<p>
+			<input name="max-src-states" id="max-src-states" value="<?php echo $pconfig['max-src-states'] ?>"><br> Maximum state entries per host<br>
+		    </td>
+                </tr>
+
 
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

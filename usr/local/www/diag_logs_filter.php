@@ -91,7 +91,7 @@ function conv_clog($logfile, $tail) {
 
 		$flent['time'] = $first_split[0] . ", " . $first_split[1] . " " . $first_split[2];
 		$flent['interface'] = $second_split[5];
-		
+
 		$flent['proto'] = $second_split[10];
 		$flent['act'] = $second_split[1];
 		$flent['src'] = format_ipf_ip($second_split[7]);
@@ -103,7 +103,9 @@ function conv_clog($logfile, $tail) {
 
 		if($second_split[11] == "udp" or $second_split[11] == "tcp" or $second_split[11] == "icmp" or $second_split[11] == "igmp") $flent['proto'] = $second_split[11];
 
-		if($flent['proto'] == "S" or $flent['proto'] == "R") $dontdisplay = 1;
+		$flent['proto'] = ereg_replace(":", "", $flent['proto']);
+
+		if($flent['proto'] == "S" or $flent['proto'] == "NBT" or $flent['proto'] == "." or $flent['proto'] == "R" or $flent['proto'] == ">") $dontdisplay = 1;
 
 		if($dontdisplay == 0)
 			$filterlog[] = $flent;

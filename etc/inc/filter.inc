@@ -1620,17 +1620,19 @@ function create_firewall_outgoing_rules_to_itself() {
 	$rule .= "# pass traffic from firewall -> out\n";
 	$rule .= "anchor \"firewallout\"\n";
 	$ifdescrs = array('wan', 'lan');
-	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
 		$ifdescrs['opt' . $j] = "opt" . $j;
-	}
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		$int = filter_translate_type_to_real_interface($ifname);
-		$rule .="pass out quick on {$int} inet from any to any keep state\n";
-                /* XXX - billm: temp fix for pppoe, needs better fix */
                 if ($config['interfaces'][$ifname]['ipaddr'] == "pppoe")
                         $int = "ng0";
-		if($config['interfaces'][$ifname]['ipaddr'] != "")
-			$rule .="pass out quick on {$int} inet from {$int} to any keep state\n";
+		$ip = find_interface_ip($int);
+		if($ip <> "") {
+			$rule .="pass out quick on {$int} inet from any to any keep state\n";
+			/* XXX - billm: temp fix for pppoe, needs better fix */
+			if($config['interfaces'][$ifname]['ipaddr'] != "")
+				$rule .="pass out quick on {$int} inet from {$int} to any keep state\n";
+		}
 	}
 	return $rule;
 }

@@ -95,7 +95,7 @@ function vpn_ipsec_configure($ipchg = false) {
 	if (isset($ipseccfg['enable'])) {
 
 		/* fastforwarding is not compatible with ipsec tunnels */
-		sysctl("sysctl net.inet.ip.fastforwarding=0");
+		system("sysctl net.inet.ip.fastforwarding=0");
 
 		if (!$curwanip) {
 			/* IP address not configured yet, exit */

@@ -560,10 +560,6 @@ function filter_generate_altq_rules() {
 				$line .= "flags S/SA ";
 			}
 
-			if (isset($rule['flags']) && $rule['flags'] <> "") {
-				//$line .= "flags " . $rule['flags'] . " ";
-			}
-
 			if (!$ispptp) {
 				#$line .= "group $groupnum ";
 			}
@@ -1374,20 +1370,11 @@ EOD;
 					$line .= " ) ";
 				}
 
-				/*
-				  XXX: fragment packets supported?
-				  if (isset($rule['frags']))
-					$line .= "keep frags ";
-                                */
 			}
 
 			if ($type == "reject" && $rule['protocol'] == "tcp") {
 				/* special reject packet */
 				$line .= "flags S/SA ";
-			}
-
-			if (isset($rule['flags']) && $rule['flags'] <> "") {
-				//$line .= "flags " . $rule['flags'] . " ";
 			}
 
 			if (!$ispptp) {

@@ -668,6 +668,24 @@ EOD;
 	return $natrule;
 }
 
+function is_one_to_one_or_server_nat_rule($target) {
+	global $config;
+
+	if($config['nat']['onetoone'] <> "")
+		foreach($config['nat']['onetoone'] as $onetoone) {
+			if($onetoone['internal'] == $target)
+				return TRUE;
+		}
+
+	if($config['nat']['servernat'] <> "")
+		foreach($config['nat']['servernat'] as $onetoone) {
+			if($onetoone['ipaddr'] == $target)
+				return TRUE;
+		}
+		
+	return FALSE;
+}
+
 function filter_nat_rules_generate() {
 	global $config, $g;
 
@@ -1236,7 +1254,7 @@ EOD;
 				$line = $type;
 			}
 
-			if(!isset($rule['direction']) and $rule['direction'] <> "") {
+			if(isset($rule['direction']) && $rule['direction'] <> "") {
 				$line .= "in ";
 			} else {
 				$line .= $rule['direction'] . " ";
@@ -1254,7 +1272,16 @@ EOD;
 				$interface = $rule['interface'];
 				$temp = filter_get_opt_interface_descr($interface);
 				if($temp <> "") $interface = $temp;
-				$line .= "on \$" . $interface . " ";
+				if(isset($rule['destination']['address'])) {
+					$canadd = 0;
+					/* because pf will not allow a interface for proxyARP
+					   type traffic lets check if its in use and if so leave
+                                           off the interface */
+					if(is_one_to_one_or_server_nat_rule($rule['destination']['address']))
+						$canadd = 1;
+				}
+				if($canadd == 0)
+					$line .= "on \$" . $interface . " ";
 			}
 
 			if (isset($rule['protocol'])) {

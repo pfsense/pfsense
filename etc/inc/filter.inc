@@ -571,16 +571,8 @@ function filter_generate_altq_rules() {
 			$line .= "queue " . filter_altq_get_queuename($rule['targetqueue']). " ";
 
 			// tos
-			$iniptos = explode(",", $pconfig['iptos']);
-			$tos .= "tos ";
-			if($iptos <> "")
-				foreach ($iptos as $tos){
-					$isfirst = 0;
-					if (array_search($tos, $iniptos) !== false) {
-						$tos .= $tos . " ";
-					}
-				}
-			if($tos <> "tos ") $line .= $tos;
+                        if($rule['iptos'] <> "")
+				$line .= "tos " . $rule['iptos'] . " ";
 
 			// label
                         if($rule['desc'] <> "") $line .= "label " . $rule['desc'] . " ";
@@ -1412,17 +1404,8 @@ EOD;
 			}
 
 			// tos
-			$iniptos = explode(",", $pconfig['iptos']);
-			$tos .= "tos ";
-			if($iptos <> "")
-				foreach ($iptos as $tos){
-					$isfirst = 0;
-					if (array_search($tos, $iniptos) !== false) {
-						$tos .= $tos . " ";
-					}
-				}
-
-			if($tos <> "tos ") $line .= $tos;
+                        if($rule['iptos'] <> "")
+				$line .= "tos " . $rule['iptos'] . " ";
 
 			// label
                         if($rule['desc'] <> "") $line .= "label " . $rule['desc'] . " ";

@@ -510,16 +510,17 @@ function update_progress_bar($percent) {
 }
 
 /*
- *  resync_all_packages_config() Forces packages to setup their configuration and rc.d files
+ *  resync_all_package_configs() Forces packages to setup their configuration and rc.d files
  */
-function resync_all_packages_config() {
+function resync_all_package_configs() {
     log_error("Resyncing configuration for all packages.");
     if(!$config['installedpackages']['package']) return;
     foreach($config['installedpackages']['package'] as $package) {
         if(file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
             $pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "pfsensepkgs");
         } else {
-            // XXX: FETCH configuration file.
+	    log_error("Fetching missing configuration XML for " . $package . ".");       
+            mwexec("fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationfile']);
             $pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "pfsensepkgs");
         }
         if($pkg_config['custom_php_command_before_form'] <> "") eval($pkg_config['custom_php_command_before_form']);
@@ -530,4 +531,27 @@ function resync_all_packages_config() {
     }
 }
 
+/*
+ *  resync_all_package_configs_bootup() Force packages to setup their configuration and rc.d files at bootup.
+ *  This function also prints output to the terminal indicating progress.
+ */
+
+function resync_all_package_configs_bootup() {
+    log_error("Resyncing configuration for all packages.");
+    if(!$config['installedpackages']['package']) return;                                           
+    foreach($config['installedpackages']['package'] as $package) {
+        if(file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
+            $pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "pfsensepkgs");
+        } else {
+	    log_error("Fetching missing configuration XML for " . $package . ".");
+	    system("fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationfile']);
+            $pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "pfsensepkgs");
+        }
+        if($pkg_config['custom_php_command_before_form'] <> "") eval($pkg_config['custom_php_command_before_form']);    
+        if($pkg_config['custom_add_php_command'] <> "") eval($pkg_config['custom_add_php_command']);
+        if($pkg_config['custom_add_php_command_late'] <> "") eval($pkg_config['custom_add_php_command_late']);
+        if($pkg_config['custom_php_install_command'] <> "") eval($pkg_config['custom_php_install_command']);
+        // XXX: process template as well.
+	print "Synced " . $package . ".\n";
+    }
 ?>

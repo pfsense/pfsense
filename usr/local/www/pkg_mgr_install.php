@@ -433,7 +433,7 @@ foreach ($packages_to_install as $id) {
                                         if(stristr($filename, ".tgz") <> "") {
                                                     update_status("Extracting tgz archive to -C for " . $filename);
                                                     fwrite($fd_log, "Extracting tgz archive to -C for " . $filename . " ...\n");
-                                                    system("cd /usr/local/pkg && tar xzvf " . $filename . " -C / >/dev/null 2>&1");
+                                                    system("/usr/bin/tar xzvf " . $filename . " -C / >/dev/null 2>&1");
                                         }
                             }
                 }

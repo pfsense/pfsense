@@ -58,7 +58,7 @@ $packages_to_install = Array();
 include("fbegin.inc");
 ?>
 <p class="pgtitle">System: Package Manager: Install Package</p>
-<form action="firewall_nat_out_load_balancing.php" method="post">
+<form action="pkg_mgr_install.php" method="post">
 
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php

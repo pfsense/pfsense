@@ -732,11 +732,14 @@ function is_service_running($service_name) {
 }
 
 /*
- *  backup_config_section($section): returns as an array the configuration section
+ *  backup_config_section($section): returns as an xml file string of
+ *                                   the configuration section
  */
 function backup_config_section($section) {
     global $config;
     $new_section = &$config['section'];
+    /* generate configuration XML */
+    $xmlconfig = dump_xml_config($new_section, $section);
     return $new_section;
 }
 
@@ -749,7 +752,12 @@ function restore_config_section($section, $new_contents) {
     global $config;
     conf_mount_rw();
     config_lock();
-    $config[$section] = &$new_contents;
+    $fout = fopen("{$g['tmp_path']}/tmpxml","w");
+    fwrite($fout, $current_rules_section);
+    fclose($fout);
+    $section_xml = parse_xml_config_pkg($g['tmp_path'] . "/tmpxml", "packagegui");
+    $config[$section] = &$section_xml;
+    unlink($g['tmp_path'] . "/tmpxml");
     write_config();
     conf_mount_ro();
     config_unlock();

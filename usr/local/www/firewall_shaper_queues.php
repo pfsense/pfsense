@@ -161,7 +161,7 @@ if ($_GET['act'] == "del") {
 			echo "<img src='bar_blue.gif' height='15' name='queue{$i}widtha' id='queue{$i}widtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
 			echo "<img src='bar_gray.gif' height='15' name='queue{$i}widthb' id='queue{$i}widthb' width='" . (100 - $cpuUsage) . "' border='0' align='absmiddle'>";
 			echo "<img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
-			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}meter' id='queue{$i}meter' value='{$cpuUsage}'>";
+			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='18' name='queue{$i}meter' id='queue{$i}meter' value='{$cpuUsage}'>";
 ?>
 
 			</td>

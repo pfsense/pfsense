@@ -3,7 +3,7 @@
 /*
 	diag_logs_filter.php
 	part of pfSesne by Scott Ullrich
-	based originally on m0n0wall (http://m0n0.ch/wall)
+	originally based on m0n0wall (http://m0n0.ch/wall)
 
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.

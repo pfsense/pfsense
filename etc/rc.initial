@@ -2,8 +2,8 @@
 
 # /etc/rc.initial
 # part of pfSense by Scott Ullrich
-# based on m0n0wall (http://neon1.net/m0n0wall)
-#
+# Copyright (C) 2004 Scott Ullrich, All rights reserved.
+# originally based on m0n0wall (http://neon1.net/m0n0wall)
 # Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 # All rights reserved.
 

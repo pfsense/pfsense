@@ -1,4 +1,5 @@
 <?php
+/* $Header$ */
 /*
 	guiconfig.inc
 	by Scott Ullrich, Copyright 2004, All rights reserved.
@@ -442,6 +443,15 @@ function gentitle($pgname) {
 	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
 }
 
+/* update the changedesc and changecount(er) variables */
+function update_changedesc($update) {
+	global $changedesc;
+	global $changecount;
+
+	$changedesc .= " {$update}";
+	$changecount++;
+}
+
 /* Check if variable has changed, update and log if it has
  * returns true if var changed
  * varname = variable name in plain text
@@ -449,12 +459,8 @@ function gentitle($pgname) {
  * new = new value
  */
 function update_if_changed($varname, $orig, $new) {
-	global $changedesc;
-	global $changecount;
-
 	if ($orig != $new) {
-		$changedesc .= " {$varname}: \"{$orig}\" -> \"{$new}\"";
-		$changecount++;
+		update_changedesc("{$varname}: \"{$orig}\" -> \"{$new}\"");
 		$orig = $new;
 		return true;
 	}

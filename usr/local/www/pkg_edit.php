@@ -94,7 +94,9 @@ if ($_POST) {
 		write_config();
 		// resync the configuration file code if defined.
 		if($pkg['custom_php_resync_config_command'] <> "") {
-		    eval($pkg['custom_php_resync_config_command']);
+			if($pkg['custom_php_command_before_form'] <> "")
+				eval($pkg['custom_php_command_before_form']);
+			eval($pkg['custom_php_resync_config_command']);
 		}
 	} else {
 		if($pkg['custom_add_php_command']) {

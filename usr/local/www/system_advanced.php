@@ -1,22 +1,22 @@
 #!/usr/local/bin/php
-<?php 
+<?php
 /*
 	system_advanced.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -82,9 +82,9 @@ if ($_POST) {
 		}
 		$config['system']['webgui']['noantilockout'] = $_POST['noantilockout'] ? true : false;
 		$config['filter']['tcpidletimeout'] = $_POST['tcpidletimeout'];
-			
+
 		write_config();
-		
+
 		if (($config['system']['webgui']['certificate'] != $oldcert)
 				|| ($config['system']['webgui']['private-key'] != $oldkey)) {
 			touch($d_sysrebootreqd_path);
@@ -98,7 +98,7 @@ if ($_POST) {
 				system_set_harddisk_standby();
 			}
 		}
-		
+
 		$retval = 0;
 		if (!file_exists($d_sysrebootreqd_path)) {
 			config_lock();
@@ -130,91 +130,92 @@ function enable_change(enable_over) {
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<form action="system_advanced.php" method="post" name="iform" id="iform">
 <?php include("fbegin.inc"); ?>
       <p class="pgtitle">System: Advanced functions</p>
             <?php if ($input_errors) print_input_errors($input_errors); ?>
             <?php if ($savemsg) print_info_box($savemsg); ?>
-            <p><span class="vexpl"><span class="red"><strong>Note: </strong></span>the 
-              options on this page are intended for use by advanced users only, 
+            <p><span class="vexpl"><span class="red"><strong>Note: </strong></span>the
+              options on this page are intended for use by advanced users only,
               and there's <strong>NO</strong> support for them.</span></p>
-            <form action="system_advanced.php" method="post" name="iform" id="iform">
+
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr> 
+                <tr>
                   <td colspan="2" valign="top" class="listtopic">IPv6 tunneling</td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncell">&nbsp;</td>
-                  <td width="78%" class="vtable"> 
-                    <input name="ipv6nat_enable" type="checkbox" id="ipv6nat_enable" value="yes" <?php if ($pconfig['ipv6nat_enable']) echo "checked"; ?> onclick="enable_change(false)"> 
-                    <strong>NAT encapsulated IPv6 packets (IP protocol 41/RFC2893) 
-                    to:</strong><br> <br> <input name="ipv6nat_ipaddr" type="text" class="formfld" id="ipv6nat_ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipv6nat_ipaddr']);?>"> 
+                  <td width="78%" class="vtable">
+                    <input name="ipv6nat_enable" type="checkbox" id="ipv6nat_enable" value="yes" <?php if ($pconfig['ipv6nat_enable']) echo "checked"; ?> onclick="enable_change(false)">
+                    <strong>NAT encapsulated IPv6 packets (IP protocol 41/RFC2893)
+                    to:</strong><br> <br> <input name="ipv6nat_ipaddr" type="text" class="formfld" id="ipv6nat_ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipv6nat_ipaddr']);?>">
                     &nbsp;(IP address)<span class="vexpl"><br>
                     Don't forget to add a firewall rule to permit IPv6 packets!</span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)"> 
+                  <td width="78%">
+                    <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
                   </td>
                 </tr>
-                <tr> 
+                <tr>
                   <td colspan="2" class="list" height="12"></td>
                 </tr>
-				<tr> 
+				<tr>
                   <td colspan="2" valign="top" class="listtopic">Filtering bridge</td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncell">&nbsp;</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="filteringbridge_enable" type="checkbox" id="filteringbridge_enable" value="yes" <?php if ($pconfig['filteringbridge_enable']) echo "checked"; ?>>
                     <strong>Enable filtering bridge</strong><span class="vexpl"><br>
-                    This will cause bridged packets to pass through the packet 
-                    filter in the same way as routed packets do (by default bridged 
-                    packets are always passed). If you enable this option, you'll 
-                    have to add filter rules to selectively permit traffic from 
+                    This will cause bridged packets to pass through the packet
+                    filter in the same way as routed packets do (by default bridged
+                    packets are always passed). If you enable this option, you'll
+                    have to add filter rules to selectively permit traffic from
                     bridged interfaces.</span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)"> 
+                  <td width="78%">
+                    <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
                   </td>
                 </tr>
-                <tr> 
+                <tr>
                   <td colspan="2" class="list" height="12"></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td colspan="2" valign="top" class="listtopic">webGUI SSL certificate/key</td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncell">Certificate</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <textarea name="cert" cols="65" rows="7" id="cert" class="formpre"><?=htmlspecialchars($pconfig['cert']);?></textarea>
-                    <br> 
-                    Paste a signed certificate in X.509 PEM format here.</td>
+                    <br>
+                    Paste a signed certificate in X.509 PEM format here. <A target="_new" HREF='system_advanced_create_certs.php'>Create</a> certificates automatically.</td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncell">Key</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <textarea name="key" cols="65" rows="7" id="key" class="formpre"><?=htmlspecialchars($pconfig['key']);?></textarea>
-                    <br> 
+                    <br>
                     Paste an RSA private key in PEM format here.</td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)"> 
+                  <td width="78%">
+                    <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
                   </td>
                 </tr>
-                <tr> 
+                <tr>
                   <td colspan="2" class="list" height="12"></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td colspan="2" valign="top" class="listtopic">Miscellaneous</td>
                 </tr>
-				<tr> 
+				<tr>
                   <td width="22%" valign="top" class="vncell">Console menu </td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="disableconsolemenu" type="checkbox" id="disableconsolemenu" value="yes" <?php if ($pconfig['disableconsolemenu']) echo "checked"; ?>>
                     <strong>Disable console menu</strong><span class="vexpl"><br>
                     Changes to this option will take effect after a reboot.</span></td>
@@ -234,9 +235,9 @@ function enable_change(enable_over) {
     Idle TCP connections will be removed from the state table after no packets have been received for the specified number of seconds. Don't set this too high or your state table could become full of connections that have been improperly shut down. The default is 2.5 hours.</span></td>
 			    </tr>
 <?php if ($g['platform'] == "generic-pc"): ?>
-				<tr> 
+				<tr>
                   <td width="22%" valign="top" class="vncell">Hard disk standby time </td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <select name="harddiskstandby" class="formfld">
 					<?php
                         /* Values from ATA-2
@@ -256,25 +257,25 @@ function enable_change(enable_over) {
                     access has elapsed. <em>Do not set this for CF cards.</em></td>
 				</tr>
 <?php endif; ?>
-				<tr> 
+				<tr>
                   <td width="22%" valign="top" class="vncell">Navigation</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="expanddiags" type="checkbox" id="expanddiags" value="yes" <?php if ($pconfig['expanddiags']) echo "checked"; ?>>
                     <strong>Keep diagnostics in navigation expanded </strong></td>
                 </tr>
-				<tr> 
+				<tr>
                   <td width="22%" valign="top" class="vncell">webGUI anti-lockout</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="noantilockout" type="checkbox" id="noantilockout" value="yes" <?php if ($pconfig['noantilockout']) echo "checked"; ?>>
                     <strong>Disable webGUI anti-lockout rule</strong><br>
 					By default, access to the webGUI on the LAN interface is always permitted, regardless of the user-defined filter rule set. Enable this feature to control webGUI access (make sure to have a filter rule in place that allows you in, or you will lock yourself out!).<br>
-					Hint: 
+					Hint:
 					the &quot;set LAN IP address&quot; option in the console menu  resets this setting as well.</td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)"> 
+                  <td width="78%">
+                    <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
                   </td>
                 </tr>
               </table>

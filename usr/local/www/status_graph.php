@@ -36,7 +36,7 @@ if ($_POST['width'])
 else
 	$width = "550";
 
-if ($_POST['y'])
+if ($_POST['height'])
 	$height = $_POST['height'];
 else
 	$height = "275";

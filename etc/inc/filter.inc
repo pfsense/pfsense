@@ -945,10 +945,30 @@ EOD;
 				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states']) )
 					$line .= "flags S/SA ";
 
-				if( !isset($rule['statetype'] )
+				/*
+					# keep state
+						works with TCP, UDP, and ICMP.
+					# modulate state
+						works only with TCP. pfSense will generate strong Initial Sequence Numbers (ISNs)
+						for packets matching this rule.
+					# synproxy state
+						proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods.
+						This option includes the functionality of keep state and modulate state combined.
+					# none
+						do not use state mechanisms to keep track. this is only useful if your doing advanced
+						queueing in certain situations. please check the faq.
+				*/
+				if( !isset($rule['statetype'] ) ) {
 					$line .= "keep state ";
-				else
-					$line .= $rule['statetype'] . " ";
+				} else {
+					if($rule['statetype'] == "modulate state" or $rule['statetype'] == "synproxy state") {
+						if($rule['protocol'] == "tcp")
+							$line .= $rule['statetype'] ;
+					} else {
+						if(!$rule['statetype'] == "none")
+							$line .= $rule['statetype'] ;
+					}
+				}
 
 				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states'] ) ) {
 					$line .= "( ";

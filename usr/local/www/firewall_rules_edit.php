@@ -117,6 +117,7 @@ function pconfig_to_address(&$adr, $padr, $pmask, $pnot, $pbeginport, $pendport)
 
 if (isset($id) && $a_filter[$id]) {
 	$pconfig['interface'] = $a_filter[$id]['interface'];
+	$pconfig['statetype'] = $a_filter[$id]['statetype'];
 
 	if (!isset($a_filter[$id]['type']))
 		$pconfig['type'] = "pass";
@@ -146,7 +147,6 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['log'] = isset($a_filter[$id]['log']);
 	$pconfig['frags'] = isset($a_filter[$id]['frags']);
 	$pconfig['descr'] = $a_filter[$id]['descr'];
-	$pconfig['statetype'] = $a_filter[$id]['statetype'];
 
 
 } else {
@@ -239,6 +239,15 @@ if ($_POST) {
 		$_POST['dstendport'] = 0;
 	}
 
+	//echo "<br>\n\n\nProtocol " . $_POST['protocol'];
+	//echo "<br>\nState type " . $_POST['statetype'];
+	//echo "<br>\n\n";
+	if($_POST['statetype'] == "modulate state" or $_POST['statetype'] == "synproxy state") {
+		if( $_POST['proto'] == "udp" or $_POST['proto'] == "tcp/udp" or $_POST['proto'] == "icmp") {
+			$input_errors[] = "You cannot select udp or icmp when using modulate state or synproxy state.";
+		}
+	}
+
 	if (($_POST['srcbeginport'] && !is_port($_POST['srcbeginport']))) {
 		$input_errors[] = "The start source port must be an integer between 1 and 65535.";
 	}
@@ -288,6 +297,8 @@ if ($_POST) {
 		$filterent['interface'] = $_POST['interface'];
 		$filterent['creategif'] = $_POST['creategif'];
 
+		$filterent['statetype'] = $_POST['statetype'];
+
 		if ($_POST['proto'] != "any")
 			$filterent['protocol'] = $_POST['proto'];
 		else
@@ -327,8 +338,6 @@ if ($_POST) {
 		/* Advanced options */
 		$filterent['max-src-nodes'] = $_POST['max-src-nodes'];
 		$filterent['max-src-states'] = $_POST['max-src-states'];
-
-		$filterent['statetype'] = $_POST['statetype'];
 
 		write_config();
 		touch($d_filterconfdirty_path);
@@ -793,7 +802,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                <tr>
                   <td width="22%" valign="top" class="vncell">State Type</td>
                   <td width="78%" class="vtable">
-			<select name"statetype">
+			<select name="statetype">
 			<option value="keep state" <?php if(!isset($pconfig['statetype']) or $pconfig['statetype'] == "keep state") echo "selected"; ?>>keep state</option>
 			<option value="modulate state" <?php if($pconfig['statetype'] == "modulate state")  echo "selected"; ?>>modulate state</option>
 			<option value="synproxy state"<?php if($pconfig['statetype'] == "synproxy state")  echo "selected"; ?>>synproxy state</option>

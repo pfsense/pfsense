@@ -66,7 +66,9 @@ if ($_POST) {
 		    $savemsg = get_std_save_message($retval);
 		else
 		    $savemsg = $retval;
-		exec("rm " . $d_shaperconfdirty_path);
+
+	        if(file_exists($d_shaperconfdirty_path))
+	          unlink($d_shaperconfdirty_path);
 	}
 }
 

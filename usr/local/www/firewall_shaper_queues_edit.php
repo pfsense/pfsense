@@ -127,24 +127,18 @@ if ($_POST) {
 	    <tr>
 	      <td width="22%" valign="top" class="vncellreq">Priority</td>
 	      <td width="78%" class="vtable"> <input name="priority" type="text" id="priority" size="5" value="<?=htmlspecialchars($pconfig['priority']);?>">
-		<br> <span class="vexpl">Valid range: 1..100.<br>
-		All backlogged (i.e., with packets queued) queues linked to
-		the same pipe share the pipe's bandwidth proportionally to
-		their prioritys (higher priority = higher share of bandwidth).
-		Note that prioritys are not priorities; a queue with a lower
-		priority is still guaranteed to get its fraction of the bandwidth
-		even if a queue with a higher priority is permanently backlogged.
+		<br> <span class="vexpl">The priority of the queue. For class based queueing the priority range is 0 to 7 and for priority based queueing the range is 0 to 15. Priority 0 is the lowest priority. When not specified, a default of 1 is used.
 		</span></td>
 	    </tr>
 	    <tr>
-	      <td width="22%" valign="top" class="vncell">Name</td>
+	      <td width="22%" valign="top" class="vncell"><b>Name</b></td>
 	      <td width="78%" class="vtable"> <input name="name" type="text" class="formfld" id="name" size="40" value="<?=htmlspecialchars($pconfig['name']);?>">
 		<br> <span class="vexpl">Enter the name of the queue here.  Do not use spaces!
 		</span></td>
 	    </tr>
 
 	    <tr>
-	      <td width="22%" valign="top" class="vncell">Scheduler </td>
+	      <td width="22%" valign="top" class="vncell"><b>Scheduler</b> </td>
 	      <td width="78%" class="vtable">
 		<select name="scheduler">
 			<option value="priq">Priority based queueing</option>

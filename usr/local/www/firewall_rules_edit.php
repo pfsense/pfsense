@@ -170,6 +170,7 @@ if ($_POST) {
 
 		if ($_POST['srcbeginport_cust'] && !$_POST['srcbeginport'])
 			$_POST['srcbeginport'] = $_POST['srcbeginport_cust'];
+
 		if ($_POST['srcendport_cust'] && !$_POST['srcendport'])
 			$_POST['srcendport'] = $_POST['srcendport_cust'];
 
@@ -185,6 +186,7 @@ if ($_POST) {
 
 		if ($_POST['dstbeginport_cust'] && !$_POST['dstbeginport'])
 			$_POST['dstbeginport'] = $_POST['dstbeginport_cust'];
+
 		if ($_POST['dstendport_cust'] && !$_POST['dstendport'])
 			$_POST['dstendport'] = $_POST['dstendport_cust'];
 
@@ -195,6 +197,7 @@ if ($_POST) {
 			if (!$_POST['dstendport'])
 				$_POST['dstendport'] = $_POST['dstbeginport'];
 		}
+		
 		if ($_POST['dstendport'] == "any")
 			$_POST['dstendport'] = $_POST['dstbeginport'];
 	}
@@ -239,27 +242,22 @@ if ($_POST) {
 		$_POST['dstendport'] = 0;
 	}
 
-	//echo "<br>\n\n\nProtocol " . $_POST['protocol'];
-	//echo "<br>\nState type " . $_POST['statetype'];
-	//echo "<br>\n\n";
-	if($_POST['statetype'] == "modulate state" or $_POST['statetype'] == "synproxy state") {
-		if( $_POST['proto'] == "udp" or $_POST['proto'] == "tcp/udp" or $_POST['proto'] == "icmp") {
+	if($_POST['statetype'] == "modulate state" or $_POST['statetype'] == "synproxy state")
+		if( $_POST['proto'] == "udp" or $_POST['proto'] == "tcp/udp" or $_POST['proto'] == "icmp")
 			$input_errors[] = "You cannot select udp or icmp when using modulate state or synproxy state.";
-		}
-	}
 
-	if (($_POST['srcbeginport'] && !is_port($_POST['srcbeginport']))) {
+	if (($_POST['srcbeginport'] && !is_port($_POST['srcbeginport'])))
 		$input_errors[] = "The start source port must be an integer between 1 and 65535.";
-	}
-	if (($_POST['srcendport'] && !is_port($_POST['srcendport']))) {
+
+	if (($_POST['srcendport'] && !is_port($_POST['srcendport'])))
 		$input_errors[] = "The end source port must be an integer between 1 and 65535.";
-	}
-	if (($_POST['dstbeginport'] && !is_port($_POST['dstbeginport']))) {
+
+	if (($_POST['dstbeginport'] && !is_port($_POST['dstbeginport'])))
 		$input_errors[] = "The start destination port must be an integer between 1 and 65535.";
-	}
-	if (($_POST['dstendport'] && !is_port($_POST['dstendport']))) {
+
+	if (($_POST['dstendport'] && !is_port($_POST['dstendport'])))
 		$input_errors[] = "The end destination port must be an integer between 1 and 65535.";
-	}
+
 
 	if (!is_specialnet($_POST['srctype'])) {
 		if (($_POST['src'] && !is_ipaddroranyalias($_POST['src']))) {

@@ -1,21 +1,23 @@
 <?php
 /*
     functions.inc
-    part of m0n0wall (http://m0n0.ch/wall)
-    
+    Copyright (C) 2004 Scott Ullrich
+    All rights reserved.
+
+    originally part of m0n0wall (http://m0n0.ch/wall)
     Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
     All rights reserved.
-    
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
-    
+
     1. Redistributions of source code must retain the above copyright notice,
        this list of conditions and the following disclaimer.
-    
+
     2. Redistributions in binary form must reproduce the above copyright
        notice, this list of conditions and the following disclaimer in the
        documentation and/or other materials provided with the distribution.
-    
+
     THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
     INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
     AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -33,7 +35,6 @@ require_once("system.inc");
 require_once("interfaces.inc");
 require_once("services.inc");
 require_once("filter.inc");
-/* require_once("shaper.inc"); */
 require_once("vpn.inc");
 require_once("captiveportal.inc");
 require_once("openvpn.inc");

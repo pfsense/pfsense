@@ -1391,6 +1391,10 @@ EOD;
 						$line .= "port {$srcport[0]} >< {$srcport[1]} ";
 					}
 				}
+                                /* OS signatures */
+                                if ($rule['protocol'] == "tcp" && isset($rule['os']))
+                                        $line .= "os {$rule['os']} ";
+			
 			}
 
 			/* destination address */

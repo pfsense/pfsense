@@ -141,6 +141,8 @@ if (isset($id) && $a_filter[$id]) {
 		$pconfig['srcmask'], $pconfig['srcnot'],
 		$pconfig['srcbeginport'], $pconfig['srcendport']);
 
+	$pconfig['os'] = $a_filter[$id]['os'];
+
 	address_to_pconfig($a_filter[$id]['destination'], $pconfig['dst'],
 		$pconfig['dstmask'], $pconfig['dstnot'],
 		$pconfig['dstbeginport'], $pconfig['dstendport']);
@@ -294,6 +296,9 @@ if ($_POST) {
 		$_POST['dstendport'] = $_POST['dstbeginport'];
 		$_POST['dstbeginport'] = $tmp;
 	}
+	if ($_POST['os'])
+		if( $_POST['proto'] != "tcp" )
+			$input_errors[] = "OS detection is only valid with protocol tcp.";
 
 	if (!$input_errors) {
 		$filterent = array();
@@ -305,6 +310,7 @@ if ($_POST) {
 		$filterent['max-src-states'] = $_POST['max-src-states'];
 		$filterent['statetimeout'] = $_POST['statetimeout'];
 		$filterent['statetype'] = $_POST['statetype'];
+		$filterent['os'] = $_POST['os'];
 
 		if ($_POST['proto'] != "any")
 			$filterent['protocol'] = $_POST['proto'];
@@ -634,6 +640,33 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                     the source of the packet for this rule. This is usually not equal to the destination port range (and is often &quot;any&quot;). <br>
                     Hint: you can leave the <em>'to'</em> field empty if you only
                     want to filter a single port</span></td>
+
+                <tr>
+                  <td width="22%" valign="top" class="vncellreq">Source OS</td>
+                  <td width="78%" class="vtable">OS Type:&nbsp;
+                    <select name="os" class="formfld">
+                      <?php
+                                          $ostypes = array(
+						"" => "any",
+                                                "AIX" => "AIX",
+                                                "Linux" => "Linux",
+                                                "FreeBSD" => "FreeBSD",
+                                                "NetBSD" => "NetBSD",
+                                                "OpenBSD" => "OpenBSD",
+                                                "Solaris" => "Solaris",
+                                                "MacOS" => "MacOS",
+                                                "Windows" => "Windows",
+                                                "Novell" => "Novell"
+                                          );
+
+                                          foreach ($ostypes as $ostype => $descr): ?>
+                      <option value="<?=$ostype;?>" <?php if ($ostype == $pconfig['os']) echo "selected"; ?>>
+                      <?=htmlspecialchars($descr);?>
+                      </option>
+                      <?php endforeach; ?>
+                    </select><br>
+                    Note: this only works for TCP rules</td>
+		</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Destination</td>
                   <td width="78%" class="vtable">
@@ -749,7 +782,8 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                   <td width="22%" valign="top" class="vncell">Advanced Options</td>
                   <td width="78%" class="vtable">
 			<input name="max-src-nodes" id="max-src-nodes" value="<?php echo $pconfig['max-src-nodes'] ?>"><br> Simultaneous client connection limit<p>
-			<input name="max-src-states" id="max-src-states" value="<?php echo $pconfig['max-src-states'] ?>"><br> Maximum state entries per host<br>
+			<input name="max-src-states" id="max-src-states" value="<?php echo $pconfig['max-src-states'] ?>"><br> Maximum state entries per host<p>
+
 			<p><strong>NOTE: Leave these fields blank to disable this feature.</strong>
 		    </td>
                 </tr>

@@ -283,7 +283,7 @@ function ipaddr_change() {
                     </strong></span>be sure to add firewall rules to permit traffic
                     through the interface. Firewall rules for an interface in
                     bridged mode have no effect on packets to hosts other than
-                    m0n0wall itself, unless &quot;Enable filtering bridge&quot;
+                    the firewall itself, unless &quot;Enable filtering bridge&quot;
                     is checked on the <a href="system_advanced.php">System:
                     Advanced functions</a> page.</span></td>
                 </tr>

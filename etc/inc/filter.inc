@@ -1666,17 +1666,22 @@ function create_firewall_outgoing_rules_to_itself() {
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
 		$ifdescrs['opt' . $j] = "opt" . $j;
 	foreach ($ifdescrs as $ifdescr => $ifname) {
+		$return_gateway = $config['interfaces'][$ifname]['gateway'];
 		$int = filter_translate_type_to_real_interface($ifname);
                 if ($config['interfaces'][$ifname]['ipaddr'] == "pppoe")
                         $int = "ng0";
 		$ip = find_interface_ip($int);
+		if($return_gateway <> "")
+			$replyto = "reply-to ({$int} {$return_gateway} ";
+		else
+			$replyto = " ";
 		if($ip <> "") {
-			$rule .="pass out quick on {$int} inet from any to any keep state\n";
+			$rule .="pass out quick on {$int} {$replyto}inet from any to any keep state\n";
 			/* XXX - billm: temp fix for pppoe, needs better fix */
 			if($config['interfaces'][$ifname]['ipaddr'] != "")
-				$rule .="pass out quick on {$int} inet from {$int} to any keep state\n";
+				$rule .="pass out quick on {$int} {$replyto} inet from {$int} to any keep state\n";
 			else
-				$rule .="pass out quick on {$int} inet from ({$int}) to any keep state\n";
+				$rule .="pass out quick on {$int} {$replyto} inet from ({$int}) to any keep state\n";
 		}
 
 	}

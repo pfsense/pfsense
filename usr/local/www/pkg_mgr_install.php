@@ -415,7 +415,10 @@ foreach ($packages_to_install as $id) {
 
     if ($pkgent['depends_on_package_base_url'] <> "" or $pkgent['pfsense_package_base_url'] <> "") {
         $status = exec_command_and_return_text("ls /var/db/pkg | grep " . $pkgent['name']);
-        fwrite($fd_log, "ls /var/db/pkg | grep " . $pkgent['name'] . "\n" . $status);
+        $package_to_verify = $pkgent['name'];
+        if($pkgent['verifyinstalledpkg'] <> "")
+            $package_to_verify = $pkgent['verifyinstalledpkg'];
+        fwrite($fd_log, "ls /var/db/pkg | grep " . $package_to_verify . "\n" . $status);
         if($status <> "") {
                     update_status("Package installation completed.");
                     fwrite($fd_log, "Package installation completed.\n");

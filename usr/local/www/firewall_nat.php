@@ -2,8 +2,10 @@
 <?php
 /*
 	firewall_nat.php
-	part of m0n0wall (http://m0n0.ch/wall)
+	Copyright (C) 2004 Scott Ullrich
+	All rights reserved.
 
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -96,6 +98,7 @@ if ($_GET['act'] == "del") {
     <li class="tabinact"><a href="firewall_nat_server.php">Server NAT</a></li>
     <li class="tabinact"><a href="firewall_nat_1to1.php">1:1</a></li>
     <li class="tabinact"><a href="firewall_nat_out.php">Outbound</a></li>
+    <li class="tabinact"><a href="firewall_nat_out_load_balancing.php">Outbound Load Balancing</a></li>
   </ul>
   </td></tr>
   <tr>

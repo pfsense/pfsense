@@ -262,18 +262,10 @@ function filter_nat_rules_generate_if($if, $src, $dst, $target) {
 	else
 		$tgt = "0/32";
 
-	if(isset($config['nat']['enableoutboundloadbalancing'])) {
-	$natrule = <<<EOD
-nat on $if from $src to any -> ($if)
-
-EOD;
-	} else {
 	$natrule = <<<EOD
 nat on $if from $src to any -> $if
 
 EOD;
-	}
-
 	return $natrule;
 }
 
@@ -285,6 +277,8 @@ function filter_nat_rules_generate() {
 
 	$pptpdcfg = $config['pptpd'];
 	$wanif = get_real_wan_interface();
+
+	$lanif = $config['interfaces']['lan']['if'];
 
 	$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
 
@@ -305,6 +299,18 @@ function filter_nat_rules_generate() {
 
 			$natrules .= "binat on {$natif} from {$natent['internal']}/{$sn} to any -> {$natent['external']}\n";
 		}
+	}
+
+	/* Setup outgoing NAT load balancing */
+	if (isset($config['nat']['outgoingloadbalancing']['rule'])) {
+		$natrules .= "pass in on " . $lanif . " route-to { ";
+		$isfirst = 0;
+		foreach ($config['nat']['outgoingloadbalancing']['rule'] as $rule) {
+			if(isfirst == 1) $natrules .= ", ";
+			$natrules .= " (" . $wanif . " " . $rule['gatewayip'] . ") ";
+			$isfirst = 1;
+		}
+		$natrules .= "} round-robin proto tcp from {$lansa} to any flags S/SA modulate state\n";
 	}
 
 	/* outbound rules - advanced or standard */

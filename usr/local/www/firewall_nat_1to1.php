@@ -92,6 +92,7 @@ if ($_GET['act'] == "del") {
     <li class="tabinact"><a href="firewall_nat_server.php">Server NAT</a></li>
     <li class="tabact">1:1</li>
     <li class="tabinact"><a href="firewall_nat_out.php">Outbound</a></li>
+    <li class="tabinact"><a href="firewall_nat_out_load_balancing.php">Outbound Load Balancing</a></li>
   </ul>
   </td></tr>
   <tr>

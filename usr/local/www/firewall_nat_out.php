@@ -2,8 +2,10 @@
 <?php
 /*
     firewall_nat_out.php
-    part of m0n0wall (http://m0n0.ch/wall)
+    Copyright (C) 2004 Scott Ullrich
+    All rights reserved.
 
+    originally part of m0n0wall (http://m0n0.ch/wall)
     Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
     All rights reserved.
 
@@ -42,7 +44,6 @@ if ($_POST) {
     $pconfig = $_POST;
 
     $config['nat']['advancedoutbound']['enable'] = ($_POST['enable']) ? true : false;
-    $config['nat']['enableoutboundloadbalancing'] = $_POST['enableoutboundloadbalancing'] ? true : false;
     write_config();
 
     $retval = 0;
@@ -95,6 +96,7 @@ if ($_GET['act'] == "del") {
     <li class="tabinact"><a href="firewall_nat_server.php">Server NAT</a></li>
     <li class="tabinact"><a href="firewall_nat_1to1.php">1:1</a></li>
     <li class="tabact">Outbound</li>
+    <li class="tabinact"><a href="firewall_nat_out_load_balancing.php">Outbound Load Balancing</a></li>
   </ul>
   </td></tr>
   <tr>

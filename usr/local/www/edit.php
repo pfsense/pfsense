@@ -144,7 +144,7 @@ function sf() { document.forms[0].savetopath.focus(); }
 <form action="<?=$ScriptName ?>" method="POST">
   <table>
     <tr>
-      <td>
+      <td nowrap>
         Save/Load from path: <input size="42" id="savetopath" name="savetopath" value="<?php echo $_POST['savetopath']; ?>"> |
 	Rows: <input size="3" name="rows" value="<? echo $rows; ?>"> |
 	Cols: <input size="3" name="cols" value="<? echo $cols; ?>"> |

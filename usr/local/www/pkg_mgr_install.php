@@ -220,7 +220,9 @@ if(!$pkg_config['packages']) {
 update_progress_bar($pb_percent);
 $pb_percent += 10;
 
-/* install the package */
+/*
+ * install the package
+*/
 
 // Ensure directories are in place for pkg_add.
 mwexec("mkdir /usr/local/www/ext/Services >/dev/null 2>&1");
@@ -327,7 +329,10 @@ $name = $pkgent['name'];
 update_progress_bar($pb_percent);
 $pb_percent++;
 
-// parse the config file for this package and install neededtext items.
+/*
+ * parse the config file for this package and install neededtext items.
+ *
+*/
 if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
             $package_conf = parse_xml_config_pkg("/usr/local/pkg/" . $pkgent['name'] . ".xml", "packagegui");
             if($package_conf['modify_system']['item'] <> "") {
@@ -340,8 +345,10 @@ if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
                 }
             }
 
-            // fetch additional files needed for package if defined
-            // and uncompress if needed.
+            /*
+             * fetch additional files needed for package if defined
+             * and uncompress if needed.
+             */
             if ($package_conf['additional_files_needed'] <> "") {
                         foreach($package_conf['additional_files_needed']['item'] as $afn) {
                                     update_progress_bar($pb_percent);
@@ -354,8 +361,10 @@ if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
                         }
             }
 
-            // loop through menu installation items
-            // installing multiple items if need be.
+            /*
+             * loop through menu installation items
+             * installing multiple items if need be.
+            */
             foreach ($package_conf['menu'] as $menu) {
                         // install menu item into the ext folder
                         fwrite($fd_log, "Adding menu option to " . $menu['section'] . "/" . $menu['name'] . "\n");

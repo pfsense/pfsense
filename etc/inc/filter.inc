@@ -961,7 +961,7 @@ for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 }
 foreach ($ifdescrs as $ifdescr => $ifname) {
 	$int = filter_translate_type_to_real_interface($ifname);
-	echo "pass out quick on {$ifname} inet proto tcp from {$ifname} to any keep state";
+	echo "pass out quick on {$ifname} inet from {$ifname} to any keep state";
 	return $int;
 }
 

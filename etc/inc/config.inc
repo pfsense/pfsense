@@ -212,7 +212,7 @@ function conf_mount_rw() {
 	   compact flash card. */
 	if($g['platform'] == "wrap" or $g['platform'] == "net45xx") {
 		mwexec("/sbin/umount -f {$g['embeddedbootupslice']}");
-		mwexec("/sbin/mount -w -o noatime {$g['embeddedbootupslice']}");
+		mwexec("/sbin/mount -w {$g['embeddedbootupslice']}");
 	}
 }
 
@@ -226,7 +226,7 @@ function conf_mount_ro() {
 	   compact flash card. */
 	if($g['platform'] == "wrap" or $g['platform'] == "net45xx") {
 		mwexec("/sbin/umount -f {$g['embeddedbootupslice']}");
-		mwexec("/sbin/mount -r -o noatime {$g['embeddedbootupslice']}");
+		mwexec("/sbin/mount -r {$g['embeddedbootupslice']}");
 	}
 }
 

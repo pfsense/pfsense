@@ -139,7 +139,10 @@ if ($_POST) {
 			($oldwebguiport != $config['system']['webgui']['port'])) {
 			global $_SERVER;
 			system_webgui_start();
-			header("Location: {$config['system']['webgui']['protocol']}://{$_SERVER['SERVER_NAME']}/system.php");
+			if ($pconfig['webguiport'])
+				header("Location: {$pconfig['webguiproto']}://{$_SERVER['SERVER_NAME']}:{$pconfig['webguiport']}/system.php");
+			else
+				header("Location: {$pconfig['webguiproto']}://{$_SERVER['SERVER_NAME']}/system.php");
 		}
 
 		$retval = 0;
@@ -232,7 +235,7 @@ if ($_POST) {
                 </tr>
                 <tr>
                   <td valign="top" class="vncell">webGUI port</td>
-                  <td class="vtable"> <input name="webguiport" type="text" class="formfld" id="webguiport" size="5" value="<?=htmlspecialchars($pconfig['webguiport']);?>">
+                  <td class="vtable"> <input name="webguiport" type="text" class="formfld" id="webguiport" onchange="'webGUI port changes will take effect immediately after clicking save') "size="5" value="<?=htmlspecialchars($pconfig['webguiport']);?>">
                     <br>
                     <span class="vexpl">Enter a custom port number for the webGUI
                     above if you want to override the default (80 for HTTP, 443

@@ -36,9 +36,6 @@ require("guiconfig.inc");
 if (!is_array($config['shaper']['rule'])) {
 	$config['shaper']['rule'] = array();
 }
-if (!is_array($config['shaper']['pipe'])) {
-	$config['shaper']['pipe'] = array();
-}
 if (!is_array($config['shaper']['queue'])) {
 	$config['shaper']['queue'] = array();
 }
@@ -254,7 +251,7 @@ if ($_GET['act'] == "del") {
                           <?php
 							if (isset($shaperent['targetqueue'])) {
 								$desc = htmlspecialchars($shaperent['targetqueue']);
-							    echo "<a href=\"firewall_shaper_pipes_edit.php?id={$shaperent['targetqueue']}\">{$desc}</a>";
+							    echo "<a href=\"firewall_shaper_queues_edit.php?id={$shaperent['targetqueue']}\">{$desc}</a>";
 							}
 						  ?><?=$textse;?>
                         </td>

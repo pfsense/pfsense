@@ -44,6 +44,7 @@ echo "5) Reboot system"
 echo "6) Ping host"
 echo "7) Shell"
 echo "8) PFtop"
+echo "9) Access web GUI using links"
 echo
 
 read -p "Enter a number: " opmode
@@ -78,6 +79,9 @@ case ${opmode} in
 	;;
 8)
 	/usr/local/sbin/pftop
+9)
+	links "http://localhost"
+	;;
 esac
 
 done

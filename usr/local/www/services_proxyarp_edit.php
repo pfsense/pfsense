@@ -1,22 +1,22 @@
 #!/usr/local/bin/php
-<?php 
+<?php
 /*
 	services_proxyarp_edit.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -70,9 +70,9 @@ if ($_POST) {
 		$reqdfields = explode(" ", "range_from range_to");
 		$reqdfieldsn = explode(",", "Range start,Range end");
 	}
-	
+
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-	
+
 	if ((($_POST['type'] != "range") && $_POST['subnet'] && !is_ipaddr($_POST['subnet']))) {
 		$input_errors[] = "A valid address must be specified.";
 	}
@@ -87,9 +87,9 @@ if ($_POST) {
 	foreach ($a_proxyarp as $arpent) {
 		if (isset($id) && ($a_proxyarp[$id]) && ($a_proxyarp[$id] === $arpent))
 			continue;
-		
+
 		if (($_POST['type'] == "range") && isset($arpent['range'])) {
-			if (($_POST['range_from'] == $arpent['range']['from']) && 
+			if (($_POST['range_from'] == $arpent['range']['from']) &&
 				($_POST['range_to'] == $arpent['range']['to'])) {
 				$input_errors[] = "This range already exists.";
 				break;
@@ -115,11 +115,11 @@ if ($_POST) {
 			$a_proxyarp[$id] = $arpent;
 		else
 			$a_proxyarp[] = $arpent;
-		
+
 		touch($d_proxyarpdirty_path);
-		
+
 		write_config();
-		
+
 		header("Location: services_proxyarp.php");
 		exit;
 	}
@@ -165,25 +165,25 @@ function typesel_change() {
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="services_proxyarp_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr> 
+                <tr>
                   <td valign="top" class="vncellreq">Network</td>
                   <td class="vtable">
                     <table border="0" cellspacing="0" cellpadding="0">
-                      <tr> 
+                      <tr>
                         <td>Type:&nbsp;&nbsp;</td>
                         <td><select name="type" class="formfld" onChange="typesel_change()">
-                            <option value="single" <?php if (!$pconfig['range_from'] && $pconfig['subnet_bits'] == 32) echo "selected"; ?>> 
+                            <option value="single" <?php if (!$pconfig['range_from'] && $pconfig['subnet_bits'] == 32) echo "selected"; ?>>
                             Single address</option>
-                            <option value="network" <?php if (!$pconfig['range_from'] && $pconfig['subnet_bits'] != 32) echo "selected"; ?>> 
+                            <option value="network" <?php if (!$pconfig['range_from'] && $pconfig['subnet_bits'] != 32) echo "selected"; ?>>
                             Network</option>
-                            <option value="range" <?php if ($pconfig['range_from']) echo "selected"; ?>> 
+                            <option value="range" <?php if ($pconfig['range_from']) echo "selected"; ?>>
                             Range</option>
                           </select></td>
                       </tr>
-                      <tr> 
+                      <tr>
                         <td>Address:&nbsp;&nbsp;</td>
                         <td><input name="subnet" type="text" class="formfld" id="subnet" size="20" value="<?=htmlspecialchars($pconfig['subnet']);?>">
-                  / 
+                  /
                           <select name="subnet_bits" class="formfld" id="select">
                             <?php for ($i = 31; $i >= 0; $i--): ?>
                             <option value="<?=$i;?>" <?php if ($i == $pconfig['subnet_bits']) echo "selected"; ?>>
@@ -193,26 +193,40 @@ function typesel_change() {
                       </select>
  </td>
                       </tr>
-                      <tr> 
+                      <tr>
                         <td>Range:&nbsp;&nbsp;</td>
                         <td><input name="range_from" type="text" class="formfld" id="range_from" size="20" value="<?=htmlspecialchars($pconfig['range_from']);?>">
-- 
-                          <input name="range_to" type="text" class="formfld" id="range_to" size="20" value="<?=htmlspecialchars($pconfig['range_to']);?>">                          
+-
+                          <input name="range_to" type="text" class="formfld" id="range_to" size="20" value="<?=htmlspecialchars($pconfig['range_to']);?>">
                           </td>
                       </tr>
                     </table>
                   </td>
                 </tr>
+
+		<tr>
+		  <td width="22%" valign="top" class="vncell"><b>Interface</td>
+		  <td width="78%" class="vtable"><select name="interface">
+			<?php if(isset($config['proxyarp']['proxyarpnet']['interface']))
+				echo "<option value=\"". $config['proxyarp']['proxyarpnet']['interface'] . "\">" . $config['proxyarp']['proxyarpnet']['interface'] . "</option>";
+			?>
+			<option value="">WAN</option>
+			<option value="">LAN</option>
+			  <?php for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): if (!isset($config['interfaces']['opt' . $i]['ovpn'])): ?>
+			  <option value="<?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?>"><?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?></option>
+			  <?php endif; endfor; ?>
+		  </td>
+		</tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
+                  <td width="78%">
                     <input name="Submit" type="submit" class="formbtn" value="Save">
                     <?php if (isset($id) && $a_proxyarp[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">

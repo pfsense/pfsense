@@ -30,6 +30,8 @@
 require("guiconfig.inc");
 require("xmlparse_pkg.inc");
 
+if(!file_exists("/usr/local/pkg/")) mwexec("mkdir -p /usr/local/pkg/");
+
 $pb_percent = 1;
 
 /*

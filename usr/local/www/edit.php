@@ -30,6 +30,8 @@
 
 require("guiconfig.inc");
 
+conf_mount_rw();
+
 if (($_POST['submit'] == "Load") && file_exists($_POST['savetopath'])) {
 	$fd = fopen($_POST['savetopath'], "r");
 	$content = fread($fd, filesize($_POST['savetopath']));
@@ -166,3 +168,9 @@ function sf() { document.forms[0].savetopath.focus(); }
 <script language="Javascript">
 sf();
 </script>
+
+<?php
+
+conf_mount_ro();
+
+?>

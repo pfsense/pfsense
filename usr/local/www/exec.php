@@ -26,6 +26,8 @@ if (($_POST['submit'] == "Download") && file_exists($_POST['dlPath'])) {
 
 require("guiconfig.inc");
 
+conf_mount_rw();
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -248,3 +250,9 @@ document.forms[0].txtCommand.focus();
 </script>
 </body>
 </html>
+
+<?php
+
+conf_mount_ro();
+
+?>

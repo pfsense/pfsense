@@ -176,7 +176,7 @@ if ($_GET['act'] == "del") {
                       </tr>
                       <?php $i++; endforeach; $total_queues = $i; ?>
                       <tr>
-                        <td class="list" colspan="5"></td>
+                        <td class="list" colspan="6"></td>
                         <td class="list"> <a href="firewall_shaper_queues_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>

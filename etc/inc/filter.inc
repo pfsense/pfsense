@@ -115,11 +115,22 @@ function filter_get_altq_queue_scheduler_type($associatedrule) {
 	return $schedulertpye;
 }
 
+function filter_get_rule_real_interface($associatedrule) {
+	global $config;
+	foreach ($config['filter']['rule'] as $rule) {
+		if($rule['descr'] == $associatedrule) {
+			$interface = $rule['interface'];
+			return $config['interfaces'][$interface]['if'];
+		}
+	}
+	return "";
+}
+
+
 function filter_get_rule_interface($associatedrule) {
 	global $config;
 	foreach ($config['filter']['rule'] as $rule) {
-		if($rule['descr'] == $associatedrule)
-			return $rule['interface'];
+		if($rule['descr'] == $associatedrule) return $rule['interface'];
 	}
 	return "";
 }
@@ -166,18 +177,20 @@ function filter_setup_altq_interfaces() {
 	$altq_rules  = "";
 	$queue_names = "";
 	$is_first = "";
+	$queue_names = "";
+	$is_first = "";
 	if (is_array($config['interfaces'])) {
 		foreach ($config['interfaces'] as $ifname) {
-			$queue_names = "";
-			$is_first = "";
 			if (is_array($config['pfqueueing']['queue'])) {
 				foreach ($config['pfqueueing']['queue'] as $queue) {
 					$schedulertype = $ifname['schedulertype'];
 					if(filter_get_altq_queue_scheduler_type($queue['options']['associatedrule']) == $schedulertype) {
-						if(is_subqueue($queue['name']) == 0) {
-							if($is_first) $queue_names .= ", ";
-							$queue_names .= $queue['name'];
-							$is_first = "1";
+						if (filter_get_rule_real_interface($queue['options']['associatedrule']) == $ifname['if']) {
+							if(is_subqueue($queue['name']) == 0) {
+								if($is_first) $queue_names .= ", ";
+								$queue_names .= $queue['name'];
+								$is_first = "1";
+							}
 						}
 					}
 				}
@@ -190,6 +203,8 @@ function filter_setup_altq_interfaces() {
 					$altq_rules .= "queue { " . $queue_names . " }";
 				}
 				$altq_rules .= "\n";
+				$is_first = "";
+				$queue_names = "";
 			}
 		}
 	}

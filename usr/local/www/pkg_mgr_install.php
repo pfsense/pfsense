@@ -37,12 +37,6 @@ if(!file_exists("/usr/local/www/ext/")) mwexec("mkdir -p /usr/local/www/ext");
 $pb_percent = 1;
 
 /*
- *   open logging facility
- */
-$fd_log = fopen("/tmp/pkg_mgr.log", "w");
-fwrite($fd_log, "Begin of Package Manager installation session.\n");
-
-/*
  *   update_output_window: update top textarea dynamically.
  */
 function update_status($status) {
@@ -153,8 +147,34 @@ $config = $config_tmp;
 ?>
 <p class="pgtitle">System: Package Manager: Install Package</p>
 <form action="firewall_nat_out_load_balancing.php" method="post">
+
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
+
+if($_GET['showlog'] <> "") {
+            echo "<table>";
+            echo "<tr><td>";
+            echo "<pre>";
+            // reopen and read log in
+            $fd = fopen("/tmp/pkg_mgr.log", "r");
+            $tmp = "";
+            while(!feof($fd)) {
+                        $tmp .= fread($fd,49);
+            }
+            fclose($fd);
+            echo $tmp;
+            echo "</pre>";
+            echo "</td></tr>";
+            echo "</table>";
+            exit;
+}
+
+/*
+ *   open logging facility
+ */
+$fd_log = fopen("/tmp/pkg_mgr.log", "w");
+fwrite($fd_log, "Begin of Package Manager installation session.\n");
+
 if(!file_exists("/tmp/pkg_config.xml")) {
             mwexec("cd {$g['tmp_path']} && /usr/bin/fetch \"http://www.pfsense.com/packages/pkg_config.xml\" >/dev/null 2>&1 ");
             if(!file_exists("{$g['tmp_path']}/pkg_config.xml")) {
@@ -222,6 +242,7 @@ if($_GET['mode'] == "reinstallall") {
     /*
      * Push the desired package id onto the install packages array
      */
+    fwrite($fd_log, "Single package installation started.\n");
     array_push($packages_to_install, $_GET['id']);
 }
 
@@ -271,6 +292,7 @@ foreach ($packages_to_install as $id) {
         $pkgent['logging']['logfile_name'] = $pkg_config['packages']['package'][$id]['logging']['logfile_name'];
         mwexec("/usr/sbin/clog -i -s 32768 /var/log/" . $pkgent['logging']['logfile_name']);
         mwexec("chmod 0600 /var/log/" . $pkgent['logging']['logfile_name']);
+        fwrite($fd_log, "Adding text to file /etc/syslog.conf\n");
         add_text_to_file("/etc/syslog.conf", $pkgent['logging']['facilityname'] . "\t\t\t" . $pkgent['logging']['logfilename']);
         mwexec("/usr/bin/killall -HUP syslogd");
     }
@@ -448,11 +470,12 @@ foreach ($packages_to_install as $id) {
     if($package_conf['custom_php_install_command']) {
         update_status("Executing post install commands...");
         $pb_percent += 50;
+        update_progress_bar(50);
         eval($package_conf['custom_php_install_command']);
     }
 
-    update_progress_bar($pb_percent);
     $pb_percent += 10;
+    update_progress_bar($pb_percent);
 
     if ($pkgent['depends_on_package_base_url'] <> "" or $pkgent['pfsense_package_base_url'] <> "") {
         $status = exec_command_and_return_text("ls /var/db/pkg | grep " . $pkgent['name']);
@@ -476,16 +499,7 @@ foreach ($packages_to_install as $id) {
 // close log
 fclose($fd_log);
 
-// reopen and read log in
-$fd_log = fopen("/tmp/pkg_mgr.log", "r");
-$tmp = "";
-while(!feof($fd_log)) {
-            $tmp .= fread($fd_log,49);
-}
-fclose($fd_log);
-$log = ereg_replace("\n", "\\n", $tmp);
-//echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"" . $log . "\";</script>";
-
+echo "<p><center>Installation completed.  Show <a href=\"pkg_mgr_install.php?showlog=true\">install log</a></center>";
 
 echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
 echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";

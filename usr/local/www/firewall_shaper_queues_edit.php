@@ -32,8 +32,6 @@
 require("guiconfig.inc");
 
 $a_queues = &$config['pfqueueing']['queue'];
-filter_rules_sort();
-$a_filter = &$config['filter']['rule'];
 
 $id = $_GET['id'];
 if (isset($_POST['id']))

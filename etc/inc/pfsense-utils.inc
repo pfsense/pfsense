@@ -554,4 +554,6 @@ function resync_all_package_configs_bootup() {
         // XXX: process template as well.
 	print "Synced " . $package . ".\n";
     }
+}
+
 ?>

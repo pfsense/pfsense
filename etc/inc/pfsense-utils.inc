@@ -526,6 +526,7 @@ function resync_all_package_configs_bootup($show_message) {
     log_error("Resyncing configuration for all packages.");
     if(!$config['installedpackages']['package']) return;
     foreach($config['installedpackages']['package'] as $package) {
+	if($show_message == true) print "Syncing " . $package['name'] . ".\n";
         if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
 	    log_error("Fetching missing configuration XML for " . $package);
 	    system("/usr/bin/fetch -o /usr/local/pkg/" . $package['configurationfile'] . " http://www.pfsense.com/packages/config/" . $package['configurationfile']);
@@ -536,7 +537,7 @@ function resync_all_package_configs_bootup($show_message) {
         if($pkg_config['custom_add_php_command_late'] <> "") eval($pkg_config['custom_add_php_command_late']);
         if($pkg_config['custom_php_install_command'] <> "") eval($pkg_config['custom_php_install_command']);
 	if($pkg_config['custom_php_resync_config_command'] <> "") eval($pkg_config['custom_php_resync_config_command']);
-	if($show_message == true) print "Synced " . $package . ".\n";
+	if($show_message == true) print "Synced " . $package['name'] . ".\n";
     }
 }
 

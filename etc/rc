@@ -67,9 +67,6 @@ cd /var/run && cp /dev/null utmp && chmod 644 utmp
 # let the PHP-based configuration subsystem set up the system now
 /etc/rc.bootup
 
-/sbin/pfctl -f /tmp/rules.debug
-/sbin/pfctl -e
-
 echo Starting INETD for FTP-PROXY...
 /usr/sbin/inetd -wW -C 60
 
@@ -80,9 +77,6 @@ echo Starting USB...
 /usr/sbin/usbd 2>>/tmp/bootup_messages
 
 /usr/sbin/cron 2>>/tmp/bootup_messages
-
-sleep 10
-/sbin/pfctl -f /tmp/rules.debug
 
 for FILE in /usr/local/etc/rc.d/*.sh; do
     if [ -e $FILE ]; then

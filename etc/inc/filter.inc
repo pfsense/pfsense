@@ -55,7 +55,7 @@ function filter_resync() {
 	mwexec("/sbin/pfctl -y"); /* XXX */
 }
 
-function filter_ipmon_start() {
+function filter_pflog_start() {
 	global $config, $g;
 
 	mwexec("ifconfig pflog0 up && pflogd -sD");
@@ -84,6 +84,9 @@ function filter_configure() {
 		mwexec("/sbin/pfctl -e");
 		mwexec("/sbin/pfctl -F nat");
 		mwexec("/sbin/pfctl -F rules");
+	} else {
+		mwexec("/sbin/pfctl -d");
+		return;
 	}
 
 	/* get our wan interface? */
@@ -98,29 +101,32 @@ function filter_configure() {
 		$mssclamp = "";
 
         $fd = fopen("/tmp/rules.debug", "w");
-	fwrite($fd, $aliases . " \n");
-	fwrite($fd, "set loginterface $wanif \n");
+	$rules = $aliases . " \n";
+	$rules.= "set loginterface $wanif \n";
 	$optimization = "normal";
 	if($config['system']['optimization'] <> "") $optimization = $config['system']['optimization'];
-        fwrite($fd, "set optimization " . $optimization . "\n");
+        $rules.= "set optimization " . $optimization . "\n";
 	if($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
 		/* User defined maximum states in Advanced menu. */
 		$maximumstates = $config['system']['maximumstates'];
-		fwrite($fd, "set limit states " . $maximumstates . "\n");
+		$rules.= "set limit states " . $maximumstates . "\n";
 	}
-	fwrite($fd, "\nscrub all " . $mssclamp ."\n"); // reassemble all directions
-	fwrite($fd, $altq_ints);
-
-	/*
-	 *  Anchors will be used to allow scripts and or users
-	 *  to add or subtract rules from the system using shellcmd.
-         */
-	fwrite($fd, $altq_queues . "\n");
-	fwrite($fd, $natrules);
-        fwrite($fd, $pfrules);
+	$rules.= "\nscrub all " . $mssclamp ."\n"; // reassemble all directions
+	$rules.= $altq_ints;
+	$rules.= $altq_queues . "\n";
+	$rules.= $natrules;
+        $rules.= $pfrules;
+	fwrite($fd, $rules);
         fclose($fd);
 
-	$rules_loading = mwexec("/sbin/pfctl -f /tmp/rules.debug");
+        $rules_loading = popen("/sbin/pfctl -f - > /dev/null 2>&1", "w");
+        if (!$rules_loading) {
+                printf("Cannot open /sbin/pfctl in filter_configure()\n");
+                return 1;
+        }
+
+	fwrite($rules_loading, $rules);
+	pclose($rules_loading);
 
 	/* load ipfw+altq module */
 	if (isset($config['shaper']['enable'])) {
@@ -1485,30 +1491,8 @@ function filter_rules_spoofcheck_generate($ifname, $if, $sa, $sn, $log) {
 
 	$ipfrules = "antispoof for " . $if . "\n";
 
-	return $ipfrules; /* testing above.  once works get rid above below.*/
-
-	if (is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
-		/* count rules */
-		$n = 1;
-		foreach ($config['staticroutes']['route'] as $route) {
-			if ($route['interface'] == $ifname)
-				$n++;
-		}
-
-		/* output skip rules */
-		foreach ($config['staticroutes']['route'] as $route) {
-			if ($route['interface'] == $ifname) {
-				//$ipfrules .= "skip $n in on $if from {$route['network']} to any\n";
-				$n--;
-			}
-		}
-		$ipfrules .= "#skip 1 in on $if from $sa/$sn to any\n";
-		$ipfrules .= "#block in $log quick on $if all\n";
-	} else {
-		$ipfrules .= "#block in $log quick on $if from ! $sa/$sn to any\n";
-	}
-
 	return $ipfrules;
+
 }
 
 ?>

@@ -65,9 +65,6 @@
 	if (!in_array($g['platform'], $g['nopccard_platforms']))
 		system_pccard_start();
 
-	/* establish pf and altq ruleset */
-	filter_configure();
-
 	/* configure loopback interface */
 	interfaces_loopback_configure();
 
@@ -83,14 +80,14 @@
 	/* set up Optional interfaces */
 	interfaces_optional_configure();
 
+	/* start pflog */
+	filter_pflog_start();
+
+	/* setup altq + pf */
+	filter_configure();
+
 	/* start OpenVPN server & clients */
 	ovpn_configure();
-
-	/* resync ipfilter */
-	filter_resync();
-
-	/* start ipmon */
-	filter_ipmon_start();
 
 	/* set up static routes */
 	system_routing_configure();

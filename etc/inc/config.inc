@@ -75,6 +75,20 @@ if ($g['booting']) {
 					if ($cfgdevice)
 						break;
 				}
+				if (mwexec("/sbin/mount -r /dev/{$mountdisk}d {$g['cf_path']}") == 0) {
+					if (file_exists("{$g['cf_conf_path']}/config.xml")) {
+						/* found it */
+						$cfgdevice = $mountdisk;
+						$cfgpartition = $cfgdevice . "a";
+						$cfgfstype = "ufs";
+						echo "Found configuration on $cfgdevice.\n";
+					}
+
+					mwexec("/sbin/umount -f {$g['cf_path']}");
+
+					if ($cfgdevice)
+						break;
+				}
 			}
 		}
 

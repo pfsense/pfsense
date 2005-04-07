@@ -61,7 +61,7 @@ pfSenseupgrade)
 	sleep 5
 
 	exec </dev/console >/dev/console 2>/dev/console
-	
+
 	echo "Firmware upgrade in progress..."  | logger -p daemon.info -i -t Upgrade
 
 	# backup config
@@ -92,5 +92,11 @@ pfSenseupgrade)
 
 	echo "Done - rebooting system..." | logger -p daemon.info -i -t Upgrade
 	/sbin/shutdown -r now
+	;;
+pfSense)
+
+	;;
+pfSense_base)
+
 	;;
 esac

@@ -59,9 +59,12 @@ require("guiconfig.inc");
 		      <table id="progholder" name="progholder" height='20' border='1' bordercolor='black' width='420' bordercolordark='#000000' bordercolorlight='#000000' style='border-collapse: collapse' colspacing='2' cellpadding='2' cellspacing='2'><tr><td><img border='0' src='progress_bar.gif' width='280' height='23' name='progressbar' id='progressbar'></td></tr></table>
 		      <br>
 		      <!-- status box -->
-		      <textarea style="border-color: #990000; background-color: #EEEEEE; border-width: 1px;" cols="60" rows="1" name="status" id="status" wrap="hard">One moment please... This will take a while!</textarea>
+		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' style='background-color: #EEEEEE; border-collapse: collapse' cols="60" rows="1" name="status" id="status" wrap="hard">
+		      One moment please... This will take a while!
+		      </textarea>
 		      <!-- command output box -->
-		      <textarea style="border-color: #990000; background-color: #EEEEEE; border-width: 1px;" cols="60" rows="25" name="output" id="output" wrap="hard"></textarea>
+		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' style='background-color: #EEEEEE; border-collapse: collapse' cols="60" rows="25" name="output" id="output" wrap="hard">
+		      </textarea>
 		      </center>
 		  </td>
 		</tr>
@@ -95,8 +98,10 @@ $kernel_version_avail = download_file_with_progress_bar("http://www.pfSense.com/
 
 $current_installed_pfsense_version = return_filename_as_string("/etc/version");
 $current_installed_pfsense_base_version = return_filename_as_string("/etc/version_base");
+$current_installed_pfsense_kernel_version = return_filename_as_string("/etc/kernel_base");
 /* end of colin these will be xmlrpc */
 
+/* begin downloading files */
 if($needs_system_upgrade == true) {
 	update_status("Downloading updates ...");
 	$status = download_file_with_progress_bar("http://www.pfSense.com/latest.tgz", "/tmp/latest.tgz");
@@ -117,11 +122,17 @@ if($needs_system_upgrade == true)
 	$external_upgrade_helper_text .= "/tmp/latest.tgz /tmp/latest.tgz.md5";
 if($needs_base_upgrade == true)
 	$external_upgrade_helper_text .= "/tmp/latest_base.tgz /tmp/latest_base.tgz.md5";
+if($needs_kernel_upgrade == true)
+	$external_upgrade_helper_text .= "/tmp/latest_kernel.tgz /tmp/latest_kernel.tgz.md5";
 
 update_status("Downloading complete.");
 update_output_window("pfSense is now upgrading.\\n\\nThe firewall will reboot once the operation is completed.");
 echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
 exec_rc_script_async("{$external_upgrade_helper_text}");
+
+/* end of upgrade script */
+
+
 
 /*
 	Helper functions

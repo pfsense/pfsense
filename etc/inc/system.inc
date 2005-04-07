@@ -374,11 +374,11 @@ EOD;
 		fclose($fd);
 
 		$res = mwexec("/usr/local/sbin/mini_httpd -S -E {$g['varetc_path']}/cert.pem" .
-			" -c \"**.php|**.cgi\" -u root $portarg" .
+			" -c \"**.php|**.cgi\" -u root -maxproc 16 $portarg" .
 			" -i {$g['varrun_path']}/mini_httpd.pid");
 	} else {
 		$res = mwexec("/usr/local/sbin/mini_httpd -c \"**.php|**.cgi\" -u root" .
-			" $portarg -i {$g['varrun_path']}/mini_httpd.pid");
+			" -maxproc 16 $portarg -i {$g['varrun_path']}/mini_httpd.pid");
 	}
 
 	if ($g['booting']) {

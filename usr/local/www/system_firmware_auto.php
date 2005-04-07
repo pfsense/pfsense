@@ -78,19 +78,24 @@ require("guiconfig.inc");
 
 /* auto upgrade logic starts here */
 
-update_status("Downloading current version information...");
-$status = download_file_with_progress_bar("http://www.pfSense.com/pfSense/version", "/tmp/pfSense_version");
-
-update_status("Downloading current base version information...");
-$status = download_file_with_progress_bar("http://www.pfSense.com/pfSense/version_base", "/tmp/pfSense_base_version");
-
-$current_installed_pfsense_version = return_filename_as_string("/etc/version");
-$current_installed_pfsense_base_version = return_filename_as_string("/etc/version_base");
-
 // XXX: logic to deterimine if we need a new version.
 $needs_system_upgrade 	= true;
 $needs_base_upgrade 	= false;
 $platform 		= return_filename_as_string("/etc/platform");
+
+/* colin, these will become xmlrpc */
+update_status("Downloading current version information...");
+$system_version_avail = download_file_with_progress_bar("http://www.pfSense.com/pfSense/version", "/tmp/pfSense_version");
+
+update_status("Downloading current base version information...");
+$base_version_avail = download_file_with_progress_bar("http://www.pfSense.com/pfSense/version_base", "/tmp/pfSense_base_version");
+
+update_status("Downloading current kernel version information...");
+$kernel_version_avail = download_file_with_progress_bar("http://www.pfSense.com/pfSense/version_kernel_{$platform}", "/tmp/pfSense_kernel_version");
+
+$current_installed_pfsense_version = return_filename_as_string("/etc/version");
+$current_installed_pfsense_base_version = return_filename_as_string("/etc/version_base");
+/* end of colin these will be xmlrpc */
 
 if($needs_system_upgrade == true) {
 	update_status("Downloading updates ...");

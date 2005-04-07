@@ -1007,7 +1007,7 @@ function auto_upgrade() {
 /*
  * check_firmware_version(): Check whether the current firmware installed is the most recently released.
  */
-function check_firmware_version() {
+function check_firmware_version($return_php = true) {
         global $g;
 	$versioncheck_base_url = $g['versioncheckbaseurl'];
         $versioncheck_path = $g['versioncheckpath'];
@@ -1023,7 +1023,8 @@ function check_firmware_version() {
         $resp = $cli->send($msg);
 	if(!$resp) return -1;
 	if($resp->faultCode()) return -1;
-        return $resp->value();
+        if($return_php == false) return $resp->serialize();
+	return $resp->value();
 }
 
 ?>

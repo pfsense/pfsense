@@ -977,17 +977,6 @@ function make_dirs($path, $mode = 0755)
 	return is_dir($path) || (make_dirs(dirname($path), $mode) && safe_mkdir($path, $mode));
 }
 
-        function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsense.restore_config_section') {
-                $params = array(new XML_RPC_Value($password, 'string'),
-                                new XML_RPC_Value($section, 'array'),
-                                new XML_RPC_Value($section_xml, 'array'));
-                $msg = new XML_RPC_Message($method, $params);
-                $cli = new XML_RPC_Client('/xmlrpc.php', $url);
-                $cli->setCredentials('admin', $password);
-                $resp = $cli->send($msg);
-        }
-}
-
 /*
  * auto_upgrade(): Upgrade pfSense to the latest firmware version.
  */

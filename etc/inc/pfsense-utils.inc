@@ -977,13 +977,29 @@ function make_dirs($path, $mode = 0755)
 	return is_dir($path) || (make_dirs(dirname($path), $mode) && safe_mkdir($path, $mode));
 }
 
+        function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsense.restore_config_section') {
+                $params = array(new XML_RPC_Value($password, 'string'),
+                                new XML_RPC_Value($section, 'array'),
+                                new XML_RPC_Value($section_xml, 'array'));
+                $msg = new XML_RPC_Message($method, $params);
+                $cli = new XML_RPC_Client('/xmlrpc.php', $url);
+                $cli->setCredentials('admin', $password);
+                $resp = $cli->send($msg);
+        }
+}
+
 /*
  * auto_upgrade(): Upgrade pfSense to the latest firmware version.
  */
 function auto_upgrade() {
         global $config, $g;
-        $http_auth_username = "";
-        $http_auth_password = "";
+	if (isset($config['system']['alt_firmware_url']['enabled'])) {
+                $firmwareurl=$config['system']['alt_firmware_url']['firmware_base_url'];
+                $firmwarepath=$config['system']['alt_firmware_url']['firmware_filename'];
+        } else {
+                $firmwareurl=$g['firmwarebaseurl'];
+                $firmwarepath=$g['firmwarefilename'];
+        }
         if($config['system']['proxy_auth_username'] <> "")
 	    $http_auth_username = $config['system']['proxy_auth_username'];
         if($config['system']['proxy_auth_password'] <> "")
@@ -1004,46 +1020,19 @@ function auto_upgrade() {
  */
 function check_firmware_version() {
         global $g;
-        $versioncheck_base_url = $g['versioncheckbaseurl'];
+	$versioncheck_base_url = $g['versioncheckbaseurl'];
         $versioncheck_path = $g['versioncheckpath'];
         if(isset($config['system']['alt_firmware_url']['enabled']) and isset($config['system']['alt_firmware_url']['versioncheck_base_url'])) {
                 $versioncheck_base_url = $config['system']['alt_firmware_url']['versioncheck_base_url'];
-                $versioncheck_path = '/checkversion.php';
-        }
-        $post = "platform=" . rawurlencode($g['platform']) .
-                "&version=" . rawurlencode(trim(file_get_contents("/etc/version")));
-        $rfd = @fsockopen($versioncheck_base_url, 80, $errno, $errstr, 3);
-        if ($rfd) {
-                $hdr = "POST {$versioncheck_path} HTTP/1.0\r\n";
-                $hdr .= "Content-Type: application/x-www-form-urlencoded\r\n";
-                $hdr .= "User-Agent: pfSense-webConfigurator/1.0\r\n";
-                $hdr .= "Host: www.pfSense.com\r\n";
-                $hdr .= "Content-Length: " . strlen($post) . "\r\n\r\n";
-
-                fwrite($rfd, $hdr);
-                fwrite($rfd, $post);
-
-                $inhdr = true;
-                $resp = "";
-                while (!feof($rfd)) {
-                        $line = fgets($rfd);
-                        if ($inhdr) {
-                                if (trim($line) == "")
-                                        $inhdr = false;
-                        } else {
-                                $resp .= $line;
-                        }
-                }
-
-                fclose($rfd);
-
-                if($_GET['autoupgrade'] <> "")
-                    return;
-
-                return $resp;
-        }
-
-        return null;
+	}
+        $params = array(new XML_RPC_Value(trim(file_get_contents('/etc/platform')), 'string'),
+                        new XML_RPC_Value(trim(file_get_contents('/etc/version')), 'string'),
+                        new XML_RPC_Value(trim(file_get_contents('/etc/version_kernel')), 'string'),
+                        new XML_RPC_Value(trim(file_get_contents('/etc/version_base')), 'string'));
+        $msg = new XML_RPC_Message('pfsense.get_firmware_version', $params);
+        $cli = new XML_RPC_Client($firmwarepath, $firmwareurl);
+        $resp = $cli->send($msg);
+        return $resp->value();
 }
 
 ?>

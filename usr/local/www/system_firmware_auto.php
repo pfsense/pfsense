@@ -3,10 +3,13 @@
 /* $Id$ */
 /*
 	system_firmware_auto.php
+	part of pfSense (http://www.pfsense.com)
+	
 	Copyright (C) 2005 Scott Ullrich
-
-        Based originally on system_firmware.php
+        
+	Based originally on system_firmware.php
         (C)2003-2004 Manuel Kasper
+	
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -60,7 +63,7 @@ require("guiconfig.inc");
 		      <br>
 		      <!-- status box -->
 		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' style='background-color: #EEEEEE; border-collapse: collapse' cols="60" rows="1" name="status" id="status" wrap="hard">
-		      One moment please... This will take a while!
+		      Beginning system autoupdate...
 		      </textarea>
 		      <!-- command output box -->
 		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' style='background-color: #EEEEEE; border-collapse: collapse' cols="60" rows="25" name="output" id="output" wrap="hard">
@@ -79,55 +82,52 @@ require("guiconfig.inc");
 
 <?php
 
-/* auto upgrade logic starts here */
+// Define necessary variables.
+$platform =		trim(file_get_contents('/etc/platform'));
+$firmware_version =	trim(file_get_contents('/etc/version'));
+$kernel_version =	trim(file_get_contents('/etc/version_kernel'));
+$base_version =		trim(file_get_contents('/etc/version_base'));
 
-// XXX: logic to deterimine if we need a new version.
-$needs_system_upgrade 	= true;
-$needs_base_upgrade 	= false;
-$platform 		= return_filename_as_string("/etc/platform");
-
-/* colin, these will become xmlrpc */
 update_status("Downloading current version information...");
-$system_version_avail = download_file_with_progress_bar("http://www.pfSense.com/pfSense/version", "/tmp/pfSense_version");
+$versions = check_firmware_version();
 
-update_status("Downloading current base version information...");
-$base_version_avail = download_file_with_progress_bar("http://www.pfSense.com/pfSense/version_base", "/tmp/pfSense_base_version");
+if($versions[0] != $firmware_version) $needs_firmware_upgrade = true;
+if($versions[1] != $kernel_version) $needs_kernel_upgrade = true;
+if($versions[2] != $base_version) $needs_base_version = true;
+// if(isset($versions[3])) update_output_window($versions[3]); // If we have additional data (a CHANGELOG etc) to display, do so.
 
-update_status("Downloading current kernel version information...");
-$kernel_version_avail = download_file_with_progress_bar("http://www.pfSense.com/pfSense/version_kernel_{$platform}", "/tmp/pfSense_kernel_version");
-
-$current_installed_pfsense_version = return_filename_as_string("/etc/version");
-$current_installed_pfsense_base_version = return_filename_as_string("/etc/version_base");
-$current_installed_pfsense_kernel_version = return_filename_as_string("/etc/kernel_base");
-/* end of colin these will be xmlrpc */
-
-/* begin downloading files */
-if($needs_system_upgrade == true) {
-	update_status("Downloading updates ...");
+if($needs_firmware_upgrade == true) {
+	update_status("Downloading firmware update...");
 	$status = download_file_with_progress_bar("http://www.pfSense.com/latest.tgz", "/tmp/latest.tgz");
-	update_output_window("pfSense download complete.");
+	update_output_window("Firmware download complete.");
 }
 
-if($needs_base_upgrade == true) {
-	update_status("Downloading base updates ...");
-	$status = download_file_with_progress_bar("http://www.pfSense.com/latest_base.tgz", "/tmp/latest_base.tgz");
-	update_status("Downloading base kernel updates ...");
+if($needs_kernel_upgrade == true) {
+	update_status("Downloading kernel update...");
 	$status = download_file_with_progress_bar("http://www.pfSense.com/latest_kernel{$platform}.tgz", "/tmp/latest_kernel.tgz");
-	update_output_window("pfSense base download complete.");
+	update_output_window("Kernel download complete.");
+
+if($needs_base_upgrade == true) {
+	update_status("Downloading base update...");
+	$status = download_file_with_progress_bar("http://www.pfSense.com/latest_base.tgz", "/tmp/latest_base.tgz");
+	update_output_window("Base update complete.");
 }
 
 /* launch external upgrade helper */
 $external_upgrade_helper_text = "/etc/rc.firmware ";
 if($needs_system_upgrade == true)
 	$external_upgrade_helper_text .= "/tmp/latest.tgz /tmp/latest.tgz.md5";
+if($needs_kernel_upgrade == true)
+	$external_upgrade_helper_text .= "/tmp/latest_kernel.tgz /tmp/latest_kernel.tgz.md5";
 if($needs_base_upgrade == true)
 	$external_upgrade_helper_text .= "/tmp/latest_base.tgz /tmp/latest_base.tgz.md5";
 if($needs_kernel_upgrade == true)
 	$external_upgrade_helper_text .= "/tmp/latest_kernel.tgz /tmp/latest_kernel.tgz.md5";
 
-update_status("Downloading complete.");
-update_output_window("pfSense is now upgrading.\\n\\nThe firewall will reboot once the operation is completed.");
+update_status("pfSense is now upgrading.  The firewall will reboot once the operation is completed.");
+
 echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
+
 exec_rc_script_async("{$external_upgrade_helper_text}");
 
 /* end of upgrade script */

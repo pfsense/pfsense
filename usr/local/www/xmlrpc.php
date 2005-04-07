@@ -125,22 +125,20 @@ function filter_configure_xmlrpc($raw_params) {
 	return new XML_RPC_Response(new XML_RPC_Value(true, 'boolean'));
 }
 
-$check_firmware_version_doc = 'Basic XMLRPC wrapper for filter_configure. This method must be called with one paramater: a string containing the local system\'s password. This function will return the output of check_firmware_version upon completion.'
+$check_firmware_version_doc = 'Basic XMLRPC wrapper for filter_configure. This function will return the output of check_firmware_version upon completion.';
 $check_firmware_version_sig = array(array(string, string));
 
 function check_firmware_version_xmlrpc($raw_params) {
-	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", 'string'))
-	return new XML_RPC_Response(new XML_RPC_Value(check_firmware_version(), 'string'));
+	return new XML_RPC_Response(new XML_RPC_Value(check_firmware_version(false), 'string'));
 }
 
 
-$auto_update_doc = 'Basic XMLRPC wrapper for auto_update. This method must be called with one paramater: a string containing the local system\'s password. This function will return true upon completion.'
+$auto_update_doc = 'Basic XMLRPC wrapper for auto_update. This method must be called with one paramater: a string containing the local system\'s password. This function will return true upon completion.';
 $auto_update_sig = array(array(boolean, string));
 
 function auto_update_xmlrpc($raw_params) {
 	$params = xmlrpc_params_to_php($raw_params);
-        if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", 'string'))
+        if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", 'string'));
 	auto_update();
 	return new XML_RPC_Response(new XML_RPC_Value(true, 'boolean'));
 }
@@ -158,10 +156,10 @@ $server = new XML_RPC_Server(
 							'docstring' => $filter_configure_doc),
 	    'pfsense.check_firmware_version' =>	array('function' => 'check_firmware_version_xmlrpc',
 							'signature' => $check_firmware_version_sig,
-							'docstring' => $check_firmware_version_doc),
-	    'pfsense.auto_update' =>		array('function' => 'auto_update_xmlrpc',
-							'signature' => $auto_update_sig,
-							'docstring' => $auto_update_doc)
+							'docstring' => $check_firmware_version_doc)
+//	    'pfsense.auto_update' =>		array('function' => 'auto_update_xmlrpc',
+//							'signature' => $auto_update_sig,
+//							'docstring' => $auto_update_doc)
         )
 );
 ?>

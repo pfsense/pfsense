@@ -3,9 +3,10 @@
 /* $Id$ */
 /*
 	system_firmware_auto.php
-	part of m0n0wall (http://m0n0.ch/wall)
+	Copyright (C) 2005 Scott Ullrich
 
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+        Based originally on system_firmware.php
+        (C)2003-2004 Manuel Kasper
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -47,27 +48,27 @@ require("guiconfig.inc");
 <p class="pgtitle">System: Firmware: Invoke Auto Upgrade</p>
 
 <form action="system_firmware_auto.php" method="post">
-  <table width="100%" border="0" cellpadding="6" cellspacing="0">
+<table width="100%" border="0" cellpadding="6" cellspacing="0">
 	<tr>
 	  <td class="tabcont">
 	      <table width="100%" border="0" cellpadding="6" cellspacing="0">
-		     <tr>
-		       <td>
-			   <!-- progress bar -->
-			   <center>
-			   <table id="progholder" name="progholder" height='20' border='1' bordercolor='black' width='420' bordercolordark='#000000' bordercolorlight='#000000' style='border-collapse: collapse' colspacing='2' cellpadding='2' cellspacing='2'><tr><td><img border='0' src='progress_bar.gif' width='280' height='23' name='progressbar' id='progressbar'></td></tr></table>
-			   <br>
-			   <!-- status box -->
-			   <textarea cols="60" rows="1" name="status" id="status" wrap="hard">One moment please... This will take a while!</textarea>
-			   <!-- command output box -->
-			   <textarea cols="60" rows="25" name="output" id="output" wrap="hard"></textarea>
-			   </center>
-		       </td>
-		     </tr>
+		<tr>
+		  <td>
+		      <!-- progress bar -->
+		      <center>
+		      <table id="progholder" name="progholder" height='20' border='1' bordercolor='black' width='420' bordercolordark='#000000' bordercolorlight='#000000' style='border-collapse: collapse' colspacing='2' cellpadding='2' cellspacing='2'><tr><td><img border='0' src='progress_bar.gif' width='280' height='23' name='progressbar' id='progressbar'></td></tr></table>
+		      <br>
+		      <!-- status box -->
+		      <textarea style="border-color: #990000; background-color: #EEEEEE; border-width: 1px;" cols="60" rows="1" name="status" id="status" wrap="hard">One moment please... This will take a while!</textarea>
+		      <!-- command output box -->
+		      <textarea style="border-color: #990000; background-color: #EEEEEE; border-width: 1px;" cols="60" rows="25" name="output" id="output" wrap="hard"></textarea>
+		      </center>
+		  </td>
+		</tr>
 	      </table>
 	  </td>
 	</tr>
-  </table>
+</table>
 </form>
 <?php include("fend.inc"); ?>
 </body>
@@ -76,9 +77,6 @@ require("guiconfig.inc");
 <?php
 
 /* auto upgrade logic starts here */
-
-$needs_base_update 	= false;
-$needs_pfSense_updates 	= false;
 
 update_status("Downloading current version information...");
 $status = download_file_with_progress_bar("http://www.pfSense.com/pfSense/version", "/tmp/pfSense_version");
@@ -92,6 +90,7 @@ $current_installed_pfsense_base_version = return_filename_as_string("/etc/versio
 // XXX: logic to deterimine if we need a new version.
 $needs_system_upgrade 	= true;
 $needs_base_upgrade 	= false;
+$platform 		= return_filename_as_string("/etc/platform");
 
 if($needs_system_upgrade == true) {
 	update_status("Downloading updates ...");
@@ -102,6 +101,8 @@ if($needs_system_upgrade == true) {
 if($needs_base_upgrade == true) {
 	update_status("Downloading base updates ...");
 	$status = download_file_with_progress_bar("http://www.pfSense.com/latest_base.tgz", "/tmp/latest_base.tgz");
+	update_status("Downloading base kernel updates ...");
+	$status = download_file_with_progress_bar("http://www.pfSense.com/latest_kernel{$platform}.tgz", "/tmp/latest_kernel.tgz");
 	update_output_window("pfSense base download complete.");
 }
 
@@ -112,9 +113,14 @@ if($needs_system_upgrade == true)
 if($needs_base_upgrade == true)
 	$external_upgrade_helper_text .= "/tmp/latest_base.tgz /tmp/latest_base.tgz.md5";
 
-update_output_window("pfSense is now upgrading.  The firewall will reboot once the operation is completed.");
+update_status("Downloading complete.");
+update_output_window("pfSense is now upgrading.\\n\\nThe firewall will reboot once the operation is completed.");
+echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
 exec_rc_script_async("{$external_upgrade_helper_text}");
 
+/*
+	Helper functions
+*/
 
 function download_file_with_progress_bar($url_file, $destination_file) {
 	global $ch, $fout, $file_size, $downloaded, $counter;
@@ -144,13 +150,13 @@ function download_file_with_progress_bar($url_file, $destination_file) {
 }
 
 function read_header($ch, $string) {
-    global $file_size, $ch, $fout;
-    $length = strlen($string);
-    ereg("(Content-Length:) (.*)", $string, $regs);
-    if($regs[2] <> "") {
-	    $file_size = intval($regs[2]);
-    }
-    return $length;
+	global $file_size, $ch, $fout;
+	$length = strlen($string);
+	ereg("(Content-Length:) (.*)", $string, $regs);
+	if($regs[2] <> "") {
+		$file_size = intval($regs[2]);
+	}
+	return $length;
 }
 
 function read_body($ch, $string) {
@@ -159,8 +165,15 @@ function read_body($ch, $string) {
 	$downloaded += intval($length);
 	$downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
 	$downloadProgress = 100 - $downloadProgress;
-	$text  = "File size : {$file_size}   ";
-	$text .= "Downloaded: {$downloaded}  ";
+	$a = $file_size;
+	$b = $downloaded;
+	$c = $downloadProgress;
+	$text  = "  Download Status\\n";
+	$text .= "---------------------------------\\n";
+	$text .= "  File size  : {$a}\\n";
+	$text .= "  Downloaded : {$b}\\n";
+	$text .= "  Percent    : {$c}%\\n";
+	$text .= "---------------------------------\\n";
 	$counter++;
 	if($counter > 150) {
 		update_output_window($text);

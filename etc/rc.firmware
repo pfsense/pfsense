@@ -94,12 +94,20 @@ pfSenseupgrade)
 	/sbin/shutdown -r now
 	;;
 pfSense)
-	cd /tmp/ && for i in `tar tf /tmp/latest.tgz; do (tar xvzf /tmp/latest.tgz $i; bspatch $i /i$; rm $i); done
+	binary_update /tmp/latest.tgz
 	;;
 pfSense_base)
-	cd /tmp/ && for i in `tar tf /tmp/latest_base.tgz; do (tar xvzf /tmp/latest_base.tgz $i; bspatch $i /i$; rm $i); done
+	binary_update /tmp/latest_base.tgz
 	;;
 pfSense_kernel)
-	cd /tmp/ && for i in `tar tf /tmp/latest_kernel.tgz; do (tar xvzf /tmp/latest_kernel.tgz $i; bspatch $i /i$; rm $i); done
+	binary_update /tmp/latest_kernel.tgz
 	;;
 esac
+
+binary_update() {
+	TGZ=$1
+	cd /tmp/
+	for i in `tar tf $TGZ;
+	 do (tar xvzf /tmp/latest.tgz $i; cp /$i bspatch $i /i$; rm $i);
+	done
+}

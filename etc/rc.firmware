@@ -94,9 +94,12 @@ pfSenseupgrade)
 	/sbin/shutdown -r now
 	;;
 pfSense)
-
+	cd /tmp/ && for i in `tar tf /tmp/latest.tgz; do (tar xvzf /tmp/latest.tgz $i; bspatch $i /i$; rm $i); done
 	;;
 pfSense_base)
-
+	cd /tmp/ && for i in `tar tf /tmp/latest_base.tgz; do (tar xvzf /tmp/latest_base.tgz $i; bspatch $i /i$; rm $i); done
+	;;
+pfSense_kernel)
+	cd /tmp/ && for i in `tar tf /tmp/latest_kernel.tgz; do (tar xvzf /tmp/latest_kernel.tgz $i; bspatch $i /i$; rm $i); done
 	;;
 esac

@@ -143,7 +143,6 @@ $use_old_checkversion = true;
 update_status("Downloading current version information...");
 if($use_old_checkversion == true) {
 	$versions = old_checkversion();
-	print $versions;
 } else {
 	$versions = check_firmware_version();
 }

@@ -1020,7 +1020,6 @@ function check_firmware_version($return_php = true) {
                         new XML_RPC_Value(trim(file_get_contents('/etc/version_base')), 'string'));
         $msg = new XML_RPC_Message('pfsense.get_firmware_version', $params);
         $cli = new XML_RPC_Client($versioncheck_path, $versioncheck_base_url);
-	$cli->setDebug(1);
         $resp = $cli->send($msg);
 	if(!$resp) return -1;
 	if($resp->faultCode()) return -1;

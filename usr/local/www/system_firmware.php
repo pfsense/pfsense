@@ -98,14 +98,6 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 			}
 		}
 	}
-} else {
-	/* Only check firmware version if we're setup to go against pfsense.org  and user wants us to */
-	if (!isset($config['system']['disablefirmwarecheck'])) {
-//		$versions = check_firmware_version();
-		if(!is_array($fwinfo)) {
-			$fwinfo = "Unable to determine if a new firmware version is available.";
-		}
-	}
 }
 
 /* upload progress bar id */
@@ -130,6 +122,8 @@ php-config.upload_progress_meter.file.filename_template = <?=$dir?>
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">System: Firmware</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
+<?php if ($savemsg) print_info_box($savemsg); ?>  	 
+<?php if ($fwinfo <> "") print_info_box($fwinfo); ?>
 <?php if (!in_array($g['platform'], $fwupplatforms)): ?>
 <p><strong>Firmware uploading is not supported on this platform.</strong></p>
 <?php elseif ($sig_warning && !$input_errors): ?>

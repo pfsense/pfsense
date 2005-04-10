@@ -39,13 +39,9 @@ require_once("xmlrpc_client.inc");
 
 function old_checkversion() {
         global $g;
-        $versioncheck_base_url = 'http://www.pfSense.com';
+        $versioncheck_base_url = 'www.pfSense.com';
         $versioncheck_path = '/pfSense/checkversion.php';
-        if(isset($config['system']['alt_firmware_url']['enabled']) and isset($config['system']['alt_firmware_url']['versioncheck_base_url'])) {
-                $versioncheck_base_url = $config['system']['alt_firmware_url']['versioncheck_base_url'];
-                $versioncheck_path = '/checkversion.php';
-        }
-        $post = "platform=" . rawurlencode($g['platform']) .
+        $post = "platform=" . rawurlencode(trim(file_get_contents("/etc/platform"))) .
                 "&version=" . rawurlencode(trim(file_get_contents("/etc/version")));
         $rfd = @fsockopen($versioncheck_base_url, 80, $errno, $errstr, 3);
         if ($rfd) {
@@ -147,6 +143,7 @@ $use_old_checkversion = true;
 update_status("Downloading current version information...");
 if($use_old_checkversion == true) {
 	$versions = old_checkversion();
+	print $versions;
 } else {
 	$versions = check_firmware_version();
 }

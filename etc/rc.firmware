@@ -107,7 +107,5 @@ esac
 binary_update() {
 	TGZ=$1
 	cd /tmp/
-	for i in `tar tf $TGZ;
-	 do (tar xvzf /tmp/latest.tgz $i; cp /$i bspatch $i /i$; rm $i);
-	done
+	for i in `tar tf $TGZ`; do (tar xvzf $TGZ $i; cp /$i bspatch $i /i$; rm $i); done
 }

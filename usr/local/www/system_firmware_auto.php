@@ -92,10 +92,14 @@ update_status("Downloading current version information...");
 $versions = check_firmware_version();
 
 if($versions != -1) {
-	if($versions[0] != $firmware_version) $needs_firmware_upgrade = true;
-	if($versions[1] != $kernel_version) $needs_kernel_upgrade = true;
-	if($versions[2] != $base_version) $needs_base_version = true;
-	// if(isset($versions[3])) update_output_window($versions[3]); // If we have additional data (a CHANGELOG etc) to display, do so.
+	if($versions[0] == true) {
+		if($versions[1] != $firmware_version) $needs_firmware_upgrade = true;
+		if($versions[2] != $kernel_version) $needs_kernel_upgrade = true;
+		if($versions[3] != $base_version) $needs_base_version = true;
+		if(isset($versions[4])) update_output_window($versions[3]); // If we have additional data (a CHANGELOG etc) to display, do so.
+	} else {
+		update_status("No updates required.");
+	}
 } else {
 	update_status("Could not retrieve version information.");
 	exit();

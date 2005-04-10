@@ -201,7 +201,7 @@ function read_body($ch, $string) {
 	$a = $file_size;
 	$b = $downloaded;
 	$c = $downloadProgress;
-	$text .= "  Download Status\\n";
+	$text = "  Download Status\\n";
 	$text .= "---------------------------------\\n";
 	$text .= "  File size  : {$a}\\n";
 	$text .= "  Downloaded : {$b}\\n";

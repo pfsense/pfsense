@@ -37,6 +37,52 @@
 require_once("guiconfig.inc");
 require_once("xmlrpc_client.inc");
 
+function old_checkversion() {
+        global $g;
+        $versioncheck_base_url = 'http://www.pfSense.com';
+        $versioncheck_path = '/pfSense/checkversion.php';
+        if(isset($config['system']['alt_firmware_url']['enabled']) and isset($config['system']['alt_firmware_url']['versioncheck_base_url'])) {
+                $versioncheck_base_url = $config['system']['alt_firmware_url']['versioncheck_base_url'];
+                $versioncheck_path = '/checkversion.php';
+        }
+        $post = "platform=" . rawurlencode($g['platform']) .
+                "&version=" . rawurlencode(trim(file_get_contents("/etc/version")));
+        $rfd = @fsockopen($versioncheck_base_url, 80, $errno, $errstr, 3);
+        if ($rfd) {
+                $hdr = "POST {$versioncheck_path} HTTP/1.0\r\n";
+                $hdr .= "Content-Type: application/x-www-form-urlencoded\r\n";
+                $hdr .= "User-Agent: pfSense-webConfigurator/1.0\r\n";
+                $hdr .= "Host: www.pfSense.com\r\n";
+                $hdr .= "Content-Length: " . strlen($post) . "\r\n\r\n";
+
+                fwrite($rfd, $hdr);
+                fwrite($rfd, $post);
+
+                $inhdr = true;
+                $resp = "";
+                while (!feof($rfd)) {
+                        $line = fgets($rfd);
+                        if ($inhdr) {
+                                if (trim($line) == "")
+                                        $inhdr = false;
+                        } else {
+                                $resp .= $line;
+                        }
+                }
+
+                fclose($rfd);
+
+                if($_GET['autoupgrade'] <> "")
+                    return;
+
+                return $resp;
+        }
+
+        return null;
+}
+
+
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -96,10 +142,16 @@ $platform =		trim(file_get_contents('/etc/platform'));
 $firmware_version =	trim(file_get_contents('/etc/version'));
 $kernel_version =	trim(file_get_contents('/etc/version_kernel'));
 $base_version =		trim(file_get_contents('/etc/version_base'));
+$use_old_checkversion = true;
 
 update_status("Downloading current version information...");
-$versions = check_firmware_version();
+if($use_old_checkversion == true) {
+	$versions = old_checkversion();
+} else {
+	$versions = check_firmware_version();
+}
 
+if($use_old_checkversion == false) {
 if($versions != -1) {
 	if($versions[0] == true) {
 		if($versions[1] != $firmware_version) $needs_firmware_upgrade = true;
@@ -153,7 +205,35 @@ if($needs_base_upgrade == true) {
 	// XXX: check md5 of downloaded file.
 	exec_rc_script_async("/etc/rc.firmware pfSense_base");
 }
+} else {
+	if($versions != "") {
+		update_output_window("Using old checkversion method. Text returned from pfSense.com:\n\n" . $versions . "\n\nUpgrading...");
+		$http_auth_username = "";
+		$http_auth_password = "";
+		if($config['system']['proxy_auth_username'])
+			$http_auth_username = $config['system']['proxy_auth_username'];
+		if($config['system']['proxy_auth_password'])
+			$http_auth_password = $config['system']['proxy_auth_password'];
 
+		/* custom firmware option */
+		if (isset($config['system']['alt_firmware_url']['enabled'])) {
+			$firmwareurl=$config['system']['alt_firmware_url']['firmware_base_url'];
+			$firmwarename=$config['system']['alt_firmware_url']['firmware_filename'];
+		} else {
+			$firmwareurl=$g['firmwarebaseurl'];
+			$firmwarename=$g['firmwarefilename'];
+		}
+
+		exec_rc_script_async("/etc/rc.firmware_auto {$firmwareurl} {$firmwarename} {$http_auth_username} {$http_auth_password}");
+		$update_status = "pfSense is now auto upgrading.  The firewall will automatically reboot if it succeeds.";
+	} elseif($versions == "") {
+		update_output_window("Using old checkversion method. You are running the latest version of pfSense.");
+	} elseif(is_null($versions)) {
+		update_output_window("Using old checkversion method. Unable to receive version information from pfSense.com.");
+	} else {
+		update_output_window("Using old checkversion method. An unknown error occurred.");
+	}
+}
 update_status("pfSense is now upgrading.  The firewall will reboot once the operation is completed.");
 
 echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";

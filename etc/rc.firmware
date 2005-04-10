@@ -106,6 +106,28 @@ esac
 
 binary_update() {
 	TGZ=$1
-	cd /tmp/
-	for i in `tar tf $TGZ`; do (tar xvzf $TGZ $i; cp /$i bspatch $i /i$; rm $i); done
+	mkdir /tmp/patched
+	cd /tmp/patched
+	for i in `tar tzf $TGZ | egrep -v "(^\./\.*/$|^\./$|.md5)"`;
+	 do (
+	   bspatch /$i /tmp/$i /tmp/patched/$i;
+	   echo Working on $i;
+	   tar xvzf $TGZ $i;
+	   tar xvzf $TGZ.old_file_md5 $i.old_file_md5;
+	   tar xvzf $TGZ.new_patch_md5 $i.new_patch_md5;
+	   tar xvzf $TGZ.new_file_md5 $i.new_file_md5;
+	   OLD_FILE_MD5=`cat /tmp/$i.old_file_md5`;
+	   NEW_PATCH_MD5=`cat /tmp/$i.new_patch_md5`;
+	   NEW_FILE_MD5=`cat /tmp/$i.new_file_md5`;
+	   PATCHED_MD5=`md5 /tmp/patched/$i | cut -d" " -f4`;
+	   if [ "$PATCHED_MD5" = "$NEW_FILE_MD5" ]; then
+		mv /tmp/patched/$i /$i;
+	   else
+		echo $i file does not match intended final md5.;
+		echo $i file does not match intended final md5. >> /tmp/errors;
+	   fi
+	   rm $i.*;
+	   rm $i
+	   );
+	done
 }

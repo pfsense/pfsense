@@ -1340,17 +1340,6 @@ EOD;
 		}
 
 		for ($iif = 0; $iif < $nif; $iif++) {
-
-			if (!$ispptp) {
-
-				$groupnum = $ifgroups[$rule['interface']];
-
-				if (!$groupnum) {
-					printf("Invalid interface name in rule $i\n");
-					break;
-				}
-			}
-
 			$type = $rule['type'];
 			if ($type != "pass" && $type != "block" && $type != "reject") {
 				/* default (for older rules) is pass */
@@ -1614,10 +1603,6 @@ EOD;
 			if ($type == "reject" && $rule['protocol'] == "tcp") {
 				/* special reject packet */
 				$line .= "flags S/SA ";
-			}
-
-			if (!$ispptp) {
-				#$line .= "group $groupnum ";
 			}
 
 			if(isset($config['shaper']['queue'])) {

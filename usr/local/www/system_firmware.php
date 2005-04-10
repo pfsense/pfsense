@@ -32,14 +32,7 @@
 
 $d_isfwfile = 1;
 require("guiconfig.inc");
-
-/* Handle auto upgrade */
-if($_POST) {
-	if (stristr($_POST['autoupgrade'], "Auto")) {
-		auto_upgrade();
-		$savemsg = "pfSense is now auto upgrading.  The firewall will automatically reboot if it succeeds.";
-	}
-}
+//require("xmlrpc_client.inc");
 
 /* Handle manual upgrade */
 if ($_POST && !file_exists($d_firmwarelock_path)) {
@@ -56,8 +49,7 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 	else if ($_POST['sig_no']) {
 		if(file_exists("{$g['tmp_path']}/firmware.tgz"))
 				unlink("{$g['tmp_path']}/firmware.tgz");
-    }
-
+	}
 	if ($mode) {
 		if ($mode == "enable") {
 			exec_rc_script("/etc/rc.firmware enable");
@@ -102,7 +94,6 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 				/* fire up the update script in the background */
 				touch($d_firmwarelock_path);
 				exec_rc_script_async("/etc/rc.firmware pfSenseupgrade {$g['tmp_path']}/firmware.tgz");
-
 				$savemsg = "The firmware is now being installed. The firewall will reboot automatically.";
 			}
 		}
@@ -110,8 +101,8 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 } else {
 	/* Only check firmware version if we're setup to go against pfsense.org  and user wants us to */
 	if (!isset($config['system']['disablefirmwarecheck'])) {
-		$fwinfo = check_firmware_version();
-		if(is_null($fwinfo)) {
+//		$versions = check_firmware_version();
+		if(!is_array($fwinfo)) {
 			$fwinfo = "Unable to determine if a new firmware version is available.";
 		}
 	}
@@ -130,18 +121,15 @@ $dir = ini_get('upload_progress_meter.file.filename_template');
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <!--
 generated new UPLOAD_IDENTIFIER = <?=$id?>
 php-config.upload_progress_meter.store_method = <?=$mth?>
 php-config.upload_progress_meter.file.filename_template = <?=$dir?>
 -->
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">System: Firmware</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if ($fwinfo <> "") print_info_box($fwinfo); ?>
 <?php if (!in_array($g['platform'], $fwupplatforms)): ?>
 <p><strong>Firmware uploading is not supported on this platform.</strong></p>
 <?php elseif ($sig_warning && !$input_errors): ?>
@@ -160,20 +148,18 @@ print_info_box($sig_warning);
 <?php else: ?>
             <?php if (!file_exists($d_firmwarelock_path)): ?>
 <form action="system_firmware.php" method="post" enctype="multipart/form-data">
-<?php if($savemsg == ""): ?>
-
+	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td>
+			<ul id="tabnav">
+				<li class="tabact">Firmware Update</a></li>
+				<li class="tabinact"><a href="system_firmware_auto.php">Auto Update</a></li>
+			</ul>
+		</td>
+	</tr>
+  <tr>
+    <td class="tabcont">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-		<tr>
-		 <td colspan="2" class="listtopic">Invoke pfSense Auto Upgrade</td>
-		</tr>
-		<tr>
-		  <td width="22%" valign="baseline" class="vncell">&nbsp;</td>
-		  <td width="78%" class="vtable">
-		  <p> Click this button to automatically upgrade pfSense in the background.  This may take a while.<br>
-		  <br>
-		  <input name="autoupgrade" type="submit" class="formbtn" value="Invoke Auto Upgrade">
-		</tr>
-		<tr><td>&nbsp;</td></tr>
                 <tr>
 		 <td colspan="2" class="listtopic">Invoke pfSense Manual Upgrade</td>
 		</tr>
@@ -194,11 +180,12 @@ print_info_box($sig_warning);
 					<input name="ulfile" type="file" class="formfld">
                     <br><br>
 
-                    <input name="Submit" type="submit" class="formbtn" value="Upgrade firmware" onClick="window.open('progress.php?UPLOAD_IDENTIFIER=<?=$id?>','UploadMeter','width=400,height=200', true); return true; ">
+                    <input name="Submit" type="submit" class="formbtn" value="Upgrade firmware">
 				  <?php endif; else: ?>
 				    <strong>You must reboot the system before you can upgrade the firmware.</strong>
 				  <?php endif; ?>
                   </td>
+		</td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
@@ -206,10 +193,10 @@ print_info_box($sig_warning);
                     </strong></span>DO NOT abort the firmware upgrade once it
                     has started. The firewall will reboot automatically after
                     storing the new firmware. The configuration will be maintained.</span></td>
-                </tr>
-
               </table>
-<?php endif ?>
+		</tr>
+		</td>
+</table>
 
 </form>
 <?php endif; endif; ?>

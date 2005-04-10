@@ -5,10 +5,7 @@
 	system_firmware_auto.php
 	part of pfSense (http://www.pfsense.com)
 
-	Copyright (C) 2005 Scott Ullrich
-
-	Based originally on system_firmware.php
-        (C)2003-2004 Manuel Kasper
+	Copyright (C) 2005 Scott Ullrich and Colin Smith
 
 	All rights reserved.
 
@@ -59,7 +56,8 @@ require_once("xmlrpc_client.inc");
   <tr>
     <td>
       <ul id="tabnav">
-    	<li class="tabact">System Update</a></li>
+	<li class="tabinact"><a href="system_firmware.php">Firmware Update</a></li>
+    	<li class="tabact">Auto Update</a></li>
       </ul>
     </td>
   </tr>
@@ -73,11 +71,11 @@ require_once("xmlrpc_client.inc");
 		      <table id="progholder" name="progholder" height='20' border='1' bordercolor='black' width='420' bordercolordark='#000000' bordercolorlight='#000000' style='border-collapse: collapse' colspacing='2' cellpadding='2' cellspacing='2'><tr><td><img border='0' src='progress_bar.gif' width='280' height='23' name='progressbar' id='progressbar'></td></tr></table>
 		      <br>
 		      <!-- status box -->
-		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' style='background-color: #EEEEEE; border-collapse: collapse' cols="60" rows="1" name="status" id="status" wrap="hard">
+		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols="60" rows="1" name="status" id="status" wrap="hard">
 		      Beginning system autoupdate...
 		      </textarea>
 		      <!-- command output box -->
-		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' style='background-color: #EEEEEE; border-collapse: collapse' cols="60" rows="25" name="output" id="output" wrap="hard">
+		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols="60" rows="25" name="output" id="output" wrap="hard">
 		      </textarea>
 		      </center>
 		  </td>

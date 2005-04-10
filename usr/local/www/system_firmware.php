@@ -179,8 +179,7 @@ print_info_box($sig_warning);
 					<input type="hidden" name="UPLOAD_IDENTIFIER" value="<?=$id?>">
 					<input name="ulfile" type="file" class="formfld">
                     <br><br>
-
-                    <input name="Submit" type="submit" class="formbtn" value="Upgrade firmware">
+		    <input name="Submit" type="submit" class="formbtn" value="Upgrade firmware" onClick="window.open('progress.php?UPLOAD_IDENTIFIER=<?=$id?>','UploadMeter','width=400,height=200', true); return true; ">
 				  <?php endif; else: ?>
 				    <strong>You must reboot the system before you can upgrade the firmware.</strong>
 				  <?php endif; ?>

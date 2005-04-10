@@ -234,7 +234,7 @@ if($needs_base_upgrade == true) {
 		update_output_window("Using old checkversion method. An unknown error occurred.");
 	}
 }
-update_status("pfSense is now upgrading.  The firewall will reboot once the operation is completed.");
+update_status("pfSense is now upgrading.  The firewall will reboot once the operation has completed.");
 
 echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
 

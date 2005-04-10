@@ -4,12 +4,12 @@
 /*
 	system_firmware_auto.php
 	part of pfSense (http://www.pfsense.com)
-	
+
 	Copyright (C) 2005 Scott Ullrich
-        
+
 	Based originally on system_firmware.php
         (C)2003-2004 Manuel Kasper
-	
+
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -82,7 +82,7 @@ require("guiconfig.inc");
 
 <?php
 
-// Define necessary variables.
+/* Define necessary variables. */
 $platform =		trim(file_get_contents('/etc/platform'));
 $firmware_version =	trim(file_get_contents('/etc/version'));
 $kernel_version =	trim(file_get_contents('/etc/version_kernel'));
@@ -123,21 +123,22 @@ if($needs_base_upgrade == true) {
 }
 
 /* launch external upgrade helper */
-$external_upgrade_helper_text = "/etc/rc.firmware ";
-if($needs_system_upgrade == true)
-	$external_upgrade_helper_text .= "/tmp/latest.tgz /tmp/latest.tgz.md5";
-if($needs_kernel_upgrade == true)
-	$external_upgrade_helper_text .= "/tmp/latest_kernel.tgz /tmp/latest_kernel.tgz.md5";
-if($needs_base_upgrade == true)
-	$external_upgrade_helper_text .= "/tmp/latest_base.tgz /tmp/latest_base.tgz.md5";
-if($needs_kernel_upgrade == true)
-	$external_upgrade_helper_text .= "/tmp/latest_kernel.tgz /tmp/latest_kernel.tgz.md5";
+$external_upgrade_helper_text = "";
+if($needs_system_upgrade == true) {
+	exec_rc_script_async("/etc/rc.firmware pfSense");
+}
+
+if($needs_kernel_upgrade == true) {
+	exec_rc_script_async("/etc/rc.firmware pfSense_kernel");
+}
+
+if($needs_base_upgrade == true) {
+	exec_rc_script_async("/etc/rc.firmware pfSense_base");
+}
 
 update_status("pfSense is now upgrading.  The firewall will reboot once the operation is completed.");
 
 echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
-
-exec_rc_script_async("{$external_upgrade_helper_text}");
 
 /* end of upgrade script */
 

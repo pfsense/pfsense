@@ -131,14 +131,17 @@ if($needs_base_upgrade == true) {
 /* launch external upgrade helper */
 $external_upgrade_helper_text = "";
 if($needs_system_upgrade == true) {
+	// XXX: check md5 of downloaded file.
 	exec_rc_script_async("/etc/rc.firmware pfSense");
 }
 
 if($needs_kernel_upgrade == true) {
+	// XXX: check md5 of downloaded file.
 	exec_rc_script_async("/etc/rc.firmware pfSense_kernel");
 }
 
 if($needs_base_upgrade == true) {
+	// XXX: check md5 of downloaded file.
 	exec_rc_script_async("/etc/rc.firmware pfSense_base");
 }
 

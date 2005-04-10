@@ -126,8 +126,8 @@ binary_update() {
 		echo $i file does not match intended final md5.;
 		echo $i file does not match intended final md5. >> /tmp/errors;
 	   fi
-	   rm $i.*;
-	   rm $i
+	   rm /tmp/patched/$i.*;
+	   rm /tmp/patched/$i
 	   );
 	done
 }

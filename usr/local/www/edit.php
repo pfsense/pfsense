@@ -141,7 +141,7 @@ function sf() { document.forms[0].savetopath.focus(); }
 <p><span class="pgtitle"><?=$Title ?></span>
 <?php if ($ulmsg) echo "<p><strong>" . $ulmsg . "</strong></p>\n"; ?>
 
-<form action="<?=$ScriptName ?>" method="POST">
+<form action="edit.php" method="POST">
   <table>
     <tr>
       <td nowrap>

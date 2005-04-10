@@ -1593,19 +1593,6 @@ EOD;
 				$line .= "flags S/SA ";
 			}
 
-			if(isset($config['shaper']['queue'])) {
-				foreach ($config['shaper']['queue'] as $que) {
-					if($que['associatedrule'] == $rule['descr']) {
-						$line .= "queue " . $que['name'];
-						break;
-					}
-				}
-			}
-
-			// tos
-                        if($rule['iptos'] <> "")
-				$line .= "tos " . $rule['iptos'] . " ";
-
 			// label
                         if($rule['descr'] <> "") $line .= "label \"USER_RULE: " . $rule['descr'] . "\" ";
 

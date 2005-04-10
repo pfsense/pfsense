@@ -96,7 +96,8 @@ if($versions != -1) {
 		if($versions[1] != $firmware_version) $needs_firmware_upgrade = true;
 		if($versions[2] != $kernel_version) $needs_kernel_upgrade = true;
 		if($versions[3] != $base_version) $needs_base_version = true;
-		if(isset($versions[4])) update_output_window($versions[3]); // If we have additional data (a CHANGELOG etc) to display, do so.
+		if(isset($versions[4])) $static_text = $versions[4] . '\n'; // If we have additional data (a CHANGELOG etc) to display, do so.
+		update_output_window($static_text);
 	} else {
 		update_status("No updates required.");
 	}
@@ -106,20 +107,25 @@ if($versions != -1) {
 }
 
 if($needs_firmware_upgrade == true) {
-	update_status("Downloading firmware update...");
+	$static_status = "Downloading firmware update... ";
+	update_status($static_status);
 	$status = download_file_with_progress_bar("http://www.pfSense.com/latest.tgz", "/tmp/latest.tgz");
-	update_output_window("Firmware download complete.");
+	$static_status .= "done. ";
 }
 
 if($needs_kernel_upgrade == true) {
-	update_status("Downloading kernel update...");
+	$static_status .= "Downloading kernel update... ";
+	update_status($static_status);
 	$status = download_file_with_progress_bar("http://www.pfSense.com/latest_kernel{$platform}.tgz", "/tmp/latest_kernel.tgz");
-	update_output_window("Kernel download complete.");
+	$static_status .= "done. ";
+}
 
 if($needs_base_upgrade == true) {
-	update_status("Downloading base update...");
+	$static_status .= "Downloading base update... ";
+	update_status($static_status);
 	$status = download_file_with_progress_bar("http://www.pfSense.com/latest_base.tgz", "/tmp/latest_base.tgz");
-	update_output_window("Base update complete.");
+	$static_status .= "done. ";
+	update_status($static_status);
 }
 
 /* launch external upgrade helper */
@@ -191,18 +197,21 @@ function read_body($ch, $string) {
 	$downloaded += intval($length);
 	$downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
 	$downloadProgress = 100 - $downloadProgress;
+	/*
 	$a = $file_size;
 	$b = $downloaded;
 	$c = $downloadProgress;
-	$text  = "  Download Status\\n";
+	$text .= "  Download Status\\n";
 	$text .= "---------------------------------\\n";
 	$text .= "  File size  : {$a}\\n";
 	$text .= "  Downloaded : {$b}\\n";
 	$text .= "  Percent    : {$c}%\\n";
 	$text .= "---------------------------------\\n";
+	*/
 	$counter++;
 	if($counter > 150) {
-		update_output_window($text);
+		$tostatus = $static_status . $downloadProgress;
+		update_status($tostatus);
 		update_progress_bar($downloadProgress);
 		$counter = 0;
 	}

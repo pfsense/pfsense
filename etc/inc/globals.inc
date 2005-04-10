@@ -59,7 +59,7 @@ $g = array(
     "firmwarebaseurl" => "http://www.pfsense.com/",
     "firmwarefilename" => "latest.tgz",
     "versioncheckbaseurl" => "www.pfsense.com",
-    "versioncheckpath" => "/pfSense/checkversion.php",
+    "versioncheckpath" => "/pfSense/xmlrpc.php",
     "embeddedbootupslice" => "/dev/ad0a"
 );
 

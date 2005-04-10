@@ -32,6 +32,9 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
+
+	TODO:
+		* modify pfSense.com XMLRPC server to return md5 hashes of firmware updates.
 */
 
 require_once("guiconfig.inc");

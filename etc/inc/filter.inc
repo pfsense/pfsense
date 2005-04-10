@@ -1272,8 +1272,6 @@ anchor "packagelate"
 EOD;
 	}
 
-	$i = 0;
-
 	$ipfrules .= "\n# User-defined rules follow\n";
 
 	if (isset($config['filter']['rule']))
@@ -1281,7 +1279,6 @@ EOD;
 
 		/* don't include disabled rules */
 		if (isset($rule['disabled'])) {
-			$i++;
 			continue;
 		}
 
@@ -1289,7 +1286,6 @@ EOD;
 		if ($rule['interface'] == "pptp") {
 
 			if ($pptpdcfg['mode'] != "server") {
-				$i++;
 				continue;
 			}
 
@@ -1299,7 +1295,6 @@ EOD;
 
 			if (strstr($rule['interface'], "opt")) {
 				if (!array_key_exists($rule['interface'], $optcfg)) {
-					$i++;
 					continue;
 				}
 			}
@@ -1311,31 +1306,26 @@ EOD;
 		if ($pptpdcfg['mode'] != "server") {
 			if (($rule['source']['network'] == "pptp") ||
 				($rule['destination']['network'] == "pptp")) {
-					$i++;
 					continue;
 				}
 		}
 
 		if ($rule['source']['network'] && strstr($rule['source']['network'], "opt")) {
 			if (!array_key_exists($rule['source']['network'], $optcfg)) {
-				$i++;
 				continue;
 			}
 		}
 		if ($rule['destination']['network'] && strstr($rule['destination']['network'], "opt")) {
 			if (!array_key_exists($rule['destination']['network'], $optcfg)) {
-				$i++;
 				continue;
 			}
 		}
 
 		/* check for unresolvable aliases */
 		if ($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
-			$i++;
 			continue;
 		}
 		if ($rule['destination']['address'] && !alias_expand($rule['destination']['address'])) {
-			$i++;
 			continue;
 		}
 
@@ -1450,7 +1440,6 @@ EOD;
 			}
 
 			if (!$src || ($src == "/")) {
-				//printf("No source address found in rule $i\n");
 				break;
 			}
 
@@ -1514,7 +1503,6 @@ EOD;
 			}
 
 			if (!$dst || ($dst == "/")) {
-				//printf("No destination address found in rule $i\n");
 				break;
 			}
 
@@ -1625,9 +1613,6 @@ EOD;
 
 			$ipfrules .= $line;
 		}
-
-
-		$i++;
 	}
 
 	$ipfrules .= "\n# SSH lockout\n";

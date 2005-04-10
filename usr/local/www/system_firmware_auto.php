@@ -52,7 +52,14 @@ require_once("xmlrpc_client.inc");
 <p class="pgtitle">System: Firmware: Invoke Auto Upgrade</p>
 
 <form action="system_firmware_auto.php" method="post">
-<table width="100%" border="0" cellpadding="6" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td>
+      <ul id="tabnav">
+    	<li class="tabact">System Update</a></li>
+      </ul>
+    </td>
+  </tr>
 	<tr>
 	  <td class="tabcont">
 	      <table width="100%" border="0" cellpadding="6" cellspacing="0">

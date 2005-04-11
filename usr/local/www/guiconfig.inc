@@ -538,7 +538,7 @@ function read_header($ch, $string) {
 }
 
 function read_body($ch, $string) {
-        global $fout, $file_size, $downloaded, $counter;
+        global $fout, $file_size, $downloaded, $counter, $sendto, $static_output;
         $length = strlen($string);
         $downloaded += intval($length);
         $downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
@@ -554,14 +554,45 @@ function read_body($ch, $string) {
         $text .= "  Percent    : {$c}%\\n";
         $text .= "---------------------------------\\n";
         */
-        $counter++;
-        if($counter > 150) {
-                $tostatus = $static_status . $downloadProgress;
-                update_status($tostatus);
+//        $counter++;
+//        if($counter > 150) {
+		if($sendto == "status") {
+                	$tostatus = $static_status . $downloadProgress . "%";
+                	update_status($tostatus);
+		} else {
+			$tooutput = $static_output . $downloadProgress . "%"; 
+			update_output_window($tooutput);
+		}
                 update_progress_bar($downloadProgress);
-                $counter = 0;
-        }
+//                $counter = 0;
+//        }
         fwrite($fout, $string);
         return $length;
 }
+
+function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 'http://ftp2.freebsd.org/pub/FreeBSD/ports/i386/packages-5-stable/Latest') {
+	global $static_status, $static_output, $g;
+	$pkg_extension = strrchr($filename, '.');
+	$static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $pkgname . " ";
+	$fetchto = "/tmp/apkg_" . $pkgname . $pkg_extension;
+        download_file_with_progress_bar($base_url . "/" . $filename, $fetchto);
+//	update_output_window($static_output . "\n\n" . $pkg_progress);
+        exec("/usr/bin/tar -O -f {$fetchto} -x +CONTENTS", $slaveout);
+        $workingdir = preg_grep("/instmp/", $slaveout);
+        $workingdir = $workingdir[0];
+        $raw_depends_list = array_values(preg_grep("/\@pkgdep/", $slaveout));
+	if($raw_depends_list != "") {
+                foreach($raw_depends_list as $adepend) {
+			$working_depend = explode(" ", $adepend);
+                        $working_depend = explode("-", $working_depend[1]);
+			$depend_filename = $working_depend[0] . $pkg_extension;
+			exec("ls /var/db/pkg", $is_installed);
+			$is_installed = array_values(preg_grep("/{$working_depend[0]}/i", $is_installed));
+			if($is_installed[0] == "") pkg_fetch_recursive($working_depend[0], $depend_filename, $dependlevel + 1);
+		}
+        }
+	mwexec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_add {$fetchto}");
+	return true;
+}
+
 ?>

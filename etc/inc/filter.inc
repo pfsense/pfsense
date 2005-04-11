@@ -951,6 +951,328 @@ function run_command_return_string($cmd) {
 	return $tmp;
 }
 
+function generate_user_filter_rule($rule, $optcfg) {
+
+		/* don't include disabled rules */
+		if (isset($rule['disabled'])) {
+			return;
+		}
+
+		/* does the rule deal with a PPTP interface? */
+		if ($rule['interface'] == "pptp") {
+
+			if ($pptpdcfg['mode'] != "server") {
+				return;
+			}
+
+			$nif = $g['n_pptp_units'];
+			$ispptp = true;
+		} else {
+
+			if (strstr($rule['interface'], "opt")) {
+				if (!array_key_exists($rule['interface'], $optcfg)) {
+					return;
+				}
+			}
+
+			$nif = 1;
+			$ispptp = false;
+		}
+
+		if ($pptpdcfg['mode'] != "server") {
+			if (($rule['source']['network'] == "pptp") ||
+				($rule['destination']['network'] == "pptp")) {
+					return;
+				}
+		}
+
+		if ($rule['source']['network'] && strstr($rule['source']['network'], "opt")) {
+			if (!array_key_exists($rule['source']['network'], $optcfg)) {
+				return;
+			}
+		}
+		if ($rule['destination']['network'] && strstr($rule['destination']['network'], "opt")) {
+			if (!array_key_exists($rule['destination']['network'], $optcfg)) {
+				continue;
+			}
+		}
+
+		/* check for unresolvable aliases */
+		if ($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
+			return;
+		}
+		if ($rule['destination']['address'] && !alias_expand($rule['destination']['address'])) {
+			return;
+		}
+
+		for ($iif = 0; $iif < $nif; $iif++) {
+			$type = $rule['type'];
+			if ($type != "pass" && $type != "block" && $type != "reject") {
+				/* default (for older rules) is pass */
+				$type = "pass";
+			}
+
+			if ($type == "reject") {
+				/* special reject packet */
+				if ($rule['protocol'] == "tcp") {
+					$line = "block return-rst";
+				} else if ($rule['protocol'] == "udp") {
+					$line = "block return-icmp";
+				} else {
+					$line = "block";
+				}
+			} else {
+				$line = $type;
+			}
+
+			/* ensure the direction is in */
+			$line .= " in ";
+
+			if (isset($rule['log']))
+				$line .= "log ";
+
+			$line .= "quick ";
+
+			if ($ispptp) {
+				$line .= "on ng" . ($iif+1) . " ";
+			} else {
+				// translate wan, man, lan, opt to real interface.
+				$interface = $rule['interface'];
+				$temp = filter_get_opt_interface_descr($interface);
+				if($temp <> "") $interface = $temp;
+				if(isset($rule['destination']['address'])) {
+					$canadd = 0;
+					/* because pf will not allow a interface for proxyARP
+					   type traffic lets check if its in use and if so leave
+                                           off the interface */
+					if(is_one_to_one_or_server_nat_rule($rule['destination']['address']))
+						$canadd = 0;
+				}
+				if($canadd == 0)
+					$line .= "on \$" . $interface . " ";
+			}
+
+			$rg = $config['interfaces'][$rule['interface']]['gateway'];
+			$ri = filter_translate_type_to_real_interface($rule['interface']);
+			if($rg <> "" and $ri <> "" and stristr($rule['interface'],"opt" == true)) {
+				$line .= "reply-to (" . $ri . " " . $rg . ") ";
+			}
+
+			/* Setup outgoing load balancing */
+			if ($config['nat']['outgoingloadbalancing']['rule'] <> "" and
+			    isset($config['nat']['outgoingloadbalancing']['enable'])
+				and $rule['interface'] == "lan") {
+				$tmprules = " route-to { ";
+				$isfirst = 0;
+				foreach ($config['nat']['outgoingloadbalancing']['rule'] as $rules) {
+					if($rules['gatewayip'] <> "") {
+						if($isfirst == 1) $tmprules .= ", ";
+						$lbinf = guess_interface_from_ip($rules['gatewayip']);
+						$tmprules .= " (" . $lbinf . " " . $rules['gatewayip'] . ") ";
+						$isfirst = 1;
+					}
+				}
+				$tmprules .= "} round-robin sticky-address ";
+				$line .= $tmprules;
+			}
+
+			if (isset($rule['protocol'])) {
+				if($rule['protocol'] == "tcp/udp")
+					$line .= "proto { tcp udp } ";
+				elseif($rule['protocol'] == "icmp")
+					$line .= "inet proto icmp ";
+				else
+					$line .= "proto {$rule['protocol']} ";
+			} else {
+				if($rule['source']['port'] <> "" || $rule['destination']['port'] <> "") {
+					$line .= "proto tcp ";
+				}
+			}
+
+			/* source address */
+			if (isset($rule['source']['any'])) {
+				$src = "any";
+			} else if ($rule['source']['network']) {
+
+				if (strstr($rule['source']['network'], "opt")) {
+					$src = $optcfg[$rule['source']['network']]['sa'] . "/" .
+						$optcfg[$rule['source']['network']]['sn'];
+					if (isset($rule['source']['not'])) $src = "!" . $src;
+				} else {
+					switch ($rule['source']['network']) {
+						case 'lan':
+							$src = "$lansa/$lansn";
+							break;
+						case 'pptp':
+							$src = "$pptpsa/$pptpsn";
+							break;
+					}
+					if (isset($rule['source']['not'])) $src = "!" . $src;
+				}
+			} else if ($rule['source']['address']) {
+				$not = "";
+				if (isset($rule['source']['not'])) $not = "!";
+				$src = "{ " . $not .  alias_expand($rule['source']['address']). " }";
+			}
+
+			if (!$src || ($src == "/")) {
+				break;
+			}
+
+			$line .= "from $src ";
+
+			if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
+
+				if ($rule['source']['port']) {
+					$srcport = explode("-", $rule['source']['port']);
+					if(alias_expand($srcport[0]))
+						$srcporta = alias_expand($srcport[0]);
+					else
+						$srcporta = $srcport[0];
+					if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
+						if(alias_expand($srcport[0]))
+							$line .= "port { {$srcporta} } ";
+						else
+							$line .= "port = {$srcporta} ";
+					} else if (($srcport[0] == 1) && ($srcport[1] == 65535)) {
+						/* no need for a port statement here */
+					} else if ($srcport[1] == 65535) {
+						$line .= "port >= {$srcport[0]} ";
+					} else if ($srcport[0] == 1) {
+						$line .= "port <= {$srcport[1]} ";
+					} else {
+						$srcport[0]--;
+						$srcport[1]++;
+						$line .= "port {$srcport[0]} >< {$srcport[1]} ";
+					}
+				}
+                                /* OS signatures */
+                                if (($rule['protocol'] == "tcp") && ($rule['os'] <> ""))
+                                        $line .= "os {$rule['os']} ";
+
+			}
+
+			/* destination address */
+			if (isset($rule['destination']['any'])) {
+				$dst = "any";
+			} else if ($rule['destination']['network']) {
+
+				if (strstr($rule['destination']['network'], "opt")) {
+					$dst = $optcfg[$rule['destination']['network']]['sa'] . "/" .
+						$optcfg[$rule['destination']['network']]['sn'];
+					if (isset($rule['destination']['not'])) $dst = " !" . $dst;
+				} else {
+					switch ($rule['destination']['network']) {
+						case 'lan':
+							$dst = "$lansa/$lansn";
+							break;
+						case 'pptp':
+							$dst = "$pptpsa/$pptpsn";
+							break;
+					}
+				}
+				if (isset($rule['destination']['not'])) $dst = " !" . $dst;
+			} else if ($rule['destination']['address']) {
+				$not = "";
+				if (isset($rule['destination']['not'])) $not = "! ";
+				$dst = "{ " . $not . alias_expand($rule['destination']['address']) . " }";
+			}
+
+			if (!$dst || ($dst == "/")) {
+				break;
+			}
+
+			$line .= "to $dst ";
+
+			if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
+
+				if ($rule['destination']['port']) {
+					$dstport = explode("-", $rule['destination']['port']);
+					if(alias_expand($dstport[0]))
+						$dstporta = alias_expand($dstport[0]);
+					else
+						$dstporta = $dstport[0];
+					if ((!$dstport[1]) || ($dstport[0] == $dstport[1])) {
+						if(alias_expand($dstport[0]))
+							$line .= "port { {$dstporta} }";
+						else
+							$line .= "port = {$dstporta} ";
+					} else if (($dstport[0] == 1) && ($dstport[1] == 65535)) {
+						/* no need for a port statement here */
+					} else if ($dstport[1] == 65535) {
+						$line .= "port >= {$dstport[0]} ";
+					} else if ($dstport[0] == 1) {
+						$line .= "port <= {$dstport[1]} ";
+					}  else {
+						$dstport[0]--;
+						$dstport[1]++;
+						$line .= "port {$dstport[0]} >< {$dstport[1]} ";
+					}
+				}
+			}
+
+			if (($rule['protocol'] == "icmp") && $rule['icmptype']) {
+				$line .= "icmp-type {$rule['icmptype']} ";
+			}
+
+			if ($type == "pass") {
+
+				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states']) )
+					if($rule['protocol'] == "tcp")
+						$line .= "flags S/SA ";
+
+				/*
+					# keep state
+						works with TCP, UDP, and ICMP.
+					# modulate state
+						works only with TCP. pfSense will generate strong Initial Sequence Numbers (ISNs)
+						for packets matching this rule.
+					# synproxy state
+						proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods.
+						This option includes the functionality of keep state and modulate state combined.
+					# none
+						do not use state mechanisms to keep track. this is only useful if your doing advanced
+						queueing in certain situations. please check the faq.
+				*/
+				if(isset($rule['statetype']) && $rule['statetype'] <> "") {
+					if($rule['statetype'] == "modulate state" or $rule['statetype'] == "synproxy state") {
+						if($rule['protocol'] == "tcp")
+							$line .= $rule['statetype'] . " ";
+					} elseif ($rule['statetype'] == "none") {
+					} else {
+						if($rule['statetype'] <> "")
+							$line .= $rule['statetype'] . " ";
+					}
+				} else {
+					$line .= "keep state ";
+				}
+
+				if( isset($rule['source-track']) and $rule['source-track'] <> "" or
+				  isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "" or
+				   isset($rule['max-src-states']) and $rule['max-src-states'] <> "" ) {
+					$line .= "( ";
+					if(isset($rule['source-track']) & $rule['source-track'] <> "")
+						$line .= "source-track rule ";
+					if(isset($rule['max-src-nodes']) & $rule['max-src-nodes'] <> "")
+						$line .= "max-src-nodes " . $rule['max-src-nodes'] . " ";
+					if(isset($rule['max-src-states']) & $rule['max-src-states'] <> "")
+						$line .= "max-src-states " . $rule['max-src-states'] . " ";
+					if(isset($rule['statetimeout']) & $rule['statetimeout'] <> "")
+						$line .= "tcp.established " . $rule['statetimeout'] . " ";
+					$line .= " ) ";
+				}
+
+			}
+
+			if ($type == "reject" && $rule['protocol'] == "tcp") {
+				/* special reject packet */
+				$line .= "flags S/SA ";
+			}
+	}
+	return $line;
+
+}
+
 function filter_rules_generate() {
 	global $config, $g;
 
@@ -1276,322 +1598,7 @@ EOD;
 
 	if (isset($config['filter']['rule']))
 		foreach ($config['filter']['rule'] as $rule) {
-
-		/* don't include disabled rules */
-		if (isset($rule['disabled'])) {
-			continue;
-		}
-
-		/* does the rule deal with a PPTP interface? */
-		if ($rule['interface'] == "pptp") {
-
-			if ($pptpdcfg['mode'] != "server") {
-				continue;
-			}
-
-			$nif = $g['n_pptp_units'];
-			$ispptp = true;
-		} else {
-
-			if (strstr($rule['interface'], "opt")) {
-				if (!array_key_exists($rule['interface'], $optcfg)) {
-					continue;
-				}
-			}
-
-			$nif = 1;
-			$ispptp = false;
-		}
-
-		if ($pptpdcfg['mode'] != "server") {
-			if (($rule['source']['network'] == "pptp") ||
-				($rule['destination']['network'] == "pptp")) {
-					continue;
-				}
-		}
-
-		if ($rule['source']['network'] && strstr($rule['source']['network'], "opt")) {
-			if (!array_key_exists($rule['source']['network'], $optcfg)) {
-				continue;
-			}
-		}
-		if ($rule['destination']['network'] && strstr($rule['destination']['network'], "opt")) {
-			if (!array_key_exists($rule['destination']['network'], $optcfg)) {
-				continue;
-			}
-		}
-
-		/* check for unresolvable aliases */
-		if ($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
-			continue;
-		}
-		if ($rule['destination']['address'] && !alias_expand($rule['destination']['address'])) {
-			continue;
-		}
-
-		for ($iif = 0; $iif < $nif; $iif++) {
-			$type = $rule['type'];
-			if ($type != "pass" && $type != "block" && $type != "reject") {
-				/* default (for older rules) is pass */
-				$type = "pass";
-			}
-
-			if ($type == "reject") {
-				/* special reject packet */
-				if ($rule['protocol'] == "tcp") {
-					$line = "block return-rst";
-				} else if ($rule['protocol'] == "udp") {
-					$line = "block return-icmp";
-				} else {
-					$line = "block";
-				}
-			} else {
-				$line = $type;
-			}
-
-			/* ensure the direction is in */
-			$line .= " in ";
-
-			if (isset($rule['log']))
-				$line .= "log ";
-
-			$line .= "quick ";
-
-			if ($ispptp) {
-				$line .= "on ng" . ($iif+1) . " ";
-			} else {
-				// translate wan, man, lan, opt to real interface.
-				$interface = $rule['interface'];
-				$temp = filter_get_opt_interface_descr($interface);
-				if($temp <> "") $interface = $temp;
-				if(isset($rule['destination']['address'])) {
-					$canadd = 0;
-					/* because pf will not allow a interface for proxyARP
-					   type traffic lets check if its in use and if so leave
-                                           off the interface */
-					if(is_one_to_one_or_server_nat_rule($rule['destination']['address']))
-						$canadd = 0;
-				}
-				if($canadd == 0)
-					$line .= "on \$" . $interface . " ";
-			}
-
-			$rg = $config['interfaces'][$rule['interface']]['gateway'];
-			$ri = filter_translate_type_to_real_interface($rule['interface']);
-			if($rg <> "" and $ri <> "" and stristr($rule['interface'],"opt" == true)) {
-				$line .= "reply-to (" . $ri . " " . $rg . ") ";
-			}
-
-			/* Setup outgoing load balancing */
-			if ($config['nat']['outgoingloadbalancing']['rule'] <> "" and
-			    isset($config['nat']['outgoingloadbalancing']['enable'])
-				and $rule['interface'] == "lan") {
-				$tmprules = " route-to { ";
-				$isfirst = 0;
-				foreach ($config['nat']['outgoingloadbalancing']['rule'] as $rules) {
-					if($rules['gatewayip'] <> "") {
-						if($isfirst == 1) $tmprules .= ", ";
-						$lbinf = guess_interface_from_ip($rules['gatewayip']);
-						$tmprules .= " (" . $lbinf . " " . $rules['gatewayip'] . ") ";
-						$isfirst = 1;
-					}
-				}
-				$tmprules .= "} round-robin sticky-address ";
-				$line .= $tmprules;
-			}
-
-			if (isset($rule['protocol'])) {
-				if($rule['protocol'] == "tcp/udp")
-					$line .= "proto { tcp udp } ";
-				elseif($rule['protocol'] == "icmp")
-					$line .= "inet proto icmp ";
-				else
-					$line .= "proto {$rule['protocol']} ";
-			} else {
-				if($rule['source']['port'] <> "" || $rule['destination']['port'] <> "") {
-					$line .= "proto tcp ";
-				}
-			}
-
-			/* source address */
-			if (isset($rule['source']['any'])) {
-				$src = "any";
-			} else if ($rule['source']['network']) {
-
-				if (strstr($rule['source']['network'], "opt")) {
-					$src = $optcfg[$rule['source']['network']]['sa'] . "/" .
-						$optcfg[$rule['source']['network']]['sn'];
-					if (isset($rule['source']['not'])) $src = "!" . $src;
-				} else {
-					switch ($rule['source']['network']) {
-						case 'lan':
-							$src = "$lansa/$lansn";
-							break;
-						case 'pptp':
-							$src = "$pptpsa/$pptpsn";
-							break;
-					}
-					if (isset($rule['source']['not'])) $src = "!" . $src;
-				}
-			} else if ($rule['source']['address']) {
-				$not = "";
-				if (isset($rule['source']['not'])) $not = "!";
-				$src = "{ " . $not .  alias_expand($rule['source']['address']). " }";
-			}
-
-			if (!$src || ($src == "/")) {
-				break;
-			}
-
-			$line .= "from $src ";
-
-			if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
-
-				if ($rule['source']['port']) {
-					$srcport = explode("-", $rule['source']['port']);
-					if(alias_expand($srcport[0]))
-						$srcporta = alias_expand($srcport[0]);
-					else
-						$srcporta = $srcport[0];
-					if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
-						if(alias_expand($srcport[0]))
-							$line .= "port { {$srcporta} } ";
-						else
-							$line .= "port = {$srcporta} ";
-					} else if (($srcport[0] == 1) && ($srcport[1] == 65535)) {
-						/* no need for a port statement here */
-					} else if ($srcport[1] == 65535) {
-						$line .= "port >= {$srcport[0]} ";
-					} else if ($srcport[0] == 1) {
-						$line .= "port <= {$srcport[1]} ";
-					} else {
-						$srcport[0]--;
-						$srcport[1]++;
-						$line .= "port {$srcport[0]} >< {$srcport[1]} ";
-					}
-				}
-                                /* OS signatures */
-                                if (($rule['protocol'] == "tcp") && ($rule['os'] <> ""))
-                                        $line .= "os {$rule['os']} ";
-
-			}
-
-			/* destination address */
-			if (isset($rule['destination']['any'])) {
-				$dst = "any";
-			} else if ($rule['destination']['network']) {
-
-				if (strstr($rule['destination']['network'], "opt")) {
-					$dst = $optcfg[$rule['destination']['network']]['sa'] . "/" .
-						$optcfg[$rule['destination']['network']]['sn'];
-					if (isset($rule['destination']['not'])) $dst = " !" . $dst;
-				} else {
-					switch ($rule['destination']['network']) {
-						case 'lan':
-							$dst = "$lansa/$lansn";
-							break;
-						case 'pptp':
-							$dst = "$pptpsa/$pptpsn";
-							break;
-					}
-				}
-				if (isset($rule['destination']['not'])) $dst = " !" . $dst;
-			} else if ($rule['destination']['address']) {
-				$not = "";
-				if (isset($rule['destination']['not'])) $not = "! ";
-				$dst = "{ " . $not . alias_expand($rule['destination']['address']) . " }";
-			}
-
-			if (!$dst || ($dst == "/")) {
-				break;
-			}
-
-			$line .= "to $dst ";
-
-			if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
-
-				if ($rule['destination']['port']) {
-					$dstport = explode("-", $rule['destination']['port']);
-					if(alias_expand($dstport[0]))
-						$dstporta = alias_expand($dstport[0]);
-					else
-						$dstporta = $dstport[0];
-					if ((!$dstport[1]) || ($dstport[0] == $dstport[1])) {
-						if(alias_expand($dstport[0]))
-							$line .= "port { {$dstporta} }";
-						else
-							$line .= "port = {$dstporta} ";
-					} else if (($dstport[0] == 1) && ($dstport[1] == 65535)) {
-						/* no need for a port statement here */
-					} else if ($dstport[1] == 65535) {
-						$line .= "port >= {$dstport[0]} ";
-					} else if ($dstport[0] == 1) {
-						$line .= "port <= {$dstport[1]} ";
-					}  else {
-						$dstport[0]--;
-						$dstport[1]++;
-						$line .= "port {$dstport[0]} >< {$dstport[1]} ";
-					}
-				}
-			}
-
-			if (($rule['protocol'] == "icmp") && $rule['icmptype']) {
-				$line .= "icmp-type {$rule['icmptype']} ";
-			}
-
-			if ($type == "pass") {
-
-				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states']) )
-					if($rule['protocol'] == "tcp")
-						$line .= "flags S/SA ";
-
-				/*
-					# keep state
-						works with TCP, UDP, and ICMP.
-					# modulate state
-						works only with TCP. pfSense will generate strong Initial Sequence Numbers (ISNs)
-						for packets matching this rule.
-					# synproxy state
-						proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods.
-						This option includes the functionality of keep state and modulate state combined.
-					# none
-						do not use state mechanisms to keep track. this is only useful if your doing advanced
-						queueing in certain situations. please check the faq.
-				*/
-				if(isset($rule['statetype']) && $rule['statetype'] <> "") {
-					if($rule['statetype'] == "modulate state" or $rule['statetype'] == "synproxy state") {
-						if($rule['protocol'] == "tcp")
-							$line .= $rule['statetype'] . " ";
-					} elseif ($rule['statetype'] == "none") {
-					} else {
-						if($rule['statetype'] <> "")
-							$line .= $rule['statetype'] . " ";
-					}
-				} else {
-					$line .= "keep state ";
-				}
-
-				if( isset($rule['source-track']) and $rule['source-track'] <> "" or
-				  isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "" or
-				   isset($rule['max-src-states']) and $rule['max-src-states'] <> "" ) {
-					$line .= "( ";
-					if(isset($rule['source-track']) & $rule['source-track'] <> "")
-						$line .= "source-track rule ";
-					if(isset($rule['max-src-nodes']) & $rule['max-src-nodes'] <> "")
-						$line .= "max-src-nodes " . $rule['max-src-nodes'] . " ";
-					if(isset($rule['max-src-states']) & $rule['max-src-states'] <> "")
-						$line .= "max-src-states " . $rule['max-src-states'] . " ";
-					if(isset($rule['statetimeout']) & $rule['statetimeout'] <> "")
-						$line .= "tcp.established " . $rule['statetimeout'] . " ";
-					$line .= " ) ";
-				}
-
-			}
-
-			if ($type == "reject" && $rule['protocol'] == "tcp") {
-				/* special reject packet */
-				$line .= "flags S/SA ";
-			}
+			$line = generate_user_filter_rule($rule, $optcfg);
 
 			// label
                         if($rule['descr'] <> "") $line .= "label \"USER_RULE: " . $rule['descr'] . "\" ";
@@ -1600,7 +1607,6 @@ EOD;
 
 			$ipfrules .= $line;
 		}
-	}
 
 	$ipfrules .= "\n# SSH lockout\n";
 	$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port 22 label \"sshlockout\"\n\n";

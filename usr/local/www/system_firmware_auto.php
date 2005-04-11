@@ -148,59 +148,59 @@ if($use_old_checkversion == true) {
 }
 
 if($use_old_checkversion == false) {
-if($versions != -1) {
-	if($versions[0] == true) {
-		if($versions[1] != $firmware_version) $needs_firmware_upgrade = true;
-		if($versions[2] != $kernel_version) $needs_kernel_upgrade = true;
-		if($versions[3] != $base_version) $needs_base_version = true;
-		if(isset($versions[4])) $static_text = $versions[4] . '\n'; // If we have additional data (a CHANGELOG etc) to display, do so.
-		update_output_window($static_text);
+	if($versions != -1) {
+		if($versions[0] == true) {
+			if($versions[1] != $firmware_version) $needs_firmware_upgrade = true;
+			if($versions[2] != $kernel_version) $needs_kernel_upgrade = true;
+			if($versions[3] != $base_version) $needs_base_version = true;
+			if(isset($versions[4])) $static_text = $versions[4] . '\n'; // If we have additional data (a CHANGELOG etc) to display, do so.
+			update_output_window($static_text);
+		} else {
+			update_status("No updates required.");
+		}
 	} else {
-		update_status("No updates required.");
+		update_status("Could not retrieve version information.");
+		exit();
 	}
-} else {
-	update_status("Could not retrieve version information.");
-	exit();
-}
 
-if($needs_firmware_upgrade == true) {
-	$static_status = "Downloading firmware update... ";
-	update_status($static_status);
-	$status = download_file_with_progress_bar("http://www.pfSense.com/latest.tgz", "/tmp/latest.tgz");
-	$static_status .= "done. ";
-}
+	if($needs_firmware_upgrade == true) {
+		$static_status = "Downloading firmware update... ";
+		update_status($static_status);
+		$status = download_file_with_progress_bar("http://www.pfSense.com/latest.tgz", "/tmp/latest.tgz");
+		$static_status .= "done. ";
+	}
 
-if($needs_kernel_upgrade == true) {
-	$static_status .= "Downloading kernel update... ";
-	update_status($static_status);
-	$status = download_file_with_progress_bar("http://www.pfSense.com/latest_kernel{$platform}.tgz", "/tmp/latest_kernel.tgz");
-	$static_status .= "done. ";
-}
+	if($needs_kernel_upgrade == true) {
+		$static_status .= "Downloading kernel update... ";
+		update_status($static_status);
+		$status = download_file_with_progress_bar("http://www.pfSense.com/latest_kernel{$platform}.tgz", "/tmp/latest_kernel.tgz");
+		$static_status .= "done. ";
+	}
 
-if($needs_base_upgrade == true) {
-	$static_status .= "Downloading base update... ";
-	update_status($static_status);
-	$status = download_file_with_progress_bar("http://www.pfSense.com/latest_base.tgz", "/tmp/latest_base.tgz");
-	$static_status .= "done. ";
-	update_status($static_status);
-}
+	if($needs_base_upgrade == true) {
+		$static_status .= "Downloading base update... ";
+		update_status($static_status);
+		$status = download_file_with_progress_bar("http://www.pfSense.com/latest_base.tgz", "/tmp/latest_base.tgz");
+		$static_status .= "done. ";
+		update_status($static_status);
+	}
 
-/* launch external upgrade helper */
-$external_upgrade_helper_text = "";
-if($needs_system_upgrade == true) {
-	// XXX: check md5 of downloaded file.
-	exec_rc_script_async("/etc/rc.firmware pfSense");
-}
+	/* launch external upgrade helper */
+	$external_upgrade_helper_text = "";
+	if($needs_system_upgrade == true) {
+		// XXX: check md5 of downloaded file.
+		exec_rc_script_async("/etc/rc.firmware pfSense");
+	}
 
-if($needs_kernel_upgrade == true) {
-	// XXX: check md5 of downloaded file.
-	exec_rc_script_async("/etc/rc.firmware pfSense_kernel");
-}
+	if($needs_kernel_upgrade == true) {
+		// XXX: check md5 of downloaded file.
+		exec_rc_script_async("/etc/rc.firmware pfSense_kernel");
+	}
 
-if($needs_base_upgrade == true) {
-	// XXX: check md5 of downloaded file.
-	exec_rc_script_async("/etc/rc.firmware pfSense_base");
-}
+	if($needs_base_upgrade == true) {
+		// XXX: check md5 of downloaded file.
+		exec_rc_script_async("/etc/rc.firmware pfSense_base");
+	}
 } else {
 	if($versions != "") {
 		update_output_window("Using old checkversion method. Text returned from pfSense.com:\n\n" . $versions . "\n\nUpgrading...");
@@ -233,78 +233,4 @@ if($needs_base_upgrade == true) {
 update_status("pfSense is now upgrading.  The firewall will reboot once the operation has completed.");
 
 echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
-
-/* end of upgrade script */
-
-
-
-/*
-	Helper functions
-*/
-
-function download_file_with_progress_bar($url_file, $destination_file) {
-	global $ch, $fout, $file_size, $downloaded, $counter;
-	$file_size  = 1;
-	$downloaded = 1;
-	/* open destination file */
-	$fout = fopen($destination_file, "wb");
-
-	/*
-		Originally by Author: Keyvan Minoukadeh
-		Modified by Scott Ullrich to return Content-Length size
-	*/
-
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $url_file);
-	curl_setopt($ch, CURLOPT_HEADERFUNCTION, 'read_header');
-	curl_setopt($ch, CURLOPT_WRITEFUNCTION, 'read_body');
-	curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
-
-	curl_exec($ch);
-	fclose($fout);
-	return 1;
-
-	if ($error = curl_error($ch)) {
-	    return -1;
-	}
-}
-
-function read_header($ch, $string) {
-	global $file_size, $ch, $fout;
-	$length = strlen($string);
-	ereg("(Content-Length:) (.*)", $string, $regs);
-	if($regs[2] <> "") {
-		$file_size = intval($regs[2]);
-	}
-	return $length;
-}
-
-function read_body($ch, $string) {
-	global $fout, $file_size, $downloaded, $counter;
-	$length = strlen($string);
-	$downloaded += intval($length);
-	$downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
-	$downloadProgress = 100 - $downloadProgress;
-	/*
-	$a = $file_size;
-	$b = $downloaded;
-	$c = $downloadProgress;
-	$text = "  Download Status\\n";
-	$text .= "---------------------------------\\n";
-	$text .= "  File size  : {$a}\\n";
-	$text .= "  Downloaded : {$b}\\n";
-	$text .= "  Percent    : {$c}%\\n";
-	$text .= "---------------------------------\\n";
-	*/
-	$counter++;
-	if($counter > 150) {
-		$tostatus = $static_status . $downloadProgress;
-		update_status($tostatus);
-		update_progress_bar($downloadProgress);
-		$counter = 0;
-	}
-	fwrite($fout, $string);
-	return $length;
-}
-
 ?>

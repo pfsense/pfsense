@@ -500,4 +500,68 @@ function update_if_changed($varname, & $orig, $new) {
 	return false;
 }
 
+function download_file_with_progress_bar($url_file, $destination_file) {
+        global $ch, $fout, $file_size, $downloaded, $counter;
+        $file_size  = 1;
+        $downloaded = 1;
+        /* open destination file */
+        $fout = fopen($destination_file, "wb");
+                
+        /*
+                Originally by Author: Keyvan Minoukadeh
+                Modified by Scott Ullrich to return Content-Length size
+        */
+                        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url_file);
+        curl_setopt($ch, CURLOPT_HEADERFUNCTION, 'read_header');
+        curl_setopt($ch, CURLOPT_WRITEFUNCTION, 'read_body');
+        curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
+                
+        curl_exec($ch);
+        fclose($fout);
+        return 1;
+
+        if ($error = curl_error($ch)) {
+            return -1;
+        }
+}
+
+function read_header($ch, $string) {
+        global $file_size, $ch, $fout;
+        $length = strlen($string);
+        ereg("(Content-Length:) (.*)", $string, $regs);
+        if($regs[2] <> "") {
+                $file_size = intval($regs[2]);
+        }
+        return $length;
+}
+
+function read_body($ch, $string) {
+        global $fout, $file_size, $downloaded, $counter;
+        $length = strlen($string);
+        $downloaded += intval($length);
+        $downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
+        $downloadProgress = 100 - $downloadProgress;
+        /*
+        $a = $file_size;
+        $b = $downloaded;
+        $c = $downloadProgress;
+        $text = "  Download Status\\n";
+        $text .= "---------------------------------\\n";
+        $text .= "  File size  : {$a}\\n";
+        $text .= "  Downloaded : {$b}\\n";
+        $text .= "  Percent    : {$c}%\\n";
+        $text .= "---------------------------------\\n";
+        */
+        $counter++;
+        if($counter > 150) {
+                $tostatus = $static_status . $downloadProgress;
+                update_status($tostatus);
+                update_progress_bar($downloadProgress);
+                $counter = 0;
+        }
+        fwrite($fout, $string);
+        return $length;
+}
 ?>

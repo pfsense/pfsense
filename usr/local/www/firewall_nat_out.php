@@ -227,7 +227,7 @@ if (isset($_POST['del_x'])) {
                 <tr valign="top" id="fr<?=$nnats;?>">
                   <td class="listt"><input type="checkbox" id="frc<?=$nnats;?>" name="rule[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$nnats;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
                   <td class="listt" align="center"></td>
-                  <td class="listlr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>">
+                  <td class="listlr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
 					if (!$natent['interface'] || ($natent['interface'] == "wan"))
 					  	echo "WAN";
@@ -236,10 +236,10 @@ if (isset($_POST['del_x'])) {
 					?>
                                         &nbsp;
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>">
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?=$natent['source']['network'];?>
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>">
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
                       if (!$natent['sourceport'])
                           echo "*";
@@ -247,7 +247,7 @@ if (isset($_POST['del_x'])) {
                           echo $natent['sourceport'];
                     ?>
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>">
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
                       if (isset($natent['destination']['any']))
                           echo "*";
@@ -258,7 +258,7 @@ if (isset($_POST['del_x'])) {
                       }
                     ?>
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>">
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
                       if (!$natent['natport'])
                           echo "*";
@@ -266,7 +266,7 @@ if (isset($_POST['del_x'])) {
                           echo $natent['natport'];
                     ?>
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>">
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
                       if (!$natent['target'])
                           echo "*";
@@ -274,7 +274,7 @@ if (isset($_POST['del_x'])) {
                           echo $natent['target'];
                     ?>
                   </td>
-                  <td class="listbg">
+                  <td class="listbg"  onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <font color="#FFFFFF"><?=htmlspecialchars($natent['descr']);?>&nbsp;
                   </td>
                   <td class="list" valign="middle" nowrap>

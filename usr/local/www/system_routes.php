@@ -126,20 +126,20 @@ if ($_GET['act'] == "del") {
 				</tr>
 			  <?php $i = 0; foreach ($a_routes as $route): ?>
                 <tr>
-                  <td class="listlr">
+                  <td class="listlr" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
                     <?php
 				  $iflabels = array('lan' => 'LAN', 'wan' => 'WAN', 'pptp' => 'PPTP');
 				  for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
 				  	$iflabels['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
 				  echo htmlspecialchars($iflabels[$route['interface']]); ?>
                   </td>
-                  <td class="listr">
+                  <td class="listr" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
                     <?=strtolower($route['network']);?>
                   </td>
-                  <td class="listr">
+                  <td class="listr" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
                     <?=strtolower($route['gateway']);?>
                   </td>
-                  <td class="listbg">
+                  <td class="listbg" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
                     <font color="#FFFFFF"><?=htmlspecialchars($route['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list"> <a href="system_routes_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a>

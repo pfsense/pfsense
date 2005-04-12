@@ -103,10 +103,10 @@ if ($_GET['act'] == "del") {
 				</tr>
 			  <?php $i = 0; foreach ($a_secret as $secretent): ?>
                 <tr> 
-                  <td class="listlr">
+                  <td class="listlr" ondblclick="document.location='vpn_pptp_users_edit.php?id=<?=$i;?>';">
                     <?=htmlspecialchars($secretent['name']);?>
                   </td>
-                  <td class="listr">
+                  <td class="listr" ondblclick="document.location='vpn_pptp_users_edit.php?id=<?=$i;?>';">
                     <?=htmlspecialchars($secretent['ip']);?>&nbsp;
                   </td>
                   <td class="list" nowrap>

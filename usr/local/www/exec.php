@@ -209,7 +209,7 @@ if (!isBlank($_POST['txtCommand'])) {
 
 ?>
 
-<form action="<?=$ScriptName ?>" method="POST" enctype="multipart/form-data" name="frmExecPlus" onSubmit="return frmExecPlus_onSubmit( this );">
+<form action="exec.php" method="POST" enctype="multipart/form-data" name="frmExecPlus" onSubmit="return frmExecPlus_onSubmit( this );">
   <table>
     <tr>
       <td class="label" align="right">Command:</td>

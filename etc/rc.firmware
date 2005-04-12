@@ -107,13 +107,13 @@ esac
 binary_update() {
 	TGZ=$1
 	mkdir /tmp/patched
-	cd /tmp/patched
+	cd /tmp
 	for i in `tar tzf $TGZ | egrep -v "(^\./\.*/$|^\./$|.md5)"`;
 	 do (
 	   echo "Working on ${i}";
 	   /usr/bin/tar xvzf ${TGZ} ${i} ${i}.old_file_md5 ${i}.new_patch_md5 ${i}.new_file_md5;
-	   /usr/local/bin/bspatch /${i} /tmp/${i} /tmp/patched/${i};
-	   OLD_FILE_MD5=`cat /tmp/${i}.old_file_md5`;
+	   /usr/local/bin/bspatch /${i} /tmp/patched/${i} /tmp/${i};
+	   OLD_FILE_MD5=`cat /tmp/patched/${i}.old_file_md5`;
 	   NEW_PATCH_MD5=`cat /tmp/${i}.new_patch_md5`;
 	   NEW_FILE_MD5=`cat /tmp/${i}.new_file_md5`;
 	   PATCHED_MD5=`/sbin/md5 -q /tmp/patched/${i}`;

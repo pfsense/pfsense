@@ -100,7 +100,7 @@ if ($_GET['act'] == "del") {
     <td class="tabcont">
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-				  <td width="10%" class="listhdrr">Interface</td>
+		  <td width="10%" class="listhdrr">Interface</td>
                   <td width="20%" class="listhdrr">External IP</td>
                   <td width="20%" class="listhdrr">Internal IP</td>
                   <td width="40%" class="listhdr">Description</td>
@@ -108,7 +108,7 @@ if ($_GET['act'] == "del") {
 				</tr>
 			  <?php $i = 0; foreach ($a_1to1 as $natent): ?>
                 <tr>
-				  <td class="listlr">
+		  <td class="listlr" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
                   <?php
 					if (!$natent['interface'] || ($natent['interface'] == "wan"))
 						echo "WAN";
@@ -116,15 +116,15 @@ if ($_GET['act'] == "del") {
 						echo htmlspecialchars($config['interfaces'][$natent['interface']]['descr']);
 				  ?>
                   </td>
-                  <td class="listr">
+                  <td class="listr" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
                     <?php echo $natent['external'];
 					if ($natent['subnet']) echo "/" . $natent['subnet']; ?>
                   </td>
-                  <td class="listr">
+                  <td class="listr" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
                     <?php echo $natent['internal'];
 					if ($natent['subnet']) echo "/" . $natent['subnet']; ?>
                   </td>
-                  <td class="listbg">
+                  <td class="listbg" ondblclick="document.location='firewall_nat_1to1_edit.php?id=<?=$i;?>';">
                     <font color="#ffffff"><?=htmlspecialchars($natent['descr']);?>&nbsp;
                   </td>
                   <td class="list" nowrap>

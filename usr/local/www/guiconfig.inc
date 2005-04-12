@@ -571,7 +571,7 @@ function read_body($ch, $string) {
 }
 
 function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 'http://ftp2.freebsd.org/pub/FreeBSD/ports/i386/packages-5-stable/Latest') {
-	global $static_status, $static_output, $g;
+	global $static_status, $static_output, $g, $fd_log;
 	$pkg_extension = strrchr($filename, '.');
 	$static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $pkgname . " ";
 	$fetchto = "/tmp/apkg_" . $pkgname . $pkg_extension;
@@ -591,8 +591,8 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 			if($is_installed[0] == "") pkg_fetch_recursive($working_depend[0], $depend_filename, $dependlevel + 1);
 		}
         }
-	mwexec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_add {$fetchto}");
+	exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_add {$fetchto}", $pkgaddout);
+	fwrite($fd_log, $pkgname . print_r($pkgaddout, true) . "\n");
 	return true;
 }
-
 ?>

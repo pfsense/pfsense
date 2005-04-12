@@ -330,7 +330,7 @@ foreach ($packages_to_install as $id) {
     /*
      * parse the config file for this package and install neededtext items.
      *
-    */
+     */
     if(file_exists("/usr/local/pkg/" . $pkgent['name'] . ".xml")) {
                 $package_conf = parse_xml_config_pkg("/usr/local/pkg/" . $pkgent['name'] . ".xml", "packagegui");
                 if($package_conf['modify_system']['item'] <> "") {
@@ -356,7 +356,7 @@ foreach ($packages_to_install as $id) {
 		    $afn_count = count($package_conf['additional_files_needed']) -1;
                     foreach($package_conf['additional_files_needed'] as $afn) {
                         $filename = get_filename_from_url($afn['item'][0]);
-                        fwrite($fd_log, "Downloading additional files needed for package " . $filename . " ...\n");
+                        fwrite($fd_log, "Downloading additional files needed for package " . $filename . "...\n");
 			if ($i == $afn_count) {
 				$static_orig = $static_output . $filename . ".\n";
 			} else {

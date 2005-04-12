@@ -212,7 +212,7 @@ if ($_GET['act'] == "del") {
                       <tr valign="top" id="fr<?=$nrules;?>">
                         <td class="listt"><input type="checkbox" id="frc<?=$nrules;?>" name="rule[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$nrules;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
                         <td class="listt" align="center"></td>
-                        <td class="listlr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>">
+                        <td class="listlr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_shaper_edit.php?id=<?=$i;?>';">
                           <?php
 				  $dis = "";
 				  if (isset($shaperent['disabled'])) {
@@ -235,20 +235,20 @@ if ($_GET['act'] == "del") {
 				  echo "</a>" . $textse;;
 				  ?>
                         </td>
-                        <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>">
+                        <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_shaper_edit.php?id=<?=$i;?>';">
                           <?=$textss;?><?php if (isset($shaperent['protocol'])) echo strtoupper($shaperent['protocol']); else echo "*"; ?><?=$textse;?>
                         </td>
-                        <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>"><?=$textss;?><?php echo htmlspecialchars(pprint_address($shaperent['source'])); ?>
+                        <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_shaper_edit.php?id=<?=$i;?>';"><?=$textss;?><?php echo htmlspecialchars(pprint_address($shaperent['source'])); ?>
 						<?php if ($shaperent['source']['port']): ?><br>
 						Port: <?=htmlspecialchars(pprint_port($shaperent['source']['port'])); ?>
 						<?php endif; ?><?=$textse;?>
                         </td>
-                        <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>"><?=$textss;?><?php echo htmlspecialchars(pprint_address($shaperent['destination'])); ?>
+                        <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_shaper_edit.php?id=<?=$i;?>';"><?=$textss;?><?php echo htmlspecialchars(pprint_address($shaperent['destination'])); ?>
 						<?php if ($shaperent['destination']['port']): ?><br>
 						Port: <?=htmlspecialchars(pprint_port($shaperent['destination']['port'])); ?>
 						<?php endif; ?><?=$textse;?>
                         </td>
-                        <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>"><?=$textss;?>
+                        <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_shaper_edit.php?id=<?=$i;?>';"><?=$textss;?>
                           <?php
 							if (isset($shaperent['targetqueue'])) {
 								$desc = htmlspecialchars($shaperent['targetqueue']);
@@ -256,7 +256,7 @@ if ($_GET['act'] == "del") {
 							}
 						  ?><?=$textse;?>
                         </td>
-                        <td class="listbg"><font color="white">
+                        <td class="listbg" onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_shaper_edit.php?id=<?=$i;?>';"><font color="white">
                           <?=$textss;?><?=htmlspecialchars($shaperent['descr']);?><?=$textse;?>
                           &nbsp; </td>
                         <td valign="middle" nowrap class="list"> <a href="firewall_shaper_edit.php?id=<?=$i;?>"><img src="e.gif" title="edit rule" width="17" height="17" border="0"></a>

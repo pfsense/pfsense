@@ -160,7 +160,7 @@ if ($_GET['act'] == "del") {
 					}
 				?>
                 <tr valign="top">
-                  <td nowrap class="listlr"><?=$spans;?>
+                  <td nowrap class="listlr" ondblclick="document.location='vpn_ipsec_edit.php?id=<?=$i;?>';"><?=$spans;?>
                     <?php	if ($ipsecent['local-subnet']['network'])
 								echo strtoupper($ipsecent['local-subnet']['network']);
 							else
@@ -169,7 +169,7 @@ if ($_GET['act'] == "del") {
                     <br>
                     <?=$ipsecent['remote-subnet'];?>
                   <?=$spane;?></td>
-                  <td class="listr"><?=$spans;?>
+                  <td class="listr" ondblclick="document.location='vpn_ipsec_edit.php?id=<?=$i;?>';"><?=$spans;?>
 				  <?php if ($ipsecent['interface']) {
 							$iflabels = array('lan' => 'LAN', 'wan' => 'WAN');
 							  for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
@@ -181,16 +181,16 @@ if ($_GET['act'] == "del") {
 						echo $if . "<br>" . $ipsecent['remote-gateway'];
 					?>
                   <?=$spane;?></td>
-                  <td class="listr"><?=$spans;?>
+                  <td class="listr" ondblclick="document.location='vpn_ipsec_edit.php?id=<?=$i;?>';"><?=$spans;?>
 				    <?=$ipsecent['p1']['mode'];?>
                   <?=$spane;?></td>
-                  <td class="listr"><?=$spans;?>
+                  <td class="listr" ondblclick="document.location='vpn_ipsec_edit.php?id=<?=$i;?>';"><?=$spans;?>
 				    <?=$p1_ealgos[$ipsecent['p1']['encryption-algorithm']];?>
                   <?=$spane;?></td>
-                  <td class="listr"><?=$spans;?>
+                  <td class="listr" ondblclick="document.location='vpn_ipsec_edit.php?id=<?=$i;?>';"><?=$spans;?>
 				    <?=$p1_halgos[$ipsecent['p1']['hash-algorithm']];?>
                   <?=$spane;?></td>
-                  <td class="listbg"><?=$spans;?>
+                  <td class="listbg" ondblclick="document.location='vpn_ipsec_edit.php?id=<?=$i;?>';"><?=$spans;?>
                     <font color="#FFFFFF"><?=htmlspecialchars($ipsecent['descr']);?>&nbsp;
                   <?=$spane;?></td>
                   <td valign="middle" nowrap class="list">

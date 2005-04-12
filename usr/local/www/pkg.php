@@ -178,7 +178,7 @@ if ($pkg['tabs'] <> "") {
 			if($pkg['adddeleteeditpagefields']['columnitem'] <> "")
 				foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
 				   ?>
-					<td class="listlr">
+					<td class="listlr" ondblclick="document.location='pkg_edit.php?xml=<?=$xml?>&act=edit&id=<?=$i;?>';">
 						<?php
 						    $toeval="\$fieldname = \$ip['" . xml_safe_fieldname($column['fieldname']) . "'];";
 						    eval($toeval);

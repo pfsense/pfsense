@@ -84,10 +84,10 @@ if ($_GET['act'] == "del") {
 				</tr>
 			  <?php $i = 0; foreach ($a_secret as $secretent): ?>
                 <tr> 
-                  <td class="listlr">
+                  <td class="listlr" ondblclick="document.location='vpn_ipsec_keys_edit.php?id=<?=$i;?>';">
                     <?=htmlspecialchars($secretent['ident']);?>
                   </td>
-                  <td class="listr">
+                  <td class="listr" ondblclick="document.location='vpn_ipsec_keys_edit.php?id=<?=$i;?>';">
                     <?=htmlspecialchars($secretent['pre-shared-key']);?>
                   </td>
                   <td class="list" nowrap>

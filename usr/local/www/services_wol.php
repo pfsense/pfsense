@@ -135,17 +135,17 @@ Click the MAC address to wake up a computer. <br>
 				</tr>
 			  <?php $i = 0; foreach ($a_wol as $wolent): ?>
                 <tr>
-                  <td class="listlr">
+                  <td class="listlr" ondblclick="document.location='services_wol_edit.php?id=<?=$i;?>';">
                     <?php if ($wolent['interface'] == "lan")
 							   echo "LAN";
 						   else
 						       echo $config['interfaces'][$wolent['interface']]['descr'];
 					?>&nbsp;
                   </td>
-                  <td class="listr">
+                  <td class="listr" ondblclick="document.location='services_wol_edit.php?id=<?=$i;?>';">
                     <a href="?mac=<?=$wolent['mac'];?>&if=<?=$wolent['interface'];?>"><?=strtolower($wolent['mac']);?></a>&nbsp;
                   </td>
-                  <td class="listbg">
+                  <td class="listbg" ondblclick="document.location='services_wol_edit.php?id=<?=$i;?>';">
                     <font color="#FFFFFF"><?=htmlspecialchars($wolent['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list">

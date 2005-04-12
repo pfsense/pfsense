@@ -33,6 +33,7 @@ binary_update() {
 		echo "${i} file does not match intended final md5." >> /tmp/errors;
 	   fi
 	   /bin/rm /tmp/patched/${i}
+	   /bin/rm /tmp/patches/${i}
 	   /bin/rm /tmp/patches/${i}.*;
 	   );
 	done

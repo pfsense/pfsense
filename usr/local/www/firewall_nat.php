@@ -173,7 +173,7 @@ if (isset($_POST['del_x'])) {
                 <tr valign="top" id="fr<?=$nnats;?>">
                   <td class="listt"><input type="checkbox" id="frc<?=$nnats;?>" name="rule[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$nnats;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
                   <td class="listt" align="center"></td>
-                  <td class="listlr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>">
+                  <td class="listlr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
                     <?php
 			if (!$natent['interface'] || ($natent['interface'] == "wan"))
 				echo "WAN";
@@ -181,10 +181,10 @@ if (isset($_POST['del_x'])) {
 				echo "<font color=\"#FFFFFF\">" . htmlspecialchars($config['interfaces'][$natent['interface']]['descr']);
 		    ?>
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>">
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
                     <?=strtoupper($natent['protocol']);?>
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>">
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
                     <?php
 						list($beginport, $endport) = split("-", $natent['external-port']);
 						if ((!$endport) || ($beginport == $endport)) {
@@ -195,13 +195,13 @@ if (isset($_POST['del_x'])) {
 							echo $beginport . " - " . $endport;
 				  ?>
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>">
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
                     <?=$natent['target'];?>
 					<?php if ($natent['external-address'])
 						echo "<br>(ext.: " . $natent['external-address'] . ")";
 					?>
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>">
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
                     <?php if ((!$endport) || ($beginport == $endport)) {
 				  			echo $natent['local-port'];
 							if ($wkports[$natent['local-port']])
@@ -211,7 +211,7 @@ if (isset($_POST['del_x'])) {
 								($natent['local-port']+$endport-$beginport);
 				  ?>
                   </td>
-                  <td class="listbg"><font color="#FFFFFFF">
+                  <td class="listbg" onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';"><font color="#FFFFFFF">
                     <?=htmlspecialchars($natent['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" class="list" nowrap>

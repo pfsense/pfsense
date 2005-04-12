@@ -234,14 +234,14 @@ END;
 		foreach($config['users'] as $username => $user){
 ?>
 		<tr>
-                  <td class="listlr">
+                  <td class="listlr" ondblclick="document.location='services_captiveportal_users_edit.php?act=edit&username=<?=$username;?>';">
                     <?php echo $username; ?>&nbsp;
                   </td>
-                  <td class="listr">
+                  <td class="listr" ondblclick="document.location='services_captiveportal_users_edit.php?act=edit&username=<?=$username;?>';">
                     <?php echo $user['fullname']; ?>&nbsp;
                   </td>
-                  <td class="listbg">
-                    <?php echo $user['expirationdate']; ?>&nbsp;
+                  <td class="listbg" ondblclick="document.location='services_captiveportal_users_edit.php?act=edit&username=<?=$username;?>';">
+                    <font color="white"><?php echo $user['expirationdate']; ?>&nbsp;</font>
                   </td>
                   <td valign="middle" nowrap class="list">
                     <table border="0" cellspacing="0" cellpadding="1">

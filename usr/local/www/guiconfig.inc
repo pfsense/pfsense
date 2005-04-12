@@ -591,7 +591,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 			if($is_installed[0] == "") pkg_fetch_recursive($working_depend[0], $depend_filename, $dependlevel + 1);
 		}
         }
-	exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_add {$fetchto}", $pkgaddout);
+	exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_add -v {$fetchto}", $pkgaddout);
 	fwrite($fd_log, $pkgname . print_r($pkgaddout, true) . "\n");
 	return true;
 }

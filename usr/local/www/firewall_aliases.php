@@ -100,10 +100,10 @@ if ($_GET['act'] == "del") {
 </tr>
 	  <?php $i = 0; foreach ($a_aliases as $alias): ?>
 <tr>
-  <td class="listlr">
+  <td class="listlr" ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
     <?=htmlspecialchars($alias['name']);?>
   </td>
-  <td class="listr">
+  <td class="listr" ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
       <?php
 	$address = htmlspecialchars($alias['address']);
 	$address = explode(" ", $address);
@@ -115,7 +115,7 @@ if ($_GET['act'] == "del") {
 	}
     ?>
   </td>
-  <td class="listbg">
+  <td class="listbg" ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
     <font color="#FFFFFF">
     <?=htmlspecialchars($alias['descr']);?>&nbsp;
   </td>

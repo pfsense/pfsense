@@ -119,10 +119,10 @@ if ($_GET['act'] == "del") {
 				</tr>
 			  <?php $i = 0; foreach ($a_snat as $natent): ?>
                 <tr>
-                  <td class="listlr">
+                  <td class="listlr" ondblclick="document.location='firewall_nat_server_edit.php?id=<?=$i;?>';">
                     <?=$natent['ipaddr'];?>
                   </td>
-                  <td class="listbg">
+                  <td class="listbg" ondblclick="document.location='firewall_nat_server_edit.php?id=<?=$i;?>';">
                     <font color="#FFFFFF"><?=htmlspecialchars($natent['descr']);?>&nbsp;
                   </td>
                   <td class="list" nowrap>

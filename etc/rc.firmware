@@ -20,8 +20,12 @@ binary_update() {
 	for i in `tar tzf $TGZ | egrep -v "(^\./\.*/$|^\./$|.md5)"`;
 	 do (
 	   echo "Working on ${i}";
+	   # Untar patch file and md5 files
 	   /usr/bin/tar xvzf ${TGZ} ${i} ${i}.old_file_md5 ${i}.new_patch_md5 ${i}.new_file_md5;
+
+	   # Apply patch - oldfile newfile patchfile
 	   /usr/local/bin/bspatch /${i} /tmp/patched/${i} /tmp/patches/${i};
+
 	   OLD_FILE_MD5=`cat /tmp/patches/${i}.old_file_md5`;
 	   NEW_PATCH_MD5=`cat /tmp/patches/${i}.new_patch_md5`;
 	   NEW_FILE_MD5=`cat /tmp/patches/${i}.new_file_md5`;
@@ -32,6 +36,7 @@ binary_update() {
 		echo "${i} file does not match intended final md5.";
 		echo "${i} file does not match intended final md5." >> /tmp/errors;
 	   fi
+
 	   /bin/rm /tmp/patched/${i}
 	   /bin/rm /tmp/patches/${i}
 	   /bin/rm /tmp/patches/${i}.*;

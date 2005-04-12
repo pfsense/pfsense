@@ -13,6 +13,31 @@ if [ $1 != "upgrade" ]; then
 	/sbin/umount -f /ftmp > /dev/null 2>&1
 fi
 
+binary_update() {
+	TGZ=$1
+	mkdir /tmp/patched
+	cd /tmp
+	for i in `tar tzf $TGZ | egrep -v "(^\./\.*/$|^\./$|.md5)"`;
+	 do (
+	   echo "Working on ${i}";
+	   cd /tmp/patched && /usr/bin/tar xvzf ${TGZ} ${i} ${i}.old_file_md5 ${i}.new_patch_md5 ${i}.new_file_md5;
+	   /usr/local/bin/bspatch /${i} /tmp/patched/${i} /tmp/${i};
+	   OLD_FILE_MD5=`cat /tmp/patched/${i}.old_file_md5`;
+	   NEW_PATCH_MD5=`cat /tmp/patched/${i}.new_patch_md5`;
+	   NEW_FILE_MD5=`cat /tmp/patched/${i}.new_file_md5`;
+	   PATCHED_MD5=`/sbin/md5 -q /tmp/patched/${i}`;
+	   if [ "$PATCHED_MD5" = "$NEW_FILE_MD5" ]; then
+		/bin/mv /tmp/patched/${i} /${i};
+	   else
+		echo "${i} file does not match intended final md5.";
+		echo "${i} file does not match intended final md5." >> /tmp/errors;
+	   fi
+	   /bin/rm /tmp/patched/${i}.*;
+	   /bin/rm /tmp/patched/${i}
+	   );
+	done
+}
+
 case $1 in
 enable)
 	/sbin/mount_mfs -s 15360 -T qp120at -b 8192 -f 1024 dummy /ftmp \
@@ -103,28 +128,3 @@ pfSense_kernel)
 	binary_update /tmp/latest_kernel.tgz
 	;;
 esac
-
-binary_update() {
-	TGZ=$1
-	mkdir /tmp/patched
-	cd /tmp
-	for i in `tar tzf $TGZ | egrep -v "(^\./\.*/$|^\./$|.md5)"`;
-	 do (
-	   echo "Working on ${i}";
-	   /usr/bin/tar xvzf ${TGZ} ${i} ${i}.old_file_md5 ${i}.new_patch_md5 ${i}.new_file_md5;
-	   /usr/local/bin/bspatch /${i} /tmp/patched/${i} /tmp/${i};
-	   OLD_FILE_MD5=`cat /tmp/patched/${i}.old_file_md5`;
-	   NEW_PATCH_MD5=`cat /tmp/${i}.new_patch_md5`;
-	   NEW_FILE_MD5=`cat /tmp/${i}.new_file_md5`;
-	   PATCHED_MD5=`/sbin/md5 -q /tmp/patched/${i}`;
-	   if [ "$PATCHED_MD5" = "$NEW_FILE_MD5" ]; then
-		/bin/mv /tmp/patched/${i} /${i};
-	   else
-		echo "${i} file does not match intended final md5.";
-		echo "${i} file does not match intended final md5." >> /tmp/errors;
-	   fi
-	   /bin/rm /tmp/patched/${i}.*;
-	   /bin/rm /tmp/patched/${i}
-	   );
-	done
-}

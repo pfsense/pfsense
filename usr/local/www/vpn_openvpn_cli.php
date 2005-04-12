@@ -119,17 +119,17 @@ if ($_GET['act'] == "del") {
 	?>
 	
 	<tr>
-	  <td class="listlr"><?=$spans;?>
+	  <td class="listlr" ondblclick="document.location='vpn_openvpn_cli_edit.php?id=<?=$i;?>';"><?=$spans;?>
 		<?= $client['if'].":".$client['cport'];?>	
 	  <?=$spane;?></td>
-	  <td class="listr"><?=$spans;?>
+	  <td class="listr" ondblclick="document.location='vpn_openvpn_cli_edit.php?id=<?=$i;?>';"><?=$spans;?>
 		<?= $client['saddr'].":".$client['sport'];?>
 	  <?=$spane;?></td>
-	  <td align="middle" class="listr"><?=$spans;?>
+	  <td align="middle" class="listr" ondblclick="document.location='vpn_openvpn_cli_edit.php?id=<?=$i;?>';"><?=$spans;?>
 	  	<?= $client['ver'];?>
 	  <?=$spane;?></td>
-	   <td class="listbg"><?=$spans;?>
-	  	<?= $client['descr'];?>
+	   <td class="listbg" ondblclick="document.location='vpn_openvpn_cli_edit.php?id=<?=$i;?>';"><?=$spans;?>
+	  	<font color="white"><?= $client['descr'];?></font>
 	  <?=$spane;?></td>
 	  <td valign="middle" nowrap class="list">
             <table border="0" cellspacing="0" cellpadding="1">

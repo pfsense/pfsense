@@ -142,16 +142,16 @@ if ($_GET['act'] == "del") {
 				</tr>
 			  <?php $i = 0; foreach ($a_hosts as $hostent): ?>
                 <tr>
-                  <td class="listlr">
+                  <td class="listlr" ondblclick="document.location='services_dnsmasq_edit.php?id=<?=$i;?>';">
                     <?=strtolower($hostent['host']);?>&nbsp;
                   </td>
-                  <td class="listr">
+                  <td class="listr" ondblclick="document.location='services_dnsmasq_edit.php?id=<?=$i;?>';">
                     <?=strtolower($hostent['domain']);?>&nbsp;
                   </td>
-                  <td class="listr">
+                  <td class="listr" ondblclick="document.location='services_dnsmasq_edit.php?id=<?=$i;?>';">
                     <?=$hostent['ip'];?>&nbsp;
                   </td>
-                  <td class="listbg">
+                  <td class="listbg" ondblclick="document.location='services_dnsmasq_edit.php?id=<?=$i;?>';">
                     <font color="#FFFFFF"><?=htmlspecialchars($hostent['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list">

@@ -333,7 +333,7 @@ The default is to use the IP of the firewall as the gateway.  Specify an alterna
                     <?=htmlspecialchars($mapent['ipaddr']);?>&nbsp;
                   </td>
                   <td class="listbg">
-                    <?=htmlspecialchars($mapent['descr']);?>&nbsp;
+                    <font color="#FFFFFFF"><?=htmlspecialchars($mapent['descr']);?>&nbsp;</font>
                   </td>
                   <td valign="middle" nowrap class="list">
                     <table border="0" cellspacing="0" cellpadding="1">

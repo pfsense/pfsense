@@ -326,13 +326,13 @@ The default is to use the IP of the firewall as the gateway.  Specify an alterna
 				</tr>
 			  <?php $i = 0; foreach ($a_maps as $mapent): ?>
                 <tr>
-                  <td class="listlr">
+                  <td class="listlr" ondblclick="document.location='services_dhcp_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
                     <?=htmlspecialchars($mapent['mac']);?>
                   </td>
-                  <td class="listr">
+                  <td class="listr" ondblclick="document.location='services_dhcp_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
                     <?=htmlspecialchars($mapent['ipaddr']);?>&nbsp;
                   </td>
-                  <td class="listbg">
+                  <td class="listbg" ondblclick="document.location='services_dhcp_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
                     <font color="#FFFFFFF"><?=htmlspecialchars($mapent['descr']);?>&nbsp;</font>
                   </td>
                   <td valign="middle" nowrap class="list">

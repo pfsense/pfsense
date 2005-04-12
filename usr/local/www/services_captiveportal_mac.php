@@ -106,11 +106,11 @@ if ($_GET['act'] == "del") {
 	</tr>
   <?php $i = 0; foreach ($a_passthrumacs as $mac): ?>
 	<tr>
-	  <td class="listlr">
+	  <td class="listlr" ondblclick="document.location='services_captiveportal_mac_edit.php?id=<?=$i;?>';">
 		<?=strtolower($mac['mac']);?>
 	  </td>
-	  <td class="listbg">
-		<?=htmlspecialchars($mac['descr']);?>&nbsp;
+	  <td class="listbg" ondblclick="document.location='services_captiveportal_mac_edit.php?id=<?=$i;?>';">
+		<font color="white"><?=htmlspecialchars($mac['descr']);?>&nbsp;</font>
 	  </td>
 	  <td valign="middle" nowrap class="list">
             <table border="0" cellspacing="0" cellpadding="1">

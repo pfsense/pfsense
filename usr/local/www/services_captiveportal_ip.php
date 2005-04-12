@@ -106,7 +106,7 @@ if ($_GET['act'] == "del") {
 	</tr>
   <?php $i = 0; foreach ($a_allowedips as $ip): ?>
 	<tr>
-	  <td class="listlr">
+	  <td class="listlr" ondblclick="document.location='services_captiveportal_ip_edit.php?id=<?=$i;?>';">
 		<?php if($ip['dir'] == "to")
 			echo "any <img src=\"in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\">";
 		?>
@@ -115,8 +115,8 @@ if ($_GET['act'] == "del") {
 			echo "<img src=\"in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\"> any";
 		?>
 	  </td>
-	  <td class="listbg">
-		<?=htmlspecialchars($ip['descr']);?>&nbsp;
+	  <td class="listbg" ondblclick="document.location='services_captiveportal_ip_edit.php?id=<?=$i;?>';">
+		<font color="white"><?=htmlspecialchars($ip['descr']);?>&nbsp;</font>
 	  </td>
 	  <td valign="middle" nowrap class="list">
             <table border="0" cellspacing="0" cellpadding="1">

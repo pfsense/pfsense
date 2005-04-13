@@ -1598,10 +1598,12 @@ EOD;
 
 	if (isset($config['filter']['rule']))
 		foreach ($config['filter']['rule'] as $rule) {
+			$line = "";
 			$line = generate_user_filter_rule($rule, $optcfg);
 
 			// label
-                        if($rule['descr'] <> "") $line .= "label \"USER_RULE: " . $rule['descr'] . "\" ";
+                        if($rule['descr'] <> "" and $line <> "")
+				$line .= "label \"USER_RULE: " . $rule['descr'] . "\" ";
 
 			$line .= "\n";
 

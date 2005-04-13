@@ -168,6 +168,12 @@ foreach ($packages_to_install as $id) {
     $pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
 
     /*
+     * Make sure that this package isn't already installed.
+     */
+
+	if(get_pkg_id($pkg_config['packages']['package'][$id]['name']) == -1) continue;
+
+    /*
      * install the package
      */
 
@@ -305,7 +311,14 @@ foreach ($packages_to_install as $id) {
 
     $config = parse_xml_config("{$g['conf_path']}/config.xml", $g['xml_rootobj']);
 
-    $config['installedpackages']['package'][] = $pkgent;
+    $pkgid = get_pkg_id($pkgent['name']);
+
+    if($pkgid == -1) {
+        $config['installedpackages']['package'][] = $pkgent;
+    } else {
+	$static_output .= "Package already registered in config.xml!\n";
+	$config['installedpackages']['package'][$pkgid] = $pkgent; 
+    }
 
     if (isset($id) && $a_out[$id])
             $a_out[$id] = $pkgent;

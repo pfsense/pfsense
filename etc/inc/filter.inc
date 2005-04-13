@@ -993,7 +993,7 @@ function generate_user_filter_rule($rule, $optcfg) {
 		}
 		if ($rule['destination']['network'] && strstr($rule['destination']['network'], "opt")) {
 			if (!array_key_exists($rule['destination']['network'], $optcfg)) {
-				continue;
+				return;
 			}
 		}
 

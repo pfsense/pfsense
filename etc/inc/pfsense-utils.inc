@@ -930,28 +930,32 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 function rmdir_recursive($path,$follow_links=false) {
 	$to_do = glob($path);
 	if(!is_array($to_do)) {
-		$dir = opendir($path);
-		while ($entry = readdir($dir)) {
-			if (is_file("$path/$entry") || ((!$follow_links) && is_link("$path/$entry")))
-				unlink("$path/$entry");
-       			elseif (is_dir("$path/$entry") && $entry!='.' && $entry!='..')
-				rmdir_recursive("$path/$entry");
-		}
-		closedir($dir);
-		rmdir($path);
-		return;
-	} else {
-		foreach($to_do as $workingdir) { // Handle wildcards by foreaching.
-			$dir = opendir($workingdir);
+		if(file_exists($to_do)) {
+			$dir = opendir($path);
 			while ($entry = readdir($dir)) {
-                        if (is_file("$workingdir/$entry") || ((!$follow_links) && is_link("$workingdir/$entry")))
-                                unlink("$workingdir/$entry");
-                        elseif (is_dir("$workingdir/$entry") && $entry!='.' && $entry!='..')
-                                rmdir_recursive("$workingdir/$entry");
+				if (is_file("$path/$entry") || ((!$follow_links) && is_link("$path/$entry")))
+					unlink("$path/$entry");
+      	 			elseif (is_dir("$path/$entry") && $entry!='.' && $entry!='..')
+					rmdir_recursive("$path/$entry");
 			}
 			closedir($dir);
-			rmdir($workingdir);
-                }
+			rmdir($path);
+			return;
+		}
+	} else {
+		foreach($to_do as $workingdir) { // Handle wildcards by foreaching.
+			if(file_exists($workingdir)) {
+				$dir = opendir($workingdir);
+				while ($entry = readdir($dir)) {
+					if (is_file("$workingdir/$entry") || ((!$follow_links) && is_link("$workingdir/$entry")))
+					unlink("$workingdir/$entry");
+					elseif (is_dir("$workingdir/$entry") && $entry!='.' && $entry!='..')
+					rmdir_recursive("$workingdir/$entry");
+				}
+				closedir($dir);
+				rmdir($workingdir);
+                	}
+		}
 		return;
 	}
 	return;
@@ -1004,24 +1008,6 @@ function auto_upgrade() {
 	return;
 }
 
-function xmlrpc_value_to_php($value) {
-	if($value->kindOf() == 'array') {
-		$toreturn = array();
-		for($i= 0; $i < $value->arraysize(); $i++) {
-			$arrayval = $value->arraymem($i);
-			if($arrayval->kindOf() == 'array') {
-				$toreturn[] = xmlrpc_value_to_php($arrayval);
-			} else {
-				$toreturn[] = $arrayval->scalarval();	
-			}
-		}
-	} else {
-		$toreturn = $value->scalarval();
-	}
-	return $toreturn;
-}
-
-
 /*
  * check_firmware_version(): Check whether the current firmware installed is the most recently released.
  */
@@ -1043,7 +1029,12 @@ function check_firmware_version($return_php = true) {
 	if($resp->faultCode()) return -1;
         if($return_php == false) return $resp->serialize();
 	$raw_versions = $resp->value();
-	return xmlrpc_value_to_php($raw_versions);
+	$toreturn = array();
+	for($i = 0; $i < $raw_versions->arraysize(); $i++) {
+		$arrayval = $raw_versions->arraymem($i);
+		$toreturn[] = $arrayval->scalarval();
+	}
+	return $toreturn;
 }
 
 ?>

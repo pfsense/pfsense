@@ -1283,9 +1283,6 @@ function filter_rules_generate() {
 	$lanif = $lancfg['if'];
 	$wanif = get_real_wan_interface();
 
-	/* rule groups (optional interfaces: see below) */
-	$ifgroups = array("lan" => 100, "wan" => 200);
-
 	$lanip = $lancfg['ipaddr'];
 	$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
 	$lansn = $lancfg['subnet'];
@@ -1320,7 +1317,6 @@ function filter_rules_generate() {
 			}
 
 			$optcfg['opt' . $i] = $oic;
-			$ifgroups['opt' . $i] = ($i * 100) + 200;
 		}
 	}
 
@@ -1532,9 +1528,6 @@ EOD;
 
 	/* group heads for optional interfaces */
 	foreach ($optcfg as $on => $oc) {
-
-		$ingroup = $ifgroups[$on];
-
 		$ipfrules .= <<<EOD
 
 

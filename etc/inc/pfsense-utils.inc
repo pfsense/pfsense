@@ -1004,6 +1004,24 @@ function auto_upgrade() {
 	return;
 }
 
+function xmlrpc_value_to_php($value) {
+	if($value->kindOf() == 'array') {
+		$toreturn = array();
+		for($i= 0; $i < $value->arraysize(); $i++) {
+			$arrayval = $value->arraymem($i);
+			if($arrayval->kindOf() == 'array') {
+				$toreturn[] = xmlrpc_value_to_php($arrayval);
+			} else {
+				$toreturn[] = $arrayval->scalarval();	
+			}
+		}
+	} else {
+		$toreturn = $value->scalarval();
+	}
+	return $toreturn;
+}
+
+
 /*
  * check_firmware_version(): Check whether the current firmware installed is the most recently released.
  */
@@ -1025,12 +1043,7 @@ function check_firmware_version($return_php = true) {
 	if($resp->faultCode()) return -1;
         if($return_php == false) return $resp->serialize();
 	$raw_versions = $resp->value();
-	$toreturn = array();
-	for($i = 0; $i < $raw_versions->arraysize(); $i++) {
-		$arrayval = $raw_versions->arraymem($i);
-		$toreturn[] = $arrayval->scalarval();
-	}
-	return $toreturn;
+	return xmlrpc_value_to_php($raw_versions);
 }
 
 ?>

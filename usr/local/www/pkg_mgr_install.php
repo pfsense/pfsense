@@ -171,7 +171,7 @@ foreach ($packages_to_install as $id) {
      * Make sure that this package isn't already installed.
      */
 
-	if(get_pkg_id($pkg_config['packages']['package'][$id]['name']) == -1) continue;
+	if(get_pkg_id($pkg_config['packages']['package'][$id]['name']) != -1) continue;
 
     /*
      * install the package
@@ -470,9 +470,8 @@ foreach ($packages_to_install as $id) {
     $static_output .= "\nPackage installation successful.";
     update_output_window($static_output);
     fwrite($fd_log, "Package installation completed.\n");
-    log_error("Package " . $pkgent['name'] . " installation completed successfully.");
+    log_error("Package " . $pkgent['name'] . " installation completed successfully.\n");
     fwrite($fd_log, "Status window output:\n" . $static_output);
-    unlink_if_exists("/
 }
 
 // Delete all temporary package tarballs and staging areas.

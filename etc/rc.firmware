@@ -15,35 +15,37 @@ fi
 
 binary_update() {
 	TGZ=$1
-	rm /tmp/errors
-	mkdir /tmp/patched /tmp/patches
+	ERR_F="/tmp/errors"
+	rm ${ERR_F} 2>/dev/null
+	mkdir /tmp/patched /tmp/patches 2>>${ERR_F}
 	cd /tmp/patches
 	for i in `tar tvzf $TGZ | egrep -v "(^d|_md5)" | nawk '{print $9;}'`;
 	 do 
 	   FILE=`basename ${i}`
 	   echo "Working on ${i}"
 	   # Untar patch file and md5 files
-	   /usr/bin/tar xvzf ${TGZ} ${i} ${i}.old_file_md5 ${i}.new_patch_md5 ${i}.new_file_md5
+	   /usr/bin/tar xzf ${TGZ} ${i} ${i}.old_file_md5 ${i}.new_patch_md5 ${i}.new_file_md5 2>>${ERR_F}
 
 	   # Apply patch - oldfile newfile patchfile
-	   /usr/local/bin/bspatch /${i} /tmp/patched/${FILE} /tmp/patches/${i}
+	   /usr/local/bin/bspatch /${i} /tmp/patched/${FILE} /tmp/patches/${i} 2>>${ERR_F}
 
-	   OLD_FILE_MD5=`cat /tmp/patches/${i}.old_file_md5`
-	   NEW_PATCH_MD5=`cat /tmp/patches/${i}.new_patch_md5`
-	   NEW_FILE_MD5=`cat /tmp/patches/${i}.new_file_md5`
-	   PATCHED_MD5=`/sbin/md5 -q /tmp/patched/${FILE}`
+	   OLD_FILE_MD5=`cat /tmp/patches/${i}.old_file_md5 2>/dev/null`
+	   NEW_PATCH_MD5=`cat /tmp/patches/${i}.new_patch_md5 2>/dev/null`
+	   NEW_FILE_MD5=`cat /tmp/patches/${i}.new_file_md5 2>/dev/null`
+	   PATCHED_MD5=`/sbin/md5 -q /tmp/patched/${FILE} 2>/dev/null`
 
 	   if [ "$PATCHED_MD5" = "$NEW_PATCH_MD5" ]; then
-		/bin/cp  /tmp/patched/${FILE} /${i}
+		/usr/bin/install -S  /tmp/patched/${FILE} /${i}
 	   else
-		echo "${i} file does not match intended final md5."
-		echo "${i} file does not match intended final md5." >> /tmp/errors
+		#echo "${i} file does not match intended final md5."
+		echo "${i} file does not match intended final md5." >> ${ERR_F}
 	   fi
 
-	   /bin/rm /tmp/patched/${FILE}
-	   /bin/rm /tmp/patches/${i}
-	   /bin/rm /tmp/patches/${i}.*
+	   /bin/rm /tmp/patched/${FILE} >> ${ERR_F}
+	   /bin/rm /tmp/patches/${i} >> ${ERR_F}
+	   /bin/rm /tmp/patches/${i}.* >> ${ERR_F}
 	done
+	rm -rf /tmp/patched /tmp/patches >> ${ERR_F}
 }
 
 case $1 in

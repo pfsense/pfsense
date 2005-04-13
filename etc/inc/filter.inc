@@ -404,6 +404,36 @@ function filter_generate_aliases() {
 	return $aliases;
 }
 
+function generate_optcfg_array(& $optcfg) {
+        for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+                $oc = $config['interfaces']['opt' . $i];
+
+                if (isset($oc['enable']) && $oc['if']) {
+                        $oic = array();
+                        $oic['if'] = $oc['if'];
+
+                        if ($oc['bridge']) {
+                                if (!strstr($oc['bridge'], "opt") ||
+                                         isset($config['interfaces'][$oc['bridge']]['enable'])) {
+                                        if (is_ipaddr($config['interfaces'][$oc['bridge']]['ipaddr'])) {
+                                                $oic['ip'] = $config['interfaces'][$oc['bridge']]['ipaddr'];
+                                                $oic['sn'] = $config['interfaces'][$oc['bridge']]['subnet'];
+                                                $oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
+                                        }
+                                }
+                                $oic['bridge'] = 1;
+                        } else {
+                                $oic['ip'] = $oc['ipaddr'];
+                                $oic['sn'] = $oc['subnet'];
+                                $oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
+                        }
+
+                        $optcfg['opt' . $i] = $oic;
+                }
+        }
+}
+
+
 function filter_generate_altq_rules() {
         global $config, $g;
 
@@ -420,20 +450,7 @@ function filter_generate_altq_rules() {
 
         /* optional interfaces */
         $optcfg = array();
-
-        for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-                $oc = $config['interfaces']['opt' . $i];
-
-                if (isset($oc['enable']) && $oc['if']) {
-                        $oic = array();
-                        $oic['ip'] = $oc['ipaddr'];
-                        $oic['if'] = $oc['if'];
-                        $oic['sa'] = gen_subnet($oc['ipaddr'], $oc['subnet']);
-                        $oic['sn'] = $oc['subnet'];
-
-                        $optcfg['opt' . $i] = $oic;
-                }
-        }
+	generate_optcfg_array($optcfg);
 
         if ($pptpdcfg['mode'] == "server") {
                 $pptpip = $pptpdcfg['localip'];
@@ -1289,36 +1306,10 @@ function filter_rules_generate() {
 
 	/* optional interfaces */
 	$optcfg = array();
+	generate_optcfg_array($optcfg);
 
 	# BEGIN OF firewall rules
 	$ipfrules="anchor \"firewallrules\"\n";
-
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-		$oc = $config['interfaces']['opt' . $i];
-
-		if (isset($oc['enable']) && $oc['if']) {
-			$oic = array();
-			$oic['if'] = $oc['if'];
-
-			if ($oc['bridge']) {
-				if (!strstr($oc['bridge'], "opt") ||
-					 isset($config['interfaces'][$oc['bridge']]['enable'])) {
-					if (is_ipaddr($config['interfaces'][$oc['bridge']]['ipaddr'])) {
-						$oic['ip'] = $config['interfaces'][$oc['bridge']]['ipaddr'];
-						$oic['sn'] = $config['interfaces'][$oc['bridge']]['subnet'];
-						$oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
-					}
-				}
-				$oic['bridge'] = 1;
-			} else {
-				$oic['ip'] = $oc['ipaddr'];
-				$oic['sn'] = $oc['subnet'];
-				$oic['sa'] = gen_subnet($oic['ip'], $oic['sn']);
-			}
-
-			$optcfg['opt' . $i] = $oic;
-		}
-	}
 
 	if ($pptpdcfg['mode'] == "server") {
 		$pptpip = $pptpdcfg['localip'];

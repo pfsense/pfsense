@@ -138,7 +138,7 @@ $platform =		trim(file_get_contents('/etc/platform'));
 $firmware_version =	trim(file_get_contents('/etc/version'));
 $kernel_version =	trim(file_get_contents('/etc/version_kernel'));
 $base_version =		trim(file_get_contents('/etc/version_base'));
-$use_old_checkversion = true;
+$use_old_checkversion = false;
 
 update_status("Downloading current version information...");
 if($use_old_checkversion == true) {

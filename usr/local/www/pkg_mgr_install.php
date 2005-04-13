@@ -320,10 +320,12 @@ foreach ($packages_to_install as $id) {
 	$config['installedpackages']['package'][$pkgid] = $pkgent; 
     }
 
+    /* This code appears to do nothing.
     if (isset($id) && $a_out[$id])
             $a_out[$id] = $pkgent;
     else
             $a_out[] = $pkgent;
+    */
 
     if(!$_GET['mode'] == "reinstallall") {
 	$static_output .= "Saving updated package information... ";
@@ -468,7 +470,8 @@ foreach ($packages_to_install as $id) {
     $static_output .= "\nPackage installation successful.";
     update_output_window($static_output);
     fwrite($fd_log, "Package installation completed.\n");
-    log_error("Package " . $pkgent['name'] . " installation completed okay.");
+    log_error("Package " . $pkgent['name'] . " installation completed successfully.");
+    fwrite($fd_log, "Status window output:\n" . $static_output);
 }
 
 // close log

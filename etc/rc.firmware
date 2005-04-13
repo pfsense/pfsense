@@ -18,7 +18,7 @@ binary_update() {
 	rm /tmp/errors
 	mkdir /tmp/patched /tmp/patches
 	cd /tmp/patches
-	for i in `tar tzf $TGZ | egrep -v "(^d|_md5)" | nawk '{print $9;}'`;
+	for i in `tar tvzf $TGZ | egrep -v "(^d|_md5)" | nawk '{print $9;}'`;
 	 do 
 	   FILE=`basename ${i}`
 	   echo "Working on ${i}"

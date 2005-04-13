@@ -472,7 +472,13 @@ foreach ($packages_to_install as $id) {
     fwrite($fd_log, "Package installation completed.\n");
     log_error("Package " . $pkgent['name'] . " installation completed successfully.");
     fwrite($fd_log, "Status window output:\n" . $static_output);
+    unlink_if_exists("/
 }
+
+// Delete all temporary package tarballs and staging areas.
+unlink_if_exists("/tmp/apkg_*");
+rmdir_recursive("/var/tmp/instmp*");
+
 
 // close log
 fclose($fd_log);

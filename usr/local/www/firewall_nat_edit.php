@@ -99,7 +99,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		if (($_POST['endport'] - $_POST['beginport'] + $_POST['localbeginport']) > 65535)
-			$input_errors[] = "The target port range must lie between 1 and 65535.";
+			$input_errors[] = "The target port range must be an integer between 1 and 65535.";
 	}
 
 	/* check for overlaps */

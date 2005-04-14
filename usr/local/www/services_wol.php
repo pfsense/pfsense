@@ -42,10 +42,14 @@ if ($_POST || $_GET['mac']) {
 	unset($input_errors);
 
 	if ($_GET['mac']) {
+        	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
+        	$_GET['mac'] = strtolower(str_replace("-", ":", $_GET['mac']));
 		$mac = $_GET['mac'];
 		$if = $_GET['if'];
 	} else {
-		$mac = $_POST['mac_input'];
+        	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
+        	$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
+		$mac = $_POST['mac'];
 		$if = $_POST['interface'];
 	}
 
@@ -110,7 +114,7 @@ if ($_GET['act'] == "del") {
                 <tr>
 				  <td width="22%" valign="top" class="vncellreq">MAC address</td>
 				  <td width="78%" class="vtable">
-                      <input name="mac_input" type="text" class="formfld" id="mac_input" size="20" value="<?=htmlspecialchars($mac);?>">
+                      <input name="mac" type="text" class="formfld" id="mac" size="20" value="<?=htmlspecialchars($mac);?>">
                       <br>
                       Enter a MAC address <span class="vexpl"> in the following format: xx:xx:xx:xx:xx:xx</span></td></tr>
 				<tr>

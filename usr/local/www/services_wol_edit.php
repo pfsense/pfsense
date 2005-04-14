@@ -58,6 +58,9 @@ if ($_POST) {
 	$reqdfieldsn = explode(",", "Interface,MAC address");
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+
+        /* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
+        $_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
 	
 	if (($_POST['mac'] && !is_macaddr($_POST['mac']))) {
 		$input_errors[] = "A valid MAC address must be specified.";

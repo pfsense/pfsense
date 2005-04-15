@@ -676,7 +676,7 @@ function filter_generate_altq_rules() {
                                 if ($rule['interface'] == "wan")
                                         $if = $wanif;
                                 else if($rule['interface'] == "lan")
-					$if = $wanif;
+					$if = $lanif;
 
                                 $line .= "via {$if}";
                         }

@@ -405,6 +405,8 @@ function filter_generate_aliases() {
 }
 
 function generate_optcfg_array(& $optcfg) {
+	global $config;
+
         for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
                 $oc = $config['interfaces']['opt' . $i];
 
@@ -968,7 +970,7 @@ function run_command_return_string($cmd) {
 	return $tmp;
 }
 
-function generate_user_filter_rule(& $rule,& $optcfg) {
+function generate_user_filter_rule($rule, $optcfg) {
 
 		/* don't include disabled rules */
 		if (isset($rule['disabled'])) {
@@ -986,14 +988,13 @@ function generate_user_filter_rule(& $rule,& $optcfg) {
 			$ispptp = true;
 		} else {
 
-/* XXX - billm - what is the intent of this code?  It seems to be stopping us from applying rules to opt interfaces */
-/*
- *			if (strstr($rule['interface'], "opt")) {
- *				if (!array_key_exists($rule['interface'], $optcfg)) {
- *					return;
- *				}
- *			}
- */
+			/* Check to see if the interface is opt and in our opt list */
+			if (strstr($rule['interface'], "opt")) {
+ 				if (!array_key_exists($rule['interface'], $optcfg)) {
+					return;
+				}
+			}
+
 
 			$nif = 1;
 			$ispptp = false;

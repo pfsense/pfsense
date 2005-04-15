@@ -147,6 +147,7 @@ if ($_GET['act'] == "del") {
 			<td class="listlr" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
 			  <?php
 			     if($queue['red'] <> "") echo " RED";
+			     if($queue['rio'] <> "") echo " RIO";
 			     if($queue['ecn'] <> "") echo " ECN";
 			     if($queue['borrow'] <> "") echo " Borrow";
 			  ?>

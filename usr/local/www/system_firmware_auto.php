@@ -138,36 +138,48 @@ $platform =		trim(file_get_contents('/etc/platform'));
 $firmware_version =	trim(file_get_contents('/etc/version'));
 $kernel_version =	trim(file_get_contents('/etc/version_kernel'));
 $base_version =		trim(file_get_contents('/etc/version_base'));
-$use_old_checkversion = false;
+$use_old_checkversion = true;
 
 update_status("Downloading current version information...");
+$static_text = "Downloading current version information... ";
+update_output_window($static_text);
 if($use_old_checkversion == true) {
 	$versions = old_checkversion();
 } else {
 	$versions = check_firmware_version();
 }
+$static_text .= "done.\n";
+update_output_window($static_text);
 
 if($use_old_checkversion == false) {
-	if($versions != -1) {
-		if($versions[0] == true) {
-			if($versions[1] != $firmware_version) $needs_firmware_upgrade = true;
-			if($versions[2] != $kernel_version) $needs_kernel_upgrade = true;
-			if($versions[3] != $base_version) $needs_base_version = true;
-			if(isset($versions[4])) $static_text = $versions[4] . '\n'; // If we have additional data (a CHANGELOG etc) to display, do so.
-			update_output_window($static_text);
-		} else {
-			update_status("No updates required.");
+	if(array_shift($versions) == true) {
+		update_status("Found required updates. Downloading...");
+		if(is_string($versions[0][0])) {
+			$static_text .= "Firmware\n\tInstalled: " . $firmware_version . "\n\tCurrent: " . $versions[0][count($versions[0]) - 1] . "\n";
+			$needs_firmware_upgrade = true;
 		}
+		if(is_string($versions[1][0])) {
+			$static_text .= "Kernel\n\tInstalled: " . $kernel_version . "\n\tCurrent: " . $versions[1][count($versions[1]) - 1] . "\n";
+			$needs_kernel_upgrade = true;
+		}
+		if(is_string($versions[2][0])) {
+			$static_text .= "Base\n\tInstalled: " . $base_version . "\n\tCurrent: " . $versions[2][count($versions[2]) -1] . "\n";
+			$needs_base_upgrade = true;
+		}
+//		if(isset($versions[3])) $static_text = $versions[4] . '\n'; // If we have additional data (a CHANGELOG etc) to display, do so.
 	} else {
-		update_status("Could not retrieve version information.");
-		exit();
+		update_status("No updates required.");
 	}
 
+	exit;
+
 	if($needs_firmware_upgrade == true) {
-		$static_status = "Downloading firmware update... ";
-		update_status($static_status);
-		$status = download_file_with_progress_bar("http://www.pfSense.com/latest.tgz", "/tmp/latest.tgz");
-		$static_status .= "done. ";
+		$i = 0;
+		foreach($versions[0] as $tofetch) {
+			$static_text .= "Installing firmware updates... ";
+			update_output_window($static_text);
+			$status = download_file_with_progress_bar("http://www.pfSense.com/latest.tgz", "/tmp/latest.tgz");
+			$static_status .= "done. ";
 	}
 
 	if($needs_kernel_upgrade == true) {

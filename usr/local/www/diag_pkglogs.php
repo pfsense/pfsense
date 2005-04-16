@@ -139,7 +139,7 @@ if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, loca
 			}
 		?>
 		</table>
-		<br><form action="diag_logs.php" method="post">
+		<br><form action="diag_pkglogs.php" method="post">
 <input name="clear" type="submit" class="formbtn" value="Clear log">
 </form>
 	</td>

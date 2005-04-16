@@ -77,8 +77,6 @@ if ($_GET['act'] == "del") {
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
 
-<form method="post">
-
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="services_captiveportal_ip.php" method="post">

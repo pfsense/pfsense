@@ -129,7 +129,7 @@ if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, loca
 			}
 			if(isset($apkg_config['logging']['custom_php_logging_command'])) {
 				eval($apkg_config['custom_php_global_functions']);
-				eval($apkg_config['logging']['custom_php_logging_command']));
+				eval($apkg_config['logging']['custom_php_logging_command']);
 			} elseif(isset($apkg_config['logging']['grepfor']) and isset($apkg_config['logging']['invertgrep'])) {
 				dump_clog($logfile, $nentries, $apkg_config['logging']['grepfor'], true);
 			} elseif(isset($apkg_config['logging']['grepfor'])) {

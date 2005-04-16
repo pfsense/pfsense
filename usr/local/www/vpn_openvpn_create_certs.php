@@ -186,6 +186,7 @@ function f(ta_id){
 	    <p>
 	    <textarea cols="55" rows="1" name="status" id="status" wrap="hard">One moment please... This will take a while!</textarea>
 	    <textarea cols="55" rows="25" name="output" id="output" wrap="hard"></textarea>
+</form>
 <?php include("fend.inc"); ?>
 </body>
 </html>

@@ -155,7 +155,6 @@ if (isset($_POST['del_x'])) {
 <form action="firewall_rules.php" method="post">
 <script type="text/javascript" language="javascript" src="row_toggle.js">
 </script>
-<form action="firewall_rules.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_filterconfdirty_path)): ?><p>
 <?php print_info_box_np("The firewall rule configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>

@@ -216,11 +216,9 @@ function get_interface_info($ifdescr) {
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
 
-<form>
-
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<form action="" method="post">
+<form action="status_interfaces.php" method="post">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <?php $i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
 

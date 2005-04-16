@@ -68,7 +68,6 @@ if ($_POST) {
 include("fbegin.inc");
 ?>
 <p class="pgtitle">System: Package Manager</p>
-<form action="firewall_nat_out_load_balancing.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
 
@@ -142,7 +141,6 @@ if(!$pkg_config['packages']) {
     </td>
   </tr>
 </table>
-</form>
 <?php include("fend.inc"); ?>
 </body>
 </html>

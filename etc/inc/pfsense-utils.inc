@@ -660,12 +660,9 @@ function gather_altq_queue_stats($dont_return_root_queues) {
  * reverse_strrchr($haystack, $needle):  Return everything in $haystack up to the *last* instance of $needle.
  *					 Useful for finding paths and stripping file extensions.
  */
-function reverse_strrchr($haystack, $needle) {
-    $pos = strrpos($haystack, $needle);
-    if($post === false) {
-	return $haystack;
-    }
-    return substr($haystack, 0, $post + 1);
+function reverse_strrchr($haystack, $needle)
+{
+               return strrpos($haystack, $needle) ? substr($haystack, 0, strrpos($haystack, $needle) +1 ) : false;
 }
 
 /*

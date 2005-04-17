@@ -59,8 +59,6 @@ chmod 0600 /var/log/system.log /var/log/filter.log /var/log/dhcpd.log /var/log/v
 
 adjkerntz -i
 
-sysctl net.inet.tcp.sack.enable=0
-
 mount_devfs devfs /dev
 
 echo Syncing master.passwd...

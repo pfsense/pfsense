@@ -152,9 +152,6 @@
 	/* start pptpd */
 	vpn_pptpd_configure();
 
-	/* start IPsec tunnels */
-	vpn_ipsec_configure();
-
 	/* start the captive portal */
 	captiveportal_configure();
 
@@ -166,6 +163,9 @@
 
 	/* start ftp proxy helpers if they are enabled */
 	system_start_ftp_helpers();
+
+	/* start IPsec tunnels */
+	vpn_ipsec_configure();
 
 	/* done */
 	unlink("{$g['varrun_path']}/booting");

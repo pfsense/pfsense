@@ -285,10 +285,9 @@ function filter_setup_altq_interfaces() {
 
 	if(!is_array($config['shaper']['queue'])) return;
 
-	$i = 0;
 	$ifdescrs = array('wan', 'lan');
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-		$ifdescrs['opt' . $j] = "opt" . $j;
+		$ifdescrs[] = "opt" . $j;
 	}
 
 	foreach ($ifdescrs as $ifdescr => $ifname) {
@@ -299,17 +298,19 @@ function filter_setup_altq_interfaces() {
 		$workting_with_interface = $ifname;
 
 		foreach ($config['shaper']['queue'] as $queue) {
+			$rule_interface = "";
+			$q = $queue;
 			$rule_interface = filter_is_queue_being_used_on_interface($queue['name'], $workting_with_interface);
-			$rule_interface = queue_interface_recursive($queue['name']);
+//			$rule_interface = queue_interface_recursive($q['name']);
 			if ($rule_interface == $workting_with_interface) {
 				$status_is_subqueue = is_subqueue($queue['name']);
-				$status_is_attached = is_queue_attached_children($queue['name']);
+//				$status_is_attached = is_queue_attached_children($q['name']);
 				if($queue['attachtoqueue'] <> "") $status_is_attached = 0;
-				if($status_is_subqueue == 0 or $status_is_attached == 1) {
+//				if($status_is_subqueue == 0 or $status_is_attached == 1) {
 					if($is_first) $queue_names .= ", ";
 					$queue_names .= $queue['name'];
 					$is_first = "1";
-				}
+//				}
 			}
 		}
 
@@ -350,14 +351,13 @@ function queue_interface_recursive($queuename) {
         }
 }
 
-
-
 function is_subqueue($name) {
         global $config;
+	$queues = $config['shaper']['queue']; /* must assign to keep from corrupting in memory $config */
         $status = "";
-        if (!is_array($config['shaper']['queue'])) return 0;
-	foreach ($config['shaper']['queue'] as $queue) {
-		if($queue['attachtoqueue'] <> "") return 1;
+        if (!is_array($queues)) return 0;
+	foreach ($queues as $queue) {
+		if($queue['attachtoqueue'] == $name) return 1;
 	}
 	return 0;
 }

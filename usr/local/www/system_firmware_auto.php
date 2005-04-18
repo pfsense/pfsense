@@ -170,12 +170,11 @@ if($use_old_checkversion == false) {
 		//              if(isset($versions[3])) $static_text = $versions[4] . '\n'; // If we have additional data (a CHANGELOG etc) to display, do so.
 	} else {
 		update_status("No updates required.");
-	} else {
-		update_status("No updates required.");
 	}
+
 	foreach($needupdate as $toupdate) {
 		if($toupdate == true) {
-			$static_text .= "Downloading {$upgrades[$i]} updates... ";
+			$static_text .= "Installing {$upgrades[$i]} updates... ";
 			$s = 0;
 			foreach($versions[$i] as $aver) {
 				$todownload = substr(strrchr($tofetch, '-'), 1);
@@ -183,6 +182,12 @@ if($use_old_checkversion == false) {
 				update_output_window($static_text . " ");
 				$tofetch = "pfSense-" . $upgrades[$i] . "-" . $todownload . ".tgz";
 				download_file_with_progress_bar("http://www.pfSense.com/updates/{$tofetch}", "/tmp/{$tofetch}");
+				update_output_window($static_text);
+				system("/etc/rc.firmware delta_firmware /tmp/" . $tofetch);
+				if(file_exists("/tmp/bdiff.log")) {
+					$static_text .= ".\n\nAn md5 mismatch was detected during the update process. Aborting...";
+					break 2;
+				}
 				if($s == count($aver) - 1) {
 					$static_text .= ".\n";
 				} else {
@@ -193,23 +198,6 @@ if($use_old_checkversion == false) {
 			}
 		}
 		$i++;
-	}
-
-	/* launch external upgrade helper */
-	$external_upgrade_helper_text = "";
-	if($needs_system_upgrade == true) {
-		// XXX: check md5 of downloaded file.
-		exec_rc_script_async("/etc/rc.firmware pfSense");
-	}
-
-	if($needs_kernel_upgrade == true) {
-		// XXX: check md5 of downloaded file.
-		exec_rc_script_async("/etc/rc.firmware pfSense_kernel");
-	}
-
-	if($needs_base_upgrade == true) {
-		// XXX: check md5 of downloaded file.
-		exec_rc_script_async("/etc/rc.firmware pfSense_base");
 	}
 } else {
 	if($versions != "") {

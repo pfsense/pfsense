@@ -152,83 +152,47 @@ $static_text .= "done.\n";
 update_output_window($static_text);
 
 if($use_old_checkversion == false) {
+	$upgrades = array('firmware', 'kernel', 'base');
 	if(array_shift($versions) == true) {
+		$i = 0;
+		$need_update = array();
 		update_status("Found required updates. Downloading...");
-		if(is_string($versions[0][0])) {
-			$static_text .= "Firmware\n\tInstalled: " . $firmware_version . "\n\tCurrent: " . $versions[0][count($versions[0]) - 1] . "\n";
-			$needs_firmware_upgrade = true;
+		foreach($versions as $ver) {
+			if(is_string($ver[0])) {
+				$static_text .= ucfirst($upgrades[$i]) . "\n\tInstalled: " . $firmware_version . "\n\tCurrent: " . $ver[count($ver) -1] . "\n";
+				$needupdate[] = true;
+			} else {
+				$needupdate[] = false;
+			}
+			$i++;
 		}
-		if(is_string($versions[1][0])) {
-			$static_text .= "Kernel\n\tInstalled: " . $kernel_version . "\n\tCurrent: " . $versions[1][count($versions[1]) - 1] . "\n";
-			$needs_kernel_upgrade = true;
-		}
-		if(is_string($versions[2][0])) {
-			$static_text .= "Base\n\tInstalled: " . $base_version . "\n\tCurrent: " . $versions[2][count($versions[2]) -1] . "\n";
-			$needs_base_upgrade = true;
-		}
-//		if(isset($versions[3])) $static_text = $versions[4] . '\n'; // If we have additional data (a CHANGELOG etc) to display, do so.
+		$i = 0;
+		//              if(isset($versions[3])) $static_text = $versions[4] . '\n'; // If we have additional data (a CHANGELOG etc) to display, do so.
+	} else {
+		update_status("No updates required.");
 	} else {
 		update_status("No updates required.");
 	}
-
-	$kernel_filename="pfSense-kernel-{$kernel_version}.tgz";
-	$base_filename="pfSense-base-{$base_version}.tgz";
-
-	if($needs_firmware_upgrade == true) {
-		$static_text .= "Downloading firmware updates... ";
-		$i = 0;
-		foreach($versions[0] as $tofetch) {
-			$todownload = substr(strrchr($tofetch, '-'), 1);
-			$static_text .= $todownload;
-			update_output_window($static_text . " ");
-			$firmware_filename="pfSense-firmware-{$todownload}.tgz";
-			download_file_with_progress_bar("http://www.pfSense.com/updates/{$firmware_filename}", "/tmp/{$firmware_filename}");
-			if($i == count($versions[0]) -1) {
-				$static_text .= ".\n";
-			} else {
-				$static_text .= ", ";
+	foreach($needupdate as $toupdate) {
+		if($toupdate == true) {
+			$static_text .= "Downloading {$upgrades[$i]} updates... ";
+			$s = 0;
+			foreach($versions[$i] as $aver) {
+				$todownload = substr(strrchr($tofetch, '-'), 1);
+				$static_text .= $todownload;
+				update_output_window($static_text . " ");
+				$tofetch = "pfSense-" . $upgrades[$i] . "-" . $todownload . ".tgz";
+				download_file_with_progress_bar("http://www.pfSense.com/updates/{$tofetch}", "/tmp/{$tofetch}");
+				if($s == count($aver) - 1) {
+					$static_text .= ".\n";
+				} else {
+					$static_text .= ", ";
+				}
+				update_output_window($static_text);
+				$s++;
 			}
-			update_output_window($static_text);
-			$i++;
 		}
-	}
-
-	if($needs_kernel_upgrade == true) {
-		$static_text .= "Downloading kernel updates... ";
-		$i = 0;
-		foreach($versions[1] as $tofetch) {
-                         $todownload = substr(strrchr($tofetch, '-'), 1);
-                         $static_text .= $todownload;
-                         update_output_window($static_text . " ");
-                         $kernel_filename="pfSense-kernel-{$todownload}.tgz";
-                         download_file_with_progress_bar("http://www.pfSense.com/updates/{$kernel_filename}", "/tmp/{$kernel_filename}");
-                         if($i == count($versions[1]) -1) {
-                                 $static_text .= ".\n";
-                         } else {
-                                 $static_text .= ", ";
-                         }
-                         update_output_window($static_text);
-                         $i++;
-                }
-	}
-
-	if($needs_base_upgrade == true) {
-		$static_text .= "Downloading base updates... ";
-		$i = 0;
-                foreach($versions[2] as $tofetch) {
-                         $todownload = substr(strrchr($tofetch, '-'), 1);
-                         $static_text .= $todownload;
-                         update_output_window($static_text . " ");
-                         $base_filename="pfSense-base-{$todownload}.tgz";
-                         download_file_with_progress_bar("http://www.pfSense.com/updates/{$kernel_filename}", "/tmp/{$base_filename}");
-                         if($i == count($versions[2]) -1) {
-                                 $static_text .= ".\n";
-                         } else {
-                                 $static_text .= ", ";
-                         }
-                         update_output_window($static_text);
-                         $i++;
-                }
+		$i++;
 	}
 
 	/* launch external upgrade helper */

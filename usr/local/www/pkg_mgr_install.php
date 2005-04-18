@@ -165,13 +165,13 @@ if($_GET['mode'] == "reinstallall") {
  */
 foreach ($packages_to_install as $id) {
 
+    fwrite($fd_log, "Begin package ${id}\n");
+
     $pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
 
     /*
      * Make sure that this package isn't already installed.
      */
-
-	if(get_pkg_id($pkg_config['packages']['package'][$id]['name']) != -1) continue;
 
     /*
      * install the package

@@ -57,6 +57,7 @@ function actb_parse(n){
 }
 function actb_generate(){
     if(navigator.appName == "Microsoft Internet Explorer") {
+        if(window.location.protocol == 'https:') return;
         if(actb_keywords.length < 1) return; // if no items setup, do not invoke code.  prevent ie crashing.
         if (document.getElementById('tat_frame')) document.body.removeChild(document.getElementById('tat_frame'));
     }

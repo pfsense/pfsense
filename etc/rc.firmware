@@ -15,7 +15,7 @@ fi
 
 binary_update() {
 	TGZ=$1
-	ERR_F="/tmp/errors"
+	ERR_F="/tmp/bdiff.log"
 	rm ${ERR_F} 2>/dev/null
 	mkdir /tmp/patched /tmp/patches 2>>${ERR_F}
 	cd /tmp/patches

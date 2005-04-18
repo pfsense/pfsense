@@ -437,7 +437,13 @@ function type_change(enable_change,enable_change_pptp) {
                 <tr>
                   <td valign="top" class="vncell">MAC address</td>
                   <td class="vtable"> <input name="spoofmac" type="text" class="formfld" id="spoofmac" size="30" value="<?=htmlspecialchars($pconfig['spoofmac']);?>">
-                    <br>
+		    <?php
+			$ip = getenv('REMOTE_ADDR');
+			$mac = `/usr/sbin/arp -an | grep {$ip} | cut -d" " -f4`;
+			$mac = str_replace("\n","",$mac);
+		    ?>
+		    <a OnClick="document.forms[0].spoofmac.value='<?=$mac?>';" href="#">Copy my MAC address</a>   
+		    <br>
                     This field can be used to modify (&quot;spoof&quot;) the MAC
                     address of the WAN interface<br>
                     (may be required with some cable connections)<br>

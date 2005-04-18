@@ -316,13 +316,6 @@ foreach ($packages_to_install as $id) {
 	$config['installedpackages']['package'][$pkgid] = $pkgent; 
     }
 
-    /* This code appears to do nothing.
-    if (isset($id) && $a_out[$id])
-            $a_out[$id] = $pkgent;
-    else
-            $a_out[] = $pkgent;
-    */
-
     if(!$_GET['mode'] == "reinstallall") {
 	$static_output .= "Saving updated package information... ";
         update_output_window($static_output);

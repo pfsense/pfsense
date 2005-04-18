@@ -153,6 +153,7 @@ update_output_window($static_text);
 
 if($use_old_checkversion == false) {
 	$upgrades = array('firmware', 'kernel', 'base');
+	$bdiff_errors = array();
 	if(array_shift($versions) == true) {
 		$i = 0;
 		$need_update = array();
@@ -185,8 +186,7 @@ if($use_old_checkversion == false) {
 				update_output_window($static_text);
 				system("/etc/rc.firmware delta_firmware /tmp/" . $tofetch);
 				if(file_exists("/tmp/bdiff.log")) {
-					$static_text .= ".\n\nAn md5 mismatch was detected during the update process. Aborting...";
-					break 2;
+					$bdiff_errors[] = file_get_contents("/tmp/bdiff.log");
 				}
 				if($s == count($aver) - 1) {
 					$static_text .= ".\n";
@@ -198,6 +198,12 @@ if($use_old_checkversion == false) {
 			}
 		}
 		$i++;
+	}
+
+	if(is_string($bdiff_errors[0])) {
+		$static_text .= "\nOne or more md5 mismatches occurred during patch application.";
+		update_output_window($static_text);
+		file_put_contents("/tmp/bdiff.log", print_r($bdiff_errors, true));
 	}
 } else {
 	if($versions != "") {

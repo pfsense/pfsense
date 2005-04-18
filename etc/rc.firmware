@@ -128,13 +128,13 @@ pfSenseupgrade)
 	echo "Done - rebooting system..." | logger -p daemon.info -i -t Upgrade
 	/sbin/shutdown -r now
 	;;
-pfSense)
-	binary_update /tmp/latest.tgz
+pfSense_firmware)
+	binary_update $2
 	;;
 pfSense_base)
-	binary_update /tmp/latest_base.tgz
+	binary_update $2
 	;;
 pfSense_kernel)
-	binary_update /tmp/latest_kernel.tgz
+	binary_update $2
 	;;
 esac

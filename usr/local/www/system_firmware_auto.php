@@ -171,32 +171,64 @@ if($use_old_checkversion == false) {
 		update_status("No updates required.");
 	}
 
-	$pfSense_firmware_filename="pfSense-firmware-{$firmware_version}.tgz";
 	$kernel_filename="pfSense-kernel-{$kernel_version}.tgz";
 	$base_filename="pfSense-base-{$base_version}.tgz";
 
 	if($needs_firmware_upgrade == true) {
+		$static_text .= "Downloading firmware updates... ";
 		$i = 0;
 		foreach($versions[0] as $tofetch) {
-			$static_text .= "Installing firmware updates... ";
+			$todownload = substr(strrchr($tofetch, '-'), 1);
+			$static_text .= $todownload;
+			update_output_window($static_text . " ");
+			$firmware_filename="pfSense-firmware-{$todownload}.tgz";
+			download_file_with_progress_bar("http://www.pfSense.com/updates/{$firmware_filename}", "/tmp/{$firmware_filename}");
+			if($i == count($versions[0]) -1) {
+				$static_text .= ".\n";
+			} else {
+				$static_text .= ", ";
+			}
 			update_output_window($static_text);
-			$status = download_file_with_progress_bar("http://www.pfSense.com/updates/{$pfSense_firmware_filename}", "/tmp/latest.tgz");
-			$static_status .= "done. ";
+			$i++;
+		}
 	}
 
 	if($needs_kernel_upgrade == true) {
-		$static_status .= "Downloading kernel update... ";
-		update_status($static_status);
-		$status = download_file_with_progress_bar("http://www.pfSense.com/updates/{$kernel_filename}", "/tmp/latest_kernel.tgz");
-		$static_status .= "done. ";
+		$static_text .= "Downloading kernel updates... ";
+		$i = 0;
+		foreach($versions[1] as $tofetch) {
+                         $todownload = substr(strrchr($tofetch, '-'), 1);
+                         $static_text .= $todownload;
+                         update_output_window($static_text . " ");
+                         $kernel_filename="pfSense-kernel-{$todownload}.tgz";
+                         download_file_with_progress_bar("http://www.pfSense.com/updates/{$kernel_filename}", "/tmp/{$kernel_filename}");
+                         if($i == count($versions[1]) -1) {
+                                 $static_text .= ".\n";
+                         } else {
+                                 $static_text .= ", ";
+                         }
+                         update_output_window($static_text);
+                         $i++;
+                }
 	}
 
 	if($needs_base_upgrade == true) {
-		$static_status .= "Downloading base update... ";
-		update_status($static_status);
-		$status = download_file_with_progress_bar("http://www.pfSense.com/updates/{$base_filename}", "/tmp/latest_base.tgz");
-		$static_status .= "done. ";
-		update_status($static_status);
+		$static_text .= "Downloading base updates... ";
+		$i = 0;
+                foreach($versions[2] as $tofetch) {
+                         $todownload = substr(strrchr($tofetch, '-'), 1);
+                         $static_text .= $todownload;
+                         update_output_window($static_text . " ");
+                         $base_filename="pfSense-base-{$todownload}.tgz";
+                         download_file_with_progress_bar("http://www.pfSense.com/updates/{$kernel_filename}", "/tmp/{$base_filename}");
+                         if($i == count($versions[2]) -1) {
+                                 $static_text .= ".\n";
+                         } else {
+                                 $static_text .= ", ";
+                         }
+                         update_output_window($static_text);
+                         $i++;
+                }
 	}
 
 	/* launch external upgrade helper */

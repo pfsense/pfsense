@@ -327,13 +327,13 @@ foreach ($packages_to_install as $id) {
 	$static_output .= "Saving updated package information... ";
         update_output_window($static_output);
         fwrite($fd_log, "Saving updated package information ...\n");
-        write_config("Installed package {$pkgent['name']}");
-        // remount rw after write_config() since it will mount ro.
         /*
          * Make sure that this package isn't already installed.
          */
-        if(!is_package_installed($pkgent['name']))
-            conf_mount_rw();
+        if(!is_package_installed($pkgent['name']))        
+            write_config("Installed package {$pkgent['name']}");
+        /* remount rw after write_config() since it will mount ro. */
+        conf_mount_rw();
 	$static_output .= "done.\n";
 	update_output_window($static_output);
     }

@@ -208,7 +208,11 @@ function conf_mount_rw() {
 	/* don't use mount -u anymore
 	   (doesn't sync the files properly and /bin/sync won't help either) */
 	mwexec("/sbin/umount -f {$g['cf_path']}");
-	mwexec("/sbin/mount -w -o noatime {$g['cf_path']}");
+	$status = mwexec("/sbin/mount -w -o noatime {$g['cf_path']}");
+	while($status == -1) {
+		mwexec("fsck -y");
+		$status = mwexec("/sbin/mount -w -o noatime {$g['cf_path']}");
+	}
 	/* if the platform is soekris or wrap, lets mount the
 	   compact flash card. */
 	if($g['platform'] == "wrap" or $g['platform'] == "net45xx") {

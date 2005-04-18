@@ -144,7 +144,13 @@ if ($_POST) {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">MAC address</td>
                   <td width="78%" class="vtable"> 
-                    <input name="mac" type="text" class="formfld" id="mac" size="30" value="<?=htmlspecialchars($pconfig['mac']);?>"> 
+                    <input name="mac" type="text" class="formfld" id="mac" size="30" value="<?=htmlspecialchars($pconfig['mac']);?>">
+		    <?php
+			$ip = getenv('REMOTE_ADDR');
+			$mac = `/usr/sbin/arp -an | grep {$ip} | cut -d" " -f4`;
+			$mac = str_replace("\n","",$mac);
+		    ?>
+		    <a OnClick="document.forms[0].mac.value='<?=$mac?>';" href="#">Copy my MAC address</a>   		    
                     <br>
                     <span class="vexpl">Enter a MAC address in the following format: 
                     xx:xx:xx:xx:xx:xx</span></td>

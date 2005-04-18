@@ -313,7 +313,6 @@ function filter_setup_altq_interfaces() {
 			}
 		}
 
-		$subnet = $ifname['ipaddr'] . "/" . $config['interfaces'][$ifname]['subnet'];
 		if($queue_names <> ""){
 			$altq_rules .= "altq on " . $config['interfaces'][$ifname]['if'] . " ";
 			if($config['interfaces'][$ifname]['bandwidth'] <> "")

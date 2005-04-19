@@ -229,8 +229,12 @@ if($use_old_checkversion == false) {
 			exit;
 		} else {
 			touch("/tmp/auto_upgrade_in_progress");
-			exec_rc_script_async("/etc/rc.firmware_auto {$firmwareurl} {$firmwarename} {$http_auth_username} {$http_auth_password}");
+			mwexec_bg("/etc/rc.firmware_auto \"{$firmwareurl}\" \"{$firmwarename}\" \"{$http_auth_username}\" \"{$http_auth_password}\"");
 			$update_status = "pfSense is now auto upgrading.  The firewall will automatically reboot if it succeeds.";
+			update_status("pfSense is now upgrading.  The firewall will reboot once the operation has completed.");
+			echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
+			exit;
+
 		}
 	} elseif($versions == "") {
 		update_output_window("Using old checkversion method. You are running the latest version of pfSense.");
@@ -240,7 +244,7 @@ if($use_old_checkversion == false) {
 		update_output_window("Using old checkversion method. An unknown error occurred.");
 	}
 }
-update_status("pfSense is now upgrading.  The firewall will reboot once the operation has completed.");
 
 echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
+
 ?>

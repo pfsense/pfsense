@@ -19,7 +19,7 @@ binary_update() {
 	rm ${ERR_F} 2>/dev/null
 	mkdir /tmp/patched /tmp/patches 2>>${ERR_F}
 	cd /tmp/patches
-	for i in `tar tvzf $TGZ | egrep -v "(^d|_md5)" | nawk '{print $9;}'`;
+	for i in `/usr/bin/tar tvzf $TGZ | egrep -v "(^d|_md5)" | nawk '{print $9;}'`;
 	 do 
 	   FILE=`basename ${i}`
 	   echo "Working on ${i}"
@@ -107,14 +107,17 @@ pfSenseupgrade)
 
 	# tar explode image onto hd
 	if [ -r $2 ]; then
-		tar xzPf $2 -U -C / | logger -p daemon.info -i -t Upgrade
-		echo "Image installed." | logger -p daemon.info -i -t Upgrade
+		echo "Installing installed $2." | logger -p daemon.info -i -t Upgrade
+		/usr/bin/tar xzPf $2 -U -C / | logger -p daemon.info -i -t Upgrade
+		echo "Image installed $2." | logger -p daemon.info -i -t Upgrade
+	else
+		echo "2nd paramater has not been passed; skipping." | logger -p daemon.info -i -t Upgrade
 	fi
 
         # process custom image if its passed
         if [ -r $3 ]; then
             echo "Custom image $3 found." | logger -p daemon.info -i -t Upgrade
-            tar xzPf $3 -U -C / | logger -p daemon.info -i -t Upgrade
+            /usr/bin/tar xzPf $3 -U -C / | logger -p daemon.info -i -t Upgrade
             echo "Custom image $3 installed." | logger -p daemon.info -i -t Upgrade
         fi
 

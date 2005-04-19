@@ -223,9 +223,15 @@ if($use_old_checkversion == false) {
 			$firmwareurl=$g['firmwarebaseurl'];
 			$firmwarename=$g['firmwarefilename'];
 		}
-
-		exec_rc_script_async("/etc/rc.firmware_auto {$firmwareurl} {$firmwarename} {$http_auth_username} {$http_auth_password}");
-		$update_status = "pfSense is now auto upgrading.  The firewall will automatically reboot if it succeeds.";
+		if(file_exists("/tmp/auto_upgrade_in_progress")) {
+			$update_status = "A upgrade is already in progress.";
+			update_output_window($update_status);
+			exit;
+		} else {
+			touch("/tmp/auto_upgrade_in_progress");
+			exec_rc_script_async("/etc/rc.firmware_auto {$firmwareurl} {$firmwarename} {$http_auth_username} {$http_auth_password}");
+			$update_status = "pfSense is now auto upgrading.  The firewall will automatically reboot if it succeeds.";
+		}
 	} elseif($versions == "") {
 		update_output_window("Using old checkversion method. You are running the latest version of pfSense.");
 	} elseif(is_null($versions)) {

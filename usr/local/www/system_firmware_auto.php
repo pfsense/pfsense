@@ -230,6 +230,7 @@ if($use_old_checkversion == false) {
 		} else {
 			touch("/tmp/auto_upgrade_in_progress");
 			log_error("Downloading http://www.pfSense.com/latest.tgz");
+			update_status("Downloading latest version...");	
 			download_file_with_progress_bar("http://www.pfSense.com/latest.tgz", "/tmp/latest.tgz");
 			log_error("Downloading http://www.pfSense.com/latest.tgz");
 			download_file_with_progress_bar("http://www.pfSense.com/latest.tgz.md5", "/tmp/latest.tgz.md5");

@@ -52,5 +52,5 @@ if [ "$PMD" = "$MD" ]; then
 fi
 
 echo "MD5's do not match.  Upgrade aborted."  | logger -p daemon.info -i -t AutoUpgrade
-rm /tmp/latest/*
+rm /tmp/latest*
 exit 1

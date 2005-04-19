@@ -107,7 +107,7 @@ pfSenseupgrade)
 
 	# tar explode image onto hd
 	if [ -r $2 ]; then
-		echo "Installing installed $2." | logger -p daemon.info -i -t Upgrade
+		echo "Installing $2." | logger -p daemon.info -i -t Upgrade
 		/usr/bin/tar xzPf $2 -U -C / | logger -p daemon.info -i -t Upgrade
 		echo "Image installed $2." | logger -p daemon.info -i -t Upgrade
 	else

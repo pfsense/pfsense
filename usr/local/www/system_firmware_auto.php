@@ -229,6 +229,10 @@ if($use_old_checkversion == false) {
 			exit;
 		} else {
 			touch("/tmp/auto_upgrade_in_progress");
+			log_error("Downloading http://www.pfSense.com/latest.tgz");
+			download_file_with_progress_bar("http://www.pfSense.com/latest.tgz", "/tmp/latest.tgz");
+			log_error("Downloading http://www.pfSense.com/latest.tgz");
+			download_file_with_progress_bar("http://www.pfSense.com/latest.tgz.md5", "/tmp/latest.tgz.md5");
 			mwexec_bg("/etc/rc.firmware_auto \"{$firmwareurl}\" \"{$firmwarename}\" \"{$http_auth_username}\" \"{$http_auth_password}\"");
 			$update_status = "pfSense is now auto upgrading.  The firewall will automatically reboot if it succeeds.";
 			update_status("pfSense is now upgrading.  The firewall will reboot once the operation has completed.");

@@ -543,19 +543,13 @@ function read_body($ch, $string) {
         $downloaded += intval($length);
         $downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
         $downloadProgress = 100 - $downloadProgress;
-        /*
-        $a = $file_size;
-        $b = $downloaded;
-        $c = $downloadProgress;
-        $text = "  Download Status\\n";
-        $text .= "---------------------------------\\n";
-        $text .= "  File size  : {$a}\\n";
-        $text .= "  Downloaded : {$b}\\n";
-        $text .= "  Percent    : {$c}%\\n";
-        $text .= "---------------------------------\\n";
+	/*
+	   lastseen is used to prevent from spamming firefox with hundreds of
+	   unnecessary javascript update messages which sends the clients
+           firefox utilization to 100%
         */
-//        $counter++;
-//        if($counter > 150) {
+        $lastseen = "-1";
+        if($lastseen <> $downloadProgress) {
 		if($sendto == "status") {
                 	$tostatus = $static_status . $downloadProgress . "%";
                 	update_status($tostatus);
@@ -564,8 +558,8 @@ function read_body($ch, $string) {
 			update_output_window($tooutput);
 		}
                 update_progress_bar($downloadProgress);
-//                $counter = 0;
-//        }
+                $lastseen = $downloadProgress;
+        }
         fwrite($fout, $string);
         return $length;
 }

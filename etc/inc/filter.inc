@@ -969,7 +969,7 @@ function run_command_return_string($cmd) {
 }
 
 function generate_user_filter_rule($rule, $optcfg) {
-		global $config;
+		global $config, $g, $ngcounter;
 		
 		/* don't include disabled rules */
 		if (isset($rule['disabled'])) {
@@ -1068,7 +1068,7 @@ function generate_user_filter_rule($rule, $optcfg) {
 			$line .= "quick ";
 			
 			if ($ispptp) {
-				$line .= "on ng" . ($iif+1) . " ";
+				$line .= "on ng" . ($ngcounter+1) . " ";
 			} else {
 				// translate wan, man, lan, opt to real interface.
 				$interface = $rule['interface'];
@@ -1598,6 +1598,7 @@ EOD;
 	$ipfrules .= "\n# User-defined rules follow\n";
 
 	if (isset($config['filter']['rule']))
+		$ngcounter = 0;
 		foreach ($config['filter']['rule'] as $rule) {
 			$line = "";
 			$line = generate_user_filter_rule($rule, $optcfg);

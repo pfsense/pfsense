@@ -538,7 +538,7 @@ function read_header($ch, $string) {
 }
 
 function read_body($ch, $string) {
-        global $fout, $file_size, $downloaded, $counter, $sendto, $static_output;
+        global $fout, $file_size, $downloaded, $counter, $sendto, $static_output, $lastseen;
         $length = strlen($string);
         $downloaded += intval($length);
         $downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);

@@ -969,24 +969,33 @@ function run_command_return_string($cmd) {
 }
 
 function generate_user_filter_rule($rule, $optcfg) {
-
+		global $config;
+		
 		/* don't include disabled rules */
 		if (isset($rule['disabled'])) {
+			return "# rule " . $rule['descr'] . " disabled \n";
 			return;
 		}
-
+		
+		$pptpdcfg = $config['pptpd'];
+		
+		if ($pptpdcfg['mode'] == "server") {
+			$pptpip = $pptpdcfg['localip'];
+			$pptpsa = $pptpdcfg['remoteip'];
+			$pptpsn = $g['pptp_subnet'];			
+		}
+		
 		/* does the rule deal with a PPTP interface? */
 		if ($rule['interface'] == "pptp") {
-
+			
 			if ($pptpdcfg['mode'] != "server") {
-				//return "# mode != server " . $rule['descr'] . "\n";
-				//return;
+				return "# mode != server " . $rule['descr'] . "\n";
 			}
-
+			
 			$nif = $g['n_pptp_units'];
 			$ispptp = true;
 		} else {
-
+			
 			/* Check to see if the interface is opt and in our opt list */
 			if (strstr($rule['interface'], "opt")) {
  				if (!array_key_exists($rule['interface'], $optcfg)) {
@@ -994,12 +1003,11 @@ function generate_user_filter_rule($rule, $optcfg) {
 					return;
 				}
 			}
-
-
+			
 			$nif = 1;
 			$ispptp = false;
 		}
-
+			
 		if ($pptpdcfg['mode'] != "server") {
 			if (($rule['source']['network'] == "pptp") ||
 				($rule['destination']['network'] == "pptp")) {
@@ -1007,7 +1015,7 @@ function generate_user_filter_rule($rule, $optcfg) {
 					return;
 				}
 		}
-
+		
 		if ($rule['source']['network'] && strstr($rule['source']['network'], "opt")) {
 			if (!array_key_exists($rule['source']['network'], $optcfg)) {
 				return "# !array_key_exists source network " . $rule['descr'] . "\n";
@@ -1020,7 +1028,7 @@ function generate_user_filter_rule($rule, $optcfg) {
 				return;
 			}
 		}
-
+		
 		/* check for unresolvable aliases */
 		if ($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
 			return "# unresolvable source aliases " . $rule['descr'] . "\n";
@@ -1030,14 +1038,14 @@ function generate_user_filter_rule($rule, $optcfg) {
 			return "# unresolvable dest aliases " . $rule['descr'] . "\n";
 			return;
 		}
-
+		
 		for ($iif = 0; $iif < $nif; $iif++) {
 			$type = $rule['type'];
 			if ($type != "pass" && $type != "block" && $type != "reject") {
 				/* default (for older rules) is pass */
 				$type = "pass";
 			}
-
+			
 			if ($type == "reject") {
 				/* special reject packet */
 				if ($rule['protocol'] == "tcp") {
@@ -1050,15 +1058,15 @@ function generate_user_filter_rule($rule, $optcfg) {
 			} else {
 				$line = $type;
 			}
-
+			
 			/* ensure the direction is in */
 			$line .= " in ";
-
+			
 			if (isset($rule['log']))
 				$line .= "log ";
-
+			
 			$line .= "quick ";
-
+			
 			if ($ispptp) {
 				$line .= "on ng" . ($iif+1) . " ";
 			} else {
@@ -1077,13 +1085,13 @@ function generate_user_filter_rule($rule, $optcfg) {
 				if($canadd == 0)
 					$line .= "on \$" . $interface . " ";
 			}
-
+			
 			$rg = $config['interfaces'][$rule['interface']]['gateway'];
 			$ri = filter_translate_type_to_real_interface($rule['interface']);
 			if($rg <> "" and $ri <> "" and stristr($rule['interface'],"opt" == true)) {
 				$line .= "reply-to (" . $ri . " " . $rg . ") ";
 			}
-
+			
 			/* Setup outgoing load balancing */
 			if ($config['nat']['outgoingloadbalancing']['rule'] <> "" and
 			    isset($config['nat']['outgoingloadbalancing']['enable'])
@@ -1140,15 +1148,15 @@ function generate_user_filter_rule($rule, $optcfg) {
 				if (isset($rule['source']['not'])) $not = "!";
 				$src = "{ " . $not .  alias_expand($rule['source']['address']). " }";
 			}
-
+			
 			if (!$src || ($src == "/")) {
 				break;
 			}
-
+			
 			$line .= "from $src ";
-
+			
 			if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
-
+			
 				if ($rule['source']['port']) {
 					$srcport = explode("-", $rule['source']['port']);
 					if(alias_expand($srcport[0]))
@@ -1203,15 +1211,15 @@ function generate_user_filter_rule($rule, $optcfg) {
 				if (isset($rule['destination']['not'])) $not = "! ";
 				$dst = "{ " . $not . alias_expand($rule['destination']['address']) . " }";
 			}
-
+			
 			if (!$dst || ($dst == "/")) {
 				break;
 			}
-
+			
 			$line .= "to $dst ";
-
+			
 			if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
-
+			
 				if ($rule['destination']['port']) {
 					$dstport = explode("-", $rule['destination']['port']);
 					if(alias_expand($dstport[0]))
@@ -1272,7 +1280,7 @@ function generate_user_filter_rule($rule, $optcfg) {
 				} else {
 					$line .= "keep state ";
 				}
-
+					
 				if( isset($rule['source-track']) and $rule['source-track'] <> "" or
 				  isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "" or
 				   isset($rule['max-src-states']) and $rule['max-src-states'] <> "" ) {
@@ -1287,9 +1295,9 @@ function generate_user_filter_rule($rule, $optcfg) {
 						$line .= "tcp.established " . $rule['statetimeout'] . " ";
 					$line .= " ) ";
 				}
-
+				
 			}
-
+			
 			if ($type == "reject" && $rule['protocol'] == "tcp") {
 				/* special reject packet */
 				$line .= "flags S/SA ";

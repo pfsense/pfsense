@@ -54,6 +54,9 @@ $apkg = $_POST['pkg'];
 if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, locate the first package that handles logging.
 	if(is_array($config['installedpackages']['package'])) {
 		foreach($config['installedpackages']['package'] as $package) {
+			if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
+				$statustext = "Could not locate /usr/local/pkg/" . $package['configurationfile'];
+			}
 			$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
 			if(is_array($pkg_config['logging'])) {
 				$apkg = $package['name'];
@@ -79,6 +82,9 @@ if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, loca
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Diagnostics: Package logs</p>
+<?php
+	if($statustext <> "") echo $statustext;
+?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
   <ul id="tabnav">
@@ -96,6 +102,9 @@ if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, loca
 		exit();
 	}
 	foreach($config['installedpackages']['package'] as $package) {
+		if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
+			echo "Could not locate /usr/local/pkg/" . $package['configurationfile'];
+		}	
         	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
 		if(is_array($pkg_config['logging'])) {
 			$pkgname = $package['name'];

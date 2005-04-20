@@ -52,7 +52,7 @@ if ($_POST['clear']) {
 $i = 0;
 $apkg = $_POST['pkg'];
 if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, locate the first package that handles logging.
-	if(is_array($config['installedpackages']['package']))
+	if(is_array($config['installedpackages']['package'])) {
 		foreach($config['installedpackages']['package'] as $package) {
 			$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
 			if(is_array($pkg_config['logging'])) {
@@ -62,6 +62,7 @@ if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, loca
 			}
 			$i++;
 		}
+	}
 } else {
 	$apkgid = get_pkg_id($apkg);
 }
@@ -84,29 +85,26 @@ if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, loca
     <?php
 	if($apkgid == -1) {
                 print_info_box_np("The specified package, {$apkg}, is not installed.");
-		include("fend.inc"); ?>
-		</html>
-    <?php	exit();
-		}
+		include("fend.inc");
+		echo "</html>";
+		exit();
+	}
 	if($i == 0) {
 		print_info_box_np("No packages are currently installed.");
-		include("fend.inc"); ?>
-		</html>
-    <?php	exit();
-	
-	
+		include("fend.inc");
+		echo "</html>";
+		exit();
+	}
 	foreach($config['installedpackages']['package'] as $package) {
         	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
 		if(is_array($pkg_config['logging'])) {
 			$pkgname = $package['name'];
 			$logtab = $pkg_config['logging']['logtab'];
 			if(!isset($pkg_config['logging']['logtab'])) $logtab = $pkgname;
-			if($apkg == $pkgname) { ?>
-				<li class="tabact"><?= $pkg_config['name']; ?></li>
-    <?php
-			} else { ?>
-				<li class="tabinact"><a href="diag_pkglogs.php?pkg=<?= $pkgname; ?>"><?= $logtab; ?></a></li>
-    <?php
+			if($apkg == $pkgname) {
+				echo "<li class=\"tabact\">{$pkg_config['name']}</li>";
+			} else {
+				echo "<li class=\"tabinact\"><a href=\"diag_pkglogs.php?pkg={$pkgname}>{$logtab}</a></li>";
 			}
 		}
         }
@@ -118,7 +116,8 @@ if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, loca
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		  <tr>
 			<td colspan="2" class="listtopic">
-			  Last <?=$nentries;?> <?=$apkg;?> log entries</td>
+			  Last <?=$nentries;?> <?=$apkg;?> log entries
+			</td>
 		  </tr>
 		  <?php
 			$apkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $config['installedpackages']['package'][$apkgid]['configurationfile'], "packagegui");

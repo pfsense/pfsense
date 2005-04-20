@@ -1,7 +1,8 @@
 #!/usr/local/bin/php
 <?php
-/* $Id$ */
 /*
+	$Id$
+	
         xmlrpc.php
         Copyright (C) 2005 Colin Smith
         All rights reserved.

@@ -36,58 +36,10 @@
 */
 
 require_once("xmlrpc_server.inc");
+require_once("xmlrpc.inc");
 require_once("xmlparse_pkg.inc");
 require_once("config.inc");
 require_once("functions.inc");
-
-// Helper functions.
-/*
- *   xmlrpc_auth: Handle basic crypt() authentication of the XMLRPC request. This function assumes that
- *                $params[0] contains the local system's plaintext password and removes the password from
- *		  the array before returning it.
- */
-function xmlrpc_auth(&$params) {
-	global $config;
-	if (crypt($params[0], $config['system']['password']) != $config['system']['password'])
-		return false; // Password didn't match.
-	array_shift($params); // Shift the password parameter off of the array.
-	return true; // Password matched.
-}
-
-/*
- *   xmlrpc_params_to_php: Convert params array passed from XMLRPC server into a PHP array and return it.
- *
- *   XXX: This function does not currently handle XML_RPC_Value objects of type "struct".
- */
-function xmlrpc_params_to_php($params) {
-	$array = array();
-	for($i = 0; $i < $params->getNumParams(); $i++) {
-		$value = $params->getParam($i);
-		if($value->kindOf() == "scalar") {
-			$array[] = $value->scalarval();
-		} elseif($value->kindOf() == "array") {
-			$array[] = xmlrpc_array_to_php($value);
-		}
-	}
-	return $array;
-}
-
-/*
- *   xmlrpc_array_to_php: Convert an XMLRPC array into a PHP array and return it.
- */
-function xmlrpc_array_to_php($array) {
-	$return = array();
-	$array_length = $array->arraysize();
-	for($i = 0; $i < $array->arraysize(); $i++) {
-		$value = $array->arraymem($i);
-		if($value->kindOf() == "scalar") {
-			$return[] = $value->scalarval();
-		} elseif($value->kindOf() == "array") {
-			$return[] = xmlrpc_array_to_php($value);
-		}
-	}
-	return $return;
-}
 
 // Exposed functions.
 

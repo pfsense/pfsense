@@ -13,11 +13,25 @@ if [ $1 != "upgrade" ]; then
 	/sbin/umount -f /ftmp > /dev/null 2>&1
 fi
 
+backup_chflags() {
+	mtree -Pcp / | bzip2 -9 > /tmp/chflags.dist.bz2
+}
+
+restore_chflags() {
+	cd / && bzcat /tmp/chflags.dist.bz2 | mtree -PU -p /
+}
+
+remove_chflags() {
+	chflags -R noschg /
+}
+
 binary_update() {
 	TGZ=$1
 	ERR_F="/tmp/bdiff.log"
 	rm ${ERR_F} 2>/dev/null
 	mkdir /tmp/patched /tmp/patches 2>>${ERR_F}
+	backup_chflags
+	remove_chflags
 	cd /tmp/patches
 	for i in `/usr/bin/tar tvzf $TGZ | egrep -v "(^d|_md5)" | nawk '{print $9;}'`;
 	 do 
@@ -46,6 +60,7 @@ binary_update() {
 	   /bin/rm /tmp/patches/${i}.* >> ${ERR_F}
 	done
 	rm -rf /tmp/patched /tmp/patches >> ${ERR_F}
+	restore_chflags
 }
 
 case $1 in
@@ -54,12 +69,17 @@ enable)
 		> /dev/null 2>&1
 	;;
 auto)
+	backup_chflags
+	remove_chflags
 	/etc/rc.firmware_auto
+	restore_chflags
 	;;
 upgrade)
 	# wait 5 seconds before beginning
 	sleep 5
-
+	backup_chflags
+	remove_chflags
+	
 	exec </dev/console >/dev/console 2>/dev/console
 
 	echo
@@ -89,11 +109,14 @@ upgrade)
 	/sbin/mount -r /cf
 
 	echo "Done - rebooting system..."
+	restore_chflags
 	/sbin/reboot
 	;;
 pfSenseupgrade)
 	# wait 5 seconds before beginning
 	sleep 5
+	backup_chflags
+	remove_chflags
 
 	exec </dev/console >/dev/console 2>/dev/console
 
@@ -130,9 +153,13 @@ pfSenseupgrade)
 
 	echo "Done - rebooting system..." | logger -p daemon.info -i -t Upgrade
 	rm /tmp/auto_upgrade_in_progress
+	restore_chflags
 	/sbin/shutdown -r now
 	;;
 delta_update)
+	backup_chflags
+	remove_chflags
 	binary_update $2
+	restore_chflags
 	;;
 esac

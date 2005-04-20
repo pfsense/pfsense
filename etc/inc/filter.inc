@@ -1069,7 +1069,6 @@ function generate_user_filter_rule($rule, $optcfg) {
 			
 			if ($ispptp) {
 				$line .= "on ng" . ($ngcounter+1) . " ";
-				$ngcounter++;
 			} else {
 				// translate wan, man, lan, opt to real interface.
 				$interface = $rule['interface'];

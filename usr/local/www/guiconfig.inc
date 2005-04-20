@@ -59,6 +59,8 @@ $d_sysrebootreqd_path = $g['varrun_path'] . "/sysreboot.reqd";
 $d_passthrumacsdirty_path = $g['varrun_path'] . "/passthrumacs.dirty";
 $d_allowedipsdirty_path = $g['varrun_path'] . "/allowedips.dirty";
 $d_ovpnclidirty_path = $g['varrun_path'] . "/ovpnclient.dirty";
+/* used by progress bar */
+$lastseen = "-1";
 
 if (file_exists($d_firmwarelock_path)) {
 	if (!$d_isfwfile) {
@@ -548,7 +550,6 @@ function read_body($ch, $string) {
 	   unnecessary javascript update messages which sends the clients
            firefox utilization to 100%
         */
-        $lastseen = "-1";
         if($lastseen <> $downloadProgress and $downloadProgress < 101) {
 		if($sendto == "status") {
                 	$tostatus = $static_status . $downloadProgress . "%";

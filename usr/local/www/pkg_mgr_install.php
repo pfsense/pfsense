@@ -141,23 +141,25 @@ if($_GET['mode'] == "reinstallall") {
      */
     $output_static = "";
     $counter = 0;
-    foreach($pkg_config['packages']['package'] as $available_package) {
-        foreach($config['installedpackages']['package'] as $package) {
-            if($package['name'] == $available_package['name']) {
-                array_push($packages_to_install, $counter);
-		$output_static .= "Adding " . $package['name'] . " to installation array.\n";
-		update_output_window($output_static);
-                fwrite($fd_log, "Adding (" . $counter . ") " . $package['name'] . " to package installation array.\n" . $status);
-            }
-        }
-        $counter++;
-    }
+    if(is_array($pkg_config['packages']['package']))
+                foreach($pkg_config['packages']['package'] as $available_package) {
+                        if(is_array($config['installedpackages']['package']))
+                                    foreach($config['installedpackages']['package'] as $package) {
+                                        if($package['name'] == $available_package['name']) {
+                                            array_push($packages_to_install, $counter);
+                                        $output_static .= "Adding " . $package['name'] . " to installation array.\n";
+                                        update_output_window($output_static);
+                                            fwrite($fd_log, "Adding (" . $counter . ") " . $package['name'] . " to package installation array.\n" . $status);
+                                        }
+                                    }
+                        $counter++;
+                }
 } else {
-    /*
-     * Push the desired package id onto the install packages array
-     */
-    fwrite($fd_log, "Single package installation started.\n");
-    array_push($packages_to_install, $_GET['id']);
+            /*
+             * Push the desired package id onto the install packages array
+             */
+            fwrite($fd_log, "Single package installation started.\n");
+            array_push($packages_to_install, $_GET['id']);
 }
 
 /*

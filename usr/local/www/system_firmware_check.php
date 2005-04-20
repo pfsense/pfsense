@@ -86,7 +86,7 @@ function old_checkversion() {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">System: Firmware: Invoke Auto Upgrade</p>
+<p class="pgtitle">System: Firmware: Auto Upgrade</p>
 
 <form action="system_firmware_auto.php" method="post">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -115,6 +115,8 @@ function old_checkversion() {
 		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols="60" rows="25" name="output" id="output" wrap="hard">
 		      </textarea>                      
 		      </center>
+                      <p>
+                      <center><input type="submit" value="Invoke Auto Upgrade">
 		  </td>
 		</tr>
 	      </table>
@@ -122,7 +124,9 @@ function old_checkversion() {
 	</tr>
 </table>
 
-<center><input type="submit" value="Invoke Auto Upgrade">
+<p>
+
+
 
 <?php
 

@@ -549,7 +549,7 @@ function read_body($ch, $string) {
            firefox utilization to 100%
         */
         $lastseen = "-1";
-        if($lastseen <> $downloadProgress) {
+        if($lastseen <> $downloadProgress and $downloadProgress < 101) {
 		if($sendto == "status") {
                 	$tostatus = $static_status . $downloadProgress . "%";
                 	update_status($tostatus);

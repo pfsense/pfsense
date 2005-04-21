@@ -223,12 +223,12 @@ if($use_old_checkversion == false) {
 			$firmwareurl=$g['firmwarebaseurl'];
 			$firmwarename=$g['firmwarefilename'];
 		}
-		if(file_exists("/tmp/auto_upgrade_in_progress")) {
-			$update_status = "A upgrade is already in progress.";
+		exec("ps -ax | grep rc.firmware_auto | grep -v grep", $upgrade_lock);
+		if($upgrade_lock[0] != "") {
+			$update_status = "An upgrade is already in progress.";
 			update_output_window($update_status);
 			exit;
 		} else {
-			touch("/tmp/auto_upgrade_in_progress");
 			log_error("Downloading http://www.pfSense.com/latest.tgz");
 			update_status("Downloading latest version...");	
 			download_file_with_progress_bar("http://www.pfSense.com/latest.tgz", "/tmp/latest.tgz");
@@ -239,7 +239,6 @@ if($use_old_checkversion == false) {
 			update_status("pfSense is now upgrading.  The firewall will reboot once the operation has completed.");
 			echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
 			exit;
-
 		}
 	} elseif($versions == "") {
 		update_output_window("Using old checkversion method. You are running the latest version of pfSense.");

@@ -311,25 +311,21 @@ foreach ($packages_to_install as $id) {
 
     $pkgid = get_pkg_id($pkgent['name']);
 
-    if($pkgid == -1) {
-        $config['installedpackages']['package'][] = $pkgent;
-    } else {
-	$static_output .= "Package already registered in config.xml!\n";
-	$config['installedpackages']['package'][$pkgid] = $pkgent; 
-    }
-
     if(!$_GET['mode'] == "reinstallall") {
 	$static_output .= "Saving updated package information... ";
-        update_output_window($static_output);
-        fwrite($fd_log, "Saving updated package information ...\n");
-        /*
-         * Make sure that this package isn't already installed.
-         */
-        if(!is_package_installed($pkgent['name']))        
-            write_config("Installed package {$pkgent['name']}");
-        /* remount rw after write_config() since it will mount ro. */
+	update_output_window($static_output);
+	if($pkgid == -1) {
+		$config['installedpackages']['package'][] = $pkgent;
+		$changedesc = "Installed {$pkgent['name']} package.";
+		$to_output = "done.\n";
+	} else {
+		$config['installedpackages']['package'][$pkgid] = $pkgent;
+		$changedesc = "Overwrote previous installation of {$pkgent['name']}.";
+		$to_output = "overwrite!\n";
+	}
+        write_config($changedesc);
         conf_mount_rw();
-	$static_output .= "done.\n";
+	$static_output .= $to_output;
 	update_output_window($static_output);
     }
 

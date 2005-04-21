@@ -110,7 +110,7 @@ upgrade)
 
 	echo "Done - rebooting system..."
 	restore_chflags
-	/sbin/reboot
+	/etc/rc.reboot
 	;;
 pfSenseupgrade)
 	# wait 5 seconds before beginning
@@ -152,9 +152,8 @@ pfSenseupgrade)
 	/sbin/mount -r /cf
 
 	echo "Done - rebooting system..." | logger -p daemon.info -i -t Upgrade
-	rm /tmp/auto_upgrade_in_progress
 	restore_chflags
-	/sbin/shutdown -r now
+	/etc/rc.reboot
 	;;
 delta_update)
 	backup_chflags

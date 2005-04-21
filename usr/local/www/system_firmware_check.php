@@ -108,11 +108,9 @@ function old_checkversion() {
 		      <table id="progholder" name="progholder" height='20' border='1' bordercolor='black' width='420' bordercolordark='#000000' bordercolorlight='#000000' style='border-collapse: collapse' colspacing='2' cellpadding='2' cellspacing='2'><tr><td><img border='0' src='progress_bar.gif' width='280' height='23' name='progressbar' id='progressbar'></td></tr></table>
 		      <br>
 		      <!-- status box -->
-		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols="60" rows="1" name="status" id="status" wrap="hard">
-		      Checking version information.
-		      </textarea>
+                      <input name="status" id="status" value="Checking version information...">
 		      <!-- command output box -->
-		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols="60" rows="25" name="output" id="output" wrap="hard">
+		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols='60' rows='5' name='output' id='output' wrap='hard'>
 		      </textarea>                      
 		      </center>
                       <p>
@@ -125,8 +123,6 @@ function old_checkversion() {
 </table>
 
 <p>
-
-
 
 <?php
 
@@ -173,7 +169,7 @@ if($use_old_checkversion == false) {
 
 } else {
 	if($versions != "") {
-		update_output_window("Using old checkversion method. Text returned from pfSense.com:\n\n" . $versions . "\n\n");
+		update_output_window("There are updates available: \n\n" . $versions . "\n\n");
 		$http_auth_username = "";
 		$http_auth_password = "";
 		if($config['system']['proxy_auth_username'])

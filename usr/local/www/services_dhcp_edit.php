@@ -172,7 +172,7 @@ if ($_POST) {
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> 
+                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" value="cancel" onclick="history.back()">
                     <?php if (isset($id) && $a_maps[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

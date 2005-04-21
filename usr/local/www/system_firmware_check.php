@@ -173,7 +173,7 @@ if($use_old_checkversion == false) {
 
 } else {
 	if($versions != "") {
-		update_output_window("Using old checkversion method. Text returned from pfSense.com:\n\n" . $versions . "\n\nUpgrading...");
+		update_output_window("Using old checkversion method. Text returned from pfSense.com:\n\n" . $versions . "\n\n");
 		$http_auth_username = "";
 		$http_auth_password = "";
 		if($config['system']['proxy_auth_username'])

@@ -565,7 +565,7 @@ function read_body($ch, $string) {
         return $length;
 }
 
-function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 'http://ftp2.freebsd.org/pub/FreeBSD/ports/i386/packages-5-stable/Latest') {
+function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 'http://ftp2.freebsd.org/pub/FreeBSD/ports/i386/packages-5.4-release/Latest') {
 	global $static_status, $static_output, $g, $fd_log;
 	$pkg_extension = strrchr($filename, '.');
 	$static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $pkgname . " ";

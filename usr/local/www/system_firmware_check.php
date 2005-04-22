@@ -110,7 +110,7 @@ function old_checkversion() {
 		      <!-- status box -->
                       <input size="60" name="status" id="status" value="Checking version information...">
 		      <!-- command output box -->
-		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols='60' rows='5' name='output' id='output' wrap='hard'>
+		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols='60' rows='3' name='output' id='output' wrap='hard'>
 		      </textarea>                      
 		      </center>
                       <p>

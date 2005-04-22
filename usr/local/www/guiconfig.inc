@@ -583,7 +583,10 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 			$depend_filename = $working_depend[0] . $pkg_extension;
 			exec("ls /var/db/pkg", $is_installed);
 			$is_installed = array_values(preg_grep("/{$working_depend[0]}/i", $is_installed));
-			if($is_installed[0] == "") pkg_fetch_recursive($working_depend[0], $depend_filename, $dependlevel + 1);
+			if($is_installed[0] == "") {
+				pkg_fetch_recursive($working_depend[0], $depend_filename, $dependlevel + 1);
+			} else {
+				fwrite($fd_log, $working_depend[0] . "\n");
 		}
         }
 	exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_add -v {$fetchto} 2>&1", $pkgaddout);

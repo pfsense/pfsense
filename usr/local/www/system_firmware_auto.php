@@ -223,7 +223,7 @@ if($use_old_checkversion == false) {
 			$firmwareurl=$g['firmwarebaseurl'];
 			$firmwarename=$g['firmwarefilename'];
 		}
-		exec("ps -ax | grep firmware_auto | grep -v grep", $upgrade_lock);
+		exec("ps -ax | grep rc.firmware_auto | grep -v grep", $upgrade_lock);
 		if($upgrade_lock[0] != "") {
 			$update_status = "An upgrade is already in progress.";
 			update_output_window($update_status);

@@ -236,6 +236,7 @@ foreach ($packages_to_install as $id) {
             fwrite($fd_log, "ERROR!  Could not fetch " . $pkg_config['packages']['package'][$id]['config_file']);
             $static_output .= "failed!\n\nInstallation aborted.";
             update_output_window($static_output);
+            echo "<br>Show <a href=\"pkg_mgr_install.php?showlog=true\">install log</a></center>";
             exit;
         }
 	$static_output .= "done.\n";

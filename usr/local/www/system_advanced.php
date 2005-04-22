@@ -140,10 +140,8 @@ if ($_POST) {
 		$config['system']['optimization'] = $_POST['optimization'];
 		$config['system']['disablerendevouz'] = $_POST['disablerendevouz'];
 
-		if ($g['platform'] == "generic-pc") {
-			$oldharddiskstandby = $config['system']['harddiskstandby'];
-			$config['system']['harddiskstandby'] = $_POST['harddiskstandby'];
-		}
+		$oldharddiskstandby = $config['system']['harddiskstandby'];
+		$config['system']['harddiskstandby'] = $_POST['harddiskstandby'];
 		$config['system']['webgui']['noantilockout'] = $_POST['noantilockout'] ? true : false;
 
 		/* Firewall and ALTQ options */

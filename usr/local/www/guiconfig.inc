@@ -587,6 +587,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 				pkg_fetch_recursive($working_depend[0], $depend_filename, $dependlevel + 1);
 			} else {
 				fwrite($fd_log, $working_depend[0] . "\n");
+			}
 		}
         }
 	exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_add -v {$fetchto} 2>&1", $pkgaddout);

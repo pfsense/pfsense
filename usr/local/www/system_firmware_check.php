@@ -108,7 +108,7 @@ function old_checkversion() {
 		      <table id="progholder" name="progholder" height='20' border='1' bordercolor='black' width='420' bordercolordark='#000000' bordercolorlight='#000000' style='border-collapse: collapse' colspacing='2' cellpadding='2' cellspacing='2'><tr><td><img border='0' src='progress_bar.gif' width='280' height='23' name='progressbar' id='progressbar'></td></tr></table>
 		      <br>
 		      <!-- status box -->
-                      <input name="status" id="status" value="Checking version information...">
+                      <input size="60" name="status" id="status" value="Checking version information...">
 		      <!-- command output box -->
 		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols='60' rows='5' name='output' id='output' wrap='hard'>
 		      </textarea>                      
@@ -186,11 +186,11 @@ if($use_old_checkversion == false) {
 			$firmwarename=$g['firmwarefilename'];
 		}
 	} elseif($versions == "") {
-		update_output_window("Using old checkversion method. You are running the latest version of pfSense.");
+		update_output_window("You are running the latest version of pfSense.");
 	} elseif(is_null($versions)) {
-		update_output_window("Using old checkversion method. Unable to receive version information from pfSense.com.");
+		update_output_window("Unable to receive version information from pfSense.com.");
 	} else {
-		update_output_window("Using old checkversion method. An unknown error occurred.");
+		update_output_window("An unknown error occurred.");
 	}
 }
 

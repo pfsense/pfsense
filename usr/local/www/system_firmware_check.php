@@ -106,11 +106,9 @@ function old_checkversion() {
 		      <!-- progress bar -->
 		      <center>
 		      <table id="progholder" name="progholder" height='20' border='1' bordercolor='black' width='420' bordercolordark='#000000' bordercolorlight='#000000' style='border-collapse: collapse' colspacing='2' cellpadding='2' cellspacing='2'><tr><td><img border='0' src='progress_bar.gif' width='280' height='23' name='progressbar' id='progressbar'></td></tr></table>
-		      <br>
-		      <!-- status box -->
-                      <input size="60" name="status" id="status" value="Checking version information...">
+		      <br>                      
 		      <!-- command output box -->
-		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols='60' rows='3' name='output' id='output' wrap='hard'>
+		      <textarea border='1' bordercolordark='#000000' bordercolorlight='#000000' cols='60' rows='7' name='output' id='output' wrap='hard'>
 		      </textarea>                      
 		      </center>
                       <p>
@@ -133,7 +131,6 @@ $kernel_version =	trim(file_get_contents('/etc/version_kernel'));
 $base_version =		trim(file_get_contents('/etc/version_base'));
 $use_old_checkversion = true;
 
-update_status("Downloading current version information...");
 $static_text = "Downloading current version information... ";
 update_output_window($static_text);
 if($use_old_checkversion == true) {
@@ -150,7 +147,7 @@ if($use_old_checkversion == false) {
 	if(array_shift($versions) == true) {
 		$i = 0;
 		$need_update = array();
-		update_status("Found required updates");
+		update_output_window("Found required updates");
 		foreach($versions as $ver) {
 			if(is_string($ver[0])) {
 				$static_text .= ucfirst($upgrades[$i]) . "\n\tInstalled: " . $firmware_version . "\n\tCurrent: " . $ver[count($ver) -1] . "\n";
@@ -163,7 +160,7 @@ if($use_old_checkversion == false) {
 		$i = 0;
 		//              if(isset($versions[3])) $static_text = $versions[4] . '\n'; // If we have additional data (a CHANGELOG etc) to display, do so.
 	} else {
-		update_status("No updates required.");
+		update_output_window("No updates required.");
 	}
 
 

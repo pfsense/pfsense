@@ -98,8 +98,8 @@ function old_checkversion() {
   <tr>
     <td>
       <ul id="tabnav">
+        <li class="tabact">Auto Update</a></li>
 	<li class="tabinact"><a href="system_firmware.php">Firmware Update</a></li>
-    	<li class="tabact">Auto Update</a></li>
       </ul>
     </td>
   </tr>

@@ -152,19 +152,11 @@ if ($_POST) {
 
 		if (($config['system']['webgui']['certificate'] != $oldcert)
 				|| ($config['system']['webgui']['private-key'] != $oldkey)) {
-//			touch($d_sysrebootreqd_path);
 			system_webgui_start();
-		} else if (($g['platform'] == "generic-pc") && ($config['system']['harddiskstandby'] != $oldharddiskstandby)) {
-			if (!$config['system']['harddiskstandby']) {
-				// Reboot needed to deactivate standby due to a stupid ATA-protocol
-				touch($d_sysrebootreqd_path);
-				unset($config['system']['harddiskstandby']);
-			} else {
-				// No need to set the standby-time if a reboot is needed anyway
-				system_set_harddisk_standby();
-			}
 		}
 
+		system_set_harddisk_standby();
+			
 		$retval = 0;
 		if (!file_exists($d_sysrebootreqd_path)) {
 			config_lock();

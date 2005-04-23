@@ -54,7 +54,7 @@ function xmlrpc_value_to_php($raw_value) {
                 $return = array();
                 for($i = 0; $i < $raw_value->arraysize(); $i++) {
                         $value = $raw_value->arraymem($i);
-                        $return[] = xmlrpc_array_to_php($value);
+                        $return[] = xmlrpc_value_to_php($value);
                 }
                 break;
         case "struct":

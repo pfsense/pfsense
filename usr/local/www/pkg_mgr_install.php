@@ -221,13 +221,6 @@ foreach ($packages_to_install as $id) {
     $static_status = "Beginning package installation for " . $pkgent['name'] . "...";
     update_status($static_status);
 
-    fwrite($fd_log, "ls {$g['vardb_path']}/pkg | grep " . $package_to_verify . "\n" . $status);
-    if($status <> "") {
-                // package is already installed!?
-                if(!$_GET['mode'] == "reinstallall")
-                    print_info_box_np("NOTICE! " . $pkgent['name'] . " is already installed!  Installation will be registered.");
-    }
-
     if($pkg_config['packages']['package'][$id]['config_file'] <> "") {
         $static_output .= "Downloading package configuration file... ";
 	download_file_with_progress_bar($pkg_config['packages']['package'][$id]['config_file'], "/usr/local/pkg/" . substr(strrchr($pkg_config['packages']['package'][$id]['config_file'], '/'), 1));
@@ -282,7 +275,15 @@ foreach ($packages_to_install as $id) {
 		$static_orig = $static_output;
 		$static_output .= "\n";
 		update_output_window($static_output);
-		pkg_fetch_recursive($pkgent['name'] . "-" . $pkgent['version'], $pkgent['depends_on_package'], 0, $pkgent['depends_on_package_base_url']);
+		exec("ls /var/db/pkg", $is_installed);
+                $pkg_installed = false;
+                foreach($is_installed as $is_inst) {
+                	if($is_inst == $pkgent['name'] . '-' . $pkgent['version']) {
+                		$pkg_installed = true;
+                		break;
+                	}
+                }
+		if($pkg_installed == false) pkg_fetch_recursive($pkgent['name'] . "-" . $pkgent['version'], $pkgent['depends_on_package'], 0, $pkgent['depends_on_package_base_url']);
 		$static_output = $static_orig . "done.\n";
 		update_output_window($static_output);
     }
@@ -290,9 +291,17 @@ foreach ($packages_to_install as $id) {
     if ($pkgent['depends_on_package_base_url'] <> "" or $pkgent['pfsense_package_base_url'] <> "") {
         $static_output .= "Checking for successful package installation... ";
 	update_output_window($static_output);
-        exec("ls {$g['vardb_path']}/pkg | grep " . $package_to_verify, $status);
-        fwrite($fd_log, $status[0] . "\n");
-        if($status[0] <> "") {
+        if($pkg_installed == false) {
+		exec("ls /var/db/pkg", $is_installed);
+		foreach($is_installed as $is_inst) {
+                         if($is_inst == $pkgent['name'] . '-' . $pkgent['version']) {
+                                 $pkg_installed = true;
+                                 break;
+                         }
+                 }
+	}
+        fwrite($fd_log, $is_installed[0] . "\n");
+        if($pkg_installed == true) {
                     $static_output .= "done.\n";
 		    update_output_window($static_output);
                     fwrite($fd_log, "pkg_add successfully completed.\n");

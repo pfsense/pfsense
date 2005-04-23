@@ -522,6 +522,7 @@ function download_file_with_progress_bar($url_file, $destination_file) {
                 
         curl_exec($ch);
         fclose($fout);
+	curl_close($ch);
         return 1;
 
         if ($error = curl_error($ch)) {
@@ -570,23 +571,32 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 	$pkg_extension = strrchr($filename, '.');
 	$static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $pkgname . " ";
 	$fetchto = "/tmp/apkg_" . $pkgname . $pkg_extension;
-        download_file_with_progress_bar($base_url . "/" . $filename, $fetchto);
+	download_file_with_progress_bar($base_url . "/" . $filename, $fetchto);
 //	update_output_window($static_output . "\n\n" . $pkg_progress);
-        exec("/usr/bin/tar -O -f {$fetchto} -x +CONTENTS", $slaveout);
+        exec("/usr/bin/bzcat {$fetchto} | /usr/bin/tar -O -f - -x +CONTENTS", $slaveout);
         $workingdir = preg_grep("/instmp/", $slaveout);
         $workingdir = $workingdir[0];
         $raw_depends_list = array_values(preg_grep("/\@pkgdep/", $slaveout));
 	if($raw_depends_list != "") {
                 foreach($raw_depends_list as $adepend) {
 			$working_depend = explode(" ", $adepend);
-                        $working_depend = explode("-", $working_depend[1]);
-			$depend_filename = $working_depend[0] . $pkg_extension;
+                        //$working_depend = explode("-", $working_depend[1]);
+			$depend_filename = $working_depend[1] . $pkg_extension;
 			exec("ls /var/db/pkg", $is_installed);
-			$is_installed = array_values(preg_grep("/{$working_depend[0]}/i", $is_installed));
-			if($is_installed[0] == "") {
-				pkg_fetch_recursive($working_depend[0], $depend_filename, $dependlevel + 1);
+			$pkg_installed = false;
+			foreach($is_installed as $is_inst) {
+				if($is_inst == $working_depend[1]) {
+					$pkg_installed = true;
+					break;
+				}
+			}
+//			$is_installed = array_values(preg_grep("/\b{$working_depend[0]}\b/i", $is_installed));
+			if($pkg_installed === false) {
+				pkg_fetch_recursive($working_depend[1], $depend_filename, $dependlevel + 1, $base_url);
 			} else {
-				fwrite($fd_log, $working_depend[0] . "\n");
+				$dependlevel++;
+				$static_output .= str_repeat(" ", $dependlevel * 2) . $working_depend[1] . " \n";
+				fwrite($fd_log, $working_depend[1] . "\n");
 			}
 		}
         }

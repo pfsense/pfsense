@@ -282,7 +282,7 @@ foreach ($packages_to_install as $id) {
 		$static_orig = $static_output;
 		$static_output .= "\n";
 		update_output_window($static_output);
-		pkg_fetch_recursive($pkgent['name'], $pkgent['depends_on_package'], 0, $pkgent['depends_on_package_base_url']);
+		pkg_fetch_recursive($pkgent['name'] . "-" . $pkgent['version'], $pkgent['depends_on_package'], 0, $pkgent['depends_on_package_base_url']);
 		$static_output = $static_orig . "done.\n";
 		update_output_window($static_output);
     }

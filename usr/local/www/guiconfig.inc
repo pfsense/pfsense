@@ -595,7 +595,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 				pkg_fetch_recursive($working_depend[1], $depend_filename, $dependlevel + 1, $base_url);
 			} else {
 				$dependlevel++;
-				$static_output .= str_repeat(" ", $dependlevel * 2) . $working_depend[1] . " \n";
+				$static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $working_depend[1] . " ";
 				fwrite($fd_log, $working_depend[1] . "\n");
 			}
 		}

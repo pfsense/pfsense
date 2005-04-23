@@ -72,7 +72,7 @@ function showhide(tspan, tri) {
               routes</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_firmware_check.php" class="navlnk">Firmware</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_advanced.php" class="navlnk">Advanced</a><br>
-	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/pkg_mgr.php" class="navlnk">Package Manager</a><br>
+	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/pkg_mgr.php" class="navlnk">Packages</a><br>
 	      <?php echo return_ext_menu("System"); ?>
               <strong>Interfaces</strong>
 			  <?php if (!isset($config['system']['webgui']['noassigninterfaces'])): ?>

@@ -233,6 +233,7 @@ function update_description(itemnum) {
 
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 
+<!--
                 <tr>
                   <td colspan="2" valign="top" class="listtopic">Disable Rendezvous</td>
                 </tr>
@@ -243,6 +244,7 @@ function update_description(itemnum) {
                     <strong>Disable the Rendevouz automatic discovery protocol.</strong>
                     </td>
                 </tr>
+-->
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">

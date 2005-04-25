@@ -65,9 +65,22 @@ include("fbegin.inc");
                 </tr>
 
 		<?php
-		 $i = 0;
+		$instpkgs = array();
+                    foreach($config['installedpackages']['package'] as $instpkg) $instpkgs[] = $instpkg['name'];
+                    foreach ($pkg_config['packages']['package'] as $pkg) {    
+                        if(!in_array($pkg, $instpkgs)) {
+                                $pkgs[] = $pkg['name'];
+                        }
+                    }
                  if($config['installedpackages']['package'] != "") {
-		    foreach ($config['installedpackages']['package'] as $pkg) {
+		    foreach($config['installedpackages']['package'] as $instpkg) $instpkgs[] = $instpkg['name'];
+		    a_sort($instpkgs);
+		    foreach ($instpkgs as $index => $pkgname){
+			if(!is_string($pkgname)) {
+				echo "<tr><td colspan=\"3\"><center>There are currently no packages installed.</td></tr>";
+				break;
+			}
+			$pkg = $config['installedpackages']['package'][$index];
                         if($pkg['name'] <> "") {
                             ?>
                             <tr valign="top">
@@ -102,11 +115,9 @@ include("fbegin.inc");
                                 </td>
                             </tr>
                             <?php
-                            $i++;
                         }
 		    }
                  }
-                 if($i == 0) echo "<tr><td colspan=\"3\"><center>There are currently no packages installed.</td></tr>";
 		?>
         </table>
     </td>

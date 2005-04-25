@@ -107,26 +107,27 @@ if(!$pkg_config['packages']) {
 			}
 		    }
 		    asort($pkgs);
-		    foreach($pkgs as $index => $pkg) {
+		    $pkgs = array_keys($pkgs);
+		    foreach($pkgs as $index) {
 			    if(!is_string($instpkgs[0])) {
 				echo "<tr><td colspan=\"3\"><center>There are currently no available packages for installation.</td></tr>";
 			    }
                             ?>
                             <tr valign="top">
                                 <td class="listlr">
-                                    <A target="_new" href="<?= $pkg_config['packages'][$index]['website'] ?>"><?= $pkg_config['packages'][$index]['name'] ?></a>
+                                    <A target="_new" href="<?= $pkg_config['packages']['package'][$index]['website'] ?>"><?= $pkg_config['packages']['package'][$index]['name'] ?></a>
                                 </td>
                                 <td class="listlr">
-                                    <?= $pkg_config['packages'][$index]['category'] ?>
+                                    <?= $pkg_config['packages']['package'][$index]['category'] ?>
     							</td>
                                 <td class="listlr">
-									<?= $pkg_config['packages'][$index]['status'] ?>
+									<?= $pkg_config['packages']['package'][$index]['status'] ?>
 									<br>
-									<?= $pkg_config['packages'][$index]['version'] ?>
+									<?= $pkg_config['packages']['package'][$index]['version'] ?>
                                 </td>
                                 <td class="listbg">
                                     <font color="#FFFFFFF">
-                                    <?= $pkg_config['packages'][$index]['descr'] ?>
+                                    <?= $pkg_config['packages']['package'][$index]['descr'] ?>
                                 </td>
                                 <td valign="middle" class="list" nowrap>
                                     <a onclick="return confirm('Do you really want to install this package?')" href="pkg_mgr_install.php?id=<?=$index;?>"><img src="plus.gif" width="17" height="17" border="0"></a>

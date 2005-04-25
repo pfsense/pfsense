@@ -98,16 +98,19 @@ if(!$pkg_config['packages']) {
                 </tr>
 
 		<?php
-		 $i = 0;
+		 $pkgs = array();
+		 $instpkgs = array();
+		    foreach($config['installedpackages']['package'] as $instpkg) $instpkgs[] = $instpkg['name'];
 		    foreach ($pkg_config['packages']['package'] as $pkg) {
-			$pkgname = $pkg['name'];
-                        if($config['installedpackages']['package'] != "") {
-                            foreach ($config['installedpackages']['package'] as $installed) {
-                                        if($installed['name'] == $pkg['name'])
-                                                    $pkgname = "";
-                            }
-                        }
-                        if($pkgname <> "") {
+			if(!in_array($pkg, $instpkgs)) {
+				$pkgs[] = $pkg['name'];
+			}
+		    }
+		    sort($pkgs);
+		    foreach($pkgs as $pkg) {
+			    if(!is_string($instpkgs[0])) {
+				echo "<tr><td colspan=\"3\"><center>There are currently no available packages for installation.</td></tr>";
+			    }
                             ?>
                             <tr valign="top">
                                 <td class="listlr">
@@ -130,11 +133,6 @@ if(!$pkg_config['packages']) {
                                 </td>
                             </tr>
                             <?php
-                        }
-			$i++;
-		    }
-                    if($i == 0) {
-                        echo "<tr><td colspan=\"3\"><center>There are currently no available packages for installation.</td></tr>";
                     }
 		?>
         </table>

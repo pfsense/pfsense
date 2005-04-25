@@ -66,12 +66,7 @@ include("fbegin.inc");
 
 		<?php
 		$instpkgs = array();
-                    foreach($config['installedpackages']['package'] as $instpkg) $instpkgs[] = $instpkg['name'];
-                    foreach ($pkg_config['packages']['package'] as $pkg) {    
-                        if(!in_array($pkg, $instpkgs)) {
-                                $pkgs[] = $pkg['name'];
-                        }
-                    }
+                foreach($config['installedpackages']['package'] as $instpkg) $instpkgs[] = $instpkg['name'];
                  if($config['installedpackages']['package'] != "") {
 		    foreach($config['installedpackages']['package'] as $instpkg) $instpkgs[] = $instpkg['name'];
 		    asort($instpkgs);

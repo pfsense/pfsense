@@ -50,13 +50,11 @@ if ($_POST['clear']) {
 }
 
 $i = 0;
+
 $apkg = $_POST['pkg'];
 if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, locate the first package that handles logging.
-	if(is_array($config['installedpackages']['package'])) {
+	if($config['installedpackages']['package'] <> "") {
 		foreach($config['installedpackages']['package'] as $package) {
-			if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
-				$statustext = "Could not locate /usr/local/pkg/" . $package['configurationfile'];
-			}
 			$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
 			if(is_array($pkg_config['logging'])) {
 				$apkg = $package['name'];
@@ -68,8 +66,8 @@ if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, loca
 	}
 } else {
 	$apkgid = get_pkg_id($apkg);
+	$i = $apkgid;
 }
-
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -82,41 +80,35 @@ if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, loca
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Diagnostics: Package logs</p>
-<?php
-	if($statustext <> "") echo $statustext;
-?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
   <ul id="tabnav">
     <?php
-	if($apkgid == -1) {
-                print_info_box_np("The specified package, {$apkg}, is not installed.");
+	if($config['installedpackages']['package'] == "") {
+		print_info_box("No packages are currently installed.");
+	?>
+		</ul></td></tr></table>
+	<?php
 		include("fend.inc");
-		echo "</html>";
-		exit();
+		exit;
 	}
-	if($i == 0) {
-		print_info_box_np("No packages are currently installed.");
-		include("fend.inc");
-		echo "</html>";
-		exit();
-	}
-	foreach($config['installedpackages']['package'] as $package) {
-		if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
-			echo "Could not locate /usr/local/pkg/" . $package['configurationfile'];
-		}	
-        	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
-		if(is_array($pkg_config['logging'])) {
-			$pkgname = $package['name'];
-			$logtab = $pkg_config['logging']['logtab'];
-			if(!isset($pkg_config['logging']['logtab'])) $logtab = $pkgname;
-			if($apkg == $pkgname) {
-				echo "<li class=\"tabact\">{$pkg_config['name']}</li>";
-			} else {
-				echo "<li class=\"tabinact\"><a href=\"diag_pkglogs.php?pkg={$pkgname}>{$logtab}</a></li>";
+	if($config['installedpackages']['package'] <> "") {
+		foreach($config['installedpackages']['package'] as $package) {
+        		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
+			if(is_array($pkg_config['logging'])) {
+				$pkgname = $package['name'];
+				$logtab = $pkg_config['logging']['logtab'];
+				if(!isset($pkg_config['logging']['logtab'])) $logtab = $pkgname;
+				if($apkg == $pkgname) { ?>
+					<li class="tabact"><?= $pkg_config['name']; ?></li>
+    <?php
+				} else { ?>
+					<li class="tabinact"><a href="diag_pkglogs.php?pkg=<?= $pkgname; ?>"><?= $logtab; ?></a></li>
+    <?php
+				}
 			}
-		}
-        }
+       		 }
+	}
     ?> 
   </ul>
   </td></tr>
@@ -125,8 +117,7 @@ if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, loca
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		  <tr>
 			<td colspan="2" class="listtopic">
-			  Last <?=$nentries;?> <?=$apkg;?> log entries
-			</td>
+			  Last <?=$nentries;?> <?=$apkg;?> log entries</td>
 		  </tr>
 		  <?php
 			$apkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $config['installedpackages']['package'][$apkgid]['configurationfile'], "packagegui");
@@ -147,9 +138,12 @@ if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, loca
 			}
 		?>
 		</table>
-		<br><form action="diag_pkglogs.php" method="post">
+		<br>
+<!--
+<form action="diag_pkglogs.php" method="post">
 <input name="clear" type="submit" class="formbtn" value="Clear log">
 </form>
+-->
 	</td>
   </tr>
 </table>

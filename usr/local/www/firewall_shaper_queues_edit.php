@@ -99,7 +99,9 @@ if ($_POST) {
 		$queue = array();
 		$queue['schedulertype'] = $_POST['schedulertype'];
 		$queue['bandwidth'] = $_POST['bandwidth'];
-		$queue['bandwidthtype'] = $_POST['bandwidthtype'];
+		$queue['bandwidthtype'] = $_POST['bandwidthtype'];\
+		if($_POST['bandwidth'] == "") 
+			unset($queue['bandwidthtype']);
 		$queue['priority'] = $_POST['priority'];
 		$queue['name'] = ereg_replace(" ", "", $_POST['name']);
 		$queue['name'] = substr($queue['name'], 0, 15);

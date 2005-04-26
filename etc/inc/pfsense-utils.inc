@@ -369,12 +369,14 @@ function is_package_installed($packagename) {
 function get_pkg_id($pkg_name) {
     global $config;
     global $pkg_config;
-    $i=0;
-    if(is_array($config['installedpackages']['package']))
+    if(is_array($config['installedpackages']['package'])) {
+	$i = 0;
 	foreach ($config['installedpackages']['package'] as $pkg) {
 	    if($pkg['name'] == $pkg_name) return $i;
 	    $i++;
 	}
+	return $i;
+    }
     return -1;
 }
 
@@ -398,8 +400,11 @@ function get_latest_package_version($pkg_name) {
  * Lookup pkg_id in pkg_config.xml
  */
 function get_available_pkg_id($pkg_name) {
-    fetch_latest_pkg_config();
-    $pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
+    global $pkg_config;
+    if(!is_array($pkg_config)) {
+	fetch_latest_pkg_config();
+	$pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
+    }
     $id = 0;
     foreach($pkg_config as $pkg) {
 	if($pkg_config['name'] == $pkg_name) {

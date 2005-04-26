@@ -139,27 +139,25 @@ if($_GET['mode'] == "reinstallall") {
      *  Loop through installed packages and if name matches
      *  push the package id onto array to reinstall
      */
+    $instpkgs = array();
     $output_static = "";
     $counter = 0;
     if(is_array($pkg_config['packages']['package']))
-                foreach($pkg_config['packages']['package'] as $available_package) {
-                        if(is_array($config['installedpackages']['package']))
-                                    foreach($config['installedpackages']['package'] as $package) {
-                                        if($package['name'] == $available_package['name']) {
-                                            array_push($packages_to_install, $counter);
-                                        $output_static .= "Adding " . $package['name'] . " to installation array.\n";
-                                        update_output_window($output_static);
-                                            fwrite($fd_log, "Adding (" . $counter . ") " . $package['name'] . " to package installation array.\n" . $status);
-                                        }
-                                    }
-                        $counter++;
+		if(!is_string($instpkgs[0])) foreach($config['installedpackages']['package'] as $index => $instpkg) $instpkgs[] = $instpkg['name'];
+                foreach($pkg_config['packages']['package'] as $index => $available_package) {
+                        if(in_array($available_package['name'], $instpkgs)) {
+				$packages_to_install[] = $index;
+                                $output_static .= "Adding " . $package['name'] . " to installation array.\n";
+                                update_output_window($output_static);
+                                fwrite($fd_log, "Adding (" . $counter . ") " . $package['name'] . " to package installation array.\n" . $status);
+                        }
                 }
 } else {
             /*
              * Push the desired package id onto the install packages array
              */
             fwrite($fd_log, "Single package installation started.\n");
-            array_push($packages_to_install, $_GET['id']);
+            $packages_to_install[] =  $_GET['id'];
 }
 
 /*

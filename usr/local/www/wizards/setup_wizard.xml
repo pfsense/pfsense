@@ -392,11 +392,13 @@
 		</field>
 	</fields>
 	<stepsubmitphpaction>
-		$ip = $_POST['adminpassword'];
 		$ft = split("\.", $_POST['ip']);
 		$ft_ip = $ft[0] . "." . $ft[1] . "." . $ft[2] . ".";
-		$config['dhcpd']['lan']['range']['from'] = $ft_ip . ".100";
-		$config['dhcpd']['lan']['range']['to'] = $ft_ip . ".250";
+		$config['dhcpd']['lan']['range']['from'] = $ft_ip . ".50";
+		$highestip = gen_subnet_max($_POST['ip'], $config['interfaces']['lan']['subnet']);
+		$hi = split("\.", $highestip);
+		$highestip = $hi[3]-1;
+		$config['dhcpd']['lan']['range']['to'] = $ft_ip . $highestip;
 	</stepsubmitphpaction>
 </step>
 <step>

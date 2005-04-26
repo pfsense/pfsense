@@ -400,7 +400,7 @@ function get_latest_package_version($pkg_name) {
  * Lookup pkg_id in pkg_config.xml
  */
 function get_available_pkg_id($pkg_name) {
-    global $pkg_config;
+    global $pkg_config, $g;
     if(!is_array($pkg_config)) {
 	fetch_latest_pkg_config();
 	$pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");

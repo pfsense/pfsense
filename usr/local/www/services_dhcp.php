@@ -53,10 +53,12 @@ $pconfig['range_from'] = $config['dhcpd'][$if]['range']['from'];
 $pconfig['range_to'] = $config['dhcpd'][$if]['range']['to'];
 $pconfig['deftime'] = $config['dhcpd'][$if]['defaultleasetime'];
 $pconfig['maxtime'] = $config['dhcpd'][$if]['maxleasetime'];
+$pconfig['gateway'] = $config['dhcpd'][$if]['gateway'];
 list($pconfig['wins1'],$pconfig['wins2']) = $config['dhcpd'][$if]['winsserver'];
 $pconfig['enable'] = isset($config['dhcpd'][$if]['enable']);
 $pconfig['denyunknown'] = isset($config['dhcpd'][$if]['denyunknown']);
 $pconfig['staticarp'] = isset($config['dhcpd'][$if]['staticarp']);
+
 
 $ifcfg = $config['interfaces'][$if];
 

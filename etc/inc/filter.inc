@@ -973,7 +973,7 @@ function generate_user_filter_rule($rule, $optcfg) {
 		
 		/* don't include disabled rules */
 		if (isset($rule['disabled'])) {
-			return "# rule " . $rule['descr'] . " disabled \n";
+			//return "# rule " . $rule['descr'] . " disabled \n";
 			return;
 		}
 		
@@ -989,7 +989,8 @@ function generate_user_filter_rule($rule, $optcfg) {
 		if ($rule['interface'] == "pptp") {
 			
 			if ($pptpdcfg['mode'] != "server") {
-				return "# mode != server " . $rule['descr'] . "\n";
+				//return "# mode != server " . $rule['descr'] . "\n";
+				return;
 			}
 			
 			$nif = $g['n_pptp_units'];
@@ -999,7 +1000,7 @@ function generate_user_filter_rule($rule, $optcfg) {
 			/* Check to see if the interface is opt and in our opt list */
 			if (strstr($rule['interface'], "opt")) {
  				if (!array_key_exists($rule['interface'], $optcfg)) {
-					return "# array key does not exist for " . $rule['descr'] . "\n";
+					//return "# array key does not exist for " . $rule['descr'] . "\n";
 					return;
 				}
 			}
@@ -1011,31 +1012,31 @@ function generate_user_filter_rule($rule, $optcfg) {
 		if ($pptpdcfg['mode'] != "server") {
 			if (($rule['source']['network'] == "pptp") ||
 				($rule['destination']['network'] == "pptp")) {
-					return "# source network or destination network == pptp on " . $rule['descr'] . "\n";
+					//return "# source network or destination network == pptp on " . $rule['descr'] . "\n";
 					return;
 				}
 		}
 		
 		if ($rule['source']['network'] && strstr($rule['source']['network'], "opt")) {
 			if (!array_key_exists($rule['source']['network'], $optcfg)) {
-				return "# !array_key_exists source network " . $rule['descr'] . "\n";
+				//return "# !array_key_exists source network " . $rule['descr'] . "\n";
 				return;
 			}
 		}
 		if ($rule['destination']['network'] && strstr($rule['destination']['network'], "opt")) {
 			if (!array_key_exists($rule['destination']['network'], $optcfg)) {
-				return "# !array_key_exists dest network " . $rule['descr'] . "\n";
+				//return "# !array_key_exists dest network " . $rule['descr'] . "\n";
 				return;
 			}
 		}
 		
 		/* check for unresolvable aliases */
 		if ($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
-			return "# unresolvable source aliases " . $rule['descr'] . "\n";
+			//return "# unresolvable source aliases " . $rule['descr'] . "\n";
 			return;
 		}
 		if ($rule['destination']['address'] && !alias_expand($rule['destination']['address'])) {
-			return "# unresolvable dest aliases " . $rule['descr'] . "\n";
+			//return "# unresolvable dest aliases " . $rule['descr'] . "\n";
 			return;
 		}
 		
@@ -1603,16 +1604,16 @@ EOD;
 			$line = "";
 			$line = generate_user_filter_rule($rule, $optcfg);
 
-			// label
-                        if($rule['descr'] <> "" and $line <> "") {
-				$line .= "label \"USER_RULE: " . $rule['descr'] . "\" ";
-			} else {
-				$line .= "# could not process \"USER_RULE: " . $rule['descr'] . "\" ";
+			if (!isset($rule['disabled'])) {
+				// label
+				if($rule['descr'] <> "" and $line <> "") {
+					$line .= "label \"USER_RULE: " . $rule['descr'] . "\" ";
+				} else {
+					$line .= "# could not process \"USER_RULE: " . $rule['descr'] . "\" ";
+				}
+				$line .= "\n";
+				$ipfrules .= $line;
 			}
-
-			$line .= "\n";
-
-			$ipfrules .= $line;
 		}
 
 	$ipfrules .= "\n# SSH lockout\n";

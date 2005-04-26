@@ -57,6 +57,7 @@ $pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
 $pconfig['schedulertype'] = $config['system']['schedulertype'];
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
 $pconfig['disablerendevouz'] = $config['system']['disablerendevouz'];
+$pconfig['enableserial'] = $config['system']['enableserial'];
 
 if ($_POST) {
 
@@ -139,6 +140,8 @@ if ($_POST) {
 		$config['system']['webgui']['expanddiags'] = $_POST['expanddiags'] ? true : false;
 		$config['system']['optimization'] = $_POST['optimization'];
 		$config['system']['disablerendevouz'] = $_POST['disablerendevouz'];
+		
+		$config['system']['enableserial'] = $_POST['enableserial'];
 
 		$oldharddiskstandby = $config['system']['harddiskstandby'];
 		$config['system']['harddiskstandby'] = $_POST['harddiskstandby'];
@@ -168,6 +171,29 @@ if ($_POST) {
 			$retval |= interfaces_optional_configure();
 			config_unlock();
 		}
+		
+		$etc_ttys  = return_filename_as_array("/etc/ttys");
+		$boot_loader_rc = return_filename_as_array("/boot/loader.rc");
+		
+		$fout = fopen("/etc/ttys","w");
+		foreach($etc_ttys as $tty) {
+			if(stristr($tty,"ttyp0") <> true) {
+				fwrite($fout, $tty . "\n");				
+			}
+		}
+		if($pconfig['enableserial'] <> "")
+			fwrite($fout, "ttyv0\t\"/usr/libexec/getty Pc\"\tcons25\ton\tsecure\n");
+		fclose($fout);		
+		
+		$fout = fopen("/boot/loader.rc","w");
+		foreach($boot_loader_rc as $blrc) {
+			if(stristr($blrc,"comconsole") <> true) {
+				fwrite($fout, $blrc . "\n");				
+			}
+		}
+		if($pconfig['enableserial'] <> "")
+			fwrite($fout, "set console=comconsole\n");
+		fclose($fout);
 	}
 }
 ?>
@@ -232,6 +258,17 @@ function update_description(itemnum) {
               and there's <strong>NO</strong> support for them.</span></p><br>
 
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
+
+                <tr>
+                  <td colspan="2" valign="top" class="listtopic">Enable Serial Console</td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncell">&nbsp;</td>
+                  <td width="78%" class="vtable">
+                    <input name="enableserial" type="checkbox" id="enableserial" value="yes" <?php if ($pconfig['enableserial']) echo "checked"; ?> onclick="enable_change(false)">
+                    <strong>This will enable the first serial port with 9600/8/N/1</strong>
+                    </td>
+                </tr>
 
 <!--
                 <tr>

@@ -308,9 +308,7 @@ function enable_change(enable_over) {
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"><span class="vexpl"><span class="red"><strong>Note:<br>
-                    </strong></span>Don't forget to add a firewall rule to permit
-                    traffic from PPTP clients!</span></td>
+                  <td width="78%"><span class="vexpl"><span class="red"><strong>Note:<br></td>
                 </tr>
               </table>
 			</td>

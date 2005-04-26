@@ -34,6 +34,9 @@ require("xmlparse_pkg.inc");
 
 conf_mount_rw();
 
+if(!file_exists("/var/db/pkg"))
+            mkdir("/var/db/pkg");
+
 /* /usr/local/pkg/ is where xml package files are stored. */
 make_dirs("/usr/local/pkg");
 /* /usr/local/pkg/pf is where custom php hook packages live to alter the rules when needed */

@@ -102,6 +102,8 @@ if ($_POST) {
 		$queue['bandwidthtype'] = $_POST['bandwidthtype'];\
 		if($_POST['bandwidth'] == "") 
 			unset($queue['bandwidthtype']);
+		if($_POST['bandwidthtype'] == "")
+			unset($queue['bandwidth']);
 		$queue['priority'] = $_POST['priority'];
 		$queue['name'] = ereg_replace(" ", "", $_POST['name']);
 		$queue['name'] = substr($queue['name'], 0, 15);

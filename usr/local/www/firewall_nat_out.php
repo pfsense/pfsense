@@ -232,7 +232,7 @@ if (isset($_POST['del_x'])) {
 					if (!$natent['interface'] || ($natent['interface'] == "wan"))
 					  	echo "WAN";
 					else
-						htmlspecialchars($config['interfaces'][$natent['interface']]['descr']);
+						echo htmlspecialchars($config['interfaces'][$natent['interface']]['descr']);
 					?>
                                         &nbsp;
                   </td>

@@ -93,7 +93,7 @@ include("fbegin.inc");
                                         } elseif($pkg['version'] <> $latest_version) {
                                             /* a new version of the package is available */
                                             $id = get_pkg_id($pkg['name']);
-                                            echo "Upgrade: <a href='pkg_mgr_delete.php?upgrade=true&id={$id}'>" . $latest_version . "</a>";
+                                            echo "Upgrade: <a href='pkg_mgr_delete.php?upgrade=true&pkg={$pkg['name']}'>" . $latest_version . "</a>";
                                             echo "<br>Installed: " . $pkg['version'];
                                         } else {
                                             echo $pkg['version'];

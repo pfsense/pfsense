@@ -357,14 +357,15 @@ EOD;
 			/* start racoon */
 			mwexec("/usr/local/sbin/racoon -d -f {$g['varetc_path']}/racoon.conf");
 
-			foreach ($ipseccfg['tunnel'] as $tunnel) {
-				if (isset($tunnel['auto'])) {
-					$remotehost = substr($tunnel['remote-subnet'],0,strpos($tunnel['remote-subnet'],"/"));
-					$srchost = vpn_endpoint_determine($tunnel, $curwanip);
-					if ($srchost)
-						mwexec_bg("/sbin/ping -c 1 -S {$srchost} {$remotehost}");
+			if(is_array($ipseccfg['tunnel']))
+				foreach ($ipseccfg['tunnel'] as $tunnel) {
+					if (isset($tunnel['auto'])) {
+						$remotehost = substr($tunnel['remote-subnet'],0,strpos($tunnel['remote-subnet'],"/"));
+						$srchost = vpn_endpoint_determine($tunnel, $curwanip);
+						if ($srchost)
+							mwexec_bg("/sbin/ping -c 1 -S {$srchost} {$remotehost}");
+					}
 				}
-			}
 		}
 	}
 

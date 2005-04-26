@@ -180,7 +180,7 @@ if ($_POST) {
 		
 		$fout = fopen("/etc/ttys","w");
 		foreach($etc_ttys as $tty) {
-			if(stristr($tty,"ttyp0") <> true) {
+			if(stristr($tty,"ttyv0") <> true) {
 				fwrite($fout, $tty . "\n");				
 			}
 		}

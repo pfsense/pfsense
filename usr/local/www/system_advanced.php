@@ -175,7 +175,8 @@ if ($_POST) {
 		$etc_ttys  = return_filename_as_array("/etc/ttys");
 		$boot_loader_rc = return_filename_as_array("/boot/loader.rc");
 		
-		config_mount_rw();
+		
+		conf_mount_rw();
 		
 		$fout = fopen("/etc/ttys","w");
 		foreach($etc_ttys as $tty) {
@@ -198,6 +199,7 @@ if ($_POST) {
 		fclose($fout);
 		
 		config_mount_ro();
+		conf_mount_ro();
 	}
 }
 ?>

@@ -198,7 +198,6 @@ if ($_POST) {
 			fwrite($fout, "set console=comconsole\n");
 		fclose($fout);
 		
-		config_mount_ro();
 		conf_mount_ro();
 	}
 }

@@ -35,7 +35,7 @@
 */
 
 require_once("guiconfig.inc");
-require_once("xmlrpc_client.inc");
+require_once("xmlrpc.inc");
 
 function old_checkversion() {
         global $g;

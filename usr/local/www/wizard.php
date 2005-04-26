@@ -389,7 +389,7 @@ if($pkg['step'][$stepid]['javascriptafterformdisplay'] <> "") {
  */
 
 function fixup_string($string) {
-	global $config;
+	global $config, $myurl;
 	// fixup #1: $myurl -> http[s]://ip_address:port/
 	$https = "";
 	$port = "";

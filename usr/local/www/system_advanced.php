@@ -175,6 +175,8 @@ if ($_POST) {
 		$etc_ttys  = return_filename_as_array("/etc/ttys");
 		$boot_loader_rc = return_filename_as_array("/boot/loader.rc");
 		
+		config_mount_rw();
+		
 		$fout = fopen("/etc/ttys","w");
 		foreach($etc_ttys as $tty) {
 			if(stristr($tty,"ttyp0") <> true) {
@@ -194,6 +196,8 @@ if ($_POST) {
 		if($pconfig['enableserial'] <> "")
 			fwrite($fout, "set console=comconsole\n");
 		fclose($fout);
+		
+		config_mount_ro();
 	}
 }
 ?>

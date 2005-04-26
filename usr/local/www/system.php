@@ -35,6 +35,7 @@ require("guiconfig.inc");
 $pconfig['hostname'] = $config['system']['hostname'];
 $pconfig['domain'] = $config['system']['domain'];
 list($pconfig['dns1'],$pconfig['dns2']) = $config['system']['dnsserver'];
+
 $pconfig['dnsallowoverride'] = isset($config['system']['dnsallowoverride']);
 $pconfig['username'] = $config['system']['username'];
 if (!$pconfig['username'])
@@ -126,6 +127,8 @@ if ($_POST) {
 			$config['system']['dnsserver'][] = $_POST['dns2'];
 
 		$olddnsallowoverride = $config['system']['dnsallowoverride'];
+		
+		unset($config['system']['dnsallowoverride']);
 		$config['system']['dnsallowoverride'] = $_POST['dnsallowoverride'] ? true : false;
 
 		if ($_POST['password']) {

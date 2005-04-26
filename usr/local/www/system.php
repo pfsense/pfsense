@@ -68,6 +68,8 @@ sort($timezonelist);
 
 if ($_POST) {
 
+	$changecount++;
+
 	unset($input_errors);
 	$pconfig = $_POST;
 

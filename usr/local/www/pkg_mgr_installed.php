@@ -65,9 +65,8 @@ include("fbegin.inc");
                 </tr>
 
 		<?php
-		$instpkgs = array();
-                foreach($config['installedpackages']['package'] as $instpkg) $instpkgs[] = $instpkg['name'];
                  if($config['installedpackages']['package'] != "") {
+		    $instpkgs = array();
 		    foreach($config['installedpackages']['package'] as $instpkg) $instpkgs[] = $instpkg['name'];
 		    asort($instpkgs);
 		    foreach ($instpkgs as $index => $pkgname){
@@ -112,6 +111,8 @@ include("fbegin.inc");
                             <?php
                         }
 		    }
+                 } else {
+                    echo "<tr><td colspan=\"3\"><center>There are currently no packages installed.</td></tr>";
                  }
 		?>
         </table>

@@ -100,7 +100,7 @@ if(!$pkg_config['packages']) {
 		<?php
 		 $pkgs = array();
 		 $instpkgs = array();
-		    foreach($config['installedpackages']['package'] as $instpkg) $instpkgs[] = $instpkg['name'];
+		    if($config['installedpackages']['package'] != "") foreach($config['installedpackages']['package'] as $instpkg) $instpkgs[] = $instpkg['name'];
 		    foreach ($pkg_config['packages']['package'] as $pkg) {
 			if(!in_array($pkg, $instpkgs)) {
 				$pkgs[] = $pkg['name'];
@@ -109,7 +109,7 @@ if(!$pkg_config['packages']) {
 		    asort($pkgs);
 		    $pkgs = array_keys($pkgs);
 		    foreach($pkgs as $index) {
-			    if(!is_string($instpkgs[0])) {
+			    if($pkgs[0] == "") {
 				echo "<tr><td colspan=\"3\"><center>There are currently no available packages for installation.</td></tr>";
 			    }
                             ?>

@@ -185,7 +185,7 @@ if ($_POST) {
 			}
 		}
 		if($pconfig['enableserial'] <> "")
-			fwrite($fout, "ttyv0\t\"/usr/libexec/getty Pc\"\tcons25\ton\tsecure\n");
+			fwrite($fout, "ttyv0\t\"/usr/libexec/getty Pc\"\tcons25\t\ton\tsecure\n");
 		fclose($fout);		
 		
 		$fout = fopen("/boot/loader.rc","w");

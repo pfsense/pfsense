@@ -33,6 +33,7 @@
 */
 
 require("guiconfig.inc");
+require("xmlparse_pkg.inc");
 
 $dhcpd_logfile = "{$g['varlog_path']}/dhcpd.log";
 

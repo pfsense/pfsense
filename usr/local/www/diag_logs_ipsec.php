@@ -33,6 +33,7 @@
 */
 
 require("guiconfig.inc");
+require("xmlparse_pkg.inc");
 
 $ipsec_logfile = "{$g['varlog_path']}/system.log";
 

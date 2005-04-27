@@ -31,6 +31,7 @@
 */
 
 require("guiconfig.inc");
+require("xmlparse_pkg.inc");
 
 $portal_logfile = "{$g['varlog_path']}/portalauth.log";
 

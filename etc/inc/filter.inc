@@ -968,8 +968,8 @@ function run_command_return_string($cmd) {
 	return $tmp;
 }
 
-function generate_user_filter_rule($rule, $optcfg) {
-		global $config, $g, $ngcounter;
+function generate_user_filter_rule($rule, $optcfg, $ngcounter) {
+		global $config, $g;
 		
 		/* don't include disabled rules */
 		if (isset($rule['disabled'])) {
@@ -1069,7 +1069,7 @@ function generate_user_filter_rule($rule, $optcfg) {
 			$line .= "quick ";
 			
 			if ($ispptp) {
-				$line .= "on ng" . ($ngcounter+1) . " ";
+				$line .= "on ng" . (intval($ngcounter)+1) . " ";
 			} else {
 				// translate wan, man, lan, opt to real interface.
 				$interface = $rule['interface'];
@@ -1598,23 +1598,36 @@ EOD;
 
 	$ipfrules .= "\n# User-defined rules follow\n";
 
-	if (isset($config['filter']['rule']))
-		$ngcounter = 0;
+	if (isset($config['filter']['rule'])) {	
 		foreach ($config['filter']['rule'] as $rule) {
 			$line = "";
-			$line = generate_user_filter_rule($rule, $optcfg);
-
-			if (!isset($rule['disabled'])) {
-				// label
-				if($rule['descr'] <> "" and $line <> "") {
-					$line .= "label \"USER_RULE: " . $rule['descr'] . "\" ";
-				} else {
-					$line .= "# could not process \"USER_RULE: " . $rule['descr'] . "\" ";
+			if ($rule['interface'] == "pptp") {
+				for($xxx=0; $xxx < $g['n_pptp_units']; $xxx++) {					
+					/*
+					 *   now that PPTP server are user rules, detect
+					 *   that user is setting the pptp server rule 
+                                         *   and setup for all netgraph interfaces
+                                         */
+					$line = generate_user_filter_rule($rule, $optcfg, $xxx);
+					if($line <> "") {
+						$ipfrules .= $line . "\n";
+					}
 				}
-				$line .= "\n";
-				$ipfrules .= $line;
+			} else {
+				$line = generate_user_filter_rule($rule, $optcfg, 0);
+				if (!isset($rule['disabled'])) {
+					// label
+					if($rule['descr'] <> "" and $line <> "") {
+						$line .= "label \"USER_RULE: " . $rule['descr'] . "\" ";
+					} else {
+						$line .= "# could not process \"USER_RULE: " . $rule['descr'] . "\" ";
+					}
+					$line .= "\n";
+					$ipfrules .= $line;
+				}
 			}
 		}
+	}
 
 	$ipfrules .= "\n# SSH lockout\n";
 	$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port 22 label \"sshlockout\"\n\n";

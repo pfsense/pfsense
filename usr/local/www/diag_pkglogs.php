@@ -50,13 +50,14 @@ if ($_POST['clear']) {
 }
 
 $i = 0;
-
+$pkgwithlogging = false;
 $apkg = $_POST['pkg'];
 if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, locate the first package that handles logging.
 	if($config['installedpackages']['package'] <> "") {
 		foreach($config['installedpackages']['package'] as $package) {
 			$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
 			if(is_array($pkg_config['logging'])) {
+				$pkgwithlogging = true;
 				$apkg = $package['name'];
 				$apkgid = $i;
 				break;
@@ -65,6 +66,7 @@ if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, loca
 		}
 	}
 } else {
+	$pkgwithlogging = true;
 	$apkgid = get_pkg_id($apkg);
 	$i = $apkgid;
 }
@@ -84,7 +86,7 @@ if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, loca
   <tr><td>
   <ul id="tabnav">
     <?php
-	if($config['installedpackages']['package'] == "") {
+	if($config['installedpackages']['package'] == "" or $pkgwithlogging == false) {
 		print_info_box("No packages are currently installed.");
 	?>
 		</ul></td></tr></table>

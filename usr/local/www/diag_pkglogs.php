@@ -87,7 +87,7 @@ if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, loca
   <ul id="tabnav">
     <?php
 	if($config['installedpackages']['package'] == "" or $pkgwithlogging == false) {
-		print_info_box("No packages are currently installed.");
+		print_info_box("No packages with logging facilities are currently installed.");
 	?>
 		</ul></td></tr></table>
 	<?php

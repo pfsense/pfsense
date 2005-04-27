@@ -454,13 +454,25 @@ function update_changedesc($update) {
 	$changecount++;
 }
 
-function dump_clog($logfile, $tail, $grepfor = "", $grepinvert = false, $withorig = true) {
+function dump_clog($logfile, $tail, $grepfor = "", $grepinvert = false, $withorig = true, $ignorepkgs = true) {
         global $g, $config;
-
         $sor = isset($config['syslog']['reverse']) ? "-r" : "";
-
 	exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
 	if(!is_array($grepfor)) $grepfor = array($grepfor);
+	if(!is_array($grepinvert)) $grepinvert = array($grepinvert);
+	if($ignorepkgs == true and $config['installedpackages']['package'] != "") {
+		foreach($config['installedpackages']['package'] as $pkg) {
+			$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $pkg['configurationfile'], "packagegui");
+			if($pkg_config['logging'] != "" and $pkg_config['logging']['grepfor'] != "") {
+				$grepfor[] = $pkg_config['logging']['grepfor'];
+				if($pkg_config['logging']['grepinvert'] != "") {
+					$grepinvert[] = $pkg_config['logging']['grepinvert'];
+				} else {
+					$grepinvert[] = true;
+				}
+			}
+		}
+	}
         if($grepfor <> "") {
 		$i = 0;
 		foreach($grepfor as $agrep) {
@@ -523,11 +535,13 @@ function download_file_with_progress_bar($url_file, $destination_file) {
         curl_exec($ch);
         fclose($fout);
 	curl_close($ch);
-        return 1;
 
-        if ($error = curl_error($ch)) {
+	if ($error = curl_error($ch)) {
+		print $error;
             return -1;
         }
+
+        return 1;
 }
 
 function read_header($ch, $string) {

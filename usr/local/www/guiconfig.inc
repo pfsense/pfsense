@@ -465,11 +465,7 @@ function dump_clog($logfile, $tail, $grepfor = "", $grepinvert = false, $withori
 			$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $pkg['configurationfile'], "packagegui");
 			if($pkg_config['logging'] != "" and $pkg_config['logging']['grepfor'] != "") {
 				$grepfor[] = $pkg_config['logging']['grepfor'];
-				if($pkg_config['logging']['grepinvert'] != "") {
-					$grepinvert[] = $pkg_config['logging']['grepinvert'];
-				} else {
-					$grepinvert[] = true;
-				}
+				$grepinvert[] = true;
 			}
 		}
 	}

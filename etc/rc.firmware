@@ -23,6 +23,7 @@ restore_chflags() {
 
 remove_chflags() {
 	chflags -R noschg /
+	chmod -R ug+rw /
 }
 
 binary_update() {
@@ -127,6 +128,8 @@ pfSenseupgrade)
 	cp -p /conf/* /tmp/configbak
 	# mount /cf
 	/sbin/mount -w -o noatime /cf
+
+	remove_chflags
 
 	# tar explode image onto hd
 	if [ -r $2 ]; then

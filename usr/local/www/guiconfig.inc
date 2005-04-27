@@ -532,11 +532,6 @@ function download_file_with_progress_bar($url_file, $destination_file) {
         fclose($fout);
 	curl_close($ch);
 
-	if ($error = curl_error($ch)) {
-		print $error;
-            return -1;
-        }
-
         return 1;
 }
 

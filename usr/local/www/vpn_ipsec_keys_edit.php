@@ -123,7 +123,7 @@ This can be either an IP address, fully qualified domain name or an e-mail addre
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" value="cancel" onclick="history.back()">
+                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" class="formbtn" value="cancel" onclick="history.back()">
                     <?php if (isset($id) && $a_secret[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

@@ -33,6 +33,13 @@
  *
  */
 
+/****f* pfsense-utils/log_error
+ * NAME
+ *   log_error - Sends a string to syslog.
+ * RESULT
+ *   null
+ ******/
+
 /*
  * log_error: send string to syslog
  */
@@ -1013,7 +1020,6 @@ function make_dirs($path, $mode = 0755)
  * SEE ALSO
  *   pfsense.utils/check_firmware_version
  ******/
-
 function auto_upgrade() {
         global $config, $g;
 	if (isset($config['system']['alt_firmware_url']['enabled'])) {

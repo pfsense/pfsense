@@ -93,6 +93,19 @@ function return_filename_as_array($filename) {
 }
 
 /*
+ *   function get_carp_status(): returns the status of carp being enabled or disabled.
+ */
+function get_carp_status() {
+    /* grab the current status of carp */
+    $status = `/sbin/sysctl net.inet.carp.allow`;
+    $status = str_replace("\n","",$status);
+    $status = str_replace(" ","",$status);
+    $status = split(":", $status);
+    if($status == "0") return false;
+    return true;
+}
+
+/*
  * return_dir_as_array($filename): returns $filename contents as a string
  */
 function return_filename_as_string($filename) {

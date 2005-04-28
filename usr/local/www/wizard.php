@@ -398,7 +398,7 @@ function fixup_string($string) {
 	if($port <> "443" and $port <> "80") $urlport = ":" . $port;
 	if($config['system']['webguiproto'] == "https") $https = "s";
 	//$myurl = "http" . $https . "://" . getenv("HTTP_HOST") . $urlportport;
-        $myurl = "http" . $https . "://" . $config['lan']['ip'];
+        $myurl = "http" . $https . "://" . $config['interfaces']['lan']['ip'];
 	$newstring = str_replace("\$myurl", $myurl, $string);
 	$string = $newstring;
 	// fixup #2: $wanip

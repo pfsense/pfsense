@@ -53,7 +53,7 @@ function log_error($error) {
  *   $dir	- string containing the path to the desired directory.
  * RESULT
  *   $dir_array - array containing the directory's contents. This array will be empty in the event of an array.
- */
+ ******/
 function return_dir_as_array($dir) {
     $dir_array = array();
     if (is_dir($dir)) {

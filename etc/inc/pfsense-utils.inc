@@ -36,20 +36,23 @@
 /****f* pfsense-utils/log_error
  * NAME
  *   log_error - Sends a string to syslog.
+ * INPUTS
+ *   $error	- string containing the syslog message.
  * RESULT
  *   null
  ******/
-
-/*
- * log_error: send string to syslog
- */
 function log_error($error) {
     syslog(LOG_WARNING, $error);
     return;
 }
 
-/*
- * return_dir_as_array($dir): returns $dir contents as an array
+/****f* pfsense-utils/return_dir_as_array
+ * NAME
+ *   return_dir_as_array - Return a directory's contents as an array.
+ * INPUTS
+ *   $dir	- string containing the path to the desired directory.
+ * RESULT
+ *   $dir_array - array containing the directory's contents. This array will be empty in the event of an array.
  */
 function return_dir_as_array($dir) {
     $dir_array = array();

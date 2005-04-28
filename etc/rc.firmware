@@ -105,12 +105,14 @@ upgrade)
 	# restore config
 	cp -p /tmp/configbak/* /conf
 
+	restore_chflags
+
 	# remount /cf ro
 	/sbin/umount -f /cf
 	/sbin/mount -r /cf
 
 	echo "Done - rebooting system..."
-	restore_chflags
+	
 	/etc/rc.reboot
 	;;
 pfSenseupgrade)
@@ -128,8 +130,6 @@ pfSenseupgrade)
 	cp -p /conf/* /tmp/configbak
 	# mount /cf
 	/sbin/mount -w -o noatime /cf
-
-	remove_chflags
 
 	# tar explode image onto hd
 	if [ -r $2 ]; then
@@ -150,12 +150,13 @@ pfSenseupgrade)
 	# restore config
 	cp -p /tmp/configbak/* /conf
 
+	restore_chflags
+
 	# remount /cf ro
 	/sbin/umount -f /cf
 	/sbin/mount -r /cf
-
+	
 	echo "Done - rebooting system..." | logger -p daemon.info -i -t Upgrade
-	restore_chflags
 	/etc/rc.reboot
 	;;
 delta_update)

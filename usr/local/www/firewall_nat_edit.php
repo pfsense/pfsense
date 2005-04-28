@@ -246,11 +246,12 @@ function ext_rep_change() {
 						  foreach ($config['nat']['servernat'] as $sn): ?>
                       <option value="<?=$sn['ipaddr'];?>" <?php if ($sn['ipaddr'] == $pconfig['extaddr']) echo "selected"; ?>><?=htmlspecialchars("{$sn['ipaddr']} ({$sn['descr']})");?></option>
                       <?php endforeach; endif; ?>
+		      <option value="any"<?php if($pconfig['extaddr'] == "any" echo " selected"; ?>></option>
                     </select><br>
                     <span class="vexpl">
 					If you want this rule to apply to another IP address than the IP address of the interface chosen above,
 					select it here (you need to define IP addresses on the
-					<a href="firewall_nat_server.php">Server NAT</a> page first).</span></td>
+					<a href="firewall_nat_server.php">Server NAT</a> page first).  Also note that if you are trying to redirect connections on the LAN select the "any" option.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Protocol</td>

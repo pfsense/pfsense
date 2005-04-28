@@ -120,11 +120,8 @@ function return_filename_as_array($filename, $strip = array('#')) {
  */
 function get_carp_status() {
     /* grab the current status of carp */
-    $status = `/sbin/sysctl net.inet.carp.allow`;
-    $status = str_replace("\n","",$status);
-    $status = str_replace(" ","",$status);
-    $status = split(":", $status);
-    if($status == "0") return false;
+    $status = `/sbin/sysctl net.inet.carp.allow | cut -d" " -f2`;
+    if(intval($status) == "0") return false;
     return true;
 }
 

@@ -109,7 +109,7 @@ function enable_hardware_offloading($interface) {
 function return_filename_as_array($filename, $strip = array('#')) {
     if(file_exists($filename)) $file = file($filename);
     if(is_array($file)) {
-		foreach($file as $line) $line = trim($line);
+	foreach($file as $line) $line = trim($line);
         foreach($strip as $tostrip) $file = preg_grep("/^{$tostrip}/", $file, PREG_GREP_INVERT);
     }
     return $file;

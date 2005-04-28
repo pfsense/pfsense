@@ -499,7 +499,7 @@ if ($pkg['tabs'] <> "") {
   <tr>
     <td width="22%" valign="top">&nbsp;</td>
     <td width="78%">
-      <input name="Submit" type="submit" class="formbtn" value="<?= $savevalue ?>"> <input type="button" value="cancel" onclick="history.back()">
+      <input name="Submit" type="submit" class="formbtn" value="<?= $savevalue ?>"> <input class="formbtn" type="button" value="cancel" onclick="history.back()">
       <?php if (isset($id) && $a_pkg[$id]): ?>
       <input name="id" type="hidden" value="<?=$id;?>">
       <?php endif; ?>

@@ -32,7 +32,7 @@
 */
 
 require("guiconfig.inc");
-require("xmlparse_pkg");
+require("xmlparse_pkg.inc");
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 exec("/usr/sbin/tcpdump -n -e -ttt -r {$g['varlog_path']}/pflog | logger -t pf -p local0.info ");

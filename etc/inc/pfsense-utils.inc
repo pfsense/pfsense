@@ -52,12 +52,12 @@ function log_error($error) {
  * INPUTS
  *   $dir	- string containing the path to the desired directory.
  * RESULT
- *   $dir_array - array containing the directory's contents. This array will be empty in the event of an array.
+ *   $dir_array - array containing the directory's contents. This array will be empty if the path specified is invalid.
  ******/
 function return_dir_as_array($dir) {
     $dir_array = array();
     if (is_dir($dir)) {
-	If ($dh = opendir($dir)) {
+	if ($dh = opendir($dir)) {
 	    while (($file = readdir($dh)) !== false) {
 		$canadd = 0;
 		if($file == ".") $canadd = 1;
@@ -71,36 +71,46 @@ function return_dir_as_array($dir) {
     return $dir_array;
 }
 
-/*
- * enable_hardware_offloading() enables hardware features of nics if they are supported
- */
+/****f* pfsense-utils/enable_hardware_offloading
+ * NAME
+ *   enable_hardware_offloading - Enable a NIC's supported hardware features.
+ * INPUTS
+ *   $interface	- string containing the physical interface to work on.
+ * RESULT
+ *   null
+ * NOTES
+ *   This function only supports the fxp driver's loadable microcode.
+ ******/
 function enable_hardware_offloading($interface) {
     global $config;
     global $g;
     if($g['booting']) {
-	$supported_ints = array('fxp');
-	foreach($supported_ints as $int) {
-	    if(stristr($interface,$int) != false) {
-		mwexec("/sbin/ifconfig $interface link0");
-	    }
-	}
+		$supported_ints = array('fxp');
+		foreach($supported_ints as $int) {
+			if(stristr($interface,$int) != false) {
+		    	mwexec("/sbin/ifconfig $interface link0");
+			}
+		}
     }
+    return;
 }
 
-/*
- * return_filename_as_array($filename): returns $filename contents as a string
- */
-function return_filename_as_array($filename) {
-    $file = array();
-    if(file_exists($filename)) {
-        $text = return_filename_as_string($filename);
-        $text_split = split("\n", $text);
-
-        /* Strip out comments */
-        while (($line = array_shift($text_split)) != NULL) {
-            if(strpos($line, "#") !== 0)
-                array_push($file, $line);
-        }
+/****f* pfsense-utils/return_filename_as_array
+ * NAME
+ *   return_filename_as_array - Return a file's contents as an array.
+ * INPUTS
+ *   $filename - string containing the path to the desired file.
+ *   $strip - array of characters to strip - default is '#'.
+ * RESULT
+ *   $file - array containing the file's contents.
+ * NOTES
+ *   This function strips lines starting with '#' and leading/trailing whitespace by default.
+ ******/
+function return_filename_as_array($filename, $strip = array('#')) {
+    if(file_exists($filename)) $file = file($filename);
+    if(is_array($file)) {
+		foreach($file as $line) $line = trim($line);
+        foreach($strip as $tostrip) $file = preg_grep("/^{$tostrip}/", $file, PREG_GREP_INVERT);
     }
     return $file;
 }

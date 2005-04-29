@@ -23,7 +23,7 @@ restore_chflags() {
 
 remove_chflags() {
 	chflags -R noschg /
-	chmod -R ug+rw /
+	chmod -R u+rw /
 }
 
 binary_update() {

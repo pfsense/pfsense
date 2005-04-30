@@ -60,7 +60,8 @@ $g = array(
     "firmwarefilename" => "latest.tgz",
     "versioncheckbaseurl" => "www.pfsense.com",
     "versioncheckpath" => "/pfSense/xmlrpc.php",
-    "embeddedbootupslice" => "/dev/ad0a"
+    "embeddedbootupslice" => "/dev/ad0a",
+    "wireless_regex" => "/^(wi|ath|an)/"
 );
 
 ?>

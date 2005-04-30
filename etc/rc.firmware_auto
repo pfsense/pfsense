@@ -23,8 +23,10 @@ fi
 #echo "Downloading $FMFILENAME.md5 from $FMBASEURL ..."  | logger -p daemon.info -i -t AutoUpgrade
 #/usr/bin/fetch -o /tmp/latest.tgz.md5 $FETCHFILENAME.md5 | logger -p daemon.info -i -t AutoUpgrade
 
-PMD=`/bin/cat /tmp/latest.tgz.md5 | cut -d" " -f4 `;
-MD=`/sbin/md5 /tmp/latest.tgz | cut -d" " -f4`;
+PMD=`/bin/cat /tmp/latest.tgz.md5 | cut -d" " -f4 `
+MD=`/sbin/md5 /tmp/latest.tgz | cut -d" " -f4`
+
+PLATFORM=`cat /etc/version`
 
 echo "   Package MD5: ${PMD}" | logger -p daemon.info -i -t AutoUpgrade
 echo "Downloaded MD5: ${MD}"  | logger -p daemon.info -i -t AutoUpgrade
@@ -41,13 +43,23 @@ fi
 
 if [ "$PMD" = "$MD" ]; then
         echo "MD5's match."  | logger -p daemon.info -i -t AutoUpgrade
-        /etc/rc.conf_mount_rw
-        if [ -r "/tmp/custom.tgz" ]; then
-            /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz /tmp/custom.tgz
-        else
-            /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz
+        if [ "$PLATFORM" = "net45xx" ]; then
+            /usr/local/bin/php /etc/rc.conf_mount_rw
         fi
-        /etc/rc.conf_mount_ro
+        if [ "$PLATFORM" = "wrap" ]; then
+            /usr/local/bin/php /etc/rc.conf_mount_rw
+        fi
+        if [ -r "/tmp/custom.tgz" ]; then
+            sh /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz /tmp/custom.tgz
+        else
+            sh /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz
+        fi
+        if [ "$PLATFORM" = "wrap" ]; then        
+            /usr/local/bin/php /etc/rc.conf_mount_ro
+        fi
+        if [ "$PLATFORM" = "net45xx" ]; then        
+            /usr/local/bin/php /etc/rc.conf_mount_ro
+        fi        
         exit 0
 fi
 

@@ -30,7 +30,6 @@
 */
 
 require("config.inc");
-require("xmlparse_pkg.inc");
 
 conf_mount_rw();
 

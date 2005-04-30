@@ -800,47 +800,45 @@ EOD;
 	if (strcasecmp(chop(fgets($fp)), "y") == 0) {
 
 		$config['interfaces']['lan']['if'] = $lanif;
-		if (preg_match("/^(wi|awi|an)/", $lanif)) {
+		if (preg_match($g['wireless_regex'], $lanif)) {
 			if (!is_array($config['interfaces']['lan']['wireless']))
 				$config['interfaces']['lan']['wireless'] = array();
 		} else {
 			unset($config['interfaces']['lan']['wireless']);
 		}
-
+		
 		$config['interfaces']['wan']['if'] = $wanif;
-		if (preg_match("/^(wi|awi|an)/", $wanif)) {
+		if (preg_match($g['wireless_regex'], $wanif)) {
 			if (!is_array($config['interfaces']['wan']['wireless']))
 				$config['interfaces']['wan']['wireless'] = array();
 		} else {
 			unset($config['interfaces']['wan']['wireless']);
 		}
-
+		
 		for ($i = 0; $i < count($optif); $i++) {
 			if (!is_array($config['interfaces']['opt' . ($i+1)]))
 				$config['interfaces']['opt' . ($i+1)] = array();
-
+			
 			$config['interfaces']['opt' . ($i+1)]['if'] = $optif[$i];
-
+			
 			/* wireless interface? */
-			if (preg_match("/^(wi|awi|an)/", $optif[$i])) {
+			if (preg_match($g['wireless_regex'], $optif[$i])) {
 				if (!is_array($config['interfaces']['opt' . ($i+1)]['wireless']))
 					$config['interfaces']['opt' . ($i+1)]['wireless'] = array();
 			} else {
 				unset($config['interfaces']['opt' . ($i+1)]['wireless']);
 			}
-
+			
 			unset($config['interfaces']['opt' . ($i+1)]['enable']);
 			$config['interfaces']['opt' . ($i+1)]['descr'] = "OPT" . ($i+1);
 		}
-
+		
 		/* remove all other (old) optional interfaces */
 		for (; isset($config['interfaces']['opt' . ($i+1)]); $i++)
 			unset($config['interfaces']['opt' . ($i+1)]);
-
-		write_config("NIC reconfigure");
-
-		if(!$noreboot) echo "\npfSense is now rebooting.\n";
-
+		
+		write_config();
+		
 		echo <<<EOD
 
 

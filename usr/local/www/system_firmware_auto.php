@@ -223,7 +223,8 @@ if($use_old_checkversion == false) {
 			$firmwareurl=$g['firmwarebaseurl'];
 			$firmwarename=$g['firmwarefilename'];
 		}
-		$upgrade_lock = file("/tmp/autoupdate.lock");
+		if(file_exists("/tmp/autoupdate.lock")) 
+			$upgrade_lock = file("/tmp/autoupdate.lock");
 		if(trim($upgrade_lock[0]) == "1") {
 			$update_status = "An upgrade is already in progress.";
 			update_output_window($update_status);

@@ -101,9 +101,11 @@ if(!$pkg_config['packages']) {
 		<?php
 		 $pkgs = array();
 		 $instpkgs = array();
-		    if($config['installedpackages']['package'] != "") foreach($config['installedpackages']['package'] as $instpkg) $instpkgs[] = $instpkg['name'];
+		    if($config['installedpackages']['package'] != "")
+			foreach($config['installedpackages']['package'] as $instpkg)
+				    $instpkgs[] = $instpkg['name'];
 		    foreach ($pkg_config['packages']['package'] as $pkg) {
-			if(!in_array($pkg, $instpkgs)) {
+			if(!in_array($pkg['name'], $instpkgs)) {
 				$pkgs[] = $pkg['name'];
 			}
 		    }

@@ -99,10 +99,10 @@ function enable_hardware_offloading($interface) {
  * NAME
  *   return_filename_as_array - Return a file's contents as an array.
  * INPUTS
- *   $filename - string containing the path to the desired file.
- *   $strip - array of characters to strip - default is '#'.
+ *   $filename	- string containing the path to the desired file.
+ *   $strip	- array of characters to strip - default is '#'.
  * RESULT
- *   $file - array containing the file's contents.
+ *   $file	- array containing the file's contents.
  * NOTES
  *   This function strips lines starting with '#' and leading/trailing whitespace by default.
  ******/
@@ -115,9 +115,12 @@ function return_filename_as_array($filename, $strip = array('#')) {
     return $file;
 }
 
-/*
- *   function get_carp_status(): returns the status of carp being enabled or disabled.
- */
+/****f* pfsense-utils/get_carp_status
+ * NAME
+ *   get_carp_status - Return whether CARP is enabled or disabled.
+ * RESULT
+ *   boolean	- true if CARP is enabled, false if otherwise.
+ ******/
 function get_carp_status() {
     /* grab the current status of carp */
     $status = `/sbin/sysctl net.inet.carp.allow | cut -d" " -f2`;
@@ -125,26 +128,28 @@ function get_carp_status() {
     return true;
 }
 
-/*
- * return_dir_as_array($filename): returns $filename contents as a string
- */
+/****f* pfsense-utils/return_filename_as_string
+ * NAME
+ *   return_filename_as_string - Return a file's contents as a string.
+ * INPUTS
+ *   $filename  - string containing the path to the desired file.
+ * RESULT
+ *   $tmp	- string containing the file's contents.
+ ******/
 function return_filename_as_string($filename) {
-    $tmp = "";
-    $fd = fopen($filename, "r");
-    if(!$fd) {
-	log_error("Could not open {$filename}");
-	return;
+    if(file_exists($filename)) {
+        return file_get_contents($filename);
+    } else {
+        return false;
     }
-    while(!feof($fd)) {
-	$tmp .= fread($fd,49);
-    }
-    fclose($fd);
-    return $tmp;
 }
 
-/*
- * is_carp_defined: returns true if carp is detected in kernel
- */
+/****f* pfsense-utils/is_carp_defined
+ * NAME
+ *   is_carp_defined - Return whether CARP is detected in the kernel.
+ * RESULT
+ *   boolean	- true if CARP is detected, false otherwise.
+ ******/
 function is_carp_defined() {
     /* is carp compiled into the kernel and userland? */
     $command = "/sbin/sysctl -a | grep carp";
@@ -164,9 +169,12 @@ function is_carp_defined() {
 	return true;
 }
 
-/*
- * find_number_of_created_carp_interfaces() returns the number of currently created carp interfaces
- */
+/****f* pfsense-utils/find_number_of_created_carp_interfaces
+ * NAME
+ *   find_number_of_created_carp_interfaces - Return the number of CARP interfaces.
+ * RESULT
+ *   $tmp	- Number of currently created CARP interfaces.
+ ******/
 function find_number_of_created_carp_interfaces() {
     $command = "/sbin/ifconfig | /usr/bin/grep \"carp*:\" | /usr/bin/wc -l";
     $fd = popen($command . " 2>&1 ", "r");
@@ -182,9 +190,14 @@ function find_number_of_created_carp_interfaces() {
     return $tmp;
 }
 
-/*
- * link_ip_to_carp_interface($ip): finds where a carp interface links to.
-*/
+/****f* pfsense-utils/link_ip_to_carp_interface
+ * NAME
+ *   link_ip_to_carp_interface - Find where a CARP interface links to.
+ * INPUTS
+ *   $ip
+ * RESULT
+ *   $carp_ints
+ ******/`
 function link_ip_to_carp_interface($ip) {
     global $config;
     if($ip == "") return;
@@ -217,18 +230,20 @@ function link_ip_to_carp_interface($ip) {
     return $carp_ints;
 }
 
-/*
- * exec_command($command): execute command return string of result
- */
+/****f* pfsense-utils/exec_command
+ * NAME
+ *   exec_command - Execute a command and return a string of the result.
+ * INPUTS
+ *   $command	- String of the command to be executed.
+ * RESULT
+ *   String containing the command's result.
+ * NOTES
+ *   This function returns the command's stdout and stderr.
+ ******/
 function exec_command($command) {
-    $counter = 0;
-    $tmp = "";
-    $fd = popen($command . " 2>&1 ", "r");
-    while(!feof($fd)) {
-	$tmp .= fread($fd,49);
-    }
-    fclose($fd);
-    return $tmp;
+    $output = array();
+    exec($command . ' 2>&1 ', $output);
+    return(implode("\n", $output));
 }
 
 /*

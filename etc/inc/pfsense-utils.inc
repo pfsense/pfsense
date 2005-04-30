@@ -197,7 +197,7 @@ function find_number_of_created_carp_interfaces() {
  *   $ip
  * RESULT
  *   $carp_ints
- ******/`
+ ******/
 function link_ip_to_carp_interface($ip) {
     global $config;
     if($ip == "") return;

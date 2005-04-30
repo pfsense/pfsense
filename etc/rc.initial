@@ -88,10 +88,8 @@ case ${opmode} in
         /usr/local/sbin/pftop
         ;;
 10)
-        echo "Downloading $FMFILENAME from $FMBASEURL ..." | logger -p daemon.info -i -t AutoUpgrade
-        /usr/bin/fetch -o /tmp/latest.tgz $FETCHFILENAME | logger -p daemon.info -i -t AutoUpgrade
-        echo "Downloading $FMFILENAME.md5 from $FMBASEURL ..."  | logger -p daemon.info -i -t AutoUpgrade
-        /usr/bin/fetch -o /tmp/latest.tgz.md5 $FETCHFILENAME.md5 | logger -p daemon.info -i -t AutoUpgrade        
+        /usr/bin/fetch -o /tmp/latest.tgz http://www.pfsense.com/latest.tgz
+        /usr/bin/fetch -o /tmp/latest.tgz.md5 http://www.pfsense.com/latest.tgz.md5
         /etc/rc.firmware_auto
         ;;
 11)

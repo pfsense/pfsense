@@ -1,12 +1,11 @@
 #!/usr/local/bin/php
 <?php 
-/* $Id$ */
 /*
 	interfaces_assign.php
 	part of m0n0wall (http://m0n0.ch/wall)
 	Written by Jim McBeath based on existing m0n0wall files
 	
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -31,6 +30,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+$pgtitle = array("Interfaces", "Assign network ports");
 require("guiconfig.inc");
 
 /*
@@ -95,7 +95,7 @@ if ($_POST) {
 					$config['interfaces'][$ifname]['if'] = $ifport;
 					
 					/* check for wireless interfaces, set or clear ['wireless'] */
-					if (preg_match("/^(wi|awi|an)/", $ifport)) {
+					if (preg_match($g['wireless_regex'], $ifport)) {
 						if (!is_array($config['interfaces'][$ifname]['wireless']))
 							$config['interfaces'][$ifname]['wireless'] = array();
 					} else {
@@ -164,7 +164,7 @@ if ($_GET['act'] == "add") {
 		}
 		if (!$portused) {
 			$config['interfaces'][$newifname]['if'] = $portname;
-			if (preg_match("/^(wi|awi|an)/", $portname))
+			if (preg_match($g['wireless_regex'], $portname))
 				$config['interfaces'][$newifname]['wireless'] = array();
 			break;
 		}
@@ -177,22 +177,12 @@ if ($_GET['act'] == "add") {
 }
 
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("Interfaces: Assign network ports");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">Interfaces: Assign network ports</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (file_exists($d_sysrebootreqd_path)) print_info_box(get_std_save_message(0)); ?>
 <form action="interfaces_assign.php" method="post" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr><td>
+  <tr><td class="tabnavtbl">
   <ul id="tabnav">
     <li class="tabact">Interface assignments</li>
     <li class="tabinact"><a href="interfaces_vlan.php">VLANs</a></li>
@@ -250,17 +240,15 @@ if ($_GET['act'] == "add") {
   </tr>
   <?php endif; ?>
 </table>
-                      <input name="Submit" type="submit" class="formbtn" value="Save">
-                    <p><span class="vexpl"><strong><span class="red">Warning:</span><br>
-                    </strong>After you click &quot;Save&quot;, you must reboot the firewall to make the changes take effect. You may also have to do one or more of the following steps before you can access your firewall again: </span></p>
-                    <ul>
-                      <li><span class="vexpl">change the IP address of your computer</span></li>
-                      <li><span class="vexpl">renew its DHCP lease</span></li>
-                      <li><span class="vexpl">access the webGUI with the new IP address</span></li>
-                    </ul></td>
+  <input name="Submit" type="submit" class="formbtn" value="Save"><br><br>
+<p><span class="vexpl"><strong><span class="red">Warning:</span><br>
+</strong>After you click &quot;Save&quot;, you must reboot the firewall to make the changes take effect. You may also have to do one or more of the following steps before you can access your firewall again: </span></p>
+<ul>
+  <li><span class="vexpl">change the IP address of your computer</span></li>
+  <li><span class="vexpl">renew its DHCP lease</span></li>
+  <li><span class="vexpl">access the webGUI with the new IP address</span></li>
+</ul></td>
 	</tr>
 </table>
 </form>
 <?php include("fend.inc"); ?>
-</body>
-</html>

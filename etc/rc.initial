@@ -38,16 +38,17 @@ while : ; do
 # display a cheap menu
 echo "pfSense console setup"
 echo "**********************"
-echo "0)  Logout if accessing via SSH"
-echo "1)  Interfaces: assign network ports"
-echo "2)  Set up LAN IP address"
-echo "3)  Reset webGUI password"
-echo "4)  Reset to factory defaults"
-echo "5)  Reboot system"
-echo "6)  Halt system"
-echo "7)  Ping host"
-echo "8)  Shell"
-echo "9)  PFtop"
+echo " 0)  Logout if accessing via SSH"
+echo " 1)  Interfaces: assign network ports"
+echo " 2)  Set up LAN IP address"
+echo " 3)  Reset webGUI password"
+echo " 4)  Reset to factory defaults"
+echo " 5)  Reboot system"
+echo " 6)  Halt system"
+echo " 7)  Ping host"
+echo " 8)  Shell"
+echo " 9)  PFtop"
+echo "10)  Invoke Auto Upgrade"
 echo
 
 read -p "Enter a number: " opmode
@@ -87,6 +88,13 @@ case ${opmode} in
         /usr/local/sbin/pftop
         ;;
 10)
+        echo "Downloading $FMFILENAME from $FMBASEURL ..." | logger -p daemon.info -i -t AutoUpgrade
+        /usr/bin/fetch -o /tmp/latest.tgz $FETCHFILENAME | logger -p daemon.info -i -t AutoUpgrade
+        echo "Downloading $FMFILENAME.md5 from $FMBASEURL ..."  | logger -p daemon.info -i -t AutoUpgrade
+        /usr/bin/fetch -o /tmp/latest.tgz.md5 $FETCHFILENAME.md5 | logger -p daemon.info -i -t AutoUpgrade        
+        /etc/rc.firmware_auto
+        ;;
+11)
         if grep "$WORD" "$CONFIG"
         then
         	links "https://localhost"

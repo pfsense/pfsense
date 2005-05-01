@@ -165,13 +165,13 @@ function interfaces_optional_configure() {
 
 	if ($bridgeconfig) {
 		/* Set the system bridge configuration and enable bridging. */
-		mwexec("/sbin/sysctl net.link.ether.bridge_cfg=" . $bridgeconfig);
-		mwexec("/sbin/sysctl net.link.ether.bridge.enable=1");
-		if (isset($config['bridge']['filteringbridge']))
-			mwexec("/sbin/sysctl net.link.ether.bridge.pf=1");
+		//mwexec("/sbin/sysctl net.link.ether.bridge_cfg=" . $bridgeconfig);
+		//mwexec("/sbin/sysctl net.link.ether.bridge.enable=1");
+		//if (isset($config['bridge']['filteringbridge']))
+		//	mwexec("/sbin/sysctl net.link.ether.bridge.pf=1");
 	} else {
-		mwexec("/sbin/sysctl net.link.ether.bridge.pf=0");
-		mwexec("/sbin/sysctl net.link.ether.bridge.enable=0");
+		//mwexec("/sbin/sysctl net.link.ether.bridge.pf=0");
+		//mwexec("/sbin/sysctl net.link.ether.bridge.enable=0");
 	}
 
 	if (!$g['booting']) {
@@ -238,12 +238,15 @@ function interfaces_optional_configure_if($opti) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) .
 				" delete up");
 
-			if ($bridgeconfig != "")
-				$bridgeconfig .= ",";
+			//if ($bridgeconfig != "")
+			//	$bridgeconfig .= ",";
 
-			$bridgeconfig .= $optcfg['if'] . ":" . $opti . "," .
-				$config['interfaces'][$optcfg['bridge']]['if'] .
-				":" . $opti;
+			//$bridgeconfig .= $optcfg['if'] . ":" . $opti . "," .
+			//	$config['interfaces'][$optcfg['bridge']]['if'] .
+			//	":" . $opti;
+                        
+                        /* use open/netBSD style bridge */
+                        mwexec("/sbin/brconfig bridge0 add {$optcfg['if']} add {$config['interfaces'][$optcfg['bridge']]['if']} up ");
 		} else {
 			mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " " .
 				escapeshellarg($optcfg['ipaddr'] . "/" . $optcfg['subnet']));

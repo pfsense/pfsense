@@ -246,6 +246,7 @@ function interfaces_optional_configure_if($opti) {
 			//	":" . $opti;
                         
                         /* use open/netBSD style bridge */
+			mwexec("/sbin/ifconfig bridge0 create");
                         mwexec("/sbin/brconfig bridge0 add {$optcfg['if']} add {$config['interfaces'][$optcfg['bridge']]['if']} up ");
 		} else {
 			mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " " .

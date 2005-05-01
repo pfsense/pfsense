@@ -102,11 +102,11 @@ if(!$pkg_config['packages']) {
 		 $pkgs = array();
 		 $instpkgs = array();
 		    if($config['installedpackages']['package'] != "")
-			foreach($config['installedpackages']['package'] as $instpkg)
-				    $instpkgs[] = $instpkg['name'];
-		    foreach ($pkg_config['packages']['package'] as $pkg) {
+			foreach($config['installedpackages']['package'] as $instpkg) $instpkgs[] = $instpkg['name'];
+
+		    foreach ($pkg_config['packages']['package'] as $key => $pkg) {
 			if(!in_array($pkg['name'], $instpkgs)) {
-				$pkgs[] = $pkg['name'];
+				$pkgs[$key] = $pkg['name'];
 			}
 		    }
 		    asort($pkgs);

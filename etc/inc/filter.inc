@@ -387,7 +387,16 @@ function filter_generate_aliases() {
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		/* do not process tun interfaces */
 		if(stristr(filter_opt_interface_to_real($ifname), "tun") == true) continue;
-		$aliases .= filter_get_opt_interface_descr($ifname) . " = \"{ " . filter_opt_interface_to_real($ifname) . " }\"\n";
+		$aliases .= filter_get_opt_interface_descr($ifname) . " = \"{ " . filter_opt_interface_to_real($ifname);
+		if($config['interfaces'][$ifname]['bridge'] <> "") {
+			$aliases .= " bridge0 "; /************************************
+						  *  warning! aktung!  ugly hack!    *
+			                          *  needs to be updated if we want  *
+						  *  to support more than one bridge *
+						  *  concurrently                    *
+						  ************************************/
+		}
+		$aliases .= " }\"\n";
 	}
 	$aliases .= "# User Aliases \n";
 	/* Setup pf groups */
@@ -1723,6 +1732,14 @@ function create_firewall_outgoing_rules_to_itself() {
 		}
 
 	}
+	
+	/* is bridging turned on? */
+	for($x=0; $x<10; $x++) {
+		if(does_interface_exist("bridge{$x}") == true) {
+			$rule .="pass out quick on bridge{$x} all keep state label \"let out anything from firewall host itself\"\n";
+		}
+	}
+	
 	return $rule;
 }
 

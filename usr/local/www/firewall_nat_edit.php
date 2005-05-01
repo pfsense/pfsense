@@ -246,7 +246,7 @@ function ext_rep_change() {
 						  foreach ($config['nat']['servernat'] as $sn): ?>
                       <option value="<?=$sn['ipaddr'];?>" <?php if ($sn['ipaddr'] == $pconfig['extaddr']) echo "selected"; ?>><?=htmlspecialchars("{$sn['ipaddr']} ({$sn['descr']})");?></option>
                       <?php endforeach; endif; ?>
-		      <option value="any"<?php if($pconfig['extaddr'] == "any") echo " selected"; ?>></option>
+		      <option value="any"<?php if($pconfig['extaddr'] == "any") echo " selected"; ?>>any</option>
                     </select><br>
                     <span class="vexpl">
 					If you want this rule to apply to another IP address than the IP address of the interface chosen above,

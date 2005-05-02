@@ -299,6 +299,7 @@
 		</field>
 		<field>
 			<name>PPTP Remote IP Address</name>
+			<bindstofield>pptp->remote</bindstofield>
 			<type>input</type>
 		</field>
 		<field>

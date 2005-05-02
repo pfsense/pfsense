@@ -114,6 +114,10 @@ function showhide(tspan, tri) {
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_queues.php" class="navlnk">Queues</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_graph.php" class="navlnk">Traffic graph</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_wireless.php" class="navlnk">Wireless</a><br>
+	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_logs.php" class="navlnk">System logs</a><br>
+	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_pkglogs.php" class="navlnk">Package logs</a><br>
+	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_dhcp_leases.php" class="navlnk">DHCP leases</a><br>
+	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_ipsec_sad.php" class="navlnk">IPsec</a><br>
 			  <?php if (isset($config['captiveportal']['enable'])): ?>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_captiveportal.php" class="navlnk">Captive portal</a><br>
 			  <?php endif; ?>
@@ -125,10 +129,6 @@ function showhide(tspan, tri) {
 			  <a href="javascript:showhide('diag','tri_diag')"><img src="/tri_c.gif" id="tri_diag" width="14" height="10" border="0"></a><strong><a href="javascript:showhide('diag','tri_diag')" class="navlnk">Diagnostics</a></strong><br>
 			  <span id="diag" style="display: none">
 			  <?php endif; ?>
-				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_logs.php" class="navlnk">System logs</a><br>
-				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_pkglogs.php" class="navlnk">Package logs</a><br>
-				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_dhcp_leases.php" class="navlnk">DHCP leases</a><br>
-				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_ipsec_sad.php" class="navlnk">IPsec</a><br>
 				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_ping.php" class="navlnk">Ping</a><br>
 				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_resetstate.php" class="navlnk">Reset state</a><br>
 				  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_backup.php" class="navlnk">Backup/Restore</a><br>

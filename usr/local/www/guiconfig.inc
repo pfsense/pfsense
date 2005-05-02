@@ -572,7 +572,7 @@ function read_body($ch, $string) {
 }
 
 function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 'http://ftp2.freebsd.org/pub/FreeBSD/ports/i386/packages-5.4-release/Latest') {
-	global $static_status, $static_output, $g, $fd_log;
+	global $pkgent, $static_status, $static_output, $g, $fd_log;
 	$pkg_extension = strrchr($filename, '.');
 	$static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $pkgname . " ";
 	$fetchto = "/tmp/apkg_" . $pkgname . $pkg_extension;
@@ -583,6 +583,8 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
         $workingdir = $workingdir[0];
         $raw_depends_list = array_values(preg_grep("/\@pkgdep/", $slaveout));
 	if($raw_depends_list != "") {
+		if($pkgent['exclude_dependency'] != "")
+			$raw_depends_list = array_values(preg_grep($pkent['exclude_dependency'], PREG_GREP_INVERT));
                 foreach($raw_depends_list as $adepend) {
 			$working_depend = explode(" ", $adepend);
                         //$working_depend = explode("-", $working_depend[1]);

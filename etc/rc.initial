@@ -49,6 +49,7 @@ echo " 7)  Ping host"
 echo " 8)  Shell"
 echo " 9)  PFtop"
 echo "10)  Invoke Auto Upgrade"
+echo "11)  Real time traffic logs"
 echo
 
 read -p "Enter a number: " opmode
@@ -93,6 +94,9 @@ case ${opmode} in
         /etc/rc.firmware_auto
         ;;
 11)
+	/usr/sbin/tcpdump -n -e -ttt -i pflog0
+	;;
+12)
         if grep "$WORD" "$CONFIG"
         then
         	links "https://localhost"

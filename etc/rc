@@ -87,9 +87,7 @@ echo Done.
 
 /usr/sbin/cron 2>>/tmp/bootup_messages
 
-echo -n "Syncing package configurations..."
 /etc/rc.packages
-echo Done.
 
 echo "Executing rc.d items..."
 for FILE in /usr/local/etc/rc.d/*.sh; do

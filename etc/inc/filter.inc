@@ -176,6 +176,9 @@ function filter_configure() {
 							mwexec("/usr/local/pkg/pf/" . $file);
 						} else {
 							//if(php_check_syntax($text, $error_message) == false)
+								if($g['booting'] == true) {
+									echo "Processing {$file} ...\n";
+								}
 								eval($text);
 						}
 					}

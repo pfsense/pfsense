@@ -1313,10 +1313,11 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				} else {
 					$line .= "keep state ";
 				}
-					
-				if( isset($rule['source-track']) and $rule['source-track'] <> "" or
-				  isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "" or
-				   isset($rule['max-src-states']) and $rule['max-src-states'] <> "" ) {
+				if( isset($rule['source-track']) and $rule['source-track'] <> "" or 
+				  isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "" or 
+				   isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "" or 
+				    isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> "" or 
+				     isset($rule['max-src-states']) and $rule['max-src-states'] <> "" ) {
 					$line .= "( ";
 					if(isset($rule['source-track']) & $rule['source-track'] <> "")
 						$line .= "source-track rule ";
@@ -1326,18 +1327,19 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						$line .= "max-src-states " . $rule['max-src-states'] . " ";
 					if(isset($rule['statetimeout']) & $rule['statetimeout'] <> "")
 						$line .= "tcp.established " . $rule['statetimeout'] . " ";
+					if(isset($rule['max-src-conn-rate']) & $rule['max-src-conn-rate'] <> "")
+						$line .= "max-src-conn-rate " . $rule['max-src-conn-rate'] . " ";						
+					if(isset($rule['max-src-conn-rates']) & $rule['max-src-conn-rates'] <> "")
+						$line .= "/" . $rule['max-src-conn-rates'] . ", overload <virusprot> flush global ";						
 					$line .= " ) ";
 				}
-				
 			}
-			
 			if ($type == "reject" && $rule['protocol'] == "tcp") {
 				/* special reject packet */
 				$line .= "flags S/SA ";
 			}
 	}
 	return $line;
-
 }
 
 function filter_rules_generate() {

@@ -1079,23 +1079,18 @@ function check_firmware_version($return_php = true) {
         if(isset($config['system']['alt_firmware_url']['enabled']) and isset($config['system']['alt_firmware_url']['versioncheck_base_url'])) {
                 $versioncheck_base_url = $config['system']['alt_firmware_url']['versioncheck_base_url'];
 	}
-        $params = array(new XML_RPC_Value(trim(file_get_contents('/etc/platform')), 'string'),
-                        new XML_RPC_Value(trim(file_get_contents('/etc/version')), 'string'),
-                        new XML_RPC_Value(trim(file_get_contents('/etc/version_kernel')), 'string'),
-                        new XML_RPC_Value(trim(file_get_contents('/etc/version_base')), 'string'));
-        $msg = new XML_RPC_Message('pfsense.get_firmware_version', $params);
+	$params = array("firmware" => array("version" => trim(file_get_contents('/etc/version'))),
+			"kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel'))),
+			"base"     => array("version" => trim(file_get_contents('/etc/version_base'))),
+			"platform" => trim(file_get_contents('/etc/platform'))
+		);
+	$xmlparams = php_value_to_xmlrpc($params);
+        $msg = new XML_RPC_Message('pfsense.get_firmware_version', array($xmlparams));
         $cli = new XML_RPC_Client($versioncheck_path, $versioncheck_base_url);
-        $resp = $cli->send($msg);
-	if(!$resp) return -1;
-	if($resp->faultCode()) return -1;
-        if($return_php == false) return $resp->serialize();
-	$raw_versions = $resp->value();
-	$toreturn = array();
-	for($i = 0; $i < $raw_versions->arraysize(); $i++) {
-		$arrayval = $raw_versions->arraymem($i);
-		$toreturn[] = $arrayval->scalarval();
-	}
-	return $toreturn;
+	$resp = $cli->send($msg);
+	$raw_versions = xmlrpc_value_to_php($resp->value());
+	$raw_versions["current"] = $params;
+	return $raw_versions;
 }
 
 ?>

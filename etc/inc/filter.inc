@@ -1750,13 +1750,16 @@ function setup_logging_interfaces() {
 }
 
 function create_firewall_outgoing_rules_to_itself() {
-	global $config;
+	global $config, g$;
 	$i = 0;
 	$rule .= "# pass traffic from firewall -> out\n";
 	$rule .= "anchor \"firewallout\"\n";
 	$ifdescrs = array('wan', 'lan');
+	
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
 		$ifdescrs['opt' . $j] = "opt" . $j;
+	
+	/* go through primary and optional interfaces */	
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		$return_gateway = $config['interfaces'][$ifname]['gateway'];
 		$int = filter_translate_type_to_real_interface($ifname);

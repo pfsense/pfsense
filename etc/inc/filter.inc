@@ -980,12 +980,15 @@ function run_command_return_string($cmd) {
 	return $tmp;
 }
 
-function generate_user_filter_rule($rule, $optcfg, $ngcounter) {
+function generate_user_filter_rule($rule, $ngcounter) {
 		global $config, $g;
+
+		$optcfg = array();
+		generate_optcfg_array($optcfg);
 		
 		/* don't include disabled rules */
 		if (isset($rule['disabled'])) {
-			//return "# rule " . $rule['descr'] . " disabled \n";
+			return "# rule " . $rule['descr'] . " disabled \n";
 			return;
 		}
 		
@@ -1001,7 +1004,7 @@ function generate_user_filter_rule($rule, $optcfg, $ngcounter) {
 		if ($rule['interface'] == "pptp") {
 			
 			if ($pptpdcfg['mode'] != "server") {
-				//return "# mode != server " . $rule['descr'] . "\n";
+				return "# mode != server " . $rule['descr'] . "\n";
 				return;
 			}
 			
@@ -1012,7 +1015,9 @@ function generate_user_filter_rule($rule, $optcfg, $ngcounter) {
 			/* Check to see if the interface is opt and in our opt list */
 			if (strstr($rule['interface'], "opt")) {
  				if (!array_key_exists($rule['interface'], $optcfg)) {
-					//return "# array key does not exist for " . $rule['descr'] . "\n";
+					$item = "";
+					foreach($optcfg as $oc) $item .= $oc;					
+					return "# {$item} {$rule['interface']} array key does not exist for " . $rule['descr'] . "\n";
 					return;
 				}
 			}
@@ -1024,31 +1029,33 @@ function generate_user_filter_rule($rule, $optcfg, $ngcounter) {
 		if ($pptpdcfg['mode'] != "server") {
 			if (($rule['source']['network'] == "pptp") ||
 				($rule['destination']['network'] == "pptp")) {
-					//return "# source network or destination network == pptp on " . $rule['descr'] . "\n";
+					return "# source network or destination network == pptp on " . $rule['descr'] . "\n";
 					return;
 				}
 		}
 		
 		if ($rule['source']['network'] && strstr($rule['source']['network'], "opt")) {
 			if (!array_key_exists($rule['source']['network'], $optcfg)) {
-				//return "# !array_key_exists source network " . $rule['descr'] . "\n";
+				return "# {$rule['source']['network']} !array_key_exists source network " . $rule['descr'] . "\n";
 				return;
 			}
 		}
 		if ($rule['destination']['network'] && strstr($rule['destination']['network'], "opt")) {
 			if (!array_key_exists($rule['destination']['network'], $optcfg)) {
-				//return "# !array_key_exists dest network " . $rule['descr'] . "\n";
+				$item = "";
+				foreach($optcfg as $oc) $item .= $oc;
+				return "# {$item} {$rule['destination']['network']} !array_key_exists dest network " . $rule['descr'] . "\n";
 				return;
 			}
 		}
 		
 		/* check for unresolvable aliases */
 		if ($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
-			//return "# unresolvable source aliases " . $rule['descr'] . "\n";
+			return "# unresolvable source aliases " . $rule['descr'] . "\n";
 			return;
 		}
 		if ($rule['destination']['address'] && !alias_expand($rule['destination']['address'])) {
-			//return "# unresolvable dest aliases " . $rule['descr'] . "\n";
+			return "# unresolvable dest aliases " . $rule['descr'] . "\n";
 			return;
 		}
 		
@@ -1163,6 +1170,7 @@ function generate_user_filter_rule($rule, $optcfg, $ngcounter) {
 			}
 			
 			if (!$src || ($src == "/")) {
+				return "# at the break!";
 				break;
 			}
 			
@@ -1226,6 +1234,7 @@ function generate_user_filter_rule($rule, $optcfg, $ngcounter) {
 			}
 			
 			if (!$dst || ($dst == "/")) {
+				return "# returning at $dst == \"/\"";
 				break;
 			}
 			
@@ -1620,13 +1629,13 @@ EOD;
 					 *   that user is setting the pptp server rule 
                                          *   and setup for all netgraph interfaces
                                          */
-					$line = generate_user_filter_rule($rule, $optcfg, $xxx);
+					$line = generate_user_filter_rule($rule, $xxx);
 					if($line <> "") {
 						$ipfrules .= $line . "\n";
 					}
 				}
 			} else {
-				$line = generate_user_filter_rule($rule, $optcfg, 0);
+				$line = generate_user_filter_rule($rule, 0);
 				if (!isset($rule['disabled'])) {
 					// label
 					if($rule['descr'] <> "" and $line <> "") {

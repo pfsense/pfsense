@@ -1542,6 +1542,18 @@ block in $log quick on $wanif from 192.168.0.0/16 to any label "block private ne
 EOD;
 
 	}
+	
+	/*
+	 * Support for allow limiting of TCP connections by establishment rate
+         * Useful for protecting against sudden outburts, etc.
+	 */
+	$ipfrules .= <<<EODF
+# Support for allow limiting of TCP connections by establishment rate
+anchor "limitingesr"
+table "virusprot" persist
+block in $log quick on $wanif from <bogons> to any label "block bogon networks from wan"
+	
+EODF;
 
 	/* block bogon networks on WAN */
 	/* http://www.cymru.com/Documents/bogon-bn-nonagg.txt */

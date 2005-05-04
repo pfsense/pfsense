@@ -150,6 +150,10 @@ pfSenseupgrade)
 	# restore config
 	cp -p /tmp/configbak/* /conf
 
+	# restore /etc symlinks
+	rm /etc/hosts
+	ln -s /var/etc/hosts /etc/hosts
+
 	restore_chflags
 
 	# remount /cf ro

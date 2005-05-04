@@ -797,9 +797,9 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 			<input name="max-src-states" id="max-src-states" value="<?php echo $pconfig['max-src-states'] ?>"><br> Maximum state entries per host<p>
 			<input name="max-src-conn-rate" id="max-src-conn-rate" value="<?php echo $pconfig['max-src-conn-rate'] ?>"> /
 			<select name="max-src-conn-rates" id="max-src-conn-rates">
-			 <option value=""<?php if($pconfig['max-src-conn-rates'] == "") echo " selected"; ?>></option>
+			 <option value=""<?php if(intval($pconfig['max-src-conn-rates']) < 1) echo " selected"; ?>></option>
 			 <?php
-			   for($x=0; $x<255; $x++) {
+			   for($x=1; $x<255; $x++) {
 				if($x == $pconfig['max-src-conn-rates'])
 					$selected = " selected";
 				else 
@@ -809,7 +809,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 			 ?>
 			 </select>
 			<br>
-			New connections / per second
+			Maximum new connections / per second
 			<p><strong>NOTE: Leave these fields blank to disable this feature.</strong>
 		    </td>
                 </tr>

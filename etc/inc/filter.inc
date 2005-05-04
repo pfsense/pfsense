@@ -1787,8 +1787,6 @@ function create_firewall_outgoing_rules_to_itself() {
 		}
 	}
 
-	
-	
 	return $rule;
 }
 

@@ -983,6 +983,17 @@ function run_command_return_string($cmd) {
 function generate_user_filter_rule($rule, $ngcounter) {
 		global $config, $g;
 
+		$wancfg = $config['interfaces']['wan'];
+		$lancfg = $config['interfaces']['lan'];
+		$pptpdcfg = $config['pptpd'];
+		
+		$lanif = $lancfg['if'];
+		$wanif = get_real_wan_interface();
+		
+		$lanip = $lancfg['ipaddr'];
+		$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
+		$lansn = $lancfg['subnet'];
+		
 		$optcfg = array();
 		generate_optcfg_array($optcfg);
 		

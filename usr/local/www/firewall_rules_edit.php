@@ -155,10 +155,16 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['disabled'] = isset($a_filter[$id]['disabled']);
 	$pconfig['log'] = isset($a_filter[$id]['log']);
 	$pconfig['descr'] = $a_filter[$id]['descr'];
+	
+	/* advanced */
         $pconfig['max-src-nodes'] = $a_filter[$id]['max-src-nodes'];
         $pconfig['max-src-states'] = $a_filter[$id]['max-src-states'];
         $pconfig['statetype'] = $a_filter[$id]['statetype'];
 	$pconfig['statetimeout'] = $a_filter[$id]['statetimeout'];
+	
+	/* advanced - new connection per second banning*/
+	$pconfig['max-src-conn-rate'] = $a_filter[$id]['max-src-conn-rate'];
+	$pconfig['max-src-conn-rates'] = $a_filter[$id]['max-src-conn-rates'];
 
 } else {
 	/* defaults */
@@ -351,6 +357,9 @@ if ($_POST) {
 			else
 				$a_filter[] = $filterent;
 		}
+
+		$filterent['max-src-conn-rate'] = $_POST['max-src-conn-rate'];
+		$filterent['max-src-conn-rates'] = $_POST['max-src-conn-rates'];
 
 		write_config();
 		touch($d_filterconfdirty_path);
@@ -781,18 +790,29 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
                 </tr>
-
-
                <tr>
                   <td width="22%" valign="top" class="vncell">Advanced Options</td>
                   <td width="78%" class="vtable">
 			<input name="max-src-nodes" id="max-src-nodes" value="<?php echo $pconfig['max-src-nodes'] ?>"><br> Simultaneous client connection limit<p>
 			<input name="max-src-states" id="max-src-states" value="<?php echo $pconfig['max-src-states'] ?>"><br> Maximum state entries per host<p>
-
+			<input name="max-src-conn-rate" id="max-src-conn-rate" value="<?php echo $pconfig['max-src-conn-rate'] ?>"> /
+			<select name="max-src-conn-rates" id="max-src-conn-rates">
+			 <option value=""<?php if($pconfig['max-src-conn-rates'] == "") echo " selected"; ?>></option>
+			 <?php
+			   for($x=0; $x<255; $x++) {
+				if($x == $pconfig['max-src-conn-rates'])
+					$selected = " selected";
+				else 
+					$selected = "";
+				echo "<option value=\"{$x}\"{$selected}>{$x}</option>\n";
+			   }
+			 ?>
+			 </select>
+			<br>
+			New connections / per second
 			<p><strong>NOTE: Leave these fields blank to disable this feature.</strong>
 		    </td>
                 </tr>
-
                <tr>
                   <td width="22%" valign="top" class="vncell">State Type</td>
                   <td width="78%" class="vtable">

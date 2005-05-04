@@ -1287,7 +1287,6 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states']) )
 					if($rule['protocol'] == "tcp")
 						$line .= "flags S/SA ";
-
 				/*
 					# keep state
 						works with TCP, UDP, and ICMP.
@@ -1327,10 +1326,11 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						$line .= "max-src-states " . $rule['max-src-states'] . " ";
 					if(isset($rule['statetimeout']) & $rule['statetimeout'] <> "")
 						$line .= "tcp.established " . $rule['statetimeout'] . " ";
-					if(isset($rule['max-src-conn-rate']) & $rule['max-src-conn-rate'] <> "")
+					if(isset($rule['max-src-conn-rate']) & $rule['max-src-conn-rate'] <> ""
+					   and isset($rule['max-src-conn-rates']) & $rule['max-src-conn-rates'] <> "") {
 						$line .= "max-src-conn-rate " . $rule['max-src-conn-rate'] . " ";						
-					if(isset($rule['max-src-conn-rates']) & $rule['max-src-conn-rates'] <> "")
-						$line .= "/" . $rule['max-src-conn-rates'] . ", overload <virusprot> flush global ";						
+						$line .= "/" . $rule['max-src-conn-rates'] . ", overload <virusprot> flush global ";
+					   }
 					$line .= " ) ";
 				}
 			}

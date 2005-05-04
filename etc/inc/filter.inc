@@ -1779,6 +1779,15 @@ function create_firewall_outgoing_rules_to_itself() {
 			$rule .="pass out quick on bridge{$x} all keep state label \"let out anything from firewall host itself\"\n";
 		}
 	}
+
+	/* netgraph outgoing */	
+	for($x=0; $x<g['n_pptp_units']; $x++) {
+		if(does_interface_exist("ng{$x}") == true) {
+			$rule .="pass out quick on ng{$x} all keep state label \"let out anything from firewall host itself\"\n";
+		}
+	}
+
+	
 	
 	return $rule;
 }

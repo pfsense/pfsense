@@ -907,7 +907,10 @@ function filter_nat_rules_generate() {
 				continue;	/* unresolvable alias */
 
 			if ($rule['external-address'])
-				$extaddr = $rule['external-address'] . "/32";
+				if($rule['external-address'] <> "any")
+					$extaddr = $rule['external-address'] . "/32";
+				else
+					$extaddr = $rule['external-address'];
 			else
 				$extaddr = get_current_wan_address();
 

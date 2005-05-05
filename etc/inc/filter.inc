@@ -1784,7 +1784,7 @@ function create_firewall_outgoing_rules_to_itself() {
 	}
 
 	/* netgraph outgoing */	
-	for($x=0; $x<g['n_pptp_units']; $x++) {
+	for($x=0; $x<$g['n_pptp_units']; $x++) {
 		if(does_interface_exist("ng{$x}") == true) {
 			$rule .="pass out quick on ng{$x} all keep state label \"let out anything from firewall host itself\"\n";
 		}

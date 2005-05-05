@@ -128,6 +128,28 @@ function filter_configure() {
 	fwrite($fd, $rules);
         fclose($fd);
 
+	/* process packager manager custom rules */
+	$files = return_dir_as_array("/usr/local/pkg/pf/");
+	if($files <> "") {
+		foreach ($files as $file) {
+			if($file <> "") {
+				$text = return_filename_as_string("/usr/local/pkg/pf/" . $file);
+				if($text != "") {
+					if(stristr($file, ".sh") == true) {
+						mwexec("/usr/local/pkg/pf/" . $file);
+					} else {
+						//if(php_check_syntax($text, $error_message) == false)
+							if($g['booting'] == true) {
+								echo " {$file} ";
+							}
+							eval($text);
+							echo " .. ";
+					}
+				}
+			}
+		}
+	}
+
         $rules_loading = mwexec("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
 
 	/* load ipfw+altq module */
@@ -165,31 +187,11 @@ function filter_configure() {
 		if(is_array($line_split))
 			$line_error = "The line in question reads [{$line_number}]:<br>" . $line_split[$line_number];
 		return "There was error(s) loading the rules:<p><pre>" . $rules_error . "\n" . $line_error . "</pre>";
-	} else {
-		/* process packager manager custom rules */
-		$files = return_dir_as_array("/usr/local/pkg/pf/");
-		if($files <> "") {
-			foreach ($files as $file) {
-				if($file <> "") {
-					$text = return_filename_as_string("/usr/local/pkg/pf/" . $file);
-					if($text != "") {
-						if(stristr($file, ".sh") == true) {
-							mwexec("/usr/local/pkg/pf/" . $file);
-						} else {
-							//if(php_check_syntax($text, $error_message) == false)
-								if($g['booting'] == true) {
-									echo "Processing {$file} ...\n";
-								}
-								eval($text);
-						}
-					}
-				}
-			}
-		}
-		if ($g['booting'])
-			echo "done\n";
-		return 0;
 	}
+	
+	if ($g['booting'])
+		echo "Done\n";
+	return 0;
 }
 
 function filter_get_altq_queue_scheduler_type($associatedrule) {

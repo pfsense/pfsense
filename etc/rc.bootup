@@ -107,6 +107,9 @@
 	/* set up Optional interfaces */
 	interfaces_optional_configure();
 
+	/* setup carp interfaces */
+	interfaces_carp_configure();
+
 	/* start pflog */
 	filter_pflog_start();
 
@@ -166,6 +169,8 @@
 
 	/* start IPsec tunnels */
 	vpn_ipsec_configure();
+
+	setup_microcode();
 
 	/* done */
 	unlink("{$g['varrun_path']}/booting");

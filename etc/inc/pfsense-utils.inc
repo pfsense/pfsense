@@ -95,6 +95,29 @@ function enable_hardware_offloading($interface) {
     return;
 }
 
+/****f* pfsense-utils/setup_microcode
+ * NAME
+ *   enumerates all interfaces and calls enable_hardware_offloading which
+ *   enables a NIC's supported hardware features.
+ * INPUTS
+ *   
+ * RESULT
+ *   null
+ * NOTES
+ *   This function only supports the fxp driver's loadable microcode.
+ ******/
+function setup_microcode() {
+   global $config;
+    if($ip == "") return;
+    $i = 0;
+    $ifdescrs = array('wan', 'lan');
+    for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+	$ifdescrs['opt' . $j] = "opt" . $j;
+    }
+    foreach($ifdescrs as $if)
+	enable_hardware_offloading($if);
+}
+
 /****f* pfsense-utils/return_filename_as_array
  * NAME
  *   return_filename_as_array - Return a file's contents as an array.

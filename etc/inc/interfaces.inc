@@ -144,8 +144,6 @@ function interfaces_lan_configure() {
 		captiveportal_configure();
 	}
 
-	enable_hardware_offloading($lancfg['if']);
-
 	if ($g['booting'])
 		echo "done\n";
 
@@ -257,12 +255,58 @@ function interfaces_optional_configure_if($opti) {
 			" delete down");
 	}
 
-	enable_hardware_offloading(escapeshellarg($optcfg['if']));
-
 	if ($g['booting'])
 		echo "done\n";
 
 	return 0;
+}
+
+function interfaces_carp_configure() {
+	global $g, $config;
+	if ($g['booting']) {
+		echo "Configuring CARP interfaces... ";
+	}	
+	unlink_if_exists("/usr/local/etc/rc.d/carp.sh");
+	unlink_if_exists("/usr/local/pkg/pf/carp.sh");
+	unlink_if_exists("/usr/local/pkg/pf/carp_rules.sh");
+	$carp_instances_counter = 0;
+	$pfsync_instances_counter = 0;
+	if($config['installedpackages']['carpsettings']['config'] != "") {
+		foreach($config['installedpackages']['carpsettings']['config'] as $carp)
+		if($carp['pfsyncenabled'] != "") {
+		      $pfsync = 1;
+		      if($carp['premption'] != "")
+				mwexec("/sbin/sysctl net.inet.carp.preempt=1");
+		      if($carp['balancing'] != "")
+				mwexec("/sbin/sysctl net.inet.arpbalance=1");
+		      $carp_sync_int = convert_friendly_interface_to_real_interface_name($carp['pfsyncinterface']);
+		      mwexec("/sbin/ifconfig pfsync0 create");
+		      mwexec("/sbin/ifconfig pfsync0 syncdev " . $carp_sync_int);
+		      mwexec("/sbin/ifconfig pfsync0 syncif " . $carp_sync_int);
+		      mwexec("/sbin/ifconfig {$carp_sync_int} up");
+		      mwexec("/sbin/ifconfig pfsync0 up");
+		      $pfsync_instances_counter++;
+		}
+	}		
+	if($config['installedpackages']['carp']['config'] != "") {
+		foreach($config['installedpackages']['carp']['config'] as $carp) {
+		  /*
+		   *  create the carp interface
+		   */
+		  mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " create");
+		  $broadcast_address = gen_subnet_max($carp['ipaddress'], $carp['netmask']);
+		  if($carp['password'] != "") {
+		    $password = " pass " . $carp['password'];
+		  }
+		  mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $carp['ipaddress'] . "/" . $carp['netmask']);
+		  mwexec(" broadcast " . $broadcast_address . " vhid " . $carp['vhid'] . " advskew " . $carp['advskew'] . $password);
+		  mwexec("/sbin/ifconfig carp{$carp_instances_counter} up");
+		  $carp_instances_counter++;
+		}
+	}
+	if ($g['booting']) {
+		echo "Done\n";
+	}
 }
 
 function interfaces_wireless_configure($if, $wlcfg) {
@@ -421,8 +465,6 @@ function interfaces_wan_configure() {
 		/* restart dnsmasq */
 		services_dnsmasq_configure();
 	}
-
-	enable_hardware_offloading($wancfg['if']);
 
 	if ($g['booting'])
 		echo "done\n";

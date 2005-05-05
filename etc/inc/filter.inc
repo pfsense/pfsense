@@ -1030,8 +1030,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			if (strstr($rule['interface'], "opt")) {
  				if (!array_key_exists($rule['interface'], $optcfg)) {
 					$item = "";
-					foreach($optcfg as $oc) $item .= $oc;					
-					return "# {$item} {$rule['interface']} array key does not exist for " . $rule['descr'] . "\n";
+					foreach($optcfg as $oc) $item .= $oc['if'];					
+					return "# {$real_int} {$item} {$rule['interface']} array key does not exist for " . $rule['descr'] . "\n";
 					return;
 				}
 			}
@@ -1666,7 +1666,7 @@ EOD;
 				$line = generate_user_filter_rule($rule, 0);
 				if (!isset($rule['disabled'])) {
 					// label
-					if($rule['descr'] <> "" and $line <> "") {
+					if($rule['descr'] <> "" and $line <> "" and strpos($line, "label" > 0) {
 						$line .= "label \"USER_RULE: " . $rule['descr'] . "\" ";
 					} else {
 						$line .= "# could not process \"USER_RULE: " . $rule['descr'] . "\" ";

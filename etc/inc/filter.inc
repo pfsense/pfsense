@@ -1750,7 +1750,7 @@ function setup_logging_interfaces() {
 }
 
 function create_firewall_outgoing_rules_to_itself() {
-	global $config, g$;
+	global $config, $g;
 	$i = 0;
 	$rule .= "# pass traffic from firewall -> out\n";
 	$rule .= "anchor \"firewallout\"\n";

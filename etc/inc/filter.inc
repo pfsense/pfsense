@@ -972,6 +972,8 @@ EOD;
 		$natrules .= "rdr on " . $lanif . " inet proto gre from any to !{$lanip} -> 127.0.0.1\n";
 	}
 
+	$natrules .= process_carp_nat_rules();
+
 	return $natrules;
 }
 
@@ -1678,6 +1680,8 @@ EOD;
 			}
 		}
 	}
+	
+	$ipfrules .= process_carp_rules();
 
 	$ipfrules .= "\n# SSH lockout\n";
 	$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port 22 label \"sshlockout\"\n\n";
@@ -1831,7 +1835,7 @@ function process_carp_rules() {
 		    $ip = $carp['ipaddress'];
 		    $int = find_ip_interface($ip);
 		    $carp_int = find_carp_interface($ip);
-		    $lines .= "pass quick on {$carp_int} proto carp from {$carp_int}:network to 224.0.0.18 keep state \(no-sync\)\n";
+		    $lines .= "pass quick on {$carp_int} proto carp from {$carp_int}:network to 224.0.0.18 keep state (no-sync)\n";
 		    $lines .= "pass out quick on {$carp_int} keep state\n";
 		    $lines .= "pass quick on {$carp_int} proto carp keep state\n";
 		    if($int != false and $int != $wan_interface) {

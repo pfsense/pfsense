@@ -1084,6 +1084,9 @@ function check_firmware_version($return_php = true) {
 			"base"     => array("version" => trim(file_get_contents('/etc/version_base'))),
 			"platform" => trim(file_get_contents('/etc/platform'))
 		);
+	if(isset($config['system']['firmwarebranch'])) {
+		foreach($params as $aparam) $aparam['branch'] = $config['system']['firmwarebranch'];
+	}
 	$xmlparams = php_value_to_xmlrpc($params);
         $msg = new XML_RPC_Message('pfsense.get_firmware_version', array($xmlparams));
         $cli = new XML_RPC_Client($versioncheck_path, $versioncheck_base_url);

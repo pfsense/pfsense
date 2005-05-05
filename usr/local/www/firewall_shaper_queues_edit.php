@@ -99,7 +99,7 @@ if ($_POST) {
 		$queue = array();
 		$queue['schedulertype'] = $_POST['schedulertype'];
 		$queue['bandwidth'] = $_POST['bandwidth'];
-		$queue['bandwidthtype'] = $_POST['bandwidthtype'];\
+		$queue['bandwidthtype'] = $_POST['bandwidthtype'];
 		if($_POST['bandwidth'] == "") 
 			unset($queue['bandwidthtype']);
 		if($_POST['bandwidthtype'] == "")

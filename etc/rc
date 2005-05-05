@@ -91,11 +91,9 @@ echo Done.
 
 echo "Executing rc.d items..."
 for FILE in /usr/local/etc/rc.d/*.sh; do
-    if [ -f $FILE ]; then
-        echo -n " Starting ${FILE}..."
-        sh $FILE >>/tmp/bootup_messages 2>&1
-	echo "Done."
-    fi
+    echo -n " Starting ${FILE}..."
+    sh $FILE >>/tmp/bootup_messages 2>&1
+    echo "Done."
 done
 
 if -e [ /tmp/filter_boot_dirty ]; then

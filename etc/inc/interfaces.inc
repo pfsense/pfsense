@@ -298,8 +298,7 @@ function interfaces_carp_configure() {
 		  if($carp['password'] != "") {
 		    $password = " pass " . $carp['password'];
 		  }
-		  mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $carp['ipaddress'] . "/" . $carp['netmask']);
-		  mwexec(" broadcast " . $broadcast_address . " vhid " . $carp['vhid'] . " advskew " . $carp['advskew'] . $password);
+		  mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $carp['ipaddress'] . "/" . $carp['netmask'] . " broadcast " . $broadcast_address . " vhid " . $carp['vhid'] . " advskew " . $carp['advskew'] . $password);
 		  mwexec("/sbin/ifconfig carp{$carp_instances_counter} up");
 		  $carp_instances_counter++;
 		}

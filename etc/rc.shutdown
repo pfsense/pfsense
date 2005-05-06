@@ -11,7 +11,7 @@ HOME=/; export HOME
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 export PATH
 
-for ci in `ifconfig | grep "carp[0-999]" | cut -d":" -f1`; do
+for ci in `/sbin/ifconfig | grep "carp[0-999]" | cut -d":" -f1`; do
     echo Bringing $ci down ...
     /sbin/ifconfig $ci down
     /sbin/ifconfig $ci destroy

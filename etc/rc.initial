@@ -38,9 +38,9 @@ while : ; do
 # display a cheap menu
 echo "pfSense console setup"
 echo "**********************"
-echo " 0)  Logout if accessing via SSH"
-echo " 1)  Interfaces: assign network ports"
-echo " 2)  Set up LAN IP address"
+echo " 0)  Logout (SSH only)"
+echo " 1)  Assign Interfaces"
+echo " 2)  Set LAN IP address"
 echo " 3)  Reset webGUI password"
 echo " 4)  Reset to factory defaults"
 echo " 5)  Reboot system"
@@ -48,8 +48,8 @@ echo " 6)  Halt system"
 echo " 7)  Ping host"
 echo " 8)  Shell"
 echo " 9)  PFtop"
-echo "10)  Invoke Auto Upgrade"
-echo "11)  Real time traffic logs"
+echo "10)  Auto Upgrade"
+echo "11)  Traffic Logs"
 echo
 
 read -p "Enter a number: " opmode

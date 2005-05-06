@@ -291,6 +291,7 @@ function interfaces_carp_configure() {
 			 */
 			exec("echo pass quick proto carp all keep state > /tmp/rules.boot");
 			exec("echo pass quick proto pfsync all keep state >> /tmp/rules.boot");
+			exec("pass out proto { tcp, udp } from any to any port 53 keep state >> /tmp/rules.boot");
 			exec("/sbin/pfctl -f /tmp/rules.boot");
 		      }
 		      $pfsync_instances_counter++;

@@ -181,7 +181,8 @@ function filter_configure() {
 							if($g['booting'] == true) {
 								echo "{$file} ";
 							}
-							eval($text);
+							if ($g['booting'])
+								eval($text);
 							echo " .. ";
 					}
 				}

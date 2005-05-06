@@ -308,6 +308,14 @@ function interfaces_carp_configure() {
 	}
 }
 
+function interfaces_carp_bringup() {
+	global $g, $config;
+	/* lets bring the carp interfaces up now */
+	$carp_ints = find_number_of_created_carp_interfaces();
+	for($x=0; $x<$carp_ints; $x++)
+		mwexec("/sbin/ifconfig carp{$carp_instances_counter} up");	
+}
+
 function interfaces_wireless_configure($if, $wlcfg) {
 	global $config, $g;
 

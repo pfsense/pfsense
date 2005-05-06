@@ -116,6 +116,9 @@
 	/* setup altq + pf */
 	filter_configure();
 
+	/* bring up carp interfaces */
+	interfaces_carp_bringup();
+
 	/* start OpenVPN server & clients */
 	ovpn_configure();
 

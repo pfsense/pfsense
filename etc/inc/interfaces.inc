@@ -264,7 +264,7 @@ function interfaces_optional_configure_if($opti) {
 function interfaces_carp_configure() {
 	global $g, $config;
 	if ($g['booting']) {
-		echo "Configuring CARP interfaces... ";
+		echo "Configuring CARP interfaces... \n";
 	}	
 	unlink_if_exists("/usr/local/etc/rc.d/carp.sh");
 	unlink_if_exists("/usr/local/pkg/pf/carp.sh");
@@ -285,7 +285,14 @@ function interfaces_carp_configure() {
 		      mwexec("/sbin/ifconfig pfsync0 syncif " . $carp_sync_int);
 		      mwexec("/sbin/ifconfig {$carp_sync_int} up");
 		      mwexec("/sbin/ifconfig pfsync0 up");
-		      mwexec("echo pass all proto pfsync from any to any | pfctl -");
+		      if($g['booting']) {
+			/* install rules to alllow pfsync to sync up during boot
+			 * carp interfaces will remain down until the bootup sequence finishes
+			 */
+			exec("echo pass quick proto carp all keep state > /tmp/rules.boot");
+			exec("echo pass quick proto pfsync all keep state >> /tmp/rules.boot");
+			exec("/sbin/pfctl -f /tmp/rules.boot");
+		      }
 		      $pfsync_instances_counter++;
 		}
 	}		
@@ -302,9 +309,6 @@ function interfaces_carp_configure() {
 		  mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $carp['ipaddress'] . "/" . $carp['netmask'] . " broadcast " . $broadcast_address . " vhid " . $carp['vhid'] . " advskew " . $carp['advskew'] . $password);
 		  $carp_instances_counter++;
 		}
-	}
-	if ($g['booting']) {
-		echo "Done\n";
 	}
 }
 

@@ -1,28 +1,19 @@
-#!/usr/local/bin/php
+#!/bin/sh
 
-# $Id$
-
-<?php
-
-exec("stty status '^T'");
+stty status '^T'
 
 # Set shell to ignore SIGINT (2), but not children;
 # shell catches SIGQUIT (3) and returns to single user after fsck.
-exec("trap : 2");
-exec("trap : 3");
+trap : 2
+trap : 3        # shouldn't be needed
 
-require("guiconfig.inc");
+HOME=/; export HOME
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+export PATH
 
-/* bring down carp gracefully */
-$carp_counter=find_number_of_created_carp_interfaces();
-mwexec("/sbin/sysctl net.inet.carp.allow=0");
-for($x=0; $x<$carp_counter; $x++) {
-        echo "Bringing down CARP{$x} ...";
-        mwexec("/sbin/ifconfig carp{$x} down");
-        mwexec("/sbin/ifconfig carp{$x} destroy");
-        echo " Done.";
-}
+for ci in `ifconfig | grep "carp[0-999]" | cut -d":" -f1`; do
+    echo Bringing $ci down ...
+    /sbin/ifconfig $ci down
+    /sbin/ifconfig $ci destroy
+done
 
-exit 0;
-
-?>

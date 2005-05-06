@@ -179,7 +179,7 @@ function filter_configure() {
 					} else {
 						//if(php_check_syntax($text, $error_message) == false)
 							if($g['booting'] == true) {
-								echo " {$file} ";
+								echo "{$file} ";
 							}
 							eval($text);
 							echo " .. ";
@@ -188,6 +188,11 @@ function filter_configure() {
 			}
 		}
 	}
+	
+	/* lets bring the carp interfaces up now */
+	$carp_ints = find_number_of_created_carp_interfaces();
+	for($x=0; $x<$carp_ints; $x++)
+		mwexec("/sbin/ifconfig carp{$carp_instances_counter} up");
 	
 	if ($g['booting'])
 		echo "Done\n";

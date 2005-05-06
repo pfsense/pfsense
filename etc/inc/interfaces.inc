@@ -285,6 +285,7 @@ function interfaces_carp_configure() {
 		      mwexec("/sbin/ifconfig pfsync0 syncif " . $carp_sync_int);
 		      mwexec("/sbin/ifconfig {$carp_sync_int} up");
 		      mwexec("/sbin/ifconfig pfsync0 up");
+		      mwexec("echo pass all proto pfsync from any to any | pfctl -");
 		      $pfsync_instances_counter++;
 		}
 	}		
@@ -299,7 +300,6 @@ function interfaces_carp_configure() {
 		    $password = " pass " . $carp['password'];
 		  }
 		  mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $carp['ipaddress'] . "/" . $carp['netmask'] . " broadcast " . $broadcast_address . " vhid " . $carp['vhid'] . " advskew " . $carp['advskew'] . $password);
-		  mwexec("/sbin/ifconfig carp{$carp_instances_counter} up");
 		  $carp_instances_counter++;
 		}
 	}

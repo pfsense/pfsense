@@ -1,5 +1,10 @@
 #!/bin/sh
 
+echo
+echo
+echo "pfSense is now shutting down ..."
+echo
+
 stty status '^T'
 
 # Set shell to ignore SIGINT (2), but not children;
@@ -11,9 +16,14 @@ HOME=/; export HOME
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 export PATH
 
+echo -n "Bringing interfaces down: ["
 for ci in `/sbin/ifconfig | grep "carp[0-999]" | cut -d":" -f1`; do
-    echo Bringing $ci down ...
+    echo -n " "
+    echo -n $ci
     /sbin/ifconfig $ci down
     /sbin/ifconfig $ci destroy
 done
+echo " ]"
+echo
+echo
 

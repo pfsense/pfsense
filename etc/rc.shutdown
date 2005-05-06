@@ -17,8 +17,10 @@ require("guiconfig.inc");
 $carp_counter=find_number_of_created_carp_interfaces();
 mwexec("/sbin/sysctl net.inet.carp.allow=0");
 for($x=0; $x<$carp_counter; $x++) {
+        echo "Bringing down CARP{$x} ...";
         mwexec("/sbin/ifconfig carp{$x} down");
         mwexec("/sbin/ifconfig carp{$x} destroy");
+        echo " Done.";
 }
 
 exit 0;

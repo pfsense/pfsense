@@ -149,10 +149,7 @@ print_info_box($sig_warning);
 			<ul id="tabnav">
 				<li class="tabact">Firmware Update</a></li>
 				<li class="tabinact"><a href="system_firmware_check.php">Auto Update</a></li>
-<<<<<<< system_firmware.php
-=======
 				<li class="tabact">Manual Update</a></li>
->>>>>>> 1.39
 			</ul>
 		</td>
 	</tr>

@@ -94,8 +94,8 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 				/* fire up the update script in the background */
 				touch($d_firmwarelock_path);
 				$savemsg = "The firmware is now being installed. The firewall will reboot automatically.";
-				exec("/etc/rc.firmware pfSenseupgradereboot {$g['tmp_path']}/firmware.tgz");
-				exec("/etc/rc.reboot);
+				exec("/etc/rc.firmware pfSenseupgrade {$g['tmp_path']}/firmware.tgz");
+				exec("/etc/rc.reboot");
 			}
 		}
 	}

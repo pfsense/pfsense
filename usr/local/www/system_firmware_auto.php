@@ -37,48 +37,6 @@
 require_once("guiconfig.inc");
 require_once("xmlrpc.inc");
 
-function old_checkversion() {
-        global $g;
-        $versioncheck_base_url = 'www.pfSense.com';
-        $versioncheck_path = '/pfSense/checkversion.php';
-        $post = "platform=" . rawurlencode(trim(file_get_contents("/etc/platform"))) .
-                "&version=" . rawurlencode(trim(file_get_contents("/etc/version")));
-        $rfd = @fsockopen($versioncheck_base_url, 80, $errno, $errstr, 3);
-        if ($rfd) {
-                $hdr = "POST {$versioncheck_path} HTTP/1.0\r\n";
-                $hdr .= "Content-Type: application/x-www-form-urlencoded\r\n";
-                $hdr .= "User-Agent: pfSense-webConfigurator/1.0\r\n";
-                $hdr .= "Host: www.pfSense.com\r\n";
-                $hdr .= "Content-Length: " . strlen($post) . "\r\n\r\n";
-
-                fwrite($rfd, $hdr);
-                fwrite($rfd, $post);
-
-                $inhdr = true;
-                $resp = "";
-                while (!feof($rfd)) {
-                        $line = fgets($rfd);
-                        if ($inhdr) {
-                                if (trim($line) == "")
-                                        $inhdr = false;
-                        } else {
-                                $resp .= $line;
-                        }
-                }
-
-                fclose($rfd);
-
-                if($_GET['autoupgrade'] <> "")
-                    return;
-
-                return $resp;
-        }
-
-        return null;
-}
-
-
-
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -91,7 +49,7 @@ function old_checkversion() {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">System: Firmware: Invoke Auto Upgrade</p>
+<p class="pgtitle">System: Firmware: Auto Upgrade</p>
 
 <form action="system_firmware_auto.php" method="post">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -134,121 +92,60 @@ function old_checkversion() {
 <?php
 
 /* Define necessary variables. */
-$platform =		trim(file_get_contents('/etc/platform'));
-$firmware_version =	trim(file_get_contents('/etc/version'));
-$kernel_version =	trim(file_get_contents('/etc/version_kernel'));
-$base_version =		trim(file_get_contents('/etc/version_base'));
-$use_old_checkversion = true;
+$update_types = array('full', 'diff');
 
-update_status("Downloading current version information...");
-$static_text = "Downloading current version information... ";
-update_output_window($static_text);
-if($use_old_checkversion == true) {
-	$versions = old_checkversion();
+if($_GET['category'] == 'full') {
+	$tocheck = 'all';
+	$categories = array('firmware', 'kernel', 'base');
 } else {
-	$versions = check_firmware_version();
+	$tocheck = array($_GET['category']);
+	$categories = $tocheck;
 }
+
+$static_text = "Downloading current version information... ";
+update_status($static_text);
+update_output_window($static_text);
+
+if(file_exists("/tmp/versioncheck.cache")) {
+	$versions = unserialize("/tmp/versioncheck.cache");
+	if(time() - $versions['cachetime'] > 300) { // Our cached data is stale, get a new copy.
+		$versions = check_firmware_version($tocheck);
+	} else { // Our cached data is relatively currently, remove the cachetime label.
+		unset($versions['cachetime']);
+	}
+}
+
 $static_text .= "done.\n";
 update_output_window($static_text);
 
-if($use_old_checkversion == false) {
-	$upgrades = array('firmware', 'kernel', 'base');
+foreach($categories as $index => $key) {
 	$bdiff_errors = array();
-	if(array_shift($versions) == true) {
-		$i = 0;
-		$need_update = array();
-		update_status("Found required updates. Downloading...");
-		foreach($versions as $ver) {
-			if(is_string($ver[0])) {
-				$static_text .= ucfirst($upgrades[$i]) . "\n\tInstalled: " . $firmware_version . "\n\tCurrent: " . $ver[count($ver) -1] . "\n";
-				$needupdate[] = true;
-			} else {
-				$needupdate[] = false;
-			}
-			$i++;
-		}
-		$i = 0;
-		//              if(isset($versions[3])) $static_text = $versions[4] . '\n'; // If we have additional data (a CHANGELOG etc) to display, do so.
-	} else {
-		update_status("No updates required.");
-	}
-
-	foreach($needupdate as $toupdate) {
-		if($toupdate == true) {
-			$static_text .= "Installing {$upgrades[$i]} updates... ";
-			$s = 0;
-			foreach($versions[$i] as $aver) {
-				$todownload = substr(strrchr($tofetch, '-'), 1);
-				$static_text .= $todownload;
-				update_output_window($static_text . " ");
-				$tofetch = "pfSense-" . $upgrades[$i] . "-" . $todownload . ".tgz";
-				download_file_with_progress_bar("http://www.pfSense.com/updates/{$tofetch}", "/tmp/{$tofetch}");
-				update_output_window($static_text);
-				system("/etc/rc.firmware delta_firmware /tmp/" . $tofetch);
-				if(file_exists("/tmp/bdiff.log")) {
-					$bdiff_errors[] = file_get_contents("/tmp/bdiff.log");
-				}
-				if($s == count($aver) - 1) {
-					$static_text .= ".\n";
-				} else {
-					$static_text .= ", ";
-				}
-				update_output_window($static_text);
-				$s++;
-			}
-		}
-		$i++;
-	}
-
-	if(is_string($bdiff_errors[0])) {
-		$static_text .= "\nOne or more md5 mismatches occurred during patch application.";
+	if(is_array($versions[$key][0])) { // Make sure we really need to update this section.
+		update_status("Found required " . $key . " updates. Downloading...");
+		$static_output .= "Downloading " . $key . "updates... ");
 		update_output_window($static_text);
-		file_put_contents("/tmp/bdiff.log", print_r($bdiff_errors, true));
-	}
-} else {
-	if($versions != "") {
-		update_output_window("Using old checkversion method. Text returned from pfSense.com:\n\n" . $versions . "\n\nUpgrading...");
-		$http_auth_username = "";
-		$http_auth_password = "";
-		if($config['system']['proxy_auth_username'])
-			$http_auth_username = $config['system']['proxy_auth_username'];
-		if($config['system']['proxy_auth_password'])
-			$http_auth_password = $config['system']['proxy_auth_password'];
-
-		/* custom firmware option */
-		if (isset($config['system']['alt_firmware_url']['enabled'])) {
-			$firmwareurl=$config['system']['alt_firmware_url']['firmware_base_url'];
-			$firmwarename=$config['system']['alt_firmware_url']['firmware_filename'];
-		} else {
-			$firmwareurl=$g['firmwarebaseurl'];
-			$firmwarename=$g['firmwarefilename'];
+		foreach($versions[$key] as $ver) { // Begin system updates.
+			foreach($update_types as $type) if(in_array($type, array_keys($ver))) $url_type = $type;
+			$tofetch = "pfSense-" . ucfirst($url_type) . "-Update-" . $ver['version'] . "-" . $ver['name'] . ".tgz";
+			$dynamic_text .= "\n\t" . $ver['version'] . "-" . $ver['name'] . " ";
+			update_output_window($static_text . $dynamic_text);
+			download_file_with_progress_bar("http://www.pfsense.com/updates/" . $tofetch, "/tmp/" . $tofetch);
+			if($url_type == "binary") {
+				exec("/etc/rc.firmware delta_update " . "/tmp/" . $tofetch, $bdiff_errors);
+				if(is_string($bdiff_errors[0])) {
+					$static_text .= "failed!\n";
+					update_output_window($static_text);
+					break;
+				}
+			} else {
+				exec("/etc/rc.firmware pfSenseupgrade " . "/tmp/" . $tofetch);
+			}
+			$static_text .= "done.\n";
 		}
-		if(file_exists("/tmp/autoupdate.lock")) 
-			$upgrade_lock = file("/tmp/autoupdate.lock");
-		if(trim($upgrade_lock[0]) == "1") {
-			$update_status = "An upgrade is already in progress.";
-			update_output_window($update_status);
-			exit;
-		} else {
-			log_error("Downloading http://www.pfSense.com/latest.tgz");
-			update_status("Downloading latest version...");	
-			download_file_with_progress_bar("http://www.pfSense.com/latest.tgz", "/tmp/latest.tgz");
-			log_error("Downloading http://www.pfSense.com/latest.tgz");
-			download_file_with_progress_bar("http://www.pfSense.com/latest.tgz.md5", "/tmp/latest.tgz.md5");
-			mwexec_bg("/etc/rc.firmware_auto \"{$firmwareurl}\" \"{$firmwarename}\" \"{$http_auth_username}\" \"{$http_auth_password}\"");
-			$update_status = "pfSense is now auto upgrading.  The firewall will automatically reboot if it succeeds.";
-			update_status("pfSense is now upgrading.  The firewall will reboot once the operation has completed.");
-			echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
-			exit;
-		}
-	} elseif($versions == "") {
-		update_output_window("Using old checkversion method. You are running the latest version of pfSense.");
-	} elseif(is_null($versions)) {
-		update_output_window("Using old checkversion method. Unable to receive version information from pfSense.com.");
-	} else {
-		update_output_window("Using old checkversion method. An unknown error occurred.");
 	}
 }
+update_status("Update finished. Rebooting...");
+exec("/etc/rc.reboot");
 
 echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
 

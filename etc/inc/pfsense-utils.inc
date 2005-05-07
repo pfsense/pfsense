@@ -1095,20 +1095,28 @@ function auto_upgrade() {
 /*
  * check_firmware_version(): Check whether the current firmware installed is the most recently released.
  */
-function check_firmware_version($return_php = true) {
+function check_firmware_version($tocheck = "all", $return_php = true) {
         global $g;
 	$versioncheck_base_url = $g['versioncheckbaseurl'];
         $versioncheck_path = $g['versioncheckpath'];
         if(isset($config['system']['alt_firmware_url']['enabled']) and isset($config['system']['alt_firmware_url']['versioncheck_base_url'])) {
                 $versioncheck_base_url = $config['system']['alt_firmware_url']['versioncheck_base_url'];
 	}
-	$params = array("firmware" => array("version" => trim(file_get_contents('/etc/version'))),
+	$rawparams = array("firmware" => array("version" => trim(file_get_contents('/etc/version'))),
 			"kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel'))),
 			"base"     => array("version" => trim(file_get_contents('/etc/version_base'))),
 			"platform" => trim(file_get_contents('/etc/platform'))
 		);
+	if($tocheck = "all") {
+		$params = $rawparams;
+	} else {
+		foreach($tocheck as $check) {
+			$params['check'] = $rawparams['check'];
+			$params['platform'] = $rawparams['platform'];
+		}
+	}
 	if(isset($config['system']['firmwarebranch'])) {
-		foreach($params as $aparam) $aparam['branch'] = $config['system']['firmwarebranch'];
+		$params['branch'] = $config['system']['firmwarebranch'];
 	}
 	$xmlparams = php_value_to_xmlrpc($params);
         $msg = new XML_RPC_Message('pfsense.get_firmware_version', array($xmlparams));

@@ -182,8 +182,8 @@ function filter_configure() {
 								echo "{$file} ";
 							}
 							if ($g['booting'])
-								eval($text);
-							echo " .. ";
+								echo " .. ";
+							eval($text);
 					}
 				}
 			}

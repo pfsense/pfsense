@@ -93,8 +93,9 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 			if (!$input_errors && !file_exists($d_firmwarelock_path) && (!$sig_warning || $_POST['sig_override'])) {
 				/* fire up the update script in the background */
 				touch($d_firmwarelock_path);
-				exec_rc_script_async("/etc/rc.firmware pfSenseupgrade {$g['tmp_path']}/firmware.tgz");
 				$savemsg = "The firmware is now being installed. The firewall will reboot automatically.";
+				exec("/etc/rc.firmware pfSenseupgradereboot {$g['tmp_path']}/firmware.tgz");
+				exec("/etc/rc.reboot);
 			}
 		}
 	}
@@ -146,8 +147,12 @@ print_info_box($sig_warning);
 	<tr>
 		<td>
 			<ul id="tabnav">
+				<li class="tabact">Firmware Update</a></li>
 				<li class="tabinact"><a href="system_firmware_check.php">Auto Update</a></li>
+<<<<<<< system_firmware.php
+=======
 				<li class="tabact">Manual Update</a></li>
+>>>>>>> 1.39
 			</ul>
 		</td>
 	</tr>

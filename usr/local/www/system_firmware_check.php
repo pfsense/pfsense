@@ -99,7 +99,7 @@ include("fbegin.inc");
 		    if($allinstall == true) {
 		?>
                                 <br><br><br><table align="center"><tr><td><form action="system_firmware_auto.php" method="post" enctype="multipart/form-data">
-                                        <input name="full" type="submit" class="formbtn" value="Begin System Update">
+                                        <input name="full" type="submit" class="formbtn" value="Begin Full Update">
                                 </form></td></tr></table>
 		<?php } ?>
 		</tr>

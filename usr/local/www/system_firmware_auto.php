@@ -56,8 +56,8 @@ require_once("xmlrpc.inc");
   <tr>
     <td>
       <ul id="tabnav">
-        <li class="tabact">Auto Update</a></li>
 	<li class="tabinact"><a href="system_firmware.php">Manual Update</a></li>
+        <li class="tabact">Auto Update</a></li>
       </ul>
     </td>
   </tr>
@@ -93,6 +93,7 @@ require_once("xmlrpc.inc");
 
 /* Define necessary variables. */
 $update_types = array('full', 'diff');
+$didupdate = false;
 
 if($_GET['category'] == 'full') {
 	$tocheck = 'all';
@@ -121,6 +122,7 @@ update_output_window($static_output);
 foreach($categories as $index => $key) {
 	$bdiff_errors = array();
 	if(is_array($versions[$key][0])) { // Make sure we really need to update this section.
+		$didupdate = true;
 		update_status("Found required " . $key . " updates. Downloading...");
 		$static_output .= "Downloading " . $key . " updates... ";
 		update_output_window($static_output);
@@ -145,8 +147,13 @@ foreach($categories as $index => $key) {
 		}
 	}
 }
-update_status("Update finished. Rebooting...");
-//exec("/etc/rc.reboot");
+
+if($didupdate == true) {
+	update_status("Update finished. Rebooting...");
+	exec("/etc/rc.reboot");
+} else {
+	update_status("No updates required.");
+}
 
 echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
 

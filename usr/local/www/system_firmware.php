@@ -147,9 +147,8 @@ print_info_box($sig_warning);
 	<tr>
 		<td>
 			<ul id="tabnav">
-				<li class="tabact">Firmware Update</a></li>
-				<li class="tabinact"><a href="system_firmware_check.php">Auto Update</a></li>
 				<li class="tabact">Manual Update</a></li>
+				<li class="tabinact"><a href="system_firmware_check.php">Auto Update</a></li>
 			</ul>
 		</td>
 	</tr>

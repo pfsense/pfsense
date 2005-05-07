@@ -1121,9 +1121,13 @@ function check_firmware_version($tocheck = "all", $return_php = true) {
 	$xmlparams = php_value_to_xmlrpc($params);
         $msg = new XML_RPC_Message('pfsense.get_firmware_version', array($xmlparams));
         $cli = new XML_RPC_Client($versioncheck_path, $versioncheck_base_url);
-	$resp = $cli->send($msg);
-	$raw_versions = xmlrpc_value_to_php($resp->value());
-	$raw_versions["current"] = $params;
+	$resp = $cli->send($msg, 10);
+	if(!$resp or $resp->faultCode()) {
+		$raw_versions = false;
+	} else {
+		$raw_versions = xmlrpc_value_to_php($resp->value());
+		$raw_versions["current"] = $params;
+	}
 	return $raw_versions;
 }
 

@@ -102,9 +102,9 @@ if($_GET['category'] == 'full') {
 	$categories = $tocheck;
 }
 
-$static_text = "Downloading current version information... ";
-update_status($static_text);
-update_output_window($static_text);
+$static_output = "Downloading current version information... ";
+update_status($static_output);
+update_output_window($static_output);
 
 if(file_exists("/tmp/versioncheck.cache")) {
 	$versions = unserialize("/tmp/versioncheck.cache");
@@ -115,37 +115,38 @@ if(file_exists("/tmp/versioncheck.cache")) {
 	}
 }
 
-$static_text .= "done.\n";
-update_output_window($static_text);
+$static_output .= "done.\n";
+update_output_window($static_output);
 
 foreach($categories as $index => $key) {
 	$bdiff_errors = array();
 	if(is_array($versions[$key][0])) { // Make sure we really need to update this section.
 		update_status("Found required " . $key . " updates. Downloading...");
-		$static_output .= "Downloading " . $key . "updates... ");
-		update_output_window($static_text);
+		$static_output .= "Downloading " . $key . " updates... ";
+		update_output_window($static_output);
 		foreach($versions[$key] as $ver) { // Begin system updates.
 			foreach($update_types as $type) if(in_array($type, array_keys($ver))) $url_type = $type;
 			$tofetch = "pfSense-" . ucfirst($url_type) . "-Update-" . $ver['version'] . "-" . $ver['name'] . ".tgz";
-			$dynamic_text .= "\n\t" . $ver['version'] . "-" . $ver['name'] . " ";
-			update_output_window($static_text . $dynamic_text);
+			$static_output_bak = $static_output;
+			$static_output .= "\n\t" . $ver['version'] . "-" . $ver['name'] . " ";
+			update_output_window($static_output);
 			download_file_with_progress_bar("http://www.pfsense.com/updates/" . $tofetch, "/tmp/" . $tofetch);
 			if($url_type == "binary") {
 				exec("/etc/rc.firmware delta_update " . "/tmp/" . $tofetch, $bdiff_errors);
 				if(is_string($bdiff_errors[0])) {
-					$static_text .= "failed!\n";
-					update_output_window($static_text);
+					$static_output .= "failed!\n";
+					update_output_window($static_output);
 					break;
 				}
 			} else {
 				exec("/etc/rc.firmware pfSenseupgrade " . "/tmp/" . $tofetch);
 			}
-			$static_text .= "done.\n";
+			$static_output = $static_output_bak . "done.\n";
 		}
 	}
 }
 update_status("Update finished. Rebooting...");
-exec("/etc/rc.reboot");
+//exec("/etc/rc.reboot");
 
 echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
 

@@ -43,6 +43,7 @@ require("xmlrpc.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php
 include("fbegin.inc");
+$versions = check_firmware_version();
 ?>
 <p class="pgtitle">System: Firmware Update</p>
 <br>
@@ -54,6 +55,7 @@ include("fbegin.inc");
   </td></tr>
   <tr>
     <td class="tabcont">
+<?php if(is_array($versions)) { ?>
               <table align="center" width="60%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td width="10%" class="listhdrr">Act</td>
@@ -63,7 +65,6 @@ include("fbegin.inc");
                 </tr>
 
 		<?php
-		  $versions = check_firmware_version();
 		  $currentvers = $versions['current'];
 		  foreach($versions as $key => $version) {
 			if($key == "current") continue;
@@ -109,6 +110,9 @@ include("fbegin.inc");
                                 </form></td></tr></table>
 		<?php } ?>
 		</tr>
+<?php } else {
+		print_info_box("Unable to receive version information.");
+} ?>
     </td>
   </tr>
 </table>

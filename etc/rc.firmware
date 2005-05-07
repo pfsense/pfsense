@@ -111,9 +111,7 @@ upgrade)
 	/sbin/umount -f /cf
 	/sbin/mount -r /cf
 
-	echo "Done - rebooting system..."
-	
-	/etc/rc.reboot
+	echo "Done."
 	;;
 pfSenseupgrade)
 	# wait 5 seconds before beginning
@@ -160,8 +158,7 @@ pfSenseupgrade)
 	/sbin/umount -f /cf
 	/sbin/mount -r /cf
 	
-	echo "Done - rebooting system..." | logger -p daemon.info -i -t Upgrade
-	/etc/rc.reboot
+	echo "Done." | logger -p daemon.info -i -t Upgrade
 	;;
 delta_update)
 	backup_chflags

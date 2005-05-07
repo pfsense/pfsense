@@ -64,13 +64,18 @@ include("fbegin.inc");
 
 		<?php
 		  $versions = check_firmware_version();
+		  $currentvers = $versions['current'];
 		  foreach($versions as $key => $version) {
 			if($key == "current") continue;
+			if($key == "firmware") {
+				$currentver = array_shift(explode('-', $currentvers['firmware']['version']));
+			} else {
+				$currentver = $currentvers[$key]['version'];
+			}
 		  	if($version == 1) {
                         	$img = "pass.gif";
                         } else {
 				$allinstall = true;
-				$currentver = array_pop($version);
                         	$img = "block.gif";
 			}
                             ?>
@@ -78,15 +83,16 @@ include("fbegin.inc");
                             <tr valign="top">
                                 <td class="listlr" nowrap><img src="<?=$img;?>" width="11" height="11" align="absmiddle"></td>
 				<td class="listlr"><?= ucfirst($key) ?></td>
-                                <td class="listlr"><?= $versions['current'][$key]['version'] ?></td>
+                                <td class="listlr"><?= $currentver ?></td>
 			<?php
 			if($version == 1) {
 			?>
-				<td class="listlr"><?= $versions['current'][$key]['version'] ?></td>
+				<td class="listlr"><?= $currentver ?></td>
 			<?php
 			} else {
+				$newver = $versions[$key][count($versions[$key]) -1];
 			?>
-				<td class="listbg"><font color="#FFFFFFF"><?= $currentver['version'] ?></td>
+				<td class="listbg"><font color="#FFFFFFF"><?= $newver['version'] ?></td>
 				<td valign="middle" class="list" nowrap>
                                 <a href="system_firmware_auto.php?category=<?=$key;?>"><img src="plus.gif" width="17" height="17" border="0"></a>
                                 </td>
@@ -108,7 +114,7 @@ include("fbegin.inc");
 </table>
 <?php
 	include("fend.inc");
-	$versions['cachetime'] == time();
+	$versions['cachetime'] = time();
 	$fout = fopen("/tmp/versioncheck.cache", "w");
 	fwrite($fout, serialize($versions));
 	fclose($fout);

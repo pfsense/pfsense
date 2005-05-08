@@ -508,10 +508,17 @@ function convert_config() {
 /* save the system configuration */
 function write_config($desc="Unknown") {
 	global $config, $g;
-	$lastchange = $config['revision']['lastchange'];
+	if(!is_dir($g['cf_conf_path'] . '/backup')) mkdir($g['cf_conf_path'] . '/backup');
+	if (time() > mktime(0, 0, 0, 9, 1, 2004))
+		$config['revision']['time'] = time();
+	$config['revision']['description'] = $desc;
+
+	/* archive config */
+        if (isset($config['system']['version_control'])) {
+        	copy($g['cf_conf_path'] . '/config.xml', $g['cf_conf_path'] . '/backup/config-' . $config['revision']['time'] . '.xml');
+	}
 
 	config_lock();
-
 	conf_mount_rw();
 
 	if (time() > mktime(0, 0, 0, 9, 1, 2004))	/* make sure the clock settings are plausible */
@@ -522,28 +529,14 @@ function write_config($desc="Unknown") {
 	/* generate configuration XML */
 	$xmlconfig = dump_xml_config($config, $g['xml_rootobj']);
 
-	/* archive config */
-	if (isset($config['system']['version_control'])) {
-		$fd = fopen("{$g['cf_conf_path']}/backup/config-{$lastchange}.xml", "w");
-		if (!$fd)
-			die("Unable to open {$g['cf_conf_path']}/bak/config-{$config['lastchange']}.xml for writing in write_config()\n");
-		fwrite($fd, $xmlconfig);
-		fclose($fd);
-	}
-
-	/* write configuration */
+	/* write new configuration */
 	$fd = fopen("{$g['cf_conf_path']}/config.xml", "w");
-
 	if (!$fd)
 		die("Unable to open {$g['cf_conf_path']}/config.xml for writing in write_config()\n");
-
 	fwrite($fd, $xmlconfig);
 	fclose($fd);
 
 	conf_mount_ro();
-
-	/* re-read configuration */
-	$config = parse_xml_config("{$g['conf_path']}/config.xml", $g['xml_rootobj']);
 
 	/* write config cache */
 	$fd = @fopen("{$g['tmp_path']}/config.cache", "wb");

@@ -508,8 +508,7 @@ function convert_config() {
 /* save the system configuration */
 function write_config($desc="Unknown") {
 	global $config, $g;
-	if(!is_array($config['revision'])) $config['revision'] = array();
-	$lastchange = $config['lastchange'];
+	$lastchange = $config['revision']['lastchange'];
 
 	config_lock();
 

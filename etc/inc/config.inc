@@ -506,30 +506,26 @@ function convert_config() {
 }
 
 /* save the system configuration */
-function write_config($desc="Non-described system change") {
-
+function write_config($desc="Unknown") {
 	global $config, $g;
+	if(!is_array($config['revision'])) $config['revision'] = array();
 	$lastchange = $config['lastchange'];
 
 	config_lock();
 
 	conf_mount_rw();
 
-	if (time() > mktime(0, 0, 0, 9, 1, 2004))	/* make sure the clock settings is plausible */
-		$config['lastchange'] = time();
+	if (time() > mktime(0, 0, 0, 9, 1, 2004))	/* make sure the clock settings are plausible */
+		$config['revision']['time'] = time();
 
-	$config['lastchangedesc'] = $desc;
+	$config['revision']['description'] = $desc;
 
 	/* generate configuration XML */
 	$xmlconfig = dump_xml_config($config, $g['xml_rootobj']);
 
-	/* archive off old config */
-	/* XXX: billm beginning of version control functionality
-	 * needs it's own directory, a front end, a way to prompt for change comments, and much more
-	 * really just stubbing this in, not for use!
-	 */
+	/* archive config */
 	if (isset($config['system']['version_control'])) {
-		$fd = fopen("{$g['cf_conf_path']}/bak/config-{$lastchange}.xml", "w");
+		$fd = fopen("{$g['cf_conf_path']}/backup/config-{$lastchange}.xml", "w");
 		if (!$fd)
 			die("Unable to open {$g['cf_conf_path']}/bak/config-{$config['lastchange']}.xml for writing in write_config()\n");
 		fwrite($fd, $xmlconfig);

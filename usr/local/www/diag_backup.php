@@ -188,7 +188,12 @@ $dir = ini_get('upload_progress_meter.file.filename_template');
             <form action="diag_backup.php" method="post" enctype="multipart/form-data" onSubmit="window.open('progress.php?conffile=<?=$id?>','UploadMeter','width=370,height=115', true); return true; ">
             <?php if ($input_errors) print_input_errors($input_errors); ?>
             <?php if ($savemsg) print_info_box($savemsg); ?>
-              <table width="100%" border="0" cellspacing="0" cellpadding="6">
+              <table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td><ul id="tabnav">
+			<li class="tabact">Remote</a></li>
+			<li class="tabinact"><a href="diag_confbak.php">Local</a></li>
+		</ul></td></tr>
+		<tr><td class="tabcont"><table align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td colspan="2" class="listtopic">Backup configuration</td>
                 </tr>
@@ -237,6 +242,9 @@ $dir = ini_get('upload_progress_meter.file.filename_template');
 		  <p> Click this button to reinstall all system packages.  This may take a while.<br>
 		  <br>
 		  <input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="Reinstall packages"></td>
+		</tr>
+		</table>
+		</td>
 		</tr>
               </table>
             </form>

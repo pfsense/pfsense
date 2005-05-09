@@ -168,33 +168,6 @@ if ($_POST) {
 	}
 }
 
-
-/* XXX - billm: begginnings of version control code
- * don't set system/version_control :)
- */
-if (isset($config['system']['version_control'])) {
-	$dir="{$g['cf_conf_path']}/bak";
-	$old_versions = array();
-	if (is_dir($dir)) {
-		if ($dh = opendir($dir)) {
-			while (($file = readdir($dh)) !== false) {
-				if ($file != "." && $file != "..") {
-					if (ereg("config-([0-9]+).xml", $file, $fname_array)) {
-						$old_ver = array();
-						$conf = return_filename_as_string("{$g['cf_conf_path']}/bak/" .$file);
-						ereg("<lastchangedesc>(.*)</lastchangedesc>", $conf, $desc_array);
-						$old_ver['date']=date("Y-m-d H:i:s", $fname_array[1]);
-						$old_ver['desc']=$desc_array[1];
-
-						array_push(&$old_versions, $old_ver);
-					}
-                                }
-                        }
-                        closedir($dh);
-                }
-	}
-}
-
 $id = rand() . '.' . time();
 
 $mth = ini_get('upload_progress_meter.store_method');

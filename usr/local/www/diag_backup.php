@@ -267,33 +267,6 @@ $dir = ini_get('upload_progress_meter.file.filename_template');
 		</tr>
               </table>
             </form>
-<?php
-	/* XXX - billm: begginnings of version control code
-	 * This code sucks and is really more of a PoC - it needs cleanup (and doesn't work)
-	 * don't set system/version_control :)
-	 */
-	if (isset($config['system']['version_control'])) {
-?>
-	    <br>
-            <form action="diag_backup.php" method="post" name="version_control" id="version_control">
-            <table width="100%" border="0" cellspacing="0" cellpadding="6">
-              <tr>
-                <td colspan="3" class="listtopic">Config backups</td>
-              </tr>
-<?php foreach ($old_versions as $ver): ?>
-              <tr>
-		<td width="22%" valign="baseline" class="vncell"><?php echo $ver['date']; ?></td>
-                <td width="56%" valign="baseline" class="vtable"><?php echo $ver['desc']; ?></td>
-                <td width="22%" valign="baseline" align="right" class="vtable"><input name="ver" type="radio" class="formfld" value="<?php echo $ver; ?>"></td>
-              </tr>
-<?php endforeach; ?>
-	   <tr>
-		<td colspan="2" valign="baseline" class="vtable"></td>
-                <td width="22%" valign="baseline"><input name="Submit" type="submit" class="formbtn" id="ver_restore" value="Restore version"></td>
-	   </tr>
-           </table>
-           </form>
-<?php }; ?>
 <?php include("fend.inc"); ?>
 </body>
 </html>

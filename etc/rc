@@ -31,9 +31,14 @@ SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
 
 /usr/local/bin/php -f /etc/rc.conf_mount_rw
 
-if [ -f /etc/hosts ]; then
-	rm /etc/hosts
+# Repair symlinks if they are broken
+if [ ! -L /etc/hosts ]; then
+	rm -rf /etc/hosts
 	ln -s /var/etc/hosts /etc/hosts    
+fi
+if [ ! -L /etc/resolv.conf ]; then
+    rm -rf /etc/resolv.conf
+    ln -s /var/etc/resolv.conf /etc/resolv.conf    
 fi
 
 /etc/rc.d/initrandom start >/dev/null

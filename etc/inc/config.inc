@@ -564,7 +564,8 @@ function reset_factory_defaults() {
 	$dh = opendir($g['conf_path']);
 	while ($filename = readdir($dh)) {
 		if (($filename != ".") && ($filename != "..")) {
-			unlink($g['conf_path'] . "/" . $filename);
+			if(file_exists($g['conf_path'] . "/" . $filename))
+				unlink($g['conf_path'] . "/" . $filename);
 		}
 	}
 	closedir($dh);

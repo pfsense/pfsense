@@ -393,7 +393,6 @@
 		</field>
 	</fields>
 	<stepsubmitphpaction>
-		system("echo {$_POST['lanipaddress']} > /tmp/tmp");
 		$ft = split("\.", $_POST['lanipaddress']);
 		$ft_ip = $ft[0] . "." . $ft[1] . "." . $ft[2] . ".";
 		$config['dhcpd']['lan']['range']['from'] = $ft_ip . "50";

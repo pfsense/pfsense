@@ -931,5 +931,31 @@ function system_start_ftp_helpers() {
 	echo "Done.\n";
 }
 
-
+function cleanup_backupcache() {  	 
+        $baktimes = array(); 	 
+        foreach(glob("/conf/backup/*") as $backup) { 	 
+                if(stristr($backup, 'backup.cache')) continue; 	 
+                $baktimes[] = array_shift(explode('.', array_pop(explode('-', $backup)))); 	 
+        } 	 
+        sort($baktimes); 	 
+        $cacheout = fopen("/conf/backup/backup.cache", "w"); 	 
+        fwrite($cacheout, implode("\n", $baktimes)); 	 
+        fclose($cacheout); 	 
+        return true; 	 
+} 	 
+  	 
+function get_backups() { 	 
+        if(file_exists("/conf/backup/backup.cache")) { 	 
+                $confvers = array_reverse(file("/conf/backup/backup.cache")); 	 
+                foreach($confvers as $index => $toproc) { 	 
+                        if(trim($toproc) == $config['revision']['time']) { 	 
+                                array_splice($confvers, $index, 0, array(trim($toproc))); 	 
+                        } 	 
+                } 	 
+        } else { 	 
+                print_info_box("No backups found."); 	 
+                return false; 	 
+        } 	 
+        return $confvers; 	 
+}
 ?>

@@ -509,21 +509,29 @@ function convert_config() {
 function write_config($desc="Unknown") {
 	global $config, $g;
 	if(!is_dir($g['cf_conf_path'] . '/backup')) mkdir($g['cf_conf_path'] . '/backup');
-	if (time() > mktime(0, 0, 0, 9, 1, 2004))
-		$config['revision']['time'] = time();
 	$config['revision']['description'] = $desc;
+
+	if (time() > mktime(0, 0, 0, 9, 1, 2004))       /* make sure the clock settings are plausible */
+                $changetime = time();
 
 	/* archive config */
         if (isset($config['system']['version_control'])) {
-        	copy($g['cf_conf_path'] . '/config.xml', $g['cf_conf_path'] . '/backup/config-' . $config['revision']['time'] . '.xml');
+        	copy($g['cf_conf_path'] . '/config.xml', $g['cf_conf_path'] . '/backup/config-' . $changetime . '.xml');
 	}
+
+	/* update backup cache */
+	if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
+		$backupcache = fopen($g['cf_conf_path'] . '/backup/backup.cache', "a");
+	} else {
+		$backupcache = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
+	}
+	fwrite($backupcache, $changetime . "\n");
+	fclose($backupcache);
 
 	config_lock();
 	conf_mount_rw();
 
-	if (time() > mktime(0, 0, 0, 9, 1, 2004))	/* make sure the clock settings are plausible */
-		$config['revision']['time'] = time();
-
+	$config['revision']['time'] = $changetime;
 	$config['revision']['description'] = $desc;
 
 	/* generate configuration XML */
@@ -545,6 +553,7 @@ function write_config($desc="Unknown") {
 		fclose($fd);
 	}
 
+	cleanup_backupcache();
 	config_unlock();
 }
 
@@ -564,8 +573,7 @@ function reset_factory_defaults() {
 	$dh = opendir($g['conf_path']);
 	while ($filename = readdir($dh)) {
 		if (($filename != ".") && ($filename != "..")) {
-			if(file_exists($g['conf_path'] . "/" . $filename))
-				unlink($g['conf_path'] . "/" . $filename);
+			unlink($g['conf_path'] . "/" . $filename);
 		}
 	}
 	closedir($dh);
@@ -923,32 +931,5 @@ function system_start_ftp_helpers() {
 	echo "Done.\n";
 }
 
-function cleanup_backupcache() {
-        $baktimes = array();
-        foreach(glob("/conf/backup/*") as $backup) {
-                if(stristr($backup, 'backup.cache')) continue;
-                $baktimes[] = array_shift(explode('.', array_pop(explode('-', $backup))));
-        }
-        sort($baktimes);
-        $cacheout = fopen("/conf/backup/backup.cache", "w");
-        fwrite($cacheout, implode("\n", $baktimes));
-        fclose($cacheout);
-        return true;
-}
-
-function get_backups() {
-        if(file_exists("/conf/backup/backup.cache")) {
-                $confvers = array_reverse(file("/conf/backup/backup.cache"));
-                foreach($confvers as $index => $toproc) {
-                        if(trim($toproc) == $config['revision']['time']) {
-                                array_splice($confvers, $index, 0, array(trim($toproc)));
-                        }
-                }
-        } else {
-                print_info_box("No backups found.");
-                return false;
-        }
-        return $confvers;
-}
 
 ?>

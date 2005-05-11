@@ -935,7 +935,8 @@ function system_start_ftp_helpers() {
 	echo "Done.\n";
 }
 
-function cleanup_backupcache() {  	 
+/*
+ function cleanup_backupcache() {  	 
         $baktimes = array(); 	 
         foreach(glob("/conf/backup/*") as $backup) { 	 
                 if(stristr($backup, 'backup.cache')) continue; 	 
@@ -946,7 +947,8 @@ function cleanup_backupcache() {
         fwrite($cacheout, implode("\n", $baktimes)); 	 
         fclose($cacheout); 	 
         return true; 	 
-} 	 
+}
+*/
   	 
 function get_backups() { 	 
         if(file_exists("/conf/backup/backup.cache")) { 	 

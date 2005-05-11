@@ -524,8 +524,9 @@ function write_config($desc="Unknown") {
 	} else {
 		$backupcache = array();
 	}
-	$backupcache[]['time'] = $changetime;
-	$backupcache[]['description'] = $desc;
+	$backupcache[] = array('time' 		=> $changetime,
+			       'description' 	=> $desc
+			);
 	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
 	fwrite($bakout, serialize($backupcache));
 	fclose($bakout);
@@ -952,7 +953,7 @@ function system_start_ftp_helpers() {
   	 
 function get_backups() { 	 
         if(file_exists("/conf/backup/backup.cache")) { 	 
-                $confvers = array_reverse(file("/conf/backup/backup.cache")); 	 
+                $confvers = array_reverse(unserialize("/conf/backup/backup.cache")); 	 
                 foreach($confvers as $index => $toproc) { 	 
                         if(trim($toproc) == $config['revision']['time']) { 	 
                                 array_splice($confvers, $index, 0, array(trim($toproc))); 	 

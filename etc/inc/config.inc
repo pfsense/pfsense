@@ -952,13 +952,13 @@ function system_start_ftp_helpers() {
 */
   	 
 function get_backups() { 	 
-        if(file_exists("/conf/backup/backup.cache")) { 	 
-                $confvers = array_reverse(unserialize("/conf/backup/backup.cache")); 	 
-                foreach($confvers as $index => $toproc) { 	 
-                        if(trim($toproc) == $config['revision']['time']) { 	 
-                                array_splice($confvers, $index, 0, array(trim($toproc))); 	 
-                        } 	 
-                } 	 
+        if(file_exists("/conf/backup/backup.cache")) {
+		$bakvers = array();
+		$toreturn = array();
+                $confvers = unserialize("/conf/backup/backup.cache");
+		foreach($confvers as $verkey => $aver) $bakvers[$verkey] = $aver['time'];
+		asort($bakvers);
+		foreach(array_keys($bakvers) as $val) $toreturn[] = $confvers[$val];
         } else { 	 
                 print_info_box("No backups found."); 	 
                 return false; 	 

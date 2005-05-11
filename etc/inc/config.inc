@@ -509,24 +509,28 @@ function convert_config() {
 function write_config($desc="Unknown") {
 	global $config, $g;
 	if(!is_dir($g['cf_conf_path'] . '/backup')) mkdir($g['cf_conf_path'] . '/backup');
-	$config['revision']['description'] = $desc;
 
 	if (time() > mktime(0, 0, 0, 9, 1, 2004))       /* make sure the clock settings are plausible */
                 $changetime = time();
 
-	/* archive config */
-        if (isset($config['system']['version_control'])) {
-        	copy($g['cf_conf_path'] . '/config.xml', $g['cf_conf_path'] . '/backup/config-' . $changetime . '.xml');
+	if($config['revision']['time'] == "") $config['revision']['time'] = '0';
+        if(isset($config['system']['version_control'])) {
+        	copy($g['cf_conf_path'] . '/config.xml', $g['cf_conf_path'] . '/backup/config-' . $config['revision']['time'] . '.xml');
 	}
 
 	/* update backup cache */
 	if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
-		$backupcache = fopen($g['cf_conf_path'] . '/backup/backup.cache', "a");
+		$backupcache = unserialize($g['cf_conf_path'] . '/backup/backup.cache');
 	} else {
-		$backupcache = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
+		$backupcache = array();
 	}
-	fwrite($backupcache, $changetime . "\n");
-	fclose($backupcache);
+	$backupcache[]['time'] = $changetime;
+	$backupcache[]['description'] = $desc;
+	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
+	fwrite($bakout, serialize($backupcache));
+	fclose($bakout);
+
+	$config['revision']['description'] = $desc;
 
 	config_lock();
 	conf_mount_rw();

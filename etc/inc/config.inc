@@ -558,7 +558,7 @@ function write_config($desc="Unknown") {
 		fclose($fd);
 	}
 
-	cleanup_backupcache();
+	//cleanup_backupcache();
 	config_unlock();
 }
 

@@ -67,6 +67,11 @@
 	/* convert configuration, if necessary */
 	convert_config();
 
+	/* Cleanup the backup cache */
+	print "Cleaning backup cache... ";
+	cleanup_backupcache();
+	print "done.\n";
+
 	/* read in /etc/sysctl.conf and set values if needed */
 	system_setup_sysctl();
 

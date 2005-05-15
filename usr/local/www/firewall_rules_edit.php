@@ -108,7 +108,10 @@ function pconfig_to_address(&$adr, $padr, $pmask, $pnot, $pbeginport, $pendport)
 			$adr['address'] .= "/" . $pmask;
 	}
 
-	$adr['not'] = $pnot ? true : false;
+	if ($pnot)
+		$adr['not'] = true;
+	else
+		unset($addr['not']);
 
 	if (($pbeginport != 0) && ($pbeginport != "any")) {
 		if ($pbeginport != $pendport)
@@ -324,6 +327,8 @@ if ($_POST) {
 		$filterent['statetimeout'] = $_POST['statetimeout'];
 		$filterent['statetype'] = $_POST['statetype'];
 		$filterent['os'] = $_POST['os'];
+		$filterent['max-src-conn-rate'] = $_POST['max-src-conn-rate'];
+		$filterent['max-src-conn-rates'] = $_POST['max-src-conn-rates'];
 
 		if ($_POST['proto'] != "any")
 			$filterent['protocol'] = $_POST['proto'];
@@ -343,8 +348,14 @@ if ($_POST) {
 			$_POST['dstmask'], $_POST['dstnot'],
 			$_POST['dstbeginport'], $_POST['dstendport']);
 
-		$filterent['disabled'] = $_POST['disabled'] ? true : false;
-		$filterent['log'] = $_POST['log'] ? true : false;
+                if ($_POST['disabled'])
+                        $filterent['disabled'] = true;
+                else
+                        unset($filterent['disabled']);
+                if ($_POST['log'])
+                        $filterent['log'] = true;
+                else
+                        unset($filterent['log']);
 		$filterent['descr'] = $_POST['descr'];
 		$filterent['returngateway'] = $_POST['returngateway'];
 		$filterent['returninterface'] = $_POST['returninterface'];
@@ -357,9 +368,6 @@ if ($_POST) {
 			else
 				$a_filter[] = $filterent;
 		}
-
-		$filterent['max-src-conn-rate'] = $_POST['max-src-conn-rate'];
-		$filterent['max-src-conn-rates'] = $_POST['max-src-conn-rates'];
 
 		write_config();
 		touch($d_filterconfdirty_path);

@@ -1327,16 +1327,16 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				    isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> "" or 
 				     isset($rule['max-src-states']) and $rule['max-src-states'] <> "" ) {
 					$line .= "( ";
-					if(isset($rule['source-track']) & $rule['source-track'] <> "")
+					if(isset($rule['source-track']) and $rule['source-track'] <> "")
 						$line .= "source-track rule ";
-					if(isset($rule['max-src-nodes']) & $rule['max-src-nodes'] <> "")
+					if(isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "")
 						$line .= "max-src-nodes " . $rule['max-src-nodes'] . " ";
-					if(isset($rule['max-src-states']) & $rule['max-src-states'] <> "")
+					if(isset($rule['max-src-states']) and $rule['max-src-states'] <> "")
 						$line .= "max-src-states " . $rule['max-src-states'] . " ";
-					if(isset($rule['statetimeout']) & $rule['statetimeout'] <> "")
+					if(isset($rule['statetimeout']) and $rule['statetimeout'] <> "")
 						$line .= "tcp.established " . $rule['statetimeout'] . " ";
-					if(isset($rule['max-src-conn-rate']) & $rule['max-src-conn-rate'] <> ""
-					   and isset($rule['max-src-conn-rates']) & $rule['max-src-conn-rates'] <> "") {
+					if(isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> ""
+					   and isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> "") {
 						$line .= "max-src-conn-rate " . $rule['max-src-conn-rate'] . " ";						
 						$line .= "/" . $rule['max-src-conn-rates'] . ", overload <virusprot> flush global ";
 					   }

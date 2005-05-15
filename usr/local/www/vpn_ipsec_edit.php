@@ -54,30 +54,6 @@ function is_specialnet($net) {
 		return false;
 }
 
-function address_to_pconfig($adr, &$padr, &$pmask) {
-
-	if ($adr['network'])
-		$padr = $adr['network'];
-	else if ($adr['address']) {
-		list($padr, $pmask) = explode("/", $adr['address']);
-		if (is_null($pmask))
-			$pmask = 32;
-	}
-}
-
-function pconfig_to_address(&$adr, $padr, $pmask) {
-
-	$adr = array();
-
-	if (is_specialnet($padr))
-		$adr['network'] = $padr;
-	else {
-		$adr['address'] = $padr;
-		if ($pmask != 32)
-			$adr['address'] .= "/" . $pmask;
-	}
-}
-
 if (isset($id) && $a_ipsec[$id]) {
 	$pconfig['disabled'] = isset($a_ipsec[$id]['disabled']);
 	$pconfig['auto'] = isset($a_ipsec[$id]['auto']);
@@ -86,7 +62,7 @@ if (isset($id) && $a_ipsec[$id]) {
 	if (!isset($a_ipsec[$id]['local-subnet']))
 		$pconfig['localnet'] = "lan";
 	else
-		address_to_pconfig($a_ipsec[$id]['local-subnet'], $pconfig['localnet'], $pconfig['localnetmask']);
+		address_to_pconfig($a_ipsec[$id]['local-subnet'], $pconfig['localnet'], $pconfig['localnetmask'], null, null, null);
 
 	if ($a_ipsec[$id]['interface'])
 		$pconfig['interface'] = $a_ipsec[$id]['interface'];

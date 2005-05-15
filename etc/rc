@@ -44,9 +44,6 @@ fi
 /etc/rc.d/initrandom start >/dev/null
 /etc/rc.d/random start >/dev/null
 
-rm -rf /var/run/*
-rm -rf /tmp/*
-
 set -T
 trap "echo 'Reboot interrupted'; exit 1" 3
 
@@ -58,6 +55,7 @@ chmod 777 /tmp/uploadbar
 mkdir /var/run /var/log /var/etc /var/db/ipf 2>/dev/null
 chmod 0755 /var/db/ipf
 rm -rf /var/log/*
+rm -rf /var/run/*
 rm -rf /tmp/*
 
 # generate circular logfiles

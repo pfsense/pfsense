@@ -972,8 +972,8 @@ function get_backups() {
                 $confvers = unserialize("/conf/backup/backup.cache");
 		$bakvers = array_keys($confvers);
 		$toreturn = array();
-		asort($bakvers);
-		foreach($bakvers as $bakver) $toreturn[] = array('time' => $bakver,
+		sort($bakvers);
+		foreach(array_reverse($bakvers) as $bakver) $toreturn[] = array('time' => $bakver,
 								 'description' => $confvers[$bakver]['description']
 								);
         } else { 	 

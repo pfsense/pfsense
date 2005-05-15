@@ -508,36 +508,40 @@ function convert_config() {
 /* save the system configuration */
 function write_config($desc="Unknown") {
 	global $config, $g;
-	if(!is_dir($g['cf_conf_path'] . '/backup')) mkdir($g['cf_conf_path'] . '/backup');
+
+	if($config['revision']['time'] == "") $changetime = 0;
+        if(isset($config['system']['version_control'])) {
+		if(!is_dir($g['cf_conf_path'] . '/backup')) mkdir($g['cf_conf_path'] . '/backup');
+		if($config['revision']['time'] == "") {
+			$baktime = 0;
+		} else {
+			$baktime = $config['system']['revision']['time'];
+		}
+		if($config['revision']['description'] == "") {
+			$bakdesc = "Unknown";
+		} else {
+			$bakdesc = $config['system']['revision']['description'];
+		}
+        	copy($g['cf_conf_path'] . '/config.xml', $g['cf_conf_path'] . '/backup/config-' . $baktime . '.xml');
+		if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
+			$backupcache = unserialize($g['cf_conf_path'] . '/backup/backup.cache');
+		} else {
+			$backupcache = array();
+		}
+		$backupcache[$baktime] = array('description' => $bakdesc);
+		$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
+ 	        fwrite($bakout, serialize($backupcache));
+       		fclose($bakout);
+	}
 
 	if (time() > mktime(0, 0, 0, 9, 1, 2004))       /* make sure the clock settings are plausible */
                 $changetime = time();
 
-	if($config['revision']['time'] == "") $config['revision']['time'] = '0';
-        if(isset($config['system']['version_control'])) {
-        	copy($g['cf_conf_path'] . '/config.xml', $g['cf_conf_path'] . '/backup/config-' . $config['revision']['time'] . '.xml');
-	}
-
-	/* update backup cache */
-	if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
-		$backupcache = unserialize($g['cf_conf_path'] . '/backup/backup.cache');
-	} else {
-		$backupcache = array();
-	}
-	$backupcache[] = array('time' 		=> $changetime,
-			       'description' 	=> $desc
-			);
-	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
-	fwrite($bakout, serialize($backupcache));
-	fclose($bakout);
-
 	$config['revision']['description'] = $desc;
-
+	$config['revision']['time'] = $changetime;
+	
 	config_lock();
 	conf_mount_rw();
-
-	$config['revision']['time'] = $changetime;
-	$config['revision']['description'] = $desc;
 
 	/* generate configuration XML */
 	$xmlconfig = dump_xml_config($config, $g['xml_rootobj']);

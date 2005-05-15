@@ -514,6 +514,10 @@ function write_config($desc="Unknown") {
 	if (time() > mktime(0, 0, 0, 9, 1, 2004))       /* make sure the clock settings are plausible */
                 $changetime = time();
 
+	/* Log the running script so it's not entirely unlogged what changed */
+        if ($desc == "Unknown")
+                $desc = "Unknown change in {$_SERVER['SCRIPT_NAME']}";
+
 	$config['revision']['description'] = $desc;
 	$config['revision']['time'] = $changetime;
 	

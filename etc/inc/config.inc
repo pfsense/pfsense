@@ -562,7 +562,7 @@ function write_config($desc="Unknown") {
 		fclose($fd);
 	}
 
-	//cleanup_backupcache();
+	cleanup_backupcache();
 	config_unlock();
 }
 
@@ -940,33 +940,46 @@ function system_start_ftp_helpers() {
 	echo "Done.\n";
 }
 
-/*
- function cleanup_backupcache() {  	 
-        $baktimes = array(); 	 
-        foreach(glob("/conf/backup/*") as $backup) { 	 
-                if(stristr($backup, 'backup.cache')) continue; 	 
-                $baktimes[] = array_shift(explode('.', array_pop(explode('-', $backup)))); 	 
-        } 	 
-        sort($baktimes); 	 
-        $cacheout = fopen("/conf/backup/backup.cache", "w"); 	 
-        fwrite($cacheout, implode("\n", $baktimes)); 	 
-        fclose($cacheout); 	 
-        return true; 	 
+function cleanup_backupcache() {
+        $backups = get_backups();
+	$newbaks = array();
+	$bakfiles = glob("/conf/backup/*");
+	$baktimes = $backups['versions'];
+	$tocache = array();
+	unset($backups['versions']);
+        foreach($bakfiles as $backup) { // Check for backups in the directory not represented in the cache.
+		$tocheck = array_shift(explode('.', array_pop(explode('-', $backup))));
+                if(stristr($tocheck, 'backup.cache')) continue;
+                if(!array_key_exists($backup, $baktimes)) {
+			$newxml = parse_xml_config_pkg('/conf/backup/' . $backup, $g['xml_rootobj']);
+			if($newxml['revision']['description'] == "") $newxml['revision']['description'] = "Unknown";
+			$tocache[$tocheck] = array('description' => $newxml['revision']['description']);
+		}
+        }
+	foreach($backups as $checkbak) {
+		if(count(preg_grep('/' . $checkbak['time'] . '/i', $bakfiles)) != 0) {
+			$newbaks[] = $checkbak;
+		}
+	}
+	foreach($backups as $todo) $tocache[$todo['time']] = array('description' => $todo['description']);	
+	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
+        fwrite($bakout, serialize($tocache));
+        fclose($bakout);
 }
-*/
   	 
 function get_backups() { 	 
         if(file_exists("/conf/backup/backup.cache")) {
-		$bakvers = array();
-		$toreturn = array();
                 $confvers = unserialize("/conf/backup/backup.cache");
-		foreach($confvers as $verkey => $aver) $bakvers[$verkey] = $aver['time'];
+		$bakvers = array_keys($confvers);
+		$toreturn = array();
 		asort($bakvers);
-		foreach(array_keys($bakvers) as $val) $toreturn[] = $confvers[$val];
+		foreach($bakvers as $bakver) $toreturn[] = array('time' => $bakver,
+								 'description' => $confvers[$bakver]['description']
+								);
         } else { 	 
-                print_info_box("No backups found."); 	 
                 return false; 	 
-        } 	 
-        return $confvers; 	 
+        }
+	$toreturn['versions'] = $bakvers;
+        return $toreturn;
 }
 ?>

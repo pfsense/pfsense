@@ -89,7 +89,10 @@ if (isset($_POST['del_x'])) {
 	}
 } else if ($_GET['act'] == "toggle") {
 	if ($a_filter[$_GET['id']]) {
-		$a_filter[$_GET['id']]['disabled'] = !isset($a_filter[$_GET['id']]['disabled']);
+                if($a_filter[$_GET['id']]['disabled'])
+                        unset($a_filter[$_GET['id']]['disabled']);
+                else
+                        $a_filter[$_GET['id']]['disabled'] = true;
 		write_config();
 		touch($d_filterconfdirty_path);
 		header("Location: firewall_rules.php?if={$if}");

@@ -152,9 +152,6 @@ if (isset($id) && $a_filter[$id]) {
 		$pconfig['dstmask'], $pconfig['dstnot'],
 		$pconfig['dstbeginport'], $pconfig['dstendport']);
 
-	$pconfig['returngateway'] = $a_filter[$id]['returngateway'];
-	$pconfig['returninterface'] = $a_filter[$id]['returninterface'];
-
 	$pconfig['disabled'] = isset($a_filter[$id]['disabled']);
 	$pconfig['log'] = isset($a_filter[$id]['log']);
 	$pconfig['descr'] = $a_filter[$id]['descr'];
@@ -280,9 +277,6 @@ if ($_POST) {
 		$input_errors[] = "The end destination port must be an alias or integer between 1 and 65535.";
 	}
 
-	if (($_POST['returngateway'] && !is_ipaddroranyalias($_POST['returngateway'])))
-		$input_errors[] = "A valid return gateway IP address or alias must be specified.";
-
 	if (!is_specialnet($_POST['srctype'])) {
 		if (($_POST['src'] && !is_ipaddroranyalias($_POST['src']))) {
 			$input_errors[] = "A valid source IP address or alias must be specified.";
@@ -357,8 +351,6 @@ if ($_POST) {
                 else
                         unset($filterent['log']);
 		$filterent['descr'] = $_POST['descr'];
-		$filterent['returngateway'] = $_POST['returngateway'];
-		$filterent['returninterface'] = $_POST['returninterface'];
 
 		if (isset($id) && $a_filter[$id])
 			$a_filter[$id] = $filterent;

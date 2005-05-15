@@ -64,13 +64,9 @@
 		}
 	}
 
-	/* convert configuration, if necessary */
+	/* convert config and clean backups */
 	convert_config();
-
-	/* Cleanup the backup cache */
-	print "Cleaning backup cache... ";
-	cleanup_backupcache();
-	print "done.\n";
+	cleanup_backupcache(true);
 
 	/* read in /etc/sysctl.conf and set values if needed */
 	system_setup_sysctl();

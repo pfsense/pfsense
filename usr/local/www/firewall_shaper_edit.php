@@ -52,15 +52,6 @@ if (isset($_GET['dup'])) {
 	$after = $_GET['dup'];
 }
 
-function is_specialnet($net) {
-	global $specialsrcdst;
-
-	if (in_array($net, $specialsrcdst) || strstr($net, "opt"))
-		return true;
-	else
-		return false;
-}
-
 if (isset($id) && $a_shaper[$id]) {
 	$pconfig['interface'] = $a_shaper[$id]['interface'];
 

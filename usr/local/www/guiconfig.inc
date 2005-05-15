@@ -675,4 +675,13 @@ function pconfig_to_address(&$adr, $padr, $pmask, $pnot=false, $pbeginport=0, $p
         }
 }
 
+function is_specialnet($net) {
+        global $specialsrcdst;
+
+        if (in_array($net, $specialsrcdst) || strstr($net, "opt"))
+                return true;
+        else
+                return false;
+}
+
 ?>

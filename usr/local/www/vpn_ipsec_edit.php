@@ -45,15 +45,6 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
-function is_specialnet($net) {
-	global $specialsrcdst;
-
-	if (in_array($net, $specialsrcdst))
-		return true;
-	else
-		return false;
-}
-
 if (isset($id) && $a_ipsec[$id]) {
 	$pconfig['disabled'] = isset($a_ipsec[$id]['disabled']);
 	$pconfig['auto'] = isset($a_ipsec[$id]['auto']);

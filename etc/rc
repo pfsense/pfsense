@@ -58,6 +58,7 @@ chmod 777 /tmp/uploadbar
 mkdir /var/run /var/log /var/etc /var/db/ipf 2>/dev/null
 chmod 0755 /var/db/ipf
 rm -rf /var/log/*
+rm -rf /tmp/*
 
 # generate circular logfiles
 clog -i -s 262144 /var/log/system.log

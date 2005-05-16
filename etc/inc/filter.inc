@@ -896,9 +896,8 @@ function filter_nat_rules_generate() {
 	}
 
 	/* DIAG: add ipv6 NAT, if requested */
-	if (isset($config['diag']['ipv6nat']['enable'])) {
-		$natrules .= "rdr on $wanif proto ipv6 from any to any port 0 -> " .
-		"{$config['diag']['ipv6nat']['ipaddr']}\n";
+	if (isset($config['diag']['ipv6nat']['enable']) and $config['diag']['ipv6nat']['ipaddr'] <> "") {
+		$natrules .= "rdr on $wanif proto ipv6 from any to any port 0 -> " . "{$config['diag']['ipv6nat']['ipaddr']}\n";
 	}
 
 	if (isset($config['nat']['rule'])) {

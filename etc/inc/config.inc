@@ -131,39 +131,27 @@ EOD;
 	mwexec("/sbin/mount -a");
 }
 
-if(!$g['booting']) parse_config();
+/* parse configuration */
+if (!$noparseconfig) {
 
-function parse_config() {
-	global $config, $g;
 	config_lock();
-	if(file_exists($g['tmp_path'] . '/config.cache')) {
-		$config = unserialize(file_get_contents($g['tmp_path'] . '/config.cache'));
+
+	/* see if there's a newer cache file */
+	if (file_exists("{$g['tmp_path']}/config.cache") &&
+		(filemtime("{$g['tmp_path']}/config.cache") >=
+		 filemtime("{$g['conf_path']}/config.xml"))) {
+
+		/* read cache */
+		$config = unserialize(file_get_contents("{$g['tmp_path']}/config.cache"));
+
 	} else {
-		generate_config_cache();
-		parse_config();
-	}	
-	config_unlock();
-	return true;
-}
 
-function generate_config_cache() {
-	global $config, $g;
-	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
-	fwrite($configcache, serialize($config));
-	fclose($configcache);
-	return true;
-}
-
-function parse_config_bootup() {
-	global $config, $g;
-	if (!$noparseconfig) {
 		if (!file_exists("{$g['conf_path']}/config.xml")) {
-			config_lock();
 			if ($g['booting']) {
 				if (strstr($g['platform'], "cdrom")) {
 					/* try copying the default config. to the floppy */
 					reset_factory_defaults();
-	
+
 					echo "No XML configuration file found - using factory defaults.\n";
 					echo "Make sure that the configuration floppy disk with the conf/config.xml\n";
 					echo "file is inserted. If it isn't, your configuration changes will be lost\n";
@@ -178,16 +166,12 @@ function parse_config_bootup() {
 				exit(0);
 			}
 		}
-	}
 
-	print "Parsing configuration file... ";
-	$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
-	generate_config_cache();
-	print "done.\n";
+		$config = parse_xml_config("{$g['conf_path']}/config.xml", $g['xml_rootobj']);
 
-	if ((float)$config['version'] > (float)$g['latest_config']) {
-		if ($g['booting']) {
-			echo <<<EOD
+		if ((float)$config['version'] > (float)$g['latest_config']) {
+			if ($g['booting']) {
+				echo <<<EOD
 
 
 *******************************************************************************
@@ -202,6 +186,16 @@ function parse_config_bootup() {
 EOD;
 			}
 		}
+
+		/* write config cache */
+		$fd = @fopen("{$g['tmp_path']}/config.cache", "wb");
+		if ($fd) {
+			fwrite($fd, serialize($config));
+			fclose($fd);
+		}
+	}
+
+	config_unlock();
 
 	/* make alias table (for faster lookups) */
 	alias_make_table();
@@ -512,35 +506,49 @@ function convert_config() {
 }
 
 /* save the system configuration */
-function write_config($desc="Unknown", $backup = true) {
+function write_config($desc="Non-described system change") {
+
 	global $config, $g;
+	$lastchange = $config['lastchange'];
 
-	if($backup) backup_config();
-
-	if (time() > mktime(0, 0, 0, 9, 1, 2004))       /* make sure the clock settings are plausible */
-                $changetime = time();
-
-	/* Log the running script so it's not entirely unlogged what changed */ 
-        if ($desc == "Unknown") 
-        	$desc = "{$_SERVER['SCRIPT_NAME']} made unknown change";  
-
-	$config['revision']['description'] = $desc;
-	$config['revision']['time'] = $changetime;
-	
 	config_lock();
+
 	conf_mount_rw();
+
+	if (time() > mktime(0, 0, 0, 9, 1, 2004))	/* make sure the clock settings is plausible */
+		$config['lastchange'] = time();
+
+	$config['lastchangedesc'] = $desc;
 
 	/* generate configuration XML */
 	$xmlconfig = dump_xml_config($config, $g['xml_rootobj']);
 
-	/* write new configuration */
+	/* archive off old config */
+	/* XXX: billm beginning of version control functionality
+	 * needs it's own directory, a front end, a way to prompt for change comments, and much more
+	 * really just stubbing this in, not for use!
+	 */
+	if (isset($config['system']['version_control'])) {
+		$fd = fopen("{$g['cf_conf_path']}/bak/config-{$lastchange}.xml", "w");
+		if (!$fd)
+			die("Unable to open {$g['cf_conf_path']}/bak/config-{$config['lastchange']}.xml for writing in write_config()\n");
+		fwrite($fd, $xmlconfig);
+		fclose($fd);
+	}
+
+	/* write configuration */
 	$fd = fopen("{$g['cf_conf_path']}/config.xml", "w");
+
 	if (!$fd)
 		die("Unable to open {$g['cf_conf_path']}/config.xml for writing in write_config()\n");
+
 	fwrite($fd, $xmlconfig);
 	fclose($fd);
 
 	conf_mount_ro();
+
+	/* re-read configuration */
+	$config = parse_xml_config("{$g['conf_path']}/config.xml", $g['xml_rootobj']);
 
 	/* write config cache */
 	$fd = @fopen("{$g['tmp_path']}/config.cache", "wb");
@@ -549,8 +557,6 @@ function write_config($desc="Unknown", $backup = true) {
 		fclose($fd);
 	}
 
-	generate_config_cache();
-	cleanup_backupcache();
 	config_unlock();
 }
 
@@ -585,44 +591,22 @@ function reset_factory_defaults() {
 	return 0;
 }
 
-function config_restore($conffile) {
-	global $config, $g;
-        
-        if (!file_exists($conffile))
-                return 1;
-        
-        config_lock();
-        conf_mount_rw();        
-        
-        backup_config();
-        copy($conffile, "{$g['conf_path']}/config.xml");
-        write_config("Reverted to " . array_pop(explode("/", $conffile)) . ".", false);
-        $config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
-        generate_config_cache();
-        
-        conf_mount_ro();
-        config_unlock();
-
-        return 0;
-}
-
-
-
 function config_install($conffile) {
-        global $config, $g;
-        
-        if (!file_exists($conffile))
-                return 1;
- 
-        config_lock();
-        conf_mount_rw();
-        
-        copy($conffile, "{$g['conf_path']}/config.xml");
-                
-        conf_mount_ro();
-        config_unlock();
 
-        return 0;
+	global $config, $g;
+
+	if (!file_exists($conffile))
+		return 1;
+
+	config_lock();
+	conf_mount_rw();
+
+	copy($conffile, "{$g['conf_path']}/config.xml");
+
+	conf_mount_ro();
+	config_unlock();
+
+	return 0;
 }
 
 /* lock configuration file, decide that the lock file is stale after
@@ -950,99 +934,5 @@ function system_start_ftp_helpers() {
 	echo "Done.\n";
 }
 
-function cleanup_backupcache($bootup = false, $revisions = "all") {
-	$i = false;
-	if($bootup) print "Cleaning backup cache...";
-	global $g;
-	$backups = get_backups();
-	$newbaks = array();
-	$bakfiles = glob("/conf/backup/*");
-	$baktimes = $backups['versions'];
-	$tocache = array();
-	unset($backups['versions']);
-        foreach($bakfiles as $backup) { // Check for backups in the directory not represented in the cache.
-		if(stristr($backup, 'backup.cache')) continue;
-		$tocheck = array_shift(explode('.', array_pop(explode('-', $backup))));	
-                if(!in_array($tocheck, $baktimes)) {
-			$i = true;
-			if($bootup) print " " . $tocheck . "a";
-			$newxml = parse_xml_config($backup, $g['xml_rootobj']);
-			if($newxml['revision']['description'] == "") $newxml['revision']['description'] = "Unknown";
-			$tocache[$tocheck] = array('description' => $newxml['revision']['description']);
-		}
-        }
-	foreach($backups as $checkbak) {
-		if(count(preg_grep('/' . $checkbak['time'] . '/i', $bakfiles)) != 0) {
-			$newbaks[] = $checkbak;
-		} else {
-			$i = true;
-			if($bootup) print " " . $tocheck . "r";
-		}
-	}
-	foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description']);	
-	if(is_integer($revisions)) {
-		$toslice = array_slice(array_keys($tocache), 0, $revisions);
-		foreach($toslice as $sliced) $newcache[$sliced] = $tocache[$sliced];
-		foreach($tocache as $version => $versioninfo) {
-			if(!in_array($version, array_keys($newcache))) {
-				unlink_if_exists($g['conf_path'] . '/backup/config-' . $version . '.xml');
-				if($bootup) print " " . $tocheck . "d";
-			}
-		}
-		$tocache = $newcache;
-	}
-	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
-        fwrite($bakout, serialize($tocache));
-        fclose($bakout);
-	if($bootup) {
-		if($i) {
-			print ".\n";
-		} else {
-			print " done.\n";
-		}
-	}
-}
-  	 
-function get_backups() { 	 
-        if(file_exists("/conf/backup/backup.cache")) {
-                $confvers = unserialize(file_get_contents("/conf/backup/backup.cache"));
-		$bakvers = array_keys($confvers);
-		$toreturn = array();
-		sort($bakvers);
-		// $bakvers = array_reverse($bakvers);
-		foreach(array_reverse($bakvers) as $bakver) $toreturn[] = array('time' => $bakver,
-								 'description' => $confvers[$bakver]['description']
-								);
-        } else { 	 
-                return false; 	 
-        }
-	$toreturn['versions'] = $bakvers;
-        return $toreturn;
-}
 
-function backup_config() {
-	global $config, $g;
-        if(!is_dir($g['cf_conf_path'] . '/backup')) mkdir($g['cf_conf_path'] . '/backup');
-        if($config['revision']['time'] == "") {
-                $baktime = 0;
-        } else {
-                $baktime = $config['revision']['time'];
-        }
-        if($config['revision']['description'] == "") {
-                $bakdesc = "Unknown";
-        } else {
-                $bakdesc = $config['revision']['description'];
-        }
-        copy($g['cf_conf_path'] . '/config.xml', $g['cf_conf_path'] . '/backup/config-' . $baktime . '.xml');
-        if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
-                $backupcache = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
-        } else {
-                $backupcache = array();
-        }
-        $backupcache[$baktime] = array('description' => $bakdesc);
-        $bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
-        fwrite($bakout, serialize($backupcache));
-        fclose($bakout);
-	return true;
-}
 ?>

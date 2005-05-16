@@ -29,8 +29,7 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-require("guiconfig.inc");
-require("xmlparse_pkg.inc");
+require_once("filter.inc");
 
 filter_configure();
 

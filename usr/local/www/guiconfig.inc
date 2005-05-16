@@ -39,6 +39,10 @@ if (!$omit_nocacheheaders) {
 	header("Pragma: no-cache");
 }
 
+/* Include authentication routines */
+/* THIS MUST BE ABOVE ALL OTHER CODE */
+require_once("auth.inc");
+
 /* parse the configuration and include all configuration functions */
 require_once("config.inc");
 require_once("functions.inc");

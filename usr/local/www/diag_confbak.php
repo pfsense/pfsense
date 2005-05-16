@@ -84,7 +84,7 @@ if(is_array($confvers)) {
 		<?php
 		  foreach($confvers as $version) {
 			if($version['time'] != 0) {
-				$date = date("n/j H:i:s", $version['time']);
+				$date = date("n/j/y H:i:s", $version['time']);
 			} else {
 				$date = "Unknown";
 			}

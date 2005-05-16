@@ -78,16 +78,8 @@ if(is_array($confvers)) { ?>
 				$changes['date'] = "Current";
 			} else {	// Use backup.cache to find the next usable backup.
 				if(file_exists("/conf/backup/config-{$version['time']}.xml")) {
-					$curconfigs[] = file_get_contents("/conf/backup/config-{$version['time']}.xml");
-					$curconfig = parse_xml_config("/conf/backup/config-{$version['time']}.xml", $g['xml_rootobj']);
-					if(file_exists("/conf/backup/config-{$curconfig['revision']['time']}.xml")) {
-						$changes['time'] = $curconfig['revision']['time'];
-						$changes['date'] = date("n/j H:i:s", $changes['time']);
-						$changes['description'] = $curconfig['revision']['description'];
-					} else {
-						$i++;
-						continue;
-					}
+					$changes = $version;
+					$changes['date'] = date("n/j H:i:s", $changes['time']);
 				} else {
 					$i++;
 					continue;

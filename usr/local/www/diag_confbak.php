@@ -28,6 +28,18 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+
+if ($_GET['newver']) {
+        $conf_file = "/cf/conf/backup/config-${_GET['newver']}.xml";
+
+        if (config_install($conf_file) == 0) {
+                system_reboot();
+                $savemsg = "The configuration has been restored. The firewall is now rebooting.";
+        } else {
+                $input_errors[] = "The configuration could not be restored.";
+        }
+}
+
 require("guiconfig.inc");
 
 ?>
@@ -44,6 +56,7 @@ require("guiconfig.inc");
 include("fbegin.inc");
 ?>
 <p class="pgtitle">Diagnostics: Local Restore</p>
+<?php if ($savemsg) print_info_box($savemsg); ?>
 <br>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
   <ul id="tabnav">

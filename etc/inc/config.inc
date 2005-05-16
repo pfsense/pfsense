@@ -520,10 +520,6 @@ function write_config($desc="Unknown", $backup = false) {
 	if (time() > mktime(0, 0, 0, 9, 1, 2004))       /* make sure the clock settings are plausible */
                 $changetime = time();
 
-	/* Log the running script so it's not entirely unlogged what changed */
-        if ($desc == "Unknown")
-                $desc = "Unknown change in {$_SERVER['SCRIPT_NAME']}";
-
 	$config['revision']['description'] = $desc;
 	$config['revision']['time'] = $changetime;
 	
@@ -950,7 +946,7 @@ function system_start_ftp_helpers() {
 	echo "Done.\n";
 }
 
-function cleanup_backupcache($bootup = false) {
+function cleanup_backupcache($bootup = false, $revisions = "all") {
 	$i = false;
 	if($bootup) print "Cleaning backup cache...";
 	global $g;
@@ -980,6 +976,17 @@ function cleanup_backupcache($bootup = false) {
 		}
 	}
 	foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description']);	
+	if(is_integer($revisions)) {
+		$toslice = array_slice(array_keys($tocache), 0, $revisions);
+		foreach($toslice as $sliced) $newcache[$sliced] = $tocache[$sliced];
+		foreach($tocache as $version => $versioninfo) {
+			if(!in_array($version, array_keys($newcache))) {
+				unlink_if_exists($g['conf_path'] . '/backup/config-' . $version . '.xml');
+				if($bootup) print " " . $tocheck . "d";
+			}
+		}
+		$tocache = $newcache;
+	}
 	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
         fwrite($bakout, serialize($tocache));
         fclose($bakout);
@@ -1029,7 +1036,7 @@ function backup_config() {
                 } else {
                         $backupcache = array();
                 }
-                $backupcache[] = array('time' => $baktime, 'description' => $bakdesc);
+                $backupcache[$baktime] = array('description' => $bakdesc);
                 $bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
                 fwrite($bakout, serialize($backupcache));
                 fclose($bakout);

@@ -56,7 +56,6 @@ include("fbegin.inc");
 <?php 
 if(file_exists("/conf/backup/backup.cache")) {
 	$confvers = unserialize(file_get_contents("/cf/conf/backup/backup.cache"));
-	array_unshift($confvers, $confvers[0]);
 } else {
 	print_info_box("No backups found.");
 }

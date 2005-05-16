@@ -2,6 +2,8 @@
 <?php
 /* $Id$ */
 
+include("guiconfig.inc");
+
 $url = 'progress.php?UPLOAD_IDENTIFIER='.  $_GET["UPLOAD_IDENTIFIER"] .'&e=1';
 
 function nice_value($x) {

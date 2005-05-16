@@ -31,6 +31,7 @@
 */
 
 header("Content-Type: text/plain");
+include("guiconfig.inc");
 
 putenv("PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
 passthru($_GET['cmd']);

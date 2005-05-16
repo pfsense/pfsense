@@ -36,6 +36,7 @@
 		* xmlrpc_params_to_php currently does *not* handle structs.
 */
 
+include("guiconfig.inc");
 require_once("xmlrpc_server.inc");
 require_once("xmlrpc.inc");
 require_once("xmlparse_pkg.inc");

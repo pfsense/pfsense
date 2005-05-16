@@ -1000,7 +1000,7 @@ function backup_config() {
                 } else {
                         $backupcache = array();
                 }
-                $backupcache[$baktime] = array('description' => $bakdesc);
+                $backupcache[] = array('time' => $baktime, 'description' => $bakdesc);
                 $bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
                 fwrite($bakout, serialize($backupcache));
                 fclose($bakout);

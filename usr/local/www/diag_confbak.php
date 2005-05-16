@@ -55,7 +55,7 @@ include("fbegin.inc");
     <td class="tabcont">
 <?php 
 if(file_exists("/conf/backup/backup.cache")) {
-	$confvers = array_reverse(file("/conf/backup/backup.cache"));
+	$confvers = unserialize(file_get_contents("/cf/conf/backup/backup.cache"));
 	array_unshift($confvers, $confvers[0]);
 } else {
 	print_info_box("No backups found.");
@@ -71,7 +71,6 @@ if(is_array($confvers)) { ?>
 		  $curconfigs = array();
 		  $i = 0;
 		  foreach($confvers as $version) {
-			$version = trim($version);
 			$changes = array();
 			if($version == $config['revision']['time'] and $i == 0) {
 				$i++;
@@ -79,9 +78,9 @@ if(is_array($confvers)) { ?>
 				$changes['time'] = $version;
 				$changes['date'] = "Current";
 			} else {	// Use backup.cache to find the next usable backup.
-				if(file_exists("/conf/backup/config-{$version}.xml")) {
-					$curconfigs[] = file_get_contents("/conf/backup/config-{$version}.xml");
-					$curconfig = parse_xml_config("/conf/backup/config-{$version}.xml", $g['xml_rootobj']);
+				if(file_exists("/conf/backup/config-{$version['time']}.xml")) {
+					$curconfigs[] = file_get_contents("/conf/backup/config-{$version['time']}.xml");
+					$curconfig = parse_xml_config("/conf/backup/config-{$version['time']}.xml", $g['xml_rootobj']);
 					if(file_exists("/conf/backup/config-{$curconfig['revision']['time']}.xml")) {
 						$changes['time'] = $curconfig['revision']['time'];
 						$changes['date'] = date("n/j H:i:s", $changes['time']);

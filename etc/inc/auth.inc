@@ -84,6 +84,9 @@ function htpasswd_backed_basic_auth() {
 
         $authfile = file("/var/run/htpasswd");
 
+	/* sanity check to ensure that /usr/local/www/.htpasswd doesn't exist */
+	unlink_if_exists("/usr/local/www/.htpasswd");
+
         /* Prompt three times and give up */
         for($attempt = 0; $attempt <= 3; basic_auth_prompt()){
                 $attempt++;

@@ -35,21 +35,26 @@
 require("guiconfig.inc");
 
 if (!is_array($config['nat']['advancedoutbound']['rule']))
-    $config['nat']['advancedoutbound']['rule'] = array();
+	$config['nat']['advancedoutbound']['rule'] = array();
 
 $a_out = &$config['nat']['advancedoutbound']['rule'];
 //nat_out_rules_sort();
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
-    $id = $_POST['id'];
+	$id = $_POST['id'];
+
+if (isset($_GET['dup']))  { 
+	$id  =  $_GET['dup']; 
+	$after  =  $_GET['dup']; 
+}  
 
 if (isset($id) && $a_out[$id]) {
     list($pconfig['source'],$pconfig['source_subnet']) = explode('/', $a_out[$id]['source']['network']);
     $pconfig['sourceport'] = $a_out[$id]['sourceport'];
     address_to_pconfig($a_out[$id]['destination'], $pconfig['destination'],
 	   $pconfig['destination_subnet'], $pconfig['destination_not'],
-	   null, null);
+	   $none, $none); 
     $pconfig['natport'] = $a_out[$id]['natport'];
     $pconfig['target'] = $a_out[$id]['target'];
     $pconfig['interface'] = $a_out[$id]['interface'];
@@ -164,10 +169,14 @@ if ($_POST) {
         if (isset($_POST['destination_not']) && $ext != "any")
             $natent['destination']['not'] = true;
 
-        if (isset($id) && $a_out[$id])
-            $a_out[$id] = $natent;
-        else
-            $a_out[] = $natent;
+	if (isset($id) && $a_nat[$id])
+		$a_nat[$id] = $natent;
+	else {
+		if (is_numeric($after))
+			array_splice($a_nat, $after+1, 0, array($natent));
+		else
+			$a_nat[] = $natent;
+	}
 
         touch($d_natconfdirty_path);
 

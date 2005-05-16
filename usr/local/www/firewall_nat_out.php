@@ -284,7 +284,7 @@ if (isset($_POST['del_x'])) {
                       </tr>
                       <tr>
                         <td><input onmouseover="fr_insline(<?=$nnats;?>, true)" onmouseout="fr_insline(<?=$nnats;?>, false)" name="move_<?=$i;?>" src="left.gif" title="move selected rules before this rule" height="17" type="image" width="17" border="0"></td>
-                        <!-- <billm><td><a href="firewall_nat_out_edit.php?dup=<?=$i;?>"><img src="plus.gif" title="add a new nat based on this one" width="17" height="17" border="0"></a></td><billm> -->
+                        <td><a href="firewall_nat_out_edit.php?dup=<?=$i;?>"><img src="plus.gif" title="add a new nat based on this one" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>
               <?php $i++; $nnats++; endforeach; ?>

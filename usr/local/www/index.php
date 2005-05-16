@@ -117,6 +117,18 @@ $cpuUsage = round(100 * (1 - $diff['idle'] / $totalDiff), 0);
 return $cpuUsage;
 }
 
+function get_pfstate() {
+        if (isset($config['system']['maximumstates']))
+                $maxstates="/{$config['system']['maximumstates']}";
+        else
+                $maxstates="/10000";
+        $curentries = `/sbin/pfctl -si |grep current`;
+        if (preg_match("/([0-9]+)/", $curentries, $matches)) {
+             $curentries = $matches[1];
+        }
+        return $curentries . $maxstates;
+}
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -182,7 +194,15 @@ return $cpuUsage;
                   <?=htmlspecialchars(date("D M j G:i:s T Y", $config['lastchange']));?>
                 </td>
               </tr><?php endif; ?>
-			  <tr>
+              <tr>
+                <td width="25%" class="vncellt">State table size</td>
+                <td width="75%" class="listr">
+                  <?php
+                    echo "<input style='border: 0px solid white;' size='30' name='pfstate' id='pfstate' value='"  .htmlspecialchars(get_pfstate()) . "'>";
+                                  ?>
+                </td>
+              </tr>
+	      <tr>
                 <td width="25%" class="vncellt">CPU usage</td>
                 <td width="75%" class="listr">
 <?php
@@ -288,6 +308,7 @@ While(!Connection_Aborted()) {
 
     echo "<script language='javascript'>\n";
     echo "document.forms[0].uptime.value = '" . get_uptime() . "';\n";
+    echo "document.forms[0].pfstate.value = '" . get_pfstate() . "';\n";
 
     echo "document.cpuwidtha.style.width='" . $cpuUsage . "';\n";
     echo "document.cpuwidthb.style.width='" . (100 - $cpuUsage) . "';\n";

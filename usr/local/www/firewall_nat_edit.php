@@ -42,6 +42,11 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
+if (isset($_GET['dup'])) {
+        $id = $_GET['dup'];
+        $after = $_GET['dup'];
+}
+
 if (isset($id) && $a_nat[$id]) {
 	$pconfig['extaddr'] = $a_nat[$id]['external-address'];
 	$pconfig['proto'] = $a_nat[$id]['protocol'];
@@ -141,8 +146,12 @@ if ($_POST) {
 
 		if (isset($id) && $a_nat[$id])
 			$a_nat[$id] = $natent;
-		else
-			$a_nat[] = $natent;
+		else {
+			if (is_numeric($after))
+				array_splice($a_nat, $after+1, 0, array($natent));
+			else
+				$a_nat[] = $natent;
+		}
 
 		touch($d_natconfdirty_path);
 
@@ -338,7 +347,7 @@ function ext_rep_change() {
                     <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
-                </tr><?php if (!(isset($id) && $a_nat[$id])): ?>
+                </tr><?php if ((!(isset($id) && $a_nat[$id])) || (isset($_GET['dup']))): ?>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">

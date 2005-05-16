@@ -41,6 +41,8 @@
 	require_once("config.inc");
 	require_once("functions.inc");
 
+	parse_config_bootup();
+
 	$lan_if = $config['interfaces']['lan']['if'];
 	$wan_if = get_real_wan_interface();
 

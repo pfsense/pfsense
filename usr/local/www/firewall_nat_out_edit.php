@@ -44,27 +44,12 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
     $id = $_POST['id'];
 
-function network_to_pconfig($adr, &$padr, &$pmask, &$pnot) {
-
-    if (isset($adr['any']))
-        $padr = "any";
-    else if ($adr['network']) {
-        list($padr, $pmask) = explode("/", $adr['network']);
-        if (!$pmask)
-            $pmask = 32;
-    }
-
-    if (isset($adr['not']))
-        $pnot = 1;
-    else
-        $pnot = 0;
-}
-
 if (isset($id) && $a_out[$id]) {
     list($pconfig['source'],$pconfig['source_subnet']) = explode('/', $a_out[$id]['source']['network']);
     $pconfig['sourceport'] = $a_out[$id]['sourceport'];
-    network_to_pconfig($a_out[$id]['destination'], $pconfig['destination'],
-	   $pconfig['destination_subnet'], $pconfig['destination_not']);
+    address_to_pconfig($a_out[$id]['destination'], $pconfig['destination'],
+	   $pconfig['destination_subnet'], $pconfig['destination_not'],
+	   null, null);
     $pconfig['natport'] = $a_out[$id]['natport'];
     $pconfig['target'] = $a_out[$id]['target'];
     $pconfig['interface'] = $a_out[$id]['interface'];

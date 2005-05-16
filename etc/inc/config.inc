@@ -131,27 +131,39 @@ EOD;
 	mwexec("/sbin/mount -a");
 }
 
-/* parse configuration */
-if (!$noparseconfig) {
+if(!$g['booting']) parse_config();
 
+function parse_config() {
+	global $config;
 	config_lock();
-
-	/* see if there's a newer cache file */
-	if (file_exists("{$g['tmp_path']}/config.cache") &&
-		(filemtime("{$g['tmp_path']}/config.cache") >=
-		 filemtime("{$g['conf_path']}/config.xml"))) {
-
-		/* read cache */
-		$config = unserialize(file_get_contents("{$g['tmp_path']}/config.cache"));
-
+	if(file_exists($g['tmp_path'] . '/config.cache')) {
+		$config = unserialize(file_get_contents($g['tmp_path'] . '/config.cache'));
 	} else {
+		generate_config_cache();
+		parse_config();
+	}	
+	config_unlock();
+	return true;
+}
 
+function generate_config_cache() {
+	global $config;
+	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
+	fwrite($configcache, serialize($config));
+	fclose($configcache);
+	return true;
+}
+
+function parse_config_bootup() {
+	global $config, $g;
+	if (!$noparseconfig) {
 		if (!file_exists("{$g['conf_path']}/config.xml")) {
+			config_lock();
 			if ($g['booting']) {
 				if (strstr($g['platform'], "cdrom")) {
 					/* try copying the default config. to the floppy */
 					reset_factory_defaults();
-
+	
 					echo "No XML configuration file found - using factory defaults.\n";
 					echo "Make sure that the configuration floppy disk with the conf/config.xml\n";
 					echo "file is inserted. If it isn't, your configuration changes will be lost\n";
@@ -166,12 +178,16 @@ if (!$noparseconfig) {
 				exit(0);
 			}
 		}
+	}
 
-		$config = parse_xml_config("{$g['conf_path']}/config.xml", $g['xml_rootobj']);
+	print "Parsing configuration file... ";
+	$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
+	generate_config_cache();
+	print "done.\n";
 
-		if ((float)$config['version'] > (float)$g['latest_config']) {
-			if ($g['booting']) {
-				echo <<<EOD
+	if ((float)$config['version'] > (float)$g['latest_config']) {
+		if ($g['booting']) {
+			echo <<<EOD
 
 
 *******************************************************************************
@@ -186,16 +202,6 @@ if (!$noparseconfig) {
 EOD;
 			}
 		}
-
-		/* write config cache */
-		$fd = @fopen("{$g['tmp_path']}/config.cache", "wb");
-		if ($fd) {
-			fwrite($fd, serialize($config));
-			fclose($fd);
-		}
-	}
-
-	config_unlock();
 
 	/* make alias table (for faster lookups) */
 	alias_make_table();
@@ -506,10 +512,10 @@ function convert_config() {
 }
 
 /* save the system configuration */
-function write_config($desc="Unknown") {
+function write_config($desc="Unknown", $backup = false) {
 	global $config, $g;
 
-	backup_config();
+	if($backup) backup_config();
 
 	if (time() > mktime(0, 0, 0, 9, 1, 2004))       /* make sure the clock settings are plausible */
                 $changetime = time();
@@ -543,7 +549,8 @@ function write_config($desc="Unknown") {
 		fclose($fd);
 	}
 
-//	cleanup_backupcache();
+	generate_config_cache();
+	cleanup_backupcache();
 	config_unlock();
 }
 
@@ -578,22 +585,44 @@ function reset_factory_defaults() {
 	return 0;
 }
 
-function config_install($conffile) {
-
+function config_restore($conffile) {
 	global $config, $g;
+        
+        if (!file_exists($conffile))
+                return 1;
+        
+        config_lock();
+        conf_mount_rw();        
+        
+        backup_config();
+        copy($conffile, "{$g['conf_path']}/config.xml");
+        write_config("Reverted to " . array_pop(explode("/", $conffile)) . ".", false);
+        $config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
+        generate_config_cache();
+        
+        conf_mount_ro();
+        config_unlock();
 
-	if (!file_exists($conffile))
-		return 1;
+        return 0;
+}
 
-	config_lock();
-	conf_mount_rw();
 
-	copy($conffile, "{$g['conf_path']}/config.xml");
 
-	conf_mount_ro();
-	config_unlock();
+function config_install($conffile) {
+        global $config, $g;
+        
+        if (!file_exists($conffile))
+                return 1;
+ 
+        config_lock();
+        conf_mount_rw();
+        
+        copy($conffile, "{$g['conf_path']}/config.xml");
+                
+        conf_mount_ro();
+        config_unlock();
 
-	return 0;
+        return 0;
 }
 
 /* lock configuration file, decide that the lock file is stale after
@@ -950,7 +979,7 @@ function cleanup_backupcache($bootup = false) {
 			if($bootup) print " " . $tocheck . "r";
 		}
 	}
-	foreach($backups as $todo) $tocache[$todo['time']] = array('description' => $todo['description']);	
+	foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description']);	
 	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
         fwrite($bakout, serialize($tocache));
         fclose($bakout);

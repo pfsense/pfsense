@@ -2,8 +2,8 @@
 <?php
 /* $Id$ */
 /*
-    system_firmware.php
-    Copyright (C) 2004, 2005 Scott Ullrich and Colin Smith
+    diag_confbak.php
+    Copyright (C) 2005 Colin Smith
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -28,19 +28,24 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+require("guiconfig.inc");
 
-if ($_GET['newver']) {
-        $conf_file = "/cf/conf/backup/config-${_GET['newver']}.xml";
-
-        if (config_install($conf_file) == 0) {
-                system_reboot();
-                $savemsg = "The configuration has been restored. The firewall is now rebooting.";
-        } else {
-                $input_errors[] = "The configuration could not be restored.";
-        }
+if($_GET['newver'] != "") {
+	if(config_restore($g['conf_path'] . '/backup/config-' . $_GET['newver'] . '.xml') == 0) {
+		$savemsg = "Successfully reverted to " . $_GET['newver'];
+	} else {
+		$savemsg = "Unable to revert to " . $_GET['newver'];
+	}
 }
 
-require("guiconfig.inc");
+if($_GET['rmver'] != "") {
+	unlink_if_exists($g['conf_path'] . '/backup/config-' . $_GET['rmver'] . '.xml');
+	$savemsg = "Deleted " . $_GET['rmver'];
+}
+
+cleanup_backupcache();
+$confvers = get_backups();
+unset($confvers['versions']);
 
 ?>
 
@@ -54,9 +59,9 @@ require("guiconfig.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php
 include("fbegin.inc");
+if($savemsg) print_info_box($savemsg);
 ?>
 <p class="pgtitle">Diagnostics: Local Restore</p>
-<?php if ($savemsg) print_info_box($savemsg); ?>
 <br>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
   <ul id="tabnav">
@@ -66,13 +71,10 @@ include("fbegin.inc");
   </td></tr>
   <tr>
     <td class="tabcont">
-<?php 
-if(file_exists("/conf/backup/backup.cache")) {
-	$confvers = unserialize(file_get_contents("/cf/conf/backup/backup.cache"));
-} else {
-	print_info_box("No backups found.");
-}
-if(is_array($confvers)) { ?>
+<?php
+if(is_array($confvers)) { 
+	      $i = 0;
+		?>
               <table align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td width="30%" class="listhdrr">Date</td>
@@ -80,44 +82,37 @@ if(is_array($confvers)) { ?>
                 </tr>
 
 		<?php
-		  $curconfigs = array();
-		  $i = 0;
 		  foreach($confvers as $version) {
-			$changes = array();
-			if($version == $config['revision']['time'] and $i == 0) {
-				$i++;
-				$changes['description'] = $config['revision']['description'];
-				$changes['time'] = $version;
-				$changes['date'] = "Current";
-			} else {	// Use backup.cache to find the next usable backup.
-				if(file_exists("/conf/backup/config-{$version['time']}.xml")) {
-					$changes = $version;
-					$changes['date'] = date("n/j H:i:s", $changes['time']);
-				} else {
-					$i++;
-					continue;
-				}
+			if($version['time'] != 0) {
+				$date = date("n/j H:i:s", $version['time']);
+			} else {
+				$date = "Unknown";
 			}
-
-			if($changes['time'] == "") $changes['date'] = "Unknown.";
-
+			$desc = $version['description'];
                ?>
                             <tr valign="top">
-				<td class="listlr"> <?= $changes['date']  ?></td>
-                                <td class="listlr"> <?= $changes['description'] ?></td>
-	       <?php	if($changes['date'] != "Current") { ?>
+				<td class="listlr"> <?= $date ?></td>
+                                <td class="listlr"> <?= $desc ?></td>
+	       <?php	if($i != 0) { ?>
 				<td valign="middle" class="list" nowrap>
-                                <a href="diag_confbak.php?newver=<?=$changes['time'];?>"><img src="plus.gif" width="17" height="17" border="0"></a>
+                                <a href="diag_confbak.php?newver=<?=$version['time'];?>"><img src="plus.gif" width="17" height="17" border="0"></a>
                                 </td>
+				<td valign="middle" class="list" nowrap>
+				<a href="diag_confbak.php?rmver=<?=$version['time'];?>"><img src="x.gif" width="17" height="17" border="0"></a>
 	       <?php	} ?>
 			    </tr>
                <?php
 		  	$i++;
                   } ?>
 		</table>
-<?php } ?>
+<?php } else {
+		print_info_box("No backups found.");
+      }
+?>
+
     </td>
   </tr>
 </table>
 </body>
 </html>
+<?php include("fend.inc"); ?>

@@ -512,7 +512,7 @@ function convert_config() {
 }
 
 /* save the system configuration */
-function write_config($desc="Unknown", $backup = false) {
+function write_config($desc="Unknown", $backup = true) {
 	global $config, $g;
 
 	if($backup) backup_config();
@@ -1018,30 +1018,27 @@ function get_backups() {
 
 function backup_config() {
 	global $config, $g;
-	if(isset($config['system']['version_control'])) {
-                if(!is_dir($g['cf_conf_path'] . '/backup')) mkdir($g['cf_conf_path'] . '/backup');
-                if($config['revision']['time'] == "") {
-                        $baktime = 0;
-                } else {
-                        $baktime = $config['revision']['time'];
-                }
-                if($config['revision']['description'] == "") {
-                        $bakdesc = "Unknown";
-                } else {
-                        $bakdesc = $config['revision']['description'];
-                }
-                copy($g['cf_conf_path'] . '/config.xml', $g['cf_conf_path'] . '/backup/config-' . $baktime . '.xml');
-                if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
-                        $backupcache = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
-                } else {
-                        $backupcache = array();
-                }
-                $backupcache[$baktime] = array('description' => $bakdesc);
-                $bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
-                fwrite($bakout, serialize($backupcache));
-                fclose($bakout);
-		return true;
+        if(!is_dir($g['cf_conf_path'] . '/backup')) mkdir($g['cf_conf_path'] . '/backup');
+        if($config['revision']['time'] == "") {
+                $baktime = 0;
+        } else {
+                $baktime = $config['revision']['time'];
         }
-	return false;
+        if($config['revision']['description'] == "") {
+                $bakdesc = "Unknown";
+        } else {
+                $bakdesc = $config['revision']['description'];
+        }
+        copy($g['cf_conf_path'] . '/config.xml', $g['cf_conf_path'] . '/backup/config-' . $baktime . '.xml');
+        if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
+                $backupcache = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
+        } else {
+                $backupcache = array();
+        }
+        $backupcache[$baktime] = array('description' => $bakdesc);
+        $bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
+        fwrite($bakout, serialize($backupcache));
+        fclose($bakout);
+	return true;
 }
 ?>

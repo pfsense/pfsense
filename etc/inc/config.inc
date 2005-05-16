@@ -134,7 +134,7 @@ EOD;
 if(!$g['booting']) parse_config();
 
 function parse_config() {
-	global $config;
+	global $config, $g;
 	config_lock();
 	if(file_exists($g['tmp_path'] . '/config.cache')) {
 		$config = unserialize(file_get_contents($g['tmp_path'] . '/config.cache'));
@@ -147,7 +147,7 @@ function parse_config() {
 }
 
 function generate_config_cache() {
-	global $config;
+	global $config, $g;
 	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
 	fwrite($configcache, serialize($config));
 	fclose($configcache);

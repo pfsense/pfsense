@@ -53,7 +53,7 @@ if (isset($id) && $a_ipsec[$id]) {
 	if (!isset($a_ipsec[$id]['local-subnet']))
 		$pconfig['localnet'] = "lan";
 	else
-		address_to_pconfig($a_ipsec[$id]['local-subnet'], $pconfig['localnet'], $pconfig['localnetmask'], null, null, null);
+		address_to_pconfig($a_ipsec[$id]['local-subnet'], $pconfig['localnet'], $pconfig['localnetmask'], $none, $none, $none);
 
 	if ($a_ipsec[$id]['interface'])
 		$pconfig['interface'] = $a_ipsec[$id]['interface'];

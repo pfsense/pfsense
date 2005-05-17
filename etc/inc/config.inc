@@ -131,28 +131,30 @@ EOD;
 	mwexec("/sbin/mount -a");
 }
 
-if(!$g['booting']) parse_config();
+if(!$g['booting']) {
+	$config = parse_config();
+}
 
 function parse_config($parse = false) {
-	global $config, $g;
-	config_lock();
+	global $g;
 	if(!$parse) {
 		if(file_exists($g['tmp_path'] . '/config.cache')) {
 			$config = unserialize(file_get_contents($g['tmp_path'] . '/config.cache'));
+			if(is_null($config)) {
+				parse_config(true);
+			}
 		} else {
-			generate_config_cache();
-			parse_config();
+			$config = parse_config(true);
 		}
 	} else {
 		$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
-		generate_config_cache();
+		generate_config_cache($config);
 	}
-	config_unlock();
-	return true;
+	return $config;
 }
 
-function generate_config_cache() {
-	global $config, $g;
+function generate_config_cache($config) {
+	global $g;
 	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
 	fwrite($configcache, serialize($config));
 	fclose($configcache);
@@ -187,7 +189,7 @@ function parse_config_bootup() {
 
 	print "Parsing configuration file... ";
 	$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
-	generate_config_cache();
+	generate_config_cache($config);
 	print "done.\n";
 
 	if ((float)$config['version'] > (float)$g['latest_config']) {
@@ -521,6 +523,7 @@ function write_config($desc="Unknown", $backup = true) {
 	global $config, $g;
 
 	if($backup) backup_config();
+	print "Config backed up.";
 
 	if (time() > mktime(0, 0, 0, 9, 1, 2004))       /* make sure the clock settings are plausible */
                 $changetime = time();
@@ -538,17 +541,22 @@ function write_config($desc="Unknown", $backup = true) {
 	/* generate configuration XML */
 	$xmlconfig = dump_xml_config($config, $g['xml_rootobj']);
 
+	print "XML dumped.";
 	/* write new configuration */
 	$fd = fopen("{$g['cf_conf_path']}/config.xml", "w");
 	if (!$fd)
 		die("Unable to open {$g['cf_conf_path']}/config.xml for writing in write_config()\n");
 	fwrite($fd, $xmlconfig);
 	fclose($fd);
+	print "config written.";
 
 	conf_mount_ro();
-	generate_config_cache();
-	cleanup_backupcache();
 	config_unlock();
+	generate_config_cache($config);
+	print "Cache generated.";
+	$config = parse_config();
+	print "Config reparsed.";
+	//cleanup_backupcache();
 }
 
 function reset_factory_defaults() {

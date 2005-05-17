@@ -37,11 +37,11 @@ $listtags = explode(" ", "row config package columnitem option item fieldname fi
 	"servernat proxyarpnet passthrumac allowedip wolentry vlan");
 
 function startElement($parser, $name, $attrs) {
-	global $depth, $curpath, $config, $havedata, $listtags;
+	global $parsedcfg, $depth, $curpath, $havedata, $listtags;
 
 	array_push($curpath, strtolower($name));
 
-	$ptr =& $config;
+	$ptr =& $parsed;
 	foreach ($curpath as $path) {
 		$ptr =& $ptr[$path];
 	}
@@ -69,10 +69,10 @@ function startElement($parser, $name, $attrs) {
 }
 
 function endElement($parser, $name) {
-	global $depth, $curpath, $config, $havedata, $listtags;
+	global $depth, $curpath, $parsedcfg, $havedata, $listtags;
 
 	if ($havedata == $depth) {
-		$ptr =& $config;
+		$ptr =& $parsedcfg;
 		foreach ($curpath as $path) {
 			$ptr =& $ptr[$path];
 		}
@@ -88,12 +88,12 @@ function endElement($parser, $name) {
 }
 
 function cData($parser, $data) {
-	global $depth, $curpath, $config, $havedata;
+	global $depth, $curpath, $parsedcfg, $havedata;
 
 	$data = trim($data, "\t\n\r");
 
 	if ($data != "") {
-		$ptr =& $config;
+		$ptr =& $parsedcfg;
 		foreach ($curpath as $path) {
 			$ptr =& $ptr[$path];
 		}
@@ -111,9 +111,9 @@ function cData($parser, $data) {
 
 function parse_xml_config($cffile, $rootobj) {
 
-	global $depth, $curpath, $config, $havedata, $listtags;
+	global $depth, $curpath, $parsedcfg, $havedata, $listtags;
 
-	$config = array();
+	$parsedcfg = array();
 	$curpath = array();
 	$depth = 0;
 	$havedata = 0;
@@ -136,11 +136,11 @@ function parse_xml_config($cffile, $rootobj) {
 	}
 	xml_parser_free($xml_parser);
 
-	if (!$config[$rootobj]) {
+	if (!$parsedcfg[$rootobj]) {
 		die("XML error: no $rootobj object found!\n");
 	}
 
-	return $config[$rootobj];
+	return $parsedcfg[$rootobj];
 }
 
 function dump_xml_config_sub($arr, $indent) {

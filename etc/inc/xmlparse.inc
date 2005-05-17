@@ -41,7 +41,7 @@ function startElement($parser, $name, $attrs) {
 
 	array_push($curpath, strtolower($name));
 
-	$ptr =& $parsed;
+	$ptr =& $parsedcfg;
 	foreach ($curpath as $path) {
 		$ptr =& $ptr[$path];
 	}

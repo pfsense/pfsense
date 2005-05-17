@@ -479,8 +479,8 @@ function filter_generate_altq_rules() {
 
         /* add a rule to pass all traffic from/to the firewall,
            so the user cannot lock himself out of the webGUI */
-        $shaperrules = "add $rulei set 4 pass all from $lanip to any\n"; $rulei++;
-        $shaperrules .= "add $rulei set 4 pass all from any to $lanip\n"; $rulei++;
+        $shaperrules = "add $rulei set 4 skipto 65535 ip from me to any\n"; $rulei++;
+        $shaperrules .= "add $rulei set 4 skipto 65535 ip from any to me\n"; $rulei++;
 	$shaperrules .= "add $rulei set 4 pass carp from any to any\n"; $rulei++;
 	$shaperrules .= "add $rulei set 4 pass pfsync from any to any\n"; $rulei++;
 

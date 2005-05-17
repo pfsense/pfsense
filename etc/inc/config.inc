@@ -963,47 +963,48 @@ function cleanup_backupcache($bootup = false, $revisions = "all") {
 		if($bootup) print " done.\n";
 		return;
 	}
-	global $g;
-	$backups = get_backups();
-	$newbaks = array();
-	$bakfiles = glob("/conf/backup/*");
-	$baktimes = $backups['versions'];
-	$tocache = array();
-	unset($backups['versions']);
-        foreach($bakfiles as $backup) { // Check for backups in the directory not represented in the cache.
-		if(stristr($backup, 'backup.cache')) continue;
-		$tocheck = array_shift(explode('.', array_pop(explode('-', $backup))));	
-                if(!in_array($tocheck, $baktimes)) {
-			$i = true;
-			if($bootup) print " " . $tocheck . "a";
-			$newxml = parse_xml_config($backup, $g['xml_rootobj']);
-			if($newxml['revision']['description'] == "") $newxml['revision']['description'] = "Unknown";
-			$tocache[$tocheck] = array('description' => $newxml['revision']['description']);
-		}
-        }
-	foreach($backups as $checkbak) {
-		if(count(preg_grep('/' . $checkbak['time'] . '/i', $bakfiles)) != 0) {
-			$newbaks[] = $checkbak;
-		} else {
-			$i = true;
-			if($bootup) print " " . $tocheck . "r";
-		}
-	}
-	foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description']);	
-	if(is_integer($revisions)) {
-		$toslice = array_slice(array_keys($tocache), 0, $revisions);
-		foreach($toslice as $sliced) $newcache[$sliced] = $tocache[$sliced];
-		foreach($tocache as $version => $versioninfo) {
-			if(!in_array($version, array_keys($newcache))) {
-				unlink_if_exists($g['conf_path'] . '/backup/config-' . $version . '.xml');
-				if($bootup) print " " . $tocheck . "d";
+	if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
+		$backups = get_backups();
+		$newbaks = array();
+		$bakfiles = glob("/conf/backup/*");
+		$baktimes = $backups['versions'];
+		$tocache = array();
+		unset($backups['versions']);
+       		foreach($bakfiles as $backup) { // Check for backups in the directory not represented in the cache.
+			if(stristr($backup, 'backup.cache')) continue;
+			$tocheck = array_shift(explode('.', array_pop(explode('-', $backup))));	
+                	if(!in_array($tocheck, $baktimes)) {
+				$i = true;
+				if($bootup) print " " . $tocheck . "a";
+				$newxml = parse_xml_config($backup, $g['xml_rootobj']);
+				if($newxml['revision']['description'] == "") $newxml['revision']['description'] = "Unknown";
+				$tocache[$tocheck] = array('description' => $newxml['revision']['description']);
+			}
+        	}
+		foreach($backups as $checkbak) {
+			if(count(preg_grep('/' . $checkbak['time'] . '/i', $bakfiles)) != 0) {
+				$newbaks[] = $checkbak;
+			} else {
+				$i = true;
+				if($bootup) print " " . $tocheck . "r";
 			}
 		}
-		$tocache = $newcache;
+		foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description']);	
+		if(is_integer($revisions)) {
+			$toslice = array_slice(array_keys($tocache), 0, $revisions);
+			foreach($toslice as $sliced) $newcache[$sliced] = $tocache[$sliced];
+			foreach($tocache as $version => $versioninfo) {
+				if(!in_array($version, array_keys($newcache))) {
+					unlink_if_exists($g['conf_path'] . '/backup/config-' . $version . '.xml');
+					if($bootup) print " " . $tocheck . "d";
+				}
+			}
+			$tocache = $newcache;
+		}
+		$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
+        	fwrite($bakout, serialize($tocache));
+  	        fclose($bakout);
 	}
-	$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
-        fwrite($bakout, serialize($tocache));
-        fclose($bakout);
 	if($bootup) {
 		if($i) {
 			print ".\n";

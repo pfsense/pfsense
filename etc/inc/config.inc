@@ -959,10 +959,6 @@ function cleanup_backupcache($bootup = false, $revisions = "all") {
 	global $g;
 	$i = false;
 	if($bootup) print "Cleaning backup cache...";
-	if(!is_dir($g['cf_conf_path'] . '/backup')) {
-		if($bootup) print " done.\n";
-		return;
-	}
 	if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
 		$backups = get_backups();
 		$newbaks = array();

@@ -102,19 +102,38 @@ if ($_POST) {
 		} else {
 			unset($config['system']['disableftpproxy']);
 		}
-		if($_POST['rfc959workaround'] == "yes") {
+		if($_POST['rfc959workaround'] == "yes")
 			$config['system']['rfc959workaround'] = "enabled";
+		else
+			unset($config['system']['rfc959workaround']);
+
+		if($_POST['filteringbridge_enable'] == "yes")
+			$config['bridge']['filteringbridge'] = true;
+		else
+			unset($config['bridge']['filteringbridge']);
+		if($_POST['ipv6nat_enable'] == "yes") {
+			$config['diag']['ipv6nat']['enable'] = true;
+			$config['diag']['ipv6nat']['ipaddr'] = $_POST['ipv6nat_ipaddr'];
+		} else {
+			unset($config['diag']['ipv6nat']['enable']);
+			unset($config['diag']['ipv6nat']['ipaddr']);
 		}
-		$config['bridge']['filteringbridge'] = $_POST['filteringbridge_enable'] ? true : false;
-		$config['diag']['ipv6nat']['enable'] = $_POST['ipv6nat_enable'] ? true : false;
-		$config['diag']['ipv6nat']['ipaddr'] = $_POST['ipv6nat_ipaddr'];
 		$oldcert = $config['system']['webgui']['certificate'];
 		$oldkey = $config['system']['webgui']['private-key'];
 		$config['system']['webgui']['certificate'] = base64_encode($_POST['cert']);
 		$config['system']['webgui']['private-key'] = base64_encode($_POST['key']);
-		$config['system']['disableconsolemenu'] = $_POST['disableconsolemenu'] ? true : false;
-		$config['system']['disablefirmwarecheck'] = $_POST['disablefirmwarecheck'] ? true : false;
-		$config['system']['altfirmwareurl'] = $_POST['altfirmwareurl'] ? true : false;
+		if($_POST['disableconsolemenu'] == "yes")
+			$config['system']['disableconsolemenu'] = true;
+		else
+			unset($config['system']['disableconsolemenu']);
+		if($_POST['disablefirmwarecheck'] == "yes")
+			$config['system']['disablefirmwarecheck'] = true;
+		else
+			unset($config['system']['disablefirmwarecheck']);
+		if($_POST['altfirmwareurl'] == "yes")
+			$config['system']['altfirmwareurl'] = true;
+		else
+			unset($config['system']['altfirmwareurl']);
 		if ($_POST['altfirmwareurl']) {
 			$config['system']['alt_firmware_url'] = array();
 			$config['system']['alt_firmware_url']['enabled'] = "";
@@ -137,15 +156,28 @@ if ($_POST) {
 			unset($config['system']['alt_pkgconfig_url']);
 		}
 
-		$config['system']['webgui']['expanddiags'] = $_POST['expanddiags'] ? true : false;
+		if ($_POST['expanddiags'] == "yes")
+			$config['system']['webgui']['expanddiags'] = true;
+		else
+			unset($config['system']['webgui']['expanddiags']);
 		$config['system']['optimization'] = $_POST['optimization'];
 		$config['system']['disablerendevouz'] = $_POST['disablerendevouz'];
 		
-		$config['system']['enableserial'] = $_POST['enableserial'];
+		if ($_POST['enableserial'] == "yes")
+			$config['system']['enableserial'] == "enabled";
+		else
+			unset($config['system']['enableserial']);
 
-		$oldharddiskstandby = $config['system']['harddiskstandby'];
-		$config['system']['harddiskstandby'] = $_POST['harddiskstandby'];
-		$config['system']['webgui']['noantilockout'] = $_POST['noantilockout'] ? true : false;
+		if($_POST['harddiskstandby'] == "yes") {
+			$config['system']['harddiskstandby'] = "yes";
+			system_set_harddisk_standby();
+		} else
+			unset($config['system']['harddiskstandby']);
+
+		if ($_POST['noantilockout'] == "yes")
+			$config['system']['webgui']['noantilockout'] = true;
+		else
+			unset($config['system']['webgui']['noantilockout']);
 
 		/* Firewall and ALTQ options */
 		$config['system']['schedulertype'] = $_POST['schedulertype'];
@@ -158,7 +190,6 @@ if ($_POST) {
 			system_webgui_start();
 		}
 
-		system_set_harddisk_standby();
 			
 		$retval = 0;
 		if (!file_exists($d_sysrebootreqd_path)) {

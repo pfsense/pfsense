@@ -137,19 +137,24 @@ if(!$g['booting']) {
 
 function parse_config($parse = false) {
 	global $g;
+
+	config_lock();
 	if(!$parse) {
 		if(file_exists($g['tmp_path'] . '/config.cache')) {
 			$config = unserialize(file_get_contents($g['tmp_path'] . '/config.cache'));
 			if(is_null($config)) {
+				config_unlock();
 				parse_config(true);
 			}
 		} else {
+			config_unlock();
 			$config = parse_config(true);
 		}
 	} else {
 		$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
 		generate_config_cache($config);
 	}
+	config_unlock();
 	return $config;
 }
 
@@ -212,6 +217,7 @@ EOD;
 
 	/* make alias table (for faster lookups) */
 	alias_make_table();
+	config_unlock();
 }
 
 /* mount flash card read/write */

@@ -523,7 +523,6 @@ function write_config($desc="Unknown", $backup = true) {
 	global $config, $g;
 
 	if($backup) backup_config();
-	print "Config backed up.";
 
 	if (time() > mktime(0, 0, 0, 9, 1, 2004))       /* make sure the clock settings are plausible */
                 $changetime = time();
@@ -541,14 +540,12 @@ function write_config($desc="Unknown", $backup = true) {
 	/* generate configuration XML */
 	$xmlconfig = dump_xml_config($config, $g['xml_rootobj']);
 
-	print "XML dumped.";
 	/* write new configuration */
 	$fd = fopen("{$g['cf_conf_path']}/config.xml", "w");
 	if (!$fd)
 		die("Unable to open {$g['cf_conf_path']}/config.xml for writing in write_config()\n");
 	fwrite($fd, $xmlconfig);
 	fclose($fd);
-	print "config written.";
 
 	conf_mount_ro();
 	config_unlock();

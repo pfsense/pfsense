@@ -552,10 +552,8 @@ function write_config($desc="Unknown", $backup = true) {
 
 	conf_mount_ro();
 	config_unlock();
+	$config = parse_config(true);
 	generate_config_cache($config);
-	print "Cache generated.";
-	$config = parse_config();
-	print "Config reparsed.";
 	//cleanup_backupcache();
 }
 

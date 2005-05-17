@@ -133,15 +133,20 @@ EOD;
 
 if(!$g['booting']) parse_config();
 
-function parse_config() {
+function parse_config($parse = false) {
 	global $config, $g;
 	config_lock();
-	if(file_exists($g['tmp_path'] . '/config.cache')) {
-		$config = unserialize(file_get_contents($g['tmp_path'] . '/config.cache'));
+	if(!$parse) {
+		if(file_exists($g['tmp_path'] . '/config.cache')) {
+			$config = unserialize(file_get_contents($g['tmp_path'] . '/config.cache'));
+		} else {
+			generate_config_cache();
+			parse_config();
+		}
 	} else {
+		$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
 		generate_config_cache();
-		parse_config();
-	}	
+	}
 	config_unlock();
 	return true;
 }
@@ -541,14 +546,6 @@ function write_config($desc="Unknown", $backup = true) {
 	fclose($fd);
 
 	conf_mount_ro();
-
-	/* write config cache */
-	$fd = @fopen("{$g['tmp_path']}/config.cache", "wb");
-	if ($fd) {
-		fwrite($fd, serialize($config));
-		fclose($fd);
-	}
-
 	generate_config_cache();
 	cleanup_backupcache();
 	config_unlock();
@@ -597,8 +594,7 @@ function config_restore($conffile) {
         backup_config();
         copy($conffile, "{$g['conf_path']}/config.xml");
         write_config("Reverted to " . array_pop(explode("/", $conffile)) . ".", false);
-        $config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
-        generate_config_cache();
+        $config = parse_config(true);
         
         conf_mount_ro();
         config_unlock();

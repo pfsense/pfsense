@@ -31,7 +31,7 @@
 require("guiconfig.inc");
 
 if($_GET['newver'] != "") {
-	$confvers = get_backups();
+	$confvers = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
 	if(config_restore($g['conf_path'] . '/backup/config-' . $_GET['newver'] . '.xml') == 0) {
 		$savemsg = "Successfully reverted to timestamp " . date("n/j/y H:i:s", $_GET['newver']) . " with description \"" . $confvers[$_GET['newver']]['description'] . "\".";
 	} else {
@@ -40,7 +40,7 @@ if($_GET['newver'] != "") {
 }
 
 if($_GET['rmver'] != "") {
-	$confvers = get_backups();
+	$confvers = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
 	unlink_if_exists($g['conf_path'] . '/backup/config-' . $_GET['rmver'] . '.xml');
 	$savemsg = "Deleted backup with timestamp " . date("n/j/y H:i:s", $_GET['rmver']) . " and description \"" . $confvers[$_GET['rmver']]['description'] . "\".";
 }

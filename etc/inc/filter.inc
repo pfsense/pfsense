@@ -44,7 +44,7 @@ function filter_resync() {
 function filter_pflog_start() {
 	global $config, $g;
 
-	mwexec("ifconfig pflog0 up && pflogd -sD");
+	mwexec("/sbin/ifconfig pflog0 up && pflogd -sD");
 }
 
 function filter_configure() {

@@ -381,7 +381,7 @@ function filter_generate_aliases() {
 	$aliases .= "# System Aliases \n";
 	$aliases .= "lan = \"{ " . $config['interfaces']['lan']['if'] . "{$lan_aliases} }\"\n";
 	$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";
-	$aliases .= "pptp = \"{  }\"\n";
+	$aliases .= "pptp = \"{ ng1 ng2 ng3 ng4 ng5 ng6 ng7 ng8 ng9 ng10 ng11 ng12 ng13 ng14 }\"\n";
 
 	$ifdescrs = array();
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
@@ -915,6 +915,8 @@ function filter_nat_rules_generate() {
 
 			if (!$rule['interface'] || ($rule['interface'] == "wan"))
 				$natif = $wanif;
+			else if($rule['interface'] == "pptp")
+				$natif = "pptp";
 			else
 				$natif = $config['interfaces'][$rule['interface']]['if'];
 

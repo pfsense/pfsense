@@ -191,7 +191,7 @@ $dir = ini_get('upload_progress_meter.file.filename_template');
               <table width="100%" border="0" cellspacing="0" cellpadding="0">
 		<tr><td><ul id="tabnav">
 			<li class="tabact">Remote</a></li>
-			<li class="tabinact"><a href="diag_confbak.php">Local</a></li>
+			<li class="tabinact"><a href="diag_confbak.php">Config History</a></li>
 		</ul></td></tr>
 		<tr><td class="tabcont"><table align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>

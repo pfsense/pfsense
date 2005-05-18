@@ -1,6 +1,13 @@
 <?php
-/* $Id$ */
-/*
+/****h* pfSense/config
+ * NAME
+ *   config.inc - Functions to manipulate config.xml
+ * DESCRIPTION
+ *   This include contains various config.xml specific functions.
+ * HISTORY
+ * $Id$
+ ******
+
 	config.inc
 	Copyright (C) 2004 Scott Ullrich
 	All rights reserved.
@@ -143,6 +150,14 @@ if(!$g['booting']) {
 	$config = parse_config();
 }
 
+/****f* config/parse_config
+ * NAME
+ *   parse_config - Read in config.cache or config.xml if needed and return $config array
+ * INPUTS
+ *   $parse       - boolean to force parse_config() to read config.xml and generate config.cache
+ * RESULT
+ *   $config      - array containing all configuration variables
+ ******/
 function parse_config($parse = false) {
 	global $g;
 

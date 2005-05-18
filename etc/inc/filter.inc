@@ -172,7 +172,7 @@ function filter_configure() {
 				$text = return_filename_as_string("/usr/local/pkg/pf/" . $file);
 				if($text != "") {
 					if(stristr($file, ".sh") == true) {
-						mwexec("/usr/local/pkg/pf/" . $file);
+						mwexec("/usr/local/pkg/pf/" . $file . " start");
 					} else {
 						//if(php_check_syntax($text, $error_message) == false)
 							if($g['booting'] == true) {

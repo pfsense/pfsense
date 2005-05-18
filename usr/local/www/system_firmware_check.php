@@ -75,7 +75,10 @@ $versions = check_firmware_version();
 			}
 		  	if($version == 1) {
                         	$img = "pass.gif";
-                        } else {
+                        } elseif($currentver > $version[count($version) - 1]['version']) {
+				$img = "pass.gif";
+				$pastlatest = true;
+			} else {
 				$allinstall = true;
                         	$img = "block.gif";
 			}
@@ -90,15 +93,22 @@ $versions = check_firmware_version();
 			?>
 				<td class="listlr"><?= $currentver ?></td>
 			<?php
+			} elseif($pastlatest) {
+				$newver = $versions[$key][count($versions[$key]) -1];
+			?>
+				<td class="listbggrey"><font color="#FFFFFFF"><?= $newver['version'] ?></td>
+			<?php
 			} else {
 				$newver = $versions[$key][count($versions[$key]) -1];
 			?>
 				<td class="listbg"><font color="#FFFFFFF"><?= $newver['version'] ?></td>
+			<?php } 
+			if(!$pastlatest) {
+			 ?>
 				<td valign="middle" class="list" nowrap>
                                 <a href="system_firmware_auto.php?category=<?=$key;?>"><img src="plus.gif" width="17" height="17" border="0"></a>
                                 </td>
-                            <?php
-			}
+				<?php }
                     }
 		?>
 		</table>

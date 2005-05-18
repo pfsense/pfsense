@@ -359,28 +359,4 @@ function add_default_pptp_rule() {
 
 }
 
-function pconfig_to_address(&$adr, $padr, $pmask, $pnot, $pbeginport, $pendport) {
-
-	$adr = array();
-
-	if ($padr == "any")
-		$adr['any'] = true;
-	else if (is_specialnet($padr))
-		$adr['network'] = $padr;
-	else {
-		$adr['address'] = $padr;
-		if ($pmask != 32)
-			$adr['address'] .= "/" . $pmask;
-	}
-
-	$adr['not'] = $pnot ? true : false;
-
-	if (($pbeginport != 0) && ($pbeginport != "any")) {
-		if ($pbeginport != $pendport)
-			$adr['port'] = $pbeginport . "-" . $pendport;
-		else
-			$adr['port'] = $pbeginport;
-	}
-}
-
 ?>

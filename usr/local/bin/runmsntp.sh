@@ -8,5 +8,5 @@ echo $$ > $1
 # the network is not yet setup)
 while true; do
 	/usr/local/bin/msntp -r -P no -l $2 -x $3 $4
-	sleep 1
+	sleep 60
 done

@@ -630,8 +630,11 @@ function config_install($conffile) {
 /* lock configuration file, decide that the lock file is stale after
    10 seconds */
 function config_lock() {
+	global $g, $process_lock;
 
-	global $g;
+	/* No need to continue if we're the ones holding the lock */
+	if ($process_lock)
+		return;
 
 	$lockfile = "{$g['varrun_path']}/config.lock";
 
@@ -640,10 +643,12 @@ function config_lock() {
 		/* open the lock file in append mode to avoid race condition */
 		if ($fd = @fopen($lockfile, "x")) {
 			/* succeeded */
+			$process_lock = true;
 			fclose($fd);
 			return;
 		} else {
 			/* file locked, wait and try again */
+			$process_lock = false;
 			sleep(1);
 			$n++;
 		}
@@ -652,10 +657,10 @@ function config_lock() {
 
 /* unlock configuration file */
 function config_unlock() {
-
-	global $g;
+	global $g, $process_lock;
 
 	$lockfile = "{$g['varrun_path']}/config.lock";
+	$process_lock = false;
 
 	if (file_exists($lockfile))
 		unlink($lockfile);

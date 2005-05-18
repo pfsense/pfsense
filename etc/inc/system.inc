@@ -196,7 +196,7 @@ function system_syslogd_start() {
 	$syslogcfg = $config['syslog'];
 
 	if ($g['booting'])
-		echo "Starting syslog service... ";
+		echo "Starting syslog... ";
 	else
 		killbypid("{$g['varrun_path']}/syslog.pid");
 
@@ -268,7 +268,7 @@ EOD;
 	}
 
 	if ($g['booting'])
-		echo "done\n";
+		echo "done.\n";
 
 	return $retval;
 }
@@ -277,7 +277,7 @@ function system_pccard_start() {
 	global $config, $g;
 
 	if ($g['booting'])
-		echo "Initializing PC cards... ";
+		echo "Initializing PCMCIA... ";
 
 	/* kill any running pccardd */
 	killbypid("{$g['varrun_path']}/pccardd.pid");
@@ -287,9 +287,9 @@ function system_pccard_start() {
 
 	if ($g['booting']) {
 		if ($res == 0)
-			echo "done\n";
+			echo "done.\n";
 		else
-			echo "failed (probably no PC card controller present)\n";
+			echo "failed!\n";
 	}
 
 	return $res;
@@ -383,9 +383,9 @@ EOD;
 
 	if ($g['booting']) {
 		if ($res == 0)
-			echo "done\n";
+			echo "done.\n";
 		else
-			echo "failed\n";
+			echo "failed!\n";
 	}
 
 	return $res;
@@ -418,7 +418,7 @@ function system_timezone_configure() {
 	$syscfg = $config['system'];
 
 	if ($g['booting'])
-		echo "Initializing timezone... ";
+		echo "Setting timezone... ";
 
 	/* extract appropriate timezone file */
 	$timezone = $syscfg['timezone'];
@@ -433,7 +433,7 @@ function system_timezone_configure() {
 	conf_mount_ro();
 
 	if ($g['booting'])
-		echo "done\n";
+		echo "done.\n";
 }
 
 function system_ntp_configure() {
@@ -467,7 +467,7 @@ function system_ntp_configure() {
 	}
 
 	if ($g['booting'])
-		echo "done\n";
+		echo "done.\n";
 }
 
 function system_halt() {
@@ -578,7 +578,7 @@ function system_set_harddisk_standby() {
 
 	if (isset($config['system']['harddiskstandby'])) {
 		if ($g['booting']) {
-			echo 'Setting harddisk standby time... ';
+			echo 'Setting hard disk standby... ';
 		}
 
 		$standby = $config['system']['harddiskstandby'];
@@ -590,13 +590,13 @@ function system_set_harddisk_standby() {
 				// Reinitialize ATA-drives
 				mwexec('/usr/local/sbin/atareinit');
 				if ($g['booting']) {
-					echo "done\n";
+					echo "done.\n";
 				}
 			} else if ($g['booting']) {
-				echo "failed\n";
+				echo "failed!\n";
 			}
 		} else if ($g['booting']) {
-			echo "failed\n";
+			echo "failed!\n";
 		}
 	}
 }

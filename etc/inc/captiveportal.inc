@@ -46,8 +46,7 @@ function captiveportal_configure() {
 		(($config['captiveportal']['interface'] == "lan") ||
 			isset($config['interfaces'][$config['captiveportal']['interface']]['enable']))) {
 
-		if ($g['booting'])
-			echo "Starting captive portal... ";
+		if($g['booting']) echo "Starting captive portal... ";
 
 		/* kill any running mini_httpd */
 		killbypid("{$g['varrun_path']}/mini_httpd.cp.pid");
@@ -238,9 +237,7 @@ EOD;
 			fclose($fd) ;
 		}
 
-
-		if ($g['booting'])
-			echo "done\n";
+		if($g['booting']) print "done.\n";
 
 	} else {
 		killbypid("{$g['varrun_path']}/mini_httpd.cp.pid");

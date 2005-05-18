@@ -56,9 +56,6 @@ function filter_configure() {
 	if(does_interface_exist($lan_if) == false) return;
 	if(does_interface_exist($wan_if) == false) return;
 
-	if ($g['booting'])
-		echo "Configuring firewall... ";
-
 	if (isset($config['shaper']['enable'])) {
 		/* somehow the interfaces do not come up
 		   correctly if we do not load, unload
@@ -179,19 +176,15 @@ function filter_configure() {
 					} else {
 						//if(php_check_syntax($text, $error_message) == false)
 							if($g['booting'] == true) {
-								echo "{$file} ";
+								echo "\t{$file}... ";
 							}
-							if ($g['booting'])
-								echo " .. ";
 							eval($text);
+							if($g['booting']) echo "done.\n";
 					}
 				}
 			}
 		}
 	}
-	
-	if ($g['booting'])
-		echo "Done\n";
 	return 0;
 }
 
@@ -1751,7 +1744,7 @@ function setup_logging_interfaces() {
 		/* do not work with tun interfaces */
 		if(stristr(filter_translate_type_to_real_interface($ifname), "tun") == true) continue;
 		$int = filter_translate_type_to_real_interface($ifname);
-		$rules.= "set loginterface {$int} \n";
+		$rules .= "set loginterface {$int} \n";
 	}
 	return $rules;
 }

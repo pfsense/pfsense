@@ -200,14 +200,10 @@ function parse_config_bootup() {
 		}
 	}
 
-	print "Parsing configuration file... ";
-	$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
-	generate_config_cache($config);
-	print "done.\n";
-
+	parse_config(true);
+	
 	if ((float)$config['version'] > (float)$g['latest_config']) {
-		if ($g['booting']) {
-			echo <<<EOD
+		echo <<<EOD
 
 
 *******************************************************************************
@@ -220,7 +216,6 @@ function parse_config_bootup() {
 
 
 EOD;
-			}
 		}
 
 	/* make alias table (for faster lookups) */
@@ -268,9 +263,6 @@ function convert_config() {
 
 	if ($config['version'] == $g['latest_config'])
 		return;		/* already at latest version */
-
-	if ($g['booting'])
-		echo "Converting configuration... ";
 
 	// Save off config version
 	$prev_version = $config['version'];
@@ -527,9 +519,6 @@ function convert_config() {
 
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
-
-	if ($g['booting'])
-		echo "Done\n";
 }
 
 /* save the system configuration */
@@ -951,22 +940,17 @@ EOD;
 }
 
 function system_start_ftp_helpers() {
-	global $config;
-	global $g;
+	global $config, $g;
 	if($config['system']['disableftpproxy'] <> "") return;
-	if ($g['booting'])
-		echo "Starting INETD and FTP Helpers for FTP-PROXY...";
 	$wanif = get_real_wan_interface();
 	mwexec("/usr/sbin/inetd -wW -C 60");
 	mwexec("/usr/bin/killall ftpsesame 2>/dev/null");
 	mwexec("/usr/local/sbin/ftpsesame -i {$wanif} -q ftpproxy");
-	echo "Done.\n";
 }
 
-function cleanup_backupcache($bootup = false, $revisions = "all") {
+function cleanup_backupcache($revisions = "all") {
 	global $g;
 	$i = false;
-	if($bootup) print "Cleaning backup cache...";
 	if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
 		$backups = get_backups();
 		$newbaks = array();
@@ -1009,7 +993,7 @@ function cleanup_backupcache($bootup = false, $revisions = "all") {
         	fwrite($bakout, serialize($tocache));
   	        fclose($bakout);
 	}
-	if($bootup) {
+	if($g['booting']) {
 		if($i) {
 			print ".\n";
 		} else {

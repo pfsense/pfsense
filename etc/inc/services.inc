@@ -174,8 +174,9 @@ EOD;
 
 	if (!$g['booting']) {
 		filter_configure();
-	} else
-		echo "done\n";
+	} else {
+		echo "done.\n";
+	}
 
 	return 0;
 }
@@ -269,8 +270,9 @@ function services_dhcrelay_configure() {
 
 	if (!$g['booting']) {
 		filter_configure();
-	} else
-		echo "done\n";
+	} else {
+		echo "done.\n";
+	}
 
 	return 0;
 }
@@ -355,7 +357,7 @@ EOD;
 		mwexec("/usr/local/bin/ez-ipupdate -c {$g['varetc_path']}/ez-ipupdate.conf");
 
 		if ($g['booting'])
-			echo "done\n";
+			echo "done.\n";
 	}
 
 	return 0;
@@ -389,7 +391,7 @@ function services_dnsmasq_configure() {
 		mwexec("/usr/local/sbin/dnsmasq {$args}");
 
 		if ($g['booting'])
-			echo "done\n";
+			echo "done.\n";
 	}
 
 	if (!$g['booting']) {
@@ -408,7 +410,7 @@ function services_snmpd_configure() {
 	if (isset($config['snmpd']['enable'])) {
 
 		if ($g['booting'])
-			echo "Starting SNMP agent... ";
+			echo "Starting SNMP daemon... ";
 
 		/* generate snmpd.conf */
 		$fd = fopen("{$g['varetc_path']}/snmpd.conf", "w");
@@ -432,7 +434,7 @@ EOD;
 			" -P {$g['varrun_path']}/snmpd.pid");
 
 		if ($g['booting'])
-			echo "done\n";
+			echo "done.\n";
 	}
 
 	return 0;

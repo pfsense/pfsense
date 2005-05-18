@@ -89,7 +89,7 @@ function ovpn_config_server() {
 	if (isset($config['ovpn']['server']['enable'])) {
 	
 		if ($g['booting'])
-			echo "Starting OpenVPN server... ";
+			echo "Configuring OpenVPN... ";
 		
 		/* kill any running openvpn daemon */
 		killbypid($g['varrun_path']."/ovpn_srv.pid");
@@ -127,7 +127,7 @@ function ovpn_config_server() {
 		
 		if ($g['booting'])
 			/* Send the boot message */
-			echo "done\n";
+			echo "done.\n";
 	}
 	else {
 		if (!$g['booting']){
@@ -317,7 +317,7 @@ function ovpn_config_client() {
 		
 			if ($g['booting'])
 				/* Send the boot message */
-				echo "done\n";
+				echo "done.\n";
 		}
 		else {
 			if (!$g['booting']){

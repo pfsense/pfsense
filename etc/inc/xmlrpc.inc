@@ -48,6 +48,7 @@ function xmlrpc_params_to_php($params) {
 function xmlrpc_value_to_php($raw_value) {
         switch($raw_value->kindOf()) {
         case "scalar":
+		if($raw_value->scalartyp() == "boolean") $return = (boolean) $raw_value->scalarval();
                 $return = $raw_value->scalarval();
                 break;
         case "array":

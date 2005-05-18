@@ -103,7 +103,7 @@ function vpn_ipsec_configure($ipchg = false) {
 		if (!$curwanip) {
 			/* IP address not configured yet, exit */
 			if ($g['booting'])
-				echo "done\n";
+				echo "done.\n";
 			return 0;
 		}
 
@@ -375,7 +375,7 @@ EOD;
 	}
 
 	if ($g['booting'])
-		echo "done\n";
+		echo "done.\n";
 
 	return 0;
 }
@@ -390,7 +390,7 @@ function vpn_pptpd_configure() {
 		if (!$pptpdcfg['mode'] || ($pptpdcfg['mode'] == "off"))
 			return 0;
 
-		echo "Configuring PPTP VPN service... ";
+		echo "Configuring PPTP VPN... ";
 	} else {
 		/* kill mpd */
 		killbypid("{$g['varrun_path']}/mpd-vpn.pid");
@@ -556,13 +556,10 @@ EOD;
 			break;
 	}
 
-	if (!$g['booting']) {
-		/* reload the filter */
-		filter_configure();
-	}
-
 	if ($g['booting'])
-		echo "done\n";
+		echo "done.\n";
+	else
+		filter_configure();
 
 	return 0;
 }

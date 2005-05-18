@@ -91,9 +91,6 @@ function interfaces_vlan_configure() {
 function interfaces_lan_configure() {
 	global $config, $g;
 
-	if ($g['booting'])
-		echo "Configuring LAN interface... ";
-
 	$lancfg = $config['interfaces']['lan'];
 
 	/* wireless configuration? */
@@ -143,9 +140,6 @@ function interfaces_lan_configure() {
 		/* reload captive portal */
 		captiveportal_configure();
 	}
-
-	if ($g['booting'])
-		echo "done\n";
 
 	return 0;
 }
@@ -202,7 +196,7 @@ function interfaces_optional_configure_if($opti) {
 		$optdescr = "";
 		if ($optcfg['descr'])
 			$optdescr = " ({$optcfg['descr']})";
-		echo "Configuring OPT{$opti}{$optdescr} interface... ";
+		print "\tOPT{$opti}{$optdescr}... ";
 	}
 
 	if (isset($optcfg['enable'])) {
@@ -256,7 +250,7 @@ function interfaces_optional_configure_if($opti) {
 	}
 
 	if ($g['booting'])
-		echo "done\n";
+		print "done.\n";
 
 	return 0;
 }
@@ -380,9 +374,7 @@ function interfaces_wan_configure() {
 
 	$wancfg = $config['interfaces']['wan'];
 
-	if ($g['booting'])
-		echo "Configuring WAN interface... ";
-	else {
+	if(!$g['booting']) {
 		/* kill dhclient */
 		killbypid("{$g['varrun_path']}/dhclient.pid");
 
@@ -397,7 +389,6 @@ function interfaces_wan_configure() {
 		unlink_if_exists("{$g['varetc_path']}/mpd.links");
 		unlink_if_exists("{$g['vardb_path']}/wanip");
 		unlink_if_exists("{$g['varetc_path']}/nameservers.conf");
-
 	}
 
 	/* remove all addresses first */
@@ -477,9 +468,6 @@ function interfaces_wan_configure() {
 		/* restart dnsmasq */
 		services_dnsmasq_configure();
 	}
-
-	if ($g['booting'])
-		echo "done\n";
 
 	return 0;
 }

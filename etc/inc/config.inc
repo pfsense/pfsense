@@ -558,31 +558,27 @@ function write_config($desc="Unknown", $backup = true) {
 }
 
 function reset_factory_defaults() {
-
 	global $g;
 
 	config_lock();
-
 	conf_mount_rw();
 
 	/* create conf directory, if necessary */
-	if (!file_exists("{$g['cf_conf_path']}"))
-		@mkdir("{$g['cf_conf_path']}");
+	safe_mkdir("{$g['cf_conf_path']}");
 
 	/* clear out /conf */
 	$dh = opendir($g['conf_path']);
 	while ($filename = readdir($dh)) {
 		if (($filename != ".") && ($filename != "..")) {
-			unlink($g['conf_path'] . "/" . $filename);
+			unlink_if_exists($g['conf_path'] . "/" . $filename);
 		}
 	}
 	closedir($dh);
 
 	/* copy default configuration */
-	@copy("{$g['conf_default_path']}/config.xml", "{$g['conf_path']}/config.xml");
+	copy("{$g['conf_default_path']}/config.xml", "{$g['conf_path']}/config.xml");
 
 	conf_mount_ro();
-
 	config_unlock();
 
 	return 0;
@@ -662,8 +658,7 @@ function config_unlock() {
 	$lockfile = "{$g['varrun_path']}/config.lock";
 	$process_lock = false;
 
-	if (file_exists($lockfile))
-		unlink($lockfile);
+	unlink_if_exists($lockfile);
 }
 
 function set_networking_interfaces_ports() {
@@ -959,7 +954,7 @@ function cleanup_backupcache($revisions = "all") {
 	if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
 		$backups = get_backups();
 		$newbaks = array();
-		$bakfiles = glob("/conf/backup/*");
+		$bakfiles = glob($g['cf_conf_path'] . "/backup/*");
 		$baktimes = $backups['versions'];
 		$tocache = array();
 		unset($backups['versions']);
@@ -1008,8 +1003,10 @@ function cleanup_backupcache($revisions = "all") {
 }
   	 
 function get_backups() { 	 
-        if(file_exists("/conf/backup/backup.cache")) {
-                $confvers = unserialize(file_get_contents("/conf/backup/backup.cache"));
+	global $g;
+
+        if(file_exists("{$g['cf_conf_path']}/backup.cache")) {
+                $confvers = unserialize(file_get_contents("{$g['cf_conf_path']}/backup.cache"));
 		$bakvers = array_keys($confvers);
 		$toreturn = array();
 		sort($bakvers);
@@ -1026,7 +1023,10 @@ function get_backups() {
 
 function backup_config() {
 	global $config, $g;
-        if(!is_dir($g['cf_conf_path'] . '/backup')) mkdir($g['cf_conf_path'] . '/backup');
+
+	/* Create backup directory if needed */
+	safe_mkdir("{$g['cf_conf_path']}/backup");
+
         if($config['revision']['time'] == "") {
                 $baktime = 0;
         } else {

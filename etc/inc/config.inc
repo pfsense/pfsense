@@ -1020,8 +1020,8 @@ function cleanup_backupcache($revisions = "all") {
 function get_backups() { 	 
 	global $g;
 
-        if(file_exists("{$g['cf_conf_path']}/backup.cache")) {
-                $confvers = unserialize(file_get_contents("{$g['cf_conf_path']}/backup.cache"));
+        if(file_exists("{$g['cf_conf_path']}/backup/backup.cache")) {
+                $confvers = unserialize(file_get_contents("{$g['cf_conf_path']}/backup/backup.cache"));
 		$bakvers = array_keys($confvers);
 		$toreturn = array();
 		sort($bakvers);

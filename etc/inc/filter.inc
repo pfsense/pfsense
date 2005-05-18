@@ -45,6 +45,9 @@ function filter_pflog_start() {
 	global $config, $g;
 
 	mwexec("/sbin/ifconfig pflog0 up && pflogd -sD");
+	
+	mwexec_bg("/usr/sbin/tcpdump -n -e -ttt -i pflog0 | logger -t pf -p local0.info");
+
 }
 
 function filter_configure() {

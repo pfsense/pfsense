@@ -31,16 +31,18 @@
 require("guiconfig.inc");
 
 if($_GET['newver'] != "") {
+	$confvers = get_backups();
 	if(config_restore($g['conf_path'] . '/backup/config-' . $_GET['newver'] . '.xml') == 0) {
-		$savemsg = "Successfully reverted to " . $_GET['newver'];
+		$savemsg = "Successfully reverted to timestamp " . date("n/j/y H:i:s", $_GET['newver']) . " with description \"" . $confvers[$_GET['newver']]['description'] . "\".";
 	} else {
-		$savemsg = "Unable to revert to " . $_GET['newver'];
+		$savemsg = "Unable to revert to the selected configuration.";
 	}
 }
 
 if($_GET['rmver'] != "") {
+	$confvers = get_backups();
 	unlink_if_exists($g['conf_path'] . '/backup/config-' . $_GET['rmver'] . '.xml');
-	$savemsg = "Deleted " . $_GET['rmver'];
+	$savemsg = "Deleted backup with timestamp " . date("n/j/y H:i:s", $_GET['rmver']) . " and description \"" . $confvers[$_GET['rmver']]['description'] . "\".";
 }
 
 cleanup_backupcache();
@@ -52,7 +54,7 @@ unset($confvers['versions']);
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title><?=gentitle("Diagnostics: Configuration Restore");?></title>
+<title><?=gentitle("Diagnostics: Configuration History");?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
@@ -61,12 +63,12 @@ unset($confvers['versions']);
 include("fbegin.inc");
 if($savemsg) print_info_box($savemsg);
 ?>
-<p class="pgtitle">Diagnostics: Local Restore</p>
+<p class="pgtitle">Diagnostics: Configuration History</p>
 <br>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
   <ul id="tabnav">
     <li class="tabinact"><a href="diag_backup.php">Remote</a></li>
-    <li class="tabact">Local</a></li>
+    <li class="tabact">Config History</a></li>
   </ul>
   </td></tr>
   <tr>

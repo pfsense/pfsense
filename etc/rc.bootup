@@ -41,7 +41,9 @@
 	require_once("config.inc");
 	require_once("functions.inc");
 
+	print "Loading configuration... ";
 	parse_config_bootup();
+	print "done.\n";
 
 	$lan_if = $config['interfaces']['lan']['if'];
 	$wan_if = get_real_wan_interface();
@@ -67,7 +69,11 @@
 	}
 
 	/* convert config and clean backups */
+	print "Updating configuration... ";
 	convert_config();
+	print "done.\n";
+
+	print "Cleaning backup cache... ";
 	cleanup_backupcache(true);
 
 	/* read in /etc/sysctl.conf and set values if needed */
@@ -102,12 +108,17 @@
 	interfaces_vlan_configure();
 
 	/* set up LAN interface */
+	print "Configuring LAN interface... ";
 	interfaces_lan_configure();
+	print "done.\n";
 
 	/* set up WAN interface */
+	print "Configuring WAN interface... ";
 	interfaces_wan_configure();
+	print "done.\n";
 
 	/* set up Optional interfaces */
+	print "Configuring OPT interfaces...\n";
 	interfaces_optional_configure();
 
 	/* setup carp interfaces */
@@ -117,6 +128,7 @@
 	filter_pflog_start();
 
 	/* setup altq + pf */
+	print "Configuring firewall...\n";
 	filter_configure();
 
 	/* bring up carp interfaces */
@@ -171,7 +183,9 @@
 	system_do_shell_commands();
 
 	/* start ftp proxy helpers if they are enabled */
+	print "Starting FTP helpers... ";
 	system_start_ftp_helpers();
+	print "done.\n";
 
 	/* start IPsec tunnels */
 	vpn_ipsec_configure();

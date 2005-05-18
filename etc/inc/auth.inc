@@ -57,11 +57,11 @@ function passwd_backed_basic_auth() {
 
 		/* Check to see if user even exists */
 		$username = $HTTP_SERVER_VARS['AUTH_USER'];
-		if(!($line = array_shift(preg_grep("/$username:.*$/", $authfile))))
+                if(!($line = array_shift(preg_grep("/^$username:.*$/", $authfile))))
 			continue;
 
 		/* Get crypted password */
-		preg_match("/$username:((...[0-9A-Za-z_\/]{8}.)[0-9A-Za-z_\/.]{22})/", $line, $matches);
+                preg_match("/^$username:((\\$1\\$[.\d\w_\/]{8}\\$)[.\d\w_\/]{22})$/", $line, $matches);
 		$pass = $matches[1];
 		$salt = $matches[2];
 
@@ -96,11 +96,11 @@ function htpasswd_backed_basic_auth() {
 
                 /* Check to see if user even exists */
                 $username = $HTTP_SERVER_VARS['AUTH_USER'];
-                if(!($line = array_shift(preg_grep("/$username:.*$/", $authfile))))
+                if(!($line = array_shift(preg_grep("/^$username:.*$/", $authfile))))
                         continue;
 
                 /* Get crypted password */
-                preg_match("/$username:((...[0-9A-Za-z_\/]{8}.)[0-9A-Za-z_\/.]{22})/", $line, $matches);
+                preg_match("/^$username:((\\$1\\$[.\d\w_\/]{8}\\$)[.\d\w_\/]{22})$/", $line, $matches);
                 $pass = $matches[1];
                 $salt = $matches[2];
 

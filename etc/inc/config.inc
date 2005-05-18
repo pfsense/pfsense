@@ -969,12 +969,11 @@ function cleanup_backupcache($revisions = "all") {
 	if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
 		$backups = get_backups();
 		$newbaks = array();
-		$bakfiles = glob($g['cf_conf_path'] . "/backup/*");
+		$bakfiles = glob($g['cf_conf_path'] . "/backup/config-*");
 		$baktimes = $backups['versions'];
 		$tocache = array();
 		unset($backups['versions']);
        		foreach($bakfiles as $backup) { // Check for backups in the directory not represented in the cache.
-			if(stristr($backup, 'backup.cache')) continue;
 			$tocheck = array_shift(explode('.', array_pop(explode('-', $backup))));	
                 	if(!in_array($tocheck, $baktimes)) {
 				$i = true;

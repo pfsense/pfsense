@@ -50,6 +50,7 @@ if(file_exists("/usr/local/www/trigger_initial_wizard")) {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php
 	echo "<center>";
+	echo "<a href=\"/\"><img src=\"/logo.gif\" border=\"0\"></a><p>";
 	echo "Welcome to pfSense!<p>";
 	echo "One moment while we start the initial setup wizard.<p>";
 	echo "Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal gui.<p>";

@@ -473,7 +473,7 @@ with a submit button (name=&quot;accept&quot;) and a hidden field with name=&quo
 		  <br>
 		  <br>
 		<?php endif; ?>
-The contents of the HTML file that you upload here are displayed when a RADIUS authentication error occurs.</td>
+The contents of the HTML file that you upload here are displayed when an authentication error occurs.</td>
 	</tr>
 	<tr>
 	  <td width="22%" valign="top">&nbsp;</td>

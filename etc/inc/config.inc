@@ -568,9 +568,8 @@ function write_config($desc="Unknown", $backup = true) {
 	conf_mount_ro();
 	config_unlock();
 
-	$config = parse_config(true);
-	//generate_config_cache($config);
-	//cleanup_backupcache();
+	generate_config_cache($config);
+	cleanup_backupcache();
 	return $config;
 }
 
@@ -603,7 +602,7 @@ function reset_factory_defaults() {
 
 function config_restore($conffile) {
 	global $config, $g;
-        
+       
         if (!file_exists($conffile))
                 return 1;
         
@@ -611,9 +610,9 @@ function config_restore($conffile) {
         conf_mount_rw();        
         
         backup_config();
-        copy($conffile, "{$g['conf_path']}/config.xml");
+        copy($conffile, "{$g['cf_conf_path']}/config.xml");
+	$config = parse_config(true);
         write_config("Reverted to " . array_pop(explode("/", $conffile)) . ".", false);
-        $config = parse_config(true);
         
         conf_mount_ro();
         config_unlock();

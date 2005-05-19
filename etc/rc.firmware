@@ -14,11 +14,11 @@ if [ $1 != "upgrade" ]; then
 fi
 
 backup_chflags() {
-	mtree -Pcp / | bzip2 -9 > /tmp/chflags.dist.bz2
+	/usr/sbin/mtree -Pcp / | bzip2 -9 > /tmp/chflags.dist.bz2
 }
 
 restore_chflags() {
-	cd / && bzcat /tmp/chflags.dist.bz2 | mtree -PU -p /
+	cd / && bzcat /tmp/chflags.dist.bz2 | /usr/sbin/mtree -PU -p /
 }
 
 remove_chflags() {

@@ -59,12 +59,9 @@ unset($confvers['versions']);
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php
-include("fbegin.inc");
-if($savemsg) print_info_box($savemsg);
-?>
+<?php include("fbegin.inc"); ?>
 <p class="pgtitle">Diagnostics: Configuration History</p>
-<br>
+<?php if($savemsg) print_info_box($savemsg); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
   <ul id="tabnav">
     <li class="tabinact"><a href="diag_backup.php">Remote</a></li>
@@ -75,7 +72,6 @@ if($savemsg) print_info_box($savemsg);
     <td class="tabcont">
 <?php
 if(is_array($confvers)) { 
-	      $i = 0;
 		?>
               <table align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
@@ -83,6 +79,11 @@ if(is_array($confvers)) {
 		  <td width="70%" class="listhdrr">Configuration Change</td>
                 </tr>
 
+                <tr valign="top">
+		  <td class="listlr"> <?= date("n/j/y H:i:s", $config['revision']['time']) ?></td>
+                  <td class="listlr"> <?= $config['revision']['description'] ?></td>
+		  <td valign="middle" class="list" nowrap>Current</td>
+		</tr>
 		<?php
 		  foreach($confvers as $version) {
 			if($version['time'] != 0) {
@@ -95,16 +96,13 @@ if(is_array($confvers)) {
                             <tr valign="top">
 				<td class="listlr"> <?= $date ?></td>
                                 <td class="listlr"> <?= $desc ?></td>
-	       <?php	if($i != 0) { ?>
 				<td valign="middle" class="list" nowrap>
                                 <a href="diag_confbak.php?newver=<?=$version['time'];?>"><img src="plus.gif" width="17" height="17" border="0"></a>
                                 </td>
 				<td valign="middle" class="list" nowrap>
 				<a href="diag_confbak.php?rmver=<?=$version['time'];?>"><img src="x.gif" width="17" height="17" border="0"></a>
-	       <?php	} ?>
 			    </tr>
                <?php
-		  	$i++;
                   } ?>
 		</table>
 <?php } else {

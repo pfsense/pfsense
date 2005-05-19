@@ -108,7 +108,7 @@ for FILE in /usr/local/etc/rc.d/*.sh; do
     echo "Done."
 done
 
-if -e [ /tmp/filter_boot_dirty ]; then
+if [ -f /tmp/filter_boot_dirty ]; then
     # one more pass to give package plugins a chance to adjust
     echo -n "Final firewall setup in progress..."
     /etc/rc.filter_configure

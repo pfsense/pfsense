@@ -112,6 +112,7 @@ upgrade)
 	/sbin/mount -r /cf
 
 	echo "Done."
+	/etc/rc.reboot
 	;;
 pfSenseupgrade)
 	# wait 5 seconds before beginning
@@ -160,6 +161,7 @@ pfSenseupgrade)
 	/sbin/mount -r /cf
 	
 	echo "Done." | logger -p daemon.info -i -t Upgrade
+	/etc/rc.reboot
 	;;
 delta_update)
 	backup_chflags

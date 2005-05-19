@@ -68,7 +68,7 @@ if($savemsg) print_info_box($savemsg);
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
   <ul id="tabnav">
     <li class="tabinact"><a href="diag_backup.php">Remote</a></li>
-    <li class="tabact">Config History</a></li>
+    <li class="tabact">Local</a></li>
   </ul>
   </td></tr>
   <tr>

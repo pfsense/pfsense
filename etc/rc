@@ -48,7 +48,7 @@ set -T
 trap "echo 'Reboot interrupted'; exit 1" 3
 
 # Create uploadbar tmp directory
-mkdir /tmp/uploadbar
+mkdir -p /tmp/uploadbar
 chmod 777 /tmp/uploadbar
 
 # make some directories in /var

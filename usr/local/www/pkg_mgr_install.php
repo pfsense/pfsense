@@ -205,6 +205,7 @@ foreach ($packages_to_install as $id) {
     $pkgent['pfsense_package'] = $a_out[$id]['pfsense_package'];
     $pkgent['pfsense_package_base_url'] = $a_out[$id]['pfsense_package_base_url'];
     $pkgent['configurationfile'] = $a_out[$id]['configurationfile'];
+    $pkgent['exclude_dependency'] = $a_out[$id]['exclude_dependency'];
     if($pkg_config['packages']['package'][$id]['logging']) {
         // logging facilities.
         $pkgent['logging']['facility'] = $pkg_config['packages']['package'][$id]['logging']['facility'];
@@ -278,6 +279,7 @@ foreach ($packages_to_install as $id) {
 		update_output_window($static_output);
 		exec("ls /var/db/pkg", $is_installed);
                 $pkg_installed = false;
+		if(isset($pkgent['skip_install_checks'])) $pkg_installed = true;
                 foreach($is_installed as $is_inst) {
                 	if($is_inst == $pkgent['name'] . '-' . $pkgent['version']) {
                 		$pkg_installed = true;

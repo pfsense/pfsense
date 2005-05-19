@@ -568,8 +568,10 @@ function write_config($desc="Unknown", $backup = true) {
 	conf_mount_ro();
 	config_unlock();
 
-	generate_config_cache($config);
+	$config = parse_config(true);
+	//generate_config_cache($config);
 	//cleanup_backupcache();
+	return $config;
 }
 
 function reset_factory_defaults() {

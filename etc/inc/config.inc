@@ -146,14 +146,12 @@ EOD;
 	mwexec("/sbin/mount -a");
 }
 
+/* This global seems to be finicky. Default to always parsing.
 if(!$g['booting']) {
 	$config = parse_config();
 }
-
-/*
-   for some reason its not parsing correctly so this is temporary
-   until someone with more knowledge can look at.
 */
+
 $config = parse_config();
 
 /****f* config/parse_config

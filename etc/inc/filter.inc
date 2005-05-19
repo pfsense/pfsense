@@ -63,8 +63,8 @@ function filter_configure() {
 		/* somehow the interfaces do not come up
 		   correctly if we do not load, unload
                    and then reload... wierd. */
-		mwexec("/sbin/kldload ipfw");
-		mwexec("/sbin/kldunload ipfw");
+		//mwexec("/sbin/kldload ipfw");
+		//mwexec("/sbin/kldunload ipfw");
 	}
 
 	/* generate aliases */

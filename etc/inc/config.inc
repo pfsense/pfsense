@@ -146,7 +146,7 @@ EOD;
 	mwexec("/sbin/mount -a");
 }
 
-if(!$g['booting']) {
+if($g['booting']) {
 	$config = parse_config();
 }
 

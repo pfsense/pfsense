@@ -113,7 +113,25 @@ function showhide(tspan, tri) {
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_interfaces.php" class="navlnk">Interfaces</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_queues.php" class="navlnk">Queues</a><br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_graph.php" class="navlnk">Traffic graph</a><br>
+	      <?php $i = 0; $ifdescrs = array();
+		if (is_array($config['interfaces']['wan']['wireless']) &&
+				(strstr($config['interfaces']['wan']['if'], "wi") || strstr($config['interfaces']['wan']['if'], "ath")))
+				$ifdescrs['wan'] = 'WAN';
+				
+		if (is_array($config['interfaces']['lan']['wireless']) &&
+				(strstr($config['interfaces']['lan']['if'], "wi") || strstr($config['interfaces']['lan']['if'], "ath")))
+				$ifdescrs['lan'] = 'LAN';
+		
+		for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+			if (is_array($config['interfaces']['opt' . $j]['wireless']) &&
+				isset($config['interfaces']['opt' . $j]['enable']) &&
+				(strstr($config['interfaces']['opt' . $j]['if'], "wi") || strstr($config['interfaces']['opt' . $j]['if'], "ath")))
+				$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
+		}
+			
+		if (count($ifdescrs) > 0): ?>	      
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_wireless.php" class="navlnk">Wireless</a><br>
+	      <?php endif; ?>
 	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_logs.php" class="navlnk">System logs</a><br>
 	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_pkglogs.php" class="navlnk">Package logs</a><br>
 	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_dhcp_leases.php" class="navlnk">DHCP leases</a><br>

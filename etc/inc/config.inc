@@ -166,6 +166,7 @@ function parse_config($parse = false) {
 	global $g;
 
 	config_lock();
+	/*
 	if(!$parse) {
 		if(file_exists($g['tmp_path'] . '/config.cache')) {
 			$config = unserialize(file_get_contents($g['tmp_path'] . '/config.cache'));
@@ -181,6 +182,12 @@ function parse_config($parse = false) {
 		$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
 		generate_config_cache($config);
 	}
+	*/
+	
+	/* ugly hack!  config.cache is really borked.  don't use until its fixed. */
+	$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
+	generate_config_cache($config);	  
+	
 	config_unlock();
 	return $config;
 }

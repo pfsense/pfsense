@@ -1043,6 +1043,8 @@ function get_backups() {
 function backup_config() {
 	global $config, $g;
 
+	conf_mount_rw();
+
 	/* Create backup directory if needed */
 	safe_mkdir("{$g['cf_conf_path']}/backup");
 
@@ -1066,6 +1068,9 @@ function backup_config() {
         $bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
         fwrite($bakout, serialize($backupcache));
         fclose($bakout);
+	
+	conf_mount_ro();
+	
 	return true;
 }
 ?>

@@ -41,6 +41,10 @@ if [ ! -L /etc/resolv.conf ]; then
     ln -s /var/etc/resolv.conf /etc/resolv.conf    
 fi
 
+if [ ! -d /cf/conf/backup/backup.cache ]; then
+    mkdir -p /cf/conf/backup/backup.cache
+fi
+
 /etc/rc.d/initrandom start >/dev/null
 /etc/rc.d/random start >/dev/null
 

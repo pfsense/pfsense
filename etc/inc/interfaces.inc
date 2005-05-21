@@ -259,6 +259,7 @@ function interfaces_carp_configure() {
 	global $g, $config;
 	if ($g['booting']) {
 		echo "Configuring CARP interfaces... \n";
+		mute_kernel_msgs();
 	}	
 	unlink_if_exists("/usr/local/etc/rc.d/carp.sh");
 	unlink_if_exists("/usr/local/pkg/pf/carp.sh");
@@ -305,6 +306,7 @@ function interfaces_carp_configure() {
 		  $carp_instances_counter++;
 		}
 	}
+	unmute_kernel_msgs();
 }
 
 function interfaces_carp_bringup() {

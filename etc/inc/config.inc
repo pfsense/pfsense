@@ -1071,4 +1071,13 @@ function backup_config() {
 	
 	return true;
 }
+
+function mute_kernel_msgs() {
+	exec("/sbin/conscontrol mute on");
+}
+
+function unmute_kernel_msgs() {
+	exec("/sbin/conscontrol mute off");
+}
+
 ?>

@@ -59,14 +59,6 @@ function filter_configure() {
 	if(does_interface_exist($lan_if) == false) return;
 	if(does_interface_exist($wan_if) == false) return;
 
-	if (isset($config['shaper']['enable'])) {
-		/* somehow the interfaces do not come up
-		   correctly if we do not load, unload
-                   and then reload... wierd. */
-		//mwexec("/sbin/kldload ipfw");
-		//mwexec("/sbin/kldunload ipfw");
-	}
-
 	/* generate aliases */
 	$aliases = filter_generate_aliases();
 	/* generate nat rules */
@@ -132,7 +124,9 @@ function filter_configure() {
 
 	/* load ipfw+altq module */
 	if (isset($config['shaper']['enable'])) {
+		mute_kernel_msgs();
 		mwexec("/sbin/kldload ipfw");
+		unmute_kernel_msgs();
                 /* change one_pass to 1 so ipfw stops checking after
                    a rule has matched */
                 mwexec("/sbin/sysctl net.inet.ip.fw.one_pass=1");

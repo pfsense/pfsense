@@ -75,7 +75,7 @@
 
 	print "Cleaning backup cache... ";
 	cleanup_backupcache(true);
-
+	
 	/* read in /etc/sysctl.conf and set values if needed */
 	system_setup_sysctl();
 
@@ -109,20 +109,29 @@
 
 	/* set up LAN interface */
 	print "Configuring LAN interface... ";
+	mute_kernel_msgs();
 	interfaces_lan_configure();
+	unmute_kernel_msgs();
 	print "done.\n";
 
 	/* set up WAN interface */
 	print "Configuring WAN interface... ";
+	mute_kernel_msgs();
 	interfaces_wan_configure();
+	unmute_kernel_msgs();
 	print "done.\n";
 
 	/* set up Optional interfaces */
+	mute_kernel_msgs();
 	print "Configuring OPT interfaces...\n";
 	interfaces_optional_configure();
-
+	unmute_kernel_msgs();
+	print "done.\n";
+	
 	/* setup carp interfaces */
 	interfaces_carp_configure();
+
+	unmute_kernel_msgs();
 
 	/* start pflog */
 	filter_pflog_start();

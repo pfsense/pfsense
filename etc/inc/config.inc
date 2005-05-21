@@ -186,7 +186,9 @@ function parse_config($parse = false) {
 	
 	/* ugly hack!  config.cache is really borked.  don't use until its fixed. */
 	$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
-	generate_config_cache($config);	  
+	
+	/* ugly hack!  config.cache is really borked.  don't use until its fixed. */
+	//generate_config_cache($config);	  
 	
 	config_unlock();
 	return $config;
@@ -194,7 +196,8 @@ function parse_config($parse = false) {
 
 function generate_config_cache($config) {
 	global $g;
-	/*
+	
+	/* ugly hack!  config.cache is really borked.  don't use until its fixed.
 	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
 	fwrite($configcache, serialize($config));
 	fclose($configcache);

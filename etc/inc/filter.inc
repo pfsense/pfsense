@@ -800,6 +800,8 @@ function filter_nat_rules_generate() {
 	$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
 
 	$natrules = "";
+	$natrules .= "nat-anchor \"pftpx/*\"\n";
+
 	$natrules .= "nat-anchor \"natearly/*\"\n";
 	$natrules .= "nat-anchor \"natrules/*\"\n";
 
@@ -888,6 +890,7 @@ function filter_nat_rules_generate() {
 
 	if(!isset($config['system']['disableftpproxy'])) {
 		$natrules .= "# FTP proxy\n";
+		$natrules .= "rdr-anchor \"pftpx/*\"\n";
 		$natrules .= "rdr on " . $lanif . " proto tcp from any to any port 21 -> 127.0.0.1 port 8021\n\n";
 	}
 
@@ -1644,6 +1647,8 @@ pass in quick proto udp from any to any port = 5050 keep state label "BigPond he
 
 # package manager late specific hook
 anchor "packagelate"
+
+anchor "pftpx/*"
 
 EOD;
 	}

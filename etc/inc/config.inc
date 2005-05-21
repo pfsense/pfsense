@@ -975,7 +975,7 @@ function system_start_ftp_helpers() {
 	global $config, $g;
 	if($config['system']['disableftpproxy'] <> "") return;
 	$wanif = get_real_wan_interface();
-	mwexec("/usr/sbin/inetd -wW -C 60");
+	//mwexec("/usr/sbin/inetd -wW -C 60");
 	mwexec("/usr/bin/killall pftpx 2>/dev/null");
 	mwexec("/usr/local/sbin/pftpx -i {$wanif} -g 8021 -q ftpproxy");
 }

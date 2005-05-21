@@ -194,9 +194,11 @@ function parse_config($parse = false) {
 
 function generate_config_cache($config) {
 	global $g;
+	/*
 	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
 	fwrite($configcache, serialize($config));
 	fclose($configcache);
+	*/
 	return true;
 }
 

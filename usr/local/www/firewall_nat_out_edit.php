@@ -169,13 +169,13 @@ if ($_POST) {
         if (isset($_POST['destination_not']) && $ext != "any")
             $natent['destination']['not'] = true;
 
-	if (isset($id) && $a_nat[$id])
-		$a_nat[$id] = $natent;
+	if (isset($id) && $a_out[$id])
+		$a_out[$id] = $natent;
 	else {
 		if (is_numeric($after))
-			array_splice($a_nat, $after+1, 0, array($natent));
+			array_splice($a_out, $after+1, 0, array($natent));
 		else
-			$a_nat[] = $natent;
+			$a_out[] = $natent;
 	}
 
         touch($d_natconfdirty_path);

@@ -46,7 +46,7 @@ if [ ! -L /etc/dhclient.conf ]; then
 fi
 
 if [ ! -d /cf/conf/backup/backup.cache ]; then
-    mkdir -p /cf/conf/backup/backup.cache
+    mkdir -p /cf/conf/backup/backup.cache 2>/dev/null
 fi
 
 /etc/rc.d/initrandom start >/dev/null

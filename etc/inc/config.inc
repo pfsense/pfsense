@@ -146,12 +146,6 @@ EOD;
 	mwexec("/sbin/mount -a");
 }
 
-/* This global seems to be finicky. Default to always parsing.
-if(!$g['booting']) {
-	$config = parse_config();
-}
-*/
-
 $config = parse_config();
 
 /****f* config/parse_config
@@ -166,7 +160,6 @@ function parse_config($parse = false) {
 	global $g;
 
 	config_lock();
-	/*
 	if(!$parse) {
 		if(file_exists($g['tmp_path'] . '/config.cache')) {
 			$config = unserialize(file_get_contents($g['tmp_path'] . '/config.cache'));
@@ -182,26 +175,19 @@ function parse_config($parse = false) {
 		$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
 		generate_config_cache($config);
 	}
-	*/
 	
 	/* ugly hack!  config.cache is really borked.  don't use until its fixed. */
-	$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
-	
-	/* ugly hack!  config.cache is really borked.  don't use until its fixed. */
-	//generate_config_cache($config);	  
-	
+	//$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
+
 	config_unlock();
 	return $config;
 }
 
 function generate_config_cache($config) {
 	global $g;
-	
-	/* ugly hack!  config.cache is really borked.  don't use until its fixed.
 	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
 	fwrite($configcache, serialize($config));
 	fclose($configcache);
-	*/
 	return true;
 }
 
@@ -584,8 +570,7 @@ function write_config($desc="Unknown", $backup = true) {
 	conf_mount_ro();
 	config_unlock();
 
-	generate_config_cache($config);
-	cleanup_backupcache();
+	$config = parse_config(true);
 	return $config;
 }
 

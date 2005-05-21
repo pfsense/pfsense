@@ -262,7 +262,9 @@ function conf_mount_rw() {
 
 /* mount flash card read only */
 function conf_mount_ro() {
-	global $g;
+	global $g, $do_not_mount_ro;
+
+	if($g['booting'] == true) return;
 
 	mwexec("/sbin/umount -f {$g['cf_path']}");
 	mwexec("/sbin/mount -r {$g['cf_path']}");

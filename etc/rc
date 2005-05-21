@@ -40,6 +40,10 @@ if [ ! -L /etc/resolv.conf ]; then
     rm -rf /etc/resolv.conf
     ln -s /var/etc/resolv.conf /etc/resolv.conf    
 fi
+if [ ! -L /etc/dhclient.conf ]; then
+    rm -rf /etc/dhclient.conf
+    ln -s /var/etc/dhclient.conf /etc/dhclient.conf
+fi
 
 if [ ! -d /cf/conf/backup/backup.cache ]; then
     mkdir -p /cf/conf/backup/backup.cache

@@ -18,6 +18,8 @@ export HOME PATH
 
 version=`cat /etc/version`
 
+/sbin/conscontrol mute off
+
 echo
 echo "Welcome to pfSense ${version} ..."
 echo

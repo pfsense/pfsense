@@ -263,7 +263,8 @@ echo "<input style='border: 0px solid white;' size='30' name='swapusagemeter' id
               </tr>
 <?php
 	/* XXX - Stub in the HW monitor for net4801 - needs to use platform var's once we start using them */
-	if (file_exists("/etc/48xx")) {
+	$is4801 = `dmesg -a | grep NET4801`;
+	if($is4801 <> "") {
 echo "			  <tr>";
 echo "                <td width='25%' class='vncellt'>Temperature </td>";
 echo "                <td width='75%' class='listr'>";

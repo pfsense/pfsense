@@ -125,10 +125,10 @@ pfSenseupgrade)
 	echo "Firmware upgrade in progress..."  | logger -p daemon.info -i -t Upgrade
 
 	# backup config
-	/bin/mkdir /tmp/configbak
-	cp -p /conf/* /tmp/configbak
+	/bin/mkdir -p /tmp/configbak 
+	cp -p /conf/* /tmp/configbak 2>/dev/null
 	# mount /cf
-	/sbin/mount -w -o noatime /cf
+	/sbin/mount -w -o noatime /cf 2>/dev/null
 
 	# tar explode image onto hd
 	if [ -r $2 ]; then
@@ -148,7 +148,7 @@ pfSenseupgrade)
         fi
 
 	# restore config
-	cp -p /tmp/configbak/* /conf
+	cp -p /tmp/configbak/* /conf 2>/dev/null
 
 	# restore /etc symlinks
 	rm /etc/hosts
@@ -157,8 +157,8 @@ pfSenseupgrade)
 	restore_chflags
 
 	# remount /cf ro
-	/sbin/umount -f /cf
-	/sbin/mount -r /cf
+	/sbin/umount -f /cf 2>/dev/null
+	/sbin/mount -r /cf 2>/dev/null
 	
 	echo "Done." | logger -p daemon.info -i -t Upgrade
 	sh /etc/rc.reboot

@@ -122,11 +122,10 @@
 	print "done.\n";
 
 	/* set up Optional interfaces */
-	mute_kernel_msgs();
 	print "Configuring OPT interfaces...\n";
+	mute_kernel_msgs();
 	interfaces_optional_configure();
 	unmute_kernel_msgs();
-	print "done.\n";
 	
 	/* setup carp interfaces */
 	interfaces_carp_configure();

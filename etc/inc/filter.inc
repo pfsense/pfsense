@@ -44,9 +44,13 @@ function filter_resync() {
 function filter_pflog_start() {
 	global $config, $g;
 
+	mute_kernel_msgs();
+	
 	mwexec("/sbin/ifconfig pflog0 up && pflogd -sD");
 	
 	mwexec_bg("/usr/sbin/tcpdump -n -e -ttt -i pflog0 | logger -t pf -p local0.info");
+	
+	unmute_kernel_msgs();
 
 }
 

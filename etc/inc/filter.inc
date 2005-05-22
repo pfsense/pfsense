@@ -870,7 +870,7 @@ function filter_nat_rules_generate() {
 				$pptpdcfg['remoteip'] . "/" . $g['pptp_subnet'], null, "", null, null);
 		}
 
-		/* static routes */
+		/* static routes
 		if (is_array($config['staticroutes']['route'])) {
 			foreach ($config['staticroutes']['route'] as $route) {
 				if ($route['interface'] != "wan")
@@ -878,6 +878,7 @@ function filter_nat_rules_generate() {
 						$route['network'], null, "", null, null);
 			}
 		}
+		*/
 	}
 
 	$natrules .= "#SSH Lockout Table\n";

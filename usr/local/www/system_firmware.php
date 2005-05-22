@@ -133,6 +133,7 @@ $sig_warning = "<strong>" . $sig_warning . "</strong><br>This means that the ima
 	"is not an official/supported image and may lead to unexpected behavior or security " .
 	"compromises. Only install images that come from sources that you trust, and make sure ".
 	"that the image has not been tampered with.<br><br>".
+	"Please note that we do not sign alpha and or beta images.<br><br>".
 	"Do you want to install this image anyway (on your own risk)?";
 print_info_box($sig_warning);
 ?>

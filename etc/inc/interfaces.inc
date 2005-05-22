@@ -197,6 +197,7 @@ function interfaces_optional_configure_if($opti) {
 		if ($optcfg['descr'])
 			$optdescr = " ({$optcfg['descr']})";
 		print "\tOPT{$opti}{$optdescr}... ";
+		mute_kernel_msgs();
 	}
 
 	if (isset($optcfg['enable'])) {
@@ -250,6 +251,7 @@ function interfaces_optional_configure_if($opti) {
 	}
 
 	if ($g['booting'])
+		unmute_kernel_msgs();
 		print "done.\n";
 
 	return 0;
@@ -377,6 +379,7 @@ function interfaces_wan_configure() {
 	$wancfg = $config['interfaces']['wan'];
 
 	if(!$g['booting']) {
+		mute_kernel_msgs();
 		/* kill dhclient */
 		killbypid("{$g['varrun_path']}/dhclient.pid");
 
@@ -470,6 +473,8 @@ function interfaces_wan_configure() {
 		/* restart dnsmasq */
 		services_dnsmasq_configure();
 	}
+
+	unmute_kernel_msgs();
 
 	return 0;
 }

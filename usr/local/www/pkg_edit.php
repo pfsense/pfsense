@@ -284,10 +284,13 @@ if ($pkg['tabs'] <> "") {
   $savevalue = "Save";
   if($pkg['savetext'] <> "") $savevalue = $pkg['savetext'];
   foreach ($pkg['fields']['field'] as $pkga) { ?>
-
+	  
 	  <?php if(!$pkga['combinefieldsend']) echo "<tr valign=\"top\">"; ?>
 
 	  <?php
+	  
+	  $size = "";
+	  
 	  if(!$pkga['dontdisplayname']) {
 		echo "<td width=\"22%\" class=\"vncellreq\">";
 		echo fixup_string($pkga['fielddescr']);

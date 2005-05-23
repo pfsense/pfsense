@@ -119,6 +119,7 @@ return $cpuUsage;
 }
 
 function get_pfstate() {
+	global $config, $g;
         if (isset($config['system']['maximumstates']))
                 $maxstates="/{$config['system']['maximumstates']}";
         else

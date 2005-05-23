@@ -8,6 +8,7 @@
 # All rights reserved.
 
 stty status '^T'
+stty susp '^-' intr '^-' quit '^-'
 
 trap : 2
 trap : 3

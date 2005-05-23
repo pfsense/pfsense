@@ -34,6 +34,9 @@
 
 require("guiconfig.inc");
 
+$swapinfo = `/usr/sbin/swapinfo`;
+if(stristr($swapinfo,"%") == true) $showswap=true;
+
 if(file_exists("/usr/local/www/trigger_initial_wizard")) {
 	conf_mount_rw();
 	unlink("/usr/local/www/trigger_initial_wizard");
@@ -120,7 +123,7 @@ return $cpuUsage;
 
 function get_pfstate() {
 	global $config, $g;
-        if (isset($config['system']['maximumstates']))
+        if (isset($config['system']['maximumstates']) and $config['system']['maximumstates'] > 0)
                 $maxstates="/{$config['system']['maximumstates']}";
         else
                 $maxstates="/10000";
@@ -241,6 +244,8 @@ echo "<input style='border: 0px solid white;' size='30' name='memusagemeter' id=
 ?>
                 </td>
               </tr>
+	      
+<?php if($showswap == true): ?>
 			  <tr>
                 <td width="25%" class="vncellt">SWAP usage</td>
                 <td width="75%" class="listr">
@@ -262,6 +267,8 @@ echo "<input style='border: 0px solid white;' size='30' name='swapusagemeter' id
 ?>
                 </td>
               </tr>
+<?php endif; ?>
+
 <?php
 	/* XXX - Stub in the HW monitor for net4801 - needs to use platform var's once we start using them */
 	$is4801 = `/sbin/dmesg -a | grep NET4801`;

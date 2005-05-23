@@ -351,6 +351,11 @@ if ($pkg['tabs'] <> "") {
 			  $fieldname .= "[]";
 			}
 			echo "<select name='" . $fieldname . "'" . $size . $multiple . ">\n";
+			if($pkga['add_to_interfaces_selection'] <> "") {
+				$SELECTED = "";
+				if($pkga['add_to_interfaces_selection'] == $value) $SELECTED = " SELECTED";
+				echo "<option value='" . $pkga['add_to_interfaces_selection'] . "'" . $SELECTED . ">" . $pkga['add_to_interfaces_selection'] . "</option>\n";
+			}			
 			foreach ($config['interfaces'] as $ifname => $iface) {
 			  if ($iface['descr'])
 				  $ifdescr = $iface['descr'];

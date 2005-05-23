@@ -471,7 +471,7 @@ foreach ($packages_to_install as $id) {
 	update_output_window($static_output);
     }
     update_status("Package installation completed.");
-    $static_output .= "\nPackage installation successful.";
+    $static_output .= "\nPackage installation successful.\n";
     update_output_window($static_output);
     fwrite($fd_log, "Package installation completed.\n");
     log_error("Package " . $pkgent['name'] . " installation completed successfully.\n");

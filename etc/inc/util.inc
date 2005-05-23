@@ -298,9 +298,9 @@ function unlink_if_exists($fn) {
 }
 
 /* make a global alias table (for faster lookups) */
-function alias_make_table() {
+function alias_make_table($config) {
 
-	global $config, $g, $aliastable;
+	global $aliastable;
 
 	$aliastable = array();
 

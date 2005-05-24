@@ -281,7 +281,7 @@ foreach ($packages_to_install as $id) {
                 $pkg_installed = false;
 		if(isset($pkg_config['packages']['package'][$id]['skip_install_checks'])) $pkg_installed = true;
                 foreach($is_installed as $is_inst) {
-                	if(array_shift(explode('-', $is_inst)) == $pkgent['name']) {
+                	if($is_inst == $pkgent['name'] . $pkgent['version']) {
                 		$pkg_installed = true;
                 		break;
                 	}
@@ -297,7 +297,7 @@ foreach ($packages_to_install as $id) {
         if($pkg_installed == false) {
 		exec("ls /var/db/pkg", $is_installed);
 		foreach($is_installed as $is_inst) {
-                         if(array_shift(explode('-', $is_inst)) == $pkgent['name']) {
+                         if($is_inst == $pkgent['name'] . $pkgent['version']) {
                                  $pkg_installed = true;
                                  break;
                          }

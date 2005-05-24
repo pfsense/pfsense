@@ -1409,6 +1409,7 @@ EOD;
 
 # enable ftp-proxy
 anchor "ftpproxy"
+anchor "pftpx/*"
 pass in quick on $wanif inet proto tcp from port 20 to ($wanif) port > 49000 user proxy flags S/SA keep state label "FTP PROXY: PASV mode data connection"
 
 EOD;
@@ -1487,8 +1488,6 @@ EOD;
 	}
 
 	$ipfrules .= <<<EOD
-
-anchor "pftpx/*"
 
 # WAN spoof check
 anchor "wanspoof"

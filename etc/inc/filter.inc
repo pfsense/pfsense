@@ -180,7 +180,6 @@ function filter_configure() {
 								echo "\t{$file}... ";
 							}
 							eval($text);
-							if($g['booting']) echo "done.\n";
 					}
 				}
 			}

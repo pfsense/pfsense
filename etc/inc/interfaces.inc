@@ -306,7 +306,7 @@ function interfaces_carp_configure() {
 		    $password = " pass " . $carp['password'];
 		  }
 		  $carpdev = "";
-		  if($carp['interface'] <> "AUTO") {
+		  if($carp['interface'] <> "AUTO" and $carp['interface'] <> "") {
 			$carpdev = " carpdev {$carp['interface']} ";
 		  }
 		  mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $carp['ipaddress'] . "/" . $carp['netmask'] . " broadcast " . $broadcast_address . " vhid " . $carp['vhid'] . "{$carpdev} advskew " . $carp['advskew'] . $password);

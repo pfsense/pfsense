@@ -1488,6 +1488,8 @@ EOD;
 
 	$ipfrules .= <<<EOD
 
+anchor "pftpx/*"
+
 # WAN spoof check
 anchor "wanspoof"
 block in $log quick on $wanif from $lansa/$lansn to any label "WAN spoof check"
@@ -1646,7 +1648,7 @@ pass in quick proto udp from any to any port = 5050 keep state label "BigPond he
 # package manager late specific hook
 anchor "packagelate"
 
-anchor "pftpx/*"
+
 
 EOD;
 	}

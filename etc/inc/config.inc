@@ -1014,8 +1014,6 @@ function cleanup_backupcache($revisions = "all") {
 	if($g['booting']) {
 		if($i) {
 			print ".\n";
-		} else {
-			print " done.\n";
 		}
 	}
 }

@@ -174,8 +174,6 @@ EOD;
 
 	if (!$g['booting']) {
 		filter_configure();
-	} else {
-		echo "done.\n";
 	}
 
 	return 0;
@@ -270,8 +268,6 @@ function services_dhcrelay_configure() {
 
 	if (!$g['booting']) {
 		filter_configure();
-	} else {
-		echo "done.\n";
 	}
 
 	return 0;

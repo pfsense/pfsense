@@ -250,9 +250,10 @@ function interfaces_optional_configure_if($opti) {
 			" delete down");
 	}
 
-	if ($g['booting'])
+	if ($g['booting']) {
 		unmute_kernel_msgs();
 		print "done.\n";
+	}
 
 	return 0;
 }

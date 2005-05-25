@@ -611,7 +611,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 			}
 		}
         }
-	exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_add -v {$fetchto} 2>&1", $pkgaddout);
+	exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_add -fv {$fetchto} 2>&1", $pkgaddout);
 	fwrite($fd_log, $pkgname . " " . print_r($pkgaddout, true) . "\n");
 	return true;
 }

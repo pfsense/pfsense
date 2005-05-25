@@ -128,8 +128,13 @@ if ($_POST) {
 		$optcfg['subnet'] = $_POST['subnet'];
 		$optcfg['bridge'] = $_POST['bridge'];
 		$optcfg['enable'] = $_POST['enable'] ? true : false;
-		$optcfg['bandwidth'] = $_POST['bandwidth'];
-		$optcfg['bandwidthtype'] = $_POST['bandwidthtype'];
+		if($_POST['bandwidth'] <> "" and $_POST['bandwidthtype'] <> "") {
+			$optcfg['bandwidth'] = $_POST['bandwidth'];
+			$optcfg['bandwidthtype'] = $_POST['bandwidthtype'];
+		} else {
+			unset($optcfg['bandwidth']);
+			unset($optcfg['bandwidthtype']);
+		}
 		$optcfg['gateway'] = $_POST['gateway'];
 
 		write_config();

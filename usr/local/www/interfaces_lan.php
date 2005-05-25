@@ -81,8 +81,13 @@ if ($_POST) {
 			touch($d_sysrebootreqd_path);
 		}
 
-		update_if_changed("bandwidth", &$lancfg['bandwidth'], $_POST['bandwidth']);
-		update_if_changed("bandwidth type", &$lancfg['bandwidthtype'], $_POST['bandwidthtype']);
+		if($_POST['bandwidth'] <> "" and $_POST['bandwidthtype'] <> "") {
+			update_if_changed("bandwidth", &$lancfg['bandwidth'], $_POST['bandwidth']);
+			update_if_changed("bandwidth type", &$lancfg['bandwidthtype'], $_POST['bandwidthtype']);
+		} else {
+			unset($lancfg['bandwidth']);
+			unset($lancfg['bandwidthtype']);
+		}
 
 		$dhcpd_was_enabled = 0;
 		if (isset($config['dhcpd']['enable'])) {

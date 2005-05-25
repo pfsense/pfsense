@@ -233,8 +233,13 @@ if ($_POST) {
 			$config['bigpond']['minheartbeatinterval'] = $_POST['bigpond_minheartbeatinterval'];
 		}
 
-		$wancfg['bandwidth'] = $_POST['bandwidth'];
-		$wancfg['bandwidthtype'] = $_POST['bandwidthtype'];
+		if($_POST['bandwidth'] <> "" and $_POST['bandwidthtype'] <> "") {
+			$wancfg['bandwidth'] = $_POST['bandwidth'];
+			$wancfg['bandwidthtype'] = $_POST['bandwidthtype'];
+		} else {
+			unset($wancfg['bandwidth']);
+			unset($wancfg['bandwidthtype']);
+		}
 
 		$wancfg['blockpriv'] = $_POST['blockpriv'] ? true : false;
 		$wancfg['blockbogons'] = $_POST['blockbogons'] ? true : false;

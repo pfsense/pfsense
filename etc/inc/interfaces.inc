@@ -307,7 +307,8 @@ function interfaces_carp_configure() {
 		  }
 		  $carpdev = "";
 		  if($carp['interface'] <> "AUTO" and $carp['interface'] <> "") {
-			$carpdev = " carpdev {$carp['interface']} ";
+			$ci = filter_opt_interface_to_real($carp['interface']);
+			$carpdev = " carpdev {$ci} ";
 		  }
 		  mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $carp['ipaddress'] . "/" . $carp['netmask'] . " broadcast " . $broadcast_address . " vhid " . $carp['vhid'] . "{$carpdev} advskew " . $carp['advskew'] . $password);
 		  $carp_instances_counter++;

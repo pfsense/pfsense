@@ -1673,7 +1673,7 @@ EOD;
 				$line = generate_user_filter_rule($rule, 0);
 				if (!isset($rule['disabled'])) {
 					// label
-					if($rule['descr'] <> "" and $line <> "" and strpos($line, "label") > 0) {
+					if($rule['descr'] <> "" and $line <> "") {
 						$line .= " label \"USER_RULE: " . $rule['descr'] . "\" ";
 					} else {
 						$line .= " label \"USER_RULE\" ";

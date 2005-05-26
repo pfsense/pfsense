@@ -1674,9 +1674,9 @@ EOD;
 				if (!isset($rule['disabled'])) {
 					// label
 					if($rule['descr'] <> "" and $line <> "" and strpos($line, "label") > 0) {
-						$line .= "label \"USER_RULE: " . $rule['descr'] . "\" ";
+						$line .= " label \"USER_RULE: " . $rule['descr'] . "\" ";
 					} else {
-						$line .= "# could not process \"USER_RULE: " . $rule['descr'] . "\" ";
+						$line .= " label \"USER_RULE\" ";
 					}
 					$line .= "\n";
 					$ipfrules .= $line;

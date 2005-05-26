@@ -480,237 +480,224 @@ function filter_generate_altq_rules() {
         /* generate rules */
         if (isset($config['shaper']['rule']))
                 foreach ($config['shaper']['rule'] as $rule) {
-		/*
-		 *   find out the interface ip.  match against carp subnets
-		 *   and automagically generate rules for carp'd interfaces
-                 *   as well as the primary interface defined.
-		 */
-		$ip = find_interface_ip($config['interfaces'][$rule['interface']]['if']);
-		$carp_ints = link_ip_to_carp_interface($ip);
-		$carp_ints_array = array(" ", $carp_ints);
-		$carp_ints_array[] = $rule['interface'];
-		
-		/* loop through generated interface list creating rules */
-		foreach($carp_ints_array as $interface) {
-			
-		    /* don't include disabled rules */
-		    if (isset($rule['disabled'])) {
-			    $i++;
-			    continue;
-		    }
-    
-		    /* does the rule deal with a PPTP interface? */
-		    if ($interface == "pptp") {
-    
-			    if ($pptpdcfg['mode'] != "server") {
-				    $i++;
-				    continue;
-			    }
-    
-			    $nif = $g['n_pptp_units'];
-			    $ispptp = true;
-		    } else {
-    
-			    if (strstr($interface, "opt")) {
-				    if (!array_key_exists($interface, $optcfg)) {
-					    $i++;
-					    continue;
-				    }
-			    }
-    
-			    $nif = 1;
-			    $ispptp = false;
-		    }
-    
-		    if ($pptpdcfg['mode'] != "server") {
-			    if (($rule['source']['network'] == "pptp") ||
-				    ($rule['destination']['network'] == "pptp")) {
-					    $i++;
-					    continue;
-				    }
-		    }
-    
-		    if (strstr($rule['source']['network'], "opt")) {
-			    if (!array_key_exists($rule['source']['network'], $optcfg)) {
-				    $i++;
-				    continue;
-			    }
-		    }
-		    if (strstr($rule['destination']['network'], "opt")) {
-			    if (!array_key_exists($rule['destination']['network'], $optcfg)) {
-				    $i++;
-				    continue;
-			    }
-		    }
-    
-		    /* check for unresolvable aliases */
-		    if ($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
-			    $i++;
-			    continue;
-		    }
-		    if ($rule['destination']['address'] && !alias_expand($rule['destination']['address'])) {
-			    $i++;
-			    continue;
-		    }
-    
-		    for ($iif = 0; $iif < $nif; $iif++) {
-    
-			    $queuename = filter_altq_get_queuename($rule['targetqueue']);
-			    $line = "add $rulei set 4 pass altq " . $rule['targetqueue'] . " ";
-			    $rulei++;
-    
-			   if (isset($rule['protocol'])) {
-				    $line .= "{$rule['protocol']} ";
-			    } else {
-				    $line .= "all ";
-			    }
-    
-			    /* source address */
-			    if (isset($rule['source']['any'])) {
-				    $src = "any";
-			    } else if ($rule['source']['network']) {
-				    if (strstr($rule['source']['network'], "opt")) {
-					    $src = $optcfg[$rule['source']['network']]['sa'] . "/" .
-						    $optcfg[$rule['source']['network']]['sn'];
-				    } else {
-					    switch ($rule['source']['network']) {
-						    case 'lan':
-							    $src = "$lansa/$lansn";
-							    break;
-						    case 'pptp':
-							    $src = "$pptpsa/$pptpsn";
-							    break;
-					    }
-				    }
-			    } else if ($rule['source']['address']) {
-				    $src = $rule['source']['address'];
-			    }
-    
-			    if (!$src) {
-				    printf("No source address found in rule $i\n");
-				    break;
-			    }
-    
-			    if (isset($rule['source']['not'])) {
-				    $line .= "from not $src ";
-			    } else {
-				    $line .= "from $src ";
-			    }
-    
-			    if (!isset($rule['protocol']) || in_array($rule['protocol'], array("tcp","udp"))) {
-				    if ($rule['source']['port']) {
-					    /*
-					     * Check to see if port is a alias.  If so grab it and
-					     * enclose it in { } to pass to pf.
-					     *
-					     * Otherwise combine the portrange into one if its only
-					     * one item.
-					     */
-					    $src = alias_expand($rule['source']['port']);
-					    if($src <> "") {
-						    $line .= $rule['destination']['port'];
-					    } else {
-						    $srcport = explode("-", $rule['source']['port']);
-						    if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
-							    $line .= "{$srcport[0]} ";
-						    } else {
-							    $line .= "{$srcport[0]}-{$srcport[1]} ";
-						    }
-					    }
-				    }
-			    }
-    
-			    /* destination address */
-			    if (isset($rule['destination']['any'])) {
-				    $dst = "any";
-			    } else if ($rule['destination']['network']) {
-    
-				    if (strstr($rule['destination']['network'], "opt")) {
-					    $dst = $optcfg[$rule['destination']['network']]['sa'] . "/" .
-						    $optcfg[$rule['destination']['network']]['sn'];
-				    } else {
-					    switch ($rule['destination']['network']) {
-						    case 'lan':
-							    $dst = "$lansa/$lansn";
-							    break;
-						    case 'pptp':
-							    $dst = "$pptpsa/$pptpsn";
-							    break;
-					    }
-				    }
-			    } else if ($rule['destination']['address']) {
-				    $dst = $rule['destination']['address'];
-			    }
-    
-			    if (!$dst) {
-				    printf("No destination address found in rule $i\n");
-				    break;
-			    }
-    
-			    if (isset($rule['destination']['not'])) {
-				    $line .= "to not $dst ";
-			    } else {
-				    $line .= "to $dst ";
-			    }
-    
-			    if (!isset($rule['protocol']) || in_array($rule['protocol'], array("tcp","udp"))) {
-				    if ($rule['destination']['port']) {
-					    $dst = alias_expand($rule['destination']['port']);
-					    /*
-					     * Check to see if port is a alias.  If so grab it and
-					     * enclose it in { } to pass to pf.
-					     *
-					     * Otherwise combine the portrange into one if its only
-					     * one item.
-					     */
-					    if($dst <> "") {
-						    $line .= $rule['destination']['port'];
-					    } else {
-						    $dstport = explode("-", $rule['destination']['port']);
-						    if ((!$dstport[1]) || ($dstport[0] == $dstport[1])) {
-							    $line .= "{$dstport[0]} ";
-						    } else {
-							    $line .= "{$dstport[0]}-{$dstport[1]} ";
-						    }
-					    }
-				    }
-			    }
-    
-			    if ($rule['iplen'])
-				    $line .= "iplen {$rule['iplen']} ";
-    
-			    if ($rule['iptos'])
-				    $line .= "iptos {$rule['iptos']} ";
-    
-			    if ($rule['tcpflags'])
-				    $line .= "tcpflags {$rule['tcpflags']} ";
-    
-			    if ($rule['direction'] == "in")
-				    $line .= "in recv ";
-			    else if ($rule['direction'] == "out")
-				    $line .= "out xmit ";
-    
-			    if ($ispptp) {
-				    $line .= " ng" . ($iif+1);
-			    } else {
-				    $if = $config['interfaces'][$interface]['if'];
-    
-				    if ($interface == "wan")
-					    $if = $wanif;
-				    else if($interface == "lan")
-					    $if = $lanif;
-    
-				    $line .= " {$if}";
-			    }
-    
-			    $line .= "\n";
-			    $shaperrules .= $line;
-		    }
-    
-		    $i++;
-	    }
 
-	}
+                /* don't include disabled rules */
+                if (isset($rule['disabled'])) {
+                        $i++;
+                        continue;
+                }
+
+                /* does the rule deal with a PPTP interface? */
+                if ($rule['interface'] == "pptp") {
+
+                        if ($pptpdcfg['mode'] != "server") {
+                                $i++;
+                                continue;
+                        }
+
+                        $nif = $g['n_pptp_units'];
+                        $ispptp = true;
+                } else {
+
+                        if (strstr($rule['interface'], "opt")) {
+                                if (!array_key_exists($rule['interface'], $optcfg)) {
+                                        $i++;
+                                        continue;
+                                }
+                        }
+
+                        $nif = 1;
+                        $ispptp = false;
+                }
+
+                if ($pptpdcfg['mode'] != "server") {
+                        if (($rule['source']['network'] == "pptp") ||
+                                ($rule['destination']['network'] == "pptp")) {
+                                        $i++;
+                                        continue;
+                                }
+                }
+
+                if (strstr($rule['source']['network'], "opt")) {
+                        if (!array_key_exists($rule['source']['network'], $optcfg)) {
+                                $i++;
+                                continue;
+                        }
+                }
+                if (strstr($rule['destination']['network'], "opt")) {
+                        if (!array_key_exists($rule['destination']['network'], $optcfg)) {
+                                $i++;
+                                continue;
+                        }
+                }
+
+                /* check for unresolvable aliases */
+                if ($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
+                        $i++;
+                        continue;
+                }
+                if ($rule['destination']['address'] && !alias_expand($rule['destination']['address'])) {
+                        $i++;
+                        continue;
+                }
+
+                for ($iif = 0; $iif < $nif; $iif++) {
+
+			$queuename = filter_altq_get_queuename($rule['targetqueue']);
+			$line = "add $rulei set 4 pass altq " . $rule['targetqueue'] . " ";
+			$rulei++;
+
+                       if (isset($rule['protocol'])) {
+                                $line .= "{$rule['protocol']} ";
+                        } else {
+                                $line .= "all ";
+                        }
+
+                        /* source address */
+                        if (isset($rule['source']['any'])) {
+                                $src = "any";
+                        } else if ($rule['source']['network']) {
+                                if (strstr($rule['source']['network'], "opt")) {
+                                        $src = $optcfg[$rule['source']['network']]['sa'] . "/" .
+                                                $optcfg[$rule['source']['network']]['sn'];
+                                } else {
+                                        switch ($rule['source']['network']) {
+                                                case 'lan':
+                                                        $src = "$lansa/$lansn";
+                                                        break;
+                                                case 'pptp':
+                                                        $src = "$pptpsa/$pptpsn";
+                                                        break;
+                                        }
+                                }
+                        } else if ($rule['source']['address']) {
+                                $src = $rule['source']['address'];
+                        }
+
+                        if (!$src) {
+                                printf("No source address found in rule $i\n");
+                                break;
+                        }
+
+                        if (isset($rule['source']['not'])) {
+                                $line .= "from not $src ";
+                        } else {
+                                $line .= "from $src ";
+                        }
+
+                        if (!isset($rule['protocol']) || in_array($rule['protocol'], array("tcp","udp"))) {
+                                if ($rule['source']['port']) {
+					/*
+					 * Check to see if port is a alias.  If so grab it and
+                                         * enclose it in { } to pass to pf.
+                                         *
+                                         * Otherwise combine the portrange into one if its only
+                                         * one item.
+					 */
+					$src = alias_expand($rule['source']['port']);
+					if($src <> "") {
+						$line .= $rule['destination']['port'];
+					} else {
+						$srcport = explode("-", $rule['source']['port']);
+						if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
+							$line .= "{$srcport[0]} ";
+						} else {
+							$line .= "{$srcport[0]}-{$srcport[1]} ";
+						}
+					}
+                                }
+                        }
+
+                        /* destination address */
+                        if (isset($rule['destination']['any'])) {
+                                $dst = "any";
+                        } else if ($rule['destination']['network']) {
+
+                                if (strstr($rule['destination']['network'], "opt")) {
+                                        $dst = $optcfg[$rule['destination']['network']]['sa'] . "/" .
+                                                $optcfg[$rule['destination']['network']]['sn'];
+                                } else {
+                                        switch ($rule['destination']['network']) {
+                                                case 'lan':
+                                                        $dst = "$lansa/$lansn";
+                                                        break;
+                                                case 'pptp':
+                                                        $dst = "$pptpsa/$pptpsn";
+                                                        break;
+                                        }
+                                }
+                        } else if ($rule['destination']['address']) {
+                                $dst = $rule['destination']['address'];
+                        }
+
+                        if (!$dst) {
+                                printf("No destination address found in rule $i\n");
+                                break;
+                        }
+
+                        if (isset($rule['destination']['not'])) {
+                                $line .= "to not $dst ";
+                        } else {
+                                $line .= "to $dst ";
+                        }
+
+                        if (!isset($rule['protocol']) || in_array($rule['protocol'], array("tcp","udp"))) {
+                                if ($rule['destination']['port']) {
+					$dst = alias_expand($rule['destination']['port']);
+					/*
+					 * Check to see if port is a alias.  If so grab it and
+                                         * enclose it in { } to pass to pf.
+                                         *
+                                         * Otherwise combine the portrange into one if its only
+                                         * one item.
+					 */
+					if($dst <> "") {
+						$line .= $rule['destination']['port'];
+					} else {
+						$dstport = explode("-", $rule['destination']['port']);
+						if ((!$dstport[1]) || ($dstport[0] == $dstport[1])) {
+							$line .= "{$dstport[0]} ";
+						} else {
+							$line .= "{$dstport[0]}-{$dstport[1]} ";
+						}
+					}
+                                }
+                        }
+
+                        if ($rule['iplen'])
+                                $line .= "iplen {$rule['iplen']} ";
+
+                        if ($rule['iptos'])
+                                $line .= "iptos {$rule['iptos']} ";
+
+                        if ($rule['tcpflags'])
+                                $line .= "tcpflags {$rule['tcpflags']} ";
+
+                        if ($rule['direction'] == "in")
+                                $line .= "in recv ";
+                        else if ($rule['direction'] == "out")
+                                $line .= "out xmit ";
+
+                        if ($ispptp) {
+                                $line .= " ng" . ($iif+1);
+                        } else {
+				$if = $config['interfaces'][$rule['interface']]['if'];
+
+                                if ($rule['interface'] == "wan")
+                                        $if = $wanif;
+                                else if($rule['interface'] == "lan")
+					$if = $lanif;
+
+                                $line .= " {$if}";
+                        }
+
+                        $line .= "\n";
+                        $shaperrules .= $line;
+                }
+
+                $i++;
+        }
+
 	$rulei++;
 
 	return $shaperrules;

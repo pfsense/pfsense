@@ -429,6 +429,7 @@
 		-->
 	</shaper>
 	<ipsec>
+                <preferredoldsa/>
 		<!-- <enable/> -->
 		<!-- syntax:
 		<tunnel>

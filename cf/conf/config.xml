@@ -429,8 +429,9 @@
 		-->
 	</shaper>
 	<ipsec>
+                <preferredoldsa/>
 		<!-- <enable/> -->
-		<!-- syntax:
+		<!-- syntax:    
 		<tunnel>
 			<disabled/>
 			<auto/>

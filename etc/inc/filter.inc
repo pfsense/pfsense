@@ -674,12 +674,12 @@ function filter_generate_altq_rules() {
                                 $line .= "tcpflags {$rule['tcpflags']} ";
 
                         if ($rule['direction'] == "in")
-                                $line .= "in ";
+                                $line .= "in recv ";
                         else if ($rule['direction'] == "out")
-                                $line .= "out ";
+                                $line .= "out xmit ";
 
                         if ($ispptp) {
-                                $line .= "via ng" . ($iif+1);
+                                $line .= " ng" . ($iif+1);
                         } else {
 				$if = $config['interfaces'][$rule['interface']]['if'];
 
@@ -688,7 +688,7 @@ function filter_generate_altq_rules() {
                                 else if($rule['interface'] == "lan")
 					$if = $lanif;
 
-                                $line .= "via {$if}";
+                                $line .= " {$if}";
                         }
 
                         $line .= "\n";

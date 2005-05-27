@@ -55,12 +55,6 @@ function captiveportal_configure() {
 		/* kill any running minicron */
 		killbypid("{$g['varrun_path']}/minicron.pid");
 
-		/* generate ipfw rules */
-		$cprules = captiveportal_rules_generate();
-
-		/* make sure ipfw is loaded */
-		mwexec("/sbin/kldload ipfw");
-
 		/* stop accounting on all clients */
 		captiveportal_radius_stop_all() ;
 
@@ -150,29 +144,6 @@ EOD;
 			fclose($fd);
 		}
 
-		/* load rules */
-		mwexec("/sbin/ipfw -f delete set 1");
-		mwexec("/sbin/ipfw -f delete set 2");
-		mwexec("/sbin/ipfw -f delete set 3");
-
-		/* XXX - seems like ipfw cannot accept rules directly on stdin,
-		   so we have to write them to a temporary file first */
-		$fd = @fopen("{$g['tmp_path']}/ipfw.cp.rules", "w");
-		if (!$fd) {
-			printf("Cannot open ipfw.cp.rules in captiveportal_configure()\n");
-			return 1;
-		}
-
-		fwrite($fd, $cprules);
-		fclose($fd);
-
-		mwexec("/sbin/ipfw {$g['tmp_path']}/ipfw.cp.rules");
-
-		unlink("{$g['tmp_path']}/ipfw.cp.rules");
-
-		/* filter on layer2 as well so we can check MAC addresses */
-		mwexec("/sbin/sysctl net.link.ether.ipfw=1");
-
 		chdir($g['captiveportal_path']);
 
 		/* start web server */
@@ -208,7 +179,7 @@ EOD;
 
 		/* generate passthru mac database */
 		captiveportal_passthrumac_configure() ;
-		/* create allowed ip database and insert ipfw rules to make it so */
+		/* create allowed ip database and insert pf tables to make it so */
 		captiveportal_allowedip_configure() ;
 
 		/* generate radius server database */
@@ -243,104 +214,13 @@ EOD;
 		killbypid("{$g['varrun_path']}/mini_httpd.cp.pid");
 		killbypid("{$g['varrun_path']}/minicron.pid");
 		captiveportal_radius_stop_all() ;
-		mwexec("/sbin/sysctl net.link.ether.ipfw=0");
-		if (!isset($config['shaper']['enable'])) {
-			/* unload ipfw */
-			mwexec("/sbin/kldunload ipfw");
-		} else {
-			/* shaper is on - just remove our rules */
-			mwexec("/sbin/ipfw -f delete set 1");
-			mwexec("/sbin/ipfw -f delete set 2");
-			mwexec("/sbin/ipfw -f delete set 3");
-		}
 	}
 
 	return 0;
 }
 
-function captiveportal_rules_generate() {
-	global $config, $g;
-
-	$cpifn = $config['captiveportal']['interface'];
-	$cpif = $config['interfaces'][$cpifn]['if'];
-	$cpip = $config['interfaces'][$cpifn]['ipaddr'];
-
-	/* note: the captive portal daemon inserts all pass rules for authenticated
-	   clients as skipto 50000 rules to make traffic shaping work */
-
-	$cprules = "";
-
-	/* captive portal on LAN interface? */
-	if ($cpifn == "lan") {
-		/* add anti-lockout rules */
-		$cprules .= <<<EOD
-add 500 set 1 pass all from $cpip to any out via $cpif
-add 501 set 1 pass all from any to $cpip in via $cpif
-
-EOD;
-	}
-
-	$cprules .= <<<EOD
-# skip to traffic shaper if not on captive portal interface
-add 1000 set 1 skipto 50000 all from any to any not layer2 not via $cpif
-# pass all layer2 traffic on other interfaces
-add 1001 set 1 pass layer2 not via $cpif
-
-# layer 2: pass ARP
-add 1100 set 1 pass layer2 mac-type arp
-# layer 2: block anything else non-IP
-add 1101 set 1 deny layer2 not mac-type ip
-# layer 2: check if MAC addresses of authenticated clients are correct
-add 1102 set 1 skipto 20000 layer2
-
-# allow access to our DHCP server (which needs to be able to ping clients as well)
-add 1200 set 1 pass udp from any 68 to 255.255.255.255 67 in
-add 1201 set 1 pass udp from any 68 to $cpip 67 in
-add 1202 set 1 pass udp from $cpip 67 to any 68 out
-add 1203 set 1 pass icmp from $cpip to any out icmptype 8
-add 1204 set 1 pass icmp from any to $cpip in icmptype 0
-
-# allow access to our DNS forwarder
-add 1300 set 1 pass udp from any to $cpip 53 in
-add 1301 set 1 pass udp from $cpip 53 to any out
-
-# allow access to our web server
-add 1302 set 1 pass tcp from any to $cpip 8000 in
-add 1303 set 1 pass tcp from $cpip 8000 to any out
-
-EOD;
-
-	if (isset($config['captiveportal']['httpslogin'])) {
-		$cprules .= <<<EOD
-add 1304 set 1 pass tcp from any to $cpip 8001 in
-add 1305 set 1 pass tcp from $cpip 8001 to any out
-
-EOD;
-	}
-
-	$cprules .= <<<EOD
-
-# ... 10000-19899: rules per authenticated client go here...
-
-# redirect non-authenticated clients to captive portal
-add 19900 set 1 fwd 127.0.0.1,8000 tcp from any to any 80 in
-# let the responses from the captive portal web server back out
-add 19901 set 1 pass tcp from any 80 to any out
-# block everything else
-add 19902 set 1 deny all from any to any
-
-# ... 20000-29899: layer2 block rules per authenticated client go here...
-
-# pass everything else on layer2
-add 29900 set 1 pass all from any to any layer2
-
-EOD;
-
-	return $cprules;
-}
-
 /* remove clients that have been around for longer than the specified amount of time */
-/* db file structure: timestamp,ipfw_rule_no,clientip,clientmac,username,sessionid */
+/* db file structure: timestamp,clientip,clientmac,username,sessionid */
 function captiveportal_prune_old() {
 
 	global $g, $config;
@@ -376,7 +256,8 @@ function captiveportal_prune_old() {
 				$timedout = true;
 		}
 
-		/* if an idle timeout is specified, get last activity timestamp from ipfw */
+		/* if an idle timeout is specified, get last activity timestamp from pf */
+		// XXX: we need a solution for this.
 		if (!$timedout && $idletimeout) {
 			$lastact = captiveportal_get_last_activity($cpdb[$i][1]);
 			if ($lastact && ((time() - $lastact) >= $idletimeout))
@@ -384,7 +265,7 @@ function captiveportal_prune_old() {
 		}
 
 		if ($timedout) {
-			/* this client needs to be deleted - remove ipfw rules */
+			/* this client needs to be deleted - remove pf table item */
 			if (isset($config['captiveportal']['radacct_enable']) && isset($radiusservers[0])) {
 				RADIUS_ACCOUNTING_STOP($cpdb[$i][1], // ruleno
 									   $cpdb[$i][4], // username
@@ -396,14 +277,9 @@ function captiveportal_prune_old() {
 									   $cpdb[$i][2]); //clientip
 				syslog(LOG_INFO,"Authenticated user $cpdb[$i][4] timed out");
 			}
-			//KEYCOM: we need to delete +40500 and +45500 as well...
-			//these are the rule numbers we use to control traffic shaping for each logged in user via captive portal
-			mwexec("/sbin/ipfw delete " . $cpdb[$i][1] . " " . ($cpdb[$i][1]+10000));
-			//we only need to remove our rules if peruserbw is turned on.
-			if(isset($config['captiveportal']['peruserbw'])) {
-				mwexec("/sbin/ipfw delete " . ($cpdb[$i][1]+40500));
-				mwexec("/sbin/ipfw delete " . ($cpdb[$i][1]+45500));
-			}
+						
+			mwexec("/sbin/pfctl -t captiveportal -T delete {$cpdb[$i][2]}");
+
 			unset($cpdb[$i]);
 		}
 	}
@@ -414,7 +290,7 @@ function captiveportal_prune_old() {
 	captiveportal_unlock();
 }
 
-/* remove a single client by ipfw rule number */
+/* remove a single client */
 function captiveportal_disconnect_client($id) {
 
 	global $g, $config;
@@ -428,7 +304,7 @@ function captiveportal_disconnect_client($id) {
 	/* find entry */
 	for ($i = 0; $i < count($cpdb); $i++) {
 		if ($cpdb[$i][1] == $id) {
-			/* this client needs to be deleted - remove ipfw rules */
+			/* this client needs to be deleted - remove pf table item */
 			if (isset($config['captiveportal']['radacct_enable']) && isset($radiusservers[0])) {
 				RADIUS_ACCOUNTING_STOP($cpdb[$i][1], // ruleno
 									   $cpdb[$i][4], // username
@@ -440,13 +316,9 @@ function captiveportal_disconnect_client($id) {
 									   $cpdb[$i][2]); //clientip
 				syslog(LOG_INFO,"Authenticated user $cpdb[$i][4] disconnected");
 			}
-			mwexec("/sbin/ipfw delete " . $cpdb[$i][1] . " " . ($cpdb[$i][1]+10000));
-			//we only need to remove our rules if peruserbw is turned on.
-			if(isset($config['captiveportal']['peruserbw'])) {
-				mwexec("/sbin/ipfw delete " . ($cpdb[$i][1]+40500));
-				mwexec("/sbin/ipfw delete " . ($cpdb[$i][1]+45500));
-			}
+
 			unset($cpdb[$i]);
+
 			break;
 		}
 	}
@@ -521,19 +393,13 @@ function captiveportal_allowedip_configure() {
 				$line = trim(fgets($fd));
 				if($line) {
 					list($ip,$rule) = explode(",",$line);
-					mwexec("/sbin/ipfw delete $rule") ;
+					mwexec("/sbin/pfctl -t captiveportal -T delete {$ip}");
 				}
 			}
 		}
 		fclose($fd) ;
 		unlink("{$g['vardb_path']}/captiveportal_ip.db");
 	}
-
-	/* get next ipfw rule number */
-	if (file_exists("{$g['vardb_path']}/captiveportal.nextrule"))
-		$ruleno = trim(file_get_contents("{$g['vardb_path']}/captiveportal.nextrule"));
-	if (!$ruleno)
-		$ruleno = 10000;	/* first rule number */
 
 	if (is_array($config['captiveportal']['allowedip'])) {
 
@@ -547,17 +413,11 @@ function captiveportal_allowedip_configure() {
 		foreach ($config['captiveportal']['allowedip'] as $ipent) {
 			/* record allowed ip so it can be recognized and removed later */
 			fwrite($fd, $ipent['ip'] . "," . $ruleno ."\n");
-			/* insert ipfw rule to allow ip thru */
-			if($ipent['dir'] == "from") {
-				mwexec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from ".$ipent['ip']." to any in") ;
-				mwexec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from any to ".$ipent['ip']." out") ;
-			} else {
-				mwexec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from any to ".$ipent['ip']." in") ;
-				mwexec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from ".$ipent['ip']." to any out") ;
-			}
-			$ruleno++ ;
-			if ($ruleno > 19899)
-				$ruleno = 10000;
+
+			/* insert pf table item to allow traffic */			
+			mwexec("/sbin/pfctl -t captiveportal -T add {$ip}");
+
+			$ruleno = $ip;
 		}
 
 		fclose($fd);
@@ -574,17 +434,19 @@ function captiveportal_allowedip_configure() {
 	return 0;
 }
 
-/* get last activity timestamp given ipfw rule number */
+/* get last activity timestamp given pf table item */
 function captiveportal_get_last_activity($ruleno) {
 
-	exec("/sbin/ipfw -T list {$ruleno} 2>/dev/null", $ipfwoutput);
+	// XXX: this needs a solution
+	//exec("/sbin/ipfw -T list {$ruleno} 2>/dev/null", $ipfwoutput);
 
-	/* in */
+	/* 
 	if ($ipfwoutput[0]) {
 		$ri = explode(" ", $ipfwoutput[0]);
 		if ($ri[1])
 			return $ri[1];
 	}
+	*/
 
 	return 0;
 }

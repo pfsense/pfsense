@@ -263,8 +263,8 @@ function captiveportal_prune_old() {
 		/* if an idle timeout is specified, get last activity timestamp from pf */
 		// XXX: we need a solution for this.
 		if (!$timedout && $idletimeout) {
-			$lastact = captiveportal_get_last_activity($cpdb[$i][1]);
-			if ($lastact && ((time() - $lastact) >= $idletimeout))
+			$isactive = captiveportal_get_last_activity($cpdb[$i][2]);
+			if($isactive == 0)
 				$timedout = true;
 		}
 
@@ -439,18 +439,11 @@ function captiveportal_allowedip_configure() {
 }
 
 /* get last activity timestamp given pf table item */
-function captiveportal_get_last_activity($ruleno) {
+function captiveportal_get_last_activity($ip) {
 
-	// XXX: this needs a solution
-	//exec("/sbin/ipfw -T list {$ruleno} 2>/dev/null", $ipfwoutput);
+	$info = `/usr/sbin/arp | /usr/bin/grep $ip`;
 
-	/* 
-	if ($ipfwoutput[0]) {
-		$ri = explode(" ", $ipfwoutput[0]);
-		if ($ri[1])
-			return $ri[1];
-	}
-	*/
+	if($info <> "") return 1;
 
 	return 0;
 }

@@ -892,6 +892,13 @@ function filter_nat_rules_generate() {
 		$natrules .= "rdr on " . $lanif . " proto tcp from any to any port 21 -> 127.0.0.1 port 8021\n\n";
 	}
 
+	/* captive portal redirects */
+	if(isset($config['captiveportal']['enable'])) {
+		$cp_interface = filter_translate_type_to_real_interface($config['captiveportal']['interface']);
+		$lan_ip = $config['interfaces']['lan']['ipaddr'];
+		$natrules .= "rdr on " . $cp_interface . " proto tcp from any to any port { 80 443 } -> {$lan_ip} port 8000\n\n";
+	}
+	
 	/* DIAG: add ipv6 NAT, if requested */
 	if (isset($config['diag']['ipv6nat']['enable']) and $config['diag']['ipv6nat']['ipaddr'] <> "") {
 		$natrules .= "rdr on $wanif proto ipv6 from any to any port 0 -> " . "{$config['diag']['ipv6nat']['ipaddr']}\n";
@@ -1651,6 +1658,22 @@ anchor "packagelate"
 EOD;
 	}
 
+	/*
+	 *    captive portal, pf version
+         *    first pass captive portal interface traffic to port 8000 
+         *    then block every incoming packet on the interface (non quick)
+         *    then follow up with an allow items in the captiveportal anchor to flow
+	 */
+	 if(isset($config['captiveportal']['enable'])) {
+		$cp_interface = filter_translate_type_to_real_interface($config['captiveportal']['interface']);
+		$lan_ip = $config['interfaces']['lan']['ipaddr'];
+		$ipfrules .= "\n# Captive portal\n";
+		$ipfrules .= "table <captiveportal>\n";
+		$ipfrules .= "pass in quick on {$cp_interface} from any to {$lanip} 8000 keep state\n";
+		$ipfrules .= "block drop in on {$cp_interface} from any to any\n";
+		$ipfrules .= "pass in quick on {$cp_interface} from <captiveportal> to any keep state\n";
+	}
+
 	$ipfrules .= "\n# User-defined rules follow\n";
 
 	if (isset($config['filter']['rule'])) {	
@@ -1716,6 +1739,7 @@ EOD;
 			$ipfrules .= "pass quick on " . $lanif . " from " . $internal_subnet . " to " . $tunnel['remote-subnet'] . " keep state label \"IPSEC:  " . $tunnel['descr'] ."\"\n";
 		}
 	}
+
 
 	$ipfrules .= <<<EOD
 

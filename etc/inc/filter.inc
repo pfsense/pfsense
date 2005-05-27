@@ -1561,7 +1561,6 @@ EOD;
 # Support for allow limiting of TCP connections by establishment rate
 anchor "limitingesr"
 table <virusprot>
-block in $log quick on $wanif from <bogons> to any label "block bogon networks from wan"
 	
 EODF;
 

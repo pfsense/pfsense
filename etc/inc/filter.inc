@@ -180,6 +180,7 @@ function filter_configure() {
 								echo "\t{$file}... ";
 							}
 							eval($text);
+							echo "done.\n";
 					}
 				}
 			}
@@ -384,17 +385,14 @@ function filter_generate_aliases() {
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 		$ifdescrs['opt' . $j] = "opt" . $j;
 	}
+	$bridgetracker = 0;
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		/* do not process tun interfaces */
 		if(stristr(filter_opt_interface_to_real($ifname), "tun") == true) continue;
 		$aliases .= filter_get_opt_interface_descr($ifname) . " = \"{ " . filter_opt_interface_to_real($ifname);
 		if($config['interfaces'][$ifname]['bridge'] <> "") {
-			$aliases .= " bridge0 "; /************************************
-						  *  warning! aktung!  ugly hack!    *
-			                          *  needs to be updated if we want  *
-						  *  to support more than one bridge *
-						  *  concurrently                    *
-						  ************************************/
+			$aliases .= " bridge{$bridgetracker} ";
+			$bridgetracker++;
 		}
 		$aliases .= " }\"\n";
 	}

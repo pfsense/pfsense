@@ -124,9 +124,7 @@ php-config.upload_progress_meter.file.filename_template = <?=$dir?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>  	 
 <?php if ($fwinfo <> "") print_info_box($fwinfo); ?>
-<?php if (!in_array($g['platform'], $fwupplatforms)): ?>
-<p><strong>Firmware uploading is not supported on this platform.</strong></p>
-<?php elseif ($sig_warning && !$input_errors): ?>
+<?php if ($sig_warning && !$input_errors): ?>
 <form action="system_firmware.php" method="post">
 <?php
 $sig_warning = "<strong>" . $sig_warning . "</strong><br>This means that the image you uploaded " .

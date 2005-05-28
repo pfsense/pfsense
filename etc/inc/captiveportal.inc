@@ -418,8 +418,10 @@ function captiveportal_allowedip_configure() {
 			/* record allowed ip so it can be recognized and removed later */
 			fwrite($fd, $ipent['ip'] . "," . $ruleno ."\n");
 
-			/* insert pf table item to allow traffic */			
-			mwexec("/sbin/pfctl -t captiveportal -T add {$ip}");
+			/* insert pf table item to allow traffic */
+			mwexec("echo \"pfctl -t captiveportal -T add {$ipent['ip']} \"> /tmp/tmp");
+			echo "Adding {$ipent['ip']}";
+			mwexec("/sbin/pfctl -t captiveportal -T add {$ipent['ip']}");
 
 			$ruleno = $ip;
 		}

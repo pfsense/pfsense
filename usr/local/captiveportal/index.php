@@ -62,7 +62,7 @@ if (!$clientmac && !isset($config['captiveportal']['nomacfilter'])) {
 }
 
 if ($clientmac && portal_mac_fixed($clientmac)) {
-	/* punch hole in ipfw for pass thru mac addresses */
+	/* punch hole in pf table and allow thru ip for the mac addresses */
 	// KEYCOM: passthru mac bandwidth control]
 	if (isset($config['captiveportal']['peruserbw'])) {
 		portal_allow($clientip, $clientmac, "unauthenticated",$config['captiveportal']['bwauthmacup'],$config['captiveportal']['bwauthmacdn']);
@@ -203,50 +203,13 @@ function portal_allow($clientip,$clientmac,$clientuser,$bw_up,$bw_down) {
 
 	/* user has accepted AUP - let him in */
 	portal_lock();
-	
-	/* get next ipfw rule number */
-	if (file_exists("{$g['vardb_path']}/captiveportal.nextrule"))
-		$ruleno = trim(file_get_contents("{$g['vardb_path']}/captiveportal.nextrule"));
-	if (!$ruleno)
-		$ruleno = 10000;	/* first rule number */
 
-	$saved_ruleno = $ruleno;
+	$saved_ruleno = $clientip;
 	
 	/* generate unique session ID */
 	$tod = gettimeofday();
 	$sessionid = substr(md5(mt_rand() . $tod['sec'] . $tod['usec'] . $clientip . $clientmac), 0, 16);
-	
-	/* add ipfw rules for layer 3 */
-	exec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from $clientip to any in");
-	exec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from any to $clientip out");
-
-	/* KEYCOM: add ipfw rules for dummynet based on bw_up and bw_down */
-	//we're just copying them by adding on some and hoping no collision will occur
-	//2000 users would be expecting a bit much from a WAP ;)
-
-	//we're using fixed rule numbers which are 'a step above' the m0n0 ones
-	//this makes sure we always know where our rules are, and taht they are deleted when m0n0's are
-	//they're set so they shouldn't hit anything important, and also so they are in roughly the right position in the fw.
-
-	//of course, we only need to do this if it's enabled in the config
-	if (isset($config['captiveportal']['peruserbw'])) {
-		$up_rule_number = $ruleno + 40500;
-		$down_rule_number = $ruleno + 45500;
-		$lanif = $config['interfaces']['lan']['if'];
-		exec("/sbin/ipfw add $up_rule_number set 4 pipe $up_rule_number ip from $clientip to any via $lanif");
-		exec("/sbin/ipfw add $down_rule_number set 4 pipe $down_rule_number ip from any to $clientip via $lanif");
-		exec("/sbin/ipfw pipe $up_rule_number config bw " . trim($bw_up) . "Kbit/s queue 10");
-		exec("/sbin/ipfw pipe $down_rule_number config bw " . trim($bw_down) . "Kbit/s queue 10");
-	}
-	/* done */
-	
-	/* add ipfw rules for layer 2 */
-	if (!isset($config['captiveportal']['nomacfilter'])) {
-		$l2ruleno = $ruleno + 10000;
-		exec("/sbin/ipfw add $l2ruleno set 3 deny all from $clientip to any not MAC any $clientmac layer2 in");
-		exec("/sbin/ipfw add $l2ruleno set 3 deny all from any to $clientip not MAC $clientmac any layer2 out");
-	}
-	
+		
 	/* read in client database */
 	$cpdb = array();
 
@@ -276,14 +239,7 @@ function portal_allow($clientip,$clientmac,$clientuser,$bw_up,$bw_down) {
 									   $radiusservers[0]['key'],
 									   $clientip);
 			}
-			//KEYCOM: we need to delete +40500 and +45500 as well...
-			//these are the rule numbers we use to control traffic shaping for each logged in user via captive portal
-			mwexec("/sbin/ipfw delete " . $cpdb[$i][1]);
-			//we only need to remove our rules if peruserbw is turned on.
-			if(isset($config['captiveportal']['peruserbw'])) {
-				mwexec("/sbin/ipfw delete " . ($cpdb[$i][1]+40500));
-				mwexec("/sbin/ipfw delete " . ($cpdb[$i][1]+45500));
-			}
+			mwexec("/sbin/pfctl -t captiveportal -T delete {$clientip}");
 			unset($cpdb[$i]);
 			break;
 		}
@@ -311,6 +267,8 @@ function portal_allow($clientip,$clientmac,$clientuser,$bw_up,$bw_down) {
 	}
 	
 	portal_unlock();
+	
+	mwexec("/sbin/pfctl -t captiveportal -T add {$_ENV['REMOTE_ADDR']}");
 	
 	/* redirect user to desired destination */
 	if ($config['captiveportal']['redirurl'])
@@ -449,7 +407,7 @@ function disconnect_client($sessionid) {
 	/* find entry */	
 	for ($i = 0; $i < count($cpdb); $i++) {
 		if ($cpdb[$i][5] == $sessionid) {
-			/* this client needs to be deleted - remove ipfw rules */
+			/* this client needs to be deleted - remove pf table item */
 			if(isset($config['captiveportal']['radacct_enable']) && isset($radiusservers[0])) {
 				RADIUS_ACCOUNTING_STOP($cpdb[$i][1], // ruleno
 									   $cpdb[$i][4], // username
@@ -460,12 +418,7 @@ function disconnect_client($sessionid) {
 									   $radiusservers[0]['key'],
 									   $clientip);
 			}
-			//again we need to remve +40500 and +45500 as well, if they exist
-			mwexec("/sbin/ipfw delete " . $cpdb[$i][1] . " " . ($cpdb[$i][1]+10000));
-			if(isset($config['captiveportal']['peruserbw'])) {
-				mwexec("/sbin/ipfw delete " . ($cpdb[$i][1]+40500));
-				mwexec("/sbin/ipfw delete " . ($cpdb[$i][1]+45500));
-			}
+			mwexec("/sbin/pfctl -t captiveportal -T delete {$clientip}");
 			unset($cpdb[$i]);
 			break;
 		}

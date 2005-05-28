@@ -179,7 +179,7 @@ function filter_configure() {
 							if($g['booting'] == true)
 								echo "\t{$file}... ";
 							eval($text);
-							if($g['booting'] == true) {							
+							if($g['booting'] == true) 
 								echo "done.\n";
 					}
 				}
@@ -894,6 +894,7 @@ function filter_nat_rules_generate() {
 	if(isset($config['captiveportal']['enable'])) {
 		$cp_interface = filter_translate_type_to_real_interface($config['captiveportal']['interface']);
 		$lan_ip = $config['interfaces']['lan']['ipaddr'];
+		$natrules .= "no rdr on {$cp_interface} from <captiveportal> to any\n";
 		$natrules .= "rdr on " . $cp_interface . " proto tcp from any to any port { 80 443 } -> {$lan_ip} port 8000\n\n";
 	}
 	
@@ -1667,9 +1668,9 @@ EOD;
 		$lan_ip = $config['interfaces']['lan']['ipaddr'];
 		$ipfrules .= "\n# Captive portal\n";
 		$ipfrules .= "table <captiveportal>\n";
-		$ipfrules .= "pass in quick on {$cp_interface} proto tcp from any to {$lanip} port = 8000 keep state\n";
-		$ipfrules .= "block drop in on {$cp_interface} from any to any\n";
-		$ipfrules .= "pass in quick on {$cp_interface} from <captiveportal> to any keep state\n";
+		$ipfrules .= "block in on {$cp_interface} from any to any\n";
+		$ipfrules .= "pass in on {$cp_interface} proto tcp from any to {$lanip} port = 8000 keep state\n";		
+		$ipfrules .= "pass in on {$cp_interface} from <captiveportal> to any keep state\n";
 	}
 
 	$ipfrules .= "\n# User-defined rules follow\n";

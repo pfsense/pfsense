@@ -1669,7 +1669,7 @@ EOD;
 		$lan_ip = $config['interfaces']['lan']['ipaddr'];
 		$ipfrules .= "\n# Captive portal\n";
 		$ipfrules .= "table <captiveportal>\n";
-		$ipfrules .= "pass in quick on {$cp_interface} from any to {$lanip} 8000 keep state\n";
+		$ipfrules .= "pass in quick on {$cp_interface} proto tcp from any to {$lanip} port = 8000 keep state\n";
 		$ipfrules .= "block drop in on {$cp_interface} from any to any\n";
 		$ipfrules .= "pass in quick on {$cp_interface} from <captiveportal> to any keep state\n";
 	}

@@ -354,34 +354,6 @@ to access after they've authenticated.</td>
         <strong>Disable MAC filtering</strong><br>
     If this option is set, no attempts will be made to ensure that the MAC address of clients stays the same while they're logged in. This is required when the MAC address cannot be determined (usually because there are routers between m0n0wall and the clients).</td>
 	  </tr>
-	  <tr>
-      <td valign="top" class="vncell">Per-user bandwidth restriction</td>
-      <td class="vtable">
-		  <input name="peruserbw" type="checkbox" class="formfld" id="peruserbw" value="yes" <?php if ($pconfig['peruserbw']) echo "checked"; ?> onClick="enable_peruserbw()">
-          <strong>Enable per-user bandwidth restriction	</strong><br><br>
-		<table cellpadding="0" cellspacing="0">
-		<tr>
-		<td>Pass-through MAC download&nbsp;&nbsp;</td>
-		<td><input type="text" class="formfld" id="bwauthmacdn" size="5" value="<?=htmlspecialchars($pconfig['bwauthmacdn']);?>"> Kbit/s</td>
-		</tr><tr>
-		<td>Pass-through MAC upload</td>
-		<td><input type="text" class="formfld" id="bwauthmacup" size="5" value="<?=htmlspecialchars($pconfig['bwauthmacup']);?>"> Kbit/s</td>
-		</tr><tr>
-		<td>Pass-through IP download</td>
-		<td><input type="text" class="formfld" id="bwauthipdn" size="5" value="<?=htmlspecialchars($pconfig['bwauthipdn']);?>"> Kbit/s</td>
-		</tr><tr>
-		<td>Pass-through IP upload</td>
-		<td><input type="text" class="formfld" id="bwauthipup" size="5" value="<?=htmlspecialchars($pconfig['bwauthipup']);?>"> Kbit/s</td>
-		</tr><tr>
-		<td>Default download</td>
-		<td><input type="text" class="formfld" id="bwdefaultdn" size="5" value="<?=htmlspecialchars($pconfig['bwdefaultdn']);?>"> Kbit/s</td>
-		</tr><tr>
-		<td>Default upload</td>
-		<td><input type="text" class="formfld" id="bwdefaultup" size="5" value="<?=htmlspecialchars($pconfig['bwdefaultup']);?>"> Kbit/s</td>
-		</tr></table>
-        <br>
-    If this option is set, the captive portal will restrict each user who logs in to a specific bandwidth as set in RADIUS. Your RADIUS server must return the attributes Nomadix-Bw-Up and Nomadix-Bw-Down (1 and 2 VSAs from Vendor 3309, Nomadix) along with Access-Accept for this to work. Bandwidth is set in Kbit/s. You can control pass-through and default bandwidths above.</td>
-	  </tr>
 	<tr>
 	  <td width="22%" valign="top" class="vncell">RADIUS server</td>
 	  <td width="78%" class="vtable">

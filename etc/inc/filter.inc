@@ -176,11 +176,11 @@ function filter_configure() {
 						mwexec("/usr/local/pkg/pf/" . $file . " start");
 					} else {
 						//if(php_check_syntax($text, $error_message) == false)
-							if($g['booting'] == true) {
+							if($g['booting'] == true)
 								echo "\t{$file}... ";
-							}
 							eval($text);
-							echo "done.\n";
+							if($g['booting'] == true) {							
+								echo "done.\n";
 					}
 				}
 			}

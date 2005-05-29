@@ -97,11 +97,11 @@ function captiveportal_configure() {
 <center>
 <font color="white" face="arial" size="+1">Welcome to pfSense's captive portal!</font>
 <p>
-<form method="post" action="$PORTAL_ACTION$">
+<form method="post" action="\$PORTAL_ACTION\$">
 <table border="0" cellpadding="6" cellspacing="0">
 <tr><td align="right" class="listhdrr"><font color="white">Username:</td><td class="listhdrr"><input name="auth_user" type="text"></td></tr>
 <tr><td align="right" class="listhdrr"><font color="white">Password:</td><td class="listhdrr"><input name="auth_pass" type="password"></td></tr>
-<input name="redirurl" type="hidden" value="$PORTAL_REDIRURL$">
+<input name="redirurl" type="hidden" value="\$PORTAL_REDIRURL\$">
 </table>
 <p>
 <center><input name="accept" type="submit" value="Continue">

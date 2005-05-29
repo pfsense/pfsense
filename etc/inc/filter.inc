@@ -150,8 +150,7 @@ function filter_configure() {
                 mwexec("/bin/mv {$g['tmp_path']}/ipfw.rules {$g['tmp_path']}/ipfw.rules_old");
 	} else {
 		mwexec("/sbin/ipfw -f flush");
-		if(!isset($config['captiveportal']['enable']))
-			mwexec("/sbin/kldunload ipfw.ko");
+		mwexec("/sbin/kldunload ipfw.ko");
 	}
 
 	if($rules_loading <> 0) {
@@ -1669,7 +1668,7 @@ EOD;
 		$ipfrules .= "\n# Captive portal\n";
 		$ipfrules .= "table <captiveportal>\n";
 		$ipfrules .= "block in on {$cp_interface} from any to any\n";
-		$ipfrules .= "pass in on {$cp_interface} proto tcp from any to {$lanip} port = 8000 keep state\n";		
+		$ipfrules .= "pass in on {$cp_interface} proto { tcp udp } from any to {$lanip} port { 8000 53 } keep state\n";		
 		$ipfrules .= "pass in on {$cp_interface} from <captiveportal> to any keep state\n";
 	}
 

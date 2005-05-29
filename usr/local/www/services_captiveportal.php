@@ -348,13 +348,6 @@ If you provide a URL here, clients will be redirected to that URL instead of the
 to access after they've authenticated.</td>
 	</tr>
 	<tr>
-      <td valign="top" class="vncell">MAC filtering </td>
-      <td class="vtable">
-        <input name="nomacfilter" type="checkbox" class="formfld" id="nomacfilter" value="yes" <?php if ($pconfig['nomacfilter']) echo "checked"; ?>>
-        <strong>Disable MAC filtering</strong><br>
-    If this option is set, no attempts will be made to ensure that the MAC address of clients stays the same while they're logged in. This is required when the MAC address cannot be determined (usually because there are routers between m0n0wall and the clients).</td>
-	  </tr>
-	<tr>
 	  <td width="22%" valign="top" class="vncell">RADIUS server</td>
 	  <td width="78%" class="vtable">
 		<table cellpadding="0" cellspacing="0">

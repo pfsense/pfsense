@@ -141,10 +141,12 @@ if ($_GET['act'] == "del") {
                 </tr>
               </table>
             </form>
-            <p class="vexpl"><span class="red"><strong>Note:<br>
-                      </strong></span>Proxy ARP can be used if you need pfSense to send ARP
+            <p class="vexpl"><span class="red"><strong>Notes:<br>
+                      </strong></span> *Proxy ARP can be used if you need pfSense to send ARP
 					  replies on an interface for other IP addresses than its own (e.g. for 1:1, advanced outbound or server NAT). It is not
 					  necessary on the WAN interface if you have a subnet routed to you or if you use PPPoE/PPTP, and it only works on the WAN interface if it's configured with a static IP address or DHCP.</p>
+					  <br>
+					  CARP can be a great replacement for proxyarp.
             <?php include("fend.inc"); ?>
 </body>
 </html>

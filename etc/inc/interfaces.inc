@@ -155,17 +155,6 @@ function interfaces_optional_configure() {
 		interfaces_optional_configure_if($i);
 	}
 
-	if ($bridgeconfig) {
-		/* Set the system bridge configuration and enable bridging. */
-		//mwexec("/sbin/sysctl net.link.ether.bridge_cfg=" . $bridgeconfig);
-		//mwexec("/sbin/sysctl net.link.ether.bridge.enable=1");
-		//if (isset($config['bridge']['filteringbridge']))
-		//	mwexec("/sbin/sysctl net.link.ether.bridge.pf=1");
-	} else {
-		//mwexec("/sbin/sysctl net.link.ether.bridge.pf=0");
-		//mwexec("/sbin/sysctl net.link.ether.bridge.enable=0");
-	}
-
 	if (!$g['booting']) {
 		/* reconfigure static routes (kernel may have deleted them) */
 		system_routing_configure();
@@ -189,6 +178,7 @@ function interfaces_optional_configure() {
 function interfaces_optional_configure_if($opti) {
 	global $config, $g;
 	global $bridgeconfig;
+	global $bridges_total;
 
 	$optcfg = $config['interfaces']['opt' . $opti];
 
@@ -228,26 +218,20 @@ function interfaces_optional_configure_if($opti) {
 
 		/* bridged? */
 		if ($optcfg['bridge']) {
-			mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) .
-				" delete up");
+			mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " delete up");
 
-			//if ($bridgeconfig != "")
-			//	$bridgeconfig .= ",";
-
-			//$bridgeconfig .= $optcfg['if'] . ":" . $opti . "," .
-			//	$config['interfaces'][$optcfg['bridge']]['if'] .
-			//	":" . $opti;
-                        
                         /* use open/netBSD style bridge */
-			mwexec("/sbin/ifconfig bridge0 create");
-                        mwexec("/sbin/brconfig bridge0 add {$optcfg['if']} add {$config['interfaces'][$optcfg['bridge']]['if']} up ");
+			mwexec("/sbin/ifconfig bridge{$bridges_total} create");
+                        mwexec("/sbin/brconfig bridge{$bridges_total} add {$optcfg['if']} add {$config['interfaces'][$optcfg['bridge']]['if']} up");
+			
+			/* lets keep track of the amount of bridges initialized */
+			$bridges_total++;
 		} else {
 			mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " " .
 				escapeshellarg($optcfg['ipaddr'] . "/" . $optcfg['subnet']));
 		}
 	} else {
-		mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) .
-			" delete down");
+		mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " delete down");
 	}
 
 	if ($g['booting']) {

@@ -69,8 +69,9 @@ $versions = check_firmware_version();
 		  foreach($versions as $key => $version) {
 			if($key == "current") continue;
 			$currentver = array_shift(explode('-', $currentvers[$key]['version']));
-		  	if($version == 1) {
+			if($version == 1) {
                         	$img = "pass.gif";
+				$pastlatest = true;
                         } elseif($currentver > $version[count($version) - 1]['version']) {
 				$img = "pass.gif";
 				$pastlatest = true;

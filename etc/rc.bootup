@@ -48,6 +48,11 @@
 	$lan_if = $config['interfaces']['lan']['if'];
 	$wan_if = get_real_wan_interface();
 
+	/*
+	 *  Deterimine if we need to throw a interface exception
+         *  and ask the user to reassign interfaces.  This will
+         *  avoid a reboot and thats a good thing.
+	 */
 	$do_assign = 0;
 	/* we need to ignore the vlan interface checks) */
 	if(stristr($lan_if,"vlan") == false or stristr($wan_if,"vlan") == false) {
@@ -198,6 +203,7 @@
 	/* start IPsec tunnels */
 	vpn_ipsec_configure();
 
+	/* setup interface microcode which improves tcp/ip speed */
 	setup_microcode();
 
 	/* done */

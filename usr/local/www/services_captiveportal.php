@@ -161,6 +161,8 @@ if ($_POST) {
 
 		write_config();
 
+		filter_configure();
+
 		$retval = 0;
 		if (!file_exists($d_sysrebootreqd_path)) {
 			config_lock();

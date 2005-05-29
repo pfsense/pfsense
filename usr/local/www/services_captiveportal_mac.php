@@ -136,7 +136,7 @@ if ($_GET['act'] == "del") {
 	<td colspan="2" class="list"><span class="vexpl"><span class="red"><strong>
 	Note:<br>
 	</strong></span>
-	Adding MAC addresses as pass-through MACs  allows them access through the captive portal automatically without being taken to the portal page. The pass-through MACs can change their IP addresses on the fly and upon the next access, the pass-through tables are changed accordingly. Pass-through MACs will however still be disconnected after the captive portal timeout period.</span></td>
+	Adding MAC addresses as pass-through MACs  allows them access through the captive portal automatically without being taken to the portal page. Pass-through MACs will however still be disconnected after the captive portal timeout period.</span></td>
 	<td class="list">&nbsp;</td>
 	</tr>
   </table>

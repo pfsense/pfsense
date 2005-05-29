@@ -539,7 +539,7 @@ function update_description(itemnum) {
                   <td width="78%" class="vtable">
                     <input name="disablefilter" type="checkbox" id="disablefilter" value="yes" <?php if (isset($config['system']['disablefilter'])) echo "checked"; ?> onclick="enable_change(false)">
                     <strong>Disable the firewalls filter altogether.</strong><br>
-                    <span class="vexpl">NOTE!  This basically converts pfSense into a routing only platform!</span></td>
+                    <span class="vexpl">Note:  This basically converts pfSense into a routing only platform!</span></td>
                 </tr>
 
                 <tr>
@@ -547,7 +547,7 @@ function update_description(itemnum) {
                   <td width="78%" class="vtable">
                     <input name="maximumstates" type="input" id="maximumstates" value="<?php echo $pconfig['maximumstates']; ?>" onclick="enable_change(false)"><br>
                     <strong>Maximum number of connections to hold in the firewall state table.</strong><br>
-                    <span class="vexpl">NOTE!  Leave this blank for the default of 10000</span></td>
+                    <span class="vexpl">Note:  Leave this blank for the default of 10000</span></td>
                 </tr>
 
                 <tr>

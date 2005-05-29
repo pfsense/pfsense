@@ -254,11 +254,9 @@ function captiveportal_prune_old() {
 
 		$timedout = false;
 
-		/* hard timeout? */
-		if ($timeout) {
-			if ((time() - $cpdb[$i][0]) >= $timeout)
-				$timedout = true;
-		}
+                /* hard timeout? */
+		if ((time() - $cpdb[$i][0]) >= $timeout)
+			$timedout = true;
 
 		/* if an idle timeout is specified, get last activity timestamp from pf */
 		// XXX: we need a solution for this.
@@ -281,7 +279,7 @@ function captiveportal_prune_old() {
 									   $cpdb[$i][2]); //clientip
 				syslog(LOG_INFO,"Authenticated user $cpdb[$i][4] timed out");
 			}
-						
+
 			mwexec("/sbin/pfctl -t captiveportal -T delete {$cpdb[$i][2]}");
 
 			unset($cpdb[$i]);

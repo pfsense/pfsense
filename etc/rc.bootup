@@ -128,7 +128,7 @@
 	echo "done.\n";
 
 	/* set up Optional interfaces */
-	echo "Configuring OPT interfaces...";
+	echo "Configuring OPT interfaces... ";
 	mute_kernel_msgs();
 	interfaces_optional_configure();
 	unmute_kernel_msgs();
@@ -143,7 +143,7 @@
 	filter_pflog_start();
 
 	/* setup altq + pf */
-	echo "Configuring firewall...";
+	echo "Configuring firewall... ";
 	mute_kernel_msgs();
 	filter_configure();
 	unmute_kernel_msgs();

@@ -84,7 +84,7 @@ if [ "$DEVFS" = "0" ]; then
     mount_devfs devfs /dev
 fi
 
-echo -n "Syncing master.passwd..."
+echo -n "Syncing master.passwd... "
 /usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd
 echo "done."
 
@@ -105,19 +105,19 @@ cd /var/run && cp /dev/null utmp && chmod 644 utmp
 echo -n Starting Secure Shell Services...
 /etc/sshd
 
-echo -n "Starting USB..."
+echo -n "Starting USB... "
 /usr/sbin/usbd 2>>/tmp/bootup_messages
-echo Done.
+echo "done."
 
 /usr/sbin/cron 2>>/tmp/bootup_messages
 
 /etc/rc.packages
 
-echo "Executing rc.d items..."
+echo "Executing rc.d items... "
 for FILE in /usr/local/etc/rc.d/*.sh; do
     echo -n " Starting ${FILE}..."
     sh $FILE >>/tmp/bootup_messages 2>&1
-    echo "Done."
+    echo "done."
 done
 
 if [ -f /tmp/filter_boot_dirty ]; then

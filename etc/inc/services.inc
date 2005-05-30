@@ -172,8 +172,7 @@ EOD;
 	mwexec("/usr/local/sbin/dhcpd -cf {$g['varetc_path']}/dhcpd.conf " .
 		join(" ", $dhcpdifs));
 
-	if (!$g['booting']) {
-		//filter_configure();
+	if ($g['booting']) {
                 print "done.\n";
 	}
 

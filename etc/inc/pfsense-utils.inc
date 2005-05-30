@@ -1172,4 +1172,65 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
         return true;
 }
 
+function download_file_with_progress_bar($url_file, $destination_file) {
+        global $ch, $fout, $file_size, $downloaded, $counter;
+        $file_size  = 1;
+        $downloaded = 1;
+        /* open destination file */
+        $fout = fopen($destination_file, "wb");
+
+        /*
+                Originally by Author: Keyvan Minoukadeh
+                Modified by Scott Ullrich to return Content-Length size
+        */
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url_file);
+        curl_setopt($ch, CURLOPT_HEADERFUNCTION, 'read_header');
+        curl_setopt($ch, CURLOPT_WRITEFUNCTION, 'read_body');
+        curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
+                        
+        curl_exec($ch);
+        fclose($fout);
+        curl_close($ch);
+         
+        return 1;
+}
+
+function read_header($ch, $string) {
+        global $file_size, $ch, $fout;
+        $length = strlen($string);
+        ereg("(Content-Length:) (.*)", $string, $regs);
+        if($regs[2] <> "") {
+                $file_size = intval($regs[2]);
+        }
+        return $length;
+}
+ 
+function read_body($ch, $string) {
+        global $fout, $file_size, $downloaded, $counter, $sendto, $static_output, $lastseen;
+        $length = strlen($string);
+        $downloaded += intval($length);
+        $downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
+        $downloadProgress = 100 - $downloadProgress;
+        /*
+           lastseen is used to prevent from spamming firefox with hundreds of
+           unnecessary javascript update messages which sends the clients
+           firefox utilization to 100%
+        */
+        if($lastseen <> $downloadProgress and $downloadProgress < 101) {
+                if($sendto == "status") {
+                        $tostatus = $static_status . $downloadProgress . "%";
+                        update_status($tostatus);
+                } else {
+                        $tooutput = $static_output . $downloadProgress . "%";
+                        update_output_window($tooutput);
+                }
+                update_progress_bar($downloadProgress);
+                $lastseen = $downloadProgress;
+        }
+        fwrite($fout, $string);
+        return $length;
+}
+
 ?>

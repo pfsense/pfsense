@@ -299,6 +299,10 @@ function interfaces_carp_configure() {
 		}
 	}
 	unmute_kernel_msgs();
+	if ($g['booting']) {
+		echo "done.\n";
+		unmute_kernel_msgs();
+	}		
 }
 
 function interfaces_carp_bringup() {

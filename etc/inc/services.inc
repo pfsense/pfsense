@@ -173,7 +173,8 @@ EOD;
 		join(" ", $dhcpdifs));
 
 	if (!$g['booting']) {
-		filter_configure();
+		//filter_configure();
+                print "done.\n";
 	}
 
 	return 0;
@@ -268,8 +269,6 @@ function services_dhcrelay_configure() {
 
 	if (!$g['booting']) {
 		filter_configure();
-	} else {
-		echo "done.\n";
 	}
 
 	return 0;

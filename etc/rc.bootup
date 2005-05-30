@@ -127,10 +127,11 @@
 	print "done.\n";
 
 	/* set up Optional interfaces */
-	print "Configuring OPT interfaces...\n";
+	print "Configuring OPT interfaces...";
 	mute_kernel_msgs();
 	interfaces_optional_configure();
 	unmute_kernel_msgs();
+	print "done.\n";
 	
 	/* setup carp interfaces */
 	interfaces_carp_configure();

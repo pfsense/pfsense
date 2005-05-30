@@ -2,7 +2,7 @@
  * NAME
  *   pkg-utils.inc - Package subsystem
  * DESCRIPTION
- *   This include contains various functions used by the pfSense package system.
+ *   This file contains various functions used by the pfSense package system.
  * HISTORY
  *   $Id$
  ******
@@ -32,39 +32,66 @@
  *
  */
 
-/*     
- *  is_package_installed($packagename): returns 1 if a package is installed, 0 otherwise.
- */ 
+require_once("xmlrpc.inc");
+
+/* Initialize the package subsystem and set interface */
+$valid_pkg_interfaces = array(
+				'web',
+				'console'
+			);
+
+if((!isset($pkg_interface)) or (!in_array($pkg_interface, $valid_pkg_interfaces)))
+	$pkg_interface = "web";
+
+$pkg_config = get_package_info("all");
+
+
+/****f* pkg-utils/is_package_installed
+ * NAME
+ *   is_package_installed - Check whether a package is installed.
+ * INPUTS
+ *   $packagename	- name of the package to check
+ * RESULT
+ *   boolean	- true if the package is installed, false otherwise
+ * NOTES
+ *   This function is deprecated - get_pkg_id() can already check for installation.
+ ******/
 function is_package_installed($packagename) {
-    global $config;
-    if($config['installedpackages']['package'] <> "")
-        foreach ($config['installedpackages']['package'] as $pkg) {                     
-            if($pkg['name'] == $packagename) return 1;                    
-        }
-    return 0;
+	$pkg = get_pkg_id($packagename);
+	if($pkg == -1) return false;
+	return true;
 }
             
-/*     
- * lookup pkg array id#
- */ 
+/****f* pkg-utils/get_pkg_id
+ * NAME
+ *   get_pkg_id - Find a package's numeric ID.
+ * INPUTS
+ *   $pkg_name	- name of the package to check
+ * RESULT
+ *   integer    - -1 if package is not found, >-1 otherwise
+ ******/
 function get_pkg_id($pkg_name) {
     global $config;
     global $pkg_config;
     if(is_array($config['installedpackages']['package'])) {
         $i = 0;
-        foreach ($config['installedpackages']['package'] as $pkg) {
+        foreach($config['installedpackages']['package'] as $pkg) {
             if($pkg['name'] == $pkg_name) return $i;
             $i++;
         }
-        return $i;
     }
     return -1;
 }
 
-/*
- *  get_latest_package_version($pkgname): Get current version of a package. Returns latest package version or false
- *                                        if package isn't defined in the currently used pkg_config.xml.
- */
+/****f* pkg-utils/get_latest_package_version
+ * NAME
+ *   get_latest_package_version - Find a package's current version.
+ * INPUTS
+ *   $pkg_name	- name of the package to check
+ * RESULT
+ *   - string containing version if package is found.
+ *   - (boolean) false if package is not found.
+ ******/
 function get_latest_package_version($pkg_name) {
     global $g;
     fetch_latest_pkg_config();
@@ -77,9 +104,7 @@ function get_latest_package_version($pkg_name) {
     return false;
 }
 
-/*
- * Lookup pkg_id in pkg_config.xml
- */
+/* This function is no longer needed - get_pkg_info() indexes by package, not ID.
 function get_available_pkg_id($pkg_name) {
     global $pkg_config, $g;
     if(!is_array($pkg_config)) {
@@ -95,27 +120,24 @@ function get_available_pkg_id($pkg_name) {
     }
     return;
 }
+*/
 
-/*
- * fetch_latest_pkg_config: download the latest pkg_config.xml to /tmp/ directory
- */
-function fetch_latest_pkg_config() {
-    global $g;
-    global $config;
-    if(!file_exists("{$g['tmp_path']}/pkg_config.xml")) {
-        $pkg_config_location = $g['pkg_config_location'];
-        $pkg_config_base_url = $g['pkg_config_base_url'];
-        if(isset($config['system']['alt_pkgconfig_url']['enabled'])) {
-            $pkg_config_location = $config['system']['alt_pkgconfig_url']['pkgconfig_base_url'] . $config['system']['alt_pkgconfig_url']['pkgconfig_filename'];
-            $pkg_config_base_url = $config['system']['alt_pkgconfig_url']['pkgconfig_base_url'];
-        }
-        mwexec("/usr/bin/fetch -o {$g['tmp_path']}/pkg_config.xml {$pkg_config_location}");
-        if(!file_exists("{$g['tmp_path']}/pkg_config.xml")) {
-            print_info_box_np("Could not download pkg_config.xml from " . $pkg_config_base_url . ". Check your DNS settings.");
-            die;
-        }
-    }    
-    return;
+/****f* pkg-utils/get_pkg_info
+ * NAME
+ *   get_pkg_info - Retrive package information from pfsense.com.
+ * INPUTS
+ *   $pkgs - 'all' to retrive all packages, an array containing package names otherwise
+ *   $info - 'all' to retrive all information, an array containing keys otherwise
+ * RESULT
+ *   $raw_versions - Array containing retrieved information, indexed by package name.
+ ******/
+function get_pkg_info($pkgs = 'all', $info = 'all') {
+        $params = array("pkg" => $pkgs, "info" => $info);
+        $msg = new XML_RPC_Message('pfsense.get_pkgs', array(php_value_to_xmlrpc($params)));
+        $cli = new XML_RPC_Client($versioncheck_path, $versioncheck_base_url);
+        $resp = $cli->send($msg);
+        $raw_versions = $resp->value();
+        return xmlrpc_value_to_php($raw_versions);
 }
 
 /*
@@ -134,22 +156,6 @@ function resync_all_package_configs($show_message = false) {
         $i++;
     }
     if($show_message == true) print ".\n";
-}
-
-/*
- * sweep_package_processes(): Periodically kill a package's unnecessary processes
- *                            that may still be running (a server that does not automatically timeout, for example)
- */
-function sweep_package_processes() {
-    global $config;
-    if(!$config['installedpackages']['package']) return;
-    foreach($config['installedpackages']['package'] as $package) {
-        $pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
-        if($pkg_config['swept_processes'] <> "") {
-            mwexec("/usr/bin/killall " . $pkg_config['swept_processes']);
-            log_error("Killed " . $package['name'] . "'s unnecessary processes.");
-        }
-    }
 }
 
 /*

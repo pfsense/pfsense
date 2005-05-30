@@ -1918,7 +1918,7 @@ EOD;
 		$ipfrules .= "\n# Setup Captive portal policy rules\n";
 		$ipfrules .= "table <captiveportal>\n";
 		$ipfrules .= "block in on {$cp_interface} from any to any label \"block items initially for cp\"\n";
-		$ipfrules .= "pass in on {$cp_interface} proto { tcp udp } from any to {$lanip} port { 8000 53 } keep statelabel \"pass items to cp web serv\"\n";		
+		$ipfrules .= "pass in on {$cp_interface} proto { tcp udp } from any to {$lanip} port { 8000 53 } keep state label \"pass items to cp web serv\"\n";		
 		$ipfrules .= "pass in on {$cp_interface} from <captiveportal> to any keep state label \"allow captive portal authd users\"\n";
 	}
 

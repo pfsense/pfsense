@@ -81,6 +81,8 @@ function filter_configure() {
 		/* pf/altq rules */
 		//$pf_altq_rules = filter_generate_pf_altq_rules();
 	}
+	
+	/* enable pf if we need to, otherwise disable */
 	if( !isset( $config['system']['disablefilter'] ) ) {
 		mwexec("/sbin/pfctl -e");
 	} else {
@@ -157,6 +159,8 @@ function filter_configure() {
 		mwexec("/sbin/kldunload ipfw.ko");
 	}
 
+	/* check for a error while loading the rules file.  if an error has occured
+	   then output the contents of the error to the caller */
 	if($rules_loading <> 0) {
 		$rules_error = exec_command("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
 		$line_error = split("\:", $rules_error);

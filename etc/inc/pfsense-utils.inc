@@ -1131,4 +1131,45 @@ function check_firmware_version($tocheck = "all", $return_php = true) {
 	return $raw_versions;
 }
 
+function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 'http://ftp2.freebsd.org/pub/FreeBSD/ports/i386/packages-5.4-release/Latest') {
+        global $pkgent, $static_status, $static_output, $g, $fd_log;
+        $pkg_extension = strrchr($filename, '.');
+        $static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $pkgname . " ";
+        $fetchto = "/tmp/apkg_" . $pkgname . $pkg_extension;
+        download_file_with_progress_bar($base_url . "/" . $filename, $fetchto);
+//      update_output_window($static_output . "\n\n" . $pkg_progress);
+        exec("/usr/bin/bzcat {$fetchto} | /usr/bin/tar -O -f - -x +CONTENTS", $slaveout);
+        $workingdir = preg_grep("/instmp/", $slaveout);
+        $workingdir = $workingdir[0];
+        $raw_depends_list = array_values(preg_grep("/\@pkgdep/", $slaveout));
+        if($raw_depends_list != "") {
+                if($pkgent['exclude_dependency'] != "")
+                        $raw_depends_list = array_values(preg_grep($pkent['exclude_dependency'], PREG_GREP_INVERT));
+                foreach($raw_depends_list as $adepend) {
+                        $working_depend = explode(" ", $adepend);
+                        //$working_depend = explode("-", $working_depend[1]);
+                        $depend_filename = $working_depend[1] . $pkg_extension;
+                        exec("ls /var/db/pkg", $is_installed);
+                        $pkg_installed = false;
+                        foreach($is_installed as $is_inst) {
+                                if($is_inst == $working_depend[1]) {
+                                        $pkg_installed = true;
+                                        break;
+                                }
+                        }
+//                      $is_installed = array_values(preg_grep("/\b{$working_depend[0]}\b/i", $is_installed));
+                        if($pkg_installed === false) {
+                                pkg_fetch_recursive($working_depend[1], $depend_filename, $dependlevel + 1, $base_url);
+                        } else {
+                                $dependlevel++;
+                                $static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $working_depend[1] . " ";
+                                fwrite($fd_log, $working_depend[1] . "\n");
+                        }
+                }
+        }
+        exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_add -fv {$fetchto} 2>&1", $pkgaddout);
+        fwrite($fd_log, $pkgname . " " . print_r($pkgaddout, true) . "\n");
+        return true;
+}
+
 ?>

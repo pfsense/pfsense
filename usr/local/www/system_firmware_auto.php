@@ -128,7 +128,7 @@ foreach($categories as $index => $key) {
 		update_output_window($static_output);
 		foreach($versions[$key] as $ver) { // Begin system updates.
 			foreach($update_types as $type) if(in_array($type, array_keys($ver))) $url_type = $type;
-			$tofetch = "pfSense-" . ucfirst($url_type) . "-Update-" . $ver['version'] . ".tgz";
+			$tofetch = "pfSense-" . ucfirst($url_type) . "-" . ucfirst($key) . "-Update-" . $ver['version'] . ".tgz";
 			$static_output_bak = $static_output;
 			$static_output .= "\n\t" . $ver['version'] . "-" . $ver['name'] . " ";
 			update_output_window($static_output);
@@ -142,6 +142,7 @@ foreach($categories as $index => $key) {
 					break;
 				}
 			} else {
+				$tofetch = "pfSense-" . ucfirst($url_type) . "-Update-" . $ver['version'] . ".tgz";
 				exec("/etc/rc.firmware pfSenseupgrade " . "/tmp/" . $tofetch);
 				unlink_if_exists("/tmp/" . $tofetch);
 			}

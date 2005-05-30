@@ -41,9 +41,9 @@
 	require_once("config.inc");
 	require_once("functions.inc");
 
-	print "Loading configuration... ";
+	echo "Loading configuration... ";
 	parse_config_bootup();
-	print "done.\n";
+	echo "done.\n";
 
 	$lan_if = $config['interfaces']['lan']['if'];
 	$wan_if = get_real_wan_interface();
@@ -74,12 +74,13 @@
 	}
 
 	/* convert config and clean backups */
-	print "Updating configuration... ";
+	echo "Updating configuration... ";
 	convert_config();
-	print "done.\n";
+	echo "done.\n";
 
-	print "Cleaning backup cache... ";
+	echo "Cleaning backup cache... ";
 	cleanup_backupcache(true);
+	echo "done.\n";
 	
 	/* read in /etc/sysctl.conf and set values if needed */
 	system_setup_sysctl();
@@ -113,25 +114,25 @@
 	interfaces_vlan_configure();
 
 	/* set up LAN interface */
-	print "Configuring LAN interface... ";
+	echo "Configuring LAN interface... ";
 	mute_kernel_msgs();
 	interfaces_lan_configure();
 	unmute_kernel_msgs();
-	print "done.\n";
+	echo "done.\n";
 
 	/* set up WAN interface */
-	print "Configuring WAN interface... ";
+	echo "Configuring WAN interface... ";
 	mute_kernel_msgs();
 	interfaces_wan_configure();
 	unmute_kernel_msgs();
-	print "done.\n";
+	echo "done.\n";
 
 	/* set up Optional interfaces */
-	print "Configuring OPT interfaces...";
+	echo "Configuring OPT interfaces...";
 	mute_kernel_msgs();
 	interfaces_optional_configure();
 	unmute_kernel_msgs();
-	print "done.\n";
+	echo "done.\n";
 	
 	/* setup carp interfaces */
 	interfaces_carp_configure();
@@ -142,8 +143,11 @@
 	filter_pflog_start();
 
 	/* setup altq + pf */
-	print "Configuring firewall...\n";
+	echo "Configuring firewall...";
+	mute_kernel_msgs();
 	filter_configure();
+	unmute_kernel_msgs();
+	echo "done.\n";
 
 	/* bring up carp interfaces */
 	interfaces_carp_bringup();
@@ -197,9 +201,9 @@
 	system_do_shell_commands();
 
 	/* start ftp proxy helpers if they are enabled */
-	print "Starting FTP helpers... ";
+	echo "Starting FTP helpers... ";
 	system_start_ftp_helpers();
-	print "done.\n";
+	echo "done.\n";
 
 	/* start IPsec tunnels */
 	vpn_ipsec_configure();

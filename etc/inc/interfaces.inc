@@ -245,7 +245,7 @@ function interfaces_optional_configure_if($opti) {
 function interfaces_carp_configure() {
 	global $g, $config;
 	if ($g['booting']) {
-		echo "Configuring CARP interfaces... \n";
+		echo "Configuring CARP interfaces...";
 		mute_kernel_msgs();
 	}	
 	unlink_if_exists("/usr/local/etc/rc.d/carp.sh");
@@ -300,8 +300,8 @@ function interfaces_carp_configure() {
 	}
 	unmute_kernel_msgs();
 	if ($g['booting']) {
-		echo "done.\n";
 		unmute_kernel_msgs();
+		echo "done.\n";
 	}		
 }
 

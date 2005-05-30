@@ -34,6 +34,7 @@
 	require_once("globals.inc");
 
 	/* let the other functions know we're booting */
+	$pkg_interface = 'console';
 	$g['booting'] = TRUE;
 	touch("{$g['varrun_path']}/booting");
 

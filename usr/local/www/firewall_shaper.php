@@ -179,7 +179,6 @@ if ($_GET['act'] == "del") {
     <li class="tabact">Rules</li>
     <li class="tabinact"><a href="firewall_shaper_queues.php">Queues</a></li>
     <li class="tabinact"><a href="firewall_shaper_magic.php">Magic shaper wizard</a></li>
-    <li class="tabinact"><a href="wizard.php?xml=setup_wizard.xml">Experimental magic shaper wizard</a></li>
   </ul>
   </td></tr>
   <tr>

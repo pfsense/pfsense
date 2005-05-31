@@ -179,6 +179,8 @@ function interfaces_optional_configure_if($opti) {
 	global $config, $g;
 	global $bridgeconfig;
 	global $bridges_total;
+	
+	if(!is_numeric($bridges_total)) $bridges_total=0;
 
 	$optcfg = $config['interfaces']['opt' . $opti];
 

@@ -3,6 +3,7 @@
 /*
 	filter.inc
 	Copyright (C) 2004 Scott Ullrich
+        Copyright (C) 2005 Bill Marquette
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -76,8 +77,6 @@ function filter_configure() {
 		/* generate altq queues */
 		$altq_queues = filter_generate_altq_queues($altq_ints);
 		/* generate altq rules */
-		// $ipfw_altq_rules = filter_generate_ipfw_altq_rules();
-		/* pf/altq rules */
 		$pf_altq_rules = filter_generate_pf_altq_rules();
 	}
 	
@@ -135,32 +134,6 @@ function filter_configure() {
         		$rules_loading .= mwexec("/sbin/pfctl -a {$queue['name']} -f {$g['tmp_path']}/{$queue['name']}.rules");
 		}
 	}
-
-/* XXX - billm
-	if (isset($config['shaper']['enable'])) {
-		mute_kernel_msgs();
-		mwexec("/sbin/kldload ipfw");
-		unmute_kernel_msgs();
-                
-
-                mwexec("/sbin/sysctl net.inet.ip.fw.one_pass=1");
-
-                mwexec("/sbin/ipfw -f delete set 4");
-                $fd = fopen("{$g['tmp_path']}/ipfw.rules", "w");
-                if (!$fd) {
-                        printf("Cannot open ipfw.rules in filter_configure()\n");
-                        return 1;
-                }
-                fwrite($fd, $ipfw_altq_rules);
-                fclose($fd);
-                mwexec("/sbin/ipfw {$g['tmp_path']}/ipfw.rules");
-		mwexec("/sbin/ipfw enable altq");
-                mwexec("/bin/mv {$g['tmp_path']}/ipfw.rules {$g['tmp_path']}/ipfw.rules_old");
-	} else {
-		mwexec("/sbin/ipfw -f flush");
-		mwexec("/sbin/kldunload ipfw.ko");
-	}
-*/
 
 	/* check for a error while loading the rules file.  if an error has occured
 	   then output the contents of the error to the caller */

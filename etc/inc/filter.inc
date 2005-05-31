@@ -137,18 +137,15 @@ function filter_configure() {
 	}
 
 /* XXX - billm
-	/* load ipfw+altq module */
 	if (isset($config['shaper']['enable'])) {
 		mute_kernel_msgs();
 		mwexec("/sbin/kldload ipfw");
 		unmute_kernel_msgs();
-                /* change one_pass to 1 so ipfw stops checking after
-                   a rule has matched */
+                
+
                 mwexec("/sbin/sysctl net.inet.ip.fw.one_pass=1");
-                /* load shaper rules */
+
                 mwexec("/sbin/ipfw -f delete set 4");
-                /* XXX - seems like ipfw cannot accept rules directly on stdin,
-                   so we have to write them to a temporary file first */
                 $fd = fopen("{$g['tmp_path']}/ipfw.rules", "w");
                 if (!$fd) {
                         printf("Cannot open ipfw.rules in filter_configure()\n");

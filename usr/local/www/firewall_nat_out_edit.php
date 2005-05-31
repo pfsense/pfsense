@@ -84,7 +84,7 @@ if ($_POST) {
 
     do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-    if ($_POST['source'] && !is_ipaddr($_POST['source'])) {
+    if ($_POST['source'] && !is_ipaddr($_POST['source']) && $_POST['source'] <> "any") {
         $input_errors[] = "A valid source must be specified.";
     }
     if ($_POST['source_subnet'] && !is_numericint($_POST['source_subnet'])) {

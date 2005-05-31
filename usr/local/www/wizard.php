@@ -99,6 +99,8 @@ $description    = $pkg['step'][$stepid]['description'];
 
 function update_config_field($field, $updatetext, $unset, $arraynum) {
 	global $config;
+	if($field['type'] == "checkbox" and $updatetext == "on")
+	    $updatetext = TRUE;
 	$field_split = split("->",$field);
 	foreach ($field_split as $f) $field_conv .= "['" . $f . "']";
 	if($field_conv == "") return;
@@ -185,7 +187,7 @@ function FieldValidate(userinput, regexp, message)
 				foreach ($field_split as $f) $field_conv .= "['" . $f . "']";
 					$toeval = "\$value = \$config" . $field_conv . $arraynum . ";";
 					eval($toeval);
-					if ($field['type'] == "checkbox") {
+					if ($field['type'] == "x") {
 						$toeval = "if(isset(\$config" . $field_conv . $arraynum . ")) \$value = \" CHECKED\";";
 						eval($toeval);
 					}

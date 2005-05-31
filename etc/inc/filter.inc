@@ -76,10 +76,9 @@ function filter_configure() {
 		/* generate altq queues */
 		$altq_queues = filter_generate_altq_queues($altq_ints);
 		/* generate altq rules */
-		/* Generate ipfw rules until billm finishes pf/altq */
-		$ipfw_altq_rules = filter_generate_ipfw_altq_rules();
+		// $ipfw_altq_rules = filter_generate_ipfw_altq_rules();
 		/* pf/altq rules */
-		//$pf_altq_rules = filter_generate_pf_altq_rules();
+		$pf_altq_rules = filter_generate_pf_altq_rules();
 	}
 	
 	/* enable pf if we need to, otherwise disable */
@@ -131,7 +130,13 @@ function filter_configure() {
         fclose($fd);
 
         $rules_loading = mwexec("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
+	if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
+		foreach ($config['shaper']['queue'] as $queue) {
+        		$rules_loading .= mwexec("/sbin/pfctl -a {$queue['name']} -f {$g['tmp_path']}/{$queue['name']}.rules");
+		}
+	}
 
+/* XXX - billm
 	/* load ipfw+altq module */
 	if (isset($config['shaper']['enable'])) {
 		mute_kernel_msgs();
@@ -158,6 +163,7 @@ function filter_configure() {
 		mwexec("/sbin/ipfw -f flush");
 		mwexec("/sbin/kldunload ipfw.ko");
 	}
+*/
 
 	/* check for a error while loading the rules file.  if an error has occured
 	   then output the contents of the error to the caller */
@@ -1931,34 +1937,76 @@ EOD;
 
 	$ipfrules .= "\n# User-defined rules follow\n";
 
+	/* This is ugly, but we generate one anchor per queue */
+	if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
+		foreach ($config['shaper']['queue'] as $queue) {
+			/* Add anchor to rules */
+			$ipfrules .= "anchor {$queue['name']} tagged {$queue['name']}\n";
+
+			/* Create rules for anchors */
+                	$fd = fopen("{$g['tmp_path']}/{$queue['name']}.rules", "w");
+			/* aliases don't recurse to anchors */
+			$line = filter_generate_aliases();
+			fwrite($fd, $line);
+			if (isset($config['filter']['rule'])) {	
+				foreach ($config['filter']['rule'] as $rule) {
+					$line = "";
+					if (!isset($rule['disabled'])) {
+						if ($rule['interface'] == "pptp") {
+							for($xxx=0; $xxx < $g['n_pptp_units']; $xxx++) {					
+								/*
+					 			 *   now that PPTP server are user rules, detect
+						 		 *   that user is setting the pptp server rule 
+                                        			 *   and setup for all netgraph interfaces
+                                       				 */
+								$line = generate_user_filter_rule($rule, $xxx);
+								$line .= " queue {$queue['name']} ";
+								if($line <> "") 
+									$ipfrules .= $line . "\n";
+							}
+						} else {
+							$line = generate_user_filter_rule($rule, 0);
+							$line .= " queue {$queue['name']} ";
+							// label
+							if($rule['descr'] <> "" and $line <> "")
+								$line .= " label \"USER_RULE: " . $rule['descr'] . "\" ";
+							else
+								$line .= " label \"USER_RULE\" ";
+						}
+					}
+					$line .= "\n";
+					fwrite($fd, $line);
+				}
+			}
+			fclose($fd);
+		}
+	}
 	if (isset($config['filter']['rule'])) {	
 		foreach ($config['filter']['rule'] as $rule) {
 			$line = "";
-			if ($rule['interface'] == "pptp") {
-				for($xxx=0; $xxx < $g['n_pptp_units']; $xxx++) {					
-					/*
-					 *   now that PPTP server are user rules, detect
-					 *   that user is setting the pptp server rule 
-                                         *   and setup for all netgraph interfaces
-                                         */
-					$line = generate_user_filter_rule($rule, $xxx);
-					if($line <> "") {
-						$ipfrules .= $line . "\n";
+			if (!isset($rule['disabled'])) {
+				if ($rule['interface'] == "pptp") {
+					for($xxx=0; $xxx < $g['n_pptp_units']; $xxx++) {					
+						/*
+			 			 *   now that PPTP server are user rules, detect
+			 			 *   that user is setting the pptp server rule 
+                                      			 *   and setup for all netgraph interfaces
+                                     			 */
+						$line = generate_user_filter_rule($rule, $xxx);
+						if($line <> "") 
+							$ipfrules .= $line . "\n";
 					}
-				}
-			} else {
-				$line = generate_user_filter_rule($rule, 0);
-				if (!isset($rule['disabled'])) {
+				} else {
+					$line = generate_user_filter_rule($rule, 0);
 					// label
-					if($rule['descr'] <> "" and $line <> "") {
+					if($rule['descr'] <> "" and $line <> "")
 						$line .= " label \"USER_RULE: " . $rule['descr'] . "\" ";
-					} else {
+					else
 						$line .= " label \"USER_RULE\" ";
-					}
-					$line .= "\n";
-					$ipfrules .= $line;
 				}
 			}
+			$line .= "\n";
+			$ipfrules .= $line;
 		}
 	}
 	

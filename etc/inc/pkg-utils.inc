@@ -43,9 +43,6 @@ $valid_pkg_interfaces = array(
 if((!isset($pkg_interface)) or (!in_array($pkg_interface, $valid_pkg_interfaces)))
 	$pkg_interface = "web";
 
-$pkg_config = get_package_info("all");
-
-
 /****f* pkg-utils/is_package_installed
  * NAME
  *   is_package_installed - Check whether a package is installed.
@@ -82,45 +79,6 @@ function get_pkg_id($pkg_name) {
     }
     return -1;
 }
-
-/****f* pkg-utils/get_latest_package_version
- * NAME
- *   get_latest_package_version - Find a package's current version.
- * INPUTS
- *   $pkg_name	- name of the package to check
- * RESULT
- *   - string containing version if package is found.
- *   - (boolean) false if package is not found.
- ******/
-function get_latest_package_version($pkg_name) {
-    global $g;
-    fetch_latest_pkg_config();
-    $pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
-    foreach($pkg_config['packages']['package'] as $pkg) {
-        if($pkg['name'] == $pkg_name) {
-            return $pkg['version'];
-        }
-    }
-    return false;
-}
-
-/* This function is no longer needed - get_pkg_info() indexes by package, not ID.
-function get_available_pkg_id($pkg_name) {
-    global $pkg_config, $g;
-    if(!is_array($pkg_config)) {
-        fetch_latest_pkg_config();
-    }
-    $pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
-    $id = 0;
-    foreach($pkg_config['packages']['package'] as $pkg) {
-        if($pkg['name'] == $pkg_name) {
-            return $id;
-        }
-        $id++;
-    }
-    return;
-}
-*/
 
 /****f* pkg-utils/get_pkg_info
  * NAME
@@ -280,7 +238,7 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 }
 
 function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 'http://ftp2.freebsd.org/pub/FreeBSD/ports/i386/packages-5.4-release/Latest') {
-        global $pkgent, $static_status, $static_output, $g, $fd_log;
+        global $pkgent, $static_status, $static_output, $g, $pkg_interface, $fd_log;
         $pkg_extension = strrchr($filename, '.');
         $static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $pkgname . " ";
         $fetchto = "/tmp/apkg_" . $pkgname . $pkg_extension;
@@ -321,7 +279,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 }
 
 function download_file_with_progress_bar($url_file, $destination_file) {
-        global $ch, $fout, $file_size, $downloaded, $counter;
+        global $ch, $fout, $file_size, $downloaded, $counter, $pkg_interface;
         $file_size  = 1;
         $downloaded = 1;
         /* open destination file */
@@ -356,17 +314,20 @@ function read_header($ch, $string) {
 }
 
 function read_body($ch, $string) {
-        global $fout, $file_size, $downloaded, $counter, $sendto, $static_output, $lastseen;
+        global $fout, $file_size, $downloaded, $counter, $sendto, $static_output, $lastseen, $pkg_interface;
         $length = strlen($string);
         $downloaded += intval($length);
         $downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
         $downloadProgress = 100 - $downloadProgress;
-        /*
-           lastseen is used to prevent from spamming firefox with hundreds of
-           unnecessary javascript update messages which sends the clients
-           firefox utilization to 100%
-        */
-        if($lastseen <> $downloadProgress and $downloadProgress < 101) {
+	$progbar = 'progress_' . $pkg_interface;
+	$progbar();
+	fwrite($fout, $string);
+	return $length);
+}
+
+function progress_web($downloadProgress) {
+	global $lastseen, $sendto;
+	if($lastseen <> $downloadProgress and $downloadProgress < 101) {
                 if($sendto == "status") {
                         $tostatus = $static_status . $downloadProgress . "%";
                         update_status($tostatus);
@@ -377,6 +338,4 @@ function read_body($ch, $string) {
                 update_progress_bar($downloadProgress);
                 $lastseen = $downloadProgress;
         }
-        fwrite($fout, $string);
-        return $length;
 }

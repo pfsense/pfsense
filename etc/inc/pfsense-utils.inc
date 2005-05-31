@@ -369,9 +369,21 @@ function filter_translate_type_to_real_interface($interface) {
  * get_carp_interface_status($carpinterface): returns the status of a carp ip
  */
 function get_carp_interface_status($carpinterface) {
-    $result = does_interface_exist($carpinterface);
-    if($result <> true) return false;
-    $status = exec_command("/sbin/ifconfig {$carpinterface} | /usr/bin/grep \"carp:\" | /usr/bin/cut -d\" \" -f2");
+    /* basically cache the contents of ifconfig statement
+       to speed up this routine */
+    global $carp_query;
+    if($carp_query == "")
+	$carp_query = split("\n", `/sbin/ifconfig | /usr/bin/grep carp`);
+    $found_interface = 0;
+    foreach($carp_query as $int) {
+	if($found_interface == 1) {
+	    if(stristr($int, "MASTER") == true) return "MASTER";
+	    if(stristr($int, "BACKUP") == true) return "BACKUP";
+	    if(stristr($int, "INIT") == true) return "INIT";
+	    return false;
+	}
+	if(stristr($int, $carpinterface) == true) $found_interface=1;
+    }
     return $status;
 }
 

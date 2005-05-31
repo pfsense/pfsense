@@ -963,7 +963,8 @@ function system_start_ftp_helpers() {
 	global $config, $g;
 	if($config['system']['disableftpproxy'] <> "") return;
 	$wanif = get_real_wan_interface();
-	mwexec("/usr/local/sbin/pftpx -g 8021");
+	$ip = find_interface_ip($waninf);
+	mwexec("/usr/local/sbin/pftpx -g 8021 -i {$ip}");
 }
 
 function cleanup_backupcache($revisions = "all") {

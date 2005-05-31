@@ -401,13 +401,19 @@ function get_pfsync_interface_status($pfsyncinterface) {
  * find_carp_interface($ip): return the carp interface where an ip is defined
  */
 function find_carp_interface($ip) {
-    $num_carp_ints = find_number_of_created_carp_interfaces();
-    for($x=0; $x<$num_carp_ints; $x++) {
-        $result = does_interface_exist("carp{$x}");
-	if($result <> true) return;
-	$ifconfig = exec_command("/sbin/ifconfig carp{$x}");
-	if(stristr($ifconfig,$ip))
-	    return "carp" . $x;
+    global $find_carp_ifconfig;
+    if($find_carp_ifconfig == "") {
+	$find_carp_ifconfig = array();
+	$num_carp_ints = find_number_of_created_carp_interfaces();
+	for($x=0; $x<$num_carp_ints; $x++) {
+	    $find_carp_ifconfig[$x] = exec_command("/sbin/ifconfig carp{$x}");
+	}
+    }
+    $carps = 0;
+    foreach($find_carp_ifconfig as $fci) {
+	if(stristr($fci, $ip) == true)
+	    return "carp{$carps}";
+	$carps++;
     }
 }
 

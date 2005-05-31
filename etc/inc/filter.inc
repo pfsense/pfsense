@@ -1272,6 +1272,10 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			return;
 		}
 		
+		/* do not process this rule if the attached interface is disabled */
+		if(!$config['interfaces'][$rule['interface']]['enable'])
+			return;
+		
 		$pptpdcfg = $config['pptpd'];
 		
 		if ($pptpdcfg['mode'] == "server") {

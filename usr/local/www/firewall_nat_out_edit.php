@@ -113,8 +113,14 @@ if ($_POST) {
         $input_errors[] = "A valid target IP address must be specified.";
     }
 
+    /* if user has selected any as source, set it here */
+    if($_POST['source_type'] == "any") {
+	$osn = "any";
+    } else {
+	$osn = gen_subnet($_POST['source'], $_POST['source_subnet']) . "/" . $_POST['source_subnet'];
+    }
+    
     /* check for existing entries */
-    $osn = gen_subnet($_POST['source'], $_POST['source_subnet']) . "/" . $_POST['source_subnet'];
     if ($_POST['destination_type'] == "any")
         $ext = "any";
     else
@@ -209,6 +215,23 @@ function typesel_change() {
             break;
     }
 }
+function sourcesel_change() {
+    switch (document.iform.source_type.selectedIndex) {
+        case 1: // network
+            document.iform.source.disabled = 0;
+            document.iform.source.disabled = 0;
+	    document.iform.sourceport.disabled = 0;	    
+            break;
+        default:
+	    document.iform.source.value = "";
+	    document.iform.sourceport.value = "";
+	    document.iform.sourceport.disabled = 1;    
+            document.iform.source.disabled = 1;
+            document.iform.source_subnet.value = "24";
+            document.iform.source_subnet.disabled = 1;
+            break;
+    }
+}
 //-->
 </script>
 </head>
@@ -242,7 +265,14 @@ function typesel_change() {
                   <td width="78%" class="vtable">
                     <table border="0" cellspacing="0" cellpadding="0">
                       <tr>
-                        <td>Address:&nbsp;&nbsp;</td
+		        <td>Type:&nbsp;&nbsp;</td>
+			<td>
+			    <select name="source_type" class="formfld" onChange="sourcesel_change()">
+                              <option value="any" <?php if ($pconfig['source'] == "any") echo "selected"; ?>>any</option>
+                              <option value="network" <?php if ($pconfig['source'] != "any") echo "selected"; ?>>Network</option>
+                            </select>			
+			</td></tr>
+                        <td>Address:&nbsp;&nbsp;</td>
                         <td><input name="source" type="text" class="formfld" id="source" size="20" value="<?=htmlspecialchars($pconfig['source']);?>">/<select name="source_subnet" class="formfld" id="source_subnet">
                           <?php for ($i = 32; $i >= 0; $i--): ?>
                           <option value="<?=$i;?>" <?php if ($i == $pconfig['source_subnet']) echo "selected"; ?>>

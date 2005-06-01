@@ -225,7 +225,7 @@ function interfaces_optional_configure_if($opti) {
                         /* use open/netBSD style bridge */
 			mwexec("/sbin/ifconfig bridge{$bridges_total} create");
                         mwexec("/sbin/brconfig bridge{$bridges_total} add {$optcfg['if']} add {$config['interfaces'][$optcfg['bridge']]['if']} up");
-			
+			mwexec("/sbin/brconfig bridge{$bridges_total} stp {$optcfg['if']} add {$config['interfaces'][$optcfg['bridge']]['if']}");
 			/* lets keep track of the amount of bridges initialized */
 			$bridges_total++;
 		} else {

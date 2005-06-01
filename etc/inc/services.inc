@@ -416,9 +416,28 @@ function services_snmpd_configure() {
 		}
 
 		$snmpdconf = <<<EOD
-syslocation "{$config['snmpd']['syslocation']}"
-syscontact "{$config['snmpd']['syscontact']}"
-rocommunity "{$config['snmpd']['rocommunity']}"
+location := "{$config['snmpd']['syslocation']}"
+contact := "{$config['snmpd']['syscontact']}"
+read := "{$config['snmpd']['rocommunity']}"
+system := 1     # pfSense
+%snmpd
+begemotSnmpdDebugDumpPdus       = 2
+begemotSnmpdDebugSyslogPri      = 7
+begemotSnmpdCommunityString.0.1 = $(read)
+begemotSnmpdCommunityDisable    = 1
+begemotSnmpdPortStatus.0.0.0.0.161 = 1
+begemotSnmpdLocalPortStatus."/var/run/snmpd.sock" = 1
+begemotSnmpdLocalPortType."/var/run/snmpd.sock" = 4
+sysContact      = $(contact)
+sysLocation     = $(location)
+sysObjectId     = 1.3.6.1.4.1.12325.1.1.2.1.$(system)
+snmpEnableAuthenTraps = 2
+begemotSnmpdModulePath."mibII"  = "/usr/lib/snmp_mibII.so"
+begemotSnmpdModulePath."netgraph" = "/usr/lib/snmp_netgraph.so"
+%netgraph
+begemotNgControlNodeName = "snmpd"
+begemotSnmpdModulePath."pf"     = "/usr/lib/snmp_pf.so"
+# config must end with blank line
 
 EOD;
 

@@ -322,8 +322,18 @@ function read_body($ch, $string) {
 	$progbar = 'progress_' . $pkg_interface;
 	$progbar();
 	fwrite($fout, $string);
-	return $length);
+	return $length;
 }
+
+/*
+function progress_console($downloadProgress) {
+	global $lastseen;
+	$barwidth = 50;
+	$mod = 100 / $barwidth;
+	$char = '*';
+	if(($lastseen <> $downloadProgress) and ($downloadProgress < 101) and (($downloadProgress % $mod) == 0)) {
+		print $char;
+*/
 
 function progress_web($downloadProgress) {
 	global $lastseen, $sendto;

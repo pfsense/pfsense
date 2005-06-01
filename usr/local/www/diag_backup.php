@@ -39,6 +39,7 @@ function spit_out_select_items($area) {
 	$select = <<<EOD
 	<select name="{$area}">
 		<option VALUE="">ALL</option>
+		<option VALUE="aliases">Aliases</option>
 		<option VALUE="shaper">Traffic Shaper</option>
 		<option VALUE="filter">Firewall Rules</option>
 		<option VALUE="nat">NAT</option>

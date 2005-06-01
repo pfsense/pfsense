@@ -425,9 +425,11 @@ EOD;
 		fwrite($fd, $snmpdconf);
 		fclose($fd);
 
-		/* run snmpd */
-		mwexec("/usr/local/sbin/snmpd -c {$g['varetc_path']}/snmpd.conf" .
-			" -P {$g['varrun_path']}/snmpd.pid");
+		/* run bsnmpd */
+		mwexec("/usr/sbin/bsnmpd -c {$g['varetc_path']}/snmpd.conf" .
+			" -p {$g['varrun_path']}/snmpd.pid");		  
+//		mwexec("/usr/local/sbin/snmpd -c {$g['varetc_path']}/snmpd.conf" .
+//			" -P {$g['varrun_path']}/snmpd.pid");
 
 		if ($g['booting'])
 			echo "done.\n";

@@ -284,12 +284,20 @@ function filter_setup_altq_interfaces() {
 			$rule_interface = "";
 			$q = $queue;
 			$rule_interface = filter_is_queue_being_used_on_interface($queue['name'], $workting_with_interface);
-			if ($rule_interface == $workting_with_interface) {
-				$status_is_subqueue = is_subqueue($queue['name']);
-				if($queue['attachtoqueue'] <> "") $status_is_attached = 0;
-				$queue_names .= " ";
-				$queue_names .= $queue['name'];
+			if ($rule_interface == $workting_with_interface and !$seen[$q['name']]) {
+				if($q['attachtoqueue'] == "") {
+					$queue_names .= " ";
+					$queue_names .= $q['name'];
+					$seen[$q['name']] = 1;
+				}
+			} else {
+				if($q['parentqueue'] <> "" and !$seen[$q['name']]) {
+					$queue_names .= " ";
+					$queue_names .= $q['name'];
+					$seen[$q['name']] = 1;
+				}
 			}
+				
 		}
 
 		if($queue_names <> ""){

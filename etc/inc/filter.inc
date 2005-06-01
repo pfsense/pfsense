@@ -639,12 +639,12 @@ function filter_generate_pf_altq_rules() {
                                 }
                         }
 
+                        if ($rule['iptos'])
+                                $line .= "tos {$rule['iptos']} ";
+
 /*
                         if ($rule['iplen'])
                                 $line .= "iplen {$rule['iplen']} ";
-
-                        if ($rule['iptos'])
-                                $line .= "iptos {$rule['iptos']} ";
 
                         if ($rule['tcpflags'])
                                 $line .= "tcpflags {$rule['tcpflags']} ";

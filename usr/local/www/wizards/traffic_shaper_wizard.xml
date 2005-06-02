@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pfsensewizard>
+<copyright>
+/* $Id$ */
+/*
+	traffic_shaper_wizard.xml
+        part of pfSense (http://www.pfsense.org/)
+
+        Copyright (C) 2005 Bill Marquette - bill.marquette@gmail.com.
+        All rights reserved.
+
+        Redistribution and use in source and binary forms, with or without
+        modification, are permitted provided that the following conditions are met:
+
+        1. Redistributions of source code must retain the above copyright notice,
+           this list of conditions and the following disclaimer.
+
+        2. Redistributions in binary form must reproduce the above copyright
+           notice, this list of conditions and the following disclaimer in the
+           documentation and/or other materials provided with the distribution.
+
+        THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+        AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+        AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+        OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+        SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+        INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+        CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+        ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+        POSSIBILITY OF SUCH DAMAGE.
+*/
+</copyright>
+<totalsteps>6</totalsteps>
+<step>
+	<id>1</id>
+	<title>pfSense Traffic Shaper Wizard</title>
+	<disableheader>true</disableheader>
+	<description>This wizard will guide you through setting up the pfSense traffic shaper.</description>
+	<fields>
+		<field>
+			<name>Next</name>
+			<type>submit</type>
+			<warning>Going any further will wipe your existing shaper config!</warning>
+		</field>
+	</fields>
+	<stepsubmitphpaction>
+		/* wipe previous */
+/* XXX - billm - disabling for preview
+		unset($config['shaper']['queue']);
+		unset($config['shaper']['rule']);
+		$config['shaper']['enable'] = FALSE;
+*/
+	</stepsubmitphpaction>
+</step>
+<step>
+	<id>2</id>
+	<title>pfSense Traffic Shaper Wizard</title>
+	<description>WAN connection speed</description>
+        <javascriptafterformdisplay>
+        </javascriptafterformdisplay>
+	<fields>
+                <field>
+                        <name>Download</name>
+                        <description>The download speed of your WAN link in KBytes/second.</description>
+                        <type>input</type>
+			<validate>^[0-9]*$</validate>
+			<message>Download speed must be numerical</message>
+                </field>
+                <field>
+                        <name>Upload</name>
+                        <description>The upload speed of your WAN link in KBytes/second.</description>
+                        <type>input</type>
+			<validate>^[0-9]*$</validate>
+			<message>Upload speed must be numerical</message>
+                </field>
+		<field>
+			<name>Next</name>
+			<type>submit</type>
+		</field>
+	</fields>
+	<stepsubmitphpaction>
+/* XXX create top level queues here */
+/* XXX create default rules here */
+	</stepsubmitphpaction>
+</step>
+<step>
+        <id>3</id>
+        <title>pfSense Traffic Shaper Wizard</title>
+        <description>Voice over IP</description>
+        <fields>
+                <field>
+                        <name>Enable</name>
+                        <type>checkbox</type>
+			<typehint>Prioritize Voice over IP traffic</typehint>
+                        <description>This will raise the priority of VOIP traffic above all other traffic.</description>
+                </field>
+                <field>
+                        <name>Provider</name>
+                        <type>select</type>
+			<description>Choose Generic if your provider isn't listed.</description>
+                        <options>
+                                <option>
+                                        <name>Generic</name>
+                                        <value>Generic</value>
+                                </option>
+                                <option>
+                                        <name>VoicePulse</name>
+                                        <value>VoicePulse</value>
+                                </option>
+                                <option>
+                                        <name>Vonage</name>
+                                        <value>Vonage</value>
+                                </option>
+			</options>
+		</field>
+		<field>
+                        <name>Bandwidth</name>
+                        <type>select</type>
+			<typehint>Bandwidth guarantee for VOIP phone</typehint>
+			<options>
+				<option>
+					<name>128KBytes/sec</name>
+					<value>128</value>
+				</option>
+				<option>
+					<name>96KBytes/sec</name>
+					<value>96</value>
+				</option>
+				<option>
+					<name>64KBytes/sec</name>
+					<value>64</value>
+				</option>
+				<option>
+					<name>32KBytes/sec</name>
+					<value>32</value>
+				</option>
+			</options>
+		</field>
+                <field>
+                        <name>Next</name>
+                        <type>submit</type>
+                </field>
+        </fields>
+	<stepsubmitphpaction>
+/* XXX create VOIP queues here */
+/* XXX create VOIP rules here */
+	</stepsubmitphpaction>
+</step>
+<step>
+        <id>4</id>
+        <title>pfSense Traffic Shaper Wizard</title>
+        <description>Peer to Peer networking</description>
+	<disableallfieldsbydefault>true</disableallfieldsbydefault>
+        <fields>
+	
+                <field>
+			<donotdisable>true</donotdisable>
+                        <name>Enable</name>
+                        <type>checkbox</type>
+                        <typehint>Prioritize Peer-to-Peer traffic</typehint>
+                        <description>This will lower the priority of P2P traffic below all other traffic.</description>
+			<enablefields>edonkey,cutemx,imest,songspy,hotlineconnect,gnutella,dcc,napster,aimster,buddyshare,scour,opennap,hotcomm,grouper,dc++,winmx</enablefields>
+                </field>
+                <field>
+                        <name>Next</name>
+                        <type>submit</type>
+                </field>
+                <field>
+                        <name>Enable/Disable specific P2P protocols</name>
+                        <type>listtopic</type>
+                </field>
+                <field>
+                        <name>eDonkey</name>
+                        <type>checkbox</type>
+			<typehint>eDonkey and other P2P using the eDonkey protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>CuteMX</name>
+                        <type>checkbox</type>
+			<typehint>CuteMX and other P2P using the CuteMX protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>iMest</name>
+                        <type>checkbox</type>
+			<typehint>iMest and other P2P using the iMest protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>SongSpy</name>
+                        <type>checkbox</type>
+			<typehint>SongSpy and other P2P using the SongSpy protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>HotlineConnect</name>
+                        <type>checkbox</type>
+			<typehint>HotlineConnect and other P2P using the HotlineConnect protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>Gnutella</name>
+                        <type>checkbox</type>
+			<typehint>Gnutella and other P2P using the Gnutella protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>DCC</name>
+                        <type>checkbox</type>
+			<typehint>irc DCC file transfers</typehint>
+                </field>
+                <field>
+                        <name>Napster</name>
+                        <type>checkbox</type>
+			<typehint>Napster and other P2P using the Napster protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>Aimster</name>
+                        <type>checkbox</type>
+			<typehint>Aimster and other P2P using the Aimster protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>BuddyShare</name>
+                        <type>checkbox</type>
+			<typehint>BuddyShare and other P2P using the BuddyShare protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>Scour</name>
+                        <type>checkbox</type>
+			<typehint>Scour and other P2P using the Scour protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>OpenNap</name>
+                        <type>checkbox</type>
+			<typehint>OpenNap and other P2P using the OpenNap protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>hotComm</name>
+                        <type>checkbox</type>
+			<typehint>hotComm and other P2P using the hotComm protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>grouper</name>
+                        <type>checkbox</type>
+			<typehint>grouper and other P2P using the grouper protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>DC++</name>
+                        <type>checkbox</type>
+			<typehint>DC++ and other P2P using the DC++ protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>WinMX</name>
+                        <type>checkbox</type>
+			<typehint>WinMX and other P2P using the WinMX protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>Next</name>
+                        <type>submit</type>
+                </field>
+        </fields>
+	<stepsubmitphpaction>
+/* XXX create P2P queues here */
+/* XXX create P2P rules here */
+	</stepsubmitphpaction>
+</step>
+<step>
+        <id>5</id>
+        <title>pfSense Traffic Shaper Wizard</title>
+        <description>Network Games</description>
+        <fields>
+                <field>
+                        <name>Enable</name>
+                        <type>checkbox</type>
+                        <typehint>Prioritize network gaming traffic</typehint>
+                        <description>This will raise the priority of gaming traffic to higher than most traffic.</description>
+                </field>
+                <field>
+                        <name>Next</name>
+                        <type>submit</type>
+                </field>
+        </fields>
+	<stepsubmitphpaction>
+/* XXX create gaming queues here */
+/* XXX create gaming rules here */
+	</stepsubmitphpaction>
+</step>
+<step>
+        <id>6</id>
+        <title>pfSense Traffic Shaper Wizard</title>
+        <description>Summary</description>
+	<fields>
+                <field>
+                        <name>Finish</name>
+                        <type>submit</type>
+                </field>
+	</fields>
+	<stepsubmitphpaction>
+/* XXX enable shaper */
+/* XXX reload filter rules */
+	</stepsubmitphpaction>
+</step>
+
+</pfsensewizard>

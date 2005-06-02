@@ -77,7 +77,7 @@ clog -i -s 32768 /var/log/vpn.log
 clog -i -s 32768 /var/log/portalauth.log
 chmod 0600 /var/log/system.log /var/log/filter.log /var/log/dhcpd.log /var/log/vpn.log /var/log/portalauth.log
 
-adjkerntz -i
+/sbin/adjkerntz -i
 
 DEVFS=`mount | grep devfs | wc -l | cut -d" " -f8`
 if [ "$DEVFS" = "0" ]; then

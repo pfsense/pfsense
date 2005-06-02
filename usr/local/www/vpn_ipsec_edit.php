@@ -161,6 +161,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$ipsecent['disabled'] = $_POST['disabled'] ? true : false;
+		$ipsecent['creategif'] = $_POST['creategif'] ? true : false;
 		$ipsecent['auto'] = $_POST['auto'] ? true : false;
 		$ipsecent['interface'] = $pconfig['interface'];
 		pconfig_to_address($ipsecent['local-subnet'], $_POST['localnet'], $_POST['localnetmask']);

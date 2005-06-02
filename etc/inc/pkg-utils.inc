@@ -242,9 +242,17 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
         $pkg_extension = strrchr($filename, '.');
         $static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $pkgname . " ";
         $fetchto = "/tmp/apkg_" . $pkgname . $pkg_extension;
-        download_file_with_progress_bar($base_url . "/" . $filename, $fetchto);
+	switch($pkg_interface) {
+		default:
+		case "web":
+			download_file_with_progress_bar($base_url . "/" . $filename, $fetchto);
+			break;
+		case "console":
+			exec("/usr/bin/fetch -o {$fetchto} {$baseurl}/{$filename}");
+			break;
+	}
 //      update_output_window($static_output . "\n\n" . $pkg_progress);
-        exec("/usr/bin/bzcat {$fetchto} | /usr/bin/tar -O -f - -x +CONTENTS", $slaveout);
+        exec("/usr/bin/tar -O -f {$fetchto} -x +CONTENTS", $slaveout);
         $workingdir = preg_grep("/instmp/", $slaveout);
         $workingdir = $workingdir[0];
         $raw_depends_list = array_values(preg_grep("/\@pkgdep/", $slaveout));
@@ -269,12 +277,12 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
                         } else {
                                 $dependlevel++;
                                 $static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $working_depend[1] . " ";
-                                fwrite($fd_log, $working_depend[1] . "\n");
+                                @fwrite($fd_log, $working_depend[1] . "\n");
                         }
                 }
         }
         exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_add -fv {$fetchto} 2>&1", $pkgaddout);
-        fwrite($fd_log, $pkgname . " " . print_r($pkgaddout, true) . "\n");
+        @fwrite($fd_log, $pkgname . " " . print_r($pkgaddout, true) . "\n");
         return true;
 }
 
@@ -313,30 +321,41 @@ function read_header($ch, $string) {
         return $length;
 }
 
+function pkg_update_output($string) {
+	global $pkg_interface;
+	switch($pkg_interface) {
+	default:
+	case "web":
+		$toput = ereg_replace("\n", "\\n", $string);
+		echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"" . $toput . "\";</script>";
+		break;
+	case "console":
+		print $string;
+		break;
+	}
+	return;
+}
+
+function pkg_update_status($string) {
+	global $pkg_interface;
+	switch($pkg_interface) {
+	default:
+	case "web":
+		echo "\n<script language=\"JavaScript\">document.forms[0].status.value=\"" . $string . "\";</script>";
+		break;
+	case "console":
+		print $string;
+		break;
+	}
+	return;
+}
+
 function read_body($ch, $string) {
         global $fout, $file_size, $downloaded, $counter, $sendto, $static_output, $lastseen, $pkg_interface;
         $length = strlen($string);
         $downloaded += intval($length);
         $downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
         $downloadProgress = 100 - $downloadProgress;
-	$progbar = 'progress_' . $pkg_interface;
-	$progbar();
-	fwrite($fout, $string);
-	return $length;
-}
-
-/*
-function progress_console($downloadProgress) {
-	global $lastseen;
-	$barwidth = 50;
-	$mod = 100 / $barwidth;
-	$char = '*';
-	if(($lastseen <> $downloadProgress) and ($downloadProgress < 101) and (($downloadProgress % $mod) == 0)) {
-		print $char;
-*/
-
-function progress_web($downloadProgress) {
-	global $lastseen, $sendto;
 	if($lastseen <> $downloadProgress and $downloadProgress < 101) {
                 if($sendto == "status") {
                         $tostatus = $static_status . $downloadProgress . "%";
@@ -348,4 +367,6 @@ function progress_web($downloadProgress) {
                 update_progress_bar($downloadProgress);
                 $lastseen = $downloadProgress;
         }
+	fwrite($fout, $string);
+	return $length;
 }

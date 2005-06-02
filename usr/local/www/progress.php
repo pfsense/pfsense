@@ -50,36 +50,37 @@ if (!$X) {
 
 <TITLE>Uploading Files... Please wait ...</TITLE>
 
-<style type='text/css'> td {font-size: 10pt } td.uplmtr {font-size:6pt; height:12px}</style>
+<style type='text/css'> td {font-size: 10pt }</style>
 
 </HEAD>
 <BODY BGCOLOR="#FFFFFF">
 
-<table height="100%" width="100%" cellPadding="4" cellSpacing="4" style="border:1px solid #000066;">
+<table height="100%" width="100%" cellPadding="4" cellSpacing="4" style="border:1px solid #990000;">
 <tr><td>
 
    <font face="arial"><b><center>Uploading files...</b></center>
 
    <br>
 
-   <table WIDTH="100%" cellPadding="1" cellSpacing="2" style='border:1px dashed #000066; BORDER-BOTTOM: 1px inset; BORDER-LEFT: 1px inset; BORDER-RIGHT: 1px inset; BORDER-TOP: 1px inset'> <tr><td>
-     <table border=0 WIDTH="100%" COLS="34"><tr>
+   <table width="100%" height="15" colspacing="0" cellpadding="0" cellspacing="0" border="0" align="top" nowrap>
+	<td width="5" height="15" background="bar_left.gif" align="top"></td>
+	<td>
+		<table WIDTH="100%" height="15" colspacing="0" cellpadding="0" cellspacing="0" border="0" align="top" nowrap>
+			<td background="bar_gray.gif"><?echo("<img src='bar_blue.gif' height='15' WIDTH='$meter%'>");?></td>
+		</table>
 
-     <?
+	</td>
+	<td width="5" height="15" background="bar_right.gif" align="top"></td>
+   </table>
 
-	for ($i=0; $i<100; $i+=3) {
-	   $color = ($i<$meter) ? " bgcolor='#990000' " : '';
-	   $width = ($i+3<100)   ? "3" : 100-$i;
-	   echo("<td $color class='uplmtr' WIDTH='$width%'>&nbsp;</td>\n");
-	}
-     ?>
 
-   </tr></table>
-   </td></tr></table>
+
+
+
 
    <br>
 
-   <TABLE WIDTH=100%>
+   <TABLE WIDTH="100%">
    <tr>
    <td align="right"><font face="arial"><b>Time Remaining:</td><td><font face="arial"><?=$eta?></td>
    <td align="right"><font face="arial"><b>Speed:</td><td><font face="arial"><font face="arial"><?=$speed?>KB/sec</td>
@@ -92,6 +93,7 @@ if (!$X) {
 
    <tr>
    <td align="right"><font face="arial"><b>Completed:</td><td><font face="arial"><?=$meter?>%</td>
+   <td align="right"><font face="arial"><b></td><td><font face="arial"></td>
    </tr>
 
 </td></tr>

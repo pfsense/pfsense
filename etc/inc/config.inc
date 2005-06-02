@@ -998,7 +998,6 @@ function cleanup_backupcache($revisions = 30) {
 		}
 		foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description']);	
 		if(is_int($revisions) and (count($tocache) > $revisions)) {
-			print "trimming";
 			$toslice = array_slice(array_keys($tocache), 0, $revisions);
 			foreach($toslice as $sliced) $newcache[$sliced] = $tocache[$sliced];
 			foreach($tocache as $version => $versioninfo) {

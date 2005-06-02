@@ -82,7 +82,7 @@ $versions = check_firmware_version();
                             ?>
 				
                             <tr valign="top">
-                                <td class="listlr" nowrap><img src="<?=$img;?>" width="11" height="11" align="absmiddle"></td>
+                                <td class="listlr" nowrap align="middle"><img src="<?=$img;?>" width="11" height="11" align="absmiddle"></td>
 				<td class="listlr"><?= ucfirst($key) ?></td>
                                 <td class="listlr"><?= $currentver ?></td>
 			<?php

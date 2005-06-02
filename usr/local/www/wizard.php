@@ -99,8 +99,6 @@ $description    = $pkg['step'][$stepid]['description'];
 
 function update_config_field($field, $updatetext, $unset, $arraynum) {
 	global $config;
-	if($field['type'] == "checkbox" and $updatetext == "on")
-	    $updatetext = TRUE;
 	$field_split = split("->",$field);
 	foreach ($field_split as $f) $field_conv .= "['" . $f . "']";
 	if($field_conv == "") return;
@@ -132,21 +130,54 @@ if($pkg['step'][$stepid]['stepbeforeformdisplay'] <> "") {
 <title><?=gentitle_pkg($title);?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="gui.css" rel="stylesheet" type="text/css">
-
-<script Language="JavaScript">
-<!--
-function FieldValidate(userinput, regexp, message)
-{
-        if(!userinput.match(regexp))
-                alert(message);
-}
-//-->
-</script>
-
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<form action="wizard.php" method="post">
+<?php if($pkg['step'][$stepid]['fields']['field'] <> "") { ?>
+<script language="JavaScript">
+<!--
+function enablechange() {
+<?php
+        foreach($pkg['step'][$stepid]['fields']['field'] as $field) {
+                if(isset($field['enablefields']) or isset($field['checkenablefields'])) {
+                        print "\t" . 'if (document.iform.' . strtolower($field['name']) . '.checked == false) {' . "\n";
+                        if(isset($field['enablefields'])) {
+                                $enablefields = explode(',', $field['enablefields']);
+                                foreach($enablefields as $enablefield) {
+                                        $enablefield = strtolower($enablefield);
+                                        print "\t\t" . 'document.iform.' . $enablefield . '.disabled = 1;' . "\n";
+                                }
+                        }
+                        if(isset($field['checkenablefields'])) {
+                                $checkenablefields = explode(',', $field['checkenablefields']);
+                                foreach($checkenablefields as $checkenablefield) {
+                                        $checkenablefield = strtolower($checkenablefield);
+                                        print "\t\t" . 'document.iform.' . $checkenablefield . '.checked = 0;' . "\n";
+                                }
+                        }
+                        print "\t" . '} else {' . "\n";
+                        if(isset($field['enablefields'])) {
+                                foreach($enablefields as $enablefield) {
+                                        $enablefield = strtolower($enablefield);
+                                        print "\t\t" . 'document.iform.' . $enablefield . '.disabled = 0;' . "\n";
+                                }
+                        }
+                        if(isset($field['checkenablefields'])) {
+                                foreach($checkenablefields as $checkenablefield) {
+                                        $checkenablefield = strtolower($checkenablefield);
+                                        print "\t\t" . 'document.iform.' . $checkenablefield . '.checked = 1;' . "\n";
+                                }
+                        }   
+                        print "\t" . '}' . "\n";
+                }
+        }
+?>
+}
+//-->
+</script>
+<?php } ?>
+
+<form action="wizard.php" method="post" name="iform" id="iform">
 <input type="hidden" name="xml" value="<?= $xml ?>">
 <input type="hidden" name="stepid" value="<?= $stepid ?>">
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -187,7 +218,7 @@ function FieldValidate(userinput, regexp, message)
 				foreach ($field_split as $f) $field_conv .= "['" . $f . "']";
 					$toeval = "\$value = \$config" . $field_conv . $arraynum . ";";
 					eval($toeval);
-					if ($field['type'] == "x") {
+					if ($field['type'] == "checkbox") {
 						$toeval = "if(isset(\$config" . $field_conv . $arraynum . ")) \$value = \" CHECKED\";";
 						eval($toeval);
 					}
@@ -299,7 +330,9 @@ function FieldValidate(userinput, regexp, message)
 			}
 			$checked = "";
 			if($value <> "") $checked = " CHECKED";
-			echo "<td class=\"vtable\"><input type='checkbox' id='" . $name . "' name='" . $name . "' " . $checked . ">\n";
+			echo "<td class=\"vtable\"><input type='checkbox' id='" . $name . "' name='" . $name . "' " . $checked;
+			if(isset($field['enablefields']) or isset($field['checkenablefields'])) echo " onClick=\"enablechange()\"";
+			echo ">\n";
 		    }
 
 		    if($field['typehint'] <> "") {

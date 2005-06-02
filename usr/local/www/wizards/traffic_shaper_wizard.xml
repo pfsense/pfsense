@@ -160,7 +160,7 @@
                         <type>checkbox</type>
                         <typehint>Prioritize Peer-to-Peer traffic</typehint>
                         <description>This will lower the priority of P2P traffic below all other traffic.</description>
-			<enablefields>edonkey,cutemx,imest,songspy,hotlineconnect,gnutella,dcc,napster,aimster,buddyshare,scour,opennap,hotcomm,grouper,dc++,winmx</enablefields>
+			<enablefields>edonkey,cutemx,imest,songspy,hotlineconnect,gnutella,dcc,napster,aimster,buddyshare,scour,opennap,hotcomm,grouper,dcplusplus,winmx</enablefields>
                 </field>
                 <field>
                         <name>Next</name>
@@ -241,7 +241,7 @@
 			<typehint>grouper and other P2P using the grouper protocol and ports</typehint>
                 </field>
                 <field>
-                        <name>DC++</name>
+                        <name>DCplusplus</name>
                         <type>checkbox</type>
 			<typehint>DC++ and other P2P using the DC++ protocol and ports</typehint>
                 </field>

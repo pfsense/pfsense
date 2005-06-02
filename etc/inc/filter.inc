@@ -868,7 +868,7 @@ function filter_nat_rules_generate() {
 	if(isset($config['captiveportal']['enable'])) {
 		$cp_interface = filter_translate_type_to_real_interface($config['captiveportal']['interface']);
 		$lan_ip = $config['interfaces']['lan']['ipaddr'];
-		$natrules .= "no rdr on {$cp_interface} from <captiveportal> to any port { 80 443 } -> {$lan_ip} port 8000\n";
+		$natrules .= "no rdr on {$cp_interface} proto tcp from <captiveportal> to any port { 80 443 }\n";
 		$natrules .= "rdr on " . $cp_interface . " proto tcp from any to any port { 80 443 } -> {$lan_ip} port 8000\n\n";
 	}
 	

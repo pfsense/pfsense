@@ -102,9 +102,6 @@ function showhide(tspan, tri) {
               <strong>VPN</strong><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/vpn_ipsec.php" class="navlnk">IPsec</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/vpn_pptp.php" class="navlnk">PPTP</a><br>
-<!--
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/vpn_openvpn.php" class="navlnk">OpenVPN</a><br>
--->
               <strong>Status</strong><br>
 			<?php if (isset($config['captiveportal']['enable'])): ?>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_captiveportal.php" class="navlnk">Captive portal</a><br>

@@ -37,7 +37,6 @@ require("guiconfig.inc");
 $pconfig['disablefilter'] = $config['system']['disablefilter'];
 $pconfig['disableftpproxy'] = $config['system']['disableftpproxy'];
 $pconfig['rfc959workaround'] = $config['system']['rfc959workaround'];
-$pconfig['filteringbridge_enable'] = isset($config['bridge']['filteringbridge']);
 $pconfig['ipv6nat_enable'] = isset($config['diag']['ipv6nat']['enable']);
 $pconfig['ipv6nat_ipaddr'] = $config['diag']['ipv6nat']['ipaddr'];
 $pconfig['cert'] = base64_decode($config['system']['webgui']['certificate']);
@@ -107,10 +106,6 @@ if ($_POST) {
 		else
 			unset($config['system']['rfc959workaround']);
 
-		if($_POST['filteringbridge_enable'] == "yes")
-			$config['bridge']['filteringbridge'] = true;
-		else
-			unset($config['bridge']['filteringbridge']);
 		if($_POST['ipv6nat_enable'] == "yes") {
 			$config['diag']['ipv6nat']['enable'] = true;
 			$config['diag']['ipv6nat']['ipaddr'] = $_POST['ipv6nat_ipaddr'];
@@ -339,29 +334,6 @@ function update_description(itemnum) {
                     to:</strong><br> <br> <input name="ipv6nat_ipaddr" type="text" class="formfld" id="ipv6nat_ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipv6nat_ipaddr']);?>">
                     &nbsp;(IP address)<span class="vexpl"><br>
                     Don't forget to add a firewall rule to permit IPv6 packets!</span></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2" class="list" height="12"></td>
-                </tr>
-		<tr>
-                  <td colspan="2" valign="top" class="listtopic">Filtering bridge</td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">&nbsp;</td>
-                  <td width="78%" class="vtable">
-                    <input name="filteringbridge_enable" type="checkbox" id="filteringbridge_enable" value="yes" <?php if ($pconfig['filteringbridge_enable']) echo "checked"; ?>>
-                    <strong>Enable filtering bridge</strong><span class="vexpl"><br>
-                    This will cause bridged packets to pass through the packet
-                    filter in the same way as routed packets do (by default bridged
-                    packets are always passed). If you enable this option, you'll
-                    have to add filter rules to selectively permit traffic from
-                    bridged interfaces.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

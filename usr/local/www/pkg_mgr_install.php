@@ -110,7 +110,7 @@ if(!$pkg_config['packages'])
   </td></tr>
   <tr>
     <td class="tabcont">
-              <table width="100%" border="0" border='0' cellpadding="6" cellspacing="0">
+              <table width="100%" border="0" cellpadding="6" cellspacing="0">
                <tr>
                  <td>
                      <!-- progress bar -->

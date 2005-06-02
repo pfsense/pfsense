@@ -418,6 +418,13 @@ function find_carp_interface($ip) {
 }
 
 /*
+ * find_number_of_created_bridges(): returns the number of currently created bridges
+ */
+function find_number_of_created_bridges() {
+    return `/sbin/ifconfig | grep \"bridge[0-999]\:" | wc -l`;
+}
+
+/*
  * add_rule_to_anchor($anchor, $rule): adds the specified rule to an anchor
  */
 function add_rule_to_anchor($anchor, $rule, $label) {

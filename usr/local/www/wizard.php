@@ -313,6 +313,11 @@ function FieldValidate(userinput, regexp, message)
 
 		    if(!$field['combinefieldsbegin'])
 			 echo "</tr>\n";
+
+		    if($field['warning'] <> "") {
+			echo "<br><b><font color=\"red\">" . $field['warning'] . "</font></b>";
+		    }
+
 		}
 	}
     ?>

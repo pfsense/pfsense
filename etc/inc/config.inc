@@ -573,6 +573,7 @@ function write_config($desc="Unknown", $backup = true) {
 	conf_mount_ro();
 	config_unlock();
 
+	// Always reparse the config after it's written - something is getting lost in serialize().
 	$config = parse_config(true);
 	return $config;
 }
@@ -967,7 +968,7 @@ function system_start_ftp_helpers() {
 	mwexec("/usr/local/sbin/pftpx -g 8021 -p {$ip}");
 }
 
-function cleanup_backupcache($revisions = "all") {
+function cleanup_backupcache($revisions = 30) {
 	global $g;
 	$i = false;
 	if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
@@ -996,7 +997,8 @@ function cleanup_backupcache($revisions = "all") {
 			}
 		}
 		foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description']);	
-		if(is_integer($revisions)) {
+		if(is_int($revisions) and (count($tocache) > $revisions)) {
+			print "trimming";
 			$toslice = array_slice(array_keys($tocache), 0, $revisions);
 			foreach($toslice as $sliced) $newcache[$sliced] = $tocache[$sliced];
 			foreach($tocache as $version => $versioninfo) {

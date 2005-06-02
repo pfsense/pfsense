@@ -175,7 +175,7 @@ function format_ipf_ip($ipfip) {
 			  <td width="15%" class="listhdrr">Proto</td>
 			</tr><?php foreach ($filterlog as $filterent): ?>
 			<tr>
-			  <td class="listlr" nowrap>
+			  <td class="listlr" nowrap align="middle">
 			  <?php if (strstr(strtolower($filterent['act']), "p"))
 			  			$img = "pass.gif";
 					 else

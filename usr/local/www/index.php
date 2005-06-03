@@ -37,6 +37,18 @@ require("guiconfig.inc");
 $swapinfo = `/usr/sbin/swapinfo`;
 if(stristr($swapinfo,"%") == true) $showswap=true;
 
+/* User recently restored his config.
+   If packages are installed lets resync
+*/
+if(file_exists("/needs_package_sync")) {
+	if($config['installedpackages'] <> "") {
+		conf_mount_rw();
+		unlink("/needs_package_sync");
+		header("Location: pkg_mgr_install.php?mode=reinstallall");
+		exit;
+	}
+}
+
 if(file_exists("/usr/local/www/trigger_initial_wizard")) {
 	conf_mount_rw();
 	unlink("/usr/local/www/trigger_initial_wizard");

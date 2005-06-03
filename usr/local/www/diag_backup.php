@@ -146,6 +146,9 @@ if ($_POST) {
 						$input_errors[] = "The configuration could not be restored.";
 					}
 				}
+				/* this will be picked up by /index.php */
+				touch("/needs_package_sync");
+				
 			} else {
 				$input_errors[] = "The configuration could not be restored (file upload error).";
 			}

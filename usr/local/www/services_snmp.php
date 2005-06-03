@@ -179,6 +179,7 @@ function enable_change(whichone) {
 	    else
 	    {
                 document.iform.trapserver.disabled = true;
+                document.iform.trapserverport.disabled = true;
                 document.iform.trapstring.disabled = true;
 	    }
 	}

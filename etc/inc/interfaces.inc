@@ -323,8 +323,8 @@ function interfaces_wireless_configure($if, $wlcfg) {
 		" ssid " . escapeshellarg($wlcfg['ssid']) . " channel " .
 		escapeshellarg($wlcfg['channel']) . " ";
 
-	if ($wlcfg['stationname'])
-		$ifcargs .= "stationname " . escapeshellarg($wlcfg['stationname']) . " ";
+	//if ($wlcfg['stationname'])
+	//	$ifcargs .= "stationname " . escapeshellarg($wlcfg['stationname']) . " ";
 
 	if (isset($wlcfg['wep']['enable']) && is_array($wlcfg['wep']['key'])) {
 		$ifcargs .= "wepmode on ";
@@ -344,27 +344,35 @@ function interfaces_wireless_configure($if, $wlcfg) {
 	switch ($wlcfg['mode']) {
 		case 'hostap':
 			if (strstr($if, "wi"))
-				$ifcargs .= "-mediaopt ibss mediaopt hostap ";
+				$ifcargs .= "mediaopt ibss mediaopt hostap ";
+			else if (strstr($if, "ath"))
+				$ifcargs .= "mediaopt hostap ";	
 			break;
 		case 'ibss':
 		case 'IBSS':
 			if (strstr($if, "wi"))
-				$ifcargs .= "-mediaopt hostap mediaopt ibss ";
+				$ifcargs .= "mediaopt hostap mediaopt ibss ";
 			else if (strstr($if, "an"))
 				$ifcargs .= "mediaopt adhoc ";
+			else if (strstr($if, "ath"))
+				$ifcargs .= "mediaopt hostap ";					
 			break;
 		case 'bss':
 		case 'BSS':
 			if (strstr($if, "wi"))
-				$ifcargs .= "-mediaopt hostap -mediaopt ibss ";
+				$ifcargs .= "mediaopt hostap mediaopt ibss ";
 			else if (strstr($if, "an"))
-				$ifcargs .= "-mediaopt adhoc ";
+				$ifcargs .= "mediaopt adhoc ";
+			else if (strstr($if, "ath"))
+				$ifcargs .= "mediaopt hostap ";			
 			break;
 	}
 
 	$ifcargs .= "up";
 
+	unmute_kernel_msgs();
 	mwexec("/sbin/ifconfig " . $ifcargs);
+	echo "Executing ifconifg {$ifcargs}\n";
 
 	return 0;
 }

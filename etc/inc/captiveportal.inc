@@ -319,11 +319,14 @@ function captiveportal_disconnect_client($id) {
 				syslog(LOG_INFO,"Authenticated user $cpdb[$i][4] disconnected");
 			}
 
+			mwexec("/sbin/pfctl -t captiveportal -T delete {$ip}");
+
 			unset($cpdb[$i]);
 
 			break;
 		}
 	}
+
 
 	/* write database */
 	captiveportal_write_db($cpdb);

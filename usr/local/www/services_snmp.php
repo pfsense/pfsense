@@ -48,6 +48,7 @@ $pconfig['rwcommunity'] = $config['snmpd']['rwcommunity'];
 $pconfig['trapenable'] = isset($config['snmpd']['trapenable']);
 $pconfig['trapserver'] = $config['snmpd']['trapserver'];
 $pconfig['trapserverport'] = $config['snmpd']['trapserverport'];
+$pconfig['trapstring'] = $config['snmpd']['trapstring'];
 
 if ($_POST) {
 
@@ -69,7 +70,11 @@ if ($_POST) {
 		$reqdfields = explode(" ", "trapserverport");
 		$reqdfieldsn = explode(",", "Trap server port");
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+		$reqdfields = explode(" ", "trapstring");
+		$reqdfieldsn = explode(",", "Trap string");
+		do_input_validation($_POST, $reqdfields, $reqdfields, $reqdfieldsn, &$input_errors);
 	}
+
 
 /* disabled until some docs show up on what this does.
 	if ($_POST['rwenable']) {
@@ -93,6 +98,7 @@ if ($_POST) {
 		$config['snmpd']['trapenable'] = $_POST['trapenable'] ? true : false;
 		$config['snmpd']['trapserver'] = $_POST['trapserver'];
 		$config['snmpd']['trapserverport'] = $_POST['trapserverport'];
+		$config['snmpd']['trapstring'] = $_POST['trapstring'];
 		
 			
 		write_config();
@@ -123,11 +129,13 @@ function enable_change(whichone) {
 	    {
 	        document.iform.trapserver.disabled = false;
 	        document.iform.trapserverport.disabled = false;
+	        document.iform.trapstring.disabled = false;
 	    }
 	    else
 	    {
                 document.iform.trapserver.disabled = true;
                 document.iform.trapserverport.disabled = true;
+                document.iform.trapstring.disabled = true;
 	    }
 	}
 
@@ -166,11 +174,12 @@ function enable_change(whichone) {
 	    {
                 document.iform.trapserver.disabled = false;
                 document.iform.trapserverport.disabled = false;
+                document.iform.trapstring.disabled = false;
 	    }
 	    else
 	    {
                 document.iform.trapserver.disabled = true;
-                document.iform.trapserverport.disabled = true;
+                document.iform.trapstring.disabled = true;
 	    }
 	}
 	else
@@ -185,6 +194,7 @@ function enable_change(whichone) {
             document.iform.trapenable.disabled = true;
             document.iform.trapserver.disabled = true;
             document.iform.trapserverport.disabled = true;
+            document.iform.trapstring.disabled = true;
 	}
 }
 //-->
@@ -271,6 +281,14 @@ function enable_change(whichone) {
                     <br>
                     Enter the port to send the traps to (default 162)</td>
                 </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncellreq">Trap server port </td>
+                  <td width="78%" class="vtable">
+                    <input name="trapstring" type="text" class="formfld" id="trapstring" size="40" value="<?=htmlspecialchars($pconfig['trapstring']);?>">
+                    <br>
+                    Trap string</td>
+                </tr>
+
 
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>

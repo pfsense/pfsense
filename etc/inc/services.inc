@@ -437,8 +437,9 @@ EOD;
 		if(isset($config['snmpd']['trapenable']) && preg_match('/^\S+$/', $config['snmpd']['trapserver'])){
 		    $snmpdconf .= <<<EOD
 # SNMP Trap support.
-traphost := "{$config['snmpd']['trapserver']}"
-trapport := "{$config['snmpd']['trapserverport']}"
+traphost := {$config['snmpd']['trapserver']}
+trapport := {$config['snmpd']['trapserverport']}
+trap := "{$config['snmpd']['trapstring']}"
 
 
 EOD;

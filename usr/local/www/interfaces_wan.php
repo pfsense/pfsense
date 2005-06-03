@@ -33,6 +33,7 @@
 require("guiconfig.inc");
 
 $wancfg = &$config['interfaces']['wan'];
+$optcfg = &$config['interfaces']['wan'];
 
 $pconfig['username'] = $config['pppoe']['username'];
 $pconfig['password'] = $config['pppoe']['password'];

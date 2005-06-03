@@ -105,7 +105,8 @@ function wireless_config_print() {
                 <tr> 
                   <td colspan="2" valign="top" class="listtopic">Wireless configuration</td>
 				</tr>
-				<?php if (strstr($optcfg['if'], "ath")): ?>
+				
+				<?php if (stristr($optcfg['if'], "ath") == true): ?>
                 <tr> 
                   <td valign="top" class="vncellreq">Standard</td>
                   <td class="vtable"><select name="standard" class="formfld" id="standard">
@@ -124,7 +125,8 @@ function wireless_config_print() {
                   <td class="vtable"><select name="mode" class="formfld" id="mode">
                       <?php 
 						$opts = array();
-						if (strstr($optcfg['if'], "wi") || strstr($optcfg['if'], "ath"))
+						if (stristr($optcfg['if'], "wi" == true) ||
+							stristr($optcfg['if'], "ath") == true)
 							$opts[] = "hostap";
 						$opts[] = "BSS";
 						$opts[] = "IBSS";

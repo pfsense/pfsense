@@ -415,22 +415,75 @@ function services_snmpd_configure() {
 			return 1;
 		}
 
+
 		$snmpdconf = <<<EOD
 location := "{$config['snmpd']['syslocation']}"
 contact := "{$config['snmpd']['syscontact']}"
 read := "{$config['snmpd']['rocommunity']}"
+
+EOD;
+
+/* No docs on what write strings do there for disable for now.
+		if(isset($config['snmpd']['rwenable']) && preg_match('/^\S+$/', $config['snmpd']['rwcommunity'])){
+		    $snmpdconf .= <<<EOD
+# write string
+write := "{$config['snmpd']['rwcommunity']}"
+
+EOD;
+		}
+*/
+
+
+		if(isset($config['snmpd']['trapenable']) && preg_match('/^\S+$/', $config['snmpd']['trapserver'])){
+		    $snmpdconf .= <<<EOD
+# SNMP Trap support.
+traphost := "{$config['snmpd']['trapserver']}"
+trapport := "{$config['snmpd']['trapserverport']}"
+
+
+EOD;
+		}
+
+
+		$snmpdconf .= <<<EOD
 system := 1     # pfSense
 %snmpd
 begemotSnmpdDebugDumpPdus       = 2
 begemotSnmpdDebugSyslogPri      = 7
 begemotSnmpdCommunityString.0.1 = $(read)
+
+EOD;
+
+/* No docs on what write strings do there for disable for now.
+		if(isset($config['snmpd']['rwcommunity']) && preg_match('/^\S+$/', $config['snmpd']['rwcommunity'])){
+		    $snmpdconf .= <<<EOD
+begemotSnmpdCommunityString.0.2 = $(write)
+
+EOD;
+		}
+*/
+
+		
+		if(isset($config['snmpd']['trapenable']) && preg_match('/^\S+$/', $config['snmpd']['trapserver'])){
+		    $snmpdconf .= <<<EOD
+begemotTrapSinkStatus.[$(traphost)].$(trapport) = 4
+begemotTrapSinkVersion.[$(traphost)].$(trapport) = 2
+begemotTrapSinkComm.[$(traphost)].$(trapport) = $(trap)
+
+EOD;
+		}
+
+
+		$snmpdconf .= <<<EOD
 begemotSnmpdCommunityDisable    = 1
 begemotSnmpdPortStatus.0.0.0.0.161 = 1
 begemotSnmpdLocalPortStatus."/var/run/snmpd.sock" = 1
 begemotSnmpdLocalPortType."/var/run/snmpd.sock" = 4
+
 sysContact      = $(contact)
 sysLocation     = $(location)
 sysObjectId     = 1.3.6.1.4.1.12325.1.1.2.1.$(system)
+
 snmpEnableAuthenTraps = 2
 begemotSnmpdModulePath."mibII"  = "/usr/lib/snmp_mibII.so"
 begemotSnmpdModulePath."netgraph" = "/usr/lib/snmp_netgraph.so"

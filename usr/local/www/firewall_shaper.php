@@ -179,6 +179,7 @@ if ($_GET['act'] == "del") {
     <li class="tabact">Rules</li>
     <li class="tabinact"><a href="firewall_shaper_queues.php">Queues</a></li>
     <li class="tabinact"><a href="firewall_shaper_magic.php">Magic shaper wizard</a></li>
+    <li class="tabinact"><a href="wizard.php?xml=traffic_shaper_wizard.xml">Experimental magic shaper wizard</a></li>
   </ul>
   </td></tr>
   <tr>
@@ -228,10 +229,11 @@ if ($_GET['act'] == "del") {
 				  echo $textss . htmlspecialchars($iflabels[$shaperent['interface']]);
 				  echo "<br>";
 				  echo "<a href=\"?act=toggle&id={$i}\">";
-				  if ($shaperent['direction'] != "in")
-				  	echo "<img src=\"out{$dis}.gif\" width=\"11\" height=\"11\" border=\"0\" style=\"margin-top: 5px\" title=\"click to toggle enabled/disabled status\">";
-				  if ($shaperent['direction'] != "out")
+				  if ($shaperent['direction'] == "in")
 				  	echo "<img src=\"in{$dis}.gif\" width=\"11\" height=\"11\" border=\"0\" style=\"margin-top: 5px\" title=\"click to toggle enabled/disabled status\">";
+				  if ($shaperent['direction'] == "out")
+				  	echo "<img src=\"out{$dis}.gif\" width=\"11\" height=\"11\" border=\"0\" style=\"margin-top: 5px\" title=\"click to toggle enabled/disabled status\">";
+
 				  echo "</a>" . $textse;;
 				  ?>
                         </td>
@@ -250,9 +252,11 @@ if ($_GET['act'] == "del") {
                         </td>
                         <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_shaper_edit.php?id=<?=$i;?>';"><?=$textss;?>
                           <?php
-							if (isset($shaperent['targetqueue'])) {
-								$desc = htmlspecialchars($shaperent['targetqueue']);
-							    echo "<a href=\"firewall_shaper_queues_edit.php?id={$shaperent['targetqueue']}\">{$desc}</a>";
+							if (isset($shaperent['outqueue']) && isset($shaperent['inqueue'])) {
+								$desc = htmlspecialchars($shaperent['outqueue']);
+							    echo "<a href=\"firewall_shaper_queues_edit.php?id={$shaperent['outqueue']}\">{$desc}</a>";
+								$desc = htmlspecialchars($shaperent['inqueue']);
+							    echo "/<a href=\"firewall_shaper_queues_edit.php?id={$shaperent['inqueue']}\">{$desc}</a>";
 							}
 						  ?><?=$textse;?>
                         </td>

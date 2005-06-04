@@ -254,7 +254,8 @@ function filter_is_queue_being_used_on_interface($queuename, $interface) {
 
 	if(!is_array($lconfig['shaper']['rule'])) return;
 	foreach($lconfig['shaper']['rule'] as $rule) {
-		if($rule['targetqueue'] == $queuename && $rule['interface'] == $interface)
+		if(($rule['inqueue'] == $queuename && $rule['interface'] == $interface) ||
+			($rule['outqueue'] == $queuename && $rule['interface'] == $interface))
 			return $interface;
 	}
 	return;
@@ -330,7 +331,7 @@ function queue_interface_recursive($queuename) {
                         if($status <> "") return $status;
                 }
                 foreach($config['shaper']['rule'] as $rule) {
-                        if($rule['targetqueue'] == $queuename)
+                        if($rule['inqueue'] == $queuename || $rule['outqueue'] == $queuename)
                                  return $rule['interface'];
                 }
         }
@@ -425,6 +426,7 @@ function generate_optcfg_array(& $optcfg) {
         }
 }
 
+/* XXX - billm - need to do the outqueue portion too */
 function filter_generate_pf_altq_rules() {
 	/* I don't think we're in IPFW anymore Toto */
 
@@ -663,7 +665,7 @@ function filter_generate_pf_altq_rules() {
                                 $line .= "out xmit ";
 
 */
-			$line .= " keep state tag {$rule['targetqueue']} ";
+			$line .= " keep state tag {$rule['inqueue']} ";
 
                         $line .= "\n";
                         $shaperrules .= $line;

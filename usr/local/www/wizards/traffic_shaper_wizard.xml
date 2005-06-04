@@ -46,11 +46,9 @@
 	</fields>
 	<stepsubmitphpaction>
 		/* wipe previous */
-/* XXX - billm - disabling for preview
 		unset($config['shaper']['queue']);
 		unset($config['shaper']['rule']);
 		$config['shaper']['enable'] = FALSE;
-*/
 	</stepsubmitphpaction>
 </step>
 <step>
@@ -160,7 +158,7 @@
                         <type>checkbox</type>
                         <typehint>Prioritize Peer-to-Peer traffic</typehint>
                         <description>This will lower the priority of P2P traffic below all other traffic.</description>
-			<enablefields>edonkey,cutemx,imest,songspy,hotlineconnect,gnutella,dcc,napster,aimster,buddyshare,scour,opennap,hotcomm,grouper,dcplusplus,winmx</enablefields>
+			<enablefields>Aimster,BitTorrent,BuddyShare,CuteMX,DCplusplus,dcc,DirectConnect,DirectFileExpress,EDonkey2000,FastTrack,Gnutella,grouper,hotComm,HotlineConnect,iMest,Napster,OpenNap,Scour,SongSpy,WinMX</enablefields>
                 </field>
                 <field>
                         <name>Next</name>
@@ -171,49 +169,14 @@
                         <type>listtopic</type>
                 </field>
                 <field>
-                        <name>eDonkey</name>
-                        <type>checkbox</type>
-			<typehint>eDonkey and other P2P using the eDonkey protocol and ports</typehint>
-                </field>
-                <field>
-                        <name>CuteMX</name>
-                        <type>checkbox</type>
-			<typehint>CuteMX and other P2P using the CuteMX protocol and ports</typehint>
-                </field>
-                <field>
-                        <name>iMest</name>
-                        <type>checkbox</type>
-			<typehint>iMest and other P2P using the iMest protocol and ports</typehint>
-                </field>
-                <field>
-                        <name>SongSpy</name>
-                        <type>checkbox</type>
-			<typehint>SongSpy and other P2P using the SongSpy protocol and ports</typehint>
-                </field>
-                <field>
-                        <name>HotlineConnect</name>
-                        <type>checkbox</type>
-			<typehint>HotlineConnect and other P2P using the HotlineConnect protocol and ports</typehint>
-                </field>
-                <field>
-                        <name>Gnutella</name>
-                        <type>checkbox</type>
-			<typehint>Gnutella and other P2P using the Gnutella protocol and ports</typehint>
-                </field>
-                <field>
-                        <name>DCC</name>
-                        <type>checkbox</type>
-			<typehint>irc DCC file transfers</typehint>
-                </field>
-                <field>
-                        <name>Napster</name>
-                        <type>checkbox</type>
-			<typehint>Napster and other P2P using the Napster protocol and ports</typehint>
-                </field>
-                <field>
                         <name>Aimster</name>
                         <type>checkbox</type>
 			<typehint>Aimster and other P2P using the Aimster protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>BitTorrent</name>
+                        <type>checkbox</type>
+			<typehint>Bittorrent and other P2P using the Torrent protocol and ports</typehint>
                 </field>
                 <field>
                         <name>BuddyShare</name>
@@ -221,19 +184,44 @@
 			<typehint>BuddyShare and other P2P using the BuddyShare protocol and ports</typehint>
                 </field>
                 <field>
-                        <name>Scour</name>
+                        <name>CuteMX</name>
                         <type>checkbox</type>
-			<typehint>Scour and other P2P using the Scour protocol and ports</typehint>
+			<typehint>CuteMX and other P2P using the CuteMX protocol and ports</typehint>
                 </field>
                 <field>
-                        <name>OpenNap</name>
+                        <name>DCplusplus</name>
                         <type>checkbox</type>
-			<typehint>OpenNap and other P2P using the OpenNap protocol and ports</typehint>
+			<typehint>DC++ and other P2P using the DC++ protocol and ports</typehint>
                 </field>
                 <field>
-                        <name>hotComm</name>
+                        <name>DCC</name>
                         <type>checkbox</type>
-			<typehint>hotComm and other P2P using the hotComm protocol and ports</typehint>
+			<typehint>irc DCC file transfers</typehint>
+                </field>
+                <field>
+                        <name>DirectConnect</name>
+                        <type>checkbox</type>
+			<typehint>DirectConnect and other P2P using the DirectConnect protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>DirectFileExpress</name>
+                        <type>checkbox</type>
+			<typehint>DirectFileExpress and other P2P using the DirectFileExpress protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>eDonkey2000</name>
+                        <type>checkbox</type>
+			<typehint>eDonkey and other P2P using the eDonkey protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>FastTrack</name>
+                        <type>checkbox</type>
+			<typehint>FastTrack and other P2P using the FastTrack protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>Gnutella</name>
+                        <type>checkbox</type>
+			<typehint>Gnutella and other P2P using the Gnutella protocol and ports</typehint>
                 </field>
                 <field>
                         <name>grouper</name>
@@ -241,9 +229,39 @@
 			<typehint>grouper and other P2P using the grouper protocol and ports</typehint>
                 </field>
                 <field>
-                        <name>DCplusplus</name>
+                        <name>hotComm</name>
                         <type>checkbox</type>
-			<typehint>DC++ and other P2P using the DC++ protocol and ports</typehint>
+			<typehint>hotComm and other P2P using the hotComm protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>HotlineConnect</name>
+                        <type>checkbox</type>
+			<typehint>HotlineConnect and other P2P using the HotlineConnect protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>iMest</name>
+                        <type>checkbox</type>
+			<typehint>iMest and other P2P using the iMest protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>Napster</name>
+                        <type>checkbox</type>
+			<typehint>Napster and other P2P using the Napster protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>OpenNap</name>
+                        <type>checkbox</type>
+			<typehint>OpenNap and other P2P using the OpenNap protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>Scour</name>
+                        <type>checkbox</type>
+			<typehint>Scour and other P2P using the Scour protocol and ports</typehint>
+                </field>
+                <field>
+                        <name>SongSpy</name>
+                        <type>checkbox</type>
+			<typehint>SongSpy and other P2P using the SongSpy protocol and ports</typehint>
                 </field>
                 <field>
                         <name>WinMX</name>
@@ -256,8 +274,80 @@
                 </field>
         </fields>
 	<stepsubmitphpaction>
-/* XXX create P2P queues here */
-/* XXX create P2P rules here */
+
+		/* XXX - billm - needs to actually honor what the user selects still */
+
+		/* To add p2p clients, push Descr,Protocol,Start,End,src/dest/both onto p2plist */
+		$p2plist[] = array('Aimster','tcp','7668','7668','both');
+		$p2plist[] = array('BitTorrent','tcp','6881','6999','both');
+		$p2plist[] = array('BuddyShare','tcp','7788','7788','both');
+		$p2plist[] = array('CuteMX','tcp','2340','2340','both');
+		$p2plist[] = array('DC++','tcp','1412','1412','both');
+		$p2plist[] = array('dcc','tcp','6666','6668','both');
+		$p2plist[] = array('DirectConnect','tcp','412','412','both');
+		$p2plist[] = array('DirectFileExpress','tcp','1044','1045','both');
+		$p2plist[] = array('EDonkey2000','tcp','4661','4665','both');
+		$p2plist[] = array('FastTrack','tcp','1214','1214','both');
+		$p2plist[] = array('Gnutella','tcp','6346','6346','both');
+		$p2plist[] = array('grouper','tcp','8038','8039','both');
+		$p2plist[] = array('hotComm','tcp','28864','28865','both');
+		$p2plist[] = array('HotlineConnect','tcp','5500','5503','both');
+		$p2plist[] = array('iMest','tcp','4329','4329','both');
+		$p2plist[] = array('Napster','tcp','6699','6701','both');
+		$p2plist[] = array('OpenNap','tcp','8888','8889','both');
+		$p2plist[] = array('Scour','tcp','8311','8311','both');
+		$p2plist[] = array('SongSpy','tcp','5190','5190','both');
+		$p2plist[] = array('WinMX','tcp','6699','6699','both');
+
+		/* Set up/down p2p as lowest weight */
+		/* loop through p2plist[] */
+		foreach ($p2plist as $p2pclient) {
+			foreach (array('source','destination') as $srcdest) {
+				$rule = array();
+				if ($srcdest == 'source') {
+					$destsrc = 'destination';
+					$rule['outqueue'] = 'qP2PUp';
+					$rule['inqueue'] = 'qP2PDown';
+					$rule['interface'] = 'lan';
+					$rule['source']['network'] = 'lan';
+					$rule['destination']['any'] = TRUE;
+					$rule['descr'] = "m_P2P {$p2pclient[0]} outbound";
+				} else {
+					$destsrc = 'source';
+					$rule['outqueue'] = 'qP2PDown';
+					$rule['inqueue'] = 'qP2PUp';
+					$rule['interface'] = 'wan';
+					$rule['source']['any'] = TRUE;
+					$rule['destination']['network'] = 'lan';
+					$rule['descr'] = "m_P2P {$p2pclient[0]} inbound";
+				}
+
+
+				$rule['destination']['port'] = $p2pclient[2]."-".$p2pclient[3];
+				if($p2pclient[1] != '')
+					$rule['protocol'] = $p2pclient[1];
+
+				$config['shaper']['rule'][] = $rule;
+			}
+		}
+
+		/* create qP2PUp */
+		$queue = array();
+		$queue['name'] = "qP2PUp";
+		$queue['associatedrule'] = 0;
+		$queue['priority'] = 0;
+		$queue['red'] = "on";
+		$queue['ecn'] = "on";
+		$config['shaper']['queue'][] = $queue;
+
+		/* create qP2PDown */
+		$queue = array();
+		$queue['name'] = "qP2PDown";
+		$queue['associatedrule'] = 0;
+		$queue['priority'] = 1;
+		$queue['red'] = "on";
+		$queue['ecn'] = "on";
+		$config['shaper']['queue'][] = $queue;
 	</stepsubmitphpaction>
 </step>
 <step>

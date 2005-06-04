@@ -78,7 +78,143 @@
 		</field>
 	</fields>
 	<stepsubmitphpaction>
-/* XXX create top level queues here */
+		/* Magic shaper uses HFSC */
+		$config['system']['schedulertype'] = "hfsc";
+
+		/* Create queues */
+		/* WAN queues */
+		$queue = array();
+		$queue['name'] = "qWANRoot";
+		$queue['associatedrule'] = 0;
+		$queue['priority'] = 6;
+		$queue['parentqueue'] = "on";
+/*
+		$queue['realtime'] = "on";
+		$queue['realtime1'] = (int)$_POST['upload'] * 0.7 . "Kb";
+		$queue['realtime2'] = "1";
+		$queue['realtime3'] = (int)$_POST['upload'] * 0.7 . "Kb";
+		$queue['upperlimit'] = "on";
+		$queue['upperlimit1'] = (int)$_POST['upload'] * 0.8 . "Kb";
+		$queue['upperlimit2'] = "1";
+		$queue['upperlimit3'] = (int)$_POST['upload'] * 0.8 . "Kb";
+		$queue['linkshare'] = "on";
+		$queue['linkshare1'] = (int)$_POST['upload'] * 0.8 . "Kb";
+		$queue['linkshare2'] = "1";
+		$queue['linkshare3'] = (int)$_POST['upload'] * 0.8 . "Kb";
+*/
+		$queue['bandwidth'] = "0";
+		$queue['bandwidthtype'] = "Kb";
+		$config['shaper']['queue'][] = $queue;
+
+                $queue = array();
+                $queue['name'] = "qWANdef";
+                $queue['attachtoqueue'] = "qWANRoot";
+                $queue['associatedrule'] = 0;
+		$queue['defaultqueue'] = 'true';
+                $queue['priority'] = 3;
+/*
+                $queue['realtime'] = "on";
+                $queue['realtime1'] = "10%";
+                $queue['realtime2'] = "1";
+                $queue['realtime3'] = "10%";
+                $queue['upperlimit'] = "on";
+                $queue['upperlimit1'] = "90%";
+                $queue['upperlimit2'] = "1";
+                $queue['upperlimit3'] = "90%";
+                $queue['linkshare'] = "on";
+                $queue['linkshare1'] = "1%";
+                $queue['linkshare2'] = "1";
+                $queue['linkshare3'] = "1%";
+*/
+		$queue['bandwidth'] = "0";
+		$queue['bandwidthtype'] = "Kb";
+                $config['shaper']['queue'][] = $queue;
+
+		/* LAN queue */
+		$queue = array();
+		$queue['name'] = "qLANRoot";
+		$queue['associatedrule'] = 0;
+		$queue['priority'] = 6;
+		$queue['parentqueue'] = "on";
+		$queue['realtime'] = "on";
+		$queue['realtime1'] = (int) $_POST['download'] * 0.7 . "Kb";
+		$queue['realtime2'] = "1";
+		$queue['realtime3'] = (int) $_POST['download'] * 0.7 . "Kb";
+		$queue['upperlimit'] = "on";
+		$queue['upperlimit1'] = (int) $_POST['download'] * 0.8 . "Kb";
+		$queue['upperlimit2'] = "1";
+		$queue['upperlimit3'] = (int) $_POST['download'] * 0.8 . "Kb";
+		$queue['linkshare'] = "on";
+		$queue['linkshare1'] = (int)$_POST['upload'] * 0.8 . "Kb";
+		$queue['linkshare2'] = "1";
+		$queue['linkshare3'] = (int)$_POST['upload'] * 0.8 . "Kb";
+		$queue['bandwidth'] = "0";
+		$queue['bandwidthtype'] = "Kb";
+		$config['shaper']['queue'][] = $queue;
+
+                $queue = array();
+                $queue['name'] = "qLANdef";
+                $queue['associatedrule'] = 0;
+                $queue['priority'] = 3;
+                $queue['attachtoqueue'] = "qLANRoot";
+                $queue['realtime'] = "on";
+                $queue['realtime1'] = "10%";
+                $queue['realtime2'] = "1";
+                $queue['realtime3'] = "10%";
+                $queue['upperlimit'] = "on";
+                $queue['upperlimit1'] = "90%";
+                $queue['upperlimit2'] = "1";
+                $queue['upperlimit3'] = "90%";
+                $queue['linkshare'] = "on";
+                $queue['linkshare1'] = "1%";
+                $queue['linkshare2'] = "1";
+                $queue['linkshare3'] = "1%";
+		$queue['bandwidth'] = "0";
+		$queue['bandwidthtype'] = "Kb";
+                $config['shaper']['queue'][] = $queue;
+
+                $queue = array();
+                $queue['name'] = "qLANacks";
+                $queue['attachtoqueue'] = "qLANRoot";
+                $queue['associatedrule'] = 0;
+                $queue['priority'] = 7;
+                $queue['realtime'] = "on";
+                $queue['realtime1'] = "10%";
+                $queue['realtime2'] = "1";
+                $queue['realtime3'] = "10%";
+                $queue['upperlimit'] = "on";
+                $queue['upperlimit1'] = "90%";
+                $queue['upperlimit2'] = "1";
+                $queue['upperlimit3'] = "90%";
+                $queue['linkshare'] = "on";
+                $queue['linkshare1'] = "1%";
+                $queue['linkshare2'] = "1";
+                $queue['linkshare3'] = "1%";
+		$queue['bandwidth'] = "0";
+		$queue['bandwidthtype'] = "Kb";
+                $config['shaper']['queue'][] = $queue;
+
+                $queue = array();
+                $queue['name'] = "qWANacks";
+                $queue['attachtoqueue'] = "qWANRoot";
+                $queue['associatedrule'] = 0;
+                $queue['priority'] = 7;
+                $queue['realtime'] = "on";
+                $queue['realtime1'] = "10%";
+                $queue['realtime2'] = "1";
+                $queue['realtime3'] = "10%";
+                $queue['upperlimit'] = "on";
+                $queue['upperlimit1'] = "90%";
+                $queue['upperlimit2'] = "1";
+                $queue['upperlimit3'] = "90%";
+                $queue['linkshare'] = "on";
+                $queue['linkshare1'] = "1%";
+                $queue['linkshare2'] = "1";
+                $queue['linkshare3'] = "1%";
+		$queue['bandwidth'] = "0";
+		$queue['bandwidthtype'] = "Kb";
+                $config['shaper']['queue'][] = $queue;
+
 /* XXX create default rules here */
 	</stepsubmitphpaction>
 </step>
@@ -141,8 +277,74 @@
                 </field>
         </fields>
 	<stepsubmitphpaction>
-/* XXX create VOIP queues here */
-/* XXX create VOIP rules here */
+                /* create qVOIPUp */
+                $queue = array();
+                $queue['name'] = "qVOIPUp";
+                $queue['associatedrule'] = 0;
+                $queue['priority'] = 7;
+                $queue['red'] = "on";
+                $queue['ecn'] = "on";
+                $queue['realtime'] = "on";
+                $queue['realtime1'] = $_POST['bandwidth'] . "Kb";
+                $queue['realtime2'] = "1";
+                $queue['realtime3'] = $_POST['bandwidth'] . "Kb";
+                $queue['upperlimit'] = "on";
+                $queue['upperlimit1'] = $_POST['bandwidth'] . "Kb";
+                $queue['upperlimit2'] = "1";
+                $queue['upperlimit3'] = $_POST['bandwidth'] . "Kb";
+                $queue['linkshare'] = "on";
+                $queue['linkshare1'] = $_POST['bandwidth'] . "Kb";
+                $queue['linkshare2'] = "1";
+                $queue['linkshare3'] = $_POST['bandwidth'] . "Kb";
+		$queue['bandwidth'] = "0";
+		$queue['bandwidthtype'] = "Kb";
+                $queue['attachtoqueue'] = "qLANRoot";
+                $config['shaper']['queue'][] = $queue;
+
+                /* create qVOIPDown */
+                $queue = array();
+                $queue['name'] = "qVOIPDown";
+                $queue['associatedrule'] = 0;
+                $queue['priority'] = 7;
+                $queue['red'] = "on";
+                $queue['ecn'] = "on";
+                $queue['realtime'] = "on";
+                $queue['realtime1'] = $_POST['bandwidth'] . "Kb";
+                $queue['realtime2'] = "1";
+                $queue['realtime3'] = $_POST['bandwidth'] . "Kb";
+                $queue['upperlimit'] = "on";
+                $queue['upperlimit1'] = $_POST['bandwidth'] . "Kb";
+                $queue['upperlimit2'] = "1";
+                $queue['upperlimit3'] = $_POST['bandwidth'] . "Kb";
+                $queue['linkshare'] = "on";
+                $queue['linkshare1'] = $_POST['bandwidth'] . "Kb";
+                $queue['linkshare2'] = "1";
+                $queue['linkshare3'] = $_POST['bandwidth'] . "Kb";
+		$queue['bandwidth'] = "0";
+		$queue['bandwidthtype'] = "Kb";
+                $queue['attachtoqueue'] = "qLANRoot";
+                $config['shaper']['queue'][] = $queue;
+
+		/* create VOIP rules */
+		$rule = array();
+		$rule['descr'] = "DiffServ/Lowdelay/Upload";
+		$rule['inqueue'] = "qVOIPDown";
+		$rule['outqueue'] = "qVOIPUp";
+		$rule['interface'] = "wan";
+		$rule['source']['network'] = 'lan';
+		$rule['destination']['any'] = TRUE;
+		$rule['iptos'] = "lowdelay";
+		$config['shaper']['rule'][] = $rule;
+
+		$rule = array();
+		$rule['descr'] = "DiffServ/Lowdelay/Download";
+		$rule['inqueue'] = "qVOIPUp";
+		$rule['outqueue'] = "qVOIPDown";
+		$rule['interface'] = "lan";
+		$rule['source']['any'] = TRUE;
+		$rule['destination']['network'] = 'lan';
+		$rule['iptos'] = "lowdelay";
+		$config['shaper']['rule'][] = $rule;
 	</stepsubmitphpaction>
 </step>
 <step>
@@ -338,6 +540,21 @@
 		$queue['priority'] = 0;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
+		$queue['realtime'] = "on";
+		$queue['realtime1'] = "1Kb";
+		$queue['realtime2'] = "1";
+		$queue['realtime3'] = "1Kb";
+		$queue['upperlimit'] = "on";
+		$queue['upperlimit1'] = "90%";
+		$queue['upperlimit2'] = "1";
+		$queue['upperlimit3'] = "90%";
+		$queue['linkshare'] = "on";
+		$queue['linkshare1'] = "0%";
+		$queue['linkshare2'] = "1";
+		$queue['linkshare3'] = "0%";
+		$queue['bandwidth'] = "0";
+		$queue['bandwidthtype'] = "Kb";
+		$queue['attachtoqueue'] = "qWANRoot";
 		$config['shaper']['queue'][] = $queue;
 
 		/* create qP2PDown */
@@ -347,6 +564,21 @@
 		$queue['priority'] = 1;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
+		$queue['realtime'] = "on";
+		$queue['realtime1'] = "1Kb";
+		$queue['realtime2'] = "1";
+		$queue['realtime3'] = "1Kb";
+		$queue['upperlimit'] = "on";
+		$queue['upperlimit1'] = "90%";
+		$queue['upperlimit2'] = "1";
+		$queue['upperlimit3'] = "90%";
+		$queue['linkshare'] = "on";
+		$queue['linkshare1'] = "1%";
+		$queue['linkshare2'] = "1";
+		$queue['linkshare3'] = "1%";
+		$queue['bandwidth'] = "0";
+		$queue['bandwidthtype'] = "Kb";
+		$queue['attachtoqueue'] = "qLANRoot";
 		$config['shaper']['queue'][] = $queue;
 	</stepsubmitphpaction>
 </step>
@@ -382,7 +614,7 @@
                 </field>
 	</fields>
 	<stepsubmitphpaction>
-/* XXX enable shaper */
+		$config['shaper']['enable'] = TRUE;
 /* XXX reload filter rules */
 	</stepsubmitphpaction>
 </step>

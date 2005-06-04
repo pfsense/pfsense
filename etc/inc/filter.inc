@@ -184,6 +184,19 @@ function filter_get_rule_interface($associatedrulenumber) {
 	return $config['shaper']['rule'][$associatedrulenumber]['interface'];
 }
 
+function find_default_queue() {
+	global $config;
+	$qconfig = $config;
+
+	if (is_array($qconfig['shaper']['queue'])) {
+		foreach ($qconfig['shaper']['queue'] as $rule) {
+			if(isset($rule['defaultqueue']) and $rule['defaultqueue'] <> "")
+				return $rule['name'];
+		}
+	}
+}
+
+
 function filter_generate_altq_queues($altq_ints) {
 	global $config;
 	$altq_rules = "";
@@ -1683,13 +1696,13 @@ EOD;
                                         			 *   and setup for all netgraph interfaces
                                        				 */
 								$line = generate_user_filter_rule($rule, $xxx);
-								$line .= " queue {$queue['name']} ";
+								$line .= " queue ({$queue['name']}, acks) ";
 								if($line <> "") 
 									$ipfrules .= $line . "\n";
 							}
 						} else {
 							$line = generate_user_filter_rule($rule, 0);
-							$line .= " queue {$queue['name']} ";
+							$line .= " queue ({$queue['name']}, acks) ";
 							// label
 							if($rule['descr'] <> "" and $line <> "")
 								$line .= " label \"USER_RULE: " . $rule['descr'] . "\" ";
@@ -1716,11 +1729,17 @@ EOD;
                                       			 *   and setup for all netgraph interfaces
                                      			 */
 						$line = generate_user_filter_rule($rule, $xxx);
-						if($line <> "") 
+						if($line <> "") { 
+							if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue']))
+								$line .= " queue (" . find_default_queue() . ", acks) ";
 							$ipfrules .= $line . "\n";
+						}
 					}
 				} else {
 					$line = generate_user_filter_rule($rule, 0);
+					if($line <> "") 
+						if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue']))
+							$line .= " queue (" . find_default_queue() . ", acks) ";
 					// label
 					if($rule['descr'] <> "" and $line <> "")
 						$line .= " label \"USER_RULE: " . $rule['descr'] . "\" ";

@@ -1019,7 +1019,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
  				if (!array_key_exists($rule['interface'], $optcfg)) {
 					$item = "";
 					foreach($optcfg as $oc) $item .= $oc['if'];					
-					return "# {$real_int} {$item} {$rule['interface']} array key does not exist for " . $rule['descr'] . "\n";
+					return "# {$real_int} {$item} {$rule['interface']} array key does not exist for " . $rule['descr'];
 					return;
 				}
 			}
@@ -1031,14 +1031,14 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		if ($pptpdcfg['mode'] != "server") {
 			if (($rule['source']['network'] == "pptp") ||
 				($rule['destination']['network'] == "pptp")) {
-					return "# source network or destination network == pptp on " . $rule['descr'] . "\n";
+					return "# source network or destination network == pptp on " . $rule['descr'];
 					return;
 				}
 		}
 		
 		if ($rule['source']['network'] && strstr($rule['source']['network'], "opt")) {
 			if (!array_key_exists($rule['source']['network'], $optcfg)) {
-				return "# {$rule['source']['network']} !array_key_exists source network " . $rule['descr'] . "\n";
+				return "# {$rule['source']['network']} !array_key_exists source network " . $rule['descr'];
 				return;
 			}
 		}
@@ -1046,18 +1046,18 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			if (!array_key_exists($rule['destination']['network'], $optcfg)) {
 				$item = "";
 				foreach($optcfg as $oc) $item .= $oc;
-				return "# {$item} {$rule['destination']['network']} !array_key_exists dest network " . $rule['descr'] . "\n";
+				return "# {$item} {$rule['destination']['network']} !array_key_exists dest network " . $rule['descr'];
 				return;
 			}
 		}
 		
 		/* check for unresolvable aliases */
 		if ($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
-			return "# unresolvable source aliases " . $rule['descr'] . "\n";
+			return "# unresolvable source aliases " . $rule['descr'];
 			return;
 		}
 		if ($rule['destination']['address'] && !alias_expand($rule['destination']['address'])) {
-			return "# unresolvable dest aliases " . $rule['descr'] . "\n";
+			return "# unresolvable dest aliases " . $rule['descr'];
 			return;
 		}
 		
@@ -1689,7 +1689,7 @@ EOD;
 							// label
 							if($rule['descr'] <> "" and $line <> "")
 								$line .= " label \"USER_RULE: " . $rule['descr'] . "\" ";
-							else
+							else					
 								$line .= " label \"USER_RULE\" ";
 						}
 					}

@@ -156,7 +156,7 @@ if ($_POST) {
 		/* file upload? */
 		if (is_uploaded_file($_FILES['htmlfile']['tmp_name']))
 			$config['captiveportal']['page']['htmltext'] = base64_encode(file_get_contents($_FILES['htmlfile']['tmp_name']));
-		if (is_uploaded_file($_FILES['errfile']['tmp_name']))
+		if (is_uploaded_file($_FILES['errfile']['tmp_name'])) 
 			$config['captiveportal']['page']['errtext'] = base64_encode(file_get_contents($_FILES['errfile']['tmp_name']));
 
 		write_config();
@@ -180,8 +180,6 @@ if ($_POST) {
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
-
-<form method="post" name="iform" id="iform">
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>

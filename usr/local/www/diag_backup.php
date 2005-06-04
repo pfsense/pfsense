@@ -140,15 +140,16 @@ if ($_POST) {
 				} else {
 					/* restore the entire configuration */
 					if (config_install($_FILES['conffile']['tmp_name']) == 0) {
+						/* this will be picked up by /index.php */
+						touch("/needs_package_sync");
+						conf_mount_rw();
 						system_reboot();
+						conf_mount_ro();
 						$savemsg = "The configuration has been restored. The firewall is now rebooting.";
 					} else {
 						$input_errors[] = "The configuration could not be restored.";
 					}
-				}
-				/* this will be picked up by /index.php */
-				touch("/needs_package_sync");
-				
+				}				
 			} else {
 				$input_errors[] = "The configuration could not be restored (file upload error).";
 			}

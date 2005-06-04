@@ -102,7 +102,7 @@
 		$queue['linkshare2'] = "1";
 		$queue['linkshare3'] = (int)$_POST['upload'] * 0.8 . "Kb";
 */
-		$queue['bandwidth'] = "0";
+		$queue['bandwidth'] = (int)$_POST['upload'];
 		$queue['bandwidthtype'] = "Kb";
 		$config['shaper']['queue'][] = $queue;
 
@@ -112,7 +112,6 @@
                 $queue['associatedrule'] = 0;
 		$queue['defaultqueue'] = 'true';
                 $queue['priority'] = 3;
-/*
                 $queue['realtime'] = "on";
                 $queue['realtime1'] = "10%";
                 $queue['realtime2'] = "1";
@@ -125,7 +124,6 @@
                 $queue['linkshare1'] = "1%";
                 $queue['linkshare2'] = "1";
                 $queue['linkshare3'] = "1%";
-*/
 		$queue['bandwidth'] = "0";
 		$queue['bandwidthtype'] = "Kb";
                 $config['shaper']['queue'][] = $queue;
@@ -136,6 +134,7 @@
 		$queue['associatedrule'] = 0;
 		$queue['priority'] = 6;
 		$queue['parentqueue'] = "on";
+/*
 		$queue['realtime'] = "on";
 		$queue['realtime1'] = (int) $_POST['download'] * 0.7 . "Kb";
 		$queue['realtime2'] = "1";
@@ -148,7 +147,8 @@
 		$queue['linkshare1'] = (int)$_POST['upload'] * 0.8 . "Kb";
 		$queue['linkshare2'] = "1";
 		$queue['linkshare3'] = (int)$_POST['upload'] * 0.8 . "Kb";
-		$queue['bandwidth'] = "0";
+*/
+		$queue['bandwidth'] = (int)$_POST['download'];
 		$queue['bandwidthtype'] = "Kb";
 		$config['shaper']['queue'][] = $queue;
 
@@ -298,7 +298,7 @@
                 $queue['linkshare3'] = $_POST['bandwidth'] . "Kb";
 		$queue['bandwidth'] = "0";
 		$queue['bandwidthtype'] = "Kb";
-                $queue['attachtoqueue'] = "qLANRoot";
+                $queue['attachtoqueue'] = "qWANRoot";
                 $config['shaper']['queue'][] = $queue;
 
                 /* create qVOIPDown */

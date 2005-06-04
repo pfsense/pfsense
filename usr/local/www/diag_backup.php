@@ -113,7 +113,6 @@ if ($_POST) {
 			exit;
 		} else if ($mode == "restore") {
 			if (is_uploaded_file($_FILES['conffile']['tmp_name'])) {
-				$command = "/sbin/sysctl -a | grep carp";
 				$fd = fopen($_FILES['conffile']['tmp_name'], "r");
 				if(!$fd) {
 					log_error("Warning, could not open " . $_FILES['conffile']['tmp_name']);

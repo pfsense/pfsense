@@ -125,8 +125,8 @@ function wireless_config_print() {
                   <td class="vtable"><select name="mode" class="formfld" id="mode">
                       <?php 
 						$opts = array();
-						if (stristr($optcfg['if'], "wi" == true) ||
-							stristr($optcfg['if'], "ath") == true)
+						if (strstr($optcfg['if'], "wi") ||
+							strstr($optcfg['if'], "ath"))
 							$opts[] = "hostap";
 						$opts[] = "BSS";
 						$opts[] = "IBSS";

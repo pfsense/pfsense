@@ -88,7 +88,7 @@ foreach ($ifdescrs as $ifn => $ifd) {
 <embed src="graph.php?ifnum=<?=$ifnum;?>&ifname=<?=rawurlencode($ifdescrs[$curif]);?>" type="image/svg+xml"
 		width="<? echo $width; ?>" height="<? echo $height; ?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
 </div>
-<p>
+<p><form method="post" action="status_graph.php">
 Graph Width: <input name="width" value="<? echo $width; ?>"> Height: <input name="height" value="<? echo $height; ?>"> <input type="submit" value="Change Graph Size"></p>
 <p><span class="red"><strong>Note:</strong></span> the <a href="http://www.adobe.com/svg/viewer/install/" target="_blank">Adobe SVG viewer</a> is required to view the graph.
 <?php include("fend.inc"); ?>

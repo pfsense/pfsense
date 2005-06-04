@@ -141,10 +141,10 @@ if ($_POST) {
 					/* restore the entire configuration */
 					if (config_install($_FILES['conffile']['tmp_name']) == 0) {
 						/* this will be picked up by /index.php */
-						touch("/needs_package_sync");
 						conf_mount_rw();
-						system_reboot();
+						touch("/needs_package_sync");
 						conf_mount_ro();
+						system_reboot();
 						$savemsg = "The configuration has been restored. The firewall is now rebooting.";
 					} else {
 						$input_errors[] = "The configuration could not be restored.";

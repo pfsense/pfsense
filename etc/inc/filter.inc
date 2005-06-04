@@ -155,14 +155,14 @@ function filter_configure() {
 					if(stristr($file, ".sh") == true) {
 						mwexec("/usr/local/pkg/pf/" . $file . " start");
 					} else {
-						if(php_check_syntax($text, $error_message) == false)
+						//if(php_check_syntax($text, $error_message) == false)
 							if($g['booting'] == true)
 								echo "\t{$file}... ";
 							eval($text);
 							if($g['booting'] == true) 
 								echo "done.\n";
-						else
-							echo "Error deteceted in {$file}: {$error_message}\n";
+						//else
+						//	echo "Error deteceted in {$file}: {$error_message}\n";
 					}
 				}
 			}

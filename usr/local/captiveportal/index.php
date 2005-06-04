@@ -418,7 +418,7 @@ function disconnect_client($sessionid) {
 									   $radiusservers[0]['key'],
 									   $clientip);
 			}
-			mwexec("/sbin/pfctl -t captiveportal -T delete {$clientip}");
+			mwexec("/sbin/pfctl -t captiveportal -T delete {$cpdb[$i][2]}");
 			unset($cpdb[$i]);
 			break;
 		}

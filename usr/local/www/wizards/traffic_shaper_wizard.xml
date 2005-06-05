@@ -60,14 +60,14 @@
 	<fields>
                 <field>
                         <name>Download</name>
-                        <description>The download speed of your WAN link in KBytes/second.</description>
+                        <description>The download speed of your WAN link in Kbits/second.</description>
                         <type>input</type>
 			<validate>^[0-9]*$</validate>
 			<message>Download speed must be numerical</message>
                 </field>
                 <field>
                         <name>Upload</name>
-                        <description>The upload speed of your WAN link in KBytes/second.</description>
+                        <description>The upload speed of your WAN link in Kbits/second.</description>
                         <type>input</type>
 			<validate>^[0-9]*$</validate>
 			<message>Upload speed must be numerical</message>
@@ -254,19 +254,19 @@
 			<typehint>Bandwidth guarantee for VOIP phone</typehint>
 			<options>
 				<option>
-					<name>128KBytes/sec</name>
+					<name>128Kbits/sec</name>
 					<value>128</value>
 				</option>
 				<option>
-					<name>96KBytes/sec</name>
+					<name>96Kbits/sec</name>
 					<value>96</value>
 				</option>
 				<option>
-					<name>64KBytes/sec</name>
+					<name>64Kbits/sec</name>
 					<value>64</value>
 				</option>
 				<option>
-					<name>32KBytes/sec</name>
+					<name>32Kbits/sec</name>
 					<value>32</value>
 				</option>
 			</options>
@@ -615,7 +615,8 @@
 	</fields>
 	<stepsubmitphpaction>
 		$config['shaper']['enable'] = TRUE;
-/* XXX reload filter rules */
+		filter_configure();
+		header("Location: /");
 	</stepsubmitphpaction>
 </step>
 

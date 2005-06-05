@@ -323,6 +323,7 @@ function interfaces_wireless_configure($if, $wlcfg) {
 		" ssid " . escapeshellarg($wlcfg['ssid']) . " channel " .
 		escapeshellarg($wlcfg['channel']) . " ";
 
+	/* XXX: apparent not everything likes this little blurb */
 	//if ($wlcfg['stationname'])
 	//	$ifcargs .= "stationname " . escapeshellarg($wlcfg['stationname']) . " ";
 
@@ -343,15 +344,12 @@ function interfaces_wireless_configure($if, $wlcfg) {
 
 	switch ($wlcfg['mode']) {
 		case 'hostap':
-			if (strstr($if, "wi"))
-				$ifcargs .= "mediaopt ibss mediaopt hostap ";
-			else if (strstr($if, "ath"))
-				$ifcargs .= "mediaopt hostap ";	
+			$ifcargs .= "mediaopt hostap ";
 			break;
 		case 'ibss':
 		case 'IBSS':
 			if (strstr($if, "wi"))
-				$ifcargs .= "mediaopt hostap mediaopt ibss ";
+				$ifcargs .= "mediaopt ibss ";
 			else if (strstr($if, "an"))
 				$ifcargs .= "mediaopt adhoc ";
 			else if (strstr($if, "ath"))
@@ -360,7 +358,7 @@ function interfaces_wireless_configure($if, $wlcfg) {
 		case 'bss':
 		case 'BSS':
 			if (strstr($if, "wi"))
-				$ifcargs .= "mediaopt hostap mediaopt ibss ";
+				$ifcargs .= "mediaopt ibss ";
 			else if (strstr($if, "an"))
 				$ifcargs .= "mediaopt adhoc ";
 			else if (strstr($if, "ath"))
@@ -369,6 +367,10 @@ function interfaces_wireless_configure($if, $wlcfg) {
 	}
 
 	$ifcargs .= "up";
+
+	unmute_kernel_msgs();
+	
+	echo "ifconfig {$ifcargs}";
 
 	mwexec("/sbin/ifconfig " . $ifcargs);
 

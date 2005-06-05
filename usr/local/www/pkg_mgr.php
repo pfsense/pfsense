@@ -29,9 +29,7 @@
 */
 
 require("guiconfig.inc");
-require("xmlparse_pkg.inc");
-
-$a_out = &$pkg_config['packages'];
+require("pkg-utils.inc");
 
 if ($_POST) {
 
@@ -72,15 +70,8 @@ include("fbegin.inc");
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
 
-if(!file_exists("{$g['tmp_path']}/pkg_config.xml")) {
-	fetch_latest_pkg_config();
-}
+$pkg_info = get_pkg_info();
 
-$pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
-
-if(!$pkg_config['packages']) {
-            print_info_box_np("Could not find any packages in pkg_config.xml");
-}
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
   <ul id="tabnav">
@@ -103,41 +94,41 @@ if(!$pkg_config['packages']) {
 		 $instpkgs = array();
 		    if($config['installedpackages']['package'] != "")
 			foreach($config['installedpackages']['package'] as $instpkg) $instpkgs[] = $instpkg['name'];
-
-		    foreach ($pkg_config['packages']['package'] as $key => $pkg) {
-			if(!in_array($pkg['name'], $instpkgs)) {
-				$pkgs[$key] = $pkg['name'];
-			}
+		    $pkg_names = array_keys($pkg_info);
+		    foreach($pkg_names as $name) {
+			if(!in_array($name, $instpkgs)) $pkg_keys[] = $name;
 		    }
-		    asort($pkgs);
-		    $pkgs = array_keys($pkgs);
-		    foreach($pkgs as $index) {
-			    if($pkgs[0] == "") {
-				echo "<tr><td colspan=\"3\"><center>There are currently no available packages for installation.</td></tr>";
-			    }
+		    sort($pkg_keys);
+		    if(count($pkg_keys) != 0) {
+		    	foreach($pkg_keys as $key) {
+			    $index = &$pkg_info[$key];
+			    if(in_array($index['name'], $instpkgs)) continue;
                             ?>
                             <tr valign="top">
                                 <td class="listlr">
-                                    <A target="_new" href="<?= $pkg_config['packages']['package'][$index]['website'] ?>"><?= $pkg_config['packages']['package'][$index]['name'] ?></a>
+                                    <A target="_new" href="<?= $index['website'] ?>"><?= $index['name'] ?></a>
                                 </td>
                                 <td class="listlr">
-                                    <?= $pkg_config['packages']['package'][$index]['category'] ?>
+                                    <?= $index['category'] ?>
     							</td>
                                 <td class="listlr">
-									<?= $pkg_config['packages']['package'][$index]['status'] ?>
+									<?= $index['status'] ?>
 									<br>
-									<?= $pkg_config['packages']['package'][$index]['version'] ?>
+									<?= $index['version'] ?>
                                 </td>
                                 <td class="listbg">
                                     <font color="#FFFFFFF">
-                                    <?= $pkg_config['packages']['package'][$index]['descr'] ?>
+                                    <?= $index['descr'] ?>
                                 </td>
                                 <td valign="middle" class="list" nowrap>
-                                    <a onclick="return confirm('Do you really want to install this package?')" href="pkg_mgr_install.php?id=<?=$index;?>"><img src="plus.gif" width="17" height="17" border="0"></a>
+                                    <a onclick="return confirm('Do you really want to install this package?')" href="pkg_mgr_install.php?id=<?=$index['name'];?>"><img src="plus.gif" width="17" height="17" border="0"></a>
                                 </td>
                             </tr>
                             <?php
-                    }
+                        }
+		    } else {
+			echo "<tr><td colspan=\"3\"><center>There are currently no available packages for installation.</td></tr>";
+		    }
 		?>
         </table>
     </td>
@@ -146,5 +137,3 @@ if(!$pkg_config['packages']) {
 <?php include("fend.inc"); ?>
 </body>
 </html>
-
-<?php unlink_if_exists("{$g['tmp_path']}/pkg*"); ?>

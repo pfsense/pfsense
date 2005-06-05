@@ -655,7 +655,7 @@ function is_service_running($service_name) {
     $status_split = split("\n", $service_name);
     $counter = 0;
     foreach ($status_split as $ss) $counter++;
-    if($counter > 0) return 1;
+    if($counter > 1) return 1;
     return 0;
 }
 

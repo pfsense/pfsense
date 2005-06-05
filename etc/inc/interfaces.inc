@@ -368,10 +368,6 @@ function interfaces_wireless_configure($if, $wlcfg) {
 
 	$ifcargs .= "up";
 
-	unmute_kernel_msgs();
-	
-	echo "ifconfig {$ifcargs}";
-
 	mwexec("/sbin/ifconfig " . $ifcargs);
 
 	return 0;

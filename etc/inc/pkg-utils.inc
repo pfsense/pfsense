@@ -438,7 +438,11 @@ function install_package($package, $pkg_info = "") {
 	update_output_window($static_output);
 	/* install other package components */
 	install_package_xml($package);
+	$static_output .= "Writing configuration... ";
+	update_output_window($static_output);
 	write_config($changedesc);
+	$static_output .= "done.\n\nInstallation completed.";
+	update_output_window($static_output);
 }
 
 function install_package_xml($pkg) {

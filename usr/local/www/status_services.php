@@ -42,6 +42,12 @@ function get_package_rcd_details($extd) {
             $package_name = $match_array[1][0];
         if (preg_match_all("/\# EXECUTABLE\: (.*)\n/",$file_contents,$match_array))
             $executable_name = $match_array[1][0];
+	/* if we cannot locate it atleast return what they passed us */
+	if($package_name = "") 
+		$package_name = str_replace(".xml","",$extd);
+	if($executable_name = "") 
+		$executable_name = str_replace(".xml","",$extd);
+	/* XXX: needs a get_pkg_description($packagename) function */
 	$description = "";
 }
 

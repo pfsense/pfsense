@@ -48,7 +48,7 @@ function find_package_description($package) {
 }
 
 function get_package_rcd_details($extd) {
-	global $package_name, $executable_name, $description;
+	global $package_name, $executable_name, $description, $raw_name;
 	$raw_name = str_replace(".sh","",$extd);
 	$package_name = "";
 	$executable_name = "";
@@ -69,17 +69,17 @@ function get_package_rcd_details($extd) {
 		$description = "&nbsp;";
 }
 
-if($_GET['service'] <> "")
+if($_GET['service'] <> "") 
 	get_package_rcd_details($_GET['service'] . ".sh");
 
 if($_GET['restartservice'] == "true") {
 	mwexec("/sbin/killall $executable_name");
-	mwexec("/bin/sh /usr/local/etc/rc.d/{$service}.sh");
+	mwexec("/bin/sh /usr/local/etc/rc.d/{$raw_name}.sh");
 	$status = is_service_running($executable_name);
 	if($status == 1) {
 		$savemsg = "{$package_name} has been restarted.";
 	} else {
-		$error_message = exec_command("/bin/sh /usr/local/etc/rc.d/{$service}.sh");
+		$error_message = exec_command("/bin/sh /usr/local/etc/rc.d/{$raw_name}.sh");
 		$savemsg = "There was a error restarting {$package_name}.<p>{$error_message}";
 	}
 }
@@ -90,11 +90,11 @@ if($_GET['stopservice'] == "true") {
 }
 
 if($_GET['startservice'] == "true") {	
-	mwexec("/bin/sh /usr/local/etc/rc.d/{$service}.sh");
+	mwexec("/bin/sh /usr/local/etc/rc.d/{$raw_name}.sh");
 	if($status == 1) {
 		$savemsg = "{$package_name} has been started.";
 	} else {
-		$error_message = exec_command("/bin/sh /usr/local/etc/rc.d/{$service}.sh");
+		$error_message = exec_command("/bin/sh /usr/local/etc/rc.d/{$raw_name}.sh");
 		$savemsg = "There was a error restarting {$package_name}.<p>{$error_message}";
 	}
 
@@ -157,13 +157,13 @@ if ($dh)
 		echo "<td class=\"listlr\">{$status_txt}</td>";
 		echo "<td class=\"listlr\"><center>";
 		if($status == 1) {
-			echo "<a href='status_services.php?restartservice=true&service={$package_name}'>";
+			echo "<a href='status_services.php?restartservice=true&service={$raw_name}'>";
 			echo "<img title='Restart Service' border='0' src='/service_restart.gif'></a> ";
-			echo "<a href='status_services.php?stopservice=true&service={$package_name}'>";
+			echo "<a href='status_services.php?stopservice=true&service={$raw_name}'>";
 			echo "<img title='Stop Service' border='0' src='/service_stop.gif'> ";
 			echo "</a> ";
 		} else {
-			echo "<a href='status_services.php?startservice=true&service={$package_name}'> ";
+			echo "<a href='status_services.php?startservice=true&service={$raw_name}'> ";
 			echo "<img title='Start Service' border='0' src='/service_start.gif'></a> ";
 		}
 		echo "</center></td>";

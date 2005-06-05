@@ -164,7 +164,7 @@ function return_filename_as_string($filename) {
         return file_get_contents($filename);
     } else {
         return false;
-    }
+   } 
 }
 
 /****f* pfsense-utils/find_package_description
@@ -178,9 +178,9 @@ function find_package_description($package) {
     if(!file_exists("{$g['tmp_path']}/pkg_config.xml"))
 	    fetch_latest_pkg_config();
     $pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
-    foreach($pkgs as $index) {
+    foreach($pkg_config['packages']['package'] as $index) {
 	if($index['name'] == $package) 
-	    return $pkg_config['packages']['package'][$index]['descr']
+	    return $index['descr'];
     }
     return;
 }

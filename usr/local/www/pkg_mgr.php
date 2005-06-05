@@ -70,7 +70,7 @@ include("fbegin.inc");
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
 
-$pkg_info = get_pkg_info();
+$pkg_info = get_pkg_info('all', array('name', 'category', 'website', 'version', 'status', 'descr'));
 
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>

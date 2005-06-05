@@ -348,61 +348,6 @@ function filter_setup_altq_interfaces() {
 	return $altq_rules;
 }
 
-
-
-function broken_filter_setup_altq_interfaces() {
-	global $config;
-	$altq_rules  = "";
-	$altq_ifs = "";
-	$bandwidth = "";
-	$queue_names = "";
-	$is_first = "";
-
-	if(!is_array($config['shaper']['queue'])) return;
-
-	$ifdescrs = array('wan', 'lan');
-	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-		$ifdescrs[] = "opt" . $j;
-	}
-
-	$queue_names = "";
-	foreach ($ifdescrs as $ifdescr => $ifname) {
-
-		$workting_with_interface = $ifname;
-
-		foreach ($config['shaper']['queue'] as $queue) {
-			$rule_interface = "";
-			$q = $queue;
-			$rule_interface = filter_is_queue_being_used_on_interface($queue['name'], $workting_with_interface);
-			if ($rule_interface == $workting_with_interface and !$seen[$q['name']]) {
-				if($q['attachtoqueue'] == "") {
-					$queue_names .= " ";
-					$queue_names .= $q['name'];
-					$seen[$q['name']] = 1;
-				}
-			} else {
-echo "{$rule_interface}\n";
-echo "{$workting_with_interface}\n";
-				if($q['parentqueue'] <> "" and !$seen[$q['name']]) {
-					$queue_names .= " ";
-					$queue_names .= $q['name'];
-					$seen[$q['name']] = 1;
-				}
-			}
-				
-		}
-
-		if($queue_names <> ""){
-			if($config['interfaces'][$ifname]['bandwidth'] <> "")
-				$bandwidth = $bandwidth + $config['interfaces'][$ifname]['bandwidth'];
-			$altq_rules .= "altq on {$config['interfaces'][$ifname]['if']} {$config['system']['schedulertype']} bandwidth {$bandwidth}Kb queue \{ {$queue_names} }";
-		}
-
-	}
-
-	return $altq_rules;
-}
-
 function is_queue_attached_children($name) {
         global $config;
         $status = "";

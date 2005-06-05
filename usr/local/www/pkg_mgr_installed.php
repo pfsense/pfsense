@@ -29,9 +29,12 @@
 */
 
 require("guiconfig.inc");
-require("xmlparse_pkg.inc");
+require("pkg-utils.inc");
 
-conf_mount_rw();
+foreach($config['installedpackages']['package'] as $instpkg) {
+	$tocheck[] = $instpkg['name'];
+}
+$currentvers = get_pkg_info($tocheck, array('version'));
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -86,7 +89,7 @@ include("fbegin.inc");
                                 </td>
                                 <td class="listlr">
                                     <?php
-                                        $latest_version = get_latest_package_version($pkg['name']);
+                                        $latest_version = $currentvers[$pkg['name']]['version'];
 					if($latest_version == false) {
 						// We can't determine this package's version status.
 						echo "Upgrade: Unknown.<br>Installed: " . $pkg['version'];
@@ -126,12 +129,3 @@ include("fbegin.inc");
 <?php
     conf_mount_ro();
 ?>
-
-
-
-
-
-
-
-
-

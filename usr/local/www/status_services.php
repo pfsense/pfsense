@@ -146,13 +146,13 @@ if ($dh)
 		echo "<td class=\"listlr\"><center>";
 		if($status == 1) {
 			echo "<a href='status_services.php?restartservice=true&service={$package_name}'>";
-			echo "<img border='0' src='/service_restart.gif'></a> ";
+			echo "<img title='Restart Service' border='0' src='/service_restart.gif'></a> ";
 			echo "<a href='status_services.php?stopservice=true&service={$package_name}'>";
-			echo "<img border='0' src='/service_stop.gif'> ";
+			echo "<img title='Stop Service' border='0' src='/service_stop.gif'> ";
 			echo "</a> ";
 		} else {
 			echo "<a href='status_services.php?startservice=true&service={$package_name}'> ";
-			echo "<img border='0' src='/service_start.gif'></a> ";
+			echo "<img title='Start Service' border='0' src='/service_start.gif'></a> ";
 		}
 		echo "</center></td>";
 		echo "</tr>";

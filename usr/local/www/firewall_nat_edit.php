@@ -61,6 +61,9 @@ if (isset($id) && $a_nat[$id]) {
 	$pconfig['interface'] = "wan";
 }
 
+if (isset($_GET['dup']))
+	unset($id);
+
 if ($_POST) {
 
 	if ($_POST['beginport_cust'] && !$_POST['beginport'])

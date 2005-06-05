@@ -263,20 +263,94 @@ function filter_get_rule_real_interface($associatedrulenumber) {
         }
 }
 
+/* Find a queue that's attached to this one and see if that queue is used on this interface */
+function is_subqueue_used_on_interface($queuename, $interface) {
+        global $config;
+	$qconfig = $config;
+        if (!is_array($qconfig['shaper']['queue'])) return 0;
+
+        foreach ($qconfig['shaper']['queue'] as $queue) {
+                if($queue['attachtoqueue'] == $queuename)
+			$subqueue_interface = filter_is_queue_being_used_on_interface($queue['name'], $interface);
+			/* Useful debugging code for when queues are messed up 
+			 * echo "{$subqueue_interface}/{$interface}/{$queue['name']}/{$queuename}\n";
+			 */
+			if ($subqueue_interface != ""){
+				return 1;
+			}
+        }
+        return 0;
+}
+
 function filter_is_queue_being_used_on_interface($queuename, $interface) {
 	global $config;
 	$lconfig = $config;
 
 	if(!is_array($lconfig['shaper']['rule'])) return;
 	foreach($lconfig['shaper']['rule'] as $rule) {
-		if(($rule['inqueue'] == $queuename && $rule['interface'] == $interface) ||
-			($rule['outqueue'] == $queuename && $rule['interface'] == $interface))
+		if(($rule['inqueue'] == $queuename && $rule['interface'] == $interface))
 			return $interface;
 	}
 	return;
 }
-
 function filter_setup_altq_interfaces() {
+	global $config;
+	$altq_rules  = "";
+	$queue_names = "";
+	$is_first = "";
+
+	if(!is_array($config['shaper']['queue'])) return;
+
+	$ifdescrs = array('wan', 'lan');
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+		$ifdescrs[] = "opt" . $j;
+	}
+
+	foreach ($ifdescrs as $ifdescr => $ifname) {
+
+		$queue_names = "";
+		$is_first = "";
+
+		$workting_with_interface = $ifname;
+
+		foreach ($config['shaper']['queue'] as $queue) {
+			$rule_interface = "";
+			$q = $queue;
+			$rule_interface = filter_is_queue_being_used_on_interface($q['name'], $workting_with_interface);
+			if ($rule_interface == $workting_with_interface) {
+				if(!isset($q['attachtoqueue'])) {
+					if($is_first) $queue_names .= ", ";
+					$queue_names .= $q['name'];
+					$is_first = "1";
+				}
+			} else {
+                                if(isset($q['parentqueue']) && ($q['parentqueue'] <> "")) {
+					if(is_subqueue_used_on_interface($q['name'], $workting_with_interface)) {
+                                        	$queue_names .= " ";
+                                        	$queue_names .= $q['name'];
+                                        	$seen[$q['name']] = 1;
+					}
+				}
+			}
+
+		}
+
+		if($queue_names <> ""){
+			$altq_rules .= "altq on " . $config['interfaces'][$ifname]['if'] . " ";
+			if($config['interfaces'][$ifname]['bandwidth'] <> "")
+				$bandwidth = " bandwidth " . $config['interfaces'][$ifname]['bandwidth'] . $config['interfaces'][$ifname]['bandwidthtype'];
+			$altq_rules .=  $config['system']['schedulertype'] . $bandwidth  . " ";
+			$altq_rules .= "queue { " . $queue_names . " }";
+		}
+		$altq_rules .= "\n";
+
+	}
+	return $altq_rules;
+}
+
+
+
+function broken_filter_setup_altq_interfaces() {
 	global $config;
 	$altq_rules  = "";
 	$altq_ifs = "";
@@ -307,6 +381,8 @@ function filter_setup_altq_interfaces() {
 					$seen[$q['name']] = 1;
 				}
 			} else {
+echo "{$rule_interface}\n";
+echo "{$workting_with_interface}\n";
 				if($q['parentqueue'] <> "" and !$seen[$q['name']]) {
 					$queue_names .= " ";
 					$queue_names .= $q['name'];
@@ -317,14 +393,13 @@ function filter_setup_altq_interfaces() {
 		}
 
 		if($queue_names <> ""){
-			$altq_ifs .= " {$config['interfaces'][$ifname]['if']}";
 			if($config['interfaces'][$ifname]['bandwidth'] <> "")
 				$bandwidth = $bandwidth + $config['interfaces'][$ifname]['bandwidth'];
+			$altq_rules .= "altq on {$config['interfaces'][$ifname]['if']} {$config['system']['schedulertype']} bandwidth {$bandwidth}Kb queue \{ {$queue_names} }";
 		}
 
 	}
 
-	$altq_rules = "altq on \{ {$altq_ifs} } {$config['system']['schedulertype']} bandwidth {$bandwidth}Kb queue \{ {$queue_names} }";
 	return $altq_rules;
 }
 
@@ -346,7 +421,7 @@ function queue_interface_recursive($queuename) {
                         if($status <> "") return $status;
                 }
                 foreach($config['shaper']['rule'] as $rule) {
-                        if($rule['inqueue'] == $queuename || $rule['outqueue'] == $queuename)
+                        if($rule['inqueue'] == $queuename)
                                  return $rule['interface'];
                 }
         }

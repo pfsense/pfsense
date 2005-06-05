@@ -137,9 +137,9 @@ if ($dh)
 			continue;
 		$status = is_service_running($executable_name);
 		if($status == 1)
-			$status_txt = "Running";
+			$status_txt = "<font color='green'>Running</font>";
 		else
-			$status_txt = "Stopped";
+			$status_txt = "<font color='red'>Stopped</font>";
 		echo "<tr><td class=\"listlr\">{$package_name}</td>";
 		echo "<td class=\"listlr\">{$description}</td>";
 		echo "<td class=\"listlr\">{$status_txt}</td>";

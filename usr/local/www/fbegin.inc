@@ -1,23 +1,23 @@
 <?php
 /* $Id$ */
 	function return_ext_menu($section) {
-		global $g;
+		global $config;
 		$htmltext = "";
-		$dh = @opendir($g['www_path'] . "/ext/" . $section);
-		if ($dh) {
-			while (($extd = readdir($dh)) !== false) {
-				if (($extd === ".") || ($extd === ".."))
-					continue;
-				$fdt = fopen("{$g['www_path']}/ext/" . $section . "/" . $extd, "r");
-				$description = fread($fdt, 1024);
-				fclose($fdt);
-				echo "<!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/pkg.php?xml=" . strtolower($extd) . ".xml\" class=\"navlnk\">" . $extd . "</a><br> -->\n";
-				$htmltext .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"" . $description . "\" class=\"navlnk\">" . $extd . "</a><br>\n";
+		if($config['installedpackages']['menu'] <> "") {
+			foreach($config['installedpackages']['menu'] as $menuitem) {
+				if($menuitem['section'] != $section) continue;
+				if($menuitem['url'] <> "") {
+					$description = '/' . $menuitem['url'];
+				} else {
+					$description = '/pkg.php?xml=' . $menuitem['configfile'];
+				}
+				$htmltext .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="' . $description . ' "class="navlnk">' . $menuitem['name'] . '</a><br>' . "\n";
 			}
-			closedir($dh);
 		}
 		return $htmltext;
 	}
+	
+					
 ?>
 
 <script language="javascript">
@@ -148,7 +148,7 @@ function showhide(tspan, tri) {
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/halt.php" class="navlnk">Halt system</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_ping.php" class="navlnk">Ping</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/reboot.php" class="navlnk">Reboot system</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_resetstate.php" class="navlnk">Reset state</a><br
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_resetstate.php" class="navlnk">Reset state</a><br>
 		<?php echo return_ext_menu("Diagnostics"); ?>
 			  </span>
 			  </font></span>

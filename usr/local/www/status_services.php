@@ -35,6 +35,18 @@ function gentitle_pkg($pgname) {
 	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
 }
 
+function find_package_description($package) {
+    global $g, $config;
+    if(!file_exists("{$g['tmp_path']}/pkg_config.xml"))
+	    fetch_latest_pkg_config();
+    $pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
+    foreach($pkg_config['packages']['package'] as $index) {
+	if($index['name'] == $package) 
+	    return $index['descr'];
+    }
+    return;
+}
+
 function get_package_rcd_details($extd) {
 	global $package_name, $executable_name, $description;
 	$raw_name = str_replace(".sh","",$extd);
@@ -133,10 +145,14 @@ if ($dh)
 		echo "<td class=\"listlr\">{$status_txt}</td>";
 		echo "<td class=\"listlr\">";
 		if($status == 1) {
-			echo "<a href='status_services.php?restartservice=true&service={$package_name}'>Restart</a> ";
-			echo "<a href='status_services.php?stopservice=true&service={$package_name}'>Stop</a> ";
+			echo "<a href='status_services.php?restartservice=true&service={$package_name}'>";
+			echo "<img border='0' src='/services_restart.gif'></a>";
+			echo "<a href='status_services.php?stopservice=true&service={$package_name}'>";
+			echo "<img border='0' src='/services_stop.gif'>";
+			echo "</a> ";
 		} else {
-			echo "<a href='status_services.php?startservice=true&service={$package_name}'>Start</a> ";
+			echo "<a href='status_services.php?startservice=true&service={$package_name}'> ";
+			echo "<img border='0' src='/services_start.gif'></a>";
 		}
 		echo "</td>";
 		echo "</tr>";

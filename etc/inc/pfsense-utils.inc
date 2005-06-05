@@ -167,6 +167,24 @@ function return_filename_as_string($filename) {
     }
 }
 
+/****f* pfsense-utils/find_package_description
+ * NAME
+ *   find_package_description - Return a packages description
+ * RESULT
+ *   $description	- packages description
+ ******/
+function find_package_description($package) {
+    global $g, $config;
+    if(!file_exists("{$g['tmp_path']}/pkg_config.xml"))
+	    fetch_latest_pkg_config();
+    $pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
+    foreach($pkgs as $index) {
+	if($index['name'] == $package) 
+	    return $pkg_config['packages']['package'][$index]['descr']
+    }
+    return;
+}
+
 /****f* pfsense-utils/is_carp_defined
  * NAME
  *   is_carp_defined - Return whether CARP is detected in the kernel.

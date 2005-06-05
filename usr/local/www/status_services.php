@@ -37,18 +37,24 @@ function gentitle_pkg($pgname) {
 
 function get_package_rcd_details($extd) {
 	global $package_name, $executable_name, $description;
+	$raw_name = str_replace(".sh","",$extd);
+	$package_name = "";
+	$executable_name = "";
+	/* XXX: needs a get_pkg_description($packagename) function */
+	$description = "";	
 	$file_contents = return_filename_as_string("/usr/local/etc/rc.d/{$extd}");
         if (preg_match_all("/\# PACKAGE\: (.*)\n/",$file_contents,$match_array))
             $package_name = $match_array[1][0];
         if (preg_match_all("/\# EXECUTABLE\: (.*)\n/",$file_contents,$match_array))
             $executable_name = $match_array[1][0];
 	/* if we cannot locate it atleast return what they passed us */
-	if($package_name = "") 
-		$package_name = str_replace(".xml","",$extd);
-	if($executable_name = "") 
-		$executable_name = str_replace(".xml","",$extd);
-	/* XXX: needs a get_pkg_description($packagename) function */
-	$description = "";
+	if($package_name == "") 
+		$package_name = str_replace(".sh","",$extd);
+	if($executable_name == "") 
+		$executable_name = str_replace(".sh","",$extd);
+	$description = find_package_description($raw_name);
+	if($description == "")
+		$description = "&nbsp;";
 }
 
 if($_GET['service'] <> "")
@@ -93,31 +99,39 @@ include("fbegin.inc");
 
 <p>
 
-<table width="100%" border="0" cellpadding="6" cellspacing="0">
-</tr>
-<tr>
-  <td class="listhdrr"><b><center>Service</center></b></td>
-  <td class="listhdrr"><b><center>Description</center></b></td>
-  <td class="listhdrr"><b><center>Status</center></b></td>
-  <td class="listhdrr"><b><center>Maintenance</center></b></td>
-</tr>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td class="tabcont">
+    <table width="100%" border="0" cellpadding="6" cellspacing="0">
+	<tr>
+	  <td class="listhdrr"><b><center>Service</center></b></td>
+	  <td class="listhdrr"><b><center>Description</center></b></td>
+	  <td class="listhdrr"><b><center>Status</center></b></td>
+	  <td class="listhdrr"><b><center>Maintenance</center></b></td>
+	</tr>
+
 <?php
 
 $dh = @opendir("/usr/local/etc/rc.d/");
 if ($dh)
 	while (($extd = readdir($dh)) !== false) {
-		if (($extd === ".") || ($extd === ".."))
+		if (($extd == ".") || ($extd == ".."))
 			continue;
 		get_package_rcd_details($extd);
-		if($executable_name= "")
+		if($executable_name == "")
+			continue;
+		if($package_name == "")
 			continue;
 		$status = is_service_running($executable_name);
 		if($status == 1)
 			$status_txt = "Running";
 		else
 			$status_txt = "Stopped";
-		echo "<tr><td>{$package_name}</td><td>{$description}</td><td>{$status_txt}</td>";
-		echo "<td>";
+		echo "<tr><td class=\"listlr\">{$package_name}</td>";
+		echo "<td class=\"listlr\">{$description}</td>";
+		echo "<td class=\"listlr\">{$status_txt}</td>";
+		echo "<td class=\"listlr\">";
 		if($status == 1) {
 			echo "<a href='status_services.php?restartservice=true&service={$package_name}'>Restart</a> ";
 			echo "<a href='status_services.php?stopservice=true&service={$package_name}'>Stop</a> ";
@@ -132,6 +146,9 @@ if ($dh)
 <tr><td>
 </td></tr>
 </table>
+
+</td>
+</tr></table>
 
 <?php include("fend.inc"); ?>
 </body>

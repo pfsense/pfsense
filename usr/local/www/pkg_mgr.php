@@ -29,7 +29,7 @@
 */
 
 require("guiconfig.inc");
-require("pkg-utils.inc");
+require_once("pkg-utils.inc");
 
 if ($_POST) {
 

@@ -42,6 +42,7 @@
 
 require("guiconfig.inc");
 require("xmlparse_pkg.inc");
+require_once("pkg-utils.inc");
 
 $pfSense_config = $config; // copy this since we will be parsing
                            // another xml file which will be clobbered.

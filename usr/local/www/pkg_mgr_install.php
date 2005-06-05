@@ -31,6 +31,7 @@
 
 require("guiconfig.inc");
 require("xmlparse_pkg.inc");
+require_once("pkg-utils.inc");
 
 conf_mount_rw();
 

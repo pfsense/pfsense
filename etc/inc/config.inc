@@ -184,6 +184,14 @@ function parse_config($parse = false) {
 	return $config;
 }
 
+/****f* config/generate_config_cache
+ * NAME
+ *   generate_config_cache - Write serialized configuration to cache.
+ * INPUTS
+ *   $config	- array containing current firewall configuration
+ * RESULT
+ *   boolean	- true on completion
+ ******/
 function generate_config_cache($config) {
 	global $g;
 	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
@@ -192,6 +200,12 @@ function generate_config_cache($config) {
 	return true;
 }
 
+/****f* config/parse_config_bootup
+ * NAME
+ *   parse_config_bootup - Bootup-specific configuration checks.
+ * RESULT
+ *   null
+ ******/
 function parse_config_bootup() {
 	global $config, $g;
 	if (!$noparseconfig) {
@@ -241,6 +255,12 @@ EOD;
 	config_unlock();
 }
 
+/****f* config/conf_mount_rw
+ * NAME
+ *   conf_mount_rw - Mount filesystems read/write.
+ * RESULT
+ *   null
+ ******/
 /* mount flash card read/write */
 function conf_mount_rw() {
 	global $g;
@@ -261,7 +281,12 @@ function conf_mount_rw() {
 	}
 }
 
-/* mount flash card read only */
+/****f* config/conf_mount_ro
+ * NAME         
+ *   conf_mount_ro - Mount filesystems readonly.
+ * RESULT
+ *   null        
+ ******/
 function conf_mount_ro() {
 	global $g, $do_not_mount_ro;
 
@@ -277,6 +302,17 @@ function conf_mount_ro() {
 	}
 }
 
+/****f* config/convert_config
+ * NAME         
+ *   convert_config - Attempt to update config.xml.
+ * DESCRIPTION
+ *   convert_config() reads the current global configuration
+ *   and attempts to convert it to conform to the latest
+ *   config.xml version. This allows major formatting changes
+ *   to be made with a minimum of breakage.
+ * RESULT
+ *   null        
+ ******/
 /* convert configuration, if necessary */
 function convert_config() {
 	global $config, $pkg_config, $g;
@@ -541,6 +577,18 @@ function convert_config() {
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
 }
 
+/****f* config/write_config
+ * NAME
+ *   write_config - Backup and write the firewall configuration.
+ * DESCRIPTION
+ *   write_config() handles backing up the current configuration,
+ *   applying changes, and regenerating the configuration cache.
+ * INPUTS
+ *   $desc	- string containing the a description of configuration changes
+ *   $backup	- boolean: do not back up current configuration if false.
+ * RESULT
+ *   null       
+ ******/
 /* save the system configuration */
 function write_config($desc="Unknown", $backup = true) {
 	global $config, $g;
@@ -578,6 +626,12 @@ function write_config($desc="Unknown", $backup = true) {
 	return $config;
 }
 
+/****f* config/reset_factory_defaults
+ * NAME
+ *   reset_factory_defaults - Reset the system to its default configuration.
+ * RESULT
+ *   integer	- indicates completion
+ ******/
 function reset_factory_defaults() {
 	global $g;
 

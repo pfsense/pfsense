@@ -335,7 +335,7 @@
 			$rule['descr'] = "DiffServ/Lowdelay/Upload";
 			$rule['inqueue'] = "qVOIPDown";
 			$rule['outqueue'] = "qVOIPUp";
-			$rule['interface'] = "wan";
+			$rule['interface'] = "lan";
 			$rule['source']['network'] = 'lan';
 			$rule['destination']['any'] = TRUE;
 			$rule['iptos'] = "lowdelay";
@@ -345,7 +345,7 @@
 			$rule['descr'] = "DiffServ/Lowdelay/Download";
 			$rule['inqueue'] = "qVOIPUp";
 			$rule['outqueue'] = "qVOIPDown";
-			$rule['interface'] = "lan";
+			$rule['interface'] = "wan";
 			$rule['source']['any'] = TRUE;
 			$rule['destination']['network'] = 'lan';
 			$rule['iptos'] = "lowdelay";
@@ -517,7 +517,7 @@
 					$destsrc = 'destination';
 					$rule['outqueue'] = 'qP2PUp';
 					$rule['inqueue'] = 'qP2PDown';
-					$rule['interface'] = 'wan';
+					$rule['interface'] = 'lan';
 					$rule['source']['network'] = 'lan';
 					$rule['destination']['any'] = TRUE;
 					$rule['descr'] = "m_P2P {$p2pclient[0]} outbound";
@@ -715,7 +715,7 @@
 				    $destsrc = 'destination';
 				    $rule['outqueue'] = 'qGamesUp';
 				    $rule['inqueue'] = 'qGamesDown';
-				    $rule['interface'] = 'wan';
+				    $rule['interface'] = 'lan';
 				    $rule['source']['network'] = 'lan';
 				    $rule['destination']['any'] = TRUE;
 				    $rule['descr'] = "m_Gam {$Gameclient[0]} outbound";
@@ -723,7 +723,7 @@
 				    $destsrc = 'source';
 				    $rule['outqueue'] = 'qGamesDown';
 				    $rule['inqueue'] = 'qGamesUp';
-				    $rule['interface'] = 'lan';
+				    $rule['interface'] = 'wan';
 				    $rule['source']['any'] = TRUE;
 				    $rule['destination']['network'] = 'lan';
 				    $rule['descr'] = "m_Gam {$Gameclient[0]} inbound";

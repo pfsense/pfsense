@@ -962,7 +962,7 @@
 		
 		if($_POST['streamingmp3'] != "") {
 		    /* streaming mp3 media aka shoutcast */
-		    $othersplist[] = array('IPSEC','tcp','8000','8010','both');
+		    $othersplist[] = array('STREAMINGMP3','tcp','8000','8010','both');
 		}
 		
 		/* XXX: add some more protocols here! */
@@ -1004,7 +1004,7 @@
 <step>
         <id>7</id>
         <title>pfSense Traffic Shaper Wizard</title>
-        <description>Summary</description>
+        <description>After pressing Finish the system will load the new profile.</description>
 	<fields>
                 <field>
                         <name>Finish</name>

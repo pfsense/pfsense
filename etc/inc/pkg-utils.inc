@@ -344,6 +344,8 @@ function read_body($ch, $string) {
 
 function install_package($package, $pkg_info = "") {
 	global $g, $config, $pkg_interface, $fd_log, $static_output;
+	/* flush static output */
+	$static_output = "";
 	/* open logfiles and begin installation */
 	if(!$fd_log) {
 		if(!$fd_log = fopen("{$g['tmp_path']}/pkg_mgr_{$pkg}.log", "w")) {
@@ -563,6 +565,8 @@ function install_package_xml($pkg) {
 
 function delete_package($pkg) {
 	global $g, $config, $fd_log, $static_output;
+	/* flush static output */
+	$static_output .= "";
 	update_status("Removing package...");
 	$static_output .= "Removing package... ";
 	update_output_window($static_output);

@@ -287,16 +287,6 @@ if ($_GET['act'] == "del") {
 
                     <table border="0" cellspacing="0" cellpadding="0">
                       <tr>
-                        <td width="16"><img src="in.gif" width="11" height="11"></td>
-                        <td>incoming (as seen by firewall)</td>
-                        <td width="14"></td>
-                        <td width="16"><img src="out.gif" width="11" height="11"></td>
-                        <td>outgoing (as seen by firewall)</td>
-                      </tr>
-                      <tr>
-                        <td colspan="5" height="4"></td>
-                      </tr>
-                      <tr>
                         <td><img src="in_d.gif" width="11" height="11"></td>
                         <td>incoming (disabled)</td>
                         <td width="14"></td>

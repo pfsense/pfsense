@@ -29,6 +29,7 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+require_once("pkg-utils.inc");
 require("pfsense-utils.inc");
 
 resync_all_package_configs(true);

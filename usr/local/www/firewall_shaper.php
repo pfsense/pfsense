@@ -285,15 +285,6 @@ if ($_GET['act'] == "del") {
                       </tr>
                     </table>
 
-                    <table border="0" cellspacing="0" cellpadding="0">
-                      <tr>
-                        <td><img src="in_d.gif" width="11" height="11"></td>
-                        <td>incoming (disabled)</td>
-                        <td width="14"></td>
-                        <td><img src="out_d.gif" width="11" height="11"></td>
-                        <td>outgoing (disabled)</td>
-                      </tr>
-                    </table>
 			        <p><span class="red"><strong>Note:</strong></span><strong><br>
                     </strong>the first rule that matches a packet will be executed.<br>
                     The following match patterns are not shown in the list above:

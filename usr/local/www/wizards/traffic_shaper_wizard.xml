@@ -425,7 +425,7 @@
                         <type>checkbox</type>
                         <typehint>Prioritize Peer-to-Peer traffic</typehint>
                         <description>This will lower the priority of P2P traffic below all other traffic.</description>
-			<enablefields>Aimster,BitTorrent,BuddyShare,CuteMX,DCplusplus,dcc,DirectConnect,DirectFileExpress,EDonkey2000,FastTrack,Gnutella,grouper,hotComm,HotlineConnect,iMest,Napster,OpenNap,Scour,SongSpy,WinMX</enablefields>
+			<enablefields>Aimster,BitTorrent,BuddyShare,CuteMX,DCplusplus,dcc,DirectConnect,DirectFileExpress,EDonkey2000,FastTrack,Gnutella,grouper,hotComm,HotlineConnect,iMesh,Napster,OpenNap,Scour,SongSpy,WinMX</enablefields>
                 </field>
                 <field>
                         <name>Next</name>
@@ -544,6 +544,8 @@
 
 	/* XXX - billm - needs to actually honor what the user selects still */
 	if ( $_POST['enable'] ) {
+
+		$p2plist = array();
 
 		/* To add p2p clients, push Descr,Protocol,Start,End,src/dest/both onto p2plist */
 		if($_POST['Aimster'] != "") 
@@ -927,6 +929,8 @@
 		$queue['attachtoqueue'] = "qLANRoot";
 		$config['shaper']['queue'][] = $queue;
                 
+		$othersplist = array();
+		
 		if($_POST['MSRDP'] != "") {
 		    /* MSRDP */
 		    $othersplist[] = array('MSRDP','tcp','3389','3389','both');

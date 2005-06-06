@@ -561,23 +561,38 @@ function install_package_xml($pkg) {
 	}
 }
 
+function delete_package($pkg) {
+	global $g, $config, $fd_log, $static_output;
+	update_status("Removing package...");
+	$static_output .= "Removing package... ";
+	update_output_window($static_output);
+	delete_package_recursive($pkg);
+	$static_output .= "done.\n";
+	update_output_window($static_output);
+	return;
+}
+
 function delete_package_recursive($pkg, $pkgdb = "") {
-	exec("/usr/bin/pkg_info -r " . $pkg, $info);
-	print_r($info);
-	if(!$pkgdb) { exec("/bin/ls /var/db/pkg", $pkgdb); print_r($pkgdb); }
+	exec("/usr/sbin/pkg_info -r " . $pkg . " 2>&1", $info);
+	if(!$pkgdb) exec("/bin/ls /var/db/pkg", $pkgdb);
 	if(stristr($info[0], "can't find package") != false) return;
 	foreach($info as $line) {
 		$depend = trim(array_pop($line));
 		if(in_array($depend, $pkgdb)) delete_package_recursive($depend, $pkgdb);
 	}
-	exec("/usr/sbin/pkg_delete " . $pkg);
+	$fd = fopen("{$g['tmp_path']}/y", "w");
+	for($line = 0; $line < 10; $line++) {
+		fwrite($fd, "y\n");
+	}
+	fclose($fd);
+	exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_delete " . $pkg ." > /dev/null 2>&1");
 	return;
 }
 
 function delete_package_xml($pkg) {
 	global $g, $config, $fd_log, $static_output;
 	if(($pkgid = get_pkg_id($pkg)) == -1) {
-                $static_output .= "The {$pkg} package is not installed.\n\nInstallation aborted.";
+                $static_output .= "The {$pkg} package is not installed.\n\nDeletion aborted.";
                 update_output_window($static_output);
                 echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
                 echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
@@ -590,13 +605,14 @@ function delete_package_xml($pkg) {
                         update_output_window("Warning, could not open log for writing.");
                 }
         }
+	update_status("Removing {$pkg} components...");
 	fwrite($fd_log, "Removing {$pkg} package... ");
-	$static_output .= "Removing {$pkg} package...\n";
+	$static_output .= "Removing {$pkg} components...\n";
 	update_output_window($static_output);
 	/* parse package configuration */
 	$packages = &$config['installedpackages']['package'];
 	$menus = &$config['installedpackages']['menu'];
-	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $packages[$pkgid]['configurationfile'], "packagegui");
+	$pkg_config = parse_xml_config("/usr/local/pkg/" . $packages[$pkgid]['configurationfile'], "packagegui");
         /* remove menu items */
 	if(is_array($pkg_config['menu'])) {
 		$static_output .= "\tMenu items... ";
@@ -653,6 +669,7 @@ function delete_package_xml($pkg) {
 	unset($config['installedpackages']['package'][$pkgid]);
 	$static_output .= "done.\n";
 	update_output_window($static_output);
+	write_config("Removed {$pkg} package.");
 	/* file cleanup */
 	$ctag = file("/etc/crontab");
 	foreach($ctag as $line) {

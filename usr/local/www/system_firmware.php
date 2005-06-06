@@ -31,8 +31,8 @@
 */
 
 $d_isfwfile = 1;
-require("guiconfig.inc");
-//require("xmlrpc_client.inc");
+require_once("guiconfig.inc");
+require_once("xmlrpc_client.inc");
 
 /* Handle manual upgrade */
 if ($_POST && !file_exists($d_firmwarelock_path)) {

@@ -28,9 +28,9 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-require("guiconfig.inc");
-require("xmlparse_pkg.inc");
-require("xmlrpc.inc");
+require_once("guiconfig.inc");
+require_once("xmlparse_pkg.inc");
+require_once("xmlrpc.inc");
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">

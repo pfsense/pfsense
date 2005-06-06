@@ -828,7 +828,7 @@
 		$queue = array();
 		$queue['name'] = "qOthersUp";
 		$queue['associatedrule'] = 0;
-		$queue['priority'] = 5;
+		$queue['priority'] = 4;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
 		$queue['realtime'] = "on";
@@ -852,7 +852,7 @@
 		$queue = array();
 		$queue['name'] = "qOthersDown";
 		$queue['associatedrule'] = 0;
-		$queue['priority'] = 5;
+		$queue['priority'] = 4;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
 		$queue['realtime'] = "on";

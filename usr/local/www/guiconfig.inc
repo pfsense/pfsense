@@ -47,6 +47,8 @@ require_once("auth.inc");
 require_once("config.inc");
 require_once("functions.inc");
 
+require_once("xmlparse_pkg.inc");
+
 $d_natconfdirty_path = $g['varrun_path'] . "/nat.conf.dirty";
 $d_filterconfdirty_path = $g['varrun_path'] . "/filter.conf.dirty";
 $d_ipsecconfdirty_path = $g['varrun_path'] . "/ipsec.conf.dirty";

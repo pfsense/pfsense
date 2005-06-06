@@ -599,7 +599,7 @@
                         <type>checkbox</type>
                         <typehint>Prioritize network gaming traffic</typehint>
                         <description>This will raise the priority of gaming traffic to higher than most traffic.</description>
-			<enablefields>Counterstrike,DeltaForce,QuakeIII</enablefields>
+			<enablefields>Counterstrike,DeltaForce,QuakeIII,TigerWoods2004PS2</enablefields>
 			<donotdisable>true</donotdisable>
                 </field>
                 <field>
@@ -620,6 +620,11 @@
                         <name>QuakeIII</name>
                         <type>checkbox</type>
 			<typehint>Quake III</typehint>
+                </field>
+                <field>
+                        <name>TigerWoods2004PS2</name>
+                        <type>checkbox</type>
+			<typehint>Tiger Woods 2004 for PS2</typehint>
                 </field>
                 <field>
                         <name>Next</name>
@@ -691,6 +696,11 @@
 
 	    /* quake3 */
 	    $gamesplist[] = array('Delta1','udp','27910','27919','both');
+    
+	    /* tiger woods 2004 ps2 */
+	    $gamesplist[] = array('Outbound2Player','udp','3658','3658','both');
+	    $gamesplist[] = array('OutboundOutbound2Player2','udp','6000','6000','both');	    
+	    $gamesplist[] = array('Outbound2EA','tcp','10300','10301','both');
     
 	    /* XXX: add some more games here! */
     

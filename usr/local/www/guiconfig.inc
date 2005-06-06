@@ -466,7 +466,7 @@ function dump_clog($logfile, $tail, $grepfor = "", $grepinvert = false, $withori
 	if(!is_array($grepinvert)) $grepinvert = array($grepinvert);
 	if($ignorepkgs == true and $config['installedpackages']['package'] != "") {
 		foreach($config['installedpackages']['package'] as $pkg) {
-			$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $pkg['configurationfile'], "packagegui");
+			$pkg_config = parse_xml_config("/usr/local/pkg/" . $pkg['configurationfile'], "packagegui");
 			if($pkg_config['logging'] != "" and $pkg_config['logging']['grepfor'] != "") {
 				$grepfor[] = $pkg_config['logging']['grepfor'];
 				$grepinvert[] = true;

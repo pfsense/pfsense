@@ -44,7 +44,6 @@ require_once("xmlrpc.inc");
 <?php
 include("fbegin.inc");
 $versions = check_firmware_version();
-print_r($versions);
 ?>
 <p class="pgtitle">System: Firmware Update</p>
 <br>

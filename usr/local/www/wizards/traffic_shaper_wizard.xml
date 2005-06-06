@@ -795,7 +795,7 @@
                         <type>checkbox</type>
                         <typehint>Other networking protocols</typehint>
                         <description>This will help raise the priority of other protocols higher than most traffic.</description>
-			<enablefields>MSRDP</enablefields>
+			<enablefields>MSRDP,PPTP,IPSEC</enablefields>
 			<donotdisable>true</donotdisable>
                 </field>
                 <field>

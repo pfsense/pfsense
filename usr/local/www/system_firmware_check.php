@@ -44,6 +44,7 @@ require_once("xmlrpc.inc");
 <?php
 include("fbegin.inc");
 $versions = check_firmware_version();
+print_r($versions);
 ?>
 <p class="pgtitle">System: Firmware Update</p>
 <br>
@@ -91,12 +92,12 @@ $versions = check_firmware_version();
 				<td class="listlr"><?= $currentver ?></td>
 			<?php
 			} elseif($pastlatest) {
-				$newver = $versions[$key][count($versions[$key]) -1];
+				$newver = $versions[$key]['version'];
 			?>
-				<td class="listbggrey"><font color="#FFFFFFF"><?= $newver['version'] ?></td>
+				<td class="listbggrey"><font color="#FFFFFFF"><?= $newver ?></td>
 			<?php
 			} else {
-				$newver = $versions[$key][count($versions[$key]) -1];
+				$newver = $versions[$key]['version'];
 			?>
 				<td class="listbg"><font color="#FFFFFFF"><?= $newver['version'] ?></td>
 			<?php } 

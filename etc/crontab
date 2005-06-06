@@ -1,14 +1,14 @@
 SHELL=/bin/sh
 PATH=/etc:/bin:/sbin:/usr/bin:/usr/sbin
 HOME=/var/log
-#minute hour    mday    month   wday    who     command
-*/5	*	*	*	*	root	/usr/libexec/atrun
-*/11	*	*	*	*	operator	/usr/libexec/save-entropy
-0	*	*	*	*	root	newsyslog
-1	3	*	*	*	root	periodic daily
-15	4	*	*	6	root	periodic weekly
-30	5	1	*	*	root	periodic monthly
-1,31	0-5	*	*	*	root	adjkerntz -a
-*/5	*	*	*	*	root	nice -n20 /etc/rc.prunecaptiveportal
-*/3000	*	*	*	*	root	/etc/rc.conf_mount_rw && /usr/bin/fetch -q -o /etc/bogons "http://www.cymru.com/Documents/bogon-bn-nonagg.txt" && /sbin/pfctl -t bogons -T replace -f /etc/bogons && /etc/rc.conf_mount_ro
-15	8	*	*	6	root	rm -rf /tmp/*
+#minute hour    mday    month   wday    who             command
+*/5	*	*	*	*	root	        /usr/libexec/atrun
+*/11	*	*	*	*	operator	nice -n20 /usr/libexec/save-entropy
+0	*	*	*	*	root	        newsyslog
+1	3	*	*	*	root	        periodic daily
+15	4	*	*	6	root	        periodic weekly
+30	5	1	*	*	root	        periodic monthly
+1,31	0-5	*	*	*	root	        adjkerntz -a
+*/5	*	*	*	*	root	        nice -n20 /etc/rc.prunecaptiveportal
+*/3000	*	*	*	*	root	        /etc/rc.conf_mount_rw && /usr/bin/fetch -q -o /etc/bogons "http://www.cymru.com/Documents/bogon-bn-nonagg.txt" && /sbin/pfctl -t bogons -T replace -f /etc/bogons && /etc/rc.conf_mount_ro
+15	8	*	*	6	root	        rm -rf /tmp/*

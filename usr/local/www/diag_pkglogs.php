@@ -39,7 +39,6 @@
 */
 
 require("guiconfig.inc");
-require("xmlparse_pkg.inc");
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
@@ -48,14 +47,13 @@ if (!$nentries)
 if ($_POST['clear']) {
 	exec("/usr/sbin/clog -i -s 262144 {$system_logfile}");
 }
-
 $i = 0;
 $pkgwithlogging = false;
 $apkg = $_POST['pkg'];
 if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, locate the first package that handles logging.
 	if($config['installedpackages']['package'] <> "") {
 		foreach($config['installedpackages']['package'] as $package) {
-			$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
+			$pkg_config = parse_xml_config("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
 			if(is_array($pkg_config['logging'])) {
 				$pkgwithlogging = true;
 				$apkg = $package['name'];

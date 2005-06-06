@@ -634,81 +634,82 @@
                 </field>
         </fields>
 	<stepsubmitphpaction>
-
-	    /* create qGamesUp queue */
-	    $queue = array();
-	    $queue['name'] = "qGamesUp";
-	    $queue['associatedrule'] = 0;
-	    $queue['priority'] = 5;
-	    $queue['red'] = "on";
-	    $queue['ecn'] = "on";
-	    $queue['realtime'] = "on";
-	    $queue['realtime1'] = $_POST['bandwidth'] . "Kb";
-	    $queue['realtime2'] = "1";
-	    $queue['realtime3'] = $_POST['bandwidth'] . "Kb";
-	    $queue['upperlimit'] = "on";
-	    $queue['upperlimit1'] = $_POST['bandwidth'] . "Kb";
-	    $queue['upperlimit2'] = "1";
-	    $queue['upperlimit3'] = $_POST['bandwidth'] . "Kb";
-	    $queue['linkshare'] = "on";
-	    $queue['linkshare1'] = $_POST['bandwidth'] . "Kb";
-	    $queue['linkshare2'] = "1";
-	    $queue['linkshare3'] = $_POST['bandwidth'] . "Kb";
-	    $queue['bandwidth'] = "0";
-	    $queue['bandwidthtype'] = "Kb";
-	    $queue['attachtoqueue'] = "qWANRoot";
-	    $config['shaper']['queue'][] = $queue;
+	/* XXX - billm - needs to actually honor what the user selects still */
+	if ( $_POST['enable'] ) {
+		/* create qGamesUp queue */
+		$queue = array();
+		$queue['name'] = "qGamesUp";
+		$queue['associatedrule'] = 0;
+		$queue['priority'] = 5;
+		$queue['red'] = "on";
+		$queue['ecn'] = "on";
+		$queue['realtime'] = "on";
+		$queue['realtime1'] = "1Kb";
+		$queue['realtime2'] = "1";
+		$queue['realtime3'] = "1Kb";
+		$queue['upperlimit'] = "on";
+		$queue['upperlimit1'] = "90%";
+		$queue['upperlimit2'] = "1";
+		$queue['upperlimit3'] = "90%";
+		$queue['linkshare'] = "on";
+		$queue['linkshare1'] = "1%";
+		$queue['linkshare2'] = "1";
+		$queue['linkshare3'] = "1%";
+		$queue['bandwidth'] = "0";
+		$queue['bandwidthtype'] = "Kb";
+		$queue['attachtoqueue'] = "qWANRoot";
+		$config['shaper']['queue'][] = $queue;
 	    
-	    /* create qGamesDown queue */
-	    $queue = array();
-	    $queue['name'] = "qGamesDown";
-	    $queue['associatedrule'] = 0;
-	    $queue['priority'] = 5;
-	    $queue['red'] = "on";
-	    $queue['ecn'] = "on";
-	    $queue['realtime'] = "on";
-	    $queue['realtime1'] = $_POST['bandwidth'] . "Kb";
-	    $queue['realtime2'] = "1";
-	    $queue['realtime3'] = $_POST['bandwidth'] . "Kb";
-	    $queue['upperlimit'] = "on";
-	    $queue['upperlimit1'] = $_POST['bandwidth'] . "Kb";
-	    $queue['upperlimit2'] = "1";
-	    $queue['upperlimit3'] = $_POST['bandwidth'] . "Kb";
-	    $queue['linkshare'] = "on";
-	    $queue['linkshare1'] = $_POST['bandwidth'] . "Kb";
-	    $queue['linkshare2'] = "1";
-	    $queue['linkshare3'] = $_POST['bandwidth'] . "Kb";
-	    $queue['bandwidth'] = "0";
-	    $queue['bandwidthtype'] = "Kb";
-	    $queue['attachtoqueue'] = "qLANRoot";
-	    $config['shaper']['queue'][] = $queue;
+		/* create qGamesDown queue */
+		$queue = array();
+		$queue['name'] = "qGamesDown";
+		$queue['associatedrule'] = 0;
+		$queue['priority'] = 5;
+		$queue['red'] = "on";
+		$queue['ecn'] = "on";
+		$queue['realtime'] = "on";
+		$queue['realtime1'] = "1Kb";
+		$queue['realtime2'] = "1";
+		$queue['realtime3'] = "1Kb";
+		$queue['upperlimit'] = "on";
+		$queue['upperlimit1'] = "90%";
+		$queue['upperlimit2'] = "1";
+		$queue['upperlimit3'] = "90%";
+		$queue['linkshare'] = "on";
+		$queue['linkshare1'] = "1%";
+		$queue['linkshare2'] = "1";
+		$queue['linkshare3'] = "1%";
+		$queue['bandwidth'] = "0";
+		$queue['bandwidthtype'] = "Kb";
+		$queue['attachtoqueue'] = "qLANRoot";
+		$config['shaper']['queue'][] = $queue;
 			
-	    $gamesplist = array();
-	    /* counter strike */
-	    $gamesplist[] = array('Titan','udp','6003','6003','both');
-	    $gamesplist[] = array('Authentication','udp','7002','7002','both');
-	    $gamesplist[] = array('Client','udp','6003','6003','both');
-	    $gamesplist[] = array('Masterserver','udp','27010','27010','both');
-	    $gamesplist[] = array('Mod-Server','udp','27011','27011','both');
-	    $gamesplist[] = array('Chat','udp','27012','27012','both');
-	    $gamesplist[] = array('HL-Serverport ','udp','27015','27015','both');
+		$gamesplist = array();
+		/* counter strike */
+		$gamesplist[] = array('Titan','udp','6003','6003','both');
+		$gamesplist[] = array('Authentication','udp','7002','7002','both');
+		$gamesplist[] = array('Client','udp','6003','6003','both');
+		$gamesplist[] = array('Masterserver','udp','27010','27010','both');
+		$gamesplist[] = array('Mod-Server','udp','27011','27011','both');
+		$gamesplist[] = array('Chat','udp','27012','27012','both');
+		$gamesplist[] = array('HL-Serverport ','udp','27015','27015','both');
     
-	    /* delta force */
-	    $gamesplist[] = array('Delta1','udp','17478','17488','both');
+		/* delta force */
+		$gamesplist[] = array('Delta1','udp','17478','17488','both');
 
-	    /* quake3 */
-	    $gamesplist[] = array('Delta1','udp','27910','27919','both');
+		/* quake3 */
+		$gamesplist[] = array('Delta1','udp','27910','27919','both');
     
-	    /* tiger woods 2004 ps2 */
-	    $gamesplist[] = array('Outbound2Player','udp','3658','3658','both');
-	    $gamesplist[] = array('Outbound2Player2','udp','6000','6000','both');	    
-	    $gamesplist[] = array('Outbound2EA','tcp','10300','10301','both');
+		/* tiger woods 2004 ps2 */
+		$gamesplist[] = array('Outbound2Player','udp','3658','3658','both');
+		$gamesplist[] = array('Outbound2Player2','udp','6000','6000','both');	    
+		$gamesplist[] = array('Outbound2EA','tcp','10300','10301','both');
     
-	    /* XXX: add some more games here! */
+		/* XXX: add some more games here! */
     
-	    /* Set up/down games as higher weight */
-	    /* loop through p2plist[] */
-	    foreach ($gamesplist as $Gameclient) {
+		/* Set up/down games as higher weight */
+		/* loop through p2plist[] */
+		foreach ($gamesplist as $Gameclient) {
 		    foreach (array('source','destination') as $srcdest) {
 			    $rule = array();
 			    if ($srcdest == 'source') {
@@ -735,7 +736,8 @@
     
 			    $config['shaper']['rule'][] = $rule;
 		    }
-	    }
+		}
+	}
 	</stepsubmitphpaction>
 </step>
 <step>

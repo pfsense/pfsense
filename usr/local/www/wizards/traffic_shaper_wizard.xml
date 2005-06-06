@@ -687,10 +687,10 @@
 	    $gamesplist[] = array('HL-Serverport ','udp','27015','27015','both');
     
 	    /* delta force */
-	    $gamesplist[] = array('Delta1','udp','17478','17478','both');
+	    $gamesplist[] = array('Delta1','udp','17478','17488','both');
 
 	    /* quake3 */
-	    $gamesplist[] = array('Delta1','udp','27910','27910','both');
+	    $gamesplist[] = array('Delta1','udp','27910','27919','both');
     
 	    /* XXX: add some more games here! */
     

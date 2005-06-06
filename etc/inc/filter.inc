@@ -1904,6 +1904,15 @@ function create_firewall_outgoing_rules_to_itself() {
                         $int = "ng0";
 		$ip = find_interface_ip($int);
 		if($ip <> "") {
+			if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
+       				foreach ($config['shaper']['queue'] as $queue) {
+					/* XXX - billm: temp fix for pppoe, needs better fix */
+					if($config['interfaces'][$ifname]['ipaddr'] != "")
+						$rule .="pass out quick on {$int} all keep state tagged {$queue['name']} queue {$queue['name']} label \"let out anything from firewall host itself\"\n";
+					else
+						$rule .="pass out quick on {$int} all keep state tagged {$queue['name']} queue {$queue['name']} label \"let out anything from firewall host itself\"\n";
+				}
+			}
 			/* XXX - billm: temp fix for pppoe, needs better fix */
 			if($config['interfaces'][$ifname]['ipaddr'] != "")
 				$rule .="pass out quick on {$int} all keep state label \"let out anything from firewall host itself\"\n";

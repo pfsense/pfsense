@@ -52,9 +52,6 @@ if [ ! -d /cf/conf/backup/ ]; then
     mkdir -p /cf/conf/backup/ 2>/dev/null
 fi
 
-/etc/rc.d/initrandom start >/dev/null
-/etc/rc.d/random start >/dev/null
-
 set -T
 trap "echo 'Reboot interrupted'; exit 1" 3
 

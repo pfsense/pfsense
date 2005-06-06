@@ -47,8 +47,6 @@ require_once("auth.inc");
 require_once("config.inc");
 require_once("functions.inc");
 
-require_once("xmlparse_pkg.inc");
-
 $d_natconfdirty_path = $g['varrun_path'] . "/nat.conf.dirty";
 $d_filterconfdirty_path = $g['varrun_path'] . "/filter.conf.dirty";
 $d_ipsecconfdirty_path = $g['varrun_path'] . "/ipsec.conf.dirty";
@@ -461,7 +459,8 @@ function update_changedesc($update) {
 }
 
 function dump_clog($logfile, $tail, $grepfor = "", $grepinvert = false, $withorig = true, $ignorepkgs = true) {
-        global $g, $config;
+        require_once("pkg-utils.inc");
+	global $g, $config;
         $sor = isset($config['syslog']['reverse']) ? "-r" : "";
 	exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
 	if(!is_array($grepfor)) $grepfor = array($grepfor);

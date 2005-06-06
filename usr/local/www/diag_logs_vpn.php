@@ -33,7 +33,6 @@
 */
 
 require("guiconfig.inc");
-require("xmlparse_pkg.inc");
 
 $pptp_logfile = "{$g['varlog_path']}/vpn.log";
 

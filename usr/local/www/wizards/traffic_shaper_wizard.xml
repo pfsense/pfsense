@@ -258,6 +258,26 @@
 			<typehint>Bandwidth guarantee for VOIP phone</typehint>
 			<options>
 				<option>
+					<name>1024Kbits/sec</name>
+					<value>1024</value>
+				</option>			    			    
+				<option>
+					<name>768Kbits/sec</name>
+					<value>768</value>
+				</option>			    
+				<option>
+					<name>512Kbits/sec</name>
+					<value>512</value>
+				</option>			    			    
+				<option>
+					<name>384Kbits/sec</name>
+					<value>384</value>
+				</option>			    
+				<option>
+					<name>256Kbits/sec</name>
+					<value>256</value>
+				</option>
+				<option>
 					<name>128Kbits/sec</name>
 					<value>128</value>
 				</option>

@@ -599,7 +599,7 @@
                         <type>checkbox</type>
                         <typehint>Prioritize network gaming traffic</typehint>
                         <description>This will raise the priority of gaming traffic to higher than most traffic.</description>
-			<enablefields>Counterstrike</enablefields>
+			<enablefields>Counterstrike,DeltaForce,QuakeIII</enablefields>
 			<donotdisable>true</donotdisable>
                 </field>
                 <field>
@@ -610,7 +610,17 @@
                         <name>Counterstrike</name>
                         <type>checkbox</type>
 			<typehint>Counterstrike.   The ultimate 1st person shooter.</typehint>
-                </field>		
+                </field>
+                <field>
+                        <name>DeltaForce</name>
+                        <type>checkbox</type>
+			<typehint>Delta Force</typehint>
+                </field>
+                <field>
+                        <name>QuakeIII</name>
+                        <type>checkbox</type>
+			<typehint>Quake III</typehint>
+                </field>
                 <field>
                         <name>Next</name>
                         <type>submit</type>
@@ -675,6 +685,12 @@
 	    $gamesplist[] = array('Mod-Server','udp','27011','27011','both');
 	    $gamesplist[] = array('Chat','udp','27012','27012','both');
 	    $gamesplist[] = array('HL-Serverport ','udp','27015','27015','both');
+    
+	    /* delta force */
+	    $gamesplist[] = array('Delta1','udp','17478','17478','both');
+
+	    /* quake3 */
+	    $gamesplist[] = array('Delta1','udp','27910','27910','both');
     
 	    /* XXX: add some more games here! */
     

@@ -574,8 +574,9 @@ function filter_generate_pf_altq_rules() {
                 }
 
                 for ($iif = 0; $iif < $nif; $iif++) {
+		    foreach ( array('in', 'out') as $direction) {
 
-                        $line = "pass in on ";
+                        $line = "pass {$direction} on ";
 
                         if ($ispptp) {
                                 $line .= " ng" . ($iif+1);
@@ -583,9 +584,15 @@ function filter_generate_pf_altq_rules() {
                                 $if = $config['interfaces'][$rule['interface']]['if'];
 
                                 if ($rule['interface'] == "wan")
-                                        $if = $wanif;
+					if($direction=="in")
+                                        	$if = $wanif;
+					else
+                                        	$if = $lanif;
                                 else if($rule['interface'] == "lan")
-                                        $if = $lanif;
+					if($direction=="in")
+                                        	$if = $lanif;
+					else
+                                        	$if = $wanif;
 
                                 $line .= " {$if} ";
                         }
@@ -595,7 +602,7 @@ function filter_generate_pf_altq_rules() {
                         }
 
                         /* source address */
-                        if (isset($rule['source']['any'])) {
+                        if (isset($rule['source']['any']) || $direction == "out") {
                                 $src = "any";
                         } else if ($rule['source']['network']) {
                                 if (strstr($rule['source']['network'], "opt")) {
@@ -721,10 +728,12 @@ function filter_generate_pf_altq_rules() {
                                 $line .= "out xmit ";
 
 */
-			$line .= " keep state tag {$rule['inqueue']} ";
+			$qtag = "{$direction}queue";
+			$line .= " keep state tag {$rule[$qtag]} ";
 
                         $line .= "\n";
                         $shaperrules .= $line;
+		    }
                 }
 
                 $i++;

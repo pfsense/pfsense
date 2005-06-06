@@ -881,7 +881,12 @@
                         <name>IPSEC</name>
                         <type>checkbox</type>
 			<typehint>IPSEC VPN traffic</typehint>
-                </field>                
+                </field>
+                <field>
+                        <name>Streaming MP3</name>
+                        <type>checkbox</type>
+			<typehint>Streaming Media</typehint>
+                </field>  		
                 <field>
                         <name>Next</name>
                         <type>submit</type>
@@ -953,6 +958,11 @@
 		if($_POST['ipsec'] != "") {
 		    /* IPSEC */
 		    $othersplist[] = array('IPSEC','tcp','500','500','both');
+		}
+		
+		if($_POST['streamingmp3'] != "") {
+		    /* streaming mp3 media aka shoutcast */
+		    $othersplist[] = array('IPSEC','tcp','8000','8010','both');
 		}
 		
 		/* XXX: add some more protocols here! */

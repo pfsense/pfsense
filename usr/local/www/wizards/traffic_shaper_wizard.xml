@@ -525,7 +525,7 @@
 					$destsrc = 'source';
 					$rule['outqueue'] = 'qP2PDown';
 					$rule['inqueue'] = 'qP2PUp';
-					$rule['interface'] = 'lan';
+					$rule['interface'] = 'wan';
 					$rule['source']['any'] = TRUE;
 					$rule['destination']['network'] = 'lan';
 					$rule['descr'] = "m_P2P {$p2pclient[0]} inbound";

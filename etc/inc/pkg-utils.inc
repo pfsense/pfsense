@@ -372,7 +372,6 @@ function install_package($package, $pkg_info = "") {
 		update_output_window($static_output);
 		@fwrite($fd_log, "Downloading package configuration file...\n");
 		$fetchto = substr(strrchr($pkg_info['config_file'], '/'), 1);
-		print $fetchto;
 		download_file_with_progress_bar($pkg_info['config_file'], '/usr/local/pkg/' . $fetchto);
 		if(!file_exists('/usr/local/pkg/' . $fetchto)) {
 			@fwrite($fd_log, "ERROR! Unable to fetch package configuration file. Aborting installation.\n");
@@ -389,6 +388,13 @@ function install_package($package, $pkg_info = "") {
 		$static_output .= "done.\n";
 		update_output_window($static_output);
 	}
+	/* make 'y' file */
+	$fd = fopen("{$g['tmp_path']}/y", "w");
+	for($line = 0; $line < 10; $line++) {
+		fwrite($fd, "y\n");
+	}
+	fclose($fd);
+
 	/* pkg_add the package and its dependencies */
 	if($pkg_info['depends_on_package_base_url'] != "") {
 		update_status("Installing " . $pkg_info['name'] . " and its dependencies.");

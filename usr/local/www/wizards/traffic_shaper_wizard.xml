@@ -31,7 +31,7 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 </copyright>
-<totalsteps>6</totalsteps>
+<totalsteps>7</totalsteps>
 <step>
 	<id>1</id>
 	<title>pfSense Traffic Shaper Wizard</title>
@@ -786,6 +786,140 @@
 </step>
 <step>
         <id>6</id>
+        <title>pfSense Traffic Shaper Wizard</title>
+	<disableallfieldsbydefault>true</disableallfieldsbydefault>
+        <description>Other Application</description>
+        <fields>
+                <field>
+                        <name>Enable</name>
+                        <type>checkbox</type>
+                        <typehint>Other networking protocols</typehint>
+                        <description>This will help raise the priority of other protocols higher than most traffic.</description>
+			<enablefields>MSRDP</enablefields>
+			<donotdisable>true</donotdisable>
+                </field>
+                <field>
+                        <name>Enable/Disable other protocols</name>
+                        <type>listtopic</type>
+                </field>		
+                <field>
+                        <name>MSRDP</name>
+                        <type>checkbox</type>
+			<typehint>Microsoft Remote Desktop Protocol</typehint>
+                </field>
+                <field>
+                        <name>PPTP</name>
+                        <type>checkbox</type>
+			<typehint>Microsoft Point to Point tunneling protocol</typehint>
+                </field>
+                <field>
+                        <name>IPSEC</name>
+                        <type>checkbox</type>
+			<typehint>IPSEC VPN traffic</typehint>
+                </field>                
+                <field>
+                        <name>Next</name>
+                        <type>submit</type>
+                </field>
+        </fields>
+	<stepsubmitphpaction>
+	if ( $_POST['enable'] ) {
+		/* create qOthersUp queue */
+		$queue = array();
+		$queue['name'] = "qOthersUp";
+		$queue['associatedrule'] = 0;
+		$queue['priority'] = 5;
+		$queue['red'] = "on";
+		$queue['ecn'] = "on";
+		$queue['realtime'] = "on";
+		$queue['realtime1'] = "1Kb";
+		$queue['realtime2'] = "1";
+		$queue['realtime3'] = "1Kb";
+		$queue['upperlimit'] = "on";
+		$queue['upperlimit1'] = "90%";
+		$queue['upperlimit2'] = "1";
+		$queue['upperlimit3'] = "90%";
+		$queue['linkshare'] = "on";
+		$queue['linkshare1'] = "1%";
+		$queue['linkshare2'] = "1";
+		$queue['linkshare3'] = "1%";
+		$queue['bandwidth'] = "0";
+		$queue['bandwidthtype'] = "Kb";
+		$queue['attachtoqueue'] = "qWANRoot";
+		$config['shaper']['queue'][] = $queue;
+	    
+		/* create qOthersDown queue */
+		$queue = array();
+		$queue['name'] = "qOthersDown";
+		$queue['associatedrule'] = 0;
+		$queue['priority'] = 5;
+		$queue['red'] = "on";
+		$queue['ecn'] = "on";
+		$queue['realtime'] = "on";
+		$queue['realtime1'] = "1Kb";
+		$queue['realtime2'] = "1";
+		$queue['realtime3'] = "1Kb";
+		$queue['upperlimit'] = "on";
+		$queue['upperlimit1'] = "90%";
+		$queue['upperlimit2'] = "1";
+		$queue['upperlimit3'] = "90%";
+		$queue['linkshare'] = "on";
+		$queue['linkshare1'] = "1%";
+		$queue['linkshare2'] = "1";
+		$queue['linkshare3'] = "1%";
+		$queue['bandwidth'] = "0";
+		$queue['bandwidthtype'] = "Kb";
+		$queue['attachtoqueue'] = "qLANRoot";
+		$config['shaper']['queue'][] = $queue;
+                
+		/* MSRDP */
+		$othersplist[] = array('MSRDP','tcp','3389','3389','both');
+                
+                /* PPTP */
+                $othersplist[] = array('PPTP','tcp','1723','1723','both');
+                $othersplist[] = array('PPTPGRE','gre','','','both');
+                
+                /* IPSEC */
+                $othersplist[] = array('IPSEC','tcp','500','500','both');
+		
+		/* XXX: add some more protocols here! */
+    
+		/* Set up/down protocols as higher weight */
+		/* loop through othersplist[] */
+		foreach ($othersplist as $otherclient) {
+		    foreach (array('source','destination') as $srcdest) {
+			    $rule = array();
+			    if ($srcdest == 'source') {
+				    $destsrc = 'destination';
+				    $rule['outqueue'] = 'qOthersUp';
+				    $rule['inqueue'] = 'qOthersDown';
+				    $rule['interface'] = 'lan';
+				    $rule['source']['network'] = 'lan';
+				    $rule['destination']['any'] = TRUE;
+				    $rule['descr'] = "m_Oth {$otherclient[0]} outbound";
+			    } else {
+				    $destsrc = 'source';
+				    $rule['outqueue'] = 'qOthersDown';
+				    $rule['inqueue'] = 'qOthersUp';
+				    $rule['interface'] = 'wan';
+				    $rule['source']['any'] = TRUE;
+				    $rule['destination']['network'] = 'lan';
+				    $rule['descr'] = "m_Oth {$otherclient[0]} inbound";
+			    }
+    
+			    $rule['destination']['port'] = $otherclient[2]."-".$otherclient[3];
+			    if($otherclient[1] != '')
+				    $rule['protocol'] = $otherclient[1];
+    
+			    $config['shaper']['rule'][] = $rule;
+		    }
+		}
+                
+        }
+	</stepsubmitphpaction>
+</step>
+<step>
+        <id>7</id>
         <title>pfSense Traffic Shaper Wizard</title>
         <description>Summary</description>
 	<fields>

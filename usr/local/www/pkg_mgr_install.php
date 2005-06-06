@@ -67,10 +67,18 @@ include("fbegin.inc");
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                <tr>
                  <td>
-                     <!-- progress bar -->
-                     <center>
-                     <table id="progholder" name="progholder" height='20' border='1' bordercolor='black' width='420' bordercolordark='#000000' bordercolorlight='#000000' style='border-collapse: collapse' colspacing='2' cellpadding='2' cellspacing='2'><tr><td><img border='0' src='progress_bar.gif' width='280' height='23' name='progressbar' id='progressbar'></td></tr></table>
-                     <br>
+		   <center>
+			<table height='15' width='420' border='0' colspacing='0' cellpadding='0' cellspacing='0'>
+				<tr>
+					<td background="bar_left.gif" height='15' width='5'>
+					</td>
+					<td>
+						<table id="progholder" name="progholder" height='15' width='410' border='0' colspacing='0' cellpadding='0' cellspacing='0'><td background="bar_gray.gif" valign="top" align="left"><img src='bar_blue.gif' width='0' height='15' name='progressbar' id='progressbar'></td></table>
+					</td>
+					<td background="bar_right.gif" height='15' width='5'>
+					</td>
+				</tr>
+			</table>
 	             <!-- status box -->
                      <textarea cols="60" rows="1" name="status" id="status" wrap="hard">Beginning package installation.</textarea>
                      <!-- command output box -->

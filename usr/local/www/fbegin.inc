@@ -61,7 +61,7 @@ function showhide(tspan, tri) {
 	</td>
   </tr>
   <tr valign="top">
-    <td width="150" bgcolor="#000000" background="left_background.gif">
+    <td width="150" bgcolor="#000000">
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
         <tr>
           <td><span class="navlnk"><font color="#FFFFFF"> <strong>System</strong>

@@ -124,7 +124,7 @@ if ($_GET['act'] == "del") {
   <ul id="tabnav">
     <li class="tabinact"><a href="firewall_shaper.php">Rules</a></li>
     <li class="tabact">Queues</a></li>
-    <li class="tabinact"><a href="wizard.php?xml=traffic_shaper_wizard.xml">Magic shaper wizard</a></li>
+    <li class="tabinact"><a href="wizard.php?xml=traffic_shaper_wizard.xml">EZ Shaper wizard</a></li>
   </ul>
   </td></tr>
   <tr>

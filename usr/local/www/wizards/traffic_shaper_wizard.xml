@@ -378,7 +378,7 @@
 		}
                 
                 /* setup vonage rule */
-		if( _POST['vonage'] != "") 
+		if( $_POST['vonage'] != "") 
 		    $voiplist[] = array('Vonage','udp','5060','5060','both');
                 
 		/* Set up/down games as higher weight */

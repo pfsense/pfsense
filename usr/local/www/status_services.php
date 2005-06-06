@@ -168,7 +168,11 @@ if ($dh)
 		}
 		echo "</center></td>";
 		echo "</tr>";
+		$counter++;
 	}
+
+if($counter == 0) 
+	echo "<tr><td colspan=5><center>Could not locate any services.</td></tr>";
 
 ?>
 <tr><td>

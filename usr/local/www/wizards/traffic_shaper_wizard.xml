@@ -699,7 +699,7 @@
     
 	    /* tiger woods 2004 ps2 */
 	    $gamesplist[] = array('Outbound2Player','udp','3658','3658','both');
-	    $gamesplist[] = array('OutboundOutbound2Player2','udp','6000','6000','both');	    
+	    $gamesplist[] = array('Outbound2Player2','udp','6000','6000','both');	    
 	    $gamesplist[] = array('Outbound2EA','tcp','10300','10301','both');
     
 	    /* XXX: add some more games here! */

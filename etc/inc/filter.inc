@@ -185,14 +185,34 @@ function filter_get_rule_interface($associatedrulenumber) {
 	return $config['shaper']['rule'][$associatedrulenumber]['interface'];
 }
 
-function find_default_queue() {
+function find_default_queue($interface) {
 	global $config;
 	$qconfig = $config;
 
 	if (is_array($qconfig['shaper']['queue'])) {
-		foreach ($qconfig['shaper']['queue'] as $rule) {
-			if(isset($rule['defaultqueue']) and $rule['defaultqueue'] <> "")
-				return $rule['name'];
+		foreach ($qconfig['shaper']['queue'] as $queue) {
+			if(isset($queue['defaultqueue']) and ($queue['defaultqueue'] <> "")) {
+				/* If this is a child queue */
+				if(isset($queue['attachtoqueue'])) {
+					if(is_subqueue_used_on_interface($queue['attachtoqueue'], $interface))
+						return $queue['name'];
+				} else
+					return $queue['name'];
+			}
+		}
+	}
+}
+
+function get_ack_queue($interface) {
+	global $config;
+	$qconfig = $config;
+
+	if (is_array($qconfig['shaper']['queue'])) {
+		foreach ($qconfig['shaper']['queue'] as $queue) {
+			if(isset($queue['ack'])) 
+				if(isset($queue['attachtoqueue']))
+					if(is_subqueue_used_on_interface($queue['attachtoqueue'], $interface))
+						return $queue['name'];
 		}
 	}
 }
@@ -1717,13 +1737,17 @@ EOD;
                                         			 *   and setup for all netgraph interfaces
                                        				 */
 								$line = generate_user_filter_rule($rule, $xxx);
-								$line .= " queue ({$queue['name']}, acks) ";
+								$ackq = get_ack_queue($rule['interface']);
+								if($ackq != "")
+									$line .= " queue ({$queue['name']}, {$ackq}) ";
 								if($line <> "") 
 									$ipfrules .= $line . "\n";
 							}
 						} else {
 							$line = generate_user_filter_rule($rule, 0);
-							$line .= " queue ({$queue['name']}, acks) ";
+								$ackq = get_ack_queue($rule['interface']);
+								if ($ackq != "")
+									$line .= " queue ({$queue['name']}, {$ackq}) ";
 							// label
 							if($rule['descr'] <> "" and $line <> "")
 								$line .= " label \"USER_RULE: " . $rule['descr'] . "\" ";
@@ -1751,16 +1775,24 @@ EOD;
                                      			 */
 						$line = generate_user_filter_rule($rule, $xxx);
 						if($line <> "") { 
-							if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue']))
-								$line .= " queue (" . find_default_queue() . ", acks) ";
+							if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
+								$defq = find_default_queue($rule['interface']);
+								$ackq = get_ack_queue($rule['interface']);
+								if (($defq != "") and ($ackq != ""))
+									$line .= " queue ({$defq}, {$ackq}) ";
+							}
 							$ipfrules .= $line . "\n";
 						}
 					}
 				} else {
 					$line = generate_user_filter_rule($rule, 0);
 					if($line <> "") 
-						if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue']))
-							$line .= " queue (" . find_default_queue() . ", acks) ";
+						if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
+							$defq = find_default_queue($rule['interface']);
+							$ackq = get_ack_queue($rule['interface']);
+							if (($defq != "") and ($ackq != ""))
+								$line .= " queue ({$defq}, {$ackq}) ";
+						}
 					// label
 					if($rule['descr'] <> "" and $line <> "")
 						$line .= " label \"USER_RULE: " . $rule['descr'] . "\" ";

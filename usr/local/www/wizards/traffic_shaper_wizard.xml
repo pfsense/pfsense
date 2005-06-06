@@ -177,6 +177,7 @@
 
                 $queue = array();
                 $queue['name'] = "qLANacks";
+		$queue['ack'] = TRUE;
                 $queue['attachtoqueue'] = "qLANRoot";
                 $queue['associatedrule'] = 0;
                 $queue['priority'] = 7;
@@ -198,6 +199,7 @@
 
                 $queue = array();
                 $queue['name'] = "qWANacks";
+		$queue['ack'] = TRUE;
                 $queue['attachtoqueue'] = "qWANRoot";
                 $queue['associatedrule'] = 0;
                 $queue['priority'] = 7;

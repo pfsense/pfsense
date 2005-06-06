@@ -7,7 +7,7 @@
 			foreach($config['installedpackages']['menu'] as $menuitem) {
 				if($menuitem['section'] != $section) continue;
 				if($menuitem['url'] <> "") {
-					$description = $menuitem['url'];
+					$description = str_replace('$myurl', getenv("HTTP_HOST"), $menuitem['url']);
 				} else {
 					$description = '/pkg.php?xml=' . $menuitem['configfile'];
 				}

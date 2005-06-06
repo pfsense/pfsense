@@ -33,7 +33,6 @@
 */
 
 require("guiconfig.inc");
-require_once("xmlparse_pkg.inc");
 
 $system_logfile = "{$g['varlog_path']}/system.log";
 

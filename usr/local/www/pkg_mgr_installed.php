@@ -108,7 +108,7 @@ include("fbegin.inc");
                                     <?= $pkg['descr'] ?>
                                 </td>
                                 <td valign="middle" class="list" nowrap>
-                                    <a onclick="return confirm('Do you really want to remove this package?')" href="pkg_mgr_delete.php?pkg=<?= $pkg['name']; ?>"><img src="x.gif" width="17" height="17" border="0"></a>
+                                    <a onclick="return confirm('Do you really want to remove this package?')" href="pkg_mgr_delete.php?pkg=<?= $pkg['name']; ?>&version=<?= $pkg['version']; ?>"><img src="x.gif" width="17" height="17" border="0"></a>
                                 </td>
                             </tr>
                             <?php

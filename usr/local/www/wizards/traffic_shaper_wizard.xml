@@ -239,7 +239,7 @@
 			<description>Choose Generic if your provider isn't listed.</description>
                         <options>
                                 <option>
-                                        <name>Generic</name>
+                                        <name>Generic (lowdelay)</name>
                                         <value>Generic</value>
                                 </option>
                                 <option>
@@ -502,7 +502,7 @@
 			<typehint>HotlineConnect and other P2P using the HotlineConnect protocol and ports</typehint>
                 </field>
                 <field>
-                        <name>iMest</name>
+                        <name>iMesh</name>
                         <type>checkbox</type>
 			<typehint>iMest and other P2P using the iMest protocol and ports</typehint>
                 </field>
@@ -542,26 +542,46 @@
 	if ( $_POST['enable'] ) {
 
 		/* To add p2p clients, push Descr,Protocol,Start,End,src/dest/both onto p2plist */
-		$p2plist[] = array('Aimster','tcp','7668','7668','both');
-		$p2plist[] = array('BitTorrent','tcp','6881','6999','both');
-		$p2plist[] = array('BuddyShare','tcp','7788','7788','both');
-		$p2plist[] = array('CuteMX','tcp','2340','2340','both');
-		$p2plist[] = array('DC++','tcp','1412','1412','both');
-		$p2plist[] = array('dcc','tcp','6666','6668','both');
-		$p2plist[] = array('DirectConnect','tcp','412','412','both');
-		$p2plist[] = array('DirectFileExpress','tcp','1044','1045','both');
-		$p2plist[] = array('EDonkey2000','tcp','4661','4665','both');
-		$p2plist[] = array('FastTrack','tcp','1214','1214','both');
-		$p2plist[] = array('Gnutella','tcp','6346','6346','both');
-		$p2plist[] = array('grouper','tcp','8038','8039','both');
-		$p2plist[] = array('hotComm','tcp','28864','28865','both');
-		$p2plist[] = array('HotlineConnect','tcp','5500','5503','both');
-		$p2plist[] = array('iMest','tcp','4329','4329','both');
-		$p2plist[] = array('Napster','tcp','6699','6701','both');
-		$p2plist[] = array('OpenNap','tcp','8888','8889','both');
-		$p2plist[] = array('Scour','tcp','8311','8311','both');
-		$p2plist[] = array('SongSpy','tcp','5190','5190','both');
-		$p2plist[] = array('WinMX','tcp','6699','6699','both');
+		if($_POST['Aimster' != "") 
+		    $p2plist[] = array('Aimster','tcp','7668','7668','both');
+		if($_POST['BitTorrent' != "") 		    
+		    $p2plist[] = array('BitTorrent','tcp','6881','6999','both');
+		if($_POST['BuddyShare' != "") 		
+		    $p2plist[] = array('BuddyShare','tcp','7788','7788','both');
+		if($_POST['CuteMX' != "") 		
+		    $p2plist[] = array('CuteMX','tcp','2340','2340','both');
+		if($_POST['DC++' != "") 		
+		    $p2plist[] = array('DC++','tcp','1412','1412','both');
+		if($_POST['dcc' != "") 		
+		    $p2plist[] = array('dcc','tcp','6666','6668','both');
+		if($_POST['DirectConnect' != "") 		
+		    $p2plist[] = array('DirectConnect','tcp','412','412','both');
+		if($_POST['DirectFileExpress' != "") 		
+		    $p2plist[] = array('DirectFileExpress','tcp','1044','1045','both');
+		if($_POST['EDonkey2000' != "") 		
+		    $p2plist[] = array('EDonkey2000','tcp','4661','4665','both');
+		if($_POST['FastTrack' != "") 		
+		    $p2plist[] = array('FastTrack','tcp','1214','1214','both');
+		if($_POST['Gnutella' != "") 		
+		    $p2plist[] = array('Gnutella','tcp','6346','6346','both');
+		if($_POST['grouper' != "") 		
+		    $p2plist[] = array('grouper','tcp','8038','8039','both');
+		if($_POST['hotComm' != "") 		
+		    $p2plist[] = array('hotComm','tcp','28864','28865','both');
+		if($_POST['HotlineConnect' != "") 		
+		    $p2plist[] = array('HotlineConnect','tcp','5500','5503','both');
+		if($_POST['' != "") 		
+		    $p2plist[] = array('iMesh','tcp','4329','4329','both');
+		if($_POST['Napster' != "") 		
+		    $p2plist[] = array('Napster','tcp','6699','6701','both');
+		if($_POST['OpenNap' != "") 		
+		    $p2plist[] = array('OpenNap','tcp','8888','8889','both');
+		if($_POST['Scour' != "") 		
+		    $p2plist[] = array('Scour','tcp','8311','8311','both');
+		if($_POST['SongSpy' != "") 		
+		    $p2plist[] = array('SongSpy','tcp','5190','5190','both');
+		if($_POST['WinMX' != "") 		
+		    $p2plist[] = array('WinMX','tcp','6699','6699','both');
 
 		/* Set up/down p2p as lowest weight */
 		/* loop through p2plist[] */
@@ -743,32 +763,42 @@
 		$queue['bandwidthtype'] = "Kb";
 		$queue['attachtoqueue'] = "qLANRoot";
 		$config['shaper']['queue'][] = $queue;
-			
+
 		$gamesplist = array();
-		/* counter strike */
-		$gamesplist[] = array('Titan','udp','6003','6003','both');
-		$gamesplist[] = array('Authentication','udp','7002','7002','both');
-		$gamesplist[] = array('Client','udp','6003','6003','both');
-		$gamesplist[] = array('Masterserver','udp','27010','27010','both');
-		$gamesplist[] = array('Mod-Server','udp','27011','27011','both');
-		$gamesplist[] = array('Chat','udp','27012','27012','both');
-		$gamesplist[] = array('HL-Serverport ','udp','27015','27015','both');
-    
-		/* delta force */
-		$gamesplist[] = array('Delta1','udp','17478','17488','both');
 
-		/* quake3 */
-		$gamesplist[] = array('Delta1','udp','27910','27919','both');
-    
-		/* tiger woods 2004 ps2 */
-		$gamesplist[] = array('Outbound2Player','udp','3658','3658','both');
-		$gamesplist[] = array('Outbound2Player2','udp','6000','6000','both');	    
-		$gamesplist[] = array('Outbound2EA','tcp','10300','10301','both');
+		if($_POST['Counterstrike' != "") {
+		    /* counter strike */
+		    $gamesplist[] = array('Titan','udp','6003','6003','both');
+		    $gamesplist[] = array('Authentication','udp','7002','7002','both');
+		    $gamesplist[] = array('Client','udp','6003','6003','both');
+		    $gamesplist[] = array('Masterserver','udp','27010','27010','both');
+		    $gamesplist[] = array('Mod-Server','udp','27011','27011','both');
+		    $gamesplist[] = array('Chat','udp','27012','27012','both');
+		    $gamesplist[] = array('HL-Serverport ','udp','27015','27015','both');
+		}
 
-		/* Call of Duty (United Offensive) */
-		$gamesplist[] = array('CallOfDuty1','tcp','28960','28960','both');
-		$gamesplist[] = array('CallOfDuty2','udp','28960','28960','both');
-		
+		if($_POST['DeltaForce' != "") {
+		    /* delta force */
+		    $gamesplist[] = array('Delta1','udp','17478','17488','both');
+		}
+
+		if($_POST['QuakeIII' != "") {
+		    /* quake3 */
+		    $gamesplist[] = array('Delta1','udp','27910','27919','both');
+		}
+
+		if($_POST['TigerWoods2004PS2' != "") {
+		    /* tiger woods 2004 ps2 */
+		    $gamesplist[] = array('Outbound2Player','udp','3658','3658','both');
+		    $gamesplist[] = array('Outbound2Player2','udp','6000','6000','both');	    
+		    $gamesplist[] = array('Outbound2EA','tcp','10300','10301','both');
+		}
+
+		if($_POST['CallOfDuty' != "") {
+		    /* Call of Duty (United Offensive) */
+		    $gamesplist[] = array('CallOfDuty1','tcp','28960','28960','both');
+		    $gamesplist[] = array('CallOfDuty2','udp','28960','28960','both');
+		}
 		/* XXX: add some more games here! */
     
 		/* Set up/down games as higher weight */
@@ -892,15 +922,21 @@
 		$queue['attachtoqueue'] = "qLANRoot";
 		$config['shaper']['queue'][] = $queue;
                 
-		/* MSRDP */
-		$othersplist[] = array('MSRDP','tcp','3389','3389','both');
-                
-                /* PPTP */
-                $othersplist[] = array('PPTP','tcp','1723','1723','both');
-                $othersplist[] = array('PPTPGRE','gre','','','both');
-                
-                /* IPSEC */
-                $othersplist[] = array('IPSEC','tcp','500','500','both');
+		if($_POST['MSRDP' != "") {
+		    /* MSRDP */
+		    $othersplist[] = array('MSRDP','tcp','3389','3389','both');
+		}
+		
+		if($_POST['PPTP' != "") {
+		    /* PPTP */
+		    $othersplist[] = array('PPTP','tcp','1723','1723','both');
+		    $othersplist[] = array('PPTPGRE','gre','','','both');
+                }
+
+		if($_POST['IPSEC' != "") {
+		    /* IPSEC */
+		    $othersplist[] = array('IPSEC','tcp','500','500','both');
+		}
 		
 		/* XXX: add some more protocols here! */
     

@@ -101,7 +101,7 @@ switch($_GET['mode']) {
 		delete_package($_GET['pkg'] . '-' . $_GET['version']);
 		delete_package_xml($_GET['pkg']);
 		update_status("Package deleted.");
-		$static_output .= "\n\nPackage deleted.";
+		$static_output .= "\nPackage deleted.";
 		update_output_window($static_output);
 		break;
 	case "reinstallpkg":

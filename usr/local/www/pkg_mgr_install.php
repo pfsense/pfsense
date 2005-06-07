@@ -96,29 +96,49 @@ include("fbegin.inc");
 </html>
 
 <?php
-
-if($_GET['mode'] == 'reinstallall') {
-	foreach($config['installedpackages']['package'] as $package) {
-		$todo[] = array('name' => $package['name'], 'version' => $package['version']);
-	}
-	foreach($todo as $pkgtodo) {
-		$static_output = "";
+switch($_GET['mode']) {
+	case "delete":
+		delete_package($_GET['pkg'] . '-' . $_GET['version']);
+		delete_package_xml($_GET['pkg']);
+		update_status("Package deleted.");
+		$static_output .= "\n\nPackage deleted.";
 		update_output_window($static_output);
-                delete_package($pkgtodo['name'] . '-' . $pkgtodo['version']);
-                delete_package_xml($pkgtodo['name']);
-                install_package($pkgtodo['name']);
-        }
-	update_status("All packages reinstalled."); 
-        $static_output .= "\n\nAll packages reinstalled.";
-	update_output_window($static_output);
-} else {
-	install_package($_GET['id']);
-	update_status("Installation of {$_GET['id']} completed.");
-	$static_output .= "\n\nInstallation completed.";
-	update_output_window($static_output);
-	echo "<p><center>Installation completed.  Show <a href=\"pkg_mgr_install.php?id={$_GET['id']}&showlog=true\">install log</a></center>";
+		break;
+	case "reinstallpkg":
+		delete_package($_GET['pkg'] . '-' . $_GET['version']);
+	        delete_package_xml($_GET['pkg']);
+		install_package($_GET['pkg']);
+		update_status("Package reinstalled.");
+		$static_output .= "\n\nPackage reinstalled.";
+		update_output_window($static_output);
+		break;
+	case "reinstallxml":
+		delete_package_xml($_GET['pkg']);
+		install_package($_GET['pkg']);
+		$static_output .= "\n\nPackage reinstalled.";
+		update_output_window($static_output);
+		break;
+	case "reinstallall":
+		foreach($config['installedpackages']['package'] as $package) {
+                	$todo[] = array('name' => $package['name'], 'version' => $package['version']);
+        	}
+        	foreach($todo as $pkgtodo) {
+                	$static_output = "";
+                	update_output_window($static_output);
+                	delete_package($pkgtodo['name'] . '-' . $pkgtodo['version']);
+                	delete_package_xml($pkgtodo['name']);
+                	install_package($pkgtodo['name']);
+        	}
+        	update_status("All packages reinstalled.");
+        	$static_output .= "\n\nAll packages reinstalled.";
+        	update_output_window($static_output);
+        	break;
+	default:
+		install_package($_GET['id']);
+        	update_status("Installation of {$_GET['id']} completed.");
+        	$static_output .= "\n\nInstallation completed.";
+        	update_output_window($static_output);
 }
-
 // Delete all temporary package tarballs and staging areas.
 unlink_if_exists("/tmp/apkg_*");
 rmdir_recursive("/var/tmp/instmp*");

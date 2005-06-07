@@ -359,72 +359,73 @@
  	                $queue['attachtoqueue'] = "qLANRoot";
  	                $config['shaper']['queue'][] = $queue;			
 			
-		}
 
-		$voiplist[] = array();
-
-		if( $_POST['provider'] == "generic") {
-
-		    /* create VOIP rules */
-		    $rule = array();
-		    $rule['descr'] = "DiffServ/Lowdelay/Upload";
-		    $rule['inqueue'] = "qVOIPDown";
-		    $rule['outqueue'] = "qVOIPUp";
-		    $rule['interface'] = "lan";
-		    $rule['source']['network'] = 'lan';
-		    $rule['destination']['any'] = TRUE;
-		    $rule['iptos'] = "lowdelay";
-		    $config['shaper']['rule'][] = $rule;
-
-		    $rule = array();
-		    $rule['descr'] = "DiffServ/Lowdelay/Download";
-		    $rule['inqueue'] = "qVOIPUp";
-		    $rule['outqueue'] = "qVOIPDown";
-		    $rule['interface'] = "wan";
-		    $rule['source']['any'] = TRUE;
-		    $rule['destination']['network'] = 'lan';
-		    $rule['iptos'] = "lowdelay";
-		    $config['shaper']['rule'][] = $rule;
-		}
-
-                /* setup vonage rule */
-		if( $_POST['provider'] == "vonage") 
-		    $voiplist[] = array('Vonage','udp','5060','5069','both');
-                
-		/* asterisk server / same as vonage somewhat */
-		if( $_POST['provider'] == "asterisk") 
-		    $voiplist[] = array('Vonage','udp','5060','5069','both');
-
-		/* Set up/down games as higher weight */
-		/* loop through voiplist[] */
-		foreach ($voiplist as $voip) {
-		    foreach (array('source','destination') as $srcdest) {
+			if( $_POST['provider'] == "generic") {
+			    /* create VOIP rules */
 			    $rule = array();
-			    if ($srcdest == 'source') {
-				    $destsrc = 'destination';
-				    $rule['outqueue'] = 'qVOIPUp';
-				    $rule['inqueue'] = 'qVOIPDown';
-				    $rule['interface'] = 'lan';
-				    $rule['source']['network'] = 'lan';
-				    $rule['destination']['any'] = TRUE;
-				    $rule['descr'] = "m_voip {$voip[0]} outbound";
-			    } else {
-				    $destsrc = 'source';
-				    $rule['outqueue'] = 'qVOIPDown';
-				    $rule['inqueue'] = 'qVOIPUp';
-				    $rule['interface'] = 'wan';
-				    $rule['source']['any'] = TRUE;
-				    $rule['destination']['network'] = 'lan';
-				    $rule['descr'] = "m_voip {$voip[0]} inbound";
-			    }
-    
-			    $rule['destination']['port'] = $voip[2]."-".$voip[3];
-			    if($voip[1] != '')
-				    $rule['protocol'] = $voip[1];
-    
+			    $rule['descr'] = "DiffServ/Lowdelay/Upload";
+			    $rule['inqueue'] = "qVOIPDown";
+			    $rule['outqueue'] = "qVOIPUp";
+			    $rule['interface'] = "lan";
+			    $rule['source']['network'] = 'lan';
+			    $rule['destination']['any'] = TRUE;
+			    $rule['iptos'] = "lowdelay";
 			    $config['shaper']['rule'][] = $rule;
-		    }
-		}                
+
+			    $rule = array();
+			    $rule['descr'] = "DiffServ/Lowdelay/Download";
+			    $rule['inqueue'] = "qVOIPUp";
+			    $rule['outqueue'] = "qVOIPDown";
+			    $rule['interface'] = "wan";
+			    $rule['source']['any'] = TRUE;
+			    $rule['destination']['network'] = 'lan';
+			    $rule['iptos'] = "lowdelay";
+			    $config['shaper']['rule'][] = $rule;
+			}
+			
+			$voiplist[] = array();
+	
+			/* setup vonage rule */
+			if( $_POST['provider'] == "vonage") 
+			    $voiplist[] = array('Vonage','udp','5060-5069','5060-5069','both');
+			
+			/* asterisk server / same as vonage somewhat */
+			if( $_POST['provider'] == "asterisk") 
+			    $voiplist[] = array('Vonage','udp','5060-5069','5060-5069','both');
+	
+			/* Set up/down games as higher weight */
+			/* loop through voiplist[] */
+			foreach ($voiplist as $voip) {
+			    foreach (array('source','destination') as $srcdest) {
+				    $rule = array();
+				    if ($srcdest == 'source') {
+					    $destsrc = 'destination';
+					    $rule['outqueue'] = 'qVOIPUp';
+					    $rule['inqueue'] = 'qVOIPDown';
+					    $rule['interface'] = 'lan';
+					    $rule['source']['network'] = 'lan';
+					    $rule['destination']['any'] = TRUE;
+					    $rule['descr'] = "m_voip {$voip[0]} outbound";
+				    } else {
+					    $destsrc = 'source';
+					    $rule['outqueue'] = 'qVOIPDown';
+					    $rule['inqueue'] = 'qVOIPUp';
+					    $rule['interface'] = 'wan';
+					    $rule['source']['any'] = TRUE;
+					    $rule['destination']['network'] = 'lan';
+					    $rule['descr'] = "m_voip {$voip[0]} inbound";
+				    }
+	    
+				    $rule['destination']['port'] = $voip[2]."-".$voip[3];
+				    if($voip[1] != '')
+					    $rule['protocol'] = $voip[1];
+	    
+				    $config['shaper']['rule'][] = $rule;
+	
+			    }
+			}                
+
+		}
                 
 	</stepsubmitphpaction>
 </step>
@@ -868,7 +869,7 @@
                         <type>checkbox</type>
                         <typehint>Other networking protocols</typehint>
                         <description>This will help raise the priority of other protocols higher than most traffic.</description>
-			<enablefields>MSRDP,PPTP,IPSEC</enablefields>
+			<enablefields>MSRDP,PPTP,IPSEC,StreamingMP3</enablefields>
 			<donotdisable>true</donotdisable>
                 </field>
                 <field>
@@ -891,7 +892,7 @@
 			<typehint>IPSEC VPN traffic</typehint>
                 </field>
                 <field>
-                        <name>Streaming MP3</name>
+                        <name>StreamingMP3</name>
                         <type>checkbox</type>
 			<typehint>Streaming Media</typehint>
                 </field>  		

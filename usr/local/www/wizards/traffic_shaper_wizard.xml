@@ -912,7 +912,17 @@
                         <name>StreamingMP3</name>
                         <type>checkbox</type>
 			<typehint>Streaming Media</typehint>
-                </field>  		
+                </field>
+                <field>
+                        <name>IRC</name>
+                        <type>checkbox</type>
+			<typehint>Internet Relay Chat</typehint>
+                </field>
+                <field>
+                        <name>DNS</name>
+                        <type>checkbox</type>
+			<typehint>Domain Name Services</typehint>
+                </field>		
                 <field>
                         <name>Next</name>
                         <type>submit</type>
@@ -989,6 +999,17 @@
 		if($_POST['streamingmp3'] != "") {
 		    /* streaming mp3 media aka shoutcast */
 		    $othersplist[] = array('STREAMINGMP3','tcp','8000','8010','both');
+		}
+		
+		if($_POST['irc'] != "") {
+		    /* internet relay chat */
+		    $othersplist[] = array('IRC','tcp','6667-6670','6667-6670','both');
+		}
+
+		if($_POST['dns'] != "") {
+		    /* domain name system */
+		    $othersplist[] = array('DNS1','tcp','53','53','both');
+		    $othersplist[] = array('DNS2','udp','53','53','both');
 		}
 		
 		/* XXX: add some more protocols here! */

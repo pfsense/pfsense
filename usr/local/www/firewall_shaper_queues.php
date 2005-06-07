@@ -203,7 +203,6 @@ if ($_GET['act'] == "del") {
 	</tr>
 </table>
             </form>
-<br><a href="firewall_shaper_queues.php?reset=true">Reset</a> queues if they do not load.
 <?php include("fend.inc"); ?>
 </body>
 </html>

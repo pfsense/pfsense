@@ -31,11 +31,12 @@
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
-foreach($config['installedpackages']['package'] as $instpkg) {
-	$tocheck[] = $instpkg['name'];
+if(is_array($config['installedpackages']['package'])) {
+	foreach($config['installedpackages']['package'] as $instpkg) {
+		$tocheck[] = $instpkg['name'];
+	}
+	$currentvers = get_pkg_info($tocheck, array('version', 'xmlver'));
 }
-$currentvers = get_pkg_info($tocheck, array('version', 'xmlver'));
-
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -67,17 +68,12 @@ include("fbegin.inc");
                   <td width="10%" class="listhdrr">XML Version</td>
                   <td width="45%" class="listhdr">Description</td>
                 </tr>
-
 		<?php
                  if($config['installedpackages']['package'] != "") {
 		    $instpkgs = array();
 		    foreach($config['installedpackages']['package'] as $instpkg) $instpkgs[] = $instpkg['name'];
 		    asort($instpkgs);
 		    foreach ($instpkgs as $index => $pkgname){
-			if(!is_string($pkgname)) {
-				echo "<tr><td colspan=\"3\"><center>There are currently no packages installed.</td></tr>";
-				break;
-			}
 			$pkg = $config['installedpackages']['package'][$index];
                         if($pkg['name'] <> "") {
                             ?>
@@ -153,7 +149,7 @@ include("fbegin.inc");
                         }
 		    }
                  } else {
-                    echo "<tr><td colspan=\"3\"><center>There are currently no packages installed.</td></tr>";
+                    echo "<tr><td colspan=\"3\"><center>There are no packages currently installed.</td></tr>";
                  }
 		?>
         </table>

@@ -34,7 +34,7 @@ require_once("pkg-utils.inc");
 foreach($config['installedpackages']['package'] as $instpkg) {
 	$tocheck[] = $instpkg['name'];
 }
-$currentvers = get_pkg_info($tocheck, array('version'));
+$currentvers = get_pkg_info($tocheck, array('version', 'xmlver'));
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -61,9 +61,10 @@ include("fbegin.inc");
     <td class="tabcont">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
-                  <td width="25%" class="listhdrr">Package Name</td>
+                  <td width="15%" class="listhdrr">Package Name</td>
                   <td width="20%" class="listhdrr">Category</td>
-                  <td width="10%" class="listhdrr">Version</td>
+		  <td width="10%" class="listhdrr">Package Version</td>
+                  <td width="10%" class="listhdrr">XML Version</td>
                   <td width="45%" class="listhdr">Description</td>
                 </tr>
 
@@ -87,29 +88,66 @@ include("fbegin.inc");
                                 <td class="listlr">
                                     <?= $pkg['category'] ?>
                                 </td>
-                                <td class="listlr">
-                                    <?php
-                                        $latest_version = $currentvers[$pkg['name']]['version'];
-					if($latest_version == false) {
+                                <?php
+                                        $latest_package = $currentvers[$pkg['name']]['version'];
+					if($latest_package == false) {
 						// We can't determine this package's version status.
-						echo "Upgrade: Unknown.<br>Installed: " . $pkg['version'];
-                                        } elseif($pkg['version'] <> $latest_version) {
-                                            /* a new version of the package is available */
-                                            $id = get_pkg_id($pkg['name']);
-                                            echo "Upgrade: <a href='pkg_mgr_delete.php?upgrade=true&pkg={$pkg['name']}'>" . $latest_version . "</a>";
-                                            echo "<br>Installed: " . $pkg['version'];
+						?><td class="listlr"><?php
+						echo "Current: Unknown.<br>Installed: " . $pkg['version'];
+                                       		?></td><?php 
+					} elseif($pkg['version'] > $latest_package) {
+                                            /* we're running a newer version of the package */
+					    ?><td class="listbggrey"><font color="#FFFFFFF"><?php
+                                            echo "Current: {$latest_version}";
+                                            echo "<br>Installed: {$pkg['version']}";
+					    ?></td><?php
+                                        } elseif($pkg['version'] < $latest_package) {
+					    /* our package is out of date */
+					    ?><td class="listbg"><font color="#FFFFFFF"><?php
+                                            echo "Current: {$latest_version}";
+					    echo "<br>Installed: {$pkg['version']}";
+					    ?></td><?php
                                         } else {
-                                            echo $pkg['version'];
-                                        }
-                                    ?>
-                                </td>
+					    ?><td class="listlr"><?php
+					    echo $pkg['version'];
+					    ?></td><?php
+					}
+					$latest_xml = explode(" ", $pkg['xmlver']);
+					$latest_xml = $latest_xml[1];
+					if(($latest_xml == false) and ($pkg['xmlver']) == false) {
+						?><td class="listlr"><?php
+						echo "Unknown.";
+						?></td><?php
+					} elseif($latest_xml == false) {
+						?><td class="listlr"><?php
+						echo "Current: Unknown.<br>Installed: {$pkg['xmlver']}";
+						?></td><?php
+					} elseif($pkg['xmlver'] > $latest_xml) {
+						?><td class="listbggrey"><font color="#FFFFFFF"><?php
+                                                echo "Current: {$latest_xml}";
+                                                echo "<br>Installed: {$pkg['xmlver']}";
+                                                ?></td><?php
+					} elseif($pkg['xmlver'] < $latest_xml) {
+						?><td class="listbg"><font color="#FFFFFFF"><?php
+	                                        echo "Current: {$latest_version}";
+						echo "<br>Installed: {$pkg['version']}";
+                            			?></td><?php
+					} else {
+						?><td class="listlr"><?php
+						echo $pkg['xmlver'];
+						?></td><?php
+					}
+                                ?>
                                 <td class="listbg">
                                     <font color="#FFFFFFF">
                                     <?= $pkg['descr'] ?>
                                 </td>
                                 <td valign="middle" class="list" nowrap>
-                                    <a onclick="return confirm('Do you really want to remove this package?')" href="pkg_mgr_delete.php?pkg=<?= $pkg['name']; ?>&version=<?= $pkg['version']; ?>"><img src="x.gif" width="17" height="17" border="0"></a>
-                                </td>
+                                    <a onclick="return confirm('Do you really want to remove this package?')" href="pkg_mgr_install.php?mode=delete&pkg=<?= $pkg['name']; ?>&version=<?= $pkg['version']; ?>"><img src="x.gif" width="17" height="17" border="0"></a>
+                                    <br>
+				    <a href="pkg_mgr_install.php?mode=reinstallpkg&pkg=<?= $pkg['name']; ?>&version=<?= $pkg['version']; ?>"><img src="reinstall_pkg.gif" width="17" height="17" border="0"</a>
+				    <a href="pkg_mgr_install.php?mode=reinstallxml&pkg=<?= $pkg['name']; ?>&version=<?= $pkg['version']; ?>"><img src="reinstall_xml.gif" width="17" height="17" border="0"</a>
+				</td>
                             </tr>
                             <?php
                         }

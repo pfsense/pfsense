@@ -250,6 +250,10 @@
                                         <name>Vonage</name>
                                         <value>Vonage</value>
                                 </option>
+                                <option>
+                                        <name>Asterisk</name>
+                                        <value>Asterisk</value>
+                                </option>				
 			</options>
 		</field>
 		<field>
@@ -385,8 +389,12 @@
 
                 /* setup vonage rule */
 		if( $_POST['provider'] == "vonage") 
-		    $voiplist[] = array('Vonage','udp','5060','5060','both');
+		    $voiplist[] = array('Vonage','udp','5060','5069','both');
                 
+		/* asterisk server / same as vonage somewhat */
+		if( $_POST['provider'] == "asterisk") 
+		    $voiplist[] = array('Vonage','udp','5060','5069','both');
+
 		/* Set up/down games as higher weight */
 		/* loop through voiplist[] */
 		foreach ($voiplist as $voip) {

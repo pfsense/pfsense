@@ -97,7 +97,7 @@ include("fbegin.inc");
 
 <?php
 
-if($_GET['reinstallallpackages']) {
+if($_GET['mode'] == 'reinstallallpackages']) {
 	foreach($config['installedpackages']['package'] as $package) {
 		$todo[] = array($package['name'], $package['version']);
 	}

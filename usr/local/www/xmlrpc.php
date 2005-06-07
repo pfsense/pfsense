@@ -101,9 +101,10 @@ $reboot_doc = 'Basic XMLRPC wrapper for rc.reboot.';
 $reboot_sig = array(array(boolean, string));
 
 function reboot_xmlrpc($raw_params) {
+	require_once("util.inc");
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", 'string'));
-	exec("/etc/rc.reboot &");
+	mwexec_bg("/etc/rc.reboot");
 	return new XML_RPC_Response(new XML_RPC_Value(true, 'boolean'));
 }
 

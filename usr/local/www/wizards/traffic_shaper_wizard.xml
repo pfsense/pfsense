@@ -310,6 +310,7 @@
                 </field>
         </fields>
 	<stepsubmitphpaction>
+
 		if ( $_POST['enable'] ) {
 	                /* create qVOIPUp */
 	                $queue = array();
@@ -358,9 +359,8 @@
 			$queue['bandwidthtype'] = "Kb";
  	                $queue['attachtoqueue'] = "qLANRoot";
  	                $config['shaper']['queue'][] = $queue;			
-			
 
-			if( $_POST['provider'] == "generic") {
+			if( $_POST['provider'] == "Generic") {
 			    /* create VOIP rules */
 			    $rule = array();
 			    $rule['descr'] = "DiffServ/Lowdelay/Upload";
@@ -386,11 +386,11 @@
 			$voiplist[] = array();
 	
 			/* setup vonage rule */
-			if( $_POST['provider'] == "vonage") 
+			if( $_POST['provider'] == "Vonage") 
 			    $voiplist[] = array('Vonage','udp','5060-5069','5060-5069','both');
 			
 			/* asterisk server / same as vonage somewhat */
-			if( $_POST['provider'] == "asterisk") 
+			if( $_POST['provider'] == "Asterisk") 
 			    $voiplist[] = array('Vonage','udp','5060-5069','5060-5069','both');
 	
 			/* Set up/down games as higher weight */

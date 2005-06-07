@@ -45,6 +45,23 @@ $a_queue = &$config['shaper']['queue'];
 
 $pconfig['enable'] = isset($config['shaper']['enable']);
 
+function wipe_magic () {
+  global $config;
+
+  /* wipe previous */
+  unset($config['shaper']['queue']);
+  unset($config['shaper']['rule']);
+  $config['shaper']['enable'] = FALSE;
+}
+
+if ($_POST['remove']) {
+  wipe_magic();
+  $savemsg = '<p><span class="red"><strong>Note: The traffic shaper has been disabled.</strong></span><strong><br>';
+  touch($d_shaperconfdirty_path);
+  unset($config['shaper']['enable']);
+  write_config();
+}
+
 if ($_POST) {
 
 	if ($_POST['submit']) {
@@ -191,8 +208,11 @@ if ($_GET['act'] == "del") {
                       </strong></p></td>
                 </tr>
                 <tr>
-                  <td> <input name="submit" type="submit" class="formbtn" value="Save">
+                  <td> 
+		  <input name="submit" type="submit" class="formbtn" value="Save"> 
+		  <input name="remove" type="submit" class="formbtn" id="remove" value="Remove Wizard"> 
                   </td>
+		  
                 </tr>
               </table>
               &nbsp;<br>

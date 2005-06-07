@@ -56,6 +56,9 @@
 			return 0;	/* nothing to do */
 	}
 
+	/* relaunch pftpx */
+	system_start_ftp_helpers();
+
 	/* resync ipfilter */
 	filter_resync();
 

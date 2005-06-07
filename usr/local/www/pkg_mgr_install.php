@@ -79,6 +79,7 @@ include("fbegin.inc");
 					</td>
 				</tr>
 			</table>
+                     <br>
 	             <!-- status box -->
                      <textarea cols="60" rows="1" name="status" id="status" wrap="hard">Beginning package installation.</textarea>
                      <!-- command output box -->

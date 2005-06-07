@@ -97,22 +97,26 @@ include("fbegin.inc");
 
 <?php
 
-if($_GET['mode'] == 'reinstallallpackages') {
+if($_GET['mode'] == 'reinstallall') {
 	foreach($config['installedpackages']['package'] as $package) {
-		$todo[] = array($package['name'], $package['version']);
+		$todo[] = array('name' => $package['name'], 'version' => $package['version']);
 	}
 	foreach($todo as $pkgtodo) {
+		$static_output = "";
+		update_output_window($static_output);
                 delete_package($pkgtodo['name'] . '-' . $pkgtodo['version']);
                 delete_package_xml($pkgtodo['name']);
                 install_package($pkgtodo['name']);
-        } 
-        update_status("All packages reinstalled.");
-        update_output_window("All packages reinstalled.");
+        }
+	update_status("All packages reinstalled."); 
+        $static_output .= "\n\nAll packages reinstalled.";
+	update_output_window($static_output);
 } else {
 	install_package($_GET['id']);
 	update_status("Installation of {$_GET['id']} completed.");
 	$static_output .= "\n\nInstallation completed.";
 	update_output_window($static_output);
+	echo "<p><center>Installation completed.  Show <a href=\"pkg_mgr_install.php?id={$_GET['id']}&showlog=true\">install log</a></center>";
 }
 
 // Delete all temporary package tarballs and staging areas.
@@ -121,9 +125,5 @@ rmdir_recursive("/var/tmp/instmp*");
 
 // close log
 fclose($fd_log);
-
-echo "<p><center>Installation completed.  Show <a href=\"pkg_mgr_install.php?showlog=true\">install log</a></center>";
-
-echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
 
 ?>

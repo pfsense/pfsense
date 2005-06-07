@@ -97,18 +97,27 @@ include("fbegin.inc");
 
 <?php
 
-/*
- *  Loop through packages_to_install, installing needed packages
- */
-install_package($_GET['id']);
-update_status("Installation of {$_GET['id']} completed.");
-$static_output .= "\n\nInstallation completed.";
-update_output_window($static_output);
+if($_GET['reinstallallpackages']) {
+	foreach($config['installedpackages']['package'] as $package) {
+		$todo[] = array($package['name'], $package['version']);
+	}
+	foreach($todo as $pkgtodo) {
+                delete_package($pkgtodo['name'] . '-' . $pkgtodo['version']);
+                delete_package_xml($pkgtodo['name']);
+                install_package($pkgtodo['name']);
+        } 
+        update_status("All packages reinstalled.");
+        update_output_window("All packages reinstalled.");
+} else {
+	install_package($_GET['id']);
+	update_status("Installation of {$_GET['id']} completed.");
+	$static_output .= "\n\nInstallation completed.";
+	update_output_window($static_output);
+}
 
 // Delete all temporary package tarballs and staging areas.
 unlink_if_exists("/tmp/apkg_*");
 rmdir_recursive("/var/tmp/instmp*");
-
 
 // close log
 fclose($fd_log);

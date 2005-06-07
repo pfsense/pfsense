@@ -97,6 +97,16 @@ function auto_update_xmlrpc($raw_params) {
 	return new XML_RPC_Response(new XML_RPC_Value(true, 'boolean'));
 }
 
+$reboot_doc = 'Basic XMLRPC wrapper for rc.reboot.';
+$reboot_sig = array(array(boolean, string));
+
+function reboot_xmlrpc($raw_params) {
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", 'string'));
+	exec("/etc/rc.reboot &");
+	return new XML_RPC_Response(new XML_RPC_Value(true, 'boolean'));
+}
+
 $server = new XML_RPC_Server(
         array(
             'pfsense.backup_config_section' => 	array('function' => 'backup_config_section_xmlrpc',
@@ -110,10 +120,13 @@ $server = new XML_RPC_Server(
 							'docstring' => $filter_configure_doc),
 	    'pfsense.check_firmware_version' =>	array('function' => 'check_firmware_version_xmlrpc',
 							'signature' => $check_firmware_version_sig,
-							'docstring' => $check_firmware_version_doc)
+							'docstring' => $check_firmware_version_doc),
 //	    'pfsense.auto_update' =>		array('function' => 'auto_update_xmlrpc',
 //							'signature' => $auto_update_sig,
-//							'docstring' => $auto_update_doc)
+//							'docstring' => $auto_update_doc),
+	    'pfsense.reboot' =>			array('function' => 'reboot_xmlrpc',
+							'signature' => $reboot_sig,
+							'docstring' => $reboot_doc)
         )
 );
 ?>

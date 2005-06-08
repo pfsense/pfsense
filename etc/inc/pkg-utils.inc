@@ -549,6 +549,11 @@ function install_package_xml($pkg) {
 			$static_output .= "done.\n";
 			update_output_window($static_output);
 		}
+		/* call our before form property since we may be declaring functions
+		   in it that are called later */
+		if($pkg_config['custom_php_command_before_form'] <> "") {
+			eval($pkg_config['custom_php_command_before_form']);
+		}
 		/* call our resync function */
 		if($pkg_config['custom_php_resync_config_command'] <> "") {
 			eval($pkg_config['custom_php_resync_config_command']);

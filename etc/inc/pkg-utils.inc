@@ -549,6 +549,10 @@ function install_package_xml($pkg) {
 			$static_output .= "done.\n";
 			update_output_window($static_output);
 		}
+		/* call our resync function */
+		if($pkg_config['custom_php_resync_config_command'] <> "") {
+			eval($pkg_config['custom_php_resync_config_command']);
+		}
 	} else {
 		$static_output .= "Loading package configuration... failed!\n\nInstallation aborted.";
 		update_output_window($static_output);

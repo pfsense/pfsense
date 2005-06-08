@@ -572,20 +572,20 @@ function delete_package($pkg) {
 	return;
 }
 
-function delete_package_recursive($pkg, $pkgdb = "") {
+function delete_package_recursive($pkg) {
 	exec("/usr/sbin/pkg_info -r " . $pkg . " 2>&1", $info);
-	if(!$pkgdb) exec("/bin/ls /var/db/pkg", $pkgdb);
+	exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_delete " . $pkg ." > /dev/null 2>&1");
+	exec("/bin/ls /var/db/pkg", $pkgdb);
 	if(stristr($info[0], "can't find package") != false) return;
 	foreach($info as $line) {
-		$depend = trim(array_pop($line));
-		if(in_array($depend, $pkgdb)) delete_package_recursive($depend, $pkgdb);
+		$depend = trim(array_pop(explode(":", $line)));
+		if(in_array($depend, $pkgdb)) delete_package_recursive($depend);
 	}
 	$fd = fopen("{$g['tmp_path']}/y", "w");
 	for($line = 0; $line < 10; $line++) {
 		fwrite($fd, "y\n");
 	}
 	fclose($fd);
-	exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_delete " . $pkg ." > /dev/null 2>&1");
 	return;
 }
 

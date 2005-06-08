@@ -834,9 +834,9 @@
 		    /* PlanetSide */
 		    $gamesplist[] = array('PlanetSide','tcp','7000','7000','both');
 		    $gamesplist[] = array('PlanetSide','tcp','7080','7080','both');
-		    $gamesplist[] = array('PlanetSide2','udp','3016-3021','3016-3021','both');
-		    $gamesplist[] = array('PlanetSide2','udp','45000-45010','45000-45010','both');
-		    $gamesplist[] = array('PlanetSide2','udp','30000-30500','30000-30500','both');
+		    $gamesplist[] = array('PlanetSide2','udp','3016','3021','both');
+		    $gamesplist[] = array('PlanetSide2','udp','45000','45010','both');
+		    $gamesplist[] = array('PlanetSide2','udp','30000','30500','both');
 		}
 
 		/* XXX: add some more games before this line!! */
@@ -886,7 +886,7 @@
                         <type>checkbox</type>
                         <typehint>Other networking protocols</typehint>
                         <description>This will help raise the priority of other protocols higher than most traffic.</description>
-			<enablefields>MSRDP,PPTP,IPSEC,StreamingMP3</enablefields>
+			<enablefields>MSRDP,PPTP,IPSEC,StreamingMP3,irc,dns</enablefields>
 			<donotdisable>true</donotdisable>
                 </field>
                 <field>
@@ -1003,7 +1003,7 @@
 		
 		if($_POST['irc'] != "") {
 		    /* internet relay chat */
-		    $othersplist[] = array('IRC','tcp','6667-6670','6667-6670','both');
+		    $othersplist[] = array('IRC','tcp','6667','6670','both');
 		}
 
 		if($_POST['dns'] != "") {

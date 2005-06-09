@@ -1973,7 +1973,7 @@ function process_carp_rules() {
 	    }
 	    foreach ($ifdescrs as $ifdescr => $ifname) {
 		$interface = convert_friendly_interface_to_real_interface_name($ifname);
-		$lines .= "pass quick on {$interface} proto carp keep state\n";
+		$lines .= "pass quick on {$interface} proto carp\n";
 	    }
 	    if($config['installedpackages']['carp']['config'] != "")
 		foreach($config['installedpackages']['carp']['config'] as $carp) {
@@ -1989,7 +1989,7 @@ function process_carp_rules() {
 			add_rule_to_anchor("natrules", $rule, $ip);
 		    }
 		}
-	    add_rule_to_anchor("carp", "pass quick on pfsync0 keep state", "pfsync0" . "3");
+	    add_rule_to_anchor("carp", "pass quick on pfsync0", "pfsync0" . "3");
 	    if($config['installedpackages']['carpsettings']['config'] != "")
 		foreach($config['installedpackages']['carpsettings']['config'] as $carp)
 		    $carp_sync_int = convert_friendly_interface_to_real_interface_name($carp['pfsyncinterface']);

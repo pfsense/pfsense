@@ -390,8 +390,10 @@
 				$voiplist[] = array('Vonage','udp','5060-5069','5060-5069','both');
 			    
 			    /* asterisk server / same as vonage somewhat */
-			    if( $_POST['provider'] == "Asterisk") 
+			    if( $_POST['provider'] == "Asterisk") {
 				$voiplist[] = array('Vonage','udp','5060-5069','5060-5069','both');
+				$voiplist[] = array('Vonage','udp','10000-17226','10000-17226','both');
+			    }
 
 			    /* VoicePulse server */
 			    if( $_POST['provider'] == "VoicePulse") {

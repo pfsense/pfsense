@@ -394,8 +394,10 @@
 				$voiplist[] = array('Vonage','udp','5060-5069','5060-5069','both');
 
 			    /* VoicePulse server */
-			    if( $_POST['provider'] == "VoicePulse") 
+			    if( $_POST['provider'] == "VoicePulse") {
 				$voiplist[] = array('VoicePulse','udp','16384-16482','16384-16482','both');
+				$voiplist[] = array('VoicePulse','udp','4569','4569','both');
+			    }
 	    
 			    /* Set up/down games as higher weight */
 			    /* loop through voiplist[] */

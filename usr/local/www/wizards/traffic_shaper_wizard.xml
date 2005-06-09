@@ -421,12 +421,10 @@
 						$rule['destination']['network'] = 'lan';
 						$rule['descr'] = "m_voip {$voip[0]} inbound";
 					}
-					
-					if($voip[2]) {
-					    $rule['destination']['port'] = $voip[2]."-".$voip[3];
-					    if($voip[1] != '')
-						    $rule['protocol'] = $voip[1];
-					}
+				    
+					$rule['destination']['port'] = $voip[2]."-".$voip[3];
+					if($voip[1] != '')
+						$rule['protocol'] = $voip[1];
 		
 					$config['shaper']['rule'][] = $rule;
 	    

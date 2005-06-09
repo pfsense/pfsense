@@ -383,7 +383,7 @@
 			    $config['shaper']['rule'][] = $rule;
 			} else {
 			
-			    $voiplist[] = array();
+			    $voiplist = array();
 	    
 			    /* setup vonage rule */
 			    if( $_POST['provider'] == "Vonage") 

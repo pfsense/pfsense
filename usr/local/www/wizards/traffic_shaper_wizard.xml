@@ -54,13 +54,13 @@
 <step>
 	<id>2</id>
 	<title>pfSense Traffic Shaper Wizard</title>
-	<description>WAN connection speed</description>
+	<description>WAN connection speed - Please note that the wizard will automatically subtract 20% for the queues.</description>
         <javascriptafterformdisplay>
         </javascriptafterformdisplay>
 	<fields>
                 <field>
                         <name>Download</name>
-                        <description>The download speed of your WAN link in Kbits/second.  Please note that the wizard will automatically subtract 20% for the queues.</description>
+                        <description>The download speed of your WAN link in Kbits/second.</description>
                         <type>input</type>
 			<validate>^[0-9]*$</validate>
 			<message>Download speed must be numerical</message>

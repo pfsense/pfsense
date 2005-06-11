@@ -68,6 +68,9 @@ if (isset($id) && $a_out[$id]) {
 	$pconfig['interface'] = "wan";
 }
 
+if (isset($_GET['dup']))
+        unset($id);
+
 if ($_POST) {
 
     if ($_POST['destination_type'] == "any") {

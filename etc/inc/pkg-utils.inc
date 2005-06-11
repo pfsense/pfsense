@@ -36,7 +36,7 @@ require_once("xmlrpc.inc");
 require_once("xmlparse.inc");
 
 /* add package specific listtags to XML parser */
-$listtags = array_merge($listtags, array("onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "step", "package", "columnitem", "option", "item", "field", "package"));
+$listtags = array_merge($listtags, array("onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package"));
 
 require_once("pfsense-utils.inc");
 require_once("globals.inc");

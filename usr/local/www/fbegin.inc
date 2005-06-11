@@ -64,7 +64,7 @@ function showhide(tspan, tri) {
     <td width="150" bgcolor="#000000">
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
         <tr>
-          <td><span class="navlnk"><font color="#FFFFFF"> <strong>System</strong>
+          <td nowrap><span class="navlnk"><font color="#FFFFFF"> <strong>System</strong>
               <br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_advanced.php" class="navlnk">Advanced</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_firmware_check.php" class="navlnk">Firmware</a><br>

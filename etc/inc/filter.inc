@@ -169,6 +169,15 @@ function filter_configure() {
 			}
 		}
 	}
+	
+	/* we need a way to let a user run a shell cmd after each
+	   filter_configure() call.  run this xml command after
+           each change.
+	*/
+	if($config['system']['afterfilterchangeshellcmd'] <> "") {
+		mwexec($config['system']['afterfilterchangeshellcmd']);
+	}
+	
 	return 0;
 }
 

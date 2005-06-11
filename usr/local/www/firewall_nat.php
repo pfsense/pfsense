@@ -178,7 +178,7 @@ if (isset($_POST['del_x'])) {
 			if (!$natent['interface'] || ($natent['interface'] == "wan"))
 				echo "WAN";
 			else
-				echo "<font color=\"#FFFFFF\">" . htmlspecialchars($config['interfaces'][$natent['interface']]['descr']);
+				echo htmlspecialchars($config['interfaces'][$natent['interface']]['descr']);
 		    ?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">

@@ -785,7 +785,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 			<select name='gateway'>
 			<?php
 				foreach($gateways as $gw) {
-					if($gw == $pconfig['gateway')
+					if($gw == $pconfig['gateway'])
 						$selected = " SELECTED";
 					else
 						$selected = "";

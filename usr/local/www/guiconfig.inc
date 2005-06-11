@@ -458,35 +458,10 @@ function update_changedesc($update) {
 	$changecount++;
 }
 
-function dump_clog($logfile, $tail, $grepfor = "", $grepinvert = false, $withorig = true, $ignorepkgs = true) {
-        require_once("pkg-utils.inc");
+function dump_clog($logfile, $tail, $withorig = true) {
 	global $g, $config;
         $sor = isset($config['syslog']['reverse']) ? "-r" : "";
 	exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
-	if(!is_array($grepfor)) $grepfor = array($grepfor);
-	if(!is_array($grepinvert)) $grepinvert = array($grepinvert);
-	if($ignorepkgs == true and $config['installedpackages']['package'] != "") {
-		foreach($config['installedpackages']['package'] as $pkg) {
-			$pkg_config = parse_xml_config("/usr/local/pkg/" . $pkg['configurationfile'], "packagegui");
-			if($pkg_config['logging'] != "" and $pkg_config['logging']['grepfor'] != "") {
-				$grepfor[] = $pkg_config['logging']['grepfor'];
-				$grepinvert[] = true;
-			}
-		}
-	}
-        if($grepfor <> "") {
-		$i = 0;
-		foreach($grepfor as $agrep) {
-			$regexp = "/" . $agrep . "/i";
-                	if($grepinvert[$i] == true) {
-                		$logarr = preg_grep($regexp, $logarr, PREG_GREP_INVERT);
-			} else {
-				$logarr = preg_grep($regexp, $logarr);
-			}
-			$i++;
-		}
-	}
-
         foreach ($logarr as $logent) {
                 $logent = preg_split("/\s+/", $logent, 6);
                 echo "<tr valign=\"top\">\n";

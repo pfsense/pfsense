@@ -902,7 +902,7 @@
                         <type>checkbox</type>
                         <typehint>Other networking protocols</typehint>
                         <description>This will help raise the priority of other protocols higher than most traffic.</description>
-			<enablefields>MSRDP,PPTP,IPSEC,StreamingMP3,IRC,DNS,HTTP,SSH</enablefields>
+			<enablefields>MSRDP,PPTP,IPSEC,StreamingMP3,IRC,DNS,HTTP,SSH,SMTP,POP3,ICMP</enablefields>
 			<donotdisable>true</donotdisable>
                 </field>
                 <field>
@@ -948,6 +948,21 @@
                         <name>SSH</name>
                         <type>checkbox</type>
 			<typehint>Secure shell protocol</typehint>
+                </field>
+                <field>
+                        <name>SMTP</name>
+                        <type>checkbox</type>
+			<typehint>Mail Protocol</typehint>
+                </field>
+                <field>
+                        <name>POP3</name>
+                        <type>checkbox</type>
+			<typehint>POP3 Protocol</typehint>
+                </field>
+                <field>
+                        <name>ICMP</name>
+                        <type>checkbox</type>
+			<typehint>ICMP Protocol</typehint>
                 </field>		
                 <field>
                         <name>Next</name>
@@ -1049,7 +1064,22 @@
 		if($_POST['ssh'] != "") {
 		    /* Secure shell traffic */
 		    $othersplist[] = array('SSH','tcp','22','22','both');
-		}	
+		}
+		
+		if($_POST['smtp'] != "") {
+		    /* Secure shell traffic */
+		    $othersplist[] = array('SMTP','tcp','25','25','both');
+		}
+
+		if($_POST['pop3'] != "") {
+		    /* Post Office Protocol - POP3 */
+		    $othersplist[] = array('POP3','tcp','110','110','both');
+		}
+		
+		if($_POST['icmp'] != "") {
+		    /* ICMP */
+		    $othersplist[] = array('ICMP','icmp','','','both');
+		}		
 		
 		/* XXX: add some more protocols here! */
     
@@ -1098,7 +1128,7 @@
                         <type>checkbox</type>
                         <typehint>Other networking protocols</typehint>
                         <description>This will help lower the priority of other protocols lower than most traffic.</description>
-			<enablefields>MSRDP,PPTP,IPSEC,StreamingMP3,IRC,DNS,HTTP,SSH</enablefields>
+			<enablefields>MSRDP,PPTP,IPSEC,StreamingMP3,IRC,DNS,HTTP,SSH,SMTP,POP3,ICMP</enablefields>
 			<donotdisable>true</donotdisable>
                 </field>
                 <field>
@@ -1145,6 +1175,21 @@
                         <type>checkbox</type>
 			<typehint>Secure shell protocol</typehint>
                 </field>
+                <field>
+                        <name>SMTP</name>
+                        <type>checkbox</type>
+			<typehint>Mail Protocol</typehint>
+                </field>
+                <field>
+                        <name>POP3</name>
+                        <type>checkbox</type>
+			<typehint>POP3 Protocol</typehint>
+                </field>
+                <field>
+                        <name>ICMP</name>
+                        <type>checkbox</type>
+			<typehint>ICMP Protocol</typehint>
+                </field>		
                 <field>
                         <name>Next</name>
                         <type>submit</type>
@@ -1246,6 +1291,21 @@
 		    /* Secure shell traffic */
 		    $othersplist[] = array('SSH','tcp','22','22','both');
 		}
+
+		if($_POST['smtp'] != "") {
+		    /* Secure shell traffic */
+		    $othersplist[] = array('SMTP','tcp','25','25','both');
+		}
+
+		if($_POST['pop3'] != "") {
+		    /* Post Office Protocol - POP3 */
+		    $othersplist[] = array('POP3','tcp','110','110','both');
+		}
+		
+		if($_POST['icmp'] != "") {
+		    /* ICMP */
+		    $othersplist[] = array('ICMP','icmp','','','both');
+		}		
 
 		/* XXX: add some more protocols here! */
     

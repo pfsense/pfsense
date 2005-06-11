@@ -1178,7 +1178,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			
 			$rg = $config['interfaces'][$rule['interface']]['gateway'];
 			$ri = filter_translate_type_to_real_interface($rule['interface']);
-			if($rg <> "" and $ri <> "" and stristr($rule['interface'],"opt" == true)) {
+			if($rg <> "" and $ri <> "" and stristr($rule['interface'],"opt") == true) {
 				$line .= "reply-to (" . $ri . " " . $rg . ") ";
 			}
 			

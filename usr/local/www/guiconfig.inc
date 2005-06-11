@@ -458,10 +458,22 @@ function update_changedesc($update) {
 	$changecount++;
 }
 
-function dump_clog($logfile, $tail, $withorig = true) {
+function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
 	global $g, $config;
         $sor = isset($config['syslog']['reverse']) ? "-r" : "";
 	exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+	if($grepfor <> "") {  	 
+                 $i = 0; 	 
+                 foreach($grepfor as $agrep) { 	 
+                         $regexp = "/" . $agrep . "/i"; 	 
+                         if($grepinvert[$i] == true) { 	 
+                                 $logarr = preg_grep($regexp, $logarr, PREG_GREP_INVERT); 	 
+                         } else { 	 
+                                 $logarr = preg_grep($regexp, $logarr); 	 
+                         } 	 
+                         $i++; 	 
+                 } 	 
+        }
         foreach ($logarr as $logent) {
                 $logent = preg_split("/\s+/", $logent, 6);
                 echo "<tr valign=\"top\">\n";

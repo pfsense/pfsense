@@ -60,7 +60,7 @@
 	<fields>
                 <field>
                         <name>Download</name>
-                        <description>The download speed of your WAN link in Kbits/second.</description>
+                        <description>The download speed of your WAN link in Kbits/second.  Please note that the wizard will automatically subtract 20% for the queues.</description>
                         <type>input</type>
 			<validate>^[0-9]*$</validate>
 			<message>Download speed must be numerical</message>

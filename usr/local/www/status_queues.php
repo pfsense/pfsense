@@ -38,9 +38,16 @@ if($_GET['reset'] <> "") {
 if (!is_array($config['shaper']['queue'])) {
 	$config['shaper']['queue'] = array();
 }
-$a_queues = &$config['shaper']['queue'];
 
-$a_queues = sort($a_queues);
+$a_queues = array();
+
+$pfctl_vsq = `/sbin/pfctl -vsq`;
+$pfctl_vsq_array = split("\n", $pfctl_vsq);
+foreach($pfctl_vsq_array as $pfctl) {
+	if (preg_match_all("/queue\s+(\w+)\s+/",$pfctl,$match_array))
+		if(stristr($match_array[1][0],"root_")==false)
+			$a_queues[] = $match_array[1][0];	
+}
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -62,7 +69,7 @@ $a_queues = sort($a_queues);
                       <?php $i = 0; foreach ($a_queues as $queue): ?>
                       <tr valign="top">
                         <td class="listbg">
-                          <font color="#FFFFFF"><?=htmlspecialchars($queue['name']);?>
+                          <font color="#FFFFFF"><?=htmlspecialchars($queue);?>
                           &nbsp;<br>
 <?php
 			$cpuUsage = 0;

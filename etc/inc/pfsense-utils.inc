@@ -634,7 +634,6 @@ function gather_altq_queue_stats($dont_return_root_queues) {
 		    array_push($queue_stats, "{$queue_name}|{$speed}|{$measured}|{$borrows}|{$suspends}|{$drops}");
         }
     }
-    $queue_stats = sort($queue_stats);
     return $queue_stats;
 }
 

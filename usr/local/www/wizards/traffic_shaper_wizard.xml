@@ -329,8 +329,7 @@
 	                $queue['name'] = "qVOIPUp";
 	                $queue['associatedrule'] = 0;
 	                $queue['priority'] = 7;
-	                $queue['red'] = "on";
-	                $queue['ecn'] = "on";
+ 	                $queue['ecn'] = "on";
 			$queue['realtime'] = "on";
 	                $queue['realtime1'] = $_POST['bandwidth'] . "Kb";
                         $queue['realtime2'] = "1";
@@ -353,7 +352,6 @@
  	                $queue['name'] = "qVOIPDown";
  	                $queue['associatedrule'] = 0;
  	                $queue['priority'] = 7;
- 	                $queue['red'] = "on";
  	                $queue['ecn'] = "on";
  	                $queue['realtime'] = "on";
  	                $queue['realtime1'] = $_POST['bandwidth'] . "Kb";

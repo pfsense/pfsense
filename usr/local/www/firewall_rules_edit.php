@@ -771,6 +771,34 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 		    </td>
 		</tr>
 
+		<?php
+			/* build a list of gateways */
+			$gateways = array();
+			foreach($config['interfaces'] as $int) {
+				if($int['gateway'] <> "")
+					$gateways[]=$int['gateway'];
+			}
+		?>
+		<tr>
+                  <td width="22%" valign="top" class="vncell">Gateway</td>
+                  <td width="78%" class="vtable">
+			<select name='gateway'>
+			<?php
+				foreach($gateways as $gw) {
+					if($gw == $pconfig['gateway')
+						$selected = " SELECTED";
+					else
+						$selected = "";
+					if($gw <> "")
+						echo "<option value=\"{$gw}\" {$selected}>{$gw}</option>\n";
+				}
+			?>
+			</select>
+			<input name="statetimeout" value="<?php echo $pconfig['frags'] ?>">
+			<p><strong>Leave blank for default.
+			</strong>
+		    </td>
+		</tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">

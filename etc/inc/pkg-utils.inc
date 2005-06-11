@@ -459,7 +459,7 @@ function install_package_xml($pkg) {
 		echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
 		echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
 		sleep(1);
-		die;
+		return;
 	} else {
 		$pkg_info = $config['installedpackages']['package'][$pkgid];
 	}
@@ -566,7 +566,7 @@ function install_package_xml($pkg) {
                 echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
                 echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
                 sleep(1);
-		die;
+		return;
 	}
 }
 
@@ -606,7 +606,7 @@ function delete_package_xml($pkg) {
                 echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
                 echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
                 sleep(1);
-                die;
+                return;
         }
 	/* set up logging if needed */
         if(!$fd_log) {
@@ -621,56 +621,60 @@ function delete_package_xml($pkg) {
 	/* parse package configuration */
 	$packages = &$config['installedpackages']['package'];
 	$menus = &$config['installedpackages']['menu'];
-	$pkg_config = parse_xml_config("/usr/local/pkg/" . $packages[$pkgid]['configurationfile'], "packagegui");
-        /* remove menu items */
-	if(is_array($pkg_config['menu'])) {
-		$static_output .= "\tMenu items... ";
-		update_output_window($static_output);
-		foreach($menus as $menu) $instmenus[] = $menu['name'];
-		foreach($pkg_config['menu'] as $menu) {
-			foreach($instmenus as $key => $instmenu) {
-				if($instmenu == $menu['name']) unset($menus[$key]);
+	if(file_exists("/usr/local/pkg" . $packages[$pkgid]['configurationfile'])) {
+		$pkg_config = parse_xml_config("/usr/local/pkg/" . $packages[$pkgid]['configurationfile'], "packagegui");
+		/* remove menu items */
+		if(is_array($pkg_config['menu'])) {
+			$static_output .= "\tMenu items... ";
+			update_output_window($static_output);
+			foreach($menus as $menu) $instmenus[] = $menu['name'];
+			foreach($pkg_config['menu'] as $menu) {
+				foreach($instmenus as $key => $instmenu) {
+					if($instmenu == $menu['name']) unset($menus[$key]);
+				}
 			}
+			$static_output .= "done.\n";
+			update_output_window($static_output);
 		}
-		$static_output .= "done.\n";
-		update_output_window($static_output);
-	}
-	/* evalate this package's global functions and pre deinstall commands */
-	if($pkg_config['custom_php_global_functions'] <> "") eval($pkg_config['custom_php_global_functions']);
-	if($pkg_config['custom_php_pre_deinstall_command'] <> "") eval($pkg_config['custom_php_pre_deinstall_command']);
-	/* remove all additional files */
-	if($pkg_config['additional_files_needed'] <> "") {
-		$static_output .= "\tAuxiliary files... ";
-		update_output_window($static_output);
-		foreach($pkg_config['additional_files_needed'] as $afn) {
-			$filename = get_filename_from_url($afn['item'][0]);
-			if($afn['prefix'] <> "") {
-				$prefix = $afn['prefix'];
-			} else {
-				$prefix = "/usr/local/pkg/";
+		/* evalate this package's global functions and pre deinstall commands */
+		if($pkg_config['custom_php_global_functions'] <> "")
+			eval($pkg_config['custom_php_global_functions']);
+		if($pkg_config['custom_php_pre_deinstall_command'] <> "") 
+			eval($pkg_config['custom_php_pre_deinstall_command']);
+		/* remove all additional files */
+		if($pkg_config['additional_files_needed'] <> "") {
+			$static_output .= "\tAuxiliary files... ";
+			update_output_window($static_output);
+			foreach($pkg_config['additional_files_needed'] as $afn) {
+				$filename = get_filename_from_url($afn['item'][0]);
+				if($afn['prefix'] <> "") {
+					$prefix = $afn['prefix'];
+				} else {
+					$prefix = "/usr/local/pkg/";
+				}
+				unlink_if_exists($prefix . $filename);
 			}
-			unlink_if_exists($prefix . $filename);
+			$static_output .= "done.\n";
+			update_output_window($static_output);
 		}
-		$static_output .= "done.\n";
-		update_output_window($static_output);
-	}
-	/* system files */
-	if($pkg_config['modify_system']['item'] <> "") {
-		$static_output .= "\tSystem files... ";
-		update_output_window($static_output);
-		foreach($pkg_config['modify_system']['item'] as $ms) {
-			if($ms['textneeded']) remove_text_from_file($ms['modifyfilename'], $ms['textneeded']);
+		/* system files */
+		if($pkg_config['modify_system']['item'] <> "") {
+			$static_output .= "\tSystem files... ";
+			update_output_window($static_output);
+			foreach($pkg_config['modify_system']['item'] as $ms) {
+				if($ms['textneeded']) remove_text_from_file($ms['modifyfilename'], $ms['textneeded']);
+			}
+			$static_output .= "done.\n";
+			update_output_window($static_output);
 		}
-		$static_output .= "done.\n";
-		update_output_window($static_output);
-	}
-	/* syslog */
-	if($pkg_config['logging']['logfile_name'] <> "") {
-		$static_output .= "\tSyslog entries... ";
-                update_output_window($static_output);
-		remove_text_from_file("/etc/syslog.conf", $pkg_config['logging']['facilityname'] . "\t\t\t\t" . $pkg_config['logging']['logfilename']);
-		$static_output .= "done.\n";
-                update_output_window($static_output);
+		/* syslog */
+		if($pkg_config['logging']['logfile_name'] <> "") {
+			$static_output .= "\tSyslog entries... ";
+			update_output_window($static_output);
+			remove_text_from_file("/etc/syslog.conf", $pkg_config['logging']['facilityname'] . "\t\t\t\t" . $pkg_config['logging']['logfilename']);
+			$static_output .= "done.\n";
+			update_output_window($static_output);
+		}
 	}
 	/* remove config.xml entries */
 	$static_output .= "\tConfiguration... ";

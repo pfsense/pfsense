@@ -29,7 +29,7 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-require("config.inc");
+require_once("config.inc");
 
 conf_mount_rw();
 

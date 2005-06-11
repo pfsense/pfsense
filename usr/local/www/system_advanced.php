@@ -159,7 +159,7 @@ if ($_POST) {
 		$config['system']['disablerendevouz'] = $_POST['disablerendevouz'];
 		
 		if ($_POST['enableserial'] == "yes")
-			$config['system']['enableserial'] == "enabled";
+			$config['system']['enableserial'] = true;
 		else
 			unset($config['system']['enableserial']);
 
@@ -210,7 +210,7 @@ if ($_POST) {
 				fwrite($fout, $tty . "\n");				
 			}
 		}
-		if($pconfig['enableserial'] <> "")
+		if($pconfig['enableserial'])
 			fwrite($fout, "ttyv0\t\"/usr/libexec/getty Pc\"\tcons25\t\ton\tsecure\n");
 		fclose($fout);		
 		
@@ -220,7 +220,7 @@ if ($_POST) {
 				fwrite($fout, $blrc . "\n");				
 			}
 		}
-		if($pconfig['enableserial'] <> "")
+		if($pconfig['enableserial'])
 			fwrite($fout, "set console=comconsole\n");
 		fclose($fout);
 		
@@ -266,7 +266,7 @@ function enable_altpkgconfigurl(enable_over) {
 var descs=new Array(5);
 descs[0]="as the name says, it's the normal optimization algorithm";
 descs[1]="used for high latency links, such as satellite links.  Expires idle connections later than default";
-descs[2]="expires idle connections quicker. more efficient use of CPU and memory but can drop legitimate connections";
+descs[2]="expires idle connections quicker. More efficient use of CPU and memory but can drop legitimate connections";
 descs[3]="tries to avoid dropping any legitimate connections at the expense of increased memory usage and CPU utilization.";
 
 function update_description(itemnum) {

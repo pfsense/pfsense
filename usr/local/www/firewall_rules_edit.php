@@ -774,6 +774,9 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 		<?php
 			/* build a list of gateways */
 			$gateways = array();
+			exec("/sbin/route -n get default |/usr/bin/grep gateway", $defroute);
+			preg_match("/(\d+\.\d+\.\d+\.\d+)/", $defroute[0], $matches);
+                        $gateways[] = $matches[1];
 			foreach($config['interfaces'] as $int) {
 				if($int['gateway'] <> "")
 					$gateways[]=$int['gateway'];

@@ -78,7 +78,6 @@ PermitRootLogin yes
 
 #AllowTcpForwarding yes
 #GatewayPorts no
-#X11Forwarding yes
 #X11DisplayOffset 10
 #X11UseLocalhost yes
 #PrintMotd yes
@@ -87,15 +86,18 @@ PermitRootLogin yes
 #UseLogin no
 #UsePrivilegeSeparation yes
 #PermitUserEnvironment no
-#Compression yes
-#ClientAliveInterval 0
+
 #ClientAliveCountMax 3
-UseDNS no
 #PidFile /var/run/sshd.pid
 #MaxStartups 10
 
 # no default banner path
 #Banner /some/path
+
+Compression yes
+ClientAliveInterval 30
+UseDNS no
+X11Forwarding no
 
 # override default of no subsystems
 Subsystem       sftp    /usr/libexec/sftp-server

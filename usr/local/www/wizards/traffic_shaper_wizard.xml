@@ -263,6 +263,46 @@
 			<default>128</default>
 			<options>
 				<option>
+					<name>12000Kbits/sec</name>
+					<value>12000</value>
+				</option>			    			    
+				<option>
+					<name>11000Kbits/sec</name>
+					<value>11000</value>
+				</option>			    
+				<option>
+					<name>10000Kbits/sec</name>
+					<value>10000</value>
+				</option>   			    			    			    			    			    
+				<option>
+					<name>9000Kbits/sec</name>
+					<value>9000</value>
+				</option>			    			    			    			    			    
+				<option>
+					<name>8000Kbits/sec</name>
+					<value>8000</value>
+				</option>			    			    			    			    
+				<option>
+					<name>7000Kbits/sec</name>
+					<value>7000</value>
+				</option>			    			    			    			    			    
+				<option>
+					<name>6000Kbits/sec</name>
+					<value>6000</value>
+				</option>			    			    			    			    
+				<option>
+					<name>5000Kbits/sec</name>
+					<value>5000</value>
+				</option>			    			    			    
+				<option>
+					<name>4000Kbits/sec</name>
+					<value>4000</value>
+				</option>			    			    
+				<option>
+					<name>3000Kbits/sec</name>
+					<value>3000</value>
+				</option>			    
+				<option>
 					<name>1500Kbits/sec</name>
 					<value>1500</value>
 				</option>

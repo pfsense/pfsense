@@ -31,7 +31,7 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 </copyright>
-<totalsteps>7</totalsteps>
+<totalsteps>8</totalsteps>
 <step>
 	<id>1</id>
 	<title>pfSense Traffic Shaper Wizard</title>
@@ -895,14 +895,14 @@
         <id>6</id>
         <title>pfSense Traffic Shaper Wizard</title>
 	<disableallfieldsbydefault>true</disableallfieldsbydefault>
-        <description>Other Application</description>
+        <description>Raise Other Applications</description>
         <fields>
                 <field>
                         <name>Enable</name>
                         <type>checkbox</type>
                         <typehint>Other networking protocols</typehint>
                         <description>This will help raise the priority of other protocols higher than most traffic.</description>
-			<enablefields>MSRDP,PPTP,IPSEC,StreamingMP3,irc,dns</enablefields>
+			<enablefields>MSRDP,PPTP,IPSEC,StreamingMP3,IRC,DNS,HTTP,SSH</enablefields>
 			<donotdisable>true</donotdisable>
                 </field>
                 <field>
@@ -938,6 +938,16 @@
                         <name>DNS</name>
                         <type>checkbox</type>
 			<typehint>Domain Name Services</typehint>
+                </field>
+                <field>
+                        <name>HTTP</name>
+                        <type>checkbox</type>
+			<typehint>HTTP and HTTPS aka Web Traffic</typehint>
+                </field>
+                <field>
+                        <name>SSH</name>
+                        <type>checkbox</type>
+			<typehint>Secure shell protocol</typehint>
                 </field>		
                 <field>
                         <name>Next</name>
@@ -1030,6 +1040,17 @@
 		    $othersplist[] = array('DNS2','udp','53','53','both');
 		}
 		
+		if($_POST['http'] != "") {
+		    /* HTTP aka Web Traffic */
+		    $othersplist[] = array('HTTP','tcp','80','80','both');
+		    $othersplist[] = array('HTTPS','tcp','443','443','both');
+		}		
+
+		if($_POST['ssh'] != "") {
+		    /* Secure shell traffic */
+		    $othersplist[] = array('SSH','tcp','22','22','both');
+		}	
+		
 		/* XXX: add some more protocols here! */
     
 		/* Set up/down protocols as higher weight */
@@ -1069,6 +1090,202 @@
 <step>
         <id>7</id>
         <title>pfSense Traffic Shaper Wizard</title>
+	<disableallfieldsbydefault>true</disableallfieldsbydefault>
+        <description>Lower Other Applications</description>
+        <fields>
+                <field>
+                        <name>Enable</name>
+                        <type>checkbox</type>
+                        <typehint>Other networking protocols</typehint>
+                        <description>This will help lower the priority of other protocols lower than most traffic.</description>
+			<enablefields>MSRDP,PPTP,IPSEC,StreamingMP3,IRC,DNS,HTTP,SSH</enablefields>
+			<donotdisable>true</donotdisable>
+                </field>
+                <field>
+                        <name>Enable/Disable other protocols</name>
+                        <type>listtopic</type>
+                </field>		
+                <field>
+                        <name>MSRDP</name>
+                        <type>checkbox</type>
+			<typehint>Microsoft Remote Desktop Protocol</typehint>
+                </field>
+                <field>
+                        <name>PPTP</name>
+                        <type>checkbox</type>
+			<typehint>Microsoft Point to Point tunneling protocol</typehint>
+                </field>
+                <field>
+                        <name>IPSEC</name>
+                        <type>checkbox</type>
+			<typehint>IPSEC VPN traffic</typehint>
+                </field>
+                <field>
+                        <name>StreamingMP3</name>
+                        <type>checkbox</type>
+			<typehint>Streaming Media</typehint>
+                </field>
+                <field>
+                        <name>IRC</name>
+                        <type>checkbox</type>
+			<typehint>Internet Relay Chat</typehint>
+                </field>
+                <field>
+                        <name>DNS</name>
+                        <type>checkbox</type>
+			<typehint>Domain Name Services</typehint>
+                </field>
+                <field>
+                        <name>HTTP</name>
+                        <type>checkbox</type>
+			<typehint>HTTP and HTTPS aka Web Traffic</typehint>
+                </field>		
+                <field>
+                        <name>SSH</name>
+                        <type>checkbox</type>
+			<typehint>Secure shell protocol</typehint>
+                </field>
+                <field>
+                        <name>Next</name>
+                        <type>submit</type>
+                </field>
+        </fields>
+	<stepsubmitphpaction>
+	if ( $_POST['enable'] ) {
+		/* create qOthersUp queue */
+		$queue = array();
+		$queue['name'] = "qOthersUpL";
+		$queue['associatedrule'] = 0;
+		$queue['priority'] = 1;
+		$queue['red'] = "on";
+		$queue['ecn'] = "on";
+		$queue['realtime'] = "on";
+		$queue['realtime1'] = "1Kb";
+		$queue['realtime2'] = "1";
+		$queue['realtime3'] = "1Kb";
+		$queue['upperlimit'] = "on";
+		$queue['upperlimit1'] = "90%";
+		$queue['upperlimit2'] = "1";
+		$queue['upperlimit3'] = "90%";
+		$queue['linkshare'] = "on";
+		$queue['linkshare1'] = "1%";
+		$queue['linkshare2'] = "1";
+		$queue['linkshare3'] = "1%";
+		$queue['bandwidth'] = "0";
+		$queue['bandwidthtype'] = "Kb";
+		$queue['attachtoqueue'] = "qWANRoot";
+		$config['shaper']['queue'][] = $queue;
+	    
+		/* create qOthersDown queue */
+		$queue = array();
+		$queue['name'] = "qOthersDownL";
+		$queue['associatedrule'] = 0;
+		$queue['priority'] = 1;
+		$queue['red'] = "on";
+		$queue['ecn'] = "on";
+		$queue['realtime'] = "on";
+		$queue['realtime1'] = "1Kb";
+		$queue['realtime2'] = "1";
+		$queue['realtime3'] = "1Kb";
+		$queue['upperlimit'] = "on";
+		$queue['upperlimit1'] = "90%";
+		$queue['upperlimit2'] = "1";
+		$queue['upperlimit3'] = "90%";
+		$queue['linkshare'] = "on";
+		$queue['linkshare1'] = "1%";
+		$queue['linkshare2'] = "1";
+		$queue['linkshare3'] = "1%";
+		$queue['bandwidth'] = "0";
+		$queue['bandwidthtype'] = "Kb";
+		$queue['attachtoqueue'] = "qLANRoot";
+		$config['shaper']['queue'][] = $queue;
+                
+		$othersplist = array();
+		
+		if($_POST['msrdp'] != "") {
+		    /* MSRDP */
+		    $othersplist[] = array('MSRDP','tcp','3389','3389','both');
+		}
+		
+		if($_POST['pptp'] != "") {
+		    /* PPTP */
+		    $othersplist[] = array('PPTP','tcp','1723','1723','both');
+		    $othersplist[] = array('PPTPGRE','gre','','','both');
+                }
+
+		if($_POST['ipsec'] != "") {
+		    /* IPSEC */
+		    $othersplist[] = array('IPSEC','udp','500','500','both');
+		    $othersplist[] = array('IPSEC','ah','','','both');
+		    $othersplist[] = array('IPSEC','esp','','','both');
+		}
+		
+		if($_POST['streamingmp3'] != "") {
+		    /* streaming mp3 media aka shoutcast */
+		    $othersplist[] = array('STREAMINGMP3','tcp','8000','8010','both');
+		}
+		
+		if($_POST['irc'] != "") {
+		    /* internet relay chat */
+		    $othersplist[] = array('IRC','tcp','6667','6670','both');
+		}
+
+		if($_POST['dns'] != "") {
+		    /* domain name system */
+		    $othersplist[] = array('DNS1','tcp','53','53','both');
+		    $othersplist[] = array('DNS2','udp','53','53','both');
+		}
+
+		if($_POST['http'] != "") {
+		    /* HTTP aka Web Traffic */
+		    $othersplist[] = array('HTTP','tcp','80','80','both');
+		    $othersplist[] = array('HTTPS','tcp','443','443','both');
+		}
+
+		if($_POST['ssh'] != "") {
+		    /* Secure shell traffic */
+		    $othersplist[] = array('SSH','tcp','22','22','both');
+		}
+
+		/* XXX: add some more protocols here! */
+    
+		/* Set up/down protocols as higher weight */
+		/* loop through othersplist[] */
+		foreach ($othersplist as $otherclient) {
+		    foreach (array('source','destination') as $srcdest) {
+			    $rule = array();
+			    if ($srcdest == 'source') {
+				    $destsrc = 'destination';
+				    $rule['outqueue'] = 'qOthersUpL';
+				    $rule['inqueue'] = 'qOthersDownL';
+				    $rule['interface'] = 'lan';
+				    $rule['source']['network'] = 'lan';
+				    $rule['destination']['any'] = TRUE;
+				    $rule['descr'] = "m_Other {$otherclient[0]} outbound";
+			    } else {
+				    $destsrc = 'source';
+				    $rule['outqueue'] = 'qOthersDownL';
+				    $rule['inqueue'] = 'qOthersUpL';
+				    $rule['interface'] = 'wan';
+				    $rule['source']['any'] = TRUE;
+				    $rule['destination']['network'] = 'lan';
+				    $rule['descr'] = "m_Other {$otherclient[0]} inbound";
+			    }
+    
+			    $rule['destination']['port'] = $otherclient[2]."-".$otherclient[3];
+			    if($otherclient[1] != '')
+				    $rule['protocol'] = $otherclient[1];
+    
+			    $config['shaper']['rule'][] = $rule;
+		    }
+		}
+                
+        }
+	</stepsubmitphpaction>
+</step>
+<step>
+        <id>8</id>
+        <title>pfSense Traffic Shaper Wizard</title>
         <description>After pressing Finish the system will load the new profile.</description>
 	<fields>
                 <field>
@@ -1082,5 +1299,4 @@
 		header("Location: /");
 	</stepsubmitphpaction>
 </step>
-
 </pfsensewizard>

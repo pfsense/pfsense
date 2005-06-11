@@ -68,7 +68,8 @@ if (isset($id) && $a_shaper[$id]) {
 		$pconfig['dstmask'], $pconfig['dstnot'],
 		$pconfig['dstbeginport'], $pconfig['dstendport']);
 
-	$pconfig['targetqueue'] = $a_shaper[$id]['targetqueue'];
+	$pconfig['inqueue'] = $a_shaper[$id]['inqueue'];
+	$pconfig['outqueue'] = $a_shaper[$id]['outqueue'];
 
 	$pconfig['direction'] = $a_shaper[$id]['direction'];
 	$pconfig['iptos'] = $a_shaper[$id]['iptos'];
@@ -170,8 +171,8 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "target proto src dst");
-	$reqdfieldsn = explode(",", "Target,Protocol,Source,Destination");
+	$reqdfields = explode(" ", "inqueue outqueue proto src dst");
+	$reqdfieldsn = explode(",", "Inbound Queue,Outbound Queue,Protocol,Source,Destination");
 
 	if (!(is_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single"))) {
 		$reqdfields[] = "srcmask";
@@ -264,7 +265,8 @@ if ($_POST) {
 		$shaperent['descr'] = $_POST['descr'];
 		$shaperent['disabled'] = $_POST['disabled'] ? true : false;
 
-		$shaperent['targetqueue'] = $_POST['target'];
+		$shaperent['inqueue'] = $_POST['inqueue'];
+		$shaperent['outqueue'] = $_POST['outqueue'];
 
 		if (isset($id) && $a_shaper[$id])
 			$a_shaper[$id] = $shaperent;
@@ -398,10 +400,10 @@ function dst_rep_change() {
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td valign="top" class="vncellreq">Target</td>
-                  <td class="vtable"> <select name="target" class="formfld">
+                  <td class="vtable"> <select name="inqueue" class="formfld">
                       <?php
 					  foreach ($config['shaper']['queue'] as $queuei => $queue): ?>
-                      <option value="<?=$queue['name'];?>" <?php if ($queue['name'] == $pconfig['targetqueue']) echo "selected"; ?>>
+                      <option value="<?=$queue['name'];?>" <?php if ($queue['name'] == $pconfig['inqueue']) echo "selected"; ?>>
                         <?php
 					  	echo htmlspecialchars("Queue " . ($queuei + 1));
 						if ($queue['name'])
@@ -409,7 +411,17 @@ function dst_rep_change() {
 			?>
                       </option>
                       <?php endforeach; ?>
-                    </select> <br>
+                    </select>/<select name="outqueue" class="formfld">
+                      <?php
+					  foreach ($config['shaper']['queue'] as $queuei => $queue): ?>
+                      <option value="<?=$queue['name'];?>" <?php if ($queue['name'] == $pconfig['outqueue']) echo "selected"; ?>>
+                        <?php
+					  	echo htmlspecialchars("Queue " . ($queuei + 1));
+						if ($queue['name'])
+							echo htmlspecialchars(" (" . $queue['name'] . ")");
+			?>
+                      </option>
+                      <?php endforeach; ?> <br>
                     <span class="vexpl">Choose a queue where packets that
                     match this rule should be sent.</span></td>
                 </tr>

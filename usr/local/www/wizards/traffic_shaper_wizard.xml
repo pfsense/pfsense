@@ -89,20 +89,6 @@
 		$queue['associatedrule'] = 0;
 		$queue['priority'] = 6;
 		$queue['parentqueue'] = "on";
-/*
-		$queue['realtime'] = "on";
-		$queue['realtime1'] = (int)$_POST['upload'] * 0.7 . "Kb";
-		$queue['realtime2'] = "1";
-		$queue['realtime3'] = (int)$_POST['upload'] * 0.7 . "Kb";
-		$queue['upperlimit'] = "on";
-		$queue['upperlimit1'] = (int)$_POST['upload'] * 0.8 . "Kb";
-		$queue['upperlimit2'] = "1";
-		$queue['upperlimit3'] = (int)$_POST['upload'] * 0.8 . "Kb";
-		$queue['linkshare'] = "on";
-		$queue['linkshare1'] = (int)$_POST['upload'] * 0.8 . "Kb";
-		$queue['linkshare2'] = "1";
-		$queue['linkshare3'] = (int)$_POST['upload'] * 0.8 . "Kb";
-*/
 		$queue['bandwidth'] = (int)$_POST['upload'];
 		$queue['bandwidthtype'] = "Kb";
 		$config['shaper']['queue'][] = $queue;
@@ -135,20 +121,6 @@
 		$queue['associatedrule'] = 0;
 		$queue['priority'] = 6;
 		$queue['parentqueue'] = "on";
-/*
-		$queue['realtime'] = "on";
-		$queue['realtime1'] = (int) $_POST['download'] * 0.7 . "Kb";
-		$queue['realtime2'] = "1";
-		$queue['realtime3'] = (int) $_POST['download'] * 0.7 . "Kb";
-		$queue['upperlimit'] = "on";
-		$queue['upperlimit1'] = (int) $_POST['download'] * 0.8 . "Kb";
-		$queue['upperlimit2'] = "1";
-		$queue['upperlimit3'] = (int) $_POST['download'] * 0.8 . "Kb";
-		$queue['linkshare'] = "on";
-		$queue['linkshare1'] = (int)$_POST['upload'] * 0.8 . "Kb";
-		$queue['linkshare2'] = "1";
-		$queue['linkshare3'] = (int)$_POST['upload'] * 0.8 . "Kb";
-*/
 		$queue['bandwidth'] = (int)$_POST['download'];
 		$queue['bandwidthtype'] = "Kb";
 		$config['shaper']['queue'][] = $queue;
@@ -259,7 +231,7 @@
 		<field>
                         <name>Bandwidth</name>
                         <type>select</type>
-			<typehint>Bandwidth guarantee for VOIP phone</typehint>
+			<typehint>Total bandwidth guarantee for VOIP phone(s)</typehint>
 			<default>128</default>
 			<options>
 				<option>
@@ -427,17 +399,17 @@
 	    
 			    /* setup vonage rule */
 			    if( $_POST['provider'] == "Vonage") 
-				$voiplist[] = array('Vonage','udp','5060-5069','5060-5069','both');
+				$voiplist[] = array('Vonage','udp','5060','5069','both');
 			    
 			    /* asterisk server / same as vonage somewhat */
 			    if( $_POST['provider'] == "Asterisk") {
-				$voiplist[] = array('Vonage','udp','5060-5069','5060-5069','both');
-				$voiplist[] = array('Vonage','udp','10000-17226','10000-17226','both');
+				$voiplist[] = array('Asterisk','udp','5060','5069','both');
+				$voiplist[] = array('Asterisk','udp','10000','17226','both');
 			    }
 
 			    /* VoicePulse server */
 			    if( $_POST['provider'] == "VoicePulse") {
-				$voiplist[] = array('VoicePulse','udp','16384-16482','16384-16482','both');
+				$voiplist[] = array('VoicePulse','udp','16384','16482','both');
 				$voiplist[] = array('VoicePulse','udp','4569','4569','both');
 			    }
 	    
@@ -899,7 +871,7 @@
 				    $rule['interface'] = 'lan';
 				    $rule['source']['network'] = 'lan';
 				    $rule['destination']['any'] = TRUE;
-				    $rule['descr'] = "m_Gam {$Gameclient[0]} outbound";
+				    $rule['descr'] = "m_Game {$Gameclient[0]} outbound";
 			    } else {
 				    $destsrc = 'source';
 				    $rule['outqueue'] = 'qGamesDown';
@@ -907,7 +879,7 @@
 				    $rule['interface'] = 'wan';
 				    $rule['source']['any'] = TRUE;
 				    $rule['destination']['network'] = 'lan';
-				    $rule['descr'] = "m_Gam {$Gameclient[0]} inbound";
+				    $rule['descr'] = "m_Game {$Gameclient[0]} inbound";
 			    }
     
 			    $rule['destination']['port'] = $Gameclient[2]."-".$Gameclient[3];
@@ -1039,7 +1011,9 @@
 
 		if($_POST['ipsec'] != "") {
 		    /* IPSEC */
-		    $othersplist[] = array('IPSEC','tcp','500','500','both');
+		    $othersplist[] = array('IPSEC','udp','500','500','both');
+		    $othersplist[] = array('IPSEC','ah','','','both');
+		    $othersplist[] = array('IPSEC','esp','','','both');
 		}
 		
 		if($_POST['streamingmp3'] != "") {
@@ -1072,7 +1046,7 @@
 				    $rule['interface'] = 'lan';
 				    $rule['source']['network'] = 'lan';
 				    $rule['destination']['any'] = TRUE;
-				    $rule['descr'] = "m_Oth {$otherclient[0]} outbound";
+				    $rule['descr'] = "m_Other {$otherclient[0]} outbound";
 			    } else {
 				    $destsrc = 'source';
 				    $rule['outqueue'] = 'qOthersDown';
@@ -1080,7 +1054,7 @@
 				    $rule['interface'] = 'wan';
 				    $rule['source']['any'] = TRUE;
 				    $rule['destination']['network'] = 'lan';
-				    $rule['descr'] = "m_Oth {$otherclient[0]} inbound";
+				    $rule['descr'] = "m_Other {$otherclient[0]} inbound";
 			    }
     
 			    $rule['destination']['port'] = $otherclient[2]."-".$otherclient[3];

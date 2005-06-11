@@ -794,7 +794,6 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 				}
 			?>
 			</select>
-			<input name="statetimeout" value="<?php echo $pconfig['frags'] ?>">
 			<p><strong>Leave blank for default.
 			</strong>
 		    </td>

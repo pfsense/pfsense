@@ -40,6 +40,8 @@ if (!is_array($config['shaper']['queue'])) {
 }
 $a_queues = &$config['shaper']['queue'];
 
+$a_queues = sort($a_queues);
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>

@@ -31,7 +31,8 @@
 require("guiconfig.inc");
 
 if($_GET['reset'] <> "") {
-	mwexec("killall -9 pfctl php");
+	mwexec("killall -9 pfctl pfctl");
+	Header("Location: status_queues.php");
 	exit;
 }
 

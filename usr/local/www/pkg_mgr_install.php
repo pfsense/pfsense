@@ -99,7 +99,9 @@ include("fbegin.inc");
 <?php
 switch($_GET['mode']) {
 	case "delete":
-		delete_package($_GET['pkg'] . '-' . $_GET['version']);
+		$id = get_pkg_id($_GET['pkg']);
+		$todel = substr(reverse_strrchr($config['installedpackages']['package'][$id]['depends_on_package'], "."), 0, -1);
+		delete_package($todel);
 		delete_package_xml($_GET['pkg']);
 		update_status("Package deleted.");
 		$static_output .= "\nPackage deleted.";

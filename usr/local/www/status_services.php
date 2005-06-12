@@ -73,7 +73,7 @@ if($_GET['service'] <> "")
 	get_package_rcd_details($_GET['service'] . ".sh");
 
 if($_GET['restartservice'] == "true") {
-	mwexec("/sbin/killall {$executable_name}");
+	mwexec("/usr/bin/killall {$executable_name}");
 	mwexec("/bin/sh /usr/local/etc/rc.d/{$raw_name}.sh start");
 	$status = is_service_running($executable_name);
 	if($status == 1) {

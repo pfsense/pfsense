@@ -402,16 +402,17 @@ function install_package($package, $pkg_info = "") {
 		$static_orig = $static_output;
 		$static_output .= "\n";
 		update_output_window($static_output);
+		$pkg_name = substr(reverse_strrchr($pkg_info['depends_on_package'], "."), 0, -1);
 		if(isset($pkg_info['skip_install_checks'])) {
 			$pkg_installed = true;
 		} else {
-			$pkg_installed = is_freebsd_pkg_installed($pkg_info['name'] . "-" . $pkg_info['version']);
+			$pkg_installed = is_freebsd_pkg_installed($pkg_name);
 		}
-		if($pkg_installed == false) pkg_fetch_recursive($pkg_info['name'] . "-" . $pkg_info['version'], $pkg_info['depends_on_package'], 0, $pkg_info['depends_on_package_base_url']);
+		if($pkg_installed == false) pkg_fetch_recursive($pkg_name, $pkg_info['depends_on_package'], 0, $pkg_info['depends_on_package_base_url']);
 		$static_output = $static_orig . "done.\nChecking for successful package installation... ";
 		update_output_window($static_output);
 		/* make sure our package was successfully installed */
-		if($pkg_installed == false) $pkg_installed = is_freebsd_pkg_installed($pkg_info['name'] . "-" . $pkg_info['version']);
+		if($pkg_installed == false) $pkg_installed = is_freebsd_pkg_installed($pkg_name);
 		if($pkg_installed == true) {
 			$static_output .= "done.\n";
 			update_output_window($static_output);

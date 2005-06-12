@@ -1346,7 +1346,7 @@
 	<stepsubmitphpaction>
 		$config['shaper']['enable'] = TRUE;
 		filter_configure();
-		header("Location: /");
+		header("Location: /status_queues.php");
 	</stepsubmitphpaction>
 </step>
 </pfsensewizard>

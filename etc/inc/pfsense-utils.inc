@@ -786,34 +786,23 @@ if (!function_exists('php_check_syntax')){
  */
 function rmdir_recursive($path,$follow_links=false) {
 	$to_do = glob($path);
-	if(!is_array($to_do)) {
-		if(file_exists($to_do)) {
-			$dir = opendir($path);
-			while ($entry = readdir($dir)) {
-				if (is_file("$path/$entry") || ((!$follow_links) && is_link("$path/$entry")))
-					unlink("$path/$entry");
-      	 			elseif (is_dir("$path/$entry") && $entry!='.' && $entry!='..')
-					rmdir_recursive("$path/$entry");
-			}
-			closedir($dir);
-			rmdir($path);
-			return;
-		}
-	} else {
-		foreach($to_do as $workingdir) { // Handle wildcards by foreaching.
-			if(file_exists($workingdir)) {
+	if(!is_array($to_do)) $to_do = array($to_do);
+	foreach($to_do as $workingdir) { // Handle wildcards by foreaching.
+		if(file_exists($workingdir)) {
+			if(is_dir($workingdir)) {
 				$dir = opendir($workingdir);
 				while ($entry = readdir($dir)) {
 					if (is_file("$workingdir/$entry") || ((!$follow_links) && is_link("$workingdir/$entry")))
-					unlink("$workingdir/$entry");
+						unlink("$workingdir/$entry");
 					elseif (is_dir("$workingdir/$entry") && $entry!='.' && $entry!='..')
-					rmdir_recursive("$workingdir/$entry");
+						rmdir_recursive("$workingdir/$entry");
 				}
 				closedir($dir);
 				rmdir($workingdir);
-                	}
-		}
-		return;
+			} elseif (is_file($workingdir)) {
+				unlink($workingdir);
+			}
+               	}
 	}
 	return;
 }

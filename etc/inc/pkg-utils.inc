@@ -653,6 +653,8 @@ function delete_package_xml($pkg) {
 					$prefix = "/usr/local/pkg/";
 				}
 				unlink_if_exists($prefix . $filename);
+				if(file_exists($prefix . $filename))
+				    mwexec("rm -rf {$prefix}{$filename}");
 			}
 			$static_output .= "done.\n";
 			update_output_window($static_output);

@@ -73,19 +73,19 @@ if($_GET['service'] <> "")
 	get_package_rcd_details($_GET['service'] . ".sh");
 
 if($_GET['restartservice'] == "true") {
-	mwexec("/sbin/killall $executable_name");
+	mwexec("/sbin/killall {$executable_name}");
 	mwexec("/bin/sh /usr/local/etc/rc.d/{$raw_name}.sh start");
 	$status = is_service_running($executable_name);
 	if($status == 1) {
 		$savemsg = "{$package_name} has been restarted.";
 	} else {
-		$error_message = exec_command("/bin/sh /usr/local/etc/rc.d/{$raw_name}.sh");
+		$error_message = exec_command("/bin/sh /usr/local/etc/rc.d/{$raw_name}.sh start");
 		$savemsg = "There was a error restarting {$package_name}.<p>{$error_message}";
 	}
 }
 
 if($_GET['stopservice'] == "true") {
-	mwexec("/sbin/killall $executable_name");
+	mwexec("/sbin/killall {$executable_name}");
 	$savemsg = "{$package_name} has been stopped.";
 }
 
@@ -94,7 +94,7 @@ if($_GET['startservice'] == "true") {
 	if($status == 1) {
 		$savemsg = "{$package_name} has been started.";
 	} else {
-		$error_message = exec_command("/bin/sh /usr/local/etc/rc.d/{$raw_name}.sh");
+		$error_message = exec_command("/bin/sh /usr/local/etc/rc.d/{$raw_name}.sh start");
 		$savemsg = "There was a error restarting {$package_name}.<p>{$error_message}";
 	}
 

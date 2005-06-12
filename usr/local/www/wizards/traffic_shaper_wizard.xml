@@ -717,7 +717,7 @@
                         <type>checkbox</type>
                         <typehint>Prioritize network gaming traffic</typehint>
                         <description>This will raise the priority of gaming traffic to higher than most traffic.</description>
-			<enablefields>Counterstrike,DeltaForce,QuakeIII,TigerWoods2004PS2,CallOfDuty,PlanetSide</enablefields>
+			<enablefields>Counterstrike,DeltaForce,QuakeIII,TigerWoods2004PS2,CallOfDuty,PlanetSide,Halo2</enablefields>
 			<donotdisable>true</donotdisable>
                 </field>
                 <field>
@@ -754,6 +754,11 @@
                         <type>checkbox</type>
 			<typehint>PlanetSide</typehint>
                 </field>
+                <field>
+                        <name>Halo2</name>
+                        <type>checkbox</type>
+			<typehint>Halo2 via Xbox live</typehint>
+                </field>		
                 <field>
                         <name>Next</name>
                         <type>submit</type>
@@ -853,6 +858,13 @@
 		    $gamesplist[] = array('PlanetSide2','udp','3016','3021','both');
 		    $gamesplist[] = array('PlanetSide2','udp','45000','45010','both');
 		    $gamesplist[] = array('PlanetSide2','udp','30000','30500','both');
+		}
+
+		if($_POST['halo2'] != "") {
+		    /* Halo2 + XBOX Live */
+		    $gamesplist[] = array('Halo2-1','udp','88','88','both');
+		    $gamesplist[] = array('Halo2-2','udp','3074','3074','both');
+		    $gamesplist[] = array('Halo2-3','tcp','3074','3074','both');
 		}
 
 		/* XXX: add some more games before this line!! */

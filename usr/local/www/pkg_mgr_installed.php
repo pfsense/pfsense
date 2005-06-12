@@ -108,8 +108,7 @@ include("fbegin.inc");
 					    echo $pkg['version'];
 					    ?></td><?php
 					}
-					$latest_xml = explode(" ", $pkg['xmlver']);
-					$latest_xml = $latest_xml[1];
+					$latest_xml = $currentvers[$pkg['name']]['xmlver'];
 					if(($latest_xml == false) and ($pkg['xmlver']) == false) {
 						?><td class="listlr"><?php
 						echo "Unknown.";
@@ -125,8 +124,8 @@ include("fbegin.inc");
                                                 ?></td><?php
 					} elseif($pkg['xmlver'] < $latest_xml) {
 						?><td class="listbg"><font color="#FFFFFFF"><?php
-	                                        echo "Current: {$latest_version}";
-						echo "<br>Installed: {$pkg['version']}";
+	                                        echo "Current: {$latest_xml}";
+						echo "<br>Installed: {$pkg['xmlver']}";
                             			?></td><?php
 					} else {
 						?><td class="listlr"><?php
@@ -141,8 +140,8 @@ include("fbegin.inc");
                                 <td valign="middle" class="list" nowrap>
                                     <a onclick="return confirm('Do you really want to remove this package?')" href="pkg_mgr_install.php?mode=delete&pkg=<?= $pkg['name']; ?>"><img title="Remove this package." src="x.gif" width="17" height="17" border="0"></a>
                                     <br>
-				    <a href="pkg_mgr_install.php?mode=reinstallpkg&pkg=<?= $pkg['name']; ?>&version=<?= $pkg['version']; ?>"><img title="Reinstall this package." src="reinstall_pkg.gif" width="17" height="17" border="0"</a>
-				    <a href="pkg_mgr_install.php?mode=reinstallxml&pkg=<?= $pkg['name']; ?>&version=<?= $pkg['version']; ?>"><img title="Reinstall this package's GUI components." src="reinstall_xml.gif" width="17" height="17" border="0"</a>
+				    <a href="pkg_mgr_install.php?mode=reinstallpkg&pkg=<?= $pkg['name']; ?>"><img title="Reinstall this package." src="reinstall_pkg.gif" width="17" height="17" border="0"</a>
+				    <a href="pkg_mgr_install.php?mode=reinstallxml&pkg=<?= $pkg['name']; ?>"><img title="Reinstall this package's GUI components." src="reinstall_xml.gif" width="17" height="17" border="0"</a>
 				</td>
                             </tr>
                             <?php

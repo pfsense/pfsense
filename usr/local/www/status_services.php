@@ -88,7 +88,7 @@ if($_GET['stopservice'] == "true") {
 	mwexec("/sbin/killall {$executable_name}");
 	$status = is_service_running($executable_name);
 	if($status == 1) {
-		$savemsg = "There was an error stopping {$package_name}.";
+		$savemsg = "There was an error stopping {$package_name} - {$executable_name}.";
 	} else {
 		$savemsg = "{$package_name} has been stopped.";
 	}

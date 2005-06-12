@@ -1988,7 +1988,7 @@ function process_carp_rules() {
 	    }
 	    foreach ($ifdescrs as $ifdescr => $ifname) {
 		$interface = convert_friendly_interface_to_real_interface_name($ifname);
-		$lines .= "pass quick on {$interface} proto carp\n";
+		$lines .= "pass quick on {$interface} proto carp keep state\n";
 	    }
 	    if($config['installedpackages']['carp']['config'] != "")
 		foreach($config['installedpackages']['carp']['config'] as $carp) {

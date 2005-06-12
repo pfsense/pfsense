@@ -59,7 +59,8 @@ include("fbegin.inc");
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
   <ul id="tabnav">
     <li class="tabinact"><a href="pkg_mgr.php">Available Packages</a></li>
-    <li class="tabact">Installed Packages</a></li>
+    <li class="tabinact"><a href="pkg_mgr_installed.php">Installed Packages</a></li>
+    <li class="tabact">Package Installer</li>
   </ul>
   </td></tr>
   <tr>

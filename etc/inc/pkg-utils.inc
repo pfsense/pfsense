@@ -685,6 +685,12 @@ function delete_package_xml($pkg) {
 			$static_output .= "done.\n";
 			update_output_window($static_output);
 		}
+		/* package XML file */
+		$static_output .= "\tPackage XML... ";
+		update_output_window($static_output);
+		unlink_if_exists("/usr/local/pkg/" . $packages[$pkgid]['configurationfile']);
+		$static_output .= "done.\n";
+		update_output_window($static_output);
 	}
 	/* remove config.xml entries */
 	$static_output .= "\tConfiguration... ";

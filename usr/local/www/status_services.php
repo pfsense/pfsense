@@ -86,18 +86,23 @@ if($_GET['restartservice'] == "true") {
 
 if($_GET['stopservice'] == "true") {
 	mwexec("/sbin/killall {$executable_name}");
-	$savemsg = "{$package_name} has been stopped.";
+	$status = is_service_running($executable_name);
+	if($status == 1) {
+		$savemsg = "There was an error stopping {$package_name}.";
+	} else {
+		$savemsg = "{$package_name} has been stopped.";
+	}
 }
 
 if($_GET['startservice'] == "true") {	
 	mwexec("/bin/sh /usr/local/etc/rc.d/{$raw_name}.sh start");
+	$status = is_service_running($executable_name);
 	if($status == 1) {
 		$savemsg = "{$package_name} has been started.";
 	} else {
 		$error_message = exec_command("/bin/sh /usr/local/etc/rc.d/{$raw_name}.sh start");
 		$savemsg = "There was a error restarting {$package_name}.<p>{$error_message}";
 	}
-
 }
 
 /* batch mode, allow other scripts to call this script */

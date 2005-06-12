@@ -675,10 +675,15 @@ function delete_package_xml($pkg) {
 			$static_output .= "done.\n";
 			update_output_window($static_output);
 		}
+		/* deinstall commands */
+		if($pkg_config['custom_php_deinstall_command'] <> "") {
+			$static_output .= "\tDeinstall commands... ";
+			update_output_window($static_output);
+			eval($pkg_config['custom_php_deinstall_command']);
+			$static_output .= "done.\n";
+			update_output_window($static_output);
+		}
 	}
-	/* execute the deinstall command if it exists */
-	if($pkg_config['custom_php_deinstall_command'] <> "")
-	    eval($pkg_config['custom_php_deinstall_command']);
 	/* remove config.xml entries */
 	$static_output .= "\tConfiguration... ";
 	update_output_window($static_output);

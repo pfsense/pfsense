@@ -676,6 +676,9 @@ function delete_package_xml($pkg) {
 			update_output_window($static_output);
 		}
 	}
+	/* execute the deinstall command if it exists */
+	if($pkg_config['custom_php_deinstall_command'] <> "")
+	    eval($pkg_config['custom_php_deinstall_command']);
 	/* remove config.xml entries */
 	$static_output .= "\tConfiguration... ";
 	update_output_window($static_output);

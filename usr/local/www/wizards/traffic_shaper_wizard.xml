@@ -397,24 +397,24 @@
 	    
 			    /* setup vonage rule */
 			    if( $_POST['provider'] == "Vonage") 
-				$voiplist[] = array('Vonage','udp','5060','5069','both');
+				$voiplist[] = array('Vonage', 'udp', '5060', '5069', 'both');
 			    
 			    /* asterisk server / same as vonage somewhat */
 			    if( $_POST['provider'] == "Asterisk") {
-				$voiplist[] = array('Asterisk','udp','5060','5069','both');
-				$voiplist[] = array('Asterisk','udp','10000','17226','both');
+				$voiplist[] = array('Asterisk', 'udp', '5060', '5069', 'both');
+				$voiplist[] = array('Asterisk', 'udp', '10000', '17226', 'both');
 			    }
 
 			    /* VoicePulse server */
 			    if( $_POST['provider'] == "VoicePulse") {
-				$voiplist[] = array('VoicePulse','udp','16384','16482','both');
-				$voiplist[] = array('VoicePulse','udp','4569','4569','both');
+				$voiplist[] = array('VoicePulse', 'udp', '16384', '16482', 'both');
+				$voiplist[] = array('VoicePulse', 'udp', '4569', '4569', 'both');
 			    }
 	    
 			    /* Set up/down games as higher weight */
 			    /* loop through voiplist[] */
 			    foreach ($voiplist as $voip) {
-				foreach (array('source','destination') as $srcdest) {
+				foreach (array('source', 'destination') as $srcdest) {
 					$rule = array();
 					if ($srcdest == 'source') {
 						$destsrc = 'destination';
@@ -584,50 +584,50 @@
 
 		/* To add p2p clients, push Descr,Protocol,Start,End,src/dest/both onto p2plist */
 		if($_POST['aimster'] != "") 
-		    $p2plist[] = array('Aimster','tcp','7668','7668','both');
+		    $p2plist[] = array('Aimster', 'tcp', '7668', '7668', 'both');
 		if($_POST['bittorrent'] != "") 		    
-		    $p2plist[] = array('BitTorrent','tcp','6881','6999','both');
+		    $p2plist[] = array('BitTorrent', 'tcp', '6881', '6999', 'both');
 		if($_POST['buddyshare'] != "") 		
-		    $p2plist[] = array('BuddyShare','tcp','7788','7788','both');
+		    $p2plist[] = array('BuddyShare', 'tcp', '7788', '7788', 'both');
 		if($_POST['cutemx'] != "") 		
-		    $p2plist[] = array('CuteMX','tcp','2340','2340','both');
+		    $p2plist[] = array('CuteMX', 'tcp', '2340', '2340', 'both');
 		if($_POST['dc++'] != "") 		
-		    $p2plist[] = array('DC++','tcp','1412','1412','both');
+		    $p2plist[] = array('DC++', 'tcp', '1412', '1412', 'both');
 		if($_POST['dcc'] != "") 		
-		    $p2plist[] = array('dcc','tcp','6666','6668','both');
+		    $p2plist[] = array('dcc', 'tcp', '6666', '6668', 'both');
 		if($_POST['directconnect'] != "") 		
-		    $p2plist[] = array('DirectConnect','tcp','412','412','both');
+		    $p2plist[] = array('DirectConnect', 'tcp', '412', '412', 'both');
 		if($_POST['directfileexpress'] != "") 		
-		    $p2plist[] = array('DirectFileExpress','tcp','1044','1045','both');
+		    $p2plist[] = array('DirectFileExpress', 'tcp', '1044', '1045', 'both');
 		if($_POST['edonkey2000'] != "") 		
-		    $p2plist[] = array('EDonkey2000','tcp','4661','4665','both');
+		    $p2plist[] = array('EDonkey2000', 'tcp', '4661', '4665', 'both');
 		if($_POST['fastTrack'] != "") 		
-		    $p2plist[] = array('FastTrack','tcp','1214','1214','both');
+		    $p2plist[] = array('FastTrack', 'tcp', '1214', '1214', 'both');
 		if($_POST['gnutella'] != "") 		
-		    $p2plist[] = array('Gnutella','tcp','6346','6346','both');
+		    $p2plist[] = array('Gnutella', 'tcp', '6346', '6346', 'both');
 		if($_POST['grouper'] != "") 		
-		    $p2plist[] = array('grouper','tcp','8038','8039','both');
+		    $p2plist[] = array('grouper', 'tcp', '8038', '8039', 'both');
 		if($_POST['hotcomm'] != "") 		
-		    $p2plist[] = array('hotComm','tcp','28864','28865','both');
+		    $p2plist[] = array('hotComm', 'tcp', '28864', '28865', 'both');
 		if($_POST['hotlineconnect'] != "") 		
-		    $p2plist[] = array('HotlineConnect','tcp','5500','5503','both');
+		    $p2plist[] = array('HotlineConnect', 'tcp', '5500', '5503', 'both');
 		if($_POST['imesh'] != "") 		
-		    $p2plist[] = array('iMesh','tcp','4329','4329','both');
+		    $p2plist[] = array('iMesh', 'tcp', '4329', '4329', 'both');
 		if($_POST['napster'] != "") 		
-		    $p2plist[] = array('Napster','tcp','6699','6701','both');
+		    $p2plist[] = array('Napster', 'tcp', '6699', '6701', 'both');
 		if($_POST['opennap'] != "") 		
-		    $p2plist[] = array('OpenNap','tcp','8888','8889','both');
+		    $p2plist[] = array('OpenNap', 'tcp', '8888', '8889', 'both');
 		if($_POST['scour'] != "") 		
-		    $p2plist[] = array('Scour','tcp','8311','8311','both');
+		    $p2plist[] = array('Scour', 'tcp', '8311', '8311', 'both');
 		if($_POST['songspy'] != "") 		
-		    $p2plist[] = array('SongSpy','tcp','5190','5190','both');
+		    $p2plist[] = array('SongSpy', 'tcp', '5190', '5190', 'both');
 		if($_POST['winmx'] != "") 		
-		    $p2plist[] = array('WinMX','tcp','6699','6699','both');
+		    $p2plist[] = array('WinMX', 'tcp', '6699', '6699', 'both');
 
 		/* Set up/down p2p as lowest weight */
 		/* loop through p2plist[] */
 		foreach ($p2plist as $p2pclient) {
-			foreach (array('source','destination') as $srcdest) {
+			foreach (array('source', 'destination') as $srcdest) {
 				$rule = array();
 				if ($srcdest == 'source') {
 					$destsrc = 'destination';
@@ -819,52 +819,52 @@
 
 		if($_POST['counterstrike'] != "") {
 		    /* counter strike */
-		    $gamesplist[] = array('Titan','udp','6003','6003','both');
-		    $gamesplist[] = array('Authentication','udp','7002','7002','both');
-		    $gamesplist[] = array('Client','udp','6003','6003','both');
-		    $gamesplist[] = array('Masterserver','udp','27010','27010','both');
-		    $gamesplist[] = array('Mod-Server','udp','27011','27011','both');
-		    $gamesplist[] = array('Chat','udp','27012','27012','both');
-		    $gamesplist[] = array('HL-Serverport ','udp','27015','27015','both');
+		    $gamesplist[] = array('Titan', 'udp', '6003', '6003', 'both');
+		    $gamesplist[] = array('Authentication', 'udp', '7002', '7002', 'both');
+		    $gamesplist[] = array('Client', 'udp', '6003', '6003', 'both');
+		    $gamesplist[] = array('Masterserver', 'udp', '27010', '27010', 'both');
+		    $gamesplist[] = array('Mod-Server', 'udp', '27011', '27011', 'both');
+		    $gamesplist[] = array('Chat', 'udp', '27012', '27012', 'both');
+		    $gamesplist[] = array('HL-Serverport ', 'udp', '27015', '27015', 'both');
 		}
 
 		if($_POST['deltaforce'] != "") {
 		    /* delta force */
-		    $gamesplist[] = array('Delta1','udp','17478','17488','both');
+		    $gamesplist[] = array('Delta1', 'udp', '17478', '17488', 'both');
 		}
 
 		if($_POST['quakeiii'] != "") {
 		    /* quake3 */
-		    $gamesplist[] = array('Delta1','udp','27910','27919','both');
+		    $gamesplist[] = array('Delta1', 'udp', '27910', '27919', 'both');
 		}
 
 		if($_POST['tigerwoods2004ps2'] != "") {
 		    /* tiger woods 2004 ps2 */
-		    $gamesplist[] = array('Outbound2Player','udp','3658','3658','both');
-		    $gamesplist[] = array('Outbound2Player2','udp','6000','6000','both');	    
-		    $gamesplist[] = array('Outbound2EA','tcp','10300','10301','both');
+		    $gamesplist[] = array('Outbound2Player', 'udp', '3658', '3658', 'both');
+		    $gamesplist[] = array('Outbound2Player2', 'udp', '6000', '6000', 'both');	    
+		    $gamesplist[] = array('Outbound2EA', 'tcp', '10300', '10301', 'both');
 		}
 
 		if($_POST['callofduty'] != "") {
 		    /* Call of Duty (United Offensive) */
-		    $gamesplist[] = array('CallOfDuty1','tcp','28960','28960','both');
-		    $gamesplist[] = array('CallOfDuty2','udp','28960','28960','both');
+		    $gamesplist[] = array('CallOfDuty1', 'tcp', '28960', '28960', 'both');
+		    $gamesplist[] = array('CallOfDuty2', 'udp', '28960', '28960', 'both');
 		}
 
 		if($_POST['planetside'] != "") {
 		    /* PlanetSide */
-		    $gamesplist[] = array('PlanetSide','tcp','7000','7000','both');
-		    $gamesplist[] = array('PlanetSide','tcp','7080','7080','both');
-		    $gamesplist[] = array('PlanetSide2','udp','3016','3021','both');
-		    $gamesplist[] = array('PlanetSide2','udp','45000','45010','both');
-		    $gamesplist[] = array('PlanetSide2','udp','30000','30500','both');
+		    $gamesplist[] = array('PlanetSide', 'tcp', '7000', '7000', 'both');
+		    $gamesplist[] = array('PlanetSide', 'tcp', '7080', '7080', 'both');
+		    $gamesplist[] = array('PlanetSide2', 'udp', '3016', '3021', 'both');
+		    $gamesplist[] = array('PlanetSide2', 'udp', '45000', '45010', 'both');
+		    $gamesplist[] = array('PlanetSide2', 'udp', '30000', '30500', 'both');
 		}
 
 		if($_POST['halo2'] != "") {
 		    /* Halo2 + XBOX Live */
-		    $gamesplist[] = array('Halo2-1','udp','88','88','both');
-		    $gamesplist[] = array('Halo2-2','udp','3074','3074','both');
-		    $gamesplist[] = array('Halo2-3','tcp','3074','3074','both');
+		    $gamesplist[] = array('Halo2-1', 'udp', '88', '88', 'both');
+		    $gamesplist[] = array('Halo2-2', 'udp', '3074', '3074', 'both');
+		    $gamesplist[] = array('Halo2-3', 'tcp', '3074', '3074', 'both');
 		}
 
 		/* XXX: add some more games before this line!! */
@@ -872,7 +872,7 @@
 		/* Set up/down games as higher weight */
 		/* loop through p2plist[] */
 		foreach ($gamesplist as $Gameclient) {
-		    foreach (array('source','destination') as $srcdest) {
+		    foreach (array('source', 'destination') as $srcdest) {
 			    $rule = array();
 			    if ($srcdest == 'source') {
 				    $destsrc = 'destination';
@@ -907,7 +907,7 @@
         <id>6</id>
         <title>pfSense Traffic Shaper Wizard</title>
 	<disableallfieldsbydefault>true</disableallfieldsbydefault>
-        <description>Raise Other Applications</description>
+        <description>Raise or lower other Applications</description>
         <fields>
                 <field>
                         <name>Enable</name>
@@ -923,57 +923,211 @@
                 </field>		
                 <field>
                         <name>MSRDP</name>
-                        <type>checkbox</type>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Dont care</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Higher</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Lower</name>
+					<value>L</value>
+				</option>
+			</options>
 			<typehint>Microsoft Remote Desktop Protocol</typehint>
                 </field>
                 <field>
                         <name>PPTP</name>
-                        <type>checkbox</type>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Dont care</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Higher</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Lower</name>
+					<value>L</value>
+				</option>
+			</options>
 			<typehint>Microsoft Point to Point tunneling protocol</typehint>
                 </field>
                 <field>
                         <name>IPSEC</name>
-                        <type>checkbox</type>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Dont care</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Higher</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Lower</name>
+					<value>L</value>
+				</option>
+			</options>
 			<typehint>IPSEC VPN traffic</typehint>
                 </field>
                 <field>
                         <name>StreamingMP3</name>
-                        <type>checkbox</type>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Dont care</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Higher</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Lower</name>
+					<value>L</value>
+				</option>
+			</options>
 			<typehint>Streaming Media</typehint>
                 </field>
                 <field>
                         <name>IRC</name>
-                        <type>checkbox</type>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Dont care</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Higher</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Lower</name>
+					<value>L</value>
+				</option>
+			</options>
 			<typehint>Internet Relay Chat</typehint>
                 </field>
                 <field>
                         <name>DNS</name>
-                        <type>checkbox</type>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Dont care</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Higher</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Lower</name>
+					<value>L</value>
+				</option>
+			</options>
 			<typehint>Domain Name Services</typehint>
                 </field>
                 <field>
                         <name>HTTP</name>
-                        <type>checkbox</type>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Dont care</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Higher</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Lower</name>
+					<value>L</value>
+				</option>
+			</options>
 			<typehint>HTTP and HTTPS aka Web Traffic</typehint>
                 </field>
                 <field>
                         <name>SSH</name>
-                        <type>checkbox</type>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Dont care</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Higher</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Lower</name>
+					<value>L</value>
+				</option>
+			</options>
 			<typehint>Secure shell protocol</typehint>
                 </field>
                 <field>
                         <name>SMTP</name>
-                        <type>checkbox</type>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Dont care</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Higher</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Lower</name>
+					<value>L</value>
+				</option>
+			</options>
 			<typehint>Mail Protocol</typehint>
                 </field>
                 <field>
                         <name>POP3</name>
-                        <type>checkbox</type>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Dont care</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Higher</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Lower</name>
+					<value>L</value>
+				</option>
+			</options>
 			<typehint>POP3 Protocol</typehint>
                 </field>
                 <field>
                         <name>ICMP</name>
-                        <type>checkbox</type>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Dont care</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Higher</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Lower</name>
+					<value>L</value>
+				</option>
+			</options>
 			<typehint>ICMP Protocol</typehint>
                 </field>		
                 <field>
@@ -985,7 +1139,7 @@
 	if ( $_POST['enable'] ) {
 		/* create qOthersUp queue */
 		$queue = array();
-		$queue['name'] = "qOthersUp";
+		$queue['name'] = "qOthersUpH";
 		$queue['associatedrule'] = 0;
 		$queue['priority'] = 4;
 		$queue['red'] = "on";
@@ -1009,7 +1163,7 @@
 	    
 		/* create qOthersDown queue */
 		$queue = array();
-		$queue['name'] = "qOthersDown";
+		$queue['name'] = "qOthersDownH";
 		$queue['associatedrule'] = 0;
 		$queue['priority'] = 4;
 		$queue['red'] = "on";
@@ -1031,184 +1185,7 @@
 		$queue['attachtoqueue'] = "qLANRoot";
 		$config['shaper']['queue'][] = $queue;
                 
-		$othersplist = array();
-		
-		if($_POST['msrdp'] != "") {
-		    /* MSRDP */
-		    $othersplist[] = array('MSRDP','tcp','3389','3389','both');
-		}
-		
-		if($_POST['pptp'] != "") {
-		    /* PPTP */
-		    $othersplist[] = array('PPTP','tcp','1723','1723','both');
-		    $othersplist[] = array('PPTPGRE','gre','','','both');
-                }
 
-		if($_POST['ipsec'] != "") {
-		    /* IPSEC */
-		    $othersplist[] = array('IPSEC','udp','500','500','both');
-		    $othersplist[] = array('IPSEC','ah','','','both');
-		    $othersplist[] = array('IPSEC','esp','','','both');
-		}
-		
-		if($_POST['streamingmp3'] != "") {
-		    /* streaming mp3 media aka shoutcast */
-		    $othersplist[] = array('STREAMINGMP3','tcp','8000','8010','both');
-		}
-		
-		if($_POST['irc'] != "") {
-		    /* internet relay chat */
-		    $othersplist[] = array('IRC','tcp','6667','6670','both');
-		}
-
-		if($_POST['dns'] != "") {
-		    /* domain name system */
-		    $othersplist[] = array('DNS1','tcp','53','53','both');
-		    $othersplist[] = array('DNS2','udp','53','53','both');
-		}
-		
-		if($_POST['http'] != "") {
-		    /* HTTP aka Web Traffic */
-		    $othersplist[] = array('HTTP','tcp','80','80','both');
-		    $othersplist[] = array('HTTPS','tcp','443','443','both');
-		}		
-
-		if($_POST['ssh'] != "") {
-		    /* Secure shell traffic */
-		    $othersplist[] = array('SSH','tcp','22','22','both');
-		}
-		
-		if($_POST['smtp'] != "") {
-		    /* Secure shell traffic */
-		    $othersplist[] = array('SMTP','tcp','25','25','both');
-		}
-
-		if($_POST['pop3'] != "") {
-		    /* Post Office Protocol - POP3 */
-		    $othersplist[] = array('POP3','tcp','110','110','both');
-		}
-		
-		if($_POST['icmp'] != "") {
-		    /* ICMP */
-		    $othersplist[] = array('ICMP','icmp','','','both');
-		}		
-		
-		/* XXX: add some more protocols here! */
-    
-		/* Set up/down protocols as higher weight */
-		/* loop through othersplist[] */
-		foreach ($othersplist as $otherclient) {
-		    foreach (array('source','destination') as $srcdest) {
-			    $rule = array();
-			    if ($srcdest == 'source') {
-				    $destsrc = 'destination';
-				    $rule['outqueue'] = 'qOthersUp';
-				    $rule['inqueue'] = 'qOthersDown';
-				    $rule['interface'] = 'lan';
-				    $rule['source']['network'] = 'lan';
-				    $rule['destination']['any'] = TRUE;
-				    $rule['descr'] = "m_Other {$otherclient[0]} outbound";
-			    } else {
-				    $destsrc = 'source';
-				    $rule['outqueue'] = 'qOthersDown';
-				    $rule['inqueue'] = 'qOthersUp';
-				    $rule['interface'] = 'wan';
-				    $rule['source']['any'] = TRUE;
-				    $rule['destination']['network'] = 'lan';
-				    $rule['descr'] = "m_Other {$otherclient[0]} inbound";
-			    }
-    
-			    $rule['destination']['port'] = $otherclient[2]."-".$otherclient[3];
-			    if($otherclient[1] != '')
-				    $rule['protocol'] = $otherclient[1];
-    
-			    $config['shaper']['rule'][] = $rule;
-		    }
-		}
-                
-        }
-	</stepsubmitphpaction>
-</step>
-<step>
-        <id>7</id>
-        <title>pfSense Traffic Shaper Wizard</title>
-	<disableallfieldsbydefault>true</disableallfieldsbydefault>
-        <description>Lower Other Applications</description>
-        <fields>
-                <field>
-                        <name>Enable</name>
-                        <type>checkbox</type>
-                        <typehint>Other networking protocols</typehint>
-                        <description>This will help lower the priority of other protocols lower than most traffic.</description>
-			<enablefields>MSRDP,PPTP,IPSEC,StreamingMP3,IRC,DNS,HTTP,SSH,SMTP,POP3,ICMP</enablefields>
-			<donotdisable>true</donotdisable>
-                </field>
-                <field>
-                        <name>Enable/Disable other protocols</name>
-                        <type>listtopic</type>
-                </field>		
-                <field>
-                        <name>MSRDP</name>
-                        <type>checkbox</type>
-			<typehint>Microsoft Remote Desktop Protocol</typehint>
-                </field>
-                <field>
-                        <name>PPTP</name>
-                        <type>checkbox</type>
-			<typehint>Microsoft Point to Point tunneling protocol</typehint>
-                </field>
-                <field>
-                        <name>IPSEC</name>
-                        <type>checkbox</type>
-			<typehint>IPSEC VPN traffic</typehint>
-                </field>
-                <field>
-                        <name>StreamingMP3</name>
-                        <type>checkbox</type>
-			<typehint>Streaming Media</typehint>
-                </field>
-                <field>
-                        <name>IRC</name>
-                        <type>checkbox</type>
-			<typehint>Internet Relay Chat</typehint>
-                </field>
-                <field>
-                        <name>DNS</name>
-                        <type>checkbox</type>
-			<typehint>Domain Name Services</typehint>
-                </field>
-                <field>
-                        <name>HTTP</name>
-                        <type>checkbox</type>
-			<typehint>HTTP and HTTPS aka Web Traffic</typehint>
-                </field>		
-                <field>
-                        <name>SSH</name>
-                        <type>checkbox</type>
-			<typehint>Secure shell protocol</typehint>
-                </field>
-                <field>
-                        <name>SMTP</name>
-                        <type>checkbox</type>
-			<typehint>Mail Protocol</typehint>
-                </field>
-                <field>
-                        <name>POP3</name>
-                        <type>checkbox</type>
-			<typehint>POP3 Protocol</typehint>
-                </field>
-                <field>
-                        <name>ICMP</name>
-                        <type>checkbox</type>
-			<typehint>ICMP Protocol</typehint>
-                </field>		
-                <field>
-                        <name>Next</name>
-                        <type>submit</type>
-                </field>
-        </fields>
-	<stepsubmitphpaction>
-	if ( $_POST['enable'] ) {
 		/* create qOthersUp queue */
 		$queue = array();
 		$queue['name'] = "qOthersUpL";
@@ -1256,88 +1233,90 @@
 		$queue['bandwidthtype'] = "Kb";
 		$queue['attachtoqueue'] = "qLANRoot";
 		$config['shaper']['queue'][] = $queue;
-                
+		
 		$othersplist = array();
+		
+		/* Unlike other areas we are posting the queue H or L or BLANK */
 		
 		if($_POST['msrdp'] != "") {
 		    /* MSRDP */
-		    $othersplist[] = array('MSRDP','tcp','3389','3389','both');
+		    $othersplist[] = array('MSRDP', 'tcp', '3389', '3389', 'both', $_POST['msrdp']);
 		}
 		
 		if($_POST['pptp'] != "") {
 		    /* PPTP */
-		    $othersplist[] = array('PPTP','tcp','1723','1723','both');
-		    $othersplist[] = array('PPTPGRE','gre','','','both');
+		    $othersplist[] = array('PPTP', 'tcp', '1723', '1723', 'both', $_POST['pptp']);
+		    $othersplist[] = array('PPTPGRE', 'gre', '', '', 'both', $_POST['pptp']);
                 }
 
 		if($_POST['ipsec'] != "") {
 		    /* IPSEC */
-		    $othersplist[] = array('IPSEC','udp','500','500','both');
-		    $othersplist[] = array('IPSEC','ah','','','both');
-		    $othersplist[] = array('IPSEC','esp','','','both');
+		    $othersplist[] = array('IPSEC', 'udp', '500', '500', 'both', $_POST['ipsec']);
+		    $othersplist[] = array('IPSEC', 'ah', '', '', 'both', $_POST['ipsec']);
+		    $othersplist[] = array('IPSEC', 'esp', '', '', 'both', $_POST['ipsec']);
 		}
 		
 		if($_POST['streamingmp3'] != "") {
 		    /* streaming mp3 media aka shoutcast */
-		    $othersplist[] = array('STREAMINGMP3','tcp','8000','8010','both');
+		    $othersplist[] = array('STREAMINGMP3', 'tcp', '8000', '8010', 'both', $_POST['streamingmp3']);
 		}
 		
 		if($_POST['irc'] != "") {
 		    /* internet relay chat */
-		    $othersplist[] = array('IRC','tcp','6667','6670','both');
+		    $othersplist[] = array('IRC', 'tcp', '6667', '6670', 'both', $_POST['irc']);
 		}
 
 		if($_POST['dns'] != "") {
 		    /* domain name system */
-		    $othersplist[] = array('DNS1','tcp','53','53','both');
-		    $othersplist[] = array('DNS2','udp','53','53','both');
+		    $othersplist[] = array('DNS1', 'tcp', '53', '53', 'both', $_POST['dns']);
+		    $othersplist[] = array('DNS2', 'udp', '53', '53', 'both', $_POST['dns']);
 		}
-
+		
 		if($_POST['http'] != "") {
 		    /* HTTP aka Web Traffic */
-		    $othersplist[] = array('HTTP','tcp','80','80','both');
-		    $othersplist[] = array('HTTPS','tcp','443','443','both');
-		}
+		    $othersplist[] = array('HTTP', 'tcp', '80', '80', 'both', $_POST['http']);
+		    $othersplist[] = array('HTTPS', 'tcp', '443', '443', 'both', $_POST['http']);
+		}		
 
 		if($_POST['ssh'] != "") {
 		    /* Secure shell traffic */
-		    $othersplist[] = array('SSH','tcp','22','22','both');
+		    $othersplist[] = array('SSH', 'tcp', '22', '22', 'both', $_POST['ssh']);
 		}
-
+		
 		if($_POST['smtp'] != "") {
 		    /* Secure shell traffic */
-		    $othersplist[] = array('SMTP','tcp','25','25','both');
+		    $othersplist[] = array('SMTP', 'tcp', '25', '25', 'both', $_POST['smtp']);
 		}
 
 		if($_POST['pop3'] != "") {
 		    /* Post Office Protocol - POP3 */
-		    $othersplist[] = array('POP3','tcp','110','110','both');
+		    $othersplist[] = array('POP3', 'tcp', '110', '110', 'both', $_POST['pop3']);
 		}
 		
 		if($_POST['icmp'] != "") {
 		    /* ICMP */
-		    $othersplist[] = array('ICMP','icmp','','','both');
+		    $othersplist[] = array('ICMP', 'icmp', '', '', 'both', $_POST['icmp']);
 		}		
-
+		
 		/* XXX: add some more protocols here! */
     
 		/* Set up/down protocols as higher weight */
 		/* loop through othersplist[] */
 		foreach ($othersplist as $otherclient) {
-		    foreach (array('source','destination') as $srcdest) {
+		    foreach (array('source', 'destination') as $srcdest) {
 			    $rule = array();
 			    if ($srcdest == 'source') {
 				    $destsrc = 'destination';
-				    $rule['outqueue'] = 'qOthersUpL';
-				    $rule['inqueue'] = 'qOthersDownL';
+				    $rule['outqueue'] = 'qOthersUp' . $otherclient[5]; /* posted value H or L */
+				    $rule['inqueue'] = 'qOthersDown' . $otherclient[5]; /* posted value H or L */
 				    $rule['interface'] = 'lan';
 				    $rule['source']['network'] = 'lan';
 				    $rule['destination']['any'] = TRUE;
 				    $rule['descr'] = "m_Other {$otherclient[0]} outbound";
 			    } else {
 				    $destsrc = 'source';
-				    $rule['outqueue'] = 'qOthersDownL';
-				    $rule['inqueue'] = 'qOthersUpL';
+				    $rule['outqueue'] = 'qOthersDown' . $otherclient[5]; /* posted value H or L */
+				    $rule['inqueue'] = 'qOthersUp' . $otherclient[5]; /* posted value H or L */
 				    $rule['interface'] = 'wan';
 				    $rule['source']['any'] = TRUE;
 				    $rule['destination']['network'] = 'lan';
@@ -1351,12 +1330,11 @@
 			    $config['shaper']['rule'][] = $rule;
 		    }
 		}
-                
         }
 	</stepsubmitphpaction>
 </step>
 <step>
-        <id>8</id>
+        <id>7</id>
         <title>pfSense Traffic Shaper Wizard</title>
         <description>After pressing Finish the system will load the new profile.</description>
 	<fields>

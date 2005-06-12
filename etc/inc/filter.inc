@@ -1978,39 +1978,9 @@ function process_carp_rules() {
 	global $g, $config;
 	$lines = "";
 	/* return if there are no carp configured items */
-	if($config['installedpackages']['carp']['config'] != "") {
-	    /* carp records exist, lets process */
-	    $wan_interface = get_real_wan_interface();
-	    $i = 0;
-	    $ifdescrs = array('wan', 'lan');
-	    for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-		$ifdescrs['opt' . $j] = "opt" . $j;
-	    }
-	    foreach ($ifdescrs as $ifdescr => $ifname) {
-		$interface = convert_friendly_interface_to_real_interface_name($ifname);
-		$lines .= "pass quick on {$interface} proto carp keep state\n";
-	    }
-	    if($config['installedpackages']['carp']['config'] != "")
-		foreach($config['installedpackages']['carp']['config'] as $carp) {
-		    $ip = $carp['ipaddress'];
-		    $int = find_ip_interface($ip);
-		    $carp_int = find_carp_interface($ip);
-		    $lines .= "pass quick on {$carp_int} proto carp from {$carp_int}:network to 224.0.0.18 keep state (no-sync)\n";
-		    $lines .= "pass out quick on {$carp_int} keep state\n";
-		    $lines .= "pass quick on {$carp_int} proto carp keep state\n";
-		    if($int != false and $int != $wan_interface) {
-			$ipnet = convert_ip_to_network_format($ip, $carp['netmask']);
-			$rule = "nat on {$int} inet from {$ipnet} to any -> ({$carp_int}) \n";
-			add_rule_to_anchor("natrules", $rule, $ip);
-		    }
-		}
-	    add_rule_to_anchor("carp", "pass quick on pfsync0", "pfsync0" . "3");
-	    if($config['installedpackages']['carpsettings']['config'] != "")
-		foreach($config['installedpackages']['carpsettings']['config'] as $carp)
-		    $carp_sync_int = convert_friendly_interface_to_real_interface_name($carp['pfsyncinterface']);
-	    if($carp_sync_int != "") {
-		$lines .= "pass quick on {$carp_sync_int} proto pfsync";
-	    }
+	if($config['installedpackages']['carp']['config'] <> "") {
+		$lines .= "pass quick proto carp keep state\n";
+		$lines .= "pass quick proto pfsync";
 	}
 	return $lines;
 }

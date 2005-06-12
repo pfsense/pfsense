@@ -148,7 +148,7 @@ if ($dh)
 		if($package_name == "")
 			continue;
 		if(get_pkg_id($package_name) == -1)
-			continute;
+			continue;
 		$status = is_service_running($executable_name);
 		if($status == 1)
 			$status_txt = "<font color='green'>Running</font>";

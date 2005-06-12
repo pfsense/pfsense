@@ -621,7 +621,7 @@ function delete_package_xml($pkg) {
 	/* parse package configuration */
 	$packages = &$config['installedpackages']['package'];
 	$menus = &$config['installedpackages']['menu'];
-	if(file_exists("/usr/local/pkg" . $packages[$pkgid]['configurationfile'])) {
+	if(file_exists("/usr/local/pkg/" . $packages[$pkgid]['configurationfile'])) {
 		$pkg_config = parse_xml_config("/usr/local/pkg/" . $packages[$pkgid]['configurationfile'], "packagegui");
 		/* remove menu items */
 		if(is_array($pkg_config['menu'])) {

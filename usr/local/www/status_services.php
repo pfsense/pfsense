@@ -147,7 +147,7 @@ if ($dh)
 			continue;
 		if($package_name == "")
 			continue;
-		if(get_pkg_id($package_name) == -1)
+		if(get_pkg_id(strtolower($package_name)) == -1)
 			continue;
 		$status = is_service_running($executable_name);
 		if($status == 1)

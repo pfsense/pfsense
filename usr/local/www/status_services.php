@@ -74,6 +74,7 @@ if($_GET['service'] <> "")
 
 if($_GET['restartservice'] == "true") {
 	mwexec("/usr/bin/killall {$executable_name}");
+	sleep(1);
 	mwexec("/bin/sh /usr/local/etc/rc.d/{$raw_name}.sh start");
 	$status = is_service_running($executable_name);
 	if($status == 1) {
@@ -86,6 +87,7 @@ if($_GET['restartservice'] == "true") {
 
 if($_GET['stopservice'] == "true") {
 	mwexec("/usr/bin/killall {$executable_name}");
+	sleep(1);
 	$status = is_service_running($executable_name);
 	if($status == 1) {
 		$savemsg = "There was an error stopping {$package_name} - {$executable_name}.";

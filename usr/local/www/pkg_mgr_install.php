@@ -108,7 +108,9 @@ switch($_GET['mode']) {
 		update_output_window($static_output);
 		break;
 	case "reinstallpkg":
-		delete_package($_GET['pkg'] . '-' . $_GET['version']);
+		$id = get_pkg_id($_GET['pkg']);
+                $todel = substr(reverse_strrchr($config['installedpackages']['package'][$id]['depends_on_package'], "."), 0, -1);
+		delete_package($todel);
 	        delete_package_xml($_GET['pkg']);
 		install_package($_GET['pkg']);
 		update_status("Package reinstalled.");

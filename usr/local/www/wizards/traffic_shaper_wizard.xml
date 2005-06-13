@@ -64,6 +64,7 @@
                         <type>input</type>
 			<validate>^[0-9]*$</validate>
 			<message>Download speed must be numerical</message>
+			<bindstofield>ezshaper->step2->download</bindstofield>
                 </field>
                 <field>
                         <name>Upload</name>
@@ -71,6 +72,7 @@
                         <type>input</type>
 			<validate>^[0-9]*$</validate>
 			<message>Upload speed must be numerical</message>
+			<bindstofield>ezshaper->step2->upload</bindstofield>
                 </field>
 		<field>
 			<name>Next</name>
@@ -204,11 +206,13 @@
                         <type>checkbox</type>
 			<typehint>Prioritize Voice over IP traffic</typehint>
                         <description>This will raise the priority of VOIP traffic above all other traffic.</description>
+			<bindstofield>ezshaper->step3->enable</bindstofield>
                 </field>
                 <field>
                         <name>Provider</name>
                         <type>select</type>
 			<description>Choose Generic if your provider isn't listed.</description>
+			<bindstofield>ezshaper->step3->provider</bindstofield>
                         <options>
                                 <option>
                                         <name>Generic (lowdelay)</name>
@@ -233,6 +237,7 @@
                         <type>select</type>
 			<typehint>Total bandwidth guarantee for VOIP phone(s)</typehint>
 			<default>128</default>
+			<bindstofield>ezshaper->step3->bandwidth</bindstofield>
 			<options>
 				<option>
 					<name>12000Kbits/sec</name>
@@ -461,6 +466,7 @@
                         <typehint>Prioritize Peer-to-Peer traffic</typehint>
                         <description>This will lower the priority of P2P traffic below all other traffic.</description>
 			<enablefields>Aimster,BitTorrent,BuddyShare,CuteMX,DCplusplus,dcc,DirectConnect,DirectFileExpress,EDonkey2000,FastTrack,Gnutella,grouper,hotComm,HotlineConnect,iMesh,Napster,OpenNap,Scour,SongSpy,WinMX</enablefields>
+			<bindstofield>ezshaper->step4->enable</bindstofield>
                 </field>
                 <field>
                         <name>Next</name>
@@ -474,101 +480,121 @@
                         <name>Aimster</name>
                         <type>checkbox</type>
 			<typehint>Aimster and other P2P using the Aimster protocol and ports</typehint>
+			<bindstofield>ezshaper->step4->aimster</bindstofield>
                 </field>
                 <field>
                         <name>BitTorrent</name>
                         <type>checkbox</type>
 			<typehint>Bittorrent and other P2P using the Torrent protocol and ports</typehint>
+			<bindstofield>ezshaper->step4->bittorrent</bindstofield>
                 </field>
                 <field>
                         <name>BuddyShare</name>
                         <type>checkbox</type>
 			<typehint>BuddyShare and other P2P using the BuddyShare protocol and ports</typehint>
+			<bindstofield>ezshaper->step4->buddyshare</bindstofield>
                 </field>
                 <field>
                         <name>CuteMX</name>
                         <type>checkbox</type>
 			<typehint>CuteMX and other P2P using the CuteMX protocol and ports</typehint>
+			<bindstofield>ezshaper->step4->cutemx</bindstofield>
                 </field>
                 <field>
                         <name>DCplusplus</name>
                         <type>checkbox</type>
 			<typehint>DC++ and other P2P using the DC++ protocol and ports</typehint>
+			<bindstofield>ezshaper->step4->dcplusplus</bindstofield>
                 </field>
                 <field>
                         <name>DCC</name>
                         <type>checkbox</type>
 			<typehint>irc DCC file transfers</typehint>
+			<bindstofield>ezshaper->step4->dcc</bindstofield>
                 </field>
                 <field>
                         <name>DirectConnect</name>
                         <type>checkbox</type>
 			<typehint>DirectConnect and other P2P using the DirectConnect protocol and ports</typehint>
+			<bindstofield>ezshaper->step4->directconnect</bindstofield>
                 </field>
                 <field>
                         <name>DirectFileExpress</name>
                         <type>checkbox</type>
 			<typehint>DirectFileExpress and other P2P using the DirectFileExpress protocol and ports</typehint>
+			<bindstofield>ezshaper->step4->directfileexpress</bindstofield>
                 </field>
                 <field>
                         <name>eDonkey2000</name>
                         <type>checkbox</type>
 			<typehint>eDonkey and other P2P using the eDonkey protocol and ports</typehint>
+			<bindstofield>ezshaper->step4->edonkey2000</bindstofield>
                 </field>
                 <field>
                         <name>FastTrack</name>
                         <type>checkbox</type>
 			<typehint>FastTrack and other P2P using the FastTrack protocol and ports</typehint>
+			<bindstofield>ezshaper->step4->fasttrack</bindstofield>
                 </field>
                 <field>
                         <name>Gnutella</name>
                         <type>checkbox</type>
 			<typehint>Gnutella and other P2P using the Gnutella protocol and ports</typehint>
+			<bindstofield>ezshaper->step4->gnutella</bindstofield>
                 </field>
                 <field>
                         <name>grouper</name>
                         <type>checkbox</type>
 			<typehint>grouper and other P2P using the grouper protocol and ports</typehint>
+			<bindstofield>ezshaper->step4->grouper</bindstofield>
                 </field>
                 <field>
                         <name>hotComm</name>
                         <type>checkbox</type>
 			<typehint>hotComm and other P2P using the hotComm protocol and ports</typehint>
+			<bindstofield>ezshaper->step4->hotcomm</bindstofield>
                 </field>
                 <field>
                         <name>HotlineConnect</name>
                         <type>checkbox</type>
 			<typehint>HotlineConnect and other P2P using the HotlineConnect protocol and ports</typehint>
+			<bindstofield>ezshaper->step4->hotlineconnect</bindstofield>
                 </field>
                 <field>
                         <name>iMesh</name>
                         <type>checkbox</type>
 			<typehint>iMest and other P2P using the iMest protocol and ports</typehint>
+			<bindstofield>ezshaper->step4->imesh</bindstofield>
                 </field>
                 <field>
                         <name>Napster</name>
                         <type>checkbox</type>
 			<typehint>Napster and other P2P using the Napster protocol and ports</typehint>
+			<bindstofield>ezshaper->step4->napster</bindstofield>
                 </field>
                 <field>
                         <name>OpenNap</name>
                         <type>checkbox</type>
 			<typehint>OpenNap and other P2P using the OpenNap protocol and ports</typehint>
+			<bindstofield>ezshaper->step4->opennap</bindstofield>
                 </field>
                 <field>
                         <name>Scour</name>
                         <type>checkbox</type>
 			<typehint>Scour and other P2P using the Scour protocol and ports</typehint>
+			<bindstofield>ezshaper->step4->scour</bindstofield>
                 </field>
                 <field>
                         <name>SongSpy</name>
                         <type>checkbox</type>
 			<typehint>SongSpy and other P2P using the SongSpy protocol and ports</typehint>
+			<bindstofield>ezshaper->step4->songspy</bindstofield>
                 </field>
                 <field>
                         <name>WinMX</name>
                         <type>checkbox</type>
 			<typehint>WinMX and other P2P using the WinMX protocol and ports</typehint>
+			<bindstofield>ezshaper->step4->winmx</bindstofield>
                 </field>
                 <field>
                         <name>Next</name>
@@ -719,6 +745,7 @@
                         <description>This will raise the priority of gaming traffic to higher than most traffic.</description>
 			<enablefields>Counterstrike,DeltaForce,QuakeIII,TigerWoods2004PS2,CallOfDuty,PlanetSide,Halo2</enablefields>
 			<donotdisable>true</donotdisable>
+			<bindstofield>ezshaper->step5->enable</bindstofield>
                 </field>
                 <field>
                         <name>Enable/Disable specific P2P protocols</name>
@@ -728,36 +755,43 @@
                         <name>Counterstrike</name>
                         <type>checkbox</type>
 			<typehint>Counterstrike.   The ultimate 1st person shooter.</typehint>
+			<bindstofield>ezshaper->step5->counterstrike</bindstofield>
                 </field>
                 <field>
                         <name>DeltaForce</name>
                         <type>checkbox</type>
 			<typehint>Delta Force</typehint>
+			<bindstofield>ezshaper->step5->deltaforce</bindstofield>
                 </field>
                 <field>
                         <name>QuakeIII</name>
                         <type>checkbox</type>
 			<typehint>Quake III</typehint>
+			<bindstofield>ezshaper->step5->quakeiii</bindstofield>
                 </field>
                 <field>
                         <name>TigerWoods2004PS2</name>
                         <type>checkbox</type>
 			<typehint>Tiger Woods 2004 for PS2</typehint>
+			<bindstofield>ezshaper->step5->tigerwoods2004ps2</bindstofield>
                 </field>
                 <field>
                         <name>CallOfDuty</name>
                         <type>checkbox</type>
 			<typehint>Call Of Duty (United Offensive)</typehint>
+			<bindstofield>ezshaper->step5->callofduty</bindstofield>
                 </field>
                 <field>
                         <name>PlanetSide</name>
                         <type>checkbox</type>
 			<typehint>PlanetSide</typehint>
+			<bindstofield>ezshaper->step5->planetside</bindstofield>
                 </field>
                 <field>
                         <name>Halo2</name>
                         <type>checkbox</type>
 			<typehint>Halo2 via Xbox live</typehint>
+			<bindstofield>ezshaper->step5->halo2xbox</bindstofield>
                 </field>		
                 <field>
                         <name>Next</name>
@@ -916,6 +950,7 @@
                         <description>This will help raise the priority of other protocols higher than most traffic.</description>
 			<enablefields>MSRDP,PPTP,IPSEC,StreamingMP3,IRC,DNS,HTTP,SSH,SMTP,POP3,ICMP</enablefields>
 			<donotdisable>true</donotdisable>
+			<bindstofield>ezshaper->step6->enable</bindstofield>
                 </field>
                 <field>
                         <name>Enable/Disable other protocols</name>
@@ -924,6 +959,7 @@
                 <field>
                         <name>MSRDP</name>
 			<type>select</type>
+			<bindstofield>ezshaper->step6->msrdp</bindstofield>
 			<options>
 				<option>
 					<name>Dont care</name>
@@ -943,6 +979,7 @@
                 <field>
                         <name>PPTP</name>
 			<type>select</type>
+			<bindstofield>ezshaper->step6->pptp</bindstofield>
 			<options>
 				<option>
 					<name>Dont care</name>
@@ -962,6 +999,7 @@
                 <field>
                         <name>IPSEC</name>
 			<type>select</type>
+			<bindstofield>ezshaper->step6->ipsec</bindstofield>
 			<options>
 				<option>
 					<name>Dont care</name>
@@ -981,6 +1019,7 @@
                 <field>
                         <name>StreamingMP3</name>
 			<type>select</type>
+			<bindstofield>ezshaper->step6->streamingmp3</bindstofield>
 			<options>
 				<option>
 					<name>Dont care</name>
@@ -1000,6 +1039,7 @@
                 <field>
                         <name>IRC</name>
 			<type>select</type>
+			<bindstofield>ezshaper->step6->irc</bindstofield>
 			<options>
 				<option>
 					<name>Dont care</name>
@@ -1019,6 +1059,7 @@
                 <field>
                         <name>DNS</name>
 			<type>select</type>
+			<bindstofield>ezshaper->step6->dns</bindstofield>
 			<options>
 				<option>
 					<name>Dont care</name>
@@ -1038,6 +1079,7 @@
                 <field>
                         <name>HTTP</name>
 			<type>select</type>
+			<bindstofield>ezshaper->step6->http</bindstofield>
 			<options>
 				<option>
 					<name>Dont care</name>
@@ -1056,6 +1098,7 @@
                 </field>
                 <field>
                         <name>SSH</name>
+			<bindstofield>ezshaper->step6->ssh</bindstofield>
 			<type>select</type>
 			<options>
 				<option>
@@ -1076,6 +1119,7 @@
                 <field>
                         <name>SMTP</name>
 			<type>select</type>
+			<bindstofield>ezshaper->step6->smtp</bindstofield>
 			<options>
 				<option>
 					<name>Dont care</name>
@@ -1095,6 +1139,7 @@
                 <field>
                         <name>POP3</name>
 			<type>select</type>
+			<bindstofield>ezshaper->step6->pop3</bindstofield>
 			<options>
 				<option>
 					<name>Dont care</name>
@@ -1113,6 +1158,7 @@
                 </field>
                 <field>
                         <name>ICMP</name>
+			<bindstofield>ezshaper->step6->icmp</bindstofield>
 			<type>select</type>
 			<options>
 				<option>

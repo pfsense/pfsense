@@ -1097,26 +1097,6 @@
 			<typehint>HTTP and HTTPS aka Web Traffic</typehint>
                 </field>
                 <field>
-                        <name>SSH</name>
-			<bindstofield>ezshaper->step6->ssh</bindstofield>
-			<type>select</type>
-			<options>
-				<option>
-					<name>Dont care</name>
-					<value></value>
-				</option>
-				<option>
-					<name>Higher</name>
-					<value>H</value>
-				</option>
-				<option>
-					<name>Lower</name>
-					<value>L</value>
-				</option>
-			</options>
-			<typehint>Secure shell protocol</typehint>
-                </field>
-                <field>
                         <name>SMTP</name>
 			<type>select</type>
 			<bindstofield>ezshaper->step6->smtp</bindstofield>
@@ -1322,11 +1302,6 @@
 		    /* HTTP aka Web Traffic */
 		    $othersplist[] = array('HTTP', 'tcp', '80', '80', 'both', $_POST['http']);
 		    $othersplist[] = array('HTTPS', 'tcp', '443', '443', 'both', $_POST['http']);
-		}		
-
-		if($_POST['ssh'] != "") {
-		    /* Secure shell traffic */
-		    $othersplist[] = array('SSH', 'tcp', '22', '22', 'both', $_POST['ssh']);
 		}
 		
 		if($_POST['smtp'] != "") {

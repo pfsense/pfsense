@@ -81,7 +81,7 @@ if ($_POST) {
                 if($field['unsetfield'] <> "") $unset_fields = "yes";
 		if($field['arraynum'] <> "") $arraynum = $field['arraynum'];
 		if($field['bindstofield'])
-			update_config_field( $field['bindstofield'], $_POST[$fieldname], $unset_fields, $arraynum);
+			update_config_field( $field['bindstofield'], $_POST[$fieldname], $unset_fields, $arraynum, $field['type']);
         }
 
     }
@@ -97,11 +97,20 @@ if ($_POST) {
 $title          = $pkg['step'][$stepid]['title'];
 $description    = $pkg['step'][$stepid]['description'];
 
-function update_config_field($field, $updatetext, $unset, $arraynum) {
+function update_config_field($field, $updatetext, $unset, $arraynum, $field_type) {
 	global $config;
 	$field_split = split("->",$field);
 	foreach ($field_split as $f) $field_conv .= "['" . $f . "']";
 	if($field_conv == "") return;
+	if($field_type == "checkbox" and $updatetext <> "on") {
+		/*
+		    item is a checkbox, it should have the value "on"
+		    if it was checked
+                */
+		$text = "unset(\$config" . $field_conv . ");";
+		eval($text);
+		return;
+	}    
 	if($unset <> "") {
 		$text = "unset(\$config" . $field_conv . ");";
 		eval($text);

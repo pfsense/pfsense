@@ -113,7 +113,6 @@ if ($_GET['act'] == "del") {
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Firewall: Traffic shaper: Queues</p>
 <form action="firewall_shaper_queues.php" method="post">
-<script type="text/javascript" language="javascript" src="row_toggle.js">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_shaperconfdirty_path)): ?><p>
@@ -142,10 +141,10 @@ if ($_GET['act'] == "del") {
                       </tr>
                       <?php $i = 0; foreach ($a_queues as $queue): ?>
                       <tr valign="top">
-                        <td class="listlr" onClick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
+                        <td class="listlr" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
                           <?=($i+1);?>
 			</td>
-			<td class="listlr" onClick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
+			<td class="listlr" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
 			  <?php
 			     if($queue['red'] <> "") echo " RED";
 			     if($queue['rio'] <> "") echo " RIO";
@@ -155,10 +154,10 @@ if ($_GET['act'] == "del") {
 			  ?>
 			  &nbsp;
 			</td>
-                        <td class="listr" onClick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
+                        <td class="listr" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
                           <?=$queue['priority'];?>&nbsp;
 			</td>
-			<td class="listr" onClick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
+			<td class="listr" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
 			  <?php
 				if($queue['defaultqueue'] <> "") {
 					echo "Yes";
@@ -167,11 +166,11 @@ if ($_GET['act'] == "del") {
 				}
 			  ?>
 			</td>
-                        <td class="listr" onClick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
+                        <td class="listr" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
                           <?=htmlspecialchars($queue['bandwidth']);?> <?=htmlspecialchars($queue['bandwidthtype']);?>
                           &nbsp;
 			</td>
-                        <td class="listbg" onClick="fr_toggle(<?=$i;?>)" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
+                        <td class="listbg" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
                           <font color="#FFFFFF"><?=htmlspecialchars($queue['name']);?>
                           &nbsp;
 			</td>

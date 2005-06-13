@@ -1015,14 +1015,15 @@ EOD;
 }
 
 function system_start_ftp_helpers() {
+	require_once("interfaces.inc");
 	global $config, $g;
 	if($config['system']['disableftpproxy'] <> "") 
 		return;
 	$wanip = get_current_wan_address();
 	mwexec("/usr/bin/killall pftpx");
 	if($wanip <> "" and $wanip <> "0.0.0.0") 
-		$pip = "-p {$ip}";
-	mwexec("/usr/local/sbin/pftpx -g 8021 {$pip}");
+		$pip = "-p {$wanip}";
+	mwexec("/usr/local/sbin/pftpx -g 8021 {$wanip}");
 }
 
 function cleanup_backupcache($revisions = 30) {

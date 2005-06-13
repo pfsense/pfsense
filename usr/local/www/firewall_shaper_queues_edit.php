@@ -47,9 +47,11 @@ if (isset($id)) {
 	if (!is_numeric($id)) {
 		$i = 0;
 		foreach($config['shaper']['queue'] as $queue) {
-			if ($queue['name'] == $id)
+			if ($queue['name'] == $id) {
 				$id = $i;
-			$i++;
+				break;
+			} else
+				$i++;
 		}
 	}
 	if ($a_queues[$id]) {

@@ -154,7 +154,7 @@
 		$queue['ack'] = TRUE;
                 $queue['attachtoqueue'] = "qLANRoot";
                 $queue['associatedrule'] = 0;
-                $queue['priority'] = 7;
+                $queue['priority'] = 6;
                 $queue['realtime'] = "on";
                 $queue['realtime1'] = "10%";
                 $queue['realtime2'] = "1";
@@ -176,7 +176,7 @@
 		$queue['ack'] = TRUE;
                 $queue['attachtoqueue'] = "qWANRoot";
                 $queue['associatedrule'] = 0;
-                $queue['priority'] = 7;
+                $queue['priority'] = 6;
                 $queue['realtime'] = "on";
                 $queue['realtime1'] = "10%";
                 $queue['realtime2'] = "1";
@@ -239,86 +239,86 @@
 			<default>128</default>
 			<bindstofield>ezshaper->step3->bandwidth</bindstofield>
 			<options>
-				<option>
-					<name>12000Kbits/sec</name>
-					<value>12000</value>
-				</option>
-				<option>
-					<name>11000Kbits/sec</name>
-					<value>11000</value>
-				</option>
-				<option>
-					<name>10000Kbits/sec</name>
-					<value>10000</value>
-				</option>
-				<option>
-					<name>9000Kbits/sec</name>
-					<value>9000</value>
-				</option>
-				<option>
-					<name>8000Kbits/sec</name>
-					<value>8000</value>
-				</option>
-				<option>
-					<name>7000Kbits/sec</name>
-					<value>7000</value>
-				</option>
-				<option>
-					<name>6000Kbits/sec</name>
-					<value>6000</value>
-				</option>
-				<option>
-					<name>5000Kbits/sec</name>
-					<value>5000</value>
-				</option>
-				<option>
-					<name>4000Kbits/sec</name>
-					<value>4000</value>
-				</option>
-				<option>
-					<name>3000Kbits/sec</name>
-					<value>3000</value>
-				</option>
-				<option>
-					<name>1500Kbits/sec</name>
-					<value>1500</value>
-				</option>
-				<option>
-					<name>1024Kbits/sec</name>
-					<value>1024</value>
-				</option>
-				<option>
-					<name>768Kbits/sec</name>
-					<value>768</value>
-				</option>
-				<option>
-					<name>512Kbits/sec</name>
-					<value>512</value>
-				</option>
-				<option>
-					<name>384Kbits/sec</name>
-					<value>384</value>
-				</option>			    
-				<option>
-					<name>256Kbits/sec</name>
-					<value>256</value>
-				</option>
-				<option>
-					<name>128Kbits/sec</name>
-					<value>128</value>
-				</option>
-				<option>
-					<name>96Kbits/sec</name>
-					<value>96</value>
-				</option>
-				<option>
-					<name>64Kbits/sec</name>
-					<value>64</value>
-				</option>
-				<option>
-					<name>32Kbits/sec</name>
-					<value>32</value>
-				</option>
+                                <option>
+                                        <name>32Kbits/sec</name>
+                                        <value>32</value>
+                                </option>
+                                <option>
+                                        <name>64Kbits/sec</name>
+                                        <value>64</value>
+                                </option>
+                                <option>
+                                        <name>96Kbits/sec</name>
+                                        <value>96</value>
+                                </option>
+                                <option>
+                                        <name>128Kbits/sec</name>
+                                        <value>128</value>
+                                </option>
+                                <option>
+                                        <name>256Kbits/sec</name>
+                                        <value>256</value>
+                                </option>
+                                <option>
+                                        <name>384Kbits/sec</name>
+                                        <value>384</value>
+                                </option>
+                                <option>
+                                        <name>512Kbits/sec</name>
+                                        <value>512</value>
+                                </option>
+                                <option>
+                                        <name>768Kbits/sec</name>
+                                        <value>768</value>
+                                </option>
+                                <option>
+                                        <name>1024Kbits/sec</name>
+                                        <value>1024</value>
+                                </option>
+                                <option>
+                                        <name>1500Kbits/sec</name>
+                                        <value>1500</value>
+                                </option>
+                                <option>
+                                        <name>3000Kbits/sec</name>
+                                        <value>3000</value>
+                                </option>
+                                <option>
+                                        <name>4000Kbits/sec</name>
+                                        <value>4000</value>
+                                </option>
+                                <option>
+                                        <name>5000Kbits/sec</name>
+                                        <value>5000</value>
+                                </option>
+                                <option>
+                                        <name>6000Kbits/sec</name>
+                                        <value>6000</value>
+                                </option>
+                                <option>
+                                        <name>7000Kbits/sec</name>
+                                        <value>7000</value>
+                                </option>
+                                <option>
+                                        <name>8000Kbits/sec</name>
+                                        <value>8000</value>
+                                </option>
+                                <option>
+                                        <name>9000Kbits/sec</name>
+                                        <value>9000</value>
+                                </option>
+                                <option>
+                                        <name>10000Kbits/sec</name>
+                                        <value>10000</value>
+                                </option>
+                                <option>
+                                        <name>11000Kbits/sec</name>
+                                        <value>11000</value>
+                                </option>
+                                <option>
+                                        <name>12000Kbits/sec</name>
+                                        <value>12000</value>
+                                </option>
 			</options>
 		</field>
                 <field>
@@ -710,7 +710,7 @@
 		$queue = array();
 		$queue['name'] = "qP2PDown";
 		$queue['associatedrule'] = 0;
-		$queue['priority'] = 1;
+		$queue['priority'] = 0;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
 		$queue['realtime'] = "on";

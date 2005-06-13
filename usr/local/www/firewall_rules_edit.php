@@ -782,9 +782,6 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 			/* build a list of gateways */
 			$gateways = array();
                         $gateways[] = "default"; // default to don't use this feature :)
-			exec("/sbin/route -n get default |/usr/bin/grep gateway", $defroute);
-			preg_match("/(\d+\.\d+\.\d+\.\d+)/", $defroute[0], $matches);
-                        $gateways[] = $matches[1];
 			foreach($config['interfaces'] as $int) {
 				if($int['gateway'] <> "")
 					$gateways[]=$int['gateway'];
@@ -800,10 +797,10 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 						$selected = " SELECTED";
 					else
 						$selected = "";
-					if($gw <> "" and $gw != "default")
-						echo "<option value=\"{$gw}\" {$selected}>{$gw}</option>\n";
-					elseif ($gw == "default") 
+					if ($gw == "default") 
 						echo "<option value=\"\" {$selected}>{$gw}</option>\n";
+					els
+						echo "<option value=\"{$gw}\" {$selected}>{$gw}</option>\n";
 				}
 			?>
 			</select>

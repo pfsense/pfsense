@@ -1187,7 +1187,7 @@
 		$queue = array();
 		$queue['name'] = "qOthersUpH";
 		$queue['associatedrule'] = 0;
-		$queue['priority'] = 4;
+		$queue['priority'] = 3;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
 		$queue['realtime'] = "on";
@@ -1211,7 +1211,7 @@
 		$queue = array();
 		$queue['name'] = "qOthersDownH";
 		$queue['associatedrule'] = 0;
-		$queue['priority'] = 4;
+		$queue['priority'] = 3;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
 		$queue['realtime'] = "on";
@@ -1236,7 +1236,7 @@
 		$queue = array();
 		$queue['name'] = "qOthersUpL";
 		$queue['associatedrule'] = 0;
-		$queue['priority'] = 1;
+		$queue['priority'] = 2;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
 		$queue['realtime'] = "on";
@@ -1260,7 +1260,7 @@
 		$queue = array();
 		$queue['name'] = "qOthersDownL";
 		$queue['associatedrule'] = 0;
-		$queue['priority'] = 1;
+		$queue['priority'] = 2;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
 		$queue['realtime'] = "on";

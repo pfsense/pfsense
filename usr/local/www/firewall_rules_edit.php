@@ -799,7 +799,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 						$selected = "";
 					if ($gw == "default") 
 						echo "<option value=\"\" {$selected}>{$gw}</option>\n";
-					els
+					else
 						echo "<option value=\"{$gw}\" {$selected}>{$gw}</option>\n";
 				}
 			?>

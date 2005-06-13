@@ -84,9 +84,9 @@ foreach($pfctl_vsq_array as $pfctl) {
 			echo "<nobr><img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
 			echo "</nobr></td></tr>";
 			echo "<tr><td bgcolor=\"#DDDDDD\" colspan=\"7\">";
-			echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+			echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 			echo "<nobr>";
-			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='15' name='queue{$i}pps' id='queue{$i}pps' value='( Loading )' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='15' name='queue{$i}pps' id='queue{$i}pps' value='                (Loading)' align='right'>";
 			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='15' name='queue{$i}bps' id='queue{$i}bps' value='' align='right'>";
 			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='15' name='queue{$i}borrows' id='queue{$i}borrows' value='' align='right'>";
 			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='15' name='queue{$i}suspends' id='queue{$i}suspends' value='' align='right'>";

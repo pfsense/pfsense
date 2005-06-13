@@ -95,6 +95,9 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['max-src-conn-rate'] = $a_filter[$id]['max-src-conn-rate'];
 	$pconfig['max-src-conn-rates'] = $a_filter[$id]['max-src-conn-rates'];
 
+	/* Multi-WAN next-hop support
+	$pconfig['gateway'] = $a_filter[$id]['gateway'];
+
 } else {
 	/* defaults */
 	if ($_GET['if'])
@@ -280,6 +283,10 @@ if ($_POST) {
                 else
                         unset($filterent['log']);
 		$filterent['descr'] = $_POST['descr'];
+
+		if ($_POST['gateway'] != "") {
+			$filterent['gateway'] = $_POST['gateway'];
+		}
 
 		if (isset($id) && $a_filter[$id])
 			$a_filter[$id] = $filterent;
@@ -774,6 +781,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 		<?php
 			/* build a list of gateways */
 			$gateways = array();
+                        $gateways[] = "default"; // default to don't use this feature :)
 			exec("/sbin/route -n get default |/usr/bin/grep gateway", $defroute);
 			preg_match("/(\d+\.\d+\.\d+\.\d+)/", $defroute[0], $matches);
                         $gateways[] = $matches[1];
@@ -792,8 +800,10 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 						$selected = " SELECTED";
 					else
 						$selected = "";
-					if($gw <> "")
+					if($gw <> "" and $gw != "default")
 						echo "<option value=\"{$gw}\" {$selected}>{$gw}</option>\n";
+					elseif ($gw == "default") 
+						echo "<option value=\"\" {$selected}>{$gw}</option>\n";
 				}
 			?>
 			</select>

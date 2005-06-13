@@ -1016,11 +1016,13 @@ EOD;
 
 function system_start_ftp_helpers() {
 	global $config, $g;
-	if($config['system']['disableftpproxy'] <> "") return;
-	$wanif = get_real_wan_interface();
-	$ip = find_interface_ip($wanif);
-	mwexec("/sbin/killall pftpx");
-	mwexec("/usr/local/sbin/pftpx -g 8021 -p {$ip}");
+	if($config['system']['disableftpproxy'] <> "") 
+		return;
+	$wanip = get_current_wan_address();
+	mwexec("/usr/bin/killall pftpx");
+	if($wanip <> "" and $wanip <> "0.0.0.0") 
+		$pip = "-p {$ip}";
+	mwexec("/usr/local/sbin/pftpx -g 8021 {$pip}");
 }
 
 function cleanup_backupcache($revisions = 30) {

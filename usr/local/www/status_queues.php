@@ -3,6 +3,7 @@
 /* $Id$ */
 /*
 	status_queues.php
+        Part of the pfSense project
 	Copyright (C) 2004, 2005 Scott Ullrich
 	All rights reserved.
 
@@ -63,30 +64,39 @@ foreach($pfctl_vsq_array as $pfctl) {
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Status: Traffic shaper: Queues</p>
 <form action="status_queues.php" method="post">
-              <table border="0" cellpadding="0" cellspacing="0">
+              <table width="100%" border="0" cellpadding="0" cellspacing="0">
                       <tr>
-                        <td class="listhdr">Queue Stats</td>
+                        <td class="listhdr" colspan="1">Queue</td>
+			<td class="listhdr" colspan="6">Statistics</td>
                       </tr>
                       <?php $i = 0; foreach ($a_queues as $queue): ?>
+		      <tr><td bgcolor="#DDDDDD" colspan="7">&nbsp;</td></tr>
                       <tr valign="top">
-                        <td class="listbg">
-                          <font color="#FFFFFF"><?=htmlspecialchars($queue);?>
-                          &nbsp;<br>
+                        <td bgcolor="#DDDDDD">
+                          <font color="#000000"><center>&nbsp;&nbsp;&nbsp;<?=htmlspecialchars($queue);?>&nbsp;&nbsp;&nbsp;</center></td>
+			<td bgcolor="#DDDDDD">
+			<nobr>
 <?php
 			$cpuUsage = 0;
 			echo "<img src='bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
 			echo "<img src='bar_blue.gif' height='15' name='queue{$i}widtha' id='queue{$i}widtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
 			echo "<img src='bar_gray.gif' height='15' name='queue{$i}widthb' id='queue{$i}widthb' width='" . (400 - $cpuUsage) . "' border='0' align='absmiddle'>";
 			echo "<nobr><img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
-			echo "<br><input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}pps' id='queue{$i}pps' value='( Loading )' align='right'>";
-			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}bps' id='queue{$i}bps' value='' align='right'>";
-			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}borrows' id='queue{$i}borrows' value='' align='right'>";
-			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}suspends' id='queue{$i}suspends' value='' align='right'>";
-			echo "<input style='border: 0px solid white; background-color:#990000; color:#FFFFFF;' size='15' name='queue{$i}drops' id='queue{$i}drops' value='' align='right'></nobr>";
+			echo "</nobr></td></tr>";
+			echo "<tr><td bgcolor=\"#DDDDDD\" colspan=\"7\">";
+			echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+			echo "<nobr>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='15' name='queue{$i}pps' id='queue{$i}pps' value='( Loading )' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='15' name='queue{$i}bps' id='queue{$i}bps' value='' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='15' name='queue{$i}borrows' id='queue{$i}borrows' value='' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='15' name='queue{$i}suspends' id='queue{$i}suspends' value='' align='right'>";
+			echo "<input style='border: 0px solid white; background-color:#DDDDDD; color:#000000;' size='15' name='queue{$i}drops' id='queue{$i}drops' value='' align='right'>";
+			echo "</nobr>";
 ?>
 
 			</td>
                       </tr>
+		      <tr><td class="vncell" bgcolor="#DDDDDD" colspan="7">&nbsp;</td></tr>
                       <?php $i++; endforeach; $total_queues = $i; ?>
                     </table>
 		    <p>
@@ -152,14 +162,16 @@ While(!Connection_Aborted()) {
 	 *   firefox and ie can be a bear on ram usage!
          */
 	$counter++;
-	if($counter > 40) {
+	if($counter > 20) {
 		echo "Redirecting to <a href=\"status_queues.php\">Queue Status</a>.<p>";
 		echo "<meta http-equiv=\"refresh\" content=\"1;url=status_queues.php\">";
 		mwexec("/usr/bin/killall -9 pfctl");
+		mwexec("/usr/bin/killall -9 pfctl php");
 		exit;
 	}
 }
 
+mwexec("/usr/bin/killall -9 pfctl pfctl");
 mwexec("/usr/bin/killall -9 pfctl php");
 
 ?>

@@ -141,7 +141,7 @@ if($pkg['step'][$stepid]['stepbeforeformdisplay'] <> "") {
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC" onLoad="enablechange();">
 <?php if($pkg['step'][$stepid]['fields']['field'] <> "") { ?>
 <script language="JavaScript">
 <!--
@@ -264,7 +264,6 @@ function enablechange() {
 				echo fixup_string($field['name']);
 				echo ":</td>\n";
 			}
-			// XXX: TODO: set $selected
 			if($field['size']) $size = " size='" . $field['size'] . "' ";
 			if($field['multiple'] == "yes") $multiple = "MULTIPLE ";
 			if(!$field['dontcombinecells'])

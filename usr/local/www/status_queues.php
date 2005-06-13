@@ -73,7 +73,7 @@ foreach($pfctl_vsq_array as $pfctl) {
 		      <tr><td bgcolor="#DDDDDD" colspan="7">&nbsp;</td></tr>
                       <tr valign="top">
                         <td bgcolor="#DDDDDD">
-                          <font color="#000000">&nbsp;&nbsp;&nbsp;<?=htmlspecialchars($queue);?>&nbsp;&nbsp;&nbsp;</td>
+                          <font color="#000000">&nbsp;&nbsp;&nbsp;<?echo "<a href=\"firewall_shaper_queues_edit.php?id={$queue}\">" . htmlspecialchars($queue) . "</a>";?>&nbsp;&nbsp;&nbsp;</td>
 			<td bgcolor="#DDDDDD">
 			<nobr>
 <?php

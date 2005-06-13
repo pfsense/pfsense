@@ -150,6 +150,7 @@ if ($_GET['act'] == "del") {
 			     if($queue['rio'] <> "") echo " RIO";
 			     if($queue['ecn'] <> "") echo " ECN";
 			     if($queue['borrow'] <> "") echo " Borrow";
+			     if(isset($queue['ack'])) echo "ACK"
 			  ?>
 			  &nbsp;
 			</td>

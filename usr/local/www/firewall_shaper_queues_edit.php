@@ -59,6 +59,7 @@ if (isset($id)) {
 		$pconfig['mask'] = $a_queues[$id]['mask'];
 		$pconfig['name'] = $a_queues[$id]['name'];
 		$pconfig = $a_queues[$id];
+		$pconfig['ack'] = $a_queues[$id]['ack'];
 		$pconfig['red'] = $a_queues[$id]['red'];
 		$pconfig['ecn'] = $a_queues[$id]['ecn'];
 		$pconfig['rio'] = $a_queues[$id]['rio'];
@@ -126,6 +127,7 @@ if ($_POST) {
 		$queue['attachtoqueue'] = $_POST['attachtoqueue'];
 		$queue['associatedrule'] = $_POST['associatedrule'];
 		$scheduleroptions="";
+		$queue['ack'] = $_POST['ack'];
 		$queue['rio'] = $_POST['rio'];
 		$queue['red'] = $_POST['red'];
 		$queue['ecn'] = $_POST['ecn'];
@@ -164,6 +166,7 @@ if ($_POST) {
 
 <?php include("fbegin.inc"); ?>
 <?php
+	$ack = $pconfig["ack"];
 	$red = $pconfig["red"];
 	$ecn = $pconfig["ecn"];
 	$rio = $pconfig["rio"];
@@ -243,6 +246,7 @@ if ($_POST) {
 	<?php if ($schedulertype == "cbq"): ?>
 		<input type="checkbox" id="borrow" name="borrow" <?php if($borrow) echo " CHECKED";?> > Borrow from other queues when available<br>
 	<? endif; ?>
+		<input type="checkbox" id="ack" name="ack" <?php if(isset($ack)) echo " CHECKED";?> > ACK/low-delay queue.  At least one queue per interface should have this checked.<br>
 		<input type="checkbox" id="red" name="red" <?php if($red) echo " CHECKED";?> > <a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#red">Random Early Detection</a><br>
 		<input type="checkbox" id="rio" name="rio" <?php if($rio) echo " CHECKED";?> > <a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#red">Random Early Detection In and Out</a><br>
 		<input type="checkbox" id="ecn" name="ecn" <?php if($ecn) echo " CHECKED";?> > <a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#ecn">Explicit Congestion Notification</a><br>

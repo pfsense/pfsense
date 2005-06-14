@@ -1175,6 +1175,26 @@
 				</option>
 			</options>
 			<typehint>ICMP Protocol</typehint>
+                </field>
+                <field>
+                        <name>SMB</name>
+			<bindstofield>ezshaper->step6->smb</bindstofield>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Dont care</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Higher</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Lower</name>
+					<value>L</value>
+				</option>
+			</options>
+			<typehint>Microsoft SMB Protocol and friends</typehint>
                 </field>		
                 <field>
                         <name>Next</name>
@@ -1341,7 +1361,13 @@
 
 		if($_POST['imap'] != "") {
 		    /* IMAP */
-		    $othersplist[] = array('IMAP', 'imap', '143', '143', 'both', $_POST['imap']);
+		    $othersplist[] = array('IMAP', 'tcp', '143', '143', 'both', $_POST['imap']);
+		}
+
+		if($_POST['smb'] != "") {
+		    /* Microsoft SMB and friends */
+		    $othersplist[] = array('SMB1', 'tcp', '445', '445', 'both', $_POST['smb']);
+		    $othersplist[] = array('SMB1', 'tcp', '137-139', '137-139', 'both', $_POST['smb']);
 		}
 
 		/* XXX: add some more protocols here! */

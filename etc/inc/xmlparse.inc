@@ -34,7 +34,7 @@
 $listtags = explode(" ", "row config package columnitem option item fieldname field rule user key subqueue " .
 	"dnsserver winsserver encryption-algorithm-option hash-algorithm-option hosts tunnel " .
 	"onetoone staticmap route alias pipe queue shellcmd earlyshellcmd mobilekey " .
-	"servernat proxyarpnet passthrumac allowedip wolentry vlan menu");
+	"servernat proxyarpnet passthrumac allowedip wolentry vlan menu domainoverrides");
 
 function startElement($parser, $name, $attrs) {
 	global $parsedcfg, $depth, $curpath, $havedata, $listtags;

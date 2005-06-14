@@ -383,6 +383,12 @@ function services_dnsmasq_configure() {
 				" -s {$config['system']['domain']}";
 		}
 
+                if (isset($config['dnsmasq']['domainoverrides']) && is_array($config['dnsmasq']['domainoverrides'])) {
+                        foreach($config['dnsmasq']['domainoverrides'] as $override) {
+                                $args .= ' --server=/' . $override['domain'] . '/' . $override['ip'];
+                        }
+                }
+
 		/* run dnsmasq */
 		mwexec("/usr/local/sbin/dnsmasq {$args}");
 

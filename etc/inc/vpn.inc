@@ -423,11 +423,14 @@ pptpd:
 
 EOD;
 
-			for ($i = 0; $i < $g['n_pptp_units']; $i++) {
+			$n_pptp_units = $g['n_pptp_units'];
+			if($config['pptp']['n_pptp_units'] <> "")
+				$n_pptp_units = $config['pptp']['n_pptp_units'];		
+			for ($i = 0; $i < $n_pptp_units; $i++) {
 				$mpdconf .= "	load pt{$i}\n";
 			}
 
-			for ($i = 0; $i < $g['n_pptp_units']; $i++) {
+			for ($i = 0; $i < $n_pptp_units; $i++) {
 
 				$clientip = long2ip(ip2long($pptpdcfg['remoteip']) + $i);
 				$ngif = "ng" . ($i+1);
@@ -513,7 +516,10 @@ EOD;
 
 			$mpdlinks = "";
 
-			for ($i = 0; $i < $g['n_pptp_units']; $i++) {
+			$n_pptp_units = $g['n_pptp_units'];
+			if($config['pptp']['n_pptp_units'] <> "")
+				$n_pptp_units = $config['pptp']['n_pptp_units'];			
+			for ($i = 0; $i < $n_pptp_units; $i++) {
 				$mpdlinks .= <<<EOD
 
 pt{$i}:

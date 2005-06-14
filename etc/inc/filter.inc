@@ -516,6 +516,8 @@ function filter_generate_pf_altq_rules() {
                 $pptpip = $pptpdcfg['localip'];
                 $pptpsa = $pptpdcfg['remoteip'];
                 $pptpsn = $g['pptp_subnet'];
+		if($config['pptp']['pptp_subnet'] <> "")
+			$pptpsn = $config['pptp']['pptp_subnet'];
         }
 
         /* generate rules */
@@ -537,6 +539,9 @@ function filter_generate_pf_altq_rules() {
                         }
 
                         $nif = $g['n_pptp_units'];
+			if($config['pptp']['n_pptp_units'] <> "")
+				$nif = $config['pptp']['n_pptp_units'];
+
                         $ispptp = true;
                 } else {
 
@@ -913,8 +918,11 @@ function filter_nat_rules_generate() {
 
 		/* PPTP subnet */
 		if ($pptpdcfg['mode'] == "server") {
+			$pptp_subnet = $g['pptp_subnet'];
+			if($config['pptp']['pptp_subnet'] <> "")
+				$pptp_subnet = $config['pptp']['pptp_subnet'];
 			$natrules .= filter_nat_rules_generate_if($wanif,
-				$pptpdcfg['remoteip'] . "/" . $g['pptp_subnet'], null, "", null, null);
+				$pptpdcfg['remoteip'] . "/" . $pptp_subnet, null, "", null, null);
 		}
 
 		/* static routes
@@ -1076,7 +1084,9 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		if ($pptpdcfg['mode'] == "server") {
 			$pptpip = $pptpdcfg['localip'];
 			$pptpsa = $pptpdcfg['remoteip'];
-			$pptpsn = $g['pptp_subnet'];			
+			$pptpsn = $g['pptp_subnet'];
+			if($config['pptp']['pptp_subnet'] <> "")
+				$pptpsn = $config['pptp']['pptp_subnet'];
 		}
 		
 		/* does the rule deal with a PPTP interface? */
@@ -1088,6 +1098,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			}
 			
 			$nif = $g['n_pptp_units'];
+			if($config['pptp']['n_pptp_units'] <> "")
+				$nif = $config['pptp']['n_pptp_units'];
 			$ispptp = true;
 		} else {
 			
@@ -1441,6 +1453,8 @@ function filter_rules_generate() {
 		$pptpip = $pptpdcfg['localip'];
 		$pptpsa = $pptpdcfg['remoteip'];
 		$pptpsn = $g['pptp_subnet'];
+		if($config['pptp']['pptp_subnet'] <> "")
+			$pptpsn = $config['pptp']['pptp_subnet'];
 	}
 
 	/* default block logging? */
@@ -1755,7 +1769,10 @@ EOD;
 					$line = "";
 					if (!isset($rule['disabled'])) {
 						if ($rule['interface'] == "pptp") {
-							for($xxx=0; $xxx < $g['n_pptp_units']; $xxx++) {					
+							$n_pptp_units = $g['n_pptp_units'];				
+							if($config['pptp']['n_pptp_units'] <> "")
+								$nif = $config['pptp']['n_pptp_units'];
+							for($xxx=0; $xxx < $n_pptp_units; $xxx++) {					
 								/*
 					 			 *   now that PPTP server are user rules, detect
 						 		 *   that user is setting the pptp server rule 
@@ -1792,7 +1809,10 @@ EOD;
 			$line = "";
 			if (!isset($rule['disabled'])) {
 				if ($rule['interface'] == "pptp") {
-					for($xxx=0; $xxx < $g['n_pptp_units']; $xxx++) {					
+					$n_pptp_units = $g['n_pptp_units'];
+					if($config['pptp']['n_pptp_units'] <> "")
+						$nif = $config['pptp']['n_pptp_units'];					
+					for($xxx=0; $xxx < $n_pptp_units; $xxx++) {					
 						/*
 			 			 *   now that PPTP server are user rules, detect
 			 			 *   that user is setting the pptp server rule 
@@ -1944,8 +1964,11 @@ function create_firewall_outgoing_rules_to_itself() {
 		}
 	}
 
-	/* netgraph outgoing */	
-	for($x=0; $x<$g['n_pptp_units']; $x++) {
+	/* netgraph outgoing */
+	$n_pptp_units = $g['n_pptp_units'];
+	if($config['pptp']['n_pptp_units'] <> "")
+		$n_pptp_units = $config['pptp']['n_pptp_units'];	
+	for($x=0; $x<$n_pptp_units; $x++) {
 		if(does_interface_exist("ng{$x}") == true) {
 			$rule .="pass out quick on ng{$x} all keep state label \"let out anything from firewall host itself\"\n";
 		}

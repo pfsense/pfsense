@@ -880,7 +880,6 @@
 		}
 
 		if($_POST['callofduty'] != "") {
-		    /* Call of Duty (United Offensive) */
 		    $gamesplist[] = array('CallOfDuty1', 'tcp', '28960', '28960', 'both');
 		    $gamesplist[] = array('CallOfDuty2', 'udp', '28960', '28960', 'both');
 		}
@@ -1207,7 +1206,7 @@
 		$queue = array();
 		$queue['name'] = "qOthersUpH";
 		$queue['associatedrule'] = 0;
-		$queue['priority'] = 3;
+		$queue['priority'] = 4;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
 		$queue['realtime'] = "on";
@@ -1231,7 +1230,7 @@
 		$queue = array();
 		$queue['name'] = "qOthersDownH";
 		$queue['associatedrule'] = 0;
-		$queue['priority'] = 3;
+		$queue['priority'] = 4;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
 		$queue['realtime'] = "on";
@@ -1367,7 +1366,7 @@
 		if($_POST['smb'] != "") {
 		    /* Microsoft SMB and friends */
 		    $othersplist[] = array('SMB1', 'tcp', '445', '445', 'both', $_POST['smb']);
-		    $othersplist[] = array('SMB1', 'tcp', '137-139', '137-139', 'both', $_POST['smb']);
+		    $othersplist[] = array('SMB2', 'tcp', '137-139', '137-139', 'both', $_POST['smb']);
 		}
 
 		/* XXX: add some more protocols here! */

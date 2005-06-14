@@ -61,6 +61,7 @@ if ($_POST['remove']) {
   unset($config['shaper']['enable']);
   write_config();
   Header("Location: firewall_shaper.php");
+  exit;
 }
 
 if ($_POST) {

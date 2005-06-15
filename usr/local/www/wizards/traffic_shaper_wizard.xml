@@ -48,6 +48,10 @@
 		/* wipe previous */
 		unset($config['shaper']['queue']);
 		unset($config['shaper']['rule']);
+		unset($config['interfaces']['wan']['bandwidth']);
+		unset($config['interfaces']['wan']['bandwidthtype']);
+		unset($config['interfaces']['lan']['bandwidth']);
+		unset($config['interfaces']['lan']['bandwidthtype']);		
 		$config['shaper']['enable'] = FALSE;
 	</stepsubmitphpaction>
 </step>

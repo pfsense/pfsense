@@ -200,6 +200,7 @@ if ($_GET['act'] == "del") {
                         authoritative dns server to be queried for that domain.</p></td>
                </tr>
              </table>
+	     &nbsp;<br>
              <table width="100%" border="0" cellpadding="0" cellspacing="0">
                <tr>
                  <td width="35%" class="listhdrr">Domain</td>

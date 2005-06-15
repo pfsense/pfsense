@@ -194,6 +194,7 @@ if ($_GET['act'] == "del") {
 		</table>
 <!-- update to enable domain overrides -->
              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+	       <tr><td>&nbsp;</td></tr>
                <tr>
                  <td><p>Below you can override an entire domain by specifying an
                         authoritative dns server to be queried for that domain.</p></td>

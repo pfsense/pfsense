@@ -190,8 +190,10 @@ if ($_GET['act'] == "del") {
                         <td valign="middle"><a href="services_dnsmasq_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>
+		   </td>
+		</table>
 <!-- update to enable domain overrides -->
-                        <table width="100%" border="0" cellpadding="6" cellspacing="0">
+             <table width="100%" border="0" cellpadding="6" cellspacing="0">
                <tr>
                  <td><p>Below you can override an entire domain by specifying an
                         authoritative dns server to be queried for that domain.</p></td>

@@ -135,7 +135,7 @@ function print_notices($notices, $category = "all") {
 	foreach($categories as $category) {
 		$toreturn .= "<ul><li>{$category}<ul>";
 		foreach($notices as $notice) {
-			if($notice['category'] == $category) {
+			if(strtolower($notice['category']) == strtolower($category)) {
 				if($notice['id'] != "") {
 					if($notice['url'] != "") {
 						$toreturn .= "<li><a href={$notice['url']}>{$notice['id']}</a> - {$notice['notice']}</li>";

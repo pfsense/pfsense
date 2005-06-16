@@ -238,10 +238,11 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 		                    eval($item_config['custom_php_resync_config_command']);
 		                }
 		                if($show_message == true) print " " . $item_config['name'];
-		            }
-		        }
-	  	  }
-	}
+                  }
+              }
+          }
+      }
+    }
 }
 
 /*

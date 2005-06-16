@@ -217,9 +217,9 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
         $pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
 		if(isset($pkg_config['nosync'])) continue;                                                          
 		if($pkg['custom_php_global_functions'] <> "")            
-			eval($pkg['custom_php_global_functions']);
-		if($pkg_config['custom_php_command_before_form'] <> "")
-	   		eval($pkg_config['custom_php_command_before_form']);
+	        eval($pkg['custom_php_global_functions']);
+	    if($pkg_config['custom_php_command_before_form'] <> "")
+	        eval($pkg_config['custom_php_command_before_form']);
 	    if($pkg_config['custom_php_resync_config_command'] <> "")
 	        eval($pkg_config['custom_php_resync_config_command']);
 	    if($sync_depends == true) {
@@ -238,12 +238,11 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 		                    eval($item_config['custom_php_resync_config_command']);
 		                }
 		                if($show_message == true) print " " . $item_config['name'];
-					}
-				}
-			}
-		}
-	}
-	return;
+                  }
+              }
+          }
+      }
+    }
 }
 
 /*
@@ -453,6 +452,7 @@ function install_package($package, $pkg_info = "") {
 
 function eval_once($toeval) {
 	global $evaled;
+	if(!$evaled) $evaled = array();
 	$evalmd5 = md5($toeval);
 	if(!in_array($evalmd5, $evaled)) {
 		eval($toeval);

@@ -449,6 +449,17 @@ function install_package($package, $pkg_info = "") {
 	update_output_window($static_output);
 }
 
+function eval_once($toeval) {
+	global $evaled;
+	$evalmd5 = md5($toeval);
+	if(!in_array($evalmd5, $evaled)) {
+		eval($toeval);
+		$evaled[] = $evalmd5;
+	}
+	return;
+}
+	
+
 function install_package_xml($pkg) {
 	global $g, $config, $fd_log, $static_output;
 	if(($pkgid = get_pkg_id($pkg)) == -1) {
@@ -540,21 +551,21 @@ function install_package_xml($pkg) {
 			$static_output .= "\tCustom commands... ";
 			update_output_window($static_output);
 			if($pkg_config['custom_php_global_functions'] <> "") {
-				eval($pkg_config['custom_php_global_functions']);
+				eval_once($pkg_config['custom_php_global_functions']);
 			}
 			fwrite($fd_log, "Executing post install commands...\n");
-			eval($pkg_config['custom_php_install_command']);
+			eval_once($pkg_config['custom_php_install_command']);
 			$static_output .= "done.\n";
 			update_output_window($static_output);
 		}
 		/* call our before form property since we may be declaring functions
 		   in it that are called later */
 		if($pkg_config['custom_php_command_before_form'] <> "") {
-			eval($pkg_config['custom_php_command_before_form']);
+			eval_once($pkg_config['custom_php_command_before_form']);
 		}
 		/* call our resync function */
 		if($pkg_config['custom_php_resync_config_command'] <> "") {
-			eval($pkg_config['custom_php_resync_config_command']);
+			eval_once($pkg_config['custom_php_resync_config_command']);
 		}
 	} else {
 		$static_output .= "Loading package configuration... failed!\n\nInstallation aborted.";
@@ -636,9 +647,9 @@ function delete_package_xml($pkg) {
 		}
 		/* evalate this package's global functions and pre deinstall commands */
 		if($pkg_config['custom_php_global_functions'] <> "")
-			eval($pkg_config['custom_php_global_functions']);
+			eval_once($pkg_config['custom_php_global_functions']);
 		if($pkg_config['custom_php_pre_deinstall_command'] <> "") 
-			eval($pkg_config['custom_php_pre_deinstall_command']);
+			eval_once($pkg_config['custom_php_pre_deinstall_command']);
 		/* remove all additional files */
 		if($pkg_config['additional_files_needed'] <> "") {
 			$static_output .= "\tAuxiliary files... ";
@@ -679,7 +690,7 @@ function delete_package_xml($pkg) {
 		if($pkg_config['custom_php_deinstall_command'] <> "") {
 			$static_output .= "\tDeinstall commands... ";
 			update_output_window($static_output);
-			eval($pkg_config['custom_php_deinstall_command']);
+			eval_once($pkg_config['custom_php_deinstall_command']);
 			$static_output .= "done.\n";
 			update_output_window($static_output);
 		}

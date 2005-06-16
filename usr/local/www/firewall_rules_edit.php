@@ -95,7 +95,7 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['max-src-conn-rate'] = $a_filter[$id]['max-src-conn-rate'];
 	$pconfig['max-src-conn-rates'] = $a_filter[$id]['max-src-conn-rates'];
 
-	/* Multi-WAN next-hop support
+	/* Multi-WAN next-hop support */
 	$pconfig['gateway'] = $a_filter[$id]['gateway'];
 
 } else {

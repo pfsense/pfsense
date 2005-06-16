@@ -95,6 +95,7 @@ $pkg_info = get_pkg_info('all', array('name', 'category', 'website', 'version', 
 		    if($config['installedpackages']['package'] != "")
 			foreach($config['installedpackages']['package'] as $instpkg) $instpkgs[] = $instpkg['name'];
 		    $pkg_names = array_keys($pkg_info);
+		    $pkg_keys = array();
 		    foreach($pkg_names as $name) {
 			if(!in_array($name, $instpkgs)) $pkg_keys[] = $name;
 		    }

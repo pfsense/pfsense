@@ -511,7 +511,7 @@ function install_package_xml($pkg) {
 				download_file_with_progress_bar($afn['item'][0], $prefix . $filename);
 				if(stristr($filename, ".tgz") <> "") {
 					fwrite($fd_log, "Extracting tarball to -C for " . $filename . "...\n");
-					exec("/usr/bin/tar xvzf " . $prefix . $filename . " -C /", $tarout);
+					exec("/usr/bin/tar xvzf " . $prefix . $filename . " -C / 2>&1", $tarout);
 					fwrite($fd_log, print_r($tarout, true) . "\n");
 				}
 				if($pkg_chmod <> "") {

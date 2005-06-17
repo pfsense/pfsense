@@ -366,9 +366,18 @@ function interfaces_wireless_configure($if, $wlcfg) {
 			break;
 	}
 
-	$ifcargs .= "up";
+	if($wlcfg['standard'] <> "")
+		$ifcargs  .= " mode {$wlcfg['standard']}";
+
+	$ifcargs .= " up";
 
 	mwexec("/sbin/ifconfig " . $ifcargs);
+	
+	/* write out the startup command to /tmp/ for
+	   debugging */
+	$fout = fopen("/tmp/debug.wireless","w");
+	fwrite($fout, "/sbin/ifconfig " . $ifcargs);
+	fclose($fout);
 
 	return 0;
 }

@@ -35,18 +35,6 @@ function gentitle_pkg($pgname) {
 	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
 }
 
-function find_package_description($package) {
-    global $g, $config;
-    if(!file_exists("{$g['tmp_path']}/pkg_config.xml"))
-	    fetch_latest_pkg_config();
-    $pkg_config = parse_xml_config_pkg("{$g['tmp_path']}/pkg_config.xml", "pfsensepkgs");
-    foreach($pkg_config['packages']['package'] as $index) {
-	if($index['name'] == $package) 
-	    return $index['descr'];
-    }
-    return;
-}
-
 function get_package_rcd_details($extd) {
 	global $package_name, $executable_name, $description, $raw_name;
 	$raw_name = str_replace(".sh","",$extd);

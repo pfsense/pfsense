@@ -176,9 +176,6 @@ function parse_config($parse = false) {
 		generate_config_cache($config);
 	}
 	
-	/* ugly hack!  config.cache is really borked.  don't use until its fixed. */
-	//$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
-
 	alias_make_table($config);
 	config_unlock();
 	return $config;

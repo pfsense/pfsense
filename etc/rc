@@ -44,8 +44,10 @@ fi
 
 /sbin/conscontrol mute off
 
-/bin/mkdir -p /usr/savecore 2>/dev/null
-/sbin/savecore /usr/savecore $SWAPDEVICE
+if [ ! "$PLATFORM" = "cdrom" ]; then
+    /bin/mkdir -p /usr/savecore 2>/dev/null
+    /sbin/savecore /usr/savecore $SWAPDEVICE
+fi
 
 # Repair symlinks if they are broken
 if [ ! -L /etc/hosts ]; then

@@ -17,7 +17,11 @@ HOME=/
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 export HOME PATH
 
+# Set our current version
 version=`cat /etc/version`
+
+# Set our operating platform
+PLATFORM=`cat /etc/platform`
 
 if [ "$PLATFORM" = "cdrom" ]; then
     /etc/rc.d/freesbie_1st
@@ -26,9 +30,6 @@ fi
 echo
 echo "Welcome to pfSense ${version} ..."
 echo
-
-# Set our operating platform
-PLATFORM=`cat /etc/platform`
 
 /sbin/mount -a || fsck -y && mount -a
 if [ ! "$PLATFORM" = "cdrom" ]; then

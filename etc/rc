@@ -101,6 +101,7 @@ cd /var/run && cp /dev/null utmp && chmod 644 utmp
 # Run ldconfig
 /sbin/ldconfig -elf /usr/lib /usr/local/lib /lib
 
+echo Mounting RW
 /usr/local/bin/php -f /etc/rc.conf_mount_rw
 
 # let the PHP-based configuration subsystem set up the system now

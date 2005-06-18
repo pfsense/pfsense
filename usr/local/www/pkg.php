@@ -30,6 +30,7 @@
 
 require("guiconfig.inc");
 require("xmlparse_pkg.inc");
+require("pkg-utils.inc");
 
 function gentitle_pkg($pgname) {
 	global $config;
@@ -39,11 +40,10 @@ function gentitle_pkg($pgname) {
 $xml = $_GET['xml'];
 
 if($xml == "") {
-            $xml = "not_defined";
-            print_info_box_np("ERROR:  Could not open " . $xml . ".");
+            print_info_box_np("ERROR: No package defined.");
             die;
 } else {
-            $pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
+            $pkg = parse_xml_config("/usr/local/pkg/" . $xml, "packagegui");
 }
 
 if($pkg['donotsave'] <> "") {

@@ -57,11 +57,10 @@ $xml = $_GET['xml'];
 if($_POST['xml']) $xml = $_POST['xml'];
 
 if($xml == "") {
-            $xml = "not_defined";
-            print_info_box_np("ERROR:  Could not open " . $xml . ".");
+            print_info_box_np("ERROR: No package defined.");
             die;
 } else {
-            $pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
+            $pkg = parse_xml_config("/usr/local/pkg/" . $xml, "packagegui");
 }
 
 $package_name = $pkg['menu'][0]['name'];

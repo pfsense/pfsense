@@ -829,44 +829,6 @@ function make_dirs($path, $mode = 0755)
 	return is_dir($path) || (make_dirs(dirname($path), $mode) && safe_mkdir($path, $mode));
 }
 
-/****f* pfsense-utils/auto_upgrade
- * NAME
- *   auto_upgrade - pfSense autoupdate handler.
- * FUNCTION
- *   Begin the pfSense autoupdate process. This function calls check_firmware_version to get
- *   a list of current versions and then loops through them, applying binary diffs etc.
- * RESULT
- *   null
- * BUGS
- *   This function needs to have logic in place to automatically switch over to full updates
- *   if a certain amount of binary diffs do not apply successfully.
- * SEE ALSO
- *   pfsense.utils/check_firmware_version
- ******/
-function auto_upgrade() {
-        global $config, $g;
-	if (isset($config['system']['alt_firmware_url']['enabled'])) {
-                $firmwareurl=$config['system']['alt_firmware_url']['firmware_base_url'];
-                $firmwarepath=$config['system']['alt_firmware_url']['firmware_filename'];
-        } else {
-                $firmwareurl=$g['firmwarebaseurl'];
-                $firmwarepath=$g['firmwarefilename'];
-        }
-        if($config['system']['proxy_auth_username'] <> "")
-	    $http_auth_username = $config['system']['proxy_auth_username'];
-        if($config['system']['proxy_auth_password'] <> "")
-	    $http_auth_password = $config['system']['proxy_auth_password'];
-        if (isset($config['system']['alt_firmware_url']['enabled'])) {
-                $firmwareurl=$config['system']['alt_firmware_url']['firmware_base_url'];
-                $firmwarename=$config['system']['alt_firmware_url']['firmware_filename'];
-        } else {
-                $firmwareurl=$g['firmwarebaseurl'];
-                $firmwarename=$g['firmwarefilename'];
-        }
-        exec_rc_script_async("/etc/rc.firmware_auto {$firmwareurl} {$firmwarename} {$http_auth_username} {$http_auth_password}");
-	return;
-}
-
 /*
  * check_firmware_version(): Check whether the current firmware installed is the most recently released.
  */

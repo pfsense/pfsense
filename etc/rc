@@ -30,7 +30,7 @@ if [ "$PLATFORM" = "cdrom" ]; then
 fi
 
 echo
-echo "Welcome to pfSense ${version} ${PLATFORM} ..."
+echo "Welcome to pfSense ${version} on the '${PLATFORM}' platform..."
 echo
 
 /sbin/mount -a || fsck -y && mount -a

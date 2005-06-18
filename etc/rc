@@ -34,6 +34,11 @@ SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
 
 /usr/local/bin/php -f /etc/rc.conf_mount_rw
 
+platform=`cat /etc/platform`
+if [ "$PLATFORM" = "cdrom" ]; then
+    /usr/local/freesbieiso/etc/rc.d/freesbie_1st
+fi
+
 # Repair symlinks if they are broken
 if [ ! -L /etc/hosts ]; then
 	rm -rf /etc/hosts

@@ -679,7 +679,7 @@ function restore_config_section($section, $new_contents) {
     $fout = fopen("{$g['tmp_path']}/tmpxml","w");
     fwrite($fout, $new_contents);
     fclose($fout);
-    $section_xml = parse_xml_config_pkg($g['tmp_path'] . "/tmpxml", $section);
+    $section_xml = parse_xml_config($g['tmp_path'] . "/tmpxml", $section);
     $config[$section] = &$section_xml;
     unlink($g['tmp_path'] . "/tmpxml");
     write_config("Restored {$section} of config file (maybe from CARP partner)");

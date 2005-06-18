@@ -295,6 +295,10 @@ function conf_mount_ro() {
 	global $g, $do_not_mount_ro;
 
 	if($g['booting'] == true) return;
+	
+	/* do not umount on cdrom platform */
+	if($g['platform'] == "cdrom")
+		return;	
 
 	mwexec("/sbin/umount -f {$g['cf_path']}");
 	mwexec("/sbin/mount -r {$g['cf_path']}");

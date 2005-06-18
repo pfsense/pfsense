@@ -211,6 +211,7 @@ function parse_config_bootup() {
 			if ($g['booting']) {
 				if (strstr($g['platform'], "cdrom")) {
 					/* try copying the default config. to the floppy */
+					echo "Resetting factory defaults...";
 					reset_factory_defaults();
 	
 					echo "No XML configuration file found - using factory defaults.\n";

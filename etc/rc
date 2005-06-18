@@ -127,12 +127,17 @@ echo -n "Starting USB... "
 /usr/sbin/usbd 2>>/tmp/bootup_messages
 echo "done."
 
+echo -n "Starting CRON... "
 /usr/sbin/cron 2>>/tmp/bootup_messages
-
-/etc/rc.packages 2>/dev/null
+echo "done."
 
 if [ ! "$PLATFORM" = "cdrom" ]; then
+
+    echo "Syncing packages..."
+    /etc/rc.packages 2>/dev/null
+    
     echo "Executing rc.d items... "
+    
     for FILE in /usr/local/etc/rc.d/*.sh; do
 	echo -n " Starting ${FILE}..."
 	sh $FILE >>/tmp/bootup_messages 2>&1

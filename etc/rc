@@ -63,6 +63,10 @@ if [ ! -d /cf/conf/backup/ ]; then
     mkdir -p /cf/conf/backup/ 2>/dev/null
 fi
 
+if [ "$PLATFORM" = "cdrom" ]; then
+    ln -s /cf/conf /conf
+fi
+
 set -T
 trap "echo 'Reboot interrupted'; exit 1" 3
 

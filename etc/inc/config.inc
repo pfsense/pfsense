@@ -1107,6 +1107,10 @@ function get_backups() {
 function backup_config() {
 	global $config, $g;
 
+	/* XXX: temporary */
+	if($g['platform'] == "cdrom")
+		return;
+
 	conf_mount_rw();
 
 	/* Create backup directory if needed */

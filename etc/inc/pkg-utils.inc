@@ -95,7 +95,7 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 	global $g;
         $params = array("pkg" => $pkgs, "info" => $info);
         $msg = new XML_RPC_Message('pfsense.get_pkgs', array(php_value_to_xmlrpc($params)));
-        $cli = new XML_RPC_Client($g['versioncheckpath'], $g['versioncheckbaseurl']);
+        $cli = new XML_RPC_Client($g['xmlrpcpath'], $g['xmlrpcbaseurl']);
         $resp = $cli->send($msg, 10);
 	if($resp and !$resp->faultCode()) {
         	$raw_versions = $resp->value();

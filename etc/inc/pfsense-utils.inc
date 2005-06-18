@@ -834,11 +834,8 @@ function make_dirs($path, $mode = 0755)
  */
 function check_firmware_version($tocheck = "all", $return_php = true) {
         global $g;
-	$versioncheck_base_url = $g['versioncheckbaseurl'];
-        $versioncheck_path = $g['versioncheckpath'];
-        if(isset($config['system']['alt_firmware_url']['enabled']) and isset($config['system']['alt_firmware_url']['versioncheck_base_url'])) {
-                $versioncheck_base_url = $config['system']['alt_firmware_url']['versioncheck_base_url'];
-	}
+	$xmlrpc_base_url = $g['xmlrpcbaseurl'];
+        $xmlrpc_path = $g['xmlrpcpath'];
 	$rawparams = array("firmware" => array("version" => trim(file_get_contents('/etc/version'))),
 			"kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel'))),
 			"base"     => array("version" => trim(file_get_contents('/etc/version_base'))),
@@ -857,7 +854,7 @@ function check_firmware_version($tocheck = "all", $return_php = true) {
 	}
 	$xmlparams = php_value_to_xmlrpc($params);
         $msg = new XML_RPC_Message('pfsense.get_firmware_version', array($xmlparams));
-        $cli = new XML_RPC_Client($versioncheck_path, $versioncheck_base_url);
+        $cli = new XML_RPC_Client($xmlrpc_path, $xmlrpc_base_url);
 	$resp = $cli->send($msg, 10);
 	if(!$resp or $resp->faultCode()) {
 		$raw_versions = false;

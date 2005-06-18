@@ -38,11 +38,15 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+echo "1";
+
 /* include globals/utility/XML parser files */
 require_once("globals.inc");
 require_once("util.inc");
 require_once("pfsense-utils.inc");
 require_once("xmlparse.inc");
+
+echo "2";
 
 /* read platform */
 if (file_exists("{$g['etc_path']}/platform")) {
@@ -50,6 +54,8 @@ if (file_exists("{$g['etc_path']}/platform")) {
 } else {
 	$g['platform'] = "unknown";
 }
+
+echo "3";
 
 /* if our config file exists bail out, we're already set. */
 if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
@@ -149,7 +155,11 @@ EOD;
 	mwexec("/sbin/mount -a");
 }
 
+echo "4";
+
 $config = parse_config();
+
+echo "5";
 
 /****f* config/parse_config
  * NAME

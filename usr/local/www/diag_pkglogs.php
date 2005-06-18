@@ -39,6 +39,7 @@
 */
 
 require("guiconfig.inc");
+require("pkg-utils.inc");
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)

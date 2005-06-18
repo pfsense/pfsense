@@ -36,7 +36,7 @@ SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
 
 platform=`cat /etc/platform`
 if [ "$PLATFORM" = "cdrom" ]; then
-    /usr/local/freesbieiso/etc/rc.d/freesbie_1st
+    /etc/rc.d/freesbie_1st
 fi
 
 # Repair symlinks if they are broken

@@ -26,7 +26,7 @@ PLATFORM=`cat /etc/platform`
 if [ "$PLATFORM" = "cdrom" ]; then
     /etc/rc.d/freesbie_1st
     echo "Launching pfi... Please wait..."
-    /bin/sh /scripts/pfi
+    /bin/sh /scripts/pfi start
 fi
 
 echo

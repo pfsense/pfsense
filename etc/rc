@@ -19,6 +19,10 @@ export HOME PATH
 
 version=`cat /etc/version`
 
+if [ "$PLATFORM" = "cdrom" ]; then
+    /etc/rc.d/freesbie_1st
+fi
+
 echo
 echo "Welcome to pfSense ${version} ..."
 echo
@@ -34,10 +38,6 @@ if [ ! "$PLATFORM" = "cdrom" ]; then
 fi
 
 /usr/local/bin/php -f /etc/rc.conf_mount_rw
-
-if [ "$PLATFORM" = "cdrom" ]; then
-    /etc/rc.d/freesbie_1st
-fi
 
 /sbin/conscontrol mute off
 

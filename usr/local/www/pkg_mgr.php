@@ -70,6 +70,12 @@ include("fbegin.inc");
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
 
+if(in_array($g['platform'], $g['nopkg_platforms'])) {
+	print_info_box("Packages are not available on this platform.");
+	include("fbegin.inc");
+	echo '</body></html>';
+}
+
 $pkg_info = get_pkg_info('all', array('name', 'category', 'website', 'version', 'status', 'descr'));
 
 ?>

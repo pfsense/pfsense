@@ -19,8 +19,6 @@ export HOME PATH
 
 version=`cat /etc/version`
 
-/sbin/conscontrol mute off
-
 echo
 echo "Welcome to pfSense ${version} ..."
 echo
@@ -29,8 +27,6 @@ echo
 SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
 /sbin/dumpon -v $SWAPDEVICE 2>/dev/null
 /sbin/swapon -a 2>/dev/null
-/bin/mkdir -p /usr/savecore 2>/dev/null
-/sbin/savecore /usr/savecore $SWAPDEVICE
 
 /usr/local/bin/php -f /etc/rc.conf_mount_rw
 
@@ -38,6 +34,11 @@ platform=`cat /etc/platform`
 if [ "$PLATFORM" = "cdrom" ]; then
     /etc/rc.d/freesbie_1st
 fi
+
+/sbin/conscontrol mute off
+
+/bin/mkdir -p /usr/savecore 2>/dev/null
+/sbin/savecore /usr/savecore $SWAPDEVICE
 
 # Repair symlinks if they are broken
 if [ ! -L /etc/hosts ]; then

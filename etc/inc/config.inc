@@ -265,6 +265,10 @@ EOD;
 function conf_mount_rw() {
 	global $g;
 
+	/* do not mount on cdrom platform */
+	if($g['platform'] == "cdrom")
+		return;
+
 	/* don't use mount -u anymore
 	   (doesn't sync the files properly and /bin/sync won't help either) */
 	mwexec("/sbin/umount -f {$g['cf_path']}");

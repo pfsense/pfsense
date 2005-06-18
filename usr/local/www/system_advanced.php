@@ -42,13 +42,6 @@ $pconfig['ipv6nat_ipaddr'] = $config['diag']['ipv6nat']['ipaddr'];
 $pconfig['cert'] = base64_decode($config['system']['webgui']['certificate']);
 $pconfig['key'] = base64_decode($config['system']['webgui']['private-key']);
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
-$pconfig['disablefirmwarecheck'] = isset($config['system']['disablefirmwarecheck']);
-$pconfig['altfirmwareurl'] = $config['system']['altfirmwareurl']['enabled'];
-$pconfig['firmware_base_url'] = $config['system']['alt_firmware_url']['firmware_base_url'];
-$pconfig['firmwarename'] = $config['system']['alt_firmware_url']['firmware_filename'];
-$pconfig['altpkgconfigurl'] = $config['system']['alt_pkgconfig_url']['enabled'];
-$pconfig['pkgconfig_base_url'] = $config['system']['alt_pkgconfig_url']['pkgconfig_base_url'];
-$pconfig['pkgconfig_filename'] = $config['system']['alt_pkgconfig_url']['pkgconfig_filename'];
 $pconfig['expanddiags'] = isset($config['system']['webgui']['expanddiags']);
 $pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
@@ -121,36 +114,6 @@ if ($_POST) {
 			$config['system']['disableconsolemenu'] = true;
 		else
 			unset($config['system']['disableconsolemenu']);
-		if($_POST['disablefirmwarecheck'] == "yes")
-			$config['system']['disablefirmwarecheck'] = true;
-		else
-			unset($config['system']['disablefirmwarecheck']);
-		if($_POST['altfirmwareurl'] == "yes")
-			$config['system']['altfirmwareurl'] = true;
-		else
-			unset($config['system']['altfirmwareurl']);
-		if ($_POST['altfirmwareurl']) {
-			$config['system']['alt_firmware_url'] = array();
-			$config['system']['alt_firmware_url']['enabled'] = "";
-			$config['system']['alt_firmware_url']['firmware_base_url'] = $_POST['firmwareurl'];
-			$config['system']['alt_firmware_url']['firmware_filename'] = $_POST['firmwarename'];
-		} elseif (isset($config['system']['alt_firmware_url']['firmware_base_url']) || isset($config['system']['alt_firmware_url']['firmware_filename'])) {
-			unset($config['system']['alt_firmware_url']['enabled']);
-		} else {
-			unset($config['system']['alt_firmware_url']);
-		}
-
-		if ($_POST['altpkgconfigurl']) {
-			$config['system']['alt_pkgconfig_url'] = array();
-			$config['system']['alt_pkgconfig_url']['enabled'] = "";
-			$config['system']['alt_pkgconfig_url']['pkgconfig_base_url'] = $_POST['pkgconfig_base_url'];
-			$config['system']['alt_pkgconfig_url']['pkgconfig_filename'] = $_POST['pkgconfig_filename'];
-		} elseif (isset($config['system']['alt_pkgconfig_url']['pkgconfig_base_url']) || isset($config['system']['alt_pkgconfig_url']['pkgconfig_filename'])) {
-			unset($config['system']['alt_pkgconfig_url']['enabled']);
-		} else {
-			unset($config['system']['alt_pkgconfig_url']);
-		}
-
 		if ($_POST['expanddiags'] == "yes")
 			$config['system']['webgui']['expanddiags'] = true;
 		else
@@ -242,24 +205,6 @@ function enable_change(enable_over) {
 		document.iform.schedulertype.disabled = 0;
 	} else {
 		document.iform.ipv6nat_ipaddr.disabled = 1;
-	}
-}
-function enable_altfirmwareurl(enable_over) {
-        if (document.iform.altfirmwareurl.checked || enable_over) {
-                document.iform.firmwareurl.disabled = 0;
-                document.iform.firmwarename.disabled = 0;
-        } else {
-                document.iform.firmwareurl.disabled = 1;
-                document.iform.firmwarename.disabled = 1;
-        }
-}
-function enable_altpkgconfigurl(enable_over) {
-	if (document.iform.altpkgconfigurl.checked || enable_over) {
-		document.iform.pkgconfig_base_url.disabled = 0;
-		document.iform.pkgconfig_filename.disabled = 0;
-	} else {
-		document.iform.pkgconfig_base_url.disabled = 1;
-		document.iform.pkgconfig_filename.disabled = 1;
 	}
 }
 
@@ -378,35 +323,6 @@ function update_description(itemnum) {
                     <input name="disableconsolemenu" type="checkbox" id="disableconsolemenu" value="yes" <?php if ($pconfig['disableconsolemenu']) echo "checked"; ?>>
                     <strong>Disable console menu</strong><span class="vexpl"><br>
                     Changes to this option will take effect after a reboot.</span></td>
-                </tr>
-		<tr>
-                  <td valign="top" class="vncell">Firmware version check </td>
-                  <td class="vtable">
-                    <input name="disablefirmwarecheck" type="checkbox" id="disablefirmwarecheck" value="yes" <?php if ($pconfig['disablefirmwarecheck']) echo "checked"; ?>>
-                    <strong>Disable firmware version check</strong><span class="vexpl"><br>
-    This will cause pfSense not to check for newer firmware versions when the <a href="system_firmware.php">System: Firmware</a> page is viewed.</span></td>
-		</tr>
-		<tr>
-                  <td valign="top" class="vncell">Alternate firmware URL</td>
-                  <td class="vtable">
-                    <input name="altfirmwareurl" type="checkbox" id="altfirmwareurl" value="yes" onClick="enable_altfirmwareurl()" <?php if (isset($pconfig['altfirmwareurl'])) echo "checked"; ?>> Use a different URL for firmware upgrades<br>
-		    <table>
-                    <tr><td>Base URL:</td><td><input name="firmwareurl" type="input" id="firmwareurl" size="64" value="<?php if ($pconfig['firmwareurl']) echo $pconfig['firmwareurl']; else echo $g['firmwarebaseurl']; ?>"></td></tr>
-                    <tr><td>Filename:</td><td><input name="firmwarename" type="input" id="firmwarename" size="32" value="<?php if ($pconfig['firmwarename']) echo $pconfig['firmwarename']; else echo $g['firmwarefilename']; ?>"></td></tr>
-		    </table>
-                    <span class="vexpl">
-    This is where pfSense will check for newer firmware versions when <a href="system_firmware.php">System: Firmware</a> page is viewed.</span></td>
-		</tr>
-                <tr>
-                  <td valign="top" class="vncell">Alternate pkg_config.xml URL</td>
-                  <td class="vtable">
-                    <input name="altpkgconfigurl" type="checkbox" id="altpkgconfigurl" value="yes" onClick="enable_altpkgconfigurl()" <?php if (isset($pconfig['altpkgconfigurl'])) echo "checked"; ?>> Retrieve the package list from a different URL<br>
-                    <table>
-                    <tr><td>Base URL:</td><td><input name="pkgconfig_base_url" type="input" id="pkgconfig_base_url" size="64" value="<?php if ($pconfig['pkg_config_base_url']) echo $pconfig['pkg_config_base_url']; else echo $g['pkg_config_base_url']; ?>"></td></tr>
-                    <tr><td>Filename:</td><td><input name="pkgconfig_filename" type="input" id="pkgconfig_filename" size="32" value="<?php if ($pconfig['pkg_config_filename']) echo $pconfig['pkg_config_filename']; else echo $g['pkg_config_filename']; ?>"></td></tr>
-                    </table>
-                    <span class="vexpl">
-    This is where pfSense will fetch its package list from.</span></td>
                 </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell">Hard disk standby time </td>

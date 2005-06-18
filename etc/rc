@@ -24,8 +24,6 @@ version=`cat /etc/version`
 PLATFORM=`cat /etc/platform`
 
 if [ "$PLATFORM" = "cdrom" ]; then
-    rm -rf /tmp
-    mkdir -p /tmp
     /etc/rc.d/freesbie_1st
     echo "Launching pfi... Please wait..."
     /bin/shsh /scripts/pfi

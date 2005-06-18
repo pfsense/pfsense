@@ -71,6 +71,9 @@ if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
 				}
 			}
 			$cfgfstype = "msdos";
+			echo "CDROM build\n";
+			echo "   CFG: {$cfgpartition}\n";
+			echo "  TYPE: {$cfgfstype}\n";
 		} else {
 			/* probe kernel known disks until we find one with config.xml */
 			$disks = explode(" ", trim(preg_replace("/kern.disks: /", "", exec("/sbin/sysctl kern.disks"))));
@@ -211,7 +214,7 @@ function parse_config_bootup() {
 			if ($g['booting']) {
 				if (strstr($g['platform'], "cdrom")) {
 					/* try copying the default config. to the floppy */
-					echo "Resetting factory defaults...";
+					echo "Resetting factory defaults...\n";
 					reset_factory_defaults();
 	
 					echo "No XML configuration file found - using factory defaults.\n";

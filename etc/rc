@@ -70,7 +70,7 @@ if [ ! -d /cf/conf/backup/ ]; then
 fi
 
 if [ "$PLATFORM" = "cdrom" ]; then
-    ln -s /FreeSBIE/cf/conf /conf
+    ln -s /cf/conf /conf
 fi
 
 set -T

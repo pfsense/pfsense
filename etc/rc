@@ -28,7 +28,7 @@ if [ "$PLATFORM" = "cdrom" ]; then
 fi
 
 echo
-echo "Welcome to pfSense ${version} ..."
+echo "Welcome to pfSense ${version} ${PLATFORM} ..."
 echo
 
 /sbin/mount -a || fsck -y && mount -a
@@ -50,10 +50,12 @@ if [ ! -L /etc/hosts ]; then
 	rm -rf /etc/hosts
 	ln -s /var/etc/hosts /etc/hosts    
 fi
+
 if [ ! -L /etc/resolv.conf ]; then
     rm -rf /etc/resolv.conf
     ln -s /var/etc/resolv.conf /etc/resolv.conf    
 fi
+
 if [ ! -L /etc/dhclient.conf ]; then
     rm -rf /etc/dhclient.conf
     ln -s /var/etc/dhclient.conf /etc/dhclient.conf

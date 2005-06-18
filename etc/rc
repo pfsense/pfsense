@@ -7,14 +7,14 @@
 # Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 # All rights reserved.
 
-stty status '^T'
-stty susp '^-' intr '^-' quit '^-'
+/bin/stty status '^T'
+/bin/stty susp '^-' intr '^-' quit '^-'
 
 trap : 2
 trap : 3
 
 HOME=/
-PATH=/sbin:/bin:/usr/sbin:/usr/bin
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/local/sbin
 export HOME PATH
 
 # Set our current version
@@ -24,7 +24,13 @@ version=`cat /etc/version`
 PLATFORM=`cat /etc/platform`
 
 if [ "$PLATFORM" = "cdrom" ]; then
+    echo md                 /tmp            mfs     rw,-s16m                1 \
+	0 >> /etc/fstab
+    rm -rf /tmp
+    mkdir -p /tmp
     /etc/rc.d/freesbie_1st
+    echo "Launching pfi... Please wait..."
+    /bin/shsh /scripts/pfi
 fi
 
 echo

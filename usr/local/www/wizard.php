@@ -51,7 +51,7 @@ if($xml == "") {
 	die;
 } else {
 	if (file_exists("{$g['www_path']}/wizards/{$xml}"))
-		$pkg = parse_xml_config_pkg("{$g['www_path']}/wizards/" . $xml, "pfsensewizard");
+		$pkg = parse_xml_config("{$g['www_path']}/wizards/" . $xml, "pfsensewizard");
 	else {
 		print_info_box_np("ERROR:  Could not open " . $xml . ".");
 		die;

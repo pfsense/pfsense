@@ -38,16 +38,10 @@
 	$g['booting'] = TRUE;
 	touch("{$g['varrun_path']}/booting");
 
-	echo "1";
-
 	/* parse the configuration and include all functions used below */
 	require_once("config.inc");
 	
-	echo "2";
-	
 	require_once("functions.inc");
-
-	echo "3";
 
 	echo "Loading configuration... ";
 	parse_config_bootup();

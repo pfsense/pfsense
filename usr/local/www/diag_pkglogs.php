@@ -45,7 +45,7 @@ if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) {
-	exec("/usr/sbin/clog -i -s 262144 {$system_logfile}");
+	exec("/usr/sbin/clog -i -s 262144 {$logfile}");
 }
 $i = 0;
 $pkgwithlogging = false;
@@ -53,8 +53,7 @@ $apkg = $_POST['pkg'];
 if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, locate the first package that handles logging.
 	if($config['installedpackages']['package'] <> "") {
 		foreach($config['installedpackages']['package'] as $package) {
-			$pkg_config = parse_xml_config("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
-			if(is_array($pkg_config['logging'])) {
+			if(is_array($package['logging'])) {
 				$pkgwithlogging = true;
 				$apkg = $package['name'];
 				$apkgid = $i;
@@ -94,7 +93,7 @@ if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, loca
 	}
 	if($config['installedpackages']['package'] <> "") {
 		foreach($config['installedpackages']['package'] as $package) {
-        		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
+        		$pkg_config = parse_xml_config("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
 			if(is_array($pkg_config['logging'])) {
 				$pkgname = $package['name'];
 				$logtab = $pkg_config['logging']['logtab'];
@@ -120,7 +119,7 @@ if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, loca
 			  Last <?=$nentries;?> <?=$apkg;?> log entries</td>
 		  </tr>
 		  <?php
-			$apkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $config['installedpackages']['package'][$apkgid]['configurationfile'], "packagegui");
+			$apkg_config = parse_xml_config("/usr/local/pkg/" . $config['installedpackages']['package'][$apkgid]['configurationfile'], "packagegui");
 			if(isset($apkg_config['logging']['logfile'])) {
 				$logfile = $apkg_config['logging']['logfile'];
 			} else {

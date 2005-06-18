@@ -71,6 +71,9 @@ fi
 
 if [ "$PLATFORM" = "cdrom" ]; then
     ln -s /cf/conf /conf
+    if [ ! -f /cf/conf/config.xml ]; then
+	cp /FreeSBIE/cf/conf/* /cf/conf/    
+    fi
 fi
 
 set -T

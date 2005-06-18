@@ -80,7 +80,6 @@ chmod 777 /tmp/uploadbar
 
 # make some directories in /var
 mkdir /var/run /var/log /var/etc 2>/dev/null
-chmod 0755 /var/db/ipf
 rm -rf /var/log/*
 rm -rf /var/run/*
 rm -rf /tmp/*

@@ -811,8 +811,8 @@ function rmdir_recursive($path,$follow_links=false) {
 function safe_mkdir($path, $mode=0755) {
 	global $g;
 	
-//	if($g['platform'] == "cdrom")
-//		return false;;	
+	if($g['platform'] == "cdrom")
+		return false;;	
 	
 	if (!is_file($path) && !is_dir($path))
 		return make_dirs($path, $mode);

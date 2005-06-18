@@ -32,6 +32,7 @@ SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
 
 PLATFORM=`cat /etc/platform`
 if [ "$PLATFORM" = "cdrom" ]; then
+    echo ">>> Starting freesbie_1st ..."
     /etc/rc.d/freesbie_1st
 fi
 

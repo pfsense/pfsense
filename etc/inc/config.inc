@@ -695,6 +695,9 @@ function config_install($conffile) {
         
         if (!file_exists($conffile))
                 return 1;
+
+	if($g['booting'] == true)
+		echo "Installing configuration...\n";
  
         config_lock();
         conf_mount_rw();

@@ -30,7 +30,7 @@ SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
 
 /usr/local/bin/php -f /etc/rc.conf_mount_rw
 
-platform=`cat /etc/platform`
+PLATFORM=`cat /etc/platform`
 if [ "$PLATFORM" = "cdrom" ]; then
     /etc/rc.d/freesbie_1st
 fi

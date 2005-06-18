@@ -23,14 +23,18 @@ echo
 echo "Welcome to pfSense ${version} ..."
 echo
 
+# Set our operating platform
+PLATFORM=`cat /etc/platform`
+
 /sbin/mount -a || fsck -y && mount -a
-SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
-/sbin/dumpon -v $SWAPDEVICE 2>/dev/null
-/sbin/swapon -a 2>/dev/null
+if [ ! "$PLATFORM" = "cdrom" ]; then
+    SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
+    /sbin/dumpon -v $SWAPDEVICE 2>/dev/null
+    /sbin/swapon -a 2>/dev/null
+fi
 
 /usr/local/bin/php -f /etc/rc.conf_mount_rw
 
-PLATFORM=`cat /etc/platform`
 if [ "$PLATFORM" = "cdrom" ]; then
     /etc/rc.d/freesbie_1st
 fi
@@ -93,10 +97,6 @@ echo "done."
 
 # Create an initial utmp file
 cd /var/run && cp /dev/null utmp && chmod 644 utmp
-
-# Build devices database
-#dev_mkdb
-
 
 if [ ! "$PLATFORM" = "cdrom" ]; then
     # Run ldconfig

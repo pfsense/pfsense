@@ -49,9 +49,9 @@ if(file_exists("/needs_package_sync")) {
 	}
 }
 
-if(file_exists("/usr/local/www/trigger_initial_wizard")) {
+if(file_exists("/trigger_initial_wizard")) {
 	conf_mount_rw();
-	unlink("/usr/local/www/trigger_initial_wizard");
+	unlink("/trigger_initial_wizard");
 	conf_mount_ro();
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">

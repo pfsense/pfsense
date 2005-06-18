@@ -32,7 +32,6 @@ SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
 
 PLATFORM=`cat /etc/platform`
 if [ "$PLATFORM" = "cdrom" ]; then
-    echo ">>> Starting freesbie_1st ..."
     /etc/rc.d/freesbie_1st
 fi
 
@@ -93,17 +92,17 @@ echo -n "Syncing master.passwd... "
 echo "done."
 
 # Create an initial utmp file
-echo 1
 cd /var/run && cp /dev/null utmp && chmod 644 utmp
 
 # Build devices database
 #dev_mkdb
 
-echo 2
-# Run ldconfig
-/sbin/ldconfig -elf /usr/lib /usr/local/lib /lib
 
-echo 3
+if [ ! "$PLATFORM" = "cdrom" ]; then
+    # Run ldconfig
+    /sbin/ldconfig -elf /usr/lib /usr/local/lib /lib
+fi
+
 echo Mounting RW
 /usr/local/bin/php -f /etc/rc.conf_mount_rw
 

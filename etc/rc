@@ -114,14 +114,13 @@ if [ ! "$PLATFORM" = "cdrom" ]; then
     /sbin/ldconfig -elf /usr/lib /usr/local/lib /lib
 fi
 
-echo Mounting RW
 /usr/local/bin/php -f /etc/rc.conf_mount_rw
 
 # let the PHP-based configuration subsystem set up the system now
 /etc/rc.bootup
 
 echo -n Starting Secure Shell Services...
-/etc/sshd
+/etc/sshd 2>/dev/null
 
 echo -n "Starting USB... "
 /usr/sbin/usbd 2>>/tmp/bootup_messages
@@ -129,14 +128,16 @@ echo "done."
 
 /usr/sbin/cron 2>>/tmp/bootup_messages
 
-/etc/rc.packages
+/etc/rc.packages 2>/dev/null
 
-echo "Executing rc.d items... "
-for FILE in /usr/local/etc/rc.d/*.sh; do
-    echo -n " Starting ${FILE}..."
-    sh $FILE >>/tmp/bootup_messages 2>&1
-    echo "done."
-done
+if [ ! "$PLATFORM" = "cdrom" ]; then
+    echo "Executing rc.d items... "
+    for FILE in /usr/local/etc/rc.d/*.sh; do
+	echo -n " Starting ${FILE}..."
+	sh $FILE >>/tmp/bootup_messages 2>&1
+	echo "done."
+    done
+fi
 
 if [ -f /tmp/filter_boot_dirty ]; then
     # one more pass to give package plugins a chance to adjust

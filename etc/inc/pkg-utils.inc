@@ -177,7 +177,7 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
                 switch ($filetype) {
                 case "all":
                     if(preg_match("/\.xml/i", $depend_file)) {
-                        $depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
+                        $depend_xml = parse_xml_config("/usr/local/pkg/" . $depend_file, "packagegui");
                         $depends[] = $depend_xml['name'];
                         break;
                     } else {
@@ -185,7 +185,7 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
                         break;
                     }
                 case ".xml":
-                    $depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
+                    $depend_xml = parse_xml_config("/usr/local/pkg/" . $depend_file, "packagegui");
                     $depends[] = $depend_xml['name'];
                     break;
                 default:
@@ -218,7 +218,7 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
     if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
     	file_notice($package['name'], "The {$package['name']} package is missing its configuration file and must be reinstalled.", "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
     } else {
-        $pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
+        $pkg_config = parse_xml_config("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
 		if(isset($pkg_config['nosync'])) continue;                                                          
 		if($pkg['custom_php_global_functions'] <> "")            
 	        eval($pkg['custom_php_global_functions']);
@@ -233,7 +233,7 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 					if(!file_exists("/usr/local/pkg" . $item)) {
 						file_notice($package['name'], "The {$package['name']} package is missing required dependencies and must be reinstalled.", "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
 					} else {
-		                $item_config = parse_xml_config_pkg("/usr/local/pkg/" . $item, "packagegui");
+		                $item_config = parse_xml_config("/usr/local/pkg/" . $item, "packagegui");
 		                if(isset($item_config['nosync'])) continue;
 		                if($item_config['custom_php_command_before_form'] <> "") {
 		                    eval($item_config['custom_php_command_before_form']);

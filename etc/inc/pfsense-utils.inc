@@ -812,7 +812,7 @@ function safe_mkdir($path, $mode=0755) {
 	global $g;
 	
 	if($g['platform'] == "cdrom")
-		return;	
+		return false;;	
 	
 	if (!is_file($path) && !is_dir($path))
 		return mkdir($path, $mode);

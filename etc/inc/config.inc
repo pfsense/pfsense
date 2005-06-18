@@ -40,6 +40,12 @@
 
 echo "1";
 
+/* do not load this file twice. */
+if($config_inc_loaded == true)
+	return;
+else
+	$config_inc_loaded = true;
+
 /* include globals/utility/XML parser files */
 require_once("globals.inc");
 require_once("util.inc");

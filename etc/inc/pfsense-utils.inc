@@ -809,6 +809,11 @@ function rmdir_recursive($path,$follow_links=false) {
  * create directory if it doesn't already exist and isn't a file!
  */
 function safe_mkdir($path, $mode=0755) {
+	global $g;
+	
+	if($g['platform'] == "cdrom")
+		return;	
+	
 	if (!is_file($path) && !is_dir($path))
 		return mkdir($path, $mode);
 	else

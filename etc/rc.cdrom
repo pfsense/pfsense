@@ -6,14 +6,14 @@
 # Run some FreeSBIE routines
 /etc/rc.d/freesbie_1st
 
+# Start PFI
+/bin/sh /scripts/pfi start
+
 # Make sure our config is where we want it
 if [ ! -f /cf/conf ]; then
 	mkdir -p /cf/conf
 	/rescue/cp /FreeSBIE/cf/conf/* /cf/conf/
 fi                                          
-
-# Start PFI
-/bin/sh /scripts/pfi start
 
 # More config workarounds
 if [ ! -L /conf ]; then       

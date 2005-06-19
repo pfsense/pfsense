@@ -515,12 +515,12 @@ EOD;
 	fwrite($fd, $dhclientconf);
 	fclose($fd);
 	
-	/* bring wan interface up before starting dhclient */
-	mwexec("/sbin/ifconfig {$wancfg['if']} up");
-	
-	/* fire up dhclient - don't wait for the lease (-nw) */
-	mwexec("/sbin/dhclient -nw -cf {$g['varetc_path']}/dhclient.conf " .
-		escapeshellarg($wancfg['if']) . " &");
+        /* bring wan interface up before starting dhclient */
+        mwexec("/sbin/ifconfig {$wancfg['if']} up");
+
+        /* fire up dhclient - don't wait for the lease (-nw) */
+        mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient.conf " .
+                escapeshellarg($wancfg['if']) . " &");
 
 	return 0;
 }

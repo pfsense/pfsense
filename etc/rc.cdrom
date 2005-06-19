@@ -9,7 +9,9 @@
 # Start PFI
 /bin/sh /scripts/pfi start
 
-# Make sure our config is where we want it
+# If PFI did not find a config, this will not be
+# a directory.  Go ahead and populate with stock
+# configuration.
 if [ ! -f /cf/conf ]; then
 	mkdir -p /cf/conf
 	/rescue/cp /FreeSBIE/cf/conf/* /cf/conf/

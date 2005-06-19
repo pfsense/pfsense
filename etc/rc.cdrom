@@ -17,7 +17,8 @@ if [ ! -f /cf/conf ]; then
 	/rescue/cp /FreeSBIE/cf/conf/* /cf/conf/
 fi                                          
 
-# More config workarounds
+# If by this time /conf doesn't exist then lets
+# go ahead and link /conf to /cf/conf
 if [ ! -L /conf ]; then       
     /rescue/ln -s /cf/conf /conf
 fi

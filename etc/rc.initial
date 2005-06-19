@@ -53,7 +53,11 @@ echo " 8)  Shell"
 echo " 9)  PFtop"
 echo "10)  Traffic Logs"
 echo
-[ "$PLATFORM" = "cdrom" ] || echo "installer)  Install pfSense to your hard drive" && echo
+
+if [ "$PLATFORM" = "cdrom" ]; then
+    echo "installer)  Install pfSense to your hard drive"
+    echo
+fi
 
 read -p "Enter a number: " opmode
 echo

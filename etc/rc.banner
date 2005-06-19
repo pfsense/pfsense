@@ -39,9 +39,10 @@
 
 	$version = chop(file_get_contents("{$g['etc_path']}/version"));
 	$buildtime = chop(file_get_contents("{$g['etc_path']}/version.buildtime"));
+	$platform = chop(file_get_contents("{$g['etc_path']}/platform"));
 
 	echo <<<EOD
-*** This is pfSense version {$version}
+*** This is pfSense version {$version} - {$platform}
 
     LAN   ->   {$config['interfaces']['lan']['if']}   ->   {$config['interfaces']['lan']['ipaddr']}
     WAN   ->   {$config['interfaces']['wan']['if']}   ->   {$config['interfaces']['wan']['ipaddr']}

@@ -7,13 +7,14 @@
 # originally based on m0n0wall (http://neon1.net/m0n0wall)
 # Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 # All rights reserved.
-# 301204:bkw Two declarations for case10
-CONFIG="/cf/conf/config.xml"
-WORD="https"
+
 # make sure the user can't kill us by pressing Ctrl-C
 trap : 2
 trap : 3
 trap : 4
+
+CONFIG="/cf/conf/config.xml"
+WORD="https"
 
 # Set our operating platform
 PLATFORM=`cat /etc/platform`

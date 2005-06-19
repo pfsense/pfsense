@@ -24,7 +24,7 @@
     INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
     AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
     AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+    oR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
     SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
     INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
     CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
@@ -49,9 +49,9 @@ if(file_exists("/needs_package_sync")) {
 	}
 }
 
-if(file_exists("/trigger_initial_wizard")) {
+if(file_exists("/usr/local/www/trigger_initial_wizard")) {
 	conf_mount_rw();
-	unlink("/trigger_initial_wizard");
+	unlink("/usr/local/www/trigger_initial_wizard");
 	conf_mount_ro();
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -300,6 +300,21 @@ echo "                </td>";
 echo "              </tr>";
 	}
 ?>
+	<tr>
+		<td width="25%" class="vncellt">Disk usage</td>
+			<td width="75%" class="listr">
+<?php
+exec("df -h | grep -w '/' | awk '{ print $5 }' | cut -d '%' -f 1", $dfout);
+$diskusage = trim($dfout[0]);
+
+echo "<img src='bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
+echo "<img src='bar_blue.gif' height='15' width='" . $diskusage . "' border='0' align='absmiddle'>";
+echo "<img src='bar_gray.gif' height='15' width='" . (100 - $diskusage) . "' border='0' align='absmiddle'>";
+echo "<img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
+echo $diskusage . "%";
+?>
+			</td>
+	</tr>
 
 
             </table>
@@ -347,6 +362,15 @@ While(!Connection_Aborted()) {
       echo "document.Tempwidthb.style.width='" . (100 - $Temp) . "';\n";
       echo "document.forms[0].Tempmeter.value = '" . $Temp . "C';\n";
     }
+
+/*
+    exec("df -h | grep -w '/' | awk '{ print $5 }' | cut -d '%' -f 1", $dfout);
+    $diskusage = trim($dfout[0]);
+
+    echo "document.Diskwidtha.style.width='" . $diskusage . "';\n";
+    echo "document.Diskwidthb.style.width='" . (100 - $diskusage) . "';\n";
+    echo "document.forms[0].Diskmeter.value = '" . $diskusage . "%';\n";
+*/
 
     echo "</script>\n";
 

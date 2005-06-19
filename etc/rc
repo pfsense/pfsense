@@ -64,17 +64,11 @@ if [ ! -L /etc/dhclient.conf ]; then
     ln -s /var/etc/dhclient.conf /etc/dhclient.conf
 fi
 
-if [ ! -d /cf/conf/backup/ ]; then
-    mkdir -p /cf/conf/backup/ 2>/dev/null
-fi
+[ ! -d /cf/conf/backup/ ] || mkdir -p /cf/conf/backup/ 2>/dev/null
 
 if [ "$PLATFORM" = "cdrom" ]; then
-
-    ln -s /cf/conf /conf
-
-    if [ ! -f /cf/conf/config.xml ]; then
-	cp /FreeSBIE/cf/conf/* /cf/conf/ 2>/dev/null    
-    fi
+    [ ! -L /cf/conf ] || ln -s /cf/conf /conf
+    [ ! -f /cf/conf/config.xml ] || cp /FreeSBIE/cf/conf/* /cf/conf/ 2>/dev/null    
 fi
 
 set -T

@@ -25,7 +25,10 @@ PLATFORM=`cat /etc/platform`
 
 if [ "$PLATFORM" = "cdrom" ]; then
     /etc/rc.d/freesbie_1st
-    /rescue/ln -s /FreeSBIE/cf /cf
+    if [ ! -f /cf/conf ]; then
+	mkdir -p /cf/conf
+	/rescue/cp /FreeSBIE/cf/conf/* /cf/conf/
+    fi
     /bin/sh /scripts/pfi start
 fi
 

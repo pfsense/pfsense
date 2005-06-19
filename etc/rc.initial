@@ -40,9 +40,12 @@ while : ; do
 
 /etc/rc.banner
 
+echo
+
 # display a cheap menu
-echo "pfSense console setup"
-echo "**********************"
+echo "***********************"
+echo " pfSense console setup "
+echo "***********************"
 echo " 0)  Logout (SSH only)"
 echo " 1)  Assign Interfaces"
 echo " 2)  Set LAN IP address"

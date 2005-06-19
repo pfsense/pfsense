@@ -90,6 +90,9 @@ case ${opmode} in
 10)
 	/usr/sbin/tcpdump -n -e -ttt -i pflog0
 	;;
+installer)
+	/scripts/installer_lua
+	;;
 99)
         if grep "$WORD" "$CONFIG"
         then

@@ -22,6 +22,10 @@ fi
 if [ ! -L /conf ]; then       
     /rescue/ln -s /cf/conf /conf
 fi
+
+# If the default config.xml and ez-ipupdate.cache do not exist,
+# lets populate them from the default (factory configuration)
+# files.
 [ ! -f /cf/conf/config.xml ] || /rescue/cp /FreeSBIE/cf/conf/config.xml /cf/conf/
 [ ! -f /cf/conf/ez-ipupdate.cache ] || /rescue/cp /FreeSBIE/cf/conf/ez-ipupdate.cache /cf/conf/
 

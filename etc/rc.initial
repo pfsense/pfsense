@@ -8,7 +8,8 @@
 # Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 # All rights reserved.
 
-# make sure the user can't kill us by pressing Ctrl-C
+# make sure the user can't kill us by pressing Ctrl-C,
+# ctrl-z, etc.
 trap : 2
 trap : 3
 trap : 4

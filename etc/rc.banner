@@ -52,6 +52,3 @@ EOD;
 		echo "\n   OPT{$i}   ->   {$config['interfaces']['opt' . $i]['if']}   ->   " . $config['interfaces']['opt' . $i]['ipaddr'] .
 			"({$config['interfaces']['opt' . $i]['descr']})";
 ?>
-
-
-

@@ -805,8 +805,9 @@ EOD;
 	echo <<<EOD
 
 If you do not know the names of your interfaces, you may choose to use
-auto-detection. In that case, disconnect all interfaces before you begin,
-and reconnect each one when prompted to do so.
+auto-detection... In that case, disconnect all interfaces now before
+hitting a.   The system will then prompt you to plug in each nic to
+autodetect.
 
 EOD;
 

@@ -101,10 +101,7 @@ echo "done."
 # Create an initial utmp file
 cd /var/run && cp /dev/null utmp && chmod 644 utmp
 
-if [ ! "$PLATFORM" = "cdrom" ]; then
-    # Run ldconfig
-    /sbin/ldconfig -elf /usr/lib /usr/local/lib /lib
-fi
+/sbin/ldconfig -elf /usr/lib /usr/local/lib /lib
 
 /usr/local/bin/php -f /etc/rc.conf_mount_rw
 

@@ -69,8 +69,8 @@ fi
 
 if [ "$PLATFORM" = "cdrom" ]; then
     [ ! -L /conf ] || ln -s /cf/conf /conf
-    [ ! -f /cf/conf/config.xml ] || cp /FreeSBIE/cf/conf/config.xml
-    [ ! -f /cf/conf/ez-ipupdate.cache ] || cp /FreeSBIE/cf/conf/ez-ipupdate.cache
+    [ ! -f /cf/conf/config.xml ] || cp /FreeSBIE/cf/conf/config.xml /cf/conf/
+    [ ! -f /cf/conf/ez-ipupdate.cache ] || cp /FreeSBIE/cf/conf/ez-ipupdate.cache /cf/conf/
     mkdir /var/db/
 fi
 

@@ -1,0 +1,26 @@
+#!/bin/sh
+#
+# rc.cdrom - livedisc specific routines
+# For pfSense
+
+# Run some FreeSBIE routines
+/etc/rc.d/freesbie_1st
+
+# Make sure our config is where we want it
+if [ ! -f /cf/conf ]; then
+	mkdir -p /cf/conf
+	/rescue/cp /FreeSBIE/cf/conf/* /cf/conf/
+fi                                          
+
+# Start PFI
+/bin/sh /scripts/pfi start
+
+# More config workarounds
+if [ ! -L /conf ]; then       
+    /rescue/ln -s /cf/conf /conf
+fi
+[ ! -f /cf/conf/config.xml ] || /rescue/cp /FreeSBIE/cf/conf/config.xml /cf/conf/
+[ ! -f /cf/conf/ez-ipupdate.cache ] || /rescue/cp /FreeSBIE/cf/conf/ez-ipupdate.cache /cf/conf/
+
+# Create some needed directories
+mkdir /var/db

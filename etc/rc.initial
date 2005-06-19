@@ -55,7 +55,8 @@ echo "10)  Traffic Logs"
 echo
 
 if [ "$PLATFORM" = "cdrom" ]; then
-    echo "installer)  Install pfSense to your hard drive"
+    echo "Run installer for the stable BSD Installer"
+    echo "Run installer.lua for the new experimental BSD Installer"
     echo
 fi
 

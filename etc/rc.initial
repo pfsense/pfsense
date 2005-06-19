@@ -59,7 +59,7 @@ if [ "$PLATFORM" = "cdrom" ]; then
     echo
 fi
 
-read -p "Enter a number: " opmode
+read -p "Enter an option: " opmode
 echo
 
 # see what the user has chosen

@@ -102,7 +102,7 @@ installer.lua)
 	/scripts/lua_installer
 	;;
 installer)
-	/scripts/installer
+	/scripts/installer.sh
 	;;
 99)
         if grep "$WORD" "$CONFIG"

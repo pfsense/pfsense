@@ -15,6 +15,9 @@ trap : 2
 trap : 3
 trap : 4
 
+# Set our operating platform
+PLATFORM=`cat /etc/platform`
+
 if [ -r /var/etc/disableconsole ]; then
 
 while : ; do
@@ -50,6 +53,7 @@ echo " 8)  Shell"
 echo " 9)  PFtop"
 echo "10)  Traffic Logs"
 echo
+[ "$PLATFORM" = "cdrom" ] || echo "installer)  Install pfSense to your hard drive"
 
 read -p "Enter a number: " opmode
 echo

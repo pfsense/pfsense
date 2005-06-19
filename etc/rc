@@ -116,6 +116,8 @@ fi
 
 /usr/local/bin/php -f /etc/rc.conf_mount_rw
 
+exit
+
 # let the PHP-based configuration subsystem set up the system now
 /etc/rc.bootup
 

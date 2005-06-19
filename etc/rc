@@ -69,7 +69,9 @@ if [ ! -d /cf/conf/backup/ ]; then
 fi
 
 if [ "$PLATFORM" = "cdrom" ]; then
+
     ln -s /cf/conf /conf
+
     if [ ! -f /cf/conf/config.xml ]; then
 	cp /FreeSBIE/cf/conf/* /cf/conf/ 2>/dev/null    
     fi

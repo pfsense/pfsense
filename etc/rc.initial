@@ -43,6 +43,7 @@ while : ; do
 echo
 
 # display a cheap menu
+echo
 echo "***********************"
 echo " pfSense console setup "
 echo "***********************"

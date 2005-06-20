@@ -105,6 +105,20 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 	}
 }
 
+function get_pkg_sizes($pkgs = 'all') {
+	global $g;
+        $params = array("pkg" => $pkgs);
+        $msg = new XML_RPC_Message('pfsense.get_pkg_sizes', array(php_value_to_xmlrpc($params)));
+        $cli = new XML_RPC_Client($g['xmlrpcpath'], $g['xmlrpcbaseurl']);
+        $resp = $cli->send($msg, 10);  
+        if($resp and !$resp->faultCode()) {
+                $raw_versions = $resp->value();
+                return xmlrpc_value_to_php($raw_versions);
+        } else {
+                return array();
+        } 
+}
+
 /*
  * resync_all_package_configs() Force packages to setup their configuration and rc.d files.
  * This function may also print output to the terminal indicating progress.
@@ -725,5 +739,49 @@ function delete_package_xml($pkg) {
 	}
 	fclose($tmptab);
 	rename("/tmp/crontab", "/etc/crontab");
+}
+
+function expand_to_bytes($size) {
+	$conv = array(
+			"G" =>	"3",
+			"M" =>  "2",
+			"K" =>  "1",
+			"B" =>  "0"
+		);
+	$suffix = substr($size, -1);
+	if(!in_array($suffix, array_keys($conv))) return $size;
+	$size = substr($size, 0, -1);
+	for($i = 0; $i < $conv[$suffix]; $i++) {
+		$size *= 1024;
+	}
+	return $size;
+}
+
+function get_pkg_db() {
+	global $g;
+	return return_dir_as_array($g['vardb_path'] . '/pkg');
+}
+
+function walk_depend($depend, $pkgdb = "") {
+	if(!$pkgdb) $pkgdb = get_pkg_db();
+	foreach($depend as $adepend) {
+		$pkgname = reverse_strrchr($adepend['name'], '.');
+		if(!in_array($pkgname, $pkgdb)) $size += expand_to_bytes($adepend['size']);
+		if(is_array($adepend['depend'])) $size += walk_depend($adepend['depend'], $pkgdb);
+	}
+	return $size;
+}
+
+function get_package_install_size($pkg = 'all', $pkg_info = "") {
+	global $config, $g;
+	if((!is_array($pkg)) and ($pkg != 'all')) $pkg = array($pkg);
+	$pkgdb = get_pkg_db();
+	if(!$pkg_info) $pkg_info = get_pkg_sizes($pkg);
+	foreach($pkg as $apkg) {
+		$size = 0;
+		if(!$pkg_info[$apkg]) continue;
+		$size += expand_to_bytes(walk_depend($depend, $pkgdb));
+		$toreturn[$apkg] = $size;
+	}
 }
 ?>

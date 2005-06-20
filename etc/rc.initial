@@ -61,7 +61,6 @@ echo
 
 if [ "$PLATFORM" = "cdrom" ]; then
     echo "Run installer for the stable BSD Installer"
-    echo "Run installer.lua for the new experimental BSD Installer"
     echo
 fi
 

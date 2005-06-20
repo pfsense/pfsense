@@ -29,7 +29,6 @@
 */
 
 require("guiconfig.inc");
-require("xmlparse_pkg.inc");
 require("pkg-utils.inc");
 
 function gentitle_pkg($pgname) {

@@ -30,7 +30,6 @@
 */
 
 require_once("guiconfig.inc");
-require_once("xmlparse_pkg.inc");
 require_once("pkg-utils.inc");
 
 $static_output = "";

@@ -29,7 +29,6 @@
 */
 
 require_once("guiconfig.inc");
-require_once("xmlparse_pkg.inc");
 require_once("xmlrpc.inc");
 
 ?>

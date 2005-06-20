@@ -41,7 +41,6 @@
 */
 
 require_once("guiconfig.inc");
-require_once("xmlparse_pkg.inc");
 require_once("pkg-utils.inc");
 
 $pfSense_config = $config; // copy this since we will be parsing

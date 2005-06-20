@@ -778,7 +778,6 @@ function walk_depend($depend, $pkgdb = "", $alreadyseen = "") {
 			continue;
 		}
 	}
-	print $size;
 	return $size;
 }
 
@@ -793,5 +792,17 @@ function get_package_install_size($pkg = 'all', $pkg_info = "") {
 		$toreturn[$apkg] = expand_to_bytes(walk_depend(array($pkg_info[$apkg]), $pkgdb));
 	}
 	return $toreturn;
+}
+
+function squash_from_bytes($size) {
+	$conv = array(1 => "B", "K", "M", "G");
+	print_r($conv);
+	foreach($conv as $div => $suffix) {
+		$sizeorig = $size;
+		if(($size /= 1024) < 1) {
+			return $sizeorig . $suffix;
+		}
+	}
+	return;
 }
 ?>

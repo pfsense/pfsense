@@ -33,7 +33,6 @@
 /* omit no-cache headers because it confuses IE with file downloads */
 $omit_nocacheheaders = true;
 require("guiconfig.inc");
-require("xmlparse.inc");
 
 function spit_out_select_items($area) {
 	$select = <<<EOD

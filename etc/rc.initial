@@ -44,7 +44,6 @@ echo
 
 # display a cheap menu
 echo
-echo "***********************"
 echo " pfSense console setup "
 echo "***********************"
 echo " 0)  Logout (SSH only)"

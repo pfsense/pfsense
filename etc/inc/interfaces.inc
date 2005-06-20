@@ -522,7 +522,7 @@ EOD;
         mwexec("/sbin/ifconfig {$wanif} up");
 
         /* fire up dhclient */
-        mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient.conf {$wanif}");
+        mwexec_bg("/sbin/dhclient -c {$g['varetc_path']}/dhclient.conf {$wanif}");
 
 	return 0;
 }

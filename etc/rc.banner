@@ -42,6 +42,7 @@
 	$platform = chop(file_get_contents("{$g['etc_path']}/platform"));
 
 	echo <<<EOD
+	
 *** This is pfSense version {$version} - {$platform} ***
 
     LAN   ->   {$config['interfaces']['lan']['if']}   ->   {$config['interfaces']['lan']['ipaddr']}

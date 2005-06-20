@@ -796,7 +796,6 @@ function get_package_install_size($pkg = 'all', $pkg_info = "") {
 
 function squash_from_bytes($size) {
 	$conv = array(1 => "B", "K", "M", "G");
-	print_r($conv);
 	foreach($conv as $div => $suffix) {
 		$sizeorig = $size;
 		if(($size /= 1024) < 1) {

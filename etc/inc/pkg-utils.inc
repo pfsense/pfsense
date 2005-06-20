@@ -41,10 +41,11 @@ $listtags = array_merge($listtags, array("onetoone", "queue", "rule", "servernat
 require_once("pfsense-utils.inc");
 require_once("globals.inc");
 
+/*
 safe_mkdir("/var/db/pkg");
 safe_mkdir("/usr/local/pkg");
 safe_mkdir("/usr/local/pkg/pf");
-
+*/
 
 /****f* pkg-utils/is_package_installed
  * NAME
@@ -762,13 +763,22 @@ function get_pkg_db() {
 	return return_dir_as_array($g['vardb_path'] . '/pkg');
 }
 
-function walk_depend($depend, $pkgdb = "") {
+function walk_depend($depend, $pkgdb = "", $alreadyseen = "") {
 	if(!$pkgdb) $pkgdb = get_pkg_db();
+	if(!$alreadyseen) $alreadyseen = array();
 	foreach($depend as $adepend) {
 		$pkgname = reverse_strrchr($adepend['name'], '.');
-		if(!in_array($pkgname, $pkgdb)) $size += expand_to_bytes($adepend['size']);
-		if(is_array($adepend['depend'])) $size += walk_depend($adepend['depend'], $pkgdb);
+		if(in_array($pkgname, $alreadyseen)) {
+			continue;
+		} elseif(!in_array($pkgname, $pkgdb)) {
+			$size += expand_to_bytes($adepend['size']);
+			$alreadyseen[] = $pkgname;
+			if(is_array($adepend['depend'])) $size += walk_depend($adepend['depend'], $pkgdb, $alreadyseen);
+		} else {
+			continue;
+		}
 	}
+	print $size;
 	return $size;
 }
 
@@ -780,8 +790,8 @@ function get_package_install_size($pkg = 'all', $pkg_info = "") {
 	foreach($pkg as $apkg) {
 		$size = 0;
 		if(!$pkg_info[$apkg]) continue;
-		$size += expand_to_bytes(walk_depend($depend, $pkgdb));
-		$toreturn[$apkg] = $size;
+		$toreturn[$apkg] = expand_to_bytes(walk_depend(array($pkg_info[$apkg]), $pkgdb));
 	}
+	return $toreturn;
 }
 ?>

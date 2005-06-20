@@ -70,13 +70,8 @@ include("fbegin.inc");
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
 
-if(in_array($g['platform'], $g['nopkg_platforms'])) {
-	print_info_box("Packages are not available on this platform.");
-	include("fbegin.inc");
-	echo '</body></html>';
-}
-
 $pkg_info = get_pkg_info('all', array('name', 'category', 'website', 'version', 'status', 'descr'));
+$pkg_sizes = get_pkg_sizes();
 
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
@@ -91,7 +86,8 @@ $pkg_info = get_pkg_info('all', array('name', 'category', 'website', 'version', 
                 <tr>
                   <td width="10%" class="listhdrr">Package Name</td>
                   <td width="25%" class="listhdrr">Category</td>
-				  <td width="5%" class="listhdrr">Status</td>
+		  <td width="20%" class="listhdrr">Size</td>
+		  <td width="5%" class="listhdrr">Status</td>
                   <td width="50%" class="listhdr">Description</td>
                 </tr>
 
@@ -117,8 +113,15 @@ $pkg_info = get_pkg_info('all', array('name', 'category', 'website', 'version', 
                                 </td>
                                 <td class="listlr">
                                     <?= $index['category'] ?>
-    							</td>
-                                <td class="listlr">
+    				</td>
+				<?php
+					$size = get_package_install_size($index['name'], $pkg_sizes);
+                               		$size = squash_from_bytes($size[$index['name']], 1);
+				?>
+				<td class="listlr">
+					<?= $size ?>
+				</td>
+				<td class="listlr">
 									<?= $index['status'] ?>
 									<br>
 									<?= $index['version'] ?>

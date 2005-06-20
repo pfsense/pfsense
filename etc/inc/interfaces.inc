@@ -504,9 +504,10 @@ function interfaces_wan_dhcp_configure() {
 
  	if ($wancfg['dhcphostname']) {
 		$dhclientconf .= <<<EOD
-send dhcp-client-identifier "{$wancfg['dhcphostname']}";
-interface "{$wancfg['if']}" {
+	send dhcp-client-identifier "{$wancfg['dhcphostname']}";
+	interface "{$wancfg['if']}" {
 	send host-name "{$wancfg['dhcphostname']}";
+	
 }
 
 EOD;
@@ -515,12 +516,13 @@ EOD;
 	fwrite($fd, $dhclientconf);
 	fclose($fd);
 	
+	$wanif = $wancfg['if'];
+	
         /* bring wan interface up before starting dhclient */
-        mwexec("/sbin/ifconfig {$wancfg['if']} up");
+        mwexec("/sbin/ifconfig {$wanif} up");
 
-        /* fire up dhclient - don't wait for the lease (-nw) */
-        mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient.conf " .
-                escapeshellarg($wancfg['if']) . " &");
+        /* fire up dhclient */
+        mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient.conf {$wanif} &";
 
 	return 0;
 }

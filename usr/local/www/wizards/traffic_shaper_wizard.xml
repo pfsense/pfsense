@@ -110,15 +110,9 @@
                 $queue['realtime2'] = "1";
                 $queue['realtime3'] = "10%";
                 $queue['upperlimit'] = "on";
-                $queue['upperlimit1'] = "90%";
+                $queue['upperlimit1'] = "100%";
                 $queue['upperlimit2'] = "1";
-                $queue['upperlimit3'] = "90%";
-                $queue['linkshare'] = "on";
-                $queue['linkshare1'] = "1%";
-                $queue['linkshare2'] = "1";
-                $queue['linkshare3'] = "1%";
-		$queue['bandwidth'] = "0";
-		$queue['bandwidthtype'] = "Kb";
+                $queue['upperlimit3'] = "100%";
                 $config['shaper']['queue'][] = $queue;
 
 		/* LAN queue */
@@ -142,14 +136,10 @@
                 $queue['realtime2'] = "1";
                 $queue['realtime3'] = "10%";
                 $queue['upperlimit'] = "on";
-                $queue['upperlimit1'] = "90%";
+                $queue['upperlimit1'] = "100%";
                 $queue['upperlimit2'] = "1";
-                $queue['upperlimit3'] = "90%";
-                $queue['linkshare'] = "on";
-                $queue['linkshare1'] = "1%";
-                $queue['linkshare2'] = "1";
-                $queue['linkshare3'] = "1%";
-		$queue['bandwidth'] = "0";
+                $queue['upperlimit3'] = "100%";
+		$queue['bandwidth'] = 0;
 		$queue['bandwidthtype'] = "Kb";
                 $config['shaper']['queue'][] = $queue;
 
@@ -164,14 +154,10 @@
                 $queue['realtime2'] = "1";
                 $queue['realtime3'] = "10%";
                 $queue['upperlimit'] = "on";
-                $queue['upperlimit1'] = "90%";
+                $queue['upperlimit1'] = "80%";
                 $queue['upperlimit2'] = "1";
-                $queue['upperlimit3'] = "90%";
-                $queue['linkshare'] = "on";
-                $queue['linkshare1'] = "1%";
-                $queue['linkshare2'] = "1";
-                $queue['linkshare3'] = "1%";
-		$queue['bandwidth'] = "0";
+                $queue['upperlimit3'] = "80%";
+		$queue['bandwidth'] = 0;
 		$queue['bandwidthtype'] = "Kb";
                 $config['shaper']['queue'][] = $queue;
 
@@ -186,14 +172,10 @@
                 $queue['realtime2'] = "1";
                 $queue['realtime3'] = "10%";
                 $queue['upperlimit'] = "on";
-                $queue['upperlimit1'] = "90%";
+                $queue['upperlimit1'] = "80%";
                 $queue['upperlimit2'] = "1";
-                $queue['upperlimit3'] = "90%";
-                $queue['linkshare'] = "on";
-                $queue['linkshare1'] = "1%";
-                $queue['linkshare2'] = "1";
-                $queue['linkshare3'] = "1%";
-		$queue['bandwidth'] = "0";
+                $queue['upperlimit3'] = "80%";
+		$queue['bandwidth'] = 0;
 		$queue['bandwidthtype'] = "Kb";
                 $config['shaper']['queue'][] = $queue;
 
@@ -347,12 +329,8 @@
  	                $queue['upperlimit1'] = $_POST['bandwidth'] . "Kb";
  	                $queue['upperlimit2'] = "1";
  	                $queue['upperlimit3'] = $_POST['bandwidth'] . "Kb";
- 	                $queue['linkshare'] = "on";
- 	                $queue['linkshare1'] = $_POST['bandwidth'] . "Kb";
- 	                $queue['linkshare2'] = "1";
- 	                $queue['linkshare3'] = $_POST['bandwidth'] . "Kb";
-			$queue['bandwidth'] = "0";
-			$queue['bandwidthtype'] = "Kb";
+		$queue['bandwidth'] = 0;
+		$queue['bandwidthtype'] = "Kb";
  	                $queue['attachtoqueue'] = "qWANRoot";
  	                $config['shaper']['queue'][] = $queue;
 
@@ -370,12 +348,8 @@
  	                $queue['upperlimit1'] = $_POST['bandwidth'] . "Kb";
  	                $queue['upperlimit2'] = "1";
  	                $queue['upperlimit3'] = $_POST['bandwidth'] . "Kb";
- 	                $queue['linkshare'] = "on";
- 	                $queue['linkshare1'] = $_POST['bandwidth'] . "Kb";
- 	                $queue['linkshare2'] = "1";
- 	                $queue['linkshare3'] = $_POST['bandwidth'] . "Kb";
-			$queue['bandwidth'] = "0";
-			$queue['bandwidthtype'] = "Kb";
+		$queue['bandwidth'] = 0;
+		$queue['bandwidthtype'] = "Kb";
  	                $queue['attachtoqueue'] = "qLANRoot";
  	                $config['shaper']['queue'][] = $queue;			
 
@@ -695,17 +669,13 @@
 		$queue['ecn'] = "on";
 		$queue['realtime'] = "on";
 		$queue['realtime1'] = "1Kb";
-		$queue['realtime2'] = "1";
+		$queue['realtime2'] = "10";
 		$queue['realtime3'] = "1Kb";
 		$queue['upperlimit'] = "on";
-		$queue['upperlimit1'] = "90%";
+		$queue['upperlimit1'] = "100%";
 		$queue['upperlimit2'] = "1";
-		$queue['upperlimit3'] = "90%";
-		$queue['linkshare'] = "on";
-		$queue['linkshare1'] = "0%";
-		$queue['linkshare2'] = "1";
-		$queue['linkshare3'] = "0%";
-		$queue['bandwidth'] = "0";
+		$queue['upperlimit3'] = "100%";
+		$queue['bandwidth'] = 0;
 		$queue['bandwidthtype'] = "Kb";
 		$queue['attachtoqueue'] = "qWANRoot";
 		$config['shaper']['queue'][] = $queue;
@@ -722,14 +692,10 @@
 		$queue['realtime2'] = "1";
 		$queue['realtime3'] = "1Kb";
 		$queue['upperlimit'] = "on";
-		$queue['upperlimit1'] = "90%";
+		$queue['upperlimit1'] = "100%";
 		$queue['upperlimit2'] = "1";
-		$queue['upperlimit3'] = "90%";
-		$queue['linkshare'] = "on";
-		$queue['linkshare1'] = "1%";
-		$queue['linkshare2'] = "1";
-		$queue['linkshare3'] = "1%";
-		$queue['bandwidth'] = "0";
+		$queue['upperlimit3'] = "100%";
+		$queue['bandwidth'] = 0;
 		$queue['bandwidthtype'] = "Kb";
 		$queue['attachtoqueue'] = "qLANRoot";
 		$config['shaper']['queue'][] = $queue;
@@ -817,14 +783,10 @@
 		$queue['realtime2'] = "1";
 		$queue['realtime3'] = "1Kb";
 		$queue['upperlimit'] = "on";
-		$queue['upperlimit1'] = "90%";
-		$queue['upperlimit2'] = "1";
-		$queue['upperlimit3'] = "90%";
-		$queue['linkshare'] = "on";
-		$queue['linkshare1'] = "1%";
-		$queue['linkshare2'] = "1";
-		$queue['linkshare3'] = "1%";
-		$queue['bandwidth'] = "0";
+		$queue['upperlimit1'] = "100%";
+		$queue['upperlimit2'] = "10";
+		$queue['upperlimit3'] = "100%";
+		$queue['bandwidth'] = 0;
 		$queue['bandwidthtype'] = "Kb";
 		$queue['attachtoqueue'] = "qWANRoot";
 		$config['shaper']['queue'][] = $queue;
@@ -841,14 +803,10 @@
 		$queue['realtime2'] = "1";
 		$queue['realtime3'] = "1Kb";
 		$queue['upperlimit'] = "on";
-		$queue['upperlimit1'] = "90%";
-		$queue['upperlimit2'] = "1";
-		$queue['upperlimit3'] = "90%";
-		$queue['linkshare'] = "on";
-		$queue['linkshare1'] = "1%";
-		$queue['linkshare2'] = "1";
-		$queue['linkshare3'] = "1%";
-		$queue['bandwidth'] = "0";
+		$queue['upperlimit1'] = "100%";
+		$queue['upperlimit2'] = "10";
+		$queue['upperlimit3'] = "100%";
+		$queue['bandwidth'] = 0;
 		$queue['bandwidthtype'] = "Kb";
 		$queue['attachtoqueue'] = "qLANRoot";
 		$config['shaper']['queue'][] = $queue;
@@ -951,7 +909,7 @@
                         <type>checkbox</type>
                         <typehint>Other networking protocols</typehint>
                         <description>This will help raise the priority of other protocols higher than most traffic.</description>
-			<enablefields>MSRDP,PPTP,IPSEC,StreamingMP3,IRC,DNS,HTTP,SMTP,POP3,ICMP,IMAP</enablefields>
+			<enablefields>MSRDP,PPTP,IPSEC,StreamingMP3,IRC,DNS,HTTP,SMTP,POP3,ICMP,IMAP,SMB</enablefields>
 			<donotdisable>true</donotdisable>
 			<bindstofield>ezshaper->step6->enable</bindstofield>
                 </field>
@@ -1218,14 +1176,10 @@
 		$queue['realtime2'] = "1";
 		$queue['realtime3'] = "1Kb";
 		$queue['upperlimit'] = "on";
-		$queue['upperlimit1'] = "90%";
+		$queue['upperlimit1'] = "100%";
 		$queue['upperlimit2'] = "1";
-		$queue['upperlimit3'] = "90%";
-		$queue['linkshare'] = "on";
-		$queue['linkshare1'] = "1%";
-		$queue['linkshare2'] = "1";
-		$queue['linkshare3'] = "1%";
-		$queue['bandwidth'] = "0";
+		$queue['upperlimit3'] = "100%";
+		$queue['bandwidth'] = 0;
 		$queue['bandwidthtype'] = "Kb";
 		$queue['attachtoqueue'] = "qWANRoot";
 		$config['shaper']['queue'][] = $queue;
@@ -1242,14 +1196,10 @@
 		$queue['realtime2'] = "1";
 		$queue['realtime3'] = "1Kb";
 		$queue['upperlimit'] = "on";
-		$queue['upperlimit1'] = "90%";
+		$queue['upperlimit1'] = "100%";
 		$queue['upperlimit2'] = "1";
-		$queue['upperlimit3'] = "90%";
-		$queue['linkshare'] = "on";
-		$queue['linkshare1'] = "1%";
-		$queue['linkshare2'] = "1";
-		$queue['linkshare3'] = "1%";
-		$queue['bandwidth'] = "0";
+		$queue['upperlimit3'] = "100%";
+		$queue['bandwidth'] = 0;
 		$queue['bandwidthtype'] = "Kb";
 		$queue['attachtoqueue'] = "qLANRoot";
 		$config['shaper']['queue'][] = $queue;
@@ -1267,14 +1217,10 @@
 		$queue['realtime2'] = "1";
 		$queue['realtime3'] = "1Kb";
 		$queue['upperlimit'] = "on";
-		$queue['upperlimit1'] = "90%";
+		$queue['upperlimit1'] = "100%";
 		$queue['upperlimit2'] = "1";
-		$queue['upperlimit3'] = "90%";
-		$queue['linkshare'] = "on";
-		$queue['linkshare1'] = "1%";
-		$queue['linkshare2'] = "1";
-		$queue['linkshare3'] = "1%";
-		$queue['bandwidth'] = "0";
+		$queue['upperlimit3'] = "100%";
+		$queue['bandwidth'] = 0;
 		$queue['bandwidthtype'] = "Kb";
 		$queue['attachtoqueue'] = "qWANRoot";
 		$config['shaper']['queue'][] = $queue;
@@ -1291,14 +1237,10 @@
 		$queue['realtime2'] = "1";
 		$queue['realtime3'] = "1Kb";
 		$queue['upperlimit'] = "on";
-		$queue['upperlimit1'] = "90%";
+		$queue['upperlimit1'] = "100%";
 		$queue['upperlimit2'] = "1";
-		$queue['upperlimit3'] = "90%";
-		$queue['linkshare'] = "on";
-		$queue['linkshare1'] = "1%";
-		$queue['linkshare2'] = "1";
-		$queue['linkshare3'] = "1%";
-		$queue['bandwidth'] = "0";
+		$queue['upperlimit3'] = "100%";
+		$queue['bandwidth'] = 0;
 		$queue['bandwidthtype'] = "Kb";
 		$queue['attachtoqueue'] = "qLANRoot";
 		$config['shaper']['queue'][] = $queue;

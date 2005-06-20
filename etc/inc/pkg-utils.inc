@@ -276,8 +276,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
         $static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $pkgname . " ";
         $fetchto = "/tmp/apkg_" . $pkgname . $pkg_extension;
 	download_file_with_progress_bar($base_url . '/' . $filename, $fetchto);
-//      update_output_window($static_output . "\n\n" . $pkg_progress);
-        exec("/usr/bin/tar -O -f {$fetchto} -x +CONTENTS", $slaveout);
+        exec("/usr/bin/tar --fast-read -O -f {$fetchto} -x +CONTENTS", $slaveout);
         $workingdir = preg_grep("/instmp/", $slaveout);
         $workingdir = $workingdir[0];
         $raw_depends_list = array_values(preg_grep("/\@pkgdep/", $slaveout));
@@ -288,7 +287,6 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
                         $working_depend = explode(" ", $adepend);
                         //$working_depend = explode("-", $working_depend[1]);
                         $depend_filename = $working_depend[1] . $pkg_extension;
-//                      $is_installed = array_values(preg_grep("/\b{$working_depend[0]}\b/i", $is_installed));
                         if(is_freebsd_pkg_installed($working_depend[1]) === false) {
                                 pkg_fetch_recursive($working_depend[1], $depend_filename, $dependlevel + 1, $base_url);
                         } else {
@@ -794,11 +792,14 @@ function get_package_install_size($pkg = 'all', $pkg_info = "") {
 	return $toreturn;
 }
 
-function squash_from_bytes($size) {
+function squash_from_bytes($size, $round = "") {
 	$conv = array(1 => "B", "K", "M", "G");
 	foreach($conv as $div => $suffix) {
 		$sizeorig = $size;
 		if(($size /= 1024) < 1) {
+			if($round) {
+				$sizeorig = round($sizeorig, $round);
+			}
 			return $sizeorig . $suffix;
 		}
 	}

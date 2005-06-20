@@ -86,7 +86,7 @@ $pkg_sizes = get_pkg_sizes();
                 <tr>
                   <td width="10%" class="listhdrr">Package Name</td>
                   <td width="25%" class="listhdrr">Category</td>
-		  <td width="20%" class="listhdrr">Size</td>
+		  <td width="10%" class="listhdrr">Size</td>
 		  <td width="5%" class="listhdrr">Status</td>
                   <td width="50%" class="listhdr">Description</td>
                 </tr>

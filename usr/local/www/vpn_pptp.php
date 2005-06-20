@@ -306,12 +306,8 @@ function enable_change(enable_over) {
                     <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
                   </td>
                 </tr>
-                <tr>
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"><span class="vexpl"><span class="red"><strong>Note:<br></td>
-                </tr>
               </table>
-			</td>
+	    </td>
 	</tr>
 </table>
 </form>

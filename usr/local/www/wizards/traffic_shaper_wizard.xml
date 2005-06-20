@@ -195,6 +195,14 @@
 			<bindstofield>ezshaper->step3->enable</bindstofield>
                 </field>
                 <field>
+                        <name>Next</name>
+                        <type>submit</type>
+                </field>
+                <field>
+                        <name>VOIP specific settings</name>
+                        <type>listtopic</type>
+                </field>
+                <field>
                         <name>Provider</name>
                         <type>select</type>
 			<description>Choose Generic if your provider isn't listed.</description>
@@ -348,8 +356,8 @@
  	                $queue['upperlimit1'] = $_POST['bandwidth'] . "Kb";
  	                $queue['upperlimit2'] = "1";
  	                $queue['upperlimit3'] = $_POST['bandwidth'] . "Kb";
-		$queue['bandwidth'] = 0;
-		$queue['bandwidthtype'] = "Kb";
+			$queue['bandwidth'] = 0;
+			$queue['bandwidthtype'] = "Kb";
  	                $queue['attachtoqueue'] = "qLANRoot";
  	                $config['shaper']['queue'][] = $queue;			
 
@@ -718,7 +726,11 @@
 			<bindstofield>ezshaper->step5->enable</bindstofield>
                 </field>
                 <field>
-                        <name>Enable/Disable specific P2P protocols</name>
+                        <name>Next</name>
+                        <type>submit</type>
+                </field>
+                <field>
+                        <name>Enable/Disable specific games</name>
                         <type>listtopic</type>
                 </field>		
                 <field>
@@ -908,10 +920,14 @@
                         <name>Enable</name>
                         <type>checkbox</type>
                         <typehint>Other networking protocols</typehint>
-                        <description>This will help raise the priority of other protocols higher than most traffic.</description>
+                        <description>This will help raise or lower the priority of other protocols higher than most traffic.</description>
 			<enablefields>MSRDP,PPTP,IPSEC,StreamingMP3,IRC,DNS,HTTP,SMTP,POP3,ICMP,IMAP,SMB</enablefields>
 			<donotdisable>true</donotdisable>
 			<bindstofield>ezshaper->step6->enable</bindstofield>
+                </field>
+                <field>
+                        <name>Next</name>
+                        <type>submit</type>
                 </field>
                 <field>
                         <name>Enable/Disable other protocols</name>

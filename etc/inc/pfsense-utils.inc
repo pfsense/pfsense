@@ -824,11 +824,11 @@ function safe_mkdir($path, $mode=0755) {
 	/* cdrom is ro. */
 	if($g['platform'] == "cdrom")
 		return false;
-
-	if(is_dir($path))
-	    return;
-
-	make_dirs($path, $mode);
+	
+	if (!is_file($path) && !is_dir($path))
+		return mkdir($path, $mode);
+	else
+		return false;
 }
 
 /*
@@ -839,10 +839,10 @@ function make_dirs($path, $mode = 0755) {
 	/* is dir already created? */
 	if(is_dir($path)) return;
 	/* create directory in question */
-	$to_create = split("/", $path);
+	$to_create = explode("/", $path);
 	foreach($to_create as $tc) 
 	    if(!is_dir($tc))
-		make_dirs($path, $mode);
+		safe_mkdir($path, $mode);
 }
 
 /*

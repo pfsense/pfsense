@@ -679,7 +679,7 @@ function restore_config_section($section, $new_contents) {
     $fout = fopen("{$g['tmp_path']}/tmpxml","w");
     fwrite($fout, $new_contents);
     fclose($fout);
-    $section_xml = parse_xml_config_pkg($g['tmp_path'] . "/tmpxml", $section);
+    $section_xml = parse_xml_config($g['tmp_path'] . "/tmpxml", $section);
     $config[$section] = &$section_xml;
     unlink($g['tmp_path'] . "/tmpxml");
     write_config("Restored {$section} of config file (maybe from CARP partner)");
@@ -812,10 +812,10 @@ function safe_mkdir($path, $mode=0755) {
 	global $g;
 	
 	if($g['platform'] == "cdrom")
-		return;	
+		return false;;	
 	
 	if (!is_file($path) && !is_dir($path))
-		return mkdir($path, $mode);
+		return make_dirs($path, $mode);
 	else
 		return false;
 }
@@ -829,54 +829,13 @@ function make_dirs($path, $mode = 0755)
 	return is_dir($path) || (make_dirs(dirname($path), $mode) && safe_mkdir($path, $mode));
 }
 
-/****f* pfsense-utils/auto_upgrade
- * NAME
- *   auto_upgrade - pfSense autoupdate handler.
- * FUNCTION
- *   Begin the pfSense autoupdate process. This function calls check_firmware_version to get
- *   a list of current versions and then loops through them, applying binary diffs etc.
- * RESULT
- *   null
- * BUGS
- *   This function needs to have logic in place to automatically switch over to full updates
- *   if a certain amount of binary diffs do not apply successfully.
- * SEE ALSO
- *   pfsense.utils/check_firmware_version
- ******/
-function auto_upgrade() {
-        global $config, $g;
-	if (isset($config['system']['alt_firmware_url']['enabled'])) {
-                $firmwareurl=$config['system']['alt_firmware_url']['firmware_base_url'];
-                $firmwarepath=$config['system']['alt_firmware_url']['firmware_filename'];
-        } else {
-                $firmwareurl=$g['firmwarebaseurl'];
-                $firmwarepath=$g['firmwarefilename'];
-        }
-        if($config['system']['proxy_auth_username'] <> "")
-	    $http_auth_username = $config['system']['proxy_auth_username'];
-        if($config['system']['proxy_auth_password'] <> "")
-	    $http_auth_password = $config['system']['proxy_auth_password'];
-        if (isset($config['system']['alt_firmware_url']['enabled'])) {
-                $firmwareurl=$config['system']['alt_firmware_url']['firmware_base_url'];
-                $firmwarename=$config['system']['alt_firmware_url']['firmware_filename'];
-        } else {
-                $firmwareurl=$g['firmwarebaseurl'];
-                $firmwarename=$g['firmwarefilename'];
-        }
-        exec_rc_script_async("/etc/rc.firmware_auto {$firmwareurl} {$firmwarename} {$http_auth_username} {$http_auth_password}");
-	return;
-}
-
 /*
  * check_firmware_version(): Check whether the current firmware installed is the most recently released.
  */
 function check_firmware_version($tocheck = "all", $return_php = true) {
         global $g;
-	$versioncheck_base_url = $g['versioncheckbaseurl'];
-        $versioncheck_path = $g['versioncheckpath'];
-        if(isset($config['system']['alt_firmware_url']['enabled']) and isset($config['system']['alt_firmware_url']['versioncheck_base_url'])) {
-                $versioncheck_base_url = $config['system']['alt_firmware_url']['versioncheck_base_url'];
-	}
+	$xmlrpc_base_url = $g['xmlrpcbaseurl'];
+        $xmlrpc_path = $g['xmlrpcpath'];
 	$rawparams = array("firmware" => array("version" => trim(file_get_contents('/etc/version'))),
 			"kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel'))),
 			"base"     => array("version" => trim(file_get_contents('/etc/version_base'))),
@@ -895,7 +854,7 @@ function check_firmware_version($tocheck = "all", $return_php = true) {
 	}
 	$xmlparams = php_value_to_xmlrpc($params);
         $msg = new XML_RPC_Message('pfsense.get_firmware_version', array($xmlparams));
-        $cli = new XML_RPC_Client($versioncheck_path, $versioncheck_base_url);
+        $cli = new XML_RPC_Client($xmlrpc_path, $xmlrpc_base_url);
 	$resp = $cli->send($msg, 10);
 	if(!$resp or $resp->faultCode()) {
 		$raw_versions = false;
@@ -906,10 +865,26 @@ function check_firmware_version($tocheck = "all", $return_php = true) {
 	return $raw_versions;
 }
 
-function get_disk_info() {
-	exec("df -h | grep -w '/' | awk '{ print $2, $3, $4, $5 }'", $diskout);
-	return explode(' ', $diskout[0]);
-	// $size, $used, $avail, $cap
+/*
+ * fetch_latest_pkg_config: download the latest pkg_config.xml to /tmp/ directory
+ */
+function fetch_latest_pkg_config() {
+    global $g;
+    global $config;
+    if(!file_exists("{$g['tmp_path']}/pkg_config.xml")) {
+	$pkg_config_location = $g['pkg_config_location'];
+	$pkg_config_base_url = $g['pkg_config_base_url'];
+	if(isset($config['system']['alt_pkgconfig_url']['enabled'])) {
+	    $pkg_config_location = $config['system']['alt_pkgconfig_url']['pkgconfig_base_url'] . $config['system']['alt_pkgconfig_url']['pkgconfig_filename'];
+	    $pkg_config_base_url = $config['system']['alt_pkgconfig_url']['pkgconfig_base_url'];
+	}
+	mwexec("/usr/bin/fetch -o {$g['tmp_path']}/pkg_config.xml {$pkg_config_location}");
+	if(!file_exists("{$g['tmp_path']}/pkg_config.xml")) {
+	    print_info_box_np("Could not download pkg_config.xml from " . $pkg_config_base_url . ". Check your DNS settings.");
+	    die;
+    	}
+    }
+    return;
 }
 
 ?>

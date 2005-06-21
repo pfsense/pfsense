@@ -83,7 +83,7 @@ $wkports = array(3389 => "MS RDP", 21 => "FTP", 22 => "SSH", 23 => "Telnet", 25 
 $iptos = array("lowdelay", "throughput", "reliability", "congestion");
 
 /* TCP flags */
-$tcpflags = array("fin", "syn", "rst", "psh", "ack", "urg");
+$tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg");
 
 $specialnets = array("lan" => "LAN net", "pptp" => "PPTP clients");
 

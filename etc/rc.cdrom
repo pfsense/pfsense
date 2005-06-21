@@ -30,4 +30,5 @@ fi
 [ ! -f /cf/conf/ez-ipupdate.cache ] || /rescue/cp /FreeSBIE/cf/conf/ez-ipupdate.cache /cf/conf/
 
 # Create some needed directories
-mkdir /var/db
+/bin/mkdir -p /var/db/pkg/
+/bin/mkdir -p /var/tmp/vi.recover/

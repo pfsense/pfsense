@@ -32,18 +32,19 @@ if [ "$PLATFORM" = "cdrom" ]; then
 	/etc/rc.cdrom
 fi
 
+# Enable console output if its muted.
+/sbin/conscontrol mute off >/dev/null
+
+# Mount all. If it fails run a fsck.
 /sbin/mount -a || fsck -y && mount -a
+
 if [ ! "$PLATFORM" = "cdrom" ]; then
     SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
     /sbin/dumpon -v $SWAPDEVICE 2>/dev/null
     /sbin/swapon -a 2>/dev/null
     
     /usr/local/bin/php -f /etc/rc.conf_mount_rw
-fi
 
-/sbin/conscontrol mute off >/dev/null
-
-if [ ! "$PLATFORM" = "cdrom" ]; then
     /bin/mkdir -p /usr/savecore 2>/dev/null
     /sbin/savecore /usr/savecore $SWAPDEVICE
 fi

@@ -822,8 +822,8 @@ function safe_mkdir($path, $mode=0755) {
 	global $g;
 	
 	if($g['platform'] == "cdrom")
-		return false;;	
-	
+		return false;
+
 	if (!is_file($path) && !is_dir($path))
 		return make_dirs($path, $mode);
 	else
@@ -834,12 +834,11 @@ function safe_mkdir($path, $mode=0755) {
  * make_dirs($path, $mode = 0755)
  * create directory tree recursively (mkdir -p)
  */
-function make_dirs($path, $mode = 0755)
-{
+function make_dirs($path, $mode = 0755) {
 	/* is dir already created? */
 	if(is_dir($path)) return;
 	/* create directory in question */
-	make_dirs(dirname($path), $mode);
+	mkdir(dirname($path), $mode);
 }
 
 /*

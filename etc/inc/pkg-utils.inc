@@ -375,11 +375,10 @@ function install_package($package, $pkg_info = "") {
 	}
 	/* set up package logging streams */
 	if($pkg_info['logging']) {
-		mwexec("/usr/sbin/clog -i -s 32768 {$g['varlog_path']}" . $pkg_info['logging']['logfile_name']);
-		chmod($g['varlog_path'] . $pkg_info['logging']['logfile_name'], 0600);
+		mwexec("/usr/sbin/clog -i -s 32768 {$g['varlog_path']}/{$pkg_info['logging']['logfilename']}");
+		chmod($g['varlog_path'] . '/' . $pkg_info['logging']['logfilename'], 0600);
 		@fwrite($fd_log, "Adding text to file /etc/syslog.conf\n");
-		add_text_to_file("/etc/syslog.conf", $pkg_info['logging']['facilityname'] . "\t\t\t" . $pkg_info['logging']['logfilename']);
-		mwexec("/usr/bin/killall -HUP syslogd");
+		system_syslogd_start();
 	}
 	/* fetch the package's configuration file */
 	if($pkg_info['config_file'] != "") {

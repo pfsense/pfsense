@@ -654,7 +654,8 @@ function reset_factory_defaults() {
 	conf_mount_rw();
 
 	/* create conf directory, if necessary */
-	safe_mkdir("{$g['cf_conf_path']}");
+	if(!is_dir($g['cf_conf_path']))
+		safe_mkdir($g['cf_conf_path']);
 
 	/* clear out /conf */
 	$dh = opendir($g['conf_path']);

@@ -458,11 +458,13 @@ function remove_text_from_file($file, $text) {
 function add_text_to_file($file, $text) {
 	if(file_exists($file) and is_writable($file)) {
 		$filecontents = file($file);
+		$filecontents[] = $text;
 		$tmpfile = get_tmp_file();
 		$fout = fopen($tmpfile, "w");
 		foreach($filecontents as $line) {
-			fwrite($tmpfile, rtrim($line) . "\n");
+			fwrite($fout, rtrim($line) . "\n");
 		}
+		fclose($fout);
 		rename($tmpfile, $file);
 		return true;
 	} else {

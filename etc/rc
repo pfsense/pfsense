@@ -106,8 +106,6 @@ cd /var/run && cp /dev/null utmp && chmod 644 utmp
 
 /usr/local/bin/php -f /etc/rc.conf_mount_rw
 
-cat /etc/motd
-
 # let the PHP-based configuration subsystem set up the system now
 /etc/rc.bootup
 

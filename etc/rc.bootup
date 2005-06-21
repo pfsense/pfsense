@@ -38,6 +38,8 @@
 	$g['booting'] = TRUE;
 	touch("{$g['varrun_path']}/booting");
 
+	$motd = trim(return_filename_as_string("/etc/motd"));
+
 	/* parse the configuration and include all functions used below */
 	require_once("config.inc");
 	

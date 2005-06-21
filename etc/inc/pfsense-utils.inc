@@ -836,7 +836,10 @@ function safe_mkdir($path, $mode=0755) {
  */
 function make_dirs($path, $mode = 0755)
 {
-	return is_dir($path) || (make_dirs(dirname($path), $mode) && safe_mkdir($path, $mode));
+	/* is dir already created? */
+	if(is_dir($path)) return;
+	/* create directory in question */
+	make_dirs(dirname($path), $mode);
 }
 
 /*

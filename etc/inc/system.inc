@@ -254,8 +254,15 @@ EOD;
 security.*					@{$syslogcfg['remoteserver']}
 auth.info;authpriv.info;daemon.info		@{$syslogcfg['remoteserver']}
 *.emerg						@{$syslogcfg['remoteserver']}
-
 EOD;
+		}
+
+		if($config['installedpackages']['package']) {
+			foreach($config['installedpackages']['package'] as $package) {
+				if($package['logging']) {
+					$syslogconf .= $package['logging']['facilityname'] . "\t\t\t\t" . $package['logging']['logfilename'] . "\n";
+				}
+			}
 		}
 
 		fwrite($fd, $syslogconf);

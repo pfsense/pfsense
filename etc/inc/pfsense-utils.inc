@@ -33,6 +33,10 @@
  *
  */
 
+function get_tmp_file() {
+	return "/tmp/tmp-" . time();
+}
+
 /****f* pfsense-utils/log_error
  * NAME
  *   log_error	- Sends a string to syslog.
@@ -452,15 +456,19 @@ function remove_text_from_file($file, $text) {
  * replaces the text if it already exists.
  */
 function add_text_to_file($file, $text) {
-    global $fd_log;
-    fwrite($fd_log, "Adding needed text items:\n");
-    $filecontents = exec_command_and_return_text("cat " . $file);
-    $filecontents = str_replace($text, "", $filecontents);
-    $text = $filecontents . $text;
-    fwrite($fd_log, $text . "\n");
-    $fd = fopen($file, "w");
-    fwrite($fd, $text . "\n");
-    fclose($fd);
+	if(file_exists($file) and is_writable($file)) {
+		$filecontents = file($file);
+		$tmpfile = get_tmp_file();
+		$fout = fopen($tmpfile, "w");
+		foreach($filecontents as $line) {
+			fwrite($tmpfile, rtrim($line) . "\n");
+		}
+		rename($tmpfile, $file);
+		return true;
+	} else {
+		return false;
+	}
+	return false;
 }
 
 /*

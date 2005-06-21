@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<packagegui>
+	<name>carp</name>
+	<version>0.1.0</version>
+	<xmlver>$Revision$</xmlver>
+	<title>Services: CARP (failover)</title>
+	<!-- Menu is where this packages menu will appear -->
+	<menu>
+	    <name>CARP (failover)</name>
+	    <tooltiptext>CARP is a tool to help achieve system redundancy, by having multiple computers creating a single, virtual network interface between them.</tooltiptext>
+	    <section>Services</section>
+	    <url>carp_status.php</url>
+	</menu>
+	<tabs>
+	    <tab>
+		<text>CARP Virtual IPs</text>
+		<url>/pkg_edit.php?xml=carp.xml</url>
+		<active/>
+	    </tab>
+	    <tab>
+		<text>CARP Status</text>
+		<url>carp_status.php</url>
+	    </tab>
+	    <tab>
+		<text>CARP Settings</text>
+		<url>pkg_edit.php?xml=carp_settings.xml&amp;id=0</url>
+	    </tab>
+	</tabs>
+    	<additional_files_needed>
+	    <prefix>/usr/local/pkg/</prefix>
+	    <chmod>a+rx</chmod>
+	    <item>http://www.pfsense.com/packages/config/carp_settings.xml</item>
+	</additional_files_needed>
+    	<additional_files_needed>
+	    <prefix>/usr/local/pkg/pf/</prefix>
+	    <chmod>a+rx</chmod>
+	    <item>http://www.pfsense.com/packages/config/carp_sync_client.php</item>
+	</additional_files_needed>
+    	<additional_files_needed>
+	    <prefix>/usr/local/pkg/</prefix>
+	    <chmod>a+rx</chmod>
+	    <nosync/>
+	    <item>http://www.pfsense.com/packages/config/carp_sync_server.php</item>
+	</additional_files_needed>
+    	<additional_files_needed>
+	    <prefix>/usr/local/www/</prefix>
+	    <chmod>a+rx</chmod>
+	    <item>http://www.pfsense.com/packages/config/carp_status.php</item>
+	</additional_files_needed>
+	<!-- configpath gets expanded out automatically and config items will be
+         stored in that location -->
+	<configpath>['installedpackages']['carp']['config']</configpath>
+	<adddeleteeditpagefields>
+	    <columnitem>
+		    <fielddescr>VHID Group</fielddescr>
+		    <fieldname>vhid</fieldname>
+	    </columnitem>
+	    <columnitem>
+		    <fielddescr>Virtual IP Address</fielddescr>
+		    <fieldname>ipaddress</fieldname>
+	    </columnitem>
+	    <columnitem>
+		    <fielddescr>Advertising Frequency</fielddescr>
+		    <fieldname>advskew</fieldname>
+	    </columnitem>
+	    <columnitem>
+		    <fielddescr>Netmask</fielddescr>
+		    <fieldname>netmask</fieldname>
+	    </columnitem>
+	</adddeleteeditpagefields>
+	<!-- fields gets invoked when the user adds or edits a item.   the following items
+         will be parsed and rendered for the user as a gui with input, and selectboxes. -->
+	<fields>
+		<field>
+			<fielddescr>Virtual IP Address</fielddescr>
+			<fieldname>ipaddress</fieldname>
+			<description>Enter the IP Address that you would like to share on both machines</description>
+			<type>input</type>
+		</field>
+<!--
+		<field>
+			<fielddescr>Bind Virtual IP to interface</fielddescr>
+			<fieldname>interface</fieldname>
+			<description>Select the interface that this IP should bind to (carpdev).  Leave this set to AUTO for the system to automatically deterimine where to setup the IP.</description>
+			<add_to_interfaces_selection>AUTO</add_to_interfaces_selection>
+			<size>3</size>
+			<value>AUTO</value>
+			<type>interfaces_selection</type>			
+		</field>
+-->
+		<field>
+			<fielddescr>Virtual IP Netmask</fielddescr>
+			<fieldname>netmask</fieldname>
+			<description>Enter the IP Address's netmask that you would like to share on both machines</description>
+			<type>select</type>
+			<value>24</value>
+			<options>
+			    <option><value>1</value><name>1</name></option>
+			    <option><value>2</value><name>2</name></option>
+			    <option><value>3</value><name>3</name></option>
+			    <option><value>4</value><name>4</name></option>
+			    <option><value>5</value><name>5</name></option>
+			    <option><value>6</value><name>6</name></option>
+			    <option><value>7</value><name>7</name></option>
+			    <option><value>8</value><name>8</name></option>
+			    <option><value>9</value><name>9</name></option>
+			    <option><value>10</value><name>10</name></option>
+			    <option><value>11</value><name>11</name></option>
+			    <option><value>12</value><name>12</name></option>
+			    <option><value>13</value><name>13</name></option>
+			    <option><value>14</value><name>14</name></option>
+			    <option><value>15</value><name>15</name></option>
+			    <option><value>16</value><name>16</name></option>
+			    <option><value>17</value><name>17</name></option>
+			    <option><value>18</value><name>18</name></option>
+			    <option><value>19</value><name>19</name></option>
+			    <option><value>20</value><name>20</name></option>
+			    <option><value>21</value><name>21</name></option>
+			    <option><value>22</value><name>22</name></option>
+			    <option><value>23</value><name>23</name></option>
+			    <option><value>24</value><name>24</name></option>
+			    <option><value>25</value><name>25</name></option>
+			    <option><value>26</value><name>26</name></option>
+			    <option><value>27</value><name>27</name></option>
+			    <option><value>28</value><name>28</name></option>
+			    <option><value>29</value><name>29</name></option>
+			    <option><value>30</value><name>30</name></option>
+			    <option><value>31</value><name>31</name></option>
+			    <option><value>32</value><name>32</name></option>
+			</options>
+		</field>
+		<field>
+			<fielddescr>Virtual IP Password</fielddescr>
+			<fieldname>password</fieldname>
+			<description>Enter the VHID group password.</description>
+			<type>password</type>
+		</field>
+		<field>
+			<fielddescr>VHID Group</fielddescr>
+			<fieldname>vhid</fieldname>
+			<description>Enter the VHID group that the machines will share</description>
+			<type>select</type>
+			<value>1</value>
+			<options>
+			    <option><value>1</value><name>1 (DEFAULT)</name></option>
+			    <option><value>2</value><name>2</name></option>
+			    <option><value>3</value><name>3</name></option>
+			    <option><value>4</value><name>4</name></option>
+			    <option><value>5</value><name>5</name></option>
+			    <option><value>6</value><name>6</name></option>
+			    <option><value>7</value><name>7</name></option>
+			    <option><value>8</value><name>8</name></option>
+			    <option><value>9</value><name>9</name></option>
+			    <option><value>10</value><name>10</name></option>
+			    <option><value>11</value><name>11</name></option>
+			    <option><value>12</value><name>12</name></option>
+			    <option><value>13</value><name>13</name></option>
+			    <option><value>14</value><name>14</name></option>
+			    <option><value>15</value><name>15</name></option>
+			    <option><value>16</value><name>16</name></option>
+			    <option><value>17</value><name>17</name></option>
+			    <option><value>18</value><name>18</name></option>
+			    <option><value>19</value><name>19</name></option>
+			    <option><value>20</value><name>20</name></option>
+			    <option><value>21</value><name>21</name></option>
+			    <option><value>22</value><name>22</name></option>
+			    <option><value>23</value><name>23</name></option>
+			    <option><value>24</value><name>24</name></option>
+			    <option><value>25</value><name>25</name></option>
+			    <option><value>26</value><name>26</name></option>
+			    <option><value>27</value><name>27</name></option>
+			    <option><value>28</value><name>28</name></option>
+			    <option><value>29</value><name>29</name></option>
+			    <option><value>30</value><name>30</name></option>
+			</options>
+		</field>
+		<field>
+			<fielddescr>Advertising Frequency</fielddescr>
+			<fieldname>advskew</fieldname>
+			<description>The frequency that this machine will advertise.  0 = master.   Anything above 0 designates a backup.</description>
+			<type>select</type>
+			<value>0</value>
+			<options>
+			    <option><value>0</value><name>0 (DEFAULT)</name></option>
+			    <option><value>1</value><name>1</name></option>
+			    <option><value>2</value><name>2</name></option>
+			    <option><value>3</value><name>3</name></option>
+			    <option><value>4</value><name>4</name></option>
+			    <option><value>5</value><name>5</name></option>
+			    <option><value>6</value><name>6</name></option>
+			    <option><value>7</value><name>7</name></option>
+			    <option><value>8</value><name>8</name></option>
+			    <option><value>9</value><name>9</name></option>
+			    <option><value>10</value><name>10</name></option>
+			    <option><value>11</value><name>11</name></option>
+			    <option><value>12</value><name>12</name></option>
+			    <option><value>13</value><name>13</name></option>
+			    <option><value>14</value><name>14</name></option>
+			    <option><value>15</value><name>15</name></option>
+			    <option><value>16</value><name>16</name></option>
+			    <option><value>17</value><name>17</name></option>
+			    <option><value>18</value><name>18</name></option>
+			    <option><value>19</value><name>19</name></option>
+			    <option><value>20</value><name>20</name></option>
+			    <option><value>21</value><name>21</name></option>
+			    <option><value>22</value><name>22</name></option>
+			    <option><value>23</value><name>23</name></option>
+			    <option><value>24</value><name>24</name></option>
+			    <option><value>25</value><name>25</name></option>
+			    <option><value>26</value><name>26</name></option>
+			    <option><value>27</value><name>27</name></option>
+			    <option><value>28</value><name>28</name></option>
+			    <option><value>29</value><name>29</name></option>
+			    <option><value>30</value><name>30</name></option>
+			</options>
+		</field>
+	</fields>
+	<custom_php_command_before_form>
+	</custom_php_command_before_form>
+	<custom_add_php_command_late>
+	    interfaces_carp_configure();
+	    interfaces_carp_bringup();		
+	</custom_add_php_command_late>	
+	<custom_php_resync_config_command>
+	</custom_php_resync_config_command>
+	<custom_delete_php_command>
+	    interfaces_carp_configure();
+	    interfaces_carp_bringup();
+	</custom_delete_php_command>
+	<custom_php_deinstall_command>
+	    unlink_if_exists("/usr/local/www/carp*");
+	    unlink_if_exists("/usr/local/pkg/carp*");
+	    unlink_if_exists("/usr/local/pkg/pf/carp*");
+	    unlink_if_exists("/usr/local/etc/rc.d/carp*");
+	    unlink_if_exists("/usr/local/pkg/pf/carp*");
+	</custom_php_deinstall_command>
+</packagegui>

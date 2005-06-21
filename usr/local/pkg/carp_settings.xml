@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<packagegui>
+	<name>carpsettings</name>
+	<version>0.1.0</version>
+	<title>Services: CARP Settings</title>
+	<!-- configpath gets expanded out automatically and config items will be
+         stored in that location -->
+	<configpath>['installedpackages']['carpsettings']['config']</configpath>
+	<aftersaveredirect>pkg_edit.php?xml=carp_settings.xml&amp;id=0</aftersaveredirect>
+	<!-- Menu is where this packages menu will appear -->
+	<menu>
+	    <name>CARP (failover)</name>
+	    <tooltiptext>CARP is a tool to help achieve system redundancy, by having multiple computers creating a single, virtual network interface between them, so that if any machine fails, another can respond instead, and/or allowing a degree of load sharing between systems. CARP is an improvement over the Virtual Router Redundancy Protocol (VRRP) standard. It was developed after VRRP was deemed to be not free enough because of a possibly-overlapping Cisco patent.</tooltiptext>
+	    <section>Services</section>
+	    <configfile>carp.xml</configfile>
+	</menu>
+	<tabs>
+	    <tab>
+		<text>CARP Virtual IPs</text>
+		<url>/pkg.php?xml=carp.xml</url>
+	    </tab>
+	    <tab>
+		<text>CARP Status</text>
+		<url>carp_status.php</url>
+	    </tab>
+	    <tab>
+		<text>CARP Settings</text>
+		<url>pkg_edit.php?xml=carp_settings.xml&amp;id=0</url>
+		<active/>
+	    </tab>
+	</tabs>
+	<adddeleteeditpagefields>
+	    <columnitem>
+		    <fielddescr>PFSync Enabled</fielddescr>
+		    <fieldname>pfsyncenabled</fieldname>
+	    </columnitem>
+	    <columnitem>
+		    <fielddescr>PFSync IP</fielddescr>
+		    <fieldname>pfsyncip</fieldname>
+	    </columnitem>
+	    <columnitem>
+		    <fielddescr>PFSync Interface</fielddescr>
+		    <fieldname>pfsyncinterface</fieldname>
+	    </columnitem>
+	    <columnitem>
+		    <fielddescr>Load Balancing</fielddescr>
+		    <fieldname>balancing</fieldname>
+		    <type>checkbox</type>
+	    </columnitem>
+	    <columnitem>
+		    <fielddescr>Preemption</fielddescr>
+		    <fieldname>premption</fieldname>
+		    <type>checkbox</type>
+	    </columnitem>
+	</adddeleteeditpagefields>
+	<!-- fields gets invoked when the user adds or edits a item.   the following items
+         will be parsed and rendered for the user as a gui with input, and selectboxes. -->
+	<fields>
+		<field>
+			<fielddescr>Synchronize Enabled</fielddescr>
+			<fieldname>pfsyncenabled</fieldname>
+			<description>PFSync transfers state insertion, update, and deletion messages between firewalls. Each firewall sends these messages out via multicast on a specified interface, using the PFSYNC protocol (IP Protocol 240). It also listens on that interface for similar messages from other firewalls, and imports them into the local state table.</description>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fielddescr>Synchronize Interface</fielddescr>
+			<fieldname>pfsyncinterface</fieldname>
+			<type>interfaces_selection</type>
+			<description>If Synchronize State is enabled, it will utilize this interface for communication.  NOTE!  You must define a IP on each machine participating in this failover group.  NOTE: You must have an IP assigned to the interface on any participating sync nodes.</description>
+		</field>
+		<field>
+			<fielddescr>Load Balancing</fielddescr>
+			<fieldname>balancing</fieldname>
+			<description>If this feature is enabled, CARP source-hashes the originating IP of a request. The hash is then used to select a virtual host from the available pool to handle the request. This is disabled by default.</description>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fielddescr>Preemption</fielddescr>
+			<fieldname>premption</fieldname>
+			<description>When preemption is enabled, each CARP host will look at the advskew (Advertising Frequency) parameter in the advertisements it receives from the master, to try to determine whether it can advertise more frequently. If so, it will begin advertising, and the current master, seeing that there is another host with a lower advskew, will bow out.</description>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fielddescr>Synchronize rules</fielddescr>
+			<fieldname>synchronizerules</fieldname>
+			<description>When this option is enabled, this system will automatically sync the firewalls rules over to the other carp when changes are made..</description>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fielddescr>Synchronize aliases</fielddescr>
+			<fieldname>synchronizealiases</fieldname>
+			<description>When this option is enabled, this system will automatically sync the aliases over to the other carp when changes are made.</description>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fielddescr>Synchronize nat</fielddescr>
+			<fieldname>synchronizenat</fieldname>
+			<description>When this option is enabled, this system will automatically sync the nat rules over to the other carp host when changes are made.</description>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fielddescr>Synchronize traffic shaper</fielddescr>
+			<fieldname>synchronizetrafficshaper</fieldname>
+			<description>When this option is enabled, this system will automatically sync the traffic shaper rules over to the other carp host when changes are made.</description>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fielddescr>Synchronize to IP</fielddescr>
+			<fieldname>synchronizetoip</fieldname>
+			<description>Enter the IP address of the firewall you would like to synchronize your rules to.</description>
+			<type>input</type>
+			<note>Note: CARP sync is currently only supported over http connections - make sure the remote system's
+ WebGUI protocol is set to this!</note>
+		</field>
+		<field>
+                        <fielddescr>Remote System Password</fielddescr>
+                        <fieldname>password</fieldname>
+                        <description>Enter the webGUI password of the system that you would like to synchronize with.</description>
+                        <type>password</type>
+                </field>
+	</fields>
+</packagegui>

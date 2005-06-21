@@ -29,7 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("VPN", "IPsec", "Edit pre-shared key");
+$pgtitle = "VPN: IPsec: Edit pre-shared key";
 require("guiconfig.inc");
 
 if (!is_array($config['ipsec']['mobilekey'])) {

@@ -29,7 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("VPN", "IPsec", "Edit CA certificate");
+$pgtitle = "VPN: IPsec: Edit CA certificate";
 require("guiconfig.inc");
 
 if (!is_array($config['ipsec']['cacert'])) {

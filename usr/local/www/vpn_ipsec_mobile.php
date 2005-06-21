@@ -29,7 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("VPN", "IPsec");
+$pgtitle = "VPN: IPsec";
 require("guiconfig.inc");
 
 if (!is_array($config['ipsec']['mobileclients'])) {

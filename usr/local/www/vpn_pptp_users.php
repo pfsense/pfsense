@@ -29,7 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("VPN", "PPTP");
+$pgtitle = "VPN: PPTP";
 require("guiconfig.inc");
 
 if (!is_array($config['pptpd']['user'])) {

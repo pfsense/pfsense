@@ -29,7 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("VPN", "IPsec", "Edit tunnel");
+$pgtitle = "VPN: IPsec: Edit tunnel";
 require("guiconfig.inc");
 
 if (!is_array($config['ipsec']['tunnel'])) {

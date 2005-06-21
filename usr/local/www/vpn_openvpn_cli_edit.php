@@ -28,7 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("VPN", "OpenVPN", "Edit client");
+$pgtitle = "VPN: OpenVPN: Edit client";
 require("guiconfig.inc");
 require_once("openvpn.inc");
 

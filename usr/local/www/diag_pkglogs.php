@@ -39,11 +39,9 @@
 */
 
 require("guiconfig.inc");
-require("pkg-utils.inc");
+//require_once("pkg-utils.inc");
 
-$nentries = $config['syslog']['nentries'];
-if (!$nentries)
-	$nentries = 50;
+if(!($nentries = $config['syslog']['nentries'])) $nentries = 50;
 
 if ($_POST['clear']) {
 	exec("/usr/sbin/clog -i -s 262144 {$logfile}");
@@ -51,7 +49,7 @@ if ($_POST['clear']) {
 $i = 0;
 $pkgwithlogging = false;
 $apkg = $_POST['pkg'];
-if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, locate the first package that handles logging.
+if(!$apkg) { // If we aren't looking for a specific package, locate the first package that handles logging.
 	if($config['installedpackages']['package'] <> "") {
 		foreach($config['installedpackages']['package'] as $package) {
 			if(is_array($package['logging'])) {
@@ -63,7 +61,7 @@ if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, loca
 			$i++;
 		}
 	}
-} else {
+} elseif($apkg) {
 	$pkgwithlogging = true;
 	$apkgid = get_pkg_id($apkg);
 	$i = $apkgid;
@@ -84,31 +82,23 @@ if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, loca
   <tr><td>
   <ul id="tabnav">
     <?php
-	if($config['installedpackages']['package'] == "" or $pkgwithlogging == false) {
+	if($pkgwithlogging == false) {
 		print_info_box("No packages with logging facilities are currently installed.");
-	?>
-		</ul></td></tr></table>
-	<?php
+		echo '</ul></td></tr></table>';
 		include("fend.inc");
 		exit;
 	}
-	if($config['installedpackages']['package'] <> "") {
-		foreach($config['installedpackages']['package'] as $package) {
-        		$pkg_config = parse_xml_config("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
-			if(is_array($pkg_config['logging'])) {
-				$pkgname = $package['name'];
-				$logtab = $pkg_config['logging']['logtab'];
-				if(!isset($pkg_config['logging']['logtab'])) $logtab = $pkgname;
-				if($apkg == $pkgname) { ?>
-					<li class="tabact"><?= $pkg_config['name']; ?></li>
-    <?php
-				} else { ?>
-					<li class="tabinact"><a href="diag_pkglogs.php?pkg=<?= $pkgname; ?>"><?= $logtab; ?></a></li>
-    <?php
-				}
+	foreach($config['installedpackages']['package'] as $package) {
+		if(is_array($package['logging'])) {
+			if(!($logtab = $package['logging']['logtab'])) $logtab = $package['name'];
+			if($apkg == $package['name']) { 
+				$curtab = $logtab;
+				echo '<li class="tabact">' . $logtab . '</li>';
+			} else {
+				Echo '<li class="tabinact"><a href="diag_pkglogs.php?pkg=' . htmlspecialchars($package['name']) . '">' . $logtab . '</a></li>';
 			}
-       		 }
-	}
+		}
+       	 }
     ?> 
   </ul>
   </td></tr>
@@ -117,25 +107,11 @@ if(!isset($_POST['pkg'])) { // If we aren't looking for a specific package, loca
 		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		  <tr>
 			<td colspan="2" class="listtopic">
-			  Last <?=$nentries;?> <?=$apkg;?> log entries</td>
+			  Last <?= $nentries ?> <?= $curtab ?> log entries</td>
 		  </tr>
 		  <?php
-			$apkg_config = parse_xml_config("/usr/local/pkg/" . $config['installedpackages']['package'][$apkgid]['configurationfile'], "packagegui");
-			if(isset($apkg_config['logging']['logfile'])) {
-				$logfile = $apkg_config['logging']['logfile'];
-			} else {
-				$logfile = "{$g['varlog_path']}/system.log";
-			}
-			if(isset($apkg_config['logging']['custom_php_logging_command'])) {
-				eval($apkg_config['custom_php_global_functions']);
-				eval($apkg_config['logging']['custom_php_logging_command']);
-			} elseif(isset($apkg_config['logging']['grepfor']) and isset($apkg_config['logging']['invertgrep'])) {
-				dump_clog($logfile, $nentries, $apkg_config['logging']['grepfor'], true, true, false);
-			} elseif(isset($apkg_config['logging']['grepfor'])) {
-				dump_clog($logfile, $nentries, $apkg_config['logging']['grepfor'], "", true, false);
-			} else {
-				dump_clog($logfile, $nentries, "", "", true, false);
-			}
+			$package =& $config['installedpackages']['package'][$apkgid];
+			dump_clog($g['varlog_path'] . '/' . $package['logging']['logfilename'], $nentries);
 		?>
 		</table>
 		<br>

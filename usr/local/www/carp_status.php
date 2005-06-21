@@ -28,7 +28,7 @@
 */
 
 require("guiconfig.inc");
-require("xmlparse_pkg.inc");
+require("xmlparse.inc");
 
 function gentitle_pkg($pgname) {
 	global $config;

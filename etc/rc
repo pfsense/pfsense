@@ -41,7 +41,7 @@ if [ ! "$PLATFORM" = "cdrom" ]; then
     /usr/local/bin/php -f /etc/rc.conf_mount_rw
 fi
 
-/sbin/conscontrol mute off
+/sbin/conscontrol mute off >/dev/null
 
 if [ ! "$PLATFORM" = "cdrom" ]; then
     /bin/mkdir -p /usr/savecore 2>/dev/null

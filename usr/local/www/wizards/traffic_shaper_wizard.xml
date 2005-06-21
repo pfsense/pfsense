@@ -341,6 +341,13 @@
 	<stepsubmitphpaction>
 
 		if ( $_POST['enable'] ) {
+		
+			/* check to see if user is setting voip speed higher than wan */
+			if($config['ezshaper']['step2']['upload'] &lt; $_POST['bandwidth'])
+			    $_POST['bandwidth'] = $config['ezshaper']['step2']['upload'];
+			if($config['ezshaper']['step2']['download'] &lt; $_POST['bandwidth'])
+			    $_POST['bandwidth'] = $config['ezshaper']['step2']['download'];
+		
 	                /* create qVOIPUp */
 	                $queue = array();
 	                $queue['name'] = "qVOIPUp";

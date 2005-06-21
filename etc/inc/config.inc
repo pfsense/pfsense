@@ -1120,7 +1120,6 @@ function get_backups() {
 function backup_config() {
 	global $config, $g;
 
-	/* XXX: temporary */
 	if($g['platform'] == "cdrom")
 		return;
 
@@ -1129,22 +1128,24 @@ function backup_config() {
 	/* Create backup directory if needed */
 	safe_mkdir("{$g['cf_conf_path']}/backup");
 
-        if($config['revision']['time'] == "") {
+        if($config['revision']['time'] == "") 
                 $baktime = 0;
-        } else {
+        else 
                 $baktime = $config['revision']['time'];
-        }
-        if($config['revision']['description'] == "") {
+	
+        if($config['revision']['description'] == "") 
                 $bakdesc = "Unknown";
-        } else {
+        else
                 $bakdesc = $config['revision']['description'];
-        }
-        copy($g['cf_conf_path'] . '/config.xml', $g['cf_conf_path'] . '/backup/config-' . $baktime . '.xml');
-        if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
+	
+	if(file_exists($g['cf_conf_path'] . '/config.xml'))
+	        copy($g['cf_conf_path'] . '/config.xml', $g['cf_conf_path'] . '/backup/config-' . $baktime . '.xml');
+
+        if(file_exists($g['cf_conf_path'] . '/backup/backup.cache'))
                 $backupcache = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
-        } else {
+        else 
                 $backupcache = array();
-        }
+	
         $backupcache[$baktime] = array('description' => $bakdesc);
 	if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
 		$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");

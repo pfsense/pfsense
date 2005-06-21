@@ -124,7 +124,8 @@ if ($_POST) {
 		if($_POST['disablefirmwarecheck'] == "yes")
 			$config['system']['disablefirmwarecheck'] = true;
 		else
-		
+			unset($config['system']['disablefirmwarecheck']);
+
 		if ($_POST['enableserial'] == "yes")
 			$config['system']['enableserial'] = true;
 		else

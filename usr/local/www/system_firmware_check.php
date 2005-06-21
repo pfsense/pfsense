@@ -31,7 +31,7 @@
 require_once("guiconfig.inc");
 require_once("xmlrpc.inc");
 
-if($config['system']['disablefirmwarecheck'])
+if(isset($config['system']['disablefirmwarecheck']))
         Header("Location: system_firmware.php");
 
 ?>

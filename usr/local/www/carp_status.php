@@ -27,8 +27,8 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-require("guiconfig.inc");
-require("xmlparse.inc");
+require_once("guiconfig.inc");
+require_once("xmlparse.inc");
 
 function gentitle_pkg($pgname) {
 	global $config;

@@ -28,8 +28,8 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-require("guiconfig.inc");
-require("pkg-utils.inc");
+require_once("guiconfig.inc");
+require_once("pkg-utils.inc");
 
 function gentitle_pkg($pgname) {
 	global $config;

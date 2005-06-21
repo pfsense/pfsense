@@ -1740,7 +1740,7 @@ EOD;
 	 */
 	 if(isset($config['captiveportal']['enable'])) {
 		$cp_interface = filter_translate_type_to_real_interface($config['captiveportal']['interface']);
-		$cp_ip = filter_translate_type_to_real_interface($cp_interface);
+		$cp_ip = find_interface_ip($cp_interface);
 		$lan_ip = $config['interfaces']['lan']['ipaddr'];
 		$ipfrules .= "\n# Setup Captive portal policy rules\n";
 		$ipfrules .= "table <captiveportal>\n";

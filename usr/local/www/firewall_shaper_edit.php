@@ -73,7 +73,6 @@ if (isset($id) && $a_shaper[$id]) {
 
 	$pconfig['direction'] = $a_shaper[$id]['direction'];
 	$pconfig['iptos'] = $a_shaper[$id]['iptos'];
-	$pconfig['iplen'] = $a_shaper[$id]['iplen'];
 	$pconfig['tcpflags'] = $a_shaper[$id]['tcpflags'];
 	$pconfig['descr'] = $a_shaper[$id]['descr'];
 	$pconfig['disabled'] = isset($a_shaper[$id]['disabled']);
@@ -237,10 +236,6 @@ if ($_POST) {
 		$_POST['dstbeginport'] = $tmp;
 	}
 
-	if (($_POST['iplen'] && !preg_match("/^(\d+)(-(\d+))?$/", $_POST['iplen']))) {
-		$input_errors[] = "The IP packet length must be an integer or a range (from-to).";
-	}
-
 	if (!$input_errors) {
 		$shaperent = array();
 		$shaperent['interface'] = $_POST['interface'];
@@ -259,7 +254,6 @@ if ($_POST) {
 			$_POST['dstbeginport'], $_POST['dstendport']);
 
 		$shaperent['direction'] = $_POST['direction'];
-		$shaperent['iplen'] = $_POST['iplen'];
 		$shaperent['iptos'] = $_POST['iptos'];
 		$shaperent['tcpflags'] = $_POST['tcpflags'];
 		$shaperent['descr'] = $_POST['descr'];
@@ -652,14 +646,6 @@ function dst_rep_change() {
                     </table>
                     <span class="vexpl">Use this to match packets according to their IP TOS values.
                     </span></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">IP packet length</td>
-                  <td width="78%" class="vtable"><input name="iplen" type="text" id="iplen" size="10" value="<?=htmlspecialchars($pconfig['iplen']);?>">
-                    <br>
-                    Setting this makes the rule match packets of a given length
-                    (either a single value or a range in the syntax <em>from-to</em>,
-                    e.g. 0-80). </td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">TCP flags</td>

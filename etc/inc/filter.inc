@@ -472,7 +472,7 @@ function generate_optcfg_array(& $optcfg) {
 
                         if ($oc['bridge']) {
                                 if (!strstr($oc['bridge'], "opt") ||
-                                         isset($config['interfaces'][$oc['bridge']]['enable'])) {
+                                        isset($config['interfaces'][$oc['bridge']]['enable'])) {
                                         if (is_ipaddr($config['interfaces'][$oc['bridge']]['ipaddr'])) {
                                                 $oic['ip'] = $config['interfaces'][$oc['bridge']]['ipaddr'];
                                                 $oic['sn'] = $config['interfaces'][$oc['bridge']]['subnet'];
@@ -943,13 +943,21 @@ function filter_nat_rules_generate() {
 	$natrules .= "table <spamd> persist\n\n";
 
 	if(!isset($config['system']['disableftpproxy'])) {
+		$optcfg = array();
+		generate_optcfg_array($optcfg);	
 		$natrules .= "# FTP proxy\n";
 		$natrules .= "rdr-anchor \"pftpx/*\"\n";
-		$natrules .= "rdr on " . $lanif . " proto tcp from any to any port 21 -> 127.0.0.1 port 8021\n\n";
+		$natrules .= "rdr on {$lanif} proto tcp from any to any port 21 -> 127.0.0.1 port 8021\n";
+		# go through optional interfaces, setting up pftpx for them as well.		
+		foreach($optcfg as $oc) {
+			$natrules .= "rdr on {$oc['if']} proto tcp from any to any port 21 -> 127.0.0.1 port 8021\n";
+		}
+		$natrules .= "\n";
 	}
 
 	/* captive portal redirects */
 	if(isset($config['captiveportal']['enable'])) {
+		$natrules .= "# Captive Portal\n";
 		$cp_interface = filter_translate_type_to_real_interface($config['captiveportal']['interface']);
 		$lan_ip = $config['interfaces']['lan']['ipaddr'];
 		$natrules .= "no rdr on {$cp_interface} proto tcp from <captiveportal> to any \n";
@@ -962,6 +970,7 @@ function filter_nat_rules_generate() {
 	}
 
 	if (isset($config['nat']['rule'])) {
+		$natrules .= "# NAT Inbound Redircts\n";
 		foreach ($config['nat']['rule'] as $rule) {
 
 			$extport = explode("-", $rule['external-port']);

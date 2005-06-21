@@ -389,6 +389,16 @@ function ipsec_mobilekey_sort() {
 	usort($config['ipsec']['mobilekey'], "mobilekeycmp");
 }
 
+function ipsec_ca_sort() {
+        global $g, $config;
+
+        function ipseccacmp($a, $b) {
+                return strcmp($a['ident'], $b['ident']);
+        }
+
+        usort($config['ipsec']['cacert'], "ipseccacmp");
+}
+
 function proxyarp_sort() {
 	global $g, $config;
 

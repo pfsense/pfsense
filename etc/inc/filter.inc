@@ -729,19 +729,23 @@ function filter_generate_pf_altq_rules() {
                         if ($rule['iptos'])
                                 $line .= "tos {$rule['iptos']} ";
 
-/*
-                        if ($rule['iplen'])
-                                $line .= "iplen {$rule['iplen']} ";
+			$inflags = explode(",", $rule['tcpflags']);
+			$flags = " flags ";
+			foreach ($tcpflags as $tcpflag) {
+				if (array_search($tcpflag, $inflags) !== false) {
+					if($tcpflag == "SYN")
+						$flags .= "S/";
+					else if($tcpflag == "CWR")
+						$flags .= "W";
+					else
+						$flags .= substr($tcpflag, 1, 1);
+				} else {
+					
+				}
+			}
+			if($flags <> " flags ")
+				$line .= "{$flags} ";
 
-                        if ($rule['tcpflags'])
-                                $line .= "tcpflags {$rule['tcpflags']} ";
-
-                        if ($rule['direction'] == "in")
-                                $line .= "in recv ";
-                        else if ($rule['direction'] == "out")
-                                $line .= "out xmit ";
-
-*/
 			$qtag = "{$direction}queue";
 			$line .= " keep state tag {$rule[$qtag]} ";
 

@@ -50,6 +50,7 @@ $pconfig['schedulertype'] = $config['system']['schedulertype'];
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
 $pconfig['disablerendevouz'] = $config['system']['disablerendevouz'];
 $pconfig['enableserial'] = $config['system']['enableserial'];
+$pconfig['disablefirmwarecheck'] = isset($config['system']['disablefirmwarecheck']);
 
 if ($_POST) {
 
@@ -119,7 +120,10 @@ if ($_POST) {
 		else
 			unset($config['system']['webgui']['expanddiags']);
 		$config['system']['optimization'] = $_POST['optimization'];
-		$config['system']['disablerendevouz'] = $_POST['disablerendevouz'];
+		
+		if($_POST['disablefirmwarecheck'] == "yes")
+			$config['system']['disablefirmwarecheck'] = true;
+		else
 		
 		if ($_POST['enableserial'] == "yes")
 			$config['system']['enableserial'] = true;
@@ -324,6 +328,12 @@ function update_description(itemnum) {
                     <strong>Disable console menu</strong><span class="vexpl"><br>
                     Changes to this option will take effect after a reboot.</span></td>
                 </tr>
+		<tr>
+                  <td valign="top" class="vncell">Firmware version check </td>
+                  <td class="vtable">
+                    <input name="disablefirmwarecheck" type="checkbox" id="disablefirmwarecheck" value="yes" <?php if ($pconfig['disablefirmwarecheck']) echo "checked"; ?>>
+                    <strong>Disable firmware version check</strong><span class="vexpl"><br>This will cause pfSense not to check for newer firmware versions when the <a href="system_firmware.php">System: Firmware</a> page is viewed.</span></td>
+		</tr>		
 		<tr>
                   <td width="22%" valign="top" class="vncell">Hard disk standby time </td>
                   <td width="78%" class="vtable">

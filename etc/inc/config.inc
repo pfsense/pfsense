@@ -1146,9 +1146,11 @@ function backup_config() {
                 $backupcache = array();
         }
         $backupcache[$baktime] = array('description' => $bakdesc);
-        $bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
-        fwrite($bakout, serialize($backupcache));
-        fclose($bakout);
+	if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
+		$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
+		fwrite($bakout, serialize($backupcache));
+		fclose($bakout);
+	}
 	
 	conf_mount_ro();
 	

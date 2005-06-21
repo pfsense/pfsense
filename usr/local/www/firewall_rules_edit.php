@@ -82,6 +82,7 @@ if (isset($id) && $a_filter[$id]) {
 		$pconfig['dstbeginport'], $pconfig['dstendport']);
 
 	$pconfig['disabled'] = isset($a_filter[$id]['disabled']);
+	$pconfig['tcpflags'] = $a_filter[$id]['tcpflags'];
 	$pconfig['log'] = isset($a_filter[$id]['log']);
 	$pconfig['descr'] = $a_filter[$id]['descr'];
 	
@@ -111,6 +112,15 @@ if (isset($_GET['dup']))
 	unset($id);
 
 if ($_POST) {
+	
+	$intcpflags = array();
+	foreach ($tcpflags as $tcpflag) {
+		if ($_POST['tcpflags_' . $tcpflag] == "on")
+			$intcpflags[] = $tcpflag;
+		else if ($_POST['tcpflags_' . $tcpflag] == "off")
+			$intcpflags[] = "!" . $tcpflag;
+	}
+	$_POST['tcpflags'] = join(",", $intcpflags);
 
 	if (($_POST['proto'] != "tcp") && ($_POST['proto'] != "udp") && ($_POST['proto'] != "tcp/udp")) {
 		$_POST['srcbeginport'] = 0;
@@ -288,6 +298,8 @@ if ($_POST) {
 			$filterent['gateway'] = $_POST['gateway'];
 		}
 
+		$filterent['tcpflags'] = $_POST['tcpflags'];
+		
 		if (isset($id) && $a_filter[$id])
 			$a_filter[$id] = $filterent;
 		else {
@@ -296,7 +308,7 @@ if ($_POST) {
 			else
 				$a_filter[] = $filterent;
 		}
-
+		
 		write_config();
 		touch($d_filterconfdirty_path);
 
@@ -808,6 +820,28 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 			</strong>
 		    </td>
 		</tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncell">TCP flags</td>
+                  <td width="78%" class="vtable"> <table border="0" cellspacing="0" cellpadding="0">
+                      <?php
+				  $inflags = explode(",", $pconfig['tcpflags']);
+				  foreach ($tcpflags as $tcpflag): $dontcare = true; ?>
+                      <tr>
+                        <td width="40" nowrap><strong>
+                          <?=strtoupper($tcpflag);?>
+                          </strong></td>
+                        <td nowrap> <input type="radio" name="tcpflags_<?=$tcpflag;?>" value="on" <?php if (array_search($tcpflag, $inflags) !== false) { echo "checked"; $dontcare = false; }?>>
+                          set&nbsp;&nbsp;&nbsp;</td>
+                        <td nowrap> <input type="radio" name="tcpflags_<?=$tcpflag;?>" value="off" <?php if (array_search("!" . $tcpflag, $inflags) !== false) { echo "checked"; $dontcare = false; }?>>
+                          cleared&nbsp;&nbsp;&nbsp;</td>
+                        <td nowrap> <input type="radio" name="tcpflags_<?=$tcpflag;?>" value="" <?php if ($dontcare) echo "checked";?>>
+                          don't care</td>
+                      </tr>
+                      <?php endforeach; ?>
+                    </table>
+                    <span class="vexpl">Use this to choose TCP flags that must
+                    be set or cleared for this rule to match.</span></td>
+                </tr>		
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">

@@ -1,11 +1,10 @@
 #!/usr/local/bin/php
 <?php
-/* $Id$ */
 /*
 	vpn_pptp_users_edit.php
 	part of m0n0wall (http://m0n0.ch/wall)
 	
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -30,6 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+$pgtitle = array("VPN", "PPTP", "Edit user");
 require("guiconfig.inc");
 
 if (!is_array($config['pptpd']['user'])) {
@@ -110,30 +110,20 @@ if ($_POST) {
 	}
 }
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("VPN: PPTP: Users: Edit");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">VPN: PPTP: Users: Edit</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="vpn_pptp_users_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Username</td>
                   <td width="78%" class="vtable">
-<input name="username" type="text" class="formfld" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>"> 
+					<?=$mandfldhtml;?><input name="username" type="text" class="formfld" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>"> 
                   </td>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Password</td>
                   <td width="78%" class="vtable"> 
-                    <input name="password" type="password" class="formfld" id="password" size="20"> 
-                    <br> <input name="password2" type="password" class="formfld" id="password2" size="20"> 
+                    <?=$mandfldhtml;?><input name="password" type="password" class="formfld" id="password" size="20"> 
+                    <br><?=$mandfldhtml;?><input name="password2" type="password" class="formfld" id="password2" size="20"> 
                     &nbsp;(confirmation)<?php if (isset($id) && $a_secret[$id]): ?><br>
                     <span class="vexpl">If you want to change the users' password, 
                     enter it here twice.</span><?php endif; ?></td>
@@ -147,7 +137,7 @@ if ($_POST) {
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" value="Cancel" onclick="history.back()"> 
+                    <input name="Submit" type="submit" class="formbtn" value="Save"> 
                     <?php if (isset($id) && $a_secret[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>
@@ -156,5 +146,3 @@ if ($_POST) {
               </table>
 </form>
 <?php include("fend.inc"); ?>
-</body>
-</html>

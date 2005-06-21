@@ -1,6 +1,5 @@
 #!/usr/local/bin/php
 <?php 
-/* $Id$ */
 /*
 	vpn_openvpn_cli_edit.php
 
@@ -29,6 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+$pgtitle = array("VPN", "OpenVPN", "Edit client");
 require("guiconfig.inc");
 require_once("openvpn.inc");
 
@@ -188,17 +188,7 @@ if (isset($_POST['pull'])) {
 }
 
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("VPN: OpenVPN: Edit client");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">VPN: OpenVPN: Edit client</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 <form action="vpn_openvpn_cli_edit.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
@@ -340,7 +330,7 @@ if (isset($_POST['pull'])) {
      <tr> 
        <td width="22%" valign="top">&nbsp;</td>
        <td width="78%"> 
-         <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" class="formbtn" value="Cancel" onclick="history.back()"> 
+         <input name="Submit" type="submit" class="formbtn" value="Save"> 
          <?php if (isset($id)): ?>
          <input name="id" type="hidden" value="<?=$id;?>"> 
          <?php endif; ?>
@@ -350,5 +340,3 @@ if (isset($_POST['pull'])) {
 </form>
 
 <?php include("fend.inc"); ?>
-</body>
-</html>

@@ -1,11 +1,10 @@
 #!/usr/local/bin/php
 <?php
-/* $Id$ */
 /*
 	vpn_ipsec_mobile.php
 	part of m0n0wall (http://m0n0.ch/wall)
 	
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -30,6 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+$pgtitle = array("VPN", "IPsec");
 require("guiconfig.inc");
 
 if (!is_array($config['ipsec']['mobileclients'])) {
@@ -44,6 +44,7 @@ if (count($a_ipsec) == 0) {
 	$pconfig['p1ealgo'] = "3des";
 	$pconfig['p1halgo'] = "sha1";
 	$pconfig['p1dhgroup'] = "2";
+	$pconfig['p1authentication_method'] = "pre_shared_key";
 	$pconfig['p2proto'] = "esp";
 	$pconfig['p2ealgos'] = explode(",", "3des,blowfish,cast128,rijndael");
 	$pconfig['p2halgos'] = explode(",", "hmac_sha1,hmac_md5");
@@ -69,6 +70,9 @@ if (count($a_ipsec) == 0) {
 	$pconfig['p1halgo'] = $a_ipsec['p1']['hash-algorithm'];
 	$pconfig['p1dhgroup'] = $a_ipsec['p1']['dhgroup'];
 	$pconfig['p1lifetime'] = $a_ipsec['p1']['lifetime'];
+	$pconfig['p1authentication_method'] = $a_ipsec['p1']['authentication_method'];
+	$pconfig['p1cert'] = base64_decode($a_ipsec['p1']['cert']);
+	$pconfig['p1privatekey'] = base64_decode($a_ipsec['p1']['private-key']);
 	$pconfig['p2proto'] = $a_ipsec['p2']['protocol'];
 	$pconfig['p2ealgos'] = $a_ipsec['p2']['encryption-algorithm-option'];
 	$pconfig['p2halgos'] = $a_ipsec['p2']['hash-algorithm-option'];
@@ -85,6 +89,13 @@ if ($_POST) {
 	$reqdfieldsn = explode(",", "P2 Encryption Algorithms,P2 Hash Algorithms");
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	
+	if ($_POST['p1authentication_method']== "rsasig") {
+		if (!strstr($_POST['p1cert'], "BEGIN CERTIFICATE") || !strstr($_POST['p1cert'], "END CERTIFICATE"))
+			$input_errors[] = "This certificate does not appear to be valid.";
+		if (!strstr($_POST['p1privatekey'], "BEGIN RSA PRIVATE KEY") || !strstr($_POST['p1privatekey'], "END RSA PRIVATE KEY"))
+			$input_errors[] = "This key does not appear to be valid.";	
+	}
 	
 	if (($_POST['p1lifetime'] && !is_numeric($_POST['p1lifetime']))) {
 		$input_errors[] = "The P1 lifetime must be an integer.";
@@ -132,6 +143,9 @@ if ($_POST) {
 		$ipsecent['p1']['hash-algorithm'] = $_POST['p1halgo'];
 		$ipsecent['p1']['dhgroup'] = $_POST['p1dhgroup'];
 		$ipsecent['p1']['lifetime'] = $_POST['p1lifetime'];
+		$ipsecent['p1']['private-key'] = base64_encode($_POST['p1privatekey']);
+		$ipsecent['p1']['cert'] = base64_encode($_POST['p1cert']);
+		$ipsecent['p1']['authentication_method'] = $_POST['p1authentication_method'];
 		$ipsecent['p2']['protocol'] = $_POST['p2proto'];
 		$ipsecent['p2']['encryption-algorithm-option'] = $_POST['p2ealgos'];
 		$ipsecent['p2']['hash-algorithm-option'] = $_POST['p2halgos'];
@@ -148,17 +162,23 @@ if ($_POST) {
 	}
 }
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("VPN: IPsec");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">VPN: IPsec</p>
+<script language="JavaScript">
+<!--
+function methodsel_change() {
+	switch (document.iform.p1authentication_method.selectedIndex) {
+		case 1:	/* rsa */
+			document.iform.p1privatekey.disabled = 0;
+			document.iform.p1cert.disabled = 0;
+			break;
+		default: /* pre-shared */
+			document.iform.p1privatekey.disabled = 1;
+			document.iform.p1cert.disabled = 1;
+			break;
+	}
+}
+//-->
+</script>
 <form action="vpn_ipsec.php" method="post">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (file_exists($d_ipsecconfdirty_path)): ?><p>
@@ -168,11 +188,12 @@ if ($_POST) {
 </form>
 <form action="vpn_ipsec_mobile.php" method="post" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr><td>
+  <tr><td class="tabnavtbl">
   <ul id="tabnav">
-    <li class="tabinact"><a href="vpn_ipsec.php">Tunnels</a></li>
+    <li class="tabinact1"><a href="vpn_ipsec.php">Tunnels</a></li>
     <li class="tabact">Mobile clients</li>
     <li class="tabinact"><a href="vpn_ipsec_keys.php">Pre-shared keys</a></li>
+    <li class="tabinact"><a href="vpn_ipsec_ca.php">CAs</a></li>
   </ul>
   </td></tr>
   <tr> 
@@ -190,8 +211,8 @@ if ($_POST) {
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Negotiation mode</td>
-                        <td width="78%" bgcolor="#FFFFFF" class="vtable">
-<select name="p1mode" class="formfld">
+                        <td width="78%" class="vtable">
+					<select name="p1mode" class="formfld">
                       <?php $modes = explode(" ", "main aggressive"); foreach ($modes as $mode): ?>
                       <option value="<?=$mode;?>" <?php if ($mode == $pconfig['p1mode']) echo "selected"; ?>> 
                       <?=htmlspecialchars($mode);?>
@@ -202,8 +223,8 @@ if ($_POST) {
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">My identifier</td>
-                        <td width="78%" bgcolor="#FFFFFF" class="vtable">
-<select name="p1myidentt" class="formfld">
+                        <td width="78%" class="vtable">
+					<select name="p1myidentt" class="formfld">
                       <?php foreach ($my_identifier_list as $mode => $modename): ?>
                       <option value="<?=$mode;?>" <?php if ($mode == $pconfig['p1myidentt']) echo "selected"; ?>> 
                       <?=htmlspecialchars($modename);?>
@@ -214,8 +235,8 @@ if ($_POST) {
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Encryption algorithm</td>
-                        <td width="78%" bgcolor="#FFFFFF" class="vtable">
-<select name="p1ealgo" class="formfld">
+                        <td width="78%" class="vtable">
+					<select name="p1ealgo" class="formfld">
                       <?php foreach ($p1_ealgos as $algo => $algoname): ?>
                       <option value="<?=$algo;?>" <?php if ($algo == $pconfig['p1ealgo']) echo "selected"; ?>> 
                       <?=htmlspecialchars($algoname);?>
@@ -226,8 +247,8 @@ if ($_POST) {
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Hash algorithm</td>
-                        <td width="78%" bgcolor="#FFFFFF" class="vtable">
-<select name="p1halgo" class="formfld">
+                        <td width="78%" class="vtable">
+					<select name="p1halgo" class="formfld">
                       <?php foreach ($p1_halgos as $algo => $algoname): ?>
                       <option value="<?=$algo;?>" <?php if ($algo == $pconfig['p1halgo']) echo "selected"; ?>> 
                       <?=htmlspecialchars($algoname);?>
@@ -238,8 +259,8 @@ if ($_POST) {
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">DH key group</td>
-                        <td width="78%" bgcolor="#FFFFFF" class="vtable">
-<select name="p1dhgroup" class="formfld">
+                        <td width="78%" class="vtable">
+					<select name="p1dhgroup" class="formfld">
                       <?php $keygroups = explode(" ", "1 2 5"); foreach ($keygroups as $keygroup): ?>
                       <option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['p1dhgroup']) echo "selected"; ?>> 
                       <?=htmlspecialchars($keygroup);?>
@@ -251,9 +272,35 @@ if ($_POST) {
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">Lifetime</td>
-                        <td width="78%" bgcolor="#FFFFFF" class="vtable"> 
+                        <td width="78%" class="vtable"> 
                     <input name="p1lifetime" type="text" class="formfld" id="p1lifetime" size="20" value="<?=$pconfig['p1lifetime'];?>">
                     seconds</td>
+                </tr>
+                <tr> 
+                  <td width="22%" valign="top" class="vncellreq">Authentication method</td>
+                  <td width="78%" class="vtable">
+					<select name="p1authentication_method" class="formfld" onChange="methodsel_change()">
+                      <?php foreach ($p1_authentication_methods as $method => $methodname): ?>
+                      <option value="<?=$method;?>" <?php if ($method == $pconfig['p1authentication_method']) echo "selected"; ?>> 
+                      <?=htmlspecialchars($methodname);?>
+                      </option>
+                      <?php endforeach; ?>
+                    </select> <br> <span class="vexpl">Must match the setting 
+                    chosen on the remote side. </span></td>
+                </tr>
+                <tr> 
+                  <td width="22%" valign="top" class="vncellreq">Certificate</td>
+                  <td width="78%" class="vtable"> 
+                    <textarea name="p1cert" cols="65" rows="7" id="p1cert" class="formpre"><?=htmlspecialchars($pconfig['p1cert']);?></textarea>
+                    <br> 
+                    Paste a certificate in X.509 PEM format here.</td>
+                </tr>
+                <tr> 
+                  <td width="22%" valign="top" class="vncellreq">Key</td>
+                  <td width="78%" class="vtable"> 
+                    <textarea name="p1privatekey" cols="65" rows="7" id="p1privatekey" class="formpre"><?=htmlspecialchars($pconfig['p1privatekey']);?></textarea>
+                    <br> 
+                    Paste an RSA private key in PEM format here.</td>
                 </tr>
                 <tr> 
                   <td colspan="2" class="list" height="12"></td>
@@ -264,8 +311,8 @@ if ($_POST) {
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Protocol</td>
-                        <td width="78%" bgcolor="#FFFFFF" class="vtable">
-<select name="p2proto" class="formfld">
+                        <td width="78%" class="vtable">
+					<select name="p2proto" class="formfld">
                       <?php foreach ($p2_protos as $proto => $protoname): ?>
                       <option value="<?=$proto;?>" <?php if ($proto == $pconfig['p2proto']) echo "selected"; ?>> 
                       <?=htmlspecialchars($protoname);?>
@@ -276,7 +323,7 @@ if ($_POST) {
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Encryption algorithms</td>
-                        <td width="78%" bgcolor="#FFFFFF" class="vtable"> 
+                        <td width="78%" class="vtable"> 
                           <?php foreach ($p2_ealgos as $algo => $algoname): ?>
                     <input type="checkbox" name="p2ealgos[]" value="<?=$algo;?>" <?php if (in_array($algo, $pconfig['p2ealgos'])) echo "checked"; ?>> 
                     <?=htmlspecialchars($algoname);?>
@@ -289,7 +336,7 @@ if ($_POST) {
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Hash algorithms</td>
-                        <td width="78%" bgcolor="#FFFFFF" class="vtable"> 
+                        <td width="78%" class="vtable"> 
                           <?php foreach ($p2_halgos as $algo => $algoname): ?>
                     <input type="checkbox" name="p2halgos[]" value="<?=$algo;?>" <?php if (in_array($algo, $pconfig['p2halgos'])) echo "checked"; ?>> 
                     <?=htmlspecialchars($algoname);?>
@@ -299,8 +346,8 @@ if ($_POST) {
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">PFS key group</td>
-                        <td width="78%" bgcolor="#FFFFFF" class="vtable">
-<select name="p2pfsgroup" class="formfld">
+                        <td width="78%" class="vtable">
+					<select name="p2pfsgroup" class="formfld">
                       <?php foreach ($p2_pfskeygroups as $keygroup => $keygroupname): ?>
                       <option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['p2pfsgroup']) echo "selected"; ?>> 
                       <?=htmlspecialchars($keygroupname);?>
@@ -311,7 +358,7 @@ if ($_POST) {
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">Lifetime</td>
-                        <td width="78%" bgcolor="#FFFFFF" class="vtable"> 
+                        <td width="78%" class="vtable"> 
                     <input name="p2lifetime" type="text" class="formfld" id="p2lifetime" size="20" value="<?=$pconfig['p2lifetime'];?>">
                     seconds</td>
                 </tr>
@@ -326,6 +373,9 @@ if ($_POST) {
 			</tr>
 		</table>
 </form>
+<script language="JavaScript">
+<!--
+methodsel_change();
+//-->
+</script>
 <?php include("fend.inc"); ?>
-</body>
-</html>

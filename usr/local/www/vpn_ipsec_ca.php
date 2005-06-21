@@ -1,7 +1,7 @@
 #!/usr/local/bin/php
 <?php
 /*
-	vpn_pptp_users.php
+	vpn_ipsec_ca.php
 	part of m0n0wall (http://m0n0.ch/wall)
 	
 	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
@@ -29,87 +29,65 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("VPN", "PPTP");
+$pgtitle = array("VPN", "IPsec");
 require("guiconfig.inc");
 
-if (!is_array($config['pptpd']['user'])) {
-	$config['pptpd']['user'] = array();
+if (!is_array($config['ipsec']['cacert'])) {
+	$config['ipsec']['cacert'] = array();
 }
-pptpd_users_sort();
-$a_secret = &$config['pptpd']['user'];
-
-if ($_POST) {
-
-	$pconfig = $_POST;
-
-	if ($_POST['apply']) {
-		$retval = 0;
-		if (!file_exists($d_sysrebootreqd_path)) {
-			config_lock();
-			$retval = vpn_pptpd_configure();
-			config_unlock();
-		}
-		$savemsg = get_std_save_message($retval);
-		if ($retval == 0) {
-			if (file_exists($d_pptpuserdirty_path))
-				unlink($d_pptpuserdirty_path);
-		}
-	}
-}
+ipsec_ca_sort();
+$a_secret = &$config['ipsec']['cacert'];
 
 if ($_GET['act'] == "del") {
 	if ($a_secret[$_GET['id']]) {
 		unset($a_secret[$_GET['id']]);
 		write_config();
-		touch($d_pptpuserdirty_path);
-		header("Location: vpn_pptp_users.php");
+		touch($d_ipsecconfdirty_path);
+		header("Location: vpn_ipsec_ca.php");
 		exit;
 	}
 }
+
 ?>
 <?php include("fbegin.inc"); ?>
-<form action="vpn_pptp_users.php" method="post">
+<form action="vpn_ipsec.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (isset($config['pptpd']['radius']['enable']))
-	print_info_box("Warning: RADIUS is enabled. The local user database will not be used."); ?>
-<?php if (file_exists($d_pptpuserdirty_path)): ?><p>
-<?php print_info_box_np("The PPTP user list has been modified.<br>You must apply the changes in order for them to take effect.<br><b>Warning: this will terminate all current PPTP sessions!</b>");?><br>
+<?php if (file_exists($d_ipsecconfdirty_path)): ?><p>
+<?php print_info_box_np("The IPsec tunnel configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr><td class="tabnavtbl">
+  <tr><td>
   <ul id="tabnav">
-    <li class="tabinact1"><a href="vpn_pptp.php">Configuration</a></li>
-    <li class="tabact">Users</li>
+    <li class="tabinact"><a href="vpn_ipsec.php">Tunnels</a></li>
+    <li class="tabinact"><a href="vpn_ipsec_mobile.php">Mobile clients</a></li>
+    <li class="tabinact"><a href="vpn_ipsec_keys.php">Pre-shared keys</a></li>
+    <li class="tabact">CAs</li>
   </ul>
   </td></tr>
   <tr> 
-    <td colspan="3" class="tabcont">
+    <td class="tabcont">
               <table width="80%" border="0" cellpadding="0" cellspacing="0">
                 <tr> 
-                  <td class="listhdrr">Username</td>
-                  <td class="listhdr">IP address</td>
+                  <td class="listhdrr">Identifier</td>
                   <td class="list"></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_secret as $secretent): ?>
                 <tr> 
                   <td class="listlr">
-                    <?=htmlspecialchars($secretent['name']);?>
+                    <?=htmlspecialchars($secretent['ident']);?>
                   </td>
-                  <td class="listr">
-                    <?=htmlspecialchars($secretent['ip']);?>&nbsp;
-                  </td>
-                  <td class="list" nowrap> <a href="vpn_pptp_users_edit.php?id=<?=$i;?>"><img src="e.gif" title="edit user" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="vpn_pptp_users.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this user?')"><img src="x.gif" title="delete user" width="17" height="17" border="0"></a></td>
+                  <td class="list" nowrap> <a href="vpn_ipsec_ca_edit.php?id=<?=$i;?>"><img src="e.gif" title="edit certificate" width="17" height="17" border="0"></a>
+                     &nbsp;<a href="vpn_ipsec_ca.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this certificate?')"><img src="x.gif" title="delete certificate" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr> 
-                  <td class="list" colspan="2"></td>
-                  <td class="list"> <a href="vpn_pptp_users_edit.php"><img src="plus.gif" title="add user" width="17" height="17" border="0"></a></td>
+                  <td class="list"></td>
+                  <td class="list"> <a href="vpn_ipsec_ca_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
 				</tr>
               </table>
-			</td>
-	</tr>
-</table>
+			 </td>
+			</tr>
+		</table>
 </form>
 <?php include("fend.inc"); ?>

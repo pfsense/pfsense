@@ -1,7 +1,7 @@
 #!/usr/local/bin/php
 <?php
 /*
-	vpn_ipsec_keys_edit.php
+	vpn_ipsec_ca_edit.php
 	part of m0n0wall (http://m0n0.ch/wall)
 	
 	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
@@ -29,14 +29,14 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("VPN", "IPsec", "Edit pre-shared key");
+$pgtitle = array("VPN", "IPsec", "Edit CA certificate");
 require("guiconfig.inc");
 
-if (!is_array($config['ipsec']['mobilekey'])) {
-	$config['ipsec']['mobilekey'] = array();
+if (!is_array($config['ipsec']['cacert'])) {
+	$config['ipsec']['cacert'] = array();
 }
-ipsec_mobilekey_sort();
-$a_secret = &$config['ipsec']['mobilekey'];
+ipsec_ca_sort();
+$a_secret = &$config['ipsec']['cacert'];
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
@@ -44,7 +44,7 @@ if (isset($_POST['id']))
 
 if (isset($id) && $a_secret[$id]) {
 	$pconfig['ident'] = $a_secret[$id]['ident'];
-	$pconfig['psk'] = $a_secret[$id]['pre-shared-key'];
+	$pconfig['cert'] = base64_decode($a_secret[$id]['cert']);
 }
 
 if ($_POST) {
@@ -53,8 +53,10 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "ident psk");
-	$reqdfieldsn = explode(",", "Identifier,Pre-shared key");
+	$reqdfields = explode(" ", "ident cert");
+	$reqdfieldsn = explode(",", "Identifier,CA Certificate");
+	if (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))
+			$input_errors[] = "This certificate does not appear to be valid.";
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
@@ -77,7 +79,7 @@ if ($_POST) {
 			$secretent = $a_secret[$id];
 	
 		$secretent['ident'] = $_POST['ident'];
-		$secretent['pre-shared-key'] = $_POST['psk'];
+		$secretent['cert'] = base64_encode($_POST['cert']);
 		
 		if (isset($id) && $a_secret[$id])
 			$a_secret[$id] = $secretent;
@@ -87,28 +89,29 @@ if ($_POST) {
 		write_config();
 		touch($d_ipsecconfdirty_path);
 		
-		header("Location: vpn_ipsec_keys.php");
+		header("Location: vpn_ipsec_ca.php");
 		exit;
 	}
 }
 ?>
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-            <form action="vpn_ipsec_keys_edit.php" method="post" name="iform" id="iform">
+            <form action="vpn_ipsec_ca_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr> 
                   <td valign="top" class="vncellreq">Identifier</td>
                   <td class="vtable">
-					<?=$mandfldhtml;?><input name="ident" type="text" class="formfld" id="ident" size="30" value="<?=$pconfig['ident'];?>">
+ <input name="ident" type="text" class="formfld" id="ident" size="30" value="<?=$pconfig['ident'];?>">
                     <br>
-This can be either an IP address, fully qualified domain name or an e-mail address.       
+This can be any text to describe the certificate authority.       
                   </td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Pre-shared key</td>
+                  <td width="22%" valign="top" class="vncellreq">Certificate</td>
                   <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="psk" type="text" class="formfld" id="psk" size="40" value="<?=htmlspecialchars($pconfig['psk']);?>">
-                  </td>
+                    <textarea name="cert" cols="65" rows="7" id="cert" class="formpre"><?=htmlspecialchars($pconfig['cert']);?></textarea>
+                    <br> 
+                    Paste a CA certificate in X.509 PEM format here.</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>

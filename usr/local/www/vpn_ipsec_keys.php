@@ -1,11 +1,10 @@
 #!/usr/local/bin/php
 <?php
-/* $Id$ */
 /*
 	vpn_ipsec_keys.php
 	part of m0n0wall (http://m0n0.ch/wall)
 	
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -30,6 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+$pgtitle = array("VPN", "IPsec");
 require("guiconfig.inc");
 
 if (!is_array($config['ipsec']['mobilekey'])) {
@@ -49,17 +49,7 @@ if ($_GET['act'] == "del") {
 }
 
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("VPN: IPsec");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">VPN: IPsec</p>
 <form action="vpn_ipsec.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_ipsecconfdirty_path)): ?><p>
@@ -67,11 +57,12 @@ if ($_GET['act'] == "del") {
 <input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr><td>
+  <tr><td class="tabnavtbl">
   <ul id="tabnav">
-    <li class="tabinact"><a href="vpn_ipsec.php">Tunnels</a></li>
+    <li class="tabinact1"><a href="vpn_ipsec.php">Tunnels</a></li>
     <li class="tabinact"><a href="vpn_ipsec_mobile.php">Mobile clients</a></li>
     <li class="tabact">Pre-shared keys</li>
+    <li class="tabinact"><a href="vpn_ipsec_ca.php">CAs</a></li>
   </ul>
   </td></tr>
   <tr> 
@@ -84,37 +75,23 @@ if ($_GET['act'] == "del") {
 				</tr>
 			  <?php $i = 0; foreach ($a_secret as $secretent): ?>
                 <tr> 
-                  <td class="listlr" ondblclick="document.location='vpn_ipsec_keys_edit.php?id=<?=$i;?>';">
+                  <td class="listlr">
                     <?=htmlspecialchars($secretent['ident']);?>
                   </td>
-                  <td class="listr" ondblclick="document.location='vpn_ipsec_keys_edit.php?id=<?=$i;?>';">
+                  <td class="listr">
                     <?=htmlspecialchars($secretent['pre-shared-key']);?>
                   </td>
-                  <td class="list" nowrap>
-                    <table border="0" cellspacing="0" cellpadding="1">
-                      <tr>
-                        <td valign="middle"><a href="vpn_ipsec_keys_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a></td>
-                        <td valign="middle"><a href="vpn_ipsec_keys.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this pre-shared key?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
-                      </tr>
-                    </table>
-                  </td>
-		</tr>
-		<?php $i++; endforeach; ?>
+                  <td class="list" nowrap> <a href="vpn_ipsec_keys_edit.php?id=<?=$i;?>"><img src="e.gif" title="edit key" width="17" height="17" border="0"></a>
+                     &nbsp;<a href="vpn_ipsec_keys.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this pre-shared key?')"><img src="x.gif" title="delete key" width="17" height="17" border="0"></a></td>
+				</tr>
+			  <?php $i++; endforeach; ?>
                 <tr> 
                   <td class="list" colspan="2"></td>
-                  <td class="list">
-                    <table border="0" cellspacing="0" cellpadding="1">
-                      <tr>
-                        <td valign="middle"><a href="vpn_ipsec_keys_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
-                      </tr>
-                    </table>
-                  </td>
-		</tr>
+                  <td class="list"> <a href="vpn_ipsec_keys_edit.php"><img src="plus.gif" title="add key" width="17" height="17" border="0"></a></td>
+				</tr>
               </table>
-            </td>
-          </tr>
-	</table>
+			 </td>
+			</tr>
+		</table>
 </form>
 <?php include("fend.inc"); ?>
-</body>
-</html>

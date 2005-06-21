@@ -820,14 +820,15 @@ function rmdir_recursive($path,$follow_links=false) {
  */
 function safe_mkdir($path, $mode=0755) {
 	global $g;
-	
+
+	/* cdrom is ro. */
 	if($g['platform'] == "cdrom")
 		return false;
 
-	if (!is_file($path) && !is_dir($path))
-		return make_dirs($path, $mode);
-	else
-		return false;
+	if(is_dir($path))
+	    return;
+
+	make_dirs($path, $mode);
 }
 
 /*
@@ -838,7 +839,10 @@ function make_dirs($path, $mode = 0755) {
 	/* is dir already created? */
 	if(is_dir($path)) return;
 	/* create directory in question */
-	mkdir(dirname($path), $mode);
+	$to_create = split("/", $path);
+	foreach($to_create as $tc) 
+	    if(!is_dir($tc))
+		make_dirs($path, $mode);
 }
 
 /*

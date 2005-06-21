@@ -40,7 +40,7 @@
 	touch("{$g['varrun_path']}/booting");
 
 	$motd = trim(return_filename_as_string("/etc/motd"));
-	if(strlen($motd) > 2) echo "\n{$motd}\n";
+	if(strlen($motd) > 2) echo "\n{$motd}\n\n";
 
 	/* parse the configuration and include all functions used below */
 	require_once("config.inc");

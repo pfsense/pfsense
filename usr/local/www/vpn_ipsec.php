@@ -171,7 +171,7 @@ if ($_GET['act'] == "del") {
                   <td class="listr"><?=$spans;?>
 				    <?=$p1_halgos[$ipsecent['p1']['hash-algorithm']];?>
                   <?=$spane;?></td>
-                  <td class="listbg"><?=$spans;?>
+                  <td class="listbg"><?=$spans;?><font color="#FFFFFF">
                     <?=htmlspecialchars($ipsecent['descr']);?>&nbsp;
                   <?=$spane;?></td>
                   <td valign="middle" nowrap class="list"> <a href="vpn_ipsec_edit.php?id=<?=$i;?>"><img src="e.gif" title="edit tunnel" width="17" height="17" border="0"></a> 

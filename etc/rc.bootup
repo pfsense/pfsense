@@ -32,6 +32,7 @@
 */
 
 	require_once("globals.inc");
+	require_once("pfsense-utils.inc");
 
 	/* let the other functions know we're booting */
 	$pkg_interface = 'console';

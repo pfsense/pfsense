@@ -27,6 +27,7 @@ fi
 # lets populate them from the default (factory configuration)
 # files.
 [ ! -f /cf/conf/config.xml ] || /rescue/cp /FreeSBIE/cf/conf/config.xml /cf/conf/
+[ ! -f /conf.default/config.xml ] || /rescue/cp /FreeSBIE/conf.default/config.xml /conf.default/
 [ ! -f /cf/conf/ez-ipupdate.cache ] || /rescue/cp /FreeSBIE/cf/conf/ez-ipupdate.cache /cf/conf/
 
 # Create some needed directories

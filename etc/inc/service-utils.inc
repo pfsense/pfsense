@@ -59,11 +59,11 @@ function write_rcfile($params) {
 	return;
 }
 
-function start_service($service) {
+function start_service($name) {
 	global $config, $g;
 	if($config['installedpackages']['service']) {
 		foreach($config['installedpackages']['service'] as $service) {
-			if($service['name'] == $service) {
+			if($service['name'] == $name) {
 				if($service['rcfile']) {
 					if($service['prefix']) {
 						$prefix =& $service['prefix'];
@@ -81,11 +81,11 @@ function start_service($service) {
 	}
 }
 
-function stop_service($service) {
+function stop_service($name) {
         global $config, $g;
         if($config['installedpackages']['service']) {
                 foreach($config['installedpackages']['service'] as $service) {
-                        if($service['name'] == $service) {
+                        if($service['name'] == $name) {
                                 if($service['rcfile']) {
                                         if($service['prefix']) {
                                                 $prefix =& $service['prefix'];
@@ -97,19 +97,22 @@ function stop_service($service) {
                                 if($service['stopcmd']) {
                                         eval($service['stopcmd']);
                                 }
+				if(!($service['rcfile'] or $service['stopcmd'])) {
+					mwexec("/usr/bin/killall {$service['executable']}");
+				}
                                 break;
                         }
                 }
         }
 }
 
-function restart_service($service) {
+function restart_service($name) {
         global $config, $g;
 	stop_service($service);
 	start_service($service);
         if($config['installedpackages']['service']) {
                 foreach($config['installedpackages']['service'] as $service) {
-                        if($service['name'] == $service) {
+                        if($service['name'] == $name) {
                                 if($service['restartcmd']) {
                                         eval($service['restartcmd']);
                                 }

@@ -50,7 +50,7 @@ if (isset($id) && $a_ipsec[$id]) {
 	if (!isset($a_ipsec[$id]['local-subnet']))
 		$pconfig['localnet'] = "lan";
 	else
-		address_to_pconfig($a_ipsec[$id]['local-subnet'], $pconfig['localnet'], $pconfig['localnetmask']);
+		address_to_pconfig_vpn($a_ipsec[$id]['local-subnet'], $pconfig['localnet'], $pconfig['localnetmask']);
 		
 	if ($a_ipsec[$id]['interface'])
 		$pconfig['interface'] = $a_ipsec[$id]['interface'];
@@ -565,3 +565,19 @@ methodsel_change();
 //-->
 </script>
 <?php include("fend.inc"); ?>
+
+
+<?php
+
+function address_to_pconfig_vpn($adr, &$padr, &$pmask) {
+
+        if ($adr['network'])
+                $padr = $adr['network'];
+        else if ($adr['address']) {
+                list($padr, $pmask) = explode("/", $adr['address']);
+                if (is_null($pmask))
+                        $pmask = 32;
+        }
+}
+
+?>

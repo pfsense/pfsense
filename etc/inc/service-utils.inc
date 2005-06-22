@@ -55,3 +55,69 @@ function write_rcfile($params) {
 	fclose($fout);
 	return;
 }
+
+function start_service($service) {
+	global $config, $g;
+	if($config['installedpackages']['service']) {
+		foreach($config['installedpackages']['service'] as $service) {
+			if($service['name'] == $service) {
+				if($service['rcfile']) {
+					if($service['prefix']) {
+						$prefix =& $service['prefix'];
+					} else {
+						$prefix = "/usr/local/etc/rc.d/";
+					}
+					mwexec($prefix . $service['rcfile'] . " start");
+				}
+				if($service['startcmd']) {
+					eval($service['startcmd']);
+				}
+				break;
+			}
+		}
+	}
+}
+
+function start_service($service) {
+        global $config, $g;
+        if($config['installedpackages']['service']) {
+                foreach($config['installedpackages']['service'] as $service) {
+                        if($service['name'] == $service) {
+                                if($service['rcfile']) {
+                                        if($service['prefix']) {
+                                                $prefix =& $service['prefix'];
+                                        } else {
+                                                $prefix = "/usr/local/etc/rc.d/";
+                                        }
+                                        mwexec($prefix . $service['rcfile'] . " stop");
+                                }
+                                if($service['stopcmd']) {
+                                        eval($service['stopcmd']);
+                                }
+                                break;
+                        }
+                }
+        }
+}
+
+function restart_service($service) {
+        global $config, $g;
+        if($config['installedpackages']['service']) {
+                foreach($config['installedpackages']['service'] as $service) {
+                        if($service['name'] == $service) {
+                                if($service['rcfile']) {
+                                        if($service['prefix']) {
+                                                $prefix =& $service['prefix'];
+                                        } else {
+                                                $prefix = "/usr/local/etc/rc.d/";
+                                        }
+                                        mwexec($prefix . $service['rcfile'] . " restart");
+                                } 
+                                if($service['restartcmd']) {
+                                        eval($service['restartcmd']);
+                                }
+                                break;
+                        }
+                }
+        }
+}

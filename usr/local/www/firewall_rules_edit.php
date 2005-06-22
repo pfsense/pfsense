@@ -855,3 +855,34 @@ var customarray=new Array(<?php echo $aliases; ?>);
 <?php include("fend.inc"); ?>
 </body>
 </html>
+
+<?php
+
+function address_to_pconfig($adr, &$padr, &$pmask, &$pnot, &$pbeginport, &$pendport) {
+
+        if (isset($adr['any']))
+                $padr = "any";
+        else if ($adr['network'])
+                $padr = $adr['network'];
+        else if ($adr['address']) {
+                list($padr, $pmask) = explode("/", $adr['address']);
+                if (!$pmask)
+                        $pmask = 32;
+        }
+
+        if (isset($adr['not']))
+                $pnot = 1;
+        else
+                $pnot = 0;
+
+        if ($adr['port']) {
+                list($pbeginport, $pendport) = explode("-", $adr['port']);
+                if (!$pendport)
+                        $pendport = $pbeginport;
+        } else {
+                $pbeginport = "any";
+                $pendport = "any";
+        }
+}
+
+?>

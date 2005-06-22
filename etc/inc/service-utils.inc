@@ -35,7 +35,7 @@
 
 function write_rcfile($params) {
 	global $config, $g;
-	$fileprefix = "/home/colin/";
+	$fileprefix = "/usr/local/etc/rc.d/";
 	if(!(is_writable($fileprefix . $params['file']) or $params['start'])) return false;
 	$towrite .= "#!/bin/sh\n# This file was automatically generated\n# by the pfSense service handler.\n\n";
 	/* write our rc functions */
@@ -51,7 +51,6 @@ function write_rcfile($params) {
 	/* begin rcfile logic */
 	$towrite .= "case $1 in\n\tstart)\n\t\trc_start\n\t\t;;\n\tstop)\n\t\trc_stop\n\t\t;;\n\trestart)\n\t\trc_stop\n\t\trc_start\n\t\t;;\nesac\n\n";
 	$fout = fopen($fileprefix . $params['file'], "w");
-	print $towrite;
 	fwrite($fout, $towrite);
 	fclose($fout);
 	return;

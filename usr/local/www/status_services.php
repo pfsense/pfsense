@@ -1,8 +1,8 @@
 #!/usr/local/bin/php
 <?php
 /*
-    services_status.php
-    Copyright (C) 2004, 2005 Scott Ullrich
+    status_services.php
+    Copyright (C) 2005 Scott Ullrich, Colin Smith
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without

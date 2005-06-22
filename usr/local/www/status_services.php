@@ -28,74 +28,36 @@
 */
 
 require("guiconfig.inc");
+require("service-utils.inc");
 
 function gentitle_pkg($pgname) {
 	global $config;
 	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
 }
 
-function get_package_rcd_details($extd) {
-	global $package_name, $executable_name, $description, $raw_name;
-	$raw_name = str_replace(".sh","",$extd);
-	$package_name = "";
-	$executable_name = "";
-	/* XXX: needs a get_pkg_description($packagename) function */
-	$description = "";	
-	$file_contents = return_filename_as_string("/usr/local/etc/rc.d/{$extd}");
-        if (preg_match_all("/\# PACKAGE\: (.*)\n/",$file_contents,$match_array))
-            $package_name = $match_array[1][0];
-        if (preg_match_all("/\# EXECUTABLE\: (.*)\n/",$file_contents,$match_array))
-            $executable_name = $match_array[1][0];
-	/* if we cannot locate it atleast return what they passed us */
-	if($package_name == "") 
-		$package_name = str_replace(".sh","",$extd);
-	if($executable_name == "") 
-		$executable_name = str_replace(".sh","",$extd);
-	$description = find_package_description($raw_name);
-	if($description == "")
-		$description = "&nbsp;";
+if($_GET['mode'] == "restartservice" and $_GET['service']) {
+	restart_service($_GET['service']);
+	$savemsg = "{$_GET['service']} has been restarted.";
 }
 
-if($_GET['service'] <> "") 
-	get_package_rcd_details($_GET['service'] . ".sh");
-
-if($_GET['restartservice'] == "true") {
-	mwexec("/usr/bin/killall {$executable_name}");
-	sleep(1);
-	mwexec("/bin/sh /usr/local/etc/rc.d/{$raw_name}.sh start");
-	$status = is_service_running($executable_name);
-	if($status == 1) {
-		$savemsg = "{$package_name} has been restarted.";
-	} else {
-		$error_message = exec_command("/bin/sh /usr/local/etc/rc.d/{$raw_name}.sh start");
-		$savemsg = "There was a error restarting {$package_name}.<p>{$error_message}";
-	}
+if($_GET['mode'] == "startservice" and $_GET['service']) {
+        start_service($_GET['service']);
+        $savemsg = "{$_GET['service']} has been started.";
 }
 
-if($_GET['stopservice'] == "true") {
-	mwexec("/usr/bin/killall {$executable_name}");
-	sleep(1);
-	$status = is_service_running($executable_name);
-	if($status == 1) {
-		$savemsg = "There was an error stopping {$package_name} - {$executable_name}.";
-	} else {
-		$savemsg = "{$package_name} has been stopped.";
-	}
-}
-
-if($_GET['startservice'] == "true") {	
-	mwexec("/bin/sh /usr/local/etc/rc.d/{$raw_name}.sh start");
-	$status = is_service_running($executable_name);
-	if($status == 1) {
-		$savemsg = "{$package_name} has been started.";
-	} else {
-		$error_message = exec_command("/bin/sh /usr/local/etc/rc.d/{$raw_name}.sh start");
-		$savemsg = "There was a error restarting {$package_name}.<p>{$error_message}";
-	}
+if($_GET['mode'] == "stopservice" and $_GET['service']) {
+        stop_service($_GET['service']);
+        $savemsg = "{$_GET['service']} has been stopped.";
 }
 
 /* batch mode, allow other scripts to call this script */
-if($_GET['batch'] <> "") exit;
+if($_GET['batch']) exit;
+
+exec("/bin/ps a | awk '{ print $5 }'", $psout);
+array_shift($psout);
+foreach($psout as $line) {
+	$ps[] = array_pop(explode('/', $line));
+}
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -126,53 +88,38 @@ include("fbegin.inc");
 	  <td class="listhdrr"><b><center>Service</center></b></td>
 	  <td class="listhdrr"><b><center>Description</center></b></td>
 	  <td class="listhdrr"><b><center>Status</center></b></td>
-	  <td class="listhdrr"><b><center>Maintenance</center></b></td>
 	</tr>
 
 <?php
 
-$dh = @opendir("/usr/local/etc/rc.d/");
-if ($dh)
-	while (($extd = readdir($dh)) !== false) {
-		if (($extd == ".") || ($extd == ".."))
-			continue;
-		get_package_rcd_details($extd);
-		if($executable_name == "")
-			continue;
-		if($package_name == "")
-			continue;
-		if(get_pkg_id(strtolower($package_name)) == -1)
-			continue;
-		$status = is_service_running($executable_name);
-		if($status == 1)
-			$status_txt = "<font color='green'>Running</font>";
-		else
-			$status_txt = "<font color='red'>Stopped</font>";
-		echo "<tr><td class=\"listlr\">{$package_name}</td>";
-		echo "<td class=\"listlr\">{$description}</td>";
-		echo "<td class=\"listlr\">{$status_txt}</td>";
-		echo "<td class=\"listlr\"><center>";
-		if($status == 1) {
-			echo "<a href='status_services.php?restartservice=true&service={$raw_name}'>";
-			echo "<img title='Restart Service' border='0' src='/service_restart.gif'></a> ";
-			echo "<a href='status_services.php?stopservice=true&service={$raw_name}'>";
-			echo "<img title='Stop Service' border='0' src='/service_stop.gif'> ";
-			echo "</a> ";
+if($config['installedpackages']['service']) {
+	foreach($config['installedpackages']['service'] as $service) {
+		if(!$service['name']) continue;
+		echo '<tr><td class="listlr">' . $service['name'] . '</td>';
+		echo '<td class="listlr">' . $service['description'] . '</td>';
+		if(is_service_running($service['name'], $ps)) {
+			echo '<td class="listlr">Running</td>';
+			$running = true;
 		} else {
-			echo "<a href='status_services.php?startservice=true&service={$raw_name}'> ";
+			echo '<td class="listbg">Stopped</td>';
+			$running = false;
+		}
+		if($running) {
+			echo "<a href='status_services.php?mode=restartservice&service={$service['name']}'>";
+			echo "<img title='Restart Service' border='0' src='/service_restart.gif'></a> ";
+			echo "<a href='status_services.php?mode=stopservice&service={$service['name']}'>";
+			echo "<img title='Stop Service' border='0' src='/service_stop.gif'> ";
+			echo "</a>";
+		} else {
+			echo "<a href='status_services.php?mode=startservice&service={$service['name']}'> ";
 			echo "<img title='Start Service' border='0' src='/service_start.gif'></a> ";
 		}
-		echo "</center></td>";
-		echo "</tr>";
-		$counter++;
+		echo '</tr>';
 	}
-
-if($counter == 0) 
-	echo "<tr><td colspan=5><center>Could not locate any services.</td></tr>";
-
+} else {
+	echo "<tr><td colspan=\"3\"><center>No services found.</td></tr>";
+}
 ?>
-<tr><td>
-</td></tr>
 </table>
 
 </td>

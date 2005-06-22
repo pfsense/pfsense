@@ -27,8 +27,7 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-require_once("guiconfig.inc");
-require_once("service-utils.inc");
+require("guiconfig.inc");
 
 function gentitle_pkg($pgname) {
 	global $config;
@@ -86,7 +85,7 @@ include("fbegin.inc");
 
 <?php
 
-exec("/bin/ps a | awk '{ print $5 }'", $psout); 
+exec("/bin/ps ax | awk '{ print $5 }'", $psout); 
 array_shift($psout);
 foreach($psout as $line) {
 	$ps[] = trim(array_pop(explode(' ', array_pop(explode('/', $line)))));

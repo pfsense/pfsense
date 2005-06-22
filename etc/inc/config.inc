@@ -608,6 +608,8 @@ function convert_config() {
 function write_config($desc="Unknown", $backup = true) {
 	global $config, $g;
 
+	restore_listtags();
+
 	if($backup) backup_config();
 
 	if (time() > mktime(0, 0, 0, 9, 1, 2004))       /* make sure the clock settings are plausible */
@@ -654,8 +656,7 @@ function reset_factory_defaults() {
 	conf_mount_rw();
 
 	/* create conf directory, if necessary */
-	if(!is_dir($g['cf_conf_path']))
-		safe_mkdir($g['cf_conf_path']);
+	safe_mkdir("{$g['cf_conf_path']}");
 
 	/* clear out /conf */
 	$dh = opendir($g['conf_path']);
@@ -1050,7 +1051,6 @@ function cleanup_backupcache($revisions = 30) {
 	global $g;
 	$i = false;
 	if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
-		conf_mount_rw();
 		$backups = get_backups();
 		$newbaks = array();
 		$bakfiles = glob($g['cf_conf_path'] . "/backup/config-*");
@@ -1091,7 +1091,6 @@ function cleanup_backupcache($revisions = 30) {
         	fwrite($bakout, serialize($tocache));
   	        fclose($bakout);
 	}
-	conf_mount_ro();
 	if($g['booting']) {
 		if($i) {
 			print "done.\n";
@@ -1121,6 +1120,7 @@ function get_backups() {
 function backup_config() {
 	global $config, $g;
 
+	/* XXX: temporary */
 	if($g['platform'] == "cdrom")
 		return;
 
@@ -1129,30 +1129,26 @@ function backup_config() {
 	/* Create backup directory if needed */
 	safe_mkdir("{$g['cf_conf_path']}/backup");
 
-        if($config['revision']['time'] == "") 
+        if($config['revision']['time'] == "") {
                 $baktime = 0;
-        else 
+        } else {
                 $baktime = $config['revision']['time'];
-	
-        if($config['revision']['description'] == "") 
+        }
+        if($config['revision']['description'] == "") {
                 $bakdesc = "Unknown";
-        else
+        } else {
                 $bakdesc = $config['revision']['description'];
-	
-	if(file_exists($g['cf_conf_path'] . '/config.xml'))
-	        copy($g['cf_conf_path'] . '/config.xml', $g['cf_conf_path'] . '/backup/config-' . $baktime . '.xml');
-
-        if(file_exists($g['cf_conf_path'] . '/backup/backup.cache'))
+        }
+        copy($g['cf_conf_path'] . '/config.xml', $g['cf_conf_path'] . '/backup/config-' . $baktime . '.xml');
+        if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
                 $backupcache = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
-        else 
+        } else {
                 $backupcache = array();
-	
+        }
         $backupcache[$baktime] = array('description' => $bakdesc);
-	if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
-		$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
-		fwrite($bakout, serialize($backupcache));
-		fclose($bakout);
-	}
+        $bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
+        fwrite($bakout, serialize($backupcache));
+        fclose($bakout);
 	
 	conf_mount_ro();
 	

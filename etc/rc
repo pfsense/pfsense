@@ -129,7 +129,7 @@ if [ ! "$PLATFORM" = "cdrom" ]; then
     
     for FILE in /usr/local/etc/rc.d/*.sh; do
 	echo -n " Starting ${FILE}..."
-	sh $FILE >>/tmp/bootup_messages 2>&1
+	sh $FILE start >>/tmp/bootup_messages 2>&1
 	echo "done."
     done
 fi

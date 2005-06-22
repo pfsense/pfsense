@@ -63,6 +63,14 @@ foreach($pfctl_vsq_array as $pfctl) {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Status: Traffic shaper: Queues</p>
+<?php
+if(!isset($config['shaper']['enable']) {
+	echo "Traffic shaping is currently disabled.";
+	include("fend.inc");
+	exit;	
+}
+?>
+
 <form action="status_queues.php" method="post">
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
                       <tr>

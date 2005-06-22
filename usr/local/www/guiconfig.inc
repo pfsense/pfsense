@@ -533,7 +533,6 @@ function address_to_pconfig($adr, &$padr, &$pmask, &$pnot, &$pbeginport, &$pendp
         }
 }
 
-
 function pconfig_to_address(&$adr, $padr, $pmask, $pnot=false, $pbeginport=0, $pendport=0) {
 
         $adr = array();
@@ -573,5 +572,16 @@ function is_specialnet($net) {
         else
                 return false;
 }
+
+function ipsec_ca_sort() {
+        global $g, $config;
+
+        function ipseccacmp($a, $b) {
+                return strcmp($a['ident'], $b['ident']);
+        }
+
+        usort($config['ipsec']['cacert'], "ipseccacmp");
+}
+
 
 ?>

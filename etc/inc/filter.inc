@@ -729,6 +729,7 @@ function filter_generate_pf_altq_rules() {
                         if ($rule['iptos'])
                                 $line .= "tos {$rule['iptos']} ";
 
+			/*
 			$inflags = explode(",", $rule['tcpflags']);
 			$flags = " flags ";
 			foreach ($tcpflags as $tcpflag) {
@@ -745,6 +746,7 @@ function filter_generate_pf_altq_rules() {
 			}
 			if($flags <> " flags ")
 				$line .= "{$flags} ";
+			*/
 
 			$qtag = "{$direction}queue";
 			$line .= " keep state tag {$rule[$qtag]} ";

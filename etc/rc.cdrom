@@ -23,6 +23,9 @@ if [ ! -L /conf ]; then
     /rescue/ln -s /cf/conf /conf
 fi
 
+# Create factory default restore directory
+/bin/mkdir -p /conf.default/ 
+
 # If the default config.xml and ez-ipupdate.cache do not exist,
 # lets populate them from the default (factory configuration)
 # files.

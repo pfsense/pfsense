@@ -222,10 +222,7 @@ include("fbegin.inc");
 </script>
 
 <?php
-$config_tmp = $config;
-$config = $pfSense_config;
 include("fbegin.inc");
-$config = $config_tmp;
 ?>
 <p class="pgtitle"><?=$title?></p>
 <form action="pkg_edit.php" method="post">

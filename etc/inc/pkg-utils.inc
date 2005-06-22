@@ -44,6 +44,7 @@ function restore_pkg_listtags() {
 
 restore_pkg_listtags();
 
+require_once("service-utils.inc");
 require_once("pfsense-utils.inc");
 require_once("globals.inc");
 
@@ -664,6 +665,7 @@ function delete_package_xml($pkg) {
 	/* parse package configuration */
 	$packages = &$config['installedpackages']['package'];
 	$menus = &$config['installedpackages']['menu'];
+	$services = &$config['installedpackages']['service'];
 	if(file_exists("/usr/local/pkg/" . $packages[$pkgid]['configurationfile'])) {
 		$pkg_config = parse_xml_config("/usr/local/pkg/" . $packages[$pkgid]['configurationfile'], "packagegui");
 		/* remove menu items */
@@ -674,6 +676,19 @@ function delete_package_xml($pkg) {
 			foreach($pkg_config['menu'] as $menu) {
 				foreach($instmenus as $key => $instmenu) {
 					if($instmenu == $menu['name']) unset($menus[$key]);
+				}
+			}
+			$static_output .= "done.\n";
+			update_output_window($static_output);
+		}
+		/* remove services */
+		if(is_array($pkg_config['service'])) {
+			$static_output .= "\tServices... ";
+			update_output_window($static_output);
+			foreach($services as $service) $instservices[] = $service['name'];
+			foreach($pkg_config['service'] as $service) {
+				foreach($instservices as $key => $instservice) {
+					if($instservice == $service['name']) unset($services[$key]);
 				}
 			}
 			$static_output .= "done.\n";

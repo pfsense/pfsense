@@ -43,9 +43,6 @@
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
-$pfSense_config = $config; // copy this since we will be parsing
-                           // another xml file which will be clobbered.
-
 function gentitle_pkg($pgname) {
 	global $pfSense_config;
 	return $pfSense_config['system']['hostname'] . "." . $pfSense_config['system']['domain'] . " - " . $pgname;
@@ -61,7 +58,6 @@ if($xml == "") {
 } else {
             $pkg = parse_xml_config("/usr/local/pkg/" . $xml, "packagegui");
 }
-
 $package_name = $pkg['menu'][0]['name'];
 $section      = $pkg['menu'][0]['section'];
 $config_path  = $pkg['configpath'];
@@ -108,7 +104,7 @@ if ($_POST) {
 	} else {
 		if($pkg['custom_add_php_command']) {
 			if($pkg['donotsave'] <> "" or $pkg['preoutput'] <> "") {
-				?>
+			?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
@@ -120,7 +116,6 @@ if ($_POST) {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php
 include("fbegin.inc");
-
 ?>
 <p class="pgtitle"><?=$title?></p>
 				<?php
@@ -165,7 +160,6 @@ include("fbegin.inc");
 				// simply loop through all field names looking for posted
 				// values matching the fieldnames.  if found, save to package
 				// configuration area.
-
 				$fieldname  = $fields['fieldname'];
 				$fieldvalue = $_POST[$fieldname];
 				$toeval = "\$pkgarr['" . $fieldname . "'] 	= \"" . $fieldvalue . "\";";

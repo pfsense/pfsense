@@ -241,7 +241,11 @@
                                 <option>
                                         <name>Asterisk</name>
                                         <value>Asterisk</value>
-                                </option>				
+				</option>			
+                                <option>
+                                        <name>PanasonicPBX</name>
+                                        <value>Panasonic</value>
+				</option>
 			</options>
 		</field>
 		<field>
@@ -341,13 +345,6 @@
 	<stepsubmitphpaction>
 
 		if ( $_POST['enable'] ) {
-		
-			/* check to see if user is setting voip speed higher than wan */
-			if($config['ezshaper']['step2']['upload'] &lt; $_POST['bandwidth'])
-			    $_POST['bandwidth'] = $config['ezshaper']['step2']['upload'];
-			if($config['ezshaper']['step2']['download'] &lt; $_POST['bandwidth'])
-			    $_POST['bandwidth'] = $config['ezshaper']['step2']['download'];
-		
 	                /* create qVOIPUp */
 	                $queue = array();
 	                $queue['name'] = "qVOIPUp";
@@ -434,7 +431,14 @@
 				$voiplist[] = array('VoicePulse', 'udp', '16384', '16482', 'both');
 				$voiplist[] = array('VoicePulse', 'udp', '4569', '4569', 'both');
 			    }
-	    
+
+			    /* Panasonic Hybrid PBX */
+			    if( $_POST['provider'] == "Panasonic") {
+				$voiplist[] = array('Panasonic1', 'udp', '8000-8063', '8000-8063', 'both');
+				$voiplist[] = array('Panasonic2', 'udp', '9300-9301', '9300-9301', 'both');
+				$voiplist[] = array('Panasonic3', 'udp', '2747', '2747', 'both');
+			    }
+
 			    /* Set up/down games as higher weight */
 			    /* loop through voiplist[] */
 			    foreach ($voiplist as $voip) {
@@ -762,7 +766,7 @@
                         <type>checkbox</type>
                         <typehint>Prioritize network gaming traffic</typehint>
                         <description>This will raise the priority of gaming traffic to higher than most traffic.</description>
-			<enablefields>Counterstrike,DeltaForce,QuakeIII,TigerWoods2004PS2,CallOfDuty,PlanetSide,Halo2,AgesOfEmpires</enablefields>
+			<enablefields>Counterstrike,DeltaForce,QuakeIII,TigerWoods2004PS2,CallOfDuty,PlanetSide,Halo2</enablefields>
 			<donotdisable>true</donotdisable>
 			<bindstofield>ezshaper->step5->enable</bindstofield>
                 </field>
@@ -815,12 +819,6 @@
                         <type>checkbox</type>
 			<typehint>Halo2 via Xbox live</typehint>
 			<bindstofield>ezshaper->step5->halo2xbox</bindstofield>
-                </field>		
-                <field>
-                        <name>AgesOfEmpires</name>
-                        <type>checkbox</type>
-			<typehint>Ages of empires</typehint>
-			<bindstofield>ezshaper->step5->agesofempires</bindstofield>
                 </field>		
                 <field>
                         <name>Next</name>
@@ -927,14 +925,6 @@
 		    $gamesplist[] = array('Halo2-1', 'udp', '88', '88', 'both');
 		    $gamesplist[] = array('Halo2-2', 'udp', '3074', '3074', 'both');
 		    $gamesplist[] = array('Halo2-3', 'tcp', '3074', '3074', 'both');
-		}
-
-		if($_POST['agesofempires'] != "") {
-		    /* Ages of empires */
-		    $gamesplist[] = array('agesofempires-1', 'tcp', '2302-2400', '2302-2400', 'both');
-		    $gamesplist[] = array('agesofempires-2', 'tcp', '6073', '6073', 'both');
-		    $gamesplist[] = array('agesofempires-3', 'udp', '2302-2400', '2302-2400', 'both');
-		    $gamesplist[] = array('agesofempires-4', 'udp', '6073', '6073', 'both');
 		}
 
 		/* XXX: add some more games before this line!! */

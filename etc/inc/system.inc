@@ -201,6 +201,15 @@ function system_syslogd_start() {
 		killbypid("{$g['varrun_path']}/syslog.pid");
 
 	if (isset($syslogcfg['enable'])) {
+		if($config['installedpackages']['package']) {
+                        foreach($config['installedpackages']['package'] as $package) {
+                                if($package['logging']) {	
+					$pkgfacilities[] = $package['logging']['facilityname'];
+                                	$syslogconf .= '!' . $package['logging']['facilityname'] . "\n*.*\t\t\t\t\t\t%{$g['varlog_path']}/" . $package['logging']['logfilename'] . "\n";
+				}
+                        }
+			$syslogconf .= '!-' . implode(',', $pkgfacilities) . "\n";
+                }
 
 		/* write syslog.conf */
 		$fd = fopen("{$g['varetc_path']}/syslog.conf", "w");
@@ -209,7 +218,7 @@ function system_syslogd_start() {
 			return 1;
 		}
 
-		$syslogconf = <<<EOD
+		$syslogconf .= <<<EOD
 local0.*					%{$g['varlog_path']}/filter.log
 local3.*					%{$g['varlog_path']}/vpn.log
 local4.*					%{$g['varlog_path']}/portalauth.log
@@ -256,15 +265,6 @@ auth.info;authpriv.info;daemon.info		@{$syslogcfg['remoteserver']}
 *.emerg						@{$syslogcfg['remoteserver']}
 EOD;
 		}
-
-		if($config['installedpackages']['package']) {
-			foreach($config['installedpackages']['package'] as $package) {
-				if($package['logging']) {
-					$syslogconf .= $package['logging']['facilityname'] . "\t\t\t\t" . $package['logging']['logfilename'] . "\n";
-				}
-			}
-		}
-
 		fwrite($fd, $syslogconf);
 		fclose($fd);
 

@@ -81,7 +81,7 @@ function start_service($service) {
 	}
 }
 
-function start_service($service) {
+function stop_service($service) {
         global $config, $g;
         if($config['installedpackages']['service']) {
                 foreach($config['installedpackages']['service'] as $service) {
@@ -125,13 +125,14 @@ function is_service_running($service, $ps = "") {
 		exec("/bin/ps a | awk '{ print $5 }'", $psout);
 		array_shift($psout);
 		foreach($psout as $line) {
-			$ps[] = array_pop(explode('/', $line));
+		        $ps[] = trim(array_pop(explode(' ', array_pop(explode('/', $line)))));
 		}
 	}
 	if($config['installedpackages']['service']) {
-                foreach($config['installedpackages']['service'] as $service) {
-                        if($service['name'] == $service) {
-				if(in_array($service['executable'], $ps)) {
+                foreach($config['installedpackages']['service'] as $aservice) {
+                        if($service == $aservice['name']) {
+				if(!$aservice['executable']) return false;
+				if(in_array($aservice['executable'], $ps)) {
 					return true;
 				} else {
 					return false;

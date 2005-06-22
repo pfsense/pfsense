@@ -64,7 +64,7 @@ foreach($pfctl_vsq_array as $pfctl) {
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Status: Traffic shaper: Queues</p>
 <?php
-if(!isset($config['shaper']['enable']) {
+if(!isset($config['shaper']['enable'])) {
 	echo "Traffic shaping is currently disabled.";
 	include("fend.inc");
 	exit;	

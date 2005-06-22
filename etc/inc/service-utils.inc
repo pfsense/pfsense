@@ -42,8 +42,11 @@ function write_rcfile($params) {
 	$towrite .= "rc_start() {\n\t" . $params['start'] . "\n}\n\n";
 	if($params['stop']) {
 		$tokill =& $params['stop'];
+	} elseif($params['executable']) {
+		// just nuke the executable
+		$tokill = "/usr/bin/killall {$params['executable']}";
 	} else {
-		// make an educated guess
+		// make an educated guess (bad)
 		$tokill = array_pop(explode('/', array_shift(explode(' ', $params['start']))));
 	}
 	$towrite .= "rc_stop() {\n\t" . $tokill . "\n}\n\n";

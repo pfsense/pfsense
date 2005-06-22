@@ -570,6 +570,16 @@ function install_package_xml($pkg) {
 			$static_output .= "done.\n";
 			update_output_window($static_output);
 		}
+		/* services */
+		if($pkg_config['service'] != "") {
+			$static_output .= "\tServices... ";
+			update_output_window($static_output);
+			foreach($pkg_config['service'] as $service) {
+				$config['installedpackages']['service'][] = $service;
+			}
+			$static_output .= "done.\n";
+			update_output_window($static_output);
+		}
 		/* custom commands */
 		if($pkg_config['custom_php_install_command'] <> "") {
 			$static_output .= "\tCustom commands... ";

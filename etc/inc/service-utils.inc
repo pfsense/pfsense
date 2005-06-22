@@ -56,6 +56,7 @@ function write_rcfile($params) {
 	$fout = fopen($fileprefix . $params['file'], "w");
 	fwrite($fout, $towrite);
 	fclose($fout);
+	chmod($fileprefix . $params['file'], 0755);
 	return;
 }
 
@@ -125,7 +126,7 @@ function restart_service($name) {
 function is_service_running($service, $ps = "") {
 	global $config;
 	if(!$ps) {
-		exec("/bin/ps a | awk '{ print $5 }'", $psout);
+		exec("/bin/ps ax | awk '{ print $5 }'", $psout);
 		array_shift($psout);
 		foreach($psout as $line) {
 		        $ps[] = trim(array_pop(explode(' ', array_pop(explode('/', $line)))));

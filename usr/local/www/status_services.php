@@ -1,8 +1,8 @@
 #!/usr/local/bin/php
 <?php
 /*
-    status_services.php
-    Copyright (C) 2005 Scott Ullrich, Colin Smith
+    services_status.php
+    Copyright (C) 2004, 2005 Scott Ullrich
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -16,7 +16,7 @@
        documentation and/or other materials provided with the distribution.
 
     THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+    INClUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
     AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
     AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
     OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
@@ -28,7 +28,7 @@
 */
 
 require("guiconfig.inc");
-require("service-utils.inc");
+include("service-utils.inc");
 
 function gentitle_pkg($pgname) {
 	global $config;
@@ -52,12 +52,6 @@ if($_GET['mode'] == "stopservice" and $_GET['service']) {
 
 /* batch mode, allow other scripts to call this script */
 if($_GET['batch']) exit;
-
-exec("/bin/ps a | awk '{ print $5 }'", $psout);
-array_shift($psout);
-foreach($psout as $line) {
-	$ps[] = array_pop(explode('/', $line));
-}
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -92,9 +86,16 @@ include("fbegin.inc");
 
 <?php
 
+exec("/bin/ps a | awk '{ print $5 }'", $psout); 
+array_shift($psout);
+foreach($psout as $line) {
+	$ps[] = trim(array_pop(explode(' ', array_pop(explode('/', $line)))));
+}
+
 if($config['installedpackages']['service']) {
 	foreach($config['installedpackages']['service'] as $service) {
 		if(!$service['name']) continue;
+		if(!$service['description']) $service['description'] = "Unknown";
 		echo '<tr><td class="listlr">' . $service['name'] . '</td>';
 		echo '<td class="listlr">' . $service['description'] . '</td>';
 		if(is_service_running($service['name'], $ps)) {
@@ -104,6 +105,7 @@ if($config['installedpackages']['service']) {
 			echo '<td class="listbg">Stopped</td>';
 			$running = false;
 		}
+		echo '<td valign="middle" class="list" nowrap>';
 		if($running) {
 			echo "<a href='status_services.php?mode=restartservice&service={$service['name']}'>";
 			echo "<img title='Restart Service' border='0' src='/service_restart.gif'></a> ";
@@ -114,6 +116,7 @@ if($config['installedpackages']['service']) {
 			echo "<a href='status_services.php?mode=startservice&service={$service['name']}'> ";
 			echo "<img title='Start Service' border='0' src='/service_start.gif'></a> ";
 		}
+		echo '</td>';
 		echo '</tr>';
 	}
 } else {

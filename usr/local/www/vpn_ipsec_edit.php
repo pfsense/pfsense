@@ -43,39 +43,6 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 	
-function is_specialnet($net) {
-	global $specialsrcdst;
-	
-	if (in_array($net, $specialsrcdst))
-		return true;
-	else
-		return false;
-}
-
-function address_to_pconfig($adr, &$padr, &$pmask) {
-		
-	if ($adr['network'])
-		$padr = $adr['network'];
-	else if ($adr['address']) {
-		list($padr, $pmask) = explode("/", $adr['address']);
-		if (is_null($pmask))
-			$pmask = 32;
-	}
-}
-
-function pconfig_to_address(&$adr, $padr, $pmask) {
-	
-	$adr = array();
-	
-	if (is_specialnet($padr))
-		$adr['network'] = $padr;
-	else {
-		$adr['address'] = $padr;
-		if ($pmask != 32)
-			$adr['address'] .= "/" . $pmask;
-	}
-}
-
 if (isset($id) && $a_ipsec[$id]) {
 	$pconfig['disabled'] = isset($a_ipsec[$id]['disabled']);
 	//$pconfig['auto'] = isset($a_ipsec[$id]['auto']);

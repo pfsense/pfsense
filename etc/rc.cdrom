@@ -13,8 +13,8 @@
 # a directory.  Go ahead and populate with stock
 # configuration.
 if [ ! -f /cf/conf ]; then
-	mkdir -p /cf/conf
-	/rescue/cp /FreeSBIE/cf/conf/* /cf/conf/
+    mkdir -p /cf/conf
+    /rescue/cp /FreeSBIE/cf/conf/* /cf/conf/
 fi                                          
 
 # If by this time /conf doesn't exist then lets
@@ -24,14 +24,14 @@ if [ ! -L /conf ]; then
 fi
 
 # Create factory default restore directory
-/bin/mkdir -p /conf.default/ 
+/bin/mkdir -p /conf.default/
 
 # If the default config.xml and ez-ipupdate.cache do not exist,
 # lets populate them from the default (factory configuration)
 # files.
-[ ! -f /cf/conf/config.xml ] || /rescue/cp /FreeSBIE/cf/conf/config.xml /cf/conf/
-[ ! -f /conf.default/config.xml ] || /rescue/cp /FreeSBIE/conf.default/config.xml /conf.default/
-[ ! -f /cf/conf/ez-ipupdate.cache ] || /rescue/cp /FreeSBIE/cf/conf/ez-ipupdate.cache /cf/conf/
+/rescue/cp /FreeSBIE/cf/conf/config.xml /cf/conf/
+/rescue/cp /FreeSBIE/conf.default/config.xml /conf.default/config.xml
+/rescue/cp /FreeSBIE/cf/conf/ez-ipupdate.cache /cf/conf/
 
 # Create some needed directories
 /bin/mkdir -p /var/db/pkg/

@@ -70,7 +70,7 @@ function start_service($name) {
 					} else {
 						$prefix = "/usr/local/etc/rc.d/";
 					}
-					mwexec($prefix . $service['rcfile'] . " start");
+					mwexec_bg($prefix . $service['rcfile'] . " start");
 				}
 				if($service['startcmd']) {
 					eval($service['startcmd']);

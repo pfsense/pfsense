@@ -45,6 +45,7 @@ if (($_POST['submit'] == "Load") && file_exists($_POST['savetopath'])) {
 	fclose($fd);
 	$edit_area="";
 	$ulmsg = "Saved text to " . $_POST['savetopath'];
+	$savemsg = "Saved text to " . $_POST['savetopath'];
 } else if (($_POST['submit'] == "Load") && !file_exists($_POST['savetopath'])) {
 	$ulmsg = "File not found " . $_POST['savetopath'];
 	$content = "";
@@ -140,7 +141,7 @@ function sf() { document.forms[0].savetopath.focus(); }
 <body onLoad="sf();">
 <p><span class="pgtitle"><?=$Title ?></span>
 <?php if ($ulmsg) echo "<p><strong>" . $ulmsg . "</strong></p>\n"; ?>
-
+<?php if ($savemsg) print_info_box($savemsg); ?>
 <form action="edit.php" method="POST">
   <table>
     <tr>

@@ -51,6 +51,7 @@ $pconfig['maximumstates'] = $config['system']['maximumstates'];
 $pconfig['disablerendevouz'] = $config['system']['disablerendevouz'];
 $pconfig['enableserial'] = $config['system']['enableserial'];
 $pconfig['disablefirmwarecheck'] = isset($config['system']['disablefirmwarecheck']);
+$pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
 
 if ($_POST) {
 
@@ -145,6 +146,8 @@ if ($_POST) {
 		/* Firewall and ALTQ options */
 		$config['system']['schedulertype'] = $_POST['schedulertype'];
 		$config['system']['maximumstates'] = $_POST['maximumstates'];
+
+                $config['ipsec']['preferoldsa'] = $_POST['preferoldsa_enable'] ? true : false;
 
 		write_config();
 
@@ -371,6 +374,13 @@ function update_description(itemnum) {
 					Hint:
 					the &quot;set LAN IP address&quot; option in the console menu  resets this setting as well.</td>
                 </tr>
+		<tr>
+                  <td width="22%" valign="top" class="vncell">IPsec SA preferral</td>
+                  <td width="78%" class="vtable">
+                    <input name="preferoldsa_enable" type="checkbox" id="preferoldsa_enable" value="yes" <?php if ($pconfig['preferoldsa_enable']) echo "checked"; ?>>
+                    <strong>Prefer old IPsec SAs</strong><br>By default, if several SAs match, the newest one is preferred if it's at least 30 seconds old.Select this option to always prefer old SAs over new ones.
+                  </td>
+                </tr>		
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">

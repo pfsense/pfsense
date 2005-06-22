@@ -27,8 +27,8 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-require("guiconfig.inc");
-include("service-utils.inc");
+require_once("guiconfig.inc");
+require_once("service-utils.inc");
 
 function gentitle_pkg($pgname) {
 	global $config;

@@ -657,16 +657,6 @@ function reverse_strrchr($haystack, $needle)
 }
 
 /*
- * is_service_running($service_name): checks to see if a service is running.
- *                                    if the service is running returns 1.
- */
-function is_service_running($service_name) {
-    $status = `/bin/ps ax | /usr/bin/grep {$service_name} | wc -l`;
-    if($status > 2) return 1;
-    return 0;
-}
-
-/*
  *  backup_config_section($section): returns as an xml file string of
  *                                   the configuration section
  */

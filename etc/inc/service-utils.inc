@@ -118,3 +118,27 @@ function restart_service($service) {
                 }
         }
 }
+
+function is_service_running($service, $ps = "") {
+	global $config;
+	if(!$ps) {
+		exec("/bin/ps a | awk '{ print $5 }'", $psout);
+		array_shift($psout);
+		foreach($psout as $line) {
+			$ps[] = array_pop(explode('/', $line));
+		}
+	}
+	if($config['installedpackages']['service']) {
+                foreach($config['installedpackages']['service'] as $service) {
+                        if($service['name'] == $service) {
+				if(in_array($service['executable'], $ps)) {
+					return true;
+				} else {
+					return false;
+				}
+				break;
+                        }
+                }
+        }
+	return false;
+}

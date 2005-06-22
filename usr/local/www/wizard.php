@@ -437,6 +437,7 @@ if($pkg['step'][$stepid]['javascriptafterformdisplay'] <> "") {
 
 function fixup_string($string) {
 	global $config, $myurl;
+	$newstring = $string;
 	// fixup #1: $myurl -> http[s]://ip_address:port/
 	$https = "";
 	$port = "";
@@ -444,19 +445,15 @@ function fixup_string($string) {
 	$port = $config['system']['webguiport'];
 	if($port <> "443" and $port <> "80") $urlport = ":" . $port;
 	if($config['system']['webguiproto'] == "https") $https = "s";
-	//$myurl = "http" . $https . "://" . getenv("HTTP_HOST") . $urlportport;
-        $myurl = "http" . $https . "://" . $config['interfaces']['lan']['ip'];
-	$newstring = str_replace("\$myurl", $myurl, $string);
-	$string = $newstring;
+        $myurl = "http" . $https . "://" . $config['interfaces']['lan']['ipaddr'];
+	$newstring = str_replace("\$myurl", $myurl, $newstring);
 	// fixup #2: $wanip
 	$curwanip = get_current_wan_address();
-	$newstring = str_replace("\$wanip", $curwanip, $string);
-	$string = $newstring;
+	$newstring = str_replace("\$wanip", $curwanip, $newstring);
 	// fixup #3: $lanip
 	$lancfg = $config['interfaces']['lan'];
-	$lanip = $lancfg['ipaddr'];
-	$newstring = str_replace("\$lanip", $lanip, $string);
-	$string = $newstring;
+	$lanip = $config['interfaces']['lan']['ipaddr'];
+	$newstring = str_replace("\$lanip", $lanip, $newstring);
 	// fixup #4: fix'r'up here.
 	return $newstring;
 }

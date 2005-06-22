@@ -102,17 +102,11 @@ function start_service($service) {
 
 function restart_service($service) {
         global $config, $g;
+	stop_service($service);
+	start_service($service);
         if($config['installedpackages']['service']) {
                 foreach($config['installedpackages']['service'] as $service) {
                         if($service['name'] == $service) {
-                                if($service['rcfile']) {
-                                        if($service['prefix']) {
-                                                $prefix =& $service['prefix'];
-                                        } else {
-                                                $prefix = "/usr/local/etc/rc.d/";
-                                        }
-                                        mwexec($prefix . $service['rcfile'] . " restart");
-                                } 
                                 if($service['restartcmd']) {
                                         eval($service['restartcmd']);
                                 }

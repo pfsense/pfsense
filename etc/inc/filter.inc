@@ -1030,7 +1030,7 @@ function filter_nat_rules_generate() {
 		else if ($pptpdcfg['mode'] == "redir")
 			$pptpdtarget = $pptpdcfg['redir'];
 
-		if ($pptpdtarget) {
+		if ($pptpdcfg['mode'] == "redir") {
 
 		$natrules .= <<<EOD
 

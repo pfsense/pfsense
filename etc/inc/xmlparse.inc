@@ -121,7 +121,6 @@ function parse_xml_config_pkg($cffile, $rootobj) {
 function parse_xml_config_raw($cffile, $rootobj) {
 
 	global $depth, $curpath, $parsedcfg, $havedata, $listtags;
-
 	$parsedcfg = array();
 	$curpath = array();
 	$depth = 0;
@@ -201,6 +200,21 @@ function dump_xml_config_sub($arr, $indent) {
 }
 
 function dump_xml_config($arr, $rootobj) {
+	global $listtags;
+	$listtags = explode(" ", "row config package columnitem option item fieldname field rule user key subqueue " .
+			"dnsserver winsserver encryption-algorithm-option hash-algorithm-option hosts tunnel " .
+			"onetoone staticmap route alias pipe queue shellcmd earlyshellcmd mobilekey " .
+			"service servernat proxyarpnet passthrumac allowedip wolentry vlan menu domainoverrides");
+	return dump_xml_config_raw($arr, $rootobj);
+}
+
+function dump_xml_config_pkg($arr, $rootobj) {
+	global $listtags;
+	$listtags = array("onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package");
+	return dump_xml_config_raw($arr, $rootobj);
+}
+
+function dump_xml_config_raw($arr, $rootobj) {
 
 	$xmlconfig = "<?xml version=\"1.0\"?" . ">\n";
 	$xmlconfig .= "<$rootobj>\n";

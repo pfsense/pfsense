@@ -116,6 +116,21 @@ function cData($parser, $data) {
 }
 
 function parse_xml_config($cffile, $rootobj) {
+	global $listtags;
+	$listtags = explode(" ", "row config package columnitem option item fieldname field rule user key subqueue " .
+                "dnsserver winsserver encryption-algorithm-option hash-algorithm-option hosts tunnel " .
+                "onetoone staticmap route alias pipe queue shellcmd earlyshellcmd mobilekey " .
+                "service servernat proxyarpnet passthrumac allowedip wolentry vlan menu domainoverrides");
+	return parse_xml_config_raw($cffile, $rootobj);
+}
+
+function parse_xml_config_pkg($cffile, $rootobj) {
+	global $listtags;
+	$listtags = array("onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package");
+	return parse_xml_config_raw($cffile, $rootobj);
+}
+
+function parse_xml_config_raw($cffile, $rootobj) {
 
 	global $depth, $curpath, $parsedcfg, $havedata, $listtags;
 

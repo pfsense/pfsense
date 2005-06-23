@@ -34,16 +34,6 @@
  */
 require_once("xmlrpc.inc");
 require_once("xmlparse.inc");
-
-/* add package specific listtags to XML parser */
-function restore_pkg_listtags() {
-	global $listtags;
-	$listtags = array("onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package");
-	return;
-}
-
-restore_pkg_listtags();
-
 require_once("service-utils.inc");
 require_once("pfsense-utils.inc");
 require_once("globals.inc");

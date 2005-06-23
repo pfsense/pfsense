@@ -36,6 +36,8 @@ $static_output = "";
 $static_status = "";
 $sendto = "output";
 
+$todo = array();
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>

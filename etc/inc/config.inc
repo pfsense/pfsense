@@ -1161,4 +1161,8 @@ function unmute_kernel_msgs() {
 	exec("/sbin/conscontrol mute off");
 }
 
+function start_devd() {
+	exec("/sbin/devd");
+}
+
 ?>

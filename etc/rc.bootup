@@ -116,6 +116,9 @@
 	/* configure loopback interface */
 	interfaces_loopback_configure();
 
+	/* start devd (dhclient now uses it */
+	start_devd();
+
 	/* set up VLAN virtual interfaces */
 	interfaces_vlan_configure();
 

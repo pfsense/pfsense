@@ -233,9 +233,10 @@ $dir = ini_get('upload_progress_meter.file.filename_template');
                       The firewall will reboot after restoring the configuration.<br>
                   </td>
                 </tr>
+		<?php if($config['installedpackages']['package'] != "") { ?>
 		<tr>
-		 <td colspan="2">&nbsp;</td>
-		</tr>
+                  <td colspan="2" class="list" height="12"></td>
+                </tr>
 		<tr>
 		 <td colspan="2" class="listtopic">Reinstall packages</td>
 		</tr>
@@ -246,6 +247,7 @@ $dir = ini_get('upload_progress_meter.file.filename_template');
 		  <br>
 		  <input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="Reinstall packages"></td>
 		</tr>
+		<?php } ?>
 		</table>
 		</td>
 		</tr>

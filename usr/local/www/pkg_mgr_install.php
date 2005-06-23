@@ -131,9 +131,8 @@ switch($_GET['mode']) {
             update_output_window($static_output);
             break;
 	case "reinstallall":
-            foreach($config['installedpackages']['package'] as $package) {
+            foreach($config['installedpackages']['package'] as $package) 
                     $todo[] = array('name' => $package['name'], 'version' => $package['version']);
-            }
             foreach($todo as $pkgtodo) {
                     $static_output = "";
                     update_output_window($static_output);

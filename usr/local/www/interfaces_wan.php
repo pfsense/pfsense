@@ -3,8 +3,10 @@
 /* $Id$ */
 /*
 	interfaces_wan.php
-	part of m0n0wall (http://m0n0.ch/wall)
-
+        Copyright (C) 2004 Scott Ullrich
+	All rights reserved.
+        
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -250,11 +252,10 @@ if ($_POST) {
 		write_config();
 
 		$retval = 0;
-		if (!file_exists($d_sysrebootreqd_path)) {
-			config_lock();
-			$retval = interfaces_wan_configure();
-			config_unlock();
-		}
+		config_lock();
+		$retval = interfaces_wan_configure();
+		config_unlock();
+		
 		$savemsg = get_std_save_message($retval);
 	}
 }

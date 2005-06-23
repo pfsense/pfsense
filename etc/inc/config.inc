@@ -608,8 +608,6 @@ function convert_config() {
 function write_config($desc="Unknown", $backup = true) {
 	global $config, $g;
 
-	restore_listtags();
-
 	if($backup) backup_config();
 
 	if (time() > mktime(0, 0, 0, 9, 1, 2004))       /* make sure the clock settings are plausible */

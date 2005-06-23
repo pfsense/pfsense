@@ -97,7 +97,7 @@ if (isset($_POST['save'])) {
                         $ifdescrs[] = "opt" . $j;
                 foreach($ifdescrs as $if) {
                         $natent = array();
-                        $osn = convert_ip_to_network_format($config['interface'][$if]['ip'], $carp['netmask']);
+                        $osn = convert_ip_to_network_format($config['interface'][$if]['ipaddr'], $carp['netmask']);
                         $natent['source']['network'] = $osn;
                         $natent['sourceport'] = "";
                         $natent['descr'] = "Auto created rule for {$if}";

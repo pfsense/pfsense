@@ -208,7 +208,7 @@ function system_syslogd_start() {
                                 	$syslogconf .= '!' . $package['logging']['facilityname'] . "\n*.*\t\t\t\t\t\t%{$g['varlog_path']}/" . $package['logging']['logfilename'] . "\n";
 				}
                         }
-			$syslogconf .= '!-' . implode(',', $pkgfacilities) . "\n";
+			if(is_array($pkgfacilities)) $syslogconf .= '!-' . implode(',', $pkgfacilities) . "\n";
                 }
 
 		/* write syslog.conf */

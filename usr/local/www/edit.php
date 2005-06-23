@@ -37,17 +37,18 @@ if (($_POST['submit'] == "Load") && file_exists($_POST['savetopath'])) {
 	$content = fread($fd, filesize($_POST['savetopath']));
 	fclose($fd);
 	$edit_area="";
-	$ulmsg = "Loaded text from " . $_POST['savetopath'];
+	$savemsg = "Loaded text from " . $_POST['savetopath'];
 } else if (($_POST['submit'] == "Save")) {
+	conf_mount_rw();
 	$content = ereg_replace("\r","",$_POST['content']) ;
 	$fd = fopen($_POST['savetopath'], "w");
 	fwrite($fd, $content);
 	fclose($fd);
 	$edit_area="";
-	$ulmsg = "Saved text to " . $_POST['savetopath'];
 	$savemsg = "Saved text to " . $_POST['savetopath'];
+	conf_mount_ro();
 } else if (($_POST['submit'] == "Load") && !file_exists($_POST['savetopath'])) {
-	$ulmsg = "File not found " . $_POST['savetopath'];
+	$savemsg = "File not found " . $_POST['savetopath'];
 	$content = "";
 	$_POST['savetopath'] = "";
 }
@@ -140,7 +141,6 @@ function sf() { document.forms[0].savetopath.focus(); }
 </script>
 <body onLoad="sf();">
 <p><span class="pgtitle"><?=$Title ?></span>
-<?php if ($ulmsg) echo "<p><strong>" . $ulmsg . "</strong></p>\n"; ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <form action="edit.php" method="POST">
   <table>

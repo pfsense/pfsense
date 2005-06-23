@@ -30,18 +30,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/* tags that are always to be handled as lists */
-function restore_listtags() {
-	global $listtags;
-	$listtags = explode(" ", "row config package columnitem option item fieldname field rule user key subqueue " .
-		"dnsserver winsserver encryption-algorithm-option hash-algorithm-option hosts tunnel " .
-	        "onetoone staticmap route alias pipe queue shellcmd earlyshellcmd mobilekey " .
-	        "service servernat proxyarpnet passthrumac allowedip wolentry vlan menu domainoverrides");
-	return;
-}
-
-restore_listtags();
-
 function startElement($parser, $name, $attrs) {
 	global $parsedcfg, $depth, $curpath, $havedata, $listtags;
 

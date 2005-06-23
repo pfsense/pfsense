@@ -38,7 +38,6 @@ if (!is_array($config['nat']['advancedoutbound']['rule']))
     $config['nat']['advancedoutbound']['rule'] = array();
 
 $a_out = &$config['nat']['advancedoutbound']['rule'];
-//nat_out_rules_sort();
 
 if ($_POST) {
 
@@ -97,7 +96,7 @@ if (isset($_POST['save'])) {
                         $ifdescrs[] = "opt" . $j;
                 foreach($ifdescrs as $if) {
                         $natent = array();
-                        $osn = convert_ip_to_network_format($config['interface'][$if]['ipaddr'], $carp['netmask']);
+                        $osn = convert_ip_to_network_format($config['interface'][$if]['ipaddr'], $config['interface'][$if]['subnet']);
                         $natent['source']['network'] = $osn;
                         $natent['sourceport'] = "";
                         $natent['descr'] = "Auto created rule for {$if}";

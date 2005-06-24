@@ -97,7 +97,7 @@ function get_interface_info($ifdescr) {
 	/* DHCP? -> see if dhclient is up */
 	if (($ifdescr == "wan") && ($config['interfaces']['wan']['ipaddr'] == "dhcp")) {
 		/* see if dhclient is up */
-		if ($ifinfo['status'] == "up" && is_service_running("dhclient") == true)
+		if ($ifinfo['status'] == "up" && is_process_running("dhclient") == true)
 			$ifinfo['dhcplink'] = "up";
 		else
 			$ifinfo['dhcplink'] = "down";

@@ -30,7 +30,8 @@
 */
 
 $pgtitle = array("Status", "Interfaces");
-require("guiconfig.inc");
+
+require_once("guiconfig.inc");
 
 $wancfg = &$config['interfaces']['wan'];
 
@@ -97,7 +98,7 @@ function get_interface_info($ifdescr) {
 	/* DHCP? -> see if dhclient is up */
 	if (($ifdescr == "wan") && ($config['interfaces']['wan']['ipaddr'] == "dhcp")) {
 		/* see if dhclient is up */
-		if ($ifinfo['status'] == "up" && is_process_running("dhclient") == true)
+		if (is_process_running("dhclient") == true)
 			$ifinfo['dhcplink'] = "up";
 		else
 			$ifinfo['dhcplink'] = "down";
@@ -222,18 +223,18 @@ function get_interface_info($ifdescr) {
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <?php $i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
 
-					for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-						$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
-					}
+		for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+			$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
+		}
 
-			      foreach ($ifdescrs as $ifdescr => $ifname):
-				  $ifinfo = get_interface_info($ifdescr);
-				  ?>
+		foreach ($ifdescrs as $ifdescr => $ifname):
+			$ifinfo = get_interface_info($ifdescr);
+		?>
               <?php if ($i): ?>
               <tr>
-				  <td colspan="8" class="list" height="12"></td>
-				</tr>
-				<?php endif; ?>
+			<td colspan="8" class="list" height="12"></td>
+			</tr>
+			<?php endif; ?>
               <tr>
                 <td colspan="2" class="listtopic">
                   <?=htmlspecialchars($ifname);?>

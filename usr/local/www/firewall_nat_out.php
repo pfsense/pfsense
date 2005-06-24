@@ -103,6 +103,9 @@ if (isset($_POST['save'])) {
                         $natent['descr'] = "Auto created rule for {$if}";
                         $natent['target'] = "";
                         $natent['interface'] = "wan";
+                        /* if a gateway is setup on this interface, use it */
+                        if($config['interfaces'][$if]['gateway'] <> "") 
+                                $natent['interface'] = $if;
                         $natent['destination']['any'] = true;
                         $natent['natport'] = "";
                         $a_out[] = $natent;

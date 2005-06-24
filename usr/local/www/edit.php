@@ -35,7 +35,7 @@ if (($_POST['submit'] == "Load") && file_exists($_POST['savetopath'])) {
 	$content = fread($fd, filesize($_POST['savetopath']));
 	fclose($fd);
 	$edit_area="";
-	$savemsg = "Loaded text from " . $_POST['savetopath'];
+	$loadmsg = "Loaded text from " . $_POST['savetopath'];
 } else if (($_POST['submit'] == "Save")) {
 	conf_mount_rw();
 	$content = ereg_replace("\r","",$_POST['content']) ;
@@ -140,6 +140,7 @@ function sf() { document.forms[0].savetopath.focus(); }
 <body onLoad="sf();">
 <p><span class="pgtitle"><?=$Title ?></span>
 <?php if ($savemsg) print_info_box($savemsg); ?>
+<?php if ($loadmsg) echo "{$loadmsg}"; ?>
 <form action="edit.php" method="POST">
   <table>
     <tr>

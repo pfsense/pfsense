@@ -107,7 +107,7 @@ if (isset($_POST['save'])) {
                         $natent['natport'] = "";
                         $a_out[] = $natent;
                 }
-                write_config();
+                $savemsg = "Default rules for each interface have been created.";
         }
         write_config();
         touch($d_natconfdirty_path);

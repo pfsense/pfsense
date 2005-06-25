@@ -93,8 +93,10 @@ if ($_POST) {
 		if($_POST['disableftpproxy'] == "yes") {
 			$config['system']['disableftpproxy'] = "enabled";
 			unset($config['system']['rfc959workaround']);
+			system_start_ftp_helpers();
 		} else {
 			unset($config['system']['disableftpproxy']);
+			mwexec("/usr/bin/killall pftpx");
 		}
 		if($_POST['rfc959workaround'] == "yes")
 			$config['system']['rfc959workaround'] = "enabled";

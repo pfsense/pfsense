@@ -99,6 +99,12 @@ if ($_POST) {
 		write_config($changedesc);
 
 		$savemsg = get_std_save_message(0);
+		
+		/* setup carp interfaces */
+		interfaces_carp_configure();
+	
+		/* bring up carp interfaces */
+		interfaces_carp_bringup();	
 
 		if ($dhcpd_was_enabled)
 			$savemsg .= "<br>Note that the DHCP server has been disabled.<br>Please review its configuration " .

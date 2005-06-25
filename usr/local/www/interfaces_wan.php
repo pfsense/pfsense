@@ -255,7 +255,13 @@ if ($_POST) {
 		config_lock();
 		$retval = interfaces_wan_configure();
 		config_unlock();
-		
+
+		/* setup carp interfaces */
+		interfaces_carp_configure();
+	
+		/* bring up carp interfaces */
+		interfaces_carp_bringup();		
+			
 		$savemsg = get_std_save_message($retval);
 	}
 }

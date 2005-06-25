@@ -210,6 +210,8 @@ include("fbegin.inc");
 <head>
 <?php
     if($pkg['title'] <> "") $title = $pkg['title'];
+    else
+    $title = "Package Editor";
 ?>
 <title><?=gentitle_pkg($title);?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">

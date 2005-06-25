@@ -137,7 +137,7 @@ $pkg_sizes = get_pkg_sizes();
                             <?php
                         }
 		    } else {
-			echo "<tr><td colspan=\"3\"><center>There are currently no available packages for installation.</td></tr>";
+			echo "<tr><td colspan=\"5\"><center>There are currently no available packages for installation.</td></tr>";
 		    }
 		?>
         </table>

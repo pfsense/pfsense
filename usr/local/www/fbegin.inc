@@ -69,7 +69,9 @@ function showhide(tspan, tri) {
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_advanced.php" class="navlnk">Advanced</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_firmware_check.php" class="navlnk">Firmware</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system.php" class="navlnk">General setup</a><br>
+		<?php if($g['platform'] <> "cdrom"): ?>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/pkg_mgr.php" class="navlnk">Packages</a><br>
+		<?php endif ?>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_routes.php" class="navlnk">Static routes</a><br>
 	      <?php echo return_ext_menu("System"); ?>
               <strong>Interfaces</strong>

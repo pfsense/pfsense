@@ -124,6 +124,12 @@ function restart_service($name) {
 }
 
 function is_process_running($process) {
+    /*
+          DO NOT TOUCH THIS!  I AM REALLY TIRED OF FIXING
+          SUCH A TRIVIAL FUNCTION.
+          
+                                 -GeekGod - 2005-06-25
+    */
     $status = `/bin/ps ax | /usr/bin/grep {$process} | wc -l`;
     if($status > 2) return 1;
     return 0;

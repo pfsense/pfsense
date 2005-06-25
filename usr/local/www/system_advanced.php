@@ -244,6 +244,7 @@ function update_description(itemnum) {
 
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 
+		<?php if($g['platform'] == "pfSense" or if($g['platform'] == "cdrom": ?>
                 <tr>
                   <td colspan="2" valign="top" class="listtopic">Enable Serial Console</td>
                 </tr>
@@ -254,19 +255,8 @@ function update_description(itemnum) {
                     <strong>This will enable the first serial port with 9600/8/N/1</strong>
                     </td>
                 </tr>
+		<?php endif ?>
 
-<!--
-                <tr>
-                  <td colspan="2" valign="top" class="listtopic">Disable Rendezvous</td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">&nbsp;</td>
-                  <td width="78%" class="vtable">
-                    <input name="disablerendevouz" type="checkbox" id="disablerendevouz" value="yes" <?php if ($pconfig['disablerendevouz']) echo "checked"; ?> onclick="enable_change(false)">
-                    <strong>Disable the Rendevouz automatic discovery protocol.</strong>
-                    </td>
-                </tr>
--->
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">

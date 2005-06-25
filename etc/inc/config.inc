@@ -1036,8 +1036,10 @@ EOD;
 function system_start_ftp_helpers() {
 	require_once("interfaces.inc");
 	global $config, $g;
-	if($config['system']['disableftpproxy'] <> "") 
+	if($config['system']['disableftpproxy'] <> "") {
+		mwexec("/usr/bin/killall pftpx");
 		return;
+	}
 	$wanip = get_current_wan_address();
 	mwexec("/usr/bin/killall pftpx");
 	if($wanip <> "" and $wanip <> "0.0.0.0") 

@@ -242,7 +242,7 @@
                                         <value>Asterisk</value>
 				</option>			
                                 <option>
-                                        <name>PanasonicPBX</name>
+                                        <name>PanasonicTDA</name>
                                         <value>Panasonic</value>
 				</option>
 			</options>

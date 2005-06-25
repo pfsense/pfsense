@@ -183,7 +183,7 @@ if ($_POST) {
 				fwrite($fout, $tty . "\n");				
 			}
 		}
-		if($pconfig['enableserial'])
+		if(isset($pconfig['enableserial']))
 			fwrite($fout, "ttyv0\t\"/usr/libexec/getty Pc\"\tcons25\t\ton\tsecure\n");
 		fclose($fout);		
 		
@@ -193,7 +193,7 @@ if ($_POST) {
 				fwrite($fout, $blrc . "\n");				
 			}
 		}
-		if($pconfig['enableserial'])
+		if(isset($pconfig['enableserial']))
 			fwrite($fout, "set console=comconsole\n");
 		fclose($fout);
 		
@@ -250,7 +250,7 @@ function update_description(itemnum) {
                 <tr>
                   <td width="22%" valign="top" class="vncell">&nbsp;</td>
                   <td width="78%" class="vtable">
-                    <input name="enableserial" type="checkbox" id="enableserial" value="yes" <?php if ($pconfig['enableserial']) echo "checked"; ?> onclick="enable_change(false)">
+                    <input name="enableserial" type="checkbox" id="enableserial" value="yes" <?php if (isset($pconfig['enableserial'])) echo "checked"; ?> onclick="enable_change(false)">
                     <strong>This will enable the first serial port with 9600/8/N/1</strong>
                     </td>
                 </tr>

@@ -84,6 +84,7 @@
 		</field>
 	</fields>
 	<stepsubmitphpaction>
+	    
 		/* Magic shaper uses HFSC */
 		$config['system']['schedulertype'] = "hfsc";
 
@@ -195,8 +196,7 @@
 		$queue['bandwidth'] = 1;
 		$queue['bandwidthtype'] = '%';
                 $config['shaper']['queue'][] = $queue;
-
-/* XXX create default rules here */
+		
 	</stepsubmitphpaction>
 </step>
 <step>

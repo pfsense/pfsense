@@ -84,7 +84,6 @@
 		</field>
 	</fields>
 	<stepsubmitphpaction>
-/* XXX we need to bail and force the user to redo this step if the WAN speeds are 0 */
 		/* Magic shaper uses HFSC */
 		$config['system']['schedulertype'] = "hfsc";
 

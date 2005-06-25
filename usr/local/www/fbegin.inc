@@ -112,7 +112,9 @@ function showhide(tspan, tri) {
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_dhcp_leases.php" class="navlnk">DHCP leases</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_interfaces.php" class="navlnk">Interfaces</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_ipsec_sad.php" class="navlnk">IPsec</a><br>
+		<?php if($g['platform'] <> "cdrom"): ?>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_pkglogs.php" class="navlnk">Package logs</a><br>
+		<?php endif ?>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_queues.php" class="navlnk">Queues</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_services.php" class="navlnk">Services</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/index.php" class="navlnk">System</a><br>

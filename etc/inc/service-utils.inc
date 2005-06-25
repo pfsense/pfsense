@@ -123,8 +123,8 @@ function restart_service($name) {
         }
 }
 
-function is_process_running($process, $ps = "") {
-    $status = `/bin/ps ax | /usr/bin/grep {$service_name} | wc -l`;
+function is_process_running($process) {
+    $status = `/bin/ps ax | /usr/bin/grep {$process} | wc -l`;
     if($status > 2) return 1;
     return 0;
 }

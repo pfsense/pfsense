@@ -124,19 +124,9 @@ function restart_service($name) {
 }
 
 function is_process_running($process, $ps = "") {
-	if(!$ps) {
-                exec("/bin/ps ax | awk '{ print $5 }'", $psout);
-                array_shift($psout);
-                foreach($psout as $line) {
-                        $ps[] = trim(array_pop(explode(' ', array_pop(explode('/', $line)))));
-                }
-        }
-	if(in_array($process, $ps)) { 
-		return true;
-	} else {
-		return false;
-	}
-	return false;
+    $status = `/bin/ps ax | /usr/bin/grep {$service_name} | wc -l`;
+    if($status > 2) return 1;
+    return 0;
 }
 
 function is_service_running($service, $ps = "") {

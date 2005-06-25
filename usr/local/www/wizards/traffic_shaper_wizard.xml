@@ -41,7 +41,7 @@
 		<field>
 			<name>Next</name>
 			<type>submit</type>
-			<warning>Going any further will wipe your existing shaper config!</warning>
+			<warning>Going any further will wipe your existing shaper config!  If you do not wish to continue, please click the pfSense logo at the top to return to the webConfigurator.</warning>
 		</field>
 	</fields>
 	<stepsubmitphpaction>

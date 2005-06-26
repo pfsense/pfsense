@@ -43,10 +43,10 @@ function write_rcfile($params) {
 	if($params['stop']) {
 		$tokill =& $params['stop'];
 	} elseif($params['executable']) {
-		/* just nuke the executable */
+		// just nuke the executable
 		$tokill = "/usr/bin/killall {$params['executable']}";
 	} else {
-		/* make an educated guess (bad) */
+		// make an educated guess (bad)
 		$tokill = array_pop(explode('/', array_shift(explode(' ', $params['start']))));
 	}
 	$towrite .= "rc_stop() {\n\t" . $tokill . "\n}\n\n";
@@ -64,7 +64,7 @@ function start_service($name) {
 	global $config, $g;
 	if($config['installedpackages']['service']) {
 		foreach($config['installedpackages']['service'] as $service) {
-			if(strtolower($service['name']) == strtolower($name)) {
+			if($service['name'] == $name) {
 				if($service['rcfile']) {
 					if($service['prefix']) {
 						$prefix =& $service['prefix'];
@@ -86,20 +86,20 @@ function stop_service($name) {
         global $config, $g;
         if($config['installedpackages']['service']) {
                 foreach($config['installedpackages']['service'] as $service) {
-                        if(strtolower($service['name']) == strtolower($name)) {
+                        if($service['name'] == $name) {
                                 if($service['rcfile']) {
                                         if($service['prefix']) {
                                                 $prefix =& $service['prefix'];
                                         } else {
                                                 $prefix = "/usr/local/etc/rc.d/";
                                         }
-                                        mwexec($prefix . $service['rcfile'] . " stop");
+                                        mwexec_bg($prefix . $service['rcfile'] . " stop");
                                 }
                                 if($service['stopcmd']) {
                                         eval($service['stopcmd']);
                                 }
 				if(!($service['rcfile'] or $service['stopcmd'])) {
-					mwexec("/usr/bin/killall {$service['executable']}");
+					mwexec_bg("/usr/bin/killall {$service['executable']}");
 				}
                                 break;
                         }
@@ -109,11 +109,11 @@ function stop_service($name) {
 
 function restart_service($name) {
         global $config, $g;
-	stop_service($service);
-	start_service($service);
+	stop_service($name);
+	start_service($name);
         if($config['installedpackages']['service']) {
                 foreach($config['installedpackages']['service'] as $service) {
-                        if(strtolower($service['name']) == strtolower($name)) {
+                        if($service['name'] == $name) {
                                 if($service['restartcmd']) {
                                         eval($service['restartcmd']);
                                 }
@@ -123,26 +123,30 @@ function restart_service($name) {
         }
 }
 
-function is_process_running($process) {
-    $status = `/bin/ps ax | /usr/bin/grep {$process} | wc -l`;
-    if($status > 2) return 1;
-    return 0;
+function is_process_running($process, $ps = "") {
+	if(!$ps) {
+                exec("/bin/ps ax | awk '{ print $5 }'", $psout);
+                array_shift($psout);
+                foreach($psout as $line) {
+                        $ps[] = trim(array_pop(explode(' ', array_pop(explode('/', $line)))));
+                }
+		print_r($ps);
+        }
+	if(in_array($process, $ps)) { 
+		return true;
+	} else {
+		return false;
+	}
+	return false;
 }
 
 function is_service_running($service, $ps = "") {
 	global $config;
-	if(!$ps) {
-		exec("/bin/ps ax | awk '{ print $5 }'", $psout);
-		array_shift($psout);
-		foreach($psout as $line) {
-		        $ps[] = trim(array_pop(explode(' ', array_pop(explode('/', $line)))));
-		}
-	}
 	if($config['installedpackages']['service']) {
                 foreach($config['installedpackages']['service'] as $aservice) {
-                        if(strtolower($service) == strtolower($aservice['name'])) {
+                        if($service == $aservice['name']) {
 				if(!$aservice['executable']) return false;
-				if(in_array($aservice['executable'], $ps)) {
+				if(is_process_running($aservice['executable'], $ps)) {
 					return true;
 				} else {
 					return false;

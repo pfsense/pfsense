@@ -34,7 +34,7 @@
 
 require("guiconfig.inc");
 
-$ipsec_logfile = "{$g['varlog_path']}/vpn.log";
+$ipsec_logfile = "{$g['varlog_path']}/system.log";
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
@@ -75,7 +75,7 @@ if ($_POST['clear']) {
 			<td colspan="2" class="listtopic">
 			  Last <?=$nentries;?> IPSEC log entries</td>
 		  </tr>
-		  <?php dump_clog($ipsec_logfile, $nentries); ?>
+		  <?php dump_clog($ipsec_logfile, $nentries, array("racoon"), array("false")); ?>
 		</table>
 		<br><form action="diag_logs.php" method="post">
 <input name="clear" type="submit" class="formbtn" value="Clear log">

@@ -43,10 +43,10 @@ function write_rcfile($params) {
 	if($params['stop']) {
 		$tokill =& $params['stop'];
 	} elseif($params['executable']) {
-		// just nuke the executable
+		/* just nuke the executable */
 		$tokill = "/usr/bin/killall {$params['executable']}";
 	} else {
-		// make an educated guess (bad)
+		/* make an educated guess (bad) */
 		$tokill = array_pop(explode('/', array_shift(explode(' ', $params['start']))));
 	}
 	$towrite .= "rc_stop() {\n\t" . $tokill . "\n}\n\n";
@@ -124,12 +124,6 @@ function restart_service($name) {
 }
 
 function is_process_running($process) {
-    /*
-          DO NOT TOUCH THIS!  I AM REALLY TIRED OF FIXING
-          SUCH A TRIVIAL FUNCTION.
-          
-                                 -GeekGod - 2005-06-25
-    */
     $status = `/bin/ps ax | /usr/bin/grep {$process} | wc -l`;
     if($status > 2) return 1;
     return 0;

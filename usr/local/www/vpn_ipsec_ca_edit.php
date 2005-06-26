@@ -104,6 +104,7 @@ if ($_POST) {
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<p class="pgtitle">IPSEC: CA: Create Certificates</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="vpn_ipsec_ca_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -120,7 +121,7 @@ This can be any text to describe the certificate authority.
                   <td width="78%" class="vtable"> 
                     <textarea name="cert" cols="65" rows="7" id="cert" class="formpre"><?=htmlspecialchars($pconfig['cert']);?></textarea>
                     <br> 
-                    Paste a CA certificate in X.509 PEM format here.</td>
+                    Paste a CA certificate in X.509 PEM format here. <A HREF='vpn_ipsec_ca_edit_create_cert.php'>Create Certificates</A></td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>

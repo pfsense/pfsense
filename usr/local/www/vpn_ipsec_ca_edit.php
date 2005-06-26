@@ -119,7 +119,7 @@ if ($_POST) {
 	      <td width="22%" valign="top" class="vncellreq">Certificate</td>
 	      <td width="78%" class="vtable"> 
 		<textarea name="cert" cols="65" rows="7" id="cert" class="formpre"><?=htmlspecialchars($pconfig['cert']);?></textarea>
-		<br>Paste a CA certificate in X.509 PEM format here. <A HREF='vpn_ipsec_ca_edit_create_cert.php'>Create Certificates</A></td>
+		<br>Paste a CA certificate in X.509 PEM format here. <A TARGET='_new' HREF='vpn_ipsec_ca_edit_create_cert.php'>Create Certificates</A></td>
 	    </tr>
 	    <tr> 
 	      <td width="22%" valign="top">&nbsp;</td>

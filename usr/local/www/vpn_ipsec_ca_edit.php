@@ -106,32 +106,30 @@ if ($_POST) {
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">IPSEC: CA: Create Certificates</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-            <form action="vpn_ipsec_ca_edit.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr> 
-                  <td valign="top" class="vncellreq">Identifier</td>
-                  <td class="vtable">
- <input name="ident" type="text" class="formfld" id="ident" size="30" value="<?=$pconfig['ident'];?>">
-                    <br>
-This can be any text to describe the certificate authority.       
-                  </td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Certificate</td>
-                  <td width="78%" class="vtable"> 
-                    <textarea name="cert" cols="65" rows="7" id="cert" class="formpre"><?=htmlspecialchars($pconfig['cert']);?></textarea>
-                    <br> 
-                    Paste a CA certificate in X.509 PEM format here. <A HREF='vpn_ipsec_ca_edit_create_cert.php'>Create Certificates</A></td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> 
-                    <?php if (isset($id) && $a_secret[$id]): ?>
-                    <input name="id" type="hidden" value="<?=$id;?>">
-                    <?php endif; ?>
-                  </td>
-                </tr>
-              </table>
+	<form action="vpn_ipsec_ca_edit.php" method="post" name="iform" id="iform">
+	  <table width="100%" border="0" cellpadding="6" cellspacing="0">
+	    <tr> 
+	      <td valign="top" class="vncellreq">Identifier</td>
+	      <td class="vtable">
+		<input name="ident" type="text" class="formfld" id="ident" size="30" value="<?=$pconfig['ident'];?>">
+		<br>This can be any text to describe the certificate authority.       
+	      </td>
+	    </tr>
+	    <tr> 
+	      <td width="22%" valign="top" class="vncellreq">Certificate</td>
+	      <td width="78%" class="vtable"> 
+		<textarea name="cert" cols="65" rows="7" id="cert" class="formpre"><?=htmlspecialchars($pconfig['cert']);?></textarea>
+		<br>Paste a CA certificate in X.509 PEM format here. <A HREF='vpn_ipsec_ca_edit_create_cert.php'>Create Certificates</A></td>
+	    </tr>
+	    <tr> 
+	      <td width="22%" valign="top">&nbsp;</td>
+	      <td width="78%"> 
+		<input name="Submit" type="submit" class="formbtn" value="Save"> 
+		<?php if (isset($id) && $a_secret[$id]): ?>
+		<input name="id" type="hidden" value="<?=$id;?>">
+		<?php endif; ?>
+	      </td>
+	    </tr>
+	  </table>
 </form>
 <?php include("fend.inc"); ?>

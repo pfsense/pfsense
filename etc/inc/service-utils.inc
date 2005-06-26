@@ -131,11 +131,18 @@ function is_process_running($process) {
 
 function is_service_running($service, $ps = "") {
 	global $config;
+	if(!$ps) {
+		exec("/bin/ps ax | awk '{ print $5 }'", $psout);
+		array_shift($psout);
+		foreach($psout as $line) {
+		        $ps[] = trim(array_pop(explode(' ', array_pop(explode('/', $line)))));
+		}
+	}
 	if($config['installedpackages']['service']) {
                 foreach($config['installedpackages']['service'] as $aservice) {
                         if($service == $aservice['name']) {
 				if(!$aservice['executable']) return false;
-				if(is_process_running($aservice['executable'], $ps)) {
+				if(in_array($aservice['executable'], $ps)) {
 					return true;
 				} else {
 					return false;

@@ -175,6 +175,9 @@
 
 	/* start web server */
 	system_webgui_start();
+	
+	/* ensure passwords are sync'd */
+	system_password_configure();
 
 	/* configure console menu */
 	system_console_configure();

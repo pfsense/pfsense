@@ -64,7 +64,7 @@ function start_service($name) {
 	global $config, $g;
 	if($config['installedpackages']['service']) {
 		foreach($config['installedpackages']['service'] as $service) {
-			if($service['name'] == $name) {
+			if(strtolower($service['name']) == strtolower($name)) {
 				if($service['rcfile']) {
 					if($service['prefix']) {
 						$prefix =& $service['prefix'];
@@ -86,7 +86,7 @@ function stop_service($name) {
         global $config, $g;
         if($config['installedpackages']['service']) {
                 foreach($config['installedpackages']['service'] as $service) {
-                        if($service['name'] == $name) {
+                        if(strtolower($service['name']) == strtolower($name)) {
                                 if($service['rcfile']) {
                                         if($service['prefix']) {
                                                 $prefix =& $service['prefix'];
@@ -113,7 +113,7 @@ function restart_service($name) {
 	start_service($service);
         if($config['installedpackages']['service']) {
                 foreach($config['installedpackages']['service'] as $service) {
-                        if($service['name'] == $name) {
+                        if(strtolower($service['name']) == strtolower($name)) {
                                 if($service['restartcmd']) {
                                         eval($service['restartcmd']);
                                 }
@@ -140,7 +140,7 @@ function is_service_running($service, $ps = "") {
 	}
 	if($config['installedpackages']['service']) {
                 foreach($config['installedpackages']['service'] as $aservice) {
-                        if($service == $aservice['name']) {
+                        if(strtolower($service) == strtolower($aservice['name'])) {
 				if(!$aservice['executable']) return false;
 				if(in_array($aservice['executable'], $ps)) {
 					return true;

@@ -114,9 +114,7 @@ if ($_POST) {
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php
-include("fbegin.inc");
-?>
+<?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$title?></p>
 				<?php
 			}
@@ -218,8 +216,50 @@ include("fbegin.inc");
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC" onLoad="enablechange();">
+<?php if($pkg['fields']['field'] <> "") { ?>
+<script language="JavaScript">
+<!--
+function enablechange() {
+<?php               
+        foreach($pkg['fields']['field'] as $field) {
+                if(isset($field['enablefields']) or isset($field['checkenablefields'])) {
+                        print "\t" . 'if (document.iform.' . strtolower($field['name']) . '.checked == false) {' . "\n";
+                        if(isset($field['enablefields'])) {
+                                $enablefields = explode(',', $field['enablefields']);
+                                foreach($enablefields as $enablefield) {
+                                        $enablefield = strtolower($enablefield);
+                                        print "\t\t" . 'document.iform.' . $enablefield . '.disabled = 1;' . "\n";
+                                }   
+                        }
+                        if(isset($field['checkenablefields'])) {
+                                $checkenablefields = explode(',', $field['checkenablefields']);
+                                foreach($checkenablefields as $checkenablefield) {
+                                        $checkenablefield = strtolower($checkenablefield);
+                                        print "\t\t" . 'document.iform.' . $checkenablefield . '.checked = 0;' . "\n";
+                                }
+                        }
+                        print "\t" . '} else {' . "\n";
+                        if(isset($field['enablefields'])) { 
+                                foreach($enablefields as $enablefield) {
+                                        $enablefield = strtolower($enablefield);
+                                        print "\t\t" . 'document.iform.' . $enablefield . '.disabled = 0;' . "\n";
+                                }
+                        }
+                        if(isset($field['checkenablefields'])) {
+                                foreach($checkenablefields as $checkenablefield) {
+                                        $checkenablefield = strtolower($checkenablefield);
+                                        print "\t\t" . 'document.iform.' . $checkenablefield . '.checked = 1;' . "\n";
+                                }
+                        }
+                        print "\t" . '}' . "\n";
+                }
+        }
+?>
+}
+//-->
+</script>
+<?php } ?>
 <script type="text/javascript" language="javascript" src="row_helper_dynamic.js">
 </script>
 

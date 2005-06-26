@@ -244,7 +244,7 @@ function update_description(itemnum) {
 
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 
-		<?php if($g['platform'] == "pfSense" or if($g['platform'] == "cdrom": ?>
+		<?php if($g['platform'] == "pfSense" or if($g['platform'] == "cdrom"): ?>
                 <tr>
                   <td colspan="2" valign="top" class="listtopic">Enable Serial Console</td>
                 </tr>

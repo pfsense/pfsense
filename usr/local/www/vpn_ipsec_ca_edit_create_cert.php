@@ -176,7 +176,7 @@ if ($_POST) {
 	    var cacert='<?=$cacert?>';
 	    var cakey='<?=$cakey?>';
 	    opener.document.forms[0].cert.value=cacert;
-	    opener.document.forms[0].ident.value=cakey;
+	    opener.document.forms[0].ident.value='Automatically generated certificate';
 	    this.close();
 	-->
 	</script>

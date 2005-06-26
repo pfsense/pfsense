@@ -158,6 +158,7 @@ $pconfig = $config['ovpn']['server'];
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<p class="pgtitle"><?php echo $pgtitle; ?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (file_exists($d_sysrebootreqd_path)) print_info_box(get_std_save_message(0)); ?>
 

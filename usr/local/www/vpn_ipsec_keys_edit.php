@@ -102,6 +102,7 @@ if ($_POST) {
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<p class="pgtitle"><?php echo $pgtitle; ?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="vpn_ipsec_keys_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">

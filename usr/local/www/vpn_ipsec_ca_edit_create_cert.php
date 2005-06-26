@@ -2,7 +2,7 @@
 <?php
 /* $Id$ */
 /*
-	system_advanced_create_certs.php
+	vpn_ipsec_ca_edit_create_cert.php
 	part of pfSense
 
 	Copyright (C) 2004 Scott Ullrich
@@ -44,6 +44,8 @@ preg_match('/\nL\=(.*)\n/', $openssl, $citynameA);
 preg_match('/\nO\=(.*)\n/', $openssl, $orginizationnameA);
 preg_match('/\nOU\=(.*)\n/', $openssl, $orginizationdepartmentA);
 preg_match('/\nCN\=(.*)\n/', $openssl, $commonnameA);
+
+$pgtitle = "IPSEC: Certificate Authority: Create CertificatesS";
 
 $countrycode = $countrycodeA[1];
 $stateorprovince = $stateorprovinceA[1];
@@ -148,8 +150,9 @@ if ($_POST) {
 <link href="gui.css" rel="stylesheet" type="text/css">
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form action="system_advanced_create_certs.php" method="post" name="iform" id="iform">
+
 <?php include("fbegin.inc"); ?>
-      <p class="pgtitle">System: Advanced functions - Create Certificates</p>
+<p class="pgtitle"><?php echo $pgtitle; ?></p>
             <?php if ($input_errors) print_input_errors($input_errors); ?>
             <?php if ($savemsg) print_info_box($savemsg); ?>
 	    <p>One moment please...

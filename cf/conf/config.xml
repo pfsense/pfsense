@@ -295,6 +295,9 @@
 	</captiveportal>
 	-->
 	<nat>
+		<ipsecpassthru>
+			<enable/>
+		</ipsecpassthru>
 		<!--
 		<rule>
 			<interface></interface>

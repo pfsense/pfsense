@@ -201,7 +201,7 @@ function dump_xml_config_sub($arr, $indent) {
 
 function dump_xml_config($arr, $rootobj) {
 	global $listtags;
-	$listtags = explode(" ", "row config package columnitem option item fieldname field rule user key subqueue " .
+	$listtags = explode(" ", "cacert row config package columnitem option item fieldname field rule user key subqueue " .
 			"dnsserver winsserver encryption-algorithm-option hash-algorithm-option hosts tunnel " .
 			"onetoone staticmap route alias pipe queue shellcmd earlyshellcmd mobilekey " .
 			"service servernat proxyarpnet passthrumac allowedip wolentry vlan menu domainoverrides");

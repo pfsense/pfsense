@@ -178,9 +178,9 @@ if ($_POST) {
 	<script language="JavaScript">
 	<!--
 	    var cacert='<?=$cacert?>';
-	    var cakey='<?=$cakey?>';
+	    var ident='<?=$commonname?>';
 	    opener.document.forms[0].cert.value=cacert;
-	    opener.document.forms[0].ident.value='Automatically generated certificate';
+	    opener.document.forms[0].ident.value=ident;
 	    this.close();
 	-->
 	</script>

@@ -60,7 +60,7 @@ if ($_POST) {
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
-	if (preg_match("/[^a-zA-Z0-9\@\.\-]/", $_POST['ident']))
+	if (preg_match("/[^a-zA-Z0-9@\.\-]/", $_POST['ident']))
 		$input_errors[] = "The identifier contains invalid characters.";
 	
 	if (!$input_errors && !(isset($id) && $a_secret[$id])) {

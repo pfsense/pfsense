@@ -151,7 +151,7 @@ if ($_POST) {
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="gui.css" rel="stylesheet" type="text/css">
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<form action="system_advanced_create_certs.php" method="post" name="iform" id="iform">
+<form action="vpn_ipsec_ca_edit_create_cert.php" method="post" name="iform" id="iform">
 
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?php echo $pgtitle; ?></p>
@@ -202,7 +202,7 @@ if ($_POST) {
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
     <link href="gui.css" rel="stylesheet" type="text/css">
     <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-    <form action="system_advanced_create_certs.php" method="post" name="iform" id="iform">
+    <form action="vpn_ipsec_ca_edit_create_cert.php" method="post" name="iform" id="iform">
     <?php include("fbegin.inc"); ?>
 	  <p class="pgtitle">System: Advanced - Create Certificates</p>
 

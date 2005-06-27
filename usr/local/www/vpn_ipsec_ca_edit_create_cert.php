@@ -65,6 +65,7 @@ if ($_POST) {
     $commonname=$_POST['commonname'];
 
     /* Write out /etc/ssl/openssl.cnf */
+    config_mount_rw();
     $fd = fopen("/etc/ssl/openssl.cnf", "w");
     fwrite($fd, "");
     fwrite($fd, "[ req ]\n");
@@ -139,6 +140,7 @@ if ($_POST) {
     fwrite($fd, "[ crl_ext ]\n");
     fwrite($fd, "authorityKeyIdentifier=keyid:always,issuer:always\n");
     fclose($fd);
+    config_mount_ro();
 
 ?>
 
@@ -157,7 +159,7 @@ if ($_POST) {
             <?php if ($savemsg) print_info_box($savemsg); ?>
 	    <p>One moment please...
 	<?php
-	    config_mount_rw();
+
 	    mwexec("cd /tmp/ && /usr/bin/openssl req -new -x509 -keyout cakey.pem -out cacert.pem -days 3650 -config /etc/ssl/openssl.cnf -passin pass:test -nodes");
 	    //mwexec("cd /tmp/ && /usr/bin/openssl req -config openssl.cnf -new -nodes > cacert.pem ");
 	    //mwexec("cd /tmp/ && /usr/bin/openssl x509 -in cert.csr -out cert.pem -req -signkey cakey.pem");
@@ -171,7 +173,7 @@ if ($_POST) {
 	    $cakeyA = ereg_replace("\r","",$cakey);
 	    $cacert = ereg_replace("\n","\\n",$cacert);
 	    $cakey = ereg_replace("\n","\\n",$cakey);
-	    config_mount_ro();
+
 	?>
 	<script language="JavaScript">
 	<!--

@@ -297,7 +297,9 @@ if ($_GET['act'] == "down") {
                           <img src="up_d.gif" width="17" height="17" border="0">
                           <?php endif; ?>
 			  <input name="move_<?=$i;?>" type="image" src="left.gif" width="17" height="17" title="move selected rules before this rule" onMouseOver="fr_insline(<?=$nrules;?>, true)" onMouseOut="fr_insline(<?=$nrules;?>, false)"><br>
-			  <a href="firewall_shaper.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this rule?')"><img src="x.gif" title="delete rule" width="17" height="17" border="0"></a>
+			  
+			  <input name="del" type="image" src="x.gif" width="17" height="17" title="delete selected mappings" onclick="return confirm('Do you really want to delete the selected mappings?')">
+			  
                           <?php if (isset($a_shaper[$i+1])): ?>
                           <a href="firewall_shaper.php?act=down&id=<?=$i;?>"><img src="down.gif" title="move down" width="17" height="17" border="0"></a>
                           <?php else: ?>

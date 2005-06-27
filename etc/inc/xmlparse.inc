@@ -30,6 +30,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/* Config XML tags that should be treat as a list not as a traditional array */
 function listtags() {
 	$ret = explode(" ", "cacert row config package columnitem option item fieldname field rule user key subqueue " .
                 "dnsserver winsserver encryption-algorithm-option hash-algorithm-option hosts tunnel " .
@@ -39,6 +40,7 @@ function listtags() {
 	return $ret;
 }
 
+/* Package XML tags that should be treat as a list not as a traditional array */
 function listtags_pkg() {
 	$ret = array("onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package");
 

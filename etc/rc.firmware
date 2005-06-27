@@ -154,10 +154,6 @@ pfSenseupgrade)
 	rm /etc/hosts
 	ln -s /var/etc/hosts /etc/hosts
 
-	# we dont use freebsd's rc, we have our own.
-	rm -rf /etc/rc.subr
-	rm -rf /etc/rc.d
-
 	restore_chflags
 
 	# remount /cf ro

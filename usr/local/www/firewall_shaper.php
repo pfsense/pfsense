@@ -91,15 +91,21 @@ if ($_POST) {
 	}
 }
 
-if ($_GET['act'] == "del") {
-	if ($a_shaper[$_GET['id']]) {
-		unset($a_shaper[$_GET['id']]);
-		write_config();
-		touch($d_shaperconfdirty_path);
-		header("Location: firewall_shaper.php");
-		exit;
-	}
-} else if ($_GET['act'] == "down") {
+if (isset($_POST['del_x'])) {
+        /* delete selected rules */
+        if (is_array($_POST['rule']) && count($_POST['rule'])) {
+                foreach ($_POST['rule'] as $rulei) {
+                        unset($a_shaper[$rulei]);
+                }
+                write_config();
+                touch($d_natconfdirty_path);
+                header("Location: firewall_shaper.php");
+                exit;
+        }
+}
+
+
+if ($_GET['act'] == "down") {
 	if ($a_shaper[$_GET['id']] && $a_shaper[$_GET['id']+1]) {
 		$tmp = $a_shaper[$_GET['id']+1];
 		$a_shaper[$_GET['id']+1] = $a_shaper[$_GET['id']];

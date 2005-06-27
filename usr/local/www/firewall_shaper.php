@@ -227,8 +227,8 @@ if ($_GET['act'] == "del") {
                         <td width="20%" class="listhdrr">Source</td>
                         <td width="20%" class="listhdrr">Destination</td>
                         <td width="15%" class="listhdrrns">Target</td>
-                        <td width="20%" class="listhdr">Description</td>
-                        <td width="15%" class="list"></td>
+                        <td width="25%" class="listhdr">Description</td>
+                        <td width="10%" class="list"></td>
                       </tr>
                       <?php $nrules = $i = 0; foreach ($a_shaper as $shaperent): ?>
                       <tr valign="top" id="fr<?=$nrules;?>">
@@ -291,7 +291,7 @@ if ($_GET['act'] == "del") {
                           <img src="up_d.gif" width="17" height="17" border="0">
                           <?php endif; ?>
 			  <input name="move_<?=$i;?>" type="image" src="left.gif" width="17" height="17" title="move selected rules before this rule" onMouseOver="fr_insline(<?=$nrules;?>, true)" onMouseOut="fr_insline(<?=$nrules;?>, false)"><br>
-			  
+			  <a href="firewall_shaper.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this rule?')"><img src="x.gif" title="delete rule" width="17" height="17" border="0"></a>
                           <?php if (isset($a_shaper[$i+1])): ?>
                           <a href="firewall_shaper.php?act=down&id=<?=$i;?>"><img src="down.gif" title="move down" width="17" height="17" border="0"></a>
                           <?php else: ?>
@@ -303,10 +303,7 @@ if ($_GET['act'] == "del") {
                       <?php $nrules++; $i++; endforeach; ?>
                       <tr>
                         <td class="list" colspan="8"></td>
-                        <td class="list">
-			  <a href="firewall_shaper_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a>&nbsp;
-			  <a href="firewall_shaper.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this rule?')"><img src="x.gif" title="delete rule" width="17" height="17" border="0"></a>
-			</td>
+                        <td class="list"> <a href="firewall_shaper_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>
 

@@ -30,6 +30,21 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+function listtags() {
+	$ret = explode(" ", "cacert row config package columnitem option item fieldname field rule user key subqueue " .
+                "dnsserver winsserver encryption-algorithm-option hash-algorithm-option hosts tunnel " .
+                "onetoone staticmap route alias queue shellcmd earlyshellcmd mobilekey " .
+                "service servernat proxyarpnet passthrumac allowedip wolentry vlan menu domainoverrides");
+
+	return $ret;
+}
+
+function listtags_pkg() {
+	$ret = array("onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package");
+
+	return $ret;
+}
+
 function startElement($parser, $name, $attrs) {
 	global $parsedcfg, $depth, $curpath, $havedata, $listtags;
 
@@ -105,16 +120,13 @@ function cData($parser, $data) {
 
 function parse_xml_config($cffile, $rootobj) {
 	global $listtags;
-	$listtags = explode(" ", "cacert row config package columnitem option item fieldname field rule user key subqueue " .
-                "dnsserver winsserver encryption-algorithm-option hash-algorithm-option hosts tunnel " .
-                "onetoone staticmap route alias queue shellcmd earlyshellcmd mobilekey " .
-                "service servernat proxyarpnet passthrumac allowedip wolentry vlan menu domainoverrides");
+	$listtags = listtags();
 	return parse_xml_config_raw($cffile, $rootobj);
 }
 
 function parse_xml_config_pkg($cffile, $rootobj) {
 	global $listtags;
-	$listtags = array("onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package");
+	$listtags = listtags_pkg();
 	return parse_xml_config_raw($cffile, $rootobj);
 }
 
@@ -201,16 +213,13 @@ function dump_xml_config_sub($arr, $indent) {
 
 function dump_xml_config($arr, $rootobj) {
 	global $listtags;
-	$listtags = explode(" ", "cacert row config package columnitem option item fieldname field rule user key subqueue " .
-			"dnsserver winsserver encryption-algorithm-option hash-algorithm-option hosts tunnel " .
-			"onetoone staticmap route alias queue shellcmd earlyshellcmd mobilekey " .
-			"service servernat proxyarpnet passthrumac allowedip wolentry vlan menu domainoverrides");
+	$listtags = listtags();
 	return dump_xml_config_raw($arr, $rootobj);
 }
 
 function dump_xml_config_pkg($arr, $rootobj) {
 	global $listtags;
-	$listtags = array("onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package");
+	$listtags = listtags_pkg();
 	return dump_xml_config_raw($arr, $rootobj);
 }
 

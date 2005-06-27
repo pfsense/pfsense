@@ -316,70 +316,69 @@ function interfaces_carp_bringup() {
 }
 
 function interfaces_wireless_configure($if, $wlcfg) {
-	global $config, $g;
+        global $config, $g;
 
-	/* wireless configuration */
-	$ifcargs = escapeshellarg($if) .
-		" ssid " . escapeshellarg($wlcfg['ssid']) . " channel " .
-		escapeshellarg($wlcfg['channel']) . " ";
+        /* wireless configuration */
+        $ifcargs = escapeshellarg($if) .
+                " ssid " . escapeshellarg($wlcfg['ssid']) . " channel " .
+                escapeshellarg($wlcfg['channel']) . " ";
 
-	/* XXX: apparent not everything likes this little blurb */
-	//if ($wlcfg['stationname'])
-	//	$ifcargs .= "stationname " . escapeshellarg($wlcfg['stationname']) . " ";
+        if ($wlcfg['stationname'])
+                $ifcargs .= "stationname " . escapeshellarg($wlcfg['stationname']) . " ";
 
-	if (isset($wlcfg['wep']['enable']) && is_array($wlcfg['wep']['key'])) {
-		$ifcargs .= "wepmode on ";
+        if (isset($wlcfg['wep']['enable']) && is_array($wlcfg['wep']['key'])) {
+                $ifcargs .= "wepmode on ";
 
-		$i = 1;
-		foreach ($wlcfg['wep']['key'] as $wepkey) {
-			$ifcargs .= "wepkey " . escapeshellarg("{$i}:{$wepkey['value']}") . " ";
-			if (isset($wepkey['txkey'])) {
-				$ifcargs .= "weptxkey {$i} ";
-			}
-			$i++;
-		}
-	} else {
-		$ifcargs .= "wepmode off ";
-	}
+                $i = 1;
+                foreach ($wlcfg['wep']['key'] as $wepkey) {
+                        $ifcargs .= "wepkey " . escapeshellarg("{$i}:{$wepkey['value']}") . " ";
+                        if (isset($wepkey['txkey'])) {
+                                $ifcargs .= "weptxkey {$i} ";
+                        }
+                        $i++;
+                }
+        } else {
+                $ifcargs .= "wepmode off ";
+        }
 
-	switch ($wlcfg['mode']) {
-		case 'hostap':
-			$ifcargs .= "mediaopt hostap ";
-			break;
-		case 'ibss':
-		case 'IBSS':
-			if (strstr($if, "wi"))
-				$ifcargs .= "mediaopt ibss ";
-			else if (strstr($if, "an"))
-				$ifcargs .= "mediaopt adhoc ";
-			else if (strstr($if, "ath"))
-				$ifcargs .= "mediaopt hostap ";					
-			break;
-		case 'bss':
-		case 'BSS':
-			if (strstr($if, "wi"))
-				$ifcargs .= "mediaopt ibss ";
-			else if (strstr($if, "an"))
-				$ifcargs .= "mediaopt adhoc ";
-			else if (strstr($if, "ath"))
-				$ifcargs .= "mediaopt hostap ";			
-			break;
-	}
+        if (strstr($if, "ath")) {
+                if ($wlcfg['standard'])
+                        $ifcargs .= "mode {$wlcfg['standard']} ";
+        }
 
-	if($wlcfg['standard'] <> "")
-		$ifcargs  .= " mode {$wlcfg['standard']}";
+        switch ($wlcfg['mode']) {
+                case 'hostap':
+                        if (strstr($if, "ath"))
+                                $ifcargs .= "-mediaopt adhoc mediaopt hostap ";
+                        else if (strstr($if, "wi"))
+                                $ifcargs .= "-mediaopt ibss mediaopt hostap ";
+                        break;
+                case 'ibss':
+                case 'IBSS':
+                        if (strstr($if, "ath"))
+                                $ifcargs .= "-mediaopt hostap mediaopt adhoc ";
+                        else if (strstr($if, "wi"))
+                                $ifcargs .= "-mediaopt hostap mediaopt ibss ";
+                        else if (strstr($if, "an"))
+                                $ifcargs .= "mediaopt adhoc ";
+                        break;
+                case 'bss':
+                case 'BSS':
+                        if (strstr($if, "ath"))
+                                $ifcargs .= "-mediaopt hostap -mediaopt adhoc ";
+                        else if (strstr($if, "wi"))
+                                $ifcargs .= "-mediaopt hostap -mediaopt ibss ";
+                        else if (strstr($if, "an"))
+                                $ifcargs .= "-mediaopt adhoc ";
+                        break;
+        }
 
-	$ifcargs .= " up";
+        $ifcargs .= "up";
 
-	mwexec("/sbin/ifconfig " . $ifcargs);
-	
-	/* write out the startup command to /tmp/ for
-	   debugging */
-	$fout = fopen("/tmp/debug.wireless","w");
-	fwrite($fout, "/sbin/ifconfig " . $ifcargs);
-	fclose($fout);
+        mwexec("/sbin/ifconfig " . $ifcargs);
 
-	return 0;
+        return 0;
+
 }
 
 function interfaces_wan_configure() {

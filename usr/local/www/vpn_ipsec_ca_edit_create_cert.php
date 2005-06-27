@@ -157,6 +157,7 @@ if ($_POST) {
             <?php if ($savemsg) print_info_box($savemsg); ?>
 	    <p>One moment please...
 	<?php
+	    config_mount_rw();
 	    mwexec("cd /tmp/ && /usr/bin/openssl req -new -x509 -keyout cakey.pem -out cacert.pem -days 3650 -config /etc/ssl/openssl.cnf -passin pass:test -nodes");
 	    //mwexec("cd /tmp/ && /usr/bin/openssl req -config openssl.cnf -new -nodes > cacert.pem ");
 	    //mwexec("cd /tmp/ && /usr/bin/openssl x509 -in cert.csr -out cert.pem -req -signkey cakey.pem");
@@ -170,6 +171,7 @@ if ($_POST) {
 	    $cakeyA = ereg_replace("\r","",$cakey);
 	    $cacert = ereg_replace("\n","\\n",$cacert);
 	    $cakey = ereg_replace("\n","\\n",$cakey);
+	    config_mount_ro();
 	?>
 	<script language="JavaScript">
 	<!--

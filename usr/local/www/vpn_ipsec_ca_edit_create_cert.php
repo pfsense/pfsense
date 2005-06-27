@@ -65,7 +65,7 @@ if ($_POST) {
     $commonname=$_POST['commonname'];
 
     /* Write out /etc/ssl/openssl.cnf */
-    config_mount_rw();
+    conf_mount_rw();
     $fd = fopen("/etc/ssl/openssl.cnf", "w");
     fwrite($fd, "");
     fwrite($fd, "[ req ]\n");
@@ -140,7 +140,7 @@ if ($_POST) {
     fwrite($fd, "[ crl_ext ]\n");
     fwrite($fd, "authorityKeyIdentifier=keyid:always,issuer:always\n");
     fclose($fd);
-    config_mount_ro();
+    conf_mount_ro();
 
 ?>
 

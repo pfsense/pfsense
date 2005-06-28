@@ -92,7 +92,7 @@ include("fbegin.inc");
 	}
 
 if(!is_array($config['installedpackages']['carp']['config'])) {
-	echo "</td></tr></table><center>Could not locate any defined CARP interfaces.";
+	echo "</td></tr></table><center><br>Could not locate any defined CARP interfaces.";
 	echo "</center>";
 
 	include("fend.inc");

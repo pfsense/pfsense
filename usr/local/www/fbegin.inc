@@ -47,6 +47,18 @@ function showhide(tspan, tri) {
 		triel.src = "/tri_c.gif";
 	}
 }
+
+function showhide_black(tspan, tri) {
+	tspanel = document.getElementById(tspan);
+        triel = document.getElementById(tri);
+        if (tspanel.style.display == 'none') {
+                tspanel.style.display = '';
+                triel.src = "/tri_o_black.gif";
+        } else {
+                tspanel.style.display = 'none';
+                triel.src = "/tri_c_black.gif";
+        }
+}
 -->
 </script>
 <table width="750" border="0" cellspacing="0" cellpadding="2">
@@ -69,9 +81,7 @@ function showhide(tspan, tri) {
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_advanced.php" class="navlnk">Advanced</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_firmware_check.php" class="navlnk">Firmware</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system.php" class="navlnk">General setup</a><br>
-		<?php if($g['platform'] <> "cdrom"): ?>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/pkg_mgr.php" class="navlnk">Packages</a><br>
-		<?php endif ?>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_routes.php" class="navlnk">Static routes</a><br>
 	      <?php echo return_ext_menu("System"); ?>
               <strong>Interfaces</strong>
@@ -112,9 +122,7 @@ function showhide(tspan, tri) {
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_dhcp_leases.php" class="navlnk">DHCP leases</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_interfaces.php" class="navlnk">Interfaces</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_ipsec_sad.php" class="navlnk">IPsec</a><br>
-		<?php if($g['platform'] <> "cdrom"): ?>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_pkglogs.php" class="navlnk">Package logs</a><br>
-		<?php endif ?>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_queues.php" class="navlnk">Queues</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_services.php" class="navlnk">Services</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/index.php" class="navlnk">System</a><br>

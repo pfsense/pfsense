@@ -149,9 +149,6 @@ function filter_configure() {
 	if(file_exists("/usr/local/pkg/pf/carp_sync_client.php"))
 		unlink("/usr/local/pkg/pf/carp_sync_client.php");
 
-	
-	mwxec("/bin/rm -rf /usr/local/pkg/pf/CVS");
-
 	/* process packager manager custom rules */
 	$files = return_dir_as_array("/usr/local/pkg/pf/");
 	if($files <> "") {
@@ -162,7 +159,7 @@ function filter_configure() {
 					if(stristr($file, ".sh") == true) {
 						mwexec("/usr/local/pkg/pf/" . $file . " start");
 					} else {
-						//if($g['booting'] == true)
+						if($g['booting'] == true)
 							echo "\t{$file}... ";
 						eval($text);
 						if($g['booting'] == true) 
@@ -176,9 +173,10 @@ function filter_configure() {
 	/* sync carp entries to other firewalls */
 	carp_sync_client();
 	
-	/* we need a way to let a user run a shell cmd after each
-	   filter_configure() call.  run this xml command after
-           each change.
+	/*
+	    we need a way to let a user run a shell cmd after each
+	    filter_configure() call.  run this xml command after
+            each change.
 	*/
 	if($config['system']['afterfilterchangeshellcmd'] <> "") {
 		mwexec($config['system']['afterfilterchangeshellcmd']);

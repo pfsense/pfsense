@@ -30,12 +30,15 @@ fi
 # lets populate them from the default (factory configuration)
 # files.
 if [ ! -f /cf/conf/config.xml ]; then
+    echo "Copying config.xml to /cf/conf/"
     /rescue/cp /FreeSBIE/cf/conf/config.xml /cf/conf/
 fi
 if [ ! -f /conf.default/config.xml ]; then
+    echo "Copying config.xml to /conf.default/conf/"
     /rescue/cp /FreeSBIE/conf.default/config.xml /conf.default/config.xml
 fi
 if [ ! -f /cf/conf/ez-ipupdate.cache ]; then
+    echo "Copying ez-ipupdate.cache to /cf/conf/"
     /rescue/cp /FreeSBIE/cf/conf/ez-ipupdate.cache /cf/conf/ez-ipupdate.cache
 fi
 

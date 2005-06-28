@@ -149,17 +149,20 @@ function filter_configure() {
 	if(file_exists("/usr/local/pkg/pf/carp_sync_client.php"))
 		unlink("/usr/local/pkg/pf/carp_sync_client.php");
 
+	
+	mwxec("/bin/rm -rf /usr/local/pkg/pf/CVS");
+
 	/* process packager manager custom rules */
 	$files = return_dir_as_array("/usr/local/pkg/pf/");
 	if($files <> "") {
 		foreach ($files as $file) {
 			if($file <> "") {
 				$text = return_filename_as_string("/usr/local/pkg/pf/" . $file);
-				if($text != "") {
+				if($text <> "" and $text <> "CVS") {
 					if(stristr($file, ".sh") == true) {
 						mwexec("/usr/local/pkg/pf/" . $file . " start");
 					} else {
-						if($g['booting'] == true)
+						//if($g['booting'] == true)
 							echo "\t{$file}... ";
 						eval($text);
 						if($g['booting'] == true) 

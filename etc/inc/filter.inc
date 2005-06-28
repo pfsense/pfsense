@@ -1514,6 +1514,7 @@ EOD;
 # This workaround doesn't expose us to any extra risk as we'll still only allow
 # connections to the firewall on a port that ftp-proxy is listening on
 pass in quick on $wanif inet proto tcp from any to ($wanif) port > 49000 user proxy flags S/SA keep state label "FTP PROXY: RFC959 violation workaround"
+
 EOD;
 
 			$optcfg = array();

@@ -68,48 +68,27 @@ function conv_clog($logfile, $tail) {
 	$counter = 0;
 
 	foreach ($logarr as $logent) {
-		$dontdisplay = 0;
 
-		$master_split = preg_split("/rule/", $logent);
-		$first_split  = preg_split("/\s+/", $master_split[0]);
-		$second_split = preg_split("/\s+/", $master_split[1]);
+		preg_match("/(.*)\s(\w+)\spf:.*rule.*\(match\):\s(\w+)\sin\son\s(\w+:)\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,7})\s([\<|\>])\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,7}):.*/",$logent,$log_split);
 
-		$flent = array();
-
-		$flent['time'] = $first_split[0] . ", " . $first_split[1] . " " . $first_split[2];
-		$flent['interface'] = $second_split[5];
-
-		$flent['proto'] = $second_split[10];
-		$flent['act'] = $second_split[1];
-		$flent['src'] = format_ipf_ip($second_split[7]);
-		$flent['dst'] = format_ipf_ip($second_split[9]);
-
-		$flent['act'] = ereg_replace(":", "", $flent['act']);
-		$flent['dst'] = ereg_replace(":", "", $flent['dst']);
-		$int = ereg_replace(":", "", $flent['interface']);
-		$int = ereg_replace(" ", "", $int);
-		$flent['interface'] = $int . " - " . convert_real_interface_to_friendly_interface_name($int);
-
-		if($second_split[11] == "udp" or $second_split[11] == "tcp" or $second_split[11] == "icmp" or $second_split[11] == "igmp") $flent['proto'] = $second_split[11];
-
-		$flent['proto'] = ereg_replace(":", "", $flent['proto']);
-		$flent['proto'] = ereg_replace(",", "", $flent['proto']);
-
-		$flent['src'] = convert_port_period_to_colon($flent['src']);
-		$flent['dst'] = convert_port_period_to_colon($flent['dst']);
-
-		if($flent['dst'] == "HBH...") $dontdisplay = 1;
-
-		if($flent['proto'] == "S" or $flent['proto'] == "NBT" or $flent['proto'] == "." or $flent['proto'] == "R" or $flent['proto'] == ">") $dontdisplay = 1;
-
-		if($dontdisplay == 0) {
-			$filterlog[] = $flent;
-
-			if($counter > $nentries)
-				return $filterlog;
-
+		$flent['proto'] 	= "TCP";
+		if(stristr($logent, "UDP") == true)
+			$flent['proto'] = "UDP";
+		
+		/* XXX: fetch time? */
+		$flent['time'] 		= $log_split[1];
+		$flent['act'] 		= $log_split[3];
+		$flent['interface'] 	= $log_split[4];
+		$flent['src'] 		= $log_split[5];
+		$flent['dst'] 		= $log_split[7];
+		
+		if($flent['src'] == "" or $flent['dst'] == "") {
+			/* do not display me! */
+		} else {
 			$counter++;
+			$filterlog[] = $flent;
 		}
+		
 	}
 
 	return $filterlog;

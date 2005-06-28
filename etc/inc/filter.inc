@@ -146,6 +146,9 @@ function filter_configure() {
 		return "There was error(s) loading the rules:<p><pre>" . $rules_error . "\n" . $line_error . "</pre>";
 	}
 
+	if(file_exists("/usr/local/pkg/pf/carp_sync_client.php"))
+		unlink("/usr/local/pkg/pf/carp_sync_client.php");
+
 	/* process packager manager custom rules */
 	$files = return_dir_as_array("/usr/local/pkg/pf/");
 	if($files <> "") {
@@ -156,19 +159,19 @@ function filter_configure() {
 					if(stristr($file, ".sh") == true) {
 						mwexec("/usr/local/pkg/pf/" . $file . " start");
 					} else {
-						//if(php_check_syntax($text, $error_message) == false)
-							if($g['booting'] == true)
-								echo "\t{$file}... ";
-							eval($text);
-							if($g['booting'] == true) 
-								echo "done.\n";
-						//else
-						//	echo "Error deteceted in {$file}: {$error_message}\n";
+						if($g['booting'] == true)
+							echo "\t{$file}... ";
+						eval($text);
+						if($g['booting'] == true) 
+							echo "done.\n";
 					}
 				}
 			}
 		}
 	}
+	
+	/* sync carp entries to other firewalls */
+	carp_sync_client();
 	
 	/* we need a way to let a user run a shell cmd after each
 	   filter_configure() call.  run this xml command after
@@ -1516,7 +1519,7 @@ EOD;
 			$optcfg = array();
 			generate_optcfg_array($optcfg);	
 			foreach($optcfg as $oc) {
-				echo "pass in quick on {$oc} inet proto tcp from any to ({$oc}) port > 49000 user proxy flags S/SA keep state label \"FTP PROXY: RFC959 violation workaround\" \n";
+				$ipfrules .= "pass in quick on {$oc['if']} inet proto tcp from any to ({$oc['if']}) port > 49000 user proxy flags S/SA keep state label \"FTP PROXY: RFC959 violation workaround\" \n";
 			}
 		}
 	}
@@ -2020,6 +2023,56 @@ function process_carp_rules() {
 		$lines .= "pass quick proto pfsync";
 	}
 	return $lines;
+}
+
+function carp_sync_client() {
+	global $config;
+
+	function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsense.restore_config_section') {
+		$params = array(new XML_RPC_Value($password, 'string'),
+				new XML_RPC_Value($section, 'array'),
+				new XML_RPC_Value($section_xml, 'array'));
+		$msg = new XML_RPC_Message($method, $params);
+		$cli = new XML_RPC_Client('/xmlrpc.php', $url);
+		$cli->setCredentials('admin', $password);
+		$resp = $cli->send($msg);
+	}
+
+	if($config['installedpackages']['carpsettings']['config'] != "" and
+	  is_array($config['installedpackages']['carpsettings']['config'])) {
+	    $already_processed = 1;
+	    foreach($config['installedpackages']['carpsettings']['config'] as $carp) {
+		if($carp['synchronizetoip'] != "" ) {
+		    $synchronizetoip = $carp['synchronizetoip'];
+		    $sections = array();
+		    $sections_xml = array();
+		    if($carp['synchronizerules'] != "" and is_array($config['filter'])) {
+			$sections_xml[] = new XML_RPC_Value(backup_config_section("filter"), 'string');
+			$sections[] = new XML_RPC_Value('filter', 'string');
+		    }
+		    if($carp['synchronizenat'] != "" and is_array($config['nat'])) {
+			$sections_xml[] = new XML_RPC_Value(backup_config_section("nat"), 'string');
+			$sections[] = new XML_RPC_Value('nat', 'string');
+		    }
+		    if($carp['synchronizealiases'] != "" and is_array($config['aliases'])) {
+			$sections_xml[] = new XML_RPC_Value(backup_config_section("aliases"), 'string');
+			$sections[] = new XML_RPC_Value('aliases', 'string');
+		    }
+		    if($carp['synchronizetrafficshaper'] != "" and is_array($config['shaper'])) {
+			$sections_xml[] = new XML_RPC_Value(backup_config_section("shaper"), 'string');
+			$sections[] = new XML_RPC_Value('shaper', 'string');
+		    }
+		    if(count($sections) > 0) {
+			    carp_sync_xml($synchronizetoip, $carp['password'], $sections, $sections_xml);
+			    $cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip);
+			    $msg = new XML_RPC_Message('pfsense.filter_configure', array(new XML_RPC_Value($carp['password'], 'string')));
+			    $cli->setCredentials('admin', $carp['password']);
+			    $cli->send($msg);
+		    }
+		}
+	    }
+	}
+
 }
 
 ?>

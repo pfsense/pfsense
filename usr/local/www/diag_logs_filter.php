@@ -78,9 +78,11 @@ function conv_clog($logfile, $tail) {
 		/* XXX: fetch time? */
 		$flent['time'] 		= $log_split[1];
 		$flent['act'] 		= $log_split[3];
-		$flent['interface'] 	= $log_split[4];
+		$flent['interface'] 	= strtoupper(convert_real_interface_to_friendly_interface_name(str_replace(":","",$log_split[4])));
 		$flent['src'] 		= $log_split[5];
 		$flent['dst'] 		= $log_split[7];
+				
+		
 		
 		if($flent['src'] == "" or $flent['dst'] == "") {
 			/* do not display me! */

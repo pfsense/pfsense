@@ -223,8 +223,6 @@
 	
 	mwexec("/sbin/pfctl -f /tmp/rules.debug");
 
-	mwexec("/sbin/pfctl -f /tmp/rules.debug");
-
 	/* done */
 	unlink("{$g['varrun_path']}/booting");
 	$g['booting'] = FALSE;

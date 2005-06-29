@@ -151,9 +151,9 @@
 	
 	/* setup altq + pf */
 	echo "Configuring firewall... ";
-	//mute_kernel_msgs();
+	mute_kernel_msgs();
 	filter_configure();
-	//unmute_kernel_msgs();
+	unmute_kernel_msgs();
 	echo "done.\n";
 
 	/* start OpenVPN server & clients */

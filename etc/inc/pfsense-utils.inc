@@ -839,7 +839,7 @@ function make_dirs($path, $mode = 0755) {
  * check_firmware_version(): Check whether the current firmware installed is the most recently released.
  */
 function check_firmware_version($tocheck = "all", $return_php = true) {
-        global $g;
+        global $g, $config;
 	$xmlrpc_base_url = $g['xmlrpcbaseurl'];
         $xmlrpc_path = $g['xmlrpcpath'];
 	$rawparams = array("firmware" => array("version" => trim(file_get_contents('/etc/version'))),
@@ -855,12 +855,13 @@ function check_firmware_version($tocheck = "all", $return_php = true) {
 			$params['platform'] = $rawparams['platform'];
 		}
 	}
-	if(isset($config['system']['firmwarebranch'])) {
-		$params['branch'] = $config['system']['firmwarebranch'];
+	if($config['system']['firmware']['branch']) {
+		$params['branch'] = $config['system']['firmware']['branch'];
 	}
 	$xmlparams = php_value_to_xmlrpc($params);
         $msg = new XML_RPC_Message('pfsense.get_firmware_version', array($xmlparams));
         $cli = new XML_RPC_Client($xmlrpc_path, $xmlrpc_base_url);
+	//$cli->setDebug(1);
 	$resp = $cli->send($msg, 10);
 	if(!$resp or $resp->faultCode()) {
 		$raw_versions = false;

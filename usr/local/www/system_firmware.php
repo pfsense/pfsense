@@ -120,7 +120,7 @@ php-config.upload_progress_meter.file.filename_template = <?=$dir?>
 -->
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">System: Firmware</p>
+<p class="pgtitle">System: Manual Update</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>  	 
 <?php if ($fwinfo <> "") print_info_box($fwinfo); ?>

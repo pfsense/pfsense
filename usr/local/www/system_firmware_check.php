@@ -53,6 +53,7 @@ $versions = check_firmware_version();
   <ul id="tabnav">
     <li class="tabinact"><a href="system_firmware.php">Manual Update</a></li>
     <li class="tabact">Auto Update</a></li>
+    <li class="tabinact"><a href="system_firmware_settings.php">Updater Settings</a></li>
   </ul>
   </td></tr>
   <tr>

@@ -85,7 +85,7 @@ include("fbegin.inc");
       <p class="pgtitle">System: Firmware Settings</p>
       
             <?php if ($savemsg) print_info_box($savemsg); ?>
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+              <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td>
 			<ul id="tabnav">

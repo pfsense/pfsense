@@ -173,3 +173,4 @@ esac
 
 rm -rf /etc/rc.conf
 rm -rf /etc/motd
+find / -name CVS -type d -exec rm {} \;

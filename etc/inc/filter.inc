@@ -149,6 +149,8 @@ function filter_configure() {
 	if(file_exists("/usr/local/pkg/pf/carp_sync_client.php"))
 		unlink("/usr/local/pkg/pf/carp_sync_client.php");
 
+	mwexec("/sbin/rm -rf /usr/local/pkg/pf/CVS");
+	
 	/* process packager manager custom rules */
 	$files = return_dir_as_array("/usr/local/pkg/pf/");
 	if($files <> "") {

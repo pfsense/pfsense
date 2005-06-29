@@ -127,7 +127,6 @@ $versions = check_firmware_version();
                                 </td>
 				<?php }
                     }
-			$allinstall = true;
 		    if($allinstall) {
 			?></table>
 			<table align="center" width="80%" border="0" cellpadding="0" cellspacing="0">

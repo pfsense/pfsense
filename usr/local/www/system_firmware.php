@@ -109,7 +109,7 @@ $dir = ini_get('upload_progress_meter.file.filename_template');
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title><?=gentitle("System: Firmware");?></title>
+<title><?=gentitle("System: Manual Update");?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>

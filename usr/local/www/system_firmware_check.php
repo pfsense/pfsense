@@ -38,7 +38,7 @@ if(isset($config['system']['disablefirmwarecheck']))
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title><?=gentitle("System: Firmware Update");?></title>
+<title><?=gentitle("System: Auto Update");?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
@@ -47,7 +47,7 @@ if(isset($config['system']['disablefirmwarecheck']))
 include("fbegin.inc");
 $versions = check_firmware_version();
 ?>
-<p class="pgtitle">System: Firmware Update</p>
+<p class="pgtitle">System: Auto Update</p>
 <br>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
   <ul id="tabnav">

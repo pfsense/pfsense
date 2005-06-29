@@ -41,7 +41,7 @@ require_once("xmlrpc.inc");
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title><?=gentitle("System: Firmware: Invoke Auto Upgrade");?></title>
+<title><?=gentitle("System: Firmware: Firmware Updater");?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
@@ -49,7 +49,7 @@ require_once("xmlrpc.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">System: Firmware: Auto Upgrade</p>
+<p class="pgtitle">System: Firmware: Firmware Updater</p>
 
 <form action="system_firmware_auto.php" method="post">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

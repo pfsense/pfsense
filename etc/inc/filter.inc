@@ -2028,18 +2028,18 @@ function process_carp_rules() {
 	return $lines;
 }
 
+function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsense.restore_config_section') {
+	$params = array(new XML_RPC_Value($password, 'string'),
+			new XML_RPC_Value($section, 'array'),
+			new XML_RPC_Value($section_xml, 'array'));
+	$msg = new XML_RPC_Message($method, $params);
+	$cli = new XML_RPC_Client('/xmlrpc.php', $url);
+	$cli->setCredentials('admin', $password);
+	$resp = $cli->send($msg);
+}
+
 function carp_sync_client() {
 	global $config;
-
-	function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsense.restore_config_section') {
-		$params = array(new XML_RPC_Value($password, 'string'),
-				new XML_RPC_Value($section, 'array'),
-				new XML_RPC_Value($section_xml, 'array'));
-		$msg = new XML_RPC_Message($method, $params);
-		$cli = new XML_RPC_Client('/xmlrpc.php', $url);
-		$cli->setCredentials('admin', $password);
-		$resp = $cli->send($msg);
-	}
 
 	if($config['installedpackages']['carpsettings']['config'] != "" and
 	  is_array($config['installedpackages']['carpsettings']['config'])) {

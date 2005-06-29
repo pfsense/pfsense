@@ -170,3 +170,6 @@ delta_update)
 	restore_chflags
 	;;
 esac
+
+rm -rf /etc/rc.conf
+rm -rf /etc/motd

@@ -264,6 +264,7 @@ function interfaces_carp_configure() {
 		      mwexec("/sbin/ifconfig pfsync0 create");
 		      mwexec("/sbin/ifconfig pfsync0 syncdev " . $carp_sync_int);
 		      mwexec("/sbin/ifconfig pfsync0 syncif " . $carp_sync_int);
+		      mwexec("/sbin/ifconfig {$carp_sync_int} up");
 		      mwexec("/sbin/ifconfig pfsync0 up");
 		      if($g['booting']) {
 			/* install rules to alllow pfsync to sync up during boot

@@ -47,9 +47,6 @@ function interfaces_vlan_configure() {
 
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 
-		/* load the VLAN module */
-		mwexec("/sbin/kldload if_vlan");
-
 		/* devices with native VLAN support */
 		$vlan_native_supp = explode(" ", "bge em gx nge ti txp");
 

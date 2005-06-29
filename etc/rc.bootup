@@ -158,9 +158,6 @@
 	unmute_kernel_msgs();
 	echo "done.\n";
 
-	/* bring up carp interfaces */
-	interfaces_carp_bringup();
-
 	/* start OpenVPN server & clients */
 	ovpn_configure();
 
@@ -222,6 +219,9 @@
 
 	/* setup interface microcode which improves tcp/ip speed */
 	setup_microcode();
+
+	/* bring up carp interfaces */
+	interfaces_carp_bringup();
 
 	/* done */
 	unlink("{$g['varrun_path']}/booting");

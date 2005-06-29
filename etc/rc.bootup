@@ -142,20 +142,18 @@
 	interfaces_optional_configure();
 	unmute_kernel_msgs();
 	echo "done.\n";
-	
-	/* setup carp interfaces */
-	interfaces_carp_configure();
-
-	unmute_kernel_msgs();
 
 	/* start pflog */
 	filter_pflog_start();
-
+	
+	/* bring up carp interfaces */
+	interfaces_carp_bringup();
+	
 	/* setup altq + pf */
 	echo "Configuring firewall... ";
-	mute_kernel_msgs();
+	//mute_kernel_msgs();
 	filter_configure();
-	unmute_kernel_msgs();
+	//unmute_kernel_msgs();
 	echo "done.\n";
 
 	/* start OpenVPN server & clients */
@@ -220,8 +218,12 @@
 	/* setup interface microcode which improves tcp/ip speed */
 	setup_microcode();
 
-	/* bring up carp interfaces */
-	interfaces_carp_bringup();
+	/* setup carp interfaces */
+	interfaces_carp_configure();
+	
+	mwexec("/sbin/pfctl -f /tmp/rules.debug");
+
+	mwexec("/sbin/pfctl -f /tmp/rules.debug");
 
 	/* done */
 	unlink("{$g['varrun_path']}/booting");

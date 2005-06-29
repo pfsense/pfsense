@@ -267,14 +267,13 @@ function interfaces_carp_configure() {
 		      mwexec("/sbin/ifconfig pfsync0 create");
 		      mwexec("/sbin/ifconfig pfsync0 syncdev " . $carp_sync_int);
 		      mwexec("/sbin/ifconfig pfsync0 syncif " . $carp_sync_int);
-		      mwexec("/sbin/ifconfig {$carp_sync_int} up");
 		      mwexec("/sbin/ifconfig pfsync0 up");
 		      if($g['booting']) {
 			/* install rules to alllow pfsync to sync up during boot
 			 * carp interfaces will remain down until the bootup sequence finishes
 			 */
 			exec("echo pass quick proto carp all keep state > /tmp/rules.boot");
-			exec("echo pass quick proto pfsync all keep state >> /tmp/rules.boot");
+			exec("echo pass quick proto pfsync all >> /tmp/rules.boot");
 			exec("echo pass out proto { tcp, udp } from any to any port 53 keep state >> /tmp/rules.boot");
 			exec("/sbin/pfctl -f /tmp/rules.boot");
 		      }
@@ -287,6 +286,7 @@ function interfaces_carp_configure() {
 		   *  create the carp interface
 		   */
 		  mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " create");
+		  mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " down");
 		  $broadcast_address = gen_subnet_max($carp['ipaddress'], $carp['netmask']);
 		  if($carp['password'] != "") {
 		    $password = " pass " . $carp['password'];
@@ -310,6 +310,8 @@ function interfaces_carp_configure() {
 function interfaces_carp_bringup() {
 	global $g, $config;
 	/* lets bring the carp interfaces up now */
+	if ($g['booting'])
+		sleep(5);
 	$carp_ints = find_number_of_created_carp_interfaces();
 	for($x=0; $x<$carp_ints; $x++)
 		mwexec("/sbin/ifconfig carp{$carp_instances_counter} up");	

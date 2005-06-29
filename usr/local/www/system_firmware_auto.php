@@ -57,7 +57,9 @@ require_once("xmlrpc.inc");
     <td>
       <ul id="tabnav">
 	<li class="tabinact"><a href="system_firmware.php">Manual Update</a></li>
-        <li class="tabact">Auto Update</a></li>
+        <li class="tabinact"><a href="system_firmware_check.php">Auto Update</a></li>
+	<li class="tabinact"><a href="system_firmware_settings.php">Updater Settings</a></li>
+	<li class="tabact">Firmware Updater</li>
       </ul>
     </td>
   </tr>

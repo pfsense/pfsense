@@ -154,7 +154,7 @@ function sf() { document.forms[0].savetopath.focus(); }
     </tr>
     <tr>
       <td valign="top" class="label">
-	<textarea rows="<?php echo $rows; ?>" cols="<?php echo $cols; ?>" name="content"><?php echo $content; ?></textarea><br>
+	<textarea rows="<?php echo $rows; ?>" cols="<?php echo $cols; ?>" name="content"><?php echo htmlentities($content); ?></textarea><br>
         <p>
     </td>
     </tr>
@@ -168,4 +168,3 @@ function sf() { document.forms[0].savetopath.focus(); }
 <script language="Javascript">
 sf();
 </script>
-

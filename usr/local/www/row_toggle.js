@@ -9,7 +9,7 @@ function fr_bgcolor(id) {
 	var cells = row.getElementsByTagName('td');
 	var cellcnt = cells.length;
 
-	for (i = 0; i <= cellcnt; i++) {
+	for (i = 0; i < cellcnt; i++) {
 		// Check for cells with frd id only
 		if (cells[i].id == "frd" + id)
 			cells[i].style.backgroundColor = checkbox.checked ? "#FFFFBB" : "#FFFFFF";

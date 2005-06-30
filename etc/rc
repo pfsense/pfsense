@@ -146,6 +146,8 @@ if [ -f /tmp/filter_boot_dirty ]; then
     echo "Done."
 fi
 
+rm -rf /usr/local/pkg/pf/CVS
+
 /usr/local/bin/php -f /etc/rc.conf_mount_ro
 
 echo "Bootup complete"

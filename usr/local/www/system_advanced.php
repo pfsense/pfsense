@@ -470,8 +470,8 @@ function update_description(itemnum) {
             <script language="JavaScript">
 <!--
 enable_change(false);
-enable_altfirmwareurl(false);
-enable_altpkgconfigurl(false);
+//enable_altfirmwareurl(false);
+//enable_altpkgconfigurl(false);
 //-->
 </script>
 <?php include("fend.inc"); ?>

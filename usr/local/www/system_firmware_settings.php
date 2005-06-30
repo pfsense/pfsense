@@ -50,15 +50,6 @@ $curcfg = $config['system']['firmware'];
 <link href="gui.css" rel="stylesheet" type="text/css">
 <script language="JavaScript">
 <!--
-function enable_change(enable_over) {
-	if (document.iform.ipv6nat_enable.checked || enable_over) {
-		document.iform.ipv6nat_ipaddr.disabled = 0;
-		document.iform.schedulertype.disabled = 0;
-	} else {
-		document.iform.ipv6nat_ipaddr.disabled = 1;
-	}
-}
-
 var systemdescs=new Array(4);
 systemdescs[0]="This patch system uses a combination of unified and binary diffs. This system requires the least bandwidth, but is less forgiving of errors.";
 systemdescs[1]="This patch system uses tar files to update the system. This requires the most bandwidth, but is more reliable.";
@@ -134,7 +125,7 @@ include("fbegin.inc");
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
+                    <input name="Submit" type="submit" class="formbtn" value="Save">
                   </td>
                 </tr>
                 <tr>

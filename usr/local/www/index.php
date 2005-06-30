@@ -61,8 +61,8 @@ if(file_exists("/usr/local/www/trigger_initial_wizard")) {
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
-<form>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<form>
 <?php
 	echo "<center>";
 	echo "<a href=\"/\"><img src=\"/logo.gif\" border=\"0\"></a><p>";
@@ -155,9 +155,9 @@ function get_pfstate() {
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
 
-<form>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<form>
 <?php include("fbegin.inc"); ?>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr align="center" valign="top">
@@ -319,6 +319,7 @@ echo $diskusage . "%";
 
             </table>
             <?php include("fend.inc"); ?>
+</form>
 </body>
 </html>
 <?php
@@ -388,4 +389,3 @@ While(!Connection_Aborted()) {
 }
 
 ?>
-

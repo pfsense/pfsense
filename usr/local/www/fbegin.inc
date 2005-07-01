@@ -61,6 +61,7 @@ function showhide_black(tspan, tri) {
 }
 -->
 </script>
+<div id="niftyOutter">
 <table width="750" border="0" cellspacing="0" cellpadding="2">
   <tr valign="bottom">
     <td width="150" height="65" align="center" valign="middle"> <strong><a href="/"><img src="/logo.gif" border="0"></a></strong></td>

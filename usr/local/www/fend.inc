@@ -6,3 +6,11 @@
       All rights reserved.&nbsp; [<a href="/license.php" class="tblnk">view license</a>]</td>
   </tr>
 </table>
+</div>
+<script type="text/javascript">
+window.onload=function(){
+if(!NiftyCheck())
+    return;
+Rounded("div#niftyOutter","all","#FFF","#D4DDFF","smooth");
+}
+</script>

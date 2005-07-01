@@ -11,6 +11,6 @@
 window.onload=function(){
 if(!NiftyCheck())
     return;
-Rounded("div#niftyOutter","all","#FFF","#D4DDFF","smooth");
+Rounded("div#niftyOutter","tr bottom","#FFF","#D4DDFF","smooth");
 }
 </script>

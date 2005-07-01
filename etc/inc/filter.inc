@@ -155,15 +155,17 @@ function filter_configure() {
 		foreach ($files as $file) {
 			if($file <> "") {
 				$text = return_filename_as_string("/usr/local/pkg/pf/" . $file);
-				if($text <> "" and $text <> "CVS") {
+				if($text <> "") {
 					if(stristr($file, ".sh") == true) {
 						mwexec("/usr/local/pkg/pf/" . $file . " start");
 					} else {
-						if($g['booting'] == true)
-							echo "\t{$file}... ";
-						eval($text);
-						if($g['booting'] == true) 
-							echo "done.\n";
+						if(stristr($text,"CVS") == false) {
+							if($g['booting'] == true)
+								echo "\t{$file}... ";
+							eval($text);
+							if($g['booting'] == true) 
+								echo "done.\n";
+						}
 					}
 				}
 			}

@@ -32,19 +32,18 @@
 
 require("guiconfig.inc");
 
-$pconfig['enable'] = isset($config['dnsmasq']['enable']);
+$pconfig['enable']  = isset($config['dnsmasq']['enable']);
 $pconfig['regdhcp'] = isset($config['dnsmasq']['regdhcp']);
 
-if (!is_array($config['dnsmasq']['hosts'])) {
+if (!is_array($config['dnsmasq']['hosts'])) 
 	$config['dnsmasq']['hosts'] = array();
-}
 
-if (!is_array($config['dnsmasq']['domainoverrides'])) {
+if (!is_array($config['dnsmasq']['domainoverrides'])) 
        $config['dnsmasq']['domainoverrides'] = array();
-}
 
 hosts_sort();
-$a_hosts = &$config['dnsmasq']['hosts'];
+
+$a_hosts 	   = &$config['dnsmasq']['hosts'];
 $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
 
 if ($_POST) {
@@ -75,7 +74,7 @@ if ($_GET['act'] == "del") {
                if ($a_hosts[$_GET['id']]) {
                        unset($a_hosts[$_GET['id']]);
                        write_config();
-                       touch($d_dnsmasqdirty_path);
+                       touch($d_hostsdirty_path);
                        header("Location: services_dnsmasq.php");
                        exit;
                }
@@ -84,7 +83,7 @@ if ($_GET['act'] == "del") {
                if ($a_domainOverrides[$_GET['id']]) {
                        unset($a_domainOverrides[$_GET['id']]);
                        write_config();
-                       touch($d_dnsmasqdirty_path);
+                       touch($d_hostsdirty_path);
                        header("Location: services_dnsmasq.php");
                        exit;
                }
@@ -110,7 +109,7 @@ if ($_GET['act'] == "del") {
 <?php print_info_box_np("The DNS forwarder configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
 <?php endif; ?>
-			  <table width="100%" border="0" cellpadding="6" cellspacing="0">
+	<table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td class="vtable"><p>
                       <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] == "yes") echo "checked";?>>
@@ -149,9 +148,9 @@ if ($_GET['act'] == "del") {
                       You may enter records that override the results from the
                       forwarders below.</p></td>
                 </tr>
-              </table>
-              &nbsp;<br>
-              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+        </table>
+        &nbsp;<br>
+        <table width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="20%" class="listhdrr">Host</td>
                   <td width="25%" class="listhdrr">Domain</td>
@@ -191,17 +190,17 @@ if ($_GET['act'] == "del") {
                       </tr>
                     </table>
 		   </td>
-		</table>
+	</table>
 <!-- update to enable domain overrides -->
-             <table width="100%" border="0" cellpadding="6" cellspacing="0">
+        <table width="100%" border="0" cellpadding="6" cellspacing="0">
 	       <tr><td>&nbsp;</td></tr>
                <tr>
                  <td><p>Below you can override an entire domain by specifying an
                         authoritative dns server to be queried for that domain.</p></td>
                </tr>
-             </table>
-	     &nbsp;<br>
-             <table width="100%" border="0" cellpadding="0" cellspacing="0">
+        </table>
+	&nbsp;<br>
+        <table width="100%" border="0" cellpadding="0" cellspacing="0">
                <tr>
                  <td width="35%" class="listhdrr">Domain</td>
                  <td width="20%" class="listhdrr">IP</td>
@@ -227,8 +226,8 @@ if ($_GET['act'] == "del") {
                  <td class="list" colspan="3"></td>
                  <td class="list"> <a href="services_dnsmasq_domainoverride_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
 	       </tr>
-              </table>
-            </form>
+        </table>
+        </form>
 <?php include("fend.inc"); ?>
 </body>
 </html>

@@ -32,9 +32,9 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['dnsmasq']['hosts'])) {
+if (!is_array($config['dnsmasq']['hosts'])) 
 	$config['dnsmasq']['hosts'] = array();
-}
+
 hosts_sort();
 $a_hosts = &$config['dnsmasq']['hosts'];
 
@@ -60,15 +60,14 @@ if ($_POST) {
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
-	if (($_POST['host'] && !is_hostname($_POST['host']))) {
+	if (($_POST['host'] && !is_hostname($_POST['host']))) 
 		$input_errors[] = "A valid host must be specified.";
-	}
-	if (($_POST['domain'] && !is_domain($_POST['domain']))) {
+
+	if (($_POST['domain'] && !is_domain($_POST['domain']))) 
 		$input_errors[] = "A valid domain must be specified.";
-	}
-	if (($_POST['ip'] && !is_ipaddr($_POST['ip']))) {
+		
+	if (($_POST['ip'] && !is_ipaddr($_POST['ip']))) 
 		$input_errors[] = "A valid IP address must be specified.";
-	}
 
 	/* check for overlaps */
 	foreach ($a_hosts as $hostent) {
@@ -114,8 +113,8 @@ if ($_POST) {
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Services: DNS forwarder: Edit host</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-            <form action="services_dnsmasq_edit.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+        <form action="services_dnsmasq_edit.php" method="post" name="iform" id="iform">
+        <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td width="22%" valign="top" class="vncell">Host</td>
                   <td width="78%" class="vtable"> 
@@ -154,7 +153,7 @@ if ($_POST) {
                     <?php endif; ?>
                   </td>
                 </tr>
-              </table>
+        </table>
 </form>
 <?php include("fend.inc"); ?>
 </body>

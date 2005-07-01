@@ -108,6 +108,7 @@ cd /var/run && cp /dev/null utmp && chmod 644 utmp
 
 # Make sure /etc/rc.conf doesn't exist.
 if [ -f /etc/rc.conf ]; then
+    echo "Removing /etc/rc.conf..."
     rm -rf /etc/rc.conf
 fi
 

@@ -81,11 +81,19 @@ rm -rf /var/run/*
 rm -rf /tmp/*
 
 # generate circular logfiles
-clog -i -s 262144 /var/log/system.log
-clog -i -s 262144 /var/log/filter.log
-clog -i -s 32768 /var/log/dhcpd.log
-clog -i -s 32768 /var/log/vpn.log
-clog -i -s 32768 /var/log/portalauth.log
+if [ ! "$PLATFORM" = "cdrom" ]; then
+    clog -i -s 1000 /var/log/system.log
+    clog -i -s 1000 /var/log/filter.log
+    clog -i -s 1000 /var/log/dhcpd.log
+    clog -i -s 1000 /var/log/vpn.log
+    clog -i -s 1000 /var/log/portalauth.log
+else
+    clog -i -s 262144 /var/log/system.log
+    clog -i -s 262144 /var/log/filter.log
+    clog -i -s 32768 /var/log/dhcpd.log
+    clog -i -s 32768 /var/log/vpn.log
+    clog -i -s 32768 /var/log/portalauth.log
+fi
 chmod 0600 /var/log/system.log /var/log/filter.log /var/log/dhcpd.log /var/log/vpn.log /var/log/portalauth.log
 
 /sbin/adjkerntz -i

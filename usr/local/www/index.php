@@ -49,18 +49,14 @@ if(file_exists("/needs_package_sync")) {
 	}
 }
 
-if(file_exists("/usr/local/www/trigger_initial_wizard")) {
+if(file_exists("/trigger_initial_wizard")) {
 	conf_mount_rw();
-	unlink("/usr/local/www/trigger_initial_wizard");
+	unlink("/trigger_initial_wizard");
 	conf_mount_ro();
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-<head>
-<title><?=gentitle("pfSense webGUI");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
+<?php include("head.inc"); ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form>
 <?php
@@ -159,6 +155,7 @@ function get_pfstate() {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form>
 <?php include("fbegin.inc"); ?>
+	    <div id="nifty">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr align="center" valign="top">
                 <td height="10" colspan="2">&nbsp;</td>
@@ -318,8 +315,18 @@ echo $diskusage . "%";
 
 
             </table>
+	    </div>
             <?php include("fend.inc"); ?>
+	    
+<script type="text/javascript">
+window.onload=function(){
+if(!NiftyCheck())
+    return;
+Rounded("div#nifty","all","#FFF","#D4DDFF","smooth");
+}
+</script>
 </form>
+
 </body>
 </html>
 <?php

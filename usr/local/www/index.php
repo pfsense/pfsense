@@ -54,8 +54,6 @@ if(file_exists("/trigger_initial_wizard")) {
 	unlink("/trigger_initial_wizard");
 	conf_mount_ro();
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
 <?php include("head.inc"); ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form>

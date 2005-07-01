@@ -32,169 +32,196 @@ require_once("guiconfig.inc");
 require_once("xmlrpc.inc");
 
 if(isset($config['system']['disablefirmwarecheck']))
-        Header("Location: system_firmware.php");
-
+	Header("Location: system_firmware.php");
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-<head>
-<title><?=gentitle("System: Auto Update");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<SCRIPT>
-<!--
-function toggleTable (table, img) {
-  var table = document.getElementById(table);
-  var img = document.getElementById(img);
-  if (table.rows[0].style.display == 'none') {
-	for (var r = 0; r < table.rows.length; r++)
-		table.rows[r].style.display = '';
-	img.src = "/tri_o_black.gif";
-  } else {
-	for (var r = 0; r < table.rows.length; r++)
-		table.rows[r].style.display = 'none';
-	img.src = "/tri_c_black.gif";
-  }
-}
--->
-</SCRIPT>
+	<head>
+		<title><?=gentitle("System: Auto Update");?></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<link href="gui.css" rel="stylesheet" type="text/css">
+	</head>
+	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+		<SCRIPT>
+		<!--
+			function toggleTable (table, img) {
+				var table = document.getElementById(table);
+				var img = document.getElementById(img);
+				if (table.rows[0].style.display == 'none') {
+					for (var r = 0; r < table.rows.length; r++)
+						table.rows[r].style.display = '';
+					img.src = "/tri_o_black.gif";
+				} else {
+					for (var r = 0; r < table.rows.length; r++)
+						table.rows[r].style.display = 'none';
+					img.src = "/tri_c_black.gif";
+				}
+			}
+		//-->
+		</SCRIPT>
 <?php
 include("fbegin.inc");
 $versions = check_firmware_version();
 ?>
-<p class="pgtitle">System: Auto Update</p>
-<br>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
-  <ul id="tabnav">
-    <li class="tabinact"><a href="system_firmware.php">Manual Update</a></li>
-    <li class="tabact">Auto Update</a></li>
-    <li class="tabinact"><a href="system_firmware_settings.php">Updater Settings</a></li>
-  </ul>
-  </td></tr>
-  <tr>
-    <td class="tabcont">
-<?php if(is_array($versions)) { ?>
-              <table align="center" width="60%" border="0" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td width="10%" class="listhdrr">Act</td>
-                  <td width="30%" class="listhdrr">Category</td>
-		  <td width="30%" class="listhdrr">Installed</td>
-                  <td width="30%" class="listhdrr">Current<td>
-                </tr>
-
-		<?php
-		  $currentvers = $versions['current'];
-		  foreach($versions as $key => $version) {
-			if($key == "current") continue;
-			$currentver = array_shift(explode('-', $currentvers[$key]['version']));
-			if($version == 1) {
-                        	$img = "pass.gif";
-				$pastlatest = true;
-                        } elseif($currentver > $version[count($version) - 1]['version']) {
-				$img = "pass.gif";
-				$pastlatest = true;
-			} else {
-				$allinstall = true;
-                        	$img = "block.gif";
-			}
-                            ?>
-				
-                            <tr valign="top">
-                                <td class="listlr" nowrap align="middle"><img src="<?=$img;?>" width="11" height="11" align="absmiddle"></td>
-				<td class="listlr"><?= ucfirst($key) ?></td>
-                                <td class="listlr"><?= $currentver ?></td>
-			<?php
-			if($version == 1) {
-			?>
-				<td class="listlr"><?= $currentver ?></td>
-			<?php
-			} elseif($pastlatest) {
-				$newver = $version[count($version) - 1]['version'];
-			?>
-				<td class="listbggrey"><font color="#FFFFFFF"><?= $newver ?></td>
-			<?php
-			} else {
-				$newver = $version[count($version) - 1]['version'];
-			?>
-				<td class="listbg"><font color="#FFFFFFF"><?= $newver ?></td>
-			<?php } 
-			if(!$pastlatest) {
-			 ?>
-				<td valign="middle" class="list" nowrap>
-                                <a href="system_firmware_auto.php?category=<?=$key;?>"><img src="plus.gif" width="17" height="17" border="0"></a>
-                                </td>
-				<?php }
-                    }
-		    if($allinstall) {
-			?></table>
-			<table align="center" width="80%" border="0" cellpadding="0" cellspacing="0">
-			<br><br>
-				<td align="center"><a href="javascript:toggleTable('updates', 'tri_updates')"><img src="/tri_c_black.gif" id="tri_updates" width="14" height="10" border="0"></a><strong><a href="javascript:toggleTable('updates', 'tri_updates')">Needed Updates</a></strong></td>
+		<p class="pgtitle">System: Auto Update</p>
+		<br>
+		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td>
+					<ul id="tabnav">
+						<li class="tabinact"><a href="system_firmware.php">Manual Update</a></li>
+						<li class="tabact">Auto Update</a></li>
+						<li class="tabinact"><a href="system_firmware_settings.php">Updater Settings</a></li>
+					</ul>
+				</td>
 			</tr>
-			<tr><td><table id="updates" align="center" width="100%" border="0" cellpadding="0" cellspacing="0"><br><br>
-				<tr>
-					<td width="20%" class="listhdrr">Released</td>
-                  			<td width="20%" class="listhdrr">Category</td>  
-                  			<td width="20%" class="listhdrr">Version</td>
-                 	 		<td width="20%" class="listhdrr">Size</td>
-                  			<td width="20%" class="listhdr">Type</td>
-                		</tr>
-				<?php
-					foreach($versions as $key => $value) {
-						if(($key == "current") or ($value == 1)) continue;
-						foreach($value as $version) {
-							if(!$version['time']) $version['time'] = "Unknown";
-							if(!$version['size']) $version['size'] = "Unknown";
-							if(!$version['type']) $version['type'] = "Unknown";
-							$version['category'] = $key;
-							$times[$version['time']][] = $version;
-						}
-					}
-					asort($times);
-					foreach($times as $time) {
-						foreach($time as $version) {
-							echo '<tr>';
-							echo '<td class="listlr">';
-								if($version['time'] != "Unknown") {
-									echo date("D M j G:i:s", $version['time']);
-								} else {
-									echo $version['time'];
-								}
-							echo '</td>';
-							echo '<td class="listlr">' . ucfirst($version['category']) . '</td>';
-							echo '<td class="listlr">' . $version['version'] . '</td>';
-							echo '<td class="listlr">' . $version['size'] . '</td>';
-							echo '<td class="listlr">' . ucfirst($version['type']) . '</td>';
-							echo '</tr>';
-						}
-					}
-				?>
-				<tr><td><br><br></td></tr>
-			</table>
-			<script language="javascript">toggleTable('updates', 'tri_updates');</script>
-			</td></tr>
-			</table>
-                                <table align="center"><tr><td><form action="system_firmware_auto.php" method="post" enctype="multipart/form-data">
-                                        <input name="full" type="submit" class="formbtn" value="Begin Full Update">
-                                </form></td></tr></table>
-		<?php } ?>
-		</tr>
+			<tr>
+				<td class="tabcont">
 <?php
+if(is_array($versions)) {
+?>
+					<table align="center" width="60%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="10%" class="listhdrr">Act</td>
+							<td width="30%" class="listhdrr">Category</td>
+							<td width="30%" class="listhdrr">Installed</td>
+							<td width="30%" class="listhdrr">Current<td>
+						</tr>
+<?php
+	$currentvers = $versions['current'];
+	foreach($versions as $key => $version) {
+		if($key == "current") continue;
+		$currentver = array_shift(explode('-', $currentvers[$key]['version']));
+		if($version == 1) {
+			$img = "pass.gif";
+			$pastlatest = true;
+		} elseif($currentver > $version[count($version) - 1]['version']) {
+			$img = "pass.gif";
+			$pastlatest = true;
+		} else {
+			$allinstall = true;
+			$img = "block.gif";
+		}
+?>
+						<tr valign="top">
+							<td class="listlr" nowrap align="middle"><img src="<?=$img;?>" width="11" height="11" align="absmiddle"></td>
+							<td class="listlr"><?= ucfirst($key) ?></td>
+							<td class="listlr"><?= $currentver ?></td>
+<?php
+		if($version == 1) {
+?>
+							<td class="listlr"><?= $currentver ?></td>
+<?php
+		} elseif($pastlatest) {
+			$newver = $version[count($version) - 1]['version'];
+?>
+							<td class="listbggrey"><font color="#FFFFFFF"><?= $newver ?></td>
+<?php
+		} else {
+			$newver = $version[count($version) - 1]['version'];
+?>
+							<td class="listbg"><font color="#FFFFFFF"><?= $newver ?></td>
+<?php
+		} 
+		if(!$pastlatest) {
+?>
+							<td valign="middle" class="list" nowrap>
+								<a href="system_firmware_auto.php?category=<?=$key;?>"><img src="plus.gif" width="17" height="17" border="0"></a>
+							</td>
+<?php
+		}
+?>
+						</tr>
+<?php
+	}
+?>
+					</table>
+<?php
+	if($allinstall) {
+?>
+					<br>
+					<br>
+					<table align="center" width="80%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td align="center"><a href="javascript:toggleTable('updates', 'tri_updates')"><img src="/tri_c_black.gif" id="tri_updates" width="14" height="10" border="0"></a><strong><a href="javascript:toggleTable('updates', 'tri_updates')">Needed Updates</a></strong></td>
+						</tr>
+						<tr>
+							<td>
+								<br>
+								<br>
+								<table id="updates" align="center" width="100%" border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td width="20%" class="listhdrr">Released</td>
+										<td width="20%" class="listhdrr">Category</td>  
+										<td width="20%" class="listhdrr">Version</td>
+										<td width="20%" class="listhdrr">Size</td>
+										<td width="20%" class="listhdr">Type</td>
+									</tr>
+<?php
+		foreach($versions as $key => $value) {
+			if(($key == "current") or ($value == 1)) continue;
+			foreach($value as $version) {
+				if(!$version['time']) $version['time'] = "Unknown";
+				if(!$version['size']) $version['size'] = "Unknown";
+				if(!$version['type']) $version['type'] = "Unknown";
+				$version['category'] = $key;
+				$times[$version['time']][] = $version;
+			}
+		}
+		asort($times);
+		foreach($times as $time) {
+			foreach($time as $version) {
+?>
+									<tr>
+										<td class="listlr">
+<?php
+				if($version['time'] != "Unknown") {
+					echo date("D M j G:i:s", $version['time']);
+				} else {
+					echo $version['time'];
+				}
+?>
+										</td>
+										<td class="listlr"><?= ucfirst($version['category']) ?></td>
+										<td class="listlr"><?= $version['version'] ?></td>
+										<td class="listlr"><?= $version['size'] ?></td>
+										<td class="listlr"><?= ucfirst($version['type']) ?></td>
+									</tr>
+<?php
+			}
+		}
+?>
+								</table>
+								<br>
+								<br>
+								<script language="javascript">toggleTable('updates', 'tri_updates');</script>
+							</td>
+						</tr>
+					</table>
+					<table align="center">
+						<tr>
+							<td>
+								<form action="system_firmware_auto.php" method="post" enctype="multipart/form-data">
+									<input name="full" type="submit" class="formbtn" value="Begin Full Update">
+								</form>
+							</td>
+						</tr>
+					</table>
+<?php
+	}
 } else {
-		print_info_box("Unable to receive version information.");
+	print_info_box("Unable to receive version information.");
 }
 ?>
-    </td>
-  </tr>
-</table>
+				</td>
+			</tr>
+		</table>
 <?php
-	include("fend.inc");
-	$versions['cachetime'] = time();
-	$fout = fopen("/tmp/versioncheck.cache", "w");
-	fwrite($fout, serialize($versions));
-	fclose($fout);
+include("fend.inc");
+$versions['cachetime'] = time();
+$fout = fopen("/tmp/versioncheck.cache", "w");
+fwrite($fout, serialize($versions));
+fclose($fout);
 ?>
-</body>
+	</body>
 </html>

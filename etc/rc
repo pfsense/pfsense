@@ -94,6 +94,8 @@ else
     clog -i -s 32768 /var/log/vpn.log
     clog -i -s 32768 /var/log/portalauth.log
 fi
+
+# change permissions on newly created clog files.
 chmod 0600 /var/log/system.log /var/log/filter.log /var/log/dhcpd.log /var/log/vpn.log /var/log/portalauth.log
 
 /sbin/adjkerntz -i

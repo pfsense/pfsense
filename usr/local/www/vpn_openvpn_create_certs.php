@@ -150,11 +150,11 @@ if ($_POST) {
     fwrite($fd, "authorityKeyIdentifier=keyid:always,issuer:always\n");
     fclose($fd);
 
+$pgtitle = "VPN: OpenVPN: Create Certs";
+include("head.inc");
+
 ?>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
 <script language="JavaScript">
 <!--
 function f(ta_id){
@@ -174,14 +174,6 @@ function f(ta_id){
 }
 -->
 </script>
-<title><?=gentitle("System: Advanced functions");?></title>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle($pgtitle);?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 

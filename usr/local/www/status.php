@@ -140,13 +140,10 @@ $pageTitle = "pfSense: status";
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
 
+$pgtitle = $pageTitle;
+include("head.inc");
+
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=$pageTitle;?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
 <style type="text/css">
 <!--
 pre {
@@ -157,7 +154,6 @@ pre {
 }
 -->
 </style>
-</head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <p><span class="pgtitle"><?=$pageTitle;?></span><br>

@@ -30,7 +30,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("Services", "Captive portal");
 require("guiconfig.inc");
 
 if (!is_array($config['captiveportal']['passthrumac']))

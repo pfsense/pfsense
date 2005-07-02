@@ -96,44 +96,10 @@ $Title      = gentitle("edit file");
 $arrDT   = localtime();
 $intYear = $arrDT[5] + 1900;
 
+$pgtitle = "Diagnostics: Edit File";
+include("head.inc");
+
 ?>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<title><?=$Title ?></title>
-<link href="gui.css" rel="stylesheet" type="text/css">
-<style>
-<!--
-
-input {
-   font-family: courier new, courier;
-   font-weight: normal;
-   font-size: 9pt;
-}
-
-pre {
-   border: 2px solid #435370;
-   background: #F0F0F0;
-   padding: 1em;
-   font-family: courier new, courier;
-   white-space: pre;
-   line-height: 10pt;
-   font-size: 10pt;
-}
-
-.label {
-   font-family: tahoma, verdana, arial, helvetica;
-   font-size: 11px;
-   font-weight: bold;
-}
-
-.button {
-   font-family: tahoma, verdana, arial, helvetica;
-   font-weight: bold;
-   font-size: 11px;
-}
-
--->
-</style>
-</head>
 <script language="Javascript">
 function sf() { document.forms[0].savetopath.focus(); }
 </script>

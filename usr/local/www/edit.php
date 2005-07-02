@@ -36,6 +36,12 @@ if (($_POST['submit'] == "Load") && file_exists($_POST['savetopath'])) {
 	fclose($fd);
 	$edit_area="";
 	$loadmsg = "Loaded text from " . $_POST['savetopath'];
+	if(stristr($_POST['savetopath'], ".php" == true)
+		$language = "php";
+	else if(stristr($_POST['savetopath'], ".sh" == true)
+		$language = "php";
+	else if(stristr($_POST['savetopath'], ".xml" == true)
+		$language = "xml";
 } else if (($_POST['submit'] == "Save")) {
 	conf_mount_rw();
 	$content = ereg_replace("\r","",$_POST['content']) ;
@@ -97,9 +103,30 @@ $arrDT   = localtime();
 $intYear = $arrDT[5] + 1900;
 
 $pgtitle = "Diagnostics: Edit File";
-include("head.inc");
 
 ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+	<title><?=gentitle($pgtitle);?></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="/niftycssCode.css">
+	<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print">
+	<link href="gui.css" rel="stylesheet" type="text/css">
+	<link type="text/css" rel="stylesheet" href="SyntaxHighlighter.css"></link>
+	<script type="text/javascript" src="/niftyjsCode.js"></script>
+	<style>
+	/* @import url(SyntaxHighlighter.css); */
+	
+	body {
+	    font-family: Arial;
+	    font-size: 12px;
+	}
+	</style>
+    
+</head>
+
+
 <script language="Javascript">
 function sf() { document.forms[0].savetopath.focus(); }
 </script>
@@ -120,7 +147,7 @@ function sf() { document.forms[0].savetopath.focus(); }
     </tr>
     <tr>
       <td valign="top" class="label">
-	<textarea rows="<?php echo $rows; ?>" cols="<?php echo $cols; ?>" name="content"><?php echo htmlentities($content); ?></textarea><br>
+	<textarea name="code" language="{$language}" rows="<?php echo $rows; ?>" cols="<?php echo $cols; ?>" name="content"><?php echo htmlentities($content); ?></textarea><br>
         <p>
     </td>
     </tr>

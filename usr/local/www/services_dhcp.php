@@ -201,6 +201,7 @@ function enable_change(enable_over) {
 <?php print_info_box_np("The static mapping configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
 <?php endif; ?>
+<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
   <?php
@@ -364,6 +365,7 @@ The default is to use the IP of the firewall as the gateway.  Specify an alterna
     </td>
   </tr>
 </table>
+</div>
 </form>
 <script language="JavaScript">
 <!--
@@ -371,5 +373,11 @@ enable_change(false);
 //-->
 </script>
 <?php include("fend.inc"); ?>
+
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
+</script>
+
 </body>
 </html>

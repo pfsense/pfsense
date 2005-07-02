@@ -893,9 +893,13 @@ function get_disk_info() {
 	    echo "</tr>\n<tr>\n";
 	    foreach ($tab_array as $ta) {
 		    if($ta[1] == true) {
-			    echo "  <td bgcolor='#EEEEEE'><B>&nbsp;&nbsp;&nbsp;{$ta[0]}&nbsp;<br>&nbsp;&nbsp;&nbsp;</div></a></td>\n";
+			    echo "  <td bgcolor='#EEEEEE'><B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
+			    echo "&nbsp;&nbsp;&nbsp;";
+			    echo "<font size='-12'><br>&nbsp;</div></td>\n";
 		    } else {
-			    echo "  <td bgcolor='#777777'><B>&nbsp;&nbsp;&nbsp;<a href='{$ta[2]}'><font color='white'>{$ta[0]}</a>&nbsp;&nbsp;&nbsp;<br>&nbsp;</div></td>\n";
+			    echo "  <td bgcolor='#777777'><B>&nbsp;&nbsp;&nbsp;<a href='{$ta[2]}'>";
+			    echo "<font color='white'>{$ta[0]}</a>&nbsp;&nbsp;&nbsp;";
+			    echo "<font size='-12'><br>&nbsp;</div></td>\n";
 		    }
 	    }
 	    echo " </tr>\n";

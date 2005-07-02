@@ -118,11 +118,6 @@ include("head.inc");
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
-  <ul id="tabnav">
-    <li class="tabinact"><a href="firewall_shaper.php">Rules</a></li>
-    <li class="tabact">Queues</a></li>
-    <li class="tabinact"><a href="wizard.php?xml=traffic_shaper_wizard.xml">EZ Shaper wizard</a></li>
-  </ul>
 <?php
 	$tab_array = array();
 	$tab_array[0] = array("Inbound", true, "firewall_nat.php");

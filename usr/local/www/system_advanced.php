@@ -228,6 +228,16 @@ function update_description(itemnum) {
 
 }
 
+function openwindow(url) {
+        var oWin = window.open(url,"pfSensePop","width=100,height=50,top=5000,left=5000");
+        if (oWin==null || typeof(oWin)=="undefined") {
+                return false;
+        } else {
+                oWin.close();
+                return true;
+        }
+}
+
 // -->
 </script>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -293,7 +303,7 @@ function update_description(itemnum) {
                   <td width="78%" class="vtable">
                     <textarea name="cert" cols="65" rows="7" id="cert" class="formpre"><?=htmlspecialchars($pconfig['cert']);?></textarea>
                     <br>
-                    Paste a signed certificate in X.509 PEM format here. <A target="_new" HREF='system_advanced_create_certs.php'>Create</a> certificates automatically.</td>
+                    Paste a signed certificate in X.509 PEM format here. <a href="javascript:if(openwindow('system_advanced_create_certs.php') == false) alert('Popup blocker detected.  Action aborted.');" >Create</a> certificates automatically.</td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Key</td>

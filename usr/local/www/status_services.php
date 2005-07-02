@@ -67,7 +67,7 @@ include("fbegin.inc");
 
 <p>
 
-
+<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td class="tabcont">
@@ -121,7 +121,14 @@ if($config['installedpackages']['service']) {
 
 </td>
 </tr></table>
+</div>
 
 <?php include("fend.inc"); ?>
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#mainarea","all","#FFF","#eeeeee","smooth");
+</script>
+
 </body>
 </html>
+

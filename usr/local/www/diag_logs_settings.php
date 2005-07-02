@@ -124,6 +124,7 @@ function enable_change(enable_over) {
 <form action="diag_logs_settings.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
+<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
@@ -200,6 +201,7 @@ function enable_change(enable_over) {
     </td>
   </tr>
 </table>
+</div>
 </form>
 <script language="JavaScript">
 <!--
@@ -207,5 +209,11 @@ enable_change(false);
 //-->
 </script>
 <?php include("fend.inc"); ?>
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
+</script>
+
 </body>
 </html>
+

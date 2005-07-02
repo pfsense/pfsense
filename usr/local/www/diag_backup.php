@@ -187,10 +187,15 @@ include("head.inc");
             <form action="diag_backup.php" method="post" enctype="multipart/form-data" onSubmit="window.open('progress.php?conffile=<?=$id?>','UploadMeter','width=370,height=115', true); return true; ">
             <?php if ($input_errors) print_input_errors($input_errors); ?>
             <?php if ($savemsg) print_info_box($savemsg); ?>
+		<div id="mainarea">
               <table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<tr><td><ul id="tabnav">
-			<li class="tabact">Remote</a></li>
-			<li class="tabinact"><a href="diag_confbak.php">Local</a></li>
+		<tr><td>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array("Remote", true, "diag_backup.php");
+	$tab_array[1] = array("Local", false, "diag_confbak.php");
+	display_top_tabs($tab_array);
+?>			
 		</ul></td></tr>
 		<tr><td class="tabcont"><table align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
@@ -248,7 +253,14 @@ include("head.inc");
 		</td>
 		</tr>
               </table>
+	      </div>
             </form>
 <?php include("fend.inc"); ?>
+
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
+</script>
+
 </body>
 </html>

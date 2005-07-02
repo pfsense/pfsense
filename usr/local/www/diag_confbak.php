@@ -58,11 +58,14 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Diagnostics: Configuration History</p>
 <?php if($savemsg) print_info_box($savemsg); ?>
+<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
-  <ul id="tabnav">
-    <li class="tabinact"><a href="diag_backup.php">Remote</a></li>
-    <li class="tabact">Local</a></li>
-  </ul>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array("Remote", false, "diag_backup.php");
+	$tab_array[1] = array("Local", true, "diag_confbak.php");
+	display_top_tabs($tab_array);
+?>			
   </td></tr>
   <tr>
     <td class="tabcont">
@@ -109,6 +112,15 @@ if(is_array($confvers)) {
     </td>
   </tr>
 </table>
+</div>
 </body>
 </html>
 <?php include("fend.inc"); ?>
+
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
+</script>
+
+</body>
+</html>

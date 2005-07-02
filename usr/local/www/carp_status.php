@@ -54,15 +54,11 @@ if($_POST['disablecarp'] <> "") {
 }
 
 $status = get_carp_status();
+
+$pgtitle = "CARP: Status";
+include("head.inc");
+
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<?php $title = "CARP: Status"; ?>
-<title><?=gentitle_pkg($title);?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php

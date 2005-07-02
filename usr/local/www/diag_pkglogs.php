@@ -66,15 +66,11 @@ if(!$apkg) { // If we aren't looking for a specific package, locate the first pa
 	$apkgid = get_pkg_id($apkg);
 	$i = $apkgid;
 }
-?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("Diagnostics: Package logs");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
 
+$pgtitle = "Diagnostics: Package logs";
+include("head.inc");
+
+?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Diagnostics: Package logs</p>

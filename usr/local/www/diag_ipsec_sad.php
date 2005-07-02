@@ -33,24 +33,23 @@
 */
 
 require("guiconfig.inc");
+
+$pgtitle = "Diagnostics: IPSEC: SA";
+include("head.inc");
+
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("Diagnostics: IPsec");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Diagnostics: IPsec</p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
-  <ul id="tabnav">
-	<li class="tabact">SAD</li>
-	<li class="tabinact"><a href="diag_ipsec_spd.php">SPD</a></li>
-  </ul>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array("SAD", true, "diag_ipsec_sad.php");
+	$tab_array[1] = array("SPD", false, "diag_ipsec_spd.php");
+	display_top_tabs($tab_array);
+?>
   </td></tr>
   <tr>
     <td class="tabcont">

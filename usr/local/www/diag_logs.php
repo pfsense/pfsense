@@ -44,29 +44,26 @@ if ($_POST['clear']) {
 	exec("/usr/sbin/clog -i -s 262144 {$system_logfile}");
 }
 
+$pgtitle = "Diagnostics: System logs: System";
+include("head.inc");
+
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("Diagnostics: System logs: System");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Diagnostics: System logs: System</p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
-  <ul id="tabnav">
-    <li class="tabact">System</li>
-    <li class="tabinact"><a href="diag_logs_filter.php">Firewall</a></li>
-    <li class="tabinact"><a href="diag_logs_dhcp.php">DHCP</a></li>
-    <li class="tabinact"><a href="diag_logs_auth.php">Portal Auth</a></li>
-    <li class="tabinact"><a href="diag_logs_ipsec.php">IPSEC VPN</a></li>
-    <li class="tabinact"><a href="diag_logs_vpn.php">PPTP VPN</a></li>
-    <li class="tabinact"><a href="diag_logs_settings.php">Settings</a></li>
-  </ul>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array("Firewall", true, "diag_logs_filter.php");
+	$tab_array[1] = array("DHCP", false, "firewall_nat_server.php");
+	$tab_array[2] = array("Portal Auth", false, "diag_logs_auth.php");
+	$tab_array[3] = array("IPSEC VPN", false, "diag_logs_ipsec.php");
+	$tab_array[4] = array("PPTP VPN", false, "diag_logs_vpn.php");
+	$tab_array[5] = array("Settings", false, "diag_logs_settings.php");
+	display_top_tabs($tab_array);
+?>
   </td></tr>
   <tr>
     <td class="tabcont">

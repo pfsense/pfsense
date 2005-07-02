@@ -61,6 +61,7 @@ include("fbegin.inc");
 $versions = check_firmware_version();
 ?>
 		<p class="pgtitle">System: Auto Update</p>
+		<div id="bottomonly">
 		<table width="100%" border="0" cellpadding="0" cellspacing="0">
 			<tr>
 				<td>
@@ -214,6 +215,7 @@ if(is_array($versions)) {
 				</td>
 			</tr>
 		</table>
+		</div>
 <?php
 include("fend.inc");
 $versions['cachetime'] = time();
@@ -221,5 +223,9 @@ $fout = fopen("/tmp/versioncheck.cache", "w");
 fwrite($fout, serialize($versions));
 fclose($fout);
 ?>
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#bottomonly","bl br","#FFF","#eeeeee","smooth");
+</script>
 	</body>
 </html>

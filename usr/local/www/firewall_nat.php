@@ -254,7 +254,10 @@ if ($pkg['tabs'] <> "") {
 </form>
 <?php include("fend.inc"); ?>
 
-
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
+</script>
 
 </body>
 </html>

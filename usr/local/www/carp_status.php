@@ -70,11 +70,13 @@ include("fbegin.inc");
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td>
- <ul id="tabnav">
-  <li class="tabinact"><a href="/pkg.php?xml=carp.xml">CARP Virtual IPs</a></li>
-  <li class="tabact">CARP Status</li>
-  <li class="tabinact"><a href="/pkg_edit.php?xml=carp_settings.xml&id=0">CARP Settings</a></li>
- </ul>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array("CARP Virtual IPs<", false, "/pkg.php?xml=carp.xml");
+	$tab_array[1] = array("CARP Status", true, "carp_status.php");
+	$tab_array[2] = array("CARP Settings", false, "/pkg_edit.php?xml=carp_settings.xml&id=0");
+	display_top_tabs($tab_array);
+?> 
 </td></tr>
 <tr><td class="tabcont">
 

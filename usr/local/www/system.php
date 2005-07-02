@@ -182,12 +182,11 @@ include("head.inc");
 
 ?>
 
-System: General setup
-
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
+<p class="pgtitle">System: General setup</p>
 <form action="system.php" method="post">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>

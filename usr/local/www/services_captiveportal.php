@@ -280,6 +280,7 @@ function enable_change(enable_change) {
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <form action="services_captiveportal.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
+<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
 <?php
@@ -454,6 +455,7 @@ The contents of the HTML file that you upload here are displayed when an authent
   </td>
   </tr>
   </table>
+  </div>
 </form>
 <script language="JavaScript">
 <!--
@@ -461,3 +463,9 @@ enable_change(false);
 //-->
 </script>
 <?php include("fend.inc"); ?>
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
+</script>
+</body>
+</html>

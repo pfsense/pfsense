@@ -159,6 +159,7 @@ include("head.inc");
 <?php print_info_box_np("The firewall rule configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
 <?php endif; ?>
+<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
   <?php
@@ -322,6 +323,7 @@ include("head.inc");
     </td>
   </tr>
 </table>
+</div>
   <p>
   <strong><span class="red">Hint:<br>
   </span></strong>Rules are evaluated on a first-match basis (i.e.
@@ -332,3 +334,12 @@ include("head.inc");
   <input type="hidden" name="if" value="<?=$if;?>">
 </form>
 <?php include("fend.inc"); ?>
+
+
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
+</script>
+
+</body>
+</html>

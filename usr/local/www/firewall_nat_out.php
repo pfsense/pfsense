@@ -187,6 +187,7 @@ include("head.inc");
 <?php print_info_box_np("The NAT configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
 <?php endif; ?>
+<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
 <?php
 	$tab_array = array();
@@ -324,7 +325,12 @@ include("head.inc");
 </td>
   </tr>
 </table>
+</div>
             </form>
 <?php include("fend.inc"); ?>
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
+</script>
 </body>
 </html>

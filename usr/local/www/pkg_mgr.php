@@ -63,7 +63,6 @@ include("head.inc");
 include("fbegin.inc");
 ?>
 <p class="pgtitle">System: Package Manager</p>
-<br>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
 

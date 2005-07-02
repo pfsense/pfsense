@@ -38,8 +38,10 @@ if (($_POST['submit'] == "Load") && file_exists($_POST['savetopath'])) {
 	$loadmsg = "Loaded text from " . $_POST['savetopath'];
 	if(stristr($_POST['savetopath'], ".php") == true)
 		$language = "php";
+	else if(stristr($_POST['savetopath'], ".inc") == true)
+		$language = "php";		
 	else if(stristr($_POST['savetopath'], ".sh") == true)
-		$language = "php";
+		$language = "core";
 	else if(stristr($_POST['savetopath'], ".xml") == true)
 		$language = "xml";
 } else if (($_POST['submit'] == "Save")) {

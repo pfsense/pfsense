@@ -68,14 +68,11 @@ if ($_GET['act'] == "del") {
 		exit;
 	}
 }
+
+$pgtitle = "Services: Captive Portal: Allowed IP's";
+include("head.inc");
+
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("pfSense webGUI");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
@@ -87,12 +84,14 @@ if ($_GET['act'] == "del") {
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
-  <ul id="tabnav">
-	<li class="tabinact1"><a href="services_captiveportal.php">Captive portal</a></li>
-	<li class="tabinact"><a href="services_captiveportal_mac.php">Pass-through MAC</a></li>
-	<li class="tabact">Allowed IP addresses</li>
-	<li class="tabinact"><a href="services_captiveportal_users.php">Users</a></li>
-  </ul>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array("Captive portal", false, "services_captiveportal.php");
+	$tab_array[1] = array("Pass-through MAC", false, "services_captiveportal_mac.php");
+	$tab_array[2] = array("Allowed IP addresses", true, "services_captiveportal_ip.php");
+	$tab_array[3] = array("Users", false, "services_captiveportal_users.php");
+	display_top_tabs($tab_array);
+?>  
   </td></tr>
   <tr>
   <td class="tabcont">

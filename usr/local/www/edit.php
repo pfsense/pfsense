@@ -58,7 +58,8 @@ if (($_POST['submit'] == "Load") && file_exists($_POST['savetopath'])) {
 }
 
 if($_POST['highlight'] <> "") {
-	if($_POST['highlight'] == "enabled") {
+	if($_POST['highlight'] == "yes" or
+	  $_POST['highlight'] == "enabled") {
 		$highlight = "yes";
 	} else {
 		$highlight = "no";
@@ -148,8 +149,8 @@ function sf() { document.forms[0].savetopath.focus(); }
   <td>
 	<center>
 	Save/Load from path: <input size="42" id="savetopath" name="savetopath" value="<?php echo $_POST['savetopath']; ?>">
+	<hr noshade>
 	<?php if($_POST['highlight'] == "no"): ?>
-	   <hr noshade>
 	   Rows: <input size="3" name="rows" value="<? echo $rows; ?>"> 
 	   Cols: <input size="3" name="cols" value="<? echo $cols; ?>">
 	<?php endif ?>

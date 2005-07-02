@@ -259,7 +259,7 @@ function enable_change(enable_change) {
 	document.iform.cert.disabled = endis;
 	document.iform.key.disabled = endis;
 	document.iform.logoutwin_enable.disabled = endis;
-	document.iform.nomacfilter.disabled = endis;
+	//document.iform.nomacfilter.disabled = endis;
 	document.iform.htmlfile.disabled = endis;
 	document.iform.errfile.disabled = endis;
 

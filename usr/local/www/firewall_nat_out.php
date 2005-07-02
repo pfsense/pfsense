@@ -175,7 +175,10 @@ if (isset($_POST['del_x'])) {
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-<?php include("head.inc"); ?>
+<?php
+	$pgtitle = "Firewall: NAT: Outgoing";
+	include("head.inc");
+?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Firewall: NAT: Outbound</p>

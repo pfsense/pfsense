@@ -58,11 +58,13 @@ include("fbegin.inc");
 <?php
 ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
-  <ul id="tabnav">
-    <li class="tabinact"><a href="pkg_mgr.php">Available Packages</a></li>
-    <li class="tabinact"><a href="pkg_mgr_installed.php">Installed Packages</a></li>
-    <li class="tabact">Package Installer</li>
-  </ul>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array("Available Packages", false, "pkg_mgr.php");
+	$tab_array[1] = array("Installed Packages", false, "firewall_nat_server.php");
+        $tab_array[2] = array("Package Installer", true, "firewall_nat_server.php");
+	display_top_tabs($tab_array);
+?>    
   </td></tr>
   <tr>
     <td class="tabcont">

@@ -53,10 +53,12 @@ include("fbegin.inc");
 <p class="pgtitle">System: Package Manager</p>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
-  <ul id="tabnav">
-    <li class="tabinact"><a href="pkg_mgr.php">Available Packages</a></li>
-    <li class="tabact">Installed Packages</li>
-  </ul>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array("Available Packages", false, "pkg_mgr.php");
+	$tab_array[1] = array("Installed Packages", true, "firewall_nat_server.php");
+	display_top_tabs($tab_array);
+?>  
   </td></tr>
   <tr>
     <td class="tabcont">

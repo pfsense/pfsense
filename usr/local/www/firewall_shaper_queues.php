@@ -120,11 +120,9 @@ include("head.inc");
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Inbound", true, "firewall_nat.php");
-	$tab_array[1] = array("Server NAT", false, "firewall_nat_server.php");
-	$tab_array[2] = array("1:1", false, "firewall_nat_1to1.php");
-	$tab_array[3] = array("Outbound", false, "firewall_nat_out.php");
-	$tab_array[4] = array("Outgoing Load Balancing", false, "firewall_nat_out_load_balancing.php");
+	$tab_array[0] = array("Rules", false, "firewall_shaper.php");
+	$tab_array[1] = array("Queues", true, "firewall_shaper_queues.php");
+	$tab_array[2] = array("EZ Shaper wizard", false, "wizard.php?xml=traffic_shaper_wizard.xml");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

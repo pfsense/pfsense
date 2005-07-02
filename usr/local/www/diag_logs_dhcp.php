@@ -57,7 +57,7 @@ include("head.inc");
 <?php
 	$tab_array = array();
 	$tab_array[0] = array("Firewall", false, "diag_logs_filter.php");
-	$tab_array[1] = array("DHCP", true, "firewall_nat_server.php");
+	$tab_array[1] = array("DHCP", true, "diag_logs_dhcp.php");
 	$tab_array[2] = array("Portal Auth", false, "diag_logs_auth.php");
 	$tab_array[3] = array("IPSEC VPN", false, "diag_logs_ipsec.php");
 	$tab_array[4] = array("PPTP VPN", false, "diag_logs_vpn.php");

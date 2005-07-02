@@ -196,8 +196,7 @@ include("head.inc");
                     </table>
 		    <p>
                     <strong><span class="red">Note:</span></strong><strong><br></strong>
-                      1)  A queue can only be deleted if it is not referenced by any rules.<br>
-		      2)  Queue graphs take 5 seconds to sample data.
+                      A queue can only be deleted if it is not referenced by any rules.<br>
 		      </td>
 		    </p>
 	</tr>

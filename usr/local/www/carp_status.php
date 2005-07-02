@@ -74,7 +74,7 @@ include("fbegin.inc");
 <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("CARP Virtual IPs<", false, "/pkg.php?xml=carp.xml");
+	$tab_array[0] = array("CARP Virtual IPs", false, "/pkg.php?xml=carp.xml");
 	$tab_array[1] = array("CARP Status", true, "carp_status.php");
 	$tab_array[2] = array("CARP Settings", false, "/pkg_edit.php?xml=carp_settings.xml&id=0");
 	display_top_tabs($tab_array);

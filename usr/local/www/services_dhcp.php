@@ -203,15 +203,20 @@ function enable_change(enable_over) {
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
-  <ul id="tabnav">
-<?php foreach ($iflist as $ifent => $ifname):
-	if ($ifent == $if): ?>
-    <li class="tabact"><?=htmlspecialchars($ifname);?></li>
-<?php else: ?>
-    <li class="tabinact"><a href="services_dhcp.php?if=<?=$ifent;?>"><?=htmlspecialchars($ifname);?></a></li>
-<?php endif; ?>
-<?php endforeach; ?>
-  </ul>
+  <?php
+	/* active tabs */
+	$tab_array = array();
+	$tabscounter = 0;
+	$i = 0;
+	foreach ($iflist as $ifent => $ifname) {
+		if ($ifent == $if)
+			$active = true;
+		else
+			$active = false;
+		$tab_array[] = array($ifname, $active, "services_dhcp.php?if={$ifent}");
+	}
+	display_top_tabs($tab_array);
+  ?>
   </td></tr>
   <tr> 
     <td class="tabcont">

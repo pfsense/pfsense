@@ -181,7 +181,7 @@ function print_info_box_np($msg) {
 	echo "  <tr>";
 	echo "   <td>";
 	echo "      <div style='background-color:#990000' id='redbox'>";
-	echo "       &nbsp;<img style='vertical-align:middle' src=\"/exclam.gif\" width=\"28\" height=\"32\">";
+	echo "       &nbsp;&nbsp;&nbsp;<img style='vertical-align:middle' src=\"/exclam.gif\" width=\"28\" height=\"32\">";
 	echo "         &nbsp;&nbsp;&nbsp;<font color='white'><b>{$msg}</b></font>";
 	echo "      </div>";
 	echo "    </td>";

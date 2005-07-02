@@ -153,19 +153,7 @@ if ($_POST) {
 		exit;
 	}
 }
-?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("Firewall: Traffic shaper: Edit queue");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
-<?php include("fbegin.inc"); ?>
-<?php
 	$ack = $pconfig["ack"];
 	$red = $pconfig["red"];
 	$ecn = $pconfig["ecn"];
@@ -187,8 +175,16 @@ if ($_POST) {
 	$defaultqueue = $pconfig["defaultqueue"];
 	$attachtoqueue = $pconfig['attachtoqueue'];
 	$parent = $pconfig["parent"];
+
+$pgtitle = "Firewall: Shaper: Queues: Edit";
+include("head.inc");
+
 ?>
-<p class="pgtitle">Firewall: Traffic shaper: Edit queue</p>
+
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+
+<?php include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 	<form action="firewall_shaper_queues_edit.php" method="post" name="iform" id="iform">
 	  <table width="100%" border="0" cellpadding="6" cellspacing="0">

@@ -278,13 +278,11 @@ if ($_POST) {
 		exit;
 	}
 }
+
+$pgtitle = "Firewall: Shaper: Edit rule";
+include("head.inc");
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("Firewall: Traffic shaper: Edit rule");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
+
 <script language="JavaScript">
 <!--
 var portsenabled = 1;
@@ -387,7 +385,7 @@ function dst_rep_change() {
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">Firewall: Traffic shaper: Edit rule</p>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (is_array($config['shaper']['queue']) && (count($config['shaper']['queue']) > 0)): ?>
             <form action="firewall_shaper_edit.php" method="post" name="iform" id="iform">

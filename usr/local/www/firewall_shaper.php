@@ -179,14 +179,14 @@ if ($_GET['act'] == "down") {
 	}
 }
 
-$pgtitle = "Firewall: Shaper";
+$pgtitle = "Firewall: Shaper: Rules";
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">Firewall: Traffic shaper: Rules</p>
+<p class="pgtitle"><?=$pgtitle?></p>
 <form action="firewall_shaper.php" method="post" name="iform">
 <script type="text/javascript" language="javascript" src="row_toggle.js">
 </script>

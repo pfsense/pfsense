@@ -303,14 +303,11 @@ if ($_POST) {
 		header("Location: firewall_rules.php?if=" . $_POST['interface']);
 		exit;
 	}
+$pgtitle = "Firewall: Rules: Edit";
+include("head.inc");
 }
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("Firewall: Rules: Edit");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
+
 <script language="JavaScript">
 <!--
 var portsenabled = 1;
@@ -426,7 +423,7 @@ function dst_rep_change() {
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">Firewall: Rules: Edit</p>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_rules_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">

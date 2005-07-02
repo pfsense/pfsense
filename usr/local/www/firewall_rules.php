@@ -150,7 +150,7 @@ include("head.inc");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">Firewall: Rules</p>
+<p class="pgtitle"><?=$pgtitle?></p>
 <form action="firewall_rules.php" method="post">
 <script type="text/javascript" language="javascript" src="row_toggle.js">
 </script>

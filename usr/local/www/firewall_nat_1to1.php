@@ -69,12 +69,10 @@ if ($_GET['act'] == "del") {
 		exit;
 	}
 }
-?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<?php
-	$pgtitle = "Firewall: NAT: 1:1";
-	include("head.inc");
+
+$pgtitle = "Firewall: NAT: 1:1";
+include("head.inc");
+
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>

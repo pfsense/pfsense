@@ -81,12 +81,10 @@ if ($_GET['act'] == "del") {
 		}
 	}
 }
-?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<?php
-	$pgtitle = "Firewall: NAT: Server NAT";
-	include("head.inc");
+
+$pgtitle = "Firewall: NAT: Server NAT";
+include("head.inc");
+
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>

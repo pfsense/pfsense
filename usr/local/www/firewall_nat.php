@@ -125,12 +125,9 @@ if (isset($_POST['del_x'])) {
         }
 }
 
-?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<?php
-	$pgtitle = "Firewall: NAT: Inbound";
-	include("head.inc");
+$pgtitle = "Firewall: NAT: Inbound";
+include("head.inc");
+
 ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>

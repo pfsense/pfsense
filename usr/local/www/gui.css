@@ -312,10 +312,27 @@ ul#tabnav li.tabact {
 	padding: 5px 8px 5px 8px;
 	white-space: nowrap;
 }
+.tabact {
+	float: left;
+	background-color: #EEEEEE;
+	color: #000000;
+	padding: 5px 8px 5px 8px;
+	white-space: nowrap;
+}
 .tabcont {
 	background-color: #EEEEEE;
 	padding-right: 12px;
 	padding-left: 12px;
 	padding-top: 12px;
 	padding-bottom: 12px;
+	font-weight: bold;
+}
+.tabinact {
+	font-weight: bold;
+	float: left;
+	border-left: 1px solid #999999;
+	background-color: #777777;
+	color: #FFFFFF;
+	padding: 0;
+	white-space: nowrap;
 }

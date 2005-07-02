@@ -140,28 +140,18 @@ function get_pfstate() {
         return $curentries . $maxstates;
 }
 
-?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("pfSense webGUI");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
+$pgtitle = "pfSense webGUI";
+/* include header and other code */
+include("head.inc");
 
+?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form>
 <?php include("fbegin.inc"); ?>
+	    <center><img src="logobig.jpg"></center>
 	    <div id="nifty">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-              <tr align="center" valign="top">
-                <td height="10" colspan="2">&nbsp;</td>
-              </tr>
-              <tr align="center" valign="top">
-                <td colspan="2"><img src="logobig.jpg"></td>
-              </tr>
-	      <tr><td>&nbsp;</td></tr>
+            <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td colspan="2" class="listtopic">System information</td>
               </tr>
@@ -317,11 +307,8 @@ echo $diskusage . "%";
             <?php include("fend.inc"); ?>
 	    
 <script type="text/javascript">
-window.onload=function(){
-if(!NiftyCheck())
-    return;
-Rounded("div#nifty","all","#FFF","#D4DDFF","smooth");
-}
+NiftyCheck();
+Rounded("div#nifty","top","#FFF","#EEEEEE","smooth");
 </script>
 </form>
 

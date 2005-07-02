@@ -128,13 +128,8 @@ if (isset($_POST['del_x'])) {
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-<head>
-<title><?=gentitle("Firewall: NAT: Inbound");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<?php include("head.inc"); ?>
+<body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Firewall: NAT: Inbound</font></p>
 <form action="firewall_nat.php" method="post" name="iform">
@@ -145,16 +140,19 @@ if (isset($_POST['del_x'])) {
 <?php print_info_box_np("The NAT configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
 <?php endif; ?>
+<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
-  <ul id="tabnav">
-    <li class="tabact">Inbound</a></li>
-    <li class="tabinact"><a href="firewall_nat_server.php">Server NAT</a></li>
-    <li class="tabinact"><a href="firewall_nat_1to1.php">1:1</a></li>
-    <li class="tabinact"><a href="firewall_nat_out.php">Outbound</a></li>
-    <li class="tabinact"><a href="firewall_nat_out_load_balancing.php">Outbound Load Balancing</a></li>
-  </ul>
-  </td></tr>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array("Inbound", true, "firewall_nat.php");
+	$tab_array[1] = array("Server NAT", false, "firewall_nat_server.php");
+	$tab_array[2] = array("1:1", false, "firewall_nat_1to1.php");
+	$tab_array[3] = array("Outbound", false, "firewall_nat_out.php");
+	$tab_array[4] = array("Outgoing Load Balancing", false, "firewall_nat_out_load_balancing.php");
+	display_top_tabs($tab_array);
+?>
+ </td></tr>
   <tr>
     <td class="tabcont">
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -245,6 +243,7 @@ if (isset($_POST['del_x'])) {
                       network).</span></p></td>
   </tr>
 </table>
+</div>
 
 <?php
 if ($pkg['tabs'] <> "") {
@@ -254,5 +253,8 @@ if ($pkg['tabs'] <> "") {
 
 </form>
 <?php include("fend.inc"); ?>
+
+
+
 </body>
 </html>

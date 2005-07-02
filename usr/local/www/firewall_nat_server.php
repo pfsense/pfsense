@@ -101,13 +101,15 @@ if ($_GET['act'] == "del") {
 <input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
-  <ul id="tabnav">
-    <li class="tabinact"><a href="firewall_nat.php">Inbound</a></li>
-    <li class="tabact">Server NAT</li>
-    <li class="tabinact"><a href="firewall_nat_1to1.php">1:1</a></li>
-    <li class="tabinact"><a href="firewall_nat_out.php">Outbound</a></li>
-    <li class="tabinact"><a href="firewall_nat_out_load_balancing.php">Outbound Load Balancing</a></li>
-  </ul>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array("Inbound", false, "firewall_nat.php");
+	$tab_array[1] = array("Server NAT", true, "firewall_nat_server.php");
+	$tab_array[2] = array("1:1", false, "firewall_nat_1to1.php");
+	$tab_array[3] = array("Outbound", false, "firewall_nat_out.php");
+	$tab_array[4] = array("Outgoing Load Balancing", false, "firewall_nat_out_load_balancing.php");
+	display_top_tabs($tab_array);
+?>
   </td></tr>
   <tr>
     <td class="tabcont">

@@ -1244,7 +1244,27 @@
 				</option>
 			</options>
 			<typehint>RealTime streaming protocol</typehint>
-                </field>			
+                </field>
+                <field>
+                        <name>SNMP</name>
+			<bindstofield>ezshaper->step6->snmp</bindstofield>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Default priority</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Lower priority</name>
+					<value>L</value>
+				</option>
+			</options>
+			<typehint>RealTime streaming protocol</typehint>
+                </field>		
                 <field>
                         <name>Next</name>
                         <type>submit</type>
@@ -1418,11 +1438,16 @@
 		    $othersplist[] = array('SMB1', 'tcp', '445', '445', 'both', $_POST['smb']);
 		    $othersplist[] = array('SMB2', 'tcp', '137-139', '137-139', 'both', $_POST['smb']);
 
-
 		if($_POST['rtsp'] != "") {
 		    /* realtime streaming protocol */
 		    $othersplist[] = array('RTSP1', 'tcp', '554', '554', 'both', $_POST['rtsp']);
 		}		}
+
+		if($_POST['snmp'] != "") {
+		    /* Simple network management protocol */
+		    $othersplist[] = array('SNMP', 'tcp', '161', '161', 'both', $_POST['snmp']);
+		    $othersplist[] = array('SNMP2', 'udp', '161', '161', 'both', $_POST['snmp']);
+		}
 
 		/* XXX: add some more protocols here! */
     

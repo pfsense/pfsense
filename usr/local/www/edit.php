@@ -197,7 +197,7 @@ sf();
 <?php if($_POST['highlight'] == "yes") {
 	echo "<script language=\"javascript\">\n";
 	echo "dp.SyntaxHighlighter.HighlightAll('code', true, true);\n";
-	echo "</script>\n;";
+	echo "</script>\n";
 }
 ?>
 

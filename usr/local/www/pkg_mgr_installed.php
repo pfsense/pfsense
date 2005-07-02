@@ -37,14 +37,11 @@ if(is_array($config['installedpackages']['package'])) {
 	}
 	$currentvers = get_pkg_info($tocheck, array('version', 'xmlver'));
 }
+
+$pgtitle = "System: Packages: Installed";
+include("head.inc");
+
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("System: Package Manager");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php

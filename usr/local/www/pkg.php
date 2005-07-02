@@ -95,17 +95,10 @@ if($pkg['custom_php_global_functions'] <> "")
 if($pkg['custom_php_command_before_form'] <> "")
 	eval($pkg['custom_php_command_before_form']);
 
+$pgtitle = $title;
+include("head.inc");
+
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<?php
-    if($pkg['title'] <> "") $title = $pkg['title'];
-?>
-<title><?=gentitle_pkg($title);?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php

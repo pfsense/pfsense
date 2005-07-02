@@ -272,7 +272,7 @@ function enable_change(enable_change) {
 
 	auth_method_change();
 	enable_https();
-	enable_peruserbw();
+	//enable_peruserbw();
 
 }
 //-->

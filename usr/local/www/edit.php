@@ -36,11 +36,11 @@ if (($_POST['submit'] == "Load") && file_exists($_POST['savetopath'])) {
 	fclose($fd);
 	$edit_area="";
 	$loadmsg = "Loaded text from " . $_POST['savetopath'];
-	if(stristr($_POST['savetopath'], ".php" == true)
+	if(stristr($_POST['savetopath'], ".php") == true)
 		$language = "php";
-	else if(stristr($_POST['savetopath'], ".sh" == true)
+	else if(stristr($_POST['savetopath'], ".sh") == true)
 		$language = "php";
-	else if(stristr($_POST['savetopath'], ".xml" == true)
+	else if(stristr($_POST['savetopath'], ".xml") == true)
 		$language = "xml";
 } else if (($_POST['submit'] == "Save")) {
 	conf_mount_rw();

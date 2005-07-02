@@ -53,8 +53,10 @@ if(file_exists("/trigger_initial_wizard")) {
 	conf_mount_rw();
 	unlink("/trigger_initial_wizard");
 	conf_mount_ro();
+
+include("head.inc");
+
 ?>
-<?php include("head.inc"); ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form>
 <?php
@@ -150,7 +152,7 @@ include("head.inc");
 <form>
 <?php include("fbegin.inc"); ?>
 	    <center><img src="logobig.jpg"></center>
-	    <div id="nifty">
+	    <div id="niftyOutter" width="650">
             <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td colspan="2" class="listtopic">System information</td>

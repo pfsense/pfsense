@@ -165,15 +165,28 @@ if (isset($_POST['del_x'])) {
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
+
+
+
+	$tab_array = array();
+	$tab_array[0] = array("Inbound", true, "firewall_nat.php");
+	$tab_array[1] = array("Server NAT", false, "firewall_nat_server.php");
+	display_top_tabs($tab_array);
+
+
   <ul id="tabnav">
-<?php $i = 0; foreach ($iflist as $ifent => $ifname):
-	if ($ifent == $if): ?>
-    <li class="tabact"><?=htmlspecialchars($ifname);?></li>
-<?php else: ?>
-    <li class="<?php if ($i == 0) echo "tabinact1"; else echo "tabinact";?>"><a href="firewall_rules.php?if=<?=$ifent;?>"><?=htmlspecialchars($ifname);?></a></li>
-<?php endif; ?>
-<?php $i++; endforeach; ?>
-  </ul>
+  <?php
+	/* active tabs */
+	$tab_array = array();
+	$tabscounter = 0; $i = 0; foreach ($iflist as $ifent => $ifname) {
+		if ($ifent == $if)
+			$active = true;
+		else
+			$active = false;
+		$tab_array[] = array($ifname, $active, "firewall_rules.php?if={$ifent}");
+	}
+	display_top_tabs($tab_array);
+  ?>
   </td></tr>
   <tr>
     <td class="tabcont">

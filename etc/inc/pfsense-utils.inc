@@ -884,18 +884,18 @@ function get_disk_info() {
 	    $tabscounter = 0;
 	    foreach ($tab_array as $ta) {
 		    if($ta[1] == true) {
-			    echo "  <td><div id='active'></div></td>\n";
+			    echo "  <td bgcolor='#EEEEEE'><div id='tabactive'></div></td>\n";
 		    } else {
-			    echo "  <td><div id='deactive{$tabscounter}'></div></td>\n";
+			    echo "  <td bgcolor='#777777'><div id='tabdeactive{$tabscounter}'></div></td>\n";
 		    }
 		    $tabscounter++;
 	    }
-	    echo "</tr>\n";
+	    echo "</tr>\n<tr>\n";
 	    foreach ($tab_array as $ta) {
 		    if($ta[1] == true) {
-			    echo "  <td class='tabact'><B>&nbsp;{$ta[0]}&nbsp;</div></a></td>\n";
+			    echo "  <td bgcolor='#EEEEEE'><B>&nbsp;{$ta[0]}&nbsp;<br>&nbsp;</div></a></td>\n";
 		    } else {
-			    echo "  <td class='tabinact'><B>&nbsp;<a href='{$ta[2]}'><font color='white'>{$ta[0]}</a>&nbsp;</div></a></td>\n";
+			    echo "  <td bgcolor='#777777'><B>&nbsp;<a href='{$ta[2]}'><font color='white'>{$ta[0]}</a>&nbsp;<br>&nbsp;</div></a></td>\n";
 		    }
 	    }
 	    echo " </tr>\n";
@@ -903,9 +903,9 @@ function get_disk_info() {
 	    
 	    echo "<script type=\"text/javascript\">";
 	    echo "NiftyCheck();\n";
-	    echo "Rounded(\"div#active\",\"top\",\"#FFF\",\"#EEEEEE\",\"smooth\");\n";
+	    echo "Rounded(\"div#tabactive\",\"top\",\"#FFF\",\"#EEEEEE\",\"smooth\");\n";
 	    for($x=0; $x<$tabscounter; $x++) 
-		    echo "Rounded(\"div#deactive{$x}\",\"top\",\"#FFF\",\"#777777\",\"smooth\");\n";
+		    echo "Rounded(\"div#tabdeactive{$x}\",\"top\",\"#FFF\",\"#777777\",\"smooth\");\n";
 	    echo "</script>";
     }
 	

@@ -178,10 +178,12 @@ function enable_change(enable_over) {
 <div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
-  <ul id="tabnav">
-    <li class="tabact">Configuration</li>
-    <li class="tabinact"><a href="vpn_pptp_users.php">Users</a></li>
-  </ul>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array("Configuration", true, "vpn_pptp.php");
+	$tab_array[1] = array("Users", false, "vpn_pptp_users.php");
+	display_top_tabs($tab_array);
+?>  
   </td></tr>
   <tr> 
     <td class="tabcont">

@@ -84,11 +84,12 @@ include("head.inc");
 <div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
-  <ul id="tabnav">
-    <li class="tabinact1"><a href="vpn_pptp.php">Configuration</a></li>
-    <li class="tabact">Users</li>
-  </ul>
-  </td></tr>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array("Configuration", false, "vpn_pptp.php");
+	$tab_array[1] = array("Users", true, "vpn_pptp_users.php");
+	display_top_tabs($tab_array);
+?>    </td></tr>
   <tr> 
     <td colspan="3" class="tabcont">
               <table width="80%" border="0" cellpadding="0" cellspacing="0">

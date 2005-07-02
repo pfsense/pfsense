@@ -144,14 +144,10 @@ if (isset($_POST['del_x'])) {
 	}
 }
 
+$pgtitle = "Firewall: Rules";
+include("head.inc");
+
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("Firewall: Rules");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle">Firewall: Rules</p>
@@ -165,16 +161,6 @@ if (isset($_POST['del_x'])) {
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
-
-
-
-	$tab_array = array();
-	$tab_array[0] = array("Inbound", true, "firewall_nat.php");
-	$tab_array[1] = array("Server NAT", false, "firewall_nat_server.php");
-	display_top_tabs($tab_array);
-
-
-  <ul id="tabnav">
   <?php
 	/* active tabs */
 	$tab_array = array();

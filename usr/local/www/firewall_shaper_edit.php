@@ -394,23 +394,23 @@ function dst_rep_change() {
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td valign="top" class="vncellreq">Target</td>
-                  <td class="vtable"> <select name="inqueue" class="formfld">
+                  <td class="vtable"> <select name="outqueue" class="formfld">
                       <?php
 					  foreach ($config['shaper']['queue'] as $queuei => $queue): ?>
-                      <option value="<?=$queue['name'];?>" <?php if ($queue['name'] == $pconfig['inqueue']) echo "selected"; ?>>
+                      <option value="<?=$queue['name'];?>" <?php if ($queue['name'] == $pconfig['outqueue']) echo "selected"; ?>>
                         <?php
-					  	echo htmlspecialchars("Queue " . ($queuei + 1));
+					  	echo htmlspecialchars("Outbound Queue " . ($queuei + 1));
 						if ($queue['name'])
 							echo htmlspecialchars(" (" . $queue['name'] . ")");
 			?>
                       </option>
                       <?php endforeach; ?>
-                    </select>/<select name="outqueue" class="formfld">
+                    </select>/<select name="inqueue" class="formfld">
                       <?php
 					  foreach ($config['shaper']['queue'] as $queuei => $queue): ?>
-                      <option value="<?=$queue['name'];?>" <?php if ($queue['name'] == $pconfig['outqueue']) echo "selected"; ?>>
+                      <option value="<?=$queue['name'];?>" <?php if ($queue['name'] == $pconfig['inqueue']) echo "selected"; ?>>
                         <?php
-					  	echo htmlspecialchars("Queue " . ($queuei + 1));
+					  	echo htmlspecialchars("Inbound Queue " . ($queuei + 1));
 						if ($queue['name'])
 							echo htmlspecialchars(" (" . $queue['name'] . ")");
 			?>

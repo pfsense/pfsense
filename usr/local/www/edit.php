@@ -44,7 +44,7 @@ if (($_POST['submit'] == "Load") && file_exists($_POST['savetopath'])) {
 		$language = "xml";
 } else if (($_POST['submit'] == "Save")) {
 	conf_mount_rw();
-	$content = ereg_replace("\r","",$_POST['content']) ;
+	$content = ereg_replace("\r","",$_POST['code']) ;
 	$fd = fopen($_POST['savetopath'], "w");
 	fwrite($fd, $content);
 	fclose($fd);
@@ -57,19 +57,26 @@ if (($_POST['submit'] == "Load") && file_exists($_POST['savetopath'])) {
 	$_POST['savetopath'] = "";
 }
 
+if($_POST['highlight'] <> "") {
+	if($_POST['highlight'] == "enabled") {
+		$highlight = "yes";
+	} else {
+		$highlight = "no";
+	}
+} else {
+	$highlight = "no";
+}
+
 if($_POST['rows'] <> "")
 	$rows = $_POST['rows'];
 else
-	$rows = 40;
+	$rows = 30;
 
 if($_POST['cols'] <> "")
 	$cols = $_POST['cols'];
 else
 	$cols = 80;
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
 <?php
 
 /*
@@ -78,8 +85,6 @@ else
 	(modified for m0n0wall by Manuel Kasper <mk@neon1.net>)
         (modified for pfSense Edit/Save file by Scott Ullrich, Copyright 2004, 2005)
 */
-
-include("fbegin.inc");
 
 // Function: is Blank
 // Returns true or false depending on blankness of argument.
@@ -113,7 +118,7 @@ $pgtitle = "Diagnostics: Edit File";
 	<link rel="stylesheet" type="text/css" href="/niftycssCode.css">
 	<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print">
 	<link href="gui.css" rel="stylesheet" type="text/css">
-	<link type="text/css" rel="stylesheet" href="SyntaxHighlighter.css"></link>
+	<link type="text/css" rel="stylesheet" href="/code-syntax-highlighter/SyntaxHighlighter.css"></link>
 	<script type="text/javascript" src="/niftyjsCode.js"></script>
 	<style>
 	/* @import url(SyntaxHighlighter.css); */
@@ -126,6 +131,7 @@ $pgtitle = "Diagnostics: Edit File";
     
 </head>
 
+<?php include("fbegin.inc"); ?>
 
 <script language="Javascript">
 function sf() { document.forms[0].savetopath.focus(); }
@@ -135,19 +141,34 @@ function sf() { document.forms[0].savetopath.focus(); }
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if ($loadmsg) echo "<p><b>{$loadmsg}<p>"; ?>
 <form action="edit.php" method="POST">
-  <table>
-    <tr>
-      <td nowrap>
-        Save/Load from path: <input size="42" id="savetopath" name="savetopath" value="<?php echo $_POST['savetopath']; ?>"> |
-	Rows: <input size="3" name="rows" value="<? echo $rows; ?>"> |
-	Cols: <input size="3" name="cols" value="<? echo $cols; ?>"> |
-        <input name="submit" type="submit"  class="button" id="Load" value="Load"> | <input name="submit" type="submit"  class="button" id="Save" value="Save">
-	<br><hr noshade width=100%>
-        </td>
-    </tr>
+
+<div id="shapeme">
+<table width="100%" cellpadding='9' cellspacing='9' bgcolor='#eeeeee'>
+ <tr>
+  <td>
+	<center>
+	Save/Load from path: <input size="42" id="savetopath" name="savetopath" value="<?php echo $_POST['savetopath']; ?>">
+	<?php if($_POST['highlight'] == "no"): ?>
+	   <hr noshade>
+	   Rows: <input size="3" name="rows" value="<? echo $rows; ?>"> 
+	   Cols: <input size="3" name="cols" value="<? echo $cols; ?>">
+	<?php endif ?>
+	<input name="submit" type="submit"  class="button" id="Load" value="Load"> |
+	<input name="submit" type="submit"  class="button" id="Save" value="Save"> |
+	Highlighting: <input name="highlight" type="radio" value="yes"
+	<?php if($highlight == "yes") echo " checked"; ?>>Enabled
+	<input name="highlight" type="radio" value="no"<?php if($highlight == "no") echo " checked"; ?>>Disabled
+  </td>
+ </tr>
+</table>
+</div>
+
+<br>
+
+  <table width='100%'>
     <tr>
       <td valign="top" class="label">
-	<textarea name="code" language="{$language}" rows="<?php echo $rows; ?>" cols="<?php echo $cols; ?>" name="content"><?php echo htmlentities($content); ?></textarea><br>
+	<textarea name="code" language="<?php echo $language; ?>" rows="<?php echo $rows; ?>" cols="<?php echo $cols; ?>" name="content"><?php echo htmlentities($content); ?></textarea><br>
         <p>
     </td>
     </tr>
@@ -157,7 +178,29 @@ function sf() { document.forms[0].savetopath.focus(); }
 </body>
 </html>
 
-
 <script language="Javascript">
 sf();
+</script>
+
+</div>
+<script language="javascript" src="/code-syntax-highlighter/shCore.js"></script>
+<script language="javascript" src="/code-syntax-highlighter/shBrushCSharp.js"></script>
+<script language="javascript" src="/code-syntax-highlighter/shBrushPhp.js"></script>
+<script language="javascript" src="/code-syntax-highlighter/shBrushJScript.js"></script>
+<script language="javascript" src="/code-syntax-highlighter/shBrushVb.js"></script>
+<script language="javascript" src="/code-syntax-highlighter/shBrushSql.js"></script>
+<script language="javascript" src="/code-syntax-highlighter/shBrushXml.js"></script>
+<script language="javascript" src="/code-syntax-highlighter/shBrushDelphi.js"></script>
+<script language="javascript" src="/code-syntax-highlighter/shBrushPython.js"></script>
+
+<?php if($_POST['highlight'] == "yes") {
+	echo "<script language=\"javascript\">\n";
+	echo "dp.SyntaxHighlighter.HighlightAll('code', true, true);\n";
+	echo "</script>\n;";
+}
+?>
+
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#shapeme","all","#FFF","#eeeeee","smooth");
 </script>

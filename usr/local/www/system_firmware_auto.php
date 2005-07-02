@@ -55,12 +55,13 @@ require_once("xmlrpc.inc");
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td>
-      <ul id="tabnav">
-	<li class="tabinact"><a href="system_firmware.php">Manual Update</a></li>
-        <li class="tabinact"><a href="system_firmware_check.php">Auto Update</a></li>
-	<li class="tabinact"><a href="system_firmware_settings.php">Updater Settings</a></li>
-	<li class="tabact">Firmware Updater</li>
-      </ul>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array("Manual Update", false, "system_firmware.php");
+	$tab_array[1] = array("Auto Update", true, "system_firmware_check.php");
+	$tab_array[2] = array("Updater Settings", false, "system_firmware_settings.php");
+	display_top_tabs($tab_array);
+?>
     </td>
   </tr>
 	<tr>

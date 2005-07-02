@@ -78,7 +78,7 @@ $pkg_sizes = get_pkg_sizes();
 <?php
 	$tab_array = array();
 	$tab_array[0] = array("Available Packages", true, "pkg_mgr.php");
-	$tab_array[1] = array("Installed Packages", false, "firewall_nat_server.php");
+	$tab_array[1] = array("Installed Packages", false, "pkg_mgr_installed.php");
 	display_top_tabs($tab_array);
 ?> 
   </td></tr>

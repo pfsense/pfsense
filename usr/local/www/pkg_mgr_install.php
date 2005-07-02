@@ -61,8 +61,8 @@ include("fbegin.inc");
 <?php
 	$tab_array = array();
 	$tab_array[0] = array("Available Packages", false, "pkg_mgr.php");
-	$tab_array[1] = array("Installed Packages", false, "firewall_nat_server.php");
-        $tab_array[2] = array("Package Installer", true, "firewall_nat_server.php");
+	$tab_array[1] = array("Installed Packages", false, "pkg_mgr_installed.php");
+        $tab_array[2] = array("Package Installer", true, "");
 	display_top_tabs($tab_array);
 ?>    
   </td></tr>

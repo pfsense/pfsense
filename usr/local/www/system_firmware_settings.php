@@ -41,13 +41,11 @@ if ($_POST) {
 
 $curcfg = $config['system']['firmware'];
 
+$pgtitle = "System: Firmware: Settings";
+include("head.inc");
+
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("System: Firmware Settings");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
+
 <script language="JavaScript">
 <!--
 var systemdescs=new Array(4);
@@ -66,7 +64,6 @@ function update_description(itemnum) {
 
 // -->
 </script>
-</head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form action="system_firmware_settings.php" method="post" name="iform" id="iform">

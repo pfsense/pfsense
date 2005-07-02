@@ -178,14 +178,11 @@ if ($_GET['act'] == "down") {
 		exit;
 	}
 }
+
+$pgtitle = "Firewall: Shaper";
+include("head.inc");
+
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("Firewall: Traffic shaper: Rules");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
@@ -200,11 +197,13 @@ if ($_GET['act'] == "down") {
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
-  <ul id="tabnav">
-    <li class="tabact">Rules</li>
-    <li class="tabinact"><a href="firewall_shaper_queues.php">Queues</a></li>
-    <li class="tabinact"><a href="wizard.php?xml=traffic_shaper_wizard.xml">EZ Shaper wizard</a></li>
-  </ul>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array("Rules", true, "firewall_shaper.php");
+	$tab_array[1] = array("Queues", false, "firewall_shaper_queues.php");
+	$tab_array[2] = array("EZ Shaper wizard", false, "wizard.php?xml=traffic_shaper_wizard.xml");
+	display_top_tabs($tab_array);
+?>  
   </td></tr>
   <tr>
     <td class="tabcont">

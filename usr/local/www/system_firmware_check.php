@@ -33,14 +33,11 @@ require_once("xmlrpc.inc");
 
 if(isset($config['system']['disablefirmwarecheck']))
 	Header("Location: system_firmware.php");
+
+$pgtitle = "System: Auto Update";
+include("head.inc");
+
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-	<head>
-		<title><?=gentitle("System: Auto Update");?></title>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-		<link href="gui.css" rel="stylesheet" type="text/css">
-	</head>
 	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 		<SCRIPT>
 		<!--

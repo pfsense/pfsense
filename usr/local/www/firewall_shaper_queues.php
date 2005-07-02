@@ -100,14 +100,11 @@ if ($_GET['act'] == "del") {
 		}
 	}
 }
+
+$pgtitle = "Firewall: Shaper: Queues";
+include("head.inc");
+
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("Firewall: Traffic shaper: Queues");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
@@ -126,6 +123,15 @@ if ($_GET['act'] == "del") {
     <li class="tabact">Queues</a></li>
     <li class="tabinact"><a href="wizard.php?xml=traffic_shaper_wizard.xml">EZ Shaper wizard</a></li>
   </ul>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array("Inbound", true, "firewall_nat.php");
+	$tab_array[1] = array("Server NAT", false, "firewall_nat_server.php");
+	$tab_array[2] = array("1:1", false, "firewall_nat_1to1.php");
+	$tab_array[3] = array("Outbound", false, "firewall_nat_out.php");
+	$tab_array[4] = array("Outgoing Load Balancing", false, "firewall_nat_out_load_balancing.php");
+	display_top_tabs($tab_array);
+?>
   </td></tr>
   <tr>
     <td class="tabcont">

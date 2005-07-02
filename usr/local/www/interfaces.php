@@ -265,13 +265,12 @@ if ($_POST) {
 		$savemsg = get_std_save_message($retval);
 	}
 }
+
+$pgtitle = "Interfaces: WAN";
+include("head.inc");
+
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("Interfaces: WAN");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
+
 <script language="JavaScript">
 <!--
 function enable_change(enable_change) {
@@ -421,7 +420,6 @@ function type_change(enable_change,enable_change_pptp) {
 }
 //-->
 </script>
-</head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>

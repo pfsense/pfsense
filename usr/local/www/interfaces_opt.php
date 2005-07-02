@@ -161,17 +161,15 @@ if ($_POST) {
 		$savemsg = get_std_save_message($retval);
 	}
 }
+
+
+$pgtitle = "Firewall: NAT: Inbound";
+include("head.inc");
+
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("Interfaces: Optional $index (" . htmlspecialchars($optcfg['descr']) . ")");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
 
 <script type="text/javascript" language="javascript" src="ip_helper.js">
 </script>
-
 <script language="JavaScript">
 <!--
 function enable_change(enable_over) {
@@ -185,8 +183,6 @@ function ipaddr_change() {
 }
 //-->
 </script>
-
-</head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>

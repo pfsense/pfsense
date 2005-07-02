@@ -53,6 +53,7 @@ include("fbegin.inc");
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
 ?>
+<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
 <?php
 	$tab_array = array();
@@ -91,10 +92,18 @@ include("fbegin.inc");
     </td>
   </tr>
 </table>
+</div>
 </form>
 <?php include("fend.inc"); ?>
+
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
+</script>
+
 </body>
 </html>
+
 
 <?php
 

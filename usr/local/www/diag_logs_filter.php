@@ -124,6 +124,7 @@ include("head.inc");
   <tr><td>
 <?php
 	$tab_array = array();
+	$tab_array[0] = array("System", false, "diag_logs.php");
 	$tab_array[0] = array("Firewall", true, "diag_logs_filter.php");
 	$tab_array[1] = array("DHCP", false, "diag_logs_dhcp.php");
 	$tab_array[2] = array("Portal Auth", false, "diag_logs_auth.php");

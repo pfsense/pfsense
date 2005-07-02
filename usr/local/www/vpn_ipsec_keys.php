@@ -61,14 +61,17 @@ include("head.inc");
 <?php print_info_box_np("The IPsec tunnel configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
 <?php endif; ?>
+<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
-  <ul id="tabnav">
-    <li class="tabinact1"><a href="vpn_ipsec.php">Tunnels</a></li>
-    <li class="tabinact"><a href="vpn_ipsec_mobile.php">Mobile clients</a></li>
-    <li class="tabact">Pre-shared keys</li>
-    <li class="tabinact"><a href="vpn_ipsec_ca.php">CAs</a></li>
-  </ul>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array("Tunnels", false, "vpn_ipsec.php");
+	$tab_array[1] = array("Mobile clients", false, "vpn_ipsec_mobile.php");
+	$tab_array[2] = array("Pre-shared keys", true, "vpn_ipsec_keys.php");
+	$tab_array[3] = array("CAs", false, "vpn_ipsec_ca.php");
+	display_top_tabs($tab_array);
+?>
   </td></tr>
   <tr> 
     <td class="tabcont">
@@ -98,5 +101,13 @@ include("head.inc");
 			 </td>
 			</tr>
 		</table>
+		</div>
 </form>
 <?php include("fend.inc"); ?>
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
+</script>
+
+</body>
+</html>

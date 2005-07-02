@@ -192,14 +192,17 @@ function methodsel_change() {
 <?php endif; ?>
 </form>
 <form action="vpn_ipsec_mobile.php" method="post" name="iform" id="iform">
+<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
-  <ul id="tabnav">
-    <li class="tabinact1"><a href="vpn_ipsec.php">Tunnels</a></li>
-    <li class="tabact">Mobile clients</li>
-    <li class="tabinact"><a href="vpn_ipsec_keys.php">Pre-shared keys</a></li>
-    <li class="tabinact"><a href="vpn_ipsec_ca.php">CAs</a></li>
-  </ul>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array("Tunnels", false, "vpn_ipsec.php");
+	$tab_array[1] = array("Mobile clients", true, "vpn_ipsec_mobile.php");
+	$tab_array[2] = array("Pre-shared keys", false, "vpn_ipsec_keys.php");
+	$tab_array[3] = array("CAs", false, "vpn_ipsec_ca.php");
+	display_top_tabs($tab_array);
+?>
   </td></tr>
   <tr> 
     <td class="tabcont">
@@ -377,6 +380,7 @@ function methodsel_change() {
 			 </td>
 			</tr>
 		</table>
+		</div>
 </form>
 <script language="JavaScript">
 <!--
@@ -384,3 +388,10 @@ methodsel_change();
 //-->
 </script>
 <?php include("fend.inc"); ?>
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
+</script>
+
+</body>
+</html>

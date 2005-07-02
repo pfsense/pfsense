@@ -70,6 +70,8 @@ $pkg_info = get_pkg_info('all', array('name', 'category', 'website', 'version', 
 $pkg_sizes = get_pkg_sizes();
 
 ?>
+
+<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
 <?php
 	$tab_array = array();
@@ -142,6 +144,13 @@ $pkg_sizes = get_pkg_sizes();
     </td>
   </tr>
 </table>
+</div>
 <?php include("fend.inc"); ?>
+
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
+</script>
+
 </body>
 </html>

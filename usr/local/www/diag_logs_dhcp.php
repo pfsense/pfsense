@@ -56,6 +56,7 @@ include("head.inc");
   <tr><td>
 <?php
 	$tab_array = array();
+	$tab_array[0] = array("System", false, "diag_logs.php");
 	$tab_array[0] = array("Firewall", false, "diag_logs_filter.php");
 	$tab_array[1] = array("DHCP", true, "diag_logs_dhcp.php");
 	$tab_array[2] = array("Portal Auth", false, "diag_logs_auth.php");
@@ -64,6 +65,7 @@ include("head.inc");
 	$tab_array[5] = array("Settings", false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
+
   </td></tr>
   <tr>
     <td class="tabcont">

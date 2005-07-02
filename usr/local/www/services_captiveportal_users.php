@@ -151,6 +151,7 @@ include("head.inc");
 </script>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
+<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
@@ -171,7 +172,7 @@ if($_GET['act']=="new" || $_GET['act']=="edit"){
 	}
 ?>
 	<form action="services_captiveportal_users.php" method="post" name="iform" id="iform">
-	<div id="mainarea">
+
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Username</td>
@@ -279,5 +280,6 @@ END;
 NiftyCheck();
 Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
 </script>
+
 </body>
 </html>

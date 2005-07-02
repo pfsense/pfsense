@@ -101,6 +101,7 @@ if(!is_array($config['installedpackages']['carp']['config'])) {
 
 <p>
 
+<div id="mainarea">
 <table width="100%" border="0" cellpadding="6" cellspacing="0">
 </tr>
 <tr>
@@ -161,8 +162,13 @@ if($config['installedpackages']['carp']['config'] <> "")
 </table>
 </td></tr>
 </table>
+</div>
 
 <?php include("fend.inc"); ?>
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
+</script>
 </body>
 </html>
 

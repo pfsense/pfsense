@@ -167,17 +167,23 @@ function enable_change(enable_over) {
 <form action="services_dhcp_relay.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
+<div id="master">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr><td>
-  <ul id="tabnav">
-<?php foreach ($iflist as $ifent => $ifname):
-	if ($ifent == $if): ?>
-    <li class="tabact"><?=htmlspecialchars($ifname);?></li>
-<?php else: ?>
-    <li class="tabinact"><a href="services_dhcp_relay.php?if=<?=$ifent;?>"><?=htmlspecialchars($ifname);?></a></li>
-<?php endif; ?>
-<?php endforeach; ?>
-  </ul>
+  <tr><td>  
+  <?php
+	/* active tabs */
+	$tab_array = array();
+	$tabscounter = 0;
+	$i = 0;
+	foreach ($iflist as $ifent => $ifname) {
+		if ($ifent == $if)
+			$active = true;
+		else
+			$active = false;
+		$tab_array[] = array($ifname, $active, "services_dhcp_relay.php?if={$ifent}");
+	}
+	display_top_tabs($tab_array);
+  ?>  
   </td></tr>
   <tr>
     <td class="tabcont">
@@ -217,6 +223,7 @@ function enable_change(enable_over) {
     </td>
   </tr>
 </table>
+</div>
 </form>
 <script language="JavaScript">
 <!--
@@ -224,5 +231,11 @@ enable_change(false);
 //-->
 </script>
 <?php include("fend.inc"); ?>
+
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
+</script>
+
 </body>
 </html>

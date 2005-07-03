@@ -187,12 +187,15 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (file_exists($d_sysrebootreqd_path)) print_info_box(get_std_save_message(0)); ?>
 <form action="interfaces_assign.php" method="post" name="iform" id="iform">
+<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
-  <ul id="tabnav">
-    <li class="tabact">Interface assignments</li>
-    <li class="tabinact"><a href="interfaces_vlan.php">VLANs</a></li>
-  </ul>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array("Interface assignments", false, "interfaces_assign.php");
+	$tab_array[1] = array("VLANs", true, "interfaces_vlan.php");
+	display_top_tabs($tab_array);
+?>  
   </td></tr>
   <tr> 
     <td class="tabcont">
@@ -256,5 +259,14 @@ include("head.inc");
 </ul></td>
 	</tr>
 </table>
+</div>
 </form>
 <?php include("fend.inc"); ?>
+
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
+</script>
+
+</body>
+</html>

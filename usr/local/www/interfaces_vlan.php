@@ -95,12 +95,15 @@ include("head.inc");
 <p class="pgtitle">Interfaces: Assign network ports: VLANs</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (file_exists($d_sysrebootreqd_path)) print_info_box(get_std_save_message(0)); ?>
+<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
-  <ul id="tabnav">
-    <li class="tabinact"><a href="interfaces_assign.php">Interface assignments</a></li>
-    <li class="tabact">VLANs</li>
-  </ul>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array("Interface assignments", true, "interfaces_assign.php");
+	$tab_array[1] = array("VLANs", false, "interfaces_vlan.php");
+	display_top_tabs($tab_array);
+?>
   </td></tr>
   <tr>
     <td class="tabcont">
@@ -142,6 +145,13 @@ include("head.inc");
 			  </td>
 	</tr>
 </table>
+</div>
 <?php include("fend.inc"); ?>
+
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
+</script>
+
 </body>
 </html>

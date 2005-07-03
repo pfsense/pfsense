@@ -33,6 +33,7 @@
 			<description>Select the carp interface to use</description>
 			<interface_filter>carp</interface_filter>
 			<type>interfaces_selection</type>
+			<all_interfaces>true</all_interfaces>
 		</field>
 		<field>
 			<fielddescr>Failover IP</fielddescr>

@@ -109,7 +109,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "VPN: PPTP: Edit User";
+$pgtitle = "VPN: PPTP: User: Edit";
 include("head.inc");
 
 ?>

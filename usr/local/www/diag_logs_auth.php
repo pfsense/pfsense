@@ -49,7 +49,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">Diagnostics: System logs: Portal Auth</p>
+<p class="pgtitle"><?=$pgtitle?></p>
 <div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>

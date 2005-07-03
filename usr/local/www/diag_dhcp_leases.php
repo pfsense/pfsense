@@ -41,7 +41,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">Diagnostics: DHCP leases</p>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php
 
 flush();

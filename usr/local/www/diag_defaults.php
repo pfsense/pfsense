@@ -52,7 +52,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">Diagnostics: Factory defaults</p>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($rebootmsg): echo print_info_box($rebootmsg); else: ?>
 <form action="diag_defaults.php" method="post">
               <p><strong>If you click &quot;Yes&quot;, the firewall will be reset

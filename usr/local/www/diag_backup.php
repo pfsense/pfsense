@@ -183,7 +183,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-      <p class="pgtitle">Diagnostics: Backup/restore</p>
+<p class="pgtitle"><?=$pgtitle?></p>
             <form action="diag_backup.php" method="post" enctype="multipart/form-data" onSubmit="window.open('progress.php?conffile=<?=$id?>','UploadMeter','width=370,height=115', true); return true; ">
             <?php if ($input_errors) print_input_errors($input_errors); ?>
             <?php if ($savemsg) print_info_box($savemsg); ?>

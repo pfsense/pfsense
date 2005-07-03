@@ -178,20 +178,22 @@ function verify_gzip_file($fname) {
 
 function print_info_box_np($msg) {
 	echo "<table height=\"32\" width=\"100%\">\n";
-	echo "  <tr>";
-	echo "   <td>";
-	echo "      <div style='background-color:#990000' id='redbox'>";
-	echo "       &nbsp;&nbsp;&nbsp;<img style='vertical-align:middle' src=\"/exclam.gif\" width=\"28\" height=\"32\">";
-	echo "         &nbsp;&nbsp;&nbsp;<font color='white'><b>{$msg}</b></font>";
-	echo "      </div>";
-	echo "    </td>";
-	echo "</table>";
-	echo "<br>";
-	echo "<script type=\"text/javascript\">";
+	echo "  <tr>\n";
+	echo "   <td>\n";
+	echo "      <div style='background-color:#990000' id='redbox'>\n";
+	echo "       <table width='100%'><tr><td width='8%'>\n";
+	echo "       &nbsp;&nbsp;&nbsp;<img style='vertical-align:middle' src=\"/exclam.gif\" width=\"28\" height=\"32\">\n";
+	echo "       </td><td><font color='white'><b>{$msg}</b></font>\n";
+	echo "       </td></tr></table>\n";
+	echo "      </div>\n";
+	echo "    </td>\n";
+	echo "</table>\n";
+	echo "<br>\n";
+	echo "<script type=\"text/javascript\">\n";
 	echo "NiftyCheck();\n";
 	echo "Rounded(\"div#redbox\",\"all\",\"#FFF\",\"#990000\",\"smooth\");\n";
 	echo "Rounded(\"td#blackbox\",\"all\",\"#FFF\",\"#000000\",\"smooth\");\n";
-	echo "</script>";	
+	echo "</script>\n";
 }
 
 function print_info_box($msg) {

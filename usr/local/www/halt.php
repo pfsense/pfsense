@@ -44,18 +44,14 @@ if ($_POST) {
 		exit;
 	}
 }
+
+$pgtitle = "Diagnostics: Halt system";
+include('head.inc');
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<title><?=gentitle("Halt system");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
-</head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">Halt system</p>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($rebootmsg): echo print_info_box($rebootmsg); else: ?>
       <form action="halt.php" method="post">
         <p><strong>Are you sure you want to halt the system?</strong></p>

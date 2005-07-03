@@ -135,12 +135,10 @@ defCmdT("cat {$g['tmp_path']}/rules.debug","cat {$g['tmp_path']}/rules.debug");
 
 defCmdT("config.xml","dumpconfigxml");
 
-$pageTitle = "pfSense: status";
-
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
 
-$pgtitle = $pageTitle;
+$pgtitle = "pfSense: status";
 include("head.inc");
 
 ?>
@@ -156,7 +154,7 @@ pre {
 </style>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<p><span class="pgtitle"><?=$pageTitle;?></span><br>
+<p><span class="pgtitle"><?=$pgtitle;?></span><br>
 <strong><?=$currentDate;?></strong>
 <p><span class="red"><strong>Note: make sure to remove any sensitive information
 (passwords, maybe also IP addresses) before posting

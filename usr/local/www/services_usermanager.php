@@ -32,7 +32,6 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-$pgtitle = array("Services", "Usermanager");
 require("guiconfig.inc");
 if(isset($_POST['save'])){
 	$_POST['username']=trim($_POST['username']);
@@ -84,6 +83,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
 <script language="javascript" type="text/javascript" src="datetimepicker.js">
 //Date Time Picker script- by TengYong Ng of http://www.rainforestnet.com
 //Script featured on JavaScript Kit (http://www.javascriptkit.com)

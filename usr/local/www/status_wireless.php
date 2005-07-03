@@ -30,7 +30,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("Status", "Wireless");
 require("guiconfig.inc");
 
 function get_wireless_info($ifdescr) {
@@ -93,6 +92,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php $i = 0; $ifdescrs = array();
 
 	if (is_array($config['interfaces']['wan']['wireless']) &&

@@ -43,9 +43,8 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">System: Firmware: Firmware Updater</p>
+<p class="pgtitle"><?=$pgtitle?></p>
 
 <form action="system_firmware_auto.php" method="post">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

@@ -30,7 +30,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("Services", "Captive portal");
 require("guiconfig.inc");
 
 if (!is_array($config['captiveportal']['allowedip']))
@@ -76,6 +75,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
 <form action="services_captiveportal_ip.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_allowedipsdirty_path)): ?><p>

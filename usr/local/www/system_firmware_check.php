@@ -34,11 +34,14 @@ require_once("xmlrpc.inc");
 if(isset($config['system']['disablefirmwarecheck']))
 	Header("Location: system_firmware.php");
 
+$versions = check_firmware_version();
 $pgtitle = "System: Auto Update";
 include("head.inc");
 
 ?>
-	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<?php include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
 		<SCRIPT>
 		<!--
 			function toggleTable (table, img) {
@@ -56,11 +59,6 @@ include("head.inc");
 			}
 		//-->
 		</SCRIPT>
-<?php
-include("fbegin.inc");
-$versions = check_firmware_version();
-?>
-		<p class="pgtitle">System: Auto Update</p>
 		<div id="bottomonly">
 		<table width="100%" border="0" cellpadding="0" cellspacing="0">
 			<tr>

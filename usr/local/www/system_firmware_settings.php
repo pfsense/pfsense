@@ -66,12 +66,11 @@ function update_description(itemnum) {
 </script>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<p class="pgtitle"><?=$pgtitle?></p>
 <form action="system_firmware_settings.php" method="post" name="iform" id="iform">
 <?php
 include("fbegin.inc");
 ?>
-      <p class="pgtitle">System: Firmware Settings</p>
-      
             <?php if ($savemsg) print_info_box($savemsg); ?>
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>

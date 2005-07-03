@@ -39,7 +39,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">Status: Captive portal</p>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php
 
 if ($_GET['act'] == "del") {

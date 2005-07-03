@@ -240,9 +240,9 @@ function openwindow(url) {
 // -->
 </script>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<form action="system_advanced.php" method="post" name="iform" id="iform">
 <?php include("fbegin.inc"); ?>
-      <p class="pgtitle">System: Advanced functions</p>
+<p class="pgtitle"><?=$pgtitle?></p>
+<form action="system_advanced.php" method="post" name="iform" id="iform">
             <?php if ($input_errors) print_input_errors($input_errors); ?>
             <?php if ($savemsg) print_info_box($savemsg); ?>
             <p><span class="vexpl"><span class="red"><strong>Note: </strong></span>

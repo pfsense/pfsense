@@ -61,7 +61,7 @@ include("head.inc");
 <?php
 include("fbegin.inc");
 ?>
-<p class="pgtitle"><?=$title?></p>
+<p class="pgtitle"><?=$pgtitle?></p>
 <form action="status_services.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 

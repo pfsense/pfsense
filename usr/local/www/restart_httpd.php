@@ -39,9 +39,12 @@ include("head.inc");
 
 <p class="pgtitle"><?php echo $pgtitle; ?></p>
 
+Forcing all PHP file permissions to 0755...
+<?php flush(); sleep(1); system('chmod 0755 /usr/local/www/*.php'); ?>
+Done.<br>
 Restarting mini_httpd...
 <?php flush(); sleep(1); system_webgui_start(); ?>
-Done.
+Done.<br>
 
 <?php
 include("fend.inc");

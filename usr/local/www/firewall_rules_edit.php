@@ -303,9 +303,11 @@ if ($_POST) {
 		header("Location: firewall_rules.php?if=" . $_POST['interface']);
 		exit;
 	}
+}
+
 $pgtitle = "Firewall: Rules: Edit";
 include("head.inc");
-}
+
 ?>
 
 <script language="JavaScript">

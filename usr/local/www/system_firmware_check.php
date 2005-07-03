@@ -35,7 +35,7 @@ if(isset($config['system']['disablefirmwarecheck']))
 	Header("Location: system_firmware.php");
 
 $versions = check_firmware_version();
-$pgtitle = "System: Auto Update";
+$pgtitle = "System: Firmware: Auto Update";
 include("head.inc");
 
 ?>

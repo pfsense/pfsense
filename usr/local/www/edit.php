@@ -151,13 +151,13 @@ function sf() { document.forms[0].savetopath.focus(); }
   <td>
 	<center>
 	Save/Load from path: <input size="42" id="savetopath" name="savetopath" value="<?php echo $_POST['savetopath']; ?>">
+	<input name="submit" type="submit"  class="button" id="Load" value="Load"> <input name="submit" type="submit"  class="button" id="Save" value="Save">
 	<hr noshade>
 	<?php if($_POST['highlight'] == "no"): ?>
 	   Rows: <input size="3" name="rows" value="<? echo $rows; ?>"> 
 	   Cols: <input size="3" name="cols" value="<? echo $cols; ?>">
 	<?php endif ?>
-	<input name="submit" type="submit"  class="button" id="Load" value="Load"> |
-	<input name="submit" type="submit"  class="button" id="Save" value="Save"> |
+	 | 
 	Highlighting: <input name="highlight" type="radio" value="yes"
 	<?php if($highlight == "yes") echo " checked"; ?>>Enabled
 	<input name="highlight" type="radio" value="no"<?php if($highlight == "no") echo " checked"; ?>>Disabled

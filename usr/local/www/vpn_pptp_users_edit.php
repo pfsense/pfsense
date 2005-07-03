@@ -119,6 +119,7 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="vpn_pptp_users_edit.php" method="post" name="iform" id="iform">
               <div id="mainarea">
+              <?display_topbar()?>
 	      <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Username</td>

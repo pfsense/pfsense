@@ -390,6 +390,7 @@ function dst_rep_change() {
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (is_array($config['shaper']['queue']) && (count($config['shaper']['queue']) > 0)): ?>
             <form action="firewall_shaper_edit.php" method="post" name="iform" id="iform">
+              <?display_topbar()?>
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td valign="top" class="vncellreq">Target</td>

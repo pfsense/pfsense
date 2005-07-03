@@ -186,6 +186,7 @@ include("head.inc");
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 	<form action="firewall_shaper_queues_edit.php" method="post" name="iform" id="iform">
+              <?display_topbar()?>
 	  <table width="100%" border="0" cellpadding="6" cellspacing="0">
 	    <tr>
 	      <td valign="top" class="vncellreq">Scheduler Type</td>

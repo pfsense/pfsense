@@ -229,10 +229,8 @@ rowtype[2] = "select";
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_aliases_edit.php" method="post" name="iform" id="iform">
+              <?display_topbar()?>
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr>
-                  <td colspan="2" valign="top" class="listtopic">Edit Alias</td>
-                </tr>
                 <tr>
                   <td valign="top" class="vncellreq">Name</td>
                   <td class="vtable"> <input name="name" type="text" class="formfld" id="name" size="40" value="<?=htmlspecialchars($pconfig['name']);?>">

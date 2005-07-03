@@ -169,6 +169,7 @@ function typesel_change() {
 <p class="pgtitle">Services: Proxy ARP: Edit</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="services_proxyarp_edit.php" method="post" name="iform" id="iform">
+              <?display_topbar()?>
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Interface</td>

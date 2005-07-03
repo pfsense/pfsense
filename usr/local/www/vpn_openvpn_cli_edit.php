@@ -196,6 +196,7 @@ include("head.inc");
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <form action="vpn_openvpn_cli_edit.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
+              <?display_topbar()?>
   <table width="100%" border="0" cellpadding="6" cellspacing="0">
     <tr>
       <td width="22%" valign="top" class="vncellreq">Disabled</td>

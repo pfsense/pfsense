@@ -79,7 +79,6 @@ include("head.inc");
 	print_info_box("Warning: RADIUS is enabled. The local user database will not be used."); ?>
 <?php if (file_exists($d_pptpuserdirty_path)): ?><p>
 <?php print_info_box_np("The PPTP user list has been modified.<br>You must apply the changes in order for them to take effect.<br><b>Warning: this will terminate all current PPTP sessions!</b>");?><br>
-<input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
 <?php endif; ?>
 <div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

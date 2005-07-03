@@ -84,8 +84,7 @@ include("head.inc");
 <form action="firewall_aliases.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_aliasesdirty_path)): ?><p>
-<?php print_info_box_np("The alias list has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
-<input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
+<?php print_info_box_np("The alias list has been changed.<br>You must apply the changes in order for them to take effect.");?>
 <?php endif; ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

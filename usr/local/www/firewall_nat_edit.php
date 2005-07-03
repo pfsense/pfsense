@@ -189,6 +189,7 @@ if ($_POST) {
 }
 
 $pgtitle = "Firewall: NAT: Edit inbound";
+$closehead = false;
 include("head.inc");
 
 ?>

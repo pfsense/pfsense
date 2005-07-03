@@ -134,6 +134,7 @@ if ($_POST) {
 }
 
 $pgtitle = "System: Firewall: Aliases: Edit alias";
+$closehead = false;
 include("head.inc");
 
 ?>

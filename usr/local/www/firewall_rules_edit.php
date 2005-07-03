@@ -306,6 +306,7 @@ if ($_POST) {
 }
 
 $pgtitle = "Firewall: Rules: Edit";
+$closehead = false;
 include("head.inc");
 
 ?>

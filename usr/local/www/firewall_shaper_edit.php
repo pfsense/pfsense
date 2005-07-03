@@ -280,6 +280,7 @@ if ($_POST) {
 }
 
 $pgtitle = "Firewall: Shaper: Edit rule";
+$closehead = false;
 include("head.inc");
 ?>
 

@@ -78,7 +78,7 @@ else
 if($_POST['cols'] <> "")
 	$cols = $_POST['cols'];
 else
-	$cols = 80;
+	$cols = 66;
 ?>
 <?php
 

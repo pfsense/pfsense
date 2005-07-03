@@ -195,7 +195,6 @@ function print_info_box_np($msg) {
 	echo "       </div>\n";
 	echo "    </td>\n";
 	echo "</table>\n";
-	echo "<br>\n";
 	echo "<script type=\"text/javascript\">\n";
 	echo "NiftyCheck();\n";
 	echo "Rounded(\"div#redbox\",\"all\",\"#FFF\",\"#990000\",\"smooth\");\n";

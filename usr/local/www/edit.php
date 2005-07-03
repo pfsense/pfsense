@@ -103,7 +103,6 @@ function puts( $arg ) { echo "$arg\n"; }
 
 $Version    = '';
 $ScriptName = $HTTP_SERVER_VARS['SCRIPT_NAME'];
-$Title      = gentitle("edit file");
 
 // Get year.
 
@@ -140,7 +139,7 @@ $pgtitle = "Diagnostics: Edit File";
 function sf() { document.forms[0].savetopath.focus(); }
 </script>
 <body onLoad="sf();">
-<p><span class="pgtitle"><?=$Title ?></span>
+<p><span class="pgtitle"><?=$pgtitle?></span>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if ($loadmsg) echo "<p><b><div style=\"background:#eeeeee\" id=\"shapeme\">&nbsp;&nbsp;&nbsp;{$loadmsg}</div><br>"; ?>
 <form action="edit.php" method="POST">

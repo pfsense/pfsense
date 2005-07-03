@@ -28,14 +28,6 @@ require("guiconfig.inc");
 
 conf_mount_rw();
 
-?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<?php
-
-include("fbegin.inc");
-
 // Function: is Blank
 // Returns true or false depending on blankness of argument.
 
@@ -52,16 +44,17 @@ function puts( $arg ) { echo "$arg\n"; }
 
 $Version    = '';
 $ScriptName = $HTTP_SERVER_VARS['SCRIPT_NAME'];
-$Title      = 'pfSense: execute command';
 
 // Get year.
 
 $arrDT   = localtime();
 $intYear = $arrDT[5] + 1900;
 
+$pgtitle = "Diagnostics: Execute command";
+$closehead = false;
+include("head.inc");
 ?>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<title><?=$Title ?></title>
+
 <script language="javascript">
 <!--
 
@@ -187,8 +180,9 @@ pre {
 -->
 </style>
 </head>
-<body>
-<p><span class="pgtitle"><?=$Title ?></span>
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<?php include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php if (isBlank($_POST['txtCommand'])): ?>
 <p class="red"><strong>Note: this function is unsupported. Use it
 on your own risk!</strong></p>

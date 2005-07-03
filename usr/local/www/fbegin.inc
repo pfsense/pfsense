@@ -74,8 +74,13 @@ function showhide_black(tspan, tri) {
 	</td>
   </tr>
   <tr valign="top">
-    <td width="150" bgcolor="#000000">
-	<table width="100%" border="0" cellpadding="6" cellspacing="0">
+    <td width="150">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+	  <tr height='1'>
+	    <td><div id="niftyMenuTop"></div></td>
+	  </tr>
+	</table>
+	<table width="100%" border="0" cellpadding="6" cellspacing="0" bgcolor="#000000">
         <tr>
           <td nowrap><span class="navlnk"><font color="#FFFFFF"> <strong>System</strong>
               <br>
@@ -171,6 +176,18 @@ function showhide_black(tspan, tri) {
 			  </span>
 			  </font></span>
             </td>
-        </tr></table></td>
+        </tr></table>
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF">
+	  <tr height='1'>
+	    <td><div id="niftyMenuBottom"></div></td>
+	  </tr>
+	</table>
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#niftyMenuTop","top","#FFFFFF","#000000","smooth");
+NiftyCheck();
+Rounded("div#niftyMenuBottom","bottom","#FFFFFF","#000000","smooth");
+</script>
+</td>
     <td width="600"><table width="100%" border="0" cellpadding="10" cellspacing="0">
         <tr><td>

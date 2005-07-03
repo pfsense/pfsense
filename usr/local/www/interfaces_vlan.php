@@ -92,7 +92,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">Interfaces: Assign network ports: VLANs</p>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (file_exists($d_sysrebootreqd_path)) print_info_box(get_std_save_message(0)); ?>
 <div id="mainarea">
@@ -100,8 +100,8 @@ include("head.inc");
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Interface assignments", true, "interfaces_assign.php");
-	$tab_array[1] = array("VLANs", false, "interfaces_vlan.php");
+	$tab_array[0] = array("Interface assignments", false, "interfaces_assign.php");
+	$tab_array[1] = array("VLANs", true, "interfaces_vlan.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

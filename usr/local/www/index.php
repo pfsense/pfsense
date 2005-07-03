@@ -54,6 +54,7 @@ if(file_exists("/trigger_initial_wizard")) {
 	unlink("/trigger_initial_wizard");
 	conf_mount_ro();
 
+$pgtitle = "pfSense first time setup";
 include("head.inc");
 
 ?>

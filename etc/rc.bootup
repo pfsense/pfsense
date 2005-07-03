@@ -212,9 +212,6 @@
 	system_start_ftp_helpers();
 	echo "done.\n";
 
-	/* start IPsec tunnels */
-	vpn_ipsec_configure();
-
 	/* setup interface microcode which improves tcp/ip speed */
 	setup_microcode();
 
@@ -222,6 +219,9 @@
 	interfaces_carp_configure();
 	
 	mwexec("/sbin/pfctl -f /tmp/rules.debug");
+	
+	/* start IPsec tunnels */
+	vpn_ipsec_configure();
 
 	/* done */
 	unlink("{$g['varrun_path']}/booting");

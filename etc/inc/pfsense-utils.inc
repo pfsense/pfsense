@@ -912,5 +912,25 @@ function get_disk_info() {
 		    echo "Rounded(\"div#tabdeactive{$x}\",\"top\",\"#FFF\",\"#777777\",\"smooth\");\n";
 	    echo "</script>";
     }
+
+
+function display_topbar($text = "") {
+	echo "     <table width='100%' cellpadding='0' cellspacing='0'>\n";
+	echo "       <tr height='1'>\n";
+	echo "         <td width='100%' valign='top' color='#990000' bgcolor='#990000'><div id='topbar'></div></td>\n";
+	echo "       </tr>\n";
+	echo "       <tr height='1'>\n";
+	if ($text != "")
+		echo "         <td height='1' class='listtopic'>{$text}</td>\n";
+	else
+		echo "         <td height='1' class='listtopic'></td>\n";
+	echo "       </tr>\n";
+	echo "     </table>";
+
+	echo "<script type=\"text/javascript\">";
+	echo "NiftyCheck();\n";
+	echo "Rounded(\"div#topbar\",\"top\",\"#FFFFFF\",\"#990000\",\"smooth\");\n";
+	echo "</script>";
+}
 	
 ?>

@@ -390,10 +390,10 @@ if ($pkg['tabs'] <> "") {
 			}
 			$interfaces = &$config['interfaces'];
 			if($pkga['all_interfaces'] <> "") {
-				$ints = `/sbin/ifconfig -l`;
-				$ints = split(" ", $ints);
+				$ints = split(" ", `/sbin/ifconfig -l`);
 				$interfaces = array();
 				foreach ($ints as $int) {
+					$interfaces[]['descr'] = $int;
 					$interfaces[] = $int;
 				}
 			}
@@ -403,13 +403,16 @@ if ($pkg['tabs'] <> "") {
 			  else
 				  $ifdescr = strtoupper($ifname);
 			  $ifname = $iface['descr'];
+			  if($pkga['all_interfaces'] <> "")
+				$ifdescr = $iface;
 			  $SELECTED = "";
 			  if($value == $ifdescr) $SELECTED = " SELECTED";
 			  $to_echo =  "<option value='" . $ifdescr . "'" . $SELECTED . ">" . $ifdescr . "</option>\n";
 			  $to_echo .= "<!-- {$value} -->";
+			  $to_echo .= "<!-- {$iface} -->";
 			  $canecho = 0;
 			  if($pkga['interface_filter'] <> "") {
-				if(stristr($value, $pkga['interface_filter']) == true)
+				if(stristr($iface, $pkga['interface_filter']) == true)
 					$canecho = 1;
 			  } else {
 				$canecho = 1;
@@ -417,8 +420,7 @@ if ($pkg['tabs'] <> "") {
 			  if($canecho == 1) 
 				echo $to_echo;
 			}
-			if($canecho == 1) 
-				echo "</select>\n<br>" . fixup_string($pkga['description']) . "\n";
+			echo "</select>\n<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "radio") {
 			echo "<input type='radio' name='" . $pkga['fieldname'] . "' value='" . $value . "'>";
 	      } else if($pkga['type'] == "rowhelper") {

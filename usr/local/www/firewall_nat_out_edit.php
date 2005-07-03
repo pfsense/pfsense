@@ -131,7 +131,7 @@ if ($_POST) {
             . $_POST['destination_subnet'];
 
 	if ($_POST['target']) {
-		/* check for clashes with 1:1 NAT (Server NAT is OK) */
+		/* check for clashes with 1:1 NAT (NAT Addresses is OK) */
 		if (is_array($config['nat']['onetoone'])) {
 			foreach ($config['nat']['onetoone'] as $natent) {
 				if (check_subnets_overlap($_POST['target'], 32, $natent['external'], $natent['subnet'])) {
@@ -244,8 +244,9 @@ function sourcesel_change() {
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_nat_out_edit.php" method="post" name="iform" id="iform">
+              <?display_topbar()?>
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-			      <tr>
+	        <tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
 					<select name="interface" class="formfld">

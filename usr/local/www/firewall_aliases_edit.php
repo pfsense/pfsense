@@ -133,8 +133,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "System: Firewall: Aliases: Edit alias";
-$closehead = false;
+$pgtitle = "System: Firewall: Aliases: Edit";
 include("head.inc");
 
 ?>
@@ -203,7 +202,6 @@ function update_box_type() {
 
 -->
 </script>
-</head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
@@ -232,6 +230,9 @@ rowtype[2] = "select";
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_aliases_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
+                <tr>
+                  <td colspan="2" valign="top" class="listtopic">Edit Alias</td>
+                </tr>
                 <tr>
                   <td valign="top" class="vncellreq">Name</td>
                   <td class="vtable"> <input name="name" type="text" class="formfld" id="name" size="40" value="<?=htmlspecialchars($pconfig['name']);?>">

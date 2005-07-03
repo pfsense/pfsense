@@ -125,7 +125,7 @@ if (isset($_POST['del_x'])) {
         }
 }
 
-$pgtitle = "Firewall: NAT: Inbound";
+$pgtitle = "Firewall: NAT: Port Forward";
 include("head.inc");
 
 ?>
@@ -144,11 +144,11 @@ include("head.inc");
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Inbound", true, "firewall_nat.php");
-	$tab_array[1] = array("Server NAT", false, "firewall_nat_server.php");
+	$tab_array[0] = array("Port Forward", true, "firewall_nat.php");
+	$tab_array[1] = array("NAT Addresses", false, "firewall_nat_server.php");
 	$tab_array[2] = array("1:1", false, "firewall_nat_1to1.php");
 	$tab_array[3] = array("Outbound", false, "firewall_nat_out.php");
-	$tab_array[4] = array("Outgoing Load Balancing", false, "firewall_nat_out_load_balancing.php");
+	$tab_array[4] = array("Outbound Load Balancing", false, "firewall_nat_out_load_balancing.php");
 	display_top_tabs($tab_array);
 ?>
  </td></tr>

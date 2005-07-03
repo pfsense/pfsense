@@ -188,8 +188,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "Firewall: NAT: Edit inbound";
-$closehead = false;
+$pgtitle = "Firewall: NAT: Port Forward: Edit";
 include("head.inc");
 
 ?>
@@ -222,15 +221,15 @@ function ext_rep_change() {
 }
 //-->
 </script>
-</head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_nat_edit.php" method="post" name="iform" id="iform">
+	      <?display_topbar()?>
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-			  	<tr>
+	  	<tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
 					<select name="interface" class="formfld">
@@ -263,7 +262,7 @@ function ext_rep_change() {
                     <span class="vexpl">
 					If you want this rule to apply to another IP address than the IP address of the interface chosen above,
 					select it here (you need to define IP addresses on the
-					<a href="firewall_nat_server.php">Server NAT</a> page first).  Also note that if you are trying to redirect connections on the LAN select the "any" option.</span></td>
+					<a href="firewall_nat_server.php">NAT Addresses</a> page first).  Also note that if you are trying to redirect connections on the LAN select the "any" option.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Protocol</td>

@@ -65,7 +65,7 @@ if ($_POST) {
 	}
 
 	if ($_POST['ipaddr'] == $config['interfaces']['wan']['ipaddr'])
-		$input_errors[] = "The WAN IP address may not be used in a Server NAT entry.";
+		$input_errors[] = "The WAN IP address may not be used in a NAT Address entry.";
 
 	/* check for overlaps with other server NAT */
 	foreach ($a_snat as $natent) {
@@ -112,7 +112,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "Firewall: NAT: Server NAT: Edit";
+$pgtitle = "Firewall: NAT: NAT Addresses: Edit";
 include("head.inc");
 
 ?>
@@ -122,6 +122,7 @@ include("head.inc");
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_nat_server_edit.php" method="post" name="iform" id="iform">
+              <?display_topbar()?>
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">External IP address</td>

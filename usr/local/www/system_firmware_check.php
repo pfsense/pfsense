@@ -59,7 +59,6 @@ include("head.inc");
 			}
 		//-->
 		</SCRIPT>
-		<div id="bottomonly">
 		<table width="100%" border="0" cellpadding="0" cellspacing="0">
 			<tr>
 				<td>
@@ -73,11 +72,12 @@ include("head.inc");
 				</td>
 			</tr>
 			<tr>
-				<td class="tabcont">
+				<td>
 <?php
 if(is_array($versions)) {
 ?>
-					<table align="center" width="60%" border="0" cellpadding="0" cellspacing="0">
+					<div id="mainarea">
+					<table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" class="tabcont">
 						<tr>
 							<td width="10%" class="listhdrr">Act</td>
 							<td width="30%" class="listhdrr">Category</td>
@@ -204,6 +204,7 @@ if(is_array($versions)) {
 							</td>
 						</tr>
 					</table>
+		</div>
 <?php
 	}
 } else {
@@ -213,7 +214,6 @@ if(is_array($versions)) {
 				</td>
 			</tr>
 		</table>
-		</div>
 <?php
 include("fend.inc");
 $versions['cachetime'] = time();
@@ -221,9 +221,5 @@ $fout = fopen("/tmp/versioncheck.cache", "w");
 fwrite($fout, serialize($versions));
 fclose($fout);
 ?>
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#bottomonly","bl br","#FFF","#eeeeee","smooth");
-</script>
 	</body>
 </html>

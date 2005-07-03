@@ -150,8 +150,9 @@ print_info_box($sig_warning);
 		</td>
 	</tr>
   <tr>
-    <td class="tabcont">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+    <td>
+	<div id="mainarea">
+              <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
 		 <td colspan="2" class="listtopic">Invoke pfSense Manual Upgrade</td>
 		</tr>
@@ -185,6 +186,7 @@ print_info_box($sig_warning);
                     has started. The firewall will reboot automatically after
                     storing the new firmware. The configuration will be maintained.</span></td>
               </table>
+		</div>
 		</tr>
 		</td>
 </table>
@@ -194,4 +196,3 @@ print_info_box($sig_warning);
 <?php include("fend.inc"); ?>
 </body>
 </html>
-

@@ -82,7 +82,8 @@ function update_description(itemnum) {
 ?>
 		</td>
 	</tr>
-	<tr><td class="tabcont"><table width="100%" border="0" cellpadding="6" cellspacing="0">
+	<tr><td><div id=mainarea>
+	      <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
 	<tr>
 		<td colspan="2" valign="top" class="listtopic">Firmware Branch</td>
 	</tr>
@@ -124,10 +125,7 @@ function update_description(itemnum) {
                     <input name="Submit" type="submit" class="formbtn" value="Save">
                   </td>
                 </tr>
-                <tr>
-                  <td colspan="2" class="list" height="12"></td>
-                </tr>
-              </table></td></tr></table>
+              </table></div></td></tr></table>
 </form>
 <?php include("fend.inc"); ?>
 </body>

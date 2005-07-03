@@ -60,8 +60,9 @@ include("head.inc");
     </td>
   </tr>
 	<tr>
-	  <td class="tabcont">
-	      <table width="100%" border="0" cellpadding="6" cellspacing="0">
+	  <td>
+	      <div id="mainarea">
+	      <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
 		  <td>
 		      <!-- progress bar -->
@@ -79,6 +80,7 @@ include("head.inc");
 		  </td>
 		</tr>
 	      </table>
+	      </div>
 	  </td>
 	</tr>
 </table>
@@ -157,5 +159,4 @@ if($didupdate == true) {
 }
 
 echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';\n</script>";
-
 ?>

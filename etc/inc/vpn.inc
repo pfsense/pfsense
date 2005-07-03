@@ -34,14 +34,45 @@
 /* include all configuration functions */
 require_once("functions.inc");
 	
+function vpn_ipsec_failover_configure() {
+	global $config, $g;
+
+	/* is failover vpn enabled? */
+	if(!isset($config['ipsec']['failover']['enable']))
+		return;
+
+	$curwanip = get_current_wan_address();
+
+	$sasyncd = "";
+
+	if($config['ipsec']['failover']['peer'])
+		$sasyncd .= "peer {$config['ipsec']['failover']['peer']}\n";
+
+	if($config['ipsec']['failover']['interface'])
+		$sasyncd .= "carp interface {$config['ipsec']['failover']['interface']}\n";
+
+	if($config['ipsec']['failover']['sharedkey'])
+		$sasyncd .= "sharedkey {$config['ipsec']['failover']['sharedkey']}\n";
+
+	$fd = fopen("{$g['varetc_path']}/sasyncd.conf", "w");
+	fwrite($fd, $sasyncd);
+	fclose($fd);
+	chmod("{$g['varetc_path']}/sasyncd.conf", 0600);
+	
+	/* launch sasyncd, oh wise one */
+	mwexec("/usr/local/sbin/sasyncd");
+}
+	
 function vpn_ipsec_configure($ipchg = false) {
 	global $config, $g;
 	
 	$curwanip = get_current_wan_address();
 
-	/* if we defined a listen ip, lets set up */
-	if($config['ipsec']['ip'] <> "")
-		$curwanip = $config['ipsec']['ip'];
+	/* setup for failover ipsec */
+	if($config['ipsec']['failover']['ip'] <> "")
+		$curwanip = $config['ipsec']['failover']['ip'];
+
+	vpn_ipsec_failover_configure();
 	
 	$syscfg = $config['system'];
 	$ipseccfg = $config['ipsec'];
@@ -117,8 +148,8 @@ function vpn_ipsec_configure($ipchg = false) {
 						$number_of_gifs = find_last_gif_device();
 						$number_of_gifs++;
 						$curwanip = get_current_wan_address();
-						if($config['ipsec']['ip'] <> "")
-							$curwanip = $config['ipsec']['ip'];
+						if($config['ipsec']['failover']['ip'] <> "")
+							$curwanip = $config['ipsec']['failover']['ip'];
 						mwexec("/sbin/ifconfig gif" . $number_of_gifs . " tunnel" . $curwanip . " " . $tunnel['remote-gateway']);
 						mwexec("/sbin/ifconfig gif" . $number_of_gifs . " {$lansa}/{$lansn} {$lanip}/32");
 					}
@@ -148,9 +179,9 @@ function vpn_ipsec_configure($ipchg = false) {
 				return 1;
 			}
 
-			if($config['ipsec']['ip'] <> "") {
+			if($config['ipsec']['failover']['ip'] <> "") {
 
-				$interface_ip = $config['ipsec']['ip'];
+				$interface_ip = $config['ipsec']['failover']['ip'];
 				$racoonconf .= <<<EOD
 listen {
 	isakmp {$interface_ip} [500];

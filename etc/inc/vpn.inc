@@ -699,8 +699,8 @@ EOD;
 	}
 	
 	if (!$g['booting']) {
-		/* reload the filter */
-		filter_configure();
+		/* set the reload filter dity flag */
+		touch("{$g['tmp_path']}/filter_boot_dirty");
 	}
 	
 	if ($g['booting'])

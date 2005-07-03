@@ -119,8 +119,8 @@ function interfaces_lan_configure() {
 		/* reconfigure static routes (kernel may have deleted them) */
 		system_routing_configure();
 
-		/* reload ipfilter (address may have changed) */
-		filter_configure();
+		/* set the reload filter dity flag */
+		touch("{$g['tmp_path']}/filter_boot_dirty");
 
 		/* reload IPsec tunnels */
 		vpn_ipsec_configure();
@@ -156,8 +156,8 @@ function interfaces_optional_configure() {
 		/* reconfigure static routes (kernel may have deleted them) */
 		system_routing_configure();
 
-		/* reload ipfilter (address may have changed) */
-		filter_configure();
+		/* set the reload filter dity flag */
+		touch("{$g['tmp_path']}/filter_boot_dirty");
 
 		/* reload IPsec tunnels */
 		vpn_ipsec_configure();
@@ -466,8 +466,8 @@ function interfaces_wan_configure() {
 		/* reconfigure static routes (kernel may have deleted them) */
 		system_routing_configure();
 
-		/* reload ipfilter */
-		filter_configure();
+		/* set the reload filter dity flag */
+		touch("{$g['tmp_path']}/filter_boot_dirty");
 
 		/* reload ipsec tunnels */
 		vpn_ipsec_configure();

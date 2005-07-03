@@ -267,7 +267,8 @@ function services_dhcrelay_configure() {
 	mwexec($cmd);
 
 	if (!$g['booting']) {
-		filter_configure();
+		/* set the reload filter dity flag */
+		touch("{$g['tmp_path']}/filter_boot_dirty");
 	}
 
 	return 0;

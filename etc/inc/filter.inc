@@ -159,7 +159,7 @@ function filter_configure() {
 					if(stristr($file, ".sh") == true) {
 						mwexec("/usr/local/pkg/pf/" . $file . " start");
 					} else {
-						if(stristr($text,"CVS") == false) {
+						if(stristr($file,"CVS") == false) {
 							if($g['booting'] == true)
 								echo "\t{$file}... ";
 							eval($text);

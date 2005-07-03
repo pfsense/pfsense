@@ -35,6 +35,12 @@
 			<type>interfaces_selection</type>
 		</field>
 		<field>
+			<fielddescr>Failover IP</fielddescr>
+			<fieldname>ip</fieldname>
+			<description>Enter the IP address you would like to use for failover</description>
+			<type>input</type>
+		</field>
+		<field>
 			<fielddescr>Peer IP</fielddescr>
 			<fieldname>peerip</fieldname>
 			<description>Enter the peers ip address</description>

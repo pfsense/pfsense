@@ -166,6 +166,8 @@ function sf() { document.forms[0].savetopath.focus(); }
 </table>
 </div>
 
+<br>
+
   <table width='100%'>
     <tr>
       <td valign="top" class="label">

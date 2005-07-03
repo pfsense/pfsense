@@ -65,6 +65,14 @@ if [ ! -L /etc/dhclient.conf ]; then
     ln -s /var/etc/dhclient.conf /etc/dhclient.conf
 fi
 
+if [ ! -L /etc/sasyncd.conf ]; then
+    touch /var/etc/sasyncd.conf
+    rm -rf /etc/sasyncd.conf
+    ln -s /var/etc/sasyncd.conf /etc/sasyncd.conf
+    chown root /var/etc/sasyncd.conf
+    chmod 0600 /var/etc/sasyncd.conf
+fi
+
 [ ! -d /cf/conf/backup/ ] || mkdir -p /cf/conf/backup/ 2>/dev/null
 
 set -T

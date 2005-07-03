@@ -878,6 +878,14 @@ function get_disk_info() {
         // $size, $used, $avail, $cap
 }
 
+/****f* pfsense-utils/display_top_tabs
+ * NAME
+ *   display_top_tabs - display tabs with rounded edges
+ * INPUTS
+ *   $text	- array of tabs
+ * RESULT
+ *   null
+ ******/
     function display_top_tabs($tab_array) {
 	    echo "<table cellpadding='0' cellspacing='0'>\n";
 	    echo " <tr height='1'>\n";
@@ -914,6 +922,14 @@ function get_disk_info() {
     }
 
 
+/****f* pfsense-utils/display_topbar
+ * NAME
+ *   display_topbar - top a table off with rounded edges
+ * INPUTS
+ *   $text	- (optional) Text to include in bar
+ * RESULT
+ *   null
+ ******/
 function display_topbar($text = "") {
 	echo "     <table width='100%' cellpadding='0' cellspacing='0'>\n";
 	echo "       <tr height='1'>\n";

@@ -165,8 +165,8 @@ function typesel_change() {
 </script>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
-<p class="pgtitle">Services: Proxy ARP: Edit</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="services_proxyarp_edit.php" method="post" name="iform" id="iform">
               <?display_topbar()?>

@@ -147,12 +147,9 @@ include("head.inc");
 
 ?>
 	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?  include('fbegin.inc'); ?>
+<? include('fbegin.inc'); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 		<form action="vpn_ipsec_ca_edit_create_cert.php" method="post" name="iform" id="iform">
-			<p class="pgtitle">
-				<?=$pgtitle?>
-			</p>
 <?
 	if($input_errors)
 		print_input_errors($input_errors);
@@ -194,22 +191,15 @@ include("head.inc");
 </html>
 <?
 } else { //if($_POST)
+$pgtitle = "VPN: IPSec: Certificate Authority: Create Certificate";
+include("head.inc");
+
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-	<head>
-		<title><?=gentitle('System: Advanced functions')?></title>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-		<link href="gui.css" rel="stylesheet" type="text/css">
-	</head>
-	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<? include('fbegin.inc'); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
+
 		<form action="vpn_ipsec_ca_edit_create_cert.php" method="post" name="iform" id="iform">
-<?
-	include('fbegin.inc');
-?>
-			<p class="pgtitle">
-				System: Advanced - Create Certificates
-			</p>
 			<table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
 					<td nowrap="nowrap" width="30%" class="vncell"><b>Country Code (2 Letters)</b></td>

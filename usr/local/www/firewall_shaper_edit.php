@@ -279,7 +279,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "Firewall: Shaper: Edit rule";
+$pgtitle = "Firewall: Shaper: Rules: Edit";
 $closehead = false;
 include("head.inc");
 ?>

@@ -84,7 +84,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "Services: Wake on LAN: Edit entry";
+$pgtitle = "Services: Wake on LAN: Edit";
 include("head.inc");
 
 ?>

@@ -492,6 +492,7 @@ EOD;
 			chmod("{$g['varetc_path']}/psk.txt", 0600);
 			
 			/* start racoon */
+			echo " racoon ";
 			mwexec("/usr/local/sbin/racoon -d -f {$g['varetc_path']}/racoon.conf");
 			
 			if (is_array($ipseccfg['tunnel'])) {
@@ -500,7 +501,7 @@ EOD;
 						$remotehost = substr($tunnel['remote-subnet'],0,strpos($tunnel['remote-subnet'],"/"));
 						$srchost = vpn_endpoint_determine($tunnel, $curwanip);
 						if ($srchost)
-							mwexec_bg("/sbin/ping -c 1 -S {$srchost} {$remotehost}");
+							mwexec_bg("/sbin/ping -c 5 -S {$srchost} {$remotehost}");
 					}
 				}
 			}
@@ -508,8 +509,8 @@ EOD;
 	}
 	
 	if (!$g['booting']) {
-		/* reload the filter */
-		filter_configure();
+		/* set the reload filter dity flag */
+		touch("{$g['tmp_path']}/filter_boot_dirty");
 	}
 	
 	if ($g['booting'])

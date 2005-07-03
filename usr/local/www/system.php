@@ -187,7 +187,6 @@ include("head.inc");
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<p class="pgtitle">System: General setup</p>
 <form action="system.php" method="post">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>

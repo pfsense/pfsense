@@ -54,6 +54,17 @@ function vpn_ipsec_failover_configure() {
 	if($config['ipsec']['failover']['sharedkey'])
 		$sasyncd .= "sharedkey {$config['ipsec']['failover']['sharedkey']}\n";
 
+	if($config['ipsec']['failover']['mode'])
+		$sasyncd .= "mode {$config['ipsec']['failover']['mode']}\n";
+
+	if($config['ipsec']['failover']['listenon'])
+		$sasyncd .= "listen on {$config['ipsec']['failover']['listenon']}\n";
+
+	if($config['ipsec']['failover']['flushmodesync'])
+		$sasyncd .= "flushmode sync {$config['ipsec']['failover']['flushmodesync']}\n";
+
+
+
 	$fd = fopen("{$g['varetc_path']}/sasyncd.conf", "w");
 	fwrite($fd, $sasyncd);
 	fclose($fd);

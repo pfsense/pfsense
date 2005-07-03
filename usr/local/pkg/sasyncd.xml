@@ -6,7 +6,7 @@
 	<!-- configpath gets expanded out automatically and config items will be
          stored in that location -->
 	<configpath>['ipsec']['failover']</configpath>
-	<aftersaveredirect>pkg_edit.php?xml=sassyncd.xml&amp;id=0</aftersaveredirect>
+	<aftersaveredirect>pkg_edit.php?xml=sasyncd.xml&amp;id=0</aftersaveredirect>
 	<!-- Menu is where this packages menu will appear -->
 	<menu>
 	    <name>VPN failover</name>

@@ -142,7 +142,7 @@ function sf() { document.forms[0].savetopath.focus(); }
 <body onLoad="sf();">
 <p><span class="pgtitle"><?=$Title ?></span>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if ($loadmsg) echo "<p><b>{$loadmsg}<p>"; ?>
+<?php if ($loadmsg) echo "<p><b><div style=\"background:#eeeeee\" id=\"shapeme\">&nbsp;&nbsp;&nbsp;{$loadmsg}</div><br>"; ?>
 <form action="edit.php" method="POST">
 
 <div id="shapeme">

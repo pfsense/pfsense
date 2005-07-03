@@ -166,12 +166,14 @@ function sf() { document.forms[0].savetopath.focus(); }
 </table>
 </div>
 
-<br>
-
   <table width='100%'>
     <tr>
       <td valign="top" class="label">
+	<div style="background:#eeeeee" id="textareaitem">
+	&nbsp;<br>&nbsp;
 	<textarea name="code" language="<?php echo $language; ?>" rows="<?php echo $rows; ?>" cols="<?php echo $cols; ?>" name="content"><?php echo htmlentities($content); ?></textarea><br>
+	&nbsp;
+	</div>
         <p>
     </td>
     </tr>
@@ -206,4 +208,5 @@ sf();
 <script type="text/javascript">
 NiftyCheck();
 Rounded("div#shapeme","all","#FFF","#eeeeee","smooth");
+Rounded("div#textareaitem","all","#FFF","#eeeeee","smooth");
 </script>

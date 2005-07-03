@@ -148,6 +148,10 @@ function showhide_black(tspan, tri) {
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_wireless.php" class="navlnk">Wireless</a><br>
 			<?php endif; ?>
 			<?php echo return_ext_menu("Status"); ?>
+<?php if (isset($config['system']['developer'])) { ?> 
+              <strong>Developers</strong><br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/restart_httpd.php" class="navlnk">Restart HTTPD</a><br>
+<?php } ?>
 			<?php if (isset($config['system']['webgui']['expanddiags']) || strstr($_SERVER['SCRIPT_FILENAME'], "diag_") || strstr($_SERVER['SCRIPT_FILENAME'], "reboot")): ?>
 		<a href="javascript:showhide('diag','tri_diag')"><img src="/tri_o.gif" id="tri_diag" width="14" height="10" border="0"></a><strong><a href="javascript:showhide('diag','tri_diag')" class="navlnk">Diagnostics</a></strong><br>
 		<span id="diag">

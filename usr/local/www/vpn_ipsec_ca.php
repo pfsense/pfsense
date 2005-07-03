@@ -75,7 +75,7 @@ include("head.inc");
   </td></tr>
   <tr> 
     <td class="tabcont">
-              <table width="80%" border="0" cellpadding="0" cellspacing="0">
+              <table width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr> 
                   <td class="listhdrr">Identifier</td>
                   <td class="list"></td>

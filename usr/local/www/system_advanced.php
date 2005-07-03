@@ -229,11 +229,10 @@ function update_description(itemnum) {
 }
 
 function openwindow(url) {
-        var oWin = window.open(url,"pfSensePop","width=100,height=50,top=5000,left=5000");
+        var oWin = window.open(url,"pfSensePop","width=620,height=400,top=150,left=150");
         if (oWin==null || typeof(oWin)=="undefined") {
                 return false;
         } else {
-                oWin.close();
                 return true;
         }
 }

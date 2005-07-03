@@ -118,8 +118,8 @@ include("head.inc");
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="vpn_pptp_users_edit.php" method="post" name="iform" id="iform">
-              <div id="mainarea">
               <?display_topbar()?>
+              <div id="mainarea">
 	      <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Username</td>
@@ -142,8 +142,8 @@ include("head.inc");
                     <br><span class="vexpl">If you want the user to be assigned a specific IP address, enter it here.</span></td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
+                  <td class="vncell" width="22%" valign="top">&nbsp;</td>
+                  <td class="vncell" width="78%"> 
                     <input name="Submit" type="submit" class="formbtn" value="Save"> 
                     <?php if (isset($id) && $a_secret[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
@@ -154,11 +154,6 @@ include("head.inc");
 	      </div>
 </form>
 <?php include("fend.inc"); ?>
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
-</script>
-
 </body>
 </html>
 

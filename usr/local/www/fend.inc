@@ -9,5 +9,6 @@
 </div>
 <script type="text/javascript">
 NiftyCheck();
+Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
 Rounded("div#niftyOutter","bl br","#FFF","#990000","smooth");
 </script>

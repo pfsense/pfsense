@@ -429,8 +429,11 @@ function type_change(enable_change,enable_change_pptp) {
             <form action="interfaces_wan.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
-                  <td valign="middle"><strong>Type</strong></td>
-                  <td> <select name="type" class="formfld" id="type" onchange="type_change()">
+                  <td colspan="2" valign="top" class="listtopic">General configuration</td>
+                </tr>
+                <tr>
+                  <td valign="middle" class="vncell"><strong>Type</strong></td>
+                  <td class="vtable"> <select name="type" class="formfld" id="type" onchange="type_change()">
                       <?php $opts = split(" ", "Static DHCP PPPoE PPTP BigPond");
 				foreach ($opts as $opt): ?>
                       <option <?php if ($opt == $pconfig['type']) echo "selected";?>>
@@ -438,12 +441,6 @@ function type_change(enable_change,enable_change_pptp) {
                       </option>
                       <?php endforeach; ?>
                     </select></td>
-                </tr>
-                <tr>
-                  <td colspan="2" valign="top" height="4"></td>
-                </tr>
-                <tr>
-                  <td colspan="2" valign="top" class="listtopic">General configuration</td>
                 </tr>
                 <tr>
                   <td valign="top" class="vncell">MAC address</td>

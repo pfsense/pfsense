@@ -41,8 +41,6 @@ function vpn_ipsec_failover_configure() {
 	if(!isset($config['ipsec']['failover']['enable']))
 		return;
 
-	$curwanip = get_current_wan_address();
-
 	$sasyncd = "";
 
 	if($config['ipsec']['failover']['peer'])
@@ -199,7 +197,7 @@ listen {
 EOD;
 			}
 				
-			$racoonconf = "path pre_shared_key \"{$g['varetc_path']}/psk.txt\";\n\n";
+			$racoonconf .= "path pre_shared_key \"{$g['varetc_path']}/psk.txt\";\n\n";
 			$racoonconf .= "path certificate  \"{$g['varetc_path']}\";\n\n";
 			
 			/* generate CA certificates files */

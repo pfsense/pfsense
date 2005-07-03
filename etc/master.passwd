@@ -18,3 +18,4 @@ nobody:*:65534:65534::0:0:Unprivileged user:/nonexistent:/usr/sbin/nologin
 dhcpd:*:1002:1002::0:0:DHCP Daemon:/nonexistent:/sbin/nologin
 admin:*:0:0::0:0:Admin User:/root:/etc/rc.initial
 _dhcp:*:65:65::0:0:dhcp programs:/var/empty:/usr/sbin/nologin
+_isakmpd:*:68:68::0:0:isakmpd privsep:/var/empty:/sbin/nologin

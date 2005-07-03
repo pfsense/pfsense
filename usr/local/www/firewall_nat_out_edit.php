@@ -196,7 +196,7 @@ if ($_POST) {
     }
 }
 
-$pgtitle = "Firewall: NAT: Outbound: Edit mapping";
+$pgtitle = "Firewall: NAT: Outbound: Edit";
 $closehead = false;
 include("head.inc");
 

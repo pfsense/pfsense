@@ -35,9 +35,17 @@ require("guiconfig.inc");
 if (!is_array($config['snmpd'])) {
 	$config['snmpd'] = array();
 	$config['snmpd']['rocommunity'] = "public";
+	$config['snmpd']['pollport'] = "161";
 }
 
+if (!is_array($config['snmpd']['modules'])) {
+	$config['snmpd']['modules'] = array();
+	$config['snmpd']['modules']['mibii'] = true;
+	$config['snmpd']['modules']['netgraph'] = true;
+	$config['snmpd']['modules']['pf'] = true;
+}
 $pconfig['enable'] = isset($config['snmpd']['enable']);
+$pconfig['pollport'] = $config['snmpd']['pollport'];
 $pconfig['syslocation'] = $config['snmpd']['syslocation'];
 $pconfig['syscontact'] = $config['snmpd']['syscontact'];
 $pconfig['rocommunity'] = $config['snmpd']['rocommunity'];
@@ -50,6 +58,10 @@ $pconfig['trapserver'] = $config['snmpd']['trapserver'];
 $pconfig['trapserverport'] = $config['snmpd']['trapserverport'];
 $pconfig['trapstring'] = $config['snmpd']['trapstring'];
 
+$pconfig['mibii'] = isset($config['snmpd']['modules']['mibii']);
+$pconfig['netgraph'] = isset($config['snmpd']['modules']['netgraph']);
+$pconfig['pf'] = isset($config['snmpd']['modules']['pf']);
+
 if ($_POST) {
 
 	unset($input_errors);
@@ -59,7 +71,10 @@ if ($_POST) {
 	if ($_POST['enable']) {
 		$reqdfields = explode(" ", "rocommunity");
 		$reqdfieldsn = explode(",", "Community");
-		
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+
+		$reqdfields = explode(" ", "pollport");
+		$reqdfieldsn = explode(",", "Polling Port");
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	}
 
@@ -67,9 +82,11 @@ if ($_POST) {
 		$reqdfields = explode(" ", "trapserver");
 		$reqdfieldsn = explode(",", "Trap server");
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+
 		$reqdfields = explode(" ", "trapserverport");
 		$reqdfieldsn = explode(",", "Trap server port");
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+
 		$reqdfields = explode(" ", "trapstring");
 		$reqdfieldsn = explode(",", "Trap string");
 		do_input_validation($_POST, $reqdfields, $reqdfields, $reqdfieldsn, &$input_errors);
@@ -88,6 +105,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$config['snmpd']['enable'] = $_POST['enable'] ? true : false;
+		$config['snmpd']['pollport'] = $_POST['pollport'];
 		$config['snmpd']['syslocation'] = $_POST['syslocation'];	
 		$config['snmpd']['syscontact'] = $_POST['syscontact'];
 		$config['snmpd']['rocommunity'] = $_POST['rocommunity'];
@@ -100,6 +118,9 @@ if ($_POST) {
 		$config['snmpd']['trapserverport'] = $_POST['trapserverport'];
 		$config['snmpd']['trapstring'] = $_POST['trapstring'];
 		
+		$config['snmpd']['modules']['mibii'] = $_POST['mibii'] ? true : false;
+		$config['snmpd']['modules']['netgraph'] = $_POST['netgraph'] ? true : false;
+		$config['snmpd']['modules']['pf'] = $_POST['pf'] ? true : false;
 			
 		write_config();
 		
@@ -153,6 +174,7 @@ function enable_change(whichone) {
 
 	if( document.iform.enable.checked == true )
 	{
+	    document.iform.pollport.disabled = false;
 	    document.iform.syslocation.disabled = false;
 	    document.iform.syscontact.disabled = false;
 	    document.iform.rocommunity.disabled = false;
@@ -180,9 +202,13 @@ function enable_change(whichone) {
                 document.iform.trapserverport.disabled = true;
                 document.iform.trapstring.disabled = true;
 	    }
+	    document.iform.mibii.disabled = false;
+	    document.iform.netgraph.disabled = false;
+	    document.iform.pf.disabled = false;
 	}
 	else
 	{
+            document.iform.pollport.disabled = true;
             document.iform.syslocation.disabled = true;
             document.iform.syscontact.disabled = true;
             document.iform.rocommunity.disabled = true;
@@ -194,6 +220,10 @@ function enable_change(whichone) {
             document.iform.trapserver.disabled = true;
             document.iform.trapserverport.disabled = true;
             document.iform.trapstring.disabled = true;
+
+            document.iform.mibii.disabled = true;
+            document.iform.netgraph.disabled = true;
+            document.iform.pf.disabled = true;
 	}
 }
 //-->
@@ -213,27 +243,36 @@ function enable_change(whichone) {
 			<td align="right" class="optsect_s"><input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(this)"> <strong>Enable</strong></td></tr>
   			</table></td>
                 </tr>
+
+                <tr>
+                  <td width="22%" valign="top" class="vncellreq">Polling Port </td>
+                  <td width="78%" class="vtable">
+                    <input name="pollport" type="text" class="formfld" id="pollport" size="40" value="<?=$pconfig['pollport'] ? htmlspecialchars($pconfig['pollport']) : htmlspecialchars(161);?>">
+                    <br>Enter the port to accept polling events on (default 161)</br>
+		  </td>
+                </tr>
+
                 <tr> 
                   <td width="22%" valign="top" class="vncell">System location</td>
                   <td width="78%" class="vtable"> 
                     <input name="syslocation" type="text" class="formfld" id="syslocation" size="40" value="<?=htmlspecialchars($pconfig['syslocation']);?>"> 
                   </td>
                 </tr>
+
                 <tr> 
                   <td width="22%" valign="top" class="vncell">System contact</td>
                   <td width="78%" class="vtable"> 
                     <input name="syscontact" type="text" class="formfld" id="syscontact" size="40" value="<?=htmlspecialchars($pconfig['syscontact']);?>"> 
                   </td>
                 </tr>
+
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Read Community String</td>
                   <td width="78%" class="vtable"> 
                     <input name="rocommunity" type="text" class="formfld" id="rocommunity" size="40" value="<?=htmlspecialchars($pconfig['rocommunity']);?>"> 
-                    <br>
-                    In most cases, &quot;public&quot; is used here</td>
+                    <br>In most cases, &quot;public&quot; is used here</br>
+		  </td>
                 </tr>
-
-
 
 <?php 
 			/* disabled until some docs show up on what this does.
@@ -241,51 +280,60 @@ function enable_change(whichone) {
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable">
 	 	   <input name="rwenable" type="checkbox" value="yes" <?php if ($pconfig['rwenable']) echo "checked"; ?> onClick="enable_change(this)">
-                    <strong>Enable Write Community String</strong></td>
+                    <strong>Enable Write Community String</strong>
+		  </td>
                 </tr>
 
 		<tr>
 		  <td width="22%" valign="top" class="vncellreq">Write community string</td>
           <td width="78%" class="vtable">
                     <input name="rwcommunity" type="text" class="formfld" id="rwcommunity" size="40" value="<?=htmlspecialchars($pconfig['rwcommunity']);?>">
-		    <br>
-                    Please use something other then &quot;private&quot; here</td>
+		    <br>Please use something other then &quot;private&quot; here</br>
+		  </td>
                 </tr>
 		    	*/ 
 ?>
-
-
 
                 <tr>
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable">
                    <input name="trapenable" type="checkbox" value="yes" <?php if ($pconfig['trapenable']) echo "checked"; ?> onClick="enable_change(this)">
-                    <strong>Enable SNMP Traps</strong></td>
+                    <strong>Enable SNMP Traps</strong>
+                  </td>
                 </tr>
 
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Trap server</td>
                   <td width="78%" class="vtable">
                     <input name="trapserver" type="text" class="formfld" id="trapserver" size="40" value="<?=htmlspecialchars($pconfig['trapserver']);?>">
-                    <br>
-                    Enter trap server name</td>
+                    <br>Enter trap server name</br>
+		  </td>
                 </tr>
 
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Trap server port </td>
                   <td width="78%" class="vtable">
                     <input name="trapserverport" type="text" class="formfld" id="trapserverport" size="40" value="<?=$pconfig['trapserverport'] ? htmlspecialchars($pconfig['trapserverport']) : htmlspecialchars(162);?>">
-                    <br>
-                    Enter the port to send the traps to (default 162)</td>
+                    <br>Enter the port to send the traps to (default 162)</br>
+		  </td>
                 </tr>
+
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Trap server port </td>
                   <td width="78%" class="vtable">
                     <input name="trapstring" type="text" class="formfld" id="trapstring" size="40" value="<?=htmlspecialchars($pconfig['trapstring']);?>">
-                    <br>
-                    Trap string</td>
+                    <br>Trap string</br>
+		  </td>
                 </tr>
 
+		<tr>
+		  <td width="22%" valign="top" class="vncellreq">SNMP Modules</td>
+		  <td width="78%" class="vtable">
+		    <input name="mibii" type="checkbox" id="mibii" value="yes" <?php if ($pconfig['mibii']) echo "checked"; ?> >MibII
+		    <input name="netgraph" type="checkbox" id="netgraph" value="yes" <?php if ($pconfig['netgraph']) echo "checked"; ?> >Netgraph
+		    <input name="pf" type="checkbox" id="pf" value="yes" <?php if ($pconfig['pf']) echo "checked"; ?> >PF
+		  </td>
+		</tr>
 
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>

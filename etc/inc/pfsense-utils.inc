@@ -892,20 +892,20 @@ function get_disk_info() {
 	    $tabscounter = 0;
 	    foreach ($tab_array as $ta) {
 		    if($ta[1] == true) {
-			    echo "  <td bgcolor='#EEEEEE'><div id='tabactive'></div></td>\n";
+			    echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\"><div id='tabactive'></div></td>\n";
 		    } else {
-			    echo "  <td bgcolor='#777777'><div id='tabdeactive{$tabscounter}'></div></td>\n";
+			    echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\"><div id='tabdeactive{$tabscounter}'></div></td>\n";
 		    }
 		    $tabscounter++;
 	    }
 	    echo "</tr>\n<tr>\n";
 	    foreach ($tab_array as $ta) {
 		    if($ta[1] == true) {
-			    echo "  <td bgcolor='#EEEEEE'><B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
+			    echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\"><B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
 			    echo "&nbsp;&nbsp;&nbsp;";
 			    echo "<font size='-12'><br>&nbsp;</div></td>\n";
 		    } else {
-			    echo "  <td bgcolor='#777777'><B>&nbsp;&nbsp;&nbsp;<a href='{$ta[2]}'>";
+			    echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\"><B>&nbsp;&nbsp;&nbsp;<a href='{$ta[2]}'>";
 			    echo "<font color='white'>{$ta[0]}</a>&nbsp;&nbsp;&nbsp;";
 			    echo "<font size='-12'><br>&nbsp;</div></td>\n";
 		    }

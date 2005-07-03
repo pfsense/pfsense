@@ -148,7 +148,7 @@ include("fbegin.inc");
                         }
 		    }
                  } else {
-                    echo "<tr><td colspan=\"3\"><center>There are no packages currently installed.</td></tr>";
+                    echo "<tr><td colspan=\"5\"><center>There are no packages currently installed.</td></tr>";
                  }
 		?>
         </table>

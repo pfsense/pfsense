@@ -104,7 +104,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "System: Static routes: Edit route";
+$pgtitle = "System: Static Routes: Edit route";
 include("head.inc");
 
 ?>

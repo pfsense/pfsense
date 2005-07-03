@@ -63,8 +63,6 @@ function vpn_ipsec_failover_configure() {
 	if($config['ipsec']['failover']['flushmodesync'])
 		$sasyncd .= "flushmode sync {$config['ipsec']['failover']['flushmodesync']}\n";
 
-
-
 	$fd = fopen("{$g['varetc_path']}/sasyncd.conf", "w");
 	fwrite($fd, $sasyncd);
 	fclose($fd);

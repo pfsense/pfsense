@@ -7,4 +7,6 @@
     <link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print">
     <link href="gui.css" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="/niftyjsCode.js"></script>
+<?php if (!isset($closehead)){ ?>
 </head>
+<?php } ?>

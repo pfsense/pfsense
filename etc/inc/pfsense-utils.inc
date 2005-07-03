@@ -903,12 +903,21 @@ function get_disk_info() {
 		    if($ta[1] == true) {
 			    echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\"><B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
 			    echo "&nbsp;&nbsp;&nbsp;";
-			    echo "<font size='-12'><br>&nbsp;</div></td>\n";
+			    echo "<font size='-12'>&nbsp;</td>\n";
 		    } else {
 			    echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\"><B>&nbsp;&nbsp;&nbsp;<a href='{$ta[2]}'>";
 			    echo "<font color='white'>{$ta[0]}</a>&nbsp;&nbsp;&nbsp;";
-			    echo "<font size='-12'><br>&nbsp;</div></td>\n";
+			    echo "<font size='-12'>&nbsp;</td>\n";
 		    }
+	    }
+	    echo "</tr>\n<tr height='5px'>\n";
+	    foreach ($tab_array as $ta) {
+		    if($ta[1] == true) {
+			    echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\"></td>\n";
+		    } else {
+			    echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\"></td>\n";
+		    }
+		    $tabscounter++;
 	    }
 	    echo " </tr>\n";
 	    echo "</table>\n";

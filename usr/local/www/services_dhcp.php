@@ -298,8 +298,13 @@ The default is to use the IP of the firewall as the gateway.  Specify an alterna
                       </tr>
                       <tr>
                         <td width="22%" valign="top" class="vncell">Static ARP</td>
-                        <td width="78%" class="vtable"><input type="checkbox" value="yes" name="staticarp" id="staticarp" <?php if($pconfig['staticarp']) echo " checked"; ?>>&nbsp; <b>Enable Static ARP entries</b><br>
-<span class="red"><strong>Note:</strong></span> This feature is under development.  Only the machines listed below will be able to communicate with the firewall on this NIC.  Disabling this has been tested to be broken, a reboot will be required to disable.  Be warned!</td>
+                        <td width="78%" class="vtable">
+				<table>
+					<tr><td><input valign="middle" type="checkbox" value="yes" name="staticarp" id="staticarp" <?php if($pconfig['staticarp']) echo " checked"; ?>>&nbsp;
+					</td><td><b>Enable Static ARP entries</b></td></tr>
+					<tr><td>&nbsp;</td><td><span class="red"><strong>Note:</strong></span> This feature is under development.  Only the machines listed below will be able to communicate with the firewall on this NIC.  Disabling this has been tested to be broken, a reboot will be required to disable.  Be warned!
+				</table>
+			</td>
                       </tr>
                       <tr> 
                         <td width="22%" valign="top">&nbsp;</td>

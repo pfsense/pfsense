@@ -396,11 +396,21 @@ if ($pkg['tabs'] <> "") {
 			  $ifname = $iface['descr'];
 			  $SELECTED = "";
 			  if($value == $ifdescr) $SELECTED = " SELECTED";
-			  echo "<option value='" . $ifdescr . "'" . $SELECTED . ">" . $ifdescr . "</option>\n";
-			  echo "<!-- {$value} -->";
+			  $to_echo =  "<option value='" . $ifdescr . "'" . $SELECTED . ">" . $ifdescr . "</option>\n";
+			  $to_echo .= "<!-- {$value} -->";
+			  $canecho = 0;
+			  if($pkga['interface_filter'] <> "") {
+				if(stristr($value, $pkga['interface_filter']) == true)
+					$canecho = 1;
+			  } else {
+				$canecho = 1;
+			  }
 			}
-			echo "</select>\n";
-			echo "<br>" . fixup_string($pkga['description']) . "\n";
+			if($canecho == 1) {
+				echo $to_echo;
+				echo "</select>\n";
+				echo "<br>" . fixup_string($pkga['description']) . "\n";
+			}
 	      } else if($pkga['type'] == "radio") {
 			echo "<input type='radio' name='" . $pkga['fieldname'] . "' value='" . $value . "'>";
 	      } else if($pkga['type'] == "rowhelper") {

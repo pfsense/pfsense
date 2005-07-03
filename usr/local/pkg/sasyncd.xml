@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<packagegui>
+	<name>sasyncd</name>
+	<version>0.1.0</version>
+	<title>Services: SASYNCD (VPN failover)</title>
+	<!-- configpath gets expanded out automatically and config items will be
+         stored in that location -->
+	<configpath>['installedpackages']['sasyncd']['config']</configpath>
+	<aftersaveredirect>pkg_edit.php?xml=sassyncd.xml&amp;id=0</aftersaveredirect>
+	<!-- Menu is where this packages menu will appear -->
+	<menu>
+	    <name>SASYNCD (VPN failover)</name>
+	    <tooltiptext>The sasyncd daemon synchronizes IPSec SA and SPD information between a number of failover IPsec gateways.  The most typical scenario is to run sasyncd on hosts also running isakmpd and sharing a common IP-address using carp.</tooltiptext>
+	    <section>Services</section>
+	    <configfile>sasyncd.xml</configfile>
+	</menu>
+	<adddeleteeditpagefields>
+	    <columnitem>
+		    <fielddescr>Interface</fielddescr>
+		    <fieldname>interface</fieldname>
+	    </columnitem>
+	    <columnitem>
+		    <fielddescr>Peer IP</fielddescr>
+		    <fieldname>peerip</fieldname>
+	    </columnitem>
+	</adddeleteeditpagefields>
+	<!-- fields gets invoked when the user adds or edits a item.   the following items
+         will be parsed and rendered for the user as a gui with input, and selectboxes. -->
+	<fields>
+		<field>
+			<fielddescr>Interface</fielddescr>
+			<fieldname>interface</fieldname>
+			<description>Select the carp interface to use</description>
+			<interface_filter>carp</interface_filter>
+			<type>interfaces_selection</type>
+		</field>
+		<field>
+			<fielddescr>Peer IP</fielddescr>
+			<fieldname>peerip</fieldname>
+			<description>Enter the peers ip address</description>
+			<type>input</type>
+		</field>
+		<field>
+			<fielddescr>Shared Key</fielddescr>
+			<fieldname>sharedkey</fieldname>
+			<description>The shared AES key used to encrypt messages between sasyncd(8) hosts.  This configuration setting is required and must be either 16, 24 or 32 bytes long (corresponding to AES using a 128, 192 or 256 bit key).</description>
+			<type>input</type>
+		</field>
+	</fields>
+</packagegui>

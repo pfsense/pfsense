@@ -63,6 +63,7 @@ $section      = $pkg['menu'][0]['section'];
 $config_path  = $pkg['configpath'];
 $name         = $pkg['name'];
 $title        = $section . ": " . $package_name;
+$pgtitle      = $title;
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
@@ -108,14 +109,14 @@ if ($_POST) {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title><?=gentitle_pkg($title);?></title>
+<title><?=$pgtitle;?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="gui.css" rel="stylesheet" type="text/css">
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$title?></p>
+<p class="pgtitle"><?=$pgtitle?></p>
 				<?php
 			}
 			if($pkg['preoutput']) echo "<pre>";
@@ -259,10 +260,8 @@ function enablechange() {
 <script type="text/javascript" language="javascript" src="row_helper_dynamic.js">
 </script>
 
-<?php
-include("fbegin.inc");
-?>
-<p class="pgtitle"><?=$title?></p>
+<?php include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
 <form action="pkg_edit.php" method="post">
 <input type="hidden" name="xml" value="<?= $xml ?>">
 <?php if ($savemsg) print_info_box($savemsg); ?>

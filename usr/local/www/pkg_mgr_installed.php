@@ -38,16 +38,14 @@ if(is_array($config['installedpackages']['package'])) {
 	$currentvers = get_pkg_info($tocheck, array('version', 'xmlver'));
 }
 
-$pgtitle = "System: Packages: Installed";
+$pgtitle = "System: Package Manager";
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php
-include("fbegin.inc");
-?>
-<p class="pgtitle">System: Package Manager</p>
+<?php include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>

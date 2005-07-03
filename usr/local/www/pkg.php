@@ -104,7 +104,7 @@ include("head.inc");
 <?php
 include("fbegin.inc");
 ?>
-<p class="pgtitle"><?=$title?></p>
+<p class="pgtitle"><?=$pgtitle?></p>
 <form action="pkg.php" method="post">
 <? if($_GET['savemsg'] <> "") $savemsg = $_GET['savemsg']; ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>

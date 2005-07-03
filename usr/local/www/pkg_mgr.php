@@ -53,7 +53,7 @@ if ($_POST) {
 }
 
 
-$pgtitle = "System: Packages";
+$pgtitle = "System: Package Manager";
 include("head.inc");
 
 ?>
@@ -62,7 +62,7 @@ include("head.inc");
 <?php
 include("fbegin.inc");
 ?>
-<p class="pgtitle">System: Package Manager</p>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
 

@@ -176,11 +176,10 @@ function f(ta_id){
 </script>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
+<?php include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
 <form action="system_advanced_create_certs.php" method="post" name="iform" id="iform">
 
-<?php include("fbegin.inc"); ?>
-      <p class="pgtitle">OpenVPN - Create Certificates</p>
             <?php if ($input_errors) print_input_errors($input_errors); ?>
             <?php if ($savemsg) print_info_box($savemsg); ?>
 	    <p>

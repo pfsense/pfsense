@@ -29,7 +29,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = "VPN: IPsec";
 require("guiconfig.inc");
 
 if (!is_array($config['ipsec']['mobileclients'])) {
@@ -162,12 +161,13 @@ if ($_POST) {
 	}
 }
 
+$pgtitle = "VPN: IPsec: Mobile";
 include("head.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?php echo $pgtitle; ?></p>
+<p class="pgtitle"><?=$pgtitle?></p>
 <script language="JavaScript">
 <!--
 function methodsel_change() {

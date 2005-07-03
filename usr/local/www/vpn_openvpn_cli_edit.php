@@ -28,7 +28,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = "VPN: OpenVPN: Edit client";
 require("guiconfig.inc");
 require_once("openvpn.inc");
 
@@ -187,15 +186,15 @@ if (isset($_POST['pull'])) {
 	}
 }
 
-$pgtitle = $pgtitle;
+$pgtitle = "VPN: OpenVPN: Edit client";
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-<p class="pgtitle">IPSEC: OpenVPN Edit</p>
 <form action="vpn_openvpn_cli_edit.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
   <table width="100%" border="0" cellpadding="6" cellspacing="0">
     <tr>

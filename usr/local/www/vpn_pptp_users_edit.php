@@ -29,7 +29,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("VPN", "PPTP", "Edit user");
 require("guiconfig.inc");
 
 if (!is_array($config['pptpd']['user'])) {
@@ -110,11 +109,13 @@ if ($_POST) {
 	}
 }
 
+$pgtitle = "VPN: PPTP: Edit User";
 include("head.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="vpn_pptp_users_edit.php" method="post" name="iform" id="iform">
               <div id="mainarea">

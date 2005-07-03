@@ -29,7 +29,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = "VPN: IPsec: Edit pre-shared key";
 require("guiconfig.inc");
 
 if (!is_array($config['ipsec']['mobilekey'])) {
@@ -92,13 +91,14 @@ if ($_POST) {
 	}
 }
 
+$pgtitle = "VPN: IPsec: Edit pre-shared key";
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?php echo $pgtitle; ?></p>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="vpn_ipsec_keys_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">

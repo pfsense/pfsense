@@ -29,7 +29,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = "VPN: PPTP";
 require("guiconfig.inc");
 
 if (!is_array($config['pptpd']['user'])) {
@@ -67,12 +66,14 @@ if ($_GET['act'] == "del") {
 	}
 }
 
+$pgtitle = "VPN: PPTP: Users";
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
 <form action="vpn_pptp_users.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (isset($config['pptpd']['radius']['enable']))

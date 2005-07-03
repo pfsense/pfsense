@@ -29,7 +29,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = "VPN: IPsec";
 require("guiconfig.inc");
 
 if (!is_array($config['ipsec']['tunnel'])) {
@@ -82,6 +81,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
+$pgtitle = "VPN: IPsec";
 include("head.inc");
 
 ?>
@@ -89,7 +89,7 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?php echo $pgtitle; ?></p>
+<p class="pgtitle"><?=$pgtitle?></p>
 <form action="vpn_ipsec.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_ipsecconfdirty_path)): ?><p>

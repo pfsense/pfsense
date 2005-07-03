@@ -28,7 +28,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = "VPN: OpenVPN";
 require("guiconfig.inc");
 require_once("openvpn.inc");
 
@@ -147,14 +146,14 @@ if ($_POST) {
 /* Simply take a copy of the array */
 $pconfig = $config['ovpn']['server'];
 
-$pgtitle = "Firewall: NAT: Inbound";
+$pgtitle = "VPN: OpenVPN";
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?php echo $pgtitle; ?></p>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (file_exists($d_sysrebootreqd_path)) print_info_box(get_std_save_message(0)); ?>
 

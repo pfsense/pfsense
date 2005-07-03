@@ -28,7 +28,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = "VPN: OpenVPN";
 require("guiconfig.inc");
 require_once("openvpn.inc");
 
@@ -68,17 +67,17 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = $pgtitle;
+$pgtitle = "VPN: OpenVPN: Client";
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (file_exists($d_sysrebootreqd_path) && !file_exists($d_ovpnclidirty_path)) print_info_box(get_std_save_message(0)); ?>
 <form action="vpn_openvpn_cli.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
-<p class="pgtitle"><?php echo $pgtitle; ?></p>
 <?php if (file_exists($d_ovpnclidirty_path)): ?><p>
 <?php print_info_box_np("The OpenVPN client configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>

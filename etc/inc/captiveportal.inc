@@ -444,7 +444,7 @@ function captiveportal_allowedip_configure() {
 /* get last activity timestamp given pf table item */
 function captiveportal_get_last_activity($ip) {
 
-	$info = `/usr/sbin/arp | /usr/bin/grep $ip`;
+	$info = `/usr/sbin/arp -an | /usr/bin/grep $ip`;
 
 	if($info <> "") return 1;
 

@@ -37,32 +37,22 @@ require_once("functions.inc");
 function vpn_ipsec_failover_configure() {
 	global $config, $g;
 
-	/* is failover vpn enabled? */
-	if(!isset($config['installedpackages']['sasyncd']['config']['enable']))
-		return;
+	$sasyncd_text = "";
 
-	$sasyncd = "";
-
-	if($config['installedpackages']['sasyncd']['config']['peer'])
-		$sasyncd .= "peer {$config['ipsec']['failover']['peer']}\n";
-
-	if($config['installedpackages']['sasyncd']['config']['interface'])
-		$sasyncd .= "carp interface {$config['ipsec']['failover']['interface']}\n";
-
-	if($config['installedpackages']['sasyncd']['config']['sharedkey'])
-		$sasyncd .= "sharedkey {$config['ipsec']['failover']['sharedkey']}\n";
-
-	if($config['installedpackages']['sasyncd']['config']['mode'])
-		$sasyncd .= "mode {$config['ipsec']['failover']['mode']}\n";
-
-	if($config['installedpackages']['sasyncd']['config']['listenon'])
-		$sasyncd .= "listen on {$config['ipsec']['failover']['listenon']}\n";
-
-	if($config['installedpackages']['sasyncd']['config']['flushmodesync'])
-		$sasyncd .= "flushmode sync {$config['ipsec']['failover']['flushmodesync']}\n";
+	foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
+		$enabled = isset($sasyncd['enable']);
+		if(!$enabled)
+			return;
+		$sasyncd_text .= "peer {$sasyncd['peer']}\n";
+		$sasyncd_text .= "carp interface {$sasyncd['interface']}\n";
+		$sasyncd_text .= "sharedkey {$sasyncd['sharedkey']}\n";
+		$sasyncd_text .= "mode {$sasyncd['mode']}\n";
+		$sasyncd_text .= "listen on {$sasyncd['listenon']}\n";
+		$sasyncd_text .= "flushmode sync {$sasyncd['flushmodesync']}\n";
+	}
 
 	$fd = fopen("{$g['varetc_path']}/sasyncd.conf", "w");
-	fwrite($fd, $sasyncd);
+	fwrite($fd, $sasyncd_text);
 	fclose($fd);
 	chmod("{$g['varetc_path']}/sasyncd.conf", 0600);
 	
@@ -188,9 +178,9 @@ function vpn_ipsec_configure($ipchg = false) {
 				return 1;
 			}
 
-			if($config['installedpackages']['sasyncd']['config']['ip'] <> "") {
+			foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
 
-				$interface_ip = $config['installedpackages']['sasyncd']['config']['ip'];
+				$interface_ip = $sasyncd['ip'];
 				$racoonconf .= <<<EOD
 listen {
 	isakmp {$interface_ip} [500];

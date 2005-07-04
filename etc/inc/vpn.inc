@@ -39,6 +39,7 @@ function vpn_ipsec_failover_configure() {
 
 	$sasyncd_text = "";
 
+	if(isset($config['installedpackages']['sasyncd']['config']))
 	foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
 		$enabled = isset($sasyncd['enable']);
 		if(!$enabled)
@@ -66,6 +67,7 @@ function vpn_ipsec_configure($ipchg = false) {
 	$curwanip = get_current_wan_address();
 
 	/* set failover ip if defined */
+	if(isset($config['installedpackages']['sasyncd']['config']))
 	foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
 		if($sasyncd['ip'] <> "") 
 			$curwanip = $sasyncd['ip'];

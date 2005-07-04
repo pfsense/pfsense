@@ -200,7 +200,6 @@ function enable_change(enable_over) {
 <?php if (file_exists($d_staticmapsdirty_path)): ?><p>
 <?php print_info_box_np("The static mapping configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
   <?php
@@ -219,8 +218,9 @@ function enable_change(enable_over) {
   ?>
   </td></tr>
   <tr> 
-    <td class="tabcont">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+    <td>
+	<div id="mainarea">
+              <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
                       <tr> 
                         <td width="22%" valign="top" class="vtable">&nbsp;</td>
                         <td width="78%" class="vtable">
@@ -327,7 +327,7 @@ The default is to use the IP of the firewall as the gateway.  Specify an alterna
                       </tr>
                     </table>
 
-              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="35%" class="listhdrr">MAC address </td>
                   <td width="20%" class="listhdrr">IP address</td>
@@ -366,10 +366,10 @@ The default is to use the IP of the firewall as the gateway.  Specify an alterna
                   </td>
                 </tr>
               </table>
+	</div>
     </td>
   </tr>
 </table>
-</div>
 </form>
 <script language="JavaScript">
 <!--
@@ -377,11 +377,5 @@ enable_change(false);
 //-->
 </script>
 <?php include("fend.inc"); ?>
-
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
-</script>
-
 </body>
 </html>

@@ -158,7 +158,6 @@ include("head.inc");
 <?php if (file_exists($d_filterconfdirty_path)): ?><p>
 <?php print_info_box_np("The firewall rule configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
   <?php
@@ -175,8 +174,9 @@ include("head.inc");
   ?>
   </td></tr>
   <tr>
-    <td class="tabcont">
-              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <td>
+	<div id="mainarea">
+              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr id="frheader">
                   <td width="3%" class="list">&nbsp;</td>
                   <td width="5%" class="list">&nbsp;</td>
@@ -288,7 +288,7 @@ include("head.inc");
 				  </td>
 				</tr>
               </table>
-			  <table border="0" cellspacing="0" cellpadding="0">
+	      <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td width="16"><img src="pass.gif" width="11" height="11"></td>
                   <td>pass</td>
@@ -303,26 +303,20 @@ include("head.inc");
                   <td>log</td>
                 </tr>
                 <tr>
-                  <td colspan="5" height="4"></td>
-                </tr>
-                <tr>
                   <td><img src="pass_d.gif" width="11" height="11"></td>
-                  <td>pass (disabled)</td>
-                  <td></td>
+                  <td nowrap>pass (disabled)</td>
+                  <td>&nbsp;</td>
                   <td><img src="block_d.gif" width="11" height="11"></td>
-                  <td>block (disabled)</td>
-                  <td></td>
+                  <td nowrap>block (disabled)</td>
+                  <td>&nbsp;</td>
                   <td><img src="reject_d.gif" width="11" height="11"></td>
-                  <td>reject (disabled)</td>
-                  <td></td>
+                  <td nowrap>reject (disabled)</td>
+                  <td>&nbsp;</td>
                   <td width="16"><img src="log_d.gif" width="11" height="11"></td>
-                  <td>log (disabled)</td>
+                  <td nowrap>log (disabled)</td>
                 </tr>
-              </table>
-    </td>
-  </tr>
-</table>
-</div>
+		<tr>
+		  <td colspan="9">
   <p>
   <strong><span class="red">Hint:<br>
   </span></strong>Rules are evaluated on a first-match basis (i.e.
@@ -330,15 +324,15 @@ include("head.inc");
   This means that if you use block rules, you'll have to pay attention
   to the rule order. Everything that isn't explicitly passed is blocked
   by default.</p>
+		 </td>
+	        </tr>
+              </table>
+	</div>
+    </td>
+  </tr>
+</table>
   <input type="hidden" name="if" value="<?=$if;?>">
 </form>
 <?php include("fend.inc"); ?>
-
-
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
-</script>
-
 </body>
 </html>

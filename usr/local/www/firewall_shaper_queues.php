@@ -115,7 +115,6 @@ include("head.inc");
 <?php if (file_exists($d_shaperconfdirty_path)): ?><p>
 <?php print_info_box_np("The traffic shaper configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
@@ -127,8 +126,9 @@ include("head.inc");
 ?>
   </td></tr>
   <tr>
-    <td class="tabcont">
-              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <td>
+	<div id="mainarea">
+              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                       <tr>
                         <td width="5%" class="listhdrr">No.</td>
 			<td width="5%" class="listhdrr">Flags</td>
@@ -193,21 +193,19 @@ include("head.inc");
                           </table>
                         </td>
                       </tr>
-                    </table>
+		      <tr><td colspan="6">
 		    <p>
                     <strong><span class="red">Note:</span></strong><strong><br></strong>
-                      A queue can only be deleted if it is not referenced by any rules.<br>
-		      </td>
+                      A queue can only be deleted if it is not referenced by any rules.
 		    </p>
+		      </td></tr>
+                    </table>
+		</div>
+	  </td>
 	</tr>
 </table>
 </div>
             </form>
 <?php include("fend.inc"); ?>
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
-</script>
 </body>
 </html>
-

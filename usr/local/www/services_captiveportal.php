@@ -280,7 +280,6 @@ function enable_change(enable_change) {
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <form action="services_captiveportal.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
 <?php
@@ -293,8 +292,9 @@ function enable_change(enable_change) {
 ?>  
   </td></tr>
   <tr>
-  <td class="tabcont">
-  <table width="100%" border="0" cellpadding="6" cellspacing="0">
+  <td>
+  <div id="mainarea">
+  <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
 	<tr>
 	  <td width="22%" valign="top" class="vtable">&nbsp;</td>
 	  <td width="78%" class="vtable">
@@ -452,10 +452,10 @@ The contents of the HTML file that you upload here are displayed when an authent
 		</strong></span>Changing any settings on this page will disconnect all clients! Don't forget to enable the DHCP server on your captive portal interface! Make sure that the default/maximum DHCP lease time is higher than the timeout entered on this page. Also, the DNS forwarder needs to be enabled for DNS lookups by unauthenticated clients to work. </span></td>
 	</tr>
   </table>
+  </div>
   </td>
   </tr>
   </table>
-  </div>
 </form>
 <script language="JavaScript">
 <!--
@@ -463,9 +463,5 @@ enable_change(false);
 //-->
 </script>
 <?php include("fend.inc"); ?>
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
-</script>
 </body>
 </html>

@@ -139,7 +139,6 @@ include("head.inc");
 <?php if (file_exists($d_natconfdirty_path)): ?><p>
 <?php print_info_box_np("The NAT configuration has been changed.<br>You must apply the changes in order for them to take effect.");?>
 <?php endif; ?>
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
@@ -153,8 +152,9 @@ include("head.inc");
 ?>
  </td></tr>
   <tr>
-    <td class="tabcont">
-              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <td>
+	<div id="mainarea">
+              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr id="frheader">
 		  <td width="3%" class="list">&nbsp;</td>
                   <td width="3%" class="list">&nbsp;</td>
@@ -235,14 +235,17 @@ include("head.inc");
                         <td><?php if ($nnats == 0): ?><img src="x_d.gif" width="17" height="17" title="delete selected rules" border="0"><?php else: ?><input name="del" type="image" src="x.gif" width="17" height="17" title="delete selected mappings" onclick="return confirm('Do you really want to delete the selected mappings?')"><?php endif; ?></td>
                       </tr>
                     </table></td>
-                </tr>              </table>
-                    <p><span class="vexpl"><span class="red"><strong>Note:<br>
+                </tr>
+        <tr><td colspan="8"><p><span class="vexpl"><span class="red"><strong>Note:<br>
                       </strong></span>It is not possible to access NATed services
                       using the WAN IP address from within the LAN (or an optional
                       network).</span></p></td>
+		    </tr>
+	</table>
+	</div>
+	</td>
   </tr>
 </table>
-</div>
 
 <?php
 if ($pkg['tabs'] <> "") {
@@ -252,11 +255,5 @@ if ($pkg['tabs'] <> "") {
 
 </form>
 <?php include("fend.inc"); ?>
-
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
-</script>
-
 </body>
 </html>

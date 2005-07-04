@@ -81,7 +81,6 @@ include("head.inc");
 <?php if (file_exists($d_passthrumacsdirty_path)): ?><p>
 <?php print_info_box_np("The captive portal MAC address configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
 <?php
@@ -94,8 +93,9 @@ include("head.inc");
 ?>  
   </td></tr>
   <tr>
-  <td class="tabcont">
-  <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <td>
+<div id="mainarea">
+  <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 	  <td width="30%" class="listhdrr">MAC address</td>
 	  <td width="60%" class="listhdr">Description</td>
@@ -137,15 +137,11 @@ include("head.inc");
 	<td class="list">&nbsp;</td>
 	</tr>
   </table>
+</div>
   </td>
   </tr>
   </table>
-  </div>
 </form>
 <?php include("fend.inc"); ?>
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
-</script>
 </body>
 </html>

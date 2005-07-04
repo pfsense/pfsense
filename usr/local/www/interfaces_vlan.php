@@ -95,7 +95,6 @@ include("head.inc");
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (file_exists($d_sysrebootreqd_path)) print_info_box(get_std_save_message(0)); ?>
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
@@ -106,8 +105,9 @@ include("head.inc");
 ?>
   </td></tr>
   <tr>
-    <td class="tabcont">
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <td>
+	<div id="mainarea">
+	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="20%" class="listhdrr">Interface</td>
                   <td width="20%" class="listhdrr">VLAN tag</td>
@@ -142,16 +142,10 @@ include("head.inc");
 				<td class="list">&nbsp;</td>
 				</tr>
               </table>
-			  </td>
+	      </div>
+	</td>
 	</tr>
 </table>
-</div>
 <?php include("fend.inc"); ?>
-
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
-</script>
-
 </body>
 </html>

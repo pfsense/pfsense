@@ -194,7 +194,6 @@ include("head.inc");
 <?php if (file_exists($d_shaperconfdirty_path)): ?><p>
 <?php print_info_box_np("The traffic shaper configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
@@ -206,8 +205,9 @@ include("head.inc");
 ?>  
   </td></tr>
   <tr>
-    <td class="tabcont">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+    <td>
+	<div id="mainarea">
+              <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td class="vtable"><p>
                       <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] == "yes") echo "checked";?>>
@@ -222,8 +222,7 @@ include("head.inc");
 		  
                 </tr>
               </table>
-              &nbsp;<br>
-              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                       <tr id="frheader">
 		        <td width="3%" class="list">&nbsp;</td>
                         <td width="3%" class="list">&nbsp;</td>
@@ -312,20 +311,18 @@ include("head.inc");
                         <td class="list" colspan="8"></td>
                         <td class="list"> <a href="firewall_shaper_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
                       </tr>
-                    </table>
-
-			        <p><span class="red"><strong>Note:</strong></span><strong><br>
+		      <tr>
+		    <td colspan="8"><p><span class="red"><strong>Note:</strong></span><strong><br>
                     </strong>the first rule that matches a packet will be executed.<br>
                     The following match patterns are not shown in the list above:
                     IP packet length, TCP flags.</td>
+		    </tr>
+                    </table>
+		</div>
+	  </td>
 	</tr>
 </table>
-</div>
             </form>
 <?php include("fend.inc"); ?>
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
-</script>
 </body>
 </html>

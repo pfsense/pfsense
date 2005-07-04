@@ -186,7 +186,6 @@ include("head.inc");
 <?php if (file_exists($d_natconfdirty_path)): ?><p>
 <?php print_info_box_np("The NAT configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
 <?php
 	$tab_array = array();
@@ -199,8 +198,9 @@ include("head.inc");
 ?>
   </td></tr>
   <tr>
-    <td class="tabcont">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+    <td>
+	<div id="mainarea">
+              <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
               <tr>
                   <td class="vtable"><p>
                       <input name="ipsecpassthru" type="checkbox" id="ipsecpassthru" value="yes" onClick="document.iform.advancedoutbound.checked=false" <?php if (isset($config['nat']['ipsecpassthru']['enable'])) echo "checked";?>>
@@ -228,8 +228,7 @@ include("head.inc");
                     </td>
                 </tr>
               </table>
-              &nbsp;<br>
-              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr id="frheader">
                   <td width="3%" class="list">&nbsp;</td>
                   <td width="3%" class="list">&nbsp;</td>
@@ -321,15 +320,11 @@ include("head.inc");
                     </table></td>
                 </tr>
               </table>
+	    </div>
 </td>
   </tr>
 </table>
-</div>
             </form>
 <?php include("fend.inc"); ?>
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
-</script>
 </body>
 </html>

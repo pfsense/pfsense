@@ -188,7 +188,6 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (file_exists($d_sysrebootreqd_path)) print_info_box(get_std_save_message(0)); ?>
 <form action="interfaces_assign.php" method="post" name="iform" id="iform">
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
 <?php
@@ -199,9 +198,10 @@ include("head.inc");
 ?>  
   </td></tr>
   <tr> 
-    <td class="tabcont">
-                    <table border="0" cellpadding="0" cellspacing="0">
-                      <tr> 
+    <td>
+	<div id="mainarea">
+        <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+       <tr> 
 	<td class="listhdrr">Interface</td>
 	<td class="listhdr">Network port</td>
 	<td class="list">&nbsp;</td>
@@ -250,6 +250,7 @@ include("head.inc");
   </tr>
   <?php endif; ?>
 </table>
+</div>
   <input name="Submit" type="submit" class="formbtn" value="Save"><br><br>
 <p><span class="vexpl"><strong><span class="red">Warning:</span><br>
 </strong>After you click &quot;Save&quot;, you must reboot the firewall to make the changes take effect. You may also have to do one or more of the following steps before you can access your firewall again: </span></p>
@@ -260,14 +261,7 @@ include("head.inc");
 </ul></td>
 	</tr>
 </table>
-</div>
 </form>
 <?php include("fend.inc"); ?>
-
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
-</script>
-
 </body>
 </html>

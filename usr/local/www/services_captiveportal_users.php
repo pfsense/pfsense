@@ -151,7 +151,6 @@ include("head.inc");
 </script>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
@@ -164,7 +163,7 @@ include("head.inc");
 ?>  
   </td></tr>
   <tr>
-  <td class="tabcont">
+  <td>
 <?php
 if($_GET['act']=="new" || $_GET['act']=="edit"){
 	if($_GET['act']=="edit" && isset($_GET['username'])){
@@ -172,8 +171,8 @@ if($_GET['act']=="new" || $_GET['act']=="edit"){
 	}
 ?>
 	<form action="services_captiveportal_users.php" method="post" name="iform" id="iform">
-
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+<div id="mainarea">
+              <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Username</td>
                   <td width="78%" class="vtable">
@@ -217,11 +216,13 @@ if($_GET['act']=="new" || $_GET['act']=="edit"){
                   </td>
                 </tr>
               </table>
+	</div>
      </form>
 <?php
 } else {
 	echo <<<END
-     <table width="100%" border="0" cellpadding="0" cellspacing="0">
+<div id="mainarea">
+     <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="35%" class="listhdrr">Username</td>
                   <td width="20%" class="listhdrr">Full Name</td>
@@ -266,6 +267,7 @@ END;
                   </td>
 	        </tr>
      </table>
+   </div>
 END;
 }
 ?>
@@ -273,13 +275,7 @@ END;
   </td>
   </tr>
   </table>
-</div>
 <?php include("fend.inc"); ?>
-
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
-</script>
 
 </body>
 </html>

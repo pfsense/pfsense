@@ -61,7 +61,6 @@ include("head.inc");
 <?php if (file_exists($d_ipsecconfdirty_path)): ?><p>
 <?php print_info_box_np("The IPsec tunnel configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
@@ -74,8 +73,9 @@ include("head.inc");
 ?>
   </td></tr>
   <tr> 
-    <td class="tabcont">
-              <table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <td>
+       <div id="mainarea">
+              <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr> 
                   <td class="listhdrr">Identifier</td>
                   <td class="list"></td>
@@ -94,16 +94,11 @@ include("head.inc");
                   <td class="list"> <a href="vpn_ipsec_ca_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
 				</tr>
               </table>
-			 </td>
-			</tr>
-		</table>
-		</div>
+	</div>
+    </td>
+  </tr>
+</table>
 </form>
 <?php include("fend.inc"); ?>
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
-</script>
-
 </body>
 </html>

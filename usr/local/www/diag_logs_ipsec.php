@@ -51,7 +51,6 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
@@ -67,16 +66,18 @@ include("head.inc");
 ?>
   </td></tr>
   <tr>
-    <td class="tabcont">
-		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <td>
+	<div id="mainarea">
+		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 		  <tr>
 			<td colspan="2" class="listtopic">
 			  Last <?=$nentries;?> IPSEC log entries</td>
 		  </tr>
 		  <?php dump_clog($ipsec_logfile, $nentries, true, array("racoon"), array(false)); ?>
+		<tr><td><br><form action="diag_logs.php" method="post">
+<input name="clear" type="submit" class="formbtn" value="Clear log"></td></tr>
 		</table>
-		<br><form action="diag_logs.php" method="post">
-<input name="clear" type="submit" class="formbtn" value="Clear log">
+	</div>
 </form>
 	</td>
   </tr>

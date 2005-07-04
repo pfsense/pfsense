@@ -191,7 +191,6 @@ function methodsel_change() {
 <?php endif; ?>
 </form>
 <form action="vpn_ipsec_mobile.php" method="post" name="iform" id="iform">
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
 <?php
@@ -204,8 +203,9 @@ function methodsel_change() {
 ?>
   </td></tr>
   <tr> 
-    <td class="tabcont">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+    <td>
+	 <div id="mainarea">
+              <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
 			  <tr> 
                         <td width="22%" valign="top">&nbsp;</td>
                         <td width="78%"> 
@@ -376,10 +376,10 @@ function methodsel_change() {
                   </td>
                 </tr>
               </table>
-			 </td>
-			</tr>
-		</table>
-		</div>
+	  </div>
+	 </td>
+	</tr>
+</table>
 </form>
 <script language="JavaScript">
 <!--
@@ -387,10 +387,5 @@ methodsel_change();
 //-->
 </script>
 <?php include("fend.inc"); ?>
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
-</script>
-
 </body>
 </html>

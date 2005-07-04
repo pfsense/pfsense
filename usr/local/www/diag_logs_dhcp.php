@@ -67,16 +67,18 @@ include("head.inc");
 ?>
   </td></tr>
   <tr>
-    <td class="tabcont">
-		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <td>
+	<div id="mainarea">
+		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 		  <tr>
 			<td colspan="2" class="listtopic">
 			  Last <?=$nentries;?> DHCP service log entries</td>
 		  </tr>
 		  <?php dump_clog($dhcpd_logfile, $nentries); ?>
+		<tr><td><br><form action="diag_logs_dhcp.php" method="post">
+<input name="clear" type="submit" class="formbtn" value="Clear log"></td></tr>
 		</table>
-		<br><form action="diag_logs_dhcp.php" method="post">
-<input name="clear" type="submit" class="formbtn" value="Clear log">
+	</div>
 </form>
 	</td>
   </tr>
@@ -84,4 +86,3 @@ include("head.inc");
 <?php include("fend.inc"); ?>
 </body>
 </html>
-

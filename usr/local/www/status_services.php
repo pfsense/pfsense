@@ -67,10 +67,10 @@ include("fbegin.inc");
 
 <p>
 
-<div id="mainarea">
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<div id="boxarea">
+<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
-    <td class="tabcont">
+    <td>
     <table width="100%" border="0" cellpadding="6" cellspacing="0">
 	<tr>
 	  <td class="listhdrr"><b><center>Service</center></b></td>
@@ -124,11 +124,6 @@ if($config['installedpackages']['service']) {
 </div>
 
 <?php include("fend.inc"); ?>
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","all","#FFF","#eeeeee","smooth");
-</script>
-
 </body>
 </html>
 

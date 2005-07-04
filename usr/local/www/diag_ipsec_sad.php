@@ -34,7 +34,7 @@
 
 require("guiconfig.inc");
 
-$pgtitle = "Diagnostics: IPSEC: SA";
+$pgtitle = "Diagnostics: IPSec: SA";
 include("head.inc");
 
 ?>
@@ -42,7 +42,6 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
@@ -53,7 +52,7 @@ include("head.inc");
 ?>
   </td></tr>
   <tr>
-    <td class="tabcont">
+    <td>
 <?php
 
 /* delete any SA? */
@@ -99,9 +98,10 @@ if ($fd) {
 		$sad[] = $cursa;
 	pclose($fd);
 }
-if (count($sad)):
 ?>
-            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<div id="mainarea">
+            <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+<?php if (count($sad)): ?>
   <tr>
                 <td nowrap class="listhdrr">Source</td>
                 <td nowrap class="listhdrr">Destination</a></td>
@@ -132,18 +132,12 @@ foreach ($sad as $sa): ?>
 
 	</tr>
 <?php endforeach; ?>
-</table>
 <?php else: ?>
-<p><strong>No IPsec security associations.</strong></p>
+<tr><td><p><strong>No IPsec security associations.</strong></p></td></tr>
 <?php endif; ?>
-</td></tr></table>
+</table>
 </div>
+</td></tr></table>
 <?php include("fend.inc"); ?>
-
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
-</script>
-
 </body>
 </html>

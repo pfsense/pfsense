@@ -124,7 +124,6 @@ function enable_change(enable_over) {
 <form action="diag_logs_settings.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
@@ -140,8 +139,9 @@ function enable_change(enable_over) {
 ?>
   </td></tr>
   <tr>
-    <td class="tabcont">
-	  <table width="100%" border="0" cellpadding="6" cellspacing="0">
+    <td>
+	<div id="mainarea">
+	  <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
                       <tr>
                         <td width="22%" valign="top" class="vtable">&nbsp;</td>
                         <td width="78%" class="vtable"> <input name="reverse" type="checkbox" id="reverse" value="yes" <?php if ($pconfig['reverse']) echo "checked"; ?>>
@@ -199,6 +199,7 @@ function enable_change(enable_over) {
                         </td>
                       </tr>
                     </table>
+	</div>
     </td>
   </tr>
 </table>
@@ -210,11 +211,5 @@ enable_change(false);
 //-->
 </script>
 <?php include("fend.inc"); ?>
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
-</script>
-
 </body>
 </html>
-

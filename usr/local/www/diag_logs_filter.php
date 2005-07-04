@@ -120,7 +120,6 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
@@ -136,11 +135,13 @@ include("head.inc");
 ?>
  </td></tr>
   <tr>
-    <td class="tabcont">
+    <td>
+	<div id="mainarea">
+		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 <?php if (!isset($config['syslog']['rawfilter'])):
 	$filterlog = conv_clog($filter_logfile, $nentries);
 ?>
-		<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr>
+		<tr>
 		  <td colspan="6" class="listtopic">
 			    Last <?=$nentries;?> firewall log entries</td>
 			</tr>
@@ -167,30 +168,21 @@ include("head.inc");
 			  <td class="listr" nowrap><?=htmlspecialchars($filterent['dst']);?></td>
 			  <td class="listr" nowrap><?=htmlspecialchars($filterent['proto']);?></td>
 			</tr><?php endforeach; ?>
-                    </table>
 <?php else: ?>
-		<table width="100%" border="0" cellspacing="0" cellpadding="0">
 		  <tr>
 			<td colspan="2" class="listtopic">
 			  Last <?=$nentries;?> firewall log entries</td>
 		  </tr>
 		  <?php dump_clog($filter_logfile, $nentries); ?>
-		</table>
 <?php endif; ?>
-		<br><form action="diag_logs_filter.php" method="post">
-<input name="clear" type="submit" class="formbtn" value="Clear log">
+		<tr><td><br><form action="diag_logs_filter.php" method="post">
+<input name="clear" type="submit" class="formbtn" value="Clear log"></td></tr>
 </form>
+		</table>
+		</div>
 	</td>
   </tr>
 </table>
-</div>
 <?php include("fend.inc"); ?>
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
-</script>
-
 </body>
 </html>
-
-

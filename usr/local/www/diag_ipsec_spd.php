@@ -34,7 +34,7 @@
 
 require("guiconfig.inc");
 
-$pgtitle = "Diagnostics: IPSEC: SPD";
+$pgtitle = "Diagnostics: IPSec: SPD";
 include("head.inc");
 
 ?>
@@ -42,7 +42,6 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
@@ -53,7 +52,7 @@ include("head.inc");
 ?>
   </td></tr>
   <tr>
-    <td class="tabcont">
+    <td>
 <?php
 
 /* delete any SP? */
@@ -103,9 +102,10 @@ if ($fd) {
 		$spd[] = $cursp;
 	pclose($fd);
 }
-if (count($spd)):
 ?>
-            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+<div id="mainarea">
+            <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+<?php if (count($spd)): ?>
   <tr>
                 <td nowrap class="listhdrr">Source</td>
                 <td nowrap class="listhdrr">Destination</a></td>
@@ -136,7 +136,7 @@ foreach ($spd as $sp): ?>
 <?php endforeach; ?>
 </table>
 <br>
-<table border="0" cellspacing="0" cellpadding="0">
+<table class="tabcont" border="0" cellspacing="0" cellpadding="6">
   <tr>
 	<td width="16"><img src="in.gif" width="11" height="11"></td>
 	<td>incoming (as seen by firewall)</td>
@@ -148,18 +148,13 @@ foreach ($spd as $sp): ?>
 	<td><img src="out.gif" width="11" height="11"></td>
 	<td>outgoing (as seen by firewall)</td>
   </tr>
-</table>
 <?php else: ?>
-<p><strong>No IPsec security policies.</strong></p>
+<tr><td><p><strong>No IPsec security policies.</strong></p></td></tr>
 <?php endif; ?>
-</td></tr></table>
+</table>
 </div>
+</td></tr></table>
 <?php include("fend.inc"); ?>
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
-</script>
-
 </body>
 </html>
 

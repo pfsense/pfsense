@@ -58,7 +58,6 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if($savemsg) print_info_box($savemsg); ?>
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
 <?php
 	$tab_array = array();
@@ -68,11 +67,12 @@ include("head.inc");
 ?>			
   </td></tr>
   <tr>
-    <td class="tabcont">
+    <td>
+	<div id="mainarea">
+              <table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
 <?php
 if(is_array($confvers)) { 
 		?>
-              <table align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td width="30%" class="listhdrr">Date</td>
 		  <td width="70%" class="listhdrr">Configuration Change</td>
@@ -103,24 +103,17 @@ if(is_array($confvers)) {
 			    </tr>
                <?php
                   } ?>
-		</table>
 <?php } else {
 		print_info_box("No backups found.");
       }
 ?>
-
+	</table>
+	</div>
     </td>
   </tr>
 </table>
-</div>
 </body>
 </html>
 <?php include("fend.inc"); ?>
-
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
-</script>
-
 </body>
 </html>

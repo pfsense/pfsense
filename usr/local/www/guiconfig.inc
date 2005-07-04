@@ -200,6 +200,7 @@ function print_info_box_np($msg) {
 	echo "Rounded(\"div#redbox\",\"all\",\"#FFF\",\"#990000\",\"smooth\");\n";
 	echo "Rounded(\"td#blackbox\",\"all\",\"#FFF\",\"#000000\",\"smooth\");\n";
 	echo "</script>\n";
+	echo "\n<br>\n";
 }
 
 function print_info_box($msg) {

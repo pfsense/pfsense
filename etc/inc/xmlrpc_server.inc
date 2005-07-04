@@ -1,9 +1,10 @@
 <?php
+
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /* $Id$ */
 
 /**
- * PHP implementation of the XML-RPC protocol
+ * Server commands for our PHP implementation of the XML-RPC protocol
  *
  * This is a PEAR-ified version of Useful inc's XML-RPC for PHP.
  * It has support for HTTP transport, proxies and authentication.
@@ -30,7 +31,8 @@
  * @author     Edd Dumbill <edd@usefulinc.com>
  * @author     Stig Bakken <stig@php.net>
  * @author     Martin Jansen <mj@php.net>
- * @copyright  1999-2001 Edd Dumbill
+ * @author     Daniel Convissor <danielc@php.net>
+ * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/XML_RPC
  */
@@ -39,11 +41,12 @@
 /**
  * Pull in the XML_RPC class
  */
-require_once 'xmlrpc_client.inc';
+require_once 'XML/RPC.php';
 
 
 /**
- * listMethods: either a string, or nothing
+ * signature for system.listMethods: return = array,
+ * parameters = a string or nothing
  * @global array $GLOBALS['XML_RPC_Server_listMethods_sig']
  */
 $GLOBALS['XML_RPC_Server_listMethods_sig'] = array(
@@ -54,12 +57,15 @@ $GLOBALS['XML_RPC_Server_listMethods_sig'] = array(
 );
 
 /**
+ * docstring for system.listMethods
  * @global string $GLOBALS['XML_RPC_Server_listMethods_doc']
  */
 $GLOBALS['XML_RPC_Server_listMethods_doc'] = 'This method lists all the'
         . ' methods that the XML-RPC server knows how to dispatch';
 
 /**
+ * signature for system.methodSignature: return = array,
+ * parameters = string
  * @global array $GLOBALS['XML_RPC_Server_methodSignature_sig']
  */
 $GLOBALS['XML_RPC_Server_methodSignature_sig'] = array(
@@ -69,6 +75,7 @@ $GLOBALS['XML_RPC_Server_methodSignature_sig'] = array(
 );
 
 /**
+ * docstring for system.methodSignature
  * @global string $GLOBALS['XML_RPC_Server_methodSignature_doc']
  */
 $GLOBALS['XML_RPC_Server_methodSignature_doc'] = 'Returns an array of known'
@@ -77,6 +84,8 @@ $GLOBALS['XML_RPC_Server_methodSignature_doc'] = 'Returns an array of known'
         . ' array to detect missing signature)';
 
 /**
+ * signature for system.methodHelp: return = string,
+ * parameters = string
  * @global array $GLOBALS['XML_RPC_Server_methodHelp_sig']
  */
 $GLOBALS['XML_RPC_Server_methodHelp_sig'] = array(
@@ -86,12 +95,14 @@ $GLOBALS['XML_RPC_Server_methodHelp_sig'] = array(
 );
 
 /**
+ * docstring for methodHelp
  * @global string $GLOBALS['XML_RPC_Server_methodHelp_doc']
  */
 $GLOBALS['XML_RPC_Server_methodHelp_doc'] = 'Returns help text if defined'
         . ' for the method passed, otherwise returns an empty string';
 
 /**
+ * dispatch map for the automatically declared XML-RPC methods.
  * @global array $GLOBALS['XML_RPC_Server_dmap']
  */
 $GLOBALS['XML_RPC_Server_dmap'] = array(
@@ -128,13 +139,11 @@ function XML_RPC_Server_listMethods($server, $m)
     global $XML_RPC_err, $XML_RPC_str, $XML_RPC_Server_dmap;
 
     $v = new XML_RPC_Value();
-    $dmap = $server->dmap;
     $outAr = array();
-    for (reset($dmap); list($key, $val) = each($dmap); ) {
+    foreach ($server->dmap as $key => $val) {
         $outAr[] = new XML_RPC_Value($key, 'string');
     }
-    $dmap = $XML_RPC_Server_dmap;
-    for (reset($dmap); list($key, $val) = each($dmap); ) {
+    foreach ($XML_RPC_Server_dmap as $key => $val) {
         $outAr[] = new XML_RPC_Value($key, 'string');
     }
     $v->addArray($outAr);
@@ -232,24 +241,94 @@ function XML_RPC_Server_debugmsg($m)
 
 
 /**
+ * A server for receiving and replying to XML RPC requests
  *
+ * <code>
+ * $server = new XML_RPC_Server(
+ *     array(
+ *         'isan8' =>
+ *             array(
+ *                 'function' => 'is_8',
+ *                 'signature' =>
+ *                      array(
+ *                          array('boolean', 'int'),
+ *                          array('boolean', 'int', 'boolean'),
+ *                          array('boolean', 'string'),
+ *                          array('boolean', 'string', 'boolean'),
+ *                      ),
+ *                 'docstring' => 'Is the value an 8?'
+ *             ),
+ *     ),
+ *     1,
+ *     0
+ * ); 
+ * </code>
  *
  * @category   Web Services
  * @package    XML_RPC
  * @author     Edd Dumbill <edd@usefulinc.com>
  * @author     Stig Bakken <stig@php.net>
  * @author     Martin Jansen <mj@php.net>
- * @copyright  1999-2001 Edd Dumbill
- * @version    Release: @package_version@
+ * @author     Daniel Convissor <danielc@php.net>
+ * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
+ * @version    Release: 1.3.1
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Server
 {
+    /**
+     * The dispatch map, listing the methods this server provides.
+     * @var array
+     */
     var $dmap = array();
+
+    /**
+     * The present response's encoding
+     * @var string
+     * @see XML_RPC_Message::getEncoding()
+     */
     var $encoding = '';
+
+    /**
+     * Debug mode (0 = off, 1 = on)
+     * @var integer
+     */
     var $debug = 0;
 
     /**
+     * The response's HTTP headers
+     * @var string
+     */
+    var $server_headers = '';
+
+    /**
+     * The response's XML payload
+     * @var string
+     */
+    var $server_payload = '';
+
+
+    /**
+     * Constructor for the XML_RPC_Server class
+     *
+     * @param array $dispMap   the dispatch map. An associative array
+     *                          explaining each function. The keys of the main
+     *                          array are the procedure names used by the
+     *                          clients. The value is another associative array
+     *                          that contains up to three elements:
+     *                            + The 'function' element's value is the name
+     *                              of the function or method that gets called.
+     *                              To define a class' method: 'class::method'.
+     *                            + The 'signature' element (optional) is an
+     *                              array describing the return values and
+     *                              parameters
+     *                            + The 'docstring' element (optional) is a
+     *                              string describing what the method does
+     * @param int $serviceNow  should the HTTP response be sent now?
+     *                          (1 = yes, 0 = no)
+     * @param int $debug       should debug output be displayed?
+     *                          (1 = yes, 0 = no)
+     *
      * @return void
      */
     function XML_RPC_Server($dispMap, $serviceNow = 1, $debug = 0)
@@ -262,14 +341,13 @@ class XML_RPC_Server
             $this->debug = 0;
         }
 
-        // dispMap is a despatch array of methods
-        // mapped to function names and signatures
-        // if a method
-        // doesn't appear in the map then an unknown
-        // method error is generated
         $this->dmap = $dispMap;
+
         if ($serviceNow) {
             $this->service();
+        } else {
+            $this->createServerPayload();
+            $this->createServerHeaders();
         }
     }
 
@@ -296,25 +374,60 @@ class XML_RPC_Server
     }
 
     /**
-     * Print out the result
+     * Sends the response
      *
      * The encoding and content-type are determined by
      * XML_RPC_Message::getEncoding()
      *
      * @return void
      *
-     * @see XML_RPC_Message::getEncoding()
+     * @uses XML_RPC_Server::createServerPayload(),
+     *       XML_RPC_Server::createServerHeaders()
      */
     function service()
     {
+        $this->createServerPayload();
+        $this->createServerHeaders();
+        header($this->server_headers);
+        print $this->server_payload;
+    }
+
+    /**
+     * Generates the payload and puts it in the $server_payload property
+     *
+     * @return void
+     *
+     * @uses XML_RPC_Server::parseRequest(), XML_RPC_Server::$encoding,
+     *       XML_RPC_Response::serialize(), XML_RPC_Server::serializeDebug()
+     */
+    function createServerPayload()
+    {
         $r = $this->parseRequest();
-        $payload = '<?xml version="1.0" encoding="'
-                 . $this->encoding . '"?>' . "\n"
-                 . $this->serializeDebug()
-                 . $r->serialize();
-        header('Content-Length: ' . strlen($payload));
-        header('Content-Type: text/xml; charset=' . $this->encoding);
-        print $payload;
+        $this->server_payload = '<?xml version="1.0" encoding="'
+                              . $this->encoding . '"?>' . "\n"
+                              . $this->serializeDebug()
+                              . $r->serialize();
+    }
+
+    /**
+     * Determines the HTTP headers and puts them in the $server_headers
+     * property
+     *
+     * @return boolean  TRUE if okay, FALSE if $server_payload isn't set.
+     *
+     * @uses XML_RPC_Server::createServerPayload(),
+     *       XML_RPC_Server::$server_headers
+     */
+    function createServerHeaders()
+    {
+        if (!$this->server_payload) {
+            return false;
+        }
+        $this->server_headers = 'Content-Length: '
+                              . strlen($this->server_payload) . "\r\n"
+                              . 'Content-Type: text/xml;'
+                              . ' charset=' . $this->encoding;
+        return true;
     }
 
     /**
@@ -336,7 +449,7 @@ class XML_RPC_Server
                         $pt = $p->kindOf();
                     }
                     // $n+1 as first type of sig is return type
-                    if ($pt != strtolower($cursig[$n+1])) {
+                    if ($pt != $cursig[$n+1]) {
                         $itsOK = 0;
                         $pno = $n+1;
                         $wanted = $cursig[$n+1];
@@ -349,11 +462,30 @@ class XML_RPC_Server
                 }
             }
         }
-        return array(0, "Wanted ${wanted}, got ${got} at param ${pno})");
+        if (isset($wanted)) {
+            return array(0, "Wanted ${wanted}, got ${got} at param ${pno}");
+        } else {
+            $allowed = array();
+            foreach ($sig as $val) {
+                end($val);
+                $allowed[] = key($val);
+            }
+            $allowed = array_unique($allowed);
+            $last = count($allowed) - 1;
+            if ($last > 0) {
+                $allowed[$last] = 'or ' . $allowed[$last];
+            }
+            return array(0,
+                         'Signature permits ' . implode(', ', $allowed)
+                                . ' parameters but the request had '
+                                . $in->getNumParams());
+        }
     }
 
     /**
      * @return object  a new XML_RPC_Response object
+     *
+     * @uses XML_RPC_Message::getEncoding(), XML_RPC_Server::$encoding
      */
     function parseRequest($data = '')
     {
@@ -428,12 +560,16 @@ class XML_RPC_Server
                     $sr = $this->verifySignature($m,
                                                  $dmap[$methName]['signature'] );
                 }
-                if ( (!isset($dmap[$methName]['signature'])) || $sr[0]) {
+                if (!isset($dmap[$methName]['signature']) || $sr[0]) {
                     // if no signature or correct signature
                     if ($sysCall) {
                         $r = call_user_func($dmap[$methName]['function'], $this, $m);
                     } else {
                         $r = call_user_func($dmap[$methName]['function'], $m);
+                    }
+                    if (!is_a($r, 'XML_RPC_Response')) {
+                        $r = new XML_RPC_Response(0, $XML_RPC_err['not_response_object'],
+                                                  $XML_RPC_str['not_response_object']);
                     }
                 } else {
                     $r = new XML_RPC_Response(0, $XML_RPC_err['incorrect_params'],
@@ -456,7 +592,8 @@ class XML_RPC_Server
      *
      * Useful for debugging.
      */
-    function echoInput() {
+    function echoInput()
+    {
         global $HTTP_RAW_POST_DATA;
 
         $r = new XML_RPC_Response(0);

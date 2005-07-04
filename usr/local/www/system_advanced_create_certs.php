@@ -144,7 +144,6 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <form action="system_advanced_create_certs.php" method="post" name="iform" id="iform">
             <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -175,7 +174,6 @@ include("head.inc");
 	-->
 	</script>
 
-<?php include("fend.inc"); ?>
 </body>
 </html>
 
@@ -193,7 +191,6 @@ include("head.inc");
     <link href="gui.css" rel="stylesheet" type="text/css">
     <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
     <form action="system_advanced_create_certs.php" method="post" name="iform" id="iform">
-    <?php include("fbegin.inc"); ?>
 	  <p class="pgtitle">System: Advanced - Create Certificates</p>
 
 	  <table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -255,7 +252,6 @@ include("head.inc");
 		      </td>
 		    </tr>
 
-    <?php include("fend.inc"); ?>
     </body>
     </html>
 

@@ -164,6 +164,7 @@ rmdir_recursive("/var/tmp/instmp*");
 conf_mount_ro();
 
 // close log
-fclose($fd_log);
+if($fd_log)
+	fclose($fd_log);
 
 ?>

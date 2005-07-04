@@ -59,4 +59,8 @@
 			<type>input</type>
 		</field>
 	</fields>
+	<custom_add_php_command_late>
+	    /* resync vpn settings */
+	    vpn_ipsec_configure();
+	</custom_add_php_command_late>
 </packagegui>

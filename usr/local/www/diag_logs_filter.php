@@ -46,7 +46,7 @@ if ($_POST['clear']) {
 
 /* format filter logs */
 function conv_clog($logfile, $tail) {
-	global $g, $config;
+	global $config;
 
 	$nentries = $config['syslog']['nentries'];
 	if (!$nentries)
@@ -61,7 +61,7 @@ function conv_clog($logfile, $tail) {
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
-	exec("/usr/sbin/clog /var/log/filter.log | tail {$sor} -n {$tail}", $logarr);
+	exec("/usr/sbin/clog {$logfile} | /usr/sbin/tail {$sor} -n {$tail}", $logarr);
 
 	$filterlog = array();
 

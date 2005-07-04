@@ -28,6 +28,11 @@
          will be parsed and rendered for the user as a gui with input, and selectboxes. -->
 	<fields>
 		<field>
+			<fielddescr>Enable</fielddescr>
+			<fieldname>enable</fieldname>
+			<type>checkbox</type>
+		</field>
+		<field>
 			<fielddescr>Interface</fielddescr>
 			<fieldname>interface</fieldname>
 			<description>Select the carp interface to use</description>

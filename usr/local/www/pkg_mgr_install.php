@@ -148,7 +148,7 @@ switch($_GET['mode']) {
             update_status("All packages reinstalled.");
             $static_output .= "\n\nAll packages reinstalled.";
             update_output_window($static_output);
-    break;
+	    break;
 	default:
             install_package($_GET['id']);
             update_status("Installation of {$_GET['id']} completed.");

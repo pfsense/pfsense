@@ -847,7 +847,7 @@ function check_firmware_version($tocheck = "all", $return_php = true) {
 			"base"     => array("version" => trim(file_get_contents('/etc/version_base'))),
 			"platform" => trim(file_get_contents('/etc/platform'))
 		);
-	if($tocheck = "all") {
+	if($tocheck == "all") {
 		$params = $rawparams;
 	} else {
 		foreach($tocheck as $check) {

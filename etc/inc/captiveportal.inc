@@ -319,6 +319,7 @@ function captiveportal_disconnect_client($id) {
 				syslog(LOG_INFO,"Authenticated user $cpdb[$i][4] disconnected");
 			}
 
+			/* XXX: What's $ip? This can't be working?!?!?! --billm */
 			mwexec("/sbin/pfctl -t captiveportal -T delete {$ip}");
 
 			unset($cpdb[$i]);
@@ -417,6 +418,7 @@ function captiveportal_allowedip_configure() {
 
 		foreach ($config['captiveportal']['allowedip'] as $ipent) {
 			/* record allowed ip so it can be recognized and removed later */
+			/* XXX: What's $ruleno?  This can't be working as expected!?!?! --billm */
 			fwrite($fd, $ipent['ip'] . "," . $ruleno ."\n");
 
 			/* insert pf table item to allow traffic */

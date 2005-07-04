@@ -34,7 +34,6 @@
  */
 
 function write_rcfile($params) {
-	global $config, $g;
 	$fileprefix = "/usr/local/etc/rc.d/";
 	if(!(is_writable($fileprefix . $params['file']) or $params['start'])) return false;
 	$towrite .= "#!/bin/sh\n# This file was automatically generated\n# by the pfSense service handler.\n\n";
@@ -61,7 +60,7 @@ function write_rcfile($params) {
 }
 
 function start_service($name) {
-	global $config, $g;
+	global $config;
 	if($config['installedpackages']['service']) {
 		foreach($config['installedpackages']['service'] as $service) {
 			if(strtolower($service['name']) == strtolower($name)) {
@@ -83,7 +82,7 @@ function start_service($name) {
 }
 
 function stop_service($name) {
-        global $config, $g;
+        global $config;
         if($config['installedpackages']['service']) {
                 foreach($config['installedpackages']['service'] as $service) {
                         if(strtolower($service['name']) == strtolower($name)) {
@@ -108,7 +107,7 @@ function stop_service($name) {
 }
 
 function restart_service($name) {
-        global $config, $g;
+    global $config;
 	stop_service($name);
 	start_service($name);
         if($config['installedpackages']['service']) {

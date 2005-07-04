@@ -103,10 +103,11 @@ function close_notice($id) {
 			break;
 		}
 	}
-	$queueout = fopen($notice_path, "w");
-        fwrite($queueout, serialize($queue));
-        fclose($queueout);
-        return;
+	/* XXX: what's $queue?  This does nothing right now so I commented it out --Bill */
+/*	$queueout = fopen($notice_path, "w");
+	fwrite($queueout, serialize($queue));
+	fclose($queueout);*/
+	return;
 }
 
 function dump_xml_notices() {

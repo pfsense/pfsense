@@ -298,7 +298,6 @@ function services_dyndns_configure() {
 	sigkillbypid("{$g['varrun_path']}/ez-ipupdate.pid", "QUIT");
 
 	$dyndnscfg = $config['dyndns'];
-	$wancfg = $config['interfaces']['wan'];
 
 	if (isset($dyndnscfg['enable'])) {
 

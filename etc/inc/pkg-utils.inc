@@ -212,49 +212,52 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
  * sync_package($pkg_name, $sync_depends = true, $show_message = false) Force a package to setup its configuration and rc.d files.
  */
 function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
-    global $config;
+	global $config;
 
-    if(!file_exists("/usr/local/pkg")) mwexec("/bin/mkdir -p /usr/local/pkg/pf");
-    if(!$config['installedpackages']['package']) return;                         
-    if(!is_numeric($pkg_name)) {                        
-        $pkg_id = get_pkg_id($pkg_name);
-        if($pkg_id == -1) return -1; // This package doesn't really exist - exit the function.
-    } else {                                                                                  
-        $pkg_id = $pkg_name;
-        if(!isset($config['installedpackages']['package'][$pkg_id]))
-            return;  // No package belongs to the pkg_id passed to this function.
-    }                                                                            
-    $package = $config['installedpackages']['package'][$pkg_id];
-    if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
-    	file_notice($package['name'], "The {$package['name']} package is missing its configuration file and must be reinstalled.", "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
-    } else {
-        $pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
-	if(isset($pkg_config['nosync'])) continue;                                                          
-	if($pkg['custom_php_global_functions'] <> "")            
-	    eval($pkg['custom_php_global_functions']);
-	if($pkg_config['custom_php_resync_config_command'] <> "")
-	    eval($pkg_config['custom_php_resync_config_command']);
-	if($sync_depends == true) {
-	    $depends = get_pkg_depends($pkg_name, ".xml", "files", 1); // Call dependency handler and do a little more error checking.
-	if(is_array($depends)) {
-		foreach($depends as $item) {
+	if(!file_exists("/usr/local/pkg")) mwexec("/bin/mkdir -p /usr/local/pkg/pf");
+	if(!$config['installedpackages']['package']) return;
+	if(!is_numeric($pkg_name)) {
+		$pkg_id = get_pkg_id($pkg_name);
+		if($pkg_id == -1) return -1; // This package doesn't really exist - exit the function.
+	} else {
+		$pkg_id = $pkg_name;
+		if(!isset($config['installedpackages']['package'][$pkg_id]))
+		return;  // No package belongs to the pkg_id passed to this function.
+	}
+	$package = $config['installedpackages']['package'][$pkg_id];
+	if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
+		file_notice($package['name'], "The {$package['name']} package is missing its configuration file and must be reinstalled.", "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
+	} else {
+		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
+		/* XXX: Zend complains about the next line "Wrong break depth"
+		 * The code is obviously wrong, but I'm not sure what it's supposed to do?
+		 */
+		if(isset($pkg_config['nosync'])) continue;
+		if($pkg['custom_php_global_functions'] <> "")
+		eval($pkg['custom_php_global_functions']);
+		if($pkg_config['custom_php_resync_config_command'] <> "")
+		eval($pkg_config['custom_php_resync_config_command']);
+		if($sync_depends == true) {
+			$depends = get_pkg_depends($pkg_name, ".xml", "files", 1); // Call dependency handler and do a little more error checking.
+			if(is_array($depends)) {
+				foreach($depends as $item) {
 					if(!file_exists("/usr/local/pkg" . $item)) {
 						file_notice($package['name'], "The {$package['name']} package is missing required dependencies and must be reinstalled.", "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
 					} else {
-		                $item_config = parse_xml_config_pkg("/usr/local/pkg/" . $item, "packagegui");
-		                if(isset($item_config['nosync'])) continue;
-		                if($item_config['custom_php_command_before_form'] <> "") {
-		                    eval($item_config['custom_php_command_before_form']);
-		                }
-		                if($item_config['custom_php_resync_config_command'] <> "") {
-		                    eval($item_config['custom_php_resync_config_command']);
-		                }
-		                if($show_message == true) print " " . $item_config['name'];
-                  }
-              }
-          }
-      }
-    }
+						$item_config = parse_xml_config_pkg("/usr/local/pkg/" . $item, "packagegui");
+						if(isset($item_config['nosync'])) continue;
+						if($item_config['custom_php_command_before_form'] <> "") {
+							eval($item_config['custom_php_command_before_form']);
+						}
+						if($item_config['custom_php_resync_config_command'] <> "") {
+							eval($item_config['custom_php_resync_config_command']);
+						}
+						if($show_message == true) print " " . $item_config['name'];
+					}
+				}
+			}
+		}
+	}
 }
 
 /*
@@ -264,7 +267,7 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
  * XXX: This function needs to return where a pkg_add fails. Our current error messages aren't very descriptive.
  */
 function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 'http://ftp2.freebsd.org/pub/FreeBSD/ports/i386/packages-5.4-release/Latest') {
-        global $pkgent, $static_status, $static_output, $g, $pkg_interface, $fd_log;
+        global $pkgent, $static_output, $g, $fd_log;
         $pkg_extension = strrchr($filename, '.');
         $static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $pkgname . " ";
         $fetchto = "/tmp/apkg_" . $pkgname . $pkg_extension;
@@ -275,7 +278,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
         $raw_depends_list = array_values(preg_grep("/\@pkgdep/", $slaveout));
         if($raw_depends_list != "") {
                 if($pkgent['exclude_dependency'] != "")
-                        $raw_depends_list = array_values(preg_grep($pkent['exclude_dependency'], PREG_GREP_INVERT));
+                        $raw_depends_list = array_values(preg_grep($pkgent['exclude_dependency'], PREG_GREP_INVERT));
                 foreach($raw_depends_list as $adepend) {
                         $working_depend = explode(" ", $adepend);
                         //$working_depend = explode("-", $working_depend[1]);
@@ -295,7 +298,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 }
 
 function download_file_with_progress_bar($url_file, $destination_file) {
-        global $ch, $fout, $file_size, $downloaded, $counter, $pkg_interface;
+        global $ch, $fout, $file_size, $downloaded, $pkg_interface;
         $file_size  = 1;
         $downloaded = 1;
         /* open destination file */
@@ -320,7 +323,7 @@ function download_file_with_progress_bar($url_file, $destination_file) {
 }
 
 function read_header($ch, $string) {
-        global $file_size, $ch, $fout;
+        global $file_size, $fout;
         $length = strlen($string);
         ereg("(Content-Length:) (.*)", $string, $regs);
         if($regs[2] <> "") {
@@ -330,7 +333,7 @@ function read_header($ch, $string) {
 }
 
 function read_body($ch, $string) {
-        global $fout, $file_size, $downloaded, $counter, $sendto, $static_output, $lastseen, $pkg_interface;
+        global $fout, $file_size, $downloaded, $sendto, $static_status, $static_output, $lastseen, $pkg_interface;
         $length = strlen($string);
         $downloaded += intval($length);
         $downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
@@ -354,7 +357,7 @@ function install_package($package, $pkg_info = "") {
 	global $g, $config, $pkg_interface, $fd_log, $static_output;
 	/* open logfiles and begin installation */
 	if(!$fd_log) {
-		if(!$fd_log = fopen("{$g['tmp_path']}/pkg_mgr_{$pkg}.log", "w")) {
+		if(!$fd_log = fopen("{$g['tmp_path']}/pkg_mgr_{$package}.log", "w")) {
 			update_output_window("Warning, could not open log for writing.");
 		}
 	}
@@ -801,7 +804,6 @@ function get_package_install_size($pkg = 'all', $pkg_info = "") {
 	$pkgdb = get_pkg_db();
 	if(!$pkg_info) $pkg_info = get_pkg_sizes($pkg);
 	foreach($pkg as $apkg) {
-		$size = 0;
 		if(!$pkg_info[$apkg]) continue;
 		$toreturn[$apkg] = expand_to_bytes(walk_depend(array($pkg_info[$apkg]), $pkgdb));
 	}

@@ -86,7 +86,6 @@ function return_dir_as_array($dir) {
  *   This function only supports the fxp driver's loadable microcode.
  ******/
 function enable_hardware_offloading($interface) {
-    global $config;
     global $g;
     if($g['booting']) {
 		$supported_ints = array('fxp');
@@ -112,8 +111,6 @@ function enable_hardware_offloading($interface) {
  ******/
 function setup_microcode() {
    global $config;
-    if($ip == "") return;
-    $i = 0;
     $ifdescrs = array('wan', 'lan');
     for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 	$ifdescrs['opt' . $j] = "opt" . $j;
@@ -226,35 +223,33 @@ function find_number_of_created_carp_interfaces() {
  *   $carp_ints
  ******/
 function link_ip_to_carp_interface($ip) {
-    global $config;
-    if($ip == "") return;
-    $i = 0;
+	global $config;
+	if($ip == "") return;
 
-    $ifdescrs = array('wan', 'lan');
-    for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-	$ifdescrs['opt' . $j] = "opt" . $j;
-    }
-
-    $ft = split("\.", $ip);
-    $ft_ip = $ft[0] . "." . $ft[1] . "." . $ft[2] . ".";
-
-    $carp_ints = "";
-    $num_carp_ints = find_number_of_created_carp_interfaces();
-    foreach ($ifdescrs as $ifdescr => $ifname) {
-	for($x=0; $x<$num_carp_ints; $x++) {
-	    $carp_int = "carp{$x}";
-	    $carp_ip = find_interface_ip($carp_int);
-	    $carp_ft = split("\.", $carp_ip);
-	    $carp_ft_ip = $carp_ft[0] . "." . $carp_ft[1] . "." . $carp_ft[2] . ".";
-	    $result = does_interface_exist($carp_int);
-	    if($result <> true) break;
-	    $interface = filter_opt_interface_to_real($ifname);
-	    if($ft_ip == $carp_ft_ip)
-		if(stristr($carp_ints,$carp_int) == false)
-		    $carp_ints .= " " . $carp_int;
+	$ifdescrs = array('wan', 'lan');
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+		$ifdescrs['opt' . $j] = "opt" . $j;
 	}
-    }
-    return $carp_ints;
+
+	$ft = split("\.", $ip);
+	$ft_ip = $ft[0] . "." . $ft[1] . "." . $ft[2] . ".";
+
+	$carp_ints = "";
+	$num_carp_ints = find_number_of_created_carp_interfaces();
+	foreach ($ifdescrs as $ifdescr => $ifname) {
+		for($x=0; $x<$num_carp_ints; $x++) {
+			$carp_int = "carp{$x}";
+			$carp_ip = find_interface_ip($carp_int);
+			$carp_ft = split("\.", $carp_ip);
+			$carp_ft_ip = $carp_ft[0] . "." . $carp_ft[1] . "." . $carp_ft[2] . ".";
+			$result = does_interface_exist($carp_int);
+			if($result <> true) break;
+			if($ft_ip == $carp_ft_ip)
+			if(stristr($carp_ints,$carp_int) == false)
+			$carp_ints .= " " . $carp_int;
+		}
+	}
+	return $carp_ints;
 }
 
 /****f* pfsense-utils/exec_command
@@ -329,14 +324,13 @@ function filter_get_opt_interface_descr($opt) {
 function get_friendly_interface_list_as_array() {
     global $config;
     $ints = array();
-    $i = 0;
     $ifdescrs = array('wan', 'lan');
     for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-	$ifdescrs['opt' . $j] = "opt" . $j;
+		$ifdescrs['opt' . $j] = "opt" . $j;
     }
     $ifdescrs = get_interface_list();
     foreach ($ifdescrs as $ifdescr => $ifname) {
-	array_push($ints,$ifdescr);
+		array_push($ints,$ifdescr);
     }
     return $ints;
 }
@@ -346,7 +340,6 @@ function get_friendly_interface_list_as_array() {
  */
 function find_ip_interface($ip) {
     global $config;
-    $i = 0;
     $ifdescrs = array('wan', 'lan');
     for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 	$ifdescrs['opt' . $j] = "opt" . $j;
@@ -373,22 +366,24 @@ function filter_translate_type_to_real_interface($interface) {
  * get_carp_interface_status($carpinterface): returns the status of a carp ip
  */
 function get_carp_interface_status($carpinterface) {
-    /* basically cache the contents of ifconfig statement
-       to speed up this routine */
-    global $carp_query;
-    if($carp_query == "")
+	/* basically cache the contents of ifconfig statement
+	to speed up this routine */
+	global $carp_query;
+	if($carp_query == "")
 	$carp_query = split("\n", `/sbin/ifconfig | /usr/bin/grep carp`);
-    $found_interface = 0;
-    foreach($carp_query as $int) {
-	if($found_interface == 1) {
-	    if(stristr($int, "MASTER") == true) return "MASTER";
-	    if(stristr($int, "BACKUP") == true) return "BACKUP";
-	    if(stristr($int, "INIT") == true) return "INIT";
-	    return false;
+	$found_interface = 0;
+	foreach($carp_query as $int) {
+		if($found_interface == 1) {
+			if(stristr($int, "MASTER") == true) return "MASTER";
+			if(stristr($int, "BACKUP") == true) return "BACKUP";
+			if(stristr($int, "INIT") == true) return "INIT";
+			return false;
+		}
+		if(stristr($int, $carpinterface) == true)
+		$found_interface=1;
 	}
-	if(stristr($int, $carpinterface) == true) $found_interface=1;
-    }
-    return $status;
+	/* XXX: Should never reach this */
+	return;
 }
 
 /*
@@ -470,7 +465,6 @@ function add_text_to_file($file, $text) {
 	} else {
 		return false;
 	}
-	return false;
 }
 
 /*
@@ -514,14 +508,13 @@ function update_status($status) {
  *   exec_command_and_return_text_array: execute command and return output
  */
 function exec_command_and_return_text_array($command) {
-    $counter = 0;
-    $fd = popen($command . " 2>&1 ", "r");
-    while(!feof($fd)) {
-	$tmp .= fread($fd,49);
-    }
-    fclose($fd);
-    $temp_array = split("\n", $tmp);
-    return $tmp_array;
+	$fd = popen($command . " 2>&1 ", "r");
+	while(!feof($fd)) {
+		$tmp .= fread($fd,49);
+	}
+	fclose($fd);
+	$temp_array = split("\n", $tmp);
+	return $temp_array;
 }
 
 /*
@@ -576,7 +569,6 @@ function convert_friendly_interface_to_real_interface_name($interface) {
     $lc_interface = strtolower($interface);
     if($lc_interface == "lan") return $config['interfaces']['lan']['if'];
     if($lc_interface == "wan") return $config['interfaces']['wan']['if'];
-    $i = 0;
     $ifdescrs = array();
     for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
 	$ifdescrs['opt' . $j] = "opt" . $j;
@@ -594,7 +586,6 @@ function convert_friendly_interface_to_real_interface_name($interface) {
  */
 function convert_real_interface_to_friendly_interface_name($interface) {
     global $config;
-    $i = 0;
     $ifdescrs = array('wan', 'lan');
     for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
 	$ifdescrs['opt' . $j] = "opt" . $j;
@@ -741,7 +732,7 @@ if (!function_exists('php_check_syntax')){
         $code = str_replace("<?php", "", $code);
         $code = str_replace("?>", "", $code);
         fwrite($fout, "<?php\n\n");
-        fwrite($fout, $code);
+        fwrite($fout, $code_to_check);
         fwrite($fout, "\n\n?>\n");
         fclose($fout);
         $command = "/usr/local/bin/php -l /tmp/codetocheck.php";

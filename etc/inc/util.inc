@@ -218,9 +218,6 @@ function is_port($port) {
 /* returns a list of interfaces with MAC addresses
    (skips VLAN and other virtual interfaces) */
 function get_interface_list() {
-
-	global $g;
-
 	/* build interface list with netstat */
 	exec("/usr/bin/netstat -inW -f link", $linkinfo);
 	array_shift($linkinfo);

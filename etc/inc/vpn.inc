@@ -75,7 +75,6 @@ function vpn_ipsec_configure($ipchg = false) {
 
 	vpn_ipsec_failover_configure();
 	
-	$syscfg = $config['system'];
 	$ipseccfg = $config['ipsec'];
 	$lancfg = $config['interfaces']['lan'];
 	$lanip = $lancfg['ipaddr'];

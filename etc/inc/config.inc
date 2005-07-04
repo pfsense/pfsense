@@ -299,7 +299,7 @@ function conf_mount_rw() {
  *   null        
  ******/
 function conf_mount_ro() {
-	global $g, $do_not_mount_ro;
+	global $g;
 
 	if($g['booting'] == true) return;
 	
@@ -330,7 +330,7 @@ function conf_mount_ro() {
  ******/
 /* convert configuration, if necessary */
 function convert_config() {
-	global $config, $pkg_config, $g;
+	global $config, $g;
 
 	if ($config['version'] == $g['latest_config'])
 		return;		/* already at latest version */
@@ -1042,8 +1042,6 @@ function system_start_ftp_helpers() {
 	}
 	$wanip = get_current_wan_address();
 	mwexec("/usr/bin/killall pftpx");
-	if($wanip <> "" and $wanip <> "0.0.0.0") 
-		$pip = "-p {$wanip}";
 	mwexec("/usr/local/sbin/pftpx -g 8021 {$wanip}");
 }
 

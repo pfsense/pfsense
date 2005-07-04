@@ -492,7 +492,8 @@ EOD;
 			chmod("{$g['varetc_path']}/psk.txt", 0600);
 			
 			/* start racoon */
-			echo " racoon ";
+			if($g['booting']) 
+				echo " racoon ";
 			mwexec("/usr/local/sbin/racoon -d -f {$g['varetc_path']}/racoon.conf");
 			
 			if (is_array($ipseccfg['tunnel'])) {

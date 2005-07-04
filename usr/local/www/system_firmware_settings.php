@@ -93,7 +93,7 @@ function update_description(itemnum) {
 			<select onChange="update_description(this.selectedIndex);" name="branch" id="branch">
 			<option value="stable"<?php if($curcfg['branch']=="stable") echo " SELECTED"; ?>>Stable</option>
 			<option value="beta"<?php if($curcfg['branch']=="beta") echo " SELECTED"; ?>>Beta</option>
-			<option value="alpha"<?php if($config['branch']=="alpha") echo " SELECTED"; ?>>Alpha</option>
+			<option value="alpha"<?php if($curcfg['branch']=="alpha") echo " SELECTED"; ?>>Alpha</option>
 			</select>
 			<textarea cols="60" rows="2" id="branchinfo" name="branchinfo"style="border:1px dashed #000066; background-color: #ffffff; color: #000000; font-size: 8pt;">
 			</textarea>

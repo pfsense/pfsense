@@ -92,7 +92,7 @@ if(is_array($versions)) {
 		if($version == 1) {
 			$img = "pass.gif";
 			$pastlatest = true;
-		} elseif($currentver > $version[count($version) - 1]['version']) {
+		} elseif( strcmp($currentver , $version[count($version) - 1]['version']) ){
 			$img = "pass.gif";
 			$pastlatest = true;
 		} else {

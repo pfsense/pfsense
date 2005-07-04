@@ -611,12 +611,14 @@ function fixup_string($string) {
 	global $config;
 	// fixup #1: $myurl -> http[s]://ip_address:port/
 	$https = "";
-	$port = "";
-	$urlport = "";
 	$port = $config['system']['webguiport'];
-	if($port <> "443" and $port <> "80") $urlport = ":" . $port;
+	if($port <> "443" and $port <> "80")
+		$urlport = ":" . $port;
+	else
+		$urlport = "";
+		
 	if($config['system']['webguiproto'] == "https") $https = "s";
-	$myurl = "http" . $https . "://" . getenv("HTTP_HOST") . $urlportport;
+	$myurl = "http" . $https . "://" . getenv("HTTP_HOST") . $urlport;
 	$newstring = str_replace("\$myurl", $myurl, $string);
 	$string = $newstring;
 	// fixup #2: $wanip

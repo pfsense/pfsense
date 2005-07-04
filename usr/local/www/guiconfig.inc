@@ -275,7 +275,7 @@ function pprint_port($port) {
 /* sort by interface only, retain the original order of rules that apply to
    the same interface */
 function filter_rules_sort() {
-	global $g, $config;
+	global $config;
 
 	/* mark each rule with the sequence number (to retain the order while sorting) */
 	for ($i = 0; isset($config['filter']['rule'][$i]); $i++)
@@ -296,7 +296,7 @@ function filter_rules_sort() {
 }
 
 function nat_rules_sort() {
-	global $g, $config;
+	global $config;
 
 	function natcmp($a, $b) {
 		if ($a['external-address'] == $b['external-address']) {
@@ -571,7 +571,7 @@ function pconfig_to_address(&$adr, $padr, $pmask, $pnot=false, $pbeginport=0, $p
         if ($pnot)
                 $adr['not'] = true;
         else
-                unset($addr['not']);
+                unset($adr['not']);
 
         if (($pbeginport != 0) && ($pbeginport != "any")) {
                 if ($pbeginport != $pendport)

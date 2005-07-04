@@ -45,7 +45,7 @@ if ($_POST['clear']) {
 }
 
 function dump_clog_vpn($logfile, $tail) {
-	global $g, $config;
+	global $config;
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 

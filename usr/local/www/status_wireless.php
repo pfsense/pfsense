@@ -34,7 +34,7 @@ require("guiconfig.inc");
 
 function get_wireless_info($ifdescr) {
 	
-	global $config, $g;
+	global $config;
 	
 	$ifinfo = array();
 	$ifinfo['if'] = $config['interfaces'][$ifdescr]['if'];

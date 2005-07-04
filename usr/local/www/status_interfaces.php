@@ -56,7 +56,7 @@ if ($_POST) {
 
 function get_interface_info($ifdescr) {
 
-	global $config, $g;
+	global $config;
 
 	$ifinfo = array();
 

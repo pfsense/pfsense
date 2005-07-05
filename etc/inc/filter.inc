@@ -1905,8 +1905,8 @@ EOD;
 			$ipfrules .= "pass quick on " . $wanif . " proto ah from " . $ipsec_ip . " to " . $remote_gateway . " keep state label \"IPSEC: ". $tunnel['descr'] ." ah proto\"\n";
 			$ipfrules .= "pass quick on " . $wanif . " proto ah from " . $remote_gateway . " to " . $ipsec_ip  . " keep state label \"IPSEC: ". $tunnel['descr'] ." ah proto\"\n";
 
-			$ipfrules .= "pass quick on " . $lanif . " from " . $tunnel['remote-subnet'] . " to " . $internal_subnet  . " keep state label \"IPSEC:  " . $tunnel['descr'] ."\"\n";
-			$ipfrules .= "pass quick on " . $lanif . " from " . $internal_subnet . " to " . $tunnel['remote-subnet'] . " keep state label \"IPSEC:  " . $tunnel['descr'] ."\"\n";
+			$ipfrules .= "pass quick on " . $lanif . " from " . $tunnel['remote-subnet'] . " to " . $tunnel['local-subnet']['address']  . " keep state label \"IPSEC:  " . $tunnel['descr'] ."\"\n";
+			$ipfrules .= "pass quick on " . $lanif . " from " . $tunnel['local-subnet']['address'] . " to " . $tunnel['remote-subnet'] . " keep state label \"IPSEC:  " . $tunnel['descr'] ."\"\n";
 		}
 	}
 

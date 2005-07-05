@@ -61,10 +61,10 @@ function showhide_black(tspan, tri) {
 }
 -->
 </script>
-<table width="750" border="0" cellspacing="0" cellpadding="0">
-  <tr valign="bottom">
+<table width="750" height="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr valign="bottom" height="65">
     <td width="150" height="65" align="center" valign="middle"> <strong><a href="/"><img src="/logo.gif" border="0"></a></strong></td>
-    <td height="100%" bgcolor="#990000" background="top_background.gif">
+    <td bgcolor="#990000" background="top_background.gif">
 	<table border="0" cellspacing="0" cellpadding="0" width="100%">
 	<tr><td align="left" valign="bottom"><span class="tfrtitle">&nbsp;webConfigurator</span></td>
 	  <td align="right" valign="bottom">
@@ -72,8 +72,8 @@ function showhide_black(tspan, tri) {
 	  </td></tr></table>
 	</td>
   </tr>
-  <tr valign="top">
-    <td width="150">
+  <tr valign="top" height="100%">
+    <td width="150" height="100%">
 	<div id="niftyMenu">
 	<table class="menu">
         <tr>

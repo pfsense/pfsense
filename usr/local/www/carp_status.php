@@ -68,6 +68,7 @@ include("fbegin.inc");
 <form action="carp_status.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
+<div id="mainarea">
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td>
@@ -79,10 +80,8 @@ include("fbegin.inc");
 	display_top_tabs($tab_array);
 ?> 
 </td></tr>
-<tr><td>
-<div id="mainarea">
-<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
-<tr><td>
+<tr><td class="tabcont">
+
 <?php
 	if($status == false) {
 		$carp_enabled = false;
@@ -91,10 +90,9 @@ include("fbegin.inc");
 		$carp_enabled = true;
 		echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"Disable Carp\">";
 	}
-echo "</td></tr></table>";
 
 if(!is_array($config['installedpackages']['carp']['config'])) {
-	echo "</div></td></tr></table><center><br>Could not locate any defined CARP interfaces.";
+	echo "</td></tr></table><center><br>Could not locate any defined CARP interfaces.";
 	echo "</center>";
 
 	include("fend.inc");
@@ -105,7 +103,7 @@ if(!is_array($config['installedpackages']['carp']['config'])) {
 
 <p>
 
-<table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+<table width="100%" border="0" cellpadding="6" cellspacing="0">
 </tr>
 <tr>
   <td class="listhdrr"><b><center>Carp Interface</center></b></td>
@@ -163,10 +161,16 @@ if($config['installedpackages']['carp']['config'] <> "")
 </center>
 </td></tr>
 </table>
-</div>
 </td></tr>
 </table>
+</div>
 
 <?php include("fend.inc"); ?>
+<script type="text/javascript">
+NiftyCheck();
+Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
+</script>
+
 </body>
 </html>
+

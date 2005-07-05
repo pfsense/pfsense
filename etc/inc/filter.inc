@@ -1785,6 +1785,23 @@ EOD;
 			$line = "";
 			if (!isset($rule['disabled'])) {
 				if ($rule['interface'] == "pptp") {
+					if($config['pptp']['n_pptp_units'] <> "")
+					$n_pptp_units = $config['pptp']['n_pptp_units'];
+					else
+					$n_pptp_units = $g['n_pptp_units'];
+					for($xxx=0; $xxx < $n_pptp_units; $xxx++) {
+						/*
+						 *   now that PPTP server are user rules, detect
+						 *   that user is setting the pptp server rule
+						 *   and setup for all netgraph interfaces
+						 */
+						$line = generate_user_filter_rule($rule, $xxx);
+						$ackq = get_ack_queue($rule['interface']);
+						if($ackq != "")
+						$line .= " queue ({$queue['name']}, {$ackq}) ";
+						if($line <> "")
+						$ipfrules .= $line . "\n";
+                                        }
 					$line = generate_user_filter_rule($rule, $xxx);
 					if($line <> "") {
 						if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {

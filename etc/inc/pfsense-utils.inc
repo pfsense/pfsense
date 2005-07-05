@@ -930,10 +930,11 @@ function get_disk_info() {
  * RESULT
  *   null
  ******/
-function display_topbar($text = "") {
+function display_topbar($text = "", $bg_color="#990000", $replace_color="#FFFFFF", $rounding_style="smooth") {	    
 	echo "     <table width='100%' cellpadding='0' cellspacing='0'>\n";
 	echo "       <tr height='1'>\n";
-	echo "         <td width='100%' valign='top' color='#990000' bgcolor='#990000'><div id='topbar'></div></td>\n";
+	echo "         <td width='100%' valign='top' color='{$bg_color}' bgcolor='{$bg_color}'>";
+	echo "		<div id='topbar'></div></td>\n";
 	echo "       </tr>\n";
 	echo "       <tr height='1'>\n";
 	if ($text != "")
@@ -942,10 +943,9 @@ function display_topbar($text = "") {
 		echo "         <td height='1' class='listtopic'></td>\n";
 	echo "       </tr>\n";
 	echo "     </table>";
-
 	echo "<script type=\"text/javascript\">";
 	echo "NiftyCheck();\n";
-	echo "Rounded(\"div#topbar\",\"top\",\"#FFFFFF\",\"#990000\",\"smooth\");\n";
+	echo "Rounded(\"div#topbar\",\"top\",\"{$replace_color}\",\"{$bg_color}\",\"{$rounding_style}\");\n";
 	echo "</script>";
 }
 	

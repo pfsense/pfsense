@@ -335,3 +335,9 @@ ul#tabnav li.tabact {
 	padding: 0;
 	white-space: nowrap;
 }
+.menu {
+	background-color: #000000;
+	white-space: nowrap;
+	width: 100%;
+	height: 100%;
+}

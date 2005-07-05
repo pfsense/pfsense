@@ -11,8 +11,7 @@
 </table>
 <script type="text/javascript">
 NiftyCheck();
-Rounded("div#niftyMenuTop","top","#FFFFFF","#000000","smooth");
-Rounded("div#niftyMenuBottom","bottom","#FFFFFF","#000000","smooth");
+Rounded("div#niftyMenu","top bottom","#FFFFFF","#000000","smooth");
 Rounded("div#mainarea","bl br tr","#FFF","#eeeeee","smooth");
 Rounded("div#boxarea","bl br tl tr","#FFF","#eeeeee","smooth");
 Rounded("tr#fend","bl br tl tr","#FFF","#990000","smooth");

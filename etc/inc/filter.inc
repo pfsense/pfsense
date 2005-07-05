@@ -1896,8 +1896,7 @@ EOD;
 	if(is_array($config['ipsec']['tunnel'])) {
 		foreach ($config['ipsec']['tunnel'] as $tunnel) {
 			$remote_gateway = $tunnel['remote-gateway'];
-			address_to_pconfig_vpn($tunnel['local-subnet'], $pconfig['localnet'], $pconfig['localnetmask']);
-			$local_subnet = $pconfig['localnet'] . "/" . $pconfig['localnetmask'];
+			$local_subnet = return_vpn_subnet($tunnel['local-subnet']);
 			$ipfrules .= "pass quick on " . $wanif . " proto udp from " . $ipsec_ip . " to " . $remote_gateway . " port = 500 keep state label \"IPSEC: ". $tunnel['descr'] ." udp\"\n";
 			$ipfrules .= "pass quick on " . $wanif . " proto udp from " . $remote_gateway . " to " . $ipsec_ip  . " port = 500 keep state label \"". $tunnel['descr'] ." udp\"\n";
 
@@ -1907,11 +1906,10 @@ EOD;
 			$ipfrules .= "pass quick on " . $wanif . " proto ah from " . $ipsec_ip . " to " . $remote_gateway . " keep state label \"IPSEC: ". $tunnel['descr'] ." ah proto\"\n";
 			$ipfrules .= "pass quick on " . $wanif . " proto ah from " . $remote_gateway . " to " . $ipsec_ip  . " keep state label \"IPSEC: ". $tunnel['descr'] ." ah proto\"\n";
 
-			//$ipfrules .= "pass quick on " . $lanif . " from " . $tunnel['remote-subnet'] . " to " . $local_subnet . " keep state label \"IPSEC:  " . $tunnel['descr'] ."\"\n";
-			//$ipfrules .= "pass quick on " . $lanif . " from " . $local_subnet . " to " . $tunnel['remote-subnet'] . " keep state label \"IPSEC:  " . $tunnel['descr'] ."\"\n";
+			$ipfrules .= "pass quick on " . $lanif . " from " . $tunnel['remote-subnet'] . " to " . $local_subnet . " keep state label \"IPSEC:  " . $tunnel['descr'] ."\"\n";
+			$ipfrules .= "pass quick on " . $lanif . " from " . $local_subnet . " to " . $tunnel['remote-subnet'] . " keep state label \"IPSEC:  " . $tunnel['descr'] ."\"\n";
 		}
 	}
-
 
 	$ipfrules .= <<<EOD
 
@@ -2090,23 +2088,23 @@ function carp_sync_client() {
 
 }
 
-function address_to_pconfig_vpn($adr, &$padr, &$pmask) {
-
-        if ($adr['network'])
-                $padr = $adr['network'];
-        else if ($adr['address']) {
+function return_vpn_subnet($adr) {
+	global $config;
+	
+        if ($adr['address']) {
                 list($padr, $pmask) = explode("/", $adr['address']);
-                if (is_null($pmask))
-                        $pmask = 32;
+                if (is_null($pmask)) 
+			return $padr . "/32";
+		return $padr . "/" . $pmask;
         }
 	
 	/* XXX: do not return wan, lan, etc */
-	if(strstr($padr, "wan") or strstr($padr, "lan") or strstr($padr, "opt")) {
-		$padr = convert_friendly_interface_to_real_interface_name($padr);
-		$padr = find_interface_ip($padr);
-	}
+	if(strstr($adr['network'], "wan") or strstr($adr['network'], "lan") or strstr($adr['network'], "opt")) 
+		return convert_ip_to_network_format($config['interfaces'][$adr['network']]['ipaddr'],
+		       $config['interfaces'][$adr['network']]['subnet']);
 	
-	
+	/* fallback - error */
+	return " # error - {$adr['network']} ";
 	
 }
 

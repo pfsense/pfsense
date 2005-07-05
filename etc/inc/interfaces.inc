@@ -374,6 +374,10 @@ function interfaces_wireless_configure($if, $wlcfg) {
 
         mwexec("/sbin/ifconfig " . $ifcargs);
 
+	$fd = fopen("{$g['tmp_path']}/ifconfig_wireless", "w");
+	fwrite($fd, "/sbin/ifconfig {$ifcargs}");
+	fclose($fd);
+
         return 0;
 
 }

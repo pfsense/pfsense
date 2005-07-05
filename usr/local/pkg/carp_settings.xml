@@ -99,6 +99,12 @@
 			<type>checkbox</type>
 		</field>
 		<field>
+			<fielddescr>Synchronize ipsec</fielddescr>
+			<fieldname>synchronizeipsec</fieldname>
+			<description>When this option is enabled, this system will automatically sync the ipsec rules over to the other carp host when changes are made.</description>
+			<type>checkbox</type>
+		</field>
+		<field>
 			<fielddescr>Synchronize traffic shaper</fielddescr>
 			<fieldname>synchronizetrafficshaper</fieldname>
 			<description>When this option is enabled, this system will automatically sync the traffic shaper rules over to the other carp host when changes are made.</description>
@@ -109,8 +115,7 @@
 			<fieldname>synchronizetoip</fieldname>
 			<description>Enter the IP address of the firewall you would like to synchronize your rules to.</description>
 			<type>input</type>
-			<note>Note: CARP sync is currently only supported over http connections - make sure the remote system's
- WebGUI protocol is set to this!</note>
+			<note>Note: CARP sync is currently only supported over http connections - make sure the remote system's WebGUI protocol is set to this!</note>
 		</field>
 		<field>
                         <fielddescr>Remote System Password</fielddescr>

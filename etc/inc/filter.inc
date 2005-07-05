@@ -2020,6 +2020,10 @@ function carp_sync_client() {
 					$sections_xml[] = new XML_RPC_Value(backup_config_section("shaper"), 'string');
 					$sections[] = new XML_RPC_Value('shaper', 'string');
 				}
+				if($carp['synchronizeipsec'] != "" and is_array($config['ipsec'])) {
+					$sections_xml[] = new XML_RPC_Value(backup_config_section("ipsec"), 'string');
+					$sections[] = new XML_RPC_Value('ipsec', 'string');
+				}				
 				if(count($sections) > 0) {
 					carp_sync_xml($synchronizetoip, $carp['password'], $sections, $sections_xml);
 					$cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip);

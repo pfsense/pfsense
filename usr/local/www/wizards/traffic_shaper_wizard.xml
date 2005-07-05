@@ -765,7 +765,7 @@
                         <type>checkbox</type>
                         <typehint>Prioritize network gaming traffic</typehint>
                         <description>This will raise the priority of gaming traffic to higher than most traffic.</description>
-			<enablefields>Counterstrike,DeltaForce,QuakeIII,TigerWoods2004PS2,CallOfDuty,PlanetSide,Halo2</enablefields>
+			<enablefields>Counterstrike,DeltaForce,QuakeIII,TigerWoods2004PS2,CallOfDuty,PlanetSide,Halo2,Unreal</enablefields>
 			<donotdisable>true</donotdisable>
 			<bindstofield>ezshaper->step5->enable</bindstofield>
                 </field>
@@ -818,6 +818,12 @@
                         <type>checkbox</type>
 			<typehint>Halo2 via Xbox live</typehint>
 			<bindstofield>ezshaper->step5->halo2xbox</bindstofield>
+                </field>
+                <field>
+                        <name>Unreal</name>
+                        <type>checkbox</type>
+			<typehint>Unreal tournament</typehint>
+			<bindstofield>ezshaper->step5->unreal</bindstofield>
                 </field>		
                 <field>
                         <name>Next</name>
@@ -924,6 +930,12 @@
 		    $gamesplist[] = array('Halo2-1', 'udp', '88', '88', 'both');
 		    $gamesplist[] = array('Halo2-2', 'udp', '3074', '3074', 'both');
 		    $gamesplist[] = array('Halo2-3', 'tcp', '3074', '3074', 'both');
+		}
+
+		if($_POST['unreal'] != "") {
+		    /* Unreal Tournament */
+		    $gamesplist[] = array('ur1', 'udp', '7777-7787', '7777-7787', 'both');
+		    $gamesplist[] = array('ur2', 'tcp', '7777-7787', '7777-7787', 'both');
 		}
 
 		/* XXX: add some more games before this line!! */

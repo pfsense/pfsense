@@ -112,7 +112,10 @@ function showhide_black(tspan, tri) {
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_proxyarp.php" class="navlnk">Proxy ARP</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_wol.php" class="navlnk">Wake on LAN</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/carp_status.php" class="navlnk">CARP (failover)</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/pkg_edit.php?xml=sasyncd.xml&id=0" class="navlnk">VPN failover</a><br>
+		
+	
+		
+		
 	      <?php echo return_ext_menu("Services"); ?>
               <strong>VPN</strong><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/vpn_ipsec.php" class="navlnk">IPsec</a><br>
@@ -152,6 +155,7 @@ function showhide_black(tspan, tri) {
 <?php if (isset($config['system']['developer'])) { ?> 
               <strong>Developers</strong><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/restart_httpd.php" class="navlnk">Restart HTTPD</a><br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/pkg_edit.php?xml=sasyncd.xml&id=0" class="navlnk">VPN failover</a><br>
 <?php } ?>
 			<?php if (isset($config['system']['webgui']['expanddiags']) || strstr($_SERVER['SCRIPT_FILENAME'], "diag_") || strstr($_SERVER['SCRIPT_FILENAME'], "reboot")): ?>
 		<a href="javascript:showhide('diag','tri_diag')"><img src="/tri_o.gif" id="tri_diag" width="14" height="10" border="0"></a><strong><a href="javascript:showhide('diag','tri_diag')" class="navlnk">Diagnostics</a></strong><br>

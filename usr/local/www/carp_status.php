@@ -68,8 +68,7 @@ include("fbegin.inc");
 <form action="carp_status.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
-<div id="mainarea">
-
+<div id="mainlevel">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td>
 <?php
@@ -168,7 +167,7 @@ if($config['installedpackages']['carp']['config'] <> "")
 <?php include("fend.inc"); ?>
 <script type="text/javascript">
 NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
+Rounded("div#mainlevel","bl br","#FFF","#eeeeee","smooth");
 </script>
 
 </body>

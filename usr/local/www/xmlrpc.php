@@ -129,4 +129,7 @@ $server = new XML_RPC_Server(
 							'docstring' => $reboot_doc)
         )
 );
+
+mwexec("rm /tmp/config.cache");
+
 ?>

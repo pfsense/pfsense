@@ -73,10 +73,10 @@ function showhide_black(tspan, tri) {
 	</td>
   </tr>
   <tr valign="top" height="100%">
-    <td width="150" height="100%">
+    <td valign="top" width="150" height="100%">
 	<div id="niftyMenu">
 	<table class="menu">
-        <tr>
+        <tr valign="top">
           <td nowrap><span class="navlnk"><font color="#FFFFFF"> <strong>System</strong>
               <br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_advanced.php" class="navlnk">Advanced</a><br>
@@ -172,7 +172,9 @@ function showhide_black(tspan, tri) {
 			  </span>
 			  </font></span>
             </td>
-        </tr></table></div>
-</td>
+        </tr>
+	</table>
+	</div>
+    </td>
     <td width="600"><table width="100%" border="0" cellpadding="10" cellspacing="0">
         <tr><td>

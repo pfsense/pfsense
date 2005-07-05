@@ -345,4 +345,5 @@ ul#tabnav li.tabact {
 	padding: 0px 5px 0px 5px;
 	width: 100%;
 	height: 100%;
+	vertical-align: top;
 }

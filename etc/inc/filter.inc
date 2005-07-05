@@ -1896,6 +1896,8 @@ EOD;
 	if(is_array($config['ipsec']['tunnel'])) {
 		foreach ($config['ipsec']['tunnel'] as $tunnel) {
 			$remote_gateway = $tunnel['remote-gateway'];
+			address_to_pconfig_vpn($tunnel['local-subnet'], $pconfig['localnet'], $pconfig['localnetmask']);
+			$local_subnet = $pconfig['localnet'] . "/" . $pconfig['localnetmask'];
 			$ipfrules .= "pass quick on " . $wanif . " proto udp from " . $ipsec_ip . " to " . $remote_gateway . " port = 500 keep state label \"IPSEC: ". $tunnel['descr'] ." udp\"\n";
 			$ipfrules .= "pass quick on " . $wanif . " proto udp from " . $remote_gateway . " to " . $ipsec_ip  . " port = 500 keep state label \"". $tunnel['descr'] ." udp\"\n";
 
@@ -1905,8 +1907,8 @@ EOD;
 			$ipfrules .= "pass quick on " . $wanif . " proto ah from " . $ipsec_ip . " to " . $remote_gateway . " keep state label \"IPSEC: ". $tunnel['descr'] ." ah proto\"\n";
 			$ipfrules .= "pass quick on " . $wanif . " proto ah from " . $remote_gateway . " to " . $ipsec_ip  . " keep state label \"IPSEC: ". $tunnel['descr'] ." ah proto\"\n";
 
-			$ipfrules .= "pass quick on " . $lanif . " from " . $tunnel['remote-subnet'] . " to " . $tunnel['local-subnet']['address']  . " keep state label \"IPSEC:  " . $tunnel['descr'] ."\"\n";
-			$ipfrules .= "pass quick on " . $lanif . " from " . $tunnel['local-subnet']['address'] . " to " . $tunnel['remote-subnet'] . " keep state label \"IPSEC:  " . $tunnel['descr'] ."\"\n";
+			//$ipfrules .= "pass quick on " . $lanif . " from " . $tunnel['remote-subnet'] . " to " . $local_subnet . " keep state label \"IPSEC:  " . $tunnel['descr'] ."\"\n";
+			//$ipfrules .= "pass quick on " . $lanif . " from " . $local_subnet . " to " . $tunnel['remote-subnet'] . " keep state label \"IPSEC:  " . $tunnel['descr'] ."\"\n";
 		}
 	}
 
@@ -2086,6 +2088,26 @@ function carp_sync_client() {
 	    }
 	}
 
+}
+
+function address_to_pconfig_vpn($adr, &$padr, &$pmask) {
+
+        if ($adr['network'])
+                $padr = $adr['network'];
+        else if ($adr['address']) {
+                list($padr, $pmask) = explode("/", $adr['address']);
+                if (is_null($pmask))
+                        $pmask = 32;
+        }
+	
+	/* XXX: do not return wan, lan, etc */
+	if(strstr($padr, "wan") or strstr($padr, "lan") or strstr($padr, "opt")) {
+		$padr = convert_friendly_interface_to_real_interface_name($padr);
+		$padr = find_interface_ip($padr);
+	}
+	
+	
+	
 }
 
 ?>

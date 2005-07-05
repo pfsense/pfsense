@@ -41,7 +41,7 @@
 /**
  * Pull in the XML_RPC class
  */
-require_once 'XML/RPC.php';
+require_once 'xmlrpc_client.inc';
 
 
 /**

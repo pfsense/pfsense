@@ -62,6 +62,8 @@ if ($_POST) {
 			config_lock();
 			$retval = vpn_ipsec_configure();
 			config_unlock();
+			/* reload the filter in the background */
+			mwexec_bg("/etc/rc.filter_configure");
 		}
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {

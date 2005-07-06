@@ -1210,14 +1210,24 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					$line .= "on \$" . $interface . " ";
 			}
 			
-			$rg = $config['interfaces'][$rule['interface']]['gateway'];
+			/* set the gateway for this item if its defined */
+			if($config['interfaces'][$rule['interface']]['gateway'] <> "") 
+				$rg = $config['interfaces'][$rule['interface']]['gateway'];
 			$ri = filter_translate_type_to_real_interface($rule['interface']);
+			
+			/*
+			 *    check to see if /tmp/{$rule['if']}_router exists.  This file
+			 *    is created by dhclient for 2nd wan interfaces, etc.
+			 */
+			if(file_exists("/tmp/{$rule['if']}_router"))
+				$rg = return_filename_as_string("/tmp/{$rule['if']}_router"));
+
 			if($rg <> "" and $ri <> "" and stristr($rule['interface'],"opt") == true) {
 				$line .= "reply-to (" . $ri . " " . $rg . ") ";
 			}
 			
 			/* if user has selected a custom gateway, lets work with it */
-			if($rule['gateway'] <> "") {
+			if($rg <> "") {
 				$int = guess_interface_from_ip($rule['gateway']);
 				$line .= " route-to (" . $int . " " . $rule['gateway'] . ") ";
 			}

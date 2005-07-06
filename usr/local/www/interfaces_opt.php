@@ -179,7 +179,7 @@ function enable_change(enable_over) {
 	document.iform.subnet.disabled = endis;
 }
 function ipaddr_change() {
-	document.iform.subnet.selectedIndex = gen_bits(document.iform.ipaddr.value);
+	document.iform.subnet.selectedIndex = gen_bits_opt(document.iform.ipaddr.value);
 }
 //-->
 </script>

@@ -123,7 +123,7 @@ include("head.inc");
 <script language="JavaScript">
 <!--
 function ipaddr_change() {
-	document.iform.subnet.value = gen_bits(document.iform.ipaddr.value);
+	document.iform.subnet.value = gen_bits_lan(document.iform.ipaddr.value);
 }
 // -->
 </script>

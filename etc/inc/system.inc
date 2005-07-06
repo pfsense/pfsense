@@ -223,7 +223,9 @@ local0.*					%{$g['varlog_path']}/filter.log
 local3.*					%{$g['varlog_path']}/vpn.log
 local4.*					%{$g['varlog_path']}/portalauth.log
 local7.*					%{$g['varlog_path']}/dhcpd.log
-*.notice;kern.debug;lpr.info;mail.crit;news.err;local0.none;local3.none;local4.none;local7.none %{$g['varlog_path']}/system.log
+*.notice;kern.debug;lpr.info;mail.crit;		%{$g['varlog_path']}/system.log
+news.err;local0.none;local3.none;local4.none;	%{$g['varlog_path']}/system.log
+local7.none					%{$g['varlog_path']}/system.log
 security.*					%{$g['varlog_path']}/system.log
 auth.info;authpriv.info;daemon.info		%{$g['varlog_path']}/system.log
 *.emerg						*
@@ -262,7 +264,8 @@ EOD;
 
 		if (isset($syslogcfg['system'])) {
 			$syslogconf .= <<<EOD
-*.notice;kern.debug;lpr.info;mail.crit;news.err;local0.none;local3.none;local7.none @{$syslogcfg['remoteserver']}
+*.notice;kern.debug;lpr.info;mail.crit;		@{$syslogcfg['remoteserver']}
+news.err;local0.none;local3.none;local7.none	@{$syslogcfg['remoteserver']}
 security.*					@{$syslogcfg['remoteserver']}
 auth.info;authpriv.info;daemon.info		@{$syslogcfg['remoteserver']}
 *.emerg						@{$syslogcfg['remoteserver']}

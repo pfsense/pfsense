@@ -122,19 +122,6 @@ function restart_service($name) {
         }
 }
 
-/*
-The current version of this function doesn't appear to work on my system.
-It returns 1 occasionally even when a nonsensical process is passed.
-
-The below function appears to fix this behavior:
-
-function is_process_running($process) {
-    $status = `/bin/ps ax | /usr/bin/grep {$process} | grep -v grep | wc -l`;
-    if($status > 0) return 1;
-    return 0;
-}
-*/
-
 function is_process_running($process) {
     $status = `/bin/ps ax | /usr/bin/grep {$process} | wc -l`;
     if($status > 2) return 1;

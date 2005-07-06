@@ -240,6 +240,7 @@ EOD;
 		if (isset($syslogcfg['vpn'])) {
 			$syslogconf .= <<<EOD
 local3.*					@{$syslogcfg['remoteserver']}
+
 EOD;
 		}
 
@@ -247,6 +248,7 @@ EOD;
 		if (isset($syslogcfg['portalauth'])) {
 			$syslogconf .= <<<EOD
 local4.*					@{$syslogcfg['remoteserver']}
+
 EOD;
 		}
 
@@ -254,6 +256,7 @@ EOD;
 		if (isset($syslogcfg['dhcp'])) {
 			$syslogconf .= <<<EOD
 local7.*					@{$syslogcfg['remoteserver']}
+
 EOD;
 		}
 

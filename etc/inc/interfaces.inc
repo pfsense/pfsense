@@ -514,8 +514,8 @@ function interfaces_opt_dhcp_configure($interface) {
 
  	if ($optcfg['dhcphostname']) {
 		$dhclientconf .= <<<EOD
-	send dhcp-client-identifier "{$optcfg['dhcphostname']}";
 	interface "{$optcfg['if']}" {
+	send dhcp-client-identifier "{$optcfg['dhcphostname']}";
 	send host-name "{$optcfg['dhcphostname']}";
 	
 }
@@ -553,9 +553,10 @@ function interfaces_wan_dhcp_configure() {
 
  	if ($wancfg['dhcphostname']) {
 		$dhclientconf .= <<<EOD
-	send dhcp-client-identifier "{$wancfg['dhcphostname']}";
 	interface "{$wancfg['if']}" {
+	send dhcp-client-identifier "{$wancfg['dhcphostname']}";
 	send host-name "{$wancfg['dhcphostname']}";
+	
 	
 }
 

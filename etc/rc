@@ -66,6 +66,7 @@ if [ ! -L /etc/dhclient.conf ]; then
 fi
 
 if [ ! -L /etc/sasyncd.conf ]; then
+    mkdir -p /var/etc/
     touch /var/etc/sasyncd.conf
     rm -rf /etc/sasyncd.conf
     ln -s /var/etc/sasyncd.conf /etc/sasyncd.conf

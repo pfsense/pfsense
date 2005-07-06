@@ -44,19 +44,31 @@ if (!$index)
 $optcfg = &$config['interfaces']['opt' . $index];
 $pconfig['descr'] = $optcfg['descr'];
 $pconfig['bridge'] = $optcfg['bridge'];
-$pconfig['ipaddr'] = $optcfg['ipaddr'];
-$pconfig['subnet'] = $optcfg['subnet'];
-$pconfig['gateway'] = $optcfg['gateway'];
 
 $pconfig['bandwidth'] = $optcfg['bandwidth'];
 $pconfig['bandwidthtype'] = $optcfg['bandwidthtype'];
 
 $pconfig['enable'] = isset($optcfg['enable']);
 
+$pconfig['blockpriv'] = isset($optcfg['blockpriv']);
+$pconfig['blockbogons'] = isset($optcfg['blockbogons']);
+$pconfig['spoofmac'] = $optcfg['spoofmac'];
+$pconfig['mtu'] = $optcfg['mtu'];
+
 /* Wireless interface? */
 if (isset($optcfg['wireless'])) {
 	require("interfaces_wlan.inc");
 	wireless_config_init();
+}
+
+if ($optcfg['ipaddr'] == "dhcp") {
+	$pconfig['type'] = "DHCP";
+} else {
+	$pconfig['type'] = "Static";
+	$pconfig['ipaddr'] = $optcfg['ipaddr'];
+	$pconfig['subnet'] = $optcfg['subnet'];
+	$pconfig['gateway'] = $optcfg['gateway'];
+	$pconfig['pointtopoint'] = $optcfg['pointtopoint'];
 }
 
 if ($_POST) {
@@ -123,11 +135,11 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
+
 		$optcfg['descr'] = $_POST['descr'];
-		$optcfg['ipaddr'] = $_POST['ipaddr'];
-		$optcfg['subnet'] = $_POST['subnet'];
 		$optcfg['bridge'] = $_POST['bridge'];
 		$optcfg['enable'] = $_POST['enable'] ? true : false;
+		
 		if($_POST['bandwidth'] <> "" and $_POST['bandwidthtype'] <> "") {
 			$optcfg['bandwidth'] = $_POST['bandwidth'];
 			$optcfg['bandwidthtype'] = $_POST['bandwidthtype'];
@@ -135,7 +147,17 @@ if ($_POST) {
 			unset($optcfg['bandwidth']);
 			unset($optcfg['bandwidthtype']);
 		}
-		$optcfg['gateway'] = $_POST['gateway'];
+
+		if ($_POST['type'] == "Static") {
+			$optcfg['ipaddr'] = $_POST['ipaddr'];
+			$optcfg['subnet'] = $_POST['subnet'];
+			$optcfg['gateway'] = $_POST['gateway'];
+			if (isset($optcfg['ispointtopoint']))
+				$optcfg['pointtopoint'] = $_POST['pointtopoint'];
+		} else if ($_POST['type'] == "DHCP") {
+			$optcfg['ipaddr'] = "dhcp";
+			$optcfg['dhcphostname'] = $_POST['dhcphostname'];
+		}
 
 		write_config();
 
@@ -181,6 +203,20 @@ function enable_change(enable_over) {
 function ipaddr_change() {
 	document.iform.subnet.selectedIndex = gen_bits_opt(document.iform.ipaddr.value);
 }
+function type_change(enable_change,enable_change_pptp) {
+	switch (document.iform.type.selectedIndex) {
+		case 0:
+			document.iform.ipaddr.disabled = 0;
+			document.iform.subnet.disabled = 0;
+			document.iform.gateway.disabled = 0;
+			break;
+		case 1:
+			document.iform.ipaddr.disabled = 1;
+			document.iform.subnet.disabled = 1;
+			document.iform.gateway.disabled = 1;
+			break;
+	}
+}
 //-->
 </script>
 
@@ -197,14 +233,59 @@ function ipaddr_change() {
                   <td width="78%" class="vtable">
 			<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
                     <strong>Enable Optional <?=$index;?> interface</strong></td>
-				</tr>
+		</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld" id="descr" size="30" value="<?=htmlspecialchars($pconfig['descr']);?>">
 					<br> <span class="vexpl">Enter a description (name) for the interface here.</span>
-				 </td>
-				</tr>
+		  </td>
+		</tr>
+
+                <tr>
+                  <td colspan="2" valign="top" height="16"></td>
+                </tr>
+                <tr>
+                  <td colspan="2" valign="top" class="listtopic">General configuration</td>
+                </tr>
+                <tr>
+                  <td valign="middle" class="vncell"><strong>Type</strong></td>
+                  <td class="vtable"> <select name="type" class="formfld" id="type" onchange="type_change()">
+                      <?php $opts = split(" ", "Static DHCP");
+				foreach ($opts as $opt): ?>
+                      <option <?php if ($opt == $pconfig['type']) echo "selected";?>>
+                      <?=htmlspecialchars($opt);?>
+                      </option>
+                      <?php endforeach; ?>
+                    </select></td>
+                </tr>
+                <tr>
+                  <td valign="top" class="vncell">MAC address</td>
+                  <td class="vtable"> <input name="spoofmac" type="text" class="formfld" id="spoofmac" size="30" value="<?=htmlspecialchars($pconfig['spoofmac']);?>">
+		    <?php
+			$ip = getenv('REMOTE_ADDR');
+			$mac = `/usr/sbin/arp -an | grep {$ip} | cut -d" " -f4`;
+			$mac = str_replace("\n","",$mac);
+		    ?>
+		    <a OnClick="document.forms[0].spoofmac.value='<?=$mac?>';" href="#">Copy my MAC address</a>   
+		    <br>
+                    This field can be used to modify (&quot;spoof&quot;) the MAC
+                    address of the WAN interface<br>
+                    (may be required with some cable connections)<br>
+                    Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx
+                    or leave blank</td>
+                </tr>
+                <tr>
+                  <td valign="top" class="vncell">MTU</td>
+                  <td class="vtable"> <input name="mtu" type="text" class="formfld" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>">
+                    <br>
+                    If you enter a value in this field, then MSS clamping for
+                    TCP connections to the value entered above minus 40 (TCP/IP
+                    header size) will be in effect. If you leave this field blank,
+                    an MTU of 1492 bytes for PPPoE and 1500 bytes for all other
+                    connection types will be assumed.</td>
+                </tr>
+		
                 <tr>
                   <td colspan="2" valign="top" height="16"></td>
 				</tr>

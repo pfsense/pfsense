@@ -216,7 +216,6 @@ function interfaces_optional_configure_if($opti) {
 		/* bridged? */
 		if ($optcfg['bridge']) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " delete up");
-
                         /* use open/netBSD style bridge */
 			mwexec("/sbin/ifconfig bridge{$bridges_total} create");
                         mwexec("/sbin/brconfig bridge{$bridges_total} add {$optcfg['if']} add {$config['interfaces'][$optcfg['bridge']]['if']} up");
@@ -224,8 +223,13 @@ function interfaces_optional_configure_if($opti) {
 			/* lets keep track of the amount of bridges initialized */
 			$bridges_total++;
 		} else {
-			mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " " .
-				escapeshellarg($optcfg['ipaddr'] . "/" . $optcfg['subnet']));
+			/* if user has selected DHCP type then act accordingly */
+			if($optcfg['type'] == 'DHCP') {
+				interfaces_opt_dhcp_configure($opti);
+			} else {			
+				mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " " .
+					escapeshellarg($optcfg['ipaddr'] . "/" . $optcfg['subnet']));
+			}
 		}
 	} else {
 		mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " delete down");
@@ -382,6 +386,11 @@ function interfaces_wireless_configure($if, $wlcfg) {
 
 }
 
+function find_dhclient_process($interface) {
+	$pid = `ps ax | grep dhclient | grep {$interface} | cut -f" " -d2`;
+	return $pid;
+}
+
 function interfaces_wan_configure() {
 	global $config, $g;
 
@@ -389,16 +398,17 @@ function interfaces_wan_configure() {
 
 	if(!$g['booting']) {
 		mute_kernel_msgs();
-		/* kill dhclient */
-		killbypid("{$g['varrun_path']}/dhclient.pid");
+
+		/* find dhclient process for wan and kill it */
+		killbypid(find_dhclient_process("wan"));
 
 		/* kill PPPoE client (mpd) */
 		killbypid("{$g['varrun_path']}/mpd.pid");
 
 		/* wait for processes to die */
-		sleep(2);
+		sleep(1);
 
-		unlink_if_exists("{$g['varetc_path']}/dhclient.conf");
+		unlink_if_exists("{$g['varetc_path']}/dhclient_wan.conf");
 		unlink_if_exists("{$g['varetc_path']}/mpd.conf");
 		unlink_if_exists("{$g['varetc_path']}/mpd.links");
 		unlink_if_exists("{$g['vardb_path']}/wanip");
@@ -488,15 +498,54 @@ function interfaces_wan_configure() {
 	return 0;
 }
 
+function interfaces_opt_dhcp_configure($interface) {
+	global $config, $g;
+
+	$optcfg = $config['interfaces'][$interface];
+
+	/* generate dhclient_wan.conf */
+	$fd = fopen("{$g['varetc_path']}/dhclient_{$interface}.conf", "w");
+	if (!$fd) {
+		printf("Error: cannot open dhclient_{$interface}.conf in interfaces_opt_dhcp_configure({$interface}) for writing.\n");
+		return 1;
+	}
+
+ 	$dhclientconf = "";
+
+ 	if ($optcfg['dhcphostname']) {
+		$dhclientconf .= <<<EOD
+	send dhcp-client-identifier "{$optcfg['dhcphostname']}";
+	interface "{$optcfg['if']}" {
+	send host-name "{$optcfg['dhcphostname']}";
+	
+}
+
+EOD;
+	}
+
+	fwrite($fd, $dhclientconf);
+	fclose($fd);
+	
+	$optif = $optcfg['if'];
+	
+        /* bring wan interface up before starting dhclient */
+        mwexec("/sbin/ifconfig {$optif} up");
+
+        /* fire up dhclient */
+        mwexec_bg("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$interface}.conf {$optif}");
+
+	return 0;
+}
+
 function interfaces_wan_dhcp_configure() {
 	global $config, $g;
 
 	$wancfg = $config['interfaces']['wan'];
 
-	/* generate dhclient.conf */
-	$fd = fopen("{$g['varetc_path']}/dhclient.conf", "w");
+	/* generate dhclient_wan.conf */
+	$fd = fopen("{$g['varetc_path']}/dhclient_wan.conf", "w");
 	if (!$fd) {
-		printf("Error: cannot open dhclient.conf in interfaces_wan_dhcp_configure().\n");
+		printf("Error: cannot open dhclient_wan.conf in interfaces_wan_dhcp_configure() for writing.\n");
 		return 1;
 	}
 
@@ -522,7 +571,7 @@ EOD;
         mwexec("/sbin/ifconfig {$wanif} up");
 
         /* fire up dhclient */
-        mwexec_bg("/sbin/dhclient -c {$g['varetc_path']}/dhclient.conf {$wanif}");
+        mwexec_bg("/sbin/dhclient -c {$g['varetc_path']}/dhclient_wan.conf {$wanif}");
 
 	return 0;
 }

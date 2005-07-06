@@ -217,7 +217,7 @@ function system_syslogd_start() {
 			printf("Error: cannot open syslog.conf in system_syslogd_start().\n");
 			return 1;
 		}
-
+		if (! isset($syslogcfg['disablelocallogging'])) {
 		$syslogconf .= <<<EOD
 local0.*					%{$g['varlog_path']}/filter.log
 local3.*					%{$g['varlog_path']}/vpn.log
@@ -231,6 +231,7 @@ auth.info;authpriv.info;daemon.info		%{$g['varlog_path']}/system.log
 *.emerg						*
 
 EOD;
+		}
 
 		if (isset($syslogcfg['filter'])) {
 			$syslogconf .= <<<EOD

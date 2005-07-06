@@ -71,6 +71,7 @@ if ($_POST) {
 		$config['syslog']['portalauth'] = $_POST['portalauth'] ? true : false;
 		$config['syslog']['vpn'] = $_POST['vpn'] ? true : false;
 		$config['syslog']['system'] = $_POST['system'] ? true : false;
+		$config['syslog']['disablelocallogging'] = $_POST['disablelocallogging'] ? true : false;
 		$config['syslog']['enable'] = $_POST['enable'] ? true : false;
 		$oldnologdefaultblock = isset($config['syslog']['nologdefaultblock']);
 		$config['syslog']['nologdefaultblock'] = $_POST['logdefaultblock'] ? false : true;
@@ -173,6 +174,11 @@ function enable_change(enable_over) {
                         <td width="78%" class="vtable"> <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
                           <strong>Enable syslog'ing to remote syslog server</strong></td>
                       </tr>
+                      <tr>
+                        <td width="22%" valign="top" class="vtable">&nbsp;</td>
+                        <td width="78%" class="vtable"> <input name="disable" type="checkbox" id="disablelocallogging" value="yes" <?php if ($pconfig['disablelocallogging']) echo "checked"; ?> onClick="enable_change(false)">
+                          <strong>Disable writing log files to the local disk</strong></td>
+                       </tr>		      
                       <tr>
                         <td width="22%" valign="top" class="vncell">Remote syslog
                           server</td>

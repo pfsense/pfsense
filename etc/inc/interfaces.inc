@@ -517,7 +517,7 @@ function interfaces_opt_dhcp_configure($interface) {
 	interface "{$optcfg['if']}" {
 	send dhcp-client-identifier "{$optcfg['dhcphostname']}";
 	send host-name "{$optcfg['dhcphostname']}";
-	
+	script "/etc/dhclient-script";
 }
 
 EOD;
@@ -556,8 +556,7 @@ function interfaces_wan_dhcp_configure() {
 	interface "{$wancfg['if']}" {
 	send dhcp-client-identifier "{$wancfg['dhcphostname']}";
 	send host-name "{$wancfg['dhcphostname']}";
-	
-	
+	script "/etc/dhclient-script";
 }
 
 EOD;

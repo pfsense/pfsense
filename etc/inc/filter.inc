@@ -1220,7 +1220,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			 *    is created by dhclient for 2nd wan interfaces, etc.
 			 */
 			if(file_exists("/tmp/{$rule['if']}_router"))
-				$rg = return_filename_as_string("/tmp/{$rule['if']}_router"));
+				$rg = return_filename_as_string("/tmp/{$rule['if']}_router");
 
 			if($rg <> "" and $ri <> "" and stristr($rule['interface'],"opt") == true) {
 				$line .= "reply-to (" . $ri . " " . $rg . ") ";

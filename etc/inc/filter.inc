@@ -967,14 +967,7 @@ function filter_nat_rules_generate() {
 		$natrules .= "\n";
 	}
 
-	/* captive portal redirects */
-	if(isset($config['captiveportal']['enable'])) {
-		$natrules .= "# Captive Portal\n";
-		$cp_interface = filter_translate_type_to_real_interface($config['captiveportal']['interface']);
-		$lan_ip = $config['interfaces']['lan']['ipaddr'];
-		$natrules .= "no rdr on {$cp_interface} proto tcp from <captiveportal> to any \n";
-		$natrules .= "rdr on " . $cp_interface . " proto tcp from any to any port { 80 443 } -> {$lan_ip} port 8000\n\n";
-	}
+
 	
 	/* DIAG: add ipv6 NAT, if requested */
 	if (isset($config['diag']['ipv6nat']['enable']) and $config['diag']['ipv6nat']['ipaddr'] <> "") {
@@ -1052,6 +1045,15 @@ EOD;
 		$natrules .= "rdr on " . $lanif . " inet proto tcp from any to !{$lanip} port www -> 127.0.0.1 port 3128\n";
 
 	$natrules .= process_carp_nat_rules();
+
+	/* captive portal redirects */
+	if(isset($config['captiveportal']['enable'])) {
+		$natrules .= "# Captive Portal\n";
+		$cp_interface = filter_translate_type_to_real_interface($config['captiveportal']['interface']);
+		$lan_ip = $config['interfaces']['lan']['ipaddr'];
+		$natrules .= "no rdr on {$cp_interface} proto tcp from <captiveportal> to any \n";
+		$natrules .= "rdr on " . $cp_interface . " proto tcp from any to any port { 80 443 } -> {$lan_ip} port 8000\n\n";
+	}
 
 	return $natrules;
 }
@@ -1227,9 +1229,9 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			}
 			
 			/* if user has selected a custom gateway, lets work with it */
-			if($rg <> "") {
+			if($rule['gateway'] <> "") {
 				$int = guess_interface_from_ip($rule['gateway']);
-				$line .= " route-to (" . $int . " " . $rule['gateway'] . ") ";
+				$line .= " route-to (" . $int . " " . $rg . ") ";
 			}
 			
 			/* Setup outgoing load balancing */

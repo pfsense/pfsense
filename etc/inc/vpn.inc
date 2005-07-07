@@ -39,18 +39,18 @@ function vpn_ipsec_failover_configure() {
 
 	$sasyncd_text = "";
 
-	if(isset($config['installedpackages']['sasyncd']['config']))
-	foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
-		$enabled = isset($sasyncd['enable']);
-		if(!$enabled)
-			return;
-		$sasyncd_text .= "peer {$sasyncd['peer']}\n";
-		$sasyncd_text .= "carp interface {$sasyncd['interface']}\n";
-		$sasyncd_text .= "sharedkey {$sasyncd['sharedkey']}\n";
-		$sasyncd_text .= "mode {$sasyncd['mode']}\n";
-		$sasyncd_text .= "listen on {$sasyncd['listenon']}\n";
-		$sasyncd_text .= "flushmode sync {$sasyncd['flushmodesync']}\n";
-	}
+	if($config['installedpackages']['sasyncd']['config'] <> "")
+		foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
+			$enabled = isset($sasyncd['enable']);
+			if(!$enabled)
+				return;
+			$sasyncd_text .= "peer {$sasyncd['peer']}\n";
+			$sasyncd_text .= "carp interface {$sasyncd['interface']}\n";
+			$sasyncd_text .= "sharedkey {$sasyncd['sharedkey']}\n";
+			$sasyncd_text .= "mode {$sasyncd['mode']}\n";
+			$sasyncd_text .= "listen on {$sasyncd['listenon']}\n";
+			$sasyncd_text .= "flushmode sync {$sasyncd['flushmodesync']}\n";
+		}
 
 	$fd = fopen("{$g['varetc_path']}/sasyncd.conf", "w");
 	fwrite($fd, $sasyncd_text);
@@ -67,11 +67,11 @@ function vpn_ipsec_configure($ipchg = false) {
 	$curwanip = get_current_wan_address();
 
 	/* set failover ip if defined */
-	if(isset($config['installedpackages']['sasyncd']['config']))
-	foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
-		if($sasyncd['ip'] <> "") 
-			$curwanip = $sasyncd['ip'];
-	}
+	if($config['installedpackages']['sasyncd']['config'] <> "")
+		foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
+			if($sasyncd['ip'] <> "") 
+				$curwanip = $sasyncd['ip'];
+		}
 
 	vpn_ipsec_failover_configure();
 	
@@ -146,10 +146,11 @@ function vpn_ipsec_configure($ipchg = false) {
 						$number_of_gifs++;
 						$curwanip = get_current_wan_address();
 						/* set failover ip if defined */
-						foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
-							if($sasyncd['ip'] <> "") 
-								$curwanip = $sasyncd['ip'];
-						}
+						if($config['installedpackages']['sasyncd']['config'] <> "")
+							foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
+								if($sasyncd['ip'] <> "") 
+									$curwanip = $sasyncd['ip'];
+							}
 						mwexec("/sbin/ifconfig gif" . $number_of_gifs . " tunnel" . $curwanip . " " . $tunnel['remote-gateway']);
 						mwexec("/sbin/ifconfig gif" . $number_of_gifs . " {$lansa}/{$lansn} {$lanip}/32");
 					}
@@ -179,7 +180,8 @@ function vpn_ipsec_configure($ipchg = false) {
 				return 1;
 			}
 
-			foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
+			if($config['installedpackages']['sasyncd']['config'] <> "")
+				foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
 
 				$interface_ip = $sasyncd['ip'];
 				$racoonconf .= <<<EOD
@@ -188,7 +190,7 @@ listen {
 }
 
 EOD;
-			}
+				}
 				
 			$racoonconf .= "path pre_shared_key \"{$g['varetc_path']}/psk.txt\";\n\n";
 			$racoonconf .= "path certificate  \"{$g['varetc_path']}\";\n\n";

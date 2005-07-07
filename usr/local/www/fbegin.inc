@@ -75,7 +75,7 @@ function showhide_black(tspan, tri) {
   <tr valign="top">
     <td valign="top" width="150">
 	<div id="niftyMenu">
-	<table class="menu">
+	<table width="100%" class="menu" bgcolor="#000000">
         <tr valign="top">
           <td nowrap><span class="navlnk"><font color="#FFFFFF"> <strong>System</strong>
               <br>

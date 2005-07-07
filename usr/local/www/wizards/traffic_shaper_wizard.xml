@@ -1275,7 +1275,7 @@
 					<value>L</value>
 				</option>
 			</options>
-			<typehint>RealTime streaming protocol</typehint>
+			<typehint>Simple Network Management Protocol</typehint>
                 </field>		
                 <field>
                         <name>Next</name>

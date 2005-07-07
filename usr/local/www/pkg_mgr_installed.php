@@ -89,13 +89,13 @@ include("head.inc");
 						?><td class="listlr"><?php
 						echo "Current: Unknown.<br>Installed: " . $pkg['version'];
                                        		?></td><?php 
-					} elseif($pkg['version'] > $latest_package) {
+					} elseif(strcmp($pkg['version'], $latest_package) > 0) {
                                             /* we're running a newer version of the package */
 					    ?><td class="listbggrey"><font color="#FFFFFFF"><?php
                                             echo "Current: {$latest_version}";
                                             echo "<br>Installed: {$pkg['version']}";
 					    ?></td><?php
-                                        } elseif($pkg['version'] < $latest_package) {
+                                        } elseif(strcmp($pkg['version'], $latest_package) < 0) {
 					    /* our package is out of date */
 					    ?><td class="listbg"><font color="#FFFFFFF"><?php
                                             echo "Current: {$latest_version}";

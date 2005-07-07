@@ -53,7 +53,9 @@ function system_resolvconf_generate($dynupdate = false) {
 		if ($nfd) {
 			while (!feof($nfd)) {
 				$dnss = trim(fgets($nfd));
-				if ($dnss) {
+				if  ( preg_match('/^(nameserver )(.*)/',$dnss, $catch) ) 
+					$dnss = $catch[2];
+				if (is_ipaddr($dnss)) {
 					$resolvconf .= "nameserver $dnss\n";
 					$havedns = true;
 				}

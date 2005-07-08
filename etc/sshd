@@ -51,10 +51,17 @@
 	pclose($fd);
 
 	$sshConfigDir = "/etc/ssh";
-	if (!file_exists("$sshConfigDir/ssh_host_key")) {
+	if (!file_exists("$sshConfigDir/ssh_host_key") and $config['ssh']['dsa'] <> "") {
 		system("/usr/bin/ssh-keygen -t rsa1 -N '' -f $sshConfigDir/ssh_host_key");
 		system("/usr/bin/ssh-keygen -t rsa -N '' -f $sshConfigDir/ssh_host_rsa_key");
 		system("/usr/bin/ssh-keygen -t dsa -N '' -f $sshConfigDir/ssh_host_dsa_key");
+		$config['ssh']['dsa'] = return_file_as_string("{$sshConfigDir}/ssh_host_dsa_key");
+		$config['ssh']['rsa'] = return_file_as_string("{$sshConfigDir}/ssh_host_rsa_key");
+		$config['ssh']['rsa1']= return_file_as_string("{$sshConfigDir}/ssh_host_key");
+	} else {
+		file_put_contents("{$sshConfigDir}/ssh_host_key", $config['ssh']['rsa1']);
+		file_put_contents("{$sshConfigDir}/ssh_host_rsa_key", $config['ssh']['rsa']);
+		file_put_contents("{$sshConfigDir}/ssh_host_dsa_key", $config['ssh']['dsa']);
 	}
 
 	// And finally ...

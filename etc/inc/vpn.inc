@@ -44,12 +44,18 @@ function vpn_ipsec_failover_configure() {
 			$enabled = isset($sasyncd['enable']);
 			if(!$enabled)
 				return;
-			$sasyncd_text .= "peer {$sasyncd['peer']}\n";
-			$sasyncd_text .= "carp interface {$sasyncd['interface']}\n";
-			$sasyncd_text .= "sharedkey {$sasyncd['sharedkey']}\n";
-			$sasyncd_text .= "mode {$sasyncd['mode']}\n";
-			$sasyncd_text .= "listen on {$sasyncd['listenon']}\n";
-			$sasyncd_text .= "flushmode sync {$sasyncd['flushmodesync']}\n";
+			if($sasyncd['peerip'] <> "")
+				$sasyncd_text .= "peer {$sasyncd['peerip']}\n";
+			if($sasyncd['interface'])
+				$sasyncd_text .= "carp interface {$sasyncd['interface']}\n";
+			if($sasyncd['sharedkey'] <> "")
+				$sasyncd_text .= "sharedkey {$sasyncd['sharedkey']}\n";
+			if($sasyncd['mode'] <> "")
+				$sasyncd_text .= "mode {$sasyncd['mode']}\n";
+			if($sasyncd['listenon'] <> "")
+				$sasyncd_text .= "listen on {$sasyncd['listenon']}\n";
+			if($sasyncd['flushmodesync'] <> "")
+				$sasyncd_text .= "flushmode sync {$sasyncd['flushmodesync']}\n";
 		}
 
 	$fd = fopen("{$g['varetc_path']}/sasyncd.conf", "w");
@@ -411,6 +417,8 @@ EOD;
 
 	if ($g['booting'])
 		echo "done.\n";
+	else
+		mwexec_bg("/etc/rc.filter_configure");
 
 	return 0;
 }

@@ -407,6 +407,8 @@ EOD;
 		filter_configure();
 	}
 
+	vpn_ipsec_failover_configure();
+
 	if ($g['booting'])
 		echo "done.\n";
 

@@ -33,38 +33,88 @@
 	$stderr = fopen("php://stderr", "w");
 
 	if (!is_dir("/var/empty")) {
-		// Home directory of sshd.
+		/* make ssh home directory */
 		mkdir("/var/empty", 0555);
 	}
 
 	if(!file_exists("")) {
-		// Login related files.
+		/* Login related files. */
 		touch("/var/log/lastlog");
 	}
 
-	// Make the root/admin passwords are the same as the web admin password.
+	/* Make the root passwords are the same as the web admin password. */
 	$fd = popen("/usr/sbin/pw usermod -n root -H 0", "w");
 	fwrite($fd, $config['system']['password']);
 	pclose($fd);
+
+	/* Make the admin passwords are the same as the web admin password. */
 	$fd = popen("/usr/sbin/pw usermod -n admin -H 0", "w");
 	fwrite($fd, $config['system']['password']);
 	pclose($fd);
 
 	$sshConfigDir = "/etc/ssh";
-	if (!file_exists("$sshConfigDir/ssh_host_key") and $config['ssh']['dsa'] <> "") {
+
+	if (!file_exists("$sshConfigDir/ssh_host_key") and $config['ssh']['dsa'] == "") {
+		/* generate keys */
 		system("/usr/bin/ssh-keygen -t rsa1 -N '' -f $sshConfigDir/ssh_host_key");
 		system("/usr/bin/ssh-keygen -t rsa -N '' -f $sshConfigDir/ssh_host_rsa_key");
 		system("/usr/bin/ssh-keygen -t dsa -N '' -f $sshConfigDir/ssh_host_dsa_key");
-		$config['ssh']['dsa'] = return_file_as_string("{$sshConfigDir}/ssh_host_dsa_key");
-		$config['ssh']['rsa'] = return_file_as_string("{$sshConfigDir}/ssh_host_rsa_key");
-		$config['ssh']['rsa1']= return_file_as_string("{$sshConfigDir}/ssh_host_key");
+
+		/* save keys */
+		$dsa  = return_filename_as_string("{$sshConfigDir}/ssh_host_dsa_key");
+		$rsa  = return_filename_as_string("{$sshConfigDir}/ssh_host_rsa_key");
+		$rsa1 = return_filename_as_string("{$sshConfigDir}/ssh_host_key");
+		$config['ssh']['dsa'] = base64_encode($dsa);
+		$config['ssh']['rsa'] = base64_encode($rsa);
+		$config['ssh']['rsa1']= base64_encode($rsa1);
+
+		/* save public keys */
+		$dsapub  = return_filename_as_string("{$sshConfigDir}/ssh_host_dsa_key.pub");
+		$rsapub  = return_filename_as_string("{$sshConfigDir}/ssh_host_rsa_key.pub");
+		$rsa1pub = return_filename_as_string("{$sshConfigDir}/ssh_host_key.pub");
+		$config['ssh']['dsa_key'] = base64_encode($dsapub);
+		$config['ssh']['rsa_key'] = base64_encode($rsapub);
+		$config['ssh']['rsa1_key']= base64_encode($rsa1pub);
 	} else {
-		file_put_contents("{$sshConfigDir}/ssh_host_key", $config['ssh']['rsa1']);
-		file_put_contents("{$sshConfigDir}/ssh_host_rsa_key", $config['ssh']['rsa']);
-		file_put_contents("{$sshConfigDir}/ssh_host_dsa_key", $config['ssh']['dsa']);
+		/* restore keys */
+		$rsa1 = base64_decode($config['ssh']['rsa1']);
+		$rsa  = base64_decode($config['ssh']['rsa']);
+		$dsa  = base64_decode($config['ssh']['dsa']);
+		file_put_contents("{$sshConfigDir}/ssh_host_key", $rsa1);
+		file_put_contents("{$sshConfigDir}/ssh_host_rsa_key", $rsa);
+		file_put_contents("{$sshConfigDir}/ssh_host_dsa_key", $dsa);
+
+		/* restore public keys */
+		$rsa1_pub = base64_decode($config['ssh']['rsa1_key']);
+		$rsa_pub  = base64_decode($config['ssh']['rsa_key']);
+		$dsa_pub  = base64_decode($config['ssh']['dsa_key']);
+		file_put_contents("{$sshConfigDir}/ssh_host_key.pub", $rsa1_pub);
+		file_put_contents("{$sshConfigDir}/ssh_host_rsa_key.pub", $rsa_pub);
+		file_put_contents("{$sshConfigDir}/ssh_host_dsa_key.pub", $dsa_pub);
+
+		/* change keys owner to root */
+		chown("{$sshConfigDir}/ssh_host_key", "root");
+		chown("{$sshConfigDir}/ssh_host_rsa_key", "root");
+		chown("{$sshConfigDir}/ssh_host_dsa_key", "root");
+
+		/* change public keys owner to root */
+		chown("{$sshConfigDir}/ssh_host_key.pub", "root");
+		chown("{$sshConfigDir}/ssh_host_rsa_key.pub", "root");
+		chown("{$sshConfigDir}/ssh_host_dsa_key.pub", "root");
+
+		/* change mode on keys to u+rw */
+		chmod("{$sshConfigDir}/ssh_host_key",0600);
+		chmod("{$sshConfigDir}/ssh_host_rsa_key",0600);
+		chmod("{$sshConfigDir}/ssh_host_dsa_key",0600);
+
+		/* change mode on public keys to u+rw */
+		chmod("{$sshConfigDir}/ssh_host_key.pub",0600);
+		chmod("{$sshConfigDir}/ssh_host_rsa_key.pub",0600);
+		chmod("{$sshConfigDir}/ssh_host_dsa_key.pub",0600);
 	}
 
-	// And finally ...
+	/* start sshd */
 	system("/usr/sbin/sshd");
 	fwrite($stderr, "Done.\n");
+
 ?>

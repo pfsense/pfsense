@@ -174,7 +174,6 @@ if ($_POST) {
 		$etc_ttys  = return_filename_as_array("/etc/ttys");
 		$boot_loader_rc = return_filename_as_array("/boot/loader.rc");
 		
-		
 		conf_mount_rw();
 		
 		$fout = fopen("/etc/ttys","w");
@@ -188,6 +187,8 @@ if ($_POST) {
 		fclose($fout);		
 		
 		$fout = fopen("/boot/loader.rc","w");
+		if(!is_array($boot_loader_rc))
+			$boot_loader_rc = array();
 		foreach($boot_loader_rc as $blrc) {
 			if(stristr($blrc,"comconsole") <> true) {
 				fwrite($fout, $blrc . "\n");				

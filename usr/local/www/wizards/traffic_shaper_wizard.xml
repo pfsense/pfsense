@@ -985,7 +985,7 @@
                         <type>checkbox</type>
                         <typehint>Other networking protocols</typehint>
                         <description>This will help raise or lower the priority of other protocols higher than most traffic.</description>
-			<enablefields>MSRDP,PPTP,IPSEC,StreamingMP3,IRC,DNS,HTTP,SMTP,POP3,ICMP,IMAP,SMB,RTSP,SNMP</enablefields>
+			<enablefields>MSRDP,PPTP,IPSEC,StreamingMP3,IRC,DNS,HTTP,SMTP,POP3,ICMP,IMAP,SMB,RTSP,SNMP,VNC</enablefields>
 			<donotdisable>true</donotdisable>
 			<bindstofield>ezshaper->step6->enable</bindstofield>
                 </field>
@@ -1276,7 +1276,27 @@
 				</option>
 			</options>
 			<typehint>Simple Network Management Protocol</typehint>
-                </field>		
+                </field>
+                <field>
+                        <name>VNC</name>
+			<bindstofield>ezshaper->step6->vnc</bindstofield>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Default priority</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Lower priority</name>
+					<value>L</value>
+				</option>
+			</options>
+			<typehint>Virtual Network Computing</typehint>
+                </field>			
                 <field>
                         <name>Next</name>
                         <type>submit</type>
@@ -1460,6 +1480,11 @@
 		    $othersplist[] = array('SNMP', 'tcp', '161', '161', 'both', $_POST['snmp']);
 		    $othersplist[] = array('SNMP2', 'udp', '161', '161', 'both', $_POST['snmp']);
 		}
+
+		if($_POST['vnc'] != "") {
+		    /* Simple network management protocol */
+		    $othersplist[] = array('VNC', 'tcp', '5900-5930', '5900-5930', 'both', $_POST['vnc']);
+		}		
 
 		/* XXX: add some more protocols here! */
     

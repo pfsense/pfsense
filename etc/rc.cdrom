@@ -12,7 +12,7 @@
 # If PFI did not find a config, this will not be
 # a directory.  Go ahead and populate with stock
 # configuration.
-if [ ! -f /cf/conf ]; then
+if [ ! -f /cf/conf/config.xml ]; then
     mkdir -p /cf/conf
     echo "Copying /FreeSBIE/cf/conf/* /cf/conf/"
     /rescue/cp /FreeSBIE/cf/conf/* /cf/conf/

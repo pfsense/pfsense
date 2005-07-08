@@ -587,6 +587,19 @@ function convert_config() {
 
 		$config['version'] = "1.6";
 	}
+	
+	/* Convert 1.6 -> 1.7 */
+	if ($config['version'] == "1.6") {
+		/* wipe previous shaper configuration */
+		unset($config['shaper']['queue']);
+		unset($config['shaper']['rule']);
+		unset($config['interfaces']['wan']['bandwidth']);
+		unset($config['interfaces']['wan']['bandwidthtype']);
+		unset($config['interfaces']['lan']['bandwidth']);
+		unset($config['interfaces']['lan']['bandwidthtype']);		
+		$config['shaper']['enable'] = FALSE;
+		$config['version'] = "1.7";	
+	}
 
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");

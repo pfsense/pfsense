@@ -14,12 +14,6 @@
 # configuration.
 if [ ! -f /cf/conf/config.xml ]; then
     mkdir -p /cf/conf
-    echo ls /cf/conf
-    ls -la /cf/conf
-    echo ls /
-    ls -la /
-    echo ls /cf/
-    echo -ls /cf/
     echo "Copying /FreeSBIE/cf/conf/* /cf/conf/"
     /rescue/cp /FreeSBIE/cf/conf/* /cf/conf/
 fi                                          

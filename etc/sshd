@@ -32,7 +32,7 @@
 
 	$stderr = fopen("php://stderr", "w");
 
-	if($argv[0] == "stop") {
+	if($argv[1] == "stop" || $argv[0] == "stop") {
 		if(file_exists("/root/.authorized_keys")) {
 			$ak = return_filename_as_string("/root/.authorized_keys");
 			$ak = base64_encode($ak);

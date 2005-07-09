@@ -44,6 +44,7 @@
 				conf_mount_ro();
 			}
 		}
+		exit;
 	}
 
 	if (!is_dir("/var/empty")) {

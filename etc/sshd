@@ -53,6 +53,11 @@
 	pclose($fd);
 
 	$sshConfigDir = "/etc/ssh";
+	
+	if (!file_exists("$sshConfigDir/ssh_host_key") and $config['ssh']['dsa'] == "") {
+		/* remove previous keys and regen later */
+		mwexec("rm /etc/ssh/ssh_host_*");
+	}
 
 	if (!file_exists("$sshConfigDir/ssh_host_key") and $config['ssh']['dsa'] == "") {
 		/* generate keys */

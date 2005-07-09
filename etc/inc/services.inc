@@ -498,9 +498,9 @@ EOD;
 begemotSnmpdLocalPortStatus."/var/run/snmpd.sock" = 1
 begemotSnmpdLocalPortType."/var/run/snmpd.sock" = 4
 
-sysContact      = "{$contact}"
-sysLocation     = "{$location}"
-sysObjectId     = 1.3.6.1.4.1.12325.1.1.2.1.{$system}
+sysContact      = "\$contact"
+sysLocation     = "\$location"
+sysObjectId     = 1.3.6.1.4.1.12325.1.1.2.1.\$system
 
 snmpEnableAuthenTraps = 2
 

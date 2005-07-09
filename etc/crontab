@@ -10,4 +10,4 @@ HOME=/var/log
 30	5	1	*	*	root	        /usr/bin/nice -n20 periodic monthly
 1,31	0-5	*	*	*	root	        /usr/bin/nice -n20 adjkerntz -a
 */5	*	*	*	*	root	        /usr/bin/nice -n20 /etc/rc.prunecaptiveportal
-*/3000	*	*	*	*	root	        /usr/bin/nice -n20 /etc/update_bogons.sh
+1	*	1	*	*	root	        /usr/bin/nice -n20 /etc/update_bogons.sh

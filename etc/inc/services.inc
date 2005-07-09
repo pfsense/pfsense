@@ -298,6 +298,7 @@ function services_dyndns_configure() {
 	sigkillbypid("{$g['varrun_path']}/ez-ipupdate.pid", "QUIT");
 
 	$dyndnscfg = $config['dyndns'];
+	$wancfg = $config['interfaces']['wan'];
 
 	if (isset($dyndnscfg['enable'])) {
 
@@ -483,55 +484,23 @@ EOD;
 
 		$snmpdconf .= <<<EOD
 begemotSnmpdCommunityDisable    = 1
-
-EOD;
-
-		if(is_port( $config['snmpd']['pollport'] )) {
-		    $snmpdconf .= <<<EOD
-begemotSnmpdPortStatus.0.0.0.0.{$config['snmpd']['pollport']} = 1
-
-EOD;
-
-		}
-
-		$snmpdconf .= <<<EOD
+begemotSnmpdPortStatus.0.0.0.0.161 = 1
 begemotSnmpdLocalPortStatus."/var/run/snmpd.sock" = 1
 begemotSnmpdLocalPortType."/var/run/snmpd.sock" = 4
 
-sysContact      = "\$contact"
-sysLocation     = "\$location"
-sysObjectId     = 1.3.6.1.4.1.12325.1.1.2.1.\$system
+sysContact      = $(contact)
+sysLocation     = $(location)
+sysObjectId     = 1.3.6.1.4.1.12325.1.1.2.1.$(system)
 
 snmpEnableAuthenTraps = 2
-
-EOD;
-
-		if (is_array( $config['snmpd']['modules'] )) {
-		    if(isset($config['snmpd']['modules']['mibii'])) {
-			$snmpdconf .= <<<EOD
 begemotSnmpdModulePath."mibII"  = "/usr/lib/snmp_mibII.so"
-
-EOD;
-		    }
-
-		    if(isset($config['snmpd']['modules']['netgraph'])) {
-			$snmpdconf .= <<<EOD
 begemotSnmpdModulePath."netgraph" = "/usr/lib/snmp_netgraph.so"
 %netgraph
 begemotNgControlNodeName = "snmpd"
-
-EOD;
-		    }
-
-		    if(isset($config['snmpd']['modules']['pf'])) {
-			$snmpdconf .= <<<EOD
 begemotSnmpdModulePath."pf"     = "/usr/lib/snmp_pf.so"
 # config must end with blank line
 
-
 EOD;
-		    }
-		}
 
 		fwrite($fd, $snmpdconf);
 		fclose($fd);

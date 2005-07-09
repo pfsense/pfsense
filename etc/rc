@@ -70,7 +70,7 @@ if [ ! -L /etc/sasyncd.conf ]; then
     touch /var/etc/sasyncd.conf
     rm -rf /etc/sasyncd.conf
     ln -s /var/etc/sasyncd.conf /etc/sasyncd.conf
-    chown root /var/etc/sasyncd.conf
+    chown root:wheel /var/etc/sasyncd.conf
     chmod 0600 /var/etc/sasyncd.conf
 fi
 

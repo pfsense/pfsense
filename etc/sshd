@@ -80,6 +80,7 @@
 		$config['ssh']['dsa_key'] = base64_encode($dsapub);
 		$config['ssh']['rsa_key'] = base64_encode($rsapub);
 		$config['ssh']['rsa1_key']= base64_encode($rsa1pub);
+		write_config("Saved SSH keys.");
 	} else {
 		/* restore keys */
 		$rsa1 = base64_decode($config['ssh']['rsa1']);

@@ -60,9 +60,6 @@
 		system("/usr/bin/ssh-keygen -t rsa1 -N '' -f $sshConfigDir/ssh_host_key");
 		system("/usr/bin/ssh-keygen -t rsa -N '' -f $sshConfigDir/ssh_host_rsa_key");
 		system("/usr/bin/ssh-keygen -t dsa -N '' -f $sshConfigDir/ssh_host_dsa_key");
-		system("/usr/sbin/sshd");
-		system("/etc/rc.d/sshd start");
-		exit;
 	}
 
 	if (!file_exists("$sshConfigDir/ssh_host_key") and $config['ssh']['dsa'] == "") {

@@ -1,29 +1,33 @@
 #!/bin/sh
 
 echo
-echo
 echo "pfSense is now shutting down ..."
 echo
 
 stty status '^T'
 
 # Set shell to ignore SIGINT (2), but not children;
-# shell catches SIGQUIT (3) and returns to single user after fsck.
 trap : 2
-trap : 3        # shouldn't be needed
 
 HOME=/; export HOME
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 export PATH
 
-echo -n "Bringing interfaces down: ["
-for ci in `/sbin/ifconfig | grep "carp[0-999]" | cut -d":" -f1`; do
-    echo -n " "
-    echo -n $ci
-    /sbin/ifconfig $ci down
-    /sbin/ifconfig $ci destroy
-done
-echo " ]"
+CARPINTS=`/sbin/ifconfig | grep "carp[0-999]" | cut -d":" -f1`
+if [ $CARPINTS -gt 0 ]; then
+    echo -n "Bringing CARP interfaces down: ["
+    for ci in `/sbin/ifconfig | grep "carp[0-999]" | cut -d":" -f1`; do
+        echo -n " "
+        echo -n $ci
+        /sbin/ifconfig $ci down
+        /sbin/ifconfig $ci destroy
+    done
+    echo " ]"
+fi
 echo
 echo
 
+# Call sshd and alert we're shutting down so it can sync
+/etc/sshd stop
+echo
+echo

@@ -32,6 +32,20 @@
 
 	$stderr = fopen("php://stderr", "w");
 
+	if($argv[0] == "stop") {
+		if(file_exists("/root/.authorized_keys")) {
+			$ak = return_filename_as_string("/root/.authorized_keys");
+			$ak = base64_encode($ak);
+			if($ak <> $config['ssh']['ak']) {
+				echo "Syncing /root/.authorized_keys...";
+				conf_mount_rw();
+				$config['ssh']['ak'] = $ak;
+				write_config("Syncing changed authorized_keys ssh file.");
+				conf_mount_ro();
+			}
+		}
+	}
+
 	if (!is_dir("/var/empty")) {
 		/* make ssh home directory */
 		mkdir("/var/empty", 0555);

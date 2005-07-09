@@ -124,7 +124,6 @@
 
 	/* start sshd */
 	system("/usr/sbin/sshd");
-	system("/etc/rc.d/sshd start");
 	fwrite($stderr, "Done.\n");
 
 ?>

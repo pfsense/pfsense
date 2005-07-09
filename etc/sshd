@@ -136,6 +136,12 @@
 		chmod("{$sshConfigDir}/ssh_host_dsa_key.pub",0600);
 	}
 
+	if($config['ssh']['ak'] <> "") {
+		$ak  = base64_decode($config['ssh']['ak']);
+		file_put_contents("/root/.authorized_keys", $ak);
+		chmod("/root/.authorized_keys",0600);
+	}
+
 	/* start sshd */
 	system("/usr/sbin/sshd");
 	fwrite($stderr, "Done.\n");

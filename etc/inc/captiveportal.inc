@@ -253,6 +253,8 @@ function captiveportal_prune_old() {
 	/* launch expiretable and remove entries older than $timeout */
 	mwexec("/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t " . ( $timeout * 60 ) . " captiveportal");
 
+	$after_prune = `/sbin/pfctl -A captiveportal -sr`;
+
 	/*
 	 *   loop back through and deterimine if expiretable removed a client.
 	 *   if we detect a client removale then update the internal db accordingly
@@ -264,10 +266,8 @@ function captiveportal_prune_old() {
                 /* hard timeout? */
 		if ((time() - $cpdb[$i][0]) >= $timeout)
 			$timedout = true;
-
-
-		$new_list = `/sbin/pfctl -A captiveportal -sr`;
-		if(stristr($current_list, $cpdb[$i][2]) == false)
+		
+		if(stristr($after_prune, $cpdb[$i][2]) == false)
 			$timedout= true;
 
 		if ($timedout) {
@@ -283,8 +283,6 @@ function captiveportal_prune_old() {
 									   $cpdb[$i][2]); //clientip
 				syslog(LOG_INFO,"Authenticated user $cpdb[$i][4] timed out");
 			}
-
-			mwexec("/usr/bin/nice -n20 /sbin/pfctl -t captiveportal -T delete {$cpdb[$i][2]}");
 
 			unset($cpdb[$i]);
 		}

@@ -11,3 +11,4 @@ HOME=/var/log
 1,31	0-5	*	*	*	root	        /usr/bin/nice -n20 adjkerntz -a
 */5	*	*	*	*	root	        /usr/bin/nice -n20 /etc/rc.prunecaptiveportal
 1	*	1	*	*	root	        /usr/bin/nice -n20 /etc/update_bogons.sh
+*/60	*	1	*	*	root	        /usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 60 sshlockout

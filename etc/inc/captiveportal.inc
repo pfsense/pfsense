@@ -251,7 +251,7 @@ function captiveportal_prune_old() {
 	$radiusservers = captiveportal_get_radius_servers();
 
 	/* launch expiretable and remove entries older than $timeout */
-	mwexec("/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t {$timeout} captiveportal");
+	mwexec("/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t " . ( $timeout * 60 ) . " captiveportal");
 
 	/*
 	 *   loop back through and deterimine if expiretable removed a client.

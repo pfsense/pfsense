@@ -108,6 +108,9 @@ Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
 /* mount rw fs */
 conf_mount_rw();
 
+/* resync password database to avoid out of sync issues */
+mwexec("/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd");
+
 switch($_GET['mode']) {
 	case "delete":
             

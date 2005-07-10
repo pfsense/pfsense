@@ -152,7 +152,7 @@
 	/* setup altq + pf */
 	echo "Configuring firewall... ";
 	mute_kernel_msgs();
-	filter_configure();
+	filter_configure_sync();
 	unmute_kernel_msgs();
 	echo "done.\n";
 

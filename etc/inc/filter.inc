@@ -56,7 +56,13 @@ function filter_pflog_start() {
 
 }
 
+/* reload filter async */
 function filter_configure() {
+	mwexec_bg("/etc/rc.filter_configure");
+}
+
+/* reload filter sync */
+function filter_configure_sync() {
 	global $config, $g;
 
 	$lan_if = $config['interfaces']['lan']['if'];

@@ -71,6 +71,8 @@ $pkg_sizes = get_pkg_sizes();
 
 ?>
 
+<br>
+
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
 <?php
 	$tab_array = array();

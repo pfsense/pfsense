@@ -250,9 +250,9 @@ function captiveportal_prune_old() {
 
 	$radiusservers = captiveportal_get_radius_servers();
 
-	if($idletimeout <> 0) (
+	if($idletimeout <> 0) {
 		/* launch expire table and remove entries older than $timeout */
-		mwexec("/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t " . $idletimeout . " captiveportal");
+		mwexec("/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t {$idletimeout} captiveportal");
 	}
 
 	$after_prune = `/sbin/pfctl -t captiveportal -T show`;

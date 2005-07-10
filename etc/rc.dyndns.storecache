@@ -6,3 +6,5 @@
 /bin/cp /var/db/ez-ipupdate.cache /conf
 /sbin/umount -f /cf 2>/dev/null
 /sbin/mount -r /cf 2>/dev/null
+
+exit 0

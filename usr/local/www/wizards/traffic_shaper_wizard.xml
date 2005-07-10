@@ -1533,7 +1533,7 @@
 	</fields>
 	<stepsubmitphpaction>
 		$config['shaper']['enable'] = TRUE;
-		filter_configure();
+		filter_configure_sync();
 		header("Location: /status_queues.php");
 	</stepsubmitphpaction>
 </step>

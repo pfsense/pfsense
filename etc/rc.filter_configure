@@ -31,6 +31,6 @@
 
 require_once("filter.inc");
 
-filter_configure();
+filter_configure_sync();
 
 ?>

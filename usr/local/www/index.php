@@ -33,6 +33,7 @@
 */
 
 require("guiconfig.inc");
+require("notices.inc");
 
 $swapinfo = `/usr/sbin/swapinfo`;
 if(stristr($swapinfo,"%") == true) $showswap=true;
@@ -153,6 +154,11 @@ include("head.inc");
 <form>
 <?php include("fbegin.inc"); ?>
 	    <center><img src="logobig.jpg"></center>
+	    <br>
+	<?php
+	    print_notice_box();
+	?> 
+	    <br>
 	    <div id="niftyOutter" width="650">
             <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>

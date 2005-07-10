@@ -118,7 +118,7 @@ function interfaces_lan_configure() {
 		system_routing_configure();
 
 		/* set the reload filter dity flag */
-		touch("{$g['tmp_path']}/filter_boot_dirty");
+		touch("{$g['tmp_path']}/filter_dirty");
 
 		/* reload IPsec tunnels */
 		vpn_ipsec_configure();
@@ -155,7 +155,7 @@ function interfaces_optional_configure() {
 		system_routing_configure();
 
 		/* set the reload filter dity flag */
-		touch("{$g['tmp_path']}/filter_boot_dirty");
+		touch("{$g['tmp_path']}/filter_dirty");
 
 		/* reload IPsec tunnels */
 		vpn_ipsec_configure();
@@ -478,7 +478,7 @@ function interfaces_wan_configure() {
 		system_routing_configure();
 
 		/* set the reload filter dity flag */
-		touch("{$g['tmp_path']}/filter_boot_dirty");
+		touch("{$g['tmp_path']}/filter_dirty");
 
 		/* reload ipsec tunnels */
 		vpn_ipsec_configure();

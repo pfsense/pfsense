@@ -98,12 +98,14 @@ if [ ! "$PLATFORM" = "cdrom" ]; then
     clog -i -s 10000 /var/log/dhcpd.log
     clog -i -s 10000 /var/log/vpn.log
     clog -i -s 10000 /var/log/portalauth.log
+    clog -i -s 10000 /var/log/ipsec.log
 else
     clog -i -s 262144 /var/log/system.log
     clog -i -s 262144 /var/log/filter.log
     clog -i -s 32768 /var/log/dhcpd.log
     clog -i -s 32768 /var/log/vpn.log
     clog -i -s 32768 /var/log/portalauth.log
+    clog -i -s 10000 /var/log/ipsec.log
 fi
 
 # change permissions on newly created clog files.

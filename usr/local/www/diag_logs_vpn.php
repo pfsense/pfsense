@@ -34,14 +34,14 @@
 
 require("guiconfig.inc");
 
-$pptp_logfile = "{$g['varlog_path']}/vpn.log";
+$pptp_logfile = "{$g['varlog_path']}/ipsec.log";
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) {
-	exec("/usr/sbin/clog -i -s 262144 {$pptp_logfile}");
+	exec("/usr/sbin/clog -i -s 262144 {$ipsec_logfile}");
 }
 
 function dump_clog_vpn($logfile, $tail) {

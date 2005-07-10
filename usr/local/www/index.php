@@ -58,6 +58,9 @@ if(file_exists("/trigger_initial_wizard")) {
 $pgtitle = "pfSense first time setup";
 include("head.inc");
 
+if(file_exists("{$g["tmp_path"]}/filter_reloading")) 
+	file_notice("Filter load in progress", "The filter rules are currently reloading.  An alert will be sent if there is an error.", "", "");
+
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form>

@@ -76,6 +76,8 @@ fi
 
 [ ! -d /cf/conf/backup/ ] || mkdir -p /cf/conf/backup/ 2>/dev/null
 
+[ ! -f /var/db/ez-ipupdate.cache ] || touch /var/db/ez-ipupdate.cache 2>/dev/null
+
 set -T
 trap "echo 'Reboot interrupted'; exit 1" 3
 

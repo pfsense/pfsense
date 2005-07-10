@@ -149,7 +149,7 @@ function filter_configure_sync() {
 		$line_split = split("\n", $rules_file);
 		if(is_array($line_split))
 			$line_error = "The line in question reads [{$line_number}]:<br>" . $line_split[$line_number];
-		file_notice("filter_load", "There was error(s) loading the rules:<p><pre>" . $rules_error . "\n" . $line_error . "</pre>";, "Filter Reload", "")
+		file_notice("filter_load", "There was error(s) loading the rules:<p><pre>" . $rules_error . "\n" . $line_error . "</pre>", "Filter Reload", "");
 		return "There was error(s) loading the rules:<p><pre>" . $rules_error . "\n" . $line_error . "</pre>";
 	}
 

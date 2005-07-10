@@ -1215,7 +1215,7 @@
 					<value>L</value>
 				</option>
 			</options>
-			<typehint>ICMP Protocol</typehint>
+			<typehint>IMAP Protocol</typehint>
                 </field>
                 <field>
                         <name>SMB</name>

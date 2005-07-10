@@ -1425,7 +1425,7 @@
 		
 		if($_POST['streamingmp3'] != "") {
 		    /* streaming mp3 media aka shoutcast */
-		    $othersplist[] = array('STREAMINGMP3', 'tcp', '8000', '8010', 'both', $_POST['streamingmp3']);
+		    $othersplist[] = array('STREAMINGMP3', 'tcp', '8000', '8100', 'both', $_POST['streamingmp3']);
 		}
 		
 		if($_POST['irc'] != "") {

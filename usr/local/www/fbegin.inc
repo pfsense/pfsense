@@ -111,9 +111,7 @@ function showhide_black(tspan, tri) {
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_snmp.php" class="navlnk">SNMP</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_proxyarp.php" class="navlnk">Proxy ARP</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_wol.php" class="navlnk">Wake on LAN</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/carp_status.php" class="navlnk">CARP (failover)</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/pkg_edit.php?xml=sasyncd.xml&id=0" class="navlnk">VPN failover</a><br>				
-		
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/carp_status.php" class="navlnk">CARP (failover)</a><br>		
 	      <?php echo return_ext_menu("Services"); ?>
               <strong>VPN</strong><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/vpn_ipsec.php" class="navlnk">IPsec</a><br>

@@ -69,6 +69,7 @@ include("head.inc");
 	$tab_array[1] = array("Mobile clients", false, "vpn_ipsec_mobile.php");
 	$tab_array[2] = array("Pre-shared keys", false, "vpn_ipsec_keys.php");
 	$tab_array[3] = array("CAs", true, "vpn_ipsec_ca.php");
+	$tab_array[4] = array("Failover IPSEC", false, "/pkg_edit.php?xml=sasyncd.xml&id=0");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

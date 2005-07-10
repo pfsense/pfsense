@@ -80,7 +80,7 @@
 
 	system("/usr/sbin/sshd");
 	fwrite($stderr, "Done.\n");
-
+	exit;
 
 	/* exit early, this needs more testing. */
 

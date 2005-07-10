@@ -58,7 +58,7 @@ function filter_pflog_start() {
 
 /* reload filter async */
 function filter_configure() {
-	mwexec_bg("/etc/rc.filter_configure");
+	mwexec_bg("/bin/sh /etc/rc.filter_configure");
 }
 
 /* reload filter sync */

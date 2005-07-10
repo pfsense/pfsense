@@ -59,7 +59,7 @@ function file_notice($id, $notice, $category = "General", $url, $priority = 1) {
 	$queueout = fopen($notice_path, "w");
 	fwrite($queueout, serialize($queue));
 	fclose($queueout);
-	return;
+	return $queuekey;
 }
 
 function get_notices($category = "all") {

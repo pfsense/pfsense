@@ -58,19 +58,19 @@ function filter_pflog_start() {
 
 /* reload filter async */
 function filter_configure() {
-	mwexec_bg("/bin/sh /etc/rc.filter_configure");
+	touch("/tmp/filter_dirty");
 }
 
 /* reload filter sync */
 function filter_configure_sync() {
+	if(file_exists("/tmp/filter_dirty"))
+		unlink("/tmp/filter_dirty");
+
 	global $config, $g;
 
 	$lan_if = $config['interfaces']['lan']['if'];
 	$wan_if = get_real_wan_interface();
-
-	if(does_interface_exist($lan_if) == false) return;
-	if(does_interface_exist($wan_if) == false) return;
-
+	
 	/* generate aliases */
 	$aliases = filter_generate_aliases();
 	/* generate nat rules */

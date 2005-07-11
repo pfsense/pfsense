@@ -52,8 +52,17 @@ include("fbegin.inc");
 
 <div id="mainlevel">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr><td>
+<?php
+	$tab_array = array();
+	$tab_array[0] = array("States", true, "diag_dump_states.php");
+	$tab_array[1] = array("Reset States", false, "diag_resetstate.php");
+	display_top_tabs($tab_array);
+?>
+</td></tr>
 <tr><td class="tabcont">
 <table colspan="3" cellpadding="3" width="100%">
+
 <?php
 
 /* table header */
@@ -120,6 +129,8 @@ foreach($states as $state) {
 NiftyCheck();
 Rounded("div#mainlevel","bl br","#FFF","#eeeeee","smooth");
 </script>
+
+<meta http-equiv="refresh" content="60;url=diag_dump_states.php">
 
 </body>
 </html>

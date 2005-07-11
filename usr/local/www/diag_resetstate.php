@@ -58,7 +58,18 @@ include("head.inc");
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-            <form action="diag_resetstate.php" method="post" name="iform" id="iform">
+        <form action="diag_resetstate.php" method="post" name="iform" id="iform">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+	<tr><td>
+	<?php
+		$tab_array = array();
+		$tab_array[0] = array("States", false, "diag_dump_states.php");
+		$tab_array[1] = array("Reset States", true, "diag_resetstate.php");
+		display_top_tabs($tab_array);
+	?>
+	</td></tr>
+	<tr><td class="tabcont">	    
+	    
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
@@ -90,6 +101,8 @@ include("head.inc");
                   </td>
                 </tr>
               </table>
+	 </td></tr>
+	</table>
 </form>
 <?php include("fend.inc"); ?>
 </body>

@@ -194,8 +194,7 @@ function showhide_black(tspan, tri) {
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/halt.php" class="navlnk">Halt system</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_ping.php" class="navlnk">Ping</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/reboot.php" class="navlnk">Reboot system</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_resetstate.php" class="navlnk">Reset state</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_dump_states.php" class="navlnk">Show States</a><br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_dump_states.php" class="navlnk">States</a><br>
 		<?php echo return_ext_menu("Diagnostics"); ?>
 			  </span>
 			  </font></span>

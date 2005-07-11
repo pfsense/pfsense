@@ -35,7 +35,7 @@ function gentitle_pkg($pgname) {
 	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
 }
 
-$pgtitle = "CARP: Status";
+$pgtitle = "Diagnostics: Show States";
 include("head.inc");
 
 $states=split("\n",`/sbin/pfctl -ss`);

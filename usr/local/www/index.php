@@ -156,6 +156,7 @@ include("head.inc");
 	    <center><img src="logobig.jpg"></center>
 	    <br>
 	<?php
+	    $found_notices = are_notices_pending();
 	    print_notice_box();
 	    
 	if(file_exists("{$g["tmp_path"]}/filter_reloading")) 
@@ -382,6 +383,11 @@ While(!Connection_Aborted()) {
 
     echo "</script>\n";
 
+     if(are_notices_pending() == true and $found_notices == false) {
+	/* found a notice, lets redirect so they can see the notice */
+	$counter = 500;
+     }
+     
     /*
      *   prevent user from running out of ram.
      *   firefox and ie can be a bear on ram usage!

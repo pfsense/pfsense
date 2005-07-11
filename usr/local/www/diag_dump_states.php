@@ -72,7 +72,7 @@ foreach($states as $state) {
 	if(count($state_split) == 7) {
 		print "<td>{$state_split[0]}</td>";
 		print "<td>{$state_split[1]}</td>";
-		print "<td>{$state_split[2]}</td>";
+		print "<td align='right'>{$state_split[2]}</td>";
 		print "<td>{$state_split[3]}</td>";
 		print "<td>{$state_split[4]}</td>";
 		print "<td>{$state_split[5]}</td>";
@@ -83,7 +83,7 @@ foreach($states as $state) {
 	} else if(count($state_split) == 8) {
 		print "<td>{$state_split[0]}</td>";
 		print "<td>{$state_split[1]}</td>";
-		print "<td>{$state_split[2]}</td>";
+		print "<td align='right'>{$state_split[2]}</td>";
 		print "<td>{$state_split[3]}</td>";
 		print "<td>{$state_split[4]}</td>";
 		print "<td>{$state_split[5]}</td>";
@@ -94,7 +94,7 @@ foreach($states as $state) {
 	} else if(count($state_split) == 9) {
 		print "<td>{$state_split[0]}</td>";
 		print "<td>{$state_split[1]}</td>";
-		print "<td>{$state_split[2]}</td>";
+		print "<td align='right'>{$state_split[2]}</td>";
 		print "<td>{$state_split[3]}</td>";
 		print "<td>{$state_split[4]}</td>";
 		print "<td>{$state_split[5]}</td>";

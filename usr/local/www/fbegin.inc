@@ -1,4 +1,5 @@
 <?php
+require_once("notices.inc");
 /* $Id$ */
 	function return_ext_menu($section) {
 		global $config;

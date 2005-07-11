@@ -797,9 +797,14 @@ function filter_flush_state_table() {
 	return mwexec("/sbin/pfctl -F state");
 }
 
-function filter_nat_rules_generate_if($if, $src, $srcport, $dst, $natport, $target) {
+function filter_nat_rules_generate_if($if, $src, $srcport, $dst, $natport, $target, $nonat) {
 	global $config;
 
+	$nat = "nat";
+	
+	if($nonat <> "")
+		$nat = "no nat";
+	
         if ($target)
                 $tgt = $target . "/32";
         else
@@ -815,7 +820,7 @@ function filter_nat_rules_generate_if($if, $src, $srcport, $dst, $natport, $targ
 		$tgt .= " port " . $natport;
 
         $natrule = <<<EOD
-nat on $if from $src to $dst -> $tgt
+$nat on $if from $src to $dst -> $tgt
 
 EOD;
 
@@ -910,7 +915,7 @@ function filter_nat_rules_generate() {
 					$natif = $config['interfaces'][$obent['interface']]['if'];
 
 				$natrules .= filter_nat_rules_generate_if($natif, $src, $obent['sourceport'], $dst, $obent['natport'],
-					$obent['target']);
+					$obent['target'], $obent['nonat']);
 			}
 		}
 	} else {
@@ -919,10 +924,10 @@ function filter_nat_rules_generate() {
 		/* create ipsec passthru rule if requested */
 		if (isset($config['nat']['ipsecpassthru']['enable'])) {
 			$natrules .= filter_nat_rules_generate_if($wanif,
-				$lansa . "/" . $lancfg['subnet'], 500, "", 500, null);
+				$lansa . "/" . $lancfg['subnet'], 500, "", 500, null, "");
 		}
 		$natrules .= filter_nat_rules_generate_if($wanif,
-			$lansa . "/" . $lancfg['subnet'], null, "", null, null);
+			$lansa . "/" . $lancfg['subnet'], null, "", null, null, "");
 
 		/* optional interfaces */
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
@@ -931,7 +936,7 @@ function filter_nat_rules_generate() {
 			if (isset($optcfg['enable']) && !$optcfg['bridge']) {
 				$optsa = gen_subnet($optcfg['ipaddr'], $optcfg['subnet']);
 				$natrules .= filter_nat_rules_generate_if($wanif,
-					$optsa . "/" . $optcfg['subnet'], null, "", null, null);
+					$optsa . "/" . $optcfg['subnet'], null, "", null, null, "");
 			}
 		}
 
@@ -941,7 +946,7 @@ function filter_nat_rules_generate() {
 			if($config['pptp']['pptp_subnet'] <> "")
 				$pptp_subnet = $config['pptp']['pptp_subnet'];
 			$natrules .= filter_nat_rules_generate_if($wanif,
-				$pptpdcfg['remoteip'] . "/" . $pptp_subnet, null, "", null, null);
+				$pptpdcfg['remoteip'] . "/" . $pptp_subnet, null, "", null, null, "");
 		}
 
 		/* static routes

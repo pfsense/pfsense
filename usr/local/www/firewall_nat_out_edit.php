@@ -61,6 +61,7 @@ if (isset($id) && $a_out[$id]) {
 	if (!$pconfig['interface'])
 		$pconfig['interface'] = "wan";
     $pconfig['descr'] = $a_out[$id]['descr'];
+    $pconfig['nonat'] = $a_out[$id]['nonat'];
 } else {
     $pconfig['source_subnet'] = 24;
     $pconfig['destination'] = "any";
@@ -247,20 +248,27 @@ function sourcesel_change() {
               <?display_topbar()?>
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 	        <tr>
+                  <td width="22%" valign="top" class="vncellreq">No nat (NOT)</td>
+                  <td width="78%" class="vtable">
+			<input type="checkbox" name="nonat"<?php if(isset($pconfig['nonat'])) echo " CHECKED"; ?>>
+                     <span class="vexpl">Enabling this option will disable natting for the item and stop processing outgoing nat rules.
+		     <br>Hint: in most cases, you'll not use this option unless you know what your doing.</span></td>
+                </tr>
+	        <tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
-					<select name="interface" class="formfld">
-						<?php
-						$interfaces = array('wan' => 'WAN');
-						for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-							$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
-						}
-						foreach ($interfaces as $iface => $ifacename): ?>
-						<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
-						<?=htmlspecialchars($ifacename);?>
-						</option>
-						<?php endforeach; ?>
-					</select><br>
+			<select name="interface" class="formfld">
+				<?php
+				$interfaces = array('wan' => 'WAN');
+				for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+					$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+				}
+				foreach ($interfaces as $iface => $ifacename): ?>
+				<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
+				<?=htmlspecialchars($ifacename);?>
+				</option>
+				<?php endforeach; ?>
+			</select><br>
                      <span class="vexpl">Choose which interface this rule applies to.<br>
                      Hint: in most cases, you'll want to use WAN here.</span></td>
                 </tr>

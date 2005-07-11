@@ -69,6 +69,7 @@ foreach($states as $state) {
 	$state_fixed=str_replace("  ", " ", $state);
 	$state_fixed=str_replace("  ", " ", $state_fixed);
 	$state_split = split(" ", $state_fixed);
+	print "<tr>";
 	if(count($state_split) == 7) {
 		print "<td>{$state_split[0]}</td>";
 		print "<td>{$state_split[1]}</td>";

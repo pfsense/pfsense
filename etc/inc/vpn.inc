@@ -402,7 +402,7 @@ EOD;
 						$remotehost = substr($tunnel['remote-subnet'],0,strpos($tunnel['remote-subnet'],"/"));
 						$srchost = vpn_endpoint_determine($tunnel, $curwanip);
 						if ($srchost)
-							mwexec_bg("/sbin/ping -c 1 -S {$srchost} {$remotehost}");
+							mwexec_bg("/sbin/ping -c 10 -S {$srchost} {$remotehost}");
 					}
 				}
 		}

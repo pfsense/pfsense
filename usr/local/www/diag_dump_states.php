@@ -61,7 +61,7 @@ print "\n<tr><!-- " . count($state_split) . " -->";
 print "<tr bgcolor='#990000'>";
 print "<td><b><font color='#ffffff'>Type</td>";
 print "<td><b><font color='#ffffff'>Proto</td>";
-print "<td colspan='7'><b><font color='#ffffff'>Source -> Destination</td>";
+print "<td colspan='7'><b><font color='#ffffff'>Source -> Router -> Destination</td>";
 print "<td><b><font color='#ffffff'>State</td>";
 print "</tr>";
 

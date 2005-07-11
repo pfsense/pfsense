@@ -1,9 +1,11 @@
 #!/usr/local/bin/php
 <?php 
 /*
-	index.php
-	part of m0n0wall (http://m0n0.ch/wall)
-	
+	index.php part of pfSense
+	Copyright (C) 2004-2005 Scott Ullrich (sullrich@gmail.com)
+	All rights reserved.
+        
+	Originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 	
@@ -28,9 +30,6 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 
-	This version of index.php has been modified by Rob Parker
-	<rob.parker@keycom.co.uk>. Changes made are in relation to Per-User Bandwidth
-	Management based on returned RADIUS attributes, and are (c) 2004 Keycom PLC.
 */
 
 require("globals.inc");
@@ -61,14 +60,18 @@ if (!$clientmac && !isset($config['captiveportal']['nomacfilter'])) {
 	exit;
 }
 
-if ($clientmac && portal_mac_fixed($clientmac)) {
+/*   loop through allowed ip list.  if user is on the list then allow
+ *   them access w/o authenticating
+ */
+$a_allowedips = &$config['captiveportal']['allowedip'] ;
+foreach ($a_allowedips as $ip) {
+	if($clientip == $ip)
+		$allowed_ip = true;
+}
+
+if ($clientmac && portal_mac_fixed($clientmac) or $allowed_ip == true) {
 	/* punch hole in pf table and allow thru ip for the mac addresses */
-	// KEYCOM: passthru mac bandwidth control]
-	if (isset($config['captiveportal']['peruserbw'])) {
-		portal_allow($clientip, $clientmac, "unauthenticated",$config['captiveportal']['bwauthmacup'],$config['captiveportal']['bwauthmacdn']);
-	} else {
-		portal_allow($clientip, $clientmac, "unauthenticated",0,0);
-	}
+	portal_allow($clientip, $clientmac, "unauthenticated");
 
 } else if ($_POST['accept'] && file_exists("{$g['vardb_path']}/captiveportal_radius.db")) {
 
@@ -83,14 +86,8 @@ if ($clientmac && portal_mac_fixed($clientmac)) {
 							  			  $radiusservers[0]['key']);
 		$auth_returns = explode("/", $auth_val);
 		$auth_val = $auth_returns[0];
-		$bw_up = $auth_returns[1];
-		$bw_down = $auth_returns[2];
 		if ($auth_val == 2) {
-			if (isset($config['captiveportal']['peruserbw'])) {
-				$sessionid = portal_allow($clientip, $clientmac, $_POST['auth_user'],$bw_up,$bw_down);
-			} else {
-				$sessionid = portal_allow($clientip, $clientmac, $_POST['auth_user'],0,0);
-			}
+			$sessionid = portal_allow($clientip, $clientmac, $_POST['auth_user']);
 			if (isset($config['captiveportal']['radacct_enable']) && isset($radiusservers[0])) {
 				$auth_val = RADIUS_ACCOUNTING_START($_POST['auth_user'],
 													$sessionid,
@@ -115,25 +112,12 @@ if ($clientmac && portal_mac_fixed($clientmac)) {
 		write_config();
 	}
 	if($config['users'][$_POST['auth_user']]['password']==md5($_POST['auth_pass'])){
-		portal_allow($clientip, $clientmac,$_POST['auth_user'],0,0);
+		portal_allow($clientip, $clientmac,$_POST['auth_user']);
 	} else {
 		readfile("{$g['varetc_path']}/captiveportal-error.html");
 	}
 } else if ($_POST['accept'] && $clientip) {
-	//KEYCOM: authorised up and down bandwidth defaults (set from webgui). If not set, use 128/128
-	if (isset($config['captiveportal']['peruserbw'])) {
-		$bw_up=$config['captiveportal']['bwauthipup'];
-		$bw_down=$config['captiveportal']['bwauthipdn'];
-		if(!isset($bw_up)) {
-			$bw_up=128;
-		}
-		if(!isset($bw_down)) {
-			$bw_down=128;
-		}
-		portal_allow($clientip, $clientmac, "unauthenticated",$bw_up,$bw_down);
-	} else {
-		portal_allow($clientip, $clientmac, "unauthenticated",0,0);
-	}
+	portal_allow($clientip, $clientmac, "unauthenticated");
 } else if ($_POST['logout_id']) {
 	disconnect_client($_POST['logout_id']);
 	echo <<<EOD
@@ -197,7 +181,7 @@ function portal_mac_fixed($clientmac) {
 	return FALSE ;
 }	
 
-function portal_allow($clientip,$clientmac,$clientuser,$bw_up,$bw_down) {
+function portal_allow($clientip,$clientmac,$clientuser) {
 
 	global $orig_host, $orig_request, $g, $config;
 

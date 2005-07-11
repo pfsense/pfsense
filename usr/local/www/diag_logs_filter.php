@@ -34,7 +34,7 @@
 require("guiconfig.inc");
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
-exec("/usr/sbin/tcpdump -n -e -ttt -r {$g['varlog_path']}/pflog | logger -t pf -p local0.info ");
+//exec("/usr/sbin/tcpdump -n -e -ttt -r {$g['varlog_path']}/pflog | logger -t pf -p local0.info ");
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)

@@ -37,7 +37,7 @@ function gentitle_pkg($pgname) {
 
 $pgtitle = "Diagnostics: Show States";
 include("head.inc");
-
+ 
 $states=split("\n",`/sbin/pfctl -ss`);
 
 ?>

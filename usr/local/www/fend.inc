@@ -15,4 +15,10 @@ Rounded("div#niftyMenu","top bottom","#FFFFFF","#000000","smooth");
 Rounded("div#mainarea","bl br tr","#FFF","#eeeeee","smooth");
 Rounded("div#boxarea","bl br tl tr","#FFF","#eeeeee","smooth");
 Rounded("tr#fend","bl br tl tr","#FFF","#990000","smooth");
+<?php
+    /* if we displayed an alert earlier, round the bottom edges */
+    if($need_alert_display == true) {
+	echo "Rounded(\"div#roundalert\",\"bl br\",\"#FFF\",\"#990000\",\"smooth\");\n";
+    }
+?>
 </script>

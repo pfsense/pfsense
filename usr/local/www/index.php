@@ -155,16 +155,6 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 	    <center><img src="logobig.jpg"></center>
 	    <br>
-	<?php
-	    $found_notices = are_notices_pending();
-	    print_notice_box();
-	    
-	if(file_exists("{$g["tmp_path"]}/filter_reloading")) 
-		print_info_box_np("The filter rules are currently reloading.  You will receive an alert if there is an error.");
-	    
-	    
-	?> 
-	    <br>
 	    <div id="niftyOutter" width="650">
             <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>

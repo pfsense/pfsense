@@ -66,11 +66,39 @@ function showhide_black(tspan, tri) {
     <td width="150" height="65" align="center" valign="middle"> <strong><a href="/"><img src="/logo.gif" border="0"></a></strong></td>
     <td bgcolor="#990000" background="top_background.gif">
 	<table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr><td align="left" valign="bottom"><span class="tfrtitle">&nbsp;webConfigurator</span></td>
-	  <td align="right" valign="bottom">
-	  <span class="hostname"><?=$config['system']['hostname'] . "." . $config['system']['domain'];?>&nbsp;</span>
-	  </td></tr></table>
-	</td>
+	 <tr><td align="left" valign="bottom"><span class="tfrtitle">&nbsp;webConfigurator</span></td>
+	   <td align="right" valign="bottom">
+	     <span class="hostname"><?=$config['system']['hostname'] . "." . $config['system']['domain'];?>&nbsp;</span>
+	   </td>
+	 </tr>
+	<?php
+		/* display a top alert bar if need be */
+		$need_alert_display = false;
+		$display_text .= "";
+		if(file_exists("{$g["tmp_path"]}/filter_reloading")) {
+			$need_alert_display = true;
+			$display_text .= "The filter rules are currently reloading.  You will receive an alert if there is an error.<br>";
+		}
+		$found_notices = are_notices_pending();
+		if($found_notices == true) {
+			$notices = get_notices();
+			if(!$notices) {
+				$need_alert_display = true;
+				$display_text .= print_notices() . "<br>";
+			}			
+		}
+		if($need_alert_display == true) {
+			// XXX: make rounded.
+			echo "<tr bgcolor=\"#000000\"><td colspan=\"2\"><font color=\"#ffffff\">";
+			echo "<div id=\"roundalert\">";
+			echo "<img src=\"/top_notification.gif\"> ";
+			echo $display_text;
+			echo "</div>";
+			echo "</td></tr>";
+		}
+	?>
+	</table>
+    </td>
   </tr>
   <tr valign="top">
     <td valign="top" width="150">

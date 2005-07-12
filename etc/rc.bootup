@@ -55,7 +55,7 @@
 	$wan_if = get_real_wan_interface();
 
 	/*
-	 *  Deterimine if we need to throw a interface exception
+	 *  Determine if we need to throw a interface exception
          *  and ask the user to reassign interfaces.  This will
          *  avoid a reboot and thats a good thing.
 	 */

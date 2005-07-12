@@ -62,7 +62,7 @@ function showhide_black(tspan, tri) {
 }
 -->
 </script>
-<table width="750" height="100%" border="0" cellspacing="0" cellpadding="0">
+<table width="750" border="0" cellspacing="0" cellpadding="0">
   <tr valign="bottom" height="65">
     <td width="150" height="65" align="center" valign="middle"> <strong><a href="/"><img src="/logo.gif" border="0"></a></strong></td>
     <td bgcolor="#990000" background="top_background.gif">
@@ -102,9 +102,9 @@ function showhide_black(tspan, tri) {
     </td>
   </tr>
   <tr valign="top">
-    <td valign="top" width="150">
-	<div id="niftyMenu">
-	<table width="100%" class="menu" bgcolor="#000000">
+    <td valign="top" height="100%" width="150">
+	<div id="niftyMenu" style="height:100%">
+	<table height="100%" width="100%" class="menu" bgcolor="#000000">
         <tr valign="top">
           <td nowrap><span class="navlnk"><font color="#FFFFFF"> <strong>System</strong>
               <br>

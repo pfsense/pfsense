@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	vpn.inc
 	Copyright (C) 2004 Scott Ullrich
@@ -97,6 +96,7 @@ function vpn_ipsec_configure($ipchg = false) {
 		mwexec("/sbin/ifconfig gif" . $x . " delete");
 	}
 
+	$curwanip = get_current_wan_address();
 	if($config['installedpackages']['sasyncd']['config'] <> "")
 		foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
 			if($sasyncd['ip'] <> "") 
@@ -138,7 +138,7 @@ function vpn_ipsec_configure($ipchg = false) {
 		if (!$curwanip) {
 			/* IP address not configured yet, exit */
 			if ($g['booting'])
-				echo "done.\n";
+				echo "done\n";
 			return 0;
 		}
 
@@ -173,11 +173,13 @@ function vpn_ipsec_configure($ipchg = false) {
 					if(isset($tunnel['creategif'])) {
 						$number_of_gifs = find_last_gif_device();
 						$number_of_gifs++;
+						$curwanip = get_current_wan_address();
 						if($config['installedpackages']['sasyncd']['config'] <> "")
 							foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
 								if($sasyncd['ip'] <> "") 
 									$curwanip = $sasyncd['ip'];
-							}						mwexec("/sbin/ifconfig gif" . $number_of_gifs . " tunnel" . $curwanip . " " . $tunnel['remote-gateway']);
+							}						
+						mwexec("/sbin/ifconfig gif" . $number_of_gifs . " tunnel" . $curwanip . " " . $tunnel['remote-gateway']);
 						mwexec("/sbin/ifconfig gif" . $number_of_gifs . " {$lansa}/{$lansn} {$lanip}/32");
 					}
 
@@ -208,6 +210,7 @@ function vpn_ipsec_configure($ipchg = false) {
 
 			$racoonconf = "";
 
+
 	if($config['installedpackages']['sasyncd']['config'] <> "")
 		foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
 			if($sasyncd['ip'] <> "") 
@@ -222,20 +225,45 @@ listen {
 EOD;
 			}
 
-			$racoonconf .= "path pre_shared_key \"{$g['varetc_path']}/psk.txt\";\n\n";
-
+			$racoonconf = "path pre_shared_key \"{$g['varetc_path']}/psk.txt\";\n\n";
+			$racoonconf .= "path certificate  \"{$g['varetc_path']}\";\n\n";
+			
+			/* generate CA certificates files */
+			$cacertnum = 0;
+			if (is_array($ipseccfg['cacert']) && count($ipseccfg['cacert']))
+				foreach ($ipseccfg['cacert'] as $cacert) {
+					++$cacertnum;
+					if (isset($cacert['cert'])) {
+						$cert = base64_decode($cacert['cert']);
+						$x509cert = openssl_x509_parse(openssl_x509_read($cert));
+						if(is_array($x509cert) && isset($x509cert['hash'])) {
+							$fd1 = fopen("{$g['varetc_path']}/{$x509cert['hash']}.0", "w");
+							if (!$fd1) {
+								printf("Error: cannot open {$x509cert['hash']}.0 in vpn.\n");
+								return 1;
+							}
+							chmod("{$g['varetc_path']}/{$x509cert['hash']}.0", 0600);
+							fwrite($fd1, $cert);
+							fclose($fd1);
+						}
+					}
+				}
+						
+			$tunnelnumber = 0;
 			if (is_array($ipseccfg['tunnel']) && count($ipseccfg['tunnel']))
 				foreach ($ipseccfg['tunnel'] as $tunnel) {
-
+				
+				++$tunnelnumber;
+			
 				if (isset($tunnel['disabled']))
 					continue;
-
+				
 				$ep = vpn_endpoint_determine($tunnel, $curwanip);
 				if (!$ep)
 					continue;
-
+			
 				vpn_localnet_determine($tunnel['local-subnet'], $sa, $sn);
-
+			
 				if (isset($tunnel['p1']['myident']['myaddress'])) {
 					$myidentt = "address";
 					$myident = $ep;
@@ -249,11 +277,68 @@ EOD;
 					$myidentt = "user_fqdn";
 					$myident = $tunnel['p1']['myident']['ufqdn'];
  				}
+				
+				if (isset($tunnel['p1']['authentication_method'])) {
+					$authmethod = $tunnel['p1']['authentication_method'];
+				} else {$authmethod = 'pre_shared_key';}
+				
+				$certline = '';	
+				
+				if ($authmethod == 'rsasig') {
+					if ($tunnel['p1']['cert'] && $tunnel['p1']['private-key']) {
+						$cert = base64_decode($tunnel['p1']['cert']);
+						$private_key = base64_decode($tunnel['p1']['private-key']);
+					} else {
+						/* null certificate/key */
+						$cert = '';
+						$private_key = '';
+					}
+					
+					if ($tunnel['p1']['peercert']) 
+						$peercert = base64_decode($tunnel['p1']['peercert']);
+					else 
+						$peercert = '';
+					
+					$fd1 = fopen("{$g['varetc_path']}/server{$tunnelnumber}-signed.pem", "w");
+					if (!$fd1) {
+						printf("Error: cannot open server{$tunnelnumber}-signed.pem in vpn.\n");
+						return 1;
+					}
+					chmod("{$g['varetc_path']}/server{$tunnelnumber}-signed.pem", 0600);
+					fwrite($fd1, $cert);
+					fclose($fd1);
+					
+					$fd1 = fopen("{$g['varetc_path']}/server{$tunnelnumber}-key.pem", "w");
+					if (!$fd1) {
+						printf("Error: cannot open server{$tunnelnumber}-key.pem in vpn.\n");
+						return 1;
+					}
+					chmod("{$g['varetc_path']}/server{$tunnelnumber}-key.pem", 0600);
+					fwrite($fd1, $private_key);
+					fclose($fd1);
 
+					$certline = "certificate_type x509 \"server{$tunnelnumber}-signed.pem\" \"server{$tunnelnumber}-key.pem\";";
+					
+					if ($peercert!=''){
+						$fd1 = fopen("{$g['varetc_path']}/peer{$tunnelnumber}-signed.pem", "w");
+						if (!$fd1) {
+							printf("Error: cannot open server{$tunnelnumber}-signed.pem in vpn.\n");
+							return 1;
+						}
+						chmod("{$g['varetc_path']}/peer{$tunnelnumber}-signed.pem", 0600);
+						fwrite($fd1, $peercert);
+						fclose($fd1);		
+						$certline .= <<<EOD
+						
+	peers_certfile "peer{$tunnelnumber}-signed.pem";
+EOD;
+					} 					
+				} 
 				$racoonconf .= <<<EOD
 remote {$tunnel['remote-gateway']} \{
 	exchange_mode {$tunnel['p1']['mode']};
 	my_identifier {$myidentt} "{$myident}";
+	{$certline}
 	peers_identifier address {$tunnel['remote-gateway']};
 	initial_contact on;
 	support_proxy on;
@@ -262,23 +347,23 @@ remote {$tunnel['remote-gateway']} \{
 	proposal \{
 		encryption_algorithm {$tunnel['p1']['encryption-algorithm']};
 		hash_algorithm {$tunnel['p1']['hash-algorithm']};
-		authentication_method pre_shared_key;
+		authentication_method {$authmethod};
 		dh_group {$tunnel['p1']['dhgroup']};
 
 EOD;
 				if ($tunnel['p1']['lifetime'])
 					$racoonconf .= "		lifetime time {$tunnel['p1']['lifetime']} secs;\n";
-
+				
 				$racoonconf .= "	}\n";
-
+				
 				if ($tunnel['p1']['lifetime'])
 					$racoonconf .= "	lifetime time {$tunnel['p1']['lifetime']} secs;\n";
-
+					
 				$racoonconf .= "}\n\n";
-
+				
 				$p2ealgos = join(",", $tunnel['p2']['encryption-algorithm-option']);
 				$p2halgos = join(",", $tunnel['p2']['hash-algorithm-option']);
-
+				
 				$racoonconf .= <<<EOD
 sainfo address {$sa}/{$sn} any address {$tunnel['remote-subnet']} any \{
 	encryption_algorithm {$p2ealgos};
@@ -289,18 +374,18 @@ EOD;
 
 				if ($tunnel['p2']['pfsgroup'])
 					$racoonconf .= "	pfs_group {$tunnel['p2']['pfsgroup']};\n";
-
+					
 				if ($tunnel['p2']['lifetime'])
 					$racoonconf .= "	lifetime time {$tunnel['p2']['lifetime']} secs;\n";
-
+					
 				$racoonconf .= "}\n\n";
 			}
-
+			
 			/* mobile clients? */
 			if (isset($ipseccfg['mobileclients']['enable'])) {
-
+				
 				$tunnel = $ipseccfg['mobileclients'];
-
+				
 				if (isset($tunnel['p1']['myident']['myaddress'])) {
 					$myidentt = "address";
 					$myident = $curwanip;
@@ -314,11 +399,52 @@ EOD;
 					$myidentt = "user_fqdn";
 					$myident = $tunnel['p1']['myident']['ufqdn'];
  				}
+				
+				if (isset($tunnel['p1']['authentication_method'])) {
+					$authmethod = $tunnel['p1']['authentication_method'];
+				} else {$authmethod = 'pre_shared_key';}
+				
+				$certline = '';					
+				if ($authmethod == 'rsasig') {
+					if ($tunnel['p1']['cert'] && $tunnel['p1']['private-key']) {
+						$cert = base64_decode($tunnel['p1']['cert']);
+						$private_key = base64_decode($tunnel['p1']['private-key']);
+					} else {
+						/* null certificate/key */
+						$cert = '';
+						$private_key = '';
+					}
+					
+					if ($tunnel['p1']['peercert']) 
+						$peercert = base64_decode($tunnel['p1']['peercert']);
+					else 
+						$peercert = '';
+					
+					$fd1 = fopen("{$g['varetc_path']}/server-mobile{$tunnelnumber}-signed.pem", "w");
+					if (!$fd1) {
+						printf("Error: cannot open server-mobile{$tunnelnumber}-signed.pem in vpn.\n");
+						return 1;
+					}
+					chmod("{$g['varetc_path']}/server-mobile{$tunnelnumber}-signed.pem", 0600);
+					fwrite($fd1, $cert);
+					fclose($fd1);
+					
+					$fd1 = fopen("{$g['varetc_path']}/server-mobile{$tunnelnumber}-key.pem", "w");
+					if (!$fd1) {
+						printf("Error: cannot open server-mobile{$tunnelnumber}-key.pem in vpn.\n");
+						return 1;
+					}
+					chmod("{$g['varetc_path']}/server-mobile{$tunnelnumber}-key.pem", 0600);
+					fwrite($fd1, $private_key);
+					fclose($fd1);
 
+					$certline = "certificate_type x509 \"server-mobile{$tunnelnumber}-signed.pem\" \"server-mobile{$tunnelnumber}-key.pem\";";
+				}
 				$racoonconf .= <<<EOD
 remote anonymous \{
 	exchange_mode {$tunnel['p1']['mode']};
 	my_identifier {$myidentt} "{$myident}";
+	{$certline}
 	initial_contact on;
 	passive on;
 	generate_policy on;
@@ -328,23 +454,23 @@ remote anonymous \{
 	proposal \{
 		encryption_algorithm {$tunnel['p1']['encryption-algorithm']};
 		hash_algorithm {$tunnel['p1']['hash-algorithm']};
-		authentication_method pre_shared_key;
+		authentication_method {$authmethod};
 		dh_group {$tunnel['p1']['dhgroup']};
 
 EOD;
 				if ($tunnel['p1']['lifetime'])
 					$racoonconf .= "		lifetime time {$tunnel['p1']['lifetime']} secs;\n";
-
+				
 				$racoonconf .= "	}\n";
-
+				
 				if ($tunnel['p1']['lifetime'])
 					$racoonconf .= "	lifetime time {$tunnel['p1']['lifetime']} secs;\n";
-
+					
 				$racoonconf .= "}\n\n";
-
+				
 				$p2ealgos = join(",", $tunnel['p2']['encryption-algorithm-option']);
 				$p2halgos = join(",", $tunnel['p2']['hash-algorithm-option']);
-
+				
 				$racoonconf .= <<<EOD
 sainfo anonymous \{
 	encryption_algorithm {$p2ealgos};
@@ -355,25 +481,25 @@ EOD;
 
 				if ($tunnel['p2']['pfsgroup'])
 					$racoonconf .= "	pfs_group {$tunnel['p2']['pfsgroup']};\n";
-
+					
 				if ($tunnel['p2']['lifetime'])
 					$racoonconf .= "	lifetime time {$tunnel['p2']['lifetime']} secs;\n";
-
+					
 				$racoonconf .= "}\n\n";
 			}
-
+			
 			fwrite($fd, $racoonconf);
 			fclose($fd);
-
+			
 			/* generate psk.txt */
 			$fd = fopen("{$g['varetc_path']}/psk.txt", "w");
 			if (!$fd) {
 				printf("Error: cannot open psk.txt in vpn_ipsec_configure().\n");
 				return 1;
 			}
-
+			
 			$pskconf = "";
-
+			
 			if (is_array($ipseccfg['tunnel'])) {
 				foreach ($ipseccfg['tunnel'] as $tunnel) {
 					if (isset($tunnel['disabled']))
@@ -381,44 +507,43 @@ EOD;
 					$pskconf .= "{$tunnel['remote-gateway']}	 {$tunnel['p1']['pre-shared-key']}\n";
 				}
 			}
-
+			
 			/* add PSKs for mobile clients */
 			if (is_array($ipseccfg['mobilekey'])) {
 				foreach ($ipseccfg['mobilekey'] as $key) {
 					$pskconf .= "{$key['ident']}	{$key['pre-shared-key']}\n";
 				}
 			}
-
+			
 			fwrite($fd, $pskconf);
 			fclose($fd);
 			chmod("{$g['varetc_path']}/psk.txt", 0600);
-
+			
 			/* start racoon */
 			mwexec("/usr/local/sbin/racoon -d -f {$g['varetc_path']}/racoon.conf");
-
-			if(is_array($ipseccfg['tunnel']))
+			
+			if (is_array($ipseccfg['tunnel'])) {
 				foreach ($ipseccfg['tunnel'] as $tunnel) {
 					if (isset($tunnel['auto'])) {
 						$remotehost = substr($tunnel['remote-subnet'],0,strpos($tunnel['remote-subnet'],"/"));
 						$srchost = vpn_endpoint_determine($tunnel, $curwanip);
 						if ($srchost)
-							mwexec_bg("/sbin/ping -c 10 -S {$srchost} {$remotehost}");
+							mwexec_bg("/sbin/ping -c 1 -S {$srchost} {$remotehost}");
 					}
 				}
+			}
 		}
 	}
+
+	vpn_ipsec_failover_configure();
 
 	if (!$g['booting']) {
 		/* reload the filter */
 		filter_configure();
 	}
 
-	vpn_ipsec_failover_configure();
-
 	if ($g['booting'])
-		echo "done.\n";
-	else
-		mwexec_bg("/etc/rc.filter_configure");
+		echo "done\n";
 
 	return 0;
 }
@@ -433,7 +558,7 @@ function vpn_pptpd_configure() {
 		if (!$pptpdcfg['mode'] || ($pptpdcfg['mode'] == "off"))
 			return 0;
 
-		echo "Configuring PPTP VPN... ";
+		echo "Configuring PPTP VPN service... ";
 	} else {
 		/* kill mpd */
 		killbypid("{$g['varrun_path']}/mpd-vpn.pid");
@@ -448,7 +573,8 @@ function vpn_pptpd_configure() {
 	}
 
 	/* make sure mpd-vpn directory exists */
-	safe_mkdir("{$g['varetc_path']}/mpd-vpn");
+	if (!file_exists("{$g['varetc_path']}/mpd-vpn"))
+		mkdir("{$g['varetc_path']}/mpd-vpn");
 
 	switch ($pptpdcfg['mode']) {
 
@@ -466,14 +592,11 @@ pptpd:
 
 EOD;
 
-			$n_pptp_units = $g['n_pptp_units'];
-			if($config['pptp']['n_pptp_units'] <> "")
-				$n_pptp_units = $config['pptp']['n_pptp_units'];		
-			for ($i = 0; $i < $n_pptp_units; $i++) {
+			for ($i = 0; $i < $g['n_pptp_units']; $i++) {
 				$mpdconf .= "	load pt{$i}\n";
 			}
 
-			for ($i = 0; $i < $n_pptp_units; $i++) {
+			for ($i = 0; $i < $g['n_pptp_units']; $i++) {
 
 				$clientip = long2ip(ip2long($pptpdcfg['remoteip']) + $i);
 				$ngif = "ng" . ($i+1);
@@ -559,10 +682,7 @@ EOD;
 
 			$mpdlinks = "";
 
-			$n_pptp_units = $g['n_pptp_units'];
-			if($config['pptp']['n_pptp_units'] <> "")
-				$n_pptp_units = $config['pptp']['n_pptp_units'];			
-			for ($i = 0; $i < $n_pptp_units; $i++) {
+			for ($i = 0; $i < $g['n_pptp_units']; $i++) {
 				$mpdlinks .= <<<EOD
 
 pt{$i}:
@@ -605,10 +725,13 @@ EOD;
 			break;
 	}
 
-	if ($g['booting'])
-		echo "done.\n";
-	else
+	if (!$g['booting']) {
+		/* reload the filter */
 		filter_configure();
+	}
+
+	if ($g['booting'])
+		echo "done\n";
 
 	return 0;
 }

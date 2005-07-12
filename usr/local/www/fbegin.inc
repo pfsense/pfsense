@@ -62,11 +62,13 @@ function showhide_black(tspan, tri) {
 }
 -->
 </script>
-<table width="750" border="0" cellspacing="0" cellpadding="0">
+<table width="750" border="0" cellspacing="1" cellpadding="1">
   <tr valign="bottom" height="65">
-    <td width="150" height="65" align="center" valign="middle"> <strong><a href="/"><img src="/logo.gif" border="0"></a></strong></td>
+    <td width="150" height="100%" align="center" valign="middle">
+       <strong><a href="/"><img src="/logo.gif" border="0"></a></strong>
+    </td>
     <td height="100%">
-      <div style="height:100%" id="topbox">
+      <div style="height:99%" id="topbox" name="topbox">
 	<table bgcolor="#990000" background="top_background.gif" border="0" cellspacing="0" cellpadding="0" width="100%" height="85%">
 	 <tr><td align="left" valign="bottom"><span class="tfrtitle">&nbsp;webConfigurator</span></td>
 	   <td align="right" valign="bottom">
@@ -99,8 +101,8 @@ function showhide_black(tspan, tri) {
 			echo "</td></tr>";
 		}
 	?>
-	</div>
 	</table>
+	</div>
     </td>
   </tr>
   <tr valign="top">

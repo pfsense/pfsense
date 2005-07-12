@@ -20,7 +20,7 @@ Rounded("tr#fend","bl br tl tr","#FFF","#990000","smooth");
     if($need_alert_display == true) {
 	echo "Rounded(\"div#roundalert\",\"bl br\",\"#FFF\",\"#990000\",\"smooth\");\n";
     } else {
-	echo "Rounded(\"div#topbox\",\"tl tr\",\"#FFF\",\"#990000\",\"smooth\");\n"
+	echo "Rounded(\"div#topbox\",\"tl tr\",\"#FFF\",\"#990000\",\"smooth\");\n";
     }
 ?>
 </script>

@@ -65,8 +65,9 @@ function showhide_black(tspan, tri) {
 <table width="750" border="0" cellspacing="0" cellpadding="0">
   <tr valign="bottom" height="65">
     <td width="150" height="65" align="center" valign="middle"> <strong><a href="/"><img src="/logo.gif" border="0"></a></strong></td>
-    <td bgcolor="#990000" background="top_background.gif">
-	<table border="0" cellspacing="0" cellpadding="0" width="100%">
+    <td height="100%">
+      <div style="height:100%" id="topbox">
+	<table bgcolor="#990000" background="top_background.gif" border="0" cellspacing="0" cellpadding="0" width="100%" height="85%">
 	 <tr><td align="left" valign="bottom"><span class="tfrtitle">&nbsp;webConfigurator</span></td>
 	   <td align="right" valign="bottom">
 	     <span class="hostname"><?=$config['system']['hostname'] . "." . $config['system']['domain'];?>&nbsp;</span>
@@ -98,6 +99,7 @@ function showhide_black(tspan, tri) {
 			echo "</td></tr>";
 		}
 	?>
+	</div>
 	</table>
     </td>
   </tr>

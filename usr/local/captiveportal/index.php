@@ -63,11 +63,11 @@ if (!$clientmac && !isset($config['captiveportal']['nomacfilter'])) {
 /*   loop through allowed ip list.  if user is on the list then allow
  *   them access w/o authenticating
  */
-$a_allowedips = &$config['captiveportal']['allowedip'] ;
-foreach ($a_allowedips as $ip) {
-	if($clientip == $ip)
-		$allowed_ip = true;
-}
+if($config['captiveportal']['allowedip'] <> "")
+	foreach($config['captiveportal']['allowedip'] as $ip) {
+		if($clientip == $ip)
+			$allowed_ip = true;
+	}
 
 if ($clientmac && portal_mac_fixed($clientmac) or $allowed_ip == true) {
 	/* punch hole in pf table and allow thru ip for the mac addresses */

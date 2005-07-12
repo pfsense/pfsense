@@ -274,7 +274,6 @@ function enable_change(enable_change) {
 
 	auth_method_change();
 	enable_https();
-	//enable_peruserbw();
 
 }
 //-->
@@ -352,7 +351,7 @@ to access after they've authenticated.</td>
 	<tr>
 	  <td width="22%" valign="top" class="vncell">RADIUS server</td>
 	  <td width="78%" class="vtable">
-		<table cellpadding="0" cellspacing="0">
+		<table cellpadding="1" cellspacing="1">
 		<td>No Authentication:&nbsp;&nbsp;</td>
  		<td><input name="auth_method" type="radio" id="auth_method" value="none" <?php if($pconfig['auth_method']!="local" || $pconfig['auth_method']!="radius") echo "checked"; ?> onClick="auth_method_change()"></td>
 		</tr>

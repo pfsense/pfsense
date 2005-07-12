@@ -19,8 +19,9 @@ Rounded("tr#fend","bl br tl tr","#FFF","#990000","smooth");
     /* if we displayed an alert earlier, round the bottom edges */
     if($need_alert_display == true) {
 	echo "Rounded(\"div#roundalert\",\"bl br\",\"#FFF\",\"#990000\",\"smooth\");\n";
-    } else {
 	echo "Rounded(\"div#topbox\",\"tl tr\",\"#FFF\",\"#990000\",\"smooth\");\n";
+    } else {
+	echo "Rounded(\"div#topbox\",\"tl tr bl br\",\"#FFF\",\"#990000\",\"smooth\");\n";
     }
 ?>
 </script>

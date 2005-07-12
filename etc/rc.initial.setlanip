@@ -106,7 +106,7 @@
 
 The LAN IP address has been set to $lanip/$lanbits.
 You can now access the webGUI by opening the following URL
-in your browser:
+in your web browser:
 
 http://$lanip/
 

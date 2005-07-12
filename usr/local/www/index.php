@@ -206,7 +206,8 @@ include("head.inc");
                 <td width="75%" class="listr">
                   <?php
                     echo "<input style='border: 0px solid white;' size='30' name='pfstate' id='pfstate' value='"  .htmlspecialchars(get_pfstate()) . "'>";
-                                  ?>
+                  ?>
+		    <br>
 		    <a href="diag_dump_states.php">Show states</a>
                 </td>
               </tr>

@@ -146,7 +146,7 @@ include("head.inc");
 		<tr>
 		  <td colspan="2">
 		      <p><span class="vexpl"><span class="red"><strong>Note:<br>
-                      </strong></span>The external IP addresses defined on this page may be used in <a href="firewall_nat.php">inbound NAT</a> mappings. Depending on the way your WAN connection is setup, you may also need <a href="services_proxyarp.php">proxy ARP</a>.</span></p>
+                      </strong></span>The external IP addresses defined on this page may be used in <a href="firewall_nat.php">inbound NAT</a> mappings. Depending on the way your WAN connection is setup, you may also need a <a href="services_virtual_ip.php">Virtual IP</a>.</span></p>
 		  </td>
 		</tr>
               </table>

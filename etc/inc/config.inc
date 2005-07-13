@@ -600,6 +600,54 @@ function convert_config() {
 		$config['shaper']['enable'] = FALSE;
 		$config['version'] = "1.7";	
 	}
+	/* Convert 1.7 -> 1.8 */
+	if ($config['version'] == "1.7") {
+		if(isset($config['proxyarp']) && is_array($config['proxyarp']['proxyarpnet'])) {
+			$proxyarp = &$config['proxyarp']['proxyarpnet'];
+			foreach($proxyarp as $arpent){
+				$vip = array();
+				$vip['mode'] = "proxyarp";
+				$vip['interface'] = $arpent['interface'];
+				$vip['descr'] = $arpent['descr'];
+				if (isset($arpent['range'])) {
+					$vip['range'] = $arpent['range'];
+					$vip['type'] = "range";
+				} else {
+					$subnet = explode('/', $arpent['network']);
+					$vip['subnet'] = $subnet[0];
+					if (isset($subnet[1])) {
+						$vip['subnet_bits'] = $subnet[1];
+						$vip['type'] = "network";
+					} else {
+						$vip['subnet_bits'] = "32";
+						$vip['type'] = "single";
+					}
+				}
+				$config['virtualip']['vip'][] = $vip;
+			}
+			unset($config['proxyarp']);
+		}
+		if(isset($config['installedpackages']) && isset($config['installedpackages']['carp']) && is_array($config['installedpackages']['carp']['config'])) {
+			$carp = &$config['installedpackages']['carp']['config'];
+			foreach($carp as $carpent){
+				$vip = array();
+				$vip['mode'] = "carp";
+				$vip['interface'] = "AUTO";
+				$vip['descr'] = "CARP vhid {$carpent['vhid']}";
+				$vip['type'] = "single";
+				$vip['vhid'] = $carpent['vhid'];
+				$vip['advskew'] = $carpent['advskew'];
+				$vip['password'] = $carpent['password'];
+				$vip['subnet'] = $carpent['ipaddress'];
+				$vip['subnet_bits'] = "32";
+				$config['virtualip']['vip'][] = $vip;
+			}
+			unset($config['installedpackages']['carp']);
+		}
+		
+		$config['version'] = "1.8";
+	}
+	
 
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");

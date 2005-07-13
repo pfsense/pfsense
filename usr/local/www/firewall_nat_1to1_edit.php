@@ -96,12 +96,12 @@ if ($_POST) {
 		}
 	}
 	
-	/* check for overlaps with server NAT */
-	if (is_array($config['nat']['servernat'])) {
-		foreach ($config['nat']['servernat'] as $natent) {
+	/* check for overlaps with Virtual IPs */
+	if (is_array($config['virtualip']['vip'])) {
+		foreach ($config['virtualip']['vip'] as $vipent) {
 			if (check_subnets_overlap($_POST['external'], $_POST['subnet'],
-				$natent['ipaddr'], 32)) {
-				$input_errors[] = "A server NAT entry overlaps with the specified external subnet.";
+				$vipent['subnet'], 32)) {
+				$input_errors[] = "Virtual IP entry overlaps with the specified external subnet.";
 				break;
 			}
 		}

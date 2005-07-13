@@ -189,11 +189,10 @@ include("head.inc");
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Port Forward", false, "firewall_nat.php");
-	$tab_array[1] = array("NAT Addresses", false, "firewall_nat_server.php");
-	$tab_array[2] = array("1:1", false, "firewall_nat_1to1.php");
-	$tab_array[3] = array("Outbound", true, "firewall_nat_out.php");
-	$tab_array[4] = array("Outbound Load Balancing", false, "firewall_nat_out_load_balancing.php");
+	$tab_array[] = array("Port Forward", false, "firewall_nat.php");
+	$tab_array[] = array("1:1", false, "firewall_nat_1to1.php");
+	$tab_array[] = array("Outbound", true, "firewall_nat_out.php");
+	$tab_array[] = array("Outbound Load Balancing", false, "firewall_nat_out_load_balancing.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -222,7 +221,7 @@ include("head.inc");
                       rules will be automatically generated anymore. Instead, only the mappings
                       you specify below will be used. With advanced outbound NAT disabled,
                       a mapping is automatically created for each interface's subnet
-                      (except WAN).</span> If you use target addresses other than the WAN interface's IP address, then depending on<span class="vexpl"> the way your WAN connection is setup, you may also need <a href="services_proxyarp.php">proxy ARP</a>.</span><br>
+                      (except WAN).</span> If you use target addresses other than the WAN interface's IP address, then depending on<span class="vexpl"> the way your WAN connection is setup, you may also need a <a href="firewall_virtual_ip.php">Virtual IP</a>.</span><br>
                       <br>
                       You may enter your own mappings below.</p>
                     </td>

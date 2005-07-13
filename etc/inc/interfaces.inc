@@ -254,49 +254,54 @@ function interfaces_carp_configure() {
 	unlink_if_exists("/usr/local/pkg/pf/carp_rules.sh");
 	$carp_instances_counter = 0;
 	$pfsync_instances_counter = 0;
-	if($config['installedpackages']['carpsettings']['config'] != "") {
-		foreach($config['installedpackages']['carpsettings']['config'] as $carp)
-		if($carp['pfsyncenabled'] != "") {
-			if($carp['premption'] != "")
-			mwexec("/sbin/sysctl net.inet.carp.preempt=1");
-			if($carp['balancing'] != "")
-			mwexec("/sbin/sysctl net.inet.arpbalance=1");
-			$carp_sync_int = convert_friendly_interface_to_real_interface_name($carp['pfsyncinterface']);
-			mwexec("/sbin/ifconfig pfsync0 create");
-			mwexec("/sbin/ifconfig pfsync0 syncdev " . $carp_sync_int);
-			mwexec("/sbin/ifconfig pfsync0 syncif " . $carp_sync_int);
-			mwexec("/sbin/ifconfig {$carp_sync_int} up");
-			mwexec("/sbin/ifconfig pfsync0 up");
-			if($g['booting']) {
-				/* install rules to alllow pfsync to sync up during boot
-				* carp interfaces will remain down until the bootup sequence finishes
-				*/
-				exec("echo pass quick proto carp all keep state > /tmp/rules.boot");
-				exec("echo pass quick proto pfsync all >> /tmp/rules.boot");
-				exec("echo pass out proto { tcp, udp } from any to any port 53 keep state >> /tmp/rules.boot");
-				exec("/sbin/pfctl -f /tmp/rules.boot");
+	if (is_array($config['virtualip']['vip'])) {
+		if(is_array($config['installedpackages']['carpsettings']['config'])) {
+			foreach($config['installedpackages']['carpsettings']['config'] as $carp)
+			if($carp['pfsyncenabled'] != "") {
+				if($carp['premption'] != "")
+				mwexec("/sbin/sysctl net.inet.carp.preempt=1");
+				if($carp['balancing'] != "")
+				mwexec("/sbin/sysctl net.inet.arpbalance=1");
+				$carp_sync_int = convert_friendly_interface_to_real_interface_name($carp['pfsyncinterface']);
+				mwexec("/sbin/ifconfig pfsync0 create");
+				mwexec("/sbin/ifconfig pfsync0 syncdev " . $carp_sync_int);
+				mwexec("/sbin/ifconfig pfsync0 syncif " . $carp_sync_int);
+				mwexec("/sbin/ifconfig {$carp_sync_int} up");
+				mwexec("/sbin/ifconfig pfsync0 up");
+				if($g['booting']) {
+					/* install rules to alllow pfsync to sync up during boot
+					* carp interfaces will remain down until the bootup sequence finishes
+					*/
+					exec("echo pass quick proto carp all keep state > /tmp/rules.boot");
+					exec("echo pass quick proto pfsync all >> /tmp/rules.boot");
+					exec("echo pass out proto { tcp, udp } from any to any port 53 keep state >> /tmp/rules.boot");
+					exec("/sbin/pfctl -f /tmp/rules.boot");
+				}
+				$pfsync_instances_counter++;
 			}
-			$pfsync_instances_counter++;
 		}
-	}
-	if($config['installedpackages']['carp']['config'] != "") {
-		foreach($config['installedpackages']['carp']['config'] as $carp) {
-			/*
-			*  create the carp interface
-			*/
-			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " create");
-			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " down");
-			$broadcast_address = gen_subnet_max($carp['ipaddress'], $carp['netmask']);
-			if($carp['password'] != "") {
-				$password = " pass " . $carp['password'];
+		$viparr = &$config['virtualip']['vip'];
+		foreach ($viparr as $vip) {
+			if ($vip['mode'] == "carp") {
+				/*
+				*  create the carp interface
+				*/
+				mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " create");
+				mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " down");
+				$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
+				if($vip['password'] != "") {
+					$password = " pass " . $vip['password'];
+				}
+				/* XXX: billm - carpdev not in our build?
+				$carpdev = "";
+				if(isset($vip['interface']) && ($vip['interface'] != "AUTO" && $vip['interface'] != "")) {
+					$ci = filter_opt_interface_to_real($vip['interface']);
+					$carpdev = " carpdev {$ci} ";
+				}
+				*/
+				mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew " . $vip['advskew'] . $password);
+				$carp_instances_counter++;
 			}
-			$carpdev = "";
-			if($carp['interface'] <> "AUTO" and $carp['interface'] <> "") {
-				$ci = filter_opt_interface_to_real($carp['interface']);
-				$carpdev = " carpdev {$ci} ";
-			}
-			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $carp['ipaddress'] . "/" . $carp['netmask'] . " broadcast " . $broadcast_address . " vhid " . $carp['vhid'] . "{$carpdev} advskew " . $carp['advskew'] . $password);
-			$carp_instances_counter++;
 		}
 	}
 	unmute_kernel_msgs();

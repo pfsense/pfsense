@@ -253,16 +253,15 @@ function ext_rep_change() {
                     <select name="extaddr" class="formfld">
 					  <option value="" <?php if (!$pconfig['extaddr']) echo "selected"; ?>>Interface address</option>
                       <?php
-					  if (is_array($config['nat']['servernat'])):
-						  foreach ($config['nat']['servernat'] as $sn): ?>
-                      <option value="<?=$sn['ipaddr'];?>" <?php if ($sn['ipaddr'] == $pconfig['extaddr']) echo "selected"; ?>><?=htmlspecialchars("{$sn['ipaddr']} ({$sn['descr']})");?></option>
+					  if (is_array($config['virtualip']['vip'])):
+						  foreach ($config['virtualip']['vip'] as $sn): ?>
+                      <option value="<?=$sn['subnet'];?>" <?php if ($sn['subnet'] == $pconfig['extaddr']) echo "selected"; ?>><?=htmlspecialchars("{$sn['subnet']} ({$sn['descr']})");?></option>
                       <?php endforeach; endif; ?>
 		      <option value="any" <?php if($pconfig['extaddr'] == "any") echo "selected"; ?>>any</option>
                     </select><br>
                     <span class="vexpl">
 					If you want this rule to apply to another IP address than the IP address of the interface chosen above,
-					select it here (you need to define IP addresses on the
-					<a href="firewall_nat_server.php">NAT Addresses</a> page first).  Also note that if you are trying to redirect connections on the LAN select the "any" option.</span></td>
+					select it here (you need to define <a href="firewall_virtual_ip.php">Virtual IP</a> addresses on the first).  Also note that if you are trying to redirect connections on the LAN select the "any" option.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Protocol</td>

@@ -90,13 +90,18 @@ include("fbegin.inc");
 		echo "<input type=\"submit\" name=\"disablecarp\" id=\"disablecarp\" value=\"Disable Carp\">";
 	}
 
-if(!is_array($config['installedpackages']['carp']['config'])) {
+if(is_array($config['virtualip']['vip'])) {
+	foreach($config['virtualip']['vip'] as $carp) {
+		if ($carp['mode'] == "carp") $carpcount++;
+	}
+	if ($carpcount == 0) {
 	echo "</td></tr></table><center><br>Could not locate any defined CARP interfaces.";
 	echo "</center>";
 
 	include("fend.inc");
 	echo "</body></html>";
 	exit;
+	}
 }
 ?>
 
@@ -111,21 +116,17 @@ if(!is_array($config['installedpackages']['carp']['config'])) {
 </tr>
 <?php
 
-if($config['installedpackages']['carp']['config'] <> "")
+if(is_array($config['virtualip']['vip'])) {
 	$carpint=0;
-	foreach($config['installedpackages']['carp']['config'] as $carp) {
-		$ipaddress = $carp['ipaddress'];
-		$premption = $carp['premption'];
+	foreach($config['virtualip']['vip'] as $carp) {
+		if ($carp['mode'] != "carp") continue;
+		$ipaddress = $carp['subnet'];
 		$password = $carp['password'];
-		$netmask = $carp['netmask'];
+		$netmask = $carp['subnet_bits'];
 		$vhid = $carp['vhid'];
 		$advskew = $carp['advskew'];
-		$pfsync = $carp['pfsync'];
-		$synciface = $carp['synciface'];
 		$carp_int = find_carp_interface($ipaddress);
 		$status = get_carp_interface_status($carp_int);
-		if(isset($carp['balancing'])) $balancing = "true"; else $balancing = "false";
-		if(isset($carp['premption'])) $premption = "true"; else $premption = "false";
 		echo "<tr>";
 		$align = "valign='middle'";
 		if($carp_enabled == false) {
@@ -147,7 +148,7 @@ if($config['installedpackages']['carp']['config'] <> "")
 		echo "</tr>";
 		$carpint++;
 	}
-
+}
 ?>
 <tr><td>
 <center>
@@ -172,4 +173,3 @@ Rounded("div#mainlevel","bl br","#FFF","#eeeeee","smooth");
 
 </body>
 </html>
-

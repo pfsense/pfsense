@@ -143,11 +143,10 @@ include("head.inc");
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Port Forward", true, "firewall_nat.php");
-	$tab_array[1] = array("NAT Addresses", false, "firewall_nat_server.php");
-	$tab_array[2] = array("1:1", false, "firewall_nat_1to1.php");
-	$tab_array[3] = array("Outbound", false, "firewall_nat_out.php");
-	$tab_array[4] = array("Outbound Load Balancing", false, "firewall_nat_out_load_balancing.php");
+	$tab_array[] = array("Port Forward", true, "firewall_nat.php");
+	$tab_array[] = array("1:1", false, "firewall_nat_1to1.php");
+	$tab_array[] = array("Outbound", false, "firewall_nat_out.php");
+	$tab_array[] = array("Outbound Load Balancing", false, "firewall_nat_out_load_balancing.php");
 	display_top_tabs($tab_array);
 ?>
  </td></tr>

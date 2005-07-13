@@ -108,6 +108,7 @@ function showhide_black(tspan, tri) {
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/firewall_nat.php" class="navlnk">NAT</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/firewall_rules.php" class="navlnk">Rules</a><br>              
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/firewall_shaper.php" class="navlnk">Traffic Shaper</a><br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/firewall_virtual_ip.php" class="navlnk">Virtual IPs</a><br>
 	      <?php echo return_ext_menu("Firewall"); ?>
               <strong>Services</strong><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_captiveportal.php" class="navlnk">Captive portal</a><br>
@@ -116,7 +117,6 @@ function showhide_black(tspan, tri) {
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_dhcp.php" class="navlnk">DHCP server</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_dyndns.php" class="navlnk">Dynamic DNS</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_snmp.php" class="navlnk">SNMP</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_proxyarp.php" class="navlnk">Proxy ARP</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_wol.php" class="navlnk">Wake on LAN</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/carp_status.php" class="navlnk">CARP (failover)</a><br>		
 	      <?php echo return_ext_menu("Services"); ?>

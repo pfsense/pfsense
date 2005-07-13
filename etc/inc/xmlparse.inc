@@ -35,7 +35,8 @@ function listtags() {
 	$ret = explode(" ", "cacert row config package columnitem option item fieldname field rule user key subqueue " .
                 "dnsserver winsserver encryption-algorithm-option hash-algorithm-option hosts tunnel " .
                 "onetoone staticmap route alias queue shellcmd earlyshellcmd mobilekey " .
-                "service servernat proxyarpnet passthrumac allowedip wolentry vlan menu domainoverrides");
+                "service servernat proxyarpnet passthrumac allowedip wolentry vlan menu domainoverrides " .
+		"vip");
 
 	return $ret;
 }

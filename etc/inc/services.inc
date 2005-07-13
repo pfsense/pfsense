@@ -557,23 +557,25 @@ function services_proxyarp_configure() {
 	/* kill any running choparp */
 	killbyname("choparp");
 
-	if (is_array($config['proxyarp']) && count($config['proxyarp'])) {
-
+	if (isset($config['virtualip']) && is_array($config['virtualip']['vip'])) {
 		$paa = array();
 
 		/* group by interface */
-		foreach ($config['proxyarp']['proxyarpnet'] as $paent) {
-			if ($paent['interface'])
-				$if = $paent['interface'];
-			else
-				$if = "wan";
+		foreach ($config['virtualip']['vip'] as $vipent) {
+			if ($vipent['mode'] === "proxyarp") {
+				if ($vipent['interface'])
+					$if = $vipent['interface'];
+				else
+					$if = "wan";
 
-			if (!is_array($paa[$if]))
-				$paa[$if] = array();
+				if (!is_array($paa[$if]))
+					$paa[$if] = array();
 
-			$paa[$if][] = $paent;
+				$paa[$if][] = $vipent;
+			}
 		}
 
+		if (count($paa))
 		foreach ($paa as $paif => $paents) {
 			if ($paif == "wan" && !(is_ipaddr($config['interfaces']['wan']['ipaddr']) ||
                                        ($config['interfaces']['wan']['ipaddr'] == "dhcp") ||
@@ -584,8 +586,8 @@ function services_proxyarp_configure() {
 
 			foreach ($paents as $paent) {
 
-				if (isset($paent['network']))
-					$args .= " " . escapeshellarg($paent['network']);
+				if (isset($paent['subnet']))
+					$args .= " " . escapeshellarg("{$paent['subnet']}/{$paent['subnet_bits']}");
 				else if (isset($paent['range']))
 					$args .= " " . escapeshellarg($paent['range']['from'] . "-" .
 						$paent['range']['to']);

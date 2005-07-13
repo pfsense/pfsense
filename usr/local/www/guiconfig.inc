@@ -64,6 +64,7 @@ $d_sysrebootreqd_path = $g['varrun_path'] . "/sysreboot.reqd";
 $d_passthrumacsdirty_path = $g['varrun_path'] . "/passthrumacs.dirty";
 $d_allowedipsdirty_path = $g['varrun_path'] . "/allowedips.dirty";
 $d_ovpnclidirty_path = $g['varrun_path'] . "/ovpnclient.dirty";
+$d_vipconfdirty_path = $g['varrun_path'] . "/vip.conf.dirty";
 /* used by progress bar */
 $lastseen = "-1";
 

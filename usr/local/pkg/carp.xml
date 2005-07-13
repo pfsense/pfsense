@@ -12,11 +12,11 @@
 	    <url>carp_status.php</url>
 	</menu>
 	<tabs>
-	    <tab>
+	    <!--<tab>
 		<text>CARP Virtual IPs</text>
 		<url>/pkg_edit.php?xml=carp.xml</url>
 		<active/>
-	    </tab>
+	    </tab>-->
 	    <tab>
 		<text>CARP Status</text>
 		<url>carp_status.php</url>

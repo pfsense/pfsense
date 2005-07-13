@@ -644,6 +644,8 @@ function convert_config() {
 			}
 			unset($config['installedpackages']['carp']);
 		}
+		/* Server NAT is no longer needed */
+		unset($config['nat']['servernat']);
 		
 		$config['version'] = "1.8";
 	}

@@ -52,6 +52,10 @@ if ($_POST) {
 		$retval = 0;
 		if (!file_exists($d_sysrebootreqd_path)) {
 			config_lock();
+			$retval = services_proxyarp_configure();
+			/* Bring up any configured CARP interfaces */
+			interfaces_carp_configure();
+			interfaces_carp_bringup();
 			$retval |= filter_configure();
 			config_unlock();
 		}

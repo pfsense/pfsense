@@ -118,7 +118,6 @@ function showhide_black(tspan, tri) {
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_dyndns.php" class="navlnk">Dynamic DNS</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_snmp.php" class="navlnk">SNMP</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_wol.php" class="navlnk">Wake on LAN</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/carp_status.php" class="navlnk">CARP (failover)</a><br>		
 	      <?php echo return_ext_menu("Services"); ?>
               <strong>VPN</strong><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/vpn_ipsec.php" class="navlnk">IPsec</a><br>
@@ -127,6 +126,7 @@ function showhide_black(tspan, tri) {
 			<?php if (isset($config['captiveportal']['enable'])): ?>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_captiveportal.php" class="navlnk">Captive portal</a><br>
 			<?php endif; ?>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/carp_status.php" class="navlnk">CARP (failover)</a><br>		
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_dhcp_leases.php" class="navlnk">DHCP leases</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_interfaces.php" class="navlnk">Interfaces</a><br>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_ipsec_sad.php" class="navlnk">IPsec</a><br>

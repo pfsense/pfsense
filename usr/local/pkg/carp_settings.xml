@@ -21,8 +21,8 @@
 	    </tab>
 -->
 	    <tab>
-		<text>CARP Status</text>
-		<url>carp_status.php</url>
+		<text>Virtual IPs</text>
+		<url>firewall_virtual_ip.php</url>
 	    </tab>
 	    <tab>
 		<text>CARP Settings</text>

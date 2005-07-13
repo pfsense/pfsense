@@ -70,14 +70,6 @@ include("fbegin.inc");
 
 <div id="mainlevel">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
-<tr><td>
-<?php
-	$tab_array = array();
-	$tab_array[] = array("CARP Status", true, "carp_status.php");
-	$tab_array[] = array("CARP Settings", false, "/pkg_edit.php?xml=carp_settings.xml&id=0");
-	display_top_tabs($tab_array);
-?> 
-</td></tr>
 <tr><td class="tabcont">
 
 <?php

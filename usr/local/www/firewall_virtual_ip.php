@@ -100,7 +100,15 @@ include("head.inc");
 <?php if (file_exists($d_vipconfdirty_path)): ?><p>
 <?php print_info_box_np("The VIP configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td class="tabnavtbl">
+  <?php
+        /* active tabs */
+        $tab_array = array();
+        $tab_array[] = array("Virtual IPs", true, "firewall_virtual_ip.php");
+        $tab_array[] = array("CARP Settings", false, "pkg_edit.php?xml=carp_settings.xml&id=0");
+        display_top_tabs($tab_array);
+  ?>
   </td></tr>
   <tr>
     <td>

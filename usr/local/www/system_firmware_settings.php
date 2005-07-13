@@ -127,7 +127,7 @@ function enable_altfirmwareurl(enable_over) {
 			<script language="javascript">
 			update_description(document.forms[0].branch.selectedIndex);
 			</script>
-			<span class="vexpl">Select the update branch you would like this system to track.</td>
+			<br><span class="vexpl">Select the update branch you would like this system to track.</td>
 	</tr>
 	<tr>
 		<td valign="top" class="vncell">Firmware XMLRPC URL</td>

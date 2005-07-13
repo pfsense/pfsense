@@ -639,7 +639,7 @@ function convert_config() {
 				$vip['advskew'] = $carpent['advskew'];
 				$vip['password'] = $carpent['password'];
 				$vip['subnet'] = $carpent['ipaddress'];
-				$vip['subnet_bits'] = "32";
+				$vip['subnet_bits'] = $carpent['netmask'];
 				$config['virtualip']['vip'][] = $vip;
 			}
 			unset($config['installedpackages']['carp']);

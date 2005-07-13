@@ -81,7 +81,7 @@ if(is_array($confvers)) {
                 <tr valign="top">
 		  <td class="listlr"> <?= date("n/j/y H:i:s", $config['revision']['time']) ?></td>
                   <td class="listlr"> <?= $config['revision']['description'] ?></td>
-		  <td valign="middle" class="list" nowrap>Current</td>
+		  <td colspan="2" valign="middle" class="list" nowrap><b>Current</b></td>
 		</tr>
 		<?php
 		  foreach($confvers as $version) {

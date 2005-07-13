@@ -36,6 +36,7 @@
 /* include all configuration functions */
 require_once("functions.inc");
 require_once("pkg-utils.inc");
+require_once("notices.inc");
 
 function filter_resync() {
 	global $config, $g;

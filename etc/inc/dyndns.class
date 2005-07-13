@@ -1,0 +1,385 @@
+<?
+	/*
+	 * PHP.updateDNS
+	 *
+	 * +====================================================+
+	 *  Services Supported:
+	 *    - DynDns (dyndns.org)
+	 *    - DHSDns (dhs.org)
+	 *    - No-IP (no-ip.com)
+	 *    - EasyDNS (easydns.com)
+	 * +----------------------------------------------------+
+	 *  Requirements:
+	 *    - PHP version 4.0.2 or higher with CURL Library
+	 * +----------------------------------------------------+
+	 *  Public Functions
+	 *    - updatedns()
+	 *
+	 *  Private Functions
+	 *    - _update()
+	 *    - _checkStatus()
+	 *    - _error()
+	 *    - _detectChange()
+	 * +----------------------------------------------------+
+	 *  Changelog
+	 *    - 12 July 05, DynDNS, DHS, No-IP working. At this
+	 *        point I have to assume that EasyDNS works due
+	 *        to the fact that I don't have an account with
+	 *        them. I followed their Dynamic DNS docs. There
+	 *        is no error checking for CURL events at this
+	 *        point, error checking will be added soon.
+	 *
+	 *    - 11 July 05, Initial Build of updateDNS
+	 * +----------------------------------------------------+
+	 *  DynDNS   - Last Tested: 12 July 2005
+	 *  No-IP    - Last Tested: 12 July 2005
+	 *  HN.org   - Last Tested: 12 July 2005
+	 *  EasyDNS  - Last Tested: NEVER
+	 *  DHS      - Last Tested: 12 July 2005
+	 *  ZoneEdit - Last Tested: NEVER
+	 *  Dyns     - Last Tested: NEVER
+	 * +====================================================+
+	 *
+	 * @author 		E.Kristensen
+	 * @link    	http://www.idylldesigns.com/projects/phpdns/
+	 * @version 	0.4
+	 * @updated		12 July 05 at 17:28:34 GMT
+	 *
+	 */
+
+	class updatedns {
+		var $_changeFile = 'changefile.txt';
+		var $_UserAgent = 'User-Agent: php-dns-updater/0.4';
+		var $_errorVerbosity = 0;
+		var $_dnsService;
+		var $_dnsUser;
+		var $_dnsPass;
+		var $_dnsHost;
+		var $_dnsIP;
+		var $_dnsWildcard;
+		var $_dnsMX;
+		var $status;
+
+		/* 
+		 * Public Constructor Function (added 12 July 05) [beta]
+		 *   - Gets the dice rolling for the update. 
+		 */
+		function updatedns ($dnsService = '', $dnsHost = '', $dnsUser = '', $dnsPass = '', $dnsWildcard = '', $dnsMX = '') {
+			if (!$dnsService) $this->_error(2);
+			if (!$dnsUser) $this->_error(3);
+			if (!$dnsPass) $this->_error(4);
+			if (!$dnsHost) $this->_error(5);
+
+			$this->_dnsService = strtolower($dnsService);
+			$this->_dnsUser = $dnsUser;
+			$this->_dnsPass = $dnsPass;
+			$this->_dnsHost = $dnsHost;
+			$this->_dnsIP = $dnsIP;
+
+			$change = $this->_detectChange();
+			if (!$change) $this->_error(10);
+
+			if ($this->_dnsService == 'dyndns' ||
+				$this->_dnsService == 'dhs' ||
+				$this->_dnsService == 'noip' ||
+				$this->_dnsService == 'easydns' ||
+				$this->_dnsService == 'hn' ||
+				$this->_dnsService == 'zoneedit' ||
+				$this->_dnsService == 'dyns')
+			{
+				$this->_update();
+			} else {
+				$this->_error(6);
+			}
+		}
+
+
+		/*
+		 * Private Function (added 12 July 05) [beta]
+		 *   Send Update To Selected Service.
+		 */
+		function _update() {
+
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_HEADER, 0);
+			curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+
+			switch ($this->_dnsService) {
+				case 'dyndns':
+					$needsIP = FALSE;
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_URL, 'https://members.dyndns.org/nic/update?hostname='.$this->_dnsHost);
+					$data = curl_exec($ch);
+					curl_close($ch);
+					$this->_checkStatus($data);
+					break;
+				case 'dhs':
+					$needsIP = TRUE;
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($ch, CURLOPT_URL, 'https://members.dhs.org/nic/hosts');
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+					$data = curl_exec($ch);
+					curl_close($ch);
+					$this->_checkStatus($data);
+					break;
+				case 'noip':
+					$needsIP = TRUE;
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($ch, CURLOPT_URL, 'http://dynupdate.no-ip.com/dns?username='.$this->_dnsUser.'&password='.$this->_dnsPass.'&hostname='.$this->_dnsHost.'&ip='.$this->_dnsIP);
+					$data = curl_exec($ch);
+					curl_close($ch);
+					$this->_checkStatus($data);
+					break;
+				case 'easydns':
+					$needsIP = TRUE;
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_URL, 'http://members.easydns.com/dyn/dyndns.php?hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP);
+					$data = curl_exec($ch);
+					curl_close($ch);
+					$this->_checkStatus($data);
+					break;
+				case 'hn':
+					$needsIP = TRUE;
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_URL, 'http://dup.hn.org/vanity/update?ver=1&IP='.$this->_dnsIP);
+					$data = curl_exec($ch);
+					curl_close($ch);
+					$this->_checkStatus($data);
+					break;
+				case 'zoneedit':
+					$needsIP = FALSE;
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($ch, CURLOPT_URL, 'https://dynamic.zoneedit.com/auth/dynamic.html?host='.$this->_dnsHost.'&dnsto='.$this->_dnsIP);
+					$data = curl_exec($ch);
+					curl_close($ch);
+					$this->_checkStatus($data);
+					break;
+				case 'dyns';
+					$needsIP = FALSE;
+					curl_setopt($ch, CURLOPT_URL, 'http://www.dyns.cx/postscript011.php?username='.$this->_dnsUser.'&password='.$this->_dnsPass.'&host='.$this->_dnsHost);
+					$data = curl_exec($ch);
+					curl_close($ch);
+					$this->_checkStatus($data);
+					break;
+				default:
+					break;
+			}
+		}
+
+
+		/*
+		 * Private Function (added 12 July 2005) [beta]
+		 *   Retrieve Update Status
+		 */
+		function _checkStatus($data) {
+			switch ($this->_dnsService) {
+				case 'dyndns':
+					break;
+				case 'dhs':
+					break;
+				case 'noip':
+					list($ip,$code) = split(":",$data);
+					switch ($code) {
+						case 0:
+							$status = "Success: IP address is current, no update performed.";
+							break;
+						case 1:
+							$status = "Success: DNS hostname update successful.";
+							break;
+						case 2:
+							$status = "Error: Hostname supplied does not exist.";
+							break;
+						case 3:
+							$status = "Error: Invalid Username.";
+							break;
+						case 4:
+							$status = "Error: Invalid Password.";
+							break;
+						case 5:
+							$status = "Error: To many updates sent.";
+							break;
+						case 6:
+							$status = "Error: Account disabled due to violation of No-IP terms of service.";
+							break;
+						case 7:
+							$status = "Error: Invalid IP. IP Address submitted is improperly formatted or is a private IP address or is on a blacklist.";
+							break;
+						case 8:
+							$status = "Error: Disabled / Locked Hostname.";
+							break;
+						case 9:
+							$status = "Error: Host updated is configured as a web redirect and no update was performed.";
+							break;
+						case 10:
+							$status = "Error: Group supplied does not exist.";
+							break;
+						case 11:
+							$status = "Success: DNS group update is successful.";
+							break;
+						case 12:
+							$status = "Success: DNS group is current, no update performed.";
+							break;
+						case 13:
+							$status = "Error: Update client support not available for supplied hostname or group.";
+							break;
+						case 14:
+							$status = "Error: Hostname supplied does not have offline settings configured.";
+							break;
+						case 99:
+							$status = "Client disabled. Client should exit and not perform any more updates without user intervention.";
+							break;
+						case 100:
+							$status = "Client disabled. Client should exit and not perform any more updates without user intervention.";
+							break;
+					}
+					break;
+				case 'easydns':
+					if (preg_match('/NOACCESS/i', $data)) {
+						$status = "Authentication Failed: Username and/or Password was Incorrect.";
+					} else if (preg_match('/NOSERVICE/i', $data)) {
+						$status = "No Service: Dynamic DNS Service has been disabled for this domain.";
+					} else if (preg_match('/ILLEGAL INPUT/i', $data)) {
+						$status = "Illegal Input: Self-Explantory";
+					} else if (preg_match('/TOOSOON/i', $data)) {
+						$status = "Too Soon: Not Enough Time Has Elapsed Since Last Update";
+					} else if (preg_match('/NOERROR/i', $data)) {
+						$status = "Update Successful!";					
+					}
+					break;
+				case 'hn':
+					break;
+				case 'zoneedit':
+					if (preg_match('/{700,799}/i', $data)) {
+						$status = "Update Failed!";
+					} else if (preg_match('/{200,201}/i', $data)) {
+						$status = "Update Successful!";
+					}
+					break;
+				case 'dyns':
+					if (preg_match("/400/i", $data)) {
+						$status = "Bad Request: The URL was malformed. Required parameters were not provided.";
+					} else if (preg_match('/402/i', $data)) {
+						$status = "Update Too Soon: You have tried updating to quickly since last change.";
+					} else if (preg_match('/403/i', $data)) {
+						$status = "Database Error: There was a server-sided database error.";
+					} else if (preg_match('/405/i', $data)) {
+						$status = "Hostname Error: The hostname (".$this->_dnsHost.") doesn't belong to you.";
+					} else if (preg_match('/200/i', $data)) {
+						$status = "Update Successful!";
+					}
+					break;
+			}
+			$this->status = $status;
+		}
+
+
+		/*
+		 * Private Function (added 12 July 05) [beta]
+		 *   Return Error, Set Last Error, and Die.
+		 */
+		function _error($errorNumber = '1') {
+		print "error";
+			switch ($errorNumber) {
+				case 0:
+					break;
+				case 2:
+					$this->lastError = 'No Dynamic DNS Service provider was selected';
+					if ($this->_errorVerbosity)
+						print "You did not select a Dynamic DNS service!";
+					break;
+				case 3:
+					$this->lastError = 'No Username Provided';
+					if ($this->_errorVerbosity)
+						print "Error! - No Username Was Provided!";
+					break;
+				case 4:
+					$this->lastError = 'No Password Provided';
+					if ($this->_errorVerbosity)
+						print "Error! - No Password Was Provided!";
+					break;
+				case 5:
+					$this->lastError = 'No Hostname Provided';
+					if ($this->_errorVerbosity)
+						print "Error - No Hostname Was Provided!";
+					break;
+				case 6:
+					$this->lastError = 'The Dynamic DNS Service provided is not yet supported';
+					if ($this->_errorVerbosity)
+						print 'Dynamic DNS Service selected is not supported!';
+					break;
+				case 10:
+					$this->lastError = 'No Change Was Made. Not Updating Dynamic DNS Entry';
+					if ($this->_errorVerbosity)
+						print 'There was no change in the WAN IP address and default timelimit has not expired. Dynamic DNS entry was not updated.';
+					break;
+			}
+		}
+
+
+		/*
+		 * Private Function (added 12 July 05) [beta]
+		 *   - Detect whether or not IP needs to be updated.
+		 *      | Written Specifically for pfSense (pfsense.com) may
+		 *      | work with other systems. pfSense base is FreeBSD.
+		 */
+		function _detectChange() {
+			$currentTime = time();
+
+			$wan_if = get_real_wan_interface();
+			$wan_ip = find_interface_ip($wan_if);
+			$this->_dnsIP = $wan_ip;
+
+			if (file_exists('/var/etc/dyndns.cache')) {
+				$file = fopen('/var/etc/dyndns.cache', 'r');
+				$contents = fread($file, filesize('/var/etc/dyndns.cache'));
+				fclose($file);
+				list($cacheIP,$cacheTime) = split(':', $contents);
+			}
+
+
+			/* Write WAN IP to cache file */
+			$file = fopen('/var/etc/dyndns.cache', 'w');
+			fwrite($file, $wan_ip.':'.$currentTime);
+			fclose($file);
+
+
+			switch ($this->_dnsService) {
+				case 'dyndns':
+					$time = '2419200';
+					break;
+				case 'dhs':
+					$time = '2419200';
+					break;
+				case 'easydns':
+					$time = '2419200';
+					break;
+				case 'noip':
+					$time = '2419200';
+					break;
+				case 'hn':
+					$time = '2419200';
+					break;
+				case 'zoneedit':
+					$time = '2419200';
+					break;
+				case 'dyns':
+					$time = '2419200';
+					break;
+			}
+
+
+			if ( ($contents != $wan_ip) || ( ($currentTime - $cacheTime) > $time ) ) {
+				return TRUE;
+			} else {
+				return FALSE;
+			}
+		}
+
+	}
+
+?>

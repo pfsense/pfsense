@@ -48,7 +48,7 @@
 	 */
 
 	class updatedns {
-		var $_changeFile = 'changefile.txt';
+		var $_changeFile = '/var/etc/dyndns.cache';
 		var $_UserAgent = 'User-Agent: php-dns-updater/0.4';
 		var $_errorVerbosity = 0;
 		var $_dnsService;
@@ -99,7 +99,6 @@
 		 *   Send Update To Selected Service.
 		 */
 		function _update() {
-
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_HEADER, 0);
 			curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
@@ -179,6 +178,11 @@
 		function _checkStatus($data) {
 			switch ($this->_dnsService) {
 				case 'dyndns':
+					if (preg_match('/notfqdn/i', $data)) {
+						$status = "Error: Not A FQDN!";
+					} else {
+						$status = "Success: Update Successful!";
+					}
 					break;
 				case 'dhs':
 					break;
@@ -275,6 +279,7 @@
 					break;
 			}
 			$this->status = $status;
+			log_error($status);
 		}
 
 
@@ -283,7 +288,6 @@
 		 *   Return Error, Set Last Error, and Die.
 		 */
 		function _error($errorNumber = '1') {
-		print "error";
 			switch ($errorNumber) {
 				case 0:
 					break;
@@ -318,6 +322,7 @@
 						print 'There was no change in the WAN IP address and default timelimit has not expired. Dynamic DNS entry was not updated.';
 					break;
 			}
+			log_error($this->lasterror);
 		}
 
 
@@ -334,19 +339,12 @@
 			$wan_ip = find_interface_ip($wan_if);
 			$this->_dnsIP = $wan_ip;
 
-			if (file_exists('/var/etc/dyndns.cache')) {
-				$file = fopen('/var/etc/dyndns.cache', 'r');
-				$contents = fread($file, filesize('/var/etc/dyndns.cache'));
+			if (file_exists($this->_changeFile)) {
+				$file = fopen($this->_changeFile, 'r');
+				$contents = fread($file, filesize($this->_changeFile));
 				fclose($file);
 				list($cacheIP,$cacheTime) = split(':', $contents);
 			}
-
-
-			/* Write WAN IP to cache file */
-			$file = fopen('/var/etc/dyndns.cache', 'w');
-			fwrite($file, $wan_ip.':'.$currentTime);
-			fclose($file);
-
 
 			switch ($this->_dnsService) {
 				case 'dyndns':
@@ -372,8 +370,16 @@
 					break;
 			}
 
+			if ( ($cacheIP != $wan_ip) ) {
+				
+			}
 
-			if ( ($contents != $wan_ip) || ( ($currentTime - $cacheTime) > $time ) ) {
+			if ( ($cacheIP != $wan_ip) || ( ($currentTime - $cacheTime) > $time ) ) {
+				/* Write WAN IP to cache file */
+				$file = fopen($this->_changeFile, 'w');
+				fwrite($file, $wan_ip.':'.$currentTime);
+				fclose($file);
+
 				return TRUE;
 			} else {
 				return FALSE;

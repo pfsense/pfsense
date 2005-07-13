@@ -122,6 +122,7 @@ if ($_POST) {
 		if ($_POST['mode'] === "carp") {
 			$vipent['vhid'] = $_POST['vhid'];
 			$vipent['advskew'] = $_POST['advskew'];
+			$vipent['password'] = $_POST['password'];
 		}
 		
 		/* Common fields */
@@ -223,9 +224,9 @@ function typesel_change() {
 		  		  <td width="22%" valign="top" class="vncellreq">Type</td>
                   <td width="78%" class="vtable">
                     <input name="mode" type="radio" onclick="enable_change(false)" value="proxyarp"
-					<?php if ($pconfig['type'] == "proxyarp" || $pconfig['type'] != "carp") echo "checked";?>> Proxy ARP
+					<?php if ($pconfig['mode'] == "proxyarp" || $pconfig['type'] != "carp") echo "checked";?>> Proxy ARP
 					<input name="mode" type="radio" onclick="enable_change(false)" value="carp"
-					<?php if ($pconfig['type'] == "carp") echo "checked";?>> CARP
+					<?php if ($pconfig['mode'] == "carp") echo "checked";?>> CARP
 				  </td>
 				</tr>
 				<tr> 
@@ -284,7 +285,7 @@ function typesel_change() {
                 </tr>
 				<tr valign="top">
 				  <td width="22%" class="vncellreq">Virtual IP Password</td>
-				  <td class="vtable"><input type='password'  name='password' value=''>
+				  <td class="vtable"><input type='password'  name='password' value="<?=htmlspecialchars($pconfig['password']);?>">
 					<br>Enter the VHID group password.
 				  </td>
 				</tr>	  

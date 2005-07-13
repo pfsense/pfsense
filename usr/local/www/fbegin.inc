@@ -188,17 +188,12 @@ function showhide_black(tspan, tri) {
 <?php
 	/* display a top alert bar if need be */
 	$need_alert_display = false;
-	$display_text .= "";
-	if(file_exists("{$g["tmp_path"]}/filter_reloading")) {
-		$need_alert_display = true;
-		$display_text .= "The filter rules are currently reloading.  You will receive an alert if there is an error.<br>";
-	}
 	$found_notices = are_notices_pending();
 	if($found_notices == true) {
 		$notices = get_notices();
 		if(!$notices) {
 			$need_alert_display = true;
-			$display_text .= print_notices() . "<br>";
+			$display_text = print_notices() . "<br>";
 		}			
 	}
 	if($need_alert_display == true) {

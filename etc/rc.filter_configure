@@ -32,8 +32,6 @@
 require_once("config.inc");
 require_once("filter.inc");
 
-touch("{$g["tmp_path"]}/filter_reloading");
 filter_configure_sync();
-unlink("{$g["tmp_path"]}/filter_reloading"); 
 
 ?>

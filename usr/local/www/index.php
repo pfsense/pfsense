@@ -32,8 +32,8 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-require("guiconfig.inc");
-require("notices.inc");
+require_once("guiconfig.inc");
+require_once("notices.inc");
 
 $swapinfo = `/usr/sbin/swapinfo`;
 if(stristr($swapinfo,"%") == true) $showswap=true;

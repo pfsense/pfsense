@@ -31,6 +31,7 @@
 
 /* include all configuration functions */
 require_once("functions.inc");
+require_once("dyndns.class");
 
 function services_dhcpd_configure() {
 	global $config, $g;
@@ -293,10 +294,6 @@ function services_dyndns_reset() {
 function services_dyndns_configure() {
 	global $config, $g;
 
-	/* kill any running ez-ipupdate */
-	/* ez-ipupdate needs SIGQUIT instead of SIGTERM */
-	sigkillbypid("{$g['varrun_path']}/ez-ipupdate.pid", "QUIT");
-
 	$dyndnscfg = $config['dyndns'];
 	$wancfg = $config['interfaces']['wan'];
 
@@ -307,51 +304,12 @@ function services_dyndns_configure() {
 		else
 			sleep(1);
 
-		/* determine WAN interface name */
-		$wanif = get_real_wan_interface();
-
-		/* write ez-ipupdate.conf */
-		$fd = fopen("{$g['varetc_path']}/ez-ipupdate.conf", "w");
-		if (!$fd) {
-			printf("Error: cannot open ez-ipupdate.conf in services_dyndns_configure().\n");
-			return 1;
-		}
-
-		$ezipupdateconf = <<<EOD
-service-type={$dyndnscfg['type']}
-user={$dyndnscfg['username']}:{$dyndnscfg['password']}
-host={$dyndnscfg['host']}
-interface=$wanif
-max-interval=2073600
-pid-file={$g['varrun_path']}/ez-ipupdate.pid
-cache-file={$g['vardb_path']}/ez-ipupdate.cache
-execute=/etc/rc.dyndns.storecache
-daemon
-
-EOD;
-
-		/* enable MX? */
-		if ($dyndnscfg['mx']) {
-			$ezipupdateconf .= "mx={$dyndnscfg['mx']}\n";
-		}
-
-		/* enable wildcards? */
-		if (isset($dyndnscfg['wildcard'])) {
-			$ezipupdateconf .= "wildcard\n";
-		}
-
-		fwrite($fd, $ezipupdateconf);
-		fclose($fd);
-
-		/* if we're booting, copy the cache file from /conf */
-		if ($g['booting']) {
-			if (file_exists("{$g['conf_path']}/ez-ipupdate.cache")) {
-				copy("{$g['conf_path']}/ez-ipupdate.cache", "{$g['vardb_path']}/ez-ipupdate.cache");
-			}
-		}
-
-		/* run ez-ipupdate */
-		mwexec("/usr/local/bin/ez-ipupdate -c {$g['varetc_path']}/ez-ipupdate.conf");
+		$dns = new updatedns($dnsService = $config['dyndns']['type'],
+							 $dnsHost = $config['dyndns']['host'],
+							 $dnsUser = $config['dyndns']['username'],
+							 $dnsPass = $config['dyndns']['password'],
+							 $dnsWilcard = $config['dyndns']['wildcard'],
+							 $dnsMX = $config['dyndns']['mx']);
 
 		if ($g['booting'])
 			echo "done.\n";

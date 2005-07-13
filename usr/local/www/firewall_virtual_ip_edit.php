@@ -143,8 +143,8 @@ if ($_POST) {
 		if (isset($id) && $a_vip[$id]) {
 			/* modify all virtual IP rules with this address */
 			for ($i = 0; isset($config['nat']['rule'][$i]); $i++) {
-				if ($config['nat']['rule'][$i]['external-address'] == $a_vip[$id]['ipaddr'])
-					$config['nat']['rule'][$i]['external-address'] = $vipent['ipaddr'];
+				if ($config['nat']['rule'][$i]['external-address'] == $a_vip[$id]['subnet'])
+					$config['nat']['rule'][$i]['external-address'] = $vipent['subnet'];
 			}
 			$a_vip[$id] = $vipent;
 		} else

@@ -54,8 +54,7 @@ $section      = $pkg['menu'][0]['section'];
 $config_path  = $pkg['configpath'];
 $title        = $section . ": " . $package_name;
 
-$toeval = "\$evaledvar = \$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'];";
-eval($toeval);
+$evaledvar = $config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
 if ($_GET['act'] == "del") {
 	    // loop through our fieldnames and automatically setup the fieldnames
@@ -64,13 +63,11 @@ if ($_GET['act'] == "del") {
 	    foreach ($evaledvar as $ip) {
 			if($pkg['adddeleteeditpagefields']['columnitem'])
 			  foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
-				  $toeval = "\$" . xml_safe_fieldname($column['fielddescr']) . " = " . "\$ip['" . xml_safe_fieldname($column['fieldname']) . "'];";
-				  eval($toeval);
+				  ${xml_safe_fieldname($column['fielddescr'])} = $ip[xml_safe_fieldname($column['fieldname'])];
 			  }
 	    }
 
-	    $toeval = "\$a_pkg = &\$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'];";
-	    eval($toeval);
+	    $a_pkg = &$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
 	    if ($a_pkg[$_GET['id']]) {
 		if($pkg['custom_delete_php_command'] <> "") {
@@ -86,8 +83,7 @@ if ($_GET['act'] == "del") {
 	    }
 }
 
-$toeval = "\$evaledvar = \$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'];";
-eval($toeval);
+$evaledvar = $config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
 if($pkg['custom_php_global_functions'] <> "")
         eval($pkg['custom_php_global_functions']);
@@ -122,11 +118,9 @@ if ($pkg['tabs'] <> "") {
 	if($tab['url'] <> "") $urltmp = $tab['url'];
 	if($tab['xml'] <> "") $urltmp = "pkg_edit.php?xml=" . $tab['xml'];
 
-	$toeval = "\$myurl = \"" . getenv("HTTP_HOST") . "\"; \n";
-	eval($toeval);
+	$myurl = getenv("HTTP_HOST");
 	// eval url so that above $myurl item can be processed if need be.
-	$toeval = "\$url = \"" . $urltmp . "\"; \n";
-	eval($toeval);
+	$url = $urltmp;
 
 	if($active == "tabinact") {
 	    echo "<li class=\"{$active}\">";
@@ -173,8 +167,7 @@ if ($pkg['tabs'] <> "") {
 				   ?>
 					<td class="listlr" ondblclick="document.location='pkg_edit.php?xml=<?=$xml?>&act=edit&id=<?=$i;?>';">
 						<?php
-						    $toeval="\$fieldname = \$ip['" . xml_safe_fieldname($column['fieldname']) . "'];";
-						    eval($toeval);
+						    $fieldname = $ip[xml_safe_fieldname($column['fieldname'])];
 						    if($column['type'] == "checkbox") {
 							if($fieldname == "") {
 							    echo "No";

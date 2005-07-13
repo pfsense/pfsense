@@ -75,7 +75,7 @@ if($pkg['custom_php_global_functions'] <> "")
 // grab the installedpackages->package_name section.
 $a_pkg = &$config['installedpackages'][$name]['config'];
 
-if(!is_array($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'])
+if(!is_array($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']))
 	$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'] = array();
 
 $a_pkg = &$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];

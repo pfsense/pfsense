@@ -256,8 +256,8 @@ function typesel_change() {
                             Single address</option>
                             <option value="network" <?php if (!$pconfig['range'] && $pconfig['subnet_bits'] != 32 && isset($pconfig['ipaddr'])) echo "selected"; ?>>
                             Network</option>
-                            <option value="range" <?php if ($pconfig['range']) echo "selected"; ?>>
-                            Range</option>
+                            <!-- XXX: Billm, don't let anyone choose this until NAT configuration screens are ready for it <option value="range" <?php if ($pconfig['range']) echo "selected"; ?>>
+                            Range</option> -->
                           </select></td>
                       </tr>
                       <tr>

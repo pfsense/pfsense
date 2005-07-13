@@ -73,14 +73,12 @@ if($pkg['custom_php_global_functions'] <> "")
         eval($pkg['custom_php_global_functions']);
 
 // grab the installedpackages->package_name section.
-$toeval = "\$a_pkg = &\$config['installedpackages']['" . $name . "']['config'];";
-eval($toeval);
+$a_pkg = &$config['installedpackages'][$name]['config'];
 
-$toeval = "if (!is_array(\$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'])) \$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'] = array();";
-eval($toeval);
+if(!is_array($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'])
+	$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'] = array();
 
-$toeval = "\$a_pkg = &\$config['installedpackages']['" . xml_safe_fieldname($pkg['name']) . "']['config'];";
-eval($toeval);
+$a_pkg = &$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
 if($_GET['savemsg'] <> "")
 	$savemsg = $_GET['savemsg'];
@@ -161,8 +159,7 @@ if ($_POST) {
 				// configuration area.
 				$fieldname  = $fields['fieldname'];
 				$fieldvalue = $_POST[$fieldname];
-				$toeval = "\$pkgarr['" . $fieldname . "'] 	= \"" . $fieldvalue . "\";";
-				eval($toeval);
+				$pkgarr[$fieldname] = $fieldvalue;
 			}
 		}
 
@@ -280,11 +277,9 @@ if ($pkg['tabs'] <> "") {
 	if($tab['url'] <> "") $urltmp = $tab['url'];
 	if($tab['xml'] <> "") $urltmp = "pkg_edit.php?xml=" . $tab['xml'];
 
-	$toeval = "\$myurl = \"" . getenv("HTTP_HOST") . "\"; \n";
-	eval($toeval);
+	$myurl = getenv("HTTP_HOST");
 	// eval url so that above $myurl item can be processed if need be.
-	$toeval = "\$url = \"" . $urltmp . "\"; \n";
-	eval($toeval);
+	$url = $urltmp;
 
 	if($active == "tabinact") {
 	    echo "<li class=\"{$active}\">";
@@ -332,9 +327,7 @@ if ($pkg['tabs'] <> "") {
 		// if user is editing a record, load in the data.
 		if (isset($id) && $a_pkg[$id]) {
 			$fieldname = $pkga['fieldname'];
-			$toeval = "\$value = \$a_pkg[" . $id . "]['" . $fieldname . "'];";
-			echo "<!-- eval: " . $toeval . "-->\n";
-			eval($toeval);
+			$value = $a_pkg[$id][$fieldname];
 		}
 
 	      if($pkga['type'] == "input") {
@@ -470,10 +463,7 @@ if ($pkg['tabs'] <> "") {
 							$fieldname = $rowhelper['fieldname'];
 							// if user is editing a record, load in the data.
 							if (isset($id) && $a_pkg[$id]) {
-								$toeval = "\$value = \$row['" . $fieldname . "'];";
-								echo "<!-- eval: " . $toeval . "-->\n";
-								eval($toeval);
-								echo "<!-- value: " . $value . "-->\n";
+								$value = $row[$fieldname];
 							}
 							$options = "";
 							$type = $rowhelper['type'];

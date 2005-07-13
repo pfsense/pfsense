@@ -424,39 +424,11 @@ function arp_get_mac_by_ip($ip) {
 
 /* return a fieldname that is safe for xml usage */
 function xml_safe_fieldname($fieldname) {
-	$fieldname = str_replace("/","",$fieldname);
-	$fieldname = str_replace("-","",$fieldname);
-	$fieldname = str_replace(" ","",$fieldname);
-	$fieldname = str_replace("!","",$fieldname);
-	$fieldname = str_replace("@","",$fieldname);
-	$fieldname = str_replace("#","",$fieldname);
-	$fieldname = str_replace("$","",$fieldname);
-	$fieldname = str_replace("%","",$fieldname);
-	$fieldname = str_replace("^","",$fieldname);
-	$fieldname = str_replace("&","",$fieldname);
-	$fieldname = str_replace("*","",$fieldname);
-	$fieldname = str_replace("(","",$fieldname);
-	$fieldname = str_replace(")","",$fieldname);
-	$fieldname = str_replace("_","",$fieldname);
-	$fieldname = str_replace("+","",$fieldname);
-	$fieldname = str_replace("=","",$fieldname);
-	$fieldname = str_replace("{","",$fieldname);
-	$fieldname = str_replace("}","",$fieldname);
-	$fieldname = str_replace("[","",$fieldname);
-	$fieldname = str_replace("]","",$fieldname);
-	$fieldname = str_replace("|","",$fieldname);
-	$fieldname = str_replace("\\","",$fieldname);
-	$fieldname = str_replace("/","",$fieldname);
-	$fieldname = str_replace("<","",$fieldname);
-	$fieldname = str_replace(">","",$fieldname);
-	$fieldname = str_replace("?","",$fieldname);
-	$fieldname = str_replace(":","",$fieldname);
-	$fieldname = str_replace(",","",$fieldname);
-	$fieldname = str_replace(".","",$fieldname);
-	$fieldname = str_replace("'","",$fieldname);
-	$fieldname = str_replace("\"","",$fieldname);
-	$fieldname = strtolower($fieldname);
-	return $fieldname;
+	$replace = array('/', '-', ' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
+			 '_', '+', '=', '{', '}', '[', ']', '|', '\', '/', '<', '>', '?',
+			 ':', ',', '.', '\'', '\\'
+		);
+	return strtolower(str_replace($replace, "", $fieldname));
 }
 
 ?>

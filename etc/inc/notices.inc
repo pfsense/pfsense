@@ -44,7 +44,7 @@ $notice_path = $g['tmp_path'] . '/notices';
  * $priority - A notice's priority. Higher numbers indicate greater severity.
  *	       0 = informational, 1 = warning, 2 = error, etc. This may also be arbitrary,
  */
-function file_notice($id, $notice, $category = "General", $url, $priority = 1) {
+function file_notice($id, $notice, $category = "General", $url = "", $priority = 1) {
 	global $notice_path;
 	if(!$queue = get_notices()) $queue = array();
 	$queuekey = time();

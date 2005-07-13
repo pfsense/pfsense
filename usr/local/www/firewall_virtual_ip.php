@@ -61,7 +61,6 @@ if ($_POST) {
 		}
 		$savemsg = get_std_save_message($retval);
 		unlink_if_exists($d_vipconfdirty_path);
-
 	}
 }
 

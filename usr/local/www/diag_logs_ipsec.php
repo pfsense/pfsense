@@ -73,7 +73,7 @@ include("head.inc");
 			<td colspan="2" class="listtopic">
 			  Last <?=$nentries;?> IPSEC log entries</td>
 		  </tr>
-		  <tr><td><?php dump_clog($ipsec_logfile, $nentries); ?>
+		  <tr><td><?php dump_clog($ipsec_logfile, $nentries, true, array("racoon")); ?>
 		<tr><td><br><form action="diag_logs.php" method="post">
 <input name="clear" type="submit" class="formbtn" value="Clear log"></td></tr>
 		</table>

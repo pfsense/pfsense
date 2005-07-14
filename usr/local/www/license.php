@@ -125,9 +125,9 @@ require("guiconfig.inc");
               Peter Curran (<a href="mailto:peter@closeconsultants.com">peter@closeconsultants.com</a>)<br>
               &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">OpenVPN support</font></em></p>
             <hr size="1">
-            <p>m0n0wall is based upon/includes various free software packages,
+            <p>pfSense is based upon/includes various free software packages,
               listed below.<br>
-              The author of m0n0wall would like to thank the authors of these
+              The author of pfSense would like to thank the authors of these
               software packages for their efforts.</p>
             <p>FreeBSD (<a href="http://www.freebsd.org" target="_blank">http://www.freebsd.org</a>)<br>
               Copyright &copy; 1994-2003 FreeBSD, Inc. All rights reserved.<br>

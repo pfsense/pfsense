@@ -1110,7 +1110,7 @@ function system_start_ftp_helpers() {
 	$wanip = get_current_wan_address();
 	
 	/* kill off pftpx if its already running */
-	if(is_process_running("pftpx") 
+	if(is_process_running("pftpx"))
 		mwexec("/usr/bin/killall pftpx");
 
 	/* if we do not have a wanip, launch with just the -g flag */	

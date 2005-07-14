@@ -539,7 +539,7 @@ EOD;
 
 	if (!$g['booting']) {
 		/* reload the filter */
-		filter_configure();
+		touch("{$g["tmp_path"]}/filter_dirty");
 	}
 
 	if ($g['booting'])
@@ -727,7 +727,7 @@ EOD;
 
 	if (!$g['booting']) {
 		/* reload the filter */
-		filter_configure();
+		touch("{$g["tmp_path"]}/filter_dirty");
 	}
 
 	if ($g['booting'])

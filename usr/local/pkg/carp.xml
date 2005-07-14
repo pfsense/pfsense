@@ -228,7 +228,6 @@
 	    interfaces_carp_bringup();
 	</custom_delete_php_command>
 	<custom_php_deinstall_command>
-	    unlink_if_exists("/usr/local/www/carp*");
 	    unlink_if_exists("/usr/local/pkg/carp*");
 	    unlink_if_exists("/usr/local/pkg/pf/carp*");
 	    unlink_if_exists("/usr/local/etc/rc.d/carp*");

@@ -179,23 +179,39 @@ function get_radio_value(obj)
         return null;
 }
 function enable_change(enable_over) {
+	var note = document.getElementById("typenote");
+	var carpnote = document.createTextNode("This should be the correct netmask.");
+	var proxyarpnote = document.createTextNode("This is a CIDR block of proxy ARP addresses.");
         if ((get_radio_value(document.iform.mode) == "carp") || enable_over) {
                 document.iform.vhid.disabled = 0;
                 document.iform.password.disabled = 0;
                 document.iform.advskew.disabled = 0;
                 document.iform.type.disabled = 1;
+                document.iform.subnet_bits.disabled = 0;
+		if (note.firstChild == null) {
+			note.appendChild(carpnote);
+		} else {
+			note.removeChild(note.firstChild);
+			note.appendChild(carpnote);
+		}
         } else {
                 document.iform.vhid.disabled = 1;
                 document.iform.password.disabled = 1;
                 document.iform.advskew.disabled = 1;
                 document.iform.type.disabled = 0;
+		if (note.firstChild == null) {
+			note.appendChild(proxyarpnote);
+		} else {
+			note.removeChild(note.firstChild);
+			note.appendChild(proxyarpnote);
+		}
         }
 }
 function typesel_change() {
     switch (document.iform.type.selectedIndex) {
         case 0: // single
             document.iform.subnet.disabled = 0;
-            document.iform.subnet_bits.disabled = 1;
+            if((get_radio_value(document.iform.mode) == "proxyarp")) document.iform.subnet_bits.disabled = 1;
             document.iform.range_from.disabled = 1;
             document.iform.range_to.disabled = 1;
             break;
@@ -270,7 +286,7 @@ function typesel_change() {
                             <?=$i;?>
                       </option>
                             <?php endfor; ?>
-                      </select>
+                      </select> <i id="typenote"></i>
  						</td>
                       </tr>
                       <tr>

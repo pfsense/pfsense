@@ -107,6 +107,7 @@ function interfaces_lan_configure() {
 				" link " . escapeshellarg($random_mac));
 			$lancfg['spoofmac'] = $random_mac;
 			write_config();
+			file_notice("MAC Address altered", "The INVALID MAC address (ff:ff:ff:ff:ff:ff) on interface {$lancfg['if']) has been automatically replaced with {$random_mac}", "", "");
 		}
 	}	
 	
@@ -220,6 +221,7 @@ function interfaces_optional_configure_if($opti) {
 				" link " . escapeshellarg($random_mac));
 			$optcfg['spoofmac'] = $random_mac;
 			write_config();
+						file_notice("MAC Address altered", "The INVALID MAC address (ff:ff:ff:ff:ff:ff) on interface {$optcfg['if']) has been automatically replaced with {$random_mac}", "", "");
 		}
 
 		/* media */
@@ -467,6 +469,7 @@ function interfaces_wan_configure() {
 				" link " . escapeshellarg($random_mac));
 			$wancfg['spoofmac'] = $random_mac;
 			write_config();
+			file_notice("MAC Address altered", "The INVALID MAC address (ff:ff:ff:ff:ff:ff) on interface {$wancfg['if']) has been automatically replaced with {$random_mac}", "", "");
 		}
 	}
 

@@ -59,8 +59,8 @@ function log_error($error) {
  *   $mac - the mac address of the interface
  ******/
 function get_interface_mac_address($interface) {
-    $mac = exec('ifconfig ' . $interface . ' | grep ether | cut -d" " -f 2');
-    return str_replace(array("\n", "\r"), "", $mac);
+    $mac = exec("ifconfig {$interface} | awk '/ether/ {print $2}'");
+    return trim($mac);
 }
 
 /****f* pfsense-utils/return_dir_as_array

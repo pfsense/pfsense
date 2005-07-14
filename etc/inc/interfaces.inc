@@ -93,10 +93,23 @@ function interfaces_lan_configure() {
 		interfaces_wireless_configure($lancfg['if'], $lancfg['wireless']);
 
 	/* MAC spoofing? */
-	if ($lancfg['spoofmac'])
+	if ($lancfg['spoofmac']) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($lancfg['if']) .
 			" link " . escapeshellarg($lancfg['spoofmac']));
-
+	} else {
+		$mac = get_interface_mac_address($lancfg['if']);
+		if($mac == "ff:ff:ff:ff:ff:ff") {
+			/*   this is not a valid mac address.  generate a
+			 *   temporary mac address so the machine can get online.
+			 */
+			$random_mac = generate_random_mac_address();
+			mwexec("/sbin/ifconfig " . escapeshellarg($lancfg['if']) .
+				" link " . escapeshellarg($random_mac));
+			$lancfg['spoofmac'] = $random_mac;
+			write_config();
+		}
+	}	
+	
 	/* media */
 	if ($lancfg['media'] || $lancfg['mediaopt']) {
 		$cmd = "/sbin/ifconfig " . escapeshellarg($lancfg['if']);
@@ -193,9 +206,21 @@ function interfaces_optional_configure_if($opti) {
 			interfaces_wireless_configure($optcfg['if'], $optcfg['wireless']);
 
 		/* MAC spoofing? */
-		if ($optcfg['spoofmac'])
+		if ($optcfg['spoofmac']) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) .
 				" link " . escapeshellarg($optcfg['spoofmac']));
+		}  else {
+		$mac = get_interface_mac_address($optcfg['if']);
+		if($mac == "ff:ff:ff:ff:ff:ff") {
+			/*   this is not a valid mac address.  generate a
+			 *   temporary mac address so the machine can get online.
+			 */
+			$random_mac = generate_random_mac_address();
+			mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) .
+				" link " . escapeshellarg($random_mac));
+			$optcfg['spoofmac'] = $random_mac;
+			write_config();
+		}
 
 		/* media */
 		if ($optcfg['media'] || $optcfg['mediaopt']) {
@@ -428,9 +453,22 @@ function interfaces_wan_configure() {
 	if (is_array($wancfg['wireless']))
 		interfaces_wireless_configure($wancfg['if'], $wancfg['wireless']);
 
-	if ($wancfg['spoofmac'])
+	if ($wancfg['spoofmac']) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) .
 			" link " . escapeshellarg($wancfg['spoofmac']));
+	}  else {
+		$mac = get_interface_mac_address($wancfg['if']);
+		if($mac == "ff:ff:ff:ff:ff:ff") {
+			/*   this is not a valid mac address.  generate a
+			 *   temporary mac address so the machine can get online.
+			 */
+			$random_mac = generate_random_mac_address();
+			mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) .
+				" link " . escapeshellarg($random_mac));
+			$wancfg['spoofmac'] = $random_mac;
+			write_config();
+		}
+	}
 
 	/* media */
 	if ($wancfg['media'] || $wancfg['mediaopt']) {

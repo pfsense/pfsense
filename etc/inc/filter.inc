@@ -2060,7 +2060,8 @@ function process_carp_rules() {
 	global $g, $config;
 	$lines = "";
 	/* return if there are no carp configured items */
-	if($config['installedpackages']['carp']['config'] <> "") {
+	if($config['installedpackages']['carpsettings']['config'] <> "" or
+	   $config['virtualip']['vip'] <> "") {
 		$lines .= "pass quick proto carp keep state\n";
 		$lines .= "pass quick proto pfsync";
 	}

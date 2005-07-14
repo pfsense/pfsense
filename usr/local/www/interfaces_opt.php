@@ -159,6 +159,11 @@ if ($_POST) {
 			$optcfg['dhcphostname'] = $_POST['dhcphostname'];
 		}
 
+		$optcfg['blockpriv'] = $_POST['blockpriv'] ? true : false;
+		$optcfg['blockbogons'] = $_POST['blockbogons'] ? true : false;
+		$optcfg['spoofmac'] = $_POST['spoofmac'];
+		$optcfg['mtu'] = $_POST['mtu'];
+
 		write_config();
 
 		$retval = 0;

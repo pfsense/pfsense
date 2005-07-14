@@ -69,7 +69,7 @@ function conv_clog($logfile, $tail) {
 
 	foreach ($logarr as $logent) {
 
-		preg_match("/(.*)\s(.*)\spf:.*rule.*\(match\):\s(\w+)\sin\son\s(\w+:)\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,7})\s([\<|\>])\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,7}):.*/",$logent,$log_split);
+		preg_match("/(.*)\s(.*)\spf:.*rule.*\(match\):\s(\w+)\sin\son\s(\w+:)\s(.*)\s([\<|\>])\s(.*):.*/",$logent,$log_split);
 
 		$flent['proto'] 	= "TCP";
 		if(stristr($logent, "UDP") == true)

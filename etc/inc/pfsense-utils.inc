@@ -50,6 +50,21 @@ function log_error($error) {
     return;
 }
 
+/****f* pfsense-utils/get_interface_mac_address
+ * NAME
+ *   get_interface_mac_address - Return a interfaces mac address
+ * INPUTS
+ *   $interface	- interface to obtain mac address from
+ * RESULT
+ *   $mac - the mac address of the interface
+ ******/
+function get_interface_mac_address($interface) {
+    $mac = `ifconfig fxp0 | grep ether | cut -d" " -f 2`;
+    $mac = str_replace("\n", "", $mac);
+    $mac = str_replace("\r", "", $mac);
+    return $mac;
+}
+
 /****f* pfsense-utils/return_dir_as_array
  * NAME
  *   return_dir_as_array - Return a directory's contents as an array.
@@ -959,10 +974,21 @@ function display_topbar($text = "", $bg_color="#990000", $replace_color="#FFFFFF
 	echo "</script>";
 }
 
+/****f* pfsense-utils/generate_random_mac
+ * NAME
+ *   generate_random_mac - generates a random mac address
+ * INPUTS
+ *   none
+ * RESULT
+ *   $mac - a random mac address
+ ******/
 function generate_random_mac() {
-	for($i = 0; $i < 6; $i++) {
-        	$mac .= dechex(rand(16, 255)) . ':';
+	$mac = "00:00";
+	for($x=0; $x<4; $x++) {
+	    $mac .= ":";
+	    $mac .= dechex(rand(16, 255));
 	}
 	return $mac;
 }
+
 ?>

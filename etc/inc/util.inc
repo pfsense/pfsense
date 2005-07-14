@@ -425,7 +425,7 @@ function arp_get_mac_by_ip($ip) {
 /* return a fieldname that is safe for xml usage */
 function xml_safe_fieldname($fieldname) {
 	$replace = array('/', '-', ' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
-			 '_', '+', '=', '{', '}', '[', ']', '|', '\', '/', '<', '>', '?',
+			 '_', '+', '=', '{', '}', '[', ']', '|', '/', '<', '>', '?',
 			 ':', ',', '.', '\'', '\\'
 		);
 	return strtolower(str_replace($replace, "", $fieldname));

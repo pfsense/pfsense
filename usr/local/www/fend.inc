@@ -26,11 +26,3 @@ Rounded("tr#fend","bl br tl tr","#FFF","#990000","smooth");
 ?>
 </script>
 
-<?php
-
-if(stristr($HTTP_SERVER_VARS["HTTP_USER_AGENT"],"MSIE") == true) {
-    echo "<center>";
-    echo "<br>";
-    echo "<a href=\"http://getfirefox.com\"><img border=\"0\" src=\"http://sfx-images.mozilla.org/affiliates/Banners/468x60/trust.png\"></a>";
-    echo "</center>";
-}

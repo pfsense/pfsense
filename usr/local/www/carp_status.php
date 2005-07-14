@@ -159,7 +159,7 @@ if(is_array($config['virtualip']['vip'])) {
 <?php include("fend.inc"); ?>
 <script type="text/javascript">
 NiftyCheck();
-Rounded("div#mainlevel","bl br","#FFF","#eeeeee","smooth");
+Rounded("div#mainlevel","all","#FFF","#eeeeee","smooth");
 </script>
 
 </body>

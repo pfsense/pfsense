@@ -104,47 +104,35 @@ include("fbegin.inc");
 <form action="pkg.php" method="post">
 <? if($_GET['savemsg'] <> "") $savemsg = $_GET['savemsg']; ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
 <?php
 if ($pkg['tabs'] <> "") {
-    echo "<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">";
-    echo "<tr><td>";
-    echo "  <ul id=\"tabnav\">";
+    echo '<tr><td>';
+    $tab_array = array();
     foreach($pkg['tabs']['tab'] as $tab) {
-	$active = "tabinact";
-	if(isset($tab['active'])) $active = "tabact";
-	$urltmp = "";
-	$title = $tab['text'];
-	if($tab['url'] <> "") $urltmp = $tab['url'];
-	if($tab['xml'] <> "") $urltmp = "pkg_edit.php?xml=" . $tab['xml'];
+        if(isset($tab['active'])) {
+                $active = true;
+        } else {
+                $active = false;
+        }
+        $urltmp = "";
+        if($tab['url'] <> "") $urltmp = $tab['url'];
+        if($tab['xml'] <> "") $urltmp = "pkg_edit.php?xml=" . $tab['xml'];
 
-	$myurl = getenv("HTTP_HOST");
-	// eval url so that above $myurl item can be processed if need be.
-	$url = $urltmp;
-
-	if($active == "tabinact") {
-	    echo "<li class=\"{$active}\">";
-	    echo "<a href=\"";
-	    echo $url;
-	    echo "\">";
-	    echo $title;
-	    echo "</a>";
-	    echo "</li>";
-	} else {
-	    echo "<li class=\"{$active}\">";
-	    echo $title;
-	    echo "</li>";
-	}
+        $myurl = getenv("HTTP_HOST");
+        // eval url so that above $myurl item can be processed if need be.
+        $url = str_replace('$myurl', $myurl, $urltmp);
+        $tab_array[] = array(
+                                $tab['text'],
+                                $active,
+                                $url
+                        );
     }
-    echo "  </ul>";
-    echo "</td></tr>";
-    echo "<tr>";
-    echo "<td class=\"tabcont\">";
+    display_top_tabs($tab_array);
+    echo '</td></tr>';
 }
 ?>
-
-<div id="mainarea">
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr><td><div id="mainarea"><table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td class="tabcont">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -209,13 +197,7 @@ if ($pkg['tabs'] <> "") {
     </td>
   </tr>
 </table>
-</div>
-
-<?php
-if ($pkg['tabs'] <> "") {
-    echo "</td></tr></table>";
-}
-?>
+</div></tr></td></table>
 
 </form>
 <?php include("fend.inc"); ?>

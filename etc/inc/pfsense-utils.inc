@@ -983,8 +983,7 @@ function display_topbar($text = "", $bg_color="#990000", $replace_color="#FFFFFF
 function generate_random_mac() {
 	$mac = "00:00";
 	for($x=0; $x<4; $x++) {
-	    $mac .= ":";
-	    $mac .= dechex(rand(16, 255));
+	    $mac .= ":" . dechex(rand(16, 255));
 	}
 	return $mac;
 }

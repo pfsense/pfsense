@@ -59,7 +59,7 @@ function log_error($error) {
  *   $mac - the mac address of the interface
  ******/
 function get_interface_mac_address($interface) {
-    $mac = `ifconfig ' . $interface . ' | grep ether | cut -d" " -f 2`;
+    $mac = exec('ifconfig ' . $interface . ' | grep ether | cut -d" " -f 2');
     $mac = str_replace("\n", "", $mac);
     $mac = str_replace("\r", "", $mac);
     return $mac;

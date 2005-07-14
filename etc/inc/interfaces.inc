@@ -210,18 +210,19 @@ function interfaces_optional_configure_if($opti) {
 		if ($optcfg['spoofmac']) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) .
 				" link " . escapeshellarg($optcfg['spoofmac']));
-		}  else {
-		$mac = get_interface_mac_address($optcfg['if']);
-		if($mac == "ff:ff:ff:ff:ff:ff") {
-			/*   this is not a valid mac address.  generate a
-			 *   temporary mac address so the machine can get online.
-			 */
-			$random_mac = generate_random_mac_address();
-			mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) .
-				" link " . escapeshellarg($random_mac));
-			$optcfg['spoofmac'] = $random_mac;
-			write_config();
-			file_notice("MAC Address altered", "The INVALID MAC address (ff:ff:ff:ff:ff:ff) on interface {$optcfg['if']} has been automatically replaced with {$random_mac}", "Interfaces");
+		} else {
+			$mac = get_interface_mac_address($optcfg['if']);
+			if($mac == "ff:ff:ff:ff:ff:ff") {
+				/*   this is not a valid mac address.  generate a
+				 *   temporary mac address so the machine can get online.
+				 */
+				$random_mac = generate_random_mac_address();
+				mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) .
+					" link " . escapeshellarg($random_mac));
+				$optcfg['spoofmac'] = $random_mac;
+				write_config();
+				file_notice("MAC Address altered", "The INVALID MAC address (ff:ff:ff:ff:ff:ff) on interface {$optcfg['if']} has been automatically replaced with {$random_mac}", "Interfaces");
+			}
 		}
 
 		/* media */

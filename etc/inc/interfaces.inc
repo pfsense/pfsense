@@ -255,7 +255,7 @@ function interfaces_optional_configure_if($opti) {
 				interfaces_opt_dhcp_configure($opti);
 			} else {			
 				mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " " .
-					escapeshellarg($optcfg['ipaddr'] . "/" . $optcfg['subnet']));
+				escapeshellarg($optcfg['ipaddr'] . "/" . $optcfg['subnet']);
 			}
 		}
 	} else {

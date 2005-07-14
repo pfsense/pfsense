@@ -1099,13 +1099,35 @@ EOD;
 function system_start_ftp_helpers() {
 	require_once("interfaces.inc");
 	global $config, $g;
+
+	/* if the ftp proxy is disabled then killall pftpx and return */	
 	if($config['system']['disableftpproxy'] <> "") {
 		mwexec("/usr/bin/killall pftpx");
 		return;
 	}
+	
+	/* grab the current WAN IP address */
 	$wanip = get_current_wan_address();
-	mwexec("/usr/bin/killall pftpx");
-	mwexec("/usr/local/sbin/pftpx -g 8021 {$wanip}");
+	
+	/* kill off pftpx if its already running */
+	if(is_process_running("pftpx") 
+		mwexec("/usr/bin/killall pftpx");
+
+	/* if we do not have a wanip, launch with just the -g flag */	
+	if($wanip <> "") {
+		$command = "/usr/local/sbin/pftpx -g 8021 {$wanip}";
+		mwexec($command);
+	} else {
+		mwexec("/usr/local/sbin/pftpx -g 8021");
+	}
+
+	if(!is_process_running("pftpx")) {
+		mwexec("/usr/local/sbin/pftpx -g 8021");
+		if(!is_process_running("pftpx")) {
+			log_error("Could not start PFTPX with command {$command}");
+			file_notice("FTP Proxy Startup Error", "PFTPX failed to start.  NOTE: FTP clients may not function correctly.", "", "");
+		}
+	}	
 }
 
 function cleanup_backupcache($revisions = 30) {

@@ -958,5 +958,11 @@ function display_topbar($text = "", $bg_color="#990000", $replace_color="#FFFFFF
 	echo "Rounded(\"div#topbar\",\"top\",\"{$replace_color}\",\"{$bg_color}\",\"{$rounding_style}\");\n";
 	echo "</script>";
 }
-	
+
+function generate_random_mac() {
+	for($i = 0; $i < 6; $i++) {
+        	$mac .= dechex(rand(16, 255)) . ':';
+	}
+	return $mac;
+}
 ?>

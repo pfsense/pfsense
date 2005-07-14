@@ -262,47 +262,35 @@ function enablechange() {
 <form action="pkg_edit.php" method="post">
 <input type="hidden" name="xml" value="<?= $xml ?>">
 <?php if ($savemsg) print_info_box($savemsg); ?>
-
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
 <?php
 if ($pkg['tabs'] <> "") {
-    echo "<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">";
-    echo "<tr><td>";
-    echo "  <ul id=\"tabnav\">";
+    echo '<tr><td>';
+    $tab_array = array();
     foreach($pkg['tabs']['tab'] as $tab) {
-	$active = "tabinact";
-	if(isset($tab['active'])) $active = "tabact";
-
+	if(isset($tab['active'])) {
+		$active = true;
+	} else {
+		$active = false;
+	}
 	$urltmp = "";
-	$title = $tab['text'];
 	if($tab['url'] <> "") $urltmp = $tab['url'];
 	if($tab['xml'] <> "") $urltmp = "pkg_edit.php?xml=" . $tab['xml'];
 
 	$myurl = getenv("HTTP_HOST");
 	// eval url so that above $myurl item can be processed if need be.
-	$url = $urltmp;
-
-	if($active == "tabinact") {
-	    echo "<li class=\"{$active}\">";
-	    echo "<a href=\"";
-	    echo $url;
-	    echo "\">";
-	    echo $title;
-	    echo "</a>";
-	    echo "</li>";
-	} else {
-	    echo "<li class=\"{$active}\">";
-	    echo $title;
-	    echo "</li>";
-	}
+	$url = str_replace('$myurl', $myurl, $urltmp);
+	$tab_array[] = array(
+				$tab['text'],
+				$active,
+				$url
+			);
     }
-    echo "  </ul>";
-    echo "</td></tr>";
-    echo "<tr>";
-    echo "<td class=\"tabcont\">";
+    display_top_tabs($tab_array);
+    echo '</td></tr>';
 }
 ?>
-
-<table width="100%" border="0" cellpadding="6" cellspacing="0">
+<tr><td><div id="mainarea"><table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
   <?php
   $cols = 0;
   $savevalue = "Save";
@@ -557,12 +545,7 @@ if ($pkg['tabs'] <> "") {
     </td>
   </tr>
 </table>
-
-<?php
-if ($pkg['tabs'] <> "") {
-    echo "</td></tr></table>";
-}
-?>
+</div></tr></td></table>
 
 <?php if($pkga['note'] <> "") echo "<br><center>" . $pkga['note'] . "</center>"; ?>
 

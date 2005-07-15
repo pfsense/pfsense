@@ -509,7 +509,6 @@ function generate_optcfg_array(& $optcfg) {
         }
 }
 
-/* XXX - billm - need to do the outqueue portion too */
 function filter_generate_pf_altq_rules() {
 	/* I don't think we're in IPFW anymore Toto */
 

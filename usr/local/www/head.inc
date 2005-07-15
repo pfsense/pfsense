@@ -1,8 +1,22 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<?php
+/* 
+ *   if user has selected a custom template, use it.
+ *   otherwise default to pfsense tempalte
+ */
+if($config['template'] <> "")
+	$g['tempalte'] = $config['template'];
+else
+	$g['tempalte'] = "pfsense";
+?>
+
 <html>
 <head>
     <title><?=gentitle($pgtitle);?></title>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <link rel="stylesheet" href="/templates/{$g['template']}/pfsense-screen.css" media="all" />
     <link rel="stylesheet" type="text/css" href="/niftycssCode.css">
     <link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print">
     <link href="gui.css" rel="stylesheet" type="text/css">

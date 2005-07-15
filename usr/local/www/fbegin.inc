@@ -12,13 +12,11 @@ require_once("notices.inc");
 				} else {
 					$description = '/pkg.php?xml=' . $menuitem['configfile'];
 				}
-				$htmltext .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="' . $description . ' "class="navlnk">' . $menuitem['name'] . '</a><br>' . "\n";
+				$htmltext .= '<li><a href="' . $description . ' "class="navlnk">' . $menuitem['name'] . '</a></li>' . "\n";
 			}
 		}
 		return $htmltext;
 	}
-	
-					
 ?>
 
 <script language="javascript">
@@ -62,128 +60,151 @@ function showhide_black(tspan, tri) {
 }
 -->
 </script>
-<table width="750" border="0" cellspacing="1" cellpadding="1">
-  <tr valign="bottom" height="65">
-    <td width="150" height="100%" align="center" valign="middle">
-       <strong><a href="/"><img src="/logo.gif" border="0"></a></strong>
-    </td>
-    <td height="100%">
-      <div style="height:100%" id="topbox" name="topbox">
-	<table bgcolor="#990000" background="top_background.gif" border="0" cellspacing="0" cellpadding="0" width="100%" height="85%">
-	 <tr><td align="left" valign="bottom"><span class="tfrtitle">&nbsp;webConfigurator</span></td>
-	   <td align="right" valign="bottom">
-	     <span class="hostname"><?=$config['system']['hostname'] . "." . $config['system']['domain'];?>&nbsp;</span>
-	   </td>
-	 </tr>
-	</table>
-	</div>	
-    </td>
-  </tr>  
-  <tr valign="top">
-    <td valign="top" height="100%" width="150">
-	<div id="niftyMenu" style="height:100%">
-	<table height="100%" width="100%" class="menu" bgcolor="#000000">
-        <tr valign="top">
-          <td nowrap><span class="navlnk"><font color="#FFFFFF"> <strong>System</strong>
-              <br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_advanced.php" class="navlnk">Advanced</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_firmware_check.php" class="navlnk">Firmware</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system.php" class="navlnk">General setup</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/pkg_mgr.php" class="navlnk">Packages</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/system_routes.php" class="navlnk">Static routes</a><br>
-	      <?php echo return_ext_menu("System"); ?>
-              <strong>Interfaces</strong>
-			<?php if (!isset($config['system']['webgui']['noassigninterfaces'])): ?>
-		<a href="/interfaces_assign.php" class="navlnks">(assign)</a>
-			<?php endif; ?>
-		<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/interfaces_lan.php" class="navlnk">LAN</a><br>
-			<?php for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): if (!isset($config['interfaces']['opt' . $i]['ovpn'])): ?>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/interfaces_opt.php?index=<?=$i;?>" class="navlnk"><?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?></a><br>
-			<?php endif; endfor; ?>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/interfaces_wan.php" class="navlnk">WAN</a><br>
-	      <?php echo return_ext_menu("Interfaces"); ?>
-              <strong>Firewall</strong><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/firewall_aliases.php" class="navlnk">Aliases</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/firewall_nat.php" class="navlnk">NAT</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/firewall_rules.php" class="navlnk">Rules</a><br>              
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/firewall_shaper.php" class="navlnk">Traffic Shaper</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/firewall_virtual_ip.php" class="navlnk">Virtual IPs</a><br>
-	      <?php echo return_ext_menu("Firewall"); ?>
-              <strong>Services</strong><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_captiveportal.php" class="navlnk">Captive portal</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_dnsmasq.php" class="navlnk">DNS forwarder</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_dhcp_relay.php" class="navlnk">DHCP relay</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_dhcp.php" class="navlnk">DHCP server</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_dyndns.php" class="navlnk">Dynamic DNS</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_snmp.php" class="navlnk">SNMP</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/services_wol.php" class="navlnk">Wake on LAN</a><br>
-	      <?php echo return_ext_menu("Services"); ?>
-              <strong>VPN</strong><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/vpn_ipsec.php" class="navlnk">IPsec</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/vpn_pptp.php" class="navlnk">PPTP</a><br>
-              <strong>Status</strong><br>
-			<?php if (isset($config['captiveportal']['enable'])): ?>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_captiveportal.php" class="navlnk">Captive portal</a><br>
-			<?php endif; ?>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/carp_status.php" class="navlnk">CARP (failover)</a><br>		
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_dhcp_leases.php" class="navlnk">DHCP leases</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_interfaces.php" class="navlnk">Interfaces</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_ipsec_sad.php" class="navlnk">IPsec</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_pkglogs.php" class="navlnk">Package logs</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_queues.php" class="navlnk">Queues</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_services.php" class="navlnk">Services</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/index.php" class="navlnk">System</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_logs.php" class="navlnk">System logs</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_graph.php" class="navlnk">Traffic graph</a><br>
-			<?php $i = 0; $ifdescrs = array();
-		if (is_array($config['interfaces']['wan']['wireless']) &&
-				(strstr($config['interfaces']['wan']['if'], "wi") || strstr($config['interfaces']['wan']['if'], "ath")))
-				$ifdescrs['wan'] = 'WAN';
-				
-		if (is_array($config['interfaces']['lan']['wireless']) &&
-				(strstr($config['interfaces']['lan']['if'], "wi") || strstr($config['interfaces']['lan']['if'], "ath")))
-				$ifdescrs['lan'] = 'LAN';
+
+<div id="wrapper">
+
+	<div id="header">
+		<div id="header-left"></div>
+		<div id="header-right">
+			<span class="alert">
+				Alert Alert Alert Alert Alert Alert Alert Alert Alert
+			</span>
+			<span class="normal">
+				<span class="left">webConfigurator</span>
+				<span class="right">localhost.local</span>
+			</span>
+		</div>
+	</div> <!-- Header DIV -->
+	<div id="content">
+		<div id="left">
+			<div id="navigation">
+				<ul>
+					<li>
+						<div>System</div>
+						<ul>
+							<li><a href="/system_advanced.php" class="navlnk">Advanced</a></li>
+							<li><a href="/system_firmware_check.php" class="navlnk">Firmware</a></li>
+							<li><a href="/system.php" class="navlnk">General setup</a></li>
+							<li><a href="/pkg_mgr.php" class="navlnk">Packages</a></li>
+							<li><a href="/system_routes.php" class="navlnk">Static routes</a></li>
+						</ul>
+					</li>
+					<li>
+						<div>Interfaces
+						<?php if (!isset($config['system']['webgui']['noassigninterfaces'])): ?>
+						<a href="/interfaces_assign.php" class="navlnks">(assign)</a>
+						<?php endif; ?></div>
+						<ul>
+							<a href="/interfaces_lan.php" class="navlnk">LAN</a></li>
+							<li><a href="/interfaces_opt.php?index=1" class="navlnk">DMZ</a></li>
+							<li><a href="/interfaces_wan.php" class="navlnk">WAN</a></li>							
+							<li><a href="/interfaces_lan.php" class="navlnk">LAN</a></li>
+							<?php for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): if (!isset($config['interfaces']['opt' . $i]['ovpn'])): ?>
+							<li><a href="/interfaces_opt.php?index=<?=$i;?>" class="navlnk"><?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?></a></li>
+							<?php endif; endfor; ?>
+							<?php echo return_ext_menu("Interfaces"); ?>							
+						</ul>
+					</li>
+					<li>
+						<div>Firewall</div>
+						<ul>
+							<li><a href="/firewall_aliases.php" class="navlnk">Aliases</a></li>
+							<li><a href="/firewall_nat.php" class="navlnk">NAT</a></li>
+							<li><a href="/firewall_rules.php" class="navlnk">Rules</a></li>              
+							<li><a href="/firewall_shaper.php" class="navlnk">Traffic Shaper</a></li>
+							<li><a href="/firewall_virtual_ip.php" class="navlnk">Virtual IPs</a></li>
+							<?php echo return_ext_menu("Firewall"); ?>
+						</ul>
+					</li>
+					<li>
+						<div>Services</div>
+						<ul>
+							<?php if (isset($config['captiveportal']['enable'])): ?>
+							<li><a href="/services_captiveportal.php" class="navlnk">Captive portal</a></li>
+							<?php endif; ?>
+							<li><a href="/services_dnsmasq.php" class="navlnk">DNS forwarder</a></li>
+							<li><a href="/services_dhcp_relay.php" class="navlnk">DHCP relay</a></li>
+							<li><a href="/services_dhcp.php" class="navlnk">DHCP server</a></li>
+							<li><a href="/services_dyndns.php" class="navlnk">Dynamic DNS</a></li>
+							<li><a href="/services_snmp.php" class="navlnk">SNMP</a></li>
+							<li><a href="/services_wol.php" class="navlnk">Wake on LAN</a></li>
+							<?php echo return_ext_menu("Services"); ?>
+						</ul>
+					</li>
+					<li>
+						<div>VPN</div>
+						<ul>
+							<li><a href="/vpn_ipsec.php" class="navlnk">IPsec</a></li>
+							<li><a href="/vpn_pptp.php" class="navlnk">PPTP</a></li>
+							<?php echo return_ext_menu("VPN"); ?>
+						</ul>
+					</li>
+					<li>
+						<div>Status</div>
+						<ul>
+							<?php if (isset($config['captiveportal']['enable'])): ?>
+							<li><a href="/status_captiveportal.php" class="navlnk">Captive portal</a></li>
+							<?php endif; ?>
+							<li><a href="/carp_status.php" class="navlnk">CARP (failover)</a></li>		
+							<li><a href="/diag_dhcp_leases.php" class="navlnk">DHCP leases</a></li>
+							<li><a href="/status_interfaces.php" class="navlnk">Interfaces</a></li>
+							<li><a href="/diag_ipsec_sad.php" class="navlnk">IPsec</a></li>
+							<li><a href="/diag_pkglogs.php" class="navlnk">Package logs</a></li>
+							<li><a href="/status_queues.php" class="navlnk">Queues</a></li>
+							<li><a href="/status_services.php" class="navlnk">Services</a></li>
+							<li><a href="/index.php" class="navlnk">System</a></li>
+							<li><a href="/diag_logs.php" class="navlnk">System logs</a></li>
+							<li><a href="/status_graph.php" class="navlnk">Traffic graph</a></li>
+							<?php $i = 0; $ifdescrs = array();
+							if (is_array($config['interfaces']['wan']['wireless']) &&
+									(strstr($config['interfaces']['wan']['if'], "wi") || strstr($config['interfaces']['wan']['if'], "ath")))
+									$ifdescrs['wan'] = 'WAN';
+									
+							if (is_array($config['interfaces']['lan']['wireless']) &&
+									(strstr($config['interfaces']['lan']['if'], "wi") || strstr($config['interfaces']['lan']['if'], "ath")))
+									$ifdescrs['lan'] = 'LAN';
+							
+							for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+								if (is_array($config['interfaces']['opt' . $j]['wireless']) &&
+									isset($config['interfaces']['opt' . $j]['enable']) &&
+									(strstr($config['interfaces']['opt' . $j]['if'], "wi") || strstr($config['interfaces']['opt' . $j]['if'], "ath")))
+									$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
+							}
+							if (count($ifdescrs) > 0): ?>	      
+							<li><a href="/status_wireless.php" class="navlnk">Wireless</a></li>
+							<?php endif; ?>
+							<?php echo return_ext_menu("Status"); ?>							
+						</ul>
+					</li>
+					<?php isset($config['developers']): ?>
+					<li>
+						<div>Developers</div>
+						<ul>
+							<li><a href="/restart_httpd.php" class="navlnk">Restart HTTPD</a></li>
+						</ul>
+					</li>
+					<? php endif ?>
+					<li>
+						<div>Diagnostics</div>
+						<ul id="diag">
+							<li><a href="/diag_backup.php" class="navlnk">Backup/Restore</a></li>
+							<li><a href="/exec.php" class="navlnk">Command Prompt</a></li>
+							<li><a href="/edit.php" class="navlnk">Edit File</a></li>
+							<li><a href="/diag_defaults.php" class="navlnk">Factory defaults </a></li>
+							<li><a href="/halt.php" class="navlnk">Halt system</a></li>
+							<li><a href="/diag_ping.php" class="navlnk">Ping</a></li>
+							<li><a href="/reboot.php" class="navlnk">Reboot system</a></li>
+							<li><a href="/diag_dump_states.php" class="navlnk">States</a></li>
+							<?php echo return_ext_menu("Diagnostics"); ?>
+						</ul>
+					</li>
+				</ul>
+			</div>
 		
-		for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-			if (is_array($config['interfaces']['opt' . $j]['wireless']) &&
-				isset($config['interfaces']['opt' . $j]['enable']) &&
-				(strstr($config['interfaces']['opt' . $j]['if'], "wi") || strstr($config['interfaces']['opt' . $j]['if'], "ath")))
-				$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
-		}
-			if (count($ifdescrs) > 0): ?>	      
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/status_wireless.php" class="navlnk">Wireless</a><br>
-			<?php endif; ?>
-			<?php echo return_ext_menu("Status"); ?>
-<?php if (isset($config['system']['developer'])) { ?> 
-              <strong>Developers</strong><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/restart_httpd.php" class="navlnk">Restart HTTPD</a><br>
-<?php } ?>
-			<?php if (isset($config['system']['webgui']['expanddiags']) || strstr($_SERVER['SCRIPT_FILENAME'], "diag_") || strstr($_SERVER['SCRIPT_FILENAME'], "reboot")): ?>
-		<a href="javascript:showhide('diag','tri_diag')"><img src="/tri_o.gif" id="tri_diag" width="14" height="10" border="0"></a><strong><a href="javascript:showhide('diag','tri_diag')" class="navlnk">Diagnostics</a></strong><br>
-		<span id="diag">
-			<?php else: ?>
-		<a href="javascript:showhide('diag','tri_diag')"><img src="/tri_c.gif" id="tri_diag" width="14" height="10" border="0"></a><strong><a href="javascript:showhide('diag','tri_diag')" class="navlnk">Diagnostics</a></strong><br>
-		<span id="diag" style="display: none">
-			<?php endif; ?>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_backup.php" class="navlnk">Backup/Restore</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/exec.php" class="navlnk">Command Prompt</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/edit.php" class="navlnk">Edit File</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_defaults.php" class="navlnk">Factory defaults </a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/halt.php" class="navlnk">Halt system</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_ping.php" class="navlnk">Ping</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/reboot.php" class="navlnk">Reboot system</a><br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/diag_dump_states.php" class="navlnk">States</a><br>
-		<?php echo return_ext_menu("Diagnostics"); ?>
-			  </span>
-			  </font></span>
-            </td>
-        </tr>
-	</table>
-	</div>
-    </td>
-    <td width="600"><table width="100%" border="0" cellpadding="10" cellspacing="0">
-        <tr><td>
+		</div> <!-- Left DIV -->
+		
+		<div id="right">
+	     
 
 <?php
 	/* display a top alert bar if need be */

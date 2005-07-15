@@ -63,9 +63,8 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 }
 
 function get_notices($category = "all") {
-	global $notice_path;
-	if(file_exists($notice_path)) {
-		$queue = unserialize(file_get_contents($notice_path));
+	if(file_exists('/tmp/notices')) {
+		$queue = unserialize(file_get_contents('/tmp/notices'));
 		if(!$queue) return false;
 		if($category != 'all') {
 			foreach($queue as $time => $notice) {
@@ -157,13 +156,4 @@ function print_notice_box($category = "all") {
 	print_info_box_np(print_notices($notices, $category));
 	return;
 }
-
-function are_notices_pending($category = "all") {
-	global $notice_path;
-	if(file_exists($notice_path)) {
-		return true;
-	}
-	return false;
-}
-
 ?>

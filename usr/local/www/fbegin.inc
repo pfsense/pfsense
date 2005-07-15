@@ -90,12 +90,9 @@ function showhide_black(tspan, tri) {
 						</ul>
 					</li>
 					<li>
-						<div>Interfaces
-						<?php if (!isset($config['system']['webgui']['noassigninterfaces'])): ?>
-						<a href="/interfaces_assign.php" class="navlnks">(assign)</a>
-						<?php endif; ?></div>
+						<div>Interfaces<?php if (!isset($config['system']['webgui']['noassigninterfaces'])): ?> <a href="/interfaces_assign.php" class="navlnks">(assign)</a><?php endif; ?></div>
 						<ul>
-							<a href="/interfaces_lan.php" class="navlnk">LAN</a></li>
+							<li><a href="/interfaces_lan.php" class="navlnk">LAN</a></li>
 							<li><a href="/interfaces_opt.php?index=1" class="navlnk">DMZ</a></li>
 							<li><a href="/interfaces_wan.php" class="navlnk">WAN</a></li>							
 							<li><a href="/interfaces_lan.php" class="navlnk">LAN</a></li>

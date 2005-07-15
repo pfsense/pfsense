@@ -422,12 +422,9 @@ function captiveportal_allowedip_configure() {
 
 		foreach ($config['captiveportal']['allowedip'] as $ipent) {
 			/* record allowed ip so it can be recognized and removed later */
-			/* XXX: What's $ruleno?  This can't be working as expected!?!?! --billm */
-			fwrite($fd, $ipent['ip'] . "," . $ruleno ."\n");
-
+			fwrite($fd, $ipent['ip'] . "," . $ipent['ip'] ."\n");
 			/* insert pf table item to allow traffic */
 			mwexec("echo \"pfctl -t captiveportal -T add {$ipent['ip']} \"> /tmp/tmp");
-			echo "Adding {$ipent['ip']}";
 			mwexec("/sbin/pfctl -t captiveportal -T add {$ipent['ip']}");
 
 			$ruleno = $ip;

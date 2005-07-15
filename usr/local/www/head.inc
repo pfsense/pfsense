@@ -7,9 +7,9 @@
  *   otherwise default to pfsense tempalte
  */
 if($config['template'] <> "")
-	$g['tempalte'] = $config['template'];
+	$g['template'] = $config['template'];
 else
-	$g['tempalte'] = "pfsense";
+	$g['template'] = "pfsense";
 ?>
 
 <html>

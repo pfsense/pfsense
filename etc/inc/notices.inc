@@ -156,4 +156,14 @@ function print_notice_box($category = "all") {
 	print_info_box_np(print_notices($notices, $category));
 	return;
 }
+
+   	 
+function are_notices_pending($category = "all") { 	 
+	global $notice_path; 	 
+	if(file_exists($notice_path)) { 	 
+		return true; 	 
+	} 	 
+	return false; 	 
+}
+
 ?>

@@ -107,6 +107,21 @@ function reboot_xmlrpc($raw_params) {
 	return new XML_RPC_Response(new XML_RPC_Value(true, 'boolean'));
 }
 
+$get_notices_sig = array(array(array(), string), array(array()));
+function get_notices_xmlrpc($raw_params) {
+	global $g;
+	require_once("notices.inc");
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!$params[0]) {
+		$toreturn = get_notices();
+	} else {
+		$toreturn = get_notices($params[0]);
+	}
+	$response = new XML_RPC_Response(XML_RPC_encode($toreturn));
+	print $response->serialize();
+	return $response;
+}
+
 $server = new XML_RPC_Server(
         array(
             'pfsense.backup_config_section' => 	array('function' => 'backup_config_section_xmlrpc',
@@ -126,7 +141,9 @@ $server = new XML_RPC_Server(
 //							'docstring' => $auto_update_doc),
 	    'pfsense.reboot' =>			array('function' => 'reboot_xmlrpc',
 							'signature' => $reboot_sig,
-							'docstring' => $reboot_doc)
+							'docstring' => $reboot_doc),
+	    'pfsense.get_notices' =>		array('function' => 'get_notices_xmlrpc',
+							'signature' => $get_notices_sig)
         )
 );
 ?>

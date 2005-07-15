@@ -308,75 +308,24 @@ function typesel_change() {
 				<tr valign="top">
 				  <td width="22%" class="vncellreq">VHID Group</td>
 				  <td class="vtable"><select id='vhid' name='vhid'>
-					<option name='1 (DEFAULT)' value='1'>1 (DEFAULT)</option>
-					<option name='2' value='2'>2</option>
-					<option name='3' value='3'>3</option>
-					<option name='4' value='4'>4</option>
-					<option name='5' value='5'>5</option>
-					<option name='6' value='6'>6</option>
-					<option name='7' value='7'>7</option>
-					<option name='8' value='8'>8</option>
-					<option name='9' value='9'>9</option>
-					<option name='10' value='10'>10</option>
-					<option name='11' value='11'>11</option>
-					<option name='12' value='12'>12</option>
-					<option name='13' value='13'>13</option>
-					<option name='14' value='14'>14</option>
-					<option name='15' value='15'>15</option>
-					<option name='16' value='16'>16</option>
-					<option name='17' value='17'>17</option>
-					<option name='18' value='18'>18</option>
-					<option name='19' value='19'>19</option>
-					<option name='20' value='20'>20</option>
-					<option name='21' value='21'>21</option>
-					<option name='22' value='22'>22</option>
-					<option name='23' value='23'>23</option>
-					<option name='24' value='24'>24</option>
-					<option name='25' value='25'>25</option>
-					<option name='26' value='26'>26</option>
-					<option name='27' value='27'>27</option>
-					<option name='28' value='28'>28</option>
-					<option name='29' value='29'>29</option>
-					<option name='30' value='30'>30</option>
-					</select>
+                            <?php for ($i = 0; $i <= 254; $i++): ?>
+                            <option value="<?=$i;?>" <?php if ($i == $pconfig['vhid']) echo "selected"; ?>>
+                            <?=$i;?>
+                      </option>
+                            <?php endfor; ?>
+                      </select>
 					<br>Enter the VHID group that the machines will share
 				  </td>
 				</tr>	  
 				<tr valign="top">
 				  <td width="22%" class="vncellreq">Advertising Frequency</td>
 				  <td class="vtable"><select id='advskew' name='advskew'>
-					<option name='0 (DEFAULT)' value='0'>0 (DEFAULT)</option>
-					<option name='1' value='1'>1</option>
-					<option name='2' value='2'>2</option>
-					<option name='3' value='3'>3</option>
-					<option name='4' value='4'>4</option>
-					<option name='5' value='5'>5</option>
-					<option name='6' value='6'>6</option>
-					<option name='7' value='7'>7</option>
-					<option name='8' value='8'>8</option>
-					<option name='9' value='9'>9</option>
-					<option name='10' value='10'>10</option>
-					<option name='11' value='11'>11</option>
-					<option name='12' value='12'>12</option>
-					<option name='13' value='13'>13</option>
-					<option name='14' value='14'>14</option>
-					<option name='15' value='15'>15</option>
-					<option name='16' value='16'>16</option>
-					<option name='17' value='17'>17</option>
-					<option name='18' value='18'>18</option>
-					<option name='19' value='19'>19</option>
-					<option name='20' value='20'>20</option>
-					<option name='21' value='21'>21</option>
-					<option name='22' value='22'>22</option>
-					<option name='23' value='23'>23</option>
-					<option name='24' value='24'>24</option>
-					<option name='25' value='25'>25</option>
-					<option name='26' value='26'>26</option>
-					<option name='27' value='27'>27</option>
-					<option name='28' value='28'>28</option>
-					<option name='29' value='29'>29</option>
-					<option name='30' value='30'>30</option>
-					</select>
+                            <?php for ($i = 0; $i <= 254; $i++): ?>
+                            <option value="<?=$i;?>" <?php if ($i == $pconfig['advskew']) echo "selected"; ?>>
+                            <?=$i;?>
+                      </option>
+                            <?php endfor; ?>
+                      </select>
 					<br>The frequency that this machine will advertise.  0 = master.   Anything above 0 designates a backup.
 				  </td>
 				</tr>

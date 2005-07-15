@@ -102,9 +102,10 @@ $fwupplatforms = array('pfSense', 'net45xx', 'net48xx', 'generic-pc', 'wrap');
 
 /* IPsec defines */
 $my_identifier_list = array('myaddress' => 'My IP address',
-                                                        'address' => 'IP address',
-                                                        'fqdn' => 'Domain name',
-                                                        'user_fqdn' => 'User FQDN');
+				'address' => 'IP address',
+				'fqdn' => 'Domain name',
+				'user_fqdn' => 'User FQDN',
+				'dyn_dns' => 'Dynamic DNS');
 
 $p1_ealgos = array('des' => 'DES', '3des' => '3DES', 'blowfish' => 'Blowfish',
                                         'cast128' => 'CAST128');

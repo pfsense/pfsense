@@ -183,7 +183,7 @@ function showhide_black(tspan, tri) {
 							<li><a href="/restart_httpd.php" class="navlnk">Restart HTTPD</a></li>
 						</ul>
 					</li>
-					<? php endif ?>
+					<?php endif ?>
 					<li>
 						<div>Diagnostics</div>
 						<ul id="diag">

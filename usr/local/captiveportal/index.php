@@ -65,8 +65,9 @@ if (!$clientmac && !isset($config['captiveportal']['nomacfilter'])) {
  */
 if($config['captiveportal']['allowedip'] <> "")
 	foreach($config['captiveportal']['allowedip'] as $ip) {
-		if($clientip == $ip)
+		if($clientip == $ip['ip']) {
 			$allowed_ip = true;
+		}
 	}
 
 if ($clientmac && portal_mac_fixed($clientmac) or $allowed_ip == true) {

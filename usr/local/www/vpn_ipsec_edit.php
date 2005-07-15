@@ -71,7 +71,10 @@ if (isset($id) && $a_ipsec[$id]) {
 	} else if (isset($a_ipsec[$id]['p1']['myident']['ufqdn'])) {
 		$pconfig['p1myidentt'] = 'user_fqdn';
 		$pconfig['p1myident'] = $a_ipsec[$id]['p1']['myident']['ufqdn'];
- 	}
+ 	} else if (isset($a_ipsec[$id]['p1']['myident']['dyn_dns'])) {
+		$pconfig['p1myidentt'] = 'dyn_dns';
+		$pconfig['p1myident'] = $a_ipsec[$id]['p1']['myident']['dyn_dns'];
+	}
 	
 	$pconfig['p1ealgo'] = $a_ipsec[$id]['p1']['encryption-algorithm'];
 	$pconfig['p1halgo'] = $a_ipsec[$id]['p1']['hash-algorithm'];
@@ -168,6 +171,11 @@ if ($_POST) {
 		$ufqdn = explode("@",$_POST['p1myident']);
 		if (!is_domain($ufqdn[1])) 
 			$input_errors[] = "A valid User FQDN in the form of user@my.domain.com for 'My identifier' must be specified.";
+	}	
+	if ($_POST['p1myidentt'] == "dyn_dns") {
+		$dyn_dns = explode("@",$_POST['p1myident']);
+		if (!is_domain($dyn_dns[1])) 
+			$input_errors[] = "A valid Dynamic DNS address for 'My identifier' must be specified.";
 	}
 	
 	if ($_POST['p1myidentt'] == "myaddress")
@@ -195,6 +203,9 @@ if ($_POST) {
 				break;
 			case 'user_fqdn':
 				$ipsecent['p1']['myident']['ufqdn'] = $_POST['p1myident'];
+				break;
+			case 'dyn_dns':
+				$ipsecent['p1']['myident']['dyn_dns'] = $_POST['p1myident'];
 				break;
 		}
 		

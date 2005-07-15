@@ -179,9 +179,11 @@
 			switch ($this->_dnsService) {
 				case 'dyndns':
 					if (preg_match('/notfqdn/i', $data)) {
-						$status = "Error: Not A FQDN!";
+						$status = "phpDynDNS: (Error) Not A FQDN!";
+					} else if (preg_match('/nochg/i', $data)) {
+						$status = "phpDynDNS: (Success) No Change In IP Address";
 					} else {
-						$status = "Success: Update Successful!";
+						$status = "phpDynDNS: (Unknown Response)";
 					}
 					break;
 				case 'dhs':
@@ -190,91 +192,100 @@
 					list($ip,$code) = split(":",$data);
 					switch ($code) {
 						case 0:
-							$status = "Success: IP address is current, no update performed.";
+							$status = "phpDynDNS: (Success) IP address is current, no update performed.";
 							break;
 						case 1:
-							$status = "Success: DNS hostname update successful.";
+							$status = "phpDynDNS: (Success) DNS hostname update successful.";
 							break;
 						case 2:
-							$status = "Error: Hostname supplied does not exist.";
+							$status = "phpDynDNS: (Error) Hostname supplied does not exist.";
 							break;
 						case 3:
-							$status = "Error: Invalid Username.";
+							$status = "phpDynDNS: (Error) Invalid Username.";
 							break;
 						case 4:
-							$status = "Error: Invalid Password.";
+							$status = "phpDynDNS: (Error) Invalid Password.";
 							break;
 						case 5:
-							$status = "Error: To many updates sent.";
+							$status = "phpDynDNS: (Error) To many updates sent.";
 							break;
 						case 6:
-							$status = "Error: Account disabled due to violation of No-IP terms of service.";
+							$status = "phpDynDNS: (Error) Account disabled due to violation of No-IP terms of service.";
 							break;
 						case 7:
-							$status = "Error: Invalid IP. IP Address submitted is improperly formatted or is a private IP address or is on a blacklist.";
+							$status = "phpDynDNS: (Error) Invalid IP. IP Address submitted is improperly formatted or is a private IP address or is on a blacklist.";
 							break;
 						case 8:
-							$status = "Error: Disabled / Locked Hostname.";
+							$status = "phpDynDNS: (Error) Disabled / Locked Hostname.";
 							break;
 						case 9:
-							$status = "Error: Host updated is configured as a web redirect and no update was performed.";
+							$status = "phpDynDNS: (Error) Host updated is configured as a web redirect and no update was performed.";
 							break;
 						case 10:
-							$status = "Error: Group supplied does not exist.";
+							$status = "phpDynDNS: (Error) Group supplied does not exist.";
 							break;
 						case 11:
-							$status = "Success: DNS group update is successful.";
+							$status = "phpDynDNS: (Success) DNS group update is successful.";
 							break;
 						case 12:
-							$status = "Success: DNS group is current, no update performed.";
+							$status = "phpDynDNS: (Success) DNS group is current, no update performed.";
 							break;
 						case 13:
-							$status = "Error: Update client support not available for supplied hostname or group.";
+							$status = "phpDynDNS: (Error) Update client support not available for supplied hostname or group.";
 							break;
 						case 14:
-							$status = "Error: Hostname supplied does not have offline settings configured.";
+							$status = "phpDynDNS: (Error) Hostname supplied does not have offline settings configured.";
 							break;
 						case 99:
-							$status = "Client disabled. Client should exit and not perform any more updates without user intervention.";
+							$status = "phpDynDNS: (Error) Client disabled. Client should exit and not perform any more updates without user intervention.";
 							break;
 						case 100:
-							$status = "Client disabled. Client should exit and not perform any more updates without user intervention.";
+							$status = "phpDynDNS: (Error) Client disabled. Client should exit and not perform any more updates without user intervention.";
+							break;
+						default:
+							$status = "phpDynDNS: (Unknown Response)";
 							break;
 					}
 					break;
 				case 'easydns':
 					if (preg_match('/NOACCESS/i', $data)) {
-						$status = "Authentication Failed: Username and/or Password was Incorrect.";
+						$status = "phpDynDNS: (Error) Authentication Failed: Username and/or Password was Incorrect.";
 					} else if (preg_match('/NOSERVICE/i', $data)) {
-						$status = "No Service: Dynamic DNS Service has been disabled for this domain.";
+						$status = "phpDynDNS: (Error) No Service: Dynamic DNS Service has been disabled for this domain.";
 					} else if (preg_match('/ILLEGAL INPUT/i', $data)) {
-						$status = "Illegal Input: Self-Explantory";
+						$status = "phpDynDNS: (Error) Illegal Input: Self-Explantory";
 					} else if (preg_match('/TOOSOON/i', $data)) {
-						$status = "Too Soon: Not Enough Time Has Elapsed Since Last Update";
+						$status = "phpDynDNS: (Error) Too Soon: Not Enough Time Has Elapsed Since Last Update";
 					} else if (preg_match('/NOERROR/i', $data)) {
-						$status = "Update Successful!";					
+						$status = "phpDynDNS: (Success) IP Updated Successfully!";					
+					} else {
+						$status = "phpDynDNS: (Unknown Response)";
 					}
 					break;
 				case 'hn':
 					break;
 				case 'zoneedit':
 					if (preg_match('/{700,799}/i', $data)) {
-						$status = "Update Failed!";
+						$status = "phpDynDNS: (Error) Update Failed!";
 					} else if (preg_match('/{200,201}/i', $data)) {
-						$status = "Update Successful!";
+						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";
+					} else {
+						$status = "phpDynDNS: (Unknown Response)";
 					}
 					break;
 				case 'dyns':
 					if (preg_match("/400/i", $data)) {
-						$status = "Bad Request: The URL was malformed. Required parameters were not provided.";
+						$status = "phpDynDNS: (Error) Bad Request - The URL was malformed. Required parameters were not provided.";
 					} else if (preg_match('/402/i', $data)) {
-						$status = "Update Too Soon: You have tried updating to quickly since last change.";
+						$status = "phpDynDNS: (Error) Update Too Soon - You have tried updating to quickly since last change.";
 					} else if (preg_match('/403/i', $data)) {
-						$status = "Database Error: There was a server-sided database error.";
+						$status = "phpDynDNS: (Error) Database Error - There was a server-sided database error.";
 					} else if (preg_match('/405/i', $data)) {
-						$status = "Hostname Error: The hostname (".$this->_dnsHost.") doesn't belong to you.";
+						$status = "phpDynDNS: (Error) Hostname Error - The hostname (".$this->_dnsHost.") doesn't belong to you.";
 					} else if (preg_match('/200/i', $data)) {
-						$status = "Update Successful!";
+						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";
+					} else {
+						$status = "phpDynDNS: (Unknown Response)";
 					}
 					break;
 			}
@@ -292,34 +303,37 @@
 				case 0:
 					break;
 				case 2:
-					$this->lastError = 'No Dynamic DNS Service provider was selected';
+					$this->lastError = 'phpDynDNS: (ERROR!) No Dynamic DNS Service provider was selected.';
 					if ($this->_errorVerbosity)
 						print "You did not select a Dynamic DNS service!";
 					break;
 				case 3:
-					$this->lastError = 'No Username Provided';
+					$this->lastError = 'phpDynDNS: (ERROR!) No Username Provided.';
 					if ($this->_errorVerbosity)
 						print "Error! - No Username Was Provided!";
 					break;
 				case 4:
-					$this->lastError = 'No Password Provided';
+					$this->lastError = 'phpDynDNS: (ERROR!) No Password Provided.';
 					if ($this->_errorVerbosity)
 						print "Error! - No Password Was Provided!";
 					break;
 				case 5:
-					$this->lastError = 'No Hostname Provided';
+					$this->lastError = 'phpDynDNS: (ERROR!) No Hostname Provided.';
 					if ($this->_errorVerbosity)
 						print "Error - No Hostname Was Provided!";
 					break;
 				case 6:
-					$this->lastError = 'The Dynamic DNS Service provided is not yet supported';
+					$this->lastError = 'phpDynDNS: (ERROR!) The Dynamic DNS Service provided is not yet supported.';
 					if ($this->_errorVerbosity)
 						print 'Dynamic DNS Service selected is not supported!';
 					break;
 				case 10:
-					$this->lastError = 'No Change Was Made. Not Updating Dynamic DNS Entry';
+					$this->lastError = 'phpDynDNS: (ERROR!) No Change Was Made. Not Updating Dynamic DNS Entry.';
 					if ($this->_errorVerbosity)
 						print 'There was no change in the WAN IP address and default timelimit has not expired. Dynamic DNS entry was not updated.';
+					break;
+				default:
+					$this->lastError = "phpDynDNS: (ERROR!) Unknown.";
 					break;
 			}
 			log_error($this->lasterror);

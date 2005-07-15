@@ -111,27 +111,9 @@ $intYear = $arrDT[5] + 1900;
 
 $pgtitle = "Diagnostics: Edit File";
 
+include("head.inc");
+
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-	<title><?=gentitle($pgtitle);?></title>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-	<link rel="stylesheet" type="text/css" href="/niftycssCode.css">
-	<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print">
-	<link href="gui.css" rel="stylesheet" type="text/css">
-	<link type="text/css" rel="stylesheet" href="/code-syntax-highlighter/SyntaxHighlighter.css"></link>
-	<script type="text/javascript" src="/niftyjsCode.js"></script>
-	<style>
-	/* @import url(SyntaxHighlighter.css); */
-	
-	body {
-	    font-family: Arial;
-	    font-size: 12px;
-	}
-	</style>
-    
-</head>
 
 <?php include("fbegin.inc"); ?>
 

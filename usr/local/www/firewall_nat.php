@@ -170,7 +170,7 @@ include("head.inc");
                   <td class="listt"><input type="checkbox" id="frc<?=$nnats;?>" name="rule[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$nnats;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
                   <td class="listt" align="center"></td>
                   <td class="listlr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
-                    <?php
+		    <?php
 			if (!$natent['interface'] || ($natent['interface'] == "wan"))
 				echo "WAN";
 			else
@@ -207,7 +207,8 @@ include("head.inc");
 								($natent['local-port']+$endport-$beginport);
 				  ?>
                   </td>
-                  <td class="listbg" onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';"><font color="#FFFFFFF">
+                  <td class="listbg" onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">
+		  <font color="#ffffff">
                     <?=htmlspecialchars($natent['descr']);?>&nbsp;
                   </td>
                   <td valign="middle" class="list" nowrap>

@@ -132,7 +132,7 @@ include("head.inc");
 					}
                                 ?>
                                 <td class="listbg">
-                                    <font color="#FFFFFFF">
+                                    <font color="#ffffff">
                                     <?= $pkg['descr'] ?>
                                 </td>
                                 <td valign="middle" class="list" nowrap>

@@ -129,7 +129,7 @@ $pkg_sizes = get_pkg_sizes();
 									<?= $index['version'] ?>
                                 </td>
                                 <td class="listbg">
-                                    <font color="#FFFFFFF">
+                                    <font color="#ffffff">
                                     <?= $index['descr'] ?>
                                 </td>
                                 <td valign="middle" class="list" nowrap>

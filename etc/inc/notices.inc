@@ -103,9 +103,13 @@ function close_notice($id) {
 			break;
 		}
 	}
-	$queueout = fopen($notice_path, "w");
-	fwrite($queueout, serialize($queue));
-	fclose($queueout);
+	if(count($queue) != 0) {
+		$queueout = fopen($notice_path, "w");
+        	fwrite($queueout, serialize($queue));
+        	fclose($queueout);
+	} else {
+		unlink_if_exists($notice_path);
+	}
 	return;
 }
 

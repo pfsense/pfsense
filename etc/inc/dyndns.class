@@ -20,16 +20,7 @@
 	 *    - _checkStatus()
 	 *    - _error()
 	 *    - _detectChange()
-	 * +----------------------------------------------------+
-	 *  Changelog
-	 *    - 12 July 05, DynDNS, DHS, No-IP working. At this
-	 *        point I have to assume that EasyDNS works due
-	 *        to the fact that I don't have an account with
-	 *        them. I followed their Dynamic DNS docs. There
-	 *        is no error checking for CURL events at this
-	 *        point, error checking will be added soon.
-	 *
-	 *    - 11 July 05, Initial Build of updateDNS
+	 *    - _debug()
 	 * +----------------------------------------------------+
 	 *  DynDNS   - Last Tested: 12 July 2005
 	 *  No-IP    - Last Tested: 12 July 2005
@@ -42,8 +33,8 @@
 	 *
 	 * @author 		E.Kristensen
 	 * @link    	http://www.idylldesigns.com/projects/phpdns/
-	 * @version 	0.4
-	 * @updated		12 July 05 at 17:28:34 GMT
+	 * @version 	0.5
+	 * @updated		16 July 05 at 17:59:12 GMT
 	 *
 	 */
 
@@ -183,6 +174,10 @@
 						$status = "phpDynDNS: (Error) Not A FQDN!";
 					} else if (preg_match('/nochg/i', $data)) {
 						$status = "phpDynDNS: (Success) No Change In IP Address";
+					} else if (preg_match('/good/i', $data)) {
+						$status = "phpDynDNS: (Success) IP Address Changed Successfully!";
+					} else if (preg_match('/noauth/i', $data)) {
+						$status = "phpDynDNS: (Error) User Authorization Failed";
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";
 						$this->_debug($data);
@@ -246,6 +241,7 @@
 							break;
 						default:
 							$status = "phpDynDNS: (Unknown Response)";
+							$this->_debug($data);
 							break;
 					}
 					break;
@@ -262,6 +258,7 @@
 						$status = "phpDynDNS: (Success) IP Updated Successfully!";					
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";
+						$this->_debug($data);
 					}
 					break;
 				case 'hn':
@@ -273,6 +270,7 @@
 						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";
+						$this->_debug($data);
 					}
 					break;
 				case 'dyns':
@@ -288,6 +286,7 @@
 						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";
+						$this->_debug($data);
 					}
 					break;
 			}
@@ -335,7 +334,8 @@
 						print 'There was no change in the WAN IP address and default timelimit has not expired. Dynamic DNS entry was not updated.';
 					break;
 				default:
-					$this->lastError = "phpDynDNS: (ERROR!) Unknown.";
+					$this->lastError = "phpDynDNS: (ERROR!) Unknown Response.";
+					$this->_debug($data);
 					break;
 			}
 			log_error($this->lasterror);
@@ -386,10 +386,7 @@
 					break;
 			}
 
-			if ( ($cacheIP != $wan_ip) ) {
-				
-			}
-
+			/* If IP addresses are different or 28 days have passed update record */
 			if ( ($cacheIP != $wan_ip) || ( ($currentTime - $cacheTime) > $time ) ) {
 				/* Write WAN IP to cache file */
 				$file = fopen($this->_changeFile, 'w');
@@ -403,9 +400,14 @@
 		}
 
 
-
+		/*
+		 * Private Funcation (added 16 July 05) [beta]
+		 *   - Writes debug information to a file.
+		 *   - This function is only called when a unknown response
+		 *   - status is returned from a DynDNS service provider.
+		 */
 		function _debug ($data) {
-			$string = date('m-d-y h:i:s').' - ['.$this->dnsService.'] - '.$data.'\n';
+			$string = date('m-d-y h:i:s').' - ['.$this->_dnsService.'] - '.$data;
 			$file = fopen($this->_debugFile, 'a');
 			fwrite($file, $string);
 			fclose($file);

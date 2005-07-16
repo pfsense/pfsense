@@ -288,9 +288,9 @@ function unlink_if_exists($fn) {
 	$to_do = glob($fn);
 	if(is_array($to_do)) {
 		foreach($to_do as $filename)
-			if (file_exists($filename) && !is_dir($filename)) unlink($filename);
+			@unlink($filename);
 	} else {
-		if (file_exists($fn)) unlink($fn);
+		@unlink($fn);
 	}
 }
 

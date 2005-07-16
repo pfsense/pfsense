@@ -49,7 +49,8 @@
 
 	class updatedns {
 		var $_changeFile = '/var/etc/dyndns.cache';
-		var $_UserAgent = 'User-Agent: php-dns-updater/0.4';
+		var $_debugFile = '/var/etc/dyndns.debug';
+		var $_UserAgent = 'User-Agent: phpDynDNS/0.4';
 		var $_errorVerbosity = 0;
 		var $_dnsService;
 		var $_dnsUser;
@@ -184,6 +185,7 @@
 						$status = "phpDynDNS: (Success) No Change In IP Address";
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";
+						$this->_debug($data);
 					}
 					break;
 				case 'dhs':
@@ -398,6 +400,15 @@
 			} else {
 				return FALSE;
 			}
+		}
+
+
+
+		function _debug ($data) {
+			$string = date('m-d-y h:i:s').' - ['.$this->dnsService.'] - '.$data.'\n';
+			$file = fopen($this->_debugFile, 'a');
+			fwrite($file, $string);
+			fclose($file);
 		}
 
 	}

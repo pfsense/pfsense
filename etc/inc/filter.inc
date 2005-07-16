@@ -216,15 +216,24 @@ function find_default_queue($interface) {
 	global $config;
 	$qconfig = $config;
 
+	/* quick return if we've already seen the default queue for this interface */
+	if (isset($queue_cache['defq'][$interface]))
+	return $queue_cache['defq'][$interface];
+
+	
 	if (is_array($qconfig['shaper']['queue'])) {
 		foreach ($qconfig['shaper']['queue'] as $queue) {
 			if(isset($queue['defaultqueue']) and ($queue['defaultqueue'] <> "")) {
 				/* If this is a child queue */
 				if(isset($queue['attachtoqueue'])) {
-					if(is_subqueue_used_on_interface($queue['attachtoqueue'], $interface))
+					if(is_subqueue_used_on_interface($queue['attachtoqueue'], $interface)) {
+						$queue_cache['defq'][$interface] = $queue['name'];
 						return $queue['name'];
-				} else
+					}
+				} else {
+					$queue_cache['defq'][$interface] = $queue['name'];
 					return $queue['name'];
+				}
 			}
 		}
 	}
@@ -232,14 +241,23 @@ function find_default_queue($interface) {
 
 function get_ack_queue($interface) {
 	global $config;
-	$qconfig = $config;
+	global $queue_cache;
+	
+	/* quick return if we've already seen the ack queue for this interface */
+	if (isset($queue_cache['ackq'][$interface]))
+	return $queue_cache['ackq'][$interface];
 
+	$qconfig = $config;
+	
 	if (is_array($qconfig['shaper']['queue'])) {
 		foreach ($qconfig['shaper']['queue'] as $queue) {
 			if(isset($queue['ack'])) 
 				if(isset($queue['attachtoqueue']))
-					if(is_subqueue_used_on_interface($queue['attachtoqueue'], $interface))
+					if(is_subqueue_used_on_interface($queue['attachtoqueue'], $interface)) {
+						/* Add to cache */
+						$queue_cache['ackq'][$interface] = $queue['name'];
 						return $queue['name'];
+					}
 		}
 	}
 }
@@ -1083,6 +1101,19 @@ function run_command_return_string($cmd) {
 	return $tmp;
 }
 
+function generate_user_filter_rule_arr($rule, $ngcounter) {
+	$ret = array();
+	$line = generate_user_filter_rule($rule, $ngcounter);
+	$ret['rule'] = $line;
+	if($rule['descr'] != "" and $line != "")
+	$ret['descr'] = "label \"USER_RULE: {$rule['descr']}\"";
+	else
+	$ret['descr'] = "label \"USER_RULE\"";
+	$ret['ackq'] = get_ack_queue($rule['interface']);
+		
+	return $ret;	
+}	
+
 function generate_user_filter_rule($rule, $ngcounter) {
 		global $config, $g;
 
@@ -1803,58 +1834,54 @@ EOD;
 
 	$ipfrules .= "\n# User-defined rules follow\n";
 
-	/* This is ugly, but we generate one anchor per queue */
-	if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
+	if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue']) && isset($config['filter']['rule'])) {
+		/* Pre-cache all our rules so we only have to generate them once */
+		/* XXX: billm - twice really, this needs to be made useable for "normal rules too" */
+		$rule_arr = array();
+		$ipfrules .= "# Anchors for rules that might be matched by queues\n";
+		foreach ($config['filter']['rule'] as $rule) {
+			$line = "";
+			if (!isset($rule['disabled'])) {
+				if ($rule['interface'] == "pptp") {
+					$n_pptp_units = $g['n_pptp_units'];
+					if($config['pptp']['n_pptp_units'] <> "")
+					$nif = $config['pptp']['n_pptp_units'];
+					for($xxx=0; $xxx < $n_pptp_units; $xxx++) {
+						/*
+						*   now that PPTP server are user rules, detect
+						*   that user is setting the pptp server rule
+						*   and setup for all netgraph interfaces
+						*/
+						$rule_arr[] = generate_user_filter_rule_arr($rule, $xxx);
+					}
+				} else {
+					$rule_arr[] = generate_user_filter_rule_arr($rule, 0);
+				}
+			}
+		}
+
+		/* This is ugly, but we generate one anchor per queue */
 		foreach ($config['shaper']['queue'] as $queue) {
 			/* Add anchor to rules */
 			$ipfrules .= "anchor {$queue['name']} tagged {$queue['name']}\n";
-
 			/* Create rules for anchors */
-                	$fd = fopen("{$g['tmp_path']}/{$queue['name']}.rules", "w");
+			$fd = fopen("{$g['tmp_path']}/{$queue['name']}.rules", "w");
 			/* aliases don't recurse to anchors */
 			$line = filter_generate_aliases();
 			fwrite($fd, $line);
-			if (isset($config['filter']['rule'])) {	
-				foreach ($config['filter']['rule'] as $rule) {
-					$line = "";
-					if (!isset($rule['disabled'])) {
-						if ($rule['interface'] == "pptp") {
-							$n_pptp_units = $g['n_pptp_units'];				
-							if($config['pptp']['n_pptp_units'] <> "")
-								$nif = $config['pptp']['n_pptp_units'];
-							for($xxx=0; $xxx < $n_pptp_units; $xxx++) {					
-								/*
-					 			 *   now that PPTP server are user rules, detect
-						 		 *   that user is setting the pptp server rule 
-                                        			 *   and setup for all netgraph interfaces
-                                       				 */
-								$line = generate_user_filter_rule($rule, $xxx);
-								$ackq = get_ack_queue($rule['interface']);
-								if($ackq != "")
-									$line .= " queue ({$queue['name']}, {$ackq}) ";
-								if($line <> "") 
-									$ipfrules .= $line . "\n";
-							}
-						} else {
-							$line = generate_user_filter_rule($rule, 0);
-								$ackq = get_ack_queue($rule['interface']);
-								if ($ackq != "")
-									$line .= " queue ({$queue['name']}, {$ackq}) ";
-							// label
-							if($rule['descr'] <> "" and $line <> "")
-								$line .= " label \"USER_RULE: " . $rule['descr'] . "\" ";
-							else					
-								$line .= " label \"USER_RULE\" ";
-						}
-					}
-					$line .= "\n";
-					fwrite($fd, $line);
-				}
+			foreach($rule_arr as $rule) {
+				if($rule['ackq'] != "")
+				$line = "{$rule['rule'] } queue ({$queue['name']}, {$rule['ackq']}) {$rule['descr']}\n";
+				else
+				$line = "{$rule['rule'] } queue {$queue['name']} {$rule['descr']}\n";
+				fwrite($fd, $line);
 			}
 			fclose($fd);
 		}
 	}
-	if (isset($config['filter']['rule'])) {	
+
+
+	if (isset($config['filter']['rule'])) {
 		foreach ($config['filter']['rule'] as $rule) {
 			$line = "";
 			if (!isset($rule['disabled'])) {

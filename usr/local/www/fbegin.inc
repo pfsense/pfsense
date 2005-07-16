@@ -67,11 +67,18 @@ function showhide_black(tspan, tri) {
 		<div id="header-left"></div>
 		<div id="header-right">
 			<span class="alert">
-				Alert Alert Alert Alert Alert Alert Alert Alert Alert
+<?
+			/**
+			 * Place code here for alert system, perhaps alerts from
+			 * pfsense.com for patches, security updates, etc...
+			 *
+			 */
+?>
+				&nbsp;
 			</span>
 			<span class="normal">
 				<span class="left">webConfigurator</span>
-				<span class="right">localhost.local</span>
+				<span class="right"><?=$config['system']['hostname'] . "." . $config['system']['domain'];?></span>
 			</span>
 		</div>
 	</div> <!-- Header DIV -->
@@ -92,8 +99,6 @@ function showhide_black(tspan, tri) {
 					<li>
 						<div>Interfaces<?php if (!isset($config['system']['webgui']['noassigninterfaces'])): ?> <a href="/interfaces_assign.php" class="navlnks">(assign)</a><?php endif; ?></div>
 						<ul>
-							<li><a href="/interfaces_lan.php" class="navlnk">LAN</a></li>
-							<li><a href="/interfaces_opt.php?index=1" class="navlnk">DMZ</a></li>
 							<li><a href="/interfaces_wan.php" class="navlnk">WAN</a></li>							
 							<li><a href="/interfaces_lan.php" class="navlnk">LAN</a></li>
 							<?php for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): if (!isset($config['interfaces']['opt' . $i]['ovpn'])): ?>

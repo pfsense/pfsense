@@ -35,13 +35,6 @@
 	require_once("functions.inc");
 
 	/* WAN IP address has changed */
-
-	/* make sure to wait until the boot scripts have finished
-	while (file_exists("{$g['varrun_path']}/booting")) {
-		sleep(1);
-	}
-        */
-
 	$curwanip = get_current_wan_address();
 
 	/*	dhclient or MPD told us that the IP address has changed;
@@ -61,9 +54,6 @@
 
 	/* resync ipfilter */
 	filter_resync();
-
-	/* flush NAT table */
-	//filter_flush_nat_table();
 
 	/* reconfigure IPsec tunnels */
 	vpn_ipsec_configure(true);

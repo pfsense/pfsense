@@ -86,9 +86,9 @@ function showhide_black(tspan, tri) {
 		<div id="left">
 			<div id="navigation">
 				<ul>
-					<li>
+					<li class="firstdrop">
 						<div>System</div>
-						<ul>
+						<ul class="subdrop">
 							<li><a href="/system_advanced.php" class="navlnk">Advanced</a></li>
 							<li><a href="/system_firmware_check.php" class="navlnk">Firmware</a></li>
 							<li><a href="/system.php" class="navlnk">General setup</a></li>
@@ -96,9 +96,10 @@ function showhide_black(tspan, tri) {
 							<li><a href="/system_routes.php" class="navlnk">Static routes</a></li>
 						</ul>
 					</li>
-					<li>
-						<div>Interfaces<?php if (!isset($config['system']['webgui']['noassigninterfaces'])): ?> <a href="/interfaces_assign.php" class="navlnks">(assign)</a><?php endif; ?></div>
-						<ul>
+					<li class="drop">
+						<div>Interfaces</div>
+						<ul class="subdrop">
+							<?php if (!isset($config['system']['webgui']['noassigninterfaces'])): ?><li><a href="/interfaces_assign.php" class="navlnks">(assign)</a></li><?php endif; ?>
 							<li><a href="/interfaces_wan.php" class="navlnk">WAN</a></li>							
 							<li><a href="/interfaces_lan.php" class="navlnk">LAN</a></li>
 							<?php for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): if (!isset($config['interfaces']['opt' . $i]['ovpn'])): ?>
@@ -107,9 +108,9 @@ function showhide_black(tspan, tri) {
 							<?php echo return_ext_menu("Interfaces"); ?>							
 						</ul>
 					</li>
-					<li>
+					<li class="drop">
 						<div>Firewall</div>
-						<ul>
+						<ul class="subdrop">
 							<li><a href="/firewall_aliases.php" class="navlnk">Aliases</a></li>
 							<li><a href="/firewall_nat.php" class="navlnk">NAT</a></li>
 							<li><a href="/firewall_rules.php" class="navlnk">Rules</a></li>              
@@ -118,9 +119,9 @@ function showhide_black(tspan, tri) {
 							<?php echo return_ext_menu("Firewall"); ?>
 						</ul>
 					</li>
-					<li>
+					<li class="drop">
 						<div>Services</div>
-						<ul>
+						<ul class="subdrop">
 							<?php if (isset($config['captiveportal']['enable'])): ?>
 							<li><a href="/services_captiveportal.php" class="navlnk">Captive portal</a></li>
 							<?php endif; ?>
@@ -133,17 +134,17 @@ function showhide_black(tspan, tri) {
 							<?php echo return_ext_menu("Services"); ?>
 						</ul>
 					</li>
-					<li>
+					<li class="drop">
 						<div>VPN</div>
-						<ul>
+						<ul class="subdrop">
 							<li><a href="/vpn_ipsec.php" class="navlnk">IPsec</a></li>
 							<li><a href="/vpn_pptp.php" class="navlnk">PPTP</a></li>
 							<?php echo return_ext_menu("VPN"); ?>
 						</ul>
 					</li>
-					<li>
+					<li class="drop">
 						<div>Status</div>
-						<ul>
+						<ul class="subdrop">
 							<?php if (isset($config['captiveportal']['enable'])): ?>
 							<li><a href="/status_captiveportal.php" class="navlnk">Captive portal</a></li>
 							<?php endif; ?>
@@ -179,16 +180,16 @@ function showhide_black(tspan, tri) {
 						</ul>
 					</li>
 					<?php if(isset($config['developers'])): ?>
-					<li>
+					<li class="drop">
 						<div>Developers</div>
-						<ul>
+						<ul class="subdrop">
 							<li><a href="/restart_httpd.php" class="navlnk">Restart HTTPD</a></li>
 						</ul>
 					</li>
 					<?php endif ?>
-					<li>
+					<li class="lastdrop">
 						<div>Diagnostics</div>
-						<ul id="diag">
+						<ul id="diag" class="subdrop">
 							<li><a href="/diag_backup.php" class="navlnk">Backup/Restore</a></li>
 							<li><a href="/exec.php" class="navlnk">Command Prompt</a></li>
 							<li><a href="/edit.php" class="navlnk">Edit File</a></li>

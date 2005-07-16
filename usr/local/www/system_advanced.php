@@ -266,6 +266,16 @@ function openwindow(url) {
                     <strong>This will enable the first serial port with 9600/8/N/1</strong>
                     </td>
                 </tr>
+                <tr>
+                  <td width="22%" valign="top">&nbsp;</td>
+                  <td width="78%">
+                    <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
+                  </td>
+                </tr>
+                </tr>
+                <tr>
+                  <td colspan="2" class="list" height="12"></td>
+                </tr>		
 		<?php endif ?>
 
 

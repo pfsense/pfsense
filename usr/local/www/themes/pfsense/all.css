@@ -40,7 +40,7 @@ form input {
 }
 #header-right .alert {
 	position: relative;
-	background: url('alert.gif') no-repeat;
+	/* background: url('alert.gif') no-repeat; */
 	background-position: 4px 2px;
 	color: #fff;
 	height: 17px;
@@ -68,6 +68,9 @@ form input {
 }
 
 #content {
+	border-top: 1px solid #FFFFFF;
+	margin-top: 0px;
+	padding-top: 0px;
 	width: 800px;
 }
 
@@ -104,7 +107,7 @@ form input {
 #navigation {
 	position: relative;
 	background-color: #000000;
-	top: 5px;
+	top: 0px;
 	left: 5px;
 	width: 157px;
 	padding-top: 6px;

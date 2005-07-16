@@ -276,6 +276,9 @@ EOD;
 				} else if (isset($tunnel['p1']['myident']['ufqdn'])) {
 					$myidentt = "user_fqdn";
 					$myident = $tunnel['p1']['myident']['ufqdn'];
+ 				} else if (isset($tunnel['p1']['myident']['dyn_dns'])) {
+					$myidentt = "dyn_dns";
+					$myident = gethostbyname($tunnel['p1']['myident']['dyn_dns']);
  				}
 				
 				if (isset($tunnel['p1']['authentication_method'])) {

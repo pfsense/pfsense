@@ -92,12 +92,27 @@ if ($_POST) {
 		if($pkg['custom_add_php_command']) {
 			if($pkg['donotsave'] <> "" or $pkg['preoutput'] <> "") {
 			?>
+
+<?
+/* 
+ *   if user has selected a custom template, use it.
+ *   otherwise default to pfsense tempalte
+ */
+if($config['template'] <> "")
+	$g['template'] = $config['template'];
+else
+	$g['template'] = "pfsense";
+
+?>
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title><?=$pgtitle;?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link href="gui.css" rel="stylesheet" type="text/css">
+	<title><?=$pgtitle;?></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" href="/templates/<?php echo $g['template']; ?>/all.css" media="all" />
+	<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print" />
+	<script type="text/javascript" src="/niftyjsCode.js"></script>
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">

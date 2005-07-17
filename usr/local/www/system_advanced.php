@@ -281,7 +281,7 @@ function openwindow(url) {
 
 
                 <tr>
-                  <td colspan="2" valign="top" class="listtopic">Template</td>
+                  <td colspan="2" valign="top" class="listtopic">Theme</td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">&nbsp;</td>

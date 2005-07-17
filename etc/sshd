@@ -44,9 +44,10 @@
 	 */
 	$files_to_check = array('ssh_host_dsa_key','ssh_host_dsa_key.pub','ssh_host_key','ssh_host_key.pub','ssh_host_rsa_key','ssh_host_rsa_key.pub','/root/.authorized_keys');
 	foreach($files_to_check as $f2c) {
-		if(file_size($f2c)==0) {
-			mwexec("rm /etc/ssh_host*");
-		}
+		if(file_exists($f2c))
+			if(file_size($f2c)==0) {
+				mwexec("rm /etc/ssh_host*");
+			}
 	}
 
 	if($argv[1] == "stop" || $argv[0] == "stop") {

@@ -274,14 +274,10 @@ function f(ta_id){
 
 } else {
 
+	$pgtitle = 'OpenVPN: Create Certificates';
+	include("head.inc");
 ?>
 
-    <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-    <html>
-    <head>
-    <title><?=gentitle("OpenVPN: Create Certificates");?></title>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-    <link href="gui.css" rel="stylesheet" type="text/css">
     <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
     <form action="vpn_openvpn_create_certs.php" method="post" name="iform" id="iform">
     <?php include("fbegin.inc"); ?>

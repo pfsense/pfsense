@@ -68,21 +68,25 @@
 			$this->_dnsHost = $dnsHost;
 			$this->_dnsIP = $dnsIP;
 
-			$change = $this->_detectChange();
-			if (!$change) $this->_error(10);
+			if ($this->_detectChange() == FALSE) $this->_error(10);
 
-			if ($this->_dnsService == 'dyndns' ||
-				$this->_dnsService == 'dhs' ||
-				$this->_dnsService == 'noip' ||
-				$this->_dnsService == 'easydns' ||
-				$this->_dnsService == 'hn' ||
-				$this->_dnsService == 'zoneedit' ||
-				$this->_dnsService == 'dyns')
-			{
-				$this->_update();
+			if ($this->_detectChange() == TRUE) {
+				if ($this->_dnsService == 'dyndns' ||
+					$this->_dnsService == 'dhs' ||
+					$this->_dnsService == 'noip' ||
+					$this->_dnsService == 'easydns' ||
+					$this->_dnsService == 'hn' ||
+					$this->_dnsService == 'zoneedit' ||
+					$this->_dnsService == 'dyns')
+				{
+					$this->_update();
+				} else {
+					$this->_error(6);
+				}
 			} else {
-				$this->_error(6);
+				$this->_error(10);
 			}
+
 		}
 
 
@@ -304,41 +308,30 @@
 				case 0:
 					break;
 				case 2:
-					$this->lastError = 'phpDynDNS: (ERROR!) No Dynamic DNS Service provider was selected.';
-					if ($this->_errorVerbosity)
-						print "You did not select a Dynamic DNS service!";
+					$error = 'phpDynDNS: (ERROR!) No Dynamic DNS Service provider was selected.';
 					break;
 				case 3:
-					$this->lastError = 'phpDynDNS: (ERROR!) No Username Provided.';
-					if ($this->_errorVerbosity)
-						print "Error! - No Username Was Provided!";
+					$error = 'phpDynDNS: (ERROR!) No Username Provided.';
 					break;
 				case 4:
-					$this->lastError = 'phpDynDNS: (ERROR!) No Password Provided.';
-					if ($this->_errorVerbosity)
-						print "Error! - No Password Was Provided!";
+					$error = 'phpDynDNS: (ERROR!) No Password Provided.';
 					break;
 				case 5:
-					$this->lastError = 'phpDynDNS: (ERROR!) No Hostname Provided.';
-					if ($this->_errorVerbosity)
-						print "Error - No Hostname Was Provided!";
+					$error = 'phpDynDNS: (ERROR!) No Hostname Provided.';
 					break;
 				case 6:
-					$this->lastError = 'phpDynDNS: (ERROR!) The Dynamic DNS Service provided is not yet supported.';
-					if ($this->_errorVerbosity)
-						print 'Dynamic DNS Service selected is not supported!';
+					$error = 'phpDynDNS: (ERROR!) The Dynamic DNS Service provided is not yet supported.';
 					break;
 				case 10:
-					$this->lastError = 'phpDynDNS: (ERROR!) No Change Was Made. Not Updating Dynamic DNS Entry.';
-					if ($this->_errorVerbosity)
-						print 'There was no change in the WAN IP address and default timelimit has not expired. Dynamic DNS entry was not updated.';
+					$error = 'phpDynDNS: No Change In My IP Address and/or 28 Days Has Not Past. Not Updating Dynamic DNS Entry.';
 					break;
 				default:
-					$this->lastError = "phpDynDNS: (ERROR!) Unknown Response.";
+					$error = "phpDynDNS: (ERROR!) Unknown Response.";
 					$this->_debug($data);
 					break;
 			}
-			log_error($this->lasterror);
+			$this->lastError = $error;
+			log_error($error);
 		}
 
 

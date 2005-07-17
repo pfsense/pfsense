@@ -18,7 +18,7 @@ form input {
 /* ID Based CSS Definitions */
 #header {
 	height: 70px;
-	width: 765px;
+	width: 800px;
 }
 #header-left {
 	position: relative;
@@ -72,6 +72,7 @@ form input {
 	margin-top: 0px;
 	padding-top: 0px;
 	width: 800px;
+	border-right: 1px solid #990000;
 }
 
 #footer {
@@ -79,7 +80,7 @@ form input {
 	top: 10px;
 	padding: 0px;
 	margin: 6px;
-	width: 765px;
+	width: 800px;
 	background-color: #990000;
 	text-align: center;
 	color: #ffffff;
@@ -97,9 +98,10 @@ form input {
 	float: left;
 }
 #right {
-	margin-left: 171px;
+	/*margin-left: 171px;*/
+	margin-left: 170px;
 	margin-top: 5px;
-	width: 650px;
+	width: 620px;
 }
 
 

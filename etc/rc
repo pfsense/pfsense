@@ -60,6 +60,11 @@ if [ ! -L /etc/resolv.conf ]; then
     ln -s /var/etc/resolv.conf /etc/resolv.conf    
 fi
 
+# Malloc debugging check
+if [ ! -L /etc/malloc.conf ]; then
+    ln -s aj /etc/malloc.conf
+fi
+
 if [ ! -L /etc/dhclient.conf ]; then
     rm -rf /etc/dhclient.conf
     ln -s /var/etc/dhclient.conf /etc/dhclient.conf

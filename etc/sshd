@@ -68,7 +68,15 @@
 	pclose($fd);
 
 	$sshConfigDir = "/etc/ssh";
-	
+
+	unset($config['ssh']['dsa_key']);
+	unset($config['ssh']['rsa_key']);
+	unset($config['ssh']['rsa1_key']);
+	unset($config['ssh']['dsa']);
+	unset($config['ssh']['rsa']);
+	unset($config['ssh']['rsa1']);
+	write_config("Clearing SSH keys from config.xml");
+
 	if (!file_exists("$sshConfigDir/ssh_host_key") and $config['ssh']['dsa'] == "") {
 		/* remove previous keys and regen later */
 		mwexec("rm /etc/ssh/ssh_host_*");

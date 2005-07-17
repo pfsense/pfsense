@@ -18,7 +18,7 @@ form input {
 /* ID Based CSS Definitions */
 #header {
 	height: 70px;
-	width: 765px;
+	width: 800px;
 }
 #header-left {
 	position: relative;
@@ -79,7 +79,7 @@ form input {
 	top: 10px;
 	padding: 0px;
 	margin: 6px;
-	width: 765px;
+	width: 800px;
 	background-color: #990000;
 	text-align: center;
 	color: #ffffff;
@@ -95,6 +95,9 @@ form input {
 #left {
 	padding-bottom: 10px;
 	margin-bottom: 10px;
+	width: 800px;
+	height: 25px;
+	border: 1px solid #990000;
 }
 #right {
 
@@ -104,9 +107,9 @@ form input {
 
 /* Style the List */
 #navigation {
-	background-color: transparent;
+	background: url('menu.gif') no-repeat;
 	/* width: 693px; */
-	width: 763px;
+	width: 800px;
 	padding: 0px;
 	height: 28px;
 }
@@ -116,12 +119,17 @@ form input {
 	list-style: none;
 	text-align: center;
 }
+#navigation ul#menu {
+	padding-top: 3px;
+	padding-left: 5px;
+}
+
 /* Style the List Elements */
 #navigation ul li {
 	float: left;
 	position: relative;
 	/* width: 7.5em; */
-	width: 8.27em;
+	width: 8.72em;
 }
 #navigation ul li div {
 	font-size: 1em;
@@ -153,7 +161,10 @@ form input {
 	cursor: pointer;
 }
 
-#navigation ul li,
+#navigation ul li {
+	background-color: transparent;
+	color: #FFF;
+}
 #navigation ul li ul li {
 	border: 1px solid #000;
 	background-color: #000;

@@ -288,11 +288,11 @@ function openwindow(url) {
                   <td width="78%" class="vtable">
 		    <select name="template">
 <?php
-			$files = return_dir_as_array("/usr/local/www/templates/");
+			$files = return_dir_as_array("/usr/local/www/themes/");
 			foreach($files as $f) {
 				if($f == "CVS") continue;
 				$selected = "";
-				if($f == $config['template'])
+				if($f == $config['theme'])
 					$selected = " SELECTED";
 				if($config['template'] == "" and $f == "pfsense")
 					$selceted = " SELECTED";

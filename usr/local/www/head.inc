@@ -6,10 +6,10 @@
  *   if user has selected a custom template, use it.
  *   otherwise default to pfsense tempalte
  */
-if($config['template'] <> "")
-	$g['template'] = $config['template'];
+if($config['theme'] <> "")
+	$g['theme'] = $config['theme'];
 else
-	$g['template'] = "pfsense";
+	$g['theme'] = "pfsense";
 ?>
 
 <html>

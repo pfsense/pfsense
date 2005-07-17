@@ -42,7 +42,7 @@
 	/*    if any of these files are 0 bytes then they are corrupted.
 	 *    remove them
 	 */
-	$files_to_check = array('ssh_host_dsa_key','ssh_host_dsa_key.pub','ssh_host_key','ssh_host_key.pub','ssh_host_rsa_key','ssh_host_rsa_key.pub');
+	$files_to_check = array('ssh_host_dsa_key','ssh_host_dsa_key.pub','ssh_host_key','ssh_host_key.pub','ssh_host_rsa_key','ssh_host_rsa_key.pub','/root/.authorized_keys');
 	foreach($files_to_check as $f2c) {
 		if(file_size($f2c)==0) {
 			mwexec("rm /etc/ssh_host*");
@@ -92,6 +92,7 @@
 	unset($config['ssh']['dsa']);
 	unset($config['ssh']['rsa']);
 	unset($config['ssh']['rsa1']);
+	unset($config['ssh']['ak']);
 	write_config("Clearing SSH keys from config.xml");
 
 	if (!file_exists("$sshConfigDir/ssh_host_key") and $config['ssh']['dsa'] == "") {

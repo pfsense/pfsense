@@ -26,7 +26,7 @@ form input {
 }
 #header-left {
 	position: relative;
-	background: url('logo.gif') no-repeat;
+	background: url('images/logo.gif') no-repeat;
 	background-position: center;
 	height: 65px;
 	width: 145px;
@@ -36,7 +36,7 @@ form input {
 }
 #header-right {
 	position: relative;
-	background: url('header.gif') no-repeat;
+	background: url('images/header.gif') no-repeat;
 	height: 70px;
 	color: #fff;
 	left: 0px;
@@ -44,7 +44,7 @@ form input {
 }
 #header-right .alert {
 	position: relative;
-	/* background: url('alert.gif') no-repeat; */
+	/* background: url('images/alert.gif') no-repeat; */
 	background-position: 4px 2px;
 	color: #fff;
 	height: 17px;
@@ -118,7 +118,7 @@ form input {
 
 /* Style the List */
 #navigation {
-	background: url('menu.gif') no-repeat;
+	background: url('images/menu.gif') no-repeat;
 	/* width: 693px; */
 	width: 800px;
 	padding: 0px;
@@ -169,7 +169,14 @@ form input {
 /* nested side drop menus within listed elements */
 #navigation ul li:hover ul { 
 	display: block;
+	cursor: hand;
+}
+#navigation ul li:hover {
+	cursor: hand;
 	cursor: pointer;
+}
+#navigation ul li:hover div {
+	text-decoration: underline;
 }
 
 #navigation ul li {
@@ -180,6 +187,9 @@ form input {
 	border: 1px solid #000;
 	background-color: #000;
 	color: #FFF;
+}
+#navigation ul li ul li a.navlnk:hover {
+	text-decoration: underline;
 }
 #navigation ul li.first {
 	border-right: 0px;

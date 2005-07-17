@@ -145,7 +145,6 @@ if (isBlank( $_POST['txtRecallBuffer'] )) {
    }
 //-->
 </script>
-<link href="gui.css" rel="stylesheet" type="text/css">
 <style>
 <!--
 

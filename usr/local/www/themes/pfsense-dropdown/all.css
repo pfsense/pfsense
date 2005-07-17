@@ -78,26 +78,6 @@ form input {
 	width: 800px;
 }
 
-#footer {
-	position: relative;
-	top: 10px;
-	padding: 0px;
-	margin: 6px;
-	margin-left: 0px;
-	margin-top: 2px;
-	width: 800px;
-	background-color: #990000;
-	text-align: center;
-	color: #ffffff;
-	font-size: 0.75em;
-	clear: both;
-	margin-bottom: 20px;
-}
-#footer p {
-	padding: 0px;
-	margin: 0px;
-}
-
 #left {
 	width: 800px;
 	height: 25px;
@@ -116,7 +96,25 @@ form input {
 	border-right: 1px solid #000000;
 }
 
-
+#footer {
+	position: relative;
+	top: 3px;
+	padding: 0px;
+	margin: 6px;
+	margin-left: 0px;
+	margin-top: 2px;
+	width: 800px;
+	background-color: #990000;
+	text-align: center;
+	color: #ffffff;
+	font-size: 0.75em;
+	clear: both;
+	margin-bottom: 20px;
+}
+#footer p {
+	padding: 0px;
+	margin: 0px;
+}
 
 /* Style the List */
 #navigation {

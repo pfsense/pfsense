@@ -85,7 +85,7 @@ function showhide_black(tspan, tri) {
 	<div id="content">
 		<div id="left">
 			<div id="navigation">
-				<ul>
+				<ul id="menu">
 					<li class="firstdrop">
 						<div>System</div>
 						<ul class="subdrop">

@@ -95,8 +95,9 @@
 	unset($config['ssh']['rsa1']);
 	unset($config['ssh']['ak']);
 	write_config("Clearing SSH keys from config.xml");
-
-	if (!file_exists("$sshConfigDir/ssh_host_key") and $config['ssh']['dsa'] == "") {
+	
+	//if (!file_exists("$sshConfigDir/ssh_host_key") and $config['ssh']['dsa'] == "") {
+	if (!file_exists("$sshConfigDir/ssh_host_key")) {
 		/* remove previous keys and regen later */
 		mwexec("rm /etc/ssh/ssh_host_*");
 		system("/usr/bin/ssh-keygen -t rsa1 -N '' -f $sshConfigDir/ssh_host_key");

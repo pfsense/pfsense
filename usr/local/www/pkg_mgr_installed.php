@@ -63,7 +63,6 @@ include("head.inc");
                   <td width="15%" class="listhdrr">Package Name</td>
                   <td width="20%" class="listhdrr">Category</td>
 		  <td width="10%" class="listhdrr">Package Version</td>
-                  <td width="10%" class="listhdrr">XML Version</td>
                   <td width="45%" class="listhdr">Description</td>
                 </tr>
 		<?php
@@ -105,30 +104,6 @@ include("head.inc");
 					    ?><td class="listlr"><?php
 					    echo $pkg['version'];
 					    ?></td><?php
-					}
-					$latest_xml = $currentvers[$pkg['name']]['xmlver'];
-					if(($latest_xml == false) and ($pkg['xmlver']) == false) {
-						?><td class="listlr"><?php
-						echo "Unknown.";
-						?></td><?php
-					} elseif($latest_xml == false) {
-						?><td class="listlr"><?php
-						echo "Current: Unknown.<br>Installed: {$pkg['xmlver']}";
-						?></td><?php
-					} elseif($pkg['xmlver'] > $latest_xml) {
-						?><td class="listbggrey"><font color="#FFFFFF"><?php
-                                                echo "Current: {$latest_xml}";
-                                                echo "<br>Installed: {$pkg['xmlver']}";
-                                                ?></td><?php
-					} elseif($pkg['xmlver'] < $latest_xml) {
-						?><td class="listbg"><font color="#FFFFFF"><?php
-	                                        echo "Current: {$latest_xml}";
-						echo "<br>Installed: {$pkg['xmlver']}";
-                            			?></td><?php
-					} else {
-						?><td class="listlr"><?php
-						echo $pkg['xmlver'];
-						?></td><?php
 					}
                                 ?>
                                 <td class="listbg">

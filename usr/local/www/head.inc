@@ -18,7 +18,7 @@ else
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
     <link rel="stylesheet" href="/themes/<?php echo $g['theme']; ?>/all.css" media="all" />
     <link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print">
-    <script type="text/javascript" src="/niftyjsCode.js"></script>
+	<script type="text/javascript" src="/themes/<?php echo $g['theme']; ?>/loader.js"></script>
 <?php if (!isset($closehead)){ ?>
 </head>
 <?php } ?>

@@ -16,6 +16,10 @@ form input {
 
 
 /* ID Based CSS Definitions */
+#wrapper {
+	
+}
+
 #header {
 	height: 70px;
 	width: 800px;
@@ -93,14 +97,13 @@ form input {
 }
 
 #left {
-	padding-bottom: 10px;
-	margin-bottom: 10px;
+
 	width: 800px;
 	height: 25px;
-	border: 1px solid #990000;
 }
 #right {
-
+	width: 785px;
+	margin: 0px auto;
 }
 
 

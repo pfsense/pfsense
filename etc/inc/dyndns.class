@@ -1,13 +1,17 @@
 <?
 	/*
-	 * PHP.updateDNS
+	 * PHP.updateDNS (pfSense version)
 	 *
 	 * +====================================================+
 	 *  Services Supported:
-	 *    - DynDns (dyndns.org)
+	 *    - DynDns (dyndns.org) [dynamic, static, custom)
 	 *    - DHSDns (dhs.org)
 	 *    - No-IP (no-ip.com)
 	 *    - EasyDNS (easydns.com)
+	 *    - DHS (www.dhs.org)
+	 *    - HN (hn.org)
+	 *    - DynS (dyns.org)
+	 *    - ZoneEdit (zoneedit.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with CURL Library
@@ -22,19 +26,21 @@
 	 *    - _detectChange()
 	 *    - _debug()
 	 * +----------------------------------------------------+
-	 *  DynDNS   - Last Tested: 12 July 2005
-	 *  No-IP    - Last Tested: 12 July 2005
-	 *  HN.org   - Last Tested: 12 July 2005
-	 *  EasyDNS  - Last Tested: NEVER
-	 *  DHS      - Last Tested: 12 July 2005
-	 *  ZoneEdit - Last Tested: NEVER
-	 *  Dyns     - Last Tested: NEVER
+	 *  DynDNS Dynamic - Last Tested: 12 July 2005
+	 *  DynDNS Static  - Last Tested: NEVER
+	 *  DynDNS Custom  - Last Tested: NEVER
+	 *  No-IP          - Last Tested: 12 July 2005
+	 *  HN.org         - Last Tested: 12 July 2005
+	 *  EasyDNS        - Last Tested: NEVER
+	 *  DHS            - Last Tested: 12 July 2005
+	 *  ZoneEdit       - Last Tested: NEVER
+	 *  Dyns           - Last Tested: NEVER
 	 * +====================================================+
 	 *
 	 * @author 		E.Kristensen
 	 * @link    	http://www.idylldesigns.com/projects/phpdns/
-	 * @version 	0.5
-	 * @updated		16 July 05 at 17:59:12 GMT
+	 * @version 	0.6
+	 * @updated		17 July 05 at 16:49:23 GMT
 	 *
 	 */
 
@@ -50,13 +56,14 @@
 		var $_dnsIP;
 		var $_dnsWildcard;
 		var $_dnsMX;
+		var $_dnsBackMX;
 		var $status;
 
 		/* 
 		 * Public Constructor Function (added 12 July 05) [beta]
 		 *   - Gets the dice rolling for the update. 
 		 */
-		function updatedns ($dnsService = '', $dnsHost = '', $dnsUser = '', $dnsPass = '', $dnsWildcard = '', $dnsMX = '') {
+		function updatedns ($dnsService = '', $dnsHost = '', $dnsUser = '', $dnsPass = '', $dnsWildcard = 'OFF', $dnsMX = '', $dnsBackMX = '') {
 			if (!$dnsService) $this->_error(2);
 			if (!$dnsUser) $this->_error(3);
 			if (!$dnsPass) $this->_error(4);
@@ -72,6 +79,8 @@
 				$this->_error(10);
 			} else {
 				if ($this->_dnsService == 'dyndns' ||
+					$this->_dnsService == 'dyndns-static' ||
+					$this->_dnsService == 'dyndns-custom' ||
 					$this->_dnsService == 'dhs' ||
 					$this->_dnsService == 'noip' ||
 					$this->_dnsService == 'easydns' ||
@@ -103,13 +112,45 @@
 					$needsIP = FALSE;
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
-					curl_setopt($ch, CURLOPT_URL, 'https://members.dyndns.org/nic/update?hostname='.$this->_dnsHost);
+					curl_setopt($ch, CURLOPT_URL, 'https://members.dyndns.org/nic/update?hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP.'&wildcard='.$this->_dnsWildcard.'&mx='.$this->_dnsMX.'&backmx=NO');
+					$data = curl_exec($ch);
+					curl_close($ch);
+					$this->_checkStatus($data);
+					break;
+				case 'dyndns-static':
+					$needsIP = FALSE;
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_URL, 'https://members.dyndns.org/nic/update?system=statdns&hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP.'&wildcard='.$this->_dnsWildcard.'&mx='.$this->_dnsMX.'&backmx=NO');
+					$data = curl_exec($ch);
+					curl_close($ch);
+					$this->_checkStatus($data);
+					break;
+				case 'dyndns-custom':
+					$needsIP = FALSE;
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_URL, 'https://members.dyndns.org/nic/update?system=custom&hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP.'&wildcard='.$this->_dnsWildcard.'&mx='.$this->_dnsMX.'&backmx=NO');
 					$data = curl_exec($ch);
 					curl_close($ch);
 					$this->_checkStatus($data);
 					break;
 				case 'dhs':
 					$needsIP = TRUE;
+						$post_data['hostscmd'] = 'edit';
+						$post_data['hostscmdstage'] = '2';
+						$post_data['type'] = '4';
+						$post_data['updatetype'] = 'Online';
+						$post_data['mx'] = $this->_dnsMX;
+						$post_data['mx2'] = '';
+						$post_data['txt'] = '';
+						$post_data['offline_url'] = '';
+						$post_data['cloak'] = 'Y';
+						$post_data['cloak_title'] = '';
+						$post_data['ip'] = $this->_dnsIP;
+						$post_data['domain'] = 'dyn.dhs.org';
+						$post_data['hostname'] = $this->_dnsHost;
+						$post_data['submit'] = 'Update';
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_URL, 'https://members.dhs.org/nic/hosts');
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
@@ -130,7 +171,7 @@
 					$needsIP = TRUE;
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
-					curl_setopt($ch, CURLOPT_URL, 'http://members.easydns.com/dyn/dyndns.php?hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP);
+					curl_setopt($ch, CURLOPT_URL, 'http://members.easydns.com/dyn/dyndns.php?hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP.'&wildcard='.$this->_dnsWildcard.'&mx='.$this->_dnsMX.'&backmx='.$this->_dnsBackMX);
 					$data = curl_exec($ch);
 					curl_close($ch);
 					$this->_checkStatus($data);
@@ -172,6 +213,34 @@
 		function _checkStatus($data) {
 			switch ($this->_dnsService) {
 				case 'dyndns':
+					if (preg_match('/notfqdn/i', $data)) {
+						$status = "phpDynDNS: (Error) Not A FQDN!";
+					} else if (preg_match('/nochg/i', $data)) {
+						$status = "phpDynDNS: (Success) No Change In IP Address";
+					} else if (preg_match('/good/i', $data)) {
+						$status = "phpDynDNS: (Success) IP Address Changed Successfully!";
+					} else if (preg_match('/noauth/i', $data)) {
+						$status = "phpDynDNS: (Error) User Authorization Failed";
+					} else {
+						$status = "phpDynDNS: (Unknown Response)";
+						$this->_debug($data);
+					}
+					break;
+				case 'dyndns-static':
+					if (preg_match('/notfqdn/i', $data)) {
+						$status = "phpDynDNS: (Error) Not A FQDN!";
+					} else if (preg_match('/nochg/i', $data)) {
+						$status = "phpDynDNS: (Success) No Change In IP Address";
+					} else if (preg_match('/good/i', $data)) {
+						$status = "phpDynDNS: (Success) IP Address Changed Successfully!";
+					} else if (preg_match('/noauth/i', $data)) {
+						$status = "phpDynDNS: (Error) User Authorization Failed";
+					} else {
+						$status = "phpDynDNS: (Unknown Response)";
+						$this->_debug($data);
+					}
+					break;
+				case 'dyndns-custom':
 					if (preg_match('/notfqdn/i', $data)) {
 						$status = "phpDynDNS: (Error) Not A FQDN!";
 					} else if (preg_match('/nochg/i', $data)) {
@@ -361,6 +430,12 @@
 
 			switch ($this->_dnsService) {
 				case 'dyndns':
+					$time = '2419200';
+					break;
+				case 'dyndns-static':
+					$time = '2419200';
+					break;
+				case 'dyndns-custom':
 					$time = '2419200';
 					break;
 				case 'dhs':

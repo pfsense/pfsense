@@ -48,7 +48,7 @@ $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
 $pconfig['schedulertype'] = $config['system']['schedulertype'];
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
-$pconfig['template'] = $config['system']['template'];
+$pconfig['theme'] = $config['system']['theme'];
 $pconfig['disablerendevouz'] = $config['system']['disablerendevouz'];
 $pconfig['enableserial'] = $config['system']['enableserial'];
 $pconfig['disablefirmwarecheck'] = isset($config['system']['disablefirmwarecheck']);
@@ -152,8 +152,8 @@ if ($_POST) {
 
                 $config['ipsec']['preferoldsa'] = $_POST['preferoldsa_enable'] ? true : false;
 	
-		/* pfSense templates */
-		$config['template'] = $_POST['template'];
+		/* pfSense themes */
+		$config['theme'] = $_POST['theme'];
 
 		write_config();
 
@@ -286,7 +286,7 @@ function openwindow(url) {
                 <tr>
                   <td width="22%" valign="top" class="vncell">&nbsp;</td>
                   <td width="78%" class="vtable">
-		    <select name="template">
+		    <select name="theme">
 <?php
 			$files = return_dir_as_array("/usr/local/www/themes/");
 			foreach($files as $f) {
@@ -294,7 +294,7 @@ function openwindow(url) {
 				$selected = "";
 				if($f == $config['theme'])
 					$selected = " SELECTED";
-				if($config['template'] == "" and $f == "pfsense")
+				if($config['theme'] == "" and $f == "pfsense")
 					$selceted = " SELECTED";
 				echo "<option{$selected}>{$f}</option>\n";
 			}

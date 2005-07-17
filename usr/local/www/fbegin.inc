@@ -179,7 +179,7 @@ function showhide_black(tspan, tri) {
 							<?php echo return_ext_menu("Status"); ?>							
 						</ul>
 					</li>
-					<?php if(isset($config['developers'])): ?>
+					<?php if(isset($config['system']['developer'])): ?>
 					<li class="drop">
 						<div>Developers</div>
 						<ul class="subdrop">

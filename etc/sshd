@@ -44,7 +44,7 @@
 	foreach($files_to_check as $f2c) {
 		if(file_exists("/etc/ssh/{$f2c}"))
 			if(file_size("/etc/ssh/{$f2c}")==0) {
-				mwexec("rm /etc/ssh_host*");
+				mwexec("rm /etc/ssh/ssh_host*");
 			}
 	}
 

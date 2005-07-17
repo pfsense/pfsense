@@ -112,12 +112,12 @@ if(is_array($versions)) {
 		} elseif($pastlatest) {
 			$newver = $version[count($version) - 1]['version'];
 ?>
-							<td class="listbggrey"><font color="#FFFFFFF"><?= $newver ?></td>
+							<td class="listbggrey"><font color="#FFFFFF"><?= $newver ?></td>
 <?php
 		} else {
 			$newver = $version[count($version) - 1]['version'];
 ?>
-							<td class="listbg"><font color="#FFFFFFF"><?= $newver ?></td>
+							<td class="listbg"><font color="#FFFFFF"><?= $newver ?></td>
 <?php
 		} 
 		if(!$pastlatest) {

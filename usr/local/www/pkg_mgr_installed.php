@@ -91,13 +91,13 @@ include("head.inc");
                                        		?></td><?php 
 					} elseif(strcmp($pkg['version'], $latest_package) > 0) {
                                             /* we're running a newer version of the package */
-					    ?><td class="listbggrey"><font color="#FFFFFFF"><?php
+					    ?><td class="listbggrey"><font color="#FFFFFF"><?php
                                             echo "Current: {$latest_version}";
                                             echo "<br>Installed: {$pkg['version']}";
 					    ?></td><?php
                                         } elseif(strcmp($pkg['version'], $latest_package) < 0) {
 					    /* our package is out of date */
-					    ?><td class="listbg"><font color="#FFFFFFF"><?php
+					    ?><td class="listbg"><font color="#FFFFFF"><?php
                                             echo "Current: {$latest_version}";
 					    echo "<br>Installed: {$pkg['version']}";
 					    ?></td><?php
@@ -116,12 +116,12 @@ include("head.inc");
 						echo "Current: Unknown.<br>Installed: {$pkg['xmlver']}";
 						?></td><?php
 					} elseif($pkg['xmlver'] > $latest_xml) {
-						?><td class="listbggrey"><font color="#FFFFFFF"><?php
+						?><td class="listbggrey"><font color="#FFFFFF"><?php
                                                 echo "Current: {$latest_xml}";
                                                 echo "<br>Installed: {$pkg['xmlver']}";
                                                 ?></td><?php
 					} elseif($pkg['xmlver'] < $latest_xml) {
-						?><td class="listbg"><font color="#FFFFFFF"><?php
+						?><td class="listbg"><font color="#FFFFFF"><?php
 	                                        echo "Current: {$latest_xml}";
 						echo "<br>Installed: {$pkg['xmlver']}";
                             			?></td><?php

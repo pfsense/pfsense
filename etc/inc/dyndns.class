@@ -39,7 +39,7 @@
 	 */
 
 	class updatedns {
-		var $_changeFile = '/var/etc/dyndns.cache';
+		var $_cacheFile = '/var/etc/dyndns.cache';
 		var $_debugFile = '/var/etc/dyndns.debug';
 		var $_UserAgent = 'User-Agent: phpDynDNS/0.4';
 		var $_errorVerbosity = 0;
@@ -348,11 +348,17 @@
 			$wan_ip = find_interface_ip($wan_if);
 			$this->_dnsIP = $wan_ip;
 
-			if (file_exists($this->_changeFile)) {
-				$file = fopen($this->_changeFile, 'r');
-				$contents = fread($file, filesize($this->_changeFile));
+			if (file_exists($this->_cacheFile)) {
+				$file = fopen($this->_cacheFile, 'r');
+				$contents = fread($file, filesize($this->_cacheFile));
 				fclose($file);
 				list($cacheIP,$cacheTime) = split(':', $contents);
+			} else {
+				$file = fopen($this->_cacheFile, 'w');
+				fwrite($file, '0.0.0.0:'.$currentTime);
+				fclose($file);
+				$cacheIP = '0.0.0.0';
+				$cacheTime = $currentTime;
 			}
 
 			switch ($this->_dnsService) {
@@ -382,7 +388,7 @@
 			/* If IP addresses are different or 28 days have passed update record */
 			if ( ($cacheIP != $wan_ip) || ( ($currentTime - $cacheTime) > $time ) ) {
 				/* Write WAN IP to cache file */
-				$file = fopen($this->_changeFile, 'w');
+				$file = fopen($this->_cacheFile, 'w');
 				fwrite($file, $wan_ip.':'.$currentTime);
 				fclose($file);
 

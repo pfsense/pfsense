@@ -115,8 +115,7 @@ include("head.inc");
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="30%" class="listhdrr">Virtual IP address</td>
-                  <td width="10%" class="listhdrr">Proxy ARP</td>
-                  <td width="10%" class="listhdrr">CARP</td>
+                  <td width="10%" class="listhdrr">Type</td>
                   <td width="40%" class="listhdr">Description</td>
                   <td width="10%" class="list"></td>
 				</tr>
@@ -130,10 +129,7 @@ include("head.inc");
 					?>
                   </td>
                   <td class="listlr" align="center" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
-                    <? if($vipent['mode'] == "proxyarp") echo "X"; else echo "&nbsp;";?>
-                  </td>
-                  <td class="listlr" align="center" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
-                    <? if($vipent['mode'] == "carp") echo "X"; else echo "&nbsp;";?>
+                    <? if($vipent['mode'] == "proxyarp") echo "<img src='/parp.gif' title='Proxy ARP'>"; else echo "<img src='/carp.gif' title='CARP'>";?>
                   </td>
                   <td class="listbg" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
                     <font color="#FFFFFF"><?=htmlspecialchars($vipent['descr']);?>&nbsp;
@@ -149,7 +145,7 @@ include("head.inc");
                 </tr>
                 <?php $i++; endforeach; ?>
                 <tr>
-                  <td class="list" colspan="4"></td>
+                  <td class="list" colspan="3"></td>
                   <td class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>

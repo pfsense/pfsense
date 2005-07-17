@@ -68,9 +68,9 @@
 			$this->_dnsHost = $dnsHost;
 			$this->_dnsIP = $dnsIP;
 
-			if ($this->_detectChange() == FALSE) $this->_error(10);
-
-			if ($this->_detectChange() == TRUE) {
+			if ($this->_detectChange() == FALSE) {
+				$this->_error(10);
+			} else {
 				if ($this->_dnsService == 'dyndns' ||
 					$this->_dnsService == 'dhs' ||
 					$this->_dnsService == 'noip' ||
@@ -83,8 +83,6 @@
 				} else {
 					$this->_error(6);
 				}
-			} else {
-				$this->_error(10);
 			}
 
 		}
@@ -394,6 +392,7 @@
 
 				return TRUE;
 			} else {
+
 				return FALSE;
 			}
 		}

@@ -25,6 +25,7 @@ if (($_POST['submit'] == "Download") && file_exists($_POST['dlPath'])) {
 }
 
 require("guiconfig.inc");
+require("head.inc");
 
 conf_mount_rw();
 

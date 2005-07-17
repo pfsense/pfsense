@@ -84,6 +84,7 @@ form input {
 	padding: 0px;
 	margin: 6px;
 	margin-left: 0px;
+	margin-top: 2px;
 	width: 800px;
 	background-color: #990000;
 	text-align: center;
@@ -100,15 +101,19 @@ form input {
 #left {
 	width: 800px;
 	height: 25px;
+	margin-bottom: 5px;
 }
 #right {
 	width: 770px;
 	margin-left: 5px;
 	margin-right: 5px;
+	margin-top: 4px;
+	padding-top: 1px;
+	padding-bottom: 15px;
 	padding-left: 10px;
 	padding-right: 10px;
-	border-left: 1px solid #99cccc;
-	border-right: 1px solid #99cccc;
+	border-left: 1px solid #000000;
+	border-right: 1px solid #000000;
 }
 
 

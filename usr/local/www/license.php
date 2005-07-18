@@ -146,9 +146,6 @@ include("head.inc");
               Copyright &copy; 2003-2004, Archie L. Cobbs, Michael Bretterklieber, Alexander Motin<br>
 All rights reserved.<br>
               <br>
-              ez-ipupdate (<a href="http://www.gusnet.cx/proj/ez-ipupdate/" target="_blank">http://www.gusnet.cx/proj/ez-ipupdate</a>)<br>
-              Copyright &copy; 1998-2001 Angus Mackay. All rights reserved.<br>
-              <br>
               Circular log support for FreeBSD syslogd (<a href="http://software.wwwi.com/syslogd/" target="_blank">http://software.wwwi.com/syslogd</a>)<br>
               Copyright &copy; 2001 Jeff Wheelhouse (jdw@wwwi.com)<br>
               <br>

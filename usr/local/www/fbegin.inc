@@ -122,9 +122,7 @@ function showhide_black(tspan, tri) {
 					<li class="drop">
 						<div>Services</div>
 						<ul class="subdrop">
-							<?php if (isset($config['captiveportal']['enable'])): ?>
 							<li><a href="/services_captiveportal.php" class="navlnk">Captive portal</a></li>
-							<?php endif; ?>
 							<li><a href="/services_dnsmasq.php" class="navlnk">DNS forwarder</a></li>
 							<li><a href="/services_dhcp_relay.php" class="navlnk">DHCP relay</a></li>
 							<li><a href="/services_dhcp.php" class="navlnk">DHCP server</a></li>

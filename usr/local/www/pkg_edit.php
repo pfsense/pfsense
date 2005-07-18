@@ -195,9 +195,10 @@ else
 
 		if($pkg['aftersaveredirect'] <> "") {
 		    header("Location:  " . $pkg['aftersaveredirect']);
-		} else {
-		    if(!$pkg['preoutput'])
-			header("Location:  pkg.php?xml=" . $xml);
+		} elseif(!$pkg['adddeleteeditpagefields']) {
+		    header("Location:  pkg_edit.php?xml={$xml}&id=0");
+		} elseif(!$pkg['preoutput']) {
+		    header("Location:  pkg.php?xml=" . $xml);
 		}
 		exit;
 	}

@@ -179,14 +179,6 @@ function showhide_black(tspan, tri) {
 							<?php echo return_ext_menu("Status"); ?>							
 						</ul>
 					</li>
-					<?php if(isset($config['system']['developer'])): ?>
-					<li class="drop">
-						<div>Developers</div>
-						<ul class="subdrop">
-							<li><a href="/restart_httpd.php" class="navlnk">Restart HTTPD</a></li>
-						</ul>
-					</li>
-					<?php endif ?>
 					<li class="lastdrop">
 						<div>Diagnostics</div>
 						<ul id="diag" class="subdrop">
@@ -199,6 +191,10 @@ function showhide_black(tspan, tri) {
 							<li><a href="/reboot.php" class="navlnk">Reboot system</a></li>
 							<li><a href="/diag_dump_states.php" class="navlnk">States</a></li>
 							<?php echo return_ext_menu("Diagnostics"); ?>
+							<?php if(isset($config['system']['developer'])): ?>
+							<li><hr width="80%"/></li>
+							<li><a href="/restart_httpd.php" class="navlnk">Restart HTTPD</a></li>
+							<?php endif ?>
 						</ul>
 					</li>
 				</ul>

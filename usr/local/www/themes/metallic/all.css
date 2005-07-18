@@ -77,8 +77,10 @@ form input {
 #content {
 	border-top: 1px solid #FFFFFF;
 	margin-top: 0px;
+	margin-left: 5px;
 	padding-top: 0px;
 	width: 800px;
+	background: url('images/horizontal.gif') repeat-y;
 }
 
 #left {
@@ -86,6 +88,7 @@ form input {
 	height: 1px;
 }
 #right {
+
 	width: 770px;
 	margin-top: 0px;
 	margin-left: 5px;
@@ -97,13 +100,16 @@ form input {
 }
 
 #footer {
+	background: url('images/footer.gif') no-repeat;
 	top: 8px;
 	padding: 0px;
+	padding-top: 10px;
 	margin: 6px;
 	margin-left: 0px;
 	margin-top: 2px;
 	width: 805px;
-	background-color: #990000;
+	height: 75px;
+	/* background-color: #990000; */
 	text-align: center;
 	color: #ffffff;
 	font-size: 0.75em;

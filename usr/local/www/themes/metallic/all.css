@@ -17,15 +17,16 @@ form input {
 
 /* ID Based CSS Definitions */
 #wrapper {
-	
+
 }
 
 #header {
 	background: url('images/header.jpg') no-repeat;
 	background-position: 4px;
-	height: 88px;
-	width: 805px;
+	height: 102px;
+	width: 808px;
 	margin-bottom: 5px;
+	z-index: 2;
 }
 #header-left {
 	position: relative;
@@ -75,7 +76,9 @@ form input {
 }
 
 #content {
-	border-top: 1px solid #FFFFFF;
+	position: relative;
+	top: -16px;
+	left: 4px;
 	margin-top: 0px;
 	margin-left: 5px;
 	padding-top: 0px;
@@ -88,33 +91,30 @@ form input {
 	height: 1px;
 }
 #right {
-
+	position: relative;
+	top: -10px;
 	width: 770px;
 	margin-top: 0px;
 	margin-left: 5px;
 	margin-right: 5px;
-	margin-bottom: 10px;
 	padding-top: 1px;
 	padding-left: 10px;
 	padding-right: 10px;
 }
 
 #footer {
+	position: relative;
 	background: url('images/footer.gif') no-repeat;
-	top: 8px;
-	padding: 0px;
-	padding-top: 10px;
-	margin: 6px;
-	margin-left: 0px;
-	margin-top: 2px;
+	top: -18px;
+	left: 6px;
 	width: 805px;
 	height: 75px;
-	/* background-color: #990000; */
-	text-align: center;
 	color: #ffffff;
-	font-size: 0.75em;
-	clear: both;
+	text-align: center;;
+	font-size: 0.9em;
+	padding-top: 17px;
 	margin-bottom: 20px;
+	clear: both;
 }
 #footer p {
 	padding: 0px;
@@ -126,8 +126,8 @@ form input {
 	/* background: url('images/menu.gif') no-repeat; */
 	/* width: 693px; */
 	position: relative;
-	top: -30px;
-	left: 2px;
+	top: -25px;
+	left: -1px;
 	width: 800px;
 	padding: 0px;
 	height: 28px;
@@ -159,6 +159,7 @@ form input {
 #navigation ul li ul {
 	display: none;
 	position: absolute; 
+	z-index: 1;
 	top: 2em;
 	left: 0px;
 	font-weight: normal;

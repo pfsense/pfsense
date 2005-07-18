@@ -156,8 +156,9 @@ include("head.inc");
 
 include("fbegin.inc");
 	if(!file_exists("/usr/local/www/themes/{$g['theme']}/no_big_logo"))
-		echo "<center><img src=\"logobig.jpg\"></center><br>";
-?>	
+		echo "<center><img src=\"logobig.jpg\"></center>";
+?>
+	   <br>
 	    <div id="niftyOutter" width="650">
             <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>

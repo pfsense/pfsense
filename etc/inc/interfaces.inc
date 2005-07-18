@@ -102,6 +102,7 @@ function interfaces_lan_configure() {
 			/*   this is not a valid mac address.  generate a
 			 *   temporary mac address so the machine can get online.
 			 */
+			echo "Generating new MAC address.";
 			$random_mac = generate_random_mac_address();
 			mwexec("/sbin/ifconfig " . escapeshellarg($lancfg['if']) .
 				" link " . escapeshellarg($random_mac));
@@ -216,6 +217,7 @@ function interfaces_optional_configure_if($opti) {
 				/*   this is not a valid mac address.  generate a
 				 *   temporary mac address so the machine can get online.
 				 */
+				echo "Generating new MAC address.";
 				$random_mac = generate_random_mac_address();
 				mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) .
 					" link " . escapeshellarg($random_mac));
@@ -465,6 +467,7 @@ function interfaces_wan_configure() {
 			/*   this is not a valid mac address.  generate a
 			 *   temporary mac address so the machine can get online.
 			 */
+			echo "Generating new MAC address.";
 			$random_mac = generate_random_mac_address();
 			mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) .
 				" link " . escapeshellarg($random_mac));

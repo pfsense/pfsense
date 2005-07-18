@@ -152,8 +152,12 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form>
-<?php include("fbegin.inc"); ?>
-	    <center><img src="logobig.jpg"></center>
+<?php
+
+include("fbegin.inc");
+	if(!file_exists("/usr/local/www/{$g['theme']}/no_big_logo"))
+		echo "<center><img src=\"logobig.jpg\"></center>";
+?>	
 	    <br>
 	    <div id="niftyOutter" width="650">
             <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">

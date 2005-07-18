@@ -155,7 +155,7 @@ include("head.inc");
 <?php
 
 include("fbegin.inc");
-	if(!file_exists("/usr/local/www/{$g['theme']}/no_big_logo"))
+	if(!file_exists("/usr/local/www/themes/{$g['theme']}/no_big_logo"))
 		echo "<center><img src=\"logobig.jpg\"></center>";
 ?>	
 	    <br>

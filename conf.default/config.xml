@@ -3,6 +3,7 @@
 <pfsense>
 	<version>1.4</version>
 	<lastchange></lastchange>
+	<theme>metallic</theme>
 	<system>
 		<optimization>normal</optimization>
 		<schedulertype>priq</schedulertype>

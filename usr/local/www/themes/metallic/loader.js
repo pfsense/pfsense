@@ -21,9 +21,9 @@ if (version == '') {
 }
 
 if (version < 7) {
-	document.write('<script type="text/javascript" src="/themes/pfsense-dropdown/javascript/ie7/ie7-standard-p.js"></script>');
+	document.write('<script type="text/javascript" src="/themes/metallic/javascript/ie7/ie7-standard-p.js"></script>');
 }
 
-document.write('<script type="text/javascript" src="/themes/pfsense-dropdown/javascript/niftyjsCode.js"></script>'); 
+document.write('<script type="text/javascript" src="/themes/metallic/javascript/niftyjsCode.js"></script>'); 
 
 // -->

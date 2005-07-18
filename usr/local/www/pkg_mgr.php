@@ -52,6 +52,16 @@ if ($_POST) {
     }
 }
 
+$pkg_info = get_pkg_info('all', array('name', 'category', 'website', 'version', 'status', 'descr'));
+if($pkg_info) {
+	$fout = fopen("{$g['tmp_path']}/pkg_info.cache", "w");
+	fwrite($fout, serialize($pkg_info));
+        $pkg_sizes = get_pkg_sizes();
+} else {
+	$using_cache = true;
+        $savemsg = "Unable to retrieve package info from {$g['xmlrpcbaseurl']}. Cached data will be used.";
+	$pkg_info = unserialize(@file_get_contents("{$g['tmp_path']}/pkg_info.cache"));
+}
 
 $pgtitle = "System: Package Manager";
 include("head.inc");
@@ -65,9 +75,6 @@ include("fbegin.inc");
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
-
-$pkg_info = get_pkg_info('all', array('name', 'category', 'website', 'version', 'status', 'descr'));
-$pkg_sizes = get_pkg_sizes();
 
 ?>
 
@@ -94,6 +101,9 @@ $pkg_sizes = get_pkg_sizes();
                 </tr>
 
 		<?php
+		 if(!$pkg_info) {
+			echo "<tr><td colspan=\"5\"><center>There are currently no available packages for installation.</td></tr>";
+		 } else {
 		 $pkgs = array();
 		 $instpkgs = array();
 		    if($config['installedpackages']['package'] != "")
@@ -117,16 +127,19 @@ $pkg_sizes = get_pkg_sizes();
                                     <?= $index['category'] ?>
     				</td>
 				<?php
-					$size = get_package_install_size($index['name'], $pkg_sizes);
-                               		$size = squash_from_bytes($size[$index['name']], 1);
+					if(!$using_cache) {
+						$size = get_package_install_size($index['name'], $pkg_sizes);
+                               			$size = squash_from_bytes($size[$index['name']], 1);
+					}
+					if(!$size) $size = "Unknown.";
 				?>
 				<td class="listlr">
-					<?= $size ?>
-				</td>
+                                 	<?= $size ?>
+                                </td>
 				<td class="listlr">
-									<?= $index['status'] ?>
-									<br>
-									<?= $index['version'] ?>
+					<?= $index['status'] ?>
+					<br>
+					<?= $index['version'] ?>
                                 </td>
                                 <td class="listbg">
                                     <font color="#ffffff">
@@ -141,6 +154,7 @@ $pkg_sizes = get_pkg_sizes();
 		    } else {
 			echo "<tr><td colspan=\"5\"><center>There are currently no available packages for installation.</td></tr>";
 		    }
+		}
 		?>
         </table>
 	</div>

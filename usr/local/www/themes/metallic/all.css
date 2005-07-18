@@ -77,7 +77,7 @@ form input {
 
 #content {
 	position: relative;
-	top: -16px;
+	top: -15px;
 	left: 4px;
 	margin-top: 0px;
 	margin-left: 5px;
@@ -126,11 +126,12 @@ form input {
 	/* background: url('images/menu.gif') no-repeat; */
 	/* width: 693px; */
 	position: relative;
-	top: -25px;
-	left: -1px;
+	top: -24px;
+	left: -4px;
 	width: 800px;
 	padding: 0px;
 	height: 28px;
+	z-index: 3;
 }
 #navigation ul {
 	padding: 0;
@@ -159,7 +160,7 @@ form input {
 #navigation ul li ul {
 	display: none;
 	position: absolute; 
-	z-index: 1;
+
 	top: 2em;
 	left: 0px;
 	font-weight: normal;

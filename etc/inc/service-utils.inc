@@ -128,6 +128,13 @@ function is_process_running($process) {
     return 0;
 }
 
+function restart_service_if_running($service) {
+	global $config;
+	if(is_service_running($service)) 
+		restart_service($service);
+	return;
+}
+
 function is_service_running($service, $ps = "") {
 	global $config;
 	if(!$ps) {

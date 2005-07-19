@@ -26,7 +26,7 @@ form input {
 }
 
 #header {
-	background: url('images/header.gif') no-repeat;
+	background: url('images/header.jpg') no-repeat;
 	background-position: 4px;
 	height: 102px;
 	width: 808px;
@@ -102,7 +102,7 @@ form input {
 	margin-top: 0px;
 	margin-left: 5px;
 	margin-right: 5px;
-	padding-top: 40px;
+	padding-top: 20px;
 	padding-left: 10px;
 	padding-right: 10px;
 	padding-bottom: 20px
@@ -168,9 +168,12 @@ form input {
 	position: absolute; 
 	top: 2em;
 	left: 0px;
+	width: 9.1em;
 	font-weight: normal;
 	background: transparent bottom left no-repeat; /* This is key to making the menu maintain visibility when not on a link */
-	padding: 0em 0 1em 0;
+	background-color: #000;
+	padding: 0em 0 0.5em 0;
+	padding-top: 0.2em;
 }
 /* to override top and left in browsers other than IE */
 /* which will position to the top right of the containing */
@@ -191,7 +194,7 @@ form input {
 	cursor: pointer;
 }
 #navigation ul li:hover div {
-	text-decoration: underline;
+	text-decoration: none;
 }
 
 #navigation ul li {
@@ -199,8 +202,8 @@ form input {
 	color: #FFF;
 }
 #navigation ul li ul li {
-	border: 0px solid #505050;
-	width: 10em;
+	border: 1px solid #505050;
+	width: 9em;
 	height: 1.6em;
 	line-height: 1.6em;
 	background: url('images/metal_bgr.gif') repeat-x;

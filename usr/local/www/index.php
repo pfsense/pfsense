@@ -159,6 +159,7 @@ include("fbegin.inc");
 		echo "<center><img src=\"logobig.jpg\"></center><br>";
 ?>
 	    <div id="niftyOutter" width="650">
+			<br/>
             <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td colspan="2" class="listtopic">System information</td>

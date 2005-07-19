@@ -350,19 +350,19 @@ While(!Connection_Aborted()) {
     echo "document.forms[0].uptime.value = '" . get_uptime() . "';\n";
     echo "document.forms[0].pfstate.value = '" . get_pfstate() . "';\n";
 
-    echo "document.cpuwidtha.style.width='" . $cpuUsage . "';\n";
-    echo "document.cpuwidthb.style.width='" . (100 - $cpuUsage) . "';\n";
+    echo "document.cpuwidtha.style.width='" . $cpuUsage . "px';\n";
+    echo "document.cpuwidthb.style.width='" . (100 - $cpuUsage) . "px';\n";
     echo "document.forms[0].cpumeter.value = '" . $cpuUsage . "%';\n";
 
-    echo "document.memwidtha.style.width='" . $memUsage . "';\n";
-    echo "document.memwidthb.style.width='" . (100 - $memUsage) . "';\n";
+    echo "document.memwidtha.style.width='" . $memUsage . "px';\n";
+    echo "document.memwidthb.style.width='" . (100 - $memUsage) . "px';\n";
     echo "document.forms[0].memusagemeter.value = '" . $memUsage . "%';\n";
 
     if (file_exists("/etc/48xx")) {
       /* Update temp. meter */
       $Temp = rtrim(`/usr/local/sbin/env4801 | grep Temp |cut -c24-25`);
-      echo "document.Tempwidtha.style.width='" . $Temp . "';\n";
-      echo "document.Tempwidthb.style.width='" . (100 - $Temp) . "';\n";
+      echo "document.Tempwidtha.style.width='" . $Temp . "px';\n";
+      echo "document.Tempwidthb.style.width='" . (100 - $Temp) . "px';\n";
       echo "document.forms[0].Tempmeter.value = '" . $Temp . "C';\n";
     }
 
@@ -370,8 +370,8 @@ While(!Connection_Aborted()) {
     exec("df -h | grep -w '/' | awk '{ print $5 }' | cut -d '%' -f 1", $dfout);
     $diskusage = trim($dfout[0]);
 
-    echo "document.Diskwidtha.style.width='" . $diskusage . "';\n";
-    echo "document.Diskwidthb.style.width='" . (100 - $diskusage) . "';\n";
+    echo "document.Diskwidtha.style.width='" . $diskusage . "px';\n";
+    echo "document.Diskwidthb.style.width='" . (100 - $diskusage) . "px';\n";
     echo "document.forms[0].Diskmeter.value = '" . $diskusage . "%';\n";
 */
 

@@ -3,6 +3,11 @@ html, body, td, th, input, select {
 	font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
 	font-size: 0.9em;
 }
+
+body {
+	margin: 5px auto;
+}
+
 form {
 	margin: 0px;
 }
@@ -14,10 +19,10 @@ form input {
 }
 
 
-
 /* ID Based CSS Definitions */
 #wrapper {
-
+	width: 815px;
+	margin: 5px auto;
 }
 
 #header {
@@ -97,9 +102,10 @@ form input {
 	margin-top: 0px;
 	margin-left: 5px;
 	margin-right: 5px;
-	padding-top: 20px;
+	padding-top: 40px;
 	padding-left: 10px;
 	padding-right: 10px;
+	padding-bottom: 20px
 }
 
 #footer {
@@ -160,7 +166,6 @@ form input {
 #navigation ul li ul {
 	display: none;
 	position: absolute; 
-
 	top: 2em;
 	left: 0px;
 	font-weight: normal;
@@ -195,7 +200,10 @@ form input {
 }
 #navigation ul li ul li {
 	border: 1px solid #505050;
-	background-color: #505050;
+	width: 10em;
+	height: 1.6em;
+	line-height: 1.6em;
+	background: url('images/metal_bgr.gif') repeat-x;
 	color: #FFF;
 }
 #navigation ul li ul li a.navlnk:hover {

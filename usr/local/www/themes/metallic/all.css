@@ -26,7 +26,7 @@ form input {
 }
 
 #header {
-	background: url('images/header.jpg') no-repeat;
+	background: url('images/header.gif') no-repeat;
 	background-position: 4px;
 	height: 102px;
 	width: 808px;
@@ -167,8 +167,8 @@ form input {
 	display: none;
 	position: absolute; 
 	top: 2em;
-	left: 0px;
-	width: 9.1em;
+	left: -2px;
+	width: 8.9em;
 	font-weight: normal;
 	background: transparent bottom left no-repeat; /* This is key to making the menu maintain visibility when not on a link */
 	background-color: #000;
@@ -203,7 +203,7 @@ form input {
 }
 #navigation ul li ul li {
 	border: 1px solid #505050;
-	width: 9em;
+	width: 8.8em;
 	height: 1.6em;
 	line-height: 1.6em;
 	background: url('images/metal_bgr.gif') repeat-x;

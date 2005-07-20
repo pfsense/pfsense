@@ -158,8 +158,9 @@ include("fbegin.inc");
 	if(!file_exists("/usr/local/www/themes/{$g['theme']}/no_big_logo"))
 		echo "<center><img src=\"logobig.jpg\"></center><br>";
 ?>
+<p class="pgtitle">System Overview</p>
+
 	    <div id="niftyOutter" width="650">
-			<br/>
             <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td colspan="2" class="listtopic">System information</td>

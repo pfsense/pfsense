@@ -147,8 +147,8 @@ While(!Connection_Aborted()) {
 
 		$packet_s = round(400 * (1 - $packet_sampled / $total_packets_s), 0);
 
-		echo "document.queue{$i}widthb.style.width='{$packet_s}';\n";
-		echo "document.queue{$i}widtha.style.width='" . (400 - $packet_s) . "';\n";
+		echo "document.queue{$i}widthb.style.width='{$packet_s}px';\n";
+		echo "document.queue{$i}widtha.style.width='" . (400 - $packet_s) . "px';\n";
 		$borrows_txt = "{$borrows} borrows";
 		$suspends_txt = "{$suspends} suspends";
 		$drops_txt = "${drops} drops";

@@ -5,6 +5,7 @@ html, body, td, th, input, select {
 }
 
 body {
+	background-color: #333333;
 	margin: 5px auto;
 }
 

@@ -1278,7 +1278,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			/* if user has selected a custom gateway, lets work with it */
 			if($rule['gateway'] <> "") {
 				$int = guess_interface_from_ip($rule['gateway']);
-				$line .= " route-to (" . $int . " " . $rg . ") ";
+				$line .= " route-to (" . $int . " " . $rule['gateway'] . ") ";
 			}
 			
 			/* Setup outgoing load balancing */

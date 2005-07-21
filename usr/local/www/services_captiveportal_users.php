@@ -255,20 +255,20 @@ END;
 <?php
 		}
 	}
-	echo <<<END
+	echo '
 		<tr>
                   <td class="list" colspan="3"></td>
                   <td class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
-                        <td valign="middle"><a href="services_captiveportal_users.php?act=new"><img src="./themes/".$g['theme']."/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+                        <td valign="middle"><a href="services_captiveportal_users.php?act=new"><img src="./themes/'.$g['theme'].'/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>
                   </td>
 	        </tr>
      </table>
    </div>
-END;
+	';
 }
 ?>
 

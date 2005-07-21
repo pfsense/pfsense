@@ -2,7 +2,14 @@
 <?php
 /* $Id$ */
 
+include("config.inc");
 include("guiconfig.inc");
+
+if($config['theme'] <> "")
+	$g['theme'] = $config['theme'];
+else
+	$g['theme'] = "pfsense";
+
 
 $url = 'progress.php?UPLOAD_IDENTIFIER='.  $_GET["UPLOAD_IDENTIFIER"] .'&e=1';
 

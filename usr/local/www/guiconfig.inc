@@ -47,6 +47,15 @@ require_once("auth.inc");
 require_once("config.inc");
 require_once("functions.inc");
 
+/*
+ *   if user has selected a custom template, use it.
+ *   otherwise default to pfsense tempalte
+ */
+if($config['theme'] <> "")
+        $g['theme'] = $config['theme'];
+else
+        $g['theme'] = "pfsense";
+
 $d_hostsdirty_path = $g['varrun_path'] . "/hosts.dirty";
 $d_natconfdirty_path = $g['varrun_path'] . "/nat.conf.dirty";
 $d_filterconfdirty_path = $g['varrun_path'] . "/filter.conf.dirty";

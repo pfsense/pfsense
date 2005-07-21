@@ -106,7 +106,8 @@ form input {
 	padding-top: 5px;
 	padding-left: 10px;
 	padding-right: 10px;
-	padding-bottom: 20px
+	padding-bottom: 20px;
+	min-height: 400px;
 }
 
 #footer {
@@ -114,7 +115,7 @@ form input {
 	background: url('images/footer.gif') no-repeat;
 	top: -18px;
 	left: 5px;
-	width: 805px;
+	width: 800px;
 	height: 75px;
 	color: #ffffff;
 	text-align: center;;

@@ -209,7 +209,6 @@ function enable_change(enable_over) {
     </td>
   </tr>
 </table>
-</div>
 </form>
 <script language="JavaScript">
 <!--

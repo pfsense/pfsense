@@ -52,7 +52,8 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr><td>
+ 	<tr>
+		<td>
 <?php
 	$tab_array = array();
 	$tab_array[0] = array("System", false, "diag_logs.php");
@@ -64,25 +65,30 @@ include("head.inc");
 	$tab_array[6] = array("Settings", false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
-  </td></tr>
-  <tr>
-    <td>
-	<div id="mainarea">
-		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
-		  <tr>
-			<td colspan="2" class="listtopic">
-			  Last <?=$nentries;?> IPSEC log entries</td>
-		  </tr>
-		  <tr><td><?php dump_clog($ipsec_logfile, $nentries, true, array("racoon")); ?>
-		<tr><td><br><form action="diag_logs.php" method="post">
-<input name="clear" type="submit" class="formbtn" value="Clear log"></td></tr>
-		</table>
-	</div>
-</form>
-	</td>
-  </tr>
+  		</td>
+	</tr>
+	<tr>
+    	<td>
+			<div id="mainarea">
+			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+		  		<tr>
+					<td colspan="2" class="listtopic">Last <?=$nentries;?> IPSEC log entries</td>
+		  		</tr>
+				<?php dump_clog($ipsec_logfile, $nentries, true, array("racoon")); ?>
+				<tr>
+					<td>
+						<br>
+						<form action="diag_logs.php" method="post">
+						<input name="clear" type="submit" class="formbtn" value="Clear log">
+						</form>
+					</td>
+				</tr>
+			</table>
+			</div>
+		</td>
+	</tr>
 </table>
-</div>
+
 <?php include("fend.inc"); ?>
 <script type="text/javascript">
 NiftyCheck();

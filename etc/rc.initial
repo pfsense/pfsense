@@ -103,7 +103,7 @@ case ${opmode} in
 10)
 	/usr/sbin/tcpdump -n -e -ttt -i pflog0
 	;;
-installer
+installer)
 	/scripts/lua_installer
 	;;
 99)

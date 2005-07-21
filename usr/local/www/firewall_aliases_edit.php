@@ -286,7 +286,7 @@ rowtype[2] = "select";
 			</select>
 			  <?php
 				if($counter > 0)
-					echo "<input type=\"image\" src=\"/x.gif\" onclick=\"removeRow(this); return false;\" value=\"Delete\">";
+					echo "<input type=\"image\" src=\"/themes/".$g['theme']."/images/icons/icon_x.gif\" onclick=\"removeRow(this); return false;\" value=\"Delete\">";
 			  ?>
 
 			</td></tr>
@@ -294,7 +294,7 @@ rowtype[2] = "select";
 
 		     </tbody>
 		    </table>
-			<a onClick="javascript:addRowTo('maintable'); typesel_change(); return false;" href="#"><img border="0" src="/plus.gif"></a>
+			<a onClick="javascript:addRowTo('maintable'); typesel_change(); return false;" href="#"><img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif"></a>
 		    </td>
                 </tr>
                 <tr>

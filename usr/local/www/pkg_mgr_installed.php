@@ -111,10 +111,10 @@ include("head.inc");
                                     <?= $pkg['descr'] ?>
                                 </td>
                                 <td valign="middle" class="list" nowrap>
-                                    <a onclick="return confirm('Do you really want to remove this package?')" href="pkg_mgr_install.php?mode=delete&pkg=<?= $pkg['name']; ?>"><img title="Remove this package." src="x.gif" width="17" height="17" border="0"></a>
+                                    <a onclick="return confirm('Do you really want to remove this package?')" href="pkg_mgr_install.php?mode=delete&pkg=<?= $pkg['name']; ?>"><img title="Remove this package." src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a>
                                     <br>
-				    <a href="pkg_mgr_install.php?mode=reinstallpkg&pkg=<?= $pkg['name']; ?>"><img title="Reinstall this package." src="reinstall_pkg.gif" width="17" height="17" border="0"</a>
-				    <a href="pkg_mgr_install.php?mode=reinstallxml&pkg=<?= $pkg['name']; ?>"><img title="Reinstall this package's GUI components." src="reinstall_xml.gif" width="17" height="17" border="0"</a>
+				    <a href="pkg_mgr_install.php?mode=reinstallpkg&pkg=<?= $pkg['name']; ?>"><img title="Reinstall this package." src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_pkg.gif" width="17" height="17" border="0"</a>
+				    <a href="pkg_mgr_install.php?mode=reinstallxml&pkg=<?= $pkg['name']; ?>"><img title="Reinstall this package's GUI components." src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_xml.gif" width="17" height="17" border="0"</a>
 				</td>
                             </tr>
                             <?php

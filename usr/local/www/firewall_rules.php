@@ -213,13 +213,13 @@ include("head.inc");
 							$textss = $textse = "";
 						}
 				  ?>
-				  <a href="?if=<?=$if;?>&act=toggle&id=<?=$i;?>"><img src="<?=$iconfn;?>.gif" width="11" height="11" border="0" title="click to toggle enabled/disabled status"></a>
+				  <a href="?if=<?=$if;?>&act=toggle&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0" title="click to toggle enabled/disabled status"></a>
 				  <?php if (isset($filterent['log'])):
 							$iconfn = "log_s";
 						if (isset($filterent['disabled']))
 							$iconfn .= "_d";
 				  	?>
-				  <br><img src="<?=$iconfn;?>.gif" width="11" height="15" border="0">
+				  <br><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="15" border="0">
 				  <?php endif; ?>
 				  </td>
                   <td class="listlr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
@@ -243,12 +243,12 @@ include("head.inc");
                   <td valign="middle" nowrap class="list">
 				    <table border="0" cellspacing="0" cellpadding="1">
 					<tr>
-					  <td><input name="move_<?=$i;?>" type="image" src="left.gif" width="17" height="17" title="move selected rules before this rule" onMouseOver="fr_insline(<?=$nrules;?>, true)" onMouseOut="fr_insline(<?=$nrules;?>, false)"></td>
-					  <td><a href="firewall_rules_edit.php?id=<?=$i;?>"><img src="e.gif" title="edit rule" width="17" height="17" border="0"></a></td>
+					  <td><input name="move_<?=$i;?>" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" width="17" height="17" title="move selected rules before this rule" onMouseOver="fr_insline(<?=$nrules;?>, true)" onMouseOut="fr_insline(<?=$nrules;?>, false)"></td>
+					  <td><a href="firewall_rules_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit rule" width="17" height="17" border="0"></a></td>
 					</tr>
 					<tr>
 					  <td align="center" valign="middle"></td>
-					  <td><a href="firewall_rules_edit.php?dup=<?=$i;?>"><img src="plus.gif" title="add a new rule based on this one" width="17" height="17" border="0"></a></td>
+					  <td><a href="firewall_rules_edit.php?dup=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add a new rule based on this one" width="17" height="17" border="0"></a></td>
 					</tr>
 					</table>
 				  </td>
@@ -261,7 +261,7 @@ include("head.inc");
 			  <span class="gray">
 			  No rules are currently defined for this interface.<br>
 			  All incoming connections on this interface will be blocked until you add pass rules.<br><br>
-			  Click the <a href="firewall_rules_edit.php?if=<?=$if;?>"><img src="plus.gif" title="add new rule" border="0" width="17" height="17" align="absmiddle"></a> button to add a new rule.</span>
+			  Click the <a href="firewall_rules_edit.php?if=<?=$if;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add new rule" border="0" width="17" height="17" align="absmiddle"></a> button to add a new rule.</span>
 			  </td>
 			  <?php endif; ?>
                 <tr id="fr<?=$nrules;?>">
@@ -277,12 +277,12 @@ include("head.inc");
 				    <table border="0" cellspacing="0" cellpadding="1">
 					<tr>
 				      <td>
-					  <?php if ($nrules == 0): ?><img src="left_d.gif" width="17" height="17" title="move selected rules to end" border="0"><?php else: ?><input name="move_<?=$i;?>" type="image" src="left.gif" width="17" height="17" title="move selected rules to end" onMouseOver="fr_insline(<?=$nrules;?>, true)" onMouseOut="fr_insline(<?=$nrules;?>, false)"><?php endif; ?></td>
+					  <?php if ($nrules == 0): ?><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="move selected rules to end" border="0"><?php else: ?><input name="move_<?=$i;?>" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" width="17" height="17" title="move selected rules to end" onMouseOver="fr_insline(<?=$nrules;?>, true)" onMouseOut="fr_insline(<?=$nrules;?>, false)"><?php endif; ?></td>
 					  <td></td>
 				    </tr>
 					<tr>
-					  <td><?php if ($nrules == 0): ?><img src="x_d.gif" width="17" height="17" title="delete selected rules" border="0"><?php else: ?><input name="del" type="image" src="x.gif" width="17" height="17" title="delete selected rules" onclick="return confirm('Do you really want to delete the selected rules?')"><?php endif; ?></td>
-					  <td><a href="firewall_rules_edit.php?if=<?=$if;?>"><img src="plus.gif" title="add new rule" width="17" height="17" border="0"></a></td>
+					  <td><?php if ($nrules == 0): ?><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="delete selected rules" border="0"><?php else: ?><input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="delete selected rules" onclick="return confirm('Do you really want to delete the selected rules?')"><?php endif; ?></td>
+					  <td><a href="firewall_rules_edit.php?if=<?=$if;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add new rule" width="17" height="17" border="0"></a></td>
 					</tr>
 				    </table>
 				  </td>
@@ -290,29 +290,29 @@ include("head.inc");
               </table>
 	      <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
-                  <td width="16"><img src="pass.gif" width="11" height="11"></td>
+                  <td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" width="11" height="11"></td>
                   <td>pass</td>
                   <td width="14"></td>
-                  <td width="16"><img src="block.gif" width="11" height="11"></td>
+                  <td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11"></td>
                   <td>block</td>
                   <td width="14"></td>
-                  <td width="16"><img src="reject.gif" width="11" height="11"></td>
+                  <td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_reject.gif" width="11" height="11"></td>
                   <td>reject</td>
                   <td width="14"></td>
-                  <td width="16"><img src="log.gif" width="11" height="11"></td>
+                  <td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_log.gif" width="11" height="11"></td>
                   <td>log</td>
                 </tr>
                 <tr>
-                  <td><img src="pass_d.gif" width="11" height="11"></td>
+                  <td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass_d.gif" width="11" height="11"></td>
                   <td nowrap>pass (disabled)</td>
                   <td>&nbsp;</td>
-                  <td><img src="block_d.gif" width="11" height="11"></td>
+                  <td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block_d.gif" width="11" height="11"></td>
                   <td nowrap>block (disabled)</td>
                   <td>&nbsp;</td>
-                  <td><img src="reject_d.gif" width="11" height="11"></td>
+                  <td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_reject_d.gif" width="11" height="11"></td>
                   <td nowrap>reject (disabled)</td>
                   <td>&nbsp;</td>
-                  <td width="16"><img src="log_d.gif" width="11" height="11"></td>
+                  <td width="16"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_log_d.gif" width="11" height="11"></td>
                   <td nowrap>log (disabled)</td>
                 </tr>
 		<tr>

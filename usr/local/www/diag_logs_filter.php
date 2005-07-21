@@ -156,9 +156,9 @@ include("head.inc");
 			<tr>
 			  <td class="listlr" nowrap align="middle">
 			  <?php if (strstr(strtolower($filterent['act']), "p"))
-			  			$img = "pass.gif";
+			  			$img = "/themes/".$g['theme']."/images/icons/icon_pass.gif";
 					 else
-					 	$img = "block.gif";
+					 	$img = "/themes/".$g['theme']."/images/icons/icon_block.gif";
 			 	?>
 			  <img src="<?=$img;?>" width="11" height="11" align="absmiddle">
 			  <?php if ($filterent['count']) echo $filterent['count'];?></td>

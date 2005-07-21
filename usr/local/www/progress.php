@@ -63,14 +63,14 @@ if (!$X) {
    <br>
 
    <table width="100%" height="15" colspacing="0" cellpadding="0" cellspacing="0" border="0" align="top" nowrap>
-	<td width="5" height="15" background="bar_left.gif" align="top"></td>
+	<td width="5" height="15" background="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" align="top"></td>
 	<td>
 		<table WIDTH="100%" height="15" colspacing="0" cellpadding="0" cellspacing="0" border="0" align="top" nowrap>
-			<td background="bar_gray.gif"><?echo("<img src='bar_blue.gif' height='15' WIDTH='$meter%'>");?></td>
+			<td background="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif"><?echo("<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='15' WIDTH='$meter%'>");?></td>
 		</table>
 
 	</td>
-	<td width="5" height="15" background="bar_right.gif" align="top"></td>
+	<td width="5" height="15" background="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" align="top"></td>
    </table>
 
 

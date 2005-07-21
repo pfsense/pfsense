@@ -176,13 +176,13 @@ include("head.inc");
                   <td class="listbg"><?=$spans;?><font color="#FFFFFF">
                     <?=htmlspecialchars($ipsecent['descr']);?>&nbsp;
                   <?=$spane;?></td>
-                  <td valign="middle" nowrap class="list"> <a href="vpn_ipsec_edit.php?id=<?=$i;?>"><img src="e.gif" title="edit tunnel" width="17" height="17" border="0"></a> 
-                    &nbsp;<a href="vpn_ipsec.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this tunnel?')"><img src="x.gif" title="delete tunnel" width="17" height="17" border="0"></a></td>
+                  <td valign="middle" nowrap class="list"> <a href="vpn_ipsec_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit tunnel" width="17" height="17" border="0"></a> 
+                    &nbsp;<a href="vpn_ipsec.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this tunnel?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="delete tunnel" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr> 
                   <td class="list" colspan="6"></td>
-                  <td class="list"> <a href="vpn_ipsec_edit.php"><img src="plus.gif" title="add tunnel" width="17" height="17" border="0"></a></td>
+                  <td class="list"> <a href="vpn_ipsec_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add tunnel" width="17" height="17" border="0"></a></td>
 				</tr>
               </table>
 	      </div>

@@ -232,7 +232,7 @@ include("head.inc");
 		</td>
 		<td valign="middle" class="list"> 
 		  <?php if (($ifname != 'lan') && ($ifname != 'wan')): ?>
-		  <a href="interfaces_assign.php?act=del&id=<?=$ifname;?>"><img src="x.gif" title="delete interface" width="17" height="17" border="0"></a> 
+		  <a href="interfaces_assign.php?act=del&id=<?=$ifname;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="delete interface" width="17" height="17" border="0"></a> 
 		  <?php endif; ?>
 		</td>
   </tr>
@@ -241,7 +241,7 @@ include("head.inc");
   <tr>
 	<td class="list" colspan="2"></td>
 	<td class="list" nowrap>
-	<a href="interfaces_assign.php?act=add"><img src="plus.gif" title="add interface" width="17" height="17" border="0"></a>
+	<a href="interfaces_assign.php?act=add"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add interface" width="17" height="17" border="0"></a>
 	</td>
   </tr>
   <?php else: ?>

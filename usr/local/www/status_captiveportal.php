@@ -105,7 +105,7 @@ captiveportal_unlock();
     <td class="listr"><?php if ($cpent[4]) echo htmlspecialchars(date("m/d/Y H:i:s", $cpent[4]));?></td>
 	<?php endif; ?>
 	<td valign="middle" class="list" nowrap>
-	<a href="?order=<?=$_GET['order'];?>&showact=<?=$_GET['showact'];?>&act=del&id=<?=$cpent[1];?>" onclick="return confirm('Do you really want to disconnect this client?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
+	<a href="?order=<?=$_GET['order'];?>&showact=<?=$_GET['showact'];?>&act=del&id=<?=$cpent[1];?>" onclick="return confirm('Do you really want to disconnect this client?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
   </tr>
 <?php endforeach; ?>
 </table>

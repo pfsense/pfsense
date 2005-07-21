@@ -86,13 +86,13 @@ include("head.inc");
                   <td class="listlr">
                     <?=htmlspecialchars($secretent['ident']);?>
                   </td>
-                  <td class="list" nowrap> <a href="vpn_ipsec_ca_edit.php?id=<?=$i;?>"><img src="e.gif" title="edit certificate" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="vpn_ipsec_ca.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this certificate?')"><img src="x.gif" title="delete certificate" width="17" height="17" border="0"></a></td>
+                  <td class="list" nowrap> <a href="vpn_ipsec_ca_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit certificate" width="17" height="17" border="0"></a>
+                     &nbsp;<a href="vpn_ipsec_ca.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this certificate?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="delete certificate" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr> 
                   <td class="list"></td>
-                  <td class="list"> <a href="vpn_ipsec_ca_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
+                  <td class="list"> <a href="vpn_ipsec_ca_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 				</tr>
               </table>
 	</div>

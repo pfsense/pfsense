@@ -152,8 +152,8 @@ Click the MAC address to wake up a computer. <br>
                   <td valign="middle" nowrap class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
-                        <td valign="middle"><a href="services_wol_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a></td>
-                        <td valign="middle"><a href="services_wol.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this entry?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
+                        <td valign="middle"><a href="services_wol_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
+                        <td valign="middle"><a href="services_wol.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this entry?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>
                   </td>
@@ -164,7 +164,7 @@ Click the MAC address to wake up a computer. <br>
                   <td class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
-                        <td valign="middle"><a href="services_wol_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
+                        <td valign="middle"><a href="services_wol_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>
                   </td>

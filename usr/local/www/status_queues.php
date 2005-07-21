@@ -82,10 +82,10 @@ if(!isset($config['shaper']['enable'])) {
 			<nobr>
 <?php
 			$cpuUsage = 0;
-			echo "<img src='bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
-			echo "<img src='bar_blue.gif' height='15' name='queue{$i}widtha' id='queue{$i}widtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
-			echo "<img src='bar_gray.gif' height='15' name='queue{$i}widthb' id='queue{$i}widthb' width='" . (400 - $cpuUsage) . "' border='0' align='absmiddle'>";
-			echo "<nobr><img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
+			echo "<img src='./themes/".$g['theme']."/images/misc/bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
+			echo "<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='15' name='queue{$i}widtha' id='queue{$i}widtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
+			echo "<img src='./themes/".$g['theme']."/images/misc/bar_gray.gif' height='15' name='queue{$i}widthb' id='queue{$i}widthb' width='" . (400 - $cpuUsage) . "' border='0' align='absmiddle'>";
+			echo "<nobr><img src='./themes/".$g['theme']."/images/misc/bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
 			echo "</nobr></td></tr>";
 			echo "<tr><td bgcolor=\"#DDDDDD\" colspan=\"7\">";
 			echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";

@@ -205,7 +205,7 @@ if($_GET['act']=="new" || $_GET['act']=="edit"){
                   <td width="22%" valign="top" class="vncell">Expiration Date</td>
                   <td width="78%" class="vtable">
                     <input name="expirationdate" type="text" class="formfld" id="expirationdate" size="10" value="<? echo $user['expirationdate']; ?>">
-                    <a href="javascript:NewCal('expirationdate','mmddyyyy')"><img src="cal.gif" width="16" height="16" border="0" alt="Pick a date"></a>
+                    <a href="javascript:NewCal('expirationdate','mmddyyyy')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_cal.gif" width="16" height="16" border="0" alt="Pick a date"></a>
                     <br> <span class="vexpl">enter nothing if account doesnt expire, otherwhise enter the expiration date in us-format: mm/dd/yyyy</span></td>
                 </tr>
                 <tr>
@@ -246,8 +246,8 @@ END;
                   <td valign="middle" nowrap class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
-                        <td valign="middle"><a href="services_captiveportal_users.php?act=edit&username=<?php echo $username; ?>"><img src="e.gif" width="17" height="17" border="0"></a></td>
-                        <td valign="middle"><a href="services_captiveportal_users.php?act=delete&username=<?php echo $username; ?>" onclick="return confirm('Do you really want to delete this User?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
+                        <td valign="middle"><a href="services_captiveportal_users.php?act=edit&username=<?php echo $username; ?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
+                        <td valign="middle"><a href="services_captiveportal_users.php?act=delete&username=<?php echo $username; ?>" onclick="return confirm('Do you really want to delete this User?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>
                   </td>
@@ -261,7 +261,7 @@ END;
                   <td class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
-                        <td valign="middle"><a href="services_captiveportal_users.php?act=new"><img src="plus.gif" width="17" height="17" border="0"></a></td>
+                        <td valign="middle"><a href="services_captiveportal_users.php?act=new"><img src="./themes/".$g['theme']."/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>
                   </td>

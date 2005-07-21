@@ -105,11 +105,11 @@ include("head.inc");
 	<tr>
 	  <td class="listlr" ondblclick="document.location='services_captiveportal_ip_edit.php?id=<?=$i;?>';">
 		<?php if($ip['dir'] == "to")
-			echo "any <img src=\"in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\">";
+			echo "any <img src=\"./themes/".$g['theme']."/images/icons/icon_in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\">";
 		?>
 		<?=strtolower($ip['ip']);?>
 		<?php if($ip['dir'] == "from")
-			echo "<img src=\"in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\"> any";
+			echo "<img src=\"./themes/".$g['theme']."/images/icons/icon_in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\"> any";
 		?>
 	  </td>
 	  <td class="listbg" ondblclick="document.location='services_captiveportal_ip_edit.php?id=<?=$i;?>';">
@@ -118,8 +118,8 @@ include("head.inc");
 	  <td valign="middle" nowrap class="list">
             <table border="0" cellspacing="0" cellpadding="1">
               <tr>
-                <td valign="middle"><a href="services_captiveportal_ip_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a></td>
-		<td valign="middle"><a href="services_captiveportal_ip.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this address?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
+                <td valign="middle"><a href="services_captiveportal_ip_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
+		<td valign="middle"><a href="services_captiveportal_ip.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this address?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
               </tr>
             </table>
           </td>
@@ -130,7 +130,7 @@ include("head.inc");
 	  <td class="list">
             <table border="0" cellspacing="0" cellpadding="1">
               <tr>
-                <td valign="middle"><a href="services_captiveportal_ip_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
+                <td valign="middle"><a href="services_captiveportal_ip_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
               </td>
             </table>
           </td>
@@ -142,14 +142,14 @@ include("head.inc");
 	  Adding allowed IP addresses will allow IP access to/from these addresses through the captive portal without being taken to the portal page. This can be used for a web server serving images for the portal page or a DNS server on another network, for example. By specifying <em>from</em> addresses, it may be used to always allow pass-through access from a client behind the captive portal.</p>
 	  <table border="0" cellspacing="0" cellpadding="0">
 		<tr>
-		  <td><span class="vexpl">any <img src="in.gif" width="11" height="11" align="absmiddle"> x.x.x.x </span></td>
+		  <td><span class="vexpl">any <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_in.gif" width="11" height="11" align="absmiddle"> x.x.x.x </span></td>
 		  <td><span class="vexpl">All connections <strong>to</strong> the IP address are allowed</span></td>
 		</tr>
 		<tr>
 		  <td colspan="5" height="4"></td>
 		</tr>
 		<tr>
-		  <td>x.x.x.x <span class="vexpl"><img src="in.gif" width="11" height="11" align="absmiddle"></span> any&nbsp;&nbsp;&nbsp; </td>
+		  <td>x.x.x.x <span class="vexpl"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_in.gif" width="11" height="11" align="absmiddle"></span> any&nbsp;&nbsp;&nbsp; </td>
 		  <td><span class="vexpl">All connections <strong>from</strong> the IP address are allowed </span></td>
 		</tr>
 	  </table></td>

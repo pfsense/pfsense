@@ -121,16 +121,16 @@ if(is_array($config['virtualip']['vip'])) {
 		echo "<tr>";
 		$align = "valign='middle'";
 		if($carp_enabled == false) {
-			$icon = "<img {$align} src='/block.gif'>";
+			$icon = "<img {$align} src='/themes/".$g['theme']."/images/icons/icon_block.gif'>";
 			$status = "DISABLED";
 			$carp_int = "carp" . $carpint;
 		} else {
 			if($status == "MASTER") {
-				$icon = "<img {$align} src='/pass.gif'>";
+				$icon = "<img {$align} src='/themes/".$g['theme']."/images/icons/icon_pass.gif'>";
 			} else if($status == "BACKUP") {
-				$icon = "<img {$align} src='/pass_d.gif'>";
+				$icon = "<img {$align} src='/themes/".$g['theme']."/images/icons/icon_pass_d.gif'>";
 			} else if($status == "INIT") {
-				$icon = "<img {$align} src='/log.gif'>";
+				$icon = "<img {$align} src='/themes/".$g['theme']."/images/icons/icon_log.gif'>";
 			}
 		}
 		echo "<td class=\"listlr\"><center>" . $carp_int . "&nbsp;</td>";

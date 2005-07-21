@@ -127,13 +127,13 @@ include("head.inc");
 	   <td class="listbg"><?=$spans;?>
 	  	<?= $client['descr'];?>
 	  <?=$spane;?></td>
-	  <td valign="middle" nowrap class="list"> <a href="vpn_openvpn_cli_edit.php?id=<?=$i;?>"><img src="e.gif" title="edit client configuration" width="17" height="17" border="0"></a>
-		 &nbsp;<a href="vpn_openvpn_cli.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this client configuration?')"><img src="x.gif" title="delete client configuration" width="17" height="17" border="0"></a></td>
+	  <td valign="middle" nowrap class="list"> <a href="vpn_openvpn_cli_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit client configuration" width="17" height="17" border="0"></a>
+		 &nbsp;<a href="vpn_openvpn_cli.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this client configuration?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="delete client configuration" width="17" height="17" border="0"></a></td>
 	</tr>
   	<?php $i++; endforeach; ?>
 	<tr> 
 	  <td class="list" colspan="4">&nbsp;</td>
-	  <td class="list"> <a href="vpn_openvpn_cli_edit.php"><img src="plus.gif" title="add client configuration" width="17" height="17" border="0"></a></td>
+	  <td class="list"> <a href="vpn_openvpn_cli_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add client configuration" width="17" height="17" border="0"></a></td>
 	</tr>
     </table>
   </td>

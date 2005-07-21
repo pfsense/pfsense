@@ -255,9 +255,9 @@ include("head.inc");
 				  echo "<br>";
 				  echo "<a href=\"?act=toggle&id={$i}\">";
 				  if ($shaperent['direction'] == "in")
-				  	echo "<img src=\"in{$dis}.gif\" width=\"11\" height=\"11\" border=\"0\" style=\"margin-top: 5px\" title=\"click to toggle enabled/disabled status\">";
+				  	echo "<img src=\"./themes/".$g['theme']."/images/icons/icon_in{$dis}.gif\" width=\"11\" height=\"11\" border=\"0\" style=\"margin-top: 5px\" title=\"click to toggle enabled/disabled status\">";
 				  if ($shaperent['direction'] == "out")
-				  	echo "<img src=\"out{$dis}.gif\" width=\"11\" height=\"11\" border=\"0\" style=\"margin-top: 5px\" title=\"click to toggle enabled/disabled status\">";
+				  	echo "<img src=\"./themes/".$g['theme']."/images/icons/icon_out{$dis}.gif\" width=\"11\" height=\"11\" border=\"0\" style=\"margin-top: 5px\" title=\"click to toggle enabled/disabled status\">";
 
 				  echo "</a>" . $textse;;
 				  ?>
@@ -288,28 +288,28 @@ include("head.inc");
                         <td class="listbg" onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_shaper_edit.php?id=<?=$i;?>';"><font color="white">
                           <?=$textss;?><?=htmlspecialchars($shaperent['descr']);?><?=$textse;?>
                           &nbsp; </td>
-                        <td valign="middle" nowrap class="list"> <a href="firewall_shaper_edit.php?id=<?=$i;?>"><img src="e.gif" title="edit rule" width="17" height="17" border="0"></a>
+                        <td valign="middle" nowrap class="list"> <a href="firewall_shaper_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit rule" width="17" height="17" border="0"></a>
                           <?php if ($i > 0): ?>
-                          <a href="firewall_shaper.php?act=up&id=<?=$i;?>"><img src="up.gif" title="move up" width="17" height="17" border="0"></a>
+                          <a href="firewall_shaper.php?act=up&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_up.gif" title="move up" width="17" height="17" border="0"></a>
                           <?php else: ?>
-                          <img src="up_d.gif" width="17" height="17" border="0">
+                          <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_up_d.gif" width="17" height="17" border="0">
                           <?php endif; ?>
-			  <input name="move_<?=$i;?>" type="image" src="left.gif" width="17" height="17" title="move selected rules before this rule" onMouseOver="fr_insline(<?=$nrules;?>, true)" onMouseOut="fr_insline(<?=$nrules;?>, false)"><br>
+			  <input name="move_<?=$i;?>" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" width="17" height="17" title="move selected rules before this rule" onMouseOver="fr_insline(<?=$nrules;?>, true)" onMouseOut="fr_insline(<?=$nrules;?>, false)"><br>
 			  
-			  <input name="del" type="image" src="x.gif" width="17" height="17" title="delete selected mappings" onclick="return confirm('Do you really want to delete the selected mappings?')">
+			  <input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="delete selected mappings" onclick="return confirm('Do you really want to delete the selected mappings?')">
 			  
                           <?php if (isset($a_shaper[$i+1])): ?>
-                          <a href="firewall_shaper.php?act=down&id=<?=$i;?>"><img src="down.gif" title="move down" width="17" height="17" border="0"></a>
+                          <a href="firewall_shaper.php?act=down&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_down.gif" title="move down" width="17" height="17" border="0"></a>
                           <?php else: ?>
-                          <img src="down_d.gif" width="17" height="17" border="0">
+                          <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_down_d.gif" width="17" height="17" border="0">
                           <?php endif; ?>
-                          <a href="firewall_shaper_edit.php?dup=<?=$i;?>"><img src="plus.gif" title="add a new rule based on this one" width="17" height="17" border="0"></a>
+                          <a href="firewall_shaper_edit.php?dup=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add a new rule based on this one" width="17" height="17" border="0"></a>
                         </td>
                       </tr>
                       <?php $nrules++; $i++; endforeach; ?>
                       <tr>
                         <td class="list" colspan="8"></td>
-                        <td class="list"> <a href="firewall_shaper_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
+                        <td class="list"> <a href="firewall_shaper_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
                       </tr>
 		      <tr>
 		    <td colspan="8"><p><span class="red"><strong>Note:</strong></span><strong><br>

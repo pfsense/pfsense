@@ -63,7 +63,7 @@ include("head.inc");
 <form>
 <?php
 	echo "<center>";
-	echo "<a href=\"/\"><img src=\"/logo.gif\" border=\"0\"></a><p>";
+	echo "<a href=\"/\"><img src=\"./themes/".$g['theme']."/images/icons/icon_logo.gif\" border=\"0\"></a><p>";
 	echo "Welcome to pfSense!<p>";
 	echo "One moment while we start the initial setup wizard.<p>";
 	echo "Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal gui.<p>";
@@ -156,7 +156,7 @@ include("head.inc");
 
 include("fbegin.inc");
 	if(!file_exists("/usr/local/www/themes/{$g['theme']}/no_big_logo"))
-		echo "<center><img src=\"logobig.jpg\"></center><br>";
+		echo "<center><img src=\"./themes/".$g['theme']."/images/logobig.jpg\"></center><br>";
 ?>
 <p class="pgtitle">System Overview</p>
 
@@ -222,10 +222,10 @@ include("fbegin.inc");
 <?php
 $cpuUsage = get_cpuusage(get_cputicks(), get_cputicks());
 
-echo "<img src='bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
-echo "<img src='bar_blue.gif' height='15' name='cpuwidtha' id='cpuwidtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
-echo "<img src='bar_gray.gif' height='15' name='cpuwidthb' id='cpuwidthb' width='" . (100 - $cpuUsage) . "' border='0' align='absmiddle'>";
-echo "<img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
+echo "<img src='./themes/".$g['theme']."/images/misc/bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
+echo "<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='15' name='cpuwidtha' id='cpuwidtha' width='" . $cpuUsage . "' border='0' align='absmiddle'>";
+echo "<img src='./themes/".$g['theme']."/images/misc/bar_gray.gif' height='15' name='cpuwidthb' id='cpuwidthb' width='" . (100 - $cpuUsage) . "' border='0' align='absmiddle'>";
+echo "<img src='./themes/".$g['theme']."/images/misc/bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
 echo "<input style='border: 0px solid white;' size='30' name='cpumeter' id='cpumeter' value='{$cpuUsage}% (Updating in 3 seconds)'>";
 //echo $cpuUsage . "%";
 ?>
@@ -244,10 +244,10 @@ $freeMem = $memory[4];
 $usedMem = $totalMem - $freeMem;
 $memUsage = round(($usedMem * 100) / $totalMem, 0);
 
-echo " <img src='bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
-echo "<img src='bar_blue.gif' height='15' name='memwidtha' id='memwidtha' width='" . $memUsage . "' border='0' align='absmiddle'>";
-echo "<img src='bar_gray.gif' height='15' name='memwidthb' id='memwidthb' width='" . (100 - $memUsage) . "' border='0' align='absmiddle'>";
-echo "<img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
+echo " <img src='./themes/".$g['theme']."/images/misc/bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
+echo "<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='15' name='memwidtha' id='memwidtha' width='" . $memUsage . "' border='0' align='absmiddle'>";
+echo "<img src='./themes/".$g['theme']."/images/misc/bar_gray.gif' height='15' name='memwidthb' id='memwidthb' width='" . (100 - $memUsage) . "' border='0' align='absmiddle'>";
+echo "<img src='./themes/".$g['theme']."/images/misc/bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
 echo "<input style='border: 0px solid white;' size='30' name='memusagemeter' id='memusagemeter' value='{$memUsage}%'>";
 //echo $memUsage . "%";
 ?>
@@ -266,10 +266,10 @@ $swapUsage = ereg_replace('%', "", $swapUsage);
 $swapUsage = ereg_replace(' ', "", $swapUsage);
 $swapUsage = rtrim($swapUsage);
 
-echo "<img src='bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
-echo "<img src='bar_blue.gif' height='15' width='" . $swapUsage . "' border='0' align='absmiddle'>";
-echo "<img src='bar_gray.gif' height='15' width='" . (100 - $swapUsage) . "' border='0' align='absmiddle'>";
-echo "<img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
+echo "<img src='./themes/".$g['theme']."/images/misc/bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
+echo "<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='15' width='" . $swapUsage . "' border='0' align='absmiddle'>";
+echo "<img src='./themes/".$g['theme']."/images/misc/bar_gray.gif' height='15' width='" . (100 - $swapUsage) . "' border='0' align='absmiddle'>";
+echo "<img src='./themes/".$g['theme']."/images/misc/bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
 echo "<input style='border: 0px solid white;' size='30' name='swapusagemeter' id='swapusagemeter' value='{$swapUsage}%'>";
 //echo $swapUsage . "%";
 
@@ -288,10 +288,10 @@ echo "                <td width='75%' class='listr'>";
 // Initialize hw monitor
 exec("/usr/local/sbin/env4801 -i");
 $Temp = rtrim(`/usr/local/sbin/env4801 | grep Temp |cut -c24-25`);
-echo "<img src='bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
-echo "<img src='bar_blue.gif' height='15' name='Tempwidtha' id='tempwidtha' width='" . $Temp . "' border='0' align='absmiddle'>";
-echo "<img src='bar_gray.gif' height='15' name='Tempwidthb' id='tempwidthb' width='" . (100 - $Temp) . "' border='0' align='absmiddle'>";
-echo "<img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
+echo "<img src='./themes/".$g['theme']."/images/misc/bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
+echo "<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='15' name='Tempwidtha' id='tempwidtha' width='" . $Temp . "' border='0' align='absmiddle'>";
+echo "<img src='./themes/".$g['theme']."/images/misc/bar_gray.gif' height='15' name='Tempwidthb' id='tempwidthb' width='" . (100 - $Temp) . "' border='0' align='absmiddle'>";
+echo "<img src='./themes/".$g['theme']."/images/misc/bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
 echo "<input style='border: 0px solid white;' size='30' name='Tempmeter' id='Tempmeter' value='{$Temp}C'>";
 echo "                </td>";
 echo "              </tr>";
@@ -304,10 +304,10 @@ echo "              </tr>";
 exec("df -h | grep -w '/' | awk '{ print $5 }' | cut -d '%' -f 1", $dfout);
 $diskusage = trim($dfout[0]);
 
-echo "<img src='bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
-echo "<img src='bar_blue.gif' height='15' width='" . $diskusage . "' border='0' align='absmiddle'>";
-echo "<img src='bar_gray.gif' height='15' width='" . (100 - $diskusage) . "' border='0' align='absmiddle'>";
-echo "<img src='bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
+echo "<img src='./themes/".$g['theme']."/images/misc/bar_left.gif' height='15' width='4' border='0' align='absmiddle'>";
+echo "<img src='./themes/".$g['theme']."/images/misc/bar_blue.gif' height='15' width='" . $diskusage . "' border='0' align='absmiddle'>";
+echo "<img src='./themes/".$g['theme']."/images/misc/bar_gray.gif' height='15' width='" . (100 - $diskusage) . "' border='0' align='absmiddle'>";
+echo "<img src='./themes/".$g['theme']."/images/misc/bar_right.gif' height='15' width='5' border='0' align='absmiddle'> ";
 echo $diskusage . "%";
 ?>
 			</td>

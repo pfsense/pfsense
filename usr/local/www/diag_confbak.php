@@ -96,10 +96,10 @@ if(is_array($confvers)) {
 				<td class="listlr"> <?= $date ?></td>
                                 <td class="listlr"> <?= $desc ?></td>
 				<td valign="middle" class="list" nowrap>
-                                <a href="diag_confbak.php?newver=<?=$version['time'];?>"><img src="plus.gif" width="17" height="17" border="0"></a>
+                                <a href="diag_confbak.php?newver=<?=$version['time'];?>"><img src="/themes/<?= $g['theme']; ?>/icons/icon_plus.gif" width="17" height="17" border="0"></a>
                                 </td>
 				<td valign="middle" class="list" nowrap>
-				<a href="diag_confbak.php?rmver=<?=$version['time'];?>"><img src="x.gif" width="17" height="17" border="0"></a>
+				<a href="diag_confbak.php?rmver=<?=$version['time'];?>"><img src="/themes/<?= $g['theme']; ?>/icons/icon_x.gif" width="17" height="17" border="0"></a>
 			    </tr>
                <?php
                   } ?>

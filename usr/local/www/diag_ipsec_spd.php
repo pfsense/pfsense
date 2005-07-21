@@ -119,7 +119,7 @@ foreach ($spd as $sp): ?>
 	<tr>
 		<td class="listlr" valign="top"><?=htmlspecialchars($sp['src']);?></td>
 		<td class="listr" valign="top"><?=htmlspecialchars($sp['dst']);?></td>
-		<td class="listr" valign="top"><img src="<?=$sp['dir'];?>.gif" width="11" height="11" style="margin-top: 2px"></td>
+		<td class="listr" valign="top"><img src="/themes/<?= $g['theme']; ?>/icons/icon_<?=$sp['dir'];?>.gif" width="11" height="11" style="margin-top: 2px"></td>
 		<td class="listr" valign="top"><?=htmlspecialchars(strtoupper($sp['proto']));?></td>
 		<td class="listr" valign="top"><?=htmlspecialchars($sp['ep_src']);?> - <br>
 			<?=htmlspecialchars($sp['ep_dst']);?></td>
@@ -129,7 +129,7 @@ foreach ($spd as $sp): ?>
 			$args .= "&dst=" . rawurlencode($sp['dst']);
 			$args .= "&dir=" . rawurlencode($sp['dir']);
 		?>
-		  <a href="diag_ipsec_spd.php?act=del&<?=$args;?>" onclick="return confirm('Do you really want to delete this security policy?')"><img src="x.gif" width="17" height="17" border="0"></a>
+		  <a href="diag_ipsec_spd.php?act=del&<?=$args;?>" onclick="return confirm('Do you really want to delete this security policy?')"><img src="/themes/<?= $g['theme']; ?>/icons/icon_x.gif" width="17" height="17" border="0"></a>
 		</td>
 
 	</tr>
@@ -138,14 +138,14 @@ foreach ($spd as $sp): ?>
 <br>
 <table class="tabcont" border="0" cellspacing="0" cellpadding="6">
   <tr>
-	<td width="16"><img src="in.gif" width="11" height="11"></td>
+	<td width="16"><img src="/themes/<?= $g['theme']; ?>/icons/icon_in.gif" width="11" height="11"></td>
 	<td>incoming (as seen by firewall)</td>
   </tr>
   <tr>
 	<td colspan="5" height="4"></td>
   </tr>
   <tr>
-	<td><img src="out.gif" width="11" height="11"></td>
+	<td><img src="/themes/<?= $g['theme']; ?>/icons/icon_out.gif" width="11" height="11"></td>
 	<td>outgoing (as seen by firewall)</td>
   </tr>
 <?php else: ?>

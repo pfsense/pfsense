@@ -102,13 +102,13 @@ if($config['installedpackages']['service']) {
 		echo '<td valign="middle" class="list" nowrap>';
 		if($running) {
 			echo "<a href='status_services.php?mode=restartservice&service={$service['name']}'>";
-			echo "<img title='Restart Service' border='0' src='/service_restart.gif'></a> ";
+			echo "<img title='Restart Service' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_restart.gif'></a> ";
 			echo "<a href='status_services.php?mode=stopservice&service={$service['name']}'>";
-			echo "<img title='Stop Service' border='0' src='/service_stop.gif'> ";
+			echo "<img title='Stop Service' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_stop.gif'> ";
 			echo "</a>";
 		} else {
 			echo "<a href='status_services.php?mode=startservice&service={$service['name']}'> ";
-			echo "<img title='Start Service' border='0' src='/service_start.gif'></a> ";
+			echo "<img title='Start Service' border='0' src='./themes/".$g['theme']."/images/icons/icon_service_start.gif'></a> ";
 		}
 		echo '</td>';
 		echo '</tr>';

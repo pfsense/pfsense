@@ -456,7 +456,7 @@ if ($pkg['tabs'] <> "") {
 
 						$rowcounter++;
 						echo "<td>";
-						echo "<input type=\"image\" src=\"/x.gif\" onclick=\"removeRow(this); return false;\" value=\"Delete\">";
+						echo "<input type=\"image\" src=\"./themes/".$g['theme']."/images/icons/icon_x.gif\" onclick=\"removeRow(this); return false;\" value=\"Delete\">";
 						echo "</td>\n";
 						echo "</tr>\n";
 					}
@@ -494,7 +494,7 @@ if ($pkg['tabs'] <> "") {
 			  </tbody>
 			</table>
 
-		<br><a onClick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="/plus.gif"></a>
+		<br><a onClick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif"></a>
 		<script language="JavaScript">
 		<!--
 		field_counter_js = <?= $fieldcounter ?>;

@@ -50,11 +50,11 @@ include("head.inc");
 				if (table.rows[0].style.display == 'none') {
 					for (var r = 0; r < table.rows.length; r++)
 						table.rows[r].style.display = '';
-					img.src = "/tri_o_black.gif";
+					img.src = "./themes/<?= $g['theme']; ?>/images/misc/tri_o_black.gif";
 				} else {
 					for (var r = 0; r < table.rows.length; r++)
 						table.rows[r].style.display = 'none';
-					img.src = "/tri_c_black.gif";
+					img.src = "./themes/<?= $g['theme']; ?>/images/misc/tri_c_black.gif";
 				}
 			}
 		//-->
@@ -90,14 +90,14 @@ if(is_array($versions)) {
 		if($key == "current") continue;
 		$currentver = array_shift(explode('-', $currentvers[$key]['version']));
 		if($version == 1) {
-			$img = "pass.gif";
+			$img = "./themes/".$g['theme']."/images/icons/icon_pass.gif";
 			$pastlatest = true;
 		} elseif( strcmp($currentver , $version[count($version) - 1]['version']) ){
-			$img = "pass.gif";
+			$img = "./themes/".$g['theme']."/images/icons/icon_pass.gif";
 			$pastlatest = true;
 		} else {
 			$allinstall = true;
-			$img = "block.gif";
+			$img = "./themes/".$g['theme']."/images/icons/icon_block.gif";
 		}
 ?>
 						<tr valign="top">
@@ -123,7 +123,7 @@ if(is_array($versions)) {
 		if(!$pastlatest) {
 ?>
 							<td valign="middle" class="list" nowrap>
-								<a href="system_firmware_auto.php?category=<?=$key;?>"><img src="plus.gif" width="17" height="17" border="0"></a>
+								<a href="system_firmware_auto.php?category=<?=$key;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a>
 							</td>
 <?php
 		}
@@ -140,7 +140,7 @@ if(is_array($versions)) {
 					<br>
 					<table align="center" width="80%" border="0" cellpadding="0" cellspacing="0">
 						<tr>
-							<td align="center"><a href="javascript:toggleTable('updates', 'tri_updates')"><img src="/tri_c_black.gif" id="tri_updates" width="14" height="10" border="0"></a><strong><a href="javascript:toggleTable('updates', 'tri_updates')">Needed Updates</a></strong></td>
+							<td align="center"><a href="javascript:toggleTable('updates', 'tri_updates')"><img src="./themes/<?= $g['theme']; ?>/images/misc/tri_c_black.gif" id="tri_updates" width="14" height="10" border="0"></a><strong><a href="javascript:toggleTable('updates', 'tri_updates')">Needed Updates</a></strong></td>
 						</tr>
 						<tr>
 							<td>

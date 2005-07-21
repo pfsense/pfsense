@@ -214,11 +214,11 @@ include("head.inc");
                   <td valign="middle" class="list" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
-                        <td><a href="firewall_nat_edit.php?id=<?=$i;?>"><img src="e.gif" width="17" height="17" border="0"></a></td>
+                        <td><a href="firewall_nat_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                       <tr>
-                        <td><input onmouseover="fr_insline(<?=$nnats;?>, true)" onmouseout="fr_insline(<?=$nnats;?>, false)" name="move_<?=$i;?>" src="left.gif" title="move selected rules before this rule" height="17" type="image" width="17" border="0"></td>
-                        <td><a href="firewall_nat_edit.php?dup=<?=$i;?>"><img src="plus.gif" title="add a new nat based on this one" width="17" height="17" border="0"></a></td>
+                        <td><input onmouseover="fr_insline(<?=$nnats;?>, true)" onmouseout="fr_insline(<?=$nnats;?>, false)" name="move_<?=$i;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" title="move selected rules before this rule" height="17" type="image" width="17" border="0"></td>
+                        <td><a href="firewall_nat_edit.php?dup=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add a new nat based on this one" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>
 		</tr>
@@ -228,11 +228,11 @@ include("head.inc");
                   <td class="list" valign="middle" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
-                        <td><?php if ($nnats == 0): ?><img src="left_d.gif" width="17" height="17" title="move selected mappings to end" border="0"><?php else: ?><input name="move_<?=$i;?>" type="image" src="left.gif" width="17" height="17" title="move selected mappings to end" border="0"><?php endif; ?></td>
-                        <td><a href="firewall_nat_edit.php"><img src="plus.gif" width="17" height="17" border="0"></a></td>
+                        <td><?php if ($nnats == 0): ?><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="move selected mappings to end" border="0"><?php else: ?><input name="move_<?=$i;?>" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" width="17" height="17" title="move selected mappings to end" border="0"><?php endif; ?></td>
+                        <td><a href="firewall_nat_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                       <tr>
-                        <td><?php if ($nnats == 0): ?><img src="x_d.gif" width="17" height="17" title="delete selected rules" border="0"><?php else: ?><input name="del" type="image" src="x.gif" width="17" height="17" title="delete selected mappings" onclick="return confirm('Do you really want to delete the selected mappings?')"><?php endif; ?></td>
+                        <td><?php if ($nnats == 0): ?><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="delete selected rules" border="0"><?php else: ?><input name="del" type="image" src="x.gif" width="17" height="17" title="delete selected mappings" onclick="return confirm('Do you really want to delete the selected mappings?')"><?php endif; ?></td>
                       </tr>
                     </table></td>
                 </tr>

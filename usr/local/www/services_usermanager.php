@@ -142,7 +142,7 @@ if($_GET['act']=="new" || $_GET['act']=="edit"){
                   <td width="22%" valign="top" class="vncell">Expiration Date</td>
                   <td width="78%" class="vtable">
                     <input name="expirationdate" type="text" class="formfld" id="expirationdate" size="10" value="<? echo $user['expirationdate']; ?>">
-                    <a href="javascript:NewCal('expirationdate','mmddyyyy')"><img src="cal.gif" width="16" height="16" border="0" alt="Pick a date"></a>
+                    <a href="javascript:NewCal('expirationdate','mmddyyyy')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_cal.gif" width="16" height="16" border="0" alt="Pick a date"></a>
                     <br> <span class="vexpl">Enter this acocunt's expiration date in us-format (mm/dd/yyyy) or leave this field empty for no expiration.</span></td>
                 </tr>
                 <tr>
@@ -178,8 +178,8 @@ END;
                   <td class="listbg">
                     <?php echo $user['expirationdate']; ?>&nbsp;
                   </td>
-                  <td valign="middle" nowrap class="list"> <a href="services_usermanager.php?act=edit&username=<?php echo $username; ?>"><img src="e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="services_usermanager.php?act=delete&username=<?php echo $username; ?>" onclick="return confirm('Do you really want to delete this user?')"><img src="x.gif" width="17" height="17" border="0"></a></td>
+                  <td valign="middle" nowrap class="list"> <a href="services_usermanager.php?act=edit&username=<?php echo $username; ?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
+                     &nbsp;<a href="services_usermanager.php?act=delete&username=<?php echo $username; ?>" onclick="return confirm('Do you really want to delete this user?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
 		</tr>
 <?php
 		}
@@ -187,7 +187,7 @@ END;
 	echo <<<END
 		<tr>
                   <td class="list" colspan="3"></td>
-                  <td class="list"> <a href="services_usermanager.php?act=new"><img src="plus.gif" width="17" height="17" border="0"></a></td>
+                  <td class="list"> <a href="services_usermanager.php?act=new"><img src="./themes/".$g['theme']."/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 	        </tr>
      </table>
 END;

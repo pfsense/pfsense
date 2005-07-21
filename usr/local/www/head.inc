@@ -1,3 +1,13 @@
+<?php
+/* 
+ *   if user has selected a custom template, use it.
+ *   otherwise default to pfsense tempalte
+ */
+if($config['theme'] <> "")
+	$g['theme'] = $config['theme'];
+else
+	$g['theme'] = "pfsense";
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>

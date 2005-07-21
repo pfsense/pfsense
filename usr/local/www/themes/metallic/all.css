@@ -172,9 +172,9 @@ form input {
 	width: 8.9em;
 	font-weight: normal;
 	background: transparent bottom left no-repeat; /* This is key to making the menu maintain visibility when not on a link */
-	background-color: #000;
+	background-color: #202020;
 	padding: 0em 0 0em 0;
-	padding-top: 0.2em;
+	padding-top: 0.3em;
 }
 /* to override top and left in browsers other than IE */
 /* which will position to the top right of the containing */

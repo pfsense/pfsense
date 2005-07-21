@@ -369,13 +369,6 @@ function install_package($package, $pkg_info = "") {
 		$pkg_info = get_pkg_info(array($package));
 		$pkg_info = $pkg_info[$package]; // We're only dealing with one package, so we can strip away the extra array.
 	}
-	/* set up package logging streams */
-	if($pkg_info['logging']) {
-		mwexec("/usr/sbin/clog -i -s 32768 {$g['varlog_path']}/{$pkg_info['logging']['logfilename']}");
-		chmod($g['varlog_path'] . '/' . $pkg_info['logging']['logfilename'], 0600);
-		@fwrite($fd_log, "Adding text to file /etc/syslog.conf\n");
-		system_syslogd_start();
-	}
 	/* fetch the package's configuration file */
 	if($pkg_info['config_file'] != "") {
 		$static_output .= "Downloading package configuration file... ";
@@ -397,46 +390,6 @@ function install_package($package, $pkg_info = "") {
 		}
 		$static_output .= "done.\n";
 		update_output_window($static_output);
-	}
-	/* make 'y' file */
-	$fd = fopen("{$g['tmp_path']}/y", "w");
-	for($line = 0; $line < 10; $line++) {
-		fwrite($fd, "y\n");
-	}
-	fclose($fd);
-
-	/* pkg_add the package and its dependencies */
-	if($pkg_info['depends_on_package_base_url'] != "") {
-		update_status("Installing " . $pkg_info['name'] . " and its dependencies.");
-		$static_output .= "Downloading " . $pkg_info['name'] . " and its dependencies... ";
-		$static_orig = $static_output;
-		$static_output .= "\n";
-		update_output_window($static_output);
-		$pkg_name = substr(reverse_strrchr($pkg_info['depends_on_package'], "."), 0, -1);
-		if(isset($pkg_info['skip_install_checks'])) {
-			$pkg_installed = true;
-		} else {
-			$pkg_installed = is_freebsd_pkg_installed($pkg_name);
-		}
-		if($pkg_installed == false) pkg_fetch_recursive($pkg_name, $pkg_info['depends_on_package'], 0, $pkg_info['depends_on_package_base_url']);
-		$static_output = $static_orig . "done.\nChecking for successful package installation... ";
-		update_output_window($static_output);
-		/* make sure our package was successfully installed */
-		if($pkg_installed == false) $pkg_installed = is_freebsd_pkg_installed($pkg_name);
-		if($pkg_installed == true) {
-			$static_output .= "done.\n";
-			update_output_window($static_output);
-			fwrite($fd_log, "pkg_add successfully completed.\n");
-		} else {
-			$static_output .= "failed!\n\nInstallation aborted.";
-			update_output_window($static_output);
-			fwrite($fd_log, "Package WAS NOT installed properly.\n");
-			fclose($fd_log);
-			echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
-			echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
-			sleep(1);
-			die;
-		}
 	}
 	/* add package information to config.xml */
 	$pkgid = get_pkg_id($pkg_info['name']);
@@ -472,7 +425,6 @@ function eval_once($toeval) {
 	}
 	return;
 }
-	
 
 function install_package_xml($pkg) {
 	global $g, $config, $fd_log, $static_output;
@@ -492,6 +444,55 @@ function install_package_xml($pkg) {
 			update_output_window("Warning, could not open log for writing.");
 		}
 	}
+
+	/* set up package logging streams */
+        if($pkg_info['logging']) {
+                mwexec("/usr/sbin/clog -i -s 32768 {$g['varlog_path']}/{$pkg_info['logging']['logfilename']}");
+                chmod($g['varlog_path'] . '/' . $pkg_info['logging']['logfilename'], 0600);
+                @fwrite($fd_log, "Adding text to file /etc/syslog.conf\n");
+                system_syslogd_start();
+        }
+
+	/* make 'y' file */
+        $fd = fopen("{$g['tmp_path']}/y", "w");
+        for($line = 0; $line < 10; $line++) {
+                fwrite($fd, "y\n");
+        }
+        fclose($fd);
+
+	/* pkg_add the package and its dependencies */
+        if($pkg_info['depends_on_package_base_url'] != "") {
+                update_status("Installing " . $pkg_info['name'] . " and its dependencies.");
+                $static_output .= "Downloading " . $pkg_info['name'] . " and its dependencies... ";
+                $static_orig = $static_output;
+                $static_output .= "\n";
+                update_output_window($static_output);
+                $pkg_name = substr(reverse_strrchr($pkg_info['depends_on_package'], "."), 0, -1);
+                if(isset($pkg_info['skip_install_checks'])) {
+                        $pkg_installed = true;
+                } else {
+                        $pkg_installed = is_freebsd_pkg_installed($pkg_name);
+                }
+                if($pkg_installed == false) pkg_fetch_recursive($pkg_name, $pkg_info['depends_on_package'], 0, $pkg_info['depends_on_package_base_url']);
+                $static_output = $static_orig . "done.\nChecking for successful package installation... ";
+                update_output_window($static_output);
+                /* make sure our package was successfully installed */
+                if($pkg_installed == false) $pkg_installed = is_freebsd_pkg_installed($pkg_name);
+                if($pkg_installed == true) {
+                        $static_output .= "done.\n";
+                        update_output_window($static_output);
+                        fwrite($fd_log, "pkg_add successfully completed.\n");
+                } else {
+                        $static_output .= "failed!\n\nInstallation aborted.";
+                        update_output_window($static_output);
+                        fwrite($fd_log, "Package WAS NOT installed properly.\n");
+                        fclose($fd_log);
+                        echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
+                        echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
+                        sleep(1);
+                        die;
+                }
+        }
 
 	$configfile = substr(strrchr($pkg_info['config_file'], '/'), 1);
 	if(file_exists("/usr/local/pkg/" . $configfile)) {

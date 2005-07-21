@@ -18,49 +18,7 @@ require_once("notices.inc");
 		return $htmltext;
 	}
 ?>
-
-<script language="javascript">
-<!--
-var tri_open = "";
-var tri_closed = "";
-
-window.onload = preload;
-
-function preload() {
-	if (document.images) {
-		tri_open = new Image(14,10);
-		tri_closed = new Image(14,10);
-		tri_open.src = "/tri_o.gif";
-		tri_closed.src = "/tri_c.gif";
-	}
-}
-
-function showhide(tspan, tri) {
-	tspanel = document.getElementById(tspan);
-	triel = document.getElementById(tri);
-	if (tspanel.style.display == 'none') {
-		tspanel.style.display = '';
-		triel.src = "/tri_o.gif";
-	} else {
-		tspanel.style.display = 'none';
-		triel.src = "/tri_c.gif";
-	}
-}
-
-function showhide_black(tspan, tri) {
-	tspanel = document.getElementById(tspan);
-        triel = document.getElementById(tri);
-        if (tspanel.style.display == 'none') {
-                tspanel.style.display = '';
-                triel.src = "/tri_o_black.gif";
-        } else {
-                tspanel.style.display = 'none';
-                triel.src = "/tri_c_black.gif";
-        }
-}
--->
-</script>
-
+s
 <div id="wrapper">
 
 	<div id="header">

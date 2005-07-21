@@ -72,7 +72,7 @@ include("head.inc");
 					<td background="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height='15' width='5'>
 					</td>
 					<td>
-						<table id="progholder" name="progholder" height='15' width='410' border='0' colspacing='0' cellpadding='0' cellspacing='0'><td background="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" valign="top" align="left"><img src='./themes/<?= $g['theme']; ?>/images/icons/icon_bar_blue.gif' width='0' height='15' name='progressbar' id='progressbar'></td></table>
+						<table id="progholder" name="progholder" height='15' width='410' border='0' colspacing='0' cellpadding='0' cellspacing='0'><td background="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" valign="top" align="left"><img src='./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif' width='0' height='15' name='progressbar' id='progressbar'></td></table>
 					</td>
 					<td background="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height='15' width='5'>
 					</td>

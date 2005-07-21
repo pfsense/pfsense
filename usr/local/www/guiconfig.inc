@@ -134,6 +134,7 @@ function do_input_validation($postdata, $reqdfields, $reqdfieldsn, $input_errors
 }
 
 function print_input_errors($input_errors) {
+	global $g;
 	echo "<p><table border=\"0\" cellspacing=\"0\" cellpadding=\"4\" width=\"100%\">\n";
 	echo "<tr><td bgcolor=\"#990000\" width=\"36\" align=\"center\" valign=\"top\"><img src=\"./themes/".$g['theme']."/images/icons/icon_error.gif\" width=\"28\" height=\"32\"></td>\n";
 	echo "<td bgcolor=\"#FFD9D1\" style=\"padding-left: 8px; padding-top: 6px\">";
@@ -179,6 +180,7 @@ function verify_gzip_file($fname) {
 }
 
 function print_info_box_np($msg) {
+	global $g;
 	echo "<table height=\"32\" width=\"100%\">\n";
 	echo "  <tr>\n";
 	echo "   <td>\n";

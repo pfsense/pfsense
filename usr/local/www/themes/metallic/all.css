@@ -210,6 +210,11 @@ form input {
 	background: url('images/metal_bgr.gif') repeat-x;
 	color: #FFF;
 }
+#navigation ul li ul li:hover {
+	background: url('images/metal_bgr_red.gif') repeat-x;
+}
+
+
 #navigation ul li ul li a.navlnk:hover {
 	text-decoration: underline;
 }

@@ -18,7 +18,7 @@ require_once("notices.inc");
 		return $htmltext;
 	}
 ?>
-s
+
 <div id="wrapper">
 
 	<div id="header">

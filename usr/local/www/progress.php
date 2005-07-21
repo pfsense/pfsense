@@ -2,7 +2,6 @@
 <?php
 /* $Id$ */
 
-include("config.inc");
 include("guiconfig.inc");
 
 if($config['theme'] <> "")

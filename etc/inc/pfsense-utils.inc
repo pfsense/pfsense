@@ -491,8 +491,11 @@ function add_text_to_file($file, $text) {
 /*
  * get_filename_from_url($url): converts a url to its filename.
  */
+
 function get_filename_from_url($url) {
-    return array_pop(explode("/", $filename));
+	$filenamesplit = split("/", $url);
+	foreach($filenamesplit as $fn) $filename = $fn; 	 
+	return $filename;
 }
 
 /*

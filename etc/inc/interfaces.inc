@@ -487,8 +487,6 @@ function interfaces_wan_configure() {
 		mwexec($cmd);
 	}
 
-	filter_configure_sync();
-
 	switch ($wancfg['ipaddr']) {
 
 		case 'dhcp':

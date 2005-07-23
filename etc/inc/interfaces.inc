@@ -487,6 +487,8 @@ function interfaces_wan_configure() {
 		mwexec($cmd);
 	}
 
+	filter_configure_sync();
+
 	switch ($wancfg['ipaddr']) {
 
 		case 'dhcp':
@@ -519,8 +521,8 @@ function interfaces_wan_configure() {
 			mwexec("/sbin/route delete default");
 			mwexec("/sbin/route add default " . escapeshellarg($config['system']['gateway']));
 
-			/* resync ipfilter (done automatically for DHCP/PPPoE/PPTP) */
-			filter_resync();
+			/* resync pf (done automatically for DHCP/PPPoE/PPTP) */
+			filter_configure();
 	}
 
 	if (!$g['booting']) {

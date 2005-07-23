@@ -282,8 +282,7 @@ if ($_POST) {
                         $filterent['log'] = true;
                 else
                         unset($filterent['log']);
-		/* XXX: enforce 63 char max length server side, client-side is already done */
-		$filterent['descr'] = $_POST['descr'];
+		strncpy($filterent['descr'], $_POST['descr'], 63);
 
 		if ($_POST['gateway'] != "") {
 			$filterent['gateway'] = $_POST['gateway'];

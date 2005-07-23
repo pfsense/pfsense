@@ -620,6 +620,8 @@ EOD;
         /* bring wan interface up before starting dhclient */
         mwexec("/sbin/ifconfig {$wanif} up");
 
+	sleep(5);
+
         /* fire up dhclient */
         mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_wan.conf {$wanif} >/tmp/{$wanif}_output >/tmp/{$wanif}_error_output");
 

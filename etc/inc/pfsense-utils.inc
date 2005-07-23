@@ -989,4 +989,20 @@ function generate_random_mac() {
 	return $mac;
 }
 
+/****f* pfsense-utils/strncpy
+ * NAME
+ *   strncpy - copy strings
+ * INPUTS
+ *   &$dst, $src, $length
+ * RESULT
+ *   none
+ ******/
+function strncpy(&$dst, $src, $length) {
+	if (strlen($src) > $length) {
+		$dst = substr($src, 0, $length);
+	} else {
+		$dst = $src;
+	}
+}
+
 ?>

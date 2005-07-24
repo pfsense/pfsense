@@ -63,8 +63,8 @@ include("head.inc");
 <form>
 <?php
 	echo "<center>\n";
-	echo "<a href=\"/\"><img src=\"./themes/".$g['theme']."/images/icons/icon_logo.gif\" border=\"0\"></a><p>\n";
-	echo "<div style=\"background-color:#ffffff\" id=\"nifty\">\n";
+	echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_logo.gif\" border=\"0\"><p>\n";
+	echo "<div \" style=\"width:700px;background-color:#ffffff\" id=\"nifty\">\n";
 	echo "Welcome to pfSense!<p>\n";
 	echo "One moment while we start the initial setup wizard.<p>\n";
 	echo "Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal gui.<p>\n";

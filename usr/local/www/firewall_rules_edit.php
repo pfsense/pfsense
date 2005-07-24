@@ -282,7 +282,7 @@ if ($_POST) {
                         $filterent['log'] = true;
                 else
                         unset($filterent['log']);
-		strncpy($filterent['descr'], $_POST['descr'], 63);
+		strncpy($filterent['descr'], $_POST['descr'], 52);
 
 		if ($_POST['gateway'] != "") {
 			$filterent['gateway'] = $_POST['gateway'];
@@ -723,7 +723,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld" id="descr" size="63" maxlength="63" value="<?=htmlspecialchars($pconfig['descr']);?>">
+                    <input name="descr" type="text" class="formfld" id="descr" size="52" maxlength="52" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
                 </tr>

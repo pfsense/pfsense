@@ -154,7 +154,8 @@ function sf() { document.forms[0].savetopath.focus(); }
       <td valign="top" class="label">
 	<div style="background:#eeeeee" id="textareaitem">
 	&nbsp;<br>&nbsp;
-	<textarea name="code" language="<?php echo $language; ?>" rows="<?php echo $rows; ?>" cols="<?php echo $cols; ?>" name="content"><?php echo htmlentities($content); ?></textarea><br>
+	<center>
+	<textarea style="width:98%" name="code" language="<?php echo $language; ?>" rows="<?php echo $rows; ?>" cols="<?php echo $cols; ?>" name="content"><?php echo htmlentities($content); ?></textarea><br>
 	&nbsp;
 	</div>
         <p>

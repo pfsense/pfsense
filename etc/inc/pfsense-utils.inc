@@ -1020,7 +1020,7 @@ function reload_interfaces() {
 		unlink("{$g['tmp_path']}/config.cache");
 	
 	/* parse config.xml again */
-	parse_config_bootup();
+	$config = parse_config(true);
 	
 	/* set up LAN interface */
 	interfaces_lan_configure();
@@ -1056,8 +1056,8 @@ function reload_all() {
 		unlink("{$g['tmp_path']}/config.cache");
 	
 	/* parse config.xml again */
-	parse_config_bootup();	
-	
+	$config = parse_config(true);
+
 	/* set up our timezone */
 	system_timezone_configure();
 

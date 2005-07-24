@@ -484,11 +484,60 @@
 </step>
 <step>
 	<id>8</id>
-	<title>Reboot in progress</title>
-	<description>A reboot is now in progress.  Please wait. &lt;p&gt; The system will automatically try to access $myurl in 120 seconds. &lt;p&gt; You can click on the icon above to access the site more quickly.
+	<title>Reload in progress</title>
+	<description>A reload is now in progress.  Please wait. &lt;p&gt; The system will automatically try to access $myurl in 120 seconds. &lt;p&gt; You can click on the icon above to access the site more quickly.
 	&lt;meta http-equiv="refresh" content="120; url=$myurl" &gt;</description>
 	<stepafterformdisplay>
-		system("/sbin/shutdown -r now");
+	/* set up our timezone */
+	system_timezone_configure();
+
+	/* set up our hostname */
+	system_hostname_configure();
+
+	/* make hosts file */
+	system_hosts_generate();
+
+	/* generate resolv.conf */
+	system_resolvconf_generate();
+
+	/* set up LAN interface */
+	interfaces_lan_configure();
+
+	/* set up WAN interface */
+	interfaces_wan_configure();
+
+	/* set up Optional interfaces */
+	interfaces_optional_configure();
+        
+	/* bring up carp interfaces */
+	interfaces_carp_bringup();
+	
+	/* set up static routes */
+	system_routing_configure();
+
+	/* enable routing */
+	system_routing_enable();
+	
+	/* ensure passwords are sync'd */
+	system_password_configure();
+
+	/* start dnsmasq service */
+	services_dnsmasq_configure();
+
+	/* start dyndns service */
+	services_dyndns_configure();
+
+	/* start DHCP service */
+	services_dhcpd_configure();
+
+	/* start the NTP client */
+	system_ntp_configure();
+
+	/* start ftp proxy helpers if they are enabled */
+	system_start_ftp_helpers();
+        
+        /* reload the filter */
+	filter_configure();
 	</stepafterformdisplay>
 </step>
 </pfsensewizard>

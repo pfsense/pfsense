@@ -89,7 +89,7 @@ if ($_POST) {
 		/* Make sure that the tunnel interface type has not changed */
 		if ($server['tun_iface'] != $_POST['tun_iface']){ 
 			$server['tun_iface'] = $_POST['tun_iface'];
-			touch($d_sysrebootreqd_path);
+
 		}
 		
 		$server['bind_iface'] = $_POST['bind_iface'];
@@ -99,11 +99,9 @@ if ($_POST) {
 		/* Make sure the IP address and/or prefix have not changed */
 		if ($server['ipblock'] != $_POST['ipblock']){
 			$server['ipblock'] = $_POST['ipblock'];
-			touch($d_sysrebootreqd_path);
 		}
 		if ($server['prefix'] != $_POST['prefix']){
 			$server['prefix'] = $_POST['prefix'];
-			touch($d_sysrebootreqd_path);
 		}
 		
 		$server['maxcli'] = $_POST['maxcli'];
@@ -155,7 +153,6 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if (file_exists($d_sysrebootreqd_path)) print_info_box(get_std_save_message(0)); ?>
 
 <form action="vpn_openvpn.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

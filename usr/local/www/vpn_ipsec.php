@@ -43,8 +43,7 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-		if (!file_exists($d_sysrebootreqd_path))
-			$retval = vpn_ipsec_configure();
+		$retval = vpn_ipsec_configure();
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {
 			if (file_exists($d_ipsecconfdirty_path))
@@ -58,13 +57,12 @@ if ($_POST) {
 		write_config();
 	
 		$retval = 0;
-		if (!file_exists($d_sysrebootreqd_path)) {
-			config_lock();
-			$retval = vpn_ipsec_configure();
-			config_unlock();
-			/* reload the filter in the background */
-			mwexec_bg("/etc/rc.filter_configure");
-		}
+		config_lock();
+		$retval = vpn_ipsec_configure();
+		config_unlock();
+		/* reload the filter in the background */
+		mwexec_bg("/etc/rc.filter_configure");
+
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {
 			if (file_exists($d_ipsecconfdirty_path))
@@ -77,7 +75,6 @@ if ($_GET['act'] == "del") {
 	if ($a_ipsec[$_GET['id']]) {
 		unset($a_ipsec[$_GET['id']]);
 		write_config();
-		touch($d_ipsecconfdirty_path);
 		header("Location: vpn_ipsec.php");
 		exit;
 	}

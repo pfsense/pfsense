@@ -131,18 +131,15 @@ if (isset($_POST['pull'])) {
 					$input_errors[] = "Run out of devices for a tunnel of type {$_POST['type']}";
 				else
 					$ovpnent['if'] = $nxt_if;
-				/* Need to reboot in order to create interfaces cleanly */
-				touch($d_sysrebootreqd_path);
+
 			}
 			/* Has the enable/disable state changed? */
 			if (isset($ovpnent['enable']) && isset($_POST['disabled'])) {
-				touch($d_sysrebootreqd_path);
 				touch($d_ovpnclidirty_path);
 				ovpn_client_kill($id);
 				ovpn_client_iface_del($id);
 			}
 			if (!isset($ovpnent['enable']) && !isset($_POST['disabled'])) {
-				touch($d_sysrebootreqd_path);
 				touch($d_ovpnclidirty_path);
 			}
 		}
@@ -155,8 +152,6 @@ if (isset($_POST['pull'])) {
 			else
 				$ovpnent['if'] = $nxt_if;
 			$ovpnent['cport'] = getnxt_port();
-			/* I think we have to reboot to have the interface created cleanly */
-			touch($d_sysrebootreqd_path);
 		}
 		$ovpnent['type'] = $_POST['type'];
 		$ovpnent['proto'] = $_POST['proto'];

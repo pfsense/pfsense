@@ -114,14 +114,13 @@ if ($_POST) {
 		write_config();
 
 		$retval = 0;
-		if (!file_exists($d_sysrebootreqd_path)) {
-			/* nuke the cache file */
-			config_lock();
-			services_dyndns_reset();
-			$retval = services_dyndns_configure();
-			$retval |= services_dnsupdate_process();
-			config_unlock();
-		}
+
+		/* nuke the cache file */
+		config_lock();
+		services_dyndns_reset();
+		$retval = services_dyndns_configure();
+		$retval |= services_dnsupdate_process();
+		config_unlock();
 		$savemsg = get_std_save_message($retval);
 	}
 }

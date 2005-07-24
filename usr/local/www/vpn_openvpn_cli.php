@@ -42,15 +42,9 @@ $ovpncli =& $config['ovpn']['client']['tunnel'];
 
 if ($_POST['apply']) {
 		$retval = 0;
-		if (file_exists($d_sysrebootreqd_path)) {
-			/* Rewrite interface definitions */
-			$retval = ovpn_client_iface();
-		}
-		else{
-			ovpn_lock();
-			$retval = ovpn_config_client();
-			ovpn_unlock();
-		}
+		ovpn_lock();
+		$retval = ovpn_config_client();
+		ovpn_unlock();
 		if (file_exists($d_ovpnclidirty_path))
 			unlink($d_ovpnclidirty_path);
 		$savemsg = get_std_save_message($retval);	

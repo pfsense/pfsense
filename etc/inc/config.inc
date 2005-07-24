@@ -701,7 +701,11 @@ function write_config($desc="Unknown", $backup = true) {
 	fwrite($fd, $xmlconfig);
 	fclose($fd);
 
-	conf_mount_ro();
+	if(!$g['booting']) {
+		conf_mount_ro();
+		
+	}
+
 	config_unlock();
 
 	// Always reparse the config after it's written - something is getting lost in serialize().

@@ -51,7 +51,7 @@ include("head.inc");
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
 ?>
-<div id="mainarea">
+<div id="mainareapkg">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
 <?php
 	$tab_array = array();
@@ -96,7 +96,7 @@ include("head.inc");
 
 <script type="text/javascript">
 NiftyCheck();
-Rounded("div#mainarea","bl br","#FFF","#eeeeee","smooth");
+Rounded("div#mainareapkg","bl br","#FFF","#eeeeee","smooth");
 </script>
 
 </body>

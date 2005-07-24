@@ -42,7 +42,6 @@ $pconfig['ipv6nat_ipaddr'] = $config['diag']['ipv6nat']['ipaddr'];
 $pconfig['cert'] = base64_decode($config['system']['webgui']['certificate']);
 $pconfig['key'] = base64_decode($config['system']['webgui']['private-key']);
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
-$pconfig['expanddiags'] = isset($config['system']['webgui']['expanddiags']);
 $pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
@@ -119,10 +118,7 @@ if ($_POST) {
 			$config['system']['disableconsolemenu'] = true;
 		else
 			unset($config['system']['disableconsolemenu']);
-		if ($_POST['expanddiags'] == "yes")
-			$config['system']['webgui']['expanddiags'] = true;
-		else
-			unset($config['system']['webgui']['expanddiags']);
+		unset($config['system']['webgui']['expanddiags']);
 		$config['system']['optimization'] = $_POST['optimization'];
 		
 		if($_POST['disablefirmwarecheck'] == "yes")
@@ -400,12 +396,6 @@ function openwindow(url) {
                     Puts the hard disk into standby mode when the selected amount of time after the last
                     access has elapsed. <em>Do not set this for CF cards.</em></td>
 				</tr>
-				<tr>
-                  <td width="22%" valign="top" class="vncell">Navigation</td>
-                  <td width="78%" class="vtable">
-                    <input name="expanddiags" type="checkbox" id="expanddiags" value="yes" <?php if ($pconfig['expanddiags']) echo "checked"; ?>>
-                    <strong>Keep diagnostics in navigation expanded </strong></td>
-                </tr>
 		<tr>
                   <td width="22%" valign="top" class="vncell">webGUI anti-lockout</td>
                   <td width="78%" class="vtable">

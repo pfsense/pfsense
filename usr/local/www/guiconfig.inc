@@ -90,12 +90,6 @@ if (file_exists($d_firmwarelock_path)) {
 $wkports = array(3389 => "MS RDP", 21 => "FTP", 22 => "SSH", 23 => "Telnet", 25 => "SMTP",
 		53 => "DNS", 80 => "HTTP", 110 => "POP3", 143 => "IMAP", 443 => "HTTPS");
 
-/* IP TOS flags */
-$iptos = array("lowdelay", "throughput", "reliability", "congestion");
-
-/* TCP flags */
-$tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg");
-
 $specialnets = array("lan" => "LAN net", "pptp" => "PPTP clients");
 
 for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {

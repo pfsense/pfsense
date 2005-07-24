@@ -59,4 +59,11 @@ $g = array(
     "wireless_regex" => "/^(wi|ath|an)/"
 );
 
+/* IP TOS flags */
+$iptos = array("lowdelay", "throughput", "reliability", "congestion");
+
+/* TCP flags */
+$tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg");
+
+
 ?>

@@ -63,7 +63,7 @@ include("head.inc");
 <form>
 <?php
 	echo "<center>\n";
-	echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_logo.gif\" border=\"0\"><p>\n";
+	echo "<img src=\"/themes/{$g['theme']}/images/logo.gif\" border=\"0\"><p>\n";
 	echo "<div \" style=\"width:700px;background-color:#ffffff\" id=\"nifty\">\n";
 	echo "Welcome to pfSense!<p>\n";
 	echo "One moment while we start the initial setup wizard.<p>\n";
@@ -73,7 +73,7 @@ include("head.inc");
 	echo "<meta http-equiv=\"refresh\" content=\"1;url=wizard.php?xml=setup_wizard.xml\">\n";
 	echo "<script type=\"text/javascript\">\n";
 	echo "NiftyCheck();\n";
-	echo "Rounded(\"div#nifty\",\"all\",\"#FFF\",\"#EEEEEE\",\"smooth\");\n";
+	echo "Rounded(\"div#nifty\",\"all\",\"#000\",\"#FFFFFF\",\"smooth\");\n";
 	echo "</script>\n";
 	exit;
 }

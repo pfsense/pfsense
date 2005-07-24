@@ -701,9 +701,8 @@ function write_config($desc="Unknown", $backup = true) {
 	fwrite($fd, $xmlconfig);
 	fclose($fd);
 
-	if(!$g['booting']) {
+	if($g['booting'] <> true) {
 		conf_mount_ro();
-		
 	}
 
 	config_unlock();

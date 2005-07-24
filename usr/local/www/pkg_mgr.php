@@ -56,6 +56,7 @@ $pkg_info = get_pkg_info('all', array('name', 'category', 'website', 'version', 
 if($pkg_info) {
 	$fout = fopen("{$g['tmp_path']}/pkg_info.cache", "w");
 	fwrite($fout, serialize($pkg_info));
+	fclose($fout);
         $pkg_sizes = get_pkg_sizes();
 } else {
 	$using_cache = true;

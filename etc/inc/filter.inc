@@ -530,7 +530,7 @@ function generate_optcfg_array(& $optcfg) {
 function filter_generate_pf_altq_rules() {
 	/* I don't think we're in IPFW anymore Toto */
 
-        global $config, $g;
+        global $config, $g, $tcpflags;
 
         $wancfg = $config['interfaces']['wan'];
         $lancfg = $config['interfaces']['lan'];
@@ -764,24 +764,15 @@ function filter_generate_pf_altq_rules() {
                         if ($rule['iptos'])
                                 $line .= "tos {$rule['iptos']} ";
 
-			/*
 			$inflags = explode(",", $rule['tcpflags']);
 			$flags = " flags ";
 			foreach ($tcpflags as $tcpflag) {
 				if (array_search($tcpflag, $inflags) !== false) {
-					if($tcpflag == "SYN")
-						$flags .= "S/";
-					else if($tcpflag == "CWR")
-						$flags .= "W";
-					else
-						$flags .= substr($tcpflag, 1, 1);
-				} else {
-					
+					$flags .= strtoupper(substr($tcpflag, 0, 1));
 				}
 			}
 			if($flags <> " flags ")
-				$line .= "{$flags} ";
-			*/
+				$line .= "{$flags}/SAFRPU ";
 
 			$qtag = "{$direction}queue";
 			$line .= " keep state tag {$rule[$qtag]} ";

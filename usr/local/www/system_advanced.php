@@ -460,6 +460,7 @@ function openwindow(url) {
                   <td width="22%" valign="top" class="vncell">Firewall Optimization Options</td>
                   <td width="78%" class="vtable">
 			<select onChange="update_description(this.selectedIndex);" name="optimization" id="optimization">
+			<br>
 			<option value="normal"<?php if($config['system']['optimization']=="normal") echo " SELECTED"; ?>>normal</option>
 			<option value="high-latency"<?php if($config['system']['optimization']=="high-latency") echo " SELECTED"; ?>>high-latency</option>
 			<option value="aggressive"<?php if($config['system']['optimization']=="aggressive") echo " SELECTED"; ?>>aggressive</option>

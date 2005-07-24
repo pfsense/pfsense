@@ -86,7 +86,9 @@ if ($_POST) {
 			$a_vlans[] = $vlan;
 		
 		write_config();		
-		touch($d_sysrebootreqd_path);
+		
+		reload_interfaces();
+		
 		header("Location: interfaces_vlan.php");
 		exit;
 	}

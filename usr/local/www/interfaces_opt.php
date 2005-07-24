@@ -166,24 +166,23 @@ if ($_POST) {
 
 		write_config();
 
-		$retval = 0;
-		if (!file_exists($d_sysrebootreqd_path)) {
-			config_lock();
-			$retval = interfaces_optional_configure();
+		$retval = interfaces_optional_configure();
 
-			/* is this the captive portal interface? */
-			if (isset($config['captiveportal']['enable']) &&
-				($config['captiveportal']['interface'] == ('opt' . $index))) {
-				captiveportal_configure();
-			}
-			config_unlock();
+		/* is this the captive portal interface? */
+		if (isset($config['captiveportal']['enable']) &&
+			($config['captiveportal']['interface'] == ('opt' . $index))) {
+			captiveportal_configure();
 		}
+		config_unlock();
 		
 		/* setup carp interfaces */
 		interfaces_carp_configure();
 	
 		/* bring up carp interfaces */
 		interfaces_carp_bringup();
+
+		/* sync filter configuration */
+		filter_configure();
 
 		$savemsg = "The changes have been applied.";
 	}

@@ -37,6 +37,8 @@
 	  return $size;
 	}
 
+	conf_mount_rw();
+
 	/*    if any of these files are 0 bytes then they are corrupted.
 	 *    remove them
 	 */

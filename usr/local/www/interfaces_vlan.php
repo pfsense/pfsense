@@ -78,7 +78,9 @@ if ($_GET['act'] == "del") {
 			$config['interfaces']['opt' . $i]['if'] = renumber_vlan($config['interfaces']['opt' . $i]['if'], $_GET['id']);
 
 		write_config();
-		touch($d_sysrebootreqd_path);
+		
+		reload_interfaces();
+		
 		header("Location: interfaces_vlan.php");
 		exit;
 	}
@@ -94,7 +96,6 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if (file_exists($d_sysrebootreqd_path)) print_info_box(get_std_save_message(0)); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php

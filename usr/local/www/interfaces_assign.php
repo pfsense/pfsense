@@ -112,7 +112,10 @@ if ($_POST) {
 		}
 	
 		write_config();
-		touch($d_sysrebootreqd_path);
+		
+		/* reload all interfaces configuration */
+		reload_interfaces();
+		
 	}
 }
 
@@ -186,7 +189,6 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if (file_exists($d_sysrebootreqd_path)) print_info_box(get_std_save_message(0)); ?>
 <form action="interfaces_assign.php" method="post" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">

@@ -1005,4 +1005,93 @@ function strncpy(&$dst, $src, $length) {
 	}
 }
 
+/****f* pfsense-utils/reload_interfaces
+ * NAME
+ *   reload_interfaces - reload all interfaces
+ * INPUTS
+ *   none
+ * RESULT
+ *   none
+ ******/
+function reload_interfaces() {
+	/* set up LAN interface */
+	interfaces_lan_configure();
+
+	/* set up WAN interface */
+	interfaces_wan_configure();
+
+	/* set up Optional interfaces */
+	interfaces_optional_configure();
+        
+	/* bring up carp interfaces */
+	interfaces_carp_bringup();
+	
+	/* set up static routes */
+	system_routing_configure();
+
+	/* enable routing */
+	system_routing_enable();
+}
+
+/****f* pfsense-utils/reload_all
+ * NAME
+ *   reload_all - reload all settings
+ *   * INPUTS
+ *   none
+ * RESULT
+ *   none
+ ******/
+function reload_all() {
+	/* set up our timezone */
+	system_timezone_configure();
+
+	/* set up our hostname */
+	system_hostname_configure();
+
+	/* make hosts file */
+	system_hosts_generate();
+
+	/* generate resolv.conf */
+	system_resolvconf_generate();
+
+	/* set up LAN interface */
+	interfaces_lan_configure();
+
+	/* set up WAN interface */
+	interfaces_wan_configure();
+
+	/* set up Optional interfaces */
+	interfaces_optional_configure();
+        
+	/* bring up carp interfaces */
+	interfaces_carp_bringup();
+	
+	/* set up static routes */
+	system_routing_configure();
+
+	/* enable routing */
+	system_routing_enable();
+	
+	/* ensure passwords are sync'd */
+	system_password_configure();
+
+	/* start dnsmasq service */
+	services_dnsmasq_configure();
+
+	/* start dyndns service */
+	services_dyndns_configure();
+
+	/* start DHCP service */
+	services_dhcpd_configure();
+
+	/* start the NTP client */
+	system_ntp_configure();
+
+	/* start ftp proxy helpers if they are enabled */
+	system_start_ftp_helpers();
+        
+        /* reload the filter */
+	filter_configure();	
+}
+
 ?>

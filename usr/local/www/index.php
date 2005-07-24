@@ -50,7 +50,7 @@ if(file_exists("/needs_package_sync")) {
 	}
 }
 
-if(file_exists("/trigger_initial_wizard") and $g['platform'] <> "cdrom") {
+if(file_exists("/trigger_initial_wizard")) {
 	conf_mount_rw();
 	unlink("/trigger_initial_wizard");
 	conf_mount_ro();

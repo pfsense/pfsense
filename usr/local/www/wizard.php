@@ -192,7 +192,7 @@ function enablechange() {
 <a href="/"><img border="0" src="./themes/<?= $g['theme']; ?>/images/logo.gif"></a>
 <p>
 
-<table width="600" cellspacing="0" cellpadding="3">
+<table bgcolor="#ffffff" width="600" cellspacing="0" cellpadding="3">
     <!-- wizard goes here -->
     <tr><td>&nbsp;</td></tr>
     <tr><td colspan='2'><center><b><?= fixup_string($description) ?></b></center></td></tr><tr><td>&nbsp;</td></tr>

@@ -192,7 +192,7 @@ function enablechange() {
 <a href="/"><img border="0" src="./themes/<?= $g['theme']; ?>/images/logo.gif"></a>
 <p>
 
-<div id="roundme">
+<div style="width:700px;background-color:#ffffff" id="roundme">
 <table bgcolor="#ffffff" width="600" cellspacing="0" cellpadding="3">
     <!-- wizard goes here -->
     <tr><td>&nbsp;</td></tr>
@@ -358,12 +358,13 @@ function enablechange() {
 	}
     ?>
 </table>
+<br>&nbsp;
 </div>
 </form>
 
 <script type="text/javascript">
 NiftyCheck();
-Rounded("div#roundme","top","#FFF","#EEEEEE","smooth");
+Rounded("div#roundme","all","#000","#FFFFFF","smooth");
 </script>
 
 </body>

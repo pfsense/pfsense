@@ -41,32 +41,7 @@ if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) {
-	exec("/usr/sbin/clog -i -s 262144 {$ipsec_logfile}");
-}
-
-function dump_clog_vpn($logfile, $tail) {
-	global $config;
-
-	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
-
-	exec("/usr/sbin/clog {$logfile} | tail {$sor} -n {$tail}", $logarr);
-
-	foreach ($logarr as $logent) {
-		$logent = preg_split("/\s+/", $logent, 6);
-		$llent = explode(",", $logent[5]);
-
-		echo "<tr>\n";
-		echo "<td class=\"listlr\" nowrap>" . htmlspecialchars(join(" ", array_slice($logent, 0, 3))) . "</td>\n";
-
-		if ($llent[0] == "login")
-			echo "<td class=\"listr\"><img src=\"/themes/".$g['theme']."/images/icons/icon_in.gif\" width=\"11\" height=\"11\" title=\"login\"></td>\n";
-		else
-			echo "<td class=\"listr\"><img src=\"/themes/".$g['theme']."/images/icons/icon_out.gif\" width=\"11\" height=\"11\" title=\"logout\"></td>\n";
-
-		echo "<td class=\"listr\">" . htmlspecialchars($llent[3]) . "</td>\n";
-		echo "<td class=\"listr\">" . htmlspecialchars($llent[2]) . "&nbsp;</td>\n";
-		echo "</tr>\n";
-	}
+	exec("/usr/sbin/clog -i -s 262144 /var/log/vpn.log");
 }
 
 $pgtitle = "Diagnostics: System logs: PPTP VPN";
@@ -104,11 +79,16 @@ include("head.inc");
 			  <td class="listhdrr">User</td>
 			  <td class="listhdrr">IP address</td>
 			</tr>
-		<tr><td><?php dump_clog_vpn($pptp_logfile, $nentries); ?>
-		<br><form action="diag_logs_vpn.php" method="post">
-<input name="clear" type="submit" class="formbtn" value="Clear log">
-</form></td></tr>
-          </table>
+			<?php dump_clog($ipsec_logfile, $nentries, true, array("mpd")); ?>
+			<tr>
+				<td>
+					<br>
+					<form action="diag_logs.php" method="post">
+					<input name="clear" type="submit" class="formbtn" value="Clear log">
+					</form>
+				</td>
+			</tr>
+		</table>
 	</div>
 	</td>
   </tr>

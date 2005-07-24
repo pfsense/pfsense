@@ -142,8 +142,8 @@ if ($_POST) {
 						conf_mount_rw();
 						touch("/needs_package_sync");
 						conf_mount_ro();
-						system_reboot();
-						$savemsg = "The configuration has been restored. The firewall is now rebooting.";
+						reload_all();
+						$savemsg = "The configuration has been restored. The firewall is now reloading the settings.";
 					} else {
 						$input_errors[] = "The configuration could not be restored.";
 					}
@@ -159,8 +159,8 @@ if ($_POST) {
 			if ($ver2restore <> "") {
 				$conf_file = "{$g['cf_conf_path']}/bak/config-" . strtotime($ver2restore) . ".xml";
                                 if (config_install($conf_file) == 0) {
-                                        system_reboot();
-                                        $savemsg = "The configuration has been restored. The firewall is now rebooting.";
+                                        reload_all();
+                                        $savemsg = "The configuration has been restored. The firewall is now reloading the settings.";
                                 } else {
                                         $input_errors[] = "The configuration could not be restored.";
                                 }
@@ -232,7 +232,7 @@ include("head.inc");
                       <input name="Submit" type="submit" class="formbtn" id="restore" value="Restore configuration">
                       <p>
                       <strong><span class="red">Note:</span></strong><br>
-                      The firewall will reboot after restoring the configuration.<br>
+                      The firewall will reload the settings after restoring the configuration.<br>
                   </td>
                 </tr>
 		<?php if($config['installedpackages']['package'] != "") { ?>

@@ -345,7 +345,7 @@ function interfaces_carp_bringup() {
 	global $g;
 	/* lets bring the carp interfaces up now */
 	if ($g['booting'])
-		sleep(5);
+		sleep(1);
 	$carp_ints = find_number_of_created_carp_interfaces();
 	for($x=0; $x<$carp_ints; $x++)
 		mwexec("/sbin/ifconfig carp{$x} up");	
@@ -623,8 +623,6 @@ EOD;
         /* bring wan interface up before starting dhclient */
         mwexec("/sbin/ifconfig {$wanif} up");
 
-	sleep(5);
-
         /* fire up dhclient */
         mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_wan.conf {$wanif} >/tmp/{$wanif}_output >/tmp/{$wanif}_error_output");
 
@@ -641,12 +639,12 @@ function interfaces_wan_dhcp_down() {
 	$wanif = $wancfg['if'];
 	mwexec("/sbin/dhclient -r");
 	mwexec("/sbin/ifconfig {$wanif} delete");
-	sleep(3);
+	sleep(1);
 }
 
 function interfaces_wan_dhcp_up() {
 	interfaces_wan_dhcp_configure();
-	sleep(3);
+	sleep(1);
 }
 
 function interfaces_wan_pppoe_configure() {
@@ -749,13 +747,13 @@ EOD;
 function interfaces_wan_pppoe_down() {
 	global $g;
 	sigkillbypid("{$g['varrun_path']}/mpd.pid", "SIGUSR2");
-	sleep(3);
+	sleep(1);
 }
 
 function interfaces_wan_pppoe_up() {
 	global $g;
 	sigkillbypid("{$g['varrun_path']}/mpd.pid", "SIGUSR1");
-	sleep(3);
+	sleep(1);
 }
 
 function interfaces_wan_pptp_configure() {
@@ -861,13 +859,13 @@ EOD;
 function interfaces_wan_pptp_down() {
 	global $g;
 	sigkillbypid("{$g['varrun_path']}/mpd.pid", "SIGUSR2");
-	sleep(3);
+	sleep(1);
 }
 
 function interfaces_wan_pptp_up() {
 	global $g;
 	sigkillbypid("{$g['varrun_path']}/mpd.pid", "SIGUSR1");
-	sleep(3);
+	sleep(1);
 }
 
 function interfaces_wan_bigpond_configure($curwanip) {

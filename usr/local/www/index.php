@@ -62,13 +62,19 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form>
 <?php
-	echo "<center>";
-	echo "<a href=\"/\"><img src=\"./themes/".$g['theme']."/images/icons/icon_logo.gif\" border=\"0\"></a><p>";
-	echo "Welcome to pfSense!<p>";
-	echo "One moment while we start the initial setup wizard.<p>";
-	echo "Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal gui.<p>";
-	echo "To bypass the wizard, click on the pfSense wizard on the initial page.";
-	echo "<meta http-equiv=\"refresh\" content=\"1;url=wizard.php?xml=setup_wizard.xml\">";
+	echo "<center>\n";
+	echo "<a href=\"/\"><img src=\"./themes/".$g['theme']."/images/icons/icon_logo.gif\" border=\"0\"></a><p>\n";
+	echo "<div id=\"nifty\">\n";
+	echo "Welcome to pfSense!<p>\n";
+	echo "One moment while we start the initial setup wizard.<p>\n";
+	echo "Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal gui.<p>\n";
+	echo "To bypass the wizard, click on the pfSense wizard on the initial page.\n";
+	echo "</div>\n";
+	echo "<meta http-equiv=\"refresh\" content=\"1;url=wizard.php?xml=setup_wizard.xml\">\n";
+	echo "<script type=\"text/javascript\">\n";
+	echo "NiftyCheck();\n";
+	echo "Rounded(\"div#nifty\",\"top\",\"#FFF\",\"#EEEEEE\",\"smooth\");\n";
+	echo "</script>\n";
 	exit;
 }
 

@@ -65,6 +65,9 @@ if ($_POST) {
 		$retval = filter_configure();
 		config_unlock();
 
+		if (file_exists($d_filterconfdirty_path))
+			unlink($d_filterconfdirty_path);
+
 		$savemsg = "The settings have been applied";
 	}
 }

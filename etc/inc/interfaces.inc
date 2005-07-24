@@ -416,7 +416,10 @@ function interfaces_wireless_configure($if, $wlcfg) {
 	$fd = fopen("{$g['tmp_path']}/ifconfig_wireless", "w");
 	fwrite($fd, "/sbin/ifconfig {$ifcargs}");
 	fclose($fd);
-
+	
+	if($wlcfg['txpower'] <> "")
+		mwexec("/sbin/ifconfig {$ifcargs} txpower {$wlcfg['txpower']}");
+	
         return 0;
 
 }

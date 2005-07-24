@@ -39,6 +39,7 @@ function wireless_config_init() {
 	$pconfig['ssid'] = $optcfg['wireless']['ssid'];
 	$pconfig['stationname'] = $optcfg['wireless']['stationname'];
 	$pconfig['channel'] = $optcfg['wireless']['channel'];
+	$pconfig['txpower'] = $optcfg['wireless']['txpower'];	
 	$pconfig['wep_enable'] = isset($optcfg['wireless']['wep']['enable']);
 	
 	if (is_array($optcfg['wireless']['wep']['key'])) {
@@ -79,6 +80,7 @@ function wireless_config_post() {
 		$optcfg['wireless']['ssid'] = $_POST['ssid'];
 		$optcfg['wireless']['stationname'] = $_POST['stationname'];
 		$optcfg['wireless']['channel'] = $_POST['channel'];
+		$optcfg['wireless']['txpower'] = $_POST['txpower'];
 		$optcfg['wireless']['wep']['enable'] = $_POST['wep_enable'] ? true : false;
 		
 		$optcfg['wireless']['wep']['key'] = array();
@@ -107,7 +109,7 @@ function wireless_config_print() {
 				</tr>
 				
 				<?php if (stristr($optcfg['if'], "ath") == true): ?>
-                <tr> 
+                <tr>
                   <td valign="top" class="vncellreq">Standard</td>
                   <td class="vtable"><select name="standard" class="formfld" id="standard">
                       <?php
@@ -145,6 +147,26 @@ function wireless_config_print() {
                   <td class="vtable"><?=$mandfldhtml;?><input name="ssid" type="text" class="formfld" id="ssid" size="20" value="<?=htmlspecialchars($pconfig['ssid']);?>">
                   </td>
                 </tr>
+
+                <tr> 
+                  <td valign="top" class="vncellreq">Transmit power</td>
+                  <td class="vtable">
+			<select name="txpower">
+				<?php
+				for($x=100; $x<1; $x--) {
+					if($pconfig["txpower"] == $x)
+						$SELECTED = " SELECTED";
+					else
+						$SELECTED = "";
+					if($x == $pconfig["txpower"]) {
+						echo "<option {$SELECTED}>{$x}</option>";
+					}
+				}
+				?>
+			</select>
+                  </td>
+                </tr>
+
                 <tr> 
                   <td valign="top" class="vncellreq">Channel</td>
                   <td class="vtable"><select name="channel" class="formfld" id="channel">

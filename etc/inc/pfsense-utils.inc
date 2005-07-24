@@ -1014,6 +1014,14 @@ function strncpy(&$dst, $src, $length) {
  *   none
  ******/
 function reload_interfaces() {
+	global $config, $g;
+	
+	if(file_exists("{$g['tmp_path']}/config.cache"))
+		unlink("{$g['tmp_path']}/config.cache");
+	
+	/* parse config.xml again */
+	parse_config_bootup();
+	
 	/* set up LAN interface */
 	interfaces_lan_configure();
 
@@ -1042,6 +1050,14 @@ function reload_interfaces() {
  *   none
  ******/
 function reload_all() {
+	global $config, $g;
+	
+	if(file_exists("{$g['tmp_path']}/config.cache"))
+		unlink("{$g['tmp_path']}/config.cache");
+	
+	/* parse config.xml again */
+	parse_config_bootup();	
+	
 	/* set up our timezone */
 	system_timezone_configure();
 

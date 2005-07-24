@@ -1023,11 +1023,11 @@ function reload_interfaces() {
 	/* set up Optional interfaces */
 	interfaces_optional_configure();
         
-	/* bring up carp interfaces */
-	interfaces_carp_bringup();
-	
 	/* set up static routes */
 	system_routing_configure();
+	
+	/* bring up carp interfaces */
+	interfaces_carp_bringup();
 
 	/* enable routing */
 	system_routing_enable();
@@ -1064,7 +1064,7 @@ function reload_all() {
 	interfaces_optional_configure();
         
 	/* bring up carp interfaces */
-	interfaces_carp_bringup();
+	interfaces_carp_configure();
 	
 	/* set up static routes */
 	system_routing_configure();
@@ -1089,7 +1089,10 @@ function reload_all() {
 
 	/* start ftp proxy helpers if they are enabled */
 	system_start_ftp_helpers();
-        
+
+	/* bring up carp interfaces */
+	interfaces_carp_bringup();
+
         /* reload the filter */
 	filter_configure();	
 }

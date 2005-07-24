@@ -45,7 +45,7 @@ require_once("functions.inc");
 // Exposed functions.
 
 $backup_config_section_doc = 'XMLRPC wrapper for backup_config_section. This method must be called with two parameters: a string containing the local system\'s password followed by a string containing the section to be backed up.';
-$backup_config_section_sig = array(array(string, string, string));
+$backup_config_section_sig = array(array($XML_RPC_String, $XML_RPC_String, $XML_RPC_String));
 
 function backup_config_section_xmlrpc($raw_params) {
 	$params = xmlrpc_params_to_php($raw_params); // Convert XML_RPC_Value objects to a PHP array of values.
@@ -55,7 +55,7 @@ function backup_config_section_xmlrpc($raw_params) {
 }
 
 $restore_config_section_doc = 'XMLRPC wrapper for restore_config_section. This method must be called with three parameters: a string containing the local system\'s password, a string containing the section to be restored, and a string containing the returned value of backup_config_section() for that section. This function returns true upon completion.';
-$restore_config_section_sig = array(array(boolean, string, array(), array()));
+$restore_config_section_sig = array(array($XML_RPC_Boolean, $XML_RPC_String, $XML_RPC_Array, $XML_RPC_Array));
 
 function restore_config_section_xmlrpc($raw_params) {
 	$params = xmlrpc_params_to_php($raw_params);
@@ -69,7 +69,7 @@ function restore_config_section_xmlrpc($raw_params) {
 }
 
 $filter_configure_doc = 'Basic XMLRPC wrapper for filter_configure. This method must be called with one paramater: a string containing the local system\'s password. This function returns true upon completion.';
-$filter_configure_sig = array(array(boolean, string));
+$filter_configure_sig = array(array($XML_RPC_Boolean, $XML_RPC_String));
 
 function filter_configure_xmlrpc($raw_params) {
 	$params = xmlrpc_params_to_php($raw_params);
@@ -79,7 +79,7 @@ function filter_configure_xmlrpc($raw_params) {
 }
 
 $check_firmware_version_doc = 'Basic XMLRPC wrapper for filter_configure. This function will return the output of check_firmware_version upon completion.';
-$check_firmware_version_sig = array(array(string, string));
+$check_firmware_version_sig = array(array($XML_RPC_String, $XML_RPC_String));
 
 function check_firmware_version_xmlrpc($raw_params) {
 	return new XML_RPC_Response(new XML_RPC_Value(check_firmware_version(false), 'string'));
@@ -87,7 +87,7 @@ function check_firmware_version_xmlrpc($raw_params) {
 
 
 $auto_update_doc = 'Basic XMLRPC wrapper for auto_update. This method must be called with one paramater: a string containing the local system\'s password. This function will return true upon completion.';
-$auto_update_sig = array(array(boolean, string));
+$auto_update_sig = array(array($XML_RPC_Boolean, $XML_RPC_String));
 
 function auto_update_xmlrpc($raw_params) {
 	$params = xmlrpc_params_to_php($raw_params);
@@ -97,7 +97,7 @@ function auto_update_xmlrpc($raw_params) {
 }
 
 $reboot_doc = 'Basic XMLRPC wrapper for rc.reboot.';
-$reboot_sig = array(array(boolean, string));
+$reboot_sig = array(array($XML_RPC_Boolean, $XML_RPC_String));
 
 function reboot_xmlrpc($raw_params) {
 	require_once("util.inc");
@@ -107,7 +107,7 @@ function reboot_xmlrpc($raw_params) {
 	return new XML_RPC_Response(new XML_RPC_Value(true, 'boolean'));
 }
 
-$get_notices_sig = array(array(array(), string), array(array()));
+$get_notices_sig = array(array($XML_RPC_Array, $XML_RPC_String), array($XML_RPC_Array));
 function get_notices_xmlrpc($raw_params) {
 	global $g;
 	require_once("notices.inc");

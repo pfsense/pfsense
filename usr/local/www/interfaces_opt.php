@@ -211,11 +211,13 @@ function ipaddr_change() {
 function type_change(enable_change,enable_change_pptp) {
 	switch (document.iform.type.selectedIndex) {
 		case 0:
+			document.iform.ipaddr.type.disabled = 0;
 			document.iform.ipaddr.disabled = 0;
 			document.iform.subnet.disabled = 0;
 			document.iform.gateway.disabled = 0;
 			break;
 		case 1:
+			document.iform.ipaddr.type.disabled = 1;
 			document.iform.ipaddr.disabled = 1;
 			document.iform.subnet.disabled = 1;
 			document.iform.gateway.disabled = 1;

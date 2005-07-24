@@ -82,6 +82,7 @@
 	//if (!file_exists("$sshConfigDir/ssh_host_key") and $config['ssh']['dsa'] == "") {
 	if (!file_exists("$sshConfigDir/ssh_host_key")) {
 		/* remove previous keys and regen later */
+		conf_mount_rw();
 		mwexec("rm /etc/ssh/ssh_host_*");
 		system("/usr/bin/ssh-keygen -t rsa1 -N '' -f $sshConfigDir/ssh_host_key");
 		system("/usr/bin/ssh-keygen -t rsa -N '' -f $sshConfigDir/ssh_host_rsa_key");

@@ -102,7 +102,12 @@ include("fbegin.inc");
 
 		<?php
 		 if(!$pkg_info) {
-			echo "<tr><td colspan=\"5\"><center>There are currently no available packages for installation.</td></tr>";
+			$ip = gethostbyname("www.pfsense.com");
+			if($ip == "") {
+				    echo "<tr><td colspan=\"5\"><center>Could not contact pfsense.com.  Check your dns/connection settings.</td></tr>";
+			} else {
+				    echo "<tr><td colspan=\"5\"><center>There are currently no available packages for installation.</td></tr>";
+			}
 		 } else {
 		 $pkgs = array();
 		 $instpkgs = array();

@@ -98,17 +98,12 @@ if ($_POST) {
 
 		write_config($changedesc);
 
-		$savemsg = get_std_save_message(0);
-		
-		/* setup carp interfaces */
-		interfaces_carp_configure();
-	
-		/* bring up carp interfaces */
-		interfaces_carp_bringup();	
-
+				
 		if ($dhcpd_was_enabled)
 			$savemsg .= "<br>Note that the DHCP server has been disabled.<br>Please review its configuration " .
 				"and enable it again prior to rebooting.";
+		else
+			$savemsg = "The changes have been applied.  You may need to correct the web browsers ip address.";
 	}
 }
 
@@ -205,3 +200,27 @@ function ipaddr_change() {
 <?php include("fend.inc"); ?>
 </body>
 </html>
+
+<?php
+
+if ($_POST) {
+
+	/*   Change these items late in the script
+	 *   so the script will fully complete to
+         *   the users web browser
+	 */
+
+	/* set up LAN interface */
+	interfaces_lan_configure();
+
+	interfaces_vlan_configure();
+	
+	/* setup carp interfaces */
+	interfaces_carp_configure();
+
+	/* bring up carp interfaces */
+	interfaces_carp_bringup();	
+	
+}
+
+?>

@@ -253,7 +253,8 @@ include("head.inc");
   <?php endif; ?>
 </table>
 </div>
-  <input name="Submit" type="submit" class="formbtn" value="Save"><br><br>
+<br>
+<input name="Submit" type="submit" class="formbtn" value="Save"><br><br>
 <p><span class="vexpl"><strong><span class="red">Warning:</span><br>
 </strong>After you click &quot;Save&quot;, you must reboot the firewall to make the changes take effect. You may also have to do one or more of the following steps before you can access your firewall again: </span></p>
 <ul>

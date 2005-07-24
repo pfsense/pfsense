@@ -286,7 +286,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
                         if(is_freebsd_pkg_installed($working_depend[1]) === false) {
                                 pkg_fetch_recursive($working_depend[1], $depend_filename, $dependlevel + 1, $base_url);
                         } else {
-                                $dependlevel++;
+//                              $dependlevel++;
                                 $static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $working_depend[1] . " ";
                                 @fwrite($fd_log, $working_depend[1] . "\n");
                         }

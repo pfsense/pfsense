@@ -42,10 +42,6 @@
 		<url>vpn_ipsec_ca.php</url>
 	    </tab>
 	    <tab>
-		<text>Pre-shared keys</text>
-		<url>vpn_ipsec_keys.php</url>
-	    </tab>
-	    <tab>
 		<text>Failover IPSEC</text>
 		<url>/pkg_edit.php?xml=sasyncd.xml&amp;id=0</url>
 		<active/>

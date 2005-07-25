@@ -158,9 +158,7 @@ function wireless_config_print() {
 						$SELECTED = " SELECTED";
 					else
 						$SELECTED = "";
-					if($x == $pconfig["txpower"]) {
-						echo "<option {$SELECTED}>{$x}</option>";
-					}
+					echo "<option {$SELECTED}>{$x}</option>\n";
 				}
 				?>
 			</select>

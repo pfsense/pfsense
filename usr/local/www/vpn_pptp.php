@@ -148,6 +148,7 @@ function enable_change(enable_over) {
 		document.iform.localip.disabled = 0;
 		document.iform.req128.disabled = 0;
 		document.iform.radiusenable.disabled = 0;
+		document.iform.wins.disabled = 0;
 		
 		if (document.iform.radiusenable.checked || enable_over) {
 			document.iform.radacct_enable.disabled = 0;
@@ -166,6 +167,7 @@ function enable_change(enable_over) {
 		document.iform.radacct_enable.disabled = 1;
 		document.iform.radiusserver.disabled = 1;
 		document.iform.radiussecret.disabled = 1;
+		document.iform.wins.disabled = 1;
 	}
 	if ((get_radio_value(document.iform.mode) == "redir") || enable_over) {
 		document.iform.redir.disabled = 0;

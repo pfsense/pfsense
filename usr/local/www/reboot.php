@@ -32,16 +32,6 @@
 
 require("guiconfig.inc");
 
-if ($_POST) {
-	if ($_POST['Submit'] != " No ") {
-		system_reboot();
-		$rebootmsg = "The system is rebooting now. This may take one minute.";
-	} else {
-		header("Location: index.php");
-		exit;
-	}
-}
-
 $pgtitle = "Diagnostics: Reboot System";
 include("head.inc");
 
@@ -49,15 +39,28 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
+<center>
 <?php if ($rebootmsg): echo print_info_box($rebootmsg); else: ?>
       <form action="reboot.php" method="post">
         <p><strong>Are you sure you want to reboot the system?</strong></p>
         <p> 
-          <input name="Submit" type="submit" class="formbtn" value=" Yes ">
           <input name="Submit" type="submit" class="formbtn" value=" No ">
+	  <input name="Submit" type="submit" class="formbtn" value=" Yes ">
         </p>
       </form>
 <?php endif; ?>
 <?php include("fend.inc"); ?>
 </body>
 </html>
+
+<?php
+if ($_POST) {
+	if ($_POST['Submit'] == " Yes ") {
+		system_reboot();
+		$rebootmsg = "The system is rebooting now. This may take one minute.";
+	} else {
+		header("Location: index.php");
+		exit;
+	}
+}
+?>

@@ -22,7 +22,9 @@ form input {
 iframe {
 	border: 0px;
 }
-
+.iframe {
+	background-color: #FFFFFF;
+}
 
 /* ID Based CSS Definitions */
 #wrapper {

@@ -174,7 +174,9 @@ if ($_GET['act'] == "add") {
 	}
 	
 	write_config();
-	touch($d_sysrebootreqd_path);
+
+	reload_interfaces();
+
 	header("Location: interfaces_assign.php");
 	exit;
 }

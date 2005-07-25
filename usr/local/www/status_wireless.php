@@ -138,7 +138,9 @@ include("head.inc");
                       <td width="15%" class="listhdr">Quality</td>
                     </tr>
                     <?php foreach ($ifinfo['sscache'] as $ss): ?>
-                    <tr> 
+		    <?php if($ss['ipaddr'] <> "0.0.0.0"
+			  and $ss['ipaddr'] <> ""): ?>
+                    <tr>                                 
                       <td class="listlr"> 
                         <?=htmlspecialchars($ss['mac']);?>
                       </td>
@@ -155,6 +157,7 @@ include("head.inc");
                         <?=htmlspecialchars($ss['qual']);?>
                       </td>
                     </tr>
+		    <?php endif; ?>
                     <?php endforeach; ?>
                   </table></td>
               </tr><?php if ($ifinfo['aslist']): ?>

@@ -108,6 +108,8 @@ function enable_hardware_offloading($interface) {
 			}
 		}
     }
+    mwexec("/sbin/ifconfig $interface txcsum 2>/dev/null");
+    mwexec("/sbin/ifconfig $interface rxcsum 2>/dev/null");    
     return;
 }
 

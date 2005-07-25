@@ -471,13 +471,12 @@
 </step>
 <step>
 	<id>7</id>
-	<title>Reboot</title>
+	<title>Reload configuration</title>
 	<disableheader>true</disableheader>
-	<description>On this screen we will reboot pfSense so your changes will take affect..</description>
+	<description>On this screen we will reload the changes.</description>
 	<fields>
 		<field>
-			<stepsubmitphpaction>/sbin/shutdown -r now</stepsubmitphpaction>
-			<name>Reboot</name>
+			<name>Reload</name>
 			<type>submit</type>
 		</field>
 	</fields>

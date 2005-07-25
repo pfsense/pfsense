@@ -161,7 +161,8 @@ function wireless_config_print() {
 					echo "<option {$SELECTED}>{$x}</option>\n";
 				}
 				?>
-			</select>
+			</select> <br>
+			Note: Typically only a few discreet power settings are available and the driver will use the setting closest to the specified value.  Not all adaptors support changing the transmit power setting.
                   </td>
                 </tr>
 

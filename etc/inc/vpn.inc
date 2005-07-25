@@ -645,7 +645,9 @@ EOD;
 
 EOD;
 			}
-
+			if (isset($pptpdcfg["wins"])) {
+				$mpdconf .= "	set ipcp nbns {$pptpdcfg['wins']}\n";
+			}
 			if (isset($config['dnsmasq']['enable'])) {
 				$mpdconf .= "	set ipcp dns " . $config['interfaces']['lan']['ipaddr'];
 				if ($syscfg['dnsserver'][0])

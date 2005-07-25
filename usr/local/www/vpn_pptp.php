@@ -40,6 +40,7 @@ $pconfig['remoteip'] = $pptpcfg['remoteip'];
 $pconfig['localip'] = $pptpcfg['localip'];
 $pconfig['redir'] = $pptpcfg['redir'];
 $pconfig['mode'] = $pptpcfg['mode'];
+$pconfig['wins'] = $pptpcfg['wins'];
 $pconfig['req128'] = isset($pptpcfg['req128']);
 $pconfig['radiusenable'] = isset($pptpcfg['radius']['enable']);
 $pconfig['radacct_enable'] = isset($pptpcfg['radius']['accounting']);
@@ -103,6 +104,7 @@ if ($_POST) {
 		$pptpcfg['redir'] = $_POST['redir'];
 		$pptpcfg['localip'] = $_POST['localip'];
 		$pptpcfg['mode'] = $_POST['mode'];
+		$pptpcfg['wins'] = $_POST['wins'];
 		$pptpcfg['req128'] = $_POST['req128'] ? true : false;
 		$pptpcfg['radius']['enable'] = $_POST['radiusenable'] ? true : false;
 		$pptpcfg['radius']['accounting'] = $_POST['radacct_enable'] ? true : false;
@@ -267,6 +269,15 @@ function enable_change(enable_over) {
                       Enter the shared secret that will be used to authenticate 
                       to the RADIUS server.</td>
                 </tr>
+
+                </tr>
+                <tr> 
+                  <td width="22%" valign="top" class="vncell">WINS Server</td>
+                  <td width="78%" valign="top" class="vtable">
+                      <input name="wins" class="formfld" id="wins" size="20" value="<?=htmlspecialchars($pconfig['wins']);?>">
+                  </td>
+                </tr>
+
                 <tr> 
                   <td height="16" colspan="2" valign="top"></td>
                 </tr>

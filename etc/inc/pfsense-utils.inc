@@ -1005,7 +1005,7 @@ function strncpy(&$dst, $src, $length) {
 	}
 }
 
-/****f* pfsense-utils/reload_interfaces
+/****f* pfsense-utils/reload_interfaces_sync
  * NAME
  *   reload_interfaces - reload all interfaces
  * INPUTS
@@ -1013,7 +1013,7 @@ function strncpy(&$dst, $src, $length) {
  * RESULT
  *   none
  ******/
-function reload_interfaces() {
+function reload_interfaces_sync() {
 	global $config, $g;
 	
 	if(file_exists("{$g['tmp_path']}/config.cache"))
@@ -1043,13 +1043,37 @@ function reload_interfaces() {
 
 /****f* pfsense-utils/reload_all
  * NAME
- *   reload_all - reload all settings
+ *   reload_all - triggers a reload of all settings
  *   * INPUTS
  *   none
  * RESULT
  *   none
  ******/
 function reload_all() {
+	touch("/tmp/reload_all");
+}
+
+/****f* pfsense-utils/reload_interfaces
+ * NAME
+ *   reload_interfaces - triggers a reload of all interfaces
+ * INPUTS
+ *   none
+ * RESULT
+ *   none
+ ******/
+function reload_interfaces() {
+	touch("/tmp/reload_interfaces");
+}
+
+/****f* pfsense-utils/reload_all_sync
+ * NAME
+ *   reload_all - reload all settings
+ *   * INPUTS
+ *   none
+ * RESULT
+ *   none
+ ******/
+function reload_all_sync() {
 	global $config, $g;
 	
 	if(file_exists("{$g['tmp_path']}/config.cache"))

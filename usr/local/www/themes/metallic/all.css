@@ -19,6 +19,10 @@ form input {
 	font-size: 1.1em;
 }
 
+iframe {
+	border: 0px;
+}
+
 
 /* ID Based CSS Definitions */
 #wrapper {
@@ -170,11 +174,13 @@ form input {
 	position: absolute; 
 	top: 2em;
 	left: -2px;
-	width: 8.9em;
+	width: 9em;
 	font-weight: normal;
 	background: transparent bottom left no-repeat; /* This is key to making the menu maintain visibility when not on a link */
 	background-color: #202020;
-	padding: 0em 0 0em 0;
+	background: url("images/menu_footer.gif") no-repeat;
+	background-position: bottom;
+	padding: 0em 0 0.4em 0;
 	padding-top: 0.3em;
 }
 /* to override top and left in browsers other than IE */
@@ -215,9 +221,8 @@ form input {
 	background: url('images/metal_bgr_red.gif') repeat-x;
 }
 
-
 #navigation ul li ul li a.navlnk:hover {
-	text-decoration: underline;
+	text-decoration: none;
 }
 #navigation ul li.first {
 	border-right: 0px;

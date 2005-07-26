@@ -83,6 +83,7 @@ function get_notices($category = "all") {
 function close_notice($id) {
 	global $notice_path;
 	require_once("util.inc");
+	$ids = array();
 	if(!$notices = get_notices()) return;
 	if($id == "all") {
 		unlink_if_exists($notice_path);
@@ -103,9 +104,9 @@ function close_notice($id) {
 			break;
 		}
 	}
-	if(count($queue) != 0) {
+	if(count($notices) != 0) {
 		$queueout = fopen($notice_path, "w");
-        	fwrite($queueout, serialize($queue));
+        	fwrite($queueout, serialize($notices));
         	fclose($queueout);
 	} else {
 		unlink_if_exists($notice_path);

@@ -204,7 +204,6 @@ include("head.inc");
 	  </td>
 	</tr>
 </table>
-</div>
             </form>
 <?php include("fend.inc"); ?>
 </body>

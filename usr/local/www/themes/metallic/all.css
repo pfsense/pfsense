@@ -20,7 +20,8 @@ form input {
 }
 
 iframe {
-	border: 0px;
+	z-index: 1;
+	border: 1px dashed #990000;
 }
 .iframe {
 	background-color: #FFFFFF;
@@ -221,6 +222,10 @@ iframe {
 }
 #navigation ul li ul li:hover {
 	background: url('images/metal_bgr_red.gif') repeat-x;
+}
+
+#navigation li li a {
+	padding: 0.2em 10px
 }
 
 #navigation ul li ul li a.navlnk:hover {

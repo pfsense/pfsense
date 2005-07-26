@@ -225,7 +225,9 @@ iframe {
 }
 
 #navigation li li a {
-	padding: 0.2em 10px
+	display: block;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 
 #navigation ul li ul li a.navlnk:hover {

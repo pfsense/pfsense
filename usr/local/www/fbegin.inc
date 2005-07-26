@@ -49,7 +49,7 @@ require_once("notices.inc");
 						<ul class="subdrop">
 							<li><a href="/system_advanced.php" class="navlnk">Advanced</a></li>
 							<li><a href="/system_firmware_check.php" class="navlnk">Firmware</a></li>
-							<li><a href="/system.php" class="navlnk">General setup</a></li>
+							<li><a href="/system.php" class="navlnk">General Setup</a></li>
 							<li><a href="/pkg_mgr.php" class="navlnk">Packages</a></li>
 							<li><a href="/system_routes.php" class="navlnk">Static routes</a></li>
 						</ul>

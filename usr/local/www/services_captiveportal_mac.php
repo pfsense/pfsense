@@ -130,6 +130,11 @@ include("head.inc");
           </td>
 	</tr>
 	<tr>
+	          <td class="list" colspan="2">&nbsp;</td>
+	          <td class="list"> <a href="services_captiveportal_mac_edit.php"><img src="plus.gif" title="add host" width="17" height="17" border="0"></a></td>
+	        </tr>
+        <tr>
+	<tr>
 	<td colspan="2" class="list"><span class="vexpl"><span class="red"><strong>
 	Note:<br>
 	</strong></span>

@@ -63,7 +63,7 @@ function vpn_ipsec_failover_configure() {
 	chmod("{$g['varetc_path']}/sasyncd.conf", 0600);
 	
 	/* launch sasyncd, oh wise one */
-	mwexec_bg("/usr/local/sbin/sasyncd -d -v -v -v | /usr/bin/logger -t pf -p local0.info");
+	mwexec_bg("/usr/local/sbin/sasyncd -d -v -v -v");
 }
 
 function find_last_gif_device() {

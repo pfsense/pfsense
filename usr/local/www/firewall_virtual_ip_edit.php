@@ -205,6 +205,7 @@ function enable_change(enable_over) {
                 document.iform.password.disabled = 1;
                 document.iform.advskew.disabled = 1;
                 document.iform.type.disabled = 0;
+                document.iform.subnet_bits.disabled = 1;
 		if (note.firstChild == null) {
 			note.appendChild(proxyarpnote);
 		} else {

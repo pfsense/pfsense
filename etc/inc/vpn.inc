@@ -645,9 +645,8 @@ EOD;
 
 EOD;
 			}
-			if (isset($pptpdcfg["wins"])) {
+			if (isset($pptpdcfg["wins"])) 
 				$mpdconf .= "	set ipcp nbns {$pptpdcfg['wins']}\n";
-			}
 			if (isset($config['dnsmasq']['enable'])) {
 				$mpdconf .= "	set ipcp dns " . $config['interfaces']['lan']['ipaddr'];
 				if ($syscfg['dnsserver'][0])
@@ -730,10 +729,7 @@ EOD;
 			break;
 	}
 
-	if (!$g['booting']) {
-		/* reload the filter */
-		touch("{$g["tmp_path"]}/filter_dirty");
-	}
+	touch("{$g["tmp_path"]}/filter_dirty");
 
 	if ($g['booting'])
 		echo "done\n";

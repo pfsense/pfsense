@@ -279,14 +279,14 @@ function conf_mount_rw() {
 	/* don't use mount -u anymore
 	   (doesn't sync the files properly and /bin/sync won't help either) */
 	$status = mwexec("/sbin/umount -f {$g['cf_path']}");
-	while($status <> 0) {
-		mwexec("fsck -y");
+	while($status < 0) {
+		mwexec("/sbin/fsck -y");
 		$status = mwexec("/sbin/umount -f {$g['cf_path']}");
 	}
 
 	$status = mwexec("/sbin/mount -w -o noatime {$g['cf_path']}");
-	while($status <> 0) {
-		mwexec("fsck -y");
+	while($status < 0) {
+		mwexec("/sbin/fsck -y");
 		$status = mwexec("/sbin/mount -w -o noatime {$g['cf_path']}");
 	}
 

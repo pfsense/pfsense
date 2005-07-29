@@ -360,11 +360,17 @@ function interfaces_carp_bringup() {
 
 function interfaces_wireless_configure($if, $wlcfg) {
         global $config, $g;
+	
+	/*   set wireless channel value.  if we're using 0 then
+	 *   convert the channel to -
+	 */
+	$channel = escapeshellarg($wlcfg['channel']);
+	if($channel == "") 
+		$channel = "";
 
         /* wireless configuration */
         $ifcargs = escapeshellarg($if) .
-                " ssid " . escapeshellarg($wlcfg['ssid']) . " channel " .
-                escapeshellarg($wlcfg['channel']) . " ";
+                " ssid " . escapeshellarg($wlcfg['ssid']) . " channel {$channel} ";
 
         if ($wlcfg['stationname'])
                 $ifcargs .= "stationname " . escapeshellarg($wlcfg['stationname']) . " ";
@@ -415,6 +421,16 @@ function interfaces_wireless_configure($if, $wlcfg) {
                                 $ifcargs .= "-mediaopt adhoc ";
                         break;
         }
+	
+	/*   if hostap is enabled and hidessid is enabled
+	 *   then hide the ssid from the general public.
+	 */
+	if($wlcfg['mode'] == "hostap") {
+		if($wlcfg['hidessid'])
+			$ifcargs .= "hidessid ";
+		else
+			$ifcargs .= "-hidessid ";
+	}
 
         $ifcargs .= "up";
 

@@ -422,14 +422,19 @@ function interfaces_wireless_configure($if, $wlcfg) {
                         break;
         }
 	
-	/*   if hostap is enabled and hidessid is enabled
-	 *   then hide the ssid from the general public.
+	/*   extra options during hostap mode
 	 */
 	if($wlcfg['mode'] == "hostap") {
-		if($wlcfg['hidessid'])
+		/* handle hide ssid option */
+		if(isset($wlcfg['hidessid']))
 			$ifcargs .= "hidessid ";
 		else
 			$ifcargs .= "-hidessid ";
+		/* handle pureg (802.11g) only option */
+		if(isset($wlcfg['pureg']))
+			$ifcargs .= "pureg ";
+		else
+			$ifcargs .= "-pureg ";
 	}
 
         $ifcargs .= "up";

@@ -166,6 +166,20 @@ function wireless_config_print() {
                 </tr>
 
                 <tr> 
+                  <td valign="top" class="vncellreq">802.11g only</td>
+                  <td class="vtable">
+		  <?php
+			if(isset($pconfig['pureg']))
+				$CHECKED = " CHECKED";
+			else
+				$CHECKED = "";
+		  ?>
+		  <input name="pureg" type="checkbox" class="formfld" id="pureg"<?php echo $CHECKED; ?>><br>
+		  When operating as an access point in 802.11g mode allow only 11g-capable stations to associate (11b-only stations are not permitted to associate).
+                  </td>
+                </tr>
+
+                <tr> 
                   <td valign="top" class="vncellreq">Transmit power</td>
                   <td class="vtable">
 			<select name="txpower">

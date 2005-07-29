@@ -263,7 +263,6 @@
 		<!-- <filteringbridge/> -->
 	</bridge>
 	<syslog>
-		<rawfilter/>
 		<!--
 		<reverse/>
 		<enable/>

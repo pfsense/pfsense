@@ -34,7 +34,7 @@
 
 require("guiconfig.inc");
 
-$pptp_logfile = "{$g['varlog_path']}/ipsec.log";
+$ipsec_logfile = "{$g['varlog_path']}/ipsec.log";
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)

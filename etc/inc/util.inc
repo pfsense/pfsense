@@ -98,12 +98,18 @@ function is_ipaddr($ipaddr) {
 /* returns true if $ipaddr is a valid dotted IPv4 address or an alias thereof */
 function is_ipaddroralias($ipaddr) {
 
-	global $aliastable;
+	global $aliastable, $config;
+
+	foreach($config['aliases']['alias'] as $alias) {
+		if($alias['name'] == $ipaddr)
+			return true;
+	}
 
 	if (isset($aliastable[$ipaddr]) && is_ipaddr($aliastable[$ipaddr]))
 		return true;
 	else
 		return is_ipaddr($ipaddr);
+	
 }
 
 /* returns true if $ipaddr is a valid dotted IPv4 address or any alias */

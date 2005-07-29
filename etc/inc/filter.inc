@@ -1010,19 +1010,6 @@ function filter_nat_rules_generate() {
 			if (!$target)
 				continue;	/* unresolvable alias */
 
-			/*
-			 *   Expand aliases
-			 *   XXX: may want to integrate this into pf macros
-			 */
-			if(alias_expand($extport[0]))
-				$extport[0] = alias_expand($extport[0]);
-			if(alias_expand($extport[1]))
-				$extport[1] = alias_expand($extport[1]);			
-			if(alias_expand($target))
-				$target = alias_expand($extport[1]);
-			if(alias_expand($localport))
-				$localport = alias_expand($localport);
-
 			if ($rule['external-address'])
 				if($rule['external-address'] <> "any")
 					$extaddr = $rule['external-address'] . "/32";
@@ -1039,6 +1026,21 @@ function filter_nat_rules_generate() {
 				$natif = $config['interfaces'][$rule['interface']]['if'];
 
 			$lanif = $lancfg['if'];
+
+			/*
+			 *   Expand aliases
+			 *   XXX: may want to integrate this into pf macros
+			 */
+			if(alias_expand($extport[0]))
+				$extport[0] = alias_expand($extport[0]);
+			if(alias_expand($extport[1]))
+				$extport[1] = alias_expand($extport[1]);			
+			if(alias_expand($target))
+				$target = alias_expand($extport[1]);
+			if(alias_expand($localport))
+				$localport = alias_expand($localport);
+			if(alias_expand($extaddr))
+				$extaddr = alias_expand($extaddr);
 
 			if ((!$extport[1]) || ($extport[0] == $extport[1])) {
 				if($rule['protocol'] == "tcp/udp")

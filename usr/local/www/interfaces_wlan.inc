@@ -29,7 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$wlchannels = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,36,40,42,44,48,50,52,56,58,60,64,149,152,153,157,160,161,165);
+$wlchannels = array(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,36,40,42,44,48,50,52,56,58,60,64,149,152,153,157,160,161,165);
 
 function wireless_config_init() {
 	global $optcfg, $pconfig;
@@ -37,6 +37,7 @@ function wireless_config_init() {
 	$pconfig['standard'] = $optcfg['wireless']['standard'];
 	$pconfig['mode'] = $optcfg['wireless']['mode'];
 	$pconfig['ssid'] = $optcfg['wireless']['ssid'];
+	$pconfig['hidessid'] = $optcfg['wireless']['hidessid'];
 	$pconfig['stationname'] = $optcfg['wireless']['stationname'];
 	$pconfig['channel'] = $optcfg['wireless']['channel'];
 	$pconfig['txpower'] = $optcfg['wireless']['txpower'];	
@@ -78,6 +79,8 @@ function wireless_config_post() {
 		$optcfg['wireless']['standard'] = $_POST['standard'];
 		$optcfg['wireless']['mode'] = $_POST['mode'];
 		$optcfg['wireless']['ssid'] = $_POST['ssid'];
+		$optcfg['wireless']['ssid'] = $_POST['ssid'];
+		$optcfg['wireless']['hidessid'] = $_POST['hidessid'];
 		$optcfg['wireless']['stationname'] = $_POST['stationname'];
 		$optcfg['wireless']['channel'] = $_POST['channel'];
 		$optcfg['wireless']['txpower'] = $_POST['txpower'];
@@ -145,6 +148,20 @@ function wireless_config_print() {
                 <tr> 
                   <td valign="top" class="vncellreq">SSID</td>
                   <td class="vtable"><?=$mandfldhtml;?><input name="ssid" type="text" class="formfld" id="ssid" size="20" value="<?=htmlspecialchars($pconfig['ssid']);?>">
+                  </td>
+                </tr>
+
+                <tr> 
+                  <td valign="top" class="vncellreq">Hide SSID</td>
+                  <td class="vtable">
+		  <?php
+			if(isset($pconfig['hidessid']))
+				$CHECKED = " CHECKED";
+			else
+				$CHECKED = "";
+		  ?>
+		  <input name="hidessid" type="checkbox" class="formfld" id="hidessid"<?php echo $CHECKED; ?>"><br>
+		  If your operating an access point this option will hide the SSID from being seen by the general public.
                   </td>
                 </tr>
 

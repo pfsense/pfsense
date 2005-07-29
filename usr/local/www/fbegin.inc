@@ -50,7 +50,9 @@ require_once("notices.inc");
 							<li><a href="/system_advanced.php" class="navlnk">Advanced</a></li>
 							<li><a href="/system_firmware_check.php" class="navlnk">Firmware</a></li>
 							<li><a href="/system.php" class="navlnk">General Setup</a></li>
+						<?php if($g['platform'] == "pfSense"): ?>
 							<li><a href="/pkg_mgr.php" class="navlnk">Packages</a></li>
+						<?php endif ?>
 							<li><a href="/system_routes.php" class="navlnk">Static routes</a></li>
 						</ul>
 					</li>

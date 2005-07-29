@@ -306,7 +306,10 @@ function enable_change(enable_change) {
 	  <td width="22%" valign="top" class="vncellreq">Interface</td>
 	  <td width="78%" class="vtable">
 		<select name="cinterface" class="formfld" id="cinterface">
-		  <?php $interfaces = array('lan' => 'LAN');
+		  <?php
+		  $interfaces = array('lan' => 'LAN');
+		  if(isset($config['system']['developer']))
+			$interfaces[] = array('wan' => 'WAN');
 		  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 			if (isset($config['interfaces']['opt' . $i]['enable']))
 				$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];

@@ -291,7 +291,7 @@ function ext_rep_change() {
 							<?=htmlspecialchars($wkportdesc);?>
 							</option>
                             <?php endforeach; ?>
-                          </select> <input autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);' onkeydown='actb_checkkey(event, this)' onkeyup='actb_tocomplete(this,event,addressarray);'  class="formfldalias" name="beginport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['beginport']; ?>"></td>
+                          </select> <input autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);' onkeydown='actb_checkkey(event, this)' onkeyup='actb_tocomplete(this,event,customarray);'  class="formfldalias" name="beginport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['beginport']; ?>"></td>
                       </tr>
                       <tr>
                         <td>to:</td>
@@ -305,7 +305,7 @@ function ext_rep_change() {
 							<?=htmlspecialchars($wkportdesc);?>
 							</option>
 							<?php endforeach; ?>
-                          </select> <input class="formfldalias"  autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);' onkeydown='actb_checkkey(event, this)' onkeyup='actb_tocomplete(this,event,addressarray);' name="endport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['endport']; ?>"></td>
+                          </select> <input class="formfldalias"  autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);' onkeydown='actb_checkkey(event, this)' onkeyup='actb_tocomplete(this,event,customarray);' name="endport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['endport']; ?>"></td>
                       </tr>
                     </table>
                     <br> <span class="vexpl">Specify the port or port range on
@@ -334,7 +334,7 @@ function ext_rep_change() {
 					  <?=htmlspecialchars($wkportdesc);?>
 					  </option>
                       <?php endforeach; ?>
-                    </select> <input  autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);' onkeydown='actb_checkkey(event, this)' onkeyup='actb_tocomplete(this,event,addressarray);' class="formfldalias" name="localbeginport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['localbeginport']; ?>">
+                    </select> <input  autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);' onkeydown='actb_checkkey(event, this)' onkeyup='actb_tocomplete(this,event,customarray);' class="formfldalias" name="localbeginport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['localbeginport']; ?>">
                     <br>
                     <span class="vexpl">Specify the port on the machine with the
                     IP address entered above. In case of a port range, specify

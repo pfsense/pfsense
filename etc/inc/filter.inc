@@ -1005,9 +1005,23 @@ function filter_nat_rules_generate() {
 
 			$extport = explode("-", $rule['external-port']);
 			$target = alias_expand_host($rule['target']);
+			$localport = $rule['local-port'];
 
 			if (!$target)
 				continue;	/* unresolvable alias */
+
+			/*
+			 *   Expand aliases
+			 *   XXX: may want to integrate this into pf macros
+			 */
+			if(alias_expand($extport[0]))
+				$extport[0] = alias_expand($extport[0]);
+			if(alias_expand($extport[1]))
+				$extport[1] = alias_expand($extport[1]);			
+			if(alias_expand($target))
+				$target = alias_expand($extport[1]);
+			if(alias_expand($localport))
+				$localport = alias_expand($localport);
 
 			if ($rule['external-address'])
 				if($rule['external-address'] <> "any")
@@ -1029,10 +1043,10 @@ function filter_nat_rules_generate() {
 			if ((!$extport[1]) || ($extport[0] == $extport[1])) {
 				if($rule['protocol'] == "tcp/udp")
 					$natrules .=
-					"rdr on $natif proto { tcp udp } from any to {$extaddr} port {$extport[0]} -> {$target} port {$rule['local-port']}";
+					"rdr on $natif proto { tcp udp } from any to {$extaddr} port {$extport[0]} -> {$target} port {$localport}";
 				else
 					$natrules .=
-					"rdr on $natif proto " . $rule['protocol'] . " from any to {$extaddr} port {$extport[0]} -> {$target} port {$rule['local-port']}";
+					"rdr on $natif proto " . $rule['protocol'] . " from any to {$extaddr} port {$extport[0]} -> {$target} port {$localport}";
 
 			} else {
 				if($rule['protocol'] == "tcp/udp")

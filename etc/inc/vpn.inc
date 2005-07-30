@@ -799,7 +799,7 @@ function vpn_pppoe_configure() {
 		/* wait for process to die */
 		sleep(2);
 		
-		vpn_pptp_configure();
+		vpn_pptpd_configure();
 	}
 
 	/* make sure mpd-vpn directory exists */

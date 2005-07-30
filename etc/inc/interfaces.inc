@@ -390,21 +390,21 @@ function interfaces_wireless_configure($if, $wlcfg) {
                 $ifcargs .= "wepmode off ";
         }
 
-        if (strstr($if, "ath")) {
+	if (preg_match($g['wireless_regex'], $if)) {
                 if ($wlcfg['standard'])
                         $ifcargs .= "mode {$wlcfg['standard']} ";
         }
 
         switch ($wlcfg['mode']) {
                 case 'hostap':
-                        if (strstr($if, "ath"))
+                        if (preg_match($g['wireless_regex'], $if)) 
                                 $ifcargs .= "-mediaopt adhoc mediaopt hostap ";
                         else if (strstr($if, "wi"))
                                 $ifcargs .= "-mediaopt ibss mediaopt hostap ";
                         break;
                 case 'ibss':
                 case 'IBSS':
-                        if (strstr($if, "ath"))
+                        if (preg_match($g['wireless_regex'], $if)) 
                                 $ifcargs .= "-mediaopt hostap mediaopt adhoc ";
                         else if (strstr($if, "wi"))
                                 $ifcargs .= "-mediaopt hostap mediaopt ibss ";
@@ -413,7 +413,7 @@ function interfaces_wireless_configure($if, $wlcfg) {
                         break;
                 case 'bss':
                 case 'BSS':
-                        if (strstr($if, "ath"))
+                        if (preg_match($g['wireless_regex'], $if)) 
                                 $ifcargs .= "-mediaopt hostap -mediaopt adhoc ";
                         else if (strstr($if, "wi"))
                                 $ifcargs .= "-mediaopt hostap -mediaopt ibss ";

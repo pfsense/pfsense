@@ -47,8 +47,10 @@ $g = array(
     "captiveportal_path" => "/usr/local/captiveportal",
     "xml_rootobj" => "pfsense",
     "pppoe_interface" => "ng0",
-    "n_pptp_units" => 16, /* this value can be overriden in pptp->n_pptp_units */
-    "pptp_subnet" => 28,  /* this value can be overriden in pptp->pptp_subnet  */
+    "n_pptp_units" => 16,  /* this value can be overriden in pptp->n_pptp_units */
+    "pptp_subnet" => 28,   /* this value can be overriden in pptp->pptp_subnet  */
+    "n_pppoe_units" => 16, /* this value can be overriden in pppoe->n_pppoe_units */
+    "pppoe_subnet" => 28,  /* this value can be overriden in pppoe->pppoe_subnet  */
     "debug" => false,
     "latest_config" => "1.8",
     "nopkg_platforms" => array("cdrom"),
@@ -56,7 +58,7 @@ $g = array(
     "xmlrpcbaseurl" => "www.pfsense.com",
     "xmlrpcpath" => "/pfSense/xmlrpc.php",
     "embeddedbootupslice" => "/dev/ad0a",
-    "wireless_regex" => "/^(wi|ath|an)/"
+    "wireless_regex" => "/^(wi|ath|an|ral|ural|wai)/"
 );
 
 /* IP TOS flags */

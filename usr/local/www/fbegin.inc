@@ -110,7 +110,9 @@ require_once("notices.inc");
 							<li><a href="/diag_dhcp_leases.php" class="navlnk">DHCP leases</a></li>
 							<li><a href="/status_interfaces.php" class="navlnk">Interfaces</a></li>
 							<li><a href="/diag_ipsec_sad.php" class="navlnk">IPsec</a></li>
+							<?php if($g['platform'] == "pfSense"): ?>
 							<li><a href="/diag_pkglogs.php" class="navlnk">Package logs</a></li>
+							<?php endif ?>
 							<li><a href="/status_queues.php" class="navlnk">Queues</a></li>
 							<li><a href="/status_services.php" class="navlnk">Services</a></li>
 							<li><a href="/index.php" class="navlnk">System</a></li>

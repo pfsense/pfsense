@@ -364,7 +364,7 @@ function enablechange() {
 
 <script type="text/javascript">
 NiftyCheck();
-Rounded("div#roundme","all","##333333","#FFFFFF","smooth");
+Rounded("div#roundme","all","#333333","#FFFFFF","smooth");
 </script>
 
 </body>

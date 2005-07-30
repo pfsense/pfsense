@@ -86,7 +86,7 @@ foreach($psout as $line) {
 	$ps[] = trim(array_pop(explode(' ', array_pop(explode('/', $line)))));
 }
 
-$services = &$config['installedpackages']['service'];
+$services = $config['installedpackages']['service'];
 
 /*    Add services that are in the base.
  *
@@ -95,42 +95,50 @@ if(isset($config['dnsmasq']['enable'])) {
 	$pconfig['name'] = "dnsmasq";
 	$pconfig['description'] = "DNS Forwarder";
 	$services[] = $pconfig;
+	unset($pconfig);
 }
 
 if(isset($config['captiveportal']['enable'])) {
 	$pconfig['name'] = "mini_httpd";
 	$pconfig['description'] = "Captive Portal";
 	$services[] = $pconfig;
+	$pconfig = "";
+	unset($pconfig);
 }
 
 if(isset($config['dnsmasq']['enable'])) {
-	$pconfig['name'] = "dnsmasq";
+	$pconfig['name'] = "dhcprelay";
 	$pconfig['description'] = "DHCP Relay";
 	$services[] = $pconfig;
+	unset($pconfig);
 }
 
 if(isset($config['dhcpd']['enable'])) {
 	$pconfig['name'] = "dhcpd";
 	$pconfig['description'] = "DHCP Server";
 	$services[] = $pconfig;
+	unset($pconfig);
 }
 
 if(isset($config['snmpd']['enable'])) {
 	$pconfig['name'] = "bsnmpd";
 	$pconfig['description'] = "SNMP";
 	$services[] = $pconfig;
+	unset($pconfig);
 }
 
 if(isset($config['wol']['wolentry'])) {
 	$pconfig['name'] = "wol";
 	$pconfig['description'] = "Wake on lan";
 	$services[] = $pconfig;
+	unset($pconfig);
 }
 
 if(isset($config['proxyarp']['proxyarpnet'])) {
 	$pconfig['name'] = "proxyarp";
 	$pconfig['description'] = "Proxy Arp";
 	$services[] = $pconfig;
+	unset($pconfig);
 }
 
 if($services) {

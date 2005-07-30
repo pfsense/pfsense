@@ -105,7 +105,8 @@ if(!isset($config['shaper']['enable'])) {
                     </table>
 		    <p>
                     <strong><span class="red">Note:</span></strong><strong><br></strong>
-		      Queue graphs take 5 seconds to sample data.
+		      Queue graphs take 5 seconds to sample data.<br>
+                      You can configure the TrafficShaper <a href="firewall_shaper.php?reset=true">here</a>.
 		    </p>
             </form>
 <br><a href="status_queues.php?reset=true">Reset</a> queues if they do not load.

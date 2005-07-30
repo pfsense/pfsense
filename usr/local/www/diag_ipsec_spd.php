@@ -151,6 +151,10 @@ foreach ($spd as $sp): ?>
 <?php else: ?>
 <tr><td><p><strong>No IPsec security policies.</strong></p></td></tr>
 <?php endif; ?>
+<td colspan="4">
+		      <p><span class="vexpl"><span class="red"><strong>Note:<br>
+                      </strong></span>You can configure your IPSEC <a href="vpn_ipsec.php">here</a>.</span></p>
+		  </td>
 </table>
 </div>
 </td></tr></table>

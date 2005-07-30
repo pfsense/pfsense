@@ -150,11 +150,18 @@ if(is_array($config['virtualip']['vip'])) {
   echo "</pre>";
 ?>
 </center>
+
 </td></tr>
+<td colspan="4">
+	<p><span class="vexpl"><span class="red"><strong>Note:<br>
+        </strong></span>You can configure your CARP-Settings <a href="firewall_virtual_ip.php">here</a>.</span></p>
+</td>
 </table>
+
 </td></tr>
 </table>
 </div>
+
 
 <?php include("fend.inc"); ?>
 <script type="text/javascript">

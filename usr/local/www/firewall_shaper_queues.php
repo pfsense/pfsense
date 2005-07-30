@@ -196,7 +196,8 @@ include("head.inc");
 		      <tr><td colspan="6">
 		    <p>
                     <strong><span class="red">Note:</span></strong><strong><br></strong>
-                      A queue can only be deleted if it is not referenced by any rules.
+                      A queue can only be deleted if it is not referenced by any rules.<br>
+                      You can check the results of your queues at <a href="status_queues.php">Status:Queues</a>.
 		    </p>
 		      </td></tr>
                     </table>

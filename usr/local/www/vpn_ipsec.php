@@ -181,6 +181,10 @@ include("head.inc");
                   <td class="list" colspan="6"></td>
                   <td class="list"> <a href="vpn_ipsec_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add tunnel" width="17" height="17" border="0"></a></td>
 				</tr>
+<td colspan="4">
+		      <p><span class="vexpl"><span class="red"><strong>Note:<br>
+                      </strong></span>You can check your IPSEC status at <a href="diag_ipsec_sad.php">Status:IPSEC</a>.</span></p>
+		  </td>
               </table>
 	      </div>
   	  </td>

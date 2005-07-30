@@ -157,7 +157,8 @@ include("head.inc");
 		<tr>
 		  <td colspan="4">
 		      <p><span class="vexpl"><span class="red"><strong>Note:<br>
-                      </strong></span>The virtual IP addresses defined on this page may be used in <a href="firewall_nat.php">NAT</a> mappings.</span></p>
+                      </strong></span>The virtual IP addresses defined on this page may be used in <a href="firewall_nat.php">NAT</a> mappings.<br>
+                      You can check the status of your CARP-Interfaces <a href="carp_status.php">here</a>.</span></p>
 		  </td>
 		</tr>
               </table>

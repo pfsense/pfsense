@@ -302,7 +302,7 @@ function enable_change(enable_over) {
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"><span class="vexpl"><span class="red"><strong>Note:<br>
-                    </strong></span>don't forget to add a firewall rule to permit 
+                    </strong></span>don't forget to <a href="firewall_rules.php?if=pptp">add a firewall rule</a> to permit 
                     traffic from PPTP clients!</span></td>
                 </tr>
               </table>

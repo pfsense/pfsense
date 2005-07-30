@@ -375,12 +375,9 @@ function type_change(enable_change,enable_change_pptp) {
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"><span class="vexpl"><span class="red"><strong>Note:<br>
-                    </strong></span>be sure to add firewall rules to permit traffic
-                    through the interface. Firewall rules for an interface in
-                    bridged mode have no effect on packets to hosts other than
-                    the firewall itself, unless &quot;Enable filtering bridge&quot;
-                    is checked on the <a href="system_advanced.php">System:
-                    Advanced functions</a> page.</span></td>
+                    </strong></span>be sure to add <a href="firewall_rules.php">firewall rules</a> to permit traffic
+                    through the interface. You also need firewall rules for an interface in
+                    bridged mode as the firewall acts as a filtering bridge.</span></td>
                 </tr>
               </table>
 </form>

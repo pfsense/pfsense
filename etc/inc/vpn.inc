@@ -781,4 +781,184 @@ function vpn_endpoint_determine($tunnel, $curwanip) {
 	return null;
 }
 
+function vpn_pppoe_configure() {
+	global $config, $g;
+
+	$syscfg = $config['system'];
+	$pppoecfg = $config['pppoe'];
+
+	if ($g['booting']) {
+		if (!$pppoecfg['mode'] || ($pppoecfg['mode'] == "off"))
+			return 0;
+
+		echo "Configuring PPPoE VPN service... ";
+	} else {
+		/* kill mpd */
+		killbypid("{$g['varrun_path']}/mpd-vpn.pid");
+
+		/* wait for process to die */
+		sleep(2);
+		
+		vpn_pptp_configure();
+	}
+
+	/* make sure mpd-vpn directory exists */
+	if (!file_exists("{$g['varetc_path']}/mpd-vpn"))
+		mkdir("{$g['varetc_path']}/mpd-vpn");
+
+	switch ($pppoecfg['mode']) {
+
+		case 'server':
+
+			/* write mpd.conf */
+			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.conf", "a");
+			if (!$fd) {
+				printf("Error: cannot open mpd.conf in vpn_pppoe_configure().\n");
+				return 1;
+			}
+			$mpdconf = "\n\n";
+			$mpdconf .= <<<EOD
+pppoe:
+
+EOD;
+
+			for ($i = 0; $i < $g['n_pppoe_units']; $i++) {
+				$mpdconf .= "	load pt{$i}\n";
+			}
+
+			for ($i = 0; $i < $g['n_pppoe_units']; $i++) {
+
+				$clientip = long2ip(ip2long($pppoecfg['remoteip']) + $i);
+				$ngif = "ng" . ($i+1);
+
+				$mpdconf .= <<<EOD
+
+pppoe0:
+	new -i {$ngif} pppoe{i} pppoe{i}
+	set ipcp ranges {$pppoecfg['localip']}/32 {$clientip}/32
+	load pppoe_standart
+
+EOD;
+			}
+
+			$mpdconf .= <<<EOD
+
+pppoe_standart:
+	#set link type pppoe
+	#set pppoe iface lnc0
+	set pppoe service "*"
+	set pppoe disable originate
+	set pppoe enable incoming
+	set bundle no multilink
+	set bundle enable compression
+	set bundle accept encryption
+	set bundle max-logins 1
+	set iface idle 0
+	set iface disable on-demand
+	set iface disable proxy-arp
+	set iface enable tcpmssfix
+	set iface mtu 1500
+	set link mtu 1500
+	set link no pap chap
+	set link enable chap
+	set link keep-alive 60 180
+	set ipcp yes vjcomp
+	set ipcp no vjcomp
+	set link max-redial -1
+	set link mtu 1452
+	set ccp yes mpp-e40
+	set ccp yes mpp-e128
+	set ccp yes mpp-stateless
+	set ipcp dns 10.10.1.3
+	set link latency 1
+
+EOD;
+
+			if (isset($config['dnsmasq']['enable'])) {
+				$mpdconf .= "	set ipcp dns " . $config['interfaces']['lan']['ipaddr'];
+				if ($syscfg['dnsserver'][0])
+					$mpdconf .= " " . $syscfg['dnsserver'][0];
+				$mpdconf .= "\n";
+			} else if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
+				$mpdconf .= "	set ipcp dns " . join(" ", $syscfg['dnsserver']) . "\n";
+			}
+
+			if (isset($pppoecfg['radius']['enable'])) {
+				$mpdconf .= <<<EOD
+	set radius server {$pppoecfg['radius']['server']} "{$pppoecfg['radius']['secret']}"
+	set radius retries 3
+	set radius timeout 10
+	set bundle enable radius-auth
+	set bundle disable radius-fallback
+
+EOD;
+
+				if (isset($pppoecfg['radius']['accounting'])) {
+					$mpdconf .= <<<EOD
+	set bundle enable radius-acct
+
+EOD;
+				}
+			}
+
+			fwrite($fd, $mpdconf);
+			fclose($fd);
+
+			/* write mpd.links */
+			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.links", "a");
+			if (!$fd) {
+				printf("Error: cannot open mpd.links in vpn_pppoe_configure().\n");
+				return 1;
+			}
+
+			$mpdlinks = "";
+
+			for ($i = 0; $i < $g['n_pppoe_units']; $i++) {
+				$mpdlinks .= <<<EOD
+
+pppoe:
+	set link type pppoe
+	#set pppoe iface lnc0
+
+EOD;
+			}
+
+			fwrite($fd, $mpdlinks);
+			fclose($fd);
+
+			/* write mpd.secret */
+			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.secret", "a");
+			if (!$fd) {
+				printf("Error: cannot open mpd.secret in vpn_pppoe_configure().\n");
+				return 1;
+			}
+
+			$mpdsecret = "\n\n";
+
+			if (is_array($pppoecfg['user'])) {
+				foreach ($pppoecfg['user'] as $user)
+					$mpdsecret .= "{$user['name']} \"{$user['password']}\" {$user['ip']}\n";
+			}
+
+			fwrite($fd, $mpdsecret);
+			fclose($fd);
+			chmod("{$g['varetc_path']}/mpd-vpn/mpd.secret", 0600);
+
+			/* fire up mpd */
+			mwexec("/usr/local/sbin/mpd -b -d {$g['varetc_path']}/mpd-vpn -p {$g['varrun_path']}/mpd-vpn.pid pppoe");
+
+			break;
+
+		case 'redir':
+			break;
+	}
+
+	touch("{$g["tmp_path"]}/filter_dirty");
+
+	if ($g['booting'])
+		echo "done\n";
+
+	return 0;
+}
+
 ?>

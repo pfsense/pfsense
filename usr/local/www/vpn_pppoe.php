@@ -272,14 +272,6 @@ function enable_change(enable_over) {
                       to the RADIUS server.</td>
                 </tr>
 
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncell">WINS Server</td>
-                  <td width="78%" valign="top" class="vtable">
-                      <input name="wins" class="formfld" id="wins" size="20" value="<?=htmlspecialchars($pconfig['wins']);?>">
-                  </td>
-                </tr>
-
                 <tr> 
                   <td height="16" colspan="2" valign="top"></td>
                 </tr>

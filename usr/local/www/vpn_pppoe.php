@@ -283,16 +283,7 @@ function enable_change(enable_over) {
                 <tr> 
                   <td height="16" colspan="2" valign="top"></td>
                 </tr>
-                <tr> 
-                  <td width="22%" valign="middle">&nbsp;</td>
-                  <td width="78%" class="vtable"> 
-                    <input name="req128" type="checkbox" id="req128" value="yes" <?php if ($pconfig['req128']) echo "checked"; ?>> 
-                    <strong>Require 128-bit encryption</strong><br>
-                    When set, 128-bit encryption will be accepted. Otherwise, 
-                    40-bit and 56-bit encryption will be accepted, too. Note that 
-                    encryption will always be forced on PPPoE connections (i.e. 
-                    unencrypted connections will not be accepted).</td>
-                </tr>
+
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 

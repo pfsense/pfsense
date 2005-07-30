@@ -26,6 +26,8 @@ PLATFORM=`cat /etc/platform`
 echo
 echo "Welcome to pfSense ${version} on the '${PLATFORM}' platform..."
 echo
+cat /etc/ascii-art/pfsense-logo-small.txt
+echo
 
 if [ "$PLATFORM" = "cdrom" ]; then
 	echo "Running CDROM routines..."

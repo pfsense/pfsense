@@ -157,5 +157,7 @@ function is_service_running($service, $ps = "") {
                         }
                 }
         }
+	if(is_process_running($service))
+		return true;
 	return false;
 }

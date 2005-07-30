@@ -86,17 +86,64 @@ foreach($psout as $line) {
 	$ps[] = trim(array_pop(explode(' ', array_pop(explode('/', $line)))));
 }
 
-if($config['installedpackages']['service']) {
-	foreach($config['installedpackages']['service'] as $service) {
+$services = &$config['installedpackages']['service'];
+
+/*    Add services that are in the base.
+ *
+ */
+if(isset($config['dnsmasq']['enable'])) {
+	$pconfig['name'] = "dnsmasq";
+	$pconfig['description'] = "DNS Forwarder";
+	$services[] = $pconfig;
+}
+
+if(isset($config['captiveportal']['enable'])) {
+	$pconfig['name'] = "mini_httpd";
+	$pconfig['description'] = "Captive Portal";
+	$services[] = $pconfig;
+}
+
+if(isset($config['dnsmasq']['enable'])) {
+	$pconfig['name'] = "dnsmasq";
+	$pconfig['description'] = "DHCP Relay";
+	$services[] = $pconfig;
+}
+
+if(isset($config['dhcpd']['enable'])) {
+	$pconfig['name'] = "dhcpd";
+	$pconfig['description'] = "DHCP Server";
+	$services[] = $pconfig;
+}
+
+if(isset($config['snmpd']['enable'])) {
+	$pconfig['name'] = "bsnmpd";
+	$pconfig['description'] = "SNMP";
+	$services[] = $pconfig;
+}
+
+if(isset($config['wol']['wolentry'])) {
+	$pconfig['name'] = "wol";
+	$pconfig['description'] = "Wake on lan";
+	$services[] = $pconfig;
+}
+
+if(isset($config['proxyarp']['proxyarpnet'])) {
+	$pconfig['name'] = "proxyarp";
+	$pconfig['description'] = "Proxy Arp";
+	$services[] = $pconfig;
+}
+
+if($services) {
+	foreach($services as $service) {
 		if(!$service['name']) continue;
 		if(!$service['description']) $service['description'] = "Unknown";
 		echo '<tr><td class="listlr">' . $service['name'] . '</td>';
 		echo '<td class="listlr">' . $service['description'] . '</td>';
-		if(is_service_running($service['name'], $ps)) {
-			echo '<td class="listlr">Running</td>';
+		if(is_service_running($service['name'], $ps) or is_process_running($service['name']) ) {
+			echo '<td class="listbg"><font color="white">Running</td><td><img src="/themes/{$g["theme"]/images/icons/icon_pass.gif"></td>';
 			$running = true;
 		} else {
-			echo '<td class="listbg">Stopped</td>';
+			echo '<td class="listbg"><font color="white">Stopped</td><td><img src="/themes/{$g["theme"]/images/icons/icon_block.gif"></td>';
 			$running = false;
 		}
 		echo '<td valign="middle" class="list" nowrap>';

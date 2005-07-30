@@ -315,7 +315,7 @@ function typesel_change() {
 				<tr valign="top">
 				  <td width="22%" class="vncellreq">VHID Group</td>
 				  <td class="vtable"><select id='vhid' name='vhid'>
-                            <?php for ($i = 0; $i <= 254; $i++): ?>
+                            <?php for ($i = 1; $i <= 254; $i++): ?>
                             <option value="<?=$i;?>" <?php if ($i == $pconfig['vhid']) echo "selected"; ?>>
                             <?=$i;?>
                       </option>

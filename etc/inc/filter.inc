@@ -1994,13 +1994,13 @@ EOD;
 						}
 					}
 				} else if($rule['interface'] == "pppoe") {
-					$n_pptp_units = $g['n_pppoe_units'];
+					$n_pppoe_units = $g['n_pppoe_units'];
 					if($config['pppoe']['n_pppoe_units'] <> "")
 						$nif = $config['pppoe']['n_pppoe_units'];					
 					for($xxx=0; $xxx < $n_pppoe_units; $xxx++) {					
 						/*
 			 			 *   now that pppoe server are user rules, detect
-			 			 *   that user is setting the pptp server rule 
+			 			 *   that user is setting the pppoe server rule 
                                       	         *   and setup for all netgraph interfaces
                                      		 */
 						$line = generate_user_filter_rule($rule, $xxx);

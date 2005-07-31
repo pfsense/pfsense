@@ -290,7 +290,7 @@ function openwindow(url) {
                 <tr>
                   <td width="22%" valign="top" class="vncell">&nbsp;</td>
                   <td width="78%" class="vtable">
-                    <input name="sshenable" type="checkbox" id="sshenable" value="yes" <?php if (isset($pconfig['sshenable'])) echo "checked"; ?> onclick="enable_change(false)">
+                    <input name="sshenabled" type="checkbox" id="sshenabled" value="yes" <?php if (isset($pconfig['sshenable'])) echo "checked"; ?> onclick="enable_change(false)">
                     <strong>Enable Secure Shell</strong>
                     </td>
                 </tr>

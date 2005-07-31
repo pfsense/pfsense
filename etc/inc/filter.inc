@@ -66,7 +66,8 @@ function filter_configure() {
 function filter_configure_sync() {
 	
 	/* file an alert that the rules are being reloaded */
-	file_notice("Operation in progress...", "The filter rules are currently reloading.  You will receive a notice if there is an error.", "", "");
+	if($g['booting'] == false) 
+		file_notice("Operation in progress...", "The filter rules are currently reloading.  You will receive a notice if there is an error.", "", "");
 	
 	if(file_exists("/tmp/filter_dirty"))
 		unlink("/tmp/filter_dirty");

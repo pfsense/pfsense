@@ -16,6 +16,21 @@ form input {
 
 
 /* ID Based CSS Definitions */
+
+#notices {
+	width: 795px;
+	background-color: #E1E4B8;
+	border: 1px solid #000000;
+	padding: 0px;
+	margin-bottom: 5px;
+}
+#notices ul {
+	margin: 0px;
+	padding: 5px;
+	padding-top: 3px;
+	list-style: none;
+}
+
 #header {
 	height: 70px;
 	width: 800px;
@@ -49,23 +64,76 @@ form input {
 	padding-left: 27px;
 	float: left;
 }
-#header-right .normal {
+
+#header-right .container .left {
 	position: relative;
+	top: 32px;
+	left: 9px;
+	font-size: 1.8em;
 }
-#header-right .normal .left {
-	position: relative; 
-	float: left;
-	font-size: 1.3em;
-	font-weight: bold;
-	top: 15px;
-	left: 4px;
-}
-#header-right .normal .right {
+
+#header-right .container .right {
 	position: relative;
 	float: right;
-	top: 22px;
+	top: -9px;
 	padding-right: 4px;
+	z-index: 1;
 }
+
+#header-right .container .right #alerts {
+	position: relative;
+	background: url('images/alert_bgr.gif') no-repeat;
+	height: 39px;
+	width: 431px;
+	z-index: 1;
+	padding-top: 20px;
+	padding-left: 5px;
+	margin: 0px;
+}
+
+
+
+table#marquee {
+	position: relative;
+	top: -6px;
+	left: -5px;
+	border: 0;
+	padding: 0;
+	margin: 0;
+	width: 424px;
+	background-color: transparent;
+	padding: 2px;
+	border: 0px;
+}
+span#marquee-container {
+	position: absolute;
+	visibility: hidden;
+	top: -100px;
+	left: -10000px;
+}
+div#marquee-text {	
+	font-size: 1.18em;
+	font-weight: bold;
+	font: Verdana;
+}
+table#marquee div#container {
+	position: relative;
+	overflow: hidden;
+	width: 418px;
+	height: 20px;
+}
+table#marquee div#container div#scroller {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+
+
+
+
+
+
+
 
 #content {
 	border-top: 1px solid #FFFFFF;

@@ -815,6 +815,9 @@ function filter_nat_rules_generate_if($if, $src, $srcport, $dst, $natport, $targ
 
 	if($src=="/32")
 		return;
+	
+	if($src{0} == "/")
+		return;
 
 	$nat = "nat";
 	

@@ -32,7 +32,7 @@
 
 	$stderr = fopen("php://stderr", "w");
 
-	if(!isset($config['sshenabled']))
+	if(!isset($config['system']['sshenabled']))
 		exit;
 	
 	function file_size($file) {

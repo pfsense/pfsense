@@ -653,7 +653,12 @@ function convert_config() {
 		/* Server NAT is no longer needed */
 		unset($config['nat']['servernat']);
 		
-		$config['version'] = "1.8";
+		/* enable SSH */
+		if ($config['version'] == "1.8") {
+			$config['system']['sshenabled'] = true;
+		}
+		
+		$config['version'] = "1.9";
 	}
 
 	/* Convert 1.8 -> 1.9 */

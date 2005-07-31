@@ -1036,7 +1036,7 @@ function filter_nat_rules_generate() {
 			if(alias_expand($extport[1]))
 				$extport[1] = alias_expand($extport[1]);			
 			if(alias_expand($target))
-				$target = alias_expand($extport[1]);
+				$target = alias_expand($target);
 			if(alias_expand($localport))
 				$localport = alias_expand($localport);
 			if(alias_expand($extaddr))

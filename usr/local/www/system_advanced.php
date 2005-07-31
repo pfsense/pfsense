@@ -494,7 +494,7 @@ function openwindow(url) {
 			<option value="high-latency"<?php if($config['system']['optimization']=="high-latency") echo " SELECTED"; ?>>high-latency</option>
 			<option value="aggressive"<?php if($config['system']['optimization']=="aggressive") echo " SELECTED"; ?>>aggressive</option>
 			<option value="conservative"<?php if($config['system']['optimization']=="conservative") echo " SELECTED"; ?>>conservative</option>
-			</select>
+			</select><br>
 			<textarea cols="60" rows="2" id="info" name="info"style="border:1px dashed #000066; background-color: #ffffff; color: #000000; font-size: 8pt;">
 			</textarea>
 			<script language="javascript">

@@ -17,6 +17,16 @@ require_once("notices.inc");
 		}
 		return $htmltext;
 	}
+
+
+
+
+	/* NOTICE ACKNOWLEDGE CODE by Erik Kristensen */
+	if ($_REQUEST['noticeaction'] == 'acknowledge') {
+		$notice_id = $_REQUEST['noticeid'];
+		close_notice($notice_id);
+	}
+	/**********************************************/
 ?>
 
 <div id="wrapper">
@@ -33,11 +43,9 @@ require_once("notices.inc");
 					foreach ($notices as $key => $value) {
 						$date = date("m-d-y h:i:s", $key);
 						if ($value['url']) {
-							#$notice_msgs .= $date.' - <a href="'.$url.'?action=acknowledge&id='.$key.'">['.$value['id'].']</a>';
-							$notice_msgs .= $date.' - ['.$value['id'].']';
+							$notice_msgs .= $date.' - <a href="'.$url.'?noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']</a>';
 						} else {
-							#$notice_msgs .= $date.' - <a href="?action=acknowledge&id='.$key.'">['.$value['id'].']</a>';
-							$notice_msgs .= $date.' - ['.$value['id'].']';
+							$notice_msgs .= $date.' - <a href="?noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']</a>';
 						}
 						$notice_msgs .= " &nbsp;&nbsp;&nbsp;&nbsp;.:.&nbsp;&nbsp;&nbsp;&nbsp; ";
 					}

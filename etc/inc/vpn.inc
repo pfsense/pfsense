@@ -812,7 +812,7 @@ function vpn_pppoe_configure() {
 
 		case 'server':
 
-			$interface = filter_translate_type_to_real_interface($pppoecfg['interface']);
+			$pppoe_interface = filter_translate_type_to_real_interface($pppoecfg['interface']);
 
 			/* write mpd.conf */
 			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.conf", "a");
@@ -849,13 +849,12 @@ EOD;
 
 pppoe_standart:
 	set link type pppoe
-	set pppoe iface {$interface}
+	set pppoe iface {$pppoe_interface}
 	set pppoe service "*"
 	set pppoe disable originate
 	set pppoe enable incoming
 	set bundle no multilink
 	set bundle enable compression
-	#set bundle accept encryption
 	set bundle max-logins 1
 	set iface idle 0
 	set iface disable on-demand
@@ -873,8 +872,9 @@ pppoe_standart:
 	set ccp yes mpp-e40
 	set ccp yes mpp-e128
 	set ccp yes mpp-stateless
-	#set ipcp dns 10.10.1.3
 	set link latency 1
+	#set ipcp dns 10.10.1.3
+	#set bundle accept encryption	
 
 EOD;
 

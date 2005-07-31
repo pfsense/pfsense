@@ -1091,9 +1091,11 @@ EOD;
 	if(isset($config['captiveportal']['enable'])) {
 		$natrules .= "# Captive Portal\n";
 		$cp_interface = filter_translate_type_to_real_interface($config['captiveportal']['interface']);
-		$lan_ip = $config['interfaces']['lan']['ipaddr'];
+		$cp_ip = $config['interfaces'][$config['captiveportal']['interface']]['ipaddr'];
+		if($cp_ip == "dhcp")
+			$cp_ip = find_interface_ip($cp_interface);
 		$natrules .= "no rdr on {$cp_interface} proto tcp from <captiveportal> to any \n";
-		$natrules .= "rdr on " . $cp_interface . " proto tcp from any to any port { 80 443 } -> {$lan_ip} port 8000\n\n";
+		$natrules .= "rdr on {$cp_interface} proto tcp from any to any port { 80 443 } -> {$cp_ip} port 8000\n\n";
 	}
 
 	return $natrules;

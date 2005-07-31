@@ -307,16 +307,13 @@ function enable_change(enable_change) {
 	  <td width="78%" class="vtable">
 		<select name="cinterface" class="formfld" id="cinterface">
 		  <?php
-		  
-		  if(isset($config['system']['developer']))
 			$interfaces = array('lan' => 'LAN', 'wan' => 'WAN');
-		  else
-			$interfaces = array('lan' => 'LAN');
-		  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-			if (isset($config['interfaces']['opt' . $i]['enable']))
-				$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
-		  }
-		  foreach ($interfaces as $iface => $ifacename): ?>
+			for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+			      if (isset($config['interfaces']['opt' . $i]['enable']))
+				      $interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+			}
+			foreach ($interfaces as $iface => $ifacename):
+		  ?>
 		  <option value="<?=$iface;?>" <?php if ($iface == $pconfig['cinterface']) echo "selected"; ?>>
 		  <?=htmlspecialchars($ifacename);?>
 		  </option>

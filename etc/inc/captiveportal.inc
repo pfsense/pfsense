@@ -46,9 +46,7 @@ require_once("radius_accounting.inc") ;
 function captiveportal_configure() {
 	global $config, $g;
 
-	if (isset($config['captiveportal']['enable']) &&
-		(($config['captiveportal']['interface'] == "lan") ||
-			isset($config['interfaces'][$config['captiveportal']['interface']]['enable']))) {
+	if (isset($config['captiveportal']['enable'])) {
 
 		if($g['booting']) echo "Starting captive portal... ";
 
@@ -154,6 +152,10 @@ EOD;
 		mwexec("/usr/local/sbin/mini_httpd -a -M 0 -u root -maxproc 16" .
 			" -p 8000 -i {$g['varrun_path']}/mini_httpd.cp.pid");
 
+		$fd = fopen("/tmp/captiveportal.txt", "w");
+		fwrite($fd, "/usr/local/sbin/mini_httpd -a -M 0 -u root -maxproc 16 -p 8000 -i {$g['varrun_path']}/mini_httpd.cp.pid");
+		fclose($fd);
+
 		/* fire up another one for HTTPS if requested */
 		if (isset($config['captiveportal']['httpslogin']) &&
 			$config['captiveportal']['certificate'] && $config['captiveportal']['private-key']) {
@@ -178,8 +180,8 @@ EOD;
 		}
 
 		/* start pruning process (interval = 60 seconds) */
-		mwexec("/usr/local/bin/minicron 60 {$g['varrun_path']}/minicron.pid " .
-			"/etc/rc.prunecaptiveportal");
+		//mwexec("/usr/local/bin/minicron 60 {$g['varrun_path']}/minicron.pid " .
+		//	"/etc/rc.prunecaptiveportal");
 
 		/* generate passthru mac database */
 		captiveportal_passthrumac_configure() ;

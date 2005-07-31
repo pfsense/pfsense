@@ -462,6 +462,7 @@ function filter_generate_aliases() {
 	$aliases .= "lan = \"{ " . $config['interfaces']['lan']['if'] . "{$lan_aliases} }\"\n";
 	$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";
 	$aliases .= "pptp = \"{ ng1 ng2 ng3 ng4 ng5 ng6 ng7 ng8 ng9 ng10 ng11 ng12 ng13 ng14 }\"\n";
+	$aliases .= "pppoe = \"{ ng1 ng2 ng3 ng4 ng5 ng6 ng7 ng8 ng9 ng10 ng11 ng12 ng13 ng14 }\"\n";
 
 	$ifdescrs = array();
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
@@ -531,6 +532,7 @@ function filter_generate_pf_altq_rules() {
         $wancfg = $config['interfaces']['wan'];
         $lancfg = $config['interfaces']['lan'];
         $pptpdcfg = $config['pptpd'];
+	$pppoecfg = $config['pptpd'];
 
         $lanif = $lancfg['if'];
         $wanif = get_real_wan_interface();
@@ -549,6 +551,14 @@ function filter_generate_pf_altq_rules() {
                 $pptpsn = $g['pptp_subnet'];
 		if($config['pptp']['pptp_subnet'] <> "")
 			$pptpsn = $config['pptp']['pptp_subnet'];
+        }
+
+        if ($pppoecfg['mode'] == "server") {
+                $pppoeip = $pppoecfg['localip'];
+                $pppoesa = $pppoecfg['remoteip'];
+                $pppoesn = $g['pppoe_subnet'];
+		if($config['pppoe']['pppoe_subnet'] <> "")
+			$pppoesn = $config['pppoe']['pppoe_subnet'];
         }
 
         /* generate rules */
@@ -574,6 +584,19 @@ function filter_generate_pf_altq_rules() {
 				$nif = $config['pptp']['n_pptp_units'];
 
                         $ispptp = true;
+		} else if($rule['interface'] == "pppoe") {
+			
+                        if ($pppoecfg['mode'] != "server") {
+                                $i++;
+                                continue;
+                        }
+
+                        $nif = $g['n_pppoe_units'];
+			if($config['pppoe']['n_pppoe_units'] <> "")
+				$nif = $config['pppoe']['n_pppoe_units'];
+
+                        $ispppoe = true;
+			
                 } else {
 
                         if (strstr($rule['interface'], "opt")) {
@@ -585,6 +608,7 @@ function filter_generate_pf_altq_rules() {
 
                         $nif = 1;
                         $ispptp = false;
+			$ispppoe = false;
                 }
 
                 if ($pptpdcfg['mode'] != "server") {
@@ -594,6 +618,14 @@ function filter_generate_pf_altq_rules() {
                                         continue;
                                 }
                 }
+		
+                if ($pppoecfg['mode'] != "server") {
+                        if (($rule['source']['network'] == "pppoe") ||
+                                ($rule['destination']['network'] == "pppoe")) {
+                                        $i++;
+                                        continue;
+                                }
+                }		
 
                 if (strstr($rule['source']['network'], "opt")) {
                         if (!array_key_exists($rule['source']['network'], $optcfg)) {
@@ -625,6 +657,8 @@ function filter_generate_pf_altq_rules() {
 
                         if ($ispptp) {
                                 $line .= " ng" . ($iif+1);
+			} else if($ispppoe) {
+				$line .= " ng" . ($iif+1);
                         } else {
                                 $if = $config['interfaces'][$rule['interface']]['if'];
 
@@ -661,6 +695,9 @@ function filter_generate_pf_altq_rules() {
                                                 case 'pptp':
                                                         $src = "$pptpsa/$pptpsn";
                                                         break;
+                                                case 'pppoe':
+                                                        $src = "$pppoesa/$pppoesn";
+                                                        break;						
                                         }
                                 }
                         } else if ($rule['source']['address']) {
@@ -717,6 +754,9 @@ function filter_generate_pf_altq_rules() {
                                                 case 'pptp':
                                                         $dst = "$pptpsa/$pptpsn";
                                                         break;
+                                                case 'pppoe':
+                                                        $dst = "$pppoesa/$pppoesn";
+                                                        break;						
                                         }
                                 }
                         } else if ($rule['destination']['address']) {
@@ -881,6 +921,7 @@ function filter_nat_rules_generate() {
 	$lancfg = $config['interfaces']['lan'];
 
 	$pptpdcfg = $config['pptpd'];
+	$pppoecfg = $config['pppoe'];
 	$wanif = get_real_wan_interface();
 
 	$lanif = $config['interfaces']['lan']['if'];
@@ -963,6 +1004,15 @@ function filter_nat_rules_generate() {
 				$pptpdcfg['remoteip'] . "/" . $pptp_subnet, null, "", null, null, "");
 		}
 
+		if ($pppoecfg['mode'] == "server") {
+			$pppoe_subnet = $g['pppoe_subnet'];
+			if($config['pppoe']['pppoe_subnet'] <> "")
+				$pppoe_subnet = $config['pppoe']['pppoe_subnet'];
+			$natrules .= filter_nat_rules_generate_if($wanif,
+				$pppoecfg['remoteip'] . "/" . $pppoe_subnet, null, "", null, null, "");
+		}
+
+
 	}
 
 	$natrules .= "#SSH Lockout Table\n";
@@ -1014,6 +1064,8 @@ function filter_nat_rules_generate() {
 				$natif = $wanif;
 			else if($rule['interface'] == "pptp")
 				$natif = "pptp";
+			else if($rule['interface'] == "pppoe")
+				$natif = "pppoe";				
 			else
 				$natif = $config['interfaces'][$rule['interface']]['if'];
 
@@ -1121,6 +1173,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		$wancfg = $config['interfaces']['wan'];
 		$lancfg = $config['interfaces']['lan'];
 		$pptpdcfg = $config['pptpd'];
+		$pppoecfg = $config['pppoe'];
 		
 		$lanif = $lancfg['if'];
 		$wanif = get_real_wan_interface();
@@ -1143,6 +1196,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 //			return;
 		
 		$pptpdcfg = $config['pptpd'];
+		$pppoecfg = $config['pppoe'];
 		
 		if ($pptpdcfg['mode'] == "server") {
 			$pptpip = $pptpdcfg['localip'];
@@ -1151,19 +1205,34 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			if($config['pptp']['pptp_subnet'] <> "")
 				$pptpsn = $config['pptp']['pptp_subnet'];
 		}
+
+		if ($pppoecfg['mode'] == "server") {
+			$pppoeip = $pptpdcfg['localip'];
+			$pppoesa = $pptpdcfg['remoteip'];
+			$pppoesn = $g['pppoe_subnet'];
+			if($config['pppoe']['pppoe_subnet'] <> "")
+				$pppoesn = $config['pppoe']['pppoe_subnet'];
+		}
 		
 		/* does the rule deal with a PPTP interface? */
 		if ($rule['interface'] == "pptp") {
-			
 			if ($pptpdcfg['mode'] != "server") {
 				return "# mode != server " . $rule['descr'] . "\n";
 				return;
 			}
-			
 			$nif = $g['n_pptp_units'];
 			if($config['pptp']['n_pptp_units'] <> "")
 				$nif = $config['pptp']['n_pptp_units'];
 			$ispptp = true;
+		} else if($rule['interface'] == "pppoe") {
+			if ($pppoecfg['mode'] != "server") {
+				return "# mode != server " . $rule['descr'] . "\n";
+				return;
+			}
+			$nif = $g['n_pppoe_units'];
+			if($config['pppoe']['n_pppoe_units'] <> "")
+				$nif = $config['pppoe']['n_pppoe_units'];
+			$ispppoe = true;			
 		} else {
 			
 			/* Check to see if the interface is opt and in our opt list */
@@ -1242,6 +1311,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			$line .= "quick ";
 			
 			if ($ispptp) {
+				$line .= "on ng" . (intval($ngcounter)+1) . " ";
+			} else if ($ispppoe) {
 				$line .= "on ng" . (intval($ngcounter)+1) . " ";
 			} else {
 				// translate wan, man, lan, opt to real interface.
@@ -1330,6 +1401,9 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						case 'pptp':
 							$src = "$pptpsa/$pptpsn";
 							break;
+						case 'pppoe':
+							$src = "$pppoesa/$pppoesn";
+							break;
 					}
 					if (isset($rule['source']['not'])) $src = "!" . $src;
 				}
@@ -1394,6 +1468,9 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						case 'pptp':
 							$dst = "$pptpsa/$pptpsn";
 							break;
+						case 'pppoe':
+							$dst = "$ppoesa/$pppoesn";
+							break;						
 					}
 				}
 				if (isset($rule['destination']['not'])) $dst = " !" . $dst;
@@ -1507,6 +1584,7 @@ function filter_rules_generate() {
 	$wancfg = $config['interfaces']['wan'];
 	$lancfg = $config['interfaces']['lan'];
 	$pptpdcfg = $config['pptpd'];
+	$pppoecfg = $config['pppoe'];
 
 	$lanif = $lancfg['if'];
 	$wanif = get_real_wan_interface();
@@ -1528,6 +1606,14 @@ function filter_rules_generate() {
 		$pptpsn = $g['pptp_subnet'];
 		if($config['pptp']['pptp_subnet'] <> "")
 			$pptpsn = $config['pptp']['pptp_subnet'];
+	}
+
+	if ($pppoecfg['mode'] == "server") {
+		$pppoeip = $pppoecfg['localip'];
+		$pppoesa = $pppoecfg['remoteip'];
+		$pppoesn = $g['pppoe_subnet'];
+		if($config['pppoe']['pppoe_subnet'] <> "")
+			$pppoesn = $config['pppoe']['pppoe_subnet'];
 	}
 
 	/* default block logging? */
@@ -1856,6 +1942,18 @@ EOD;
 						*/
 						$rule_arr[] = generate_user_filter_rule_arr($rule, $xxx);
 					}
+				} else if($rule['interface'] == "pppoe") {
+					$n_pppoe_units = $g['n_pppoe_units'];
+					if($config['pppoe']['n_pppoe_units'] <> "")
+					$nif = $config['pppoe']['n_pppoe_units'];
+					for($xxx=0; $xxx < $n_pppoe_units; $xxx++) {
+						/*
+						*   now that pppoe server are user rules, detect
+						*   that user is setting the pptp server rule
+						*   and setup for all netgraph interfaces
+						*/
+						$rule_arr[] = generate_user_filter_rule_arr($rule, $xxx);
+					}					
 				} else {
 					$rule_arr[] = generate_user_filter_rule_arr($rule, 0);
 				}
@@ -1908,6 +2006,27 @@ EOD;
 							$ipfrules .= $line . "\n";
 						}
 					}
+				} else if($rule['interface'] == "pppoe") {
+					$n_pptp_units = $g['n_pppoe_units'];
+					if($config['pppoe']['n_pppoe_units'] <> "")
+						$nif = $config['pppoe']['n_pppoe_units'];					
+					for($xxx=0; $xxx < $n_pppoe_units; $xxx++) {					
+						/*
+			 			 *   now that pppoe server are user rules, detect
+			 			 *   that user is setting the pptp server rule 
+                                      	         *   and setup for all netgraph interfaces
+                                     		 */
+						$line = generate_user_filter_rule($rule, $xxx);
+						if($line <> "") { 
+							if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
+								$defq = find_default_queue($rule['interface']);
+								$ackq = get_ack_queue($rule['interface']);
+								if (($defq != "") and ($ackq != ""))
+									$line .= " queue ({$defq}, {$ackq}) ";
+							}
+							$ipfrules .= $line . "\n";
+						}
+					}					
 				} else {
 					$line = generate_user_filter_rule($rule, 0);
 					if($line <> "") 

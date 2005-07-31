@@ -945,6 +945,8 @@ function filter_nat_rules_generate() {
 			$natrules .= filter_nat_rules_generate_if($wanif,
 				$lansa . "/" . $lancfg['subnet'], 500, "", 500, null, "");
 		}
+		
+		$lansa = find_interface_ip($config['interfaces']['lan']['if']);
 		$natrules .= filter_nat_rules_generate_if($wanif,
 			$lansa . "/" . $lancfg['subnet'], null, "", null, null, "");
 
@@ -968,15 +970,6 @@ function filter_nat_rules_generate() {
 				$pptpdcfg['remoteip'] . "/" . $pptp_subnet, null, "", null, null, "");
 		}
 
-		/* static routes
-		if (is_array($config['staticroutes']['route'])) {
-			foreach ($config['staticroutes']['route'] as $route) {
-				if ($route['interface'] != "wan")
-					$natrules .= filter_nat_rules_generate_if($wanif,
-						$route['network'], null, "", null, null);
-			}
-		}
-		*/
 	}
 
 	$natrules .= "#SSH Lockout Table\n";

@@ -38,7 +38,6 @@ $pppoecfg = &$config['pppoe'];
 
 $pconfig['remoteip'] = $pppoecfg['remoteip'];
 $pconfig['localip'] = $pppoecfg['localip'];
-$pconfig['redir'] = $pppoecfg['redir'];
 $pconfig['mode'] = $pppoecfg['mode'];
 $pconfig['interface'] = $pppoecfg['interface'];
 $pconfig['wins'] = $pppoecfg['wins'];
@@ -89,20 +88,10 @@ if ($_POST) {
 				$input_errors[] = "The specified server address is equal to the LAN interface address.";	
 			}
 		}
-	} else if ($_POST['mode'] == "redir") {
-		$reqdfields = explode(" ", "redir");
-		$reqdfieldsn = explode(",", "PPPoE redirection target address");
-		
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-		
-		if (($_POST['redir'] && !is_ipaddr($_POST['redir']))) {
-			$input_errors[] = "A valid target address must be specified.";
-		}
 	}
-
+	
 	if (!$input_errors) {
 		$pppoecfg['remoteip'] = $_POST['remoteip'];
-		$pppoecfg['redir'] = $_POST['redir'];
 		$pppoecfg['localip'] = $_POST['localip'];
 		$pppoecfg['mode'] = $_POST['mode'];
 		$pppoecfg['wins'] = $_POST['wins'];
@@ -171,11 +160,6 @@ function enable_change(enable_over) {
 		document.iform.radiussecret.disabled = 1;
 		document.iform.wins.disabled = 1;
 	}
-	if ((get_radio_value(document.iform.mode) == "redir") || enable_over) {
-		document.iform.redir.disabled = 0;
-	} else {
-		document.iform.redir.disabled = 1;
-	}
 }
 //-->
 </script>
@@ -193,7 +177,7 @@ function enable_change(enable_over) {
   </td></tr>
   <tr> 
     <td>
-<div id="mainarea">
+	<div id="mainarea">
               <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr> 
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
@@ -201,29 +185,21 @@ function enable_change(enable_over) {
                     <input name="mode" type="radio" onclick="enable_change(false)" value="off"
 				  	<?php if (($pconfig['mode'] != "server") && ($pconfig['mode'] != "redir")) echo "checked";?>>
                     Off</td>
+		</tr>
                 <tr> 
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable">
-<input type="radio" name="mode" value="redir" onclick="enable_change(false)" <?php if ($pconfig['mode'] == "redir") echo "checked"; ?>>
-                    Redirect incoming PPPoE connections to:</td>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">PPPoE redirection</td>
-                  <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="redir" type="text" class="formfld" id="redir" size="20" value="<?=htmlspecialchars($pconfig['redir']);?>"> 
-                    <br>
-                    Enter the IP address of a host which will accept incoming 
-                    PPPoE connections.</td>
-                <tr> 
-                  <td width="22%" valign="top" class="vtable">&nbsp;</td>
-                  <td width="78%" class="vtable">
-<input type="radio" name="mode" value="server" onclick="enable_change(false)" <?php if ($pconfig['mode'] == "server") echo "checked"; ?>>
+		    <input type="radio" name="mode" value="server" onclick="enable_change(false)" <?php if ($pconfig['mode'] == "server") echo "checked"; ?>>
                     Enable PPPoE server</td>
+		</tr>
+
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Max. concurrent 
-                    connections</td>
+                  <td width="22%" valign="top" class="vncellreq">Max. concurrent connections</td>
                   <td width="78%" class="vtable"> 
                     <?=$g['n_pppoe_units'];?>
                   </td>
+		</tr>
+
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Server address</td>
                   <td width="78%" class="vtable"> 
@@ -232,9 +208,9 @@ function enable_change(enable_over) {
                     Enter the IP address the PPPoE server should use on its side 
                     for all clients.</td>
                 </tr>
+
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Remote address 
-                    range</td>
+                  <td width="22%" valign="top" class="vncellreq">Remote address range</td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="remoteip" type="text" class="formfld" id="remoteip" size="20" value="<?=htmlspecialchars($pconfig['remoteip']);?>">
                     / 
@@ -245,6 +221,7 @@ function enable_change(enable_over) {
                     <?=$g['n_pppoe_units'];?>
                     addresses, starting at the address entered above, to clients.</td>
                 </tr>
+
                 <tr> 
                   <td width="22%" valign="top" class="vncell">RADIUS</td>
                   <td width="78%" class="vtable"> 
@@ -300,8 +277,6 @@ function enable_change(enable_over) {
 		  </td>
                 </tr>
 
-
-
                 <tr> 
                   <td height="16" colspan="2" valign="top"></td>
                 </tr>
@@ -319,8 +294,8 @@ function enable_change(enable_over) {
                     traffic from PPPoE clients!</span></td>
                 </tr>
               </table>
-</div>
-			</td>
+	   </div>
+	 </td>
 	</tr>
 </table>
 </form>

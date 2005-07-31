@@ -37,6 +37,25 @@ function get_tmp_file() {
 	return "/tmp/tmp-" . time();
 }
 
+/****f* pfsense-utils/get_dns_servers
+ * NAME
+ *   get_dns_servres - get system dns servers
+ * INPUTS
+ *   $dns_servers - an array of the dns servers
+ * RESULT
+ *   null
+ ******/
+function get_dns_servers() {
+	$dns_servers = array();
+	$dns = `cat /etc/resolv.conf`;
+	$dns_s = split("\n", $dns);
+	foreach($dns_s as $dns) {
+		if (preg_match("/nameserver (.*)/", $dns, $matches))
+			$dns_servers[] = $matches[1];		
+	}
+	return $dns_servers;
+}
+
 /****f* pfsense-utils/log_error
  * NAME
  *   log_error	- Sends a string to syslog.

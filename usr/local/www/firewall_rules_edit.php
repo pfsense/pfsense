@@ -32,7 +32,7 @@
 
 require("guiconfig.inc");
 
-$specialsrcdst = explode(" ", "any lan pptp");
+$specialsrcdst = explode(" ", "any lan pptp pppoe");
 
 if (!is_array($config['filter']['rule'])) {
 	$config['filter']['rule'] = array();
@@ -457,7 +457,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
 <select name="interface" class="formfld">
-                      <?php $interfaces = array('wan' => 'WAN', 'lan' => 'LAN', 'pptp' => 'PPTP');
+                      <?php $interfaces = array('wan' => 'WAN', 'lan' => 'LAN', 'pptp' => 'PPTP', 'pppoe' => 'PPPOE');
 					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 					  	$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 					  }
@@ -541,6 +541,8 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                             LAN subnet</option>
                             <option value="pptp" <?php if ($pconfig['src'] == "pptp") { echo "selected"; } ?>>
                             PPTP clients</option>
+			    <option value="pppoe" <?php if ($pconfig['src'] == "pppoe") { echo "selected"; } ?>>
+                            PPPoE clients</option>			    
 							<?php for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): ?>
                             <option value="opt<?=$i;?>" <?php if ($pconfig['src'] == "opt" . $i) { echo "selected"; } ?>>
                             <?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?> subnet</option>
@@ -650,6 +652,9 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
                             LAN subnet</option>
                             <option value="pptp" <?php if ($pconfig['dst'] == "pptp") { echo "selected"; } ?>>
                             PPTP clients</option>
+                            <option value="pppoe" <?php if ($pconfig['dst'] == "pppoe") { echo "selected"; } ?>>
+                            PPPoE clients</option>
+
 							<?php for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): ?>
                             <option value="opt<?=$i;?>" <?php if ($pconfig['dst'] == "opt" . $i) { echo "selected"; } ?>>
                             <?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?> subnet</option>

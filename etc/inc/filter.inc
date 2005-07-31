@@ -1188,16 +1188,11 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		/* don't include disabled rules */
 		if (isset($rule['disabled'])) {
 			return "# rule " . $rule['descr'] . " disabled \n";
-			return;
 		}
-		
-		/* do not process this rule if the attached interface is disabled */
-//		if(!isset($config['interfaces'][$rule['interface']]['enable']))
-//			return;
-		
+
 		$pptpdcfg = $config['pptpd'];
 		$pppoecfg = $config['pppoe'];
-		
+
 		if ($pptpdcfg['mode'] == "server") {
 			$pptpip = $pptpdcfg['localip'];
 			$pptpsa = $pptpdcfg['remoteip'];
@@ -1218,7 +1213,6 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		if ($rule['interface'] == "pptp") {
 			if ($pptpdcfg['mode'] != "server") {
 				return "# mode != server " . $rule['descr'] . "\n";
-				return;
 			}
 			$nif = $g['n_pptp_units'];
 			if($config['pptp']['n_pptp_units'] <> "")
@@ -1227,7 +1221,6 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		} else if($rule['interface'] == "pppoe") {
 			if ($pppoecfg['mode'] != "server") {
 				return "# mode != server " . $rule['descr'] . "\n";
-				return;
 			}
 			$nif = $g['n_pppoe_units'];
 			if($config['pppoe']['n_pppoe_units'] <> "")
@@ -1241,7 +1234,6 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					$item = "";
 					foreach($optcfg as $oc) $item .= $oc['if'];					
 					return "# {$real_int} {$item} {$rule['interface']} array key does not exist for " . $rule['descr'];
-					return;
 				}
 			}
 			
@@ -1254,14 +1246,12 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			if (($rule['source']['network'] == "pptp") ||
 				($rule['destination']['network'] == "pptp")) {
 					return "# source network or destination network == pptp on " . $rule['descr'];
-					return;
 				}
 		}
 		
 		if ($rule['source']['network'] && strstr($rule['source']['network'], "opt")) {
 			if (!array_key_exists($rule['source']['network'], $optcfg)) {
 				return "# {$rule['source']['network']} !array_key_exists source network " . $rule['descr'];
-				return;
 			}
 		}
 		if ($rule['destination']['network'] && strstr($rule['destination']['network'], "opt")) {
@@ -1269,18 +1259,15 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				$item = "";
 				foreach($optcfg as $oc) $item .= $oc;
 				return "# {$item} {$rule['destination']['network']} !array_key_exists dest network " . $rule['descr'];
-				return;
 			}
 		}
 		
 		/* check for unresolvable aliases */
 		if ($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
 			return "# unresolvable source aliases " . $rule['descr'];
-			return;
 		}
 		if ($rule['destination']['address'] && !alias_expand($rule['destination']['address'])) {
 			return "# unresolvable dest aliases " . $rule['descr'];
-			return;
 		}
 		
 		for ($iif = 0; $iif < $nif; $iif++) {
@@ -1416,7 +1403,6 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			
 			if (!$src || ($src == "/")) {
 				return "# at the break!";
-				break;
 			}
 			
 			$line .= "from $src ";
@@ -1946,7 +1932,7 @@ EOD;
 				} else if($rule['interface'] == "pppoe") {
 					$n_pppoe_units = $g['n_pppoe_units'];
 					if($config['pppoe']['n_pppoe_units'] <> "")
-					$nif = $config['pppoe']['n_pppoe_units'];
+						$nif = $config['pppoe']['n_pppoe_units'];
 					for($xxx=0; $xxx < $n_pppoe_units; $xxx++) {
 						/*
 						*   now that pppoe server are user rules, detect
@@ -2026,6 +2012,8 @@ EOD;
 									$line .= " queue ({$defq}, {$ackq}) ";
 							}
 							$ipfrules .= $line . "\n";
+						} else {
+							$ipfrules .= "# Error creating {$rule['descr']} \n";
 						}
 					}					
 				} else {
@@ -2177,7 +2165,7 @@ function create_firewall_outgoing_rules_to_itself() {
 		$n_pptp_units = $config['pptp']['n_pptp_units'];	
 	for($x=0; $x<$n_pptp_units; $x++) {
 		if(does_interface_exist("ng{$x}") == true) {
-			$rule .="pass out quick on ng{$x} all keep state label \"let out anything from firewall host itself\"\n";
+			$rule .="pass out quick on ng{$x} all keep state label \"let out anything from firewall host itself pptp\"\n";
 		}
 	}
 
@@ -2187,7 +2175,7 @@ function create_firewall_outgoing_rules_to_itself() {
 		$n_pppoe_units = $config['pppoe']['n_pppoe_units'];	
 	for($x=0; $x<$n_pppoe_units; $x++) {
 		if(does_interface_exist("ng{$x}") == true) {
-			$rule .="pass out quick on ng{$x} all keep state label \"let out anything from firewall host itself\"\n";
+			$rule .="pass out quick on ng{$x} all keep state label \"let out anything from firewall host itself pppoe\"\n";
 		}
 	}
 

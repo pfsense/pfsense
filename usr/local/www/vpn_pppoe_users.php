@@ -66,7 +66,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = "VPN: PPTP: Users";
+$pgtitle = "VPN: PPPoE: Users";
 include("head.inc");
 
 ?>
@@ -79,7 +79,7 @@ include("head.inc");
 <?php if (isset($config['pppoe']['radius']['enable']))
 	print_info_box("Warning: RADIUS is enabled. The local user database will not be used."); ?>
 <?php if (file_exists($d_pppoeuserdirty_path)): ?><p>
-<?php print_info_box_np("The PPTP user list has been modified.<br>You must apply the changes in order for them to take effect.<br><b>Warning: this will terminate all current PPTP sessions!</b>");?><br>
+<?php print_info_box_np("The PPPoE user list has been modified.<br>You must apply the changes in order for them to take effect.<br><b>Warning: this will terminate all current PPPoE sessions!</b>");?><br>
 <?php endif; ?>
 <div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

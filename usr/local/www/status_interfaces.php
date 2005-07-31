@@ -299,7 +299,7 @@ include("head.inc");
                 <td width="78%" class="listr">
                   <?=htmlspecialchars($ifinfo['gateway']);?>
                 </td>
-              </tr><?php endif; if ($ifdescr == "wan" && file_exists("{$g['varetc_path']}/nameservers.conf")): ?>
+              </tr><?php endif; if ($ifdescr == "wan" && file_exists("{$g['varetc_path']}/resolv.conf")): ?>
                 <td width="22%" class="vncellt">ISP DNS servers</td>
                 <td width="78%" class="listr">
 		<?php

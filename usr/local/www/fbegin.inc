@@ -24,19 +24,36 @@ require_once("notices.inc");
 	<div id="header">
 		<div id="header-left"></div>
 		<div id="header-right">
-			<span class="alert">
-<?
-			/**
-			 * Place code here for alert system, perhaps alerts from
-			 * pfsense.com for patches, security updates, etc...
-			 *
-			 */
-?>
-				&nbsp;
-			</span>
-			<span class="normal">
+			<span class="container">
 				<span class="left">webConfigurator</span>
-				<span class="right"><?=$config['system']['hostname'] . "." . $config['system']['domain'];?></span>
+				<span class="right">
+<?
+				if (are_notices_pending()) {
+					$notices = get_notices();
+					foreach ($notices as $key => $value) {
+						$date = date("m-d-y h:i:s", $key);
+						if ($value['url']) {
+							#$notice_msgs .= $date.' - <a href="'.$url.'?action=acknowledge&id='.$key.'">['.$value['id'].']</a>';
+							$notice_msgs .= $date.' - ['.$value['id'].']';
+						} else {
+							#$notice_msgs .= $date.' - <a href="?action=acknowledge&id='.$key.'">['.$value['id'].']</a>';
+							$notice_msgs .= $date.' - ['.$value['id'].']';
+						}
+						$notice_msgs .= " &nbsp;&nbsp;&nbsp;&nbsp;.:.&nbsp;&nbsp;&nbsp;&nbsp; ";
+					}
+?>
+					<div id="alerts">
+						<script type="text/javascript">
+							var content='<div id="marquee-text"><?= $notice_msgs; ?></div>'
+						</script>
+						<script type="text/javascript" src="/ticker.js"></script>				
+					</div>
+<?
+				} else {
+					print $config['system']['hostname'] . "." . $config['system']['domain'];
+				}
+?>
+				</span>
 			</span>
 		</div>
 	</div> <!-- Header DIV -->

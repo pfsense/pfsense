@@ -2064,7 +2064,7 @@ function create_firewall_outgoing_rules_to_itself() {
 	/* netgraph pppoe outgoing */
 	$n_pptp_units = $g['n_pppoe_units'];
 	if($config['pppoe']['n_pppoe_units'] <> "")
-		$n_pppoe_units = $config['pptp']['n_pppoe_units'];	
+		$n_pppoe_units = $config['pppoe']['n_pppoe_units'];	
 	for($x=0; $x<$n_pppoe_units; $x++) {
 		if(does_interface_exist("ng{$x}") == true) {
 			$rule .="pass out quick on ng{$x} all keep state label \"let out anything from firewall host itself\"\n";

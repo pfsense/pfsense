@@ -40,8 +40,6 @@ $pconfig['remoteip'] = $pppoecfg['remoteip'];
 $pconfig['localip'] = $pppoecfg['localip'];
 $pconfig['mode'] = $pppoecfg['mode'];
 $pconfig['interface'] = $pppoecfg['interface'];
-$pconfig['wins'] = $pppoecfg['wins'];
-$pconfig['req128'] = isset($pppoecfg['req128']);
 $pconfig['radiusenable'] = isset($pppoecfg['radius']['enable']);
 $pconfig['radacct_enable'] = isset($pppoecfg['radius']['accounting']);
 $pconfig['radiusserver'] = $pppoecfg['radius']['server'];
@@ -94,9 +92,7 @@ if ($_POST) {
 		$pppoecfg['remoteip'] = $_POST['remoteip'];
 		$pppoecfg['localip'] = $_POST['localip'];
 		$pppoecfg['mode'] = $_POST['mode'];
-		$pppoecfg['wins'] = $_POST['wins'];
 		$pppoecfg['interface'] = $_POST['interface'];
-		$pppoecfg['req128'] = $_POST['req128'] ? true : false;
 		$pppoecfg['radius']['enable'] = $_POST['radiusenable'] ? true : false;
 		$pppoecfg['radius']['accounting'] = $_POST['radacct_enable'] ? true : false;
 		$pppoecfg['radius']['server'] = $_POST['radiusserver'];
@@ -137,9 +133,7 @@ function enable_change(enable_over) {
 	if ((get_radio_value(document.iform.mode) == "server") || enable_over) {
 		document.iform.remoteip.disabled = 0;
 		document.iform.localip.disabled = 0;
-		document.iform.req128.disabled = 0;
 		document.iform.radiusenable.disabled = 0;
-		document.iform.wins.disabled = 0;
 		
 		if (document.iform.radiusenable.checked || enable_over) {
 			document.iform.radacct_enable.disabled = 0;
@@ -153,12 +147,10 @@ function enable_change(enable_over) {
 	} else {
 		document.iform.remoteip.disabled = 1;
 		document.iform.localip.disabled = 1;
-		document.iform.req128.disabled = 1;
 		document.iform.radiusenable.disabled = 1;
 		document.iform.radacct_enable.disabled = 1;
 		document.iform.radiusserver.disabled = 1;
 		document.iform.radiussecret.disabled = 1;
-		document.iform.wins.disabled = 1;
 	}
 }
 //-->

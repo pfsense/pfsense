@@ -194,6 +194,28 @@ function enable_change(enable_over) {
 		</tr>
 
                 <tr> 
+                  <td width="22%" valign="top" class="vncell"><b>Interface</b></td>
+                  <td width="78%" valign="top" class="vtable">
+
+			<select name="interface" class="formfld" id="interface">
+			  <?php
+				$interfaces = array('lan' => 'LAN', 'wan' => 'WAN');
+				for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+				      if (isset($config['interfaces']['opt' . $i]['enable']))
+					      $interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+				}
+				foreach ($interfaces as $iface => $ifacename):
+			  ?>
+			  <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
+			  <?=htmlspecialchars($ifacename);?>
+			  </option>
+			  <?php endforeach; ?>
+			</select> <br>			
+                      
+		  </td>
+                </tr>
+
+                <tr> 
                   <td width="22%" valign="top" class="vncellreq">Max. concurrent connections</td>
                   <td width="78%" class="vtable"> 
                     <?=$g['n_pppoe_units'];?>
@@ -251,27 +273,7 @@ function enable_change(enable_over) {
                       to the RADIUS server.</td>
                 </tr>
 		
-                <tr> 
-                  <td width="22%" valign="top" class="vncell"><b>Interface</b></td>
-                  <td width="78%" valign="top" class="vtable">
 
-			<select name="interface" class="formfld" id="interface">
-			  <?php
-				$interfaces = array('lan' => 'LAN', 'wan' => 'WAN');
-				for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-				      if (isset($config['interfaces']['opt' . $i]['enable']))
-					      $interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
-				}
-				foreach ($interfaces as $iface => $ifacename):
-			  ?>
-			  <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
-			  <?=htmlspecialchars($ifacename);?>
-			  </option>
-			  <?php endforeach; ?>
-			</select> <br>			
-                      
-		  </td>
-                </tr>
 
                 <tr> 
                   <td height="16" colspan="2" valign="top"></td>

@@ -250,11 +250,7 @@ function enable_change(enable_over) {
                       Enter the shared secret that will be used to authenticate 
                       to the RADIUS server.</td>
                 </tr>
-
-                <tr> 
-                  <td height="16" colspan="2" valign="top"></td>
-                </tr>
-
+		
                 <tr> 
                   <td width="22%" valign="top" class="vncell">Interface</td>
                   <td width="78%" valign="top" class="vtable">

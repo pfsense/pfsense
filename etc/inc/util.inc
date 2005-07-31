@@ -100,6 +100,9 @@ function is_ipaddroralias($ipaddr) {
 
 	global $aliastable, $config;
 
+	if(!$config['aliases']['alias']) 
+		return;
+
 	foreach($config['aliases']['alias'] as $alias) {
 		if($alias['name'] == $ipaddr)
 			return true;

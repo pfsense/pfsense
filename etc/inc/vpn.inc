@@ -810,6 +810,8 @@ function vpn_pppoe_configure() {
 
 		case 'server':
 
+			$interface = filter_translate_type_to_real_interface($pppoecfg['interface']);
+
 			/* write mpd.conf */
 			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.conf", "a");
 			if (!$fd) {
@@ -845,7 +847,7 @@ EOD;
 
 pppoe_standart:
 	set link type pppoe
-	set pppoe iface {$pppoecfg['interface']}
+	set pppoe iface {$interface}
 	set pppoe service "*"
 	set pppoe disable originate
 	set pppoe enable incoming

@@ -855,7 +855,7 @@ pppoe_standart:
 	set pppoe enable incoming
 	set bundle no multilink
 	set bundle enable compression
-	set bundle accept encryption
+	#set bundle accept encryption
 	set bundle max-logins 1
 	set iface idle 0
 	set iface disable on-demand

@@ -117,8 +117,6 @@ function filter_configure_sync() {
 
 	$rules .= setup_logging_interfaces();
 
-	//$rules.= "set state-policy if-bound\n";
-
 	$optimization = "normal";
 	if($config['system']['optimization'] <> "") $optimization = $config['system']['optimization'];
         $rules.= "set optimization " . $optimization . "\n";

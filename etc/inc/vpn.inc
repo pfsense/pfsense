@@ -62,6 +62,8 @@ function vpn_ipsec_failover_configure() {
 	fclose($fd);
 	chmod("{$g['varetc_path']}/sasyncd.conf", 0600);
 	
+	mwexec("killall sasyncd");
+	
 	/* launch sasyncd, oh wise one */
 	mwexec_bg("/usr/local/sbin/sasyncd -d -v -v -v");
 }

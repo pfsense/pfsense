@@ -45,6 +45,7 @@ require_once("notices.inc");
 						$noticemsg = str_replace("'", "", $value['notice']);
 						$noticemsg = str_replace('"', "", $noticemsg);
 						$noticemsg = str_replace("\n", "", $noticemsg);
+						$notice_msgs = '<a href="?noticeaction=acknowledge&noticeid=all">Acknowledge All</a> &nbsp;&nbsp;&nbsp;&nbsp;.:.&nbsp;&nbsp;&nbsp;&nbsp; ';
 						if ($value['url']) {
 							$notice_msgs .= $date.' - <a href="'.$url.'?noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']</a>';
 						} else {
@@ -61,7 +62,11 @@ require_once("notices.inc");
 					</div>
 <?
 				} else {
-					print $config['system']['hostname'] . "." . $config['system']['domain'];
+?>
+					<div id="hostname">
+						<? print $config['system']['hostname'] . "." . $config['system']['domain']; ?>
+					</div>
+<?
 				}
 ?>
 				</span>

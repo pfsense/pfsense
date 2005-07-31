@@ -5,6 +5,7 @@
 	<lastchange></lastchange>
 	<theme>metallic</theme>
 	<system>
+		<enablesshd/>
 		<optimization>normal</optimization>
 		<schedulertype>priq</schedulertype>
 		<hostname>pfSense</hostname>

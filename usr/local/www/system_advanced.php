@@ -52,6 +52,7 @@ $pconfig['disablerendevouz'] = $config['system']['disablerendevouz'];
 $pconfig['enableserial'] = $config['system']['enableserial'];
 $pconfig['disablefirmwarecheck'] = isset($config['system']['disablefirmwarecheck']);
 $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
+$pconfig['sshenabled'] = $config['system']['sshenabled'];
 
 if ($_POST) {
 
@@ -90,6 +91,11 @@ if ($_POST) {
 		} else {
 			unset($config['system']['disablefilter']);
 		}
+		if($_POST['sshenabled'] == "yes") {
+			$config['system']['sshenabled'] = "enabled";
+		} else {
+			unset($config['system']['sshenabled']);
+		}		
 		if($_POST['disableftpproxy'] == "yes") {
 			$config['system']['disableftpproxy'] = "enabled";
 			unset($config['system']['rfc959workaround']);
@@ -272,7 +278,26 @@ function openwindow(url) {
                 </tr>		
 		<?php endif ?>
 
-
+                <tr>
+                  <td colspan="2" valign="top" class="listtopic">Secure Shell</td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncell">&nbsp;</td>
+                  <td width="78%" class="vtable">
+                    <input name="sshenable" type="checkbox" id="sshenable" value="yes" <?php if (isset($pconfig['sshenable'])) echo "checked"; ?> onclick="enable_change(false)">
+                    <strong>This controls if SSH is enabled</strong>
+                    </td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top">&nbsp;</td>
+                  <td width="78%">
+                    <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
+                  </td>
+                </tr>
+                </tr>
+                <tr>
+                  <td colspan="2" class="list" height="12"></td>
+                </tr>	
 
                 <tr>
                   <td colspan="2" valign="top" class="listtopic">Theme</td>

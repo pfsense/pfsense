@@ -32,6 +32,9 @@
 
 	$stderr = fopen("php://stderr", "w");
 
+	if(!isset($config['sshenabled']))
+		exit;
+	
 	function file_size($file) {
 	  $size = filesize($file);
 	  return $size;

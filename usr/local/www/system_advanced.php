@@ -152,6 +152,12 @@ if ($_POST) {
 		$config['system']['schedulertype'] = $_POST['schedulertype'];
 		$config['system']['maximumstates'] = $_POST['maximumstates'];
 
+		if($_POST['sshenabled'] == "yes") {
+			$config['system']['sshenabled'] = $_POST['sshenabled'];
+		} else {
+			unset($config['system']['sshenabled']);
+		}
+
                 $config['ipsec']['preferoldsa'] = $_POST['preferoldsa_enable'] ? true : false;
 	
 		/* pfSense themes */

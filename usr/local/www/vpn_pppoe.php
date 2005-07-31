@@ -40,6 +40,7 @@ $pconfig['remoteip'] = $pppoecfg['remoteip'];
 $pconfig['localip'] = $pppoecfg['localip'];
 $pconfig['redir'] = $pppoecfg['redir'];
 $pconfig['mode'] = $pppoecfg['mode'];
+$pconfig['interface'] = $pppoecfg['interface'];
 $pconfig['wins'] = $pppoecfg['wins'];
 $pconfig['req128'] = isset($pppoecfg['req128']);
 $pconfig['radiusenable'] = isset($pppoecfg['radius']['enable']);
@@ -105,12 +106,13 @@ if ($_POST) {
 		$pppoecfg['localip'] = $_POST['localip'];
 		$pppoecfg['mode'] = $_POST['mode'];
 		$pppoecfg['wins'] = $_POST['wins'];
+		$pppoecfg['interface'] = $_POST['interface'];
 		$pppoecfg['req128'] = $_POST['req128'] ? true : false;
 		$pppoecfg['radius']['enable'] = $_POST['radiusenable'] ? true : false;
 		$pppoecfg['radius']['accounting'] = $_POST['radacct_enable'] ? true : false;
 		$pppoecfg['radius']['server'] = $_POST['radiusserver'];
 		$pppoecfg['radius']['secret'] = $_POST['radiussecret'];
-			
+
 		write_config();
 		
 		$retval = 0;
@@ -271,6 +273,34 @@ function enable_change(enable_over) {
                       Enter the shared secret that will be used to authenticate 
                       to the RADIUS server.</td>
                 </tr>
+
+                <tr> 
+                  <td height="16" colspan="2" valign="top"></td>
+                </tr>
+
+                <tr> 
+                  <td width="22%" valign="top" class="vncell">Interface</td>
+                  <td width="78%" valign="top" class="vtable">
+
+			<select name="interface" class="formfld" id="interface">
+			  <?php
+				$interfaces = array('lan' => 'LAN', 'wan' => 'WAN');
+				for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+				      if (isset($config['interfaces']['opt' . $i]['enable']))
+					      $interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+				}
+				foreach ($interfaces as $iface => $ifacename):
+			  ?>
+			  <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
+			  <?=htmlspecialchars($ifacename);?>
+			  </option>
+			  <?php endforeach; ?>
+			</select> <br>			
+                      
+		  </td>
+                </tr>
+
+
 
                 <tr> 
                   <td height="16" colspan="2" valign="top"></td>

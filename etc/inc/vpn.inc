@@ -844,8 +844,8 @@ EOD;
 			$mpdconf .= <<<EOD
 
 pppoe_standart:
-	#set link type pppoe
-	#set pppoe iface lnc0
+	set link type pppoe
+	set pppoe iface {$pppoecfg['interface']}
 	set pppoe service "*"
 	set pppoe disable originate
 	set pppoe enable incoming

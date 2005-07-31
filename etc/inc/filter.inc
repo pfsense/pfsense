@@ -813,6 +813,9 @@ function filter_flush_state_table() {
 function filter_nat_rules_generate_if($if, $src, $srcport, $dst, $natport, $target, $nonat) {
 	global $config;
 
+	if($src=="/32")
+		return;
+
 	$nat = "nat";
 	
 	if($nonat <> "")
@@ -1666,7 +1669,8 @@ EOD;
 
 	foreach ($optcfg as $oc) {
 		if (!$oc['bridge'])
-			$ipfrules .= "block in $log quick on $wanif from {$oc['sa']}/{$oc['sn']} to any label \"interface spoof check\"\n";
+			if($oc['sa'] <> "") 
+				$ipfrules .= "block in $log quick on $wanif from {$oc['sa']}/{$oc['sn']} to any label \"interface spoof check\"\n";
 	}
 
 	/* allow PPTP traffic if PPTP client is enabled on WAN */

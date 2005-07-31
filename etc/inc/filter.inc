@@ -532,7 +532,7 @@ function filter_generate_pf_altq_rules() {
         $wancfg = $config['interfaces']['wan'];
         $lancfg = $config['interfaces']['lan'];
         $pptpdcfg = $config['pptpd'];
-	$pppoecfg = $config['pptpd'];
+	$pppoecfg = $config['pppoe'];
 
         $lanif = $lancfg['if'];
         $wanif = get_real_wan_interface();
@@ -1207,8 +1207,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		}
 
 		if ($pppoecfg['mode'] == "server") {
-			$pppoeip = $pptpdcfg['localip'];
-			$pppoesa = $pptpdcfg['remoteip'];
+			$pppoeip = $pppoecfg['localip'];
+			$pppoesa = $pppoecfg['remoteip'];
 			$pppoesn = $g['pppoe_subnet'];
 			if($config['pppoe']['pppoe_subnet'] <> "")
 				$pppoesn = $config['pppoe']['pppoe_subnet'];
@@ -1247,6 +1247,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			
 			$nif = 1;
 			$ispptp = false;
+			$ispppoe = false;
 		}
 			
 		if ($pptpdcfg['mode'] != "server") {
@@ -1949,7 +1950,7 @@ EOD;
 					for($xxx=0; $xxx < $n_pppoe_units; $xxx++) {
 						/*
 						*   now that pppoe server are user rules, detect
-						*   that user is setting the pptp server rule
+						*   that user is setting the pppoe server rule
 						*   and setup for all netgraph interfaces
 						*/
 						$rule_arr[] = generate_user_filter_rule_arr($rule, $xxx);
@@ -2181,7 +2182,7 @@ function create_firewall_outgoing_rules_to_itself() {
 	}
 
 	/* netgraph pppoe outgoing */
-	$n_pptp_units = $g['n_pppoe_units'];
+	$n_pppoe_units = $g['n_pppoe_units'];
 	if($config['pppoe']['n_pppoe_units'] <> "")
 		$n_pppoe_units = $config['pppoe']['n_pppoe_units'];	
 	for($x=0; $x<$n_pppoe_units; $x++) {

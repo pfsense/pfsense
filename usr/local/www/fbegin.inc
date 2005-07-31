@@ -42,10 +42,13 @@ require_once("notices.inc");
 					$notices = get_notices();
 					foreach ($notices as $key => $value) {
 						$date = date("m-d-y h:i:s", $key);
+						$noticemsg = str_replace("'", "", $value['notice']);
+						$noticemsg = str_replace('"', "", $noticemsg);
+						$noticemsg = str_replace("\n", "", $noticemsg);
 						if ($value['url']) {
 							$notice_msgs .= $date.' - <a href="'.$url.'?noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']</a>';
 						} else {
-							$notice_msgs .= $date.' - <a href="?noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']</a>';
+							$notice_msgs .= $date.' - <a href="?noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']'.$noticemsg.'</a>';
 						}
 						$notice_msgs .= " &nbsp;&nbsp;&nbsp;&nbsp;.:.&nbsp;&nbsp;&nbsp;&nbsp; ";
 					}

@@ -48,6 +48,9 @@ $iflist = array("lan" => "LAN", "wan" => "WAN");
 if ($config['pptpd']['mode'] == "server")
 	$iflist['pptp'] = "PPTP VPN";
 
+if ($config['pppoe']['mode'] == "server")
+	$iflist['pppoe'] = "PPPoE VPN";
+
 for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 	$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 }

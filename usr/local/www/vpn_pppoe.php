@@ -114,7 +114,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "VPN PPPoE";
+$pgtitle = "VPN: PPPoE";
 include("head.inc");
 
 ?>

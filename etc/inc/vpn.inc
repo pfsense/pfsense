@@ -823,7 +823,7 @@ pppoe:
 EOD;
 
 			for ($i = 0; $i < $g['n_pppoe_units']; $i++) {
-				$mpdconf .= "	load pt{$i}\n";
+				$mpdconf .= "	load pppoe{$i}\n";
 			}
 
 			for ($i = 0; $i < $g['n_pppoe_units']; $i++) {

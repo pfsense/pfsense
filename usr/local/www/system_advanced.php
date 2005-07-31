@@ -208,6 +208,8 @@ if ($_POST) {
 			fwrite($fout, "set console=comconsole\n");
 		fclose($fout);
 		
+		mwexec("/etc/sshd");
+		
 		conf_mount_ro();
 	}
 }

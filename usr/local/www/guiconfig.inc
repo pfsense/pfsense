@@ -367,6 +367,16 @@ function pptpd_users_sort() {
 	usort($config['pptpd']['user'], "usercmp");
 }
 
+function pppoe_users_sort() {
+	global $g, $config;
+
+	function usercmp($a, $b) {
+		return strcasecmp($a['name'], $b['name']);
+	}
+
+	usort($config['pppoe']['user'], "usercmp");
+}
+
 function staticroutes_sort() {
 	global $g, $config;
 

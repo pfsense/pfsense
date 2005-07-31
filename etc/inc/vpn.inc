@@ -869,7 +869,7 @@ pppoe_standart:
 	set ccp yes mpp-e40
 	set ccp yes mpp-e128
 	set ccp yes mpp-stateless
-	set ipcp dns 10.10.1.3
+	#set ipcp dns 10.10.1.3
 	set link latency 1
 
 EOD;

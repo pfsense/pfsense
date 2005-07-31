@@ -835,7 +835,7 @@ EOD;
 
 				$mpdconf .= <<<EOD
 
-pppoe0:
+pppoe{$i}:
 	new -i {$ngif} pppoe{$i} pppoe{$i}
 	set ipcp ranges {$pppoecfg['localip']}/32 {$clientip}/32
 	load pppoe_standart

@@ -261,7 +261,7 @@ function interfaces_optional_configure_if($opti) {
 			$bridges_total++;
 		} else {
 			/* if user has selected DHCP type then act accordingly */
-			if($optcfg['type'] == 'DHCP') {
+			if($optcfg['ipaddr'] == "dhcp") {
 				interfaces_opt_dhcp_configure($opti);
 			} else {			
 				mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " " .

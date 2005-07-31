@@ -200,6 +200,9 @@
 	/* start pptpd */
 	vpn_pptpd_configure();
 
+	/* start pppoe server */
+	vpn_pppoe_configure();
+
 	/* start the captive portal */
 	captiveportal_configure();
 

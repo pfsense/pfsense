@@ -41,7 +41,7 @@ require_once("notices.inc");
 				if (are_notices_pending()) {
 					$notices = get_notices();
 					foreach ($notices as $key => $value) {
-						$date = date("m-d-y h:i:s", $key);
+						$date = date("m-d-y H:i:s", $key);
 						$noticemsg = str_replace("'", "", $value['notice']);
 						$noticemsg = str_replace('"', "", $noticemsg);
 						$noticemsg = str_replace("\n", "", $noticemsg);

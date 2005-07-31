@@ -939,7 +939,6 @@ function filter_nat_rules_generate() {
 		}
 	} else {
 		/* standard outbound rules (one for each interface) */
-		$lansa = find_interface_ip($config['interfaces']['lan']['if']);
 		/* create ipsec passthru rule if requested */
 		if (isset($config['nat']['ipsecpassthru']['enable'])) {
 			$natrules .= filter_nat_rules_generate_if($wanif,

@@ -301,7 +301,14 @@ include("head.inc");
                 </td>
               </tr><?php endif; if ($ifdescr == "wan" && file_exists("{$g['varetc_path']}/nameservers.conf")): ?>
                 <td width="22%" class="vncellt">ISP DNS servers</td>
-                <td width="78%" class="listr"><?php echo nl2br(file_get_contents("{$g['varetc_path']}/nameservers.conf")); ?></td>
+                <td width="78%" class="listr">
+		<?php
+			$dns_servers = get_dns_servers();
+			foreach($dns_servers as $dns) {
+				echo "{$dns}<br>";
+			}	
+		?>
+		</td>
 			  <?php endif; endif; if ($ifinfo['media']): ?>
               <tr>
                 <td width="22%" class="vncellt">Media</td>

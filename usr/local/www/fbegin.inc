@@ -45,6 +45,11 @@ require_once("notices.inc");
 						$noticemsg = str_replace("'", "", $value['notice']);
 						$noticemsg = str_replace('"', "", $noticemsg);
 						$noticemsg = str_replace("\n", "", $noticemsg);
+						$noticemsg = str_replace("<p>", "", $noticemsg);
+						$noticemsg = str_replace("<pre>", "", $noticemsg);
+						$noticemsg = str_replace("</pre>", "", $noticemsg);
+						$noticemsg = str_replace("</p>", "", $noticemsg);
+						$noticemsg = str_replace("<br>", "", $noticemsg);
 						$notice_msgs = '<a href="?noticeaction=acknowledge&noticeid=all">Acknowledge All</a> &nbsp;&nbsp;&nbsp;&nbsp;.:.&nbsp;&nbsp;&nbsp;&nbsp; ';
 						if ($value['url']) {
 							$notice_msgs .= $date.' - <a href="'.$url.'?noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']</a>';

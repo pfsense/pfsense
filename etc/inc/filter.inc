@@ -1004,6 +1004,7 @@ function filter_nat_rules_generate() {
 				$pptpdcfg['remoteip'] . "/" . $pptp_subnet, null, "", null, null, "");
 		}
 
+		/* PPPoE subnet */
 		if ($pppoecfg['mode'] == "server") {
 			$pppoe_subnet = $g['pppoe_subnet'];
 			if($config['pppoe']['pppoe_subnet'] <> "")

@@ -252,7 +252,7 @@ function enable_change(enable_over) {
                 </tr>
 		
                 <tr> 
-                  <td width="22%" valign="top" class="vncell">Interface</td>
+                  <td width="22%" valign="top" class="vncell"><b>Interface</b></td>
                   <td width="78%" valign="top" class="vtable">
 
 			<select name="interface" class="formfld" id="interface">

@@ -173,6 +173,12 @@ function return_filename_as_array($filename, $strip = array('#')) {
     return $file;
 }
 
+/****f* pfsense-utils/file_put_contents
+ * NAME
+ *   file_put_contents - Wrapper for file_put_contents if it doesn't exist
+ * RESULT
+ *   none
+ ******/
 if(!function_exists("file_put_contents")) {
     function file_put_contents($filename, $data) {
 	$fd = fopen($filename,"w");

@@ -38,6 +38,12 @@ require_once("functions.inc");
 require_once("pkg-utils.inc");
 require_once("notices.inc");
 
+function filter_resync() {
+	global $config, $g;
+
+	mwexec("/sbin/pfctl -y"); /* XXX */
+}
+
 function filter_pflog_start() {
 	global $config, $g;
 
@@ -1985,14 +1991,8 @@ EOD;
 								if (($defq != "") and ($ackq != ""))
 									$line .= " queue ({$defq}, {$ackq}) ";
 							}
-							$ipfrules .= $line;
+							$ipfrules .= $line . "\n";
 						}
-						// label
-						if($rule['descr'] <> "" and $line <> "")
-							$ipfrules .= " label \"USER_RULE_PPTP: " . $rule['descr'] . "\" \n";
-						else
-							$ipfrules .= " label \"USER_RULE_PPTP\" \n";						
-						}						
 					}
 				} else if($rule['interface'] == "pppoe") {
 					$n_pppoe_units = $g['n_pppoe_units'];
@@ -2012,16 +2012,11 @@ EOD;
 								if (($defq != "") and ($ackq != ""))
 									$line .= " queue ({$defq}, {$ackq}) ";
 							}
-							$ipfrules .= $line;
+							$ipfrules .= $line . "\n";
 						} else {
 							$ipfrules .= "# Error creating {$rule['descr']} \n";
 						}
-						// label
-						if($rule['descr'] <> "" and $line <> "")
-							$ipfrules .= " label \"USER_RULE_PPPoE: " . $rule['descr'] . "\" \n";
-						else
-							$ipfrules .= " label \"USER_RULE_PPPoE\" \n";						
-						}
+					}					
 				} else {
 					$line = generate_user_filter_rule($rule, 0);
 					if($line <> "") 
@@ -2280,6 +2275,7 @@ function return_vpn_subnet($adr) {
 		return $padr . "/" . $pmask;
         }
 	
+	/* XXX: do not return wan, lan, etc */
 	if(strstr($adr['network'], "wan") or strstr($adr['network'], "lan") or strstr($adr['network'], "opt")) 
 		return convert_ip_to_network_format($config['interfaces'][$adr['network']]['ipaddr'],
 		       $config['interfaces'][$adr['network']]['subnet']);

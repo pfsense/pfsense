@@ -14,11 +14,21 @@ if [ $1 != "upgrade" ]; then
 fi
 
 backup_chflags() {
-	/usr/sbin/mtree -Pcp / | bzip2 -9 > /tmp/chflags.dist.bz2 | logger -p daemon.info -i -t UpgradeFlags
+	/usr/sbin/mtree -Pcp /bin | bzip2 -9 > /tmp/chflags.dist.bin | logger -p daemon.info -i -t UpgradeFlags
+	/usr/sbin/mtree -Pcp /lib | bzip2 -9 > /tmp/chflags.dist.lib | logger -p daemon.info -i -t UpgradeFlags
+	/usr/sbin/mtree -Pcp /libexec | bzip2 -9 > /tmp/chflags.dist.libexec | logger -p daemon.info -i -t UpgradeFlags
+	/usr/sbin/mtree -Pcp /sbin | bzip2 -9 > /tmp/chflags.dist.sbin | logger -p daemon.info -i -t UpgradeFlags
+	/usr/sbin/mtree -Pcp /sys | bzip2 -9 > /tmp/chflags.dist.sys | logger -p daemon.info -i -t UpgradeFlags
+	/usr/sbin/mtree -Pcp /usr | bzip2 -9 > /tmp/chflags.dist.usr | logger -p daemon.info -i -t UpgradeFlags
 }
 
 restore_chflags() {
-	cd / && /usr/bin/bzcat /tmp/chflags.dist.bz2 | /usr/sbin/mtree -PU -p / | logger -p daemon.info -i -t UpgradeFlags
+	cd / && /usr/bin/bzcat /tmp/chflags.dist.bin.bz2 | /usr/sbin/mtree -PU -p /bin | logger -p daemon.info -i -t UpgradeFlags
+	cd / && /usr/bin/bzcat /tmp/chflags.dist.lib.bz2 | /usr/sbin/mtree -PU -p /lib | logger -p daemon.info -i -t UpgradeFlags
+	cd / && /usr/bin/bzcat /tmp/chflags.dist.libexec.bz2 | /usr/sbin/mtree -PU -p /libexec | logger -p daemon.info -i -t UpgradeFlags
+	cd / && /usr/bin/bzcat /tmp/chflags.dist.sbin.bz2 | /usr/sbin/mtree -PU -p /sbin | logger -p daemon.info -i -t UpgradeFlags
+	cd / && /usr/bin/bzcat /tmp/chflags.dist.sys.bz2 | /usr/sbin/mtree -PU -p /sys | logger -p daemon.info -i -t UpgradeFlags
+	cd / && /usr/bin/bzcat /tmp/chflags.dist.usr.bz2 | /usr/sbin/mtree -PU -p /usr | logger -p daemon.info -i -t UpgradeFlags
 }
 
 remove_chflags() {

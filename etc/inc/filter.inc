@@ -2012,11 +2012,16 @@ EOD;
 								if (($defq != "") and ($ackq != ""))
 									$line .= " queue ({$defq}, {$ackq}) ";
 							}
-							$ipfrules .= $line . "\n";
+							$ipfrules .= $line;
 						} else {
 							$ipfrules .= "# Error creating {$rule['descr']} \n";
 						}
-					}					
+						// label
+						if($rule['descr'] <> "" and $line <> "")
+							$line .= " label \"USER_RULE_PPPoE: " . $rule['descr'] . "\" \n";
+						else
+							$line .= " label \"USER_RULE_PPPoE\" \n";						
+						}					
 				} else {
 					$line = generate_user_filter_rule($rule, 0);
 					if($line <> "") 

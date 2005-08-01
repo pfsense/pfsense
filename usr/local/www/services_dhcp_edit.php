@@ -53,9 +53,11 @@ if (isset($_POST['id']))
 	$id = $_POST['id'];
 
 if (isset($id) && $a_maps[$id]) {
-	$pconfig['mac'] = $a_maps[$id]['mac'];
-	$pconfig['ipaddr'] = $a_maps[$id]['ipaddr'];
-	$pconfig['descr'] = $a_maps[$id]['descr'];
+        $pconfig['mac'] = $a_maps[$id]['mac'];
+        $pconfig['ipaddr'] = $a_maps[$id]['ipaddr'];
+        $pconfig['descr'] = $a_maps[$id]['descr'];
+} else {
+        $pconfig['mac'] = $_GET['mac'];
 }
 
 if ($_POST) {

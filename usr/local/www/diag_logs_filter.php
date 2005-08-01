@@ -34,7 +34,6 @@
 require("guiconfig.inc");
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
-//exec("/usr/sbin/tcpdump -n -e -ttt -r {$g['varlog_path']}/pflog | logger -t pf -p local0.info ");
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
@@ -75,7 +74,6 @@ function conv_clog($logfile, $tail) {
 		if(stristr($logent, "UDP") == true)
 			$flent['proto'] = "UDP";
 		
-		/* XXX: fetch time? */
 		$flent['time'] 		= $log_split[1];
 		$flent['act'] 		= $log_split[3];
 		$flent['interface'] 	= strtoupper(convert_real_interface_to_friendly_interface_name(str_replace(":","",$log_split[4])));

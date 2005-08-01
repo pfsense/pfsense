@@ -53,7 +53,7 @@
 	system_start_ftp_helpers();
 
 	/* resync ipfilter */
-	filter_resync();
+	filter_configure_sync();
 
 	/* reconfigure IPsec tunnels */
 	vpn_ipsec_configure(true);

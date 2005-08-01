@@ -38,12 +38,6 @@ require_once("functions.inc");
 require_once("pkg-utils.inc");
 require_once("notices.inc");
 
-function filter_resync() {
-	global $config, $g;
-
-	mwexec("/sbin/pfctl -y"); /* XXX */
-}
-
 function filter_pflog_start() {
 	global $config, $g;
 
@@ -1859,9 +1853,6 @@ EOD;
 
 # PPTPd rules
 anchor "pptp"
-#pass quick proto gre from any to $pptpdtarget keep state label "allow gre pptpd"
-#pass quick proto tcp from any to $pptpdtarget port = 1723 keep state label "allow pptpd $pptpdtarget"
-# XXX: fix me!
 pass quick proto gre from any to any keep state label "allow gre pptpd"
 pass quick proto tcp from any to any port = 1723 keep state label "allow pptpd $pptpdtarget"
 
@@ -2286,7 +2277,6 @@ function return_vpn_subnet($adr) {
 		return $padr . "/" . $pmask;
         }
 	
-	/* XXX: do not return wan, lan, etc */
 	if(strstr($adr['network'], "wan") or strstr($adr['network'], "lan") or strstr($adr['network'], "opt")) 
 		return convert_ip_to_network_format($config['interfaces'][$adr['network']]['ipaddr'],
 		       $config['interfaces'][$adr['network']]['subnet']);

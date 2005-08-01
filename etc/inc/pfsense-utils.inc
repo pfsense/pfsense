@@ -430,7 +430,6 @@ function get_carp_interface_status($carpinterface) {
 		if(stristr($int, $carpinterface) == true)
 		$found_interface=1;
 	}
-	/* XXX: Should never reach this */
 	return;
 }
 

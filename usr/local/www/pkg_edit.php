@@ -309,7 +309,6 @@ if ($pkg['tabs'] <> "") {
 			echo "<input type='password' " . $size . " name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
 			echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "select") {
-		  // XXX: TODO: set $selected
                   if($pkga['size']) $size = " size='" . $pkga['size'] . "' ";
 		  if($pkga['multiple'] == "yes") $multiple = "MULTIPLE ";
 		    echo "<select " . $multiple . $size . "id='" . $pkga['fieldname'] . "' name='" . $pkga['fieldname'] . "'>\n";

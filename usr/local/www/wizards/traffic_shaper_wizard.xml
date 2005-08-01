@@ -625,7 +625,6 @@
         </fields>
 	<stepsubmitphpaction>
 
-	/* XXX - billm - needs to actually honor what the user selects still */
 	if ( $_POST['enable'] ) {
 
 		$p2plist = array();
@@ -831,7 +830,6 @@
                 </field>
         </fields>
 	<stepsubmitphpaction>
-	/* XXX - billm - needs to actually honor what the user selects still */
 	if ( $_POST['enable'] ) {
 		/* create qGamesUp queue */
 		$queue = array();
@@ -937,8 +935,6 @@
 		    $gamesplist[] = array('ur1', 'udp', '7777-7787', '7777-7787', 'both');
 		    $gamesplist[] = array('ur2', 'tcp', '7777-7787', '7777-7787', 'both');
 		}
-
-		/* XXX: add some more games before this line!! */
     
 		/* Set up/down games as higher weight */
 		/* loop through p2plist[] */
@@ -1484,9 +1480,7 @@
 		if($_POST['vnc'] != "") {
 		    /* Simple network management protocol */
 		    $othersplist[] = array('VNC', 'tcp', '5900-5930', '5900-5930', 'both', $_POST['vnc']);
-		}		
-
-		/* XXX: add some more protocols here! */
+		}
     
 		/* Set up/down protocols as higher weight */
 		/* loop through othersplist[] */

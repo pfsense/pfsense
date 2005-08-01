@@ -325,8 +325,7 @@ function captiveportal_disconnect_client($id) {
 				syslog(LOG_INFO,"Authenticated user $cpdb[$i][4] disconnected");
 			}
 
-			/* XXX: What's $ip? This can't be working?!?!?! --billm */
-			mwexec("/sbin/pfctl -t captiveportal -T delete {$ip}");
+			mwexec("/sbin/pfctl -t captiveportal -T delete {$cpdb[$i][2]}");
 
 			unset($cpdb[$i]);
 

@@ -143,15 +143,15 @@ if [ -f /etc/rc.conf ]; then
     rm -rf /etc/rc.conf
 fi
 
+echo -n "Starting USB... "
+/usr/sbin/usbd 2>>/tmp/bootup_messages
+echo "done."
+
 # let the PHP-based configuration subsystem set up the system now
 /etc/rc.bootup
 
 echo -n Starting Secure Shell Services...
 /etc/sshd 2>/dev/null
-
-echo -n "Starting USB... "
-/usr/sbin/usbd 2>>/tmp/bootup_messages
-echo "done."
 
 echo -n "Starting CRON... "
 /usr/sbin/cron 2>>/tmp/bootup_messages

@@ -52,7 +52,7 @@ $pconfig['disablerendevouz'] = $config['system']['disablerendevouz'];
 $pconfig['enableserial'] = $config['system']['enableserial'];
 $pconfig['disablefirmwarecheck'] = isset($config['system']['disablefirmwarecheck']);
 $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
-$pconfig['sshenabled'] = $config['system']['sshenabled'];
+$pconfig['enablesshd'] = $config['system']['enablesshd'];
 
 if ($_POST) {
 
@@ -91,10 +91,10 @@ if ($_POST) {
 		} else {
 			unset($config['system']['disablefilter']);
 		}
-		if($_POST['sshenabled'] == "yes") {
-			$config['system']['sshenabled'] = "enabled";
+		if($_POST['enablesshd'] == "yes") {
+			$config['system']['enablesshd'] = "enabled";
 		} else {
-			unset($config['system']['sshenabled']);
+			unset($config['system']['enablesshd']);
 		}		
 		if($_POST['disableftpproxy'] == "yes") {
 			$config['system']['disableftpproxy'] = "enabled";
@@ -152,10 +152,10 @@ if ($_POST) {
 		$config['system']['schedulertype'] = $_POST['schedulertype'];
 		$config['system']['maximumstates'] = $_POST['maximumstates'];
 
-		if($_POST['sshenabled'] == "yes") {
-			$config['system']['sshenabled'] = $_POST['sshenabled'];
+		if($_POST['enablesshd'] == "yes") {
+			$config['system']['enablesshd'] = $_POST['enablesshd'];
 		} else {
-			unset($config['system']['sshenabled']);
+			unset($config['system']['enablesshd']);
 		}
 
                 $config['ipsec']['preferoldsa'] = $_POST['preferoldsa_enable'] ? true : false;
@@ -292,7 +292,7 @@ function openwindow(url) {
                 <tr>
                   <td width="22%" valign="top" class="vncell">&nbsp;</td>
                   <td width="78%" class="vtable">
-                    <input name="sshenabled" type="checkbox" id="sshenabled" value="yes" <?php if (isset($pconfig['sshenabled'])) echo "checked"; ?> onclick="enable_change(false)">
+                    <input name="enablesshd" type="checkbox" id="enablesshd" value="yes" <?php if (isset($pconfig['enablesshd'])) echo "checked"; ?> onclick="enable_change(false)">
                     <strong>Enable Secure Shell</strong>
                     </td>
                 </tr>

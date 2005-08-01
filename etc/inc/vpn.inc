@@ -922,7 +922,7 @@ EOD;
 
 pppoe:
 	set link type pppoe
-	#set pppoe iface lnc0
+	set pppoe iface {$pppoe_interface}
 
 EOD;
 			}

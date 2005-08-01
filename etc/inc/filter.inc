@@ -1853,6 +1853,9 @@ EOD;
 
 # PPTPd rules
 anchor "pptp"
+#pass quick proto gre from any to $pptpdtarget keep state label "allow gre pptpd"
+#pass quick proto tcp from any to $pptpdtarget port = 1723 keep state label "allow pptpd $pptpdtarget"
+# XXX: fix me!
 pass quick proto gre from any to any keep state label "allow gre pptpd"
 pass quick proto tcp from any to any port = 1723 keep state label "allow pptpd $pptpdtarget"
 

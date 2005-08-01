@@ -1991,8 +1991,14 @@ EOD;
 								if (($defq != "") and ($ackq != ""))
 									$line .= " queue ({$defq}, {$ackq}) ";
 							}
-							$ipfrules .= $line . "\n";
+							$ipfrules .= $line;
 						}
+						// label
+						if($rule['descr'] <> "" and $line <> "")
+							$ipfrules .= " label \"USER_RULE_PPTP: " . $rule['descr'] . "\" \n";
+						else
+							$ipfrules .= " label \"USER_RULE_PPTP\" \n";						
+						}						
 					}
 				} else if($rule['interface'] == "pppoe") {
 					$n_pppoe_units = $g['n_pppoe_units'];

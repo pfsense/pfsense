@@ -32,8 +32,12 @@
 
 	$stderr = fopen("php://stderr", "w");
 
-	if(!isset($config['system']['enablesshd']))
-		exit;
+	if(isset($config['system']['enablesshd'])) {
+		/* do nothing, we're enabled */
+	} else {
+		if($g['booting'])
+			echo "SSHD is disabled.";
+	}
 	
 	function file_size($file) {
 	  $size = filesize($file);

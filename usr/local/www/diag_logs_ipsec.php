@@ -78,7 +78,7 @@ include("head.inc");
 				<tr>
 					<td>
 						<br>
-						<form action="diag_logs.php" method="post">
+						<form action="diag_logs_ipsec.php" method="post">
 						<input name="clear" type="submit" class="formbtn" value="Clear log">
 						</form>
 					</td>

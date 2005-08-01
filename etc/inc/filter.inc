@@ -2018,10 +2018,10 @@ EOD;
 						}
 						// label
 						if($rule['descr'] <> "" and $line <> "")
-							$line .= " label \"USER_RULE_PPPoE: " . $rule['descr'] . "\" \n";
+							$ipfrules .= " label \"USER_RULE_PPPoE: " . $rule['descr'] . "\" \n";
 						else
-							$line .= " label \"USER_RULE_PPPoE\" \n";						
-						}					
+							$ipfrules .= " label \"USER_RULE_PPPoE\" \n";						
+						}
 				} else {
 					$line = generate_user_filter_rule($rule, 0);
 					if($line <> "") 

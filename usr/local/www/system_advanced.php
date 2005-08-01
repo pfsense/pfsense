@@ -138,7 +138,7 @@ if ($_POST) {
 			unset($config['system']['enableserial']);
 
 		if($_POST['harddiskstandby'] <> "") {
-			$config['system']['harddiskstandby'] = "yes";
+			$config['system']['harddiskstandby'] = $_POST['harddiskstandby'];
 			system_set_harddisk_standby();
 		} else
 			unset($config['system']['harddiskstandby']);

@@ -294,10 +294,10 @@ function type_change(enable_change,enable_change_pptp) {
 		
                 <tr>
                   <td colspan="2" valign="top" height="16"></td>
-				</tr>
-				<tr>
+		</tr>
+		<tr>
                   <td colspan="2" valign="top" class="listtopic">IP configuration</td>
-				</tr>
+		</tr>
 		<tr>
                   <td width="22%" valign="top" class="vncellreq">Bridge with</td>
                   <td width="78%" class="vtable">

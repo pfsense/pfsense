@@ -100,7 +100,9 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		$optcfg['bridge'] = $_POST['bridge'];
+		
+		$lancfg['bridge'] = $_POST['bridge'];
+		
 		if (($lancfg['ipaddr'] != $_POST['ipaddr']) || ($lancfg['subnet'] != $_POST['subnet'])) {
 			update_if_changed("IP Address", &$lancfg['ipaddr'], $_POST['ipaddr']);
 			update_if_changed("subnet", &$lancfg['subnet'], $_POST['subnet']);

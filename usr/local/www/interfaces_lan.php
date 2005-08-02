@@ -35,7 +35,7 @@ require("guiconfig.inc");
 $lancfg = &$config['interfaces']['lan'];
 $pconfig['ipaddr'] = $lancfg['ipaddr'];
 $pconfig['subnet'] = $lancfg['subnet'];
-$pconfig['bridge'] = $optcfg['bridge'];
+$pconfig['bridge'] = $lancfg['bridge'];
 $pconfig['bandwidth'] = $lancfg['bandwidth'];
 $pconfig['bandwidthtype'] = $lancfg['bandwidthtype'];
 

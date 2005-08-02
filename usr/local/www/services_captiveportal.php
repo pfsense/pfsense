@@ -89,8 +89,8 @@ if ($_POST) {
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 			$coptif = &$config['interfaces']['opt' . $i];
 			if (isset($coptif['enable']) && $coptif['bridge']) {
-				$input_errors[] = "The captive portal cannot be used when one or more interfaces are bridged.";
-				break;
+				//$input_errors[] = "The captive portal cannot be used when one or more interfaces are bridged.";
+				//break;
 			}
 		}
 

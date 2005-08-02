@@ -111,6 +111,24 @@ function interfaces_lan_configure() {
 			file_notice("MAC Address altered", "The INVALID MAC address (ff:ff:ff:ff:ff:ff) on interface {$lancfg['if']} has been automatically replaced with {$random_mac}", "Interfaces");
 		}
 	}	
+
+	/* bridged? */
+	if ($optcfg['bridge']) {
+		mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " delete up");
+		/* use open/netBSD style bridge */
+		mwexec("/sbin/ifconfig bridge{$bridges_total} create");
+		mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$optcfg['if']} addm {$config['interfaces'][$optcfg['bridge']]['if']} up");
+		mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$optcfg['if']} add {$config['interfaces'][$optcfg['bridge']]['if']}");
+		
+		$fd = fopen("{$g['tmp_path']}/bridge_config_{$optcfg['if']}", "w");
+		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} create\n");
+		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} addm {$optcfg['if']} addm {$config['interfaces'][$optcfg['bridge']]['if']} up\n");
+		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$optcfg['if']} add {$config['interfaces'][$optcfg['bridge']]['if']}\n");
+		fclose($fd);
+		
+		/* lets keep track of the amount of bridges initialized */
+		$bridges_total++;
+	}
 	
 	/* media */
 	if ($lancfg['media'] || $lancfg['mediaopt']) {

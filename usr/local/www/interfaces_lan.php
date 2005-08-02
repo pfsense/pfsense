@@ -244,16 +244,11 @@ function enable_change(enable_over) {
                       <li>change the IP address of your computer</li>
                       <li>renew its DHCP lease</li>
                       <li>access the webGUI with the new IP address</li>
+		      <li>be sure to add <a href="firewall_rules.php">firewall rules</a> to permit traffic through the interface.</li>
+		      <li>You also need firewall rules for an interface in bridged mode as the firewall acts as a filtering bridge.</li>
                     </ul>
                     </span></td>
                 </tr>
-                <tr>
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"><span class="vexpl"><span class="red"><strong>Note:<br>
-                    </strong></span>be sure to add <a href="firewall_rules.php">firewall rules</a> to permit traffic
-                    through the interface. You also need firewall rules for an interface in
-                    bridged mode as the firewall acts as a filtering bridge.</span></td>
-                </tr>		
               </table>
 </form>
 <?php include("fend.inc"); ?>

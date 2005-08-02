@@ -63,8 +63,8 @@ function wireless_config_post() {
 
 	/* input validation */
 	if ($_POST['enable']) {
-		$reqdfields = explode(" ", "mode ssid channel");
-		$reqdfieldsn = explode(",", "Mode,SSID,Channel");
+		$reqdfields = explode(" ", "mode ssid");
+		$reqdfieldsn = explode(",", "Mode,SSID");
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 		
 		if (!$input_errors) {

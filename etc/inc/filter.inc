@@ -1581,6 +1581,11 @@ function filter_rules_generate() {
 	$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
 	$lansn = $lancfg['subnet'];
 
+	if($lansa) 
+		$lansa_sn_combo = "{$lansa}/{$lansn}";
+	else
+		$lansa_sn_combo = "192.168.1.1/32";
+
 	/* optional interfaces */
 	$optcfg = array();
 	generate_optcfg_array($optcfg);
@@ -1757,7 +1762,7 @@ EOD;
 # (not possible at the moment - need 'me' like in ipfw)
 anchor "wandhcp"
 pass out quick on $wanif proto udp from any port = 68 to any port = 67 label "allow dhcp client out wan"
-block in $log quick on $wanif proto udp from any port = 67 to $lansa/$lansn port = 68 label "allow dhcp client out wan"
+block in $log quick on $wanif proto udp from any port = 67 to {$lansa_sn_combo} port = 68 label "allow dhcp client out wan"
 pass in quick on $wanif proto udp from any port = 67 to any port = 68 label "allow dhcp client out wan"
 
 # LAN/OPT spoof check (needs to be after DHCP because of broadcast addresses)

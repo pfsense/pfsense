@@ -86,7 +86,8 @@
 					$this->_dnsService == 'easydns' ||
 					$this->_dnsService == 'hn' ||
 					$this->_dnsService == 'zoneedit' ||
-					$this->_dnsService == 'dyns')
+					$this->_dnsService == 'dyns' ||
+					$this->_dnsService == 'ods')
 				{
 					$this->_update();
 				} else {

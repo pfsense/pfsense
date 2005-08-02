@@ -113,6 +113,7 @@ function interfaces_lan_configure() {
 	}	
 
 	/* bridged? */
+	$bridges_total=0;
 	if ($lancfg['bridge']) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($lancfg['if']) . " delete up");
 		/* use open/netBSD style bridge */

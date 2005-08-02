@@ -662,7 +662,7 @@ function convert_config() {
 	}
 
 	/* Convert 1.8 -> 1.9 */
-	if ($config['version'] == "1.7") {
+	if ($config['version'] == "1.8") {
 		$config['theme']="metallic";
 		$config['version'] = "1.9";
 	}

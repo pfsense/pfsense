@@ -448,6 +448,9 @@ function interfaces_wireless_configure($if, $wlcfg) {
 	if($wlcfg['txpower'] <> "")
 		mwexec("/sbin/ifconfig {$ifcargs} txpower {$wlcfg['txpower']}");
 	
+	if(isset($wlcfg['useolsr']))
+		setup_wireless_olsr(escapeshellarg($if));
+	
         return 0;
 
 }

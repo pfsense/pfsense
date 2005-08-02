@@ -626,4 +626,281 @@ EOD;
 	return 0;
 }
 
+function setup_wireless_olsr($interface) {
+	$fd = fopen("{$g['varetc_path']}/{$interface}_olsr.conf", "w");
+	$olsr .= <<<EOD
+#
+# olsr.org OLSR daemon config file
+#
+# Lines starting with a # are discarded
+#
+# This file was shipped with olsrd 0.4.9
+#
+
+# Debug level(0-9)
+# If set to 0 the daemon runs in the background
+
+DebugLevel      1
+
+# IP version to use (4 or 6)
+
+IpVersion       4
+
+# Clear the screen each time the internal state changes
+
+ClearScreen     yes
+
+# HNA IPv4 routes
+# syntax: netaddr netmask
+# Example Internet gateway:
+# 0.0.0.0 0.0.0.0
+
+Hna4
+{
+#   Internet gateway:
+#   0.0.0.0      0.0.0.0
+#   more entries can be added:
+#   192.168.1.0  255.255.255.0
+}
+
+# HNA IPv6 routes
+# syntax: netaddr prefix
+# Example Internet gateway:
+Hna6
+{
+#   Internet gateway:
+#   ::              0
+#   more entries can be added:
+#   fec0:2200:106:: 48
+}
+
+
+# Should olsrd keep on running even if there are
+# no interfaces available? This is a good idea
+# for a PCMCIA/USB hotswap environment.
+# "yes" OR "no"
+
+AllowNoInt      yes
+
+# TOS(type of service) value for
+# the IP header of control traffic.
+# If not set it will default to 16
+
+#TosValue       16
+
+# The fixed willingness to use(0-7)
+# If not set willingness will be calculated
+# dynamically based on battery/power status
+# if such information is available
+
+#Willingness            4
+
+# Allow processes like the GUI front-end
+# to connect to the daemon.
+
+IpcConnect
+{
+     # Determines how many simultaneously
+     # IPC connections that will be allowed
+     # Setting this to 0 disables IPC
+
+     MaxConnections  0
+
+     # By default only 127.0.0.1 is allowed
+     # to connect. Here allowed hosts can
+     # be added
+
+     Host            127.0.0.1
+     #Host            10.0.0.5
+
+     # You can also specify entire net-ranges
+     # that are allowed to connect. Multiple
+     # entries are allowed
+
+     #Net             192.168.1.0 255.255.255.0
+}
+
+# Wether to use hysteresis or not
+# Hysteresis adds more robustness to the
+# link sensing but delays neighbor registration.
+# Used by default. 'yes' or 'no'
+
+UseHysteresis   yes
+
+# Hysteresis parameters
+# Do not alter these unless you know
+# what you are doing!
+# Set to auto by default. Allowed
+# values are floating point values
+# in the interval 0,1
+# THR_LOW must always be lower than
+# THR_HIGH.
+
+HystScaling     0.50
+HystThrHigh     0.80
+HystThrLow      0.30
+
+
+# Link quality level
+# 0 = do not use link quality
+# 1 = use link quality for MPR selection
+# 2 = use link quality for MPR selection and routing
+# Defaults to 0
+
+#LinkQualityLevel       0
+
+# Link quality window size
+# Defaults to 10
+
+#LinkQualityWinSize     10
+
+# Polling rate in seconds(float).
+# Default value 0.05 sec
+
+Pollrate        0.05
+
+
+# TC redundancy
+# Specifies how much neighbor info should
+# be sent in TC messages
+# Possible values are:
+# 0 - only send MPR selectors
+# 1 - send MPR selectors and MPRs
+# 2 - send all neighbors
+#
+# defaults to 0
+
+#TcRedundancy   0
+
+
+#
+# MPR coverage
+# Specifies how many MPRs a node should
+# try select to reach every 2 hop neighbor
+#
+# Can be set to any integer >0
+#
+# defaults to 1
+
+#MprCoverage    1
+
+
+# Olsrd plugins to load
+# This must be the absolute path to the file
+# or the loader will use the following scheme:
+# - Try the paths in the LD_LIBRARY_PATH
+#   environment variable.
+# - The list of libraries cached in /etc/ld.so.cache
+# - /lib, followed by /usr/lib
+
+# Example plugin entry with parameters:
+
+#LoadPlugin "olsrd_dyn_gw.so.0.3"
+#{
+    # Here parameters are set to be sent to the
+    # plugin. Theese are on the form "key" "value".
+    # Parameters ofcause, differs from plugin to plugin.
+    # Consult the documentation of your plugin for details.
+
+    # Example: dyn_gw params
+
+    # how often to check for Internet connectivity
+    # defaults to 5 secs
+#   PlParam     "Interval"   "40"
+
+    # if one or more IPv4 addresses are given, do a ping on these in
+    # descending order to validate that there is not only an entry in
+    # routing table, but also a real internet connection. If any of
+    # these addresses could be pinged successfully, the test was
+    # succesful, i.e. if the ping on the 1st address was successful,the
+    # 2nd won't be pinged
+#   PlParam     "Ping"       "141.1.1.1"
+#   PlParam     "Ping"       "194.25.2.129"
+#}
+
+
+
+# Interfaces and their rules
+# Omitted options will be set to the
+# default values. Multiple interfaces
+# can be specified in the same block
+# and multiple blocks can be set.
+
+# !!CHANGE THE INTERFACE LABEL(s) TO MATCH YOUR INTERFACE(s)!!
+# (eg. wlan0 or eth1):
+
+Interface "{$interface}"
+{
+
+    # IPv4 broadcast address to use. The
+    # one usefull example would be 255.255.255.255
+    # If not defined the broadcastaddress
+    # every card is configured with is used
+
+    # Ip4Broadcast              255.255.255.255
+
+    # IPv6 address scope to use.
+    # Must be 'site-local' or 'global'
+
+    # Ip6AddrType               site-local
+
+    # IPv6 multicast address to use when
+    # using site-local addresses.
+    # If not defined, ff05::15 is used
+
+    # Ip6MulticastSite          ff05::11
+
+    # IPv6 multicast address to use when
+    # using global addresses
+    # If not defined, ff0e::1 is used
+
+    # Ip6MulticastGlobal        ff0e::1
+
+
+    # Emission intervals.
+    # If not defined, RFC proposed values will
+    # be used in most cases.
+
+    # Hello interval in seconds(float)
+    # HelloInterval    2.0
+
+    # HELLO validity time
+    # HelloValidityTime 6.0
+
+    # TC interval in seconds(float)
+    # TcInterval        5.0
+
+    # TC validity time
+    # TcValidityTime    15.0
+
+    # MID interval in seconds(float)
+    # MidInterval       5.0
+
+    # MID validity time
+    # MidValidityTime   15.0
+
+    # HNA interval in seconds(float)
+    # HnaInterval       5.0
+
+    # HNA validity time
+    # HnaValidityTime   15.0
+
+    # When multiple links exist between hosts
+    # the weight of interface is used to determine
+    # the link to use. Normally the weight is
+    # automatically calculated by olsrd based
+    # on the characteristics of the interface,
+    # but here you can specify a fixed value.
+    # Olsrd will choose links with the lowest value.
+
+    # Weight 0
+
+
+}
+EOD;
+	fwrite($fd, $olsr);
+	fclose($fd);
+	mwexec_bg("/usr/local/sbin/olsrd -f {$g['varetc_path']}/{$interface}_olsr.conf");
+}
+
 ?>

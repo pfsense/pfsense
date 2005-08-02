@@ -35,7 +35,7 @@ require("guiconfig.inc");
 $lancfg = &$config['interfaces']['lan'];
 $pconfig['ipaddr'] = $lancfg['ipaddr'];
 $pconfig['subnet'] = $lancfg['subnet'];
-
+$pconfig['bridge'] = $optcfg['bridge'];
 $pconfig['bandwidth'] = $lancfg['bandwidth'];
 $pconfig['bandwidthtype'] = $lancfg['bandwidthtype'];
 
@@ -47,63 +47,90 @@ if (isset($lancfg['wireless'])) {
 
 if ($_POST) {
 
-	unset($input_errors);
-	$pconfig = $_POST;
-	$changedesc = "LAN Interface: ";
-
-	/* input validation */
-	$reqdfields = explode(" ", "ipaddr subnet");
-	$reqdfieldsn = explode(",", "IP address,Subnet bit count");
-
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-
-	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
-		$input_errors[] = "A valid IP address must be specified.";
-	}
-	if (($_POST['subnet'] && !is_numeric($_POST['subnet']))) {
-		$input_errors[] = "A valid subnet bit count must be specified.";
-	}
-
-	/* Wireless interface? */
-	if (isset($lancfg['wireless'])) {
-		$wi_input_errors = wireless_config_post();
-		if ($wi_input_errors) {
-			$input_errors = array_merge($input_errors, $wi_input_errors);
+	if ($_POST['bridge']) {
+		/* double bridging? */
+		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+			if ($i != $index) {
+				if ($config['interfaces']['opt' . $i]['bridge'] == $_POST['bridge']) {
+					$input_errors[] = "Optional interface {$i} " .
+						"({$config['interfaces']['opt' . $i]['descr']}) is already bridged to " .
+						"the specified interface.";
+				} else if ($config['interfaces']['opt' . $i]['bridge'] == "opt{$index}") {
+					$input_errors[] = "Optional interface {$i} " .
+						"({$config['interfaces']['opt' . $i]['descr']}) is already bridged to " .
+						"this interface.";
+				}
+			}
 		}
-	}
-
-	if (!$input_errors) {
-		if (($lancfg['ipaddr'] != $_POST['ipaddr']) || ($lancfg['subnet'] != $_POST['subnet'])) {
-			update_if_changed("IP Address", &$lancfg['ipaddr'], $_POST['ipaddr']);
-			update_if_changed("subnet", &$lancfg['subnet'], $_POST['subnet']);
-
-			/* We'll need to reboot after this */
-			touch($d_sysrebootreqd_path);
+		if ($config['interfaces'][$_POST['bridge']]['bridge']) {
+			$input_errors[] = "The specified interface is already bridged to " .
+				"another interface.";
 		}
-
-		if($_POST['bandwidth'] <> "" and $_POST['bandwidthtype'] <> "") {
-			update_if_changed("bandwidth", &$lancfg['bandwidth'], $_POST['bandwidth']);
-			update_if_changed("bandwidth type", &$lancfg['bandwidthtype'], $_POST['bandwidthtype']);
-		} else {
-			unset($lancfg['bandwidth']);
-			unset($lancfg['bandwidthtype']);
+		/* captive portal on? */
+		if (isset($config['captiveportal']['enable'])) {
+			$input_errors[] = "Interfaces cannot be bridged while the captive portal is enabled.";
 		}
+	} else {
 
-		$dhcpd_was_enabled = 0;
-		if (isset($config['dhcpd']['enable'])) {
-			unset($config['dhcpd']['enable']);
-			$dhcpd_was_enabled = 1;
-			$changedesc .= " DHCP disabled";
+		unset($input_errors);
+		$pconfig = $_POST;
+		$changedesc = "LAN Interface: ";
+	
+		/* input validation */
+		$reqdfields = explode(" ", "ipaddr subnet");
+		$reqdfieldsn = explode(",", "IP address,Subnet bit count");
+	
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	
+		if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
+			$input_errors[] = "A valid IP address must be specified.";
 		}
-
-		write_config($changedesc);
-
-				
-		if ($dhcpd_was_enabled)
-			$savemsg .= "<br>Note that the DHCP server has been disabled.<br>Please review its configuration " .
-				"and enable it again prior to rebooting.";
-		else
-			$savemsg = "The changes have been applied.  You may need to correct the web browsers ip address.";
+		if (($_POST['subnet'] && !is_numeric($_POST['subnet']))) {
+			$input_errors[] = "A valid subnet bit count must be specified.";
+		}
+	
+		/* Wireless interface? */
+		if (isset($lancfg['wireless'])) {
+			$wi_input_errors = wireless_config_post();
+			if ($wi_input_errors) {
+				$input_errors = array_merge($input_errors, $wi_input_errors);
+			}
+		}
+	
+		if (!$input_errors) {
+			$optcfg['bridge'] = $_POST['bridge'];
+			if (($lancfg['ipaddr'] != $_POST['ipaddr']) || ($lancfg['subnet'] != $_POST['subnet'])) {
+				update_if_changed("IP Address", &$lancfg['ipaddr'], $_POST['ipaddr']);
+				update_if_changed("subnet", &$lancfg['subnet'], $_POST['subnet']);
+	
+				/* We'll need to reboot after this */
+				touch($d_sysrebootreqd_path);
+			}
+	
+			if($_POST['bandwidth'] <> "" and $_POST['bandwidthtype'] <> "") {
+				update_if_changed("bandwidth", &$lancfg['bandwidth'], $_POST['bandwidth']);
+				update_if_changed("bandwidth type", &$lancfg['bandwidthtype'], $_POST['bandwidthtype']);
+			} else {
+				unset($lancfg['bandwidth']);
+				unset($lancfg['bandwidthtype']);
+			}
+	
+			$dhcpd_was_enabled = 0;
+			if (isset($config['dhcpd']['enable'])) {
+				unset($config['dhcpd']['enable']);
+				$dhcpd_was_enabled = 1;
+				$changedesc .= " DHCP disabled";
+			}
+	
+			write_config($changedesc);
+	
+					
+			if ($dhcpd_was_enabled)
+				$savemsg .= "<br>Note that the DHCP server has been disabled.<br>Please review its configuration " .
+					"and enable it again prior to rebooting.";
+			else
+				$savemsg = "The changes have been applied.  You may need to correct the web browsers ip address.";
+		}
 	}
 }
 
@@ -120,6 +147,12 @@ include("head.inc");
 function ipaddr_change() {
 	document.iform.subnet.value = gen_bits_lan(document.iform.ipaddr.value);
 }
+function enable_change(enable_over) {
+	var endis;
+	endis = !((document.iform.bridge.selectedIndex == 0) || enable_over);
+	document.iform.ipaddr.disabled = endis;
+	document.iform.subnet.disabled = endis;
+}
 // -->
 </script>
 
@@ -131,6 +164,24 @@ function ipaddr_change() {
 <?php if ($savemsg) print_info_box($savemsg); ?>
             <form action="interfaces_lan.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
+		<tr>
+                  <td width="22%" valign="top" class="vncellreq">Bridge with</td>
+                  <td width="78%" class="vtable">
+			<select name="bridge" class="formfld" id="bridge" onChange="enable_change(false)">
+				  	<option <?php if (!$pconfig['bridge']) echo "selected";?> value="">none</option>
+                      <?php $opts = array('lan' => "LAN", 'wan' => "WAN");
+					  	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+							if ($i != $index)
+								$opts['opt' . $i] = "Optional " . $i . " (" .
+									$config['interfaces']['opt' . $i]['descr'] . ")";
+						}
+					foreach ($opts as $opt => $optname): ?>
+                      <option <?php if ($opt == $pconfig['bridge']) echo "selected";?> value="<?=htmlspecialchars($opt);?>">
+                      <?=htmlspecialchars($optname);?>
+                      </option>
+                      <?php endforeach; ?>
+                    </select> </td>
+		</tr>	      
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">IP address</td>
                   <td width="78%" class="vtable">
@@ -193,6 +244,13 @@ function ipaddr_change() {
                     </ul>
                     </span></td>
                 </tr>
+                <tr>
+                  <td width="22%" valign="top">&nbsp;</td>
+                  <td width="78%"><span class="vexpl"><span class="red"><strong>Note:<br>
+                    </strong></span>be sure to add <a href="firewall_rules.php">firewall rules</a> to permit traffic
+                    through the interface. You also need firewall rules for an interface in
+                    bridged mode as the firewall acts as a filtering bridge.</span></td>
+                </tr>		
               </table>
 </form>
 <?php include("fend.inc"); ?>

@@ -70,67 +70,66 @@ if ($_POST) {
 		if (isset($config['captiveportal']['enable'])) {
 			$input_errors[] = "Interfaces cannot be bridged while the captive portal is enabled.";
 		}
-	} else {
+	}
 
-		unset($input_errors);
-		$pconfig = $_POST;
-		$changedesc = "LAN Interface: ";
-	
-		/* input validation */
-		$reqdfields = explode(" ", "ipaddr subnet");
-		$reqdfieldsn = explode(",", "IP address,Subnet bit count");
-	
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-	
-		if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
-			$input_errors[] = "A valid IP address must be specified.";
+	unset($input_errors);
+	$pconfig = $_POST;
+	$changedesc = "LAN Interface: ";
+
+	/* input validation */
+	$reqdfields = explode(" ", "ipaddr subnet");
+	$reqdfieldsn = explode(",", "IP address,Subnet bit count");
+
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+
+	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
+		$input_errors[] = "A valid IP address must be specified.";
+	}
+	if (($_POST['subnet'] && !is_numeric($_POST['subnet']))) {
+		$input_errors[] = "A valid subnet bit count must be specified.";
+	}
+
+	/* Wireless interface? */
+	if (isset($lancfg['wireless'])) {
+		$wi_input_errors = wireless_config_post();
+		if ($wi_input_errors) {
+			$input_errors = array_merge($input_errors, $wi_input_errors);
 		}
-		if (($_POST['subnet'] && !is_numeric($_POST['subnet']))) {
-			$input_errors[] = "A valid subnet bit count must be specified.";
+	}
+
+	if (!$input_errors) {
+		$optcfg['bridge'] = $_POST['bridge'];
+		if (($lancfg['ipaddr'] != $_POST['ipaddr']) || ($lancfg['subnet'] != $_POST['subnet'])) {
+			update_if_changed("IP Address", &$lancfg['ipaddr'], $_POST['ipaddr']);
+			update_if_changed("subnet", &$lancfg['subnet'], $_POST['subnet']);
+
+			/* We'll need to reboot after this */
+			touch($d_sysrebootreqd_path);
 		}
-	
-		/* Wireless interface? */
-		if (isset($lancfg['wireless'])) {
-			$wi_input_errors = wireless_config_post();
-			if ($wi_input_errors) {
-				$input_errors = array_merge($input_errors, $wi_input_errors);
-			}
+
+		if($_POST['bandwidth'] <> "" and $_POST['bandwidthtype'] <> "") {
+			update_if_changed("bandwidth", &$lancfg['bandwidth'], $_POST['bandwidth']);
+			update_if_changed("bandwidth type", &$lancfg['bandwidthtype'], $_POST['bandwidthtype']);
+		} else {
+			unset($lancfg['bandwidth']);
+			unset($lancfg['bandwidthtype']);
 		}
-	
-		if (!$input_errors) {
-			$optcfg['bridge'] = $_POST['bridge'];
-			if (($lancfg['ipaddr'] != $_POST['ipaddr']) || ($lancfg['subnet'] != $_POST['subnet'])) {
-				update_if_changed("IP Address", &$lancfg['ipaddr'], $_POST['ipaddr']);
-				update_if_changed("subnet", &$lancfg['subnet'], $_POST['subnet']);
-	
-				/* We'll need to reboot after this */
-				touch($d_sysrebootreqd_path);
-			}
-	
-			if($_POST['bandwidth'] <> "" and $_POST['bandwidthtype'] <> "") {
-				update_if_changed("bandwidth", &$lancfg['bandwidth'], $_POST['bandwidth']);
-				update_if_changed("bandwidth type", &$lancfg['bandwidthtype'], $_POST['bandwidthtype']);
-			} else {
-				unset($lancfg['bandwidth']);
-				unset($lancfg['bandwidthtype']);
-			}
-	
-			$dhcpd_was_enabled = 0;
-			if (isset($config['dhcpd']['enable'])) {
-				unset($config['dhcpd']['enable']);
-				$dhcpd_was_enabled = 1;
-				$changedesc .= " DHCP disabled";
-			}
-	
-			write_config($changedesc);
-	
-					
-			if ($dhcpd_was_enabled)
-				$savemsg .= "<br>Note that the DHCP server has been disabled.<br>Please review its configuration " .
-					"and enable it again prior to rebooting.";
-			else
-				$savemsg = "The changes have been applied.  You may need to correct the web browsers ip address.";
+
+		$dhcpd_was_enabled = 0;
+		if (isset($config['dhcpd']['enable'])) {
+			unset($config['dhcpd']['enable']);
+			$dhcpd_was_enabled = 1;
+			$changedesc .= " DHCP disabled";
 		}
+
+		write_config($changedesc);
+
+				
+		if ($dhcpd_was_enabled)
+			$savemsg .= "<br>Note that the DHCP server has been disabled.<br>Please review its configuration " .
+				"and enable it again prior to rebooting.";
+		else
+			$savemsg = "The changes have been applied.  You may need to correct the web browsers ip address.";
 	}
 }
 

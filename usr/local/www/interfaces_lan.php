@@ -80,9 +80,9 @@ if ($_POST) {
 	if (!$_POST['bridge']) {
 		$reqdfields = explode(" ", "ipaddr subnet");
 		$reqdfieldsn = explode(",", "IP address,Subnet bit count");
+		
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	}
-
-	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
 		$input_errors[] = "A valid IP address must be specified.";
@@ -151,6 +151,7 @@ function ipaddr_change() {
 	document.iform.subnet.value = gen_bits_lan(document.iform.ipaddr.value);
 }
 function enable_change(enable_over) {
+	return;
 	var endis;
 	endis = !((document.iform.bridge.selectedIndex == 0) || enable_over);
 	document.iform.ipaddr.disabled = endis;

@@ -115,7 +115,7 @@ function interfaces_lan_configure() {
 	/* bridged? */
 	$bridges_total=0;
 	if ($lancfg['bridge']) {
-		mwexec("/sbin/ifconfig " . escapeshellarg($lancfg['if']) . " delete up");
+		// mwexec("/sbin/ifconfig " . escapeshellarg($lancfg['if']) . " delete up");
 		/* use open/netBSD style bridge */
 		mwexec("/sbin/ifconfig bridge{$bridges_total} create");
 		mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$lancfg['if']} addm {$config['interfaces'][$lancfg['bridge']]['if']} up");

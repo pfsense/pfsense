@@ -187,14 +187,18 @@ if ($_POST) {
 		conf_mount_rw();
 		
 		$fout = fopen("/etc/ttys","w");
-		foreach($etc_ttys as $tty) {
-			if(stristr($tty,"ttyv0") <> true) {
-				fwrite($fout, $tty . "\n");				
+		if(!$fout) {
+			echo "Cannot open /etc/ttys for writing.  Floppy inserted?\n";	
+		} else {		
+			foreach($etc_ttys as $tty) {
+				if(stristr($tty,"ttyv0") <> true) {
+					fwrite($fout, $tty . "\n");				
+				}
 			}
+			if(isset($pconfig['enableserial']))
+				fwrite($fout, "ttyv0\t\"/usr/libexec/getty Pc\"\tcons25\t\ton\tsecure\n");
+			fclose($fout);		
 		}
-		if(isset($pconfig['enableserial']))
-			fwrite($fout, "ttyv0\t\"/usr/libexec/getty Pc\"\tcons25\t\ton\tsecure\n");
-		fclose($fout);		
 		
 		$fout = fopen("/boot/loader.rc","w");
 		if(!is_array($boot_loader_rc))

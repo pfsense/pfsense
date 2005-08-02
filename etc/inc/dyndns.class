@@ -39,15 +39,15 @@
 	 *
 	 * @author 		E.Kristensen
 	 * @link    	http://www.idylldesigns.com/projects/phpdns/
-	 * @version 	0.6
-	 * @updated		17 July 05 at 16:49:23 GMT
+	 * @version 	0.7
+	 * @updated		1 August 05 at 21:02:42 GMT
 	 *
 	 */
 
 	class updatedns {
 		var $_cacheFile = '/var/etc/dyndns.cache';
 		var $_debugFile = '/var/etc/dyndns.debug';
-		var $_UserAgent = 'User-Agent: phpDynDNS/0.4';
+		var $_UserAgent = 'User-Agent: phpDynDNS/0.7';
 		var $_errorVerbosity = 0;
 		var $_dnsService;
 		var $_dnsUser;
@@ -193,9 +193,20 @@
 					curl_close($ch);
 					$this->_checkStatus($data);
 					break;
-				case 'dyns';
+				case 'dyns':
 					$needsIP = FALSE;
 					curl_setopt($ch, CURLOPT_URL, 'http://www.dyns.cx/postscript011.php?username='.$this->_dnsUser.'&password='.$this->_dnsPass.'&host='.$this->_dnsHost);
+					$data = curl_exec($ch);
+					curl_close($ch);
+					$this->_checkStatus($data);
+					break;
+				case 'ods':
+					$needsIP = FALSE;
+						$post_data['LOGIN'] = $this->_dnsUser." = ".$this->_dnsPass;
+						$post_data['DELLR'] = $this->_dnsHost;
+						$post_data['ADDRR'] = $this->_dnsHost." A ".$this->dnsIP;
+					curl_setopt($ch, CURLOPT_URL, 'http://ods.org:7070/update');
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 					$data = curl_exec($ch);
 					curl_close($ch);
 					$this->_checkStatus($data);
@@ -360,6 +371,8 @@
 						$this->_debug($data);
 					}
 					break;
+				case 'ods':
+					break;
 			}
 			$this->status = $status;
 			log_error($status);
@@ -454,6 +467,9 @@
 					$time = '2419200';
 					break;
 				case 'dyns':
+					$time = '2419200';
+					break;
+				case 'ods':
 					$time = '2419200';
 					break;
 			}

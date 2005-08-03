@@ -111,9 +111,6 @@
 	/* generate resolv.conf */
 	system_resolvconf_generate();
 
-	/* start pccardd */
-	system_pccard_start();
-
 	/* configure loopback interface */
 	interfaces_loopback_configure();
 

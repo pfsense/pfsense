@@ -64,7 +64,10 @@ function filter_configure() {
 
 /* reload filter sync */
 function filter_configure_sync() {
-		
+	/* file an alert that the rules are being reloaded */
+	if($g['booting'] == false) 
+		file_notice("Operation in progress...", "The filter rules are currently reloading.  You will receive a notice if there is an error.");
+	
 	if(file_exists("/tmp/filter_dirty"))
 		unlink("/tmp/filter_dirty");
 
@@ -162,8 +165,8 @@ function filter_configure_sync() {
 	if($files <> "") {
 		foreach ($files as $file) {
 			if($file <> "") {
-				$text = return_filename_as_string("/usr/local/pkg/pf/" . $file);
-				if($text <> "") {
+				$text = file_get_contents("/usr/local/pkg/pf/" . $file);
+				if($text) {
 					if(stristr($file, ".sh") == true) {
 						mwexec("/usr/local/pkg/pf/" . $file . " start");
 					} else {
@@ -191,7 +194,8 @@ function filter_configure_sync() {
 	if($config['system']['afterfilterchangeshellcmd'] <> "") {
 		mwexec($config['system']['afterfilterchangeshellcmd']);
 	}
-	
+
+	close_notice($toclose);	
 	return 0;
 }
 
@@ -1330,7 +1334,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			 *    is created by dhclient for 2nd wan interfaces, etc.
 			 */
 			if(file_exists("/tmp/{$rule['if']}_router"))
-				$rg = return_filename_as_string("/tmp/{$rule['if']}_router");
+				$rg = file_get_contents("/tmp/{$rule['if']}_router");
 
 			if($rg <> "" and $ri <> "" and stristr($rule['interface'],"opt") == true) {
 				$line .= "reply-to (" . $ri . " " . $rg . ") ";

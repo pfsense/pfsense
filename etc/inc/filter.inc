@@ -1127,7 +1127,8 @@ EOD;
 	}
 
 	if (is_package_installed("squid") == 1)
-		$natrules .= "rdr on " . $lanif . " inet proto tcp from any to !{$lanip} port www -> 127.0.0.1 port 3128\n";
+		if(is_process_running("squid"))
+			$natrules .= "rdr on " . $lanif . " inet proto tcp from any to !{$lanip} port www -> 127.0.0.1 port 3128\n";
 
 	$natrules .= process_carp_nat_rules();
 

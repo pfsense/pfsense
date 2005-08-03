@@ -76,6 +76,9 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
+	/* filter out spaces from descriptions  */
+	$POST['descr'] = str_replace(" ", "_", $POST['descr']);
+
 	/* input validation */
 	if ($_POST['enable']) {
 

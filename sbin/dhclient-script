@@ -159,24 +159,24 @@ add_new_resolv_conf() {
 	fi
 
 	if [ -f /var/etc/resolv.conf.std ]; then
-		if [ -f /etc/resolv.conf.tail ]; then
-			cat /etc/resolv.conf.tail >>/var/etc/resolv.conf.std
+		if [ -f /var/etc/resolv.conf.tail ]; then
+			cat /var/etc/resolv.conf.tail >>/var/etc/resolv.conf.std
 		fi
 
-		# In case (e.g. during OpenBSD installs) /etc/resolv.conf
+		# In case (e.g. during OpenBSD installs) /var/etc/resolv.conf
 		# is a symbolic link, take care to preserve the link and write
 		# the new data in the correct location.
 
-		if [ -f /etc/resolv.conf ]; then
-			cat /etc/resolv.conf > /etc/resolv.conf.save
+		if [ -f /var/etc/resolv.conf ]; then
+			cat /var/etc/resolv.conf > /var/etc/resolv.conf.save
 		fi
 		cat /var/etc/resolv.conf.std > /var/etc/nameservers.conf
-		cat /var/etc/resolv.conf.std > /etc/resolv.conf
+		cat /var/etc/resolv.conf.std > /var/etc/resolv.conf
 		rm -f /var/etc/resolv.conf.std
 
 		# Try to ensure correct ownership and permissions.
-		chown -RL root:wheel /etc/resolv.conf
-		chmod -RL 644 /etc/resolv.conf
+		chown -RL root:wheel /var/etc/resolv.conf
+		chmod -RL 644 /var/etc/resolv.conf
 
 		return 0
 	fi
@@ -263,8 +263,8 @@ EXPIRE|FAIL)
 	fi
 	# XXX Why add alias we just deleted above?
 	add_new_alias
-	if [ -f /etc/resolv.conf.save ]; then
-		cat /etc/resolv.conf.save > /etc/resolv.conf
+	if [ -f /var/etc/resolv.conf.save ]; then
+		cat /var/etc/resolv.conf.save > /var/etc/resolv.conf
 	fi
 	;;
 

@@ -142,25 +142,25 @@ add_new_resolv_conf() {
 	# thus broke the script. This code creates the resolv.conf if either
 	# are provided.
 
-	rm -f /etc/resolv.conf.std
+	rm -f /var/etc/resolv.conf.std
 
 	if [ -n "$new_domain_name" ]; then
-		echo "search $new_domain_name" >>/etc/resolv.conf.std
+		echo "search $new_domain_name" >>/var/etc/resolv.conf.std
 	fi
 
 	rm -f /var/etc/nameservers.conf
 
 	if [ -n "$new_domain_name_servers" ]; then
 		for nameserver in $new_domain_name_servers; do
-			echo "nameserver $nameserver" >>/etc/resolv.conf.std
+			echo "nameserver $nameserver" >>/var/etc/resolv.conf.std
 			echo $nameserver >>/var/etc/nameservers.conf
 			echo $new_domain_name >/var/etc/defaultdomain.conf
 		done
 	fi
 
-	if [ -f /etc/resolv.conf.std ]; then
+	if [ -f /var/etc/resolv.conf.std ]; then
 		if [ -f /etc/resolv.conf.tail ]; then
-			cat /etc/resolv.conf.tail >>/etc/resolv.conf.std
+			cat /etc/resolv.conf.tail >>/var/etc/resolv.conf.std
 		fi
 
 		# In case (e.g. during OpenBSD installs) /etc/resolv.conf
@@ -170,9 +170,9 @@ add_new_resolv_conf() {
 		if [ -f /etc/resolv.conf ]; then
 			cat /etc/resolv.conf > /etc/resolv.conf.save
 		fi
-		cat /etc/resolv.conf.std > /var/etc/nameservers.conf
-		cat /etc/resolv.conf.std > /etc/resolv.conf
-		rm -f /etc/resolv.conf.std
+		cat /var/etc/resolv.conf.std > /var/etc/nameservers.conf
+		cat /var/etc/resolv.conf.std > /etc/resolv.conf
+		rm -f /var/etc/resolv.conf.std
 
 		# Try to ensure correct ownership and permissions.
 		chown -RL root:wheel /etc/resolv.conf

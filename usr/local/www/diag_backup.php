@@ -131,7 +131,7 @@ if ($_POST) {
 				}
 				if($_POST['restorearea'] <> "") {
 					/* restore a specific area of the configuration */
-					$rules = return_filename_as_string($_FILES['conffile']['tmp_name']);
+					$rules = file_get_contents($_FILES['conffile']['tmp_name']);
 					restore_config_section($_POST['restorearea'], $rules);
 					filter_configure();
 					$savemsg = "The configuration area has been restored.";

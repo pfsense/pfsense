@@ -113,17 +113,17 @@
 		system("/usr/bin/ssh-keygen -t dsa -N '' -f $sshConfigDir/ssh_host_dsa_key");
 
 		/* save keys */
-		$dsa  = return_filename_as_string("{$sshConfigDir}/ssh_host_dsa_key");
-		$rsa  = return_filename_as_string("{$sshConfigDir}/ssh_host_rsa_key");
-		$rsa1 = return_filename_as_string("{$sshConfigDir}/ssh_host_key");
+		$dsa  = file_get_contents("{$sshConfigDir}/ssh_host_dsa_key");
+		$rsa  = file_get_contents("{$sshConfigDir}/ssh_host_rsa_key");
+		$rsa1 = file_get_contents("{$sshConfigDir}/ssh_host_key");
 		$config['ssh']['dsa'] = base64_encode($dsa);
 		$config['ssh']['rsa'] = base64_encode($rsa);
 		$config['ssh']['rsa1']= base64_encode($rsa1);
 
 		/* save public keys */
-		$dsapub  = return_filename_as_string("{$sshConfigDir}/ssh_host_dsa_key.pub");
-		$rsapub  = return_filename_as_string("{$sshConfigDir}/ssh_host_rsa_key.pub");
-		$rsa1pub = return_filename_as_string("{$sshConfigDir}/ssh_host_key.pub");
+		$dsapub  = file_get_contents("{$sshConfigDir}/ssh_host_dsa_key.pub");
+		$rsapub  = file_get_contents("{$sshConfigDir}/ssh_host_rsa_key.pub");
+		$rsa1pub = file_get_contents("{$sshConfigDir}/ssh_host_key.pub");
 		$config['ssh']['dsa_key'] = base64_encode($dsapub);
 		$config['ssh']['rsa_key'] = base64_encode($rsapub);
 		$config['ssh']['rsa1_key']= base64_encode($rsa1pub);

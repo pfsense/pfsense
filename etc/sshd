@@ -93,6 +93,7 @@
 		/* remove previous keys and regen later */
 		conf_mount_rw();
 		mwexec("rm /etc/ssh/ssh_host_*");
+		echo "\n";
 		system("/usr/bin/ssh-keygen -t rsa1 -N '' -f $sshConfigDir/ssh_host_key");
 		system("/usr/bin/ssh-keygen -t rsa -N '' -f $sshConfigDir/ssh_host_rsa_key");
 		system("/usr/bin/ssh-keygen -t dsa -N '' -f $sshConfigDir/ssh_host_dsa_key");

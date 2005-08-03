@@ -200,22 +200,6 @@ function get_carp_status() {
     return true;
 }
 
-/****f* pfsense-utils/return_filename_as_string
- * NAME
- *   return_filename_as_string - Return a file's contents as a string.
- * INPUTS
- *   $filename  - string containing the path to the desired file.
- * RESULT
- *   $tmp	- string containing the file's contents.
- ******/
-function return_filename_as_string($filename) {
-    if(file_exists($filename)) {
-        return file_get_contents($filename);
-    } else {
-        return false;
-   } 
-}
-
 /****f* pfsense-utils/is_carp_defined
  * NAME
  *   is_carp_defined - Return whether CARP is detected in the kernel.

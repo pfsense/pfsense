@@ -236,6 +236,11 @@ function ovpn_srv_config_generate() {
 		$ovpn_config .= "--push \"inactive {$server['psh_options']['inact']}\" ";
 	}
 	
+	/* Set protocol being used (TCP or UDP) */
+	if ($server['psh_options']['proto'] == 'TCP') {
+		$ovpn_config .= "--proto tcp-server ";
+	}
+	
 	//trigger_error("OVPN: $ovpn_config", E_USER_NOTICE);
 	return $ovpn_config;
 }

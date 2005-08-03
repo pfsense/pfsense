@@ -112,8 +112,7 @@
 	system_resolvconf_generate();
 
 	/* start pccardd */
-	if (!in_array($g['platform'], $g['nopccard_platforms']))
-		system_pccard_start();
+	system_pccard_start();
 
 	/* configure loopback interface */
 	interfaces_loopback_configure();

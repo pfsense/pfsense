@@ -164,6 +164,13 @@ foreach ($leases as $data) {
 		} else {
 			$fspans = $fspane = "";
 		}
+                $lip = ip2long($data['ip']);
+                foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
+                        if (($lip >= ip2long($dhcpifconf['range']['from'])) && ($lip <= ip2long($dhcpifconf['range']['to']))) {
+                                $data['if'] = $dhcpif;
+                                break;
+                        }
+                }		
 		echo "<tr>\n";
                 echo "<td class=\"listlr\">{$fspans}{$data['ip']}{$fspane}&nbsp;</td>\n";
                 echo "<td class=\"listr\">{$fspans}{$data['mac']}{$fspane}&nbsp;</td>\n";

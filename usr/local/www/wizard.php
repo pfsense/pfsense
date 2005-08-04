@@ -109,7 +109,16 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 		$text = "unset(\$config" . $field_conv . ");";
 		eval($text);
 		return;
-	}    
+	}
+	
+	if($field_type == "interfaces_selection") {
+		$text = "unset(\$config" . $field_conv . ");";
+		eval($text);
+		$text = "\$config" . $field_conv . " = \"" . $updatetext . "\";";
+		eval($text);
+		return;
+	}
+	
 	if($unset <> "") {
 		$text = "unset(\$config" . $field_conv . ");";
 		eval($text);
@@ -244,7 +253,61 @@ function enablechange() {
 			if($field['validate'])
 				echo " onChange='FieldValidate(this.value, \"{$field['validate']}\", \"{$field['message']}\");'";
 			echo ">\n";
-		    } else if ($field['type'] == "password") {
+		    } else if($field['type'] == "interfaces_selection") {
+			$size = "";
+			$multiple = "";
+			$name = strtolower($name);
+			echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
+			echo fixup_string($field['name']) . "\n";
+			echo "</td>";
+			echo "<td class=\"vtable\">\n";
+			if($field['size'] <> "") $size = " size=\"" . $field['size'] . "\"";
+			if($field['multiple'] <> "" and $field['multiple'] <> "0") {
+			  $multiple = " multiple=\"multiple\"";
+			  $name .= "[]";
+			}
+			echo "<select name='" . $name . "'" . $size . $multiple . ">\n";
+			if($field['add_to_interfaces_selection'] <> "") {
+				$SELECTED = "";
+				if($field['add_to_interfaces_selection'] == $value) $SELECTED = " SELECTED";
+				echo "<option value='" . $field['add_to_interfaces_selection'] . "'" . $SELECTED . ">" . $field['add_to_interfaces_selection'] . "</option>\n";
+			}
+			$interfaces = &$config['interfaces'];
+			if($field['all_interfaces'] <> "") {
+				$ints = split(" ", `/sbin/ifconfig -l`);
+				$interfaces = array();
+				foreach ($ints as $int) {
+					$interfaces[]['descr'] = $int;
+					$interfaces[] = $int;
+				}
+			}
+			foreach ($interfaces as $ifname => $iface) {
+			  if ($iface['descr'])
+				  $ifdescr = $iface['descr'];
+			  else
+				  $ifdescr = strtoupper($ifname);
+			  $ifname = $iface['descr'];
+			  $ip = "";
+			  if($field['all_interfaces'] <> "") {
+				$ifdescr = $iface;
+				$ip = " " . find_interface_ip($iface);
+			  }
+			  $SELECTED = "";
+			  if($value == $ifdescr) $SELECTED = " SELECTED";
+			  $to_echo =  "<option value='" . $ifdescr . "'" . $SELECTED . ">" . $ifdescr . $ip . "</option>\n";
+			  $to_echo .= "<!-- {$value} -->";
+			  $canecho = 0;
+			  if($field['interface_filter'] <> "") {
+				if(stristr($iface, $field['interface_filter']) == true)
+					$canecho = 1;
+			  } else {
+				$canecho = 1;
+			  }
+			  if($canecho == 1) 
+				echo $to_echo;
+			}
+				echo "</select>\n";
+			} else if ($field['type'] == "password") {
 			if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
 				echo fixup_string($field['name']);

@@ -357,4 +357,7 @@ include("head.inc");
 triggers it. To substantiate this point: disconnecting manually
 will <strong>not</strong> prevent dial-on-demand from making connections
 to the outside! Don't use dial-on-demand if you want to make sure that the line is kept disconnected.
+
+<meta http-equiv="refresh" content="120;url=index.php">
+
 <?php include("fend.inc"); ?>

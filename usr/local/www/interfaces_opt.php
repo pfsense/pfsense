@@ -42,7 +42,9 @@ if (!$index)
 	exit;
 
 $optcfg = &$config['interfaces']['opt' . $index];
-$pconfig['descr'] = $optcfg['descr'];
+$optcfg['descr'] = str_replace(" ", "_", $optcfg['descr']);
+
+$pconfig['descr'] = str_replace(" ", "_", $optcfg['descr']);
 $pconfig['bridge'] = $optcfg['bridge'];
 
 $pconfig['bandwidth'] = $optcfg['bandwidth'];
@@ -140,7 +142,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 
-		$optcfg['descr'] = $_POST['descr'];
+		$optcfg['descr'] = str_replace(" ", "_", $_POST['descr']);
 		$optcfg['bridge'] = $_POST['bridge'];
 		$optcfg['enable'] = $_POST['enable'] ? true : false;
 		

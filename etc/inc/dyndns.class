@@ -103,10 +103,12 @@
 		 *   Send Update To Selected Service.
 		 */
 		function _update() {
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_HEADER, 0);
-			curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+			if ($this->_dnsService != 'ods') {
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_HEADER, 0);
+				curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+			}
 
 			switch ($this->_dnsService) {
 				case 'dyndns':
@@ -203,14 +205,33 @@
 					break;
 				case 'ods':
 					$needsIP = FALSE;
-						$post_data['LOGIN'] = $this->_dnsUser." = ".$this->_dnsPass;
-						$post_data['DELLR'] = $this->_dnsHost;
-						$post_data['ADDRR'] = $this->_dnsHost." A ".$this->dnsIP;
-					curl_setopt($ch, CURLOPT_URL, 'http://ods.org:7070/update');
-					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-					$data = curl_exec($ch);
-					curl_close($ch);
-					$this->_checkStatus($data);
+					$this->con['socket'] = fsockopen("ods.org", "7070");
+					/* Check that we have connected */
+					if (!$this->con['socket']) {
+						print "error! could not connect.";
+						break;
+					}
+					/* Here is the loop. Read the incoming data (from the socket connection) */
+					while (!feof($this->con['socket'])) {
+						$this->con['buffer']['all'] = trim(fgets($this->con['socket'], 4096));
+						$code = substr($this->con['buffer']['all'], 0, 3);
+						sleep(1);
+						switch($code) {
+							case 100:
+								fputs($this->con['socket'], "LOGIN ".$this->_dnsUser." ".$this->_dnsPass."\n");
+								break;
+							case 225:
+								fputs($this->con['socket'], "DELRR ".$this->_dnsHost." A\n");
+								break;
+							case 901:
+								fputs($this->con['socket'], "ADDRR ".$this->_dnsHost." A ".$this->_dnsIP."\n");
+								break;
+							case 795:
+								fputs($this->con['socket'], "QUIT\n");
+								break;
+						}
+					}
+					$this->_checkStatus($code);
 					break;
 				default:
 					break;
@@ -373,6 +394,12 @@
 					}
 					break;
 				case 'ods':
+					if (preg_match("/299/i", $data)) {
+						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";
+					} else {
+						$status = "phpDynDNS: (Unknown Response)";
+						$this->_debug($data);
+					}
 					break;
 			}
 			$this->status = $status;

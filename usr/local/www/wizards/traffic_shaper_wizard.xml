@@ -48,10 +48,10 @@
 		/* wipe previous */
 		unset($config['shaper']['queue']);
 		unset($config['shaper']['rule']);
-		unset($config['interfaces']['wan']['bandwidth']);
-		unset($config['interfaces']['wan']['bandwidthtype']);
-		unset($config['interfaces']['lan']['bandwidth']);
-		unset($config['interfaces']['lan']['bandwidthtype']);		
+		unset($config['interfaces']["wan"]['bandwidth']);
+		unset($config['interfaces']["wan"]['bandwidthtype']);
+		unset($config['interfaces'][$config['ezshaper']['step2']['interface']]['bandwidth']);
+		unset($config['interfaces'][$config['ezshaper']['step2']['interface']]['bandwidthtype']);		
 		$config['shaper']['enable'] = FALSE;
 	</stepsubmitphpaction>
 </step>
@@ -78,6 +78,14 @@
 			<message>Upload speed must be numerical</message>
 			<bindstofield>ezshaper->step2->upload</bindstofield>
                 </field>
+		<field>
+			<name>Interface</name>
+			<description>The other interface to apply Traffic Shaper settings to</description>
+			<type>interfaces_selection</type>
+			<value>lan</value>
+			<message>Will use WAN as default with the above selection</message>
+			<bindstofield>ezshaper->step2->interface</bindstofield>
+		</field>
 		<field>
 			<name>Next</name>
 			<type>submit</type>
@@ -396,8 +404,8 @@
 			    $rule['descr'] = "DiffServ/Lowdelay/Upload";
 			    $rule['inqueue'] = "qVOIPDown";
 			    $rule['outqueue'] = "qVOIPUp";
-			    $rule['interface'] = "lan";
-			    $rule['source']['network'] = 'lan';
+			    $rule['interface'] = $config['ezshaper']['step2']['interface'];
+			    $rule['source']['network'] = $config['ezshaper']['step2']['interface'];
 			    $rule['destination']['any'] = TRUE;
 			    $rule['iptos'] = "lowdelay";
 			    $config['shaper']['rule'][] = $rule;
@@ -408,7 +416,7 @@
 			    $rule['outqueue'] = "qVOIPDown";
 			    $rule['interface'] = "wan";
 			    $rule['source']['any'] = TRUE;
-			    $rule['destination']['network'] = 'lan';
+			    $rule['destination']['network'] = $config['ezshaper']['step2']['interface'];
 			    $rule['iptos'] = "lowdelay";
 			    $config['shaper']['rule'][] = $rule;
 			} else {
@@ -447,17 +455,17 @@
 						$destsrc = 'destination';
 						$rule['outqueue'] = 'qVOIPUp';
 						$rule['inqueue'] = 'qVOIPDown';
-						$rule['interface'] = 'lan';
-						$rule['source']['network'] = 'lan';
+						$rule['interface'] = $config['ezshaper']['step2']['interface'];
+						$rule['source']['network'] = $config['ezshaper']['step2']['interface'];
 						$rule['destination']['any'] = TRUE;
 						$rule['descr'] = "m_voip {$voip[0]} outbound";
 					} else {
 						$destsrc = 'source';
 						$rule['outqueue'] = 'qVOIPDown';
 						$rule['inqueue'] = 'qVOIPUp';
-						$rule['interface'] = 'wan';
+						$rule['interface'] = "wan";
 						$rule['source']['any'] = TRUE;
-						$rule['destination']['network'] = 'lan';
+						$rule['destination']['network'] = $config['ezshaper']['step2']['interface'];
 						$rule['descr'] = "m_voip {$voip[0]} inbound";
 					}
 				    
@@ -680,17 +688,17 @@
 					$destsrc = 'destination';
 					$rule['outqueue'] = 'qP2PUp';
 					$rule['inqueue'] = 'qP2PDown';
-					$rule['interface'] = 'lan';
-					$rule['source']['network'] = 'lan';
+					$rule['interface'] = $config['ezshaper']['step2']['interface'];
+					$rule['source']['network'] = $config['ezshaper']['step2']['interface'];
 					$rule['destination']['any'] = TRUE;
 					$rule['descr'] = "m_P2P {$p2pclient[0]} outbound";
 				} else {
 					$destsrc = 'source';
 					$rule['outqueue'] = 'qP2PDown';
 					$rule['inqueue'] = 'qP2PUp';
-					$rule['interface'] = 'wan';
+					$rule['interface'] = "wan";
 					$rule['source']['any'] = TRUE;
-					$rule['destination']['network'] = 'lan';
+					$rule['destination']['network'] = $config['ezshaper']['step2']['interface'];
 					$rule['descr'] = "m_P2P {$p2pclient[0]} inbound";
 				}
 
@@ -945,17 +953,17 @@
 				    $destsrc = 'destination';
 				    $rule['outqueue'] = 'qGamesUp';
 				    $rule['inqueue'] = 'qGamesDown';
-				    $rule['interface'] = 'lan';
-				    $rule['source']['network'] = 'lan';
+				    $rule['interface'] = $config['ezshaper']['step2']['interface'];
+				    $rule['source']['network'] = $config['ezshaper']['step2']['interface'];
 				    $rule['destination']['any'] = TRUE;
 				    $rule['descr'] = "m_Game {$Gameclient[0]} outbound";
 			    } else {
 				    $destsrc = 'source';
 				    $rule['outqueue'] = 'qGamesDown';
 				    $rule['inqueue'] = 'qGamesUp';
-				    $rule['interface'] = 'wan';
+				    $rule['interface'] = "wan";
 				    $rule['source']['any'] = TRUE;
-				    $rule['destination']['network'] = 'lan';
+				    $rule['destination']['network'] = $config['ezshaper']['step2']['interface'];
 				    $rule['descr'] = "m_Game {$Gameclient[0]} inbound";
 			    }
     
@@ -1491,17 +1499,17 @@
 				    $destsrc = 'destination';
 				    $rule['outqueue'] = 'qOthersUp' . $otherclient[5]; /* posted value H or L */
 				    $rule['inqueue'] = 'qOthersDown' . $otherclient[5]; /* posted value H or L */
-				    $rule['interface'] = 'lan';
-				    $rule['source']['network'] = 'lan';
+				    $rule['interface'] = $config['ezshaper']['step2']['interface'];
+				    $rule['source']['network'] = $config['ezshaper']['step2']['interface'];
 				    $rule['destination']['any'] = TRUE;
 				    $rule['descr'] = "m_Other {$otherclient[0]} outbound";
 			    } else {
 				    $destsrc = 'source';
 				    $rule['outqueue'] = 'qOthersDown' . $otherclient[5]; /* posted value H or L */
 				    $rule['inqueue'] = 'qOthersUp' . $otherclient[5]; /* posted value H or L */
-				    $rule['interface'] = 'wan';
+				    $rule['interface'] = "wan";
 				    $rule['source']['any'] = TRUE;
-				    $rule['destination']['network'] = 'lan';
+				    $rule['destination']['network'] = $config['ezshaper']['step2']['interface'];
 				    $rule['descr'] = "m_Other {$otherclient[0]} inbound";
 			    }
     

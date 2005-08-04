@@ -81,7 +81,6 @@ include("head.inc");
 <?php if (file_exists($d_pppoeuserdirty_path)): ?><p>
 <?php print_info_box_np("The PPPoE user list has been modified.<br>You must apply the changes in order for them to take effect.<br><b>Warning: this will terminate all current PPPoE sessions!</b>");?><br>
 <?php endif; ?>
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
 <?php
@@ -91,8 +90,9 @@ include("head.inc");
 	display_top_tabs($tab_array);
 ?>    </td></tr>
   <tr> 
-    <td colspan="3" class="tabcont">
-              <table width="80%" border="0" cellpadding="0" cellspacing="0">
+	<td>
+         <div id="mainarea">
+              <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr> 
                   <td class="listhdrr">Username</td>
                   <td class="listhdr">IP address</td>

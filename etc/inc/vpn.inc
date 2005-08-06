@@ -790,7 +790,7 @@ function vpn_pppoe_configure() {
 	$pppoecfg = $config['pppoe'];
 
 	/* create directory if it does not exist */
-	if(!dir_exist("{$g['varetc_path']}/mpd-vpn"))
+	if(!is_dir("{$g['varetc_path']}/mpd-vpn"))
 		mkdir("{$g['varetc_path']}/mpd-vpn");
 	
 	if ($g['booting']) {

@@ -129,7 +129,7 @@ include("head.inc");
 					?>
                   </td>
                   <td class="listlr" align="center" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
-                    <? if($vipent['mode'] == "proxyarp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_parp.gif' title='Proxy ARP'>"; else echo "<img src='./themes/".$g['theme']."/images/icons/icon_carp.gif' title='CARP'>";?>
+                    <? if($vipent['mode'] == "proxyarp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_parp.gif' title='Proxy ARP'>"; elseif($vipent['mode'] == "carp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_carp.gif' title='CARP'>"; elseif($vipent['mode'] == "other") echo "<img src='./themes/".$g['theme']."/images/icons/icon_other.gif' title='Other'>";?>
                   </td>
                   <td class="listbg" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
                     <font color="#FFFFFF"><?=htmlspecialchars($vipent['descr']);?>&nbsp;

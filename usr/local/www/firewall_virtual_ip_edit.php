@@ -213,6 +213,13 @@ function enable_change(enable_over) {
 			note.appendChild(proxyarpnote);
 		}
         }
+	if (get_radio_value(document.iform.mode) == "other") {
+                document.iform.type.disabled = 1;
+		if (note.firstChild != null) {
+			note.removeChild(note.firstChild);
+		}
+	}
+		
 }
 function typesel_change() {
     switch (document.iform.type.selectedIndex) {
@@ -250,6 +257,8 @@ function typesel_change() {
 					<?php if ($pconfig['mode'] == "proxyarp" || $pconfig['type'] != "carp") echo "checked";?>> Proxy ARP
 					<input name="mode" type="radio" onclick="enable_change(false)" value="carp"
 					<?php if ($pconfig['mode'] == "carp") echo "checked";?>> CARP
+					<input name="mode" type="radio" onclick="enable_change(false)" value="other"
+					<?php if ($pconfig['mode'] == "other") echo "checked";?>> Other 
 				  </td>
 				</tr>
 				<tr> 

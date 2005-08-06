@@ -45,6 +45,7 @@ $pconfig['system'] = isset($config['syslog']['system']);
 $pconfig['enable'] = isset($config['syslog']['enable']);
 $pconfig['logdefaultblock'] = !isset($config['syslog']['nologdefaultblock']);
 $pconfig['rawfilter'] = isset($config['syslog']['rawfilter']);
+$pconfig['disablelocallogging'] = !isset($config['syslog']['disablelocallogging']);
 
 if (!$pconfig['nentries'])
 	$pconfig['nentries'] = 50;
@@ -176,7 +177,7 @@ function enable_change(enable_over) {
                       </tr>
                       <tr>
                         <td width="22%" valign="top" class="vtable">&nbsp;</td>
-                        <td width="78%" class="vtable"> <input name="disable" type="checkbox" id="disablelocallogging" value="yes" <?php if ($pconfig['disablelocallogging']) echo "checked"; ?> onClick="enable_change(false)">
+                        <td width="78%" class="vtable"> <input name="disablelocallogging" type="checkbox" id="disablelocallogging" value="yes" <?php if ($pconfig['disablelocallogging']) echo "checked"; ?> onClick="enable_change(false)">
                           <strong>Disable writing log files to the local disk</strong></td>
                        </tr>		      
                       <tr>

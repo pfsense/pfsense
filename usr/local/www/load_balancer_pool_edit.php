@@ -50,48 +50,19 @@ if (isset($id) && $a_pool[$id]) {
 }
 
 if ($_POST) {
-echo "<pre>";
-print_r($_POST);
-echo "</pre>";
 	unset($input_errors);
 	$pconfig = $_POST;
 
 	/* input validation */
-//	$reqdfields = explode(" ", "name");
-//	$reqdfieldsn = explode(",", "Name");
+	$reqdfields = explode(" ", "name");
+	$reqdfieldsn = explode(",", "Name");
 
-//	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-	if (($_POST['subnet'] && !is_ipaddr($_POST['subnet']))) {
-		$input_errors[] = "A valid IP address must be specified.";
-	}
-
-	if ($_POST['ipaddr'] == $config['interfaces']['wan']['ipaddr'])
-		$input_errors[] = "The WAN IP address may not be used in a virtual entry.";
-
-	if ($_POST['ipaddr'] == $config['interfaces']['lan']['ipaddr'])
-		$input_errors[] = "The LAN IP address may not be used in a virtual entry.";
-
-	/* check for overlaps with other virtual IP */
-	foreach ($a_pool as $poolent) {
-		if (isset($id) && ($a_pool[$id]) && ($a_pool[$id] === $poolent))
-			continue;
-
-		if (isset($_POST['subnet']) && $_POST['subnet'] == $poolent['subnet']) {
-			$input_errors[] = "There is already a virtual IP entry for the specified IP address.";
-			break;
-		}
-	}
-
-	/* check for overlaps with 1:1 NAT */
-	if (is_array($config['nat']['onetoone'])) {
-		foreach ($config['nat']['onetoone'] as $natent) {
-			if (check_subnets_overlap($_POST['ipaddr'], 32, $natent['external'], $natent['subnet'])) {
-				$input_errors[] = "A 1:1 NAT mapping overlaps with the specified IP address.";
-				break;
-			}
-		}
-	}
+	/* Ensure that our pool names are unique */
+	for ($i=0; isset($config['load_balancer']['pool'][$i]); $i++)
+		if (($_POST['name'] == $config['load_balancer']['pool'][$i]['name']) && ($i != $id))
+			$input_errors[] = "This pool name has already been used.  Pool names must be unique.";
 
 	if (!$input_errors) {
 		$poolent = array();
@@ -103,7 +74,7 @@ echo "</pre>";
 		$poolent['monitor'] = $_POST['monitor'];
 
 		if (isset($id) && $a_pool[$id]) {
-			/* modify all virtual IP rules with this name */
+			/* modify all virtual servers with this name */
 			for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
 				if ($config['load_balancer']['virtual_server'][$i]['pool'] == $a_pool[$id]['name'])
 					$config['load_balancer']['virtual_server'][$i]['pool'] = $poolent['name'];
@@ -112,9 +83,6 @@ echo "</pre>";
 		} else
 			$a_pool[] = $poolent;
 
-echo "<pre>";
-print_r($poolent);
-echo "</pre>";
 		touch($d_poolconfdirty_path);
 
 		write_config();
@@ -154,6 +122,14 @@ include("head.inc");
                   </td>
 		</tr>
                 <tr align="left">
+                  <td class="vtable" colspan="2">
+                    Monitor: <select id="monitor" name="monitor">
+			<option value="TCP">TCP</option>
+			<!--billm - XXX: add HTTP/HTTPS here --!>
+			</select>
+                  </td>
+		</tr>
+                <tr align="left">
                   <td class="vtable" align="left" valign="bottom">
 		    IP
                     <input name="ipaddr" type="text" size="16"> 
@@ -171,8 +147,15 @@ include("head.inc");
 			</select>
                   </td>
                 </tr>
+                <tr align="left">
+                  <td class="vtable" align="left" valign="bottom">
+			<input name="Submit" type="submit" class="formbtn" value="Submit" onClick="AllServers('serversSelect', true)">
+			<?php if (isset($id) && $a_pool[$id]): ?>
+			<input name="id" type="hidden" value="<?=$id;?>">
+			<?php endif; ?>
+		  </td>
+		</tr>
               </table>
-<input name="Submit" type="submit" class="formbtn" value="Save" onClick="AllServers('serversSelect', true)">
 </form>
 <?php include("fend.inc"); ?>
 </body>

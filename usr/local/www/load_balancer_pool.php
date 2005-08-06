@@ -126,7 +126,7 @@ include("head.inc");
 				<?=$vipent['monitor'];?>
                   </td>
                   <td class="listbg" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
-				<?=$vipent['descr'];?>
+				<font color="#FFFFFF"><?=$vipent['desc'];?></font>
                   </td>
                   <td class="list" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">

@@ -44,6 +44,7 @@ $pconfig['radiusenable'] = isset($pppoecfg['radius']['enable']);
 $pconfig['radacct_enable'] = isset($pppoecfg['radius']['accounting']);
 $pconfig['radiusserver'] = $pppoecfg['radius']['server'];
 $pconfig['radiussecret'] = $pppoecfg['radius']['secret'];
+$pconfig['n_pppoe_units'] = $pppoecfg['n_pppoe_units'];
 
 if ($_POST) {
 
@@ -93,6 +94,7 @@ if ($_POST) {
 		$pppoecfg['localip'] = $_POST['localip'];
 		$pppoecfg['mode'] = $_POST['mode'];
 		$pppoecfg['interface'] = $_POST['interface'];
+		$pppoecfg['n_pppoe_units'] = $_POST['n_pppoe_units'];	
 		$pppoecfg['radius']['enable'] = $_POST['radiusenable'] ? true : false;
 		$pppoecfg['radius']['accounting'] = $_POST['radacct_enable'] ? true : false;
 		$pppoecfg['radius']['server'] = $_POST['radiusserver'];
@@ -206,14 +208,22 @@ function enable_change(enable_over) {
                       
 		  </td>
                 </tr>
-
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Max. concurrent connections</td>
-                  <td width="78%" class="vtable"> 
-                    <?=$g['n_pppoe_units'];?>
+                  <td width="78%" class="vtable">
+		    <select name="n_pppoe_units">
+		    <?php
+		     for($x=0; $x<33; $x++) {
+			if($x == $pconfig['n_pppoe_units'])
+				$SELECTED = " SELECTED";
+			else
+				$SELECTED = "";
+			echo "<option value=\"\"{$SELECTED}>{$x}</option>\n";			
+		     }
+		    ?>
+		    </select>
                   </td>
 		</tr>
-
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Server address</td>
                   <td width="78%" class="vtable"> 
@@ -222,7 +232,6 @@ function enable_change(enable_over) {
                     Enter the IP address the PPPoE server should use on its side 
                     for all clients.</td>
                 </tr>
-
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Remote address range</td>
                   <td width="78%" class="vtable"> 
@@ -264,13 +273,9 @@ function enable_change(enable_over) {
                       Enter the shared secret that will be used to authenticate 
                       to the RADIUS server.</td>
                 </tr>
-		
-
-
                 <tr> 
                   <td height="16" colspan="2" valign="top"></td>
                 </tr>
-
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 

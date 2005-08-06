@@ -830,11 +830,11 @@ pppoe:
 
 EOD;
 
-			for ($i = 0; $i < $g['n_pppoe_units']; $i++) {
+			for ($i = 0; $i < $pppoecfg['n_pppoe_units']; $i++) {
 				$mpdconf .= "	load pppoe{$i}\n";
 			}
 
-			for ($i = 0; $i < $g['n_pppoe_units']; $i++) {
+			for ($i = 0; $i < $pppoecfg['n_pppoe_units']; $i++) {
 
 				$clientip = long2ip(ip2long($pppoecfg['remoteip']) + $i);
 				$ngif = "ng" . ($i+1);
@@ -921,7 +921,7 @@ EOD;
 
 			$mpdlinks = "";
 
-			for ($i = 0; $i < $g['n_pppoe_units']; $i++) {
+			for ($i = 0; $i < $pppoecfg['n_pppoe_units']; $i++) {
 				$mpdlinks .= <<<EOD
 
 pppoe:

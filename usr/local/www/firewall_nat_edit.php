@@ -95,7 +95,7 @@ if ($_POST) {
 		$input_errors[] = "The local port must be an integer between 1 and 65535.";
 	}
 	if (($_POST['localip'] && !is_ipaddroralias($_POST['localip']))) {
-		$input_errors[] = "A valid NAT IP address or host alias must be specified.";
+		$input_errors[] = "\"{$_POST['localip']}\" is not valid NAT IP address or host alias.";
 	}
 
 	if ($_POST['beginport'] > $_POST['endport']) {

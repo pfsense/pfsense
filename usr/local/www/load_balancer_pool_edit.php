@@ -107,31 +107,35 @@ include("head.inc");
 
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr align="left">
-                  <td class="vtable" colspan="2">
-                    Name: <input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"{$pconfig['name']}\"";?> size="16" maxlength="16">
+                  <td width="22%" valign="top" class="vncellreq">Name</td>
+                  <td width="78%" class="vtable" colspan="2">
+                    <input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"{$pconfig['name']}\"";?> size="16" maxlength="16">
                   </td>
 		</tr>
                 <tr align="left">
-                  <td class="vtable" colspan="2">
-                    Description: <input name="desc" type="text" <?if(isset($pconfig['desc'])) echo "value=\"{$pconfig['desc']}\"";?>size="64">
+                  <td width="22%" valign="top" class="vncellreq">Description</td>
+                  <td width="78%" class="vtable" colspan="2">
+                    <input name="desc" type="text" <?if(isset($pconfig['desc'])) echo "value=\"{$pconfig['desc']}\"";?>size="64">
                   </td>
 		</tr>
                 <tr align="left">
-                  <td class="vtable" colspan="2">
-                    Port: <input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16">
+                  <td width="22%" valign="top" class="vncellreq">Port</td>
+                  <td width="78%" class="vtable" colspan="2">
+                    <input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16"> - server pool port, this is the port your servers are listening to.
                   </td>
 		</tr>
                 <tr align="left">
-                  <td class="vtable" colspan="2">
-                    Monitor: <select id="monitor" name="monitor">
+                  <td width="22%" valign="top" class="vncellreq">Monitor</td>
+                  <td width="78%" class="vtable" colspan="2">
+                    <select id="monitor" name="monitor">
 			<option value="TCP">TCP</option>
 			<!--billm - XXX: add HTTP/HTTPS here --!>
 			</select>
                   </td>
 		</tr>
                 <tr align="left">
-                  <td class="vtable" align="left" valign="bottom">
-		    IP
+                  <td width="22%" valign="top" class="vncellreq">IP</td>
+                  <td width="78%" class="vtable" colspan="2">
                     <input name="ipaddr" type="text" size="16"> 
 		    <input class="formbtn" type="button" name="button1" value="->" onclick="AddServerToPool(document.iform);">
                   </td>

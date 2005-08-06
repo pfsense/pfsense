@@ -211,14 +211,14 @@ function enable_change(enable_over) {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Subnet netmask</td>
                   <td width="78%" class="vtable">
-		    <select name="n_pppoe_units">
+		    <select id="n_pppoe_units" name="n_pppoe_units">
 		    <?php
 		     for($x=0; $x<33; $x++) {
 			if($x == $pconfig['n_pppoe_units'])
 				$SELECTED = " SELECTED";
 			else
 				$SELECTED = "";
-			echo "<option value=\"\"{$SELECTED}>{$x}</option>\n";			
+			echo "<option value=\"{$x}\"{$SELECTED}>{$x}</option>\n";			
 		     }
 		    ?>
 		    </select>

@@ -35,6 +35,12 @@ require("guiconfig.inc");
 $pgtitle = "Diagnostics: Reboot System";
 include("head.inc");
 
+if ($_POST) {
+	if ($_POST['Submit'] == " Yes ") {
+		$rebootmsg = "The system is rebooting now. This may take one minute.";
+	}
+}
+
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>

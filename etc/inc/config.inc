@@ -1147,15 +1147,6 @@ function system_start_ftp_helpers() {
 	} else {
 		mwexec("/usr/local/sbin/pftpx -g 8021");
 	}
-
-	if(!is_process_running("pftpx")) {
-		mwexec("/usr/local/sbin/pftpx -g 8021");
-		if(!is_process_running("pftpx")) {
-			sleep(2);
-			log_error("Could not start PFTPX with command {$command}");
-			file_notice("FTP Proxy Startup Error", "PFTPX failed to start.  NOTE: FTP clients may not function correctly.", "", "");
-		}
-	}	
 }
 
 function cleanup_backupcache($revisions = 30) {

@@ -1021,6 +1021,10 @@ function filter_nat_rules_generate() {
 	$natrules .= "\n# spam table \n";
 	$natrules .= "table <spamd> persist\n\n";
 
+	/* load balancer anchor */
+	$natrules .= "\n# Load balancing anchor - slbd updates\n";
+	$natrules .= "rdr-anchor \"slb\"\n";
+
 	if(!isset($config['system']['disableftpproxy'])) {
 		$optcfg = array();
 		generate_optcfg_array($optcfg);	

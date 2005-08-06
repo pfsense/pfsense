@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- pfSense default system configuration -->
 <pfsense>
-	<version>1.4</version>
+	<version>1.9</version>
 	<lastchange></lastchange>
 	<theme>metallic</theme>
 	<system>

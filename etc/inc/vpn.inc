@@ -789,6 +789,10 @@ function vpn_pppoe_configure() {
 	$syscfg = $config['system'];
 	$pppoecfg = $config['pppoe'];
 
+	/* create directory if it does not exist */
+	if(!dir_exist("{$g['varetc_path']}/mpd-vpn"))
+		mkdir("{$g['varetc_path']}/mpd-vpn");
+	
 	if ($g['booting']) {
 		if (!$pppoecfg['mode'] || ($pppoecfg['mode'] == "off"))
 			return 0;

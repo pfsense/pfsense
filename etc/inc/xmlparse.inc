@@ -36,7 +36,7 @@ function listtags() {
 		"earlyshellcmd encryption-algorithm-option field fieldname hash-algorithm-option " .
 		"hosts item key menu mobilekey onetoone option package passthrumac pool proxyarpnet ".
 		"queue route row rule service servernat servers shellcmd staticmap subqueue"  .
-                "tunnel user vip vlan winsserver wolentry");
+                "tunnel user vip virtual_server vlan winsserver wolentry");
 	return $ret;
 }
 

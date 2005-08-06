@@ -76,6 +76,7 @@ $d_allowedipsdirty_path = $g['varrun_path'] . "/allowedips.dirty";
 $d_ovpnclidirty_path = $g['varrun_path'] . "/ovpnclient.dirty";
 $d_vipconfdirty_path = $g['varrun_path'] . "/vip.conf.dirty";
 $d_poolconfdirty_path = $g['varrun_path'] . "/pool.conf.dirty";
+$d_vsconfdirty_path = $g['varrun_path'] . "/vs.conf.dirty";
 /* used by progress bar */
 $lastseen = "-1";
 

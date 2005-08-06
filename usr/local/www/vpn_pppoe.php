@@ -209,7 +209,7 @@ function enable_change(enable_over) {
 		  </td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Max. concurrent connections</td>
+                  <td width="22%" valign="top" class="vncellreq">Subnet netmask</td>
                   <td width="78%" class="vtable">
 		    <select name="n_pppoe_units">
 		    <?php
@@ -222,6 +222,7 @@ function enable_change(enable_over) {
 		     }
 		    ?>
 		    </select>
+		    <br>Hint: 24 is 255.255.255.0
                   </td>
 		</tr>
                 <tr> 

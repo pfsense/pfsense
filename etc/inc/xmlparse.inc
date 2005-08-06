@@ -32,12 +32,11 @@
 
 /* Config XML tags that should be treat as a list not as a traditional array */
 function listtags() {
-	$ret = explode(" ", "cacert row config package columnitem option item fieldname field rule user key subqueue " .
-                "dnsserver winsserver encryption-algorithm-option hash-algorithm-option hosts tunnel " .
-                "onetoone staticmap route alias queue shellcmd earlyshellcmd mobilekey " .
-                "service servernat proxyarpnet passthrumac allowedip wolentry vlan menu domainoverrides " .
-		"vip");
-
+	$ret = explode(" ", "alias allowedip cacert config columnitem dnsserver domainoverrides " .
+		"earlyshellcmd encryption-algorithm-option field fieldname hash-algorithm-option " .
+		"hosts item key menu mobilekey onetoone option package passthrumac proxyarpnet ".
+		"queue route row rule service servernat shellcmd staticmap subqueue"  .
+                "tunnel user vip vlan winsserver wolentry");
 	return $ret;
 }
 

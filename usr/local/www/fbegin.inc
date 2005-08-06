@@ -193,6 +193,7 @@ require_once("notices.inc");
 							<?php if(isset($config['system']['developer'])): ?>
 							<li><hr width="80%"/></li>
 							<li><a href="/restart_httpd.php" class="navlnk">Restart HTTPD</a></li>
+							<li><a href="/load_balancer_pool.php" class="navlnk">Load Balancer</a></li>
 							<?php endif ?>
 						</ul>
 					</li>

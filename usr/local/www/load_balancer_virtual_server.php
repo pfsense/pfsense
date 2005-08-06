@@ -54,21 +54,12 @@ if ($_POST) {
 
 if ($_GET['act'] == "del") {
 	if ($a_vs[$_GET['id']]) {
-		/* make sure no inbound NAT mappings reference this entry */
-		if (is_array($config['nat']['rule'])) {
-			foreach ($config['nat']['rule'] as $rule) {
-				if ($rule['external-address'] == $a_vs[$_GET['id']]['ipaddr']) {
-					$input_errors[] = "This entry cannot be deleted because it is still referenced by at least one NAT mapping.";
-					break;
-				}
-			}
-		}
 
 		if (!$input_errors) {
 			unset($a_vs[$_GET['id']]);
 			write_config();
 			touch($d_vsconfdirty_path);
-			header("Location: firewall_virtual_ip.php");
+			header("Location: load_balancer_virtual_server.php");
 			exit;
 		}
 	}
@@ -81,11 +72,11 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
-<form action="firewall_virtual_ip.php" method="post">
+<form action="load_balancer_virtual_server.php" method="post">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_vsconfdirty_path)): ?><p>
-<?php print_info_box_np("The VIP configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
+<?php print_info_box_np("The virtual server configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
@@ -125,7 +116,7 @@ include("head.inc");
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
                         <td valign="middle"><a href="load_balancer_virtual_server_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
-                        <td valign="middle"><a href="firewall_virtual_ip.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this entry?')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                        <td valign="middle"><a href="load_balancer_virtual_server.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this entry?')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>
                   </td>

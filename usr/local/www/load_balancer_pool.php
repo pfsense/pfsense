@@ -32,10 +32,10 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['load_balancer']['pool'])) {
-	$config['load_balancer']['pool'] = array();
+if (!is_array($config['load_balancer']['lbpool'])) {
+	$config['load_balancer']['lbpool'] = array();
 }
-$a_pool = &$config['load_balancer']['pool'];
+$a_pool = &$config['load_balancer']['lbpool'];
 
 if ($_POST) {
 	$pconfig = $_POST;

@@ -58,11 +58,6 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-	/* Ensure that our pool names are unique */
-	for ($i=0; isset($config['load_balancer']['pool'][$i]); $i++)
-		if (($_POST['name'] == $config['load_balancer']['pool'][$i]['name']) && ($i != $id))
-			$input_errors[] = "This pool name has already been used.  Pool names must be unique.";
-
 	if (!$input_errors) {
 		$vsent = array();
 		
@@ -120,10 +115,10 @@ include("head.inc");
                 <tr align="left">
 		  <td width="22%" valign="top" class="vncellreq">Virtual Server Pool</td>
                   <td width="78%" class="vtable" colspan="2">
-                    <select id="monitor" name="monitor">
+                    <select id="pool" name="pool">
 			<?php
-				for ($i = 0; isset($config['load_balancer']['pool'][$i]); $i++) {
-					echo "<option value=\"{$config['load_balancer']['pool'][$i]['name']}\">{$config['load_balancer']['pool'][$i]['name']}</option>";
+				for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
+					echo "<option value=\"{$config['load_balancer']['lbpool'][$i]['name']}\">{$config['load_balancer']['lbpool'][$i]['name']}</option>";
 				}
 			?>
 			</select>

@@ -31,10 +31,10 @@
 */
 
 require("guiconfig.inc");
-if (!is_array($config['load_balancer']['pool'])) {
-        $config['load_balancer']['pool'] = array();
+if (!is_array($config['load_balancer']['lbpool'])) {
+        $config['load_balancer']['lbpool'] = array();
 }
-$a_pool = &$config['load_balancer']['pool'];
+$a_pool = &$config['load_balancer']['lbpool'];
 
 if (isset($_POST['id']))
 	$id = $_POST['id'];
@@ -60,8 +60,8 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	/* Ensure that our pool names are unique */
-	for ($i=0; isset($config['load_balancer']['pool'][$i]); $i++)
-		if (($_POST['name'] == $config['load_balancer']['pool'][$i]['name']) && ($i != $id))
+	for ($i=0; isset($config['load_balancer']['lbpool'][$i]); $i++)
+		if (($_POST['name'] == $config['load_balancer']['lbpool'][$i]['name']) && ($i != $id))
 			$input_errors[] = "This pool name has already been used.  Pool names must be unique.";
 
 	if (!$input_errors) {

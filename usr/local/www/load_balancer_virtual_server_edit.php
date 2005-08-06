@@ -46,6 +46,7 @@ if (isset($id) && $a_vs[$id]) {
 	$pconfig['port'] = $a_vs[$id]['port'];
 	$pconfig['pool'] = $a_vs[$id]['pool'];
 	$pconfig['desc'] = $a_vs[$id]['desc'];
+	$pconfig['name'] = $a_vs[$id]['name'];
 }
 
 if ($_POST) {
@@ -53,14 +54,15 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "ipaddr");
-	$reqdfieldsn = explode(",", "IP Address");
+	$reqdfields = explode(" ", "ipaddr name");
+	$reqdfieldsn = explode(",", "IP Address, Name");
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if (!$input_errors) {
 		$vsent = array();
 		
+		$vsent['name'] = $_POST['name'];
 		$vsent['desc'] = $_POST['desc'];
 		$vsent['pool'] = $_POST['pool'];
 		$vsent['port'] = $_POST['port'];
@@ -94,6 +96,12 @@ include("head.inc");
 </script>
 
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
+                <tr align="left">
+		  <td width="22%" valign="top" class="vncellreq">Name</td>
+                  <td width="78%" class="vtable" colspan="2">
+                    <input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"{$pconfig['name']}\"";?>size="32" maxlength="32">
+                  </td>
+		</tr>
                 <tr align="left">
 		  <td width="22%" valign="top" class="vncellreq">Description</td>
                   <td width="78%" class="vtable" colspan="2">

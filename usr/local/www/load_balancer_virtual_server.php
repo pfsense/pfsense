@@ -30,7 +30,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
+require_once("vslb.inc");
 
 if (!is_array($config['load_balancer']['virtual_server'])) {
 	$config['load_balancer']['virtual_server'] = array();
@@ -45,6 +46,7 @@ if ($_POST) {
 		if (!file_exists($d_sysrebootreqd_path)) {
 			config_lock();
 			$retval |= filter_configure();
+			$retval |= slbd_configure();
 			config_unlock();
 		}
 		$savemsg = get_std_save_message($retval);
@@ -93,7 +95,8 @@ include("head.inc");
 	<div id="mainarea">
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td width="30%" class="listhdrr">Virtual server address</td>
+                  <td width="10%" class="listhdrr">Name</td>
+                  <td width="20%" class="listhdrr">Server address</td>
                   <td width="10%" class="listhdrr">Port</td>
                   <td width="20%" class="listhdrr">Pool</td>
                   <td width="30%" class="listhdr">Description</td>
@@ -101,6 +104,9 @@ include("head.inc");
 				</tr>
 			  <?php $i = 0; foreach ($a_vs as $vsent): ?>
                 <tr>
+                  <td class="listlr" ondblclick="document.location='load_balancer_virtual_server_edit.php?id=<?=$i;?>';">
+			<?=$vsent['name'];?>
+                  </td>
                   <td class="listlr" ondblclick="document.location='load_balancer_virtual_server_edit.php?id=<?=$i;?>';">
 			<?=$vsent['ipaddr'];?>
                   </td>
@@ -123,7 +129,7 @@ include("head.inc");
                 </tr>
                 <?php $i++; endforeach; ?>
                 <tr>
-                  <td class="list" colspan="4"></td>
+                  <td class="list" colspan="5"></td>
                   <td class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>

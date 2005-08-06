@@ -96,17 +96,6 @@ if ($_POST) {
 		}
 	}
 	
-	/* check for overlaps with Virtual IPs */
-	if (is_array($config['virtualip']['vip'])) {
-		foreach ($config['virtualip']['vip'] as $vipent) {
-			if (check_subnets_overlap($_POST['external'], $_POST['subnet'],
-				$vipent['subnet'], 32)) {
-				$input_errors[] = "Virtual IP entry overlaps with the specified external subnet.";
-				break;
-			}
-		}
-	}
-	
 	/* check for overlaps with advanced outbound NAT */
 	if (is_array($config['nat']['advancedoutbound']['rule'])) {
 		foreach ($config['nat']['advancedoutbound']['rule'] as $natent) {
@@ -150,7 +139,7 @@ include("head.inc");
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_nat_1to1_edit.php" method="post" name="iform" id="iform">
-              <?display_topbar()?>
+
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
 				  <td width="22%" valign="top" class="vncellreq">Interface</td>

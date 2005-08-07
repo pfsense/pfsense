@@ -535,10 +535,24 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
  * new = new value
  */
 function update_if_changed($varname, & $orig, $new) {
-	if ($orig != $new) {
-		update_changedesc("{$varname}: \"{$orig}\" -> \"{$new}\"");
+	if (is_array($orig) && is_array($new)) {
+		$a_diff = array_diff($orig, $new);
+		foreach ($a_diff as $diff) {
+			update_changedesc("removed {$varname}: \"{$diff}\"");
+		}
+		$a_diff = array_diff($new, $orig);
+		foreach ($a_diff as $diff) {
+			update_changedesc("added {$varname}: \"{$diff}\"");
+		}
 		$orig = $new;
 		return true;
+			
+	} else { 
+		if ($orig != $new) {
+			update_changedesc("{$varname}: \"{$orig}\" -> \"{$new}\"");
+			$orig = $new;
+			return true;
+		}
 	}
 	return false;
 }

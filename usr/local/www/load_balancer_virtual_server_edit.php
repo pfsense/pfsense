@@ -1,6 +1,6 @@
 #!/usr/local/bin/php
 <?php
-/* $Id */
+/* $Id$ */
 /*
         load_balancer_virtual_server_edit.php
         part of pfSense (http://www.pfsense.com/)

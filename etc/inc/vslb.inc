@@ -1,5 +1,5 @@
 <?php
-/* $Id */
+/* $Id$ */
 /*
 	vslb.inc
         Copyright (C) 2005 Bill Marquette

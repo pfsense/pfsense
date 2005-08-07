@@ -1,6 +1,6 @@
 #!/usr/local/bin/php
 <?php
-/* $Id */
+/* $Id$ */
 /*
 	load_balancer_pool.php
 	part of pfSense (http://www.pfsense.com/)

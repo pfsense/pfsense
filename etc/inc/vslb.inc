@@ -76,7 +76,8 @@ function slbd_configure() {
 	fwrite($fd, $slbdconf);
 	fclose($fd);
 	mwexec("/usr/bin/pkill -9 slbd");
-	mwexec("/usr/local/sbin/slbd -c{$g['varetc_path']}/slbd.conf");
+	/* startup slbd pointing it's config at /var/etc/slbd.conf with a polling interval of 5 seconds */
+	mwexec("/usr/local/sbin/slbd -c{$g['varetc_path']}/slbd.conf -r5000");
 }
 
 ?>

@@ -49,13 +49,18 @@ if (isset($id) && $a_pool[$id]) {
 	$pconfig['monitor'] = $a_pool[$id]['monitor'];
 }
 
+$changedesc = "Load Balancer: Pool: ";
+$changecount = 0;
+
 if ($_POST) {
+	$changecount++;
+
 	unset($input_errors);
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "name");
-	$reqdfieldsn = explode(",", "Name");
+	$reqdfields = explode(" ", "name port monitor servers");
+	$reqdfieldsn = explode(",", "Name,Port,Monitor,Server List");
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -63,15 +68,29 @@ if ($_POST) {
 	for ($i=0; isset($config['load_balancer']['lbpool'][$i]); $i++)
 		if (($_POST['name'] == $config['load_balancer']['lbpool'][$i]['name']) && ($i != $id))
 			$input_errors[] = "This pool name has already been used.  Pool names must be unique.";
+	if (!is_port($_POST['port']))
+			$input_errors[] = "The port must be an integer between 1 and 65535.";
+	if (is_array($_POST['servers'])) {
+		foreach($pconfig['servers'] as $svrent) {
+			if (!is_ipaddr($svrent))
+				$input_errors[] = "{$svrent} is not a valid IP address.";
+		}
+	}
+	if ($_POST['monitor'] != "TCP" && $_POST['monitor'] != "HTTP")
+		$input_errors[] = "Invalid monitor chosen.";
 
 	if (!$input_errors) {
 		$poolent = array();
+		if(isset($id) && $a_pool[$id])
+			$poolent = $a_pool[$id];
+		if($poolent['name'] != "")
+			$changedesc .= " modified '{$poolent['name']}' pool:";
 		
-		$poolent['name'] = $_POST['name'];
-		$poolent['desc'] = $_POST['desc'];
-		$poolent['port'] = $_POST['port'];
-		$poolent['servers'] = $_POST['servers'];
-		$poolent['monitor'] = $_POST['monitor'];
+		update_if_changed("name", $poolent['name'], $_POST['name']);
+		update_if_changed("description", $poolent['desc'], $_POST['desc']);
+		update_if_changed("port", $poolent['port'], $_POST['port']);
+		update_if_changed("servers", $poolent['servers'], $_POST['servers']);
+		update_if_changed("monitor", $poolent['monitor'], $_POST['monitor']);
 
 		if (isset($id) && $a_pool[$id]) {
 			/* modify all virtual servers with this name */
@@ -85,7 +104,8 @@ if ($_POST) {
 
 		touch($d_poolconfdirty_path);
 
-		write_config();
+		if ($changecount > 0)
+			write_config($changedesc);
 
 		header("Location: load_balancer_pool.php");
 		exit;

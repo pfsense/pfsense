@@ -1342,8 +1342,23 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			
 			/* if user has selected a custom gateway, lets work with it */
 			if($rule['gateway'] <> "") {
-				$int = guess_interface_from_ip($rule['gateway']);
-				$line .= " route-to (" . $int . " " . $rule['gateway'] . ") ";
+				$foundlb = 0;
+				foreach($config['load_balancer']['lbpool'] as $lb) {
+					if($lb['name'] == $rule['gateway']) {
+						$servers = "";
+						/*   XXX: when slbd writes out helper file,
+						 *        simply read in and feed to route-to
+						 */
+						foreach($lb['servers'] as $server) {
+							$servers .= $server . " ";
+						}
+						$line .= " route-to (" . $int . " " . $servers . ") ";
+					}
+				}
+				if($foundlb == 0) {
+					$int = guess_interface_from_ip($rule['gateway']);
+					$line .= " route-to (" . $int . " " . $rule['gateway'] . ") ";
+				}
 			}
 			
 			/* Setup outgoing load balancing */

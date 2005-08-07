@@ -53,6 +53,15 @@ if ($config['pptpd']['mode'] == "server")
 if ($config['pppoe']['mode'] == "server")
 	$iflist['pppoe'] = "PPPoE VPN";
 
+/* add ipsec filter gif interfaces */
+$a_ipsec = &$config['ipsec']['tunnel'];
+$i = 0; foreach ($a_ipsec as $ipsecent) {
+	if(isset($ipsecent['creategif'])) {
+		$iflist["gif{$i}"] = "{$ipsecent['descr']}";
+		$i++;
+	}
+}
+
 for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 	$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 }

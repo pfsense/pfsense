@@ -7,10 +7,6 @@ function AddServerToPool(form) {
 	form['servers[]'].options[form['servers[]'].options.length] = new Option(ServerPort,ServerPort);
 }
 
-function RemoveServerFromPool(form) {
-	form.ipaddr=form['servers[]'].options[form['servers[]'].selectedIndex].value;
-	form['servers[]'].options[form['servers[]'].selectedIndex] = null;
-}
 
 function AllServers(id, selectAll) {
    var opts = document.getElementById(id).getElementsByTagName('option');
@@ -18,4 +14,23 @@ function AllServers(id, selectAll) {
    {
        opts[i].selected = selectAll;
    }
+}
+
+
+function RemoveServerFromPool(form)
+{
+	var theSel = form['servers[]'];
+	var selIndex = theSel.selectedIndex;
+	if (selIndex != -1) {
+		for(i=theSel.length-1; i>=0; i--)
+		{
+			if(theSel.options[i].selected)
+			{
+				theSel.options[i] = null;
+			}
+		}
+		if (theSel.length > 0) {
+			theSel.selectedIndex = selIndex == 0 ? 0 : selIndex - 1;
+		}
+	}
 }

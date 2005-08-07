@@ -61,8 +61,13 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "name port monitor servers");
-	$reqdfieldsn = explode(",", "Name,Port,Monitor,Server List");
+	if($POST['type'] == "server") {
+		$reqdfields = explode(" ", "name port monitor servers");
+		$reqdfieldsn = explode(",", "Name,Port,Monitor,Server List");
+	} else {
+		$reqdfields = explode(" ", "name monitor servers");
+		$reqdfieldsn = explode(",", "Name,Monitor,Server List");		
+	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 

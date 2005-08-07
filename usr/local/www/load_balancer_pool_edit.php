@@ -130,10 +130,15 @@ function type_change(enable_change) {
 		case 0:
 			document.iform.monitorip.disabled = 1;
 			document.iform.port.disabled = 0;
+			document.iform.monitor.selectedIndex = 0;
+			document.iform.monitor.disabled = 0;
 			break;
 		case 1:
 			document.iform.monitorip.disabled = 0;
 			document.iform.port.disabled = 1;
+			/* set to ICMP */
+			document.iform.monitor.selectedIndex = 1;
+			document.iform.monitor.disabled = 1;
 			break;
 	}
 }
@@ -175,6 +180,12 @@ function type_change(enable_change) {
 			</td>
 		</tr>
 		<tr align="left">
+			<td width="22%" valign="top" class="vncellreq">Monitor IP</td>
+			<td width="78%" class="vtable" colspan="2">
+				<input id="monitorip" name="monitorip" value="<?php echo $pconfig['monitorip']; ?>">
+			</td>
+		</tr>		
+		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq">Monitor</td>
 			<td width="78%" class="vtable" colspan="2">
 				<select id="monitor" name="monitor">
@@ -183,15 +194,7 @@ function type_change(enable_change) {
 					<!-- billm - XXX: add HTTP/HTTPS here -->
 				</select>
 			</td>
-		</tr>
-
-		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq">Monitor IP</td>
-			<td width="78%" class="vtable" colspan="2">
-				<input id="monitorip" name="monitorip" value="<?php echo $pconfig['monitorip']; ?>">
-			</td>
-		</tr>
-		
+		</tr>		
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq">IP</td>
 			<td width="78%" class="vtable">

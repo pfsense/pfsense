@@ -224,6 +224,9 @@
 	/* start IPsec tunnels */
 	vpn_ipsec_configure();
 
+	/* start load balancer daemon */
+	slbd_configure();
+
 	/* done */
 	unlink("{$g['varrun_path']}/booting");
 	$g['booting'] = FALSE;

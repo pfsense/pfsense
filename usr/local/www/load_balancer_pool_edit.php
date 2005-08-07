@@ -150,7 +150,7 @@ include("head.inc");
 							<input class="formbtn" type="button" name="button2" value="&lt;-" onclick="RemoveServerFromPool(document.iform);">
 						</td>
 						<td>
-							<select id="serversSelect" name="servers[]" multiple="true" size="4" width="22">
+							<select id="serversSelect" name="servers[]" multiple="true" size="5">
 <?php
 							if (is_array($pconfig['servers']))
 								foreach($pconfig['servers'] as $svrent) {

@@ -5,6 +5,7 @@ function AddServerToPool(form) {
 
 function RemoveServerFromPool(form) {
 	form.ipaddr=form['servers[]'].options[form['servers[]'].selectedIndex].value;
+	form['servers[]'].options[form['servers[]'].selectedIndex] = null;
 }
 
 function AllServers(id, selectAll) {

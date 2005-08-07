@@ -36,6 +36,10 @@ require_once("notices.inc");
 function slbd_configure() {
 	global $config, $g;
 
+	/* no need to go further if we don't have any load balance stuff */
+	if (!is_array($config['load_balancer']) || (!is_array($config['load_balancer']['pool']))
+		return;
+
 	$a_vs = &$config['load_balancer']['virtual_server'];
 	$a_pool = &$config['load_balancer']['pool'];
 

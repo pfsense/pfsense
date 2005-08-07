@@ -42,6 +42,8 @@ else
 	$id = $_GET['id'];
 
 if (isset($id) && $a_pool[$id]) {
+	$pconfig['monitorip'] = $a_pool[$id]['monitorip'];
+	$pconfig['type'] = $a_pool[$id]['type'];
 	$pconfig['name'] = $a_pool[$id]['name'];
 	$pconfig['desc'] = $a_pool[$id]['desc'];
 	$pconfig['port'] = $a_pool[$id]['port'];
@@ -86,6 +88,8 @@ if ($_POST) {
 		if($poolent['name'] != "")
 			$changedesc .= " modified '{$poolent['name']}' pool:";
 		
+		update_if_changed("type", $poolent['type'], $_POST['type']);
+		update_if_changed("monitorip", $poolent['monitorip'], $_POST['monitorip']);
 		update_if_changed("name", $poolent['name'], $_POST['name']);
 		update_if_changed("description", $poolent['desc'], $_POST['desc']);
 		update_if_changed("port", $poolent['port'], $_POST['port']);
@@ -138,6 +142,17 @@ include("head.inc");
 				<input name="desc" type="text" <?if(isset($pconfig['desc'])) echo "value=\"{$pconfig['desc']}\"";?>size="64">
 			</td>
 		</tr>
+
+		<tr align="left">
+			<td width="22%" valign="top" class="vncellreq">Type</td>
+			<td width="78%" class="vtable" colspan="2">
+				<select name="type">
+					<option value="server"<?php if($pconfig['type'] == "server") echo " SELECTED"; ?>>Server</option>
+					<option value="gateway"><?php if($pconfig['type'] == "gateway") echo " SELECTED"; ?>>Gateway</option>
+				</select>
+			</td>
+		</tr>
+		
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq">Port</td>
 			<td width="78%" class="vtable" colspan="2">
@@ -153,6 +168,14 @@ include("head.inc");
 				</select>
 			</td>
 		</tr>
+
+		<tr align="left">
+			<td width="22%" valign="top" class="vncellreq">Monitor IP</td>
+			<td width="78%" class="vtable" colspan="2">
+				<input name="monitorip" value="<?php echo $pconfig['monitorip']; ?>">
+			</td>
+		</tr>
+		
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq">IP</td>
 			<td width="78%" class="vtable">

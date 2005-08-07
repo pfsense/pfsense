@@ -192,7 +192,6 @@ include("head.inc");
 	$tab_array[] = array("Port Forward", false, "firewall_nat.php");
 	$tab_array[] = array("1:1", false, "firewall_nat_1to1.php");
 	$tab_array[] = array("Outbound", true, "firewall_nat_out.php");
-	$tab_array[] = array("Outbound Load Balancing", false, "firewall_nat_out_load_balancing.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

@@ -54,13 +54,14 @@ include("head.inc");
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("System", false, "diag_logs.php");
-	$tab_array[1] = array("Firewall", false, "diag_logs_filter.php");
-	$tab_array[2] = array("DHCP", false, "diag_logs_dhcp.php");
-	$tab_array[3] = array("Portal Auth", true, "diag_logs_auth.php");
-	$tab_array[4] = array("IPSEC VPN", false, "diag_logs_ipsec.php");
-	$tab_array[5] = array("PPTP VPN", false, "diag_logs_vpn.php");
-	$tab_array[6] = array("Settings", false, "diag_logs_settings.php");
+	$tab_array[] = array("System", false, "diag_logs.php");
+	$tab_array[] = array("Firewall", false, "diag_logs_filter.php");
+	$tab_array[] = array("DHCP", false, "diag_logs_dhcp.php");
+	$tab_array[] = array("Portal Auth", true, "diag_logs_auth.php");
+	$tab_array[] = array("IPSEC VPN", false, "diag_logs_ipsec.php");
+	$tab_array[] = array("PPTP VPN", false, "diag_logs_vpn.php");
+	$tab_array[] = array("Load Balance", false, "diag_logs_slbd.php");
+	$tab_array[] = array("Settings", false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

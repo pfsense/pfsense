@@ -128,12 +128,15 @@ include("head.inc");
 function type_change(enable_change) {
 	switch (document.iform.type.selectedIndex) {
 		case 0:
+			clearcombo();
+			document.iform.serversSelect.clear;
 			document.iform.monitorip.disabled = 1;
 			document.iform.port.disabled = 0;
 			document.iform.monitor.selectedIndex = 0;
 			document.iform.monitor.disabled = 0;
 			break;
 		case 1:
+			clearcombo();
 			document.iform.monitorip.disabled = 0;
 			document.iform.port.disabled = 1;
 			/* set to ICMP */
@@ -141,6 +144,12 @@ function type_change(enable_change) {
 			document.iform.monitor.disabled = 1;
 			break;
 	}
+}
+function clearcombo(){
+  for (var i=document.iform.serversSelect.options.length-1; i>=0; i--){
+    document.iform.serversSelect.options[i] = null;
+  }
+  document.iform.serversSelect.selectedIndex = -1;
 }
 </script>
 

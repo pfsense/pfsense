@@ -78,7 +78,7 @@ if ($_POST) {
 				$input_errors[] = "{$svrent} is not a valid IP address.";
 		}
 	}
-	if ($_POST['monitor'] != "TCP" && $_POST['monitor'] != "HTTP")
+	if ($_POST['monitor'] != "TCP" && $_POST['monitor'] != "HTTP" && $_POST['monitor'] != "ICMP")
 		$input_errors[] = "Invalid monitor chosen.";
 
 	if (!$input_errors) {
@@ -124,6 +124,21 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script type="text/javascript" language="javascript" src="pool.js"></script>
 
+<script language="javascript">
+function type_change(enable_change) {
+	switch (document.iform.type.selectedIndex) {
+		case 0:
+			document.iform.monitorip.disabled = 1;
+			document.iform.port.disabled = 0;
+			break;
+		case 1:
+			document.iform.monitorip.disabled = 0;
+			document.iform.port.disabled = 1;
+			break;
+	}
+}
+</script>
+
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -146,9 +161,9 @@ include("head.inc");
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq">Type</td>
 			<td width="78%" class="vtable" colspan="2">
-				<select name="type">
+				<select name="type" id="type" onchange="type_change();">
 					<option value="server"<?php if($pconfig['type'] == "server") echo " SELECTED"; ?>>Server</option>
-					<option value="gateway"><?php if($pconfig['type'] == "gateway") echo " SELECTED"; ?>>Gateway</option>
+					<option value="gateway"<?php if($pconfig['type'] == "gateway") echo " SELECTED"; ?>>Gateway</option>
 				</select>
 			</td>
 		</tr>
@@ -164,6 +179,7 @@ include("head.inc");
 			<td width="78%" class="vtable" colspan="2">
 				<select id="monitor" name="monitor">
 					<option value="TCP">TCP</option>
+					<option value="ICMP">ICMP</option>
 					<!-- billm - XXX: add HTTP/HTTPS here -->
 				</select>
 			</td>
@@ -172,7 +188,7 @@ include("head.inc");
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq">Monitor IP</td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="monitorip" value="<?php echo $pconfig['monitorip']; ?>">
+				<input id="monitorip" name="monitorip" value="<?php echo $pconfig['monitorip']; ?>">
 			</td>
 		</tr>
 		
@@ -217,7 +233,9 @@ include("head.inc");
 		</tr>
 	</table>
 	</form>
-
+<script language="javascript">
+type_change();
+</script>
 <?php include("fend.inc"); ?>
 </body>
 </html>

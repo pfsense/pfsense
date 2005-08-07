@@ -131,6 +131,7 @@ function type_change(enable_change) {
 			clearcombo();
 			document.iform.serversSelect.clear;
 			document.iform.monitorip.disabled = 1;
+			document.iform.monitorip.value = "";
 			document.iform.port.disabled = 0;
 			document.iform.monitor.selectedIndex = 0;
 			document.iform.monitor.disabled = 0;
@@ -138,6 +139,7 @@ function type_change(enable_change) {
 		case 1:
 			clearcombo();
 			document.iform.monitorip.disabled = 0;
+			document.iform.monitorip.value = "";
 			document.iform.port.disabled = 1;
 			/* set to ICMP */
 			document.iform.monitor.selectedIndex = 1;

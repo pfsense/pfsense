@@ -812,7 +812,7 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 						echo "<option value=\"{$gw}\" {$selected}>{$gw}</option>\n";
 					}
 				}
-				foreach($config['load_balancer']['virtual_server'] as $lb) {
+				foreach($config['load_balancer']['lbpool'] as $lb) {
 					if($config['gateway'] == $lb['name']) {
 						echo "<option value=\"{$lb['name']}\" SELECTED>{$lb['name']}</option>\n";
 					} else {

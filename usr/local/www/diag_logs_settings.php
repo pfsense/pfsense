@@ -45,7 +45,7 @@ $pconfig['system'] = isset($config['syslog']['system']);
 $pconfig['enable'] = isset($config['syslog']['enable']);
 $pconfig['logdefaultblock'] = !isset($config['syslog']['nologdefaultblock']);
 $pconfig['rawfilter'] = isset($config['syslog']['rawfilter']);
-$pconfig['disablelocallogging'] = !isset($config['syslog']['disablelocallogging']);
+$pconfig['disablelocallogging'] = isset($config['syslog']['disablelocallogging']);
 
 if (!$pconfig['nentries'])
 	$pconfig['nentries'] = 50;

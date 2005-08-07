@@ -53,6 +53,12 @@ if [ ! "$PLATFORM" = "cdrom" ]; then
 fi
 
 # Repair symlinks if they are broken
+if [ ! -L /etc/syslog.conf ]; then
+	rm -rf /etc/syslog.conf
+	ln -s /var/etc/syslog.conf /etc/syslog.conf
+fi
+
+# Repair symlinks if they are broken
 if [ ! -L /etc/hosts ]; then
 	rm -rf /etc/hosts
 	ln -s /var/etc/hosts /etc/hosts    

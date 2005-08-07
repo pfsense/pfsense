@@ -125,6 +125,7 @@ require_once("notices.inc");
 							<li><a href="/services_dhcp_relay.php" class="navlnk">DHCP relay</a></li>
 							<li><a href="/services_dhcp.php" class="navlnk">DHCP server</a></li>
 							<li><a href="/services_dyndns.php" class="navlnk">Dynamic DNS</a></li>
+							<li><a href="/load_balancer_pool.php" class="navlnk">Load Balancer</a></li>
 							<li><a href="/services_snmp.php" class="navlnk">SNMP</a></li>
 							<li><a href="/services_wol.php" class="navlnk">Wake on LAN</a></li>
 							<?php echo return_ext_menu("Services"); ?>
@@ -193,7 +194,6 @@ require_once("notices.inc");
 							<?php if(isset($config['system']['developer'])): ?>
 							<li><hr width="80%"/></li>
 							<li><a href="/restart_httpd.php" class="navlnk">Restart HTTPD</a></li>
-							<li><a href="/load_balancer_pool.php" class="navlnk">Load Balancer</a></li>
 							<?php endif ?>
 						</ul>
 					</li>

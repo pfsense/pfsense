@@ -203,7 +203,7 @@ function clearcombo(){
 		<tr align="left">
 			<td width="22%" valign="top" class="vncellreq">Monitor IP</td>
 			<td width="78%" class="vtable" colspan="2">
-				<input id="monitorip" name="monitorip" value="<?php echo $pconfig['monitorip']; ?>">
+				<input size="16" id="monitorip" name="monitorip" value="<?php echo $pconfig['monitorip']; ?>">
 			</td>
 		</tr>			
 		<tr align="left">

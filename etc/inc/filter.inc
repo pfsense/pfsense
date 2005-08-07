@@ -134,7 +134,7 @@ function filter_configure_sync() {
         $rules_loading = mwexec("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
 	if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
 		foreach ($config['shaper']['queue'] as $queue) {
-        		$rules_loading .= mwexec("/sbin/pfctl -a {$queue['name']} -f {$g['tmp_path']}/{$queue['name']}.rules");
+        		mwexec("/sbin/pfctl -a {$queue['name']} -f {$g['tmp_path']}/{$queue['name']}.rules");
 		}
 	}
 

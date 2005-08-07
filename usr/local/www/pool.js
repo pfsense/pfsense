@@ -1,5 +1,9 @@
 function AddServerToPool(form) {
 	var ServerPort=form.ipaddr.value;
+	if(form.type.selectedIndex == 2)
+		var ServerPort=form.ipaddr.value;
+	else
+		var ServerPort=form.ipaddr.value + "|" + form.monitorip.value;
 	form['servers[]'].options[form['servers[]'].options.length] = new Option(ServerPort,ServerPort);
 }
 

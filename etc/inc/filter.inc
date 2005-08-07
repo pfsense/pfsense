@@ -1346,11 +1346,13 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				foreach($config['load_balancer']['lbpool'] as $lb) {
 					if($lb['name'] == $rule['gateway']) {
 						$gateway = "";
-						/*   XXX: when slbd writes out helper file,
-						 *        simply read in and feed to route-to
-						 */
 						$line .= " route-to { ";
-						foreach($lb['servers'] as $server) {
+						if(file_exists("{$g['tmp_path']}/{$lb['name']}.pool")) {
+							$lbs = split("\n", file_get_contents("{$g['tmp_path']}/{$lb['name']}.pool"));
+						} else {
+							$lbs = $lb['servers'];
+						}
+						foreach($lbs as $server) {
 							$gateway .= $server . " ";
 							if($foundlb == 1)
 								$line .= ", ";
@@ -1359,9 +1361,9 @@ function generate_user_filter_rule($rule, $ngcounter) {
 							$foundlb = 1;
 						}
 						$line .= "} ";
-						
 					}
 				}
+				/*  we're not using load balancing, just setup gateway */
 				if($foundlb == 0) {
 					$int = guess_interface_from_ip($rule['gateway']);
 					$line .= " route-to (" . $int . " " . $rule['gateway'] . ") ";

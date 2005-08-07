@@ -230,6 +230,7 @@ news.err;local0.none;local3.none;local4.none;	%{$g['varlog_path']}/system.log
 local7.none					%{$g['varlog_path']}/system.log
 security.*					%{$g['varlog_path']}/system.log
 auth.info;authpriv.info;daemon.info		%{$g['varlog_path']}/system.log
+local1.*					%{$g['varlog_path']}/slbd.log
 *.emerg						*
 
 EOD;

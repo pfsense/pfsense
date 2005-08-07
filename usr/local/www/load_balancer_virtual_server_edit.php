@@ -133,7 +133,7 @@ include("head.inc");
                   </td>
 		</tr>
                 <tr align="left">
-                  <td class="vtable" align="left" valign="bottom">
+                  <td align="left" valign="bottom">
 			<input name="Submit" type="submit" class="formbtn" value="Submit">
 			<?php if (isset($id) && $a_vs[$id]): ?>
 			<input name="id" type="hidden" value="<?=$id;?>">

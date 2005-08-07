@@ -801,14 +801,23 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 			<select name='gateway'>
 			<?php
 				foreach($gateways as $gw) {
-					if($gw == $pconfig['gateway'])
+					if($gw == $pconfig['gateway']) {
 						$selected = " SELECTED";
-					else
+					} else {
 						$selected = "";
-					if ($gw == "default") 
-						echo "<option value=\"\" {$selected}>{$gw}</option>\n";
-					else
+					}
+					if ($gw == "default") {
+						echo "<option value=\"\" {$selected}>{$gw}</option>\n";	
+					} else {
 						echo "<option value=\"{$gw}\" {$selected}>{$gw}</option>\n";
+					}
+				}
+				foreach($config['load_balancer']['virtual_server'] as $lb) {
+					if($config['gateway'] == $lb['name']) {
+						echo "<option value=\"{$lb['name']}\" SELECTED>{$lb['name']}</option>\n";
+					} else {
+						echo "<option value=\"{$lb['name']}\">{$lb['name']}</option>\n";
+					}		
 				}
 			?>
 			</select>

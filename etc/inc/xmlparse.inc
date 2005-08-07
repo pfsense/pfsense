@@ -42,7 +42,7 @@ function listtags() {
 
 /* Package XML tags that should be treat as a list not as a traditional array */
 function listtags_pkg() {
-	$ret = array("onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package");
+	$ret = array("onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package", "file");
 
 	return $ret;
 }
@@ -120,19 +120,19 @@ function cData($parser, $data) {
 	}
 }
 
-function parse_xml_config($cffile, $rootobj) {
+function parse_xml_config($cffile, $rootobj, $isstring = "false") {
 	global $listtags;
 	$listtags = listtags();
-	return parse_xml_config_raw($cffile, $rootobj);
+	return parse_xml_config_raw($cffile, $rootobj, $isstring);
 }
 
-function parse_xml_config_pkg($cffile, $rootobj) {
+function parse_xml_config_pkg($cffile, $rootobj, $isstring = "false") {
 	global $listtags;
 	$listtags = listtags_pkg();
-	return parse_xml_config_raw($cffile, $rootobj);
+	return parse_xml_config_raw($cffile, $rootobj, $isstring);
 }
 
-function parse_xml_config_raw($cffile, $rootobj) {
+function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 
 	global $depth, $curpath, $parsedcfg, $havedata, $listtags;
 	$parsedcfg = array();

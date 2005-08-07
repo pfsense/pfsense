@@ -130,9 +130,8 @@ function wireless_config_print() {
                   <td class="vtable"><select name="mode" class="formfld" id="mode">
                       <?php 
 						$opts = array();
-						if (strstr($optcfg['if'], "wi") ||
-							strstr($optcfg['if'], "ath"))
-							$opts[] = "hostap";
+						if (preg_match($g['wireless_regex'], $optcfg['if']))
+							$opts[] = "hostap";							
 						$opts[] = "BSS";
 						$opts[] = "IBSS";
 				foreach ($opts as $opt): ?>

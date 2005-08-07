@@ -52,6 +52,8 @@ function slbd_configure() {
 		else
 			$slbdconf .= "{$vsent['name']}|{$vsent['desc']}:\\\n";
 
+		/* pool name */
+        	$slbdconf .= "\t:poolname={$vsent['name']}:\\\n";
 		/* virtual IP */
 	 	$slbdconf .= "\t:vip={$vsent['ipaddr']}:\\\n";
 		/* virtual port */

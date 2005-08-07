@@ -98,69 +98,83 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<script type="text/javascript" language="javascript" src="pool.js"></script>
+
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-            <form action="load_balancer_pool_edit.php" method="post" name="iform" id="iform">
-<script type="text/javascript" language="javascript" src="pool.js">
-</script>
 
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr align="left">
-                  <td width="22%" valign="top" class="vncellreq">Name</td>
-                  <td width="78%" class="vtable" colspan="2">
-                    <input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"{$pconfig['name']}\"";?> size="16" maxlength="16">
-                  </td>
+	<form action="load_balancer_pool_edit.php" method="post" name="iform" id="iform">
+	<table width="100%" border="0" cellpadding="6" cellspacing="0">
+		<tr align="left">
+			<td width="22%" valign="top" class="vncellreq">Name</td>
+			<td width="78%" class="vtable" colspan="2">
+				<input name="name" type="text" <?if(isset($pconfig['name'])) echo "value=\"{$pconfig['name']}\"";?> size="16" maxlength="16">
+			</td>
 		</tr>
-                <tr align="left">
-                  <td width="22%" valign="top" class="vncellreq">Description</td>
-                  <td width="78%" class="vtable" colspan="2">
-                    <input name="desc" type="text" <?if(isset($pconfig['desc'])) echo "value=\"{$pconfig['desc']}\"";?>size="64">
-                  </td>
+		<tr align="left">
+			<td width="22%" valign="top" class="vncellreq">Description</td>
+			<td width="78%" class="vtable" colspan="2">
+				<input name="desc" type="text" <?if(isset($pconfig['desc'])) echo "value=\"{$pconfig['desc']}\"";?>size="64">
+			</td>
 		</tr>
-                <tr align="left">
-                  <td width="22%" valign="top" class="vncellreq">Port</td>
-                  <td width="78%" class="vtable" colspan="2">
-                    <input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16"> - server pool port, this is the port your servers are listening to.
-                  </td>
+		<tr align="left">
+			<td width="22%" valign="top" class="vncellreq">Port</td>
+			<td width="78%" class="vtable" colspan="2">
+				<input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16"> - server pool port, this is the port your servers are listening to.
+			</td>
 		</tr>
-                <tr align="left">
-                  <td width="22%" valign="top" class="vncellreq">Monitor</td>
-                  <td width="78%" class="vtable" colspan="2">
-                    <select id="monitor" name="monitor">
-			<option value="TCP">TCP</option>
-			<!--billm - XXX: add HTTP/HTTPS here --!>
-			</select>
-                  </td>
+		<tr align="left">
+			<td width="22%" valign="top" class="vncellreq">Monitor</td>
+			<td width="78%" class="vtable" colspan="2">
+				<select id="monitor" name="monitor">
+					<option value="TCP">TCP</option>
+					<!-- billm - XXX: add HTTP/HTTPS here -->
+				</select>
+			</td>
 		</tr>
-                <tr align="left">
-                  <td width="22%" valign="top" class="vncellreq">IP</td>
-                  <td width="78%" class="vtable" colspan="2">
-                    <input name="ipaddr" type="text" size="16"> 
-		    <input class="formbtn" type="button" name="button1" value="->" onclick="AddServerToPool(document.iform);">
-                  </td>
-                  <td class="vtable" align="left" valign="bottom">
-		    <input class="formbtn" type="button" name="button2" value="<-" onclick="RemoveServerFromPool(document.iform);">
-			List:
-			<select id="serversSelect" name="servers[]" multiple="true" size="4" width="22">
-			<?php  if (is_array($pconfig['servers']))
-				foreach($pconfig['servers'] as $svrent) {
-					echo "<option value=\"{$svrent}\">{$svrent}</option>";
-				}
-			?>
-			</select>
-                  </td>
-                </tr>
-                <tr align="left">
-                  <td class="vtable" align="left" valign="bottom">
-			<input name="Submit" type="submit" class="formbtn" value="Submit" onClick="AllServers('serversSelect', true)">
-			<?php if (isset($id) && $a_pool[$id]): ?>
-			<input name="id" type="hidden" value="<?=$id;?>">
-			<?php endif; ?>
-		  </td>
+		<tr align="left">
+			<td width="22%" valign="top" class="vncellreq">IP</td>
+			<td width="78%" class="vtable">
+				<input name="ipaddr" type="text" size="16"> 
+				<input class="formbtn" type="button" name="button1" value="-&gt;" onclick="AddServerToPool(document.iform);">
+			</td>
 		</tr>
-              </table>
-</form>
+		<tr>
+			<td width="22%" valign="top" class="vncellreq">List</td>
+			<td width="78%" class="vtable" colspan="2" valign="top">
+				<table>
+					<tbody>
+					<tr>
+						<td valign="top">
+							<input class="formbtn" type="button" name="button2" value="&lt;-" onclick="RemoveServerFromPool(document.iform);">
+						</td>
+						<td>
+							<select id="serversSelect" name="servers[]" multiple="true" size="4" width="22">
+<?php
+							if (is_array($pconfig['servers']))
+								foreach($pconfig['servers'] as $svrent) {
+									echo "<option value=\"{$svrent}\">{$svrent}</option>";
+								}
+?>
+							</select>			
+						</td>
+					</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+		<tr align="left">
+			<td colspan="2" align="center" align="left" valign="bottom">
+				<input name="Submit" type="submit" class="formbtn" value="Save" onClick="AllServers('serversSelect', true)">
+				<?php if (isset($id) && $a_pool[$id]): ?>
+				<input name="id" type="hidden" value="<?=$id;?>">
+				<?php endif; ?>
+			</td>
+		</tr>
+	</table>
+	</form>
+
 <?php include("fend.inc"); ?>
 </body>
 </html>

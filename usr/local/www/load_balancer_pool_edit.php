@@ -157,7 +157,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncellreq">IP</td>
 			<td width="78%" class="vtable">
 				<input name="ipaddr" type="text" size="16"> 
-				<input class="formbtn" type="button" name="button1" value="-&gt;" onclick="AddServerToPool(document.iform);">
+				<input class="formbtn" type="button" name="button1" value="Add to pool" onclick="AddServerToPool(document.iform);">
 			</td>
 		</tr>
 		<tr>
@@ -166,9 +166,6 @@ include("head.inc");
 				<table>
 					<tbody>
 					<tr>
-						<td valign="top">
-							<input class="formbtn" type="button" name="button2" value="&lt;-" onclick="RemoveServerFromPool(document.iform);">
-						</td>
 						<td>
 							<select id="serversSelect" name="servers[]" multiple="true" size="5">
 <?php
@@ -178,6 +175,9 @@ include("head.inc");
 								}
 ?>
 							</select>			
+						</td>
+						<td valign="top">
+							<input class="formbtn" type="button" name="button2" value="Remove from pool" onclick="RemoveServerFromPool(document.iform);">
 						</td>
 					</tr>
 					</tbody>

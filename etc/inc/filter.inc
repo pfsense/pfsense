@@ -1349,14 +1349,17 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						/*   XXX: when slbd writes out helper file,
 						 *        simply read in and feed to route-to
 						 */
-						$line .= " route-to (";
+						$line .= " route-to { ";
 						foreach($lb['servers'] as $server) {
 							$gateway .= $server . " ";
+							if($foundlb == 1)
+								$line .= ", ";
 							$int = guess_interface_from_ip($rule['gateway']);
-							$line .=  $int . " " . $gateway . " ";
+							$line .=  "(" . $int . " " . $gateway . ") ";
+							$foundlb = 1;
 						}
-						$line .= ") ";
-						$foundlb = 1;
+						$line .= "} ";
+						
 					}
 				}
 				if($foundlb == 0) {

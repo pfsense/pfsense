@@ -202,7 +202,7 @@ function system_syslogd_start() {
 	else
 		killbypid("{$g['varrun_path']}/syslog.pid");
 
-	if (isset($syslogcfg['enable'])) {
+	if (isset($syslogcfg)) {
 		if($config['installedpackages']['package']) {
                         foreach($config['installedpackages']['package'] as $package) {
                                 if($package['logging']) {	

@@ -2213,6 +2213,12 @@ function create_firewall_outgoing_rules_to_itself() {
 		}
 	}
 
+	/* setup outgoing gif tunnels */
+	$number_of_gifs = find_last_gif_device();
+	for($x=0; $x<$number_of_gifs; $x++) {
+		$rule .="pass out quick on gif{$x} all keep state label \"let out anything from firewall host itself ipsec gif\"\n";
+	}
+
 	return $rule;
 }
 

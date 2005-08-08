@@ -84,7 +84,7 @@ if ($_POST) {
 				if($POST['type'] == "server") {
 					$input_errors[] = "{$svrent} is not a valid IP address.";
 				} else {
-					$split_ip = split("|", $svrent);
+					$split_ip = split("\|", $svrent);
 					if(!is_ipaddr($split_ip[0]))
 						$input_errors[] = "{$split_ip[0]} is not a valid IP address.";
 					if(!is_ipaddr($split_ip[1]))

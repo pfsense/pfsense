@@ -1356,7 +1356,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 							$gateway .= $server . " ";
 							if($foundlb == 1)
 								$line .= ", ";
-							if(stristr($rule['gateway'], "|") == true) {
+							if(stristr($rule['gateway'], "\|") == true) {
 								$split_ip = split("\|", $rule['gateway']);
 								$rule['gateway'] = $split_ip[0];
 								$gateway .= $rule['gateway'] . " ";

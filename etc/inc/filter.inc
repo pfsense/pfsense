@@ -1345,7 +1345,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				$foundlb = 0;
 				foreach($config['load_balancer']['lbpool'] as $lb) {
 					if($lb['name'] == $rule['gateway']) {
-						$gateway = "";
+						$gateway = $rule['gateway'];
 						$line .= " route-to { ";
 						if(file_exists("{$g['tmp_path']}/{$lb['name']}.pool")) {
 							$lbs = split("\n", file_get_contents("{$g['tmp_path']}/{$lb['name']}.pool"));
@@ -1361,7 +1361,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 								$rule['gateway'] = $split_ip[0];
 								$gateway .= $rule['gateway'] . " ";
 							}
-							$int = guess_interface_from_ip($rule['gateway']);
+							$int = guess_interface_from_ip($gateway);
 							$line .=  "(" . $int . " " . $gateway . ") ";
 							$foundlb = 1;
 						}

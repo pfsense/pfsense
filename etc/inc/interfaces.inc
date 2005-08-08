@@ -676,7 +676,7 @@ EOD;
         /* fire up dhclient */
         mwexec_bg("/sbin/dhclient -c {$g['varetc_path']}/dhclient_wan.conf {$wanif} >/tmp/{$wanif}_output >/tmp/{$wanif}_error_output");
 
-	$fout = fopen("/tmp//sbin/ifconfig_{$wanif}","w");
+	$fout = fopen("/tmp/ifconfig_{$wanif}","w");
 	fwrite($fout, "/sbin/dhclient -c {$g['varetc_path']}/dhclient_wan.conf {$wanif}");
 	fclose($fout);
 

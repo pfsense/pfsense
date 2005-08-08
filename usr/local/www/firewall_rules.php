@@ -55,10 +55,12 @@ if ($config['pppoe']['mode'] == "server")
 
 /* add ipsec filter gif interfaces */
 $a_ipsec = &$config['ipsec']['tunnel'];
-$i = 0; foreach ($a_ipsec as $ipsecent) {
-	if(isset($ipsecent['creategif'])) {
-		$iflist["gif{$i}"] = "{$ipsecent['descr']}";
-		$i++;
+if(is_array($a_ipsec)) {
+	$i = 0; foreach ($a_ipsec as $ipsecent) {
+		if(isset($ipsecent['creategif'])) {
+			$iflist["gif{$i}"] = "{$ipsecent['descr']}";
+			$i++;
+		}
 	}
 }
 

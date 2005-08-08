@@ -76,11 +76,21 @@ if ($_POST) {
 		if (($_POST['name'] == $config['load_balancer']['lbpool'][$i]['name']) && ($i != $id))
 			$input_errors[] = "This pool name has already been used.  Pool names must be unique.";
 	if (!is_port($_POST['port']))
+		if($POST['type'] == "server")
 			$input_errors[] = "The port must be an integer between 1 and 65535.";
 	if (is_array($_POST['servers'])) {
 		foreach($pconfig['servers'] as $svrent) {
-			if (!is_ipaddr($svrent))
-				$input_errors[] = "{$svrent} is not a valid IP address.";
+			if (!is_ipaddr($svrent)) {
+				if($POST['type'] == "server") {
+					$input_errors[] = "{$svrent} is not a valid IP address.";
+				} else {
+					$split_ip = split("|", $svrent);
+					if(!is_ipaddr($split_ip[0]))
+						$input_errors[] = "{$split_ip[0]} is not a valid IP address.";
+					if(!is_ipaddr($split_ip[1]))
+						$input_errors[] = "{$split_ip[1]} is not a valid IP address.";
+				}
+			}
 		}
 	}
 	if ($_POST['monitor'] != "TCP" && $_POST['monitor'] != "HTTP" && $_POST['monitor'] != "ICMP")

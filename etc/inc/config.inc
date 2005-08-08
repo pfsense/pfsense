@@ -1138,7 +1138,7 @@ function system_start_ftp_helpers() {
 	
 	/* kill off pftpx if its already running */
 	if(is_process_running("pftpx"))
-		mwexec("/usr/bin/killall pftpx");
+		mwexec("/usr/bin/killall pftpx 2>/dev/null");
 
 	/* if we do not have a wanip, launch with just the -g flag */	
 	if($wanip <> "") {

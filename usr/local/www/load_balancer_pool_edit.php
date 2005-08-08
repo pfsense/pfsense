@@ -93,8 +93,11 @@ if ($_POST) {
 			}
 		}
 	}
-	if ($_POST['monitor'] != "TCP" && $_POST['monitor'] != "HTTP" && $_POST['monitor'] != "ICMP")
-		$input_errors[] = "Invalid monitor chosen.";
+
+	if($POST['type'] == "server") {
+		if ($_POST['monitor'] != "TCP" && $_POST['monitor'] != "HTTP" && $_POST['monitor'] != "ICMP")
+			$input_errors[] = "Invalid monitor chosen.";
+	}
 
 	if (!$input_errors) {
 		$poolent = array();

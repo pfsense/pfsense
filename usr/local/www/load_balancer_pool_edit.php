@@ -65,8 +65,8 @@ if ($_POST) {
 		$reqdfields = explode(" ", "name port monitor servers");
 		$reqdfieldsn = explode(",", "Name,Port,Monitor,Server List");
 	} else {
-		$reqdfields = explode(" ", "name monitor servers");
-		$reqdfieldsn = explode(",", "Name,Monitor,Server List");		
+		$reqdfields = explode(" ", "name servers");
+		$reqdfieldsn = explode(",", "Name,Server List");		
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);

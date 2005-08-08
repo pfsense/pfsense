@@ -1347,20 +1347,26 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					if($lb['name'] == $rule['gateway']) {
 						$gateway = $rule['gateway'];
 						$line .= " route-to { ";
+						/* if /tmp/$lbname.pool exists then read in our gateway hints from slbd */
 						if(file_exists("{$g['tmp_path']}/{$lb['name']}.pool")) {
 							$lbs = split("\n", file_get_contents("{$g['tmp_path']}/{$lb['name']}.pool"));
 						} else {
 							$lbs = $lb['servers'];
 						}
+						/* iterate through $lbs and setup items accordingly */
 						foreach($lbs as $server) {
 							$gateway .= $server . " ";
 							if($foundlb == 1)
 								$line .= ", ";
+							/*   we are seperating the monitor address from the gateway
+							 *   using the | character
+							 */  
 							if(stristr($rule['gateway'], "|") == true) {
 								$split_ip = split("\|", $rule['gateway']);
 								$rule['gateway'] = $split_ip[0];
 								$gateway .= $split_ip[0] . " ";
 							}
+							/* deterimine interface from gateway address */
 							$int = guess_interface_from_ip($gateway);
 							$line .=  "(" . $int . " " . $gateway . ") ";
 							$foundlb = 1;

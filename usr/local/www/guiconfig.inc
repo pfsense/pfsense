@@ -234,14 +234,7 @@ function format_bytes($bytes) {
 function get_std_save_message($ok) {
 	global $d_sysrebootreqd_path;
 
-	if ($ok == 0) {
-		if (file_exists($d_sysrebootreqd_path))
-			return "The changes have been saved. You must <a color=\"#FFFF00\" href=\"/reboot.php\">reboot</a> your firewall for changes to take effect.";
-		else
-			return "The changes have been applied successfully.";
-	} else {
-		return "ERROR: the changes could not be applied (error code $ok).";
-	}
+	return "The changes have been applied successfully.";
 }
 
 function pprint_address($adr) {

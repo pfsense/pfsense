@@ -1355,20 +1355,22 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						}
 						/* iterate through $lbs and setup items accordingly */
 						foreach($lbs as $server) {
-							$gateway .= $server . " ";
 							if($foundlb == 1)
 								$line .= ", ";
 							/*   we are seperating the monitor address from the gateway
 							 *   using the | character
 							 */  
-							if(stristr($rule['gateway'], "|") == true) {
-								$split_ip = split("\|", $rule['gateway']);
+							if(stristr($server, "|") == true) {
+								$split_ip = split("\|", $server);
 								$rule['gateway'] = $split_ip[0];
-								$gateway .= $split_ip[0] . " ";
+								$gateway = $split_ip[0];
 							}
 							/* deterimine interface from gateway address */
 							$int = guess_interface_from_ip($gateway);
 							$line .=  "(" . $int . " " . $gateway . ") ";
+							if($int == "") {
+								$line = "# error resolving load balancing {$gateway}";
+							}
 							$foundlb = 1;
 						}
 						$line .= "} ";
@@ -1381,24 +1383,6 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				}
 			}
 			
-			/* Setup outgoing load balancing */
-			if ($config['nat']['outgoingloadbalancing']['rule'] <> "" and
-			    isset($config['nat']['outgoingloadbalancing']['enable'])
-				and $rule['interface'] == "lan") {
-				$tmprules = " route-to { ";
-				$isfirst = 0;
-				foreach ($config['nat']['outgoingloadbalancing']['rule'] as $rules) {
-					if($rules['gatewayip'] <> "") {
-						if($isfirst == 1) $tmprules .= ", ";
-						$lbinf = guess_interface_from_ip($rules['gatewayip']);
-						$tmprules .= " (" . $lbinf . " " . $rules['gatewayip'] . ") ";
-						$isfirst = 1;
-					}
-				}
-				$tmprules .= "} round-robin sticky-address ";
-				$line .= $tmprules;
-			}
-
 			if (isset($rule['protocol'])) {
 				if($rule['protocol'] == "tcp/udp")
 					$line .= "proto { tcp udp } ";

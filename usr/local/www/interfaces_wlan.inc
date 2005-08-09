@@ -102,7 +102,7 @@ function wireless_config_post() {
 }
 
 function wireless_config_print() {
-	global $optcfg, $pconfig, $wlchannels;
+	global $optcfg, $pconfig, $wlchannels, $g;
 ?>
                 <tr> 
                   <td colspan="2" valign="top" height="16"></td>

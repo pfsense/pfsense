@@ -37,7 +37,6 @@ function wireless_config_init() {
 	$pconfig['standard'] = $optcfg['wireless']['standard'];
 	$pconfig['mode'] = $optcfg['wireless']['mode'];
 	$pconfig['ssid'] = $optcfg['wireless']['ssid'];
-	$pconfig['hidessid'] = $optcfg['wireless']['hidessid'];
 	$pconfig['stationname'] = $optcfg['wireless']['stationname'];
 	$pconfig['channel'] = $optcfg['wireless']['channel'];
 	$pconfig['txpower'] = $optcfg['wireless']['txpower'];	
@@ -80,7 +79,6 @@ function wireless_config_post() {
 		$optcfg['wireless']['mode'] = $_POST['mode'];
 		$optcfg['wireless']['ssid'] = $_POST['ssid'];
 		$optcfg['wireless']['ssid'] = $_POST['ssid'];
-		$optcfg['wireless']['hidessid'] = $_POST['hidessid'];
 		$optcfg['wireless']['stationname'] = $_POST['stationname'];
 		$optcfg['wireless']['channel'] = $_POST['channel'];
 		$optcfg['wireless']['txpower'] = $_POST['txpower'];
@@ -149,21 +147,6 @@ function wireless_config_print() {
                   <td class="vtable"><?=$mandfldhtml;?><input name="ssid" type="text" class="formfld" id="ssid" size="20" value="<?=htmlspecialchars($pconfig['ssid']);?>">
                   </td>
                 </tr>
-
-                <tr> 
-                  <td valign="top" class="vncellreq">Hide SSID</td>
-                  <td class="vtable">
-		  <?php
-			if(isset($pconfig['hidessid']))
-				$CHECKED = " CHECKED";
-			else
-				$CHECKED = "";
-		  ?>
-		  <input name="hidessid" type="checkbox" class="formfld" id="hidessid"<?php echo $CHECKED; ?>"><br>
-		  If your operating an access point this option will hide the SSID from being seen by the general public.
-                  </td>
-                </tr>
-
                 <tr> 
                   <td valign="top" class="vncellreq">802.11g only</td>
                   <td class="vtable">
@@ -177,7 +160,6 @@ function wireless_config_print() {
 		  When operating as an access point in 802.11g mode allow only 11g-capable stations to associate (11b-only stations are not permitted to associate).
                   </td>
                 </tr>
-
                 <tr> 
                   <td valign="top" class="vncellreq">Transmit power</td>
                   <td class="vtable">
@@ -195,7 +177,6 @@ function wireless_config_print() {
 			Note: Typically only a few discreet power settings are available and the driver will use the setting closest to the specified value.  Not all adaptors support changing the transmit power setting.
                   </td>
                 </tr>
-
                 <tr> 
                   <td valign="top" class="vncellreq">Channel</td>
                   <td class="vtable"><select name="channel" class="formfld" id="channel">

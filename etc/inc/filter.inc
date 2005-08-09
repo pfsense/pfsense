@@ -1373,7 +1373,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 							}
 							$foundlb = 1;
 						}
-						$line .= "} round-robin ";
+						$line .= "} round-robin sticky-address ";
 					}
 				}
 				/*  we're not using load balancing, just setup gateway */

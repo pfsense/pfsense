@@ -131,4 +131,10 @@
                         <type>password</type>
                 </field>
 	</fields>
+	<custom_add_php_command_late>
+            /* resync */
+            interfaces_carp_bringup();
+            /* setup carp interfaces */
+            interfaces_carp_configure();
+	</custom_add_php_command_late>	
 </packagegui>

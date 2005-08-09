@@ -190,7 +190,7 @@ if ($_POST) {
 		/* sync filter configuration */
 		filter_configure();
 
-		$savemsg = "The changes have been applied.";
+		$savemsg = get_std_save_message($retval);
 	}
 }
 

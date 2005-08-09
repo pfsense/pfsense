@@ -128,6 +128,7 @@ if ($_POST) {
 
 		write_config($changedesc);
 
+		$savemsg = get_std_save_message($retval);
 				
 		if ($dhcpd_was_enabled)
 			$savemsg .= "<br>Note that the DHCP server has been disabled.<br>Please review its configuration " .

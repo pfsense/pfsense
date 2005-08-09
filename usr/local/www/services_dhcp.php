@@ -145,17 +145,10 @@ if ($_POST) {
 			interfaces_staticarp_configure($if);
 		
 		$retval = 0;
-		if (!file_exists($d_sysrebootreqd_path)) {
-			config_lock();
-			$retval = services_dhcpd_configure();
-			config_unlock();
-		}
+		config_lock();
+		$retval = services_dhcpd_configure();
+		config_unlock();
 		$savemsg = get_std_save_message($retval);
-		
-		if ($retval == 0) {
-			if (file_exists($d_staticmapsdirty_path))
-				unlink($d_staticmapsdirty_path);
-		}
 	}
 }
 

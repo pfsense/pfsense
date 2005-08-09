@@ -262,7 +262,7 @@ if ($_POST) {
 		/* bring up carp interfaces */
 		interfaces_carp_bringup();		
 			
-		$savemsg = "The changes have been applied.";
+		$savemsg = get_std_save_message($retval);
 	}
 }
 

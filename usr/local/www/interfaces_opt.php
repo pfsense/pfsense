@@ -41,10 +41,14 @@ else if ($_POST['index'])
 if (!$index)
 	exit;
 
-$optcfg = &$config['interfaces']['opt' . $index];
-$optcfg['descr'] = str_replace(" ", "_", $optcfg['descr']);
+function remove_bad_chars($string) {
+	return preg_replace('/[^a-z]/i','',$string);
+}
 
-$pconfig['descr'] = str_replace(" ", "_", $optcfg['descr']);
+$optcfg = &$config['interfaces']['opt' . $index];
+$optcfg['descr'] = remove_bad_chars($optcfg['descr']);
+
+$pconfig['descr'] = $optcfg['descr'];
 $pconfig['bridge'] = $optcfg['bridge'];
 
 $pconfig['bandwidth'] = $optcfg['bandwidth'];
@@ -78,7 +82,7 @@ if ($_POST) {
 	unset($input_errors);
 
 	/* filter out spaces from descriptions  */
-	$POST['descr'] = str_replace(" ", "_", $POST['descr']);
+	$POST['descr'] = remove_bad_chars($POST['descr']);
 
 	$pconfig = $_POST;
 
@@ -142,7 +146,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 
-		$optcfg['descr'] = str_replace(" ", "_", $_POST['descr']);
+		$optcfg['descr'] = remove_bad_chars($_POST['descr']);
 		$optcfg['bridge'] = $_POST['bridge'];
 		$optcfg['enable'] = $_POST['enable'] ? true : false;
 		

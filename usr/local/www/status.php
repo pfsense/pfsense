@@ -135,6 +135,8 @@ defCmdT("cat {$g['tmp_path']}/rules.debug","cat {$g['tmp_path']}/rules.debug");
 
 defCmdT("config.xml","dumpconfigxml");
 
+defCmdT("Interrupts", "vmstat -i");
+
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
 

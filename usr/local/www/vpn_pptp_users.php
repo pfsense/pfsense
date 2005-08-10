@@ -115,10 +115,10 @@ include("head.inc");
                   <td class="list"> <a href="vpn_pptp_users_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add user" width="17" height="17" border="0"></a></td>
 				</tr>
               </table>
+</div>
 			</td>
 	</tr>
 </table>
-</div>
 </form>
 <?php include("fend.inc"); ?>
 <script type="text/javascript">

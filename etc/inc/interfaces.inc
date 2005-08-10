@@ -693,7 +693,6 @@ function interfaces_wan_dhcp_down() {
 	global $config;
 	$wancfg = $config['interfaces']['wan'];
 	$wanif = $wancfg['if'];
-	mwexec("/sbin/dhclient -r");
 	mwexec("/sbin/ifconfig {$wanif} delete");
 	sleep(1);
 }

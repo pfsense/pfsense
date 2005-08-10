@@ -362,6 +362,7 @@ function interfaces_carp_configure() {
 		}
 	}
 	/* remove any dangling carp references */
+	$carp_instances_counter++;
 	for($x=$carp_instances_counter; $x<$total_carp_interfaces_defined; $x++) {
 		mwexec("/sbin/ifconfig carp{$x} down");
 		mwexec("/sbin/ifconfig carp{$x} destroy");

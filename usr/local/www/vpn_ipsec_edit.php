@@ -160,7 +160,8 @@ if ($_POST) {
 		$input_errors[] = "A valid remote network address must be specified.";
 	}
 	if (($_POST['remotegw'] && !is_ipaddr($_POST['remotegw']))) {
-		$input_errors[] = "A valid remote gateway address must be specified.";
+		if($_POST['p1myidentt'] <> "dyn_dns")
+			$input_errors[] = "A valid remote gateway address must be specified.";
 	}
 	if ((($_POST['p1myidentt'] == "address") && !is_ipaddr($_POST['p1myident']))) {
 		$input_errors[] = "A valid IP address for 'My identifier' must be specified.";

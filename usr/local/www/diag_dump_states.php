@@ -50,7 +50,7 @@ include("fbegin.inc");
 <form action="carp_status.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
-<div id="mainlevel">
+<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td>
 <?php
@@ -125,13 +125,6 @@ foreach($states as $state) {
 </div>
 
 <?php include("fend.inc"); ?>
-<script type="text/javascript">
-NiftyCheck();
-Rounded("div#mainlevel","bl br","#FFF","#eeeeee","smooth");
-</script>
-
 <meta http-equiv="refresh" content="60;url=diag_dump_states.php">
-
 </body>
 </html>
-

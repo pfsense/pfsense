@@ -126,6 +126,14 @@ upgrade)
 pfSenseupgrade)
 	# wait 5 seconds before beginning
 	sleep 5
+
+	# Sanity check - bail early if there's no firmware file!
+	if [ ! -r $2 ]; then
+		echo "2nd parameter has not been passed or file does not exist. Exiting." | logger -p daemon.info
+ -i -t Upgrade
+		exit
+	fi
+
 	backup_chflags
 	remove_chflags
 
@@ -140,14 +148,10 @@ pfSenseupgrade)
 	/sbin/mount -w -o noatime /cf 2>/dev/null
 
 	# tar explode image onto hd
-	if [ -r $2 ]; then
-		echo "Installing $2." | logger -p daemon.info -i -t Upgrade
-		/usr/bin/tar xzPf $2 -U -C / | logger -p daemon.info -i -t Upgrade
-		/usr/bin/find / -name CVS -exec rm {} \;
-		echo "Image installed $2." | logger -p daemon.info -i -t Upgrade
-	else
-		echo "2nd paramater has not been passed; skipping." | logger -p daemon.info -i -t Upgrade
-	fi
+	echo "Installing $2." | logger -p daemon.info -i -t Upgrade
+	/usr/bin/tar xzPf $2 -U -C / | logger -p daemon.info -i -t Upgrade
+	/usr/bin/find / -name CVS -exec rm {} \;
+	echo "Image installed $2." | logger -p daemon.info -i -t Upgrade
 
         # process custom image if its passed
         if [ -r $3 ]; then

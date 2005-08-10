@@ -78,7 +78,6 @@ function wireless_config_post() {
 		$optcfg['wireless']['standard'] = $_POST['standard'];
 		$optcfg['wireless']['mode'] = $_POST['mode'];
 		$optcfg['wireless']['ssid'] = $_POST['ssid'];
-		$optcfg['wireless']['ssid'] = $_POST['ssid'];
 		$optcfg['wireless']['stationname'] = $_POST['stationname'];
 		$optcfg['wireless']['channel'] = $_POST['channel'];
 		$optcfg['wireless']['txpower'] = $_POST['txpower'];
@@ -108,8 +107,7 @@ function wireless_config_print() {
                 <tr> 
                   <td colspan="2" valign="top" class="listtopic">Wireless configuration</td>
 				</tr>
-				
-				<?php if (stristr($optcfg['if'], "ath") == true): ?>
+				<?php if (preg_match($g['wireless_regex'], $optcfg['if'])): ?>
                 <tr>
                   <td valign="top" class="vncellreq">Standard</td>
                   <td class="vtable"><select name="standard" class="formfld" id="standard">

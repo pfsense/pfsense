@@ -1288,6 +1288,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					$line = "block return-rst";
 				} else if ($rule['protocol'] == "udp") {
 					$line = "block return-icmp";
+				} else if ($rule['protocol'] == "tcp/udp") {
+                                        $line = "block return";
 				} else {
 					$line = "block";
 				}

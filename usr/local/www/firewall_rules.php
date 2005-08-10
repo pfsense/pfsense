@@ -211,7 +211,7 @@ include("head.inc");
 				  <?php if ($filterent['type'] == "block")
 				  			$iconfn = "block";
 						else if ($filterent['type'] == "reject") {
-							if ($filterent['protocol'] == "tcp" || $filterent['protocol'] == "udp")
+							if ($filterent['protocol'] == "tcp" || $filterent['protocol'] == "udp" || $filterent['protocol'] == "tcp/udp")
 								$iconfn = "reject";
 							else
 								$iconfn = "block";

@@ -1365,7 +1365,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 								$rule['gateway'] = $split_ip[0];
 								$gateway = $split_ip[0];
 							}
-							/* deterimine interface from gateway address */
+							/* determine interface from gateway address */
 							$int = guess_interface_from_ip($gateway);
 							$line .=  "(" . $int . " " . $gateway . ") ";
 							if($int == "") {

@@ -163,6 +163,7 @@ echo "done."
 
 echo -n Starting Secure Shell Services...
 /etc/sshd 2>/dev/null
+echo "done."
 
 echo -n "Starting CRON... "
 /usr/sbin/cron 2>>/tmp/bootup_messages

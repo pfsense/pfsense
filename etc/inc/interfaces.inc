@@ -310,6 +310,7 @@ function interfaces_carp_configure() {
 	unlink_if_exists("/usr/local/pkg/pf/carp_rules.sh");
 	$carp_instances_counter = 0;
 	$pfsync_instances_counter = 0;
+	$total_carp_interfaces_defined = find_number_of_created_carp_interfaces();
 	if (is_array($config['virtualip']['vip'])) {
 		if(is_array($config['installedpackages']['carpsettings']['config'])) {
 			foreach($config['installedpackages']['carpsettings']['config'] as $carp)
@@ -359,6 +360,11 @@ function interfaces_carp_configure() {
 				$carp_instances_counter++;
 			}
 		}
+	}
+	/* remove any dangling carp references */
+	for($x=$carp_instances_counter; $x<$total_carp_interfaces_defined; $x++) {
+		mwexec("/sbin/ifconfig carp{$x} down");
+		mwexec("/sbin/ifconfig carp{$x} destroy");
 	}
 	unmute_kernel_msgs();
 	if ($g['booting']) {

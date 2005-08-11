@@ -176,6 +176,8 @@ function vpn_ipsec_configure($ipchg = false) {
 						$number_of_gifs = find_last_gif_device();
 						$number_of_gifs++;
 						$curwanip = get_current_wan_address();
+						if(is_domain($tunnel['remote-gateway']))
+							$tunnel['remote-gateway'] = gethostbyname($tunnel['remote-gateway']);
 						if($config['installedpackages']['sasyncd']['config'] <> "")
 							foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
 								if($sasyncd['ip'] <> "") 

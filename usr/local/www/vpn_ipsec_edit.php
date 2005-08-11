@@ -160,7 +160,7 @@ if ($_POST) {
 		$input_errors[] = "A valid remote network address must be specified.";
 	}
 	if (($_POST['remotegw'] && !is_ipaddr($_POST['remotegw']))) {
-		if($_POST['p1myidentt'] <> "dyn_dns")
+		if(is_domain($_POST['remotegw']) == false) 
 			$input_errors[] = "A valid remote gateway address must be specified.";
 	}
 	if ((($_POST['p1myidentt'] == "address") && !is_ipaddr($_POST['p1myident']))) {
@@ -171,13 +171,13 @@ if ($_POST) {
 	}
 	if ($_POST['p1myidentt'] == "user_fqdn") {
 		$ufqdn = explode("@",$_POST['p1myident']);
-		if (!is_domain($ufqdn[1])) 
+		if (is_domain($ufqdn[1]) == false) 
 			$input_errors[] = "A valid User FQDN in the form of user@my.domain.com for 'My identifier' must be specified.";
 	}	
 	if ($_POST['p1myidentt'] == "dyn_dns") {
 		$dyn_dns = explode("@",$_POST['p1myident']);
-		//if (!is_domain($dyn_dns[1])) 
-			//$input_errors[] = "A valid Dynamic DNS address for 'My identifier' must be specified.";
+		if (is_domain($dyn_dns[1]) == false) 
+			$input_errors[] = "A valid Dynamic DNS address for 'My identifier' must be specified.";
 	}
 	
 	if ($_POST['p1myidentt'] == "myaddress")

@@ -104,9 +104,7 @@ case ${opmode} in
 	/usr/sbin/tcpdump -n -e -ttt -i pflog0
 	;;
 installer)
-	if [ -e /scripts/lua_installer ]; then
-	    /scripts/lua_installer
-	fi
+        [ -e /scripts/lua_installer ] || /scripts/lua_installer
 	;;
 99)
         if grep "$WORD" "$CONFIG"

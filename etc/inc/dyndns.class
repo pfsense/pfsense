@@ -251,7 +251,7 @@
 					} else if (preg_match('/nochg/i', $data)) {
 						$status = "phpDynDNS: (Success) No Change In IP Address";
 					} else if (preg_match('/good/i', $data)) {
-						$status = "phpDynDNS: (Success) IP Address Changed Successfully!";
+						$status = "phpDynDNS: (Success) IP Address Changed Successfully! (".$this->_dnsIP.")";
 					} else if (preg_match('/noauth/i', $data)) {
 						$status = "phpDynDNS: (Error) User Authorization Failed";
 					} else {

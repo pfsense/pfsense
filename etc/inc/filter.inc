@@ -2107,6 +2107,16 @@ EOD;
 		}
 	}
 
+	/*     is mobile ipsec enabled?  if so lets allow some pretty 
+	 *     loose rules to allow mobile clients to phone in.
+	 */
+	$ipseccfg = $config['ipsec'];
+	if (isset($ipseccfg['mobileclients']['enable'])) {
+		$ipfrules .= "pass quick on " . $wanif . " proto udp from any to any port = 500 keep state label \"IPSEC: Mobile\"\n";
+		$ipfrules .= "pass quick on " . $wanif . " proto esp from any to any keep state label \"IPSEC: Mobile\"\n";
+		$ipfrules .= "pass quick on " . $wanif . " proto ah from any to any  keep state label \"IPSEC: Mobile\"\n";		
+	}
+
 	$ipfrules .= <<<EOD
 
 #---------------------------------------------------------------------------

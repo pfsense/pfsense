@@ -89,8 +89,11 @@ function vpn_ipsec_configure($ipchg = false) {
 
 	/* deterimine if we should load the via padlock module */
 	$dmesg_boot = file_get_contents("/var/log/dmesg.boot");
-	if(stristr($dmesg_boot, "Padlock"))
+	if(stristr($dmesg_boot, "Padlock")) {
+		if($g['booting'] == true)
+			echo "[VIA Padlock] ";
 		mwexec("/sbin/kldload padlock");
+	}
 
 	if(isset($config['ipsec']['preferredoldsa'])) {
 		mwexec("/sbin/sysctl net.key.preferred_oldsa=0");

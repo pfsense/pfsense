@@ -697,6 +697,16 @@ function interfaces_wan_dhcp_down() {
 	sleep(1);
 }
 
+function interfaces_dhcp_down($interface) {
+	global $config;
+	$wancfg = $config['interfaces']['wan'];
+	$wanif = $wancfg['if'];
+	mwexec("/sbin/ifconfig {$interface} delete");
+	$pid_dhclient = `ps awux | grep dhclient | grep {$interface}`;
+	mwexec("kill {$pid_dhclient}");
+	sleep(1);
+}
+
 function interfaces_wan_dhcp_up() {
 	interfaces_wan_dhcp_configure();
 	sleep(1);

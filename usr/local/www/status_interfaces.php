@@ -2,8 +2,11 @@
 <?php
 /*
 	status_interfaces.php
-	part of m0n0wall (http://m0n0.ch/wall)
+        part of pfSense
+	Copyright (C) 2005 Scott Ullrich <sullrich@gmail.com>.
+	All rights reserved.
 
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -36,14 +39,14 @@ $wancfg = &$config['interfaces']['wan'];
 if ($_POST) {
 	if ($_POST['submit'] == "Disconnect" || $_POST['submit'] == "Release") {
 		if ($wancfg['ipaddr'] == "dhcp")
-			interfaces_wan_dhcp_down();
+			interfaces_dhcp_down($_POST['interface']);
 		else if ($wancfg['ipaddr'] == "pppoe")
 			interfaces_wan_pppoe_down();
 		else if ($wancfg['ipaddr'] == "pptp")
 			interfaces_wan_pptp_down();
 	} else if ($_POST['submit'] == "Connect" || $_POST['submit'] == "Renew") {
 		if ($wancfg['ipaddr'] == "dhcp")
-			interfaces_wan_dhcp_up();
+			interfaces_dhcp_up($_POST['interface']);
 		else if ($wancfg['ipaddr'] == "pppoe")
 			interfaces_wan_pppoe_up();
 		else if ($wancfg['ipaddr'] == "pptp")
@@ -104,7 +107,7 @@ function get_interface_info($ifdescr) {
 	/* loop through optional interfaces looking to see if they are dhcp */
         for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
                 $ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
-                if (($ifdescr == "opt$j") && ($config['interfaces']['opt' . $j]['ipaddr'] == "dhcp")) {
+                if (($ifdescr == "opt{$j}") && ($config['interfaces']['opt' . $j]['ipaddr'] == "dhcp")) {
                         /* see if dhclient is up */
                         if (is_process_running("dhclient") == true)
                                 $ifinfo['dhcplink'] = "up";
@@ -227,11 +230,9 @@ include("head.inc");
 <p class="pgtitle"><?=$pgtitle?></p>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <?php $i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
-
 		for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 			$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
 		}
-
 		foreach ($ifdescrs as $ifdescr => $ifname):
 			$ifinfo = get_interface_info($ifdescr);
 			$realint = filter_translate_type_to_real_interface($ifname);
@@ -345,7 +346,7 @@ include("head.inc");
                 <td width="22%" class="vncellt">In/out packets</td>
                 <td width="78%" class="listr">
                   <?=htmlspecialchars($ifinfo['inpkts'] . "/" . $ifinfo['outpkts'] . " (" .
-				  		format_bytes($ifinfo['inbytes']) . "/" . format_bytes($ifinfo['outbytes']) . ")");?>
+			format_bytes($ifinfo['inbytes']) . "/" . format_bytes($ifinfo['outbytes']) . ")");?>
                 </td>
               </tr><?php if (isset($ifinfo['inerrs'])): ?>
               <tr>
@@ -370,7 +371,8 @@ include("head.inc");
 </strong>Using dial-on-demand will bring the connection up again if any packet
 triggers it. To substantiate this point: disconnecting manually
 will <strong>not</strong> prevent dial-on-demand from making connections
-to the outside! Don't use dial-on-demand if you want to make sure that the line is kept disconnected.
+to the outside! Don't use dial-on-demand if you want to make sure that the line 
+is kept disconnected.
 
 <meta http-equiv="refresh" content="120;url=<?php print $_SERVER['PHP_SELF']; ?>">
 

@@ -646,6 +646,49 @@ EOD;
 	return 0;
 }
 
+function interfaces_dhcp_configure($interface) {
+	global $config, $g;
+
+	$optcfg = $config['interfaces'][$interface];
+
+	/* generate dhclient_$interface.conf */
+	$fd = fopen("{$g['varetc_path']}/dhclient_{$interface}.conf", "w");
+	if (!$fd) {
+		printf("Error: cannot open dhclient_{$interface}.conf in interfaces_dhcp_configure({$$interface}) for writing.\n");
+		return 1;
+	}
+
+ 	$dhclientconf = "";
+
+ 	if ($optcfg['dhcphostname']) {
+		$dhclientconf .= <<<EOD
+interface "{$optcfg['if']}" {
+	send dhcp-client-identifier "{$optcfg['dhcphostname']}";
+	send host-name "{$optcfg['dhcphostname']}";
+	script "/sbin/dhclient-script";
+}
+
+EOD;
+	}
+
+	fwrite($fd, $dhclientconf);
+	fclose($fd);
+	
+	$optif = $optcfg['if'];
+	
+        /* bring wan interface up before starting dhclient */
+        mwexec("/sbin/ifconfig {$optif} up");
+
+        /* fire up dhclient */
+        mwexec("/sbin/dhclient -b -c {$g['varetc_path']}/dhclient_{$optif}.conf {$optif} >/tmp/{$optif}_output >/tmp/{$optif}_error_output");
+
+	$fout = fopen("/tmp/ifconfig_{$optif}","w");
+	fwrite($fout, "/sbin/dhclient -b -c {$g['varetc_path']}/dhclient_{$optif}.conf {$optif}");
+	fclose($fout);
+
+	return 0;
+}
+
 function interfaces_wan_dhcp_configure() {
 	global $config, $g;
 
@@ -705,6 +748,11 @@ function interfaces_dhcp_down($interface) {
 	$pid_dhclient = `ps awux | grep dhclient | grep {$interface}`;
 	if($pid_dhclient)
 		mwexec("kill {$pid_dhclient}");
+	sleep(1);
+}
+
+function interfaces_dhcp_up($interface) {
+	interfaces_dhcp_configure($interface);
 	sleep(1);
 }
 

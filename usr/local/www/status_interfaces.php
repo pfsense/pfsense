@@ -101,6 +101,16 @@ function get_interface_info($ifdescr) {
 		else
 			$ifinfo['dhcplink'] = "down";
 	}
+        for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+                $ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
+                if (($ifdescr == "opt$j") && ($config['interfaces']['opt' . $j]['ipaddr'] == "dhcp")) {
+                        /* see if dhclient is up */
+                        if (is_process_running("dhclient") == true)
+                                $ifinfo['dhcplink'] = "up";
+                        else
+                                $ifinfo['dhcplink'] = "down";
+                }
+        }
 
 	/* PPPoE interface? -> get status from virtual interface */
 	if (($ifdescr == "wan") && ($config['interfaces']['wan']['ipaddr'] == "pppoe")) {

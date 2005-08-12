@@ -321,6 +321,7 @@ function openwindow(url) {
 <?php
 			$files = return_dir_as_array("/usr/local/www/themes/");
 			foreach($files as $f) {
+				if (substr($f, 0, 1) == "_") continue;
 				if($f == "CVS") continue;
 				$selected = "";
 				if($f == $config['theme'])

@@ -172,12 +172,16 @@ function vpn_ipsec_configure($ipchg = false) {
 
 					vpn_localnet_determine($tunnel['local-subnet'], $sa, $sn);
 
+					if(is_domain($tunnel['remote-gateway'])) {
+						$tmp = gethostbyname($tunnel['remote-gateway']);
+						if($tmp)
+							$tunnel['remote-gateway'] = $tmp;
+					}
+
 					if(isset($tunnel['creategif'])) {
 						$number_of_gifs = find_last_gif_device();
 						$number_of_gifs++;
 						$curwanip = get_current_wan_address();
-						if(is_domain($tunnel['remote-gateway']))
-							$tunnel['remote-gateway'] = gethostbyname($tunnel['remote-gateway']);
 						if($config['installedpackages']['sasyncd']['config'] <> "")
 							foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
 								if($sasyncd['ip'] <> "") 

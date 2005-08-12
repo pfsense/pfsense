@@ -87,12 +87,14 @@ function find_last_gif_device() {
 function vpn_ipsec_configure($ipchg = false) {
 	global $config, $g;
 
-	/* deterimine if we should load the via padlock module */
-	$dmesg_boot = file_get_contents("/var/log/dmesg.boot");
-	if(stristr($dmesg_boot, "Padlock")) {
-		if($g['booting'] == true)
-			echo "[VIA Padlock] ";
+
+	if($g['booting'] == true) {
+		/* deterimine if we should load the via padlock module */
+		$dmesg_boot = file_get_contents("/var/log/dmesg.boot");
+		if(stristr($dmesg_boot, "Padlock")) {		
+		echo "[VIA Padlock] ";
 		mwexec("/sbin/kldload padlock");
+		}
 	}
 
 	if(isset($config['ipsec']['preferredoldsa'])) {

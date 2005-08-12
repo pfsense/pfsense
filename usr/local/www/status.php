@@ -156,6 +156,7 @@ pre {
 </style>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<?php include("fbegin.inc"); ?>
 <p><span class="pgtitle"><?=$pgtitle;?></span><br>
 <strong><?=$currentDate;?></strong>
 <p><span class="red"><strong>Note: make sure to remove any sensitive information
@@ -167,5 +168,6 @@ Passwords in config.xml have been automatically removed.
 
 <?php execCmds(); ?>
 
+<?php include("fend.inc"); ?>
 </body>
 </html>

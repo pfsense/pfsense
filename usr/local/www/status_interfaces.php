@@ -99,7 +99,7 @@ function get_interface_info($ifdescr) {
 	/* DHCP? -> see if dhclient is up */
 	if (($ifdescr == "wan") && ($config['interfaces']['wan']['ipaddr'] == "dhcp")) {
 		/* see if dhclient is up */
-		if (is_process_running("dhclient") == true)
+		if (is_dhcp_running("wan") == true)
 			$ifinfo['dhcplink'] = "up";
 		else
 			$ifinfo['dhcplink'] = "down";
@@ -109,7 +109,7 @@ function get_interface_info($ifdescr) {
                 $ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
                 if (($ifdescr == "opt{$j}") && ($config['interfaces']['opt' . $j]['ipaddr'] == "dhcp")) {
                         /* see if dhclient is up */
-                        if (is_process_running("dhclient") == true)
+                        if (is_dhcp_running("opt{$j}") == true)
                                 $ifinfo['dhcplink'] = "up";
                         else
                                 $ifinfo['dhcplink'] = "down";

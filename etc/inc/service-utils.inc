@@ -128,6 +128,14 @@ function is_process_running($process) {
     return 0;
 }
 
+function is_dhcp_running($interface) {
+    if(filter_translate_type_to_real_interface($interface) <> "")
+	$interface = filter_translate_type_to_real_interface($interface);
+    $status = `/bin/ps ax | /usr/bin/grep dhclient | grep $interface | grep -v grep | wc -l`;
+    if($status > 0) return 1;
+    return 0;
+}
+
 function restart_service_if_running($service) {
 	global $config;
 	if(is_service_running($service)) 

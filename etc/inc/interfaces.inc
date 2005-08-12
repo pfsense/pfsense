@@ -703,7 +703,8 @@ function interfaces_dhcp_down($interface) {
 	$wanif = $wancfg['if'];
 	mwexec("/sbin/ifconfig {$interface} delete");
 	$pid_dhclient = `ps awux | grep dhclient | grep {$interface}`;
-	mwexec("kill {$pid_dhclient}");
+	if($pid_dhclient)
+		mwexec("kill {$pid_dhclient}");
 	sleep(1);
 }
 

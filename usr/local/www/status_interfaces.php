@@ -214,7 +214,6 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
-<form action="status_interfaces.php" method="post">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <?php $i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
 
@@ -224,7 +223,10 @@ include("head.inc");
 
 		foreach ($ifdescrs as $ifdescr => $ifname):
 			$ifinfo = get_interface_info($ifdescr);
+			$realint = filter_translate_type_to_real_interface($ifname);
 		?>
+		<form action="status_interfaces.php" method="post">
+		<input type="hidden" name="interface" value="<?php echo $realint; ?>">
               <?php if ($i): ?>
               <tr>
 			<td colspan="8" class="list" height="12"></td>
@@ -347,6 +349,7 @@ include("head.inc");
                   <?=htmlspecialchars($ifinfo['collisions']);?>
                 </td>
               </tr><?php endif; ?>
+	      </form>
 	      <?php endif; ?>
               <?php $i++; endforeach; ?>
             </table>

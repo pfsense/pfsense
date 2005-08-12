@@ -73,7 +73,7 @@ function defCmd($command) {
 function listCmds() {
     global $commands;
     echo "<p>This status page includes the following information:\n";
-    echo "<ul>\n";
+    echo "<ul width=\"700\">\n";
     for ($i = 0; isset($commands[$i]); $i++ ) {
         echo "<li><strong><a href=\"#" . $commands[$i][0] . "\">" . $commands[$i][0] . "</a></strong>\n";
     }
@@ -164,9 +164,11 @@ pre {
 information from this page in public places (like mailing lists)!</strong></span><br>
 Passwords in config.xml have been automatically removed.
 
+<div id="cmdspace" style="width:700px">
 <?php listCmds(); ?>
 
 <?php execCmds(); ?>
+</div>
 
 <?php include("fend.inc"); ?>
 </body>

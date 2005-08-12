@@ -101,6 +101,7 @@ function get_interface_info($ifdescr) {
 		else
 			$ifinfo['dhcplink'] = "down";
 	}
+	/* loop through optional interfaces looking to see if they are dhcp */
         for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
                 $ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
                 if (($ifdescr == "opt$j") && ($config['interfaces']['opt' . $j]['ipaddr'] == "dhcp")) {

@@ -87,13 +87,12 @@ function find_last_gif_device() {
 function vpn_ipsec_configure($ipchg = false) {
 	global $config, $g;
 
-
 	if($g['booting'] == true) {
 		/* deterimine if we should load the via padlock module */
 		$dmesg_boot = file_get_contents("/var/log/dmesg.boot");
 		if(stristr($dmesg_boot, "Padlock")) {		
-		echo "[VIA Padlock] ";
-		mwexec("/sbin/kldload padlock");
+			echo "[VIA Padlock] ";
+			mwexec("/sbin/kldload padlock");
 		}
 	}
 

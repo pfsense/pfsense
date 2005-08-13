@@ -30,6 +30,9 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+/* require authentication - usually included in guiconfig.inc */
+require_once('auth.inc');
+
 // VERSION 1.0.4
 
 /********** HTTP GET Based Conf ***********/

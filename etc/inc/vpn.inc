@@ -90,7 +90,7 @@ function vpn_ipsec_configure($ipchg = false) {
 	if($g['booting'] == true) {
 		/* determine if we should load the via padlock module */
 		$dmesg_boot = file_get_contents("/var/log/dmesg.boot");
-		if(stristr($dmesg_boot, "ACE")) {		
+		if(stristr($dmesg_boot, "ACE") == true) {		
 			echo "[VIA Padlock] ";
 			mwexec("/sbin/kldload padlock");
 			mwexec("sysctl net.inet.ipsec.crypto_support=1");

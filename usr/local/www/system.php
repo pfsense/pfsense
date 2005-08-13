@@ -277,7 +277,6 @@ include("head.inc");
 	// restart webgui if proto or port changed
 	if ($restart_webgui) {
 		global $_SERVER;
-		system_webgui_start();
 		if ($pconfig['webguiport']) {
 			$url="{$pconfig['webguiproto']}://{$_SERVER['SERVER_NAME']}:{$pconfig['webguiport']}/system.php";
 		} else {
@@ -285,6 +284,7 @@ include("head.inc");
 		}
 		echo "<p>One moment... switching https mode/port...</p>";
 		echo "<meta http-equiv=\"refresh\" content=\"10;url={$url}\">";
+		system_webgui_start();
 	}
 
 ?>

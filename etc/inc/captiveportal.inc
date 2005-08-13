@@ -261,7 +261,7 @@ function captiveportal_prune_old() {
 
 	/*
 	 *   loop back through and determine if expiretable removed a client.
-	 *   if we detect a client removale then update the internal db accordingly
+	 *   if we detect a client removal then update the internal db accordingly
          */
 	for ($i = 0; $i < count($cpdb); $i++) {
 

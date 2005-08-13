@@ -30,8 +30,9 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/* require authentication - usually included in guiconfig.inc */
-require_once('auth.inc');
+/* Headers are evil, must omit them */
+$omit_nocacheheaders = true;
+require_once('guiconfig.inc');
 
 // VERSION 1.0.4
 

@@ -271,8 +271,6 @@ include("head.inc");
               </table>
 </form>
 <?php include("fend.inc"); ?>
-</body>
-</html>
 <?php
 	// restart webgui if proto or port changed
 	if ($restart_webgui) {
@@ -284,7 +282,11 @@ include("head.inc");
 		}
 		echo "<p>One moment... switching https mode/port...</p>";
 		echo "<meta http-equiv=\"refresh\" content=\"10;url={$url}\">";
-		system_webgui_start();
 	}
 
+?>
+</body>
+</html>
+<?php
+	system_webgui_start();	
 ?>

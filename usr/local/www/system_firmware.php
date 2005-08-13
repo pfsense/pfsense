@@ -92,7 +92,7 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 
                         /* Check for input errors, firmware locks, warnings, then check for firmware if sig_override is set */
                         if (!$input_errors && !file_exists($d_firmwarelock_path) && (!$sig_warning || $_POST['sig_override'])) {
-                                if (!file_exists("{$g['tmp_path']}/firmware.tgz")) {
+                                if (file_exists("{$g['tmp_path']}/firmware.tgz")) {
                                         /* fire up the update script in the background */
                                         touch($d_firmwarelock_path);
                                         $savemsg = "The firmware is now being updated. The firewall will reboot automatically.";

@@ -288,5 +288,7 @@ include("head.inc");
 </body>
 </html>
 <?php
-	system_webgui_start();	
+	if ($restart_webgui) {
+		system_webgui_start();
+	}
 ?>

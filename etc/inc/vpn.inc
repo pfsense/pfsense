@@ -93,6 +93,7 @@ function vpn_ipsec_configure($ipchg = false) {
 		if(stristr($dmesg_boot, "ACE")) {		
 			echo "[VIA Padlock] ";
 			mwexec("/sbin/kldload padlock");
+			mwexec("sysctl net.inet.ipsec.crypto_support=1");
 		}
 	}
 

@@ -146,6 +146,15 @@ if ($_POST) {
 		if ($changecount > 0)
 			write_config($changedesc);
 
+		if ($restart_webgui) {
+			global $_SERVER;
+			if ($pconfig['webguiport']) {
+				$url="{$pconfig['webguiproto']}://{$_SERVER['HTTP_HOST']}:{$pconfig['webguiport']}/system.php";
+			} else {
+				$url = "{$pconfig['webguiproto']}://{$_SERVER['HTTP_HOST']}/system.php";
+			}
+		}
+
 		$retval = 0;
 		if (!file_exists($d_sysrebootreqd_path)) {
 			config_lock();
@@ -164,6 +173,8 @@ if ($_POST) {
 		}
 
 		$savemsg = get_std_save_message($retval);
+		if ($restart_webgui)
+			$savemsg .= "<br />One moment...redirecting to {$url}";
 	}
 }
 
@@ -274,13 +285,6 @@ include("head.inc");
 <?php
 	// restart webgui if proto or port changed
 	if ($restart_webgui) {
-		global $_SERVER;
-		if ($pconfig['webguiport']) {
-			$url="{$pconfig['webguiproto']}://{$_SERVER['SERVER_ADDR']}:{$pconfig['webguiport']}/system.php";
-		} else {
-			$url = "{$pconfig['webguiproto']}://{$_SERVER['SERVER_ADDR']}/system.php";
-		}
-		echo "<p>One moment... switching https mode/port...</p>";
 		echo "<meta http-equiv=\"refresh\" content=\"10;url={$url}\">";
 	}
 
@@ -288,7 +292,5 @@ include("head.inc");
 </body>
 </html>
 <?php
-	if ($restart_webgui) {
-		system_webgui_start();
-	}
-?>
+if ($restart_webgui)
+	system_webgui_start();

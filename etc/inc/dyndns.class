@@ -452,8 +452,9 @@
 		function _detectChange() {
 			$currentTime = time();
 
-			$wan_if = get_real_wan_interface();
-			$wan_ip = find_interface_ip($wan_if);
+			#$wan_if = get_real_wan_interface();
+			#$wan_ip = find_interface_ip($wan_if);
+			$wan_ip = get_current_wan_address();
 			$this->_dnsIP = $wan_ip;
 
 			if (file_exists($this->_cacheFile)) {

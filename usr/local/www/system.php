@@ -276,9 +276,9 @@ include("head.inc");
 	if ($restart_webgui) {
 		global $_SERVER;
 		if ($pconfig['webguiport']) {
-			$url="{$pconfig['webguiproto']}://{$_SERVER['SERVER_NAME']}:{$pconfig['webguiport']}/system.php";
+			$url="{$pconfig['webguiproto']}://{$_SERVER['SERVER_ADDR']}:{$pconfig['webguiport']}/system.php";
 		} else {
-			$url = "{$pconfig['webguiproto']}://{$_SERVER['SERVER_NAME']}/system.php";
+			$url = "{$pconfig['webguiproto']}://{$_SERVER['SERVER_ADDR']}/system.php";
 		}
 		echo "<p>One moment... switching https mode/port...</p>";
 		echo "<meta http-equiv=\"refresh\" content=\"10;url={$url}\">";

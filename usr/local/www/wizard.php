@@ -197,8 +197,14 @@ function enablechange() {
 <center>
 
 &nbsp;<br>
+<?php
+	if($title == "Reload in progress")
+		$ip = "http://{$config['interfacs']['lan']['ipaddr']}";
+	else
+		$ip = "/";
+?>
 
-<a href="/"><img border="0" src="./themes/<?= $g['theme']; ?>/images/logo.gif"></a>
+<a href="<?php echo $ip; ?>"><img border="0" src="./themes/<?= $g['theme']; ?>/images/logo.gif"></a>
 <p>
 
 <div style="width:700px;background-color:#ffffff" id="roundme">

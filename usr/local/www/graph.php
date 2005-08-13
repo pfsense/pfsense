@@ -30,8 +30,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-include("guiconfig.inc");
-
 // VERSION 1.0.4
 
 /********** HTTP GET Based Conf ***********/

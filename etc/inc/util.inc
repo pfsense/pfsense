@@ -239,7 +239,7 @@ function get_interface_list() {
 		if (substr($ifname, -1) == "*")
 			$ifname = substr($ifname, 0, strlen($ifname) - 1);
 
-		if (!preg_match("/^(plip|pflog|ppp|sl|gif|faith|lo|ng|vlan)/", $ifname)) {
+		if (!preg_match("/^(plip|pflog|pfsync|ppp|sl|gif|faith|lo|ng|vlan)/", $ifname)) {
 			$iflist[$ifname] = array();
 
 			$iflist[$ifname]['mac'] = chop($alink[3]);

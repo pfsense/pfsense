@@ -37,7 +37,7 @@ if (!$auth_method())
 	exit;
 
 function basic_auth_prompt(){
-	header("WWW-Authenticate: Basic realm=\"pfSense\"");
+	header("WWW-Authenticate: Basic realm=\".\"");
 	header("HTTP/1.0 401 Unauthorized");
 	echo "You must enter valid credentials to access this resource.";
 	exit;

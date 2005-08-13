@@ -88,7 +88,7 @@ function vpn_ipsec_configure($ipchg = false) {
 	global $config, $g;
 
 	if($g['booting'] == true) {
-		/* deterimine if we should load the via padlock module */
+		/* determine if we should load the via padlock module */
 		$dmesg_boot = file_get_contents("/var/log/dmesg.boot");
 		if(stristr($dmesg_boot, "ACE")) {		
 			echo "[VIA Padlock] ";

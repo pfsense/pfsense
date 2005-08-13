@@ -2081,7 +2081,7 @@ EOD;
 		exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=1");
 	else
 		exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=0");
-	/* deterimine ipsec address */
+	/* determine ipsec address */
 	$ipsec_ip = $wan_ip;
 	/* set failover ip if defined */
 	if(isset($config['installedpackages']['sasyncd']['config']))

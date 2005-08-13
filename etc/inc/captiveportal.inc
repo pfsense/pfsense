@@ -260,7 +260,7 @@ function captiveportal_prune_old() {
 	$after_prune = `/sbin/pfctl -t captiveportal -T show`;
 
 	/*
-	 *   loop back through and deterimine if expiretable removed a client.
+	 *   loop back through and determine if expiretable removed a client.
 	 *   if we detect a client removale then update the internal db accordingly
          */
 	for ($i = 0; $i < count($cpdb); $i++) {

@@ -146,16 +146,6 @@ if ($_POST) {
 		if ($changecount > 0)
 			write_config($changedesc);
 
-		// restart webgui if proto or port changed
-		if ($restart_webgui) {
-			global $_SERVER;
-			system_webgui_start();
-			if ($pconfig['webguiport'])
-				header("Location: {$pconfig['webguiproto']}://{$_SERVER['SERVER_NAME']}:{$pconfig['webguiport']}/system.php");
-			else
-				header("Location: {$pconfig['webguiproto']}://{$_SERVER['SERVER_NAME']}/system.php");
-		}
-
 		$retval = 0;
 		if (!file_exists($d_sysrebootreqd_path)) {
 			config_lock();
@@ -283,3 +273,18 @@ include("head.inc");
 <?php include("fend.inc"); ?>
 </body>
 </html>
+<?php
+	// restart webgui if proto or port changed
+	if ($restart_webgui) {
+		global $_SERVER;
+		system_webgui_start();
+		if ($pconfig['webguiport']) {
+			$url="{$pconfig['webguiproto']}://{$_SERVER['SERVER_NAME']}:{$pconfig['webguiport']}/system.php";
+		} else {
+			$url = "{$pconfig['webguiproto']}://{$_SERVER['SERVER_NAME']}/system.php";
+		}
+		echo "<p>One moment... switching https mode/port...</p>";
+		echo "<meta http-equiv=\"refresh\" content=\"10;url={$url}\">";
+	}
+
+?>

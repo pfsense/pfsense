@@ -74,4 +74,7 @@
 		fwrite($fd, $curwanip);
 		fclose($fd);
 	}
+
+	/* Update dynamic DNS */
+	services_dyndns_configure();
 ?>

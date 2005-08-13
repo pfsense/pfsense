@@ -199,7 +199,7 @@ function enablechange() {
 &nbsp;<br>
 <?php
 	if($title == "Reload in progress")
-		$ip = "http://{$config['interfacs']['lan']['ipaddr']}";
+		$ip = "http://{$config['interfaces']['lan']['ipaddr']}";
 	else
 		$ip = "/";
 ?>

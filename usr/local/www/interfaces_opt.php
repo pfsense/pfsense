@@ -372,7 +372,7 @@ function type_change(enable_change,enable_change_pptp) {
                   <td width="78%" class="vtable">
 			<input name="gateway" value="<?php echo $pconfig['gateway']; ?>">
 			<br>
-			If you have multiple WAN connections, enter the next hop gateway (router) here.  Otherwise, leave this option blank.
+			If you have multiple WAN connections, enter the next hop gateway (router) IP address here.  Otherwise, leave this option blank.
 		  </td>
 		</tr>
                 <tr>

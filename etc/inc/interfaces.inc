@@ -188,9 +188,6 @@ function interfaces_optional_configure() {
 		/* reconfigure static routes (kernel may have deleted them) */
 		system_routing_configure();
 
-		/* set the reload filter dity flag */
-		touch("{$g['tmp_path']}/filter_dirty");
-
 		/* reload IPsec tunnels */
 		vpn_ipsec_configure();
 
@@ -199,6 +196,9 @@ function interfaces_optional_configure() {
 
 		/* restart dnsmasq */
 		services_dnsmasq_configure();
+
+		/* set the reload filter dity flag */
+		touch("{$g['tmp_path']}/filter_dirty");				
 	}
 
 	return 0;
@@ -281,7 +281,7 @@ function interfaces_optional_configure_if($opti) {
 		} else {
 			/* if user has selected DHCP type then act accordingly */
 			if($optcfg['ipaddr'] == "dhcp") {
-				interfaces_opt_dhcp_configure("opt" . $opti);
+				interfaces_opt_dhcp_configure($opti);
 			} else {			
 				mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " " .
 				escapeshellarg($optcfg['ipaddr'] . "/" . $optcfg['subnet']));
@@ -610,7 +610,7 @@ function interfaces_wan_configure() {
 function interfaces_opt_dhcp_configure($interface) {
 	global $config, $g;
 
-	$optcfg = $config['interfaces'][$interface];
+	$optcfg = $config['interfaces']['opt{$interface}']['if'];
 
 	/* generate dhclient_wan.conf */
 	$fd = fopen("{$g['varetc_path']}/dhclient_{$interface}.conf", "w");

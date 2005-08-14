@@ -634,17 +634,22 @@ function setup_wireless_olsr($interface) {
 #
 # Lines starting with a # are discarded
 #
-# This file was shipped with olsrd 0.4.9
+# This file was shipped with olsrd 0.X.X
 #
+
+# This file is an example of a typical
+# configuration for a mostly static
+# network(regarding mobility) using
+# the LQ extention
 
 # Debug level(0-9)
 # If set to 0 the daemon runs in the background
 
-DebugLevel      1
+DebugLevel	2
 
 # IP version to use (4 or 6)
 
-IpVersion       4
+IpVersion	4
 
 # Clear the screen each time the internal state changes
 
@@ -680,20 +685,20 @@ Hna6
 # for a PCMCIA/USB hotswap environment.
 # "yes" OR "no"
 
-AllowNoInt      yes
+AllowNoInt	yes
 
 # TOS(type of service) value for
 # the IP header of control traffic.
 # If not set it will default to 16
 
-#TosValue       16
+#TosValue	16
 
 # The fixed willingness to use(0-7)
 # If not set willingness will be calculated
 # dynamically based on battery/power status
 # if such information is available
 
-#Willingness            4
+#Willingness    	4
 
 # Allow processes like the GUI front-end
 # to connect to the daemon.
@@ -713,11 +718,11 @@ IpcConnect
      Host            127.0.0.1
      #Host            10.0.0.5
 
-     # You can also specify entire net-ranges
+     # You can also specify entire net-ranges 
      # that are allowed to connect. Multiple
      # entries are allowed
 
-     #Net             192.168.1.0 255.255.255.0
+     #Net             192.168.1.0 255.255.255.0     
 }
 
 # Wether to use hysteresis or not
@@ -725,10 +730,10 @@ IpcConnect
 # link sensing but delays neighbor registration.
 # Used by default. 'yes' or 'no'
 
-UseHysteresis   yes
+UseHysteresis	no
 
 # Hysteresis parameters
-# Do not alter these unless you know
+# Do not alter these unless you know 
 # what you are doing!
 # Set to auto by default. Allowed
 # values are floating point values
@@ -736,9 +741,9 @@ UseHysteresis   yes
 # THR_LOW must always be lower than
 # THR_HIGH.
 
-HystScaling     0.50
-HystThrHigh     0.80
-HystThrLow      0.30
+#HystScaling	0.50
+#HystThrHigh	0.80
+#HystThrLow	0.30
 
 
 # Link quality level
@@ -747,17 +752,17 @@ HystThrLow      0.30
 # 2 = use link quality for MPR selection and routing
 # Defaults to 0
 
-#LinkQualityLevel       0
+LinkQualityLevel	2
 
 # Link quality window size
 # Defaults to 10
 
-#LinkQualityWinSize     10
+LinkQualityWinSize	10
 
-# Polling rate in seconds(float).
+# Polling rate in seconds(float). 
 # Default value 0.05 sec
 
-Pollrate        0.05
+Pollrate	0.05
 
 
 # TC redundancy
@@ -770,7 +775,7 @@ Pollrate        0.05
 #
 # defaults to 0
 
-#TcRedundancy   0
+TcRedundancy	2
 
 
 #
@@ -782,13 +787,13 @@ Pollrate        0.05
 #
 # defaults to 1
 
-#MprCoverage    1
+MprCoverage	3
 
 
 # Olsrd plugins to load
 # This must be the absolute path to the file
 # or the loader will use the following scheme:
-# - Try the paths in the LD_LIBRARY_PATH
+# - Try the paths in the LD_LIBRARY_PATH 
 #   environment variable.
 # - The list of libraries cached in /etc/ld.so.cache
 # - /lib, followed by /usr/lib
@@ -807,7 +812,7 @@ Pollrate        0.05
     # how often to check for Internet connectivity
     # defaults to 5 secs
 #   PlParam     "Interval"   "40"
-
+    
     # if one or more IPv4 addresses are given, do a ping on these in
     # descending order to validate that there is not only an entry in
     # routing table, but also a real internet connection. If any of
@@ -829,7 +834,7 @@ Pollrate        0.05
 # !!CHANGE THE INTERFACE LABEL(s) TO MATCH YOUR INTERFACE(s)!!
 # (eg. wlan0 or eth1):
 
-Interface "{$interface}"
+Interface "ath0" "wi0"
 {
 
     # IPv4 broadcast address to use. The
@@ -837,24 +842,24 @@ Interface "{$interface}"
     # If not defined the broadcastaddress
     # every card is configured with is used
 
-    # Ip4Broadcast              255.255.255.255
+    # Ip4Broadcast		255.255.255.255
 
     # IPv6 address scope to use.
     # Must be 'site-local' or 'global'
 
-    # Ip6AddrType               site-local
+    # Ip6AddrType		site-local
 
     # IPv6 multicast address to use when
     # using site-local addresses.
     # If not defined, ff05::15 is used
 
-    # Ip6MulticastSite          ff05::11
+    # Ip6MulticastSite		ff05::11
 
     # IPv6 multicast address to use when
     # using global addresses
     # If not defined, ff0e::1 is used
 
-    # Ip6MulticastGlobal        ff0e::1
+    # Ip6MulticastGlobal	ff0e::1
 
 
     # Emission intervals.
@@ -862,28 +867,28 @@ Interface "{$interface}"
     # be used in most cases.
 
     # Hello interval in seconds(float)
-    # HelloInterval    2.0
+    HelloInterval    2.0
 
     # HELLO validity time
-    # HelloValidityTime 6.0
+    HelloValidityTime	20.0
 
     # TC interval in seconds(float)
-    # TcInterval        5.0
+    TcInterval        5.0
 
     # TC validity time
-    # TcValidityTime    15.0
+    TcValidityTime	30.0
 
     # MID interval in seconds(float)
-    # MidInterval       5.0
+    MidInterval	5.0
 
     # MID validity time
-    # MidValidityTime   15.0
+    MidValidityTime	30.0
 
     # HNA interval in seconds(float)
-    # HnaInterval       5.0
+    HnaInterval	5.0
 
     # HNA validity time
-    # HnaValidityTime   15.0
+    HnaValidityTime 	30.0
 
     # When multiple links exist between hosts
     # the weight of interface is used to determine

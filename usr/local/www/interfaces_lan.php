@@ -90,6 +90,9 @@ if ($_POST) {
 	if (($_POST['subnet'] && !is_numeric($_POST['subnet']))) {
 		$input_errors[] = "A valid subnet bit count must be specified.";
 	}
+	if($_POST['bandwidth'] <> "" && !is_numeric($_POST['bandwidth'])) {
+		$input_errors[] = "A valid bandwidth value is required 1-999999.";
+	}
 
 	/* Wireless interface? */
 	if (isset($lancfg['wireless'])) {

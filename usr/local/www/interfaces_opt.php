@@ -142,8 +142,10 @@ if ($_POST) {
 		}
 	        if ($_POST['mtu'] && (($_POST['mtu'] < 576) || ($_POST['mtu'] > 1500))) {
 			$input_errors[] = "The MTU must be between 576 and 1500 bytes.";
+		}		
+		if($_POST['bandwidth'] <> "" && !is_numeric($_POST['bandwidth'])) {
+			$input_errors[] = "A valid bandwidth value is required 1-999999.";
 		}
-
 	}
 
 	/* Wireless interface? */

@@ -124,8 +124,8 @@ if ($_POST) {
 				$input_errors[] = "Interfaces cannot be bridged while the captive portal is enabled.";
 			}
 		} else {
-			$reqdfields = explode(" ", "descr");
-			$reqdfieldsn = explode(",", "Description");
+                        $reqdfields = explode(" ", "descr ipaddr subnet");
+                        $reqdfieldsn = explode(",", "Description,IP address,Subnet bit count");
 
 			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 

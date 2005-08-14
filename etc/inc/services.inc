@@ -834,7 +834,7 @@ MprCoverage	3
 # !!CHANGE THE INTERFACE LABEL(s) TO MATCH YOUR INTERFACE(s)!!
 # (eg. wlan0 or eth1):
 
-Interface "ath0" "wi0"
+Interface "{$interface}" 
 {
 
     # IPv4 broadcast address to use. The

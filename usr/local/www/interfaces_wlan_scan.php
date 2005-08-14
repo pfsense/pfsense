@@ -44,8 +44,9 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 
+echo "Scanning nodes... One moment please...";
 $scan_nodes = `/sbin/ifconfig {$_GET['interface']} scan`;
-echo "<PRE>";
+echo "<P>Available nodes:<PRE>";
 echo $scan_nodes;
 echo "</PRE>";
 

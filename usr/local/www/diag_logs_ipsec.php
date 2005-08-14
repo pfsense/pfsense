@@ -34,7 +34,7 @@
 
 require("guiconfig.inc");
 
-$ipsec_logfile = "{$g['varlog_path']}/ipsec.log";
+$system_logfile = "{$g['varlog_path']}/system.log";
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
@@ -75,7 +75,7 @@ include("head.inc");
 		  		<tr>
 					<td colspan="2" class="listtopic">Last <?=$nentries;?> IPSEC log entries</td>
 		  		</tr>
-				<?php dump_clog($ipsec_logfile, $nentries, true, array("racoon")); ?>
+				<?php dump_clog($system_logfile, $nentries, true, array("racoon")); ?>
 				<tr>
 					<td>
 						<br>

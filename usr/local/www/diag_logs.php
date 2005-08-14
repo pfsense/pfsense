@@ -76,7 +76,7 @@ include("head.inc");
 				<tr>
 					<td colspan="2" class="listtopic">Last <?=$nentries;?> system log entries</td>
 				</tr>
-				<?php dump_clog($system_logfile, $nentries); ?>
+				<?php dump_clog($system_logfile, $nentries, true, "", array("racoon")); ?>
 				<tr>
 					<td>
 						<br>

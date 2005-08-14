@@ -2,7 +2,7 @@
 <?php
 /* $Id$ */
 /*
-	interfaces_wan.php
+	interfaces_wlan_scan.php
         Copyright (C) 2004 Scott Ullrich
 	All rights reserved.
         

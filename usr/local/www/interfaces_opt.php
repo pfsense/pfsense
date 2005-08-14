@@ -146,6 +146,9 @@ if ($_POST) {
 		if($_POST['bandwidth'] <> "" && !is_numeric($_POST['bandwidth'])) {
 			$input_errors[] = "A valid bandwidth value is required 1-999999.";
 		}
+		if (($_POST['spoofmac'] && !is_macaddr($_POST['spoofmac']))) {
+			$input_errors[] = "A valid MAC address must be specified.";
+		}		
 	}
 
 	/* Wireless interface? */

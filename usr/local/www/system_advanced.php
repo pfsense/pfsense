@@ -79,12 +79,17 @@ if ($_POST) {
 	if ($_POST['altfirmwareurl'])
 		if ($_POST['firmwareurl'] == "" || $_POST['firmwarename'] == "")
 		$input_errors[] = "You must specify a base URL and a filename for the alternate firmware.";
-
 	if ($_POST['altpkgconfigurl'])
 		if ($_POST['pkgconfig_base_url'] == "" || $_POST['pkgconfig_filename'] == "")
 		$input_errors[] = "You must specifiy and base URL and a filename before using an alternate pkg_config.xml.";
 	}
-
+	if ($_POST['maximumstates'] <> "") {
+		if ($_POST['maximumstates'] < 1000)
+			$input_errors[] = "States must be above 1000 and below 100000000";
+		if ($_POST['maximumstates'] > 100000000)
+			$input_errors[] = "States must be above 1000 and below 100000000";
+	}
+	
 	if (!$input_errors) {
 		if($_POST['disablefilter'] == "yes") {
 			$config['system']['disablefilter'] = "enabled";

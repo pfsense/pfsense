@@ -76,10 +76,12 @@ function wireless_config_post() {
 	/* loop through keys and enforce size */
 	for ($i = 1; $i <= 4; $i++) {
 		if ($_POST['key' . $i]) {
+			/* 64 bit */
 			if(strlen($_POST['key' . $i]) == 5)
 				continue;
 			if(strlen($_POST['key' . $i]) == 10)
 				continue;
+			/* 128 bit */
 			if(strlen($_POST['key' . $i]) == 13)
 				continue;
 			if(strlen($_POST['key' . $i]) == 26)

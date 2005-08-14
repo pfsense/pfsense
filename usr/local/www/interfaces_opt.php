@@ -134,6 +134,10 @@ if ($_POST) {
 				$input_errors[] = "A valid subnet bit count must be specified.";
 			}
 		}
+	        if ($_POST['mtu'] && (($_POST['mtu'] < 576) || ($_POST['mtu'] > 1500))) {
+			$input_errors[] = "The MTU must be between 576 and 1500 bytes.";
+		}
+
 	}
 
 	/* Wireless interface? */

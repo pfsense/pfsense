@@ -61,6 +61,7 @@ $pconfig['blockbogons'] = isset($optcfg['blockbogons']);
 $pconfig['spoofmac'] = $optcfg['spoofmac'];
 $pconfig['mtu'] = $optcfg['mtu'];
 
+
 /* Wireless interface? */
 if (isset($optcfg['wireless'])) {
 	require("interfaces_wlan.inc");
@@ -69,6 +70,7 @@ if (isset($optcfg['wireless'])) {
 
 if ($optcfg['ipaddr'] == "dhcp") {
 	$pconfig['type'] = "DHCP";
+	$pconfig['dhcphostname'] = $optcfg['dhcphostname'];
 } else {
 	$pconfig['type'] = "Static";
 	$pconfig['ipaddr'] = $optcfg['ipaddr'];
@@ -149,6 +151,8 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
+
+		unset($optcfg['dhcphostname']);
 
 		$optcfg['descr'] = remove_bad_chars($_POST['descr']);
 		$optcfg['bridge'] = $_POST['bridge'];
@@ -362,10 +366,23 @@ function type_change(enable_change,enable_change_pptp) {
 			If you have multiple WAN connections, enter the next hop gateway (router) here.  Otherwise, leave this option blank.
 		  </td>
 		</tr>
-
                 <tr>
                   <td colspan="2" valign="top" height="16"></td>
                 </tr>
+                <tr>
+                  <td colspan="2" valign="top" class="listtopic">DHCP client configuration</td>
+                </tr>
+                <tr>
+                  <td valign="top" class="vncell">Hostname</td>
+                  <td class="vtable"> <input name="dhcphostname" type="text" class="formfld" id="dhcphostname" size="40" value="<?=htmlspecialchars($pconfig['dhcphostname']);?>">
+                    <br>
+                    The value in this field is sent as the DHCP client identifier
+                    and hostname when requesting a DHCP lease. Some ISPs may require
+                    this (for client identification).</td>
+                </tr>
+                <tr>
+                  <td colspan="2" valign="top" height="16"></td>
+                </tr>		
                 <tr>
                   <td colspan="2" valign="top" class="vnsepcell">Bandwidth Management (Traffic Shaping)</td>
                 </tr>

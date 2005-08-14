@@ -129,13 +129,13 @@ function enable_hardware_offloading($interface) {
 			mwexec("/sbin/ifconfig {$interface} link0");
 		}
 	}
+	if(stristr($options, "txcsum") == true)
+	    mwexec("/sbin/ifconfig {$interface} txcsum 2>/dev/null");
+	if(stristr($options, "rxcsum") == true)    
+	    mwexec("/sbin/ifconfig {$interface} rxcsum 2>/dev/null");    
+	if(stristr($options, "polling") == true)
+	    mwexec("/sbin/ifconfig {$interface} polling 2>/dev/null");
     }
-    if(stristr($options, "txcsum") == true)
-	mwexec("/sbin/ifconfig {$interface} txcsum 2>/dev/null");
-    if(stristr($options, "rxcsum") == true)    
-	mwexec("/sbin/ifconfig {$interface} rxcsum 2>/dev/null");    
-    if(stristr($options, "polling") == true)
-	mwexec("/sbin/ifconfig {$interface} polling 2>/dev/null");
     return;
 }
 

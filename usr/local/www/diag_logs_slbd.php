@@ -84,5 +84,6 @@ include("head.inc");
   </tr>
 </table>
 <?php include("fend.inc"); ?>
+<meta http-equiv="refresh" content="60;url=<?php print $_SERVER['PHP_SELF']; ?>">
 </body>
 </html>

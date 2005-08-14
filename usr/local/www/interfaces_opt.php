@@ -124,20 +124,19 @@ if ($_POST) {
 				$input_errors[] = "Interfaces cannot be bridged while the captive portal is enabled.";
 			}
 		} else {
-                        $reqdfields = explode(" ", "descr ipaddr subnet");
-                        $reqdfieldsn = explode(",", "Description,IP address,Subnet bit count");
-
-			do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-
-			if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
-				$input_errors[] = "A valid IP address must be specified.";
-			}
-			if (($_POST['subnet'] && !is_numeric($_POST['subnet']))) {
-				$input_errors[] = "A valid subnet bit count must be specified.";
-			}
-			
-			if($_POST['gateway'] <> "" && !is_ipaddr($_POST['gateway'])) {
-				$input_errors[] = "A valid gateway must be specified.";
+			if ($_POST['type'] <> "DHCP") {
+				$reqdfields = explode(" ", "descr ipaddr subnet");
+				$reqdfieldsn = explode(",", "Description,IP address,Subnet bit count");
+				do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+				if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
+					$input_errors[] = "A valid IP address must be specified.";
+				}
+				if (($_POST['subnet'] && !is_numeric($_POST['subnet']))) {
+					$input_errors[] = "A valid subnet bit count must be specified.";
+				}
+				if($_POST['gateway'] <> "" && !is_ipaddr($_POST['gateway'])) {
+					$input_errors[] = "A valid gateway must be specified.";
+				}
 			}
 		}
 	        if ($_POST['mtu'] && (($_POST['mtu'] < 576) || ($_POST['mtu'] > 1500))) {

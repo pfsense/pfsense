@@ -623,7 +623,7 @@ function interfaces_opt_dhcp_configure($interface) {
 
  	if ($optcfg['dhcphostname']) {
 		$dhclientconf .= <<<EOD
-interface "{$optcfg['if']}" {
+	interface "{$optcfg['if']}" {
 	send dhcp-client-identifier "{$optcfg['dhcphostname']}";
 	send host-name "{$optcfg['dhcphostname']}";
 	script "/sbin/dhclient-script";
@@ -637,7 +637,7 @@ EOD;
 	
 	$optif = $optcfg['if'];
 	
-        /* bring wan interface up before starting dhclient */
+        /* bring interface up before starting dhclient */
         mwexec("/sbin/ifconfig {$optif} up");
 
         /* fire up dhclient */
@@ -744,11 +744,11 @@ function interfaces_dhcp_down($interface) {
 	global $config;
 	$wancfg = $config['interfaces']['wan'];
 	$wanif = $wancfg['if'];
-	mwexec("/sbin/ifconfig {$interface} delete");
+	mwexec("/sbin/ifconfig {$interface} down");
+	sleep(1);
 	$pid_dhclient = `ps awux | grep dhclient | grep {$interface}`;
 	if($pid_dhclient)
 		mwexec("kill {$pid_dhclient}");
-	sleep(1);
 }
 
 function interfaces_dhcp_up($interface) {

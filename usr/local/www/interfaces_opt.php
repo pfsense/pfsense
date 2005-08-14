@@ -135,6 +135,10 @@ if ($_POST) {
 			if (($_POST['subnet'] && !is_numeric($_POST['subnet']))) {
 				$input_errors[] = "A valid subnet bit count must be specified.";
 			}
+			
+			if($_POST['gateway'] <> "" && !is_ipaddr($_POST['gateway'])) {
+				$input_errors[] = "A valid gateway must be specified.";
+			}
 		}
 	        if ($_POST['mtu'] && (($_POST['mtu'] < 576) || ($_POST['mtu'] > 1500))) {
 			$input_errors[] = "The MTU must be between 576 and 1500 bytes.";

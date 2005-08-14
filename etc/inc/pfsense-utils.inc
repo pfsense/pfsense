@@ -121,16 +121,21 @@ function return_dir_as_array($dir) {
  ******/
 function enable_hardware_offloading($interface) {
     global $g;
+    $options = strtolower(`/sbin/ifconfig {$interface} | grep options`);
     if($g['booting']) {
-		$supported_ints = array('fxp');
-		foreach($supported_ints as $int) {
-			if(stristr($interface,$int) != false) {
-		    	mwexec("/sbin/ifconfig $interface link0");
-			}
+	$supported_ints = array('fxp');
+	foreach($supported_ints as $int) {
+		if(stristr($interface,$int) != false) {
+			mwexec("/sbin/ifconfig {$interface} link0");
 		}
+	}
     }
-    mwexec("/sbin/ifconfig $interface txcsum 2>/dev/null");
-    mwexec("/sbin/ifconfig $interface rxcsum 2>/dev/null");    
+    if(stristr($options, "txcsum") == true)
+	mwexec("/sbin/ifconfig {$interface} txcsum 2>/dev/null");
+    if(stristr($options, "rxcsum") == true)    
+	mwexec("/sbin/ifconfig {$interface} rxcsum 2>/dev/null");    
+    if(stristr($options, "polling") == true)
+	mwexec("/sbin/ifconfig {$interface} polling 2>/dev/null");
     return;
 }
 

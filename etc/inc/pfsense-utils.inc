@@ -56,16 +56,18 @@ function get_dns_servers() {
 	return $dns_servers;
 }
 
+ 	
 /****f* pfsense-utils/log_error
- * NAME
- *   log_error	- Sends a string to syslog.
- * INPUTS
- *   $error	- string containing the syslog message.
- * RESULT
- *   null
- ******/
+* NAME
+*   log_error  - Sends a string to syslog.
+* INPUTS
+*   $error     - string containing the syslog message.
+* RESULT
+*   null
+******/
 function log_error($error) {
-    syslog(LOG_WARNING, $error);
+    $page = $_SERVER['PHP_SELF'];
+    syslog(LOG_WARNING, "$page: $error");
     return;
 }
 

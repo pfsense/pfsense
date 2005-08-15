@@ -2091,7 +2091,10 @@ EOD;
 	}	
 	if(is_array($config['ipsec']['tunnel'])) {
 		foreach ($config['ipsec']['tunnel'] as $tunnel) {
-			$remote_gateway = $tunnel['remote-gateway'];
+			/* is this a dynamic dns hostname? */
+			$remote_gateway = gethostbyname($tunnel['remote-gateway']);
+			if($remote_gateway == "")
+				$remote_gateway = $tunnel['remote-gateway'];
 			$local_subnet = return_vpn_subnet($tunnel['local-subnet']);
 			$ipfrules .= "pass quick on " . $wanif . " proto udp from " . $ipsec_ip . " to " . $remote_gateway . " port = 500 keep state label \"IPSEC: ". $tunnel['descr'] ." udp\"\n";
 			$ipfrules .= "pass quick on " . $wanif . " proto udp from " . $remote_gateway . " to " . $ipsec_ip  . " port = 500 keep state label \"". $tunnel['descr'] ." udp\"\n";

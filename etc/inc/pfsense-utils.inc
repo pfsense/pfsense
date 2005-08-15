@@ -123,6 +123,9 @@ function enable_hardware_offloading($interface) {
     global $g;
     $options = strtolower(`/sbin/ifconfig {$interface} | grep options`);
     if($g['booting']) {
+	/* translate wan, lan, opt -> real interface if needed */
+	$int = filter_translate_type_to_real_interface($interface);
+	if($int <> "") $interface = $int;	
 	$supported_ints = array('fxp');
 	foreach($supported_ints as $int) {
 		if(stristr($interface,$int) != false) {

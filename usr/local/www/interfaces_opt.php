@@ -150,6 +150,11 @@ if ($_POST) {
 		}		
 	}
 
+	if($_POST['mtu']) {
+		if($_POST['mtu'] < 24 or $_POST['mtu'] > 1501)
+			$input_errors[] = "A valid MTU is required 24-1500.";
+	}
+	
 	/* Wireless interface? */
 	if (isset($optcfg['wireless'])) {
 		$wi_input_errors = wireless_config_post();

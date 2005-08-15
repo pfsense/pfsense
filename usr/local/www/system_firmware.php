@@ -34,6 +34,19 @@ $d_isfwfile = 1;
 require_once("guiconfig.inc");
 require_once("xmlrpc_client.inc");
 
+/* if upgrade in progress, alert user */
+if(file_exists($d_firmwarelock_path)) {
+	$pgtitle = "System: Firmware: Manual Update";
+	include("head.inc");
+	echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">";
+	include("fbegin.inc");
+	echo "<p class=\"pgtitle\"><?=$pgtitle?></p>";
+	echo "A upgrade is currently in progress.";
+	include("fend.inc");
+	echo "</body>";
+	echo "</html>";
+}
+
 /* Handle manual upgrade */
 if ($_POST && !file_exists($d_firmwarelock_path)) {
 

@@ -281,7 +281,7 @@ function interfaces_optional_configure_if($opti) {
 		} else {
 			/* if user has selected DHCP type then act accordingly */
 			if($optcfg['ipaddr'] == "dhcp") {
-				interfaces_opt_dhcp_configure($opti);
+				interfaces_opt_dhcp_configure("opt{$opti}");
 			} else {			
 				mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " " .
 				escapeshellarg($optcfg['ipaddr'] . "/" . $optcfg['subnet']));
@@ -610,7 +610,7 @@ function interfaces_wan_configure() {
 function interfaces_opt_dhcp_configure($interface) {
 	global $config, $g;
 
-	$optcfg = $config['interfaces']['opt{$interface}'];
+	$optcfg = $config['interfaces'][$interface];
 	$optif = $optcfg['if'];
 
 	/* generate dhclient_wan.conf */

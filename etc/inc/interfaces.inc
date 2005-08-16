@@ -610,7 +610,8 @@ function interfaces_wan_configure() {
 function interfaces_opt_dhcp_configure($interface) {
 	global $config, $g;
 
-	$optcfg = $config['interfaces']['opt{$interface}']['if'];
+	$optcfg = $config['interfaces']['opt{$interface}'];
+	$optif = $optcfg['if'];
 
 	/* generate dhclient_wan.conf */
 	$fd = fopen("{$g['varetc_path']}/dhclient_{$interface}.conf", "w");
@@ -634,9 +635,7 @@ EOD;
 
 	fwrite($fd, $dhclientconf);
 	fclose($fd);
-	
-	$optif = $optcfg['if'];
-	
+
         /* bring interface up before starting dhclient */
         mwexec("/sbin/ifconfig {$optif} up");
 

@@ -120,8 +120,6 @@ if ($_POST) {
 		else
 			$a_maps[] = $mapent;
 		
-		touch($d_staticmapsdirty_path);
-		
 		write_config();
 		
 		header("Location: services_dhcp.php?if={$if}");

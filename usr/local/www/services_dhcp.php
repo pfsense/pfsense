@@ -136,8 +136,8 @@ if ($_POST) {
 		$config['dhcpd'][$if]['gateway'] = $_POST['gateway'];
 
 		$config['dhcpd'][$if]['staticarp'] = $_POST['staticarp'] ? true : false;
-
 	
+
 		write_config();
 
 		/* static arp configuration */
@@ -156,7 +156,6 @@ if ($_GET['act'] == "del") {
 	if ($a_maps[$_GET['id']]) {
 		unset($a_maps[$_GET['id']]);
 		write_config();
-		touch($d_staticmapsdirty_path);
 		header("Location: services_dhcp.php?if={$if}");
 		exit;
 	}

@@ -120,6 +120,8 @@ if ($_POST) {
 		config_unlock();
 		
 		$savemsg = get_std_save_message($retval);
+		
+		filter_configure();
 	}
 }
 

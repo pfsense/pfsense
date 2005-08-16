@@ -614,9 +614,9 @@ function interfaces_opt_dhcp_configure($interface) {
 	$optif = $optcfg['if'];
 
 	/* generate dhclient_wan.conf */
-	$fd = fopen("{$g['varetc_path']}/dhclient_{$interface}.conf", "w");
+	$fd = fopen("{$g['varetc_path']}/dhclient_{$optif}.conf", "w");
 	if (!$fd) {
-		printf("Error: cannot open dhclient_{$interface}.conf in interfaces_opt_dhcp_configure({$interface}) for writing.\n");
+		printf("Error: cannot open dhclient_{$optif}.conf in interfaces_opt_dhcp_configure({$optif}) for writing.\n");
 		return 1;
 	}
 
@@ -624,7 +624,7 @@ function interfaces_opt_dhcp_configure($interface) {
 
  	if ($optcfg['dhcphostname']) {
 		$dhclientconf .= <<<EOD
-	interface "{$optcfg['if']}" {
+	interface "{$optif}" {
 	send dhcp-client-identifier "{$optcfg['dhcphostname']}";
 	send host-name "{$optcfg['dhcphostname']}";
 	script "/sbin/dhclient-script";
@@ -640,7 +640,7 @@ EOD;
         mwexec("/sbin/ifconfig {$optif} up");
 
         /* fire up dhclient */
-        mwexec("/sbin/dhclient -b -c {$g['varetc_path']}/dhclient_{$interface}.conf {$optif}");
+        mwexec("/sbin/dhclient -b -c {$g['varetc_path']}/dhclient_{$optif}.conf {$optif}");
 
 	return 0;
 }

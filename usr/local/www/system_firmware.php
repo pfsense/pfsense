@@ -43,6 +43,7 @@ if(file_exists($d_firmwarelock_path)) {
 	echo "<p class=\"pgtitle\"><?=$pgtitle?></p>\n";
 	echo "<div>\n";
 	print_info_box("A upgrade is currently in progress.<p>The firewall will reboot when the operation is complete.");
+	echo "<center><img src='/themes/<?= $g['theme']; ?>/images/icons/icon_fw-update.gif'>";
 	echo "</div>\n";
 	include("fend.inc");
 	echo "</body>";

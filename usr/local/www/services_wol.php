@@ -59,6 +59,19 @@ if ($_POST || $_GET['mac']) {
 	if (!$if)
 		$input_errors[] = "A valid interface must be specified.";
 
+	if($_GET['wakeall'] <> "") {
+		$i = 0;
+		$savemsg = "";
+		foreach ($a_wol as $wolent) {
+			$mac = $wolent['mac'];
+			$if = $wolent['interface'];
+			$bcip = gen_subnet_max($config['interfaces'][$if]['ipaddr'],
+				$config['interfaces'][$if]['subnet']);
+			mwexec("/usr/local/bin/wol -i {$bcip} {$mac}");
+			$savemsg .= "Sent magic packet to {$mac}.<br>";
+		}
+	}
+
 	if (!$input_errors) {
 		/* determine broadcast address */
 		$bcip = gen_subnet_max($config['interfaces'][$if]['ipaddr'],
@@ -164,7 +177,10 @@ Click the MAC address to wake up a computer. <br>
                   <td class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
-                        <td valign="middle"><a href="services_wol_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+                        <td valign="middle">
+				<a href="services_wol_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a>
+				Wake <a href="services_wol.php?wakeall=true">All</a> Clients
+			</td>
                       </tr>
                     </table>
                   </td>

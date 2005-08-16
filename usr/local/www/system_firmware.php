@@ -48,6 +48,7 @@ if(file_exists($d_firmwarelock_path)) {
 	include("fend.inc");
 	echo "</body>";
 	echo "</html>";
+	exit;
 }
 
 /* Handle manual upgrade */

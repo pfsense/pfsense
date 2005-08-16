@@ -41,7 +41,9 @@ if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) {
+	exec("killall syslogd");
 	exec("/usr/sbin/clog -i -s 262144 {$ipsec_logfile}");
+	system_syslogd_start();	
 }
 
 $pgtitle = "Diagnostics: System logs: IPSEC VPN";

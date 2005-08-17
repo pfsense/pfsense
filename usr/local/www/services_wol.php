@@ -139,7 +139,9 @@ include("head.inc");
                       <br>
                       You may store MAC addresses below for your convenience.
 Click the MAC address to wake up a computer. <br>
-&nbsp;
+&nbsp;<br>
+You also can wake all clients at once: <a href="services_wol.php?wakeall=true"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_wol_all.gif" width="17" height="17" border="0"></a><br>
+&nbsp;<br>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="15%" class="listhdrr">Interface</td>
@@ -179,11 +181,13 @@ Click the MAC address to wake up a computer. <br>
                       <tr>
                         <td valign="middle">
 				<a href="services_wol_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a>
-				Wake <a href="services_wol.php?wakeall=true">All</a> Clients
+				
 			</td>
+
                       </tr>
                     </table>
                   </td>
+                  			
 		</tr>
               </table>
 </form>

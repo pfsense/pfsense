@@ -86,6 +86,8 @@ function wireless_config_post() {
 				continue;
 			if(strlen($_POST['key' . $i]) == 26)
 				continue;
+			if(strlen($_POST['key' . $i]) == 28)
+				continue;
 			$input_errors[] =  "Invalid wep key size.   Sizes should be 40 (64) bit keys or 104 (128) bit.";
 			break;
 		}

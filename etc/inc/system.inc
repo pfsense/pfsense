@@ -43,6 +43,13 @@ function system_resolvconf_generate($dynupdate = false) {
 		return 1;
 	}
 
+	$dhfd = @fopen("{$g['etc_path']}/dhclient-enter-hooks", "w");
+	if (!$dhfd) {
+		printf("Error: cannot open dhclient-enter-hooks in system_resolvconf_generate().\n");
+		return 1;
+	}
+
+
 	$resolvconf = "domain {$syscfg['domain']}\n";
 
 	$havedns = false;
@@ -71,7 +78,19 @@ function system_resolvconf_generate($dynupdate = false) {
 				$resolvconf .= "nameserver $ns\n";
 			$havedns = true;
 		}
+
+		/* create a dhclient-enter-hooks, so resolv.conf stays intact */
+		$dhcliententerhooks = "add_new_resolv_conf() {\n";
+		$dhcliententerhooks .= "\techo search {$syscfg['domain']} > \$RESOLV\n";
+		foreach ($syscfg['dnsserver'] as $ns) {
+			if ($ns)
+				$dhcliententerhooks .= "\techo nameserver $ns > \$RESOLV\n";
 	}
+		$dhcliententerhooks .= "}\n";
+	}
+
+	fwrite($dhfd, $dhcliententerhooks);
+	fclose($dhfd);
 
 	fwrite($fd, $resolvconf);
 	fclose($fd);

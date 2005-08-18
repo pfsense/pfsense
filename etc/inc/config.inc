@@ -1153,6 +1153,7 @@ function cleanup_backupcache($revisions = 30) {
 	global $g;
 	$i = false;
 	if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
+		conf_mount_rw();
 		$backups = get_backups();
 		$newbaks = array();
 		$bakfiles = glob($g['cf_conf_path'] . "/backup/config-*");
@@ -1192,6 +1193,7 @@ function cleanup_backupcache($revisions = 30) {
 		$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
         	fwrite($bakout, serialize($tocache));
   	        fclose($bakout);
+		conf_mount_ro();
 	}
 	if($g['booting']) {
 		if($i) {

@@ -235,10 +235,9 @@ include("head.inc");
 		}
 		foreach ($ifdescrs as $ifdescr => $ifname):
 			$ifinfo = get_interface_info($ifdescr);
-			$realint = filter_translate_type_to_real_interface($ifname);
 		?>
 		<form action="status_interfaces.php" method="post">
-		<input type="hidden" name="interface" value="<?php echo $realint; ?>">
+		<input type="hidden" name="interface" value="<?php echo $ifdescr; ?>">
               <?php if ($i): ?>
               <tr>
 			<td colspan="8" class="list" height="12"></td>

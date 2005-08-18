@@ -819,6 +819,17 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 						echo "<option value=\"{$lb['name']}\">{$lb['name']}</option>\n";
 					}		
 				}
+				for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+					if($config['interfaces']['opt' . $i]['ipaddr'] == "dhcp") {
+						$descr = $config['interfaces']['opt' . $i]['descr'];
+						if ($pconfig['gateway'] == $config['interfaces']['opt' . $i]) {
+							$selected = " SELECTED";	
+						} else {
+							$selected = "";
+						}
+						echo "<option value=\"opt{$i}\" {$selected}>OPT{$i} - {$descr}</option>\n";
+					}
+				}
 			?>
 			</select>
 			<p><strong>Leave blank for default.

@@ -101,7 +101,7 @@ if ($_POST) {
 		
 		if ((ip2long($_POST['ipaddr']) >= $dynsubnet_start) &&
 				(ip2long($_POST['ipaddr']) <= $dynsubnet_end)) {
-			$input_errors[] = "Static IP addresses may not lie within the dynamic client range.";
+			$input_errors[] = "Static IP address falls within the dynamic client range.";
 		}
 		if ((ip2long($_POST['ipaddr']) < $lansubnet_start) ||
 			(ip2long($_POST['ipaddr']) > $lansubnet_end)) {

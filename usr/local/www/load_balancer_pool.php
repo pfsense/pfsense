@@ -103,7 +103,7 @@ include("head.inc");
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="10%" class="listhdrr">Name</td>
-                  <td width="25%" class="listhdrr">Servers</td>
+                  <td width="25%" class="listhdrr">Servers/Gateways</td>
                   <td width="10%" class="listhdrr">Port</td>
                   <td width="15%" class="listhdrr">Monitor</td>
                   <td width="30%" class="listhdr">Description</td>

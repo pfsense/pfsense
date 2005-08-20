@@ -30,7 +30,7 @@ restore_chflags() {
 remove_chflags() {
 	TOPROCESS="bin lib libexec sbin sys usr"
 	for files in $TOPROCESS; do
-		/usr/bin/chflags -R noschg /${files}
+		/bin/chflags -R noschg /${files}
 		/bin/chmod -R u+rw /${files}
 	done
 }

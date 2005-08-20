@@ -1274,6 +1274,10 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		if ($rule['destination']['address'] && !alias_expand($rule['destination']['address'])) {
 			return "# unresolvable dest aliases " . $rule['descr'];
 		}
+
+		$ifdescrs = array();
+		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+			$ifdescrs[] = "opt" . $i;
 		
 		for ($iif = 0; $iif < $nif; $iif++) {
 			$type = $rule['type'];
@@ -1341,13 +1345,26 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			if($rg <> "" and $ri <> "" and stristr($rule['interface'],"opt") == true) {
 				$line .= "reply-to (" . $ri . " " . $rg . ") ";
 			}
-			
+
 			/* if user has selected a custom gateway, lets work with it */
 			if($rule['gateway'] <> "") {
 				$foundlb = 0;
 				foreach($config['load_balancer']['lbpool'] as $lb) {
 					if($lb['name'] == $rule['gateway']) {
 						$gateway = $rule['gateway'];
+						/*
+						*    is $gateway a interface name?
+						*    if so, lets find out the gateway address
+						*    from /tmp/router_bleh.router
+						*/
+					        if(in_array($gateway, $ifdescrs)==true) {
+							if(is_file("{$g["tmp_path"]}/{$gateway}_router")) {
+								$return_gateway = file_get_contents("{$g["tmp_path"]}/{$gateway}_router");
+							} else {
+								log_error("Could not find {$g["tmp_path"]}/{$gateway}_router.  Needed for dhcp gateway information");
+								continue;
+							}
+					        }
 						$line .= " route-to { ";
 						/* if /tmp/$lbname.pool exists then read in our gateway hints from slbd */
 						if(file_exists("{$g['tmp_path']}/{$lb['name']}.pool")) {
@@ -1380,8 +1397,25 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				}
 				/*  we're not using load balancing, just setup gateway */
 				if($foundlb == 0) {
-					$int = guess_interface_from_ip($rule['gateway']);
-					$line .= " route-to (" . $int . " " . $rule['gateway'] . ") ";
+					$gateway = $rule['gateway'];
+					/*
+					*    is $gateway a interface name?
+					*    if so, lets find out the gateway address
+					*    from /tmp/router_bleh.router
+					*/
+					if(in_array($gateway, $ifdescrs)==true) {
+						if(is_file("{$g["tmp_path"]}/{$gateway}_router")) {
+							$gatewayip = file_get_contents("{$g["tmp_path"]}/{$gateway}_router");
+						} else {
+							log_error("Could not find {$g["tmp_path"]}/{$gateway}_router.  Needed for dhcp gateway information");
+							continue;
+						}
+					} else {
+						/* user picked a real gateway ip */
+						$gatewayip = $rule['gateway'];
+					}
+					$int = guess_interface_from_ip($gatewayip);
+					$line .= " route-to (" . $int . " " . $gatewayip . ") ";
 				}
 			}
 			
@@ -2172,13 +2206,12 @@ function create_firewall_outgoing_rules_to_itself() {
 	$rule .= "# pass traffic from firewall -> out\n";
 	$rule .= "anchor \"firewallout\"\n";
 	$ifdescrs = array('wan', 'lan');
-	
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
 		$ifdescrs['opt' . $j] = "opt" . $j;
-	
 	/* go through primary and optional interfaces */	
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		$return_gateway = $config['interfaces'][$ifname]['gateway'];
+		$ints = array();
 		$int = filter_translate_type_to_real_interface($ifname);
                 if ($config['interfaces'][$ifname]['ipaddr'] == "pppoe")
                         $int = "ng0";
@@ -2201,7 +2234,6 @@ function create_firewall_outgoing_rules_to_itself() {
 		}
 
 	}
-	
 	/* is bridging turned on? */
 	for($x=0; $x<10; $x++) {
 		if(does_interface_exist("bridge{$x}") == true) {

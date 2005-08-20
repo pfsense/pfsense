@@ -990,7 +990,7 @@ function display_topbar($text = "", $bg_color="#990000", $replace_color="#FFFFFF
 	echo "</script>";
 }
 
-/****f* pfsense-utils/generate_random_mac
+/****f* pfsense-utils/generate_random_mac_address
  * NAME
  *   generate_random_mac - generates a random mac address
  * INPUTS
@@ -998,7 +998,7 @@ function display_topbar($text = "", $bg_color="#990000", $replace_color="#FFFFFF
  * RESULT
  *   $mac - a random mac address
  ******/
-function generate_random_mac() {
+function generate_random_mac_address() {
 	$mac = "00:a0:8e";
 	for($x=0; $x<3; $x++) 
 	    $mac .= ":" . dechex(rand(16, 255));

@@ -58,7 +58,7 @@ list($pconfig['wins1'],$pconfig['wins2']) = $config['dhcpd'][$if]['winsserver'];
 $pconfig['enable'] = isset($config['dhcpd'][$if]['enable']);
 $pconfig['denyunknown'] = isset($config['dhcpd'][$if]['denyunknown']);
 $pconfig['staticarp'] = isset($config['dhcpd'][$if]['staticarp']);
-
+$pconfig['failover_peerip'] = $config['dhcpd'][$if]['failover_peerip'];
 
 $ifcfg = $config['interfaces'][$if];
 
@@ -126,7 +126,8 @@ if ($_POST) {
 		$config['dhcpd'][$if]['maxleasetime'] = $_POST['maxtime'];
 		$config['dhcpd'][$if]['enable'] = $_POST['enable'] ? true : false;
 		$config['dhcpd'][$if]['denyunknown'] = $_POST['denyunknown'] ? true : false;
-		
+		$config['dhcpd'][$if]['failover_peerip'] = $_POST['failover_peerip'];
+				
 		unset($config['dhcpd'][$if]['winsserver']);
 		if ($_POST['wins1'])
 			$config['dhcpd'][$if]['winsserver'][] = $_POST['wins1'];
@@ -288,6 +289,15 @@ The default is to use the IP of the firewall as the gateway.  Specify an alterna
                           for a specific expiration time.<br>
                           The default is 86400 seconds.</td>
                       </tr>
+		      
+                      <tr>
+                        <td width="22%" valign="top" class="vncell">Failover peer IP:</td>
+                        <td width="78%" class="vtable">
+				<input name="maxtime" type="text" class="formfld" id="maxtime" size="10" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br>
+				Leave blank to disable.  Peer must be present in Virtual IP's with a type of CARP.
+			</td>
+		      </tr>
+		      
                       <tr>
                         <td width="22%" valign="top" class="vncell">Static ARP</td>
                         <td width="78%" class="vtable">

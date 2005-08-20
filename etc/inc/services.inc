@@ -78,6 +78,51 @@ ddns-update-style none;
 EOD;
 
 	$dhcpdifs = array();
+	
+	/*    loop through and deterimine if we need to setup
+	 *    failover peer "bleh" entries
+	 */
+	$dhcpnum = 0;
+	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
+		if($dhcpifconf['failover_peerip'] <> "") {
+			/*
+			 *    yep, failover peer is defined.
+			 *    does it match up to a defined vip?
+			 */
+			$skew = 1;
+			foreach ($a_vip as $vipent) {
+				$int = guess_interface_from_ip($vipent['subnet']);
+				$intip = find_interface_ip($int);
+				if($int == $dhcpif) {
+					/* this is the interface! */
+					if($vipent['advskew'] == "0")
+						$skew = 0;
+				}
+			}
+			if($skew == 1) {
+				$type = "secondary";
+			} else {
+				$type = "primary";
+			}
+			$dhcpdconf .= <<<EOPP
+failover peer "dhcp{$dhcpnum}" { 
+  {$type};
+  address {$intip};
+  port 520;
+  peer address {$dhcpifconf['failover_peerip']};
+  peer port 519;
+  max-response-delay 60;
+  max-unacked-updates 10;
+}
+EOPP;
+		$dhcpnum++;
+
+			
+		}
+	}
+
+	$dhcpnum = 0;
+
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
 
 		$ifcfg = $config['interfaces'][$dhcpif];
@@ -113,6 +158,11 @@ EOD;
 			$routers = $dhcpifconf['gateway'];
 		else
 			$routers = $ifcfg['ipaddr'];
+
+		if($dhcpifconf['failover_peerip'] <> "") {
+			$dhcpdconf .= "		failover peer \"dhcp{$dhcpnum}\";\n";
+			$dhcpnum++;
+		}
 
 		$dhcpdconf .= <<<EOD
 		range {$dhcpifconf['range']['from']} {$dhcpifconf['range']['to']};

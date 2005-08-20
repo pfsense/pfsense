@@ -200,6 +200,7 @@ function enable_change(enable_over) {
 	document.iform.deftime.disabled = endis;
 	document.iform.maxtime.disabled = endis;
 	document.iform.gateway.disabled = endis;
+	document.iform.failover_peerip.disabled = endis;
 }
 //-->
 </script>
@@ -313,7 +314,7 @@ The default is to use the IP of the firewall as the gateway.  Specify an alterna
                       <tr>
                         <td width="22%" valign="top" class="vncell">Failover peer IP:</td>
                         <td width="78%" class="vtable">
-				<input name="maxtime" type="text" class="formfld" id="maxtime" size="10" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br>
+				<input name="failover_peerip" type="text" class="formfld" id="failover_peerip" size="10" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br>
 				Leave blank to disable.  Peer must be present in Virtual IP's with a type of CARP.
 			</td>
 		      </tr>

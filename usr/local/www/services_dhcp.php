@@ -201,6 +201,8 @@ function enable_change(enable_over) {
 	document.iform.maxtime.disabled = endis;
 	document.iform.gateway.disabled = endis;
 	document.iform.failover_peerip.disabled = endis;
+	document.iform.staticarp.disabled = endis;
+	
 }
 //-->
 </script>

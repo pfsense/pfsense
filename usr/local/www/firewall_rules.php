@@ -54,12 +54,14 @@ if ($config['pppoe']['mode'] == "server")
 	$iflist['pppoe'] = "PPPoE VPN";
 
 /* add ipsec filter gif interfaces */
-$a_ipsec = &$config['ipsec']['tunnel'];
-if(is_array($a_ipsec)) {
-	$i = 0; foreach ($a_ipsec as $ipsecent) {
-		if(isset($ipsecent['creategif'])) {
-			$iflist["gif{$i}"] = "{$ipsecent['descr']}";
-			$i++;
+if (is_array($config['ipsec']['tunnel']) && isset($config['ipsec']['enable'])) {
+	$a_ipsec = &$config['ipsec']['tunnel'];
+	if(is_array($a_ipsec)) {
+		$i = 0; foreach ($a_ipsec as $ipsecent) {
+			if(isset($ipsecent['creategif'])) {
+				$iflist["gif{$i}"] = "{$ipsecent['descr']}";
+				$i++;
+			}
 		}
 	}
 }

@@ -116,6 +116,8 @@ upgrade)
 
 	restore_chflags
 
+	rm -f /var/run/firmware.lock
+
 	# remount /cf ro
 	/sbin/umount -f /cf
 	/sbin/mount -r /cf
@@ -169,6 +171,8 @@ pfSenseupgrade)
 	ln -s /var/etc/hosts /etc/hosts
 
 	restore_chflags
+	
+	rm -f /var/run/firmware.lock
 
 	# remount /cf ro
 	/sbin/umount -f /cf 2>/dev/null

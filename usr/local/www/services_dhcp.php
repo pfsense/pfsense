@@ -68,6 +68,19 @@ if (!is_array($config['dhcpd'][$if]['staticmap'])) {
 staticmaps_sort($if);
 $a_maps = &$config['dhcpd'][$if]['staticmap'];
 
+function is_inrange($test, $start, $end) {
+	$tmp = explode(".", $test);
+	$o_test = $tmp[3];
+	$tmp = explode(".", $start);
+	$o_start = $tmp[3];
+	$tmp = explode(".", $end);
+	$o_end = $tmp[3];
+
+	if ( ($o_test < $o_end) && ($o_test > $o_start) )
+		return true;
+	else
+		return false;
+}
 
 if ($_POST) {
 
@@ -81,6 +94,13 @@ if ($_POST) {
 		$reqdfieldsn = explode(",", "Range begin,Range end");
 		
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+
+		foreach($a_maps as $mapent) {
+			if(is_inrange($mapent['ipaddr'], $_POST['range_from'], $_POST['range_to'])) {
+				$input_errors[] = "{$mapent['ipaddr']} is inside the range you specified.";
+			}
+
+		}
 		
 		if (($_POST['range_from'] && !is_ipaddr($_POST['range_from']))) {
 			$input_errors[] = "A valid range must be specified.";

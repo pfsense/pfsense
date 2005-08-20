@@ -102,8 +102,8 @@ defCmdT("pfctl -sr", "/sbin/pfctl -sr");
 defCmdT("pfctl -ss", "/sbin/pfctl -ss");
 defCmdT("pfctl -si", "/sbin/pfctl -si");
 defCmdT("pfctl -sa"," /sbin/pfctl -sa");
-defCmdT("pfctl -s rules -v","/sbin/pfctl -s rules -v");
-defCmdT("pfctl -s queue -v","/sbin/pfctl -s queue -v");
+defCmdT("pfctl -s rules -vv","/sbin/pfctl -s rules -vv");
+defCmdT("pfctl -s queue -vv","/sbin/pfctl -s queue -vv");
 defCmdT("pfctl -vsq","/sbin/pfctl -vsq");
 
 defCmdT("pftop -w 150 -a -b","/usr/local/sbin/pftop -a -b");

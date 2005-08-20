@@ -192,7 +192,6 @@ include("head.inc");
 function enable_change(enable_over) {
 	var endis;
 	endis = !(document.iform.enable.checked || enable_over);
-	
 	document.iform.range_from.disabled = endis;
 	document.iform.range_to.disabled = endis;
 	document.iform.wins1.disabled = endis;
@@ -202,7 +201,7 @@ function enable_change(enable_over) {
 	document.iform.gateway.disabled = endis;
 	document.iform.failover_peerip.disabled = endis;
 	document.iform.staticarp.disabled = endis;
-	
+	document.iform.denyunknown.disabled = endis;
 }
 //-->
 </script>
@@ -248,7 +247,7 @@ function enable_change(enable_over) {
 				  <tr>
 	              <td width="22%" valign="top" class="vtable">&nbsp;</td>
                       <td width="78%" class="vtable">
-<input name="denyunknown" type="checkbox" value="yes" <?php if ($pconfig['denyunknown']) echo "checked"; ?>>
+<input name="denyunknown" id="denyunknown" type="checkbox" value="yes" <?php if ($pconfig['denyunknown']) echo "checked"; ?>>
                       <strong>Deny unknown clients</strong><br>
                       If this is checked, only the clients defined below will get DHCP leases from this server. </td>
 		      		  </tr>

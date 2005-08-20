@@ -139,7 +139,7 @@ pfSenseupgrade)
 	backup_chflags
 	remove_chflags
 
-	exec </dev/console >/dev/console 2>/dev/console
+	#exec </dev/console >/dev/console 2>/dev/console
 
 	echo "Firmware upgrade in progress..."  | logger -p daemon.info -i -t Upgrade
 

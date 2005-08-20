@@ -666,6 +666,21 @@ function convert_config() {
 		$config['theme']="metallic";
 		$config['version'] = "1.9";
 	}
+	/* Convert 1.9 -> 1.10 */
+	if ($config['version'] == "1.9") {
+		if(is_array($config['ipsec']['tunnel'])) {
+			reset($config['ipsec']['tunnel']);
+			while (list($tunnel) = each($config['ipsec']['tunnel'])) {
+				/* Sanity check on required variables */
+				/* This fixes bogus <tunnel> entries - remnant of bug #393 */
+				if (!isset($tunnel['local-subnet']) && !isset($tunnel['remote-subnet'])) {
+					unset($config['ipsec']['tunnel'][$tunnel]);
+				}
+			}
+        	}
+		$config['version'] = "1.10";
+	}
+
 
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");

@@ -134,6 +134,7 @@ if ($_POST) {
 		$config['system']['dnsallowoverride'] = $_POST['dnsallowoverride'] ? true : false;
 
 		if ($_POST['password']) {
+			conf_mount_rw();
 			$config['system']['password'] = crypt($_POST['password']);
 			$fd = popen("/usr/sbin/pw usermod -n root -H 0", "w");
 			$salt = md5(time());
@@ -142,6 +143,7 @@ if ($_POST) {
 			pclose($fd);
 			sync_webgui_passwords();
 			update_changedesc("password changed via webConfigurator");
+			conf_mount_ro();
 		}
 
 		if ($changecount > 0)
@@ -157,21 +159,19 @@ if ($_POST) {
 		}
 
 		$retval = 0;
-		if (!file_exists($d_sysrebootreqd_path)) {
-			config_lock();
-			$retval = system_hostname_configure();
-			$retval |= system_hosts_generate();
-			$retval |= system_resolvconf_generate();
-			$retval |= system_password_configure();
-			$retval |= services_dnsmasq_configure();
-			$retval |= system_timezone_configure();
- 			$retval |= system_ntp_configure();
+		config_lock();
+		$retval = system_hostname_configure();
+		$retval |= system_hosts_generate();
+		$retval |= system_resolvconf_generate();
+		$retval |= system_password_configure();
+		$retval |= services_dnsmasq_configure();
+		$retval |= system_timezone_configure();
+		$retval |= system_ntp_configure();
 
- 			if ($olddnsallowoverride != $config['system']['dnsallowoverride'])
- 				$retval |= interfaces_wan_configure();
+		if ($olddnsallowoverride != $config['system']['dnsallowoverride'])
+			$retval |= interfaces_wan_configure();
 
-			config_unlock();
-		}
+		config_unlock();
 
 		$savemsg = get_std_save_message($retval);
 		if ($restart_webgui)

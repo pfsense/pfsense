@@ -1120,6 +1120,19 @@ function reload_interfaces() {
 	touch("/tmp/reload_interfaces");
 }
 
+/****f* pfsense-utils/sync_webgui_passwords
+ * NAME
+ *   sync_webgui_passwords - syncs webgui and ssh passwords
+ * INPUTS
+ *   none
+ * RESULT
+ *   none
+ ******/
+function sync_webgui_passwords() {
+	mwexec("/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd");
+	mwexec("/usr/sbin/pwd_mkdb /etc/master.passwd");
+}
+
 /****f* pfsense-utils/reload_all_sync
  * NAME
  *   reload_all - reload all settings

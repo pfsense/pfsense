@@ -118,6 +118,12 @@
 			<type>checkbox</type>
 		</field>
 		<field>
+			<fielddescr>Synchronize Virtual IPs</fielddescr>
+			<fieldname>synchronizecarp</fieldname>
+			<description>When this option is enabled, this system will automatically sync the Virtual IP (minus proxyarp) settings over to the other carp host when changes are made.</description>
+			<type>checkbox</type>
+		</field>			
+		<field>
 			<fielddescr>Synchronize traffic shaper</fielddescr>
 			<fieldname>synchronizetrafficshaper</fieldname>
 			<description>When this option is enabled, this system will automatically sync the traffic shaper rules over to the other carp host when changes are made.</description>

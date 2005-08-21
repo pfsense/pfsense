@@ -717,6 +717,24 @@ function backup_config_section($section) {
 }
 
 /*
+ *  backup_config_section($section): returns as an xml file string of
+ *                                   the configuration section
+ */
+function backup_vip_config_section($section) {
+    global $config;
+    $new_section = &$config['virtualip'];
+    foreach($new_section as $section) {
+	if($section['mode'] == "proxyarp") {
+		unset($section);		
+	}
+    }
+    /* generate configuration XML */
+    $xmlconfig = dump_xml_config($new_section, $section);
+    $xmlconfig = str_replace("<?xml version=\"1.0\"?>", "", $xmlconfig);
+    return $xmlconfig;
+}
+
+/*
  *  restore_config_section($section, new_contents): restore a configuration section,
  *                                                  and write the configuration out
  *                                                  to disk/cf.

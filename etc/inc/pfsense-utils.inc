@@ -509,6 +509,23 @@ function add_text_to_file($file, $text) {
 }
 
 /*
+ *   after_sync_bump_adv_skew(): create skew values by 1S
+ */
+function after_sync_bump_adv_skew() {
+	global $config, $g;
+	$processed_skew = 1;
+	$a_vip = &$config['virtualip']['vip'];
+	foreach ($a_vip as $vipent) {
+		if($vipent['advskew'] <> "") {
+			$processed_skew = 1;
+			$vipent['advskew'] = $vipent['advskew']+1;
+		}
+	}
+	if($processed_skew == 1)
+		write_config("After synch increase advertising skew");
+}
+
+/*
  * get_filename_from_url($url): converts a url to its filename.
  */
 function get_filename_from_url($url) {

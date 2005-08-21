@@ -141,7 +141,6 @@ if ($_POST) {
 			$crypted_pw = crypt($_POST['password'],$salt);
 			fwrite($fd, $crypted_pw);
 			pclose($fd);
-			sync_webgui_passwords();
 			update_changedesc("password changed via webConfigurator");
 			conf_mount_ro();
 		}
@@ -167,6 +166,8 @@ if ($_POST) {
 		$retval |= services_dnsmasq_configure();
 		$retval |= system_timezone_configure();
 		$retval |= system_ntp_configure();
+		
+		sync_webgui_passwords();
 
 		if ($olddnsallowoverride != $config['system']['dnsallowoverride'])
 			$retval |= interfaces_wan_configure();

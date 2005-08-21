@@ -2313,7 +2313,7 @@ function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsen
 	$cli->setCredentials('admin', $password);
 	$resp = $cli->send($msg);
 }
-
+ 
 function carp_sync_client() {
 	global $config;
 

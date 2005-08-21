@@ -106,9 +106,9 @@
 			<type>checkbox</type>
 		</field>
 		<field>
-			<fielddescr>Synchronize SNMP</fielddescr>
-			<fieldname>synchronizesnmp</fieldname>
-			<description>When this option is enabled, this system will automatically sync the snmp settings over to the other carp host when changes are made.</description>
+			<fielddescr>Synchronize DHCPD</fielddescr>
+			<fieldname>synchronizedhcpd</fieldname>
+			<description>When this option is enabled, this system will automatically sync the DHCP Server settings over to the other carp host when changes are made.</description>
 			<type>checkbox</type>
 		</field>
 		<field>

@@ -670,7 +670,7 @@ function convert_config() {
 	if ($config['version'] == "1.9") {
 		if(is_array($config['ipsec']['tunnel'])) {
 			reset($config['ipsec']['tunnel']);
-			while (list($tunnel) = each($config['ipsec']['tunnel'])) {
+			while (list($index, $tunnel) = each($config['ipsec']['tunnel'])) {
 				/* Sanity check on required variables */
 				/* This fixes bogus <tunnel> entries - remnant of bug #393 */
 				if (!isset($tunnel['local-subnet']) && !isset($tunnel['remote-subnet'])) {

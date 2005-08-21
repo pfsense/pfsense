@@ -2337,6 +2337,10 @@ function carp_sync_client() {
 			$sections_xml[] = new XML_RPC_Value(backup_config_section("aliases"), 'string');
 			$sections[] = new XML_RPC_Value('aliases', 'string');
 		    }
+		    if($carp['synchronizedhcpd'] != "" and is_array($config['dhcpd'])) {
+			$sections_xml[] = new XML_RPC_Value(backup_config_section("dhcpd"), 'string');
+			$sections[] = new XML_RPC_Value('dhcpd', 'string');
+		    }		    
 		    if($carp['synchronizetrafficshaper'] != "" and is_array($config['shaper'])) {
 			$sections_xml[] = new XML_RPC_Value(backup_config_section("shaper"), 'string');
 			$sections[] = new XML_RPC_Value('shaper', 'string');

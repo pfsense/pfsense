@@ -140,7 +140,7 @@ if ($_POST) {
 			$crypted_pw = crypt($_POST['password'],$salt);
 			fwrite($fd, $crypted_pw);
 			pclose($fd);
-			update_changedesc("password changed");
+			update_changedesc("password changed via webConfigurator");
 		}
 
 		if ($changecount > 0)

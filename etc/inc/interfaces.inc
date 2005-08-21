@@ -291,11 +291,6 @@ function interfaces_optional_configure_if($opti) {
 		mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " delete down");
 	}
 
-	if ($g['booting']) {
-		unmute_kernel_msgs();
-		print "done.\n";
-	}
-
 	return 0;
 }
 

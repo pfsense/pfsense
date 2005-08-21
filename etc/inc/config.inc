@@ -678,7 +678,7 @@ function convert_config() {
 				}
 			}
         	}
-		$config['version'] = "1.10";
+		$config['version'] = "2.0";
 	}
 
 

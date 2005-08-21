@@ -140,6 +140,7 @@ if ($_POST) {
 			$crypted_pw = crypt($_POST['password'],$salt);
 			fwrite($fd, $crypted_pw);
 			pclose($fd);
+			sync_webgui_passwords();
 			update_changedesc("password changed via webConfigurator");
 		}
 

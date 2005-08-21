@@ -1129,8 +1129,10 @@ function reload_interfaces() {
  *   none
  ******/
 function sync_webgui_passwords() {
+	conf_mount_rw();
 	mwexec("/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd");
 	mwexec("/usr/sbin/pwd_mkdb /etc/master.passwd");
+	conf_mount_ro();
 }
 
 /****f* pfsense-utils/reload_all_sync

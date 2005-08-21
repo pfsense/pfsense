@@ -720,7 +720,7 @@ function backup_config_section($section) {
  *  backup_config_section($section): returns as an xml file string of
  *                                   the configuration section
  */
-function backup_vip_config_section($section) {
+function backup_vip_config_section() {
     global $config;
     $new_section = &$config['virtualip'];
     foreach($new_section as $section) {
@@ -729,7 +729,7 @@ function backup_vip_config_section($section) {
 	}
     }
     /* generate configuration XML */
-    $xmlconfig = dump_xml_config($new_section, $section);
+    $xmlconfig = dump_xml_config($new_section, "virtualip");
     $xmlconfig = str_replace("<?xml version=\"1.0\"?>", "", $xmlconfig);
     return $xmlconfig;
 }

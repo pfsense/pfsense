@@ -2351,7 +2351,7 @@ function carp_sync_client() {
 		    }
 
 		    if($carp['synchronizecarp'] != "" and is_array($config['virtualip'])) {
-			$sections_xml[] = new XML_RPC_Value(backup_vip_config_section("virtualip"), 'string');
+			$sections_xml[] = new XML_RPC_Value(backup_vip_config_section(), 'string');
 			$sections[] = new XML_RPC_Value('virtualip', 'string');
 		    }
 		    

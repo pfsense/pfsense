@@ -73,18 +73,24 @@ function filter_configure_sync() {
 	$wan_if = get_real_wan_interface();
 	
 	/* generate aliases */
+	if($g['booting'] == true) echo " aliases ";
 	$aliases = filter_generate_aliases();
 	/* generate nat rules */
+	  if($g['booting'] == true) echo " rules ";
 	$natrules = filter_nat_rules_generate();
 	/* generate pfctl rules */
+	if($g['booting'] == true) echo " filtering ";
 	$pfrules = filter_rules_generate();
 
 	if(isset($config['shaper']['enable'])) {
 		/* generate altq interface setup parms */
+		if($g['booting'] == true) echo " altq-interfaces ";
 		$altq_ints = filter_setup_altq_interfaces();
 		/* generate altq queues */
+		if($g['booting'] == true) echo " altq-queues ";
 		$altq_queues = filter_generate_altq_queues($altq_ints);
 		/* generate altq rules */
+		if($g['booting'] == true) echo " altq-rules ";
 		$pf_altq_rules = filter_generate_pf_altq_rules();
 	}
 	

@@ -118,8 +118,14 @@
 			<type>checkbox</type>
 		</field>
 		<field>
+			<fielddescr>Synchronize Static Routes</fielddescr>
+			<fieldname>synchronizestaticroutes</fieldname>
+			<description>When this option is enabled, this system will automatically sync the Static Route settings over to the other carp host when changes are made.</description>
+			<type>checkbox</type>
+		</field>
+		<field>
 			<fielddescr>Synchronize Virtual IPs</fielddescr>
-			<fieldname>virtualip</fieldname>
+			<fieldname>synchronizevirtualip</fieldname>
 			<description>When this option is enabled, this system will automatically sync the Virtual IP (minus proxyarp) settings over to the other carp host when changes are made.</description>
 			<type>checkbox</type>
 		</field>			

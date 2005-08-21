@@ -2349,7 +2349,11 @@ function carp_sync_client() {
 			$sections_xml[] = new XML_RPC_Value(backup_config_section("shaper"), 'string');
 			$sections[] = new XML_RPC_Value('shaper', 'string');
 		    }
-		    if($carp['virtualip'] != "" and is_array($config['virtualip'])) {
+		    if($carp['synchronizestaticroutes'] != "" and is_array($config['staticroutes'])) {
+			$sections_xml[] = new XML_RPC_Value(backup_config_section("staticroutes"), 'string');
+			$sections[] = new XML_RPC_Value('staticroutes', 'string');
+		    }		    
+		    if($carp['synchronizevirtualip'] != "" and is_array($config['virtualip'])) {
 			$sections_xml[] = new XML_RPC_Value(backup_vip_config_section(), 'string');
 			$sections[] = new XML_RPC_Value('virtualip', 'string');
 			/* XXX/TODO: call remote end +1 after_sync_bump_adv_skew() */

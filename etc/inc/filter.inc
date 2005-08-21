@@ -2340,7 +2340,11 @@ function carp_sync_client() {
 		    if($carp['synchronizedhcpd'] != "" and is_array($config['dhcpd'])) {
 			$sections_xml[] = new XML_RPC_Value(backup_config_section("dhcpd"), 'string');
 			$sections[] = new XML_RPC_Value('dhcpd', 'string');
-		    }		    
+		    }
+		    if($carp['synchronizewol'] != "" and is_array($config['wol'])) {
+			$sections_xml[] = new XML_RPC_Value(backup_config_section("wol"), 'string');
+			$sections[] = new XML_RPC_Value('wol', 'string');
+		    }
 		    if($carp['synchronizetrafficshaper'] != "" and is_array($config['shaper'])) {
 			$sections_xml[] = new XML_RPC_Value(backup_config_section("shaper"), 'string');
 			$sections[] = new XML_RPC_Value('shaper', 'string');

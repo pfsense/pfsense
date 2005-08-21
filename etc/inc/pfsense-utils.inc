@@ -1189,7 +1189,14 @@ function reload_all_sync() {
 	interfaces_carp_bringup();
 
         /* reload the filter */
-	filter_configure();	
+	filter_configure();
+	
+	/* sync pw database */
+	conf_mount_rw();
+	mwexec("/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd");
+	mwexec("/usr/sbin/pwd_mkdb /etc/master.passwd");
+	conf_mount_ro();
+	
 }
 
 ?>

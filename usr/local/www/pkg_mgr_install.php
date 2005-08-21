@@ -109,8 +109,7 @@ Rounded("div#mainareapkg","bl br","#FFF","#eeeeee","smooth");
 conf_mount_rw();
 
 /* resync password database to avoid out of sync issues */
-mwexec("/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd");
-mwexec("/usr/sbin/pwd_mkdb /etc/master.passwd");
+sync_webgui_passwords();
 
 switch($_GET['mode']) {
 	case "delete":

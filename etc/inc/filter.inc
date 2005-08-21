@@ -2356,7 +2356,6 @@ function carp_sync_client() {
 		    if($carp['synchronizevirtualip'] != "" and is_array($config['virtualip'])) {
 			$sections_xml[] = new XML_RPC_Value(backup_vip_config_section(), 'string');
 			$sections[] = new XML_RPC_Value('virtualip', 'string');
-			/* XXX/TODO: call remote end +1 after_sync_bump_adv_skew() */
 		    }
 		    if(count($sections) > 0) {
 			    carp_sync_xml($synchronizetoip, $carp['password'], $sections, $sections_xml);

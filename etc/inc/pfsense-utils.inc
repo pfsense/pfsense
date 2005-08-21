@@ -727,6 +727,9 @@ function backup_vip_config_section() {
 	if($section['mode'] == "proxyarp") {
 		unset($section);		
 	}
+	if($section['advskew'] <> "") {
+		$section['advskew']++;
+	}
     }
     /* generate configuration XML */
     $xmlconfig = dump_xml_config($new_section, "virtualip");

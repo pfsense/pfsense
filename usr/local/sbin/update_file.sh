@@ -28,4 +28,8 @@ else
     echo "trying to fetch latest"
 fi
 
+/etc/rc.conf_mount_rw
+
 `which fetch` -o "$1" "$baseurl$1$urlrev$rev$urlcon"
+
+/etc/rc.conf_mount_ro

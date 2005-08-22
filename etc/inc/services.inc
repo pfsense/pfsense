@@ -101,9 +101,13 @@ EOD;
 				}
 			}
 			if($skew == 1) {
+				$dhcpdconf_pri = "";
 				$type = "secondary";
+				
 			} else {
 				$type = "primary";
+				$dhcpdconf_pri = "mclt 600;\n";
+				$dhcpdconf_pri .= "split 128;\n";
 			}
 			$dhcpdconf .= <<<EOPP
 failover peer "dhcp{$dhcpnum}" { 
@@ -113,14 +117,11 @@ failover peer "dhcp{$dhcpnum}" {
   peer address {$dhcpifconf['failover_peerip']};
   peer port 519;
   max-response-delay 60;
-  max-unacked-updates 10;  
+  max-unacked-updates 10;
+  {$dhcpdconf_pri}
   load balance max seconds 3;  
 }
 EOPP;
-		if($type == "primary") {
-			$dhcpdconf .= "mclt 600;\n";
-			$dhcpdconf .= "split 128;\n";
-		}
 		$dhcpnum++;
 
 			

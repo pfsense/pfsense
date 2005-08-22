@@ -723,16 +723,18 @@ function backup_config_section($section) {
 function backup_vip_config_section() {
     global $config;
     $new_section = &$config['virtualip'];
-    foreach($new_section as $section) {
-	if($section['vip']['mode'] == "proxyarp") {
+    foreach($new_section['vip'] as $section) {
+	if($section['mode'] == "proxyarp") {
 		unset($section);		
 	}
-	if($section['vip']['advskew'] <> "") {
-		$section['vip']['advskew']++;
+	if($section['advskew'] <> "") {
+		$section['advskew']++;
 	}
+	$temp['vip'][] = $section;
     }
+    
     /* generate configuration XML */
-    $xmlconfig = dump_xml_config($new_section, "virtualip");
+    $xmlconfig = dump_xml_config($temp, "virtualip");
     $xmlconfig = str_replace("<?xml version=\"1.0\"?>", "", $xmlconfig);
     return $xmlconfig;
 }

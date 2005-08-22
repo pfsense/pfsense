@@ -106,7 +106,7 @@ EOD;
 				$dhcpdconf_pri = "";
 			} else {
 				$type = "primary";
-				$dhcpdconf_pri  = "  mclt 600;\n";
+				$dhcpdconf_pri = " mclt 600;\n";
 				$dhcpdconf_pri .= "  split 128;\n";
 			}
 			$dhcpdconf .= <<<EOPP

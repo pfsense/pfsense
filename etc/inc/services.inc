@@ -153,8 +153,8 @@ EOPP;
 		$dhcpdconf .= "subnet $subnet netmask $subnetmask {\n";
 		$dhcpdconf .= "	pool {\n";
 		
-		if($dhcpifconf['failover_peerip'] <> "") {
-		$dhcpdconf .= "	deny dynamic bootp clients;\n";
+		if($dhcpifconf['failover_peerip'] <> "") 
+			$dhcpdconf .= "	deny dynamic bootp clients;\n";
 		
 		if (isset($dhcpifconf['denyunknown']))
 		   $dhcpdconf .= "		deny unknown clients;\n";

@@ -666,7 +666,7 @@ function convert_config() {
 		$config['theme']="metallic";
 		$config['version'] = "1.9";
 	}
-	/* Convert 1.9 -> 1.10 */
+	/* Convert 1.9 -> 2.0 */
 	if ($config['version'] == "1.9") {
 		if(is_array($config['ipsec']['tunnel'])) {
 			reset($config['ipsec']['tunnel']);

@@ -103,10 +103,9 @@ EOD;
 			}
 			if($skew > 0) {
 				$type = "secondary";
-				$dhcpdconf_pri = "";
+				$dhcpdconf_pri = " mclt 600;\n";
 			} else {
 				$type = "primary";
-				$dhcpdconf_pri = " mclt 600;\n";
 				$dhcpdconf_pri .= "  split 128;\n";
 			}
 			$dhcpdconf .= <<<EOPP

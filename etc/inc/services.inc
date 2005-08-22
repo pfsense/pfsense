@@ -101,13 +101,12 @@ EOD;
 				}
 			}
 			if($skew > 0) {
-				$dhcpdconf_pri = "";
 				$type = "secondary";
+				$dhcpdconf_pri = "";
 			} else {
 				$type = "primary";
-				$dhcpdconf_pri = "  mclt 600;\n";
+				$dhcpdconf_pri  = "  mclt 600;\n";
 				$dhcpdconf_pri .= "  split 128;\n";
-				$dhcpdconf_pri .= "  load balance max seconds 3;\n";
 			}
 			$dhcpdconf .= <<<EOPP
 failover peer "dhcp{$dhcpnum}" { 
@@ -119,7 +118,7 @@ failover peer "dhcp{$dhcpnum}" {
   max-response-delay 60;
   max-unacked-updates 10;
   {$dhcpdconf_pri}
-  load balance max seconds 3;  
+  load balance max seconds 3;
 }
 EOPP;
 		$dhcpnum++;

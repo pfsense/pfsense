@@ -100,14 +100,13 @@ EOD;
 						$skew = 0;
 				}
 			}
-			if($skew == 1) {
+			if($skew > 0) {
 				$dhcpdconf_pri = "";
 				$type = "secondary";
-				
 			} else {
 				$type = "primary";
-				$dhcpdconf_pri = "mclt 600;\n";
-				$dhcpdconf_pri .= "split 128;\n";
+				$dhcpdconf_pri = "  mclt 600;\n";
+				$dhcpdconf_pri .= "  split 128;\n";
 			}
 			$dhcpdconf .= <<<EOPP
 failover peer "dhcp{$dhcpnum}" { 
@@ -123,8 +122,6 @@ failover peer "dhcp{$dhcpnum}" {
 }
 EOPP;
 		$dhcpnum++;
-
-			
 		}
 	}
 

@@ -114,6 +114,9 @@ failover peer "dhcp{$dhcpnum}" {
   peer port 519;
   max-response-delay 60;
   max-unacked-updates 10;
+  mclt 600;
+  split 128;
+  load balance max seconds 3;  
 }
 EOPP;
 		$dhcpnum++;

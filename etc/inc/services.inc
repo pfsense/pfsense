@@ -94,7 +94,8 @@ EOD;
 			foreach ($a_vip as $vipent) {
 				$int = guess_interface_from_ip($vipent['subnet']);
 				$intip = find_interface_ip($int);
-				if($int == $dhcpif) {
+				$real_dhcpif = convert_friendly_interface_to_real_interface_name($dhcpif);
+				if($int == $real_dhcpif) {
 					/* this is the interface! */
 					if($vipent['advskew'] == "0")
 						$skew = 0;

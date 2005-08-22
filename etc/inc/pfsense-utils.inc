@@ -724,11 +724,11 @@ function backup_vip_config_section() {
     global $config;
     $new_section = &$config['virtualip'];
     foreach($new_section as $section) {
-	if($section['mode'] == "proxyarp") {
+	if($section['vip']['mode'] == "proxyarp") {
 		unset($section);		
 	}
-	if($section['advskew'] <> "") {
-		$section['advskew']++;
+	if($section['vip']['advskew'] <> "") {
+		$section['vip']['advskew']++;
 	}
     }
     /* generate configuration XML */

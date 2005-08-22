@@ -113,12 +113,14 @@ failover peer "dhcp{$dhcpnum}" {
   peer address {$dhcpifconf['failover_peerip']};
   peer port 519;
   max-response-delay 60;
-  max-unacked-updates 10;
-  mclt 600;
-  split 128;
+  max-unacked-updates 10;  
   load balance max seconds 3;  
 }
 EOPP;
+		if($type == "primary") {
+			$dhcpdconf .= "mclt 600;\n";
+			$dhcpdconf .= "split 128;\n";
+		}
 		$dhcpnum++;
 
 			

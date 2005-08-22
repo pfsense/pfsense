@@ -107,6 +107,7 @@ EOD;
 				$type = "primary";
 				$dhcpdconf_pri = "  mclt 600;\n";
 				$dhcpdconf_pri .= "  split 128;\n";
+				$dhcpdconf_pri .= "  load balance max seconds 3;\n";
 			}
 			$dhcpdconf .= <<<EOPP
 failover peer "dhcp{$dhcpnum}" { 

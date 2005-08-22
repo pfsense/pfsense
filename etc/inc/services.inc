@@ -120,6 +120,7 @@ failover peer "dhcp{$dhcpnum}" {
   {$dhcpdconf_pri}
   load balance max seconds 3;
 }
+
 EOPP;
 		$dhcpnum++;
 		}

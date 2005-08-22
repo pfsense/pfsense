@@ -90,6 +90,7 @@ EOD;
 			 *    does it match up to a defined vip?
 			 */
 			$skew = 1;
+			$a_vip = &$config['virtualip']['vip'];
 			foreach ($a_vip as $vipent) {
 				$int = guess_interface_from_ip($vipent['subnet']);
 				$intip = find_interface_ip($int);

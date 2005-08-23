@@ -67,7 +67,11 @@
 			<fielddescr>Synchronize Interface</fielddescr>
 			<fieldname>pfsyncinterface</fieldname>
 			<type>interfaces_selection</type>
-			<description>If Synchronize State is enabled, it will utilize this interface for communication.  NOTE!  You must define a IP on each machine participating in this failover group.  NOTE: You must have an IP assigned to the interface on any participating sync nodes.</description>
+			<description>
+			    If Synchronize State is enabled, it will utilize this interface for communication.
+			    &lt;br&gt;&lt;b&gt;NOTE:&lt;/b&gt;  You must define a IP on each machine participating in this failover group.
+			    &lt;br&gt;&lt;b&gt;NOTE:&lt;/b&gt;  You must have an IP assigned to the interface on any participating sync nodes.
+			</description>
 		</field>
 		<field>
 			<fielddescr>Load Balancing</fielddescr>

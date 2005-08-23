@@ -12,24 +12,32 @@ rev='1'
 
 if [ -z $1 ];then
     echo "No file to update given"
-    echo "Usage: $0 /path/to/file [revision]"
+    echo "Usage: `basename $0` /path/to/file [revision]"
+    echo "Usage: `basename $0` -all"
     exit 0
 fi
 
-if [ ! -f $1 ];then
+if [ "$1" = "-all" ];then
+    echo "This will update all .php .js and .inc pages on your pfsense box!"
+    FMATCHES=`find /etc/inc/ /usr/local/www /usr/local/captiveportal -name "*.php" -or -name "*.inc" -or -name "*.js"`
+elif [ ! -f $1 ];then
     echo "File $1 doesn't exist"
     exit 0
-fi
-
-if [ ! -z $2 ];then
-    rev=$2
-    echo "trying to fetch $rev"
 else
-    echo "trying to fetch latest"
+    FMATCHES=$1
 fi
 
 /etc/rc.conf_mount_rw
 
-`which fetch` -o "$1" "$baseurl$1$urlrev$rev$urlcon"
+for file in $FMATCHES ;do
+    if [ ! -z $2 ];then
+        rev=$2
+        echo "trying to fetch $rev $file"
+    else
+        echo "trying to fetch latest $file"
+    fi
+    #echo fetch -o "$file" "$baseurl$file$urlrev$rev$urlcon"
+    `which fetch` -o "$file" "$baseurl$file$urlrev$rev$urlcon"
+done
 
 /etc/rc.conf_mount_ro

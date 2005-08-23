@@ -193,37 +193,9 @@ include("head.inc");
 
 ?>
 
-<script language="JavaScript">
-<!--
-function ext_change() {
-	if (document.iform.beginport.selectedIndex == 0) {
-		document.iform.beginport_cust.disabled = 0;
-	} else {
-		document.iform.beginport_cust.value = "";
-		document.iform.beginport_cust.disabled = 1;
-	}
-	if (document.iform.endport.selectedIndex == 0) {
-		document.iform.endport_cust.disabled = 0;
-	} else {
-		document.iform.endport_cust.value = "";
-		document.iform.endport_cust.disabled = 1;
-	}
-	if (document.iform.localbeginport.selectedIndex == 0) {
-		document.iform.localbeginport_cust.disabled = 0;
-	} else {
-		document.iform.localbeginport_cust.value = "";
-		document.iform.localbeginport_cust.disabled = 1;
-	}
-}
-function ext_rep_change() {
-	document.iform.endport.selectedIndex = document.iform.beginport.selectedIndex;
-	document.iform.localbeginport.selectedIndex = document.iform.beginport.selectedIndex;
-}
-//-->
-</script>
-
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php
+include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_nat_edit.php" method="post" name="iform" id="iform">
@@ -250,15 +222,16 @@ function ext_rep_change() {
 			    <tr>
                   <td width="22%" valign="top" class="vncellreq">External address</td>
                   <td width="78%" class="vtable">
-                    <select name="extaddr" class="formfld">
-					  <option value="" <?php if (!$pconfig['extaddr']) echo "selected"; ?>>Interface address</option>
-                      <?php
-					  if (is_array($config['virtualip']['vip'])):
-						  foreach ($config['virtualip']['vip'] as $sn): ?>
-                      <option value="<?=$sn['subnet'];?>" <?php if ($sn['subnet'] == $pconfig['extaddr']) echo "selected"; ?>><?=htmlspecialchars("{$sn['subnet']} ({$sn['descr']})");?></option>
-                      <?php endforeach; endif; ?>
-		      <option value="any" <?php if($pconfig['extaddr'] == "any") echo "selected"; ?>>any</option>
-                    </select><br>
+					<select name="extaddr" class="formfld">
+						<option value="" <?php if (!$pconfig['extaddr']) echo "selected"; ?>>Interface address</option>
+<?php					if (is_array($config['virtualip']['vip'])):
+						foreach ($config['virtualip']['vip'] as $sn): ?>
+						<option value="<?=$sn['subnet'];?>" <?php if ($sn['subnet'] == $pconfig['extaddr']) echo "selected"; ?>><?=htmlspecialchars("{$sn['subnet']} ({$sn['descr']})");?></option>
+<?php					endforeach;
+						endif; ?>
+						<option value="any" <?php if($pconfig['extaddr'] == "any") echo "selected"; ?>>any</option>
+					</select>
+					<br />
                     <span class="vexpl">
 					If you want this rule to apply to another IP address than the IP address of the interface chosen above,
 					select it here (you need to define <a href="firewall_virtual_ip.php">Virtual IP</a> addresses on the first).  Also note that if you are trying to redirect connections on the LAN select the "any" option.</span></td>
@@ -291,7 +264,7 @@ function ext_rep_change() {
 							<?=htmlspecialchars($wkportdesc);?>
 							</option>
                             <?php endforeach; ?>
-                          </select> <input autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);' onkeydown='actb_checkkey(event, this)' onkeyup='actb_tocomplete(this,event,customarray);'  class="formfldalias" name="beginport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['beginport']; ?>"></td>
+                          </select> <input autocomplete='off' class="formfldalias" name="beginport_cust" id="beginport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['beginport']; ?>"></td>
                       </tr>
                       <tr>
                         <td>to:</td>
@@ -305,7 +278,7 @@ function ext_rep_change() {
 							<?=htmlspecialchars($wkportdesc);?>
 							</option>
 							<?php endforeach; ?>
-                          </select> <input class="formfldalias"  autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);' onkeydown='actb_checkkey(event, this)' onkeyup='actb_tocomplete(this,event,customarray);' name="endport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['endport']; ?>"></td>
+                          </select> <input class="formfldalias"  autocomplete='off' name="endport_cust" id="endport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['endport']; ?>"></td>
                       </tr>
                     </table>
                     <br> <span class="vexpl">Specify the port or port range on
@@ -316,7 +289,7 @@ function ext_rep_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">NAT IP</td>
                   <td width="78%" class="vtable">
-                    <input autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);' onkeydown='actb_checkkey(event, this)' onkeyup='actb_tocomplete(this,event,addressarray);' name="localip" type="text" class="formfldalias" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>">
+                    <input autocomplete='off' name="localip" type="text" class="formfldalias" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>">
                     <br> <span class="vexpl">Enter the internal IP address of
                     the server on which you want to map the ports.<br>
                     e.g. <em>192.168.1.12</em></span></td>
@@ -334,7 +307,7 @@ function ext_rep_change() {
 					  <?=htmlspecialchars($wkportdesc);?>
 					  </option>
                       <?php endforeach; ?>
-                    </select> <input  autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);' onkeydown='actb_checkkey(event, this)' onkeyup='actb_tocomplete(this,event,customarray);' class="formfldalias" name="localbeginport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['localbeginport']; ?>">
+                    </select> <input  autocomplete='off' class="formfldalias" name="localbeginport_cust" id="localbeginport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['localbeginport']; ?>">
                     <br>
                     <span class="vexpl">Specify the port on the machine with the
                     IP address entered above. In case of a port range, specify
@@ -369,7 +342,7 @@ function ext_rep_change() {
 </form>
 <script language="JavaScript">
 <!--
-ext_change();
+	ext_change();
 //-->
 </script>
 <?php
@@ -392,11 +365,9 @@ if($config['aliases']['alias'] <> "")
 ?>
 <script language="JavaScript">
 <!--
-var addressarray=new Array(<?php echo $aliasesaddr; ?>);
-var customarray=new Array(<?php echo $aliases; ?>);
+	var addressarray=new Array(<?php echo $aliasesaddr; ?>);
+	var customarray=new Array(<?php echo $aliases; ?>);
 //-->
-</script>
-<script type="text/javascript" language="javascript" src="auto_complete_helper.js">
 </script>
 <?php include("fend.inc"); ?>
 </body>

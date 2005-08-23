@@ -47,6 +47,12 @@ if (isset($id) && $a_wol[$id]) {
 	$pconfig['mac'] = $a_wol[$id]['mac'];
 	$pconfig['descr'] = $a_wol[$id]['descr'];
 }
+else
+{
+	$pconfig['interface'] = $_GET['if'];
+	$pconfig['mac'] = $_GET['mac'];
+	$pconfig['descr'] = $_GET['descr'];
+}
 
 if ($_POST) {
 

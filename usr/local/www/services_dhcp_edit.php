@@ -58,6 +58,7 @@ if (isset($id) && $a_maps[$id]) {
         $pconfig['descr'] = $a_maps[$id]['descr'];
 } else {
         $pconfig['mac'] = $_GET['mac'];
+        $pconfig['descr'] = $_GET['descr'];
 }
 
 if ($_POST) {

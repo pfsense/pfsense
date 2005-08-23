@@ -135,7 +135,7 @@ if(isset($config['wol']['wolentry'])) {
 }
 
 if(isset($config['proxyarp']['proxyarpnet'])) {
-	$pconfig['name'] = "proxyarp";
+	$pconfig['name'] = "choparp";
 	$pconfig['description'] = "Proxy Arp";
 	$services[] = $pconfig;
 	unset($pconfig);

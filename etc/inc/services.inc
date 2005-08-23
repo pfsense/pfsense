@@ -103,14 +103,14 @@ EOD;
 			}
 			if($skew > 0) {
 				$type = "secondary";
-				$dhcpdconf_pri  = "  mclt 600;\n";
+				$dhcpdconf_pri  = "mclt 600;\n";
 				$my_port = "520";
 				$peer_port = "519";
 			} else {
 				$my_port = "519";
 				$peer_port = "520";
 				$type = "primary";
-				$dhcpdconf_pri  = "  split 128;\n";
+				$dhcpdconf_pri  = "split 128;\n";
 				$dhcpdconf_pri .= "  mclt 600;\n";
 			}
 			$dhcpdconf .= <<<EOPP

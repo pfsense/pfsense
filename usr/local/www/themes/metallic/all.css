@@ -317,6 +317,11 @@ table#marquee div#container div#scroller {
 
 
 
+#graph {
+	position: relative;
+	z-index: 10;
+}
+
 
 
 /* Class Based CSS Definitions */
@@ -659,6 +664,29 @@ ul#tabnav li.tabact {
 }
 
 
+/* Auto Complete Suggestions */
+div.suggestions {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border: 1px solid black;
+    position: absolute;
+	background-color: #990000;
+	color: #FFF;
+}
+
+div.suggestions div {
+    cursor: default;
+    padding: 0px 3px;
+	background-color: #990000;
+	color: #FFF;
+}
+
+div.suggestions div.current {
+    background-color: #3366cc;
+    color: #FFF;
+}
+/* End Auto Complete Suggestions */
+
 
 /* Nifty Corners Crap */
 .rtop,.artop{display:block}
@@ -682,3 +710,4 @@ ul#tabnav li.tabact {
 .rxr1,.rxr2,.rxr3,.rxr4,.rxsr1,.rxsr2,.rar1,.rar2,.rar3,.rar4,.rasr1,.rasr2{border-left-width:0}
 .r4,.rl4,.rr4,.re4,.rel4,.rer4,.ra4,.rar4,.ral4,.rx4,.rxl4,.rxr4{height:2px}
 .rer1,.rel1,.re1,.res1,.resl1,.resr1{border-width:1px 0 0;height:0px !important;height /**/:1px}
+/* End Nifty Corners Crap */

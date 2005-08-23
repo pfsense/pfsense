@@ -18,6 +18,24 @@ else
     <link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print">
 	<script type="text/javascript" src="/themes/<?php echo $g['theme']; ?>/loader.js"></script>
 
+<?
+	/*
+	 *	Find all javascript files that need to be included
+	 *	for this page ... from the arrays ... :)
+	 *	Coded by: Erik Kristensen
+	 */
+
+	## Make Sure $page_filename has been set ##
+	## if it hasn't been don't bother ... :P ##
+	if ($page_filename) {
+		include('includes/javascript.inc.php');
+
+		foreach ($top_javascript_files["$page_filename"] as $file) {
+		 	echo '<script type="text/javascript" src="/javascript/'.$file.'"></script>';
+		}
+	}
+?>
+
 <?php if (!isset($closehead)){ ?>
 </head>
 <?php } ?>

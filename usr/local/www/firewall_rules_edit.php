@@ -309,484 +309,361 @@ if ($_POST) {
 
 $pgtitle = "Firewall: Rules: Edit";
 $closehead = false;
+
+$page_filename = "firewall_rules_edit.php";
 include("head.inc");
 
 ?>
 
-<script language="JavaScript">
-<!--
-var portsenabled = 1;
-
-function ext_change() {
-	if ((document.iform.srcbeginport.selectedIndex == 0) && portsenabled) {
-		document.iform.srcbeginport_cust.disabled = 0;
-	} else {
-		document.iform.srcbeginport_cust.value = "";
-		document.iform.srcbeginport_cust.disabled = 1;
-	}
-	if ((document.iform.srcendport.selectedIndex == 0) && portsenabled) {
-		document.iform.srcendport_cust.disabled = 0;
-	} else {
-		document.iform.srcendport_cust.value = "";
-		document.iform.srcendport_cust.disabled = 1;
-	}
-	if ((document.iform.dstbeginport.selectedIndex == 0) && portsenabled) {
-		document.iform.dstbeginport_cust.disabled = 0;
-	} else {
-		document.iform.dstbeginport_cust.value = "";
-		document.iform.dstbeginport_cust.disabled = 1;
-	}
-	if ((document.iform.dstendport.selectedIndex == 0) && portsenabled) {
-		document.iform.dstendport_cust.disabled = 0;
-	} else {
-		document.iform.dstendport_cust.value = "";
-		document.iform.dstendport_cust.disabled = 1;
-	}
-
-	if (!portsenabled) {
-		document.iform.srcbeginport.disabled = 1;
-		document.iform.srcendport.disabled = 1;
-		document.iform.dstbeginport.disabled = 1;
-		document.iform.dstendport.disabled = 1;
-	} else {
-		document.iform.srcbeginport.disabled = 0;
-		document.iform.srcendport.disabled = 0;
-		document.iform.dstbeginport.disabled = 0;
-		document.iform.dstendport.disabled = 0;
-	}
-}
-
-function typesel_change() {
-	switch (document.iform.srctype.selectedIndex) {
-		case 1:	/* single */
-			document.iform.src.disabled = 0;
-			document.iform.srcmask.value = "";
-			document.iform.srcmask.disabled = 1;
-			break;
-		case 2:	/* network */
-			document.iform.src.disabled = 0;
-			document.iform.srcmask.disabled = 0;
-			break;
-		default:
-			document.iform.src.value = "";
-			document.iform.src.disabled = 1;
-			document.iform.srcmask.value = "";
-			document.iform.srcmask.disabled = 1;
-			break;
-	}
-	switch (document.iform.dsttype.selectedIndex) {
-		case 1:	/* single */
-			document.iform.dst.disabled = 0;
-			document.iform.dstmask.value = "";
-			document.iform.dstmask.disabled = 1;
-			break;
-		case 2:	/* network */
-			document.iform.dst.disabled = 0;
-			document.iform.dstmask.disabled = 0;
-			break;
-		default:
-			document.iform.dst.value = "";
-			document.iform.dst.disabled = 1;
-			document.iform.dstmask.value = "";
-			document.iform.dstmask.disabled = 1;
-			break;
-	}
-}
-
-function proto_change() {
-	if (document.iform.proto.selectedIndex < 3) {
-		portsenabled = 1;
-	} else {
-		portsenabled = 0;
-	}
-
-	/* Disable OS knob if the proto is not TCP. */
-	if (document.iform.proto.selectedIndex < 1) {
-		document.forms[0].os.disabled = 0;
-	} else {
-		document.forms[0].os.disabled = 1;
-	}
-
-	if (document.iform.proto.selectedIndex == 3) {
-		document.iform.icmptype.disabled = 0;
-	} else {
-		document.iform.icmptype.disabled = 1;
-	}
-
-	ext_change();
-}
-
-function src_rep_change() {
-	document.iform.srcendport.selectedIndex = document.iform.srcbeginport.selectedIndex;
-}
-function dst_rep_change() {
-	document.iform.dstendport.selectedIndex = document.iform.dstbeginport.selectedIndex;
-}
-//-->
-</script>
 </head>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-            <form action="firewall_rules_edit.php" method="post" name="iform" id="iform">
-              <?display_topbar()?>
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Action</td>
-                  <td width="78%" class="vtable">
-<select name="type" class="formfld">
-                      <?php $types = explode(" ", "Pass Block Reject"); foreach ($types as $type): ?>
-                      <option value="<?=strtolower($type);?>" <?php if (strtolower($type) == strtolower($pconfig['type'])) echo "selected"; ?>>
-                      <?=htmlspecialchars($type);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select> <br>
-                    <span class="vexpl">Choose what to do with packets that match
-					the criteria specified below.<br>
-Hint: the difference between block and reject is that with reject, a packet (TCP RST or ICMP port unreachable for UDP) is returned to the sender, whereas with block the packet is dropped silently. In either case, the original packet is discarded. Reject only works when the protocol is set to either TCP or UDP (but not &quot;TCP/UDP&quot;) below.</span></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Disabled</td>
-                  <td width="78%" class="vtable">
-                    <input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked"; ?>>
-                    <strong>Disable this rule</strong><br>
-                    <span class="vexpl">Set this option to disable this rule without
-					removing it from the list.</span></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Interface</td>
-                  <td width="78%" class="vtable">
-<select name="interface" class="formfld">
-                      <?php $interfaces = array('wan' => 'WAN', 'lan' => 'LAN', 'pptp' => 'PPTP', 'pppoe' => 'PPPOE');
-					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-					  	$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
-					  }
-					  foreach ($interfaces as $iface => $ifacename): ?>
-                      <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
-                      <?=htmlspecialchars($ifacename);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select> <br>
-                    <span class="vexpl">Choose on which interface packets must
-                    come in to match this rule.</span></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Protocol</td>
-                  <td width="78%" class="vtable">
-<select name="proto" class="formfld" onchange="proto_change()">
-                      <?php $protocols = explode(" ", "TCP UDP TCP/UDP ICMP ICMP6 ESP AH GRE IPv6 IGMP any carp pfsync"); foreach ($protocols as $proto): ?>
-                      <option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['proto']) echo "selected"; ?>>
-                      <?=htmlspecialchars($proto);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select> <br>
-                    <span class="vexpl">Choose which IP protocol this rule should
-                    match.<br>
-                    Hint: in most cases, you should specify <em>TCP</em> &nbsp;here.</span></td>
-                </tr>
-                <tr>
-                  <td valign="top" class="vncell">ICMP type</td>
-                  <td class="vtable">
-                    <select name="icmptype" class="formfld">
-                      <?php
 
-					  $icmptypes = array(
-					  	"" => "any",
-						"echorep" => "Echo reply",
-					  	"unreach" => "Destination unreachable",
-						"squench" => "Source quench",
-						"redir" => "Redirect",
-						"althost" => "Alternate Host",
-						"echoreq" => "Echo",
-						"routeradv" => "Router advertisement",
-						"routersol" => "Router solicitation",
-						"timex" => "Time exceeded",
-						"paramprob" => "Invalid IP header",
-						"timereq" => "Timestamp",
-						"timerep" => "Timestamp reply",
-						"inforeq" => "Information request",
-						"inforep" => "Information reply",
-						"maskreq" => "Address mask request",
-						"maskrep" => "Address mask reply"
-					  );
-
-					  foreach ($icmptypes as $icmptype => $descr): ?>
-                      <option value="<?=$icmptype;?>" <?php if ($icmptype == $pconfig['icmptype']) echo "selected"; ?>>
-                      <?=htmlspecialchars($descr);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select>
-                    <br>
-                    <span class="vexpl">If you selected ICMP for the protocol above, you may specify an ICMP type here.</span></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Source</td>
-                  <td width="78%" class="vtable">
-<input name="srcnot" type="checkbox" id="srcnot" value="yes" <?php if ($pconfig['srcnot']) echo "checked"; ?>>
-                    <strong>not</strong><br>
-                    Use this option to invert the sense of the match.<br>
-                    <br>
-                    <table border="0" cellspacing="0" cellpadding="0">
-                      <tr>
-                        <td>Type:&nbsp;&nbsp;</td>
-                        <td><select name="srctype" class="formfld" onChange="typesel_change()">
-							<?php $sel = is_specialnet($pconfig['src']); ?>
-                            <option value="any" <?php if ($pconfig['src'] == "any") { echo "selected"; } ?>>
-                            any</option>
-                            <option value="single" <?php if (($pconfig['srcmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>>
-                            Single host or alias</option>
-                            <option value="network" <?php if (!$sel) echo "selected"; ?>>
-                            Network</option>
-                            <option value="lan" <?php if ($pconfig['src'] == "lan") { echo "selected"; } ?>>
-                            LAN subnet</option>
-                            <option value="pptp" <?php if ($pconfig['src'] == "pptp") { echo "selected"; } ?>>
-                            PPTP clients</option>
-			    <option value="pppoe" <?php if ($pconfig['src'] == "pppoe") { echo "selected"; } ?>>
-                            PPPoE clients</option>			    
-							<?php for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): ?>
-                            <option value="opt<?=$i;?>" <?php if ($pconfig['src'] == "opt" . $i) { echo "selected"; } ?>>
-                            <?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?> subnet</option>
-							<?php endfor; ?>
-                          </select></td>
-                      </tr>
-                      <tr>
-                        <td>Address:&nbsp;&nbsp;</td>
-                        <td><input autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);' onkeydown='actb_checkkey(event, this)' onkeyup='actb_tocomplete(this,event,addressarray);' name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>">
-                        /
-						<select name="srcmask" class="formfld" id="srcmask">
-						<?php for ($i = 31; $i > 0; $i--): ?>
-						<option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected"; ?>><?=$i;?></option>
-						<?php endfor; ?>
-						</select>
-						</td>
-					  </tr>
-                    </table></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Source port range
-                  </td>
-                  <td width="78%" class="vtable">
-                    <table border="0" cellspacing="0" cellpadding="0">
-                      <tr>
-                        <td>from:&nbsp;&nbsp;</td>
-                        <td><select name="srcbeginport" class="formfld" onchange="src_rep_change();ext_change()">
-                            <option value="">(other)</option>
-                            <option value="any" <?php $bfound = 0; if ($pconfig['srcbeginport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
-                            <?php foreach ($wkports as $wkport => $wkportdesc): ?>
-                            <option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcbeginport']) {
-																echo "selected";
-																$bfound = 1;
-															}?>>
-                            <?=htmlspecialchars($wkportdesc);?>
-                            </option>
-                            <?php endforeach; ?>
-                          </select> <input autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);'  onkeydown='actb_checkkey(event, this);' onkeyup='actb_tocomplete(this,event,customarray)' class="formfldalias" name="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo $pconfig['srcbeginport']; ?>"></td>
-                      </tr>
-                      <tr>
-                        <td>to:</td>
-                        <td><select name="srcendport" class="formfld" onchange="ext_change()">
-                            <option value="">(other)</option>
-                            <option value="any" <?php $bfound = 0; if ($pconfig['srcendport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
-                            <?php foreach ($wkports as $wkport => $wkportdesc): ?>
-                            <option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcendport']) {
-																echo "selected";
-																$bfound = 1;
-															}?>>
-                            <?=htmlspecialchars($wkportdesc);?>
-                            </option>
-                            <?php endforeach; ?>
-                          </select> <input autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);'  onkeydown='actb_checkkey(event, this);' onkeyup='actb_tocomplete(this,event,customarray)' class="formfldalias" name="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo $pconfig['srcendport']; ?>"></td>
-                      </tr>
-                    </table>
-                    <br>
-                    <span class="vexpl">Specify the port or port range for
-                    the source of the packet for this rule. This is usually not equal to the destination port range (and is often &quot;any&quot;). <br>
-                    Hint: you can leave the <em>'to'</em> field empty if you only
-                    want to filter a single port</span></td>
-
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Source OS</td>
-                  <td width="78%" class="vtable">OS Type:&nbsp;
-                    <select name="os" id="os" class="formfld">
-                      <?php
-                                          $ostypes = array(
-						"" => "any",
-                                                "AIX" => "AIX",
-                                                "Linux" => "Linux",
-                                                "FreeBSD" => "FreeBSD",
-                                                "NetBSD" => "NetBSD",
-                                                "OpenBSD" => "OpenBSD",
-                                                "Solaris" => "Solaris",
-                                                "MacOS" => "MacOS",
-                                                "Windows" => "Windows",
-                                                "Novell" => "Novell"
-                                          );
-
-                                          foreach ($ostypes as $ostype => $descr): ?>
-                      <option value="<?=$ostype;?>" <?php if ($ostype == $pconfig['os']) echo "selected"; ?>>
-                      <?=htmlspecialchars($descr);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select><br>
-                    Note: this only works for TCP rules</td>
+<form action="firewall_rules_edit.php" method="post" name="iform" id="iform">
+<? display_topbar() ?>
+	<table width="100%" border="0" cellpadding="6" cellspacing="0">
+    	<tr>
+			<td width="22%" valign="top" class="vncellreq">Action</td>
+			<td width="78%" class="vtable">
+				<select name="type" class="formfld">
+					<?php $types = explode(" ", "Pass Block Reject"); foreach ($types as $type): ?>
+					<option value="<?=strtolower($type);?>" <?php if (strtolower($type) == strtolower($pconfig['type'])) echo "selected"; ?>>
+					<?=htmlspecialchars($type);?>
+					</option>
+					<?php endforeach; ?>
+				</select> 
+				<br/>
+				<span class="vexpl">
+					Choose what to do with packets that match the criteria specified below. <br/>
+					Hint: the difference between block and reject is that with reject, a packet (TCP RST or ICMP port unreachable for UDP) is returned to the sender, whereas with block the packet is dropped silently. In either case, the original packet is discarded. Reject only works when the protocol is set to either TCP or UDP (but not &quot;TCP/UDP&quot;) below.
+				</span>
+			</td>
 		</tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Destination</td>
-                  <td width="78%" class="vtable">
-                    <input name="dstnot" type="checkbox" id="dstnot" value="yes" <?php if ($pconfig['dstnot']) echo "checked"; ?>>
-                    <strong>not</strong><br>
-                    Use this option to invert the sense of the match.<br>
-                    <br>
-                    <table border="0" cellspacing="0" cellpadding="0">
-                      <tr>
-                        <td>Type:&nbsp;&nbsp;</td>
-                        <td><select name="dsttype" class="formfld" onChange="typesel_change()">
-                            <?php $sel = is_specialnet($pconfig['dst']); ?>
-                            <option value="any" <?php if ($pconfig['dst'] == "any") { echo "selected"; } ?>>
-                            any</option>
-                            <option value="single" <?php if (($pconfig['dstmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>>
-                            Single host or alias</option>
-                            <option value="network" <?php if (!$sel) echo "selected"; ?>>
-                            Network</option>
-                            <option value="lan" <?php if ($pconfig['dst'] == "lan") { echo "selected"; } ?>>
-                            LAN subnet</option>
-                            <option value="pptp" <?php if ($pconfig['dst'] == "pptp") { echo "selected"; } ?>>
-                            PPTP clients</option>
-                            <option value="pppoe" <?php if ($pconfig['dst'] == "pppoe") { echo "selected"; } ?>>
-                            PPPoE clients</option>
-
-							<?php for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): ?>
-                            <option value="opt<?=$i;?>" <?php if ($pconfig['dst'] == "opt" . $i) { echo "selected"; } ?>>
-                            <?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?> subnet</option>
-							<?php endfor; ?>
-                          </select></td>
-                      </tr>
-                      <tr>
-                        <td>Address:&nbsp;&nbsp;</td>
-                        <td><input name="dst" autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);'  onkeydown='actb_checkkey(event, this);' onkeyup='actb_tocomplete(this,event,addressarray)' type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
-                          /
-                          <select name="dstmask" class="formfld" id="dstmask">
-						<?php for ($i = 31; $i > 0; $i--): ?>
-						<option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo "selected"; ?>><?=$i;?></option>
-						<?php endfor; ?>
-						</select></td>
-                      </tr>
-                    </table></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Destination port
-                    range </td>
-                  <td width="78%" class="vtable">
-                    <table border="0" cellspacing="0" cellpadding="0">
-                      <tr>
-                        <td>from:&nbsp;&nbsp;</td>
-                        <td><select name="dstbeginport" class="formfld" onchange="dst_rep_change();ext_change()">
-                            <option value="">(other)</option>
-                            <option value="any" <?php $bfound = 0; if ($pconfig['dstbeginport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
-                            <?php foreach ($wkports as $wkport => $wkportdesc): ?>
-                            <option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstbeginport']) {
-																echo "selected";
-																$bfound = 1;
-															}?>>
-                            <?=htmlspecialchars($wkportdesc);?>
-                            </option>
-                            <?php endforeach; ?>
-                          </select> <input autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);' onkeydown='actb_checkkey(event, this);' onkeyup='actb_tocomplete(this,event,customarray)' class="formfldalias" name="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo $pconfig['dstbeginport']; ?>"></td>
-                      </tr>
-                      <tr>
-                        <td>to:</td>
-                        <td><select name="dstendport" class="formfld" onchange="ext_change()">
-                            <option value="">(other)</option>
-                            <option value="any" <?php $bfound = 0; if ($pconfig['dstendport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
-                            <?php foreach ($wkports as $wkport => $wkportdesc): ?>
-                            <option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstendport']) {
-																echo "selected";
-																$bfound = 1;
-															}?>>
-                            <?=htmlspecialchars($wkportdesc);?>
-                            </option>
-                            <?php endforeach; ?>
-                          </select> <input autocomplete='off' onblur='actb_removedisp()' onkeypress='return (event.keyCode!=13);' onkeydown='actb_checkkey(event, this);' onkeyup='actb_tocomplete(this,event,customarray)' class="formfldalias" name="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo $pconfig['dstendport']; ?>"></td>
-                      </tr>
-                    </table>
-                    <br> <span class="vexpl">Specify the port or port range for
-                    the destination of the packet for this rule.<br>
-                    Hint: you can leave the <em>'to'</em> field empty if you only
-                    want to filter a single port</span></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Log</td>
-                  <td width="78%" class="vtable">
-                    <input name="log" type="checkbox" id="log" value="yes" <?php if ($pconfig['log']) echo "checked"; ?>>
-                    <strong>Log packets that are handled by this rule</strong><br>
-                    <span class="vexpl">Hint: the firewall has limited local log
-                    space. Don't turn on logging for everything. If you want to
-                    do a lot of logging, consider using a remote syslog server
-                    (see the <a href="diag_logs_settings.php">Diagnostics: System
-                    logs: Settings</a> page).</span></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">Description</td>
-                  <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld" id="descr" size="52" maxlength="52" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">You may enter a description here
-                    for your reference (not parsed).</span></td>
-                </tr>
-               <tr>
-                  <td width="22%" valign="top" class="vncell">Advanced Options</td>
-                  <td width="78%" class="vtable">
-			<input name="max-src-nodes" id="max-src-nodes" value="<?php echo $pconfig['max-src-nodes'] ?>"><br> Simultaneous client connection limit<p>
-			<input name="max-src-states" id="max-src-states" value="<?php echo $pconfig['max-src-states'] ?>"><br> Maximum state entries per host<p>
-			<input name="max-src-conn-rate" id="max-src-conn-rate" value="<?php echo $pconfig['max-src-conn-rate'] ?>"> /
-			<select name="max-src-conn-rates" id="max-src-conn-rates">
-			 <option value=""<?php if(intval($pconfig['max-src-conn-rates']) < 1) echo " selected"; ?>></option>
-			 <?php
-			   for($x=1; $x<255; $x++) {
-				if($x == $pconfig['max-src-conn-rates'])
-					$selected = " selected";
-				else 
-					$selected = "";
-				echo "<option value=\"{$x}\"{$selected}>{$x}</option>\n";
-			   }
-			 ?>
-			 </select>
-			<br>
-			Maximum new connections / per second
-			<p><strong>NOTE: Leave these fields blank to disable this feature.</strong>
-		    </td>
-                </tr>
-               <tr>
-                  <td width="22%" valign="top" class="vncell">State Type</td>
-                  <td width="78%" class="vtable">
-			<select name="statetype">
-			<option value="keep state" <?php if(!isset($pconfig['statetype']) or $pconfig['statetype'] == "keep state") echo "selected"; ?>>keep state</option>
-			<option value="modulate state" <?php if($pconfig['statetype'] == "modulate state")  echo "selected"; ?>>modulate state</option>
-			<option value="synproxy state"<?php if($pconfig['statetype'] == "synproxy state")  echo "selected"; ?>>synproxy state</option>
-			<option value="none"<?php if($pconfig['statetype'] == "none") echo "selected"; ?>>none</option>
-			</select><br>HINT: Select which type of state tracking mechanism you would like to use.  If in doubt, use keep state.
-			<p><strong>
-			<table>
-			<tr><td width="25%"><li>keep state</li></td><td>works with TCP, UDP, and ICMP.</td></tr>
-			<tr><td width="25%"><li>modulate state</li></td><td>works only with TCP. pfSense will generate strong Initial Sequence Numbers (ISNs) for packets matching this rule.</li></td></tr>
-			<tr><td width="25%"><li>synproxy state</li></td><td>proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined.</td></tr>
-			<tr><td width="25%"><li>none</li></td><td>do not use state mechanisms to keep track.  this is only useful if your doing advanced queueing in certain situations.  please check the faq.</td></tr>
-			</table>
-			</strong>
-		    </td>
-                </tr>
-
 		<tr>
-                  <td width="22%" valign="top" class="vncell">State Timeout</td>
-                  <td width="78%" class="vtable">
-			<input name="statetimeout" value="<?php echo $pconfig['frags'] ?>">
-			<p><strong>Leave blank for default.  Amount is in seconds.
-			</strong>
-		    </td>
+			<td width="22%" valign="top" class="vncellreq">Disabled</td>
+			<td width="78%" class="vtable">
+				<input name="disabled" type="checkbox" id="disabled" value="yes" <?php if ($pconfig['disabled']) echo "checked"; ?>>
+				<strong>Disable this rule</strong><br />
+				<span class="vexpl">Set this option to disable this rule without removing it from the list.</span>
+			</td>
 		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncellreq">Interface</td>
+			<td width="78%" class="vtable">
+				<select name="interface" class="formfld">
+<?php
+					$interfaces = array('wan' => 'WAN', 'lan' => 'LAN', 'pptp' => 'PPTP', 'pppoe' => 'PPPOE');
+					for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+						$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+					}
+					foreach ($interfaces as $iface => $ifacename): ?>
+						<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>><?=htmlspecialchars($ifacename);?></option>
+<?php 				endforeach; ?>
+				</select> 
+				<br />
+				<span class="vexpl">Choose on which interface packets must come in to match this rule.</span>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncellreq">Protocol</td>
+			<td width="78%" class="vtable">
+				<select name="proto" class="formfld" onchange="proto_change()">
+<?php
+				$protocols = explode(" ", "TCP UDP TCP/UDP ICMP ICMP6 ESP AH GRE IPv6 IGMP any carp pfsync");
+				foreach ($protocols as $proto): ?>
+					<option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['proto']) echo "selected"; ?>><?=htmlspecialchars($proto);?></option>
+<?php 			endforeach; ?>
+				</select>
+				<br />
+				<span class="vexpl">Choose which IP protocol this rule should match. <br /> Hint: in most cases, you should specify <em>TCP</em> &nbsp;here.</span>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" class="vncell">ICMP type</td>
+			<td class="vtable">
+				<select name="icmptype" class="formfld">
+<?php
+				$icmptypes = array(
+				"" => "any",
+				"echorep" => "Echo reply",
+				"unreach" => "Destination unreachable",
+				"squench" => "Source quench",
+				"redir" => "Redirect",
+				"althost" => "Alternate Host",
+				"echoreq" => "Echo",
+				"routeradv" => "Router advertisement",
+				"routersol" => "Router solicitation",
+				"timex" => "Time exceeded",
+				"paramprob" => "Invalid IP header",
+				"timereq" => "Timestamp",
+				"timerep" => "Timestamp reply",
+				"inforeq" => "Information request",
+				"inforep" => "Information reply",
+				"maskreq" => "Address mask request",
+				"maskrep" => "Address mask reply"
+				);
 
-		<?php
+				foreach ($icmptypes as $icmptype => $descr): ?>
+					<option value="<?=$icmptype;?>" <?php if ($icmptype == $pconfig['icmptype']) echo "selected"; ?>><?=htmlspecialchars($descr);?></option>
+<?php 			endforeach; ?>
+			</select>
+			<br />
+			<span class="vexpl">If you selected ICMP for the protocol above, you may specify an ICMP type here.</span>
+		</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncellreq">Source</td>
+			<td width="78%" class="vtable">
+				<input name="srcnot" type="checkbox" id="srcnot" value="yes" <?php if ($pconfig['srcnot']) echo "checked"; ?>>
+				<strong>not</strong>
+				<br />
+				Use this option to invert the sense of the match.
+				<br />
+				<br />
+				<table border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td>Type:&nbsp;&nbsp;</td>
+						<td>
+							<select name="srctype" class="formfld" onChange="typesel_change()">
+<?php
+								$sel = is_specialnet($pconfig['src']); ?>
+								<option value="any"     <?php if ($pconfig['src'] == "any") { echo "selected"; } ?>>any</option>
+								<option value="single"  <?php if (($pconfig['srcmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>>Single host or alias</option>
+								<option value="network" <?php if (!$sel) echo "selected"; ?>>Network</option>
+								<option value="lan"     <?php if ($pconfig['src'] == "lan") { echo "selected"; } ?>>LAN subnet</option>
+								<option value="pptp"    <?php if ($pconfig['src'] == "pptp") { echo "selected"; } ?>>PPTP clients</option>
+								<option value="pppoe"   <?php if ($pconfig['src'] == "pppoe") { echo "selected"; } ?>>PPPoE clients</option>			    
+<?php
+								for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): ?>
+									<option value="opt<?=$i;?>" <?php if ($pconfig['src'] == "opt" . $i) { echo "selected"; } ?>><?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?> subnet</option>
+<?php 							endfor; ?>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>Address:&nbsp;&nbsp;</td>
+						<td>
+							<input autocomplete='off' name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>"> /
+							<select name="srcmask" class="formfld" id="srcmask">
+<?php						for ($i = 31; $i > 0; $i--): ?>
+								<option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected"; ?>><?=$i;?></option>
+<?php 						endfor; ?>
+							</select>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncellreq">Source port range</td>
+			<td width="78%" class="vtable">
+				<table border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td>from:&nbsp;&nbsp;</td>
+						<td>
+							<select name="srcbeginport" class="formfld" onchange="src_rep_change();ext_change()">
+								<option value="">(other)</option>
+								<option value="any" <?php $bfound = 0; if ($pconfig['srcbeginport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
+<?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
+									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcbeginport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
+<?php 							endforeach; ?>
+							</select> 
+							<input autocomplete='off' class="formfldalias" name="srcbeginport_cust" id="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo $pconfig['srcbeginport']; ?>">
+						</td>
+					</tr>
+					<tr>
+						<td>to:</td>
+						<td>
+							<select name="srcendport" class="formfld" onchange="ext_change()">
+								<option value="">(other)</option>
+								<option value="any" <?php $bfound = 0; if ($pconfig['srcendport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
+<?php							foreach ($wkports as $wkport => $wkportdesc): ?>
+									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcendport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
+<?php							endforeach; ?>
+							</select> 
+							<input autocomplete='off' class="formfldalias" name="srcendport_cust" id="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo $pconfig['srcendport']; ?>">
+						</td>
+					</tr>
+				</table>
+				<br />
+				<span class="vexpl">Specify the port or port range for the source of the packet for this rule. This is usually not equal to the destination port range (and is often &quot;any&quot;). <br /> Hint: you can leave the <em>'to'</em> field empty if you only want to filter a single port</span>
+			</td>
+		</tr>		
+		<tr>
+			<td width="22%" valign="top" class="vncellreq">Source OS</td>
+			<td width="78%" class="vtable">OS Type:&nbsp;
+				<select name="os" id="os" class="formfld">
+<?php
+		           $ostypes = array(
+						 "" => "any",
+		                 "AIX" => "AIX",
+		                 "Linux" => "Linux",
+		                 "FreeBSD" => "FreeBSD",
+		                 "NetBSD" => "NetBSD",
+		                 "OpenBSD" => "OpenBSD",
+		                 "Solaris" => "Solaris",
+		                 "MacOS" => "MacOS",
+		                 "Windows" => "Windows",
+		                 "Novell" => "Novell"
+		           );
+
+					foreach ($ostypes as $ostype => $descr): ?>
+						<option value="<?=$ostype;?>" <?php if ($ostype == $pconfig['os']) echo "selected"; ?>><?=htmlspecialchars($descr);?></option>
+<?php				endforeach; ?>
+				</select>
+				<br />
+				Note: this only works for TCP rules
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncellreq">Destination</td>
+			<td width="78%" class="vtable">
+				<input name="dstnot" type="checkbox" id="dstnot" value="yes" <?php if ($pconfig['dstnot']) echo "checked"; ?>>
+				<strong>not</strong>
+					<br />
+				Use this option to invert the sense of the match.
+					<br />
+					<br />
+				<table border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td>Type:&nbsp;&nbsp;</td>
+						<td>
+							<select name="dsttype" class="formfld" onChange="typesel_change()">
+<?php
+								$sel = is_specialnet($pconfig['dst']); ?>
+								<option value="any" <?php if ($pconfig['dst'] == "any") { echo "selected"; } ?>>any</option>
+								<option value="single" <?php if (($pconfig['dstmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>>Single host or alias</option>
+								<option value="network" <?php if (!$sel) echo "selected"; ?>>Network</option>
+								<option value="lan" <?php if ($pconfig['dst'] == "lan") { echo "selected"; } ?>>LAN subnet</option>
+								<option value="pptp" <?php if ($pconfig['dst'] == "pptp") { echo "selected"; } ?>>PPTP clients</option>
+								<option value="pppoe" <?php if ($pconfig['dst'] == "pppoe") { echo "selected"; } ?>>PPPoE clients</option>
+<?php 							for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): ?>
+									<option value="opt<?=$i;?>" <?php if ($pconfig['dst'] == "opt" . $i) { echo "selected"; } ?>><?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?> subnet</option>
+<?php 							endfor; ?>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>Address:&nbsp;&nbsp;</td>
+						<td>
+							<input name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
+							/
+							<select name="dstmask" class="formfld" id="dstmask">
+<?php
+							for ($i = 31; $i > 0; $i--): ?>
+								<option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo "selected"; ?>><?=$i;?></option>
+<?php						endfor; ?>
+							</select>
+						</td>
+					</tr>
+				</table>
+
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncellreq">Destination port range </td>
+			<td width="78%" class="vtable">
+				<table border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td>from:&nbsp;&nbsp;</td>
+						<td>
+							<select name="dstbeginport" class="formfld" onchange="dst_rep_change();ext_change()">
+								<option value="">(other)</option>
+								<option value="any" <?php $bfound = 0; if ($pconfig['dstbeginport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
+<?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
+									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstbeginport']) { echo "selected"; $bfound = 1; }?>><?=htmlspecialchars($wkportdesc);?></option>
+<?php 							endforeach; ?>
+							</select>
+							<input autocomplete='off' class="formfldalias" name="dstbeginport_cust" id="dstbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstbeginport']) echo $pconfig['dstbeginport']; ?>">
+						</td>
+					</tr>
+					<tr>
+						<td>to:</td>
+						<td>
+							<select name="dstendport" class="formfld" onchange="ext_change()">
+								<option value="">(other)</option>
+								<option value="any" <?php $bfound = 0; if ($pconfig['dstendport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
+<?php							foreach ($wkports as $wkport => $wkportdesc): ?>
+									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstendport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
+<?php 							endforeach; ?>
+							</select> 
+							<input autocomplete='off' class="formfldalias" name="dstendport_cust" id="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo $pconfig['dstendport']; ?>">
+						</td>
+					</tr>
+				</table>
+				<br />
+				<span class="vexpl">
+					Specify the port or port range for the destination of the packet for this rule.
+						<br />
+					Hint: you can leave the <em>'to'</em> field empty if you only want to filter a single port
+				</span>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncellreq">Log</td>
+			<td width="78%" class="vtable">
+				<input name="log" type="checkbox" id="log" value="yes" <?php if ($pconfig['log']) echo "checked"; ?>>
+				<strong>Log packets that are handled by this rule</strong>
+					<br />
+				<span class="vexpl">Hint: the firewall has limited local log space. Don't turn on logging for everything. If you want to do a lot of logging, consider using a remote syslog server (see the <a href="diag_logs_settings.php">Diagnostics: System logs: Settings</a> page).</span>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">Description</td>
+			<td width="78%" class="vtable">
+				<input name="descr" type="text" class="formfld" id="descr" size="52" maxlength="52" value="<?=htmlspecialchars($pconfig['descr']);?>">
+				<br />
+				<span class="vexpl">You may enter a description here for your reference (not parsed).</span>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">Advanced Options</td>
+			<td width="78%" class="vtable">
+				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo $pconfig['max-src-nodes'] ?>"><br> Simultaneous client connection limit<p>
+				<input name="max-src-states" id="max-src-states" value="<?php echo $pconfig['max-src-states'] ?>"><br> Maximum state entries per host<p>
+				<input name="max-src-conn-rate" id="max-src-conn-rate" value="<?php echo $pconfig['max-src-conn-rate'] ?>"> /
+				<select name="max-src-conn-rates" id="max-src-conn-rates">
+					<option value=""<?php if(intval($pconfig['max-src-conn-rates']) < 1) echo " selected"; ?>></option>
+<?php				for($x=1; $x<255; $x++) {
+						if($x == $pconfig['max-src-conn-rates']) $selected = " selected"; else $selected = "";
+						echo "<option value=\"{$x}\"{$selected}>{$x}</option>\n";
+					} ?>
+				</select>
+				<br />
+				Maximum new connections / per second
+				<p><strong>NOTE: Leave these fields blank to disable this feature.</strong>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">State Type</td>
+			<td width="78%" class="vtable">
+				<select name="statetype">
+					<option value="keep state" <?php if(!isset($pconfig['statetype']) or $pconfig['statetype'] == "keep state") echo "selected"; ?>>keep state</option>
+					<option value="modulate state" <?php if($pconfig['statetype'] == "modulate state")  echo "selected"; ?>>modulate state</option>
+					<option value="synproxy state"<?php if($pconfig['statetype'] == "synproxy state")  echo "selected"; ?>>synproxy state</option>
+					<option value="none"<?php if($pconfig['statetype'] == "none") echo "selected"; ?>>none</option>
+				</select><br>HINT: Select which type of state tracking mechanism you would like to use.  If in doubt, use keep state.
+				<p><strong>
+				<table>
+					<tr><td width="25%"><li>keep state</li></td><td>works with TCP, UDP, and ICMP.</td></tr>
+					<tr><td width="25%"><li>modulate state</li></td><td>works only with TCP. pfSense will generate strong Initial Sequence Numbers (ISNs) for packets matching this rule.</li></td></tr>
+					<tr><td width="25%"><li>synproxy state</li></td><td>proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined.</td></tr>
+					<tr><td width="25%"><li>none</li></td><td>do not use state mechanisms to keep track.  this is only useful if your doing advanced queueing in certain situations.  please check the faq.</td></tr>
+				</table>
+				</strong></p>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">State Timeout</td>
+			<td width="78%" class="vtable">
+				<input name="statetimeout" value="<?php echo $pconfig['frags'] ?>">
+				<p><strong>Leave blank for default.  Amount is in seconds.</strong></p>
+			</td>
+		</tr>
+<?php
 			/* build a list of gateways */
 			$gateways = array();
                         $gateways[] = "default"; // default to don't use this feature :)
@@ -794,12 +671,12 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 				if($int['gateway'] <> "")
 					$gateways[]=$int['gateway'];
 			}
-		?>
+?>
 		<tr>
-                  <td width="22%" valign="top" class="vncell">Gateway</td>
-                  <td width="78%" class="vtable">
-			<select name='gateway'>
-			<?php
+			<td width="22%" valign="top" class="vncell">Gateway</td>
+			<td width="78%" class="vtable">
+				<select name='gateway'>
+<?php
 				foreach($gateways as $gw) {
 					if($gw == $pconfig['gateway']) {
 						$selected = " SELECTED";
@@ -830,56 +707,55 @@ Hint: the difference between block and reject is that with reject, a packet (TCP
 						echo "<option value=\"opt{$i}\" {$selected}>OPT{$i} - {$descr}</option>\n";
 					}
 				}
-			?>
-			</select>
-			<p><strong>Leave blank for default.
-			</strong>
-		    </td>
+?>
+				</select>
+				<p><strong>Leave blank for default.</strong></p>
+			</td>
 		</tr>
-                <tr>
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%">
-                    <input name="Submit" type="submit" class="formbtn" value="Save">  <input type="button" class="formbtn" value="Cancel" onclick="history.back()">
-                    <?php if (isset($id) && $a_filter[$id]): ?>
-                    <input name="id" type="hidden" value="<?=$id;?>">
-                    <?php endif; ?>
-                    <input name="after" type="hidden" value="<?=$after;?>">
-                  </td>
-                </tr>
-              </table>
+		<tr>
+			<td width="22%" valign="top">&nbsp;</td>
+			<td width="78%">
+				<input name="Submit" type="submit" class="formbtn" value="Save">  <input type="button" class="formbtn" value="Cancel" onclick="history.back()">
+<?php			if (isset($id) && $a_filter[$id]): ?>
+					<input name="id" type="hidden" value="<?=$id;?>">
+<?php 			endif; ?>
+				<input name="after" type="hidden" value="<?=$after;?>">
+			</td>
+		</tr>
+	</table>
 </form>
 <script language="JavaScript">
 <!--
-ext_change();
-typesel_change();
-proto_change();
+	ext_change();
+	typesel_change();
+	proto_change();
 
 <?php
-$isfirst = 0;
-$aliases = "";
-$addrisfirst = 0;
-$aliasesaddr = "";
-if($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias']))
-	foreach($config['aliases']['alias'] as $alias_name) {
-		if(!stristr($alias_name['address'], ".")) {
-			if($isfirst == 1) $aliases .= ",";
-			$aliases .= "'" . $alias_name['name'] . "'";
-			$isfirst = 1;
-		} else {
-			if($addrisfirst == 1) $aliasesaddr .= ",";
-			$aliasesaddr .= "'" . $alias_name['name'] . "'";
-			$addrisfirst = 1;
+	$isfirst = 0;
+	$aliases = "";
+	$addrisfirst = 0;
+	$aliasesaddr = "";
+	if($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias']))
+		foreach($config['aliases']['alias'] as $alias_name) {
+			if(!stristr($alias_name['address'], ".")) {
+				if($isfirst == 1) $aliases .= ",";
+				$aliases .= "'" . $alias_name['name'] . "'";
+				$isfirst = 1;
+			} else {
+				if($addrisfirst == 1) $aliasesaddr .= ",";
+				$aliasesaddr .= "'" . $alias_name['name'] . "'";
+				$addrisfirst = 1;
+			}
 		}
-	}
 ?>
 
-var addressarray=new Array(<?php echo $aliasesaddr; ?>);
-var customarray=new Array(<?php echo $aliases; ?>);
+	var addressarray=new Array(<?php echo $aliasesaddr; ?>);
+	var customarray=new Array(<?php echo $aliases; ?>);
 
 //-->
 </script>
-<script type="text/javascript" language="javascript" src="auto_complete_helper.js">
-</script>
+
+
 <?php include("fend.inc"); ?>
 </body>
 </html>

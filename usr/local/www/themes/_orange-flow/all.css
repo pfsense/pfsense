@@ -3,12 +3,6 @@ html, body, td, th, input, select {
 	font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
 	font-size: 0.9em;
 }
-
-body {
-	background-color: #333333;
-	margin: 5px auto;
-}
-
 form {
 	margin: 0px;
 }
@@ -19,40 +13,42 @@ form input {
 	font-size: 1.1em;
 }
 
-iframe {
-	z-index: 1;
-	border: 1px dashed #990000;
-}
-.iframe {
-	background-color: #FFFFFF;
-}
+
 
 /* ID Based CSS Definitions */
-#wrapper {
-	width: 815px;
-	margin: 5px auto;
+
+#notices {
+	width: 795px;
+	background-color: #E1E4B8;
+	border: 1px solid #000000;
+	padding: 0px;
+	margin-bottom: 5px;
+}
+#notices ul {
+	margin: 0px;
+	padding: 5px;
+	padding-top: 3px;
+	list-style: none;
 }
 
 #header {
-	background: url('images/header.gif') no-repeat;
-	background-position: 4px;
-	height: 102px;
-	width: 808px;
-	margin-bottom: 5px;
-	z-index: 2;
+	height: 70px;
+	width: 840px;
+        background: url('/themes/_orange-flow/images/bgr_top.gif') no-repeat;
 }
 #header-left {
 	position: relative;
-	/* background: url('images/logo.gif') no-repeat; */
+	/* background: url('/themes/_orange-flow/images/logo.gif') no-repeat; */
 	background-position: center;
 	height: 65px;
 	width: 145px;
 	left: 10px;
 	float: left;
+	/* background-color: #fff; */
 }
 #header-right {
 	position: relative;
-	/* background: url('images/header.gif') no-repeat; */
+	background: url('images/header.gif') no-repeat;
 	height: 70px;
 	color: #fff;
 	left: 0px;
@@ -69,22 +65,18 @@ iframe {
 	padding-left: 27px;
 	float: left;
 }
-#header-right .container {
-	position: relative;
-}
+
 #header-right .container .left {
-	position: relative; 
-	float: left;
-	font-size: 1.3em;
-	font-weight: bold;
-	top: 15px;
-	left: 4px;
-	display: none;
+	position: relative;
+	top: 32px;
+	left: 9px;
+	font-size: 1.8em;
 }
+
 #header-right .container .right {
 	position: relative;
 	float: right;
-	top: 22px;
+	top: -9px;
 	padding-right: 4px;
 	z-index: 1;
 }
@@ -151,171 +143,105 @@ table#marquee div#container div#scroller {
 
 
 
+
+
+
 #content {
-	position: relative;
-	top: -15px;
-	left: 4px;
+	border-top: 1px solid #FFFFFF;
 	margin-top: 0px;
-	margin-left: 5px;
 	padding-top: 0px;
 	width: 800px;
-	background: url('images/horizontal.gif') repeat-y;
-}
-
-#left {
-	width: 800px;
-	height: 1px;
-}
-#right {
-	position: relative;
-	top: -10px;
-	width: 770px;
-	margin-top: 0px;
-	margin-left: 5px;
-	margin-right: 5px;
-	padding-top: 5px;
-	padding-left: 10px;
-	padding-right: 10px;
-	padding-bottom: 20px;
-	min-height: 400px;
 }
 
 #footer {
 	position: relative;
-	background: url('images/footer.gif') no-repeat;
-	top: -18px;
-	left: 7px;
+	top: 10px;
+	padding: 0px;
+	margin: 6px;
 	width: 800px;
-	height: 75px;
+	background-color: #990000;
+	text-align: center;
 	color: #ffffff;
-	text-align: center;;
-	font-size: 0.9em;
-	padding-top: 17px;
-	margin-bottom: 20px;
+	font-size: 0.75em;
 	clear: both;
+	margin-bottom: 20px;
 }
 #footer p {
 	padding: 0px;
 	margin: 0px;
 }
 
-/* Style the List */
-#navigation {
-	/* background: url('images/menu.gif') no-repeat; */
-	/* width: 693px; */
-	position: relative;
-	top: -24px;
-	left: -4px;
-	width: 800px;
-	padding: 0px;
-	height: 28px;
-	z-index: 3;
-}
-#navigation ul {
-	padding: 0;
-	margin: 0;
-	list-style: none;
-	text-align: center;
-}
-#navigation ul#menu {
-	padding-top: 3px;
-	padding-left: 5px;
-}
-
-/* Style the List Elements */
-#navigation ul li {
+#left {
+	width: 150px;
 	float: left;
+}
+#right {
+	/*margin-left: 171px;*/
+	margin-left: 170px;
+	margin-top: 5px;
+	width: 620px;
+        background: url('/themes/_orange-flow/images/bgr_middle_right.gif') repeat-y;
+}
+
+
+
+#navigation {
 	position: relative;
-	/* width: 7.5em; */
-	width: 8.77em;
-}
-#navigation ul li div {
-	font-size: 1em;
-	font-weight: bold;
-}
-/* Make the List inside the List Elements */
-/* initially hidden with absolute position */
-#navigation ul li ul {
-	display: none;
-	position: absolute; 
-	top: 2em;
-	left: -2px;
-	width: 9em;
-	font-weight: normal;
-	background: transparent bottom left no-repeat; /* This is key to making the menu maintain visibility when not on a link */
-	background-color: #202020;
-	background: url("images/menu_footer.gif") no-repeat;
-	background-position: bottom;
-	padding: 0em 0 0.4em 0;
-	padding-top: 0.3em;
-}
-/* to override top and left in browsers other than IE */
-/* which will position to the top right of the containing */
-/* li, rather than bottom left */
-#navigation ul li > ul {
-	top: auto;
-	left: auto;
-	left: -1px !important;
-}
-/* Show initial drop down upon mouse over, but do not show */
-/* nested side drop menus within listed elements */
-#navigation ul li:hover ul { 
-	display: block;
-	cursor: hand;
-}
-#navigation ul li:hover {
-	cursor: hand;
-	cursor: pointer;
-}
-#navigation ul li:hover div {
-	text-decoration: none;
+	background-color: #000000;
+	top: 0px;
+	left: 5px;
+	width: 157px;
+	padding-top: 6px;
+	margin-left: 1px;
+	color: #fff;
+	padding-bottom: 6px;
+	padding-right: 0px;
 }
 
-#navigation ul li {
-	background-color: transparent;
-	color: #FFF;
-}
-#navigation ul li ul li {
-	border: 1px solid #505050;
-	width: 8.8em;
-	height: 1.6em;
-	line-height: 1.6em;
-	background: url('images/metal_bgr.gif') repeat-x;
-	color: #FFF;
-}
-#navigation ul li ul li:hover {
-	background: url('images/metal_bgr_red.gif') repeat-x;
+#navigation ul {
+	margin: 0px;
+	padding: 0px;
+	width: 100%;
 }
 
-#navigation li li a {
+#navigation ul li { 
 	display: block;
 	padding-left: 10px;
-	padding-right: 10px;
 }
 
-#navigation ul li ul li a.navlnk:hover {
+#navigation ul li div {
+	margin-top: 2px;
+}
+
+#navigation ul li div {
+	font-weight: bold;
+}
+
+#navigation ul li div .small,
+#navigation ul li div .small:hover {
+	font-weight: normal;
+	font-size: 0.79em;
+}
+
+#navigation ul li a {
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
+	height: 1.2em;
+	line-height: 1.2em;
+	color: #fff;
 	text-decoration: none;
-}
-#navigation ul li.first {
-	border-right: 0px;
-}
-#navigation ul li.middle {
-	border-right: 0px;
-}
-#navigation ul li.last {
-
+	width: 61px;
+	font-size: 0.9em;
+	text-align: center;
 }
 
-#navigation ul li.dropfirst {
-	border-bottom: 0px;
+#navigation ul li a:hover {
+	color: #fff;
+	text-decoration: underline;
+	font-size: 0.9em;
 }
-#navigation ul li.dropmiddle {
-	border-bottom: 0px;
-}
-#navigation ul li.droplast {
-}
-
-
 
 
 
@@ -657,7 +583,6 @@ ul#tabnav li.tabact {
 	width: 100%;
 	vertical-align: top;
 }
-
 
 
 /* Nifty Corners Crap */

@@ -70,7 +70,7 @@ for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 ?>
 <form name="form1" action="status_graph.php" method="get" style="padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid #999999">
 Interface:
-<select name="if" class="formfld" onchange="document.form1.submit()">
+<select name="if" class="formfld" style="z-index: -10;" onchange="document.form1.submit()">
 <?php
 foreach ($ifdescrs as $ifn => $ifd) {
 	echo "<option value=\"$ifn\"";
@@ -80,13 +80,15 @@ foreach ($ifdescrs as $ifn => $ifd) {
 ?>
 </select>
 </form>
-<div align="center" style="z-index: 5">
-<embed src="graph.php?ifnum=<?=$ifnum;?>&ifname=<?=rawurlencode($ifdescrs[$curif]);?>" type="image/svg+xml"
-		width="<? echo $width; ?>" height="<? echo $height; ?>" style="z-index: 5"; pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
-</div>
+<p><span class="red"><strong>Note:</strong></span> the <a href="http://www.adobe.com/svg/viewer/install/" target="_blank">Adobe SVG viewer</a> is required to view the graph.
 <p><form method="post" action="status_graph.php">
 Graph Width: <input name="width" value="<? echo $width; ?>"> Height: <input name="height" value="<? echo $height; ?>"> <input type="submit" value="Change Graph Size"></p>
-<p><span class="red"><strong>Note:</strong></span> the <a href="http://www.adobe.com/svg/viewer/install/" target="_blank">Adobe SVG viewer</a> is required to view the graph.
+</form>
+<div>
+<embed id="graph" src="graph.php?ifnum=<?=$ifnum;?>&ifname=<?=rawurlencode($ifdescrs[$curif]);?>" type="image/svg+xml"
+		width="<? echo $width; ?>" height="<? echo $height; ?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
+</div>
+
 <?php include("fend.inc"); ?>
 </body>
 </html>

@@ -613,6 +613,29 @@ ul#tabnav li.tabact {
 }
 
 
+/* Auto Complete Suggestions */
+div.suggestions {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border: 1px solid black;
+    position: absolute;
+	background-color: #990000;
+	color: #FFF;
+}
+
+div.suggestions div {
+    cursor: default;
+    padding: 0px 3px;
+	background-color: #990000;
+	color: #FFF;
+}
+
+div.suggestions div.current {
+    background-color: #3366cc;
+    color: #FFF;
+}
+/* End Auto Complete Suggestions */
+
 
 /* Nifty Corners Crap */
 .rtop,.artop{display:block}

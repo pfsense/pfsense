@@ -309,7 +309,7 @@ The default is to use the IP of the firewall as the gateway.  Specify an alterna
                         <td width="22%" valign="top" class="vncell">Failover peer IP:</td>
                         <td width="78%" class="vtable">
 				<input name="failover_peerip" type="text" class="formfld" id="failover_peerip" size="10" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br>
-				Leave blank to disable.  Peer must be present in Virtual IP's with a type of CARP.
+				Leave blank to disable.  Enter the REAL address of the other machine.  Machines must be using CARP.
 			</td>
 		      </tr>
 		      

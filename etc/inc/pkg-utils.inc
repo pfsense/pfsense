@@ -450,6 +450,7 @@ function install_package_xml($pkg) {
                 mwexec("/usr/sbin/clog -i -s 32768 {$g['varlog_path']}/{$pkg_info['logging']['logfilename']}");
                 chmod($g['varlog_path'] . '/' . $pkg_info['logging']['logfilename'], 0600);
                 @fwrite($fd_log, "Adding text to file /etc/syslog.conf\n");
+		mwexec("killall syslogd");
                 system_syslogd_start();
         }
 

@@ -92,7 +92,7 @@ EOD;
 			$skew = 1;
 			$a_vip = &$config['virtualip']['vip'];
 			foreach ($a_vip as $vipent) {
-				$int = guess_interface_from_ip($vipent['subnet']);
+				$int = guess_interface_from_ip($dhcpifconf['failover_peerip']);
 				$intip = find_interface_ip($int);
 				$real_dhcpif = convert_friendly_interface_to_real_interface_name($dhcpif);
 				if($int == $real_dhcpif) {

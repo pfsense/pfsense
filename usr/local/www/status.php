@@ -106,7 +106,7 @@ defCmdT("pfctl -s rules -vv","/sbin/pfctl -s rules -vv");
 defCmdT("pfctl -s queue -vv","/sbin/pfctl -s queue -vv");
 defCmdT("pfctl -vsq","/sbin/pfctl -vsq");
 
-defCmdT("Load Balancer","pfctl -a slb -s rules");
+defCmdT("Load Balancer","pfctl -a slb -s nat");
 
 defCmdT("pftop -w 150 -a -b","/usr/local/sbin/pftop -a -b");
 defCmdT("pftop -w 150 -a -b -v long","/usr/local/sbin/pftop -w 150 -a -b -v long");

@@ -35,14 +35,11 @@ require_once("notices.inc");
 
 function slbd_configure() {
 	global $config, $g;
-
-	/* no need to go further if we don't have any load balance stuff */
-	if ((!is_array($config['load_balancer'])) || (!is_array($config['load_balancer']['pool'])))
-		return;
-
+	
 	$a_vs = &$config['load_balancer']['virtual_server'];
 	$a_pool = &$config['load_balancer']['pool'];
 
+	$should_start=0;
 
 	$fd = fopen("{$g['varetc_path']}/slbd.conf", "w");
 
@@ -78,12 +75,19 @@ function slbd_configure() {
 		}
 		
         	$slbdconf .= "\t:tcppoll:send=:expect=:\n";
+		
+		$should_start=1;
 	}
-	fwrite($fd, $slbdconf);
-	fclose($fd);
-	mwexec("/usr/bin/pkill -9 slbd");
-	/* startup slbd pointing it's config at /var/etc/slbd.conf with a polling interval of 5 seconds */
-	mwexec("/usr/local/sbin/slbd -c{$g['varetc_path']}/slbd.conf -r5000");
+	
+	if($should_start == 1) {
+		fwrite($fd, $slbdconf);
+		fclose($fd);
+		mwexec("/usr/bin/pkill -9 slbd");
+		/* startup slbd pointing it's config at /var/etc/slbd.conf with a polling interval of 5 seconds */
+		mwexec("/usr/local/sbin/slbd -c{$g['varetc_path']}/slbd.conf -r5000");
+	} else {
+		fclose($fd);	
+	}
 }
 
 ?>

@@ -63,12 +63,12 @@ if ($_POST) {
 			}
 		}
 		if ($config['interfaces'][$_POST['bridge']]['bridge']) {
-			$input_errors[] = "The specified interface is already bridged to " .
-				"another interface.";
+			//$input_errors[] = "The specified interface is already bridged to " .
+			//	"another interface.";
 		}
 		/* captive portal on? */
 		if (isset($config['captiveportal']['enable'])) {
-			$input_errors[] = "Interfaces cannot be bridged while the captive portal is enabled.";
+			//$input_errors[] = "Interfaces cannot be bridged while the captive portal is enabled.";
 		}
 	}
 

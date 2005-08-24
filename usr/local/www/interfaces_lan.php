@@ -52,13 +52,13 @@ if ($_POST) {
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 			if ($i != $index) {
 				if ($config['interfaces']['opt' . $i]['bridge'] == $_POST['bridge']) {
-					$input_errors[] = "Optional interface {$i} " .
-						"({$config['interfaces']['opt' . $i]['descr']}) is already bridged to " .
-						"the specified interface.";
+					//$input_errors[] = "Optional interface {$i} " .
+					//	"({$config['interfaces']['opt' . $i]['descr']}) is already bridged to " .
+					//	"the specified interface.";
 				} else if ($config['interfaces']['opt' . $i]['bridge'] == "opt{$index}") {
-					$input_errors[] = "Optional interface {$i} " .
-						"({$config['interfaces']['opt' . $i]['descr']}) is already bridged to " .
-						"this interface.";
+					//$input_errors[] = "Optional interface {$i} " .
+					//	"({$config['interfaces']['opt' . $i]['descr']}) is already bridged to " .
+					//	"this interface.";
 				}
 			}
 		}

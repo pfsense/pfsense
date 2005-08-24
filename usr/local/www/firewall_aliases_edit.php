@@ -294,7 +294,7 @@ rowtype[2] = "select";
 
 		     </tbody>
 		    </table>
-			<a onClick="javascript:addRowTo('maintable'); typesel_change(); return false;" href="#"><img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif"></a>
+			<a onClick="javascript:addRowTo('maintable'); typesel_change(); return false;" href="#"><img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add another entry"></a>
 		    </td>
                 </tr>
                 <tr>

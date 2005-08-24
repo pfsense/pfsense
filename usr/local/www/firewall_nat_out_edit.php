@@ -78,6 +78,10 @@ if ($_POST) {
         $_POST['destination'] = "any";
         $_POST['destination_subnet'] = 24;
     }
+    if ($_POST['source_type'] == "any") {
+        $_POST['source'] = "any";
+        $_POST['source_subnet'] = 24;
+    }
 
     unset($input_errors);
     $pconfig = $_POST;
@@ -88,11 +92,13 @@ if ($_POST) {
 
     do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-    if ($_POST['source'] && !is_ipaddr($_POST['source']) && $_POST['source'] <> "any") {
-        $input_errors[] = "A valid source must be specified.";
-    }
-    if ($_POST['source_subnet'] && !is_numericint($_POST['source_subnet'])) {
-        $input_errors[] = "A valid source bit count must be specified.";
+    if ($_POST['source_type'] != "any") {
+        if ($_POST['source'] && !is_ipaddr($_POST['source']) && $_POST['source'] <> "any") {
+            $input_errors[] = "A valid source must be specified.";
+        }
+        if ($_POST['source_subnet'] && !is_numericint($_POST['source_subnet'])) {
+            $input_errors[] = "A valid source bit count must be specified.";
+        }
     }
     if ($_POST['sourceport'] && !is_numericint($_POST['sourceport'])) {
         $input_errors[] = "A valid source port must be specified.";

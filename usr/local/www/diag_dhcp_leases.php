@@ -173,14 +173,18 @@ foreach ($leases as $data) {
                 }		
 		echo "<tr>\n";
                 echo "<td class=\"listlr\">{$fspans}{$data['ip']}{$fspane}&nbsp;</td>\n";
+                if ($data['act'] != "active") {
+                        echo "<td class=\"listr\">{$fspans}<a href=\"services_wol.php?if={$data['if']}&mac={$data['mac']}\" title=\"send Wake on Lan packet to mac\">{$data['mac']}</a>{$fspane}&nbsp;</td>\n";
+                } else {
                 echo "<td class=\"listr\">{$fspans}{$data['mac']}{$fspane}&nbsp;</td>\n";
+                }
                 echo "<td class=\"listr\">{$fspans}{$data['hostname']}{$fspane}&nbsp;</td>\n";
                 echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['start']) . "{$fspane}&nbsp;</td>\n";
                 echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['end']) . "{$fspane}&nbsp;</td>\n";
                 echo "<td class=\"list\" valign=\"middle\"><a href=\"services_dhcp_edit.php?if={$data['if']}&mac={$data['mac']}&descr={$data['hostname']}\">";
 		echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"add a static mapping for this MAC address\"></a></td>\n";
                 echo "<td valign=\"middle\"><a href=\"services_wol_edit.php?if={$data['if']}&mac={$data['mac']}&descr={$data['hostname']}\">";
-		echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_wol_all.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"add a wake on lan mapping for this MAC address\"></a></td>\n";
+		echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_wol_all.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"add a Wake on Lan mapping for this MAC address\"></a></td>\n";
                 echo "</tr>\n";
 	}
 }

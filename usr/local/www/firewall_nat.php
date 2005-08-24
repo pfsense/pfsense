@@ -213,7 +213,7 @@ include("head.inc");
                   <td valign="middle" class="list" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
-                        <td><a href="firewall_nat_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
+                        <td><a href="firewall_nat_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="edit rule"></a></td>
                       </tr>
                       <tr>
                         <td><input onmouseover="fr_insline(<?=$nnats;?>, true)" onmouseout="fr_insline(<?=$nnats;?>, false)" name="move_<?=$i;?>" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" title="move selected rules before this rule" height="17" type="image" width="17" border="0"></td>

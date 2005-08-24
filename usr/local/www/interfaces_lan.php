@@ -212,6 +212,7 @@ function enable_change(enable_over) {
                 </tr>
 				<?php /* Wireless interface? */
 				if (isset($lancfg['wireless']))
+					$optcfg = $lancfg;
 					wireless_config_print();
 				?>
 

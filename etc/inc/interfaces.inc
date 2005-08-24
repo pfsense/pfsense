@@ -476,7 +476,9 @@ function interfaces_wireless_configure($if, $wlcfg) {
 }
 
 function find_dhclient_process($interface) {
-	$pid = `ps ax | grep dhclient | grep {$interface} | cut -f" " -d2`;
+	if(filter_translate_type_to_real_interface($interface) <> "")
+        	$realinterface = filter_translate_type_to_real_interface($interface);
+	$pid = `ps ax | grep "[d]hclient" | grep {$realinterface} | awk -F" " '{print $1}'`;
 	return $pid;
 }
 
@@ -643,6 +645,8 @@ EOD;
 function interfaces_dhcp_configure($interface) {
 	global $config, $g;
 
+	if(filter_translate_type_to_real_interface($interface) <> "")
+        	$realinterface = filter_translate_type_to_real_interface($interface);
 	$optcfg = $config['interfaces'][$interface];
 
 	/* generate dhclient_$interface.conf */
@@ -656,7 +660,7 @@ function interfaces_dhcp_configure($interface) {
 
  	if ($optcfg['dhcphostname']) {
 		$dhclientconf .= <<<EOD
-interface "{$optcfg['if']}" {
+interface "{$realinterface}" {
 	send dhcp-client-identifier "{$optcfg['dhcphostname']}";
 	send host-name "{$optcfg['dhcphostname']}";
 	script "/sbin/dhclient-script";
@@ -736,13 +740,13 @@ function interfaces_wan_dhcp_down() {
 
 function interfaces_dhcp_down($interface) {
 	global $config;
-	$wancfg = $config['interfaces']['wan'];
-	$wanif = $wancfg['if'];
-	mwexec("/sbin/ifconfig {$interface} down");
+	if(filter_translate_type_to_real_interface($interface) <> "")
+		$realinterface = filter_translate_type_to_real_interface($interface);
+	mwexec("/sbin/ifconfig {$realinterface} down");
 	sleep(1);
-	$pid_dhclient = `ps awux | grep dhclient | grep {$interface}`;
-	if($pid_dhclient)
-		mwexec("kill {$pid_dhclient}");
+	$pid = find_dhclient_process($interface);
+	if($pid)
+		mwexec("kill {$pid}");
 }
 
 function interfaces_dhcp_up($interface) {

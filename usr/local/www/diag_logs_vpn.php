@@ -34,7 +34,7 @@
 
 require("guiconfig.inc");
 
-$ipsec_logfile = "{$g['varlog_path']}/ipsec.log";
+$ipsec_logfile = "{$g['varlog_path']}/vpn.log";
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)

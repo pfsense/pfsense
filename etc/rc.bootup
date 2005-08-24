@@ -63,7 +63,7 @@
 	 */
 	$do_assign = 0;
 	/* we need to ignore the vlan interface checks) */
-	if(stristr($lan_if,"vlan") == false or stristr($wan_if,"vlan") == false) {
+	if(stristr($lan_if,"vlan") == false and stristr($wan_if,"vlan") == false) {
 		if(does_interface_exist($lan_if) == false) {
 			echo "\n\n\nLAN {$lan_if} interface mismatch.";
 			$do_assign = 1;

@@ -38,15 +38,17 @@ $wancfg = &$config['interfaces']['wan'];
 
 if ($_POST) {
 	if ($_POST['submit'] == "Disconnect" || $_POST['submit'] == "Release") {
+		$interface = $_POST['interface'];
 		if ($wancfg['ipaddr'] == "dhcp")
-			interfaces_dhcp_down($_POST['interface']);
+			interfaces_dhcp_down($interface);
 		else if ($wancfg['ipaddr'] == "pppoe")
 			interfaces_wan_pppoe_down();
 		else if ($wancfg['ipaddr'] == "pptp")
 			interfaces_wan_pptp_down();
 	} else if ($_POST['submit'] == "Connect" || $_POST['submit'] == "Renew") {
+		$interface = $_POST['interface'];
 		if ($wancfg['ipaddr'] == "dhcp")
-			interfaces_dhcp_up($_POST['interface']);
+			interfaces_dhcp_up($interface);
 		else if ($wancfg['ipaddr'] == "pppoe")
 			interfaces_wan_pppoe_up();
 		else if ($wancfg['ipaddr'] == "pptp")
@@ -292,7 +294,9 @@ include("head.inc");
                 <td width="78%" class="listr">
                   <?=htmlspecialchars($ifinfo['macaddr']);?>
                 </td>
-              </tr><?php endif; if ($ifinfo['status'] != "down"): ?>
+              </tr>
+	      </form>
+		<?php endif; if ($ifinfo['status'] != "down"): ?>
 			  <?php if ($ifinfo['dhcplink'] != "down" && $ifinfo['pppoelink'] != "down" && $ifinfo['pptplink'] != "down"): ?>
 			  <?php if ($ifinfo['ipaddr']): ?>
               <tr>
@@ -360,11 +364,9 @@ include("head.inc");
                   <?=htmlspecialchars($ifinfo['collisions']);?>
                 </td>
               </tr><?php endif; ?>
-	      </form>
 	      <?php endif; ?>
               <?php $i++; endforeach; ?>
             </table>
-</form>
 <br>
 <strong class="red">Note:<br>
 </strong>Using dial-on-demand will bring the connection up again if any packet

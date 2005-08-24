@@ -130,6 +130,12 @@
 			<type>checkbox</type>
 		</field>
 		<field>
+			<fielddescr>Synchronize Load Balancer</fielddescr>
+			<fieldname>synchronizelb</fieldname>
+			<description>When this option is enabled, this system will automatically sync the Load Balancer settings over to the other carp host when changes are made.</description>
+			<type>checkbox</type>
+		</field>			
+		<field>
 			<fielddescr>Synchronize Virtual IPs</fielddescr>
 			<fieldname>synchronizevirtualip</fieldname>
 			<description>When this option is enabled, this system will automatically sync the Virtual IP (minus proxyarp) settings over to the other carp host when changes are made.</description>

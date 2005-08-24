@@ -2363,6 +2363,10 @@ function carp_sync_client() {
 			$sections_xml[] = new XML_RPC_Value(backup_vip_config_section(), 'string');
 			$sections[] = new XML_RPC_Value('virtualip', 'string');
 		    }
+		    if($carp['synchronizelb'] != "" and is_array($config['load_balancer'])) {
+			$sections_xml[] = new XML_RPC_Value(backup_config_section("load_balancer"), 'string');
+			$sections[] = new XML_RPC_Value('load_balancer', 'string');
+		    }		    
 		    if(count($sections) > 0) {
 			    carp_sync_xml($synchronizetoip, $carp['password'], $sections, $sections_xml);
 			    $cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip);

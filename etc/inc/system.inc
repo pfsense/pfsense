@@ -33,85 +33,53 @@
 require_once("functions.inc");
 
 function system_resolvconf_generate($dynupdate = false) {
-	global $config, $g;
+        global $config, $g;
 
-	$syscfg = $config['system'];
+        $syscfg = $config['system'];
 
-	$fd = fopen("{$g['varetc_path']}/resolv.conf.new", "w");
-	if (!$fd) {
-		printf("Error: cannot open resolv.conf.new in system_resolvconf_generate().\n");
-		return 1;
-	}
+        $fd = fopen("{$g['varetc_path']}/resolv.conf", "w");
+        if (!$fd) {
+                printf("Error: cannot open resolv.conf in system_resolvconf_generate().\n");
+                return 1;
+        }
 
-	$dhfd = @fopen("{$g['etc_path']}/dhclient-enter-hooks", "w");
-	if (!$dhfd) {
-		printf("Error: cannot open dhclient-enter-hooks in system_resolvconf_generate().\n");
-		return 1;
-	}
+        $resolvconf = "domain {$syscfg['domain']}\n";
 
+        $havedns = false;
 
-	$resolvconf = "domain {$syscfg['domain']}\n";
-
-	$havedns = false;
-
-	if (isset($syscfg['dnsallowoverride'])) {
-		/* get dynamically assigned DNS servers for ppp (if any) */
-		$nfd = @fopen("{$g['varetc_path']}/nameservers.conf", "r");
-		if ($nfd) {
-			while (!feof($nfd)) {
-				$dnss = trim(fgets($nfd));
-				if  ( preg_match('/^(nameserver )(.*)/',$dnss, $catch) ) 
-					$dnss = $catch[2];
-				if (is_ipaddr($dnss)) {
-					$resolvconf .= "nameserver $dnss\n";
-					$havedns = true;
-				}
+        if (isset($syscfg['dnsallowoverride'])) {
+                /* get dynamically assigned DNS servers (if any) */
+                $nfd = @fopen("{$g['varetc_path']}/nameservers.conf", "r");
+                if ($nfd) {
+                        while (!feof($nfd)) {
+                                $dnss = trim(fgets($nfd));
+                                if ($dnss) {
+                                        $resolvconf .= "nameserver $dnss\n";
+                                        $havedns = true;
+                                }
+                        }
+                        fclose($nfd);
+                }
+        }
+        if (!$havedns && is_array($syscfg['dnsserver'])) {
+                foreach ($syscfg['dnsserver'] as $ns) {
+                        if ($ns) {
+                                $resolvconf .= "nameserver $ns\n";
+				$havedns = true;
 			}
-			fclose($nfd);
-		}
-	}
+                }
+        }
 
-	/* if we didn't get assigned DNS servers and have some set add 'em */
-	if (!$havedns && is_array($syscfg['dnsserver'])) {
-		foreach ($syscfg['dnsserver'] as $ns) {
-			if ($ns)
-				$resolvconf .= "nameserver $ns\n";
-			$havedns = true;
-		}
+        fwrite($fd, $resolvconf);
+        fclose($fd);
 
-		/* create a dhclient-enter-hooks, so resolv.conf stays intact */
-		$dhcliententerhooks = "add_new_resolv_conf() {\n";
-		$dhcliententerhooks .= "\techo search {$syscfg['domain']} > \$RESOLV\n";
-		foreach ($syscfg['dnsserver'] as $ns) {
-			if ($ns)
-				$dhcliententerhooks .= "\techo nameserver $ns > \$RESOLV\n";
-	}
-		$dhcliententerhooks .= "}\n";
-	}
+        if (!$g['booting']) {
+                /* restart dhcpd (nameservers may have changed) */
+                if (!$dynupdate)
+                        services_dhcpd_configure();
+        }
 
-	fwrite($dhfd, $dhcliententerhooks);
-	fclose($dhfd);
-
-	fwrite($fd, $resolvconf);
-	fclose($fd);
-
-	/* If we now have DNS servers, overwrite resolv.conf */
-	if ($havedns) {
-		if (file_exists("{$g['varetc_path']}/resolv.conf"))
-			unlink("{$g['varetc_path']}/resolv.conf");
-		rename("{$g['varetc_path']}/resolv.conf.new", "{$g['varetc_path']}/resolv.conf");
-	} else {
-		unlink("{$g['varetc_path']}/resolv.conf.new");
-	}
-
-
-	if (!$g['booting']) {
-		/* restart dhcpd (nameservers may have changed) */
-		if (!$dynupdate)
-			services_dhcpd_configure();
-	}
-
-	return 0;
+        return 0;
 }
 
 function system_hosts_generate() {

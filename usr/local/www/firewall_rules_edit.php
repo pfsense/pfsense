@@ -709,7 +709,7 @@ include("head.inc");
 				}
 ?>
 				</select>
-				<p><strong>Leave blank for default.</strong></p>
+				<p><strong>Leave as 'default' to use the system routing table.  Or choose a gateway to utilize policy based routing.</strong></p>
 			</td>
 		</tr>
 		<tr>

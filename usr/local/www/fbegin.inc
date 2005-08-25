@@ -163,13 +163,13 @@ require_once("notices.inc");
 								preg_match($g['wireless_regex'], $config['interfaces']['wan']['if']))
 									$ifdescrs['wan'] = 'WAN';									
 							if (is_array($config['interfaces']['lan']['wireless']) &&
-								preg_match($g['wireless_regex'], $config['interfaces']['wan']['if']))
+								preg_match($g['wireless_regex'], $config['interfaces']['lan']['if']))
 									$ifdescrs['lan'] = 'LAN';
 							for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 								if (is_array($config['interfaces']['opt' . $j]['wireless']) &&
 									isset($config['interfaces']['opt' . $j]['enable']) &&
-									(strstr($config['interfaces']['opt' . $j]['if'], "wi") || strstr($config['interfaces']['opt' . $j]['if'], "ath")))
-									$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
+									 preg_match($g['wireless_regex'], $config['interfaces']['opt' . $j]['if']))
+										$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
 							}
 							if (count($ifdescrs) > 0): ?>	      
 							<li><a href="/status_wireless.php" class="navlnk">Wireless</a></li>

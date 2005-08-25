@@ -34,6 +34,8 @@
 /* include all configuration functions */
 require_once("functions.inc");
 
+if(!is_numeric($bridges_total)) $bridges_total=0;
+
 function interfaces_loopback_configure() {
 	mwexec("/sbin/ifconfig lo0 127.0.0.1");
 
@@ -84,7 +86,7 @@ function interfaces_vlan_configure() {
 }
 
 function interfaces_lan_configure() {
-	global $config, $g;
+	global $config, $g, $bridges_total;
 
 	$lancfg = $config['interfaces']['lan'];
 
@@ -113,7 +115,7 @@ function interfaces_lan_configure() {
 	}	
 
 	/* bridged? */
-	$bridges_total=0;
+	
 	if ($lancfg['bridge']) {
 		// mwexec("/sbin/ifconfig " . escapeshellarg($lancfg['if']) . " delete up");
 		/* use open/netBSD style bridge */
@@ -208,8 +210,6 @@ function interfaces_optional_configure_if($opti) {
 	global $config, $g;
 	global $bridgeconfig;
 	global $bridges_total;
-	
-	if(!is_numeric($bridges_total)) $bridges_total=0;
 
 	$optcfg = $config['interfaces']['opt' . $opti];
 

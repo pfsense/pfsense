@@ -160,13 +160,11 @@ require_once("notices.inc");
 							<li><a href="/status_graph.php" class="navlnk">Traffic graph</a></li>
 							<?php $i = 0; $ifdescrs = array();
 							if (is_array($config['interfaces']['wan']['wireless']) &&
-									(strstr($config['interfaces']['wan']['if'], "wi") || strstr($config['interfaces']['wan']['if'], "ath")))
-									$ifdescrs['wan'] = 'WAN';
-									
+								preg_match($g['wireless_regex'], $config['interfaces']['wan']['if']))
+									$ifdescrs['wan'] = 'WAN';									
 							if (is_array($config['interfaces']['lan']['wireless']) &&
-									(strstr($config['interfaces']['lan']['if'], "wi") || strstr($config['interfaces']['lan']['if'], "ath")))
+								preg_match($g['wireless_regex'], $config['interfaces']['wan']['if']))
 									$ifdescrs['lan'] = 'LAN';
-							
 							for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 								if (is_array($config['interfaces']['opt' . $j]['wireless']) &&
 									isset($config['interfaces']['opt' . $j]['enable']) &&

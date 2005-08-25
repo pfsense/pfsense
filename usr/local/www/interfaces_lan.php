@@ -33,6 +33,8 @@
 require("guiconfig.inc");
 
 $lancfg = &$config['interfaces']['lan'];
+$optcfg = &$config['interfaces']['lan'];
+
 $pconfig['ipaddr'] = $lancfg['ipaddr'];
 $pconfig['subnet'] = $lancfg['subnet'];
 $pconfig['bridge'] = $lancfg['bridge'];
@@ -212,7 +214,6 @@ function enable_change(enable_over) {
                 </tr>
 				<?php /* Wireless interface? */
 				if (isset($lancfg['wireless']))
-					$optcfg = $lancfg;
 					wireless_config_print();
 				?>
 

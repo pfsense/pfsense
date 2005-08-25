@@ -43,40 +43,42 @@ function slbd_configure() {
 
 	$fd = fopen("{$g['varetc_path']}/slbd.conf", "w");
 
-	foreach ($a_vs as $vsent) {
-		if ($vsent['desc'] == "")
-			$slbdconf .= "{$vsent['name']}:\\\n";
-		else
-			$slbdconf .= "{$vsent['name']}|{$vsent['desc']}:\\\n";
-
-		/* pool name */
-        	$slbdconf .= "\t:poolname={$vsent['name']}:\\\n";
-		/* virtual IP */
-	 	$slbdconf .= "\t:vip={$vsent['ipaddr']}:\\\n";
-		/* virtual port */
-	 	$slbdconf .= "\t:vip-port={$vsent['port']}:\\\n";
-		/* fallback IP */
-	 	$slbdconf .= "\t:sitedown={$vsent['ipaddr']}:\\\n";
-		/* fallback port */
-	 	$slbdconf .= "\t:sitedown-port={$vsent['port']}:\\\n";
-
-		for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
-			if ($config['load_balancer']['lbpool'][$i]['name'] == $vsent['pool']) {
-				$svrcnt = 0;
-				$svrtxt = "";
-				$svrtxt = "\t:service-port={$config['load_balancer']['lbpool'][$i]['port']}:\\\n";
-				foreach ($config['load_balancer']['lbpool'][$i]['servers'] as $lbsvr) {
-					$svrtxt .= "\t:{$svrcnt}={$lbsvr}:\\\n";
-					$svrcnt++;
+	if(is_array($a_vs)) {
+		foreach ($a_vs as $vsent) {
+			if ($vsent['desc'] == "")
+				$slbdconf .= "{$vsent['name']}:\\\n";
+			else
+				$slbdconf .= "{$vsent['name']}|{$vsent['desc']}:\\\n";
+	
+			/* pool name */
+			$slbdconf .= "\t:poolname={$vsent['name']}:\\\n";
+			/* virtual IP */
+			$slbdconf .= "\t:vip={$vsent['ipaddr']}:\\\n";
+			/* virtual port */
+			$slbdconf .= "\t:vip-port={$vsent['port']}:\\\n";
+			/* fallback IP */
+			$slbdconf .= "\t:sitedown={$vsent['ipaddr']}:\\\n";
+			/* fallback port */
+			$slbdconf .= "\t:sitedown-port={$vsent['port']}:\\\n";
+	
+			for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
+				if ($config['load_balancer']['lbpool'][$i]['name'] == $vsent['pool']) {
+					$svrcnt = 0;
+					$svrtxt = "";
+					$svrtxt = "\t:service-port={$config['load_balancer']['lbpool'][$i]['port']}:\\\n";
+					foreach ($config['load_balancer']['lbpool'][$i]['servers'] as $lbsvr) {
+						$svrtxt .= "\t:{$svrcnt}={$lbsvr}:\\\n";
+						$svrcnt++;
+					}
+					$slbdconf .= "\t:services={$svrcnt}:\\\n";
+					$slbdconf .= $svrtxt;
 				}
-				$slbdconf .= "\t:services={$svrcnt}:\\\n";
-				$slbdconf .= $svrtxt;
 			}
+			
+			$slbdconf .= "\t:tcppoll:send=:expect=:\n";
+			
+			$should_start=1;
 		}
-		
-        	$slbdconf .= "\t:tcppoll:send=:expect=:\n";
-		
-		$should_start=1;
 	}
 	
 	if($should_start == 1) {

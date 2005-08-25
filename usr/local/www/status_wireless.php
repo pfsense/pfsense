@@ -96,17 +96,17 @@ include("head.inc");
 <?php $i = 0; $ifdescrs = array();
 
 	if (is_array($config['interfaces']['wan']['wireless']) &&
-			(strstr($config['interfaces']['wan']['if'], "wi") || strstr($config['interfaces']['wan']['if'], "ath")))
+			preg_match($g['wireless_regex'], $config['interfaces']['wan']['if']))
 			$ifdescrs['wan'] = 'WAN';
 			
 	if (is_array($config['interfaces']['lan']['wireless']) &&
-			(strstr($config['interfaces']['lan']['if'], "wi") || strstr($config['interfaces']['lan']['if'], "ath")))
+			preg_match($g['wireless_regex'], $config['interfaces']['lan']['if']))
 			$ifdescrs['lan'] = 'LAN';
 	
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 		if (is_array($config['interfaces']['opt' . $j]['wireless']) &&
 			isset($config['interfaces']['opt' . $j]['enable']) &&
-			(strstr($config['interfaces']['opt' . $j]['if'], "wi") || strstr($config['interfaces']['opt' . $j]['if'], "ath")))
+			preg_match($g['wireless_regex'], $config['interfaces']['opt' . $j]['if']))
 			$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
 	}
 		
@@ -189,6 +189,6 @@ include("head.inc");
               <?php $i++; endforeach; ?>
             </table>
 <?php else: ?>
-<strong>No supported wireless interfaces were found for status display (only cards that use the wi[n] or ath[n] driver are supported).</strong>
+<strong>No supported wireless interfaces were found for status display (only cards that use the wi[n], ath[n], an[n], ral[n], ural[n] and wai[n] driver are supported).</strong>
 <?php endif; ?>
 <?php include("fend.inc"); ?>

@@ -183,7 +183,7 @@ function wireless_config_print() {
                   <td class="vtable">
 			<select name="txpower">
 				<?php
-				for($x = 100; $x > 0; $x--) {
+				for($x = 99; $x > 0; $x--) {
 					if($pconfig["txpower"] == $x)
 						$SELECTED = " SELECTED";
 					else

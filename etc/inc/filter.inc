@@ -1348,8 +1348,11 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			if(file_exists("/tmp/{$rule['if']}_router"))
 				$rg = file_get_contents("/tmp/{$rule['if']}_router");
 
-			if($rg <> "" and $ri <> "" and stristr($rule['interface'],"opt") == true) {
-				$line .= "reply-to (" . $ri . " " . $rg . ") ";
+			/* do not process reply-to for gateway'd rules */
+			if($rule['gateway'] == "") {
+				if($rg <> "" and $ri <> "" and stristr($rule['interface'],"opt") == true) {
+					$line .= "reply-to (" . $ri . " " . $rg . ") ";
+				}
 			}
 
 			/* if user has selected a custom gateway, lets work with it */

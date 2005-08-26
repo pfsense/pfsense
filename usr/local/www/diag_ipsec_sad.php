@@ -127,7 +127,7 @@ foreach ($sad as $sa): ?>
 			$args .= "&proto=" . rawurlencode($sa['proto']);
 			$args .= "&spi=" . rawurlencode("0x" . $sa['spi']);
 		?>
-		  <a href="diag_ipsec_sad.php?act=del&<?=$args;?>" onclick="return confirm('Do you really want to delete this security association?')"><img src="/themes/<?= $g['theme']; ?>/images/icon_x.gif" width="17" height="17" border="0"></a>
+		  <a href="diag_ipsec_sad.php?act=del&<?=$args;?>" onclick="return confirm('Do you really want to delete this security association?')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a>
 		</td>
 
 	</tr>

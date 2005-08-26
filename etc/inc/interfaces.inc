@@ -617,18 +617,23 @@ function interfaces_opt_dhcp_configure($interface) {
 		return 1;
 	}
 
+	if ($optcfg['dhcphostname']) {
+		$dhclientconf_hostname = "send dhcp-client-identifier \"{$optcfg['dhcphostname']}\";\n";
+		$dhclientconf_hostname = "	send dhcp-client-identifier \"{$optcfg['dhcphostname']}\";\n";
+	} else {
+		$dhclientconf_hostname = "";
+	}
+
  	$dhclientconf = "";
 
- 	if ($optcfg['dhcphostname']) {
-		$dhclientconf .= <<<EOD
-	interface "{$optif}" {
-	send dhcp-client-identifier "{$optcfg['dhcphostname']}";
+	$dhclientconf .= <<<EOD
+interface "{$optif}" {
 	send host-name "{$optcfg['dhcphostname']}";
 	script "/sbin/dhclient-script";
+	{$dhclientconf_hostname}
 }
 
 EOD;
-	}
 
 	fwrite($fd, $dhclientconf);
 	fclose($fd);
@@ -647,6 +652,7 @@ function interfaces_dhcp_configure($interface) {
 
 	if(filter_translate_type_to_real_interface($interface) <> "")
         	$realinterface = filter_translate_type_to_real_interface($interface);
+
 	$optcfg = $config['interfaces'][$interface];
 
 	/* generate dhclient_$interface.conf */
@@ -656,18 +662,22 @@ function interfaces_dhcp_configure($interface) {
 		return 1;
 	}
 
+	if ($optcfg['dhcphostname']) {
+		$dhclientconf_hostname = "send dhcp-client-identifier \"{$optcfg['dhcphostname']}\";\n";
+		$dhclientconf_hostname = "	send dhcp-client-identifier \"{$optcfg['dhcphostname']}\";\n";
+	} else {
+		$dhclientconf_hostname = "";
+	}
+
  	$dhclientconf = "";
 
- 	if ($optcfg['dhcphostname']) {
-		$dhclientconf .= <<<EOD
+	$dhclientconf .= <<<EOD
 interface "{$realinterface}" {
-	send dhcp-client-identifier "{$optcfg['dhcphostname']}";
-	send host-name "{$optcfg['dhcphostname']}";
 	script "/sbin/dhclient-script";
+	{$dhclientconf_hostname}
 }
 
 EOD;
-	}
 
 	fwrite($fd, $dhclientconf);
 	fclose($fd);
@@ -698,19 +708,23 @@ function interfaces_wan_dhcp_configure() {
 		printf("Error: cannot open dhclient_wan.conf in interfaces_wan_dhcp_configure() for writing.\n");
 		return 1;
 	}
+	
+	if ($wancfg['dhcphostname']) {
+		$dhclientconf_hostname = "send dhcp-client-identifier \"{$wancfg['dhcphostname']}\";\n";
+		$dhclientconf_hostname = "	send dhcp-client-identifier \"{$wancfg['dhcphostname']}\";\n";
+	} else {
+		$dhclientconf_hostname = "";
+	}
 
  	$dhclientconf = "";
 
- 	if ($wancfg['dhcphostname']) {
-		$dhclientconf .= <<<EOD
+	$dhclientconf .= <<<EOD
 interface "{$wancfg['if']}" {
-	send dhcp-client-identifier "{$wancfg['dhcphostname']}";
-	send host-name "{$wancfg['dhcphostname']}";
 	script "/sbin/dhclient-script";
+	{$dhclientconf_hostname}
 }
 
 EOD;
-	}
 
 	fwrite($fd, $dhclientconf);
 	fclose($fd);

@@ -95,6 +95,12 @@ if (isset($_POST['save'])) {
                 for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) 
                         $ifdescrs[] = "opt" . $j;
                 foreach($ifdescrs as $if) {
+			if($if <> "lan" and $if <> "wan") {
+				/* interface is an optional.  is it enabled? */
+				if(!isset($config['interfaces'][$if]['enabled'])) {
+					continue;
+				}
+			}
                         $natent = array();
                         $osn = convert_ip_to_network_format($config['interfaces'][$if]['ipaddr'],
                                 $config['interfaces'][$if]['subnet']);

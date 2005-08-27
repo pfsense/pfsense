@@ -55,6 +55,7 @@ $pconfig['deftime'] = $config['dhcpd'][$if]['defaultleasetime'];
 $pconfig['maxtime'] = $config['dhcpd'][$if]['maxleasetime'];
 $pconfig['gateway'] = $config['dhcpd'][$if]['gateway'];
 list($pconfig['wins1'],$pconfig['wins2']) = $config['dhcpd'][$if]['winsserver'];
+list($pconfig['dns1'],$pconfig['dns2']) = $config['dhcpd'][$if]['dns'];
 $pconfig['enable'] = isset($config['dhcpd'][$if]['enable']);
 $pconfig['denyunknown'] = isset($config['dhcpd'][$if]['denyunknown']);
 $pconfig['staticarp'] = isset($config['dhcpd'][$if]['staticarp']);
@@ -104,7 +105,10 @@ if ($_POST) {
 		if (($_POST['gateway'] && !is_ipaddr($_POST['gateway'])))
 			$input_errors[] = "A valid IP address must be specified for the gateway.";
 		if (($_POST['wins1'] && !is_ipaddr($_POST['wins1'])) || ($_POST['wins2'] && !is_ipaddr($_POST['wins2']))) {
-			$input_errors[] = "A valid IP address must be specified for the primary/secondary WINS server.";
+			$input_errors[] = "A valid IP address must be specified for the primary/secondary WINS servers.";
+		}
+		if (($_POST['dns1'] && !is_ipaddr($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddr($_POST['dns2']))) {
+			$input_errors[] = "A valid IP address must be specified for the primary/secondary DNS servers.";
 		}
 		if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60))) {
 			$input_errors[] = "The default lease time must be at least 60 seconds.";
@@ -146,6 +150,12 @@ if ($_POST) {
 			$config['dhcpd'][$if]['winsserver'][] = $_POST['wins1'];
 		if ($_POST['wins2'])
 			$config['dhcpd'][$if]['winsserver'][] = $_POST['wins2'];
+
+		if ($_POST['dns1'])
+			$config['dhcpd'][$if]['dns1'][] = $_POST['wins1'];
+		if ($_POST['dns2'])
+			$config['dhcpd'][$if]['dns2'][] = $_POST['wins2'];
+
 			
 		$config['dhcpd'][$if]['gateway'] = $_POST['gateway'];
 
@@ -189,6 +199,8 @@ function enable_change(enable_over) {
 	document.iform.range_to.disabled = endis;
 	document.iform.wins1.disabled = endis;
 	document.iform.wins2.disabled = endis;
+	document.iform.dns1.disabled = endis;
+	document.iform.dns2.disabled = endis;
 	document.iform.deftime.disabled = endis;
 	document.iform.maxtime.disabled = endis;
 	document.iform.gateway.disabled = endis;
@@ -277,6 +289,12 @@ function enable_change(enable_over) {
                         <td width="78%" class="vtable"> 
                           <input name="wins1" type="text" class="formfld" id="wins1" size="20" value="<?=htmlspecialchars($pconfig['wins1']);?>"><br>
                           <input name="wins2" type="text" class="formfld" id="wins2" size="20" value="<?=htmlspecialchars($pconfig['wins2']);?>"></td>
+                      </tr>
+                      <tr> 
+                        <td width="22%" valign="top" class="vncell">DNS servers</td>
+                        <td width="78%" class="vtable"> 
+                          <input name="dns1" type="text" class="formfld" id="dns1" size="20" value="<?=htmlspecialchars($pconfig['dns1']);?>"><br>
+                          <input name="dns2" type="text" class="formfld" id="dns2" size="20" value="<?=htmlspecialchars($pconfig['dns2']);?>"></td>
                       </tr>
                      <tr> 
                        <td width="22%" valign="top" class="vncell">Gateway</td>

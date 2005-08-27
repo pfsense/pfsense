@@ -67,6 +67,8 @@ function services_dhcpd_configure() {
 		return 1;
 	}
 
+	
+
 	$dhcpdconf = <<<EOD
 option domain-name "{$syscfg['domain']}";
 default-lease-time 7200;
@@ -194,6 +196,10 @@ EOD;
 		if (is_array($dhcpifconf['winsserver']) && $dhcpifconf['winsserver'][0]) {
 			$dhcpdconf .= "	option netbios-name-servers " . join(",", $dhcpifconf['winsserver']) . ";\n";
 			$dhcpdconf .= "	option netbios-node-type 8;\n";
+		}
+
+		if (is_array($dhcpifconf['winsserver']) && $dhcpifconf['winsserver'][0]) {
+			$dhcpdconf .= "	option domain-name-servers " . join(",", $dhcpifconf['dns']) . ";\n";
 		}
 
 		if ($dhcpifconf['next-server'])

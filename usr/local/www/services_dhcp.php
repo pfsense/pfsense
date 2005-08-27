@@ -304,8 +304,9 @@ function enable_change(enable_over) {
                        <td width="22%" valign="top" class="vncell">Gateway</td>
                        <td width="78%" class="vtable"> 
                          <input name="gateway" type="text" class="formfld" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>"><br>
-The default is to use the IP of the firewall as the gateway.  Specify an alternate gateway here if this is not the correct gateway for your network.
-                      </tr>
+			 The default is to use the IP of the firewall as the gateway.  Specify an alternate gateway here if this is not the correct gateway for your network.
+			</td> 
+                     </tr>
                       <tr> 
                         <td width="22%" valign="top" class="vncell">Default lease 
                           time</td>
@@ -314,7 +315,8 @@ The default is to use the IP of the firewall as the gateway.  Specify an alterna
                           seconds<br>
                           This is used for clients that do not ask for a specific 
                           expiration time.<br>
-                          The default is 7200 seconds.</td>
+                          The default is 7200 seconds.
+			</td>
                       </tr>
                       <tr> 
                         <td width="22%" valign="top" class="vncell">Maximum lease 
@@ -324,9 +326,9 @@ The default is to use the IP of the firewall as the gateway.  Specify an alterna
                           seconds<br>
                           This is the maximum lease time for clients that ask 
                           for a specific expiration time.<br>
-                          The default is 86400 seconds.</td>
+                          The default is 86400 seconds.
+			</td>
                       </tr>
-		      
                       <tr>
                         <td width="22%" valign="top" class="vncell">Failover peer IP:</td>
                         <td width="78%" class="vtable">
@@ -334,14 +336,26 @@ The default is to use the IP of the firewall as the gateway.  Specify an alterna
 				Leave blank to disable.  Enter the REAL address of the other machine.  Machines must be using CARP.
 			</td>
 		      </tr>
-		      
                       <tr>
                         <td width="22%" valign="top" class="vncell">Static ARP</td>
                         <td width="78%" class="vtable">
 				<table>
-					<tr><td><input valign="middle" type="checkbox" value="yes" name="staticarp" id="staticarp" <?php if($pconfig['staticarp']) echo " checked"; ?>>&nbsp;
-					</td><td><b>Enable Static ARP entries</b></td></tr>
-					<tr><td>&nbsp;</td><td><span class="red"><strong>Note:</strong></span> This feature is under development.  Only the machines listed below will be able to communicate with the firewall on this NIC.  Disabling this has been tested to be broken, a reboot will be required to disable.  Be warned!
+					<tr>
+						<td>
+							<input valign="middle" type="checkbox" value="yes" name="staticarp" id="staticarp" <?php if($pconfig['staticarp']) echo " checked"; ?>>&nbsp;
+						</td>
+						<td>
+							<b>Enable Static ARP entries</b>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							&nbsp;
+						</td>
+						<td>
+							<span class="red"><strong>Note:</strong></span> This feature is under development.  Only the machines listed below will be able to communicate with the firewall on this NIC.  Disabling this has been tested to be broken, a reboot will be required to disable.  Be warned!
+						</td>
+					</tr>
 				</table>
 			</td>
                       </tr>
@@ -362,17 +376,18 @@ The default is to use the IP of the firewall as the gateway.  Specify an alterna
                             <br>
                             The DHCP lease table can be viewed on the <a href="diag_dhcp_leases.php">Diagnostics: 
                             DHCP leases</a> page.<br>
-                            </span></p></td>
+                            </span></p>
+			</td>
                       </tr>
                     </table>
-
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td width="35%" class="listhdrr">MAC address </td>
+                  <td width="35%" class="listhdrr">MAC address</td>
                   <td width="20%" class="listhdrr">IP address</td>
                   <td width="35%" class="listhdr">Description</td>
-                  <td width="10%" class="list"></td>
-				</tr>
+                  <td width="10%" class="list">
+		  </td>
+		</tr>
 			  <?php $i = 0; foreach ($a_maps as $mapent): ?>
                 <tr>
                   <td class="listlr" ondblclick="document.location='services_dhcp_edit.php?if=<?=$if;?>&id=<?=$i;?>';">

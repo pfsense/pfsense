@@ -86,6 +86,13 @@ function wireless_config_post() {
 				}
 				continue;
 			}
+			if(strlen($_POST['key' . $i]) == 12) {
+				/* hex key */
+				if(stristr($_POST['key' . $i], "0x") == false) {
+					$_POST['key' . $i] = "0x" . $_POST['key' . $i];
+				}
+				continue;
+			}			
 			/* 128 bit */
 			if(strlen($_POST['key' . $i]) == 13)
 				continue;

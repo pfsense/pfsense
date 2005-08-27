@@ -67,7 +67,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = "Firewall: Virtual IP Addresses";
+$pgtitle = "Services: Load Balancer: Virtual Servers";
 include("head.inc");
 
 ?>

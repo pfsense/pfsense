@@ -282,19 +282,23 @@ function enable_change(enable_over) {
                         <td width="22%" valign="top" class="vncellreq">Range</td>
                         <td width="78%" class="vtable"> 
                           <input name="range_from" type="text" class="formfld" id="range_from" size="20" value="<?=htmlspecialchars($pconfig['range_from']);?>"> 
-                          &nbsp;to&nbsp; <input name="range_to" type="text" class="formfld" id="range_to" size="20" value="<?=htmlspecialchars($pconfig['range_to']);?>"></td>
+                          &nbsp;to&nbsp; <input name="range_to" type="text" class="formfld" id="range_to" size="20" value="<?=htmlspecialchars($pconfig['range_to']);?>">
+			</td>
                       </tr>
                       <tr> 
                         <td width="22%" valign="top" class="vncell">WINS servers</td>
                         <td width="78%" class="vtable"> 
                           <input name="wins1" type="text" class="formfld" id="wins1" size="20" value="<?=htmlspecialchars($pconfig['wins1']);?>"><br>
-                          <input name="wins2" type="text" class="formfld" id="wins2" size="20" value="<?=htmlspecialchars($pconfig['wins2']);?>"></td>
+                          <input name="wins2" type="text" class="formfld" id="wins2" size="20" value="<?=htmlspecialchars($pconfig['wins2']);?>">
+			</td>
                       </tr>
                       <tr> 
                         <td width="22%" valign="top" class="vncell">DNS servers</td>
                         <td width="78%" class="vtable"> 
                           <input name="dns1" type="text" class="formfld" id="dns1" size="20" value="<?=htmlspecialchars($pconfig['dns1']);?>"><br>
-                          <input name="dns2" type="text" class="formfld" id="dns2" size="20" value="<?=htmlspecialchars($pconfig['dns2']);?>"></td>
+                          <input name="dns2" type="text" class="formfld" id="dns2" size="20" value="<?=htmlspecialchars($pconfig['dns2']);?>"><br>
+			  NOTE: leave blank to use the system default DNS servers.  This option is handy when your doing CARP+DHCP Failover, etc.
+			</td>
                       </tr>
                      <tr> 
                        <td width="22%" valign="top" class="vncell">Gateway</td>

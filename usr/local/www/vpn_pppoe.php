@@ -237,13 +237,9 @@ function enable_change(enable_over) {
                   <td width="22%" valign="top" class="vncellreq">Remote address range</td>
                   <td width="78%" class="vtable"> 
                     <?=$mandfldhtml;?><input name="remoteip" type="text" class="formfld" id="remoteip" size="20" value="<?=htmlspecialchars($pconfig['remoteip']);?>">
-                    / 
-                    <?=$g['pppoe_subnet'];?>
                     <br>
                     Specify the starting address for the client IP address subnet.<br>
-                    The PPPoE server will assign 
-                    <?=$g['n_pppoe_units'];?>
-                    addresses, starting at the address entered above, to clients.</td>
+                    </td>
                 </tr>
 
                 <tr> 

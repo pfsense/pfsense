@@ -79,13 +79,23 @@ function wireless_config_post() {
 			/* 64 bit */
 			if(strlen($_POST['key' . $i]) == 5)
 				continue;
-			if(strlen($_POST['key' . $i]) == 10)
+			if(strlen($_POST['key' . $i]) == 10) {
+				/* hex key */
+				if(stristr($_POST['key' . $i], "0x") == false) {
+					$_POST['key' . $i] = "0x" . $_POST['key' . $i];
+				}
 				continue;
+			}
 			/* 128 bit */
 			if(strlen($_POST['key' . $i]) == 13)
 				continue;
-			if(strlen($_POST['key' . $i]) == 26)
+			if(strlen($_POST['key' . $i]) == 26) {
+				/* hex key */
+				if(stristr($_POST['key' . $i], "0x") == false) {
+					$_POST['key' . $i] = "0x" . $_POST['key' . $i];
+				}			
 				continue;
+			}
 			if(strlen($_POST['key' . $i]) == 28)
 				continue;
 			$input_errors[] =  "Invalid wep key size.   Sizes should be 40 (64) bit keys or 104 (128) bit.";

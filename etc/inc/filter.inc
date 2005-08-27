@@ -995,6 +995,13 @@ function filter_nat_rules_generate() {
 
 			if (isset($optcfg['enable']) && !$optcfg['bridge']) {
 				$optsa = gen_subnet($optcfg['ipaddr'], $optcfg['subnet']);
+				
+				/* setup nat mappings for lan -> optional interface */
+				if($optcfg['gateway'] <> "") {
+					$natrules .= filter_nat_rules_generate_if($optcfg['if'],
+						$lansa . "/" . $lancfg['subnet'], null, "", null, null, "");
+				}
+					
 				$natrules .= filter_nat_rules_generate_if($wanif,
 					$optsa . "/" . $optcfg['subnet'], null, "", null, null, "");
 			}

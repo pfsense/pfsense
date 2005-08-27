@@ -106,7 +106,7 @@ if (isset($_POST['save'])) {
                                 $config['interfaces'][$if]['subnet']);
                         $natent['source']['network'] = $osn;
                         $natent['sourceport'] = "";
-                        $natent['descr'] = "Auto created rule for {$if}";
+                        $natent['descr'] = "Auto created rule for {$config[$if]['descr']}";
                         $natent['target'] = "";
                         $natent['interface'] = "wan";
                         $natent['destination']['any'] = true;

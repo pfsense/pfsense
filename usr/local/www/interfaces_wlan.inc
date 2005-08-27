@@ -268,7 +268,7 @@ function wireless_config_print() {
                     hex digits preceded by '0x'.<br>
                     104 (128) bit keys may be entered as 13 ASCII characters or 
                     26 hex digits preceded by '0x'.
-		    <p>For assistance creating keys, please see
+		    <p>For assistance with creating keys, please see
 		       <a href="javascript:if(openwindow('/wlan_strong_key_generator/generator.php') == false) alert('Popup blocker detected.  Action aborted.');">WLAN Strong Key Generator</a>.
 		   </td>
                 </tr>

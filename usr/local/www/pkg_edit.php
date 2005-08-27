@@ -125,8 +125,8 @@ if ($_POST) {
 						} else {
 						  if($firstfield == $rowhelperfield['fieldname']) $rows++;
 						}
-						$comd = "\$value = \$_POST['" . $rowhelperfield['fieldname'] . $x . "'];";
-						//echo($comd . "<br>");
+						$comd = "\$value = \$_POST['" . $rowhelperfield['fieldname'] . $x . "'];";						
+						echo($comd . "<br>");
 						eval($comd);
 						if($value <> "") {
 							$comd = "\$pkgarr['row'][" . $x . "]['" . $rowhelperfield['fieldname'] . "'] = \"" . $value . "\";";
@@ -139,6 +139,16 @@ if ($_POST) {
 				// simply loop through all field names looking for posted
 				// values matching the fieldnames.  if found, save to package
 				// configuration area.
+				if(is_array( $_POST[$fields['fieldname']] )) {
+					$pkgarr[$fields['fieldname']]=array();
+					foreach($_POST[$fields['fieldname']] as $v) {
+						echo "IS ARRAY";
+						$pkgarr[$fields['fieldname']][] = $v;
+						echo("\$pkgarr[\$fields['fieldname']][] = \$v; <br>");
+						eval($comd);								
+					}
+					continue;
+				}                                
 				$fieldname  = $fields['fieldname'];
 				$fieldvalue = $_POST[$fieldname];
 				$pkgarr[$fieldname] = $fieldvalue;

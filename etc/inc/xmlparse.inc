@@ -30,11 +30,11 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/* Config XML tags that should be treat as a list not as a traditional array */
+/* The following items will be treated as arrays in config.xml */
 function listtags() {
 	$ret = explode(" ", "alias allowedip cacert config columnitem dnsserver domainoverrides " .
 		"earlyshellcmd encryption-algorithm-option field fieldname hash-algorithm-option " .
-		"hosts item key lbpool menu mobilekey onetoone option package passthrumac proxyarpnet " .
+		"hosts interface_array item key lbpool menu mobilekey onetoone option package passthrumac proxyarpnet " .
 		"queue route row rule service servernat servers shellcmd staticmap subqueue " .
                 "tunnel user vip virtual_server vlan winsserver wolentry");
 	return $ret;

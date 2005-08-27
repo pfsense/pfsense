@@ -126,9 +126,16 @@ function filter_configure_sync() {
 		$maximumstates = $config['system']['maximumstates'];
 		$rules.= "set limit states " . $maximumstates . "\n";
 	}
-
 	$rules.= "\n";
 	$rules.= "scrub on {$wanif} all " . $mssclamp ."\n"; // reassemble all directions
+        /* loop through optional interfaces.  if a gateway is set, lets scrub em down! */
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+		if($config['interfaces']["opt" . $j]['gateway'] <> "") {
+			$if = convert_friendly_interface_to_real_interface_name("opt{$j}");
+			$rules.= "scrub on {$if} all " . $mssclamp ."\n"; // reassemble all directions
+		}
+	}
+
 	$rules.= $altq_ints . "\n";
 	$rules.= $altq_queues . "\n";
 	$rules.= $natrules . "\n";

@@ -138,6 +138,17 @@ function wireless_config_post() {
 function wireless_config_print() {
 	global $optcfg, $pconfig, $wlchannels, $g;
 ?>
+
+<script language="JavaScript">
+	function openwindow(url) {
+		var oWin = window.open(url,"pfSensePop","width=620,height=400,top=150,left=150");
+		if (oWin==null || typeof(oWin)=="undefined") {
+			return false;
+		} else {
+			return true;
+		}
+	}
+</script>
                 <tr> 
                   <td colspan="2" valign="top" height="16"></td>
 				</tr>

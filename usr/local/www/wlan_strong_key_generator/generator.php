@@ -234,7 +234,7 @@ p {  font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10px; color:
       <td width="150">&nbsp;</td>
     </tr>
     <tr> 
-      <td align="right" width="120"><img src="key_64.gif" width="81" height="42"></td>
+      <td align="right" width="120"><img src="/themes/pfsense/images/misc/key_64.gif" width="81" height="42"></td>
       <td>&nbsp;</td>
       <td width="150"> 
         <input type="button" class="button" name="gen64" value="generate 64-bit key" onClick="javascript:go(this.form, 5)">
@@ -247,7 +247,7 @@ p {  font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10px; color:
       <td width="150">&nbsp;</td>
     </tr>
     <tr> 
-      <td align="right" width="120"><img src="key_128.gif" width="94" height="42"></td>
+      <td align="right" width="120"><img src="/themes/pfsense/images/misc/key_128.gif" width="94" height="42"></td>
       <td>&nbsp;</td>
       <td width="150"> 
         <input type="button" class="button" name="gen128" value="generate 128-bit key" onClick="javascript:go(this.form, 13)">
@@ -260,7 +260,7 @@ p {  font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10px; color:
       <td width="150">&nbsp;</td>
     </tr>
     <tr> 
-      <td align="right" width="120"><img src="key_152.gif" width="94" height="42"></td>
+      <td align="right" width="120"><img src="/themes/pfsense/images/misc/key_152.gif" width="94" height="42"></td>
       <td>&nbsp;</td>
       <td width="150"> 
         <input type="button" class="button" name="gen152" value="generate 152-bit key" onClick="javascript:go(this.form, 16)">
@@ -273,7 +273,7 @@ p {  font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10px; color:
       <td width="150">&nbsp;</td>
     </tr>
     <tr> 
-      <td align="right" width="120"><img src="key_256.gif" width="94" height="42"></td>
+      <td align="right" width="120"><img src="/themes/pfsense/images/misc/key_256.gif" width="94" height="42"></td>
       <td>&nbsp;</td>
 
       <td width="150"> 

@@ -63,9 +63,10 @@ function system_resolvconf_generate($dynupdate = false) {
         }
         if (!$havedns && is_array($syscfg['dnsserver'])) {
                 foreach ($syscfg['dnsserver'] as $ns) {
-                        if ($ns)
+                        if ($ns) {
                                 $resolvconf .= "nameserver $ns\n";
-                        $havedns = true;
+				$havedns = true;
+			}
                 }
         }
 

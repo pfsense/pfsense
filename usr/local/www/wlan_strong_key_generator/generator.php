@@ -1,3 +1,5 @@
+#!/usr/local/bin/php
+
 <html>
 <head>
 <title>WLAN Strong Key Generator version 2.2 by Warewolf Labs ( formerly WEP Strong Key Generator )</title>

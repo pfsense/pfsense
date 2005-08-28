@@ -83,6 +83,6 @@
                 fclose($fd);
         }
 	
-	filter_configure_sync();
+	filter_configure();
 	
 ?>

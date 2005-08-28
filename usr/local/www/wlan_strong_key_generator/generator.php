@@ -158,7 +158,7 @@ setTimeout("window.status=''",1800)
 
 <style type="text/css">
 <!--
-.button {  font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10px; font-weight: bold; color: #FFFFFF; background-color: #6699FF}
+.button {  font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10px; font-weight: bold; color: #FFFFFF; background-color: #990000}
 .header {  font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 14px; font-weight: bold; color: #000000; background-color: #FFFFFF; border-color: #999999 #999999 #000000 #000000; text-decoration: underline}
 .textfield {  font-family: "Courier New", Courier, mono; font-size: 12px}
 .header2 { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold; color: #000000; background-color: #FFFFFF; border-color: #999999 #999999 #000000 #000000; text-decoration: underline}

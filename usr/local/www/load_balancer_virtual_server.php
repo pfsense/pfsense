@@ -43,12 +43,10 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-		if (!file_exists($d_sysrebootreqd_path)) {
-			config_lock();
-			$retval |= filter_configure();
-			$retval |= slbd_configure();
-			config_unlock();
-		}
+		config_lock();
+		$retval |= filter_configure();
+		$retval |= slbd_configure();
+		config_unlock();
 		$savemsg = get_std_save_message($retval);
 		unlink_if_exists($d_vsconfdirty_path);
 	}

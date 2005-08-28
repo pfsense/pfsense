@@ -73,7 +73,7 @@ if ($_POST) {
 		else
 			$a_vs[] = $vsent;
 
-		touch($d_poolconfdirty_path);
+		touch($d_vsconfdirty_path);
 
 		write_config();
 

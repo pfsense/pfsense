@@ -486,7 +486,7 @@
                         <name>Enable</name>
                         <type>checkbox</type>
                         <typehint>Prioritize Peer-to-Peer traffic</typehint>
-                        <description>This will lower the priority of P2P traffic below all other traffic.</description>
+                        <description>This will lower the priority of P2P traffic below all other traffic.  Please check the items that you would like to prioritize lower than normal traffic.</description>
 			<enablefields>Aimster,BitTorrent,BuddyShare,CuteMX,DCplusplus,dcc,DirectConnect,DirectFileExpress,EDonkey2000,FastTrack,Gnutella,grouper,hotComm,HotlineConnect,iMesh,Napster,OpenNap,Scour,SongSpy,WinMX</enablefields>
 			<bindstofield>ezshaper->step4->enable</bindstofield>
                 </field>

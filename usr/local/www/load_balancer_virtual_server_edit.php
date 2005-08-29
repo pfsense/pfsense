@@ -77,9 +77,6 @@ if ($_POST) {
 
 		write_config();
 
-		/* reconfigure slbd */
-		slbd_configure();
-
 		header("Location: load_balancer_virtual_server.php");
 		exit;
 	}

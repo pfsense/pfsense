@@ -153,12 +153,17 @@ EOPP;
 			$dnscfg .= "	option domain-name \"{$dhcpifconf['domain']}\";\n";
 		}
 
-		if (is_array($dhcpifconf['dnsserver']) && ($dhcpifconf['dnsserver'][0])) {
-			$dnscfg .= "	option domain-name-servers " . join(",", $dhcpifconf['dnsserver']) . ";";
-		} else if (isset($config['dnsmasq']['enable'])) {
-			$dnscfg .= "	option domain-name-servers " . $ifcfg['ipaddr'] . ";";
-		} else if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
-			$dnscfg .= "	option domain-name-servers " . join(",", $syscfg['dnsserver']) . ";";
+		/* is failover dns setup? */
+		if (is_array($dhcpifconf['dnsserver']) && $dhcpifconf['dnsserver'][0] <> "" && $dhcpifconf['dnsserver'][1] <> "") {
+			$dhcpdconf .= "	option domain-name-servers " . join(",", $dhcpifconf['dnsserver']) . ";\n";
+		} else {
+			if (is_array($dhcpifconf['dnsserver']) && ($dhcpifconf['dnsserver'][0])) {
+				$dnscfg .= "	option domain-name-servers " . join(",", $dhcpifconf['dnsserver']) . ";";
+			} else if (isset($config['dnsmasq']['enable'])) {
+				$dnscfg .= "	option domain-name-servers " . $ifcfg['ipaddr'] . ";";
+			} else if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
+				$dnscfg .= "	option domain-name-servers " . join(",", $syscfg['dnsserver']) . ";";
+			}
 		}
 
 		$dhcpdconf .= "subnet $subnet netmask $subnetmask {\n";
@@ -196,10 +201,6 @@ EOD;
 		if (is_array($dhcpifconf['winsserver']) && $dhcpifconf['winsserver'][0]) {
 			$dhcpdconf .= "	option netbios-name-servers " . join(",", $dhcpifconf['winsserver']) . ";\n";
 			$dhcpdconf .= "	option netbios-node-type 8;\n";
-		}
-
-		if (is_array($dhcpifconf['dnsserver']) && $dhcpifconf['dnsserver'][0] <> "" && $dhcpifconf['dnsserver'][1] <> "") {
-			$dhcpdconf .= "	option domain-name-servers " . join(",", $dhcpifconf['dnsserver']) . ";\n";
 		}
 
 		if ($dhcpifconf['next-server'])

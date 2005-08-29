@@ -198,8 +198,8 @@ EOD;
 			$dhcpdconf .= "	option netbios-node-type 8;\n";
 		}
 
-		if (is_array($dhcpifconf['winsserver']) && $dhcpifconf['winsserver'][0]) {
-			$dhcpdconf .= "	option domain-name-servers " . join(",", $dhcpifconf['dns']) . ";\n";
+		if (is_array($dhcpifconf['dnsserver']) && $dhcpifconf['dnsserver'][0] <> "" && $dhcpifconf['dnsserver'][1] <> "") {
+			$dhcpdconf .= "	option domain-name-servers " . join(",", $dhcpifconf['dnsserver']) . ";\n";
 		}
 
 		if ($dhcpifconf['next-server'])

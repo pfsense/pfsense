@@ -55,7 +55,7 @@ $pconfig['deftime'] = $config['dhcpd'][$if]['defaultleasetime'];
 $pconfig['maxtime'] = $config['dhcpd'][$if]['maxleasetime'];
 $pconfig['gateway'] = $config['dhcpd'][$if]['gateway'];
 list($pconfig['wins1'],$pconfig['wins2']) = $config['dhcpd'][$if]['winsserver'];
-list($pconfig['dns1'],$pconfig['dns2']) = $config['dhcpd'][$if]['dns'];
+list($pconfig['dns1'],$pconfig['dns2']) = $config['dhcpd'][$if]['dnsserver'];
 $pconfig['enable'] = isset($config['dhcpd'][$if]['enable']);
 $pconfig['denyunknown'] = isset($config['dhcpd'][$if]['denyunknown']);
 $pconfig['staticarp'] = isset($config['dhcpd'][$if]['staticarp']);
@@ -152,9 +152,9 @@ if ($_POST) {
 			$config['dhcpd'][$if]['winsserver'][] = $_POST['wins2'];
 
 		if ($_POST['dns1'])
-			$config['dhcpd'][$if]['dns1'][] = $_POST['wins1'];
+			$config['dhcpd'][$if]['dnsserver'][] = $_POST['dns1'];
 		if ($_POST['dns2'])
-			$config['dhcpd'][$if]['dns2'][] = $_POST['wins2'];
+			$config['dhcpd'][$if]['dnsserver'][] = $_POST['dns2'];
 
 			
 		$config['dhcpd'][$if]['gateway'] = $_POST['gateway'];

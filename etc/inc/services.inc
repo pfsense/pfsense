@@ -153,27 +153,27 @@ EOPP;
 			$dnscfg .= "	option domain-name \"{$dhcpifconf['domain']}\";\n";
 		}
 
-		/* is failover dns setup? */
-		if (is_array($dhcpifconf['dnsserver']) && $dhcpifconf['dnsserver'][0] <> "") {
-			$dhcpdconf .= "	option domain-name-servers {$dhcpifconf['dnsserver'][0]}";
-			if($dhcpifconf['dnsserver'][1] <> "")
-				$dhcpdconf .= ",{$dhcpifconf['dnsserver'][1]}";
-			$dhcpdconf .= "\n";
-		} else {
-			if (is_array($dhcpifconf['dnsserver']) && ($dhcpifconf['dnsserver'][0])) {
-				$dnscfg .= "	option domain-name-servers " . join(",", $dhcpifconf['dnsserver']) . ";";
-			} else if (isset($config['dnsmasq']['enable'])) {
-				$dnscfg .= "	option domain-name-servers " . $ifcfg['ipaddr'] . ";";
-			} else if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
-				$dnscfg .= "	option domain-name-servers " . join(",", $syscfg['dnsserver']) . ";";
-			}
+		if (is_array($dhcpifconf['dnsserver']) && ($dhcpifconf['dnsserver'][0])) {
+			$dnscfg .= "	option domain-name-servers " . join(",", $dhcpifconf['dnsserver']) . ";";
+		} else if (isset($config['dnsmasq']['enable'])) {
+			$dnscfg .= "	option domain-name-servers " . $ifcfg['ipaddr'] . ";";
+		} else if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
+			$dnscfg .= "	option domain-name-servers " . join(",", $syscfg['dnsserver']) . ";";
 		}
 
 		$dhcpdconf .= "subnet $subnet netmask $subnetmask {\n";
 		$dhcpdconf .= "	pool {\n";
+
+		/* is failover dns setup? */
+		if (is_array($dhcpifconf['dnsserver']) && $dhcpifconf['dnsserver'][0] <> "") {
+			$dhcpdconf .= "		option domain-name-servers {$dhcpifconf['dnsserver'][0]}";
+			if($dhcpifconf['dnsserver'][1] <> "")
+				$dhcpdconf .= ",{$dhcpifconf['dnsserver'][1]}";
+			$dhcpdconf .= "\n";
+		}
 		
 		if($dhcpifconf['failover_peerip'] <> "") 
-			$dhcpdconf .= "	deny dynamic bootp clients;\n";
+			$dhcpdconf .= "		deny dynamic bootp clients;\n";
 		
 		if (isset($dhcpifconf['denyunknown']))
 		   $dhcpdconf .= "		deny unknown clients;\n";

@@ -169,7 +169,7 @@ EOPP;
 			$dhcpdconf .= "		option domain-name-servers {$dhcpifconf['dnsserver'][0]}";
 			if($dhcpifconf['dnsserver'][1] <> "")
 				$dhcpdconf .= ",{$dhcpifconf['dnsserver'][1]}";
-			$dhcpdconf .= "\n";
+			$dhcpdconf .= ";\n";
 		}
 		
 		if($dhcpifconf['failover_peerip'] <> "") 

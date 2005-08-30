@@ -47,7 +47,7 @@ if (isset($id) && $a_pool[$id]) {
 	$pconfig['name'] = $a_pool[$id]['name'];
 	$pconfig['desc'] = $a_pool[$id]['desc'];
 	$pconfig['port'] = $a_pool[$id]['port'];
-	$pconfig['servers'] = $a_pool[$id]['servers'];
+	$pconfig['servers'] = &$a_pool[$id]['servers'];
 	$pconfig['monitor'] = $a_pool[$id]['monitor'];
 }
 
@@ -239,13 +239,16 @@ function clearcombo(){
 					<tr>
 						<td>
 							<select id="serversSelect" name="servers[]" multiple="true" size="5">
+							
 <?php
-							if (is_array($pconfig['servers']))
+							echo $a_pool[$id]['servers'];
+							if (is_array($pconfig['servers'])) {
 								foreach($pconfig['servers'] as $svrent) {
-									echo "<option value=\"{$svrent}\">{$svrent}</option>";
+									echo "    <option value=\"{$svrent}\">{$svrent}</option>\n";
 								}
+							}
+							echo "</select>";
 ?>
-							</select>			
 						</td>
 						<td valign="top">
 							<input class="formbtn" type="button" name="button2" value="Remove from pool" onclick="RemoveServerFromPool(document.iform);">

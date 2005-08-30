@@ -13,6 +13,10 @@
 trap : 2
 trap : 3
 
+# mount /usr.uzip if it exists
+[ -x /usr.uzip ] && [ -d /usr ] && [ ! -d /usr/local ] \
+	&& /sbin/mount_cd9660 /dev/`/sbin/mdconfig -af /usr.uzip`.uzip /usr
+
 HOME=/
 PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/local/sbin
 export HOME PATH
@@ -41,7 +45,12 @@ fi
 # Mount all. If it fails run a fsck.
 /sbin/mount -a || /sbin/fsck -y && /sbin/mount -a || /sbin/fsck -y 
 
-if [ ! "$PLATFORM" = "cdrom" ]; then
+if [ "$PLATFORM" = "cdrom" ] ; then
+    echo "No swap on ${PLATFORM}"
+elif [ "$PLATFORM" = "embedded" ] ; then
+    echo "No swap on ${PLATFORM}"
+    /usr/local/bin/php -f /etc/rc.conf_mount_rw
+else
     SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
     /sbin/dumpon -v $SWAPDEVICE 2>/dev/null
     /sbin/swapon -a 2>/dev/null

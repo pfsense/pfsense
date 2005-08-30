@@ -60,6 +60,16 @@ function system_resolvconf_generate($dynupdate = false) {
                         }
                         fclose($nfd);
                 }
+                $nfd = @fopen("{$g['varetc_path']}/defaultdomain.conf", "r");
+                if ($nfd and $havedns) {
+                        while (!feof($nfd)) {
+                                $dnss = trim(fgets($nfd));
+                                if ($dnss) {
+                                        $resolvconf .= "search $dnss\n";
+                                }
+                        }
+                        fclose($nfd);
+                }
         }
         if (!$havedns && is_array($syscfg['dnsserver'])) {
                 foreach ($syscfg['dnsserver'] as $ns) {

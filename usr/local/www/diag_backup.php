@@ -185,78 +185,73 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
-            <form action="diag_backup.php" method="post" enctype="multipart/form-data" onSubmit="window.open('progress.php?conffile=<?=$id?>','UploadMeter','width=370,height=115', true); return true; ">
-            <?php if ($input_errors) print_input_errors($input_errors); ?>
-            <?php if ($savemsg) print_info_box($savemsg); ?>
-              <table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<tr><td>
+
+<form action="diag_backup.php" method="post" enctype="multipart/form-data" onSubmit="check_upload_status(<?= $id; ?>);">
+<?php if ($input_errors) print_input_errors($input_errors); ?>
+<?php if ($savemsg) print_info_box($savemsg); ?>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td>
 <?php
-	$tab_array = array();
-	$tab_array[0] = array("Local", true, "diag_backup.php");
-	$tab_array[1] = array("Remote", false, "diag_confbak.php");
-	display_top_tabs($tab_array);
+		$tab_array = array();
+		$tab_array[0] = array("Local", true, "diag_backup.php");
+		$tab_array[1] = array("Remote", false, "diag_confbak.php");
+		display_top_tabs($tab_array);
 ?>			
-		</ul></td></tr>
-		<tr><td>
-		<div id="mainarea">
-		<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr>
-                  <td colspan="2" class="listtopic">Backup configuration</td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="baseline" class="vncell">&nbsp;</td>
-                  <td width="78%" class="vtable">
-                    <p> Click this button to download the system configuration
-                      in XML format.<br>
-                      <br>
-		      Backup area: <?php spit_out_select_items("backuparea"); ?>
-		      <p>
-		      <input name="nopackages" type="checkbox" class="formcheckbox" id="nopackages">Do not backup package information.<p>
-                      <input name="Submit" type="submit" class="formbtn" id="download" value="Download configuration"></td>
-                </tr>
-                <tr>
-                  <td colspan="2" class="list" height="12"></td>
-                </tr>
-                <tr>
-                  <td colspan="2" class="listtopic">Restore configuration</td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="baseline" class="vncell">&nbsp;</td>
-                  <td width="78%" class="vtable">
-                    Open a pfSense configuration XML file and click the button
-                      below to restore the configuration.<br>
-                      <br>
-		      Restore area: <?php spit_out_select_items("restorearea"); ?>
-		      <p>
-                      <input name="conffile" type="file" class="formfld" id="conffile" size="40">
-                      <p>
-                      <input name="Submit" type="submit" class="formbtn" id="restore" value="Restore configuration">
-                      <p>
-                      <strong><span class="red">Note:</span></strong><br>
-                      The firewall will reload the settings after restoring the configuration.<br>
-                  </td>
-                </tr>
-		<?php if($config['installedpackages']['package'] != "") { ?>
-		<tr>
-                  <td colspan="2" class="list" height="12"></td>
-                </tr>
-		<tr>
-		 <td colspan="2" class="listtopic">Reinstall packages</td>
-		</tr>
-		<tr>
-		  <td width="22%" valign="baseline" class="vncell">&nbsp;</td>
-		  <td width="78%" class="vtable">
-		  <p> Click this button to reinstall all system packages.  This may take a while.<br>
-		  <br>
-		  <input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="Reinstall packages"></td>
-		</tr>
-		<?php } ?>
-		</table>
-		</div>
 		</td>
-		</tr>
-              </table>
-            </form>
+	</tr>
+	<tr>
+		<td>
+			<div id="mainarea">
+			<table class="tabcont" align="center" width="100%" border="0" cellpadding="6" cellspacing="0">
+				<tr>
+					<td colspan="2" class="listtopic">Backup configuration</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
+					<td width="78%" class="vtable">
+						<p>Click this button to download the system configuration in XML format.<br /><br /> Backup area: <?php spit_out_select_items("backuparea"); ?></p>
+						<p><input name="nopackages" type="checkbox" class="formcheckbox" id="nopackages">Do not backup package information.</p>
+						<p><input name="Submit" type="submit" class="formbtn" id="download" value="Download configuration"></p>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" class="list" height="12">&nbsp;</td>
+                </tr>
+                <tr>
+					<td colspan="2" class="listtopic">Restore configuration</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
+					<td width="78%" class="vtable">
+						Open a pfSense configuration XML file and click the button below to restore the configuration. <br /><br /> Restore area: <?php spit_out_select_items("restorearea"); ?>
+						<p><input name="conffile" type="file" class="formfld" id="conffile" size="40"></p>
+						<p><input name="Submit" type="submit" class="formbtn" id="restore" value="Restore configuration"></p>
+                      	<p><strong><span class="red">Note:</span></strong><br />The firewall will reload the settings after restoring the configuration.<br /></p>
+					</td>
+				</tr>
+				<?php if($config['installedpackages']['package'] != "") { ?>
+				<tr>
+					<td colspan="2" class="list" height="12">&nbsp;</td>
+				</tr>
+				<tr>
+					<td colspan="2" class="listtopic">Reinstall packages</td>
+				</tr>
+				<tr>
+					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
+					<td width="78%" class="vtable">
+						<p>Click this button to reinstall all system packages.  This may take a while. <br /><br />
+		  				<input name="Submit" type="submit" class="formbtn" id="reinstallpackages" value="Reinstall packages">
+					</td>
+				</tr>
+				<?php } ?>
+			</table>
+			</div>
+		</td>
+	</tr>
+</table>
+</form>
+
 <?php include("fend.inc"); ?>
 </body>
 </html>

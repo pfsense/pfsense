@@ -154,8 +154,11 @@ EOPP;
 		}
 
 		/* is failover dns setup? */
-		if (is_array($dhcpifconf['dnsserver']) && $dhcpifconf['dnsserver'][0] <> "" && $dhcpifconf['dnsserver'][1] <> "") {
-			$dhcpdconf .= "	option domain-name-servers " . join(",", $dhcpifconf['dnsserver']) . ";\n";
+		if (is_array($dhcpifconf['dnsserver']) && $dhcpifconf['dnsserver'][0] <> "") {
+			$dhcpdconf .= "	option domain-name-servers {$dhcpifconf['dnsserver'][0]}";
+			if($dhcpifconf['dnsserver'][1] <> "")
+				$dhcpdconf .= ",{$dhcpifconf['dnsserver'][1]}";
+			$dhcpdconf .= "\n";
 		} else {
 			if (is_array($dhcpifconf['dnsserver']) && ($dhcpifconf['dnsserver'][0])) {
 				$dnscfg .= "	option domain-name-servers " . join(",", $dhcpifconf['dnsserver']) . ";";

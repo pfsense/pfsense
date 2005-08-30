@@ -152,7 +152,7 @@ add_new_resolv_conf() {
 
 	if [ -n "$new_domain_name_servers" ]; then
 		for nameserver in $new_domain_name_servers; do
-			echo "nameserver $nameserver" >>/var/etc/resolv.conf.std
+			echo "$nameserver" >>/var/etc/resolv.conf.std
 			echo $nameserver >>/var/etc/nameservers.conf
 			echo $new_domain_name >/var/etc/defaultdomain.conf
 		done

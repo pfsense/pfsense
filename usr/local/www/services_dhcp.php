@@ -151,10 +151,13 @@ if ($_POST) {
 		if ($_POST['wins2'])
 			$config['dhcpd'][$if]['winsserver'][] = $_POST['wins2'];
 
-		if ($_POST['dns1'])
+		if ($_POST['dns1']) {
+			unset($config['dhcpd'][$if]['dnsserver']);
 			$config['dhcpd'][$if]['dnsserver'][] = $_POST['dns1'];
-		if ($_POST['dns2'])
+		}
+		if ($_POST['dns2']) {
 			$config['dhcpd'][$if]['dnsserver'][] = $_POST['dns2'];
+		}
 
 			
 		$config['dhcpd'][$if]['gateway'] = $_POST['gateway'];

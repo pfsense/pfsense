@@ -171,7 +171,7 @@ add_new_resolv_conf() {
 			cat /var/etc/resolv.conf > /var/etc/resolv.conf.save
 		fi
 		cat /var/etc/resolv.conf.std > /var/etc/nameservers.conf
-		cat /var/etc/resolv.conf.std > /var/etc/resolv.conf
+		#cat /var/etc/resolv.conf.std > /var/etc/resolv.conf
 		rm -f /var/etc/resolv.conf.std
 
 		# Try to ensure correct ownership and permissions.
@@ -264,7 +264,7 @@ EXPIRE|FAIL)
 	# XXX Why add alias we just deleted above?
 	add_new_alias
 	if [ -f /var/etc/resolv.conf.save ]; then
-		cat /var/etc/resolv.conf.save > /var/etc/resolv.conf
+		#cat /var/etc/resolv.conf.save > /var/etc/resolv.conf
 	fi
 	;;
 

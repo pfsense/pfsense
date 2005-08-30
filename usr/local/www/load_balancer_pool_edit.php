@@ -269,7 +269,7 @@ function clearcombo(){
 	</table>
 	</form>
 <script language="javascript">
-type_change();
+<?php if(!$id) echo "type_change();\n"; ?>
 </script>
 <?php include("fend.inc"); ?>
 </body>

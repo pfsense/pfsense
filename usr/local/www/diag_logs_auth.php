@@ -73,7 +73,7 @@ include("head.inc");
 			<td colspan="2" class="listtopic">
 			  Last <?=$nentries;?> Portal Auth log entries</td>
 		  </tr>
-		  <?php dump_clog($portal_logfile, $nentries); ?>
+		  <?php dump_clog($portal_logfile, $nentries, true, "" , array("squid")); ?>
 		<tr><td><br><form action="diag_logs_auth.php" method="post">
 <input name="clear" type="submit" class="formbtn" value="Clear log"></td></tr>
 		</table>

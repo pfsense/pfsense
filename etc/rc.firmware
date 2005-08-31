@@ -176,6 +176,7 @@ pfSenseupgrade)
 	rm -f /var/run/firmware.lock
 
 	# remount /cf ro
+	/bin/sync
 	/etc/rc.conf_mount_rw
 	/sbin/umount -f /cf 2>/dev/null
 	/sbin/mount -r /cf 2>/dev/null

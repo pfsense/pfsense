@@ -147,9 +147,10 @@ pfSenseupgrade)
 	/bin/mkdir -p /tmp/configbak 
 	cp -p /conf/* /tmp/configbak 2>/dev/null
 	# mount /cf
+	/etc/rc.conf_mount_rw
 	/sbin/mount -w -o noatime /cf 2>/dev/null
-        /etc/rc.conf_mount_rw
-
+	/sbin/mount -w -o noatime /   2>/dev/null
+        
 	# tar explode image onto hd
 	echo "Installing $2." | logger -p daemon.info -i -t Upgrade
 	/usr/bin/tar xzPf $2 -U -C / | logger -p daemon.info -i -t Upgrade

@@ -154,7 +154,7 @@ EOPP;
 		}
 
 		if (is_array($dhcpifconf['dnsserver']) && ($dhcpifconf['dnsserver'][0])) {
-			//$dnscfg .= "	option domain-name-servers " . join(",", $dhcpifconf['dnsserver']) . ";";
+			$dnscfg .= "	option domain-name-servers " . join(",", $dhcpifconf['dnsserver']) . ";";
 		} else if (isset($config['dnsmasq']['enable'])) {
 			$dnscfg .= "	option domain-name-servers " . $ifcfg['ipaddr'] . ";";
 		} else if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {

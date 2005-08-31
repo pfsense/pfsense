@@ -153,7 +153,7 @@ include("head.inc");
 		</tr>
               </table>
 </form>
-<br><span class="red"><strong>Note:</strong></span> Don't forget to add a firewall rule for the virtual server after your finished setting it up.
+<br><span class="red"><strong>Note:</strong></span> Don't forget to add a firewall rule for the virtual server/pool after your finished setting it up.
 <?php include("fend.inc"); ?>
 </body>
 </html>

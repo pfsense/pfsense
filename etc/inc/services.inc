@@ -93,14 +93,16 @@ EOD;
 			 */
 			$skew = 1;
 			$a_vip = &$config['virtualip']['vip'];
-			foreach ($a_vip as $vipent) {
-				$int = guess_interface_from_ip($dhcpifconf['failover_peerip']);
-				$intip = find_interface_ip($int);
-				$real_dhcpif = convert_friendly_interface_to_real_interface_name($dhcpif);
-				if($int == $real_dhcpif) {
-					/* this is the interface! */
-					if($vipent['advskew'] == "0")
-						$skew = 0;
+			if(is_array($a_vip)) {
+				foreach ($a_vip as $vipent) {
+					$int = guess_interface_from_ip($dhcpifconf['failover_peerip']);
+					$intip = find_interface_ip($int);
+					$real_dhcpif = convert_friendly_interface_to_real_interface_name($dhcpif);
+					if($int == $real_dhcpif) {
+						/* this is the interface! */
+						if($vipent['advskew'] == "0")
+							$skew = 0;
+					}
 				}
 			}
 			if($skew > 0) {

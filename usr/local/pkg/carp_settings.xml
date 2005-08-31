@@ -167,5 +167,7 @@
             interfaces_carp_bringup();
             /* setup carp interfaces */
             interfaces_carp_configure();
+	    /* force a filter configure for syncing */
+	    filter_configure();
 	</custom_add_php_command_late>	
 </packagegui>

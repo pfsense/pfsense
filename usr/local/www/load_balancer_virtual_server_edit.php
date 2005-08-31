@@ -47,6 +47,7 @@ if (isset($id) && $a_vs[$id]) {
 	$pconfig['pool'] = $a_vs[$id]['pool'];
 	$pconfig['desc'] = $a_vs[$id]['desc'];
 	$pconfig['name'] = $a_vs[$id]['name'];
+	$pconfig['sitedown'] = $a_vs[$id]['sitedown'];
 }
 
 if ($_POST) {
@@ -66,6 +67,7 @@ if ($_POST) {
 		$vsent['desc'] = $_POST['desc'];
 		$vsent['pool'] = $_POST['pool'];
 		$vsent['port'] = $_POST['port'];
+		$vsent['sitedown'] = $_POST['sitedown'];
 		$vsent['ipaddr'] = $_POST['ipaddr'];
 
 		if (isset($id) && $a_vs[$id])
@@ -130,6 +132,13 @@ include("head.inc");
 				}
 			?>
 			</select>
+                  </td>
+		</tr>
+                <tr align="left">
+		  <td width="22%" valign="top" class="vncellreq">Pool Down Server</td>
+                  <td width="78%" class="vtable" colspan="2">
+                    <input name="ipaddr" type="text" <?if(isset($pconfig['sitedown'])) echo "value=\"{$pconfig['sitedown']}\"";?> size="16" maxlength="16">
+		    <br>NOTE: This is the server that clients will be redirected to if *ALL* servers in the pool are offline.
                   </td>
 		</tr>
                 <tr align="left">

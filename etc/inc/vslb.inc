@@ -59,7 +59,7 @@ function slbd_configure() {
 			/* fallback IP */
 			$slbdconf .= "\t:sitedown={$vsent['ipaddr']}:\\\n";
 			/* fallback port */
-			$slbdconf .= "\t:sitedown-port={$vsent['port']}:\\\n";
+			$slbdconf .= "\t:sitedown-port={$vsent['sitedown']}:\\\n";
 	
 			for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 				if ($config['load_balancer']['lbpool'][$i]['name'] == $vsent['pool']) {

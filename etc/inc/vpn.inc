@@ -94,9 +94,10 @@ function vpn_ipsec_configure($ipchg = false) {
 			if(stristr($dmesg_boot, "ACE") == true) {		
 				echo "Enabling [VIA Padlock] ...";
 				mwexec("/sbin/kldload padlock");
-				//mwexec("/sbin/sysctl net.inet.ipsec.crypto_support=1");
-				mwexec("/usr/sbin/setkey -F;/usr/sbin/setkey -FP");
-				echo " done.";
+				mwexec("/sbin/sysctl net.inet.ipsec.crypto_support=1");
+				mwexec("/usr/sbin/setkey -F");
+				mwexec("/usr/sbin/setkey -FP");
+				echo " done.\n";
 			}
 		}
 	}

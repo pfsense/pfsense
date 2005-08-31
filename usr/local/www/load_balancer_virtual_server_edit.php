@@ -114,14 +114,14 @@ include("head.inc");
 		  <td width="22%" valign="top" class="vncellreq">IP Address</td>
                   <td width="78%" class="vtable" colspan="2">
                     <input name="ipaddr" type="text" <?if(isset($pconfig['ipaddr'])) echo "value=\"{$pconfig['ipaddr']}\"";?> size="16" maxlength="16">
-		    <br>NOTE: This is normally the WAN IP address that you would like the server to listen on.  All connections to this IP/PORT will be forwarded to the pool cluster.
+		    <br><b>NOTE:</b> This is normally the WAN IP address that you would like the server to listen on.  All connections to this IP/PORT will be forwarded to the pool cluster.
                   </td>
 		</tr>
                 <tr align="left">
 		  <td width="22%" valign="top" class="vncellreq">Port</td>
                   <td width="78%" class="vtable" colspan="2">
                     <input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16">
-		    <br>NOTE: This is the PORT that the clients will connect to.  All connections to this port will be forwarded to the pool cluster.
+		    <br><b>NOTE:</b> This is the PORT that the clients will connect to.  All connections to this port will be forwarded to the pool cluster.
                   </td>
 		</tr>
                 <tr align="left">
@@ -140,7 +140,7 @@ include("head.inc");
 		  <td width="22%" valign="top" class="vncellreq">Pool Down Server</td>
                   <td width="78%" class="vtable" colspan="2">
                     <input name="ipaddr" type="text" <?if(isset($pconfig['sitedown'])) echo "value=\"{$pconfig['sitedown']}\"";?> size="16" maxlength="16">
-		    <br>NOTE: This is the server that clients will be redirected to if *ALL* servers in the pool are offline.
+		    <br><b>NOTE:</b> This is the server that clients will be redirected to if *ALL* servers in the pool are offline.
                   </td>
 		</tr>
                 <tr align="left">

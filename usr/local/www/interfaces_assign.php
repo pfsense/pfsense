@@ -111,10 +111,9 @@ if ($_POST) {
 			}
 		}
 	
+		$savemsg = get_std_save_message($retval);
+	
 		write_config();
-		
-		/* reload all interfaces configuration */
-		reload_interfaces();
 		
 	}
 }
@@ -191,6 +190,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
+<?php if ($savemsg) print_info_box($savemsg); ?>
 <form action="interfaces_assign.php" method="post" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
@@ -270,3 +270,10 @@ include("head.inc");
 <?php include("fend.inc"); ?>
 </body>
 </html>
+
+<?php
+
+if($_POST) {
+	/* reload all interfaces configuration */
+	reload_interfaces();
+}

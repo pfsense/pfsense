@@ -42,7 +42,7 @@ if (!$index)
 	exit;
 
 function remove_bad_chars($string) {
-	return preg_replace('/[^a-z|0-9]/i','',$string);
+	return preg_replace('/[^a-z|_|0-9]/i','',$string);
 }
 
 $optcfg = &$config['interfaces']['opt' . $index];

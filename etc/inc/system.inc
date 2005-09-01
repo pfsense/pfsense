@@ -619,11 +619,25 @@ function system_set_harddisk_standby() {
 }
 
 function system_setup_sysctl() {
+	global $config;
+
 	$sysctl = return_filename_as_array("/etc/sysctl.conf");
 	foreach($sysctl as $sysc) {
 		if($sysc <> "")
 			mwexec("sysctl {$sysc}");
 	}
+	if (isset($config['system']['sharednet'])) {
+		system_disable_arp_wrong_if();
+	}
 }
+
+function system_disable_arp_wrong_if() {
+	mwexec("/sbin/sysctl -n net.link.ether.inet.log_arp_wrong_iface=0");
+}
+
+function system_enable_arp_wrong_if() {
+	mwexec("/sbin/sysctl -n net.link.ether.inet.log_arp_wrong_iface=1");
+}
+
 
 ?>

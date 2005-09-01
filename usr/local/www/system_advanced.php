@@ -53,6 +53,7 @@ $pconfig['enableserial'] = $config['system']['enableserial'];
 $pconfig['disablefirmwarecheck'] = isset($config['system']['disablefirmwarecheck']);
 $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
 $pconfig['enablesshd'] = $config['system']['enablesshd'];
+$pconfig['sharednet'] = $config['system']['sharednet'];
 
 if ($_POST) {
 
@@ -101,6 +102,15 @@ if ($_POST) {
 		} else {
 			unset($config['system']['enablesshd']);
 		}		
+
+		if($_POST['sharednet'] == "yes") {
+			$config['system']['sharednet'] = true;
+			system_disable_arp_wrong_if();
+		} else {
+			unset($config['system']['sharednet']);
+			system_enable_arp_wrong_if();
+		}		
+
 		if($_POST['disableftpproxy'] == "yes") {
 			$config['system']['disableftpproxy'] = "enabled";
 			unset($config['system']['rfc959workaround']);
@@ -303,6 +313,27 @@ function openwindow(url) {
                   <td width="78%" class="vtable">
                     <input name="enablesshd" type="checkbox" id="enablesshd" value="yes" <?php if (isset($pconfig['enablesshd'])) echo "checked"; ?> onclick="enable_change(false)">
                     <strong>Enable Secure Shell</strong>
+                    </td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top">&nbsp;</td>
+                  <td width="78%">
+                    <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
+                  </td>
+                </tr>
+                </tr>
+                <tr>
+                  <td colspan="2" class="list" height="12"></td>
+                </tr>	
+
+                <tr>
+                  <td colspan="2" valign="top" class="listtopic">Shared Physical Network</td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncell">&nbsp;</td>
+                  <td width="78%" class="vtable">
+                    <input name="sharednet" type="checkbox" id="sharednet" value="yes" <?php if (isset($pconfig['sharednet'])) echo "checked"; ?> onclick="enable_change(false)">
+                    <strong>This will supress ARP messages when interfaces share the same physical network</strong>
                     </td>
                 </tr>
                 <tr>

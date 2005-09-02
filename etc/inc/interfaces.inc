@@ -394,8 +394,9 @@ function interfaces_wireless_configure($if, $wlcfg) {
 
         if ($wlcfg['stationname'])
                 $ifcargs .= "stationname " . escapeshellarg($wlcfg['stationname']) . " ";
-		
-	if (isset($wlcfg['wpa']['enable'])) {
+	
+	if(!$wlcfg['mode']) {
+		if (isset($wlcfg['wpa']['enable'])) {
 		
 	$wpa .= <<<EOD
 	
@@ -404,10 +405,11 @@ eapol_version=1
 ap_scan=1
 fast_reauth=1
 
-network=\{
+network={
 	ssid="{$wlcfg['ssid']}"
 	key_mgmt="{$wlcfg['wpapsk']}"
 	psk="{$wlcfg['passphrase']}"
+	
 }
 
 EOD;
@@ -417,6 +419,7 @@ EOD;
 		fclose($fd);
 		mwexec_bg("wpa_supplicant -i {$if} -c /etc/wpa_supplicant.conf");
 
+		}
 	}
 
         if (isset($wlcfg['wep']['enable']) && is_array($wlcfg['wep']['key'])) {

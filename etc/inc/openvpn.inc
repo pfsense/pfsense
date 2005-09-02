@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	openvpn.inc
 	
@@ -33,10 +32,10 @@ require_once("globals.inc");
 require_once("config.inc");
 require_once("functions.inc");
 
-function ovpn_configure() {
+function ovpn_configure($reconfigure) {
 	global $config;
 	if (is_array($config['ovpn']['server']))
-		ovpn_config_server();
+		ovpn_config_server($reconfigure);
 	if (is_array($config['ovpn']['client']))
 		ovpn_config_client();
 	return;
@@ -80,91 +79,165 @@ function ovpn_unlink_tap() {
 }
 
 /*****************************/	
-/*  Server-related functions */
+/*  Server related functions */
+/*****************************/
+
+function getnxt_server_if($type) {
+	/* find the first available device of type $type */
+	global $config;
+	$a_server = $config['ovpn']['server']['tunnel'];
+	$max = ($type == 'tun') ? 9 : 4;
+	for ($i = 0; $i < $max ; $i++) {
+		$hit = false;
+		foreach ($a_server as $server) {
+			if ($server['tun_iface'] == $type . $i) {
+				$hit = true;
+				break;
+			}
+		}
+		if (!$hit)
+			return $type . $i;
+	}
+	return false;
+}
+
+function getnxt_server_port() {
+	/* Get first unused port */
+	global $config;
+	$a_server = $config['ovpn']['server']['tunnel'];
+	$port = 1194;
+	while (true) {
+		$hit = false;
+		foreach ($a_server as $server) {
+			if ($server['port'] == $port) {
+				$hit = true;
+				break;
+			}
+		}
+		if (!$hit)
+			if (!ovpn_port_inuse_client($port))
+				return $port;
+		$port++;
+	}
+	return false; /* should never get here */
+}
 
 /* Configure the server */
-function ovpn_config_server() {
+function ovpn_config_server($reconfigure) {
 	global $config, $g;
-	
-	if (isset($config['ovpn']['server']['enable'])) {
-	
-		if ($g['booting'])
-			echo "Configuring OpenVPN... ";
-		
+
+	foreach ($config['ovpn']['server']['tunnel'] as $id => $server) {
+		/* get tunnel interface */
+		$tun = $server['tun_iface'];
+			
 		/* kill any running openvpn daemon */
-		killbypid($g['varrun_path']."/ovpn_srv.pid");
-		
-		/* Remove old certs & keys */
-		unlink_if_exists("{$g['vardb_path']}/ovpn_ca_cert.pem");
-		unlink_if_exists("{$g['vardb_path']}/ovpn_srv_cert.pem");
-		unlink_if_exists("{$g['vardb_path']}/ovpn_srv_key.pem");
-		unlink_if_exists("{$g['vardb_path']}/ovpn_dh.pem");
-		
-		/* Copy the TLS-Server certs & keys to disk */
-		$fd = @fopen("{$g['vardb_path']}/ovpn_ca_cert.pem", "w");
-		if ($fd) {
-			fwrite($fd, base64_decode($config['ovpn']['server']['ca_cert'])."\n");
-			fclose($fd);	
-		}
-		$fd = @fopen("{$g['vardb_path']}/ovpn_srv_cert.pem", "w");
-		if ($fd) {
-			fwrite($fd, base64_decode($config['ovpn']['server']['srv_cert'])."\n");
-			fclose($fd);	
-		}
-		$fd = @fopen("{$g['vardb_path']}/ovpn_srv_key.pem", "w");
-		if ($fd) {
-			fwrite($fd, base64_decode($config['ovpn']['server']['srv_key'])."\n");
-			fclose($fd);	
-		}
-		$fd = @fopen("{$g['vardb_path']}/ovpn_dh.pem", "w");
-		if ($fd) {
-			fwrite($fd, base64_decode($config['ovpn']['server']['dh_param'])."\n");
-			fclose($fd);	
-		}
-		
-		/* Start the openvpn daemon */
-		mwexec("/usr/local/sbin/openvpn " . ovpn_srv_config_generate());
-		
-		if ($g['booting'])
-			/* Send the boot message */
-			echo "done.\n";
-	}
-	else {
-		if (!$g['booting']){
-			/* stop any processes, unload the tap module */
+		killbypid($g['varrun_path']."/ovpn_srv_{$tun}.pid");
+
+		if (isset($server['enable'])) {
+
+			if ($g['booting'])
+				echo "Starting OpenVPN server $id... ";
+
+			/* send SIGUSR1 to running openvpn daemon */
+			if ( $reconfigure == "true" && isset($server['dynip'])) {
+				sigkillbypid($g['varrun_path']."/ovpn_srv_{$tun}.pid", "SIGUSR1");
+				continue;
+			}
+
 			/* Remove old certs & keys */
-			unlink_if_exists("{$g['vardb_path']}/ovpn_ca_cert.pem");
-			unlink_if_exists("{$g['vardb_path']}/ovpn_srv_cert.pem");
-			unlink_if_exists("{$g['vardb_path']}/ovpn_srv_key.pem");
-			unlink_if_exists("{$g['vardb_path']}/ovpn_dh.pem");
-			killbypid("{$g['varrun_path']}/ovpn_srv.pid");
-			if ($config['ovpn']['server']['tun_iface'] == 'tap0')
-				ovpn_unlink_tap();
+			unlink_if_exists("{$g['vardb_path']}/ovpn_ca_cert_{$tun}.pem");
+			unlink_if_exists("{$g['vardb_path']}/ovpn_srv_cert_{$tun}.pem");
+			unlink_if_exists("{$g['vardb_path']}/ovpn_srv_key_{$tun}.pem");
+			unlink_if_exists("{$g['vardb_path']}/ovpn_dh_{$tun}.pem");
+
+			/* Copy the TLS-Server certs & keys to disk */
+			$fd = fopen("{$g['vardb_path']}/ovpn_ca_cert_{$tun}.pem", "w");
+			if ($fd) {
+				fwrite($fd, base64_decode($server['ca_cert'])."\n");
+				fclose($fd);	
+			}
+			$fd = fopen("{$g['vardb_path']}/ovpn_srv_cert_{$tun}.pem", "w");
+			if ($fd) {
+				fwrite($fd, base64_decode($server['srv_cert'])."\n");
+				fclose($fd);	
+			}
+			touch ("{$g['vardb_path']}/ovpn_srv_key_{$tun}.pem");
+			chmod ("{$g['vardb_path']}/ovpn_srv_key_{$tun}.pem", 0600);
+			$fd = fopen("{$g['vardb_path']}/ovpn_srv_key_{$tun}.pem", "w");
+			if ($fd) {
+				fwrite($fd, base64_decode($server['srv_key'])."\n");
+				fclose($fd);	
+			}
+			$fd = fopen("{$g['vardb_path']}/ovpn_dh_{$tun}.pem", "w");
+			if ($fd) {
+				fwrite($fd, base64_decode($server['dh_param'])."\n");
+				fclose($fd);	
+			}
+
+			/* Start the openvpn daemon */
+			mwexec("/usr/local/sbin/openvpn " . ovpn_srv_config_generate($id));
+
+			if ($g['booting'])
+				/* Send the boot message */
+				echo "done\n";
+		}
+		else {
+			if (!$g['booting']){
+				/* stop any processes, unload the tap module */
+				/* Remove old certs & keys */
+				ovpn_server_kill($tun);
+
+				if ($server['type'] == "tap")
+					ovpn_unlink_tap();
+			}
 		}
 	}
 	return 0;
 }
 
-/* Generate the config for a OpenVPN server */
-function ovpn_srv_config_generate() {
-	global $config, $g;
-	$server = $config['ovpn']['server'];
+/* Kill off a running server process */
+function ovpn_server_kill($tun) {
+	global $g;
 	
+	killbypid("{$g['varrun_path']}/ovpn_srv_{$tun}.pid");
+
+	/* Remove old certs & keys */
+	unlink_if_exists("{$g['vardb_path']}/ovpn_ca_cert_{$tun}.pem");
+	unlink_if_exists("{$g['vardb_path']}/ovpn_srv_cert_{$tun}.pem");
+	unlink_if_exists("{$g['vardb_path']}/ovpn_srv_key_{$tun}.pem");
+	unlink_if_exists("{$g['vardb_path']}/ovpn_dh_{$tun}.pem");
+
+	return 0;
+}
+
+/* Generate the config for a OpenVPN server */
+function ovpn_srv_config_generate($id) {
+	global $config, $g;
+	$server = $config['ovpn']['server']['tunnel'][$id];
+
+	/* get tunnel interface */
+	$tun = $server['tun_iface'];
+
 	/* First the generic stuff:
 		- We are a server
 		- We are a TLS Server (for authentication)
 		- We will run without privilege
 	*/
-	$ovpn_config = "--daemon --user nobody --group nobody --verb {$server['verb']} ";
+	$ovpn_config = "--daemon --user nobody --group nobody --verb {$server['verb']} --persist-tun --persist-key ";
 	
 	/* pid file */
-	$ovpn_config .= "--writepid {$g['varrun_path']}/ovpn_srv.pid ";
+	$ovpn_config .= "--writepid {$g['varrun_path']}/ovpn_srv_{$tun}.pid ";
 	
 	/* interface */
 	$ovpn_config .= "--dev {$server['tun_iface']} ";
 	
 	/* port */
 	$ovpn_config .= "--port {$server['port']} ";
+
+	/* Set protocol being used (p = udp (default), tcp-server)
+	if ($server['proto'] == 'tcp') {
+		$ovpn_config .= "--proto tcp-server";
+	}
 	
 	/* Interface binding - 1 or all */
 	if ($server['bind_iface'] != 'all') {
@@ -172,9 +245,12 @@ function ovpn_srv_config_generate() {
 			$ovpn_config .= "--local $ipaddr ";
 		else
 			return "Interface bridged";
-		
 	}
-		
+
+	/* are we using dynamic ip addresses? */
+	if (isset($server['dynip']))
+		$ovpn_config .= "--persist-remote-ip ";
+	
 	/* Client to client routing (off by default) */
 	if (isset($server['cli2cli']))
 		$ovpn_config .= "--client-to-client ";
@@ -187,10 +263,10 @@ function ovpn_srv_config_generate() {
 	$ovpn_config .= "--server {$server['ipblock']} {$mask} ";
 	
 	/* TLS-Server params */
-	$ovpn_config .= "--ca {$g['vardb_path']}/ovpn_ca_cert.pem ";
-	$ovpn_config .= "--cert {$g['vardb_path']}/ovpn_srv_cert.pem ";
-	$ovpn_config .= "--key {$g['vardb_path']}/ovpn_srv_key.pem ";
-	$ovpn_config .= "--dh {$g['vardb_path']}/ovpn_dh.pem ";
+	$ovpn_config .= "--ca {$g['vardb_path']}/ovpn_ca_cert_{$tun}.pem ";
+	$ovpn_config .= "--cert {$g['vardb_path']}/ovpn_srv_cert_{$tun}.pem ";
+	$ovpn_config .= "--key {$g['vardb_path']}/ovpn_srv_key_{$tun}.pem ";
+	$ovpn_config .= "--dh {$g['vardb_path']}/ovpn_dh_{$tun}.pem ";
 	
 	/* Data channel encryption cipher*/
 	$ovpn_config .= "--cipher {$server['crypto']} ";
@@ -202,7 +278,7 @@ function ovpn_srv_config_generate() {
 	/* Client push - redirect gateway */
 	if (isset($server['psh_options']['redir'])){
 		if (isset($server['psh_options']['redir_loc']))
-			$ovpn_config .= "--push \"redirect-gateway 'local'\" ";
+			$ovpn_config .= "--push \"redirect-gateway local\" ";
 		else
 			$ovpn_config .= "--push \"redirect-gateway\" ";
 	}
@@ -235,12 +311,7 @@ function ovpn_srv_config_generate() {
 		$ovpn_config .= "--inactive {$server['psh_options']['pingexit']} ";
 		$ovpn_config .= "--push \"inactive {$server['psh_options']['inact']}\" ";
 	}
-	
-	/* Set protocol being used (TCP or UDP) */
-	if ($server['psh_options']['proto'] == 'TCP') {
-		$ovpn_config .= "--proto tcp-server ";
-	}
-	
+
 	//trigger_error("OVPN: $ovpn_config", E_USER_NOTICE);
 	return $ovpn_config;
 }
@@ -249,69 +320,166 @@ function ovpn_srv_config_generate() {
 function ovpn_server_iface(){
 	global $config, $g;
 	
-	$i = 1;
-	while (true) {
-		$ifname = 'opt' . $i;
-		if (is_array($config['interfaces'][$ifname])) {
-			if ((isset($config['interfaces'][$ifname]['ovpn']))
-			     && ($config['interfaces'][$ifname]['ovpn'] == 'server'))
-				/* Already an interface defined - overwrite */
-				break;
-		}
-		else {
-			/* No existing entry, this is first unused */
-			$config['interfaces'][$ifname] = array();
-			break;
-		}
-		$i++;
-	}
-	$config['interfaces'][$ifname]['descr'] = "OVPN server";
-	$config['interfaces'][$ifname]['if'] = $config['ovpn']['server']['tun_iface'];
-	$config['interfaces'][$ifname]['ipaddr'] = long2ip( ip2long($config['ovpn']['server']['ipblock']) + 1);
-	$config['interfaces'][$ifname]['subnet'] = $config['ovpn']['server']['prefix'];
-	$config['interfaces'][$ifname]['enable'] = isset($config['ovpn']['server']['enable']) ? true : false;
-	$config['interfaces'][$ifname]['ovpn'] = 'server';
+	foreach ($config['ovpn']['server']['tunnel'] as $id => $server) {
+		if (isset($server['enable'])) {
+
+			/* get tunnel interface */
+			$tun = $server['tun_iface'];
 			
-	write_config();
-	
+			$i = 1;
+			while (true) {
+				$ifname = 'opt' . $i;
+				if (is_array($config['interfaces'][$ifname])) {
+					if ((isset($config['interfaces'][$ifname]['ovpn']))
+					     && ($config['interfaces'][$ifname]['ovpn'] == "server_{$tun}"))
+						/* Already an interface defined - overwrite */
+						break;
+				}
+				else {
+					/* No existing entry, this is first unused */
+					$config['interfaces'][$ifname] = array();
+					break;
+				}
+				$i++;
+			}
+			if (isset($server['descr']))
+				$config['interfaces'][$ifname]['descr'] = $server['descr'];
+			else
+				$config['interfaces'][$ifname]['descr'] = "OVPN server-{$tun}";
+			$config['interfaces'][$ifname]['if'] = $server['tun_iface'];
+			$config['interfaces'][$ifname]['ipaddr'] = long2ip( ip2long($server['ipblock']) + 1);
+			$config['interfaces'][$ifname]['subnet'] = $server['prefix'];
+			$config['interfaces'][$ifname]['enable'] = isset($server['enable']) ? true : false;
+			$config['interfaces'][$ifname]['ovpn'] = "server_{$tun}";
+
+			write_config();
+		}
+	}
 	return "OpenVPN server interface defined";
 }
 
-/********************************************************/
+/* Delete a server interface definition */
+function ovpn_server_iface_del($tun) {
+	global $config;
+
+	for ($i = 1; is_array($config['interfaces']['opt' . $i]); $i++) {
+		$ifname = 'opt' . $i;
+		if ((isset($config['interfaces'][$ifname]['ovpn']))
+		     && ($config['interfaces'][$ifname]['if'] == "$tun")) {
+			unset($config['interfaces'][$ifname]);
+			break;
+		}
+	}
+
+
+	/* shift down other OPTn interfaces to get rid of holes */
+	$i++;
+
+	/* look at the following OPTn ports */
+	while (is_array($config['interfaces']['opt' . $i])) {
+		$config['interfaces']['opt' . ($i - 1)] =
+			$config['interfaces']['opt' . $i];
+
+		unset($config['interfaces']['opt' . $i]);
+		$i++;
+	}
+}
+
+
+/****************************/
 /* Client related functions */
+/****************************/
+
+function getnxt_client_if($type) {
+	/* find the first available device of type $type */
+	global $config;
+	$a_client = $config['ovpn']['client']['tunnel'];
+	$max = ($type == 'tun') ? 9 : 4;
+	for ($i = $max; $i < ($max+$max) ; $i++) {
+		$hit = false;
+		foreach ($a_client as $client) {
+			if ($client['if'] == $type . $i) {
+				$hit = true;
+				break;
+			}
+		}
+		if (!$hit)
+			return $type . $i;
+	}
+        return false;
+}
+
+function getnxt_client_port() {
+        /* Get first unused port */
+	global $config;
+	$a_client = $config['ovpn']['client']['tunnel'];
+	$port = 1194;
+	while (true) {
+		$hit = false;
+		foreach ($a_client as $client) {
+			if ($client['port'] == $port) {
+				$hit = true;
+				break;
+			}
+		}
+		if (!$hit)
+			if (!ovpn_port_inuse_server($port))
+				return $port;
+		$port++;
+	}
+	return false; /* should never get here */
+}
+
+/* Port in use */
+function ovpn_port_inuse_client($port){
+	global $config;
+	$a_client = $config['ovpn']['client']['tunnel'];
+	foreach ($a_client as $client) {
+		if ($client['port'] == $port) {
+			return true;
+		}
+	}
+	return false;
+}
+
 function ovpn_config_client() {
 	/* Boot time configuration */
 	global $config, $g;
 	
 	foreach ($config['ovpn']['client']['tunnel'] as $id => $client) {
+
+		/* get tunnel interface */
+		$tun = $client['if'];
+
+		/* kill any running openvpn daemon */
+		killbypid($g['varrun_path']."/ovpn_cli_{$tun}.pid");
+
 		if (isset($client['enable'])) {
 	
 			if ($g['booting'])
 				echo "Starting OpenVPN client $id... ";
 		
-			/* kill any running openvpn daemon */
-			killbypid("{$g['varrun_path']}/ovpn_client{$id}.pid");
-		
 			/* Remove old certs & keys */
-			unlink_if_exists("{$g['vardb_path']}/ovpn_ca_cert_{$id}.pem");
-			unlink_if_exists("{$g['vardb_path']}/ovpn_cli_cert_{$id}.pem");
-			unlink_if_exists("{$g['vardb_path']}/ovpn_cli_key_{$id}.pem");
+			unlink_if_exists("{$g['vardb_path']}/ovpn_cli_ca_cert_{$tun}.pem");
+			unlink_if_exists("{$g['vardb_path']}/ovpn_cli_cert_{$tun}.pem");
+			unlink_if_exists("{$g['vardb_path']}/ovpn_cli_key_{$tun}.pem");
 		
 			/* Copy the TLS-Client certs & keys to disk */
-			/*$fd = @fopen("{$g['vardb_path']}/ovpn_ca_cert_{$id}.pem", "w");*/
-			$fd = fopen("{$g['vardb_path']}/ovpn_ca_cert_{$id}.pem", "w");
+			$fd = fopen("{$g['vardb_path']}/ovpn_cli_ca_cert_{$tun}.pem", "w");
 			if ($fd) {
 				fwrite($fd, base64_decode($client['ca_cert'])."\n");
 				fclose($fd);	
 			}
 			else
 				trigger_error("OVPN: No open for CA", E_USER_NOTICE);
-			$fd = fopen($g['vardb_path']."/ovpn_cli_cert_".$id.".pem", "w");
+			$fd = fopen("{$g['vardb_path']}/ovpn_cli_cert_{$tun}.pem", "w");
 			if ($fd) {
 				fwrite($fd, base64_decode($client['cli_cert'])."\n");
 				fclose($fd);	
 			}
-			$fd = fopen($g['vardb_path']."/ovpn_cli_key_".$id.".pem", "w");
+			touch ("{$g['vardb_path']}/ovpn_cli_key_{$tun}.pem");
+			chmod ("{$g['vardb_path']}/ovpn_cli_key_{$tun}.pem", 0600);
+			$fd = fopen("{$g['vardb_path']}/ovpn_cli_key_{$tun}.pem", "w");
 			if ($fd) {
 				fwrite($fd, base64_decode($client['cli_key'])."\n");
 				fclose($fd);	
@@ -322,16 +490,14 @@ function ovpn_config_client() {
 		
 			if ($g['booting'])
 				/* Send the boot message */
-				echo "done.\n";
+				echo "done\n";
 		}
 		else {
 			if (!$g['booting']){
 				/* stop any processes, unload the tap module */
 				/* Remove old certs & keys */
-				unlink_if_exists("{$g['vardb_path']}/ovpn_ca_cert_{$id}.pem");
-				unlink_if_exists("{$g['vardb_path']}/ovpn_cli_cert_{$id}.pem");
-				unlink_if_exists("{$g['vardb_path']}/ovpn_cli_key_{$id}.pem");
-				killbypid("{$g['varrun_path']}/ovpn_client{$id}.pid");
+				ovpn_client_kill($tun);
+
 				if ($client['type'] == "tap")
 					ovpn_unlink_tap();
 			}
@@ -342,44 +508,57 @@ function ovpn_config_client() {
 }
 
 /* Kill off a running client process */
-function ovpn_client_kill($id) {
+function ovpn_client_kill($tun) {
 	global $g;
 	
-	killbypid("{$g['varrun_path']}/ovpn_client{$id}.pid");
+	killbypid("{$g['varrun_path']}/ovpn_cli_{$tun}.pid");
+	
+	/* Remove old certs & keys */
+	unlink_if_exists("{$g['vardb_path']}/ovpn_cli_ca_cert_{$tun}.pem");
+	unlink_if_exists("{$g['vardb_path']}/ovpn_cli_cert_{$tun}.pem");
+	unlink_if_exists("{$g['vardb_path']}/ovpn_cli_key_{$tun}.pem");
+
 	return 0;
 }
 
+/* Generate the config for a OpenVPN client */
 function ovpn_cli_config_generate($id) {
 	/* configure the named client */
 	global $config, $g;
-	$client = $config['ovpn']['client']['tunnel'];
+	$client = $config['ovpn']['client']['tunnel'][$id];
+
+	/* get tunnel interface */
+	$tun = $client['if'];
 	
 	/* Client support in 2.0 is very simple */
 	
 	$ovpn_config = "--client --daemon --verb 1 ";
 	
 	/* pid file */
-	$ovpn_config .= "--writepid {$g['varrun_path']}/ovpn_client{$id}.pid ";
+	$ovpn_config .= "--writepid {$g['varrun_path']}/ovpn_cli_{$tun}.pid ";
 	
 	/* interface */
-	$ovpn_config .= "--dev {$client[$id]['if']} ";
+	$ovpn_config .= "--dev {$client['if']} ";
 	
 	/* protocol */
-	$ovpn_config .= "--proto {$client[$id]['proto']} ";
+	/* Set protocol being used (p = udp (default), tcp-client)
+	if ($client['proto'] == 'tcp') {
+		$ovpn_config .= "--proto tcp-client";
+	}
 	
 	/* port */
-	$ovpn_config .= "--lport {$client[$id]['cport']} ";
+	$ovpn_config .= "--lport {$client['port']} ";
 	
 	/* server location */
-	$ovpn_config .= "--remote {$client[$id]['saddr']} {$client[$id]['sport']} ";
+	$ovpn_config .= "--remote {$client['saddr']} {$client['sport']} ";
 	
 	/* TLS-Server params */
-	$ovpn_config .= "--ca {$g['vardb_path']}/ovpn_ca_cert_{$id}.pem ";
-	$ovpn_config .= "--cert {$g['vardb_path']}/ovpn_cli_cert_{$id}.pem ";
-	$ovpn_config .= "--key {$g['vardb_path']}/ovpn_cli_key_{$id}.pem ";
+	$ovpn_config .= "--ca {$g['vardb_path']}/ovpn_cli_ca_cert_{$tun}.pem ";
+	$ovpn_config .= "--cert {$g['vardb_path']}/ovpn_cli_cert_{$tun}.pem ";
+	$ovpn_config .= "--key {$g['vardb_path']}/ovpn_cli_key_{$tun}.pem ";
 		
 	/* Data channel encryption cipher*/
-	$ovpn_config .= "--cipher {$client[$id]['crypto']} ";
+	$ovpn_config .= "--cipher {$client['crypto']} ";
 	
 	//trigger_error("OVPN: $ovpn_config", E_USER_NOTICE);
 	return $ovpn_config;
@@ -391,12 +570,16 @@ function ovpn_client_iface(){
 		
 	foreach ($config['ovpn']['client']['tunnel'] as $id => $client) {
 		if (isset($client['enable'])) {
+
+			/* get tunnel interface */
+			$tun = $client['if'];
+
 			$i = 1;
 			while (true) {
 				$ifname = 'opt' . $i;
 				if (is_array($config['interfaces'][$ifname])) {
 					if ((isset($config['interfaces'][$ifname]['ovpn']))
-			     		     && ($config['interfaces'][$ifname]['ovpn'] == "client{$id}"))
+			     		     && ($config['interfaces'][$ifname]['ovpn'] == "client_{$tun}"))
 						/* Already an interface defined - overwrite */
 						break;
 				}
@@ -410,12 +593,12 @@ function ovpn_client_iface(){
 			if (isset($client['descr']))
 				$config['interfaces'][$ifname]['descr'] = $client['descr'];
 			else
-				$config['interfaces'][$ifname]['descr'] = "OVPN client-{$id}";
+				$config['interfaces'][$ifname]['descr'] = "OVPN client-{$tun}";
 			$config['interfaces'][$ifname]['if'] = $client['if'];
 			$config['interfaces'][$ifname]['ipaddr'] = "0.0.0.0";
 			$config['interfaces'][$ifname]['subnet'] = "0";
 			$config['interfaces'][$ifname]['enable'] = isset($client['enable']) ? true : false;
-			$config['interfaces'][$ifname]['ovpn'] = "client{$id}";
+			$config['interfaces'][$ifname]['ovpn'] = "client_{$tun}";
 			write_config();
 		}
 	}
@@ -423,19 +606,32 @@ function ovpn_client_iface(){
 }
 
 /* Delete a client interface definition */
-function ovpn_client_iface_del($id) {
+function ovpn_client_iface_del($tun) {
 	global $config;
-	
-	$i = 1;
-	while (true) {
+
+	for ($i = 1; is_array($config['interfaces']['opt' . $i]); $i++) {
 		$ifname = 'opt' . $i;
-		if (is_array($config['interfaces'][$ifname])) {
-			if ((isset($config['interfaces'][$ifname]['ovpn']))
-			     && ($config['interfaces'][$ifname]['ovpn'] == "client{$id}"))
-			     unset($config['interfaces'][$ifname]);
+		if ((isset($config['interfaces'][$ifname]['ovpn']))
+		     && ($config['interfaces'][$ifname]['if'] == "$tun")) {
+			unset($config['interfaces'][$ifname]);
+			break;
 		}
 	}
+
+
+	/* shift down other OPTn interfaces to get rid of holes */
+	$i++;
+
+	/* look at the following OPTn ports */
+	while (is_array($config['interfaces']['opt' . $i])) {
+		$config['interfaces']['opt' . ($i - 1)] =
+			$config['interfaces']['opt' . $i];
+
+		unset($config['interfaces']['opt' . $i]);
+		$i++;
+	}
 }
+
 
 /******************/
 /* Misc functions */
@@ -452,6 +648,18 @@ function ovpn_calc_end($start, $prefix){
 function ovpn_calc_mask($prefix){
 
 	return long2ip(ip2long("255.255.255.255") - (pow( 2, (32 - $prefix)) - 1));
+}
+
+/* Port in use */
+function ovpn_port_inuse_server($port){
+	global $config;
+	$a_server = $config['ovpn']['server']['tunnel'];
+	foreach ($a_server as $server) {
+		if ($server['port'] == $port) {
+			return true;
+		}
+	}
+	return false;
 }
 
 /* Read in a file from the $_FILES array */
@@ -539,7 +747,7 @@ function ovpn_lock() {
 	$n = 0;
 	while ($n < 10) {
 		/* open the lock file in append mode to avoid race condition */
-		if ($fd = @fopen($lockfile, "x")) {
+		if ($fd = fopen($lockfile, "x")) {
 			/* succeeded */
 			fclose($fd);
 			return;

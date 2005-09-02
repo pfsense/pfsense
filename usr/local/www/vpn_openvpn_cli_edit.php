@@ -28,6 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+$pgtitle = array("VPN", "OpenVPN", "Edit client");
 require("guiconfig.inc");
 require_once("openvpn.inc");
 
@@ -38,47 +39,7 @@ if (!is_array($config['ovpn']['client'])){
 	$config['ovpn']['client']['tunnel'] = array();
 }
 
-function getnxt_if($type) {
-	/* find the first available device of type $type */
-	global $config;
-	$a_client = $config['ovpn']['client']['tunnel'];
-	$max = ($type == 'tun') ? 17 : 4;
-	for ($i = 1; $i < $max ; $i++) {
-		$hit = false;
-		foreach ($a_client as $client) {
-			if ($client['iface'] == $type . $i) {
-				$hit = true;
-				break;
-			}
-		}
-		if (!$hit) 
-			return $type . $i;
-	}
-	return false;
-}
 
-
-function getnxt_port() {
-	/* Get first unused port */
-	global $config;
-	$a_client = $config['ovpn']['client']['tunnel'];
-	$port = 5001;
-	while (true) {
-		$hit = false;
-		foreach ($a_client as $client) {
-			if ($client['cport'] == $port) {
-				$hit = true;
-				break;
-			}
-		}
-		if (!$hit) 
-			return $port;
-		$port++;
-	}
-	return false; /* should never get here */
-}
-			
-		 
 $ovpncli =& $config['ovpn']['client']['tunnel'];
 
 $id = $_GET['id'];
@@ -95,7 +56,7 @@ else {
 	$pconfig = array();
 	$pconfig['type'] = 'tun';
 	$pconfig['proto'] = 'udp';
-	$pconfig['sport'] = '5000';
+	$pconfig['sport'] = '1194';
 	$pconfig['ver'] = '2';
 	$pconfig['crypto'] = 'BF-CBC';
 	$pconfig['pull'] = true;
@@ -103,8 +64,26 @@ else {
 }
 
 if (isset($_POST['pull'])) {
+
+	$pconfig = $_POST;
+
+	$pconfig['ca_cert'] = base64_encode($pconfig['ca_cert']);
+	$pconfig['cli_cert'] = base64_encode($pconfig['cli_cert']);
+	$pconfig['cli_key'] = base64_encode($pconfig['cli_key']);
+
 	/* Called from form */
 	unset($input_errors);
+
+	/* input validation */
+	$reqdfields = explode(" ", "type saddr sport");
+	$reqdfieldsn = explode(",", "Tunnel type,Address,Port");
+
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+ 
+	/* valid Port */
+	if (($_POST['sport'] && !is_port($_POST['sport'])))
+		$input_errors[] = "The server's port must be an integer between 1 and 65535 (default 1194).";
+
 	if (is_null($_POST['ca_cert']))
 		$input_errors[] = "You must provide a CA certificate file";
 	elseif (!strstr($_POST['ca_cert'], "BEGIN CERTIFICATE") || !strstr($_POST['ca_cert'], "END CERTIFICATE"))
@@ -124,20 +103,33 @@ if (isset($_POST['pull'])) {
 		if (isset($id)) {
 			/* Editing an existing entry */
 			$ovpnent = $ovpncli[$id];
+
+			if ( $ovpncli[$id]['sport'] != $_POST['sport'] ||
+				$ovpncli[$id]['proto'] != $_POST['proto'] ) {
+
+				/* some entries changed */
+				for ($i = 0; isset($config['ovpn']['client']['tunnel'][$i]); $i++) {
+					$current = &$config['ovpn']['client']['tunnel'][$i];
+
+					if ($current['sport'] == $_POST['sport'])
+						if ($current['proto'] == $_POST['proto'])
+							$input_errors[] = "You already have this combination for port and protocol settings. You can't use it twice";
+				}
+			}
+
 			/* Test Server type hasn't changed */
 			if ($ovpnent['type'] != $_POST['type']) {
-				$nxt_if = getnxt_if($_POST['type']);
+				$nxt_if = getnxt_client_if($_POST['type']);
 				if (!$nxt_if)
 					$input_errors[] = "Run out of devices for a tunnel of type {$_POST['type']}";
 				else
 					$ovpnent['if'] = $nxt_if;
-
+				/* Need to reboot in order to create interfaces cleanly */
+				touch($d_sysrebootreqd_path);
 			}
 			/* Has the enable/disable state changed? */
 			if (isset($ovpnent['enable']) && isset($_POST['disabled'])) {
 				touch($d_ovpnclidirty_path);
-				ovpn_client_kill($id);
-				ovpn_client_iface_del($id);
 			}
 			if (!isset($ovpnent['enable']) && !isset($_POST['disabled'])) {
 				touch($d_ovpnclidirty_path);
@@ -146,22 +138,25 @@ if (isset($_POST['pull'])) {
 		else {
 			/* Creating a new entry */
 			$ovpnent = array();
-			$nxt_if = getnxt_if($_POST['type']);
+			$nxt_if = getnxt_client_if($_POST['type']);
 			if (!$nxt_if)
 				$input_errors[] = "Run out of devices for a tunnel of type {$_POST['type']}";
 			else
 				$ovpnent['if'] = $nxt_if;
-			$ovpnent['cport'] = getnxt_port();
+			$ovpnent['port'] = getnxt_client_port();
+			/* I think we have to reboot to have the interface created cleanly */
+			touch($d_sysrebootreqd_path);
 		}
+
 		$ovpnent['type'] = $_POST['type'];
 		$ovpnent['proto'] = $_POST['proto'];
 		$ovpnent['sport'] = $_POST['sport'];
 		$ovpnent['ver'] = $_POST['ver'];
 		$ovpnent['saddr'] = $_POST['saddr'];
 		$ovpnent['descr'] = $_POST['descr'];
-		$ovpnent['ca_cert'] = base64_encode($_POST['ca_cert']);
-		$ovpnent['cli_cert'] = base64_encode($_POST['cli_cert']);
-		$ovpnent['cli_key'] = base64_encode($_POST['cli_key']);
+		$ovpnent['ca_cert'] = $pconfig['ca_cert'];
+		$ovpnent['cli_cert'] = $pconfig['cli_cert'];
+		$ovpnent['cli_key'] = $pconfig['cli_key'];
 		$ovpnent['crypto'] = $_POST['crypto'];
 		$ovpnent['pull'] = true; //This is a fixed config for this version
 		$ovpnent['enable'] = isset($_POST['disabled']) ? false : true;
@@ -176,22 +171,17 @@ if (isset($_POST['pull'])) {
 		
 		write_config();
 		touch($d_ovpnclidirty_path);
+
 		header("Location: vpn_openvpn_cli.php");
 		exit;
 	}
 }
 
-$pgtitle = "VPN: OpenVPN: Edit client";
-include("head.inc");
-
 ?>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
+
 <form action="vpn_openvpn_cli_edit.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
-              <?display_topbar()?>
   <table width="100%" border="0" cellpadding="6" cellspacing="0">
     <tr>
       <td width="22%" valign="top" class="vncellreq">Disabled</td>
@@ -228,7 +218,7 @@ include("head.inc");
       <td width="22%" valign="top" class="vncellreq">Port</td>
       <td width="78%" class="vtable">
         <input name="sport" type="text" class="formfld" size="5" maxlength="5" value="<?=htmlspecialchars($pconfig['sport']);?>"><br>
-        Enter the server's port number (default is 5000).</td>
+        Enter the server's port number (default is 1194).</td>
     </tr>
     
     <tr>

@@ -445,6 +445,37 @@ EOD;
                                 $ifcargs .= "-mediaopt adhoc mediaopt hostap ";
                         else if (strstr($if, "wi"))
                                 $ifcargs .= "-mediaopt ibss mediaopt hostap ";
+				if (isset($wlcfg['wpa']['enable'])) {
+$wpa .= <<<EOD
+
+interface={$if}
+driver=bsd
+logger_syslog=-1
+logger_syslog_level=0
+logger_stdout=-1
+logger_stdout_level=0
+debug=4
+dump_file=/tmp/hostapd.dump
+ctrl_interface=/var/run/hostapd
+ctrl_interface_group=wheel
+ssid={$wlcfg['ssid']}
+macaddr_acl=1
+auth_algs=3
+eapol_key_index_workaround=0
+wpa=1
+wpa_key_mgmt={$wlcfg['wpapsk']}
+wpa_pairwise=CCMP
+wpa_group_rekey=60
+wpa_gmk_rekey=3600
+wpa_passphrase={$wlcfg['passphrase']}
+
+EOD;
+					$fd = fopen("{$g['etc_path']}/hostapd_{$if}.conf", "w");
+					fwrite($fd, "{$wpa}");
+					fclose($fd);
+					mwexec("hostpad -B {$g['etc_path']}/hostapd_{$if}.conf");
+				}				
+				
                         break;
                 case 'ibss':
                 case 'IBSS':

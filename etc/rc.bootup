@@ -155,7 +155,7 @@
 	echo "done.\n";
 
 	/* start OpenVPN server & clients */
-	ovpn_configure();
+        ovpn_configure(false);
 
 	/* set up static routes */
 	system_routing_configure();

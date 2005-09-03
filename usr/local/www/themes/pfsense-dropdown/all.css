@@ -171,6 +171,7 @@ table#marquee div#container div#scroller {
 	font-size: 0.75em;
 	clear: both;
 	margin-bottom: 20px;
+	z-index: 0;
 }
 #footer p {
 	padding: 0px;
@@ -190,6 +191,7 @@ table#marquee div#container div#scroller {
 	margin: 0;
 	list-style: none;
 	text-align: center;
+	z-index: 10;
 }
 #navigation ul#menu {
 	padding-top: 3px;

@@ -124,7 +124,7 @@ if ($_POST) {
 		else
 			$a_aliases[] = $alias;
 
-		touch($d_aliasesdirty_path);
+		filter_configure();
 
 		write_config();
 

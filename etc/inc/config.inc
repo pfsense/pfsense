@@ -294,7 +294,12 @@ function conf_mount_rw() {
 	   compact flash card. */
 	if($g['platform'] == "wrap" or $g['platform'] == "net45xx") {
 		mwexec("/sbin/umount -f {$g['embeddedbootupslice']}");
-		mwexec("/sbin/mount -w {$g['embeddedbootupslice']}");
+		$status = mwexec("/sbin/mount -w {$g['embeddedbootupslice']}");
+		/* we could not mount this correctly.  kick off fsck */
+		while($status < 0) {
+			mwexec("/sbin/fsck -y");
+			$status = mwexec("/sbin/mount -w {$g['embeddedbootupslice']}");
+		}
 	}
 }
 

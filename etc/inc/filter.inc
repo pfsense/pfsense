@@ -1371,52 +1371,53 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			/* if user has selected a custom gateway, lets work with it */
 			if($rule['gateway'] <> "") {
 				$foundlb = 0;
-				foreach($config['load_balancer']['lbpool'] as $lb) {
-					if($lb['name'] == $rule['gateway']) {
-						$gateway = $rule['gateway'];
-						/*
-						*    is $gateway a interface name?
-						*    if so, lets find out the gateway address
-						*    from /tmp/router_bleh.router
-						*/
-					        if(in_array($gateway, $ifdescrs)==true) {
-							if(is_file("{$g["tmp_path"]}/{$gateway}_router")) {
-								$return_gateway = file_get_contents("{$g["tmp_path"]}/{$gateway}_router");
+				if(isarray($config['load_balancer']['lbpool']))
+					foreach($config['load_balancer']['lbpool'] as $lb) {
+						if($lb['name'] == $rule['gateway']) {
+							$gateway = $rule['gateway'];
+							/*
+							*    is $gateway a interface name?
+							*    if so, lets find out the gateway address
+							*    from /tmp/router_bleh.router
+							*/
+							if(in_array($gateway, $ifdescrs)==true) {
+								if(is_file("{$g["tmp_path"]}/{$gateway}_router")) {
+									$return_gateway = file_get_contents("{$g["tmp_path"]}/{$gateway}_router");
+								} else {
+									log_error("Could not find {$g["tmp_path"]}/{$gateway}_router.  Needed for dhcp gateway information");
+									continue;
+								}
+							}
+							$line .= " route-to { ";
+							/* if /tmp/$lbname.pool exists then read in our gateway hints from slbd */
+							if(file_exists("{$g['tmp_path']}/{$lb['name']}.pool")) {
+								$lbs = split("\n", file_get_contents("{$g['tmp_path']}/{$lb['name']}.pool"));
 							} else {
-								log_error("Could not find {$g["tmp_path"]}/{$gateway}_router.  Needed for dhcp gateway information");
-								continue;
+								$lbs = $lb['servers'];
 							}
-					        }
-						$line .= " route-to { ";
-						/* if /tmp/$lbname.pool exists then read in our gateway hints from slbd */
-						if(file_exists("{$g['tmp_path']}/{$lb['name']}.pool")) {
-							$lbs = split("\n", file_get_contents("{$g['tmp_path']}/{$lb['name']}.pool"));
-						} else {
-							$lbs = $lb['servers'];
+							/* iterate through $lbs and setup items accordingly */
+							foreach($lbs as $server) {
+								if($foundlb == 1)
+									$line .= ", ";
+								/*   we are seperating the monitor address from the gateway
+								 *   using the | character
+								 */  
+								if(stristr($server, "|") == true) {
+									$split_ip = split("\|", $server);
+									$rule['gateway'] = $split_ip[0];
+									$gateway = $split_ip[0];
+								}
+								/* determine interface from gateway address */
+								$int = guess_interface_from_ip($gateway);
+								$line .=  "(" . $int . " " . $gateway . ") ";
+								if($int == "") {
+									$line = "# error resolving load balancing {$gateway}";
+								}
+								$foundlb = 1;
+							}
+							$line .= "} round-robin ";
 						}
-						/* iterate through $lbs and setup items accordingly */
-						foreach($lbs as $server) {
-							if($foundlb == 1)
-								$line .= ", ";
-							/*   we are seperating the monitor address from the gateway
-							 *   using the | character
-							 */  
-							if(stristr($server, "|") == true) {
-								$split_ip = split("\|", $server);
-								$rule['gateway'] = $split_ip[0];
-								$gateway = $split_ip[0];
-							}
-							/* determine interface from gateway address */
-							$int = guess_interface_from_ip($gateway);
-							$line .=  "(" . $int . " " . $gateway . ") ";
-							if($int == "") {
-								$line = "# error resolving load balancing {$gateway}";
-							}
-							$foundlb = 1;
-						}
-						$line .= "} round-robin ";
 					}
-				}
 				/*  we're not using load balancing, just setup gateway */
 				if($foundlb == 0) {
 					$gateway = $rule['gateway'];

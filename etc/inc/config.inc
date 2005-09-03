@@ -297,6 +297,7 @@ function conf_mount_rw() {
 		$status = mwexec("/sbin/mount -w {$g['embeddedbootupslice']}");
 		/* we could not mount this correctly.  kick off fsck */
 		while($status < 0) {
+			log_error("File system is dirty.  Launching FSCK for /");
 			mwexec("/sbin/fsck -y");
 			$status = mwexec("/sbin/mount -w {$g['embeddedbootupslice']}");
 		}

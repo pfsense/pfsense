@@ -1371,7 +1371,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			/* if user has selected a custom gateway, lets work with it */
 			if($rule['gateway'] <> "") {
 				$foundlb = 0;
-				if(isarray($config['load_balancer']['lbpool']))
+				if(isarray($config['load_balancer']['lbpool'])) {
 					foreach($config['load_balancer']['lbpool'] as $lb) {
 						if($lb['name'] == $rule['gateway']) {
 							$gateway = $rule['gateway'];
@@ -1418,6 +1418,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 							$line .= "} round-robin ";
 						}
 					}
+				}
 				/*  we're not using load balancing, just setup gateway */
 				if($foundlb == 0) {
 					$gateway = $rule['gateway'];

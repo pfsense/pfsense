@@ -17,6 +17,7 @@ else
 	<link rel="stylesheet" href="/themes/<?php echo $g['theme']; ?>/all.css" media="all" />
 	<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print">
 	<script type="text/javascript" src="/themes/<?php echo $g['theme']; ?>/loader.js"></script>
+	<script type="text/javascript">var theme = "<?php echo $g['theme']; ?>"</script>
 
 <?
 	/*

@@ -35,7 +35,7 @@ var addRowTo = (function() {
 	td = d.createElement("td");
 	td.rowSpan = "1";
 
-	td.innerHTML = '<input type="image" src="/x.gif" onclick="removeRow(this); return false;" value="Delete">';
+	td.innerHTML = '<input type="image" src="/themes/' + theme + '/images/icons/icon_x.gif" onclick="removeRow(this); return false;" value="Delete">';
 	tr.appendChild(td);
 	tbody.appendChild(tr);
     });

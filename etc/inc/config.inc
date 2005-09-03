@@ -290,18 +290,16 @@ function conf_mount_rw() {
 		$status = mwexec("/sbin/mount -w -o noatime {$g['cf_path']}");
 	}
 
-	/* if the platform is soekris or wrap or pfSense, lets mount the
-	   compact flash cards root. */
-	if($g['platform'] == "wrap" or $g['platform'] == "net45xx"
-	   or $g['platform'] == "pfSense") {
-		mwexec("/sbin/umount -f {$g['embeddedbootupslice']}");
-		$status = mwexec("/sbin/mount -w {$g['embeddedbootupslice']}");
-		/* we could not mount this correctly.  kick off fsck */
-		while($status < 0) {
-			log_error("File system is dirty.  Launching FSCK for /");
-			mwexec("/sbin/fsck -y");
-			$status = mwexec("/sbin/mount -w {$g['embeddedbootupslice']}");
-		}
+	/*    if the platform is soekris or wrap or pfSense, lets mount the
+	 *    compact flash cards root.
+         */
+	mwexec("/sbin/umount -f /");
+	$status = mwexec("/sbin/mount -w /");
+	/* we could not mount this correctly.  kick off fsck */
+	while($status < 0) {
+		log_error("File system is dirty.  Launching FSCK for /");
+		mwexec("/sbin/fsck -y");
+		$status = mwexec("/sbin/mount -w /");
 	}
 }
 
@@ -322,13 +320,11 @@ function conf_mount_ro() {
 
 	mwexec("/sbin/umount -f {$g['cf_path']}");
 	mwexec("/sbin/mount -r {$g['cf_path']}");
-	/* if the platform is soekris or wrap, lets unmount the
-	   compact flash card. */
-	if($g['platform'] == "wrap" or $g['platform'] == "net45xx"
-		or $g['platform'] == "pfSense") {
-		mwexec("/sbin/umount -f {$g['embeddedbootupslice']}");
-		mwexec("/sbin/mount -r {$g['embeddedbootupslice']}");
-	}
+	/*    if the platform is soekris or wrap, lets unmount the
+	 *    compact flash card.
+         */
+	mwexec("/sbin/umount -f /");
+	mwexec("/sbin/mount -f -r /");
 }
 
 /****f* config/convert_config

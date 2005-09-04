@@ -139,7 +139,7 @@ include("head.inc");
                 <tr align="left">
 		  <td width="22%" valign="top" class="vncellreq">Pool Down Server</td>
                   <td width="78%" class="vtable" colspan="2">
-                    <input name="ipaddr" type="text" <?if(isset($pconfig['sitedown'])) echo "value=\"{$pconfig['sitedown']}\"";?> size="16" maxlength="16">
+                    <input name="sitedown" type="text" <?if(isset($pconfig['sitedown'])) echo "value=\"{$pconfig['sitedown']}\"";?> size="16" maxlength="16">
 		    <br><b>NOTE:</b> This is the server that clients will be redirected to if *ALL* servers in the pool are offline.
                   </td>
 		</tr>

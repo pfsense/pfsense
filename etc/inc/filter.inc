@@ -2329,13 +2329,20 @@ function process_carp_rules() {
 }
 
 function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsense.restore_config_section') {
+	global $config;
 	$params = array(new XML_RPC_Value($password, 'string'),
 			new XML_RPC_Value($section, 'array'),
 			new XML_RPC_Value($section_xml, 'array'));
 	$msg = new XML_RPC_Message($method, $params);
+	if($config['system']['webgui']['port'] != "") {
+		$port = $config['system']['webgui']['port'];
+		$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
+	} else {
 	$cli = new XML_RPC_Client('/xmlrpc.php', $url);
+	}
 	$cli->setCredentials('admin', $password);
 	$resp = $cli->send($msg);
+	log_error("synchronize XML to $url on port $port");
 }
  
 function carp_sync_client() {
@@ -2346,7 +2353,11 @@ function carp_sync_client() {
 	    $already_processed = 1;
 	    foreach($config['installedpackages']['carpsettings']['config'] as $carp) {
 		if($carp['synchronizetoip'] != "" ) {
-		    $synchronizetoip = $carp['synchronizetoip'];
+		    if($config['system']['webgui']['protocol'] != "") {
+			$synchronizetoip = $config['system']['webgui']['protocol'];
+			$synchronizetoip .= "://";
+		    }
+		    $synchronizetoip .= $carp['synchronizetoip'];
 		    $sections = array();
 		    $sections_xml = array();
 		    if($carp['synchronizerules'] != "" and is_array($config['filter'])) {

@@ -437,10 +437,14 @@ EOD;
                 $ifcargs .= "wepmode off ";
         }
 
-	if (preg_match($g['wireless_regex'], $if)) {
-                if ($wlcfg['standard'])
-                        $ifcargs .= "mode {$wlcfg['standard']} ";
-        }
+	if(isset($wlcfg['pureg'])) {
+		$ifcargs .= "mode 11g ";
+	} else {
+		if (preg_match($g['wireless_regex'], $if)) {
+			if ($wlcfg['standard'])
+				$ifcargs .= "mode {$wlcfg['standard']} ";
+		}
+	}
 
         switch ($wlcfg['mode']) {
                 case 'hostap':

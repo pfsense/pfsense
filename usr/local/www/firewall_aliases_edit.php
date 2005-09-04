@@ -46,12 +46,21 @@ if (isset($_POST['id']))
 
 if (isset($id) && $a_aliases[$id]) {
 	$pconfig['name'] = $a_aliases[$id]['name'];
+	$addresses = explode(' ', $a_aliases[$id]['address']);
+	if (is_array($addresses))
+		$address = $addresses[0];
+	else
+		$address = $addresses;
 	list($pconfig['address'],$pconfig['address_subnet']) =
-		explode('/', $a_aliases[$id]['address']);
+		explode('/', $address);
 	if ($pconfig['address_subnet'])
 		$pconfig['type'] = "network";
 	else
-		$pconfig['type'] = "host";
+		if (is_ipaddr($pconfig['address']))
+			$pconfig['type'] = "host";
+		else
+			$pconfig['type'] = "port";
+			
 	$pconfig['descr'] = $a_aliases[$id]['descr'];
 }
 
@@ -166,13 +175,13 @@ function typesel_change() {
 		case 1:	/* network */
 			var cmd;
 			document.iform.address_subnet.disabled = 0;
-			document.iform.address_subnet.value = "";
+//			document.iform.address_subnet.value = "";
 			newrows = totalrows+1;
 			for(i=2; i<newrows; i++) {
 				comd = 'document.iform.address_subnet' + i + '.disabled = 0;';
 				eval(comd);
-				comd = 'document.iform.address_subnet' + i + '.value = "32";';
-				eval(comd);
+//				comd = 'document.iform.address_subnet' + i + '.value = "32";';
+//				eval(comd);
 			}
 			break;
 		case 2:	/* port */
@@ -196,11 +205,11 @@ function update_box_type() {
 	if(selected == 'Network(s)') {
 		document.getElementById ("addressnetworkport").firstChild.data = "Network(s)";
 		document.getElementById ("address_subnet").visible = true;
-		document.getElementById ("address_subnet").disabled = true;
+		document.getElementById ("address_subnet").disabled = false;
 	} else if(selected == 'Host(s)') {
 		document.getElementById ("addressnetworkport").firstChild.data = "Host(s)";
 		document.getElementById ("address_subnet").visible = false;
-		document.getElementById ("address_subnet").disabled = false;
+		document.getElementById ("address_subnet").disabled = true;
 	} else if(selected == 'Port(s)') {
 		document.getElementById ("addressnetworkport").firstChild.data = "Port(s)";
 		document.getElementById ("address_subnet").visible = false;
@@ -322,6 +331,7 @@ rows = 1;
 totalrows = <?php echo $counter; ?>;
 loaded = <?php echo $counter; ?>;
 typesel_change();
+update_box_type();
 
 //-->
 </script>

@@ -50,6 +50,9 @@ if (isset($id) && $a_vs[$id]) {
 	$pconfig['sitedown'] = $a_vs[$id]['sitedown'];
 }
 
+$changedesc = "Load Balancer: Virtual Server: ";
+$changecount = 0;
+
 if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -62,22 +65,31 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$vsent = array();
-		
-		$vsent['name'] = $_POST['name'];
-		$vsent['desc'] = $_POST['desc'];
-		$vsent['pool'] = $_POST['pool'];
-		$vsent['port'] = $_POST['port'];
-		$vsent['sitedown'] = $_POST['sitedown'];
-		$vsent['ipaddr'] = $_POST['ipaddr'];
+		if(isset($id) && $a_vs[$id])
+			$vsent = $a_vs[$id];
+		if($vsent['name'] != "")
+			$changedesc .= " modified '{$vsent['name']}' vs:";
+		else
+			$changedesc .= " created '{$_POST['name']}' vs:";
+
+		update_if_changed("name", $vsent['name'], $_POST['name']);
+		update_if_changed("desc", $vsent['desc'], $_POST['desc']);
+		update_if_changed("pool", $vsent['pool'], $_POST['pool']);
+		update_if_changed("port", $vsent['port'], $_POST['port']);
+		update_if_changed("sitedown", $vsent['sitedown'], $_POST['sitedown']);
+		update_if_changed("ipaddr", $vsent['ipaddr'], $_POST['ipaddr']);
 
 		if (isset($id) && $a_vs[$id])
 			$a_vs[$id] = $vsent;
 		else
 			$a_vs[] = $vsent;
 
-		touch($d_vsconfdirty_path);
 
-		write_config();
+		if ($changecount > 0) {
+			/* Mark virtual server dirty */
+			touch($d_vsconfdirty_path);
+			write_config($changedesc);
+		}
 
 		header("Location: load_balancer_virtual_server.php");
 		exit;

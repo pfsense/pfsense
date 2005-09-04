@@ -114,7 +114,9 @@ if ($_POST) {
 		update_if_changed("domain", $config['system']['domain'], strtolower($_POST['domain']));
 		update_if_changed("username", $config['system']['username'], $_POST['username']);
 
-		if (update_if_changed("webgui protocol", $config['system']['webgui']['protocol'], $pconfig['webguiproto'])  || update_if_changed("webgui port", $config['system']['webgui']['port'], $pconfig['webguiport']))
+		if (update_if_changed("webgui protocol", $config['system']['webgui']['protocol'], $_POST['webguiproto']))
+			$restart_webgui = true;
+		if (update_if_changed("webgui port", $config['system']['webgui']['port'], $_POST['webguiport']))
 			$restart_webgui = true;
 
 		update_if_changed("timezone", $config['system']['timezone'], $_POST['timezone']);
@@ -150,10 +152,11 @@ if ($_POST) {
 
 		if ($restart_webgui) {
 			global $_SERVER;
-			if ($pconfig['webguiport']) {
-				$url="{$pconfig['webguiproto']}://{$_SERVER['HTTP_HOST']}:{$pconfig['webguiport']}/system.php";
+			list($host) = explode(":", $_SERVER['HTTP_HOST']);
+			if ($config['system']['webgui']['port']) {
+				$url="{$config['system']['webgui']['protocol']}://{$host}:{$config['system']['webgui']['port']}/system.php";
 			} else {
-				$url = "{$pconfig['webguiproto']}://{$_SERVER['HTTP_HOST']}/system.php";
+				$url = "{$config['system']['webgui']['protocol']}://{$host}/system.php";
 			}
 		}
 
@@ -246,7 +249,7 @@ include("head.inc");
                 </tr>
                 <tr>
                   <td valign="top" class="vncell">webGUI port</td>
-                  <td class="vtable"> <input name="webguiport" type="text" class="formfld" id="webguiport" "size="5" value="<?=htmlspecialchars($pconfig['webguiport']);?>">
+                  <td class="vtable"> <input name="webguiport" type="text" class="formfld" id="webguiport" "size="5" value="<?=htmlspecialchars($config['system']['webgui']['port']);?>">
                     <br>
                     <span class="vexpl">Enter a custom port number for the webGUI
                     above if you want to override the default (80 for HTTP, 443

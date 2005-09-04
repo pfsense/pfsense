@@ -58,10 +58,23 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "ipaddr name");
-	$reqdfieldsn = explode(",", "IP Address, Name");
+	$reqdfields = explode(" ", "ipaddr name port");
+	$reqdfieldsn = explode(",", "IP Address, Name, Port");
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+
+	for ($i=0; isset($config['load_balancer']['virtual_server'][$i]); $i++)
+		if (($_POST['name'] == $config['load_balancer']['virtual_server'][$i]['name']) && ($i != $id))
+			$input_errors[] = "This virtual server name has already been used.  Virtual server names must be unique.";
+
+	if (!is_port($_POST['port']))
+		$input_errors[] = "The port must be an integer between 1 and 65535.";
+
+	if(!is_ipaddr($_POST['ipaddr']))
+		$input_errors[] = "{$_POST['ipaddr']} is not a valid IP address.";
+
+	if(($_POST['sitedown'] != "") && (!is_ipaddr($_POST['sitedown'])))
+		$input_errors[] = "{$_POST['sitedown']} is not a valid IP address.";
 
 	if (!$input_errors) {
 		$vsent = array();

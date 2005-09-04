@@ -410,7 +410,7 @@ function type_change(enable_change,enable_change_pptp) {
 				<option value="Gb">Gigabit/s</option>
 				<option value=""></option>
 			</select>
-			<br> The bandwidth setting will define the speed of the interface for traffic shaping.
+			<br> The bandwidth setting will define the speed of the interface for traffic shaping.  Do not enter your "Internet" bandwidth here, only the physical speed!
 		  </td>
                 </tr>                <tr>
                   <td width="22%" valign="top">&nbsp;</td>

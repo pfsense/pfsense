@@ -204,7 +204,6 @@ if ($_POST) {
 			($config['captiveportal']['interface'] == ('opt' . $index))) {
 			captiveportal_configure();
 		}
-		config_unlock();
 		
 		/* setup carp interfaces */
 		interfaces_carp_configure();

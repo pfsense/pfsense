@@ -124,10 +124,12 @@ if ($_POST) {
 		} else
 			$a_pool[] = $poolent;
 
-		touch($d_poolconfdirty_path);
 
-		if ($changecount > 0)
+		if ($changecount > 0) {
+			/* Mark pool dirty */
+			touch($d_poolconfdirty_path);
 			write_config($changedesc);
+		}
 
 		header("Location: load_balancer_pool.php");
 		exit;

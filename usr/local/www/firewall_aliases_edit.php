@@ -74,13 +74,21 @@ if ($_POST) {
 	if (($_POST['name'] && !is_validaliasname($_POST['name']))) {
 		$input_errors[] = "The alias name may only consist of the characters a-z, A-Z, 0-9.";
 	}
-	if (($_POST['address'] && !is_ipaddr($_POST['address']))) {
-// XXX: fixup this to detect correct type of data that should be posted.
-//		$input_errors[] = "A valid address must be specified.";
+	if ($_POST['type'] == "host")
+		if (!is_ipaddr($_POST['address'])) {
+			$input_errors[] = "A valid address must be specified.";
+		}
+	if ($_POST['type'] == "network") {
+		if (!is_ipaddr($_POST['address'])) {
+			$input_errors[] = "A valid address must be specified.";
+		}
+		if (!is_numeric($_POST['address_subnet'])) {
+			$input_errors[] = "A valid subnet bit count must be specified.";
+		}
 	}
-	if (($_POST['address_subnet'] && !is_numeric($_POST['address_subnet']))) {
-		$input_errors[] = "A valid subnet bit count must be specified.";
-	}
+	if ($_POST['type'] == "port")
+		if (!is_port($_POST['address']))
+			$input_errors[] = "The port must be an integer between 1 and 65535.";
 
 	/* check for name conflicts */
 	foreach ($a_aliases as $alias) {

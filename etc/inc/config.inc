@@ -293,7 +293,8 @@ function conf_mount_rw() {
 	/*    if the platform is soekris or wrap or pfSense, lets mount the
 	 *    compact flash cards root.
          */
-	if($g['platform'] == "wrap" or $g['platform'] == "net45xx") {
+	if($g['platform'] == "wrap" or $g['platform'] == "net45xx"
+	   or $g['platform'] == "embedded") {
 		mwexec("/sbin/umount -f /");
 		$status = mwexec("/sbin/mount -w /");
 		/* we could not mount this correctly.  kick off fsck */
@@ -325,7 +326,8 @@ function conf_mount_ro() {
 	/*    if the platform is soekris or wrap, lets unmount the
 	 *    compact flash card.
          */
-	if($g['platform'] == "wrap" or $g['platform'] == "net45xx") {
+	if($g['platform'] == "wrap" or $g['platform'] == "net45xx"
+	   or $g['platform'] == "embedded") {
 		mwexec("/sbin/umount -f /");
 		mwexec("/sbin/mount -f -r /");
 	}

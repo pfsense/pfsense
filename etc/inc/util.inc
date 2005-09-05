@@ -206,6 +206,11 @@ function is_macaddr($macaddr) {
 
 /* returns true if $name is a valid name for an alias */
 function is_validaliasname($name) {
+	/* Array of reserved words */
+	$reserved = array("port");
+	if (in_array($name, $reserved))
+		return -1;
+
 	if (!preg_match("/[^a-zA-Z0-9]/", $name))
 		return true;
 	else

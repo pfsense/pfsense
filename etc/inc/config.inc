@@ -293,13 +293,15 @@ function conf_mount_rw() {
 	/*    if the platform is soekris or wrap or pfSense, lets mount the
 	 *    compact flash cards root.
          */
-	mwexec("/sbin/umount -f /");
-	$status = mwexec("/sbin/mount -w /");
-	/* we could not mount this correctly.  kick off fsck */
-	while($status < 0) {
-		log_error("File system is dirty.  Launching FSCK for /");
-		mwexec("/sbin/fsck -y");
+	if($g['platform'] == "wrap" or $g['platform'] == "net45xx") {
+		mwexec("/sbin/umount -f /");
 		$status = mwexec("/sbin/mount -w /");
+		/* we could not mount this correctly.  kick off fsck */
+		while($status < 0) {
+			log_error("File system is dirty.  Launching FSCK for /");
+			mwexec("/sbin/fsck -y");
+			$status = mwexec("/sbin/mount -w /");
+		}
 	}
 }
 
@@ -317,17 +319,16 @@ function conf_mount_ro() {
 	/* do not umount on cdrom platform */
 	if($g['platform'] == "cdrom")
 		return;
-	
-	if(file_exists("/tmp/ro_root_mount"))
-		return;
 
 	mwexec("/sbin/umount -f {$g['cf_path']}");
 	mwexec("/sbin/mount -r {$g['cf_path']}");
 	/*    if the platform is soekris or wrap, lets unmount the
 	 *    compact flash card.
          */
-	mwexec("/sbin/umount -f /");
-	mwexec("/sbin/mount -f -r /");
+	if($g['platform'] == "wrap" or $g['platform'] == "net45xx") {
+		mwexec("/sbin/umount -f /");
+		mwexec("/sbin/mount -f -r /");
+	}
 }
 
 /****f* config/convert_config

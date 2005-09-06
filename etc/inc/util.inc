@@ -232,6 +232,7 @@ function is_port($port) {
 function get_interface_list() {
         /* get a list of virtual interface types */
         $vfaces = explode(" ", trim(shell_exec("/sbin/ifconfig -C")));
+	/* get our active interfaces */
         $upints = explode(" ", trim(shell_exec("/sbin/ifconfig -lu")));
         /* build interface list with netstat */
         exec("/usr/bin/netstat -inW -f link | awk '{ print $1, $4 } '", $linkinfo);
@@ -241,8 +242,7 @@ function get_interface_list() {
                 $ifname = rtrim(trim($alink[0]), '*');
                 if (!in_array(substr($ifname, 0, -1), $vfaces)) {
                         $iflist[$ifname]['mac'] = trim($alink[1]);
-                        $iflist[$ifname]['up'] = in_array($ifname, $upints) ? true: false;
-                        /* find out if the link on this interface is up */
+			$iflist[$ifname]['up'] = in_array($ifname, $upints) ? true: false;
                 }
         }
         return $iflist;

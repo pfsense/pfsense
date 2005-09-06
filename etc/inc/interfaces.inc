@@ -893,7 +893,6 @@ EOD;
 	if (isset($config['system']['dnsallowoverride'])) {
 		$mpdconf .= <<<EOD
 	set ipcp enable req-pri-dns
-	set ipcp enable req-sec-dns
 
 EOD;
 	}
@@ -1001,7 +1000,6 @@ EOD;
 	if (isset($config['system']['dnsallowoverride'])) {
 		$mpdconf .= <<<EOD
 	set ipcp enable req-pri-dns
-	set ipcp enable req-sec-dns
 
 EOD;
 	}

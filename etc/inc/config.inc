@@ -914,8 +914,9 @@ EOD;
 
 	echo <<<EOD
 
-*NOTE*  pfSense requires *ATLEAST* 2 interfaces to function.   If you
-        do not have two interfaces turn off the machine until you do.
+*NOTE*  pfSense requires *ATLEAST* 2 assigned interfaces to function.
+        If you do not have two interfaces turn off the machine until
+	you do.
 
 If you do not know the names of your interfaces, you may choose to use
 auto-detection... In that case, disconnect all interfaces now before

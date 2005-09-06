@@ -97,7 +97,6 @@ function is_ipaddr($ipaddr) {
 
 /* returns true if $ipaddr is a valid dotted IPv4 address or an alias thereof */
 function is_ipaddroralias($ipaddr) {
-
 	global $aliastable, $config;
 
 	if(is_array($config['aliases']['alias'])) {
@@ -231,40 +230,22 @@ function is_port($port) {
 /* returns a list of interfaces with MAC addresses
    (skips VLAN and other virtual interfaces) */
 function get_interface_list() {
-	/* build interface list with netstat */
-	exec("/usr/bin/netstat -inW -f link", $linkinfo);
-	array_shift($linkinfo);
-
-	$iflist = array();
-
-	foreach ($linkinfo as $link) {
-		$alink = preg_split("/\s+/", $link);
-		$ifname = chop($alink[0]);
-
-		if (substr($ifname, -1) == "*")
-			$ifname = substr($ifname, 0, strlen($ifname) - 1);
-
-		if (!preg_match("/^(plip|pflog|pfsync|ppp|sl|gif|faith|lo|ng|vlan)/", $ifname)) {
-			$iflist[$ifname] = array();
-
-			$iflist[$ifname]['mac'] = chop($alink[3]);
-			$iflist[$ifname]['up'] = false;
-
-			/* find out if the link on this interface is up */
-			unset($ifinfo);
-			exec("/sbin/ifconfig {$ifname}", $ifinfo);
-
-			foreach ($ifinfo as $ifil) {
-				if (preg_match("/status: (.*)$/", $ifil, $matches)) {
-					if ($matches[1] == "active")
-						$iflist[$ifname]['up'] = true;
-					break;
-				}
-			}
-		}
-	}
-
-	return $iflist;
+        /* get a list of virtual interface types */
+        $vfaces = explode(" ", trim(shell_exec("/sbin/ifconfig -C")));
+        $upints = explode(" ", trim(shell_exec("/sbin/ifconfig -lu")));
+        /* build interface list with netstat */
+        exec("/usr/bin/netstat -inW -f link | awk '{ print $1, $4 } '", $linkinfo);
+        array_shift($linkinfo);
+        foreach ($linkinfo as $link) {
+                $alink = explode(" ", $link);
+                $ifname = rtrim(trim($alink[0]), '*');
+                if (!in_array(substr($ifname, 0, -1), $vfaces)) {
+                        $iflist[$ifname]['mac'] = trim($alink[1]);
+                        $iflist[$ifname]['up'] = in_array($ifname, $upints) ? true: false;
+                        /* find out if the link on this interface is up */
+                }
+        }
+        return $iflist;
 }
 
 /* wrapper for exec() */

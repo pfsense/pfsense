@@ -209,6 +209,7 @@ include("head.inc");
                   <td width="10%" class="listhdrr">Port</td>
                   <td width="15%" class="listhdrr">Destination</td>
                   <td width="10%" class="listhdrr">Port</td>
+		  <td width="10%" class="listhdrr">Gateway</td>
                   <td width="22%" class="listhdr">Description</td>
                   <td width="10%" class="list"></td>
 				</tr>
@@ -261,6 +262,11 @@ include("head.inc");
                   <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
                     <?=$textss;?><?php echo htmlspecialchars(pprint_port($filterent['destination']['port'])); ?><?=$textse;?>
                   </td>
+
+                  <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+                    <?=$textss;?><?php echo htmlspecialchars(pprint_port($filterent['gateway'])); ?><?=$textse;?>
+                  </td>
+
                   <td class="listbg" onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';" bcolor="#990000"><font color="white">
                     <?=$textss;?><?=htmlspecialchars($filterent['descr']);?>&nbsp;<?=$textse;?>
                   </td>

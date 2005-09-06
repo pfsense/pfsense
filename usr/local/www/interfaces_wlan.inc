@@ -120,6 +120,7 @@ function wireless_config_post() {
 		$optcfg['wireless']['txpower'] = $_POST['txpower'];
 		$optcfg['wireless']['wep']['enable'] = $_POST['wep_enable'] ? true : false;
 		
+		/*
 		$optcfg['wireless']['wep']['key'] = array();
 		for ($i = 1; $i <= 4; $i++) {
 			if ($_POST['key' . $i]) {
@@ -130,6 +131,7 @@ function wireless_config_post() {
 				$optcfg['wireless']['wep']['key'][] = $newkey;
 			}
 		}
+		*/
 	}
 	
 	return $input_errors;

@@ -43,7 +43,7 @@ fi
 /sbin/conscontrol mute off >/dev/null
 
 # Mount all. If it fails run a fsck.
-/sbin/mount -a || /sbin/fsck -y && /sbin/mount -a || /sbin/fsck -y 
+/sbin/mount -w -a || /sbin/fsck -y
 
 if [ "$PLATFORM" = "cdrom" ] ; then
     echo "No swap on ${PLATFORM}"

@@ -208,7 +208,7 @@ function is_validaliasname($name) {
 	/* Array of reserved words */
 	$reserved = array("port");
 	if (in_array($name, $reserved))
-		return -1;
+		return -2;
 
 	if (!preg_match("/[^a-zA-Z0-9]/", $name))
 		return true;

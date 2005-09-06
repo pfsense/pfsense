@@ -83,8 +83,8 @@ if ($_POST) {
 	if (($_POST['name'] && (is_validaliasname($_POST['name']) == false))) {
 		$input_errors[] = "The alias name may only consist of the characters a-z, A-Z, 0-9.";
 	}
-	if (($_POST['name'] && (is_validaliasname($_POST['name']) == -1))) {
-		$input_errors[] = "Reserved word used for alias name.";
+	if (($_POST['name'] && (is_validaliasname($_POST['name']) == -2))) {
+		//$input_errors[] = "Reserved word used for alias name.";
 	}
 	if ($_POST['type'] == "host")
 		if (!is_ipaddr($_POST['address'])) {

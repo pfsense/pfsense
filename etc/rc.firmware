@@ -201,3 +201,9 @@ rm -rf /usr/savecore/*
 /sbin/mount -r /cf 2>/dev/null
 /sbin/umount -f / 2>/dev/null
 /sbin/mount -r / 2>/dev/null
+
+if [ -e /etc/init_bootloader.sh ]; then
+	sh /etc/init_bootloader.sh
+fi
+
+

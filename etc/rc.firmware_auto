@@ -58,11 +58,17 @@ if [ "$PMD" = "$MD" ]; then
             /bin/sync
             sleep 5
             /usr/local/bin/php /etc/rc.conf_mount_ro
+            if [ -e /etc/init_bootloader.sh ]; then
+                    sh /etc/init_bootloader.sh
+            fi            
         fi
         if [ "$PLATFORM" = "net45xx" ]; then
             /bin/sync
             sleep 5
             /usr/local/bin/php /etc/rc.conf_mount_ro
+            if [ -e /etc/init_bootloader.sh ]; then
+                    sh /etc/init_bootloader.sh
+            fi            
         fi        
         exit 0
 fi

@@ -118,6 +118,9 @@ upgrade)
 
 	rm -f /var/run/firmware.lock
 
+        /bin/sync
+        sleep 5
+
 	# remount /cf ro
 	/sbin/umount -f /cf
 	/sbin/mount -r /cf
@@ -174,6 +177,9 @@ pfSenseupgrade)
 	restore_chflags
 	
 	rm -f /var/run/firmware.lock
+
+	/bin/sync
+	sleep 5
 
 	# remount /cf ro
 	/bin/sync

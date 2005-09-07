@@ -54,10 +54,14 @@ if [ "$PMD" = "$MD" ]; then
         else
             sh /etc/rc.firmware pfSenseupgrade /tmp/latest.tgz
         fi
-        if [ "$PLATFORM" = "wrap" ]; then        
+        if [ "$PLATFORM" = "wrap" ]; then
+            /bin/sync
+            sleep 5
             /usr/local/bin/php /etc/rc.conf_mount_ro
         fi
-        if [ "$PLATFORM" = "net45xx" ]; then        
+        if [ "$PLATFORM" = "net45xx" ]; then
+            /bin/sync
+            sleep 5
             /usr/local/bin/php /etc/rc.conf_mount_ro
         fi        
         exit 0

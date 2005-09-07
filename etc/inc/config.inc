@@ -282,7 +282,7 @@ function conf_mount_rw() {
 
 	$status = mwexec("/sbin/mount -w -o noatime {$g['cf_path']}");
 	if($status <> 0) {
-		mwexec("/sbin/fsck -y");
+		mwexec("/sbin/fsck -y {$g['cf_path']}");
 		$status = mwexec("/sbin/mount -w -o noatime {$g['cf_path']}");
 	}
 

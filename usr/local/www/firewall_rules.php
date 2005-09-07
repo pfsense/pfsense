@@ -287,7 +287,7 @@ include("head.inc");
 			  <?php if ($nrules == 0): ?>
               <td class="listt"></td>
 			  <td class="listt"></td>
-			  <td class="listlr" colspan="6" align="center" valign="middle">
+			  <td class="listlr" colspan="7" align="center" valign="middle">
 			  <span class="gray">
 			  No rules are currently defined for this interface.<br>
 			  All incoming connections on this interface will be blocked until you add pass rules.<br><br>
@@ -350,7 +350,7 @@ include("head.inc");
                   <td nowrap>log (disabled)</td>
                 </tr>
 		<tr>
-		  <td colspan="9">
+		  <td colspan="10">
   <p>
   <strong><span class="red">Hint:<br>
   </span></strong>Rules are evaluated on a first-match basis (i.e.

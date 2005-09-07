@@ -281,7 +281,7 @@ function conf_mount_rw() {
 	$status = mwexec("/sbin/umount -f {$g['cf_path']}");
 
 	$status = mwexec("/sbin/mount -w -o noatime {$g['cf_path']}");
-	while($status <> 0) {
+	if($status <> 0) {
 		mwexec("/sbin/fsck -y");
 		$status = mwexec("/sbin/mount -w -o noatime {$g['cf_path']}");
 	}
@@ -294,7 +294,7 @@ function conf_mount_rw() {
 		mwexec("/sbin/umount -f /");
 		$status = mwexec("/sbin/mount -w /");
 		/* we could not mount this correctly.  kick off fsck */
-		while($status <> 0) {
+		if($status <> 0) {
 			log_error("File system is dirty.  Launching FSCK for /");
 			mwexec("/sbin/fsck -y");
 			$status = mwexec("/sbin/mount -w /");

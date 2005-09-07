@@ -300,6 +300,7 @@ include("head.inc");
                   <td class="list">&nbsp;</td>
                   <td class="list">&nbsp;</td>
                   <td class="list">&nbsp;</td>
+		  <td class="list">&nbsp;</td>
                   <td class="list">&nbsp;</td>
                   <td class="list">&nbsp;</td>
                   <td class="list">&nbsp;</td>

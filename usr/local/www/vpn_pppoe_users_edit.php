@@ -102,7 +102,10 @@ if ($_POST) {
 			$a_secret[] = $secretent;
 		
 		write_config();
-		touch($d_pppoeuserdirty_path);
+		
+		config_lock();
+		$retval = vpn_pppoe_configure();
+		config_unlock();	
 		
 		header("Location: vpn_pppoe_users.php");
 		exit;

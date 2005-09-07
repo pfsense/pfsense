@@ -42,9 +42,11 @@ fi
 # Enable console output if its muted.
 /sbin/conscontrol mute off >/dev/null
 
-# Mount all. If it fails run a fsck.
+# Mount /. If it fails run a fsck.
 /sbin/mount -w / || /sbin/fsck -y
 
+# Check to see if a compact flash mountpoint exists
+# If it fails to mount then run a fsck -y
 if grep cf /etc/fstab; then
     /sbin/mount -w /cf || /sbin/fsck -y
 fi

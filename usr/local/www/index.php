@@ -130,9 +130,12 @@ $diff['intr'] = ($cpuTicks2[3] - $cpuTicks[3])+1;
 $diff['idle'] = ($cpuTicks2[4] - $cpuTicks[4])+1;
 
 //echo "<!-- user: {$diff['user']}  nice {$diff['nice']}  sys {$diff['sys']}  intr {$diff['intr']}  idle {$diff['idle']} -->";
-
 $totalDiff = $diff['user'] + $diff['nice'] + $diff['sys'] + $diff['intr'] + $diff['idle'];
-$cpuUsage = round(100 * (1 - $diff['idle'] / $totalDiff), 0);
+$totalused = $diff['user'] + $diff['nice'] + $diff['sys'] + $diff['intr'] - 1;
+$cpuUsage = round(100 * ($totalused / $totalDiff), 0);
+
+#$totalDiff = $diff['user'] + $diff['nice'] + $diff['sys'] + $diff['intr'] + $diff['idle'];
+#$cpuUsage = round(100 * (1 - $diff['idle'] / $totalDiff), 0);
 
 return $cpuUsage;
 }

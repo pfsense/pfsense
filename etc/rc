@@ -44,10 +44,13 @@ fi
 
 # Mount all. If it fails run a fsck.
 /sbin/mount -w / || /sbin/fsck -y
-/sbin/mount -a
+
 if grep cf /etc/fstab; then
     /sbin/mount -w /cf || /sbin/fsck -y
 fi
+
+# Mount memory file system if it exists
+/sbin/mount -a
 
 if [ "$PLATFORM" = "cdrom" ] ; then
     echo "No swap on ${PLATFORM}"

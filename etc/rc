@@ -44,7 +44,7 @@ fi
 
 # Mount all. If it fails run a fsck.
 /sbin/mount -w / || /sbin/fsck -y
-if grep cf test.txt; then
+if grep cf /etc/fstab; then
     /sbin/mount -w /cf || /sbin/fsck -y
 fi
 

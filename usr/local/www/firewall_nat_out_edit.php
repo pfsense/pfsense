@@ -111,7 +111,7 @@ if ($_POST) {
             $input_errors[] = "A valid destination bit count must be specified.";
         }
     }
-    if ($_POST['destination_type'] != "any") {
+    if ($_POST['destination_type'] == "any") {
 	if ($_POST['destination_not'])
             $input_errors[] = "Negating destination address of \"any\" is invalid.";
     }
@@ -356,9 +356,22 @@ function sourcesel_change() {
                 <tr>
                   <td valign="top" class="vncell">Target</td>
                   <td class="vtable">
-<input name="target" type="text" class="formfld" id="target" size="20" value="<?=htmlspecialchars($pconfig['target']);?>">
-                    <br>
-                     <span class="vexpl">Packets matching this rule will be mapped to the IP address given here. Leave blank to use the selected interface's IP address.</span></td>
+			<select name="target" class="formfld">
+				<option value="" <?php if (!$pconfig['target']) echo "selected"; ?>>Interface address</option>
+				<?php
+				if (is_array($config['virtualip']['vip'])):
+					foreach ($config['virtualip']['vip'] as $sn): ?>
+						<option value="<?=$sn['subnet'];?>" <?php if ($sn['subnet'] == $pconfig['target']) echo "selected"; ?>><?=htmlspecialchars("{$sn['subnet']} ({$sn['descr']})");?></option>
+<?php						endforeach;
+				endif; ?>
+					<option value="" <?php if($pconfig['target'] == "any") echo "selected"; ?>>any</option>
+				</select>
+				<br />
+                     <span class="vexpl">Packets matching this rule will be mapped to the IP address given here.<br>
+			If you want this rule to apply to another IP address than the IP address of the interface chosen above,
+			select it here (you need to define <a href="firewall_virtual_ip.php">Virtual IP</a> addresses on the first).
+			 Also note that if you are trying to redirect connections on the LAN select the "any" option.
+			</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>

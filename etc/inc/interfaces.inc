@@ -480,7 +480,11 @@ EOD;
 					$fd = fopen("{$g['etc_path']}/hostapd_{$if}.conf", "w");
 					fwrite($fd, "{$wpa}");
 					fclose($fd);
-					mwexec("/usr/sbin/hostapd -B {$g['etc_path']}/hostapd_{$if}.conf");
+					if(is_process_running("hostapd")) {
+						mwexec("/usr/bin/killall -HUP hostapd");
+					} else {
+						mwexec("/usr/sbin/hostapd -B {$g['etc_path']}/hostapd_{$if}.conf");
+					}
 				}				
 				
                         break;

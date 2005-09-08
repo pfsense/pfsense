@@ -480,7 +480,7 @@ EOD;
 					$fd = fopen("{$g['etc_path']}/hostapd_{$if}.conf", "w");
 					fwrite($fd, "{$wpa}");
 					fclose($fd);
-					mwexec("hostpad -B {$g['etc_path']}/hostapd_{$if}.conf");
+					mwexec("/usr/sbin/hostapd -B {$g['etc_path']}/hostapd_{$if}.conf");
 				}				
 				
                         break;

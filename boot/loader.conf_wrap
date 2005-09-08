@@ -9,3 +9,4 @@ rootfs_name="mfsroot.bin"
 rootfs_type="mfs_root"
 autoboot_delay=1
 hint.sio.0.flags="0x30"
+debug.acpi.disable="thermal"

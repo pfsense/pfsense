@@ -1371,7 +1371,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			/* if user has selected a custom gateway, lets work with it */
 			if($rule['gateway'] <> "") {
 				$foundlb = 0;
-				if(isarray($config['load_balancer']['lbpool'])) {
+				if(is_array($config['load_balancer']['lbpool'])) {
 					foreach($config['load_balancer']['lbpool'] as $lb) {
 						if($lb['name'] == $rule['gateway']) {
 							$gateway = $rule['gateway'];

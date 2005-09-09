@@ -699,8 +699,8 @@ include("head.inc");
 				for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 					if($config['interfaces']['opt' . $i]['ipaddr'] == "dhcp") {
 						$descr = $config['interfaces']['opt' . $i]['descr'];
-						if ($pconfig['gateway'] == $config['interfaces']['opt' . $i]) {
-							$selected = " SELECTED";	
+						if ($pconfig['gateway'] == "opt{$i}") {
+							$selected = " SELECTED";
 						} else {
 							$selected = "";
 						}

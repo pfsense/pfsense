@@ -2148,8 +2148,11 @@ EOD;
 			$ipsec_ip = $sasyncd['ip'];
 	}
 	
-	if(is_array($config['ipsec']['tunnel'])) {
+	if(is_array($config['ipsec']['tunnel']) && isset($config['ipsec']['enable'])) {
 		foreach ($config['ipsec']['tunnel'] as $tunnel) {
+			/* if tunnel is disabled, lets skip to next item */
+			if(isset($tunnel['disabled']))
+				continue;
 			/* is this a dynamic dns hostname? */
 			$remote_gateway = gethostbyname($tunnel['remote-gateway']);
 			if($remote_gateway == "")

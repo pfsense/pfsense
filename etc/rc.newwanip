@@ -77,7 +77,10 @@
                 fwrite($fd, $curwanip);
                 fclose($fd);
         }
-	
+        
+        /* after IP change, update DynDNS */
+	services_dyndns_configure();
+        
 	filter_configure_sync();
 	
 ?>

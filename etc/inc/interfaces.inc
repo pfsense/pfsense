@@ -929,6 +929,12 @@ EOD;
 	fwrite($fd, $mpdconf);
 	fclose($fd);
 
+	/* if mpd is active, lets take it down */
+	if(file_exists("{$g['varrun_path']}/mpd.pid")) {
+		killbypid(file_get_contents("{$g['varrun_path']}/mpd.pid"));
+		sleep(3);
+	}
+
 	/* fire up mpd */
 	mwexec("/usr/local/sbin/mpd -b -d {$g['varetc_path']} -p {$g['varrun_path']}/mpd.pid pppoe");
 

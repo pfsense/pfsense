@@ -1079,10 +1079,20 @@ function filter_nat_rules_generate() {
 		$natrules .= "# NAT Inbound Redircts\n";
 		foreach ($config['nat']['rule'] as $rule) {
 
-			$extport = explode("-", $rule['external-port']);
-			$target = alias_expand_host($rule['target']);
-			$localport = $rule['local-port'];
+			/* if item is an alias, expand */
+			if(alias_expand($rule['external-port']))
+				$extport = alias_expand($rule['external-port']);
+			else 
+				$extport = explode("-", $rule['external-port']);
 
+			/* if item is an alias, expand */
+			if(alias_expand($rule['local-port'])) 
+				$localport = alias_expand($rule['local-port']);
+			else
+				$localport = $rule['local-port'];
+
+			$target = alias_expand_host($rule['target']);
+			
 			if (!$target)
 				continue;	/* unresolvable alias */
 

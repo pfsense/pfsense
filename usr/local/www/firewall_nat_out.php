@@ -279,7 +279,7 @@ include("head.inc");
                       else {
                           if (isset($natent['destination']['not']))
                               echo "!&nbsp;";
-                          echo $natent['destination']['network'];
+                          echo $natent['destination']['address'];
                       }
                     ?>
                   </td>

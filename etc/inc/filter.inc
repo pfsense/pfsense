@@ -972,9 +972,9 @@ function filter_nat_rules_generate() {
 
 				$src = $obent['source']['network'];
 				if (isset($obent['destination']['not']) && !isset($obent['destination']['any']))
-					$dst = "!" . $obent['destination']['network'];
+					$dst = "!" . $obent['destination']['address'];
 				else
-					$dst = $obent['destination']['network'];
+					$dst = $obent['destination']['address'];
 
 
 				if (!$obent['interface'] || ($obent['interface'] == "wan"))

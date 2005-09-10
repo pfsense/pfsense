@@ -111,9 +111,6 @@ if ($_POST) {
 		if (($lancfg['ipaddr'] != $_POST['ipaddr']) || ($lancfg['subnet'] != $_POST['subnet'])) {
 			update_if_changed("IP Address", &$lancfg['ipaddr'], $_POST['ipaddr']);
 			update_if_changed("subnet", &$lancfg['subnet'], $_POST['subnet']);
-
-			/* We'll need to reboot after this */
-			touch($d_sysrebootreqd_path);
 		}
 
 		if($_POST['bandwidth'] <> "" and $_POST['bandwidthtype'] <> "") {

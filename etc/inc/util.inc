@@ -97,6 +97,7 @@ function is_ipaddr($ipaddr) {
 
 /* returns true if $ipaddr is a valid dotted IPv4 address or an alias thereof */
 function is_ipaddroralias($ipaddr) {
+
 	global $aliastable, $config;
 
 	if(is_array($config['aliases']['alias'])) {
@@ -206,9 +207,9 @@ function is_macaddr($macaddr) {
 /* returns true if $name is a valid name for an alias */
 function is_validaliasname($name) {
 	/* Array of reserved words */
-	$reserved = array("port","pass");
-	if (in_array($name, $reserved, true))
-		return;
+	$reserved = array("port");
+	if (in_array($name, $reserved))
+		return -1;
 
 	if (!preg_match("/[^a-zA-Z0-9]/", $name))
 		return true;
@@ -227,25 +228,38 @@ function is_port($port) {
 		return true;
 }
 
-/* returns a list of interfaces with MAC addresses
-   (skips VLAN and other virtual interfaces) */
-function get_interface_list() {
-        /* get a list of virtual interface types */
-        $vfaces = explode(" ", trim(shell_exec("/sbin/ifconfig -C")));
-	/* get our active interfaces */
-        $upints = explode(" ", trim(shell_exec("/sbin/ifconfig -lu")));
-        /* build interface list with netstat */
-        exec("/usr/bin/netstat -inW -f link | awk '{ print $1, $4 } '", $linkinfo);
-        array_shift($linkinfo);
-        foreach ($linkinfo as $link) {
-                $alink = explode(" ", $link);
-                $ifname = rtrim(trim($alink[0]), '*');
-                if (!in_array(substr($ifname, 0, -1), $vfaces)) {
-                        $iflist[$ifname]['mac'] = trim($alink[1]);
-			$iflist[$ifname]['up'] = in_array($ifname, $upints) ? true: false;
-                }
-        }
-        return $iflist;
+/*
+ *   get_interface_list() - Return a list of all physical interfaces
+ *   along with MAC and status.
+ *
+ *   $mode = "active" - use ifconfig -lu
+ *           "media"  - use ifconfig to check physical connection
+ *			status (slower)
+ */
+function get_interface_list($mode = "active") {
+	/* get a list of virtual interface types */
+	$vfaces = explode(" ", trim(shell_exec("/sbin/ifconfig -C")));
+	if($mode == "active") $upints = explode(" ", trim(shell_exec("/sbin/ifconfig -lu")));
+	/* build interface list with netstat */
+	exec("/usr/bin/netstat -inW -f link | awk '{ print $1, $4 } '", $linkinfo);
+	array_shift($linkinfo);
+	foreach ($linkinfo as $link) {
+		$alink = explode(" ", $link);
+		$ifname = rtrim(trim($alink[0]), '*');
+		if (!in_array(substr($ifname, 0, -1), $vfaces)) {
+			$iflist[$ifname]['mac'] = trim($alink[1]);
+			switch($mode) {
+			case "active":
+				$iflist[$ifname]['up'] = in_array($ifname, $upints) ? true: false;
+				break;
+			case "media":		
+				$upints = shell_exec("/sbin/ifconfig {$ifname} | grep 'status' | awk '{ print $2 }'");
+				if(trim($upints) == "active") $iflist[$ifname]['up'] = true;
+				break;
+			}
+		}
+	}
+	return $iflist;
 }
 
 /* wrapper for exec() */

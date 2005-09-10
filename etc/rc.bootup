@@ -117,6 +117,9 @@
 	/* start devd (dhclient now uses it */
 	start_devd();
 
+	/* start syslogd */
+	system_syslogd_start();
+
 	/* set up VLAN virtual interfaces */
 	interfaces_vlan_configure();
 
@@ -165,9 +168,6 @@
 
 	/* enable routing */
 	system_routing_enable();
-
-	/* start syslogd */
-	system_syslogd_start();
 	
 	/* ensure passwords are sync'd */
 	system_password_configure();

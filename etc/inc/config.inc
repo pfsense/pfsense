@@ -1078,7 +1078,7 @@ EOD;
 }
 
 function autodetect_interface($ifname, $fp) {
-	$iflist_prev = get_interface_list();
+	$iflist_prev = get_interface_list("media");
 	echo <<<EOD
 
 Connect the {$ifname} interface now and make sure that the link is up.
@@ -1086,7 +1086,7 @@ Then press ENTER to continue.
 
 EOD;
 	fgets($fp);
-	$iflist = get_interface_list();
+	$iflist = get_interface_list("media");
 
 	foreach ($iflist_prev as $ifn => $ifa) {
 		if (!$ifa['up'] && $iflist[$ifn]['up']) {

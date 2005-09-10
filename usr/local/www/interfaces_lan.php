@@ -124,22 +124,14 @@ if ($_POST) {
 			unset($lancfg['bandwidthtype']);
 		}
 
-		$dhcpd_was_enabled = 0;
-		if (isset($config['dhcpd']['enable'])) {
-			unset($config['dhcpd']['enable']);
-			$dhcpd_was_enabled = 1;
-			$changedesc .= " DHCP disabled";
-		}
-
 		write_config($changedesc);
 
-		$savemsg = get_std_save_message($retval);
-				
-		if ($dhcpd_was_enabled)
-			$savemsg .= "<br>Note that the DHCP server has been disabled.<br>Please review its configuration " .
-				"and enable it again prior to rebooting.";
-		else
+		touch($d_landirty_path);
+
+		if ($_POST['enable']) {
 			$savemsg = "The changes have been applied.  You may need to correct the web browsers ip address.";
+		}
+
 	}
 }
 
@@ -171,6 +163,9 @@ function enable_change(enable_over) {
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
+<?php if (file_exists($d_landirty_path)): ?><p>
+<?php print_info_box_np("The LAN configuration has been changed.<br>You must apply the changes in order for them to take effect.  Don't forget to adjust the DHCP Server range if needed before applying.");?><br>
+<?php endif; ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
             <form action="interfaces_lan.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -267,7 +262,7 @@ function enable_change(enable_over) {
 
 <?php
 
-if ($_POST) {
+if ($_POST['enable']) {
 
 	/*   Change these items late in the script
 	 *   so the script will fully complete to
@@ -283,7 +278,9 @@ if ($_POST) {
 	interfaces_carp_configure();
 
 	/* bring up carp interfaces */
-	interfaces_carp_bringup();	
+	interfaces_carp_bringup();
+	
+	unlink($d_landirty_path);
 	
 }
 

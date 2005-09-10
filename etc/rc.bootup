@@ -154,6 +154,9 @@
 	//unmute_kernel_msgs();
 	echo "done.\n";
 
+	/* start web server */
+	system_webgui_start();
+
 	/* start OpenVPN server & clients */
         ovpn_configure(false);
 
@@ -165,9 +168,6 @@
 
 	/* start syslogd */
 	system_syslogd_start();
-
-	/* start web server */
-	system_webgui_start();
 	
 	/* ensure passwords are sync'd */
 	system_password_configure();

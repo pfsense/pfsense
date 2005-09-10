@@ -49,9 +49,6 @@
                         return 0;       /* nothing to do */
         }
 
-        /* reload firewall rules */
-        filter_configure();
-
         /* reconfigure IPsec tunnels */
         vpn_ipsec_configure(true);
 
@@ -78,7 +75,7 @@
         /* after IP change, update DynDNS */
 	services_dyndns_configure();
         
-	filter_configure_sync();
+	filter_configure();
         
         return 0;
 	

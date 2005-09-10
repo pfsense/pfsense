@@ -279,10 +279,14 @@ function conf_mount_rw() {
 	/* don't use mount -u anymore
 	   (doesn't sync the files properly and /bin/sync won't help either) */
 	$status = mwexec("/sbin/umount -f {$g['cf_path']}");
+	while($status < 0) {
+		mwexec("/sbin/fsck -y");
+		$status = mwexec("/sbin/umount -f {$g['cf_path']}");
+	}
 
 	$status = mwexec("/sbin/mount -w -o noatime {$g['cf_path']}");
-	if($status <> 0) {
-		mwexec("/sbin/fsck -y {$g['cf_path']}");
+	while($status < 0) {
+		mwexec("/sbin/fsck -y");
 		$status = mwexec("/sbin/mount -w -o noatime {$g['cf_path']}");
 	}
 
@@ -294,7 +298,7 @@ function conf_mount_rw() {
 		mwexec("/sbin/umount -f /");
 		$status = mwexec("/sbin/mount -w /");
 		/* we could not mount this correctly.  kick off fsck */
-		if($status <> 0) {
+		while($status < 0) {
 			log_error("File system is dirty.  Launching FSCK for /");
 			mwexec("/sbin/fsck -y");
 			$status = mwexec("/sbin/mount -w /");
@@ -868,7 +872,7 @@ function set_networking_interfaces_ports() {
 
 	$fp = fopen('php://stdin', 'r');
 
-	$iflist = get_interface_list();
+	$iflist = get_interface_list("media");
 
 	echo <<<EOD
 
@@ -909,10 +913,6 @@ EOD;
 	}
 
 	echo <<<EOD
-
-*NOTE*  pfSense requires *ATLEAST* 2 assigned interfaces to function.
-        If you do not have two interfaces turn off the machine until
-	you do.
 
 If you do not know the names of your interfaces, you may choose to use
 auto-detection... In that case, disconnect all interfaces now before
@@ -1078,7 +1078,7 @@ EOD;
 }
 
 function autodetect_interface($ifname, $fp) {
-	$iflist_prev = get_interface_list();
+	$iflist_prev = get_interface_list("media");
 	echo <<<EOD
 
 Connect the {$ifname} interface now and make sure that the link is up.
@@ -1086,8 +1086,7 @@ Then press ENTER to continue.
 
 EOD;
 	fgets($fp);
-	$iflist = get_interface_list();
-
+	$iflist = get_interface_list("media");
 	foreach ($iflist_prev as $ifn => $ifa) {
 		if (!$ifa['up'] && $iflist[$ifn]['up']) {
 			echo "Detected link-up on interface {$ifn}.\n";

@@ -173,9 +173,12 @@ if ($_POST) {
 	$reqdfieldsn = explode(",", "Type,Interface,Protocol,Source,Destination");
 
 
-	if($_POST['statetype'] == "modulate state" or $_POST['statetype'] == "synproxy state")
+	if($_POST['statetype'] == "modulate state" or $_POST['statetype'] == "synproxy state") {
 		if( $_POST['proto'] != "tcp" )
 			$input_errors[] = "{$_POST['statetype']} is only valid with protocol tcp.";
+		if(($_POST['statetype'] == "synproxy state") && ($_POST['gateway'] != ""))
+			$input_errors[] = "{$_POST['statetype']} is only valid if the gateway is set to 'default'.";
+	}
 
 
 	if (!(is_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single"))) {

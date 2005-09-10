@@ -52,9 +52,6 @@
         /* reload firewall rules */
         filter_rules_generate();
 
-        /* flush NAT table */
-        filter_flush_nat_table();
-
         /* reconfigure IPsec tunnels */
         vpn_ipsec_configure(true);
 

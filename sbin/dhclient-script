@@ -117,9 +117,12 @@ add_new_routes() {
 	$ROUTE add $new_ip_address $LOCALHOST >/dev/null 2>&1
 	for router in $new_routers; do
 		if [ "$new_ip_address" = "$router" ]; then
-			$ROUTE add default -iface $router >/dev/null 2>&1
+			$ROUTE add default -iface $router
+			#>/dev/null 2>&1
+			echo $new_routers > /tmp/${interface}_router
 		else
-			$ROUTE add default $router >/dev/null 2>&1
+			$ROUTE add default $router
+			#>/dev/null 2>&1
                         echo $new_routers > /tmp/${interface}_router
 		fi
 		# 2nd and subsequent default routers error out, so explicitly

@@ -119,9 +119,11 @@ add_new_routes() {
 		if [ "$new_ip_address" = "$router" ]; then
 			$ROUTE add default -iface $router
 			#>/dev/null 2>&1
+			echo $ROUTE add default -iface $router | $LOGGER
 			echo $new_routers > /tmp/${interface}_router
 		else
 			$ROUTE add default $router
+			echo $ROUTE add default $router | $LOGGER
 			#>/dev/null 2>&1
                         echo $new_routers > /tmp/${interface}_router
 		fi

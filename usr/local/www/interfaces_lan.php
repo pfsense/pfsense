@@ -165,7 +165,7 @@ function enable_change(enable_over) {
 <?php if (file_exists($d_landirty_path)): ?><p>
 <?php print_info_box_np("The LAN configuration has been changed.<br>You must apply the changes in order for them to take effect.  Don't forget to adjust the DHCP Server range if needed before applying.");?><br>
 <?php endif; ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
+<?php if ($savemsg) print_info_box_np($savemsg); ?>
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
                   <td colspan="2" valign="top" class="listtopic">IP configuration</td>

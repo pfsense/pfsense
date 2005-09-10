@@ -243,13 +243,13 @@ TIMEOUT)
 			fi
 			add_new_routes
 			if add_new_resolv_conf; then
-				exit_with_hooks 0
+				exit_with_hooks
 			fi
 		fi
 	fi
 	ifconfig $interface inet -alias $new_ip_address $medium
 	delete_old_routes
-	exit_with_hooks 1
+	exit_with_hooks
 	;;
 esac
 

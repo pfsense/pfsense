@@ -56,6 +56,7 @@ if($config['theme'] <> "")
 else
         $g['theme'] = "pfsense";
 
+$d_landirty_path = $g['varrun_path'] . "/lan.conf.dirty";
 $d_pppoeuserdirty_path = $g['varrun_path'] . "/vpn-pppoe-users-edit.dirty";
 $d_hostsdirty_path = $g['varrun_path'] . "/hosts.dirty";
 $d_natconfdirty_path = $g['varrun_path'] . "/nat.conf.dirty";

@@ -153,10 +153,10 @@ add_new_resolv_conf() {
 exit_with_hooks() {
 	exit_status=$1
 	if [ -f /etc/dhclient-exit-hooks ]; then
-		. /etc/dhclient-exit-hooks
+		/etc/rc.newwanip
 	fi
 	# probably should do something with exit status of the local script
-	exit $exit_status
+	exit 0
 }
 
 #

@@ -50,7 +50,7 @@
         }
 
         /* reload firewall rules */
-        filter_rules_generate();
+        filter_configure();
 
         /* reconfigure IPsec tunnels */
         vpn_ipsec_configure(true);

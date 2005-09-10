@@ -82,5 +82,7 @@
 	services_dyndns_configure();
         
 	filter_configure_sync();
+        
+        return 0;
 	
 ?>

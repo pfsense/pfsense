@@ -37,7 +37,7 @@ for file in $FMATCHES ;do
         echo "trying to fetch latest $file"
     fi
     #echo fetch -o "$file" "$baseurl$file$urlrev$rev$urlcon"
-    `which fetch` -o "$file" "$baseurl$file$urlrev$rev$urlcon"
+    `which fetch` -q -o "$file" "$baseurl$file$urlrev$rev$urlcon"
 done
 
 /etc/rc.conf_mount_ro

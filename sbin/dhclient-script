@@ -23,6 +23,9 @@ GREP=/usr/bin/grep
 AWK=/usr/bin/awk
 HOSTNAME=/bin/hostname
 ROUTE=/sbin/route
+SED=/usr/bin/sed
+ARP=/usr/sbin/arp
+
 LOCALHOST=127.0.0.1
 
 if [ -x /usr/bin/logger ]; then
@@ -48,9 +51,9 @@ check_hostname() {
 }
 
 arp_flush() {
-	arp -an -i $interface | \
-		sed -n -e 's/^.*(\(.*\)) at .*$/arp -d \1/p' | \
-		sh >/dev/null 2>&1
+	$ARP -an -i $interface | \
+		$SED -n -e 's/^.*(\(.*\)) at .*$/arp -d \1/p' | \
+		/bin/sh >/dev/null 2>&1
 }
 
 delete_old_address() {
@@ -180,7 +183,7 @@ case $reason in
 MEDIUM)
 	ifconfig $interface $medium
 	ifconfig $interface inet -alias 0.0.0.0 $medium >/dev/null 2>&1
-	sleep 1
+	/bin/sleep 1
 	;;
 
 PREINIT)
@@ -232,7 +235,7 @@ EXPIRE|FAIL)
 TIMEOUT)
 	delete_old_alias
 	add_new_address
-	sleep 1
+	/bin/sleep 1
 	if [ -n "$new_routers" ]; then
 		$LOGGER "New Routers ($interface): $new_routers"
 		set "$new_routers"

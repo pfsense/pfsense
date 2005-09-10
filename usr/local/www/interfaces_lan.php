@@ -125,7 +125,8 @@ if ($_POST) {
 
 		touch($d_landirty_path);
 
-		if ($_POST['enable']) {
+		if ($_POST['apply'] <> "") {
+			unlink($d_landirty_path);
 			$savemsg = "The changes have been applied.  You may need to correct the web browsers ip address.";
 		}
 
@@ -157,6 +158,7 @@ function enable_change(enable_over) {
 
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<form action="interfaces_lan.php" method="post" name="iform" id="iform">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -164,7 +166,6 @@ function enable_change(enable_over) {
 <?php print_info_box_np("The LAN configuration has been changed.<br>You must apply the changes in order for them to take effect.  Don't forget to adjust the DHCP Server range if needed before applying.");?><br>
 <?php endif; ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-            <form action="interfaces_lan.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 		<tr>
                   <td colspan="2" valign="top" class="listtopic">IP configuration</td>
@@ -259,7 +260,7 @@ function enable_change(enable_over) {
 
 <?php
 
-if ($_POST['enable']) {
+if ($_POST['apply'] <> "") {
 
 	/*   Change these items late in the script
 	 *   so the script will fully complete to

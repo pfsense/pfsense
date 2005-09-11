@@ -1,6 +1,5 @@
 <?
 function cpu_usage() {
-	sleep(5);
 	return get_cpuusage(get_cputicks(), get_cputicks());
 }
 

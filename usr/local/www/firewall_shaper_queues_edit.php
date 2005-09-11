@@ -251,10 +251,17 @@ include("head.inc");
 		<input type="checkbox" id="parentqueue" name="parentqueue" <?php if($parentqueue) echo " CHECKED";?> > This is a parent queue of HFSC/CBQ<br>
 	<?php endif; ?>
 	<?php if ($schedulertype == "hfsc"): ?>
-		<input type="checkbox" id="upperlimit" name="upperlimit" <?php if($upperlimit) echo " CHECKED";?> > Upperlimit: <input size="3" value="<?=htmlspecialchars($upperlimit1);?>" name="upperlimit1"> <input size="3" value="<?=htmlspecialchars($upperlimit2);?>" name="upperlimit2"> <input size="3" value="<?=htmlspecialchars($upperlimit3);?>" name="upperlimit3"> <br>
-		<input type="checkbox" id="realtime" name="realtime" <?php if($realtime) echo " CHECKED";?> > Real time: <input size="3" value="<?=htmlspecialchars($realtime1);?>" name="realtime1"> <input size="3" value="<?=htmlspecialchars($realtime2); ?>" name="realtime2"> <input size="3" value="<?=htmlspecialchars($realtime3);?>" name="realtime3"><br>
-		<input type="checkbox" id="linkshare" id="linkshare" name="linkshare" <?php if($linkshare) echo " CHECKED";?> > Link share: <input size="3" value="<?=htmlspecialchars($linkshare1);?>" value="<?=htmlspecialchars($linkshare1);?>" id="linkshare1" name="linkshare1"> <input size="3" value="<?=htmlspecialchars($linkshare2);?>" id="linkshare2" name="linkshare2"> <input size="3" value="<?=htmlspecialchars($linkshare3);?>" id="linkshare3" name="linkshare3"><br>
-		<br> <span class="vexpl">Select options for this queue
+		<table>
+		<tr><td>&nbsp;</td><td><b><center>m1</td><td><b><center>d</td><td><b><center>m2</td></tr>
+		<tr><td><input type="checkbox" id="upperlimit" name="upperlimit" <?php if($upperlimit) echo " CHECKED";?> > Upperlimit:</td><td><input size="3" value="<?=htmlspecialchars($upperlimit1);?>" name="upperlimit1"></td><td><input size="3" value="<?=htmlspecialchars($upperlimit2);?>" name="upperlimit2"></td><td><input size="3" value="<?=htmlspecialchars($upperlimit3);?>" name="upperlimit3"></td><td>The maximum allowed bandwidth for the queue.</td></tr>
+		<tr><td><input type="checkbox" id="realtime" name="realtime" <?php if($realtime) echo " CHECKED";?> > Real time:</td><td><input size="3" value="<?=htmlspecialchars($realtime1);?>" name="realtime1"></td><td><input size="3" value="<?=htmlspecialchars($realtime2); ?>" name="realtime2"></td><td><input size="3" value="<?=htmlspecialchars($realtime3);?>" name="realtime3"></td><td>The minimum required bandwidth for the queue.</td></tr>
+		<tr><td><input type="checkbox" id="linkshare" id="linkshare" name="linkshare" <?php if($linkshare) echo " CHECKED";?> > Link share:</td><td><input size="3" value="<?=htmlspecialchars($linkshare1);?>" value="<?=htmlspecialchars($linkshare1);?>" id="linkshare1" name="linkshare1"></td><td><input size="3" value="<?=htmlspecialchars($linkshare2);?>" id="linkshare2" name="linkshare2"></td><td><input size="3" value="<?=htmlspecialchars($linkshare3);?>" id="linkshare3" name="linkshare3"></td><td>The bandwidth share of a backlogged queue.</td></tr>
+		</table><br>		
+			The format for service curve specifications is (m1, d, m2).  m2 controls
+			the bandwidth assigned to the queue.  m1 and d are optional and can be 
+			used to control the initial bandwidth assignment.  For the first d milliseconds the queue gets the bandwidth given as m1, afterwards the value
+			given in m2.
+		<p> <span class="vexpl">Select options for this queue
 		</span></td>
 	    </tr>
 	<?php endif; ?>

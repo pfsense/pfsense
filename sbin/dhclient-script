@@ -22,6 +22,7 @@ NETSTAT=/usr/bin/netstat
 GREP=/usr/bin/grep
 AWK=/usr/bin/awk
 HOSTNAME=/bin/hostname
+GREP=/usr/bin/grep
 ROUTE=/sbin/route
 SED=/usr/bin/sed
 ARP=/usr/sbin/arp
@@ -143,7 +144,7 @@ add_new_routes() {
 	fi
 	
 	# last ditch effort if no route exists.
-	DEFAULTROUTE=`netstat -rn | grep default`
+	DEFAULTROUTE=`$NETSTAT -rn | $GREP default`
 	if [ -z "${DEFAULTROUTE}" ]; then
 	    $ROUTE add default -iface $interface
 	fi

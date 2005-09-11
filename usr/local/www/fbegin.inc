@@ -34,9 +34,9 @@ require_once("notices.inc");
 	<div id="header">
 		<div id="header-left"></div>
 		<div id="header-right">
-			<span class="container">
-				<span class="left">webConfigurator</span>
-				<span class="right">
+			<div class="container">
+				<div class="left">webConfigurator</div>
+				<div class="right">
 <?
 				if (are_notices_pending()) {
 					$notices = get_notices();
@@ -74,8 +74,8 @@ require_once("notices.inc");
 <?
 				}
 ?>
-				</span>
-			</span>
+				</div>
+			</div>
 		</div>
 	</div> <!-- Header DIV -->
 	<div id="content">

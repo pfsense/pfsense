@@ -32,106 +32,108 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-require_once('guiconfig.inc');
-require_once('notices.inc');
+	## Load Essential Includes
+	require_once('guiconfig.inc');
+	require_once('notices.inc');
 
 
-require_once('includes/functions.inc.php');
+	## Load Functions Files
+	require_once('includes/functions.inc.php');
 
 
+	## Load AJAX, Initiate Class ###############################################
+	require_once('includes/sajax.class.php');
 
-/* SAJAX STUFF */
-require_once('includes/sajax.class.php');
+	## Initiate Class and Set location of ajax file containing 
+	## the information that we need for this page. Also set functions
+	## that SAJAX will be using.
+	$oSajax = new sajax();
+	$oSajax->sajax_remote_uri = 'sajax/index.sajax.php';
+	$oSajax->sajax_request_type = 'POST';
+	$oSajax->sajax_export("mem_usage","cpu_usage","get_uptime","get_pfstate");
+	$oSajax->sajax_handle_client_request();
+	############################################################################
 
-$oSajax = new sajax();
-$oSajax->sajax_remote_uri = 'sajax/index.sajax.php';
-$oSajax->sajax_request_type = 'POST';
-$oSajax->sajax_export("mem_usage","cpu_usage","get_uptime","get_pfstate");
-$oSajax->sajax_handle_client_request();
-/***************/
+
+	## Check to see if we have a swap space,
+	## if true, display, if false, hide it ...
+	$swapinfo = `/usr/sbin/swapinfo`;
+	if(stristr($swapinfo,'%') == true) $showswap=true;
 
 
-
-$swapinfo = `/usr/sbin/swapinfo`;
-if(stristr($swapinfo,'%') == true) $showswap=true;
-
-/* User recently restored his config.
-   If packages are installed lets resync
-*/
-if(file_exists('/needs_package_sync')) {
-	if($config['installedpackages'] <> '') {
-		conf_mount_rw();
-		unlink('/needs_package_sync');
-		header('Location: pkg_mgr_install.php?mode=reinstallall');
-		exit;
-	}
-}
-
-if(file_exists('/trigger_initial_wizard')) {
-	conf_mount_rw();
-	unlink('/trigger_initial_wizard');
-	conf_mount_ro();
-
-$pgtitle = 'pfSense first time setup';
-include('head.inc');
-
-?>
-<body link='#0000CC' vlink='#0000CC' alink='#0000CC'>
-<form>
-<?php
-	echo "<center>\n";
-	echo "<img src=\"/themes/{$g['theme']}/images/logo.gif\" border=\"0\"><p>\n";
-	echo "<div \" style=\"width:700px;background-color:#ffffff\" id=\"nifty\">\n";
-	echo "Welcome to pfSense!<p>\n";
-	echo "One moment while we start the initial setup wizard.<p>\n";
-	echo "Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal gui.<p>\n";
-	echo "To bypass the wizard, click on the pfSense wizard on the initial page.\n";
-	echo "</div>\n";
-	echo "<meta http-equiv=\"refresh\" content=\"1;url=wizard.php?xml=setup_wizard.xml\">\n";
-	echo "<script type=\"text/javascript\">\n";
-	echo "NiftyCheck();\n";
-	echo "Rounded(\"div#nifty\",\"all\",\"#000\",\"#FFFFFF\",\"smooth\");\n";
-	echo "</script>\n";
-	exit;
-}
-
-/* find out whether there's hardware encryption (hifn) */
-unset($hwcrypto);
-$fd = @fopen("{$g['varlog_path']}/dmesg.boot", "r");
-if ($fd) {
-	while (!feof($fd)) {
-		$dmesgl = fgets($fd);
-		if (preg_match("/^hifn.: (.*?),/", $dmesgl, $matches)) {
-			$hwcrypto = $matches[1];
-			break;
+	## User recently restored his config.
+	## If packages are installed lets resync
+	if(file_exists('/needs_package_sync')) {
+		if($config['installedpackages'] <> '') {
+			conf_mount_rw();
+			unlink('/needs_package_sync');
+			header('Location: pkg_mgr_install.php?mode=reinstallall');
+			exit;
 		}
 	}
-	fclose($fd);
-}
 
 
+	## If it is the first time webGUI has been
+	## accessed since initial install show this stuff.
+	if(file_exists('/trigger_initial_wizard')) {
+		conf_mount_rw();
+		unlink('/trigger_initial_wizard');
+		conf_mount_ro();
 
-$pgtitle = "pfSense webGUI";
-/* include header and other code */
-include("head.inc");
+		$pgtitle = 'pfSense first time setup';
+		include('head.inc');
+
+		echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
+		echo "<form>\n";
+		echo "<center>\n";
+		echo "<img src=\"/themes/{$g['theme']}/images/logo.gif\" border=\"0\"><p>\n";
+		echo "<div \" style=\"width:700px;background-color:#ffffff\" id=\"nifty\">\n";
+		echo "Welcome to pfSense!<p>\n";
+		echo "One moment while we start the initial setup wizard.<p>\n";
+		echo "Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal gui.<p>\n";
+		echo "To bypass the wizard, click on the pfSense wizard on the initial page.\n";
+		echo "</div>\n";
+		echo "<meta http-equiv=\"refresh\" content=\"1;url=wizard.php?xml=setup_wizard.xml\">\n";
+		echo "<script type=\"text/javascript\">\n";
+		echo "NiftyCheck();\n";
+		echo "Rounded(\"div#nifty\",\"all\",\"#000\",\"#FFFFFF\",\"smooth\");\n";
+		echo "</script>\n";
+		exit;
+	}
+
+
+	## Find out whether there's hardware encryption or not
+	unset($hwcrypto);
+	$fd = @fopen("{$g['varlog_path']}/dmesg.boot", "r");
+	if ($fd) {
+		while (!feof($fd)) {
+			$dmesgl = fgets($fd);
+			if (preg_match("/^hifn.: (.*?),/", $dmesgl, $matches)) {
+				$hwcrypto = $matches[1];
+				break;
+			}
+		}
+		fclose($fd);
+	}
+
+
+	## Set Page Title and Include Header
+	$pgtitle = "pfSense webGUI";
+	include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script language="javascript" type="text/javascript">
-	<?php $oSajax->sajax_show_javascript(); ?>
-</script>
 
-<form>
 <?php
-
 include("fbegin.inc");
 	if(!file_exists("/usr/local/www/themes/{$g['theme']}/no_big_logo"))
 		echo "<center><img src=\"./themes/".$g['theme']."/images/logobig.jpg\"></center><br>";
 ?>
 <p class="pgtitle">System Overview</p>
 
-<div id="niftyOutter" width="650">
+<div id="niftyOutter">
+<form action="index.php" method="post">
 <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tbody>
 		<tr>
@@ -181,14 +183,14 @@ include("fbegin.inc");
 			<td width="25%" class="vncellt">CPU usage</td>
 			<td width="75%" class="listr">
 				<?php $cpuUsage = get_cpuusage(get_cputicks(), get_cputicks()); ?>
-				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="absmiddle" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="cpuwidtha" id="cpuwidtha" width="<?= $cpuUsage; ?>" border="0" align="absmiddle" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="cpuwidthb" id="cpuwidthb" width="<?= (100 - $cpuUsage); ?>" border="0" align="absmiddle" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="absmiddle" /><input style="border: 0px solid white;" size="30" name="cpumeter" id="cpumeter" value="<?= $cpuUsage.'%'; ?> (Updating in 3 seconds)" />
+				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="cpuwidtha" id="cpuwidtha" width="<?= $cpuUsage; ?>" border="0" align="middle" alt="blue bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="cpuwidthb" id="cpuwidthb" width="<?= (100 - $cpuUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" /><input style="border: 0px solid white;" size="30" name="cpumeter" id="cpumeter" value="<?= $cpuUsage.'%'; ?> (Updating in 3 seconds)" />
 			</td>
 		</tr>
 		<tr>
 			<td width="25%" class="vncellt">Memory usage</td>
 			<td width="75%" class="listr">
 				<?php $memUsage = mem_usage(); ?>
-				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="absmiddle" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="memwidtha" id="memwidtha" width="<?= $memUsage; ?>" border="0" align="absmiddle" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="memwidthb" id="memwidthb" width="<?= (100 - $memUsage); ?>" border="0" align="absmiddle" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="absmiddle" /><input style="border: 0px solid white;" size="30" name="memusagemeter" id="memusagemeter" value="<?= $memUsage.'%'; ?>" />
+				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="memwidtha" id="memwidtha" width="<?= $memUsage; ?>" border="0" align="middle" alt="blue bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="memwidthb" id="memwidthb" width="<?= (100 - $memUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" /><input style="border: 0px solid white;" size="30" name="memusagemeter" id="memusagemeter" value="<?= $memUsage.'%'; ?>" />
 			</td>
 		</tr>
 		<?php if($showswap == true): ?>
@@ -196,7 +198,7 @@ include("fbegin.inc");
 			<td width="25%" class="vncellt">SWAP usage</td>
 			<td width="75%" class="listr">
 				<?php $swapusage = swap_usage(); ?>
-				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="absmiddle" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" width="<?= $swapUsage; ?>" border="0" align="absmiddle" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" width="<?= (100 - $swapUsage); ?>" border="0" align="absmiddle" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="absmiddle" /><input style="border: 0px solid white;" size="30" name="swapusagemeter" id="swapusagemeter" value="<?= $swapusage.'%'; ?>" />
+				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" width="<?= $swapUsage; ?>" border="0" align="middle" alt="blue bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" width="<?= (100 - $swapUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" /><input style="border: 0px solid white;" size="30" name="swapusagemeter" id="swapusagemeter" value="<?= $swapusage.'%'; ?>" />
 			</td>
 		</tr>
 		<?php endif; ?>
@@ -210,7 +212,7 @@ include("fbegin.inc");
 		<tr>
 			<td width='25%' class='vncellt'>Temperature</td>
 			<td width='75%' class='listr'>
-				<img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="absmiddle" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_blue.gif" height="15" name="Tempwidtha" id="tempwidtha" width="<?= $temp; ?>" border="0" align="absmiddle" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_gray.gif" height="15" name="Tempwidthb" id="tempwidthb" width="<?= (100 - $temp); ?>" border="0" align="absmiddle" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="absmiddle" /><input style="border: 0px solid white;" size="30" name="Tempmeter" id="Tempmeter" value="<?= $temp."C"; ?>" />
+				<img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_blue.gif" height="15" name="Tempwidtha" id="tempwidtha" width="<?= $temp; ?>" border="0" align="middle" alt="blue bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_gray.gif" height="15" name="Tempwidthb" id="tempwidthb" width="<?= (100 - $temp); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" /><input style="border: 0px solid white;" size="30" name="Tempmeter" id="Tempmeter" value="<?= $temp."C"; ?>" />
 			</td>
 		</tr>
 		<?php endif; ?>
@@ -218,12 +220,13 @@ include("fbegin.inc");
 			<td width="25%" class="vncellt">Disk usage</td>
 			<td width="75%" class="listr">
 				<?php $diskusage = disk_usage(); ?>
-				<img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="absmiddle" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_blue.gif" height="15" width="<?= $diskusage; ?>" border="0" align="absmiddle" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_gray.gif" height="15" width="<?= (100 - $diskusage); ?>" border="0" align="absmiddle" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="absmiddle" />
+				<img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_blue.gif" height="15" width="<?= $diskusage; ?>" border="0" align="middle" alt="blue bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_gray.gif" height="15" width="<?= (100 - $diskusage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
 				<?php echo $diskusage . "%"; ?>
 			</td>
 		</tr>
 	</tbody>
 </table>
+</form>
 </div>
 
 <?php include("fend.inc"); ?>
@@ -232,7 +235,7 @@ include("fbegin.inc");
 	NiftyCheck();
 	Rounded("div#nifty","top","#FFF","#EEEEEE","smooth");
 </script>
-</form>
+
 
 </body>
 </html>

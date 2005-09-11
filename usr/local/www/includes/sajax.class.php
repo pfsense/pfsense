@@ -99,7 +99,7 @@ class sajax {
 
 		ob_start();
 		?>
-		
+		<!--
 		// remote scripting library
 		// (c) copyright 2005 modernmethod, inc
 		var sajax_debug_mode = <?php echo $this->sajax_debug_mode ? "true" : "false"; ?>;
@@ -174,7 +174,7 @@ class sajax {
 			sajax_debug(func_name + " waiting..");
 			delete x;
 		}
-		
+		//-->
 		<?php
 		$html = ob_get_contents();
 		ob_end_clean();

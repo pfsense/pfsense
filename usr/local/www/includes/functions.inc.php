@@ -1,5 +1,6 @@
 <?
 function cpu_usage() {
+	sleep(5);
 	return get_cpuusage(get_cputicks(), get_cputicks());
 }
 
@@ -28,6 +29,7 @@ function get_uptime() {
 }
 
 function get_cputicks() {
+	sleep(5);
 	$cputicks = explode(" ", `/sbin/sysctl -n kern.cp_time`);
 	return $cputicks;
 }

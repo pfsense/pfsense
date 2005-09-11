@@ -183,7 +183,7 @@ include("fbegin.inc");
 			<td width="25%" class="vncellt">CPU usage</td>
 			<td width="75%" class="listr">
 				<?php $cpuUsage = get_cpuusage(get_cputicks(), get_cputicks()); ?>
-				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="cpuwidtha" id="cpuwidtha" width="<?= $cpuUsage; ?>" border="0" align="middle" alt="blue bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="cpuwidthb" id="cpuwidthb" width="<?= (100 - $cpuUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" /><input style="border: 0px solid white;" size="30" name="cpumeter" id="cpumeter" value="<?= $cpuUsage.'%'; ?> (Updating in 3 seconds)" />
+				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="cpuwidtha" id="cpuwidtha" width="<?= $cpuUsage; ?>" border="0" align="middle" alt="blue bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="cpuwidthb" id="cpuwidthb" width="<?= (100 - $cpuUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" /><input style="border: 0px solid white;" size="30" name="cpumeter" id="cpumeter" value="<?= $cpuUsage.'%'; ?> (Updating in 10 seconds)" />
 			</td>
 		</tr>
 		<tr>

@@ -141,6 +141,10 @@ add_new_routes() {
                         echo $new_routers > /tmp/${interface}_router
 		done
 	fi
+	
+	# last ditch effort if no route exists.
+	$ROUTE add default -iface $interface
+	
 }
 
 add_new_resolv_conf() {

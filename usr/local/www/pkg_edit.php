@@ -142,9 +142,7 @@ if ($_POST) {
 				if(is_array( $_POST[$fields['fieldname']] )) {
 					$pkgarr[$fields['fieldname']]=array();
 					foreach($_POST[$fields['fieldname']] as $v) {
-						echo "IS ARRAY";
 						$pkgarr[$fields['fieldname']][] = $v;
-						echo("\$pkgarr[\$fields['fieldname']][] = \$v; <br>");
 						eval($comd);								
 					}
 					continue;

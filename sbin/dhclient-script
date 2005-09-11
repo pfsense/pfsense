@@ -143,7 +143,10 @@ add_new_routes() {
 	fi
 	
 	# last ditch effort if no route exists.
-	$ROUTE add default -iface $interface
+	DEFAULTROUTE=`netstat -rn | grep default`
+	if [ -z "${DEFAULTROUTE}" ]; then
+	    $ROUTE add default -iface $interface
+	fi
 	
 }
 

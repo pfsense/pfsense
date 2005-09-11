@@ -250,7 +250,13 @@ include("head.inc");
 	<?php if ($schedulertype == "hfsc" or $schedulertype == "cbq"): ?>
 		<input type="checkbox" id="parentqueue" name="parentqueue" <?php if($parentqueue) echo " CHECKED";?> > This is a parent queue of HFSC/CBQ<br>
 	<?php endif; ?>
+	<span class="vexpl"><br>Select options for this queue
+	</tr>
+
 	<?php if ($schedulertype == "hfsc"): ?>
+	    <tr>
+	      <td width="22%" valign="top" class="vncell"><b>Service Curve (sc)</td>
+	      <td width="78%" class="vtable">	
 		<table>
 		<tr><td>&nbsp;</td><td><b><center>m1</td><td><b><center>d</td><td><b><center>m2</td></tr>
 		<tr><td><input type="checkbox" id="upperlimit" name="upperlimit" <?php if($upperlimit) echo " CHECKED";?> > Upperlimit:</td><td><input size="3" value="<?=htmlspecialchars($upperlimit1);?>" name="upperlimit1"></td><td><input size="3" value="<?=htmlspecialchars($upperlimit2);?>" name="upperlimit2"></td><td><input size="3" value="<?=htmlspecialchars($upperlimit3);?>" name="upperlimit3"></td><td>The maximum allowed bandwidth for the queue.</td></tr>
@@ -261,10 +267,12 @@ include("head.inc");
 			the bandwidth assigned to the queue.  m1 and d are optional and can be 
 			used to control the initial bandwidth assignment.  For the first d milliseconds the queue gets the bandwidth given as m1, afterwards the value
 			given in m2.
-		<p> <span class="vexpl">Select options for this queue
 		</span></td>
 	    </tr>
 	<?php endif; ?>
+	
+
+	
 	<?php if ($schedulertype == "hfsc" or $schedulertype == "cbq"): ?>
 	    <tr>
 		<td width="22%" valign="top" class="vncell">Parent queue (CBQ or HFSC only):</td>

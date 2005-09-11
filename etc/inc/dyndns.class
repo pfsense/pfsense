@@ -58,6 +58,7 @@
 		var $_dnsMX;
 		var $_dnsBackMX;
 		var $status;
+		var $_debugID;
 
 		/* 
 		 * Public Constructor Function (added 12 July 05) [beta]
@@ -74,6 +75,7 @@
 			$this->_dnsPass = $dnsPass;
 			$this->_dnsHost = $dnsHost;
 			$this->_dnsIP = $dnsIP;
+			$this->_debugID = rand(1000000, 9999999);
 
 			if ($this->_detectChange() == FALSE) {
 				$this->_error(10);
@@ -462,12 +464,18 @@
 				$contents = fread($file, filesize($this->_cacheFile));
 				fclose($file);
 				list($cacheIP,$cacheTime) = split(':', $contents);
+
+				$this->_debug($cacheIP.'/'.$cacheTime);
+
+				$initial = true;
 			} else {
 				$file = fopen($this->_cacheFile, 'w');
 				fwrite($file, '0.0.0.0:'.$currentTime);
 				fclose($file);
 				$cacheIP = '0.0.0.0';
 				$cacheTime = $currentTime;
+
+				$initial = false;
 			}
 
 			switch ($this->_dnsService) {
@@ -504,7 +512,7 @@
 			}
 
 			/* If IP addresses are different or 28 days have passed update record */
-			if ( ($cacheIP != $wan_ip) || ( ($currentTime - $cacheTime) > $time ) ) {
+			if ( ($cacheIP != $wan_ip) || ( ($currentTime - $cacheTime) > $time ) || ($initial == true) ) {
 				/* Write WAN IP to cache file */
 				$file = fopen($this->_cacheFile, 'w');
 				fwrite($file, $wan_ip.':'.$currentTime);
@@ -525,7 +533,7 @@
 		 *   - status is returned from a DynDNS service provider.
 		 */
 		function _debug ($data) {
-			$string = date('m-d-y h:i:s').' - ['.$this->_dnsService.'] - '.$data;
+			$string = date('m-d-y h:i:s').' - ('.$this->_debugID.') - ['.$this->_dnsService.'] - '.$data;
 			$file = fopen($this->_debugFile, 'a');
 			fwrite($file, $string);
 			fclose($file);

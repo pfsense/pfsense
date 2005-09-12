@@ -1,13 +1,10 @@
 #!/usr/local/bin/php
 <?php
-/* $Id$ */
 /*
 	diag_ping.php
-	Copyright (C) 2004 Scott Ullrich
-	All rights reserved.
+	part of m0n0wall (http://m0n0.ch/wall)
 
-	originially part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Bob Zoller (bob@kludgebox.com) and Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2003-2005 Bob Zoller (bob@kludgebox.com) and Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -32,6 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+$pgtitle = array("Diagnostics", "Ping");
 require("guiconfig.inc");
 
 define('MAX_COUNT', 10);
@@ -52,9 +50,9 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$do_ping = true;
-		$host = preg_replace ("/[^A-Za-z0-9.]/","",$_POST['host']);
+		$host = $_POST['host'];
+		$interface = $_POST['interface'];
 		$count = $_POST['count'];
-
 	}
 }
 if (!isset($do_ping)) {
@@ -63,26 +61,60 @@ if (!isset($do_ping)) {
 	$count = DEFAULT_COUNT;
 }
 
-$pgtitle = "Diagnostics: Ping";
-include("head.inc");
-
+function get_interface_addr($ifdescr) {
+	
+	global $config, $g;
+	
+	/* find out interface name */
+	if ($ifdescr == "wan")
+		$if = get_real_wan_interface();
+	else
+		$if = $config['interfaces'][$ifdescr]['if'];
+	
+	/* try to determine IP address and netmask with ifconfig */
+	unset($ifconfiginfo);
+	exec("/sbin/ifconfig " . $if, $ifconfiginfo);
+	
+	foreach ($ifconfiginfo as $ici) {
+		if (preg_match("/inet (\S+)/", $ici, $matches)) {
+			return $matches[1];
+		}
+	}
+	
+	return false;
+}
 ?>
-
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 			<form action="diag_ping.php" method="post" name="iform" id="iform">
 			  <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
 				  <td width="22%" valign="top" class="vncellreq">Host</td>
+				  <td width="78%" class="vtable"> 
+                    <?=$mandfldhtml;?><input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>"></td>
+				</tr>
+				<tr>
+				  <td width="22%" valign="top" class="vncellreq">Interface</td>
 				  <td width="78%" class="vtable">
-                    <input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>"></td>
+				  <select name="interface" class="formfld">
+                      <?php $interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
+					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+					    if (isset($config['interfaces']['opt' . $i]['enable']) &&
+							!$config['interfaces']['opt' . $i]['bridge'])
+					  		$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+					  }
+					  foreach ($interfaces as $iface => $ifacename): ?>
+                      <option value="<?=$iface;?>" <?php if ($iface == $interface) echo "selected"; ?>> 
+                      <?=htmlspecialchars($ifacename);?>
+                      </option>
+                      <?php endforeach; ?>
+                    </select>
+				  </td>
 				</tr>
 				<tr>
 				  <td width="22%" valign="top" class="vncellreq">Count</td>
 				  <td width="78%" class="vtable">
-<select name="count" class="formfld" id="count">
+					<select name="count" class="formfld" id="count">
 					<?php for ($i = 1; $i <= MAX_COUNT; $i++): ?>
 					<option value="<?=$i;?>" <?php if ($i == $count) echo "selected"; ?>><?=$i;?></option>
 					<?php endfor; ?>
@@ -90,7 +122,7 @@ include("head.inc");
 				</tr>
 				<tr>
 				  <td width="22%" valign="top">&nbsp;</td>
-				  <td width="78%">
+				  <td width="78%"> 
                     <input name="Submit" type="submit" class="formbtn" value="Ping">
 				</td>
 				</tr>
@@ -100,7 +132,11 @@ include("head.inc");
 					echo("<strong>Ping output:</strong><br>");
 					echo('<pre>');
 					ob_end_flush();
-					system("/sbin/ping -c$count " . escapeshellarg($host));
+					$ifaddr = get_interface_addr($interface);
+					if ($ifaddr)
+						system("/sbin/ping -S$ifaddr -c$count " . escapeshellarg($host));
+					else
+						system("/sbin/ping -c$count " . escapeshellarg($host));
 					echo('</pre>');
 				}
 				?>
@@ -109,5 +145,3 @@ include("head.inc");
 			</table>
 </form>
 <?php include("fend.inc"); ?>
-</body>
-</html>

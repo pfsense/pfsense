@@ -29,9 +29,13 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("Diagnostics", "Traceroute");
-require("guiconfig.inc");
 
+require("guiconfig.inc");
+$pgtitle = "Diagnostics: Traceroute";
+include("head.inc");
+include("fbegin.inc"); 
+?>
+<body link="#000000" vlink="#000000" alink="#000000">
 
 define('MAX_TTL', 64);
 define('DEFAULT_TTL', 18);

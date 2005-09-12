@@ -29,11 +29,12 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("Diagnostics", "ARP table");
 require("guiconfig.inc");
-
+$pgtitle = "Diagnostics: ARP Table";
+include("head.inc");
+include("fbegin.inc"); 
 ?>
-<?php include("fbegin.inc"); ?>
+<body link="#000000" vlink="#000000" alink="#000000">
 
 <?php
 

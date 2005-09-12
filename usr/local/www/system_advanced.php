@@ -298,7 +298,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell">&nbsp;</td>
 			<td width="78%" class="vtable">
 				<input name="sharednet" type="checkbox" id="sharednet" value="yes" <?php if (isset($pconfig['sharednet'])) echo "checked"; ?> onclick="enable_change(false)" />
-				<strong>This will supress ARP messages when interfaces share the same physical network</strong>
+				<strong>This will suppress ARP messages when interfaces share the same physical network</strong>
 			</td>
 		</tr>
 		<tr>

@@ -1,12 +1,10 @@
 #!/usr/local/bin/php
 <?php 
 /*
-	index.php part of pfSense
-	Copyright (C) 2004-2005 Scott Ullrich (sullrich@gmail.com)
-	All rights reserved.
-        
-	Originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	index.php
+	part of m0n0wall (http://m0n0.ch/wall)
+	
+	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -29,14 +27,13 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
-
 */
 
 require("globals.inc");
 require("util.inc");
 require("config.inc");
-require("radius_authentication.inc") ;
-require("radius_accounting.inc") ;
+require("radius_authentication.inc");
+require("radius_accounting.inc");
 
 header("Expires: 0");
 header("Cache-Control: no-store, no-cache, must-revalidate");
@@ -60,18 +57,8 @@ if (!$clientmac && !isset($config['captiveportal']['nomacfilter'])) {
 	exit;
 }
 
-/*   loop through allowed ip list.  if user is on the list then allow
- *   them access w/o authenticating
- */
-if($config['captiveportal']['allowedip'] <> "")
-	foreach($config['captiveportal']['allowedip'] as $ip) {
-		if($clientip == $ip['ip']) {
-			$allowed_ip = true;
-		}
-	}
-
-if ($clientmac && portal_mac_fixed($clientmac) or $allowed_ip == true) {
-	/* punch hole in pf table and allow thru ip for the mac addresses */
+if ($clientmac && portal_mac_fixed($clientmac)) {
+	/* punch hole in ipfw for pass thru mac addresses */
 	portal_allow($clientip, $clientmac, "unauthenticated");
 
 } else if ($_POST['accept'] && file_exists("{$g['vardb_path']}/captiveportal_radius.db")) {
@@ -85,10 +72,9 @@ if ($clientmac && portal_mac_fixed($clientmac) or $allowed_ip == true) {
 							  			  $radiusservers[0]['ipaddr'],
 							  			  $radiusservers[0]['port'],
 							  			  $radiusservers[0]['key']);
-		$auth_returns = explode("/", $auth_val);
-		$auth_val = $auth_returns[0];
 		if ($auth_val == 2) {
-			$sessionid = portal_allow($clientip, $clientmac, $_POST['auth_user']);
+			captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"LOGIN");
+			$sessionid = portal_allow($clientip, $clientmac, $_POST['auth_user'], $_POST['auth_pass']);
 			if (isset($config['captiveportal']['radacct_enable']) && isset($radiusservers[0])) {
 				$auth_val = RADIUS_ACCOUNTING_START($_POST['auth_user'],
 													$sessionid,
@@ -98,23 +84,47 @@ if ($clientmac && portal_mac_fixed($clientmac) or $allowed_ip == true) {
 													$clientip);
 			}
 		} else {
+			captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"FAILURE");
 			readfile("{$g['varetc_path']}/captiveportal-error.html");
 		}
 	} else {
 		readfile("{$g['varetc_path']}/captiveportal-error.html");
 	}
-
-} else if ($_POST['accept'] && $config['captiveportal']['auth_method']=="local") {
-	//check against local usermanager
 	
+} else if ($_POST['accept'] && $config['captiveportal']['auth_method'] == "local") {
+
+	//check against local usermanager
+	$userdb = &$config['captiveportal']['user'];
+
+	$loginok = false;
+
 	//erase expired accounts
-	if(trim($config['users'][$_POST['auth_user']]['expirationdate'])!="" && strtotime("-1 day")>strtotime($config['users'][$_POST['auth_user']]['expirationdate'])){
-		unset($config['users'][$_POST['auth_user']]);
-		write_config();
+	if (is_array($userdb)) {
+		$moddb = false;
+		for ($i = 0; $i < count($userdb); $i++) {
+			if ($userdb[$i]['expirationdate'] && (strtotime("-1 day") > strtotime($userdb[$i]['expirationdate']))) {
+				unset($userdb[$i]);
+				$moddb = true;
+			}
+		}
+		if ($moddb)
+			write_config();
+			
+		$userdb = &$config['captiveportal']['user'];
+		
+		for ($i = 0; $i < count($userdb); $i++) {
+			if (($userdb[$i]['name'] == $_POST['auth_user']) && ($userdb[$i]['password'] == md5($_POST['auth_pass']))) {
+				$loginok = true;
+				break;
+			}
+		}
 	}
-	if($config['users'][$_POST['auth_user']]['password']==md5($_POST['auth_pass'])){
-		portal_allow($clientip, $clientmac,$_POST['auth_user']);
+
+	if ($loginok){
+		captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"LOGIN");
+		portal_allow($clientip, $clientmac,$_POST['auth_user'],0,0);
 	} else {
+		captiveportal_logportalauth($_POST['auth_user'],$clientmac,$clientip,"FAILURE");
 		readfile("{$g['varetc_path']}/captiveportal-error.html");
 	}
 } else if ($_POST['accept'] && $clientip) {
@@ -148,7 +158,7 @@ EOD;
 	if (isset($config['captiveportal']['httpslogin']))
 		$htmltext = str_replace("\$PORTAL_ACTION\$", "https://{$config['captiveportal']['httpsname']}:8001/", $htmltext);
 	else
-		$htmltext = str_replace("\$PORTAL_ACTION\$", "", $htmltext);
+		$htmltext = str_replace("\$PORTAL_ACTION\$", "http://{$config['interfaces'][$config['captiveportal']['interface']]['ipaddr']}:8000/", $htmltext);
 	
 	if (preg_match("/redirurl=(.*)/", $orig_request, $matches))
 		$redirurl = urldecode($matches[1]);
@@ -182,19 +192,36 @@ function portal_mac_fixed($clientmac) {
 	return FALSE ;
 }	
 
-function portal_allow($clientip,$clientmac,$clientuser) {
+function portal_allow($clientip,$clientmac,$clientuser,$password = "") {
 
 	global $orig_host, $orig_request, $g, $config;
 
 	/* user has accepted AUP - let him in */
 	portal_lock();
+	
+	/* get next ipfw rule number */
+	if (file_exists("{$g['vardb_path']}/captiveportal.nextrule"))
+		$ruleno = trim(file_get_contents("{$g['vardb_path']}/captiveportal.nextrule"));
+	if (!$ruleno)
+		$ruleno = 10000;	/* first rule number */
 
-	$saved_ruleno = $clientip;
+	$saved_ruleno = $ruleno;
 	
 	/* generate unique session ID */
 	$tod = gettimeofday();
 	$sessionid = substr(md5(mt_rand() . $tod['sec'] . $tod['usec'] . $clientip . $clientmac), 0, 16);
-		
+	
+	/* add ipfw rules for layer 3 */
+	exec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from $clientip to any in");
+	exec("/sbin/ipfw add $ruleno set 2 skipto 50000 ip from any to $clientip out");
+	
+	/* add ipfw rules for layer 2 */
+	if (!isset($config['captiveportal']['nomacfilter'])) {
+		$l2ruleno = $ruleno + 10000;
+		exec("/sbin/ipfw add $l2ruleno set 3 deny all from $clientip to any not MAC any $clientmac layer2 in");
+		exec("/sbin/ipfw add $l2ruleno set 3 deny all from any to $clientip not MAC $clientmac any layer2 out");
+	}
+	
 	/* read in client database */
 	$cpdb = array();
 
@@ -224,7 +251,7 @@ function portal_allow($clientip,$clientmac,$clientuser) {
 									   $radiusservers[0]['key'],
 									   $clientip);
 			}
-			mwexec("/sbin/pfctl -t captiveportal -T delete {$clientip}");
+			mwexec("/sbin/ipfw delete " . $cpdb[$i][1] . " " . ($cpdb[$i][1]+10000));
 			unset($cpdb[$i]);
 			break;
 		}
@@ -237,7 +264,9 @@ function portal_allow($clientip,$clientmac,$clientuser) {
 			fwrite($fd, join(",", $cpent) . "\n");
 		}
 		/* write in this new entry */
-		fwrite($fd, time().",{$ruleno},{$clientip},{$clientmac},{$clientuser},{$sessionid}\n") ;
+		/* encode password in Base64 just in case it contains commas */
+		$bpassword = base64_encode($password);
+		fwrite($fd, time().",{$ruleno},{$clientip},{$clientmac},{$clientuser},{$sessionid},{$bpassword}\n") ;
 		fclose($fd);
 	}
 	
@@ -252,8 +281,6 @@ function portal_allow($clientip,$clientmac,$clientuser) {
 	}
 	
 	portal_unlock();
-	
-	mwexec("/sbin/pfctl -t captiveportal -T add {$_ENV['REMOTE_ADDR']}");
 	
 	/* redirect user to desired destination */
 	if ($config['captiveportal']['redirurl'])
@@ -392,7 +419,7 @@ function disconnect_client($sessionid) {
 	/* find entry */	
 	for ($i = 0; $i < count($cpdb); $i++) {
 		if ($cpdb[$i][5] == $sessionid) {
-			/* this client needs to be deleted - remove pf table item */
+			/* this client needs to be deleted - remove ipfw rules */
 			if(isset($config['captiveportal']['radacct_enable']) && isset($radiusservers[0])) {
 				RADIUS_ACCOUNTING_STOP($cpdb[$i][1], // ruleno
 									   $cpdb[$i][4], // username
@@ -401,9 +428,10 @@ function disconnect_client($sessionid) {
 									   $radiusservers[0]['ipaddr'],
 									   $radiusservers[0]['acctport'],
 									   $radiusservers[0]['key'],
-									   $clientip);
+									   $cpdb[$i][2]);
 			}
-			mwexec("/sbin/pfctl -t captiveportal -T delete {$cpdb[$i][2]}");
+			mwexec("/sbin/ipfw delete " . $cpdb[$i][1] . " " . ($cpdb[$i][1]+10000));
+			captiveportal_logportalauth($cpdb[$i][4],$cpdb[$i][3],$cpdb[$i][2],"LOGOUT");
 			unset($cpdb[$i]);
 			break;
 		}
@@ -420,4 +448,15 @@ function disconnect_client($sessionid) {
 	
 	portal_unlock();
 }
+
+/* log successful captive portal authentication to syslog */
+/* part of this code from php.net */
+function captiveportal_logportalauth($user,$mac,$ip,$status) {
+	define_syslog_variables();
+	openlog("logportalauth", LOG_PID, LOG_LOCAL4);
+	// Log it
+	syslog(LOG_INFO, "$status: $user, $mac, $ip");
+	closelog();
+}
+
 ?>

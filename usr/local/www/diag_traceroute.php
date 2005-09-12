@@ -35,7 +35,10 @@ $pgtitle = "Diagnostics: Traceroute";
 include("head.inc");
 include("fbegin.inc"); 
 ?>
+
 <body link="#000000" vlink="#000000" alink="#000000">
+
+<?php
 
 define('MAX_TTL', 64);
 define('DEFAULT_TTL', 18);

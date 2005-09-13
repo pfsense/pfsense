@@ -34,7 +34,7 @@
 
 require("guiconfig.inc");
 
-$racoon_logfile = "{$g['varlog_path']}/racoon.log";
+$ipsec_logfile = "{$g['varlog_path']}/ipsec.log";
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
@@ -77,7 +77,7 @@ include("head.inc");
 		  		<tr>
 					<td colspan="2" class="listtopic">Last <?=$nentries;?> IPSEC log entries</td>
 		  		</tr>
-				<?php dump_clog($racoon_logfile, $nentries, true, array("racoon"), array(false)); ?>
+				<?php dump_clog($ipsec_logfile, $nentries, true, array("racoon"), array(false)); ?>
 				<tr>
 					<td>
 						<br>

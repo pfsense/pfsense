@@ -57,10 +57,9 @@ echo " 7)  Ping host"
 echo " 8)  Shell"
 echo " 9)  PFtop"
 echo "10)  Traffic Logs"
-echo
 
 if [ "$PLATFORM" = "cdrom" ]; then
-    echo "Run installer to install pfSense to your local hard disk."
+    echo "99)  Install pfSense to a hard drive/memory drive, etc."
     echo
 fi
 
@@ -103,10 +102,10 @@ case ${opmode} in
 10)
 	/usr/sbin/tcpdump -n -e -ttt -i pflog0
 	;;
-installer)    
+99)    
         /scripts/lua_installer
 	;;
-99)
+100)
         if grep "$WORD" "$CONFIG"
         then
         	links "https://localhost"

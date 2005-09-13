@@ -2370,7 +2370,7 @@ function carp_sync_client() {
 		    }
 		    $port = $config['system']['webgui']['port'];
 		    /* if port is empty lets rely on the protocol selection */
-		    if(!is_int($port)) {
+		    if($port == "") {
 			if($config['system']['webgui']['protocol'] == "http") {
 				$port = "80";
 			} else {

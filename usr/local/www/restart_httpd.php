@@ -39,8 +39,14 @@ include("head.inc");
 
 <p class="pgtitle"><?php echo $pgtitle; ?></p>
 
+Mounting file systems read/write...
+<?php flush(); sleep(1); conf_mount_rw(); ?>
+Done.<br>
 Forcing all PHP file permissions to 0755...
-<?php flush(); sleep(1); system('chmod 0755 /usr/local/www/*.php'); ?>
+<?php flush(); sleep(1); system('chmod -R 0755 /usr/local/www/*.php'); ?>
+Done.<br>
+Mounting file systems read only...
+<?php flush(); sleep(1); conf_mount_ro(); ?>
 Done.<br>
 Restarting mini_httpd...
 <?php flush(); sleep(1); system_webgui_start(); ?>

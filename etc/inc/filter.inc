@@ -2345,7 +2345,7 @@ function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsen
 	$msg = new XML_RPC_Message($method, $params);
 	log_error("begin synchronize XML configuration data to $url on port $port");
 	$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
-	$cli->setCredentials('admin', $password);
+	$cli->setCredentials($config['system']['username'], $password);
 	$resp = $cli->send($msg);
 	if(!$resp) {
 		log_error("A communication error occured while syncing configuration data with {$url}:{$port} - " . $cli->errstr);

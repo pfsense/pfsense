@@ -40,8 +40,6 @@ require_once("notices.inc");
 
 function filter_resync() {
 	global $config, $g;
-
-	mwexec("/sbin/pfctl -y"); /* XXX */
 }
 
 function filter_pflog_start() {

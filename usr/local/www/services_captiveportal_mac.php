@@ -67,7 +67,12 @@ if ($_GET['act'] == "del") {
 		exit;
 	}
 }
+
+$pgtitle = "Services: Captive Portal MACS";
+include("head.inc");
+
 ?>
+<body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
 <form action="services_captiveportal_mac.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>

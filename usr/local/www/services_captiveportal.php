@@ -157,7 +157,12 @@ if ($_POST) {
 		$savemsg = get_std_save_message($retval);
 	}
 }
+
+$pgtitle = "Services: Captive Portal";
+include("head.inc");
+
 ?>
+<body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
 <script language="JavaScript">
 <!--

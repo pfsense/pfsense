@@ -207,12 +207,12 @@ function system_syslogd_start() {
                         foreach($config['installedpackages']['package'] as $package) {
                                 if($package['logging']) {	
 					$pkgfacilities[] = $package['logging']['facilityname'];
-                                	$syslogconf .= '!' . $package['logging']['facilityname'] . "\n*.*\t\t\t\t\t\t%{$g['varlog_path']}/" . $package['logging']['logfilename'] . "\n";
+					$facilitylist = implode(',', $pkgfacilities);
+					mwexec("clog -i -s 10000 {$g['varlog_path']}/{$package['logging']['logfilename']}");
+                                	$syslogconf .= "!{$package['logging']['facilityname']}\n*.*\t\t\t\t\t\t%{$g['varlog_path']}/{$package['logging']['logfilename']}\n!-{$facilitylist}\n";
 				}
                         }
-			if(is_array($pkgfacilities)) $syslogconf .= '!-' . implode(',', $pkgfacilities) . "\n";
                 }
-
 		/* write syslog.conf */
 		$fd = fopen("{$g['varetc_path']}/syslog.conf", "w");
 		if (!$fd) {
@@ -223,7 +223,7 @@ function system_syslogd_start() {
 		$syslogconf .= <<<EOD
 !racoon
 *.*						%{$g['varlog_path']}/ipsec.log
-!-racoon
+!-racoon,{$facilitylist}
 local0.*					%{$g['varlog_path']}/filter.log
 local3.*					%{$g['varlog_path']}/vpn.log
 local4.*					%{$g['varlog_path']}/portalauth.log

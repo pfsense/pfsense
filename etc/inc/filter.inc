@@ -2417,7 +2417,7 @@ function carp_sync_client() {
 			$sections[] = new XML_RPC_Value('load_balancer', 'string');
 		    }		    
 		    if(count($sections) > 0) {
-			    carp_sync_xml($synchronizetoip, $carp['password'], $sections, $sections_xml, false, $port);
+			    carp_sync_xml($synchronizetoip, $carp['password'], $sections, $sections_xml, 'pfsense.restore_config_section', $port);
 			    $cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);
 			    $msg = new XML_RPC_Message('pfsense.filter_configure', array(new XML_RPC_Value($carp['password'], 'string')));
 			    $cli->setCredentials('admin', $carp['password']);

@@ -1,9 +1,5 @@
 <?php
-<<<<<<< guiconfig.inc
 /* $Id$ */
-=======
-/* $Id$ */
->>>>>>> 1.86
 /*
 	guiconfig.inc
 	by Scott Ullrich, Copyright 2004, All rights reserved.

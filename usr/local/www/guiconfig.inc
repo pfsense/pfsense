@@ -1,5 +1,9 @@
 <?php
+<<<<<<< guiconfig.inc
 /* $Id$ */
+=======
+/* $Id$ */
+>>>>>>> 1.86
 /*
 	guiconfig.inc
 	by Scott Ullrich, Copyright 2004, All rights reserved.
@@ -497,23 +501,18 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 	global $g, $config;
         $sor = isset($config['syslog']['reverse']) ? "-r" : "";
 	exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
-	/* handle grep for case */
-	if(is_array($grepfor)) {  	 
-                 $i = 0; 	 
+	if(is_array($grepfor)) {
+		 $i = 0;
                  foreach($grepfor as $agrep) { 	 
-                        $regexp = "/" . $agrep . "/i"; 	 
-			$logarr = preg_grep($regexp, $logarr); 	 
-                        $i++; 	 
-                 }
+                         $regexp = "/" . $agrep . "/i"; 	 
+                         if($grepinvert[$i]) { 	 
+                                 $logarr = preg_grep($regexp, $logarr, PREG_GREP_INVERT); 	 
+                         } else { 	 
+                                 $logarr = preg_grep($regexp, $logarr); 	 
+                         }
+			 $i++;
+                 } 	 
         }
-	/* handle grepinvert (inverse) case */
-	if(is_array($grepinvert)) {
-		foreach($grepinvert as $invert) { 
-			$regexp = "/" . $invert . "/i";
-			$logarr = preg_grep($regexp, $logarr, PREG_GREP_INVERT); 	 
-		}
-	}
-	/* assemble html table for logs */
         foreach ($logarr as $logent) {
                 $logent = preg_split("/\s+/", $logent, 6);
                 echo "<tr valign=\"top\">\n";

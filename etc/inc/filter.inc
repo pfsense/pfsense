@@ -2349,19 +2349,15 @@ function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsen
 			new XML_RPC_Value($section, 'array'),
 			new XML_RPC_Value($section_xml, 'array'));
 	$msg = new XML_RPC_Message($method, $params);
-	if($config['system']['webgui']['port'] != "") {
-		$port = $config['system']['webgui']['port'];
-		/* if port is empty lets rely on the protocol selection */
-		if($port == "") {
-			if($config['system']['webgui']['protocol'] == "http")
-				$port = "80";
-			else
-				$port = "443";
-		}
-		$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
-	} else {
-	$cli = new XML_RPC_Client('/xmlrpc.php', $url);
+	$port = $config['system']['webgui']['port'];
+	/* if port is empty lets rely on the protocol selection */
+	if($port == "") {
+		if($config['system']['webgui']['protocol'] == "http")
+			$port = "80";
+		else
+			$port = "443";
 	}
+	$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
 	$cli->setCredentials('admin', $password);
 	$resp = $cli->send($msg);
 	log_error("synchronize XML to $url on port $port");

@@ -38,10 +38,6 @@ require_once("functions.inc");
 require_once("pkg-utils.inc");
 require_once("notices.inc");
 
-function filter_resync() {
-	global $config, $g;
-}
-
 function filter_pflog_start() {
 	global $config, $g;
 

@@ -2348,9 +2348,9 @@ function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsen
 	$cli->setCredentials('admin', $password);
 	$resp = $cli->send($msg);
 	if(!$resp) {
-		log_error("A communication error occured while syncing configuration data with {$url}:{$port} - {$cli->errstr}");
+		log_error("A communication error occured while syncing configuration data with {$url}:{$port} - " . $cli->errstr);
 	} elseif($resp->faultCode()) {
-		log_error("An error code was received while syncing configuration data with {$url}:{$port} - Code {$resp->faultCode()}: {$resp->faultString()}");
+		log_error("An error code was received while syncing configuration data with {$url}:{$port} - Code " . $resp->faultCode() . ":" . $resp->faultString() );
 	} else {
 		log_error("Configuration data was successfully synced to {$url}:{$port}");
 	}
@@ -2368,13 +2368,13 @@ function carp_sync_client() {
 			$synchronizetoip = $config['system']['webgui']['protocol'];
 			$synchronizetoip .= "://";
 		    }
-		$port = $config['system']['webgui']['port'];
-		/* if port is empty lets rely on the protocol selection */
+		    $port = $config['system']['webgui']['port'];
+		    /* if port is empty lets rely on the protocol selection */
 		    if($port == "") {
-			if($config['system']['webgui']['protocol'] == "http")
-					$port = "80";
-			    else
-					$port = "443";
+			if($config['system']['webgui']['protocol'] == "http") {
+				$port = "80";
+			} else {
+				$port = "443";
 			}
 	   	    }
 		    $synchronizetoip .= $carp['synchronizetoip'];

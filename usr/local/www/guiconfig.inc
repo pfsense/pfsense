@@ -498,7 +498,7 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
         $sor = isset($config['syslog']['reverse']) ? "-r" : "";
 	exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
 	/* handle grep for case */
-	if($grepfor <> "") {  	 
+	if(is_array($grepfor)) {  	 
                  $i = 0; 	 
                  foreach($grepfor as $agrep) { 	 
                         $regexp = "/" . $agrep . "/i"; 	 

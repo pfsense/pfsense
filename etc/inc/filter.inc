@@ -2370,7 +2370,7 @@ function carp_sync_client() {
 		    }
 		    $port = $config['system']['webgui']['port'];
 		    /* if port is empty lets rely on the protocol selection */
-		    if($port == "") {
+		    if(!is_int($port)) {
 			if($config['system']['webgui']['protocol'] == "http") {
 				$port = "80";
 			} else {
@@ -2417,7 +2417,7 @@ function carp_sync_client() {
 			$sections[] = new XML_RPC_Value('load_balancer', 'string');
 		    }		    
 		    if(count($sections) > 0) {
-			    carp_sync_xml($synchronizetoip, $carp['password'], $sections, $sections_xml, $port);
+			    carp_sync_xml($synchronizetoip, $carp['password'], $sections, $sections_xml, false, $port);
 			    $cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);
 			    $msg = new XML_RPC_Message('pfsense.filter_configure', array(new XML_RPC_Value($carp['password'], 'string')));
 			    $cli->setCredentials('admin', $carp['password']);

@@ -2337,7 +2337,7 @@ function process_carp_rules() {
 	return $lines;
 }
 
-function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsense.restore_config_section', $port) {
+function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsense.restore_config_section', $port = "80") {
 	global $config;
 	$params = array(new XML_RPC_Value($password, 'string'),
 			new XML_RPC_Value($section, 'array'),

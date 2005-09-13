@@ -82,7 +82,7 @@ include("head.inc");
 			  <td class="listhdrr">User</td>
 			  <td class="listhdrr">IP address</td>
 			</tr>
-			<?php dump_clog($ipsec_logfile, $nentries, true, array("mpd")); ?>
+			<?php dump_clog($ipsec_logfile, $nentries, array("mpd"), array(false)); ?>
 			<tr>
 				<td>
 					<br>

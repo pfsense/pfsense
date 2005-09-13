@@ -2337,20 +2337,12 @@ function process_carp_rules() {
 	return $lines;
 }
 
-function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsense.restore_config_section') {
+function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsense.restore_config_section', $port) {
 	global $config;
 	$params = array(new XML_RPC_Value($password, 'string'),
 			new XML_RPC_Value($section, 'array'),
 			new XML_RPC_Value($section_xml, 'array'));
 	$msg = new XML_RPC_Message($method, $params);
-	$port = $config['system']['webgui']['port'];
-	/* if port is empty lets rely on the protocol selection */
-	if($port == "") {
-		if($config['system']['webgui']['protocol'] == "http")
-			$port = "80";
-		else
-			$port = "443";
-	}
 	log_error("begin synchronize XML configuration data to $url on port $port");
 	$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
 	$cli->setCredentials('admin', $password);
@@ -2376,6 +2368,15 @@ function carp_sync_client() {
 			$synchronizetoip = $config['system']['webgui']['protocol'];
 			$synchronizetoip .= "://";
 		    }
+		$port = $config['system']['webgui']['port'];
+		/* if port is empty lets rely on the protocol selection */
+		    if($port == "") {
+			if($config['system']['webgui']['protocol'] == "http")
+					$port = "80";
+			    else
+					$port = "443";
+			}
+	   	    }
 		    $synchronizetoip .= $carp['synchronizetoip'];
 		    $sections = array();
 		    $sections_xml = array();
@@ -2416,8 +2417,8 @@ function carp_sync_client() {
 			$sections[] = new XML_RPC_Value('load_balancer', 'string');
 		    }		    
 		    if(count($sections) > 0) {
-			    carp_sync_xml($synchronizetoip, $carp['password'], $sections, $sections_xml);
-			    $cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip);
+			    carp_sync_xml($synchronizetoip, $carp['password'], $sections, $sections_xml, $port);
+			    $cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);
 			    $msg = new XML_RPC_Message('pfsense.filter_configure', array(new XML_RPC_Value($carp['password'], 'string')));
 			    $cli->setCredentials('admin', $carp['password']);
 			    $cli->send($msg);

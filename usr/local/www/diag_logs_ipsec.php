@@ -77,7 +77,7 @@ include("head.inc");
 		  		<tr>
 					<td colspan="2" class="listtopic">Last <?=$nentries;?> IPSEC log entries</td>
 		  		</tr>
-				<?php dump_clog($ipsec_logfile, $nentries, true, array("racoon"), array(false)); ?>
+				<?php dump_clog($ipsec_logfile, $nentries); ?>
 				<tr>
 					<td>
 						<br>

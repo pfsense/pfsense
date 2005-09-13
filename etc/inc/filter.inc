@@ -2420,7 +2420,7 @@ function carp_sync_client() {
 			    carp_sync_xml($synchronizetoip, $carp['password'], $sections, $sections_xml, 'pfsense.restore_config_section', $port);
 			    $cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);
 			    $msg = new XML_RPC_Message('pfsense.filter_configure', array(new XML_RPC_Value($carp['password'], 'string')));
-			    $cli->setCredentials('admin', $carp['password']);
+			    $cli->setCredentials($config['system']['username'], $carp['password']);
 			    $cli->send($msg);
 		    }
 		}

@@ -2357,10 +2357,11 @@ function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsen
 		else
 			$port = "443";
 	}
+	log_error("begin synchronize XML configuration data to $url on port $port");
 	$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
 	$cli->setCredentials('admin', $password);
 	$resp = $cli->send($msg);
-	log_error("synchronize XML to $url on port $port");
+	log_error("end synchronize XML configuration data to $url on port $port");
 }
  
 function carp_sync_client() {

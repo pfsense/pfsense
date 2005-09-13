@@ -185,6 +185,7 @@ require_once("notices.inc");
 					<li class="lastdrop">
 						<div>Diagnostics</div>
 						<ul id="diag" class="subdrop">
+							<li><a href="/diag_arp.php" class="navlnk">ARP Tables</a></li>
 							<li><a href="/diag_backup.php" class="navlnk">Backup/Restore</a></li>
 							<li><a href="/exec.php" class="navlnk">Command Prompt</a></li>
 							<li><a href="/edit.php" class="navlnk">Edit File</a></li>
@@ -193,6 +194,7 @@ require_once("notices.inc");
 							<li><a href="/diag_ping.php" class="navlnk">Ping</a></li>
 							<li><a href="/reboot.php" class="navlnk">Reboot system</a></li>
 							<li><a href="/diag_dump_states.php" class="navlnk">States</a></li>
+							<li><a href="/diag_traceroute.php" class="navlnk">Traceroute</a></li>
 							<?php echo return_ext_menu("Diagnostics"); ?>
 							<?php if(isset($config['system']['developer'])): ?>
 							<li><hr width="80%"/></li>

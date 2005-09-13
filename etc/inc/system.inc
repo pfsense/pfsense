@@ -221,6 +221,9 @@ function system_syslogd_start() {
 		}
 		if (!isset($syslogcfg['disablelocallogging'])) {
 		$syslogconf .= <<<EOD
+!racoon
+*.*						%{$g['varlog_path']}/racoon.log
+!-racoon
 local0.*					%{$g['varlog_path']}/filter.log
 local3.*					%{$g['varlog_path']}/vpn.log
 local4.*					%{$g['varlog_path']}/portalauth.log

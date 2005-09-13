@@ -63,6 +63,7 @@ if [ "$PLATFORM" = "cdrom" ]; then
     echo
 fi
 
+echo
 read -p "Enter an option: " opmode
 echo
 

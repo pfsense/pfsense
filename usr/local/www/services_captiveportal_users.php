@@ -77,6 +77,14 @@ include("head.inc");
 	<li class="tabinact"><a href="services_captiveportal_ip.php">Allowed IP addresses</a></li>
 	<li class="tabact">Users</li>
   </ul>
+<?php
+	$tab_array = array();
+	$tab_array[] = array("Captive portal", false, "services_captiveportal.php");
+	$tab_array[] = array("Pass-through MAC", false, "services_captiveportal_mac.php");
+	$tab_array[] = array("Allowed IP addresses", false, "services_captiveportal_ip.php");
+	$tab_array[] = array("Users", true, "services_captiveportal_users.php");
+	display_top_tabs($tab_array);
+?>
   </td></tr>
   <tr>
   <td class="tabcont">

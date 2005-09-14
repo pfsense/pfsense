@@ -81,13 +81,15 @@ include("head.inc");
 <input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr><td class="tabnavtbl">
-  <ul id="tabnav">
-	<li class="tabinact1"><a href="services_captiveportal.php">Captive portal</a></li>
-	<li class="tabinact"><a href="services_captiveportal_mac.php">Pass-through MAC</a></li>
-	<li class="tabact">Allowed IP addresses</li>
-	<li class="tabinact"><a href="services_captiveportal_users.php">Users</a></li>
-  </ul>
+  <tr><td class="tabnavtbl">  
+<?php
+	$tab_array = array();
+	$tab_array[] = array("Captive portal", false, "services_captiveportal.php");
+	$tab_array[] = array("Pass-through MAC", false, "services_captiveportal_mac.php");
+	$tab_array[] = array("Allowed IP addresses", true, "services_captiveportal_ip.php");
+	$tab_array[] = array("Users", false, "services_captiveportal_users.php");
+	display_top_tabs($tab_array);
+?>
   </td></tr>
   <tr>
   <td class="tabcont">

@@ -200,12 +200,14 @@ function enable_change(enable_change) {
 <form action="services_captiveportal.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
-  <ul id="tabnav">
-	<li class="tabact">Captive portal</li>
-	<li class="tabinact"><a href="services_captiveportal_mac.php">Pass-through MAC</a></li>
-	<li class="tabinact"><a href="services_captiveportal_ip.php">Allowed IP addresses</a></li>
-	<li class="tabinact"><a href="services_captiveportal_users.php">Users</a></li>
-  </ul>
+<?php
+	$tab_array = array();
+	$tab_array[] = array("Captive portal", true, "services_captiveportal.php");
+	$tab_array[] = array("Pass-through MAC", false, "services_captiveportal_mac.php");
+	$tab_array[] = array("Allowed IP addresses", false, "services_captiveportal_ip.php");
+	$tab_array[] = array("Users", true, "services_captiveportal_users.php");
+	display_top_tabs($tab_array);
+?>  
   </td></tr>
   <tr>
   <td class="tabcont">

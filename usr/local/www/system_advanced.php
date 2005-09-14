@@ -567,7 +567,7 @@ include("head.inc");
 <?php
 
 function auto_login($status) {
-	$gettytab = file_get_contents("/etc/gettyab");
+	$gettytab = file_get_contents("/etc/gettytab");
 	$getty_split = split("\n", $gettytab);
 	conf_mount_rw();
 	$fd = fopen("/etc/gettytab", "w");

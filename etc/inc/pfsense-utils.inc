@@ -717,6 +717,18 @@ function backup_config_section($section) {
 }
 
 /*
+ *  backup_config_ts_scheduler(): returns the traffic shaper scheduler for backup
+ */
+function backup_config_ts_scheduler() {
+    global $config;
+    $new_section = &$config['syste']['schedulertype'];
+    /* generate configuration XML */
+    $xmlconfig = dump_xml_config($new_section, $section);
+    $xmlconfig = str_replace("<?xml version=\"1.0\"?>", "", $xmlconfig);
+    return $xmlconfig;
+}
+
+/*
  *  backup_config_section($section): returns as an xml file string of
  *                                   the configuration section
  */

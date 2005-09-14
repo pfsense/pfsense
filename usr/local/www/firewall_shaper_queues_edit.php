@@ -199,7 +199,7 @@ include("head.inc");
 		?>
 	      </td>
 	    </tr>
-	    <?php if ($schedulertype == "cbq"): ?>
+	    <?php if ($schedulertype == "cbq" or $schedulertype == "hfsc"): ?>
 	    <tr>
 	      <td valign="top" class="vncellreq">Bandwidth</td>
 	      <td class="vtable"> <input name="bandwidth" class="formfld" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">

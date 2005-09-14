@@ -111,3 +111,18 @@ include("head.inc");
 </tr>
 </table>
 <?php include("fend.inc"); ?>
+
+<?php
+
+function captiveportal_users_sort() {
+        global $g, $config;
+
+        function cpusercmp($a, $b) {
+                return strcasecmp($a['name'], $b['name']);
+        }
+
+        usort($config['captiveportal']['user'], "cpusercmp");
+}
+
+
+?>

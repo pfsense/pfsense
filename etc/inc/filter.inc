@@ -61,6 +61,9 @@ function filter_configure_sync() {
 	if(file_exists("/tmp/filter_dirty"))
 		unlink("/tmp/filter_dirty");
 
+	if(file_exists("/tmp/config.cache"))
+		unlink("/tmp/config.cache");
+
 	global $config, $g;
 
 	$lan_if = $config['interfaces']['lan']['if'];

@@ -87,7 +87,7 @@ include("head.inc");
 	$tab_array[] = array("Captive portal", false, "services_captiveportal.php");
 	$tab_array[] = array("Pass-through MAC", true, "services_captiveportal_mac.php");
 	$tab_array[] = array("Allowed IP addresses", false, "services_captiveportal_ip.php");
-	$tab_array[] = array("Users", true, "services_captiveportal_users.php");
+	$tab_array[] = array("Users", false, "services_captiveportal_users.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

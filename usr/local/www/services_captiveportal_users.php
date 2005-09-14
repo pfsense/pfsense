@@ -71,12 +71,6 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
-  <ul id="tabnav">
-	<li class="tabinact1"><a href="services_captiveportal.php">Captive portal</a></li>
-	<li class="tabinact"><a href="services_captiveportal_mac.php">Pass-through MAC</a></li>
-	<li class="tabinact"><a href="services_captiveportal_ip.php">Allowed IP addresses</a></li>
-	<li class="tabact">Users</li>
-  </ul>
 <?php
 	$tab_array = array();
 	$tab_array[] = array("Captive portal", false, "services_captiveportal.php");

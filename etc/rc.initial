@@ -20,21 +20,6 @@ WORD="https"
 # Set our operating platform
 PLATFORM=`cat /etc/platform`
 
-if [ -r /var/etc/disableconsole ]; then
-
-while : ; do
-
-echo
-echo
-echo "*** Console menu disabled. ***"
-echo
-
-read tmp
-
-done
-
-else
-
 # endless loop
 while : ; do
 
@@ -120,4 +105,3 @@ sleep 1
 
 done
 
-fi

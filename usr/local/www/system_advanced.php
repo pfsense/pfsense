@@ -135,10 +135,13 @@ if ($_POST) {
 		$oldkey = $config['system']['webgui']['private-key'];
 		$config['system']['webgui']['certificate'] = base64_encode($_POST['cert']);
 		$config['system']['webgui']['private-key'] = base64_encode($_POST['key']);
-		if($_POST['disableconsolemenu'] == "yes")
+		if($_POST['disableconsolemenu'] == "yes") {
 			$config['system']['disableconsolemenu'] = true;
-		else
+			auto_login(true);
+		} else {
 			unset($config['system']['disableconsolemenu']);
+			auto_login(false);
+		}
 		unset($config['system']['webgui']['expanddiags']);
 		$config['system']['optimization'] = $_POST['optimization'];
 		
@@ -561,5 +564,28 @@ include("head.inc");
 
 <?php include("fend.inc"); ?>
 
+<?php
+
+function auto_login($status) {
+	$gettytab = file_get_contents("/etc/gettyab");
+	$getty_split = split("\n", $gettytab);
+	conf_mount_rw();
+	$fd = fopen("/etc/gettytab", "w");
+	foreach($getty_split as $gs) {
+		if(stristr($gs, "cb:ce:ck:lc") == true) {
+			if($status == true) {
+				fwrite($fd, "::cb:ce:ck:lc:fd#1000:im=\r\n%s/%m (%h) (%t)\r\n\r\n:sp#1200:\\n");
+			} else {
+				fwrite($fd, ":al=root:cb:ce:ck:lc:fd#1000:im=\r\n%s/%m (%h) (%t)\r\n\r\n:sp#1200:\\n");
+			}
+		} else {
+			fwrite($fd, "{$gs}\n");
+		}
+	}
+	fclose($fd);
+	conf_mount_ro();	
+}
+
+?>
 </body>
 </html>

@@ -32,9 +32,14 @@
 require("guiconfig.inc");
 $pgtitle = "Diagnostics: ARP Table";
 include("head.inc");
-include("fbegin.inc"); 
 ?>
 <body link="#000000" vlink="#000000" alink="#000000">
+<? include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+                <td>
+
 
 <?php
 
@@ -196,5 +201,6 @@ function getHostName($mac,$ip)
   </tr>
 <?php endforeach; ?>
 </table>
+</td></tr></table>
 
 <?php include("fend.inc"); ?>

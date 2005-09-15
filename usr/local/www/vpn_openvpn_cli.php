@@ -97,18 +97,23 @@ include("head.inc");
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
-  <ul id="tabnav">	        
-	<li class="tabinact1"><a href="vpn_openvpn.php">Server</a></li>
-	<li class="tabact">Client</li>
-  </ul>
+<?php
+        $tab_array = array();
+        $tab_array[] = array("Server", false, "vpn_openvpn.php");
+        $tab_array[] = array("Client", true, "vpn_openvpn.php");
+        display_top_tabs($tab_array);
+?>
   </td></tr>
   <tr>
-  <td class="tabcont">
+  <td>
+    <div id="mainarea">
+    <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+  <td colspan="6">
   <strong><span class="red">WARNING: This feature is experimental and modifies your optional interface configuration.
   Backup your configuration before using OpenVPN, and restore it before upgrading.<br>
 &nbsp;  <br>
     </span></strong>
-    <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 	  <td width="10%" class="listhdrr">Interface</td>
 	  <td width="10%" class="listhdrr">Protocol</td>
@@ -147,15 +152,16 @@ include("head.inc");
 	   <td class="listbg"><?=$spans;?>
 	  	<?= htmlspecialchars($client['descr']);?>&nbsp;
 	  <?=$spane;?></td>
-	  <td valign="middle" nowrap class="list"> <a href="vpn_openvpn_cli_edit.php?id=<?=$i;?>"><img src="e.gif" title="edit client configuration" width="17" height="17" border="0"></a>
-		 &nbsp;<a href="vpn_openvpn_cli.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this client configuration?')"><img src="x.gif" title="delete client configuration" width="17" height="17" border="0"></a></td>
+	  <td valign="middle" nowrap class="list"> <a href="vpn_openvpn_cli_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit client configuration" width="17" height="17" border="0"></a>
+		 &nbsp;<a href="vpn_openvpn_cli.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this client configuration?')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="delete client configuration" width="17" height="17" border="0"></a></td>
 	</tr>
   	<?php $i++; endforeach; ?>
 	<tr> 
 	  <td class="list" colspan="6">&nbsp;</td>
-	  <td class="list"> <a href="vpn_openvpn_cli_edit.php"><img src="plus.gif" title="add client configuration" width="17" height="17" border="0"></a></td>
+	  <td class="list"> <a href="vpn_openvpn_cli_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add client configuration" width="17" height="17" border="0"></a></td>
 	</tr>
     </table>
+    </div>
   </td>
 </tr>
 </table>

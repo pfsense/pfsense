@@ -101,6 +101,8 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="services_captiveportal_ip_edit.php" method="post" name="iform" id="iform">
+<br/>
+<br/>	    
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
                   <td width="22%" valign="top" class="vncellreq">Direction</td>

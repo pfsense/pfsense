@@ -69,6 +69,8 @@ include("head.inc");
 ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
+<br/>
+<br/>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php

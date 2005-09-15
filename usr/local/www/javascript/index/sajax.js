@@ -6,7 +6,7 @@ function updateMeters()
 	x_get_pfstate(updateState);
 	x_get_temp(updateTemp);
 
-	window.setTimeout('updateMeters()', 5000);
+	window.setTimeout('updateMeters()', 10000);
 }
 
 function updateMemory(x)
@@ -44,4 +44,4 @@ function updateState(x)
 	document.getElementById("pfstate").value = x;
 }
 
-window.setTimeout('updateMeters()', 5000);
+window.setTimeout('updateMeters()', 10000);

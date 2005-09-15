@@ -1174,7 +1174,8 @@ function is_jumbo_capable($int) {
 	 * http://www.freebsd.org/cgi/man.cgi?query=vlan&manpath=FreeBSD+6.0-current&format=html
 	 * Only the following drivers support large frames
 	 */
-	$capable = array("bfe", "dc", "de", "fxp", "hme", "rl", "sis", "ste", "tl", "tx", "xl" );
+	$capable = array("bfe", "dc", "de", "fxp", "hme", "rl", "sis", "ste",
+		"tl", "tx", "xl");
 	
 	$int_family = preg_split("/[0-9]+/", $int);
 
@@ -1183,5 +1184,32 @@ function is_jumbo_capable($int) {
 	else
 		return false;
 }
+
+/****f* interfaces/is_altq_capable
+ * NAME
+ *   is_altq_capable - Test if interface is capable of using ALTQ
+ * INPUTS
+ *   $int            - string containing interface name
+ * RESULT
+ *   boolean         - true or false
+ ******/
+
+function is_altq_capable($int) {
+        /* Per:
+         * http://www.freebsd.org/cgi/man.cgi?query=altq&manpath=FreeBSD+6.0-current&format=html
+         * Only the following drivers have ALTQ support
+         */
+        $capable = array("an", "ath", "awi", "bfe", "bge", "dc", "de", "ed",
+		"em", "fxp", "hme", "lnc", "ndis", "rl", "sf", "sis", "sk",
+		"tun", "vr", "wi", "xl");
+
+        $int_family = preg_split("/[0-9]+/", $int);
+
+        if (in_array($int_family[0], $capable))
+                return true;
+        else
+                return false;
+}
+
 
 ?>

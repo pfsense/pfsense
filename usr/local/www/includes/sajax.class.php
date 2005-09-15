@@ -1,5 +1,8 @@
 <?php
 
+if(Connection_Aborted()) {
+	exit;
+}
 
 class sajax {
 

@@ -1,9 +1,8 @@
 <?
-/*
-*function cpu_usage() {
-*	return get_cpuusage(get_cputicks(), get_cputicks());
-*}
-*/
+
+if(Connection_Aborted()) {
+	exit;
+}
 
 function get_uptime() {
 	exec("/sbin/sysctl -n kern.boottime", $boottime);
@@ -27,13 +26,6 @@ function get_uptime() {
 	$uptimestr .= sprintf("%02d:%02d", $uphours, $upmins);
 	return $uptimestr;
 }
-/*
-*function get_cputicks() {
-*	sleep(5);
-*	$cputicks = explode(" ", `/sbin/sysctl -n kern.cp_time`);
-*	return $cputicks;
-*}
-*/
 
 function cpu_usage() {
 	sleep(5);

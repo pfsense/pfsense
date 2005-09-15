@@ -1,8 +1,9 @@
 <?
-function cpu_usage() {
-	return get_cpuusage(get_cputicks(), get_cputicks());
-}
-
+/*
+*function cpu_usage() {
+*	return get_cpuusage(get_cputicks(), get_cputicks());
+*}
+*/
 
 function get_uptime() {
 	exec("/sbin/sysctl -n kern.boottime", $boottime);
@@ -26,14 +27,21 @@ function get_uptime() {
 	$uptimestr .= sprintf("%02d:%02d", $uphours, $upmins);
 	return $uptimestr;
 }
+/*
+*function get_cputicks() {
+*	sleep(5);
+*	$cputicks = explode(" ", `/sbin/sysctl -n kern.cp_time`);
+*	return $cputicks;
+*}
+*/
 
-function get_cputicks() {
+function cpu_usage() {
+	usleep(250);
+	$cpuTicks = explode(" ", `/sbin/sysctl -n kern.cp_time`);
 	sleep(1);
-	$cputicks = explode(" ", `/sbin/sysctl -n kern.cp_time`);
-	return $cputicks;
-}
-
-function get_cpuusage($cpuTicks, $cpuTicks2) {
+	$cpuTicks2 = explode(" ", `/sbin/sysctl -n kern.cp_time`);
+	sleep(1);
+	
 	$diff = array();
 	$diff['user'] = ($cpuTicks2[0] - $cpuTicks[0]);
 	$diff['nice'] = ($cpuTicks2[1] - $cpuTicks[1]);

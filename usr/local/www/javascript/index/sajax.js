@@ -1,3 +1,7 @@
+if(Connection_Aborted()) {
+	exit;
+}
+
 function updateMeters()
 {
 	x_cpu_usage(updateCPU);

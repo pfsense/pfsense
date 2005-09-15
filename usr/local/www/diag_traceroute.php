@@ -33,11 +33,10 @@
 require("guiconfig.inc");
 $pgtitle = "Diagnostics: Traceroute";
 include("head.inc");
-include("fbegin.inc"); 
 ?>
-
 <body link="#000000" vlink="#000000" alink="#000000">
-
+<? include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php
 
 define('MAX_TTL', 64);
@@ -69,7 +68,6 @@ if (!isset($do_traceroute)) {
 	$ttl = DEFAULT_TTL;
 }
 ?>
-<?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 			<form action="diag_traceroute.php" method="post" name="iform" id="iform">
 			  <table width="100%" border="0" cellpadding="6" cellspacing="0">

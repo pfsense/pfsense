@@ -85,9 +85,13 @@ function get_interface_addr($ifdescr) {
 }
 
 $pgtitle = "Diagnostics: Ping";
-include("head.inc");
-include("fbegin.inc"); 
-?>
+include("head.inc"); ?>
+<body link="#000000" vlink="#000000" alink="#000000">
+<? include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+                <td>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 			<form action="diag_ping.php" method="post" name="iform" id="iform">
 			  <table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -147,4 +151,5 @@ include("fbegin.inc");
 				</tr>
 			</table>
 </form>
+</td></tr></table>
 <?php include("fend.inc"); ?>

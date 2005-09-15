@@ -124,7 +124,11 @@ if ($_POST) {
 	}
 }
 
+$pgtitle = "Services: Captive Portal Users Edit";
+include("head.inc");
+
 ?>
+<body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
 <script language="javascript" type="text/javascript" src="datetimepicker.js">
 <!--
@@ -135,6 +139,8 @@ if ($_POST) {
 </script>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <form action="services_captiveportal_users_edit.php" method="post" name="iform" id="iform">
+<br/>
+<br/>
   <table width="100%" border="0" cellpadding="6" cellspacing="0">
 	<tr> 
 	  <td width="22%" valign="top" class="vncellreq">Username</td>

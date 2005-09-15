@@ -50,7 +50,6 @@ include("fbegin.inc");
 <form action="carp_status.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td>
 <?php
@@ -60,8 +59,9 @@ include("fbegin.inc");
 	display_top_tabs($tab_array);
 ?>
 </td></tr>
-<tr><td class="tabcont">
-<table colspan="3" cellpadding="3" width="100%">
+<tr><td>
+        <div id="mainarea">
+              <table class="tabcont" width="100%" border="0" cellpadding="0" cellpadding="3">
 
 <?php
 

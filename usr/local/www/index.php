@@ -185,7 +185,7 @@ include("fbegin.inc");
 				<?php $cpuUsage = "0"; ?>
 				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="cpuwidtha" id="cpuwidtha" width="<?= $cpuUsage; ?>" border="0" align="middle" alt="blue bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="cpuwidthb" id="cpuwidthb" width="<?= (100 - $cpuUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
 				&nbsp;
-				<input style="border: 0px solid white;" size="30" name="cpumeter" id="cpumeter" value="(Updating in 10 seconds)" />
+				<input style="border: 0px solid white;" size="30" name="cpumeter" id="cpumeter" value="(Updating in 15 seconds)" />
 			</td>
 		</tr>
 		<tr>

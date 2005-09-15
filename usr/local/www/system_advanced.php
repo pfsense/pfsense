@@ -210,7 +210,8 @@ if ($_POST) {
 		} else {		
 			foreach($etc_ttys as $tty) {
 				if(stristr($tty,"ttyv0") <> true) {
-					fwrite($fout, $tty . "\n");				
+					if($tty <> "")
+						fwrite($fout, $tty . "\n");				
 				}
 			}
 			if(isset($pconfig['enableserial']))

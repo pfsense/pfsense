@@ -79,8 +79,14 @@ if ($_GET['act'] == "del") {
 		exit;
 	}
 }
+$pgtitle = "VPN: OpenVPN";
+include("head.inc");
+
 ?>
+
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (file_exists($d_sysrebootreqd_path) && !file_exists($d_ovpnclidirty_path)) print_info_box(get_std_save_message(0)); ?>
 <form action="vpn_openvpn_cli.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
@@ -92,7 +98,7 @@ if ($_GET['act'] == "del") {
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
   <ul id="tabnav">	        
-	<li class="tabinact1"><a href="vpn_openvpn_srv.php">Server</a></li>
+	<li class="tabinact1"><a href="vpn_openvpn.php">Server</a></li>
 	<li class="tabact">Client</li>
   </ul>
   </td></tr>

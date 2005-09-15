@@ -91,8 +91,19 @@ if (file_exists($d_firmwarelock_path)) {
 }
 
 /* some well knows ports */
-$wkports = array(3389 => "MS RDP", 21 => "FTP", 22 => "SSH", 23 => "Telnet", 25 => "SMTP",
-		53 => "DNS", 80 => "HTTP", 110 => "POP3", 143 => "IMAP", 443 => "HTTPS");
+$wkports = array(3389 => "MS RDP",
+	21 => "FTP",
+	22 => "SSH",
+	23 => "Telnet",
+	25 => "SMTP",
+	53 => "DNS",
+	80 => "HTTP",
+	110 => "POP3",
+	113 => "IDENT/AUTH",
+	123 => "NTP",
+	143 => "IMAP",
+	443 => "HTTPS",
+	993 => "IMAP/S");
 
 $specialnets = array("lan" => "LAN net", "pptp" => "PPTP clients");
 

@@ -1,6 +1,3 @@
-if(Connection_Aborted()) {
-	exit;
-}
 
 function updateMeters()
 {

@@ -111,12 +111,19 @@ include("head.inc");
                   <td width="78%" class="vtable"> 
                     <select name="if" class="formfld">
                       <?php
-					  foreach ($portlist as $ifn => $ifinfo): ?>
-                      <option value="<?=$ifn;?>" <?php if ($ifn == $pconfig['if']) echo "selected"; ?>> 
-                      <?=htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")");?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select></td>
+					  foreach ($portlist as $ifn => $ifinfo) 
+						if (is_jumbo_capable($ifn)) {
+							echo "<option value=\"{$ifn}\"";
+							if ($ifn == $pconfig['if'])
+								echo "selected";
+							echo ">";
+                      				        echo htmlspecialchars($ifn . " (" . $ifinfo['mac'] . ")");
+                      					echo "</option>";
+						}
+		      ?>
+                    </select>
+			<br/>
+			<span class="vexpl">Only VLAN capable interfaces will be shown.</span></td>
                 </tr>
 				<tr>
                   <td valign="top" class="vncellreq">VLAN tag </td>

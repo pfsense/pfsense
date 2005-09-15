@@ -688,6 +688,15 @@ function convert_config() {
         	}
 		$config['version'] = "2.0";
 	}
+	/* Convert 2.0 -> 2.1 */
+	if ($config['version'] == "2.0") {
+		/* shaper scheduler moved */
+		if(isset($config['system']['schedulertype'])) {
+			$config['shaper']['schedulertype'] = $config['system']['schedulertype'];
+			unset($config['system']['schedulertype']);
+		}
+		$config['version'] = "2.1";
+	}
 
 
 	if ($prev_version != $config['version'])

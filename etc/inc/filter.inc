@@ -2406,8 +2406,6 @@ function carp_sync_client() {
 		    if($carp['synchronizetrafficshaper'] != "" and is_array($config['shaper'])) {
 			$sections_xml[] = new XML_RPC_Value(backup_config_section("shaper"), 'string');
 			$sections[] = new XML_RPC_Value('shaper', 'string');
-			$sections_xml[] = new XML_RPC_Value(backup_config_ts_scheduler(), 'string');
-			$sections[] = new XML_RPC_Value('shaper', 'string');
 		    }
 		    if($carp['synchronizestaticroutes'] != "" and is_array($config['staticroutes'])) {
 			$sections_xml[] = new XML_RPC_Value(backup_config_section("staticroutes"), 'string');

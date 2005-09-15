@@ -28,7 +28,7 @@ function get_uptime() {
 }
 
 function get_cputicks() {
-	sleep(5);
+	sleep(1);
 	$cputicks = explode(" ", `/sbin/sysctl -n kern.cp_time`);
 	return $cputicks;
 }

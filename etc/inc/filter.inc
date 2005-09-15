@@ -206,7 +206,7 @@ function filter_configure_sync() {
 
 function filter_get_altq_queue_scheduler_type($associatedrule) {
 	global $config;
-	return $config['system']['schedulertype'];
+	return $config['shaper']['schedulertype'];
 }
 
 function filter_get_rule_interface($associatedrulenumber) {
@@ -300,7 +300,7 @@ function filter_generate_altq_queues($altq_ints) {
 				if(isset($rule['realtime']) and $rule['realtime'] <> "") {
 					$options .= " realtime(" . $rule['realtime1'] . " " . $rule['realtime2'] . " " . $rule['realtime3'] . ")";
 				}
-				$scheduler_type = $config['system']['schedulertype'];
+				$scheduler_type = $config['shaper']['schedulertype'];
 				$altq_rules .= $scheduler_type . " ";
 				if($options)
 					$altq_rules .= "(". $options . " )";
@@ -410,7 +410,7 @@ function filter_setup_altq_interfaces() {
 			$altq_rules .= "altq on " . $config['interfaces'][$ifname]['if'] . " ";
 			if($config['interfaces'][$ifname]['bandwidth'] <> "")
 				$bandwidth = " bandwidth " . $config['interfaces'][$ifname]['bandwidth'] . $config['interfaces'][$ifname]['bandwidthtype'];
-			$altq_rules .=  $config['system']['schedulertype'] . $bandwidth  . " ";
+			$altq_rules .=  $config['shaper']['schedulertype'] . $bandwidth  . " ";
 			$altq_rules .= "queue { " . $queue_names . " }";
 		}
 		$altq_rules .= "\n";

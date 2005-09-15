@@ -45,7 +45,7 @@ $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
-$pconfig['schedulertype'] = $config['system']['schedulertype'];
+$pconfig['schedulertype'] = $config['shaper']['schedulertype'];
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
 $pconfig['theme'] = $config['system']['theme'];
 $pconfig['disablerendevouz'] = $config['system']['disablerendevouz'];
@@ -167,7 +167,7 @@ if ($_POST) {
 			unset($config['system']['webgui']['noantilockout']);
 
 		/* Firewall and ALTQ options */
-		$config['system']['schedulertype'] = $_POST['schedulertype'];
+		$config['shaper']['schedulertype'] = $_POST['schedulertype'];
 		$config['system']['maximumstates'] = $_POST['maximumstates'];
 
 		if($_POST['enablesshd'] == "yes") {

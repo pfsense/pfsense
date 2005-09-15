@@ -157,17 +157,24 @@ include("head.inc");
 <form action="vpn_openvpn.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
-  <ul id="tabnav">	        
-	<li class="tabact">Server</li>
-	<li class="tabinact"><a href="vpn_openvpn_cli.php">Client</a></li>
-  </ul>
+<?php
+        $tab_array = array();
+        $tab_array[] = array("Server", true, "vpn_openvpn.php");
+        $tab_array[] = array("Client", false, "vpn_openvpn.php");
+        display_top_tabs($tab_array);
+?>
   </td></tr>
   <tr>
-  <td class="tabcont">
+  <td>
+    <div id="mainarea">
+    <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+  <td colspan="2">
     <strong><span class="red">WARNING: This feature is experimental and modifies your optional interface configuration.
   Backup your configuration before using OpenVPN, and restore it before upgrading.<br>
 &nbsp;  <br>
-    </span></strong><table width="100%" border="0" cellpadding="6" cellspacing="0">
+    </span></strong>
+  </td></tr>
   <tr>
     <td width="22%" valign="top" class="vtable">&nbsp;</td>
     <td width="78%" class="vtable">
@@ -350,7 +357,9 @@ include("head.inc");
           </strong></span>Changing any settings on this page will disconnect all clients!</span>
 	</td>
       </tr>
-    </table>  </td>
+    </table>
+    </div>
+</td>
 </tr>
 </table>
 </form>

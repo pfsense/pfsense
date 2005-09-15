@@ -43,7 +43,9 @@ fi
 /sbin/conscontrol mute off >/dev/null
 
 # Mount /. If it fails run a fsck.
-/sbin/mount -w / || /sbin/fsck -y
+if [ ! "$PLATFORM" = "cdrom" ] ; then
+    /sbin/mount -w / || /sbin/fsck -y
+fi
 
 # Check to see if a compact flash mountpoint exists
 # If it fails to mount then run a fsck -y

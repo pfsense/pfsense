@@ -102,13 +102,13 @@ include("head.inc");
                   <td class="listbg">
                     <?=$userent['expirationdate']; ?>&nbsp;
                   </td>
-                  <td valign="middle" nowrap class="list"> <a href="services_captiveportal_users_edit.php?id=<?=$i; ?>"><img src="/themes/{$g['theme']}/icon_e.gif" title="edit user" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="services_captiveportal_users.php?act=del&id=<?=$i; ?>" onclick="return confirm('Do you really want to delete this user?')"><img src="/themes/{$g['theme']}/icon_x.gif" title="delete user" width="17" height="17" border="0"></a></td>
+                  <td valign="middle" nowrap class="list"> <a href="services_captiveportal_users_edit.php?id=<?=$i; ?>"><img src="/themes/<?php echo $g['theme']; ?>/images/icon_e.gif" title="edit user" width="17" height="17" border="0"></a>
+                     &nbsp;<a href="services_captiveportal_users.php?act=del&id=<?=$i; ?>" onclick="return confirm('Do you really want to delete this user?')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="delete user" width="17" height="17" border="0"></a></td>
 		</tr>
 	<?php $i++; endforeach; ?>
 		<tr> 
 			  <td class="list" colspan="3"></td>
-			  <td class="list"> <a href="services_captiveportal_users_edit.php"><img src="/themes/{$g['theme']}/icon_plus.gif" title="add user" width="17" height="17" border="0"></a></td>
+			  <td class="list"> <a href="services_captiveportal_users_edit.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icon_plus.gif" title="add user" width="17" height="17" border="0"></a></td>
 		</tr>
  </table>     
 </td>

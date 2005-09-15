@@ -68,7 +68,7 @@ function get_pfstate() {
 
 function disk_usage()
 {
-	exec("df -h | grep -w '/' | awk '{ print $5 }' | cut -d '%' -f 1", $dfout);
+	exec("/bin/df -h | /usr/bin/grep -w '/' | /usr/bin/awk '{ print $5 }' | /usr/bin/cut -d '%' -f 1", $dfout);
 	$diskusage = trim($dfout[0]);
 
 	return $diskusage;
@@ -76,7 +76,7 @@ function disk_usage()
 
 function swap_usage()
 {
-	$swapUsage = `/usr/sbin/swapinfo | cut -c45-55 | grep "%"`;
+	$swapUsage = `/usr/sbin/swapinfo | /usr/bin/cut -c45-55 | /usr/bin/grep "%"`;
 	$swapUsage = ereg_replace('%', "", $swapUsage);
 	$swapUsage = ereg_replace(' ', "", $swapUsage);
 	$swapUsage = rtrim($swapUsage);

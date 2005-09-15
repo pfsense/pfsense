@@ -210,6 +210,7 @@ include("fbegin.inc");
 		<?php endif; ?>
 <?php
 		/* XXX - Stub in the HW monitor for net4801 - needs to use platform var's once we start using them */
+		/* XXX - this should be grep net4801, but the graph doesn't update right now and I don't want to fix it right now - billm */
 		$is4801 = `/sbin/dmesg -a | grep NET4801`;
 		if($is4801 <> ""):
 			exec("/usr/local/sbin/env4801 -i");

@@ -1160,4 +1160,28 @@ function get_current_wan_address() {
 	}
 }
 
+/****f* interfaces/is_jumbo_capable
+ * NAME
+ *   is_jumbo_capable - Test if interface is jumbo frame capable.  Useful for determining VLAN capability.
+ * INPUTS
+ *   $int             - string containing interface name
+ * RESULT
+ *   boolean          - true or false
+ ******/
+
+function is_jumbo_capable($int) {
+	/* Per:
+	 * http://www.freebsd.org/cgi/man.cgi?query=vlan&manpath=FreeBSD+6.0-current&format=html
+	 * Only the following drivers support large frames
+	 */
+	$capable = array("bfe", "dc", "de", "fxp", "hme", "rl", "sis", "ste", "tl", "tx", "xl" );
+	
+	$int_family = preg_split("/[0-9]+/", $int);
+
+	if (in_array($int_family[0], $capable))
+		return true;
+	else
+		return false;
+}
+
 ?>

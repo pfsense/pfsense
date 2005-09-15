@@ -34,21 +34,20 @@ function get_cputicks() {
 }
 
 function get_cpuusage($cpuTicks, $cpuTicks2) {
-
 	$diff = array();
-	$diff['user'] = ($cpuTicks2[0] - $cpuTicks[0])+1;
-	$diff['nice'] = ($cpuTicks2[1] - $cpuTicks[1])+1;
-	$diff['sys'] = ($cpuTicks2[2] - $cpuTicks[2])+1;
-	$diff['intr'] = ($cpuTicks2[3] - $cpuTicks[3])+1;
-	$diff['idle'] = ($cpuTicks2[4] - $cpuTicks[4])+1;
+	$diff['user'] = ($cpuTicks2[0] - $cpuTicks[0]);
+	$diff['nice'] = ($cpuTicks2[1] - $cpuTicks[1]);
+	$diff['sys'] = ($cpuTicks2[2] - $cpuTicks[2]);
+	$diff['intr'] = ($cpuTicks2[3] - $cpuTicks[3]);
+	$diff['idle'] = ($cpuTicks2[4] - $cpuTicks[4]);
 	
 	//echo "<!-- user: {$diff['user']}  nice {$diff['nice']}  sys {$diff['sys']}  intr {$diff['intr']}  idle {$diff['idle']} -->";
 	$totalDiff = $diff['user'] + $diff['nice'] + $diff['sys'] + $diff['intr'] + $diff['idle'];
-	$totalused = $diff['user'] + $diff['nice'] + $diff['sys'] + $diff['intr'] - 1;
-	$cpuUsage = round(100 * ($totalused / $totalDiff), 0);
-	
-	#$totalDiff = $diff['user'] + $diff['nice'] + $diff['sys'] + $diff['intr'] + $diff['idle'];
-	#$cpuUsage = round(100 * (1 - $diff['idle'] / $totalDiff), 0);
+	$totalused = $diff['user'] + $diff['nice'] + $diff['sys'] + $diff['intr'];
+		if (isset($totalused)&&$totalused <= 0) {
+			$totalused = 0.001;
+		}
+	$cpuUsage = floor(100 * ($totalused / $totalDiff));
 	
 	return $cpuUsage;
 }

@@ -86,7 +86,7 @@
 	<stepsubmitphpaction>
 	    
 		/* Magic shaper uses HFSC */
-		$config['system']['schedulertype'] = "hfsc";
+		$config['shaper']['schedulertype'] = "hfsc";
 
 		/* Create queues */
 		/* WAN queues */

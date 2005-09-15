@@ -1552,8 +1552,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 							$dst = "$ppoesa/$pppoesn";
 							break;						
 					}
+					if (isset($rule['destination']['not'])) $dst = " !" . $dst;
 				}
-				if (isset($rule['destination']['not'])) $dst = " !" . $dst;
 			} else if ($rule['destination']['address']) {
 				$not = "";
 				if (isset($rule['destination']['not'])) $not = "! ";

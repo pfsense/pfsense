@@ -65,8 +65,27 @@ function get_pfstate() {
         return $curentries . $maxstates;
 }
 
-function get_temp($type) {
-	switch($type) {
+function has_temp() {
+	if(`/sbin/dmesg -a | /usr/bin/grep net4801` <> "") {
+		/* Initialize hw monitor */
+		exec("/usr/local/sbin/env4801 -i");
+		return true;
+	}
+
+	/* should only reach here if there is no hardware monitor */
+	return false;
+}
+
+function get_hwtype() {
+        if(`/sbin/dmesg -a | /usr/bin/grep net4801` <> "") {
+                return "4801";
+        }
+
+	return;
+}
+
+function get_temp() {
+	switch(get_hwtype()) {
 		case '4801':
 			$ret = rtrim(`/usr/local/sbin/env4801 | /usr/bin/grep Temp |/usr/bin/cut -c24-25`);
 			break;

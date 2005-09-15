@@ -4,6 +4,7 @@ function updateMeters()
 	x_mem_usage(updateMemory);
 	x_get_uptime(updateUptime);
 	x_get_pfstate(updateState);
+	x_get_temp(updateTemp);
 
 	window.setTimeout('updateMeters()', 5000);
 }
@@ -22,6 +23,16 @@ function updateCPU(x)
 	
 	document.getElementById("cpuwidtha").style.width = x + 'px';
 	document.getElementById("cpuwidthb").style.width = (100 - x) + 'px';
+}
+
+function updateTemp(x)
+{
+	if(document.getElementById("tempmeter")) {
+	document.getElementById("tempmeter").value = x + '%';
+	
+	document.getElementById("tempwidtha").style.width = x + 'px';
+	document.getElementById("tempwidthb").style.width = (100 - x) + 'px';
+	}
 }
 
 function updateUptime(x)

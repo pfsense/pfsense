@@ -65,6 +65,17 @@ function get_pfstate() {
         return $curentries . $maxstates;
 }
 
+function get_temp($type) {
+	switch($type) {
+		case '4801':
+			$ret = rtrim(`/usr/local/sbin/env4801 | /usr/bin/grep Temp |/usr/bin/cut -c24-25`);
+			break;
+		default:
+			return;
+	}
+
+	return $ret;
+}
 
 function disk_usage()
 {

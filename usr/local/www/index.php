@@ -50,7 +50,7 @@
 	$oSajax = new sajax();
 	$oSajax->sajax_remote_uri = 'sajax/index.sajax.php';
 	$oSajax->sajax_request_type = 'POST';
-	$oSajax->sajax_export("mem_usage","cpu_usage","get_uptime","get_pfstate");
+	$oSajax->sajax_export("mem_usage","cpu_usage","get_uptime","get_pfstate", "get_temp");
 	$oSajax->sajax_handle_client_request();
 	############################################################################
 
@@ -211,14 +211,16 @@ include("fbegin.inc");
 <?php
 		/* XXX - Stub in the HW monitor for net4801 - needs to use platform var's once we start using them */
 		/* XXX - this should be grep net4801, but the graph doesn't update right now and I don't want to fix it right now - billm */
-		$is4801 = `/sbin/dmesg -a | grep NET4801`;
+		$is4801 = `/sbin/dmesg -a | /usr/bin/grep net4801`;
 		if($is4801 <> ""):
 			exec("/usr/local/sbin/env4801 -i");
-			$Temp = rtrim(`/usr/local/sbin/env4801 | grep Temp |cut -c24-25`);
+			$hwtype = "4801";
+			
 ?>
 		<tr>
 			<td width='25%' class='vncellt'>Temperature</td>
 			<td width='75%' class='listr'>
+				<?php $temp = get_temp($hwtype); ?>
 				<img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_blue.gif" height="15" name="Tempwidtha" id="tempwidtha" width="<?= $temp; ?>" border="0" align="middle" alt="blue bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_gray.gif" height="15" name="Tempwidthb" id="tempwidthb" width="<?= (100 - $temp); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
 				&nbsp;
 				<input style="border: 0px solid white;" size="30" name="Tempmeter" id="Tempmeter" value="<?= $temp."C"; ?>" />

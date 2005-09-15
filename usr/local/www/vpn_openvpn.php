@@ -160,7 +160,7 @@ include("head.inc");
 <?php
         $tab_array = array();
         $tab_array[] = array("Server", true, "vpn_openvpn.php");
-        $tab_array[] = array("Client", false, "vpn_openvpn.php");
+        $tab_array[] = array("Client", false, "vpn_openvpn_cli.php");
         display_top_tabs($tab_array);
 ?>
   </td></tr>

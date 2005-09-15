@@ -109,13 +109,13 @@ include("head.inc");
 	  <td class="listbg">
 		<?=htmlspecialchars($mac['descr']);?>&nbsp;
 	  </td>
-	  <td valign="middle" nowrap class="list"> <a href="services_captiveportal_mac_edit.php?id=<?=$i;?>"><img src="e.gif" title="edit host" width="17" height="17" border="0"></a>
-		 &nbsp;<a href="services_captiveportal_mac.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this host?')"><img src="x.gif" title="delete host" width="17" height="17" border="0"></a></td>
+	  <td valign="middle" nowrap class="list"> <a href="services_captiveportal_mac_edit.php?id=<?=$i;?>"><img src="/themes/{$g['theme']}/icon_e.gif" title="edit host" width="17" height="17" border="0"></a>
+		 &nbsp;<a href="services_captiveportal_mac.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this host?')"><img src="/themes/{$g['theme']}/icon_x.gif" title="delete host" width="17" height="17" border="0"></a></td>
 	</tr>
   <?php $i++; endforeach; ?>
 	<tr> 
 	  <td class="list" colspan="2">&nbsp;</td>
-	  <td class="list"> <a href="services_captiveportal_mac_edit.php"><img src="plus.gif" title="add host" width="17" height="17" border="0"></a></td>
+	  <td class="list"> <a href="services_captiveportal_mac_edit.php"><img src="/themes/{$g['theme']}/icon_plus.gif" title="add host" width="17" height="17" border="0"></a></td>
 	</tr>
 	<tr>
 	<td colspan="2" class="list"><span class="vexpl"><span class="red"><strong>

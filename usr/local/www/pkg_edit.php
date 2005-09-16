@@ -125,8 +125,7 @@ if ($_POST) {
 						} else {
 						  if($firstfield == $rowhelperfield['fieldname']) $rows++;
 						}
-						$comd = "\$value = \$_POST['" . $rowhelperfield['fieldname'] . $x . "'];";						
-						echo($comd . "<br>");
+						$comd = "\$value = \$_POST['" . $rowhelperfield['fieldname'] . $x . "'];";
 						eval($comd);
 						if($value <> "") {
 							$comd = "\$pkgarr['row'][" . $x . "]['" . $rowhelperfield['fieldname'] . "'] = \"" . $value . "\";";

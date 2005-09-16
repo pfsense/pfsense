@@ -74,6 +74,7 @@ include("head.inc");
 ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
+<p class="pgtitle">Services: Captive portal IP</p>
 <form action="services_captiveportal_ip.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_allowedipsdirty_path)): ?><p>

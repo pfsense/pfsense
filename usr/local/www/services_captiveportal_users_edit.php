@@ -138,6 +138,7 @@ include("head.inc");
 // -->
 </script>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
+<p class="pgtitle">Services: Captive portal Users Edit</p>
 <form action="services_captiveportal_users_edit.php" method="post" name="iform" id="iform">
 <br/>
 <br/>

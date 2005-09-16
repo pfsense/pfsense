@@ -75,6 +75,7 @@ include("head.inc");
 <body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
 <form action="services_captiveportal_mac.php" method="post">
+<p class="pgtitle">Services: Captive portal MAC</p>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_passthrumacsdirty_path)): ?><p>
 <?php print_info_box_np("The captive portal MAC address configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>

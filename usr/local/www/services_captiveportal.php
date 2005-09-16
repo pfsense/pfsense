@@ -29,7 +29,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("Services", "Captive portal");
 require("guiconfig.inc");
 
 if (!is_array($config['captiveportal'])) {
@@ -199,6 +198,7 @@ function enable_change(enable_change) {
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <br/>
 <br/>
+<p class="pgtitle">Services: Captive portal</p>
 <form action="services_captiveportal.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">

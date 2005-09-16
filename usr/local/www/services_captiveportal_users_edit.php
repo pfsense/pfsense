@@ -140,8 +140,6 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <p class="pgtitle">Services: Captive portal Users Edit</p>
 <form action="services_captiveportal_users_edit.php" method="post" name="iform" id="iform">
-<br/>
-<br/>
   <table width="100%" border="0" cellpadding="6" cellspacing="0">
 	<tr> 
 	  <td width="22%" valign="top" class="vncellreq">Username</td>

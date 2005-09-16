@@ -122,6 +122,9 @@ if ($_POST) {
 			$a_maps[] = $mapent;
 		
 		write_config();
+
+                if (isset($config['dhcpd'][$if]['staticarp']))
+			interfaces_staticarp_configure($if);		
 		
 		header("Location: services_dhcp.php?if={$if}");
 		exit;

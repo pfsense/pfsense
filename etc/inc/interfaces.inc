@@ -355,7 +355,11 @@ function interfaces_carp_configure() {
 				$carp_instances_counter++;
 			}
 		}
-	}
+	} else {
+		/* hush little pfsync, don't say a word.  GeekGod's gonna
+		   buy you a mocking bird. */
+		mwexec("/sbin/ifconfig pfsync0 syncdev lo0 up");
+	}	
 	/* remove any dangling carp references */
 	for($x=$carp_instances_counter; $x<$total_carp_interfaces_defined; $x++) {
 		mwexec("/sbin/ifconfig carp{$x} down");

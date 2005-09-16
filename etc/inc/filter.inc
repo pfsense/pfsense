@@ -1043,17 +1043,6 @@ function filter_nat_rules_generate() {
 	$natrules .= "\n# Load balancing anchor - slbd updates\n";
 	$natrules .= "rdr-anchor \"slb\"\n";
 
-	/* captive portal redirects */
-	if(isset($config['captiveportal']['enable'])) {
-		$natrules .= "# Captive Portal\n";
-		$cp_interface = filter_translate_type_to_real_interface($config['captiveportal']['interface']);
-		$cp_ip = $config['interfaces'][$config['captiveportal']['interface']]['ipaddr'];
-		if($cp_ip == "dhcp")
-			$cp_ip = find_interface_ip($cp_interface);
-		$natrules .= "no rdr on {$cp_interface} proto tcp from <captiveportal> to any \n";
-		$natrules .= "rdr on {$cp_interface} proto tcp from any to any port { 80 443 } -> {$cp_ip} port 8000\n\n";
-	}
-
 	if(!isset($config['system']['disableftpproxy'])) {
 		$optcfg = array();
 		generate_optcfg_array($optcfg);	

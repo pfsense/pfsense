@@ -40,8 +40,8 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
-$pconfig['schedulertype'] = $config['system']['schedulertype'];
-$schedulertype = $config['system']['schedulertype'];
+$pconfig['schedulertype'] = $config['shaper']['schedulertype'];
+$schedulertype = $config['shaper']['schedulertype'];
 
 if (isset($id)) {
 	if (!is_numeric($id)) {

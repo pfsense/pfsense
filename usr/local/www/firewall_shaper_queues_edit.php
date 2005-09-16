@@ -231,15 +231,7 @@ include("head.inc");
 	    <tr>
 	      <td width="22%" valign="top" class="vncell">Scheduler options</td>
 	      <td width="78%" class="vtable">
-	<?php
-		$isdefaultdefined = 0;
-		foreach($config['shaper'] as $queue) {
-			if(isset($queue["defaultqueue"])) $isdefaultdefined = 1;
-		}
-	?>
-	<?php if ($isdefaultdefined == 0): ?>
-	        <input type="checkbox" id="defaultqueue" name="defaultqueue" <?php if($defaultqueue) echo " CHECKED";?> > Default queue<br>
-	<? endif; ?>
+	<input type="checkbox" id="defaultqueue" name="defaultqueue" <?php if($defaultqueue) echo " CHECKED";?> > Default queue<br>
 	<?php if ($schedulertype == "cbq"): ?>
 		<input type="checkbox" id="borrow" name="borrow" <?php if($borrow) echo " CHECKED";?> > Borrow from other queues when available<br>
 	<? endif; ?>

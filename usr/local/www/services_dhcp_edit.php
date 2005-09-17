@@ -125,6 +125,8 @@ if ($_POST) {
 
                 if (isset($config['dhcpd'][$if]['staticarp']))
 			interfaces_staticarp_configure($if);		
+
+		services_dhcpd_configure();
 		
 		header("Location: services_dhcp.php?if={$if}");
 		exit;

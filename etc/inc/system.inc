@@ -403,38 +403,49 @@ EOD;
 	return $res;
 }
 
-function system_generate_lighty_config($filename, $cert, $key, $pid_file) {
+function system_generate_lighty_config($filename, $cert, $key, $pid_file, $port = "") {
+	
+	/* create directory to hold compressed items */
+	if(!is_dir("/tmp/lighttpd/cache/compress/"))
+		mkdir("/tmp/lighttpd/cache/compress/");
+	
+	if($port <> "")
+		$lighty_port = $port;
+	else
+		$lighty_port = "80";
 	
 	$lighy_config .= <<<EOD
-
+#
 # lighttpd configuration file
 #
 # use a it as base for lighttpd 1.0.0 and above
-
+#
 ############ Options you really have to take care of ####################
 
 ## modules to load
 server.modules              = (
-                               "mod_rewrite",
-                               "mod_redirect",
-#                               "mod_alias",
+                                "mod_rewrite",
+                                "mod_redirect",
                                 "mod_access",
-#                               "mod_auth",
-#                               "mod_status",
-                               "mod_setenv",
-                               "mod_fastcgi",
-#                               "mod_proxy",
-#                               "mod_simple_vhost",
-#                               "mod_evhost",
-#                               "mod_userdir",
-                               "mod_cgi",
-                               "mod_compress",
+                                "mod_setenv",
+                                "mod_fastcgi",
+                                "mod_compress")
+
+## Unused modules
 #                               "mod_ssi",
 #                               "mod_usertrack",
 #                               "mod_expire",
 #                               "mod_secdownload",
 #                               "mod_rrdtool",
-                                "mod_accesslog" )
+#                               "mod_auth",
+#                               "mod_status",
+#                               "mod_alias",
+#                               "mod_proxy",
+#                               "mod_simple_vhost",
+#                               "mod_evhost",
+#                               "mod_userdir",
+#                               "mod_cgi",
+#                                "mod_accesslog"
 
 ## a static document-root, for virtual-hosting take look at the
 ## server.virtual-* options
@@ -503,11 +514,6 @@ mimetype.assign             = (
 # Use the "Content-Type" extended attribute to obtain mime type if possible
 #mimetypes.use-xattr        = "enable"
 
-
-## send a different Server: header
-## be nice and keep it at lighttpd
-#server.tag                 = "lighttpd"
-
 #### accesslog module
 accesslog.filename          = "/dev/null"
 
@@ -519,14 +525,10 @@ accesslog.filename          = "/dev/null"
 url.access-deny             = ( "~", ".inc" )
 
 
-
 ######### Options that are good to be but not neccesary to be changed #######
 
 ## bind to port (default: 80)
-#server.port                = 81
-
-## bind to localhost (default: all interfaces)
-#server.bind                = "grisu.home.kneschke.de"
+server.port                = {$lighty_port}
 
 ## error-handler for status 404
 #server.error-handler-404   = "/error-handler.html"
@@ -535,55 +537,18 @@ url.access-deny             = ( "~", ".inc" )
 ## to help the rc.scripts
 server.pid-file            = "/var/run/{$pid_file}"
 
-
-###### virtual hosts
-##
-##  If you want name-based virtual hosting add the next three settings and load
-##  mod_simple_vhost
-##
-## document-root =
-##   virtual-server-root + virtual-server-default-host + virtual-server-docroot
-## or
-##   virtual-server-root + http-host + virtual-server-docroot
-##
-#simple-vhost.server-root   = "/home/weigon/wwwroot/servers/"
-#simple-vhost.default-host  = "grisu.home.kneschke.de"
-#simple-vhost.document-root = "/pages/"
-
-
-##
-## Format: <errorfile-prefix><status-code>.html
-## -> ..../status-404.html for 'File not found'
-#server.errorfile-prefix    = "/home/weigon/projects/lighttpd/doc/status-"
-
 ## virtual directory listings
-#server.dir-listing         = "enable"
+server.dir-listing         = "disable"
 
 ## enable debugging
-#debug.log-request-header   = "enable"
-#debug.log-response-header  = "enable"
-#debug.log-request-handling = "enable"
-#debug.log-file-not-found   = "enable"
-
-### only root can use these options
-#
-# chroot() to directory (default: no chroot() )
-#server.chroot              = "/"
+debug.log-request-header   = "disable"
+debug.log-response-header  = "disable"
+debug.log-request-handling = "disable"
+debug.log-file-not-found   = "disable"
 
 #### compress module
 #compress.cache-dir         = "/tmp/lighttpd/cache/compress/"
 #compress.filetype          = ("text/plain", "text/html")
-
-#### proxy module
-## read proxy.txt for more info
-#proxy.server               = ( ".php" =>
-#                               ( "localhost" =>
-#                                 (
-#                                   "host" => "192.168.0.101",
-#                                   "port" => 80
-#                                 )
-#                               )
-#                             )
 
 #### fastcgi module
 ## read fastcgi.txt for more info
@@ -596,67 +561,6 @@ fastcgi.server             = ( ".php" =>
                                )
                             )
 
-#### CGI module
-#cgi.assign                 = ( ".pl"  => "/usr/bin/perl",
-#                               ".cgi" => "/usr/bin/perl" )
-#
-
-#### status module
-#status.status-url          = "/server-status"
-#status.config-url          = "/server-config"
-
-#### auth module
-## read authentification.txt for more info
-#auth.backend               = "plain"
-#auth.backend.plain.userfile = "lighttpd.user"
-#auth.backend.plain.groupfile = "lighttpd.group"
-
-#auth.backend.ldap.hostname = "localhost"
-#auth.backend.ldap.base-dn  = "dc=my-domain,dc=com"
-#auth.backend.ldap.filter   = "(uid=$)"
-
-#auth.require               = ( "/server-status" =>
-#                               (
-#                                 "method"  => "digest",
-#                                 "realm"   => "download archiv",
-#                                 "require" => "group=www|user=jan|host=192.168.2.10"
-#                               ),
-#                               "/server-info" =>
-#                               (
-#                                 "method"  => "digest",
-#                                 "realm"   => "download archiv",
-#                                 "require" => "group=www|user=jan|host=192.168.2.10"
-#                               )
-#                             )
-
-#### url handling modules (rewrite, redirect, access)
-#url.rewrite                = ( "^/$"             => "/server-status" )
-#url.redirect               = ( "^/wishlist/(.+)" => "http://www.123.org/$1" )
-
-#
-# define a pattern for the host url finding
-# %% => % sign
-# %0 => domain name + tld
-# %1 => tld
-# %2 => domain name without tld
-# %3 => subdomain 1 name
-# %4 => subdomain 2 name
-#
-#evhost.path-pattern        = "/home/storage/dev/www/%3/htdocs/"
-
-#### expire module
-#expire.url                 = ( "/buggy/" => "access 2 hours", "/asdhas/" => "access plus 1 seconds 2 minutes")
-
-#### ssi
-#ssi.extension              = ( ".shtml" )
-
-#### rrdtool
-#rrdtool.binary             = "/usr/bin/rrdtool"
-#rrdtool.db-name            = "/var/www/lighttpd.rrd"
-
-#### setenv
-#setenv.add-request-header  = ( "TRAV_ENV" => "mysql://user@host/db" )
-#setenv.add-response-header = ( "X-Secret-Message" => "42" )
 EOD;
 
 	if($cert <> "" and $key <> "") {

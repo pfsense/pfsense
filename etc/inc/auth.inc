@@ -52,6 +52,10 @@ function passwd_backed_basic_auth() {
 	for($attempt = 0; $attempt <= 3; basic_auth_prompt()){
 		$attempt++;
 		/* Check for AUTH_USER */
+		if ($HTTP_SERVER_VARS['PHP_AUTH_USER'] <> "") {
+			$HTTP_SERVER_VARS['AUTH_USER'] = $HTTP_SERVER_VARS['PHP_AUTH_USER'];
+			$HTTP_SERVER_VARS['AUTH_PW'] = $HTTP_SERVER_VARS['PHP_AUTH_PW'];
+		}
 		if (!isset($HTTP_SERVER_VARS['AUTH_USER']))
 			continue;
 
@@ -91,6 +95,10 @@ function htpasswd_backed_basic_auth() {
         for($attempt = 0; $attempt <= 3; basic_auth_prompt()){
                 $attempt++;
                 /* Check for AUTH_USER */
+		if ($HTTP_SERVER_VARS['PHP_AUTH_USER'] <> "") {
+			$HTTP_SERVER_VARS['AUTH_USER'] = $HTTP_SERVER_VARS['PHP_AUTH_USER'];
+			$HTTP_SERVER_VARS['AUTH_PW'] = $HTTP_SERVER_VARS['PHP_AUTH_PW'];
+		}
                 if (!isset($HTTP_SERVER_VARS['AUTH_USER']))
                         continue;
 

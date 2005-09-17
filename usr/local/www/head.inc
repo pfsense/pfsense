@@ -27,7 +27,7 @@ else
 	 *	Coded by: Erik Kristensen
 	 */
 
-	$dir  = trim(basename($_SERVER["PHP_SELF"]), '.php');
+	$dir  = trim(basename($_SERVER["SCRIPT_FILENAME"]), '.php');
 	$path = "/usr/local/www/javascript/" . $dir . "/";
 	if (is_dir($path)) {
 		if ($dh = opendir($path)) {

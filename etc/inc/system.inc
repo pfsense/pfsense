@@ -319,10 +319,10 @@ function system_webgui_start() {
 	global $config, $g;
 
 	if ($g['booting'])
-		echo "Starting webGUI... ";
+		echo "Starting webConfigurator... ";
 
 	/* kill any running mini_httpd */
-	killbypid("{$g['varrun_path']}/mini_httpd.pid");
+	killbypid("{$g['varrun_path']}/lighty-webConfigurator.pid");
 
 	/* generate password file */
 	system_password_configure();
@@ -381,7 +381,285 @@ fuFjHpSfOiG62lfRdZgCPAr1L/1pJF+8RqjGlFfAuFA=
 -----END RSA PRIVATE KEY-----
 EOD;
 		}
+	} else {
+		$cert = "";
+		$key = "";
+	}
 
+	/* generate lighttpd configuration */
+	system_generate_lighty_config("{$g['varetc_path']}/lighty-webConfigurator.conf",
+		$key, $cert, "lighty-webConfigurator.pid");
+
+	/* attempt to start lighthttpd */
+	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");
+
+	if ($g['booting']) {
+		if ($res == 0)
+			echo "done.\n";
+		else
+			echo "failed!\n";
+	}
+
+	return $res;
+}
+
+function system_generate_lighty_config($filename, $cert, $key, $pid_file) {
+	
+	$lighy_config .= <<<EOD
+
+# lighttpd configuration file
+#
+# use a it as base for lighttpd 1.0.0 and above
+
+############ Options you really have to take care of ####################
+
+## modules to load
+server.modules              = (
+                               "mod_rewrite",
+                               "mod_redirect",
+#                               "mod_alias",
+                                "mod_access",
+#                               "mod_auth",
+#                               "mod_status",
+                               "mod_setenv",
+                               "mod_fastcgi",
+#                               "mod_proxy",
+#                               "mod_simple_vhost",
+#                               "mod_evhost",
+#                               "mod_userdir",
+                               "mod_cgi",
+                               "mod_compress",
+#                               "mod_ssi",
+#                               "mod_usertrack",
+#                               "mod_expire",
+#                               "mod_secdownload",
+#                               "mod_rrdtool",
+                                "mod_accesslog" )
+
+## a static document-root, for virtual-hosting take look at the
+## server.virtual-* options
+server.document-root        = "/usr/local/www/data/"
+
+## where to send error-messages to
+server.errorlog             = "/var/log/lighttpd.error.log"
+
+# files to check for if .../ is requested
+server.indexfiles           = ( "index.php", "index.html",
+                                "index.htm", "default.htm" )
+
+# mimetype mapping
+mimetype.assign             = (
+  ".pdf"          =>      "application/pdf",
+  ".sig"          =>      "application/pgp-signature",
+  ".spl"          =>      "application/futuresplash",
+  ".class"        =>      "application/octet-stream",
+  ".ps"           =>      "application/postscript",
+  ".torrent"      =>      "application/x-bittorrent",
+  ".dvi"          =>      "application/x-dvi",
+  ".gz"           =>      "application/x-gzip",
+  ".pac"          =>      "application/x-ns-proxy-autoconfig",
+  ".swf"          =>      "application/x-shockwave-flash",
+  ".tar.gz"       =>      "application/x-tgz",
+  ".tgz"          =>      "application/x-tgz",
+  ".tar"          =>      "application/x-tar",
+  ".zip"          =>      "application/zip",
+  ".mp3"          =>      "audio/mpeg",
+  ".m3u"          =>      "audio/x-mpegurl",
+  ".wma"          =>      "audio/x-ms-wma",
+  ".wax"          =>      "audio/x-ms-wax",
+  ".ogg"          =>      "audio/x-wav",
+  ".wav"          =>      "audio/x-wav",
+  ".gif"          =>      "image/gif",
+  ".jpg"          =>      "image/jpeg",
+  ".jpeg"         =>      "image/jpeg",
+  ".png"          =>      "image/png",
+  ".xbm"          =>      "image/x-xbitmap",
+  ".xpm"          =>      "image/x-xpixmap",
+  ".xwd"          =>      "image/x-xwindowdump",
+  ".css"          =>      "text/css",
+  ".html"         =>      "text/html",
+  ".htm"          =>      "text/html",
+  ".js"           =>      "text/javascript",
+  ".asc"          =>      "text/plain",
+  ".c"            =>      "text/plain",
+  ".conf"         =>      "text/plain",
+  ".text"         =>      "text/plain",
+  ".txt"          =>      "text/plain",
+  ".dtd"          =>      "text/xml",
+  ".xml"          =>      "text/xml",
+  ".mpeg"         =>      "video/mpeg",
+  ".mpg"          =>      "video/mpeg",
+  ".mov"          =>      "video/quicktime",
+  ".qt"           =>      "video/quicktime",
+  ".avi"          =>      "video/x-msvideo",
+  ".asf"          =>      "video/x-ms-asf",
+  ".asx"          =>      "video/x-ms-asf",
+  ".wmv"          =>      "video/x-ms-wmv",
+  ".bz2"          =>      "application/x-bzip",
+  ".tbz"          =>      "application/x-bzip-compressed-tar",
+  ".tar.bz2"      =>      "application/x-bzip-compressed-tar"
+ )
+
+# Use the "Content-Type" extended attribute to obtain mime type if possible
+#mimetypes.use-xattr        = "enable"
+
+
+## send a different Server: header
+## be nice and keep it at lighttpd
+#server.tag                 = "lighttpd"
+
+#### accesslog module
+accesslog.filename          = "/dev/null"
+
+## deny access the file-extensions
+#
+# ~    is for backupfiles from vi, emacs, joe, ...
+# .inc is often used for code includes which should in general not be part
+#      of the document-root
+url.access-deny             = ( "~", ".inc" )
+
+
+
+######### Options that are good to be but not neccesary to be changed #######
+
+## bind to port (default: 80)
+#server.port                = 81
+
+## bind to localhost (default: all interfaces)
+#server.bind                = "grisu.home.kneschke.de"
+
+## error-handler for status 404
+#server.error-handler-404   = "/error-handler.html"
+#server.error-handler-404   = "/error-handler.php"
+
+## to help the rc.scripts
+server.pid-file            = "/var/run/{$pid_file}"
+
+
+###### virtual hosts
+##
+##  If you want name-based virtual hosting add the next three settings and load
+##  mod_simple_vhost
+##
+## document-root =
+##   virtual-server-root + virtual-server-default-host + virtual-server-docroot
+## or
+##   virtual-server-root + http-host + virtual-server-docroot
+##
+#simple-vhost.server-root   = "/home/weigon/wwwroot/servers/"
+#simple-vhost.default-host  = "grisu.home.kneschke.de"
+#simple-vhost.document-root = "/pages/"
+
+
+##
+## Format: <errorfile-prefix><status-code>.html
+## -> ..../status-404.html for 'File not found'
+#server.errorfile-prefix    = "/home/weigon/projects/lighttpd/doc/status-"
+
+## virtual directory listings
+#server.dir-listing         = "enable"
+
+## enable debugging
+#debug.log-request-header   = "enable"
+#debug.log-response-header  = "enable"
+#debug.log-request-handling = "enable"
+#debug.log-file-not-found   = "enable"
+
+### only root can use these options
+#
+# chroot() to directory (default: no chroot() )
+#server.chroot              = "/"
+
+#### compress module
+#compress.cache-dir         = "/tmp/lighttpd/cache/compress/"
+#compress.filetype          = ("text/plain", "text/html")
+
+#### proxy module
+## read proxy.txt for more info
+#proxy.server               = ( ".php" =>
+#                               ( "localhost" =>
+#                                 (
+#                                   "host" => "192.168.0.101",
+#                                   "port" => 80
+#                                 )
+#                               )
+#                             )
+
+#### fastcgi module
+## read fastcgi.txt for more info
+fastcgi.server             = ( ".php" =>
+                               ( "localhost" =>
+                                 (
+                                   "socket" => "/tmp/php-fastcgi.socket",
+                                   "bin-path" => "/usr/local/bin/php"
+                                 )
+                               )
+                            )
+
+#### CGI module
+#cgi.assign                 = ( ".pl"  => "/usr/bin/perl",
+#                               ".cgi" => "/usr/bin/perl" )
+#
+
+#### status module
+#status.status-url          = "/server-status"
+#status.config-url          = "/server-config"
+
+#### auth module
+## read authentification.txt for more info
+#auth.backend               = "plain"
+#auth.backend.plain.userfile = "lighttpd.user"
+#auth.backend.plain.groupfile = "lighttpd.group"
+
+#auth.backend.ldap.hostname = "localhost"
+#auth.backend.ldap.base-dn  = "dc=my-domain,dc=com"
+#auth.backend.ldap.filter   = "(uid=$)"
+
+#auth.require               = ( "/server-status" =>
+#                               (
+#                                 "method"  => "digest",
+#                                 "realm"   => "download archiv",
+#                                 "require" => "group=www|user=jan|host=192.168.2.10"
+#                               ),
+#                               "/server-info" =>
+#                               (
+#                                 "method"  => "digest",
+#                                 "realm"   => "download archiv",
+#                                 "require" => "group=www|user=jan|host=192.168.2.10"
+#                               )
+#                             )
+
+#### url handling modules (rewrite, redirect, access)
+#url.rewrite                = ( "^/$"             => "/server-status" )
+#url.redirect               = ( "^/wishlist/(.+)" => "http://www.123.org/$1" )
+
+#
+# define a pattern for the host url finding
+# %% => % sign
+# %0 => domain name + tld
+# %1 => tld
+# %2 => domain name without tld
+# %3 => subdomain 1 name
+# %4 => subdomain 2 name
+#
+#evhost.path-pattern        = "/home/storage/dev/www/%3/htdocs/"
+
+#### expire module
+#expire.url                 = ( "/buggy/" => "access 2 hours", "/asdhas/" => "access plus 1 seconds 2 minutes")
+
+#### ssi
+#ssi.extension              = ( ".shtml" )
+
+#### rrdtool
+#rrdtool.binary             = "/usr/bin/rrdtool"
+#rrdtool.db-name            = "/var/www/lighttpd.rrd"
+
+#### setenv
+#setenv.add-request-header  = ( "TRAV_ENV" => "mysql://user@host/db" )
+#setenv.add-response-header = ( "X-Secret-Message" => "42" )
+EOD;
+
+	if($cert <> "" and $key <> "") {
 		$fd = fopen("{$g['varetc_path']}/cert.pem", "w");
 		if (!$fd) {
 			printf("Error: cannot open cert.pem in system_webgui_start().\n");
@@ -392,23 +670,21 @@ EOD;
 		fwrite($fd, "\n");
 		fwrite($fd, $key);
 		fclose($fd);
-
-		$res = mwexec("/usr/local/sbin/mini_httpd -S -E {$g['varetc_path']}/cert.pem" .
-			" -c \"**.php|**.cgi\" -u root -maxproc 16 $portarg" .
-			" -i {$g['varrun_path']}/mini_httpd.pid");
-	} else {
-		$res = mwexec("/usr/local/sbin/mini_httpd -c \"**.php|**.cgi\" -u root" .
-			" -maxproc 16 $portarg -i {$g['varrun_path']}/mini_httpd.pid");
+		$lighty_config .= "\n";
+		$lighty_config .= "ssl.engine = \"enable\"\n";
+		$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/cert.pem\"\n\n";	
 	}
 
-	if ($g['booting']) {
-		if ($res == 0)
-			echo "done.\n";
-		else
-			echo "failed!\n";
+	$fd = fopen("{$g['varetc_path']}/{$filename}", "w");
+	if (!$fd) {
+		printf("Error: cannot open {$g['varetc_path']}/{$filename} in system_generate_lighty_config().\n");
+		return 1;
 	}
+	fwrite($fd, $lighty_config);
+	fclose($fd);
 
-	return $res;
+	return 0;
+
 }
 
 function system_password_configure() {

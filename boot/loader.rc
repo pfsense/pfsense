@@ -1,0 +1,3 @@
+include /boot/loader.4th
+start
+check-password

@@ -126,8 +126,13 @@ if ($_POST) {
                 if (isset($config['dhcpd'][$if]['staticarp']))
 			interfaces_staticarp_configure($if);		
 
-		services_dhcpd_configure();
-		
+                $retval = 0;
+                config_lock();
+                $retval = services_dhcpd_configure();
+                config_unlock();
+
+                $savemsg = get_std_save_message($retval);
+
 		header("Location: services_dhcp.php?if={$if}");
 		exit;
 	}

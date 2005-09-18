@@ -2414,6 +2414,10 @@ function carp_sync_client() {
 			    $msg = new XML_RPC_Message('pfsense.filter_configure', array(new XML_RPC_Value($carp['password'], 'string')));
 			    $cli->setCredentials($config['system']['username'], $carp['password']);
 			    $cli->send($msg);
+			    /* signal a carp reload */
+			    $msg = new XML_RPC_Message('pfsense.interfaces_carp_configure_xmlrpc', array(new XML_RPC_Value($carp['password'], 'string')));
+			    $cli->setCredentials($config['system']['username'], $carp['password']);
+			    $cli->send($msg);			    
 		    }
 		}
 	    }

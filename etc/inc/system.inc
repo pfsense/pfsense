@@ -407,7 +407,7 @@ EOD;
 function system_generate_lighty_config($filename, $cert, $key, $pid_file,
 	$port = "", $document_root = "/usr/local/www/",
 	$cert_location = "cert.pem",
-	$max_procs, $max_requests = "5") {
+	$max_procs, $max_requests = "1") {
 	
 	/* create directory to hold compressed items */
 	if(!is_dir("/tmp/lighttpd/cache/compress/"))

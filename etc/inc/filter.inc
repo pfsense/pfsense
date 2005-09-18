@@ -2341,8 +2341,10 @@ function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsen
 	$resp = $cli->send($msg);
 	if(!$resp) {
 		log_error("A communication error occured while syncing configuration data with {$url}:{$port} - " . $cli->errstr);
+		file_notice("sync_settings", "A communication error occured while syncing configuration data with {$url}:{$port} - " . $cli->errstr, "Settings Sync", "");
 	} elseif($resp->faultCode()) {
 		log_error("An error code was received while syncing configuration data with {$url}:{$port} - Code " . $resp->faultCode() . ":" . $resp->faultString() );
+		file_notice("sync_settings", "An error code was received while syncing configuration data with {$url}:{$port} - Code " . $resp->faultCode() . ":" . $resp->faultString(), "Settings Sync", "");
 	} else {
 		log_error("Configuration data was successfully synced to {$url}:{$port}");
 	}

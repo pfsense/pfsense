@@ -388,7 +388,7 @@ EOD;
 
 	/* generate lighttpd configuration */
 	system_generate_lighty_config("{$g['varetc_path']}/lighty-webConfigurator.conf",
-		$key, $cert, "lighty-webConfigurator.pid");
+		$key, $cert, "lighty-webConfigurator.pid", "/usr/local/www/");
 
 	/* attempt to start lighthttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");
@@ -403,7 +403,7 @@ EOD;
 	return $res;
 }
 
-function system_generate_lighty_config($filename, $cert, $key, $pid_file, $port = "") {
+function system_generate_lighty_config($filename, $cert, $key, $pid_file, $port = "", $document_root = "/usr/local/www/") {
 	
 	/* create directory to hold compressed items */
 	if(!is_dir("/tmp/lighttpd/cache/compress/"))
@@ -449,7 +449,7 @@ server.modules              = (
 
 ## a static document-root, for virtual-hosting take look at the
 ## server.virtual-* options
-server.document-root        = "/usr/local/www/"
+server.document-root        = "{$documentroot}"
 
 ## where to send error-messages to
 server.errorlog             = "/var/log/lighttpd.error.log"

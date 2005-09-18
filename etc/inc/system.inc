@@ -414,7 +414,7 @@ function system_generate_lighty_config($filename, $cert, $key, $pid_file, $port 
 	else
 		$lighty_port = "80";
 	
-	$lighy_config .= <<<EOD
+	$lighty_config .= <<<EOD
 #
 # lighttpd configuration file
 #

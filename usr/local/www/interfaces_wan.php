@@ -482,28 +482,15 @@ function type_change(enable_change,enable_change_pptp) {
                   <td class="vtable"> <input name="ipaddr" type="text" class="formfld" id="ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>">
                     /
                     <select name="subnet" class="formfld" id="subnet">
-					<?php
-					for ($i = 32; $i > 0; $i--) {
-						if($i <> 31) {
-							echo "<option value=\"{$i}\" ";
-							if ($i == $pconfig['subnet']) echo "selected";
-							echo ">" . $i . "</option>";
-						}
-					}
-					?>
-                    <?php
-					/*
-                      if (isset($wancfg['ispointtopoint']))
-                      	$snmax = 32;
-                      else
-                      	$snmax = 31;
-                      for ($i = $snmax; $i > 0; $i--): ?>
-					  <?php if(i$ <> 31) ?><option value="<?=$i;?>" <?php if ($i == $pconfig['subnet']) echo "selected"; ?>><?php end if; ?>
-                      <?=$i;?>
-                      </option>
-                      <?php endfor; ?>
-					*/
-					?>
+			<?php
+			for ($i = 32; $i > 0; $i--) {
+				if($i <> 31) {
+					echo "<option value=\"{$i}\" ";
+					if ($i == $pconfig['subnet']) echo "selected";
+					echo ">" . $i . "</option>";
+				}
+			}
+			?>
                     </select></td>
                 </tr><?php if (isset($wancfg['ispointtopoint'])): ?>
                 <tr>
@@ -582,9 +569,7 @@ function type_change(enable_change,enable_change_pptp) {
                 <tr>
                   <td valign="top" class="vncell">Idle timeout</td>
                   <td class="vtable">
-                    <input name="pppoe_idletimeout" type="text" class="formfld" id="pppoe_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pppoe_idletimeout']);?>">
-                    seconds<br>
-    If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</td>
+                    <input name="pppoe_idletimeout" type="text" class="formfld" id="pppoe_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pppoe_idletimeout']);?>"> seconds<br>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</td>
                 </tr>
                 <tr>
                   <td colspan="2" valign="top" height="16"></td>
@@ -628,9 +613,7 @@ function type_change(enable_change,enable_change_pptp) {
                 <tr>
                   <td valign="top" class="vncell">Idle timeout</td>
                   <td class="vtable">
-                    <input name="pptp_idletimeout" type="text" class="formfld" id="pptp_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pptp_idletimeout']);?>">
-                    seconds<br>
-    If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</td>
+                    <input name="pptp_idletimeout" type="text" class="formfld" id="pptp_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pptp_idletimeout']);?>"> seconds<br>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</td>
                 </tr>
                 <tr>
                   <td colspan="2" valign="top" height="16"></td>
@@ -665,14 +648,13 @@ function type_change(enable_change,enable_change_pptp) {
                 <tr>
                   <td valign="top" class="vncell">Min. heartbeat interval</td>
                   <td class="vtable">
-                    <input name="bigpond_minheartbeatinterval" type="text" class="formfld" id="bigpond_minheartbeatinterval" size="8" value="<?=htmlspecialchars($pconfig['bigpond_minheartbeatinterval']);?>">
-                    seconds<br>
-    Setting this to a sensible value (e.g. 60 seconds) can protect against DoS attacks. </td>
+                    <input name="bigpond_minheartbeatinterval" type="text" class="formfld" id="bigpond_minheartbeatinterval" size="8" value="<?=htmlspecialchars($pconfig['bigpond_minheartbeatinterval']);?>">seconds<br>Setting this to a sensible value (e.g. 60 seconds) can protect against DoS attacks. </td>
                 </tr>
-                <?php /* Wireless interface? */
+		        <?php
+				/* Wireless interface? */
 				if (isset($wancfg['wireless']))
 					wireless_config_print();
-				?>
+			?>
                 <tr>
                   <td height="16" colspan="2" valign="top"></td>
                 </tr>

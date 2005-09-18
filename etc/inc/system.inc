@@ -427,15 +427,14 @@ function system_generate_lighty_config($filename, $cert, $key, $pid_file,
 ############ Options you really have to take care of ####################
 
 ## modules to load
-server.modules              = (
-                                "mod_rewrite",
-                                "mod_redirect",
-                                "mod_access",
-                                "mod_setenv",
-                                "mod_fastcgi",
-                                "mod_compress")
+server.modules              =  ("mod_access",
+                                "mod_fastcgi")
 
 ## Unused modules
+#                               "mod_setenv",
+#                               "mod_compress"
+#				"mod_redirect",
+#                               "mod_rewrite",
 #                               "mod_ssi",
 #                               "mod_usertrack",
 #                               "mod_expire",
@@ -519,7 +518,7 @@ mimetype.assign             = (
 #mimetypes.use-xattr        = "enable"
 
 #### accesslog module
-accesslog.filename          = "/dev/null"
+#accesslog.filename          = "/dev/null"
 
 ## deny access the file-extensions
 #

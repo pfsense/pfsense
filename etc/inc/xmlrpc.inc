@@ -68,7 +68,7 @@ function xmlrpc_value_to_php($raw_value) {
                 break;
         }
 	*/
-        return XML_RPC_decode($return);
+        return XML_RPC_decode($raw_value);
 }
 
 /*

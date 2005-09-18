@@ -6,8 +6,8 @@ if(Connection_Aborted()) {
 
 
 	function get_stats() {
-		$stats['mem'] = mem_usage();
 		$stats['cpu'] = cpu_usage();
+		$stats['mem'] = mem_usage();
 		$stats['uptime'] = get_uptime();
 		$stats['states'] = get_pfstate();
 		$stats['temp'] = get_temp();

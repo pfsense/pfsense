@@ -356,7 +356,7 @@ function alias_expand($name) {
 	if (isset($aliastable[$name]))
 		return $aliastable[$name];
 	else if (is_ipaddr($name) || is_subnet($name))
-		return $name;
+		return "\${$name}";
 	else
 		return null;
 }

@@ -235,32 +235,55 @@ function is_port($port) {
  *
  *   $mode = "active" - use ifconfig -lu
  *           "media"  - use ifconfig to check physical connection
- *			status (slower)
+ *			status (much slower)
  */
-function get_interface_list($mode = "active") {
-	/* get a list of virtual interface types */
-	$vfaces = explode(" ", trim(shell_exec("/sbin/ifconfig -C")));
-	if($mode == "active") $upints = explode(" ", trim(shell_exec("/sbin/ifconfig -lu")));
-	/* build interface list with netstat */
-	exec("/usr/bin/netstat -inW -f link | awk '{ print $1, $4 } '", $linkinfo);
-	array_shift($linkinfo);
-	foreach ($linkinfo as $link) {
-		$alink = explode(" ", $link);
-		$ifname = rtrim(trim($alink[0]), '*');
-		if (!in_array(substr($ifname, 0, -1), $vfaces)) {
-			$iflist[$ifname]['mac'] = trim($alink[1]);
-			switch($mode) {
-			case "active":
-				$iflist[$ifname]['up'] = in_array($ifname, $upints) ? true: false;
+function get_interface_list($mode = "active", $keyby = "physical") {
+        global $config;
+        /* get a list of virtual interface types */
+        $vfaces = explode(" ", trim(shell_exec("/sbin/ifconfig -C")));
+	switch($mode) {
+	case "active":
+                $upints = explode(" ", trim(shell_exec("/sbin/ifconfig -lu")));
+        	break;
+	case "media":
+                $intlist = explode(" ", trim(shell_exec("/sbin/ifconfig -l")));
+                exec("/sbin/ifconfig -a", $ifconfig);
+                $regexp = '/(' . implode('|', $intlist) . '):\s/';
+                $ints = preg_grep($regexp, $ifconfig);
+                $ifstatus = preg_grep('/status:/', $ifconfig);
+                foreach($ints as $value) {
+                        $status = trim(array_shift($ifstatus));
+                        if(stristr($status, "active")) $upints[] = array_shift($intlist);
+                }
+		break;
+	}
+        /* build interface list with netstat */
+        exec("/usr/bin/netstat -inW -f link | awk '{ print $1, $4 } '", $linkinfo);
+        array_shift($linkinfo);
+        foreach ($linkinfo as $link) {
+                $alink = explode(" ", $link);
+                $ifname = rtrim(trim($alink[0]), '*');
+                if (!in_array(substr($ifname, 0, -1), $vfaces)) {
+			$toput = array(
+					"mac" => trim($alink[1]),
+					"up" => in_array($ifname, $upints)
+				);
+			foreach($config['interfaces'] as $name => $int) {
+				if($int['if'] == $ifname) $friendly = $name;
+			}
+			switch($keyby) {
+			case "physical":
+				$toput['friendly'] = $friendly;
+				$iflist[$ifname] = $toput;
 				break;
-			case "media":		
-				$upints = shell_exec("/sbin/ifconfig {$ifname} | grep 'status' | awk '{ print $2 }'");
-				if(trim($upints) == "active") $iflist[$ifname]['up'] = true;
+			case "friendly":
+				$toput['if'] = $ifname;
+				$iflist[$friendly] = $toput;
 				break;
 			}
-		}
-	}
-	return $iflist;
+                }
+        }
+        return $iflist;
 }
 
 /* wrapper for exec() */

@@ -573,26 +573,19 @@ function install_package_xml($pkg) {
 			update_output_window($static_output);
 		}
 		/* custom commands */
-		if($pkg_config['custom_php_install_command'] <> "") {
-			$static_output .= "\tCustom commands... ";
-			update_output_window($static_output);
-			if($pkg_config['custom_php_global_functions'] <> "") {
-				eval_once($pkg_config['custom_php_global_functions']);
-			}
-			fwrite($fd_log, "Executing post install commands...\n");
+		$static_output .= "\tCustom commands... ";
+		update_output_window($static_output);
+		if($pkg_config['custom_php_global_functions'] <> "") {
+			eval_once($pkg_config['custom_php_global_functions']);
+		}
+		if($pkg_config['custom_php_install_command']) {
 			eval_once($pkg_config['custom_php_install_command']);
-			$static_output .= "done.\n";
-			update_output_window($static_output);
 		}
-		/* call our before form property since we may be declaring functions
-		   in it that are called later */
-		if($pkg_config['custom_php_command_before_form'] <> "") {
-			eval_once($pkg_config['custom_php_command_before_form']);
-		}
-		/* call our resync function */
 		if($pkg_config['custom_php_resync_config_command'] <> "") {
-			eval_once($pkg_config['custom_php_resync_config_command']);
-		}
+                        eval_once($pkg_config['custom_php_resync_config_command']);
+                }
+		$static_output .= "done.\n";
+		update_output_window($static_output);
 	} else {
 		$static_output .= "Loading package configuration... failed!\n\nInstallation aborted.";
 		update_output_window($static_output);

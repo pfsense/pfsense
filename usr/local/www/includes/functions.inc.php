@@ -31,7 +31,6 @@ function cpu_usage() {
 	$cpuTicks = explode(" ", `/sbin/sysctl -n kern.cp_time`);
 	sleep(1);
 	$cpuTicks2 = explode(" ", `/sbin/sysctl -n kern.cp_time`);
-	sleep(1);
 	
 	$diff = array();
 	$diff['user'] = ($cpuTicks2[0] - $cpuTicks[0]);

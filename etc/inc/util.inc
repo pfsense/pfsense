@@ -250,7 +250,6 @@ function get_interface_list($mode = "active", $keyby = "physical") {
                 exec("/sbin/ifconfig -a", $ifconfig);
                 $regexp = '/(' . implode('|', $intlist) . '):\s/';
                 $ifstatus = preg_grep('/status:/', $ifconfig);
-		$i = 0;
 		foreach($ifstatus as $status) {
                 	if(stristr($status, "active")) $upints[] = array_shift($intlist);
 		}

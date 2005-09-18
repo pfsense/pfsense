@@ -394,10 +394,10 @@ function interfaces_wireless_configure($if, $wlcfg) {
 	 */
 	$channel = escapeshellarg($wlcfg['channel']);
 	if($channel == "") 
-		$channel = "";
+		$channel = " ";
 
         /* wireless configuration */
-        $ifcargs = escapeshellarg($if) . " ssid " . escapeshellarg($wlcfg['ssid']) . " channel {$channel}";
+        $ifcargs = escapeshellarg($if) . " ssid " . escapeshellarg($wlcfg['ssid']) . " channel {$channel} ";
 
         if ($wlcfg['stationname'])
                 $ifcargs .= "stationname " . escapeshellarg($wlcfg['stationname']) . " ";
@@ -574,6 +574,7 @@ EOD;
         return 0;
 
 }
+
 
 
 function find_dhclient_process($interface) {

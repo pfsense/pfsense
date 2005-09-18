@@ -171,8 +171,10 @@ EOD;
 		/* get memory in meachine */
 		$memory = get_memory();
 		$avail = $memory[0];
+		$use_fastcgi = true;
 		if($avail > 0 and $avail < 65) {
 			$procs = 1;
+			$use_fastcgi = false;
 		} else if($avail > 64 and $avail < 128) {
 			$procs = 5;
 		} else if($avail > 128 and $avail < 164) {
@@ -192,7 +194,7 @@ EOD;
 		/* generate lighttpd configuration */
 		system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal.conf",
 			$key, $cert, "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/",
-				"cert-portal.pem", "5", $procs);
+				"cert-portal.pem", "5", $procs, $use_fastcgi);
 	
 		/* attempt to start lighttpd */
 		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-CaptivePortal.conf");		

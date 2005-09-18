@@ -387,15 +387,23 @@ EOD;
 	}
 
 	/* non-standard port? */
-	if ($config['system']['webgui']['port'])
+	if ($config['system']['webgui']['port']) 
 		$port = $config['system']['webgui']['port'];
 	else
 		$port = "80";
 
+	/* if we are strapped for memory, do not use fast cgi */
+	$memory = get_memory();
+	$avail_mem = $memory[1];
+	if($avail < 128) 
+		$use_fastcgi = false;
+	else
+		$use_fastcgi = true;
+
 	/* generate lighttpd configuration */
 	system_generate_lighty_config("{$g['varetc_path']}/lighty-webConfigurator.conf",
 		$key, $cert, "lighty-webConfigurator.pid", $port, "/usr/local/www/",
-			"cert.pem", "1");
+			"cert.pem", "1", "1", $use_fastcgi);
 
 	/* attempt to start lighthttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");
@@ -412,13 +420,48 @@ EOD;
 
 function system_generate_lighty_config($filename, $cert, $key, $pid_file,
 	$port = "", $document_root = "/usr/local/www/",
-	$cert_location = "cert.pem",
-	$max_procs, $max_requests = "1") {
+	$cert_location = "cert.pem", $max_procs,
+	$max_requests = "1", $fast_cgi_enable = true) {
 	
 	if($port <> "")
 		$lighty_port = $port;
 	else
 		$lighty_port = "80";
+	
+	if($fast_cgi_enable == true) {
+		$module = "\"mod_fastcgi\"";
+		$cgi_config = "";
+		$fastcgi_config = <<<EOD
+#### fastcgi module
+## read fastcgi.txt for more info
+fastcgi.server             = ( ".php" =>
+                               ( "localhost" =>
+                                 (
+                                   "socket" => "/tmp/php-fastcgi.socket",
+				   "min-procs" => 1,
+				   "max-procs" => {$max_procs},
+				   "max-load-per-proc" => 1,
+				   "idle-timeout" => 1,
+				   "bin-environment" => ( 
+				      "PHP_FCGI_CHILDREN" => "{$max_procs}",
+				      "PHP_FCGI_MAX_REQUESTS" => "{$max_requests}"
+				   ),				   
+                                   "bin-path" => "/usr/local/bin/php"
+                                 )
+                               )
+                            )		
+
+EOD;
+	} else {
+		$fastcgi_config = "";
+		$module = "\"mod_cgi\"";
+		$cgi_config = <<<EOD
+#### CGI module
+cgi.assign                 = ( ".php"  => "/usr/local/bin/php",
+                               ".cgi" => "/usr/bin/perl" )
+		
+EOD;
+	}
 	
 	$lighty_config .= <<<EOD
 #
@@ -429,8 +472,10 @@ function system_generate_lighty_config($filename, $cert, $key, $pid_file,
 ############ Options you really have to take care of ####################
 
 ## modules to load
-server.modules              =  ("mod_access",
-                                "mod_fastcgi")
+server.modules              =   (
+				  "mod_access",
+                                  {$module}
+				)
 
 ## Unused modules
 #                               "mod_setenv",
@@ -555,24 +600,9 @@ debug.log-file-not-found   = "disable"
 #compress.cache-dir         = "/tmp/lighttpd/cache/compress/"
 #compress.filetype          = ("text/plain", "text/html")
 
-#### fastcgi module
-## read fastcgi.txt for more info
-fastcgi.server             = ( ".php" =>
-                               ( "localhost" =>
-                                 (
-                                   "socket" => "/tmp/php-fastcgi.socket",
-				   "min-procs" => 1,
-				   "max-procs" => {$max_procs},
-				   "max-load-per-proc" => 1,
-				   "idle-timeout" => 1,
-				   "bin-environment" => ( 
-				      "PHP_FCGI_CHILDREN" => "{$max_procs}",
-				      "PHP_FCGI_MAX_REQUESTS" => "{$max_requests}"
-				   ),				   
-                                   "bin-path" => "/usr/local/bin/php"
-                                 )
-                               )
-                            )
+{$fastcgi_config}
+
+{$cgi_config}
 
 EOD;
 

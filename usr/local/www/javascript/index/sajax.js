@@ -1,13 +1,24 @@
 
+// Seconds * 1000 = value
+var update_interval = 4000;
+
+
 function updateMeters()
 {
-	x_cpu_usage(updateCPU);
-	x_mem_usage(updateMemory);
-	x_get_uptime(updateUptime);
-	x_get_pfstate(updateState);
-	x_get_temp(updateTemp);
+	x_get_stats(stats);
 
-	window.setTimeout('updateMeters()', 4000);
+	window.setTimeout('updateMeters()', update_interval);
+}
+
+function stats(x) {
+
+	var values = x.split("|");
+
+	updateCPU(values[0]);
+	updateMemory(values[1]);
+	updateUptime(values[2]);
+	updateState(values[3]);
+	updateTemp(values[4]);
 }
 
 function updateMemory(x)
@@ -45,4 +56,5 @@ function updateState(x)
 	document.getElementById("pfstate").value = x;
 }
 
-window.setTimeout('updateMeters()', 4000);
+window.setTimeout('updateMeters()', update_interval);
+

@@ -386,9 +386,15 @@ EOD;
 		$key = "";
 	}
 
+	/* non-standard port? */
+	if ($config['system']['webgui']['port'])
+		$port = $config['system']['webgui']['port'];
+	else
+		$port = "80";
+
 	/* generate lighttpd configuration */
 	system_generate_lighty_config("{$g['varetc_path']}/lighty-webConfigurator.conf",
-		$key, $cert, "lighty-webConfigurator.pid", "80", "/usr/local/www/",
+		$key, $cert, "lighty-webConfigurator.pid", $port, "/usr/local/www/",
 			"cert.pem", "1");
 
 	/* attempt to start lighthttpd */

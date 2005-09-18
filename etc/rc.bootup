@@ -229,6 +229,9 @@
 	/* start load balancer daemon */
 	slbd_configure();
 
+	/* power down hard drive if needed/set */
+	system_set_harddisk_standby();
+
 	/* done */
 	unlink("{$g['varrun_path']}/booting");
 	$g['booting'] = FALSE;

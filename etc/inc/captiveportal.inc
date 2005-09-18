@@ -168,11 +168,31 @@ EOD;
 			fwrite($fd, $key);
 			fclose($fd);
 		}
+		/* get memory in meachine */
+		$memory = get_memory();
+		$avail = $memory[0];
+		if($avail > 0 and $avail < 65) {
+			$procs = 1;
+		} else if($avail > 64 and $avail < 128) {
+			$procs = 5;
+		} else if($avail > 128 and $avail < 164) {
+			$procs = 15;
+		} else if($avail > 164 and $avail < 256) {
+			$procs = 20;
+		} else if($avail > 256 and $avail < 384) {
+			$procs = 25;
+		} else if($avail > 384 and $avail < 512) {
+			$procs = 30;
+		} else if($avail > 512 and $avail < 684) {
+			$procs = 40;
+		} else {
+			$procs = 50;
+		}
 
 		/* generate lighttpd configuration */
 		system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal.conf",
 			$key, $cert, "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/",
-				"cert-portal.pem", "5");
+				"cert-portal.pem", $procs);
 	
 		/* attempt to start lighttpd */
 		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-CaptivePortal.conf");		

@@ -889,8 +889,24 @@ function rmdir_recursive($path,$follow_links=false) {
 }
 
 /*
- * safe_mkdir($path, $mode = 0755)
- * create directory if it doesn't already exist and isn't a file!
+ *     get_memory()
+ *     returns an array listing the amount of
+ *     memory installed in the hardware
+ *     [0]real and [1]available
+ */
+function get_memory() {
+        $mem = `cat /var/log/dmesg.boot | grep memory`;
+        if (preg_match_all("/real memory  = .* \((.*) MB/", $mem, $matches))
+                $real = $matches[1];
+        if (preg_match_all("/avail memory = .* \((.*) MB/", $mem, $matches))
+                $avail = $matches[1];
+        return array($real[0],$avail[0]);
+}
+
+
+/*
+ *    safe_mkdir($path, $mode = 0755)
+ *    create directory if it doesn't already exist and isn't a file!
  */
 function safe_mkdir($path, $mode=0755) {
 	global $g;

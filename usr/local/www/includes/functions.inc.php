@@ -29,7 +29,7 @@ function get_uptime() {
 
 function cpu_usage() {
 	$cpuTicks = explode(" ", `/sbin/sysctl -n kern.cp_time`);
-	sleep(1);
+	usleep(5);
 	$cpuTicks2 = explode(" ", `/sbin/sysctl -n kern.cp_time`);
 	
 	$diff = array();

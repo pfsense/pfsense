@@ -249,12 +249,11 @@ function get_interface_list($mode = "active", $keyby = "physical") {
                 $intlist = explode(" ", trim(shell_exec("/sbin/ifconfig -l")));
                 exec("/sbin/ifconfig -a", $ifconfig);
                 $regexp = '/(' . implode('|', $intlist) . '):\s/';
-                $ints = preg_grep($regexp, $ifconfig);
                 $ifstatus = preg_grep('/status:/', $ifconfig);
-                foreach($ints as $value) {
-                        $status = trim(array_shift($ifstatus));
-                        if(stristr($status, "active")) $upints[] = array_shift($intlist);
-                }
+		$i = 0;
+		foreach($ifstatus as $status) {
+                	if(stristr($status, "active")) $upints[] = array_shift($intlist);
+		}
 		break;
 	}
         /* build interface list with netstat */

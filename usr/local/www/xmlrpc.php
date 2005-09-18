@@ -122,8 +122,19 @@ function get_notices_xmlrpc($raw_params) {
 	return $response;
 }
 
+$carp_configure_doc = 'Basic XMLRPC wrapper for rc.reboot.';
+$carp_configure_sig = array(array($XML_RPC_Boolean, $XML_RPC_String));
+function interfaces_carp_configure_xmlrpc($raw_params) {
+	interfaces_carp_bringup();
+	interfaces_carp_configure();
+	return new XML_RPC_Response(new XML_RPC_Value(true, 'boolean'));
+}
+
 $server = new XML_RPC_Server(
         array(
+            'pfsense.interfaces_carp_configure' => array('function' => 'interfaces_carp_configure_xmlrpc',
+							'signature' => $carp_configure_doc,
+							'docstring' => $carp_configure_sig),
             'pfsense.backup_config_section' => 	array('function' => 'backup_config_section_xmlrpc',
 							'signature' => $backup_config_section_sig,
 							'docstring' => $backup_config_section_doc),

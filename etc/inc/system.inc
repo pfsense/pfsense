@@ -411,7 +411,7 @@ function system_generate_lighty_config($filename, $cert, $key, $pid_file,
 	
 	/* create directory to hold compressed items */
 	if(!is_dir("/tmp/lighttpd/cache/compress/"))
-		system("mkdir -p /tmp/lighttpd/cache/compress/");
+		make_dirs("/tmp/lighttpd/cache/compress/");
 	
 	if($port <> "")
 		$lighty_port = $port;

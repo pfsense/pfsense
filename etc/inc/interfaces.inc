@@ -397,7 +397,7 @@ function interfaces_wireless_configure($if, $wlcfg) {
 		$channel = " ";
 
         /* wireless configuration */
-        $ifcargs = escapeshellarg($if) . " ssid " . escapeshellarg($wlcfg['ssid']) . " channel {$channel} ";
+        $ifcargs = escapeshellarg($if) . " ssid " . escapeshellarg($wlcfg['ssid']) . " Channel {$channel} ";
 
         if ($wlcfg['stationname'])
                 $ifcargs .= "stationname " . escapeshellarg($wlcfg['stationname']) . " ";
@@ -450,7 +450,7 @@ EOD;
                 $ifcargs .= "wepmode off ";
         }
 
-	if(isset($wlcfg['pureg'])) {
+	if(isset($wlcfg['pureg']['enable'])) {
 		$ifcargs .= "mode 11g ";
 	} else {
 		if (preg_match($g['wireless_regex'], $if)) {
@@ -574,7 +574,6 @@ EOD;
         return 0;
 
 }
-
 
 
 function find_dhclient_process($interface) {
@@ -1194,6 +1193,31 @@ function get_current_wan_address() {
 		/* static WAN IP address */
 		return $wancfg['ipaddr'];
 	}
+}
+
+/****f* interfaces/is_jumbo_capable
+ * NAME
+ *   is_jumbo_capable - Test if interface is jumbo frame capable.  Useful for determining VLAN capability.
+ * INPUTS
+ *   $int             - string containing interface name
+ * RESULT
+ *   boolean          - true or false
+ ******/
+
+function is_jumbo_capable($int) {
+	/* Per:
+	 * http://www.freebsd.org/cgi/man.cgi?query=vlan&manpath=FreeBSD+6.0-current&format=html
+	 * Only the following drivers support large frames
+	 */
+	$capable = array("bfe", "dc", "de", "fxp", "hme", "rl", "sis", "ste",
+		"tl", "tx", "xl", "em");
+	
+	$int_family = preg_split("/[0-9]+/", $int);
+
+	if (in_array($int_family[0], $capable))
+		return true;
+	else
+		return false;
 }
 
 /****f* interfaces/is_altq_capable

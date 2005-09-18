@@ -817,9 +817,6 @@ function system_dmesg_save() {
 function system_set_harddisk_standby() {
 	global $g, $config;
 
-	if ($g['platform'] != "generic-pc")
-		return;
-
 	if (isset($config['system']['harddiskstandby'])) {
 		if ($g['booting']) {
 			echo 'Setting hard disk standby... ';

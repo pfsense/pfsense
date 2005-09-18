@@ -310,19 +310,28 @@ function exec_command($command) {
     return(implode("\n", $output));
 }
 
-/****f* pfsense-utils/is_jumbo_capable
+/****f* interfaces/is_jumbo_capable
  * NAME
- *   is_jumbo_capable - Checks to see if a interface can handle vlans
+ *   is_jumbo_capable - Test if interface is jumbo frame capable.  Useful for determining VLAN capability.
  * INPUTS
- *   $interface	- Interface to check status of
+ *   $int             - string containing interface name
  * RESULT
- *   true or false
- * NOTES
- *   This function returns the true or false
+ *   boolean          - true or false
  ******/
-function is_jumbo_capable($interface) {
-	$status = `ifconfig $interface`;
-	return stristr($status, "VLAN_MTU");
+function is_jumbo_capable($int) {
+	/* Per:
+	 * http://www.freebsd.org/cgi/man.cgi?query=vlan&manpath=FreeBSD+6.0-current&format=html
+	 * Only the following drivers support large frames
+	 */
+	$capable = array("bfe", "dc", "de", "fxp", "hme", "rl", "sis", "ste",
+		"tl", "tx", "xl", "em");
+	
+	$int_family = preg_split("/[0-9]+/", $int);
+
+	if (in_array($int_family[0], $capable))
+		return true;
+	else
+		return false;
 }
 
 /*

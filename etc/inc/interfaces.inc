@@ -387,7 +387,7 @@ function interfaces_wireless_configure($if, $wlcfg) {
 	/* set values for /path/program */
 	$hostapd = "/usr/sbin/hostapd";
 	$wpa_supplicant = "/usr/sbin/wpa_supplicant";
-	$killall = "/usr/bin/killall";
+	$ifconfig = "/sbin/ifconfig ";
 
 	/*   set wireless channel value.  if we're using 0 then
 	 *   convert the channel to -
@@ -397,8 +397,7 @@ function interfaces_wireless_configure($if, $wlcfg) {
 		$channel = "";
 
         /* wireless configuration */
-        $ifcargs = escapeshellarg($if) .
-                " ssid " . escapeshellarg($wlcfg['ssid']) . " channel {$channel} ";
+        $ifcargs = escapeshellarg($if) . " ssid " . escapeshellarg($wlcfg['ssid']) . " channel {$channel}";
 
         if ($wlcfg['stationname'])
                 $ifcargs .= "stationname " . escapeshellarg($wlcfg['stationname']) . " ";
@@ -536,32 +535,34 @@ EOD;
 			$ifcargs .= "-hidessid ";
 
 		/* handle pureg (802.11g) only option */
-		if(isset($wlcfg['pureg']))
+		if(isset($wlcfg['pureg']['enable']))
 			$ifcargs .= "pureg ";
 		else
 			$ifcargs .= "-pureg ";
 
 		/* handle turbo option */
-		if(isset($wlcfg['turbo']))
+		if(isset($wlcfg['turbo']['enable']))
 			$ifcargs .= "mediaopt turbo ";
 		else
-			$ifcargs .= "mediaopt -turbo ";
+			$ifcargs .= "-mediaopt turbo ";
 
 		/* handle txpower setting */
 		if($wlcfg['txpower'] <> "")
 			$ifcargs .= "txpower {$wlcfg['txpower']} ";
 		
 		/* handle wme option */
-		if(isset($wlcfg['wme']))
-			$ifcargs .= "wme ";
+		if(isset($wlcfg['wme']['enable']))
+			$ifcargs .= " wme";
 		else
-			$ifcargs .= "-wme ";
+			$ifcargs .= " -wme";
 
 	}
 
-        $ifcargs .= "up";
+        
+        mwexec($ifconfig . $if . " down"); 
+	mwexec($ifconfig . $ifcargs);
+	mwexec($ifconfig . " up");
 
-        mwexec("/sbin/ifconfig " . $ifcargs);
 
 	$fd = fopen("{$g['tmp_path']}/ifconfig_wireless", "w");
 	fwrite($fd, "/sbin/ifconfig {$ifcargs}");

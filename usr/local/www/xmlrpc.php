@@ -32,8 +32,6 @@
 		* Expose more functions.
 		* Add syslog handling of errors.
 		* Define XML_RPC_erruser.
-		* Write handlers for PHP -> XML_RPC_Value.
-		* xmlrpc_params_to_php currently does *not* handle structs.
 */
 
 include("guiconfig.inc");

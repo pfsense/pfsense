@@ -313,7 +313,7 @@ include("head.inc");
                       </tr>
 		      <tr>
 		    <td colspan="8"><p><span class="red"><strong>Note:</strong></span><strong><br>
-                    </strong>the first rule that matches a packet will be executed.<br>
+                    </strong>The last rule that matches a packet will be executed.<br>
                     The following match patterns are not shown in the list above:
                     IP packet length, TCP flags.<br>
                     You can check the results of your queues at <a href="status_queues.php">Status:Queues</a>.</td>

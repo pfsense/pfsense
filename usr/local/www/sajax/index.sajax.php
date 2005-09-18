@@ -8,6 +8,6 @@
 	require("../includes/functions.inc.php");
 
 	$oSajax = new sajax();
-	$oSajax->sajax_export("mem_usage","cpu_usage","get_uptime","get_pfstate", "get_temp");
+	$oSajax->sajax_export("get_stats");
 	$oSajax->sajax_handle_client_request();
 ?>

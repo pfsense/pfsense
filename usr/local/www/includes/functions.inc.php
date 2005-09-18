@@ -4,6 +4,20 @@ if(Connection_Aborted()) {
 	exit;
 }
 
+
+	function get_stats() {
+		$stats['mem'] = mem_usage();
+		$stats['cpu'] = cpu_usage();
+		$stats['uptime'] = get_uptime();
+		$stats['states'] = get_pfstate();
+		$stats['temp'] = get_temp();
+
+		$stats = join("|", $stats);
+
+		return $stats;
+	}
+
+
 function get_uptime() {
 	exec("/sbin/sysctl -n kern.boottime", $boottime);
 	preg_match("/sec = (\d+)/", $boottime[0], $matches);

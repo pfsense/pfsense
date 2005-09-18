@@ -50,7 +50,7 @@
 	$oSajax = new sajax();
 	$oSajax->sajax_remote_uri = 'sajax/index.sajax.php';
 	$oSajax->sajax_request_type = 'POST';
-	$oSajax->sajax_export("mem_usage","cpu_usage","get_uptime","get_pfstate", "get_temp");
+	$oSajax->sajax_export("get_stats");
 	$oSajax->sajax_handle_client_request();
 	############################################################################
 

@@ -310,6 +310,21 @@ function exec_command($command) {
     return(implode("\n", $output));
 }
 
+/****f* pfsense-utils/is_jumbo_capable
+ * NAME
+ *   is_jumbo_capable - Checks to see if a interface can handle vlans
+ * INPUTS
+ *   $interface	- Interface to check status of
+ * RESULT
+ *   true or false
+ * NOTES
+ *   This function returns the true or false
+ ******/
+function is_jumbo_capable($interface) {
+	$status = `ifconfig $interface`;
+	return stristr($status, "VLAN_MTU");
+}
+
 /*
  * does_interface_exist($interface): return true or false if a interface is detected.
  */

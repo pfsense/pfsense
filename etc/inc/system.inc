@@ -449,7 +449,7 @@ server.modules              = (
 
 ## a static document-root, for virtual-hosting take look at the
 ## server.virtual-* options
-server.document-root        = "/usr/local/www/data/"
+server.document-root        = "/usr/local/www/"
 
 ## where to send error-messages to
 server.errorlog             = "/var/log/lighttpd.error.log"

@@ -37,7 +37,7 @@ function xmlrpc_params_to_php($params) {
         $array = array();
         for($i = 0; $i < $params->getNumParams(); $i++) {
                 $value = $params->getParam($i);
-                $array[] = xmlrpc_value_to_php($value);
+                $array[] = XML_RPC_decode($value);
         }
         return $array;
 }
@@ -46,6 +46,7 @@ function xmlrpc_params_to_php($params) {
  *   xmlrpc_value_to_php: Convert an XMLRPC value into a PHP scalar/array and return it.
  */
 function xmlrpc_value_to_php($raw_value) {
+	/*
         switch($raw_value->kindOf()) {
         case "scalar":
 		if($raw_value->scalartyp() == "boolean") $return = (boolean) $raw_value->scalarval();
@@ -66,13 +67,17 @@ function xmlrpc_value_to_php($raw_value) {
                 }
                 break;
         }
-        return $return;
+	*/
+        return XML_RPC_decode($return);
 }
 
 /*
  *   php_value_to_xmlrpc: Convert a PHP scalar or array into its XMLRPC equivalent.
  */
 function php_value_to_xmlrpc($value, $force_array = false) {
+	$toreturn = XML_RPC_encode($value);
+	return $force_array ? array($toreturn) : $toreturn;
+	/*
         if(gettype($value) == "array") {
                 $xmlrpc_type = "array";
                 $toreturn = array();
@@ -88,6 +93,7 @@ function php_value_to_xmlrpc($value, $force_array = false) {
                         return new XML_RPC_Value($value, gettype($value));
                 }
         }
+	*/
 }
 
 /*

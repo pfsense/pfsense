@@ -556,6 +556,10 @@ fastcgi.server             = ( ".php" =>
                                ( "localhost" =>
                                  (
                                    "socket" => "/tmp/php-fastcgi.socket",
+				   "min-procs" => 1,
+				   "max-procs" => 1,
+				   "max-load-per-proc" => 1,
+				   "idle-timeout" => 5,
                                    "bin-path" => "/usr/local/bin/php"
                                  )
                                )

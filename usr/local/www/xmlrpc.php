@@ -122,7 +122,7 @@ function get_notices_xmlrpc($raw_params) {
 	return $response;
 }
 
-$carp_configure_doc = 'Basic XMLRPC wrapper for rc.reboot.';
+$carp_configure_doc = 'Basic XMLRPC wrapper for configuring carp interfaces.';
 $carp_configure_sig = array(array($XML_RPC_Boolean, $XML_RPC_String));
 function interfaces_carp_configure_xmlrpc($raw_params) {
 	interfaces_carp_bringup();

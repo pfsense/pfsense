@@ -50,12 +50,8 @@ function captiveportal_configure() {
 			echo "Starting captive portal... ";
 		
 		/* kill any running mini_httpd */
-		killbypid("{$g['varrun_path']}/mini_httpd.cp.pid");
-		killbypid("{$g['varrun_path']}/mini_httpd.cps.pid");
-		
-		/* kill any running minicron */
-		killbypid("{$g['varrun_path']}/minicron.pid");
-		
+		killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
+				
 		/* generate ipfw rules */
 		$cprules = captiveportal_rules_generate();
 		
@@ -156,9 +152,16 @@ EOD;
 		chdir($g['captiveportal_path']);
 		
 		/* start web server */
-		mwexec("/usr/local/sbin/mini_httpd -a -M 0 -u root -maxproc 16" .
-			" -p 8000 -i {$g['varrun_path']}/mini_httpd.cp.pid");
+		//      mwexec("/usr/local/sbin/mini_httpd -a -M 0 -u root -maxproc 16" .
+		//  	" -p 8000 -i {$g['varrun_path']}/mini_httpd.cp.pid");
 		
+		/* generate lighttpd configuration */
+		system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal.conf",
+			$key, $cert, "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/");
+	
+		/* attempt to start lighthttpd */
+		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-CaptivePortal.conf");		
+
 		/* fire up another one for HTTPS if requested */
 		if (isset($config['captiveportal']['httpslogin']) &&
 			$config['captiveportal']['certificate'] && $config['captiveportal']['private-key']) {
@@ -181,11 +184,7 @@ EOD;
 				" -u root -maxproc 16 -p 8001" .
 				" -i {$g['varrun_path']}/mini_httpd.cps.pid");
 		}
-			
-		/* start pruning process (interval = 60 seconds) */
-		mwexec("/usr/local/bin/minicron 60 {$g['varrun_path']}/minicron.pid " .
-			"/etc/rc.prunecaptiveportal");
-		
+
 		/* generate passthru mac database */
 		captiveportal_passthrumac_configure();
 		/* create allowed ip database and insert ipfw rules to make it so */
@@ -222,9 +221,7 @@ EOD;
 			echo "done\n";
 		
 	} else {
-		killbypid("{$g['varrun_path']}/mini_httpd.cp.pid");
-		killbypid("{$g['varrun_path']}/mini_httpd.cps.pid");
-		killbypid("{$g['varrun_path']}/minicron.pid");
+		killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
 
 		captiveportal_radius_stop_all();
 

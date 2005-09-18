@@ -389,7 +389,7 @@ EOD;
 	/* generate lighttpd configuration */
 	system_generate_lighty_config("{$g['varetc_path']}/lighty-webConfigurator.conf",
 		$key, $cert, "lighty-webConfigurator.pid", "80", "/usr/local/www/",
-			"cert.pem");
+			"cert.pem", "1");
 
 	/* attempt to start lighthttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");
@@ -406,7 +406,8 @@ EOD;
 
 function system_generate_lighty_config($filename, $cert, $key, $pid_file,
 	$port = "", $document_root = "/usr/local/www/",
-	$cert_location = "cert.pem") {
+	$cert_location = "cert.pem",
+	$max_procs) {
 	
 	/* create directory to hold compressed items */
 	if(!is_dir("/tmp/lighttpd/cache/compress/"))
@@ -560,11 +561,11 @@ fastcgi.server             = ( ".php" =>
                                  (
                                    "socket" => "/tmp/php-fastcgi.socket",
 				   "min-procs" => 1,
-				   "max-procs" => 1,
+				   "max-procs" => {$max_procs},
 				   "max-load-per-proc" => 1,
 				   "idle-timeout" => 5,
 				   "bin-environment" => ( 
-				      "PHP_FCGI_CHILDREN" => "2",
+				      "PHP_FCGI_CHILDREN" => "{$max_procs}",
 				      "PHP_FCGI_MAX_REQUESTS" => "100"
 				   ),				   
                                    "bin-path" => "/usr/local/bin/php"

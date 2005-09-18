@@ -388,7 +388,8 @@ EOD;
 
 	/* generate lighttpd configuration */
 	system_generate_lighty_config("{$g['varetc_path']}/lighty-webConfigurator.conf",
-		$key, $cert, "lighty-webConfigurator.pid", "80", "/usr/local/www/");
+		$key, $cert, "lighty-webConfigurator.pid", "80", "/usr/local/www/",
+		"cert.pem");
 
 	/* attempt to start lighthttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");
@@ -403,7 +404,9 @@ EOD;
 	return $res;
 }
 
-function system_generate_lighty_config($filename, $cert, $key, $pid_file, $port = "", $document_root = "/usr/local/www/") {
+function system_generate_lighty_config($filename, $cert, $key, $pid_file,
+	$port = "", $document_root = "/usr/local/www/",
+	$cert_location = "cert.pem") {
 	
 	/* create directory to hold compressed items */
 	if(!is_dir("/tmp/lighttpd/cache/compress/"))
@@ -560,6 +563,10 @@ fastcgi.server             = ( ".php" =>
 				   "max-procs" => 1,
 				   "max-load-per-proc" => 1,
 				   "idle-timeout" => 5,
+				   "bin-environment" => ( 
+				      "PHP_FCGI_CHILDREN" => "2",
+				      "PHP_FCGI_MAX_REQUESTS" => "100"
+				   ),				   
                                    "bin-path" => "/usr/local/bin/php"
                                  )
                                )
@@ -568,12 +575,12 @@ fastcgi.server             = ( ".php" =>
 EOD;
 
 	if($cert <> "" and $key <> "") {
-		$fd = fopen("{$g['varetc_path']}/cert.pem", "w");
+		$fd = fopen("{$g['varetc_path']}/{$cert_location}", "w");
 		if (!$fd) {
 			printf("Error: cannot open cert.pem in system_webgui_start().\n");
 			return 1;
 		}
-		chmod("{$g['varetc_path']}/cert.pem", 0600);
+		chmod("{$g['varetc_path']}/{$cert_location}", 0600);
 		fwrite($fd, $cert);
 		fwrite($fd, "\n");
 		fwrite($fd, $key);
@@ -581,7 +588,7 @@ EOD;
 		$lighty_config .= "\n";
 		$lighty_config .= "## ssl configuration\n";
 		$lighty_config .= "ssl.engine = \"enable\"\n";
-		$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/cert.pem\"\n\n";	
+		$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";	
 	}
 
 	$fd = fopen("{$g['varetc_path']}/{$filename}", "w");

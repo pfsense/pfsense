@@ -154,21 +154,13 @@ EOD;
 		/* start web server */
 		//      mwexec("/usr/local/sbin/mini_httpd -a -M 0 -u root -maxproc 16" .
 		//  	" -p 8000 -i {$g['varrun_path']}/mini_httpd.cp.pid");
-		
-		/* generate lighttpd configuration */
-		system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal.conf",
-			$key, $cert, "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/");
 	
-		/* attempt to start lighthttpd */
-		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-CaptivePortal.conf");		
-
-		/* fire up another one for HTTPS if requested */
+		$cert = "";
+		$key = "";
 		if (isset($config['captiveportal']['httpslogin']) &&
 			$config['captiveportal']['certificate'] && $config['captiveportal']['private-key']) {
-			
 			$cert = base64_decode($config['captiveportal']['certificate']);
 			$key = base64_decode($config['captiveportal']['private-key']);
-			
 			$fd = fopen("{$g['varetc_path']}/cert-portal.pem", "w");
 			if (!$fd) {
 				printf("Error: cannot open cert-portal.pem in system_webgui_start().\n");
@@ -179,11 +171,17 @@ EOD;
 			fwrite($fd, "\n");
 			fwrite($fd, $key);
 			fclose($fd);
-			
-			mwexec("/usr/local/sbin/mini_httpd -S -a -M 0 -E {$g['varetc_path']}/cert-portal.pem" .
-				" -u root -maxproc 16 -p 8001" .
-				" -i {$g['varrun_path']}/mini_httpd.cps.pid");
+
+
 		}
+
+		/* generate lighttpd configuration */
+		system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal.conf",
+			$key, $cert, "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/",
+			"cert-portal.pem");
+	
+		/* attempt to start lighthttpd */
+		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-CaptivePortal.conf");		
 
 		/* generate passthru mac database */
 		captiveportal_passthrumac_configure();

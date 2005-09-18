@@ -409,10 +409,6 @@ function system_generate_lighty_config($filename, $cert, $key, $pid_file,
 	$cert_location = "cert.pem",
 	$max_procs, $max_requests = "1") {
 	
-	/* create directory to hold compressed items */
-	if(!is_dir("/tmp/lighttpd/cache/compress/"))
-		make_dirs("/tmp/lighttpd/cache/compress/");
-	
 	if($port <> "")
 		$lighty_port = $port;
 	else

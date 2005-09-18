@@ -132,9 +132,13 @@ if ($_POST) {
 				if($_POST['restorearea'] <> "") {
 					/* restore a specific area of the configuration */
 					$rules = file_get_contents($_FILES['conffile']['tmp_name']);
-					restore_config_section($_POST['restorearea'], $rules);
-					filter_configure();
-					$savemsg = "The configuration area has been restored.";
+					if(stristr($_POST['restorearea'], $rules) == false) {
+						$input_errors[] = "You have selected to restore a area but we could not locate the correct xml tag.";
+					} else {
+						restore_config_section($_POST['restorearea'], $rules);
+						filter_configure();
+						$savemsg = "The configuration area has been restored.";
+					}
 				} else {
 					/* restore the entire configuration */
 					if (config_install($_FILES['conffile']['tmp_name']) == 0) {
@@ -143,7 +147,6 @@ if ($_POST) {
 						touch("/needs_package_sync");
 						conf_mount_ro();
 						$reloadall = true;
-						
 						$savemsg = "The configuration has been restored. The firewall is now reloading the settings.";
 					} else {
 						$input_errors[] = "The configuration could not be restored.";

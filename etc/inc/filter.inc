@@ -866,7 +866,7 @@ function filter_nat_rules_generate_if($if, $src, $srcport, $dst, $natport, $targ
 
 	$nat = "nat";
 	
-	if($nonat <> "")
+	if($nonat == true)
 		$nat = "no nat";
 	
         if ($target)
@@ -980,7 +980,7 @@ function filter_nat_rules_generate() {
 					$natif = $config['interfaces'][$obent['interface']]['if'];
 
 				$natrules .= filter_nat_rules_generate_if($natif, $src, $obent['sourceport'], $dst, $obent['natport'],
-					$obent['target'], $obent['nonat']);
+					$obent['target'], isset($obent['nonat']));
 			}
 		}
 	} else {
@@ -988,10 +988,10 @@ function filter_nat_rules_generate() {
 		/* create ipsec passthru rule if requested */
 		if (isset($config['nat']['ipsecpassthru']['enable'])) {
 			$natrules .= filter_nat_rules_generate_if($wanif,
-				$lansa . "/" . $lancfg['subnet'], 500, "", 500, null, "");
+				$lansa . "/" . $lancfg['subnet'], 500, "", 500, null, false);
 		}
 		$natrules .= filter_nat_rules_generate_if($wanif,
-			$lansa . "/" . $lancfg['subnet'], null, "", null, null, "");
+			$lansa . "/" . $lancfg['subnet'], null, "", null, null, false);
 
 		/* optional interfaces */
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
@@ -1005,10 +1005,10 @@ function filter_nat_rules_generate() {
                                  */
 				if($optcfg['gateway'] <> "") 
 					$natrules .= filter_nat_rules_generate_if($optcfg['if'],
-						$lansa . "/" . $lancfg['subnet'], null, "", null, null, "");
+						$lansa . "/" . $lancfg['subnet'], null, "", null, null, isset($optcfg['nonat']));
 					
 				$natrules .= filter_nat_rules_generate_if($wanif,
-					$optsa . "/" . $optcfg['subnet'], null, "", null, null, "");
+					$optsa . "/" . $optcfg['subnet'], null, "", null, null, isset($optcfg['nonat']));
 			}
 		}
 

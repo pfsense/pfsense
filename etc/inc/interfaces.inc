@@ -384,6 +384,11 @@ function interfaces_carp_bringup() {
 function interfaces_wireless_configure($if, $wlcfg) {
         global $config, $g;
 	
+	/* set values for /path/program */
+	$hostapd = "/usr/sbin/hostapd";
+	$wpa_supplicant = "/usr/sbin/wpa_supplicant";
+	$killall = "/usr/bin/killall";
+
 	/*   set wireless channel value.  if we're using 0 then
 	 *   convert the channel to -
 	 */
@@ -402,26 +407,32 @@ function interfaces_wireless_configure($if, $wlcfg) {
 		if (isset($wlcfg['wpa']['enable'])) {
 		
 	$wpa .= <<<EOD
-	
+
+ctrl_interface={$g['varrun_path']}/hostapd
 ctrl_interface_group=0
-eapol_version=1
 ap_scan=1
-fast_reauth=1
+#fast_reauth=1
 
 network={
-	ssid="{$wlcfg['ssid']}"
-	key_mgmt="{$wlcfg['wpapsk']}"
-	psk="{$wlcfg['passphrase']}"
-	
+ssid={$wlcfg['ssid']}
+scan_ssid=2
+priority=5
+key_mgmt={$wlcfg['wpa']['wpa_key_mgmt']}
+psk={$wlcfg['wpa']['passphrase']}
+pairwise={$wlcfg['wpa']['wpa_pairwise']}
+group={$wlcfg['wpa']['wpa_pairwise']}
 }
 
 EOD;
 
-		$fd = fopen("{$g['etc_path']}/ifconfig_{$if}", "w");
+		$fd = fopen("{$g['tmp_path']}/wpa_supplicant_{$if}.conf", "w");
 		fwrite($fd, "{$wpa}");
 		fclose($fd);
-		mwexec_bg("wpa_supplicant -i {$if} -c /etc/wpa_supplicant.conf");
 
+		if(is_process_running("wpa_supplicant")) {
+			mwexec("$killall -HUP wpa_supplicant");
+			} else {
+			mwexec("$wpa_supplicant -i {$if} -c {$g['etc_path']}/wpa_supplicant_{$if}.conf"); 		}
 		}
 	}
 
@@ -464,33 +475,36 @@ logger_syslog=-1
 logger_syslog_level=0
 logger_stdout=-1
 logger_stdout_level=0
-debug=4
-dump_file=/tmp/hostapd.dump
-ctrl_interface=/var/run/hostapd
+dump_file={$g['tmp_path']}/hostapd_{$if}.dump
+ctrl_interface={$g['varrun_path']}/hostapd
 ctrl_interface_group=wheel
+#accept_mac_file={$g['tmp_path']}/hostapd_{$if}.accept
+#deny_mac_file={$g['tmp_path']}/hostapd_{$if}.deny
 ssid={$wlcfg['ssid']}
-macaddr_acl=1
-auth_algs=3
-eapol_key_index_workaround=0
-wpa=1
-wpa_key_mgmt={$wlcfg['wpapsk']}
-wpa_pairwise=CCMP
-wpa_group_rekey=60
-wpa_gmk_rekey=3600
-wpa_passphrase={$wlcfg['passphrase']}
+debug={$wlcfg['wpa']['debug_mode']}
+#macaddr_acl={$wlcfg['wpa']['macaddr_acl']}
+auth_algs={$wlcfg['wpa']['auth_algs']}
+wpa={$wlcfg['wpa']['wpa_mode']}
+wpa_key_mgmt={$wlcfg['wpa']['wpa_key_mgmt']}
+wpa_pairwise={$wlcfg['wpa']['wpa_pairwise']}
+#wpa_group_rekey={$wlcfg['wpa']['wpa_group_rekey']}
+#wpa_gmk_rekey={$wlcfg['wpa']['wpa_gmk_rekey']}
+#wpa_strict_rekey={$wlcfg['wpa']['wpa_strict_rekey']}
+wpa_passphrase={$wlcfg['wpa']['passphrase']}
+ieee8021x={$wlcfg['wpa']['ieee8021x']}
 
 EOD;
-					$fd = fopen("{$g['etc_path']}/hostapd_{$if}.conf", "w");
+					$fd = fopen("{$g['tmp_path']}/hostapd_{$if}.conf", "w");
 					fwrite($fd, "{$wpa}");
 					fclose($fd);
 					if(is_process_running("hostapd")) {
-						mwexec("/usr/bin/killall -HUP hostapd");
+						mwexec("$killall -HUP hostapd");
 					} else {
-						mwexec("/usr/sbin/hostapd -B {$g['etc_path']}/hostapd_{$if}.conf");
+						mwexec("$hostapd -B {$g['tmp_path']}/hostapd_{$if}.conf");
 					}
-				}				
-				
-                        break;
+				}
+			break;
+
                 case 'ibss':
                 case 'IBSS':
                         if (preg_match($g['wireless_regex'], $if)) 
@@ -514,16 +528,35 @@ EOD;
 	/*   extra options during hostap mode
 	 */
 	if($wlcfg['mode'] == "hostap") {
+
 		/* handle hide ssid option */
 		if(isset($wlcfg['hidessid']))
 			$ifcargs .= "hidessid ";
 		else
 			$ifcargs .= "-hidessid ";
+
 		/* handle pureg (802.11g) only option */
 		if(isset($wlcfg['pureg']))
 			$ifcargs .= "pureg ";
 		else
 			$ifcargs .= "-pureg ";
+
+		/* handle turbo option */
+		if(isset($wlcfg['turbo']))
+			$ifcargs .= "mediaopt turbo ";
+		else
+			$ifcargs .= "mediaopt -turbo ";
+
+		/* handle txpower setting */
+		if($wlcfg['txpower'] <> "")
+			$ifcargs .= "txpower {$wlcfg['txpower']} ";
+		
+		/* handle wme option */
+		if(isset($wlcfg['wme']))
+			$ifcargs .= "wme ";
+		else
+			$ifcargs .= "-wme ";
+
 	}
 
         $ifcargs .= "up";
@@ -534,15 +567,13 @@ EOD;
 	fwrite($fd, "/sbin/ifconfig {$ifcargs}");
 	fclose($fd);
 	
-	if($wlcfg['txpower'] <> "")
-		mwexec("/sbin/ifconfig {$ifcargs} txpower {$wlcfg['txpower']}");
-	
 	if(isset($wlcfg['useolsr']))
 		setup_wireless_olsr(escapeshellarg($if));
 	
         return 0;
 
 }
+
 
 function find_dhclient_process($interface) {
 	if(filter_translate_type_to_real_interface($interface) <> "")
@@ -1178,7 +1209,7 @@ function is_jumbo_capable($int) {
 	 * Only the following drivers support large frames
 	 */
 	$capable = array("bfe", "dc", "de", "fxp", "hme", "rl", "sis", "ste",
-		"tl", "tx", "xl");
+		"tl", "tx", "xl", "em");
 	
 	$int_family = preg_split("/[0-9]+/", $int);
 

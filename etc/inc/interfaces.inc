@@ -363,7 +363,6 @@ function interfaces_carp_configure() {
 	/* remove any dangling carp references */
 	for($x=$carp_instances_counter; $x<$total_carp_interfaces_defined; $x++) {
 		mwexec("/sbin/ifconfig carp{$x} down");
-		mwexec("/sbin/ifconfig carp{$x} destroy");
 	}
 	unmute_kernel_msgs();
 	if ($g['booting']) {

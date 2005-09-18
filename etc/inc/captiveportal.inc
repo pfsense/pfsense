@@ -150,11 +150,7 @@ EOD;
 		mwexec("/sbin/sysctl net.link.ether.ipfw=1");
 		
 		chdir($g['captiveportal_path']);
-		
-		/* start web server */
-		//      mwexec("/usr/local/sbin/mini_httpd -a -M 0 -u root -maxproc 16" .
-		//  	" -p 8000 -i {$g['varrun_path']}/mini_httpd.cp.pid");
-	
+
 		$cert = "";
 		$key = "";
 		if (isset($config['captiveportal']['httpslogin']) &&
@@ -171,16 +167,14 @@ EOD;
 			fwrite($fd, "\n");
 			fwrite($fd, $key);
 			fclose($fd);
-
-
 		}
 
 		/* generate lighttpd configuration */
 		system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal.conf",
 			$key, $cert, "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/",
-			"cert-portal.pem");
+				"cert-portal.pem");
 	
-		/* attempt to start lighthttpd */
+		/* attempt to start lighttpd */
 		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-CaptivePortal.conf");		
 
 		/* generate passthru mac database */

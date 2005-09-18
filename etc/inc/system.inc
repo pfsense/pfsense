@@ -389,7 +389,7 @@ EOD;
 	/* generate lighttpd configuration */
 	system_generate_lighty_config("{$g['varetc_path']}/lighty-webConfigurator.conf",
 		$key, $cert, "lighty-webConfigurator.pid", "80", "/usr/local/www/",
-		"cert.pem");
+			"cert.pem");
 
 	/* attempt to start lighthttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");

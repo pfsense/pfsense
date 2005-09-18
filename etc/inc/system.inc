@@ -579,6 +579,7 @@ EOD;
 		fwrite($fd, $key);
 		fclose($fd);
 		$lighty_config .= "\n";
+		$lighty_config .= "## ssl configuration\n";
 		$lighty_config .= "ssl.engine = \"enable\"\n";
 		$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/cert.pem\"\n\n";	
 	}

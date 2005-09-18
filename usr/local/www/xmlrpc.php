@@ -125,6 +125,8 @@ function get_notices_xmlrpc($raw_params) {
 $carp_configure_doc = 'Basic XMLRPC wrapper for configuring carp interfaces.';
 $carp_configure_sig = array(array($XML_RPC_Boolean, $XML_RPC_String));
 function interfaces_carp_configure_xmlrpc($raw_params) {
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", 'string'));
 	interfaces_carp_bringup();
 	interfaces_carp_configure();
 	return new XML_RPC_Response(new XML_RPC_Value(true, 'boolean'));

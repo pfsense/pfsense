@@ -26,109 +26,164 @@
         INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
         CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
         ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-        POSSIBILITY OF SUCH DAMAGE.
+        POSSIBILITY OF SUCH DAMAGE._Value(
 
 	TODO:
 		* Expose more functions.
-		* Add syslog handling of errors.
-		* Define XML_RPC_erruser.
 */
 
-include("guiconfig.inc");
 require_once("xmlrpc_server.inc");
 require_once("xmlrpc.inc");
 require_once("config.inc");
 require_once("functions.inc");
 
-// Exposed functions.
+$xmlrpc_g = array(
+			"return" => array(
+						"true" => new XML_RPC_Response(new XML_RPC_Value(true, $XML_RPC_Boolean)),
+						"false" => new XML_RPC_Response(new XML_RPC_Value(false, $XML_RPC_Boolean)),
+						"authfail" => new XML_RPC_Response(0, $XML_RPC_erruser+1, "Authentication failure")
+				)
+		);
+
+/*
+ *   pfSense XMLRPC errors
+ *   $XML_RPC_erruser + 1 = Auth failure
+ */
+$XML_RPC_erruser = 200;
+
+/* EXPOSED FUNCTIONS */
 
 $backup_config_section_doc = 'XMLRPC wrapper for backup_config_section. This method must be called with two parameters: a string containing the local system\'s password followed by a string containing the section to be backed up.';
-$backup_config_section_sig = array(array($XML_RPC_String, $XML_RPC_String, $XML_RPC_String));
+$backup_config_section_sig = array(
+				array(
+					$XML_RPC_String, // First signature element is return value.
+					$XML_RPC_String,
+					$XML_RPC_String
+				)
+			);
 
 function backup_config_section_xmlrpc($raw_params) {
-	$params = xmlrpc_params_to_php($raw_params); // Convert XML_RPC_Value objects to a PHP array of values.
-	if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", 'string'));
-	$val = new XML_RPC_Value(backup_config_section($params[0]), 'string'); 
-	return new XML_RPC_Response($val);
+	global $xmlrpc_g;
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
+	$val = backup_config_section($params['section']); 
+	return new XML_RPC_Response(XML_RPC_encode($val));
 }
 
+/*****************************/
+
 $restore_config_section_doc = 'XMLRPC wrapper for restore_config_section. This method must be called with three parameters: a string containing the local system\'s password, a string containing the section to be restored, and a string containing the returned value of backup_config_section() for that section. This function returns true upon completion.';
-$restore_config_section_sig = array(array($XML_RPC_Boolean, $XML_RPC_String, $XML_RPC_Array, $XML_RPC_Array));
+$restore_config_section_sig = array(
+					array(
+						$XML_RPC_Boolean,
+						$XML_RPC_String,
+						$XML_RPC_Array,
+						$XML_RPC_Array
+					)
+				);
 
 function restore_config_section_xmlrpc($raw_params) {
+	global $xmlrpc_g;
 	$params = xmlrpc_params_to_php($raw_params);
 	$i = 0;
-	if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", 'string'));
+	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
 	foreach($params[0] as $section) {
 		restore_config_section($section, $params[1][$i]);
 		$i++;
 	}
-	return new XML_RPC_Response(new XML_RPC_Value(true, 'boolean'));
+	return $xmlrpc_g['return']['true'];
 }
+
+/*****************************/
 
 $filter_configure_doc = 'Basic XMLRPC wrapper for filter_configure. This method must be called with one paramater: a string containing the local system\'s password. This function returns true upon completion.';
-$filter_configure_sig = array(array($XML_RPC_Boolean, $XML_RPC_String));
+$filter_configure_sig = array(
+				array(
+					$XML_RPC_Boolean,
+					$XML_RPC_String
+				)
+			);
 
 function filter_configure_xmlrpc($raw_params) {
+	global $xmlrpc_g;
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", 'string'));
+	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
 	filter_configure();
-	return new XML_RPC_Response(new XML_RPC_Value(true, 'boolean'));
+	return $xmlrpc_g['return']['true'];
 }
+
+/*****************************/
 
 $check_firmware_version_doc = 'Basic XMLRPC wrapper for filter_configure. This function will return the output of check_firmware_version upon completion.';
-$check_firmware_version_sig = array(array($XML_RPC_String, $XML_RPC_String));
+$check_firmware_version_sig = array(
+					array(
+						$XML_RPC_String,
+						$XML_RPC_String
+					)
+				);
 
 function check_firmware_version_xmlrpc($raw_params) {
-	return new XML_RPC_Response(new XML_RPC_Value(check_firmware_version(false), 'string'));
+	return new XML_RPC_Response(new XML_RPC_Value(check_firmware_version(false), $XML_RPC_String));
 }
 
-
-$auto_update_doc = 'Basic XMLRPC wrapper for auto_update. This method must be called with one paramater: a string containing the local system\'s password. This function will return true upon completion.';
-$auto_update_sig = array(array($XML_RPC_Boolean, $XML_RPC_String));
-
-function auto_update_xmlrpc($raw_params) {
-	$params = xmlrpc_params_to_php($raw_params);
-        if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", 'string'));
-	auto_update();
-	return new XML_RPC_Response(new XML_RPC_Value(true, 'boolean'));
-}
+/*****************************/
 
 $reboot_doc = 'Basic XMLRPC wrapper for rc.reboot.';
 $reboot_sig = array(array($XML_RPC_Boolean, $XML_RPC_String));
 
 function reboot_xmlrpc($raw_params) {
-	require_once("util.inc");
+	global $xmlrpc_g;
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", 'string'));
+	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
 	mwexec_bg("/etc/rc.reboot");
-	return new XML_RPC_Response(new XML_RPC_Value(true, 'boolean'));
+	return $xmlrpc_g['return']['true'];
 }
 
-$get_notices_sig = array(array($XML_RPC_Array, $XML_RPC_String), array($XML_RPC_Array));
+/*****************************/
+
+$get_notices_sig = array(
+				array(
+					$XML_RPC_Array, 
+					$XML_RPC_String
+				),
+				array(
+					$XML_RPC_Array
+				)
+			);
+
 function get_notices_xmlrpc($raw_params) {
-	global $g;
+	global $g, $xmlrpc_g;
 	require_once("notices.inc");
-	$params = xmlrpc_params_to_php($raw_params);
-	if(!$params[0]) {
+	$params = array_pop(xmlrpc_params_to_php($raw_params));
+	if(!$params) {
 		$toreturn = get_notices();
 	} else {
-		$toreturn = get_notices($params[0]);
+		$toreturn = get_notices($params);
 	}
 	$response = new XML_RPC_Response(XML_RPC_encode($toreturn));
-	print $response->serialize();
 	return $response;
 }
 
-$carp_configure_doc = 'Basic XMLRPC wrapper for configuring carp interfaces.';
-$carp_configure_sig = array(array($XML_RPC_Boolean, $XML_RPC_String));
+/*****************************/
+
+$carp_configure_doc = 'Basic XMLRPC wrapper for configuring CARP interfaces.';
+$carp_configure_sig = array(
+				array(
+					$XML_RPC_Boolean,
+					$XML_RPC_String
+				)
+			);
+			
 function interfaces_carp_configure_xmlrpc($raw_params) {
+	global $xmlrpc_g;
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", 'string'));
+	if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", $XML_RPC_String));
 	interfaces_carp_bringup();
 	interfaces_carp_configure();
-	return new XML_RPC_Response(new XML_RPC_Value(true, 'boolean'));
+	return new XML_RPC_Response(new XML_RPC_Value(true, $XML_RPC_Boolean));
 }
+
+/*****************************/
 
 $server = new XML_RPC_Server(
         array(
@@ -147,9 +202,6 @@ $server = new XML_RPC_Server(
 	    'pfsense.check_firmware_version' =>	array('function' => 'check_firmware_version_xmlrpc',
 							'signature' => $check_firmware_version_sig,
 							'docstring' => $check_firmware_version_doc),
-//	    'pfsense.auto_update' =>		array('function' => 'auto_update_xmlrpc',
-//							'signature' => $auto_update_sig,
-//							'docstring' => $auto_update_doc),
 	    'pfsense.reboot' =>			array('function' => 'reboot_xmlrpc',
 							'signature' => $reboot_sig,
 							'docstring' => $reboot_doc),

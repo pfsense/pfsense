@@ -1141,7 +1141,8 @@ EOD;
 		$vlan['if'] = chop(fgets($fp));
 
 		if ($vlan['if']) {
-			if (!array_key_exists($vlan['if'], $iflist)) {
+			if (!array_key_exists($vlan['if'], $iflist) or
+			    !is_jumbo_capable($vlan['if'])) {
 				echo "\nInvalid interface name '{$vlan['if']}'\n";
 				continue;
 			}

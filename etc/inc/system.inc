@@ -456,7 +456,7 @@ server.modules              = (
 server.document-root        = "{$document_root}"
 
 ## where to send error-messages to
-server.errorlog             = "/var/log/lighttpd.error.log"
+#server.errorlog             = "/var/log/lighttpd.error.log"
 
 # files to check for if .../ is requested
 server.indexfiles           = ( "index.php", "index.html",

@@ -407,7 +407,7 @@ EOD;
 function system_generate_lighty_config($filename, $cert, $key, $pid_file,
 	$port = "", $document_root = "/usr/local/www/",
 	$cert_location = "cert.pem",
-	$max_procs) {
+	$max_procs, $max_requests = "5") {
 	
 	/* create directory to hold compressed items */
 	if(!is_dir("/tmp/lighttpd/cache/compress/"))
@@ -563,10 +563,10 @@ fastcgi.server             = ( ".php" =>
 				   "min-procs" => 1,
 				   "max-procs" => {$max_procs},
 				   "max-load-per-proc" => 1,
-				   "idle-timeout" => 5,
+				   "idle-timeout" => 1,
 				   "bin-environment" => ( 
 				      "PHP_FCGI_CHILDREN" => "{$max_procs}",
-				      "PHP_FCGI_MAX_REQUESTS" => "100"
+				      "PHP_FCGI_MAX_REQUESTS" => "{$max_requests}"
 				   ),				   
                                    "bin-path" => "/usr/local/bin/php"
                                  )

@@ -6,7 +6,6 @@
  *   This include contains various pfSense specific functions.
  * HISTORY
  *   $Id$
- *   $Id$
  ******
  *
  * Copyright (C) 2005 Scott Ullrich (sullrich@gmail.com)
@@ -711,6 +710,18 @@ function reverse_strrchr($haystack, $needle)
 function backup_config_section($section) {
     global $config;
     $new_section = &$config[$section];
+    /* generate configuration XML */
+    $xmlconfig = dump_xml_config($new_section, $section);
+    $xmlconfig = str_replace("<?xml version=\"1.0\"?>", "", $xmlconfig);
+    return $xmlconfig;
+}
+
+/*
+ *  backup_config_ts_scheduler(): returns the traffic shaper scheduler for backup
+ */
+function backup_config_ts_scheduler() {
+    global $config;
+    $new_section = &$config['syste']['schedulertype'];
     /* generate configuration XML */
     $xmlconfig = dump_xml_config($new_section, $section);
     $xmlconfig = str_replace("<?xml version=\"1.0\"?>", "", $xmlconfig);

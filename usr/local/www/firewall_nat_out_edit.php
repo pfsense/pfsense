@@ -174,6 +174,7 @@ if ($_POST) {
         $natent['descr'] = $_POST['descr'];
         $natent['target'] = $_POST['target'];
         $natent['interface'] = $_POST['interface'];
+	$natent['nonat'] = $_POST['nonat'];
 
         if ($ext == "any")
             $natent['destination']['any'] = true;

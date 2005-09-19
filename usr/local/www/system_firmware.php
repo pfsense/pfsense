@@ -164,12 +164,8 @@ print_info_box($sig_warning);
 <?php else: ?>
             <?php if (!file_exists($d_firmwarelock_path)): ?>
 	<?php
-		
-		$ip = split(":", $_SERVER['PHP_SELF']);
-		$myip = $ip[0] . $ip[1];
-
-	?>
-	
+		$myip = "http://{$_SERVER['SERVER_NAME']}:8041/system_firmware.php";
+	?>	
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td>
@@ -205,7 +201,7 @@ print_info_box($sig_warning);
 		    </form>
 		    <?php
 			if(file_exists($d_fwupenabled_path)) {
-				echo "<form action=\"http:/{$myip}:8041\" method=\"post\" enctype=\"multipart/form-data\">";
+				echo "<form action=\"{$myip}\" method=\"post\" enctype=\"multipart/form-data\">";
 			}		    
 		    ?>		    
 					<strong>Firmware image file: </strong>&nbsp;

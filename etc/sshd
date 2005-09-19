@@ -104,7 +104,7 @@
 
 	$status = system("/usr/sbin/sshd");
 	if($status <> 0) {
-		
+		echo "Error!\n";
 	} else {
 		echo "Done.\n";
 	}

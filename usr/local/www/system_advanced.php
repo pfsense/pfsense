@@ -531,7 +531,9 @@ include("head.inc");
 				<input name="disablefilter" type="checkbox" id="disablefilter" value="yes" <?php if (isset($config['system']['disablefilter'])) echo "checked"; ?> onclick="enable_change(false)" />
 				<strong>Disable the firewalls filter altogether.</strong>
 				<br />
-				<span class="vexpl">Note:  This basically converts pfSense into a routing only platform!</span>
+				<span class="vexpl">Note:  This basically converts pfSense into a routing only platform!<br>
+				                    Note:  This will turn off NAT!
+				</span>
 			</td>
 		</tr>
 		<tr>

@@ -94,9 +94,9 @@
 		conf_mount_rw();
 		mwexec("rm /etc/ssh/ssh_host_*");
 		echo "\n";
-		system("/usr/bin/ssh-keygen -t rsa1 -N '' -f $sshConfigDir/ssh_host_key");
-		system("/usr/bin/ssh-keygen -t rsa -N '' -f $sshConfigDir/ssh_host_rsa_key");
-		system("/usr/bin/ssh-keygen -t dsa -N '' -f $sshConfigDir/ssh_host_dsa_key");
+		system("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t rsa1 -N '' -f $sshConfigDir/ssh_host_key");
+		system("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t rsa -N '' -f $sshConfigDir/ssh_host_rsa_key");
+		system("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t dsa -N '' -f $sshConfigDir/ssh_host_dsa_key");
 		
 	}
 
@@ -108,9 +108,9 @@
 
 	if (!file_exists("$sshConfigDir/ssh_host_key") and $config['ssh']['dsa'] == "") {
 		/* generate keys */
-		system("/usr/bin/ssh-keygen -t rsa1 -N '' -f $sshConfigDir/ssh_host_key");
-		system("/usr/bin/ssh-keygen -t rsa -N '' -f $sshConfigDir/ssh_host_rsa_key");
-		system("/usr/bin/ssh-keygen -t dsa -N '' -f $sshConfigDir/ssh_host_dsa_key");
+		system("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t rsa1 -N '' -f $sshConfigDir/ssh_host_key");
+		system("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t rsa -N '' -f $sshConfigDir/ssh_host_rsa_key");
+		system("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t dsa -N '' -f $sshConfigDir/ssh_host_dsa_key");
 
 		/* save keys */
 		$dsa  = file_get_contents("{$sshConfigDir}/ssh_host_dsa_key");

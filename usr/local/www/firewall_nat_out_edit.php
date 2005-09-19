@@ -174,7 +174,13 @@ if ($_POST) {
         $natent['descr'] = $_POST['descr'];
         $natent['target'] = $_POST['target'];
         $natent['interface'] = $_POST['interface'];
-	$natent['nonat'] = $_POST['nonat'];
+
+	/* if user has selected not nat, set it here */
+	if(isset($_POST['nonat'])) {
+		$natent['nonat'] = true;
+	} else {
+		$natent['nonat'] = false;
+	}
 
         if ($ext == "any")
             $natent['destination']['any'] = true;

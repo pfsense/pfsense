@@ -77,6 +77,7 @@
 
 	$sshConfigDir = "/etc/ssh";
 
+	/* mop up from a badly implemented ssh keys -> cf backup */
 	if($config['ssh']['dsa_key'] <> "") {
 		unset($config['ssh']['dsa_key']);
 		unset($config['ssh']['rsa_key']);
@@ -88,20 +89,65 @@
 		write_config("Clearing SSH keys from config.xml");
 	}
 	
-	//if (!file_exists("$sshConfigDir/ssh_host_key") and $config['ssh']['dsa'] == "") {
-	if (!file_exists("$sshConfigDir/ssh_host_key")) {
+	if (!file_exists("$sshConfigDir/ssh_host_key") or file_exists("/etc/keys_generating")) {
 		/* remove previous keys and regen later */
 		conf_mount_rw();
 		mwexec("rm /etc/ssh/ssh_host_*");
-		echo "\n";
+		touch("/etc/keys_generating");
+		echo " Generating Keys:\n";
 		system("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t rsa1 -N '' -f $sshConfigDir/ssh_host_key");
 		system("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t rsa -N '' -f $sshConfigDir/ssh_host_rsa_key");
 		system("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t dsa -N '' -f $sshConfigDir/ssh_host_dsa_key");
-		
+		unlink("/etc/keys_generating");
+		echo "Starting SSH... ";
 	}
 
-	system("/usr/sbin/sshd");
-	fwrite($stderr, "Done.\n");
+	$status = system("/usr/sbin/sshd");
+	if($status <> 0) {
+		
+	} else {
+		echo "Done.\n";
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	exit;
 
 	/* exit early, this needs more testing. */

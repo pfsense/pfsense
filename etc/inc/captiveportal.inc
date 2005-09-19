@@ -188,13 +188,13 @@ EOD;
 		} else if($avail > 512 and $avail < 684) {
 			$procs = 7;
 		} else {
-			$procs = 8;
+			$procs = 1;
 		}
 
 		/* generate lighttpd configuration */
 		system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal.conf",
 			$key, $cert, "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/",
-				"cert-portal.pem", "5", $procs, $use_fastcgi);
+				"cert-portal.pem", "1", $procs, $use_fastcgi);
 	
 		/* attempt to start lighttpd */
 		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-CaptivePortal.conf");		

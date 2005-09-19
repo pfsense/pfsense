@@ -176,19 +176,19 @@ EOD;
 			$procs = 1;
 			$use_fastcgi = false;
 		} else if($avail > 64 and $avail < 128) {
-			$procs = 5;
+			$procs = 2;
 		} else if($avail > 128 and $avail < 164) {
-			$procs = 15;
+			$procs = 3;
 		} else if($avail > 164 and $avail < 256) {
-			$procs = 20;
+			$procs = 4;
 		} else if($avail > 256 and $avail < 384) {
-			$procs = 25;
+			$procs = 5;
 		} else if($avail > 384 and $avail < 512) {
-			$procs = 30;
+			$procs = 6;
 		} else if($avail > 512 and $avail < 684) {
-			$procs = 40;
+			$procs = 7;
 		} else {
-			$procs = 50;
+			$procs = 8;
 		}
 
 		/* generate lighttpd configuration */

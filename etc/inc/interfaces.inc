@@ -389,15 +389,11 @@ function interfaces_wireless_configure($if, $wlcfg) {
 	$wpa_supplicant = "/usr/sbin/wpa_supplicant";
 	$ifconfig = "/sbin/ifconfig ";
 
-	/*   set wireless channel value.  if we're using 0 then
-	 *   convert the channel to -
-	 */
-	$channel = escapeshellarg($wlcfg['channel']);
-	if($channel == "") 
-		$channel = " ";
+	/* Clear all ifcargs before we begin */
+	$ifcargs = "";
 
         /* wireless configuration */
-        $ifcargs = escapeshellarg($if) . " ssid " . escapeshellarg($wlcfg['ssid']) . " Channel {$channel} ";
+        $ifcargs .= escapeshellarg($if) . " ssid " . escapeshellarg($wlcfg['ssid']) . " ";
 
         if ($wlcfg['stationname'])
                 $ifcargs .= "stationname " . escapeshellarg($wlcfg['stationname']) . " ";
@@ -411,7 +407,6 @@ ctrl_interface={$g['varrun_path']}/hostapd
 ctrl_interface_group=0
 ap_scan=1
 #fast_reauth=1
-
 network={
 ssid={$wlcfg['ssid']}
 scan_ssid=2
@@ -455,8 +450,18 @@ EOD;
 	} else {
 		if (preg_match($g['wireless_regex'], $if)) {
 			if ($wlcfg['standard'])
-				$ifcargs .= "mode {$wlcfg['standard']} ";
+				$ifcargs .= "mode " . escapeshellarg($wlcfg['standard']) . " ";
 		}
+	}
+
+	/*   set wireless channel value.  if we're using 0 then
+	 *   convert the channel to -
+	 *   THIS NEEDS TO BE SET AFTER $ifcargs .= "mode " !!! lsf
+	 */
+	$channel = escapeshellarg($wlcfg['channel']);
+	if($channel == "") {
+		$channel = "";
+		} else { $ifcargs .= "channel" . escapeshellarg($wlcfg['channel']) . " ";
 	}
 
         switch ($wlcfg['mode']) {
@@ -529,7 +534,7 @@ EOD;
 	if($wlcfg['mode'] == "hostap") {
 
 		/* handle hide ssid option */
-		if(isset($wlcfg['hidessid']))
+		if(isset($wlcfg['hidessid']['enable']))
 			$ifcargs .= "hidessid ";
 		else
 			$ifcargs .= "-hidessid ";
@@ -548,7 +553,7 @@ EOD;
 
 		/* handle txpower setting */
 		if($wlcfg['txpower'] <> "")
-			$ifcargs .= "txpower {$wlcfg['txpower']} ";
+			$ifcargs .= "txpower " . escapeshellarg($wlcfg['txpower']) . " ";
 		
 		/* handle wme option */
 		if(isset($wlcfg['wme']['enable']))
@@ -574,7 +579,6 @@ EOD;
         return 0;
 
 }
-
 
 function find_dhclient_process($interface) {
 	if(filter_translate_type_to_real_interface($interface) <> "")

@@ -865,14 +865,18 @@ function filter_nat_rules_generate_if($if, $src, $srcport, $dst, $natport, $targ
 		return;
 
 	$nat = "nat";
-	
-	if($nonat == true)
-		$nat = "no nat";
-	
+
         if ($target)
                 $tgt = $target . "/32";
         else
                 $tgt = "($if)";
+	
+	if($nonat == true) {
+		$nat = "no nat";
+		$second_half_of_rule = "";
+	} else {
+		$second_half_of_rule = " -> {$tgt}";
+	}
 
 	if ($dst == "")
 		$dst = "any";
@@ -884,7 +888,7 @@ function filter_nat_rules_generate_if($if, $src, $srcport, $dst, $natport, $targ
 		$tgt .= " port " . $natport;
 
         $natrule = <<<EOD
-$nat on $if from $src to $dst -> $tgt
+$nat on $if from $src to $dst $second_half_of_rule
 
 EOD;
 

@@ -179,7 +179,7 @@ if ($_POST) {
 
 		$savemsg = get_std_save_message($retval);
 		if ($restart_webgui)
-			$savemsg .= "<br />One moment...redirecting to {$url}";
+			$savemsg .= "<br />One moment...redirecting to {$url} in 10 seconds.";
 	}
 }
 

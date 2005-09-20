@@ -168,16 +168,25 @@ EOD;
 			fwrite($fd, $key);
 			fclose($fd);
 		}
-		/* get memory in meachine */
+
+		/*
+		 *    get available memory in machine then deterimine
+		 *    how many procs captiveportal should start out with.
+                 *    with one of our users at a school they sometimes have
+                 *    login spikes with 400+ users logging in around the same
+                 *    time.  in m0n0/mini_httpd it would hit the 16 concurrent
+                 *    limit so some users would receive a http server busy
+                 *    error.
+                 */
 		$memory = get_memory();
 		$avail = $memory[0];
 		$use_fastcgi = true;
 		if($avail > 0 and $avail < 65) {
 			$procs = 1;
 			$use_fastcgi = false;
-		} else if($avail > 64 and $avail < 128) {
+		} else if($avail > 64 and $avail < 120) {
 			$procs = 2;
-		} else if($avail > 128 and $avail < 164) {
+		} else if($avail > 120 and $avail < 160) {
 			$procs = 3;
 		} else if($avail > 164 and $avail < 256) {
 			$procs = 4;

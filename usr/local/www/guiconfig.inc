@@ -163,7 +163,7 @@ function print_input_errors($input_errors) {
 	}
 	echo "</ul></span>";
 
-	echo "</td></tr></table></p>";
+	echo "</td></tr></table></p>&nbsp;<br>";
 }
 
 function exec_rc_script($scriptname) {

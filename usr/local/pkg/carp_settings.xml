@@ -60,7 +60,11 @@
 		<field>
 			<fielddescr>Synchronize Enabled</fielddescr>
 			<fieldname>pfsyncenabled</fieldname>
-			<description>PFSync transfers state insertion, update, and deletion messages between firewalls. Each firewall sends these messages out via multicast on a specified interface, using the PFSYNC protocol (IP Protocol 240). It also listens on that interface for similar messages from other firewalls, and imports them into the local state table.</description>
+			    <description>
+				PFSync transfers state insertion, update, and deletion messages between firewalls. Each firewall sends these messages out via multicast on a specified interface, using the PFSYNC protocol (IP Protocol 240). It also listens on that interface for similar messages from other firewalls, and imports them into the local state table.
+				&lt;p&gt;
+				NOTE: Clicking save will force a configuration sync!
+			    </description>
 			<type>checkbox</type>
 		</field>
 		<field>

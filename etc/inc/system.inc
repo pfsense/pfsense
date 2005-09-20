@@ -390,9 +390,9 @@ EOD;
 	if ($config['system']['webgui']['port'] <> "") {
 		$port = $config['system']['webgui']['port'];
 	} else {
-		if($config['webguiproto'] == "https")
+		if($config['system']['webgui']['protocol'] == "https")
 			$port = "443";
-		elseif($config['webguiproto'] == "http")
+		elseif($config['system']['webgui']['protocol'] == "http")
 			$port = "80";
 		else
 			$port = "80";

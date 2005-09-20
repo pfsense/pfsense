@@ -232,6 +232,10 @@
 	/* power down hard drive if needed/set */
 	system_set_harddisk_standby();
 
+	/* lock down console if necessary */
+	if(isset($config['system']['disableconsolemenu']))
+		touch("/var/etc/console_lockdown");
+	
 	/* done */
 	unlink("{$g['varrun_path']}/booting");
 	$g['booting'] = FALSE;

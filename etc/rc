@@ -212,4 +212,10 @@ rm -rf /usr/local/pkg/pf/CVS
 
 echo "Bootup complete"
 
+# if console is not locked, spawn rc.initial.
+if [ ! -f /var/etc/console_lockdown ]; then
+    /bin/sh /etc/rc.initial
+fi
+
+# console is locked, lets exit and let the login shell take over.
 exit 0

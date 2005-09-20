@@ -132,7 +132,7 @@ if ($_POST) {
 				if($_POST['restorearea'] <> "") {
 					/* restore a specific area of the configuration */
 					$rules = file_get_contents($_FILES['conffile']['tmp_name']);
-					if(stristr($_POST['restorearea'], $rules) == false) {
+					if(stristr($rules, $_POST['restorearea']) == false) {
 						$input_errors[] = "You have selected to restore a area but we could not locate the correct xml tag.";
 					} else {
 						restore_config_section($_POST['restorearea'], $rules);

@@ -140,16 +140,21 @@ if ($_POST) {
 						$savemsg = "The configuration area has been restored.";
 					}
 				} else {
-					/* restore the entire configuration */
-					if (config_install($_FILES['conffile']['tmp_name']) == 0) {
-						/* this will be picked up by /index.php */
-						conf_mount_rw();
-						touch("/needs_package_sync");
-						conf_mount_ro();
-						$reloadall = true;
-						$savemsg = "The configuration has been restored. The firewall is now reloading the settings.";
+					$rules = file_get_contents($_FILES['conffile']['tmp_name']);
+					if(stristr($rules, "pfsense") == false) {
+						$input_errors[] = "You have selected to restore the full configuration but we could not locate a pfsense tag.";
 					} else {
-						$input_errors[] = "The configuration could not be restored.";
+					/* restore the entire configuration */
+						if (config_install($_FILES['conffile']['tmp_name']) == 0) {
+							/* this will be picked up by /index.php */
+							conf_mount_rw();
+							touch("/needs_package_sync");
+							conf_mount_ro();
+							$reloadall = true;
+							$savemsg = "The configuration has been restored. The firewall is now reloading the settings.";
+						} else {
+							$input_errors[] = "The configuration could not be restored.";
+						}
 					}
 				}				
 			} else {

@@ -1,7 +1,6 @@
 <?php
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
-/* $Id$ */
 
 /**
  * Server commands for our PHP implementation of the XML-RPC protocol
@@ -41,7 +40,7 @@
 /**
  * Pull in the XML_RPC class
  */
-require_once 'xmlrpc_client.inc';
+require_once 'XML/RPC.php';
 
 
 /**
@@ -215,7 +214,7 @@ function XML_RPC_Server_methodHelp($server, $m)
         $dmap = $server->dmap;
         $sysCall = 0;
     }
-    //  print "<!-- ${methName} -->\n";
+
     if (isset($dmap[$methName])) {
         if ($dmap[$methName]['docstring']) {
             $r = new XML_RPC_Response(new XML_RPC_Value($dmap[$methName]['docstring']),
@@ -271,7 +270,7 @@ function XML_RPC_Server_debugmsg($m)
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.1
+ * @version    Release: 1.4.2
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Server
@@ -386,8 +385,12 @@ class XML_RPC_Server
      */
     function service()
     {
-        $this->createServerPayload();
-        $this->createServerHeaders();
+        if (!$this->server_payload) {
+            $this->createServerPayload();
+        }
+        if (!$this->server_headers) {
+            $this->createServerHeaders();
+        }
         header($this->server_headers);
         print $this->server_payload;
     }
@@ -502,11 +505,12 @@ class XML_RPC_Server
         $parser = (int) $parser_resource;
 
         $XML_RPC_xh[$parser] = array();
-        $XML_RPC_xh[$parser]['st']     = '';
         $XML_RPC_xh[$parser]['cm']     = 0;
         $XML_RPC_xh[$parser]['isf']    = 0;
         $XML_RPC_xh[$parser]['params'] = array();
         $XML_RPC_xh[$parser]['method'] = '';
+        $XML_RPC_xh[$parser]['stack'] = array();	
+        $XML_RPC_xh[$parser]['valuestack'] = array();	
 
         $plist = '';
 
@@ -523,16 +527,26 @@ class XML_RPC_Server
                                               xml_error_string(xml_get_error_code($parser_resource)),
                                               xml_get_current_line_number($parser_resource)));
             xml_parser_free($parser_resource);
+        } elseif ($XML_RPC_xh[$parser]['isf']>1) {
+            $r = new XML_RPC_Response(0,
+                                      $XML_RPC_err['invalid_request'],
+                                      $XML_RPC_str['invalid_request']
+                                      . ': '
+                                      . $XML_RPC_xh[$parser]['isf_reason']);
+            xml_parser_free($parser_resource);
         } else {
             xml_parser_free($parser_resource);
             $m = new XML_RPC_Message($XML_RPC_xh[$parser]['method']);
             // now add parameters in
             for ($i = 0; $i < sizeof($XML_RPC_xh[$parser]['params']); $i++) {
                 // print '<!-- ' . $XML_RPC_xh[$parser]['params'][$i]. "-->\n";
-                $plist .= "$i - " . $XML_RPC_xh[$parser]['params'][$i] . " \n";
-                eval('$m->addParam(' . $XML_RPC_xh[$parser]['params'][$i] . ');');
+                $plist .= "$i - " . var_export($XML_RPC_xh[$parser]['params'][$i], true) . " \n";
+                $m->addParam($XML_RPC_xh[$parser]['params'][$i]);
             }
-            XML_RPC_Server_debugmsg($plist);
+
+            if ($this->debug) {
+                XML_RPC_Server_debugmsg($plist);
+            }
 
             // now to deal with the method
             $methName = $XML_RPC_xh[$parser]['method'];

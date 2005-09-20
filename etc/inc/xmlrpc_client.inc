@@ -1,7 +1,6 @@
 <?php
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
-/* $Id$ */
 
 /**
  * PHP implementation of the XML-RPC protocol
@@ -155,6 +154,7 @@ $GLOBALS['XML_RPC_err'] = array(
     'introspect_unknown'  => 4,
     'http_error'          => 5,
     'not_response_object' => 6,
+    'invalid_request'     => 7,
 );
 
 /**
@@ -168,6 +168,7 @@ $GLOBALS['XML_RPC_str'] = array(
     'introspect_unknown'  => 'Can\'t introspect: method unknown',
     'http_error'          => 'Didn\'t receive 200 OK from remote server.',
     'not_response_object' => 'The requested method didn\'t return an XML_RPC_Response object.',
+    'invalid_request'     => 'Invalid request payload',
 );
 
 
@@ -198,10 +199,34 @@ $GLOBALS['XML_RPC_backslash'] = chr(92) . chr(92);
 
 
 /**
+ * Valid parents of XML elements
+ * @global array $GLOBALS['XML_RPC_valid_parents']
+ */
+$GLOBALS['XML_RPC_valid_parents'] = array(
+    'BOOLEAN' => array('VALUE'),
+    'I4' => array('VALUE'),
+    'INT' => array('VALUE'),
+    'STRING' => array('VALUE'),
+    'DOUBLE' => array('VALUE'),
+    'DATETIME.ISO8601' => array('VALUE'),
+    'BASE64' => array('VALUE'),
+    'ARRAY' => array('VALUE'),
+    'STRUCT' => array('VALUE'),
+    'PARAM' => array('PARAMS'),
+    'METHODNAME' => array('METHODCALL'),
+    'PARAMS' => array('METHODCALL', 'METHODRESPONSE'),
+    'MEMBER' => array('STRUCT'),
+    'NAME' => array('MEMBER'),
+    'DATA' => array('ARRAY'),
+    'FAULT' => array('METHODRESPONSE'),
+    'VALUE' => array('MEMBER', 'DATA', 'PARAM', 'FAULT'),
+);
+
+
+/**
  * Stores state during parsing
  *
  * quick explanation of components:
- *   + st     = builds up a string for evaluation
  *   + ac     = accumulates values
  *   + qt     = decides if quotes are needed for evaluation
  *   + cm     = denotes struct or array (comma needed)
@@ -223,22 +248,58 @@ $GLOBALS['XML_RPC_xh'] = array();
  */
 function XML_RPC_se($parser_resource, $name, $attrs)
 {
-    global $XML_RPC_xh, $XML_RPC_DateTime, $XML_RPC_String;
+    global $XML_RPC_xh, $XML_RPC_DateTime, $XML_RPC_String, $XML_RPC_valid_parents;
     $parser = (int) $parser_resource;
+
+    // if invalid xmlrpc already detected, skip all processing
+    if ($XML_RPC_xh[$parser]['isf'] >= 2) {
+        return;
+    }
+
+    // check for correct element nesting
+    // top level element can only be of 2 types
+    if (count($XML_RPC_xh[$parser]['stack']) == 0) {
+        if ($name != 'METHODRESPONSE' && $name != 'METHODCALL') {
+            $XML_RPC_xh[$parser]['isf'] = 2;
+            $XML_RPC_xh[$parser]['isf_reason'] = 'missing top level xmlrpc element';
+            return;
+        }
+    } else {
+        // not top level element: see if parent is OK
+        if (!in_array($XML_RPC_xh[$parser]['stack'][0], $XML_RPC_valid_parents[$name])) {
+            $name = preg_replace('[^a-zA-Z0-9._-]', '', $name);
+            $XML_RPC_xh[$parser]['isf'] = 2;
+            $XML_RPC_xh[$parser]['isf_reason'] = "xmlrpc element $name cannot be child of {$XML_RPC_xh[$parser]['stack'][0]}";
+            return;
+        }
+    }
 
     switch ($name) {
     case 'STRUCT':
-    case 'ARRAY':
-        $XML_RPC_xh[$parser]['st'] .= 'array(';
         $XML_RPC_xh[$parser]['cm']++;
-        // this last line turns quoting off
-        // this means if we get an empty array we'll
-        // simply get a bit of whitespace in the eval
+
+        // turn quoting off
         $XML_RPC_xh[$parser]['qt'] = 0;
+
+        $cur_val = array();
+        $cur_val['value'] = array();
+        $cur_val['members'] = 1;
+        array_unshift($XML_RPC_xh[$parser]['valuestack'], $cur_val);
+        break;
+
+    case 'ARRAY':
+        $XML_RPC_xh[$parser]['cm']++;
+
+        // turn quoting off
+        $XML_RPC_xh[$parser]['qt'] = 0;
+
+        $cur_val = array();
+        $cur_val['value'] = array();
+        $cur_val['members'] = 0;
+        array_unshift($XML_RPC_xh[$parser]['valuestack'], $cur_val);
         break;
 
     case 'NAME':
-        $XML_RPC_xh[$parser]['st'] .= '"';
         $XML_RPC_xh[$parser]['ac'] = '';
         break;
 
@@ -247,11 +308,10 @@ function XML_RPC_se($parser_resource, $name, $attrs)
         break;
 
     case 'PARAM':
-        $XML_RPC_xh[$parser]['st'] = '';
+        $XML_RPC_xh[$parser]['valuestack'] = array();
         break;
 
     case 'VALUE':
-        $XML_RPC_xh[$parser]['st'] .= 'new XML_RPC_Value(';
         $XML_RPC_xh[$parser]['lv'] = 1;
         $XML_RPC_xh[$parser]['vt'] = $XML_RPC_String;
         $XML_RPC_xh[$parser]['ac'] = '';
@@ -289,7 +349,20 @@ function XML_RPC_se($parser_resource, $name, $attrs)
 
     case 'MEMBER':
         $XML_RPC_xh[$parser]['ac'] = '';
+        break;
+
+    case 'DATA':
+    case 'METHODCALL':
+    case 'METHODNAME':
+    case 'METHODRESPONSE':
+    case 'PARAMS':
+        // valid elements that add little to processing
+        break;
     }
+
+
+    // Save current element to stack
+    array_unshift($XML_RPC_xh[$parser]['stack'], $name);
 
     if ($name != 'VALUE') {
         $XML_RPC_xh[$parser]['lv'] = 0;
@@ -306,22 +379,27 @@ function XML_RPC_ee($parser_resource, $name)
     global $XML_RPC_xh, $XML_RPC_Types, $XML_RPC_String;
     $parser = (int) $parser_resource;
 
+    if ($XML_RPC_xh[$parser]['isf'] >= 2) {
+        return;
+    }
+
+    // push this element from stack
+    // NB: if XML validates, correct opening/closing is guaranteed and
+    // we do not have to check for $name == $curr_elem.
+    // we also checked for proper nesting at start of elements...
+    $curr_elem = array_shift($XML_RPC_xh[$parser]['stack']);
+
     switch ($name) {
     case 'STRUCT':
     case 'ARRAY':
-        if ($XML_RPC_xh[$parser]['cm']
-            && substr($XML_RPC_xh[$parser]['st'], -1) == ',')
-        {
-            $XML_RPC_xh[$parser]['st'] = substr($XML_RPC_xh[$parser]['st'], 0, -1);
-        }
-
-        $XML_RPC_xh[$parser]['st'] .= ')';
+    $cur_val = array_shift($XML_RPC_xh[$parser]['valuestack']);
+    $XML_RPC_xh[$parser]['value'] = $cur_val['value'];
         $XML_RPC_xh[$parser]['vt'] = strtolower($name);
         $XML_RPC_xh[$parser]['cm']--;
         break;
 
     case 'NAME':
-        $XML_RPC_xh[$parser]['st'] .= $XML_RPC_xh[$parser]['ac'] . '" => ';
+    $XML_RPC_xh[$parser]['valuestack'][0]['name'] = $XML_RPC_xh[$parser]['ac'];
         break;
 
     case 'BOOLEAN':
@@ -344,22 +422,21 @@ function XML_RPC_ee($parser_resource, $name)
     case 'BASE64':
         if ($XML_RPC_xh[$parser]['qt'] == 1) {
             // we use double quotes rather than single so backslashification works OK
-            $XML_RPC_xh[$parser]['st'] .= '"' . $XML_RPC_xh[$parser]['ac'] . '"';
+            $XML_RPC_xh[$parser]['value'] = $XML_RPC_xh[$parser]['ac'];
         } elseif ($XML_RPC_xh[$parser]['qt'] == 2) {
-            $XML_RPC_xh[$parser]['st'] .= 'base64_decode("'
-                                        . $XML_RPC_xh[$parser]['ac'] . '")';
+            $XML_RPC_xh[$parser]['value'] = base64_decode($XML_RPC_xh[$parser]['ac']);
         } elseif ($name == 'BOOLEAN') {
-            $XML_RPC_xh[$parser]['st'] .= $XML_RPC_xh[$parser]['ac'];
+            $XML_RPC_xh[$parser]['value'] = $XML_RPC_xh[$parser]['ac'];
         } else {
             // we have an I4, INT or a DOUBLE
             // we must check that only 0123456789-.<space> are characters here
             if (!ereg("^[+-]?[0123456789 \t\.]+$", $XML_RPC_xh[$parser]['ac'])) {
                 XML_RPC_Base::raiseError('Non-numeric value received in INT or DOUBLE',
                                          XML_RPC_ERROR_NON_NUMERIC_FOUND);
-                $XML_RPC_xh[$parser]['st'] .= 'XML_RPC_ERROR_NON_NUMERIC_FOUND';
+                $XML_RPC_xh[$parser]['value'] = XML_RPC_ERROR_NON_NUMERIC_FOUND;
             } else {
                 // it's ok, add it on
-                $XML_RPC_xh[$parser]['st'] .= $XML_RPC_xh[$parser]['ac'];
+                $XML_RPC_xh[$parser]['value'] = $XML_RPC_xh[$parser]['ac'];
             }
         }
 
@@ -372,24 +449,38 @@ function XML_RPC_ee($parser_resource, $name)
         // deal with a string value
         if (strlen($XML_RPC_xh[$parser]['ac']) > 0 &&
             $XML_RPC_xh[$parser]['vt'] == $XML_RPC_String) {
-
-            $XML_RPC_xh[$parser]['st'] .= '"' . $XML_RPC_xh[$parser]['ac'] . '"';
+            $XML_RPC_xh[$parser]['value'] = $XML_RPC_xh[$parser]['ac'];
+        } elseif ($XML_RPC_xh[$parser]['lv'] == 1) {
+            // The <value> element was empty.
+            $XML_RPC_xh[$parser]['value'] = '';
         }
 
-        // This if () detects if no scalar was inside <VALUE></VALUE>
-        // and pads an empty "".
-        if ($XML_RPC_xh[$parser]['st'][strlen($XML_RPC_xh[$parser]['st'])-1] == '(') {
-            $XML_RPC_xh[$parser]['st'] .= '""';
-        }
-        $XML_RPC_xh[$parser]['st'] .= ", '" . $XML_RPC_xh[$parser]['vt'] . "')";
-        if ($XML_RPC_xh[$parser]['cm']) {
-            $XML_RPC_xh[$parser]['st'] .= ',';
+        $temp = new XML_RPC_Value($XML_RPC_xh[$parser]['value'], $XML_RPC_xh[$parser]['vt']);
+
+        $cur_val = array_shift($XML_RPC_xh[$parser]['valuestack']);
+        if (is_array($cur_val)) {
+            if ($cur_val['members']==0) {
+                $cur_val['value'][] = $temp;
+            } else {
+                $XML_RPC_xh[$parser]['value'] = $temp;
+            }
+            array_unshift($XML_RPC_xh[$parser]['valuestack'], $cur_val);
+        } else {
+            $XML_RPC_xh[$parser]['value'] = $temp;
         }
         break;
 
     case 'MEMBER':
         $XML_RPC_xh[$parser]['ac'] = '';
         $XML_RPC_xh[$parser]['qt'] = 0;
+
+        $cur_val = array_shift($XML_RPC_xh[$parser]['valuestack']);
+        if (is_array($cur_val)) {
+            if ($cur_val['members']==1) {
+                $cur_val['value'][$cur_val['name']] = $XML_RPC_xh[$parser]['value'];
+            }
+            array_unshift($XML_RPC_xh[$parser]['valuestack'], $cur_val);
+        }
         break;
 
     case 'DATA':
@@ -398,7 +489,7 @@ function XML_RPC_ee($parser_resource, $name)
         break;
 
     case 'PARAM':
-        $XML_RPC_xh[$parser]['params'][] = $XML_RPC_xh[$parser]['st'];
+        $XML_RPC_xh[$parser]['params'][] = $XML_RPC_xh[$parser]['value'];
         break;
 
     case 'METHODNAME':
@@ -441,9 +532,7 @@ function XML_RPC_cd($parser_resource, $data)
         if (!isset($XML_RPC_xh[$parser]['ac'])) {
             $XML_RPC_xh[$parser]['ac'] = '';
         }
-        $XML_RPC_xh[$parser]['ac'] .= str_replace('$', '\$',
-            str_replace('"', '\"', str_replace(chr(92),
-            $XML_RPC_backslash, $data)));
+        $XML_RPC_xh[$parser]['ac'] .= $data;
     }
 }
 
@@ -457,7 +546,7 @@ function XML_RPC_cd($parser_resource, $data)
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.1
+ * @version    Release: 1.4.2
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Base {
@@ -502,7 +591,7 @@ class XML_RPC_Base {
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.1
+ * @version    Release: 1.4.2
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Client extends XML_RPC_Base {
@@ -593,7 +682,7 @@ class XML_RPC_Client extends XML_RPC_Base {
      * The error message, if any
      * @var string
      */
-    var $errstring = '';
+    var $errstr = '';
 
     /**
      * The current debug mode (1 = on, 0 = off)
@@ -743,7 +832,7 @@ class XML_RPC_Client extends XML_RPC_Base {
      */
     function send($msg, $timeout = 0)
     {
-        if (strtolower(get_class($msg)) != 'xml_rpc_message') {
+        if (!is_a($msg, 'XML_RPC_Message')) {
             $this->errstr = 'send()\'s $msg parameter must be an'
                           . ' XML_RPC_Message object.';
             $this->raiseError($this->errstr, XML_RPC_ERROR_PROGRAMMING);
@@ -829,7 +918,11 @@ class XML_RPC_Client extends XML_RPC_Base {
         }
 
         if ($timeout) {
-            stream_set_timeout($fp, $timeout);
+            /*
+             * Using socket_set_timeout() because stream_set_timeout()
+             * was introduced in 4.3.0, but we need to support 4.2.0.
+             */
+            socket_set_timeout($fp, $timeout);
         }
 
         // Pre-emptive BC hacks for fools calling sendPayloadHTTP10() directly
@@ -852,7 +945,7 @@ class XML_RPC_Client extends XML_RPC_Base {
         }
         $resp = $msg->parseResponseFile($fp);
 
-        $meta = stream_get_meta_data($fp);
+        $meta = socket_get_status($fp);
         if ($meta['timed_out']) {
             fclose($fp);
             $this->errstr = 'RPC server did not send response before timeout.';
@@ -887,7 +980,7 @@ class XML_RPC_Client extends XML_RPC_Base {
            $this->headers = 'POST ';
         }
         $this->headers .= $this->path. " HTTP/1.0\r\n";
-        
+
         $this->headers .= "User-Agent: PEAR XML_RPC\r\n";
         $this->headers .= 'Host: ' . $this->server . "\r\n";
 
@@ -920,7 +1013,7 @@ class XML_RPC_Client extends XML_RPC_Base {
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.1
+ * @version    Release: 1.4.2
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Response extends XML_RPC_Base
@@ -1011,7 +1104,7 @@ class XML_RPC_Response extends XML_RPC_Base
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.1
+ * @version    Release: 1.4.2
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Message extends XML_RPC_Base
@@ -1247,13 +1340,15 @@ class XML_RPC_Message extends XML_RPC_Base
         $parser_resource = xml_parser_create($encoding);
         $parser = (int) $parser_resource;
 
+        $XML_RPC_xh = array();
         $XML_RPC_xh[$parser] = array();
 
-        $XML_RPC_xh[$parser]['st'] = '';
         $XML_RPC_xh[$parser]['cm'] = 0;
         $XML_RPC_xh[$parser]['isf'] = 0;
         $XML_RPC_xh[$parser]['ac'] = '';
         $XML_RPC_xh[$parser]['qt'] = '';
+        $XML_RPC_xh[$parser]['stack'] = array();
+        $XML_RPC_xh[$parser]['valuestack'] = array();
 
         xml_parser_set_option($parser_resource, XML_OPTION_CASE_FOLDING, true);
         xml_set_element_handler($parser_resource, 'XML_RPC_se', 'XML_RPC_ee');
@@ -1261,9 +1356,9 @@ class XML_RPC_Message extends XML_RPC_Base
 
         $hdrfnd = 0;
         if ($this->debug) {
-            print "<PRE>---GOT---\n";
+            print "\n<pre>---GOT---\n";
             print isset($_SERVER['SERVER_PROTOCOL']) ? htmlspecialchars($data) : $data;
-            print "\n---END---\n</PRE>";
+            print "\n---END---</pre>\n";
         }
 
         // See if response is a 200 or a 100 then a 200, else raise error.
@@ -1273,16 +1368,15 @@ class XML_RPC_Message extends XML_RPC_Base
             !preg_match('@^HTTP/[0-9\.]+ 10[0-9]([A-Za-z ]+)?[\r\n]+HTTP/[0-9\.]+ 200@', $data))
         {
                 $errstr = substr($data, 0, strpos($data, "\n") - 1);
-                //error_log('HTTP error, got response: ' . $errstr);
+                error_log('HTTP error, got response: ' . $errstr);
                 $r = new XML_RPC_Response(0, $XML_RPC_err['http_error'],
                                           $XML_RPC_str['http_error'] . ' (' .
                                           $errstr . ')');
                 xml_parser_free($parser_resource);
                 return $r;
         }
+
         // gotta get rid of headers here
-
-
         if (!$hdrfnd && ($brpos = strpos($data,"\r\n\r\n"))) {
             $XML_RPC_xh[$parser]['ha'] = substr($data, 0, $brpos);
             $data = substr($data, $brpos + 4);
@@ -1305,26 +1399,33 @@ class XML_RPC_Message extends XML_RPC_Base
                                   xml_error_string(xml_get_error_code($parser_resource)),
                                   xml_get_current_line_number($parser_resource));
             }
-            //error_log($errstr);
+            error_log($errstr);
             $r = new XML_RPC_Response(0, $XML_RPC_err['invalid_return'],
                                       $XML_RPC_str['invalid_return']);
             xml_parser_free($parser_resource);
             return $r;
         }
+
         xml_parser_free($parser_resource);
+
         if ($this->debug) {
-            print '<PRE>---EVALING---[' .
-            strlen($XML_RPC_xh[$parser]['st']) . " chars]---\n" .
-            htmlspecialchars($XML_RPC_xh[$parser]['st']) . ";\n---END---</PRE>";
+            print "\n<pre>---PARSED---\n";
+            var_dump($XML_RPC_xh[$parser]['value']);
+            print "---END---</pre>\n";
         }
-        if (strlen($XML_RPC_xh[$parser]['st']) == 0) {
+
+        if ($XML_RPC_xh[$parser]['isf'] > 1) {
+            $r = new XML_RPC_Response(0, $XML_RPC_err['invalid_return'],
+                                      $XML_RPC_str['invalid_return'].' '.$XML_RPC_xh[$parser]['isf_reason']);
+        } elseif (!is_object($XML_RPC_xh[$parser]['value'])) {
             // then something odd has happened
             // and it's time to generate a client side error
             // indicating something odd went on
             $r = new XML_RPC_Response(0, $XML_RPC_err['invalid_return'],
                                       $XML_RPC_str['invalid_return']);
         } else {
-            eval('$v=' . $XML_RPC_xh[$parser]['st'] . '; $allOK=1;');
+            $v = $XML_RPC_xh[$parser]['value'];
+            $allOK=1;
             if ($XML_RPC_xh[$parser]['isf']) {
                 $f = $v->structmem('faultCode');
                 $fs = $v->structmem('faultString');
@@ -1349,7 +1450,7 @@ class XML_RPC_Message extends XML_RPC_Base
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
  * @copyright  1999-2001 Edd Dumbill, 2001-2005 The PHP Group
- * @version    Release: 1.3.1
+ * @version    Release: 1.4.2
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Value extends XML_RPC_Base
@@ -1560,14 +1661,13 @@ class XML_RPC_Value extends XML_RPC_Base
      */
     function serializeval($o)
     {
-        $rs = '';
+        if (!is_object($o) || empty($o->me) || !is_array($o->me)) {
+            return '';
+        }
         $ar = $o->me;
         reset($ar);
         list($typ, $val) = each($ar);
-        $rs .= '<value>';
-        $rs .= $this->serializedata($typ, $val);
-        $rs .= "</value>\n";
-        return $rs;
+        return '<value>' .  $this->serializedata($typ, $val) .  "</value>\n";
     }
 
     /**
@@ -1623,7 +1723,7 @@ class XML_RPC_Value extends XML_RPC_Base
                 $t[$id] = $cont->scalarval();
             }
             foreach ($t as $id => $cont) {
-                eval('$b->'.$id.' = $cont;');
+                $b->$id = $cont;
             }
         }
 

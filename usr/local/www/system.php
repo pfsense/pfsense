@@ -292,7 +292,8 @@ include("head.inc");
 	if ($restart_webgui) {
 		echo "<meta http-equiv=\"refresh\" content=\"10;url={$url}\">";
 	}
-
+	flush();
+        sleep(2);
 ?>
 </body>
 </html>

@@ -181,20 +181,20 @@ EOD;
 		$memory = get_memory();
 		$avail = $memory[0];
 		$use_fastcgi = true;
-		if($avail > 0 and $avail < 65) {
+		if($avail > 0 and $avail < 60) {
 			$procs = 1;
 			$use_fastcgi = false;
-		} else if($avail > 64 and $avail < 120) {
+		} else if($avail > 60 and $avail < 120) {
 			$procs = 2;
 		} else if($avail > 120 and $avail < 160) {
 			$procs = 3;
-		} else if($avail > 164 and $avail < 256) {
+		} else if($avail > 160 and $avail < 250) {
 			$procs = 4;
-		} else if($avail > 256 and $avail < 384) {
+		} else if($avail > 250 and $avail < 380) {
 			$procs = 5;
-		} else if($avail > 384 and $avail < 512) {
+		} else if($avail > 380 and $avail < 500) {
 			$procs = 6;
-		} else if($avail > 512 and $avail < 684) {
+		} else if($avail > 500 and $avail < 680) {
 			$procs = 7;
 		} else {
 			$procs = 1;

@@ -387,10 +387,16 @@ EOD;
 	}
 
 	/* non-standard port? */
-	if ($config['system']['webgui']['port']) 
+	if ($config['system']['webgui']['port'] <> "") {
 		$port = $config['system']['webgui']['port'];
-	else
-		$port = "80";
+	} else {
+		if($config['webguiproto'] == "https")
+			$port = "443";
+		elseif($config['webguiproto'] == "http")
+			$port = "80";
+		else
+			$port = "80";
+	}
 
 	/* if we are strapped for memory, do not use fast cgi */
 	$memory = get_memory();
@@ -419,7 +425,7 @@ EOD;
 }
 
 function system_generate_lighty_config($filename, $cert, $key, $pid_file,
-	$port = "", $document_root = "/usr/local/www/",
+	$port, $document_root = "/usr/local/www/",
 	$cert_location = "cert.pem", $max_procs,
 	$max_requests = "1", $fast_cgi_enable = true) {
 	

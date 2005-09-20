@@ -368,7 +368,7 @@ include("head.inc");
 	      <?php endif; ?>
               <?php $i++; endforeach; ?>
             </table>
-<<br/>
+<br/>
 <strong class="red">Note:<br>
 In/out counters will wrap at 32bit (4 Gigabyte) ! <br/>
 </strong>Using dial-on-demand will bring the connection up again if any packet

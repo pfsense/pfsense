@@ -170,8 +170,6 @@ if ($_POST) {
 		$retval |= services_dnsmasq_configure();
 		$retval |= system_timezone_configure();
 		$retval |= system_ntp_configure();
-		
-		sync_webgui_passwords();
 
 		if ($olddnsallowoverride != $config['system']['dnsallowoverride'])
 			$retval |= interfaces_wan_configure();

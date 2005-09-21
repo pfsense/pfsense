@@ -464,7 +464,7 @@ EOD;
 		$cgi_config = <<<EOD
 #### CGI module
 cgi.assign                 = ( ".php"  => "/usr/local/bin/php",
-                               ".cgi" => "/usr/bin/perl" )
+                               ".cgi" => "" )
 		
 EOD;
 	}

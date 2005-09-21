@@ -144,6 +144,7 @@ if ($_POST) {
 			fwrite($fd, $crypted_pw);
 			pclose($fd);
 			update_changedesc("password changed via webConfigurator");
+			sync_webgui_passwords();
 			conf_mount_ro();
 		}
 

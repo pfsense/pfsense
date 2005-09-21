@@ -401,7 +401,7 @@ EOD;
 	/* if we are strapped for memory, do not use fast cgi */
 	$memory = get_memory();
 	$avail_mem = $memory[1];
-	if($avail < 120) 
+	if($avail_mem < 120) 
 		$use_fastcgi = false;
 	else
 		$use_fastcgi = true;

@@ -136,7 +136,7 @@ if ($clientmac && portal_mac_fixed($clientmac)) {
 <HEAD><TITLE>Disconnecting...</TITLE></HEAD>
 <BODY BGCOLOR="#435370">
 <SPAN STYLE="color: #ffffff; font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">
-<B>You have been disconnected.</B>
+<B>You've been disconnected.</B>
 </SPAN>
 <SCRIPT LANGUAGE="JavaScript">
 <!--

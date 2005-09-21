@@ -647,20 +647,31 @@ EOD;
 function system_password_configure() {
 	global $config, $g;
 
+	conf_mount_rw();
+
 	$fd = fopen("{$g['varrun_path']}/htpasswd", "w");
 	if (!$fd) {
 		printf("Error: cannot open htpasswd in system_password_configure().\n");
 		return 1;
 	}
 
-	if ($config['system']['username'])
-		$username = $config['system']['username'];
-	else
-		$username = "admin";
-
+	/* set admin account */
+	$username = "admin";
 	fwrite($fd, $username . ":" . $config['system']['password'] . "\n");
+
+	/* set defined user account */
+	if($username <> "admin") {
+		$username = $config['system']['username'];
+		fwrite($fd, $username . ":" . $config['system']['password'] . "\n");
+	}
+
 	fclose($fd);
-	chmod("{$g['varrun_path']}/htpasswd", 0600);
+	chmod("{$g['varrun_path']}/htpasswd", 0600);	
+	
+	/* sync passwords */
+	sync_webgui_passwords();
+
+	/* !NOTE! conf_mount_ro is done by sync_webgui_passwords() */
 
 	return 0;
 }

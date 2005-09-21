@@ -461,7 +461,7 @@ EOD;
 	$channel = escapeshellarg($wlcfg['channel']);
 	if($channel == "") {
 		$channel = "";
-		} else { $ifcargs .= "channel" . escapeshellarg($wlcfg['channel']) . " ";
+		} else { $ifcargs .= "channel " . escapeshellarg($wlcfg['channel']) . " ";
 	}
 
         switch ($wlcfg['mode']) {

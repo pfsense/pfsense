@@ -166,7 +166,7 @@ add_new_resolv_conf() {
 
 # Must be used on exit.   Invokes the local dhcp client exit hooks, if any.
 exit_with_hooks() {
-	/etc/rc.newwanip
+	/etc/rc.newwanip {$interface}
 	# probably should do something with exit status of the local script
 	exit 0
 }

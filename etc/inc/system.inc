@@ -435,7 +435,7 @@ function system_generate_lighty_config($filename, $cert, $key, $pid_file,
 		$lighty_port = "80";
 	
 	if($fast_cgi_enable == true) {
-		$module = "\"mod_fastcgi\"";
+		$module = "\"mod_fastcgi\", \"mod_cgi\"";
 		$cgi_config = "";
 		$fastcgi_config = <<<EOD
 #### fastcgi module
@@ -456,6 +456,10 @@ fastcgi.server             = ( ".php" =>
                                  )
                                )
                             )		
+
+#### CGI module
+cgi.assign                 = ( ".php"  => "/usr/local/bin/php",
+                               ".cgi" => "" )
 
 EOD;
 	} else {

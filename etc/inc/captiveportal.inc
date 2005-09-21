@@ -200,6 +200,11 @@ EOD;
 			$procs = 1;
 		}
 
+		/* TEMPORARY!  FAST_CGI reports _FALSE_ client ip
+		 * 	       addresses.
+		 */
+		$use_fastcgi = false;
+
 		/* generate lighttpd configuration */
 		system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal.conf",
 			$key, $cert, "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/",

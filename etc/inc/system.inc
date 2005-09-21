@@ -458,8 +458,7 @@ fastcgi.server             = ( ".php" =>
                             )		
 
 #### CGI module
-cgi.assign                 = ( ".php"  => "/usr/local/bin/php",
-                               ".cgi" => "" )
+cgi.assign                 = ( ".cgi" => "" )
 
 EOD;
 	} else {

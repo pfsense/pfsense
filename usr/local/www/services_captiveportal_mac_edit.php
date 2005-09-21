@@ -99,8 +99,8 @@ include("head.inc");
 ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
 <p class="pgtitle">Services: Captive portal MAC Edit</p>
+<?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="services_captiveportal_mac_edit.php" method="post" name="iform" id="iform">   
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>

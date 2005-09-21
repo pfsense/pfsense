@@ -137,8 +137,8 @@ include("head.inc");
 //For this script, visit http://www.javascriptkit.com
 // -->
 </script>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
 <p class="pgtitle">Services: Captive portal Users Edit</p>
+<?php if ($input_errors) print_input_errors($input_errors); ?>
 <form action="services_captiveportal_users_edit.php" method="post" name="iform" id="iform">
   <table width="100%" border="0" cellpadding="6" cellspacing="0">
 	<tr> 

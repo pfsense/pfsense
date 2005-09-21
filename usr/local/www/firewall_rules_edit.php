@@ -662,7 +662,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">State Timeout</td>
 			<td width="78%" class="vtable">
-				<input name="statetimeout" value="<?php echo $pconfig['frags'] ?>">
+				<input name="statetimeout" value="<?php echo $pconfig['statetimeout'] ?>">
 				<p><strong>Leave blank for default.  Amount is in seconds.</strong></p>
 			</td>
 		</tr>

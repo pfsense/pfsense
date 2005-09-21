@@ -35,16 +35,22 @@
 
         /* WAN IP address has changed */
 
-        $curwanip = get_current_wan_address();
+        if($argv[1] <> "") {
+                $curwanip = find_interface_ip($argv[1]);
+                $interface = $argv[1];
+        } else {
+                $curwanip = get_current_wan_address();
+                $interface = "wan";
+        }
 
         /*      dhclient or MPD told us that the IP address has changed;
                 let's see if that's really true to avoid reloading things
                 when it's not really necessary (dhclient likes to
                 execute its dhclient-exit-hooks also on renewals)
         */
-        if (file_exists("{$g['vardb_path']}/wanip")) {
-                $oldwanip = chop(file_get_contents("{$g['vardb_path']}/wanip"));
-
+        if (file_exists("{$g['vardb_path']}/{$interface}_ip")) {
+                $oldwanip = chop(file_get_contents("{$g['vardb_path']}/{$interface}_ip"));
+                log_error("Informational: DHClient spawned /etc/rc.newwanip but the ip has not changed.");
                 if ($curwanip == $oldwanip)
                         return 0;       /* nothing to do */
         }
@@ -55,22 +61,24 @@
         /* regenerate resolv.conf if DNS overrides are allowed or the BigPond
            client is enabled */
         if (isset($config['system']['dnsallowoverride']) ||
-                        ($config['interfaces']['wan']['ipaddr'] == "bigpond"))
+                        ($config['interfaces'][$interface]['ipaddr'] == "bigpond"))
                 system_resolvconf_generate(true);
 
         /* fire up the BigPond client, if necessary */
-        if ($config['interfaces']['wan']['ipaddr'] == "bigpond")
+        if ($config['interfaces'][$interface]['ipaddr'] == "bigpond")
                 interfaces_wan_bigpond_configure($curwanip);
 
         /* perform RFC 2136 DNS update */
         services_dnsupdate_process();
 
         /* write current WAN IP to file */
-        $fd = @fopen("{$g['vardb_path']}/wanip", "w");
+        $fd = @fopen("{$g['vardb_path']}/{$interface}_ip", "w");
         if ($fd) {
                 fwrite($fd, $curwanip);
                 fclose($fd);
         }
+        
+        log_error("Informational: DHClient spawned /etc/rc.newwanip and the new ip is {$curwanip}.");
         
         /* after IP change, update DynDNS */
 	services_dyndns_configure();

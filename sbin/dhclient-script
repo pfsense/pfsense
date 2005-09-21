@@ -75,7 +75,6 @@ add_new_address() {
 	$LOGGER "New Routers ($interface): $new_routers"
         
         echo $new_routers > /tmp/${interface}_router
-        
 }
 
 delete_old_alias() {
@@ -168,6 +167,8 @@ add_new_resolv_conf() {
 # Must be used on exit.   Invokes the local dhcp client exit hooks, if any.
 exit_with_hooks() {
 	/etc/rc.newwanip
+        # trigger filter reload
+        touch /tmp/filter_dirty
 	# probably should do something with exit status of the local script
 	exit 0
 }
@@ -268,5 +269,8 @@ TIMEOUT)
 	exit_with_hooks
 	;;
 esac
+
+# trigger filter reload
+touch /tmp/filter_dirty
 
 exit_with_hooks 0

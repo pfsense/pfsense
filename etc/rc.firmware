@@ -75,8 +75,8 @@ binary_update() {
 
 case $1 in
 enable)
-	/sbin/mount_mfs -s 15360 -T qp120at -b 8192 -f 1024 dummy /ftmp \
-		> /dev/null 2>&1
+	#/sbin/mount_mfs -s 15360 -T qp120at -b 8192 -f 1024 dummy /ftmp \
+	#	> /dev/null 2>&1
 	;;
 auto)
 	backup_chflags

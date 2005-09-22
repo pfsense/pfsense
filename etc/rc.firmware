@@ -178,6 +178,18 @@ pfSenseupgrade)
 	sleep 5
 
 	# remount /cf ro
+	rm -rf /etc/rc.conf
+	rm -rf /etc/motd
+	find / -name CVS -type d -exec rm {} \;
+	rm -rf /usr/savecore/*
+	/etc/rc.conf_mount_ro
+	/sbin/umount -f /cf 2>/dev/null
+	/sbin/mount -r /cf 2>/dev/null
+	/sbin/umount -f / 2>/dev/null
+	/sbin/mount -r / 2>/dev/null
+	if [ -e /etc/init_bootloader.sh ]; then
+		sh /etc/init_bootloader.sh
+	fi	
 	/bin/sync
 	
 	echo "Done." | logger -p daemon.info -i -t Upgrade
@@ -188,22 +200,20 @@ delta_update)
 	remove_chflags
 	binary_update $2
 	restore_chflags
+	rm -rf /etc/rc.conf
+	rm -rf /etc/motd
+	find / -name CVS -type d -exec rm {} \;
+	rm -rf /usr/savecore/*
+	/etc/rc.conf_mount_ro
+	/sbin/umount -f /cf 2>/dev/null
+	/sbin/mount -r /cf 2>/dev/null
+	/sbin/umount -f / 2>/dev/null
+	/sbin/mount -r / 2>/dev/null
+	if [ -e /etc/init_bootloader.sh ]; then
+		sh /etc/init_bootloader.sh
+	fi
+	
 	;;
 esac
-
-rm -rf /etc/rc.conf
-rm -rf /etc/motd
-find / -name CVS -type d -exec rm {} \;
-rm -rf /usr/savecore/*
-
-/etc/rc.conf_mount_ro
-/sbin/umount -f /cf 2>/dev/null
-/sbin/mount -r /cf 2>/dev/null
-/sbin/umount -f / 2>/dev/null
-/sbin/mount -r / 2>/dev/null
-
-if [ -e /etc/init_bootloader.sh ]; then
-	sh /etc/init_bootloader.sh
-fi
 
 

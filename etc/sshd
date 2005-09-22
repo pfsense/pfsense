@@ -87,16 +87,22 @@
 		write_config("Clearing SSH keys from config.xml");
 	}
 	
+	/* are we already running?  if so exit */
+	if(file_exists("/tmp/keys_generating"))
+		exit;
+	
 	if (!file_exists("$sshConfigDir/ssh_host_key") or file_exists("/etc/keys_generating")) {
 		/* remove previous keys and regen later */
 		conf_mount_rw();
 		mwexec("rm /etc/ssh/ssh_host_*");
 		touch("/etc/keys_generating");
+		touch("/tmp/keys_generating");
 		echo " Generating Keys:\n";
 		system("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t rsa1 -N '' -f $sshConfigDir/ssh_host_key");
 		system("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t rsa -N '' -f $sshConfigDir/ssh_host_rsa_key");
 		system("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t dsa -N '' -f $sshConfigDir/ssh_host_dsa_key");
 		unlink("/etc/keys_generating");
+		unlink("/tmp/keys_generating");
 		echo "Starting SSH... ";
 	}
 

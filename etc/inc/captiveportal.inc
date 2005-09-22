@@ -276,6 +276,9 @@ function captiveportal_rules_generate() {
 	$cpif = $config['interfaces'][$cpifn]['if'];
 	$cpip = $config['interfaces'][$cpifn]['ipaddr'];
 
+	mwexec("ipfw add 400 allow carp from any to any");
+	mwexec("ipfw add 401 allow pfsync from any to any");
+
 	/* note: the captive portal daemon inserts all pass rules for authenticated
 	   clients as skipto 50000 rules to make traffic shaping work */
 

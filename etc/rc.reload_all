@@ -33,6 +33,7 @@ require_once("config.inc");
 require_once("filter.inc");
 
 reload_all_sync();
+sleep(2);
 filter_configure_sync();
 
 ?>

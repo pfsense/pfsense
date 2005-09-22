@@ -375,7 +375,7 @@ function interfaces_carp_bringup() {
 	global $g;
 	/* lets bring the carp interfaces up now */
 	if ($g['booting'])
-		sleep(1);
+		sleep(2);
 	$carp_ints = find_number_of_created_carp_interfaces();
 	for($x=0; $x<$carp_ints; $x++)
 		mwexec("/sbin/ifconfig carp{$x} up");	

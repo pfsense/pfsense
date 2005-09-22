@@ -43,7 +43,7 @@ header("Pragma: no-cache");
 $orig_host = $_ENV['HTTP_HOST'];
 $orig_request = $_ENV['CAPTIVE_REQPATH'];
 $lockfile = "{$g['varrun_path']}/captiveportal.lock";
-$clientip = $_ENV['REMOTE_ADDR'];
+$clientip = $_SERVER['REMOTE_ADDR'];
 
 if (!$clientip) {
 	/* not good - bail out */

@@ -148,7 +148,7 @@
 	filter_pflog_start();
 	
 	/* bring up carp interfaces */
-	interfaces_carp_bringup();
+	interfaces_carp_configure();
 	
 	/* setup altq + pf */
 	echo "Configuring firewall... ";
@@ -219,7 +219,7 @@
 	unmute_kernel_msgs();
 
 	/* setup carp interfaces */
-	interfaces_carp_configure();
+	interfaces_carp_bringup();
 	
 	mwexec("/sbin/pfctl -f /tmp/rules.debug");
 	

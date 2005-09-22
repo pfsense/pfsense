@@ -27,6 +27,9 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 
+/* Add server to virtual server pool
+ * operates on whatever form is passed to it
+ */
 function AddServerToPool(form) {
 
 	var theSel = form['servers[]'];

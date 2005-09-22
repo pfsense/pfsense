@@ -2335,10 +2335,11 @@ function process_carp_rules() {
 
 function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsense.restore_config_section', $port) {
 
+	global $config, $g;
+
 	if($g['booting'])
 		return;
 
-	global $config;
 	$params = array(new XML_RPC_Value($password, 'string'),
 			new XML_RPC_Value($section, 'array'),
 			new XML_RPC_Value($section_xml, 'array'));
@@ -2360,10 +2361,10 @@ function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsen
  
 function carp_sync_client() {
 
+	global $config, $g;
+
 	if($g['booting'])
 		return;
-
-	global $config;
 
 	if($config['installedpackages']['carpsettings']['config'] != "" and
 	  is_array($config['installedpackages']['carpsettings']['config'])) {

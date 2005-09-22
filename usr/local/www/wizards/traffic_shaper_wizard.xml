@@ -433,8 +433,8 @@
 
 			    /* Panasonic Hybrid PBX */
 			    if( $_POST['provider'] == "Panasonic") {
-				$voiplist[] = array('Panasonic1', 'udp', '8000-8063', '8000-8063', 'both');
-				$voiplist[] = array('Panasonic2', 'udp', '9300-9301', '9300-9301', 'both');
+				$voiplist[] = array('Panasonic1', 'udp', '8000', '8063', 'both');
+				$voiplist[] = array('Panasonic2', 'udp', '9300', '9301', 'both');
 				$voiplist[] = array('Panasonic3', 'udp', '2747', '2747', 'both');
 			    }
 
@@ -934,8 +934,8 @@
 
 		if($_POST['unreal'] != "") {
 		    /* Unreal Tournament */
-		    $gamesplist[] = array('ur1', 'udp', '7777-7787', '7777-7787', 'both');
-		    $gamesplist[] = array('ur2', 'tcp', '7777-7787', '7777-7787', 'both');
+		    $gamesplist[] = array('ur1', 'udp', '7777', '7787', 'both');
+		    $gamesplist[] = array('ur2', 'tcp', '7777', '7787', 'both');
 		}
 
 		/* XXX: add some more games before this line!! */
@@ -1483,7 +1483,7 @@
 
 		if($_POST['vnc'] != "") {
 		    /* Simple network management protocol */
-		    $othersplist[] = array('VNC', 'tcp', '5900-5930', '5900-5930', 'both', $_POST['vnc']);
+		    $othersplist[] = array('VNC', 'tcp', '5900', '5930', 'both', $_POST['vnc']);
 		}		
 
 		/* XXX: add some more protocols here! */

@@ -100,7 +100,7 @@
 		echo "Starting SSH... ";
 	}
 
-	$status = system("/usr/sbin/sshd");
+	$status = mwexec("/usr/sbin/sshd");
 	if($status <> 0) {
 		file_notice("sshd_startup", "SSHD failed to start.", "SSHD Daemon", "");
 		echo "Error!\n";

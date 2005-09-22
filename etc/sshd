@@ -30,8 +30,6 @@
 */
 	require_once("config.inc");
 
-	$stderr = fopen("php://stderr", "w");
-
 	if(isset($config['system']['enablesshd'])) {
 		/* do nothing, we're enabled */
 	} else {
@@ -221,6 +219,6 @@
 
 	/* start sshd */
 	system("/usr/sbin/sshd");
-	fwrite($stderr, "Done.\n");
+	echo "Done.\n";
 
 ?>

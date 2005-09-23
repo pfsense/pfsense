@@ -764,7 +764,9 @@ function backup_vip_config_section() {
 		unset($section);		
 	}
 	if($section['advskew'] <> "") {
-		$section['advskew']++;
+		$section['advskew']=$section['advskew']+50;
+		if($section['advskew'] > 255)
+			$section['advskew'] = 255;
 	}
 	$temp['vip'][] = $section;
     }

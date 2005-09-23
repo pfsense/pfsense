@@ -38,22 +38,22 @@ require_once("guiconfig.inc");
 $wancfg = &$config['interfaces']['wan'];
 
 if ($_POST) {
+	$interface = $_POST['interface'];
+	$ifcfg = &$config['interfaces'][$interface];
 	if ($_POST['submit'] == "Disconnect" || $_POST['submit'] == "Release") {
-		$interface = $_POST['interface'];
-		if ($wancfg['ipaddr'] == "dhcp")
+		if ($ifcfg['ipaddr'] == "dhcp")
 			interfaces_dhcp_down($interface);
-		else if ($wancfg['ipaddr'] == "pppoe")
-			interfaces_wan_pppoe_down();
-		else if ($wancfg['ipaddr'] == "pptp")
-			interfaces_wan_pptp_down();
+		else if ($ifcfg['ipaddr'] == "pppoe")
+			interfaces_wan_pppoe_down(); // FIXME: when we support multi-pppoe
+		else if ($ifcfg['ipaddr'] == "pptp")
+			interfaces_wan_pptp_down(); // FIXME: when we support multi-pptp
 	} else if ($_POST['submit'] == "Connect" || $_POST['submit'] == "Renew") {
-		$interface = $_POST['interface'];
-		if ($wancfg['ipaddr'] == "dhcp")
+		if ($ifcfg['ipaddr'] == "dhcp")
 			interfaces_dhcp_up($interface);
-		else if ($wancfg['ipaddr'] == "pppoe")
-			interfaces_wan_pppoe_up();
-		else if ($wancfg['ipaddr'] == "pptp")
-			interfaces_wan_pptp_up();
+		else if ($ifcfg['ipaddr'] == "pppoe")
+			interfaces_wan_pppoe_up(); // FIXME: when we support multi-pppoe
+		else if ($ifcfg['ipaddr'] == "pptp")
+			interfaces_wan_pptp_up(); // FIXME: when we support multi-pptp
 	} else {
 		header("Location: index.php");
 		exit;

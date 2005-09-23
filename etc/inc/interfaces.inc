@@ -351,7 +351,8 @@ function interfaces_carp_configure() {
 					$carpdev = " carpdev {$ci} ";
 				}
 				*/
-				mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew " . $vip['advskew'] . $password);
+				mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew 50 " . $password ." up");
+				mwexec("/sbin/ifconfig carp{$carp_instances_counter} up");
 				$carp_instances_counter++;
 			}
 		}
@@ -359,10 +360,6 @@ function interfaces_carp_configure() {
 		/* hush little pfsync, don't say a word.  GeekGod's gonna
 		   buy you a mocking bird. */
 		mwexec("/sbin/ifconfig pfsync0 syncdev lo0 up");
-	}	
-	/* remove any dangling carp references */
-	for($x=$carp_instances_counter; $x<$total_carp_interfaces_defined; $x++) {
-		mwexec("/sbin/ifconfig carp{$x} down");
 	}
 	unmute_kernel_msgs();
 	if ($g['booting']) {
@@ -372,13 +369,35 @@ function interfaces_carp_configure() {
 }
 
 function interfaces_carp_bringup() {
-	global $g;
-	/* lets bring the carp interfaces up now */
-	if ($g['booting'])
-		sleep(2);
+	global $g, $config;
+	sleep(5);
+	if($g['booting']) 
+		sleep(15);
+	$carp_instances_counter=0;
+	/* lets bring the carp interfaces up now by changing advskew back down */
 	$carp_ints = find_number_of_created_carp_interfaces();
-	for($x=0; $x<$carp_ints; $x++)
-		mwexec("/sbin/ifconfig carp{$x} up");	
+	$viparr = &$config['virtualip']['vip'];
+	foreach ($viparr as $vip) {
+		if ($vip['mode'] == "carp") {
+			/*
+			*  create the carp interface
+			*/
+			$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
+			if($vip['password'] != "") {
+				$password = " pass " . $vip['password'];
+			}
+			/* XXX: billm - carpdev not in our build?
+			$carpdev = "";
+			if(isset($vip['interface']) && ($vip['interface'] != "AUTO" && $vip['interface'] != "")) {
+				$ci = filter_opt_interface_to_real($vip['interface']);
+				$carpdev = " carpdev {$ci} ";
+			}
+			*/
+			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew {$vip['advskew']} " . $password . " up");
+			echo "/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew {$vip['advskew']} " . $password . " up\n";
+			$carp_instances_counter++;
+		}
+	}
 }
 
 function interfaces_wireless_configure($if, $wlcfg) {

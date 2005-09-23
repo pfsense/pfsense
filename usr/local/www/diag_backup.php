@@ -151,7 +151,7 @@ if ($_POST) {
 							touch("/needs_package_sync");
 							conf_mount_ro();
 							$reloadall = true;
-							$savemsg = "The configuration has been restored. The firewall is now reloading the settings.";
+							$savemsg = "The configuration has been restored. The firewall is now rebooting.";
 						} else {
 							$input_errors[] = "The configuration could not be restored.";
 						}
@@ -267,7 +267,7 @@ include("head.inc");
 <?php
 
 if($reloadall == true) {
-	reload_all();
+	mwexec("/etc/rc.reboot");
 }
 
 ?>

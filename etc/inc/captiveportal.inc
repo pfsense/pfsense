@@ -50,8 +50,12 @@ function captiveportal_configure() {
 			echo "Starting captive portal... ";
 		
 		/* kill any running mini_httpd */
-		killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
-				
+		killbypid("{$g['varrun_path']}/mini_httpd.cp.pid");
+		killbypid("{$g['varrun_path']}/mini_httpd.cps.pid");
+		
+		/* kill any running minicron */
+		killbypid("{$g['varrun_path']}/minicron.pid");
+		
 		/* generate ipfw rules */
 		$cprules = captiveportal_rules_generate();
 		
@@ -151,12 +155,39 @@ EOD;
 		
 		chdir($g['captiveportal_path']);
 
-		$cert = "";
-		$key = "";
+		$memory = get_memory();
+		$avail = $memory[0];
+		$use_fastcgi = true;
+		if($avail > 0 and $avail < 60) {
+			$procs = 16;
+			$use_fastcgi = false;
+		} else if($avail > 60 and $avail < 120) {
+			$procs = 24;
+		} else if($avail > 120 and $avail < 160) {
+			$procs = 32;
+		} else if($avail > 160 and $avail < 250) {
+			$procs = 48;
+		} else if($avail > 250 and $avail < 380) {
+			$procs = 56;
+		} else if($avail > 380 and $avail < 500) {
+			$procs = 72;
+		} else if($avail > 500 and $avail < 680) {
+			$procs = 80;
+		} else {
+			$procs = 16;
+		}	
+	
+		/* start web server */
+		mwexec("/usr/local/sbin/mini_httpd -a -M 0 -u root -maxproc {$procs}" .
+			" -p 8000 -i {$g['varrun_path']}/mini_httpd.cp.pid");
+		
+		/* fire up another one for HTTPS if requested */
 		if (isset($config['captiveportal']['httpslogin']) &&
 			$config['captiveportal']['certificate'] && $config['captiveportal']['private-key']) {
+			
 			$cert = base64_decode($config['captiveportal']['certificate']);
 			$key = base64_decode($config['captiveportal']['private-key']);
+			
 			$fd = fopen("{$g['varetc_path']}/cert-portal.pem", "w");
 			if (!$fd) {
 				printf("Error: cannot open cert-portal.pem in system_webgui_start().\n");
@@ -167,52 +198,16 @@ EOD;
 			fwrite($fd, "\n");
 			fwrite($fd, $key);
 			fclose($fd);
+			
+			mwexec("/usr/local/sbin/mini_httpd -S -a -M 0 -E {$g['varetc_path']}/cert-portal.pem" .
+				" -u root -maxproc 16 -p 8001" .
+				" -i {$g['varrun_path']}/mini_httpd.cps.pid");
 		}
-
-		/*
-		 *    get available memory in machine then deterimine
-		 *    how many procs captiveportal should start out with.
-                 *    with one of our users at a school they sometimes have
-                 *    login spikes with 400+ users logging in around the same
-                 *    time.  in m0n0/mini_httpd it would hit the 16 concurrent
-                 *    limit so some users would receive a http server busy
-                 *    error.
-                 */
-		$memory = get_memory();
-		$avail = $memory[0];
-		$use_fastcgi = true;
-		if($avail > 0 and $avail < 60) {
-			$procs = 1;
-			$use_fastcgi = false;
-		} else if($avail > 60 and $avail < 120) {
-			$procs = 2;
-		} else if($avail > 120 and $avail < 160) {
-			$procs = 3;
-		} else if($avail > 160 and $avail < 250) {
-			$procs = 4;
-		} else if($avail > 250 and $avail < 380) {
-			$procs = 5;
-		} else if($avail > 380 and $avail < 500) {
-			$procs = 6;
-		} else if($avail > 500 and $avail < 680) {
-			$procs = 7;
-		} else {
-			$procs = 1;
-		}
-
-		/* TEMPORARY!  FAST_CGI reports _FALSE_ client ip
-		 * 	       addresses.
-		 */
-		$use_fastcgi = false;
-
-		/* generate lighttpd configuration */
-		system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal.conf",
-			$key, $cert, "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/",
-				"cert-portal.pem", "1", $procs, $use_fastcgi);
-	
-		/* attempt to start lighttpd */
-		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-CaptivePortal.conf");		
-
+			
+		/* start pruning process (interval = 60 seconds) */
+		mwexec("/usr/local/bin/minicron 60 {$g['varrun_path']}/minicron.pid " .
+			"/etc/rc.prunecaptiveportal");
+		
 		/* generate passthru mac database */
 		captiveportal_passthrumac_configure();
 		/* create allowed ip database and insert ipfw rules to make it so */
@@ -249,7 +244,9 @@ EOD;
 			echo "done\n";
 		
 	} else {
-		killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
+		killbypid("{$g['varrun_path']}/mini_httpd.cp.pid");
+		killbypid("{$g['varrun_path']}/mini_httpd.cps.pid");
+		killbypid("{$g['varrun_path']}/minicron.pid");
 
 		captiveportal_radius_stop_all();
 
@@ -275,9 +272,6 @@ function captiveportal_rules_generate() {
 	$cpifn = $config['captiveportal']['interface'];
 	$cpif = $config['interfaces'][$cpifn]['if'];
 	$cpip = $config['interfaces'][$cpifn]['ipaddr'];
-
-	mwexec("/sbin/ipfw add 400 allow carp from any to any");
-	mwexec("/sbin/ipfw add 401 allow pfsync from any to any");
 
 	/* note: the captive portal daemon inserts all pass rules for authenticated
 	   clients as skipto 50000 rules to make traffic shaping work */

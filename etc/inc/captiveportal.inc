@@ -157,10 +157,8 @@ EOD;
 
 		$memory = get_memory();
 		$avail = $memory[0];
-		$use_fastcgi = true;
 		if($avail > 0 and $avail < 60) {
 			$procs = 16;
-			$use_fastcgi = false;
 		} else if($avail > 60 and $avail < 120) {
 			$procs = 24;
 		} else if($avail > 120 and $avail < 160) {

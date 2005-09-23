@@ -315,113 +315,96 @@ function system_pccard_start() {
 	return $res;
 }
 
+
 function system_webgui_start() {
-	global $config, $g;
+        global $config, $g;
 
-	if ($g['booting'])
-		echo "Starting webConfigurator... ";
+        if ($g['booting'])
+                echo "Starting webGUI... ";
 
-	/* kill any running mini_httpd */
-	killbypid("{$g['varrun_path']}/lighty-webConfigurator.pid");
+        /* kill any running mini_httpd */
+        killbypid("{$g['varrun_path']}/mini_httpd.pid");
 
-	/* generate password file */
-	system_password_configure();
+        /* generate password file */
+        system_password_configure();
 
-	chdir($g['www_path']);
+        chdir($g['www_path']);
 
-	/* non-standard port? */
-	if ($config['system']['webgui']['port'])
-		$portarg = "-p {$config['system']['webgui']['port']}";
-	else
-		$portarg = "";
+        /* non-standard port? */
+        if ($config['system']['webgui']['port'])
+                $portarg = "-p {$config['system']['webgui']['port']}";
+        else
+                $portarg = "";
 
-	if ($config['system']['webgui']['protocol'] == "https") {
+        if ($config['system']['webgui']['protocol'] == "https") {
 
-		if ($config['system']['webgui']['certificate'] && $config['system']['webgui']['private-key']) {
-			$cert = base64_decode($config['system']['webgui']['certificate']);
-			$key = base64_decode($config['system']['webgui']['private-key']);
-		} else {
-			/* default certificate/key */
-			$cert = <<<EOD
+                if ($config['system']['webgui']['certificate'] && $config['system']['webgui']['private-key']) {
+                        $cert = base64_decode($config['system']['webgui']['certificate']);
+                        $key = base64_decode($config['system']['webgui']['private-key']);
+                } else {
+                        /* default certificate/key */
+                        $cert = <<<EOD
 -----BEGIN CERTIFICATE-----
-MIIC4zCCAkygAwIBAgIBADANBgkqhkiG9w0BAQQFADBbMQswCQYDVQQGEwJOQTEL
-MAkGA1UECBMCTkExCzAJBgNVBAcTAk5BMQswCQYDVQQKEwJOQTELMAkGA1UECxMC
-TkExCzAJBgNVBAMTAk5BMQswCQYDVQQGEwJVUzAeFw0wNTAzMDYwMDE1NDJaFw0x
-NTAzMDQwMDE1NDJaMFsxCzAJBgNVBAYTAk5BMQswCQYDVQQIEwJOQTELMAkGA1UE
-BxMCTkExCzAJBgNVBAoTAk5BMQswCQYDVQQLEwJOQTELMAkGA1UEAxMCTkExCzAJ
-BgNVBAYTAlVTMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDF7luuy70OvHrl
-xnW9ID6srsfxEFCF4d9LmlZ6XdW1rEUHQ6KTgz4iSD+pxEOxxlY+bCH6HTkAy5Sa
-zt3eT7javvF+ILZgarwoY2x+NbDctd0VBJVkH0fEvBf1xqU7wpkOiWkw1RmfEvZI
-6XnGi6VSjSmkm0UoQMKg9R7niRtE4QIDAQABo4G2MIGzMB0GA1UdDgQWBBTgvk9F
-alPK6/OcZrkaE8BhBrRo2DCBgwYDVR0jBHwweoAU4L5PRWpTyuvznGa5GhPAYQa0
-aNihX6RdMFsxCzAJBgNVBAYTAk5BMQswCQYDVQQIEwJOQTELMAkGA1UEBxMCTkEx
-CzAJBgNVBAoTAk5BMQswCQYDVQQLEwJOQTELMAkGA1UEAxMCTkExCzAJBgNVBAYT
-AlVTggEAMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEEBQADgYEAv9+GXdYIWs2R
-8B0zI4jAbHcaRsfohuzpNHD5re7ZK8H4fYbHIfmPY2UM3yOU7J2rLP8KGfKztay1
-Z3RNW7SKJI/CagbdQOuYdMrlEyA4ZImM6NNzUbH6rNKtmDIDo1kHL3cXjzXEjBE+
-ZZYTREFcdhtzUH5lYzJz1uVFeCSwozk=
+MIIBlDCB/gIBADANBgkqhkiG9w0BAQQFADATMREwDwYDVQQKEwhtMG4wd2FsbDAe
+Fw0wNTA1MTAxMjI0NDRaFw0wNzA1MTAxMjI0NDRaMBMxETAPBgNVBAoTCG0wbjB3
+YWxsMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDAShszhFz+o8lsMWTGgTxs
+TMPR+v4+qL5jXDyY97MLTGFK7aqQOtpIQc+TcTc4jklgOVlHoR7oBXrsi8YrbCd+
+83LPQmQoSPC0VqhfU3uYf3NzxiK8r97aPCsmWgwT2pQ6TcESTm6sF7nLprOf/zFP
+C4jE2fvjkbzyVolPywBuewIDAQABMA0GCSqGSIb3DQEBBAUAA4GBAFR962c4R5tV
+cTn0OQcszYoW6WC+ini9tQQh5ku5jYDAiC+00atawJEVLnL3lwAcpSKTIWlTkD20
+tl3lz5br1qFgYky+Rd0kwS2nk9jRbkxSXxd6KJVnNRCKre28aw3ENzZfCSurPQsX
+UPp5er+NtwMT1g7s/JDmKTC4w1rGr5/c
 -----END CERTIFICATE-----
+
 EOD;
 
-			$key = <<<EOD
+                        $key = <<<EOD
 -----BEGIN RSA PRIVATE KEY-----
-MIICXAIBAAKBgQDF7luuy70OvHrlxnW9ID6srsfxEFCF4d9LmlZ6XdW1rEUHQ6KT
-gz4iSD+pxEOxxlY+bCH6HTkAy5Sazt3eT7javvF+ILZgarwoY2x+NbDctd0VBJVk
-H0fEvBf1xqU7wpkOiWkw1RmfEvZI6XnGi6VSjSmkm0UoQMKg9R7niRtE4QIDAQAB
-AoGAF9dMJ9PWo+3EB+VNzUgTBI3Q+5JxgI7ibKLcg8TFtypW7jcRYB9Q3qRBNtuz
-I7i2LrKrrQrUEOp0rej5BIwpwcjtEE2NsZwgYwDyywptoqt3WO86nPXYz2KhkQmP
-YCDmPrff4vXCv6zgefb/AIgrOkgD3ViEoePhCAg+0l3fEIECQQD7C68Nb6KAWUND
-Q9B0RxYrlgXikQ8yVHhlyM433APe/NCJ9kl5dLXpyjuvrWB+ml6TlLrcroLGejbd
-tYXvIiyJAkEAydZVHqB4MpMtuY7VJoHNgl06YBoeTI+BJptPaOUNl4SlUKIYJMhX
-oOXIGk9uDjfSNS7HvunZBjgz092GShWvmQJAQ8NhmwTZHj/58fwqFljh2R4DtKZn
-LbSzUvYjA9z1holDWRoLtycTu2mFNuRbuZC9mqR40/ye/CgdCzdmUagt0QJBAKq1
-00ySINd10Cive+yTwMPQIj2CGbpbbbq/hYyMntBWapQmZRFHOYZmkrZeFBGGeQ5u
-QJdipiIyivNY2+nxKZECQCvumJPfZYxCeCAEC+G2xezrP6bC6FhzUOw6410UARTM
-fuFjHpSfOiG62lfRdZgCPAr1L/1pJF+8RqjGlFfAuFA=
+MIICXQIBAAKBgQDAShszhFz+o8lsMWTGgTxsTMPR+v4+qL5jXDyY97MLTGFK7aqQ
+OtpIQc+TcTc4jklgOVlHoR7oBXrsi8YrbCd+83LPQmQoSPC0VqhfU3uYf3NzxiK8
+r97aPCsmWgwT2pQ6TcESTm6sF7nLprOf/zFPC4jE2fvjkbzyVolPywBuewIDAQAB
+AoGAbJJrQW9fQrggJuLMz/hwsYW2m31oyOBmf5u463YQtjRuSuxe/gj87weZuNqY
+H2rXq2k2K+ehl8hgW+egASyUL3L7kCkEAsVREujKTEyhSqqIRDPWTxo9S/YA9Gvn
+2ZnJvkrcKjqCO9aHX3rvJOK/ErYI6akctgI3KmgkYw5XNmECQQDuZU97RTWH9rmP
+aQr57ysNXxgFsyhetOOqeYkPtIVwpOiNbfwE1zi5RGdtO4Ku3fG1lV4J2UoWJ9yD
+awdoyYIHAkEAzn0xJ90IjPsHk+8SODEj5JGdHSZPNu1tgtrbjEi9sfGWg4K7XTxr
+QW90pWb1bKKU1uh5FzW6OhnFfuQXt1kC7QJAPSthqY+onKqCEnoxhtAHi/bKgyvl
+P+fKQwPMV2tKkgy+XwvJjrRqqZ8TqsOKVLQ+QQmCh6RpjiXMPyxHSmvqIQJBAKLR
+HF1ucDuaBROkwx0DwmWMW/KMLpIFDQDNSaiIAuu4rxHrl4mhBoGGPNffI04RtILw
+s+qVNs5xW8T+XaT4ztECQQDFHPnZeoPWE5z+AX/UUQIUWaDExz3XRzmIxRbOrlFi
+CsF1s0TdJLi/wzNQRAL37A8vqCeVFR/ng3Xpg96Yg+8Z
 -----END RSA PRIVATE KEY-----
+
 EOD;
-		}
-	} else {
-		$cert = "";
-		$key = "";
-	}
+                }
 
-	/* non-standard port? */
-	if ($config['system']['webgui']['port'] <> "") {
-		$port = $config['system']['webgui']['port'];
-	} else {
-		if($config['system']['webgui']['protocol'] == "https")
-			$port = "443";
-		elseif($config['system']['webgui']['protocol'] == "http")
-			$port = "80";
-		else
-			$port = "80";
-	}
+                $fd = fopen("{$g['varetc_path']}/cert.pem", "w");
+                if (!$fd) {
+                        printf("Error: cannot open cert.pem in system_webgui_start().\n");
+                        return 1;
+                }
+                chmod("{$g['varetc_path']}/cert.pem", 0600);
+                fwrite($fd, $cert);
+                fwrite($fd, "\n");
+                fwrite($fd, $key);
+                fclose($fd);
 
-	/* if we are strapped for memory, do not use fast cgi */
-	$memory = get_memory();
-	$avail_mem = $memory[1];
-	if($avail_mem < 120) 
-		$use_fastcgi = false;
-	else
-		$use_fastcgi = true;
+                $res = mwexec("/usr/local/sbin/mini_httpd -S -E {$g['varetc_path']}/cert.pem" .
+                        " -c \"**.php|**.cgi\" -u root -maxproc 16 $portarg" .
+                        " -i {$g['varrun_path']}/mini_httpd.pid");
+        } else {
+                $res = mwexec("/usr/local/sbin/mini_httpd -c \"**.php|**.cgi\" -u root" .
+                        " -maxproc 16 $portarg -i {$g['varrun_path']}/mini_httpd.pid");
+        }
 
-	/* generate lighttpd configuration */
-	system_generate_lighty_config("{$g['varetc_path']}/lighty-webConfigurator.conf",
-		$key, $cert, "lighty-webConfigurator.pid", $port, "/usr/local/www/",
-			"cert.pem", "1", "1", $use_fastcgi);
+        if ($g['booting']) {
+                if ($res == 0)
+                        echo "done\n";
+                else
+                        echo "failed\n";
+        }
 
-	/* attempt to start lighthttpd */
-	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");
-
-	if ($g['booting']) {
-		if ($res == 0)
-			echo "done.\n";
-		else
-			echo "failed!\n";
-	}
-
-	return $res;
+        return $res;
 }
 
 function system_generate_lighty_config($filename, $cert, $key, $pid_file,

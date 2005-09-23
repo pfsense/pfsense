@@ -64,22 +64,16 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 		$mode = "upgrade";
 	else if ($_POST['sig_no']) {
 		if(file_exists("{$g['tmp_path']}/firmware.tgz"))
-			unlink("{$g['tmp_path']}/firmware.tgz");
+				unlink("{$g['tmp_path']}/firmware.tgz");
 	}
 	if ($mode) {
 		if ($mode == "enable") {
 			exec_rc_script("/etc/rc.firmware enable");
-			chdir($g['www_path']);
-			$command = "/usr/local/sbin/mini_httpd " .
-				" -c \"**.php|**.cgi\" -u root -maxproc 2 -p 8041" .
-				" -i {$g['varrun_path']}/mini_httpd.pid";
-			$res = mwexec($command);
 			touch($d_fwupenabled_path);
 		} else if ($mode == "disable") {
 			exec_rc_script("/etc/rc.firmware disable");
 			if (file_exists($d_fwupenabled_path))
 				unlink($d_fwupenabled_path);
-			system("/usr/bin/killall mini_httpd");
 		} else if ($mode == "upgrade") {
 			if (is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 				/* verify firmware image(s) */
@@ -160,12 +154,10 @@ print_info_box($sig_warning);
 ?>
 <input name="sig_override" type="submit" class="formbtn" id="sig_override" value=" Yes ">
 <input name="sig_no" type="submit" class="formbtn" id="sig_no" value=" No ">
-
+</form>
 <?php else: ?>
             <?php if (!file_exists($d_firmwarelock_path)): ?>
-	<?php
-		$myip = "http://{$_SERVER['SERVER_NAME']}:8041/system_firmware.php";
-	?>	
+<form action="system_firmware.php" method="post" enctype="multipart/form-data">
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td>
@@ -187,7 +179,6 @@ print_info_box($sig_warning);
 		</tr>
 		  <td width="22%" valign="baseline" class="vncell">&nbsp;</td>
                   <td width="78%" class="vtable">
-		  <form action="system_firmware.php" method="post">
             <p>Click &quot;Enable firmware
               upload&quot; below, then choose the image file (<?=$g['platform'];?>-*.tgz)
 			  to be uploaded.<br>Click &quot;Upgrade firmware&quot;
@@ -198,12 +189,6 @@ print_info_box($sig_warning);
 				  <?php else: ?>
 				   <input name="Submit" type="submit" class="formbtn" value="Disable firmware upload">
                     <br><br>
-		    </form>
-		    <?php
-			if(file_exists($d_fwupenabled_path)) {
-				echo "<form action=\"{$myip}\" method=\"post\" enctype=\"multipart/form-data\">";
-			}		    
-		    ?>		    
 					<strong>Firmware image file: </strong>&nbsp;
 					<input type="hidden" name="UPLOAD_IDENTIFIER" value="<?=$id?>">
 					<input name="ulfile" type="file" class="formfld">

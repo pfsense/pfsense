@@ -316,10 +316,10 @@ function download_file_with_progress_bar($url_file, $destination_file) {
         curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
 
         curl_exec($ch);
+	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         fclose($fout);
         curl_close($ch);
-
-        return 1;
+	return ($http_code == 200) ? true : $http_code;
 }
 
 function read_header($ch, $string) {

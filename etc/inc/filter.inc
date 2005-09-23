@@ -1482,9 +1482,13 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					if (isset($rule['source']['not'])) $src = "!" . $src;
 				}
 			} else if ($rule['source']['address']) {
+				$expsrc = alias_expand($rule['source']['address']);
 				$not = "";
 				if (isset($rule['source']['not'])) $not = "!";
-				$src = "{ " . $not .  alias_expand($rule['source']['address']). " }";
+				if (stristr($expsrc, "$"))
+					$src = $not . $expsrc;
+				else
+					$src = "{ {$not} {$expsrc} }";
 			}
 			
 			if (!$src || ($src == "/")) {
@@ -1548,9 +1552,13 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					if (isset($rule['destination']['not'])) $dst = " !" . $dst;
 				}
 			} else if ($rule['destination']['address']) {
+				$expdst = alias_expand($rule['destination']['address']);
 				$not = "";
 				if (isset($rule['destination']['not'])) $not = "! ";
-				$dst = "{ " . $not . alias_expand($rule['destination']['address']) . " }";
+				if (stristr($expdst, "$"))
+					$dst = $not . $expdst;
+				else
+					$dst = "{ {$not} {$expdst} }";
 			}
 			
 			if (!$dst || ($dst == "/")) {

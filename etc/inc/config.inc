@@ -313,7 +313,12 @@ function conf_mount_rw() {
 function conf_mount_ro() {
 	global $g;
 
-	if($g['booting'] == true) return;
+	if($g['booting'] == true)
+		return;
+	
+	/* do not umount if generating ssh keys */
+	if(file_exists("/tmp/keys_generating"))
+		return;
 	
 	/* do not umount on cdrom platform */
 	if($g['platform'] == "cdrom")

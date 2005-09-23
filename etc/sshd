@@ -35,6 +35,7 @@
 	} else {
 		if($g['booting'])
 			echo "SSHD is disabled.";
+		exit;
 	}
 	
 	function file_size($file) {

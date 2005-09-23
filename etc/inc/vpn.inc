@@ -622,6 +622,12 @@ EOD;
 				$mpdconf .= "	load pt{$i}\n";
 			}
 
+			if ($config['interfaces']['wan']['ipaddr'] == "pppoe") {
+				$pptp_mtu = "1440";
+			} else {
+				$pptp_mtu = "1460";
+			}
+
 			for ($i = 0; $i < $g['n_pptp_units']; $i++) {
 
 				$clientip = long2ip(ip2long($pptpdcfg['remoteip']) + $i);
@@ -651,7 +657,7 @@ pts:
 	set link yes acfcomp protocomp
 	set link no pap chap
 	set link enable chap-msv2
-	set link mtu 1460
+	set link mtu {$pptp_mtu}
 	set link keep-alive 10 60
 	set ipcp yes vjcomp
 	set bundle enable compression

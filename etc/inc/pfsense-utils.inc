@@ -765,7 +765,7 @@ function backup_vip_config_section() {
 	}
 	if($section['advskew'] <> "") {
 		$section_val = intval($section['advskew']);
-		$section_val=$section_val+50;
+		$section_val=$section_val+100;
 		if($section_val > 255)
 			$section_val = 255;
 		$section['advskew'] = $section_val;
@@ -1189,7 +1189,6 @@ function reload_interfaces() {
 function sync_webgui_passwords() {
 	conf_mount_rw();
 	mwexec("/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd");
-	mwexec("/usr/sbin/pwd_mkdb /etc/master.passwd");
 	conf_mount_ro();
 }
 
@@ -1267,7 +1266,6 @@ function reload_all_sync() {
 	/* sync pw database */
 	conf_mount_rw();
 	mwexec("/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd");
-	mwexec("/usr/sbin/pwd_mkdb /etc/master.passwd");
 	conf_mount_ro();
 	
 }

@@ -2,13 +2,9 @@
 <?php
 /* $Id$ */
 /*
-	system_advanced.php
+	system_firmware_settings.php
         part of pfSense
-        Copyright (C) 2005 Scott Ullrich
-
-	originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
+        Copyright (C) 2005 Colin Smith
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:

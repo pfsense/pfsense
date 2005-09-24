@@ -272,6 +272,8 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
         $static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $pkgname . " ";
         $fetchto = "/tmp/apkg_" . $pkgname . $pkg_extension;
 	download_file_with_progress_bar($base_url . '/' . $filename, $fetchto);
+	$static_output .= "Extracting and checking {$pkgname} {$pkg_extension} ... ";
+	update_output_window($static_output);	
         exec("/usr/bin/tar --fast-read -O -f {$fetchto} -x +CONTENTS 2>&1", $slaveout);
         $workingdir = preg_grep("/instmp/", $slaveout);
         $workingdir = $workingdir[0];

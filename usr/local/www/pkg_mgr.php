@@ -31,33 +31,12 @@
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
-if ($_POST) {
-
-    $pconfig = $_POST;
-
-    $retval = 0;
-
-    if (!file_exists($d_sysrebootreqd_path)) {
-		config_lock();
-        $retval |= filter_configure();
-		config_unlock();
-    }
-    $savemsg = get_std_save_message($retval);
-
-    if ($retval == 0) {
-        if (file_exists($d_natconfdirty_path))
-            unlink($d_natconfdirty_path);
-        if (file_exists($d_filterconfdirty_path))
-            unlink($d_filterconfdirty_path);
-    }
-}
-
 $pkg_info = get_pkg_info('all', array('name', 'category', 'website', 'version', 'status', 'descr'));
 if($pkg_info) {
 	$fout = fopen("{$g['tmp_path']}/pkg_info.cache", "w");
 	fwrite($fout, serialize($pkg_info));
 	fclose($fout);
-        $pkg_sizes = get_pkg_sizes();
+        //$pkg_sizes = get_pkg_sizes();
 } else {
 	$using_cache = true;
         $savemsg = "Unable to retrieve package info from {$g['xmlrpcbaseurl']}. Cached data will be used.";
@@ -96,7 +75,9 @@ include("fbegin.inc");
                 <tr>
                   <td width="10%" class="listhdrr">Package Name</td>
                   <td width="25%" class="listhdrr">Category</td>
+<!--
 		  <td width="10%" class="listhdrr">Size</td>
+-->
 		  <td width="5%" class="listhdrr">Status</td>
                   <td width="50%" class="listhdr">Description</td>
                 </tr>
@@ -128,15 +109,19 @@ include("fbegin.inc");
                                     <?= $index['category'] ?>
     				</td>
 				<?php
+					/*
 					if(!$using_cache) {
 						$size = get_package_install_size($index['name'], $pkg_sizes);
                                			$size = squash_from_bytes($size[$index['name']], 1);
 					}
 					if(!$size) $size = "Unknown.";
+					*/
 				?>
+				<!--
 				<td class="listlr">
                                  	<?= $size ?>
                                 </td>
+				-->
 				<td class="listlr">
 					<?= $index['status'] ?>
 					<br>
@@ -153,7 +138,7 @@ include("fbegin.inc");
                             <?php
                         }
 		    } else {
-			echo "<tr><td colspan=\"5\"><center>There are currently no packages available for installation.</td></tr>";
+			echo '<tr><td colspan="5"><center>There are currently no packages available for installation.</center></td></tr>';
 		    }
 		}
 		?>
@@ -165,4 +150,3 @@ include("fbegin.inc");
 <?php include("fend.inc"); ?>
 </body>
 </html>
-

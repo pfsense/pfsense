@@ -365,10 +365,6 @@ function interfaces_carp_configure() {
 	}
 }
 
-function interfaces_carp_bringup() {
-	/* no longer used */
-}
-
 function interfaces_wireless_configure($if, $wlcfg) {
         global $config, $g;
 	

@@ -2355,7 +2355,7 @@ function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsen
 	log_error("begin synchronize XML configuration data to $url on port $port");
 	$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
 	$cli->setCredentials($config['system']['username'], $password);
-	$resp = $cli->send($msg);
+	$resp = $cli->send($msg, "240");
 	if(!$resp) {
 		log_error("A communication error occured while syncing configuration data with {$url}:{$port} - " . $cli->errstr);
 		file_notice("sync_settings", "A communication error occured while syncing configuration data with {$url}:{$port} - " . $cli->errstr, "Settings Sync", "");
@@ -2436,10 +2436,10 @@ function carp_sync_client() {
 			    $cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);
 			    $msg = new XML_RPC_Message('pfsense.filter_configure', array(new XML_RPC_Value($carp['password'], 'string')));
 			    $cli->setCredentials($config['system']['username'], $carp['password']);
-			    $cli->send($msg);
+			    $cli->send($msg, "240");
 			    /* signal a carp reload */
 			    $msg = new XML_RPC_Message('pfsense.interfaces_carp_configure_xmlrpc', array(new XML_RPC_Value($carp['password'], 'string')));
-			    $cli->send($msg);			    
+			    $cli->send($msg, "240");			    
 		    }
 		}
 	    }

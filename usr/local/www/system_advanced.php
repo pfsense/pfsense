@@ -200,7 +200,7 @@ if ($_POST) {
 		config_unlock();
 		
 		$etc_ttys  = return_filename_as_array("/etc/ttys");
-		$boot_loader_rc = return_filename_as_array("/boot/loader.rc");
+		
 		
 		conf_mount_rw();
 		
@@ -218,18 +218,6 @@ if ($_POST) {
 				fwrite($fout, "ttyv0\t\"/usr/libexec/getty Pc\"\tcons25\t\ton\tsecure\n");
 			fclose($fout);		
 		}
-		
-		$fout = fopen("/boot/loader.rc","w");
-		if(!is_array($boot_loader_rc))
-			$boot_loader_rc = array();
-		foreach($boot_loader_rc as $blrc) {
-			if(stristr($blrc,"comconsole") <> true) {
-				fwrite($fout, $blrc . "\n");				
-			}
-		}
-		if(isset($pconfig['enableserial']))
-			fwrite($fout, "set console=comconsole\n");
-		fclose($fout);
 		
 		mwexec("/etc/sshd");
 		

@@ -33,5 +33,6 @@ require_once("pkg-utils.inc");
 require_once("pfsense-utils.inc");
 
 resync_all_package_configs(true);
+//start_pkg_system();
 
 ?>

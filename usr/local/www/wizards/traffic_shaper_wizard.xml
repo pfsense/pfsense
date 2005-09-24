@@ -427,8 +427,11 @@
 			    
 			    /* asterisk server / same as vonage somewhat */
 			    if( $_POST['provider'] == "Asterisk") {
-				$voiplist[] = array('Asterisk', 'udp', '5060', '5069', 'both');
-				$voiplist[] = array('Asterisk', 'udp', '10000', '17226', 'both');
+				$voiplist[] = array('Asterisk MGCP', 'udp', '2727', '2727', 'both');
+				$voiplist[] = array('Asterisk IAX', 'udp', '4569', '4569', 'both');
+				$voiplist[] = array('Asterisk IAX-2', 'udp', '5036', '5036', 'both');
+				$voiplist[] = array('Asterisk RTP', 'udp', '5060', '5069', 'both');
+				$voiplist[] = array('Asterisk SIP', 'udp', '10000', '20000', 'both');
 			    }
 
 			    /* VoicePulse server */

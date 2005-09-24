@@ -53,16 +53,14 @@ function filter_pflog_start() {
 
 /* reload filter async */
 function filter_configure() {
-	touch("/tmp/filter_dirty");
+	touch("{$g['tmp_path']}/filter_dirty");
 }
 
 /* reload filter sync */
 function filter_configure_sync() {
-	if(file_exists("/tmp/filter_dirty"))
-		unlink("/tmp/filter_dirty");
+	unlink_if_exists("{$g['tmp_path']}/filter_dirty");
 
-	if(file_exists("/tmp/config.cache"))
-		unlink("/tmp/config.cache");
+	unlink_if_exists("{$g['tmp_path']}/config.cache");
 
 	global $config, $g;
 
@@ -154,7 +152,7 @@ function filter_configure_sync() {
 		$rules_error = exec_command("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
 		$line_error = split("\:", $rules_error);
 		$line_number = $line_error[1];
-		$rules_file = `/bin/cat /tmp/rules.debug`;
+		$rules_file = `/bin/cat {$g['tmp_path']}/rules.debug`;
 		$line_split = split("\n", $rules_file);
 		if(is_array($line_split))
 			$line_error = "The line in question reads [{$line_number}]: " . $line_split[$line_number-1];
@@ -1358,8 +1356,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			 *    check to see if /tmp/{$rule['if']}_router exists.  This file
 			 *    is created by dhclient for 2nd wan interfaces, etc.
 			 */
-			if(file_exists("/tmp/{$rule['if']}_router"))
-				$rg = file_get_contents("/tmp/{$rule['if']}_router");
+			if(file_exists("{$g['tmp_path']}/{$rule['if']}_router"))
+				$rg = file_get_contents("{$g['tmp_path']}/{$rule['if']}_router");
 
 			/* do not process reply-to for gateway'd rules */
 			if($rule['gateway'] == "") {
@@ -1381,10 +1379,10 @@ function generate_user_filter_rule($rule, $ngcounter) {
 							*    from /tmp/router_bleh.router
 							*/
 							if(in_array($gateway, $ifdescrs)==true) {
-								if(is_file("{$g["tmp_path"]}/{$gateway}_router")) {
-									$return_gateway = file_get_contents("{$g["tmp_path"]}/{$gateway}_router");
+								if(is_file("{$g['tmp_path']}/{$gateway}_router")) {
+									$return_gateway = file_get_contents("{$g['tmp_path']}/{$gateway}_router");
 								} else {
-									log_error("Could not find {$g["tmp_path"]}/{$gateway}_router.  Needed for dhcp gateway information");
+									log_error("Could not find {$g['tmp_path']}/{$gateway}_router.  Needed for dhcp gateway information");
 									continue;
 								}
 							}
@@ -1429,11 +1427,11 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					*/
 					if(in_array($gateway, $ifdescrs)==true) {
 						$int=filter_opt_interface_to_real($gateway);
-						if(is_file("{$g["tmp_path"]}/{$int}_router")) {
-							$gatewayip = file_get_contents("{$g["tmp_path"]}/{$int}_router");
+						if(is_file("{$g['tmp_path']}/{$int}_router")) {
+							$gatewayip = file_get_contents("{$g['tmp_path']}/{$int}_router");
 							$line .= " route-to ( " . $int . " " . rtrim($gatewayip) . " ) ";
 						} else {
-							log_error("Could not find {$g["tmp_path"]}/{$int}_router.  Needed for dhcp gateway information");
+							log_error("Could not find {$g['tmp_path']}/{$int}_router.  Needed for dhcp gateway information");
 							continue;
 						}
 					} else {

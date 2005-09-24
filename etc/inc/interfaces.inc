@@ -309,28 +309,27 @@ function interfaces_carp_configure() {
 	if (is_array($config['virtualip']['vip'])) {
 		if(is_array($config['installedpackages']['carpsettings']['config'])) {
 			foreach($config['installedpackages']['carpsettings']['config'] as $carp)
-			if($carp['pfsyncenabled'] != "") {
-				if($carp['premption'] != "")
-				mwexec("/sbin/sysctl net.inet.carp.preempt=1");
-				if($carp['balancing'] != "")
-				mwexec("/sbin/sysctl net.inet.arpbalance=1");
-				$carp_sync_int = convert_friendly_interface_to_real_interface_name($carp['pfsyncinterface']);
-				mwexec("/sbin/ifconfig pfsync0 create");
-				mwexec("/sbin/ifconfig pfsync0 syncdev " . $carp_sync_int);
-				mwexec("/sbin/ifconfig pfsync0 syncif " . $carp_sync_int);
-				mwexec("/sbin/ifconfig {$carp_sync_int} up");
-				mwexec("/sbin/ifconfig pfsync0 up");
-				if($g['booting']) {
-					/* install rules to alllow pfsync to sync up during boot
-					* carp interfaces will remain down until the bootup sequence finishes
-					*/
-					exec("echo pass quick proto carp all keep state > /tmp/rules.boot");
-					exec("echo pass quick proto pfsync all >> /tmp/rules.boot");
-					exec("echo pass out proto { tcp, udp } from any to any port 53 keep state >> /tmp/rules.boot");
-					exec("/sbin/pfctl -f /tmp/rules.boot");
+				if($carp['pfsyncenabled'] != "") {
+					if($carp['premption'] != "")
+						mwexec("/sbin/sysctl net.inet.carp.preempt=1");
+					if($carp['balancing'] != "")
+						mwexec("/sbin/sysctl net.inet.arpbalance=1");
+					$carp_sync_int = convert_friendly_interface_to_real_interface_name($carp['pfsyncinterface']);
+					mwexec("/sbin/ifconfig pfsync0 create");
+					mwexec("/sbin/ifconfig pfsync0 syncdev " . $carp_sync_int);
+					mwexec("/sbin/ifconfig pfsync0 syncif " . $carp_sync_int);
+					mwexec("/sbin/ifconfig pfsync0 up");
+					if($g['booting']) {
+						/* install rules to alllow pfsync to sync up during boot
+						* carp interfaces will remain down until the bootup sequence finishes
+						*/
+						exec("echo pass quick proto carp all keep state > /tmp/rules.boot");
+						exec("echo pass quick proto pfsync all >> /tmp/rules.boot");
+						exec("echo pass out proto { tcp, udp } from any to any port 53 keep state >> /tmp/rules.boot");
+						exec("/sbin/pfctl -f /tmp/rules.boot");
+					}
+					$pfsync_instances_counter++;
 				}
-				$pfsync_instances_counter++;
-			}
 		}
 		$viparr = &$config['virtualip']['vip'];
 		foreach ($viparr as $vip) {
@@ -362,7 +361,7 @@ function interfaces_carp_configure() {
 	}	
 	/* remove any dangling carp references */
 	for($x=$carp_instances_counter; $x<$total_carp_interfaces_defined; $x++) {
-		mwexec("/sbin/ifconfig carp{$x} down");
+		//mwexec("/sbin/ifconfig carp{$x} down");
 	}
 	unmute_kernel_msgs();
 	if ($g['booting']) {

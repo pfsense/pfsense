@@ -1189,6 +1189,7 @@ function reload_interfaces() {
 function sync_webgui_passwords() {
 	conf_mount_rw();
 	mwexec("/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd");
+	mwexec("/usr/sbin/pwd_mkdb /etc/master.passwd");
 	conf_mount_ro();
 }
 

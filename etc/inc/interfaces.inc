@@ -955,7 +955,7 @@ EOD;
 	/* if mpd is active, lets take it down */
 	if(file_exists("{$g['varrun_path']}/mpd.pid")) {
 		killbypid(file_get_contents("{$g['varrun_path']}/mpd.pid"));
-		sleep(3);
+		sleep(1);
 	}
 
 	/* fire up mpd */

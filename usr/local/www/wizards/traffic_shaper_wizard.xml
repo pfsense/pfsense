@@ -44,6 +44,12 @@
 			<warning>Going any further will wipe your existing shaper config!  If you do not wish to continue, please click the pfSense logo at the top to return to the webConfigurator.</warning>
 		</field>
 	</fields>
+	<stepbeforeformdisplay>
+		/* Check to see if ALTQ can even be used */
+		if(!is_altq_capable($config['interfaces']['wan']['if']) or !is_altq_capable($config['interfaces']['lan']['if'])) {
+			header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=7");
+		}
+	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
 		/* wipe previous */
 		unset($config['shaper']['queue']);
@@ -1535,6 +1541,20 @@
 		$config['shaper']['enable'] = TRUE;
 		filter_configure_sync();
 		header("Location: /status_queues.php");
+	</stepsubmitphpaction>
+</step>
+<step>
+	<id>8</id>
+        <title>pfSense Traffic Shaper Wizard</title>
+	<fields>
+		<field>
+			<name>Finish</name>
+			<type>submit</type>
+			<warning>Either your LAN or WAN interface doesn't support ALTQ.  The wizard cannot continue.</warning>
+		</field>
+	</fields>
+	<stepsubmitphpaction>
+		header("Location: /");
 	</stepsubmitphpaction>
 </step>
 </pfsensewizard>

@@ -355,15 +355,10 @@ function interfaces_carp_configure() {
 			}
 		}
 	} else {
-		/* hush little pfsync, don't say a word.  GeekGod's gonna
-		   buy you a mocking bird. */
+		/* Hush little pfsync, don't say a word.
+		   GeekGod's gonna buy you a mocking bird. */
 		mwexec("/sbin/ifconfig pfsync0 syncdev lo0 up");
-	}	
-	/* remove any dangling carp references */
-	for($x=$carp_instances_counter; $x<$total_carp_interfaces_defined; $x++) {
-		//mwexec("/sbin/ifconfig carp{$x} down");
 	}
-	unmute_kernel_msgs();
 	if ($g['booting']) {
 		unmute_kernel_msgs();
 		echo "done.\n";
@@ -371,13 +366,7 @@ function interfaces_carp_configure() {
 }
 
 function interfaces_carp_bringup() {
-	global $g;
-	/* lets bring the carp interfaces up now */
-	if ($g['booting'])
-		sleep(2);
-	$carp_ints = find_number_of_created_carp_interfaces();
-	for($x=0; $x<$carp_ints; $x++)
-		mwexec("/sbin/ifconfig carp{$x} up");	
+	/* no longer used */
 }
 
 function interfaces_wireless_configure($if, $wlcfg) {

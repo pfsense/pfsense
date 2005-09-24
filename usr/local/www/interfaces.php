@@ -261,10 +261,7 @@ if ($_POST) {
 
 		/* setup carp interfaces */
 		interfaces_carp_configure();
-	
-		/* bring up carp interfaces */
-		interfaces_carp_bringup();		
-			
+
 		$savemsg = get_std_save_message($retval);
 	}
 }

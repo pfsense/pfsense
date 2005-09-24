@@ -217,9 +217,6 @@
 	mute_kernel_msgs();
 	setup_microcode();
 	unmute_kernel_msgs();
-
-	/* setup carp interfaces */
-	interfaces_carp_bringup();
 	
 	mwexec("/sbin/pfctl -f /tmp/rules.debug");
 	

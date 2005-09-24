@@ -153,9 +153,6 @@ if ($_POST) {
 
 		touch($d_vipconfdirty_path);
 
-		/* bring up carp interfaces */
-		interfaces_carp_bringup();
-
 		/* setup carp interfaces */
 		interfaces_carp_configure();
 

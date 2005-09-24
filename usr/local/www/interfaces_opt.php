@@ -207,9 +207,6 @@ if ($_POST) {
 		
 		/* setup carp interfaces */
 		interfaces_carp_configure();
-	
-		/* bring up carp interfaces */
-		interfaces_carp_bringup();
 
 		/* sync filter configuration */
 		filter_configure();

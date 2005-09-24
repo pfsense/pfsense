@@ -275,9 +275,6 @@ if ($_POST['apply'] <> "") {
 	/* setup carp interfaces */
 	interfaces_carp_configure();
 
-	/* bring up carp interfaces */
-	interfaces_carp_bringup();
-	
 	unlink($d_landirty_path);
 	
 }

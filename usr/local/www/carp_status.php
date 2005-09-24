@@ -49,7 +49,6 @@ if($_POST['disablecarp'] <> "") {
 		$savemsg = "CARP has been enabled.";
 		mwexec("/sbin/sysctl net.inet.carp.allow=1");
 		interfaces_carp_configure();
-		interfaces_carp_bringup();
 	}
 }
 

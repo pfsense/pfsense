@@ -46,12 +46,8 @@ if ($_POST['clear']) {
 }
 
 /* format filter logs */
-function conv_clog($logfile, $tail) {
+function conv_clog($logfile, $tail = 50) {
 	global $config;
-
-	$nentries = $config['syslog']['nentries'];
-	if (!$nentries)
-		$nentries = 50;
 
 	/* make interface/port table */
 	$iftable = array();

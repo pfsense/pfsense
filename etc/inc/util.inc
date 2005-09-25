@@ -239,6 +239,7 @@ function is_port($port) {
  */
 function get_interface_list($mode = "active", $keyby = "physical") {
         global $config;
+	$upints = array();
         /* get a list of virtual interface types */
         $vfaces = explode(" ", trim(shell_exec("/sbin/ifconfig -C")));
 	switch($mode) {

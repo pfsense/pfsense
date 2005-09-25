@@ -157,7 +157,7 @@ include("head.inc");
         				</strong>
 						</span>
 						<br />
-						You can configure your CARP-Settings <a href="firewall_virtual_ip.php">here</a>.
+						You can configure your CARP-Settings <a href="pkg_edit.php?xml=carp_settings.xml&id=0">here</a>.
 						</span>
 						</p>
 					</td>

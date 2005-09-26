@@ -426,10 +426,10 @@
 	<stepsubmitphpaction>
 		$ft = split("\.", $_POST['lanipaddress']);
 		$ft_ip = $ft[0] . "." . $ft[1] . "." . $ft[2] . ".";
-		$config['dhcpd']['lan']['range']['from'] = $ft_ip . "50";
+		$config['dhcpd']['lan']['range']['from'] = $ft_ip . "10";
 		$highestip = gen_subnet_max($_POST['lanipaddress'], $config['interfaces']['lan']['subnet']);
 		$hi = split("\.", $highestip);
-		$highestip = $hi[3]-1;
+		$highestip = $hi[3]-10;
 		$config['dhcpd']['lan']['range']['to'] = $ft_ip . $highestip;
 	</stepsubmitphpaction>
 </step>

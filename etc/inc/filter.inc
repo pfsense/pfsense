@@ -1630,8 +1630,8 @@ EOD;
 			$ipfrules .= "pass quick on {$wanif} proto ah from {$ipsec_ip} to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound ah proto\"\n";
 			$ipfrules .= "pass quick on {$wanif} proto ah from {$remote_gateway} to {$ipsec_ip} keep state label \"IPSEC: {$tunnel['descr']} - inbound ah proto\"\n";
 
-			$ipfrules .= "pass quick on {$lanif} from {$tunnel['remote-subnet']} to {$local_subnet} keep state label \"IPSEC: {$tunnel['descr']} - remote subnet to local subnet\"\n";
-			$ipfrules .= "pass quick on {$lanif} from {$local_subnet} to {$tunnel['remote-subnet']} keep state label \"IPSEC:  {$tunnel['descr']} - local subnet to remote subnet\"\n";
+			$ipfrules .= "pass quick on {$lanif} from {$tunnel['remote-subnet']} to {$local_subnet} keep state label \"IPSEC: {$tunnel['descr']} - remote to local\"\n";
+			$ipfrules .= "pass quick on {$lanif} from {$local_subnet} to {$tunnel['remote-subnet']} keep state label \"IPSEC:  {$tunnel['descr']} - local to remote\"\n";
 		}
 	}
 

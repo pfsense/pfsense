@@ -124,7 +124,7 @@ function filter_generate_altq_queues($altq_ints) {
 				$options .= " realtime({$rule['realtime1']} {$rule['realtime2']} {$rule['realtime3']})";
 			}
 			$scheduler_type = $config['shaper']['schedulertype'];
-			$altq_rules .= "{$scheduler_type} "
+			$altq_rules .= "{$scheduler_type} ";
 			if($options)
 				$altq_rules .= "( {$options} )";
 			$fsq="";

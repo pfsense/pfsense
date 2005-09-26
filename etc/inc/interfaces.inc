@@ -351,6 +351,8 @@ function interfaces_carp_configure() {
 				}
 				*/
 				mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew " . $vip['advskew'] . $password);
+				if($g['booting']) 
+					mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " down");
 				$carp_instances_counter++;
 			}
 		}
@@ -362,6 +364,16 @@ function interfaces_carp_configure() {
 	if ($g['booting']) {
 		unmute_kernel_msgs();
 		echo "done.\n";
+	}
+}
+
+function interfaces_carp_bring_up_final() {
+	global $config, $g;
+	$carp_instances_counter = 0;
+	$viparr = &$config['virtualip']['vip'];
+	foreach ($viparr as $vip) {
+		mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
+		$carp_instances_counter++;
 	}
 }
 

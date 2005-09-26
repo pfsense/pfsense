@@ -226,6 +226,8 @@
 	/* start load balancer daemon */
 	slbd_configure();
 
+	interfaces_carp_bring_up_final();
+
 	/* power down hard drive if needed/set */
 	system_set_harddisk_standby();
 

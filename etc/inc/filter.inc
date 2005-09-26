@@ -55,7 +55,7 @@ function filter_pflog_start() {
 /* reload filter async */
 function filter_configure() {
 	global $g;
-	touch("{$g['tmp_path']}/filter_dirty");
+	touch($g['tmp_path'] . "/filter_dirty");
 }
 
 /* reload filter sync */

@@ -1451,24 +1451,6 @@ anchor "packagelate"
 EOD;
 	}
 
-	/*
-	 *    captive portal, pf version
-         *    first pass captive portal interface traffic to port 8000 
-         *    then block every incoming packet on the interface (non quick)
-         *    then follow up with an allow items in the captiveportal anchor to flow
-	 */
-	 if(isset($config['captiveportal']['enable'])) {
-		$cp_interface = filter_translate_type_to_real_interface($config['captiveportal']['interface']);
-		$cp_ip = find_interface_ip($cp_interface);
-		$lan_ip = $config['interfaces']['lan']['ipaddr'];
-		$ipfrules .= "\n# Setup Captive portal policy rules\n";
-		$ipfrules .= "table <captiveportal>\n";
-		$ipfrules .= "block in on {$cp_interface} from any to any label \"block items initially for cp\"\n";
-		$ipfrules .= "pass in quick on {$cp_interface} proto { tcp udp } from any to {$cp_ip} port { 8000 53 } keep state label \"pass items to cp web serv\"\n";
-		$ipfrules .= "pass in quick on {$cp_interface} proto { tcp udp } from any to {$lanip} port { 8000 53 } keep state label \"pass items to cp web serv\"\n";
-		$ipfrules .= "pass in on {$cp_interface} from <captiveportal> to any keep state label \"allow captive portal authd users\"\n";
-	}
-
 	$ipfrules .= "\n# SSH lockout\n";
 	$ipfrules .= "block in log proto tcp from <sshlockout> to any port 22 label \"sshlockout\"\n\n";
 

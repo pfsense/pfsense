@@ -110,6 +110,7 @@
 				curl_setopt($ch, CURLOPT_HEADER, 0);
 				curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
 			}
 
 			switch ($this->_dnsService) {
@@ -207,7 +208,7 @@
 					break;
 				case 'ods':
 					$needsIP = FALSE;
-					$this->con['socket'] = fsockopen("ods.org", "7070");
+					$this->con['socket'] = fsockopen("ods.org", "7070", $misc_errno, $misc_error, 30);
 					/* Check that we have connected */
 					if (!$this->con['socket']) {
 						print "error! could not connect.";

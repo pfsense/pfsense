@@ -242,6 +242,7 @@ function wireless_config_print() {
 			<td valign="top" class="vncell">Enable turbo mode</td>
 			<td class="vtable"><input name="turbo_enable" type="checkbox" class="formfld" id="turbo_enable" value="yes" <? if ($pconfig['turbo_enable']) echo "checked";?>>
 			<br/>Setting this option will force the card to use turbo mode.
+			<br/>use "ifconfig interface list channel" to list turbo capable channels.
 			</td>
 		</tr>
 		<tr>
@@ -282,8 +283,11 @@ function wireless_config_print() {
                       <?=$channel;?>
                       </option>
                       <?php endforeach; ?>
-                    </select> <br/>
-                    Note: Not all channels may be supported by your card</td>
+			</select>
+			<br/>
+			Note: Not all channels may be supported by your card
+			<br/>
+			use "ifconfig interface list channel" to list channels.</td>
                 </tr>
                 <tr> 
                   <td valign="top" class="vncell">Station name</td>

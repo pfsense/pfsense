@@ -57,6 +57,12 @@ if (file_exists("{$g['etc_path']}/platform")) {
 	$g['platform'] = "unknown";
 }
 
+/* if /debugging exists, lets set $debugging
+   so we can output more information */
+if(file_exists("/debugging"))
+	$debugging = true;
+
+
 /* if our config file exists bail out, we're already set. */
 if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
 	/* find the device where config.xml resides and write out an fstab */

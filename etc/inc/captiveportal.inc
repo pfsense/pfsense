@@ -567,6 +567,7 @@ function captiveportal_passthrumac_configure() {
 		mwexec("/sbin/ipfw delete 50");
 		foreach($config['captiveportal']['passthrumac'] as $ptm) {
 			/* create the pass through mac entry */
+			//system("echo /sbin/ipfw add 50 skipto 65535 ip from any to any MAC {$ptm['mac']} any > /tmp/cp");
 			mwexec("/sbin/ipfw add 50 skipto 65535 ip from any to any MAC {$ptm['mac']} any");
 		}
 	}

@@ -371,6 +371,8 @@ function interfaces_carp_bring_up_final() {
 	global $config, $g;
 	$carp_instances_counter = 0;
 	$viparr = &$config['virtualip']['vip'];
+	if(!is_array($viparr))
+		return;
 	foreach ($viparr as $vip) {
 		mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
 		$carp_instances_counter++;

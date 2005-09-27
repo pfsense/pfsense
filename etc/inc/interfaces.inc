@@ -325,7 +325,9 @@ function interfaces_carp_configure() {
 							echo "Bringing up pfsync0.\n";
 						mwexec("/sbin/ifconfig pfsync0 create");
 						mwexec("/sbin/ifconfig pfsync0 syncdev " . $carp_sync_int);
-						mwexec("/sbin/ifconfig pfsync0 syncif " . $carp_sync_int);
+						if($debugging)
+							echo "Bringing up syncif pfsync0.\n";
+
 						mwexec("/sbin/ifconfig pfsync0 up");
 					}
 					if($g['booting']) {

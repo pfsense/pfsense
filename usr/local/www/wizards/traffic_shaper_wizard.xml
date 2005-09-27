@@ -1095,8 +1095,8 @@
                         <type>submit</type>
                 </field>
                 <field>
-                        <name>Enable/Disable other protocols</name>
-                        <type>listtopic</type>
+                        <name>Remote Service / Terminalemulation</name>
+			<type>listtopic</type>
                 </field>		
                 <field>
                         <name>MSRDP</name>
@@ -1117,6 +1117,154 @@
 				</option>
 			</options>
 			<typehint>Microsoft Remote Desktop Protocol</typehint>
+                </field>
+                <field>
+                        <name>VNC</name>
+			<bindstofield>ezshaper->step6->vnc</bindstofield>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Default priority</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Lower priority</name>
+					<value>L</value>
+				</option>
+			</options>
+			<typehint>Virtual Network Computing</typehint>
+                </field>
+                <field>
+                        <name>AppleRemoteDesktop</name>
+			<bindstofield>ezshaper->step6->appleremotedesktop</bindstofield>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Default priority</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Lower priority</name>
+					<value>L</value>
+				</option>
+			</options>
+			<typehint>Apple Remote Desktop</typehint>
+                </field>
+                <field>
+                        <name>PCAnywhere</name>
+			<bindstofield>ezshaper->step6->pcanywhere</bindstofield>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Default priority</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Lower priority</name>
+					<value>L</value>
+				</option>
+			</options>
+			<typehint>Symantec PC Anywhere</typehint>
+                </field>
+                <field>
+                        <name>Messengers</name>
+			<type>listtopic</type>
+                </field>
+                <field>
+                        <name>IRC</name>
+			<type>select</type>
+			<bindstofield>ezshaper->step6->irc</bindstofield>
+			<options>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Default priority</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Lower priority</name>
+					<value>L</value>
+				</option>
+			</options>
+			<typehint>Internet Relay Chat</typehint>
+                </field>
+                <field>
+                        <name>ICQ</name>
+			<bindstofield>ezshaper->step6->icq</bindstofield>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Default priority</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Lower priority</name>
+					<value>L</value>
+				</option>
+			</options>
+			<typehint>ICQ</typehint>
+                </field>
+                <field>
+                        <name>MSN</name>
+			<bindstofield>ezshaper->step6->msnmessenger</bindstofield>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Default priority</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Lower priority</name>
+					<value>L</value>
+				</option>
+			</options>
+			<typehint>MSN Messenger</typehint>
+                </field>
+                <field>
+                <name>Teamspeak</name>
+			<bindstofield>ezshaper->step6->teamspeak</bindstofield>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Default priority</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Lower priority</name>
+					<value>L</value>
+				</option>
+			</options>
+			<typehint>TeamSpeak</typehint>
+                </field>
+                <field>
+                        <name>VPN</name>
+			<type>listtopic</type>
                 </field>
                 <field>
                         <name>PPTP</name>
@@ -1159,6 +1307,10 @@
 			<typehint>IPSEC VPN traffic</typehint>
                 </field>
                 <field>
+                        <name>Multimedia/Streaming</name>
+			<type>listtopic</type>
+                </field>
+                <field>
                         <name>StreamingMP3</name>
 			<type>select</type>
 			<bindstofield>ezshaper->step6->streamingmp3</bindstofield>
@@ -1179,9 +1331,9 @@
 			<typehint>Streaming Media</typehint>
                 </field>
                 <field>
-                        <name>IRC</name>
+                        <name>RTSP</name>
+			<bindstofield>ezshaper->step6->rtsp</bindstofield>
 			<type>select</type>
-			<bindstofield>ezshaper->step6->irc</bindstofield>
 			<options>
 				<option>
 					<name>Higher priority</name>
@@ -1196,27 +1348,11 @@
 					<value>L</value>
 				</option>
 			</options>
-			<typehint>Internet Relay Chat</typehint>
+			<typehint>RealTime streaming protocol</typehint>
                 </field>
                 <field>
-                        <name>DNS</name>
-			<type>select</type>
-			<bindstofield>ezshaper->step6->dns</bindstofield>
-			<options>
-				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
-					<name>Default priority</name>
-					<value></value>
-				</option>
-				<option>
-					<name>Lower priority</name>
-					<value>L</value>
-				</option>
-			</options>
-			<typehint>Domain Name Services</typehint>
+                        <name>Web</name>
+			<type>listtopic</type>
                 </field>
                 <field>
                         <name>HTTP</name>
@@ -1237,6 +1373,10 @@
 				</option>
 			</options>
 			<typehint>HTTP and HTTPS aka Web Traffic</typehint>
+                </field>
+                <field>
+                        <name>Mail</name>
+			<type>listtopic</type>
                 </field>
                 <field>
                         <name>SMTP</name>
@@ -1279,26 +1419,6 @@
 			<typehint>POP3 Protocol</typehint>
                 </field>
                 <field>
-                        <name>ICMP</name>
-			<bindstofield>ezshaper->step6->icmp</bindstofield>
-			<type>select</type>
-			<options>
-				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
-					<name>Default priority</name>
-					<value></value>
-				</option>
-				<option>
-					<name>Lower priority</name>
-					<value>L</value>
-				</option>
-			</options>
-			<typehint>ICMP Protocol</typehint>
-                </field>
-                <field>
                         <name>IMAP</name>
 			<bindstofield>ezshaper->step6->imap</bindstofield>
 			<type>select</type>
@@ -1317,126 +1437,6 @@
 				</option>
 			</options>
 			<typehint>IMAP Protocol</typehint>
-                </field>
-                <field>
-                        <name>SMB</name>
-			<bindstofield>ezshaper->step6->smb</bindstofield>
-			<type>select</type>
-			<options>
-				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
-					<name>Default priority</name>
-					<value></value>
-				</option>
-				<option>
-					<name>Lower priority</name>
-					<value>L</value>
-				</option>
-			</options>
-			<typehint>Microsoft SMB Protocol and friends</typehint>
-                </field>
-                <field>
-                        <name>RTSP</name>
-			<bindstofield>ezshaper->step6->rtsp</bindstofield>
-			<type>select</type>
-			<options>
-				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
-					<name>Default priority</name>
-					<value></value>
-				</option>
-				<option>
-					<name>Lower priority</name>
-					<value>L</value>
-				</option>
-			</options>
-			<typehint>RealTime streaming protocol</typehint>
-                </field>
-                <field>
-                        <name>SNMP</name>
-			<bindstofield>ezshaper->step6->snmp</bindstofield>
-			<type>select</type>
-			<options>
-				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
-					<name>Default priority</name>
-					<value></value>
-				</option>
-				<option>
-					<name>Lower priority</name>
-					<value>L</value>
-				</option>
-			</options>
-			<typehint>Simple Network Management Protocol</typehint>
-                </field>
-                <field>
-                        <name>VNC</name>
-			<bindstofield>ezshaper->step6->vnc</bindstofield>
-			<type>select</type>
-			<options>
-				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
-					<name>Default priority</name>
-					<value></value>
-				</option>
-				<option>
-					<name>Lower priority</name>
-					<value>L</value>
-				</option>
-			</options>
-			<typehint>Virtual Network Computing</typehint>
-                </field>			
-                <field>
-                        <name>AppleRemoteDesktop</name>
-			<bindstofield>ezshaper->step6->appleremotedesktop</bindstofield>
-			<type>select</type>
-			<options>
-				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
-					<name>Default priority</name>
-					<value></value>
-				</option>
-				<option>
-					<name>Lower priority</name>
-					<value>L</value>
-				</option>
-			</options>
-			<typehint>Apple Remote Desktop</typehint>
-                </field>
-                <field>
-                        <name>ICQ</name>
-			<bindstofield>ezshaper->step6->icq</bindstofield>
-			<type>select</type>
-			<options>
-				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
-					<name>Default priority</name>
-					<value></value>
-				</option>
-				<option>
-					<name>Lower priority</name>
-					<value>L</value>
-				</option>
-			</options>
-			<typehint>ICQ</typehint>
                 </field>
                 <field>
                         <name>LotusNotes</name>
@@ -1459,8 +1459,32 @@
 			<typehint>Lotus Notes</typehint>
                 </field>
                 <field>
-                        <name>MSN</name>
-			<bindstofield>ezshaper->step6->msnmessenger</bindstofield>
+                        <name>Miscellaneous</name>
+			<type>listtopic</type>
+                </field>
+                               <field>
+                        <name>DNS</name>
+			<type>select</type>
+			<bindstofield>ezshaper->step6->dns</bindstofield>
+			<options>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Default priority</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Lower priority</name>
+					<value>L</value>
+				</option>
+			</options>
+			<typehint>Domain Name Services</typehint>
+                </field>
+                <field>
+                        <name>ICMP</name>
+			<bindstofield>ezshaper->step6->icmp</bindstofield>
 			<type>select</type>
 			<options>
 				<option>
@@ -1476,8 +1500,48 @@
 					<value>L</value>
 				</option>
 			</options>
-			<typehint>MSN Messenger</typehint>
+			<typehint>ICMP Protocol</typehint>
                 </field>
+                <field>
+                        <name>SMB</name>
+			<bindstofield>ezshaper->step6->smb</bindstofield>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Default priority</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Lower priority</name>
+					<value>L</value>
+				</option>
+			</options>
+			<typehint>Microsoft SMB Protocol and friends</typehint>
+                </field>
+                <field>
+                        <name>SNMP</name>
+			<bindstofield>ezshaper->step6->snmp</bindstofield>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Default priority</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Lower priority</name>
+					<value>L</value>
+				</option>
+			</options>
+			<typehint>Simple Network Management Protocol</typehint>
+                </field> 
                 <field>
                         <name>MySQLServer</name>
 			<bindstofield>ezshaper->step6->mysqlserver</bindstofield>
@@ -1498,47 +1562,6 @@
 			</options>
 			<typehint>MySQL Server</typehint>
                 </field>
-                <field>
-                        <name>PCAnywhere</name>
-			<bindstofield>ezshaper->step6->pcanywhere</bindstofield>
-			<type>select</type>
-			<options>
-				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
-					<name>Default priority</name>
-					<value></value>
-				</option>
-				<option>
-					<name>Lower priority</name>
-					<value>L</value>
-				</option>
-			</options>
-			<typehint>Symantec PC Anywhere</typehint>
-                </field>
-                <field>
-                        <name>Teamspeak</name>
-			<bindstofield>ezshaper->step6->teamspeak</bindstofield>
-			<type>select</type>
-			<options>
-				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
-					<name>Default priority</name>
-					<value></value>
-				</option>
-				<option>
-					<name>Lower priority</name>
-					<value>L</value>
-				</option>
-			</options>
-			<typehint>TeamSpeak</typehint>
-                </field>
-                
                 <field>
                         <name>Next</name>
                         <type>submit</type>

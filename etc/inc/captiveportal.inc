@@ -556,6 +556,21 @@ function captiveportal_passthrumac_configure() {
 		fclose($fd); 
 	}
 	
+	/*    pass through mac entries should always exist.  the reason
+	 *    for this is because we do not have native mac address filtering
+         *    mechanisms.  this allows us to filter by mac address easily
+	 *    and get around this limitation.   I consider this a bug in
+         *    m0n0wall and pfSense as m0n0wall does not have native mac 
+         *    filtering mechanisms as well. -Scott Ullrich
+         */
+	if (is_array($config['captiveportal']['passthrumac'])) {
+		mwexec("/sbin/ipfw delete 50");
+		foreach($config['captiveportal']['passthrumac'] as $ptm) {
+			/* create the pass through mac entry */
+			mwexec("/sbin/ipfw add 50 skipto 50000 from any to any MAC {$ptm['mac']}");
+		}
+	}
+	
 	captiveportal_unlock();
 	
 	return 0;

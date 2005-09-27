@@ -350,8 +350,7 @@ function wireless_config_print() {
 			</td>
 		      </tr>
 		    </table>
-		<p>For assistance with creating keys, please see
-		<a href="javascript:if(openwindow('/wlan_strong_key_generator/generator.php') == false) alert('Popup blocker detected. Action aborted.');">WLAN Strong Key Generator</a>
+		<br/>Passphrase must be from 8 to 63 chars.
 		</td>
 	        </tr>
 		<tr>

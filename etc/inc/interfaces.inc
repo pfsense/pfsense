@@ -218,7 +218,6 @@ function interfaces_optional_configure_if($opti) {
 		if ($optcfg['descr'])
 			$optdescr = " ({$optcfg['descr']})";
 		print "\tOPT{$opti}{$optdescr}... ";
-		mute_kernel_msgs();
 	}
 
 	if (isset($optcfg['enable'])) {

@@ -139,9 +139,11 @@
 
 	/* set up Optional interfaces */
 	echo "Configuring OPT interfaces... ";
-	mute_kernel_msgs();
+	if(!$debugging)
+		mute_kernel_msgs();
 	interfaces_optional_configure();
-	unmute_kernel_msgs();
+	if(!$debugging) 
+		unmute_kernel_msgs();
 	echo "done.\n";
 
 	/* start pflog */

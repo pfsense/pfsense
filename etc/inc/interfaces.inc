@@ -518,8 +518,10 @@ EOD;
 					fwrite($fd, "{$wpa}");
 					fclose($fd);
 					if(is_process_running("hostapd")) {
-						mwexec("$killall -HUP hostapd");
-					} else {
+						mwexec("$killall -KILL hostapd");
+						sleep(2);
+						mwexec("$hostapd -B {$g['tmp_path']}/hostapd_{$if}.conf");
+ 					} else {
 						mwexec("$hostapd -B {$g['tmp_path']}/hostapd_{$if}.conf");
 					}
 				}
@@ -581,10 +583,13 @@ EOD;
 
         
         mwexec($ifconfig . $if . " down"); 
+	mwexec("$killall -KILL hostapd");
 	mwexec($ifconfig . $ifcargs);
 	mwexec($ifconfig . " up");
+	sleep(1);
+	mwexec("$hostapd -B {$g['tmp_path']}/hostapd_{$if}.conf");
 
-
+	/* Write ifconfig settings to tmp file so we can see if user set something weird */ 
 	$fd = fopen("{$g['tmp_path']}/ifconfig_wireless", "w");
 	fwrite($fd, "/sbin/ifconfig {$ifcargs}");
 	fclose($fd);

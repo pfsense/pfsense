@@ -90,6 +90,14 @@ include("head.inc");
 
 <form>
 
+This program is currently undergoing changes and is broke.  Check back before release!
+
+<?php
+
+exit;
+
+?>
+
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>

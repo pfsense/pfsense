@@ -1,13 +1,12 @@
 <?xml version="1.0"?>
 <!-- pfSense default system configuration -->
 <pfsense>
-	<version>2.0</version>
+	<version>2.1</version>
 	<lastchange></lastchange>
 	<theme>metallic</theme>
 	<system>
 		<enablesshd/>
 		<optimization>normal</optimization>
-		<schedulertype>priq</schedulertype>
 		<hostname>pfSense</hostname>
 		<domain>local</domain>
 		<dnsserver></dnsserver>
@@ -387,6 +386,7 @@
 	</filter>
 	<shaper>
 		<!-- <enable/> -->
+		<!-- <schedulertype>hfsc</schedulertype> -->
 		<!-- rule syntax:
 		<rule>
 			<disabled/>

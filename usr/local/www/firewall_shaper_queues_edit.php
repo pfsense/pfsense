@@ -240,7 +240,7 @@ include("head.inc");
 		<input type="checkbox" id="rio" name="rio" <?php if($rio) echo " CHECKED";?> > <a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#red">Random Early Detection In and Out</a><br>
 		<input type="checkbox" id="ecn" name="ecn" <?php if($ecn) echo " CHECKED";?> > <a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#ecn">Explicit Congestion Notification</a><br>
 	<?php if ($schedulertype == "hfsc" or $schedulertype == "cbq"): ?>
-		<input type="checkbox" id="parentqueue" name="parentqueue" <?php if($parentqueue) echo " CHECKED";?> > This is a parent queue of HFSC/CBQ<br>
+		<input type="checkbox" id="parentqueue" name="parentqueue" <?php if($parentqueue) echo " CHECKED";?> > This is a parent queue<br>
 	<?php endif; ?>
 	<span class="vexpl"><br>Select options for this queue
 	</tr>
@@ -267,7 +267,7 @@ include("head.inc");
 	
 	<?php if ($schedulertype == "hfsc" or $schedulertype == "cbq"): ?>
 	    <tr>
-		<td width="22%" valign="top" class="vncell">Parent queue (CBQ or HFSC only):</td>
+		<td width="22%" valign="top" class="vncell">Parent queue:</td>
 		<td width="78%" class="vtable">
 		   <select id="attachtoqueue" name="attachtoqueue">
 			<?php

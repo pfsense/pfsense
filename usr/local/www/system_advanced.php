@@ -476,6 +476,7 @@ include("head.inc");
 				<br />
 			</td>
 		</tr>
+<!---
 		<tr>
 			<td width="22%" valign="top" class="vncell">Traffic Shaper Scheduler</td>
 			<td width="78%" class="vtable">
@@ -495,6 +496,7 @@ include("head.inc");
 				<?php endif; ?>
 			</td>
 		</tr>
+-->
 		<tr>
 			<td width="22%" valign="top" class="vncell">Firewall Optimization Options</td>
 			<td width="78%" class="vtable">

@@ -121,7 +121,7 @@ function return_dir_as_array($dir) {
  ******/
 function enable_hardware_offloading($interface) {
     global $g, $config;
-    if(isset($config['system']['do_not_use_nic_microcode'))
+    if(isset($config['system']['do_not_use_nic_microcode']))
 	return;
     if($g['booting']) {
 	/* translate wan, lan, opt -> real interface if needed */

@@ -120,7 +120,9 @@ function return_dir_as_array($dir) {
  *   This function only supports the fxp driver's loadable microcode.
  ******/
 function enable_hardware_offloading($interface) {
-    global $g;
+    global $g, $config;
+    if(isset($config['system']['do_not_use_nic_microcode'))
+	return;
     if($g['booting']) {
 	/* translate wan, lan, opt -> real interface if needed */
 	$int = filter_translate_type_to_real_interface($interface);

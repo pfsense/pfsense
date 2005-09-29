@@ -1836,7 +1836,7 @@
 <step>
         <id>7</id>
         <title>pfSense Traffic Shaper Wizard</title>
-        <description>After pressing Finish the system will load the new profile.</description>
+        <description>After pressing Finish the system will load the new profile.   Please note that this may take a moment.   Also note that the traffic shaper is stateful meaning that only new connections will be shaped.   If this is an issue please reset the states after loading the profile.</description>
 	<fields>
                 <field>
                         <name>Finish</name>

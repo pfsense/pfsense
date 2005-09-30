@@ -60,28 +60,14 @@ function system_resolvconf_generate($dynupdate = false) {
                         }
                         fclose($nfd);
                 }
-                $nfd = @fopen("{$g['varetc_path']}/defaultdomain.conf", "r");
-                if ($nfd and $havedns) {
-                        while (!feof($nfd)) {
-                                $dnss = trim(fgets($nfd));
-                                if ($dnss) {
-                                        $resolvconf .= "search $dnss\n";
-                                }
-                        }
-                        fclose($nfd);
-                }
         }
         if (!$havedns && is_array($syscfg['dnsserver'])) {
                 foreach ($syscfg['dnsserver'] as $ns) {
-                        if ($ns) {
-				
+                        if ($ns)
                                 $resolvconf .= "nameserver $ns\n";
-				$havedns = true;
-			}
+                        $havedns = true;
                 }
         }
-
-	$ns = str_replace("nameserver nameserver ", "nameserver ", $resolvconf);
 
         fwrite($fd, $resolvconf);
         fclose($fd);

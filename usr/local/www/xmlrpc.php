@@ -179,6 +179,7 @@ function interfaces_carp_configure_xmlrpc($raw_params) {
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", $XML_RPC_String));
 	interfaces_carp_configure();
+	interfaces_carp_bring_up_final();
 	return new XML_RPC_Response(new XML_RPC_Value(true, $XML_RPC_Boolean));
 }
 

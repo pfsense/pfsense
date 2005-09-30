@@ -2,7 +2,11 @@
 /* $Id$ */
 /*
 	interfaces.inc
-	Copyright (C) 2004 Scott Ullrich
+	Copyright (C) 2004-2005 Scott Ullrich
+	All rights reserved.
+
+	function interfaces_wireless_configure is
+	Copyright (C) 2005 Espen Johansen
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -12,11 +16,11 @@
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 
-	1. Redistributions of source code must retain the above copyright notice,
+	1. Redistributions of source code must retain the above copyright notices,
 	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
+	   notices, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
 
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -398,27 +402,108 @@ function interfaces_carp_bring_up_final() {
 }
 
 function interfaces_wireless_configure($if, $wlcfg) {
-        global $config, $g;
+	global $config, $g;
 	
 	/* set values for /path/program */
 	$hostapd = "/usr/sbin/hostapd";
 	$wpa_supplicant = "/usr/sbin/wpa_supplicant";
 	$ifconfig = "/sbin/ifconfig ";
+	$killall = "/usr/bin/killall ";
 
-	/* Clear all ifcargs before we begin */
-	$ifcargs = "";
+	/* Sett all wireless ifconfig variables (splitt up to get rid of needed checking) */
 
-        /* wireless configuration */
-        $ifcargs .= escapeshellarg($if) . " ssid " . escapeshellarg($wlcfg['ssid']) . " ";
+	/* Set a/b/g standard */
+	$standard = ("mode " . escapeshellarg($wlcfg['standard']));
 
-        if ($wlcfg['stationname'])
-                $ifcargs .= "stationname " . escapeshellarg($wlcfg['stationname']) . " ";
+	/* set wireless channel value */
+	$channel = escapeshellarg($wlcfg['channel']);
 	
-	if(!$wlcfg['mode']) {
-		if (isset($wlcfg['wpa']['enable'])) {
-		
-	$wpa .= <<<EOD
+	if($channel == "") {
+		$channel = "";
+	} else { 
+		$channel = ("channel " . escapeshellarg($wlcfg['channel']));
+	}
 
+	/* Set ssid */
+	$ssid = ("ssid " . escapeshellarg($wlcfg['ssid']));
+
+	/* Set stationname */
+	if (!$wlcfg['stationname'])
+		$stationname = "pfsense";
+	else
+		$stationname = ("stationname " . escapeshellarg($wlcfg['stationname']));
+
+	/* Set wireless hostap mode */
+	if ($wlcfg['mode'] == hostap)
+		$hostapmode = "mediaopt hostap";
+	else
+		$hostapmode = "-mediaopt hostap";
+
+	/* Set wireless adhoc mode */
+	if ($wlcfg['mode'] == adhoc)
+		$adhocmode = "mediaopt adhoc";
+	else
+		$adhocmode = "-mediaopt adhoc";
+
+	/* Not neccesary to set BSS mode as this is default if adhoc and/or hostap is NOT set */
+
+	/* handle hide ssid option */
+	if(isset($wlcfg['hidessid']['enable']))
+		$hidessid = "hidessid";
+	else
+		$hidessid = "-hidessid";
+
+	/* handle pureg (802.11g) only option */
+	if(isset($wlcfg['pureg']['enable']))
+		$pureg = "mode 11g pureg";
+	else
+		$pureg = "-pureg";
+
+	/* enable apbridge option */
+	if(isset($wlcfg['apbridge']['enable']))
+		$apbridge = "apbridge";
+	else
+		$apbridge = "-apbridge";
+
+	/* handle turbo option */
+	if(isset($wlcfg['turbo']['enable']))
+		$turbo = "mediaopt turbo";
+	else
+		$turbo = "-mediaopt turbo";
+
+	/* handle txpower setting */
+	if($wlcfg['txpower'] <> "")
+		$txpower = ("txpower " . escapeshellarg($wlcfg['txpower']));
+	
+	/* handle wme option */
+	if(isset($wlcfg['wme']['enable']))
+		$wme = "wme";
+	else
+		$wme = "-wme";
+	
+	/* set up wep if enabled */
+        if (isset($wlcfg['wep']['enable']) && is_array($wlcfg['wep']['key'])) {
+                $wepset .= "authmode shared wepmode on ";
+
+                $i = 1;
+                foreach ($wlcfg['wep']['key'] as $wepkey) {
+                        $wepset .= "wepkey " . escapeshellarg("{$i}:{$wepkey['value']}") . " ";
+                        if (isset($wepkey['txkey'])) {
+                                $wepset .= "weptxkey {$i} ";
+                        }
+                        $i++;
+                }
+        } else {
+                $wepset = "authmode open wepmode off";
+	}
+
+	/* generate wpa_supplicant/hostap config if wpa is enabled */
+
+	switch ($wlcfg['mode']) {
+		case 'BSS':
+			if (isset($wlcfg['wpa']['enable'])) {
+
+				$wpa .= <<<EOD
 ctrl_interface={$g['varrun_path']}/hostapd
 ctrl_interface_group=0
 ap_scan=1
@@ -432,63 +517,20 @@ psk={$wlcfg['wpa']['passphrase']}
 pairwise={$wlcfg['wpa']['wpa_pairwise']}
 group={$wlcfg['wpa']['wpa_pairwise']}
 }
-
 EOD;
 
-		$fd = fopen("{$g['tmp_path']}/wpa_supplicant_{$if}.conf", "w");
-		fwrite($fd, "{$wpa}");
-		fclose($fd);
+				$fd = fopen("{$g['tmp_path']}/wpa_supplicant_{$if}.conf", "w");
+				fwrite($fd, "{$wpa}");
+				fclose($fd);
 
-		if(is_process_running("wpa_supplicant")) {
-			mwexec("$killall -HUP wpa_supplicant");
-			} else {
-			mwexec("$wpa_supplicant -i {$if} -c {$g['etc_path']}/wpa_supplicant_{$if}.conf"); 		}
-		}
-	}
+				if(is_process_running("wpa_supplicant"))
+					mwexec("$killall" . " wpa_supplicant");
+			}
+		break;
 
-        if (isset($wlcfg['wep']['enable']) && is_array($wlcfg['wep']['key'])) {
-                $ifcargs .= "wepmode on ";
-
-                $i = 1;
-                foreach ($wlcfg['wep']['key'] as $wepkey) {
-                        $ifcargs .= "wepkey " . escapeshellarg("{$i}:{$wepkey['value']}") . " ";
-                        if (isset($wepkey['txkey'])) {
-                                $ifcargs .= "weptxkey {$i} ";
-                        }
-                        $i++;
-                }
-        } else {
-                $ifcargs .= "wepmode off ";
-        }
-
-	if(isset($wlcfg['pureg']['enable'])) {
-		$ifcargs .= "mode 11g ";
-	} else {
-		if (preg_match($g['wireless_regex'], $if)) {
-			if ($wlcfg['standard'])
-				$ifcargs .= "mode " . escapeshellarg($wlcfg['standard']) . " ";
-		}
-	}
-
-	/*   set wireless channel value.  if we're using 0 then
-	 *   convert the channel to -
-	 *   THIS NEEDS TO BE SET AFTER $ifcargs .= "mode " !!! lsf
-	 */
-	$channel = escapeshellarg($wlcfg['channel']);
-	if($channel == "") {
-		$channel = "";
-		} else { $ifcargs .= "channel " . escapeshellarg($wlcfg['channel']) . " ";
-	}
-
-        switch ($wlcfg['mode']) {
-                case 'hostap':
-                        if (preg_match($g['wireless_regex'], $if)) 
-                                $ifcargs .= "-mediaopt adhoc mediaopt hostap ";
-                        else if (strstr($if, "wi"))
-                                $ifcargs .= "-mediaopt ibss mediaopt hostap ";
-				if (isset($wlcfg['wpa']['enable'])) {
-$wpa .= <<<EOD
-
+		case 'hostap':
+			if (isset($wlcfg['wpa']['enable'])) {
+				$wpa .= <<<EOD
 interface={$if}
 driver=bsd
 logger_syslog=-1
@@ -507,97 +549,70 @@ auth_algs={$wlcfg['wpa']['auth_algs']}
 wpa={$wlcfg['wpa']['wpa_mode']}
 wpa_key_mgmt={$wlcfg['wpa']['wpa_key_mgmt']}
 wpa_pairwise={$wlcfg['wpa']['wpa_pairwise']}
-#wpa_group_rekey={$wlcfg['wpa']['wpa_group_rekey']}
-#wpa_gmk_rekey={$wlcfg['wpa']['wpa_gmk_rekey']}
-#wpa_strict_rekey={$wlcfg['wpa']['wpa_strict_rekey']}
+wpa_group_rekey={$wlcfg['wpa']['wpa_group_rekey']}
+wpa_gmk_rekey={$wlcfg['wpa']['wpa_gmk_rekey']}
+wpa_strict_rekey={$wlcfg['wpa']['wpa_strict_rekey']}
 wpa_passphrase={$wlcfg['wpa']['passphrase']}
 ieee8021x={$wlcfg['wpa']['ieee8021x']}
-
 EOD;
-					$fd = fopen("{$g['tmp_path']}/hostapd_{$if}.conf", "w");
-					fwrite($fd, "{$wpa}");
-					fclose($fd);
-					if(is_process_running("hostapd")) {
-						mwexec("$killall -KILL hostapd");
-						sleep(2);
-						mwexec("$hostapd -B {$g['tmp_path']}/hostapd_{$if}.conf");
- 					} else {
-						mwexec("$hostapd -B {$g['tmp_path']}/hostapd_{$if}.conf");
-					}
-				}
-			break;
 
-                case 'ibss':
-                case 'IBSS':
-                        if (preg_match($g['wireless_regex'], $if)) 
-                                $ifcargs .= "-mediaopt hostap mediaopt adhoc ";
-                        else if (strstr($if, "wi"))
-                                $ifcargs .= "-mediaopt hostap mediaopt ibss ";
-                        else if (strstr($if, "an"))
-                                $ifcargs .= "mediaopt adhoc ";
-                        break;
-                case 'bss':
-                case 'BSS':
-                        if (preg_match($g['wireless_regex'], $if)) 
-                                $ifcargs .= "-mediaopt hostap -mediaopt adhoc ";
-                        else if (strstr($if, "wi"))
-                                $ifcargs .= "-mediaopt hostap -mediaopt ibss ";
-                        else if (strstr($if, "an"))
-                                $ifcargs .= "-mediaopt adhoc ";
-                        break;
-        }
-	
-	/*   extra options during hostap mode
-	 */
-	if($wlcfg['mode'] == "hostap") {
+				$fd = fopen("{$g['tmp_path']}/hostapd_{$if}.conf", "w");
+				fwrite($fd, "{$wpa}");
+				fclose($fd);
 
-		/* handle hide ssid option */
-		if(isset($wlcfg['hidessid']['enable']))
-			$ifcargs .= "hidessid ";
-		else
-			$ifcargs .= "-hidessid ";
+				if(is_process_running("hostapd"))
+					mwexec("$killall" . " hostapd");
+			}
+		break;
 
-		/* handle pureg (802.11g) only option */
-		if(isset($wlcfg['pureg']['enable']))
-			$ifcargs .= "pureg ";
-		else
-			$ifcargs .= "-pureg ";
+		case 'adhoc':
+			if(is_process_running("hostapd"))
+				mwexec("$killall hostapd");
 
-		/* handle turbo option */
-		if(isset($wlcfg['turbo']['enable']))
-			$ifcargs .= "mediaopt turbo ";
-		else
-			$ifcargs .= "-mediaopt turbo ";
+			if(is_process_running("wpa_supplicant"))
+				mwexec("$killall wpa_supplicant");
+		break;
+	}	
 
-		/* handle txpower setting */
-		if($wlcfg['txpower'] <> "")
-			$ifcargs .= "txpower " . escapeshellarg($wlcfg['txpower']) . " ";
-		
-		/* handle wme option */
-		if(isset($wlcfg['wme']['enable']))
-			$ifcargs .= " wme";
-		else
-			$ifcargs .= " -wme";
+	/* start up everything */
+	        
+	mwexec("$ifconfig {$if}" . " down"); 
+	mwexec("$ifconfig $if" . " " . $standard);
+	mwexec("$ifconfig $if" . " " . $channel);
+	mwexec("$ifconfig $if" . " " . $ssid);
+	mwexec("$ifconfig $if" . " " . $stationname);
+	mwexec("$ifconfig $if" . " " . $hostapmode);
+	mwexec("$ifconfig $if" . " " . $adhocmode);
+	mwexec("$ifconfig $if" . " " . $hidessid);
+	mwexec("$ifconfig $if" . " " . $pureg);
+	mwexec("$ifconfig $if" . " " . $apbridge);
+	mwexec("$ifconfig $if" . " " . $turbo);
+	mwexec("$ifconfig $if" . " " . $wme);
+	mwexec("$ifconfig $if" . " " . $wepset);
+	mwexec("$ifconfig $if" . " up"); 
 
+	if (isset($wlcfg['wpa']['enable'])) {
+		if ($wlcfg['mode'] == BSS) 
+			mwexec("$wpa_supplicant -i {$if} -c {$g['etc_path']}/wpa_supplicant_{$if}.conf");
+		if ($wlcfg['mode'] == hostap) 
+			mwexec("$hostapd -B {$g['tmp_path']}/hostapd_{$if}.conf");
 	}
 
-        
-        mwexec($ifconfig . $if . " down"); 
-	mwexec("$killall -KILL hostapd");
-	mwexec($ifconfig . $ifcargs);
-	mwexec($ifconfig . " up");
-	sleep(1);
-	mwexec("$hostapd -B {$g['tmp_path']}/hostapd_{$if}.conf");
-
 	/* Write ifconfig settings to tmp file so we can see if user set something weird */ 
-	$fd = fopen("{$g['tmp_path']}/ifconfig_wireless", "w");
-	fwrite($fd, "/sbin/ifconfig {$ifcargs}");
-	fclose($fd);
+//	$ifcargs = ("$standard $channel $ssid $stationname $hostapmode $adhocmode $hidessid $pureg $apbridge $turbo $wme $wepset");
+//	$fd = fopen("{$g['tmp_path']}/ifconfig_wireless", "w");
+//	fwrite($fd, "/sbin/ifconfig {$ifcargs}");
+//	fclose($fd);
+
+	/* Write wep crap out */
+//	$fd = fopen("{$g['tmp_path']}/ifconfig_wep", "w");
+//	fwrite($fd, "sbin/ifconfig {$wepset}");
+//	fclose($fd);
 	
 	if(isset($wlcfg['useolsr']))
 		setup_wireless_olsr(escapeshellarg($if));
-	
-        return 0;
+
+	return 0;
 
 }
 

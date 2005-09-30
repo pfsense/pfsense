@@ -468,7 +468,7 @@
 
 				$this->_debug($cacheIP.'/'.$cacheTime);
 
-				$initial = true;
+				$initial = false;
 			} else {
 				$file = fopen($this->_cacheFile, 'w');
 				fwrite($file, '0.0.0.0:'.$currentTime);
@@ -476,7 +476,7 @@
 				$cacheIP = '0.0.0.0';
 				$cacheTime = $currentTime;
 
-				$initial = false;
+				$initial = true;
 			}
 
 			switch ($this->_dnsService) {

@@ -783,7 +783,7 @@ EOD;
         mwexec("/sbin/ifconfig {$optif} up");
 
         /* fire up dhclient */
-        mwexec_bg("/sbin/dhclient -d -c {$g['varetc_path']}/dhclient_{$optif}.conf {$optif}");
+        mwexec("/sbin/dhclient -d -c {$g['varetc_path']}/dhclient_{$optif}.conf {$optif}");
 
 	return 0;
 }
@@ -829,7 +829,7 @@ EOD;
         mwexec("/sbin/ifconfig {$optif} up");
 
         /* fire up dhclient */
-        mwexec_bg("/sbin/dhclient -d -c {$g['varetc_path']}/dhclient_{$optif}.conf {$optif} >/tmp/{$optif}_output >/tmp/{$optif}_error_output");
+        mwexec("/sbin/dhclient -d -c {$g['varetc_path']}/dhclient_{$optif}.conf {$optif} >/tmp/{$optif}_output >/tmp/{$optif}_error_output");
 
 	$fout = fopen("/tmp/ifconfig_{$optif}","w");
 	fwrite($fout, "/sbin/dhclient -d -c {$g['varetc_path']}/dhclient_{$optif}.conf {$optif}");
@@ -876,7 +876,7 @@ EOD;
         mwexec("/sbin/ifconfig {$wanif} up");
 
         /* fire up dhclient */
-        mwexec_bg("/sbin/dhclient -d -c {$g['varetc_path']}/dhclient_wan.conf {$wanif} >/tmp/{$wanif}_output >/tmp/{$wanif}_error_output");
+        mwexec("/sbin/dhclient -d -c {$g['varetc_path']}/dhclient_wan.conf {$wanif} >/tmp/{$wanif}_output >/tmp/{$wanif}_error_output");
 
 	$fout = fopen("/tmp/ifconfig_{$wanif}","w");
 	fwrite($fout, "/sbin/dhclient -d -c {$g['varetc_path']}/dhclient_wan.conf {$wanif}");

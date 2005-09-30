@@ -146,6 +146,9 @@
 		unmute_kernel_msgs();
 	echo "done.\n";
 
+	/* generate resolv.conf */
+	system_resolvconf_generate();
+
 	/* start pflog */
 	filter_pflog_start();
 	

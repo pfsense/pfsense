@@ -40,6 +40,15 @@ require_once("notices.inc");
 <?
 				if (are_notices_pending()) {
 					$notices = get_notices();
+					
+					## Get Query Arguments from URL ###
+					foreach ($_REQUEST as $key => $value) {
+						if ($key != "PHPSESSID")
+							$requests[] = $key.'='.$value;
+					}
+					$request_string = implode("&", $requests);
+					$request_string = $request_string . '&';
+
 					foreach ($notices as $key => $value) {
 						$date = date("m-d-y H:i:s", $key);
 						$noticemsg = str_replace("'", "", $value['notice']);
@@ -52,9 +61,9 @@ require_once("notices.inc");
 						$noticemsg = str_replace("<br>", "", $noticemsg);
 						$notice_msgs = '<a href="?noticeaction=acknowledge&noticeid=all">Acknowledge All</a> &nbsp;&nbsp;&nbsp;&nbsp;.:.&nbsp;&nbsp;&nbsp;&nbsp; ';
 						if ($value['url']) {
-							$notice_msgs .= $date.' - <a href="'.$url.'?noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']</a>';
+							$notice_msgs .= $date.' - <a href="'.$url.'?'.$request_string.'noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']</a>';
 						} else {
-							$notice_msgs .= $date.' - <a href="?noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']'.$noticemsg.'</a>';
+							$notice_msgs .= $date.' - <a href="?'.$request_string.'noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']'.$noticemsg.'</a>';
 						}
 						$notice_msgs .= " &nbsp;&nbsp;&nbsp;&nbsp;.:.&nbsp;&nbsp;&nbsp;&nbsp; ";
 					}

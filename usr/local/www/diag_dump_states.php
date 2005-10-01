@@ -118,11 +118,11 @@ foreach($states as $state) {
 
 ?>
 </table>
-
+</div>
 </center>
 </td></tr>
 </table>
-</div>
+
 
 <?php include("fend.inc"); ?>
 <meta http-equiv="refresh" content="60;url=diag_dump_states.php">

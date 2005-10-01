@@ -92,7 +92,7 @@ case ${opmode} in
 	/usr/sbin/tcpdump -n -e -ttt -i pflog0
 	;;
 98)
-	/etc/rc.store_config_to_removable_device
+	/etc/rc.initial.store_config_to_removable_device
 	;;
 99)    
         /scripts/lua_installer

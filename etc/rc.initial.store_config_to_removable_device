@@ -66,13 +66,18 @@
 		exit;
 	}
 
+	echo "\n\nProcessing: ";
+	
+	echo "moving...";
 	mwexec("/bin/mv /cf/conf/config.xml /mnt/cf/");
+	echo "removing old...";
 	mwexec("/bin/rm -rf /cf");
 	mwexec("/bin/rm -rf /conf");
 	mwexec("/bin/mkdir /cf/");
+	echo "linking...";
 	mwexec("/bin/ln -s /mnt/cf /cf/conf");
 	mwexec("/bin/ln -s /mnt/cf /conf");
-	
+	echo "done.\n\n";
 	
 
 ?>

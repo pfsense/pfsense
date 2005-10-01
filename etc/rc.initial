@@ -42,8 +42,8 @@ echo " 7)  Ping host"
 echo " 8)  Shell"
 echo " 9)  PFtop"
 echo "10)  Traffic Logs"
-if [ -f /capable_* ]; then
-    echo "98)  "
+if [ -f /var/db/pfi/capable_* ]; then
+    echo "98)  Move configuration file to removable device"
 fi
 
 if [ "$PLATFORM" = "cdrom" ]; then

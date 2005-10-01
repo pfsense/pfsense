@@ -71,6 +71,7 @@
 	mwexec("/bin/rm -rf /conf");
 	mwexec("/bin/mkdir /cf/");
 	mwexec("/bin/ln -s /mnt/cf /cf/conf");
+	mwexec("/bin/ln -s /mnt/cf /conf");
 	
 	
 

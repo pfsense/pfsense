@@ -91,11 +91,11 @@ case ${opmode} in
 10)
 	/usr/sbin/tcpdump -n -e -ttt -i pflog0
 	;;
-98)    
-        /scripts/lua_installer
+98)
+	/etc/rc.store_config_to_removable_device
 	;;
 99)    
-        /etc/rc.store_config_to_removable_device
+        /scripts/lua_installer
 	;;
 100)
         if grep "$WORD" "$CONFIG"

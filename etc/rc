@@ -209,6 +209,8 @@ rm -rf /usr/local/pkg/pf/CVS
 
 /usr/local/sbin/check_reload_status >/dev/null &
 
+/usr/local/bin/beep.sh start
+
 echo "Bootup complete"
 
 exit 0

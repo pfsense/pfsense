@@ -728,6 +728,7 @@ function system_reboot_sync() {
 }
 
 function system_reboot_cleanup() {
+	mwexec("/usr/local/bin/beep.sh stop");
 	captiveportal_radius_stop_all();
 }
 

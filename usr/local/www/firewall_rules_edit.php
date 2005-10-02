@@ -493,6 +493,7 @@ include("head.inc");
 				</table>
 				<br />
 				<span class="vexpl">Specify the port or port range for the source of the packet for this rule. This is usually not equal to the destination port range (and is often &quot;any&quot;). <br /> Hint: you can leave the <em>'to'</em> field empty if you only want to filter a single port</span>
+				<span class="vexpl"><B>NOTE:</B> You will not need to enter anything here in 99.99999% of the circumstances.  If you're unsure, do not enter anything here!</span>
 			</td>
 		</tr>		
 		<tr>

@@ -651,7 +651,7 @@ include("head.inc");
 					<option value="none"<?php if($pconfig['statetype'] == "none") echo "selected"; ?>>none</option>
 				</select><br>HINT: Select which type of state tracking mechanism you would like to use.  If in doubt, use keep state.
 				<p><strong>
-				<table>
+				<table width="90%">
 					<tr><td width="25%"><li>keep state</li></td><td>works with TCP, UDP, and ICMP.</td></tr>
 					<tr><td width="25%"><li>modulate state</li></td><td>works only with TCP. pfSense will generate strong Initial Sequence Numbers (ISNs) for packets matching this rule.</li></td></tr>
 					<tr><td width="25%"><li>synproxy state</li></td><td>proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined.</td></tr>

@@ -427,7 +427,11 @@ function find_ip_interface($ip) {
  */
 function filter_translate_type_to_real_interface($interface) {
     global $config;
-    return $config['interfaces'][$interface]['if'];
+    if($config['interfaces'][$interface]['if'] <> "") {
+	return $config['interfaces'][$interface]['if'];
+    } else {
+	return $interface;
+    }
 }
 
 /*

@@ -43,7 +43,9 @@ echo " 8)  Shell"
 echo " 9)  PFtop"
 echo "10)  Traffic Logs"
 if [ -f /var/db/pfi/capable_* ]; then
-    echo "98)  Move configuration file to removable device"
+    if [ ! -L /cf/conf ]; then
+	echo "98)  Move configuration file to removable device"
+    fi
 fi
 
 if [ "$PLATFORM" = "cdrom" ]; then

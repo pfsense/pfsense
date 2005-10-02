@@ -677,7 +677,10 @@ function delete_package_xml($pkg) {
 			foreach($services as $service) $instservices[] = $service['name'];
 			foreach($pkg_config['service'] as $service) {
 				foreach($instservices as $key => $instservice) {
-					if($instservice == $service['name']) unset($services[$key]);
+					if($instservice == $service['name']) {
+						stop_service($service['name']);
+						unset($services[$key]);
+					}
 				}
 			}
 			$static_output .= "done.\n";

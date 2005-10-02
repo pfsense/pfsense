@@ -1211,6 +1211,8 @@ function get_real_wan_interface() {
 function get_current_wan_address($interface = "wan") {
 	global $config, $g;
 
+	$interface = filter_translate_type_to_real_interface($interface);
+
 	$wancfg = $config['interfaces'][$interface];
 
 	if(in_array($wancfg['ipaddr'], array('dhcp'))) {

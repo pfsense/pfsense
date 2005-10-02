@@ -591,7 +591,7 @@
                 <field>
                         <name>iMesh</name>
                         <type>checkbox</type>
-			<typehint>iMest and other P2P using the iMest protocol and ports</typehint>
+			<typehint>iMesh and other P2P using the iMesh protocol and ports</typehint>
 			<bindstofield>ezshaper->step4->imesh</bindstofield>
                 </field>
                 <field>

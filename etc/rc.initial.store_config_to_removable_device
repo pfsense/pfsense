@@ -77,6 +77,7 @@
 	echo "linking...";
 	mwexec("/bin/ln -s /mnt/cf /cf/conf");
 	mwexec("/bin/ln -s /mnt/cf /conf");
+	mwexec("/bin/rm -f /var/db/pfi");
 	echo "done.\n\n";
 	
 

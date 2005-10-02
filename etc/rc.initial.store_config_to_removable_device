@@ -53,7 +53,7 @@
 		echo "\n";
 		echo "pfSense configuration file to reside on: ";
 		$move_config_to_device = chop(fgets($fp));
-		if ($move_config_to_device === "") {
+		if ($move_config_to_device == "") {
 			exit(0);
 		}		
 	} while (!$move_config_to_device);

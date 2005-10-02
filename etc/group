@@ -6,11 +6,16 @@ tty:*:4:root
 operator:*:5:root
 bin:*:7:
 staff:*:20:root
+sshd:*:22:
 guest:*:31:root
+_pflogd:*:64:
+_dhcp:*:65:
+proxy:*:62:
+authpf:*:63:
 dialer:*:68:
 network:*:69:
 www:*:80:
 nogroup:*:65533:
 nobody:*:65534:
 admin:*:0:
-_dhcp:*:65:
+

@@ -1036,8 +1036,6 @@ EOD;
 		echo "OPT" . ($i+1) . " -> " . $optif[$i] . "\n";
 	}
 
-	if(!$noreboot) echo "\npfSense will reboot after saving the changes.\n";
-
 echo <<<EOD
 
 Do you want to proceed [y|n]?
@@ -1095,9 +1093,9 @@ EOD;
 
 
 EOD;
+		/* resync everything */
+		reload_all_sync();
 
-		if($noreboot <> true)
-			system_reboot_sync();
 	}
 }
 

@@ -118,6 +118,7 @@ switch($_GET['mode']) {
             $todel = substr(reverse_strrchr($config['installedpackages']['package'][$id]['depends_on_package'], "."), 0, -1);
             delete_package($todel);
             delete_package_xml($_GET['pkg']);
+	    stop_service($_GET['pkg']);
             update_status("Package deleted.");
             $static_output .= "\nPackage deleted.";
             update_output_window($static_output);

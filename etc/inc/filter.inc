@@ -547,7 +547,7 @@ function filter_nat_rules_generate() {
 				else
 					$extaddr = $rule['external-address'];
 			else
-				$extaddr = get_current_wan_address();
+				$extaddr = get_current_wan_address($rule['interface']);
 
 			if (!$rule['interface'] || ($rule['interface'] == "wan"))
 				$natif = $wanif;

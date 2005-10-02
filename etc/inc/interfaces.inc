@@ -1208,10 +1208,10 @@ function get_real_wan_interface() {
 	return $wanif;
 }
 
-function get_current_wan_address() {
+function get_current_wan_address($interface = "wan") {
 	global $config, $g;
 
-	$wancfg = $config['interfaces']['wan'];
+	$wancfg = $config['interfaces'][$interface];
 
 	if (in_array($wancfg['ipaddr'], array('pppoe','dhcp','pptp','bigpond'))) {
 		/* dynamic WAN IP address, find out which one */

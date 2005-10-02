@@ -1213,7 +1213,20 @@ function get_current_wan_address($interface = "wan") {
 
 	$wancfg = $config['interfaces'][$interface];
 
-	if (in_array($wancfg['ipaddr'], array('pppoe','dhcp','pptp','bigpond'))) {
+	if(in_array($wancfg['ipaddr'], array('dhcp'))) {
+		/* get interface info with netstat */
+		exec("/usr/bin/netstat -nWI " . escapeshellarg($interface) . " -f inet", $ifinfo);
+
+		if (isset($ifinfo[1])) {
+			$aif = preg_split("/\s+/", $ifinfo[1]);
+			$curwanip = chop($aif[3]);
+
+			if ($curwanip && is_ipaddr($curwanip) && ($curwanip != "0.0.0.0"))
+				return $curwanip;
+		}
+
+		return null;		
+	} else if (in_array($wancfg['ipaddr'], array('pppoe','pptp','bigpond'))) {
 		/* dynamic WAN IP address, find out which one */
 		$wanif = get_real_wan_interface();
 

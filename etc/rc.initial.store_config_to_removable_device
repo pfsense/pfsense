@@ -79,7 +79,7 @@
 	mwexec("/bin/ln -s /mnt/cf /conf");
 	mwexec("/bin/rm -rf /var/db/pfi");
 	config_unlock();
-	echo "done.\n\n";
-	
+	echo "done.\n";
+	echo "You're configuration has been moved to {$move_config_to_device}\n";
 
 ?>

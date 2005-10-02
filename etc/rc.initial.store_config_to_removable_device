@@ -67,7 +67,7 @@
 	}
 
 	echo "\n\nProcessing: ";
-	
+	config_lock();
 	echo "moving...";
 	mwexec("/bin/mv /cf/conf/config.xml /mnt/cf/");
 	echo "removing old...";
@@ -78,6 +78,7 @@
 	mwexec("/bin/ln -s /mnt/cf /cf/conf");
 	mwexec("/bin/ln -s /mnt/cf /conf");
 	mwexec("/bin/rm -rf /var/db/pfi");
+	config_unlock();
 	echo "done.\n\n";
 	
 

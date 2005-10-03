@@ -262,7 +262,7 @@ function type_change(enable_change,enable_change_pptp) {
             <form action="interfaces_opt.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
-                  <td colspan="2" valign="top" class="listtopic">Optional Interface Configurtaion</td>
+                  <td colspan="2" valign="top" class="listtopic">Optional Interface Configuration</td>
                 </tr>	      
                 <tr>
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>

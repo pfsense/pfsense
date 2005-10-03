@@ -558,11 +558,13 @@ function install_package_xml($pkg) {
 		if($pkg_config['menu'] != "") {
 			$static_output .= "\tMenu items... ";
 			update_output_window($static_output);
-			foreach($pkg_config['menu'] as $menu) {
-				foreach($config['installedpackages']['menu'] as $amenu) {
-					if($amenu['name'] == $menu['name']) continue 2;
+			if(is_array($pkg_config['menu'])) {
+				foreach($pkg_config['menu'] as $menu) {
+					foreach($config['installedpackages']['menu'] as $amenu) {
+						if($amenu['name'] == $menu['name']) continue 2;
+					}
+					$config['installedpackages']['menu'][] = $menu;
 				}
-				$config['installedpackages']['menu'][] = $menu;
 			}
 			$static_output .= "done.\n";
 			update_output_window($static_output);

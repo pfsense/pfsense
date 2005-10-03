@@ -380,6 +380,7 @@ function services_dyndns_configure() {
 		if ($g['booting']) {
 			echo "Starting DynDNS client... ";
 			if($config['system']['use_old_dyndns'] <> "") {
+				echo " [Using ez-ipupdate] ";
 				services_dyndns_configure_old();
 				exit;
 			}	

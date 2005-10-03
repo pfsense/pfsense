@@ -41,13 +41,17 @@ require_once("notices.inc");
 				if (are_notices_pending()) {
 					$notices = get_notices();
 					
+					$requests=array();
+					
 					## Get Query Arguments from URL ###
 					foreach ($_REQUEST as $key => $value) {
 						if ($key != "PHPSESSID")
 							$requests[] = $key.'='.$value;
 					}
-					$request_string = implode("&", $requests);
-					$request_string = $request_string . '&';
+					if(is_array($requests))
+						$request_string = implode("&", $requests);
+					// do we want a & on the end of the url?
+					//$request_string = $request_string . '&';
 
 					foreach ($notices as $key => $value) {
 						$date = date("m-d-y H:i:s", $key);

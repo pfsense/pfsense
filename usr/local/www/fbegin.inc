@@ -50,8 +50,6 @@ require_once("notices.inc");
 					}
 					if(is_array($requests))
 						$request_string = implode("&", $requests);
-					// do we want a & on the end of the url?
-					//$request_string = $request_string . '&';
 
 					foreach ($notices as $key => $value) {
 						$date = date("m-d-y H:i:s", $key);
@@ -67,7 +65,7 @@ require_once("notices.inc");
 						if ($value['url']) {
 							$notice_msgs .= $date.' - <a href="'.$url.'?'.$request_string.'noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']</a>';
 						} else {
-							$notice_msgs .= $date.' - <a href="?'.$request_string.'noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']'.$noticemsg.'</a>';
+							$notice_msgs .= $date.' - <a href="?'.$request_string.'&noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']'.$noticemsg.'</a>';
 						}
 						$notice_msgs .= " &nbsp;&nbsp;&nbsp;&nbsp;.:.&nbsp;&nbsp;&nbsp;&nbsp; ";
 					}

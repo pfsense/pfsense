@@ -385,6 +385,10 @@ function services_dyndns_configure() {
 			}	
 		} else {
 			sleep(1);
+			if($config['system']['use_old_dyndns'] <> "") {
+				services_dyndns_configure_old();
+				exit;
+			}			
 		}
 
 		$dns = new updatedns($dnsService = $config['dyndns']['type'],

@@ -81,7 +81,9 @@
         log_error("Informational: DHClient spawned /etc/rc.newwanip and the new ip is {$interface} - {$curwanip}.");
         
         /* after IP change, update DynDNS */
-	services_dyndns_configure();
+        if(!$config['system']['use_old_dyndns']) {
+                services_dyndns_configure();
+        }
         
 	filter_configure();
         

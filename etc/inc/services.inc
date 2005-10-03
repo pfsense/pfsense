@@ -437,7 +437,7 @@ function services_dyndns_configure_old() {
 service-type={$dyndnscfg['type']}
 user={$dyndnscfg['username']}:{$dyndnscfg['password']}
 host={$dyndnscfg['host']}
-interface=$wanif
+interface={$wanif}
 max-interval=2073600
 pid-file={$g['varrun_path']}/ez-ipupdate.pid
 cache-file={$g['vardb_path']}/ez-ipupdate.cache

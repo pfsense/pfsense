@@ -1190,6 +1190,7 @@ function reload_interfaces() {
  *   none
  ******/
 function sync_webgui_passwords() {
+	global $config;
 	conf_mount_rw();
 	$config['system']['password'] = crypt($_POST['password']);
 	/* sync root */

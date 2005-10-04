@@ -236,6 +236,10 @@ function filter_generate_aliases() {
 
 	$aliases .= "# System Aliases \n";
 	$aliases .= "lan = \"{ {$config['interfaces']['lan']['if']}{$lan_aliases} }\"\n";
+	/* if we are using PPPoE then include the interface */
+	if($config['interfaces']['wan']['ipaddr'] == "pppoe") {
+		$wan_aliases .= " ng0";
+	}
 	$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";
 	$aliases .= "pptp = \"{ ng1 ng2 ng3 ng4 ng5 ng6 ng7 ng8 ng9 ng10 ng11 ng12 ng13 ng14 }\"\n";
 	$aliases .= "pppoe = \"{ ng1 ng2 ng3 ng4 ng5 ng6 ng7 ng8 ng9 ng10 ng11 ng12 ng13 ng14 }\"\n";

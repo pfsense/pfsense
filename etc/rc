@@ -156,11 +156,6 @@ if [ "$DEVFS" = "0" ]; then
     mount_devfs devfs /dev
 fi
 
-echo -n "Syncing master.passwd... "
-/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd
-/usr/sbin/pwd_mkdb  /etc/master.passwd
-echo "done."
-
 # Create an initial utmp file
 cd /var/run && cp /dev/null utmp && chmod 644 utmp
 

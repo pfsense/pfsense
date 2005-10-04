@@ -369,13 +369,14 @@ include("head.inc");
               <?php $i++; endforeach; ?>
             </table>
 <br/>
-<strong class="red">Note:<br>
-In/out counters will wrap at 32bit (4 Gigabyte) ! <br/>
 </strong>Using dial-on-demand will bring the connection up again if any packet
 triggers it. To substantiate this point: disconnecting manually
 will <strong>not</strong> prevent dial-on-demand from making connections
 to the outside! Don't use dial-on-demand if you want to make sure that the line 
 is kept disconnected.
+<p>
+<strong class="red">Note:<br>
+In/out counters will wrap at 32bit (4 Gigabyte) ! <br/>
 
 <meta http-equiv="refresh" content="120;url=<?php print $_SERVER['PHP_SELF']; ?>">
 

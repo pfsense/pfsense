@@ -1191,6 +1191,20 @@ function reload_interfaces() {
  ******/
 function sync_webgui_passwords() {
 	conf_mount_rw();
+	$config['system']['password'] = crypt($_POST['password']);
+	/* sync root */
+	$fd = popen("/usr/sbin/pw usermod -n root -H 0", "w");
+	$salt = md5(time());
+	$crypted_pw = crypt($_POST['password'],$salt);
+	fwrite($fd, $crypted_pw);
+	pclose($fd);
+	/* sync admin */
+	$fd = popen("/usr/sbin/pw usermod -n admin -H 0", "w");
+	$salt = md5(time());
+	$crypted_pw = crypt($_POST['password'],$salt);
+	fwrite($fd, $crypted_pw);
+	pclose($fd);  
+	update_changedesc("password changed via webConfigurator");
 	mwexec("/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd");
 	mwexec("/usr/sbin/pwd_mkdb /etc/master.passwd");
 	conf_mount_ro();

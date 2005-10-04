@@ -748,25 +748,6 @@ function system_do_shell_commands($early = 0) {
 	}
 }
 
-function system_do_extensions($early = false) {
-	global $config, $g;
-
-	if (!is_dir("{$g['etc_path']}/inc/ext"))
-		return;
-
-	$dh = @opendir("{$g['etc_path']}/inc/ext");
-	if ($dh) {
-		while (($extd = readdir($dh)) !== false) {
-			if (($extd === ".") || ($extd === ".."))
-				continue;
-			$rcfile = "{$g['etc_path']}/inc/ext/" . $extd . "/" . ($early ? "rc.early" : "rc");
-			if (file_exists($rcfile))
-				passthru($rcfile);
-		}
-		closedir($dh);
-	}
-}
-
 function system_console_configure() {
 	global $config, $g;
 

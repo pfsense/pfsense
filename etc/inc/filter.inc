@@ -315,16 +315,14 @@ function filter_flush_state_table() {
 function filter_nat_rules_generate_if($if, $src, $srcport, $dst, $natport, $target, $nonat) {
 	global $config;
 
-	if($src=="/32")
+	if($src == "/32" || $src{0} == "/")
 		return;
 	
-	if($src{0} == "/")
-		return;
-
 	$nat = "nat";
 
+	/* Use interface name if IP isn't specified */
         if ($target)
-                $tgt = $target . "/32";
+                $tgt = "{$target}/32";
         else
                 $tgt = "($if)";
 	
@@ -338,11 +336,14 @@ function filter_nat_rules_generate_if($if, $src, $srcport, $dst, $natport, $targ
 	if ($dst == "")
 		$dst = "any";
 
+	/* Match on this source port */
         if ($srcport)
-		$src .= " port " . $srcport;
+		$src .= " port {$srcport}";
 
+	/* set the source port the world sees */
 	if ($natport)
-		$tgt .= " port " . $natport;
+		$second_half_of_rule .= " port {$natport}";
+
 
         $natrule = "{$nat} on {$if} from {$src} to {$dst} {$second_half_of_rule}\n";
 

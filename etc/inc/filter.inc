@@ -604,7 +604,8 @@ function filter_nat_rules_generate() {
 			 */
 			if($target <> "") {
 				if($extport[0] == "21" and !$config['system']['disableftpproxy']) {
-					$helpers = exec("ps awux | grep pftpx | grep {$target}");
+					$helpers = exec("ps aux | grep pftpx | grep {$target}");
+					echo "{$helpers}\n";
 					if(!$helpers)
 						mwexec_bg("/usr/local/sbin/pftpx -c 21 -f {$target} -g 21");
 				}

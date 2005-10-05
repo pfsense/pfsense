@@ -1202,8 +1202,7 @@ function sync_webgui_passwords() {
 	/* sync admin */
 	$fd = popen("/usr/sbin/pw usermod -n admin -H 0", "w");
 	fwrite($fd, $crypted_pw);
-	pclose($fd);  
-	update_changedesc("password changed via webConfigurator");
+	pclose($fd);
 	mwexec("/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd");
 	mwexec("/usr/sbin/pwd_mkdb /etc/master.passwd");
 	conf_mount_ro();

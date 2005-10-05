@@ -234,11 +234,6 @@ function filter_generate_aliases() {
 	$lan_aliases = " " . link_ip_to_carp_interface($lanip);
 	$wan_aliases = " " . link_ip_to_carp_interface($wanip);
 
-	/* if we are using PPPoE then include the interface */
-	if($config['interfaces']['wan']['ipaddr'] == "pppoe") {
-		$wan_aliases .= " ng0";
-	}
-
 	$aliases .= "# System Aliases \n";
 	$aliases .= "lan = \"{ {$config['interfaces']['lan']['if']}{$lan_aliases} }\"\n";
 	$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";

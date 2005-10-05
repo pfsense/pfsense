@@ -741,10 +741,17 @@ function system_do_shell_commands($early = 0) {
 		$cmdn = "shellcmd";
 
 	if (is_array($config['system'][$cmdn])) {
-
+		
+		/* *cmd is an array, loop through */
 		foreach ($config['system'][$cmdn] as $cmd) {
 			exec($cmd);
 		}
+
+	} elseif($config['system'][$cmdn] <> "") {
+		
+		/* execute single item */
+		exec($config['system'][$cmdn]);
+
 	}
 }
 

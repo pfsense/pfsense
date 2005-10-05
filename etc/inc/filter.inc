@@ -606,7 +606,7 @@ function filter_nat_rules_generate() {
 				if($natport == "21" and !$config['system']['disableftpproxy']) {
 					$helpers = exec("ps awux | grep pftpx | grep {$target}");
 					if(!$helpers)
-						mwexec_bg("/usr/local/sbin/pftpx -c 81 -f {$target} -g 81");
+						mwexec_bg("/usr/local/sbin/pftpx -c 21 -f {$target} -g 81");
 				}
 			}
 

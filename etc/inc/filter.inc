@@ -351,19 +351,6 @@ function filter_nat_rules_generate_if($if, $src, $srcport, $dst, $natport, $targ
 
         $natrule = "{$nat} on {$if} from {$src} to {$dst} {$second_half_of_rule}\n";
 
-	/*
-	 *    If FTP Proxy Helper is enbabled and the
-	 *    operator has requested a port forward to
-         *    a ftp server then launch a helper
-	 */
-	if($dst <> "") {
-		if($natport == "21" and !$config['system']['disableftpproxy']) {
-			$helpers = exec("ps awux | grep pftpx | grep {$dst}");
-			if(!$helpers)
-				mwexec_bg("/usr/local/sbin/pftpx -c 81 -f {$dst} -g 81");
-		}
-	}
-	
 	return $natrule;
 }
 
@@ -608,6 +595,19 @@ function filter_nat_rules_generate() {
 				else
 					$natrules .=
 					 "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
+			}
+
+			/*
+			 *    If FTP Proxy Helper is enbabled and the
+			 *    operator has requested a port forward to
+			 *    a ftp server then launch a helper
+			 */
+			if($target <> "") {
+				if($natport == "21" and !$config['system']['disableftpproxy']) {
+					$helpers = exec("ps awux | grep pftpx | grep {$target}");
+					if(!$helpers)
+						mwexec_bg("/usr/local/sbin/pftpx -c 81 -f {$target} -g 81");
+				}
 			}
 
 			$natrules .= "\n";

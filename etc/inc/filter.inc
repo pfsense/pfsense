@@ -357,10 +357,10 @@ function filter_nat_rules_generate_if($if, $src, $srcport, $dst, $natport, $targ
          *    a ftp server then launch a helper
 	 */
 	if($dst <> "") {
-		if($natport == "21" and $config['system']['disableftpproxy'] <> "") {
-			$helpers = exec("ps awux | grep pftpx | grep {$dst} | cut -d\" \" -f5");
-			mwexec("/bin/kill {$helpers}");
-			mwexec_bg("/usr/local/sbin/pftpx -c 81 -f {$dst} -g 81");
+		if($natport == "21" and !$config['system']['disableftpproxy']) {
+			$helpers = exec("ps awux | grep pftpx | grep {$dst}");
+			if(!$helpers)
+				mwexec_bg("/usr/local/sbin/pftpx -c 81 -f {$dst} -g 81");
 		}
 	}
 	

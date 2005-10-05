@@ -80,34 +80,47 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "interface proto beginport localip localbeginport");
-	$reqdfieldsn = explode(",", "Interface,Protocol,Start port,NAT IP,Local port");
+	if($_POST['proto'] == "TCP" or $_POST['proto'] == "UDP" or $_POST['proto'] == "TCP/UDP") {
+		$reqdfields = explode(" ", "interface proto beginport localip localbeginport");
+		$reqdfieldsn = explode(",", "Interface,Protocol,Start port,NAT IP,Local port");
+	} else {
+		$reqdfields = explode(" ", "interface proto localip");
+		$reqdfieldsn = explode(",", "Interface,Protocol,NAT IP");		
+	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-	if (($_POST['beginport'] && !is_ipaddroralias($_POST['beginport']) && !is_port($_POST['beginport']))) {
-		$input_errors[] = "The start port must be an integer between 1 and 65535.";
-	}
-	if (($_POST['endport'] && !is_ipaddroralias($_POST['endport']) && !is_port($_POST['endport']))) {
-		$input_errors[] = "The end port must be an integer between 1 and 65535.";
-	}
-	if (($_POST['localbeginport'] && !is_ipaddroralias($_POST['localbeginport']) && !is_port($_POST['localbeginport']))) {
-		$input_errors[] = "The local port must be an integer between 1 and 65535.";
-	}
 	if (($_POST['localip'] && !is_ipaddroralias($_POST['localip']))) {
 		$input_errors[] = "\"{$_POST['localip']}\" is not valid NAT IP address or host alias.";
 	}
 
-	if ($_POST['beginport'] > $_POST['endport']) {
-		/* swap */
-		$tmp = $_POST['endport'];
-		$_POST['endport'] = $_POST['beginport'];
-		$_POST['beginport'] = $tmp;
-	}
+	/* only validate the ports if the protocol is TCP, UDP or TCP/UDP */
+	if($_POST['proto'] == "TCP" or $_POST['proto'] == "UDP" or $_POST['proto'] == "TCP/UDP") {
 
-	if (!$input_errors) {
-		if (($_POST['endport'] - $_POST['beginport'] + $_POST['localbeginport']) > 65535)
-			$input_errors[] = "The target port range must be an integer between 1 and 65535.";
+		if (($_POST['beginport'] && !is_ipaddroralias($_POST['beginport']) && !is_port($_POST['beginport']))) {
+			$input_errors[] = "The start port must be an integer between 1 and 65535.";
+		}
+
+		if (($_POST['endport'] && !is_ipaddroralias($_POST['endport']) && !is_port($_POST['endport']))) {
+			$input_errors[] = "The end port must be an integer between 1 and 65535.";
+		}
+
+		if (($_POST['localbeginport'] && !is_ipaddroralias($_POST['localbeginport']) && !is_port($_POST['localbeginport']))) {
+			$input_errors[] = "The local port must be an integer between 1 and 65535.";
+		}
+
+		if ($_POST['beginport'] > $_POST['endport']) {
+			/* swap */
+			$tmp = $_POST['endport'];
+			$_POST['endport'] = $_POST['beginport'];
+			$_POST['beginport'] = $tmp;
+		}
+
+		if (!$input_errors) {
+			if (($_POST['endport'] - $_POST['beginport'] + $_POST['localbeginport']) > 65535)
+				$input_errors[] = "The target port range must be an integer between 1 and 65535.";
+		}
+		
 	}
 
 	/* check for overlaps */
@@ -199,7 +212,6 @@ include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_nat_edit.php" method="post" name="iform" id="iform">
-	      <?display_topbar("", "#eeeeee")?>
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 	  	<tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
@@ -239,7 +251,7 @@ include("fbegin.inc"); ?>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Protocol</td>
                   <td width="78%" class="vtable">
-                    <select name="proto" class="formfld">
+                    <select name="proto" class="formfld" onChange="proto_change();">
                       <?php $protocols = explode(" ", "TCP UDP TCP/UDP GRE ESP"); foreach ($protocols as $proto): ?>
                       <option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['proto']) echo "selected"; ?>><?=htmlspecialchars($proto);?></option>
                       <?php endforeach; ?>

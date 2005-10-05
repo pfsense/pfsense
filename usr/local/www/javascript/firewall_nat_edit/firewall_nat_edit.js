@@ -19,11 +19,31 @@ function ext_change() {
 		document.iform.localbeginport_cust.disabled = 1;
 	}
 }
+
 function ext_rep_change() {
 	document.iform.endport.selectedIndex = document.iform.beginport.selectedIndex;
 	document.iform.localbeginport.selectedIndex = document.iform.beginport.selectedIndex;
 }
 
+
+function proto_change() {
+	if(document.iform.proto.selectedIndex > 3) {
+		document.iform.beginport_cust.disabled = 1;
+		document.iform.endport_cust.disabled = 1;
+		document.iform.beginport.disabled = 1;
+		document.iform.endport.disabled = 1;
+		document.iform.localbeginport_cust.disabled = 1;
+		document.iform.localbeginport.disabled = 1;		
+	} else {
+		document.iform.beginport_cust.disabled = 0;
+		document.iform.endport_cust.disabled = 0;
+		document.iform.beginport.disabled = 0;
+		document.iform.endport.disabled = 0;
+		document.iform.localbeginport_cust.disabled = 0;
+		document.iform.localbeginport.disabled = 0;		
+	}
+	
+}
 
 window.onload = function () {
 	var oTextbox1 = new AutoSuggestControl(document.getElementById("localip"), new StateSuggestions(addressarray));

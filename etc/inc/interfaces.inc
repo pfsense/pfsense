@@ -554,6 +554,9 @@ wpa_gmk_rekey={$wlcfg['wpa']['wpa_gmk_rekey']}
 wpa_strict_rekey={$wlcfg['wpa']['wpa_strict_rekey']}
 wpa_passphrase={$wlcfg['wpa']['passphrase']}
 ieee8021x={$wlcfg['wpa']['ieee8021x']}
+#Enable the next lines for preauth when roaming. Interface = wired or wireless interface talking to the AP you want to roam from/to
+#rsn_preauth=1
+#rsn_preauth_interfaces=eth0
 EOD;
 
 				$fd = fopen("{$g['tmp_path']}/hostapd_{$if}.conf", "w");

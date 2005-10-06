@@ -249,9 +249,9 @@ function ovpn_srv_config_generate($id) {
 	/* port */
 	$ovpn_config .= "--port {$server['port']} ";
 
-	/* Set protocol being used (p = udp (default), tcp-server)
+	/* Set protocol being used (p = udp (default), tcp-server) */
 	if ($server['proto'] == 'tcp') {
-		$ovpn_config .= "--proto tcp-server ";
+		$ovpn_config .= "--proto tcp ";
 	}
 	
 	/* Interface binding - 1 or all */

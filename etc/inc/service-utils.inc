@@ -61,6 +61,8 @@ function write_rcfile($params) {
 
 function start_service($name) {
 	global $config;
+	/* make sure service is stopped before starting */
+	stop_service($name);
 	if($config['installedpackages']['service']) {
 		foreach($config['installedpackages']['service'] as $service) {
 			if(strtolower($service['name']) == strtolower($name)) {

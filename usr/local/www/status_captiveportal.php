@@ -32,7 +32,10 @@
 
 require("guiconfig.inc");
 
-$pgtitle = "Status: Captive portal";
+$concurrent = `cat /var/db/captiveportal.db | wc -l`;
+
+$pgtitle = "Status: Captive portal ({$concurrent})";
+
 include("head.inc");
 
 ?>

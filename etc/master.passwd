@@ -1,6 +1,6 @@
 # $FreeBSD: src/etc/master.passwd,v 1.39 2004/08/01 21:33:47 markm Exp $
 #
-root::0:0::0:0:Charlie &:/root:/bin/sh
+root:$1$iUpbXUIV$7PberecIXo0.xSD8RoX/N.:0:0::0:0:Charlie &:/root:/bin/sh
 toor:*:0:0::0:0:Bourne-again Superuser:/root:
 daemon:*:1:1::0:0:Owner of many system processes:/root:/usr/sbin/nologin
 operator:*:2:5::0:0:System &:/:/usr/sbin/nologin
@@ -16,6 +16,6 @@ _pflogd:*:64:64::0:0:pflogd privsep user:/var/empty:/usr/sbin/nologin
 www:*:80:80::0:0:World Wide Web Owner:/nonexistent:/usr/sbin/nologin
 nobody:*:65534:65534::0:0:Unprivileged user:/nonexistent:/usr/sbin/nologin
 dhcpd:*:1002:1002::0:0:DHCP Daemon:/nonexistent:/sbin/nologin
-admin:*:0:0::0:0:Admin User:/root:/etc/rc.initial
+admin:$1$iUpbXUIV$7PberecIXo0.xSD8RoX/N.:0:0::0:0:Admin User:/root:/etc/rc.initial
 _dhcp:*:65:65::0:0:dhcp programs:/var/empty:/usr/sbin/nologin
 _isakmpd:*:68:68::0:0:isakmpd privsep:/var/empty:/sbin/nologin

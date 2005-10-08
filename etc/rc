@@ -225,6 +225,7 @@ if [ -e /dev/ukbd0 ]; then
         /etc/rc.initial 2>/dev/ttyv1 </dev/ttyv1 >/dev/ttyv1 &
         sleep 1
         /usr/sbin/vidcontrol -s 2
+	dmesg -a 
 	# Lock em into the menu
 	/usr/sbin/vidcontrol -S off
 fi

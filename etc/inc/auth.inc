@@ -67,7 +67,8 @@ function passwd_backed_basic_auth() {
                  *    honour custom username set in webConfigurator page */
 		 */ 
 		if($config['system']['username'] == $HTTP_SERVER_VARS['AUTH_USER']) {
-			/* we match, don't continue to next for loop */
+			/* we match, check the password in xml configuration file */
+			$username = "root";
 		} else {
 			/*   finally, if we're here then we didn't match the username in
 			 *   the webConfigurator.  Check the password file.

@@ -80,6 +80,7 @@
 			set_networking_interfaces_ports();
 		}
 	}
+	unmute_kernel_msgs();
 
 	/* convert config and clean backups */
 	echo "Updating configuration... ";

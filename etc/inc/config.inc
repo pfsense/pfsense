@@ -1093,6 +1093,10 @@ EOD;
 
 
 EOD;
+
+		if($booting)
+			exit;
+
 		/* resync everything */
 		reload_all_sync();
 

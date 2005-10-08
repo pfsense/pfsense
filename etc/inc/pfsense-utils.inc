@@ -1199,10 +1199,12 @@ function sync_webgui_passwords() {
 	$fd = popen("/usr/sbin/pw usermod -n root -H 0", "w");
 	fwrite($fd, $crypted_pw);
 	pclose($fd);
+	mwexec("/usr/sbin/pw usermod -n root -s /etc/rc.initial");
 	/* sync admin */
 	$fd = popen("/usr/sbin/pw usermod -n admin -H 0", "w");
 	fwrite($fd, $crypted_pw);
 	pclose($fd);
+	mwexec("/usr/sbin/pw usermod -n admin -s /etc/rc.initial");
 	mwexec("/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd");
 	mwexec("/usr/sbin/pwd_mkdb /etc/master.passwd");
 	conf_mount_ro();

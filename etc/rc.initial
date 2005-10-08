@@ -96,8 +96,12 @@ case ${opmode} in
 98)
 	/etc/rc.initial.store_config_to_removable_device
 	;;
-99)    
-        /scripts/lua_installer
+99)
+	if [ -e /dev/ukbd0 ]; then
+	    env TERM=cons25 /scripts/lua_installer
+	else 
+            /scripts/lua_installer
+	fi
 	;;
 100)
         if grep "$WORD" "$CONFIG"

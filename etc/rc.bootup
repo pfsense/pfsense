@@ -49,6 +49,11 @@
 	
 	require_once("functions.inc");
 
+	/* start devd (dhclient now uses it */
+	echo "Starting device manager (devd)... ";
+	start_devd();
+	echo "done.\n";
+
 	echo "Loading configuration... ";
 	parse_config_bootup();
 	echo "done.\n";
@@ -149,11 +154,6 @@
 	interfaces_optional_configure();
 	if(!$debugging) 
 		unmute_kernel_msgs();
-	echo "done.\n";
-
-	/* start devd (dhclient now uses it */
-	echo "Starting device manager (devd)... ";
-	start_devd();
 	echo "done.\n";
 
 	/* generate resolv.conf */

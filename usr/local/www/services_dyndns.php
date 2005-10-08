@@ -229,7 +229,7 @@ function enable_change(enable_change) {
                 <tr>
                   <td colspan="2" valign="top" class="optsect_t">
 				  <table border="0" cellspacing="0" cellpadding="0" width="100%">
-				  <tr><td class="optsect_s"><strong>RFC 2163 Dynamic DNS updates</strong></td>
+				  <tr><td class="optsect_s"><strong>RFC 2136 Dynamic DNS updates</strong></td>
 				  <td align="right" class="optsect_s"><input name="dnsupdate_enable" type="checkbox" value="yes" <?php if ($pconfig['dnsupdate_enable']) echo "checked"; ?> onClick="enable_change(false)"> <strong>Enable</strong></td></tr>
 				  </table></td>
                 </tr>

@@ -122,11 +122,6 @@
 	/* configure loopback interface */
 	interfaces_loopback_configure();
 
-	/* start devd (dhclient now uses it */
-	echo "Starting device manager (devd)... ";
-	start_devd();
-	echo "done.\n";
-
 	/* start syslogd */
 	system_syslogd_start();
 
@@ -154,6 +149,11 @@
 	interfaces_optional_configure();
 	if(!$debugging) 
 		unmute_kernel_msgs();
+	echo "done.\n";
+
+	/* start devd (dhclient now uses it */
+	echo "Starting device manager (devd)... ";
+	start_devd();
 	echo "done.\n";
 
 	/* generate resolv.conf */

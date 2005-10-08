@@ -1311,10 +1311,12 @@ function backup_config() {
 }
 
 function mute_kernel_msgs() {
+	return;
 	exec("/sbin/conscontrol mute on");
 }
 
 function unmute_kernel_msgs() {
+	return;
 	exec("/sbin/conscontrol mute off");
 }
 

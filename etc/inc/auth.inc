@@ -61,8 +61,20 @@ function passwd_backed_basic_auth() {
 
 		/* Check to see if user even exists */
 		$username = $HTTP_SERVER_VARS['AUTH_USER'];
-                if(!($line = array_shift(preg_grep("/^$username:.*$/", $authfile))))
-			continue;
+		
+		/*
+		 *    auth the username
+                 *    honour custom username set in webConfigurator page */
+		 */ 
+		if($config['system']['username'] == $HTTP_SERVER_VARS['AUTH_USER']) {
+			/* we match, don't continue to next for loop */
+		} else {
+			/*   finally, if we're here then we didn't match the username in
+			 *   the webConfigurator.  Check the password file.
+                         */
+	                if(!($line = array_shift(preg_grep("/^$username:.*$/", $authfile))))
+				continue;
+		}
 
 		/* Get crypted password */
                 preg_match("/^$username:((\\$1\\$[.\d\w_\/]{8}\\$)[.\d\w_\/]{22})$/", $line, $matches);

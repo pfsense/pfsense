@@ -207,10 +207,6 @@ rm -rf /usr/local/pkg/pf/CVS
 
 /usr/local/bin/beep.sh start
 
-echo "Bootup complete"
-
-exit 0
-
 if [ -e /dev/ukbd0 ]; then
 	/usr/bin/clear
 	# Allow VTY switching
@@ -231,5 +227,7 @@ if [ -e /dev/ukbd0 ]; then
 	# Lock em into the menu
 	/usr/sbin/vidcontrol -S off
 fi
+
+echo "Bootup complete"
 
 exit 0

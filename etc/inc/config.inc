@@ -1095,7 +1095,7 @@ EOD;
 EOD;
 
 		if($g['booting'])
-			exit;
+			return;
 
 		/* resync everything */
 		reload_all_sync();

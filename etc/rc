@@ -209,6 +209,8 @@ rm -rf /usr/local/pkg/pf/CVS
 
 echo "Bootup complete"
 
+exit 0
+
 if [ -e /dev/ukbd0 ]; then
 	/usr/bin/clear
 	# Allow VTY switching

@@ -205,7 +205,7 @@ rm -rf /usr/local/pkg/pf/CVS
 
 /usr/local/sbin/check_reload_status >/dev/null &
 
-/usr/local/bin/beep.sh start
+echo "Bootup complete"
 
 if [ -e /dev/ukbd0 ]; then
 	/usr/bin/clear
@@ -228,6 +228,8 @@ if [ -e /dev/ukbd0 ]; then
 	/usr/sbin/vidcontrol -S off
 fi
 
-echo "Bootup complete"
+/usr/local/bin/beep.sh start
+
+
 
 exit 0

@@ -123,7 +123,9 @@
 	interfaces_loopback_configure();
 
 	/* start devd (dhclient now uses it */
+	echo "Starting device manager (devd)... ";
 	start_devd();
+	echo "done.\n";
 
 	/* start syslogd */
 	system_syslogd_start();

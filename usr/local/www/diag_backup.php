@@ -121,7 +121,7 @@ if ($_POST) {
 					    $tmp .= fread($fd,49);
 				}
 				fclose($fd);
-				if(stristr($tmp, "m0n0wall" == true)) {
+				if(stristr($tmp, "m0n0wall") == true) {
 					log_error("Upgrading m0n0wall configuration to pfsense.");
 					/* m0n0wall was found in config.  convert it. */
 					$upgradedconfig = str_replace("m0n0wall", "pfsense", $tmp);

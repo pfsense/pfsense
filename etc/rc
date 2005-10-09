@@ -207,14 +207,16 @@ rm -rf /usr/local/pkg/pf/CVS
 
 echo "Bootup complete"
 
-# Allow VTY switching
-/usr/sbin/vidcontrol -S on
-# Turn off bloody mouse pointer.
-/usr/sbin/vidcontrol -m off	
-/etc/rc.initial 2>/dev/ttyv1 </dev/ttyv1 >/dev/ttyv1 &
-/usr/sbin/vidcontrol -s 2
-# Lock em into the menu
-/usr/sbin/vidcontrol -S off
+if [ ! -e /var/etc/console_lockdown ]; then
+    # Allow VTY switching
+    /usr/sbin/vidcontrol -S on
+    # Turn off bloody mouse pointer.
+    /usr/sbin/vidcontrol -m off	
+    /etc/rc.initial 2>/dev/ttyv1 </dev/ttyv1 >/dev/ttyv1 &
+    /usr/sbin/vidcontrol -s 2
+    # Lock em into the menu
+    /usr/sbin/vidcontrol -S off
+fi
 
 /usr/local/bin/beep.sh start
 

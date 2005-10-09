@@ -1303,8 +1303,8 @@ function discover_bridge($interface1, $interface2) {
 	$total_bridges = get_number_of_bridged_interfaces();
 	for($x=0; $x<$total_bridges; $x++) {
 		$bridge_text = `/sbin/ifconfig bridge{$x} | grep member`;
-		if(stristr($bridge_text, $interface1) == true) and
-		   stristr($bridge_text, $interface2) == true)) {
+		if(stristr($bridge_text, $interface1) == true and
+		   stristr($bridge_text, $interface2) == true) {
 			return "bridge{$x}";			
 		}
 	}

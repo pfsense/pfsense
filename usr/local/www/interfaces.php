@@ -71,7 +71,7 @@ if ($wancfg['ipaddr'] == "dhcp") {
 	$pconfig['type'] = "Static";
 	$pconfig['ipaddr'] = $wancfg['ipaddr'];
 	$pconfig['subnet'] = $wancfg['subnet'];
-	$pconfig['gateway'] = $config['system']['gateway'];
+	$pconfig['gateway'] = $config['interfaces']['wan']['gateway'];
 	$pconfig['pointtopoint'] = $wancfg['pointtopoint'];
 }
 
@@ -191,7 +191,7 @@ if ($_POST) {
 	
 		unset($wancfg['ipaddr']);
 		unset($wancfg['subnet']);
-		unset($config['system']['gateway']);
+		unset($config['interfaces']['wan']['gateway']);
 		unset($wancfg['pointtopoint']);
 		unset($wancfg['dhcphostname']);
 		unset($config['pppoe']['username']);
@@ -215,7 +215,7 @@ if ($_POST) {
 		if ($_POST['type'] == "Static") {
 			$wancfg['ipaddr'] = $_POST['ipaddr'];
 			$wancfg['subnet'] = $_POST['subnet'];
-			$config['system']['gateway'] = $_POST['gateway'];
+			$config['interfaces']['wan']['gateway'] = $_POST['gateway'];
 			if (isset($wancfg['ispointtopoint']))
 				$wancfg['pointtopoint'] = $_POST['pointtopoint'];
 		} else if ($_POST['type'] == "DHCP") {

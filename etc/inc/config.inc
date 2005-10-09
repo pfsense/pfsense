@@ -580,7 +580,7 @@ function convert_config() {
 		/* Default route moved */
 		if (isset($config['interfaces']['wan']['gateway']))
 			if ($config['interfaces']['wan']['gateway'] <> "")
-				$config['system']['gateway'] = $config['interfaces']['wan']['gateway'];
+				$config['interfaces']['wan']['gateway'] = $config['interfaces']['wan']['gateway'];
 		unset($config['interfaces']['wan']['gateway']);
 
                 /* Queues are no longer interface specific */

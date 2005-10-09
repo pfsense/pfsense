@@ -713,7 +713,7 @@ function interfaces_wan_configure() {
 			}
 			/* install default route */
 			mwexec("/sbin/route delete default");
-			mwexec("/sbin/route add default " . escapeshellarg($config['system']['gateway']));
+			mwexec("/sbin/route add default " . escapeshellarg($config['interfaces']['wan']['gateway']));
 
 			/* resync pf (done automatically for DHCP/PPPoE/PPTP) */
 			filter_configure();

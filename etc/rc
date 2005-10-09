@@ -212,10 +212,8 @@ if [ ! -e /var/etc/console_lockdown ]; then
     /usr/sbin/vidcontrol -S on
     # Turn off bloody mouse pointer.
     /usr/sbin/vidcontrol -m off	
-    /etc/rc.initial 2>/dev/ttyv1 </dev/ttyv1 >/dev/ttyv1 &
+    env TERM=cons25 /etc/rc.initial 2>/dev/ttyv1 </dev/ttyv1 >/dev/ttyv1 &
     /usr/sbin/vidcontrol -s 2
-    # Lock em into the menu
-    /usr/sbin/vidcontrol -S off
 fi
 
 /usr/local/bin/beep.sh start

@@ -1192,7 +1192,7 @@ function reload_interfaces() {
 function sync_webgui_passwords() {
 	global $config;
 	conf_mount_rw();
-	$crypted_pw = $config['system']['password']
+	$crypted_pw = $config['system']['password'];
 	/* sync root */
 	$fd = popen("/usr/sbin/pw usermod -n root -H 0", "w");
 	fwrite($fd, $crypted_pw);

@@ -208,7 +208,6 @@ rm -rf /usr/local/pkg/pf/CVS
 echo "Bootup complete"
 
 if [ -e /dev/ukbd0 ]; then
-	/usr/bin/clear
 	# Allow VTY switching
         /usr/sbin/vidcontrol -S on
 	# Turn off bloody mouse pointer.
@@ -221,9 +220,7 @@ if [ -e /dev/ukbd0 ]; then
 	echo "Press ALT + F2 to switch to the pfSense menu."
 	echo
         /etc/rc.initial 2>/dev/ttyv1 </dev/ttyv1 >/dev/ttyv1 &
-        sleep 1
         /usr/sbin/vidcontrol -s 2
-	/sbin/dmesg -a >/dev/ttyv1
 	# Lock em into the menu
 	/usr/sbin/vidcontrol -S off
 fi

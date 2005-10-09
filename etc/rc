@@ -213,6 +213,7 @@ if [ ! -e /var/etc/console_lockdown ]; then
     # Turn off bloody mouse pointer.
     /usr/sbin/vidcontrol -m off	
     env TERM=cons25 /etc/rc.initial 2>/dev/ttyv1 </dev/ttyv1 >/dev/ttyv1 &
+    sleep 1
     /usr/sbin/vidcontrol -s 2
 fi
 

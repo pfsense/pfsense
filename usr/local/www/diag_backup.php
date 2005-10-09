@@ -128,6 +128,7 @@ if ($_POST) {
 					$fd = fopen($_FILES['conffile']['tmp_name'], "w");
 					fwrite($fd, $upgradedconfig);
 					fclose($fd);
+					$tmp = $upgradedconfig;
 					$m0n0wall_upgrade = true;
 				}
 				if($_POST['restorearea'] <> "") {
@@ -156,7 +157,7 @@ if ($_POST) {
 							/* remove cache, we will force a config reload */
 							if(file_exists("/tmp/config.cache"))
 								unlink("/tmp/config.cache");
-							parse_config(true);
+							parse_config(false);
 							/* force a configuration upgrade */
 							convert_config();
 							if($m0n0wall_upgrade == true) {

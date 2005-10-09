@@ -178,7 +178,7 @@ echo "done."
 /etc/rc.bootup
 
 echo -n Starting Secure Shell Services...
-/etc/sshd 2>/dev/nul
+/etc/sshd
 echo "done."
 
 echo -n "Starting CRON... "

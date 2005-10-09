@@ -38,8 +38,6 @@
 /* include all configuration functions */
 require_once("functions.inc");
 
-if(!is_numeric($bridges_total)) $bridges_total=0;
-
 function interfaces_loopback_configure() {
 	mwexec("/sbin/ifconfig lo0 127.0.0.1");
 
@@ -90,7 +88,9 @@ function interfaces_vlan_configure() {
 }
 
 function interfaces_lan_configure() {
-	global $config, $g, $bridges_total;
+	global $config, $g;
+
+	$bridges_total = get_next_available_bridge_interface();
 
 	$lancfg = $config['interfaces']['lan'];
 
@@ -132,9 +132,7 @@ function interfaces_lan_configure() {
 		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} addm {$lancfg['if']} addm {$config['interfaces'][$lancfg['bridge']]['if']} up\n");
 		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$lancfg['if']} add {$config['interfaces'][$lancfg['bridge']]['if']}\n");
 		fclose($fd);
-		
-		/* lets keep track of the amount of bridges initialized */
-		$bridges_total++;
+
 	}
 	
 	/* media */
@@ -213,7 +211,8 @@ function interfaces_optional_configure() {
 function interfaces_optional_configure_if($opti) {
 	global $config, $g;
 	global $bridgeconfig;
-	global $bridges_total;
+
+	$bridges_total = get_next_available_bridge_interface();
 
 	$optcfg = $config['interfaces']['opt' . $opti];
 
@@ -278,9 +277,7 @@ function interfaces_optional_configure_if($opti) {
 			fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} addm {$optcfg['if']} addm {$config['interfaces'][$optcfg['bridge']]['if']} up\n");
 			fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$optcfg['if']} add {$config['interfaces'][$optcfg['bridge']]['if']}\n");
 			fclose($fd);
-			
-			/* lets keep track of the amount of bridges initialized */
-			$bridges_total++;
+
 		} else {
 			/* if user has selected DHCP type then act accordingly */
 			if($optcfg['ipaddr'] == "dhcp") {

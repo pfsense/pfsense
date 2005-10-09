@@ -1298,6 +1298,7 @@ function get_next_available_bridge_interface() {
 }
 
 function destroy_bridge($bridge_num) {
+	mwexec("/sbin/ifconfig bridge{$bridge_num} down");
 	mwexec("/sbin/ifconfig bridge{$bridge_num} delete");
 	mwexec("/sbin/ifconfig bridge{$bridge_num} destroy");
 	return;

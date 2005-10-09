@@ -117,7 +117,7 @@ function htpasswd_backed_basic_auth() {
 
 		/*
 		 *    auth the username
-                 *    honour custom username set in webConfigurator page */
+                 *    honour custom username set in webConfigurator page
 		 */ 
 		if($config['system']['username'] == $HTTP_SERVER_VARS['AUTH_USER']) {
 			/* we match, check the password in xml configuration file */

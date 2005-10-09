@@ -128,6 +128,7 @@ if ($_POST) {
 					$fd = fopen($_FILES['conffile']['tmp_name'], "w");
 					fwrite($fd, $upgradedconfig);
 					fclose($fd);
+					$m0n0wall_upgrade = true;
 				}
 				if($_POST['restorearea'] <> "") {
 					/* restore a specific area of the configuration */
@@ -144,7 +145,7 @@ if ($_POST) {
 					if(stristr($rules, "pfsense") == false) {
 						$input_errors[] = "You have selected to restore the full configuration but we could not locate a pfsense tag.";
 					} else {
-					/* restore the entire configuration */
+						/* restore the entire configuration */
 						if (config_install($_FILES['conffile']['tmp_name']) == 0) {
 							/* this will be picked up by /index.php */
 							conf_mount_rw();
@@ -152,11 +153,24 @@ if ($_POST) {
 							conf_mount_ro();
 							$reloadall = true;
 							$savemsg = "The configuration has been restored. The firewall is now rebooting.";
+							/* remove cache, we will force a config reload */
+							if(file_exists("/tmp/config.cache"))
+								unlink("/tmp/config.cache");
+							parse_config(true);
+							/* force a configuration upgrade */
+							convert_config();
+							if($m0n0wall_upgrade == true) {
+								if($config['system']['gateway'] <> "") {
+									$config['interfaces']['wan']['gateway'] = $config['system']['gateway'];
+								}
+								unset($config['shaper']);
+							}
+							write_config();
 						} else {
 							$input_errors[] = "The configuration could not be restored.";
 						}
 					}
-				}				
+				}
 			} else {
 				$input_errors[] = "The configuration could not be restored (file upload error).";
 			}

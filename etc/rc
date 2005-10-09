@@ -207,26 +207,15 @@ rm -rf /usr/local/pkg/pf/CVS
 
 echo "Bootup complete"
 
-if [ -e /dev/ukbd0 ]; then
-	# Allow VTY switching
-        /usr/sbin/vidcontrol -S on
-	# Turn off bloody mouse pointer.
-        /usr/sbin/vidcontrol -m off	
-	echo
-	echo "Working around a USB Keyboard bug in FreeBSD"
-	echo
-        echo "Bringing up the menu on ALT-F2 vty console..."
-	echo
-	echo "Press ALT + F2 to switch to the pfSense menu."
-	echo
-        /etc/rc.initial 2>/dev/ttyv1 </dev/ttyv1 >/dev/ttyv1 &
-        /usr/sbin/vidcontrol -s 2
-	# Lock em into the menu
-	/usr/sbin/vidcontrol -S off
-fi
+# Allow VTY switching
+/usr/sbin/vidcontrol -S on
+# Turn off bloody mouse pointer.
+/usr/sbin/vidcontrol -m off	
+/etc/rc.initial 2>/dev/ttyv1 </dev/ttyv1 >/dev/ttyv1 &
+/usr/sbin/vidcontrol -s 2
+# Lock em into the menu
+/usr/sbin/vidcontrol -S off
 
 /usr/local/bin/beep.sh start
-
-
 
 exit 0

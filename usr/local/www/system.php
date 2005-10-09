@@ -134,11 +134,11 @@ if ($_POST) {
 		
 		unset($config['system']['dnsallowoverride']);
 		$config['system']['dnsallowoverride'] = $_POST['dnsallowoverride'] ? true : false;
-
-		if ($_POST['password']) {
+                if ($_POST['password']) {
+                        $config['system']['password'] = crypt($_POST['password']);
 			update_changedesc("password changed via webConfigurator");
-			sync_webgui_passwords();
-		}
+			sync_webgui_passwords();			
+                }
 
 		if ($changecount > 0)
 			write_config($changedesc);

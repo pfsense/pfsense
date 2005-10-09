@@ -171,7 +171,7 @@ fi
 
 echo -n "Starting USB... "
 /usr/sbin/usbd 2>>/tmp/bootup_messages
-#/usr/local/sbin/kbdcheck
+/usr/local/sbin/kbdcheck
 echo "done."
 
 # let the PHP-based configuration subsystem set up the system now

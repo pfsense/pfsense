@@ -51,7 +51,9 @@
 
 	/* start devd (dhclient now uses it */
 	echo "Starting device manager (devd)... ";
+	mute_kernel_msgs();
 	start_devd();
+	unmute_kernel_msgs();
 	echo "done.\n";
 
 	echo "Loading configuration... ";

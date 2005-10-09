@@ -174,6 +174,8 @@ $config = parse_config();
 function parse_config($parse = false) {
 	global $g;
 
+	$raw_configuration_file = 
+
 	config_lock();
 	if(!$parse) {
 		if(file_exists($g['tmp_path'] . '/config.cache')) {
@@ -837,9 +839,14 @@ function config_install($conffile) {
  
         config_lock();
         conf_mount_rw();
-        
+
+	
         copy($conffile, "{$g['conf_path']}/config.xml");
-                
+
+	/* unlink cache file if it exists */
+	if(file_exists("{$g['tmp_path']}/config.cache"))
+		unlink("{$g['tmp_path']}/config.cache");
+  
         conf_mount_ro();
         config_unlock();
 

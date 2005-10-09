@@ -226,7 +226,7 @@ include("head.inc");
                 <tr>
                   <td colspan="2"><p><span class="vexpl"><span class="red"><strong>Note:<br>
                       </strong></span>If advanced outbound NAT is enabled, no outbound NAT
-                      rules will be automatically generated anymore. Instead, only the mappings
+                      rules will be automatically generated any longer. Instead, only the mappings
                       you specify below will be used. With advanced outbound NAT disabled,
                       a mapping is automatically created for each interface's subnet
                       (except WAN).  If you use target addresses other than the WAN interface's

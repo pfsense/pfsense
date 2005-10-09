@@ -1,5 +1,9 @@
 #!/bin/sh
 
+if [ -e /dev/ukbd0 ]; then
+        /usr/sbin/vidcontrol -s 2
+fi
+        
 echo
 echo "pfSense is now shutting down ..."
 echo

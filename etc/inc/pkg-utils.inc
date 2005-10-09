@@ -560,8 +560,10 @@ function install_package_xml($pkg) {
 			update_output_window($static_output);
 			if(is_array($pkg_config['menu'])) {
 				foreach($pkg_config['menu'] as $menu) {
-					foreach($config['installedpackages']['menu'] as $amenu) {
-						if($amenu['name'] == $menu['name']) continue 2;
+					if(is_array($config['installedpackages']['menu'])) {
+						foreach($config['installedpackages']['menu'] as $amenu) {
+							if($amenu['name'] == $menu['name']) continue 2;
+						}
 					}
 					$config['installedpackages']['menu'][] = $menu;
 				}

@@ -137,10 +137,8 @@ if ($_POST) {
 		$config['system']['webgui']['private-key'] = base64_encode($_POST['key']);
 		if($_POST['disableconsolemenu'] == "yes") {
 			$config['system']['disableconsolemenu'] = true;
-			auto_login(true);
 		} else {
 			unset($config['system']['disableconsolemenu']);
-			auto_login(false);
 		}
 		unset($config['system']['webgui']['expanddiags']);
 		$config['system']['optimization'] = $_POST['optimization'];

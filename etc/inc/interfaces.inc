@@ -1279,5 +1279,27 @@ function is_altq_capable($int) {
                 return false;
 }
 
+function get_number_of_bridged_interfaces() {
+	$bridges = array();
+	$bridges = split("\n", `/sbin/ifconfig -a | /usr/bin/grep bridge`);
+	return array_count_values($bridges);
+}
+
+function get_next_available_bridge_interface() {
+	$bridges = array();
+	$bridges = split("\n", `/sbin/ifconfig -a | /usr/bin/grep bridge`);
+	$last_seen_bridge_number = 0;
+	foreach ($bridges as $bridge) {
+		preg_match_all("/bridge([0-999])/",$bridge,$match_array)
+		$bridge_number = $match_array[1][0];
+		if($bridge_number - $last_seen_bridge_number > 1) {
+			return $bridge_number-1;	
+		}
+		$last_seen_bridge_number = $bridge_number;
+	}
+	$last_seen_bridge_number++;
+	return($last_seen_bridge_number);
+}
+
 
 ?>

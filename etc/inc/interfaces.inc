@@ -121,7 +121,6 @@ function interfaces_lan_configure() {
 	/* bridged? */
 	
 	if ($lancfg['bridge']) {
-		// mwexec("/sbin/ifconfig " . escapeshellarg($lancfg['if']) . " delete up");
 		/* use open/netBSD style bridge */
 		mwexec("/sbin/ifconfig bridge{$bridges_total} create");
 		mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$lancfg['if']} addm {$config['interfaces'][$lancfg['bridge']]['if']} up");
@@ -1298,5 +1297,22 @@ function get_next_available_bridge_interface() {
 	return($last_seen_bridge_number);
 }
 
+function destroy_bridge($bridge_num) {
+	mwexec("/sbin/ifconfig bridge{$bridge_num} delete");
+	mwexec("/sbin/ifconfig bridge{$bridge_num} destroy");
+	return;
+}
+
+function discover_bridge($interface1, $interface2) {
+	$total_bridges = get_number_of_bridged_interfaces();
+	for($x=0; $x<$total_bridges; $x++) {
+		$bridge_text = `/sbin/ifconfig bridge{$x} | grep member`;
+		if(stristr($bridge_text, $interface1) == true) and
+		   stristr($bridge_text, $interface2) == true)) {
+			return "bridge{$x}";			
+		}
+	}
+	return false;
+}
 
 ?>

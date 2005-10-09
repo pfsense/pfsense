@@ -160,7 +160,7 @@ if ($_POST) {
 			if (isset($natent['destination']['not']) == isset($_POST['destination_not'])) {
 				if ((isset($natent['destination']['any']) && ($ext == "any")) ||
 						($natent['destination']['address'] == $ext)) {
-					$input_errors[] = "There is already an outbound NAT rule with the specified settings.";
+					//$input_errors[] = "There is already an outbound NAT rule with the specified settings.";
 					break;
 				}
 			}

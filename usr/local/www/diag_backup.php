@@ -151,7 +151,7 @@ if ($_POST) {
 							/* this will be picked up by /index.php */
 							conf_mount_rw();
 							touch("/needs_package_sync");
-							conf_mount_ro();
+							
 							$reloadall = true;
 							$savemsg = "The configuration has been restored. The firewall is now rebooting.";
 							/* remove cache, we will force a config reload */
@@ -167,6 +167,7 @@ if ($_POST) {
 								unset($config['shaper']);
 							}
 							write_config();
+							conf_mount_ro();
 						} else {
 							$input_errors[] = "The configuration could not be restored.";
 						}

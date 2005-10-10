@@ -209,7 +209,7 @@ echo "Bootup complete"
 if [ "$PLATFORM" = "wrap" ]; then
     while [ 1 ];
     do
-	env TERM=cons25 /etc/rc.initial
+	env TERM=cons25 sh "/etc/rc.initial"
     done
     exit
 fi

@@ -42,7 +42,7 @@ done
 
 /etc/rc.conf_mount_ro
 
-if [ $? -eq 0 ]
+if [ $? -eq 0 ]; then
         echo "File updated."
     else
         echo "An error occured during update."

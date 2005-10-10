@@ -30,20 +30,23 @@ fi
 /etc/rc.conf_mount_rw
 
 for file in $FMATCHES ;do
+
     if [ ! -z $2 ];then
         rev=$2
         echo "trying to fetch $rev $file"
     else
         echo "trying to fetch latest $file"
     fi
-    #echo fetch -o "$file" "$baseurl$file$urlrev$rev$urlcon"
-    `which fetch` -q -o "$file" "$baseurl$file$urlrev$rev$urlcon"
+    
+    /usr/bin/fetch -T 60 -q -o "$file" "$baseurl$file$urlrev$rev$urlcon"
+
+    if [ $? -eq 0 ]; then
+            echo "File updated."
+        else
+            echo "An error occured during update."
+    fi
+
 done
 
 /etc/rc.conf_mount_ro
 
-if [ $? -eq 0 ]; then
-        echo "File updated."
-    else
-        echo "An error occured during update."
-fi

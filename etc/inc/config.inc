@@ -708,7 +708,12 @@ function convert_config() {
 		}
 		$config['version'] = "2.1";
 	}
-
+	/* Convert 2.1 -> 2.2 */
+	if ($config['version'] == "2.1") {
+		/* move gateway to wan interface */
+		$config['interfaces']['wan']['gateway'] = $config['system']['gateway'];
+		$config['version'] = "2.2";
+	}
 
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");

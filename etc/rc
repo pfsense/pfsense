@@ -179,7 +179,6 @@ echo "done."
 
 echo -n Starting Secure Shell Services...
 /etc/sshd
-echo "done."
 
 echo -n "Starting CRON... "
 /usr/sbin/cron 2>>/tmp/bootup_messages

@@ -174,8 +174,6 @@ $config = parse_config();
 function parse_config($parse = false) {
 	global $g;
 
-	$raw_configuration_file = 
-
 	config_lock();
 	if(!$parse) {
 		if(file_exists($g['tmp_path'] . '/config.cache')) {

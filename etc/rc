@@ -205,23 +205,23 @@ rm -rf /usr/local/pkg/pf/CVS
 /usr/local/sbin/check_reload_status >/dev/null &
 
 echo "Bootup complete"
-if [ ! "$PLATFORM" = "cdrom" ]; then
-    if [ ! -e /var/etc/console_lockdown ]; then
-	# Allow VTY switching
-	/usr/sbin/vidcontrol -S on
-	# Turn off bloody mouse pointer.
-	/usr/sbin/vidcontrol -m off	
-	env TERM=cons25 /etc/rc.initial 2>/dev/ttyv1 </dev/ttyv1 >/dev/ttyv1 &
-	sleep 1
-	/usr/sbin/vidcontrol -s 2
-    fi
-else
-    if [ ! -e /var/etc/console_lockdown ]; then
-	while [ 1 ];
-	do
-	    env TERM=cons25 /etc/rc.initial
-	done
-    fi
+
+if [ "$PLATFORM" = "wrap" ]; then
+    while [ 1 ];
+    do
+	env TERM=cons25 /etc/rc.initial
+    done
+    exit
+fi
+
+if [ ! -e /var/etc/console_lockdown ]; then
+    # Allow VTY switching
+    /usr/sbin/vidcontrol -S on
+    # Turn off bloody mouse pointer.
+    /usr/sbin/vidcontrol -m off	
+    env TERM=cons25 /etc/rc.initial 2>/dev/ttyv1 </dev/ttyv1 >/dev/ttyv1 &
+    sleep 1
+    /usr/sbin/vidcontrol -s 2
 fi
 
 /usr/local/bin/beep.sh start

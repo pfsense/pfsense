@@ -128,7 +128,6 @@ if ($_POST) {
 					$fd = fopen($_FILES['conffile']['tmp_name'], "w");
 					fwrite($fd, $upgradedconfig);
 					fclose($fd);
-					$tmp = $upgradedconfig;
 					$m0n0wall_upgrade = true;
 				}
 				if($_POST['restorearea'] <> "") {
@@ -157,15 +156,14 @@ if ($_POST) {
 							if(file_exists("/tmp/config.cache"))
 								unlink("/tmp/config.cache");
 							if($m0n0wall_upgrade == true) {
-								parse_config(false);
-								/* force a configuration upgrade */								
-								convert_config();
+								parse_config(true);
 								if($config['system']['gateway'] <> "") {
 									$config['interfaces']['wan']['gateway'] = $config['system']['gateway'];
 								}
 								unset($config['shaper']);
 								write_config();
 								conf_mount_ro();
+								$savemsg = "The m0n0wall configuration has been restored and upgraded to pfSense.<p>The firewall is now rebooting.";
 							}
 						} else {
 							$input_errors[] = "The configuration could not be restored.";

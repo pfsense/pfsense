@@ -41,3 +41,9 @@ for file in $FMATCHES ;do
 done
 
 /etc/rc.conf_mount_ro
+
+if [ $? -eq 0 ]
+        echo "File updated."
+    else
+        echo "An error occured during update."
+fi

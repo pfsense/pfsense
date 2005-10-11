@@ -27,7 +27,7 @@ function ext_rep_change() {
 
 
 function proto_change() {
-	if(document.iform.proto.selectedIndex > 3) {
+	if(document.iform.proto.selectedIndex > 2) {
 		document.iform.beginport_cust.disabled = 1;
 		document.iform.endport_cust.disabled = 1;
 		document.iform.beginport.disabled = 1;

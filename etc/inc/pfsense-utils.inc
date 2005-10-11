@@ -1199,12 +1199,14 @@ function sync_webgui_passwords() {
 	}
 	/* set admin account */
 	$username = $config['system']['username'];
-	fwrite($fd, $username . ":" . $config['system']['password'] . "\n");
+	
 	/* set defined user account */
 	if($username <> "admin") {
 		$username = $config['system']['username'];
 		fwrite($fd, $username . ":" . $config['system']['password'] . "\n");
-	}
+	} else {
+		fwrite($fd, $username . ":" . $config['system']['password'] . "\n");	
+	}	
 	fclose($fd);
 	chmod("{$g['varrun_path']}/htpasswd", 0600);	
 	$crypted_pw = $config['system']['password'];

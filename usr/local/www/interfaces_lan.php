@@ -107,7 +107,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		
 		if($lancfg['bridge'] <> "" and $_POST['bridge'] == "") {
-			$bridge = discover_bridge($lancfg['if'], $lancfg['bridge'];
+			$bridge = discover_bridge($lancfg['if'], $lancfg['bridge']);
 			if($bridge) {
 				destroy_bridge($bridge);
 			}

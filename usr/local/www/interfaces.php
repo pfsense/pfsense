@@ -183,7 +183,7 @@ if ($_POST) {
 	if (!$input_errors) {
 
 		if($wancfg['bridge'] <> "" and $_POST['bridge'] == "") {
-			$bridge = discover_bridge($wancfg['if'], $wancfg['bridge'];
+			$bridge = discover_bridge($wancfg['if'], $wancfg['bridge']);
 			if($bridge) {
 				destroy_bridge($bridge);
 			}

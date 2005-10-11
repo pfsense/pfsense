@@ -1198,9 +1198,8 @@ function sync_webgui_passwords() {
 		return 1;
 	}
 	/* set admin account */
-	$username = "admin";
+	$username = $config['system']['username'];
 	fwrite($fd, $username . ":" . $config['system']['password'] . "\n");
-
 	/* set defined user account */
 	if($username <> "admin") {
 		$username = $config['system']['username'];

@@ -217,18 +217,6 @@
 			<type>listtopic</type>
 		</field>
 		<field>
-			<name>Scheduler</name>
-			<donotdisable>true</donotdisable>
-			<type>select</type>
-			<bindstofield>interfaces->wan->schedulertype</bindstofield>
-			<description>Select which type of queueing you would like to use</description>
-			<options>
-				<option><name>Priority Based Queueing</name><value>priq</value></option>
-				<option><name>Class Based Queueing</name><value>cbq</value></option>
-				<option><name>Hierarchical Fair Service Curve queueing</name><value>hfsc</value></option>
-			</options>
-		</field>
-		<field>
 			<combinefieldsbegin>true</combinefieldsbegin>
 			<donotdisable>true</donotdisable>
 			<name>Interface Bandwidth Speed</name>

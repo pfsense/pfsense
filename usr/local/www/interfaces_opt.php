@@ -121,7 +121,7 @@ if ($_POST) {
 			}
 			/* captive portal on? */
 			if (isset($config['captiveportal']['enable'])) {
-				$input_errors[] = "Interfaces cannot be bridged while the captive portal is enabled.";
+				//$input_errors[] = "Interfaces cannot be bridged while the captive portal is enabled.";
 			}
 		} else {
 			if ($_POST['type'] <> "DHCP") {

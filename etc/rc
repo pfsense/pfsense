@@ -216,12 +216,12 @@ fi
 
 if [ ! -e /var/etc/console_lockdown ]; then
     # Allow VTY switching
-    /usr/sbin/vidcontrol -S on
+    /usr/sbin/vidcontrol -S on 2>/dev/null
     # Turn off bloody mouse pointer.
-    /usr/sbin/vidcontrol -m off	
+    /usr/sbin/vidcontrol -m off	 2>/dev/null
     env TERM=cons25 /etc/rc.initial 2>/dev/ttyv1 </dev/ttyv1 >/dev/ttyv1 &
     sleep 1
-    /usr/sbin/vidcontrol -s 2
+    /usr/sbin/vidcontrol -s 2 2>/dev/null
 fi
 
 /usr/local/bin/beep.sh start

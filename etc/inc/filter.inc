@@ -601,8 +601,11 @@ function filter_nat_rules_generate() {
 				if($extport[0] == "21" and !$config['system']['disableftpproxy']) {
 					$helpers = exec("ps aux | grep pftpx | grep {$target}");
 					echo "{$helpers}\n";
-					if(!$helpers)
-						mwexec_bg("/usr/local/sbin/pftpx -c 21 -f {$target} -g 21");
+					if(!$helpers) {
+						/* install a pftpx helper, do not set a rule */
+						mwexec_bg("/usr/local/sbin/pftpx -b {$extaddr} -c 21 -f {$target} -g 21");
+						$natrules = "";
+					}
 				}
 			}
 

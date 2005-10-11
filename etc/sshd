@@ -65,6 +65,7 @@
 	}
 
 	/* Make the root passwords are the same as the web admin password. */
+	conf_mount_rw();
 	$fd = popen("/usr/sbin/pw usermod -n root -H 0", "w");
 	fwrite($fd, $config['system']['password']);
 	pclose($fd);
@@ -115,7 +116,7 @@
 		echo "Done.\n";
 	}
 	
-	
+	conf_mount_ro();
 	
 	
 	

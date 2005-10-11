@@ -1190,8 +1190,24 @@ function reload_interfaces() {
  *   none
  ******/
 function sync_webgui_passwords() {
-	global $config;
+	global $config, $g;
 	conf_mount_rw();
+	$fd = fopen("{$g['varrun_path']}/htpasswd", "w");
+	if (!$fd) {
+		printf("Error: cannot open htpasswd in system_password_configure().\n");
+		return 1;
+	}
+	/* set admin account */
+	$username = "admin";
+	fwrite($fd, $username . ":" . $config['system']['password'] . "\n");
+
+	/* set defined user account */
+	if($username <> "admin") {
+		$username = $config['system']['username'];
+		fwrite($fd, $username . ":" . $config['system']['password'] . "\n");
+	}
+	fclose($fd);
+	chmod("{$g['varrun_path']}/htpasswd", 0600);	
 	$crypted_pw = $config['system']['password'];
 	/* sync root */
 	$fd = popen("/usr/sbin/pw usermod -n root -H 0", "w");

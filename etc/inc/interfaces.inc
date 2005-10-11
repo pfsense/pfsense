@@ -1287,11 +1287,11 @@ function get_next_available_bridge_interface() {
 		$bridge_text = `/sbin/ifconfig bridge{$x}`;
 		if(stristr($bridge_text, "does not exist") == true) {
 			$x++;
-			return "bridge{$x}";
+			return $x;
 		}
 	}
 	$x++;
-	return "bridge{$x}";
+	return $x;
 }
 
 function destroy_bridge($bridge_num) {

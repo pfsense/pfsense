@@ -1285,8 +1285,10 @@ function get_next_available_bridge_interface() {
 	$bridges_total = get_number_of_bridged_interfaces();
 	for($x=0; $x<$total_bridges; $x++) {
 		$bridge_text = `/sbin/ifconfig bridge{$x}`;
-		if(stristr($bridge_text, "does not exist") == true)
+		if(stristr($bridge_text, "does not exist") == true) {
+			$x++;
 			return "bridge{$x}";
+		}
 	}
 	$x++;
 	return "bridge{$x}";

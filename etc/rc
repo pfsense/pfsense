@@ -206,7 +206,17 @@ rm -rf /usr/local/pkg/pf/CVS
 
 echo "Bootup complete"
 
-if [ "$PLATFORM" = "wrap" ]; then
+if [ -e /dev/ttyv1 ]; then
+    if [ ! -e /var/etc/console_lockdown ]; then
+	# Allow VTY switching
+	/usr/sbin/vidcontrol -S on 2>/dev/null
+	# Turn off bloody mouse pointer.
+	/usr/sbin/vidcontrol -m off	 2>/dev/null
+	env TERM=cons25 /etc/rc.initial 2>/dev/ttyv1 </dev/ttyv1 >/dev/ttyv1 &
+	sleep 1
+	/usr/sbin/vidcontrol -s 2 2>/dev/null
+    fi
+else
     while [ 1 ];
     do
 	env TERM=cons25 sh "/etc/rc.initial"
@@ -214,15 +224,6 @@ if [ "$PLATFORM" = "wrap" ]; then
     exit
 fi
 
-if [ ! -e /var/etc/console_lockdown ]; then
-    # Allow VTY switching
-    /usr/sbin/vidcontrol -S on 2>/dev/null
-    # Turn off bloody mouse pointer.
-    /usr/sbin/vidcontrol -m off	 2>/dev/null
-    env TERM=cons25 /etc/rc.initial 2>/dev/ttyv1 </dev/ttyv1 >/dev/ttyv1 &
-    sleep 1
-    /usr/sbin/vidcontrol -s 2 2>/dev/null
-fi
 
 /usr/local/bin/beep.sh start
 

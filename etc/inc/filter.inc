@@ -526,8 +526,8 @@ function filter_nat_rules_generate() {
 
 			/* if item is an alias, expand */
 			if(alias_expand($rule['external-port']))
-				$extport = alias_expand($rule['external-port']);
-			else 
+				$extport[0] = alias_expand($rule['external-port']);
+			else
 				$extport = explode("-", $rule['external-port']);
 
 			/* if item is an alias, expand */
@@ -560,6 +560,8 @@ function filter_nat_rules_generate() {
 
 			$lanif = $lancfg['if'];
 
+
+
 			/*
 			 *   Expand aliases
 			 *   XXX: may want to integrate this into pf macros
@@ -574,6 +576,7 @@ function filter_nat_rules_generate() {
 				$localport = alias_expand($localport);
 			if(alias_expand($extaddr))
 				$extaddr = alias_expand($extaddr);
+
 
 			if ((!$extport[1]) || ($extport[0] == $extport[1])) {
 				if($rule['protocol'] == "tcp/udp")

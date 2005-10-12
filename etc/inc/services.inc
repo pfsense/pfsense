@@ -36,7 +36,7 @@ require_once("dyndns.class");
 function services_dhcpd_configure() {
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "services_dhcpd_configure($if) being called $mt\n"
+		echo "services_dhcpd_configure($if) being called $mt\n";;
 	}
 	global $config, $g;
 

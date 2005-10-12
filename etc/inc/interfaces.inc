@@ -1282,8 +1282,13 @@ function is_altq_capable($int) {
 }
 
 function get_number_of_bridged_interfaces() {
-	$bridges = trim(`/sbin/ifconfig -a | /usr/bin/grep bridge | /usr/bin/wc -l`);
-	return "{$bridges}";
+	$bridges_total = 0;
+	$bridges = split("\n", `/sbin/ifconfig -a | /usr/bin/grep bridge | grep flags`);
+	foreach($bridges as $bridge) {
+		preg_match_all("/bridge(.*):/",$bridge,$match_array);
+		$bridges_total = $match_array[1][0];
+	}
+	return "{$bridges_total}";
 }
 
 function get_next_available_bridge_interface() {

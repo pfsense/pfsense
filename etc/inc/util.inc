@@ -347,6 +347,17 @@ function is_alias($name) {
 	global $aliastable;
 
 	return isset($aliastable[$name]);
+}	
+
+function alias_expand_value($name) {
+
+	global $aliastable, $config;
+
+	foreach($config['aliases']['alias'] as $alias) {
+		if($alias['name'] == $name)
+			return $alias['address'];
+	}
+
 }
 
 /* expand a host or network alias, if necessary */

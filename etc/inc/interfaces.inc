@@ -1317,6 +1317,7 @@ function discover_bridge($interface1, $interface2) {
 		$bridge_text = "NA";
 		if(!stristr($interfaces, "bridge{$x}")) {
 			$bridge_text = `/sbin/ifconfig bridge{$x} | grep member`;
+		}
 		if(stristr($bridge_text, $interface1) == true and
 		   stristr($bridge_text, $interface2) == true) {
 			return "{$x}";			

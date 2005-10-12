@@ -41,6 +41,10 @@ require_once("shaper.inc");
 
 function filter_pflog_start() {
 	global $config, $g;
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "filter_pflog_start() being called $mt\n";
+	}	
 
 	mute_kernel_msgs();
 	
@@ -54,6 +58,10 @@ function filter_pflog_start() {
 
 /* reload filter async */
 function filter_configure() {
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "filter_configure() being called $mt\n";
+	}	
 	global $g;
 	touch($g['tmp_path'] . "/filter_dirty");
 }
@@ -61,7 +69,10 @@ function filter_configure() {
 /* reload filter sync */
 function filter_configure_sync() {
 	global $config, $g;
-
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "filter_configure_sync() being called $mt\n";
+	}	
 	unlink_if_exists("{$g['tmp_path']}/filter_dirty");
 	unlink_if_exists("{$g['tmp_path']}/config.cache");
 
@@ -205,6 +216,10 @@ function filter_configure_sync() {
 
 function filter_get_rule_interface($associatedrulenumber) {
 	global $config;
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "filter_get_rule_interface() being called $mt\n";
+	}	
 	foreach ($config['shaper']['rule'] as $rule) {
 		if($rule['descr'] == $associatedrule) return $rule['interface'];
 	}
@@ -213,6 +228,10 @@ function filter_get_rule_interface($associatedrulenumber) {
 
 function filter_get_rule_real_interface($associatedrulenumber) {
         global $config;
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "filter_get_rule_real_interface() being called $mt\n";
+	}	
         $x=0;
         foreach($config['shaper']['rule'] as $rule) {
                 if($x == $associatedrulenumber)
@@ -223,7 +242,10 @@ function filter_get_rule_real_interface($associatedrulenumber) {
 
 function filter_generate_aliases() {
 	global $config;
-
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "filter_generate_aliases() being called $mt\n";
+	}
 	$aliases = "";
 
 	$i = 0;
@@ -271,6 +293,10 @@ function filter_generate_aliases() {
 
 function generate_optcfg_array(& $optcfg) {
 	global $config;
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "generate_optcfg_array() being called $mt\n";
+	}
 
         for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
                 $oc = $config['interfaces']['opt' . $i];
@@ -302,7 +328,10 @@ function generate_optcfg_array(& $optcfg) {
 
 function filter_flush_nat_table() {
 	global $config, $g;
-
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "filter_flush_nat_table() being called $mt\n";
+	}
 	return mwexec("/sbin/pfctl -F nat");
 }
 
@@ -351,6 +380,10 @@ function filter_nat_rules_generate_if($if, $src, $srcport, $dst, $natport, $targ
 
 function is_one_to_one_or_server_nat_rule($iptocheck) {
 	global $config;
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "is_one_to_one_or_server_nat_rule() being called $mt\n";
+	}
 
 	if($config['nat']['onetoone'] <> "")
 		foreach($config['nat']['onetoone'] as $onetoone) {
@@ -636,6 +669,12 @@ EOD;
 }
 
 function run_command_return_string($cmd) {
+	global $config;
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "generate_user_filter_rule() being called $mt\n";
+	}	
+	
 	$fd = popen($cmd, "r");
 	while(!feof($fd)) {
 		$tmp .= fread($fd,49);
@@ -645,6 +684,11 @@ function run_command_return_string($cmd) {
 }
 
 function generate_user_filter_rule_arr($rule, $ngcounter) {
+	global $config;
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "generate_user_filter_rule() being called $mt\n";
+	}	
 	$ret = array();
 	$line = generate_user_filter_rule($rule, $ngcounter);
 	$ret['rule'] = $line;
@@ -659,6 +703,11 @@ function generate_user_filter_rule_arr($rule, $ngcounter) {
 
 function generate_user_filter_rule($rule, $ngcounter) {
 		global $config, $g;
+
+		if(isset($config['system']['developerspew'])) {
+			$mt = microtime();
+			echo "generate_user_filter_rule() being called $mt\n";
+		}
 
 		$wancfg = $config['interfaces']['wan'];
 		$lancfg = $config['interfaces']['lan'];
@@ -1139,6 +1188,11 @@ function generate_user_filter_rule($rule, $ngcounter) {
 
 function filter_rules_generate() {
 	global $config, $g;
+
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "filter_rules_generate() being called $mt\n";
+	}
 
 	$wancfg = $config['interfaces']['wan'];
 	$lancfg = $config['interfaces']['lan'];
@@ -1674,14 +1728,23 @@ function filter_rules_spoofcheck_generate($ifname, $if, $sa, $sn, $log) {
 
 	global $g, $config;
 
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "filter_rules_spoofcheck_generate() being called $mt\n";
+	}
+
 	$ipfrules = "antispoof for {$if}\n";
 
 	return $ipfrules;
 
 }
 
-function setup_logging_interfaces() {
+function setup_logging_interfaces() {	
 	global $config;
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "setup_logging_interfaces() being called $mt\n";
+	}		
 	$rules = "";
 	$i = 0;
 	$ifdescrs = array('wan', 'lan');
@@ -1699,6 +1762,10 @@ function setup_logging_interfaces() {
 
 function create_firewall_outgoing_rules_to_itself() {
 	global $config, $g;
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "create_firewall_outgoing_rules_to_itself() being called $mt\n";
+	}	
 	$i = 0;
 	$rule .= "# pass traffic from firewall -> out\n";
 	$rule .= "anchor \"firewallout\"\n";
@@ -1771,6 +1838,10 @@ function create_firewall_outgoing_rules_to_itself() {
 
 function process_carp_nat_rules() {
 	global $g, $config;
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "process_carp_nat_rules() being called $mt\n";
+	}		
 	$lines = "";
 	if($config['installedpackages']['carp']['config'] != "")
 	    foreach($config['installedpackages']['carp']['config'] as $carp) {
@@ -1791,6 +1862,10 @@ function process_carp_nat_rules() {
 
 function process_carp_rules() {
 	global $g, $config;
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "process_carp_rules() being called $mt\n";
+	}	
 	$lines = "";
 	/* return if there are no carp configured items */
 	if($config['installedpackages']['carpsettings']['config'] <> "" or
@@ -1804,6 +1879,11 @@ function process_carp_rules() {
 function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsense.restore_config_section', $port) {
 
 	global $config, $g;
+
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "carp_sync_xml() being called $mt\n";
+	}
 
 	if($g['booting'])
 		return;
@@ -1830,6 +1910,11 @@ function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsen
 function carp_sync_client() {
 
 	global $config, $g;
+
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "carp_sync_client() being called $mt\n";
+	}
 
 	if($g['booting'])
 		return;
@@ -1909,7 +1994,11 @@ function carp_sync_client() {
 
 function return_vpn_subnet($adr) {
 	global $config;
-	
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "return_vpn_subnet() being called $mt\n";
+	}
+
         if ($adr['address']) {
                 list($padr, $pmask) = explode("/", $adr['address']);
                 if (is_null($pmask)) 

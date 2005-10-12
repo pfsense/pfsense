@@ -1296,7 +1296,6 @@ function get_next_available_bridge_interface() {
 			return $x;
 		}
 	}
-	$x++;
 	return $x;
 }
 

@@ -165,7 +165,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 
-		$bridge = discover_bridge($optcfg['if'], $optcfg['bridge']);
+		$bridge = discover_bridge($optcfg['if'], filter_translate_type_to_real_interface($optcfg['bridge']));
 		if($bridge) {
 			destroy_bridge($bridge);
 		}

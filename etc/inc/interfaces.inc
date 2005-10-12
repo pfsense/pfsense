@@ -1289,6 +1289,7 @@ function get_number_of_bridged_interfaces() {
 
 function get_next_available_bridge_interface() {
 	$bridges_total = get_number_of_bridged_interfaces();
+	$x=0;
 	for($x=0; $x<$total_bridges; $x++) {
 		$bridge_text = `/sbin/ifconfig bridge{$x}`;
 		if(stristr($bridge_text, "does not exist") == true) {
@@ -1312,6 +1313,7 @@ function destroy_bridge($bridge_num) {
 
 function discover_bridge($interface1, $interface2) {
 	$total_bridges = get_number_of_bridged_interfaces();
+	$x=0;
 	for($x=0; $x<$total_bridges; $x++) {
 		$bridge_text = `/sbin/ifconfig bridge{$x} | grep member`;
 		if(stristr($bridge_text, $interface1) == true and

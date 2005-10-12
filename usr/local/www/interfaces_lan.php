@@ -107,7 +107,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		
 		$bridge = discover_bridge($lancfg['if'], filter_translate_type_to_real_interface($lancfg['bridge']));
-		if($bridge) {
+		if($bridge <> "-1") {
 			destroy_bridge($bridge);
 		}
 

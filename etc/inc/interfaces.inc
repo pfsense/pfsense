@@ -1283,27 +1283,27 @@ function is_altq_capable($int) {
 
 function get_number_of_bridged_interfaces() {
 	$bridges = trim(`/sbin/ifconfig -a | /usr/bin/grep bridge | /usr/bin/wc -l`);
-	return $bridges;
+	return "{$bridges}";
 }
 
 function get_next_available_bridge_interface() {
 	$bridges_total = get_number_of_bridged_interfaces();
+	$interfaces = `/sbin/ifconfig -l`;
 	$x=0;
 	for($x=0; $x<$bridges_total; $x++) {
-		$bridge_text = `/sbin/ifconfig bridge{$x}`;
-		if(stristr($bridge_text, "does not exist") == true) {
+		if(!stristr($interfaces, "bridge{$x}")) {
 			$x++;
-			return $x;
+			return "{$x}";
 		}
 	}
-	return $x;
+	return "{$x}";
 }
 
 function destroy_bridge($bridge_num) {
 	mwexec("/sbin/ifconfig bridge{$bridge_num} down");
 	sleep(1);
 	mwexec("/sbin/ifconfig bridge{$bridge_num} delete");
-	sleep(2);
+	sleep(1);
 	mwexec("/sbin/ifconfig bridge{$bridge_num} destroy");
 	sleep(1);
 	return;
@@ -1316,10 +1316,10 @@ function discover_bridge($interface1, $interface2) {
 		$bridge_text = `/sbin/ifconfig bridge{$x} | grep member`;
 		if(stristr($bridge_text, $interface1) == true and
 		   stristr($bridge_text, $interface2) == true) {
-			return $x;			
+			return "{$x}";			
 		}
 	}
-	return false;
+	return "-1";
 }
 
 ?>

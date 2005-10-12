@@ -183,7 +183,7 @@ if ($_POST) {
 	if (!$input_errors) {
 
 		$bridge = discover_bridge($wancfg['if'], filter_translate_type_to_real_interface($wancfg['bridge']));
-		if($bridge) {
+		if($bridge <> "-1") {
 			destroy_bridge($bridge);
 		}
 	

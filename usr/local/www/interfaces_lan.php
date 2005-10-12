@@ -106,13 +106,11 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		
-		if($lancfg['bridge'] <> "" and $_POST['bridge'] == "") {
-			$bridge = discover_bridge($lancfg['if'], $lancfg['bridge']);
-			if($bridge) {
-				destroy_bridge($bridge);
-			}
+		$bridge = discover_bridge($lancfg['if'], $lancfg['bridge']);
+		if($bridge) {
+			destroy_bridge($bridge);
 		}
-		
+
 		$lancfg['bridge'] = $_POST['bridge'];
 		
 		if (($lancfg['ipaddr'] != $_POST['ipaddr']) || ($lancfg['subnet'] != $_POST['subnet'])) {

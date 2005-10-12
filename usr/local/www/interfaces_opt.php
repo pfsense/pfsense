@@ -165,11 +165,9 @@ if ($_POST) {
 
 	if (!$input_errors) {
 
-		if($optcfg['bridge'] <> "" and $_POST['bridge'] == "") {
-			$bridge = discover_bridge($optcfg['if'], $optcfg['bridge']);
-			if($bridge) {
-				destroy_bridge($bridge);
-			}
+		$bridge = discover_bridge($optcfg['if'], $optcfg['bridge']);
+		if($bridge) {
+			destroy_bridge($bridge);
 		}
 
 		unset($optcfg['dhcphostname']);

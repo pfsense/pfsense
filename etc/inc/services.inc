@@ -265,7 +265,7 @@ EOD;
 function interfaces_staticarp_configure($if) {
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "interfaces_staticarp_configure($if) being called $mt\n"
+		echo "interfaces_staticarp_configure($if) being called $mt\n";
 	}
         global $config, $g;
         

@@ -33,11 +33,11 @@
 require_once("functions.inc");
 
 function system_resolvconf_generate($dynupdate = false) {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_resolvconf_generate() being called $mt\n";
 	}	
-        global $config, $g;
 
         $syscfg = $config['system'];
 
@@ -86,11 +86,11 @@ function system_resolvconf_generate($dynupdate = false) {
 }
 
 function system_hosts_generate() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_hosts_generate() being called $mt\n";
-	}	
-	global $config, $g;
+	}
 
 	$syscfg = $config['system'];
 	$lancfg = $config['interfaces']['lan'];
@@ -126,11 +126,11 @@ EOD;
 }
 
 function system_hostname_configure() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_hostname_configure() being called $mt\n";
-	}
-	global $config, $g;
+	}	
 
 	$syscfg = $config['system'];
 
@@ -140,12 +140,12 @@ function system_hostname_configure() {
 }
 
 function system_routing_configure() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_routing_configure() being called $mt\n";
 	}
-	global $config, $g;
-
+	
 	/* Enable fast routing, if enabled */
 	if(isset($config['staticroutes']['enablefastrouting']))
 		mwexec("/sbin/sysctl net.inet.ip.fastforwarding=1");
@@ -189,21 +189,21 @@ function system_routing_configure() {
 }
 
 function system_routing_enable() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_routing_enable() being called $mt\n";
 	}
-	global $config, $g;
 
 	return mwexec("/sbin/sysctl net.inet.ip.forwarding=1");
 }
 
 function system_syslogd_start() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_syslogd_start() being called $mt\n";
 	}
-	global $config, $g;
 
 	$syslogcfg = $config['syslog'];
 
@@ -304,11 +304,11 @@ EOD;
 }
 
 function system_pccard_start() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_pccard_start() being called $mt\n";
 	}
-	global $config, $g;
 
 	if ($g['booting'])
 		echo "Initializing PCMCIA... ";
@@ -331,11 +331,11 @@ function system_pccard_start() {
 
 
 function system_webgui_start() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_webgui_start() being called $mt\n";
 	}
-        global $config, $g;
 
         if ($g['booting'])
                 echo "Starting webGUI... ";
@@ -429,6 +429,8 @@ function system_generate_lighty_config($filename, $cert, $key, $pid_file,
 	$port, $document_root = "/usr/local/www/",
 	$cert_location = "cert.pem", $max_procs,
 	$max_requests = "1", $fast_cgi_enable = true) {
+
+	global $config, $g;
 
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -651,12 +653,12 @@ EOD;
 }
 
 function system_password_configure() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_password_configure() being called $mt\n";
-	}	
-	global $config, $g;
-	
+	}
+
 	/* sync passwords */
 	sync_webgui_passwords();
 
@@ -666,11 +668,11 @@ function system_password_configure() {
 }
 
 function system_timezone_configure() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_timezone_configure() being called $mt\n";
 	}	
-	global $config, $g;
 
 	$syscfg = $config['system'];
 
@@ -694,11 +696,11 @@ function system_timezone_configure() {
 }
 
 function system_ntp_configure() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_ntp_configure() being called $mt\n";
 	}
-	global $config, $g;
 
 	$syscfg = $config['system'];
 
@@ -761,11 +763,11 @@ function system_reboot_cleanup() {
 }
 
 function system_do_shell_commands($early = 0) {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_do_shell_commands() being called $mt\n";
 	}
-	global $config, $g;
 
 	if ($early)
 		$cmdn = "earlyshellcmd";
@@ -788,11 +790,11 @@ function system_do_shell_commands($early = 0) {
 }
 
 function system_console_configure() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_console_configure() being called $mt\n";
 	}	
-	global $config, $g;
 
 	if (isset($config['system']['disableconsolemenu'])) {
 		touch("{$g['varetc_path']}/disableconsole");
@@ -802,11 +804,11 @@ function system_console_configure() {
 }
 
 function system_dmesg_save() {
+	global $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_dmesg_save() being called $mt\n";
-	}	
-	global $g;
+	}
 
 	exec("/sbin/dmesg", $dmesg);
 
@@ -833,11 +835,11 @@ function system_dmesg_save() {
 }
 
 function system_set_harddisk_standby() {
+	global $g, $config;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_set_harddisk_standby() being called $mt\n";
 	}
-	global $g, $config;
 
 	if (isset($config['system']['harddiskstandby'])) {
 		if ($g['booting']) {
@@ -865,11 +867,11 @@ function system_set_harddisk_standby() {
 }
 
 function system_setup_sysctl() {
+	global $config;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_setup_sysctl() being called $mt\n";
 	}
-	global $config;
 
 	$sysctl = return_filename_as_array("/etc/sysctl.conf");
 	foreach($sysctl as $sysc) {
@@ -882,6 +884,7 @@ function system_setup_sysctl() {
 }
 
 function system_disable_arp_wrong_if() {
+	global $config;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_disable_arp_wrong_if() being called $mt\n";
@@ -890,6 +893,7 @@ function system_disable_arp_wrong_if() {
 }
 
 function system_enable_arp_wrong_if() {
+	global $config;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_enable_arp_wrong_if() being called $mt\n";

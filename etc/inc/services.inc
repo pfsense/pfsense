@@ -34,11 +34,11 @@ require_once("functions.inc");
 require_once("dyndns.class");
 
 function services_dhcpd_configure() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "services_dhcpd_configure($if) being called $mt\n";;
+		echo "services_dhcpd_configure($if) being called $mt\n";
 	}
-	global $config, $g;
 
 	/* kill any running dhcpd */
 	killbypid("{$g['varrun_path']}/dhcpd.pid");
@@ -263,11 +263,11 @@ EOD;
 }
 
 function interfaces_staticarp_configure($if) {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "interfaces_staticarp_configure($if) being called $mt\n";
 	}
-        global $config, $g;
         
         $ifcfg = $config['interfaces'][$if];
 
@@ -292,11 +292,11 @@ function interfaces_staticarp_configure($if) {
 }
 
 function services_dhcrelay_configure() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "services_dhcrelay_configure() being called $mt\n"
+		echo "services_dhcrelay_configure() being called $mt\n";
 	}
-	global $config, $g;
 
 	/* kill any running dhcrelay */
 	killbypid("{$g['varrun_path']}/dhcrelay.pid");
@@ -366,11 +366,11 @@ function services_dhcrelay_configure() {
 }
 
 function services_dyndns_reset() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "services_dyndns_reset() being called $mt\n"
-	}	
-	global $config, $g;
+		echo "services_dyndns_reset() being called $mt\n";
+	}
 
 	if (file_exists("{$g['vardb_path']}/ez-ipupdate.cache")) {
 		unlink("{$g['vardb_path']}/ez-ipupdate.cache");
@@ -386,12 +386,11 @@ function services_dyndns_reset() {
 }
 
 function services_dyndns_configure() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "services_dyndns_configure() being called $mt\n"
+		echo "services_dyndns_configure() being called $mt\n";
 	}
-
-	global $config, $g;
 
 	$dyndnscfg = $config['dyndns'];
 	$wancfg = $config['interfaces']['wan'];
@@ -428,12 +427,11 @@ function services_dyndns_configure() {
 }
 
 function services_dyndns_configure_old() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "services_dyndns_configure_old() being called $mt\n"
-	}	
-	
-        global $config, $g;
+		echo "services_dyndns_configure_old() being called $mt\n";
+	}
 
         /* kill any running ez-ipupdate */
         /* ez-ipupdate needs SIGQUIT instead of SIGTERM */
@@ -512,12 +510,11 @@ EOD;
 
 
 function services_dnsmasq_configure() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "services_dnsmasq_configure() being called $mt\n"
+		echo "services_dnsmasq_configure() being called $mt\n";
 	}
-
-	global $config, $g;
 
 	/* kill any running dnsmasq */
 	sigkillbypid("{$g['varrun_path']}/dnsmasq.pid", "TERM");
@@ -561,11 +558,11 @@ function services_dnsmasq_configure() {
 }
 
 function services_snmpd_configure() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "services_snmpd_configure() being called $mt\n"
-	}	
-	global $config, $g;
+		echo "services_snmpd_configure() being called $mt\n";
+	}
 
 	/* kill any running snmpd */
 	sigkillbypid("{$g['varrun_path']}/snmpd.pid", "TERM");
@@ -709,13 +706,12 @@ EOD;
 	return 0;
 }
 
-function services_proxyarp_configure() {	
+function services_proxyarp_configure() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "services_proxyarp_configure() being called $mt\n"
+		echo "services_proxyarp_configure() being called $mt\n";
 	}
-
-	global $config, $g;
 
 	/* kill any running choparp */
 	killbyname("choparp");
@@ -762,12 +758,12 @@ function services_proxyarp_configure() {
 }
 
 function services_dnsupdate_process() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "services_dnsupdate_process() being called $mt\n"
+		echo "services_dnsupdate_process() being called $mt\n";
 	}
-	global $config, $g;
-	
+
 	/* Dynamic DNS updating active? */
 	if (isset($config['dnsupdate']['enable'])) {
 		
@@ -836,9 +832,10 @@ EOD;
 }
 
 function setup_wireless_olsr($interface) {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "setup_wireless_olsr($interface) being called $mt\n"
+		echo "setup_wireless_olsr($interface) being called $mt\n";
 	}
 	$fd = fopen("{$g['varetc_path']}/{$interface}_olsr.conf", "w");
 	$olsr .= <<<EOD

@@ -943,14 +943,20 @@ pppoe:
 	set iface {$ondemand} on-demand
 	set iface idle {$idle}
 	set iface up-script /usr/local/sbin/ppp-linkup
-
 EOD;
-
+	
 	if (isset($pppoecfg['ondemand'])) {
-		$mpdconf .= <<<EOD
-	set iface addrs 10.0.0.1 10.0.0.2
+		if (isset($pppoecfg['local-ip']) && isset($pppoecfg['remote-ip'])) {
+			$mpdconf .= <<<EOD
+	set iface addrs {$pppoecfg['local-ip']} {$pppoecfg['remote-ip']}
 
 EOD;
+		} else {
+			$mpdconf .= <<<EOD
+	set iface addrs 192.0.2.112 192.0.2.113
+
+EOD;
+		}
 	}
 
 	$mpdconf .= <<<EOD

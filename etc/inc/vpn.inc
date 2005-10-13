@@ -238,11 +238,17 @@ function vpn_ipsec_configure($ipchg = false) {
 		foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
 			if($sasyncd['ip'] <> "") 
 				$curwanip = $sasyncd['ip'];
-
+				/* natt - turn on if <developer/> exists */
+				if(isset($config['system']['developer'] <> "") {
+					$lanip = $config['interfaces']['lan']['ipaddr'];
+					if($lanip <> "") 
+						$natt = "isakmp_natt {$lanip}[4500];\n";
+				}	
 				$interface_ip = $sasyncd['ip'];
 				$racoonconf .= <<<EOD
 listen {
 	isakmp {$interface_ip} [500];
+	{$natt}
 }
 
 EOD;

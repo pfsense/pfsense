@@ -17,13 +17,3 @@ HOME=/; export HOME
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 export PATH
 
-CARPINTS=`/sbin/ifconfig | grep "carp[0-999]" | cut -d":" -f1`
-for ci in `/sbin/ifconfig | grep "carp[0-999]" | cut -d":" -f1`; do
-    /sbin/ifconfig $ci down
-    /sbin/ifconfig $ci destroy
-done
-
-# Call sshd and alert we're shutting down so it can sync
-/etc/sshd stop
-echo
-echo

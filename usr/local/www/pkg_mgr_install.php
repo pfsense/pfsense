@@ -154,10 +154,16 @@ switch($_GET['mode']) {
             update_output_window($static_output);
 	    break;
 	default:
-            install_package($_GET['id']);
-            update_status("Installation of {$_GET['id']} completed.");
-            $static_output .= "\n\nInstallation completed.";
-            update_output_window($static_output);
+            $status = install_package($_GET['id']);
+	    if($status == -1) {
+		update_status("Installation of {$_GET['id']} FAILED!");
+                $static_output .= "\n\nInstallation halted.";		
+	    } else {
+                update_status("Installation of {$_GET['id']} completed.");
+		$static_output .= "\n\nInstallation completed.";
+	    }
+	    update_output_window($static_output);
+
 }
 
 // Delete all temporary package tarballs and staging areas.

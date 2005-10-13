@@ -387,7 +387,7 @@ function install_package($package, $pkg_info = "") {
 				$static_output .= "failed!\n\nInstallation aborted.";
 				update_output_window($static_output);
 				echo "<br>Show <a href=\"pkg_mgr_install.php?showlog=true\">install log</a></center>";
-			 	exit;
+			 	return -1;
 			}
 		}
 		$static_output .= "done.\n";

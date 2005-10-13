@@ -127,7 +127,7 @@ function enable_hardware_offloading($interface) {
 	/*    active polling for interface if it supports it
 	 *    man polling on a freebsd box for the following list
          */
-	$supported_ints = array('dc', 'em', 'fwe', 'fwip', 'fxp', 'ixgb',
+	$supported_ints = array('dc', 'em', 'fwe', 'fwip', 'fxp', 'ixgb', 'ste' 
 		'nge', 're', 'rl', 'sf', 'sis', 'ste', 'vge', 'vr', 'xl', 'fxp');
 	foreach($supported_ints as $int) {
 		echo "\n{$interface} ";

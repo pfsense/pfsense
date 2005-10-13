@@ -239,7 +239,7 @@ function vpn_ipsec_configure($ipchg = false) {
 			if($sasyncd['ip'] <> "") 
 				$curwanip = $sasyncd['ip'];
 				/* natt - turn on if <developer/> exists */
-				if(isset($config['system']['developer'] <> "")) {
+				if(isset($config['system']['developer']) <> "") {
 					$lanip = $config['interfaces']['lan']['ipaddr'];
 					if($lanip <> "") 
 						$natt = "isakmp_natt {$lanip}[4500];\n";

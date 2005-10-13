@@ -225,8 +225,7 @@ if ($_POST) {
 			fclose($fout);		
 		}
 		
-		$ssh_output = mwexec("/etc/sshd");
-		log_error("restarting sshd, $ssh_output");
+		mwexec("/etc/sshd");
 		
 		conf_mount_ro();
 	}

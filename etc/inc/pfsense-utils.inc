@@ -124,15 +124,13 @@ function enable_hardware_offloading($interface) {
     if(isset($config['system']['do_not_use_nic_microcode']))
 	return;
     if($g['booting']) {
-	/*    active polling for interface if it supports it
+	/*    activate polling for interface if it supports it
 	 *    man polling on a freebsd box for the following list
          */
 	$supported_ints = array('dc', 'em', 'fwe', 'fwip', 'fxp', 'ixgb', 'ste' 
 		'nge', 're', 'rl', 'sf', 'sis', 'ste', 'vge', 'vr', 'xl', 'fxp');
 	foreach($supported_ints as $int) {
-		echo "\n{$interface} ";
 		if(stristr($interface,$int) != false) {
-			echo "enable polling for {$interface}";
 			mwexec("/sbin/ifconfig {$interface} polling");
 		}
 	}

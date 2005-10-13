@@ -128,13 +128,14 @@ function swap_usage()
 
 function mem_usage()
 {
-	exec("/sbin/sysctl -n vm.stats.vm.v_active_count vm.stats.vm.v_inactive_count " .
-		"vm.stats.vm.v_wire_count vm.stats.vm.v_cache_count vm.stats.vm.v_free_count", $memory);
+	exec("/sbin/sysctl -n vm.stats.vm.v_page_count vm.stats.vm.v_inactive_count " .
+		"vm.stats.vm.v_cache_count vm.stats.vm.v_free_count", $memory);
 	
-	$totalMem = $memory[0] + $memory[1] + $memory[2] + $memory[3] + $memory[4];
-	$freeMem = $memory[4];
-	$usedMem = $totalMem - $freeMem;
+	$totalMem = $memory[0];
+	$availMem = $memory[1] + $memory[2] + $memory[3];
+	$usedMem = $totalMem - $availMem;
 	$memUsage = round(($usedMem * 100) / $totalMem, 0);
 
 	return $memUsage;
 }
+

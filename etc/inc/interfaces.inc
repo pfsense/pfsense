@@ -1286,7 +1286,10 @@ function get_number_of_bridged_interfaces() {
 	$bridges = split("\n", `/sbin/ifconfig -a | /usr/bin/grep bridge | grep flags`);
 	foreach($bridges as $bridge) {
 		preg_match_all("/bridge(.*):/",$bridge,$match_array);
-		$bridges_total = $match_array[1][0];
+		if($match_array[1][0] <> "") {
+			if($match_array[1][0] > $bridges_total)
+				$bridges_total = $match_array[1][0];
+		}
 	}
 	return "{$bridges_total}";
 }
@@ -1297,7 +1300,6 @@ function get_next_available_bridge_interface() {
 	$x=0;
 	for($x=0; $x<$bridges_total; $x++) {
 		if(!stristr($interfaces, "bridge{$x}")) {
-			$x++;
 			return "{$x}";
 		}
 	}
@@ -1315,14 +1317,16 @@ function destroy_bridge($bridge_num) {
 }
 
 function discover_bridge($interface1, $interface2) {
+	if(!$interface1) return;
+	if(!$interface2) return;
 	$total_bridges = get_number_of_bridged_interfaces();
 	$interfaces = `/sbin/ifconfig -l`;
 	$x=0;
 	for($x=0; $x<$total_bridges; $x++) {
 		$bridge_text = "NA";
-		if(!stristr($interfaces, "bridge{$x}")) {
-			$bridge_text = `/sbin/ifconfig bridge{$x} | grep member`;
-		}
+		if(!stristr($interfaces, "bridge{$x}")) 
+			continue;
+		$bridge_text = `/sbin/ifconfig bridge{$x} | grep member`;
 		if(stristr($bridge_text, $interface1) == true and
 		   stristr($bridge_text, $interface2) == true) {
 			return "{$x}";			

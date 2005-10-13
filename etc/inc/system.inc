@@ -338,7 +338,7 @@ function system_webgui_start() {
 	}
 
         if ($g['booting'])
-                echo "Starting webGUI... ";
+                echo "Starting webConfigurator... ";
 
         /* kill any running mini_httpd */
         killbypid("{$g['varrun_path']}/mini_httpd.pid");

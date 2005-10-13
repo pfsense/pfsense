@@ -212,18 +212,17 @@ if [ -e /dev/ttyv1 ]; then
 	/usr/sbin/vidcontrol -S on 2>/dev/null
 	# Turn off bloody mouse pointer.
 	/usr/sbin/vidcontrol -m off	 2>/dev/null
-	env TERM=cons25 /etc/rc.initial 2>/dev/ttyv1 </dev/ttyv1 >/dev/ttyv1 &
+	env TERM=cons25 sh -c /etc/rc.initial 2>/dev/ttyv1 </dev/ttyv1 >/dev/ttyv1 &
 	sleep 1
 	/usr/sbin/vidcontrol -s 2 2>/dev/null
     fi
 else
     while [ 1 ];
     do
-	env TERM=cons25 sh "/etc/rc.initial"
+	env TERM=cons25 sh -c "/etc/rc.initial"
     done
     exit
 fi
-
 
 /usr/local/bin/beep.sh start
 

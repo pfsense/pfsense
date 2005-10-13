@@ -243,6 +243,7 @@ function vpn_ipsec_configure($ipchg = false) {
 					$lanip = $config['interfaces']['lan']['ipaddr'];
 					if($lanip <> "") 
 						$natt = "isakmp_natt {$lanip}[4500];\n";
+					
 				}	
 				$interface_ip = $sasyncd['ip'];
 				$racoonconf .= <<<EOD

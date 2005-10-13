@@ -77,15 +77,6 @@ if ($_POST) {
 		
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 		
-		/* make sure no interfaces are bridged */
-		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-			$coptif = &$config['interfaces']['opt' . $i];
-			if (isset($coptif['enable']) && $coptif['bridge']) {
-				$input_errors[] = "The captive portal cannot be used when one or more interfaces are bridged.";
-				break;
-			}
-		}
-		
 		if ($_POST['httpslogin_enable']) {
 		 	if (!$_POST['cert'] || !$_POST['key']) {
 				$input_errors[] = "Certificate and key must be specified for HTTPS login.";

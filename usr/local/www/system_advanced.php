@@ -53,6 +53,7 @@ $pconfig['enableserial'] = $config['system']['enableserial'];
 $pconfig['disablefirmwarecheck'] = isset($config['system']['disablefirmwarecheck']);
 $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
 $pconfig['enablesshd'] = $config['system']['enablesshd'];
+$pconfig['sshport'] = $config['system']['ssh']['port'];
 $pconfig['sharednet'] = $config['system']['sharednet'];
 
 if ($_POST) {
@@ -90,7 +91,12 @@ if ($_POST) {
 		if ($_POST['maximumstates'] > 100000000)
 			$input_errors[] = "States must be above 1000 and below 100000000";
 	}
-	
+	if ($_POST['sshport'] <> "") {
+		if( ! is_port($_POST['sshport'])) {
+			$input_errors[] = "You must specify a valid port number";
+		}
+	}
+
 	if (!$input_errors) {
 		if($_POST['disablefilter'] == "yes") {
 			$config['system']['disablefilter'] = "enabled";
@@ -102,6 +108,8 @@ if ($_POST) {
 		} else {
 			unset($config['system']['enablesshd']);
 		}		
+		$oldsshport = $config['system']['ssh']['port'];
+		$config['system']['ssh']['port'] = $_POST['sshport'];
 
 		if($_POST['sharednet'] == "yes") {
 			$config['system']['sharednet'] = true;
@@ -217,7 +225,8 @@ if ($_POST) {
 			fclose($fout);		
 		}
 		
-		mwexec("/etc/sshd");
+		$ssh_output = mwexec("/etc/sshd");
+		log_error("restarting sshd, $ssh_output");
 		
 		conf_mount_ro();
 	}
@@ -270,6 +279,14 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<input name="enablesshd" type="checkbox" id="enablesshd" value="yes" <?php if (isset($pconfig['enablesshd'])) echo "checked"; ?> onclick="enable_change(false)" />
 				<strong>Enable Secure Shell</strong>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">SSH port</td>
+			<td width="78%" class="vtable">
+				<input name="sshport" type="text" id="sshport" value="<?php echo $pconfig['sshport']; ?>" onclick="enable_change(false)" />
+				<br />
+				<span class="vexpl">Note:  Leave this blank for the default of 22</span>
 			</td>
 		</tr>
 		<tr>

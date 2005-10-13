@@ -105,6 +105,7 @@ if ($_POST) {
 		}
 		if($_POST['enablesshd'] == "yes") {
 			$config['system']['enablesshd'] = "enabled";
+			touch("{$g['tmp_path']}/tmp/start_sshd");
 		} else {
 			unset($config['system']['enablesshd']);
 		}		
@@ -224,8 +225,6 @@ if ($_POST) {
 				fwrite($fout, "ttyv0\t\"/usr/libexec/getty Pc\"\tcons25\t\ton\tsecure\n");
 			fclose($fout);		
 		}
-		
-		mwexec("/etc/sshd");
 		
 		conf_mount_ro();
 	}

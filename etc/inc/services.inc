@@ -402,13 +402,13 @@ function services_dyndns_configure() {
 			if($config['system']['use_old_dyndns'] <> "") {
 				echo " [Using ez-ipupdate] ";
 				services_dyndns_configure_old();
-				exit;
+				return;
 			}	
 		} else {
 			sleep(1);
 			if($config['system']['use_old_dyndns'] <> "") {
 				services_dyndns_configure_old();
-				exit;
+				return;
 			}			
 		}
 

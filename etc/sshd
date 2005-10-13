@@ -111,9 +111,9 @@
 	$status = mwexec("/usr/sbin/sshd");
 	if($status <> 0) {
 		file_notice("sshd_startup", "SSHD failed to start.", "SSHD Daemon", "");
-		echo "Error!\n";
+		echo "error!\n";
 	} else {
-		echo "Done.\n";
+		echo "done.\n";
 	}
 	
 	conf_mount_ro();
@@ -227,6 +227,6 @@
 
 	/* start sshd */
 	system("/usr/sbin/sshd");
-	echo "Done.\n";
+	echo "done.\n";
 
 ?>

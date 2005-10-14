@@ -58,7 +58,7 @@ $g = array(
     "xmlrpcbaseurl" => "www.pfsense.com",
     "xmlrpcpath" => "/pfSense/xmlrpc.php",
     "embeddedbootupslice" => "/dev/ad0a",
-    "wireless_regex" => "/^(wi|ath|an|ral|ural|wai|iwi)/"
+    "wireless_regex" => "/^(wi|ath|an|ral|ural|wai|iwi|an)/"
 );
 
 /* IP TOS flags */

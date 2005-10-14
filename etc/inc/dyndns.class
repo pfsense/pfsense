@@ -35,12 +35,13 @@
 	 *  DHS            - Last Tested: 12 July 2005
 	 *  ZoneEdit       - Last Tested: NEVER
 	 *  Dyns           - Last Tested: NEVER
+	 *  ODS            - Last Tested: 02 August 2005
 	 * +====================================================+
 	 *
 	 * @author 		E.Kristensen
 	 * @link    	http://www.idylldesigns.com/projects/phpdns/
-	 * @version 	0.7
-	 * @updated		1 August 05 at 21:02:42 GMT
+	 * @version 	0.8
+	 * @updated		13 October 05 at 21:02:42 GMT
 	 *
 	 */
 
@@ -65,6 +66,8 @@
 		 *   - Gets the dice rolling for the update. 
 		 */
 		function updatedns ($dnsService = '', $dnsHost = '', $dnsUser = '', $dnsPass = '', $dnsWildcard = 'OFF', $dnsMX = '', $dnsBackMX = '') {
+			global $config;
+
 			if (!$dnsService) $this->_error(2);
 			if (!$dnsUser) $this->_error(3);
 			if (!$dnsPass) $this->_error(4);
@@ -76,6 +79,12 @@
 			$this->_dnsHost = $dnsHost;
 			$this->_dnsIP = $dnsIP;
 			$this->_debugID = rand(1000000, 9999999);
+
+			if (!isset($config['dyndns']['enabled'])) {
+				@unlink($this->_cacheFile);
+				@unlink($this->_debugFile);
+				return true;
+			}
 
 			if ($this->_detectChange() == FALSE) {
 				$this->_error(10);

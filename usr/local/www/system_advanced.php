@@ -106,7 +106,7 @@ if ($_POST) {
 		}
 		if($_POST['enablesshd'] == "yes") {
 			$config['system']['enablesshd'] = "enabled";
-			touch("{$g['tmp_path']}/tmp/start_sshd");
+			touch("{$g['tmp_path']}/start_sshd");
 		} else {
 			unset($config['system']['enablesshd']);
 		}		

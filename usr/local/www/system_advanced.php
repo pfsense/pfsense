@@ -413,7 +413,7 @@ include("head.inc");
                                         Device polling is a technique that lets the system periodically poll network devices for new
                                         data instead of relying on interrupts. This can reduce CPU load and therefore increase
                                         throughput, at the expense of a slightly higher forwarding delay (the devices are polled 1000 times
-                                        per second). Not all NICs support polling; see the m0n0wall homepage for a list of supported cards.
+                                        per second). Not all NICs support polling; see the pfSense homepage for a list of supported cards.
                   </td>
                 </tr>
 		

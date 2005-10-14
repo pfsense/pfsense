@@ -55,6 +55,7 @@ $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
 $pconfig['enablesshd'] = $config['system']['enablesshd'];
 $pconfig['sshport'] = $config['system']['ssh']['port'];
 $pconfig['sharednet'] = $config['system']['sharednet'];
+$pconfig['polling_enable'] = isset($config['system']['polling']);
 
 if ($_POST) {
 
@@ -111,6 +112,8 @@ if ($_POST) {
 		}		
 		$oldsshport = $config['system']['ssh']['port'];
 		$config['system']['ssh']['port'] = $_POST['sshport'];
+
+                $config['system']['polling'] = $_POST['polling_enable'] ? true : false;
 
 		if($_POST['sharednet'] == "yes") {
 			$config['system']['sharednet'] = true;
@@ -401,6 +404,19 @@ include("head.inc");
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">Miscellaneous</td>
 		</tr>
+
+                <tr>
+                  <td width="22%" valign="top" class="vncell">Device polling</td>
+                  <td width="78%" class="vtable">
+                    <input name="polling_enable" type="checkbox" id="polling_enable" value="yes" <?php if ($pconfig['polling_enable']) echo "checked"; ?>>
+                    <strong>Use device polling</strong><br>
+                                        Device polling is a technique that lets the system periodically poll network devices for new
+                                        data instead of relying on interrupts. This can reduce CPU load and therefore increase
+                                        throughput, at the expense of a slightly higher forwarding delay (the devices are polled 1000 times
+                                        per second). Not all NICs support polling; see the m0n0wall homepage for a list of supported cards.
+                  </td>
+                </tr>
+		
 		<tr>
 			<td width="22%" valign="top" class="vncell">Console menu </td>
 			<td width="78%" class="vtable">

@@ -126,15 +126,17 @@ function enable_hardware_offloading($interface) {
     if($g['booting']) {
 	/* translate wan, lan, opt -> real interface if needed */
 	$int = filter_translate_type_to_real_interface($interface);
-	if($int <> "") $interface = $int;	
-	/*    activate polling for interface if it supports it
-	 *    man polling on a freebsd box for the following list
-         */
-	$supported_ints = array('dc', 'em', 'fwe', 'fwip', 'fxp', 'ixgb', 'ste',
-		'nge', 're', 'rl', 'sf', 'sis', 'ste', 'vge', 'vr', 'xl', 'fxp');
-	foreach($supported_ints as $int) {
-		if(stristr($interface,$int) != false) {
-			mwexec("/sbin/ifconfig {$interface} polling");
+	if($int <> "") $interface = $int;
+	if(isset($config['system']['polling'])) {
+		/*    activate polling for interface if it supports it
+		 *    man polling on a freebsd box for the following list
+		 */
+		$supported_ints = array('dc', 'em', 'fwe', 'fwip', 'fxp', 'ixgb', 'ste',
+			'nge', 're', 'rl', 'sf', 'sis', 'ste', 'vge', 'vr', 'xl', 'fxp');
+		foreach($supported_ints as $int) {
+			if(stristr($interface,$int) != false) {
+				mwexec("/sbin/ifconfig {$interface} polling");
+			}
 		}
 	}
 	$options = strtolower(`/sbin/ifconfig {$interface} | grep options`);

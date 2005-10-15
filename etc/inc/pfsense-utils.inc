@@ -132,7 +132,7 @@ function enable_hardware_offloading($interface) {
 		 *    man polling on a freebsd box for the following list
 		 */
 		$supported_ints = array('dc', 'em', 'fwe', 'fwip', 'fxp', 'ixgb', 'ste',
-			'nge', 're', 'rl', 'sf', 'sis', 'ste', 'vge', 'vr', 'xl', 'fxp');
+			'nge', 're', 'rl', 'sf', 'sis', 'ste', 'vge', 'vr', 'xl');
 		foreach($supported_ints as $int) {
 			if(stristr($interface,$int) != false) {
 				mwexec("/sbin/ifconfig {$interface} polling");

@@ -8,6 +8,8 @@ echo
 echo "pfSense is now shutting down ..."
 echo
 
+/sbin/ifconfig pfsync0 -syncdev down
+
 stty status '^T'
 
 # Set shell to ignore SIGINT (2), but not children;

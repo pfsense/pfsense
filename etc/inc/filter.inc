@@ -1687,17 +1687,17 @@ EOD;
 				continue;	
 			}
 			$local_subnet = return_vpn_subnet($tunnel['local-subnet']);
-			$ipfrules .= "pass quick on {$wanif} proto udp from {$ipsec_ip} to {$remote_gateway} port = 500 keep state label \"IPSEC: {$tunnel['descr']} - outbound isakmp\"\n";
-			$ipfrules .= "pass quick on {$wanif} proto udp from {$remote_gateway} to {$ipsec_ip} port = 500 keep state label \"IPSEC: {$tunnel['descr']} - inbound isakmp\"\n";
+			$ipfrules .= "pass out quick on {$wanif} proto udp from {$ipsec_ip} to {$remote_gateway} port = 500 keep state label \"IPSEC: {$tunnel['descr']} - outbound isakmp\"\n";
+			$ipfrules .= "pass in quick on {$wanif} proto udp from {$remote_gateway} to {$ipsec_ip} port = 500 keep state label \"IPSEC: {$tunnel['descr']} - inbound isakmp\"\n";
 
-			$ipfrules .= "pass quick on {$wanif} proto esp from {$ipsec_ip} to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound esp proto\"\n";
-			$ipfrules .= "pass quick on {$wanif} proto esp from {$remote_gateway} to {$ipsec_ip} keep state label \"IPSEC: {$tunnel['descr']} - inbound esp proto\"\n";
+			$ipfrules .= "pass out quick on {$wanif} proto esp from {$ipsec_ip} to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound esp proto\"\n";
+			$ipfrules .= "pass in quick on {$wanif} proto esp from {$remote_gateway} to {$ipsec_ip} keep state label \"IPSEC: {$tunnel['descr']} - inbound esp proto\"\n";
 
-			$ipfrules .= "pass quick on {$wanif} proto ah from {$ipsec_ip} to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound ah proto\"\n";
-			$ipfrules .= "pass quick on {$wanif} proto ah from {$remote_gateway} to {$ipsec_ip} keep state label \"IPSEC: {$tunnel['descr']} - inbound ah proto\"\n";
+			$ipfrules .= "pass out quick on {$wanif} proto ah from {$ipsec_ip} to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound ah proto\"\n";
+			$ipfrules .= "pass in quick on {$wanif} proto ah from {$remote_gateway} to {$ipsec_ip} keep state label \"IPSEC: {$tunnel['descr']} - inbound ah proto\"\n";
 
-			$ipfrules .= "pass quick on {$lanif} from {$tunnel['remote-subnet']} to {$local_subnet} keep state label \"IPSEC: {$tunnel['descr']} - remote to local\"\n";
-			$ipfrules .= "pass quick on {$lanif} from {$local_subnet} to {$tunnel['remote-subnet']} keep state label \"IPSEC:  {$tunnel['descr']} - local to remote\"\n";
+			$ipfrules .= "pass out quick on {$lanif} from {$tunnel['remote-subnet']} to {$local_subnet} keep state label \"IPSEC: {$tunnel['descr']} - remote to local\"\n";
+			$ipfrules .= "pass in quick on {$lanif} from {$local_subnet} to {$tunnel['remote-subnet']} keep state label \"IPSEC:  {$tunnel['descr']} - local to remote\"\n";
 		}
 	}
 
@@ -1706,9 +1706,9 @@ EOD;
 	 */
 	$ipseccfg = $config['ipsec'];
 	if (isset($ipseccfg['mobileclients']['enable'])) {
-		$ipfrules .= "pass quick on {$wanif} proto udp from any to any port = 500 keep state label \"IPSEC: Mobile - inbound isakmp\"\n";
-		$ipfrules .= "pass quick on {$wanif} proto esp from any to any keep state label \"IPSEC: Mobile - inbound esp proto\"\n";
-		$ipfrules .= "pass quick on {$wanif} proto ah from any to any  keep state label \"IPSEC: Mobile - inbound ah proto\"\n";
+		$ipfrules .= "pass in quick on {$wanif} proto udp from any to any port = 500 keep state label \"IPSEC: Mobile - inbound isakmp\"\n";
+		$ipfrules .= "pass in quick on {$wanif} proto esp from any to any keep state label \"IPSEC: Mobile - inbound esp proto\"\n";
+		$ipfrules .= "pass in quick on {$wanif} proto ah from any to any  keep state label \"IPSEC: Mobile - inbound ah proto\"\n";
 	}
 
 	$ipfrules .= <<<EOD

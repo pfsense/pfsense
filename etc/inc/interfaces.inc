@@ -340,15 +340,12 @@ function interfaces_carp_configure() {
 			}			
 			/* do not setup pfsync twice */
 			if($total_carp_interfaces_defined == 0) {
-				if($debugging)
-					echo "Bringing up pfsync0.\n";
-				mwexec("/sbin/ifconfig pfsync0 create");
+				//if($debugging)
+				//	echo "Bringing up pfsync0.\n";
+				//mwexec("/sbin/ifconfig pfsync0 create");
 				if($debugging)
 					echo "Assigning syncdev to {$carp_sync_int}.\n";						
-				mwexec("/sbin/ifconfig pfsync0 syncdev " . $carp_sync_int);
-				if($debugging)
-					echo "Bringing up syncif pfsync0.\n";
-				mwexec("/sbin/ifconfig pfsync0 up");
+				mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} up");
 			}
 		}
 	}

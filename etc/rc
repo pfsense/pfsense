@@ -6,7 +6,7 @@
 # originally based on m0n0wall (http://neon1.net/m0n0wall)
 # Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 # All rights reserved.
-
+#
 #/bin/stty status '^T'
 #/bin/stty susp '^-' intr '^-' quit '^-'
 

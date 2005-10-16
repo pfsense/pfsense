@@ -124,12 +124,12 @@ function interfaces_lan_configure() {
 		/* use open/netBSD style bridge */
 		mwexec("/sbin/ifconfig bridge{$bridges_total} create");
 		mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$lancfg['if']} addm {$config['interfaces'][$lancfg['bridge']]['if']} up");
-		mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$lancfg['if']} add {$config['interfaces'][$lancfg['bridge']]['if']}");
+		mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$lancfg['if']} stp {$config['interfaces'][$lancfg['bridge']]['if']}");
 		
 		$fd = fopen("{$g['tmp_path']}/bridge_config_{$lancfg['if']}", "w");
 		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} create\n");
 		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} addm {$lancfg['if']} addm {$config['interfaces'][$lancfg['bridge']]['if']} up\n");
-		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$lancfg['if']} add {$config['interfaces'][$lancfg['bridge']]['if']}\n");
+		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$lancfg['if']} stp {$config['interfaces'][$lancfg['bridge']]['if']}\n");
 		fclose($fd);
 
 	}
@@ -269,11 +269,11 @@ function interfaces_optional_configure_if($opti) {
                         /* use open/netBSD style bridge */
 			mwexec("/sbin/ifconfig bridge{$bridges_total} create");
                         mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$optcfg['if']} addm {$config['interfaces'][$optcfg['bridge']]['if']} up");
-			mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$optcfg['if']} add {$config['interfaces'][$optcfg['bridge']]['if']}");
+			mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$optcfg['if']} stp {$config['interfaces'][$optcfg['bridge']]['if']}");
 			$fd = fopen("{$g['tmp_path']}/bridge_config_{$optcfg['if']}", "w");
 			fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} create\n");
 			fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} addm {$optcfg['if']} addm {$config['interfaces'][$optcfg['bridge']]['if']} up\n");
-			fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$optcfg['if']} add {$config['interfaces'][$optcfg['bridge']]['if']}\n");
+			fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$optcfg['if']} stp {$config['interfaces'][$optcfg['bridge']]['if']}\n");
 			fclose($fd);
 		} else {
 			/* if user has selected DHCP type then act accordingly */

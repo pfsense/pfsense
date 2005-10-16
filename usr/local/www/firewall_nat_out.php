@@ -243,10 +243,10 @@ include("head.inc");
                   <td width="3%" class="list">&nbsp;</td>
                   <td width="10%" class="listhdrr">Interface</td>
                   <td width="20%" class="listhdrr">Source</td>
-                  <td width="20%" class="listhdrr">Source Port</td>
                   <td width="20%" class="listhdrr">Destination</td>
+                  <td width="20%" class="listhdrr">Destination Port</td>
+                  <td width="20%" class="listhdrr">NAT Address</td>
                   <td width="20%" class="listhdrr">NAT Port</td>
-                  <td width="20%" class="listhdrr">Target</td>
                   <td width="25%" class="listhdr">Description</td>
                   <td width="5%" class="list"></td>
                 </tr>
@@ -265,14 +265,6 @@ include("head.inc");
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?=$natent['source']['network'];?>
-                  </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
-                    <?php
-                      if (!$natent['sourceport'])
-                          echo "*";
-                      else
-                          echo $natent['sourceport'];
-                    ?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
@@ -299,6 +291,14 @@ include("head.inc");
                           echo "*";
                       else
                           echo $natent['target'];
+                    ?>
+                  </td>
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
+                    <?php
+                      if (!$natent['sourceport'])
+                          echo "*";
+                      else
+                          echo $natent['sourceport'];
                     ?>
                   </td>
                   <td class="listbg"  onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">

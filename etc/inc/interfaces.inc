@@ -123,22 +123,24 @@ function interfaces_lan_configure() {
 	if ($lancfg['bridge']) {
 		/* use open/netBSD style bridge */
 		mwexec("/sbin/ifconfig bridge{$bridges_total} create");
-		mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$lancfg['if']} addm {$config['interfaces'][$lancfg['bridge']]['if']} up");
-		mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$lancfg['if']} stp {$config['interfaces'][$lancfg['bridge']]['if']}");
 		
 		/* force all bridged interfaces to use same mtu */
-		$mtu = get_interface_mtu($lancfg['if']);
+		$mtu = get_interface_mtu($config['interfaces'][$lancfg['bridge']]['if']);
 		mwexec("/sbin/ifconfig {$lancfg['if']} mtu {$mtu}");
 		mwexec("/sbin/ifconfig {$config['interfaces'][$lancfg['bridge']]['if']} mtu {$mtu}");
-		
+
+		/* assign items to a bridge */
+		mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$lancfg['if']} addm {$config['interfaces'][$lancfg['bridge']]['if']} up");
+		mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$lancfg['if']} stp {$config['interfaces'][$lancfg['bridge']]['if']}");
+
+		/* log commands run for debugging in /tmp/ */
 		$fd = fopen("{$g['tmp_path']}/bridge_config_{$lancfg['if']}", "w");
-		fwrite($fd, "/sbin/ifconfig {$lancfg['if']} mtu {$mtu}");
-		fwrite($fd, "/sbin/ifconfig {$config['interfaces'][$lancfg['bridge']]['if']} mtu {$mtu}");
+		fwrite($fd, "/sbin/ifconfig {$lancfg['if']} mtu {$mtu}\n");
+		fwrite($fd, "/sbin/ifconfig {$config['interfaces'][$lancfg['bridge']]['if']} mtu {$mtu}\n");
 		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} create\n");
 		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} addm {$lancfg['if']} addm {$config['interfaces'][$lancfg['bridge']]['if']} up\n");
 		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$lancfg['if']} stp {$config['interfaces'][$lancfg['bridge']]['if']}\n");
 		fclose($fd);
-
 	}
 	
 	/* media */
@@ -186,9 +188,6 @@ function interfaces_lan_configure() {
 function interfaces_optional_configure() {
 	global $config, $g;
 	global $bridgeconfig;
-
-	/* Reset bridge configuration.	Interfaces will add to it. */
-	$bridgeconfig = "";
 
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 		interfaces_optional_configure_if($i);
@@ -275,17 +274,20 @@ function interfaces_optional_configure_if($opti) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " delete up");
                         /* use open/netBSD style bridge */
 			mwexec("/sbin/ifconfig bridge{$bridges_total} create");
-                        mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$optcfg['if']} addm {$config['interfaces'][$optcfg['bridge']]['if']} up");
-			mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$optcfg['if']} stp {$config['interfaces'][$optcfg['bridge']]['if']}");
 			
 			/* force all bridged interfaces to use same mtu */
-			$mtu = get_interface_mtu($optcfg['if']);
+			$mtu = get_interface_mtu($config['interfaces'][$optcfg['bridge']]['if']);
 			mwexec("/sbin/ifconfig {$optcfg['if']} mtu {$mtu}");
 			mwexec("/sbin/ifconfig {$config['interfaces'][$optcfg['bridge']]['if']} mtu {$mtu}");			
-			
+
+			/* assign items to a bridge */
+                        mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$optcfg['if']} addm {$config['interfaces'][$optcfg['bridge']]['if']} up");
+			mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$optcfg['if']} stp {$config['interfaces'][$optcfg['bridge']]['if']}");
+
+			/* log commands run for debugging in /tmp/ */
 			$fd = fopen("{$g['tmp_path']}/bridge_config_{$optcfg['if']}", "w");
-			fwrite($fd, "/sbin/ifconfig {$optcfg['if']} mtu {$mtu}");
-			fwrite($fd, "/sbin/ifconfig {$config['interfaces'][$optcfg['bridge']]['if']} mtu {$mtu}");			
+			fwrite($fd, "/sbin/ifconfig {$optcfg['if']} mtu {$mtu}\n");
+			fwrite($fd, "/sbin/ifconfig {$config['interfaces'][$optcfg['bridge']]['if']} mtu {$mtu}\n");
 			fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} create\n");
 			fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} addm {$optcfg['if']} addm {$config['interfaces'][$optcfg['bridge']]['if']} up\n");
 			fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$optcfg['if']} stp {$config['interfaces'][$optcfg['bridge']]['if']}\n");

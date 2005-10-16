@@ -132,7 +132,7 @@ function enable_hardware_offloading($interface) {
 		 *    man polling on a freebsd box for the following list
 		 */
 		$supported_ints = array('dc', 'em', 'fwe', 'fwip', 'fxp', 'ixgb', 'ste',
-			'nge', 're', 'rl', 'sf', 'sis', 'ste', 'vge', 'vr', 'xl');
+			'nge', 're', 'rl', 'sf', 'sis', 'ste', 'vge', 'vr', 'xl', 'fxp');
 		foreach($supported_ints as $int) {
 			if(stristr($interface,$int) != false) {
 				mwexec("/sbin/ifconfig {$interface} polling");
@@ -247,6 +247,16 @@ function is_carp_defined() {
 	return false;
     else
 	return true;
+}
+
+/****f* pfsense-utils/get_interface_mtu
+ * NAME
+ *   get_interface_mtu - Return the mtu of an interface
+ * RESULT
+ *   $tmp	- Returns the mtu of an interface
+ ******/
+function get_interface_mtu($interface) {
+	$mtu = `/sbin/ifconfig {$interface} | /usr/bin/grep mtu | /usr/bin/cut -d" " -f4`;
 }
 
 /****f* pfsense-utils/find_number_of_created_carp_interfaces

@@ -257,6 +257,7 @@ function is_carp_defined() {
  ******/
 function get_interface_mtu($interface) {
 	$mtu = `/sbin/ifconfig {$interface} | /usr/bin/grep mtu | /usr/bin/cut -d" " -f4`;
+	return $mtu;
 }
 
 /****f* pfsense-utils/find_number_of_created_carp_interfaces

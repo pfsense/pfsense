@@ -393,7 +393,7 @@ function interfaces_carp_configure() {
 			$carp_instances_counter++;
 		}
 	}
-	if ($g['booting'] and !$debugging) {
+	if ($g['booting']) {
 		unmute_kernel_msgs();
 		echo "done.\n";
 	}

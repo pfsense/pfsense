@@ -316,7 +316,7 @@ function interfaces_carp_configure() {
 			if($carp['premption'] != "")
 				mwexec("/sbin/sysctl net.inet.carp.preempt=1");
 			if($carp['balancing'] != "")
-				mwexec("/sbin/sysctl net.inet.arpbalance=1");
+				mwexec("/sbin/sysctl net.inet.carp.arpbalance=1");
 			if($debugging) 
 				echo "Get friendly interface name {$carp['pfsyncinterface']}.\n";
 			$carp_sync_int = convert_friendly_interface_to_real_interface_name($carp['pfsyncinterface']);

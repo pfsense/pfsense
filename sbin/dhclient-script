@@ -94,12 +94,16 @@ add_new_alias() {
 
 delete_old_routes() {
 	$ROUTE delete "$old_ip_address" $LOCALHOST >/dev/null 2>&1
-	for router in $old_routers; do
-		if [ $if_defaultroute = x -o $if_defaultroute = $interface ]; then
-			$ROUTE delete default $route >/dev/null 2>&1
-                        /bin/rm -f /tmp/${interface}_router
-		fi
-	done
+	# Only allow the default route to be overridden if it's on our own interface
+	DEFAULTROUTE_IFACE=`route get default | grep interface | awk '{print $2};'`
+	if [ -z "${DEFAULTROUTE_IFACE}" -o "{$interface}" = "${DEFAULTROUTE_IFACE}" ]; then
+		for router in $old_routers; do
+			if [ $if_defaultroute = x -o $if_defaultroute = $interface ]; then
+				$ROUTE delete default $route >/dev/null 2>&1
+                        	/bin/rm -f /tmp/${interface}_router
+			fi
+		done
+	fi
 
 	if [ -n "$old_static_routes" ]; then
 		set $old_static_routes
@@ -115,22 +119,27 @@ delete_old_routes() {
 
 add_new_routes() {
 	$ROUTE add $new_ip_address $LOCALHOST >/dev/null 2>&1
-	for router in $new_routers; do
-		if [ "$new_ip_address" = "$router" ]; then
-			$ROUTE add default -iface $router
-			#>/dev/null 2>&1
-			echo $ROUTE add default -iface $router | $LOGGER
-			echo $new_routers > /tmp/${interface}_router
-		else
-			$ROUTE add default $router
-			echo $ROUTE add default $router | $LOGGER
-			#>/dev/null 2>&1
-                        echo $new_routers > /tmp/${interface}_router
-		fi
-		# 2nd and subsequent default routers error out, so explicitly
-		# stop processing the list after the first one.
-		break
-	done
+
+	# Only allow the default route to be overridden if it's on our own interface
+	DEFAULTROUTE_IFACE=`route get default | grep interface | awk '{print $2};'`
+	if [ -z "${DEFAULTROUTE_IFACE}" -o "{$interface}" = "${DEFAULTROUTE_IFACE}" ]; then
+		for router in $new_routers; do
+			if [ "$new_ip_address" = "$router" ]; then
+				$ROUTE add default -iface $router
+				#>/dev/null 2>&1
+				echo $ROUTE add default -iface $router | $LOGGER
+				echo $new_routers > /tmp/${interface}_router
+			else
+				$ROUTE add default $router
+				echo $ROUTE add default $router | $LOGGER
+				#>/dev/null 2>&1
+                       		echo $new_routers > /tmp/${interface}_router
+			fi
+			# 2nd and subsequent default routers error out, so explicitly
+			# stop processing the list after the first one.
+			break
+		done
+	fi
 
 	if [ -n "$new_static_routes" ]; then
 		$LOGGER "New Static Routes ($interface): $new_static_routes"

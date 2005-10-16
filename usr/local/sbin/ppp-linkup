@@ -1,0 +1,22 @@
+#!/bin/sh
+
+rm -f /var/etc/nameservers.conf
+
+# unset CGI environment variables so as not to confuse PHP
+unset CONTENT_TYPE GATEWAY_INTERFACE REMOTE_USER REMOTE_ADDR AUTH_TYPE
+unset HTTP_USER_AGENT CONTENT_LENGTH SCRIPT_FILENAME HTTP_HOST
+unset SERVER_SOFTWARE HTTP_REFERER SERVER_PROTOCOL REQUEST_METHOD
+unset SERVER_PORT SCRIPT_NAME SERVER_NAME
+
+# write nameservers to file
+if [ "$6" = "dns1" ]; then
+	echo $7 >> /var/etc/nameservers.conf
+fi
+if [ "$8" = "dns2" ]; then
+	echo $9 >> /var/etc/nameservers.conf
+fi
+
+# let the configuration system know that the
+# WAN IP address has changed
+/etc/rc.newwanip
+

@@ -1029,6 +1029,13 @@ EOD;
 	/* fire up mpd */
 	mwexec("/usr/local/sbin/mpd -b -d {$g['varetc_path']} -p {$g['varrun_path']}/mpd.pid pppoe");
 
+        /* sleep until wan is up */
+        while(!file_exists("{$g['tmp_path']}/wanup")) {
+                sleep(1);
+        }
+        unlink_if_exists("{$g['tmp_path']}/wanup");
+
+
 	return 0;
 }
 

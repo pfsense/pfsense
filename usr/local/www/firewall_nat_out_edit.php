@@ -237,12 +237,10 @@ function sourcesel_change() {
         case 1: // network
             document.iform.source.disabled = 0;
             document.iform.source.disabled = 0;
-	    document.iform.sourceport.disabled = 0;	    
             break;
         default:
 	    document.iform.source.value = "";
 	    document.iform.sourceport.value = "";
-	    document.iform.sourceport.disabled = 1;    
             document.iform.source.disabled = 1;
             document.iform.source_subnet.value = "24";
             document.iform.source_subnet.disabled = 1;
@@ -299,24 +297,14 @@ function sourcesel_change() {
 			</td></tr>
                         <td>Address:&nbsp;&nbsp;</td>
                         <td><input name="source" type="text" class="formfld" id="source" size="20" value="<?=htmlspecialchars($pconfig['source']);?>">/<select name="source_subnet" class="formfld" id="source_subnet">
-                          <?php for ($i = 32; $i >= 0; $i--): ?>
-                          <option value="<?=$i;?>" <?php if ($i == $pconfig['source_subnet']) echo "selected"; ?>>
-                          <?=$i;?>
-                          </option>
-                          <?php endfor; ?>
+<?php for ($i = 32; $i >= 0; $i--): ?>
+                          <option value="<?=$i;?>"<?php if ($i == $pconfig['source_subnet']) echo " selected"; ?>><?=$i;?></option>
+<?php endfor; ?>
                           </select></td>
                       </tr>
                       <tr>
                         <td>&nbsp;</td>
                         <td><span class="vexpl">Enter the source network for the outbound NAT mapping.</span></td>
-                      </tr>
-                      <tr>
-                        <td>Port:&nbsp;&nbsp;</td>
-                        <td><input name="sourceport" type="text" class="formfld" id="sourceport" size="5" value="<?=htmlspecialchars($pconfig['sourceport']);?>"></td>
-                      </tr>
-                      <tr>
-                        <td>&nbsp;</td>
-                        <td><span class="vexpl">Enter the source port for the outbound NAT mapping.</span></td>
                       </tr>
                     </table></td>
                 </tr>
@@ -331,9 +319,9 @@ function sourcesel_change() {
                       <tr>
                         <td>Type:&nbsp;&nbsp;</td>
                         <td><select name="destination_type" class="formfld" onChange="typesel_change()">
-                            <option value="any" <?php if ($pconfig['destination'] == "any") echo "selected"; ?>>
+                            <option value="any"<?php if ($pconfig['destination'] == "any") echo " selected"; ?>>
                             any</option>
-                            <option value="network" <?php if ($pconfig['destination'] != "any") echo "selected"; ?>>
+                            <option value="network"<?php if ($pconfig['destination'] != "any") echo " selected"; ?>>
                             Network</option>
                           </select></td>
                       </tr>
@@ -342,11 +330,9 @@ function sourcesel_change() {
                         <td><input name="destination" type="text" class="formfld" id="destination" size="20" value="<?=htmlspecialchars($pconfig['destination']);?>">
                           /
                           <select name="destination_subnet" class="formfld" id="destination_subnet">
-                            <?php for ($i = 32; $i >= 0; $i--): ?>
-                            <option value="<?=$i;?>" <?php if ($i == $pconfig['destination_subnet']) echo "selected"; ?>>
-                            <?=$i;?>
-                            </option>
-                            <?php endfor; ?>
+<?php for ($i = 32; $i >= 0; $i--): ?>
+                            <option value="<?=$i;?>"<?php if ($i == $pconfig['destination_subnet']) echo " selected"; ?>><?=$i;?></option>
+<?php endfor; ?>
                           </select> </td>
                       </tr>
                       <tr>
@@ -359,26 +345,41 @@ function sourcesel_change() {
                         <td><input name="natport" type="text" class="formfld" id="natport" size="5" value="<?=htmlspecialchars($pconfig['natport']);?>"> (leave blank for any)</td>
                       </tr>
                     </table>
+		  </td>
                 </tr>
                 <tr>
-                  <td valign="top" class="vncell">Target</td>
-                  <td class="vtable">
-			<select name="target" class="formfld">
-				<option value="" <?php if (!$pconfig['target']) echo "selected"; ?>>Interface address</option>
-				<?php
-				if (is_array($config['virtualip']['vip'])):
-					foreach ($config['virtualip']['vip'] as $sn): ?>
-						<option value="<?=$sn['subnet'];?>" <?php if ($sn['subnet'] == $pconfig['target']) echo "selected"; ?>><?=htmlspecialchars("{$sn['subnet']} ({$sn['descr']})");?></option>
-<?php						endforeach;
-				endif; ?>
-					<option value="" <?php if($pconfig['target'] == "any") echo "selected"; ?>>any</option>
-				</select>
-				<br />
+                  <td width="22%" valign="top" class="vncell">Target</td>
+                  <td width="78%" class="vtable">
+			<table border="0" cellspacing="0" cellpadding="0">
+			<tr>
+			  <td>Address:&nbsp;&nbsp;</td>
+			  <td><select name="target" class="formfld">
+				<option value=""<?php if (!$pconfig['target']) echo " selected"; ?>>Interface address</option>
+<?php	if (is_array($config['virtualip']['vip'])):
+		foreach ($config['virtualip']['vip'] as $sn): ?>
+				<option value="<?=$sn['subnet'];?>" <?php if ($sn['subnet'] == $pconfig['target']) echo "selected"; ?>><?=htmlspecialchars("{$sn['subnet']} ({$sn['descr']})");?></option>
+<?php 		endforeach;
+	endif; ?>
+				<option value=""<?php if($pconfig['target'] == "any") echo " selected"; ?>>any</option>
+			  </select>
+			  </td>
+			</tr>
+			<tr><td>&nbsp;</td><td>
                      <span class="vexpl">Packets matching this rule will be mapped to the IP address given here.<br>
 			If you want this rule to apply to another IP address than the IP address of the interface chosen above,
 			select it here (you need to define <a href="firewall_virtual_ip.php">Virtual IP</a> addresses on the first).
 			 Also note that if you are trying to redirect connections on the LAN select the "any" option.
-			</span></td>
+			</span>
+			</td></tr>
+			<tr>
+                          <td>Port:&nbsp;&nbsp;</td>
+                          <td><input name="sourceport" type="text" class="formfld" id="sourceport" size="5" value="<?=htmlspecialchars($pconfig['sourceport']);?>"></td>
+			</tr>
+			<tr><td>&nbsp;</td><td>
+                        <span class="vexpl">Enter the source port for the outbound NAT mapping.</span>
+			</td></tr>
+			</table>
+		  </td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>

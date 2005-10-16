@@ -531,7 +531,7 @@ EOD;
 				fclose($fd);
 
 				if(is_process_running("wpa_supplicant"))
-					mwexec("$killall" . " wpa_supplicant");
+					mwexec("$killall wpa_supplicant");
 			}
 		break;
 
@@ -571,7 +571,7 @@ EOD;
 				fclose($fd);
 
 				if(is_process_running("hostapd"))
-					mwexec("$killall" . " hostapd");
+					mwexec("$killall  hostapd");
 			}
 		break;
 

@@ -543,7 +543,7 @@ group={$wlcfg['wpa']['wpa_pairwise']}
 }
 EOD;
 
-				$fd = fopen("{$g['tmp_path']}/wpa_supplicant_{$if}.conf", "w");
+				$fd = fopen("{$g['varetc_path']}/wpa_supplicant_{$if}.conf", "w");
 				fwrite($fd, "{$wpa}");
 				fclose($fd);
 
@@ -583,7 +583,7 @@ ieee8021x={$wlcfg['wpa']['ieee8021x']}
 #rsn_preauth_interfaces=eth0
 EOD;
 
-				$fd = fopen("{$g['tmp_path']}/hostapd_{$if}.conf", "w");
+				$fd = fopen("{$g['varetc_path']}/hostapd_{$if}.conf", "w");
 				fwrite($fd, "{$wpa}");
 				fclose($fd);
 
@@ -620,9 +620,9 @@ EOD;
 
 	if (isset($wlcfg['wpa']['enable'])) {
 		if ($wlcfg['mode'] == BSS) 
-			mwexec("$wpa_supplicant -i {$if} -c {$g['etc_path']}/wpa_supplicant_{$if}.conf");
+			mwexec("$wpa_supplicant -i {$if} -c {$g['varetc_path']}/wpa_supplicant_{$if}.conf");
 		if ($wlcfg['mode'] == hostap) 
-			mwexec("$hostapd -B {$g['tmp_path']}/hostapd_{$if}.conf");
+			mwexec("$hostapd -B {$g['varetc_path']}/hostapd_{$if}.conf");
 	}
 
 	/* Write ifconfig settings to tmp file so we can see if user set something weird */ 

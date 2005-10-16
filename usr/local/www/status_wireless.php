@@ -1,22 +1,19 @@
 #!/usr/local/bin/php
-<?php 
-/* $Id$ */
+<?php
 /*
 	status_wireless.php
-	part of m0n0wall (http://m0n0.ch/wall)
-	
-	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2004 Scott Ullrich
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 	
 	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
+	this list of conditions and the following disclaimer.
 	
 	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
 	
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -30,173 +27,114 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-require("guiconfig.inc");
+require_once("config.inc");
+require_once("guiconfig.inc");
 
-function get_wireless_info($ifdescr) {
-	
+function gentitle_pkg($pgname) {
 	global $config;
-	
-	$ifinfo = array();
-	$ifinfo['if'] = $config['interfaces'][$ifdescr]['if'];
-	
-	/* get signal strength cache */
-	exec("/usr/sbin/wicontrol -i " . $ifinfo['if'] . " -C", $sscache);
-	
-	$ifinfo['sscache'] = array();
-	foreach ($sscache as $ss) {
-		if ($ss) {
-			$ssa = preg_split("/\s+/", $ss);
-			$sscent = array();
-			$sscent['mac'] = chop($ssa[1], ",");
-			$sscent['ipaddr'] = chop($ssa[2], ",");
-			$sscent['sig'] = chop($ssa[4], ",");
-			$sscent['noise'] = chop($ssa[6], ",");
-			$sscent['qual'] = chop($ssa[8], ",");
-			$ifinfo['sscache'][] = $sscent;
-		}
-	}
-	
-	/* if in hostap mode: get associated stations */
-	if ($config['interfaces'][$ifdescr]['wireless']['mode'] == "hostap") {
-		exec("/usr/sbin/wicontrol -i " . $ifinfo['if'] . " -l", $aslist);
-		
-		$ifinfo['aslist'] = array();
-		array_shift($aslist);
-		foreach ($aslist as $as) {
-			if ($as) {
-				if (preg_match("/^ap/", $as)) {
-					if (is_array($aslent) && count($aslent))
-						$ifinfo['aslist'][] = $aslent;
-					$aslent = array();
-				} else if (preg_match("/BSSID:\s*\[ (.*) \]/", $as, $matches)) {
-					$aslent['bssid'] = $matches[1];
-				} else if (preg_match("/\[dBm\]:\s*\[ .* \/ (.*) \/ (.*) \]/", $as, $matches)) {
-					$aslent['sig'] = $matches[1];
-					$aslent['noise'] = $matches[2];
-				}
-			}
-		}
-		if (is_array($aslent) && count($aslent))
-			$ifinfo['aslist'][] = $aslent;
-	}
-	
-	return $ifinfo;
+	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
 }
 
-$pgtitle = "Status: Wireless";
+$pgtitle = "Diagnostics: Wireless Status";
 include("head.inc");
 
-?>
-
-<form>
-
-This program is currently undergoing changes and is broke.  Check back before release!
-
-<?php
-
-exit;
-
+$if = $_POST['if'];
+if($_GET['if'] <> "")
+	$if = $_GET['if'];
+if($if == "") {
+	/* Find the first interface
+	   that is wireless */
+	foreach($config['interfaces'] as $interface) {
+		if($interface['wireless'] <> "") {
+			$if = $interface['if'];
+			break;
+		}
+	}
+}
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+<?php
+include("fbegin.inc");
+?>
 <p class="pgtitle"><?=$pgtitle?></p>
-<?php $i = 0; $ifdescrs = array();
+<form action="carp_status.php" method="post">
+<?php if ($savemsg) print_info_box($savemsg); ?>
 
-	if (is_array($config['interfaces']['wan']['wireless']) &&
-			preg_match($g['wireless_regex'], $config['interfaces']['wan']['if']))
-			$ifdescrs['wan'] = 'WAN';
-			
-	if (is_array($config['interfaces']['lan']['wireless']) &&
-			preg_match($g['wireless_regex'], $config['interfaces']['lan']['if']))
-			$ifdescrs['lan'] = 'LAN';
-	
-	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-		if (is_array($config['interfaces']['opt' . $j]['wireless']) &&
-			isset($config['interfaces']['opt' . $j]['enable']) &&
-			preg_match($g['wireless_regex'], $config['interfaces']['opt' . $j]['if']))
-			$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
+<div id="mainarea">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr><td>
+<?php
+$tab_array = array();
+foreach($config['interfaces'] as $interface) {
+	if($interface['wireless'] <> "") {
+		if($if == $interface['if'])
+			$enabled = true;
+		else
+			$enabled = false;
+		$friendly = convert_real_interface_to_friendly_interface_name($interface['if']);
+		if($interface['descr'] <> "")
+			$friendly = $interface['descr'];
+		$tab_array[] = array("Status ($friendly)", $enabled, "status_wireless.php?if={$interface['if']}");
+		break;
 	}
-		
-	if (count($ifdescrs) > 0): ?>
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-              <?php
-			      foreach ($ifdescrs as $ifdescr => $ifname): 
-				  $ifinfo = get_wireless_info($ifdescr);
-			  ?>
-              <?php if ($i): ?>
-              <tr> 
-                <td colspan="8" class="list" height="12"></td>
-              </tr>
-              <?php endif; ?>
-              <tr> 
-                <td colspan="2" class="listtopic"> 
-                  <?=htmlspecialchars($ifname);?> interface (SSID &quot;<?=htmlspecialchars($config['interfaces'][$ifdescr]['wireless']['ssid']);?>&quot;)</td>
-              </tr>
-              <tr> 
-                <td width="22%" valign="top" class="vncellt">Signal strength 
-                  cache</td>
-                <td width="78%" class="listrpad"> 
-                  <table width="100%" border="0" cellpadding="0" cellspacing="0">
-                    <tr> 
-                      <td width="30%" class="listhdrr">MAC address</td>
-                      <td width="25%" class="listhdrr">IP address</td>
-                      <td width="15%" class="listhdrr">Signal</td>
-                      <td width="15%" class="listhdrr">Noise</td>
-                      <td width="15%" class="listhdr">Quality</td>
-                    </tr>
-                    <?php foreach ($ifinfo['sscache'] as $ss): ?>
-		    <?php if($ss['ipaddr'] <> "0.0.0.0"
-			  and $ss['ipaddr'] <> ""): ?>
-                    <tr>                                 
-                      <td class="listlr"> 
-                        <?=htmlspecialchars($ss['mac']);?>
-                      </td>
-                      <td class="listr"> 
-                        <?=htmlspecialchars($ss['ipaddr']);?>
-                      </td>
-                      <td class="listr"> 
-                        <?=htmlspecialchars($ss['sig']);?>
-                      </td>
-                      <td class="listr"> 
-                        <?=htmlspecialchars($ss['noise']);?>
-                      </td>
-                      <td class="listr"> 
-                        <?=htmlspecialchars($ss['qual']);?>
-                      </td>
-                    </tr>
-		    <?php endif; ?>
-                    <?php endforeach; ?>
-                  </table></td>
-              </tr><?php if ($ifinfo['aslist']): ?>
-              <tr> 
-                <td width="22%" valign="top" class="vncellt">Associated stations 
-                </td>
-                <td width="78%" class="listrpad"> 
-                  <table width="100%" border="0" cellpadding="0" cellspacing="0">
-                    <tr> 
-                      <td width="40%" class="listhdrr">BSSID</td>
-                      <td width="30%" class="listhdrr">Signal</td>
-                      <td width="30%" class="listhdrr">Noise</td>
-                    </tr>
-                    <?php foreach ($ifinfo['aslist'] as $as): ?>
-                    <tr> 
-                      <td class="listlr"> 
-                        <?=htmlspecialchars($as['bssid']);?>
-                      </td>
-                      <td class="listr"> 
-                        <?=htmlspecialchars($as['sig']);?> dBm
-                      </td>
-                      <td class="listr"> 
-                        <?=htmlspecialchars($as['noise']);?> dBm
-                      </td>
-                    </tr>
-                    <?php endforeach; ?>
-                  </table></td>
-              </tr><?php endif; ?>
-              <?php $i++; endforeach; ?>
-            </table>
-<?php else: ?>
-<strong>No supported wireless interfaces were found for status display (only cards that use the wi[n], ath[n], an[n], ral[n], ural[n] and wai[n] driver are supported).</strong>
-<?php endif; ?>
+}
+/* XXX: add other wireless interfaces here */
+display_top_tabs($tab_array);
+?>
+</td></tr>
+<tr><td class="tabcont">
+<table colspan="3" cellpadding="3" width="100%">
+
+<?php
+
+/* table header */
+print "\n<tr><!-- " . count($state_split) . " -->";
+print "<tr bgcolor='#990000'>";
+print "<td><b><font color='#ffffff'>ADDR</td>";
+print "<td><b><font color='#ffffff'>AID</td>";
+print "<td><b><font color='#ffffff'>CHAN</td>";
+print "<td><b><font color='#ffffff'>RATE</td>";
+print "<td><b><font color='#ffffff'>RSSI</td>";
+print "<td><b><font color='#ffffff'>IDLE</td>";
+print "<td><b><font color='#ffffff'>TXSEQ</td>";
+print "<td><b><font color='#ffffff'>RXSEQ</td>";
+print "<td><b><font color='#ffffff'>CAPS</td>";
+print "<td><b><font color='#ffffff'>ERP</td>";
+print "</tr>\n\n";
+
+$states=split("\n",`/sbin/ifconfig {$if} list sta | grep -v "AID CHAN"`);
+
+$counter=0;
+foreach($states as $state) {
+	$state_fixed = str_replace("  ", " ", $state);
+	$state_fixed = str_replace("  ", " ", $state_fixed);
+	$state_fixed = str_replace("  ", " ", $state_fixed);
+	$state_split = split(" ", $state_fixed);
+	print "<tr>";
+	print "<td>{$state_split[0]}</td>";
+	print "<td>{$state_split[1]}</td>";
+	print "<td>{$state_split[2]}</td>";
+	print "<td>{$state_split[3]}</td>";
+	print "<td>{$state_split[4]}</td>";
+	print "<td>{$state_split[5]}</td>";
+	print "<td>{$state_split[6]}</td>";
+	print "<td>{$state_split[7]}</td>";
+	print "<td>{$state_split[8]}</td>";
+	print "<td>{$state_split[9]}</td>";
+	print "</tr>\n";
+	print "<!-- $state_fixed -->\n";
+}
+
+?>
+</table>
+
+</center>
+</td></tr>
+</table>
+</div>
+
 <?php include("fend.inc"); ?>
+<meta http-equiv="refresh" content="120;url=status_wireless.php?if=<?php echo $if; ?>">
+</body>
+</html>

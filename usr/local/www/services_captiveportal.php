@@ -113,22 +113,46 @@ if ($_POST) {
 		$config['captiveportal']['interface'] = $_POST['cinterface'];
 		$config['captiveportal']['timeout'] = $_POST['timeout'];
 		$config['captiveportal']['idletimeout'] = $_POST['idletimeout'];
-		$config['captiveportal']['enable'] = $_POST['enable'] ? true : false;
 		$config['captiveportal']['auth_method'] = $_POST['auth_method'];
-		$config['captiveportal']['radacct_enable'] = $_POST['radacct_enable'] ? true : false;
-		$config['captiveportal']['reauthenticate'] = $_POST['reauthenticate'] ? true : false;
 		$config['captiveportal']['reauthenticateacct'] = $_POST['reauthenticateacct'];
-		$config['captiveportal']['httpslogin'] = $_POST['httpslogin_enable'] ? true : false;
 		$config['captiveportal']['httpsname'] = $_POST['httpsname'];
 		$config['captiveportal']['certificate'] = base64_encode($_POST['cert']);
 		$config['captiveportal']['private-key'] = base64_encode($_POST['key']);
-		$config['captiveportal']['logoutwin_enable'] = $_POST['logoutwin_enable'] ? true : false;
-		$config['captiveportal']['nomacfilter'] = $_POST['nomacfilter'] ? true : false;
 		$config['captiveportal']['redirurl'] = $_POST['redirurl'];
 		$config['captiveportal']['radiusip'] = $_POST['radiusip'];
 		$config['captiveportal']['radiusport'] = $_POST['radiusport'];
 		$config['captiveportal']['radiusacctport'] = $_POST['radiusacctport'];
 		$config['captiveportal']['radiuskey'] = $_POST['radiuskey'];
+
+		if($_POST['radacct_enable'] == "yes")
+			$config['captiveportal']['radacct_enable'] = true;
+		else 
+			unset($config['captiveportal']['radacct_enable']);
+
+		if($_POST['reauthenticate'] == "yes")
+			$config['captiveportal']['reauthenticate'] = true;
+		else
+			unset($config['captiveportal']['reauthenticate']);
+		
+		if($_POST['enable'] == "yes")
+			$config['captiveportal']['enable'] = true;
+		else
+			unset($config['captiveportal']['enable']);
+			
+		if($_POST['httpslogin_enable'] == "yes")
+			$config['captiveportal']['httpslogin'] =  true;
+		else
+			unset($config['captiveportal']['httpslogin']);
+		
+		if($_POST['logoutwin_enable'] == "yes")
+			$config['captiveportal']['logoutwin_enable'] = true;
+		else
+			unset($config['captiveportal']['logoutwin_enable']);
+
+		if($_POST['nomacfilter'] == "yes")
+			$config['captiveportal']['nomacfilter'] = true;
+		else
+			unset($config['captiveportal']['nomacfilter']);
 		
 		/* file upload? */
 		if (is_uploaded_file($_FILES['htmlfile']['tmp_name']))

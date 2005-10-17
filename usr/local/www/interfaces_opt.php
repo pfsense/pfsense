@@ -368,10 +368,6 @@ function type_change(enable_change,enable_change_pptp) {
 					?>                    </select>
 				 </td>
 				</tr>
-				<?php /* Wireless interface? */
-				if (isset($optcfg['wireless']))
-					wireless_config_print();
-				?>
 		<tr>
                   <td width="22%" valign="top" class="vncell">Gateway</td>
                   <td width="78%" class="vtable">
@@ -380,6 +376,10 @@ function type_change(enable_change,enable_change_pptp) {
 			If you have multiple WAN connections, enter the next hop gateway (router) IP address here.  Otherwise, leave this option blank.
 		  </td>
 		</tr>
+				<?php /* Wireless interface? */
+				if (isset($optcfg['wireless']))
+					wireless_config_print();
+				?>		
                 <tr>
                   <td colspan="2" valign="top" height="16"></td>
                 </tr>

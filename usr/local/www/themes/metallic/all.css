@@ -388,6 +388,10 @@ table#marquee div#container div#scroller {
 	text-decoration: none;
 	font-size: 11px;
 }
+.redlnk {
+	color: #990000;
+	text-decoration: none;
+}
 .tblnk {
 	color: #FFFFFF;
 	text-decoration: none;

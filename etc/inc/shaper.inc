@@ -156,13 +156,17 @@ function is_subqueue_used_on_interface($queuename, $interface) {
 	if (!is_array($qconfig['shaper']['queue'])) return 0;
 
 	foreach ($qconfig['shaper']['queue'] as $queue) {
-		if($queue['attachtoqueue'] == $queuename)
-		$subqueue_interface = filter_is_queue_being_used_on_interface($queue['name'], $interface);
-		/* Useful debugging code for when queues are messed up
-		* echo "{$subqueue_interface}/{$interface}/{$queue['name']}/{$queuename}\n";
-		*/
-		if ($subqueue_interface != ""){
-			return 1;
+		if($queue['attachtoqueue'] == $queuename) {
+			/* recurse if we're a parent queue */
+			if ($queue['parentqueue'] == "on") {
+				return is_subqueue_used_on_interface($queue['name'], $interface);
+			}
+
+			/* If we're not a parent check to see if the queue is used on this interface */
+			$subqueue_interface = filter_is_queue_being_used_on_interface($queue['name'], $interface);
+			if ($subqueue_interface != ""){
+				return 1;
+			}
 		}
 	}
 	return 0;
@@ -199,28 +203,8 @@ function filter_setup_altq_interfaces() {
 		$queue_names = "";
 		$is_first = "";
 
-		$workting_with_interface = $ifname;
+		$queue_names = find_root_queue($ifname);
 
-		foreach ($config['shaper']['queue'] as $queue) {
-			$rule_interface = "";
-			$q = $queue;
-			$rule_interface = filter_is_queue_being_used_on_interface($q['name'], $workting_with_interface);
-			if ($rule_interface == $workting_with_interface) {
-				if(!isset($q['attachtoqueue'])) {
-					if($is_first) $queue_names .= ", ";
-					$queue_names .= $q['name'];
-					$is_first = "1";
-				}
-			} else {
-				if(isset($q['parentqueue']) && ($q['parentqueue'] <> "")) {
-					if(is_subqueue_used_on_interface($q['name'], $workting_with_interface)) {
-						$queue_names .= " ";
-						$queue_names .= $q['name'];
-					}
-				}
-			}
-
-		}
 		if($queue_names <> ""){
 			$altq_rules .= "altq on {$config['interfaces'][$ifname]['if']} ";
 			if($config['interfaces'][$ifname]['bandwidth'] <> "")
@@ -233,6 +217,34 @@ function filter_setup_altq_interfaces() {
 	}
 	return $altq_rules;
 }
+
+/* Find the root queue for an interface */
+function find_root_queue($ifname) {
+	global $config;
+
+	$dbg = fopen("/tmp/debug", 'a');
+	foreach ($config['shaper']['queue'] as $queue) {
+		$rule_interface = "";
+		$q = $queue;
+		fwrite($dbg, "interface: {$ifname}\n");
+		fwrite($dbg, "queue: {$q['name']} parent: {$q['parentqueue']} attached: {$q['attachtoqueue']}\n");
+		/* if we're a parentqueue and aren't attached to another queue we're probably a root */
+		if ((isset($q['parentqueue']) && $q['parentqueue'] <> "") && (!isset($q['attachtoqueue']) || $q['attachtoqueue'] == "")) {
+			fwrite($dbg, "queue: {$q['name']} is a parent\n");
+			/* Confirm that this is a valid queue for this interface */
+			$rule_interface = is_subqueue_used_on_interface($q['name'], $ifname);
+			if ($rule_interface == 1) {
+				fwrite($dbg, "queue: {$q['name']} is a parent on {$ifname}\n");
+				$queue_names .= " ";
+				$queue_names .= $q['name'];
+			}
+		}
+	}
+	fclose($dbg);
+	return $queue_names;
+}
+
+	
 
 
 function is_queue_attached_children($name) {

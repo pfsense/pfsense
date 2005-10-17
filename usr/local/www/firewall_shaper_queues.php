@@ -101,6 +101,53 @@ if ($_GET['act'] == "del") {
 	}
 }
 
+if ($_POST) {
+        /* yuck - IE won't send value attributes for image buttons, while Mozilla does -
+           so we use .x/.y to fine move button clicks instead... */
+        unset($movebtn);
+        foreach ($_POST as $pn => $pd) {
+                if (preg_match("/move_(\d+)_x/", $pn, $matches)) {
+                        $movebtn = $matches[1];
+                        break;
+                }
+        }
+        /* move selected rules before this rule */
+        if (isset($movebtn) && is_array($_POST['queue']) && count($_POST['queue'])) {
+                $a_queue_new = array();
+
+                /* copy all rules < $movebtn and not selected */
+                for ($i = 0; $i < $movebtn; $i++) {
+                        if (!in_array($i, $_POST['queue']))
+                                $a_queue_new[] = $a_queues[$i];
+                }
+
+                /* copy all selected rules */
+                for ($i = 0; $i < count($a_queues); $i++) {
+                        if ($i == $movebtn)
+                                continue;
+                        if (in_array($i, $_POST['queue']))
+                                $a_queue_new[] = $a_queues[$i];
+                }
+
+                /* copy $movebtn rule */
+                if ($movebtn < count($a_queues))
+                        $a_queue_new[] = $a_queues[$movebtn];
+
+                /* copy all rules > $movebtn and not selected */
+                for ($i = $movebtn+1; $i < count($a_queues); $i++) {
+                        if (!in_array($i, $_POST['queue']))
+                                $a_queue_new[] = $a_queues[$i];
+                }
+
+                $a_queues = $a_queue_new;
+                write_config();
+                touch($d_shaperconfdirty_path);
+                header("Location: firewall_shaper_queues.php");
+                exit;
+        }
+}
+
+
 $pgtitle = "Firewall: Shaper: Queues";
 include("head.inc");
 
@@ -110,6 +157,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <form action="firewall_shaper_queues.php" method="post">
+<script type="text/javascript" language="javascript" src="row_toggle.js"></script>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_shaperconfdirty_path)): ?><p>
@@ -129,34 +177,34 @@ include("head.inc");
     <td>
 	<div id="mainarea">
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td width="5%" class="listhdrr">No.</td>
+		<tr id="frheader">
+                        <td width="3%" class="list">&nbsp;</td>
+                        <td width="0%" class="list">&nbsp;</td>
 			<td width="5%" class="listhdrr">Flags</td>
                         <td width="5%" class="listhdrr">Priority</td>
 			<td width="5%" class="listhdr">Default</td>
 			<td width="5%" class="listhdr">Bandwidth</td>
-                        <td width="70%" class="listhdr">Name</td>
-                        <td width="10%" class="list"></td>
+                        <td width="65%" class="listhdr">Name</td>
+                        <td width="10%" class="list">&nbsp;</td>
                       </tr>
                       <?php $i = 0; foreach ($a_queues as $queue): ?>
-                      <tr valign="top">
-                        <td class="listlr" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
-                          <?=($i+1);?>
+                      <tr valign="top" id="fr<?=$i;?>">
+<td class="listt"><input type="checkbox" id="frc<?=$i;?>" name="queue[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$i;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
+			<td class="listt" onClick="fr_toggle(<?=$i;?>)" id="frc<?=$i;?>" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">&nbsp;</td>
+			<td class="listr" onClick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
+<?php
+     if($queue['red'] <> "") echo " RED";
+     if($queue['rio'] <> "") echo " RIO";
+     if($queue['ecn'] <> "") echo " ECN";
+     if($queue['borrow'] <> "") echo " Borrow";
+     if(isset($queue['ack'])) echo "ACK"
+?>
+			&nbsp;
 			</td>
-			<td class="listlr" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
-			  <?php
-			     if($queue['red'] <> "") echo " RED";
-			     if($queue['rio'] <> "") echo " RIO";
-			     if($queue['ecn'] <> "") echo " ECN";
-			     if($queue['borrow'] <> "") echo " Borrow";
-			     if(isset($queue['ack'])) echo "ACK"
-			  ?>
-			  &nbsp;
-			</td>
-                        <td class="listr" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
+                        <td class="listr" onClick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
                           <?=$queue['priority'];?>&nbsp;
 			</td>
-			<td class="listr" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
+			<td class="listr" onClick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
 			  <?php
 				if($queue['defaultqueue'] <> "") {
 					echo "Yes";
@@ -165,17 +213,18 @@ include("head.inc");
 				}
 			  ?>
 			</td>
-                        <td class="listr" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
+                        <td class="listr" onClick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
                           <?=htmlspecialchars($queue['bandwidth']);?> <?=htmlspecialchars($queue['bandwidthtype']);?>
                           &nbsp;
 			</td>
-                        <td class="listbg" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
+                        <td class="listbg" onClick="fr_toggle(<?=$i;?>)" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
                           <font color="#FFFFFF"><?=htmlspecialchars($queue['name']);?>
                           &nbsp;
 			</td>
                         <td valign="middle" nowrap class="list">
                           <table border="0" cellspacing="0" cellpadding="1">
                             <tr>
+			      <td><input name="move_<?=$i;?>" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" width="17" height="17" title="move selected queue before this rule" onMouseOver="fr_insline(<?=$i;?>, true)" onMouseOut="fr_insline(<?=$i;?>, false)"></td>
                               <td valign="middle"><a href="firewall_shaper_queues_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
                               <td valign="middle"><a href="firewall_shaper_queues.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this queue?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
                             </tr>
@@ -184,7 +233,7 @@ include("head.inc");
                       </tr>
                       <?php $i++; endforeach; $total_queues = $i; ?>
                       <tr>
-                        <td class="list" colspan="6"></td>
+                        <td class="list" colspan="7"></td>
                         <td class="list">
                           <table border="0" cellspacing="0" cellpadding="1">
                             <tr>
@@ -193,7 +242,7 @@ include("head.inc");
                           </table>
                         </td>
                       </tr>
-		      <tr><td colspan="6">
+		      <tr><td colspan="7">
 		    <p>
                     <strong><span class="red">Note:</span></strong><strong><br></strong>
                       A queue can only be deleted if it is not referenced by any rules.<br>

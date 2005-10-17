@@ -215,8 +215,8 @@ include("head.inc");
 		<td>
 <?php
 		$tab_array = array();
-		$tab_array[1] = array("Remote", false, "diag_confbak.php");
-		$tab_array[0] = array("Local", true, "diag_backup.php");
+		$tab_array[0] = array("Remote", false, "diag_confbak.php");
+		$tab_array[1] = array("Local", true, "diag_backup.php");
 		display_top_tabs($tab_array);
 ?>			
 		</td>

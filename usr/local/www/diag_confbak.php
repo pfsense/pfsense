@@ -61,8 +61,8 @@ include("head.inc");
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Remote", false, "diag_backup.php");
-	$tab_array[1] = array("Local", true, "diag_confbak.php");
+	$tab_array[0] = array("Remote", true, "diag_confbak.php");
+	$tab_array[1] = array("Local", false, "diag_backup.php");
 	display_top_tabs($tab_array);
 ?>			
   </td></tr>
@@ -103,17 +103,18 @@ if(is_array($confvers)) {
 			    </tr>
                <?php
                   } ?>
-<?php } else {
-		print_info_box("No backups found.");
-      }
+<?php } else { ?>
+		<tr><td>
+		<?php print_info_box("No backups found."); ?>
+		</td></tr>
+<?php      }
 ?>
 	</table>
 	</div>
     </td>
   </tr>
 </table>
-</body>
-</html>
+</form>
 <?php include("fend.inc"); ?>
 </body>
 </html>

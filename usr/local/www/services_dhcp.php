@@ -141,8 +141,6 @@ if ($_POST) {
 		$config['dhcpd'][$if]['range']['to'] = $_POST['range_to'];
 		$config['dhcpd'][$if]['defaultleasetime'] = $_POST['deftime'];
 		$config['dhcpd'][$if]['maxleasetime'] = $_POST['maxtime'];
-		$config['dhcpd'][$if]['enable'] = $_POST['enable'] ? true : false;
-		$config['dhcpd'][$if]['denyunknown'] = $_POST['denyunknown'] ? true : false;
 		$config['dhcpd'][$if]['failover_peerip'] = $_POST['failover_peerip'];
 				
 		unset($config['dhcpd'][$if]['winsserver']);
@@ -160,8 +158,20 @@ if ($_POST) {
 			
 		$config['dhcpd'][$if]['gateway'] = $_POST['gateway'];
 
-		$config['dhcpd'][$if]['staticarp'] = $_POST['staticarp'] ? true : false;
-	
+		if($_POST['denyunknown'] == "yes") 
+			$config['dhcpd'][$if]['denyunknown'] = true;
+		else
+			unset($config['dhcpd'][$if]['denyunknown']);
+
+		if($_POST['enable'] == "yes")
+			$config['dhcpd'][$if]['enable'] = $_POST['enable'];
+		else
+			unset($config['dhcpd'][$if]['enable']);
+		
+		if($_POST['staticarp'] == "yes")
+			$config['dhcpd'][$if]['staticarp'] = true;
+		else 
+			unset($config['dhcpd'][$if]['staticarp']);
 
 		write_config();
 
@@ -245,7 +255,7 @@ function enable_change(enable_over) {
                       <tr> 
                         <td width="22%" valign="top" class="vtable">&nbsp;</td>
                         <td width="78%" class="vtable">
-<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
+			  <input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
                           <strong>Enable DHCP server on 
                           <?=htmlspecialchars($iflist[$if]);?>
                           interface</strong></td>
@@ -253,7 +263,7 @@ function enable_change(enable_over) {
 				  <tr>
 	              <td width="22%" valign="top" class="vtable">&nbsp;</td>
                       <td width="78%" class="vtable">
-<input name="denyunknown" id="denyunknown" type="checkbox" value="yes" <?php if ($pconfig['denyunknown']) echo "checked"; ?>>
+			<input name="denyunknown" id="denyunknown" type="checkbox" value="yes" <?php if ($pconfig['denyunknown']) echo "checked"; ?>>
                       <strong>Deny unknown clients</strong><br>
                       If this is checked, only the clients defined below will get DHCP leases from this server. </td>
 		      		  </tr>

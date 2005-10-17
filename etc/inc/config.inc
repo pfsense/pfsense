@@ -750,10 +750,11 @@ function write_config($desc="Unknown", $backup = true) {
 	$config['revision']['time'] = $changetime;
 	
 	config_lock();
-	conf_mount_rw();
 
 	/* generate configuration XML */
 	$xmlconfig = dump_xml_config($config, $g['xml_rootobj']);
+
+	conf_mount_rw();
 
 	/* write new configuration */
 	$fd = fopen("{$g['cf_conf_path']}/config.xml", "w");

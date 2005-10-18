@@ -17,6 +17,8 @@ if [ -z $1 ];then
     exit 0
 fi
 
+/etc/rc.conf_mount_rw
+
 if [ "$1" = "-all" ];then
     echo "This will update all .php .js and .inc pages on your pfsense box!"
     FMATCHES=`find /etc/inc/ /usr/local/www /usr/local/captiveportal -name "*.php" -or -name "*.inc" -or -name "*.js"`
@@ -26,8 +28,6 @@ elif [ ! -f $1 ];then
 else
     FMATCHES=$1
 fi
-
-/etc/rc.conf_mount_rw
 
 for file in $FMATCHES ;do
 

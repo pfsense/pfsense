@@ -68,7 +68,6 @@ if (!is_array($config['dhcpd'][$if]['staticmap'])) {
 }
 staticmaps_sort($if);
 $a_maps = &$config['dhcpd'][$if]['staticmap'];
-staticmaps_sort($if);
 
 function is_inrange($test, $start, $end) {
 	if ( (ip2long($test) < ip2long($end)) && (ip2long($test) > ip2long($start)) )

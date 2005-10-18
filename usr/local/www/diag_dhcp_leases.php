@@ -111,6 +111,7 @@ while ($data = array_shift($return)) {
 	if ($data[0] == "lease") {
 		$d = array_shift($return);
 		$leases[$i]['ip'] = $d[0];
+		$leases[$i]['type'] = "dynamic";
 	}
 	if ($data[0] == "client-hostname") {
 		$d = array_shift($return);
@@ -121,6 +122,12 @@ while ($data = array_shift($return)) {
 		if ($d[0] == "ethernet") {
 			$d = array_shift($return);
 			$leases[$i]['mac'] = $d[0];
+			$online = exec("/usr/sbin/arp -an |/usr/bin/grep {$d[0]}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
+			if ($online == 1) {
+				$leases[$i]['online'] = 'online';
+			} else {
+				$leases[$i]['online'] = 'offline';
+			}
 		}
 	} else if ($data[0] == "starts") {
 		$d = array_shift($return);
@@ -138,10 +145,43 @@ while ($data = array_shift($return)) {
 		$d = array_shift($return);
 		if ($d[0] == "state") {
 			$d = array_shift($return);
-			$leases[$i]['act'] = $d[0];
+			switch($d[0]) {
+				case 'active':
+					$leases[$i]['act'] = 'active';
+					break;
+				case 'free':
+					$leases[$i]['act'] = 'expired';
+					break;
+				case 'backup':
+					$leases[$i]['act'] = 'reserved';	
+					$leases[$i]['online'] = 'offline';
+					break;
+			}
 		}
 	} else if (($data[0] == "}") && ($data[1] == 1))		// End of group
 		$i++;
+}
+foreach($config['interfaces'] as $ifname => $ifarr) {
+	if (is_array($config['dhcpd'][$ifname]['staticmap'])) {
+		foreach($config['dhcpd'][$ifname]['staticmap'] as $static) {
+			$slease = array();
+			$slease['ip'] = $static['ipaddr'];
+			$slease['type'] = "static";
+			$slease['mac'] = $static['mac'];
+			$slease['start'] = gmdate("M d Y H:i:s", time());
+			$slease['end'] = gmdate("M d Y H:i:s", time());
+			$slease['end'] = gmdate("M d Y H:i:s", strtotime('+5 minutes'));
+			$slease['hostname'] = $static['descr'];
+			$slease['act'] = "static";
+			$online = exec("/usr/sbin/arp -an |/usr/bin/grep {$slease['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
+			if ($online == 1) {
+				$slease['online'] = 'online';
+			} else {
+				$slease['online'] = 'offline';
+			}
+			$leases[] = $slease;
+		}
+	}
 }
 
 if ($_GET['order'])
@@ -153,12 +193,14 @@ if ($_GET['order'])
     <td class="listhdrr"><a href="?all=<?=$_GET['all'];?>&order=mac">MAC address</a></td>
     <td class="listhdrr"><a href="?all=<?=$_GET['all'];?>&order=hostname">Hostname</a></td>
     <td class="listhdrr"><a href="?all=<?=$_GET['all'];?>&order=start">Start</a></td>
-    <td class="listhdr"><a href="?all=<?=$_GET['all'];?>&order=end">End</a></td>
+    <td class="listhdrr"><a href="?all=<?=$_GET['all'];?>&order=end">End</a></td>
+    <td class="listhdr"><a href="?all=<?=$_GET['all'];?>&order=online">Online</a></td>
+    <td class="listhdr"><a href="?all=<?=$_GET['all'];?>&order=act">Lease Type</a></td>
 	</tr>
 <?php
 foreach ($leases as $data) {
-	if (($data['act'] == "active") || ($_GET['all'] == 1)) {
-		if ($data['act'] != "active") {
+	if (($data['act'] == "active") || ($data['act'] == "static") || ($_GET['all'] == 1)) {
+		if ($data['act'] != "active" && $data['act'] != "static") {
 			$fspans = "<span class=\"gray\">";
 			$fspane = "</span>";
 		} else {
@@ -173,16 +215,25 @@ foreach ($leases as $data) {
                 }		
 		echo "<tr>\n";
                 echo "<td class=\"listlr\">{$fspans}{$data['ip']}{$fspane}&nbsp;</td>\n";
-                if ($data['act'] != "active") {
+                if ($data['online'] != "online") {
                         echo "<td class=\"listr\">{$fspans}<a href=\"services_wol.php?if={$data['if']}&mac={$data['mac']}\" title=\"send Wake on Lan packet to mac\">{$data['mac']}</a>{$fspane}&nbsp;</td>\n";
                 } else {
-                echo "<td class=\"listr\">{$fspans}{$data['mac']}{$fspane}&nbsp;</td>\n";
+                	echo "<td class=\"listr\">{$fspans}{$data['mac']}{$fspane}&nbsp;</td>\n";
                 }
                 echo "<td class=\"listr\">{$fspans}{$data['hostname']}{$fspane}&nbsp;</td>\n";
                 echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['start']) . "{$fspane}&nbsp;</td>\n";
                 echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['end']) . "{$fspane}&nbsp;</td>\n";
-                echo "<td class=\"list\" valign=\"middle\"><a href=\"services_dhcp_edit.php?if={$data['if']}&mac={$data['mac']}&descr={$data['hostname']}\">";
-		echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"add a static mapping for this MAC address\"></a></td>\n";
+                echo "<td class=\"listr\">{$fspans}{$data['online']}{$fspane}&nbsp;</td>\n";
+                echo "<td class=\"listr\">{$fspans}{$data['act']}{$fspane}&nbsp;</td>\n";
+		
+		if ($data['type'] == "dynamic") {
+                	echo "<td class=\"list\" valign=\"middle\"><a href=\"services_dhcp_edit.php?if={$data['if']}&mac={$data['mac']}&descr={$data['hostname']}\">";
+			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"add a static mapping for this MAC address\"></a></td>\n";
+		} else {
+                	echo "<td class=\"list\" valign=\"middle\">";
+			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus_mo.gif\" width=\"17\" height=\"17\" border=\"0\"</td>\n";
+		}
+
                 echo "<td valign=\"middle\"><a href=\"services_wol_edit.php?if={$data['if']}&mac={$data['mac']}&descr={$data['hostname']}\">";
 		echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_wol_all.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"add a Wake on Lan mapping for this MAC address\"></a></td>\n";
                 echo "</tr>\n";
@@ -195,10 +246,10 @@ foreach ($leases as $data) {
 <input type="hidden" name="order" value="<?=$_GET['order'];?>">
 <?php if ($_GET['all']): ?>
 <input type="hidden" name="all" value="0">
-<input type="submit" class="formbtn" value="Show active leases only">
+<input type="submit" class="formbtn" value="Show active and static leases only">
 <?php else: ?>
 <input type="hidden" name="all" value="1">
-<input type="submit" class="formbtn" value="Show active and expired leases">
+<input type="submit" class="formbtn" value="Show all configured leases">
 <?php endif; ?>
 </form>
 <?php else: ?>

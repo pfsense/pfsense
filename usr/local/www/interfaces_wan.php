@@ -252,8 +252,16 @@ if ($_POST) {
 			unset($wancfg['bandwidthtype']);
 		}
 
-		$wancfg['blockpriv'] = $_POST['blockpriv'] ? true : false;
-		$wancfg['blockbogons'] = $_POST['blockbogons'] ? true : false;
+		if($_POST['blockpriv'] == "yes")
+			$wancfg['blockpriv'] = true;
+		else
+			usnet($wancfg['blockpriv']);
+		
+		if($_POST['blockbogons'] == "yes")
+			$wancfg['blockbogons'] = true;
+		else
+			unset($wancfg['blockbogons']);
+		
 		$wancfg['spoofmac'] = $_POST['spoofmac'];
 		$wancfg['mtu'] = $_POST['mtu'];
 

@@ -62,56 +62,60 @@ include("fbegin.inc");
 <tr><td>
         <div id="mainarea">
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellpadding="3">
-
+		<tr id="frheader">
+			<td class="listhdrr">Type</td>
+			<td class="listhdrr">Proto</td>
+			<td class="listhdrr" colspan="7">Source -> Router -> Destination</td>
+			<td class="listhdrr">State</td>
+		</tr>
 <?php
-
-/* table header */
-print "\n<tr><!-- " . count($state_split) . " -->";
-print "<tr bgcolor='#990000'>";
-print "<td><b><font color='#ffffff'>Type</td>";
-print "<td><b><font color='#ffffff'>Proto</td>";
-print "<td colspan='7'><b><font color='#ffffff'>Source -> Router -> Destination</td>";
-print "<td><b><font color='#ffffff'>State</td>";
-print "</tr>";
-
 foreach($states as $state) {
 	$state_fixed=str_replace("  ", " ", $state);
 	$state_fixed=str_replace("  ", " ", $state_fixed);
 	$state_split = split(" ", $state_fixed);
-	print "<tr>";
+	print "<tr valign=\"top\">";
 	if(count($state_split) == 7) {
-		print "<td>{$state_split[0]}</td>";
-		print "<td>{$state_split[1]}</td>";
-		print "<td align='right'>{$state_split[2]}</td>";
-		print "<td>{$state_split[3]}</td>";
-		print "<td>{$state_split[4]}</td>";
-		print "<td>{$state_split[5]}</td>";
-		print "<td>&nbsp;</td>";
-		print "<td>&nbsp;</td>";
-		print "<td>&nbsp;</td>";
-		print "<td>{$state_split[6]}</td>";
-	} else if(count($state_split) == 8) {
-		print "<td>{$state_split[0]}</td>";
-		print "<td>{$state_split[1]}</td>";
-		print "<td align='right'>{$state_split[2]}</td>";
-		print "<td>{$state_split[3]}</td>";
-		print "<td>{$state_split[4]}</td>";
-		print "<td>{$state_split[5]}</td>";
-		print "<td>{$state_split[6]}</td>";
-		print "<td>&nbsp;</td>";
-		print "<td>&nbsp;</td>";
-		print "<td>{$state_split[7]}</td>";	
-	} else if(count($state_split) == 9) {
-		print "<td>{$state_split[0]}</td>";
-		print "<td>{$state_split[1]}</td>";
-		print "<td align='right'>{$state_split[2]}</td>";
-		print "<td>{$state_split[3]}</td>";
-		print "<td>{$state_split[4]}</td>";
-		print "<td>{$state_split[5]}</td>";
-		print "<td>{$state_split[6]}</td>";
-		print "<td>{$state_split[7]}</td>";	
-		print "<td>&nbsp;</td>";
-		print "<td>{$state_split[8]}</td>";	
+$line = <<<EOD
+		<td class="listt">{$state_split[0]}</td>
+		<td class="listt">{$state_split[1]}</td>
+		<td class="listt" align="right">{$state_split[2]}</td>
+		<td class="listt">{$state_split[3]}</td>
+		<td class="listt">{$state_split[4]}</td>
+		<td class="listt">{$state_split[5]}</td>
+		<td class="listt">&nbsp;</td>
+		<td class="listt">&nbsp;</td>
+		<td class="listt">&nbsp;</td>
+		<td class="listt">{$state_split[6]}</td>
+EOD;
+		print $line;
+	} elseif(count($state_split) == 8) {
+$line = <<<EOD
+		<td class="listt">{$state_split[0]}</td>
+		<td class="listt">{$state_split[1]}</td>
+		<td class="listt" align=r"right">{$state_split[2]}</td>
+		<td class="listt">{$state_split[3]}</td>
+		<td class="listt">{$state_split[4]}</td>
+		<td class="listt">{$state_split[5]}</td>
+		<td class="listt">{$state_split[6]}</td>
+		<td class="listt">&nbsp;</td>
+		<td class="listt">&nbsp;</td>
+		<td class="listt">{$state_split[7]}</td>	
+EOD;
+		print $line;
+	} elseif(count($state_split) == 9) {
+$line = <<<EOD
+		<td class="listt">{$state_split[0]}</td>
+		<td class="listt">{$state_split[1]}</td>
+		<td  class="listt"align="right">{$state_split[2]}</td>
+		<td class="listt">{$state_split[3]}</td>
+		<td class="listt">{$state_split[4]}</td>
+		<td class="listt">{$state_split[5]}</td>
+		<td class="listt">{$state_split[6]}</td>
+		<td class="listt">{$state_split[7]}</td>
+		<td class="listt">&nbsp;</td>
+		<td class="listt">{$state_split[8]}</td>
+EOD;
+		print $line;
 	}
 	print "</tr>";
 }
@@ -123,8 +127,7 @@ foreach($states as $state) {
 </td></tr>
 </table>
 
-
 <?php include("fend.inc"); ?>
-<meta http-equiv="refresh" content="60;url=diag_dump_states.php">
+<meta http-equiv="refresh" content="60;url=<?php print $_SERVER['PHP_SELF']; ?>">
 </body>
 </html>

@@ -38,7 +38,7 @@ for file in $FMATCHES ;do
         echo "trying to fetch latest $file"
     fi
     
-    /usr/bin/fetch -T 60 -q -o "$file" "$baseurl$file$urlrev$rev$urlcon"
+    /usr/bin/fetch -T 60 -q -o "$file" "$baseurl$file$urlrev$rev$urlcon&only_with_tag=RELENG_1"
 
     if [ $? -eq 0 ]; then
             echo "File updated."

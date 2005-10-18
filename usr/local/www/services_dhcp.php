@@ -63,11 +63,9 @@ $pconfig['failover_peerip'] = $config['dhcpd'][$if]['failover_peerip'];
 
 $ifcfg = $config['interfaces'][$if];
 
-if (!is_array($config['dhcpd'][$if]['staticmap'])) {
-	$config['dhcpd'][$if]['staticmap'] = array();
-}
-staticmaps_sort($if);
 $a_maps = &$config['dhcpd'][$if]['staticmap'];
+
+staticmaps_sort($if);
 
 function is_inrange($test, $start, $end) {
 	if ( (ip2long($test) < ip2long($end)) && (ip2long($test) > ip2long($start)) )
@@ -399,7 +397,9 @@ function enable_change(enable_over) {
                   <td width="10%" class="list">
 		  </td>
 		</tr>
+			  <?php if(is_array($a_maps)): ?>
 			  <?php $i = 0; foreach ($a_maps as $mapent): ?>
+			  <?php if($mapent['mac'] <> "" and $mapent['ipaddr'] <> ""): ?>
                 <tr>
                   <td class="listlr" ondblclick="document.location='services_dhcp_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
                     <?=htmlspecialchars($mapent['mac']);?>
@@ -419,7 +419,9 @@ function enable_change(enable_over) {
                     </table>
                   </td>
                 </tr>
+		<?php endif; ?>
 		<?php $i++; endforeach; ?>
+		<?php endif; ?>
                 <tr> 
                   <td class="list" colspan="3"></td>
                   <td class="list">

@@ -106,7 +106,7 @@ if(!isset($config['shaper']['enable'])) {
 		    <p>
                     <strong><span class="red">Note:</span></strong><strong><br></strong>
 		      Queue graphs take 5 seconds to sample data.<br>
-                      You can configure the TrafficShaper <a href="firewall_shaper.php?reset=true">here</a>.
+                      You can configure the Traffic Shaper <a href="firewall_shaper.php?reset=true">here</a>.
 		    </p>
             </form>
 <br><a href="status_queues.php?reset=true">Reset</a> queues if they do not load.
@@ -172,7 +172,7 @@ While(!Connection_Aborted()) {
 	$counter++;
 	if($counter > 40) {
 		echo "Redirecting to <a href=\"status_queues.php\">Queue Status</a>.<p>";
-		echo "<meta http-equiv=\"refresh\" content=\"1;url=status_queues.php\">";
+		echo "<meta http-equiv=\"refresh\" content=\"1;url={$_SERVER['PHP_SELF']}\">";
 		mwexec("/usr/bin/killall -9 pfctl");
 		mwexec("/usr/bin/killall -9 pfctl php");
 		exit;

@@ -126,7 +126,7 @@ captiveportal_unlock();
 </p>
 <?php include("fend.inc"); ?>
 
-<meta http-equiv="refresh" content="60;url=status_captiveportal.php">
+<meta http-equiv="refresh" content="60;url=<?php print $_SERVER['PHP_SELF']; ?>">
 
 </body>
 </html>

@@ -133,6 +133,6 @@ foreach($states as $state) {
 </table>
 
 <?php include("fend.inc"); ?>
-<meta http-equiv="refresh" content="120;url=status_wireless.php?if=<?php echo $if; ?>">
+<meta http-equiv="refresh" content="120;url=<?php print $_SERVER['PHP_SELF']; ?>?if=<?php echo $if; ?>">
 </body>
 </html>

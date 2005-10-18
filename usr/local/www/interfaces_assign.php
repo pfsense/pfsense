@@ -256,7 +256,7 @@ include("head.inc");
 </div>
 <br>
 <input name="Submit" type="submit" class="formbtn" value="Save"><br><br>
-<p><span class="vexpl"><strong><span class="red">Warning:</span><br>
+<p>
 </p>
 <ul>
   <li><span class="vexpl">change the IP address of your computer</span></li>

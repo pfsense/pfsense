@@ -63,8 +63,11 @@ $pconfig['failover_peerip'] = $config['dhcpd'][$if]['failover_peerip'];
 
 $ifcfg = $config['interfaces'][$if];
 
+if (!is_array($config['dhcpd'][$if]['staticmap'])) {
+	$config['dhcpd'][$if]['staticmap'] = array();
+}
+staticmaps_sort($if);
 $a_maps = &$config['dhcpd'][$if]['staticmap'];
-
 staticmaps_sort($if);
 
 function is_inrange($test, $start, $end) {

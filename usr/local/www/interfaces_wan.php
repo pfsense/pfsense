@@ -255,7 +255,7 @@ if ($_POST) {
 		if($_POST['blockpriv'] == "yes")
 			$wancfg['blockpriv'] = true;
 		else
-			usnet($wancfg['blockpriv']);
+			unset($wancfg['blockpriv']);
 		
 		if($_POST['blockbogons'] == "yes")
 			$wancfg['blockbogons'] = true;

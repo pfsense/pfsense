@@ -58,10 +58,9 @@ if($if == "") {
 include("fbegin.inc");
 ?>
 <p class="pgtitle"><?=$pgtitle?></p>
-<form action="carp_status.php" method="post">
+<form action="status_wireless.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 
-<div id="mainarea">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td>
 <?php
@@ -83,8 +82,9 @@ foreach($config['interfaces'] as $interface) {
 display_top_tabs($tab_array);
 ?>
 </td></tr>
-<tr><td class="tabcont">
-<table colspan="3" cellpadding="3" width="100%">
+<tr><td>
+<div id="mainarea">
+<table class="tabcont" colspan="3" cellpadding="3" width="100%">
 
 <?php
 
@@ -128,11 +128,9 @@ foreach($states as $state) {
 
 ?>
 </table>
-
-</center>
+</div>
 </td></tr>
 </table>
-</div>
 
 <?php include("fend.inc"); ?>
 <meta http-equiv="refresh" content="120;url=status_wireless.php?if=<?php echo $if; ?>">

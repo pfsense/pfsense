@@ -105,12 +105,24 @@ if ($_POST) {
 		$pptpcfg['localip'] = $_POST['localip'];
 		$pptpcfg['mode'] = $_POST['mode'];
 		$pptpcfg['wins'] = $_POST['wins'];
-		$pptpcfg['req128'] = $_POST['req128'] ? true : false;
-		$pptpcfg['radius']['enable'] = $_POST['radiusenable'] ? true : false;
-		$pptpcfg['radius']['accounting'] = $_POST['radacct_enable'] ? true : false;
 		$pptpcfg['radius']['server'] = $_POST['radiusserver'];
 		$pptpcfg['radius']['secret'] = $_POST['radiussecret'];
+
+		if($_POST['req128'] == "yes") 
+			$pptpcfg['req128'] = true;
+		else
+			unset($pptpcfg['req128']);
+
+		if($_POST['radiusenable'] == "yes") 
+			$pptpcfg['radius']['enable'] = true;
+		else 
+			unset($pptpcfg['radius']['enable']);
 			
+		if($_POST['radacct_enable'] == "yes") 
+			$pptpcfg['radius']['accounting'] = true;
+		else 
+			unset($pptpcfg['radius']['accounting']);
+		
 		write_config();
 		
 		$retval = 0;

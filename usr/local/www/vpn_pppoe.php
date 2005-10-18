@@ -95,10 +95,19 @@ if ($_POST) {
 		$pppoecfg['mode'] = $_POST['mode'];
 		$pppoecfg['interface'] = $_POST['interface'];
 		$pppoecfg['n_pppoe_units'] = $_POST['n_pppoe_units'];	
-		$pppoecfg['radius']['enable'] = $_POST['radiusenable'] ? true : false;
-		$pppoecfg['radius']['accounting'] = $_POST['radacct_enable'] ? true : false;
+
 		$pppoecfg['radius']['server'] = $_POST['radiusserver'];
 		$pppoecfg['radius']['secret'] = $_POST['radiussecret'];
+
+		if($_POST['radiusenable'] == "yes")
+			$pppoecfg['radius']['enable'] = true;
+		else
+			unset($pppoecfg['radius']['enable']);
+			
+		if($_POST['radacct_enable'] == "yes")
+			$pppoecfg['radius']['accounting'] = true;
+		else
+			unset($pppoecfg['radius']['accounting']);
 
 		write_config();
 		

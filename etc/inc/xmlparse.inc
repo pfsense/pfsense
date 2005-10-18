@@ -184,12 +184,13 @@ function dump_xml_config_sub($arr, $indent) {
 						$xmlconfig .= "</$ent>\n";
 					} else {
 						$xmlconfig .= str_repeat("\t", $indent);
-						if ((is_bool($cval) && ($cval == true)) ||
-							($cval === ""))
+						if($cval === false) continue;
+						if(($cval === true) || ($cval === "")) {
 							$xmlconfig .= "<$ent/>\n";
-						else if (!is_bool($cval))
+						} else {
 							$xmlconfig .= "<$ent>" . htmlspecialchars($cval) . "</$ent>\n";
 					}
+				}
 				}
 			} else {
 				/* it's an array */

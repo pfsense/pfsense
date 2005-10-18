@@ -140,7 +140,6 @@ if ($_GET['act'] == "del") {
 	}
 
 	write_config();
-	touch($d_sysrebootreqd_path);
 	header("Location: interfaces_assign.php");
 	exit;
 }
@@ -258,7 +257,7 @@ include("head.inc");
 <br>
 <input name="Submit" type="submit" class="formbtn" value="Save"><br><br>
 <p><span class="vexpl"><strong><span class="red">Warning:</span><br>
-</strong>After you click &quot;Save&quot;, you must reboot the firewall to make the changes take effect. You may also have to do one or more of the following steps before you can access your firewall again: </span></p>
+</p>
 <ul>
   <li><span class="vexpl">change the IP address of your computer</span></li>
   <li><span class="vexpl">renew its DHCP lease</span></li>

@@ -852,7 +852,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				$temp = filter_get_opt_interface_descr($interface);
 				if($temp <> "") $interface = $temp;
 				if(isset($rule['destination']['address'])) {
-					$canadd = 0;
+					$canadd = 0; // XXX: billm - eh?  this is a nice little noop
 					/* because pf will not allow a interface for proxyARP
 					   type traffic lets check if its in use and if so leave
                                            off the interface */
@@ -863,23 +863,26 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					$line .= "on \$" . $interface . " ";
 			}
 			
-			/* set the gateway for this item if its defined */
-			if($config['interfaces'][$rule['interface']]['gateway'] <> "") 
-				$rg = $config['interfaces'][$rule['interface']]['gateway'];
-			$ri = filter_translate_type_to_real_interface($rule['interface']);
 			
+			/* set the gateway interface */
+			$ri = filter_translate_type_to_real_interface($rule['interface']);
+
 			/*
-			 *    check to see if /tmp/{$rule['if']}_router exists.  This file
+			 *    check to see if /tmp/{${ri}_router exists.  This file
 			 *    is created by dhclient for 2nd wan interfaces, etc.
+			 *    else get gateway from the interface config
 			 */
-			if(file_exists("{$g['tmp_path']}/{$rule['if']}_router"))
-				$rg = file_get_contents("{$g['tmp_path']}/{$rule['if']}_router");
+			if(file_exists("{$g['tmp_path']}/{$ri}_router")) {
+				$rg = file_get_contents("{$g['tmp_path']}/{$ri}_router");
+				$rg = rtrim($rg);
+			} elseif ($config['interfaces'][$rule['interface']]['gateway'] <> "")  {
+				$rg = $config['interfaces'][$rule['interface']]['gateway'];
+			}
+
 
 			/* do not process reply-to for gateway'd rules */
-			if($rule['gateway'] == "") {
-				if($rg <> "" and $ri <> "" and stristr($rule['interface'],"opt") == true) {
-					$line .= "reply-to (" . $ri . " " . $rg . ") ";
-				}
+			if(($rule['gateway'] == "") and ($ri != "") and ($rg != "") and (stristr($rule['interface'],"opt") == true)) {
+				$line .= "reply-to (" . $ri . " " . $rg . ") ";
 			}
 
 			/* if user has selected a custom gateway, lets work with it */

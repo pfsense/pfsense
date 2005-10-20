@@ -70,6 +70,7 @@ function slbd_configure() {
 						$svrtxt .= "\t:{$svrcnt}={$lbsvr}:\\\n";
 						$svrcnt++;
 					}
+					$slbdconf .= "\t:method=round-robin:\\\n";
 					$slbdconf .= "\t:services={$svrcnt}:\\\n";
 					$slbdconf .= $svrtxt;
 				}

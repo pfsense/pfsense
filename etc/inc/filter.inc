@@ -564,9 +564,9 @@ function filter_nat_rules_generate() {
 
 			/* if item is an alias, expand */
 			if(alias_expand($rule['local-port'])) 
-				$localport = alias_expand_value($rule['local-port']);
+				$localport = "";
 			else
-				$localport = $rule['local-port'];
+				$localport = " port {$rule['local-port']}";
 
 			$target = alias_expand_host($rule['target']);
 			
@@ -604,10 +604,10 @@ function filter_nat_rules_generate() {
 			if ((!$extport[1]) || ($extport[0] == $extport[1])) {
 				if($rule['protocol'] == "tcp/udp")
 					$natrules .=
-					"rdr on $natif proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target} ";
+					"rdr on $natif proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
 				else
 					$natrules .=
-					"rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}  ";
+					"rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
 
 			} else {
 				if($rule['protocol'] == "tcp/udp")

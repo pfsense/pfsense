@@ -602,21 +602,29 @@ EOD;
 	}	
 
 	/* start up everything */
-	        
-	mwexec("$ifconfig {$if}" . " down"); 
+	
+	mwexec("$ifconfig $if" . " -mediaopt hostap, turbo");	// Fix bug with turbomode and reboot (hopefully)        
+	mwexec("$ifconfig $if" . " down"); 
 	mwexec("$ifconfig $if" . " " . $standard);
 	mwexec("$ifconfig $if" . " " . $channel);
 	mwexec("$ifconfig $if" . " " . $ssid);
 	mwexec("$ifconfig $if" . " " . $stationname);
-	mwexec("$ifconfig $if" . " " . $hostapmode);
+//	mwexec("$ifconfig $if" . " " . $hostapmode);
 	mwexec("$ifconfig $if" . " " . $adhocmode);
+	/* fix turbo mode and reboot */
+	mwexec("$ifconfig $if" . " up"); 
+	mwexec("$ifconfig $if" . " " . $hostapmode);
+	mwexec("$ifconfig $if" . " " . $turbo);
+	mwexec("$ifconfig $if" . " down"); 
+	/* fix turbo mode and reboot */
 	mwexec("$ifconfig $if" . " " . $hidessid);
 	mwexec("$ifconfig $if" . " " . $pureg);
 	mwexec("$ifconfig $if" . " " . $apbridge);
-	mwexec("$ifconfig $if" . " " . $turbo);
+//	mwexec("$ifconfig $if" . " " . $turbo);
 	mwexec("$ifconfig $if" . " " . $wme);
 	mwexec("$ifconfig $if" . " " . $wepset);
-	mwexec("$ifconfig $if" . " up"); 
+	mwexec("$ifconfig $if" . " up");
+
 
 	if (isset($wlcfg['wpa']['enable'])) {
 		if ($wlcfg['mode'] == BSS) 

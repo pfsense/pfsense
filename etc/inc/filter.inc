@@ -601,6 +601,23 @@ function filter_nat_rules_generate() {
 			if(alias_expand($extaddr))
 				$extaddr = alias_expand($extaddr);
 
+			/*
+			 *    If FTP Proxy Helper is enbabled and the
+			 *    operator has requested a port forward to
+			 *    a ftp server then launch a helper
+			 */
+			if($target <> "") {
+				if($extport[0] == "21" and !$config['system']['disableftpproxy']) {
+					$helpers = exec("ps aux | grep pftpx | grep {$target}");
+					echo "{$helpers}\n";
+					if(!$helpers) {
+						/* install a pftpx helper, do not set a rule */
+						mwexec_bg("/usr/local/sbin/pftpx -b {$extaddr} -c 21 -f {$target} -g 21");
+						return;
+					}
+				}
+			}
+
 			if ((!$extport[1]) || ($extport[0] == $extport[1])) {
 				if($rule['protocol'] == "tcp/udp")
 					$natrules .=
@@ -616,23 +633,6 @@ function filter_nat_rules_generate() {
 				else
 					$natrules .=
 					 "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
-			}
-
-			/*
-			 *    If FTP Proxy Helper is enbabled and the
-			 *    operator has requested a port forward to
-			 *    a ftp server then launch a helper
-			 */
-			if($target <> "") {
-				if($extport[0] == "21" and !$config['system']['disableftpproxy']) {
-					$helpers = exec("ps aux | grep pftpx | grep {$target}");
-					echo "{$helpers}\n";
-					if(!$helpers) {
-						/* install a pftpx helper, do not set a rule */
-						mwexec_bg("/usr/local/sbin/pftpx -b {$extaddr} -c 21 -f {$target} -g 21");
-						$natrules = "";
-					}
-				}
 			}
 
 			$natrules .= "\n";

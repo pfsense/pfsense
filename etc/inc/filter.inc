@@ -613,7 +613,7 @@ function filter_nat_rules_generate() {
 					if(!$helpers) {
 						/* install a pftpx helper, do not set a rule */
 						mwexec_bg("/usr/local/sbin/pftpx -b {$extaddr} -c 21 -f {$target} -g 21");
-						return;
+						continue;
 					}
 				}
 			}

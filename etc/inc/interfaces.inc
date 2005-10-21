@@ -603,7 +603,7 @@ EOD;
 
 	/* start up everything */
 	
-	mwexec("$ifconfig $if" . " -mediaopt hostap, turbo");	// Fix bug with turbomode and reboot (hopefully)        
+	mwexec("$ifconfig $if" . " -mediaopt hostap,turbo");	// Fix bug with turbomode and reboot (hopefully)        
 	mwexec("$ifconfig $if" . " down"); 
 	mwexec("$ifconfig $if" . " " . $standard);
 	mwexec("$ifconfig $if" . " " . $channel);

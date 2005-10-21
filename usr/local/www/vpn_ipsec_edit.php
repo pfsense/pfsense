@@ -157,6 +157,8 @@ if ($_POST) {
 			$input_errors[] = "The remote network bits are invalid.";
 	}
 	if (($_POST['remotenet'] && !is_ipaddr($_POST['remotenet'])) or $_POST['remotenet'] == "0.0.0.0") {
+		/* allow 0.0.0.0 remote net usage */
+		if($_POST['remotenet'] <> "0.0.0.0") 		
 		$input_errors[] = "A valid remote network address must be specified.";
 	}
 	if (($_POST['remotegw'] && !is_ipaddr($_POST['remotegw']))) {

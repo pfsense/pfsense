@@ -211,28 +211,33 @@ if ($_POST) {
 		    $savemsg = $retval;
 		$retval |= interfaces_optional_configure();
 		config_unlock();
-		
-		$etc_ttys  = return_filename_as_array("/etc/ttys");
-		
+
+		/* serial console */
+		if(file_exists("/boot.config"))
+			$boot_config = file_get_contents("/boot.config");
+		else
+			$boot_config = "";
+			
+		$boot_config_split = split("\n", $boot_config);
 		
 		conf_mount_rw();
 		
-		$fout = fopen("/etc/ttys","w");
-		if(!$fout) {
-			echo "Cannot open /etc/ttys for writing.  Floppy inserted?\n";	
-		} else {		
-			foreach($etc_ttys as $tty) {
-				if(stristr($tty,"ttyv0") <> true) {
-					if($tty <> "")
-						fwrite($fout, $tty . "\n");				
+		$fd = fopen("/boot.config","w");
+		if($fd) {
+			foreach($boot_config_split as $bcs) {
+				if(stristr($bcs, "-D")) {
+					if(isset($config['system']['enableserial'])) {
+						fwrite($fd, "-D");
+					}
+				} else {
+					fwrite($fd, "{$bcs}\n");
 				}
 			}
-			if(isset($pconfig['enableserial']))
-				fwrite($fout, "ttyv0\t\"/usr/libexec/getty Pc\"\tcons25\t\ton\tsecure\n");
-			fclose($fout);		
+			fclose($fd);
 		}
 		
 		conf_mount_ro();
+		
 	}
 }
 

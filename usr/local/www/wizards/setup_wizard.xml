@@ -209,7 +209,7 @@
 		</field>
 		<field>
 			<name>Gateway</name>
-			<bindstofield>system->gateway</bindstofield>
+			<bindstofield>interfaces->wan->gateway</bindstofield>
 			<type>input</type>
 		</field>
 		<field>

@@ -511,15 +511,28 @@ function fixup_string($string) {
 	global $config, $myurl;
 	$newstring = $string;
 	// fixup #1: $myurl -> http[s]://ip_address:port/
-	$https = "";
+	switch($config['system']['webguiproto']) {
+		case "http":
+			$proto = "http";
+			break;
+		case "https":
+			$proto = "https";
+			break;
+		default:
+			$proto = "http";
+			break;
+	}
 	$port = $config['system']['webguiport'];
-	if($port <> "443" and $port <> "80")
-		$urlport = ":" . $port;
-	else
-		$urlport = "";
-	if($config['system']['webguiproto'] == "https")
-		$https = "s";
-    $myurl = "http" . $https . "://" . $config['interfaces']['lan']['ipaddr'] . $urlport;
+	if($port != "") {
+		if(($port == "443" and $proto != "https") or ($port == "80" and $proto != "http")) {
+			$urlport = ":" . $port;
+		} elseif ($port != "80" and $port != "443") {
+			$urlport = ":" . $port;
+		} else {
+			$urlport = "";
+		}
+	}
+	$myurl = $proto . "://" . $config['interfaces']['lan']['ipaddr'] . $urlport . "/";
 	$newstring = str_replace("\$myurl", $myurl, $newstring);
 	// fixup #2: $wanip
 	$curwanip = get_current_wan_address();

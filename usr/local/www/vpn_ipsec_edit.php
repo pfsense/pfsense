@@ -153,7 +153,7 @@ if ($_POST) {
 		$input_errors[] = "The P2 lifetime must be an integer.";
 	}
 	if ($_POST['remotebits'] && (!is_numeric($_POST['remotebits']) || ($_POST['remotebits'] < 0) || ($_POST['remotebits'] > 32))) {
-		if(!$_POST['remotenet'] == "0.0.0.0")
+		if(!$_POST['remotebits'] == "0.0.0.0")
 			$input_errors[] = "The remote network bits are invalid.";
 	}
 	if (($_POST['remotenet'] && !is_ipaddr($_POST['remotenet'])) or $_POST['remotenet'] == "0.0.0.0") {

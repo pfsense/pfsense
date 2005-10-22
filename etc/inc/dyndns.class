@@ -38,10 +38,10 @@
 	 *  ODS            - Last Tested: 02 August 2005
 	 * +====================================================+
 	 *
-	 * @author 		E.Kristensen
+	 * @author 	E.Kristensen
 	 * @link    	http://www.idylldesigns.com/projects/phpdns/
 	 * @version 	0.8
-	 * @updated		13 October 05 at 21:02:42 GMT
+	 * @updated	13 October 05 at 21:02:42 GMT
 	 *
 	 */
 
@@ -464,19 +464,16 @@
 		function _detectChange() {
 			$currentTime = time();
 
-			#$wan_if = get_real_wan_interface();
-			#$wan_ip = find_interface_ip($wan_if);
 			$wan_ip = get_current_wan_address();
 			$this->_dnsIP = $wan_ip;
 
 			if (file_exists($this->_cacheFile)) {
-				$file = fopen($this->_cacheFile, 'r');
-				$contents = fread($file, filesize($this->_cacheFile));
-				fclose($file);
+				if(file_exists($this->_cacheFile))
+					$contents = file_get_contents($this->_cacheFile);
+				else
+					$contents = "";
 				list($cacheIP,$cacheTime) = split(':', $contents);
-
 				$this->_debug($cacheIP.'/'.$cacheTime);
-
 				$initial = false;
 			} else {
 				$file = fopen($this->_cacheFile, 'w');
@@ -484,55 +481,35 @@
 				fclose($file);
 				$cacheIP = '0.0.0.0';
 				$cacheTime = $currentTime;
-
 				$initial = true;
 			}
 
-			switch ($this->_dnsService) {
-				case 'dyndns':
-					$time = '2419200';
-					break;
-				case 'dyndns-static':
-					$time = '2419200';
-					break;
-				case 'dyndns-custom':
-					$time = '2419200';
-					break;
-				case 'dhs':
-					$time = '2419200';
-					break;
-				case 'easydns':
-					$time = '2419200';
-					break;
-				case 'noip':
-					$time = '2419200';
-					break;
-				case 'hn':
-					$time = '2419200';
-					break;
-				case 'zoneedit':
-					$time = '2419200';
-					break;
-				case 'dyns':
-					$time = '2419200';
-					break;
-				case 'ods':
-					$time = '2419200';
-					break;
-			}
+			/*   use 2419200 for dyndns, dhs, easydns, noip, hn
+			 *   zoneedit, dyns, ods
+			 */
+			$time = '2419200';
 
-			/* If IP addresses are different or 28 days have passed update record */
-			if ( ($cacheIP != $wan_ip) || ( ($currentTime - $cacheTime) > $time ) || ($initial == true) ) {
+			$needs_updating = FALSE;
+			/* lets deterimine if the item needs updating */
+			if ($cacheIP != $wan_ip)
+				$needs_updating = TRUE;
+			if ($currentTime - $cacheTime) > $time )
+				$needs_updating = TRUE;
+			if ($initial == TRUE)
+				$needs_updating = TRUE;
+
+			/* finally if we need updating then store the
+			   new cache value and return true */
+			if($needs_updating == TRUE) {
 				/* Write WAN IP to cache file */
 				$file = fopen($this->_cacheFile, 'w');
 				fwrite($file, $wan_ip.':'.$currentTime);
-				fclose($file);
-
+				fclose($file);			
 				return TRUE;
 			} else {
-
-				return FALSE;
+				return FALSE;			
 			}
+
 		}
 
 

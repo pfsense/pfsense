@@ -152,11 +152,14 @@ include("head.inc");
 			</tr><?php foreach ($filterlog as $filterent): ?>
 			<tr>
 			  <td class="listlr" nowrap align="middle">
+			  <center>
 			  <?php if (strstr(strtolower($filterent['act']), "p"))
-			  			$img = "/themes/".$g['theme']."/images/icons/icon_pass.gif";
-					 else
-					 	$img = "/themes/".$g['theme']."/images/icons/icon_block.gif";
-			 	?>
+			  			$img = "/themes/{$g['theme']}/images/icons/icon_pass.gif";
+					else if(strstr(strtolower($filterent['act']), "r"))
+					 	$img = "/themes/{$g['theme']}/images/icons/icon_reject.gif";
+					else
+						$img = "/themes/{$g['theme']}/images/icons/icon_block.gif";
+			  ?>
 			  <img src="<?=$img;?>" width="11" height="11" align="absmiddle">
 			  <?php if ($filterent['count']) echo $filterent['count'];?></td>
 			  <td class="listr" nowrap><?=htmlspecialchars($filterent['time']);?></td>

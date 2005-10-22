@@ -493,7 +493,7 @@
 			/* lets deterimine if the item needs updating */
 			if ($cacheIP != $wan_ip)
 				$needs_updating = TRUE;
-			if ($currentTime - $cacheTime) > $time )
+			if (($currentTime - $cacheTime) > $time )
 				$needs_updating = TRUE;
 			if ($initial == TRUE)
 				$needs_updating = TRUE;

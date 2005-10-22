@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <pfsensewizard>
 <copyright>
 /* $Id$ */
@@ -461,7 +461,7 @@
 	<id>7</id>
 	<title>Reload configuration</title>
 	<disableheader>true</disableheader>
-	<description>On this screen we will reload the changes.</description>
+	<description>Click 'Reload' to reload pfSense with new changes.  If you changed the password, pfSense will ask you to log in again.</description>
 	<fields>
 		<field>
 			<name>Reload</name>

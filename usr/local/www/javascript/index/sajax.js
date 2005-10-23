@@ -40,7 +40,7 @@ function updateCPU(x)
 function updateTemp(x)
 {
 	if(document.getElementById("tempmeter") != null) {
-		document.getElementById("tempmeter").value = x + '%';
+		document.getElementById("tempmeter").value = x + 'C';
 		document.getElementById("tempwidtha").style.width = x + 'px';
 		document.getElementById("tempwidthb").style.width = (100 - x) + 'px';
 	}

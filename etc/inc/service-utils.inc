@@ -147,27 +147,24 @@ function restart_service_if_running($service) {
 
 function is_service_running($service, $ps = "") {
 	global $config;
+	/*
 	if(!$ps) {
 		exec("/bin/ps ax | awk '{ print $5 }'", $psout);
-		array_shift($psout);
-		foreach($psout as $line) {
-		        $ps[] = trim(array_pop(explode(' ', array_pop(explode('/', $line)))));
-		}
 	}
-	if($config['installedpackages']['service']) {
+	*/
+	if(is_array($config['installedpackages']['service'])) {
                 foreach($config['installedpackages']['service'] as $aservice) {
                         if(strtolower($service) == strtolower($aservice['name'])) {
 				if(!$aservice['executable']) return false;
-				if(in_array($aservice['executable'], $ps)) {
+				/*
+				if(count(preg_grep("/{$aservice['executable']}/i", $ps))) {
 					return true;
 				} else {
 					return false;
 				}
-				break;
+				*/
+				return is_process_running($aservice['executable']) ? true : false;
                         }
                 }
         }
-	if(is_process_running($service))
-		return true;
-	return false;
 }

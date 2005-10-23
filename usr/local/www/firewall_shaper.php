@@ -43,7 +43,12 @@ if (!is_array($config['shaper']['queue'])) {
 $a_shaper = &$config['shaper']['rule'];
 $a_queue = &$config['shaper']['queue'];
 
-$pconfig['enable'] = isset($config['shaper']['enable']);
+/* redirect to wizard if shaper isn't already configured */
+if(isset($config['shaper']['enable'])) {
+	$pconfig['enable'] = TRUE;
+} else {
+	Header("Location: wizard.php?xml=traffic_shaper_wizard.xml");
+}
 
 function wipe_magic () {
   global $config;

@@ -37,6 +37,13 @@ if (!is_array($config['shaper']['rule'])) {
 }
 $a_shaper = &$config['shaper']['rule'];
 
+/* redirect to wizard if shaper isn't already configured */
+if(isset($config['shaper']['enable'])) {
+        $pconfig['enable'] = TRUE;
+} else {
+        Header("Location: wizard.php?xml=traffic_shaper_wizard.xml");
+}
+
 $specialsrcdst = explode(" ", "any lan pptp");
 
 $id = $_GET['id'];

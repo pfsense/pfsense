@@ -54,7 +54,7 @@ function wireless_config_init() {
 	$pconfig['wpa_pairwise'] = $optcfg['wireless']['wpa']['wpa_pairwise'];
 	$pconfig['wpa_group_rekey'] = $optcfg['wireless']['wpa']['wpa_group_rekey'];
 	$pconfig['wpa_gmk_rekey'] = $optcfg['wireless']['wpa']['wpa_gmk_rekey'];
-	$pconfig['wpa_strict_rekey'] = $optcfg['wireless']['wpa']['wpa_strict_rekey'];
+	$pconfig['wpa_strict_rekey'] = isset($optcfg['wireless']['wpa']['wpa_strict_rekey']);
 	$pconfig['passphrase'] = $optcfg['wireless']['wpa']['passphrase'];
 	$pconfig['ieee8021x_enable'] = isset($optcfg['wireless']['wpa']['ieee8021x']['enable']);
 	$pconfig['ext_wpa_sw'] = $optcfg['wireless']['wpa']['ext_wpa_sw'];

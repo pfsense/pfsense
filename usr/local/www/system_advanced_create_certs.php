@@ -124,7 +124,7 @@ if ($_POST) {
     fwrite($fd, "commonName              = supplied\n");
     fwrite($fd, "emailAddress            = optional\n");
     fwrite($fd, "[ req_distinguished_name ]\n");
-    fwrite($fd, "countryName                     = US\n");
+    //fwrite($fd, "countryName                     = US\n");
     fwrite($fd, "[ req_attributes ]\n");
     fwrite($fd, "challengePassword               = A challenge password\n");
     fwrite($fd, "unstructuredName                = An optional company name\n");

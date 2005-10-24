@@ -370,9 +370,11 @@ function filter_nat_rules_generate_if($if, $src, $srcport, $dst, $natport, $targ
 
 	/* set the source port the world sees */
 	if ($srcport)
-		$second_half_of_rule .= " port {$srcport}";
+		$srcport_rule .= " port {$srcport}";
+	else
+		$srcport_rule = "";
 
-        $natrule = "{$nat} on {$if} from {$src} to {$dst} {$second_half_of_rule}\n";
+        $natrule = "{$nat} on {$if} from {$src}{$srcport_rule} to {$dst} {$second_half_of_rule}\n";
 
 	return $natrule;
 }

@@ -980,7 +980,17 @@ pppoe:
 	set iface idle {$idle}
 	set iface up-script /usr/local/sbin/ppp-linkup
 EOD;
-	
+
+	/*    Check for ppp-linkdown Script in /usr/local/sbin
+	 *    Create reference in mpd.conf
+	 */
+	if ( file_exists("/usr/local/sbin/ppp-linkdown") ){
+		$mpdconf .= <<<EOD
+	set iface down-script /usr/local/sbin/ppp-linkdown
+
+EOD;
+	}
+
 	if (isset($pppoecfg['ondemand'])) {
 		if (isset($pppoecfg['local-ip']) && isset($pppoecfg['remote-ip'])) {
 			$mpdconf .= <<<EOD
@@ -1111,6 +1121,16 @@ pptp:
 	set iface up-script /usr/local/sbin/ppp-linkup
 
 EOD;
+
+	/*   Check for ppp-linkdown Script in /usr/local/sbin
+	 *   Create reference in mpd.conf
+	 */
+	if ( file_exists("/usr/local/sbin/ppp-linkdown") ){
+		$mpdconf .= <<<EOD
+	set iface down-script /usr/local/sbin/ppp-linkdown
+
+EOD;
+	}
 
 	if (isset($pptpcfg['ondemand'])) {
 		$mpdconf .= <<<EOD

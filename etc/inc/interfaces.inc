@@ -979,6 +979,7 @@ pppoe:
 	set iface {$ondemand} on-demand
 	set iface idle {$idle}
 	set iface up-script /usr/local/sbin/ppp-linkup
+
 EOD;
 
 	/*    Check for ppp-linkdown Script in /usr/local/sbin

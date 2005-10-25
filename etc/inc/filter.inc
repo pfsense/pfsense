@@ -340,39 +340,51 @@ function filter_flush_state_table() {
 	return mwexec("/sbin/pfctl -F state");
 }
 
-function filter_nat_rules_generate_if($if, $src, $srcport, $dst, $natport, $target, $nonat) {
+/* Generate a 'nat on' or 'no nat on' rule for given interface */
+function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "any", $dstport = "", $natip = "", $natport = "", $nonat = false) {
 	global $config;
 
+	/* XXX: billm - any idea if this code is needed? */
 	if($src == "/32" || $src{0} == "/")
 		return;
-	
-	$nat = "nat";
-
+		
 	/* Use interface name if IP isn't specified */
-        if ($target)
-                $tgt = "{$target}/32";
+        if ($natip != "")
+                $tgt = "{$natip}/32";
         else
                 $tgt = "($if)";
-	
-	if($nonat == true) {
-		$nat = "no nat";
-		$second_half_of_rule = "";
-	} else {
-		$second_half_of_rule = " -> {$tgt}";
-	}
 
+	/* Add the hard set source port (useful for ISAKMP) */
+        if ($natport != "")
+		$tgt .= " port {$natport}";
+	
+	/* sometimes this gets called with "" instead of a value */
+	if ($src == "")
+		$src = "any";
+
+	/* Match on this source port */
+        if ($srcport != "")
+		$src .= " port {$srcport}";
+
+	/* sometimes this gets called with "" instead of a value */
 	if ($dst == "")
 		$dst = "any";
 
-	/* Match on this source port */
-        if ($srcport)
-		$src .= " port {$srcport}";
+	/* Match on this dest port */
+        if ($dstport != "")
+		$dst .= " port {$dstport}";
 
-	/* set the source port the world sees */
-	if ($natport)
-		$second_half_of_rule .= " port {$natport}";
+	/* Allow for negating NAT entries */
+	if ($nonat) {
+		$nat = "no nat";
+		$target = "";
+	} else {
+		$nat = "nat";
+		$target = "-> {$tgt}";
+	}
 
-        $natrule = "{$nat} on {$if} from {$src} to {$dst} {$second_half_of_rule}\n";
+	/* Put all the pieces together */
+        $natrule = "{$nat} on {$if} from {$src} to {$dst} {$target}\n";
 
 	return $natrule;
 }
@@ -469,8 +481,8 @@ function filter_nat_rules_generate() {
 				else
 					$natif = $config['interfaces'][$obent['interface']]['if'];
 
-				$natrules .= filter_nat_rules_generate_if($natif, $src, $obent['sourceport'], $dst, $obent['natport'],
-					$obent['target'], isset($obent['nonat']));
+				$natrules .= filter_nat_rules_generate_if($natif, $src, $obent['sourceport'], $dst, $obent['dstport'], $obent['target'], $obent['natport'],
+					isset($obent['nonat']));
 			}
 		}
 	} else {
@@ -478,10 +490,9 @@ function filter_nat_rules_generate() {
 		/* create ipsec passthru rule if requested */
 		if (isset($config['nat']['ipsecpassthru']['enable'])) {
 			$natrules .= filter_nat_rules_generate_if($wanif,
-				"{$lansa}/{$lancfg['subnet']}", 500, "", 500, null, false);
+				"{$lansa}/{$lancfg['subnet']}", 500, "", 500, null, 500, false);
 		}
-		$natrules .= filter_nat_rules_generate_if($wanif,
-			"{$lansa}/{$lancfg['subnet']}", null, "", null, null, false);
+		$natrules .= filter_nat_rules_generate_if($wanif, "{$lansa}/{$lancfg['subnet']}");
 
 		/* optional interfaces */
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
@@ -495,10 +506,10 @@ function filter_nat_rules_generate() {
                                  */
 				if($optcfg['gateway'] <> "") 
 					$natrules .= filter_nat_rules_generate_if($optcfg['if'],
-						"{$lansa}/{$lancfg['subnet']}", null, "", null, null, isset($optcfg['nonat']));
+						"{$lansa}/{$lancfg['subnet']}", null, "", null, null, null, isset($optcfg['nonat']));
 					
 				$natrules .= filter_nat_rules_generate_if($wanif,
-					"{$optsa}/{$optcfg['subnet']}", null, "", null, null, isset($optcfg['nonat']));
+					"{$optsa}/{$optcfg['subnet']}", null, "", null, null, null, isset($optcfg['nonat']));
 			}
 		}
 
@@ -508,7 +519,7 @@ function filter_nat_rules_generate() {
 			if($config['pptp']['pptp_subnet'] <> "")
 				$pptp_subnet = $config['pptp']['pptp_subnet'];
 			$natrules .= filter_nat_rules_generate_if($wanif,
-				"{$pptpdcfg['remoteip']}/{$pptp_subnet}", null, "", null, null, "");
+				"{$pptpdcfg['remoteip']}/{$pptp_subnet}");
 		}
 
 		/* PPPoE subnet */
@@ -517,7 +528,7 @@ function filter_nat_rules_generate() {
 			if($config['pppoe']['pppoe_subnet'] <> "")
 				$pppoe_subnet = $config['pppoe']['pppoe_subnet'];
 			$natrules .= filter_nat_rules_generate_if($wanif,
-				"{$pppoecfg['remoteip']}/{$pppoe_subnet}", null, "", null, null, "");
+				"{$pppoecfg['remoteip']}/{$pppoe_subnet}");
 		}
 
 

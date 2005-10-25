@@ -68,6 +68,8 @@
 		function updatedns ($dnsService = '', $dnsHost = '', $dnsUser = '', $dnsPass = '', $dnsWildcard = 'OFF', $dnsMX = '', $dnsBackMX = '') {
 			global $config;
 
+			log_error("DynDns: updatedns() starting");
+
 			if (!$dnsService) $this->_error(2);
 			if (!$dnsUser) $this->_error(3);
 			if (!$dnsPass) $this->_error(4);
@@ -79,12 +81,6 @@
 			$this->_dnsHost = $dnsHost;
 			$this->_dnsIP = $dnsIP;
 			$this->_debugID = rand(1000000, 9999999);
-
-			if (!isset($config['dyndns']['enabled'])) {
-				@unlink($this->_cacheFile);
-				@unlink($this->_debugFile);
-				return true;
-			}
 
 			if ($this->_detectChange() == FALSE) {
 				$this->_error(10);
@@ -113,6 +109,9 @@
 		 *   Send Update To Selected Service.
 		 */
 		function _update() {
+		
+			log_error("DynDns: DynDns _update() starting.");
+		
 			if ($this->_dnsService != 'ods') {
 				$ch = curl_init();
 				curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -254,6 +253,7 @@
 		 *   Retrieve Update Status
 		 */
 		function _checkStatus($data) {
+			log_error("DynDns: DynDns _checkStatus() starting.");
 			switch ($this->_dnsService) {
 				case 'dyndns':
 					if (preg_match('/notfqdn/i', $data)) {
@@ -458,6 +458,9 @@
 		 *      | work with other systems. pfSense base is FreeBSD.
 		 */
 		function _detectChange() {
+			
+			log_error("DynDns: _detectChange() starting.");
+		
 			$currentTime = time();
 
 			$wan_ip = get_current_wan_address();

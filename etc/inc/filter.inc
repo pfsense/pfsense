@@ -364,17 +364,15 @@ function filter_nat_rules_generate_if($if, $src, $srcport, $dst, $natport, $targ
 	if ($dst == "")
 		$dst = "any";
 
-	/* Match on this destination port */
-        if ($natport)
-		$dst .= " port {$natport}";
+	/* Match on this source port */
+        if ($srcport)
+		$src .= " port {$srcport}";
 
 	/* set the source port the world sees */
-	if ($srcport)
-		$srcport_rule .= " port {$srcport}";
-	else
-		$srcport_rule = "";
+	if ($natport)
+		$second_half_of_rule .= " port {$natport}";
 
-        $natrule = "{$nat} on {$if} from {$src}{$srcport_rule} to {$dst} {$second_half_of_rule}\n";
+        $natrule = "{$nat} on {$if} from {$src} to {$dst} {$second_half_of_rule}\n";
 
 	return $natrule;
 }
@@ -1356,13 +1354,17 @@ EOD;
 		}
 	}
 
-	$ipfrules .= <<<EOD
+	/* install wan spoof check rule if lan address exists */
+	if($lansa) {
+
+		$ipfrules .= <<<EOD
 
 # WAN spoof check
 anchor "wanspoof"
 block in $log quick on $wanif from $lansa/$lansn to any label "WAN spoof check"
 
 EOD;
+	}
 
 	foreach ($optcfg as $oc) {
 		if (!$oc['bridge'])

@@ -55,6 +55,7 @@ if (isset($id) && $a_out[$id]) {
     address_to_pconfig($a_out[$id]['destination'], $pconfig['destination'],
 	   $pconfig['destination_subnet'], $pconfig['destination_not'],
 	   $none, $none); 
+    $pconfig['dstport'] = $a_out[$id]['dstport'];
     $pconfig['natport'] = $a_out[$id]['natport'];
     $pconfig['target'] = $a_out[$id]['target'];
     $pconfig['interface'] = $a_out[$id]['interface'];
@@ -114,6 +115,9 @@ if ($_POST) {
     if ($_POST['destination_type'] == "any") {
 	if ($_POST['destination_not'])
             $input_errors[] = "Negating destination address of \"any\" is invalid.";
+    }
+    if ($_POST['dstport'] && !is_numericint($_POST['dstport'])) {
+        $input_errors[] = "A valid destination port must be specified.";
     }
     if ($_POST['natport'] && !is_numericint($_POST['natport'])) {
         $input_errors[] = "A valid NAT port must be specified.";
@@ -188,6 +192,7 @@ if ($_POST) {
             $natent['destination']['address'] = $ext;
 
         $natent['natport'] = $_POST['natport'];
+        $natent['dstport'] = $_POST['dstport'];
 
         if (isset($_POST['destination_not']) && $ext != "any")
             $natent['destination']['not'] = true;
@@ -306,6 +311,10 @@ function sourcesel_change() {
                         <td>&nbsp;</td>
                         <td><span class="vexpl">Enter the source network for the outbound NAT mapping.</span></td>
                       </tr>
+                      <tr>
+                        <td>Source port:&nbsp;&nbsp;</td>
+                        <td><input name="sourceport" type="text" class="formfld" id="sourceport" size="5" value="<?=htmlspecialchars($pconfig['sourceport']);?>"> (leave blank for any)</td>
+                      </tr>
                     </table></td>
                 </tr>
                 <tr>
@@ -341,8 +350,8 @@ function sourcesel_change() {
                           the outbound NAT mapping.</span></td>
                       </tr>
                       <tr>
-                        <td>NAT port:&nbsp;&nbsp;</td>
-                        <td><input name="natport" type="text" class="formfld" id="natport" size="5" value="<?=htmlspecialchars($pconfig['natport']);?>"> (leave blank for any)</td>
+                        <td>Destination port:&nbsp;&nbsp;</td>
+                         <td><input name="dstport" type="text" class="formfld" id="dstport" size="5" value="<?=htmlspecialchars($pconfig['dstport']);?>"> (leave blank for any)</td>
                       </tr>
                     </table>
 		  </td>
@@ -373,7 +382,7 @@ function sourcesel_change() {
 			</td></tr>
 			<tr>
                           <td>Port:&nbsp;&nbsp;</td>
-                          <td><input name="sourceport" type="text" class="formfld" id="sourceport" size="5" value="<?=htmlspecialchars($pconfig['sourceport']);?>"></td>
+                          <td><input name="natport" type="text" class="formfld" id="natport" size="5" value="<?=htmlspecialchars($pconfig['natport']);?>"></td>
 			</tr>
 			<tr><td>&nbsp;</td><td>
                         <span class="vexpl">Enter the source port for the outbound NAT mapping.</span>

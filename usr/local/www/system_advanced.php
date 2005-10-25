@@ -109,6 +109,7 @@ if ($_POST) {
 			touch("{$g['tmp_path']}/start_sshd");
 		} else {
 			unset($config['system']['enablesshd']);
+			mwexec("/usr/bin/killall sshd");
 		}		
 		$oldsshport = $config['system']['ssh']['port'];
 		$config['system']['ssh']['port'] = $_POST['sshport'];

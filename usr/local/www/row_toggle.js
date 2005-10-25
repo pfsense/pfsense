@@ -24,28 +24,31 @@ function fr_insline(id, on) {
 		var prevrow = document.getElementById('frheader');
 	}
 
-	var cells = row.getElementsByTagName("td");
+	var cells = row.getElementsByTagName("td"); 
 	var prevcells = prevrow.getElementsByTagName("td");
-
-	for (i = 2; i <= 7; i++) {
-		if (on) {
-			prevcells[i].style.borderBottom = "3px solid #990000";
-			prevcells[i].style.paddingBottom = (id != 0) ? 2 : 3;
-		} else {
-			prevcells[i].style.borderBottom = "1px solid #999999";
-			prevcells[i].style.borderBottomWidth = "1px";
-			prevcells[i].style.paddingBottom = (id != 0) ? 4 : 5;
+	
+	for (i = 0; i <= prevcells.length - 1; i++) {
+		if (prevcells[i].id == 'frd' + (id-1)) {
+			if (on) {
+				prevcells[i].style.borderBottom = "3px solid #990000";
+				prevcells[i].style.paddingBottom = (id != 0) ? 2 : 3;
+			} else {
+				prevcells[i].style.borderBottom = "1px solid #999999";
+				prevcells[i].style.borderBottomWidth = "1px";
+				prevcells[i].style.paddingBottom = (id != 0) ? 4 : 5;
+			}
 		}
 	}
 
-	for (i = 2; i <= 7; i++) {
-		if (on) {
-			cells[i].style.borderTop = "2px solid #990000";
-			cells[i].style.paddingTop = 2;
-		} else {
-			prevcells[i].style.borderBottom = "1px solid #999999";
-			cells[i].style.borderTopWidth = 0;
-			cells[i].style.paddingTop = 4;
+	for (i = 0; i <= cells.length - 1; i++) {
+		if (cells[i].id == 'frd' + (id)) {
+			if (on) {
+				cells[i].style.borderTop = "2px solid #990000";
+				cells[i].style.paddingTop = 2;
+			} else {
+				cells[i].style.borderTopWidth = 0;
+				cells[i].style.paddingTop = 4;
+			}
 		}
 	}
 }

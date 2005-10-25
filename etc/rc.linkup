@@ -1,7 +1,7 @@
 #!/usr/local/bin/php -f
 <?php
 /*
-        rc.linkup
+        rc.linkup - devd hotplug actions
         part of pfSense 
 
         Copyright (C) 2003-2005 Scott Ullrich <sullrich@gmail.com>.
@@ -33,30 +33,36 @@
         require_once("config.inc");
         require_once("functions.inc");
 
-        if($argv[2] == "stop") {
+        if($argv[2] == "stop" or $argv[2] == "down") {
+                log_error("DEVD Ethernet detached event for {$argv[1]}");
                 exec("/sbin/ifconfig {$argv[1]} delete");
                 exec("/sbin/ifconfig {$argv[1]} down");
-                exec("arp -da");
+                exec("/usr/sbin/arp -da");
+                exit;
         }
 
-        if($argv[2] == "start") {
-                exec("/sbin/ifconfig {$argv[1]} delete");
+        if($argv[2] == "start" or $argv[2] == "up") {
+                log_error("DEVD Ethernet attached event for {$argv[1]}");
                 exec("/sbin/ifconfig {$argv[1]} up");
-                exec("arp -da");
+                exec("/usr/sbin/arp -da");
         }
 
         if($argv[1] <> "") {
                 $interface = convert_real_interface_to_friendly_interface_name($argv[1]);
         } else {
-                $curwanip = get_current_wan_address();
+                log_error("WARNING: No interface passed to rc.linkup");
                 $interface = "wan";
         }
 
         if($interface == "wan") {
+                log_error("HOTPLUG: Configuring wan interface {$interface}");
                 interfaces_wan_configure();
+        } else if($interface == "lan") {
+                log_error("HOTPLUG: Configuring lan interface {$interface}");                
+                interfaces_lan_configure();
         } else {
+                log_error("HOTPLUG: Configuring optional interface {$interface}");
                 interfaces_optional_configure_if($interface);
         }
-
 
 ?>

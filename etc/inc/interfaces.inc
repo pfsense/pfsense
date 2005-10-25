@@ -141,6 +141,10 @@ function interfaces_lan_configure() {
 		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} addm {$lancfg['if']} addm {$config['interfaces'][$lancfg['bridge']]['if']} up\n");
 		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$lancfg['if']} stp {$config['interfaces'][$lancfg['bridge']]['if']}\n");
 		fclose($fd);
+		
+		/* bring up interfaces */
+		mwexec("/sbin/ifconfig {$config['interfaces'][$lancfg['bridge']]['if']} up");
+		mwexec("/sbin/ifconfig {$lancfg['if']} up");
 	}
 	
 	/* media */
@@ -292,6 +296,12 @@ function interfaces_optional_configure_if($opti) {
 			fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} addm {$optcfg['if']} addm {$config['interfaces'][$optcfg['bridge']]['if']} up\n");
 			fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$optcfg['if']} stp {$config['interfaces'][$optcfg['bridge']]['if']}\n");
 			fclose($fd);
+			
+			/* bring up interfaces */
+			mwexec("/sbin/ifconfig {$config['interfaces'][$optcfg['bridge']]['if']} up");
+			mwexec("/sbin/ifconfig {$optcfg['if']} up");
+
+			
 		} else {
 			/* if user has selected DHCP type then act accordingly */
 			if($optcfg['ipaddr'] == "dhcp") {

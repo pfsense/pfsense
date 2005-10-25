@@ -31,7 +31,6 @@
 
 /* include all configuration functions */
 require_once("functions.inc");
-require_once("dyndns.class");
 
 function services_dhcpd_configure() {
 	global $config, $g;
@@ -411,6 +410,9 @@ function services_dyndns_configure() {
 				return;
 			}			
 		}
+		
+		/* load up the dyndns.class */
+		require_once("dyndns.class");
 
 		$dns = new updatedns($dnsService = $config['dyndns']['type'],
 							 $dnsHost = $config['dyndns']['host'],

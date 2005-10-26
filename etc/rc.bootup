@@ -197,9 +197,16 @@
 
 	/* start dyndns service */
 	services_dyndns_configure();
+	
+	/* static IP address? -> attempt DNS update */
+	if (is_ipaddr($config['interfaces']['wan']['ipaddr']))
+		services_dnsupdate_process();
 
 	/* start DHCP service */
 	services_dhcpd_configure();
+
+	/* start DHCP relay */
+	services_dhcrelay_configure();
 
 	/* start SNMP service */
 	services_snmpd_configure();

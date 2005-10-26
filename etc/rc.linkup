@@ -36,7 +36,6 @@
         if($argv[2] == "stop" or $argv[2] == "down") {
                 log_error("DEVD Ethernet detached event for {$argv[1]}");
                 exec("/sbin/ifconfig {$argv[1]} delete");
-                exec("/sbin/ifconfig {$argv[1]} down");
                 exec("/usr/sbin/arp -da");
                 exit;
         }

@@ -4,18 +4,19 @@ if(Connection_Aborted()) {
 	exit;
 }
 
+require_once("config.inc");
 
-	function get_stats() {
-		$stats['cpu'] = cpu_usage();
-		$stats['mem'] = mem_usage();
-		$stats['uptime'] = get_uptime();
-		$stats['states'] = get_pfstate();
-		$stats['temp'] = get_temp();
+function get_stats() {
+	$stats['cpu'] = cpu_usage();
+	$stats['mem'] = mem_usage();
+	$stats['uptime'] = get_uptime();
+	$stats['states'] = get_pfstate();
+	$stats['temp'] = get_temp();
 
-		$stats = join("|", $stats);
+	$stats = join("|", $stats);
 
-		return $stats;
-	}
+	return $stats;
+}
 
 
 function get_uptime() {

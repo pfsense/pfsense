@@ -63,6 +63,7 @@ if ($_POST) {
     $commonname=$_POST['commonname'];
 
     /* Write out /etc/ssl/openssl.cnf */
+    conf_mount_rw();
     $fd = fopen("/etc/ssl/openssl.cnf", "w");
     fwrite($fd, "");
     fwrite($fd, "[ req ]\n");
@@ -253,5 +254,7 @@ include("head.inc");
     </html>
 
 <?php
-}
+}	
+	conf_mount_ro();
+
 ?>

@@ -18,5 +18,5 @@ fi
 
 # let the configuration system know that the
 # WAN IP address has changed
-/etc/rc.newwanip
+/etc/rc.newwanip &
 

@@ -443,7 +443,8 @@ include("head.inc");
 				<br />
 				<span class="vexpl">This will cause pfSense not to check for newer firmware versions when the <a href="system_firmware.php">System: Firmware</a> page is viewed.</span>
 			</td>
-		</tr>		
+		</tr>
+<?php if($g['platform'] == "pfSense"): ?>		
 		<tr>
 			<td width="22%" valign="top" class="vncell">Hard disk standby time </td>
 			<td width="78%" class="vtable">
@@ -464,6 +465,7 @@ include("head.inc");
 				access has elapsed. <em>Do not set this for CF cards.</em>
 			</td>
 		</tr>
+<?php endif; ?>		
 		<tr>
 			<td width="22%" valign="top" class="vncell">webGUI anti-lockout</td>
 			<td width="78%" class="vtable">

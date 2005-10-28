@@ -258,8 +258,15 @@ if ($_POST) {
 		$filterent['statetimeout'] = $_POST['statetimeout'];
 		$filterent['statetype'] = $_POST['statetype'];
 		$filterent['os'] = $_POST['os'];
-		$filterent['max-src-conn-rate'] = $_POST['max-src-conn-rate'];
-		$filterent['max-src-conn-rates'] = $_POST['max-src-conn-rates'];
+		
+		/* unless both values are provided, unset the values - ticket #650 */
+		if($_POST['max-src-conn-rate'] <> "" and $_POST['max-src-conn-rates'] <> "") {
+			$filterent['max-src-conn-rate'] = $_POST['max-src-conn-rate'];
+			$filterent['max-src-conn-rates'] = $_POST['max-src-conn-rates'];
+		} else {
+			unset($filterent['max-src-conn-rate']);
+			unset($filterent['max-src-conn-rates']);
+		}
 
 		if ($_POST['proto'] != "any")
 			$filterent['protocol'] = $_POST['proto'];

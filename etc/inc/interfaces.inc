@@ -337,8 +337,10 @@ function interfaces_carp_configure() {
 	if (!is_array($config['virtualip']['vip']) or
 	    !is_array($config['installedpackages']['carpsettings']['config'])) {
 		mwexec("/sbin/ifconfig pfsync0 syncdev lo0 up");
-		if($g['booting'])
+		if($g['booting']) {
+			unmute_kernel_msgs();
 			echo "done.\n";
+		}
 		return;
 	}
 	foreach($config['installedpackages']['carpsettings']['config'] as $carp) {

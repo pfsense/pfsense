@@ -143,14 +143,9 @@ $pgtitle = "Interfaces: LAN";
 include("head.inc");
 
 ?>
-<script type="text/javascript" language="javascript" src="ip_helper.js">
-</script>
 
 <script language="JavaScript">
 <!--
-function ipaddr_change() {
-	document.iform.subnet.value = gen_bits_lan(document.iform.ipaddr.value);
-}
 function enable_change(enable_over) {
 	return;
 	var endis;

@@ -2,8 +2,8 @@
 /* $Id$ */
 /*
 	filter.inc
-	Copyright (C) 2004 Scott Ullrich
-        Copyright (C) 2005 Bill Marquette
+	Copyright (C) 2004,2005 Scott Ullrich
+        Copyright (C) 2005 	Bill Marquette
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -1367,14 +1367,16 @@ EOD;
 
 	/* install wan spoof check rule if lan address exists */
 	if($lansa) {
-
-		$ipfrules .= <<<EOD
+		if(!isset($config['interfaces']['wan']['spoofmac'])) {
+			$ipfrules .= <<<EOD
 
 # WAN spoof check
 anchor "wanspoof"
 block in $log quick on $wanif from $lansa/$lansn to any label "WAN spoof check"
 
 EOD;
+
+		}
 	}
 
 	foreach ($optcfg as $oc) {

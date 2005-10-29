@@ -42,7 +42,7 @@
 	$platform = chop(file_get_contents("{$g['etc_path']}/platform"));
 
 	$lanip = find_interface_ip($config['interfaces']['lan']['if']);
-	$wanip = find_interface_ip($config['interfaces']['wan']['if']);
+	$wanip = find_interface_ip(get_real_wan_interface());
 
 	echo <<<EOD
 	

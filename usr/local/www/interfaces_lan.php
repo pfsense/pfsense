@@ -180,7 +180,7 @@ function enable_change(enable_over) {
                   <td width="78%" class="vtable">
 			<select name="bridge" class="formfld" id="bridge" onChange="enable_change(false)">
 				  	<option <?php if (!$pconfig['bridge']) echo "selected";?> value="">none</option>
-                      <?php $opts = array('lan' => "LAN", 'wan' => "WAN");
+                      <?php $opts = array('wan' => "WAN");
 					  	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 							if ($i != $index)
 								$opts['opt' . $i] = "Optional " . $i . " (" .

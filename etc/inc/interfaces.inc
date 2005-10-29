@@ -94,6 +94,10 @@ function interfaces_lan_configure() {
 
 	$lancfg = $config['interfaces']['lan'];
 
+	/* if user has removed ip address, clear it*/
+	if($lancfg['ipaddr'] == "")
+		mwexec("/sbin/ifconfig {$lancfg['if']} delete");
+
 	/* wireless configuration? */
 	if (is_array($lancfg['wireless']))
 		interfaces_wireless_configure($lancfg['if'], $lancfg['wireless']);

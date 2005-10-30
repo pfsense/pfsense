@@ -812,7 +812,7 @@
                         <type>checkbox</type>
                         <typehint>Prioritize network gaming traffic</typehint>
                         <description>This will raise the priority of gaming traffic to higher than most traffic.</description>
-			<enablefields>Counterstrike,DeltaForce,QuakeIII,TigerWoods2004PS2,CallOfDuty,PlanetSide,Halo2,Unreal,DOOM3,EmpireEarth,Everquest,FarCry,HalfLife2,HalfLife,WolfensteinEnemyTerritory</enablefields>
+			<enablefields>Battlefield2,Counterstrike,DeltaForce,QuakeIII,TigerWoods2004PS2,CallOfDuty,PlanetSide,Halo2,Unreal,DOOM3,EmpireEarth,Everquest,FarCry,HalfLife2,HalfLife,WolfensteinEnemyTerritory</enablefields>
 			<donotdisable>true</donotdisable>
 			<bindstofield>ezshaper->step5->enable</bindstofield>
                 </field>

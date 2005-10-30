@@ -43,18 +43,6 @@
                 $interface = "wan";
         }
 
-        /*      dhclient or MPD told us that the IP address has changed;
-                let's see if that's really true to avoid reloading things
-                when it's not really necessary (dhclient likes to
-                execute its dhclient-exit-hooks also on renewals)
-        */
-        if (file_exists("{$g['vardb_path']}/{$interface}_ip")) {
-                $oldwanip = chop(file_get_contents("{$g['vardb_path']}/{$interface}_ip"));
-                log_error("Informational: DHClient spawned /etc/rc.newwanip but the ip has not changed.");
-                if ($curwanip == $oldwanip)
-                        return 0;       /* nothing to do */
-        }
-
         /* reconfigure IPsec tunnels */
         vpn_ipsec_configure(true);
 

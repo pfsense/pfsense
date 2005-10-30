@@ -202,15 +202,20 @@ function enablechange() {
 		$ip = "http://{$config['interfaces']['lan']['ipaddr']}";
 	else
 		$ip = "/";
+
 ?>
 
 <a href="<?php echo $ip; ?>"><img border="0" src="./themes/<?= $g['theme']; ?>/images/logo.gif"></a>
 <p>
-
 <div style="width:700px;background-color:#ffffff" id="roundme">
 <table bgcolor="#ffffff" width="600" cellspacing="0" cellpadding="3">
     <!-- wizard goes here -->
     <tr><td>&nbsp;</td></tr>
+    <tr><td colspan='2'>
+<?php	if ($_GET['message'] != "") {
+		print_info_box($_GET['message']);
+	}
+?></td></tr>
     <tr><td colspan='2'><center><b><?= fixup_string($description) ?></b></center></td></tr><tr><td>&nbsp;</td></tr>
     <?php
 	if(!$pkg['step'][$stepid]['disableheader'])

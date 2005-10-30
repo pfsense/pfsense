@@ -825,6 +825,12 @@
                         <type>listtopic</type>
                 </field>		
                 <field>
+                        <name>Battlefield2</name>
+                        <type>checkbox</type>
+			<typehint>Battlefield 2</typehint>
+			<bindstofield>ezshaper->step5->battlefield2</bindstofield>
+                </field>
+                <field>
                         <name>CallOfDuty</name>
                         <type>checkbox</type>
 			<typehint>Call Of Duty (United Offensive)</typehint>
@@ -975,6 +981,19 @@
 		$config['shaper']['queue'][] = $queue;
 
 		$gamesplist = array();
+
+		if($_POST['battlefield2'] != "") {
+		    /* Battlefield 2 */
+		    $gamesplist[] = array('BF2-1500-4999', 'udp', '1500', '4999', 'both');
+		    $gamesplist[] = array('BF2-4711', 'tcp', '4711', '4711', 'both');
+		    $gamesplist[] = array('BF2-16567', 'udp', '16567', '16567', 'both');
+		    $gamesplist[] = array('BF2-27900', 'udp', '27900', '27900', 'both');
+		    $gamesplist[] = array('BF2-28910', 'tcp', '28910', '28910', 'both');
+		    $gamesplist[] = array('BF2-29900-29901-UDP', 'udp', '29900', '29901', 'both');
+		    $gamesplist[] = array('BF2-29900-29901-TCP', 'tcp', '29900', '29901', 'both');
+		    $gamesplist[] = array('BF2-27900', 'udp', '27900', '27900', 'both');
+		    $gamesplist[] = array('BF2-55123-55125', 'udp', '55123', '55125', 'both');
+		}
 
 		if($_POST['counterstrike'] != "") {
 		    /* counter strike */

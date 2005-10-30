@@ -54,10 +54,13 @@
 		/* wipe previous */
 		unset($config['shaper']['queue']);
 		unset($config['shaper']['rule']);
-		unset($config['interfaces']['wan']['bandwidth']);
-		unset($config['interfaces']['wan']['bandwidthtype']);
-		unset($config['interfaces']['lan']['bandwidth']);
-		unset($config['interfaces']['lan']['bandwidthtype']);		
+		/* XXX: billm - this is breaking things :) */
+		/*
+		 * unset($config['interfaces']['wan']['bandwidth']);
+		 * unset($config['interfaces']['wan']['bandwidthtype']);
+		 * unset($config['interfaces']['lan']['bandwidth']);
+		 * unset($config['interfaces']['lan']['bandwidthtype']);		
+		 */
 		$config['shaper']['enable'] = FALSE;
 	</stepsubmitphpaction>
 </step>
@@ -68,6 +71,13 @@
         <javascriptafterformdisplay>
         </javascriptafterformdisplay>
 	<fields>
+		<field>
+			<name>Inside</name>
+			<description>Inside interface for shaping your download speeds</description>
+			<type>interfaces_selection</type>
+                        <typehint>This is usually the LAN interface</typehint>
+			<bindstofield>ezshaper->step2->inside_int</bindstofield>
+		</field>
                 <field>
                         <name>Download</name>
                         <description>The download speed of your WAN link in Kbits/second.</description>
@@ -76,6 +86,13 @@
 			<message>Download speed must be numerical</message>
 			<bindstofield>ezshaper->step2->download</bindstofield>
                 </field>
+		<field>
+			<name>Outside</name>
+			<description>Outside interface for shaping your upload speeds</description>
+			<type>interfaces_selection</type>
+                        <typehint>This is usually the WAN interface</typehint>
+			<bindstofield>ezshaper->step2->outside_int</bindstofield>
+		</field>
                 <field>
                         <name>Upload</name>
                         <description>The upload speed of your WAN link in Kbits/second.</description>
@@ -90,6 +107,13 @@
 		</field>
 	</fields>
 	<stepsubmitphpaction>
+		if ($config['ezshaper']['step2']['inside_int'] == $config['ezshaper']['step2']['outside_int']) {
+			$message="Inside and Outside interfaces cannot be the same";
+			header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid={$stepid}&amp;message={$message}");
+			exit;
+		}
+		$downq = "q" . strtoupper($config['ezshaper']['step2']['inside_int']);
+		$upq = "q" . strtoupper($config['ezshaper']['step2']['outside_int']);
 	    
 		/* Magic shaper uses HFSC */
 		$config['shaper']['schedulertype'] = "hfsc";
@@ -97,7 +121,7 @@
 		/* Create queues */
 		/* WAN queues */
 		$queue = array();
-		$queue['name'] = "qWANRoot";
+		$queue['name'] = "{$upq}Root";
 		$queue['associatedrule'] = 0;
 		$queue['priority'] = 6;
 		$queue['parentqueue'] = "on";
@@ -106,8 +130,8 @@
 		$config['shaper']['queue'][] = $queue;
 
                 $queue = array();
-                $queue['name'] = "qWANdef";
-                $queue['attachtoqueue'] = "qWANRoot";
+                $queue['name'] = "{$upq}def";
+                $queue['attachtoqueue'] = "{$upq}Root";
                 $queue['associatedrule'] = 0;
 		$queue['defaultqueue'] = 'true';
                 $queue['priority'] = 3;
@@ -129,7 +153,7 @@
 
 		/* LAN queue */
 		$queue = array();
-		$queue['name'] = "qLANRoot";
+		$queue['name'] = "{$downq}Root";
 		$queue['associatedrule'] = 0;
 		$queue['priority'] = 6;
 		$queue['parentqueue'] = "on";
@@ -138,9 +162,9 @@
 		$config['shaper']['queue'][] = $queue;
 
                 $queue = array();
-                $queue['name'] = "qLANdef";
+                $queue['name'] = "{$downq}def";
                 $queue['priority'] = 3;
-                $queue['attachtoqueue'] = "qLANRoot";
+                $queue['attachtoqueue'] = "{$downq}Root";
                 $queue['associatedrule'] = 0;
 		$queue['defaultqueue'] = 'true';
                 $queue['realtime'] = "on";
@@ -160,9 +184,9 @@
                 $config['shaper']['queue'][] = $queue;
 
                 $queue = array();
-                $queue['name'] = "qLANacks";
+                $queue['name'] = "{$downq}acks";
 		$queue['ack'] = TRUE;
-                $queue['attachtoqueue'] = "qLANRoot";
+                $queue['attachtoqueue'] = "{$downq}Root";
                 $queue['associatedrule'] = 0;
                 $queue['priority'] = 6;
                 $queue['realtime'] = "on";
@@ -182,9 +206,9 @@
                 $config['shaper']['queue'][] = $queue;
 
                 $queue = array();
-                $queue['name'] = "qWANacks";
+                $queue['name'] = "{$upq}acks";
 		$queue['ack'] = TRUE;
-                $queue['attachtoqueue'] = "qWANRoot";
+                $queue['attachtoqueue'] = "{$upq}Root";
                 $queue['associatedrule'] = 0;
                 $queue['priority'] = 6;
                 $queue['realtime'] = "on";
@@ -350,6 +374,11 @@
 	<stepsubmitphpaction>
 
 		if ( $_POST['enable'] ) {
+			$downq = "q" . strtoupper($config['ezshaper']['step2']['inside_int']);
+			$upq = "q" . strtoupper($config['ezshaper']['step2']['outside_int']);
+			$downint = strtolower($config['ezshaper']['step2']['inside_int']);
+			$upint = strtolower($config['ezshaper']['step2']['outside_int']);
+
 	                /* create qVOIPUp */
 	                $queue = array();
 	                $queue['name'] = "qVOIPUp";
@@ -370,7 +399,7 @@
  	                $queue['upperlimit3'] = $_POST['bandwidth'] . "Kb";
 			$queue['bandwidth'] = 1;
 			$queue['bandwidthtype'] = '%';
- 	                $queue['attachtoqueue'] = "qWANRoot";
+ 	                $queue['attachtoqueue'] = "{$upq}Root";
  	                $config['shaper']['queue'][] = $queue;
 
  	                /* create qVOIPDown */
@@ -393,7 +422,7 @@
  	                $queue['upperlimit3'] = $_POST['bandwidth'] . "Kb";
 			$queue['bandwidth'] = 1;
 			$queue['bandwidthtype'] = '%';
- 	                $queue['attachtoqueue'] = "qLANRoot";
+ 	                $queue['attachtoqueue'] = "{$downq}Root";
  	                $config['shaper']['queue'][] = $queue;			
 
 			if( $_POST['provider'] == "Generic") {
@@ -402,8 +431,8 @@
 			    $rule['descr'] = "DiffServ/Lowdelay/Upload";
 			    $rule['inqueue'] = "qVOIPDown";
 			    $rule['outqueue'] = "qVOIPUp";
-			    $rule['interface'] = "lan";
-			    $rule['source']['network'] = 'lan';
+			    $rule['interface'] = $downint;
+			    $rule['source']['network'] = $downint;
 			    $rule['destination']['any'] = TRUE;
 			    $rule['iptos'] = "lowdelay";
 			    $config['shaper']['rule'][] = $rule;
@@ -412,9 +441,9 @@
 			    $rule['descr'] = "DiffServ/Lowdelay/Download";
 			    $rule['inqueue'] = "qVOIPUp";
 			    $rule['outqueue'] = "qVOIPDown";
-			    $rule['interface'] = "wan";
+			    $rule['interface'] = $upint;
 			    $rule['source']['any'] = TRUE;
-			    $rule['destination']['network'] = 'lan';
+			    $rule['destination']['network'] = $downint;
 			    $rule['iptos'] = "lowdelay";
 			    $config['shaper']['rule'][] = $rule;
 			} else {
@@ -453,17 +482,17 @@
 						$destsrc = 'destination';
 						$rule['outqueue'] = 'qVOIPUp';
 						$rule['inqueue'] = 'qVOIPDown';
-						$rule['interface'] = 'lan';
-						$rule['source']['network'] = 'lan';
+						$rule['interface'] = $downint;
+						$rule['source']['network'] = $downint;
 						$rule['destination']['any'] = TRUE;
 						$rule['descr'] = "m_voip {$voip[0]} outbound";
 					} else {
 						$destsrc = 'source';
 						$rule['outqueue'] = 'qVOIPDown';
 						$rule['inqueue'] = 'qVOIPUp';
-						$rule['interface'] = 'wan';
+						$rule['interface'] = $upint;
 						$rule['source']['any'] = TRUE;
-						$rule['destination']['network'] = 'lan';
+						$rule['destination']['network'] = $downint;
 						$rule['descr'] = "m_voip {$voip[0]} inbound";
 					}
 				    
@@ -639,6 +668,10 @@
 
 	/* XXX - billm - needs to actually honor what the user selects still */
 	if ( $_POST['enable'] ) {
+		$downq = "q" . strtoupper($config['ezshaper']['step2']['inside_int']);
+		$upq = "q" . strtoupper($config['ezshaper']['step2']['outside_int']);
+		$downint = strtolower($config['ezshaper']['step2']['inside_int']);
+		$upint = strtolower($config['ezshaper']['step2']['outside_int']);
 
 		$p2plist = array();
 
@@ -695,17 +728,17 @@
 					$destsrc = 'destination';
 					$rule['outqueue'] = 'qP2PUp';
 					$rule['inqueue'] = 'qP2PDown';
-					$rule['interface'] = 'lan';
-					$rule['source']['network'] = 'lan';
+					$rule['interface'] = $downint;
+					$rule['source']['network'] = $downint;
 					$rule['destination']['any'] = TRUE;
 					$rule['descr'] = "m_P2P {$p2pclient[0]} outbound";
 				} else {
 					$destsrc = 'source';
 					$rule['outqueue'] = 'qP2PDown';
 					$rule['inqueue'] = 'qP2PUp';
-					$rule['interface'] = 'wan';
+					$rule['interface'] = $upint;
 					$rule['source']['any'] = TRUE;
-					$rule['destination']['network'] = 'lan';
+					$rule['destination']['network'] = $downint;
 					$rule['descr'] = "m_P2P {$p2pclient[0]} inbound";
 				}
 
@@ -739,7 +772,7 @@
                 $queue['upperlimit3'] = "90%";
 		$queue['bandwidth'] = 1;
 		$queue['bandwidthtype'] = '%';
-		$queue['attachtoqueue'] = "qWANRoot";
+                $queue['attachtoqueue'] = "{$upq}Root";
 		$config['shaper']['queue'][] = $queue;
 
 		/* create qP2PDown */
@@ -763,7 +796,7 @@
                 $queue['upperlimit3'] = "90%";
 		$queue['bandwidth'] = 1;
 		$queue['bandwidthtype'] = '%';
-		$queue['attachtoqueue'] = "qLANRoot";
+                $queue['attachtoqueue'] = "{$downq}Root";
 		$config['shaper']['queue'][] = $queue;
 	}	
 	</stepsubmitphpaction>
@@ -889,6 +922,10 @@
 	<stepsubmitphpaction>
 	/* XXX - billm - needs to actually honor what the user selects still */
 	if ( $_POST['enable'] ) {
+		$downq = "q" . strtoupper($config['ezshaper']['step2']['inside_int']);
+		$upq = "q" . strtoupper($config['ezshaper']['step2']['outside_int']);
+		$downint = strtolower($config['ezshaper']['step2']['inside_int']);
+		$upint = strtolower($config['ezshaper']['step2']['outside_int']);
 		/* create qGamesUp queue */
 		$queue = array();
 		$queue['name'] = "qGamesUp";
@@ -910,7 +947,7 @@
                 $queue['upperlimit3'] = "90%";
 		$queue['bandwidth'] = 1;
 		$queue['bandwidthtype'] = '%';
-		$queue['attachtoqueue'] = "qWANRoot";
+                $queue['attachtoqueue'] = "{$upq}Root";
 		$config['shaper']['queue'][] = $queue;
 	    
 		/* create qGamesDown queue */
@@ -934,7 +971,7 @@
                 $queue['upperlimit3'] = "90%";
 		$queue['bandwidth'] = 1;
 		$queue['bandwidthtype'] = '%';
-		$queue['attachtoqueue'] = "qLANRoot";
+                $queue['attachtoqueue'] = "{$downq}Root";
 		$config['shaper']['queue'][] = $queue;
 
 		$gamesplist = array();
@@ -1050,17 +1087,17 @@
 				    $destsrc = 'destination';
 				    $rule['outqueue'] = 'qGamesUp';
 				    $rule['inqueue'] = 'qGamesDown';
-				    $rule['interface'] = 'lan';
-				    $rule['source']['network'] = 'lan';
+				    $rule['interface'] = $downint;
+				    $rule['source']['network'] = $downint;
 				    $rule['destination']['any'] = TRUE;
 				    $rule['descr'] = "m_Game {$Gameclient[0]} outbound";
 			    } else {
 				    $destsrc = 'source';
 				    $rule['outqueue'] = 'qGamesDown';
 				    $rule['inqueue'] = 'qGamesUp';
-				    $rule['interface'] = 'wan';
+				    $rule['interface'] = $upint;
 				    $rule['source']['any'] = TRUE;
-				    $rule['destination']['network'] = 'lan';
+				    $rule['destination']['network'] = $downint;
 				    $rule['descr'] = "m_Game {$Gameclient[0]} inbound";
 			    }
     
@@ -1569,6 +1606,10 @@
         </fields>
 	<stepsubmitphpaction>
 	if ( $_POST['enable'] ) {
+		$downq = "q" . strtoupper($config['ezshaper']['step2']['inside_int']);
+		$upq = "q" . strtoupper($config['ezshaper']['step2']['outside_int']);
+		$downint = strtolower($config['ezshaper']['step2']['inside_int']);
+		$upint = strtolower($config['ezshaper']['step2']['outside_int']);
 		/* create qOthersUp queue */
 		$queue = array();
 		$queue['name'] = "qOthersUpH";
@@ -1590,7 +1631,7 @@
                 $queue['upperlimit3'] = "90%";
 		$queue['bandwidth'] = 1;
 		$queue['bandwidthtype'] = '%';
-		$queue['attachtoqueue'] = "qWANRoot";
+                $queue['attachtoqueue'] = "{$upq}Root";
 		$config['shaper']['queue'][] = $queue;
 	    
 		/* create qOthersDown queue */
@@ -1614,7 +1655,7 @@
                 $queue['upperlimit3'] = "90%";
 		$queue['bandwidth'] = 1;
 		$queue['bandwidthtype'] = '%';
-		$queue['attachtoqueue'] = "qLANRoot";
+                $queue['attachtoqueue'] = "{$downq}Root";
 		$config['shaper']['queue'][] = $queue;
                 
 
@@ -1639,7 +1680,7 @@
                 $queue['upperlimit3'] = "90%";
 		$queue['bandwidth'] = 1;
 		$queue['bandwidthtype'] = '%';
-		$queue['attachtoqueue'] = "qWANRoot";
+                $queue['attachtoqueue'] = "{$upq}Root";
 		$config['shaper']['queue'][] = $queue;
 	    
 		/* create qOthersDown queue */
@@ -1663,7 +1704,7 @@
                 $queue['upperlimit3'] = "90%";
 		$queue['bandwidth'] = 1;
 		$queue['bandwidthtype'] = '%';
-		$queue['attachtoqueue'] = "qLANRoot";
+                $queue['attachtoqueue'] = "{$downq}Root";
 		$config['shaper']['queue'][] = $queue;
 		
 		$othersplist = array();
@@ -1809,17 +1850,17 @@
 				    $destsrc = 'destination';
 				    $rule['outqueue'] = 'qOthersUp' . $otherclient[5]; /* posted value H or L */
 				    $rule['inqueue'] = 'qOthersDown' . $otherclient[5]; /* posted value H or L */
-				    $rule['interface'] = 'lan';
-				    $rule['source']['network'] = 'lan';
+				    $rule['interface'] = $downint;
+				    $rule['source']['network'] = $downint;
 				    $rule['destination']['any'] = TRUE;
 				    $rule['descr'] = "m_Other {$otherclient[0]} outbound";
 			    } else {
 				    $destsrc = 'source';
 				    $rule['outqueue'] = 'qOthersDown' . $otherclient[5]; /* posted value H or L */
 				    $rule['inqueue'] = 'qOthersUp' . $otherclient[5]; /* posted value H or L */
-				    $rule['interface'] = 'wan';
+				    $rule['interface'] = $upint;
 				    $rule['source']['any'] = TRUE;
-				    $rule['destination']['network'] = 'lan';
+				    $rule['destination']['network'] = $downint;
 				    $rule['descr'] = "m_Other {$otherclient[0]} inbound";
 			    }
     
@@ -1841,10 +1882,10 @@
 		<type>listtopic</type>
         </field>	
         <description>
-	    After pressing Finish the system will load the new profile.
-	    Please note that this may take a moment.
-	    Also note that the traffic shaper is stateful meaning that only new connections will be shaped.
-	    If this is an issue please reset the states after loading the profile.
+	    After pressing Finish the system will load the new profile.&lt;br/&gt;
+	    Please note that this may take a moment.&lt;br/&gt;
+	    Also note that the traffic shaper is stateful meaning that only new connections will be shaped.&lt;br/&gt;
+	    If this is an issue please reset the state table after loading the profile.&lt;br/&gt;
 	</description>
 	<fields>
                 <field>

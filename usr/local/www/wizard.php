@@ -264,15 +264,15 @@ function enablechange() {
 			$multiple = "";
 			$name = strtolower($name);
 			echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
-			echo fixup_string($field['name']) . "\n";
+			echo fixup_string($field['name']) . ":\n";
 			echo "</td>";
 			echo "<td class=\"vtable\">\n";
-			if($field['size'] <> "") $size = " size=\"" . $field['size'] . "\"";
+			if($field['size'] <> "") $size = "size=\"{$field['size']}\"";
 			if($field['multiple'] <> "" and $field['multiple'] <> "0") {
-			  $multiple = " multiple=\"multiple\"";
+			  $multiple = "multiple=\"multiple\"";
 			  $name .= "[]";
 			}
-			echo "<select name='" . $name . "'" . $size . $multiple . ">\n";
+			echo "<select id='{$name}' name='{$name}' {$size} {$multiple}>\n";
 			if($field['add_to_interfaces_selection'] <> "") {
 				$SELECTED = "";
 				if($field['add_to_interfaces_selection'] == $value) $SELECTED = " SELECTED";

@@ -60,7 +60,7 @@
         services_dnsupdate_process();
 
         /* write current WAN IP to file */
-        $fd = @fopen("{$g['vardb_path']}/{$interface}_ip", "w");
+        $fd = fopen("{$g['vardb_path']}/{$interface}_ip", "w");
         if ($fd) {
                 fwrite($fd, $curwanip);
                 fclose($fd);

@@ -207,6 +207,10 @@ function filter_setup_altq_interfaces() {
 
 		if($queue_names <> ""){
 			$altq_rules .= "altq on {$config['interfaces'][$ifname]['if']} ";
+			/* Default bandwidth to 10Mbit - this handles virtual interfaces (vlan) that have
+			 * no bandwidth associated with them.
+			 */
+			$bandwidth = "bandwidth 10Mb";
 			if($config['interfaces'][$ifname]['bandwidth'] <> "")
 				$bandwidth = "bandwidth {$config['interfaces'][$ifname]['bandwidth']}{$config['interfaces'][$ifname]['bandwidthtype']}";	
 			$altq_rules .= "{$config['shaper']['schedulertype']} {$bandwidth} ";

@@ -45,7 +45,10 @@ $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
-$pconfig['schedulertype'] = $config['shaper']['schedulertype'];
+/* billm: alternate schedulers are currently disable */
+/* 
+ * $pconfig['schedulertype'] = $config['shaper']['schedulertype'];
+ */
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
 $pconfig['theme'] = $config['system']['theme'];
 $pconfig['disablerendevouz'] = $config['system']['disablerendevouz'];

@@ -304,12 +304,14 @@ function services_dhcrelay_configure() {
 
 	/* DHCPRelay enabled on any interfaces? */
 	$dhcrelayenable = false;
-	foreach ($dhcrelaycfg as $dhcrelayif => $dhcrelayifconf) {
-		if (isset($dhcrelayifconf['enable']) &&
-			(($dhcrelayif == "lan") ||
-			(isset($config['interfaces'][$dhcrelayif]['enable']) &&
-			$config['interfaces'][$dhcrelayif]['if'] && (!$config['interfaces'][$dhcrelayif]['bridge']))))
-			$dhcrelayenable = true;
+	if(is_array($dhcrelaycfg)) {
+		foreach ($dhcrelaycfg as $dhcrelayif => $dhcrelayifconf) {
+			if (isset($dhcrelayifconf['enable']) &&
+				(($dhcrelayif == "lan") ||
+				(isset($config['interfaces'][$dhcrelayif]['enable']) &&
+				$config['interfaces'][$dhcrelayif]['if'] && (!$config['interfaces'][$dhcrelayif]['bridge']))))
+				$dhcrelayenable = true;
+		}
 	}
 
 	if (!$dhcrelayenable)

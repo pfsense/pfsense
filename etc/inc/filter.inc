@@ -618,12 +618,11 @@ function filter_nat_rules_generate() {
 			 *    a ftp server then launch a helper
 			 */
 			if($target <> "") {
-				if($extport[0] == "21" and !$config['system']['disableftpproxy']) {
-					$helpers = exec("ps aux | grep pftpx | grep {$target}");
-					echo "{$helpers}\n";
+				if($extport[0] == "21" and !isset($config['system']['disableftpproxy'])) {
+					$helpers = exec("ps aux | grep pftpx | grep -v grep | grep {$target}");
 					if(!$helpers) {
 						/* install a pftpx helper, do not set a rule */
-						mwexec_bg("/usr/local/sbin/pftpx -b {$extaddr} -c 21 -f {$target} -g 21");
+						mwexec_bg("/usr/local/sbin/pftpx -b {$rule['external-address']} -c 21 -f {$target} -g 21");
 						continue;
 					}
 				}

@@ -79,12 +79,11 @@ if ($_POST) {
 	$changedesc = "LAN Interface: ";
 
 	/* input validation */
-	if (!$_POST['bridge']) {
-		$reqdfields = explode(" ", "ipaddr subnet");
-		$reqdfieldsn = explode(",", "IP address,Subnet bit count");
-		
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-	}
+	$reqdfields = explode(" ", "ipaddr subnet");
+	$reqdfieldsn = explode(",", "IP address,Subnet bit count");
+	
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
+
 
 	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
 		$input_errors[] = "A valid IP address must be specified.";

@@ -41,22 +41,51 @@
 	$buildtime = chop(file_get_contents("{$g['etc_path']}/version.buildtime"));
 	$platform = chop(file_get_contents("{$g['etc_path']}/platform"));
 
-	$lanip = find_interface_ip($config['interfaces']['lan']['if']);
-	$wanip = find_interface_ip(get_real_wan_interface());
+	$banner = "\n*** Welcome to pfSense version {$version} - {$platform} ***\n";
 
-	echo <<<EOD
-	
-*** This is pfSense version {$version} - {$platform} ***
+	$iflist = get_interface_list("media");
 
-    LAN   ->   {$config['interfaces']['lan']['if']}   ->   {$lanip}
-    WAN   ->   {$config['interfaces']['wan']['if']}   ->   {$wanip}
-EOD;
-
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-		$ipaddr = find_interface_ip($config['interfaces']['opt' . $i]['if']);
-		echo "\n   OPT{$i}   ->   {$config['interfaces']['opt' . $i]['if']}   ->   ";
-		echo $ipaddr;
-		echo " ({$config['interfaces']['opt' . $i]['descr']})";
+	foreach($iflist as $ifname => $ifinfo) {
+		$friendly = strtoupper($ifinfo['friendly']);
+		$ifconf =& $config['interfaces'][$ifinfo['friendly']];
+		/* skip interfaces that don't have a friendly name */
+		if($friendly != "") {
+			switch($ifconf['ipaddr']) {
+			case "dhcp":
+				$ifinfo['class'] = "DHCP";
+				break;
+			case "pppoe":
+				$ifinfo['class'] = "PPPoE";
+				$ifinfo['ipaddr'] = $iflist['ng0']['ipaddr'];
+				break;
+			case "pptp":
+				$ifinfo['class'] = "PPTP";
+				$ifinfo['ipaddr'] = $iflist['ng0']['ipaddr'];
+				break;
+			}
+			/* print interface name */
+			$tobanner = "\n  {$friendly}";
+			/* interface description */
+			if($ifconf['descr']) {
+				$tobanner .= "({$ifconf['descr']})";
+			}
+			/* is the interface up? */
+			if($ifinfo['up']) {
+				$tobanner .= "*";
+			}
+			/* pad banner to eliminate tab errors */
+			$banner .= str_pad($tobanner, 25, " ", STR_PAD_RIGHT);
+			/* print physical if name */
+			$banner .= "->\t{$ifname}\t->\t";
+			/* do we have an IP? */
+			$banner .= $ifinfo['ipaddr'] ? $ifinfo['ipaddr'] : "NONE";
+			/* do we have an interface class? */
+			if($ifinfo['class']) {
+				$banner .= "({$ifinfo['class']})";
+			}
+		}
 	}
+
+	print $banner;
 
 ?>

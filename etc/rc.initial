@@ -25,8 +25,6 @@ while : ; do
 
 /etc/rc.banner
 
-echo
-
 # display a cheap menu
 echo
 echo " pfSense console setup "

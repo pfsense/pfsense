@@ -621,8 +621,11 @@ function filter_nat_rules_generate() {
 				if($extport[0] == "21" and !isset($config['system']['disableftpproxy'])) {
 					$helpers = exec("ps aux | grep pftpx | grep -v grep | grep {$target}");
 					if(!$helpers) {
+						$external_address = $rule['external-address'];
+						if($external_address == "")
+							$external_address = find_interface_ip(get_real_wan_interface());
 						/* install a pftpx helper, do not set a rule */
-						mwexec_bg("/usr/local/sbin/pftpx -b {$rule['external-address']} -c 21 -f {$target} -g 21");
+						mwexec_bg("/usr/local/sbin/pftpx -b {$external_address} -c 21 -f {$target} -g 21");
 						continue;
 					}
 				}

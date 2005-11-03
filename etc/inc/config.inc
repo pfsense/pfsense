@@ -1190,26 +1190,23 @@ function system_start_ftp_helpers() {
 	require_once("interfaces.inc");
 	global $config, $g;
 
-	/* if the ftp proxy is disabled then killall pftpx and return */	
+	/*    if the ftp proxy is disabled then kill pftpx instance and return
+	 *    note that the helpers for port forwards are launched in a different
+         *    sequence so we are filtering them out here by not including -g 8021 first.
+         */
 	if($config['system']['disableftpproxy'] <> "") {
-		mwexec("/usr/bin/killall pftpx");
+		$helpers = exec("ps aux | grep \"/usr/local/sbin/pftpx -g 8021\" | grep -v grep | cut -d\" \" -f6");
+		mwexec("/usr/bin/kill {$helpers}");
 		return;
 	}
 	
 	/* grab the current WAN IP address */
 	$wanip = get_current_wan_address();
 	
-	/* kill off pftpx if its already running */
-	if(is_process_running("pftpx"))
-		mwexec("/usr/bin/killall pftpx 2>/dev/null");
-
-	/* if we do not have a wanip, launch with just the -g flag */	
-	if($wanip <> "") {
-		$command = "/usr/local/sbin/pftpx -g 8021 {$wanip}";
-		mwexec($command);
-	} else {
+	/* if pftpx is already running then do not launch it again */
+	$helpers = exec("ps aux | grep \"/usr/local/sbin/pftpx -g 8021\" | grep -v grep");
+	if(!$helpers) 
 		mwexec("/usr/local/sbin/pftpx -g 8021");
-	}
 }
 
 function cleanup_backupcache($revisions = 30) {

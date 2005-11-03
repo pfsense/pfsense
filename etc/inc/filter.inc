@@ -619,7 +619,7 @@ function filter_nat_rules_generate() {
 			 */
 			if($target <> "") {
 				if($extport[0] == "21" and !isset($config['system']['disableftpproxy'])) {
-					$helpers = exec("ps aux | grep pftpx | grep -v grep | grep {$target}");
+					$helpers = exec("ps awux | grep pftpx | grep -v grep | grep {$target} | cut -d\" \" -f5");
 					if(!$helpers) {
 						$external_address = $rule['external-address'];
 						if($external_address == "")
@@ -1000,6 +1000,9 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					if (isset($rule['source']['not'])) $src = " !{$src}";
 				} else {
 					switch ($rule['source']['network']) {
+						case 'wanip':
+							$src = $curwanip;
+							break;						
 						case 'lan':
 							$src = "{$lansa}/{$lansn}";
 							break;
@@ -1074,6 +1077,9 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					if (isset($rule['destination']['not'])) $dst = " !{$dst}";
 				} else {
 					switch ($rule['destination']['network']) {
+						case 'wanip':
+							$dst = $curwanip;
+							break;						
 						case 'lan':
 							$dst = "{$lansa}/{$lansn}";
 							break;

@@ -34,7 +34,7 @@
 
 require("guiconfig.inc");
 
-$specialsrcdst = explode(" ", "any lan pptp pppoe");
+$specialsrcdst = explode(" ", "any wanip lan pptp pppoe");
 
 if (!is_array($config['filter']['rule'])) {
 	$config['filter']['rule'] = array();
@@ -443,6 +443,7 @@ include("head.inc");
 								<option value="any"     <?php if ($pconfig['src'] == "any") { echo "selected"; } ?>>any</option>
 								<option value="single"  <?php if (($pconfig['srcmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>>Single host or alias</option>
 								<option value="network" <?php if (!$sel) echo "selected"; ?>>Network</option>
+								<option value="wanip" 	<?php if ($pconfig['src'] == "wanip") { echo "selected"; } ?>>WAN address</option>
 								<option value="lan"     <?php if ($pconfig['src'] == "lan") { echo "selected"; } ?>>LAN subnet</option>
 								<option value="pptp"    <?php if ($pconfig['src'] == "pptp") { echo "selected"; } ?>>PPTP clients</option>
 								<option value="pppoe"   <?php if ($pconfig['src'] == "pppoe") { echo "selected"; } ?>>PPPoE clients</option>			    
@@ -548,6 +549,7 @@ include("head.inc");
 								<option value="any" <?php if ($pconfig['dst'] == "any") { echo "selected"; } ?>>any</option>
 								<option value="single" <?php if (($pconfig['dstmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>>Single host or alias</option>
 								<option value="network" <?php if (!$sel) echo "selected"; ?>>Network</option>
+								<option value="wanip" <?php if ($pconfig['dst'] == "wanip") { echo "selected"; } ?>>WAN address</option>
 								<option value="lan" <?php if ($pconfig['dst'] == "lan") { echo "selected"; } ?>>LAN subnet</option>
 								<option value="pptp" <?php if ($pconfig['dst'] == "pptp") { echo "selected"; } ?>>PPTP clients</option>
 								<option value="pppoe" <?php if ($pconfig['dst'] == "pppoe") { echo "selected"; } ?>>PPPoE clients</option>

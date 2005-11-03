@@ -465,6 +465,7 @@
 
 			$wan_ip = get_current_wan_address();
 			$this->_dnsIP = $wan_ip;
+			log_error("DynDns: Current WAN IP: {$wan_ip}");
 
 			if (file_exists($this->_cacheFile)) {
 				if(file_exists($this->_cacheFile))
@@ -474,6 +475,7 @@
 				list($cacheIP,$cacheTime) = split(':', $contents);
 				$this->_debug($cacheIP.'/'.$cacheTime);
 				$initial = false;
+				log_error("DynDns: Cached IP: {cacheIP}");
 			} else {
 				$file = fopen($this->_cacheFile, 'w');
 				fwrite($file, '0.0.0.0:'.$currentTime);
@@ -481,6 +483,7 @@
 				$cacheIP = '0.0.0.0';
 				$cacheTime = $currentTime;
 				$initial = true;
+				log_error("DynDns: No Cached IP found.");
 			}
 
 			/*   use 2419200 for dyndns, dhs, easydns, noip, hn
@@ -492,15 +495,18 @@
 			/* lets deterimine if the item needs updating */
 			if ($cacheIP != $wan_ip) {
 				$needs_updating = TRUE;
+				log_error("DynDns: cacheIP != wan_ip.  Updating.");
 			}
 			$update_reason = "Cached IP: {$cacheIP} WAN IP: {$wan_ip} ";
 			if (($currentTime - $cacheTime) > $time ) {
 				$needs_updating = TRUE;
+				log_error("DynDns: More than 28 days.  Updating.");
 			}
 			$update_reason .= "{$currentTime} - {$cacheTime} > {$time} ";
 			if ($initial == TRUE) {
 				$needs_updating = TRUE;
 				$update_reason .= "Inital update. ";
+				log_error("DynDns: Initial run.   Updating.");
 			}
 			/*   finally if we need updating then store the
 			 *   new cache value and return true

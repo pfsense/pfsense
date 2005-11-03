@@ -105,7 +105,7 @@ $wkports = array(3389 => "MS RDP",
 	443 => "HTTPS",
 	993 => "IMAP/S");
 
-$specialnets = array("lan" => "LAN net", "pptp" => "PPTP clients");
+$specialnets = array("wanip" => "WAN address","lan" => "LAN net", "pptp" => "PPTP clients");
 
 for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 	$specialnets['opt' . $i] = $config['interfaces']['opt' . $i]['descr'] . " net";

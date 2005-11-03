@@ -55,6 +55,7 @@ if ($_POST) {
         </p>
       </form>
 <?php endif; ?>
+</center>
 <?php include("fend.inc"); ?>
 </body>
 </html>

@@ -243,7 +243,6 @@ function clearcombo(){
 							<select id="serversSelect" name="servers[]" multiple="true" size="5">
 							
 <?php
-							echo $a_pool[$id]['servers'];
 							if (is_array($pconfig['servers'])) {
 								foreach($pconfig['servers'] as $svrent) {
 									echo "    <option value=\"{$svrent}\">{$svrent}</option>\n";

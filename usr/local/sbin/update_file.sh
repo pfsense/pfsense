@@ -17,8 +17,6 @@ if [ -z $1 ];then
     exit 0
 fi
 
-/etc/rc.conf_mount_rw
-
 if [ "$1" = "-all" ];then
     echo "This will update all .php .js and .inc pages on your pfsense box!"
     FMATCHES=`find /etc/inc/ /usr/local/www /usr/local/captiveportal -name "*.php" -or -name "*.inc" -or -name "*.js"`
@@ -29,24 +27,17 @@ else
     FMATCHES=$1
 fi
 
-for file in $FMATCHES ;do
+/etc/rc.conf_mount_rw
 
+for file in $FMATCHES ;do
     if [ ! -z $2 ];then
         rev=$2
         echo "trying to fetch $rev $file"
     else
         echo "trying to fetch latest $file"
     fi
-    
-    /usr/bin/fetch -T 60 -q -o "$file" "$baseurl$file$urlrev$rev$urlcon;only_with_tag=RELENG_1"
-
-    if [ $? -eq 0 ]; then
-            echo "File updated."
-        else
-            echo "An error occured during update."
-    fi
-
+    #echo fetch -o "$file" "$baseurl$file$urlrev$rev$urlcon"
+    `which fetch` -o "$file" "$baseurl$file$urlrev$rev$urlcon"
 done
 
 /etc/rc.conf_mount_ro
-

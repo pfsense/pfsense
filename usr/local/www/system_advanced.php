@@ -292,6 +292,7 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<input name="enableserial" type="checkbox" id="enableserial" value="yes" <?php if (isset($pconfig['enableserial'])) echo "checked"; ?> onclick="enable_change(false)" />
 				<strong>This will enable the first serial port with 9600/8/N/1</strong>
+				<br>
 				<span class="vexpl">Note:  This will disable the internal video card/keyboard</span>
 			</td>
 		</tr>

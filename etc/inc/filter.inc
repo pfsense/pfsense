@@ -736,6 +736,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		$optcfg = array();
 		generate_optcfg_array($optcfg);
 		
+		$curwanip = get_current_wan_address();
+		
 		/* don't include disabled rules */
 		if (isset($rule['disabled'])) {
 			return "# rule " . $rule['descr'] . " disabled \n";

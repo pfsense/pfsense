@@ -254,6 +254,7 @@
 		 */
 		function _checkStatus($data) {
 			log_error("DynDns: DynDns _checkStatus() starting.");
+			log_error("DynDns: Current Service: {$this->_dnsService}");
 			switch ($this->_dnsService) {
 				case 'dyndns':
 					if (preg_match('/notfqdn/i', $data)) {
@@ -475,7 +476,7 @@
 				list($cacheIP,$cacheTime) = split(':', $contents);
 				$this->_debug($cacheIP.'/'.$cacheTime);
 				$initial = false;
-				log_error("DynDns: Cached IP: {cacheIP}");
+				log_error("DynDns: Cached IP: {$cacheIP}");
 			} else {
 				conf_mount_rw();
 				$file = fopen($this->_cacheFile, 'w');

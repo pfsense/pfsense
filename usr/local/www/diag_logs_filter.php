@@ -68,6 +68,9 @@ function conv_clog($logfile, $tail = 50) {
 
 		preg_match("/(.*)\s(.*)\spf:.*rule.*\(match\):\s(\w+)\sin\son\s(\w+:)\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,7})\s([\<|\>])\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,7}):.*/",$logent,$log_split);
 
+		if($log_split[5] == "")
+			preg_match("/(.*)\s(.*)\spf:.*rule.*\(match\):\s(\w+)\sin\son\s(\w+:)\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\s([\<|\>])\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}):.*/",$logent,$log_split);
+
 		$flent['proto'] 	= "TCP";
 		if(stristr($logent, "UDP") == true)
 			$flent['proto'] = "UDP";

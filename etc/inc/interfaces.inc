@@ -428,6 +428,7 @@ function interfaces_carp_bring_up_final() {
 	if(!is_array($viparr)) 
 		return;
 	$carp_instances_counter = 0;
+	sleep(15);
 	foreach ($viparr as $vip) {
 		if($debugging)
 			echo "Upping interface carp{$carp_instances_counter}.\n";

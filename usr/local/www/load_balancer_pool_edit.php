@@ -269,9 +269,6 @@ function clearcombo(){
 		</tr>
 	</table>
 	</form>
-<script language="javascript">
-<?php if(!$id) echo "type_change();\n"; ?>
-</script>
 <?php include("fend.inc"); ?>
 </body>
 </html>

@@ -46,7 +46,7 @@
 	 */
 
 	class updatedns {
-		var $_cacheFile = '/var/etc/dyndns.cache';
+		var $_cacheFile = '/cf/conf/dyndns.cache';
 		var $_debugFile = '/var/etc/dyndns.debug';
 		var $_UserAgent = 'User-Agent: phpDynDNS/0.7';
 		var $_errorVerbosity = 0;
@@ -477,9 +477,11 @@
 				$initial = false;
 				log_error("DynDns: Cached IP: {cacheIP}");
 			} else {
+				conf_mount_rw();
 				$file = fopen($this->_cacheFile, 'w');
 				fwrite($file, '0.0.0.0:'.$currentTime);
 				fclose($file);
+				conf_mount_ro();
 				$cacheIP = '0.0.0.0';
 				$cacheTime = $currentTime;
 				$initial = true;
@@ -513,9 +515,11 @@
                          */
 			if($needs_updating == TRUE) {
 				/* Write WAN IP to cache file */
+				conf_mount_rw();
 				$file = fopen($this->_cacheFile, 'w');
 				fwrite($file, $wan_ip.':'.$currentTime);
-				fclose($file);			
+				fclose($file);
+				conf_mount_ro();
 				return TRUE;
 			} else {
 				return FALSE;			
@@ -533,9 +537,11 @@
 		 */
 		function _debug ($data) {
 			$string = date('m-d-y h:i:s').' - ('.$this->_debugID.') - ['.$this->_dnsService.'] - '.$data;
+			conf_mount_rw();
 			$file = fopen($this->_debugFile, 'a');
 			fwrite($file, $string);
 			fclose($file);
+			conf_mount_ro();
 		}
 
 	}

@@ -119,6 +119,8 @@ include("head.inc");
                   <td width="10%" class="list"></td>
 				</tr>
 			  <?php $i = 0; foreach ($a_vip as $vipent): ?>
+			  <?php if($vipent['subnet'] <> "" or $vipent['range'] <> "" or
+			        $vipent['subnet_bits'] <> "" or $vipent['range']['from'] <> ""): ?>
                 <tr>
                   <td class="listlr" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
 					<?php	if (($vipent['type'] == "single") || ($vipent['type'] == "network"))
@@ -142,6 +144,7 @@ include("head.inc");
                     </table>
                   </td>
                 </tr>
+		<?php endif; ?>
                 <?php $i++; endforeach; ?>
                 <tr>
                   <td class="list" colspan="3"></td>

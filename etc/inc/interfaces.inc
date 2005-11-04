@@ -413,7 +413,7 @@ function interfaces_carp_configure() {
 			$carp_instances_counter++;
 		}
 	}
-	//mwexec("/bin/sh /tmp/carp.sh");
+	mwexec("/bin/sh /tmp/carp.sh");
 	fclose($fd);
 	if ($g['booting']) {
 		unmute_kernel_msgs();
@@ -440,7 +440,7 @@ function interfaces_carp_bring_up_final() {
 		if($counter > 15)
 			$supress = 0;
 	}	
-	sleep(15);
+	sleep(30);
 	foreach ($viparr as $vip) {
 		if($debugging)
 			echo "Upping interface carp{$carp_instances_counter}.\n";

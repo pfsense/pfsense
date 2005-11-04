@@ -189,8 +189,14 @@ function enable_change(enable_change) {
                   <td width="22%" valign="top" class="vncellreq">Hostname</td>
                   <td width="78%" class="vtable">
                     <input name="host" type="text" class="formfld" id="host" size="30" value="<?=htmlspecialchars($pconfig['host']);?>">
+		    <br>
+		    <span class="vexpl">
+		    <span class="red"><strong>Note:<br></strong>
+		    </span>
+			Enter the complete host/domain name.  example:  myhost.dyndns.org
+		    </span>		    
                   </td>
-				</tr>
+		</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">MX</td>
                   <td width="78%" class="vtable">

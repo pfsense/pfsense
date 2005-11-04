@@ -401,7 +401,7 @@ function enable_change(enable_over) {
 		</tr>
 			  <?php if(is_array($a_maps)): ?>
 			  <?php $i = 0; foreach ($a_maps as $mapent): ?>
-			  <?php if($mapent['mac'] <> ""): ?>
+			  <?php if($mapent['mac'] <> "" or $mapent['ipaddr'] <> ""): ?>
                 <tr>
                   <td class="listlr" ondblclick="document.location='services_dhcp_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
                     <?=htmlspecialchars($mapent['mac']);?>

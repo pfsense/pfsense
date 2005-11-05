@@ -267,6 +267,7 @@
 						$status = "phpDynDNS: (Error) User Authorization Failed";
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";
+						log_error("phpDynDNS: PAYLOAD: {$data}");
 						$this->_debug($data);
 					}
 					break;
@@ -281,6 +282,7 @@
 						$status = "phpDynDNS: (Error) User Authorization Failed";
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";
+						log_error("phpDynDNS: PAYLOAD: {$data}");
 						$this->_debug($data);
 					}
 					break;
@@ -295,6 +297,7 @@
 						$status = "phpDynDNS: (Error) User Authorization Failed";
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";
+						log_error("phpDynDNS: PAYLOAD: {$data}");
 						$this->_debug($data);
 					}
 					break;
@@ -373,6 +376,7 @@
 						$status = "phpDynDNS: (Success) IP Updated Successfully!";					
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";
+						log_error("phpDynDNS: PAYLOAD: {$data}");
 						$this->_debug($data);
 					}
 					break;
@@ -385,6 +389,7 @@
 						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";
+						log_error("phpDynDNS: PAYLOAD: {$data}");
 						$this->_debug($data);
 					}
 					break;
@@ -401,6 +406,7 @@
 						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";
+						log_error("phpDynDNS: PAYLOAD: {$data}");
 						$this->_debug($data);
 					}
 					break;
@@ -409,6 +415,7 @@
 						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";
+						log_error("phpDynDNS: PAYLOAD: {$data}");
 						$this->_debug($data);
 					}
 					break;

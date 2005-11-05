@@ -414,6 +414,8 @@ function interfaces_carp_configure() {
 		}
 	}
 	mwexec("/bin/sh /tmp/carp.sh");
+	sleep(1);
+	mwexec("/bin/sh /tmp/carp.sh");
 	fclose($fd);
 	if ($g['booting']) {
 		unmute_kernel_msgs();

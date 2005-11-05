@@ -442,7 +442,7 @@ function interfaces_carp_bring_up_final() {
 		if($counter > 15)
 			$supress = 0;
 	}	
-	sleep(30);
+	sleep(60);
 	foreach ($viparr as $vip) {
 		if($debugging)
 			echo "Upping interface carp{$carp_instances_counter}.\n";

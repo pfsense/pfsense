@@ -115,8 +115,14 @@ while ($data = array_shift($return)) {
 	}
 	if ($data[0] == "client-hostname") {
 		$d = array_shift($return);
-		$leases[$i]['hostname'] = $d[0];
-	}
+		if($d[0] <> "") {
+			$leases[$i]['hostname'] = $d[0];
+		} else {
+			if(gethostbyaddr($leases[$i]['ip']) <> "") {
+				$leases[$i]['hostname'] = gethostbyaddr($leases[$i]['ip']);
+			}
+		}
+	}	
 	if ($data[0] == "hardware") {
 		$d = array_shift($return);
 		if ($d[0] == "ethernet") {

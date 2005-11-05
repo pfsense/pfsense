@@ -87,18 +87,16 @@ function find_last_gif_device() {
 function vpn_ipsec_configure($ipchg = false) {
 	global $config, $g;
 
-	if(isset($config['system']['developer'])) {
-		if($g['booting'] == true) {
-			/* determine if we should load the via padlock module */
-			$dmesg_boot = `cat /var/log/dmesg.boot | grep CPU`;
-			if(stristr($dmesg_boot, "ACE") == true) {		
-				echo "Enabling [VIA Padlock] ...";
-				mwexec("/sbin/kldload padlock");
-				mwexec("/sbin/sysctl net.inet.ipsec.crypto_support=1");
-				mwexec("/usr/sbin/setkey -F");
-				mwexec("/usr/sbin/setkey -FP");
-				echo " done.\n";
-			}
+	if($g['booting'] == true) {
+		/* determine if we should load the via padlock module */
+		$dmesg_boot = `cat /var/log/dmesg.boot | grep CPU`;
+		if(stristr($dmesg_boot, "ACE") == true) {		
+			echo "Enabling [VIA Padlock] ...";
+			mwexec("/sbin/kldload padlock");
+			mwexec("/sbin/sysctl net.inet.ipsec.crypto_support=1");
+			mwexec("/usr/sbin/setkey -F");
+			mwexec("/usr/sbin/setkey -FP");
+			echo " done.\n";
 		}
 	}
 

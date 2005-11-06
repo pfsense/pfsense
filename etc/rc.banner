@@ -1,15 +1,12 @@
 #!/usr/local/bin/php -f
 <?php
-/* $Id$ */
 /*
+	$Id$
+
 	rc.banner
 	part of pfSense
-	Copyright (C) 2004 Scott Ullrich
+	Copyright (C) 2005 Scott Ullrich and Colin Smith
 	All rights reserved
-
-	originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -35,37 +32,37 @@
 
 	/* parse the configuration and include all functions used below */
 	require_once("config.inc");
-	require_once("functions.inc");
 
-	$version = chop(file_get_contents("{$g['etc_path']}/version"));
-	$buildtime = chop(file_get_contents("{$g['etc_path']}/version.buildtime"));
-	$platform = chop(file_get_contents("{$g['etc_path']}/platform"));
+	$version = trim(file_get_contents("{$g['etc_path']}/version"));
+	$platform = trim(file_get_contents("{$g['etc_path']}/platform"));
 
-	$banner = "\n*** Welcome to pfSense version {$version} - {$platform} ***\n";
+	print "\n*** Welcome to pfSense version {$version} - {$platform} ***\n";
 
+	/* get our initial interface list */
 	$iflist = get_interface_list("media");
 
 	foreach($iflist as $ifname => $ifinfo) {
-		$friendly = strtoupper($ifinfo['friendly']);
-		$ifconf =& $config['interfaces'][$ifinfo['friendly']];
 		/* skip interfaces that don't have a friendly name */
-		if($friendly != "") {
+		if($ifinfo['friendly'] != "") {
+			$friendly = strtoupper($ifinfo['friendly']);
+			/* point to this interface's config */
+			$ifconf =& $config['interfaces'][$ifinfo['friendly']];
+			/* look for 'special cases' */
 			switch($ifconf['ipaddr']) {
 			case "dhcp":
-				$ifinfo['class'] = "DHCP";
+				$ifinfo['class'] = "(DHCP)";
 				break;
 			case "pppoe":
-				$ifinfo['class'] = "PPPoE";
+				$ifinfo['class'] = "(PPPoE)";
 				$ifinfo['ipaddr'] = $iflist['ng0']['ipaddr'];
 				break;
 			case "pptp":
-				$ifinfo['class'] = "PPTP";
+				$ifinfo['class'] = "(PPTP)";
 				$ifinfo['ipaddr'] = $iflist['ng0']['ipaddr'];
 				break;
 			}
-			/* print interface name */
-			$tobanner = "\n  {$friendly}";
-			/* interface description */
+			$tobanner = $friendly;
+			/* does this interface have an extra description? */
 			if($ifconf['descr']) {
 				$tobanner .= "({$ifconf['descr']})";
 			}
@@ -73,19 +70,12 @@
 			if($ifinfo['up']) {
 				$tobanner .= "*";
 			}
-			/* pad banner to eliminate tab errors */
-			$banner .= str_pad($tobanner, 25, " ", STR_PAD_RIGHT);
-			/* print physical if name */
-			$banner .= "->\t{$ifname}\t->\t";
-			/* do we have an IP? */
-			$banner .= $ifinfo['ipaddr'] ? $ifinfo['ipaddr'] : "NONE";
-			/* do we have an interface class? */
-			if($ifinfo['class']) {
-				$banner .= "({$ifinfo['class']})";
-			}
+			printf("\n  %-25s->\t%s\t->\t%s%s",
+				$tobanner,
+				$ifname,
+				$ifinfo['ipaddr'] ? $ifinfo['ipaddr'] : "NONE",
+				$ifinfo['class']
+			);
 		}
 	}
-
-	print $banner;
-
 ?>

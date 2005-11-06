@@ -258,9 +258,13 @@ function get_interface_list($mode = "active", $keyby = "physical") {
 		break;
 	}
         /* build interface list with netstat */
-        exec("/usr/bin/netstat -inW -f link | awk '{ print $1, $4 } '", $linkinfo);
+        exec("/usr/bin/netstat -inW -f link | awk '{ print $1, $4 }'", $linkinfo);
         array_shift($linkinfo);
-        foreach ($linkinfo as $link) {
+	/* build ip address list with netstat */
+	exec("/usr/bin/netstat -inW -f inet | awk '{ print $1, $4 }'", $ipinfo);
+	array_shift($ipinfo);
+	foreach($linkinfo as $link) {
+		$friendly = "";
                 $alink = explode(" ", $link);
                 $ifname = rtrim(trim($alink[0]), '*');
                 if (!in_array(substr($ifname, 0, -1), $vfaces)) {
@@ -268,17 +272,27 @@ function get_interface_list($mode = "active", $keyby = "physical") {
 					"mac" => trim($alink[1]),
 					"up" => in_array($ifname, $upints)
 				);
+			foreach($ipinfo as $ip) {
+				$aip = explode(" ", $ip);
+				if($aip[0] == $ifname) {
+					$toput['ipaddr'] = $aip[1];
+				}
+			}
 			foreach($config['interfaces'] as $name => $int) {
 				if($int['if'] == $ifname) $friendly = $name;
 			}
 			switch($keyby) {
 			case "physical":
-				$toput['friendly'] = $friendly;
+				if($friendly != "") {
+					$toput['friendly'] = $friendly;
+				}
 				$iflist[$ifname] = $toput;
 				break;
 			case "friendly":
-				$toput['if'] = $ifname;
-				$iflist[$friendly] = $toput;
+				if($friendly != "") {
+					$toput['if'] = $ifname;
+					$iflist[$friendly] = $toput;
+				}
 				break;
 			}
                 }

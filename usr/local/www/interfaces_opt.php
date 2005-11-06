@@ -424,6 +424,12 @@ function type_change(enable_change,enable_change_pptp) {
 			<br> The bandwidth setting will define the speed of the interface for traffic shaping.  Do not enter your "Internet" bandwidth here, only the physical speed!
 		  </td>
                 </tr>
+                <tr>
+                  <td colspan="2" valign="top" height="16"></td>
+                </tr>
+                <tr>
+                  <td colspan="2" valign="top" class="listtopic">FTP Helper</td>
+                </tr>		
 		<tr>
 			<td width="22%" valign="top" class="vncell">FTP Helper</td>
 			<td width="78%" class="vtable">
@@ -431,7 +437,7 @@ function type_change(enable_change,enable_change_pptp) {
 				<strong>Disable the userland FTP-Proxy application</strong>
 				<br />
 			</td>
-		</tr>		
+		</tr>	
 		<tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">

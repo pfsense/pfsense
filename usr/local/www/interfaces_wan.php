@@ -671,6 +671,20 @@ function type_change(enable_change,enable_change_pptp) {
                   <td class="vtable">
                     <input name="bigpond_minheartbeatinterval" type="text" class="formfld" id="bigpond_minheartbeatinterval" size="8" value="<?=htmlspecialchars($pconfig['bigpond_minheartbeatinterval']);?>">seconds<br>Setting this to a sensible value (e.g. 60 seconds) can protect against DoS attacks. </td>
                 </tr>
+                <tr>
+                  <td colspan="2" valign="top" height="16"></td>
+                </tr>
+                <tr>
+                  <td colspan="2" valign="top" class="listtopic">FTP Helper</td>
+                </tr>		
+		<tr>
+			<td width="22%" valign="top" class="vncell">FTP Helper</td>
+			<td width="78%" class="vtable">
+				<input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if (isset($config['system']['disableftpproxy'])) echo "checked"; ?> onclick="enable_change(false)" />
+				<strong>Disable the userland FTP-Proxy application</strong>
+				<br />
+			</td>
+		</tr>
 		        <?php
 				/* Wireless interface? */
 				if (isset($wancfg['wireless']))
@@ -699,14 +713,7 @@ function type_change(enable_change,enable_change_pptp) {
                     are reserved (but not RFC 1918) or not yet assigned by IANA.<br>
                     Bogons are prefixes that should never appear in the Internet routing table, and obviously should not appear as the source address in any packets you receive.</td>
 		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell">FTP Helper</td>
-			<td width="78%" class="vtable">
-				<input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if (isset($config['system']['disableftpproxy'])) echo "checked"; ?> onclick="enable_change(false)" />
-				<strong>Disable the userland FTP-Proxy application</strong>
-				<br />
-			</td>
-		</tr>		
+	
                 <tr>
                   <td width="100" valign="top">&nbsp;</td>
                   <td> &nbsp;<br> <input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change_pptp(true)&&enable_change(true)">

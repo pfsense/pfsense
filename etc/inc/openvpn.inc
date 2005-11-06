@@ -82,6 +82,7 @@ function ovpn_unlink_tap() {
 function ovpn_config_server($reconfigure) {
 	global $config, $g, $d_ovpnsrvdirty_path;
 
+	if($config['ovpn']['server']['tunnel'])
 	foreach ($config['ovpn']['server']['tunnel'] as $id => $server) {
 		/* get tunnel interface */
 		$tun = $server['tun_iface'];

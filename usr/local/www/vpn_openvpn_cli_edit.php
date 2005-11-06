@@ -28,6 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+$pgtitle = array("VPN", "OpenVPN", "Edit client");
 require("guiconfig.inc");
 require_once("openvpn.inc");
 
@@ -170,8 +171,6 @@ if ($_POST) {
 
 			if (!empty($retval))
 				$input_errors[] = $retval;
-			else 
-				ovpn_cli_dirty($ovpnent['if']);
 		}
 
 		if ( $ovpncli[$id]['sport'] != $_POST['sport'] ||
@@ -192,17 +191,11 @@ if ($_POST) {
 			$input_errors[] = "Delete this interface first before changing the type of the tunnel to "
 			                . strtoupper($_POST['type']) .".";
 
-		/* Has the enable/disable state changed? */
-		if (isset($ovpnent['enable']) && isset($_POST['disabled'])) {
-			ovpn_cli_dirty($ovpnent['if']);
-		}
 		if (!isset($ovpnent['enable']) && !isset($_POST['disabled'])) {
 
 			/* check if port number is free, else choose another one */
 			if (in_array($ovpnent['cport'], used_port_list()))
 				$ovpnent['cport'] = getnxt_port();
-
-			ovpn_cli_dirty($ovpnent['if']);
 		}
 	} else {
 		/* Creating a new entry */
@@ -220,8 +213,6 @@ if ($_POST) {
 
 			if (!empty($retval))
 				$input_errors[] = $retval;
-			else
-				ovpn_cli_dirty($ovpnent['if']);
 		}
 	}
 
@@ -239,8 +230,10 @@ if ($_POST) {
 		$ovpnent['cli_cert'] = $pconfig['cli_cert'];
 		$ovpnent['cli_key'] = $pconfig['cli_key'];
 		$ovpnent['crypto'] = $_POST['crypto'];
+		$ovpnent['comp_method'] = $_POST['comp_method'];
 		$ovpnent['ns_cert_type'] = $_POST['ns_cert_type'] ? true : false;
 		$ovpnent['pull'] = $_POST['pull'] ? true : false;
+		$ovpnent['dupcn'] = $_POST['dupcn'] ? true : false;
 		$ovpnent['tlsauth'] = $_POST['tlsauth'] ? true : false;
 		$ovpnent['bridge'] = $_POST['bridge'];
 		$ovpnent['lipaddr'] = $_POST['lipaddr'];
@@ -292,12 +285,7 @@ if ($_POST) {
 	}
 }
 
-
-$pgtitle = "VPN: OpenVPN: Edit client";
-include("head.inc");
-
 ?>
-
 <?php include("fbegin.inc"); ?>
 <script language="JavaScript">
 function enable_change(enable_over) {
@@ -318,6 +306,7 @@ function enable_change(enable_over) {
 	document.iform.cli_cert.disabled = endis;
 	document.iform.cli_key.disabled = endis;
 	document.iform.crypto.disabled = endis;
+	document.iform.comp_method.disabled = endis;
 	document.iform.ns_cert_type.disabled = endis;
 	document.iform.pull.disabled = endis;
 	document.iform.tlsauth.disabled = endis;
@@ -341,7 +330,6 @@ function expertmode_change(enable_over) {
 
 	document.iform.expertmode_options.disabled = endis;
 }
-
 
 function tls_change(enable_over) {
 	var endis;
@@ -659,13 +647,44 @@ function get_radio_value(obj) {
     <tr>
       <td colspan="2" valign="top" class="listtopic">Client Options</td>
     </tr>
-    <tr>
 
-     <tr>
-       <td width="22%" valign="top" class="vncell">Options</td>
-       <td width="78%" class="vtable">
-         <input type="checkbox" name="pull" value="yes" <?php if ($pconfig['pull']) echo "checked"; ?>> 
-         <strong>Client-pull</strong></td>
+    <tr>
+      <td width="22%" valign="top" class="vncell">Pull Options</td>
+      <td width="78%" class="vtable">
+        <input type="checkbox" name="pull" value="yes" <?php if ($pconfig['pull']) echo "checked"; ?>> 
+        <strong>Client-pull</strong><br>
+	This  option  must  be used on a client which is connecting to a
+	multi-client server.  It indicates to OpenVPN that it should
+	accept options pushed by the server, provided they are part of the
+	legal set of pushable options.
+	</td>
+    </tr>
+
+    <tr>
+      <td width="22%" valign="top" class="vncell">Compression method</td>
+      <td width="78%" class="vtable">
+	<select name="comp_method" class="formfld" id="comp_method">
+	<option <?php if (!$pconfig['comp_method']) echo "selected";?> value="">none</option>
+	<?php $compression_method = array('lzo' => 'LZO', 'noadapt' => 'LZO (no adaptive)');
+	    foreach($compression_method as $comp_method => $comp_methodname): ?>
+		<option value="<?=$comp_method;?>"
+		<?php if ($comp_method == $pconfig['comp_method']) echo "selected";?>>
+		  <?=htmlspecialchars($comp_methodname);?>
+		</option>
+	<?php endforeach; ?>
+	</select>
+	<br>
+	Choose which compression method to use.<br>
+	<br>
+	LZO compression generally improves performance on slow links,
+	but may add up to 1 byte per packet for incompressible data.<br>
+	<br>
+	With adaptive compression, OpenVPN will periodically sample the
+	compression process to measure its efficiency. If the data being
+	sent over the tunnel is already compressed, the compression
+	efficiency will be very low. Choose 'LZO (no adaptive)'
+	to disable OpenVPN's adaptive compression algorithm.
+	</td>
      </tr>
 
      <tr>

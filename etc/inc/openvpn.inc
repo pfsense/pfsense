@@ -53,13 +53,6 @@ function ovpn_link_tap() {
 		mwexec("/sbin/kldload if_tap");
 		$fd = fopen($g['vardb_path'] ."/ovpn_tap_link", 'w');
 	}
-	//else {
-	//	$fd = fopen($g['vardb_path'] ."/ovpn_tap_link", 'r+');
-	//	$link_count = fread($fd, filesize($g['vardb_path'] ."/ovpn_tap_link"));
-	//	$link_count ++;
-	//}
-	//fwrite($fd, $link_count);
-	//fclose($fd);
 	return true;
 }
 
@@ -89,8 +82,6 @@ function ovpn_unlink_tap() {
 function ovpn_config_server($reconfigure) {
 	global $config, $g, $d_ovpnsrvdirty_path;
 
-	if(!is_array($config['ovpn']['server']['tunnel']))
-		return;
 	foreach ($config['ovpn']['server']['tunnel'] as $id => $server) {
 		/* get tunnel interface */
 		$tun = $server['tun_iface'];
@@ -124,7 +115,7 @@ function ovpn_config_server($reconfigure) {
 				$lines = file($d_ovpnsrvdirty_path);
 
 			/* reconfigure server */
-			if (is_array($lines) && in_array($tun, $lines)) {
+			if (is_array($lines) && in_array($tun . "\n", $lines)) {
 
 				/* kill running server */
 				ovpn_server_kill($tun);
@@ -274,6 +265,19 @@ EOD;
 	if (isset($server['dynip']))
 		$ovpn_config .= "persist-remote-ip\n";
 
+	/* LZO compression (off by default) */
+	if (isset($server['comp_method'])) {
+		switch ($server['comp_method']) {
+
+			case 'lzo':
+				$ovpn_config .= "comp-lzo\n";
+				break;
+			case 'noadapt':
+				$ovpn_config .= "comp-lzo\n" . "comp-noadapt\n";
+				break;
+		}
+	}
+
 	/* Client to client routing (off by default) */
 	if (isset($server['cli2cli']))
 		$ovpn_config .= "client-to-client\n";
@@ -349,6 +353,55 @@ EOD;
 		if (isset($server['dupcn']))
 			$ovpn_config .= "duplicate-cn\n";
 
+		$push_options = "";
+	
+		/* Client push - redirect gateway */
+		if (isset($server['psh_options']['redir']))  {
+			if (isset($server['psh_options']['redir_loc']))
+				$push_config .= "push \"redirect-gateway local\"\n";
+			else
+				$push_config .= "push \"redirect-gateway\"\n";
+		}
+
+		/* Client push - route delay */
+		if (isset($server['psh_options']['rte_delay']))
+			$push_config .= "push \"route-delay {$server['psh_options']['rte_delay_int']}\"\n";
+
+		/* Client push - ping (note we set both server and client) */
+		if (isset ($server['psh_options']['ping'])){
+			$conflict = true;
+			$interval = $server['psh_options']['ping_int'];
+			$ovpn_config .= "ping {$server['psh_options']['ping_int']}\n ";
+			$push_config .= "push \"ping {$server['psh_options']['ping_int']}\"\n";
+		}
+
+		/* Client push - ping-restart (note server uses 2 x client interval) */
+		if (isset ($server['psh_options']['pingrst'])){
+			$conflict = true;
+			$interval = $server['psh_options']['pingrst_int'];
+			$ovpn_config .= "ping-restart " . ($interval * 2) . "\n";
+			$push_config .= "push \"ping-restart $interval\"\n";
+		}
+	
+		/* Client push - ping-exit (set on client) */
+		if (isset ($server['psh_options']['pingexit'])){
+			$conflict = true;
+			$ovpn_config .= "ping-exit {$server['psh_options']['pingexit_int']}\n";
+			$push_config .= "push \"ping-exit {$server['psh_options']['pingexit_int']}\"\n";
+		}
+
+		/* Client push - inactive (set on client) */
+		if (isset ($server['psh_options']['inact'])){
+			$ovpn_config .= "inactive {$server['psh_options']['inact_int']}\n";
+			$push_config .= "push \"inactive {$server['psh_options']['inact_int']}\"\n";
+		}
+
+		if (isset($server['client-to-client']))
+			$push_config .= "push \"route {$network} {$netmask}\"\n";
+
+		if (isset($push_config))
+			$ovpn_config .= $push_config;
+
 	} else {
 		/* 'authentication_method' == "pre_shared_key" */
 		$network = gen_subnet($server['lipaddr'], $server['netmask']);
@@ -363,60 +416,7 @@ EOD;
 			$ovpn_config .= "ifconfig {$server['lipaddr']} {$netmask}\n";
 		}
 
-		if (isset($server['client-to-client']))
-			$ovpn_config .= "push \"route {$network} {$netmask}\"\n";
-		else
-			$ovpn_config .= "push \"route {$server['lipaddr']}\"\n";
-
 	} /* end authentication_method */
-
-	$push_options = "";
-	
-	/* Client push - redirect gateway */
-	if (isset($server['psh_options']['redir']))  {
-		if (isset($server['psh_options']['redir_loc']))
-			$push_config .= "push \"redirect-gateway local\"\n";
-		else
-			$push_config .= "push \"redirect-gateway\"\n";
-		if ($server['method'] != "ovpn")
-			$push_config .= "push \"route-gateway {$server['ipblock']}\"\n";
-	}
-
-	/* Client push - route delay */
-	if (isset($server['psh_options']['rte_delay']))
-		$push_config .= "push \"route-delay {$server['psh_options']['rte_delay_int']}\"\n";
-
-	/* Client push - ping (note we set both server and client) */
-	if (isset ($server['psh_options']['ping'])){
-		$conflict = true;
-		$interval = $server['psh_options']['ping_int'];
-		$ovpn_config .= "ping {$server['psh_options']['ping_int']}\n ";
-		$push_config .= "push \"ping {$server['psh_options']['ping_int']}\"\n";
-	}
-
-	/* Client push - ping-restart (note server uses 2 x client interval) */
-	if (isset ($server['psh_options']['pingrst'])){
-		$conflict = true;
-		$interval = $server['psh_options']['pingrst_int'];
-		$ovpn_config .= "ping-restart " . ($interval * 2) . "\n";
-		$push_config .= "push \"ping-restart $interval\"\n";
-	}
-
-	/* Client push - ping-exit (set on client) */
-	if (isset ($server['psh_options']['pingexit'])){
-		$conflict = true;
-		$ovpn_config .= "ping-exit {$server['psh_options']['pingexit_int']}\n";
-		$push_config .= "push \"ping-exit {$server['psh_options']['pingexit_int']}\"\n";
-	}
-
-	/* Client push - inactive (set on client) */
-	if (isset ($server['psh_options']['inact'])){
-		$ovpn_config .= "inactive {$server['psh_options']['inact_int']}\n";
-		$push_config .= "push \"inactive {$server['psh_options']['inact_int']}\"\n";
-	}
-
-	if (isset($push_config))
-		$ovpn_config .= $push_config;
 
 	if (!isset($conflict))
 		$ovpn_config .= "keepalive 10 60\n";
@@ -648,7 +648,7 @@ function ovpn_server_crl_add() {
 					$lines = file($d_ovpncrldirty_path);
 
 				/* reconfigure crl file */
-				if (is_array($lines) && in_array($name, $lines)) {
+				if (is_array($lines) && in_array($name . "\n", $lines)) {
 
 					/* restart running openvpn daemon */
 					foreach ($config['ovpn']['server']['tunnel'] as $id => $server) {
@@ -744,7 +744,7 @@ function ovpn_srv_dirty($tun) {
 	
 	$fd = fopen($d_ovpnsrvdirty_path, 'a');
 	if ($fd) {
-		fwrite($fd, $tun);
+		fwrite($fd, $tun ."\n");
 		fclose($fd);
 	}
 }
@@ -755,7 +755,7 @@ function ovpn_crl_dirty($name) {
 	
 	$fd = fopen($d_ovpncrldirty_path, 'a');
 	if ($fd) {
-		fwrite($fd, $name);
+		fwrite($fd, $name ."\n");
 		fclose($fd);
 	}
 }
@@ -797,7 +797,7 @@ function ovpn_config_client() {
 				$lines = file($d_ovpnclidirty_path);
 
 			/* reconfigure client */
-			if (is_array($lines) && in_array($tun, $lines)) {
+			if (is_array($lines) && in_array($tun . "\n", $lines)) {
 
 				/* kill running client */
 				ovpn_client_kill($tun);
@@ -987,6 +987,19 @@ EOD;
 
 	} /* end authentication_method */
 
+	/* LZO compression (off by default) */
+	if (isset($client['comp_method'])) {
+		switch ($client['comp_method']) {
+
+			case 'lzo':
+				$ovpn_config .= "comp-lzo\n";
+				break;
+			case 'noadapt':
+				$ovpn_config .= "comp-lzo\n" . "comp-noadapt\n";
+				break;
+		}
+	}
+
 	/* Expert mode paramters */
 	if (isset($client['expertmode_enabled']) && is_array($client['expertmode'])) {
 		$ovpn_config .= ";begin expertmode\n";
@@ -1096,7 +1109,7 @@ function ovpn_cli_dirty($tun) {
 	
 	$fd = fopen($d_ovpnclidirty_path, 'a');
 	if ($fd) {
-		fwrite($fd, $tun);
+		fwrite($fd, $tun . "\n");
 		fclose($fd);
 	}
 }

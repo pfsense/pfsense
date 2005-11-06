@@ -28,6 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+$pgtitle = array("VPN", "OpenVPN");
 require("guiconfig.inc");
 require_once("openvpn.inc");
 
@@ -81,12 +82,7 @@ if ($_GET['act'] == "del") {
 		exit;
 	}
 }
-
-$pgtitle = "VPN: OpenVPN";
-include("head.inc");
-
 ?>
-
 <?php include("fbegin.inc"); ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (file_exists($d_sysrebootreqd_path) && !file_exists($d_ovpnclidirty_path)) print_info_box(get_std_save_message(0)); ?>

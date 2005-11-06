@@ -29,6 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+$pgtitle = array("VPN", "OpenVPN", "Edit server");
 require("guiconfig.inc");
 require_once("openvpn.inc");
 
@@ -80,7 +81,6 @@ if ($_POST) {
 
 	unset($input_errors);
 	unset($check_ipblock);
-	unset($bridge_reset);
 
 	/* input validation */
 	$reqdfields = explode(" ", "type bind_iface");
@@ -170,6 +170,8 @@ if ($_POST) {
 		if ($_POST['ipblock'] && $check_ipblock) {
 			if (!is_ipaddr($_POST['ipblock'])) {
 				$input_errors[] = "A valid IP netblock must be specified.";
+			} else if ($_POST['type'] == "tun" && intval($_POST['prefix']) > 29) {
+				$input_errors[] = "Network mask too high for tun-style tunnels.";
 			} else {
 				$network = ip2long(gen_subnet($_POST['ipblock'], $_POST['prefix']));
 				$broadcast = ip2long(gen_subnet_max($_POST['ipblock'], $_POST['prefix']));
@@ -242,9 +244,6 @@ if ($_POST) {
 
 			if (ip2long($_POST['range_from']) > ip2long($_POST['range_to']))
 				$input_errors[] = "The range is invalid (first element higher than second element).";
-
-			if (!($_POST['type'] == "tap" && $_POST['authentication_method'] == "rsasig"))
-				$bridge_reset = 1;
 		}
 	}
 
@@ -295,8 +294,6 @@ if ($_POST) {
 
 			if (!empty($retval))
 				$input_errors[] = $retval;
-			else
-				ovpn_srv_dirty($ovpnent['tun_iface']);
 		}
 
 		/* port number syntactically valid, so lets check, if it is free */
@@ -344,12 +341,6 @@ if ($_POST) {
 
 		}
 
-		/* Has the enable/disable state changed? */
-		if (isset($ovpnent['enable']) && isset($_POST['disabled'])) {
-			/* status changed to disabled */
-			ovpn_srv_dirty($ovpnent['tun_iface']);
-		}
-
 		/* status changed to enable */
 		if (!isset($ovpnent['enable']) && !isset($_POST['disabled'])) {
 
@@ -367,8 +358,6 @@ if ($_POST) {
 					$input_errors[] = "OpenVPN binding already in use by another OpenVPN daemon.";
 				}
 			}
-
-			ovpn_srv_dirty($ovpnent['tun_iface']);
 		}
 
 	} else {
@@ -404,8 +393,6 @@ if ($_POST) {
 
 			if (!empty($retval))
 				$input_errors[] = $retval;
-			else
-				ovpn_srv_dirty($ovpnent['tun_iface']);
 		}
 	}
 
@@ -434,6 +421,7 @@ if ($_POST) {
 		$ovpnent['verb'] = $_POST['verb'];
 		$ovpnent['maxcli'] = $_POST['maxcli'];
 		$ovpnent['crypto'] = $_POST['crypto'];
+		$ovpnent['comp_method'] = $_POST['comp_method'];
 		$ovpnent['cli2cli'] = $_POST['cli2cli'] ? true : false;
 		$ovpnent['dupcn'] = $_POST['dupcn'] ? true : false;
 		$ovpnent['dynip'] = $_POST['dynip'] ? true : false;
@@ -525,11 +513,8 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "VPN: OpenVPN: Edit Server";
-include("head.inc");
 
 ?>
-
 <?php include("fbegin.inc"); ?>
 <script language="JavaScript">
 function enable_change(enable_over) {
@@ -568,6 +553,7 @@ function enable_change(enable_over) {
 	document.iform.netmask.disabled = endis;
 	document.iform.cli2cli.disabled = endis;
 	document.iform.dupcn.disabled = endis;
+	document.iform.comp_method.disabled = endis;
 	document.iform.psh_redir.disabled = endis;
 	document.iform.psh_redir_loc.disabled = endis;
 	document.iform.psh_rtedelay.disabled = endis;
@@ -608,7 +594,6 @@ function tls_change(enable_over) {
         
         document.iform.psk.disabled = endis;
 }
-
 
 function expertmode_change(enable_over) {
 	var endis;
@@ -676,6 +661,19 @@ function methodsel_change(enable_over) {
 			document.iform.lipaddr.disabled = 1;
 			document.iform.ripaddr.disabled = 1;
 			document.iform.netmask.disabled = 1;
+			document.iform.cli2cli.disabled = 0;
+			document.iform.psh_redir.disabled = 0;
+			document.iform.psh_redir_loc.disabled = 0;
+			document.iform.psh_rtedelay.disabled = 0;
+			document.iform.psh_rtedelay_int.disabled = 0;
+			document.iform.psh_inact.disabled = 0;
+			document.iform.psh_inact_int.disabled = 0;
+			document.iform.psh_ping.disabled = 0;
+			document.iform.psh_ping_int.disabled = 0;
+			document.iform.psh_pingexit.disabled = 0;
+			document.iform.psh_pingexit_int.disabled = 0;
+			document.iform.psh_pingrst.disabled = 0;
+			document.iform.psh_pingrst_int.disabled = 0;
 			tls_change();
 			break;
 		default: /* pre-shared */
@@ -715,6 +713,18 @@ function methodsel_change(enable_over) {
 			document.iform.dupcn.checked = 0;
 			document.iform.cli2cli.disabled = 1;
 			document.iform.cli2cli.checked = 0;
+			document.iform.psh_redir.disabled = 1;
+			document.iform.psh_redir_loc.disabled = 1;
+			document.iform.psh_rtedelay.disabled = 1;
+			document.iform.psh_rtedelay_int.disabled = 1;
+			document.iform.psh_inact.disabled = 1;
+			document.iform.psh_inact_int.disabled = 1;
+			document.iform.psh_ping.disabled = 1;
+			document.iform.psh_ping_int.disabled = 1;
+			document.iform.psh_pingexit.disabled = 1;
+			document.iform.psh_pingexit_int.disabled = 1;
+			document.iform.psh_pingrst.disabled = 1;
+			document.iform.psh_pingrst_int.disabled = 1;
 			break;
 	}
 
@@ -1087,6 +1097,33 @@ function get_radio_value(obj) {
 	<input name="dupcn" type="checkbox" value="yes" <?php if (isset($pconfig['dupcn'])) echo "checked"; ?>>
         <strong>Permit duplicate client certificates</strong><br>
 	If this option is on, clients with duplicate certificates will not be disconnected.</td>
+    </tr>
+	 
+    <tr>
+      <td width="22%" valign="top" class="vncell">Compression method</td>
+      <td width="78%" class="vtable">
+        <select name="comp_method" class="formfld" id="comp_method">
+        <option <?php if (!$pconfig['comp_method']) echo "selected";?> value="">none</option>
+        <?php $compression_method = array('lzo' => 'LZO', 'noadapt' => 'LZO (no adaptive)');
+            foreach($compression_method as $comp_method => $comp_methodname): ?>
+                <option value="<?=$comp_method;?>"
+		<?php if ($comp_method == $pconfig['comp_method']) echo "selected";?>>
+                  <?=htmlspecialchars($comp_methodname);?>
+                </option>
+        <?php endforeach; ?>
+        </select> 
+	<br>
+	Choose which compression method to use.<br>
+	<br>
+	LZO compression generally improves performance on slow links,
+	but may add up to 1 byte per packet for incompressible data.<br>
+	<br>
+	With adaptive compression, OpenVPN will periodically sample the
+	compression process to measure its efficiency. If the data being
+	sent over the tunnel is already compressed, the compression
+	efficiency will be very low. Choose 'LZO (no adaptive)'
+	to disable OpenVPN's adaptive compression algorithm.
+	</td>
     </tr>
 	 
     <tr>

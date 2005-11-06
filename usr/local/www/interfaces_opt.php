@@ -61,6 +61,7 @@ $pconfig['blockbogons'] = isset($optcfg['blockbogons']);
 $pconfig['spoofmac'] = $optcfg['spoofmac'];
 $pconfig['mtu'] = $optcfg['mtu'];
 
+$pconfig['disableftpproxy'] = isset($optcfg['disableftpproxy']);
 
 /* Wireless interface? */
 if (isset($optcfg['wireless'])) {
@@ -171,6 +172,15 @@ if ($_POST) {
 		}
 
 		unset($optcfg['dhcphostname']);
+		unset($optcfg['disableftpproxy']);
+		
+		/* per interface pftpx helper */
+		if($_POST['disableftpproxy'] == "yes") {
+			$optcfg['disableftpproxy'] = true;
+			system_start_ftp_helpers();
+		} else {			
+			system_start_ftp_helpers();
+		}		
 
 		$optcfg['descr'] = remove_bad_chars($_POST['descr']);
 		$optcfg['bridge'] = $_POST['bridge'];
@@ -413,7 +423,16 @@ function type_change(enable_change,enable_change_pptp) {
 			</select>
 			<br> The bandwidth setting will define the speed of the interface for traffic shaping.  Do not enter your "Internet" bandwidth here, only the physical speed!
 		  </td>
-                </tr>                <tr>
+                </tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">FTP Helper</td>
+			<td width="78%" class="vtable">
+				<input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if (isset($config['system']['disableftpproxy'])) echo "checked"; ?> onclick="enable_change(false)" />
+				<strong>Disable the userland FTP-Proxy application</strong>
+				<br />
+			</td>
+		</tr>		
+		<tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
                     <input name="index" type="hidden" value="<?=$index;?>">

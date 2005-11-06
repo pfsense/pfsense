@@ -35,7 +35,6 @@
 require("guiconfig.inc");
 
 $pconfig['disablefilter'] = $config['system']['disablefilter'];
-$pconfig['disableftpproxy'] = $config['system']['disableftpproxy'];
 $pconfig['rfc959workaround'] = $config['system']['rfc959workaround'];
 $pconfig['ipv6nat_enable'] = isset($config['diag']['ipv6nat']['enable']);
 $pconfig['ipv6nat_ipaddr'] = $config['diag']['ipv6nat']['ipaddr'];
@@ -130,14 +129,6 @@ if ($_POST) {
 			system_enable_arp_wrong_if();
 		}		
 
-		if($_POST['disableftpproxy'] == "yes") {
-			$config['system']['disableftpproxy'] = "enabled";
-			unset($config['system']['rfc959workaround']);
-			system_start_ftp_helpers();
-		} else {
-			unset($config['system']['disableftpproxy']);
-			system_start_ftp_helpers();
-		}
 		if($_POST['rfc959workaround'] == "yes")
 			$config['system']['rfc959workaround'] = "enabled";
 		else
@@ -523,14 +514,6 @@ include("head.inc");
 		</tr>
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">Traffic Shaper and Firewall Advanced</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell">FTP Helper</td>
-			<td width="78%" class="vtable">
-				<input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if (isset($config['system']['disableftpproxy'])) echo "checked"; ?> onclick="enable_change(false)" />
-				<strong class="vexpl">Disable the userland FTP-Proxy application</strong>
-				<br />
-			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell">FTP RFC 959 data port violation workaround</td>

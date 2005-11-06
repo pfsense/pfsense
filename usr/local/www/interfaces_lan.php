@@ -41,6 +41,8 @@ $pconfig['bridge'] = $lancfg['bridge'];
 $pconfig['bandwidth'] = $lancfg['bandwidth'];
 $pconfig['bandwidthtype'] = $lancfg['bandwidthtype'];
 
+$pconfig['disableftpproxy'] = isset($lancfg['disableftpproxy']);
+
 /* Wireless interface? */
 if (isset($lancfg['wireless'])) {
 	require("interfaces_wlan.inc");
@@ -104,6 +106,16 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
+		
+		unset($lancfg['disableftpproxy']);
+		
+		/* per interface pftpx helper */
+		if($_POST['disableftpproxy'] == "yes") {
+			$lancfg['disableftpproxy'] = true;
+			system_start_ftp_helpers();
+		} else {			
+			system_start_ftp_helpers();
+		}			
 		
 		$bridge = discover_bridge($lancfg['if'], filter_translate_type_to_real_interface($lancfg['bridge']));
 		if($bridge <> "-1") {
@@ -230,6 +242,14 @@ function enable_change(enable_over) {
 			<br> The bandwidth setting will define the speed of the interface for traffic shaping.  Do not enter your "Internet" bandwidth here, only the physical speed!
 		  </td>
                 </tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">FTP Helper</td>
+			<td width="78%" class="vtable">
+				<input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if (isset($config['system']['disableftpproxy'])) echo "checked"; ?> onclick="enable_change(false)" />
+				<strong>Disable the userland FTP-Proxy application</strong>
+				<br />
+			</td>
+		</tr>		
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">

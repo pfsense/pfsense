@@ -544,18 +544,25 @@ function filter_nat_rules_generate() {
 	$natrules .= "\n# Load balancing anchor - slbd updates\n";
 	$natrules .= "rdr-anchor \"slb\"\n";
 
-	if(!isset($config['system']['disableftpproxy'])) {
-		$optcfg = array();
-		generate_optcfg_array($optcfg);	
-		$natrules .= "# FTP proxy\n";
-		$natrules .= "rdr-anchor \"pftpx/*\"\n";
-		$natrules .= "rdr on {$lanif} proto tcp from any to any port 21 -> 127.0.0.1 port 8021\n";
-		# go through optional interfaces, setting up pftpx for them as well.		
-		foreach($optcfg as $oc) {
-			$natrules .= "rdr on {$oc['if']} proto tcp from any to any port 21 -> 127.0.0.1 port 8021\n";
+	/* build an array of interfaces to work with */
+	$iflist = array("lan" => "LAN", "wan" => "WAN");
+	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+	$natrules .= "# FTP proxy\n";
+	$natrules .= "rdr-anchor \"pftpx/*\"\n";
+	$interface_counter = 0;
+	/* loop through all interfaces and handle pftpx redirections */
+	foreach ($iflist as $ifent => $ifname) {
+		if(isset($config['interfaces'][$ifname]['disableftpproxy'])) {
+			$interface_counter++;
+			continue;
 		}
-		$natrules .= "\n";
+		$tmp_port = 8021 + $interface_counter;
+		$tmp_interface = convert_friendly_interface_to_real_interface_name($ifname);
+		$natrules .= "rdr on {$tmp_interface} proto tcp from any to any port 21 -> 127.0.0.1 port {$tmp_port}\n";
+		$interface_counter++;
 	}
+	$natrules .= "\n";
 	
 	/* DIAG: add ipv6 NAT, if requested */
 	if (isset($config['diag']['ipv6nat']['enable']) and $config['diag']['ipv6nat']['ipaddr'] <> "") {

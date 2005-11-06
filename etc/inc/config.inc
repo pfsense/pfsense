@@ -1190,23 +1190,40 @@ function system_start_ftp_helpers() {
 	require_once("interfaces.inc");
 	global $config, $g;
 
-	/*    if the ftp proxy is disabled then kill pftpx instance and return
-	 *    note that the helpers for port forwards are launched in a different
-         *    sequence so we are filtering them out here by not including -g 8021 first.
-         */
-	if($config['system']['disableftpproxy'] <> "") {
-		$helpers = exec("ps aux | grep \"/usr/local/sbin/pftpx -g 8021\" | grep -v grep | cut -d\" \" -f6");
-		mwexec("/usr/bin/kill {$helpers}");
-		return;
+	/* build an array of interfaces to work with */
+	$iflist = array("lan" => "LAN", "wan" => "WAN");
+	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+
+	/* loop through all interfaces and handle pftpx */
+	$interface_counter = 0;
+	foreach ($iflist as $ifent => $ifname) {
+		/*    if the ftp proxy is disabled for this interface then kill pftpx 
+		 *    instance and continue. note that the helpers for port forwards are 
+		 *    launched in a  different sequence so we are filtering them out 
+                 *    here by not including -c {$port} -g 8021 first.
+		 */
+		$port = 8021 + $interface_counter;
+		if(isset($config['interfaces'][$ifname]['disableftpproxy'])) {
+			/*    item is disabled.  lets ++ the interface counter and
+			 *    keep processing interfaces. kill pftpx if already
+                         *    running for this instance.
+                         */
+			$helpers = exec("ps aux | grep \"/usr/local/sbin/pftpx -g 8021\" | grep -v grep | cut -d\" \" -f6");
+			mwexec("/usr/bin/kill {$helpers}");
+			$interface_counter++;
+			continue;
+		}
+		/* grab the current interface IP address */
+		$ip = find_interface_ip(convert_friendly_interface_to_real_interface_name($ifname));
+		/* if pftpx is already running then do not launch it again */
+		$helpers = exec("ps aux | grep \"/usr/local/sbin/pftpx -c {$port} -g 8021\" | grep -v grep | grep {$ip}");
+		if(!$helpers) 
+			mwexec("/usr/local/sbin/pftpx -c {$port} -g 8021 {$ip}");
+		
+		$interface_counter++;
 	}
-	
-	/* grab the current WAN IP address */
-	$wanip = get_current_wan_address();
-	
-	/* if pftpx is already running then do not launch it again */
-	$helpers = exec("ps aux | grep \"/usr/local/sbin/pftpx -g 8021\" | grep -v grep");
-	if(!$helpers) 
-		mwexec("/usr/local/sbin/pftpx -g 8021");
+
 }
 
 function cleanup_backupcache($revisions = 30) {

@@ -51,6 +51,8 @@ $pconfig['pptp_remote'] = $config['pptp']['remote'];
 $pconfig['pptp_dialondemand'] = isset($config['pptp']['ondemand']);
 $pconfig['pptp_idletimeout'] = $config['pptp']['timeout'];
 
+$pconfig['disableftpproxy'] = isset($wancfg['disableftpproxy']);
+
 $pconfig['bigpond_username'] = $config['bigpond']['username'];
 $pconfig['bigpond_password'] = $config['bigpond']['password'];
 $pconfig['bigpond_authserver'] = $config['bigpond']['authserver'];
@@ -209,6 +211,15 @@ if ($_POST) {
 		unset($config['bigpond']['authserver']);
 		unset($config['bigpond']['authdomain']);
 		unset($config['bigpond']['minheartbeatinterval']);
+		unset($wancfg['disableftpproxy']);
+		
+		/* per interface pftpx helper */
+		if($_POST['disableftpproxy'] == "yes") {
+			$wancfg['disableftpproxy'] = true;
+			system_start_ftp_helpers();
+		} else {			
+			system_start_ftp_helpers();
+		}
 
 		if ($_POST['type'] == "Static") {
 			$wancfg['ipaddr'] = $_POST['ipaddr'];
@@ -687,6 +698,15 @@ function type_change(enable_change,enable_change_pptp) {
                     When set, this option blocks traffic from IP addresses that
                     are reserved (but not RFC 1918) or not yet assigned by IANA.<br>
                     Bogons are prefixes that should never appear in the Internet routing table, and obviously should not appear as the source address in any packets you receive.</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">FTP Helper</td>
+			<td width="78%" class="vtable">
+				<input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if (isset($config['system']['disableftpproxy'])) echo "checked"; ?> onclick="enable_change(false)" />
+				<strong>Disable the userland FTP-Proxy application</strong>
+				<br />
+			</td>
+		</tr>		
                 <tr>
                   <td width="100" valign="top">&nbsp;</td>
                   <td> &nbsp;<br> <input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change_pptp(true)&&enable_change(true)">

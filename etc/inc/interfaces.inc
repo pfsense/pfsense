@@ -414,7 +414,7 @@ function interfaces_carp_configure() {
 		}
 	}
 	mwexec("/bin/sh /tmp/carp.sh");
-	sleep(1);
+	sleep(5);
 	mwexec("/bin/sh /tmp/carp.sh");
 	fclose($fd);
 	if ($g['booting']) {
@@ -442,7 +442,7 @@ function interfaces_carp_bring_up_final() {
 		if($counter > 15)
 			$supress = 0;
 	}	
-	sleep(60);
+	sleep(45);
 	foreach ($viparr as $vip) {
 		if($debugging)
 			echo "Upping interface carp{$carp_instances_counter}.\n";

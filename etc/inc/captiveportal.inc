@@ -296,14 +296,14 @@ function captiveportal_rules_generate() {
 		if($config['captiveportal']['interface'] == $ifname)
 			continue;
 		$int = convert_friendly_interface_to_real_interface_name($ifname);
-		$cprules .= "add 30 skipto 50000 allow all from any to any in via {$int} keep-state\n";
+		$cprules .= "add 30 set 1 skipto 50000 all from any to any in via {$int} keep-state\n";
 	}
 
 	/* captive portal on LAN interface? */
 	if ($cpifn == "lan") {
 		/* add anti-lockout rules */
 		$cprules .= <<<EOD
-add 500 set 1 pass all from $cpip to any out via $cpif
+add 500 pass all from $cpip to any out via $cpif
 add 501 set 1 pass all from any to $cpip in via $cpif
 
 EOD;

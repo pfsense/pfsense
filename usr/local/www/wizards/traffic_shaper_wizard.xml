@@ -54,14 +54,8 @@
 		/* wipe previous */
 		unset($config['shaper']['queue']);
 		unset($config['shaper']['rule']);
-		/* XXX: billm - this is breaking things :) */
-		/*
-		 * unset($config['interfaces']['wan']['bandwidth']);
-		 * unset($config['interfaces']['wan']['bandwidthtype']);
-		 * unset($config['interfaces']['lan']['bandwidth']);
-		 * unset($config['interfaces']['lan']['bandwidthtype']);		
-		 */
 		$config['shaper']['enable'] = FALSE;
+		$config['shaper']['itemsshaped'] = "0";
 	</stepsubmitphpaction>
 </step>
 <step>
@@ -478,6 +472,7 @@
 			    foreach ($voiplist as $voip) {
 				foreach (array('source', 'destination') as $srcdest) {
 					$rule = array();
+					$config['shaper']['itemsshaped']++;
 					if ($srcdest == 'source') {
 						$destsrc = 'destination';
 						$rule['outqueue'] = 'qVOIPUp';
@@ -724,6 +719,7 @@
 		foreach ($p2plist as $p2pclient) {
 			foreach (array('source', 'destination') as $srcdest) {
 				$rule = array();
+				$config['shaper']['itemsshaped']++;
 				if ($srcdest == 'source') {
 					$destsrc = 'destination';
 					$rule['outqueue'] = 'qP2PUp';
@@ -1102,6 +1098,7 @@
 		foreach ($gamesplist as $Gameclient) {
 		    foreach (array('source', 'destination') as $srcdest) {
 			    $rule = array();
+			    $config['shaper']['itemsshaped']++;
 			    if ($srcdest == 'source') {
 				    $destsrc = 'destination';
 				    $rule['outqueue'] = 'qGamesUp';
@@ -1865,6 +1862,7 @@
 		foreach ($othersplist as $otherclient) {
 		    foreach (array('source', 'destination') as $srcdest) {
 			    $rule = array();
+			    $config['shaper']['itemsshaped']++;
 			    if ($srcdest == 'source') {
 				    $destsrc = 'destination';
 				    $rule['outqueue'] = 'qOthersUp' . $otherclient[5]; /* posted value H or L */
@@ -1912,6 +1910,22 @@
                         <type>submit</type>
                 </field>
 	</fields>
+	<stepbeforeformdisplay>
+		if($config['shaper']['itemsshaped'] == "0") {
+		    /*    no shaper items have been selected 
+		     *    wipe previous
+		     */
+		    unset($config['shaper']['queue']);
+		    unset($config['shaper']['rule']);
+		    $config['shaper']['enable'] = FALSE;
+		    $config['shaper']['itemsshaped'] = "0";
+		    $message = "No items have been selected to shape.  Exiting traffic shaper wizard.";
+		    write_config("No shaper items picked, unsetting shaper configuration");
+		    header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=8&amp;message={$message}");
+		    filter_configure();	
+		    exit;
+		}	    
+	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
 		$config['shaper']['enable'] = TRUE;
 		filter_configure_sync();

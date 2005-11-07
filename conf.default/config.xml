@@ -56,6 +56,7 @@
 			<subnet></subnet>
 			<gateway></gateway>
 			<blockpriv/>
+                        <disableftpproxy/>			
 			<dhcphostname></dhcphostname>
 			<media></media>
 			<mediaopt></mediaopt>

@@ -1213,15 +1213,15 @@ function system_start_ftp_helpers() {
 			mwexec("/usr/bin/kill {$helpers}");
 			$interface_counter++;
 			continue;
-		}
+		} else {
 		/* grab the current interface IP address */
-		$ip = find_interface_ip(convert_friendly_interface_to_real_interface_name($ifname));
-		/* if pftpx is already running then do not launch it again */
-		$helpers = exec("ps aux | grep \"/usr/local/sbin/pftpx -c {$port} -g 8021\" | grep -v grep | grep {$ip}");
-		if(!$helpers) 
-			mwexec("/usr/local/sbin/pftpx -c {$port} -g 8021 {$ip}");
-		
-		$interface_counter++;
+			$ip = find_interface_ip(convert_friendly_interface_to_real_interface_name($ifname));
+			/* if pftpx is already running then do not launch it again */
+			$helpers = exec("ps aux | grep \"/usr/local/sbin/pftpx -c {$port} -g 8021\" | grep -v grep | grep {$ip}");
+			if(!$helpers) 
+				mwexec("/usr/local/sbin/pftpx -c {$port} -g 8021 {$ip}");		
+			$interface_counter++;
+		}
 	}
 
 }

@@ -1928,6 +1928,7 @@
 	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
 		$config['shaper']['enable'] = TRUE;
+                unset($config['shaper']['itemsshaped']);  
 		filter_configure_sync();
 		header("Location: /status_queues.php");
 	</stepsubmitphpaction>

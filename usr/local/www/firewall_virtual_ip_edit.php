@@ -223,20 +223,20 @@ function typesel_change() {
         case 0: // single
             document.iform.subnet.disabled = 0;
             if((get_radio_value(document.iform.mode) == "proxyarp")) document.iform.subnet_bits.disabled = 1;
-            document.iform.range_from.disabled = 1;
-            document.iform.range_to.disabled = 1;
+            //document.iform.range_from.disabled = 1;
+            //document.iform.range_to.disabled = 1;
             break;
         case 1: // network
             document.iform.subnet.disabled = 0;
             document.iform.subnet_bits.disabled = 0;
-            document.iform.range_from.disabled = 1;
-            document.iform.range_to.disabled = 1;
+            //document.iform.range_from.disabled = 1;
+            //document.iform.range_to.disabled = 1;
             break;
         case 2: // range
             document.iform.subnet.disabled = 1;
             document.iform.subnet_bits.disabled = 1;
-            document.iform.range_from.disabled = 0;
-            document.iform.range_to.disabled = 0;
+            //document.iform.range_from.disabled = 0;
+            //document.iform.range_to.disabled = 0;
             break;
     }
 }
@@ -302,13 +302,17 @@ function typesel_change() {
                       </select> <i id="typenote"></i>
  						</td>
                       </tr>
-                      <tr>
-                        <td>Range:&nbsp;&nbsp;</td>
-                        <td><input name="range_from" type="text" class="formfld" id="range_from" size="20" value="<?=htmlspecialchars($pconfig['range']['from']);?>">
+		      <?php
+		      /*
+                        <tr>
+                         <td>Range:&nbsp;&nbsp;</td>
+                          <td><input name="range_from" type="text" class="formfld" id="range_from" size="20" value="<?=htmlspecialchars($pconfig['range']['from']);?>">
 -
                           <input name="range_to" type="text" class="formfld" id="range_to" size="20" value="<?=htmlspecialchars($pconfig['range']['to']);?>">
                           </td>
-					  </tr>
+			 </tr>
+  		       */
+			?>
                     </table>
                   </td>
                 </tr>

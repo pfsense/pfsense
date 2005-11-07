@@ -276,7 +276,7 @@ if (!isBlank($_POST['txtPHPCommand'])) {
 	  <td colspan="2" valign="top" class="vnsepcell">PHP Execute</td>
 	</tr>
 	<tr>
-		<td class="label" align="right">Command:</td>
+		<td align="right">Command:</td>
 		<td class="type"><textarea id="txtPHPCommand" name="txtPHPCommand" type="text" rows="3" cols="50" value="<?=htmlspecialchars($_POST['txtPHPCommand']);?>"></textarea></td>
 	</tr>
     <tr>

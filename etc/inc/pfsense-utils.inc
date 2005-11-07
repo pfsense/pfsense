@@ -127,25 +127,12 @@ function enable_hardware_offloading($interface) {
 	/* translate wan, lan, opt -> real interface if needed */
 	$int = filter_translate_type_to_real_interface($interface);
 	if($int <> "") $interface = $int;
-	if(isset($config['system']['polling'])) {
-		/*    activate polling for interface if it supports it
-		 *    man polling on a freebsd box for the following list
-		 */
-		$supported_ints = array('dc', 'em', 'fwe', 'fwip', 'fxp', 'ixgb', 'ste',
-			'nge', 're', 'rl', 'sf', 'sis', 'ste', 'vge', 'vr', 'xl', 'fxp');
-		foreach($supported_ints as $int) {
-			if(stristr($interface,$int) != false) {
-				mwexec("/sbin/ifconfig {$interface} polling");
-			}
-		}
-	}
+        $int_family = preg_split("/[0-9]+/", $int);
 	$options = strtolower(`/sbin/ifconfig {$interface} | grep options`);
 	$supported_ints = array('fxp');
-	foreach($supported_ints as $int) {
-		if(stristr($interface,$int) != false) {
-			mwexec("/sbin/ifconfig {$interface} link0");
-		}
-	}
+	if (in_array($int_family, $supported_ints))
+		mwexec("/sbin/ifconfig {$interface} link0");
+
 	if(stristr($options, "txcsum") == true)
 	    mwexec("/sbin/ifconfig {$interface} txcsum 2>/dev/null");
 	if(stristr($options, "rxcsum") == true)    
@@ -154,6 +141,58 @@ function enable_hardware_offloading($interface) {
 	    mwexec("/sbin/ifconfig {$interface} polling 2>/dev/null");
     }
     return;
+}
+
+/****f* pfsense-utils/setup_polling_defaults
+ * NAME
+ *   sets up sysctls for pollingS
+ * INPUTS
+ *   
+ * RESULT
+ *   null
+ * NOTES
+ *   
+ ******/
+function setup_polling_defaults() {
+	global $g, $config;
+	if($config['system']['polling_each_burst'])
+		mwexec("sysctl kern.polling.each_burst={$config['system']['polling_each_burst']}");
+	if($config['system']['polling_burst_max'])
+		mwexec("sysctl kern.polling.burst_max={$config['system']['polling_burst_max']}");
+	if($config['system']['polling_user_frac'])
+		mwexec("sysctl kern.polling.user_frac={$config['system']['polling_user_frac']}");		
+}
+
+/****f* pfsense-utils/setup_polling
+ * NAME
+ *   sets up polling
+ * INPUTS
+ *   
+ * RESULT
+ *   null
+ * NOTES
+ *   
+ ******/
+function setup_polling() {
+	setup_polling_defaults();
+	global $g, $config;
+	/* build an array of interfaces to work with */
+	$iflist = array("lan" => "LAN", "wan" => "WAN");
+	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+	$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];		
+	/*    activate polling for interface if it supports it
+	 *    man polling on a freebsd box for the following list
+	 */
+	/* loop through all interfaces and handle pftpx redirections */
+	foreach ($iflist as $ifent => $ifname) {	
+		$supported_ints = array('dc', 'em', 'fwe', 'fwip', 'fxp', 'ixgb', 'ste',
+			'nge', 're', 'rl', 'sf', 'sis', 'ste', 'vge', 'vr', 'xl');
+		if (in_array($int_family, $supported_ints) and isset($config['system']['polling'])) {
+			mwexec("/sbin/ifconfig {$interface} polling");
+		} else {
+			mwexec("/sbin/ifconfig {$interface} -polling");
+		}
+	}
 }
 
 /****f* pfsense-utils/setup_microcode

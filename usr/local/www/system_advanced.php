@@ -116,10 +116,13 @@ if ($_POST) {
 		$oldsshport = $config['system']['ssh']['port'];
 		$config['system']['ssh']['port'] = $_POST['sshport'];
 
-		if($_POST['polling_enable'] == "yes")
+		if($_POST['polling_enable'] == "yes") { 
 			$config['system']['polling'] = true;
-		else
+			setup_polling();
+		} else {
 			unset($config['system']['polling']);
+			setup_polling();
+		}
 
 		if($_POST['sharednet'] == "yes") {
 			$config['system']['sharednet'] = true;

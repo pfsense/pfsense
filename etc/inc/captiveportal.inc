@@ -285,7 +285,20 @@ function captiveportal_rules_generate() {
 	   clients as skipto 50000 rules to make traffic shaping work */
 
 	$cprules = "";
-	
+
+	/*   allow nat redirects to work  see
+	     http://cvstrac.pfsense.com/tktview?tn=651
+	 */
+	$iflist = array("lan" => "LAN", "wan" => "WAN");
+	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];	
+	foreach ($iflist as $ifent => $ifname) {
+		if($config['captiveportal']['interface'] == $ifname)
+			continue;
+		$int = convert_friendly_interface_to_real_interface_name($ifname);
+		$cprules .= "ipfw add 30 skipto 50000 allow all from any to any in via {$int} keep-state\n";
+	}
+
 	/* captive portal on LAN interface? */
 	if ($cpifn == "lan") {
 		/* add anti-lockout rules */

@@ -201,10 +201,23 @@ if (!isBlank($_POST['txtCommand'])) {
    puts("</pre>");
 }
 
+
+if (!isBlank($_POST['txtPHPCommand'])) {
+   puts("<pre>");
+   require_once("config.inc");
+   require_once("functions.inc");
+   echo eval($_POST['txtPHPCommand']);
+   puts("</pre>");
+}
+
+
 ?>
 
 <form action="exec.php" method="POST" enctype="multipart/form-data" name="frmExecPlus" onSubmit="return frmExecPlus_onSubmit( this );">
   <table>
+	<tr>
+	  <td colspan="2" valign="top" class="vnsepcell">Execute Shell command</td>
+	</tr>  
     <tr>
       <td class="label" align="right">Command:</td>
       <td class="type"><input id="txtCommand" name="txtCommand" type="text" size="80" value="<?=htmlspecialchars($_POST['txtCommand']);?>"></td>
@@ -223,19 +236,58 @@ if (!isBlank($_POST['txtCommand'])) {
       <td height="8"></td>
       <td></td>
     </tr>
+	<tr>
+	  <td colspan="2" valign="top" height="16"></td>
+	</tr>
+	<tr>
+	  <td colspan="2" valign="top" class="vnsepcell">Download</td>
+	</tr>    
     <tr>
-      <td align="right">Download:</td>
+      <td align="right">File to download:</td>
       <td>
         <input name="dlPath" type="text" id="dlPath" size="50">
+	</td></tr>
+    <tr>
+      <td valign="top">&nbsp;&nbsp;&nbsp;</td>
+      <td valign="top" class="label">	
         <input name="submit" type="submit"  class="button" id="download" value="Download">
         </td>
     </tr>
+	<tr>
+	  <td colspan="2" valign="top" height="16"></td>
+	</tr>
+	<tr>
+	  <td colspan="2" valign="top" class="vnsepcell">Upload</td>
+	</tr>    
     <tr>
-      <td align="right">Upload:</td>
+      <td align="right">File to upload:</td>
       <td valign="top" class="label">
-<input name="ulfile" type="file" class="button" id="ulfile">
+	<input name="ulfile" type="file" class="button" id="ulfile">
+	</td></tr>
+    <tr>
+      <td valign="top">&nbsp;&nbsp;&nbsp;</td>
+      <td valign="top" class="label">	
         <input name="submit" type="submit"  class="button" id="upload" value="Upload"></td>
     </tr>
+	<tr>
+	  <td colspan="2" valign="top" height="16"></td>
+	</tr>
+	<tr>
+	  <td colspan="2" valign="top" class="vnsepcell">PHP Execute</td>
+	</tr>
+	<tr>
+		<td class="label" align="right">Command:</td>
+		<td class="type"><textarea id="txtPHPCommand" name="txtPHPCommand" type="text" rows="3" cols="50" value="<?=htmlspecialchars($_POST['txtPHPCommand']);?>"></textarea></td>
+	</tr>
+    <tr>
+      <td valign="top">&nbsp;&nbsp;&nbsp;</td>
+      <td valign="top" class="label">
+         <input type="submit" class="button" value="Execute">
+	 <p>
+	 <b>Example:</b>   interfaces_carp_bring_up_final();
+      </td>
+    </tr>
+    
   </table>
 <?php include("fend.inc"); ?>
 </form>

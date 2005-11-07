@@ -296,7 +296,7 @@ function captiveportal_rules_generate() {
 		if($config['captiveportal']['interface'] == $ifname)
 			continue;
 		$int = convert_friendly_interface_to_real_interface_name($ifname);
-		$cprules .= "ipfw add 30 skipto 50000 allow all from any to any in via {$int} keep-state\n";
+		$cprules .= "add 30 skipto 50000 allow all from any to any in via {$int} keep-state\n";
 	}
 
 	/* captive portal on LAN interface? */

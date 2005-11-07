@@ -435,10 +435,10 @@ function interfaces_carp_bring_up_final() {
 		return;
 	$carp_instances_counter = 0;
 	$counter = 0;
-	$supress = intval(`sysctl net.inet.carp.suppress_preempt | cut -d" " -f2`);
+	$supress = intval(`/sbin/sysctl net.inet.carp.suppress_preempt | cut -d" " -f2`);
 	while($supress > 0) {
 		sleep(2);
-		$supress = intval(`sysctl net.inet.carp.suppress_preempt | cut -d" " -f2`);
+		$supress = intval(`/sbin/sysctl net.inet.carp.suppress_preempt | cut -d" " -f2`);
 		if($counter > 15)
 			$supress = 0;
 	}	

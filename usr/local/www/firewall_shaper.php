@@ -65,7 +65,7 @@ if ($_POST['remove']) {
   touch($d_shaperconfdirty_path);
   unset($config['shaper']['enable']);
   write_config();
-  Header("Location: firewall_shaper.php");
+  Header("Location: index.php");
   exit;
 }
 

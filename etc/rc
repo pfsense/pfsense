@@ -174,11 +174,11 @@ echo -n "Starting USB... "
 /usr/local/sbin/kbdcheck
 echo "done."
 
-# let the PHP-based configuration subsystem set up the system now
-/etc/rc.bootup
-
 echo -n Starting Secure Shell Services...
 /etc/sshd
+
+# let the PHP-based configuration subsystem set up the system now
+/etc/rc.bootup
 
 echo -n "Starting CRON... "
 /usr/sbin/cron 2>>/tmp/bootup_messages

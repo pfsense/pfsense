@@ -225,7 +225,7 @@ function enable_change(enable_over) {
 		<tr>
 			<td width="22%" valign="top" class="vncell">FTP Helper</td>
 			<td width="78%" class="vtable">
-				<input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if (isset($pconfig['disableftpproxy'])) echo "checked"; ?> onclick="enable_change(false)" />
+				<input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if ($pconfig['disableftpproxy']) echo "checked"; ?> onclick="enable_change(false)" />
 				<strong>Disable the userland FTP-Proxy application</strong>
 				<br />
 			</td>

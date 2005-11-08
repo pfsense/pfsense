@@ -457,9 +457,8 @@ function verify_digital_signature($fname) {
 
 	global $g;
 
-	return mwexec("/usr/local/bin/verifysig " .
-		escapeshellarg("{$g['etc_path']}/pubkey.pem") . " " .
-		escapeshellarg($fname));
+	return mwexec("/usr/local/sbin/gzsig verify {$g['etc_path']}/pubkey.pem < " . escapeshellarg($fname));
+
 }
 
 /* obtain MAC address given an IP address by looking at the ARP table */

@@ -216,6 +216,20 @@ function enable_change(enable_over) {
 					?>
                     </select></td>
                 </tr>
+                <tr>
+                  <td colspan="2" valign="top" height="16"></td>
+                </tr>
+                <tr>
+                  <td colspan="2" valign="top" class="listtopic">FTP Helper</td>
+                </tr>		
+		<tr>
+			<td width="22%" valign="top" class="vncell">FTP Helper</td>
+			<td width="78%" class="vtable">
+				<input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if (isset($pconfig['disableftpproxy'])) echo "checked"; ?> onclick="enable_change(false)" />
+				<strong>Disable the userland FTP-Proxy application</strong>
+				<br />
+			</td>
+		</tr>			
 				<?php /* Wireless interface? */
 				if (isset($lancfg['wireless']))
 					wireless_config_print();

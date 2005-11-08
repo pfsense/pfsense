@@ -407,14 +407,12 @@ function interfaces_carp_configure() {
 			if($debugging)
 				echo "Configuring carp{$carp_instances_counter}.\n";
 			fwrite($fd, "/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew 200 " . $password . "\n");
-			//mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew 200 " . $password);
+			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew 200 " . $password);
 			if($g['booting']) 
 				mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
 			$carp_instances_counter++;
 		}
 	}
-	mwexec("/bin/sh /tmp/carp.sh");
-	sleep(5);
 	mwexec("/bin/sh /tmp/carp.sh");
 	fclose($fd);
 	if ($g['booting']) {

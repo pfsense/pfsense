@@ -1191,7 +1191,7 @@ function system_start_ftp_helpers() {
 	global $config, $g;
 
 	/* build an array of interfaces to work with */
-	$iflist = array("lan" => "LAN", "wan" => "WAN");
+	$iflist = array("lan" => "LAN");
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
 		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 
@@ -1213,7 +1213,6 @@ function system_start_ftp_helpers() {
 			if($helpers)
 				mwexec("/bin/kill {$helpers}");
 			$interface_counter++;
-			continue;
 		} else {
 		/* grab the current interface IP address */
 			$ip = find_interface_ip(convert_friendly_interface_to_real_interface_name($ifname));

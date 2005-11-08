@@ -545,7 +545,7 @@ function filter_nat_rules_generate() {
 	$natrules .= "rdr-anchor \"slb\"\n";
 
 	/* build an array of interfaces to work with */
-	$iflist = array("lan" => "LAN", "wan" => "WAN");
+	$iflist = array("lan" => "LAN");
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
 		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 	$natrules .= "# FTP proxy\n";

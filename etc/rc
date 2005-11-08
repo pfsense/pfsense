@@ -174,9 +174,6 @@ echo -n "Starting USB... "
 /usr/local/sbin/kbdcheck
 echo "done."
 
-echo -n Starting Secure Shell Services...
-/etc/sshd
-
 # let the PHP-based configuration subsystem set up the system now
 /etc/rc.bootup
 

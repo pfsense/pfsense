@@ -284,7 +284,7 @@ to access after they've authenticated.</td>
       <td class="vtable">
         <input name="nomacfilter" type="checkbox" class="formfld" id="nomacfilter" value="yes" <?php if ($pconfig['nomacfilter']) echo "checked"; ?>>
         <strong>Disable MAC filtering</strong><br>
-    If this option is set, no attempts will be made to ensure that the MAC address of clients stays the same while they're logged in. This is required when the MAC address of cannot be determined (usually because there are routers between m0n0wall and the clients).</td>
+    If this option is set, no attempts will be made to ensure that the MAC address of clients stays the same while they're logged in. This is required when the MAC address of cannot be determined (usually because there are routers between pfSense and the clients).</td>
 	  </tr>
 	<tr> 
 	  <td width="22%" valign="top" class="vncell">Authentication</td>

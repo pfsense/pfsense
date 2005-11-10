@@ -83,6 +83,8 @@ case ${opmode} in
         /etc/rc.initial.ping
         ;;
 8)
+	/usr/sbin/vidcontrol -S on
+	/usr/sbin/vidcontrol -s 1 2>/dev/null
 	set prompt="%n\@%m\:%~# "
         /bin/tcsh
         ;;

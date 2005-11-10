@@ -1423,7 +1423,14 @@ EOD;
 # (not possible at the moment - need 'me' like in ipfw)
 anchor "wandhcp"
 pass out quick on $wanif proto udp from any port = 68 to any port = 67 label "allow dhcp client out wan"
-block in $log quick on $wanif proto udp from any port = 67 to {$lansa_sn_combo} port = 68 label "allow dhcp client out wan"
+
+EOD;
+
+if($config['interfaces']['lan']['bridge'] <> "wan")
+	echo "block in $log quick on $wanif proto udp from any port = 67 to {$lansa_sn_combo} port = 68 label \"allow dhcp client out wan\"\n";
+
+	$ipfrules .= <<<EOD
+
 pass in quick on $wanif proto udp from any port = 67 to any port = 68 label "allow dhcp client out wan"
 
 # LAN/OPT spoof check (needs to be after DHCP because of broadcast addresses)

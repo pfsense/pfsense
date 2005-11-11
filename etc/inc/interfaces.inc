@@ -410,6 +410,7 @@ function interfaces_carp_configure() {
 			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew 200 " . $password);
 			usleep(10);
 			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
+			fwrite($fd, "/sbin/ifconfig carp" . $carp_instances_counter . " up");
 			$carp_instances_counter++;
 		}
 	}

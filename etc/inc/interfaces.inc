@@ -678,7 +678,7 @@ EOD;
 //	fclose($fd);
 	
 	if(isset($wlcfg['useolsr']))
-		setup_wireless_olsr(escapeshellarg($if));
+		setup_wireless_olsr($if);
 
 	return 0;
 

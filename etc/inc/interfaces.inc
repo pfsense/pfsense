@@ -408,8 +408,8 @@ function interfaces_carp_configure() {
 				echo "Configuring carp{$carp_instances_counter}.\n";
 			fwrite($fd, "/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew 200 " . $password . "\n");
 			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew 200 " . $password);
-			if($g['booting']) 
-				mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
+			usleep(10);
+			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
 			$carp_instances_counter++;
 		}
 	}
@@ -439,6 +439,7 @@ function interfaces_carp_bring_up_final() {
 		$supress = intval(`/sbin/sysctl net.inet.carp.suppress_preempt | cut -d" " -f2`);
 		if($counter > 15)
 			$supress = 0;
+		$counter++;
 	}	
 	sleep(45);
 	foreach ($viparr as $vip) {

@@ -62,8 +62,6 @@ elif [ "$PLATFORM" = "embedded" ] ; then
     echo "No swap on ${PLATFORM}"
     /usr/local/bin/php -f /etc/rc.conf_mount_rw
 else
-    SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
-
     /sbin/swapon -a 2>/dev/null
     
     /usr/local/bin/php -f /etc/rc.conf_mount_rw

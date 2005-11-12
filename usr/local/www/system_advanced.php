@@ -602,7 +602,7 @@ include("head.inc");
 			<td colspan="2" valign="top" class="listtopic">Network Address Translation</td>
 		</tr>
 		<tr>
-			<td width="22%" valign="top" class="vncell">Disable FTP Nat Reflection</td>
+			<td width="22%" valign="top" class="vncell">Disable NAT Reflection</td>
 			<td width="78%" class="vtable">
 				<input name="disablenatreflection" type="checkbox" id="disablenatreflection" value="yes" <?php if (isset($config['system']['disablenatreflection'])) echo "checked"; ?> onclick="enable_change(false)" />
 				<strong>Disables the automatic creation of NAT redirect rules for LAN/OPTIONAL interfaces that redirect from WAN -> LAN, etc.</strong>

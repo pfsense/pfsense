@@ -91,12 +91,12 @@ function vpn_ipsec_configure($ipchg = false) {
 		/* determine if we should load the via padlock module */
 		$dmesg_boot = `cat /var/log/dmesg.boot | grep CPU`;
 		if(stristr($dmesg_boot, "ACE") == true) {		
-			echo "Enabling [VIA Padlock] ...";
-			mwexec("/sbin/kldload padlock");
-			mwexec("/sbin/sysctl net.inet.ipsec.crypto_support=1");
-			mwexec("/usr/sbin/setkey -F");
-			mwexec("/usr/sbin/setkey -FP");
-			echo " done.\n";
+			//echo "Enabling [VIA Padlock] ...";
+			//mwexec("/sbin/kldload padlock");
+			//mwexec("/sbin/sysctl net.inet.ipsec.crypto_support=1");
+			//mwexec("/usr/sbin/setkey -F");
+			//mwexec("/usr/sbin/setkey -FP");
+			//echo " done.\n";
 		}
 	}
 
@@ -132,7 +132,7 @@ function vpn_ipsec_configure($ipchg = false) {
 		echo "Configuring IPsec VPN... ";
 	} else {
 		/* kill racoon */
-		killbypid("{$g['varrun_path']}/racoon.pid");
+		mwexec("/usr/bin/killall racoon");
 
 		/* wait for process to die */
 		sleep(2);

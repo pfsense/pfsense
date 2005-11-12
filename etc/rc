@@ -63,13 +63,10 @@ elif [ "$PLATFORM" = "embedded" ] ; then
     /usr/local/bin/php -f /etc/rc.conf_mount_rw
 else
     SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
-    /sbin/dumpon -v $SWAPDEVICE 2>/dev/null
+
     /sbin/swapon -a 2>/dev/null
     
     /usr/local/bin/php -f /etc/rc.conf_mount_rw
-
-    /bin/mkdir -p /usr/savecore 2>/dev/null
-    /sbin/savecore /usr/savecore $SWAPDEVICE
 fi
 
 # Repair symlinks if they are broken

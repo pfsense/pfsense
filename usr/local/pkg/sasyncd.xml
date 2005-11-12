@@ -66,13 +66,13 @@
 		<field>
 			<fielddescr>Failover IP</fielddescr>
 			<fieldname>ip</fieldname>
-			<description>Enter the IP address you would like to use for failover</description>
+			<description>Enter the IP address you would like to use for failover.  HINT:  You normally want to use a public CARP ip.</description>
 			<type>input</type>
 		</field>
 		<field>
 			<fielddescr>Peer IP</fielddescr>
 			<fieldname>peerip</fieldname>
-			<description>Enter the peers ip address</description>
+			<description>Enter the peers ip address.   HINT: You normally want to enter the peers REAL LAN IP here.</description>
 			<type>input</type>
 		</field>
 		<field>

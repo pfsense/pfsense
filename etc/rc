@@ -7,11 +7,6 @@
 # Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 # All rights reserved.
 #
-#/bin/stty status '^T'
-#/bin/stty susp '^-' intr '^-' quit '^-'
-
-#trap : 2
-#trap : 3
 
 # mount /usr.uzip if it exists
 [ -x /usr.uzip ] && [ -d /usr ] && [ ! -d /usr/local ] \

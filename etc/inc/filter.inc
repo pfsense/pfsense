@@ -706,13 +706,15 @@ function filter_nat_rules_generate() {
 			
 			$natrules .= "\n";
 		}
-	
+		
 		if(!isset($config['system']['disablenatreflection'])) {
 			fclose($fd);				
-			/* kill off any running inetd's */
-			mwexec("/usr/bin/killall inetd");
-			/* start new inetd */
-			mwexec("/usr/sbin/inetd -a 127.0.0.1 /var/etc/inetd.conf");
+			$helpers = trim(exec("ps ax | grep inetd | grep -v grep"));
+			if(!$helpers)
+				mwexec("/usr/sbin/inetd -a 127.0.0.1 /var/etc/inetd.conf");
+			else
+				mwexec("/usr/bin/killall -HUP inetd");
+			
 		}
 	}
 

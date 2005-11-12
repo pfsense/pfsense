@@ -59,6 +59,8 @@ $pconfig['sshport'] = $config['system']['ssh']['port'];
 $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['polling_enable'] = isset($config['system']['polling']);
 
+$pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
+
 if ($_POST) {
 
 	unset($input_errors);
@@ -187,6 +189,12 @@ if ($_POST) {
 			unset($config['system']['enablesshd']);
 		}
 
+		if($_POST['disablenatreflection'] == "yes") {
+			$config['system']['disablenatreflection'] = $_POST['disablenatreflection'];
+		} else {
+			unset($config['system']['disablenatreflection']);
+		}
+	
                 $config['ipsec']['preferoldsa'] = $_POST['preferoldsa_enable'] ? true : false;
 	
 		/* pfSense themes */
@@ -586,6 +594,21 @@ include("head.inc");
 				<span class="vexpl">Note:  Leave this blank for the default of 10000</span>
 			</td>
 		</tr>
+
+		<tr>
+			<td colspan="2" class="list" height="12">&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top" class="listtopic">Network Address Translation</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">Disable FTP Nat Reflection</td>
+			<td width="78%" class="vtable">
+				<input name="disablenatreflection" type="checkbox" id="disablenatreflection" value="yes" <?php if (isset($config['system']['disablenatreflection'])) echo "checked"; ?> onclick="enable_change(false)" />
+				<strong>Disables the automatic creation of NAT redirect rules for LAN/OPTIONAL interfaces that redirect from WAN -> LAN, etc.</strong>
+			</td>
+		</tr>
+		
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" /></td>

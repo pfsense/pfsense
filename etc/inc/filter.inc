@@ -572,6 +572,13 @@ function filter_nat_rules_generate() {
 
 	if (isset($config['nat']['rule'])) {
 		$natrules .= "# NAT Inbound Redirects\n";
+		
+		if(!isset($config['system']['disablenatreflection'])) {
+			$fd = fopen("/var/etc/inetd.conf","w");		
+			/* start redirects on port 19000 of localhost */
+			$starting_localhost_port = 19000;
+		}
+	
 		foreach ($config['nat']['rule'] as $rule) {
 
 			/* if item is an alias, expand */
@@ -641,10 +648,10 @@ function filter_nat_rules_generate() {
 			if ((!$extport[1]) || ($extport[0] == $extport[1])) {
 				if($rule['protocol'] == "tcp/udp")
 					$natrules .=
-					"rdr on $natif proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
+					 "rdr on $natif proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
 				else
 					$natrules .=
-					"rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
+					 "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
 
 			} else {
 				if($rule['protocol'] == "tcp/udp")
@@ -655,7 +662,57 @@ function filter_nat_rules_generate() {
 					 "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
 			}
 
+			/*    setup reflection rule for this item if requested
+			 *    sponsored by Robin Greenhagen www.gsihosting.com
+			 */
+			if(!isset($config['system']['disablenatreflection'])) {
+				
+				$natrules .= "\n# Reflection redirects\n";				
+				foreach ($iflist as $ifent => $ifname) {
+					
+					/* do not process interfaces with gateways*/
+					if($config['interfaces'][$ifname]['gateway'] <> "")
+						continue;
+						
+					$ifname_real = convert_friendly_interface_to_real_interface_name($ifname);
+						
+					if($extport[1])
+						$range_end = ($extport[1]);
+					else
+						$range_end = ($extport[0]);
+						
+					$range_end++;
+					
+					if($extport[0] - $range_end > 500) {
+						$range_end = $extport[0]+1;
+						log_error("Not installing nat reflection rules for a port range > 500");
+					}
+						
+					for($x=$extport[0]; $x<$range_end; $x++) {
+						
+						/* XXX: need to handle port ranges somehow */
+						fwrite($fd, "{$starting_localhost_port}\tstream\t{$rule['protocol']}\tnowait\tnobody\t/usr/bin/nc nc -w 20 {$target} {$x}\n");
+						
+						$natrules .=
+						  "rdr on {$ifname_real} proto {$rule['protocol']} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
+						
+						$starting_localhost_port++;
+						
+					}
+					
+				}
+				
+			}
+			
 			$natrules .= "\n";
+		}
+	
+		if(!isset($config['system']['disablenatreflection'])) {
+			fclose($fd);				
+			/* kill off any running inetd's */
+			mwexec("/usr/bin/killall inetd");
+			/* start new inetd */
+			mwexec("/usr/sbin/inetd -a 127.0.0.1 /var/etc/inetd.conf");
 		}
 	}
 

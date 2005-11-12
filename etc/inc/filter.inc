@@ -690,11 +690,15 @@ function filter_nat_rules_generate() {
 						
 					for($x=$extport[0]; $x<$range_end; $x++) {
 						
-						/* XXX: need to handle port ranges somehow */
-						fwrite($fd, "{$starting_localhost_port}\tstream\t{$rule['protocol']}\tnowait\tnobody\t/usr/bin/nc nc -w 20 {$target} {$x}\n");
+						if($rule['protocol'] == "tcp/udp")
+							$protocol = "{ tcp udp }";
+						else
+							$protocol = $rule['protocol'];
+						
+						fwrite($fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait\tnobody\t/usr/bin/nc nc -w 20 {$target} {$x}\n");
 						
 						$natrules .=
-						  "rdr on {$ifname_real} proto {$rule['protocol']} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
+						  "rdr on {$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
 						
 						$starting_localhost_port++;
 						

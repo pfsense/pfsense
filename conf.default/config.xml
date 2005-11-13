@@ -5,7 +5,6 @@
 	<lastchange></lastchange>
 	<theme>metallic</theme>
 	<system>
-		<enablesshd/>
 		<optimization>normal</optimization>
 		<hostname>pfSense</hostname>
 		<domain>local</domain>

@@ -664,17 +664,6 @@ EOD;
 		if ($wlcfg['mode'] == hostap) 
 			mwexec("$hostapd -B {$g['varetc_path']}/hostapd_{$if}.conf");
 	}
-
-	/* Write ifconfig settings to tmp file so we can see if user set something weird */ 
-//	$ifcargs = ("$standard $channel $ssid $stationname $hostapmode $adhocmode $hidessid $pureg $apbridge $turbo $wme $wepset");
-//	$fd = fopen("{$g['tmp_path']}/ifconfig_wireless", "w");
-//	fwrite($fd, "/sbin/ifconfig {$ifcargs}");
-//	fclose($fd);
-
-	/* Write wep crap out */
-//	$fd = fopen("{$g['tmp_path']}/ifconfig_wep", "w");
-//	fwrite($fd, "sbin/ifconfig {$wepset}");
-//	fclose($fd);
 	
 	if(isset($wlcfg['useolsr']))
 		setup_wireless_olsr($if);

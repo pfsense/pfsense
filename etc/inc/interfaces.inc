@@ -816,7 +816,6 @@ function interfaces_opt_dhcp_configure($interface) {
 
 	if ($optcfg['dhcphostname']) {
 		$dhclientconf_hostname = "send dhcp-client-identifier \"{$optcfg['dhcphostname']}\";\n";
-		$dhclientconf_hostname = "	send dhcp-client-identifier \"{$optcfg['dhcphostname']}\";\n";
 	} else {
 		$dhclientconf_hostname = "";
 	}
@@ -839,7 +838,7 @@ EOD;
         mwexec("/sbin/ifconfig {$optif} up");
 
         /* fire up dhclient */
-        mwexec("/sbin/dhclient -cf {$g['varetc_path']}/dhclient_{$optif}.conf {$optif}");
+        mwexec("/sbin/dhclient -nw -cf {$g['varetc_path']}/dhclient_{$optif}.conf {$optif}");
 
 	return 0;
 }
@@ -861,7 +860,6 @@ function interfaces_dhcp_configure($interface) {
 
 	if ($optcfg['dhcphostname']) {
 		$dhclientconf_hostname = "send dhcp-client-identifier \"{$optcfg['dhcphostname']}\";\n";
-		$dhclientconf_hostname = "	send dhcp-client-identifier \"{$optcfg['dhcphostname']}\";\n";
 	} else {
 		$dhclientconf_hostname = "";
 	}
@@ -885,10 +883,10 @@ EOD;
         mwexec("/sbin/ifconfig {$optif} up");
 
         /* fire up dhclient */
-        mwexec("/sbin/dhclient -cf {$g['varetc_path']}/dhclient_{$optif}.conf {$optif} >/tmp/{$optif}_output >/tmp/{$optif}_error_output");
+        mwexec("/sbin/dhclient -nw -cf {$g['varetc_path']}/dhclient_{$optif}.conf {$optif} >/tmp/{$optif}_output >/tmp/{$optif}_error_output");
 
 	$fout = fopen("/tmp/ifconfig_{$optif}","w");
-	fwrite($fout, "/sbin/dhclient -cf {$g['varetc_path']}/dhclient_{$optif}.conf {$optif}");
+	fwrite($fout, "/sbin/dhclient -nw -cf {$g['varetc_path']}/dhclient_{$optif}.conf {$optif}");
 	fclose($fout);
 
 	return 0;
@@ -908,7 +906,6 @@ function interfaces_wan_dhcp_configure() {
 	
 	if ($wancfg['dhcphostname']) {
 		$dhclientconf_hostname = "send dhcp-client-identifier \"{$wancfg['dhcphostname']}\";\n";
-		$dhclientconf_hostname = "	send dhcp-client-identifier \"{$wancfg['dhcphostname']}\";\n";
 	} else {
 		$dhclientconf_hostname = "";
 	}
@@ -932,10 +929,10 @@ EOD;
         mwexec("/sbin/ifconfig {$wanif} up");
 
         /* fire up dhclient */
-        mwexec("/sbin/dhclient -cf {$g['varetc_path']}/dhclient_wan.conf {$wanif} >/tmp/{$wanif}_output >/tmp/{$wanif}_error_output");
+        mwexec("/sbin/dhclient -nw -cf {$g['varetc_path']}/dhclient_wan.conf {$wanif} >/tmp/{$wanif}_output >/tmp/{$wanif}_error_output");
 
 	$fout = fopen("/tmp/ifconfig_{$wanif}","w");
-	fwrite($fout, "/sbin/dhclient -cf {$g['varetc_path']}/dhclient_wan.conf {$wanif}");
+	fwrite($fout, "/sbin/dhclient -nw -cf {$g['varetc_path']}/dhclient_wan.conf {$wanif}");
 	fclose($fout);
 
 	return 0;

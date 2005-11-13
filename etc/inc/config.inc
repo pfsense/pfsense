@@ -1209,7 +1209,7 @@ function system_start_ftp_helpers() {
 			 *    keep processing interfaces. kill pftpx if already
                          *    running for this instance.
                          */
-			$helpers = exec("ps ax | grep \"/usr/local/sbin/pftpx -c {$port}\" | grep -v grep | sed \"s/  */ /g\" | cut -f2 -d\" \"");
+			$helpers = exec("ps awux | grep \"/usr/local/sbin/pftpx -c {$port}\" | grep -v grep | sed \"s/  */ /g\" | cut -f2 -d\" \"");
 			if($helpers)
 				mwexec("/bin/kill {$helpers}");
 			$interface_counter++;
@@ -1217,7 +1217,7 @@ function system_start_ftp_helpers() {
 		/* grab the current interface IP address */
 			$ip = find_interface_ip(convert_friendly_interface_to_real_interface_name($ifname));
 			/* if pftpx is already running then do not launch it again */
-			$helpers = exec("ps ax | grep \"/usr/local/sbin/pftpx -c {$port}\" | grep -v grep | sed \"s/  */ /g\"");
+			$helpers = exec("ps awux | grep \"/usr/local/sbin/pftpx -c {$port}\" | grep -v grep | sed \"s/  */ /g\"");
 			if(!$helpers && $ip)
  				mwexec("/usr/local/sbin/pftpx -c {$port} -g 8021 {$ip}");
 			$interface_counter++;

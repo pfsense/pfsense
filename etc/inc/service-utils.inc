@@ -125,7 +125,7 @@ function restart_service($name) {
 }
 
 function is_process_running($process) {
-    $status = `/bin/ps ax | /usr/bin/grep {$process} | grep -v grep | wc -l`;
+    $status = `/bin/ps awux | /usr/bin/grep {$process} | grep -v grep | wc -l`;
     if($status > 0) return 1;
     return 0;
 }

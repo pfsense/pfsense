@@ -620,8 +620,7 @@ EOD;
 				fwrite($fd, "{$wpa}");
 				fclose($fd);
 
-				if(is_process_running("hostapd"))
-					mwexec("$killall  hostapd");
+				mwexec("$killall  hostapd");
 			}
 		break;
 

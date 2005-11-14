@@ -267,6 +267,4 @@
 	unlink("{$g['varrun_path']}/booting");
 	$g['booting'] = FALSE;
 
-	echo "Returning to rc.";
-
 ?>

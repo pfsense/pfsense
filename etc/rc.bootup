@@ -255,7 +255,7 @@
 
 	/* start ftp proxy helpers if they are enabled */
 	echo "Starting FTP helpers... ";
-	//system_start_ftp_helpers();
+	system_start_ftp_helpers();
 	echo "done.\n";
 
 	/* power down hard drive if needed/set */

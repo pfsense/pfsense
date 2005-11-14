@@ -123,7 +123,8 @@ function filter_generate_altq_queues($altq_ints) {
 			if(isset($rule['realtime']) and $rule['realtime'] <> "") {
 				$options .= " realtime({$rule['realtime1']} {$rule['realtime2']} {$rule['realtime3']})";
 			}
-			$scheduler_type = $config['shaper']['schedulertype'];
+			//$scheduler_type = $config['shaper']['schedulertype'];
+                        $scheduler_type = "hfsc";
 			$altq_rules .= "{$scheduler_type} ";
 			if($options)
 				$altq_rules .= "( {$options} )";

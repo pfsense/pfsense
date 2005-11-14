@@ -121,6 +121,8 @@ function return_dir_as_array($dir) {
  ******/
 function enable_hardware_offloading($interface) {
     global $g, $config;
+    if(stristr($interface,"lnc"))
+	return;    
     if(isset($config['system']['do_not_use_nic_microcode']))
 	return;
     if($g['booting']) {

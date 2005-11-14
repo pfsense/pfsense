@@ -243,6 +243,8 @@
 	unmute_kernel_msgs();
 	echo "done.\n";
 	
+	sleep(2);
+	
 	mwexec("/sbin/pfctl -f /tmp/rules.debug");
 	
 	/* start IPsec tunnels */
@@ -268,5 +270,7 @@
 	/* done */
 	unlink("{$g['varrun_path']}/booting");
 	$g['booting'] = FALSE;
+
+	echo "Returning to rc.";
 
 ?>

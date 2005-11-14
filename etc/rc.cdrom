@@ -3,44 +3,42 @@
 # rc.cdrom - livedisc specific routines
 # For pfSense
 
-# Run some FreeSBIE routines
-/etc/rc.d/freesbie_1st
+# Size of memory file system /conf partition
+partsize="3m"
+
+set -x
+
+# Run some initialization routines
+/etc/rc.d/uzip start
+
+# Initialize MFS for /var. Partly taken from /etc/rc.d/var
+if (/bin/mkdir -p /var/.diskless 2> /dev/null); then
+       rmdir /var/.diskless
+else
+        varsize="32m"
+       mdmfs -S -M -s ${varsize} md /var
+fi
+
+
+for i in tmp etcmfs rootmfs; do
+       if [ -f /etc/rc.d/$i ]; then
+               sh /etc/rc.d/$i start
+       fi
+done
 
 # Start PFI
 /bin/sh /scripts/pfi start
 
-# If PFI did not find a config, this will not be
-# a directory.  Go ahead and populate with stock
+# If PFI did not find a config, we should create
+# a tiny mfs under /conf and populate with stock
 # configuration.
-if [ ! -f /cf/conf/config.xml ]; then
-    mkdir -p /cf/conf
-    echo "Copying /FreeSBIE/cf/conf/* /cf/conf/"
-    /rescue/cp /FreeSBIE/cf/conf/* /cf/conf/
-fi                                          
-
-# If by this time /conf doesn't exist then lets
-# go ahead and link /conf to /cf/conf
-if [ ! -L /conf ]; then       
-    /rescue/ln -s /cf/conf /conf
-fi
-
-# Create factory default restore directory
-/bin/mkdir -p /conf.default/
-
-# If the default config.xml and ez-ipupdate.cache do not exist,
-# lets populate them from the default (factory configuration)
-# files.
-if [ ! -f /cf/conf/config.xml ]; then
-    echo "Copying config.xml to /cf/conf/"
-    /rescue/cp /FreeSBIE/cf/conf/config.xml /cf/conf/
-fi
-if [ ! -f /conf.default/config.xml ]; then
-    echo "Copying config.xml to /conf.default/conf/"
-    /rescue/cp /FreeSBIE/conf.default/config.xml /conf.default/config.xml
-fi
-if [ ! -f /cf/conf/ez-ipupdate.cache ]; then
-    echo "Copying ez-ipupdate.cache to /cf/conf/"
-    /rescue/cp /FreeSBIE/cf/conf/ez-ipupdate.cache /cf/conf/ez-ipupdate.cache
+if [ ! -f /conf/config.xml ]; then
+       echo "Generating a MFS /conf partition"       
+       device=$(mdconfig -a -t malloc -s ${partsize})
+       newfs /dev/${device} > /dev/null 2>&1
+       mount /dev/${device} /conf
+       cp /cf/conf/* /conf
+       mount_nullfs /conf /cf/conf
 fi
 
 # Create some needed directories

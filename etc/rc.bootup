@@ -242,9 +242,11 @@
 	echo "done.\n";
 
 	/* setup interface microcode which improves tcp/ip speed */
+	echo "Setting up microcode and tx/rx offloading... ";
 	mute_kernel_msgs();
 	setup_microcode();
 	unmute_kernel_msgs();
+	echo "done.\n";
 	
 	mwexec("/sbin/pfctl -f /tmp/rules.debug");
 	

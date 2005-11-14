@@ -1218,8 +1218,10 @@ function system_start_ftp_helpers() {
 			$ip = find_interface_ip(convert_friendly_interface_to_real_interface_name($ifname));
 			/* if pftpx is already running then do not launch it again */
 			$helpers = exec("ps awux | grep \"/usr/local/sbin/pftpx -c {$port}\" | grep -v grep | sed \"s/  */ /g\"");
-			if(!$helpers && $ip)
+			if(!$helpers && $ip) {
+				echo "$port ";
  				mwexec("/usr/local/sbin/pftpx -c {$port} -g 8021 {$ip}");
+			}
 			$interface_counter++;
 		}
 	}

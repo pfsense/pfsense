@@ -1272,6 +1272,8 @@ function sync_webgui_passwords() {
 	fclose($fd);
 	chmod("{$g['varrun_path']}/htpasswd", 0600);	
 	$crypted_pw = $config['system']['password'];
+	mwexec("/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd");
+	mwexec("/usr/sbin/pwd_mkdb /etc/master.passwd");
 	/* sync root */
 	$fd = popen("/usr/sbin/pw usermod -n root -H 0", "w");
 	fwrite($fd, $crypted_pw);

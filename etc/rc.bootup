@@ -236,11 +236,6 @@
 	/* setup polling */
 	setup_polling();
 
-	/* start ftp proxy helpers if they are enabled */
-	echo "Starting FTP helpers... ";
-	system_start_ftp_helpers();
-	echo "done.\n";
-
 	/* setup interface microcode which improves tcp/ip speed */
 	echo "Setting up microcode and tx/rx offloading... ";
 	mute_kernel_msgs();
@@ -257,6 +252,11 @@
 	slbd_configure();
 
 	interfaces_carp_bring_up_final();
+
+	/* start ftp proxy helpers if they are enabled */
+	echo "Starting FTP helpers... ";
+	system_start_ftp_helpers();
+	echo "done.\n";
 
 	/* power down hard drive if needed/set */
 	system_set_harddisk_standby();

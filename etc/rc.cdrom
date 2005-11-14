@@ -6,8 +6,6 @@
 # Size of memory file system /conf partition
 partsize="3m"
 
-set -x
-
 # Run some initialization routines
 /etc/rc.d/uzip start
 
@@ -15,7 +13,7 @@ set -x
 if (/bin/mkdir -p /var/.diskless 2> /dev/null); then
        rmdir /var/.diskless
 else
-        varsize="32m"
+        varsize="8m"
        mdmfs -S -M -s ${varsize} md /var
 fi
 

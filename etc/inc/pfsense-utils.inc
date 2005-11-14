@@ -131,10 +131,10 @@ function enable_hardware_offloading($interface) {
 	if($int <> "") $interface = $int;
         $int_family = preg_split("/[0-9]+/", $int);
 	$options = strtolower(`/sbin/ifconfig {$interface} | grep options`);
+	echo $interface . " ";
 	$supported_ints = array('fxp');
 	if (in_array($int_family, $supported_ints))
 		mwexec("/sbin/ifconfig {$interface} link0");
-
 	if(stristr($options, "txcsum") == true)
 	    mwexec("/sbin/ifconfig {$interface} txcsum 2>/dev/null");
 	if(stristr($options, "rxcsum") == true)    

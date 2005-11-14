@@ -802,7 +802,7 @@ function reset_factory_defaults() {
 	copy("{$g['conf_default_path']}/config.xml", "{$g['conf_path']}/config.xml");
 	
 	/* call the wizard */
-	touch("/trigger_initial_wizard");
+	touch("/conf/trigger_initial_wizard");
 	
 	conf_mount_ro();
 	config_unlock();
@@ -1095,7 +1095,7 @@ EOD;
 		conf_mount_rw();
 		
 		/* call the wizard */
-		touch("/trigger_initial_wizard");
+		touch("/conf/trigger_initial_wizard");
 		
 		write_config();
 		

@@ -244,15 +244,15 @@
 	echo "Sleeping";
 	sleep(2);
 	
-	mwexec("/sbin/pfctl -f /tmp/rules.debug");
+	//mwexec("/sbin/pfctl -f /tmp/rules.debug");
 	
 	/* start IPsec tunnels */
-	vpn_ipsec_configure();
+	//vpn_ipsec_configure();
 
 	/* start load balancer daemon */
-	slbd_configure();
+	//slbd_configure();
 
-	interfaces_carp_bring_up_final();
+	//interfaces_carp_bring_up_final();
 
 	/* start ftp proxy helpers if they are enabled */
 	echo "Starting FTP helpers... ";
@@ -260,7 +260,7 @@
 	echo "done.\n";
 
 	/* power down hard drive if needed/set */
-	system_set_harddisk_standby();
+	//system_set_harddisk_standby();
 
 	/* lock down console if necessary */
 	if(isset($config['system']['disableconsolemenu']))

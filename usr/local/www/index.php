@@ -63,10 +63,10 @@
 
 	## User recently restored his config.
 	## If packages are installed lets resync
-	if(file_exists('/needs_package_sync')) {
+	if(file_exists('/conf/needs_package_sync')) {
 		if($config['installedpackages'] <> '') {
 			conf_mount_rw();
-			unlink('/needs_package_sync');
+			unlink('/conf/needs_package_sync');
 			header('Location: pkg_mgr_install.php?mode=reinstallall');
 			exit;
 		}
@@ -75,9 +75,9 @@
 
 	## If it is the first time webGUI has been
 	## accessed since initial install show this stuff.
-	if(file_exists('/trigger_initial_wizard')) {
+	if(file_exists('/conf/trigger_initial_wizard')) {
 		conf_mount_rw();
-		unlink('/trigger_initial_wizard');
+		unlink('/conf/trigger_initial_wizard');
 		conf_mount_ro();
 
 		$pgtitle = 'pfSense first time setup';

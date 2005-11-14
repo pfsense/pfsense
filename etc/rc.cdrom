@@ -37,7 +37,7 @@ if [ ! -f /conf/config.xml ]; then
        device=$(mdconfig -a -t malloc -s ${partsize})
        newfs /dev/${device} > /dev/null 2>&1
        mount /dev/${device} /conf
-       cp /cf/conf/* /conf
+       cp /conf.default/* /conf
        mount_nullfs /conf /cf/conf
 fi
 

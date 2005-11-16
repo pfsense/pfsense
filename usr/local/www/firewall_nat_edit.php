@@ -191,6 +191,30 @@ if ($_POST) {
 
 			$config['filter']['rule'][] = $filterent;
 
+			/*    auto add rule to external port 21 as well since we are using
+			 *    pftpx to help open up ports automatically
+                         */
+			if($_POST['endport'] == "21") {
+				$filterent = array();
+				$filterent['interface'] = $_POST['interface'];
+				$filterent['protocol'] = $_POST['proto'];
+				$filterent['source']['any'] = "";
+				$filterent['destination']['address'] = $_POST['extaddr'];
+	
+				$dstpfrom = $_POST['localbeginport'];
+				$dstpto = $dstpfrom + $_POST['endport'] - $_POST['beginport'];
+	
+				if ($dstpfrom == $dstpto)
+					$filterent['destination']['port'] = $dstpfrom;
+				else
+					$filterent['destination']['port'] = $dstpfrom . "-" . $dstpto;
+	
+				$filterent['descr'] = "NAT " . $_POST['descr'];
+	
+				$config['filter']['rule'][] = $filterent;
+				
+			}
+
 			touch($d_filterconfdirty_path);
 		}
 

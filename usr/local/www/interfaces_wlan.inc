@@ -48,6 +48,7 @@ function wireless_config_init() {
 	$pconfig['hidessid_enable'] = isset($optcfg['wireless']['hidessid']['enable']);
 	$pconfig['debug_mode'] = $optcfg['wireless']['wpa']['debug_mode'];
 	$pconfig['macaddr_acl'] = $optcfg['wireless']['wpa']['macaddr_acl'];
+	$pconfig['macaddr_acl_enable'] = $optcfg['wireless']['wpa']['macaddr_acl_enable'];
 	$pconfig['auth_algs'] = $optcfg['wireless']['wpa']['auth_algs'];
 	$pconfig['wpa_mode'] = $optcfg['wireless']['wpa']['wpa_mode'];
 	$pconfig['wpa_key_mgmt'] = $optcfg['wireless']['wpa']['wpa_key_mgmt'];
@@ -139,7 +140,6 @@ function wireless_config_post() {
 		$optcfg['wireless']['channel'] = $_POST['channel'];
 		$optcfg['wireless']['authmode'] = $_POST['authmode'];		
 		$optcfg['wireless']['txpower'] = $_POST['txpower'];
-		
 		$optcfg['wireless']['wpa']['macaddr_acl'] = $_POST['macaddr_acl'];
 		$optcfg['wireless']['wpa']['auth_algs'] = $_POST['auth_algs'];
 		$optcfg['wireless']['wpa']['wpa_mode'] = $_POST['wpa_mode'];
@@ -154,6 +154,11 @@ function wireless_config_post() {
 			$optcfg['wireless']['hidessid']['enable'] = true;
 		else
 			unset($optcfg['wireless']['hidessid']['enable']);
+
+		if($_POST['macaddr_acl_enable'] == "yes") 
+			$optcfg['wireless']['wpa']['macaddr_acl_enable'] = true;
+		else
+			unset($optcfg['wireless']['wpa']['macaddr_acl_enable']);
 
 		if($_POST['ieee8021x_enable'] == "yes")
 			$optcfg['wireless']['wpa']['ieee8021x']['enable'] = true;
@@ -384,16 +389,14 @@ function wireless_config_print() {
 			<tr> 
                         <td>&nbsp;</td>
                         <td>&nbsp;WPA Pre Shared Key&nbsp;</td>
-		</tr>
-		<tr>
+			</tr>
+			<tr>
 			<td>PSK:&nbsp;&nbsp;</td>
-			<td>
-			<input name="passphrase" type="text" class="formfld" id="passphrase" size="66" value="<?=htmlspecialchars($pconfig['passphrase']);?>">
+			<td><input name="passphrase" type="text" class="formfld" id="passphrase" size="66" value="<?=htmlspecialchars($pconfig['passphrase']);?>"></td>
+			</tr>
+			</table>
+			<br/>Passphrase must be from 8 to 63 chars.
 			</td>
-		      </tr>
-		    </table>
-		<br/>Passphrase must be from 8 to 63 chars.
-		</td>
 	        </tr>
 		<tr>
 			<td valign="top" class="vncell">WPA Mode</td>
@@ -424,7 +427,8 @@ function wireless_config_print() {
 			<option <? if ($pconfig['macaddr_acl'] == '2') echo "selected";?> value="2">Radius</option>
 			</select>
 			<br/><br/>
-			Setting this to "Allow" will allow all clients in not in deny list, while "Deny" will deny all clients not in allow list. Radius will cause allow and deny list to be searched and then query radius.</br>
+			Setting this to "Allow" will allow all clients in not in deny list, while "Deny" will deny all clients not in allow list.
+			Radius will cause allow and deny list to be searched and then query radius.</br>
 			</td>
 		</tr>
 		<tr>

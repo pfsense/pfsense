@@ -561,16 +561,16 @@ function interfaces_wireless_configure($if, $wlcfg) {
 			if (isset($wlcfg['wpa']['enable'])) {
 
 				$wpa .= <<<EOD
-ctrl_interface={$g['varrun_path']}/hostapd
+ctrl_interface={$g['varrun_path']}/wpa_supplicant
 ctrl_interface_group=0
 ap_scan=1
 #fast_reauth=1
 network={
-ssid={$wlcfg['ssid']}
-scan_ssid=2
+ssid="{$wlcfg['ssid']}"
+scan_ssid=1
 priority=5
 key_mgmt={$wlcfg['wpa']['wpa_key_mgmt']}
-psk={$wlcfg['wpa']['passphrase']}
+psk="{$wlcfg['wpa']['passphrase']}"
 pairwise={$wlcfg['wpa']['wpa_pairwise']}
 group={$wlcfg['wpa']['wpa_pairwise']}
 }
@@ -656,7 +656,7 @@ EOD;
 
 	if (isset($wlcfg['wpa']['enable'])) {
 		if ($wlcfg['mode'] == bss) 
-			mwexec("$wpa_supplicant -i {$if} -c {$g['varetc_path']}/wpa_supplicant_{$if}.conf");
+			mwexec("$wpa_supplicant -B -i {$if} -c {$g['varetc_path']}/wpa_supplicant_{$if}.conf");
 		if ($wlcfg['mode'] == hostap) 
 			mwexec("$hostapd -B {$g['varetc_path']}/hostapd_{$if}.conf");
 	}

@@ -6,6 +6,8 @@
 # Size of memory file system /conf partition
 partsize="3m"
 
+set -x
+
 # Run some initialization routines
 /etc/rc.d/uzip start
 
@@ -13,7 +15,7 @@ partsize="3m"
 if (/bin/mkdir -p /var/.diskless 2> /dev/null); then
        rmdir /var/.diskless
 else
-        varsize="8m"
+        varsize="32m"
        mdmfs -S -M -s ${varsize} md /var
 fi
 
@@ -31,12 +33,13 @@ done
 # a tiny mfs under /conf and populate with stock
 # configuration.
 if [ ! -f /conf/config.xml ]; then
-       echo "Generating a MFS /conf partition"       
+       echo -n "Generating a MFS /conf partition... "       
        device=$(mdconfig -a -t malloc -s ${partsize})
        newfs /dev/${device} > /dev/null 2>&1
        mount /dev/${device} /conf
        cp /conf.default/* /conf
        mount_nullfs /conf /cf/conf
+       echo "done."
 fi
 
 # Create some needed directories

@@ -56,18 +56,19 @@ fi
 # Mount memory file system if it exists
 /sbin/mount -a
 
-if [ "$PLATFORM" = "embedded" ] ; then
+if [ "$PLATFORM" = "cdrom" ] ; then
+	# do nothing for cdrom platform
+elif [ "$PLATFORM" = "embedded" ] ; then
+    echo "No swap on ${PLATFORM}"
     /usr/local/bin/php -f /etc/rc.conf_mount_rw
 else
     SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
-    /sbin/dumpon -v $SWAPDEVICE 2>/dev/null
+
     /sbin/swapon -a 2>/dev/null
     
     /usr/local/bin/php -f /etc/rc.conf_mount_rw
-
-    /bin/mkdir -p /usr/savecore 2>/dev/null
-    /sbin/savecore /usr/savecore $SWAPDEVICE
 fi
+
 
 # Repair symlinks if they are broken
 if [ ! -L /etc/syslog.conf ]; then

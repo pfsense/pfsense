@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/sh
 #
 # Set the IFS parameters for an interface configured for
 # point-to-point use at a specific distance.  Based on a

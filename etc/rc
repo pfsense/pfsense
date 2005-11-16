@@ -56,7 +56,7 @@ fi
 # Mount memory file system if it exists
 /sbin/mount -a
 
-if [ "$PLATFORM" = "cdrom" ] ; then
+if [ "$PLATFORM" = "embedded" ] ; then
     /usr/local/bin/php -f /etc/rc.conf_mount_rw
 else
     SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`

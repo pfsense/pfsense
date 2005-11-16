@@ -557,7 +557,7 @@ function interfaces_wireless_configure($if, $wlcfg) {
 	/* generate wpa_supplicant/hostap config if wpa is enabled */
 
 	switch ($wlcfg['mode']) {
-		case 'BSS':
+		case 'bss':
 			if (isset($wlcfg['wpa']['enable'])) {
 
 				$wpa .= <<<EOD
@@ -599,9 +599,9 @@ ctrl_interface={$g['varrun_path']}/hostapd
 ctrl_interface_group=wheel
 #accept_mac_file={$g['tmp_path']}/hostapd_{$if}.accept
 #deny_mac_file={$g['tmp_path']}/hostapd_{$if}.deny
+#macaddr_acl={$wlcfg['wpa']['macaddr_acl']}
 ssid={$wlcfg['ssid']}
 debug={$wlcfg['wpa']['debug_mode']}
-#macaddr_acl={$wlcfg['wpa']['macaddr_acl']}
 auth_algs={$wlcfg['wpa']['auth_algs']}
 wpa={$wlcfg['wpa']['wpa_mode']}
 wpa_key_mgmt={$wlcfg['wpa']['wpa_key_mgmt']}
@@ -625,11 +625,8 @@ EOD;
 		break;
 
 		case 'adhoc':
-			if(is_process_running("hostapd"))
-				mwexec("$killall hostapd");
-
-			if(is_process_running("wpa_supplicant"))
-				mwexec("$killall wpa_supplicant");
+			mwexec("$killall hostapd");
+			mwexec("$killall wpa_supplicant");
 		break;
 	}	
 
@@ -657,9 +654,8 @@ EOD;
 	mwexec("$ifconfig $if" . " " . $wepset);
 	mwexec("$ifconfig $if" . " up");
 
-
 	if (isset($wlcfg['wpa']['enable'])) {
-		if ($wlcfg['mode'] == BSS) 
+		if ($wlcfg['mode'] == bss) 
 			mwexec("$wpa_supplicant -i {$if} -c {$g['varetc_path']}/wpa_supplicant_{$if}.conf");
 		if ($wlcfg['mode'] == hostap) 
 			mwexec("$hostapd -B {$g['varetc_path']}/hostapd_{$if}.conf");

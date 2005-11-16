@@ -671,7 +671,7 @@ EOD;
 function find_dhclient_process($interface) {
 	if(filter_translate_type_to_real_interface($interface) <> "")
         	$realinterface = filter_translate_type_to_real_interface($interface);
-	$pid = `ps ax | grep "[d]hclient" | grep {$realinterface} | awk -F" " '{print $1}'`;
+	$pid = `/usr/bin/pgrep -f "dhclient: {$realinterface}(\$| .*)"`;
 	return $pid;
 }
 

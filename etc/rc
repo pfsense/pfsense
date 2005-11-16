@@ -6,7 +6,12 @@
 # originally based on m0n0wall (http://neon1.net/m0n0wall)
 # Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 # All rights reserved.
-#
+
+#/bin/stty status '^T'
+#/bin/stty susp '^-' intr '^-' quit '^-'
+
+#trap : 2
+#trap : 3
 
 # mount /usr.uzip if it exists
 [ -x /usr.uzip ] && [ -d /usr ] && [ ! -d /usr/local ] \
@@ -53,13 +58,16 @@ fi
 
 if [ "$PLATFORM" = "cdrom" ] ; then
     echo "No swap on ${PLATFORM}"
-elif [ "$PLATFORM" = "embedded" ] ; then
-    echo "No swap on ${PLATFORM}"
     /usr/local/bin/php -f /etc/rc.conf_mount_rw
 else
+    SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
+    /sbin/dumpon -v $SWAPDEVICE 2>/dev/null
     /sbin/swapon -a 2>/dev/null
     
     /usr/local/bin/php -f /etc/rc.conf_mount_rw
+
+    /bin/mkdir -p /usr/savecore 2>/dev/null
+    /sbin/savecore /usr/savecore $SWAPDEVICE
 fi
 
 # Repair symlinks if they are broken
@@ -155,7 +163,6 @@ cd /var/run && cp /dev/null utmp && chmod 644 utmp
 
 # Make sure /etc/rc.conf doesn't exist.
 if [ -f /etc/rc.conf ]; then
-    echo "Removing /etc/rc.conf..."
     rm -rf /etc/rc.conf
 fi
 

@@ -473,12 +473,17 @@ function interfaces_wireless_configure($if, $wlcfg) {
 	$standard = ("mode " . escapeshellarg($wlcfg['standard']));
 
 	/* set wireless channel value */
-	$channel = escapeshellarg($wlcfg['channel']);
-	
 	if($channel == "") {
 		$channel = "";
 	} else { 
 		$channel = ("channel " . escapeshellarg($wlcfg['channel']));
+	}
+
+	/* set Distance value */
+	if($distance == "") {
+		$distance = "";
+	} else {
+		$distance = escapeshellarg($wlcfg['distance']);
 	}
 
 	/* Set ssid */
@@ -631,6 +636,9 @@ EOD;
 	}	
 
 	/* start up everything */
+
+	/* set ack timers according to users preference (if he has any) */
+	if(!$distance == "") mwexec("/sbin/athctrl.sh -i {$if} -d {$distance}");
 	
 	mwexec("$ifconfig $if" . " -mediaopt hostap,turbo");	// Fix bug with turbomode and reboot (hopefully)        
 	mwexec("$ifconfig $if" . " down"); 

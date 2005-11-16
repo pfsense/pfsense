@@ -57,7 +57,6 @@ fi
 /sbin/mount -a
 
 if [ "$PLATFORM" = "cdrom" ] ; then
-    echo "No swap on ${PLATFORM}"
     /usr/local/bin/php -f /etc/rc.conf_mount_rw
 else
     SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`

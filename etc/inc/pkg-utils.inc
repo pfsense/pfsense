@@ -216,7 +216,6 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 	global $config;
 
-	if(!file_exists("/usr/local/pkg")) mwexec("/bin/mkdir -p /usr/local/pkg/pf");
 	if(!$config['installedpackages']['package']) return;
 	if(!is_numeric($pkg_name)) {
 		$pkg_id = get_pkg_id($pkg_name);

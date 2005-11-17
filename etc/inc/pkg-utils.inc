@@ -39,8 +39,10 @@ require_once("pfsense-utils.inc");
 require_once("globals.inc");
 
 safe_mkdir("/var/db/pkg");
-safe_mkdir("/usr/local/pkg");
-safe_mkdir("/usr/local/pkg/pf");
+if($g['platform'] <> "embedded" and $g['platform'] <> "cdrom") {
+	safe_mkdir("/usr/local/pkg");
+	safe_mkdir("/usr/local/pkg/pf");
+}
 
 /****f* pkg-utils/is_package_installed
  * NAME

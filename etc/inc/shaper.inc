@@ -123,8 +123,7 @@ function filter_generate_altq_queues($altq_ints) {
 			if(isset($rule['realtime']) and $rule['realtime'] <> "") {
 				$options .= " realtime({$rule['realtime1']} {$rule['realtime2']} {$rule['realtime3']})";
 			}
-			//$scheduler_type = $config['shaper']['schedulertype'];
-                        $scheduler_type = "hfsc";
+			$scheduler_type = $config['shaper']['schedulertype'];
 			$altq_rules .= "{$scheduler_type} ";
 			if($options)
 				$altq_rules .= "( {$options} )";
@@ -212,7 +211,7 @@ function filter_setup_altq_interfaces() {
 			 * no bandwidth associated with them.
 			 */
 			$bandwidth = "bandwidth 10Mb";
-			if($config['interfaces'][$ifname]['bandwidth'] <> "")
+			if($config['interfaces'][$ifname]['bandwidth'] <> "" and $config['interfaces'][$ifname]['bandwidthtype'] <> "" )
 				$bandwidth = "bandwidth {$config['interfaces'][$ifname]['bandwidth']}{$config['interfaces'][$ifname]['bandwidthtype']}";	
 			$altq_rules .= "{$config['shaper']['schedulertype']} {$bandwidth} ";
 			$altq_rules .= "queue { {$queue_names} }";
@@ -454,6 +453,9 @@ function filter_generate_pf_altq_rules() {
 				}
 
 				/* source address */
+				/* Using any for source on 'out' is due to not knowing what
+				 * the packet looks like after NAT occurs
+				 */
 				if (isset($rule['source']['any']) || $direction == "out") {
 					$src = "any";
 				} else if ($rule['source']['network']) {

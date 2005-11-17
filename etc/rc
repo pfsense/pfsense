@@ -23,10 +23,6 @@ export HOME PATH
 # Set our current version
 version=`cat /etc/version`
 
-if [ "$PLATFORM" = "wrap" ]; then
-	/etc/rc.d/uzip start
-fi
-
 echo
 cat /etc/ascii-art/pfsense-logo-small.txt
 echo
@@ -36,6 +32,10 @@ echo
 
 if [ "$PLATFORM" = "cdrom" ]; then
 	/etc/rc.cdrom
+fi
+
+if [ "$PLATFORM" = "wrap" ]; then
+	/etc/rc.embedded
 fi
 
 # Enable console output if its muted.

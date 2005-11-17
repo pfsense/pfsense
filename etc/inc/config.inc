@@ -62,6 +62,14 @@ if (file_exists("{$g['etc_path']}/platform")) {
 if(file_exists("/debugging"))
 	$debugging = true;
 
+$config_contents = file_get_contents("/cf/conf/config.xml");
+if(stristr($config_contents, "m0n0wall") == true) {
+	/* user has just upgraded to m0n0wall, replace root xml tags */
+	$config_contents = str_replace("m0n0wall","pfsense");
+	$fd = fopen("/cf/conf/config.xml", "w");
+	fwrite($fd, $config_contents);
+	fclose($fd);	
+}
 
 /* if our config file exists bail out, we're already set. */
 if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {

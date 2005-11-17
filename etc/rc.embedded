@@ -6,10 +6,9 @@
 # Size of memory file system /conf partition
 partsize="3m"
 
-set -x
-
 # Run some initialization routines
 /etc/rc.d/uzip start
+/etc/rc.d/tmp start
 
 # Initialize MFS for /var. Partly taken from /etc/rc.d/var
 if (/bin/mkdir -p /var/.diskless 2> /dev/null); then
@@ -18,13 +17,6 @@ else
         varsize="8m"
        mdmfs -S -M -s ${varsize} md /var
 fi
-
-
-for i in tmp; do
-       if [ -f /etc/rc.d/$i ]; then
-               sh /etc/rc.d/$i start
-       fi
-done
 
 # Create some needed directories
 /bin/mkdir -p /var/db/pkg/

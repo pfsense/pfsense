@@ -34,26 +34,33 @@ if [ "$PLATFORM" = "cdrom" ]; then
 	/etc/rc.cdrom
 fi
 
-if [ "$PLATFORM" = "wrap" ]; then
+if [ "$PLATFORM" = "embedded" ]; then
 	/etc/rc.embedded
 fi
 
 # Enable console output if its muted.
 /sbin/conscontrol mute off >/dev/null
 
+# Mount memory file system if it exists
+/sbin/mount -a
+
 # Mount /. If it fails run a fsck.
 if [ ! "$PLATFORM" = "cdrom" ] ; then
-    /sbin/mount -w / || /sbin/fsck -y
+    /sbin/mount -uw / || (/sbin/fsck -y && /sbin/mount -uw /)
 fi
 
 # Check to see if a compact flash mountpoint exists
 # If it fails to mount then run a fsck -y
-if grep cf /etc/fstab; then
-    /sbin/mount -w /cf || /sbin/fsck -y
+if grep -q cf /etc/fstab; then
+    /sbin/mount -uw /cf || (/sbin/fsck -y && /sbin/mount -uw /cf)
 fi
 
-# Mount memory file system if it exists
-/sbin/mount -a
+# If /conf is a directory, convert it to a symlink
+# to /cf/conf
+if [ -d "/conf" ]; then
+	rm -rf /conf
+	ln -s /cf/conf /conf
+fi
 
 if [ "$PLATFORM" = "cdrom" ] ; then
 	# do nothing for cdrom platform

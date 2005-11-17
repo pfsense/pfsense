@@ -13,9 +13,8 @@
 #trap : 2
 #trap : 3
 
-# mount /usr.uzip if it exists
-[ -x /usr.uzip ] && [ -d /usr ] && [ ! -d /usr/local ] \
-	&& /sbin/mount_cd9660 /dev/`/sbin/mdconfig -af /usr.uzip`.uzip /usr
+# Set our operating platform
+PLATFORM=`cat /etc/platform`
 
 HOME=/
 PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/local/sbin
@@ -24,8 +23,9 @@ export HOME PATH
 # Set our current version
 version=`cat /etc/version`
 
-# Set our operating platform
-PLATFORM=`cat /etc/platform`
+if [ "$PLATFORM" = "wrap" ]; then
+	/etc/rc.d/uzip start
+fi
 
 echo
 cat /etc/ascii-art/pfsense-logo-small.txt

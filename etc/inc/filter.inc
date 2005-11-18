@@ -627,13 +627,13 @@ function filter_nat_rules_generate() {
 				$extaddr = alias_expand($extaddr);
 
 			/*
-			 *    If FTP Proxy Helper is enbabled and the
+			 *    If FTP Proxy Helper is enabled and the
 			 *    operator has requested a port forward to
 			 *    a ftp server then launch a helper
 			 */
 			if($target <> "") {
 				if($extport[0] == "21" and !isset($config['system']['disableftpproxy'])) {
-					$helpers = exec("ps ax | grep /usr/local/sbin/pftpx | grep -v grep | sed \"s/  */ /g\" | grep {$target} | cut -f2 -d\" \"");
+					$helpers = exec("ps awux | grep pftpx | grep -v grep | grep \"-f {$target}\" ");
 					if(!$helpers) {
 						$external_address = $rule['external-address'];
 						if($external_address == "")

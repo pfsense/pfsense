@@ -59,7 +59,8 @@ fi
 # Check to see if a compact flash mountpoint exists
 # If it fails to mount then run a fsck -y
 if grep -q cf /etc/fstab; then
-    /sbin/mount -uw /cf || (/sbin/fsck -y; /sbin/mount -uw /cf)
+    /sbin/mount -uw /cf || \
+	(/sbin/umount /cf; /sbin/fsck -y /cf; /sbin/mount -w /cf)
 fi
 
 if [ "$PLATFORM" = "cdrom" ] ; then

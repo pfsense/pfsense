@@ -162,14 +162,14 @@
 		unmute_kernel_msgs();
 	echo "done.\n";
 
+	/* bring up carp interfaces */
+	interfaces_carp_configure();
+
 	/* generate resolv.conf */
 	system_resolvconf_generate();
 
 	/* start pflog */
 	filter_pflog_start();
-	
-	/* bring up carp interfaces */
-	interfaces_carp_configure();
 	
 	/* setup altq + pf */
 	echo "Configuring firewall... ";

@@ -46,20 +46,20 @@ fi
 
 # Mount /. If it fails run a fsck.
 if [ ! "$PLATFORM" = "cdrom" ] ; then
-    /sbin/mount -uw / || (/sbin/fsck -y && /sbin/mount -uw /)
+	/sbin/mount -uw / || (/sbin/fsck -y /; /sbin/mount -uw /)
+
+	# If /conf is a directory, convert it to a symlink
+	# to /cf/conf
+	if [ -d "/conf" ]; then
+		rm -rf /conf
+		ln -s /cf/conf /conf
+	fi
 fi
 
 # Check to see if a compact flash mountpoint exists
 # If it fails to mount then run a fsck -y
 if grep -q cf /etc/fstab; then
-    /sbin/mount -uw /cf || (/sbin/fsck -y && /sbin/mount -uw /cf)
-fi
-
-# If /conf is a directory, convert it to a symlink
-# to /cf/conf
-if [ -d "/conf" ]; then
-	rm -rf /conf
-	ln -s /cf/conf /conf
+    /sbin/mount -uw /cf || (/sbin/fsck -y /cf; /sbin/mount -uw /cf)
 fi
 
 if [ "$PLATFORM" = "cdrom" ] ; then

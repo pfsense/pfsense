@@ -6,8 +6,6 @@
 # Size of memory file system /conf partition
 partsize="3m"
 
-set -x
-
 # Run some initialization routines
 /etc/rc.d/uzip start
 

@@ -165,6 +165,11 @@
 	/* bring up carp interfaces */
 	interfaces_carp_configure();
 
+	/* start ftp proxy helpers if they are enabled */
+	echo "Starting FTP helpers... ";
+	system_start_ftp_helpers();
+	echo "done.\n";
+
 	/* generate resolv.conf */
 	system_resolvconf_generate();
 
@@ -250,11 +255,6 @@
 	slbd_configure();
 
 	interfaces_carp_bring_up_final();
-
-	/* start ftp proxy helpers if they are enabled */
-	echo "Starting FTP helpers... ";
-	system_start_ftp_helpers();
-	echo "done.\n";
 
 	/* power down hard drive if needed/set */
 	system_set_harddisk_standby();

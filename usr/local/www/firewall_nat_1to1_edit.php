@@ -88,11 +88,11 @@ if ($_POST) {
 			continue;
 		
 		if (check_subnets_overlap($_POST['external'], $_POST['subnet'], $natent['external'], $natent['subnet'])) {
-			$input_errors[] = "Another 1:1 rule overlaps with the specified external subnet.";
-			break;
+			//$input_errors[] = "Another 1:1 rule overlaps with the specified external subnet.";
+			//break;
 		} else if (check_subnets_overlap($_POST['internal'], $_POST['subnet'], $natent['internal'], $natent['subnet'])) {
-			$input_errors[] = "Another 1:1 rule overlaps with the specified internal subnet.";
-			break;
+			//$input_errors[] = "Another 1:1 rule overlaps with the specified internal subnet.";
+			//break;
 		}
 	}
 	

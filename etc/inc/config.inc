@@ -292,14 +292,10 @@ function conf_mount_rw() {
 	if($g['platform'] == "cdrom")
 		return;
 
-	/* don't use mount -u anymore
-	   (doesn't sync the files properly and /bin/sync won't help either) */
-	$status = mwexec("/sbin/umount -f {$g['cf_path']}");
-
-	$status = mwexec("/sbin/mount -w -o noatime {$g['cf_path']}");
+	$status = mwexec("/sbin/mount -u -w {$g['cf_path']}");
 	if($status <> 0) {
 		mwexec("/sbin/fsck -y {$g['cf_path']}");
-		$status = mwexec("/sbin/mount -w -o noatime {$g['cf_path']}");
+		$status = mwexec("/sbin/mount -u -w {$g['cf_path']}");
 	}
 
 	/*    if the platform is soekris or wrap or pfSense, lets mount the
@@ -307,13 +303,12 @@ function conf_mount_rw() {
          */
 	if($g['platform'] == "wrap" or $g['platform'] == "net45xx"
 	   or $g['platform'] == "embedded") {
-		mwexec("/sbin/umount -f /");
-		$status = mwexec("/sbin/mount -w /");
+		$status = mwexec("/sbin/mount -u -w /");
 		/* we could not mount this correctly.  kick off fsck */
 		if($status <> 0) {
 			log_error("File system is dirty.  Launching FSCK for /");
 			mwexec("/sbin/fsck -y");
-			$status = mwexec("/sbin/mount -w /");
+			$status = mwexec("/sbin/mount -u -w /");
 		}
 	}
 }
@@ -338,15 +333,16 @@ function conf_mount_ro() {
 	if($g['platform'] == "cdrom")
 		return;
 
-	mwexec("/sbin/umount -f {$g['cf_path']}");
-	mwexec("/sbin/mount -r {$g['cf_path']}");
+	mwexec("/sbin/mount -u -r {$g['cf_path']}");
 	/*    if the platform is soekris or wrap, lets unmount the
 	 *    compact flash card.
          */
 	if($g['platform'] == "wrap" or $g['platform'] == "net45xx"
 	   or $g['platform'] == "embedded") {
-		mwexec("/sbin/umount -f /");
-		mwexec("/sbin/mount -f -r /");
+		mwexec("/bin/sync");
+		mwexec("/bin/sync");
+		mwexec("/bin/sync");
+		mwexec("/sbin/mount -u -r /");
 	}
 }
 

@@ -145,9 +145,9 @@ if ($_POST) {
 		else
 			$a_aliases[] = $alias;
 
-		filter_configure();
-
 		write_config();
+		
+		filter_configure();
 
 		header("Location: firewall_aliases.php");
 		exit;

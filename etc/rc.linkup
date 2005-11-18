@@ -33,6 +33,12 @@
         require_once("config.inc");
         require_once("functions.inc");
 
+        $friendly_interface = convert_real_interface_to_friendly_interface_name($argv[1]);
+        if($config['interfaces'][$friendly_interface]['ipaddr'] <> "dhcp") {
+                log_error("Hotplug event detected for {$argv[1]} but ignoring since interface is not set for DHCP");
+                exit;
+        }
+
         if($argv[2] == "stop" or $argv[2] == "down") {
                 log_error("DEVD Ethernet detached event for {$argv[1]}");
                 exec("/sbin/ifconfig {$argv[1]} delete");

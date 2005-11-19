@@ -65,12 +65,10 @@ if(file_exists("/debugging"))
 $config_contents = file_get_contents("/cf/conf/config.xml");
 if(stristr($config_contents, "m0n0wall") == true) {
 	/* user has just upgraded to m0n0wall, replace root xml tags */
-	echo "Upgrading m0n0wall configuration to pfSense... ";
 	$config_contents = str_replace("m0n0wall","pfsense");
 	$fd = fopen("/cf/conf/config.xml", "w");
 	fwrite($fd, $config_contents);
-	fclose($fd);
-	echo "done.";
+	fclose($fd);	
 }
 
 /* if our config file exists bail out, we're already set. */
@@ -294,10 +292,14 @@ function conf_mount_rw() {
 	if($g['platform'] == "cdrom")
 		return;
 
-	$status = mwexec("/sbin/mount -u -w {$g['cf_path']}");
+	/* don't use mount -u anymore
+	   (doesn't sync the files properly and /bin/sync won't help either) */
+	$status = mwexec("/sbin/umount -f {$g['cf_path']}");
+
+	$status = mwexec("/sbin/mount -w -o noatime {$g['cf_path']}");
 	if($status <> 0) {
 		mwexec("/sbin/fsck -y {$g['cf_path']}");
-		$status = mwexec("/sbin/mount -u -w {$g['cf_path']}");
+		$status = mwexec("/sbin/mount -w -o noatime {$g['cf_path']}");
 	}
 
 	/*    if the platform is soekris or wrap or pfSense, lets mount the
@@ -305,12 +307,13 @@ function conf_mount_rw() {
          */
 	if($g['platform'] == "wrap" or $g['platform'] == "net45xx"
 	   or $g['platform'] == "embedded") {
-		$status = mwexec("/sbin/mount -u -w /");
+		mwexec("/sbin/umount -f /");
+		$status = mwexec("/sbin/mount -w /");
 		/* we could not mount this correctly.  kick off fsck */
 		if($status <> 0) {
 			log_error("File system is dirty.  Launching FSCK for /");
 			mwexec("/sbin/fsck -y");
-			$status = mwexec("/sbin/mount -u -w /");
+			$status = mwexec("/sbin/mount -w /");
 		}
 	}
 }
@@ -335,16 +338,15 @@ function conf_mount_ro() {
 	if($g['platform'] == "cdrom")
 		return;
 
-	mwexec("/sbin/mount -u -r {$g['cf_path']}");
+	mwexec("/sbin/umount -f {$g['cf_path']}");
+	mwexec("/sbin/mount -r {$g['cf_path']}");
 	/*    if the platform is soekris or wrap, lets unmount the
 	 *    compact flash card.
          */
 	if($g['platform'] == "wrap" or $g['platform'] == "net45xx"
 	   or $g['platform'] == "embedded") {
-		mwexec("/bin/sync");
-		mwexec("/bin/sync");
-		mwexec("/bin/sync");
-		mwexec("/sbin/mount -u -r /");
+		mwexec("/sbin/umount -f /");
+		mwexec("/sbin/mount -f -r /");
 	}
 }
 

@@ -481,7 +481,8 @@ function interfaces_wireless_configure($if, $wlcfg) {
 		$distance = escapeshellarg($wlcfg['distance']);
 
 	/* Set ssid */
-	$ssid = ("ssid " . escapeshellarg($wlcfg['ssid']));
+	if($wlcfg['ssid'])  
+		$ssid = "ssid " . escapeshellarg($wlcfg['ssid']);
 
 	/* Set stationname */
 	if ($wlcfg['stationname'])
@@ -578,7 +579,7 @@ EOD;
 				fwrite($fd, "{$wpa}");
 				fclose($fd);
 
-				mwexec("$killall wpa_supplicant");
+				mwexec("{$killall} wpa_supplicant");
 			}
 		break;
 
@@ -617,21 +618,17 @@ EOD;
 				fwrite($fd, "{$wpa}");
 				fclose($fd);
 
-				mwexec("$killall  hostapd");
+				mwexec("{$killall} hostapd");
 			}
 		break;
 
 		case 'adhoc':
-			mwexec("$killall hostapd");
-			mwexec("$killall wpa_supplicant");
+			mwexec("{$killall} hostapd");
+			mwexec("{$killall} wpa_supplicant");
 		break;
 	}	
 
 	/* all variables are set, lets start up everything */
-
-	/* set ack timers according to users preference (if he has any) */
-	if($distance)
-		mwexec("/sbin/athctrl.sh -i {$if} -d {$distance}");
 	
 	mwexec("$ifconfig $if" . " -mediaopt hostap,turbo");	// Fix bug with turbomode and reboot (hopefully)        
 	mwexec("$ifconfig $if" . " down"); 
@@ -655,11 +652,17 @@ EOD;
 
 	if (isset($wlcfg['wpa']['enable'])) {
 		if ($wlcfg['mode'] == bss) 
-			mwexec("$wpa_supplicant -B -i {$if} -c {$g['varetc_path']}/wpa_supplicant_{$if}.conf");
+			mwexec("{$wpa_supplicant} -B -i {$if} -c {$g['varetc_path']}/wpa_supplicant_{$if}.conf");
 		if ($wlcfg['mode'] == hostap) 
-			mwexec("$hostapd -B {$g['varetc_path']}/hostapd_{$if}.conf");
+			mwexec("{$hostapd} -B {$g['varetc_path']}/hostapd_{$if}.conf");
 	}
-	
+
+	/* set ack timers according to users preference (if he/she has any) */
+	if($distance) {
+		mwexec("/sbin/athctrl.sh -i {$if} -d {$distance}");
+		mwexec("echo /sbin/athctrl.sh -i {$if} -d {$distance} >/tmp/athctrl.txt");
+	}
+
 	if(isset($wlcfg['useolsr']))
 		setup_wireless_olsr($if);
 

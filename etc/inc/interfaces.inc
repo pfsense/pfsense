@@ -467,42 +467,36 @@ function interfaces_wireless_configure($if, $wlcfg) {
 	$ifconfig = "/sbin/ifconfig ";
 	$killall = "/usr/bin/killall ";
 
-	/* Sett all wireless ifconfig variables (splitt up to get rid of needed checking) */
+	/* Set all wireless ifconfig variables (splitt up to get rid of needed checking) */
 
 	/* Set a/b/g standard */
 	$standard = ("mode " . escapeshellarg($wlcfg['standard']));
 
 	/* set wireless channel value */
-	if($channel == "") {
-		$channel = "";
-	} else { 
+	if($wlcfg['channel'])
 		$channel = ("channel " . escapeshellarg($wlcfg['channel']));
-	}
 
 	/* set Distance value */
-	if($distance == "") {
-		$distance = "";
-	} else {
+	if($wlcfg['distance']) 
 		$distance = escapeshellarg($wlcfg['distance']);
-	}
 
 	/* Set ssid */
 	$ssid = ("ssid " . escapeshellarg($wlcfg['ssid']));
 
 	/* Set stationname */
-	if (!$wlcfg['stationname'])
-		$stationname = "pfsense";
-	else
+	if ($wlcfg['stationname'])
 		$stationname = ("stationname " . escapeshellarg($wlcfg['stationname']));
-
+	else
+		$stationname = "pfsense";
+		
 	/* Set wireless hostap mode */
-	if ($wlcfg['mode'] == hostap)
+	if ($wlcfg['mode'] == "hostap")
 		$hostapmode = "mediaopt hostap";
 	else
 		$hostapmode = "-mediaopt hostap";
 
 	/* Set wireless adhoc mode */
-	if ($wlcfg['mode'] == adhoc)
+	if ($wlcfg['mode'] == "adhoc")
 		$adhocmode = "mediaopt adhoc";
 	else
 		$adhocmode = "-mediaopt adhoc";
@@ -546,7 +540,6 @@ function interfaces_wireless_configure($if, $wlcfg) {
 	/* set up wep if enabled */
         if (isset($wlcfg['wep']['enable']) && is_array($wlcfg['wep']['key'])) {
                 $wepset .= "authmode shared wepmode on ";
-
                 $i = 1;
                 foreach ($wlcfg['wep']['key'] as $wepkey) {
                         $wepset .= "wepkey " . escapeshellarg("{$i}:{$wepkey['value']}") . " ";
@@ -585,8 +578,7 @@ EOD;
 				fwrite($fd, "{$wpa}");
 				fclose($fd);
 
-				if(is_process_running("wpa_supplicant"))
-					mwexec("$killall wpa_supplicant");
+				mwexec("$killall wpa_supplicant");
 			}
 		break;
 
@@ -635,10 +627,11 @@ EOD;
 		break;
 	}	
 
-	/* start up everything */
+	/* all variables are set, lets start up everything */
 
 	/* set ack timers according to users preference (if he has any) */
-	if(!$distance == "") mwexec("/sbin/athctrl.sh -i {$if} -d {$distance}");
+	if($distance)
+		mwexec("/sbin/athctrl.sh -i {$if} -d {$distance}");
 	
 	mwexec("$ifconfig $if" . " -mediaopt hostap,turbo");	// Fix bug with turbomode and reboot (hopefully)        
 	mwexec("$ifconfig $if" . " down"); 
@@ -646,7 +639,6 @@ EOD;
 	mwexec("$ifconfig $if" . " " . $channel);
 	mwexec("$ifconfig $if" . " " . $ssid);
 	mwexec("$ifconfig $if" . " " . $stationname);
-//	mwexec("$ifconfig $if" . " " . $hostapmode);
 	mwexec("$ifconfig $if" . " " . $adhocmode);
 	/* fix turbo mode and reboot */
 	mwexec("$ifconfig $if" . " up"); 
@@ -657,7 +649,6 @@ EOD;
 	mwexec("$ifconfig $if" . " " . $hidessid);
 	mwexec("$ifconfig $if" . " " . $pureg);
 	mwexec("$ifconfig $if" . " " . $apbridge);
-//	mwexec("$ifconfig $if" . " " . $turbo);
 	mwexec("$ifconfig $if" . " " . $wme);
 	mwexec("$ifconfig $if" . " " . $wepset);
 	mwexec("$ifconfig $if" . " up");

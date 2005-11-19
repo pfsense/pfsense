@@ -263,6 +263,8 @@
 	if(isset($config['system']['disableconsolemenu']))
 		touch("/var/etc/console_lockdown");
 	
+	filter_configure();
+	
 	/* done */
 	unlink("{$g['varrun_path']}/booting");
 	$g['booting'] = FALSE;

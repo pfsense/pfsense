@@ -59,16 +59,20 @@ if (file_exists("{$g['etc_path']}/platform")) {
 
 /* if /debugging exists, lets set $debugging
    so we can output more information */
-if(file_exists("/debugging"))
+if(file_exists("/debugging")) {
 	$debugging = true;
+	$g['debug'] = true;
+}
 
 $config_contents = file_get_contents("/cf/conf/config.xml");
 if(stristr($config_contents, "m0n0wall") == true) {
 	/* user has just upgraded to m0n0wall, replace root xml tags */
+	echo "Upgrading m0n0wall configuration to pfSense... ";
 	$config_contents = str_replace("m0n0wall","pfsense");
 	$fd = fopen("/cf/conf/config.xml", "w");
 	fwrite($fd, $config_contents);
-	fclose($fd);	
+	fclose($fd);
+	echo "done.";
 }
 
 /* if our config file exists bail out, we're already set. */
@@ -292,14 +296,10 @@ function conf_mount_rw() {
 	if($g['platform'] == "cdrom")
 		return;
 
-	/* don't use mount -u anymore
-	   (doesn't sync the files properly and /bin/sync won't help either) */
-	$status = mwexec("/sbin/umount -f {$g['cf_path']}");
-
-	$status = mwexec("/sbin/mount -w -o noatime {$g['cf_path']}");
+	$status = mwexec("/sbin/mount -w {$g['cf_path']}");
 	if($status <> 0) {
 		mwexec("/sbin/fsck -y {$g['cf_path']}");
-		$status = mwexec("/sbin/mount -w -o noatime {$g['cf_path']}");
+		$status = mwexec("/sbin/mount -w {$g['cf_path']}");
 	}
 
 	/*    if the platform is soekris or wrap or pfSense, lets mount the
@@ -307,7 +307,6 @@ function conf_mount_rw() {
          */
 	if($g['platform'] == "wrap" or $g['platform'] == "net45xx"
 	   or $g['platform'] == "embedded") {
-		mwexec("/sbin/umount -f /");
 		$status = mwexec("/sbin/mount -w /");
 		/* we could not mount this correctly.  kick off fsck */
 		if($status <> 0) {
@@ -338,15 +337,16 @@ function conf_mount_ro() {
 	if($g['platform'] == "cdrom")
 		return;
 
-	mwexec("/sbin/umount -f {$g['cf_path']}");
 	mwexec("/sbin/mount -r {$g['cf_path']}");
 	/*    if the platform is soekris or wrap, lets unmount the
 	 *    compact flash card.
          */
 	if($g['platform'] == "wrap" or $g['platform'] == "net45xx"
 	   or $g['platform'] == "embedded") {
-		mwexec("/sbin/umount -f /");
-		mwexec("/sbin/mount -f -r /");
+		mwexec("/bin/sync");
+		mwexec("/bin/sync");
+		mwexec("/bin/sync");
+		mwexec("/sbin/mount -r /");
 	}
 }
 
@@ -1222,18 +1222,15 @@ function system_start_ftp_helpers() {
 				mwexec("/bin/kill {$helpers}");
 			$interface_counter++;
 		} else {
-		/* grab the current interface IP address */
+			/* grab the current interface IP address */
 			$ip = find_interface_ip(convert_friendly_interface_to_real_interface_name($ifname));
 			/* if pftpx is already running then do not launch it again */
 			$helpers = exec("ps awux | grep \"/usr/local/sbin/pftpx -c {$port}\" | grep -v grep | sed \"s/  */ /g\"");
-			if(!$helpers && $ip) {
-				echo "$port ";
+			if(!$helpers && $ip)
  				mwexec("/usr/local/sbin/pftpx -c {$port} -g 8021 {$ip}");
-			}
 			$interface_counter++;
 		}
 	}
-
 }
 
 function cleanup_backupcache($revisions = 30) {

@@ -672,7 +672,14 @@ function filter_nat_rules_generate() {
 					/* do not process interfaces with gateways*/
 					if($config['interfaces'][$ifname]['gateway'] <> "")
 						continue;
-						
+
+					/* do not process interfaces that will end up with gateways */
+					if($config['interfaces'][$ifname]['ipaddr'] == "dhcp" or
+					   $config['interfaces'][$ifname]['ipaddr'] == "bigpond" or
+					   $config['interfaces'][$ifname]['ipaddr'] == "pppoe" or
+					   $config['interfaces'][$ifname]['ipaddr'] == "pptp")
+						continue;
+
 					$ifname_real = convert_friendly_interface_to_real_interface_name($ifname);
 						
 					if($extport[1])

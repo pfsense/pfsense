@@ -1114,8 +1114,12 @@ EOD;
 		if($g['booting'])
 			return;
 
+		echo "One moment while we reloading the settings...";
+
 		/* resync everything */
 		reload_all_sync();
+		
+		echo " done!";
 
 	}
 }

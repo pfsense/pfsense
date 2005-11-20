@@ -1119,7 +1119,7 @@ EOD;
 		/* resync everything */
 		reload_all_sync();
 		
-		echo " done!";
+		echo " done!\n";
 
 	}
 }

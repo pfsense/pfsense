@@ -151,7 +151,7 @@ if ($_POST) {
 							conf_mount_rw();
 							touch("/needs_package_sync");
 							$reloadall = true;
-							$savemsg = "The configuration has been restored. The firewall is now rebooting.";
+							$savemsg = "The configuration has been restored. The firewall is now reloading..";
 							/* remove cache, we will force a config reload */
 							if(file_exists("/tmp/config.cache"))
 								unlink("/tmp/config.cache");

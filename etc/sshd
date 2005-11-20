@@ -130,6 +130,7 @@
 		system("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t dsa -N '' -f $sshConfigDir/ssh_host_dsa_key");
 		unlink("/etc/keys_generating");
 		unlink("/tmp/keys_generating");
+		file_notice("SSH", "pfSense has completed creating your SSH keys.  SSH is now started.", "SSH Startup", "");
 		echo "Starting SSH... ";
 	}
 

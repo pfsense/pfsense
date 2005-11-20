@@ -337,7 +337,11 @@ function conf_mount_ro() {
 	if($g['platform'] == "cdrom")
 		return;
 
+	/* sync data, then force a umount the remount of /cf */
+	mwexec("/bin/sync");
+	mwexec("/sbin/umount -f {$g['cf_path']}");
 	mwexec("/sbin/mount -r {$g['cf_path']}");
+	
 	/*    if the platform is soekris or wrap, lets unmount the
 	 *    compact flash card.
          */

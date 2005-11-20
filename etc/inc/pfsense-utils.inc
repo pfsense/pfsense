@@ -1204,7 +1204,15 @@ function reload_interfaces_sync() {
 	
 	/* parse config.xml again */
 	$config = parse_config(true);
-	
+
+	$iflist = array("lan" => "LAN");
+	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+	foreach ($iflist as $ifent => $ifname) {
+		$ifname_real = convert_friendly_interface_to_real_interface_name($ifname);
+		mwexec("/sbin/ifconfig {$ifname_real} down");
+	}
+
 	/* set up LAN interface */
 	interfaces_lan_configure();
 
@@ -1319,6 +1327,14 @@ function reload_all_sync() {
 
 	/* generate resolv.conf */
 	system_resolvconf_generate();
+
+	$iflist = array("lan" => "LAN");
+	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+	foreach ($iflist as $ifent => $ifname) {
+		$ifname_real = convert_friendly_interface_to_real_interface_name($ifname);
+		mwexec("/sbin/ifconfig {$ifname_real} down");
+	}
 
 	/* set up LAN interface */
 	interfaces_lan_configure();

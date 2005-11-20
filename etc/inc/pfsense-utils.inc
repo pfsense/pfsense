@@ -1211,6 +1211,7 @@ function reload_interfaces_sync() {
 	foreach ($iflist as $ifent => $ifname) {
 		$ifname_real = convert_friendly_interface_to_real_interface_name($ifname);
 		mwexec("/sbin/ifconfig {$ifname_real} down");
+		mwexec("/sbin/ifconfig {$ifname_real} delete");
 	}
 
 	/* set up LAN interface */

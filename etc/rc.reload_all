@@ -32,8 +32,10 @@
 require_once("config.inc");
 require_once("filter.inc");
 
+log_error("rc.reload_all: Reloading all configuration settings.");
 reload_all_sync();
 sleep(2);
+log_error("rc.reload_all: Reloading filter configuration.");
 filter_configure_sync();
 
 ?>

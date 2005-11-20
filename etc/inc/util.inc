@@ -308,7 +308,7 @@ function mwexec($command) {
 	if ($g['debug']) {
 		if (!$_SERVER['REMOTE_ADDR'])
 			echo "mwexec(): $command\n";
-		passthru($command, $retval);
+		exec("$command > /dev/null 2>&1", $oarr, $retval);
 	} else {
 		exec("$command > /dev/null 2>&1", $oarr, $retval);
 	}

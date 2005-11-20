@@ -333,25 +333,18 @@ function conf_mount_ro() {
 	if(file_exists("/tmp/keys_generating"))
 		return;
 	
-	/* do not umount on cdrom platform */
-	if($g['platform'] == "cdrom")
+	/* do not umount on cdrom or pfSense platforms */
+	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
 		return;
 
 	/* sync data, then force a umount the remount of /cf */
 	mwexec("/bin/sync");
+	mwexec("/bin/sync");
 	mwexec("/sbin/umount -f {$g['cf_path']}");
 	mwexec("/sbin/mount -r {$g['cf_path']}");
-	
-	/*    if the platform is soekris or wrap, lets unmount the
-	 *    compact flash card.
-         */
-	if($g['platform'] == "wrap" or $g['platform'] == "net45xx"
-	   or $g['platform'] == "embedded") {
-		mwexec("/bin/sync");
-		mwexec("/bin/sync");
-		mwexec("/bin/sync");
-		mwexec("/sbin/mount -r /");
-	}
+	mwexec("/bin/sync");
+	mwexec("/bin/sync");
+	mwexec("/sbin/mount -r /");
 }
 
 /****f* config/convert_config

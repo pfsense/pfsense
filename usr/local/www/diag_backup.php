@@ -280,7 +280,14 @@ include("head.inc");
 <?php
 
 if($reloadall == true) {
-	mwexec("/etc/rc.reboot");
+	
+	if(file_exists("{$g['tmp_path']}/config.cache"))
+		unlink("{$g['tmp_path']}/config.cache");
+		
+	parse_config();
+	
+	reload_all();
+	
 }
 
 ?>

@@ -316,6 +316,9 @@ function conf_mount_rw() {
 			$status = mwexec("/sbin/mount -w /");
 		}
 	}
+	
+	usleep(100);
+	
 }
 
 /****f* config/conf_mount_ro
@@ -346,6 +349,9 @@ function conf_mount_ro() {
 	mwexec("/bin/sync");
 	mwexec("/bin/sync");
 	mwexec("/sbin/mount -r /");
+	
+	usleep(100);
+
 }
 
 /****f* config/convert_config

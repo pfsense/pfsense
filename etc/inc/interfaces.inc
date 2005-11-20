@@ -660,7 +660,9 @@ EOD;
 	/* set ack timers according to users preference (if he/she has any) */
 	if($distance) {
 		mwexec("/sbin/athctrl.sh -i {$if} -d {$distance}");
-		mwexec("echo /sbin/athctrl.sh -i {$if} -d {$distance} >/tmp/athctrl.txt");
+		$fd = fopen("/tmp/athctrl.txt", "w");
+		fwrite($fd, "/sbin/athctrl.sh -i {$if} -d {$distance}");
+		fclose($fd);		
 	}
 
 	if(isset($wlcfg['useolsr']))

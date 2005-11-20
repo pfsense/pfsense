@@ -293,9 +293,10 @@ function conf_mount_rw() {
 	global $g;
 
 	/* do not mount on cdrom platform */
-	if($g['platform'] == "cdrom")
+	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
 		return;
 
+	$status = mwexec("/sbin/umount -f {$g['cf_path']}");
 	$status = mwexec("/sbin/mount -w {$g['cf_path']}");
 	if($status <> 0) {
 		mwexec("/sbin/fsck -y {$g['cf_path']}");

@@ -76,15 +76,21 @@ function conv_clog($logfile, $tail = 50) {
 		$flent['proto'] 	= "TCP";
 		if(stristr($logent, "UDP") == true)
 			$flent['proto'] = "UDP";
+		if(stristr($logent, "ICMP") == true)
+			$flent['proto'] = "ICMP";
 		
 		$flent['time'] 		= $log_split[1];
 		$flent['act'] 		= $log_split[3];
 		$flent['interface'] 	= strtoupper(convert_real_interface_to_friendly_interface_name(str_replace(":","",$log_split[4])));
-		$flent['src'] 		= $log_split[5];
-		$flent['dst'] 		= $log_split[7];
-				
 		
-		
+		if($flent['proto'] == "TCP" or $flent['proto'] == "UDP") {
+			$flent['src'] 		= convert_port_period_to_colon($log_split[5]);
+			$flent['dst'] 		= convert_port_period_to_colon($log_split[7]);
+		} else {
+			$flent['src'] 		= $log_split[5];
+			$flent['dst'] 		= $log_split[7];			
+		}
+			
 		if($flent['src'] == "" or $flent['dst'] == "") {
 			/* do not display me! */
 		} else {
@@ -103,6 +109,8 @@ function convert_port_period_to_colon($addr) {
 		$newvar = $addr_split[0] . "." . $addr_split[1] . "." . $addr_split[2] . "." . $addr_split[3];
 	else
 		$newvar = $addr_split[0] . "." . $addr_split[1] . "." . $addr_split[2] . "." . $addr_split[3] . ":" . $addr_split[4];
+	if($newvar == "...")
+		return $addr;
 	return $newvar;
 }
 

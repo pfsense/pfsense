@@ -287,10 +287,12 @@ function captiveportal_rules_generate() {
 	     http://cvstrac.pfsense.com/tktview?tn=651
 	 */
 	$iflist = array("lan" => "LAN", "wan" => "WAN");
+	$captive_portal_interface = strtoupper($config['captiveportal']['interface']);
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
 		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];	
 	foreach ($iflist as $ifent => $ifname) {
-		if($config['captiveportal']['interface'] == $ifname)
+		//echo "{$ifname} -> {$config['captiveportal']['interface']}\n";
+		if($captive_portal_interface == strtoupper($ifname))
 			continue;
 		$int = convert_friendly_interface_to_real_interface_name($ifname);
 		$cprules .= "add 30 set 1 skipto 50000 all from any to any in via {$int} keep-state\n";

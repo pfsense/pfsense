@@ -476,7 +476,9 @@ function filter_generate_pf_altq_rules() {
 						}
 					}
 				} else if ($rule['source']['address']) {
-					$src = $rule['source']['address'];
+					$src = alias_expand($rule['source']['address']);
+					if(!$src)
+						$src = $rule['source']['address'];
 				}
 
 				if (!$src) {
@@ -535,7 +537,9 @@ function filter_generate_pf_altq_rules() {
 						}
 					}
 				} else if ($rule['destination']['address']) {
-					$dst = $rule['destination']['address'];
+					$dst = alias_expand($rule['destination']['address']);
+					if(!$dst)
+						$dst = $rule['destination']['address'];
 				}
 
 				if (!$dst) {

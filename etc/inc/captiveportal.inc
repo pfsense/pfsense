@@ -90,14 +90,11 @@ Welcome to the pfSense Captive Portal!  This is the default page since a custom 
    <tr><td>Username:</td><td><input name="auth_user" type="text"></td></tr>
    <tr><td>Password:</td><td><input name="auth_pass" type="password"></td></tr>
    <tr><td colspan="2">
-	<input name="redirurl" type="hidden" value="$PORTAL_REDIRURL$">
+	<form method="post" action="\$PORTAL_ACTION\$">
 	<input name="accept" type="submit" value="Continue">
+	<input name="redirurl" type="hidden" value="\$PORTAL_REDIRURL\$">
    </td></tr>
 </table>
-</form>
-<form method="post" action="\$PORTAL_ACTION\$">
-  <input name="accept" type="submit" value="Continue">
-  <input name="redirurl" type="hidden" value="\$PORTAL_REDIRURL\$">
 </form>
 </body>
 </html>

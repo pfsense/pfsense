@@ -470,11 +470,11 @@ function interfaces_wireless_configure($if, $wlcfg) {
 	/* Set all wireless ifconfig variables (splitt up to get rid of needed checking) */
 
 	/* Set a/b/g standard */
-	$standard = ("mode " . escapeshellarg($wlcfg['standard']));
+	$standard = "mode " . escapeshellarg($wlcfg['standard']);
 
 	/* set wireless channel value */
 	if($wlcfg['channel'])
-		$channel = ("channel " . escapeshellarg($wlcfg['channel']));
+		$channel = "channel " . escapeshellarg($wlcfg['channel']);
 
 	/* set Distance value */
 	if($wlcfg['distance']) 
@@ -486,7 +486,7 @@ function interfaces_wireless_configure($if, $wlcfg) {
 
 	/* Set stationname */
 	if ($wlcfg['stationname'])
-		$stationname = ("stationname " . escapeshellarg($wlcfg['stationname']));
+		$stationname = "stationname " . escapeshellarg($wlcfg['stationname']);
 	else
 		$stationname = "pfsense";
 		
@@ -530,7 +530,7 @@ function interfaces_wireless_configure($if, $wlcfg) {
 
 	/* handle txpower setting */
 	if($wlcfg['txpower'] <> "")
-		$txpower = ("txpower " . escapeshellarg($wlcfg['txpower']));
+		$txpower = "txpower " . escapeshellarg($wlcfg['txpower']);
 	
 	/* handle wme option */
 	if(isset($wlcfg['wme']['enable']))

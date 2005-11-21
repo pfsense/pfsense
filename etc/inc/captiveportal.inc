@@ -83,18 +83,21 @@ function captiveportal_configure() {
 <title>pfSense captive portal</title>
 </head>
 <body>
+<center>
 <h2>pfSense captive portal</h2>
 Welcome to the pfSense Captive Portal!  This is the default page since a custom page has not been defined.
-<form method="post" action="$PORTAL_ACTION$">
+<form method="post" action="\$PORTAL_ACTION\$">
+<input name="redirurl" type="hidden" value="\$PORTAL_REDIRURL\$">
 <table>
    <tr><td>Username:</td><td><input name="auth_user" type="text"></td></tr>
    <tr><td>Password:</td><td><input name="auth_pass" type="password"></td></tr>
+   <tr><td>&nbsp;</td></tr>
    <tr><td colspan="2">
-	<form method="post" action="\$PORTAL_ACTION\$">
 	<input name="accept" type="submit" value="Continue">
-	<input name="redirurl" type="hidden" value="\$PORTAL_REDIRURL\$">
+	
    </td></tr>
 </table>
+</center>
 </form>
 </body>
 </html>

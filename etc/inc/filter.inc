@@ -553,7 +553,7 @@ function filter_nat_rules_generate() {
 	$interface_counter = 0;
 	/* loop through all interfaces and handle pftpx redirections */
 	foreach ($iflist as $ifent => $ifname) {
-		if(isset($config['interfaces'][$ifname]['disableftpproxy'])) {
+		if(isset($config['interfaces'][strtolower($ifname)]['disableftpproxy'])) {
 			$interface_counter++;
 			continue;
 		}
@@ -631,6 +631,7 @@ function filter_nat_rules_generate() {
 			 *    operator has requested a port forward to
 			 *    a ftp server then launch a helper
 			 */
+			$dontinstallrdr = false;
 			if($target <> "") {
 				if($extport[0] == "21" and !isset($config['interfaces'][strtolower($rule['interface'])]['disableftpproxy'])) {
 					$helpers = exec("/bin/ps awux | grep {$target} | grep -v grep");
@@ -640,25 +641,28 @@ function filter_nat_rules_generate() {
 							$external_address = find_interface_ip(get_real_wan_interface());
 						/* install a pftpx helper, do not set a rule */
 						mwexec("/usr/local/sbin/pftpx -f {$target} -b {$external_address} -c 21 -g 21");
+						$dontinstallrdr = true;
 					}
 				}
 			}
 
-			if ((!$extport[1]) || ($extport[0] == $extport[1])) {
-				if($rule['protocol'] == "tcp/udp")
-					$natrules .=
-					 "rdr on $natif proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
-				else
-					$natrules .=
-					 "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
-
-			} else {
-				if($rule['protocol'] == "tcp/udp")
-					$natrules .=
-					 "rdr on $natif proto { tcp udp } from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
-				else
-					$natrules .=
-					 "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
+			if($dontinstallrdr == false) {
+				if ((!$extport[1]) || ($extport[0] == $extport[1])) {
+					if($rule['protocol'] == "tcp/udp")
+						$natrules .=
+						 "rdr on $natif proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
+					else
+						$natrules .=
+						 "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
+	
+				} else {
+					if($rule['protocol'] == "tcp/udp")
+						$natrules .=
+						 "rdr on $natif proto { tcp udp } from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
+					else
+						$natrules .=
+						 "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
+				}
 			}
 
 			/*    setup reflection rule for this item if requested

@@ -1222,7 +1222,7 @@ function system_start_ftp_helpers() {
                  *    here by not including -c {$port} -g 8021 first.
 		 */
 		$port = 8021 + $interface_counter;
-		if(isset($config['interfaces'][$ifname]['disableftpproxy'])) {
+		if(isset($config['interfaces'][strtolower($ifname)]['disableftpproxy'])) {
 			/*    item is disabled.  lets ++ the interface counter and
 			 *    keep processing interfaces. kill pftpx if already
                          *    running for this instance.

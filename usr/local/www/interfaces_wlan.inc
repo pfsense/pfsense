@@ -426,21 +426,6 @@ function wireless_config_print() {
 			</td>
 		</tr>
 		<tr>
-			<td valign="top" class="vncell">Enable MAC Filtering</td>
-			<td class="vtable"><input name="mac_acl_enable" type="checkbox" value="yes" class="formfld" id="mac_acl_enable" <? if ($pconfig['mac_acl_enable']) echo "checked"; ?>> 
-			Setting this option will enable the use of a mac filterlist to allow/deny association based on mac address
-			<br/><br/>
-			<select name="macaddr_acl" class="formfld" id="macaddr_acl">
-                        <option <? if ($pconfig['macaddr_acl'] == '0') echo "selected";?> value="0">Allow</option>
-			<option <? if ($pconfig['macaddr_acl'] == '1') echo "selected";?> value="1">Deny</option>
-			<option <? if ($pconfig['macaddr_acl'] == '2') echo "selected";?> value="2">Radius</option>
-			</select>
-			<br/><br/>
-			Setting this to "Allow" will allow all clients in not in deny list, while "Deny" will deny all clients not in allow list.
-			Radius will cause allow and deny list to be searched and then query radius.</br>
-			</td>
-		</tr>
-		<tr>
 			<td valign="top" class="vncell">Authentication</td>
 			<td class="vtable"><select name="auth_algs" class="formfld" id="auth_algs">
 			<option <? if ($pconfig['auth_algs'] == '1') echo "selected";?> value="1">Open System Authentication</option>

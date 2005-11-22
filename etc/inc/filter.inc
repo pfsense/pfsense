@@ -632,7 +632,7 @@ function filter_nat_rules_generate() {
 			 *    a ftp server then launch a helper
 			 */
 			if($target <> "") {
-				if($extport[0] == "21" and !isset($config['system']['disableftpproxy'])) {
+				if($extport[0] == "21" and !isset($config['interfaces'][$rule['interface']]['disableftpproxy'])) {
 					$helpers = exec("/bin/ps awux | grep {$target} | grep -v grep");
 					if(!$helpers) {
 						$external_address = $rule['external-address'];

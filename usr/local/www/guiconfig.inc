@@ -204,7 +204,7 @@ function print_info_box_np($msg) {
 	echo "   <td>\n";
 	echo "      <div style='background-color:#990000' id='redbox'>\n";
 	echo "       <table width='100%'><tr><td width='8%'>\n";
-	echo "        &nbsp;&nbsp;&nbsp;<img style='vertical-align:middle' src=\"./themes/".$g['theme']."/images/icons/icon_exclam.gif\" width=\"28\" height=\"32\">\n";
+	echo "        &nbsp;&nbsp;&nbsp;<img style='vertical-align:middle' src=\"/themes/".$g['theme']."/images/icons/icon_exclam.gif\" width=\"28\" height=\"32\">\n";
 	echo "        </td>\n";
 	echo "        <td width='70%'><font color='white'><b>{$msg}</b></font>\n";
 	echo "        </td>";

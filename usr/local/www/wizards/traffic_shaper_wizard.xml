@@ -47,7 +47,8 @@
 	<stepbeforeformdisplay>
 		/* Check to see if ALTQ can even be used */
 		if(!is_altq_capable($config['interfaces']['wan']['if']) or !is_altq_capable($config['interfaces']['lan']['if'])) {
-			header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=7");
+			$message="Either your LAN or WAN interface doesn't support ALTQ.  The wizard cannot continue.";
+			header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=7&amp;message={$message}");
 		}
 	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
@@ -1921,7 +1922,7 @@
 		    $config['shaper']['itemsshaped'] = "0";
 		    $message = "No items have been selected to shape.  Exiting traffic shaper wizard.";
 		    write_config("No shaper items picked, unsetting shaper configuration");
-		    header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=8&amp;message={$message}");
+		    header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=7&amp;message={$message}");
 		    filter_configure();	
 		    exit;
 		}	    
@@ -1940,7 +1941,6 @@
 		<field>
 			<name>Finish</name>
 			<type>submit</type>
-			<warning>Either your LAN or WAN interface doesn't support ALTQ.  The wizard cannot continue.</warning>
 		</field>
 	</fields>
 	<stepsubmitphpaction>

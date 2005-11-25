@@ -342,7 +342,7 @@ function wireless_config_print() {
 			<td class="vtable"><input name="distance" type="text" class="formfld" id="distance" size="5" value="<?=htmlspecialchars($pconfig['distance']);?>">
 			<br/>
 			Note: This field can used to tune ACK/CTS timers to fit the distance between AP and Client<br/>
-			(measured in Meters)
+			(measured in Meters and works only for Atheros based cards !)
 			</td>
 		</tr>
 		<tr>

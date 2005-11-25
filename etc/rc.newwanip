@@ -37,7 +37,7 @@
 
         if($argv[1] <> "") {
                 $curwanip = find_interface_ip($argv[1]);
-                $interface = $argv[1];
+                $interface = convert_real_interface_to_friendly_interface_name($argv[1]);
         } else {
                 $curwanip = get_current_wan_address();
                 $interface = "wan";

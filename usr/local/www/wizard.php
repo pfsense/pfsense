@@ -148,6 +148,13 @@ include("head.inc");
 <?php if($pkg['step'][$stepid]['fields']['field'] <> "") { ?>
 <script language="JavaScript">
 <!--
+
+function  FieldValidate(userinput,  regexp,  message) 
+{ 
+                if(!userinput.match(regexp)) 
+                                alert(message); 
+} 
+
 function enablechange() {
 <?php
         foreach($pkg['step'][$stepid]['fields']['field'] as $field) {

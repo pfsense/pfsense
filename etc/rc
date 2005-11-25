@@ -129,7 +129,6 @@ chmod 777 /tmp/uploadbar
 mkdir -p /var/run /var/log /var/etc /var/db/entropy /var/at/jobs/ /var/empty 2>/dev/null
 rm -rf /var/log/*
 rm -rf /var/run/*
-rm -rf /tmp/*
 
 # generate circular logfiles
 if [ ! "$PLATFORM" = "cdrom" ]; then

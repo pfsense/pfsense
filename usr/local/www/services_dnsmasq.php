@@ -133,14 +133,14 @@ include("head.inc");
                       the forwarder. The DNS forwarder will use the DNS servers
                       entered in <a href="system.php">System: General setup</a>
                       or those obtained via DHCP or PPP on WAN if the &quot;Allow
-                      DNS server list to be overridden by DHCP/PPP on WAN&quot;</span>
+                      DNS server list to be overridden by DHCP/PPP on WAN&quot;
                       is checked. If you don't use that option (or if you use
                       a static IP address on WAN), you must manually specify at
                       least one DNS server on the <a href="system.php">System:
                       General setup</a> page.<br>
                       <br>
                       You may enter records that override the results from the
-                      forwarders below.</p></td>
+                      forwarders below.</span></p></td>
                 </tr>
         </table>
         &nbsp;<br>

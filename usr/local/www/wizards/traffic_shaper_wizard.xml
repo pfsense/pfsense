@@ -519,7 +519,7 @@
                         <type>checkbox</type>
                         <typehint>Lower priority of Peer-to-Peer traffic</typehint>
                         <description>This will lower the priority of P2P traffic below all other traffic.  Please check the items that you would like to prioritize lower than normal traffic.</description>
-			<enablefields>Aimster,BitTorrent,BuddyShare,CuteMX,DCplusplus,dcc,DirectConnect,DirectFileExpress,EDonkey2000,FastTrack,Gnutella,grouper,hotComm,HotlineConnect,iMesh,Napster,OpenNap,Scour,Shareaza,SongSpy,WinMX</enablefields>
+			<enablefields>Aimster,BitTorrent,BuddyShare,CuteMX,DCplusplus,dcc,DirectConnect,DirectFileExpress,EDonkey2000,FastTrack,Gnutella,grouper,hotComm,HotlineConnect,iMesh,Napster,OpenNap,Scour,SongSpy,WinMX</enablefields>
 			<bindstofield>ezshaper->step4->enable</bindstofield>
                 </field>
                 <field>
@@ -693,8 +693,10 @@
 		    $p2plist[] = array('EDonkey2000', 'tcp', '4661', '4665', 'both');
 		if($_POST['fastTrack'] != "") 		
 		    $p2plist[] = array('FastTrack', 'tcp', '1214', '1214', 'both');
-		if($_POST['gnutella'] != "") 		
-		    $p2plist[] = array('Gnutella', 'tcp', '6346', '6346', 'both');
+		if($_POST['gnutella'] != "") { 		
+		    $p2plist[] = array('Gnutella-TCP', 'tcp', '6346', '6346', 'both');
+		    $p2plist[] = array('Gnutella-UDP', 'udp', '6346', '6346', 'both');
+		}
 		if($_POST['grouper'] != "") 		
 		    $p2plist[] = array('grouper', 'tcp', '8038', '8039', 'both');
 		if($_POST['hotcomm'] != "") 		
@@ -810,7 +812,7 @@
                         <type>checkbox</type>
                         <typehint>Prioritize network gaming traffic</typehint>
                         <description>This will raise the priority of gaming traffic to higher than most traffic.</description>
-			<enablefields>Battlefield2,Counterstrike,DeltaForce,QuakeIII,TigerWoods2004PS2,CallOfDuty,PlanetSide,Halo2,Unreal,DOOM3,EmpireEarth,Everquest,FarCry,HalfLife2,HalfLife,WolfensteinEnemyTerritory</enablefields>
+			<enablefields>Battle.NET,Battlefield2,CallOfDuty,Counterstrike,DeltaForce,DOOM3,EmpireEarth,Everquest,FarCry,GunZOnline,HalfLife,HalfLife2,Halo2,Lineage2,PlanetSide,QuakeIII,TigerWoods2004PS2,WolfensteinEnemyTerritory,WorldOfWarcraft</enablefields>
 			<donotdisable>true</donotdisable>
 			<bindstofield>ezshaper->step5->enable</bindstofield>
                 </field>
@@ -823,9 +825,15 @@
                         <type>listtopic</type>
                 </field>		
                 <field>
+                        <name>Battle.NET</name>
+                        <type>checkbox</type>
+			<typehint>Battle.net - Virtually every game from Blizzard publishing should match this.  This includes the following game series: Starcraft, Diablo, Warcraft.  Guild Wars also uses this port.</typehint>
+			<bindstofield>ezshaper->step5->battlefield2</bindstofield>
+                </field>
+                <field>
                         <name>Battlefield2</name>
                         <type>checkbox</type>
-			<typehint>Battlefield 2</typehint>
+			<typehint>Battlefield 2 - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
 			<bindstofield>ezshaper->step5->battlefield2</bindstofield>
                 </field>
                 <field>
@@ -861,8 +869,14 @@
                 <field>
                         <name>Everquest</name>
                         <type>checkbox</type>
-			<typehint>Everquest</typehint>
+			<typehint>Everquest - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
 			<bindstofield>ezshaper->step5->everquest</bindstofield>
+                </field>
+                <field>
+                        <name>GunZOnline</name>
+                        <type>checkbox</type>
+			<typehint>GunZ Online</typehint>
+			<bindstofield>ezshaper->step5->gunzonline</bindstofield>
                 </field>
                 <field>
                         <name>FarCry</name>
@@ -887,6 +901,12 @@
                         <type>checkbox</type>
 			<typehint>Halo2 via Xbox live</typehint>
 			<bindstofield>ezshaper->step5->halo2xbox</bindstofield>
+                </field>
+                <field>
+                        <name>Lineage2</name>
+                        <type>checkbox</type>
+			<typehint>Lineage II</typehint>
+			<bindstofield>ezshaper->step5->lineage2</bindstofield>
                 </field>
                 <field>
                         <name>PlanetSide</name>
@@ -917,6 +937,12 @@
                         <type>checkbox</type>
 			<typehint>Wolfenstein Enemy Territory</typehint>
 			<bindstofield>ezshaper->step5->wolfet</bindstofield>
+                </field>
+                <field>
+                        <name>WorldOfWarcraft</name>
+                        <type>checkbox</type>
+			<typehint>World of Warcraft</typehint>
+			<bindstofield>ezshaper->step5->wow</bindstofield>
                 </field>
                 <field>
                         <name>Next</name>
@@ -1093,6 +1119,30 @@
 		    $gamesplist[] = array('WolfET-1', 'tcp', '27960', '27960', 'both');
 		}
 
+		if($_POST['lineage2'] != "") {
+		    /* Lineage II */
+		    $gamesplist[] = array('Lineage2-2009', 'tcp', '2009', '2009', 'both');
+		    $gamesplist[] = array('Lineage2-2106', 'tcp', '2106', '2106', 'both');
+		    $gamesplist[] = array('Lineage2-7777', 'tcp', '7777', '7777', 'both');
+		}
+
+		if($_POST['battlenet'] != "") {
+		    /* Blizzard Publishing games */
+		    $gamesplist[] = array('Battle.NET', 'tcp', '6112', '6119', 'both');
+		}
+		if($_POST['wow'] != "") {
+		    /* World of WarCract */
+		    if ($_POST['battlenet'] == "") {
+			/* Add battle.net only if WoW is selected and battle.net isn't */
+		        $gamesplist[] = array('Battle.NET', 'tcp', '6112', '6119', 'both');
+		    }
+		    $gamesplist[] = array('WoW', 'tcp', '3724', '3724', 'both');
+		}
+		if($_POST['gunzonline'] != "") {
+		    /* GunZ Online */
+		    $gamesplist[] = array('GunZOnline', 'udp', '7700', '7700', 'both');
+		}
+
 		/* XXX: add some more games before this line!! */
     
 		/* Set up/down games as higher weight */
@@ -1141,7 +1191,7 @@
                         <type>checkbox</type>
                         <typehint>Other networking protocols</typehint>
                         <description>This will help raise or lower the priority of other protocols higher than most traffic.</description>
-			<enablefields>MSRDP,PPTP,IPSEC,StreamingMP3,IRC,DNS,HTTP,SMTP,POP3,ICMP,IMAP,SMB,RTSP,SNMP,VNC,AppleRemoteDesktop,ICQ,LotusNotes,MSN,MySqlServer,PCAnywhere,TeamSpeak</enablefields>
+			<enablefields>AIM,AppleRemoteDesktop,DNS,HTTP,ICMP,ICQ,IMAP,IPSEC,IRC,LotusNotes,MSN,MSRDP,MySqlServer,PCAnywhere,POP3,PPTP,RTSP,SMB,SMTP,SNMP,StreamingMP3,TeamSpeak,VNC</enablefields>
 			<donotdisable>true</donotdisable>
 			<bindstofield>ezshaper->step6->enable</bindstofield>
                 </field>
@@ -1276,6 +1326,26 @@
 				</option>
 			</options>
 			<typehint>ICQ</typehint>
+                </field>
+                <field>
+                        <name>AIM</name>
+			<bindstofield>ezshaper->step6->aolinstantmessenger</bindstofield>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Default priority</name>
+					<value></value>
+				</option>
+				<option>
+					<name>Lower priority</name>
+					<value>L</value>
+				</option>
+			</options>
+			<typehint>AOL Instant Messenger</typehint>
                 </field>
                 <field>
                         <name>MSN</name>
@@ -1829,6 +1899,10 @@
 		    $othersplist[] = array('LotusNotes1', 'tcp', '1352', '1352', 'both', $_POST['lotusnotes']);
 		    $othersplist[] = array('LotusNotes2', 'udp', '1352', '1352', 'both', $_POST['lotusnotes']);
 		}		
+		if($_POST['aolinstantmessenger'] != "") {
+		    /* AIM */
+		    $othersplist[] = array('AIM', 'tcp', '5190', '5190', 'both', $_POST['aolinstantmessenger']);
+		}
 
 		if($_POST['msnmessenger'] != "") {
 		    /* msn messenger */

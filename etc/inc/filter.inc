@@ -2008,9 +2008,11 @@ function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsen
 	if($g['booting'])
 		return;
 
-	$params = array(new XML_RPC_Value($password, 'string'),
-			new XML_RPC_Value($section, 'array'),
-			new XML_RPC_Value($section_xml, 'array'));
+	$params = array(
+			new XML_RPC_Value($password, 'string'),
+			XML_RPC_encode($section),
+			XML_RPC_encode($section_xml)
+		);
 	$msg = new XML_RPC_Message($method, $params);
 	log_error("begin synchronize XML configuration data to $url on port $port");
 	$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
@@ -2020,8 +2022,9 @@ function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsen
 		log_error("A communication error occured while syncing configuration data with {$url}:{$port} - " . $cli->errstr);
 		file_notice("sync_settings", "A communication error occured while syncing configuration data with {$url}:{$port} - " . $cli->errstr, "Settings Sync", "");
 	} elseif($resp->faultCode()) {
-		log_error("An error code was received while syncing configuration data with {$url}:{$port} - Code " . $resp->faultCode() . ":" . $resp->faultString() );
-		file_notice("sync_settings", "An error code was received while syncing configuration data with {$url}:{$port} - Code " . $resp->faultCode() . ":" . $resp->faultString(), "Settings Sync", "");
+		$error = "An error code was received while syncing configuration data with {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
+		log_error($error);
+		file_notice("sync_settings", $error, "Settings Sync", "");	
 	} else {
 		log_error("Configuration data was successfully synced to {$url}:{$port}");
 	}

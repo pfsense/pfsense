@@ -68,6 +68,8 @@
 
 	echo "\n\nProcessing: ";
 	config_lock();
+	echo " nullfs... ";
+	system("/sbin/umount /cf/conf");
 	echo "moving...";
 	mwexec("/bin/mv /cf/conf/config.xml /mnt/cf/");
 	echo "removing old...";

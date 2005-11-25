@@ -49,7 +49,7 @@ function wireless_config_init() {
 	$pconfig['hidessid_enable'] = isset($optcfg['wireless']['hidessid']['enable']);
 	$pconfig['debug_mode'] = $optcfg['wireless']['wpa']['debug_mode'];
 	$pconfig['macaddr_acl'] = $optcfg['wireless']['wpa']['macaddr_acl'];
-	$pconfig['mac_acl_enable'] = $optcfg['wireless']['wpa']['mac_acl_enable'];
+	$pconfig['mac_acl_enable'] = isset($optcfg['wireless']['wpa']['mac_acl_enable']);
 	$pconfig['auth_algs'] = $optcfg['wireless']['wpa']['auth_algs'];
 	$pconfig['wpa_mode'] = $optcfg['wireless']['wpa']['wpa_mode'];
 	$pconfig['wpa_key_mgmt'] = $optcfg['wireless']['wpa']['wpa_key_mgmt'];
@@ -425,6 +425,8 @@ function wireless_config_print() {
  			</select>
 			</td>
 		</tr>
+		<? /*
+		*/ ?>
 		<tr>
 			<td valign="top" class="vncell">Authentication</td>
 			<td class="vtable"><select name="auth_algs" class="formfld" id="auth_algs">

@@ -68,11 +68,11 @@
 
 	echo "\n\nProcessing: ";
 	config_lock();
-	echo " nullfs... ";
-	system("/sbin/umount /cf/conf");
 	echo "moving...";
 	mwexec("/bin/mv /cf/conf/config.xml /mnt/cf/");
 	echo "removing old...";
+	echo " nullfs... ";
+	system("/sbin/umount /cf/conf");	
 	mwexec("/bin/rm -rf /cf");
 	mwexec("/bin/rm -rf /conf");
 	mwexec("/bin/mkdir /cf/");
@@ -82,6 +82,6 @@
 	mwexec("/bin/rm -rf /var/db/pfi");
 	config_unlock();
 	echo "done.\n";
-	echo "You're configuration has been moved to {$move_config_to_device}\n";
+	echo "\nYou're configuration has been moved to {$move_config_to_device}\n";
 
 ?>

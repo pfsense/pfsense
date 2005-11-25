@@ -30,11 +30,18 @@
 */
 
         /* parse the configuration and include all functions used below */
+        require_once("globals.inc");
         require_once("config.inc");
         require_once("functions.inc");
 
+        if($g['booting'] == true)
+                exit;
+
         $friendly_interface = convert_real_interface_to_friendly_interface_name($argv[1]);
-        if($config['interfaces'][$friendly_interface]['ipaddr'] <> "dhcp") {
+        if($config['interfaces'][$friendly_interface]['ipaddr'] <> "dhcp" and
+           $config['interfaces'][$friendly_interface]['ipaddr'] <> "pppoe" and
+           $config['interfaces'][$friendly_interface]['ipaddr'] <> "bigpond" and
+           $config['interfaces'][$friendly_interface]['ipaddr'] <> "pptp") {
                 log_error("Hotplug event detected for {$argv[1]} but ignoring since interface is not set for DHCP");
                 exit;
         }

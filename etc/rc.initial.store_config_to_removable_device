@@ -69,17 +69,17 @@
 	echo "\n\nProcessing: ";
 	config_lock();
 	echo "moving...";
-	mwexec("/bin/mv /cf/conf/config.xml /tmp/mnt/cf/");
+	mwexec("mkdir -p /tmp/mnt/cf/conf/");
+	mwexec("/bin/mv /cf/conf/config.xml /tmp/mnt/cf/conf/");
 	echo "removing old...";
 	echo " nullfs... ";
 	system("/sbin/umount /cf/conf");
-	//system("/sbin/umount /conf");
-        //mwexec("/bin/rm -rf /conf");
-	mwexec("/bin/rm -rf /cf");
-	mwexec("/bin/mkdir /cf/");
+	system("/sbin/umount /conf");
+        mwexec("/bin/rm -rf /conf/*.*");
+	/* use nullfs to mount */
+	system("/sbin/mount_nullfs /tmp/mnt/cf/conf /conf");
+	system("/sbin/mount_nullfs /tmp/mnt/cf /cf");
 	echo "linking...";
-	mwexec("/bin/ln -s /tmp/mnt/cf /cf/conf");
-	mwexec("/bin/ln -s /tmp/mnt/cf /conf");
 	mwexec("/bin/rm -rf /var/db/pfi");
 	config_unlock();
 	echo "done.\n";

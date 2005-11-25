@@ -72,7 +72,8 @@
 	mwexec("/bin/mv /cf/conf/config.xml /mnt/cf/");
 	echo "removing old...";
 	echo " nullfs... ";
-	system("/sbin/umount /cf/conf");	
+	system("/sbin/umount /cf/conf");
+	system("/sbin/umount /conf");
 	mwexec("/bin/rm -rf /cf");
 	mwexec("/bin/rm -rf /conf");
 	mwexec("/bin/mkdir /cf/");

@@ -332,6 +332,94 @@ function system_pccard_start() {
 
 function system_webgui_start() {
 	global $config, $g;
+
+	if ($g['booting'])
+		echo "Starting webConfigurator... ";
+
+	/* kill any running mini_httpd */
+	killbypid("{$g['varrun_path']}/lighty-webConfigurator.pid");
+
+	/* generate password file */
+	system_password_configure();
+
+	chdir($g['www_path']);
+
+	/* non-standard port? */
+	if ($config['system']['webgui']['port'])
+		$portarg = "-p {$config['system']['webgui']['port']}";
+	else
+		$portarg = "";
+
+	if ($config['system']['webgui']['protocol'] == "https") {
+
+		if ($config['system']['webgui']['certificate'] && $config['system']['webgui']['private-key']) {
+			$cert = base64_decode($config['system']['webgui']['certificate']);
+			$key = base64_decode($config['system']['webgui']['private-key']);
+		} else {
+			/* default certificate/key */
+			$cert = <<<EOD
+-----BEGIN CERTIFICATE-----
+MIIC4zCCAkygAwIBAgIBADANBgkqhkiG9w0BAQQFADBbMQswCQYDVQQGEwJOQTEL
+MAkGA1UECBMCTkExCzAJBgNVBAcTAk5BMQswCQYDVQQKEwJOQTELMAkGA1UECxMC
+TkExCzAJBgNVBAMTAk5BMQswCQYDVQQGEwJVUzAeFw0wNTAzMDYwMDE1NDJaFw0x
+NTAzMDQwMDE1NDJaMFsxCzAJBgNVBAYTAk5BMQswCQYDVQQIEwJOQTELMAkGA1UE
+BxMCTkExCzAJBgNVBAoTAk5BMQswCQYDVQQLEwJOQTELMAkGA1UEAxMCTkExCzAJ
+BgNVBAYTAlVTMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDF7luuy70OvHrl
+xnW9ID6srsfxEFCF4d9LmlZ6XdW1rEUHQ6KTgz4iSD+pxEOxxlY+bCH6HTkAy5Sa
+zt3eT7javvF+ILZgarwoY2x+NbDctd0VBJVkH0fEvBf1xqU7wpkOiWkw1RmfEvZI
+6XnGi6VSjSmkm0UoQMKg9R7niRtE4QIDAQABo4G2MIGzMB0GA1UdDgQWBBTgvk9F
+alPK6/OcZrkaE8BhBrRo2DCBgwYDVR0jBHwweoAU4L5PRWpTyuvznGa5GhPAYQa0
+aNihX6RdMFsxCzAJBgNVBAYTAk5BMQswCQYDVQQIEwJOQTELMAkGA1UEBxMCTkEx
+CzAJBgNVBAoTAk5BMQswCQYDVQQLEwJOQTELMAkGA1UEAxMCTkExCzAJBgNVBAYT
+AlVTggEAMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEEBQADgYEAv9+GXdYIWs2R
+8B0zI4jAbHcaRsfohuzpNHD5re7ZK8H4fYbHIfmPY2UM3yOU7J2rLP8KGfKztay1
+Z3RNW7SKJI/CagbdQOuYdMrlEyA4ZImM6NNzUbH6rNKtmDIDo1kHL3cXjzXEjBE+
+ZZYTREFcdhtzUH5lYzJz1uVFeCSwozk=
+-----END CERTIFICATE-----
+EOD;
+
+			$key = <<<EOD
+-----BEGIN RSA PRIVATE KEY-----
+MIICXAIBAAKBgQDF7luuy70OvHrlxnW9ID6srsfxEFCF4d9LmlZ6XdW1rEUHQ6KT
+gz4iSD+pxEOxxlY+bCH6HTkAy5Sazt3eT7javvF+ILZgarwoY2x+NbDctd0VBJVk
+H0fEvBf1xqU7wpkOiWkw1RmfEvZI6XnGi6VSjSmkm0UoQMKg9R7niRtE4QIDAQAB
+AoGAF9dMJ9PWo+3EB+VNzUgTBI3Q+5JxgI7ibKLcg8TFtypW7jcRYB9Q3qRBNtuz
+I7i2LrKrrQrUEOp0rej5BIwpwcjtEE2NsZwgYwDyywptoqt3WO86nPXYz2KhkQmP
+YCDmPrff4vXCv6zgefb/AIgrOkgD3ViEoePhCAg+0l3fEIECQQD7C68Nb6KAWUND
+Q9B0RxYrlgXikQ8yVHhlyM433APe/NCJ9kl5dLXpyjuvrWB+ml6TlLrcroLGejbd
+tYXvIiyJAkEAydZVHqB4MpMtuY7VJoHNgl06YBoeTI+BJptPaOUNl4SlUKIYJMhX
+oOXIGk9uDjfSNS7HvunZBjgz092GShWvmQJAQ8NhmwTZHj/58fwqFljh2R4DtKZn
+LbSzUvYjA9z1holDWRoLtycTu2mFNuRbuZC9mqR40/ye/CgdCzdmUagt0QJBAKq1
+00ySINd10Cive+yTwMPQIj2CGbpbbbq/hYyMntBWapQmZRFHOYZmkrZeFBGGeQ5u
+QJdipiIyivNY2+nxKZECQCvumJPfZYxCeCAEC+G2xezrP6bC6FhzUOw6410UARTM
+fuFjHpSfOiG62lfRdZgCPAr1L/1pJF+8RqjGlFfAuFA=
+-----END RSA PRIVATE KEY-----
+EOD;
+		}
+	} else {
+		$cert = "";
+		$key = "";
+	}
+
+	/* generate lighttpd configuration */
+	system_generate_lighty_config("{$g['varetc_path']}/lighty-webConfigurator.conf",
+		$key, $cert, "lighty-webConfigurator.pid", "/usr/local/www/");
+
+	/* attempt to start lighthttpd */
+	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");
+
+	if ($g['booting']) {
+		if ($res == 0)
+			echo "done.\n";
+		else
+			echo "failed!\n";
+	}
+
+	return $res;
+}
+
+function system_webgui_start_old() {
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_webgui_start() being called $mt\n";

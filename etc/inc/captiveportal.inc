@@ -187,32 +187,18 @@ EOD;
 			$procs = 16;
 		}	
 	
-		/* start web server */
-		mwexec("/usr/local/sbin/mini_httpd -a -M 0 -u root -maxproc {$procs}" .
-			" -p 8000 -i {$g['varrun_path']}/mini_httpd.cp.pid");
-		
-		/* fire up another one for HTTPS if requested */
-		if (isset($config['captiveportal']['httpslogin']) &&
-			$config['captiveportal']['certificate'] && $config['captiveportal']['private-key']) {
-			
-			$cert = base64_decode($config['captiveportal']['certificate']);
-			$key = base64_decode($config['captiveportal']['private-key']);
-			
-			$fd = fopen("{$g['varetc_path']}/cert-portal.pem", "w");
-			if (!$fd) {
-				printf("Error: cannot open cert-portal.pem in system_webgui_start().\n");
-				return 1;
-			}
-			chmod("{$g['varetc_path']}/cert-portal.pem", 0600);
-			fwrite($fd, $cert);
-			fwrite($fd, "\n");
-			fwrite($fd, $key);
-			fclose($fd);
-			
-			mwexec("/usr/local/sbin/mini_httpd -S -a -M 0 -E {$g['varetc_path']}/cert-portal.pem" .
-				" -u root -maxproc 16 -p 8001" .
-				" -i {$g['varrun_path']}/mini_httpd.cps.pid");
-		}
+		/* TEMPORARY!  FAST_CGI reports _FALSE_ client ip
+		 * 	       addresses.
+		 */
+		$use_fastcgi = false;
+
+		/* generate lighttpd configuration */
+		system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal.conf",
+			$key, $cert, "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/",
+				"cert-portal.pem", "1", $procs, $use_fastcgi);
+	
+		/* attempt to start lighttpd */
+		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-CaptivePortal.conf");
 			
 		/* start pruning process (interval = 60 seconds) */
 		mwexec("/usr/local/bin/minicron 60 {$g['varrun_path']}/minicron.pid " .

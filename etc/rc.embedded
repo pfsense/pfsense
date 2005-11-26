@@ -7,7 +7,7 @@
 partsize="3m"
 
 # Run some initialization routines
-/etc/rc.d/uzip start
+[ -f /etc/rc.d/uzip ] && /etc/rc.d/uzip start
 /etc/rc.d/tmp start
 
 # Initialize MFS for /var. Partly taken from /etc/rc.d/var

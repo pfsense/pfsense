@@ -34,21 +34,24 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['shaper']['rule'])) {
-	$config['shaper']['rule'] = array();
-}
-if (!is_array($config['shaper']['queue'])) {
-	$config['shaper']['queue'] = array();
-}
-$a_shaper = &$config['shaper']['rule'];
-$a_queue = &$config['shaper']['queue'];
-
 /* redirect to wizard if shaper isn't already configured */
 if(isset($config['shaper']['enable'])) {
 	$pconfig['enable'] = TRUE;
 } else {
-	Header("Location: wizard.php?xml=traffic_shaper_wizard.xml");
+	if(!is_array($config['shaper']['queue']))
+		Header("Location: wizard.php?xml=traffic_shaper_wizard.xml");
 }
+
+if (!is_array($config['shaper']['rule'])) {
+	$config['shaper']['rule'] = array();
+}
+
+if (!is_array($config['shaper']['queue'])) {
+	$config['shaper']['queue'] = array();
+}
+
+$a_shaper = &$config['shaper']['rule'];
+$a_queue = &$config['shaper']['queue'];
 
 function wipe_magic () {
   global $config;

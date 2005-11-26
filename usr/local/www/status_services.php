@@ -106,7 +106,19 @@ if(isset($config['captiveportal']['enable'])) {
 	unset($pconfig);
 }
 
-if(isset($config['dnsmasq']['enable'])) {
+$iflist = array("lan" => "LAN");
+for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+	$oc = $config['interfaces']['opt' . $i];
+	if (isset($oc['enable']) && $oc['if'] && (!$oc['bridge'])) 
+		$iflist['opt' . $i] = "opt{$i}";	
+}
+$show_dhcprelay = false;
+foreach($iflist as $if) {
+	if(isset($config['dhcrelay'][$if]['enable']))
+		$show_dhcprelay = true;
+}
+
+if($show_dhcprelay == true) {
 	$pconfig['name'] = "dhcprelay";
 	$pconfig['description'] = "DHCP Relay";
 	$services[] = $pconfig;

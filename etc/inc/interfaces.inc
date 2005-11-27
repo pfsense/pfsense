@@ -690,11 +690,14 @@ function interfaces_wan_configure() {
 		/* find dhclient process for wan and kill it */
 		killbypid(find_dhclient_process("wan"));
 
+		/* remove wanup file if it exists */
+		unlink_if_exists("{$g['tmp_path']}/wanup");
+
 		/* kill PPPoE client (mpd) */
 		killbypid("{$g['varrun_path']}/mpd.pid");
 
 		/* wait for processes to die */
-		sleep(1);
+		sleep(3);
 
 		unlink_if_exists("{$g['varetc_path']}/dhclient_wan.conf");
 		unlink_if_exists("{$g['varetc_path']}/mpd.conf");
@@ -1073,24 +1076,27 @@ EOD;
 
 	fwrite($fd, $mpdconf);
 	fclose($fd);
-
-	/* if mpd is active, lets take it down */
-	if(file_exists("{$g['varrun_path']}/mpd.pid")) {
-		killbypid(file_get_contents("{$g['varrun_path']}/mpd.pid"));
-		sleep(1);
+	
+	if(file_exists("{$g['varrun_path']}/mpd.pid") and $g['booting']) {
+		/* if we are booting and mpd has already been started then don't start again. */
+	} else {
+		/* if mpd is active, lets take it down */
+		if(file_exists("{$g['varrun_path']}/mpd.pid")) {
+			killbypid("{$g['varrun_path']}/mpd.pid");
+			sleep(3);
+		}
+		/* fire up mpd */	
+		mwexec("/usr/local/sbin/mpd -b -d {$g['varetc_path']} -p {$g['varrun_path']}/mpd.pid pppoe");
 	}
-
-	/* fire up mpd */
-	mwexec("/usr/local/sbin/mpd -b -d {$g['varetc_path']} -p {$g['varrun_path']}/mpd.pid pppoe");
 
         /* sleep until wan is up - or 30 seconds, whichever comes first */
 	for ($count = 0; $count < 30; $count++) {
 		if(file_exists("{$g['tmp_path']}/wanup")) {
 			break;
 		}
-	
 		sleep(1);
 	}
+
 	unlink_if_exists("{$g['tmp_path']}/wanup");
 
 	return 0;

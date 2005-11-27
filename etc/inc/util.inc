@@ -37,7 +37,10 @@ function killbypid($pidfile) {
 /* sigkill a process by pid file */
 function sigkillbypid($pidfile, $sig) {
 	if (file_exists($pidfile)) {
-		mwexec("/bin/kill -s $sig `/bin/cat " . $pidfile . "`");
+		$pid = file_get_contents($pidfile);
+		mwexec("/bin/kill -s $sig {$pid}");
+	} else {
+		mwexec("/bin/kill -s $sig {$pidfile}");
 	}
 }
 

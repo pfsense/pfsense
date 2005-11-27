@@ -403,7 +403,7 @@ EOD;
 
 	/* generate lighttpd configuration */
 	system_generate_lighty_config("{$g['varetc_path']}/lighty-webConfigurator.conf",
-		$key, $cert, "lighty-webConfigurator.pid", "/usr/local/www/");
+		$key, $cert, "lighty-webConfigurator.pid", $portarg, "/usr/local/www/");
 
 	/* attempt to start lighthttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");
@@ -514,8 +514,8 @@ EOD;
 }
 
 function system_generate_lighty_config($filename, $cert, $key, $pid_file,
-	$port, $document_root = "/usr/local/www/",
-	$cert_location = "cert.pem", $max_procs,
+	$port = 80, $document_root = "/usr/local/www/",
+	$cert_location = "cert.pem", $max_procs = 5,
 	$max_requests = "1", $fast_cgi_enable = true) {
 
 	global $config, $g;
@@ -728,9 +728,9 @@ EOD;
 		$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";	
 	}
 
-	$fd = fopen("{$g['varetc_path']}/{$filename}", "w");
+	$fd = fopen("{$filename}", "w");
 	if (!$fd) {
-		printf("Error: cannot open {$g['varetc_path']}/{$filename} in system_generate_lighty_config().\n");
+		printf("Error: cannot open {$filename} in system_generate_lighty_config().\n");
 		return 1;
 	}
 	fwrite($fd, $lighty_config);

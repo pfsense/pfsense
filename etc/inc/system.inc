@@ -346,7 +346,7 @@ function system_webgui_start() {
 
 	/* non-standard port? */
 	if ($config['system']['webgui']['port'])
-		$portarg = "-p {$config['system']['webgui']['port']}";
+		$portarg = "{$config['system']['webgui']['port']}";
 	else
 		$portarg = "";
 

@@ -1882,77 +1882,67 @@ function setup_logging_interfaces() {
 
 function create_firewall_outgoing_rules_to_itself() {
 	global $config, $g;
+	
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "create_firewall_outgoing_rules_to_itself() being called $mt\n";
 	}	
+	
 	$i = 0;
 	$rule .= "# pass traffic from firewall -> out\n";
 	$rule .= "anchor \"firewallout\"\n";
 	$ifdescrs = array('wan', 'lan');
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
 		$ifdescrs['opt' . $j] = "opt" . $j;
+	
 	/* go through primary and optional interfaces */	
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		$return_gateway = $config['interfaces'][$ifname]['gateway'];
 		$ints = array();
 		$int = filter_translate_type_to_real_interface($ifname);
+		/* if the interface is pppoe, set the ng0 interface */
                 if ($config['interfaces'][$ifname]['ipaddr'] == "pppoe")
                         $int = "ng0";
 		$ip = find_interface_ip($int);
-		if($ip <> "") {
-			if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
-       				foreach ($config['shaper']['queue'] as $queue) {
-					/* XXX - billm: temp fix for pppoe, needs better fix */
-					if($config['interfaces'][$ifname]['ipaddr'] != "")
-						$rule .="pass out quick on {$int} all keep state tagged {$queue['name']} queue {$queue['name']} label \"let out anything from firewall host itself\"\n";
-					else
-						$rule .="pass out quick on {$int} all keep state tagged {$queue['name']} queue {$queue['name']} label \"let out anything from firewall host itself\"\n";
-				}
-			}
-			/* XXX - billm: temp fix for pppoe, needs better fix */
-			if($config['interfaces'][$ifname]['ipaddr'] != "")
-				$rule .="pass out quick on {$int} all keep state label \"let out anything from firewall host itself\"\n";
-			else
-				$rule .="pass out quick on {$int} all keep state label \"let out anything from firewall host itself\"\n";
+		if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
+			foreach ($config['shaper']['queue'] as $queue) 
+				$rule .="pass out quick on {$int} all keep state tagged {$queue['name']} queue {$queue['name']} label \"let out anything from firewall host itself\"\n";
 		}
-
+		$rule .="pass out quick on {$int} all keep state label \"let out anything from firewall host itself\"\n";
 	}
+	
 	/* is bridging turned on? */
 	for($x=0; $x<10; $x++) {
-		if(does_interface_exist("bridge{$x}") == true) {
+		if(does_interface_exist("bridge{$x}") == true) 
 			$rule .="pass out quick on bridge{$x} all keep state label \"let out anything from firewall host itself\"\n";
-		}
 	}
-
+	
 	/* netgraph pptp outgoing */
 	$n_pptp_units = $g['n_pptp_units'];
 	if($config['pptp']['n_pptp_units'] <> "")
 		$n_pptp_units = $config['pptp']['n_pptp_units'];	
 	for($x=0; $x<$n_pptp_units; $x++) {
-		if(does_interface_exist("ng{$x}") == true) {
+		if(does_interface_exist("ng{$x}") == true) 
 			$rule .="pass out quick on ng{$x} all keep state label \"let out anything from firewall host itself pptp\"\n";
-		}
 	}
-
+	
 	/* netgraph pppoe outgoing */
 	$n_pppoe_units = $g['n_pppoe_units'];
 	if($config['pppoe']['n_pppoe_units'] <> "")
 		$n_pppoe_units = $config['pppoe']['n_pppoe_units'];	
 	for($x=0; $x<$n_pppoe_units; $x++) {
-		if(does_interface_exist("ng{$x}") == true) {
+		if(does_interface_exist("ng{$x}") == true) 
 			$rule .="pass out quick on ng{$x} all keep state label \"let out anything from firewall host itself pppoe\"\n";
-		}
 	}
-
+	
 	/* setup outgoing gif tunnels */
 	$number_of_gifs = find_last_gif_device();
+	$number_of_gifs++;
 	for($x=0; $x<$number_of_gifs; $x++) {
-		if(does_interface_exist("gif{$x}") == true) {
+		if(does_interface_exist("gif{$x}") == true) 
 			$rule .="pass out quick on gif{$x} all keep state label \"let out anything from firewall host itself ipsec gif\"\n";
-		}
 	}
-
+	
 	return $rule;
 }
 

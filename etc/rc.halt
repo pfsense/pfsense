@@ -4,5 +4,5 @@
 
 sleep 1
 
-/sbin/shutdown -h now
+/sbin/shutdown -p now
 

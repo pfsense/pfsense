@@ -72,10 +72,11 @@
         
         /* after IP change, update DynDNS */
         if(!$config['system']['use_old_dyndns']) {
-                services_dyndns_configure();
+                touch("/tmp/update_dyndns");
         }
         
-	filter_configure();
+        /* signal filter reload */
+	touch("/tmp/filter_dirty");
         
         return 0;
 	

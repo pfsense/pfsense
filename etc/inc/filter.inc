@@ -1894,7 +1894,7 @@ function create_firewall_outgoing_rules_to_itself() {
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
 		$ifdescrs['opt' . $j] = "opt" . $j;
 	
-	/* go through primary and optional interfaces */	
+	/* go through primary and optional interfaces */
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		$return_gateway = $config['interfaces'][$ifname]['gateway'];
 		$ints = array();
@@ -1902,20 +1902,16 @@ function create_firewall_outgoing_rules_to_itself() {
 		/* if the interface is pppoe, set the ng0 interface */
 
 		$ip = find_interface_ip($int);
+		if ($config['interfaces'][$ifname]['ipaddr'] == "pppoe")
+			$int = " { " . filter_translate_type_to_real_interface($ifname) . " ng0 } ";
 		if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
 			foreach ($config['shaper']['queue'] as $queue) 
 				$rule .="pass out quick on {$int} all keep state tagged {$queue['name']} queue {$queue['name']} label \"let out anything from firewall host itself\"\n";
 		}
+                
+		/* first add a rule for the real interface, then for ng0 */
+		$rule .="pass out quick on {$int} all keep state label \"let out anything from firewall host itself\"\n";
 
-		/* need to physically let the traffic out still, even though we just tagged it */
-                if ($config['interfaces'][$ifname]['ipaddr'] == "pppoe") {
-			/* first add a rule for the real interface, then for ng0 */
-			$rule .="pass out quick on {$int} all keep state label \"let out anything from firewall host itself\"\n";
-                        $int = "ng0";
-			$rule .="pass out quick on {$int} all keep state label \"let out anything from firewall host itself\"\n";
-		} else {
-			$rule .="pass out quick on {$int} all keep state label \"let out anything from firewall host itself\"\n";
-		}
 	}
 	
 	/* is bridging turned on? */

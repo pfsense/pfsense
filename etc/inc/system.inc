@@ -515,7 +515,7 @@ EOD;
 
 function system_generate_lighty_config($filename, $cert, $key, $pid_file,
 	$port = 80, $document_root = "/usr/local/www/",
-	$cert_location = "cert.pem", $max_procs = 1,
+	$cert_location = "cert.pem", $max_procs = 2,
 	$max_requests = "1", $fast_cgi_enable = true) {
 
 	global $config, $g;

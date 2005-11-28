@@ -845,9 +845,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		
 		/* does the rule deal with a PPTP interface? */
 		if ($rule['interface'] == "pptp") {
-			if ($pptpdcfg['mode'] != "server") {
-				return "# mode != server " . $rule['descr'] . "\n";
-			}
+			if ($pptpdcfg['mode'] != "server") 
+				return "";
 			$nif = $g['n_pptp_units'];
 			if($config['pptp']['n_pptp_units'] <> "")
 				$nif = $config['pptp']['n_pptp_units'];

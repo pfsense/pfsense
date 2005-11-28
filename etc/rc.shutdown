@@ -17,3 +17,4 @@ HOME=/; export HOME
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 export PATH
 
+rm -rf /tmp/*

@@ -39,7 +39,6 @@ function sigkillbypid($pidfile, $sig) {
 	if (file_exists($pidfile)) {
 		$pid = trim(file_get_contents($pidfile));
 		mwexec("/bin/kill -s $sig {$pid}");
-		unlink_if_exists($pidfile);
 	} else {
 		mwexec("/bin/kill -s $sig {$pidfile}");
 	}

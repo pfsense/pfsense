@@ -853,7 +853,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			$ispptp = true;
 		} else if($rule['interface'] == "pppoe") {
 			if ($pppoecfg['mode'] != "server") {
-				return "# mode != server " . $rule['descr'] . "\n";
+				return "";
 			}
 			$nif = $g['n_pppoe_units'];
 			if($config['pppoe']['n_pppoe_units'] <> "")

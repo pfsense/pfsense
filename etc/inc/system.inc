@@ -529,7 +529,14 @@ function system_generate_lighty_config($filename, $cert, $key, $pid_file,
 		$lighty_port = $port;
 	else
 		$lighty_port = "80";
-	
+
+	$memory = get_memory();
+	$avail = $memory[0];
+
+	if($avail > 0 and $avail < 72) {
+		$fast_cgi_enable = false;
+	}
+		
 	if($fast_cgi_enable == true) {
 		$module = "\"mod_fastcgi\", \"mod_cgi\"";
 		$cgi_config = "";

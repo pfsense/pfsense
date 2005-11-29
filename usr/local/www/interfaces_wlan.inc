@@ -36,6 +36,7 @@ function wireless_config_init() {
 
 	$pconfig['standard'] = $optcfg['wireless']['standard'];
 	$pconfig['mode'] = $optcfg['wireless']['mode'];
+	$pconfig['protmode'] = $optcfg['wireless']['protmode'];
 	$pconfig['ssid'] = $optcfg['wireless']['ssid'];
 	$pconfig['stationname'] = $optcfg['wireless']['stationname'];
 	$pconfig['channel'] = $optcfg['wireless']['channel'];
@@ -136,6 +137,7 @@ function wireless_config_post() {
 
 		$optcfg['wireless']['standard'] = $_POST['standard'];
 		$optcfg['wireless']['mode'] = $_POST['mode'];
+		$optcfg['wireless']['protmode'] = $_POST['protmode'];
 		$optcfg['wireless']['ssid'] = $_POST['ssid'];
 		$optcfg['wireless']['stationname'] = $_POST['stationname'];
 		$optcfg['wireless']['channel'] = $_POST['channel'];
@@ -262,6 +264,19 @@ function wireless_config_print() {
 				<option <? if ($pconfig['mode'] == 'adhoc') echo "selected";?> value="adhoc">Ad-hoc (IBSS)</option>
 				<option <? if ($pconfig['mode'] == 'hostap') echo "selected";?> value="hostap">Access Point</option>
 			</select>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" class="vncellreq">802.11g OFDM Protection Mode</td>
+			<td class="vtable">
+			<select name="protmode" class="formfld" id="protmode">
+				<option <? if ($pconfig['protmode'] == 'off') echo "selected";?> value="off">Protection mode off</option>
+				<option <? if ($pconfig['protmode'] == 'cts') echo "selected";?> value="cts">Protection mode CTS to self</option>
+				<option <? if ($pconfig['protmode'] == 'rtscts') echo "selected";?> value="rtscts">Protection mode RTS and CTS</option>
+			</select>
+			<br/>
+			For IEEE 802.11g, use the specified technique for protecting OFDM frames in a mixed 11b/11g network.
+			<br/>
 			</td>
 		</tr>
 		<tr>

@@ -352,6 +352,9 @@ function system_webgui_start() {
 
 	if ($config['system']['webgui']['protocol'] == "https") {
 
+	if(!$config['system']['webgui']['port'])
+		$portarg = "443";
+
 		if ($config['system']['webgui']['certificate'] && $config['system']['webgui']['private-key']) {
 			$cert = base64_decode($config['system']['webgui']['certificate']);
 			$key = base64_decode($config['system']['webgui']['private-key']);
@@ -403,7 +406,7 @@ EOD;
 
 	/* generate lighttpd configuration */
 	system_generate_lighty_config("{$g['varetc_path']}/lighty-webConfigurator.conf",
-		$key, $cert, "lighty-webConfigurator.pid", $portarg, "/usr/local/www/");
+		$cert, $key, "lighty-webConfigurator.pid", $portarg, "/usr/local/www/");
 
 	/* attempt to start lighthttpd */
 	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");

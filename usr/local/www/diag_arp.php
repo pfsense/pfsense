@@ -178,6 +178,8 @@ function getHostName($mac,$ip)
 		return $dhcpmac[$mac];
 	else if ($dhcpip[$ip])
 		return $dhcpip[$ip];
+	else if(gethostbyaddr($ip) <> "" and gethostbyaddr($ip) <> $ip)
+		return gethostbyaddr($ip);
 	else 
 		return "&nbsp;";	
 }

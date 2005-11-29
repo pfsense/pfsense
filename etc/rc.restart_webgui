@@ -1,0 +1,12 @@
+#!/usr/local/bin/php -f
+
+<?php
+
+require("config.inc");
+require("functions.inc");
+
+mwexec("killall -9 lighttpd");
+
+system_webgui_start();
+
+?>

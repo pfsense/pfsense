@@ -94,6 +94,9 @@ case ${opmode} in
 10)
 	/usr/sbin/tcpdump -n -e -ttt -i pflog0
 	;;
+11)
+	/etc/rc.restart_webgui
+	;;
 98)
 	/etc/rc.initial.store_config_to_removable_device
 	;;

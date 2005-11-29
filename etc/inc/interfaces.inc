@@ -472,6 +472,9 @@ function interfaces_wireless_configure($if, $wlcfg) {
 	/* Set a/b/g standard */
 	$standard = "mode " . escapeshellarg($wlcfg['standard']);
 
+	/* Set 802.11g protection mode */
+	$protmode = "protmode " . escapeshellarg($wlcfg['protmode']);
+
 	/* set wireless channel value */
 	if($wlcfg['channel'])
 		$channel = "channel " . escapeshellarg($wlcfg['channel']);
@@ -633,6 +636,7 @@ EOD;
 	mwexec("$ifconfig $if" . " -mediaopt hostap,turbo");	// Fix bug with turbomode and reboot (hopefully)        
 	mwexec("$ifconfig $if" . " down"); 
 	mwexec("$ifconfig $if" . " " . $standard);
+	mwexec("$ifconfig $if" . " " . $protmode);
 	mwexec("$ifconfig $if" . " " . $channel);
 	mwexec("$ifconfig $if" . " " . $ssid);
 	mwexec("$ifconfig $if" . " " . $stationname);

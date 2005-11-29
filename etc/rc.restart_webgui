@@ -11,6 +11,6 @@ echo "Restarting webConfigurator...";
 
 system_webgui_start();
 
-echo " done.";
+echo " done.\n\n";
 
 ?>

@@ -194,7 +194,7 @@ EOD;
 
 		/* generate lighttpd configuration */
 		system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal.conf",
-			$key, $cert, "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/",
+			$cert, $key, "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/",
 				"cert-portal.pem", "1", $procs, $use_fastcgi);
 	
 		/* attempt to start lighttpd */

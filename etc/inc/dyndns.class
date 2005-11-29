@@ -263,6 +263,7 @@
 		function _checkStatus($data) {
 			log_error("DynDns: DynDns _checkStatus() starting.");
 			log_error("DynDns: Current Service: {$this->_dnsService}");
+			$successful_update = false;
 			switch ($this->_dnsService) {
 				case 'dyndns':
 					if (preg_match('/notfqdn/i', $data)) {
@@ -271,6 +272,7 @@
 						$status = "phpDynDNS: (Success) No Change In IP Address";
 					} else if (preg_match('/good/i', $data)) {
 						$status = "phpDynDNS: (Success) IP Address Changed Successfully! (".$this->_dnsIP.")";
+						$successful_update = true;
 					} else if (preg_match('/noauth/i', $data)) {
 						$status = "phpDynDNS: (Error) User Authorization Failed";
 					} else {
@@ -286,6 +288,7 @@
 						$status = "phpDynDNS: (Success) No Change In IP Address";
 					} else if (preg_match('/good/i', $data)) {
 						$status = "phpDynDNS: (Success) IP Address Changed Successfully!";
+						$successful_update = true;
 					} else if (preg_match('/noauth/i', $data)) {
 						$status = "phpDynDNS: (Error) User Authorization Failed";
 					} else {
@@ -301,6 +304,7 @@
 						$status = "phpDynDNS: (Success) No Change In IP Address";
 					} else if (preg_match('/good/i', $data)) {
 						$status = "phpDynDNS: (Success) IP Address Changed Successfully!";
+						$successful_update = true;
 					} else if (preg_match('/noauth/i', $data)) {
 						$status = "phpDynDNS: (Error) User Authorization Failed";
 					} else {
@@ -316,9 +320,11 @@
 					switch ($code) {
 						case 0:
 							$status = "phpDynDNS: (Success) IP address is current, no update performed.";
+							$successful_update = true;
 							break;
 						case 1:
 							$status = "phpDynDNS: (Success) DNS hostname update successful.";
+							$successful_update = true;
 							break;
 						case 2:
 							$status = "phpDynDNS: (Error) Hostname supplied does not exist.";
@@ -349,9 +355,11 @@
 							break;
 						case 11:
 							$status = "phpDynDNS: (Success) DNS group update is successful.";
+							$successful_update = true;
 							break;
 						case 12:
 							$status = "phpDynDNS: (Success) DNS group is current, no update performed.";
+							$successful_update = true;
 							break;
 						case 13:
 							$status = "phpDynDNS: (Error) Update client support not available for supplied hostname or group.";
@@ -381,7 +389,8 @@
 					} else if (preg_match('/TOOSOON/i', $data)) {
 						$status = "phpDynDNS: (Error) Too Soon: Not Enough Time Has Elapsed Since Last Update";
 					} else if (preg_match('/NOERROR/i', $data)) {
-						$status = "phpDynDNS: (Success) IP Updated Successfully!";					
+						$status = "phpDynDNS: (Success) IP Updated Successfully!";
+						$successful_update = true;
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";
 						log_error("phpDynDNS: PAYLOAD: {$data}");
@@ -395,6 +404,7 @@
 						$status = "phpDynDNS: (Error) Update Failed!";
 					} else if (preg_match('/{200,201}/i', $data)) {
 						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";
+						$successful_update = true;
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";
 						log_error("phpDynDNS: PAYLOAD: {$data}");
@@ -412,6 +422,7 @@
 						$status = "phpDynDNS: (Error) Hostname Error - The hostname (".$this->_dnsHost.") doesn't belong to you.";
 					} else if (preg_match('/200/i', $data)) {
 						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";
+						$successful_update = true;
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";
 						log_error("phpDynDNS: PAYLOAD: {$data}");
@@ -421,12 +432,22 @@
 				case 'ods':
 					if (preg_match("/299/i", $data)) {
 						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";
+						$successful_update = true;
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";
 						log_error("phpDynDNS: PAYLOAD: {$data}");
 						$this->_debug($data);
 					}
 					break;
+			}
+			
+			if($successful_update == true) {
+				/* Write WAN IP to cache file */
+				conf_mount_rw();
+				$file = fopen($this->_cacheFile, 'w');
+				fwrite($file, $wan_ip.':'.$currentTime);
+				fclose($file);
+				conf_mount_ro();
 			}
 			$this->status = $status;
 			log_error($status);
@@ -530,12 +551,6 @@
 			 *   new cache value and return true
                          */
 			if($needs_updating == TRUE) {
-				/* Write WAN IP to cache file */
-				conf_mount_rw();
-				$file = fopen($this->_cacheFile, 'w');
-				fwrite($file, $wan_ip.':'.$currentTime);
-				fclose($file);
-				conf_mount_ro();
 				return TRUE;
 			} else {
 				return FALSE;			

@@ -7,6 +7,10 @@ require("functions.inc");
 
 mwexec("killall -9 lighttpd");
 
+echo "Restarting webConfigurator...";
+
 system_webgui_start();
+
+echo " done.";
 
 ?>

@@ -1995,12 +1995,23 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 	if($g['booting'])
 		return;
 
+	foreach($sections as $section) {
+		/* we can't use array_intersect_key()
+		   due to the vip 'special case' */
+		if($section != 'virtualip') {
+			$xml[$section] = $config[$section];
+		} else {
+			$xml[$section] = backup_vip_config_section();
+		}
+	}
+	
 	$params = array(
 			XML_RPC_encode($password),
-			XML_RPC_encode($sections)
+			XML_RPC_encode($xml)
 		);
-	$msg = new XML_RPC_Message($method, $params);
+
 	log_error("Beginning XMLRPC sync to {$url}:{$port}.");
+	$msg = new XML_RPC_Message($method, $params);
 	$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
 	$cli->setCredentials('admin', $password);
 	if($g['debug']) $cli->setDebug(1);
@@ -2069,7 +2080,7 @@ function carp_sync_client() {
 			$sections[] = 'staticroutes';
 		    }		    
 		    if($carp['synchronizevirtualip'] != "" and is_array($config['virtualip'])) {
-			$sections[] = backup_vip_config_section();
+			$sections[] = 'virtualip';
 		    }
 		    if($carp['synchronizelb'] != "" and is_array($config['load_balancer'])) {
 			$sections[] = 'load_balancer';

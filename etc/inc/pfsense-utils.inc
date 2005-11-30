@@ -842,11 +842,7 @@ function backup_vip_config_section() {
 	}
 	$temp['vip'][] = $section;
     }
-    
-    /* generate configuration XML */
-    $xmlconfig = dump_xml_config($temp, "virtualip");
-    $xmlconfig = str_replace("<?xml version=\"1.0\"?>", "", $xmlconfig);
-    return $xmlconfig;
+    return $temp;
 }
 
 /*

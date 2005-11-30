@@ -1989,37 +1989,33 @@ function process_carp_rules() {
 	return $lines;
 }
 
-function carp_sync_xml($url, $password, $section, $section_xml, $method = 'pfsense.restore_config_section', $port) {
-
+function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsense.restore_config_section') {
 	global $config, $g;
-
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "carp_sync_xml() being called $mt\n";
-	}
 
 	if($g['booting'])
 		return;
 
 	$params = array(
-			new XML_RPC_Value($password, 'string'),
-			XML_RPC_encode($section),
-			XML_RPC_encode($section_xml)
+			XML_RPC_encode($password),
+			XML_RPC_encode($sections)
 		);
 	$msg = new XML_RPC_Message($method, $params);
-	log_error("begin synchronize XML configuration data to $url on port $port");
+	log_error("Beginning XMLRPC sync to {$url}:{$port}.");
 	$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
-	$cli->setCredentials($config['system']['username'], $password);
+	$cli->setCredentials('admin', $password);
+	if($g['debug']) $cli->setDebug(1);
+	/* send our XMLRPC message and timeout after 240 seconds */
 	$resp = $cli->send($msg, "240");
 	if(!$resp) {
-		log_error("A communication error occured while syncing configuration data with {$url}:{$port} - " . $cli->errstr);
-		file_notice("sync_settings", "A communication error occured while syncing configuration data with {$url}:{$port} - " . $cli->errstr, "Settings Sync", "");
+		$error = "A communications error occured while attempting XMLRPC sync with {$url}:{$port}.";
+		log_error($error);
+		file_notice("sync_settings", $error, "Settings Sync", "");
 	} elseif($resp->faultCode()) {
-		$error = "An error code was received while syncing configuration data with {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
+		$error = "An error code was received while attempting XMLRPC sync with {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
 		log_error($error);
 		file_notice("sync_settings", $error, "Settings Sync", "");	
 	} else {
-		log_error("Configuration data was successfully synced to {$url}:{$port}");
+		log_error("XMLRPC sync successfully completed with {$url}:{$port}.");
 	}
 }
  
@@ -2027,19 +2023,16 @@ function carp_sync_client() {
 
 	global $config, $g;
 
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "carp_sync_client() being called $mt\n";
-	}
-
 	if($g['booting'])
 		return;
 
-	if($config['installedpackages']['carpsettings']['config'] != "" and
-	  is_array($config['installedpackages']['carpsettings']['config'])) {
-	    $already_processed = 1;
+	if(is_array($config['installedpackages']['carpsettings']['config'])) {
 	    foreach($config['installedpackages']['carpsettings']['config'] as $carp) {
 		if($carp['synchronizetoip'] != "" ) {
+		    /*
+		     * XXX: The way we're finding the port right now is really suboptimal -
+		     *	    we can't assume that the other machine is setup identically.
+		     */
 		    if($config['system']['webgui']['protocol'] != "") {
 			$synchronizetoip = $config['system']['webgui']['protocol'];
 			$synchronizetoip .= "://";
@@ -2054,49 +2047,38 @@ function carp_sync_client() {
 			}
 	   	    }
 		    $synchronizetoip .= $carp['synchronizetoip'];
-		    $sections = array();
-		    $sections_xml = array();
 		    if($carp['synchronizerules'] != "" and is_array($config['filter'])) {
-			$sections_xml[] = new XML_RPC_Value(backup_config_section("filter"), 'string');
-			$sections[] = new XML_RPC_Value('filter', 'string');
+			$sections[] = 'filter';
 		    }
 		    if($carp['synchronizenat'] != "" and is_array($config['nat'])) {
-			$sections_xml[] = new XML_RPC_Value(backup_config_section("nat"), 'string');
-			$sections[] = new XML_RPC_Value('nat', 'string');
+			$sections[] = 'nat';
 		    }
 		    if($carp['synchronizealiases'] != "" and is_array($config['aliases'])) {
-			$sections_xml[] = new XML_RPC_Value(backup_config_section("aliases"), 'string');
-			$sections[] = new XML_RPC_Value('aliases', 'string');
+			$sections[] = 'aliases';
 		    }
 		    if($carp['synchronizedhcpd'] != "" and is_array($config['dhcpd'])) {
-			$sections_xml[] = new XML_RPC_Value(backup_config_section("dhcpd"), 'string');
-			$sections[] = new XML_RPC_Value('dhcpd', 'string');
+			$sections[] = 'dhcpd';
 		    }
 		    if($carp['synchronizewol'] != "" and is_array($config['wol'])) {
-			$sections_xml[] = new XML_RPC_Value(backup_config_section("wol"), 'string');
-			$sections[] = new XML_RPC_Value('wol', 'string');
+			$sections[] = 'wol';
 		    }
 		    if($carp['synchronizetrafficshaper'] != "" and is_array($config['shaper'])) {
-			$sections_xml[] = new XML_RPC_Value(backup_config_section("shaper"), 'string');
-			$sections[] = new XML_RPC_Value('shaper', 'string');
+			$sections[] = 'shaper';
 		    }
 		    if($carp['synchronizestaticroutes'] != "" and is_array($config['staticroutes'])) {
-			$sections_xml[] = new XML_RPC_Value(backup_config_section("staticroutes"), 'string');
-			$sections[] = new XML_RPC_Value('staticroutes', 'string');
+			$sections[] = 'staticroutes';
 		    }		    
 		    if($carp['synchronizevirtualip'] != "" and is_array($config['virtualip'])) {
-			$sections_xml[] = new XML_RPC_Value(backup_vip_config_section(), 'string');
-			$sections[] = new XML_RPC_Value('virtualip', 'string');
+			$sections[] = backup_vip_config_section();
 		    }
 		    if($carp['synchronizelb'] != "" and is_array($config['load_balancer'])) {
-			$sections_xml[] = new XML_RPC_Value(backup_config_section("load_balancer"), 'string');
-			$sections[] = new XML_RPC_Value('load_balancer', 'string');
+			$sections[] = 'load_balancer';
 		    }		    
 		    if(count($sections) > 0) {
-			    carp_sync_xml($synchronizetoip, $carp['password'], $sections, $sections_xml, 'pfsense.restore_config_section', $port);
+			    carp_sync_xml($synchronizetoip, $carp['password'], $sections, $port);
 			    $cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);
 			    $msg = new XML_RPC_Message('pfsense.filter_configure', array(new XML_RPC_Value($carp['password'], 'string')));
-			    $cli->setCredentials($config['system']['username'], $carp['password']);
+			    $cli->setCredentials('admin', $carp['password']);
 			    $cli->send($msg, "900");
 			    /* signal a carp reload */
 			    $msg = new XML_RPC_Message('pfsense.interfaces_carp_configure_xmlrpc', array(new XML_RPC_Value($carp['password'], 'string')));

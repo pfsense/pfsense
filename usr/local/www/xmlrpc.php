@@ -36,6 +36,7 @@ require_once("xmlrpc_server.inc");
 require_once("xmlrpc.inc");
 require_once("config.inc");
 require_once("functions.inc");
+require_once("array_intersect_key.inc");
 
 $xmlrpc_g = array(
 			"return" => array(
@@ -53,44 +54,41 @@ $XML_RPC_erruser = 200;
 
 /* EXPOSED FUNCTIONS */
 
-$backup_config_section_doc = 'XMLRPC wrapper for backup_config_section. This method must be called with two parameters: a string containing the local system\'s password followed by a string containing the section to be backed up.';
+$backup_config_section_doc = 'XMLRPC wrapper for backup_config_section. This method must be called with two parameters: a string containing the local system\'s password followed by an array containing the keys to be backed up.';
 $backup_config_section_sig = array(
 				array(
-					$XML_RPC_String, // First signature element is return value.
+					$XML_RPC_Struct, // First signature element is return value.
 					$XML_RPC_String,
-					$XML_RPC_String
+					$XML_RPC_Array
 				)
 			);
 
 function backup_config_section_xmlrpc($raw_params) {
-	global $xmlrpc_g;
+	global $config, $xmlrpc_g;
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
-	$val = backup_config_section($params[0]); 
+	$val = array_intersect_key($config, array_flip($params[0]));
 	return new XML_RPC_Response(XML_RPC_encode($val));
 }
 
 /*****************************/
 
-$restore_config_section_doc = 'XMLRPC wrapper for restore_config_section. This method must be called with three parameters: a string containing the local system\'s password, a string containing the section to be restored, and a string containing the returned value of backup_config_section() for that section. This function returns true upon completion.';
+$restore_config_section_doc = 'XMLRPC wrapper for restore_config_section. This method must be called with two parameters: a string containing the local system\'s password and an array to merge into the system\'s config. This function returns true upon completion.';
 $restore_config_section_sig = array(
 					array(
 						$XML_RPC_Boolean,
 						$XML_RPC_String,
-						$XML_RPC_Array,
-						$XML_RPC_Array
+						$XML_RPC_Struct
 					)
 				);
 
 function restore_config_section_xmlrpc($raw_params) {
-	global $xmlrpc_g;
+	global $config, $xmlrpc_g;
 	$params = xmlrpc_params_to_php($raw_params);
-	$i = 0;
 	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
-	foreach($params[0] as $section) {
-		restore_config_section($section, $params[1][$i]);
-		$i++;
-	}
+	$config = array_merge($config, $params[0]);
+	$mergedkeys = implode(",", array_keys($params[0]));
+	write_config("Merged in config ({$mergedkeys} sections) from XMLRPC client.");
 	return $xmlrpc_g['return']['true'];
 }
 

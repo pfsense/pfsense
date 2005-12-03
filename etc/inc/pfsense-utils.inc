@@ -1375,7 +1375,7 @@ function reload_all_sync() {
 	captiveportal_configure();
 
         /* reload the filter */
-	filter_configure();
+	filter_configure_sync();
 	
 	/* sync pw database */
 	conf_mount_rw();

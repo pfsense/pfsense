@@ -137,11 +137,13 @@ defCmdT("last 50 filter log entries","/usr/sbin/clog /var/log/filter.log 2>&1 | 
 defCmd("ls /conf");
 defCmd("ls /var/run");
 
+defCmd("/sbin/mount");
+
 defCmdT("cat {$g['tmp_path']}/rules.debug","cat {$g['tmp_path']}/rules.debug");
 
-defCmdT("config.xml","dumpconfigxml");
+defCmdT("VMStat", "vmstat -afimsz");
 
-defCmdT("Interrupts", "vmstat -i");
+defCmdT("config.xml","dumpconfigxml");
 
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];

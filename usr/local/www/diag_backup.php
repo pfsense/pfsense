@@ -155,8 +155,8 @@ if ($_POST) {
 							/* remove cache, we will force a config reload */
 							if(file_exists("/tmp/config.cache"))
 								unlink("/tmp/config.cache");
+							$config = parse_config(true);
 							if($m0n0wall_upgrade == true) {
-								$config = parse_config(true);
 								if($config['system']['gateway'] <> "") {
 									$config['interfaces']['wan']['gateway'] = $config['system']['gateway'];
 								}

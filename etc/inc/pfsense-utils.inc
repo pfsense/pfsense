@@ -1378,6 +1378,9 @@ function reload_all_sync() {
 	conf_mount_rw();
 	mwexec("/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd");
 	conf_mount_ro();
+
+	/* restart sshd */
+	touch("/tmp/start_sshd");
 	
 }
 

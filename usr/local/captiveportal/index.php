@@ -165,11 +165,7 @@ EOD;
 	else
 		$redirurl = "http://{$orig_host}{$orig_request}";
 	$htmltext = str_replace("\$PORTAL_REDIRURL\$", htmlspecialchars($redirurl), $htmltext);
-	
-	echo "<p>Orig_host = {$orig_host}       \n";
-	echo "<p>Orig_request = {$orig_request} \n";
-	echo "<p>redirurl = {$redirurl}         \n";
-	
+		
 	echo $htmltext;
 }
 

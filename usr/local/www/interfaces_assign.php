@@ -115,6 +115,8 @@ if ($_POST) {
 	
 		write_config();
 		
+		touch("/tmp/reload_interfaces");
+		
 	}
 }
 
@@ -270,9 +272,3 @@ include("head.inc");
 </body>
 </html>
 
-<?php
-
-if($_POST) {
-	/* reload all interfaces configuration */
-	reload_interfaces();
-}

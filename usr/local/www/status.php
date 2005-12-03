@@ -104,7 +104,11 @@ defCmdT("pfctl -si", "/sbin/pfctl -si");
 defCmdT("pfctl -sa"," /sbin/pfctl -sa");
 defCmdT("pfctl -s rules -vv","/sbin/pfctl -s rules -vv");
 defCmdT("pfctl -s queue -vv","/sbin/pfctl -s queue -vv");
+defCmdT("pfctl -s queue -vv","/sbin/pfctl -s nat -vv");
+
 defCmdT("pfctl -vsq","/sbin/pfctl -vsq");
+
+defCmdT("pfctl -vvs Tables","pfctl -vvs Tables");
 
 defCmdT("Load Balancer","/sbin/pfctl -a slb -s nat");
 

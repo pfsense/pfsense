@@ -329,6 +329,8 @@ function interfaces_carp_configure() {
 		$mt = microtime();
 		echo "interfaces_carp_configure() being called $mt\n";
 	}
+	if(!$config['installedpackages']['carpsettings']['config'])
+		return;	
 	if ($g['booting'] and !$debugging) {
 		echo "Configuring CARP interfaces...";
 		mute_kernel_msgs();

@@ -516,16 +516,28 @@ EOD;
         return $res;
 }
 
-function system_generate_lighty_config($filename, $cert, $key, $pid_file,
-	$port = 80, $document_root = "/usr/local/www/",
-	$cert_location = "cert.pem", $max_procs = 2,
-	$max_requests = "1", $fast_cgi_enable = true) {
+function system_generate_lighty_config($filename,
+	$cert,
+	$key,
+	$pid_file,
+	$port = 80,
+	$document_root = "/usr/local/www/",
+	$cert_location = "cert.pem",
+	$max_procs = 2,
+	$max_requests = "1",
+	$fast_cgi_enable = true,
+	$captive_portal = false) {
 
 	global $config, $g;
 
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_generate_lighty_config() being called $mt\n";
+	}
+
+	if($captive_portal == true)  {
+		$captiveportal = ",\"mod_rewrite\"";
+		$captive_portal_rewrite = "url.rewrite-once = ( \"(.*)\" => \"/index.php?redirurl=$1\" )";
 	}
 
 	if($port <> "")
@@ -589,7 +601,7 @@ EOD;
 ## modules to load
 server.modules              =   (
 				  "mod_access",
-                                  {$module}
+                                  {$module}{$captiveportal}
 				)
 
 ## Unused modules
@@ -615,6 +627,7 @@ server.modules              =   (
 ## a static document-root, for virtual-hosting take look at the
 ## server.virtual-* options
 server.document-root        = "{$document_root}"
+{$captive_portal_rewrite}
 
 ## where to send error-messages to
 #server.errorlog             = "/var/log/lighttpd.error.log"

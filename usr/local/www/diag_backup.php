@@ -167,7 +167,8 @@ if ($_POST) {
 								$reboot_needed = true;
 							}
 							if(isset($config['captiveportal']['enable'])) {
-								$savemsg = "The configuration has been restored.<p>The firewall is now rebooting.";
+								/* for some reason ipfw doesn't init correctly except on bootup sequence */
+								$savemsg = "The configuration has been restored.<p>The firewall is now rebooting due to captive portal.";
 								$reboot_needed = true;
 							}
 						} else {

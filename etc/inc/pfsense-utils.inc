@@ -1370,12 +1370,12 @@ function reload_all_sync() {
 
 	/* start ftp proxy helpers if they are enabled */
 	system_start_ftp_helpers();
-
-        /* reload the filter */
-	filter_configure();
 	
 	/* start the captive portal */
 	captiveportal_configure();
+
+        /* reload the filter */
+	filter_configure();
 	
 	/* sync pw database */
 	conf_mount_rw();

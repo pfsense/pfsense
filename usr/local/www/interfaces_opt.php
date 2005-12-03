@@ -211,12 +211,6 @@ if ($_POST) {
 		$optcfg['mtu'] = $_POST['mtu'];
 
 		write_config();
-
-		/* is this the captive portal interface? */
-		if (isset($config['captiveportal']['enable']) &&
-			($config['captiveportal']['interface'] == ('opt' . $index))) {
-			captiveportal_configure();
-		}
 		
 		touch("/tmp/reload_interfaces");
 		

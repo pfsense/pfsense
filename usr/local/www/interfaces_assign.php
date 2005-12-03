@@ -173,7 +173,7 @@ if ($_GET['act'] == "add") {
 	
 	write_config();
 
-	reload_interfaces();
+	touch("/tmp/reload_interfaces");
 
 	header("Location: interfaces_assign.php");
 	exit;

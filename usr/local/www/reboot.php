@@ -45,7 +45,6 @@ if ($_POST) {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
-<center>
 <?php if ($rebootmsg): echo print_info_box($rebootmsg); else: ?>
       <form action="reboot.php" method="post">
         <p><strong>Are you sure you want to reboot the system?</strong></p>
@@ -55,7 +54,6 @@ if ($_POST) {
         </p>
       </form>
 <?php endif; ?>
-</center>
 <?php include("fend.inc"); ?>
 </body>
 </html>

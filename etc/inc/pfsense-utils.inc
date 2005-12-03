@@ -1374,6 +1374,9 @@ function reload_all_sync() {
         /* reload the filter */
 	filter_configure();
 	
+	/* start the captive portal */
+	captiveportal_configure();
+	
 	/* sync pw database */
 	conf_mount_rw();
 	mwexec("/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd");

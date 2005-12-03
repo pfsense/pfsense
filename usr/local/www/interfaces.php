@@ -279,12 +279,8 @@ if ($_POST) {
 		write_config();
 
 		$retval = 0;
-		config_lock();
-		$retval = interfaces_wan_configure();
-		config_unlock();
 
-		/* setup carp interfaces */
-		interfaces_carp_configure();
+		touch("/tmp/reload_interfaces");
 
 		$savemsg = get_std_save_message($retval);
 	}

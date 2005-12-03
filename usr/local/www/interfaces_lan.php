@@ -293,18 +293,7 @@ function enable_change(enable_over) {
 
 if ($_POST['apply'] <> "") {
 
-	/*   Change these items late in the script
-	 *   so the script will fully complete to
-         *   the users web browser
-	 */
-
-	/* set up LAN interface */
-	interfaces_lan_configure();
-
-	interfaces_vlan_configure();
-	
-	/* setup carp interfaces */
-	interfaces_carp_configure();
+	touch("/tmp/reload_interfaces");
 
 	unlink($d_landirty_path);
 	

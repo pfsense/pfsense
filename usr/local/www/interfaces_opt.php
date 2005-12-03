@@ -212,17 +212,14 @@ if ($_POST) {
 
 		write_config();
 
-		$retval = interfaces_optional_configure();
-
 		/* is this the captive portal interface? */
 		if (isset($config['captiveportal']['enable']) &&
 			($config['captiveportal']['interface'] == ('opt' . $index))) {
 			captiveportal_configure();
 		}
 		
-		/* setup carp interfaces */
-		interfaces_carp_configure();
-
+		touch("/tmp/reload_interfaces");
+		
 		/* sync filter configuration */
 		filter_configure();
 

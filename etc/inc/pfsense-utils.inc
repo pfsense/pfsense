@@ -1223,6 +1223,9 @@ function reload_interfaces_sync() {
 	
 	/* enable routing */
 	system_routing_enable();
+	
+	/* setup captive portal if needed */
+	captiveportal_configure();	
 }
 
 /****f* pfsense-utils/reload_all

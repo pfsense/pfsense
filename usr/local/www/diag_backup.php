@@ -151,7 +151,7 @@ if ($_POST) {
 							conf_mount_rw();
 							touch("/needs_package_sync");
 							$reloadall = true;
-							$savemsg = "The configuration has been restored. The firewall is now reloading..";
+							$savemsg = "The configuration has been restored. The firewall is now reloading.";
 							/* remove cache, we will force a config reload */
 							if(file_exists("/tmp/config.cache"))
 								unlink("/tmp/config.cache");
@@ -164,6 +164,11 @@ if ($_POST) {
 								write_config();
 								conf_mount_ro();
 								$savemsg = "The m0n0wall configuration has been restored and upgraded to pfSense.<p>The firewall is now rebooting.";
+								$reboot_needed = true;
+							}
+							if(isset($config['captiveportal']['enable'])) {
+								$savemsg = "The configuration has been restored.<p>The firewall is now rebooting.";
+								$reboot_needed = true;
 							}
 						} else {
 							$input_errors[] = "The configuration could not be restored.";
@@ -278,6 +283,11 @@ include("head.inc");
 </html>
 
 <?php
+
+if($reboot_needed == true) {
+	mwexec("/etc/rc.reboot");
+	exit;
+}
 
 if($reloadall == true) {
 	

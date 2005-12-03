@@ -136,6 +136,7 @@ include("head.inc"); ?>
 				<tr>
 				<td valign="top" colspan="2">
 				<? if ($do_ping) {
+					echo "<font face='terminal' size='2'>";
 					echo("<strong>Ping output:</strong><br>");
 					echo('<pre>');
 					ob_end_flush();

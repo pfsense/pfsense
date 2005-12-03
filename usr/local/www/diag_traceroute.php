@@ -95,6 +95,7 @@ if (!isset($do_traceroute)) {
 				<td valign="top" colspan="2">
 				<p><span class="vexpl"><span class="red"><strong>Note: </strong></span> Traceroute may take a while to complete.  You may hit the Stop button on your browser at any time to see the progress of failed traceroutes.<p>
 				<? if ($do_traceroute) {
+					echo "<font face='terminal' size='2'>";
 					echo("<br><strong>Traceroute output:</strong><br>");
 					echo('<pre>');
 					ob_end_flush();

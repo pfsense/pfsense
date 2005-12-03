@@ -115,8 +115,6 @@ if ($_POST) {
 	
 		write_config();
 		
-		touch("/tmp/reload_interfaces");
-		
 	}
 }
 
@@ -272,3 +270,11 @@ include("head.inc");
 </body>
 </html>
 
+<?php
+
+	if ($_POST) {
+		if (!$input_errors)
+			touch("/tmp/reload_interfaces");
+	}
+
+?>

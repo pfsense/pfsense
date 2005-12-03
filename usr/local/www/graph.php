@@ -44,16 +44,16 @@ $fetch_link = "ifstats.cgi?$ifnum";
 
 //SVG attributes
 $attribs['axis']='fill="black" stroke="black"';
-$attribs['in']='fill="#435370" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="7"';
-$attribs['out']='fill="#8092B3" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="7"';
-$attribs['graph_in']='fill="none" stroke="#435370" stroke-opacity="0.8"';
-$attribs['graph_out']='fill="none" stroke="#8092B3" stroke-opacity="0.8"';
+$attribs['in']='fill="#FF0000" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="7"';
+$attribs['out']='fill="#000000" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="7"';
+$attribs['graph_in']='fill="none" stroke="#FF0000" stroke-opacity="0.8"';
+$attribs['graph_out']='fill="none" stroke="#000000" stroke-opacity="0.8"';
 $attribs['legend']='fill="black" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="4"';
-$attribs['graphname']='fill="#435370" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="8"';
+$attribs['graphname']='fill="#FF0000" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="8"';
 $attribs['grid_txt']='fill="gray" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="6"';
 $attribs['grid']='stroke="gray" stroke-opacity="0.5"';
-$attribs['switch_unit']='fill="#435370" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="4" text-decoration="underline"';
-$attribs['switch_scale']='fill="#435370" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="4" text-decoration="underline"';
+$attribs['switch_unit']='fill="#FF0000" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="4" text-decoration="underline"';
+$attribs['switch_scale']='fill="#FF0000" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="4" text-decoration="underline"';
 $attribs['error']='fill="blue" font-family="Arial" font-size="4"';
 $attribs['collect_initial']='fill="gray" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="4"';
 

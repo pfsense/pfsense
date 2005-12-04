@@ -80,7 +80,7 @@ foreach ($ifdescrs as $ifn => $ifd) {
 ?>
 </select>
 </form>
-<p><span class="red"><strong>Note:</strong></span> the <a href="http://www.adobe.com/svg/viewer/install/" target="_blank">Adobe SVG viewer</a> is required to view the graph.
+<p><span class="red"><strong>Note:</strong></span> the <a href="http://www.adobe.com/svg/viewer/install/" target="_blank">Adobe SVG viewer</a> or FireFox 1.5 is required to view the graph.
 <p><form method="post" action="status_graph.php">
 Graph Width: <input name="width" value="<? echo $width; ?>"> Height: <input name="height" value="<? echo $height; ?>"> <input type="submit" value="Change Graph Size"></p>
 </form>

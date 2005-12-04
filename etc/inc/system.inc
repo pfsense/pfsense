@@ -53,17 +53,11 @@ function system_resolvconf_generate($dynupdate = false) {
 
         if (isset($syscfg['dnsallowoverride'])) {
                 /* get dynamically assigned DNS servers (if any) */
-                $nfd = @fopen("{$g['varetc_path']}/nameservers.conf", "r");
-                if ($nfd) {
-                        while (!feof($nfd)) {
-                                $dnss = trim(fgets($nfd));
-                                if ($dnss) {
-                                        $resolvconf .= "nameserver $dnss\n";
-                                        $havedns = true;
-                                }
-                        }
-                        fclose($nfd);
-                }
+		$ns = get_nameservers();
+		foreach($ns as $nameserver) {
+			$resolvconf .= "nameserver $nameserver\n";
+			$havedns = true;			
+		}
         }
         if (!$havedns && is_array($syscfg['dnsserver'])) {
                 foreach ($syscfg['dnsserver'] as $ns) {
@@ -83,6 +77,19 @@ function system_resolvconf_generate($dynupdate = false) {
         }
 
         return 0;
+}
+
+function get_nameservers() {
+	global $config, $g;
+	$master_list = array();
+	$dns_lists = split("\n", `ls /var/etc/nameserver_*`);
+	foreach($dns_lists as $dns) {
+		$items = split("\n", file_get_contents($dns));
+		foreach($items as $item)
+			if($item <> "")
+				$master_list[] = $item;
+	}
+	return $master_list;
 }
 
 function system_hosts_generate() {

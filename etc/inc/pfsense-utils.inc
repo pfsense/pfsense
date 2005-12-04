@@ -1376,7 +1376,10 @@ function reload_all_sync() {
 
         /* reload the filter */
 	filter_configure_sync();
-	
+
+	/* bring up carp interfaces*/
+	interfaces_carp_bring_up_final();
+
 	/* sync pw database */
 	conf_mount_rw();
 	mwexec("/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd");

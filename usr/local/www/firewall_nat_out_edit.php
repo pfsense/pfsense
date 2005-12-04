@@ -133,7 +133,7 @@ if ($_POST) {
 	$osn = "any";
     } else {
 	$osn = gen_subnet($_POST['source'], $_POST['source_subnet']) . "/" . $_POST['source_subnet'];
-    }
+    }	
     
     /* check for existing entries */
     if ($_POST['destination_type'] == "any")
@@ -181,11 +181,10 @@ if ($_POST) {
         $natent['interface'] = $_POST['interface'];
 
 	/* if user has selected not nat, set it here */
-	if(isset($_POST['nonat'])) {
+	if(isset($_POST['nonat'])) 
 		$natent['nonat'] = true;
-	} else {
-		$natent['nonat'] = false;
-	}
+	else 
+		unset($natent['nonat']);
 
         if ($ext == "any")
             $natent['destination']['any'] = true;
@@ -281,7 +280,7 @@ function sourcesel_change() {
                   <td width="78%" class="vtable">
 			<select name="interface" class="formfld">
 				<?php
-				$interfaces = array('wan' => 'WAN');
+				$interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
 				for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 					$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 				}
@@ -357,13 +356,13 @@ function sourcesel_change() {
                       </tr>
                       <tr>
                         <td>Destination port:&nbsp;&nbsp;</td>
-                         <td><input name="dstport" type="text" class="formfld" id="dstport" size="5" value="<?=htmlspecialchars($pconfig['dstport']);?>"> (leave blank for any)</td>
+                        <td><input name="dstport" type="text" class="formfld" id="dstport" size="5" value="<?=htmlspecialchars($pconfig['dstport']);?>"> (leave blank for any)</td>
                       </tr>
                     </table>
 		  </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncell">Target</td>
+                  <td width="22%" valign="top" class="vncell">Translation</td>
                   <td width="78%" class="vtable">
 			<table border="0" cellspacing="0" cellpadding="0">
 			<tr>
@@ -401,7 +400,7 @@ function sourcesel_change() {
                   <td width="78%" class="vtable">
                     <input name="nosync" type="checkbox" class="formfld" id="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>>
 		  </td>
-                </tr>		
+                </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable">

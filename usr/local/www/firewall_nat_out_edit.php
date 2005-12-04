@@ -63,6 +63,7 @@ if (isset($id) && $a_out[$id]) {
 		$pconfig['interface'] = "wan";
     $pconfig['descr'] = $a_out[$id]['descr'];
     $pconfig['nonat'] = $a_out[$id]['nonat'];
+    $pconfig['nosync'] = isset($a_out[$id]['nosync']);
 } else {
     $pconfig['source_subnet'] = 24;
     $pconfig['destination'] = "any";
@@ -205,6 +206,11 @@ if ($_POST) {
 		else
 			$a_out[] = $natent;
 	}
+
+	if($_POST['nosync'] <> "")
+		$natent['nosync'] = true;
+	else
+		unset($natent['nosync']);
 
         touch($d_natconfdirty_path);
 
@@ -390,6 +396,12 @@ function sourcesel_change() {
 			</table>
 		  </td>
                 </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncell">No XMLRPC Sync</td>
+                  <td width="78%" class="vtable">
+                    <input name="nosync" type="text" class="formfld" id="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>>
+		  </td>
+                </tr>		
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable">

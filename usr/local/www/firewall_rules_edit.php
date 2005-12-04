@@ -93,6 +93,8 @@ if (isset($id) && $a_filter[$id]) {
         $pconfig['statetype'] = $a_filter[$id]['statetype'];
 	$pconfig['statetimeout'] = $a_filter[$id]['statetimeout'];
 	
+	$pconfig['nosync'] = isset($a_filter[$id]['nosync']);	
+
 	/* advanced - new connection per second banning*/
 	$pconfig['max-src-conn-rate'] = $a_filter[$id]['max-src-conn-rate'];
 	$pconfig['max-src-conn-rates'] = $a_filter[$id]['max-src-conn-rates'];
@@ -258,7 +260,13 @@ if ($_POST) {
 		$filterent['statetimeout'] = $_POST['statetimeout'];
 		$filterent['statetype'] = $_POST['statetype'];
 		$filterent['os'] = $_POST['os'];
-		
+
+		/* Nosync directive - do not xmlrpc sync this item */
+		if($_POST['nosync'] <> "") 
+			$filterent['nosync'] = true;
+		else
+			unset($filterent['nosync']);
+
 		/* unless both values are provided, unset the values - ticket #650 */
 		if($_POST['max-src-conn-rate'] <> "" and $_POST['max-src-conn-rates'] <> "") {
 			$filterent['max-src-conn-rate'] = $_POST['max-src-conn-rate'];
@@ -676,6 +684,12 @@ include("head.inc");
 				<p><strong>Leave blank for default.  Amount is in seconds.</strong></p>
 			</td>
 		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">No XMLRPC Sync</td>
+			<td width="78%" class="vtable">
+				<input type="checkbox" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>>
+			</td>
+		</tr>		
 <?php
 			/* build a list of gateways */
 			$gateways = array();

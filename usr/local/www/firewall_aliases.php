@@ -101,13 +101,12 @@ include("head.inc");
   </td>
   <td class="listr" ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
       <?php
-	$address = htmlspecialchars($alias['address']);
-	$address = explode(" ", $address);
-	$isfirst = 0;
-	foreach ($address as $addy) {
-		if($isfirst == 1) echo "<br>";
-		echo $addy;
-		$isfirst = 1;
+	$addresses = implode(", ", array_slice(explode(" ", $alias['address']), 0, 10));
+	echo $addresses;
+	if(count($addresses) < 10) {
+		echo ".";
+	} else {
+		echo "...";
 	}
     ?>
   </td>
@@ -131,6 +130,7 @@ include("head.inc");
     <table border="0" cellspacing="0" cellpadding="1">
       <tr>
         <td valign="middle"><a href="firewall_aliases_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="add a new alias"></a></td>
+	<td valign="middle"><a href="firewall_aliases_import.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_import_alias.gif" width="17" height="17" border="0" title="import aliases from list"></a></td>
       </tr>
     </table>
   </td>

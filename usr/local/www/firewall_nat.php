@@ -235,11 +235,6 @@ include("head.inc");
                       </tr>
                     </table></td>
                 </tr>
-        <tr><td colspan="8"><p><span class="vexpl"><span class="red"><strong>Note:<br>
-                      </strong></span>It is not possible to access NATed services
-                      using the WAN IP address from within the LAN (or an optional
-                      network).</span></p></td>
-		    </tr>
 	</table>
 	</div>
 	</td>

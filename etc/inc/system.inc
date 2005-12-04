@@ -82,7 +82,7 @@ function system_resolvconf_generate($dynupdate = false) {
 function get_nameservers() {
 	global $config, $g;
 	$master_list = array();
-	$dns_lists = split("\n", `ls /var/etc/nameserver_*`);
+	$dns_lists = split("\n", `ls /var/etc/nameserver_* 2>/dev/null`);
 	foreach($dns_lists as $dns) {
 		$items = split("\n", file_get_contents($dns));
 		foreach($items as $item)

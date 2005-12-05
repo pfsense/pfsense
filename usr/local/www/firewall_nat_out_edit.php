@@ -398,7 +398,7 @@ function sourcesel_change() {
                   <td width="22%" valign="top" class="vncell">No XMLRPC Sync</td>
                   <td width="78%" class="vtable">
                     <input name="nosync" type="checkbox" class="formfld" id="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
-		    HINT: This prevents the rule from automatically syncing to other carp memebers.
+		    HINT: This prevents the rule from automatically syncing to other carp members.
 		  </td>
                 </tr>
                 <tr>

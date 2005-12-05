@@ -145,6 +145,35 @@ function enable_hardware_offloading($interface) {
     return;
 }
 
+/****f* pfsense-utils/is_alias_inuse
+ * NAME
+ *   checks to see if an alias is currently in use by a rule
+ * INPUTS
+ *   
+ * RESULT
+ *   true or false
+ * NOTES
+ *   
+ ******/
+function is_alias_inuse($alias) {
+    global $g, $config;
+    /* loop through firewall rules looking for alias in use */
+    foreach($config['filter']['rule'] as $rule) {
+	if($rule['source']['address'] == $alias)
+	    return true;
+	if($rule['destination']['address'] == $alias)
+	    return true;
+    }
+    /* loop through nat rules looking for alias in use */
+    foreach($config['nat']['rule'] as $rule) {
+	if($rule['source']['address'] == $alias)
+	    return true;
+	if($rule['destination']['address'] == $alias)
+	    return true;
+    }
+    return false;
+}
+
 /****f* pfsense-utils/setup_polling_defaults
  * NAME
  *   sets up sysctls for pollingS

@@ -145,8 +145,10 @@ if ($_POST) {
 		else
 			$a_aliases[] = $alias;
 
+		touch($d_aliasesdirty_path);
+
 		write_config();
-		
+
 		filter_configure();
 
 		header("Location: firewall_aliases.php");
@@ -250,13 +252,23 @@ rowtype[2] = "select";
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_aliases_edit.php" method="post" name="iform" id="iform">
+              <?display_topbar()?>
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
+<?php if(is_alias_inuse($pconfig['name']) == true): ?>
+                <tr>
+                  <td valign="top" class="vncellreq">Name</td>
+                  <td class="vtable"> <input name="name" type="hidden" class="formfld" id="name" size="40" value="<?=htmlspecialchars($pconfig['name']);?>">
+		  <?php echo $pconfig['name']; ?>
+                    <p><span class="vexpl">NOTE: This alias is in use so the name may not be modified!</span></td>
+                </tr>
+<?php else: ?>
                 <tr>
                   <td valign="top" class="vncellreq">Name</td>
                   <td class="vtable"> <input name="name" type="text" class="formfld" id="name" size="40" value="<?=htmlspecialchars($pconfig['name']);?>">
                     <br> <span class="vexpl">The name of the alias may only consist
                     of the characters a-z, A-Z and 0-9.</span></td>
                 </tr>
+<?php endif; ?>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable"> <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">

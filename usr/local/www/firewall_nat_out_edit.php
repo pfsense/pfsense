@@ -266,7 +266,6 @@ function sourcesel_change() {
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_nat_out_edit.php" method="post" name="iform" id="iform">
-              <?display_topbar()?>
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 	        <tr>
                   <td width="22%" valign="top" class="vncellreq">No nat (NOT)</td>

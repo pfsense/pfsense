@@ -121,7 +121,6 @@ include("head.inc");
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="vpn_pppoe_users_edit.php" method="post" name="iform" id="iform">
-              <?display_topbar()?>
               <div id="mainarea">
 	      <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr> 

@@ -252,7 +252,6 @@ rowtype[2] = "select";
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_aliases_edit.php" method="post" name="iform" id="iform">
-              <?display_topbar()?>
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 <?php if(is_alias_inuse($pconfig['name']) == true): ?>
                 <tr>

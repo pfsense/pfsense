@@ -207,6 +207,7 @@
 				case 'zoneedit':
 					$needsIP = FALSE;
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 					curl_setopt($ch, CURLOPT_URL, 'https://dynamic.zoneedit.com/auth/dynamic.html?host='.$this->_dnsHost.'&dnsto='.$this->_dnsIP);
 					$data = curl_exec($ch);
 					if (@curl_error($ch)) log_error("Curl errror occured: " . curl_error($ch));

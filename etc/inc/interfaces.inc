@@ -495,7 +495,7 @@ function interfaces_wireless_configure($if, $wlcfg) {
 	if ($wlcfg['stationname'])
 		$stationname = "stationname " . escapeshellarg($wlcfg['stationname']);
 	else
-		$stationname = "pfsense";
+		$stationname = "stationname pfsense";
 		
 	/* Set wireless hostap mode */
 	if ($wlcfg['mode'] == "hostap")

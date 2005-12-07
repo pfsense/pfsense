@@ -99,7 +99,7 @@ if(isset($config['dnsmasq']['enable'])) {
 }
 
 if(isset($config['captiveportal']['enable'])) {
-	$pconfig['name'] = "mini_httpd";
+	$pconfig['name'] = "lighttpd";
 	$pconfig['description'] = "Captive Portal";
 	$services[] = $pconfig;
 	$pconfig = "";

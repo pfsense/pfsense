@@ -25,7 +25,6 @@ if (($_POST['submit'] == "Download") && file_exists($_POST['dlPath'])) {
 }
 
 require("guiconfig.inc");
-require("head.inc");
 
 conf_mount_rw();
 
@@ -52,7 +51,6 @@ $arrDT   = localtime();
 $intYear = $arrDT[5] + 1900;
 
 $pgtitle = "Diagnostics: Execute command";
-$closehead = false;
 include("head.inc");
 ?>
 
@@ -232,10 +230,6 @@ if (!isBlank($_POST['txtPHPCommand'])) {
          <input type="button"  class="button" value="Clear" onClick="return Reset_onClick( this.form );">
       </td>
     </tr>
-    <tr>
-      <td height="8"></td>
-      <td></td>
-    </tr>
 	<tr>
 	  <td colspan="2" valign="top" height="16"></td>
 	</tr>
@@ -284,7 +278,7 @@ if (!isBlank($_POST['txtPHPCommand'])) {
       <td valign="top" class="label">
          <input type="submit" class="button" value="Execute">
 	 <p>
-	 <b>Example:</b>   interfaces_carp_bring_up_final();
+	 <strong>Example:</strong>   interfaces_carp_bring_up_final();
       </td>
     </tr>
     

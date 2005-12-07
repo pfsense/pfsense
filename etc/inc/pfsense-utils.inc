@@ -1018,12 +1018,15 @@ function rmdir_recursive($path,$follow_links=false) {
  *     [0]real and [1]available
  */
 function get_memory() {
-        $mem = `cat /var/log/dmesg.boot | grep memory`;
-        if (preg_match_all("/real memory  = .* \((.*) MB/", $mem, $matches))
-                $real = $matches[1];
-        if (preg_match_all("/avail memory = .* \((.*) MB/", $mem, $matches))
-                $avail = $matches[1];
-        return array($real[0],$avail[0]);
+	if(file_exists("cat /var/log/dmesg.boot")) {
+		$mem = `cat /var/log/dmesg.boot | grep memory`;
+		if (preg_match_all("/real memory  = .* \((.*) MB/", $mem, $matches))
+			$real = $matches[1];
+		if (preg_match_all("/avail memory = .* \((.*) MB/", $mem, $matches))
+			$avail = $matches[1];
+		return array($real[0],$avail[0]);
+	}
+	return array("64","64");
 }
 
 

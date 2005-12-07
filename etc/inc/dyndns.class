@@ -403,7 +403,7 @@
 				case 'zoneedit':
 					if (preg_match('/799/i', $data)) {
 						$status = "phpDynDNS: (Error 799) Update Failed!";				
-					} else if (preg_match('/700}/i', $data)) {
+					} else if (preg_match('/700/i', $data)) {
 						$status = "phpDynDNS: (Error 700) Update Failed!";
 					} else if (preg_match('/200/i', $data)) {
 						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";

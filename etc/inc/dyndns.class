@@ -400,11 +400,16 @@
 				case 'hn':
 					break;
 				case 'zoneedit':
-					if (preg_match('/{700,799}/i', $data)) {
-						$status = "phpDynDNS: (Error) Update Failed!";
-					} else if (preg_match('/{200,201}/i', $data)) {
+					if (preg_match('/799/i', $data)) {
+						$status = "phpDynDNS: (Error 799) Update Failed!";				
+					} else if (preg_match('/700}/i', $data)) {
+						$status = "phpDynDNS: (Error 700) Update Failed!";
+					} else if (preg_match('/200/i', $data)) {
 						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";
 						$successful_update = true;
+					} else if (preg_match('/201/i', $data)) {
+						$status = "phpDynDNS: (Success) IP Address Updated Successfully!";
+						$successful_update = true;						
 					} else {
 						$status = "phpDynDNS: (Unknown Response)";
 						log_error("phpDynDNS: PAYLOAD: {$data}");

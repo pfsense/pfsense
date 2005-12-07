@@ -570,6 +570,9 @@ function filter_nat_rules_generate() {
 		$natrules .= "rdr on $wanif proto ipv6 from any to any -> {$config['diag']['ipv6nat']['ipaddr']}\n";
 	}
 
+	if(file_exists("/var/etc/inetd.conf"))
+		mwexec("rm /var/etc/inetd.conf");
+
 	if (isset($config['nat']['rule'])) {
 		$natrules .= "# NAT Inbound Redirects\n";
 		

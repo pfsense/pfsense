@@ -123,7 +123,6 @@
 				case 'dyndns':
 					$needsIP = FALSE;
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-					curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					curl_setopt($ch, CURLOPT_URL, 'https://members.dyndns.org/nic/update?hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP.'&wildcard='.$this->_dnsWildcard.'&mx='.$this->_dnsMX.'&backmx=NO');
 					$data = curl_exec($ch);
@@ -134,7 +133,6 @@
 				case 'dyndns-static':
 					$needsIP = FALSE;
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-					curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					curl_setopt($ch, CURLOPT_URL, 'https://members.dyndns.org/nic/update?system=statdns&hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP.'&wildcard='.$this->_dnsWildcard.'&mx='.$this->_dnsMX.'&backmx=NO');
 					$data = curl_exec($ch);
@@ -145,7 +143,6 @@
 				case 'dyndns-custom':
 					$needsIP = FALSE;
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-					curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					curl_setopt($ch, CURLOPT_URL, 'https://members.dyndns.org/nic/update?system=custom&hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP.'&wildcard='.$this->_dnsWildcard.'&mx='.$this->_dnsMX.'&backmx=NO');
 					$data = curl_exec($ch);
@@ -170,7 +167,6 @@
 					$post_data['hostname'] = $this->_dnsHost;
 					$post_data['submit'] = 'Update';
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-					curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 					curl_setopt($ch, CURLOPT_URL, 'https://members.dhs.org/nic/hosts');
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
@@ -182,7 +178,6 @@
 				case 'noip':
 					$needsIP = TRUE;
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-					curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 					curl_setopt($ch, CURLOPT_URL, 'http://dynupdate.no-ip.com/dns?username='.$this->_dnsUser.'&password='.$this->_dnsPass.'&hostname='.$this->_dnsHost.'&ip='.$this->_dnsIP);
 					$data = curl_exec($ch);
 					if (@curl_error($ch)) log_error("Curl errror occured: " . curl_error($ch));
@@ -192,7 +187,6 @@
 				case 'easydns':
 					$needsIP = TRUE;
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-					curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					curl_setopt($ch, CURLOPT_URL, 'http://members.easydns.com/dyn/dyndns.php?hostname='.$this->_dnsHost.'&myip='.$this->_dnsIP.'&wildcard='.$this->_dnsWildcard.'&mx='.$this->_dnsMX.'&backmx='.$this->_dnsBackMX);
 					$data = curl_exec($ch);
@@ -203,7 +197,6 @@
 				case 'hn':
 					$needsIP = TRUE;
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-					curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
 					curl_setopt($ch, CURLOPT_URL, 'http://dup.hn.org/vanity/update?ver=1&IP='.$this->_dnsIP);
 					$data = curl_exec($ch);
@@ -214,7 +207,6 @@
 				case 'zoneedit':
 					$needsIP = FALSE;
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-					curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 					curl_setopt($ch, CURLOPT_URL, 'https://dynamic.zoneedit.com/auth/dynamic.html?host='.$this->_dnsHost.'&dnsto='.$this->_dnsIP);
 					$data = curl_exec($ch);
 					if (@curl_error($ch)) log_error("Curl errror occured: " . curl_error($ch));

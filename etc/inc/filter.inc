@@ -699,28 +699,28 @@ function filter_nat_rules_generate() {
 					if($extport[0] - $range_end > 500) {
 						$range_end = $extport[0]+1;
 						log_error("Not installing nat reflection rules for a port range > 500");
-					}
-						
-					/* only install reflection rules for < 19991 items */
-					if($starting_localhost_port < 19991) {
-						for($x=$extport[0]; $x<$range_end; $x++) {
-							
-							if($rule['protocol'] == "tcp/udp") {
-								$protocol = "{ tcp udp }";
-								fwrite($fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait\tnobody\t/usr/bin/nc nc -w 20 {$target} {$x}\n");
-							} else {
-								$protocol = $rule['protocol'];
-								fwrite($fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait\tnobody\t/usr/bin/nc nc -w 20 {$target} {$x}\n");
-							}
-							
-							$natrules .=
-							  "rdr on {$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
-							
-							$starting_localhost_port++;
-							
-							if($starting_localhost_port > 19990) {
-								log_error("Not installing nat reflection rules. Maximum 19,990 reached.");
-								$x = $range_end+1;
+					} else {					
+						/* only install reflection rules for < 19991 items */
+						if($starting_localhost_port < 19991) {
+							for($x=$extport[0]; $x<$range_end; $x++) {
+								
+								if($rule['protocol'] == "tcp/udp") {
+									$protocol = "{ tcp udp }";
+									fwrite($fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait\tnobody\t/usr/bin/nc nc -w 20 {$target} {$x}\n");
+								} else {
+									$protocol = $rule['protocol'];
+									fwrite($fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait\tnobody\t/usr/bin/nc nc -w 20 {$target} {$x}\n");
+								}
+								
+								$natrules .=
+								  "rdr on {$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
+								
+								$starting_localhost_port++;
+								
+								if($starting_localhost_port > 19990) {
+									log_error("Not installing nat reflection rules. Maximum 1,000 reached.");
+									$x = $range_end+1;
+								}
 							}
 						}
 					}

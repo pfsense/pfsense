@@ -361,7 +361,7 @@ include("fbegin.inc"); ?>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input name="autoadd" type="checkbox" id="autoadd" value="yes">
+                    <input name="autoadd" type="checkbox" id="autoadd" value="yes" CHECKED>
                     <strong>Auto-add a firewall rule to permit traffic through
                     this NAT rule</strong></td>
                 </tr><?php endif; ?>

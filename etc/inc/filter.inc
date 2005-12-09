@@ -644,8 +644,8 @@ function filter_nat_rules_generate() {
 							$external_address = find_interface_ip(get_real_wan_interface());
 						/* install a pftpx helper, do not set a rule */
 						mwexec("/usr/local/sbin/pftpx -f {$target} -b {$external_address} -c 21 -g 21");
-						$dontinstallrdr = true;
 					}
+					$dontinstallrdr = true;
 				}
 			}
 

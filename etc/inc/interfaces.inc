@@ -305,6 +305,7 @@ function interfaces_optional_configure_if($opti) {
 			/* bring up interfaces */
 			mwexec("/sbin/ifconfig {$config['interfaces'][$optcfg['bridge']]['if']} up");
 			mwexec("/sbin/ifconfig {$optcfg['if']} up");
+			mwexec("/sbin/ifconfig bridge{$bridges_total} up");
 
 			
 		} else {

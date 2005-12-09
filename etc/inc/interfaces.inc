@@ -149,6 +149,7 @@ function interfaces_lan_configure() {
 		/* bring up interfaces */
 		mwexec("/sbin/ifconfig {$config['interfaces'][$lancfg['bridge']]['if']} up");
 		mwexec("/sbin/ifconfig {$lancfg['if']} up");
+		mwexec("/sbin/ifconfig bridge{$bridges_total} up");
 	}
 	
 	/* media */

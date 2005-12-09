@@ -38,6 +38,19 @@ if (!is_array($config['wol']['wolentry'])) {
 wol_sort();
 $a_wol = &$config['wol']['wolentry'];
 
+if($_GET['wakeall'] <> "") {
+	$i = 0;
+	$savemsg = "";
+	foreach ($a_wol as $wolent) {
+		$mac = $wolent['mac'];
+		$if = $wolent['interface'];
+		$bcip = gen_subnet_max($config['interfaces'][$if]['ipaddr'],
+			$config['interfaces'][$if]['subnet']);
+		mwexec("/usr/local/bin/wol -i {$bcip} {$mac}");
+		$savemsg .= "Sent magic packet to {$mac}.<br>";
+	}
+}
+
 if ($_POST || $_GET['mac']) {
 	unset($input_errors);
 
@@ -58,19 +71,6 @@ if ($_POST || $_GET['mac']) {
 		$input_errors[] = "A valid MAC address must be specified.";
 	if (!$if)
 		$input_errors[] = "A valid interface must be specified.";
-
-	if($_GET['wakeall'] <> "") {
-		$i = 0;
-		$savemsg = "";
-		foreach ($a_wol as $wolent) {
-			$mac = $wolent['mac'];
-			$if = $wolent['interface'];
-			$bcip = gen_subnet_max($config['interfaces'][$if]['ipaddr'],
-				$config['interfaces'][$if]['subnet']);
-			mwexec("/usr/local/bin/wol -i {$bcip} {$mac}");
-			$savemsg .= "Sent magic packet to {$mac}.<br>";
-		}
-	}
 
 	if (!$input_errors) {
 		/* determine broadcast address */

@@ -314,7 +314,7 @@ function enable_change(whichone) {
                 <tr> 
   		  <td colspan="2" valign="top" class="optsect_t">
   			<table border="0" cellspacing="0" cellpadding="0" width="100%">
-  			<tr><td class="optsect_s"><strong>Enable SNMP Traps</strong></td>
+  			<tr><td class="optsect_s"><strong>SNMP Traps</strong></td>
 			<td align="right" class="optsect_s"><input name="trapenable" type="checkbox" value="yes" <?php if ($pconfig['trapenable']) echo "checked"; ?> onClick="enable_change(this)"> <strong>Enable</strong></td></tr>
   			</table></td>
                 </tr>
@@ -337,11 +337,28 @@ function enable_change(whichone) {
                 </tr>
 
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Trap server port </td>
+                  <td width="22%" valign="top" class="vncellreq">Enter the SNMP trap string</td>
                   <td width="78%" class="vtable">
                     <input name="trapstring" type="text" class="formfld" id="trapstring" size="40" value="<?=htmlspecialchars($pconfig['trapstring']);?>">
                     <br>Trap string</br>
 		  </td>
+                </tr>
+
+                <tr> 
+                  <td width="22%" valign="top">&nbsp;</td>
+                  <td width="78%"> 
+                    <input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change(true)"> 
+                  </td>
+                </tr>
+
+		<tr><td>&nbsp;</td></tr>
+
+                <tr> 
+  		  <td colspan="2" valign="top" class="optsect_t">
+  			<table border="0" cellspacing="0" cellpadding="0" width="100%">
+  			<tr><td class="optsect_s"><strong>Modules</strong></td>
+			<td align="right" class="optsect_s">&nbsp;</td></tr>
+  			</table></td>
                 </tr>
 
 		<tr>

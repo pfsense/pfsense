@@ -89,6 +89,12 @@ function get_nameservers() {
 			if($item <> "")
 				$master_list[] = $item;
 	}
+	if(!file_exists("/var/etc/nameservers.conf"))
+		return $master_list;
+	$dns = `cat /var/etc/nameservers.conf`;
+	$dns_s = split("\n", $dns);
+	foreach($dns_s as $dns) 
+		$master_list[] = $dns;	
 	return $master_list;
 }
 

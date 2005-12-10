@@ -53,10 +53,15 @@ function get_dns_servers() {
 		if (preg_match("/nameserver (.*)/", $dns, $matches))
 			$dns_servers[] = $matches[1];		
 	}
+	$dns = `cat /var/etc/nameservers.conf`;
+	$dns_s = split("\n", $dns);
+	foreach($dns_s as $dns) {
+		if (preg_match("/nameserver (.*)/", $dns, $matches))
+			$dns_servers[] = $matches[1];		
+	}
 	return $dns_servers;
 }
 
- 	
 /****f* pfsense-utils/log_error
 * NAME
 *   log_error  - Sends a string to syslog.

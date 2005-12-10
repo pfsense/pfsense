@@ -53,12 +53,6 @@ function get_dns_servers() {
 		if (preg_match("/nameserver (.*)/", $dns, $matches))
 			$dns_servers[] = $matches[1];		
 	}
-	if(!file_exists("/var/etc/nameservers.conf"))
-		return $dns_servers;
-	$dns = `cat /var/etc/nameservers.conf`;
-	$dns_s = split("\n", $dns);
-	foreach($dns_s as $dns) 
-		$dns_servers[] = $dns;
 	return $dns_servers;
 }
 

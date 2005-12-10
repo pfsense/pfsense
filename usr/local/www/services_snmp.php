@@ -365,7 +365,9 @@ function enable_change(whichone) {
 		  <td width="22%" valign="top" class="vncellreq">SNMP Modules</td>
 		  <td width="78%" class="vtable">
 		    <input name="mibii" type="checkbox" id="mibii" value="yes" <?php if ($pconfig['mibii']) echo "checked"; ?> >MibII
+		    <br>
 		    <input name="netgraph" type="checkbox" id="netgraph" value="yes" <?php if ($pconfig['netgraph']) echo "checked"; ?> >Netgraph
+		    <br>
 		    <input name="pf" type="checkbox" id="pf" value="yes" <?php if ($pconfig['pf']) echo "checked"; ?> >PF
 		  </td>
 		</tr>

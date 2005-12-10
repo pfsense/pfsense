@@ -696,7 +696,7 @@ function filter_nat_rules_generate() {
 						
 					$range_end++;
 					
-					if($extport[0] - $range_end > 500) {
+					if($range_end - $extport[0] > 500) {
 						$range_end = $extport[0]+1;
 						log_error("Not installing nat reflection rules for a port range > 500");
 					} else {					

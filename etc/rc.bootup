@@ -212,9 +212,6 @@
 	/* start DHCP relay */
 	services_dhcrelay_configure();
 
-	/* start SNMP service */
-	services_snmpd_configure();
-
 	/* start proxy ARP service */
 	services_proxyarp_configure();
 
@@ -256,13 +253,16 @@
 
 	interfaces_carp_bring_up_final();
 
+	/* start SNMP service */
+	services_snmpd_configure();
+
 	/* power down hard drive if needed/set */
 	system_set_harddisk_standby();
 
 	/* lock down console if necessary */
 	if(isset($config['system']['disableconsolemenu']))
 		touch("/var/etc/console_lockdown");
-	
+
 	filter_configure();
 	
 	/* done */

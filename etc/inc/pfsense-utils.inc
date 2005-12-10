@@ -55,10 +55,8 @@ function get_dns_servers() {
 	}
 	$dns = `cat /var/etc/nameservers.conf`;
 	$dns_s = split("\n", $dns);
-	foreach($dns_s as $dns) {
-		if (preg_match("/nameserver (.*)/", $dns, $matches))
-			$dns_servers[] = $matches[1];		
-	}
+	foreach($dns_s as $dns) 
+		$dns_servers[] = $dns;
 	return $dns_servers;
 }
 

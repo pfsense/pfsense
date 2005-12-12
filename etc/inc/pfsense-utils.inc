@@ -156,6 +156,7 @@ function enable_hardware_offloading($interface) {
  ******/
 function is_alias_inuse($alias) {
     global $g, $config;
+    if($alias == "") return false;
     /* loop through firewall rules looking for alias in use */
     foreach($config['filter']['rule'] as $rule) {
 	if($rule['source']['address'] == $alias)

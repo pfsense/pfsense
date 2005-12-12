@@ -149,6 +149,7 @@ function interfaces_lan_configure() {
 		/* bring up interfaces */
 		mwexec("/sbin/ifconfig {$config['interfaces'][$lancfg['bridge']]['if']} up");
 		mwexec("/sbin/ifconfig {$lancfg['if']} up");
+		mwexec("/sbin/ifconfig bridge{$bridges_total} down");
 		mwexec("/sbin/ifconfig bridge{$bridges_total} up");
 	}
 	
@@ -305,6 +306,7 @@ function interfaces_optional_configure_if($opti) {
 			/* bring up interfaces */
 			mwexec("/sbin/ifconfig {$config['interfaces'][$optcfg['bridge']]['if']} up");
 			mwexec("/sbin/ifconfig {$optcfg['if']} up");
+			mwexec("/sbin/ifconfig bridge{$bridges_total} down");
 			mwexec("/sbin/ifconfig bridge{$bridges_total} up");
 
 			

@@ -53,7 +53,14 @@ function get_dns_servers() {
 		if (preg_match("/nameserver (.*)/", $dns, $matches))
 			$dns_servers[] = $matches[1];		
 	}
-	return $dns_servers;
+	$dns_server_master = array();
+	foreach($dns_servers as $t) {
+		if($t <> $lastseen)
+			if($t <> "")
+				$dns_server_master[] = $t;
+		$lastseen = $t;
+	}
+	return $dns_server_master;
 }
 
 /****f* pfsense-utils/log_error

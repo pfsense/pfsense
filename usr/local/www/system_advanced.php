@@ -229,38 +229,40 @@ if ($_POST) {
 			$boot_config = "";
 			
 		$boot_config_split = split("\n", $boot_config);
-		$fd = fopen("/boot.config","w");
-		if($fd) {
-			foreach($boot_config_split as $bcs) {
-				if(stristr($bcs, "-D")) {
-					/* DONT WRITE OUT, WE'LL DO IT LATER */	
-				} else {
-					if($bcs <> "")
-						fwrite($fd, "{$bcs}\n");
+		if($g['platform'] <> "cdrom") {
+			$fd = fopen("/boot.config","w");
+			if($fd) {
+				foreach($boot_config_split as $bcs) {
+					if(stristr($bcs, "-D")) {
+						/* DONT WRITE OUT, WE'LL DO IT LATER */	
+					} else {
+						if($bcs <> "")
+							fwrite($fd, "{$bcs}\n");
+					}
 				}
+				if(isset($config['system']['enableserial'])) {
+					fwrite($fd, "-D");
+				}			
+				fclose($fd);
 			}
-			if(isset($config['system']['enableserial'])) {
-				fwrite($fd, "-D");
-			}			
-			fclose($fd);
-		}
-		/* serial console - write out /boot/loader.conf */
-		$boot_config = file_get_contents("/boot/loader.conf");	
-		$boot_config_split = split("\n", $boot_config);
-		$fd = fopen("/boot/loader.conf","w");
-		if($fd) {
-			foreach($boot_config_split as $bcs) {
-				if(stristr($bcs, "console")) {
-					/* DONT WRITE OUT, WE'LL DO IT LATER */	
-				} else {
-					if($bcs <> "")
-						fwrite($fd, "{$bcs}\n");
+			/* serial console - write out /boot/loader.conf */
+			$boot_config = file_get_contents("/boot/loader.conf");	
+			$boot_config_split = split("\n", $boot_config);
+			$fd = fopen("/boot/loader.conf","w");
+			if($fd) {
+				foreach($boot_config_split as $bcs) {
+					if(stristr($bcs, "console")) {
+						/* DONT WRITE OUT, WE'LL DO IT LATER */	
+					} else {
+						if($bcs <> "")
+							fwrite($fd, "{$bcs}\n");
+					}
 				}
+				if(isset($config['system']['enableserial'])) {
+					fwrite($fd, "console=\"comconsole\"\n");
+				}
+				fclose($fd);
 			}
-			if(isset($config['system']['enableserial'])) {
-				fwrite($fd, "console=\"comconsole\"\n");
-			}
-			fclose($fd);
 		}
 		
 		conf_mount_ro();

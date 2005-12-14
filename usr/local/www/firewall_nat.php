@@ -47,6 +47,8 @@ if ($_POST) {
 	if ($_POST['apply']) {
 
 		write_config();
+		
+		filter_configure();
 
 		$retval = 0;
 

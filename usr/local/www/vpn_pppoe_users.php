@@ -43,11 +43,11 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-		if (!file_exists($d_sysrebootreqd_path)) {
-			config_lock();
-			$retval = vpn_pppoe_configure();
-			config_unlock();
-		}
+
+		config_lock();
+		$retval = vpn_pppoe_configure();
+		config_unlock();
+
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {
 			if (file_exists($d_pppoeuserdirty_path))

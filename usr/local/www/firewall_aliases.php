@@ -46,12 +46,12 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-		if (!file_exists($d_sysrebootreqd_path)) {
-			config_lock();
-			/* reload all components that use aliases */
-			$retval = filter_configure();
-			config_unlock();
-		}
+
+		config_lock();
+		/* reload all components that use aliases */
+		$retval = filter_configure();
+		config_unlock();
+
 		if(stristr($retval, "error") <> true)
 		    $savemsg = get_std_save_message($retval);
 		else

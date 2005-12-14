@@ -50,14 +50,14 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-		if (!file_exists($d_sysrebootreqd_path)) {
-			config_lock();
-			$retval = services_proxyarp_configure();
-			/* Bring up any configured CARP interfaces */
-			interfaces_carp_configure();
-			$retval |= filter_configure();
-			config_unlock();
-		}
+
+		config_lock();
+		$retval = services_proxyarp_configure();
+		/* Bring up any configured CARP interfaces */
+		interfaces_carp_configure();
+		$retval |= filter_configure();
+		config_unlock();
+
 		$savemsg = get_std_save_message($retval);
 		unlink_if_exists($d_vipconfdirty_path);
 	}

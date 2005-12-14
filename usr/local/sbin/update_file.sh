@@ -7,7 +7,7 @@ fi
 
 baseurl='http://pfsense.com/cgi-bin/cvsweb.cgi/pfSense'
 urlrev='?rev='
-urlcon=';content-type=text%2Fplain'
+urlcon=';content-type=text%2Fplain;only_with_tag=RELENG_1'
 rev='1'
 
 if [ -z $1 ];then

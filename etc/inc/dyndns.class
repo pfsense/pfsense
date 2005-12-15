@@ -451,6 +451,7 @@
 				log_error("phpDynDNS: updating cache file {$this->_cacheFile}: {$wan_ip}");
 				conf_mount_rw();
 				$file = fopen($this->_cacheFile, 'w');
+				$wan_ip = get_current_wan_address();
 				fwrite($file, $wan_ip.':'.$currentTime);
 				fclose($file);
 				conf_mount_ro();

@@ -444,6 +444,8 @@ function interfaces_carp_bring_up_final() {
 		return;
 	$carp_instances_counter = 0;
 	$counter = 0;
+	if($g['booting'])
+		echo "Waiting for final CARP interface bringup...";
 	$supress = intval(`/sbin/sysctl net.inet.carp.suppress_preempt | cut -d" " -f2`);
 	while($supress > 0) {
 		sleep(2);
@@ -451,6 +453,7 @@ function interfaces_carp_bring_up_final() {
 		if($counter > 15)
 			$supress = 0;
 		$counter++;
+		echo ".";
 	}	
 	sleep(45);
 	foreach ($viparr as $vip) {
@@ -466,6 +469,8 @@ function interfaces_carp_bring_up_final() {
 		mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew " . $vip['advskew'] . $password);
 		$carp_instances_counter++;
 	}
+	if($g['booting'])
+		echo " done.\n";	
 }
 
 function interfaces_wireless_configure($if, $wlcfg) {

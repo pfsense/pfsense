@@ -192,6 +192,11 @@ EOD;
 		 */
 		$use_fastcgi = false;
 
+		if(isset($config['captiveportal']['httpslogin'])) {
+			$cert = base64_decode($config['captiveportal']['certificate']);
+			$key = base64_decode($config['captiveportal']['private-key']);
+		}
+
 		/* generate lighttpd configuration */
 		system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal.conf",
 			$cert, $key, "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/",

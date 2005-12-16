@@ -590,7 +590,7 @@ function filter_generate_pf_altq_rules() {
 				$line .= "{$flags}/SAFRPU ";
 
 				$qtag = "{$direction}queue";
-				$line .= " keep state tag {$rule[$qtag]} ";
+				$line .= " keep state tagged unshaped tag {$rule[$qtag]} ";
 
 				$line .= "\n";
 				$shaperrules .= $line;

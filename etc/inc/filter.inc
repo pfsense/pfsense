@@ -97,7 +97,12 @@ function filter_configure_sync() {
 		$altq_queues = filter_generate_altq_queues($altq_ints);
 		/* generate altq rules */
 		if($g['booting'] == true) echo " altq-rules ";
-		$pf_altq_rules = filter_generate_pf_altq_rules();
+		/* Setup a default rule that tags ALL packets as unshaped
+		 * we'll match only unshaped packets in the shaper code later
+		 * this allows the shaper to be first match
+		 */
+		$pf_altq_rules = "block any tag unshaped label SHAPER: first match rule\n";
+		$pf_altq_rules .= filter_generate_pf_altq_rules();
 	}
 	
 	/* enable pf if we need to, otherwise disable */

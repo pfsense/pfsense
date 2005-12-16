@@ -76,8 +76,22 @@ function conv_clog($logfile, $tail = 50) {
 		$flent['proto'] 	= "TCP";
 		if(stristr($logent, "UDP") == true)
 			$flent['proto'] = "UDP";
-		if(stristr($logent, "ICMP") == true)
+		else if(stristr($logent, "ICMP") == true)
 			$flent['proto'] = "ICMP";
+		else if(stristr($logent, "HSRP") == true)
+			$flent['proto'] = "HSRP";			
+		else if(stristr($logent, "ESP") == true)
+			$flent['proto'] = "ESP";	
+		else if(stristr($logent, "AH") == true)
+			$flent['proto'] = "AH";
+		else if(stristr($logent, "GRE") == true)
+			$flent['proto'] = "GRE";
+		else if(stristr($logent, "IGMP") == true)
+			$flent['proto'] = "IGMP";
+		else if(stristr($logent, "CARP") == true)
+			$flent['proto'] = "CARP";
+		else if(stristr($logent, "PFSYNC") == true)
+			$flent['proto'] = "PFSYNC";
 		
 		$flent['time'] 		= $log_split[1];
 		$flent['act'] 		= $log_split[3];

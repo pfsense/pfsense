@@ -270,6 +270,7 @@
 						$status = "phpDynDNS: (Error) Not A FQDN!";
 					} else if (preg_match('/nochg/i', $data)) {
 						$status = "phpDynDNS: (Success) No Change In IP Address";
+						$successful_update = true;
 					} else if (preg_match('/good/i', $data)) {
 						$status = "phpDynDNS: (Success) IP Address Changed Successfully! (".$this->_dnsIP.")";
 						$successful_update = true;
@@ -447,9 +448,9 @@
 			}
 			
 			if($successful_update == true) {
-				$wan_ip = get_current_wan_address();
-				$currentTime = time();
 				/* Write WAN IP to cache file */
+				$wan_ip = get_current_wan_address();
+				$currentTime = time();				  
 				log_error("phpDynDNS: updating cache file {$this->_cacheFile}: {$wan_ip}");
 				conf_mount_rw();
 				$file = fopen($this->_cacheFile, 'w');

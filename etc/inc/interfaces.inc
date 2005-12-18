@@ -147,10 +147,12 @@ function interfaces_lan_configure() {
 		fclose($fd);
 		
 		/* bring up interfaces */
-		mwexec("/sbin/ifconfig {$config['interfaces'][$lancfg['bridge']]['if']} up");
-		mwexec("/sbin/ifconfig {$lancfg['if']} up");
 		mwexec("/sbin/ifconfig bridge{$bridges_total} down");
-		mwexec("/sbin/ifconfig {$lancfg['if']} up");		
+		usleep(100);
+		mwexec("/sbin/ifconfig {$config['interfaces'][$lancfg['bridge']]['if']} up");
+		usleep(5);
+		mwexec("/sbin/ifconfig {$lancfg['if']} up");
+		usleep(5);
 		mwexec("/sbin/ifconfig bridge{$bridges_total} up");
 	}
 	
@@ -305,12 +307,13 @@ function interfaces_optional_configure_if($opti) {
 			fclose($fd);
 			
 			/* bring up interfaces */
-			mwexec("/sbin/ifconfig {$config['interfaces'][$optcfg['bridge']]['if']} up");
-			mwexec("/sbin/ifconfig {$optcfg['if']} up");
 			mwexec("/sbin/ifconfig bridge{$bridges_total} down");
+			usleep(100);
+			mwexec("/sbin/ifconfig {$config['interfaces'][$optcfg['bridge']]['if']} up");
+			usleep(5);
 			mwexec("/sbin/ifconfig {$optcfg['if']} up");
+			usleep(5);
 			mwexec("/sbin/ifconfig bridge{$bridges_total} up");
-
 			
 		} else {
 			/* if user has selected DHCP type then act accordingly */
@@ -796,6 +799,38 @@ function interfaces_wan_configure() {
 
 			/* resync pf (done automatically for DHCP/PPPoE/PPTP) */
 			filter_configure();
+	}
+
+	if ($wancfg['bridge']) {
+		/* use open/netBSD style bridge */
+		mwexec("/sbin/ifconfig bridge{$bridges_total} create");
+		
+		/* force all bridged interfaces to use same mtu */
+		$mtu = get_interface_mtu($config['interfaces'][$wancfg['bridge']]['if']);
+		mwexec("/sbin/ifconfig {$wancfg['if']} mtu {$mtu}");
+		mwexec("/sbin/ifconfig {$config['interfaces'][$wancfg['bridge']]['if']} mtu {$mtu}");
+		
+		/* assign items to a bridge */
+		mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$wancfg['if']} addm {$config['interfaces'][$wancfg['bridge']]['if']} up");
+		mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$wancfg['if']} stp {$config['interfaces'][$wancfg['bridge']]['if']}");
+		
+		/* log commands run for debugging in /tmp/ */
+		$fd = fopen("{$g['tmp_path']}/bridge_config_{$wancfg['if']}", "w");
+		fwrite($fd, "/sbin/ifconfig {$wancfg['if']} mtu {$mtu}\n");
+		fwrite($fd, "/sbin/ifconfig {$config['interfaces'][$wancfg['bridge']]['if']} mtu {$mtu}\n");
+		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} create\n");
+		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} addm {$wancfg['if']} addm {$config['interfaces'][$wancfg['bridge']]['if']} up\n");
+		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$wancfg['if']} stp {$config['interfaces'][$wancfg['bridge']]['if']}\n");
+		fclose($fd);
+		
+		/* bring up interfaces */
+		mwexec("/sbin/ifconfig bridge{$bridges_total} down");
+		usleep(100);
+		mwexec("/sbin/ifconfig {$config['interfaces'][$wancfg['bridge']]['if']} up");
+		usleep(5);
+		mwexec("/sbin/ifconfig {$wancfg['if']} up");
+		usleep(5);
+		mwexec("/sbin/ifconfig bridge{$bridges_total} up");
 	}
 
 	if (!$g['booting']) {

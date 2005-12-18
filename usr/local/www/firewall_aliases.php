@@ -104,7 +104,7 @@ include("head.inc");
 	$addresses = implode(", ", array_slice(explode(" ", $alias['address']), 0, 10));
 	echo $addresses;
 	if(count($addresses) < 10) {
-		echo ".";
+		echo " ";
 	} else {
 		echo "...";
 	}

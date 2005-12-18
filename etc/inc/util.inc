@@ -240,11 +240,33 @@ function is_port($port) {
  *           "media"  - use ifconfig to check physical connection
  *			status (much slower)
  */
-function get_interface_list($mode = "active", $keyby = "physical") {
+/*
+ *   get_interface_list() - Return a list of all physical interfaces
+ *   along with MAC and status.
+ *
+ *   $mode = "active" - use ifconfig -lu
+ *           "media"  - use ifconfig to check physical connection
+ *			status (much slower)
+ */
+function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "") {
         global $config;
 	$upints = array();
         /* get a list of virtual interface types */
-        $vfaces = explode(" ", trim(shell_exec("/sbin/ifconfig -C")));
+        if(!$vfaces) {
+		$vfaces = array(
+				'ppp',
+				'sl',
+				'gif',
+				'faith',
+				'lo',
+				'ng',
+				'vlan',
+				'tun',
+				'pflog',
+				'pfsync',
+				'carp'
+			);
+	}
 	switch($mode) {
 	case "active":
                 $upints = explode(" ", trim(shell_exec("/sbin/ifconfig -lu")));
@@ -270,7 +292,8 @@ function get_interface_list($mode = "active", $keyby = "physical") {
 		$friendly = "";
                 $alink = explode(" ", $link);
                 $ifname = rtrim(trim($alink[0]), '*');
-                if (!in_array(substr($ifname, 0, -1), $vfaces)) {
+                /* trim out all numbers before checking for vfaces */
+		if (!in_array(array_shift(preg_split('/\d/', $ifname)), $vfaces)) {
 			$toput = array(
 					"mac" => trim($alink[1]),
 					"up" => in_array($ifname, $upints)

@@ -154,6 +154,8 @@ function interfaces_lan_configure() {
 		mwexec("/sbin/ifconfig {$lancfg['if']} up");
 		usleep(5);
 		mwexec("/sbin/ifconfig bridge{$bridges_total} up");
+		
+		$bridges_total++;
 	}
 	
 	/* media */
@@ -314,6 +316,8 @@ function interfaces_optional_configure_if($opti) {
 			mwexec("/sbin/ifconfig {$optcfg['if']} up");
 			usleep(5);
 			mwexec("/sbin/ifconfig bridge{$bridges_total} up");
+			
+			$bridges_total++;
 			
 		} else {
 			/* if user has selected DHCP type then act accordingly */
@@ -831,6 +835,8 @@ function interfaces_wan_configure() {
 		mwexec("/sbin/ifconfig {$wancfg['if']} up");
 		usleep(5);
 		mwexec("/sbin/ifconfig bridge{$bridges_total} up");
+		
+		$bridges_total++;
 	}
 
 	if (!$g['booting']) {

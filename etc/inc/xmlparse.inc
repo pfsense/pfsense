@@ -32,7 +32,7 @@
 
 /* The following items will be treated as arrays in config.xml */
 function listtags() {
-	$ret = explode(" ", "alias allowedip cacert config columnitem dnsserver domainoverrides " .
+	$ret = explode(" ", "alias aliasurl allowedip cacert config columnitem dnsserver domainoverrides " .
 		"earlyshellcmd encryption-algorithm-option field fieldname hash-algorithm-option " .
 		"hosts interface_array item key lbpool menu mobilekey onetoone option package passthrumac proxyarpnet " .
 		"queue pipe route row rule service servernat servers earlyshellcmd shellcmd staticmap subqueue " .

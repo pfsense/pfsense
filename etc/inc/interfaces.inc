@@ -134,7 +134,7 @@ function interfaces_lan_configure() {
 		mwexec("/sbin/ifconfig {$config['interfaces'][$lancfg['bridge']]['if']} mtu {$mtu}");
 
 		/* assign items to a bridge */
-		mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$lancfg['if']} addm {$config['interfaces'][$lancfg['bridge']]['if']} up");
+		mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$lancfg['if']} addm {$config['interfaces'][$lancfg['bridge']]['if']}");
 		mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$lancfg['if']} stp {$config['interfaces'][$lancfg['bridge']]['if']}");
 
 		/* log commands run for debugging in /tmp/ */
@@ -296,7 +296,7 @@ function interfaces_optional_configure_if($opti) {
 			mwexec("/sbin/ifconfig {$config['interfaces'][$optcfg['bridge']]['if']} mtu {$mtu}");			
 
 			/* assign items to a bridge */
-                        mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$optcfg['if']} addm {$config['interfaces'][$optcfg['bridge']]['if']} up");
+                        mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$optcfg['if']} addm {$config['interfaces'][$optcfg['bridge']]['if']}");
 			mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$optcfg['if']} stp {$config['interfaces'][$optcfg['bridge']]['if']}");
 
 			/* log commands run for debugging in /tmp/ */
@@ -815,7 +815,7 @@ function interfaces_wan_configure() {
 		mwexec("/sbin/ifconfig {$config['interfaces'][$wancfg['bridge']]['if']} mtu {$mtu}");
 		
 		/* assign items to a bridge */
-		mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$wancfg['if']} addm {$config['interfaces'][$wancfg['bridge']]['if']} up");
+		mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$wancfg['if']} addm {$config['interfaces'][$wancfg['bridge']]['if']}");
 		mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$wancfg['if']} stp {$config['interfaces'][$wancfg['bridge']]['if']}");
 		
 		/* log commands run for debugging in /tmp/ */

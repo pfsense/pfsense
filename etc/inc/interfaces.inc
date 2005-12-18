@@ -142,7 +142,7 @@ function interfaces_lan_configure() {
 		fwrite($fd, "/sbin/ifconfig {$lancfg['if']} mtu {$mtu}\n");
 		fwrite($fd, "/sbin/ifconfig {$config['interfaces'][$lancfg['bridge']]['if']} mtu {$mtu}\n");
 		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} create\n");
-		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} addm {$lancfg['if']} addm {$config['interfaces'][$lancfg['bridge']]['if']} up\n");
+		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} addm {$lancfg['if']} addm {$config['interfaces'][$lancfg['bridge']]['if']}\n");
 		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$lancfg['if']} stp {$config['interfaces'][$lancfg['bridge']]['if']}\n");
 		fclose($fd);
 		
@@ -823,7 +823,7 @@ function interfaces_wan_configure() {
 		fwrite($fd, "/sbin/ifconfig {$wancfg['if']} mtu {$mtu}\n");
 		fwrite($fd, "/sbin/ifconfig {$config['interfaces'][$wancfg['bridge']]['if']} mtu {$mtu}\n");
 		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} create\n");
-		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} addm {$wancfg['if']} addm {$config['interfaces'][$wancfg['bridge']]['if']} up\n");
+		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} addm {$wancfg['if']} addm {$config['interfaces'][$wancfg['bridge']]['if']}\n");
 		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$wancfg['if']} stp {$config['interfaces'][$wancfg['bridge']]['if']}\n");
 		fclose($fd);
 		

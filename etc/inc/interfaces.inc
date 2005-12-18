@@ -338,6 +338,9 @@ function interfaces_carp_configure() {
 	global $g, $config, $debugging;
 	$carp_instances_counter = 0;
 	$total_carp_interfaces_defined = find_number_of_created_carp_interfaces();
+	/* destroy previous interfaces */
+	for($x=0; $x<$total_carp_interfaces_defined; $x++) 
+		mwexec("/sbin/ifconfig carp{$x} delete");	
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "interfaces_carp_configure() being called $mt\n";

@@ -102,6 +102,7 @@ require_once("notices.inc");
 						<?php if($g['platform'] == "pfSense"): ?>
 							<li><a href="/pkg_mgr.php" class="navlnk">Packages</a></li>
 						<?php endif ?>
+							<li><a href="/wizard.php?xml=setup_wizard.xml" class="navlnk">Setup wizard</a></li>
 							<li><a href="/system_routes.php" class="navlnk">Static routes</a></li>
 						</ul>
 					</li>

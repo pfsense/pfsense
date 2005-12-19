@@ -1121,7 +1121,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					$not = "";
 
 				if (stristr($expsrc, "$"))
-					$src = "{$not} " . alias_expand_value($rule['source']['address']);
+					$src = "{ {$not} " . alias_expand_value($rule['source']['address']) . " } ";
 				else
 					$src = "{ {$not} {$expsrc} }";
 			}
@@ -1198,7 +1198,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					$not = "";
 
 				if (stristr($expdst, "$"))
-					$dst = "{$not} " . alias_expand_value($rule['destination']['address']);
+					$dst = "{ {$not} " . alias_expand_value($rule['destination']['address']) . " } ";
 				else
 					$dst = "{ {$not} {$expdst} }";
 			}

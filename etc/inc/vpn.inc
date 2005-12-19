@@ -875,7 +875,7 @@ EOD;
 
 pppoe{$i}:
 	new -i {$ngif} pppoe{$i} pppoe{$i}
-	set ipcp ranges {$pppoecfg['localip']}/32 {$clientip}/32
+	set ipcp ranges {$pppoecfg['localip']}/32 0.0.0.0/0
 	load pppoe_standart
 
 EOD;
@@ -897,7 +897,6 @@ pppoe_standart:
 	set iface disable proxy-arp
 	set iface enable tcpmssfix
 	set iface mtu 1500
-	set link mtu 1500
 	set link no pap chap
 	set link enable chap
 	set link keep-alive 60 180

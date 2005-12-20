@@ -465,14 +465,16 @@ function interfaces_carp_bring_up_final() {
 	if($g['booting'])
 		echo "Waiting for final CARP interface bringup...";
 	$supress = intval(`/sbin/sysctl net.inet.carp.suppress_preempt | cut -d" " -f2`);
-	while($supress > 0) {
-		sleep(2);
-		$supress = intval(`/sbin/sysctl net.inet.carp.suppress_preempt | cut -d" " -f2`);
-		if($counter > 15)
-			$supress = 0;
-		$counter++;
-		echo ".";
-	}	
+	if($g['booting']) {
+		while($supress > 0) {
+			sleep(2);
+			$supress = intval(`/sbin/sysctl net.inet.carp.suppress_preempt | cut -d" " -f2`);
+			if($counter > 15)
+				$supress = 0;
+			$counter++;
+			echo ".";
+		}
+	}
 	sleep(45);
 	foreach ($viparr as $vip) {
 		if($debugging)

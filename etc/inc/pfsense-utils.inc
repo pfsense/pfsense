@@ -338,6 +338,20 @@ function get_interface_mtu($interface) {
 	return $mtu;
 }
 
+/****f* pfsense-utils/is_interface_wireless
+ * NAME
+ *   is_interface_wireless - Returns if an interface is wireless
+ * RESULT
+ *   $tmp	- Returns if an interface is wireless
+ ******/
+function is_interface_wireless($interface) {
+	global $config, $g;
+	if(isset($config['interfaces'][$interface]['wireless']))
+		return true;
+	else
+		return false;
+}
+
 /****f* pfsense-utils/find_number_of_created_carp_interfaces
  * NAME
  *   find_number_of_created_carp_interfaces - Return the number of CARP interfaces.

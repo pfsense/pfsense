@@ -135,7 +135,11 @@ function interfaces_lan_configure() {
 
 		/* assign items to a bridge */
 		mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$lancfg['if']} addm {$config['interfaces'][$lancfg['bridge']]['if']}");
-		mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$lancfg['if']} stp {$config['interfaces'][$lancfg['bridge']]['if']}");
+		
+		if(is_interface_wireless($lancfg['if'])) 
+			mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$lancfg['if']}");
+		if(is_interface_wireless($config['interfaces'][$lancfg['bridge']]['if'])) 
+			mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$config['interfaces'][$lancfg['bridge']]['if']}");
 
 		/* log commands run for debugging in /tmp/ */
 		$fd = fopen("{$g['tmp_path']}/bridge_config_{$lancfg['if']}", "w");
@@ -297,7 +301,11 @@ function interfaces_optional_configure_if($opti) {
 
 			/* assign items to a bridge */
                         mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$optcfg['if']} addm {$config['interfaces'][$optcfg['bridge']]['if']}");
-			mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$optcfg['if']} stp {$config['interfaces'][$optcfg['bridge']]['if']}");
+
+			if(is_interface_wireless($optcfg['if'])) 
+				mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$optcfg['if']}");
+			if(is_interface_wireless($config['interfaces'][$optcfg['bridge']]['if'])) 
+				mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$config['interfaces'][$optcfg['bridge']]['if']}");
 
 			/* log commands run for debugging in /tmp/ */
 			$fd = fopen("{$g['tmp_path']}/bridge_config_{$optcfg['if']}", "w");
@@ -819,7 +827,11 @@ function interfaces_wan_configure() {
 		
 		/* assign items to a bridge */
 		mwexec("/sbin/ifconfig bridge{$bridges_total} addm {$wancfg['if']} addm {$config['interfaces'][$wancfg['bridge']]['if']}");
-		mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$wancfg['if']} stp {$config['interfaces'][$wancfg['bridge']]['if']}");
+
+		if(is_interface_wireless($wancfg['if'])) 
+			mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$wancfg['if']}");
+		if(is_interface_wireless($config['interfaces'][$wancfg['bridge']]['if'])) 
+			mwexec("/sbin/ifconfig bridge{$bridges_total} stp {$config['interfaces'][$wancfg['bridge']]['if']}");
 		
 		/* log commands run for debugging in /tmp/ */
 		$fd = fopen("{$g['tmp_path']}/bridge_config_{$wancfg['if']}", "w");

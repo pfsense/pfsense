@@ -101,9 +101,9 @@ if (isset($_POST['save'])) {
 				}
 			}
                         $natent = array();
-                        $osn = convert_ip_to_network_format($config['interfaces'][$if]['ipaddr'],
+                        $osn = gen_subnet($config['interfaces'][$if]['ipaddr'],
                                 $config['interfaces'][$if]['subnet']);
-                        $natent['source']['network'] = $osn;
+                        $natent['source']['network'] = $osn . "/" . $config['interfaces'][$if]['subnet'];
                         $natent['sourceport'] = "";
                         $int_description = $config['interfaces'][$if]['descr'];
                         if($if == "lan")

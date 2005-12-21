@@ -114,3 +114,4 @@ function xmlrpc_auth(&$params) {
         return false;
 }
 
+?>

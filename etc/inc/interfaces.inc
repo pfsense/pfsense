@@ -470,7 +470,7 @@ function interfaces_carp_bring_up_final() {
 			sleep(2);
 			$supress = intval(`/sbin/sysctl net.inet.carp.suppress_preempt | cut -d" " -f2`);
 			if($counter > 15)
-				$supress = 0;
+				$supress = 1;
 			$counter++;
 			echo ".";
 		}

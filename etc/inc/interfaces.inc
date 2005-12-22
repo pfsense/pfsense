@@ -474,12 +474,15 @@ function interfaces_carp_bring_up_final() {
 			$counter++;
 			echo ".";
 		}
+		for($x=0; $x<23; $x++) {
+			sleep(2);
+			echo ".";
+		}
+		echo " done.\n";
 	}
-	sleep(45);
 	foreach ($viparr as $vip) {
 		if($debugging)
 			echo "Upping interface carp{$carp_instances_counter}.\n";
-		mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " create");
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
 		if($vip['password'] != "") 
 			$password = " pass " . $vip['password'];

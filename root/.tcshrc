@@ -1,1 +1,2 @@
-# Blank .tschrc file
+#  Give  us  a  more  informative  prompt. 
+set  prompt="%m\:%~#  "  

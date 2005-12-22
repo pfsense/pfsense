@@ -94,8 +94,8 @@ function vpn_ipsec_configure($ipchg = false) {
 			//echo "Enabling [VIA Padlock] ...";
 			//mwexec("/sbin/kldload padlock");
 			//mwexec("/sbin/sysctl net.inet.ipsec.crypto_support=1");
-			//mwexec("/usr/sbin/setkey -F");
-			//mwexec("/usr/sbin/setkey -FP");
+			//mwexec("/sbin/setkey -F");
+			//mwexec("/sbin/setkey -FP");
 			//echo " done.\n";
 		}
 	}
@@ -142,8 +142,8 @@ function vpn_ipsec_configure($ipchg = false) {
 	}
 
 	/* flush SPD and SAD */
-	mwexec("/usr/sbin/setkey -FP");
-	mwexec("/usr/sbin/setkey -F");
+	mwexec("/sbin/setkey -FP");
+	mwexec("/sbin/setkey -F");
 
 	if (isset($ipseccfg['enable'])) {
 
@@ -219,7 +219,7 @@ function vpn_ipsec_configure($ipchg = false) {
 				fclose($fd);
 
 				/* load SPD */
-				mwexec("/usr/sbin/setkey -c < {$g['varetc_path']}/spd.conf");
+				mwexec("/sbin/setkey -c < {$g['varetc_path']}/spd.conf");
 			}
 
 			/* generate racoon.conf */

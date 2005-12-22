@@ -57,7 +57,7 @@ include("head.inc");
 
 /* delete any SP? */
 if ($_GET['act'] == "del") {
-	$fd = @popen("/usr/sbin/setkey -c > /dev/null 2>&1", "w");
+	$fd = @popen("/sbin/setkey -c > /dev/null 2>&1", "w");
 	if ($fd) {
 		fwrite($fd, "spddelete {$_GET['src']} {$_GET['dst']} any -P {$_GET['dir']} ;\n");
 		pclose($fd);
@@ -66,7 +66,7 @@ if ($_GET['act'] == "del") {
 }
 
 /* query SAD */
-$fd = @popen("/usr/sbin/setkey -DP", "r");
+$fd = @popen("/sbin/setkey -DP", "r");
 $spd = array();
 if ($fd) {
 	while (!feof($fd)) {

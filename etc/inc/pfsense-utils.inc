@@ -167,17 +167,21 @@ function is_alias_inuse($alias) {
     if($alias == "") return false;
     /* loop through firewall rules looking for alias in use */
     foreach($config['filter']['rule'] as $rule) {
-	if($rule['source']['address'] == $alias)
-	    return true;
-	if($rule['destination']['address'] == $alias)
-	    return true;
+	if(isset($rule['source']))
+		if($rule['source']['address'] == $alias)
+			return true;
+	if(isset($rule['destination']))
+		if($rule['destination']['address'] == $alias)
+			return true;
     }
     /* loop through nat rules looking for alias in use */
     foreach($config['nat']['rule'] as $rule) {
-	if($rule['source']['address'] == $alias)
-	    return true;
-	if($rule['destination']['address'] == $alias)
-	    return true;
+	if(isset($rule['source']))
+		if($rule['source']['address'] == $alias)
+			return true;
+	if(isset($rule['destination']))
+		if($rule['destination']['address'] == $alias)
+			return true;
     }
     return false;
 }

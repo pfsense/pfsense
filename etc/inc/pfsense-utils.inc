@@ -166,25 +166,23 @@ function is_alias_inuse($alias) {
     global $g, $config;
     if($alias == "") return false;
     /* loop through firewall rules looking for alias in use */
-    foreach($config['filter']['rule'] as $rule) {
-		if(isset($rule['source']))
-			if(isset($rule['source']['address']))
+    if(is_array($config['nat']['rule']))
+	    foreach($config['filter']['rule'] as $rule) {
+			if(is_array($rule['source']['address']))
 				if($rule['source']['address'] == $alias)
 					return true;
-		if(isset($rule['destination']))
-			if(isset($rule['destination']['address']))
+			if(is_array($rule['destination']['address']))
 				if($rule['destination']['address'] == $alias)
 					return true;
-    }
+	    }
     /* loop through nat rules looking for alias in use */
-    foreach($config['nat']['rule'] as $rule) {
-		if(isset($rule['source']))
-			if($rule['source']['address'] == $alias)
+    if(is_array($config['nat']['rule']))
+	    foreach($config['nat']['rule'] as $rule) {
+			if($rule['target'] == $alias)
 				return true;
-		if(isset($rule['destination']))
-			if($rule['destination']['address'] == $alias)
-				return true;
-    }
+			if($rule['external-address'] == $alias)
+				return true;	
+	    }
     return false;
 }
 

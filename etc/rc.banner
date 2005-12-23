@@ -54,11 +54,11 @@
 				break;
 			case "pppoe":
 				$ifinfo['class'] = "(PPPoE)";
-				$ifinfo['ipaddr'] = $iflist['ng0']['ipaddr'];
+				$ifinfo['ipaddr'] = get_current_wan_address();
 				break;
 			case "pptp":
 				$ifinfo['class'] = "(PPTP)";
-				$ifinfo['ipaddr'] = $iflist['ng0']['ipaddr'];
+				$ifinfo['ipaddr'] = get_current_wan_address();
 				break;
 			}
 			$tobanner = $friendly;

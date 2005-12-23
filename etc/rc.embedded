@@ -6,6 +6,7 @@
 # Size of memory file system /conf partition
 partsize="3m"
 
+echo -n "Setting up embedded specific environment..."
 # Run some initialization routines
 [ -f /etc/rc.d/uzip ] && /etc/rc.d/uzip start
 /etc/rc.d/tmp start
@@ -21,3 +22,4 @@ fi
 # Create some needed directories
 /bin/mkdir -p /var/db/pkg/
 /bin/mkdir -p /var/tmp/vi.recover/
+echo " done."

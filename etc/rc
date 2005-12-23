@@ -42,6 +42,7 @@ fi
 /sbin/conscontrol mute off >/dev/null
 
 # Mount memory file system if it exists
+echo -n "Mounting filesystems..."
 /sbin/mount -a
 
 # Mount /. If it fails run a fsck.
@@ -74,7 +75,7 @@ else
     
     /usr/local/bin/php -f /etc/rc.conf_mount_rw
 fi
-
+echo " done."
 
 # Repair symlinks if they are broken
 if [ ! -L /etc/syslog.conf ]; then

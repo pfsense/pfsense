@@ -50,6 +50,11 @@ iframe {
 	left: 10px;
 	float: left;
 }
+#header-left #status-link {
+	position: relative;
+	top: 10px;
+	left: 6px;
+}
 #header-right {
 	position: relative;
 	/* background: url('images/header.gif') no-repeat; */

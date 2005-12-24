@@ -378,6 +378,18 @@
 			<typehint>Block private networks from entering via WAN</typehint>
 		</field>
 		<field>
+			<name>Block bogon networks</name>
+			<type>listtopic</type>
+		</field>		
+		<field>
+			<donotdisable>true</donotdisable>
+			<name>Block bogon networks</name>
+			<description>Block bogon networks When set, this option blocks traffic from IP addresses that are reserved (but not RFC 1918) or not yet assigned by IANA. Bogons are prefixes that should never appear in the Internet routing table, and obviously should not appear as the source address in any packets you receive.When set, this option blocks traffic from IP addresses that are reserved for private networks as per RFC 1918 (10/8, 172.16/12, 192.168/16) as well as loopback addresses (127/8). You should generally leave this option turned on, unless your WAN network lies in such a private address space, too.</description>
+			<type>checkbox</type>
+			<bindstofield>interfaces->wan->blockbogons</bindstofield>
+			<typehint>Block bogon networks When set, this option blocks traffic from IP addresses that are reserved (but not RFC 1918) or not yet assigned by IANA. Bogons are prefixes that should never appear in the Internet routing table, and obviously should not appear as the source address in any packets you receive.When set, this option blocks traffic from IP addresses that are reserved for private networks as per RFC 1918 (10/8, 172.16/12, 192.168/16) as well as loopback addresses (127/8). You should generally leave this option turned on, unless your WAN network lies in such a private address space, too.</typehint>
+		</field>	
+		<field>
 			<name>Next</name>
 			<type>submit</type>
 		</field>

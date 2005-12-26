@@ -2001,7 +2001,9 @@
 	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
 		$config['shaper']['enable'] = TRUE;
-                unset($config['shaper']['itemsshaped']);  
+                unset($config['shaper']['itemsshaped']);
+		if(file_exists($d_shaperconfdirty_path))
+			mwexec("rm {$d_shaperconfdirty_path}");
 		filter_configure_sync();
 		header("Location: /status_queues.php");
 	</stepsubmitphpaction>

@@ -74,6 +74,7 @@ if ($_POST) {
 if ($_GET['act'] == "del") {
 	if ($a_ipsec[$_GET['id']]) {
 		unset($a_ipsec[$_GET['id']]);
+		filter_configure();
 		write_config();
 		header("Location: vpn_ipsec.php");
 		exit;

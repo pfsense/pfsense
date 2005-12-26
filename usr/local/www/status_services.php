@@ -139,13 +139,6 @@ if(isset($config['snmpd']['enable'])) {
 	unset($pconfig);
 }
 
-if(isset($config['wol']['wolentry'])) {
-	$pconfig['name'] = "wol";
-	$pconfig['description'] = "Wake on lan";
-	$services[] = $pconfig;
-	unset($pconfig);
-}
-
 if(isset($config['proxyarp']['proxyarpnet'])) {
 	$pconfig['name'] = "choparp";
 	$pconfig['description'] = "Proxy Arp";

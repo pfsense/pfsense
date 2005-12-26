@@ -187,7 +187,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$ipsecent['disabled'] = $_POST['disabled'] ? true : false;
-		$ipsecent['auto'] = $_POST['auto'] ? true : false;
+		//$ipsecent['auto'] = $_POST['auto'] ? true : false;
 		$ipsecent['interface'] = $pconfig['interface'];
 		pconfig_to_address($ipsecent['local-subnet'], $_POST['localnet'], $_POST['localnetmask']);
 		$ipsecent['remote-subnet'] = $_POST['remotenet'] . "/" . $_POST['remotebits'];
@@ -304,14 +304,7 @@ function methodsel_change() {
                     <span class="vexpl">Set this option to disable this tunnel without
 					removing it from the list.</span></td>
                 </tr>
-				<tr> 
-				  <td width="22%" valign="top" class="vncellreq">Auto-establish</td>
-				  <td width="78%" class="vtable"> 
-					<input name="auto" type="checkbox" id="auto" value="yes" <?php if ($pconfig['auto']) echo "checked"; ?>>
-					<strong>Automatically establish this tunnel</strong><br>
-					<span class="vexpl">Set this option to automatically re-establish this tunnel after reboots/reconfigures. If this is not set, the tunnel is established on demand.</span></td>
-				</tr>
-				<tr> 
+		<tr> 
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable"><select name="interface" class="formfld">
                       <?php $interfaces = array('wan' => 'WAN', 'lan' => 'LAN');

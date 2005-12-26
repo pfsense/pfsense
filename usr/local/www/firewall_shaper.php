@@ -60,6 +60,7 @@ function wipe_magic () {
   unset($config['shaper']['queue']);
   unset($config['shaper']['rule']);
   $config['shaper']['enable'] = FALSE;
+  filter_configure();
 }
 
 if ($_POST['remove']) {

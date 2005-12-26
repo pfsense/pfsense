@@ -2099,7 +2099,12 @@ function carp_sync_client() {
 		    }
 		    if($carp['synchronizelb'] != "" and is_array($config['load_balancer'])) {
 			$sections[] = 'load_balancer';
+		    }
+		    if($carp['synchronizeipsec'] != "" and is_array($config['ipsec'])) {
+			$sections[] = 'ipsec';
 		    }		    
+		    
+		    
 		    if(count($sections) > 0) {
 			    carp_sync_xml($synchronizetoip, $carp['password'], $sections, $port);
 			    $cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);

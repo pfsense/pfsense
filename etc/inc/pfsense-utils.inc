@@ -1283,7 +1283,13 @@ function reload_interfaces_sync() {
 	system_routing_enable();
 	
 	/* setup captive portal if needed */
-	captiveportal_configure();	
+	captiveportal_configure();
+	
+	/* bring up carp interfaces */
+	interfaces_carp_configure();
+	
+	/* bring up carp interfaces*/
+	interfaces_carp_bring_up_final();	
 }
 
 /****f* pfsense-utils/reload_all

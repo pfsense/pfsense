@@ -172,7 +172,7 @@ include("head.inc");
 			if (!$natent['interface'] || ($natent['interface'] == "wan"))
 				echo "WAN";
 			else
-				echo htmlspecialchars($config['interfaces'][$natent['interface']]['descr']);
+				echo strtoupper($natent['interface']);
 		    ?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">

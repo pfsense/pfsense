@@ -553,13 +553,17 @@ EOD;
 			/* start racoon */
 			mwexec("/usr/local/sbin/racoon -f {$g['varetc_path']}/racoon.conf");
 			
+			usleep(100);
+			
 			if (is_array($ipseccfg['tunnel'])) {
 				foreach ($ipseccfg['tunnel'] as $tunnel) {
 					if (isset($tunnel['auto'])) {
 						$remotehost = substr($tunnel['remote-subnet'],0,strpos($tunnel['remote-subnet'],"/"));
 						$srchost = vpn_endpoint_determine($tunnel, $curwanip);
-						if ($srchost)
+						if ($srchost) {
+							log_error("Bringing ipsec tunnel up with ping -c 10 -S {$srchost} {$remotehost}");
 							mwexec_bg("/sbin/ping -c 10 -S {$srchost} {$remotehost}");
+						}
 					}
 				}
 			}

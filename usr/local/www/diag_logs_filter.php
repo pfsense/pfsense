@@ -73,6 +73,7 @@ function conv_clog($logfile, $tail = 50) {
 		if($log_split[5] == "")
 			preg_match("/(.*)\s(.*)\spf:.*rule.*\(match\):\s(\w+)\sin\son\s(\w+:)\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\s([\<|\>])\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}):.*/",$logent,$log_split);
 
+		$do_not_display = false;
 		$flent['proto'] 	= "TCP";
 		if(stristr($logent, "UDP") == true)
 			$flent['proto'] = "UDP";
@@ -92,6 +93,8 @@ function conv_clog($logfile, $tail = 50) {
 			$flent['proto'] = "CARP";
 		else if(stristr($logent, "PFSYNC") == true)
 			$flent['proto'] = "PFSYNC";
+		else
+			$do_not_display = true;
 		
 		$flent['time'] 		= $log_split[1];
 		$flent['act'] 		= $log_split[3];
@@ -105,7 +108,7 @@ function conv_clog($logfile, $tail = 50) {
 			$flent['dst'] 		= $log_split[7];			
 		}
 			
-		if($flent['src'] == "" or $flent['dst'] == "") {
+		if($flent['src'] == "" or $flent['dst'] == "" or $do_not_display == true) {
 			/* do not display me! */
 		} else {
 			$counter++;

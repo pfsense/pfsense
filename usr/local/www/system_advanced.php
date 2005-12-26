@@ -182,7 +182,8 @@ if ($_POST) {
 			unset($config['system']['webgui']['noantilockout']);
 
 		/* Firewall and ALTQ options */
-		$config['shaper']['schedulertype'] = $_POST['schedulertype'];
+		/* alternate scheduler types are currently unsupported */
+		//$config['shaper']['schedulertype'] = $_POST['schedulertype'];
 		$config['system']['maximumstates'] = $_POST['maximumstates'];
 
 		if($_POST['enablesshd'] == "yes") {

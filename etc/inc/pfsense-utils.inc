@@ -350,6 +350,7 @@ function get_interface_mtu($interface) {
  ******/
 function is_interface_wireless($interface) {
 	global $config, $g;
+	$interface = convert_real_interface_to_friendly_interface_name($interface);
 	if(isset($config['interfaces'][$interface]['wireless']))
 		return true;
 	else

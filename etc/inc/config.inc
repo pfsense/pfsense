@@ -939,9 +939,13 @@ Valid interfaces are:
 
 EOD;
 
-	foreach ($iflist as $iface => $ifa) {
-		echo sprintf("% -8s%s%s\n", $iface, $ifa['mac'],
-			$ifa['up'] ? "   (up)" : "");
+	if(!is_array($iflist)) {
+		echo "No interfaces found!\n";
+	} else {
+		foreach ($iflist as $iface => $ifa) {
+			echo sprintf("% -8s%s%s\n", $iface, $ifa['mac'],
+				$ifa['up'] ? "   (up)" : "");
+		}
 	}
 
 	echo <<<EOD

@@ -962,16 +962,6 @@ EOD;
 
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 
-		echo "\n\nReal interfaces available:\n";
-		if(!is_array($iflist)) {
-			echo "No interfaces found!\n";
-		} else {
-			foreach ($iflist as $iface => $ifa) {
-				echo sprintf("% -8s%s%s\n", $iface, $ifa['mac'],
-					$ifa['up'] ? "   (up)" : "");
-			}
-		}
-
 		echo "\n\nVLAN interfaces:\n\n";
 		$i = 0;
 		foreach ($config['vlans']['vlan'] as $vlan) {
@@ -1207,6 +1197,26 @@ EOD;
 
 	while (1) {
 		$vlan = array();
+
+		echo "\n\nVLAN Capable interfaces:\n\n";
+		if(!is_array($iflist)) {
+			echo "No interfaces found!\n";
+		} else {
+			$vlan_capable=0;
+			foreach ($iflist as $iface => $ifa) {
+				if (array_key_exists($vlan['if'], $iflist) or
+				    is_jumbo_capable($vlan['if'])) {
+					echo sprintf("% -8s%s%s\n", $iface, $ifa['mac'],
+						$ifa['up'] ? "   (up)" : "");
+					$vlan_capable++;
+				}
+			}
+		}
+
+		if($vlan_capable == 0) {
+			echo "No VLAN capable interfaces detected.\n";
+			return;
+		}
 
 		echo "\nEnter the parent interface name for the new VLAN (or nothing if finished): ";
 		$vlan['if'] = chop(fgets($fp));

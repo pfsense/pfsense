@@ -536,6 +536,14 @@ function filter_nat_rules_generate() {
 				"{$pppoecfg['remoteip']}/{$pppoe_subnet}");
 		}
 
+		/* static routes */
+		if (is_array($config['staticroutes']['route'])) {
+			foreach ($config['staticroutes']['route'] as $route) {
+				if ($route['interface'] != "wan")
+					$natrules .= filter_nat_rules_generate_if($wanif,
+						$route['network'], "", null);
+			}
+		}
 
 	}
 

@@ -503,7 +503,7 @@ function filter_generate_pf_altq_rules() {
 						*/
 						$src = alias_expand($rule['source']['port']);
 						if($src <> "") {
-							$line .= "port {$rule['destination']['port']}";
+							$line .= "port {$src}";
 						} else {
 							$srcport = explode("-", $rule['source']['port']);
 							if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
@@ -564,7 +564,7 @@ function filter_generate_pf_altq_rules() {
 						* one item.
 						*/
 						if($dst <> "") {
-							$line .= "port {$rule['destination']['port']}";
+							$line .= "port {$dst}";
 						} else {
 							$dstport = explode("-", $rule['destination']['port']);
 							if ((!$dstport[1]) || ($dstport[0] == $dstport[1])) {

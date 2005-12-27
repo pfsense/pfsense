@@ -1141,6 +1141,8 @@ EOD;
 		reload_all_sync();
 		
 		echo " done!\n";
+		
+		touch("{$g['tmp_path']}/assign_complete");
 
 	}
 }

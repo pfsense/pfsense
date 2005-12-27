@@ -81,7 +81,7 @@
 				$do_assign = 1;
 			}
 		}
-		if($do_assign == 1) {
+		if($do_assign == 1 and !file_exists("{$g['tmp_path']}/assign_complete")) {
 			$noreboot = true;
 			echo " -- Running interface assignment option.\n";
 			set_networking_interfaces_ports();

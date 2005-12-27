@@ -1204,8 +1204,7 @@ EOD;
 		} else {
 			$vlan_capable=0;
 			foreach ($iflist as $iface => $ifa) {
-				if (array_key_exists($vlan['if'], $iflist) or
-				    is_jumbo_capable($vlan['if'])) {
+				if (is_jumbo_capable($ifa)) {
 					echo sprintf("% -8s%s%s\n", $iface, $ifa['mac'],
 						$ifa['up'] ? "   (up)" : "");
 					$vlan_capable++;

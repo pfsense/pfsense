@@ -61,6 +61,7 @@ $pconfig['trapstring'] = $config['snmpd']['trapstring'];
 $pconfig['mibii'] = isset($config['snmpd']['modules']['mibii']);
 $pconfig['netgraph'] = isset($config['snmpd']['modules']['netgraph']);
 $pconfig['pf'] = isset($config['snmpd']['modules']['pf']);
+$pconfig['bindlan'] = isset($config['snmpd']['bindlan']);
 
 if ($_POST) {
 
@@ -129,6 +130,7 @@ if ($_POST) {
 		$config['snmpd']['modules']['mibii'] = $_POST['mibii'] ? true : false;
 		$config['snmpd']['modules']['netgraph'] = $_POST['netgraph'] ? true : false;
 		$config['snmpd']['modules']['pf'] = $_POST['pf'] ? true : false;
+		$config['snmpd']['bindlan'] = $_POST['bindlan'] ? true : false;
 			
 		write_config();
 		
@@ -187,6 +189,7 @@ function enable_change(whichone) {
 	    document.iform.syscontact.disabled = false;
 	    document.iform.rocommunity.disabled = false;
 	    document.iform.trapenable.disabled = false;
+	    document.iform.bindlan.disabled = false;
 	    /* disabled until some docs show up on what this does.
 	    document.iform.rwenable.disabled = false;
 	    if( document.iform.rwenable.checked == true )
@@ -232,6 +235,8 @@ function enable_change(whichone) {
             document.iform.mibii.disabled = true;
             document.iform.netgraph.disabled = true;
             document.iform.pf.disabled = true;
+	    
+	    document.iform.bindlan.disabled = true;
 	}
 }
 //-->
@@ -371,7 +376,14 @@ function enable_change(whichone) {
 		    <input name="pf" type="checkbox" id="pf" value="yes" <?php if ($pconfig['pf']) echo "checked"; ?> >PF
 		  </td>
 		</tr>
-
+                <tr> 
+                  <td width="22%" valign="top" class="vtable"></td>
+                  <td width="78%" class="vtable"> 
+                    <input name="bindlan" type="checkbox" value="yes" <?php if ($pconfig['bindlan']) echo "checked"; ?>> <strong>Bind to LAN interface only</strong>
+                    <br>
+                    This option can be useful when trying to access the SNMP agent
+                    by the LAN interface's IP address through a VPN tunnel terminated on the WAN interface.</td>
+                </tr>
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 

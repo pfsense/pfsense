@@ -651,9 +651,15 @@ begemotSnmpdCommunityDisable    = 1
 
 EOD;
 
+		if(isset($config['snmpd']['bindlan'])) {
+			$bind_to_ip = $config['interfaces']['lan']['ipaddr'];
+		} else {
+			$bind_to_ip = "0.0.0.0";
+		}
+
 		if(is_port( $config['snmpd']['pollport'] )) {
 		    $snmpdconf .= <<<EOD
-begemotSnmpdPortStatus.0.0.0.0.{$config['snmpd']['pollport']} = 1
+begemotSnmpdPortStatus.{$bind_to_ip}.{$config['snmpd']['pollport']} = 1
 
 EOD;
 
@@ -702,9 +708,13 @@ EOD;
 		fwrite($fd, $snmpdconf);
 		fclose($fd);
 
+		if (isset($config['snmpd']['bindlan'])) {
+			$bindlan = "";
+		}
+
 		/* run bsnmpd */
 		mwexec("/usr/sbin/bsnmpd -c {$g['varetc_path']}/snmpd.conf" .
-			" -p {$g['varrun_path']}/snmpd.pid");
+			"{$bindlan} -p {$g['varrun_path']}/snmpd.pid");
 
 		if ($g['booting'])
 			echo "done.\n";

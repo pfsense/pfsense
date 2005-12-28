@@ -71,7 +71,7 @@ elif [ "$PLATFORM" = "embedded" ] ; then
 else
     SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
 
-    /sbin/swapon -a 2>/dev/null
+    /sbin/swapon -a 2>/dev/null >/dev/null
     
     /usr/local/bin/php -f /etc/rc.conf_mount_rw
 fi

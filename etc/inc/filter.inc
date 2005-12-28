@@ -1928,12 +1928,30 @@ function create_firewall_outgoing_rules_to_itself() {
 		if ($config['interfaces'][$ifname]['ipaddr'] == "pppoe")
 			$int = " { " . filter_translate_type_to_real_interface($ifname) . " ng0 } ";
 		if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
-			foreach ($config['shaper']['queue'] as $queue) 
-				$rule .="pass out quick on {$int} all keep state tagged {$queue['name']} queue {$queue['name']} label \"let out anything from firewall host itself\"\n";
+			$ackq = get_ack_queue($ifname);
+			$defq = find_default_queue($ifname);
+			/* Handle all tagged packets */
+			foreach ($config['shaper']['queue'] as $queue) {
+				if ($ackq == "" || $defq == "") {
+					/* Shaper must not be enabled on this interface */
+					$q = "";
+				} else {
+					$q = "queue ({$queue['name']}, {$ackq})";
+				}
+				$rule .="pass out quick on {$int} all keep state tagged {$queue['name']} {$q} label \"let out anything from firewall host itself\"\n";
+			}
+			/* Handle untagged packets */
+			if ($ackq == "" || $defq == "") {
+				/* Shaper must not be enabled on this interface */
+				$q = "";
+			} else {
+				$q = "queue ({$defq}, {$ackq})";
+			}
+			$rule .="pass out quick on {$int} all keep state {$q} label \"let out anything from firewall host itself\"\n";
+		} else {
+			/* first add a rule for the real interface, then for ng0 */
+			$rule .="pass out quick on {$int} all keep state label \"let out anything from firewall host itself\"\n";
 		}
-                
-		/* first add a rule for the real interface, then for ng0 */
-		$rule .="pass out quick on {$int} all keep state label \"let out anything from firewall host itself\"\n";
 
 	}
 	

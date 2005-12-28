@@ -562,7 +562,7 @@ function system_generate_lighty_config($filename,
 	$avail = $memory[0];
 
 	if($avail > 0 and $avail < 65) {
-	$fast_cgi_enable = false;
+		$fast_cgi_enable = false;
 	}
 		
 	if($fast_cgi_enable == true) {

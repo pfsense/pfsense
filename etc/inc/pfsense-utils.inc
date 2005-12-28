@@ -1045,7 +1045,7 @@ function rmdir_recursive($path,$follow_links=false) {
  *     [0]real and [1]available
  */
 function get_memory() {
-	if(file_exists("cat /var/log/dmesg.boot")) {
+	if(file_exists("/var/log/dmesg.boot")) {
 		$mem = `cat /var/log/dmesg.boot | grep memory`;
 		if (preg_match_all("/real memory  = .* \((.*) MB/", $mem, $matches))
 			$real = $matches[1];

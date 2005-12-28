@@ -537,7 +537,7 @@
                 <field>
                         <name>BitTorrent</name>
                         <type>checkbox</type>
-			<typehint>Bittorrent and other P2P using the Torrent protocol and ports</typehint>
+			<typehint>Bittorrent and other P2P using the Torrent protocol and ports, set your client to use port 50000 for random data ports.</typehint>
 			<bindstofield>ezshaper->step4->bittorrent</bindstofield>
                 </field>
                 <field>
@@ -675,6 +675,8 @@
 		    $p2plist[] = array('Aimster', 'tcp', '7668', '7668', 'both');
 		if($_POST['bittorrent'] != "") 		    
 		    $p2plist[] = array('BitTorrent', 'tcp', '6881', '6999', 'both');
+		if($_POST['bittorrent'] != "") 		    
+		    $p2plist[] = array('BitTorrent', 'tcp', '50000-51000', '50000-51000', 'both');
 		if($_POST['buddyshare'] != "") 		
 		    $p2plist[] = array('BuddyShare', 'tcp', '7788', '7788', 'both');
 		if($_POST['cutemx'] != "") 		

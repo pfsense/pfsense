@@ -3,7 +3,7 @@
 <pfsense>
 	<version>2.1</version>
 	<lastchange></lastchange>
-	<theme>metallic</theme>
+	<theme>pfsense</theme>
 	<system>
 		<optimization>normal</optimization>
 		<hostname>pfSense</hostname>

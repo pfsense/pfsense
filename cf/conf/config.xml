@@ -3,7 +3,7 @@
 <pfsense>
 	<version>2.0</version>
 	<lastchange></lastchange>
-	<theme>metallic</theme>
+	<theme>pfsense</theme>
 	<system>
 		<optimization>normal</optimization>
 		<schedulertype>priq</schedulertype>

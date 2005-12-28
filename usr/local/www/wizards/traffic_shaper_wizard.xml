@@ -114,7 +114,7 @@
 		$config['shaper']['schedulertype'] = "hfsc";
 
 		/* Create queues */
-		/* WAN queues */
+		/* WAN root queue */
 		$queue = array();
 		$queue['name'] = "{$upq}Root";
 		$queue['associatedrule'] = 0;
@@ -124,6 +124,17 @@
 		$queue['bandwidthtype'] = "Kb";
 		$config['shaper']['queue'][] = $queue;
 
+		/* LAN root queue */
+		$queue = array();
+		$queue['name'] = "{$downq}Root";
+		$queue['associatedrule'] = 0;
+		$queue['priority'] = 6;
+		$queue['parentqueue'] = "on";
+		$queue['bandwidth'] = (int)$_POST['download'];
+		$queue['bandwidthtype'] = "Kb";
+		$config['shaper']['queue'][] = $queue;
+
+		/* WAN default queue */
                 $queue = array();
                 $queue['name'] = "{$upq}def";
                 $queue['attachtoqueue'] = "{$upq}Root";
@@ -146,16 +157,7 @@
 		$queue['bandwidthtype'] = '%';
                 $config['shaper']['queue'][] = $queue;
 
-		/* LAN queue */
-		$queue = array();
-		$queue['name'] = "{$downq}Root";
-		$queue['associatedrule'] = 0;
-		$queue['priority'] = 6;
-		$queue['parentqueue'] = "on";
-		$queue['bandwidth'] = (int)$_POST['download'];
-		$queue['bandwidthtype'] = "Kb";
-		$config['shaper']['queue'][] = $queue;
-
+		/* LAN default queue */
                 $queue = array();
                 $queue['name'] = "{$downq}def";
                 $queue['priority'] = 3;
@@ -178,10 +180,11 @@
 		$queue['bandwidthtype'] = '%';
                 $config['shaper']['queue'][] = $queue;
 
+		/* WAN ack queue */
                 $queue = array();
-                $queue['name'] = "{$downq}acks";
+                $queue['name'] = "{$upq}acks";
 		$queue['ack'] = TRUE;
-                $queue['attachtoqueue'] = "{$downq}Root";
+                $queue['attachtoqueue'] = "{$upq}Root";
                 $queue['associatedrule'] = 0;
                 $queue['priority'] = 6;
                 $queue['realtime'] = "on";
@@ -199,11 +202,12 @@
 		$queue['bandwidth'] = 1;
 		$queue['bandwidthtype'] = '%';
                 $config['shaper']['queue'][] = $queue;
-
                 $queue = array();
-                $queue['name'] = "{$upq}acks";
+
+		/* LAN ack queue */
+                $queue['name'] = "{$downq}acks";
 		$queue['ack'] = TRUE;
-                $queue['attachtoqueue'] = "{$upq}Root";
+                $queue['attachtoqueue'] = "{$downq}Root";
                 $queue['associatedrule'] = 0;
                 $queue['priority'] = 6;
                 $queue['realtime'] = "on";
@@ -377,6 +381,7 @@
 	                /* create qVOIPUp */
 	                $queue = array();
 	                $queue['name'] = "qVOIPUp";
+ 	                $queue['attachtoqueue'] = "{$upq}Root";
 	                $queue['associatedrule'] = 0;
 	                $queue['priority'] = 7;
 			$queue['realtime'] = "on";
@@ -393,12 +398,12 @@
  	                $queue['upperlimit3'] = $_POST['bandwidth'] . "Kb";
 			$queue['bandwidth'] = 1;
 			$queue['bandwidthtype'] = '%';
- 	                $queue['attachtoqueue'] = "{$upq}Root";
  	                $config['shaper']['queue'][] = $queue;
 
  	                /* create qVOIPDown */
  	                $queue = array();
  	                $queue['name'] = "qVOIPDown";
+ 	                $queue['attachtoqueue'] = "{$downq}Root";
  	                $queue['associatedrule'] = 0;
  	                $queue['priority'] = 7;
  	                $queue['realtime'] = "on";
@@ -415,7 +420,6 @@
  	                $queue['upperlimit3'] = $_POST['bandwidth'] . "Kb";
 			$queue['bandwidth'] = 1;
 			$queue['bandwidthtype'] = '%';
- 	                $queue['attachtoqueue'] = "{$downq}Root";
  	                $config['shaper']['queue'][] = $queue;			
 
 			$config['shaper']['itemsshaped']++;
@@ -754,6 +758,7 @@
 		/* create qP2PUp */
 		$queue = array();
 		$queue['name'] = "qP2PUp";
+                $queue['attachtoqueue'] = "{$upq}Root";
 		$queue['associatedrule'] = 0;
 		$queue['priority'] = 0;
 		$queue['red'] = "on";
@@ -772,12 +777,12 @@
                 $queue['upperlimit3'] = "90%";
 		$queue['bandwidth'] = 1;
 		$queue['bandwidthtype'] = '%';
-                $queue['attachtoqueue'] = "{$upq}Root";
 		$config['shaper']['queue'][] = $queue;
 
 		/* create qP2PDown */
 		$queue = array();
 		$queue['name'] = "qP2PDown";
+                $queue['attachtoqueue'] = "{$downq}Root";
 		$queue['associatedrule'] = 0;
 		$queue['priority'] = 0;
 		$queue['red'] = "on";
@@ -796,7 +801,6 @@
                 $queue['upperlimit3'] = "90%";
 		$queue['bandwidth'] = 1;
 		$queue['bandwidthtype'] = '%';
-                $queue['attachtoqueue'] = "{$downq}Root";
 		$config['shaper']['queue'][] = $queue;
 	}	
 	</stepsubmitphpaction>
@@ -812,7 +816,7 @@
                         <type>checkbox</type>
                         <typehint>Prioritize network gaming traffic</typehint>
                         <description>This will raise the priority of gaming traffic to higher than most traffic.</description>
-			<enablefields>Battle.NET,Battlefield2,CallOfDuty,Counterstrike,DeltaForce,DOOM3,EmpireEarth,Everquest,FarCry,GunZOnline,HalfLife,HalfLife2,Halo2,Lineage2,PlanetSide,QuakeIII,TigerWoods2004PS2,WolfensteinEnemyTerritory,WorldOfWarcraft</enablefields>
+			<enablefields>BattleNET,Battlefield2,CallOfDuty,Counterstrike,DeltaForce,DOOM3,EmpireEarth,Everquest,FarCry,GunZOnline,HalfLife,HalfLife2,Halo2,Lineage2,PlanetSide,QuakeIII,TigerWoods2004PS2,WolfensteinEnemyTerritory,WorldOfWarcraft</enablefields>
 			<donotdisable>true</donotdisable>
 			<bindstofield>ezshaper->step5->enable</bindstofield>
                 </field>
@@ -825,10 +829,10 @@
                         <type>listtopic</type>
                 </field>		
                 <field>
-                        <name>Battle.NET</name>
+                        <name>BattleNET</name>
                         <type>checkbox</type>
 			<typehint>Battle.net - Virtually every game from Blizzard publishing should match this.  This includes the following game series: Starcraft, Diablo, Warcraft.  Guild Wars also uses this port.</typehint>
-			<bindstofield>ezshaper->step5->battlefield2</bindstofield>
+			<bindstofield>ezshaper->step5->battlenet</bindstofield>
                 </field>
                 <field>
                         <name>Battlefield2</name>
@@ -959,6 +963,7 @@
 		/* create qGamesUp queue */
 		$queue = array();
 		$queue['name'] = "qGamesUp";
+                $queue['attachtoqueue'] = "{$upq}Root";
 		$queue['associatedrule'] = 0;
 		$queue['priority'] = 5;
 		$queue['red'] = "on";
@@ -977,12 +982,12 @@
                 $queue['upperlimit3'] = "90%";
 		$queue['bandwidth'] = 1;
 		$queue['bandwidthtype'] = '%';
-                $queue['attachtoqueue'] = "{$upq}Root";
 		$config['shaper']['queue'][] = $queue;
 	    
 		/* create qGamesDown queue */
 		$queue = array();
 		$queue['name'] = "qGamesDown";
+                $queue['attachtoqueue'] = "{$downq}Root";
 		$queue['associatedrule'] = 0;
 		$queue['priority'] = 5;
 		$queue['red'] = "on";
@@ -1001,7 +1006,6 @@
                 $queue['upperlimit3'] = "90%";
 		$queue['bandwidth'] = 1;
 		$queue['bandwidthtype'] = '%';
-                $queue['attachtoqueue'] = "{$downq}Root";
 		$config['shaper']['queue'][] = $queue;
 
 		$gamesplist = array();
@@ -1701,6 +1705,7 @@
 		/* create qOthersUp queue */
 		$queue = array();
 		$queue['name'] = "qOthersUpH";
+                $queue['attachtoqueue'] = "{$upq}Root";
 		$queue['associatedrule'] = 0;
 		$queue['priority'] = 4;
 		$queue['red'] = "on";
@@ -1719,12 +1724,12 @@
                 $queue['upperlimit3'] = "90%";
 		$queue['bandwidth'] = 1;
 		$queue['bandwidthtype'] = '%';
-                $queue['attachtoqueue'] = "{$upq}Root";
 		$config['shaper']['queue'][] = $queue;
 	    
 		/* create qOthersDown queue */
 		$queue = array();
 		$queue['name'] = "qOthersDownH";
+                $queue['attachtoqueue'] = "{$downq}Root";
 		$queue['associatedrule'] = 0;
 		$queue['priority'] = 4;
 		$queue['red'] = "on";
@@ -1743,13 +1748,13 @@
                 $queue['upperlimit3'] = "90%";
 		$queue['bandwidth'] = 1;
 		$queue['bandwidthtype'] = '%';
-                $queue['attachtoqueue'] = "{$downq}Root";
 		$config['shaper']['queue'][] = $queue;
                 
 
 		/* create qOthersUp queue */
 		$queue = array();
 		$queue['name'] = "qOthersUpL";
+                $queue['attachtoqueue'] = "{$upq}Root";
 		$queue['associatedrule'] = 0;
 		$queue['priority'] = 2;
 		$queue['red'] = "on";
@@ -1768,12 +1773,12 @@
                 $queue['upperlimit3'] = "90%";
 		$queue['bandwidth'] = 1;
 		$queue['bandwidthtype'] = '%';
-                $queue['attachtoqueue'] = "{$upq}Root";
 		$config['shaper']['queue'][] = $queue;
 	    
 		/* create qOthersDown queue */
 		$queue = array();
 		$queue['name'] = "qOthersDownL";
+                $queue['attachtoqueue'] = "{$downq}Root";
 		$queue['associatedrule'] = 0;
 		$queue['priority'] = 2;
 		$queue['red'] = "on";
@@ -1792,7 +1797,6 @@
                 $queue['upperlimit3'] = "90%";
 		$queue['bandwidth'] = 1;
 		$queue['bandwidthtype'] = '%';
-                $queue['attachtoqueue'] = "{$downq}Root";
 		$config['shaper']['queue'][] = $queue;
 		
 		$othersplist = array();
@@ -2004,8 +2008,7 @@
 	<stepsubmitphpaction>
 		$config['shaper']['enable'] = TRUE;
                 unset($config['shaper']['itemsshaped']);
-		if(file_exists($d_shaperconfdirty_path))
-			mwexec("rm {$d_shaperconfdirty_path}");
+		unlink_if_exists($d_shaperconfdirty_path);
 		filter_configure_sync();
 		header("Location: /status_queues.php");
 	</stepsubmitphpaction>

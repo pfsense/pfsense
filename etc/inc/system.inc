@@ -561,9 +561,9 @@ function system_generate_lighty_config($filename,
 	$memory = get_memory();
 	$avail = $memory[0];
 
-	//if($avail > 0 and $avail < 72) {
+	if($avail > 0 and $avail < 65) {
 	$fast_cgi_enable = false;
-	//}
+	}
 		
 	if($fast_cgi_enable == true) {
 		$module = "\"mod_fastcgi\", \"mod_cgi\"";

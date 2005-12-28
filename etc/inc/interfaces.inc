@@ -815,6 +815,8 @@ function interfaces_wan_configure() {
 			mwexec("/sbin/route delete default");
 			mwexec("/sbin/route add default " . escapeshellarg($config['interfaces']['wan']['gateway']));
 
+			mwexec("/sbin/ifconfig {$wancfg['if']} up");
+
 			/* resync pf (done automatically for DHCP/PPPoE/PPTP) */
 			filter_configure();
 	}

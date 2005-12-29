@@ -72,7 +72,6 @@ if($_GET['filter']) {
 			</tr>
 		
 		<tr>
-			<td class="listhdrr" width="10%">Type</td>
 			<td class="listhdrr" width="10%">Proto</td>
 			<td class="listhdrr" width="65">Source -> Router -> Destination</td>
 			<td class="listhdr" width="25%">State</td>
@@ -93,7 +92,6 @@ if(count($states) > 0) {
 
 		$towrite = <<<EOD
 		<tr valign="top">
-		<td class="listlr">{$type}</td>
 		<td class="listlr">{$proto}</td>
 		<td class="listlr">{$info}</td>
 		<td class="listlr">{$state}</td>

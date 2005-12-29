@@ -351,12 +351,6 @@ function interfaces_carp_configure() {
 		$mt = microtime();
 		echo "interfaces_carp_configure() being called $mt\n";
 	}
-	if(!$config['installedpackages']['carpsettings']['config'])
-		return;	
-	if ($g['booting'] and !$debugging) {
-		echo "Configuring CARP interfaces...";
-		mute_kernel_msgs();
-	}
 	/* if neither items are arrays then redirect pfsync to loopback */
 	if (!is_array($config['virtualip']['vip']) or
 	    !is_array($config['installedpackages']['carpsettings']['config'])) {
@@ -367,6 +361,12 @@ function interfaces_carp_configure() {
 		}
 		return;
 	}
+	if(!$config['installedpackages']['carpsettings']['config'])
+		return;	
+	if ($g['booting'] and !$debugging) {
+		echo "Configuring CARP interfaces...";
+		mute_kernel_msgs();
+	}	
 	foreach($config['installedpackages']['carpsettings']['config'] as $carp) {
 		if($carp['pfsyncenabled'] != "") {
 			mwexec("/sbin/sysctl net.inet.carp.allow=1");

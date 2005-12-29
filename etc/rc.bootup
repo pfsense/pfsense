@@ -170,6 +170,8 @@
 
 	/* start pflog */
 	filter_pflog_start();
+
+	setup_filter_bridge();
 	
 	/* setup altq + pf */
 	echo "Configuring firewall... ";

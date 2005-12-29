@@ -43,6 +43,7 @@ $pconfig['key'] = base64_decode($config['system']['webgui']['private-key']);
 $pconfig['disableconsolemenu'] = isset($config['system']['disableconsolemenu']);
 $pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
+$pconfig['filteringbridge_enable'] = isset($config['bridge']['filteringbridge']);
 $pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
 /* billm: alternate schedulers are currently disable */
 /* 
@@ -200,6 +201,8 @@ if ($_POST) {
 	
                 $config['ipsec']['preferoldsa'] = $_POST['preferoldsa_enable'] ? true : false;
 	
+		$config['bridge']['filteringbridge'] = $_POST['filteringbridge_enable'] ? true : false;	
+	
 		/* pfSense themes */
 		$config['theme'] = $_POST['theme'];
 
@@ -267,6 +270,8 @@ if ($_POST) {
 		}
 		
 		conf_mount_ro();
+		
+		setup_filter_bridge();
 		
 	}
 }
@@ -404,6 +409,17 @@ include("head.inc");
 				&nbsp;(IP address)<span class="vexpl"><br /> Don't forget to add a firewall rule to permit IPv6 packets!</span>
 			</td>
 		</tr>
+                <tr> 
+                  <td width="22%" valign="top" class="vncell">&nbsp;</td>
+                  <td width="78%" class="vtable"> 
+                    <input name="filteringbridge_enable" type="checkbox" id="filteringbridge_enable" value="yes" <?php if ($pconfig['filteringbridge_enable']) echo "checked"; ?>>
+                    <strong>Enable filtering bridge</strong><span class="vexpl"><br>
+                    This will cause bridged packets to pass through the packet 
+                    filter in the same way as routed packets do (by default bridged 
+                    packets are always passed). If you enable this option, you'll 
+                    have to add filter rules to selectively permit traffic from 
+                    bridged interfaces.</span></td>
+                </tr>			
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">

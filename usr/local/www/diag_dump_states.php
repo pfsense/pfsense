@@ -65,7 +65,7 @@ if($_GET['filter']) {
 							<form action="<?=$PHP_SELF;?>" method="get" id="search">
 							<td width="175"><input name="filter" type="text" id="" value="<?=$_GET['filter_params'];?>" size="30" style="font-size:11px;"></td>
 							</form>
-							<td><input type="submit" class="formbtn" value="Accept"></td>
+							<td><input type="submit" class="formbtn" value="Filter"></td>
 						</tr>
 					</table>
 				</td>

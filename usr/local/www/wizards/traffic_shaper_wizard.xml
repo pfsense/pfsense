@@ -816,7 +816,7 @@
                         <type>checkbox</type>
                         <typehint>Prioritize network gaming traffic</typehint>
                         <description>This will raise the priority of gaming traffic to higher than most traffic.</description>
-			<enablefields>BattleNET,Battlefield2,CallOfDuty,Counterstrike,DeltaForce,DOOM3,EmpireEarth,Everquest,FarCry,GunZOnline,HalfLife,HalfLife2,Halo2,Lineage2,PlanetSide,QuakeIII,TigerWoods2004PS2,WolfensteinEnemyTerritory,WorldOfWarcraft</enablefields>
+			<enablefields>BattleNET,Battlefield2,CallOfDuty,Counterstrike,DeltaForce,DOOM3,EmpireEarth,Everquest,Everquest2,FarCry,GunZOnline,HalfLife,HalfLife2,Halo2,Lineage2,PlanetSide,QuakeIII,TigerWoods2004PS2,WolfensteinEnemyTerritory,WorldOfWarcraft</enablefields>
 			<donotdisable>true</donotdisable>
 			<bindstofield>ezshaper->step5->enable</bindstofield>
                 </field>
@@ -876,6 +876,12 @@
 			<typehint>Everquest - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
 			<bindstofield>ezshaper->step5->everquest</bindstofield>
                 </field>
+                <field>
+			<name>Everquest2</name>
+			<type>checkbox</type>
+			<typehint>Everquest II</typehint>
+			<bindstofield>ezshaper->step5->everquest2</bindstofield>
+		</field>
                 <field>
                         <name>GunZOnline</name>
                         <type>checkbox</type>
@@ -1093,6 +1099,15 @@
 		    $gamesplist[] = array('Everquest-3', 'udp', '1024', '6000', 'both');
 		    $gamesplist[] = array('Everquest-4', 'udp', '7000', '7000', 'both');
 		}
+
+		if($_POST['everquest2'] != "") {
+		    /* everquest2 */
+		    $gamesplist[] = array('Everquest2-1', 'tcp', '7000', '7000', 'both');
+		    $gamesplist[] = array('Everquest2-2', 'udp', '3016', '3021', 'both');
+		    $gamesplist[] = array('Everquest2-3', 'udp', '9100', '9100', 'both');
+		    $gamesplist[] = array('Everquest2-4', 'udp', '9700', '9703', 'both');
+		    $gamesplist[] = array('Everquest2-5', 'udp', '32800', '33000', 'both');
+ 		}
 
 		if($_POST['farcry'] != "") {
 		    /* far cry */

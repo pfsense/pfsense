@@ -409,6 +409,9 @@ include("head.inc");
 				&nbsp;(IP address)<span class="vexpl"><br /> Don't forget to add a firewall rule to permit IPv6 packets!</span>
 			</td>
 		</tr>
+		<tr>
+			<td colspan="2" valign="top" class="listtopic">Filtering Bridge</td>
+		</tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">&nbsp;</td>
                   <td width="78%" class="vtable"> 

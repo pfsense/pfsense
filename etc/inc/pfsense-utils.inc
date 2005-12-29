@@ -445,7 +445,13 @@ function is_jumbo_capable($int) {
 	 * http://www.freebsd.org/cgi/man.cgi?query=vlan&manpath=FreeBSD+6.0-RELEASE&format=html
 	 * Only the following drivers support large frames
 	 */
-	$capable = array("bfe", "bge", "dc", "de", "em", "fxp", "gem", "hme", 
+	/* 'de' chipset purposely left out of this list
+	 * requires defining BIG_PACKET in the
+	 * /usr/src/sys/pci/if_de.c source file and rebuilding the
+	 * kernel or module.  The hack works only for the 21041,
+	 * 21140, and 21140A chips.
+	 */
+	$capable = array("bfe", "bge", "dc", "em", "fxp", "gem", "hme", 
 		"ixgb", "nge", "re", "rl", "sis", "ste", "ti", "tl", "tx",
 		"txp", "xl");
 	

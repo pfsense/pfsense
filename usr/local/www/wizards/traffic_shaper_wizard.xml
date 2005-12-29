@@ -966,8 +966,6 @@
                 $queue['attachtoqueue'] = "{$upq}Root";
 		$queue['associatedrule'] = 0;
 		$queue['priority'] = 5;
-		$queue['red'] = "on";
-		$queue['ecn'] = "on";
 		$queue['realtime'] = "on";
 		$queue['realtime1'] = "1Kb";
 		$queue['realtime2'] = "1";
@@ -990,8 +988,6 @@
                 $queue['attachtoqueue'] = "{$downq}Root";
 		$queue['associatedrule'] = 0;
 		$queue['priority'] = 5;
-		$queue['red'] = "on";
-		$queue['ecn'] = "on";
 		$queue['realtime'] = "on";
 		$queue['realtime1'] = "1Kb";
 		$queue['realtime2'] = "1";

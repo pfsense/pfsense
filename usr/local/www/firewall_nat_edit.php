@@ -75,14 +75,17 @@ if ($_POST) {
 
 	if (!$_POST['endport'])
 		$_POST['endport'] = $_POST['beginport'];
+        /* Make beginning port end port if not defined and endport is */
+        if (!$_POST['beginport'] && $_POST['endport'])
+                $_POST['beginport'] = $_POST['endport'];
 
 	unset($input_errors);
 	$pconfig = $_POST;
 
 	/* input validation */
-	if($_POST['proto'] == "TCP" or $_POST['proto'] == "UDP" or $_POST['proto'] == "TCP/UDP") {
+	if(strtoupper($_POST['proto']) == "TCP" or strtoupper($_POST['proto']) == "UDP" or strtoupper($_POST['proto']) == "TCP/UDP") {
 		$reqdfields = explode(" ", "interface proto beginport localip localbeginport");
-		$reqdfieldsn = explode(",", "Interface,Protocol,Start port,NAT IP,Local port");
+		$reqdfieldsn = explode(",", "Interface,Protocol,Ext. start port,NAT IP,Local port");
 	} else {
 		$reqdfields = explode(" ", "interface proto localip");
 		$reqdfieldsn = explode(",", "Interface,Protocol,NAT IP");		
@@ -95,7 +98,7 @@ if ($_POST) {
 	}
 
 	/* only validate the ports if the protocol is TCP, UDP or TCP/UDP */
-	if($_POST['proto'] == "TCP" or $_POST['proto'] == "UDP" or $_POST['proto'] == "TCP/UDP") {
+	if(strtoupper($_POST['proto']) == "TCP" or strtoupper($_POST['proto']) == "UDP" or strtoupper($_POST['proto']) == "TCP/UDP") {
 
 		if (($_POST['beginport'] && !is_ipaddroralias($_POST['beginport']) && !is_port($_POST['beginport']))) {
 			$input_errors[] = "The start port must be an integer between 1 and 65535.";

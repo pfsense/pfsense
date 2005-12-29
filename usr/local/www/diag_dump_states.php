@@ -106,7 +106,7 @@ EOD;
 $line = <<<EOD
 		<td class="listt">{$state_split[0]}</td>
 		<td class="listt">{$state_split[1]}</td>
-		<td  class="listt"align="right">{$state_split[2]}</td>
+		<td class="listt" align="right">{$state_split[2]}</td>
 		<td class="listt">{$state_split[3]}</td>
 		<td class="listt">{$state_split[4]}</td>
 		<td class="listt">{$state_split[5]}</td>

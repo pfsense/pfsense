@@ -9,16 +9,7 @@ partsize="3m"
 # Run some initialization routines
 /etc/rc.d/uzip start
 
-# Initialize MFS for /var. Partly taken from /etc/rc.d/var
-if (/bin/mkdir -p /var/.diskless 2> /dev/null); then
-       rmdir /var/.diskless
-else
-        varsize="32m"
-       mdmfs -S -M -s ${varsize} md /var
-fi
-
-
-for i in tmp etcmfs rootmfs; do
+for i in tmp varmfs etcmfs rootmfs; do
        if [ -f /etc/rc.d/$i ]; then
                sh /etc/rc.d/$i start
        fi

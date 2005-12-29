@@ -2,7 +2,7 @@
 <?php
 /*
     diag_dump_states.php
-    Copyright (C) 2004 Scott Ullrich
+    Copyright (C) 2005 Scott Ullrich, Colin Smith
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -28,28 +28,22 @@
 */
 
 require_once("guiconfig.inc");
-require_once("xmlparse.inc");
-
-function gentitle_pkg($pgname) {
-	global $config;
-	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
-}
 
 $pgtitle = "Diagnostics: Show States";
 include("head.inc");
- 
-$states=split("\n",`/sbin/pfctl -ss`);
+
+/* get our states */
+if($_GET['filter']) {
+	exec("/sbin/pfctl -ss | grep {$_GET['filter']}", $states);
+} else {
+	exec("/sbin/pfctl -ss", $states);
+}
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php
-include("fbegin.inc");
-?>
+<?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
-<form action="carp_status.php" method="post">
-<?php if ($savemsg) print_info_box($savemsg); ?>
-
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td>
 <?php
@@ -59,65 +53,56 @@ include("fbegin.inc");
 	display_top_tabs($tab_array);
 ?>
 </td></tr>
+
 <tr><td>
         <div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="0" cellpadding="3">
-		<tr id="frheader">
-			<td class="listhdrr">Type</td>
-			<td class="listhdrr">Proto</td>
-			<td class="listhdrr" colspan="7">Source -> Router -> Destination</td>
-			<td class="listhdrr">State</td>
+              <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr>
+				<td colspan="10">
+					<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+						<tr>
+							<td style="font-weight:bold;" width="50" align="right">Filter:&nbsp;</td>
+							<form action="<?=$PHP_SELF;?>" method="get" id="search">
+							<td width="175"><input name="filter" type="text" id="" value="<?=$_GET['filter_params'];?>" size="30" style="font-size:11px;"></td>
+							</form>
+							<td><input type="submit" class="formbtn" value="Accept"></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		
+		<tr>
+			<td class="listhdrr" width="10%">Type</td>
+			<td class="listhdrr" width="10%">Proto</td>
+			<td class="listhdrr" width="65">Source -> Router -> Destination</td>
+			<td class="listhdr" width="25%">State</td>
 		</tr>
 <?php
-foreach($states as $state) {
-	$state_fixed=str_replace("  ", " ", $state);
-	$state_fixed=str_replace("  ", " ", $state_fixed);
-	$state_split = split(" ", $state_fixed);
-	print "<tr valign=\"top\">";
-	if(count($state_split) == 7) {
-$line = <<<EOD
-		<td class="listt">{$state_split[0]}</td>
-		<td class="listt">{$state_split[1]}</td>
-		<td class="listt" align="right">{$state_split[2]}</td>
-		<td class="listt">{$state_split[3]}</td>
-		<td class="listt">{$state_split[4]}</td>
-		<td class="listt">{$state_split[5]}</td>
-		<td class="listt">&nbsp;</td>
-		<td class="listt">&nbsp;</td>
-		<td class="listt">&nbsp;</td>
-		<td class="listt">{$state_split[6]}</td>
+$state_counter = 0;
+if(count($states) > 0) {
+	foreach($states as $line) {
+		$state_counter++;
+		if($state_counter > 1000)
+			break;
+	
+		$line_split = preg_split("/\s+/", $line);
+		$state = array_pop($line_split);
+		$type = array_shift($line_split);
+		$proto = array_shift($line_split);
+		$info = implode(" ", $line_split);
+
+		$towrite = <<<EOD
+		<tr valign="top">
+		<td class="listlr">{$type}</td>
+		<td class="listlr">{$proto}</td>
+		<td class="listlr">{$info}</td>
+		<td class="listlr">{$state}</td>
+		</tr>
 EOD;
-		print $line;
-	} elseif(count($state_split) == 8) {
-$line = <<<EOD
-		<td class="listt">{$state_split[0]}</td>
-		<td class="listt">{$state_split[1]}</td>
-		<td class="listt" align=r"right">{$state_split[2]}</td>
-		<td class="listt">{$state_split[3]}</td>
-		<td class="listt">{$state_split[4]}</td>
-		<td class="listt">{$state_split[5]}</td>
-		<td class="listt">{$state_split[6]}</td>
-		<td class="listt">&nbsp;</td>
-		<td class="listt">&nbsp;</td>
-		<td class="listt">{$state_split[7]}</td>	
-EOD;
-		print $line;
-	} elseif(count($state_split) == 9) {
-$line = <<<EOD
-		<td class="listt">{$state_split[0]}</td>
-		<td class="listt">{$state_split[1]}</td>
-		<td class="listt" align="right">{$state_split[2]}</td>
-		<td class="listt">{$state_split[3]}</td>
-		<td class="listt">{$state_split[4]}</td>
-		<td class="listt">{$state_split[5]}</td>
-		<td class="listt">{$state_split[6]}</td>
-		<td class="listt">{$state_split[7]}</td>
-		<td class="listt">&nbsp;</td>
-		<td class="listt">{$state_split[8]}</td>
-EOD;
-		print $line;
+		print $towrite;
 	}
-	print "</tr>";
+} else {
+	print '<tr><td colspan="4"><center>No states were found.</center></td></tr>';
 }
 
 ?>
@@ -126,8 +111,7 @@ EOD;
 </center>
 </td></tr>
 </table>
-
 <?php include("fend.inc"); ?>
-<meta http-equiv="refresh" content="60;url=<?php print $_SERVER['PHP_SELF']; ?>">
+<meta http-equiv="refresh" content="60;url=diag_dump_states.php">
 </body>
 </html>

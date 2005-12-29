@@ -410,6 +410,9 @@ include("head.inc");
 			</td>
 		</tr>
 		<tr>
+			<td colspan="2" class="list" height="12">&nbsp;</td>
+		</tr>		
+		<tr>
 			<td colspan="2" valign="top" class="listtopic">Filtering Bridge</td>
 		</tr>
                 <tr> 

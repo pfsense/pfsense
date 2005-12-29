@@ -121,6 +121,7 @@
 	
 	if (!file_exists("$sshConfigDir/ssh_host_key") or file_exists("/etc/keys_generating")) {
 		/* remove previous keys and regen later */
+		file_notice("SSH", "pfSense has started creating your SSH keys.  SSH Startup will be delayed.", "SSH KeyGen", "");
 		conf_mount_rw();
 		mwexec("rm /etc/ssh/ssh_host_*");
 		touch("/etc/keys_generating");

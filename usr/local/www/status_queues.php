@@ -149,7 +149,12 @@ While(!Connection_Aborted()) {
 
 		echo "<script language='javascript'>\n";
 
-		$packet_s = round(400 * (1 - $packet_sampled / $total_packets_s), 0);
+		/* Since pps can be 0, let's not divide by zero */
+		if ($total_packets_s == 0) {
+			$packet_s = round(400 * (1 - $packet_sampled / $total_packets_s), 0);
+		} else {
+			$packet_s = 0;
+		}
 
 		echo "document.queue{$i}widthb.style.width='{$packet_s}px';\n";
 		echo "document.queue{$i}widtha.style.width='" . (400 - $packet_s) . "px';\n";

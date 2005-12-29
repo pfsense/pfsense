@@ -2019,7 +2019,24 @@
 	<stepsubmitphpaction>
 		$config['shaper']['enable'] = TRUE;
                 unset($config['shaper']['itemsshaped']);
-		unlink_if_exists($d_shaperconfdirty_path);
+                /* Sort rules by queue priority */
+                sort_rule_by_queue_priority();
+
+                /* Enable shaper */
+                $config['shaper']['enable'] = TRUE;
+
+                /* Prepare for next ezshaper wizard run */
+                unset($config['shaper']['itemsshaped']);
+
+                /* Create new rules */
+                filter_configure_sync();
+
+                /* And we're no longer dirty! */
+                unlink_if_exists($d_shaperconfdirty_path);
+
+                /* Head over and check out the groovy queue stats */
+                header("Location: /status_queues.php");
+
 		filter_configure_sync();
 		header("Location: /status_queues.php");
 	</stepsubmitphpaction>

@@ -490,6 +490,28 @@ function wol_sort() {
 	usort($config['wol']['wolentry'], "wolcmp");
 }
 
+function sort_rule_by_queue_priority() {
+	global $g, $config;
+	global $queues;
+
+	function rqpcmp($a, $b) {
+		global $queues;
+
+		$ra = $queues[$a['outqueue']];
+		$rb = $queues[$b['outqueue']];
+
+		if ($ra == $rb)
+			return 0;
+		/* reverse sort - we want higher priority first */	
+		return ($ra < $rb) ? 1 : -1;
+	}
+
+	foreach($config['shaper']['queue'] as $q) {
+		$queues[$q['name']] = $q['priority'];
+	}
+
+	usort($config['shaper']['rule'], "rqpcmp");
+}
 function gentitle($pgname) {
 	global $config;
 	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;

@@ -442,11 +442,12 @@ function exec_command($command) {
  ******/
 function is_jumbo_capable($int) {
 	/* Per:
-	 * http://www.freebsd.org/cgi/man.cgi?query=vlan&manpath=FreeBSD+6.0-current&format=html
+	 * http://www.freebsd.org/cgi/man.cgi?query=vlan&manpath=FreeBSD+6.0-RELEASE&format=html
 	 * Only the following drivers support large frames
 	 */
-	$capable = array("bfe", "dc", "de", "fxp", "hme", "rl", "sis", "ste",
-		"tl", "tx", "xl", "em");
+	$capable = array("bfe", "bge", "dc", "de", "em", "fxp", "gem", "hme", 
+		"ixgb", "nge", "re", "rl", "sis", "ste", "ti", "tl", "tx",
+		"txp", "xl");
 	
 	$int_family = preg_split("/[0-9]+/", $int);
 

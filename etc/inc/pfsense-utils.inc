@@ -453,7 +453,7 @@ function is_jumbo_capable($int) {
 	 */
 	$capable = array("bfe", "bge", "dc", "em", "fxp", "gem", "hme", 
 		"ixgb", "nge", "re", "rl", "sis", "ste", "ti", "tl", "tx",
-		"txp", "xl");
+		"txp", "xl", "sk");
 	
 	$int_family = preg_split("/[0-9]+/", $int);
 

@@ -65,6 +65,7 @@ include("fbegin.inc");
 <tr><td>
 <?php
 $tab_array = array();
+$mode = "";
 foreach($config['interfaces'] as $interface) {
 	if($interface['wireless'] <> "") {
 		if($if == $interface['if'])
@@ -72,6 +73,7 @@ foreach($config['interfaces'] as $interface) {
 		else
 			$enabled = false;
 		$friendly = convert_real_interface_to_friendly_interface_name($interface['if']);
+		$mode = $interface['wireless']['mode'];
 		if($interface['descr'] <> "")
 			$friendly = $interface['descr'];
 		$tab_array[] = array("Status ($friendly)", $enabled, "status_wireless.php?if={$interface['if']}");
@@ -85,46 +87,83 @@ display_top_tabs($tab_array);
 <tr><td>
 <div id="mainarea">
 <table class="tabcont" colspan="3" cellpadding="3" width="100%">
-
 <?php
 
-/* table header */
-print "\n<tr><!-- " . count($state_split) . " -->";
-print "<tr bgcolor='#990000'>";
-print "<td><b><font color='#ffffff'>ADDR</td>";
-print "<td><b><font color='#ffffff'>AID</td>";
-print "<td><b><font color='#ffffff'>CHAN</td>";
-print "<td><b><font color='#ffffff'>RATE</td>";
-print "<td><b><font color='#ffffff'>RSSI</td>";
-print "<td><b><font color='#ffffff'>IDLE</td>";
-print "<td><b><font color='#ffffff'>TXSEQ</td>";
-print "<td><b><font color='#ffffff'>RXSEQ</td>";
-print "<td><b><font color='#ffffff'>CAPS</td>";
-print "<td><b><font color='#ffffff'>ERP</td>";
-print "</tr>\n\n";
+if ($mode == 'bss') {
+	/* table header */
+	print "\n<tr><!-- " . count($state_split) . " -->";
+	print "<tr bgcolor='#990000'>";
+	print "<td><b><font color='#ffffff'>SSID</td>";
+	print "<td><b><font color='#ffffff'>BSSID</td>";
+	print "<td><b><font color='#ffffff'>CHAN</td>";
+	print "<td><b><font color='#ffffff'>RATE</td>";
+	print "<td><b><font color='#ffffff'>RSSI</td>";
+	print "<td><b><font color='#ffffff'>INT</td>";
+	print "<td><b><font color='#ffffff'>CAPS</td>";
+	print "</tr>\n\n";
 
-$states=split("\n",`/sbin/ifconfig {$if} list sta | grep -v "AID CHAN"`);
+	$states=split("\n",`/sbin/ifconfig {$if} list scan | grep -v "CHAN RATE"`);
 
-$counter=0;
-foreach($states as $state) {
-	$state_fixed = str_replace("  ", " ", $state);
-	$state_fixed = str_replace("  ", " ", $state_fixed);
-	$state_fixed = str_replace("  ", " ", $state_fixed);
-	$state_split = split(" ", $state_fixed);
-	print "<tr>";
-	print "<td>{$state_split[0]}</td>";
-	print "<td>{$state_split[1]}</td>";
-	print "<td>{$state_split[2]}</td>";
-	print "<td>{$state_split[3]}</td>";
-	print "<td>{$state_split[4]}</td>";
-	print "<td>{$state_split[5]}</td>";
-	print "<td>{$state_split[6]}</td>";
-	print "<td>{$state_split[7]}</td>";
-	print "<td>{$state_split[8]}</td>";
-	print "<td>{$state_split[9]}</td>";
-	print "</tr>\n";
-	print "<!-- $state_fixed -->\n";
+	$counter=0;
+	foreach($states as $state) {
+		$state_fixed = str_replace("  ", " ", $state);
+		$state_fixed = str_replace("  ", " ", $state_fixed);
+		$state_fixed = str_replace("  ", " ", $state_fixed);
+		$state_split = split(" ", $state_fixed);
+		if($state_split[1] <> ""){
+			print "<tr>";
+			print "<td>{$state_split[0]}</td>";
+			print "<td>{$state_split[1]}</td>";
+			print "<td>{$state_split[2]}</td>";
+			print "<td>{$state_split[3]}</td>";
+			print "<td>{$state_split[4]}</td>";
+			print "<td>{$state_split[5]}</td>";
+			print "<td>{$state_split[6]}</td>";
+			print "</tr>\n";
+			print "<!-- $state_fixed -->\n";
+		}
+	}
+} elseif ($mode == 'hostap') {
+	/* table header */
+	print "\n<tr><!-- " . count($state_split) . " -->";
+	print "<tr bgcolor='#990000'>";
+	print "<td><b><font color='#ffffff'>ADDR</td>";
+	print "<td><b><font color='#ffffff'>AID</td>";
+	print "<td><b><font color='#ffffff'>CHAN</td>";
+	print "<td><b><font color='#ffffff'>RATE</td>";
+	print "<td><b><font color='#ffffff'>RSSI</td>";
+	print "<td><b><font color='#ffffff'>IDLE</td>";
+	print "<td><b><font color='#ffffff'>TXSEQ</td>";
+	print "<td><b><font color='#ffffff'>RXSEQ</td>";
+	print "<td><b><font color='#ffffff'>CAPS</td>";
+	print "<td><b><font color='#ffffff'>ERP</td>";
+	print "</tr>\n\n";
+
+	$states=split("\n",`/sbin/ifconfig {$if} list sta | grep -v "AID CHAN"`);
+
+	$counter=0;
+	foreach($states as $state) {
+		$state_fixed = str_replace("  ", " ", $state);
+		$state_fixed = str_replace("  ", " ", $state_fixed);
+		$state_fixed = str_replace("  ", " ", $state_fixed);
+		$state_split = split(" ", $state_fixed);
+		print "<tr>";
+		print "<td>{$state_split[0]}</td>";
+		print "<td>{$state_split[1]}</td>";
+		print "<td>{$state_split[2]}</td>";
+		print "<td>{$state_split[3]}</td>";
+		print "<td>{$state_split[4]}</td>";
+		print "<td>{$state_split[5]}</td>";
+		print "<td>{$state_split[6]}</td>";
+		print "<td>{$state_split[7]}</td>";
+		print "<td>{$state_split[8]}</td>";
+		print "<td>{$state_split[9]}</td>";
+		print "</tr>\n";
+		print "<!-- $state_fixed -->\n";
+	}
 }
+
+/* XXX: what stats to we get for adhoc mode? */ 
 
 ?>
 </table>

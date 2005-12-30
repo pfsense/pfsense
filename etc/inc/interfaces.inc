@@ -512,7 +512,7 @@ function interfaces_wireless_configure($if, $wlcfg) {
 	$protmode = "protmode " . escapeshellarg($wlcfg['protmode']);
 
 	/* set wireless channel value */
-	if($wlcfg['channel'])
+	if(isset($wlcfg['channel']))
 		$channel = "channel " . escapeshellarg($wlcfg['channel']);
 
 	/* set Distance value */

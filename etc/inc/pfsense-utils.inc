@@ -620,11 +620,11 @@ function find_carp_interface($ip) {
 function setup_filter_bridge() {
 	global $config, $g;
 	if(isset($config['bridge']['filteringbridge'])) {
-		mwexec("sysctl net.link.bridge.pfil_member=1");
-		mwexec("net.link.bridge.pfil_bridge=1");
+		mwexec("/sbin/sysctl net.link.bridge.pfil_member=1");
+		mwexec("/sbin/sysctl net.link.bridge.pfil_bridge=1");
 	} else {		
-		mwexec("sysctl net.link.bridge.pfil_member=0");
-		mwexec("sysctl net.link.bridge.pfil_bridge=0");
+		mwexec("/sbin/sysctl net.link.bridge.pfil_member=0");
+		mwexec("/sbin/sysctl net.link.bridge.pfil_bridge=0");
 	}
 }
 

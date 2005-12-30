@@ -36,11 +36,23 @@
 
 	$version = trim(file_get_contents("{$g['etc_path']}/version"));
 	$platform = trim(file_get_contents("{$g['etc_path']}/platform"));
+	$hostname = $config['system']['hostname'];
 
-	print "\n*** Welcome to pfSense version {$version} - {$platform} ***\n";
+	print "\n*** Welcome to pfSense {$version}-{$platform} on {$hostname} ***\n";
 
 	/* get our initial interface list */
-	$iflist = get_interface_list("media");
+	$vfaces = array(
+			'ppp',
+			'sl',
+			'gif',
+			'faith',
+			'lo',
+			'tun',
+			'pflog',
+			'pfsync',
+			'carp'
+		);
+	$iflist = get_interface_list("media", "physical", $vfaces);
 
 	foreach($iflist as $ifname => $ifinfo) {
 		/* skip interfaces that don't have a friendly name */
@@ -55,11 +67,11 @@
 				break;
 			case "pppoe":
 				$ifinfo['class'] = "(PPPoE)";
-				$ifinfo['ipaddr'] = get_current_wan_address();
+				$ifinfo['ipaddr'] = $iflist[$g['pppoe_interface']]['ipaddr'];
 				break;
 			case "pptp":
 				$ifinfo['class'] = "(PPTP)";
-				$ifinfo['ipaddr'] = get_current_wan_address();
+				$ifinfo['ipaddr'] = $iflist[$g['pppoe_interface']]['ipaddr'];
 				break;
 			}
 			$tobanner = $friendly;

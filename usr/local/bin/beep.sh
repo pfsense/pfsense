@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -f "/dev/speaker" ]; then
+if [ -c "/dev/speaker" ]; then
 	
 	if [ "$1" = "start" ]; then
 		/usr/local/bin/beep -p 500 200

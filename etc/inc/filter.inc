@@ -1525,7 +1525,7 @@ pass out quick on $wanif proto udp from any port = 68 to any port = 67 label "al
 
 EOD;
 
-if($config['interfaces']['lan']['bridge'] <> "wan")
+if($config['interfaces']['lan']['bridge'] <> "wan" and $config['interfaces']['wan']['bridge'] <> "lan")
 	$ipfrules .= "block in $log quick on $wanif proto udp from any port = 67 to {$lansa_sn_combo} port = 68 label \"allow dhcp client out wan\"\n";
 
 	$ipfrules .= <<<EOD

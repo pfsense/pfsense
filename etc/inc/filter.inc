@@ -668,9 +668,12 @@ function filter_nat_rules_generate() {
 						$natrules .=
 						 "rdr on $natif proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
 					else
-						$natrules .=
-						 "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
-	
+						if($extport[0]) 
+							$natrules .=
+							"rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
+						else 
+							$natrules .=
+							"rdr on $natif proto {$rule['protocol']} from any to {$extaddr} } -> {$target}{$localport}";	
 				} else {
 					if($rule['protocol'] == "tcp/udp")
 						$natrules .=

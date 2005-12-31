@@ -2,6 +2,5 @@
 *default base=/tmp/pfSense
 *default release=cvs
 *default delete use-rel-suffix
-*default release=cvs tag=.
-pfSense
+pfSenseHEAD
 *default compress

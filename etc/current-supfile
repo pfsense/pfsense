@@ -1,5 +1,5 @@
 *default host=cvs.pfsense.com
-*default base=/home/pfsense/cvsroot
+*default base=/tmp/pfSense
 *default release=cvs
 *default delete use-rel-suffix
 *default release=cvs tag=.

@@ -14,6 +14,9 @@ function stats(x) {
 
 	var values = x.split("|");
 
+	if(values[0] == 'undefined')
+		return;
+
 	updateCPU(values[0]);
 	updateMemory(values[1]);
 	updateUptime(values[2]);

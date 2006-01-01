@@ -585,6 +585,7 @@ function filter_nat_rules_generate() {
 
 	if(file_exists("/var/etc/inetd.conf"))
 		mwexec("rm /var/etc/inetd.conf");
+	touch("/var/etc/inetd.conf");
 
 	if (isset($config['nat']['rule'])) {
 		$natrules .= "# NAT Inbound Redirects\n";

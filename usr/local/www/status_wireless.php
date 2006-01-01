@@ -47,7 +47,6 @@ if($if == "") {
 	foreach($config['interfaces'] as $interface) {
 		if($interface['wireless'] <> "") {
 			$if = $interface['if'];
-			break;
 		}
 	}
 }

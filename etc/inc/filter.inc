@@ -750,7 +750,7 @@ function filter_nat_rules_generate() {
 		
 		if(!isset($config['system']['disablenatreflection'])) {
 			fclose($fd);				
-			$helpers = trim(exec("ps ax | grep inetd | grep -v grep"));
+			$helpers = trim(exec("/bin/ps ax | /usr/bin/grep inetd | /usr/bin/grep -v grep | /usr/bin/grep 127"));
 			if(!$helpers)
 				mwexec("/usr/sbin/inetd -a 127.0.0.1 /var/etc/inetd.conf");
 			else

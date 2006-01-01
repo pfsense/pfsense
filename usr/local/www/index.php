@@ -240,7 +240,6 @@ include("fbegin.inc");
 <script type="text/javascript">
 	NiftyCheck();
 	Rounded("div#nifty","top","#FFF","#EEEEEE","smooth");
-	alert(document.location);
 </script>
 
 

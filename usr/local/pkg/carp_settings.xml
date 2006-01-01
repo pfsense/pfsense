@@ -73,6 +73,7 @@
 			<type>interfaces_selection</type>
 			<description>
 			    If Synchronize State is enabled, it will utilize this interface for communication.
+			    &lt;br&gt;&lt;b&gt;NOTE:&lt;/b&gt;  We recommend setting this to a interface other than LAN!  A dedicated interface works the best.
 			    &lt;br&gt;&lt;b&gt;NOTE:&lt;/b&gt;  You must define a IP on each machine participating in this failover group.
 			    &lt;br&gt;&lt;b&gt;NOTE:&lt;/b&gt;  You must have an IP assigned to the interface on any participating sync nodes.
 			</description>

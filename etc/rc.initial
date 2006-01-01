@@ -101,7 +101,7 @@ case ${opmode} in
 	/etc/rc.restart_webgui
 	;;
 98)
-	if [ ! -f /tmp/config_moved ];
+	if [ ! -f /tmp/config_moved ]; then
 		/etc/rc.initial.store_config_to_removable_device
 	fi
 	;;

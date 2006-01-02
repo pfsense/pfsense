@@ -277,7 +277,7 @@ include("head.inc");
 					  <td><a href="firewall_rules_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit rule" width="17" height="17" border="0"></a></td>
 					</tr>
 					<tr>
-					  <td align="center" valign="middle"><a href="firewall_rules.php?act=del&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="delete rule" onclick="return confirm('Do you really want to delete this rule?')"></a></td>
+					  <td align="center" valign="middle"><a href="firewall_rules.php?act=del&if=<?=$if;?>&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="delete rule" onclick="return confirm('Do you really want to delete this rule?')"></a></td>
 					  <td><a href="firewall_rules_edit.php?dup=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add a new rule based on this one" width="17" height="17" border="0"></a></td>
 					</tr>
 					</table>

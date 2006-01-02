@@ -355,6 +355,7 @@ function interfaces_carp_configure() {
 	if (!is_array($config['virtualip']['vip']) or
 	    !is_array($config['installedpackages']['carpsettings']['config'])) {
 		mwexec("/sbin/ifconfig pfsync0 syncdev lo0 up");
+		mwexec("/sbin/sysctl net.inet.carp.allow=0");
 		if($g['booting']) {
 			unmute_kernel_msgs();
 			echo "done.\n";

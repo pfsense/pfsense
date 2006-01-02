@@ -1,4 +1,3 @@
-#!/usr/local/bin/php
 <?php
 /*
 	vpn_ipsec_keys.php

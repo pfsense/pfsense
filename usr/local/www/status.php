@@ -1,4 +1,3 @@
-#!/usr/local/bin/php
 <?php
 /* $Id$ */
 /* Run various commands and collect their output into HTML tables.

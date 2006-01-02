@@ -1,4 +1,3 @@
-#!/usr/local/bin/php
 <?php
 /*
 	vpn_pppoe_users.php

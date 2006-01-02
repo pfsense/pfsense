@@ -1,5 +1,4 @@
-#!/usr/local/bin/php
-<?php
+#!/usr/local/bin/php?php
 /* $Id$ */
 
 include("guiconfig.inc");

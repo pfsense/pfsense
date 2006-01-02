@@ -1,4 +1,3 @@
-#!/usr/local/bin/php
 <?php
 /* $Id$ */
 require("guiconfig.inc");

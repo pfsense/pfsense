@@ -1,4 +1,3 @@
-#!/usr/local/bin/php
 <?php 
 /*
 	vpn_openvpn_cli_edit.php

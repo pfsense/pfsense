@@ -1,4 +1,3 @@
-#!/usr/local/bin/php
 <?php 
 /*
 	services_captiveportal.php

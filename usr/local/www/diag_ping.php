@@ -1,4 +1,3 @@
-#!/usr/local/bin/php
 <?php
 /*
 	diag_ping.php

@@ -1,4 +1,3 @@
-#!/usr/local/bin/php
 <?php 
 /*
 	interfaces_assign.php

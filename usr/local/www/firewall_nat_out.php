@@ -300,13 +300,14 @@ include("head.inc");
                           echo $natent['sourceport'];
                     ?>		    
                   </td>
-
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
-			if(isset($natent['staticnatport'])) echo "*";
+			if(isset($natent['staticnatport']))
+			    echo "<CENTER>*</CENTER>";
+			else
+			    echo "&nbsp;";
                     ?>		    
                   </td>
-
                   <td class="listbg"  onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <font color="#FFFFFF"><?=htmlspecialchars($natent['descr']);?>&nbsp;
                   </td>

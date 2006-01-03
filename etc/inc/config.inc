@@ -69,7 +69,7 @@ if(file_exists("/cf/conf/config.xml")) {
 	if(stristr($config_contents, "m0n0wall") == true) {
 		/* user has just upgraded to m0n0wall, replace root xml tags */
 		echo "Upgrading m0n0wall configuration to pfSense... ";
-		$config_contents = str_replace("m0n0wall","pfsense");
+		$config_contents = str_replace("m0n0wall","pfsense", $config_contents);
 		$fd = fopen("/cf/conf/config.xml", "w");
 		fwrite($fd, $config_contents);
 		fclose($fd);

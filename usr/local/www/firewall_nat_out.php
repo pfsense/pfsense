@@ -244,7 +244,8 @@ include("head.inc");
                   <td width="20%" class="listhdrr">Destination</td>
                   <td width="20%" class="listhdrr">Destination Port</td>
                   <td width="20%" class="listhdrr">NAT Address</td>
-                  <td width="20%" class="listhdrr">NAT Port</td>
+                  <td width="10%" class="listhdrr">NAT Port</td>
+		  <td width="10%" class="listhdrr">Static Port</td>
                   <td width="25%" class="listhdr">Description</td>
                   <td width="5%" class="list"></td>
                 </tr>
@@ -297,8 +298,15 @@ include("head.inc");
                           echo "*";
                       else
                           echo $natent['sourceport'];
-                    ?>
+                    ?>		    
                   </td>
+
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
+                    <?php
+			if(isset($natent['staticnatport'])) echo "*";
+                    ?>		    
+                  </td>
+
                   <td class="listbg"  onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <font color="#FFFFFF"><?=htmlspecialchars($natent['descr']);?>&nbsp;
                   </td>

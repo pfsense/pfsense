@@ -396,7 +396,7 @@ function sourcesel_change() {
 			</tr>
 			<tr>
                           <td>Static-port:&nbsp;&nbsp;</td>
-                          <td><input name="staticnatport" type="text" class="formfld" id="staticnatport" size="5" value="<?=htmlspecialchars($pconfig['staticnatport']);?>"></td>
+                          <td><input name="staticnatport" type="checkbox" class="formfld" id="staticnatport" size="5"<?php if($pconfig['staticnatport']) echo " CHECKED";?>></td>
 			</tr>			
 			<tr><td>&nbsp;</td><td>
                         <span class="vexpl">Enter the source port for the outbound NAT mapping.</span>

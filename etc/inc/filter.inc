@@ -388,8 +388,14 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 		$target = "-> {$tgt}";
 	}
 
+	/* outgoing static-port option, hamachi, Grandstream, VOIP, etc */
+	if($staticnatport)
+		$staticnatport_txt = " static-port";
+	else
+		$staticnatport_txt = "";
+		
 	/* Put all the pieces together */
-        $natrule = "{$nat} on {$if} from {$src} to {$dst} {$target}\n";
+        $natrule = "{$nat} on {$if} from {$src} to {$dst} {$target}{$staticnatport_txt}\n";
 
 	return $natrule;
 }

@@ -63,6 +63,7 @@ if (isset($id) && $a_out[$id]) {
     $pconfig['descr'] = $a_out[$id]['descr'];
     $pconfig['nonat'] = $a_out[$id]['nonat'];
     $pconfig['nosync'] = isset($a_out[$id]['nosync']);
+    $pconfig['staticnatport'] = isset($a_out[$id]['staticnatport']);    
 } else {
     $pconfig['source_subnet'] = 24;
     $pconfig['destination'] = "any";
@@ -178,6 +179,12 @@ if ($_POST) {
         $natent['descr'] = $_POST['descr'];
         $natent['target'] = $_POST['target'];
         $natent['interface'] = $_POST['interface'];
+
+	/* static-port */	
+	if(isset($_POST['staticnatport'])) 
+		$natent['staticnatport'] = true;
+	else 
+		unset($natent['staticnatport']);
 
 	/* if user has selected not nat, set it here */
 	if(isset($_POST['nonat'])) 
@@ -387,6 +394,10 @@ function sourcesel_change() {
                           <td>Port:&nbsp;&nbsp;</td>
                           <td><input name="natport" type="text" class="formfld" id="natport" size="5" value="<?=htmlspecialchars($pconfig['natport']);?>"></td>
 			</tr>
+			<tr>
+                          <td>Static-port:&nbsp;&nbsp;</td>
+                          <td><input name="staticnatport" type="text" class="formfld" id="staticnatport" size="5" value="<?=htmlspecialchars($pconfig['staticnatport']);?>"></td>
+			</tr>			
 			<tr><td>&nbsp;</td><td>
                         <span class="vexpl">Enter the source port for the outbound NAT mapping.</span>
 			</td></tr>

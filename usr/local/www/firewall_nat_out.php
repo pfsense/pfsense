@@ -322,7 +322,7 @@ include("head.inc");
                     </table>
               <?php $i++; $nnats++; endforeach; ?>
                 <tr>
-                  <td class="list" colspan="9"></td>
+                  <td class="list" colspan="10"></td>
                   <td class="list" valign="middle" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>

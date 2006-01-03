@@ -70,6 +70,8 @@ if(file_exists("/cf/conf/config.xml")) {
 		/* user has just upgraded to m0n0wall, replace root xml tags */
 		echo "Upgrading m0n0wall configuration to pfSense... ";
 		$config_contents = str_replace("m0n0wall","pfsense", $config_contents);
+		if (!config_validate($config_contents))
+			log_error("ERROR!  Could not convert m0n0wall -> pfsense in config.xml");	
 		$fd = fopen("/cf/conf/config.xml", "w");
 		fwrite($fd, $config_contents);
 		fclose($fd);
@@ -865,6 +867,9 @@ function config_install($conffile) {
         if (!file_exists($conffile))
                 return 1;
 
+	if (!config_validate($conffile))
+		return 1;
+
 	if($g['booting'] == true)
 		echo "Installing configuration...\n";
  
@@ -882,6 +887,32 @@ function config_install($conffile) {
         config_unlock();
 
         return 0;
+}
+
+function config_validate($conffile) {
+
+	global $g, $xmlerr;
+
+	$xml_parser = xml_parser_create();
+	
+	if (!($fp = fopen($conffile, "r"))) {
+		$xmlerr = "XML error: unable to open file";
+		return false;
+	}
+	
+	while ($data = fread($fp, 4096)) {
+		if (!xml_parse($xml_parser, $data, feof($fp))) {
+			$xmlerr = sprintf("%s at line %d",
+						xml_error_string(xml_get_error_code($xml_parser)),
+						xml_get_current_line_number($xml_parser));
+			return false;
+		}
+	}
+	xml_parser_free($xml_parser);
+	
+	fclose($fp);
+	
+	return true;
 }
 
 /* lock configuration file, decide that the lock file is stale after

@@ -346,7 +346,7 @@ function filter_flush_state_table() {
 }
 
 /* Generate a 'nat on' or 'no nat on' rule for given interface */
-function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "any", $dstport = "", $natip = "", $natport = "", $nonat = false) {
+function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "any", $dstport = "", $natip = "", $natport = "", $nonat = false, $staticnatport = false) {
 	global $config;
 
 	/* XXX: billm - any idea if this code is needed? */

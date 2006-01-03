@@ -272,7 +272,7 @@ function sourcesel_change() {
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="firewall_nat_out_edit.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+              <table width="100%" border="0" cellpadding="6" cellspacing="1">
 	        <tr>
                   <td width="22%" valign="top" class="vncellreq">No nat (NOT)</td>
                   <td width="78%" class="vtable">
@@ -301,7 +301,7 @@ function sourcesel_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Source</td>
                   <td width="78%" class="vtable">
-                    <table border="0" cellspacing="0" cellpadding="0">
+                    <table border="0" cellspacing="1" cellpadding="1">
                       <tr>
 		        <td>Type:&nbsp;&nbsp;</td>
 			<td>
@@ -334,7 +334,7 @@ function sourcesel_change() {
                     <strong>not</strong><br>
                     Use this option to invert the sense of the match.<br>
                     <br>
-                    <table border="0" cellspacing="0" cellpadding="0">
+                    <table border="0" cellspacing="1" cellpadding="1">
                       <tr>
                         <td>Type:&nbsp;&nbsp;</td>
                         <td><select name="destination_type" class="formfld" onChange="typesel_change()">
@@ -369,7 +369,7 @@ function sourcesel_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncell">Translation</td>
                   <td width="78%" class="vtable">
-			<table border="0" cellspacing="0" cellpadding="0">
+			<table border="0" cellspacing="1" cellpadding="1">
 			<tr>
 			  <td>Address:&nbsp;&nbsp;</td>
 			  <td><select name="target" class="formfld">

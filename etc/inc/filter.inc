@@ -491,9 +491,17 @@ function filter_nat_rules_generate() {
 					$natif = $wanif;
 				else
 					$natif = $config['interfaces'][$obent['interface']]['if'];
-
-				$natrules .= filter_nat_rules_generate_if($natif, $src, $obent['sourceport'], $dst, $obent['dstport'], $obent['target'], $obent['natport'],
-					isset($obent['nonat']));
+					
+				$natrules .= filter_nat_rules_generate_if($natif,
+					$src,
+					$obent['sourceport'],
+					$dst,
+					$obent['dstport'],
+					$obent['target'],
+					$obent['natport'],
+					isset($obent['nonat']),
+					isset($obent['staticnatport'])
+					);					
 			}
 		}
 	} else {

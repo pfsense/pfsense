@@ -1302,11 +1302,15 @@ function system_start_ftp_helpers() {
 			$interface_counter++;
 		} else {
 			/* grab the current interface IP address */
-			$ip = find_interface_ip(convert_friendly_interface_to_real_interface_name($ifname));
+			$int = convert_friendly_interface_to_real_interface_name($ifname);
+			$ip = find_interface_ip($int);
 			/* if pftpx is already running then do not launch it again */
-			$helpers = exec("ps awux | grep \"/usr/local/sbin/pftpx -c {$port}\" | grep -v grep | sed \"s/  */ /g\"");
+			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/pftpx -c {$port}\" | grep -v grep | sed \"s/  */ /g\"");
 			if(!$helpers && $ip)
  				mwexec("/usr/local/sbin/pftpx -c {$port} -g 8021 {$ip}");
+			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/ftpsesame -i {$int}\" | grep -v grep | sed \"s/  */ /g\"");
+			if(!$helpers && $ip)
+ 				mwexec("/usr/local/sbin/ftpsesame -i {$int}");
 			$interface_counter++;
 		}
 	}

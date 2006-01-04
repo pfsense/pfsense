@@ -570,43 +570,43 @@ EOD;
 
 function vpn_pptpd_configure() {
 	global $config, $g;
-
+	
 	$syscfg = $config['system'];
 	$pptpdcfg = $config['pptpd'];
-
+	
 	if ($g['booting']) {
 		if (!$pptpdcfg['mode'] || ($pptpdcfg['mode'] == "off"))
 			return 0;
-
+		
 		echo "Configuring PPTP VPN service... ";
-	} else {
+	} else {	
 		/* kill mpd */
 		killbypid("{$g['varrun_path']}/mpd-vpn.pid");
-
+		
 		/* wait for process to die */
 		sleep(2);
-
+		
 		/* remove mpd.conf, if it exists */
 		unlink_if_exists("{$g['varetc_path']}/mpd-vpn/mpd.conf");
 		unlink_if_exists("{$g['varetc_path']}/mpd-vpn/mpd.links");
 		unlink_if_exists("{$g['varetc_path']}/mpd-vpn/mpd.secret");
 	}
-
+		
 	/* make sure mpd-vpn directory exists */
 	if (!file_exists("{$g['varetc_path']}/mpd-vpn"))
 		mkdir("{$g['varetc_path']}/mpd-vpn");
-
+		
 	switch ($pptpdcfg['mode']) {
-
+		
 		case 'server':
-
+			
 			/* write mpd.conf */
 			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.conf", "w");
 			if (!$fd) {
 				printf("Error: cannot open mpd.conf in vpn_pptpd_configure().\n");
 				return 1;
 			}
-
+				
 			$mpdconf = <<<EOD
 pptpd:
 
@@ -615,18 +615,12 @@ EOD;
 			for ($i = 0; $i < $g['n_pptp_units']; $i++) {
 				$mpdconf .= "	load pt{$i}\n";
 			}
-
-			if ($config['interfaces']['wan']['ipaddr'] == "pppoe") {
-				$pptp_mtu = "1440";
-			} else {
-				$pptp_mtu = "1460";
-			}
-
+			
 			for ($i = 0; $i < $g['n_pptp_units']; $i++) {
-
+			
 				$clientip = long2ip(ip2long($pptpdcfg['remoteip']) + $i);
 				$ngif = "ng" . ($i+1);
-
+			
 				$mpdconf .= <<<EOD
 
 pt{$i}:
@@ -636,7 +630,7 @@ pt{$i}:
 
 EOD;
 			}
-
+			
 			$mpdconf .= <<<EOD
 
 pts:
@@ -651,7 +645,7 @@ pts:
 	set link yes acfcomp protocomp
 	set link no pap chap
 	set link enable chap-msv2
-	set link mtu {$pptp_mtu}
+	set link mtu 1460
 	set link keep-alive 10 60
 	set ipcp yes vjcomp
 	set bundle enable compression
@@ -660,7 +654,7 @@ pts:
 	set ccp yes mpp-stateless
 
 EOD;
-
+			
 			if (!isset($pptpdcfg['req128'])) {
 				$mpdconf .= <<<EOD
 	set ccp yes mpp-e40
@@ -668,9 +662,10 @@ EOD;
 
 EOD;
 			}
-			if (isset($pptpdcfg["wins"])) 
-				$mpdconf .= "	set ipcp nbns {$pptpdcfg['wins']}\n";
-			if (isset($config['dnsmasq']['enable'])) {
+			
+			if (is_array($pptpdcfg['dnsserver']) && ($pptpdcfg['dnsserver'][0])) {
+				$mpdconf .= "	set ipcp dns " . join(" ", $pptpdcfg['dnsserver']) . "\n";
+			} else if (isset($config['dnsmasq']['enable'])) {
 				$mpdconf .= "	set ipcp dns " . $config['interfaces']['lan']['ipaddr'];
 				if ($syscfg['dnsserver'][0])
 					$mpdconf .= " " . $syscfg['dnsserver'][0];
@@ -678,7 +673,7 @@ EOD;
 			} else if (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
 				$mpdconf .= "	set ipcp dns " . join(" ", $syscfg['dnsserver']) . "\n";
 			}
-
+			
 			if (isset($pptpdcfg['radius']['enable'])) {
 				$mpdconf .= <<<EOD
 	set radius server {$pptpdcfg['radius']['server']} "{$pptpdcfg['radius']['secret']}"
@@ -699,16 +694,16 @@ EOD;
 
 			fwrite($fd, $mpdconf);
 			fclose($fd);
-
+			
 			/* write mpd.links */
 			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.links", "w");
 			if (!$fd) {
 				printf("Error: cannot open mpd.links in vpn_pptpd_configure().\n");
 				return 1;
 			}
-
+			
 			$mpdlinks = "";
-
+			
 			for ($i = 0; $i < $g['n_pptp_units']; $i++) {
 				$mpdlinks .= <<<EOD
 
@@ -724,16 +719,16 @@ EOD;
 
 			fwrite($fd, $mpdlinks);
 			fclose($fd);
-
+			
 			/* write mpd.secret */
 			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.secret", "w");
 			if (!$fd) {
 				printf("Error: cannot open mpd.secret in vpn_pptpd_configure().\n");
 				return 1;
 			}
-
+			
 			$mpdsecret = "";
-
+			
 			if (is_array($pptpdcfg['user'])) {
 				foreach ($pptpdcfg['user'] as $user)
 					$mpdsecret .= "{$user['name']} \"{$user['password']}\" {$user['ip']}\n";
@@ -742,21 +737,24 @@ EOD;
 			fwrite($fd, $mpdsecret);
 			fclose($fd);
 			chmod("{$g['varetc_path']}/mpd-vpn/mpd.secret", 0600);
-
+			
 			/* fire up mpd */
 			mwexec("/usr/local/sbin/mpd -b -d {$g['varetc_path']}/mpd-vpn -p {$g['varrun_path']}/mpd-vpn.pid pptpd");
-
+			
 			break;
-
+			
 		case 'redir':
 			break;
 	}
-
-	touch("{$g["tmp_path"]}/filter_dirty");
-
+	
+	if (!$g['booting']) {
+		/* reload the filter */
+		filter_configure();
+	}
+	
 	if ($g['booting'])
 		echo "done\n";
-
+	
 	return 0;
 }
 
@@ -764,7 +762,7 @@ function vpn_localnet_determine($adr, &$sa, &$sn) {
 	global $config, $g;
 
 	if (isset($adr)) {
-		if ($adr['network']) {
+		if ($adr['network']) {			
 			switch ($adr['network']) {
 				case 'lan':
 					$sn = $config['interfaces']['lan']['subnet'];
@@ -783,9 +781,9 @@ function vpn_localnet_determine($adr, &$sa, &$sn) {
 }
 
 function vpn_endpoint_determine($tunnel, $curwanip) {
-
+	
 	global $g, $config;
-
+	
 	if ((!$tunnel['interface']) || ($tunnel['interface'] == "wan")) {
 		if ($curwanip)
 			return $curwanip;
@@ -795,12 +793,12 @@ function vpn_endpoint_determine($tunnel, $curwanip) {
 		return $config['interfaces']['lan']['ipaddr'];
 	} else {
 		$oc = $config['interfaces'][$tunnel['interface']];
-
+		
 		if (isset($oc['enable']) && $oc['if']) {
 			return $oc['ipaddr'];
 		}
 	}
-
+	
 	return null;
 }
 

@@ -28,7 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("Services", "Captive portal");
+$pgtitle = "Services:Captive portal";
 require("guiconfig.inc");
 
 if (!is_array($config['captiveportal']['allowedip']))
@@ -43,9 +43,9 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-
-		$retval = captiveportal_allowedip_configure();
-
+		if (!file_exists($d_sysrebootreqd_path)) {
+			$retval = captiveportal_allowedip_configure();
+		}
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {
 			if (file_exists($d_allowedipsdirty_path)) {
@@ -67,27 +67,26 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = "Services: Captive Portal IP";
-include("head.inc");
 
+include("head.inc");
 ?>
-<body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">Services: Captive portal IP</p>
+<p class="pgtitle"><?=$pgtitle?></p>
 <form action="services_captiveportal_ip.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_allowedipsdirty_path)): ?><p>
 <?php print_info_box_np("The captive portal IP address configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
-</p>
+<input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr><td class="tabnavtbl">  
+  <tr><td class="tabnavtbl">
 <?php
 	$tab_array = array();
 	$tab_array[] = array("Captive portal", false, "services_captiveportal.php");
 	$tab_array[] = array("Pass-through MAC", false, "services_captiveportal_mac.php");
 	$tab_array[] = array("Allowed IP addresses", true, "services_captiveportal_ip.php");
 	$tab_array[] = array("Users", false, "services_captiveportal_users.php");
+	$tab_array[] = array("File Manager", true, "services_captiveportal_filemanager.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -128,14 +127,14 @@ include("head.inc");
 	  Adding allowed IP addresses will allow IP access to/from these addresses through the captive portal without being taken to the portal page. This can be used for a web server serving images for the portal page or a DNS server on another network, for example. By specifying <em>from</em> addresses, it may be used to always allow pass-through access from a client behind the captive portal.</p>
 	  <table border="0" cellspacing="0" cellpadding="0">
 		<tr>
-		  <td><span class="vexpl">any <img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_in.gif" width="11" height="11" align="absmiddle"> x.x.x.x </span></td>
+		  <td><span class="vexpl">any <img src="/themes/<=$g['theme'];?>/images/icons/icon_in.gif" width="11" height="11" align="absmiddle"> x.x.x.x </span></td>
 		  <td><span class="vexpl">All connections <strong>to</strong> the IP address are allowed</span></td>
 		</tr>
 		<tr>
 		  <td colspan="5" height="4"></td>
 		</tr>
 		<tr>
-		  <td>x.x.x.x <span class="vexpl"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_in.gif" width="11" height="11" align="absmiddle"></span> any&nbsp;&nbsp;&nbsp; </td>
+		  <td>x.x.x.x <span class="vexpl"><img src="/themes/<=$g['theme'];?>/images/icons/icon_in.gif" width="11" height="11" align="absmiddle"></span> any&nbsp;&nbsp;&nbsp; </td>
 		  <td><span class="vexpl">All connections <strong>from</strong> the IP address are allowed </span></td>
 		</tr>
 	  </table></td>

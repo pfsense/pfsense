@@ -28,7 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("Services", "Captive portal", "Edit allowed IP address");
+$pgtitle = "Services:Captive portal:Edit allowed IP address";
 require("guiconfig.inc");
 
 if (!is_array($config['captiveportal']['allowedip']))
@@ -92,15 +92,13 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "Services: Captive Portal Edit Allowed IP Address";
 include("head.inc");
 
 ?>
-<body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">Services: Captive portal IP Edit</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-            <form action="services_captiveportal_ip_edit.php" method="post" name="iform" id="iform">  
+<p class="pgtitle"><?=$pgtitle?></p>
+            <form action="services_captiveportal_ip_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
                   <td width="22%" valign="top" class="vncellreq">Direction</td>

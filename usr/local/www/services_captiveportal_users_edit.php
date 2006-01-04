@@ -3,7 +3,7 @@
 	services_captiveportal_users_edit.php
 	part of m0n0wall (http://m0n0.ch/wall)
 	
-	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 	Copyright (C) 2005 Pascal Suter <d-monodev@psuter.ch>.
 	All rights reserved. 
@@ -30,7 +30,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-$pgtitle = array("Services", "Captive portal", "Edit user");
+$pgtitle = "Services: Captive portal: Edit user";
 require("guiconfig.inc");
 
 if (!is_array($config['captiveportal']['user'])) {
@@ -123,11 +123,10 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "Services: Captive Portal Users Edit";
 include("head.inc");
 
 ?>
-<body link="#000000" vlink="#000000" alink="#000000">
+?>
 <?php include("fbegin.inc"); ?>
 <script language="javascript" type="text/javascript" src="datetimepicker.js">
 <!--
@@ -136,8 +135,8 @@ include("head.inc");
 //For this script, visit http://www.javascriptkit.com
 // -->
 </script>
-<p class="pgtitle">Services: Captive portal Users Edit</p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
 <form action="services_captiveportal_users_edit.php" method="post" name="iform" id="iform">
   <table width="100%" border="0" cellpadding="6" cellspacing="0">
 	<tr> 
@@ -183,17 +182,3 @@ include("head.inc");
   </table>
  </form>
 <?php include("fend.inc"); ?>
-<?php
-
-function captiveportal_users_sort() {
-        global $g, $config;
-
-        function cpusercmp($a, $b) {
-                return strcasecmp($a['name'], $b['name']);
-        }
-
-        usort($config['captiveportal']['user'], "cpusercmp");
-}
-
-
-?>

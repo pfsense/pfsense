@@ -28,7 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("Services", "Captive portal");
+$pgtitle = "Services:Captive portal";
 require("guiconfig.inc");
 
 if (!is_array($config['captiveportal']['passthrumac']))
@@ -43,9 +43,9 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-
-		$retval = captiveportal_passthrumac_configure();
-
+		if (!file_exists($d_sysrebootreqd_path)) {
+			$retval = captiveportal_passthrumac_configure();
+		}
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {
 			if (file_exists($d_passthrumacsdirty_path)) {
@@ -67,18 +67,16 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = "Services: Captive Portal MACS";
 include("head.inc");
 
 ?>
-<body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
 <form action="services_captiveportal_mac.php" method="post">
-<p class="pgtitle">Services: Captive portal MAC</p>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_passthrumacsdirty_path)): ?><p>
 <?php print_info_box_np("The captive portal MAC address configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
-</p>
+<input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
@@ -88,6 +86,7 @@ include("head.inc");
 	$tab_array[] = array("Pass-through MAC", true, "services_captiveportal_mac.php");
 	$tab_array[] = array("Allowed IP addresses", false, "services_captiveportal_ip.php");
 	$tab_array[] = array("Users", false, "services_captiveportal_users.php");
+	$tab_array[] = array("File Manager", true, "services_captiveportal_filemanager.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

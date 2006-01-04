@@ -3,7 +3,7 @@
 	services_captiveportal_users.php
 	part of m0n0wall (http://m0n0.ch/wall)
 	
-	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
+	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 	Copyright (C) 2005 Pascal Suter <d-monodev@psuter.ch>.
 	All rights reserved. 
@@ -30,7 +30,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-$pgtitle = array("Services", "Captive portal");
+$pgtitle = "Services:Captive portal";
 require("guiconfig.inc");
 
 if (!is_array($config['captiveportal']['user'])) {
@@ -62,13 +62,11 @@ if ($changed) {
 	exit;
 }
 
-$pgtitle = "Services: Captive Portal";
 include("head.inc");
 
 ?>
-<body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle">Services: Captive portal Users</p>
+<p class="pgtitle"><?=$pgtitle?></p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
@@ -77,6 +75,7 @@ include("head.inc");
 	$tab_array[] = array("Pass-through MAC", false, "services_captiveportal_mac.php");
 	$tab_array[] = array("Allowed IP addresses", false, "services_captiveportal_ip.php");
 	$tab_array[] = array("Users", true, "services_captiveportal_users.php");
+	$tab_array[] = array("File Manager", true, "services_captiveportal_filemanager.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -113,18 +112,3 @@ include("head.inc");
 </tr>
 </table>
 <?php include("fend.inc"); ?>
-
-<?php
-
-function captiveportal_users_sort() {
-        global $g, $config;
-
-        function cpusercmp($a, $b) {
-                return strcasecmp($a['name'], $b['name']);
-        }
-
-        usort($config['captiveportal']['user'], "cpusercmp");
-}
-
-
-?>

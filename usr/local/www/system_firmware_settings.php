@@ -118,7 +118,7 @@ function enable_altfirmwareurl(enable_over) {
 			<option value="alpha"<?php if($curcfg['branch']=="alpha") echo " SELECTED"; ?>>Alpha</option>
 			</select>
 			<br>
-			<textarea cols="60" rows="2" id="branchinfo" name="branchinfo"style="border:1px dashed #000066; background-color: #ffffff; color: #000000; font-size: 8pt;">
+			<textarea cols="60" rows="2" id="branchinfo" name="branchinfo"style="padding:5px; border:1px dashed #000066; background-color: #ffffff; color: #000000; font-size: 8pt;">
 			</textarea>
 			<script language="javascript">
 			update_description(document.forms[0].branch.selectedIndex);

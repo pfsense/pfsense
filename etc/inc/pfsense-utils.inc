@@ -1420,6 +1420,8 @@ function reload_all_sync() {
 	$iflist = split(" ", str_replace("\n", "", `/sbin/ifconfig -l`));
 	foreach ($iflist as $ifent => $ifname) {
 		$ifname_real = convert_friendly_interface_to_real_interface_name($ifname);
+		if($ifname_real == "lo0")
+		    continue;		
 		mwexec("/sbin/ifconfig {$ifname_real} down");
 		mwexec("/sbin/ifconfig {$ifname_real} delete");
 	}

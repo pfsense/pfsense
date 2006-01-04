@@ -1641,7 +1641,7 @@ EOD;
 	if ($pptpdcfg['mode'] && ($pptpdcfg['mode'] != "off")) {
 
 		if ($pptpdcfg['mode'] == "server")
-			$pptpdtarget = $curwanip;
+			$pptpdtarget = get_current_wan_address();
 		else
 			$pptpdtarget = $pptpdcfg['redir'];
 

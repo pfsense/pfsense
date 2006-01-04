@@ -149,6 +149,7 @@ if ($_POST) {
 							/* this will be picked up by /index.php */
 							conf_mount_rw();
 							touch("/needs_package_sync");
+							$reboot_needed = true;
 							$reloadall = true;
 							$savemsg = "The configuration has been restored. The firewall is now reloading.";
 							/* remove cache, we will force a config reload */

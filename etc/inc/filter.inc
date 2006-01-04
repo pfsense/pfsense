@@ -1359,8 +1359,11 @@ function filter_rules_generate() {
 	$optcfg = array();
 	generate_optcfg_array($optcfg);
 
+	/* ftp-sesame */
+	$ipfrules .= "anchor \"ftpsesame/*\" \n";
+
 	# BEGIN OF firewall rules
-	$ipfrules="anchor \"firewallrules\"\n";
+	$ipfrules .= "anchor \"firewallrules\"\n";
 
 	if ($pptpdcfg['mode'] == "server") {
 		$pptpip = $pptpdcfg['localip'];

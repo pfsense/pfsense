@@ -287,6 +287,16 @@ function pprint_port($port) {
 	return $pport;
 }
 
+function captiveportal_users_sort() {
+	global $g, $config;
+	
+	function cpusercmp($a, $b) {
+		return strcasecmp($a['name'], $b['name']);
+	}
+	
+	usort($config['captiveportal']['user'], "cpusercmp");
+}
+
 /* sort by interface only, retain the original order of rules that apply to
    the same interface */
 function filter_rules_sort() {
@@ -468,6 +478,16 @@ function passthrumacs_sort() {
 	}
 
 	usort($config['captiveportal']['passthrumac'],"passthrumacscmp");
+}
+
+function cpelements_sort() {
+	global $g, $config;
+
+	function cpelementscmp($a, $b) {
+		return strcasecmp($a['name'], $b['name']);
+	}
+	
+	usort($config['captiveportal']['element'],"cpelementscmp");
 }
 
 function allowedips_sort() {

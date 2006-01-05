@@ -103,6 +103,7 @@ include("head.inc");
                     <?=htmlspecialchars($secretent['name']);?>
                   </td>
                   <td class="listr">
+		    <?php if($secretent['ip'] == "") $secretent['ip'] = "Dynamic"; ?>
                     <?=htmlspecialchars($secretent['ip']);?>&nbsp;
                   </td>
                   <td class="list" nowrap> <a href="vpn_pppoe_users_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit user" width="17" height="17" border="0"></a>

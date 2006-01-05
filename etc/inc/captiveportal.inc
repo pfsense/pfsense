@@ -52,8 +52,7 @@ function captiveportal_configure() {
 			echo "Starting captive portal... ";
 		
 		/* kill any running mini_httpd */
-		killbypid("{$g['varrun_path']}/mini_httpd.cp.pid");
-		killbypid("{$g['varrun_path']}/mini_httpd.cps.pid");
+		killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
 		
 		/* kill any running minicron */
 		killbypid("{$g['varrun_path']}/minicron.pid");
@@ -253,8 +252,7 @@ EOD;
 			echo "done\n";
 		
 	} else {
-		killbypid("{$g['varrun_path']}/mini_httpd.cp.pid");
-		killbypid("{$g['varrun_path']}/mini_httpd.cps.pid");
+		killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
 		killbypid("{$g['varrun_path']}/minicron.pid");
 
 		captiveportal_radius_stop_all();

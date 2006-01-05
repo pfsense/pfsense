@@ -457,6 +457,9 @@ function filter_nat_rules_generate() {
 	$natrules .= "nat-anchor \"natearly/*\"\n";
 	$natrules .= "nat-anchor \"natrules/*\"\n";
 
+	$natrules .= "# FTP proxy\n";
+	$natrules .= "rdr-anchor \"pftpx/*\"\n";
+
 	/* any 1:1 mappings? */
 	if (is_array($config['nat']['onetoone'])) {
 		foreach ($config['nat']['onetoone'] as $natent) {
@@ -575,8 +578,6 @@ function filter_nat_rules_generate() {
 	$iflist = array("lan" => "LAN");
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
 		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
-	$natrules .= "# FTP proxy\n";
-	$natrules .= "rdr-anchor \"pftpx/*\"\n";
 	$interface_counter = 0;
 	/* loop through all interfaces and handle pftpx redirections */
 	foreach ($iflist as $ifent => $ifname) {

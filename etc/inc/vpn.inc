@@ -898,6 +898,7 @@ pppoe_standart:
 	set ipcp no vjcomp
 	set link max-redial -1
 	set link mtu 1492
+	set link mru 1492	
 	set ccp yes mpp-e40
 	set ccp yes mpp-e128
 	set ccp yes mpp-stateless

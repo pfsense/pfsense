@@ -43,7 +43,7 @@ $pconfig['radiusenable'] = isset($pppoecfg['radius']['enable']);
 $pconfig['radacct_enable'] = isset($pppoecfg['radius']['accounting']);
 $pconfig['radiusserver'] = $pppoecfg['radius']['server'];
 $pconfig['radiussecret'] = $pppoecfg['radius']['secret'];
-$pconfig['radiusissueips'] = $pppoecfg['radius']['radiusissueips'];
+$pconfig['radiusissueips'] = isset($pppoecfg['radius']['radiusissueips']);
 $pconfig['n_pppoe_units'] = $pppoecfg['n_pppoe_units'];
 
 if ($_POST) {
@@ -109,9 +109,9 @@ if ($_POST) {
 		else
 			unset($pppoecfg['radius']['accounting']);
 
-		if($_POST['radiusissueips'] == "yes")
+		if($_POST['radiusissueips'] == "yes") {
 			$pppoecfg['radius']['radiusissueips'] = true;
-		else
+		} else
 			unset($pppoecfg['radius']['radiusissueips']);
 
 		write_config();
@@ -150,15 +150,17 @@ function enable_change(enable_over) {
 		document.iform.remoteip.disabled = 0;
 		document.iform.localip.disabled = 0;
 		document.iform.radiusenable.disabled = 0;
-		
+		document.iform.radiusissueips.disabled = 0;
 		if (document.iform.radiusenable.checked || enable_over) {
 			document.iform.radacct_enable.disabled = 0;
 			document.iform.radiusserver.disabled = 0;
 			document.iform.radiussecret.disabled = 0;
+			document.iform.radiusissueips.disabled = 0;
 		} else {
 			document.iform.radacct_enable.disabled = 1;
 			document.iform.radiusserver.disabled = 1;
 			document.iform.radiussecret.disabled = 1;
+			document.iform.radiusissueips.disabled = 1;
 		}
 	} else {
 		document.iform.remoteip.disabled = 1;
@@ -167,6 +169,7 @@ function enable_change(enable_over) {
 		document.iform.radacct_enable.disabled = 1;
 		document.iform.radiusserver.disabled = 1;
 		document.iform.radiussecret.disabled = 1;
+		document.iform.radiusissueips.disabled = 1;
 	}
 }
 //-->
@@ -287,7 +290,7 @@ function enable_change(enable_over) {
                 <tr> 
                   <td width="22%" valign="top" class="vncell">RADIUS issued IP's</td>
                   <td width="78%" valign="top" class="vtable">
-                      <input name="radiusissueips" type="checkbox" class="formfld" id="radiusissueips"<?php if(isset($pconfig['radiusissueips'])) echo " CHECKED"; ?>>
+                      <input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips"<?php if($pconfig['radiusissueips']) echo " CHECKED"; ?>>
                       <br>Issue IP Addresses via RADIUS server.
                       
                   </td>

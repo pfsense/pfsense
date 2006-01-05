@@ -1145,7 +1145,7 @@
 		    /* Blizzard Publishing games */
 		    $gamesplist[] = array('Battle.NET', 'tcp', '6112', '6119', 'both');
 		}
-		if($_POST['wow'] != "") {
+		if($_POST['worldofwarcraft'] != "") {
 		    /* World of WarCract */
 		    if ($_POST['battlenet'] == "") {
 			/* Add battle.net only if WoW is selected and battle.net isn't */

@@ -352,6 +352,8 @@ function system_webgui_start() {
 	/* kill any running mini_httpd */
 	killbypid("{$g['varrun_path']}/lighty-webConfigurator.pid");
 
+	sleep(1);
+
 	/* generate password file */
 	system_password_configure();
 

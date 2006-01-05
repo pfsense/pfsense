@@ -43,6 +43,7 @@ $pconfig['radiusenable'] = isset($pppoecfg['radius']['enable']);
 $pconfig['radacct_enable'] = isset($pppoecfg['radius']['accounting']);
 $pconfig['radiusserver'] = $pppoecfg['radius']['server'];
 $pconfig['radiussecret'] = $pppoecfg['radius']['secret'];
+$pconfig['radiusissueips'] = $pppoecfg['radius']['radiusissueips'];
 $pconfig['n_pppoe_units'] = $pppoecfg['n_pppoe_units'];
 
 if ($_POST) {
@@ -107,6 +108,11 @@ if ($_POST) {
 			$pppoecfg['radius']['accounting'] = true;
 		else
 			unset($pppoecfg['radius']['accounting']);
+
+		if($_POST['radiusissueips'] == "yes")
+			$pppoecfg['radius']['radiusissueips'] = true;
+		else
+			unset($pppoecfg['radius']['radiusissueips']);
 
 		write_config();
 		
@@ -278,6 +284,14 @@ function enable_change(enable_over) {
                       Enter the shared secret that will be used to authenticate 
                       to the RADIUS server.</td>
                 </tr>
+                <tr> 
+                  <td width="22%" valign="top" class="vncell">RADIUS issued IP's</td>
+                  <td width="78%" valign="top" class="vtable">
+                      <input name="radiusissueips" type="checkbox" class="formfld" id="radiusissueips"<?php if(isset($pconfig['radiusissueips'])) echo " CHECKED"; ?>>
+                      <br>Issue IP Addresses via RADIUS server.
+                      
+                  </td>
+                </tr>		
                 <tr> 
                   <td height="16" colspan="2" valign="top"></td>
                 </tr>

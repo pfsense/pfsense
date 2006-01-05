@@ -858,11 +858,18 @@ EOD;
 				$clientip = long2ip(ip2long($pppoecfg['remoteip']) + $i);
 				$ngif = "ng" . ($i+1);
 
+				if($pppoecfg['radius']['issueradiusips']) {
+					$isssue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 {$clientip}/32";
+				} else {
+					$isssue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 0.0.0.0/0";
+					$isssue_ip_type .="\nset ipcp yes radius-ip";
+				}
+				
 				$mpdconf .= <<<EOD
 
 pppoe{$i}:
 	new -i {$ngif} pppoe{$i} pppoe{$i}
-	set ipcp ranges {$pppoecfg['localip']}/32 0.0.0.0/0
+	{$isssue_ip_type}
 	load pppoe_standart
 
 EOD;

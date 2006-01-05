@@ -613,6 +613,9 @@ EOD;
 #
 ############ Options you really have to take care of ####################
 
+# FreeBSD!
+server.event-handler        = "freebsd-kqueue"
+
 ## modules to load
 server.modules              =   (
 				  "mod_access",

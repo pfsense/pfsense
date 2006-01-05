@@ -155,7 +155,7 @@ pfSenseupgrade)
         
 	# tar explode image onto hd
 	echo "Installing $IMG." | logger -p daemon.info -i -t Upgrade
-	/usr/bin/tar xzUPf $IMG -C / | logger -p daemon.info -i -t Upgrade
+	cd / && /usr/bin/tar xzUPf $IMG | logger -p daemon.info -i -t Upgrade
 	/usr/bin/find / -name CVS -exec rm -fr {} \;
 	echo "Image installed $IMG." | logger -p daemon.info -i -t Upgrade
 

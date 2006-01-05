@@ -282,10 +282,6 @@ function enable_change(enable_change) {
 		<span class="vexpl">Choose which interface to run the captive portal on.</span></td>
 	</tr>
 	<tr>
-	  <td valign="top" class="vncell">Maximum concurrent connections</td>
-	  <td class="vtable">
-		<table cellpadding="0" cellspacing="0">
-	<tr>
 	  <td valign="top" class="vncell">Idle timeout</td>
 	  <td class="vtable">
 		<input name="idletimeout" type="text" class="formfld" id="idletimeout" size="6" value="<?=htmlspecialchars($pconfig['idletimeout']);?>">

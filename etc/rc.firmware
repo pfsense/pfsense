@@ -9,14 +9,18 @@
 
 #CFDEVICE=`cat /var/etc/cfdevice`
 
-if [ $1 != "upgrade" ]; then
+export ACTION=$1
+export IMG=$2
+export CUSTOMIMG=$3
+
+if [ $ACTION != "upgrade" ]; then
 	/sbin/umount -f /ftmp > /dev/null 2>&1
 fi
 
 backup_chflags() {
 	TOPROCESS="bin lib libexec sbin usr"
 	for files in $TOPROCESS; do
-		/usr/sbin/mtree -Pcp /${files} | bzip2 -9 > /tmp/chflags.dist.${files} | logger -p daemon.info -i -t UpgradeFlags
+		/usr/sbin/mtree -Pcp /${files} | bzip2 -9 > /tmp/chflags.dist.${files}.bz2 | logger -p daemon.info -i -t UpgradeFlags
 	done
 }
 
@@ -73,7 +77,7 @@ binary_update() {
 	restore_chflags
 }
 
-case $1 in
+case $ACTION in
 enable)
 	#/sbin/mount_mfs -s 15360 -T qp120at -b 8192 -f 1024 dummy /ftmp \
 	#	> /dev/null 2>&1
@@ -103,8 +107,8 @@ upgrade)
 	/sbin/umount -f /cf
 
 	# dd image onto card
-	if [ -r $2 ]; then
-		/usr/bin/gunzip -S "" -c $2 | dd of=/dev/r$CFDEVICE bs=16k > /dev/null 2>&1
+	if [ -r $IMG ]; then
+		/usr/bin/gunzip -S "" -c $IMG | dd of=/dev/r$CFDEVICE bs=16k > /dev/null 2>&1
 		echo "Image installed."
 	fi
 
@@ -129,9 +133,8 @@ pfSenseupgrade)
 	sleep 5
 
 	# Sanity check - bail early if there's no firmware file!
-	if [ ! -r $2 ]; then
-		echo "2nd parameter has not been passed or file does not exist. Exiting." | logger -p daemon.info
- -i -t Upgrade
+	if [ ! -r $IMG ]; then
+		echo "2nd parameter has not been passed or file does not exist. Exiting." | logger -p daemon.info -i -t Upgrade
 		exit
 	fi
 
@@ -151,16 +154,16 @@ pfSenseupgrade)
 	/sbin/mount -w -o noatime /   2>/dev/null
         
 	# tar explode image onto hd
-	echo "Installing $2." | logger -p daemon.info -i -t Upgrade
-	/usr/bin/tar xzPf $2 -U -C / | logger -p daemon.info -i -t Upgrade
-	/usr/bin/find / -name CVS -exec rm {} \;
-	echo "Image installed $2." | logger -p daemon.info -i -t Upgrade
+	echo "Installing $IMG." | logger -p daemon.info -i -t Upgrade
+	/usr/bin/tar xzUPf $IMG -C / | logger -p daemon.info -i -t Upgrade
+	/usr/bin/find / -name CVS -exec rm -fr {} \;
+	echo "Image installed $IMG." | logger -p daemon.info -i -t Upgrade
 
         # process custom image if its passed
-        if [ -r $3 ]; then
-            echo "Custom image $3 found." | logger -p daemon.info -i -t Upgrade
-            /usr/bin/tar xzPf $3 -U -C / | logger -p daemon.info -i -t Upgrade
-            echo "Custom image $3 installed." | logger -p daemon.info -i -t Upgrade
+        if [ -r $CUSTOMIMG ]; then
+            echo "Custom image $CUSTOMIMG found." | logger -p daemon.info -i -t Upgrade
+            /usr/bin/tar xzPUf $CUSTOMIMG -C / | logger -p daemon.info -i -t Upgrade
+            echo "Custom image $CUSTOMIMG installed." | logger -p daemon.info -i -t Upgrade
         fi
 
 	# restore config
@@ -191,14 +194,13 @@ pfSenseupgrade)
 		sh /etc/init_bootloader.sh
 	fi	
 	/bin/sync
-	
 	echo "Done." | logger -p daemon.info -i -t Upgrade
 	sh /etc/rc.reboot
 	;;
 delta_update)
 	backup_chflags
 	remove_chflags
-	binary_update $2
+	binary_update $IMG
 	restore_chflags
 	rm -rf /etc/rc.conf
 	rm -rf /etc/motd

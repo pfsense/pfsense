@@ -1022,7 +1022,7 @@ EOD;
 		echo "\nEnter the LAN interface name or 'a' for auto-detection: ";
 		$lanif = chop(fgets($fp));
 		if ($lanif === "") {
-			exit(0);
+			return;
 		}
 
 		if ($lanif === "a")
@@ -1038,7 +1038,7 @@ EOD;
 		echo "\nEnter the WAN interface name or 'a' for auto-detection: ";
 		$wanif = chop(fgets($fp));
 		if ($wanif === "") {
-			exit(0);
+			return;
 		}
 		if ($wanif === "a")
 			$wanif = autodetect_interface("WAN", $fp);
@@ -1091,7 +1091,7 @@ Error: you cannot assign the same interface name twice!
 
 EOD;
 
-				exit(0);
+				return;
 			}
 		}
 	}

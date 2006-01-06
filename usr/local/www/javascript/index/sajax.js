@@ -14,8 +14,9 @@ function stats(x) {
 
 	var values = x.split("|");
 
-	if(values[0] == 'undefined')
-		return;
+	foreach($values as $value)
+		if(value == 'undefined')
+			return;
 
 	updateCPU(values[0]);
 	updateMemory(values[1]);

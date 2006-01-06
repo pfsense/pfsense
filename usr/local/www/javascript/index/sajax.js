@@ -14,9 +14,10 @@ function stats(x) {
 
 	var values = x.split("|");
 
-	for(var val in values)
-		if(val == 'undefined')
+	for(var counter=0; counter<x.length; x++) {
+		if(values[counter] == 'undefined' || values[counter] == null)
 			return;
+	}	
 
 	updateCPU(values[0]);
 	updateMemory(values[1]);

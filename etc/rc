@@ -207,6 +207,11 @@ rm -rf /usr/local/pkg/pf/CVS
 
 /usr/local/sbin/check_reload_status >/dev/null &
 
+echo -n "Pre-caching PHP for faster responses..."
+fetch -q -o /tmp/phpfast http://localhost/xmlrpc.php
+rm -f /tmp/phpfast
+echo " done!"
+
 echo "Bootup complete"
 
 /usr/local/bin/beep.sh start

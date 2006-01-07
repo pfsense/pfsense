@@ -208,7 +208,7 @@ rm -rf /usr/local/pkg/pf/CVS
 /usr/local/sbin/check_reload_status >/dev/null &
 
 echo -n "Pre-caching PHP for faster responses..."
-echo \n\n| fetch -q -o /tmp/ http://localhost/preload.php
+fetch -q -o /tmp/ http://localhost/preload.php
 rm -f /tmp/phpfast
 echo " done!"
 

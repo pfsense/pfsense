@@ -290,7 +290,7 @@ function enable_change(enable_over) {
 if ($_POST['apply'] <> "") {
 
 	touch("/tmp/reload_interfaces");
-
+	if(file_exists($d_landirty_path))
 	unlink($d_landirty_path);
 	
 }

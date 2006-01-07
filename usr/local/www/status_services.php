@@ -150,9 +150,9 @@ if($services) {
 		if(!$service['name']) continue;
 		if(!$service['description']) $service['description'] = "Unknown";
 		echo '<tr><td class="listlr">' . $service['name'] . '</td>';
-		echo '<td class="listlr">' . $service['description'] . '</td>';
+		echo '<td class="listr">' . $service['description'] . '</td>';
 		if(is_service_running($service['name'], $ps) or is_process_running($service['name']) ) {
-			echo '<td class="listlr">Running</td><td><img src="/themes/';
+			echo '<td class="listr">Running</td><td><img src="/themes/';
 			echo $g["theme"] . '/images/icons/icon_pass.gif"></td>';
 			$running = true;
 		} else {

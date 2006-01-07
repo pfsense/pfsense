@@ -210,7 +210,7 @@ rm -rf /usr/local/pkg/pf/CVS
 echo -n "Pre-caching PHP for faster responses..."
 fetch -q -o /tmp/ http://localhost/preload.php
 rm -f /tmp/phpfast
-echo " done!"
+echo " done."
 
 echo "Bootup complete"
 

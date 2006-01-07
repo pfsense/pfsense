@@ -94,8 +94,8 @@ if(count($states) > 0) {
 		$towrite = <<<EOD
 		<tr valign="top">
 		<td class="listlr">{$proto}</td>
-		<td class="listlr">{$info}</td>
-		<td class="listlr">{$state}</td>
+		<td class="listr">{$info}</td>
+		<td class="listr">{$state}</td>
 		</tr>
 EOD;
 		print $towrite;

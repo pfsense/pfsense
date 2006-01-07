@@ -588,12 +588,15 @@ function install_package_xml($pkg) {
 		$static_output .= "\tCustom commands... ";
 		update_output_window($static_output);
 		if($pkg_config['custom_php_global_functions'] <> "") {
+			update_output_window("Running custom_php_global_functions...");
 			eval_once($pkg_config['custom_php_global_functions']);
 		}
 		if($pkg_config['custom_php_install_command']) {
+			update_output_window("Running custom_php_install_command...");
 			eval_once($pkg_config['custom_php_install_command']);
 		}
 		if($pkg_config['custom_php_resync_config_command'] <> "") {
+			update_output_window("Running custom_php_resync_config_command...");
                         eval_once($pkg_config['custom_php_resync_config_command']);
                 }
 		$static_output .= "done.\n";

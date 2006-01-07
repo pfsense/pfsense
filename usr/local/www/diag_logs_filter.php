@@ -73,9 +73,10 @@ function conv_clog($logfile, $tail = 50) {
 			preg_match("/(.*)\s(.*)\spf:.*rule.*\(match\):\s(\w+)\sin\son\s(\w+:)\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\s([\<|\>])\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}):.*/",$logent,$log_split);
 
 		$do_not_display = false;
-		$flent['proto'] 	= "TCP";
 		if(stristr($logent, "UDP") == true)
 			$flent['proto'] = "UDP";
+		else if(stristr($logent, "TCP") == true)
+			$flent['proto'] = "TCP";
 		else if(stristr($logent, "ICMP") == true)
 			$flent['proto'] = "ICMP";
 		else if(stristr($logent, "HSRP") == true)

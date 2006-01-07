@@ -104,6 +104,8 @@ Rounded("div#mainareapkg","bl br","#FFF","#eeeeee","smooth");
 
 <?php
 
+ob_flush();
+
 /* mount rw fs */
 conf_mount_rw();
 

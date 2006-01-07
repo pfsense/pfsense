@@ -709,6 +709,8 @@ function get_filename_from_url($url) {
 function update_output_window($text) {
     $log = ereg_replace("\n", "\\n", $text);
     echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"" . $log . "\";</script>";
+    /* ensure that contents are written out */
+    ob_flush();    
 }
 
 /*
@@ -729,6 +731,8 @@ function get_dir($dir) {
  */
 function update_status($status) {
     echo "\n<script language=\"JavaScript\">document.forms[0].status.value=\"" . $status . "\";</script>";
+    /* ensure that contents are written out */
+    ob_flush();    
 }
 
 /*

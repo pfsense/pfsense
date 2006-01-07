@@ -48,8 +48,8 @@ if ($_POST) {
       <form action="reboot.php" method="post">
         <p><strong>Are you sure you want to reboot the system?</strong></p>
         <p> 
-          <input name="Submit" type="submit" class="formbtn" value=" No ">
 	  <input name="Submit" type="submit" class="formbtn" value=" Yes ">
+	  <input name="Submit" type="submit" class="formbtn" value=" No ">
         </p>
       </form>
 <?php endif; ?>

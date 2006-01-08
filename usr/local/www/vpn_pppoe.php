@@ -151,6 +151,8 @@ function enable_change(enable_over) {
 		document.iform.localip.disabled = 0;
 		document.iform.radiusenable.disabled = 0;
 		document.iform.radiusissueips.disabled = 0;
+		document.iform.interface.disabled = 0;
+		document.iform.n_pppoe_units.disabled = 0;		
 		if (document.iform.radiusenable.checked || enable_over) {
 			document.iform.radacct_enable.disabled = 0;
 			document.iform.radiusserver.disabled = 0;
@@ -163,6 +165,8 @@ function enable_change(enable_over) {
 			document.iform.radiusissueips.disabled = 1;
 		}
 	} else {
+		document.iform.interface.disabled = 1;
+		document.iform.n_pppoe_units.disabled = 1;		
 		document.iform.remoteip.disabled = 1;
 		document.iform.localip.disabled = 1;
 		document.iform.radiusenable.disabled = 1;

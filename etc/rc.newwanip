@@ -45,6 +45,14 @@
                 $interface = "wan";
         }
 
+	/* grab the prior ip for pftpx tests */
+		if(file_exists("/tmp/rc.newwanip_oldip")) {
+		$old_ip = file_get_contents("/tmp/rc.newwanip_oldip");
+		$helpers = exec("/bin/ps awux | grep {$old_ip} | grep -v grep | cut -d\" \" -f6");
+		mwexec("kill " . trim($helpers);
+		unlink("/tmp/rc.newwanip_oldip");
+	}
+
         /* reconfigure IPsec tunnels */
         vpn_ipsec_configure(true);
 

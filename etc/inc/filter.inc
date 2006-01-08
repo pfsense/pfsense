@@ -666,7 +666,7 @@ function filter_nat_rules_generate() {
 			$dontinstallrdr = false;
 			if($target <> "") {
 				if($extport[0] == "21" and !isset($config['interfaces'][strtolower($rule['interface'])]['disableftpproxy'])) {
-					$helpers = exec("/bin/ps awux | grep {$target} | grep -v grep");
+					$helpers = exec("/bin/ps awux | grep {$target} -b {$external_address} | grep -v grep");
 					if(!$helpers) {
 						$external_address = $rule['external-address'];
 						if($external_address == "")

@@ -50,7 +50,7 @@ function filter_pflog_start() {
 	
 	mwexec("/sbin/ifconfig pflog0 up && pflogd");
 	
-	mwexec_bg("/usr/sbin/tcpdump -l -n -e -ttt -i pflog0 | grep \"[esp|tcp|udp|icmp|igmp|icmp|ESP|TCP|UDP|IGMP|ICMP]\" | logger -t pf -p local0.info");
+	mwexec_bg("/usr/sbin/tcpdump -s68 -l -n -e -ttt -i pflog0 | logger -t pf -p local0.info");
 	
 	unmute_kernel_msgs();
 

@@ -226,8 +226,6 @@ include("head.inc");
 
 ?>
 
-<script type="text/javascript" language="javascript" src="ip_helper.js">
-</script>
 <script language="JavaScript">
 <!--
 function enable_change(enable_over) {

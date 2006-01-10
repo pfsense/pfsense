@@ -257,6 +257,8 @@ include("head.inc");
                     <?php
 					if (!$natent['interface'] || ($natent['interface'] == "wan"))
 					  	echo "WAN";
+                                        else if (!$natent['interface'] || ($natent['interface'] == "lan"))
+                                                 echo "LAN";                                                
 					else
 						echo htmlspecialchars($config['interfaces'][$natent['interface']]['descr']);
 					?>

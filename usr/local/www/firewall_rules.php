@@ -231,7 +231,7 @@ include("head.inc");
 					</tr>
 					<tr>
 					  <td align="center" valign="middle"></td>
-					  <td>&nbsp;</td>
+					  <td><img src="./themes/<?= $g['theme']; ?>/images/icons/plus_d.gif" title="add a new rule based on this one" width="17" height="17" border="0"></td>
 					</tr>
 					</table>
 				  </td>

@@ -690,7 +690,7 @@ function type_change(enable_change,enable_change_pptp) {
                 </tr>
                 <tr>
                   <td valign="middle">&nbsp;</td>
-                  <td class="vtable"> <input name="blockpriv" type="checkbox" id="blockpriv" value="yes" <?php if ($pconfig['blockpriv']) echo "checked"; ?>>
+                  <td class="vtable"><a name="rfc1918"></a> <input name="blockpriv" type="checkbox" id="blockpriv" value="yes" <?php if ($pconfig['blockpriv']) echo "checked"; ?>>
                     <strong>Block private networks</strong><br>
                     When set, this option blocks traffic from IP addresses that
                     are reserved for private<br>

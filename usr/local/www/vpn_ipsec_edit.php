@@ -176,8 +176,7 @@ if ($_POST) {
 			$input_errors[] = "A valid User FQDN in the form of user@my.domain.com for 'My identifier' must be specified.";
 	}	
 	if ($_POST['p1myidentt'] == "dyn_dns") {
-		$dyn_dns = explode("@",$_POST['p1myident']);
-		if (is_domain($dyn_dns[1]) == false) 
+		if (is_domain($_POST['p1myidentt']) == false) 
 			$input_errors[] = "A valid Dynamic DNS address for 'My identifier' must be specified.";
 	}
 	

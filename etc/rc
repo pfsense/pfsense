@@ -208,7 +208,14 @@ rm -rf /usr/local/pkg/pf/CVS
 /usr/local/sbin/check_reload_status >/dev/null &
 
 echo -n "Pre-caching PHP for faster responses..."
-fetch -q -o /tmp/ http://localhost/preload.php
+CONFIG="/cf/conf/config.xml"
+WORD="https"
+if grep "$WORD" "$CONFIG"
+then
+	fetch -q -o /tmp/ https://localhost/preload.php
+else
+	fetch -q -o /tmp/ http://localhost/preload.php
+fi
 rm -f /tmp/phpfast
 echo " done."
 

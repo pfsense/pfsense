@@ -139,8 +139,8 @@ if ($_GET['act'] == "del") {
 	}
 
 	write_config();
-	header("Location: interfaces_assign.php");
-	exit;
+	
+	$savemsg = "Interface has been deleted.";
 }
 
 if ($_GET['act'] == "add") {
@@ -174,8 +174,8 @@ if ($_GET['act'] == "add") {
 
 	touch("/tmp/reload_interfaces");
 
-	header("Location: interfaces_assign.php");
-	exit;
+	$savemsg = "Interface has been added.";
+
 }
 
 

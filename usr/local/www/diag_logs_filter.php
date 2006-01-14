@@ -57,13 +57,16 @@ function conv_clog($logfile, $tail = 50) {
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
-	exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+	exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n 500", $logarr);
 
 	$filterlog = array();
 
 	$counter = 0;
 
 	foreach ($logarr as $logent) {
+
+		if($counter > $nentries)
+			break;
 
 		$log_split = "";
 

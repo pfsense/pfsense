@@ -214,15 +214,15 @@ include("head.inc");
 				</tr>
 <?php if (($if == "wan") && isset($config['interfaces']['wan']['blockpriv'])): ?>
                 <tr valign="top" id="frrfc1918">
-                  <td class="listt"></td>
-                  <td class="listt" align="center"><img src="block.gif" width="11" height="11" border="0"></td>
+                  <td width="3%" class="list">&nbsp;</td>
+                  <td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0"></td>
                   <td class="listlr" style="background-color: #e0e0e0">*</td>
                   <td class="listr" style="background-color: #e0e0e0">RFC 1918 networks</td>
                   <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listr" style="background-color: #e0e0e0">*</td>
 		  <td class="listr" style="background-color: #e0e0e0">*</td>
-                  <td class="listbg" style="background-color: #e0e0e0">Block private networks</td>
+                  <td class="listbg" style="background-color: #990000"><font color="white">Block private networks</td>
                   <td valign="middle" nowrap class="list">
 				    <table border="0" cellspacing="0" cellpadding="1">
 					<tr>

@@ -218,32 +218,6 @@ function filter_configure_sync() {
 	return 0;
 }
 
-function filter_get_rule_interface($associatedrulenumber) {
-	global $config;
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "filter_get_rule_interface() being called $mt\n";
-	}	
-	foreach ($config['shaper']['rule'] as $rule) {
-		if($rule['descr'] == $associatedrule) return $rule['interface'];
-	}
-	return $config['shaper']['rule'][$associatedrulenumber]['interface'];
-}
-
-function filter_get_rule_real_interface($associatedrulenumber) {
-        global $config;
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "filter_get_rule_real_interface() being called $mt\n";
-	}	
-        $x=0;
-        foreach($config['shaper']['rule'] as $rule) {
-                if($x == $associatedrulenumber)
-                        return $rule['interface'];
-                $x++;
-        }
-}
-
 function filter_generate_aliases() {
 	global $config;
 	if(isset($config['system']['developerspew'])) {
@@ -401,7 +375,7 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 }
 
 function is_one_to_one_or_server_nat_rule($iptocheck) {
-	global $config;
+	global $config, $target;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "is_one_to_one_or_server_nat_rule() being called $mt\n";

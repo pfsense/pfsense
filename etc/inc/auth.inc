@@ -65,7 +65,8 @@ function passwd_backed_basic_auth() {
 			continue;
 
 		/* Get crypted password */
-                preg_match("/^$username:((\\$1\\$[.\d\w_\/]{8}\\$)[.\d\w_\/]{22})$/", $line, $matches);
+		$matches = "";
+        preg_match("/^$username:((\\$1\\$[.\d\w_\/]{8}\\$)[.\d\w_\/]{22})$/", $line, $matches);
 		$pass = $matches[1];
 		$salt = $matches[2];
 
@@ -108,6 +109,7 @@ function htpasswd_backed_basic_auth() {
                         continue;
 
                 /* Get crypted password */
+                $matches = "";
                 preg_match("/^$username:((\\$1\\$[.\d\w_\/]{8}\\$)[.\d\w_\/]{22})$/", $line, $matches);
                 $pass = $matches[1];
                 $salt = $matches[2];

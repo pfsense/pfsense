@@ -717,6 +717,7 @@ function captiveportal_allowedip_configure() {
 /* get last activity timestamp given ipfw rule number */
 function captiveportal_get_last_activity($ruleno) {
 	
+	$ipfwoutput = "";
 	exec("/sbin/ipfw -T list {$ruleno} 2>/dev/null", $ipfwoutput);
 	
 	/* in */

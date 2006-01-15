@@ -2144,7 +2144,7 @@ function carp_sync_client() {
 			    $cli->setCredentials('admin', $carp['password']);
 			    $cli->send($msg, "900");
 			    /* signal a carp reload */
-			    $msg = new XML_RPC_Message('pfsense.interfaces_carp_configure', array(new XML_RPC_Value($carp['password'], 'string')));
+			    $msg = new XML_RPC_Message('pfsense.interfaces_carp_configure');
 			    $cli->send($msg, "900");			    
 		    }
 		}

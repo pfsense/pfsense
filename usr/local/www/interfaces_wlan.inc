@@ -281,7 +281,7 @@ function wireless_config_print() {
 		</tr>
 		<tr>
 			<td valign="top" class="vncellreq">SSID</td>
-			<td class="vtable"><?=$mandfldhtml;?><input name="ssid" type="text" class="formfld" id="ssid" size="20" value="<?=htmlspecialchars($pconfig['ssid']);?>">
+			<td class="vtable"><input name="ssid" type="text" class="formfld" id="ssid" size="20" value="<?=htmlspecialchars($pconfig['ssid']);?>">
 			</td>
                 </tr>
 		<tr>

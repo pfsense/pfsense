@@ -101,7 +101,7 @@ require_once("notices.inc");
 							<li><a href="/system.php" class="navlnk">General Setup</a></li>
 						<?php if($g['platform'] == "pfSense"): ?>
 							<li><a href="/pkg_mgr.php" class="navlnk">Packages</a></li>
-						<?php endif ?>
+						<?php endif; ?>
 							<li><a href="/wizard.php?xml=setup_wizard.xml" class="navlnk">Setup wizard</a></li>
 							<li><a href="/system_routes.php" class="navlnk">Static routes</a></li>
 						</ul>
@@ -169,7 +169,7 @@ require_once("notices.inc");
 							<li><a href="/diag_ipsec_sad.php" class="navlnk">IPsec</a></li>
 							<?php if($g['platform'] == "pfSense"): ?>
 							<li><a href="/diag_pkglogs.php" class="navlnk">Package logs</a></li>
-							<?php endif ?>
+							<?php endif; ?>
 							<li><a href="/status_queues.php" class="navlnk">Queues</a></li>
 							<li><a href="/status_services.php" class="navlnk">Services</a></li>
 							<li><a href="/index.php" class="navlnk">System</a></li>
@@ -211,7 +211,7 @@ require_once("notices.inc");
 							<?php if(isset($config['system']['developer'])): ?>
 							<li><hr width="80%"/></li>
 							<li><a href="/restart_httpd.php" class="navlnk">Restart HTTPD</a></li>
-							<?php endif ?>
+							<?php endif; ?>
 						</ul>
 					</li>
 				</ul>

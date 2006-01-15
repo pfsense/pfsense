@@ -315,7 +315,7 @@ include("head.inc");
 		<tr>
 			<td colspan="2" class="list" height="12"></td>
 		</tr>		
-		<?php endif ?>
+		<?php endif; ?>
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">Secure Shell</td>
 		</tr>

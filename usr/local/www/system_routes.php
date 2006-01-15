@@ -109,7 +109,7 @@ include("head.inc");
 
 		<tr><td colspan=2><hr><input type="submit" value="Save"></td></tr>
 	       </table><br>
-	     <?php endif ?>
+	     <?php endif; ?>
 
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>

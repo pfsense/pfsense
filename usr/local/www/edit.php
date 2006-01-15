@@ -136,7 +136,7 @@ function sf() { document.forms[0].savetopath.focus(); }
 	<?php if($_POST['highlight'] == "no"): ?>
 	   Rows: <input size="3" name="rows" value="<? echo $rows; ?>"> 
 	   Cols: <input size="3" name="cols" value="<? echo $cols; ?>">
-	<?php endif ?>
+	<?php endif; ?>
 	 | 
 	Highlighting: <input name="highlight" type="radio" value="yes"
 	<?php if($highlight == "yes") echo " checked"; ?>>Enabled

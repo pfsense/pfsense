@@ -896,7 +896,7 @@ function backup_config_section($section) {
  */
 function backup_config_ts_scheduler() {
     global $config;
-    $new_section = &$config['syste']['schedulertype'];
+    $new_section = &$config['system']['schedulertype'];
     /* generate configuration XML */
     $xmlconfig = dump_xml_config($new_section, $section);
     $xmlconfig = str_replace("<?xml version=\"1.0\"?>", "", $xmlconfig);

@@ -2021,6 +2021,9 @@ function create_firewall_outgoing_rules_to_itself() {
 
 function process_carp_nat_rules() {
 	global $g, $config;
+	
+	$wan_interface = get_real_wan_interface();
+	
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "process_carp_nat_rules() being called $mt\n";

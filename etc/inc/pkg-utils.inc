@@ -156,9 +156,9 @@ function is_freebsd_pkg_installed($pkg) {
  *
  */
 function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $return_nosync = 1) {
-    global $config;                                                                             
+    global $config;                
+    $pkg_id = get_pkg_id($pkg_name);                                                             
     if(!is_numeric($pkg_name)) {
-        $pkg_id = get_pkg_id($pkg_name);
         if($pkg_id == -1) return -1; // This package doesn't really exist - exit the function.
     } else {                                                                                  
         if(!isset($config['installedpackages']['package'][$pkg_id])) return; // No package belongs to the pkg_id passed to this function.
@@ -236,8 +236,8 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 		 * The code is obviously wrong, but I'm not sure what it's supposed to do?
 		 */
 		if(isset($pkg_config['nosync'])) continue;
-		if($pkg['custom_php_global_functions'] <> "")
-		eval($pkg['custom_php_global_functions']);
+		if($pkg_config['custom_php_global_functions'] <> "")
+		eval($pkg_config['custom_php_global_functions']);
 		if($pkg_config['custom_php_resync_config_command'] <> "")
 		eval($pkg_config['custom_php_resync_config_command']);
 		if($sync_depends == true) {

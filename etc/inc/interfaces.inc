@@ -721,7 +721,7 @@ function find_dhclient_process($interface) {
 }
 
 function interfaces_wan_configure() {
-	global $config, $g;
+	global $config, $g, $bridges_total;
 
 	$wancfg = $config['interfaces']['wan'];
 

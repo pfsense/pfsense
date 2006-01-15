@@ -251,7 +251,7 @@ function generate_config_cache($config) {
  *   null
  ******/
 function parse_config_bootup() {
-	global $config, $g;
+	global $config, $g, $noparseconfig;
 	if (!$noparseconfig) {
 		if (!file_exists("{$g['conf_path']}/config.xml")) {
 			config_lock();

@@ -858,8 +858,8 @@ EOD;
 
 				$clientip = long2ip(ip2long($pppoecfg['remoteip']) + $i);
 				$ngif = "ng" . ($i+1);
-
-				if($pppoecfg['radius']['issueradiusips'] && isset($pppoecfg['radius']['enable'])) {
+				
+				if(isset($pppoecfg['radius']['radiusissueips']) && isset($pppoecfg['radius']['enable'])) {
 					$isssue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 0.0.0.0/0";
 					$isssue_ip_type .="\n\tset ipcp yes radius-ip";					
 				} else {

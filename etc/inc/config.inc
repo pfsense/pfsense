@@ -1331,7 +1331,7 @@ function cleanup_backupcache($revisions = 30) {
 			$tocheck = array_shift(explode('.', array_pop(explode('-', $backup))));	
                 	if(!in_array($tocheck, $baktimes)) {
 				$i = true;
-				if($bootup) print " " . $tocheck . "a";
+				if($g['booting']) print " " . $tocheck . "a";
 				$newxml = parse_xml_config($backup, $g['xml_rootobj']);
 				if($newxml['revision']['description'] == "") $newxml['revision']['description'] = "Unknown";
 				$tocache[$tocheck] = array('description' => $newxml['revision']['description']);
@@ -1342,7 +1342,7 @@ function cleanup_backupcache($revisions = 30) {
 				$newbaks[] = $checkbak;
 			} else {
 				$i = true;
-				if($bootup) print " " . $tocheck . "r";
+				if($g['booting']) print " " . $tocheck . "r";
 			}
 		}
 		foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description']);	
@@ -1352,7 +1352,7 @@ function cleanup_backupcache($revisions = 30) {
 			foreach($tocache as $version => $versioninfo) {
 				if(!in_array($version, array_keys($newcache))) {
 					unlink_if_exists($g['conf_path'] . '/backup/config-' . $version . '.xml');
-					if($bootup) print " " . $tocheck . "d";
+					if($g['booting']) print " " . $tocheck . "d";
 				}
 			}
 			$tocache = $newcache;

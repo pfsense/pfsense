@@ -1391,8 +1391,8 @@ EOD;
 		$optcfg = array();
 		generate_optcfg_array($optcfg);	
 		foreach($optcfg as $oc) {
-			if(!isset($oc['gateway']) && $oc['if']) {
-				$ipfrules .= "pass in quick on {$oc['if']} inet proto tcp from any to (lo0) port 21 keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
+			if(!isset($oc['gateway']) && $oc['if'] <> "") {
+				$ipfrules .= "pass in quick on (" . $oc['if'] . ") inet proto tcp from any to (lo0) port 21 keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
 			}
 		}
 		
@@ -1400,7 +1400,6 @@ EOD;
 
 anchor "ftpproxy"
 anchor "pftpx/*"
-pass in quick on $lan inet proto tcp from any to lo0 port 21 keep state label "FTP PROXY: Allow traffic to localhost"
 pass in quick on $wanif inet proto tcp from port 20 to ($wanif) port > 49000 user proxy flags S/SA keep state label "FTP PROXY: PASV mode data connection"
 
 EOD;

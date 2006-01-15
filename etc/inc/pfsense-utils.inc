@@ -45,23 +45,6 @@ if($g['platform'] == "pfSense") {
 	safe_mkdir("/usr/local/pkg/pf");
 }
 
-/*
- *    safe_mkdir($path, $mode = 0755)
- *    create directory if it doesn't already exist and isn't a file!
- */
-function safe_mkdir($path, $mode=0755) {
-        global $g;
-
-        /* cdrom is ro. */
-        if($g['platform'] == "cdrom")
-                return false;
-
-        if (!is_file($path) && !is_dir($path))
-                return mkdir($path, $mode);
-        else
-                return false;
-}
-
 /****f* pkg-utils/is_package_installed
  * NAME
  *   is_package_installed - Check whether a package is installed.

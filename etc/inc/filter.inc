@@ -1392,7 +1392,7 @@ EOD;
 		generate_optcfg_array($optcfg);	
 		foreach($optcfg as $oc) {
 			if(!isset($oc['gateway']) && $oc['if'] <> "") {
-				$ipfrules .= "pass in quick on (" . $oc['if'] . ") inet proto tcp from any to (lo0) port 21 keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
+				$ipfrules .= "pass in quick on " . $oc['if'] . " inet proto tcp from any to (lo0) port 21 keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
 			}
 		}
 		

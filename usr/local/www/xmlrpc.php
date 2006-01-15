@@ -120,6 +120,7 @@ $check_firmware_version_sig = array(
 				);
 
 function check_firmware_version_xmlrpc($raw_params) {
+	global $XML_RPC_String;
 	return new XML_RPC_Response(new XML_RPC_Value(check_firmware_version(false), $XML_RPC_String));
 }
 
@@ -172,7 +173,7 @@ $carp_configure_sig = array(
 			);
 			
 function interfaces_carp_configure_xmlrpc($raw_params) {
-	global $xmlrpc_g;
+	global $xmlrpc_g, $XML_RPC_Boolean, $XML_RPC_String;
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", $XML_RPC_String));
 	interfaces_carp_configure();

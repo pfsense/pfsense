@@ -1390,7 +1390,7 @@ function get_current_wan_address($interface = "wan") {
 	$wancfg = $config['interfaces'][$interface];
 
 	$interface = filter_translate_type_to_real_interface($interface);
-
+	$ifinfo = "";
 	if(in_array($wancfg['ipaddr'], array('dhcp'))) {
 		/* get interface info with netstat */
 		exec("/usr/bin/netstat -nWI " . escapeshellarg($interface) . " -f inet", $ifinfo);
@@ -1456,6 +1456,7 @@ function get_number_of_bridged_interfaces() {
 	$bridges_total = 0;
 	$bridges = split("\n", `/sbin/ifconfig -a | /usr/bin/grep bridge | grep flags`);
 	foreach($bridges as $bridge) {
+		$match_array = "";
 		preg_match_all("/bridge(.*):/",$bridge,$match_array);
 		if($match_array[1][0] <> "") {
 			if($match_array[1][0] > $bridges_total)

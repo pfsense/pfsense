@@ -79,7 +79,7 @@ function wireless_config_init() {
 }
 
 function wireless_config_post() {
-	global $optcfg, $pconfig;
+	global $optcfg, $pconfig, $input_errors;
 
 	unset($input_errors);
 

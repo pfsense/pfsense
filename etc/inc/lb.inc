@@ -123,7 +123,9 @@ require_once("functions.inc");
 	}
 	
 	function get_state($ip){
+		$result = "";
 		$pingcmd = exec("/usr/local/bin/sudo /sbin/ping -c1 -t1 -n ".$ip,$result);
+		$match = "";
 		if (preg_match_all('/.*100\%\spacket\sloss.*/',$result[count($result)-1], $match))
 			return 0;
 		if (preg_match_all('/.*0\%\spacket\sloss.*/',$result[count($result)-2], $match))

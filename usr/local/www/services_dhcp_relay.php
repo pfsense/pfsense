@@ -34,6 +34,9 @@ function get_wan_dhcp_server() {
 	$dhclientfn = $g['vardb_path'] . "/dhclient.leases";
 	$leases = file($dhclientfn);
 	/* Start at the end, work backwards finding the latest lease for the WAN */
+	$dhcpserver = "";
+	$iface = "";
+	$iface = "";
 	for ($i = (count($leases)-1); $i >= 0; $i--) {
 		if ($leases[$i] == "}") {
 			unset($iface);

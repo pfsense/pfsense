@@ -30,6 +30,7 @@
 
 function RADIUS_AUTHENTICATION($username,$password,$radiusip,$radiusport,$radiuskey) {
 	$sharedsecret=$radiuskey ;
+	global $debug, $errno, $nasHostname, $errstr;
 	# $debug = 1 ;
 
 	exec("/bin/hostname", $nasHostname) ;

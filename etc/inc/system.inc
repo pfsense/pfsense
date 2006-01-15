@@ -940,6 +940,7 @@ function system_dmesg_save() {
 		echo "system_dmesg_save() being called $mt\n";
 	}
 
+	$dmesg = "";
 	exec("/sbin/dmesg", $dmesg);
 
 	/* find last copyright line (output from previous boots may be present) */

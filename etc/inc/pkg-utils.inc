@@ -277,6 +277,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 	download_file_with_progress_bar($base_url . '/' . $filename, $fetchto);
 	$static_output .= " (extracting)";
 	update_output_window($static_output);	
+		$slaveout = "";
         exec("/usr/bin/tar --fast-read -O -f {$fetchto} -x +CONTENTS 2>&1", $slaveout);
         $workingdir = preg_grep("/instmp/", $slaveout);
         $workingdir = $workingdir[0];
@@ -297,6 +298,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
                         }
                 }
         }
+        $pkgaddout = "";
         exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_add -fv {$fetchto} 2>&1", $pkgaddout);
         @fwrite($fd_log, $pkgname . " " . print_r($pkgaddout, true) . "\n");
         return true;
@@ -329,6 +331,7 @@ function download_file_with_progress_bar($url_file, $destination_file) {
 
 function read_header($ch, $string) {
         global $file_size, $fout;
+        $regs = "";
         $length = strlen($string);
         ereg("(Content-Length:) (.*)", $string, $regs);
         if($regs[2] <> "") {
@@ -543,6 +546,7 @@ function install_package_xml($pkg) {
 				download_file_with_progress_bar($afn['item'][0], $prefix . $filename);
 				if(stristr($filename, ".tgz") <> "") {
 					fwrite($fd_log, "Extracting tarball to -C for " . $filename . "...\n");
+					$tarout = "";
 					exec("/usr/bin/tar xvzf " . $prefix . $filename . " -C / 2>&1", $tarout);
 					fwrite($fd_log, print_r($tarout, true) . "\n");
 				}
@@ -625,6 +629,8 @@ function delete_package($pkg) {
 }
 
 function delete_package_recursive($pkg) {
+	$info = "";
+	$pkgdb = "";
 	exec("/usr/sbin/pkg_info -r " . $pkg . " 2>&1", $info);
 	exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_delete " . $pkg ." > /dev/null 2>&1");
 	exec("/bin/ls /var/db/pkg", $pkgdb);

@@ -71,6 +71,8 @@ function get_interface_addr($ifdescr) {
 		$if = $config['interfaces'][$ifdescr]['if'];
 	
 	/* try to determine IP address and netmask with ifconfig */
+	$ifconfiginfo = "";
+	$matches = "";
 	unset($ifconfiginfo);
 	exec("/sbin/ifconfig " . $if, $ifconfiginfo);
 	

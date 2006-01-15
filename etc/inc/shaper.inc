@@ -307,6 +307,8 @@ function filter_generate_pf_altq_rules() {
 	/* I don't think we're in IPFW anymore Toto */
 
 	global $config, $g, $tcpflags;
+	
+	$i = 0;
 
 	$lancfg = $config['interfaces']['lan'];
 	$pptpdcfg = $config['pptpd'];

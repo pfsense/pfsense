@@ -37,6 +37,8 @@ function doCmdT($title, $command) {
 		}
 		fclose($fd);
 	} else {
+		$execOutput = "";
+		$execStatus = "";
 		exec ($command . " 2>&1", $execOutput, $execStatus);
 		for ($i = 0; isset($execOutput[$i]); $i++) {
 			if ($i > 0) {

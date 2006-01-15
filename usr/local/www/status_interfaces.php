@@ -62,7 +62,7 @@ if ($_POST) {
 
 function get_interface_info($ifdescr) {
 
-	global $config;
+	global $config, $linkinfo, $netstatrninfo;
 
 	$ifinfo = array();
 
@@ -74,6 +74,7 @@ function get_interface_info($ifdescr) {
 		$ifinfo['if'] = $ifinfo['hwif'];
 
 	/* run netstat to determine link info */
+
 	unset($linkinfo);
 	exec("/usr/bin/netstat -I " . $ifinfo['hwif'] . " -nWb -f link", $linkinfo);
 	$linkinfo = preg_split("/\s+/", $linkinfo[1]);
@@ -128,6 +129,7 @@ function get_interface_info($ifdescr) {
 			$ifinfo['pppoelink'] = "down";
 		} else {
 			/* get PPPoE link status for dial on demand */
+			$ifconfiginfo = "";
 			unset($ifconfiginfo);
 			exec("/sbin/ifconfig " . $ifinfo['if'], $ifconfiginfo);
 
@@ -165,7 +167,7 @@ function get_interface_info($ifdescr) {
 		/* try to determine media with ifconfig */
 		unset($ifconfiginfo);
 		exec("/sbin/ifconfig " . $ifinfo['hwif'], $ifconfiginfo);
-
+		$matches = "";
 		foreach ($ifconfiginfo as $ici) {
 			if (!isset($config['interfaces'][$ifdescr]['wireless'])) {
 				/* don't list media/speed for wireless cards, as it always

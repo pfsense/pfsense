@@ -172,7 +172,8 @@ function exec_rc_script($scriptname) {
 
 	if (file_exists($d_sysrebootreqd_path))
 		return 0;
-
+	$execoutput = "";
+	$retval = "";
 	exec($scriptname . " >/dev/null 2>&1", $execoutput, $retval);
 	return $retval;
 }
@@ -180,7 +181,8 @@ function exec_rc_script($scriptname) {
 function exec_rc_script_async($scriptname) {
 
 	global $d_sysrebootreqd_path;
-
+	$execoutput = "";
+	$retval = "";
 	if (file_exists($d_sysrebootreqd_path))
 		return 0;
 
@@ -548,7 +550,8 @@ function update_changedesc($update) {
 
 function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
 	global $g, $config;
-        $sor = isset($config['syslog']['reverse']) ? "-r" : "";
+    $sor = isset($config['syslog']['reverse']) ? "-r" : "";
+    $logarr = "";
 	exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
 	if(is_array($grepfor)) {
 		 $i = 0;

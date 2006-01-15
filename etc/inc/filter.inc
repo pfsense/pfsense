@@ -1455,6 +1455,7 @@ EOD;
 	/* pass traffic between statically routed subnets and the subnet on the
 	   interface in question to avoid problems with complicated routing
 	   topologies */
+	$sa = "";
 	if (is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
 		foreach ($config['staticroutes']['route'] as $route) {
 			unset($sa);

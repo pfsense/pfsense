@@ -46,6 +46,8 @@ function get_tmp_file() {
  *   null
  ******/
 function get_dns_servers() {
+	$lastseen = "";
+	$matches = "";
 	$dns_servers = array();
 	$dns = `cat /etc/resolv.conf`;
 	$dns_s = split("\n", $dns);
@@ -230,7 +232,7 @@ function setup_polling() {
 	foreach ($iflist as $ifent => $ifname) {	
 		$supported_ints = array('dc', 'em', 'fwe', 'fwip', 'fxp', 'ixgb', 'ste',
 			'nge', 're', 'rl', 'sf', 'sis', 'ste', 'vge', 'vr', 'xl');
-		if (in_array($int_family, $supported_ints) and isset($config['system']['polling'])) {
+		if (in_array($ifname, $supported_ints) and isset($config['system']['polling'])) {
 			mwexec("/sbin/ifconfig {$interface} polling");
 		} else {
 			mwexec("/sbin/ifconfig {$interface} -polling");
@@ -760,6 +762,7 @@ function exec_command_and_return_text($command) {
  */
 function execute_command_return_output($command) {
     global $fd_log;
+    $lasttext = "";
     $fd = popen($command . " 2>&1 ", "r");
     echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"\";</script>";
     $counter = 0;
@@ -848,6 +851,7 @@ function gather_altq_queue_stats($dont_return_root_queues) {
     $stats = `/sbin/pfctl -vvsq & /bin/sleep 5;/usr/bin/killall pfctl 2>/dev/null`;
     $stats_array = split("\n", $stats);
     $queue_stats = array();
+    $match_array = "";
     foreach ($stats_array as $stats_line) {
         if (preg_match_all("/queue\s+(\w+)\s+/",$stats_line,$match_array))
             $queue_name = $match_array[1][0];
@@ -932,7 +936,7 @@ function backup_vip_config_section() {
  *                                                  to disk/cf.
  */
 function restore_config_section($section, $new_contents) {
-    global $config;
+    global $config, $g;
     conf_mount_rw();
     $fout = fopen("{$g['tmp_path']}/tmpxml","w");
     fwrite($fout, $new_contents);
@@ -951,6 +955,7 @@ function restore_config_section($section, $new_contents) {
  * written by nf@bigpond.net.au
  */
 function http_post($server, $port, $url, $vars) {
+	global $errstr;
     $user_agent = "Mozilla/4.0 (compatible; MSIE 5.5; Windows 98)";
     $urlencoded = "";
     while (list($key,$value) = each($vars))
@@ -971,6 +976,7 @@ Content-Length: $content_length
 
 ";
 
+	$errno = "";
     $fp = fsockopen($server, $port, $errno, $errstr);
     if (!$fp) {
 	return false;
@@ -1071,6 +1077,7 @@ function rmdir_recursive($path,$follow_links=false) {
  */
 function get_memory() {
 	if(file_exists("/var/log/dmesg.boot")) {
+		$matches = "";
 		$mem = `cat /var/log/dmesg.boot | grep memory`;
 		if (preg_match_all("/real memory  = .* \((.*) MB/", $mem, $matches))
 			$real = $matches[1];
@@ -1151,6 +1158,7 @@ function check_firmware_version($tocheck = "all", $return_php = true) {
 }
 
 function get_disk_info() {
+		$diskout = "";
         exec("df -h | grep -w '/' | awk '{ print $2, $3, $4, $5 }'", $diskout);
         return explode(' ', $diskout[0]);
         // $size, $used, $avail, $cap

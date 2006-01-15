@@ -35,6 +35,7 @@
 */
 
 function RADIUS_ACCOUNTING_START($username,$sessionid,$radiusip,$radiusport,$radiuskey,$clientip) {
+	global $debug, $nasHostname, $errstr;
 	$sharedsecret=$radiuskey ;
 	# $debug = 1 ;
 
@@ -42,6 +43,7 @@ function RADIUS_ACCOUNTING_START($username,$sessionid,$radiusip,$radiusport,$rad
 	if(!$nasHostname[0])
 		$nasHostname[0] = "m0n0wall" ;
 
+	$errno = "";	
 	$fd = @fsockopen("udp://$radiusip",$radiusport,$errno,$errstr,3) ;
 	if(!$fd) 
 		return 1 ; /* error return */
@@ -137,8 +139,9 @@ function RADIUS_ACCOUNTING_START($username,$sessionid,$radiusip,$radiusport,$rad
 
 function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radiusip,$radiusport,$radiuskey,$clientip,$interimupdate=false) {
 	$sharedsecret=$radiuskey ;
+	global $debug, $errno, $ipfw, $errstr,$nasHostname;
+	$matches = "";
 	# $debug = 1 ;
-
 	exec("/bin/hostname", $nasHostname) ;
 	if(!$nasHostname[0])
 		$nasHostname[0] = "quewall" ;

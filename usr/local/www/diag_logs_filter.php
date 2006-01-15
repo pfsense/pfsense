@@ -56,7 +56,7 @@ function conv_clog($logfile, $tail = 50) {
 		$iftable[$config['interfaces']['opt' . $i]['if']] = $config['interfaces']['opt' . $i]['descr'];
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
-
+	$logarr = "";
 	exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n 500", $logarr);
 
 	$filterlog = array();

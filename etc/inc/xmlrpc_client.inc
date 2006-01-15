@@ -729,6 +729,7 @@ class XML_RPC_Client extends XML_RPC_Base {
         $this->proxy_user = $proxy_user;
         $this->proxy_pass = $proxy_pass;
 
+		$match = "";
         preg_match('@^(http://|https://|ssl://)?(.*)$@', $server, $match);
         if ($match[1] == '') {
             if ($port == 443) {
@@ -1297,7 +1298,7 @@ class XML_RPC_Message extends XML_RPC_Base
     function getEncoding($data)
     {
         global $XML_RPC_defencoding;
-
+		$match = "";
         if (preg_match('/<\?xml[^>]*\s*encoding\s*=\s*[\'"]([^"\']*)[\'"]/i',
                        $data, $match))
         {
@@ -1834,6 +1835,7 @@ function XML_RPC_iso8601_encode($timet, $utc = 0)
 function XML_RPC_iso8601_decode($idate, $utc = 0)
 {
     $t = 0;
+    $regs = "";
     if (ereg('([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})', $idate, $regs)) {
         if ($utc) {
             $t = gmmktime($regs[4], $regs[5], $regs[6], $regs[2], $regs[3], $regs[1]);

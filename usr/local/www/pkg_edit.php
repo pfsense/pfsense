@@ -600,11 +600,12 @@ function fixup_string($string) {
  */
 function parse_package_templates() {
 	global $pkg, $config;
+	$rows = 0;
 	if($pkg['templates']['template'] <> "")
 	    foreach($pkg['templates']['template'] as $pkg_template_row) {
 		$filename = $pkg_template_row['filename'];
 		$template_text = $pkg_template_row['templatecontents'];
-
+		$firstfield = "";
 		/* calculate total row helpers count */
 		foreach ($pkg['fields']['field'] as $fields) {
 			if($fields['type'] == "rowhelper") {
@@ -618,6 +619,7 @@ function parse_package_templates() {
 						  if($firstfield == $rowhelperfield['fieldname']) $rows++;
 						}
 						$comd = "\$value = \$_POST['" . $rowhelperfield['fieldname'] . $x . "'];";
+						$value = "";
 						eval($comd);
 						if($value <> "") {
 						    //$template_text = str_replace($fieldname . "_fieldvalue", $fieldvalue, $template_text);
@@ -653,6 +655,7 @@ function parse_package_templates() {
 						    $row_helper_data .= $value;
 						    $isfirst = 1;
 						}
+						$sep = "";
 						ereg($rowhelperfield['fieldname'] . "_fieldvalue\[(.*)\]", $template_text, $sep);
 						foreach ($sep as $se) $seperator = $se;
 						if($seperator <> "") {

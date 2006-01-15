@@ -273,6 +273,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
         	break;
 	case "media":
                 $intlist = explode(" ", trim(shell_exec("/sbin/ifconfig -l")));
+                $ifconfig = "";
                 exec("/sbin/ifconfig -a", $ifconfig);
                 $regexp = '/(' . implode('|', $intlist) . '):\s/';
                 $ifstatus = preg_grep('/status:/', $ifconfig);
@@ -283,9 +284,11 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 		break;
 	}
         /* build interface list with netstat */
+        $linkinfo = "";
         exec("/usr/bin/netstat -inW -f link | awk '{ print $1, $4 }'", $linkinfo);
         array_shift($linkinfo);
 	/* build ip address list with netstat */
+	$ipinfo = "";
 	exec("/usr/bin/netstat -inW -f inet | awk '{ print $1, $4 }'", $ipinfo);
 	array_shift($ipinfo);
 	foreach($linkinfo as $link) {
@@ -330,7 +333,8 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 function mwexec($command) {
 
 	global $g;
-
+	$oarr = "";
+	$retval = "";
 	if ($g['debug']) {
 		if (!$_SERVER['REMOTE_ADDR'])
 			echo "mwexec(): $command\n";
@@ -490,6 +494,7 @@ function verify_digital_signature($fname) {
 /* obtain MAC address given an IP address by looking at the ARP table */
 function arp_get_mac_by_ip($ip) {
 	mwexec("/sbin/ping -c 1 -t 1 {$ip}");
+	$arpoutput = "";
 	exec("/usr/sbin/arp -n {$ip}", $arpoutput);
 
 	if ($arpoutput[0]) {

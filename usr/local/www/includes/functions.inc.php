@@ -20,6 +20,8 @@ function get_stats() {
 
 
 function get_uptime() {
+	$boottime = "";
+	$matches = "";
 	exec("/sbin/sysctl -n kern.boottime", $boottime);
 	preg_match("/sec = (\d+)/", $boottime[0], $matches);
 	$boottime = $matches[1];
@@ -67,15 +69,16 @@ function cpu_usage() {
 
 function get_pfstate() {
 	global $config;
-        if (isset($config['system']['maximumstates']) and $config['system']['maximumstates'] > 0)
-                $maxstates="/{$config['system']['maximumstates']}";
-        else
-                $maxstates="/10000";
-        $curentries = `/sbin/pfctl -si |grep current`;
-        if (preg_match("/([0-9]+)/", $curentries, $matches)) {
-             $curentries = $matches[1];
-        }
-        return $curentries . $maxstates;
+	$matches = "";
+	if (isset($config['system']['maximumstates']) and $config['system']['maximumstates'] > 0)
+	        $maxstates="/{$config['system']['maximumstates']}";
+	else
+	        $maxstates="/10000";
+	$curentries = `/sbin/pfctl -si |grep current`;
+	if (preg_match("/([0-9]+)/", $curentries, $matches)) {
+	     $curentries = $matches[1];
+	}
+	return $curentries . $maxstates;
 }
 
 function has_temp() {
@@ -111,6 +114,7 @@ function get_temp() {
 
 function disk_usage()
 {
+	$dfout = "";
 	exec("/bin/df -h | /usr/bin/grep -w '/' | /usr/bin/awk '{ print $5 }' | /usr/bin/cut -d '%' -f 1", $dfout);
 	$diskusage = trim($dfout[0]);
 
@@ -129,6 +133,7 @@ function swap_usage()
 
 function mem_usage()
 {
+	$memory = "";
 	exec("/sbin/sysctl -n vm.stats.vm.v_page_count vm.stats.vm.v_inactive_count " .
 		"vm.stats.vm.v_cache_count vm.stats.vm.v_free_count", $memory);
 	

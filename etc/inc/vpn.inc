@@ -69,6 +69,7 @@ function vpn_ipsec_failover_configure() {
 }
 
 function find_last_gif_device() {
+	 	$regs = "";
         $last_gif_found = -1;
         if (!($fp = popen("/sbin/ifconfig -l", "r"))) return -1;
         $ifconfig_data = fread($fp, 4096);
@@ -85,7 +86,7 @@ function find_last_gif_device() {
 }
 
 function vpn_ipsec_configure($ipchg = false) {
-	global $config, $g;
+	global $config, $g, $sa, $sn;
 
 	if($g['booting'] == true) {
 		/* determine if we should load the via padlock module */

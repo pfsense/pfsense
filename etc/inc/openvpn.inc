@@ -439,7 +439,7 @@ EOD;
 
 /* Define an OVPN Server tunnel interface in the interfaces array and assign a name */
 function ovpn_server_iface(){
-	global $config, $g;
+	global $config, $g, $bridge_configure, $filter_configure;
 
 	unset($filter_configure);
 	unset($bridge_configure);
@@ -1018,7 +1018,7 @@ EOD;
 
 /* Define an OVPN tunnel interface in the interfaces array for each client */
 function ovpn_client_iface(){
-	global $config;
+	global $config, $filter_configure, $bridge_configure;
 		
 	unset($filter_configure);
 	unset($bridge_configure);
@@ -1386,7 +1386,7 @@ function ovpn_ccd_sort() {
 
 /* called by interfaces_opt.php */
 function ovpn_config_post() {
-	global $_POST, $optcfg, $pconfig;
+	global $_POST, $optcfg, $pconfig, $input_errors;
 	
 	unset($input_errors);
 
@@ -1414,7 +1414,7 @@ function ovpn_config_post() {
 }
 
 function check_bridging($bridge) {
-	global $config;
+	global $config, $input_errors, $index;
 	unset($input_errors);
 
 	/* double bridging? */

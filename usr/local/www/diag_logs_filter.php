@@ -61,7 +61,7 @@ function conv_clog($logfile, $tail = 50) {
 
 	$filterlog = array();
 
-	$counter = 0;
+	$counter = 1;
 
 	foreach ($logarr as $logent) {
 

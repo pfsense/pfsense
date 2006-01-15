@@ -476,33 +476,34 @@ function install_package_xml($pkg) {
                 $static_orig = $static_output;
                 $static_output .= "\n";
                 update_output_window($static_output);
-                $pkg_name = substr(reverse_strrchr($pkg_info['depends_on_package'], "."), 0, -1);
-                if(isset($pkg_info['skip_install_checks'])) {
-                        $pkg_installed = true;
-                } else {
-                        $pkg_installed = is_freebsd_pkg_installed($pkg_name);
-                }
-                if($pkg_installed == false) pkg_fetch_recursive($pkg_name, $pkg_info['depends_on_package'], 0, $pkg_info['depends_on_package_base_url']);
-                $static_output = $static_orig . "done.\nChecking for successful package installation... ";
-                update_output_window($static_output);
-                /* make sure our package was successfully installed */
-                if($pkg_installed == false) $pkg_installed = is_freebsd_pkg_installed($pkg_name);
-                if($pkg_installed == true) {
-                        $static_output .= "done.\n";
-                        update_output_window($static_output);
-                        fwrite($fd_log, "pkg_add successfully completed.\n");
-                } else {
-                        $static_output .= "failed!\n\nInstallation aborted.";
-                        update_output_window($static_output);
-                        fwrite($fd_log, "Package WAS NOT installed properly.\n");
-                        fclose($fd_log);
-                        echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
-                        echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
-                        sleep(1);
-                        die;
-                }
-        }
-
+		foreach($pkg_info['depends_on_package_base_url'] as $pkgdep) {
+                	$pkg_name = substr(reverse_strrchr($pkgdep, "."), 0, -1);
+                	if(isset($pkg_info['skip_install_checks'])) {
+                      		$pkg_installed = true;
+                	} else {
+                       		$pkg_installed = is_freebsd_pkg_installed($pkg_name);
+                	}
+                	if($pkg_installed == false) pkg_fetch_recursive($pkg_name, $pkgdep, 0, $pkg_info['depends_on_package_base_url']);
+                	$static_output = $static_orig . "done.\nChecking for successful package installation... ";
+                	update_output_window($static_output);
+                	/* make sure our package was successfully installed */
+                	if($pkg_installed == false) $pkg_installed = is_freebsd_pkg_installed($pkg_name);
+                	if($pkg_installed == true) {
+                        	$static_output .= "done.\n";
+                        	update_output_window($static_output);
+                        	fwrite($fd_log, "pkg_add successfully completed.\n");
+                	} else {
+				$static_output .= "failed!\n\nInstallation aborted.";
+				update_output_window($static_output);
+				fwrite($fd_log, "Package WAS NOT installed properly.\n");
+				fclose($fd_log);
+				echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
+				echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
+				sleep(1);
+				die;
+			}
+		}
+	}
 	$configfile = substr(strrchr($pkg_info['config_file'], '/'), 1);
 	if(file_exists("/usr/local/pkg/" . $configfile)) {
 		$static_output .= "Loading package configuration... ";

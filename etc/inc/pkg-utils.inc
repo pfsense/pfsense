@@ -156,9 +156,9 @@ function is_freebsd_pkg_installed($pkg) {
  *
  */
 function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $return_nosync = 1) {
-    global $config;                
-    $pkg_id = get_pkg_id($pkg_name);                                                             
+    global $config;                                                                             
     if(!is_numeric($pkg_name)) {
+        $pkg_id = get_pkg_id($pkg_name);
         if($pkg_id == -1) return -1; // This package doesn't really exist - exit the function.
     } else {                                                                                  
         if(!isset($config['installedpackages']['package'][$pkg_id])) return; // No package belongs to the pkg_id passed to this function.
@@ -236,8 +236,8 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 		 * The code is obviously wrong, but I'm not sure what it's supposed to do?
 		 */
 		if(isset($pkg_config['nosync'])) continue;
-		if($pkg_config['custom_php_global_functions'] <> "")
-		eval($pkg_config['custom_php_global_functions']);
+		if($pkg['custom_php_global_functions'] <> "")
+		eval($pkg['custom_php_global_functions']);
 		if($pkg_config['custom_php_resync_config_command'] <> "")
 		eval($pkg_config['custom_php_resync_config_command']);
 		if($sync_depends == true) {
@@ -277,7 +277,6 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 	download_file_with_progress_bar($base_url . '/' . $filename, $fetchto);
 	$static_output .= " (extracting)";
 	update_output_window($static_output);	
-		$slaveout = "";
         exec("/usr/bin/tar --fast-read -O -f {$fetchto} -x +CONTENTS 2>&1", $slaveout);
         $workingdir = preg_grep("/instmp/", $slaveout);
         $workingdir = $workingdir[0];
@@ -298,7 +297,6 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
                         }
                 }
         }
-        $pkgaddout = "";
         exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_add -fv {$fetchto} 2>&1", $pkgaddout);
         @fwrite($fd_log, $pkgname . " " . print_r($pkgaddout, true) . "\n");
         return true;
@@ -331,7 +329,6 @@ function download_file_with_progress_bar($url_file, $destination_file) {
 
 function read_header($ch, $string) {
         global $file_size, $fout;
-        $regs = "";
         $length = strlen($string);
         ereg("(Content-Length:) (.*)", $string, $regs);
         if($regs[2] <> "") {
@@ -476,34 +473,33 @@ function install_package_xml($pkg) {
                 $static_orig = $static_output;
                 $static_output .= "\n";
                 update_output_window($static_output);
-		foreach($pkg_info['depends_on_package_base_url'] as $pkgdep) {
-                	$pkg_name = substr(reverse_strrchr($pkgdep, "."), 0, -1);
-                	if(isset($pkg_info['skip_install_checks'])) {
-                      		$pkg_installed = true;
-                	} else {
-                       		$pkg_installed = is_freebsd_pkg_installed($pkg_name);
-                	}
-                	if($pkg_installed == false) pkg_fetch_recursive($pkg_name, $pkgdep, 0, $pkg_info['depends_on_package_base_url']);
-                	$static_output = $static_orig . "done.\nChecking for successful package installation... ";
-                	update_output_window($static_output);
-                	/* make sure our package was successfully installed */
-                	if($pkg_installed == false) $pkg_installed = is_freebsd_pkg_installed($pkg_name);
-                	if($pkg_installed == true) {
-                        	$static_output .= "done.\n";
-                        	update_output_window($static_output);
-                        	fwrite($fd_log, "pkg_add successfully completed.\n");
-                	} else {
-				$static_output .= "failed!\n\nInstallation aborted.";
-				update_output_window($static_output);
-				fwrite($fd_log, "Package WAS NOT installed properly.\n");
-				fclose($fd_log);
-				echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
-				echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
-				sleep(1);
-				die;
-			}
-		}
-	}
+                $pkg_name = substr(reverse_strrchr($pkg_info['depends_on_package'], "."), 0, -1);
+                if(isset($pkg_info['skip_install_checks'])) {
+                        $pkg_installed = true;
+                } else {
+                        $pkg_installed = is_freebsd_pkg_installed($pkg_name);
+                }
+                if($pkg_installed == false) pkg_fetch_recursive($pkg_name, $pkg_info['depends_on_package'], 0, $pkg_info['depends_on_package_base_url']);
+                $static_output = $static_orig . "done.\nChecking for successful package installation... ";
+                update_output_window($static_output);
+                /* make sure our package was successfully installed */
+                if($pkg_installed == false) $pkg_installed = is_freebsd_pkg_installed($pkg_name);
+                if($pkg_installed == true) {
+                        $static_output .= "done.\n";
+                        update_output_window($static_output);
+                        fwrite($fd_log, "pkg_add successfully completed.\n");
+                } else {
+                        $static_output .= "failed!\n\nInstallation aborted.";
+                        update_output_window($static_output);
+                        fwrite($fd_log, "Package WAS NOT installed properly.\n");
+                        fclose($fd_log);
+                        echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
+                        echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
+                        sleep(1);
+                        die;
+                }
+        }
+
 	$configfile = substr(strrchr($pkg_info['config_file'], '/'), 1);
 	if(file_exists("/usr/local/pkg/" . $configfile)) {
 		$static_output .= "Loading package configuration... ";
@@ -547,7 +543,6 @@ function install_package_xml($pkg) {
 				download_file_with_progress_bar($afn['item'][0], $prefix . $filename);
 				if(stristr($filename, ".tgz") <> "") {
 					fwrite($fd_log, "Extracting tarball to -C for " . $filename . "...\n");
-					$tarout = "";
 					exec("/usr/bin/tar xvzf " . $prefix . $filename . " -C / 2>&1", $tarout);
 					fwrite($fd_log, print_r($tarout, true) . "\n");
 				}
@@ -630,8 +625,6 @@ function delete_package($pkg) {
 }
 
 function delete_package_recursive($pkg) {
-	$info = "";
-	$pkgdb = "";
 	exec("/usr/sbin/pkg_info -r " . $pkg . " 2>&1", $info);
 	exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_delete " . $pkg ." > /dev/null 2>&1");
 	exec("/bin/ls /var/db/pkg", $pkgdb);

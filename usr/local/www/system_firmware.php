@@ -120,20 +120,10 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 	}
 }
 
-/* upload progress bar id */
-$id = rand() . '.' . time();
-$mth = ini_get('upload_progress_meter.store_method');
-$dir = ini_get('upload_progress_meter.file.filename_template');
-
 $pgtitle = "System: Firmware: Manual Update";
 include("head.inc");
 
 ?>
-<!--
-generated new UPLOAD_IDENTIFIER = <?=$id?>
-php-config.upload_progress_meter.store_method = <?=$mth?>
-php-config.upload_progress_meter.file.filename_template = <?=$dir?>
--->
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
@@ -188,7 +178,6 @@ print_info_box($sig_warning);
 				   <input name="Submit" type="submit" class="formbtn" value="Disable firmware upload">
                     <br><br>
 					<strong>Firmware image file: </strong>&nbsp;
-					<input type="hidden" name="UPLOAD_IDENTIFIER" value="<?=$id?>">
 					<input name="ulfile" type="file" class="formfld">
                     <br><br>
 		    <input name="Submit" type="submit" class="formbtn" value="Upgrade firmware">

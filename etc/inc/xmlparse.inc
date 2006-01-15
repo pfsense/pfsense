@@ -42,7 +42,7 @@ function listtags() {
 
 /* Package XML tags that should be treat as a list not as a traditional array */
 function listtags_pkg() {
-	$ret = array("onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package", "file");
+	$ret = array("onetoone", "queue", "rule", "servernat", "alias", "depends_on_package", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package", "file");
 
 	return $ret;
 }

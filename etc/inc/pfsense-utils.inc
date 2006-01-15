@@ -1,14 +1,14 @@
 <?php
-/****h* pfSense/pkg-utils
+/****h* pfSense/pfsense-utils
  * NAME
- *   pkg-utils.inc - Package subsystem
+ *   pfsense-utils.inc - Utilities specific to pfSense
  * DESCRIPTION
- *   This file contains various functions used by the pfSense package system.
+ *   This include contains various pfSense specific functions.
  * HISTORY
  *   $Id$
  ******
  *
- * Copyright (C) 2005 Colin Smith (ethethlay@gmail.com)
+ * Copyright (C) 2005 Scott Ullrich (sullrich@gmail.com)
  * All rights reserved.
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -32,813 +32,1588 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  */
-require_once("xmlrpc.inc");
-require_once("xmlparse.inc");
-require_once("service-utils.inc");
-require_once("pfsense-utils.inc");
-require_once("globals.inc");
 
-safe_mkdir("/var/db/pkg");
-$g['platform'] = trim(file_get_contents("/etc/platform"));
-if($g['platform'] == "pfSense") {
-	safe_mkdir("/usr/local/pkg");
-	safe_mkdir("/usr/local/pkg/pf");
+function get_tmp_file() {
+	return "/tmp/tmp-" . time();
 }
 
-/****f* pkg-utils/is_package_installed
+/****f* pfsense-utils/get_dns_servers
  * NAME
- *   is_package_installed - Check whether a package is installed.
+ *   get_dns_servres - get system dns servers
  * INPUTS
- *   $packagename	- name of the package to check
+ *   $dns_servers - an array of the dns servers
  * RESULT
- *   boolean	- true if the package is installed, false otherwise
+ *   null
+ ******/
+function get_dns_servers() {
+	$dns_servers = array();
+	$dns = `cat /etc/resolv.conf`;
+	$dns_s = split("\n", $dns);
+	foreach($dns_s as $dns) {
+		$matches = "";
+		if (preg_match("/nameserver (.*)/", $dns, $matches))
+			$dns_servers[] = $matches[1];		
+	}
+	$dns_server_master = array();
+	sort($dns_servers);
+	$lastseen = "";
+	foreach($dns_servers as $t) {
+		if($t <> $lastseen)
+			if($t <> "")
+				$dns_server_master[] = $t;
+		$lastseen = $t;
+	}
+	return $dns_server_master;
+}
+ 	
+/****f* pfsense-utils/log_error
+* NAME
+*   log_error  - Sends a string to syslog.
+* INPUTS
+*   $error     - string containing the syslog message.
+* RESULT
+*   null
+******/
+function log_error($error) {
+	$page = $_SERVER['PHP_SELF'];
+	syslog(LOG_WARNING, "$page: $error");
+	return;
+}
+
+/****f* pfsense-utils/get_interface_mac_address
+ * NAME
+ *   get_interface_mac_address - Return a interfaces mac address
+ * INPUTS
+ *   $interface	- interface to obtain mac address from
+ * RESULT
+ *   $mac - the mac address of the interface
+ ******/
+function get_interface_mac_address($interface) {
+	$mac = exec("ifconfig {$interface} | awk '/ether/ {print $2}'");
+	return trim($mac);
+}
+
+/****f* pfsense-utils/return_dir_as_array
+ * NAME
+ *   return_dir_as_array - Return a directory's contents as an array.
+ * INPUTS
+ *   $dir	- string containing the path to the desired directory.
+ * RESULT
+ *   $dir_array - array containing the directory's contents. This array will be empty if the path specified is invalid.
+ ******/
+function return_dir_as_array($dir) {
+	$dir_array = array();
+	if (is_dir($dir)) {
+		if ($dh = opendir($dir)) {
+			while (($file = readdir($dh)) !== false) {
+				$canadd = 0;
+				if($file == ".") $canadd = 1;
+				if($file == "..") $canadd = 1;
+				if($canadd == 0)
+					array_push($dir_array, $file);
+			}
+			closedir($dh);
+		}
+	}
+	return $dir_array;
+}
+
+/****f* pfsense-utils/enable_hardware_offloading
+ * NAME
+ *   enable_hardware_offloading - Enable a NIC's supported hardware features.
+ * INPUTS
+ *   $interface	- string containing the physical interface to work on.
+ * RESULT
+ *   null
  * NOTES
- *   This function is deprecated - get_pkg_id() can already check for installation.
+ *   This function only supports the fxp driver's loadable microcode.
  ******/
-function is_package_installed($packagename) {
-	$pkg = get_pkg_id($packagename);
-	if($pkg == -1) return false;
-	return true;
-}
-            
-/****f* pkg-utils/get_pkg_id
- * NAME
- *   get_pkg_id - Find a package's numeric ID.
- * INPUTS
- *   $pkg_name	- name of the package to check
- * RESULT
- *   integer    - -1 if package is not found, >-1 otherwise
- ******/
-function get_pkg_id($pkg_name) {
-    global $config;
-    if(is_array($config['installedpackages']['package'])) {
-        $i = 0;
-        foreach($config['installedpackages']['package'] as $pkg) {
-            if($pkg['name'] == $pkg_name) return $i;
-            $i++;
-        }
-    }
-    return -1;
+function enable_hardware_offloading($interface) {
+	global $g, $config;
+
+	if(stristr($interface,"lnc"))
+		return;
+	if(isset($config['system']['do_not_use_nic_microcode']))
+		return;
+
+	if($g['booting']) {
+	/* translate wan, lan, opt -> real interface if needed */
+	$int = filter_translate_type_to_real_interface($interface);
+	if($int <> "") $interface = $int;
+	$int_family = preg_split("/[0-9]+/", $int);
+	$options = strtolower(`/sbin/ifconfig {$interface} | grep options`);
+	$supported_ints = array('fxp');
+	if (in_array($int_family, $supported_ints))
+		mwexec("/sbin/ifconfig {$interface} link0");
+
+	if(stristr($options, "txcsum") == true)
+	    mwexec("/sbin/ifconfig {$interface} txcsum 2>/dev/null");
+	if(stristr($options, "rxcsum") == true)    
+	    mwexec("/sbin/ifconfig {$interface} rxcsum 2>/dev/null");    
+	if(stristr($options, "polling") == true)
+	    mwexec("/sbin/ifconfig {$interface} polling 2>/dev/null");
+	}
+	return;
 }
 
-/****f* pkg-utils/get_pkg_info
+/****f* pfsense-utils/is_alias_inuse
  * NAME
- *   get_pkg_info - Retrive package information from pfsense.com.
+ *   checks to see if an alias is currently in use by a rule
  * INPUTS
- *   $pkgs - 'all' to retrive all packages, an array containing package names otherwise
- *   $info - 'all' to retrive all information, an array containing keys otherwise
+ *   
  * RESULT
- *   $raw_versions - Array containing retrieved information, indexed by package name.
+ *   true or false
+ * NOTES
+ *   
  ******/
-function get_pkg_info($pkgs = 'all', $info = 'all') {
-	global $g;
-        $params = array("pkg" => $pkgs, "info" => $info);
-        $msg = new XML_RPC_Message('pfsense.get_pkgs', array(php_value_to_xmlrpc($params)));
-        $cli = new XML_RPC_Client($g['xmlrpcpath'], $g['xmlrpcbaseurl']);
-        $resp = $cli->send($msg, 10);
-	if($resp and !$resp->faultCode()) {
-        	$raw_versions = $resp->value();
-		return xmlrpc_value_to_php($raw_versions);
-	} else {
-		return array();
+function is_alias_inuse($alias) {
+	global $g, $config;
+
+	if($alias == "") return false;
+	/* loop through firewall rules looking for alias in use */
+	if(is_array($config['nat']['rule']))
+		foreach($config['filter']['rule'] as $rule) {
+			if(is_array($rule['source']['address']))
+				if($rule['source']['address'] == $alias)
+					return true;
+			if(is_array($rule['destination']['address']))
+				if($rule['destination']['address'] == $alias)
+					return true;
+		}
+	/* loop through nat rules looking for alias in use */
+	if(is_array($config['nat']['rule']))
+		foreach($config['nat']['rule'] as $rule) {
+			if($rule['target'] == $alias)
+				return true;
+			if($rule['external-address'] == $alias)
+				return true;	
+		}
+	return false;
+}
+
+/****f* pfsense-utils/setup_polling_defaults
+ * NAME
+ *   sets up sysctls for pollingS
+ * INPUTS
+ *   
+ * RESULT
+ *   null
+ * NOTES
+ *   
+ ******/
+function setup_polling_defaults() {
+	global $g, $config;
+	if($config['system']['polling_each_burst'])
+		mwexec("sysctl kern.polling.each_burst={$config['system']['polling_each_burst']}");
+	if($config['system']['polling_burst_max'])
+		mwexec("sysctl kern.polling.burst_max={$config['system']['polling_burst_max']}");
+	if($config['system']['polling_user_frac'])
+		mwexec("sysctl kern.polling.user_frac={$config['system']['polling_user_frac']}");		
+}
+
+/****f* pfsense-utils/setup_polling
+ * NAME
+ *   sets up polling
+ * INPUTS
+ *   
+ * RESULT
+ *   null
+ * NOTES
+ *   
+ ******/
+function setup_polling() {
+	global $g, $config;
+
+	setup_polling_defaults();
+	/* build an array of interfaces to work with */
+	$iflist = array("lan" => "LAN", "wan" => "WAN");
+	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];		
+	/*    activate polling for interface if it supports it
+	 *    man polling on a freebsd box for the following list
+	 */
+	/* loop through all interfaces and handle pftpx redirections */
+	foreach ($iflist as $ifent => $ifname) {	
+		$supported_ints = array('dc', 'em', 'fwe', 'fwip', 'fxp', 'ixgb', 'ste',
+			'nge', 're', 'rl', 'sf', 'sis', 'ste', 'vge', 'vr', 'xl');
+		if (in_array($ifname, $supported_ints) and isset($config['system']['polling'])) {
+			mwexec("/sbin/ifconfig {$interface} polling");
+		} else {
+			mwexec("/sbin/ifconfig {$interface} -polling");
+		}
 	}
 }
 
-function get_pkg_sizes($pkgs = 'all') {
+/****f* pfsense-utils/setup_microcode
+ * NAME
+ *   enumerates all interfaces and calls enable_hardware_offloading which
+ *   enables a NIC's supported hardware features.
+ * INPUTS
+ *   
+ * RESULT
+ *   null
+ * NOTES
+ *   This function only supports the fxp driver's loadable microcode.
+ ******/
+function setup_microcode() {
+	global $config;
+
+	$ifdescrs = array('wan', 'lan');
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+		$ifdescrs['opt' . $j] = "opt" . $j;
+	}
+	foreach($ifdescrs as $if)
+		enable_hardware_offloading($if);
+}
+
+/****f* pfsense-utils/return_filename_as_array
+ * NAME
+ *   return_filename_as_array - Return a file's contents as an array.
+ * INPUTS
+ *   $filename	- string containing the path to the desired file.
+ *   $strip	- array of characters to strip - default is '#'.
+ * RESULT
+ *   $file	- array containing the file's contents.
+ * NOTES
+ *   This function strips lines starting with '#' and leading/trailing whitespace by default.
+ ******/
+function return_filename_as_array($filename, $strip = array('#')) {
+	if(file_exists($filename)) $file = file($filename);
+	if(is_array($file)) {
+		foreach($file as $line) $line = trim($line);
+		foreach($strip as $tostrip) $file = preg_grep("/^{$tostrip}/", $file, PREG_GREP_INVERT);
+	}
+	return $file;
+}
+
+/****f* pfsense-utils/file_put_contents
+ * NAME
+ *   file_put_contents - Wrapper for file_put_contents if it doesn't exist
+ * RESULT
+ *   none
+ ******/
+if(!function_exists("file_put_contents")) {
+	function file_put_contents($filename, $data) {
+		$fd = fopen($filename,"w");
+		fwrite($fd, $data);
+		fclose($fd);
+	}
+}
+
+/****f* pfsense-utils/get_carp_status
+ * NAME
+ *   get_carp_status - Return whether CARP is enabled or disabled.
+ * RESULT
+ *   boolean	- true if CARP is enabled, false if otherwise.
+ ******/
+function get_carp_status() {
+    /* grab the current status of carp */
+    $status = `/sbin/sysctl net.inet.carp.allow | cut -d" " -f2`;
+    if(intval($status) == "0") return false;
+    return true;
+}
+
+/****f* pfsense-utils/is_carp_defined
+ * NAME
+ *   is_carp_defined - Return whether CARP is detected in the kernel.
+ * RESULT
+ *   boolean	- true if CARP is detected, false otherwise.
+ ******/
+function is_carp_defined() {
+	/* is carp compiled into the kernel and userland? */
+	$command = "/sbin/sysctl -a | grep carp";
+	$fd = popen($command . " 2>&1 ", "r");
+	if(!$fd) {
+		log_error("Warning, could not execute command {$command}");
+		return 0;
+	}
+	while(!feof($fd)) {
+		$tmp .= fread($fd,49);
+	}
+	fclose($fd);
+
+	if($tmp == "")
+		return false;
+	else
+		return true;
+}
+
+/****f* pfsense-utils/get_interface_mtu
+ * NAME
+ *   get_interface_mtu - Return the mtu of an interface
+ * RESULT
+ *   $tmp	- Returns the mtu of an interface
+ ******/
+function get_interface_mtu($interface) {
+	$mtu = `/sbin/ifconfig {$interface} | /usr/bin/grep mtu | /usr/bin/cut -d" " -f4`;
+	return $mtu;
+}
+
+/****f* pfsense-utils/is_interface_wireless
+ * NAME
+ *   is_interface_wireless - Returns if an interface is wireless
+ * RESULT
+ *   $tmp	- Returns if an interface is wireless
+ ******/
+function is_interface_wireless($interface) {
+	global $config, $g;
+	$interface = convert_real_interface_to_friendly_interface_name($interface);
+	if(isset($config['interfaces'][$interface]['wireless']))
+		return true;
+	else
+		return false;
+}
+
+/****f* pfsense-utils/find_number_of_created_carp_interfaces
+ * NAME
+ *   find_number_of_created_carp_interfaces - Return the number of CARP interfaces.
+ * RESULT
+ *   $tmp	- Number of currently created CARP interfaces.
+ ******/
+function find_number_of_created_carp_interfaces() {
+	$command = "/sbin/ifconfig | /usr/bin/grep \"carp*:\" | /usr/bin/wc -l";
+	$fd = popen($command . " 2>&1 ", "r");
+	if(!$fd) {
+		log_error("Warning, could not execute command {$command}");
+		return 0;
+	}
+	while(!feof($fd)) {
+		$tmp .= fread($fd,49);
+	}
+	fclose($fd);
+	$tmp = intval($tmp);
+	return $tmp;
+}
+
+/****f* pfsense-utils/link_ip_to_carp_interface
+ * NAME
+ *   link_ip_to_carp_interface - Find where a CARP interface links to.
+ * INPUTS
+ *   $ip
+ * RESULT
+ *   $carp_ints
+ ******/
+function link_ip_to_carp_interface($ip) {
+	global $config;
+	if($ip == "") return;
+
+	$ifdescrs = array('wan', 'lan');
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+		$ifdescrs['opt' . $j] = "opt" . $j;
+	}
+
+	$ft = split("\.", $ip);
+	$ft_ip = $ft[0] . "." . $ft[1] . "." . $ft[2] . ".";
+
+	$carp_ints = "";
+	$num_carp_ints = find_number_of_created_carp_interfaces();
+	foreach ($ifdescrs as $ifdescr => $ifname) {
+		for($x=0; $x<$num_carp_ints; $x++) {
+			$carp_int = "carp{$x}";
+			$carp_ip = find_interface_ip($carp_int);
+			$carp_ft = split("\.", $carp_ip);
+			$carp_ft_ip = $carp_ft[0] . "." . $carp_ft[1] . "." . $carp_ft[2] . ".";
+			$result = does_interface_exist($carp_int);
+			if($result <> true) break;
+			if($ft_ip == $carp_ft_ip)
+			if(stristr($carp_ints,$carp_int) == false)
+			$carp_ints .= " " . $carp_int;
+		}
+	}
+	return $carp_ints;
+}
+
+/****f* pfsense-utils/exec_command
+ * NAME
+ *   exec_command - Execute a command and return a string of the result.
+ * INPUTS
+ *   $command	- String of the command to be executed.
+ * RESULT
+ *   String containing the command's result.
+ * NOTES
+ *   This function returns the command's stdout and stderr.
+ ******/
+function exec_command($command) {
+	$output = array();
+	exec($command . ' 2>&1 ', $output);
+	return(implode("\n", $output));
+}
+
+/****f* interfaces/is_jumbo_capable
+ * NAME
+ *   is_jumbo_capable - Test if interface is jumbo frame capable.  Useful for determining VLAN capability.
+ * INPUTS
+ *   $int             - string containing interface name
+ * RESULT
+ *   boolean          - true or false
+ ******/
+function is_jumbo_capable($int) {
+	/* Per:
+	 * http://www.freebsd.org/cgi/man.cgi?query=vlan&manpath=FreeBSD+6.0-RELEASE&format=html
+	 * Only the following drivers support large frames
+         * 
+	 * 'de' chipset purposely left out of this list
+	 * requires defining BIG_PACKET in the
+	 * /usr/src/sys/pci/if_de.c source file and rebuilding the
+	 * kernel or module.  The hack works only for the 21041,
+	 * 21140, and 21140A chips.
+	 */
 	global $g;
-        $params = array("pkg" => $pkgs);
-        $msg = new XML_RPC_Message('pfsense.get_pkg_sizes', array(php_value_to_xmlrpc($params)));
-        $cli = new XML_RPC_Client($g['xmlrpcpath'], $g['xmlrpcbaseurl']);
-        $resp = $cli->send($msg, 10);  
-        if($resp and !$resp->faultCode()) {
-                $raw_versions = $resp->value();
-                return xmlrpc_value_to_php($raw_versions);
-        } else {
-                return array();
-        } 
+	
+	$capable = $g['vlan_long_frame'];
+	
+	$int_family = preg_split("/[0-9]+/", $int);
+
+	if (in_array($int_family[0], $capable))
+		return true;
+	else
+		return false;
 }
 
 /*
- * resync_all_package_configs() Force packages to setup their configuration and rc.d files.
- * This function may also print output to the terminal indicating progress.
+ * does_interface_exist($interface): return true or false if a interface is detected.
  */
-function resync_all_package_configs($show_message = false) {
-    global $config;
-    $i = 0;
-    log_error("Resyncing configuration for all packages.");
-    if(!$config['installedpackages']['package']) return;
-    if($show_message == true) print "Syncing packages:";
-    foreach($config['installedpackages']['package'] as $package) {
-        if($show_message == true) print " " . $package['name'];
-        sync_package($i, true, true);
-        $i++;
-    }
-    if($show_message == true) print ".\n";
+function does_interface_exist($interface) {
+	$ints = exec_command("/sbin/ifconfig -l");
+	if(stristr($ints, $interface) !== false)
+		return true;
+	else
+		return false;
 }
 
 /*
- * is_freebsd_pkg_installed() - Check /var/db/pkg to determine whether or not a FreeBSD
- *				package is installed.
+ * convert_ip_to_network_format($ip, $subnet): converts an ip address to network form
  */
-function is_freebsd_pkg_installed($pkg) {
-	global $g;
-	if(in_array($pkg, return_dir_as_array("{$g['vardb_path']}/pkg"))) return true;
+function convert_ip_to_network_format($ip, $subnet) {
+	$ipsplit = split('[.]', $ip);
+	$string = $ipsplit[0] . "." . $ipsplit[1] . "." . $ipsplit[2] . ".0/" . $subnet;
+	return $string;
+}
+
+/*
+ * find_interface_ip($interface): return the interface ip (first found)
+ */
+function find_interface_ip($interface) {
+	if(does_interface_exist($interface) == false) return;
+	$ip = exec_command("/sbin/ifconfig {$interface} | /usr/bin/grep -w \"inet\" | /usr/bin/cut -d\" \" -f 2");
+	$ip = str_replace("\n","",$ip);
+	return $ip;
+}
+
+function guess_interface_from_ip($ipaddress) {
+	$ints = `/sbin/ifconfig -l`;
+	$ints_split = split(" ", $ints);
+	$ip_subnet_split = split("\.", $ipaddress);
+	$ip_subnet = $ip_subnet_split[0] . "." . $ip_subnet_split[1] . "." . $ip_subnet_split[2] . ".";
+	foreach($ints_split as $int) {
+		$ip = find_interface_ip($int);
+		$ip_split = split("\.", $ip);
+		$ip_tocheck = $ip_split[0] . "." . $ip_split[1] . "." . $ip_split[2] . ".";
+		if(stristr($ip_tocheck, $ip_subnet) != false) return $int;
+	}
+}
+
+function filter_opt_interface_to_real($opt) {
+	global $config;
+	return $config['interfaces'][$opt]['if'];
+}
+
+function filter_get_opt_interface_descr($opt) {
+	global $config;
+	return $config['interfaces'][$opt]['descr'];
+}
+
+function get_friendly_interface_list_as_array() {
+	global $config;
+	$ints = array();
+	$ifdescrs = array('wan', 'lan');
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+		$ifdescrs['opt' . $j] = "opt" . $j;
+	}
+	$ifdescrs = get_interface_list();
+	foreach ($ifdescrs as $ifdescr => $ifname) {
+		array_push($ints,$ifdescr);
+	}
+	return $ints;
+}
+
+/*
+ * find_ip_interface($ip): return the interface where an ip is defined
+ */
+function find_ip_interface($ip) {
+	global $config;
+	$ifdescrs = array('wan', 'lan');
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+		$ifdescrs['opt' . $j] = "opt" . $j;
+	}
+	foreach ($ifdescrs as $ifdescr => $ifname) {
+		$int = filter_translate_type_to_real_interface($ifname);
+		$ifconfig = exec_command("/sbin/ifconfig {$int}");
+	if(stristr($ifconfig,$ip) <> false)
+		return $int;
+	}
 	return false;
 }
 
 /*
- * get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", return_nosync = 1):  Return a package's dependencies.
- *
- * $filetype = "all" || ".xml", ".tgz", etc.
- * $format = "files" (full filenames) || "names" (stripped / parsed depend names)
- * $return_nosync = 1 (return depends that have nosync set) | 0 (ignore packages with nosync)
- *
+ *  filter_translate_type_to_real_interface($interface): returns the real interface name
+ *                                                       for a friendly interface.  ie: wan
  */
-function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $return_nosync = 1) {
-    global $config;                
-    $pkg_id = get_pkg_id($pkg_name);                                                             
-    if(!is_numeric($pkg_name)) {
-        if($pkg_id == -1) return -1; // This package doesn't really exist - exit the function.
-    } else {                                                                                  
-        if(!isset($config['installedpackages']['package'][$pkg_id])) return; // No package belongs to the pkg_id passed to this function.
-    }                                                                                                                                    
-    $package = $config['installedpackages']['package'][$pkg_id];
-    if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
-        file_notice($package['name'], "The {$package['name']} package is missing its configuration file and must be reinstalled.", "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
-		return;
-	}
-	$pkg_xml = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
-    if($pkg_xml['additional_files_needed'] != "") {                                                  
-        foreach($pkg_xml['additional_files_needed'] as $item) {
-            if (($return_nosync == 0) && (isset($item['nosync']))) continue; // Do not return depends with nosync set if not required.
-            $depend_file = substr(strrchr($item['item']['0'], '/'),1); // Strip URLs down to filenames.
-            $depend_name = substr(substr($depend_file,0,strpos($depend_file,".")+1),0,-1); // Strip filename down to dependency name.
-            if (($filetype != "all") && (!preg_match("/${filetype}/i", $depend_file))) continue;
-            if ($item['prefix'] != "") {
-                $prefix = $item['prefix'];
-            } else {
-                $prefix = "/usr/local/pkg/";
-            }
-            if(!file_exists($prefix . $pkg_name)) {
-				file_notice($package['name'], "The {$package['name']} package is missing required dependencies and must be reinstalled.", "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
-            }
-            switch ($format) {
-            case "files":
-                $depends[] = $depend_file;
-                break;
-            case "names":
-                switch ($filetype) {
-                case "all":
-                    if(preg_match("/\.xml/i", $depend_file)) {
-                        $depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
-                        $depends[] = $depend_xml['name'];
-                        break;
-                    } else {
-                        $depends[] = $depend_name; // If this dependency isn't package XML, use the stripped filename.
-                        break;
-                    }
-                case ".xml":
-                    $depend_xml = parse_xml_config_pkg("/usr/local/pkg/" . $depend_file, "packagegui");
-                    $depends[] = $depend_xml['name'];
-                    break;
-                default:
-                    $depends[] = $depend_name; // If we aren't looking for XML, use the stripped filename (it's all we have).
-                    break;
-                }
-            }
-        }
-        return $depends;
-    }
-}
-
-/*
- * sync_package($pkg_name, $sync_depends = true, $show_message = false) Force a package to setup its configuration and rc.d files.
- */
-function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
+function filter_translate_type_to_real_interface($interface) {
 	global $config;
-
-	if(!$config['installedpackages']['package']) return;
-	if(!is_numeric($pkg_name)) {
-		$pkg_id = get_pkg_id($pkg_name);
-		if($pkg_id == -1) return -1; // This package doesn't really exist - exit the function.
+	if($config['interfaces'][$interface]['if'] <> "") {
+		return $config['interfaces'][$interface]['if'];
 	} else {
-		$pkg_id = $pkg_name;
-		if(!isset($config['installedpackages']['package'][$pkg_id]))
-		return;  // No package belongs to the pkg_id passed to this function.
-	}
-	$package = $config['installedpackages']['package'][$pkg_id];
-	if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
-		file_notice($package['name'], "The {$package['name']} package is missing its configuration file and must be reinstalled.", "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
-	} else {
-		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
-		/* XXX: Zend complains about the next line "Wrong break depth"
-		 * The code is obviously wrong, but I'm not sure what it's supposed to do?
-		 */
-		if(isset($pkg_config['nosync'])) continue;
-		if($pkg_config['custom_php_global_functions'] <> "")
-		eval($pkg_config['custom_php_global_functions']);
-		if($pkg_config['custom_php_resync_config_command'] <> "")
-		eval($pkg_config['custom_php_resync_config_command']);
-		if($sync_depends == true) {
-			$depends = get_pkg_depends($pkg_name, ".xml", "files", 1); // Call dependency handler and do a little more error checking.
-			if(is_array($depends)) {
-				foreach($depends as $item) {
-					if(!file_exists("/usr/local/pkg" . $item)) {
-						file_notice($package['name'], "The {$package['name']} package is missing required dependencies and must be reinstalled.", "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
-					} else {
-						$item_config = parse_xml_config_pkg("/usr/local/pkg/" . $item, "packagegui");
-						if(isset($item_config['nosync'])) continue;
-						if($item_config['custom_php_command_before_form'] <> "") {
-							eval($item_config['custom_php_command_before_form']);
-						}
-						if($item_config['custom_php_resync_config_command'] <> "") {
-							eval($item_config['custom_php_resync_config_command']);
-						}
-						if($show_message == true) print " " . $item_config['name'];
-					}
-				}
-			}
-		}
+		return $interface;
 	}
 }
 
 /*
- * pkg_fetch_recursive: Download and install a FreeBSD package and its dependencies. This function provides output to
- * 			a progress bar and output window.
- *
- * XXX: This function needs to return where a pkg_add fails. Our current error messages aren't very descriptive.
+ * get_carp_interface_status($carpinterface): returns the status of a carp ip
  */
-function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 'http://ftp2.freebsd.org/pub/FreeBSD/ports/i386/packages-5.4-release/Latest') {
-        global $pkgent, $static_output, $g, $fd_log;
-        $pkg_extension = strrchr($filename, '.');
-        $static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $pkgname . " ";
-        $fetchto = "/tmp/apkg_" . $pkgname . $pkg_extension;
-	download_file_with_progress_bar($base_url . '/' . $filename, $fetchto);
-	$static_output .= " (extracting)";
-	update_output_window($static_output);	
-		$slaveout = "";
-        exec("/usr/bin/tar --fast-read -O -f {$fetchto} -x +CONTENTS 2>&1", $slaveout);
-        $workingdir = preg_grep("/instmp/", $slaveout);
-        $workingdir = $workingdir[0];
-        $raw_depends_list = array_values(preg_grep("/\@pkgdep/", $slaveout));
-        if($raw_depends_list != "") {
-                if($pkgent['exclude_dependency'] != "")
-                        $raw_depends_list = array_values(preg_grep($pkgent['exclude_dependency'], PREG_GREP_INVERT));
-                foreach($raw_depends_list as $adepend) {
-                        $working_depend = explode(" ", $adepend);
-                        //$working_depend = explode("-", $working_depend[1]);
-                        $depend_filename = $working_depend[1] . $pkg_extension;
-                        if(is_freebsd_pkg_installed($working_depend[1]) === false) {
-                                pkg_fetch_recursive($working_depend[1], $depend_filename, $dependlevel + 1, $base_url);
-                        } else {
-//                              $dependlevel++;
-                                $static_output .= "\n" . str_repeat(" ", $dependlevel * 2) . $working_depend[1] . " ";
-                                @fwrite($fd_log, $working_depend[1] . "\n");
-                        }
-                }
-        }
-        $pkgaddout = "";
-        exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_add -fv {$fetchto} 2>&1", $pkgaddout);
-        @fwrite($fd_log, $pkgname . " " . print_r($pkgaddout, true) . "\n");
-        return true;
-}
-
-function download_file_with_progress_bar($url_file, $destination_file) {
-        global $ch, $fout, $file_size, $downloaded, $pkg_interface;
-        $file_size  = 1;
-        $downloaded = 1;
-        /* open destination file */
-        $fout = fopen($destination_file, "wb");
-
-        /*
-                Originally by Author: Keyvan Minoukadeh
-                Modified by Scott Ullrich to return Content-Length size
-        */
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url_file);
-        curl_setopt($ch, CURLOPT_HEADERFUNCTION, 'read_header');
-        curl_setopt($ch, CURLOPT_WRITEFUNCTION, 'read_body');
-        curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
-
-        curl_exec($ch);
-	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        fclose($fout);
-        curl_close($ch);
-	return ($http_code == 200) ? true : $http_code;
-}
-
-function read_header($ch, $string) {
-        global $file_size, $fout;
-        $regs = "";
-        $length = strlen($string);
-        ereg("(Content-Length:) (.*)", $string, $regs);
-        if($regs[2] <> "") {
-                $file_size = intval($regs[2]);
-        }
-        return $length;
-}
-
-function read_body($ch, $string) {
-        global $fout, $file_size, $downloaded, $sendto, $static_status, $static_output, $lastseen, $pkg_interface;
-        $length = strlen($string);
-        $downloaded += intval($length);
-        $downloadProgress = round(100 * (1 - $downloaded / $file_size), 0);
-        $downloadProgress = 100 - $downloadProgress;
-	if($lastseen <> $downloadProgress and $downloadProgress < 101) {
-                if($sendto == "status") {
-                        $tostatus = $static_status . $downloadProgress . "%";
-                        update_status($tostatus);
-                } else {
-                        $tooutput = $static_output . $downloadProgress . "%";
-                        update_output_window($tooutput);
-                }
-                update_progress_bar($downloadProgress);
-                $lastseen = $downloadProgress;
-        }
-	fwrite($fout, $string);
-	return $length;
-}
-
-function install_package($package, $pkg_info = "") {
-	global $g, $config, $pkg_interface, $fd_log, $static_output;
-	/* open logfiles and begin installation */
-	if(!$fd_log) {
-		if(!$fd_log = fopen("{$g['tmp_path']}/pkg_mgr_{$package}.log", "w")) {
-			update_output_window("Warning, could not open log for writing.");
+function get_carp_interface_status($carpinterface) {
+	/* basically cache the contents of ifconfig statement
+	to speed up this routine */
+	global $carp_query;
+	if($carp_query == "")
+	$carp_query = split("\n", `/sbin/ifconfig | /usr/bin/grep carp`);
+	$found_interface = 0;
+	foreach($carp_query as $int) {
+		if($found_interface == 1) {
+			if(stristr($int, "MASTER") == true) return "MASTER";
+			if(stristr($int, "BACKUP") == true) return "BACKUP";
+			if(stristr($int, "INIT") == true) return "INIT";
+			return false;
 		}
-	}
-	@fwrite($fd_log, "Beginning package installation.\n");
-	log_error('Beginning package installation for ' . $package . '.');
-	update_status("Beginning package installation for " . $package . "...");
-	/* fetch package information if needed */
-	if(!$pkg_info or !is_array($pkg_info[$package])) {
-		$pkg_info = get_pkg_info(array($package));
-		$pkg_info = $pkg_info[$package]; // We're only dealing with one package, so we can strip away the extra array.
-	}
-	/* fetch the package's configuration file */
-	if($pkg_info['config_file'] != "") {
-		$static_output .= "Downloading package configuration file... ";
-		update_output_window($static_output);
-		@fwrite($fd_log, "Downloading package configuration file...\n");
-		$fetchto = substr(strrchr($pkg_info['config_file'], '/'), 1);
-		download_file_with_progress_bar($pkg_info['config_file'], '/usr/local/pkg/' . $fetchto);
-		if(!file_exists('/usr/local/pkg/' . $fetchto)) {
-			@fwrite($fd_log, "ERROR! Unable to fetch package configuration file. Aborting installation.\n");
-			if($pkg_interface == "console") {
-				print "\nERROR! Unable to fetch package configuration file. Aborting package installation.\n";
-				return;
-			} else {
-				$static_output .= "failed!\n\nInstallation aborted.";
-				update_output_window($static_output);
-				echo "<br>Show <a href=\"pkg_mgr_install.php?showlog=true\">install log</a></center>";
-			 	return -1;
-			}
-		}
-		$static_output .= "done.\n";
-		update_output_window($static_output);
-	}
-	/* add package information to config.xml */
-	$pkgid = get_pkg_id($pkg_info['name']);
-	$static_output .= "Saving updated package information... ";
-	update_output_window($static_output);
-	if($pkgid == -1) {
-		$config['installedpackages']['package'][] = $pkg_info;
-		$changedesc = "Installed {$pkg_info['name']} package.";
-		$to_output = "done.\n";
-	} else {
-		$config['installedpackages']['package'][$pkgid] = $pkg_info;
-		$changedesc = "Overwrote previous installation of {$pkg_info['name']}.";
-		$to_output = "overwrite!\n";
-	}
-	$static_output .= $to_output;
-	update_output_window($static_output);
-	/* install other package components */
-	install_package_xml($package);
-	$static_output .= "Writing configuration... ";
-	update_output_window($static_output);
-	write_config($changedesc);
-	$static_output .= "done.";
-	update_output_window($static_output);
-}
-
-function eval_once($toeval) {
-	global $evaled;
-	if(!$evaled) $evaled = array();
-	$evalmd5 = md5($toeval);
-	if(!in_array($evalmd5, $evaled)) {
-		eval($toeval);
-		$evaled[] = $evalmd5;
+		if(stristr($int, $carpinterface) == true)
+		$found_interface=1;
 	}
 	return;
 }
 
-function install_package_xml($pkg) {
-	global $g, $config, $fd_log, $static_output;
-	if(($pkgid = get_pkg_id($pkg)) == -1) {
-		$static_output .= "The {$pkg} package is not installed.\n\nInstallation aborted.";
-		update_output_window($static_output);
-		echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
-		echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
-		sleep(1);
-		return;
-	} else {
-		$pkg_info = $config['installedpackages']['package'][$pkgid];
+/*
+ * get_pfsync_interface_status($pfsyncinterface): returns the status of a pfsync
+ */
+function get_pfsync_interface_status($pfsyncinterface) {
+    $result = does_interface_exist($pfsyncinterface);
+    if($result <> true) return;
+    $status = exec_command("/sbin/ifconfig {$pfsyncinterface} | /usr/bin/grep \"pfsync:\" | /usr/bin/cut -d\" \" -f5");
+    return $status;
+}
+
+/*
+ * find_carp_interface($ip): return the carp interface where an ip is defined
+ */
+function find_carp_interface($ip) {
+	global $find_carp_ifconfig;
+	if($find_carp_ifconfig == "") {
+		$find_carp_ifconfig = array();
+		$num_carp_ints = find_number_of_created_carp_interfaces();
+		for($x=0; $x<$num_carp_ints; $x++) {
+			$find_carp_ifconfig[$x] = exec_command("/sbin/ifconfig carp{$x}");
+		}
 	}
-	/* set up logging if needed */
-	if(!$fd_log) {
-		if(!$fd_log = fopen("{$g['tmp_path']}/pkg_mgr_{$pkg}.log", "w")) {
-			update_output_window("Warning, could not open log for writing.");
-		}
-	}
-
-	/* set up package logging streams */
-        if($pkg_info['logging']) {
-                mwexec("/usr/sbin/clog -i -s 32768 {$g['varlog_path']}/{$pkg_info['logging']['logfilename']}");
-                chmod($g['varlog_path'] . '/' . $pkg_info['logging']['logfilename'], 0600);
-                @fwrite($fd_log, "Adding text to file /etc/syslog.conf\n");
-		mwexec("killall syslogd");
-                system_syslogd_start();
-        }
-
-	/* make 'y' file */
-        $fd = fopen("{$g['tmp_path']}/y", "w");
-        for($line = 0; $line < 10; $line++) {
-                fwrite($fd, "y\n");
-        }
-        fclose($fd);
-
-	/* pkg_add the package and its dependencies */
-        if($pkg_info['depends_on_package_base_url'] != "") {
-                update_status("Installing " . $pkg_info['name'] . " and its dependencies.");
-                $static_output .= "Downloading " . $pkg_info['name'] . " and its dependencies... ";
-                $static_orig = $static_output;
-                $static_output .= "\n";
-                update_output_window($static_output);
-                $pkg_name = substr(reverse_strrchr($pkg_info['depends_on_package'], "."), 0, -1);
-                if(isset($pkg_info['skip_install_checks'])) {
-                        $pkg_installed = true;
-                } else {
-                        $pkg_installed = is_freebsd_pkg_installed($pkg_name);
-                }
-                if($pkg_installed == false) pkg_fetch_recursive($pkg_name, $pkg_info['depends_on_package'], 0, $pkg_info['depends_on_package_base_url']);
-                $static_output = $static_orig . "done.\nChecking for successful package installation... ";
-                update_output_window($static_output);
-                /* make sure our package was successfully installed */
-                if($pkg_installed == false) $pkg_installed = is_freebsd_pkg_installed($pkg_name);
-                if($pkg_installed == true) {
-                        $static_output .= "done.\n";
-                        update_output_window($static_output);
-                        fwrite($fd_log, "pkg_add successfully completed.\n");
-                } else {
-                        $static_output .= "failed!\n\nInstallation aborted.";
-                        update_output_window($static_output);
-                        fwrite($fd_log, "Package WAS NOT installed properly.\n");
-                        fclose($fd_log);
-                        echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
-                        echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
-                        sleep(1);
-                        die;
-                }
-        }
-
-	$configfile = substr(strrchr($pkg_info['config_file'], '/'), 1);
-	if(file_exists("/usr/local/pkg/" . $configfile)) {
-		$static_output .= "Loading package configuration... ";
-		update_output_window($static_output);
-		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $configfile, "packagegui");
-		$static_output .= "done.\n";
-		update_output_window($static_output);
-		$static_output .= "Configuring package components...\n";
-		update_output_window($static_output);
-		/* modify system files */
-		if($pkg_config['modify_system']['item'] <> "") {
-			$static_output .= "\tSystem files... ";
-			update_output_window($static_output);
-			foreach($pkg_config['modify_system']['item'] as $ms) {
-				if($ms['textneeded']) {
-					add_text_to_file($ms['modifyfilename'], $ms['textneeded']);
-				}
-			}
-			$static_output .= "done.\n";
-			update_output_window($static_output);
-		}
-		/* download additional files */
-		if($pkg_config['additional_files_needed'] <> "") {
-			$static_output .= "\tAdditional files... ";
-			$static_orig = $static_output;
-			update_output_window($static_output);
-			foreach($pkg_config['additional_files_needed'] as $afn) {
-				$filename = get_filename_from_url($afn['item'][0]);
-				if($afn['chmod'] <> "") {
-					$pkg_chmod = $afn['chmod'];
-				} else {
-					$pkg_chmod = "";
-				}
-				if($afn['prefix'] <> "") {
-					$prefix = $afn['prefix'];
-				} else {
-					$prefix = "/usr/local/pkg/";
-				}
-				$static_output .= $filename . " ";
-                                update_output_window($static_output);
-				download_file_with_progress_bar($afn['item'][0], $prefix . $filename);
-				if(stristr($filename, ".tgz") <> "") {
-					fwrite($fd_log, "Extracting tarball to -C for " . $filename . "...\n");
-					$tarout = "";
-					exec("/usr/bin/tar xvzf " . $prefix . $filename . " -C / 2>&1", $tarout);
-					fwrite($fd_log, print_r($tarout, true) . "\n");
-				}
-				if($pkg_chmod <> "") {
-					fwrite($fd_log, "Changing file mode to {$pkg_chmod} for {$prefix}{$filename}\n");
-					chmod($prefix . $filename, $pkg_chmod);
-					system("/bin/chmod {$pkg_chmod} {$prefix}{$filename}");
-				}
-				$static_output = $static_orig;
-                                update_output_window($static_output);
-			}
-			$static_output .= "done.\n";
-			update_output_window($static_output);
-		}
-		/* sidebar items */
-		if($pkg_config['menu'] != "") {
-			$static_output .= "\tMenu items... ";
-			update_output_window($static_output);
-			if(is_array($pkg_config['menu'])) {
-				foreach($pkg_config['menu'] as $menu) {
-					if(is_array($config['installedpackages']['menu'])) {
-						foreach($config['installedpackages']['menu'] as $amenu) {
-							if($amenu['name'] == $menu['name']) continue 2;
-						}
-					}
-					$config['installedpackages']['menu'][] = $menu;
-				}
-			}
-			$static_output .= "done.\n";
-			update_output_window($static_output);
-		}
-		/* services */
-		if($pkg_config['service'] != "") {
-			$static_output .= "\tServices... ";
-			update_output_window($static_output);
-			foreach($pkg_config['service'] as $service) {
-				$config['installedpackages']['service'][] = $service;
-			}
-			$static_output .= "done.\n";
-			update_output_window($static_output);
-		}
-		/* custom commands */
-		$static_output .= "\tCustom commands... ";
-		update_output_window($static_output);
-		if($pkg_config['custom_php_global_functions'] <> "") {
-			update_output_window("Running custom_php_global_functions...");
-			eval_once($pkg_config['custom_php_global_functions']);
-		}
-		if($pkg_config['custom_php_install_command']) {
-			update_output_window("Running custom_php_install_command...");
-			eval_once($pkg_config['custom_php_install_command']);
-		}
-		if($pkg_config['custom_php_resync_config_command'] <> "") {
-			update_output_window("Running custom_php_resync_config_command...");
-                        eval_once($pkg_config['custom_php_resync_config_command']);
-                }
-		$static_output .= "done.\n";
-		update_output_window($static_output);
-	} else {
-		$static_output .= "Loading package configuration... failed!\n\nInstallation aborted.";
-		update_output_window($static_output);
-		fwrite($fd_log, "Unable to load package configuration. Installation aborted.\n");
-                fclose($fd_log);
-                echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
-                echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
-                sleep(1);
-		return;
+	$carps = 0;
+	foreach($find_carp_ifconfig as $fci) {
+		if(stristr($fci, $ip) == true)
+			return "carp{$carps}";
+		$carps++;
 	}
 }
 
-function delete_package($pkg) {
-	global $g, $config, $fd_log, $static_output;
-	update_status("Removing package...");
-	$static_output .= "Removing package... ";
-	update_output_window($static_output);
-	delete_package_recursive($pkg);
-	$static_output .= "done.\n";
-	update_output_window($static_output);
-	return;
+/*
+ * setup_filter_bridge(): toggle filtering bridge
+ */
+function setup_filter_bridge() {
+	global $config, $g;
+	if(isset($config['bridge']['filteringbridge'])) {
+		mwexec("/sbin/sysctl net.link.bridge.pfil_member=1");
+		mwexec("/sbin/sysctl net.link.bridge.pfil_bridge=1");
+	} else {		
+		mwexec("/sbin/sysctl net.link.bridge.pfil_member=0");
+		mwexec("/sbin/sysctl net.link.bridge.pfil_bridge=0");
+	}
 }
 
-function delete_package_recursive($pkg) {
-	$info = "";
-	$pkgdb = "";
-	exec("/usr/sbin/pkg_info -r " . $pkg . " 2>&1", $info);
-	exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_delete " . $pkg ." > /dev/null 2>&1");
-	exec("/bin/ls /var/db/pkg", $pkgdb);
-	if(stristr($info[0], "can't find package") != false) return;
-	foreach($info as $line) {
-		$depend = trim(array_pop(explode(":", $line)));
-		if(in_array($depend, $pkgdb)) delete_package_recursive($depend);
+/*
+ * find_number_of_created_bridges(): returns the number of currently created bridges
+ */
+function find_number_of_created_bridges() {
+	return `/sbin/ifconfig | grep \"bridge[0-999]\:" | wc -l`;
+}
+
+/*
+ * add_rule_to_anchor($anchor, $rule): adds the specified rule to an anchor
+ */
+function add_rule_to_anchor($anchor, $rule, $label) {
+	mwexec("echo " . $rule . " | /sbin/pfctl -a " . $anchor . ":" . $label . " -f -");
+}
+
+/*
+ * remove_text_from_file
+ * remove $text from file $file
+ */
+function remove_text_from_file($file, $text) {
+	global $fd_log;
+	fwrite($fd_log, "Adding needed text items:\n");
+	$filecontents = exec_command_and_return_text("cat " . $file);
+	$textTMP = str_replace($text, "", $filecontents);
+	$text .= $textTMP;
+	fwrite($fd_log, $text . "\n");
+	$fd = fopen($file, "w");
+	fwrite($fd, $text);
+	fclose($fd);
+}
+
+/*
+ * add_text_to_file($file, $text): adds $text to $file.
+ * replaces the text if it already exists.
+ */
+function add_text_to_file($file, $text) {
+	if(file_exists($file) and is_writable($file)) {
+		$filecontents = file($file);
+		$filecontents[] = $text;
+		$tmpfile = get_tmp_file();
+		$fout = fopen($tmpfile, "w");
+		foreach($filecontents as $line) {
+			fwrite($fout, rtrim($line) . "\n");
+		}
+		fclose($fout);
+		rename($tmpfile, $file);
+		return true;
+	} else {
+		return false;
 	}
-	$fd = fopen("{$g['tmp_path']}/y", "w");
-	for($line = 0; $line < 10; $line++) {
-		fwrite($fd, "y\n");
+}
+
+/*
+ *   after_sync_bump_adv_skew(): create skew values by 1S
+ */
+function after_sync_bump_adv_skew() {
+	global $config, $g;
+	$processed_skew = 1;
+	$a_vip = &$config['virtualip']['vip'];
+	foreach ($a_vip as $vipent) {
+		if($vipent['advskew'] <> "") {
+			$processed_skew = 1;
+			$vipent['advskew'] = $vipent['advskew']+1;
+		}
+	}
+	if($processed_skew == 1)
+		write_config("After synch increase advertising skew");
+}
+
+/*
+ * get_filename_from_url($url): converts a url to its filename.
+ */
+function get_filename_from_url($url) {
+	return basename($url);
+}
+
+/*
+ *   update_output_window: update bottom textarea dynamically.
+ */
+function update_output_window($text) {
+	$log = ereg_replace("\n", "\\n", $text);
+	echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"" . $log . "\";</script>";
+	/* ensure that contents are written out */
+	ob_flush();
+}
+
+/*
+ *   get_dir: return an array of $dir
+ */
+function get_dir($dir) {
+	$dir_array = array();
+	$d = dir($dir);
+	while (false !== ($entry = $d->read())) {
+		array_push($dir_array, $entry);
+	}
+	$d->close();
+	return $dir_array;
+}
+
+/*
+ *   update_output_window: update top textarea dynamically.
+ */
+function update_status($status) {
+	echo "\n<script language=\"JavaScript\">document.forms[0].status.value=\"" . $status . "\";</script>";
+	/* ensure that contents are written out */
+	ob_flush();
+}
+
+/*
+ *   exec_command_and_return_text_array: execute command and return output
+ */
+function exec_command_and_return_text_array($command) {
+	$fd = popen($command . " 2>&1 ", "r");
+	while(!feof($fd)) {
+		$tmp .= fread($fd,49);
 	}
 	fclose($fd);
-	return;
+	$temp_array = split("\n", $tmp);
+	return $temp_array;
 }
 
-function delete_package_xml($pkg) {
-	global $g, $config, $fd_log, $static_output;
-	if(($pkgid = get_pkg_id($pkg)) == -1) {
-                $static_output .= "The {$pkg} package is not installed.\n\nDeletion aborted.";
-                update_output_window($static_output);
-                echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
-                echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
-                sleep(1);
-                return;
-        }
-	/* set up logging if needed */
-        if(!$fd_log) {
-                if(!$fd_log = fopen("{$g['tmp_path']}/pkg_mgr_{$pkg}.log", "w")) {
-                        update_output_window("Warning, could not open log for writing.");
-                }
-        }
-	update_status("Removing {$pkg} components...");
-	fwrite($fd_log, "Removing {$pkg} package... ");
-	$static_output .= "Removing {$pkg} components...\n";
-	update_output_window($static_output);
-	/* parse package configuration */
-	$packages = &$config['installedpackages']['package'];
-	$menus = &$config['installedpackages']['menu'];
-	$services = &$config['installedpackages']['service'];
-	if(file_exists("/usr/local/pkg/" . $packages[$pkgid]['configurationfile'])) {
-		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $packages[$pkgid]['configurationfile'], "packagegui");
-		/* remove menu items */
-		if(is_array($pkg_config['menu'])) {
-			$static_output .= "\tMenu items... ";
-			update_output_window($static_output);
-			foreach($menus as $menu) $instmenus[] = $menu['name'];
-			foreach($pkg_config['menu'] as $menu) {
-				foreach($instmenus as $key => $instmenu) {
-					if($instmenu == $menu['name']) unset($menus[$key]);
-				}
-			}
-			$static_output .= "done.\n";
-			update_output_window($static_output);
-		}
-		/* remove services */
-		if(is_array($pkg_config['service'])) {
-			$static_output .= "\tServices... ";
-			update_output_window($static_output);
-			foreach($services as $service) $instservices[] = $service['name'];
-			foreach($pkg_config['service'] as $service) {
-				foreach($instservices as $key => $instservice) {
-					if($instservice == $service['name']) {
-						stop_service($service['name']);
-						unset($services[$key]);
-					}
-				}
-			}
-			$static_output .= "done.\n";
-			update_output_window($static_output);
-		}
-		/* evalate this package's global functions and pre deinstall commands */
-		if($pkg_config['custom_php_global_functions'] <> "")
-			eval_once($pkg_config['custom_php_global_functions']);
-		if($pkg_config['custom_php_pre_deinstall_command'] <> "") 
-			eval_once($pkg_config['custom_php_pre_deinstall_command']);
-		/* remove all additional files */
-		if($pkg_config['additional_files_needed'] <> "") {
-			$static_output .= "\tAuxiliary files... ";
-			update_output_window($static_output);
-			foreach($pkg_config['additional_files_needed'] as $afn) {
-				$filename = get_filename_from_url($afn['item'][0]);
-				if($afn['prefix'] <> "") {
-					$prefix = $afn['prefix'];
-				} else {
-					$prefix = "/usr/local/pkg/";
-				}
-				unlink_if_exists($prefix . $filename);
-				if(file_exists($prefix . $filename))
-				    mwexec("rm -rf {$prefix}{$filename}");
-			}
-			$static_output .= "done.\n";
-			update_output_window($static_output);
-		}
-		/* system files */
-		if($pkg_config['modify_system']['item'] <> "") {
-			$static_output .= "\tSystem files... ";
-			update_output_window($static_output);
-			foreach($pkg_config['modify_system']['item'] as $ms) {
-				if($ms['textneeded']) remove_text_from_file($ms['modifyfilename'], $ms['textneeded']);
-			}
-			$static_output .= "done.\n";
-			update_output_window($static_output);
-		}
-		/* syslog */
-		if($pkg_config['logging']['logfile_name'] <> "") {
-			$static_output .= "\tSyslog entries... ";
-			update_output_window($static_output);
-			remove_text_from_file("/etc/syslog.conf", $pkg_config['logging']['facilityname'] . "\t\t\t\t" . $pkg_config['logging']['logfilename']);
-			$static_output .= "done.\n";
-			update_output_window($static_output);
-		}
-		/* deinstall commands */
-		if($pkg_config['custom_php_deinstall_command'] <> "") {
-			$static_output .= "\tDeinstall commands... ";
-			update_output_window($static_output);
-			eval_once($pkg_config['custom_php_deinstall_command']);
-			$static_output .= "done.\n";
-			update_output_window($static_output);
-		}
-		/* package XML file */
-		$static_output .= "\tPackage XML... ";
-		update_output_window($static_output);
-		unlink_if_exists("/usr/local/pkg/" . $packages[$pkgid]['configurationfile']);
-		$static_output .= "done.\n";
-		update_output_window($static_output);
-	}
-	/* remove config.xml entries */
-	$static_output .= "\tConfiguration... ";
-	update_output_window($static_output);
-	unset($config['installedpackages']['package'][$pkgid]);
-	$static_output .= "done.\n";
-	update_output_window($static_output);
-	write_config("Removed {$pkg} package.");
-	/* file cleanup */
-	$ctag = file("/etc/crontab");
-	foreach($ctag as $line) {
-		if(trim($line) != "") $towrite[] = $line;
-	}
-	$tmptab = fopen("/tmp/crontab", "w");
-	foreach($towrite as $line) {
-		fwrite($tmptab, $line);
-	}
-	fclose($tmptab);
-	rename("/tmp/crontab", "/etc/crontab");
+/*
+ *   exec_command_and_return_text: execute command and return output
+ */
+function exec_command_and_return_text($command) {
+	return exec_command($command);
 }
 
-function expand_to_bytes($size) {
-	$conv = array(
-			"G" =>	"3",
-			"M" =>  "2",
-			"K" =>  "1",
-			"B" =>  "0"
-		);
-	$suffix = substr($size, -1);
-	if(!in_array($suffix, array_keys($conv))) return $size;
-	$size = substr($size, 0, -1);
-	for($i = 0; $i < $conv[$suffix]; $i++) {
-		$size *= 1024;
-	}
-	return $size;
-}
-
-function get_pkg_db() {
-	global $g;
-	return return_dir_as_array($g['vardb_path'] . '/pkg');
-}
-
-function walk_depend($depend, $pkgdb = "", $alreadyseen = "") {
-	if(!$pkgdb) $pkgdb = get_pkg_db();
-	if(!$alreadyseen) $alreadyseen = array();
-	foreach($depend as $adepend) {
-		$pkgname = reverse_strrchr($adepend['name'], '.');
-		if(in_array($pkgname, $alreadyseen)) {
-			continue;
-		} elseif(!in_array($pkgname, $pkgdb)) {
-			$size += expand_to_bytes($adepend['size']);
-			$alreadyseen[] = $pkgname;
-			if(is_array($adepend['depend'])) $size += walk_depend($adepend['depend'], $pkgdb, $alreadyseen);
+/*
+ *   exec_command_and_return_text: execute command and update output window dynamically
+ */
+function execute_command_return_output($command) {
+	global $fd_log;
+	$fd = popen($command . " 2>&1 ", "r");
+	echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"\";</script>";
+	$counter = 0;
+	$counter2 = 0;
+	while(!feof($fd)) {
+		$tmp = fread($fd, 50);
+		$tmp1 = ereg_replace("\n","\\n", $tmp);
+		$text = ereg_replace("\"","'", $tmp1);
+		$lasttext = "";
+		if($lasttext == "..") {
+			$text = "";
+			$lasttext = "";
+			$counter=$counter-2;
 		} else {
-			continue;
+			$lasttext .= $text;
 		}
+		if($counter > 51) {
+			$counter = 0;
+			$extrabreak = "\\n";
+		} else {
+	    $extrabreak = "";
+	    $counter++;
+		}
+		if($counter2 > 600) {
+			echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"\";</script>";
+			$counter2 = 0;
+		} else
+			$counter2++;
+		echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = this.document.forms[0].output.value + \"" . $text . $extrabreak .  "\"; f('output'); </script>";
 	}
-	return $size;
+	fclose($fd);
 }
 
-function get_package_install_size($pkg = 'all', $pkg_info = "") {
+/*
+ * convert_friendly_interface_to_real_interface_name($interface): convert WAN to FXP0
+ */
+function convert_friendly_interface_to_real_interface_name($interface) {
+	global $config;
+	$lc_interface = strtolower($interface);
+	if($lc_interface == "lan") return $config['interfaces']['lan']['if'];
+	if($lc_interface == "wan") return $config['interfaces']['wan']['if'];
+	$ifdescrs = array();
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
+		$ifdescrs['opt' . $j] = "opt" . $j;
+	foreach ($ifdescrs as $ifdescr => $ifname) {
+		if(strtolower($ifname) == $lc_interface)
+	    return $config['interfaces'][$ifname]['if'];
+		if(strtolower($config['interfaces'][$ifname]['descr']) == $lc_interface)
+			return $config['interfaces'][$ifname]['if'];
+   }
+   return $interface;
+}
+
+/*
+ * convert_real_interface_to_friendly_interface_name($interface): convert fxp0 -> wan, etc.
+ */
+function convert_real_interface_to_friendly_interface_name($interface) {
+	global $config;
+	$ifdescrs = array('wan', 'lan');
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
+		$ifdescrs['opt' . $j] = "opt" . $j;
+	foreach ($ifdescrs as $ifdescr => $ifname) {
+		$int = filter_translate_type_to_real_interface($ifname);
+		if($ifname == $interface) return $ifname;
+		if($int == $interface) return $ifname;
+	}
+	return $interface;
+}
+
+/*
+ * update_progress_bar($percent): updates the javascript driven progress bar.
+ */
+function update_progress_bar($percent) {
+	if($percent > 100) $percent = 1;
+	echo "\n<script type=\"text/javascript\" language=\"javascript\">";
+	echo "\ndocument.progressbar.style.width='" . $percent . "%';";
+	echo "\n</script>";
+}
+
+/****f* pfsense-utils/WakeOnLan
+ * NAME
+ *   WakeOnLan - Wake a machine up using the wake on lan format/protocol
+ * RESULT
+ *   true/false - true if the operation was successful
+ ******/
+function WakeOnLan($addr, $mac)
+{
+	$addr_byte = explode(':', $mac);
+	$hw_addr = '';
+	
+	for ($a=0; $a < 6; $a++)
+		$hw_addr .= chr(hexdec($addr_byte[$a]));
+	
+	$msg = chr(255).chr(255).chr(255).chr(255).chr(255).chr(255);
+	
+	for ($a = 1; $a <= 16; $a++)
+		$msg .= $hw_addr;
+	
+	// send it to the broadcast address using UDP
+	$s = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
+	if ($s == false) {
+		log_error("Error creating socket!");
+		log_error("Error code is '".socket_last_error($s)."' - " . socket_strerror(socket_last_error($s)));
+	} else {
+		// setting a broadcast option to socket:
+		$opt_ret =  socket_set_option($s, 1, 6, TRUE);
+		if($opt_ret < 0)
+			log_error("setsockopt() failed, error: " . strerror($opt_ret));
+		$e = socket_sendto($s, $msg, strlen($msg), 0, $addr, 2050);
+		socket_close($s);
+		log_error("Magic Packet sent ({$e}) to {$addr} MAC={$mac}");
+		return true;
+	}
+	
+	return false;
+}
+
+/*
+ * gather_altq_queue_stats():  gather altq queue stats and return an array that
+ *                             is queuename|qlength|measured_packets
+ *                             NOTE: this command takes 5 seconds to run
+ */
+function gather_altq_queue_stats($dont_return_root_queues) {
+	mwexec("/usr/bin/killall -9 pfctl");
+	$stats = `/sbin/pfctl -vvsq & /bin/sleep 5;/usr/bin/killall pfctl 2>/dev/null`;
+	$stats_array = split("\n", $stats);
+	$queue_stats = array();
+	foreach ($stats_array as $stats_line) {
+		$match_array = "";
+		if (preg_match_all("/queue\s+(\w+)\s+/",$stats_line,$match_array))
+			$queue_name = $match_array[1][0];
+		if (preg_match_all("/measured:\s+.*packets\/s\,\s(.*)\s+\]/",$stats_line,$match_array))
+			$speed = $match_array[1][0];
+		if (preg_match_all("/borrows:\s+(.*)/",$stats_line,$match_array))
+			$borrows = $match_array[1][0];
+		if (preg_match_all("/suspends:\s+(.*)/",$stats_line,$match_array))
+			$suspends = $match_array[1][0];
+		if (preg_match_all("/dropped pkts:\s+(.*)/",$stats_line,$match_array))
+			$drops = $match_array[1][0];
+		if (preg_match_all("/measured:\s+(.*)packets/",$stats_line,$match_array)) {
+			$measured = $match_array[1][0];
+			if($dont_return_root_queues == true)
+				if(stristr($queue_name,"root_") == false)
+					array_push($queue_stats, "{$queue_name}|{$speed}|{$measured}|{$borrows}|{$suspends}|{$drops}");
+		}
+	}
+	return $queue_stats;
+}
+
+/*
+ * reverse_strrchr($haystack, $needle):  Return everything in $haystack up to the *last* instance of $needle.
+ *					 Useful for finding paths and stripping file extensions.
+ */
+function reverse_strrchr($haystack, $needle) {
+	return strrpos($haystack, $needle) ? substr($haystack, 0, strrpos($haystack, $needle) +1 ) : false;
+}
+
+/*
+ *  backup_config_section($section): returns as an xml file string of
+ *                                   the configuration section
+ */
+function backup_config_section($section) {
+	global $config;
+	$new_section = &$config[$section];
+	/* generate configuration XML */
+	$xmlconfig = dump_xml_config($new_section, $section);
+	$xmlconfig = str_replace("<?xml version=\"1.0\"?>", "", $xmlconfig);
+	return $xmlconfig;
+}
+
+/*
+ *  backup_vip_config_section($section): returns as an xml file string of
+ *                                   the configuration section
+ */
+function backup_vip_config_section() {
+	global $config;
+	$new_section = &$config['virtualip'];
+	foreach($new_section['vip'] as $section) {
+		if($section['mode'] == "proxyarp") {
+			unset($section);		
+		}
+		if($section['advskew'] <> "") {
+			$section_val = intval($section['advskew']);
+			$section_val=$section_val+100;
+			if($section_val > 255)
+				$section_val = 255;
+			$section['advskew'] = $section_val;
+		}
+		$temp['vip'][] = $section;
+   }
+   return $temp;
+}
+
+/*
+ *  restore_config_section($section, new_contents): restore a configuration section,
+ *                                                  and write the configuration out
+ *                                                  to disk/cf.
+ */
+function restore_config_section($section, $new_contents) {
 	global $config, $g;
-	if((!is_array($pkg)) and ($pkg != 'all')) $pkg = array($pkg);
-	$pkgdb = get_pkg_db();
-	if(!$pkg_info) $pkg_info = get_pkg_sizes($pkg);
-	foreach($pkg as $apkg) {
-		if(!$pkg_info[$apkg]) continue;
-		$toreturn[$apkg] = expand_to_bytes(walk_depend(array($pkg_info[$apkg]), $pkgdb));
-	}
-	return $toreturn;
+	conf_mount_rw();
+	$fout = fopen("{$g['tmp_path']}/tmpxml","w");
+	fwrite($fout, $new_contents);
+	fclose($fout);
+	$section_xml = parse_xml_config($g['tmp_path'] . "/tmpxml", $section);
+	$config[$section] = &$section_xml;
+	unlink($g['tmp_path'] . "/tmpxml");
+	write_config("Restored {$section} of config file (maybe from CARP partner)");
+	conf_mount_ro();
+	return;
 }
 
-function squash_from_bytes($size, $round = "") {
-	$conv = array(1 => "B", "K", "M", "G");
-	foreach($conv as $div => $suffix) {
-		$sizeorig = $size;
-		if(($size /= 1024) < 1) {
-			if($round) {
-				$sizeorig = round($sizeorig, $round);
-			}
-			return $sizeorig . $suffix;
+/*
+ * http_post($server, $port, $url, $vars): does an http post to a web server
+ *                                         posting the vars array.
+ * written by nf@bigpond.net.au
+ */
+function http_post($server, $port, $url, $vars) {
+	$user_agent = "Mozilla/4.0 (compatible; MSIE 5.5; Windows 98)";
+	$urlencoded = "";
+	while (list($key,$value) = each($vars))
+		$urlencoded.= urlencode($key) . "=" . urlencode($value) . "&";
+	$urlencoded = substr($urlencoded,0,-1);
+	$content_length = strlen($urlencoded);
+	$headers = "POST $url HTTP/1.1
+Accept: */*
+Accept-Language: en-au
+Content-Type: application/x-www-form-urlencoded
+User-Agent: $user_agent
+Host: $server
+Connection: Keep-Alive
+Cache-Control: no-cache
+Content-Length: $content_length
+
+";
+
+	$errno = "";
+	$errstr = "";
+	$fp = fsockopen($server, $port, $errno, $errstr);
+	if (!$fp) {
+		return false;
+	}
+
+	fputs($fp, $headers);
+	fputs($fp, $urlencoded);
+
+	$ret = "";
+	while (!feof($fp))
+		$ret.= fgets($fp, 1024);
+	fclose($fp);
+
+	return $ret;
+}
+
+/*
+ *  php_check_syntax($code_tocheck, $errormessage): checks $code_to_check for errors
+ */
+if (!function_exists('php_check_syntax')){
+	function php_check_syntax($code_to_check, &$errormessage){
+		return false;
+		$fout = fopen("/tmp/codetocheck.php","w");
+		$code = $_POST['content'];
+		$code = str_replace("<?php", "", $code);
+		$code = str_replace("?>", "", $code);
+		fwrite($fout, "<?php\n\n");
+		fwrite($fout, $code_to_check);
+		fwrite($fout, "\n\n?>\n");
+		fclose($fout);
+		$command = "/usr/local/bin/php -l /tmp/codetocheck.php";
+		$output = exec_command($command);
+		if (stristr($output, "Errors parsing") == false) {
+			echo "false\n";
+			$errormessage = '';
+			return(false);
+		} else {
+			$errormessage = $output;
+			return(true);
 		}
+	}
+}
+
+/*
+ *  php_check_filename_syntax($filename, $errormessage): checks the file $filename for errors
+ */
+if (!function_exists('php_check_syntax')){
+	function php_check_syntax($code_to_check, &$errormessage){
+		return false;
+		$command = "/usr/local/bin/php -l " . $code_to_check;
+		$output = exec_command($command);
+		if (stristr($output, "Errors parsing") == false) {
+			echo "false\n";
+			$errormessage = '';
+			return(false);
+		} else {
+			$errormessage = $output;
+			return(true);
+		}
+	}
+}
+
+/*
+ * rmdir_recursive($path,$follow_links=false)
+ * Recursively remove a directory tree (rm -rf path)
+ * This is for directories _only_
+ */
+function rmdir_recursive($path,$follow_links=false) {
+	$to_do = glob($path);
+	if(!is_array($to_do)) $to_do = array($to_do);
+	foreach($to_do as $workingdir) { // Handle wildcards by foreaching.
+		if(file_exists($workingdir)) {
+			if(is_dir($workingdir)) {
+				$dir = opendir($workingdir);
+				while ($entry = readdir($dir)) {
+					if (is_file("$workingdir/$entry") || ((!$follow_links) && is_link("$workingdir/$entry")))
+						unlink("$workingdir/$entry");
+					elseif (is_dir("$workingdir/$entry") && $entry!='.' && $entry!='..')
+						rmdir_recursive("$workingdir/$entry");
+				}
+				closedir($dir);
+				rmdir($workingdir);
+			} elseif (is_file($workingdir)) {
+				unlink($workingdir);
+			}
+               	}
 	}
 	return;
 }
+
+/*
+ *     get_memory()
+ *     returns an array listing the amount of
+ *     memory installed in the hardware
+ *     [0]real and [1]available
+ */
+function get_memory() {
+	if(file_exists("/var/log/dmesg.boot")) {
+		$mem = `cat /var/log/dmesg.boot | grep memory`;
+		$matches = "";
+		if (preg_match_all("/real memory  = .* \((.*) MB/", $mem, $matches))
+			$real = $matches[1];
+		if (preg_match_all("/avail memory = .* \((.*) MB/", $mem, $matches))
+			$avail = $matches[1];
+		return array($real[0],$avail[0]);
+	}
+	return array("64","64");
+}
+
+/*
+ *    safe_mkdir($path, $mode = 0755)
+ *    create directory if it doesn't already exist and isn't a file!
+ */
+function safe_mkdir($path, $mode=0755) {
+	global $g;
+
+	/* cdrom is ro. */
+	if($g['platform'] == "cdrom")
+		return false;
+	
+	if (!is_file($path) && !is_dir($path))
+		return mkdir($path, $mode);
+	else
+		return false;
+}
+
+/*
+ * make_dirs($path, $mode = 0755)
+ * create directory tree recursively (mkdir -p)
+ */
+function make_dirs($path, $mode = 0755) {
+	/* is dir already created? */
+	if(is_dir($path)) return;
+	/* create directory in question */
+	$to_create = explode("/", $path);
+	foreach($to_create as $tc) 
+		if(!is_dir($tc))
+			safe_mkdir($path, $mode);
+}
+
+/*
+ * call_pfsense_method(): Call a method exposed by the pfsense.com XMLRPC server.
+ */
+function call_pfsense_method($method, $params, $timeout = 0) {
+	global $g, $config;
+	$xmlrpc_base_url = $g['xmlrpcbaseurl'];
+	$xmlrpc_path = $g['xmlrpcpath'];
+	$msg = new XML_RPC_Message($method, array(XML_RPC_Encode($params)));
+	$cli = new XML_RPC_Client($xmlrpc_path, $xmlrpc_base_url);
+	$resp = $cli->send($msg, $timeout);
+	if(!$resp or $resp->faultCode()) {
+		log_error("XMLRPC request failed with error " . $resp->faultCode() . ": " . $resp->faultString());
+		return false;
+	}
+	return XML_RPC_Decode($resp->value());
+}
+
+/*
+ * check_firmware_version(): Check whether the current firmware installed is the most recently released.
+ */
+function check_firmware_version($tocheck = "all", $return_php = true) {
+	global $g, $config;
+	$rawparams = array("firmware" => array("version" => trim(file_get_contents('/etc/version'))),
+		"kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel'))),
+		"base"     => array("version" => trim(file_get_contents('/etc/version_base'))),
+		"platform" => trim(file_get_contents('/etc/platform'))
+		);
+	if($tocheck == "all") {
+		$params = $rawparams;
+	} else {
+		foreach($tocheck as $check) {
+			$params['check'] = $rawparams['check'];
+			$params['platform'] = $rawparams['platform'];
+		}
+	}
+	if($config['system']['firmware']['branch']) {
+		$params['branch'] = $config['system']['firmware']['branch'];
+	}
+	if(!$versions = call_pfsense_method('pfsense.get_firmware_version', $params)) {
+		return false;
+	} else {
+		$versions["current"] = $params;
+	}
+	return $versions;
+}
+
+function get_disk_info() {
+	$diskout = "";
+	exec("/bin/df -h | /usr/bin/grep -w '/' | /usr/bin/awk '{ print $2, $3, $4, $5 }'", $diskout);
+	return explode(' ', $diskout[0]);
+	// $size, $used, $avail, $cap
+}
+
+/****f* pfsense-utils/display_top_tabs
+ * NAME
+ *   display_top_tabs - display tabs with rounded edges
+ * INPUTS
+ *   $text	- array of tabs
+ * RESULT
+ *   null
+ ******/
+function display_top_tabs($tab_array) {
+	echo "<table cellpadding='0' cellspacing='0'>\n";
+	echo " <tr height='1'>\n";
+	$tabscounter = 0;
+	foreach ($tab_array as $ta) {
+		if($ta[1] == true) {
+			echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\"><div id='tabactive'></div></td>\n";
+		} else {
+			echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\"><div id='tabdeactive{$tabscounter}'></div></td>\n";
+		}
+		$tabscounter++;
+	}
+	echo "</tr>\n<tr>\n";
+	foreach ($tab_array as $ta) {
+		if($ta[1] == true) {
+			echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\"><B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
+			echo "&nbsp;&nbsp;&nbsp;";
+			echo "<font size='-12'>&nbsp;</td>\n";
+		} else {
+			echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\"><B>&nbsp;&nbsp;&nbsp;<a href='{$ta[2]}'>";
+			echo "<font color='white'>{$ta[0]}</a>&nbsp;&nbsp;&nbsp;";
+			echo "<font size='-12'>&nbsp;</td>\n";
+		}
+	}
+	echo "</tr>\n<tr height='5px'>\n";
+	foreach ($tab_array as $ta) {
+		if($ta[1] == true) {
+			echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\"></td>\n";
+		} else {
+			echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\"></td>\n";
+		}
+		$tabscounter++;
+	}
+	echo " </tr>\n";
+	echo "</table>\n";
+	    
+	echo "<script type=\"text/javascript\">";
+	echo "NiftyCheck();\n";
+	echo "Rounded(\"div#tabactive\",\"top\",\"#FFF\",\"#EEEEEE\",\"smooth\");\n";
+	for($x=0; $x<$tabscounter; $x++) 
+		echo "Rounded(\"div#tabdeactive{$x}\",\"top\",\"#FFF\",\"#777777\",\"smooth\");\n";
+	echo "</script>";
+}
+
+
+/****f* pfsense-utils/display_topbar
+ * NAME
+ *   display_topbar - top a table off with rounded edges
+ * INPUTS
+ *   $text	- (optional) Text to include in bar
+ * RESULT
+ *   null
+ ******/
+function display_topbar($text = "", $bg_color="#990000", $replace_color="#FFFFFF", $rounding_style="smooth") {	    
+	echo "     <table width='100%' cellpadding='0' cellspacing='0'>\n";
+	echo "       <tr height='1'>\n";
+	echo "         <td width='100%' valign='top' color='{$bg_color}' bgcolor='{$bg_color}'>";
+	echo "		<div id='topbar'></div></td>\n";
+	echo "       </tr>\n";
+	echo "       <tr height='1'>\n";
+	if ($text != "")
+		echo "         <td height='1' class='listtopic'>{$text}</td>\n";
+	else
+		echo "         <td height='1' class='listtopic'></td>\n";
+	echo "       </tr>\n";
+	echo "     </table>";
+	echo "<script type=\"text/javascript\">";
+	echo "NiftyCheck();\n";
+	echo "Rounded(\"div#topbar\",\"top\",\"{$replace_color}\",\"{$bg_color}\",\"{$rounding_style}\");\n";
+	echo "</script>";
+}
+
+/****f* pfsense-utils/generate_random_mac_address
+ * NAME
+ *   generate_random_mac - generates a random mac address
+ * INPUTS
+ *   none
+ * RESULT
+ *   $mac - a random mac address
+ ******/
+function generate_random_mac_address() {
+	$mac = "00:a0:8e";
+	for($x=0; $x<3; $x++) 
+		$mac .= ":" . dechex(rand(16, 255));
+
+	return $mac;
+}
+
+/****f* pfsense-utils/strncpy
+ * NAME
+ *   strncpy - copy strings
+ * INPUTS
+ *   &$dst, $src, $length
+ * RESULT
+ *   none
+ ******/
+function strncpy(&$dst, $src, $length) {
+	if (strlen($src) > $length) {
+		$dst = substr($src, 0, $length);
+	} else {
+		$dst = $src;
+	}
+}
+
+/****f* pfsense-utils/reload_interfaces_sync
+ * NAME
+ *   reload_interfaces - reload all interfaces
+ * INPUTS
+ *   none
+ * RESULT
+ *   none
+ ******/
+function reload_interfaces_sync() {
+	global $config, $g;
+	
+	touch("{$g['tmp_path']}/reloading_all");
+	
+	if(file_exists("{$g['tmp_path']}/config.cache"))
+		unlink("{$g['tmp_path']}/config.cache");
+	
+	/* parse config.xml again */
+	$config = parse_config(true);
+	
+	/* delete all old interface information */
+	$iflist = split(" ", str_replace("\n", "", `/sbin/ifconfig -l`));
+	foreach ($iflist as $ifent => $ifname) {
+		$ifname_real = convert_friendly_interface_to_real_interface_name($ifname);
+		mwexec("/sbin/ifconfig {$ifname_real} down");
+		mwexec("/sbin/ifconfig {$ifname_real} delete");
+	}
+
+	/* set up VLAN virtual interfaces */
+	interfaces_vlan_configure();
+	
+	/* set up LAN interface */
+	interfaces_lan_configure();
+
+	/* set up WAN interface */
+	interfaces_wan_configure();
+
+	/* set up Optional interfaces */
+	interfaces_optional_configure();
+        
+	/* set up static routes */
+	system_routing_configure();
+	
+	/* enable routing */
+	system_routing_enable();
+	
+	/* setup captive portal if needed */
+	captiveportal_configure();
+
+	/* bring up carp interfaces */
+	interfaces_carp_configure();
+	
+	/* bring up carp interfaces*/
+	interfaces_carp_bring_up_final();
+	
+	unlink_if_exists("{$g['tmp_path']}/reloading_all");
+}
+
+/****f* pfsense-utils/reload_all
+ * NAME
+ *   reload_all - triggers a reload of all settings
+ *   * INPUTS
+ *   none
+ * RESULT
+ *   none
+ ******/
+function reload_all() {
+	touch("/tmp/reload_all");
+}
+
+/****f* pfsense-utils/reload_interfaces
+ * NAME
+ *   reload_interfaces - triggers a reload of all interfaces
+ * INPUTS
+ *   none
+ * RESULT
+ *   none
+ ******/
+function reload_interfaces() {
+	touch("/tmp/reload_interfaces");
+}
+
+/****f* pfsense-utils/sync_webgui_passwords
+ * NAME
+ *   sync_webgui_passwords - syncs webgui and ssh passwords
+ * INPUTS
+ *   none
+ * RESULT
+ *   none
+ ******/
+function sync_webgui_passwords() {
+	global $config, $g;
+	conf_mount_rw();
+	$fd = fopen("{$g['varrun_path']}/htpasswd", "w");
+	if (!$fd) {
+		printf("Error: cannot open htpasswd in system_password_configure().\n");
+		return 1;
+	}
+	/* set admin account */
+	$username = $config['system']['username'];
+	
+	/* set defined user account */
+	if($username <> "admin") {
+		$username = $config['system']['username'];
+		fwrite($fd, $username . ":" . $config['system']['password'] . "\n");
+	} else {
+		fwrite($fd, $username . ":" . $config['system']['password'] . "\n");	
+	}	
+	fclose($fd);
+	chmod("{$g['varrun_path']}/htpasswd", 0600);	
+	$crypted_pw = $config['system']['password'];
+	mwexec("/usr/sbin/pwd_mkdb -d /etc -p /etc/master.passwd");
+	mwexec("/usr/sbin/pwd_mkdb -p /etc/master.passwd");
+	/* sync root */
+	$fd = popen("/usr/sbin/pw usermod -n root -H 0", "w");
+	fwrite($fd, $crypted_pw);
+	pclose($fd);
+	mwexec("/usr/sbin/pw usermod -n root -s /bin/sh");
+	/* sync admin */
+	$fd = popen("/usr/sbin/pw usermod -n admin -H 0", "w");
+	fwrite($fd, $crypted_pw);
+	pclose($fd);
+	mwexec("/usr/sbin/pw usermod -n admin -s /etc/rc.initial");
+	mwexec("/usr/sbin/pwd_mkdb -d /etc -p /etc/master.passwd");
+	mwexec("/usr/sbin/pwd_mkdb -p /etc/master.passwd");
+	conf_mount_ro();
+}
+
+/****f* pfsense-utils/cleanup_opt_interfaces_after_removal
+ * NAME
+ *   cleanup_opt_interfaces_after_removal - renumber interfaces after removing
+ *   * INPUTS
+ *   optional interface number
+ * RESULT
+ *   none
+ ******/
+function cleanup_opt_interfaces_after_removal($opt_interface_num) {
+	global $config;
+	unlink_if_exists("/tmp/config.cache");
+	$config_file = file_get_contents("/cf/conf/config.xml");
+	/* loop through and reassign optional items */
+	for ($i = 255; isset($config['interfaces']['opt' . $i]); $i--) {
+		if($i < $opt_interface_num)
+			break;
+		/* replace opt$i with $i -1 */
+		str_replace("opt" . $i, "opt" . ($i-1), $config_file);
+	}
+	$fd = fopen("/cf/conf/config.xml", "w");
+	fwrite($fd, $config_file);
+	fclose($fd);
+	$config = parse_config(true);
+	return true;
+}
+
+/****f* pfsense-utils/get_number_of_wan_netgraph_interfaces_needed
+ * NAME
+ *   get_number_of_wan_netgraph_interfaces_needed - returns the
+ *   		amount of netgraph interfaces needed for system wans
+ *   * INPUTS
+ *   none
+ * RESULT
+ *   number of needed netgraph (ng) interfaces
+ ******/
+function get_number_of_wan_netgraph_interfaces_needed() {
+	global $config, $g;
+	/* build an array of interfaces to work with */
+	$iflist = array("wan" => "WAN");
+	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+	$ng_interfaces_needed = 0;
+	foreach ($iflist as $ifent => $ifname) {
+		if($config['inerfaces'][$ifname]['ipaddr'] == "pppoe") {
+			$ng_interfaces_needed++;
+		}
+	}
+	return $ng_interfaces_needed;
+}
+
+function get_netgaph_interface_assignment($friendly_interface) {
+	global $config, $g;
+	/* build an array of interfaces to work with */
+	$iflist = array("wan" => "WAN");
+	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+		$ng_interfaces_needed = 0;
+		$ng_interfaces_number = 0;
+		foreach ($iflist as $ifent => $ifname) {
+		if($config['inerfaces'][$ifname]['ipaddr'] == "pppoe") {
+			$ng_interfaces_number++;
+		}
+		if($friendly_interface == $ifname)
+			break;
+	}
+	return $ng_interfaces_number;	
+}
+
+/****f* pfsense-utils/reload_all_sync
+ * NAME
+ *   reload_all - reload all settings
+ *   * INPUTS
+ *   none
+ * RESULT
+ *   none
+ ******/
+function reload_all_sync() {
+	global $config, $g;
+	
+	touch("{$g['tmp_path']}/reloading_all");
+	
+	if(file_exists("{$g['tmp_path']}/config.cache"))
+		unlink("{$g['tmp_path']}/config.cache");
+	
+	/* parse config.xml again */
+	$config = parse_config(true);
+
+	/* set up our timezone */
+	system_timezone_configure();
+
+	/* set up our hostname */
+	system_hostname_configure();
+
+	/* make hosts file */
+	system_hosts_generate();
+
+	/* generate resolv.conf */
+	system_resolvconf_generate();
+
+	/* delete all old interface information */
+	$iflist = split(" ", str_replace("\n", "", `/sbin/ifconfig -l`));
+	foreach ($iflist as $ifent => $ifname) {
+		$ifname_real = convert_friendly_interface_to_real_interface_name($ifname);
+		if($ifname_real == "lo0")
+		    continue;
+		mwexec("/sbin/ifconfig {$ifname_real} down");
+		mwexec("/sbin/ifconfig {$ifname_real} delete");
+	}
+
+	/* set up VLAN virtual interfaces */
+	interfaces_vlan_configure();
+	
+	/* set up LAN interface */
+	interfaces_lan_configure();
+
+	/* set up WAN interface */
+	interfaces_wan_configure();
+
+	/* set up Optional interfaces */
+	interfaces_optional_configure();
+        
+	/* bring up carp interfaces */
+	interfaces_carp_configure();
+	
+	/* set up static routes */
+	system_routing_configure();
+
+	/* enable routing */
+	system_routing_enable();
+	
+	/* ensure passwords are sync'd */
+	system_password_configure();
+
+	/* start dnsmasq service */
+	services_dnsmasq_configure();
+
+	/* start dyndns service */
+	services_dyndns_configure();
+
+	/* start DHCP service */
+	services_dhcpd_configure();
+
+	/* start the NTP client */
+	system_ntp_configure();
+
+	/* start ftp proxy helpers if they are enabled */
+	system_start_ftp_helpers();
+
+	/* start the captive portal */
+	captiveportal_configure();
+
+        /* reload the filter */
+	filter_configure_sync();
+
+	/* bring up carp interfaces*/
+	interfaces_carp_bring_up_final();
+	
+	/* sync pw database */
+	conf_mount_rw();
+	mwexec("/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd");
+	conf_mount_ro();
+
+	/* restart sshd */
+	touch("/tmp/start_sshd");
+	
+	unlink_if_exists("{$g['tmp_path']}/reloading_all");
+	
+}
+
+function print_value_list($list, $count = 10, $separator = ",") {
+	$list = implode($separator, array_slice($list, 0, $count));
+	if(count($list) < $count) {
+		$list .= ".";
+	} else {
+		$list .= "...";
+	}
+	return $list;
+}
+
 ?>

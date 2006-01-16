@@ -620,10 +620,13 @@ include("head.inc");
 				<span class="vexpl">Note:  Leave this blank for the default of 10000</span>
 			</td>
 		</tr>
-
+		<tr>
+			<td width="22%" valign="top">&nbsp;</td>
+			<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" /></td>
+		</tr>
 		<tr>
 			<td colspan="2" class="list" height="12">&nbsp;</td>
-		</tr>
+		</tr>		
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">Network Address Translation</td>
 		</tr>
@@ -634,7 +637,6 @@ include("head.inc");
 				<strong>Disables the automatic creation of NAT redirect rules for access to your public IP addresses from within your internal networks</strong>
 			</td>
 		</tr>
-		
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" /></td>

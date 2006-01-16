@@ -54,13 +54,16 @@ include("head.inc");
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($rebootmsg): echo print_info_box($rebootmsg); else: ?>
 <form action="diag_defaults.php" method="post">
-              <p><strong>If you click &quot;Yes&quot;, the firewall will be reset
-                to factory defaults and will reboot immediately. The entire system
-                configuration will be overwritten. The LAN IP address will be
-                reset to 192.168.1.1, the system will be configured as a DHCP
-                server, the WAN interface will be set to obtain an address from a DHCP server
-		and the password will be set to 'pfsense'.<br>
-                <br>
+              <p><strong>If you click &quot;Yes&quot;, the firewall will: 
+	      
+		<ul>
+		  <li>Reset to factory defaults</li>
+		  <li>LAN IP address will be reset to 192.168.1.1</li>
+		  <li>System will be configured as a DHCP server on the default LAN interface</li>
+		  <li>Reboot after changes are installed</li>
+		  <li>WAN interface will be set to obtain an address automatically from a DHCP server</li>
+		  <li>Default webConfigurator password will be reset to 'pfsense'</li>
+		</ul>
                 Are you sure you want to proceed?</strong></p>
         <p>
           <input name="Submit" type="submit" class="formbtn" value=" Yes ">

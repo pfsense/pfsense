@@ -61,5 +61,10 @@ function updateState(x)
 	document.getElementById("pfstate").value = x;
 }
 
-window.setTimeout('updateMeters()', update_interval);
+
+/* start ajax helper "thread" if not started */
+if(!ajaxStarted) {
+	window.setTimeout('updateMeters()', update_interval);
+	var ajaxStarted = true;
+}
 

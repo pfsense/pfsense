@@ -165,20 +165,15 @@ function get_notices_xmlrpc($raw_params) {
 /*****************************/
 
 $carp_configure_doc = 'Basic XMLRPC wrapper for configuring CARP interfaces.';
-$carp_configure_sig = array(
-				array(
-					$XML_RPC_Boolean,
-					$XML_RPC_String
-				)
-			);
-			
+$carp_configure_sig = array(array($XML_RPC_Boolean, $XML_RPC_String));
+
 function interfaces_carp_configure_xmlrpc($raw_params) {
-	global $xmlrpc_g, $XML_RPC_Boolean, $XML_RPC_String;
+	global $xmlrpc_g;
 	$params = xmlrpc_params_to_php($raw_params);
-	if(!xmlrpc_auth($params)) return new XML_RPC_Response(new XML_RPC_Value("auth_failure", $XML_RPC_String));
+	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
 	interfaces_carp_configure();
 	interfaces_carp_bring_up_final();
-	return new XML_RPC_Response(new XML_RPC_Value(true, $XML_RPC_Boolean));
+	return $xmlrpc_g['return']['true'];
 }
 
 /*****************************/

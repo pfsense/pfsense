@@ -123,7 +123,9 @@
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-
+<script language="javascript">
+var ajaxStarted = false;
+</script>
 <?php
 include("fbegin.inc");
 	if(!file_exists("/usr/local/www/themes/{$g['theme']}/no_big_logo"))

@@ -200,8 +200,8 @@ function enable_change(enable_change) {
 	radius_endis = !((!endis && document.iform.auth_method[2].checked) || enable_change);
 	
 	document.iform.cinterface.disabled = endis;
-	document.iform.maxproc.disabled = endis;
-	document.iform.maxprocperip.disabled = endis;
+	//document.iform.maxproc.disabled = endis;
+	//document.iform.maxprocperip.disabled = endis;
 	document.iform.idletimeout.disabled = endis;
 	document.iform.timeout.disabled = endis;
 	document.iform.redirurl.disabled = endis;

@@ -486,7 +486,7 @@
 					$error = 'phpDynDNS: (ERROR!) The Dynamic DNS Service provided is not yet supported.';
 					break;
 				case 10:
-					$error = 'phpDynDNS: No Change In My IP Address and/or 28 Days Has Not Past. Not Updating Dynamic DNS Entry.';
+					$error = 'phpDynDNS: No Change In My IP Address and/or 25 Days Has Not Past. Not Updating Dynamic DNS Entry.';
 					break;
 				default:
 					$error = "phpDynDNS: (ERROR!) Unknown Response.";
@@ -548,7 +548,7 @@
 			$update_reason = "Cached IP: {$cacheIP} WAN IP: {$wan_ip} ";
 			if (($currentTime - $cacheTime) > $time ) {
 				$needs_updating = TRUE;
-				log_error("DynDns: More than 28 days.  Updating.");
+				log_error("DynDns: More than 25 days.  Updating.");
 			}
 			$update_reason .= "{$currentTime} - {$cacheTime} > {$time} ";
 			if ($initial == TRUE) {

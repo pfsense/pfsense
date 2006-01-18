@@ -1308,9 +1308,6 @@ function system_start_ftp_helpers() {
 			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/pftpx -c {$port}\" | grep -v grep | sed \"s/  */ /g\"");
 			if(!$helpers && $ip)
  				mwexec("/usr/local/sbin/pftpx -c {$port} -g 8021 {$ip}");
-			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/ftpsesame -i {$int}\" | grep -v grep | sed \"s/  */ /g\"");
-			if(!$helpers && $ip)
- 				mwexec("/usr/local/sbin/ftpsesame -i {$int} -t ftpsesame");
 			$interface_counter++;
 		}
 	}

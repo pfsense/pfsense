@@ -168,3 +168,5 @@ function is_service_running($service, $ps = "") {
                 }
         }
 }
+
+?>

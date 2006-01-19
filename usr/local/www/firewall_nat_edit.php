@@ -133,14 +133,16 @@ if ($_POST) {
 			continue;
 		if ($natent['external-address'] != $_POST['extaddr'])
 			continue;
-
+		if (($natent['proto'] != $_POST['proto']) && ($natent['proto'] != "tcp/udp") && ($_POST['proto'] != "tcp/udp"))
+			continue;
+		
 		list($begp,$endp) = explode("-", $natent['external-port']);
 		if (!$endp)
 			$endp = $begp;
-
+		
 		if (!(   (($_POST['beginport'] < $begp) && ($_POST['endport'] < $begp))
 		      || (($_POST['beginport'] > $endp) && ($_POST['endport'] > $endp)))) {
-
+			
 			$input_errors[] = "The external port range overlaps with an existing entry.";
 			break;
 		}

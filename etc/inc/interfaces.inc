@@ -670,6 +670,12 @@ EOD;
 
 	/* all variables are set, lets start up everything */
 	
+	/* set ack timers according to users preference (if he/she has any) */
+
+	if($distance) {
+		mwexec("/sbin/athctrl.sh -i {$if} -d {$distance}");
+	}
+
 	mwexec("$ifconfig $if" . " -mediaopt hostap,turbo");	// Fix bug with turbomode and reboot (hopefully)        
 	mwexec("$ifconfig $if" . " down"); 
 	mwexec("$ifconfig $if" . " " . $standard);
@@ -698,13 +704,6 @@ EOD;
 			mwexec("{$hostapd} -B {$g['varetc_path']}/hostapd_{$if}.conf");
 	}
 
-	/* set ack timers according to users preference (if he/she has any) */
-	if($distance) {
-		mwexec("/sbin/athctrl.sh -i {$if} -d {$distance}");
-		$fd = fopen("/tmp/athctrl.txt", "w");
-		fwrite($fd, "/sbin/athctrl.sh -i {$if} -d {$distance}");
-		fclose($fd);		
-	}
 
 	if(isset($wlcfg['useolsr']))
 		setup_wireless_olsr($if);

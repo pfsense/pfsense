@@ -72,8 +72,8 @@ if (isset($_POST['del_x'])) {
                 foreach ($_POST['rule'] as $rulei) {
 			$target = $rule['target'];
 			$helpers = exec("/bin/ps auwx | grep pftpx | grep {$target} | grep -v grep | cut -d\" \" -f5");
-			if(!$helpers) {
-				/* install a pftpx helper, do not set a rule */
+			if($helpers) {
+				/* kill ftp proxy helper */
 				mwexec("/bin/kill {$helpers}");
 			}
                         unset($a_nat[$rulei]);

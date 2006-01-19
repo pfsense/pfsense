@@ -1212,20 +1212,20 @@ function display_top_tabs($tab_array) {
 	$tabscounter = 0;
 	foreach ($tab_array as $ta) {
 		if($ta[1] == true) {
-			echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer; cursor: hand;\"><div id='tabactive'></div></td>\n";
+			echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><div id='tabactive'></div></td>\n";
 		} else {
-			echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer; cursor: hand;\"><div id='tabdeactive{$tabscounter}'></div></td>\n";
+			echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><div id='tabdeactive{$tabscounter}'></div></td>\n";
 		}
 		$tabscounter++;
 	}
 	echo "</tr>\n<tr>\n";
 	foreach ($tab_array as $ta) {
 		if($ta[1] == true) {
-			echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer; cursor: hand;\"><B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
+			echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
 			echo "&nbsp;&nbsp;&nbsp;";
 			echo "<font size='-12'>&nbsp;</td>\n";
 		} else {
-			echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer; cursor: hand;\"><B>&nbsp;&nbsp;&nbsp;<a href='{$ta[2]}'>";
+			echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><B>&nbsp;&nbsp;&nbsp;<a href='{$ta[2]}'>";
 			echo "<font color='white'>{$ta[0]}</a>&nbsp;&nbsp;&nbsp;";
 			echo "<font size='-12'>&nbsp;</td>\n";
 		}
@@ -1233,9 +1233,9 @@ function display_top_tabs($tab_array) {
 	echo "</tr>\n<tr height='5px'>\n";
 	foreach ($tab_array as $ta) {
 		if($ta[1] == true) {
-			echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer; cursor: hand;\"></td>\n";
+			echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"></td>\n";
 		} else {
-			echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer; cursor: hand;\"></td>\n";
+			echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"></td>\n";
 		}
 		$tabscounter++;
 	}

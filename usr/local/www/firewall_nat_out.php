@@ -269,6 +269,14 @@ include("head.inc");
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
+                      if (!$natent['sourceport'])
+                          echo "*";
+                      else
+                          echo $natent['sourceport'];
+                    ?>
+                  </td>
+                  <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
+                    <?php
                       if (isset($natent['destination']['any']))
                           echo "*";
                       else {
@@ -280,10 +288,10 @@ include("head.inc");
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
-                      if (!$natent['natport'])
+                      if (!$natent['dstport'])
                           echo "*";
                       else
-                          echo $natent['natport'];
+                          echo $natent['dstport'];
                     ?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">

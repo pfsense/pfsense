@@ -37,7 +37,6 @@ if (!is_array($config['nat']['rule']))
 	$config['nat']['rule'] = array();
 
 $a_nat = &$config['nat']['rule'];
-//nat_rules_sort();
 
 if ($_POST) {
 
@@ -71,6 +70,12 @@ if (isset($_POST['del_x'])) {
         /* delete selected rules */
         if (is_array($_POST['rule']) && count($_POST['rule'])) {
                 foreach ($_POST['rule'] as $rulei) {
+			$target = $rule['target'];
+			$helpers = exec("/bin/ps auwx | grep pftpx | grep {$target} | grep -v grep | cut -d\" \" -f5");
+			if(!$helpers) {
+				/* install a pftpx helper, do not set a rule */
+				mwexec("/bin/kill {$helpers}");
+			}
                         unset($a_nat[$rulei]);
                 }
                 write_config();

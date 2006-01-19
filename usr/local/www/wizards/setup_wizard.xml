@@ -36,7 +36,7 @@
 	<id>1</id>
 	<title>pfSense Setup Wizard</title>
 	<disableheader>true</disableheader>
-	<description>This wizard will guide you through installing pfSense initially.</description>
+	<description>This wizard will guide you through the initial configuration of pfSense.</description>
 	<fields>
 		<field>
 			<name>Next</name>

@@ -37,7 +37,7 @@ fclose($fd);
 
 /* Lets match the fileds in the read in file and
    populate the variables for the form */
-preg_match('/\nC\=(.*)\n/', $openssl, $countrycodeA);
+preg_match('/C\=(.*)\n/', $openssl, $countrycodeA);
 preg_match('/\nST\=(.*)\n/', $openssl, $stateorprovinceA);
 preg_match('/\nL\=(.*)\n/', $openssl, $citynameA);
 preg_match('/\nO\=(.*)\n/', $openssl, $orginizationnameA);

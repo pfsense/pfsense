@@ -1520,15 +1520,16 @@ pass out quick on {$wancfg['if']} proto tcp from any to any port = 1723 flags S/
 EOD;
 	}
 
-	$ipfrules .= <<<EOD
+	if ($wancfg['ipaddr'] == "dhcp") {
+
+		$ipfrules .= <<<EOD
 
 # allow our DHCP client out to the WAN
-# XXX - should be more restrictive
-# (not possible at the moment - need 'me' like in ipfw)
 anchor "wandhcp"
 pass out quick on $wanif proto udp from any port = 68 to any port = 67 label "allow dhcp client out wan"
 
 EOD;
+	}
 
 if($config['interfaces']['lan']['bridge'] <> "wan" and $config['interfaces']['wan']['bridge'] <> "lan")
 	$ipfrules .= "block in $log quick on $wanif proto udp from any port = 67 to {$lansa_sn_combo} port = 68 label \"allow dhcp client out wan\"\n";

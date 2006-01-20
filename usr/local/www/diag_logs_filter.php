@@ -30,6 +30,16 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+if($_GET['getrulenum'] or $_POST['getrulenum']) {
+	if($_GET['getrulenum'])
+		$rulenum = $_GET['getrulenum'];
+	if($_POST['getrulenum'])
+		$rulenum = $_POST['getrulenum'];
+	$rule = `pfctl -vvsr | grep @{$rulenum}`;
+	echo "The rule that triggered this action is:\n\n{$rule}";
+	exit;
+}
+
 require("guiconfig.inc");
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
@@ -47,7 +57,7 @@ if ($_POST['clear']) {
 /* format filter logs */
 function conv_clog($logfile, $tail = 50) {
 	global $config, $nentries;
-
+	$logarr = "";
 	/* make interface/port table */
 	$iftable = array();
 	$iftable[$config['interfaces']['lan']['if']] = "LAN";
@@ -56,7 +66,7 @@ function conv_clog($logfile, $tail = 50) {
 		$iftable[$config['interfaces']['opt' . $i]['if']] = $config['interfaces']['opt' . $i]['descr'];
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
-	$logarr = "";
+
 	exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n 500", $logarr);
 
 	$filterlog = array();
@@ -64,16 +74,18 @@ function conv_clog($logfile, $tail = 50) {
 	$counter = 1;
 
 	foreach ($logarr as $logent) {
-
-		if($counter > $nentries)
+	
+		if($counter > $nentries) 
 			break;
 
 		$log_split = "";
 
-		preg_match("/(.*)\s(.*)\spf:.*rule.*\(match\):\s(\w+)\sin\son\s(\w+:)\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,7})\s([\<|\>])\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,7}):.*/",$logent,$log_split);
+		/* pf: 6. 272592 rule 218/0(match): block in on fxp0: 72.240.236.119.4503 > 216.135.89.2.6881: S 1163549441:1163549441(0) win 65535 <mss 1432,nop,nop,sackOK> */
+		  	
+		preg_match("/(.*)\s(.*)\spf:.*rule (.*)\(match\):\s(\w+)\sin\son\s(\w+:)\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,7})\s([\<|\>])\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,7}):.*/",$logent,$log_split);
 
 		if($log_split[5] == "")
-			preg_match("/(.*)\s(.*)\spf:.*rule.*\(match\):\s(\w+)\sin\son\s(\w+:)\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\s([\<|\>])\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}):.*/",$logent,$log_split);
+			preg_match("/(.*)\s(.*)\spf:.*rule (.*)\(match\):\s(\w+)\sin\son\s(\w+:)\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\s([\<|\>])\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}):.*/",$logent,$log_split);
 
 		$logent = strtoupper($logent);
 
@@ -101,18 +113,29 @@ function conv_clog($logfile, $tail = 50) {
 		else
 			$do_not_display = true;
 		
+		$log_split[5] = str_replace(":","",$log_split[5]);
+		
 		$flent['time'] 		= $log_split[1];
-		$flent['act'] 		= $log_split[3];
-		$flent['interface'] 	= strtoupper(convert_real_interface_to_friendly_interface_name(str_replace(":","",$log_split[4])));
+		$flent['act'] 		= $log_split[4];
+		
+		$friendly_int = convert_real_interface_to_friendly_interface_name($log_split[5]);
+		
+		$flent['interface'] 	=  strtoupper($friendly_int);
+		
+		if($config['interfaces'][$friendly_int]['descr'] <> "")
+			$flent['interface'] .= " ({$config['interfaces'][$friendly_int]['descr']})";
 		
 		if($flent['proto'] == "TCP" or $flent['proto'] == "UDP") {
-			$flent['src'] 		= convert_port_period_to_colon($log_split[5]);
-			$flent['dst'] 		= convert_port_period_to_colon($log_split[7]);
+			$flent['src'] 		= convert_port_period_to_colon($log_split[6]);
+			$flent['dst'] 		= convert_port_period_to_colon($log_split[8]);
 		} else {
-			$flent['src'] 		= $log_split[5];
-			$flent['dst'] 		= $log_split[7];			
+			$flent['src'] 		= $log_split[6];
+			$flent['dst'] 		= $log_split[8];			
 		}
-			
+		
+		$tmp = split("/", $log_split[3]);
+		$flent['rulenum'] = $tmp[0];
+		
 		if($flent['src'] == "" or $flent['dst'] == "" or $do_not_display == true) {
 			/* do not display me! */
 		} else {
@@ -188,6 +211,7 @@ include("head.inc");
 			<tr>
 			  <td class="listlr" nowrap align="middle">
 			  <center>
+			  <a href="#" onClick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo $filterent['rulenum']; ?>', outputrule);">
 			  <?php if (strstr(strtolower($filterent['act']), "p"))
 			  			$img = "/themes/{$g['theme']}/images/icons/icon_pass.gif";
 					else if(strstr(strtolower($filterent['act']), "r"))
@@ -195,7 +219,7 @@ include("head.inc");
 					else
 						$img = "/themes/{$g['theme']}/images/icons/icon_block.gif";
 			  ?>
-			  <img src="<?=$img;?>" width="11" height="11" align="absmiddle">
+			  <img border="0" src="<?=$img;?>" width="11" height="11" align="absmiddle">
 			  <?php if ($filterent['count']) echo $filterent['count'];?></td>
 			  <td class="listr" nowrap><?=htmlspecialchars($filterent['time']);?></td>
 			  <td class="listr" nowrap><?=htmlspecialchars(convert_real_interface_to_friendly_interface_name($filterent['interface']));?></td>
@@ -218,6 +242,48 @@ include("head.inc");
 	</td>
   </tr>
 </table>
+<script language="javascript">
+if (typeof getURL == 'undefined') {
+	getURL = function(url, callback) {
+		if (!url)
+			throw 'No URL for getURL';
+		try {
+			if (typeof callback.operationComplete == 'function')
+				callback = callback.operationComplete;
+		} catch (e) {}
+			if (typeof callback != 'function')
+				throw 'No callback function for getURL';
+		var http_request = null;
+		if (typeof XMLHttpRequest != 'undefined') {
+		    http_request = new XMLHttpRequest();
+		}
+		else if (typeof ActiveXObject != 'undefined') {
+			try {
+				http_request = new ActiveXObject('Msxml2.XMLHTTP');
+			} catch (e) {
+				try {
+					http_request = new ActiveXObject('Microsoft.XMLHTTP');
+				} catch (e) {}
+			}
+		}
+		if (!http_request)
+			throw 'Both getURL and XMLHttpRequest are undefined';		
+		http_request.onreadystatechange = function() {
+			if (http_request.readyState == 4) {
+				callback( { success : true,
+				  content : http_request.responseText,
+				  contentType : http_request.getResponseHeader("Content-Type") } );
+			}
+		}
+		http_request.open('GET', url, true);
+		http_request.send(null);
+	}
+}
+
+function outputrule(req) {
+	alert(req.content);
+}
+</script>
 <?php include("fend.inc"); ?>
 <meta http-equiv="refresh" content="60;url=<?php print $_SERVER['PHP_SELF']; ?>">
 </body>

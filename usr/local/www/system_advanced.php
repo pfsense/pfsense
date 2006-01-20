@@ -206,12 +206,6 @@ if ($_POST) {
 		$config['theme'] = $_POST['theme'];
 
 		write_config();
-
-		if (($config['system']['webgui']['certificate'] != $oldcert)
-				|| ($config['system']['webgui']['private-key'] != $oldkey)) {
-			system_webgui_start();
-		}
-
 			
 		$retval = 0;
 		config_lock();
@@ -659,6 +653,11 @@ include("head.inc");
 <?php include("fend.inc"); ?>
 
 <?php
+
+if (($config['system']['webgui']['certificate'] != $oldcert)
+		|| ($config['system']['webgui']['private-key'] != $oldkey)) {
+	touch("/tmp/restart_webgui");
+}
 
 function auto_login($status) {
 	$gettytab = file_get_contents("/etc/gettytab");

@@ -236,7 +236,32 @@ include("head.inc");
 					</table>
 				  </td>
 				</tr>
-<?php endif; ?>					
+<?php endif; ?>
+<?php if (($if == "wan") && isset($config['interfaces']['wan']['blockbogons'])): ?>
+                <tr valign="top" id="frrfc1918">
+                  <td width="3%" class="list">&nbsp;</td>
+                  <td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0"></td>
+                  <td class="listlr" style="background-color: #e0e0e0">*</td>
+                  <td class="listr" style="background-color: #e0e0e0">reserved/not assigned by IANA</td>
+                  <td class="listr" style="background-color: #e0e0e0">*</td>
+                  <td class="listr" style="background-color: #e0e0e0">*</td>
+                  <td class="listr" style="background-color: #e0e0e0">*</td>
+		  <td class="listr" style="background-color: #e0e0e0">*</td>
+                  <td class="listbg" style="background-color: #990000"><font color="white">Block private networks</td>
+                  <td valign="middle" nowrap class="list">
+				    <table border="0" cellspacing="0" cellpadding="1">
+					<tr>
+					  <td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="move selected rules before this rule"></td>
+					  <td><a href="interfaces_wan.php#rfc1918"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit rule" width="17" height="17" border="0"></a></td>
+					</tr>
+					<tr>
+					  <td align="center" valign="middle"></td>
+					  <td><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus_d.gif" title="add a new rule based on this one" width="17" height="17" border="0"></td>
+					</tr>
+					</table>
+				  </td>
+				</tr>
+<?php endif; ?>
 				<?php $nrules = 0; for ($i = 0; isset($a_filter[$i]); $i++):
 					$filterent = $a_filter[$i];
 					if ($filterent['interface'] != $if)

@@ -75,7 +75,6 @@ foreach($config['interfaces'] as $interface) {
 		if($interface['descr'] <> "")
 			$friendly = $interface['descr'];
 		$tab_array[] = array("Status ($friendly)", $enabled, "status_wireless.php?if={$interface['if']}");
-		break;
 	}
 }
 /* XXX: add other wireless interfaces here */

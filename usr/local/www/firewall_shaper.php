@@ -62,7 +62,7 @@ function wipe_magic () {
   filter_configure();
 }
 
-if ($_POST['remove']) {
+if ($_POST['remove'] or $_GET['remove']) {
   wipe_magic();
   $savemsg = '<p><span class="red"><strong>Note: The traffic shaper has been disabled.</strong></span><strong><br>';
   touch($d_shaperconfdirty_path);

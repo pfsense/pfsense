@@ -209,6 +209,11 @@ function enablechange() {
 	else
 		$ip = "/";
 
+if($_GET['xml'] == "traffic_shaper_wizard.xml" or
+   $_POST['xml'] == "traffic_shaper_wizard.xml") {
+	$ip .= "firewall_shaper.php?remove=true";
+}
+
 ?>
 
 <a href="<?php echo $ip; ?>"><img border="0" src="./themes/<?= $g['theme']; ?>/images/logo.gif"></a>

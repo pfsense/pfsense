@@ -123,7 +123,7 @@ function conv_clog($logfile, $tail = 50) {
 		$flent['interface'] 	=  strtoupper($friendly_int);
 		
 		if($config['interfaces'][$friendly_int]['descr'] <> "")
-			$flent['interface'] .= " ({$config['interfaces'][$friendly_int]['descr']})";
+			$flent['interface'] = "{$config['interfaces'][$friendly_int]['descr']}";
 		
 		if($flent['proto'] == "TCP" or $flent['proto'] == "UDP") {
 			$flent['src'] 		= convert_port_period_to_colon($log_split[6]);

@@ -91,8 +91,8 @@ if ($_POST) {
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 			$coptif = &$config['interfaces']['opt' . $i];
 			if (isset($coptif['enable']) && $coptif['bridge']) {
-				$input_errors[] = "The captive portal cannot be used when one or more interfaces are bridged.";
-				break;
+				//$input_errors[] = "The captive portal cannot be used when one or more interfaces are bridged.";
+				//break;
 			}
 		}
 		
@@ -240,9 +240,9 @@ function enable_change(enable_change) {
 }
 //-->
 </script>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="services_captiveportal.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">

@@ -58,7 +58,7 @@
 		<field>
 			<fielddescr>Interface</fielddescr>
 			<fieldname>interface</fieldname>
-			<description>Select the carp interface to use</description>
+			<description>Select the carp interface to use.</description>
 			<interface_filter>carp</interface_filter>
 			<type>interfaces_selection</type>
 			<all_interfaces>true</all_interfaces>
@@ -82,8 +82,14 @@
 			<type>input</type>
 		</field>
 	</fields>
+	<custom_add_php_command>
+		/* automatically turn on prefer old sa's until sasyncd is finished being ported */
+		if($_POST['ip'] != "") 
+			$config['ipsec']['preferoldsa'] = true;
+	</custom_add_php_command>
 	<custom_add_php_command_late>
 	    /* resync vpn settings */
+	    mwexec("/usr/bin/killall racoon");
 	    vpn_ipsec_configure();
 	</custom_add_php_command_late>
 </packagegui>

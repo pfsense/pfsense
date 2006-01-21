@@ -210,7 +210,7 @@ rm -rf /usr/local/pkg/pf/CVS
 echo -n "Pre-caching PHP for faster responses..."
 CONFIG="/cf/conf/config.xml"
 WORD="https"
-if grep "$WORD" "$CONFIG"
+if grep "$WORD" "$CONFIG" | grep -v httpsname
 then
 	fetch -q -o /tmp/ https://localhost/preload.php
 else

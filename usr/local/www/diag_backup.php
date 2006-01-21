@@ -171,6 +171,7 @@ if ($_POST) {
 								$savemsg = "The configuration has been restored.<p>The firewall is now rebooting due to captive portal.";
 								$reboot_needed = true;
 							}
+							setup_serial_port();
 						} else {
 							$input_errors[] = "The configuration could not be restored.";
 						}

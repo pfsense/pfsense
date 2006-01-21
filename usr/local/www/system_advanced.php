@@ -216,53 +216,8 @@ if ($_POST) {
 		    $savemsg = $retval;
 		$retval |= interfaces_optional_configure();
 		config_unlock();
-
-		conf_mount_rw();
-
-		/* serial console - write out /boot.config */
-		if(file_exists("/boot.config"))
-			$boot_config = file_get_contents("/boot.config");
-		else
-			$boot_config = "";
 			
-		$boot_config_split = split("\n", $boot_config);
-		if($g['platform'] <> "cdrom") {
-			$fd = fopen("/boot.config","w");
-			if($fd) {
-				foreach($boot_config_split as $bcs) {
-					if(stristr($bcs, "-D")) {
-						/* DONT WRITE OUT, WE'LL DO IT LATER */	
-					} else {
-						if($bcs <> "")
-							fwrite($fd, "{$bcs}\n");
-					}
-				}
-				if(isset($config['system']['enableserial'])) {
-					fwrite($fd, "-D");
-				}			
-				fclose($fd);
-			}
-			/* serial console - write out /boot/loader.conf */
-			$boot_config = file_get_contents("/boot/loader.conf");	
-			$boot_config_split = split("\n", $boot_config);
-			$fd = fopen("/boot/loader.conf","w");
-			if($fd) {
-				foreach($boot_config_split as $bcs) {
-					if(stristr($bcs, "console")) {
-						/* DONT WRITE OUT, WE'LL DO IT LATER */	
-					} else {
-						if($bcs <> "")
-							fwrite($fd, "{$bcs}\n");
-					}
-				}
-				if(isset($config['system']['enableserial'])) {
-					fwrite($fd, "console=\"comconsole\"\n");
-				}
-				fclose($fd);
-			}
-		}
-		
-		conf_mount_ro();
+		setup_serial_port();
 		
 		setup_filter_bridge();
 		

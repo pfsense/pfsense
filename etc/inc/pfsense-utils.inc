@@ -1606,6 +1606,79 @@ function reload_all_sync() {
 	
 }
 
+function auto_login($status) {
+	$gettytab = file_get_contents("/etc/gettytab");
+	$getty_split = split("\n", $gettytab);
+	conf_mount_rw();
+	$fd = fopen("/etc/gettytab", "w");
+	foreach($getty_split as $gs) {
+		if(stristr($gs, "cb:ce:ck:lc") == true) {
+			if($status == true) {
+				fwrite($fd, ":cb:ce:ck:lc:fd#1000:im=\\r\\n%s/%m (%h) (%t)\\r\\n\\r\\n:sp#1200:\\\n");
+			} else {
+				fwrite($fd, ":al=root:cb:ce:ck:lc:fd#1000:im=\\r\\n%s/%m (%h) (%t)\\r\\n\\r\\n:sp#1200:\\\n");
+			}
+		} else {
+			fwrite($fd, "{$gs}\n");
+		}
+	}
+	fclose($fd);
+	conf_mount_ro();	
+}
+
+function setup_serial_port() {
+	global $g, $config;
+	/* serial console - write out /boot.config */
+	if(file_exists("/boot.config"))
+		$boot_config = file_get_contents("/boot.config");
+	else
+		$boot_config = "";
+	
+	if($g['platform'] <> "cdrom") {
+		$boot_config_split = split("\n", $boot_config);
+		$fd = fopen("/boot.config","w");
+		if($fd) {
+			foreach($boot_config_split as $bcs) {
+				if(stristr($bcs, "-D")) {
+					/* DONT WRITE OUT, WE'LL DO IT LATER */	
+				} else {
+					if($bcs <> "")
+						fwrite($fd, "{$bcs}\n");
+				}
+			}
+			if(isset($config['system']['enableserial'])) {
+				fwrite($fd, "-D");
+			}			
+			fclose($fd);
+		}
+		/* serial console - write out /boot/loader.conf */
+		$boot_config = file_get_contents("/boot/loader.conf");	
+		$boot_config_split = split("\n", $boot_config);
+		$fd = fopen("/boot/loader.conf","w");
+		if($fd) {
+			foreach($boot_config_split as $bcs) {
+				if(stristr($bcs, "console")) {
+					/* DONT WRITE OUT, WE'LL DO IT LATER */	
+				} else {
+					if($bcs <> "")
+						fwrite($fd, "{$bcs}\n");
+				}
+			}
+			if(isset($config['system']['enableserial'])) {
+				fwrite($fd, "console=\"comconsole\"\n");
+			}
+			fclose($fd);
+		}
+	}
+	if(isset($config['system']['disableconsolemenu'])) {
+		auto_login(true);
+	} else {
+		auto_login(false);
+	}	
+	conf_mount_ro();
+	return;	
+}
+
 function print_value_list($list, $count = 10, $separator = ",") {
 	$list = implode($separator, array_slice($list, 0, $count));
 	if(count($list) < $count) {

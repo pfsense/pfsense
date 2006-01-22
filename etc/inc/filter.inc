@@ -2137,8 +2137,9 @@ function carp_sync_client() {
 		    if($carp['synchronizeipsec'] != "" and is_array($config['ipsec'])) {
 			$sections[] = 'ipsec';
 		    }		    
-		    
-		    
+		    if($carp['synchronizednsforwarder'] != "" and is_array($config['dnsmasq'])) {
+		        $sections[] = 'dnsmasq';
+		    }		    		    
 		    if(count($sections) > 0) {
 			    carp_sync_xml($synchronizetoip, $carp['password'], $sections, $port);
 			    $cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);

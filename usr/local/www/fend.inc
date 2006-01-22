@@ -4,7 +4,7 @@
 	
 	<div id="footer">
 		<a target="_blank" href="http://www.pfSense.com" class="redlnk">pfSense</a> is &copy; 2004-2005 by Scott Ullrich. All Rights Reserved.</p>
-		 [<a href="/license.php" class="tblnk">view license</a>] [<a href="/diag_bugreport.php" class="tblnk">found a bug?</a>]</p>
+		<br>[<a href="/license.php" class="tblnk">view license</a>] [<a href="/diag_bugreport.php" class="tblnk">found a bug?</a>]</p>
 	</div> <!-- Footer DIV -->
 
 </div> <!-- Wrapper Div -->

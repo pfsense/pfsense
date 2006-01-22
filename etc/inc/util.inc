@@ -254,6 +254,7 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
         /* get a list of virtual interface types */
         if(!$vfaces) {
 		$vfaces = array(
+				'bridge',
 				'ppp',
 				'sl',
 				'gif',

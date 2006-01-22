@@ -49,8 +49,8 @@ function filter_pflog_start() {
 	mute_kernel_msgs();
 	
 	/* do not run pflogd on non HD platforms */	
-	if($g['platform'] == "pfSense") 
-		mwexec("/sbin/ifconfig pflog0 up && pflogd");
+	//if($g['platform'] == "pfSense") 
+	//	mwexec("/sbin/ifconfig pflog0 up && pflogd");
 	
 	mwexec_bg("/usr/sbin/tcpdump -l -n -e -ttt -i pflog0 | egrep -e \"IGMP|TCP|UDP|ESP|IGRP|IGMP|ICMP|esp|tcp|udp|icmp|igmp|igrp\" |logger -t pf -p local0.info");
 	

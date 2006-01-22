@@ -36,13 +36,13 @@ function listtags() {
 		"earlyshellcmd encryption-algorithm-option field fieldname hash-algorithm-option " .
 		"hosts interface_array item key lbpool menu mobilekey onetoone option package passthrumac proxyarpnet " .
 		"queue pipe route row rule service servernat servers earlyshellcmd shellcmd staticmap subqueue " .
-                "tunnel user vip virtual_server vlan winsserver wolentry");
+                "tunnel user vip virtual_server vlan winsserver wolentry depends_on_package");
 	return $ret;
 }
 
 /* Package XML tags that should be treat as a list not as a traditional array */
 function listtags_pkg() {
-	$ret = array("onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package", "file");
+	$ret = array("depends_on_package", "onetoone", "queue", "rule", "servernat", "alias", "additional_files_needed", "tab", "template", "menu", "rowhelperfield", "service", "step", "package", "columnitem", "option", "item", "field", "package", "file");
 
 	return $ret;
 }

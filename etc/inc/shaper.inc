@@ -34,7 +34,6 @@ require_once("functions.inc");
 require_once("pkg-utils.inc");
 require_once("notices.inc");
 
-
 function find_default_queue($interface) {
 	global $config, $queue_cache;
 	$qconfig = $config;
@@ -42,7 +41,6 @@ function find_default_queue($interface) {
 	/* quick return if we've already seen the default queue for this interface */
 	if (isset($queue_cache['defq'][$interface]))
 	return $queue_cache['defq'][$interface];
-
 
 	if (is_array($qconfig['shaper']['queue'])) {
 		foreach ($qconfig['shaper']['queue'] as $queue) {
@@ -64,7 +62,6 @@ function find_default_queue($interface) {
 	/* unreachable */
 	return null;
 }
-
 
 function get_ack_queue($interface) {
 	global $config, $queue_cache;
@@ -89,7 +86,6 @@ function get_ack_queue($interface) {
 	/* unreachable */
 	return null;
 }
-
 
 function filter_generate_altq_queues($altq_ints) {
 	global $config;
@@ -172,7 +168,6 @@ function is_subqueue_used_on_interface($queuename, $interface) {
 	return 0;
 }
 
-
 function filter_is_queue_being_used_on_interface($queuename, $interface) {
 	global $config;
 	$lconfig = $config;
@@ -184,7 +179,6 @@ function filter_is_queue_being_used_on_interface($queuename, $interface) {
 	}
 	return null;
 }
-
 
 function filter_setup_altq_interfaces() {
 	global $config;
@@ -226,30 +220,21 @@ function filter_setup_altq_interfaces() {
 function find_root_queue($ifname) {
 	global $config;
 
-	$dbg = fopen("/tmp/debug", 'a');
 	foreach ($config['shaper']['queue'] as $queue) {
 		$rule_interface = "";
 		$q = $queue;
-		fwrite($dbg, "interface: {$ifname}\n");
-		fwrite($dbg, "queue: {$q['name']} parent: {$q['parentqueue']} attached: {$q['attachtoqueue']}\n");
 		/* if we're a parentqueue and aren't attached to another queue we're probably a root */
 		if ((isset($q['parentqueue']) && $q['parentqueue'] <> "") && (!isset($q['attachtoqueue']) || $q['attachtoqueue'] == "")) {
-			fwrite($dbg, "queue: {$q['name']} is a parent\n");
 			/* Confirm that this is a valid queue for this interface */
 			$rule_interface = is_subqueue_used_on_interface($q['name'], $ifname);
 			if ($rule_interface == 1) {
-				fwrite($dbg, "queue: {$q['name']} is a parent on {$ifname}\n");
 				$queue_names .= " ";
 				$queue_names .= $q['name'];
 			}
 		}
 	}
-	fclose($dbg);
 	return $queue_names;
 }
-
-	
-
 
 function is_queue_attached_children($name) {
 	global $config;
@@ -259,7 +244,6 @@ function is_queue_attached_children($name) {
 	}
 	return 0;
 }
-
 
 function queue_interface_recursive($queuename) {
 	global $config;
@@ -278,7 +262,6 @@ function queue_interface_recursive($queuename) {
 	return null;
 }
 
-
 function is_subqueue($name) {
 	global $config;
 	$queues = $config['shaper']['queue']; /* must assign to keep from corrupting in memory $config */
@@ -288,7 +271,6 @@ function is_subqueue($name) {
 	}
 	return 0;
 }
-
 
 function filter_altq_get_queuename($queuenum) {
 	global $config;
@@ -302,13 +284,11 @@ function filter_altq_get_queuename($queuenum) {
 	return null;
 }
 
-
 function filter_generate_pf_altq_rules() {
 	/* I don't think we're in IPFW anymore Toto */
-
-	global $config, $g, $tcpflags;
-	
 	$i = 0;
+	
+	global $config, $g, $tcpflags;
 
 	$lancfg = $config['interfaces']['lan'];
 	$pptpdcfg = $config['pptpd'];
@@ -391,8 +371,6 @@ function filter_generate_pf_altq_rules() {
 				$ispptp = false;
 				$ispppoe = false;
 		}
-
-
 
 		if (strstr($rule['source']['network'], "opt")) {
 			if (!array_key_exists($rule['source']['network'], $optcfg)) {

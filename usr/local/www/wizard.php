@@ -209,11 +209,6 @@ function enablechange() {
 	else
 		$ip = "/";
 
-if($_GET['xml'] == "traffic_shaper_wizard.xml" or
-   $_POST['xml'] == "traffic_shaper_wizard.xml") {
-	$ip .= "firewall_shaper.php?remove=true";
-}
-
 ?>
 
 <a href="<?php echo $ip; ?>"><img border="0" src="./themes/<?= $g['theme']; ?>/images/logo.gif"></a>
@@ -275,6 +270,25 @@ if($_GET['xml'] == "traffic_shaper_wizard.xml" or
 			if($field['validate'])
 				echo " onChange='FieldValidate(this.value, \"{$field['validate']}\", \"{$field['message']}\");'";
 			echo ">\n";
+
+
+			
+		    } else if ($field['type'] == "inputalias") {
+			if(!$field['dontdisplayname']) {
+				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
+				echo fixup_string($field['name']);
+				echo ":</td>\n";
+			}
+			if(!$field['dontcombinecells'])
+				echo "<td class=\"vtable\">\n";
+
+			echo "<input  autocomplete='off' class='formfldalias' id='" . $name . "' name='" . $name . "' value='" . $value . "'";
+			if($field['validate'])
+				echo " onChange='FieldValidate(this.value, \"{$field['validate']}\", \"{$field['message']}\");'";
+			echo ">\n";			
+
+
+		
 		    } else if($field['type'] == "interfaces_selection") {
 			$size = "";
 			$multiple = "";
@@ -294,7 +308,7 @@ if($_GET['xml'] == "traffic_shaper_wizard.xml" or
 				if($field['add_to_interfaces_selection'] == $value) $SELECTED = " SELECTED";
 				echo "<option value='" . $field['add_to_interfaces_selection'] . "'" . $SELECTED . ">" . $field['add_to_interfaces_selection'] . "</option>\n";
 			}
-			$interfaces = &$config['interfaces'];
+			$interfaces = $config['interfaces'];
 			if($field['all_interfaces'] <> "") {
 				$ints = split(" ", `/sbin/ifconfig -l`);
 				$interfaces = array();
@@ -446,7 +460,42 @@ if($_GET['xml'] == "traffic_shaper_wizard.xml" or
 <br>&nbsp;
 </div>
 </form>
+<script language="JavaScript">
+<!--
+	if (typeof ext_change != 'undefined') {
+		ext_change();
+	}
+	if (typeof proto_change != 'undefined') {
+		ext_change();
+	}
+	if (typeof proto_change != 'undefined') {
+		proto_change();
+	}
 
+<?php
+	$isfirst = 0;
+	$aliases = "";
+	$addrisfirst = 0;
+	$aliasesaddr = "";
+	if($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias']))
+		foreach($config['aliases']['alias'] as $alias_name) {
+			if(!stristr($alias_name['address'], ".")) {
+				if($isfirst == 1) $aliases .= ",";
+				$aliases .= "'" . $alias_name['name'] . "'";
+				$isfirst = 1;
+			} else {
+				if($addrisfirst == 1) $aliasesaddr .= ",";
+				$aliasesaddr .= "'" . $alias_name['name'] . "'";
+				$addrisfirst = 1;
+			}
+		}
+?>
+
+	var addressarray=new Array(<?php echo $aliasesaddr; ?>);
+	var customarray=new Array(<?php echo $aliases; ?>);
+
+//-->
+</script>
 <script type="text/javascript">
 NiftyCheck();
 Rounded("div#roundme","all","#333333","#FFFFFF","smooth");

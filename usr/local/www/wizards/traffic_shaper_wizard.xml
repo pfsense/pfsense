@@ -62,10 +62,37 @@
 <step>
 	<id>2</id>
 	<title>pfSense Traffic Shaper Wizard</title>
-	<description>WAN connection speed - Please note that the wizard will automatically subtract 20% for the queues.</description>
+	<description>Shaper configuration</description>
         <javascriptafterformdisplay>
         </javascriptafterformdisplay>
 	<fields>
+		<field>
+			<name>Scheduler</name>
+			<type>select</type>
+			<typehint>&lt;br /&gt;&lt;strong&gt;CBQ:&lt;/strong&gt; Each queue
+           can have a priority and a bandwidth assigned.  Priority mainly controls
+           the time packets take to get sent out, while bandwidth has
+           primarily effects on throughput.
+				  &lt;br /&gt;&lt;strong&gt;HFSC:&lt;/strong&gt;  
+           Adds to CBQ with the support for both link-sharing and guaranteed real-time services.
+	   It employs a service curve based QoS model, and its unique feature is an ability to
+           decouple delay and bandwidth allocation.</typehint>
+			<bindstofield>ezshaper->step2->scheduler</bindstofield>
+			<options>
+				<option>
+					<name>Class Based Queuing</name>
+					<value>cbq</value>
+				</option>
+				<option>
+					<name>Hierarchical Fair Service Curve</name>
+					<value>hfsc</value>
+				</option>
+			</options>
+		</field>
+                <field>
+                        <name>Setup network speeds - Please note that the wizard will automatically subtract 20% for the queues.</name>
+                        <type>listtopic</type>
+                </field>
 		<field>
 			<name>Inside</name>
 			<description>Inside interface for shaping your download speeds</description>
@@ -111,7 +138,7 @@
 		$upq = "q" . strtoupper($config['ezshaper']['step2']['outside_int']);
 	    
 		/* Magic shaper uses HFSC */
-		$config['shaper']['schedulertype'] = "hfsc";
+		$config['shaper']['schedulertype'] = $_POST['scheduler'];
 
 		/* Create queues */
 		/* WAN root queue */
@@ -141,21 +168,28 @@
                 $queue['associatedrule'] = 0;
 		$queue['defaultqueue'] = 'true';
                 $queue['priority'] = 3;
-                $queue['realtime'] = "on";
-                $queue['realtime1'] = "10%";
-                $queue['realtime2'] = "1";
-                $queue['realtime3'] = "10%";
-                $queue['linkshare'] = "on";
-                $queue['linkshare1'] = "0%";
-                $queue['linkshare2'] = "1000";
-                $queue['linkshare3'] = "10%";
-                $queue['upperlimit'] = "on";
-                $queue['upperlimit1'] = "100%";
-                $queue['upperlimit2'] = "100";
-                $queue['upperlimit3'] = "90%";
-		$queue['bandwidth'] = 1;
-		$queue['bandwidthtype'] = '%';
+		if ($config['shaper']['schedulertype'] == "hfsc") {
+                	$queue['realtime'] = "on";
+                	$queue['realtime1'] = "10%";
+                	$queue['realtime2'] = "1";
+                	$queue['realtime3'] = "10%";
+                	$queue['linkshare'] = "on";
+                	$queue['linkshare1'] = "0%";
+                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare3'] = "10%";
+                	$queue['upperlimit'] = "on";
+                	$queue['upperlimit1'] = "100%";
+                	$queue['upperlimit2'] = "100";
+                	$queue['upperlimit3'] = "90%";
+			$queue['bandwidth'] = 1;
+			$queue['bandwidthtype'] = '%';
+		} elseif ($config['shaper']['schedulertype'] == "cbq") {
+			$queue['borrow'] = "on";
+			$queue['bandwidth'] = 6;
+			$queue['bandwidthtype'] = 'Kb';
+		}
                 $config['shaper']['queue'][] = $queue;
+
 
 		/* LAN default queue */
                 $queue = array();
@@ -164,20 +198,26 @@
                 $queue['attachtoqueue'] = "{$downq}Root";
                 $queue['associatedrule'] = 0;
 		$queue['defaultqueue'] = 'true';
-                $queue['realtime'] = "on";
-                $queue['realtime1'] = "10%";
-                $queue['realtime2'] = "1";
-                $queue['realtime3'] = "10%";
-                $queue['linkshare'] = "on";
-                $queue['linkshare1'] = "0%";
-                $queue['linkshare2'] = "1000";
-                $queue['linkshare3'] = "10%";
-                $queue['upperlimit'] = "on";
-                $queue['upperlimit1'] = "100%";
-                $queue['upperlimit2'] = "100";
-                $queue['upperlimit3'] = "90%";
-		$queue['bandwidth'] = 1;
-		$queue['bandwidthtype'] = '%';
+		if ($config['shaper']['schedulertype'] == "hfsc") {
+                	$queue['realtime'] = "on";
+                	$queue['realtime1'] = "10%";
+                	$queue['realtime2'] = "1";
+                	$queue['realtime3'] = "10%";
+                	$queue['linkshare'] = "on";
+                	$queue['linkshare1'] = "0%";
+                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare3'] = "10%";
+                	$queue['upperlimit'] = "on";
+                	$queue['upperlimit1'] = "100%";
+                	$queue['upperlimit2'] = "100";
+                	$queue['upperlimit3'] = "90%";
+			$queue['bandwidth'] = 1;
+			$queue['bandwidthtype'] = '%';
+		} elseif ($config['shaper']['schedulertype'] == "cbq") {
+			$queue['borrow'] = "on";
+			$queue['bandwidth'] = 6;
+			$queue['bandwidthtype'] = 'Kb';
+		}
                 $config['shaper']['queue'][] = $queue;
 
 		/* WAN ack queue */
@@ -187,20 +227,26 @@
                 $queue['attachtoqueue'] = "{$upq}Root";
                 $queue['associatedrule'] = 0;
                 $queue['priority'] = 6;
-                $queue['realtime'] = "on";
-                $queue['realtime1'] = "10%";
-                $queue['realtime2'] = "1";
-                $queue['realtime3'] = "10%";
-                $queue['linkshare'] = "on";
-                $queue['linkshare1'] = "0%";
-                $queue['linkshare2'] = "1000";
-                $queue['linkshare3'] = "10%";
-                $queue['upperlimit'] = "on";
-                $queue['upperlimit1'] = "80%";
-                $queue['upperlimit2'] = "1";
-                $queue['upperlimit3'] = "80%";
-		$queue['bandwidth'] = 1;
-		$queue['bandwidthtype'] = '%';
+		if ($config['shaper']['schedulertype'] == "hfsc") {
+                	$queue['realtime'] = "on";
+                	$queue['realtime1'] = "10%";
+                	$queue['realtime2'] = "1";
+                	$queue['realtime3'] = "10%";
+                	$queue['linkshare'] = "on";
+                	$queue['linkshare1'] = "0%";
+                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare3'] = "10%";
+                	$queue['upperlimit'] = "on";
+                	$queue['upperlimit1'] = "80%";
+                	$queue['upperlimit2'] = "1";
+                	$queue['upperlimit3'] = "80%";
+			$queue['bandwidth'] = 1;
+			$queue['bandwidthtype'] = '%';
+		} elseif ($config['shaper']['schedulertype'] == "cbq") {
+			$queue['borrow'] = "on";
+			$queue['bandwidth'] = 6;
+			$queue['bandwidthtype'] = 'Kb';
+		}
                 $config['shaper']['queue'][] = $queue;
                 $queue = array();
 
@@ -210,21 +256,28 @@
                 $queue['attachtoqueue'] = "{$downq}Root";
                 $queue['associatedrule'] = 0;
                 $queue['priority'] = 6;
-                $queue['realtime'] = "on";
-                $queue['realtime1'] = "10%";
-                $queue['realtime2'] = "1";
-                $queue['realtime3'] = "10%";
-                $queue['linkshare'] = "on";
-                $queue['linkshare1'] = "0%";
-                $queue['linkshare2'] = "1000";
-                $queue['linkshare3'] = "10%";
-                $queue['upperlimit'] = "on";
-                $queue['upperlimit1'] = "80%";
-                $queue['upperlimit2'] = "1";
-                $queue['upperlimit3'] = "80%";
-		$queue['bandwidth'] = 1;
-		$queue['bandwidthtype'] = '%';
+		if ($config['shaper']['schedulertype'] == "hfsc") {
+                	$queue['realtime'] = "on";
+                	$queue['realtime1'] = "10%";
+                	$queue['realtime2'] = "1";
+                	$queue['realtime3'] = "10%";
+                	$queue['linkshare'] = "on";
+                	$queue['linkshare1'] = "0%";
+                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare3'] = "10%";
+                	$queue['upperlimit'] = "on";
+                	$queue['upperlimit1'] = "80%";
+                	$queue['upperlimit2'] = "1";
+                	$queue['upperlimit3'] = "80%";
+			$queue['bandwidth'] = 1;
+			$queue['bandwidthtype'] = '%';
+		} elseif ($config['shaper']['schedulertype'] == "cbq") {
+			$queue['borrow'] = "on";
+			$queue['bandwidth'] = 6;
+			$queue['bandwidthtype'] = 'Kb';
+		}
                 $config['shaper']['queue'][] = $queue;
+
 		
 	</stepsubmitphpaction>
 </step>
@@ -275,6 +328,13 @@
                                         <value>Panasonic</value>
 				</option>
 			</options>
+		</field>
+		<field>
+                        <name>Address</name>
+			<type>inputalias</type>
+			<description>(Optional) If this is chosen, the provider field will be overridden.  This allows you to just provide the IP address of the VOIP adaptor to prioritize.  NOTE: You can also use a Firewall Alias in this location.</description>
+			<bindstofield>ezshaper->step3->address</bindstofield>
+			<message>IP Address field is non-blank and doesn't look like an IP address.</message>
 		</field>
 		<field>
                         <name>Bandwidth</name>
@@ -371,6 +431,16 @@
                 </field>
         </fields>
 	<stepsubmitphpaction>
+		if($_POST['address']) {
+			if(!is_ipaddr($_POST['address'])) {
+				if(!is_alias($_POST['address'])) {
+					/* item is not an ip or alias.  error out */
+					$message="Address must be a valid IP address or Firewall Alias.  Please correct this value to continue.";
+					header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=3&amp;message={$message}");
+					exit;
+				}
+			}
+		}
 
 		if ( $_POST['enable'] ) {
 			$downq = "q" . strtoupper($config['ezshaper']['step2']['inside_int']);
@@ -381,23 +451,28 @@
 	                /* create qVOIPUp */
 	                $queue = array();
 	                $queue['name'] = "qVOIPUp";
- 	                $queue['attachtoqueue'] = "{$upq}Root";
+ 	               	$queue['attachtoqueue'] = "{$upq}Root";
 	                $queue['associatedrule'] = 0;
 	                $queue['priority'] = 7;
-			$queue['realtime'] = "on";
-	                $queue['realtime1'] = $_POST['bandwidth'] . "Kb";
-                        $queue['realtime2'] = "1";
-                        $queue['realtime3'] = $_POST['bandwidth'] . "Kb";
-			$queue['linkshare'] = "on";
-			$queue['linkshare1'] = "0%";
-			$queue['linkshare2'] = "1000";
-			$queue['linkshare3'] = "10%";
- 	                $queue['upperlimit'] = "on";
- 	                $queue['upperlimit1'] = $_POST['bandwidth'] . "Kb";
- 	                $queue['upperlimit2'] = "1";
- 	                $queue['upperlimit3'] = $_POST['bandwidth'] . "Kb";
-			$queue['bandwidth'] = 1;
-			$queue['bandwidthtype'] = '%';
+			if ($config['shaper']['schedulertype'] == "hfsc") {
+				$queue['realtime'] = "on";
+	                	$queue['realtime1'] = $_POST['bandwidth'] . "Kb";
+                        	$queue['realtime2'] = "1";
+                        	$queue['realtime3'] = $_POST['bandwidth'] . "Kb";
+				$queue['linkshare'] = "on";
+				$queue['linkshare1'] = "0%";
+				$queue['linkshare2'] = "1000";
+				$queue['linkshare3'] = "10%";
+ 	                	$queue['upperlimit'] = "on";
+ 	                	$queue['upperlimit1'] = $_POST['bandwidth'] . "Kb";
+ 	                	$queue['upperlimit2'] = "1";
+ 	                	$queue['upperlimit3'] = $_POST['bandwidth'] . "Kb";
+				$queue['bandwidth'] = 1;
+				$queue['bandwidthtype'] = '%';
+			} elseif ($config['shaper']['schedulertype'] == "cbq") {
+                        	$queue['bandwidth'] = $_POST['bandwidth'];
+                        	$queue['bandwidthtype'] = 'Kb';
+			}
  	                $config['shaper']['queue'][] = $queue;
 
  	                /* create qVOIPDown */
@@ -406,25 +481,51 @@
  	                $queue['attachtoqueue'] = "{$downq}Root";
  	                $queue['associatedrule'] = 0;
  	                $queue['priority'] = 7;
- 	                $queue['realtime'] = "on";
- 	                $queue['realtime1'] = $_POST['bandwidth'] . "Kb";
- 	                $queue['realtime2'] = "1";
- 	                $queue['realtime3'] = $_POST['bandwidth'] . "Kb";
-			$queue['linkshare'] = "on";
-			$queue['linkshare1'] = "0%";
-			$queue['linkshare2'] = "1000";
-			$queue['linkshare3'] = "10%";
- 	                $queue['upperlimit'] = "on";
- 	                $queue['upperlimit1'] = $_POST['bandwidth'] . "Kb";
- 	                $queue['upperlimit2'] = "1";
- 	                $queue['upperlimit3'] = $_POST['bandwidth'] . "Kb";
-			$queue['bandwidth'] = 1;
-			$queue['bandwidthtype'] = '%';
+			if ($config['shaper']['schedulertype'] == "hfsc") {
+ 	                	$queue['realtime'] = "on";
+ 	                	$queue['realtime1'] = $_POST['bandwidth'] . "Kb";
+ 	                	$queue['realtime2'] = "1";
+ 	                	$queue['realtime3'] = $_POST['bandwidth'] . "Kb";
+				$queue['linkshare'] = "on";
+				$queue['linkshare1'] = "0%";
+				$queue['linkshare2'] = "1000";
+				$queue['linkshare3'] = "10%";
+ 	                	$queue['upperlimit'] = "on";
+ 	                	$queue['upperlimit1'] = $_POST['bandwidth'] . "Kb";
+ 	                	$queue['upperlimit2'] = "1";
+ 	                	$queue['upperlimit3'] = $_POST['bandwidth'] . "Kb";
+				$queue['bandwidth'] = 1;
+				$queue['bandwidthtype'] = '%';
+			} elseif ($config['shaper']['schedulertype'] == "cbq") {
+                        	$queue['bandwidth'] = $_POST['bandwidth'];
+                        	$queue['bandwidthtype'] = 'Kb';
+			}
  	                $config['shaper']['queue'][] = $queue;			
 
 			$config['shaper']['itemsshaped']++;
 
-			if( $_POST['provider'] == "Generic") {
+			/* If user specifies an IP, we don't bother with providers */
+			if( is_ipaddr($_POST['address']) ) {
+			    /* create VOIP rules */
+			    $rule = array();
+			    $rule['descr'] = "VOIP Adapter";
+			    $rule['inqueue'] = "qVOIPDown";
+			    $rule['outqueue'] = "qVOIPUp";
+			    $rule['interface'] = $downint;
+			    /* $rule['source']['network'] = $downint; */
+			    $rule['source']['address'] = $_POST['address'];
+			    $rule['destination']['any'] = TRUE;
+			    $config['shaper']['rule'][] = $rule;
+
+			    $rule = array();
+			    $rule['descr'] = "VOIP Adapter";
+			    $rule['inqueue'] = "qVOIPUp";
+			    $rule['outqueue'] = "qVOIPDown";
+			    $rule['interface'] = $upint;
+			    $rule['source']['any'] = TRUE;
+			    $rule['destination']['address'] = $_POST['address'];
+			    $config['shaper']['rule'][] = $rule;
+			} elseif( $_POST['provider'] == "Generic" ) {
 			    /* create VOIP rules */
 			    $rule = array();
 			    $rule['descr'] = "DiffServ/Lowdelay/Upload";
@@ -472,7 +573,7 @@
 				$voiplist[] = array('Panasonic3', 'udp', '2747', '2747', 'both');
 			    }
 
-			    /* Set up/down games as higher weight */
+			    /* Set up/down VOIP as higher weight */
 			    /* loop through voiplist[] */
 			    foreach ($voiplist as $voip) {
 				foreach (array('source', 'destination') as $srcdest) {
@@ -500,7 +601,6 @@
 						$rule['protocol'] = $voip[1];
 		
 					$config['shaper']['rule'][] = $rule;
-	    
 				}
 			    }                
 			}
@@ -521,7 +621,7 @@
                         <type>checkbox</type>
                         <typehint>Lower priority of Peer-to-Peer traffic</typehint>
                         <description>This will lower the priority of P2P traffic below all other traffic.  Please check the items that you would like to prioritize lower than normal traffic.</description>
-			<enablefields>Aimster,BitTorrent,BuddyShare,CuteMX,DCplusplus,dcc,DirectConnect,DirectFileExpress,EDonkey2000,FastTrack,Gnutella,grouper,hotComm,HotlineConnect,iMesh,Napster,OpenNap,Scour,SongSpy,WinMX</enablefields>
+			<enablefields>Aimster,BitTorrent,BuddyShare,CuteMX,DCplusplus,dcc,DirectConnect,DirectFileExpress,EDonkey2000,FastTrack,Gnutella,grouper,hotComm,HotlineConnect,iMesh,Napster,OpenNap,Scour,Shareaza,SongSpy,WinMX</enablefields>
 			<bindstofield>ezshaper->step4->enable</bindstofield>
                 </field>
                 <field>
@@ -541,7 +641,7 @@
                 <field>
                         <name>BitTorrent</name>
                         <type>checkbox</type>
-			<typehint>Bittorrent and other P2P using the Torrent protocol and ports, set your client to use port 50000-55000 for random data ports.</typehint>
+			<typehint>Bittorrent and other P2P using the Torrent protocol and ports</typehint>
 			<bindstofield>ezshaper->step4->bittorrent</bindstofield>
                 </field>
                 <field>
@@ -679,8 +779,6 @@
 		    $p2plist[] = array('Aimster', 'tcp', '7668', '7668', 'both');
 		if($_POST['bittorrent'] != "") 		    
 		    $p2plist[] = array('BitTorrent', 'tcp', '6881', '6999', 'both');
-		if($_POST['bittorrent'] != "") 		    
-		    $p2plist[] = array('BitTorrent', 'tcp', '50000-55000', '50000-55000', 'both');
 		if($_POST['buddyshare'] != "") 		
 		    $p2plist[] = array('BuddyShare', 'tcp', '7788', '7788', 'both');
 		if($_POST['cutemx'] != "") 		
@@ -763,20 +861,26 @@
 		$queue['priority'] = 0;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
-		$queue['realtime'] = "on";
-		$queue['realtime1'] = "1Kb";
-		$queue['realtime2'] = "10";
-		$queue['realtime3'] = "1Kb";
-                $queue['linkshare'] = "on";
-                $queue['linkshare1'] = "0%";
-                $queue['linkshare2'] = "1000";
-                $queue['linkshare3'] = "10%";
-		$queue['upperlimit'] = "on";
-		$queue['upperlimit1'] = "100%";
-                $queue['upperlimit2'] = "100";
-                $queue['upperlimit3'] = "90%";
-		$queue['bandwidth'] = 1;
-		$queue['bandwidthtype'] = '%';
+		if ($config['shaper']['schedulertype'] == "hfsc") {
+			$queue['realtime'] = "on";
+			$queue['realtime1'] = "1Kb";
+			$queue['realtime2'] = "10";
+			$queue['realtime3'] = "1Kb";
+                	$queue['linkshare'] = "on";
+                	$queue['linkshare1'] = "0%";
+                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare3'] = "10%";
+			$queue['upperlimit'] = "on";
+			$queue['upperlimit1'] = "100%";
+                	$queue['upperlimit2'] = "100";
+                	$queue['upperlimit3'] = "90%";
+			$queue['bandwidth'] = 1;
+			$queue['bandwidthtype'] = '%';
+		} elseif ($config['shaper']['schedulertype'] == "cbq") {
+			$queue['borrow'] = "on";
+                        $queue['bandwidth'] = 6;
+                        $queue['bandwidthtype'] = 'Kb';
+                }
 		$config['shaper']['queue'][] = $queue;
 
 		/* create qP2PDown */
@@ -787,20 +891,26 @@
 		$queue['priority'] = 0;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
-		$queue['realtime'] = "on";
-		$queue['realtime1'] = "1Kb";
-		$queue['realtime2'] = "1";
-		$queue['realtime3'] = "1Kb";
-                $queue['linkshare'] = "on";
-                $queue['linkshare1'] = "0%";
-                $queue['linkshare2'] = "1000";
-                $queue['linkshare3'] = "10%";
-		$queue['upperlimit'] = "on";
-		$queue['upperlimit1'] = "100%";
-                $queue['upperlimit2'] = "100";
-                $queue['upperlimit3'] = "90%";
-		$queue['bandwidth'] = 1;
-		$queue['bandwidthtype'] = '%';
+		if ($config['shaper']['schedulertype'] == "hfsc") {
+			$queue['realtime'] = "on";
+			$queue['realtime1'] = "1Kb";
+			$queue['realtime2'] = "10";
+			$queue['realtime3'] = "1Kb";
+                	$queue['linkshare'] = "on";
+                	$queue['linkshare1'] = "0%";
+                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare3'] = "10%";
+			$queue['upperlimit'] = "on";
+			$queue['upperlimit1'] = "100%";
+                	$queue['upperlimit2'] = "100";
+                	$queue['upperlimit3'] = "90%";
+			$queue['bandwidth'] = 1;
+			$queue['bandwidthtype'] = '%';
+		} elseif ($config['shaper']['schedulertype'] == "cbq") {
+			$queue['borrow'] = "on";
+                        $queue['bandwidth'] = 6;
+                        $queue['bandwidthtype'] = 'Kb';
+                }
 		$config['shaper']['queue'][] = $queue;
 	}	
 	</stepsubmitphpaction>
@@ -816,7 +926,7 @@
                         <type>checkbox</type>
                         <typehint>Prioritize network gaming traffic</typehint>
                         <description>This will raise the priority of gaming traffic to higher than most traffic.</description>
-			<enablefields>BattleNET,Battlefield2,CallOfDuty,Counterstrike,DeltaForce,DOOM3,EmpireEarth,Everquest,Everquest2,FarCry,GunZOnline,HalfLife,HalfLife2,Halo2,Lineage2,PlanetSide,QuakeIII,TigerWoods2004PS2,WolfensteinEnemyTerritory,WorldOfWarcraft</enablefields>
+			<enablefields>BattleNET,Battlefield2,CallOfDuty,Counterstrike,DeltaForce,DOOM3,EmpireEarth,Everquest,Everquest2,FarCry,GunZOnline,HalfLife,HalfLife2,Halo2,Lineage2,PlanetSide,QuakeIII,TigerWoods2004PS2,UnrealTournament,WolfensteinEnemyTerritory,WorldOfWarcraft</enablefields>
 			<donotdisable>true</donotdisable>
 			<bindstofield>ezshaper->step5->enable</bindstofield>
                 </field>
@@ -937,10 +1047,10 @@
 			<bindstofield>ezshaper->step5->tigerwoods2004ps2</bindstofield>
                 </field>
                 <field>
-                        <name>Unreal</name>
+                        <name>UnrealTournament</name>
                         <type>checkbox</type>
-			<typehint>Unreal tournament</typehint>
-			<bindstofield>ezshaper->step5->unreal</bindstofield>
+			<typehint>Unreal Tournament</typehint>
+			<bindstofield>ezshaper->step5->unrealtournament</bindstofield>
                 </field>
                 <field>
                         <name>WolfensteinEnemyTerritory</name>
@@ -966,26 +1076,33 @@
 		$upq = "q" . strtoupper($config['ezshaper']['step2']['outside_int']);
 		$downint = strtolower($config['ezshaper']['step2']['inside_int']);
 		$upint = strtolower($config['ezshaper']['step2']['outside_int']);
+
 		/* create qGamesUp queue */
 		$queue = array();
 		$queue['name'] = "qGamesUp";
                 $queue['attachtoqueue'] = "{$upq}Root";
 		$queue['associatedrule'] = 0;
 		$queue['priority'] = 5;
-		$queue['realtime'] = "on";
-		$queue['realtime1'] = "1Kb";
-		$queue['realtime2'] = "1";
-		$queue['realtime3'] = "1Kb";
-                $queue['linkshare'] = "on";
-                $queue['linkshare1'] = "0%";
-                $queue['linkshare2'] = "1000";
-                $queue['linkshare3'] = "10%";
-		$queue['upperlimit'] = "on";
-		$queue['upperlimit1'] = "100%";
-                $queue['upperlimit2'] = "100";
-                $queue['upperlimit3'] = "90%";
-		$queue['bandwidth'] = 1;
-		$queue['bandwidthtype'] = '%';
+		if ($config['shaper']['schedulertype'] == "hfsc") {
+			$queue['realtime'] = "on";
+			$queue['realtime1'] = "1Kb";
+			$queue['realtime2'] = "1";
+			$queue['realtime3'] = "1Kb";
+                	$queue['linkshare'] = "on";
+                	$queue['linkshare1'] = "0%";
+                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare3'] = "10%";
+			$queue['upperlimit'] = "on";
+			$queue['upperlimit1'] = "100%";
+                	$queue['upperlimit2'] = "100";
+                	$queue['upperlimit3'] = "90%";
+			$queue['bandwidth'] = 1;
+			$queue['bandwidthtype'] = '%';
+		} elseif ($config['shaper']['schedulertype'] == "cbq") {
+			$queue['borrow'] = "on";
+                        $queue['bandwidth'] = 6;
+                        $queue['bandwidthtype'] = 'Kb';
+                }
 		$config['shaper']['queue'][] = $queue;
 	    
 		/* create qGamesDown queue */
@@ -994,20 +1111,26 @@
                 $queue['attachtoqueue'] = "{$downq}Root";
 		$queue['associatedrule'] = 0;
 		$queue['priority'] = 5;
-		$queue['realtime'] = "on";
-		$queue['realtime1'] = "1Kb";
-		$queue['realtime2'] = "1";
-		$queue['realtime3'] = "1Kb";
-                $queue['linkshare'] = "on";
-                $queue['linkshare1'] = "0%";
-                $queue['linkshare2'] = "1000";
-                $queue['linkshare3'] = "10%";
-		$queue['upperlimit'] = "on";
-		$queue['upperlimit1'] = "100%";
-                $queue['upperlimit2'] = "100";
-                $queue['upperlimit3'] = "90%";
-		$queue['bandwidth'] = 1;
-		$queue['bandwidthtype'] = '%';
+		if ($config['shaper']['schedulertype'] == "hfsc") {
+			$queue['realtime'] = "on";
+			$queue['realtime1'] = "1Kb";
+			$queue['realtime2'] = "1";
+			$queue['realtime3'] = "1Kb";
+                	$queue['linkshare'] = "on";
+                	$queue['linkshare1'] = "0%";
+                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare3'] = "10%";
+			$queue['upperlimit'] = "on";
+			$queue['upperlimit1'] = "100%";
+                	$queue['upperlimit2'] = "100";
+                	$queue['upperlimit3'] = "90%";
+			$queue['bandwidth'] = 1;
+			$queue['bandwidthtype'] = '%';
+		} elseif ($config['shaper']['schedulertype'] == "cbq") {
+			$queue['borrow'] = "on";
+                        $queue['bandwidth'] = 6;
+                        $queue['bandwidthtype'] = 'Kb';
+                }
 		$config['shaper']['queue'][] = $queue;
 
 		$gamesplist = array();
@@ -1074,7 +1197,7 @@
 		    $gamesplist[] = array('Halo2-3', 'tcp', '3074', '3074', 'both');
 		}
 
-		if($_POST['unreal'] != "") {
+		if($_POST['unrealtournament'] != "") {
 		    /* Unreal Tournament */
 		    $gamesplist[] = array('ur1', 'udp', '7777', '7787', 'both');
 		    $gamesplist[] = array('ur2', 'tcp', '7777', '7787', 'both');
@@ -1721,20 +1844,26 @@
 		$queue['priority'] = 4;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
-		$queue['realtime'] = "on";
-		$queue['realtime1'] = "1Kb";
-		$queue['realtime2'] = "1";
-		$queue['realtime3'] = "1Kb";
-                $queue['linkshare'] = "on";
-                $queue['linkshare1'] = "0%";
-                $queue['linkshare2'] = "1000";
-                $queue['linkshare3'] = "10%";
-		$queue['upperlimit'] = "on";
-		$queue['upperlimit1'] = "100%";
-                $queue['upperlimit2'] = "100";
-                $queue['upperlimit3'] = "90%";
-		$queue['bandwidth'] = 1;
-		$queue['bandwidthtype'] = '%';
+		if ($config['shaper']['schedulertype'] == "hfsc") {
+			$queue['realtime'] = "on";
+			$queue['realtime1'] = "1Kb";
+			$queue['realtime2'] = "1";
+			$queue['realtime3'] = "1Kb";
+                	$queue['linkshare'] = "on";
+                	$queue['linkshare1'] = "0%";
+                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare3'] = "10%";
+			$queue['upperlimit'] = "on";
+			$queue['upperlimit1'] = "100%";
+                	$queue['upperlimit2'] = "100";
+                	$queue['upperlimit3'] = "90%";
+			$queue['bandwidth'] = 1;
+			$queue['bandwidthtype'] = '%';
+		} elseif ($config['shaper']['schedulertype'] == "cbq") {
+			$queue['borrow'] = "on";
+                        $queue['bandwidth'] = 6;
+                        $queue['bandwidthtype'] = 'Kb';
+                }
 		$config['shaper']['queue'][] = $queue;
 	    
 		/* create qOthersDown queue */
@@ -1745,20 +1874,26 @@
 		$queue['priority'] = 4;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
-		$queue['realtime'] = "on";
-		$queue['realtime1'] = "1Kb";
-		$queue['realtime2'] = "1";
-		$queue['realtime3'] = "1Kb";
-                $queue['linkshare'] = "on";
-                $queue['linkshare1'] = "0%";
-                $queue['linkshare2'] = "1000";
-                $queue['linkshare3'] = "10%";
-		$queue['upperlimit'] = "on";
-		$queue['upperlimit1'] = "100%";
-                $queue['upperlimit2'] = "100";
-                $queue['upperlimit3'] = "90%";
-		$queue['bandwidth'] = 1;
-		$queue['bandwidthtype'] = '%';
+		if ($config['shaper']['schedulertype'] == "hfsc") {
+			$queue['realtime'] = "on";
+			$queue['realtime1'] = "1Kb";
+			$queue['realtime2'] = "1";
+			$queue['realtime3'] = "1Kb";
+                	$queue['linkshare'] = "on";
+                	$queue['linkshare1'] = "0%";
+                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare3'] = "10%";
+			$queue['upperlimit'] = "on";
+			$queue['upperlimit1'] = "100%";
+                	$queue['upperlimit2'] = "100";
+                	$queue['upperlimit3'] = "90%";
+			$queue['bandwidth'] = 1;
+			$queue['bandwidthtype'] = '%';
+		} elseif ($config['shaper']['schedulertype'] == "cbq") {
+			$queue['borrow'] = "on";
+                        $queue['bandwidth'] = 6;
+                        $queue['bandwidthtype'] = 'Kb';
+                }
 		$config['shaper']['queue'][] = $queue;
                 
 
@@ -1770,20 +1905,26 @@
 		$queue['priority'] = 2;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
-		$queue['realtime'] = "on";
-		$queue['realtime1'] = "1Kb";
-		$queue['realtime2'] = "1";
-		$queue['realtime3'] = "1Kb";
-                $queue['linkshare'] = "on";
-                $queue['linkshare1'] = "0%";
-                $queue['linkshare2'] = "1000";
-                $queue['linkshare3'] = "10%";
-		$queue['upperlimit'] = "on";
-		$queue['upperlimit1'] = "100%";
-                $queue['upperlimit2'] = "100";
-                $queue['upperlimit3'] = "90%";
-		$queue['bandwidth'] = 1;
-		$queue['bandwidthtype'] = '%';
+		if ($config['shaper']['schedulertype'] == "hfsc") {
+			$queue['realtime'] = "on";
+			$queue['realtime1'] = "1Kb";
+			$queue['realtime2'] = "1";
+			$queue['realtime3'] = "1Kb";
+                	$queue['linkshare'] = "on";
+                	$queue['linkshare1'] = "0%";
+                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare3'] = "10%";
+			$queue['upperlimit'] = "on";
+			$queue['upperlimit1'] = "100%";
+                	$queue['upperlimit2'] = "100";
+                	$queue['upperlimit3'] = "90%";
+			$queue['bandwidth'] = 1;
+			$queue['bandwidthtype'] = '%';
+		} elseif ($config['shaper']['schedulertype'] == "cbq") {
+			$queue['borrow'] = "on";
+                        $queue['bandwidth'] = 6;
+                        $queue['bandwidthtype'] = 'Kb';
+                }
 		$config['shaper']['queue'][] = $queue;
 	    
 		/* create qOthersDown queue */
@@ -1794,20 +1935,26 @@
 		$queue['priority'] = 2;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
-		$queue['realtime'] = "on";
-		$queue['realtime1'] = "1Kb";
-		$queue['realtime2'] = "1";
-		$queue['realtime3'] = "1Kb";
-                $queue['linkshare'] = "on";
-                $queue['linkshare1'] = "0%";
-                $queue['linkshare2'] = "1000";
-                $queue['linkshare3'] = "10%";
-		$queue['upperlimit'] = "on";
-		$queue['upperlimit1'] = "100%";
-                $queue['upperlimit2'] = "100";
-                $queue['upperlimit3'] = "90%";
-		$queue['bandwidth'] = 1;
-		$queue['bandwidthtype'] = '%';
+		if ($config['shaper']['schedulertype'] == "hfsc") {
+			$queue['realtime'] = "on";
+			$queue['realtime1'] = "1Kb";
+			$queue['realtime2'] = "1";
+			$queue['realtime3'] = "1Kb";
+                	$queue['linkshare'] = "on";
+                	$queue['linkshare1'] = "0%";
+                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare3'] = "10%";
+			$queue['upperlimit'] = "on";
+			$queue['upperlimit1'] = "100%";
+                	$queue['upperlimit2'] = "100";
+                	$queue['upperlimit3'] = "90%";
+			$queue['bandwidth'] = 1;
+			$queue['bandwidthtype'] = '%';
+		} elseif ($config['shaper']['schedulertype'] == "cbq") {
+			$queue['borrow'] = "on";
+                        $queue['bandwidth'] = 6;
+                        $queue['bandwidthtype'] = 'Kb';
+                }
 		$config['shaper']['queue'][] = $queue;
 		
 		$othersplist = array();
@@ -2017,27 +2164,22 @@
 		}	    
 	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
+		/* Sort rules by queue priority */
+		 sort_rule_by_queue_priority(); 
+
+		/* Enable shaper */
 		$config['shaper']['enable'] = TRUE;
-                unset($config['shaper']['itemsshaped']);
-                /* Sort rules by queue priority */
-                sort_rule_by_queue_priority();
 
-                /* Enable shaper */
-                $config['shaper']['enable'] = TRUE;
+		/* Prepare for next ezshaper wizard run */
+		unset($config['shaper']['itemsshaped']);
 
-                /* Prepare for next ezshaper wizard run */
-                unset($config['shaper']['itemsshaped']);
-
-                /* Create new rules */
-                filter_configure_sync();
-
-                /* And we're no longer dirty! */
-                unlink_if_exists($d_shaperconfdirty_path);
-
-                /* Head over and check out the groovy queue stats */
-                header("Location: /status_queues.php");
-
+		/* Create new rules */
 		filter_configure_sync();
+
+		/* And we're no longer dirty! */
+		unlink_if_exists($d_shaperconfdirty_path);
+
+		/* Head over and check out the groovy queue stats */
 		header("Location: /status_queues.php");
 	</stepsubmitphpaction>
 </step>

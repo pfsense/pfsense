@@ -100,6 +100,8 @@ function filter_generate_altq_queues($altq_ints) {
 			$altq_rules .= "bandwidth {$rule['bandwidth']}{$rule['bandwidthtype']} ";
 			if (isset($rule['priority']) and $rule['priority'] <> "")
 			$altq_rules .= "priority {$rule['priority']} ";
+			if (isset($rule['qlimit']) and $rule['qlimit'] <> "")
+			$altq_rules .= "qlimit {$rule['qlimit']} ";
 			if(isset($rule['red']) and $rule['red'] <> "")
 			$options .= " red";
 			if(isset($rule['borrow']) and $rule['borrow'] <> "")
@@ -201,12 +203,8 @@ function filter_setup_altq_interfaces() {
 
 		if($queue_names <> ""){
 			$altq_rules .= "altq on {$config['interfaces'][$ifname]['if']} ";
-			/* Default bandwidth to 10Mbit - this handles virtual interfaces (vlan) that have
-			 * no bandwidth associated with them.
-			 */
-			$bandwidth = "bandwidth 10Mb";
-			if($config['interfaces'][$ifname]['bandwidth'] <> "" and $config['interfaces'][$ifname]['bandwidthtype'] <> "" )
-				$bandwidth = "bandwidth {$config['interfaces'][$ifname]['bandwidth']}{$config['interfaces'][$ifname]['bandwidthtype']}";	
+			$bandwidth_arr = get_queue_bandwidth($queue_names);
+			$bandwidth = "bandwidth {$bandwidth_arr['bandwidth']}{$bandwidth_arr['bandwidthtype']}";
 			$altq_rules .= "{$config['shaper']['schedulertype']} {$bandwidth} ";
 			$altq_rules .= "queue { {$queue_names} }";
 		}
@@ -215,6 +213,8 @@ function filter_setup_altq_interfaces() {
 	}
 	return $altq_rules;
 }
+
+
 
 /* Find the root queue for an interface */
 function find_root_queue($ifname) {
@@ -228,12 +228,25 @@ function find_root_queue($ifname) {
 			/* Confirm that this is a valid queue for this interface */
 			$rule_interface = is_subqueue_used_on_interface($q['name'], $ifname);
 			if ($rule_interface == 1) {
-				$queue_names .= " ";
+				if (strlen($queue_names) > 0)
+					$queue_names .= " ";
 				$queue_names .= $q['name'];
 			}
 		}
 	}
 	return $queue_names;
+}
+
+function get_queue_bandwidth($name) {
+	global $config;
+	foreach ($config['shaper']['queue'] as $queue) {
+		if ($queue['name'] == $name) {
+			return array(
+				'bandwidth' => $queue['bandwidth'],
+				'bandwidthtype' => $queue['bandwidthtype']
+			);
+		}
+	}
 }
 
 function is_queue_attached_children($name) {

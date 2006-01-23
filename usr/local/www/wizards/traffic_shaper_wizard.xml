@@ -66,31 +66,6 @@
         <javascriptafterformdisplay>
         </javascriptafterformdisplay>
 	<fields>
-<!--
-		<field>
-			<name>Scheduler</name>
-			<type>select</type>
-			<typehint>&lt;br /&gt;&lt;strong&gt;CBQ:&lt;/strong&gt; Each queue
-           can have a priority and a bandwidth assigned.  Priority mainly controls
-           the time packets take to get sent out, while bandwidth has
-           primarily effects on throughput.
-				  &lt;br /&gt;&lt;strong&gt;HFSC:&lt;/strong&gt;  
-           Adds to CBQ with the support for both link-sharing and guaranteed real-time services.
-	   It employs a service curve based QoS model, and its unique feature is an ability to
-           decouple delay and bandwidth allocation.</typehint>
-			<bindstofield>ezshaper->step2->scheduler</bindstofield>
-			<options>
-				<option>
-					<name>Class Based Queuing</name>
-					<value>cbq</value>
-				</option>
-				<option>
-					<name>Hierarchical Fair Service Curve</name>
-					<value>hfsc</value>
-				</option>
-			</options>
-		</field>
--->
                 <field>
                         <name>Setup network speeds - Please note that the wizard will automatically subtract 20% for the queues.</name>
                         <type>listtopic</type>

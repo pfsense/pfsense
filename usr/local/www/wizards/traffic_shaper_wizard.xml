@@ -90,7 +90,7 @@
 				</option>
 			</options>
 		</field>
---!>
+-->
                 <field>
                         <name>Setup network speeds - Please note that the wizard will automatically subtract 20% for the queues.</name>
                         <type>listtopic</type>

@@ -48,11 +48,6 @@
 		    <fieldname>balancing</fieldname>
 		    <type>checkbox</type>
 	    </columnitem>
-	    <columnitem>
-		    <fielddescr>Preemption</fielddescr>
-		    <fieldname>premption</fieldname>
-		    <type>checkbox</type>
-	    </columnitem>
 	</adddeleteeditpagefields>
 	<!-- fields gets invoked when the user adds or edits a item.   the following items
          will be parsed and rendered for the user as a gui with input, and selectboxes. -->
@@ -83,13 +78,6 @@
 			<fieldname>balancing</fieldname>
 			<description>If this feature is enabled, CARP source-hashes the originating IP of a request. The hash is then used to select a virtual host from the available pool to handle the request. This is disabled by default.</description>
 			<type>checkbox</type>
-		</field>
-		<field>
-			<fielddescr>Preemption</fielddescr>
-			<fieldname>premption</fieldname>
-			<description>When preemption is enabled, each CARP host will look at the advskew (Advertising Frequency) parameter in the advertisements it receives from the master, to try to determine whether it can advertise more frequently. If so, it will begin advertising, and the current master, seeing that there is another host with a lower advskew, will bow out.</description>
-			<type>checkbox</type>
-			<value>true</value>
 		</field>
 		<field>
 			<fielddescr>Synchronize rules</fielddescr>

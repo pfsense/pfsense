@@ -371,10 +371,7 @@ function interfaces_carp_configure() {
 	foreach($config['installedpackages']['carpsettings']['config'] as $carp) {
 		if($carp['pfsyncenabled'] != "") {
 			mwexec("/sbin/sysctl net.inet.carp.allow=1");
-			if($debugging) 
-				echo "Enabling preempt\n";
-			if($carp['premption'] != "")
-				mwexec("/sbin/sysctl net.inet.carp.preempt=1");
+			mwexec("/sbin/sysctl net.inet.carp.preempt=1");
 			if($carp['balancing'] != "")
 				mwexec("/sbin/sysctl net.inet.carp.arpbalance=1");
 			if($debugging) 

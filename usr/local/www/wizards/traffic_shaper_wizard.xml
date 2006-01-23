@@ -114,8 +114,7 @@
 		$downq = "q" . strtoupper($config['ezshaper']['step2']['inside_int']);
 		$upq = "q" . strtoupper($config['ezshaper']['step2']['outside_int']);
 	    
-		/* Magic shaper uses HFSC */
-		/* $config['shaper']['schedulertype'] = $_POST['scheduler']; */
+		/* Magic shaper scheduler */
 		$config['shaper']['schedulertype'] = "hfsc";
 
 		/* Create queues */
@@ -123,9 +122,9 @@
 		$queue = array();
 		$queue['name'] = "{$upq}Root";
 		$queue['associatedrule'] = 0;
-		$queue['priority'] = 6;
+		$queue['priority'] = 0;
 		$queue['parentqueue'] = "on";
-		$queue['bandwidth'] = (int)$_POST['upload'];
+		$queue['bandwidth'] = (int)$_POST['upload'] * .8;
 		$queue['bandwidthtype'] = "Kb";
 		$config['shaper']['queue'][] = $queue;
 
@@ -133,9 +132,9 @@
 		$queue = array();
 		$queue['name'] = "{$downq}Root";
 		$queue['associatedrule'] = 0;
-		$queue['priority'] = 6;
+		$queue['priority'] = 0;
 		$queue['parentqueue'] = "on";
-		$queue['bandwidth'] = (int)$_POST['download'];
+		$queue['bandwidth'] = (int)$_POST['download'] * .8;
 		$queue['bandwidthtype'] = "Kb";
 		$config['shaper']['queue'][] = $queue;
 
@@ -152,15 +151,16 @@
                 	$queue['realtime2'] = "1";
                 	$queue['realtime3'] = "10%";
                 	$queue['linkshare'] = "on";
-                	$queue['linkshare1'] = "0%";
-                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare1'] = "10%";
+                	$queue['linkshare2'] = "100";
                 	$queue['linkshare3'] = "10%";
                 	$queue['upperlimit'] = "on";
-                	$queue['upperlimit1'] = "100%";
+                	$queue['upperlimit1'] = "80%";
                 	$queue['upperlimit2'] = "100";
-                	$queue['upperlimit3'] = "90%";
+                	$queue['upperlimit3'] = "80%";
 			$queue['bandwidth'] = 1;
 			$queue['bandwidthtype'] = '%';
+			$queue['qlimit'] = 500;
 		} elseif ($config['shaper']['schedulertype'] == "cbq") {
 			$queue['borrow'] = "on";
 			$queue['bandwidth'] = 6;
@@ -182,15 +182,16 @@
                 	$queue['realtime2'] = "1";
                 	$queue['realtime3'] = "10%";
                 	$queue['linkshare'] = "on";
-                	$queue['linkshare1'] = "0%";
-                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare1'] = "10%";
+                	$queue['linkshare2'] = "100";
                 	$queue['linkshare3'] = "10%";
                 	$queue['upperlimit'] = "on";
-                	$queue['upperlimit1'] = "100%";
+                	$queue['upperlimit1'] = "80%";
                 	$queue['upperlimit2'] = "100";
-                	$queue['upperlimit3'] = "90%";
+                	$queue['upperlimit3'] = "80%";
 			$queue['bandwidth'] = 1;
 			$queue['bandwidthtype'] = '%';
+			$queue['qlimit'] = 500;
 		} elseif ($config['shaper']['schedulertype'] == "cbq") {
 			$queue['borrow'] = "on";
 			$queue['bandwidth'] = 6;
@@ -204,15 +205,15 @@
 		$queue['ack'] = TRUE;
                 $queue['attachtoqueue'] = "{$upq}Root";
                 $queue['associatedrule'] = 0;
-                $queue['priority'] = 6;
+                $queue['priority'] = 7;
 		if ($config['shaper']['schedulertype'] == "hfsc") {
                 	$queue['realtime'] = "on";
                 	$queue['realtime1'] = "10%";
                 	$queue['realtime2'] = "1";
                 	$queue['realtime3'] = "10%";
                 	$queue['linkshare'] = "on";
-                	$queue['linkshare1'] = "0%";
-                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare1'] = "10%";
+                	$queue['linkshare2'] = "100";
                 	$queue['linkshare3'] = "10%";
                 	$queue['upperlimit'] = "on";
                 	$queue['upperlimit1'] = "80%";
@@ -233,15 +234,15 @@
 		$queue['ack'] = TRUE;
                 $queue['attachtoqueue'] = "{$downq}Root";
                 $queue['associatedrule'] = 0;
-                $queue['priority'] = 6;
+                $queue['priority'] = 7;
 		if ($config['shaper']['schedulertype'] == "hfsc") {
                 	$queue['realtime'] = "on";
                 	$queue['realtime1'] = "10%";
                 	$queue['realtime2'] = "1";
                 	$queue['realtime3'] = "10%";
                 	$queue['linkshare'] = "on";
-                	$queue['linkshare1'] = "0%";
-                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare1'] = "10%";
+                	$queue['linkshare2'] = "100";
                 	$queue['linkshare3'] = "10%";
                 	$queue['upperlimit'] = "on";
                 	$queue['upperlimit1'] = "80%";
@@ -438,8 +439,8 @@
                         	$queue['realtime2'] = "1";
                         	$queue['realtime3'] = $_POST['bandwidth'] . "Kb";
 				$queue['linkshare'] = "on";
-				$queue['linkshare1'] = "0%";
-				$queue['linkshare2'] = "1000";
+				$queue['linkshare1'] = "10%";
+				$queue['linkshare2'] = "1";
 				$queue['linkshare3'] = "10%";
  	                	$queue['upperlimit'] = "on";
  	                	$queue['upperlimit1'] = $_POST['bandwidth'] . "Kb";
@@ -465,8 +466,8 @@
  	                	$queue['realtime2'] = "1";
  	                	$queue['realtime3'] = $_POST['bandwidth'] . "Kb";
 				$queue['linkshare'] = "on";
-				$queue['linkshare1'] = "0%";
-				$queue['linkshare2'] = "1000";
+				$queue['linkshare1'] = "10%";
+				$queue['linkshare2'] = "1";
 				$queue['linkshare3'] = "10%";
  	                	$queue['upperlimit'] = "on";
  	                	$queue['upperlimit1'] = $_POST['bandwidth'] . "Kb";
@@ -845,15 +846,16 @@
 			$queue['realtime2'] = "10";
 			$queue['realtime3'] = "1Kb";
                 	$queue['linkshare'] = "on";
-                	$queue['linkshare1'] = "0%";
-                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare1'] = "10%";
+                	$queue['linkshare2'] = "100";
                 	$queue['linkshare3'] = "10%";
 			$queue['upperlimit'] = "on";
-			$queue['upperlimit1'] = "100%";
+			$queue['upperlimit1'] = "90%";
                 	$queue['upperlimit2'] = "100";
                 	$queue['upperlimit3'] = "90%";
 			$queue['bandwidth'] = 1;
 			$queue['bandwidthtype'] = '%';
+			$queue['qlimit'] = 500;
 		} elseif ($config['shaper']['schedulertype'] == "cbq") {
 			$queue['borrow'] = "on";
                         $queue['bandwidth'] = 6;
@@ -875,15 +877,16 @@
 			$queue['realtime2'] = "10";
 			$queue['realtime3'] = "1Kb";
                 	$queue['linkshare'] = "on";
-                	$queue['linkshare1'] = "0%";
-                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare1'] = "10%";
+                	$queue['linkshare2'] = "100";
                 	$queue['linkshare3'] = "10%";
 			$queue['upperlimit'] = "on";
-			$queue['upperlimit1'] = "100%";
+			$queue['upperlimit1'] = "90%";
                 	$queue['upperlimit2'] = "100";
                 	$queue['upperlimit3'] = "90%";
 			$queue['bandwidth'] = 1;
 			$queue['bandwidthtype'] = '%';
+			$queue['qlimit'] = 500;
 		} elseif ($config['shaper']['schedulertype'] == "cbq") {
 			$queue['borrow'] = "on";
                         $queue['bandwidth'] = 6;
@@ -1067,12 +1070,12 @@
 			$queue['realtime2'] = "1";
 			$queue['realtime3'] = "1Kb";
                 	$queue['linkshare'] = "on";
-                	$queue['linkshare1'] = "0%";
-                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare1'] = "10%";
+                	$queue['linkshare2'] = "1";
                 	$queue['linkshare3'] = "10%";
 			$queue['upperlimit'] = "on";
-			$queue['upperlimit1'] = "100%";
-                	$queue['upperlimit2'] = "100";
+			$queue['upperlimit1'] = "90%";
+                	$queue['upperlimit2'] = "1";
                 	$queue['upperlimit3'] = "90%";
 			$queue['bandwidth'] = 1;
 			$queue['bandwidthtype'] = '%';
@@ -1095,12 +1098,12 @@
 			$queue['realtime2'] = "1";
 			$queue['realtime3'] = "1Kb";
                 	$queue['linkshare'] = "on";
-                	$queue['linkshare1'] = "0%";
-                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare1'] = "10%";
+                	$queue['linkshare2'] = "1";
                 	$queue['linkshare3'] = "10%";
 			$queue['upperlimit'] = "on";
-			$queue['upperlimit1'] = "100%";
-                	$queue['upperlimit2'] = "100";
+			$queue['upperlimit1'] = "90%";
+                	$queue['upperlimit2'] = "1";
                 	$queue['upperlimit3'] = "90%";
 			$queue['bandwidth'] = 1;
 			$queue['bandwidthtype'] = '%';
@@ -1819,7 +1822,7 @@
 		$queue['name'] = "qOthersUpH";
                 $queue['attachtoqueue'] = "{$upq}Root";
 		$queue['associatedrule'] = 0;
-		$queue['priority'] = 4;
+		$queue['priority'] = 6;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
 		if ($config['shaper']['schedulertype'] == "hfsc") {
@@ -1828,12 +1831,12 @@
 			$queue['realtime2'] = "1";
 			$queue['realtime3'] = "1Kb";
                 	$queue['linkshare'] = "on";
-                	$queue['linkshare1'] = "0%";
-                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare1'] = "10%";
+                	$queue['linkshare2'] = "10";
                 	$queue['linkshare3'] = "10%";
 			$queue['upperlimit'] = "on";
-			$queue['upperlimit1'] = "100%";
-                	$queue['upperlimit2'] = "100";
+			$queue['upperlimit1'] = "90%";
+                	$queue['upperlimit2'] = "10";
                 	$queue['upperlimit3'] = "90%";
 			$queue['bandwidth'] = 1;
 			$queue['bandwidthtype'] = '%';
@@ -1849,7 +1852,7 @@
 		$queue['name'] = "qOthersDownH";
                 $queue['attachtoqueue'] = "{$downq}Root";
 		$queue['associatedrule'] = 0;
-		$queue['priority'] = 4;
+		$queue['priority'] = 6;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
 		if ($config['shaper']['schedulertype'] == "hfsc") {
@@ -1858,12 +1861,12 @@
 			$queue['realtime2'] = "1";
 			$queue['realtime3'] = "1Kb";
                 	$queue['linkshare'] = "on";
-                	$queue['linkshare1'] = "0%";
-                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare1'] = "10%";
+                	$queue['linkshare2'] = "10";
                 	$queue['linkshare3'] = "10%";
 			$queue['upperlimit'] = "on";
-			$queue['upperlimit1'] = "100%";
-                	$queue['upperlimit2'] = "100";
+			$queue['upperlimit1'] = "90%";
+                	$queue['upperlimit2'] = "10";
                 	$queue['upperlimit3'] = "90%";
 			$queue['bandwidth'] = 1;
 			$queue['bandwidthtype'] = '%';
@@ -1889,15 +1892,16 @@
 			$queue['realtime2'] = "1";
 			$queue['realtime3'] = "1Kb";
                 	$queue['linkshare'] = "on";
-                	$queue['linkshare1'] = "0%";
-                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare1'] = "10%";
+                	$queue['linkshare2'] = "10";
                 	$queue['linkshare3'] = "10%";
 			$queue['upperlimit'] = "on";
-			$queue['upperlimit1'] = "100%";
-                	$queue['upperlimit2'] = "100";
+			$queue['upperlimit1'] = "90%";
+                	$queue['upperlimit2'] = "10";
                 	$queue['upperlimit3'] = "90%";
 			$queue['bandwidth'] = 1;
 			$queue['bandwidthtype'] = '%';
+			$queue['qlimit'] = 500;
 		} elseif ($config['shaper']['schedulertype'] == "cbq") {
 			$queue['borrow'] = "on";
                         $queue['bandwidth'] = 6;
@@ -1919,15 +1923,16 @@
 			$queue['realtime2'] = "1";
 			$queue['realtime3'] = "1Kb";
                 	$queue['linkshare'] = "on";
-                	$queue['linkshare1'] = "0%";
-                	$queue['linkshare2'] = "1000";
+                	$queue['linkshare1'] = "10%";
+                	$queue['linkshare2'] = "10";
                 	$queue['linkshare3'] = "10%";
 			$queue['upperlimit'] = "on";
-			$queue['upperlimit1'] = "100%";
-                	$queue['upperlimit2'] = "100";
+			$queue['upperlimit1'] = "90%";
+                	$queue['upperlimit2'] = "10";
                 	$queue['upperlimit3'] = "90%";
 			$queue['bandwidth'] = 1;
 			$queue['bandwidthtype'] = '%';
+			$queue['qlimit'] = 500;
 		} elseif ($config['shaper']['schedulertype'] == "cbq") {
 			$queue['borrow'] = "on";
                         $queue['bandwidth'] = 6;

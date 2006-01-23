@@ -141,7 +141,7 @@
 	    
 		/* Magic shaper uses HFSC */
 		/* $config['shaper']['schedulertype'] = $_POST['scheduler']; */
-		$config['shaper']['schedulertype'] = "hfsc"
+		$config['shaper']['schedulertype'] = "hfsc";
 
 		/* Create queues */
 		/* WAN root queue */

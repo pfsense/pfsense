@@ -50,9 +50,6 @@ $optcfg['descr'] = remove_bad_chars($optcfg['descr']);
 $pconfig['descr'] = $optcfg['descr'];
 $pconfig['bridge'] = $optcfg['bridge'];
 
-$pconfig['bandwidth'] = $optcfg['bandwidth'];
-$pconfig['bandwidthtype'] = $optcfg['bandwidthtype'];
-
 $pconfig['enable'] = isset($optcfg['enable']);
 
 $pconfig['blockpriv'] = isset($optcfg['blockpriv']);
@@ -142,9 +139,6 @@ if ($_POST) {
 	        if ($_POST['mtu'] && (($_POST['mtu'] < 576) || ($_POST['mtu'] > 1500))) {
 			$input_errors[] = "The MTU must be between 576 and 1500 bytes.";
 		}		
-		if($_POST['bandwidth'] <> "" && !is_numeric($_POST['bandwidth'])) {
-			$input_errors[] = "A valid bandwidth value is required 1-999999.";
-		}
 		if (($_POST['spoofmac'] && !is_macaddr($_POST['spoofmac']))) {
 			$input_errors[] = "A valid MAC address must be specified.";
 		}		
@@ -184,14 +178,6 @@ if ($_POST) {
 		$optcfg['descr'] = remove_bad_chars($_POST['descr']);
 		$optcfg['bridge'] = $_POST['bridge'];
 		$optcfg['enable'] = $_POST['enable'] ? true : false;
-		
-		if($_POST['bandwidth'] <> "" and $_POST['bandwidthtype'] <> "") {
-			$optcfg['bandwidth'] = $_POST['bandwidth'];
-			$optcfg['bandwidthtype'] = $_POST['bandwidthtype'];
-		} else {
-			unset($optcfg['bandwidth']);
-			unset($optcfg['bandwidthtype']);
-		}
 
 		if ($_POST['type'] == "Static") {
 			$optcfg['ipaddr'] = $_POST['ipaddr'];
@@ -409,24 +395,6 @@ function type_change(enable_change,enable_change_pptp) {
                 <tr>
                   <td colspan="2" valign="top" height="16"></td>
                 </tr>		
-                <tr>
-                  <td colspan="2" valign="top" class="vnsepcell">Bandwidth Management (Traffic Shaping)</td>
-                </tr>
-                <tr>
-                  <td valign="top" class="vncell">Interface Bandwidth Speed</td>
-                  <td class="vtable"> <input name="bandwidth" type="text" class="formfld" id="bandwidth" size="30" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">
-			<select name="bandwidthtype">
-				<option value="<?=htmlspecialchars($pconfig['bandwidthtype']);?>"><?=htmlspecialchars($pconfig['bandwidthtype']);?></option>
-				<option value="b">bit/s</option>
-				<option value="Kb">Kilobit/s</option>
-				<option value="Mb">Megabit/s</option>
-				<option value="Gb">Gigabit/s</option>
-				<option value=""></option>
-			</select>
-			<br> The bandwidth setting will define the speed of the interface for traffic shaping.  Do not enter your "Internet" bandwidth here, only the physical speed!
-		  </td>
-                </tr>
-
 		<tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">

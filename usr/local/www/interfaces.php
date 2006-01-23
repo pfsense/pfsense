@@ -513,9 +513,6 @@ function type_change(enable_change,enable_change_pptp) {
                   <td colspan="2" valign="top" height="16"></td>
                 </tr>
                 <tr>
-                  <td colspan="2" valign="top" class="listtopic">Bandwidth Management (Traffic Shaping)</td>
-                </tr>
-                <tr>
                   <td colspan="2" valign="top" class="listtopic">DHCP client configuration</td>
                 </tr>
                 <tr>

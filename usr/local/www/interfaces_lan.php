@@ -37,8 +37,6 @@ $optcfg = &$config['interfaces']['lan'];
 $pconfig['ipaddr'] = $lancfg['ipaddr'];
 $pconfig['subnet'] = $lancfg['subnet'];
 $pconfig['bridge'] = $lancfg['bridge'];
-$pconfig['bandwidth'] = $lancfg['bandwidth'];
-$pconfig['bandwidthtype'] = $lancfg['bandwidthtype'];
 
 $pconfig['disableftpproxy'] = isset($lancfg['disableftpproxy']);
 
@@ -92,9 +90,6 @@ if ($_POST) {
 	if (($_POST['subnet'] && !is_numeric($_POST['subnet']))) {
 		$input_errors[] = "A valid subnet bit count must be specified.";
 	}
-	if($_POST['bandwidth'] <> "" && !is_numeric($_POST['bandwidth'])) {
-		$input_errors[] = "A valid bandwidth value is required 1-999999.";
-	}
 
 	/* Wireless interface? */
 	if (isset($lancfg['wireless'])) {
@@ -126,14 +121,6 @@ if ($_POST) {
 		if (($lancfg['ipaddr'] != $_POST['ipaddr']) || ($lancfg['subnet'] != $_POST['subnet'])) {
 			update_if_changed("IP Address", &$lancfg['ipaddr'], $_POST['ipaddr']);
 			update_if_changed("subnet", &$lancfg['subnet'], $_POST['subnet']);
-		}
-
-		if($_POST['bandwidth'] <> "" and $_POST['bandwidthtype'] <> "") {
-			update_if_changed("bandwidth", &$lancfg['bandwidth'], $_POST['bandwidth']);
-			update_if_changed("bandwidth type", &$lancfg['bandwidthtype'], $_POST['bandwidthtype']);
-		} else {
-			unset($lancfg['bandwidth']);
-			unset($lancfg['bandwidthtype']);
 		}
 
 		write_config($changedesc);
@@ -234,27 +221,7 @@ function enable_change(enable_over) {
 					wireless_config_print();
 				?>
 
-                <tr>
-                  <td colspan="2" valign="top" height="16"></td>
-                </tr>
 
-                <tr>
-                  <td colspan="2" valign="top" class="vnsepcell">Bandwidth Management (Traffic Shaping)</td>
-                </tr>
-                <tr>
-                  <td valign="top" class="vncell">Interface Bandwidth Speed</td>
-                  <td class="vtable"> <input name="bandwidth" type="text" class="formfld" id="bandwidth" size="30" value="<?=htmlspecialchars($pconfig['bandwidth']);?>">
-			<select name="bandwidthtype">
-				<option value="<?=htmlspecialchars($pconfig['bandwidthtype']);?>"><?=htmlspecialchars($pconfig['bandwidthtype']);?></option>
-				<option value="b">bit/s</option>
-				<option value="Kb">Kilobit/s</option>
-				<option value="Mb">Megabit/s</option>
-				<option value="Gb">Gigabit/s</option>
-				<option value=""></option>
-			</select>
-			<br> The bandwidth setting will define the speed of the interface for traffic shaping.  Do not enter your "Internet" bandwidth here, only the physical speed!
-		  </td>
-                </tr>
                 <tr>
                   <td colspan="2" valign="top" height="16"></td>
                 </tr>

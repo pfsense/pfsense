@@ -213,41 +213,6 @@
 			<type>input</type>
 		</field>
 		<field>
-			<name>Bandwidth Management (Traffic Shaping)</name>
-			<type>listtopic</type>
-		</field>
-		<field>
-			<combinefieldsbegin>true</combinefieldsbegin>
-			<donotdisable>true</donotdisable>
-			<name>Interface Bandwidth Speed</name>
-			<type>input</type>
-			<typehint> | </typehint>
-			<bindstofield>interfaces->wan->bandwidth</bindstofield>
-		</field>
-		<field>
-			<name>Speed Type</name>
-			<donotdisable>true</donotdisable>
-			<type>select</type>
-			<combinefieldsend>true</combinefieldsend>
-			<dontdisplayname>true</dontdisplayname>
-			<dontcombinecells>true</dontcombinecells>
-			<bindstofield>interfaces->wan->bandwidthtype</bindstofield>
-			<options>
-				<option>
-					<name>bit/s</name>
-				</option>
-				<option>
-					<name>Kilobit/s</name>
-				</option>
-				<option>
-					<name>Megabit/s</name>
-				</option>
-				<option>
-					<name>Gigabit/s</name>
-				</option>
-			</options>
-		</field>
-		<field>
 			<name>DHCP client configuration</name>
 			<type>listtopic</type>
 		</field>

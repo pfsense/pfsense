@@ -88,6 +88,10 @@ function find_last_gif_device() {
 function vpn_ipsec_configure($ipchg = false) {
 	global $config, $g, $sa, $sn;
 
+	/* get the automatic /etc/ping_hosts.sh ready */
+	unlink_if_exists("/var/db/ipsecpinghosts");
+	touch("/var/db/ipsecpinghosts");
+
 	if($g['booting'] == true) {
 		/* determine if we should load the via padlock module */
 		$dmesg_boot = `cat /var/log/dmesg.boot | grep CPU`;
@@ -190,6 +194,15 @@ function vpn_ipsec_configure($ipchg = false) {
 						$tmp = gethostbyname($tunnel['remote-gateway']);
 						if($tmp)
 							$tunnel['remote-gateway'] = $tmp;
+					}
+
+					/* add entry to host pinger */
+					if($tunnel['pinghost']) {
+						$pfd = fopen("/var/db/ipsecpinghosts","a");
+						$srcip = find_interface_ip($config['interfaces']['lan']['if']);
+						$dstip = $tunnel['pinghost'];
+						fwrite($pfd, "$srcip|$dstip|3");
+						fclose($pfd);
 					}
 
 					if(isset($tunnel['creategif'])) {

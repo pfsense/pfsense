@@ -90,6 +90,7 @@ if (isset($id) && $a_ipsec[$id]) {
 	$pconfig['p2pfsgroup'] = $a_ipsec[$id]['p2']['pfsgroup'];
 	$pconfig['p2lifetime'] = $a_ipsec[$id]['p2']['lifetime'];
 	$pconfig['descr'] = $a_ipsec[$id]['descr'];
+	$pconfig['pinghost'] = $a_ipsec[$id]['pinghost'];
 	
 } else {
 	/* defaults */
@@ -226,6 +227,7 @@ if ($_POST) {
 		$ipsecent['p2']['pfsgroup'] = $_POST['p2pfsgroup'];
 		$ipsecent['p2']['lifetime'] = $_POST['p2lifetime'];
 		$ipsecent['descr'] = $_POST['descr'];
+		$ipsecent['pinghost'] = $_POST['pinghost'];
 		
 		if (isset($id) && $a_ipsec[$id])
 			$a_ipsec[$id] = $ipsecent;
@@ -550,6 +552,17 @@ function methodsel_change() {
                     <input name="p2lifetime" type="text" class="formfld" id="p2lifetime" size="20" value="<?=$pconfig['p2lifetime'];?>">
                     seconds</td>
                 </tr>
+                <tr> 
+                  <td colspan="2" class="list" height="12"></td>
+                </tr>
+                <tr> 
+                  <td colspan="2" valign="top" class="listtopic">Keep alive</td>
+                </tr>
+                <tr> 
+                  <td width="22%" valign="top" class="vncell">Automatically ping host</td>
+                  <td width="78%" class="vtable"> 
+                    <input name="pinghost" type="text" class="formfld" id="pinghost" size="20" value="<?=$pconfig['pinghost'];?>"></td>
+                </tr>		
                 <tr> 
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> 

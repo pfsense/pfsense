@@ -201,7 +201,7 @@ function vpn_ipsec_configure($ipchg = false) {
 						$pfd = fopen("/var/db/ipsecpinghosts","a");
 						$srcip = find_interface_ip($config['interfaces']['lan']['if']);
 						$dstip = $tunnel['pinghost'];
-						fwrite($pfd, "$srcip|$dstip|3");
+						fwrite($pfd, "$srcip|$dstip|3\n");
 						fclose($pfd);
 					}
 

@@ -463,6 +463,13 @@ function install_package_xml($pkg) {
 	}
 	fclose($fd);
 
+	/*   if a require exists, include it.  this will
+	 *   show us where an error exists in a package
+         *   instead of making us blindly guess
+	 */
+	if($pkg_info['include_file'] <> "")
+		require_once($pkg_info['include_file']);
+
 	/* pkg_add the package and its dependencies */
 	if($pkg_info['depends_on_package_base_url'] != "") {
 		update_status("Installing " . $pkg_info['name'] . " and its dependencies.");

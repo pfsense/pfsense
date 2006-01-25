@@ -33,6 +33,10 @@ header("Content-Type: text/plain");
 include("guiconfig.inc");
 
 putenv("PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
+if($_GET['cmd'] == "") {
+	echo "Nothing specified.  Cannot continue.";
+	exit;
+}
 passthru($_GET['cmd']);
 
 exit(0);

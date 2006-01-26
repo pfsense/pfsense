@@ -72,7 +72,7 @@
 	}
 	
 	$temp = gettimeofday();
-	$timing = $temp["sec"] + $temp["usec"] / 1000000.0;
+	$timing = (double)$temp["sec"] + (double)$temp["usec"] / 1000000.0;
 
 	echo "$timing|" . $ifinfo['inbytes'] . "|" . $ifinfo['outpkts'] . "\n";
 

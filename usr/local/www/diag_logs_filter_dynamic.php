@@ -204,10 +204,10 @@ include("head.inc");
   <tr>
      <td>
 	<div id="mainarea">
+		<div class="listtopic">
+			Last <?php echo $nentries; ?> records
+		</div>	
 		<div id="log">
-			<div class="listtopic">
-				Last <?php echo $nentries; ?> records
-			</div>
 			<div class="log-header">
                                 <span class="log-action">Act</span>
                                 <span class="log-time">Time</span>

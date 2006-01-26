@@ -350,11 +350,13 @@ function update_div_rows(data) {
                  */
 		if(isReverse == false) {
 			for (var i = numrows-1; i > 1; i--) {
-				rows[i].innerHTML = rows[i-1].innerHTML;
+				previousrecord = i - 1;
+				rows[i].innerHTML = rows[previousrecord].innerHTML;
 			}
 		} else {
-			for (var i = 1; i < numrows+1; i++) {
-				rows[i].innerHTML = rows[i-1].innerHTML;
+			for (var i = 2; i < numrows - 1; i++) {
+				nextrecord = i + 1;
+				rows[i].innerHTML = rows[nextrecord].innerHTML;
 			}		
 		}
 		var item = document.getElementById('firstrow');

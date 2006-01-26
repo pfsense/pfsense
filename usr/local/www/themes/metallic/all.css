@@ -4,6 +4,16 @@ html, body, td, th, input, select {
 	font-size: 0.9em;
 }
 
+div.GraphLink {
+	position: relative;
+}
+
+span.GraphLinkLine {
+	position: absolute;
+	background-color: #990000;
+	width: 100%;
+}
+
 body {
 	background-color: #333333;
 	margin: 5px auto;
@@ -34,7 +44,7 @@ iframe {
 }
 
 #header {
-	background: url('images/header.gif') no-repeat;
+	background: url('/themes/metallic/images/header.gif') no-repeat;
 	background-position: 4px;
 	height: 102px;
 	width: 808px;
@@ -43,7 +53,7 @@ iframe {
 }
 #header-left {
 	position: relative;
-	/* background: url('images/logo.gif') no-repeat; */
+	/* background: url('/themes/metallic/images/logo.gif') no-repeat; */
 	background-position: center;
 	height: 65px;
 	width: 145px;
@@ -57,7 +67,7 @@ iframe {
 }
 #header-right {
 	position: relative;
-	/* background: url('images/header.gif') no-repeat; */
+	/* background: url('/themes/metallic/images/header.gif') no-repeat; */
 	height: 70px;
 	color: #fff;
 	left: 0px;
@@ -65,7 +75,7 @@ iframe {
 }
 #header-right .alert {
 	position: relative;
-	/* background: url('images/alert.gif') no-repeat; */
+	/* background: url('/themes/metallic/images/alert.gif') no-repeat; */
 	background-position: 4px 2px;
 	color: #fff;
 	height: 17px;
@@ -89,33 +99,31 @@ iframe {
 #header-right .container .right {
 	position: relative;
 	float: right;
-	top: 22px;
+	top: 10px;
 	padding-right: 4px;
 	z-index: 1;
 }
 
-#header-right .container .right #alerts {
+#header-right .container .right #marquee-text {
+	background: url('/themes/metallic/images/misc/status_alerter.gif') no-repeat;
+	margin: 0px;
+}
+#header-right .container .right #ajaxstatusbar {
 	position: relative;
-	background: url('images/alert_bgr.gif') no-repeat;
-	height: 39px;
+	height: 13px;
 	width: 431px;
 	z-index: 1;
-	padding-top: 20px;
-	padding-left: 5px;
 	margin: 0px;
+text-align: right;
 }
 #header-right .container .right #hostname {
 	position: relative;
-	height: 39px;
-	width: 431px;
+	height: 13px;
 	z-index: 1;
-	padding-left: 5px;
 	margin: 0px;
-	top: 25px;
-	left: 230px;
+top: 25px;
+text-align: right;
 }
-
-
 
 table#marquee {
 	position: relative;
@@ -164,7 +172,7 @@ table#marquee div#container div#scroller {
 	margin-left: 5px;
 	padding-top: 0px;
 	width: 800px;
-	background: url('images/horizontal.gif') repeat-y;
+	background: url('/themes/metallic/images/horizontal.gif') repeat-y;
 }
 
 #left {
@@ -187,15 +195,15 @@ table#marquee div#container div#scroller {
 
 #footer {
 	position: relative;
-	background: url('images/footer.gif') no-repeat;
+	background: url('/themes/metallic/images/footer.gif') no-repeat;
 	top: -18px;
 	left: 7px;
 	width: 800px;
 	height: 75px;
 	color: #ffffff;
 	text-align: center;;
-	font-size: 0.9em;
-	padding-top: 17px;
+	font-size: 0.7em;
+	padding-top: 10px;
 	margin-bottom: 20px;
 	clear: both;
 }
@@ -720,3 +728,69 @@ div.suggestions div.current {
 .r4,.rl4,.rr4,.re4,.rel4,.rer4,.ra4,.rar4,.ral4,.rx4,.rxl4,.rxr4{height:2px}
 .rer1,.rel1,.re1,.res1,.resl1,.resr1{border-width:1px 0 0;height:0px !important;height /**/:1px}
 /* End Nifty Corners Crap */
+
+
+
+/* CSS for Dynamic Log Viewer */
+/* Author: Erik Kristensen    */
+div#log div.log-entry {
+	clear: both;
+}
+
+div#log div.log-entry span,
+div#log div.log-header span {
+	padding: 3px 2px 3px 2px;
+	padding-left: 8px;
+}
+
+div#log div.log-entry span.log-action {
+	padding-bottom: 6px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+div#log div.log-header span {
+	border-top: 1px solid #999;
+	background-color: #bbb;
+	font-weight: bold;
+	text-align: left;
+}
+
+div#log span.log-action,
+div#log span.log-time,
+div#log span.log-interface,
+div#log span.log-source,
+div#log span.log-destination,
+div#log span.log-protocol {
+	float: left;
+	text-align: left;
+	border-left: 1px solid #999;
+	border-bottom: 1px solid #999;
+}
+
+div#log span.log-protocol {
+	border-right: 1px solid #999;
+}
+
+div#log span.log-action {
+	width: 2em;
+	text-align: center;
+}
+
+div#log span.log-time {
+	width: 12.5em;
+}
+
+div#log span.log-interface {
+	width: 5em;
+}
+
+div#log span.log-source,
+div#log span.log-destination {
+	width: 17.6em;
+}
+
+div#log span.log-protocol {
+	width: 5.5em;
+}
+/* END CSS FOR DYNAMIC LOG VIEWER */

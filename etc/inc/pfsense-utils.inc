@@ -1628,6 +1628,7 @@ function auto_login($status) {
 
 function setup_serial_port() {
 	global $g, $config;
+	conf_mount_rw();
 	/* serial console - write out /boot.config */
 	if(file_exists("/boot.config"))
 		$boot_config = file_get_contents("/boot.config");

@@ -543,8 +543,14 @@ function filter_nat_rules_generate() {
 	$natrules .= "#SSH Lockout Table\n";
 	$natrules .= "table <sshlockout> persist\n\n";
 
-	$natrules .= "\n# spam table \n";
-	$natrules .= "table <spamd> persist\n\n";
+	/* is SPAMD insalled? */
+	if (is_package_installed("spamd") == 1) {
+		$natrules .= "\n# spam table \n";
+		$natrules .= "table <spamd> persist\n";
+		$natrules .= "table <spamd-white> persist\n";
+		$natrules .= "rdr pass on {$wanif} proto tcp from <spamd> to port smtp -> 127.0.0.1 port spamd\n";
+		$natrules .= "rdr pass on {$wanif} proto tcp from !<spamd-white> to port smtp -> 127.0.0.1 port spamd\n";
+	}
 
 	/* load balancer anchor */
 	$natrules .= "\n# Load balancing anchor - slbd updates\n";

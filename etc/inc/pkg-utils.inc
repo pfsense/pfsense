@@ -744,7 +744,8 @@ function delete_package_xml($pkg) {
 			$static_output = "Loading package instructions...";
 			update_output_window($static_output);
 			fwrite($fd_log, "require_once('include_file')\n");
-			require_once($pkg_config['include_file']);
+			if(file_exists($pkg_config['include_file']))
+				require_once($pkg_config['include_file']);
 			fwrite($fd_log, "require_once('include_file') included\n");
 		}		
 		/* evalate this package's global functions and pre deinstall commands */

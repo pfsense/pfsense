@@ -550,6 +550,10 @@ function filter_nat_rules_generate() {
 		$natrules .= "table <spamd-white> persist\n";
 		$natrules .= "rdr pass on {$wanif} proto tcp from <spamd> to port smtp -> 127.0.0.1 port spamd\n";
 		$natrules .= "rdr pass on {$wanif} proto tcp from !<spamd-white> to port smtp -> 127.0.0.1 port spamd\n";
+		$nextmta = $config['installedpackages']['spamdsettings']['config']['nextmta'];
+		if($nextmta <> "") {
+			$natrules .= "rdr pass on {$wanif} proto tcp from <spamd-white> to port smtp -> {$nextmta} port smtp\n";
+		}		
 	}
 
 	/* load balancer anchor */

@@ -736,6 +736,17 @@ function delete_package_xml($pkg) {
 			$static_output .= "done.\n";
 			update_output_window($static_output);
 		}
+		/*   if a require exists, include it.  this will
+		 *   show us where an error exists in a package
+		 *   instead of making us blindly guess
+		 */
+		if($pkg_config['include_file'] <> "") {
+			$static_output = "Loading package instructions...";
+			update_output_window($static_output);
+			fwrite($fd_log, "require_once('include_file')\n");
+			require_once($pkg_config['include_file']);
+			fwrite($fd_log, "require_once('include_file') included\n");
+		}		
 		/* evalate this package's global functions and pre deinstall commands */
 		if($pkg_config['custom_php_global_functions'] <> "")
 			eval_once($pkg_config['custom_php_global_functions']);

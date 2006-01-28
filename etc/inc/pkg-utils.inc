@@ -502,17 +502,7 @@ function install_package_xml($pkg) {
 	if(file_exists("/usr/local/pkg/" . $configfile)) {
 		$static_output .= "Loading package configuration... ";
 		update_output_window($static_output);
-		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $configfile, "packagegui");
-		/*   if a require exists, include it.  this will
-		 *   show us where an error exists in a package
-		 *   instead of making us blindly guess
-		 */
-		if($pkg_config['include_file'] <> "") {
-			$static_output = "Loading package instructions...";
-			update_output_window($static_output);
-			fwrite($fd_log, "require_once('include_file')\n");
-			require_once($pkg_config['include_file']);
-		}		
+		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $configfile, "packagegui");	
 		$static_output .= "done.\n";
 		update_output_window($static_output);
 		$static_output .= "Configuring package components...\n";
@@ -566,6 +556,16 @@ function install_package_xml($pkg) {
 			$static_output .= "done.\n";
 			update_output_window($static_output);
 		}
+		/*   if a require exists, include it.  this will
+		 *   show us where an error exists in a package
+		 *   instead of making us blindly guess
+		 */
+		if($pkg_config['include_file'] <> "") {
+			$static_output = "Loading package instructions...";
+			update_output_window($static_output);
+			fwrite($fd_log, "require_once('include_file')\n");
+			require_once($pkg_config['include_file']);
+		}			
 		/* sidebar items */
 		if($pkg_config['menu'] != "") {
 			$static_output .= "\tMenu items... ";

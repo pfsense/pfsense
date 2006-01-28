@@ -2081,6 +2081,7 @@ fodms		7200/udp   #FODMS FLIP
 dlip		7201/tcp
 dlip		7201/udp
 ftp-proxy	8021/tcp   # pf ftp-proxy
+spamd		8025/tcp   # spamd(8)
 natd		8668/divert # Network Address Translation
 jetdirect	9100/tcp   #HP JetDirect card
 man		9535/tcp

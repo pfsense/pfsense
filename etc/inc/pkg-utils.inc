@@ -463,13 +463,6 @@ function install_package_xml($pkg) {
 	}
 	fclose($fd);
 
-	/*   if a require exists, include it.  this will
-	 *   show us where an error exists in a package
-         *   instead of making us blindly guess
-	 */
-	if($pkg_info['include_file'] <> "")
-		require_once($pkg_info['include_file']);
-
 	/* pkg_add the package and its dependencies */
 	if($pkg_info['depends_on_package_base_url'] != "") {
 		update_status("Installing " . $pkg_info['name'] . " and its dependencies.");
@@ -510,6 +503,16 @@ function install_package_xml($pkg) {
 		$static_output .= "Loading package configuration... ";
 		update_output_window($static_output);
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $configfile, "packagegui");
+		/*   if a require exists, include it.  this will
+		 *   show us where an error exists in a package
+		 *   instead of making us blindly guess
+		 */
+		if($pkg_config['include_file'] <> "") {
+			$static_output = "Loading package instructions...";
+			update_output_window($static_output);
+			fwrite($fd_log, "require_once('include_file')\n");
+			require_once($pkg_config['include_file']);
+		}		
 		$static_output .= "done.\n";
 		update_output_window($static_output);
 		$static_output .= "Configuring package components...\n";
@@ -594,12 +597,18 @@ function install_package_xml($pkg) {
 		$static_output .= "\tCustom commands... ";
 		update_output_window($static_output);
 		if($pkg_config['custom_php_global_functions'] <> "") {
+			$static_output = "Executing custom_php_global_functions()...";
+			update_output_window($static_output);			
 			eval_once($pkg_config['custom_php_global_functions']);
 		}
 		if($pkg_config['custom_php_install_command']) {
+			$static_output = "Executing custom_php_install_command()...";
+			update_output_window($static_output);
 			eval_once($pkg_config['custom_php_install_command']);
 		}
 		if($pkg_config['custom_php_resync_config_command'] <> "") {
+			$static_output = "Executing custom_php_resync_config_command()...";
+			update_output_window($static_output);
 			eval_once($pkg_config['custom_php_resync_config_command']);
 		}
 		$static_output .= "done.\n";
@@ -616,11 +625,33 @@ function install_package_xml($pkg) {
 	}
 }
 
-function delete_package($pkg) {
+function delete_package($pkg, $pkgid) {
 	global $g, $config, $fd_log, $static_output;
 	update_status("Removing package...");
 	$static_output .= "Removing package... ";
 	update_output_window($static_output);
+	$pkgid = get_pkg_id($pkgid);
+	$pkg_info = $config['installedpackages']['package'][$pkgid];
+	echo $id . "<p>";
+	echo $pkg_config . "<p>";
+	$configfile = $pkg_info['configurationfile'];
+	echo $configfile . "<p>";
+	if(file_exists("/usr/local/pkg/" . $configfile)) {
+		$static_output .= "\nLoading package configuration $configfile... ";
+		update_output_window($static_output);
+		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $configfile, "packagegui");
+		/*   if a require exists, include it.  this will
+		 *   show us where an error exists in a package
+		 *   instead of making us blindly guess
+		 */
+		if($pkg_config['include_file'] <> "") {
+			$static_output .= "\nLoading package instructions...\n";
+			update_output_window($static_output);
+			require_once($pkg_config['include_file']);
+		}
+	}
+	$static_output .= "\Starting package deletetion...\n";
+	update_output_window($static_output);	
 	delete_package_recursive($pkg);
 	$static_output .= "done.\n";
 	update_output_window($static_output);

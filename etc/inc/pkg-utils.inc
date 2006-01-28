@@ -413,9 +413,9 @@ function install_package($package, $pkg_info = "") {
 	$static_output .= "Writing configuration... ";
 	update_output_window($static_output);
 	write_config($changedesc);
-	$static_output .= "done.";
+	$static_output .= "done.\n";
 	update_output_window($static_output);
-	$static_output .= "Starting service.";
+	$static_output .= "Starting service.\n";
 	update_output_window($static_output);	
 	start_service($pkg_info['config_file']);	
 }

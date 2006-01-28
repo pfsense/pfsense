@@ -158,6 +158,10 @@ if ($_POST) {
 
 		write_config();
 
+		if($pkg['include_file'] <> "") {
+			require_once($pkg['include_file']);
+		}
+
 		// late running code
 		if($pkg['custom_add_php_command_late'] <> "") {
 		    eval($pkg['custom_add_php_command_late']);

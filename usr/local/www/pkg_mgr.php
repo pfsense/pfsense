@@ -78,6 +78,7 @@ include("fbegin.inc");
 		  <td width="10%" class="listhdrr">Size</td>
 -->
 		  <td width="5%" class="listhdrr">Status</td>
+		  <td width="5%" class="listhdrr">Maintainer</td>
                   <td width="50%" class="listhdr">Description</td>
                 </tr>
 
@@ -126,6 +127,11 @@ include("fbegin.inc");
 					<br>
 					<?= $index['version'] ?>
                                 </td>
+                                <td class="listbg">
+                                    <font color="#ffffff">
+                                    <?= $index['maintainer'] ?>
+				    &nbsp;
+                                </td>					
                                 <td class="listbg">
                                     <font color="#ffffff">
                                     <?= $index['descr'] ?>

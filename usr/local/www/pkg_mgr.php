@@ -30,7 +30,7 @@
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
-$pkg_info = get_pkg_info('all', array('name', 'category', 'website', 'version', 'status', 'descr'));
+$pkg_info = get_pkg_info('all', array('name', 'category', 'website', 'version', 'status', 'descr', 'maintainer'));
 if($pkg_info) {
 	$fout = fopen("{$g['tmp_path']}/pkg_info.cache", "w");
 	fwrite($fout, serialize($pkg_info));
@@ -127,6 +127,15 @@ include("fbegin.inc");
 					<br>
 					<?= $index['version'] ?>
                                 </td>
+                                <td class="listlr">
+					<?php
+						if($index['maintainer'] != "") {
+							echo "<a href='{$index['maintainer']}'>{$index['maintainer']}</a>";
+						} else {
+							echo "Unknown";
+						}
+					?>
+                                </td>				
                                 <td class="listbg">
                                     <font color="#ffffff">
                                     <?= $index['maintainer'] ?>

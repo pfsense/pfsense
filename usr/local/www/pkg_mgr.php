@@ -136,8 +136,7 @@ include("fbegin.inc");
 						}
 					?>
                                 </td>				
-                                <td class="listbg">
-                                    <font color="#ffffff">
+                                <td class="listlr">
                                     <?= $index['maintainer'] ?>
 				    &nbsp;
                                 </td>					

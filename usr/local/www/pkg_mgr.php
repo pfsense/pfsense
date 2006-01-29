@@ -135,11 +135,7 @@ include("fbegin.inc");
 							echo "Unknown";
 						}
 					?>
-                                </td>				
-                                <td class="listlr">
-                                    <?= $index['maintainer'] ?>
-				    &nbsp;
-                                </td>					
+                                </td>									
                                 <td class="listbg">
                                     <font color="#ffffff">
                                     <?= $index['descr'] ?>

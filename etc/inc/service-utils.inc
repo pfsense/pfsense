@@ -75,7 +75,7 @@ function start_service($name) {
 					if(file_exists($prefix . $service['rcfile']))
 						mwexec_bg($prefix . $service['rcfile'] . " start");
 					if(file_exists("/usr/local/etc/rc.d/{$name}.sh"))
-						mwexec_bg($prefix . $service['rcfile'] . " start");
+						mwexec_bg("/usr/local/etc/rc.d/{$name}.sh start");
 				}
 				if($service['startcmd']) {
 					eval($service['startcmd']);

@@ -78,32 +78,43 @@ $pgtitle = "VPN: OpenVPN";
 include("head.inc");
 
 ?>
-
 <?php include("fbegin.inc"); ?>
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (file_exists($d_sysrebootreqd_path) && !file_exists($d_ovpncrldirty_path)) print_info_box(get_std_save_message(0)); ?>
+
 <form action="vpn_openvpn_crl.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
 <?php if (file_exists($d_ovpncrldirty_path)): ?><p>
-<?php print_info_box_np("OpenVPN CRL files have been changed.<br>You must apply the changes in order for them to take effect.");?><br>
-<input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
+<?php print_info_box_np("OpenVPN CRL files have been changed.<br>You must apply the changes in order for them to take effect.");?>
 <?php endif; ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
-  <ul id="tabnav">	        
-	<li class="tabinact"><a href="vpn_openvpn_srv.php">Server</a></li>
-	<li class="tabinact"><a href="vpn_openvpn_cli.php">Client</a></li>
-	<li class="tabinact"><a href="vpn_openvpn_ccd.php">Client-specific Configuration</a></li>
-	<li class="tabact">CRL</li>
-  </ul>
+  <?php
+	$tab_array = array();
+	$tab_array[] = array("Server", false, "vpn_openvpn_srv.php");
+	$tab_array[] = array("Client", false, "vpn_openvpn_cli.php");
+	$tab_array[] = array("Client-specific Configuration", false, "vpn_openvpn_ccd.php");
+	$tab_array[] = array("CRL", true, "vpn_openvpn_crl.php");
+	display_top_tabs($tab_array);
+?>
   </td></tr>
-  <tr>
-  <td class="tabcont">
-  <strong><span class="red">WARNING: This feature is experimental and modifies your optional interface configuration.
-  Backup your configuration before using OpenVPN, and restore it before upgrading.<br>
-  &nbsp;<br>
-  </span></strong>
-    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  
+  <tr> 
+    <td>
+	<div id="mainarea">
+        <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+                <tr> 
+                  <td class="vtable">
+				    <strong><span class="red">WARNING: This feature is experimental and modifies your optional interface configuration.
+					Backup your configuration before using OpenVPN, and restore it before upgrading.
+				    </span></strong>
+				  </td>
+				</tr>
+        </table>
+		
+    <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 	  <td width="40%" class="listhdrr">CRL name</td>
 	  <td width="50%" class="listhdr">Description</td>
@@ -126,31 +137,33 @@ include("head.inc");
 	  <td class="listbg"><?=$spans;?>
 		<?= htmlspecialchars($crl['descr']);?>&nbsp;
 	  <?=$spane;?></td>
-	  <td valign="middle" nowrap class="list"><a href="vpn_openvpn_crl_edit.php?id=<?=$i;?>"><img src="e.gif" title="edit CRL file" width="17" height="17" border="0"></a>
-		&nbsp;<a href="vpn_openvpn_crl.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this CRL file?')"><img src="x.gif" title="delete CRL file" width="17" height="17" border="0"></a></td>
+	  <td valign="middle" nowrap class="list"><a href="vpn_openvpn_crl_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit CRL file" width="17" height="17" border="0"></a>
+		&nbsp;<a href="vpn_openvpn_crl.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this CRL file?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="delete CRL file" width="17" height="17" border="0"></a></td>
 	</tr>
   	<?php $i++; endforeach; ?>
 	<tr> 
 	  <td class="list" colspan="2">&nbsp;</td>
-	  <td class="list"><a href="vpn_openvpn_crl_edit.php"><img src="plus.gif" title="add CRL file" width="17" height="17" border="0"></a></td>
+	  <td class="list"><a href="vpn_openvpn_crl_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add CRL file" width="17" height="17" border="0"></a></td>
 	</tr>
-    </table><br>
-    <span class="vexpl">
-      <span class="red"><strong>Note:</strong></span><br>
-	A  CRL  (certificate  revocation list) is used when a particular
-	key is compromised but when the overall PKI is still intact.<br>
-	<br>
-	Suppose you had a PKI consisting of a CA, root certificate,  and
-	a number of client certificates.  Suppose a laptop computer
-	containing a client key and certificate was stolen.  By adding  the
-	stolen certificate to the CRL file, you could reject any connection
-	which attempts to use it, while preserving the overall
-	integrity of the PKI.<br>
-	<br>
-	The  only  time when it would be necessary to rebuild the entire
-	PKI from scratch would be if the root certificate key itself was
-	compromised.
-    </span>
+	<td colspan="4">
+		      <p><span class="vexpl"><span class="red"><strong>Note:</strong></span><br>
+					A  CRL  (certificate  revocation list) is used when a particular
+					key is compromised but when the overall PKI is still intact.<br>
+					<br>
+					Suppose you had a PKI consisting of a CA, root certificate,  and
+					a number of client certificates.  Suppose a laptop computer
+					containing a client key and certificate was stolen.  By adding  the
+					stolen certificate to the CRL file, you could reject any connection
+					which attempts to use it, while preserving the overall
+					integrity of the PKI.<br>
+					<br>
+					The  only  time when it would be necessary to rebuild the entire
+					PKI from scratch would be if the root certificate key itself was
+					compromised.
+				    </span>
+			  </p>
+	</td>
+    </table>
   </td>
 </tr>
 </table>

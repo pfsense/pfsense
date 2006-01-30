@@ -262,7 +262,6 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'lo',
 				'ng',
 				'vlan',
-				'tun',
 				'pflog',
 				'pfsync',
 				'carp'

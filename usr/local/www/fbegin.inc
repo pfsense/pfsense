@@ -149,7 +149,7 @@ require_once("notices.inc");
 							<li><a href="/vpn_ipsec.php" class="navlnk">IPsec</a></li>
 							<?php
 								if(isset($config['system']['developer'])) {
-									echo "<li><a href=\"/vpn_openvpn.php\" class=\"navlnk\">OpenVPN</a></li>";
+									echo "<li><a href=\"/vpn_openvpn_srv.php\" class=\"navlnk\">OpenVPN</a></li>";
 								}
 							?>
 							<li><a href="/vpn_pptp.php" class="navlnk">PPTP</a></li>

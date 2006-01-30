@@ -27,7 +27,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("VPN", "OpenVPN");
 require("guiconfig.inc");
 require_once("openvpn.inc");
 
@@ -81,32 +80,49 @@ if ($_GET['act'] == "del") {
 		exit;
 	}
 }
+
+$pgtitle = "VPN: OpenVPN";
+include("head.inc");
+
 ?>
 <?php include("fbegin.inc"); ?>
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (file_exists($d_sysrebootreqd_path) && !file_exists($d_ovpnclidirty_path)) print_info_box(get_std_save_message(0)); ?>
 <form action="vpn_openvpn_cli.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
 <?php if (file_exists($d_ovpnclidirty_path)): ?><p>
-<?php print_info_box_np("The OpenVPN client configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
-<input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
+<?php print_info_box_np("The OpenVPN client configuration has been changed.<br>You must apply the changes in order for them to take effect.");?>
 <?php endif; ?>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
-  <ul id="tabnav">	        
-	<li class="tabinact1"><a href="vpn_openvpn_srv.php">Server</a></li>
-	<li class="tabact">Client</li>
-	<li class="tabinact"><a href="vpn_openvpn_ccd.php">Client-specific Configuration</a></li>
-	<li class="tabinact"><a href="vpn_openvpn_crl.php">CRL</a></li>
-  </ul>
+<?php
+	$tab_array = array();
+	$tab_array[] = array("Server", false, "vpn_openvpn_srv.php");
+	$tab_array[] = array("Client", true, "vpn_openvpn_cli.php");
+	$tab_array[] = array("Client-specific Configuration", false, "vpn_openvpn_ccd.php");
+	$tab_array[] = array("CRL", false, "vpn_openvpn_crl.php");
+	display_top_tabs($tab_array);
+?>
   </td></tr>
-  <tr>
-  <td class="tabcont">
-  <strong><span class="red">WARNING: This feature is experimental and modifies your optional interface configuration.
-  Backup your configuration before using OpenVPN, and restore it before upgrading.<br>
-&nbsp;  <br>
-    </span></strong>
-    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+
+  <tr> 
+    <td>
+	<div id="mainarea">
+        <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
+                <tr> 
+                  <td class="vtable">
+					  <strong><span class="red">WARNING: This feature is experimental and modifies your optional interface configuration.
+					  Backup your configuration before using OpenVPN, and restore it before upgrading.
+					  </span></strong>
+					   </td>
+				</tr>
+        </table>
+					  
+					  
+					  
+    <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 	  <td width="10%" class="listhdrr">Interface</td>
 	  <td width="5%" class="listhdrr">Protocol</td>
@@ -148,13 +164,13 @@ if ($_GET['act'] == "del") {
 	   <td class="listbg"><?=$spans;?>
 	  	<?= htmlspecialchars($client['descr']);?>&nbsp;
 	  <?=$spane;?></td>
-	  <td valign="middle" nowrap class="list"> <a href="vpn_openvpn_cli_edit.php?id=<?=$i;?>"><img src="e.gif" title="edit client configuration" width="17" height="17" border="0"></a>
-		 &nbsp;<a href="vpn_openvpn_cli.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this client configuration?')"><img src="x.gif" title="delete client configuration" width="17" height="17" border="0"></a></td>
+	  <td valign="middle" nowrap class="list"> <a href="vpn_openvpn_cli_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit client configuration" width="17" height="17" border="0"></a>
+		 &nbsp;<a href="vpn_openvpn_cli.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this client configuration?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="delete client configuration" width="17" height="17" border="0"></a></td>
 	</tr>
   	<?php $i++; endforeach; ?>
 	<tr> 
 	  <td class="list" colspan="6">&nbsp;</td>
-	  <td class="list"> <a href="vpn_openvpn_cli_edit.php"><img src="plus.gif" title="add client configuration" width="17" height="17" border="0"></a></td>
+	  <td class="list"> <a href="vpn_openvpn_cli_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add client configuration" width="17" height="17" border="0"></a></td>
 	</tr>
     </table>
   </td>

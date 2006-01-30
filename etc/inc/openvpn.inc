@@ -104,6 +104,12 @@ function ovpn_config_server($reconfigure) {
 				/* next server */
 				continue;
 			}
+			/* restart openvpn daemon if pf is restarted, but not on boot, hence the else if */
+			else if ( $reconfigure == "pfreload") {
+				ovpn_server_kill($tun);
+				mwexec("/usr/local/sbin/openvpn {$g['varetc_path']}/ovpn_srv_{$tun}.conf");
+				continue;
+			}
 
 			/* send SIGUSR1 to running openvpn daemon */
 			if ( $reconfigure == "true" && isset($server['dynip'])) {
@@ -180,6 +186,9 @@ function ovpn_server_kill($tun) {
 function ovpn_srv_config_generate($id) {
 	global $config, $g;
 	$server = $config['ovpn']['server']['tunnel'][$id];
+
+	/* mount filesystem for read/write */
+	conf_mount_rw();
 
 	/* get tunnel interface */
 	$tun = $server['tun_iface'];
@@ -433,6 +442,9 @@ EOD;
 
 	fwrite($fd, $ovpn_config);
 	fclose($fd);
+
+	/* return from filesystem read/write mode and mount read-only */
+	conf_mount_ro();
 
 	//trigger_error("OVPN: $ovpn_config", E_USER_NOTICE);
 }
@@ -768,7 +780,7 @@ function ovpn_crl_dirty($name) {
 
 function ovpn_config_client() {
 	/* Boot time configuration */
-	global $config, $g, $d_ovpnclidirty_path;;
+	global $config, $g, $d_ovpnclidirty_path;
 	
 	foreach ($config['ovpn']['client']['tunnel'] as $id => $client) {
 

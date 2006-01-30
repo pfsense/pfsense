@@ -249,7 +249,8 @@ function filter_generate_aliases() {
 	$bridgetracker = 0;
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		/* do not process tun interfaces */
-		if(stristr(filter_opt_interface_to_real($ifname), "tun") == true) continue;
+		/* do process tun interfaces for openvpn compatibility */
+		/* if(stristr(filter_opt_interface_to_real($ifname), "tun") == true) continue; */
 		$aliases .= filter_get_opt_interface_descr($ifname) . " = \"{ " . filter_opt_interface_to_real($ifname);
 		if($config['interfaces'][$ifname]['bridge'] <> "") {
 			$aliases .= " bridge{$bridgetracker} ";

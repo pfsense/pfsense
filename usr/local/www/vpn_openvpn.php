@@ -50,7 +50,7 @@ if ($_POST) {
 	unset($input_errors);
 
 	/* input validation */
-	if ($_POST['enable']) {
+	if (isset($_POST['enable'])) {
 		$reqdfields = explode(" ", "tun_iface bind_iface ipblock");
 		$reqdfieldsn = explode(",", "Tunnel type,Interface binding,IP address block start");
 
@@ -59,7 +59,7 @@ if ($_POST) {
 	}
 	
 	/* need a test here to make sure prefix and max_clients are coherent */
-	
+		
 	/* Sort out the cert+key files */
 	if (is_null($_POST['ca_cert']))
 		$input_errors[] = "You must provide a CA certificate file";
@@ -84,7 +84,6 @@ if ($_POST) {
 	if (!$input_errors) {
 		$server =& $config['ovpn']['server'];
 		$server['enable'] = $_POST['enable'] ? true : false;
-		
 		/* Make sure that the tunnel interface type has not changed */
 		if ($server['tun_iface'] != $_POST['tun_iface']){ 
 			$server['tun_iface'] = $_POST['tun_iface'];
@@ -133,7 +132,7 @@ if ($_POST) {
 		}
 		else{
 			ovpn_lock();
-			$retval = ovpn_config_server();
+			$retval = ovpn_config_server($server['enable']);
 			ovpn_unlock();
 		}
 		$savemsg = get_std_save_message($retval);

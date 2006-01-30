@@ -72,5 +72,10 @@ $iptos = array("lowdelay", "throughput", "reliability", "congestion");
 /* TCP flags */
 $tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg");
 
+/* OpenVPN Directories */
+$d_ovpnsrvdirty_path = "/tmp/ovpn-srv.dirty";
+$d_ovpncrldirty_path = "/tmp/ovpn-crl.dirty";
+$d_ovpnclidirty_path = "/tmp/ovpn-cli.dirty";
+
 
 ?>

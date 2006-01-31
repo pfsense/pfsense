@@ -83,9 +83,12 @@ if ($_POST) {
     }
 } else {
 	if (($_GET['act'] == "del") && $a_element[$_GET['id']]) {
+		conf_mount_rw();
+		unlink_if_exists($g['captiveportal_path'] . "/" . $a_element[$id]['name']);
 		unset($a_element[$_GET['id']]);
 		write_config();
 		captiveportal_write_elements();
+		conf_mount_ro();
 		header("Location: services_captiveportal_filemanager.php");
 		exit;
 	}

@@ -892,7 +892,7 @@ function captiveportal_write_elements() {
 	}
 	
 	if (is_array($config['captiveportal']['element'])) {
-	
+		conf_mount_rw();
 		foreach ($config['captiveportal']['element'] as $data) {
 			$fd = @fopen($g['captiveportal_element_path'] . '/' . $data['name'], "wb");
 			if (!$fd) {
@@ -902,7 +902,10 @@ function captiveportal_write_elements() {
 			$decoded = base64_decode($data['content']);
 			fwrite($fd,$decoded);
 			fclose($fd);
+			unlink_if_exists("{$g['captiveportal_path']}/{$data['name']}");
+			mwexec("cd {$g['captiveportal_path']}/ && ln -s {$g['captiveportal_element_path']}/{$data['name']} {$data['name']}");
 		}
+		conf_mount_ro();
 	}
 	
 	return 0;

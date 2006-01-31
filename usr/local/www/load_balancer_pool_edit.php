@@ -213,8 +213,8 @@ function clearcombo(){
 			<td width="22%" valign="top" class="vncellreq">Monitor</td>
 			<td width="78%" class="vtable" colspan="2">
 				<select id="monitor" name="monitor">
-					<option value="TCP">TCP</option>
-					<option value="ICMP">ICMP</option>
+					<option value="TCP"<?php if($pconfig['monitor'] == "TCP") echo " SELECTED"; ?>>TCP</option>
+					<option value="ICMP"<?php if($pconfig['monitor'] == "ICMP") echo " SELECTED"; ?>>ICMP</option>
 					<!-- billm - XXX: add HTTP/HTTPS here -->
 				</select>
 			</td>

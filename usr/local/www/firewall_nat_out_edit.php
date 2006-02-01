@@ -200,6 +200,11 @@ if ($_POST) {
         $natent['natport'] = $_POST['natport'];
         $natent['dstport'] = $_POST['dstport'];
 
+	if($_POST['nosync'] == "yes")
+		$natent['nosync'] = true;
+	else
+		unset($natent['nosync']);
+
         if (isset($_POST['destination_not']) && $ext != "any")
             $natent['destination']['not'] = true;
 
@@ -211,11 +216,6 @@ if ($_POST) {
 		else
 			$a_out[] = $natent;
 	}
-
-	if($_POST['nosync'] <> "")
-		$natent['nosync'] = true;
-	else
-		unset($natent['nosync']);
 
         touch($d_natconfdirty_path);
 
@@ -378,7 +378,8 @@ function sourcesel_change() {
 		foreach ($config['virtualip']['vip'] as $sn): ?>
 				<option value="<?=$sn['subnet'];?>" <?php if ($sn['subnet'] == $pconfig['target']) echo "selected"; ?>><?=htmlspecialchars("{$sn['subnet']} ({$sn['descr']})");?></option>
 <?php 		endforeach;
-	endif; ?>
+	endif;
+?>
 				<option value=""<?php if($pconfig['target'] == "any") echo " selected"; ?>>any</option>
 			  </select>
 			  </td>
@@ -407,7 +408,7 @@ function sourcesel_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncell">No XMLRPC Sync</td>
                   <td width="78%" class="vtable">
-                    <input name="nosync" type="checkbox" class="formfld" id="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
+                    <input value="yes" name="nosync" type="checkbox" class="formfld" id="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
 		    HINT: This prevents the rule from automatically syncing to other carp members.
 		  </td>
                 </tr>

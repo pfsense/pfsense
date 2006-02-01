@@ -240,10 +240,11 @@ include("head.inc");
                   <td width="3%" class="list">&nbsp;</td>
                   <td width="3%" class="list">&nbsp;</td>
                   <td width="10%" class="listhdrr">Interface</td>
-                  <td width="20%" class="listhdrr">Source</td>
-                  <td width="20%" class="listhdrr">Destination</td>
-                  <td width="20%" class="listhdrr">Destination Port</td>
-                  <td width="20%" class="listhdrr">NAT Address</td>
+                  <td width="15%" class="listhdrr">Source</td>
+                  <td width="10%" class="listhdrr">Source Port</td>
+                  <td width="15%" class="listhdrr">Destination</td>
+                  <td width="10%" class="listhdrr">Destination Port</td>
+                  <td width="15%" class="listhdrr">NAT Address</td>
                   <td width="10%" class="listhdrr">NAT Port</td>
 		  <td width="10%" class="listhdrr">Static Port</td>
                   <td width="25%" class="listhdr">Description</td>
@@ -304,11 +305,11 @@ include("head.inc");
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
-                      if (!$natent['sourceport'])
+                      if (!$natent['natport'])
                           echo "*";
                       else
-                          echo $natent['sourceport'];
-                    ?>		    
+                          echo $natent['natport'];
+                    ?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$nnats;?>';">
                     <?php
@@ -333,7 +334,7 @@ include("head.inc");
                     </table>
               <?php $i++; $nnats++; endforeach; ?>
                 <tr>
-                  <td class="list" colspan="10"></td>
+                  <td class="list" colspan="11"></td>
                   <td class="list" valign="middle" nowrap>
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>

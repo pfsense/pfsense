@@ -174,36 +174,42 @@ function typesel_change() {
 			document.iform.address_subnet.disabled = 1;
 			document.iform.address_subnet.value = "";
 			document.iform.address_subnet.selected = 0;
-			newrows = totalrows+1;
+			newrows = totalrows+100;
 			for(i=2; i<newrows; i++) {
-				comd = 'document.iform.address_subnet' + i + '.disabled = 1;';
-				eval(comd);
-				comd = 'document.iform.address_subnet' + i + '.value = "";';
-				eval(comd);
+				var item = document.getElementById('document.iform.address_subnet' + i);
+				if(item) {
+					comd = 'document.iform.address_subnet' + i + '.disabled = 1;';
+					eval(comd);
+					comd = 'document.iform.address_subnet' + i + '.value = "";';
+					eval(comd);
+				}
 			}
 			break;
 		case 1:	/* network */
 			var cmd;
 			document.iform.address_subnet.disabled = 0;
-//			document.iform.address_subnet.value = "";
-			newrows = totalrows+1;
+			newrows = totalrows+100;
 			for(i=2; i<newrows; i++) {
-				comd = 'document.iform.address_subnet' + i + '.disabled = 0;';
-				eval(comd);
-//				comd = 'document.iform.address_subnet' + i + '.value = "32";';
-//				eval(comd);
+				var item = document.getElementById('document.iform.address_subnet' + i);
+				if(item) {
+					comd = 'document.iform.address_subnet' + i + '.disabled = 0;';
+					eval(comd);
+				}
 			}
 			break;
 		case 2:	/* port */
 			var cmd;
 			document.iform.address_subnet.disabled = 1;
 			document.iform.address_subnet.value = "";
-			newrows = totalrows+1;
+			newrows = totalrows+100;
 			for(i=2; i<newrows; i++) {
-				comd = 'document.iform.address_subnet' + i + '.disabled = 1;';
-				eval(comd);
-				comd = 'document.iform.address_subnet' + i + '.value = "32";';
-				eval(comd);
+				var item = document.getElementById('document.iform.address_subnet' + i);
+				if(item) {
+					comd = 'document.iform.address_subnet' + i + '.disabled = 1;';
+					eval(comd);
+					comd = 'document.iform.address_subnet' + i + '.value = "32";';
+					eval(comd);
+				}
 			}
 			break;
 	}

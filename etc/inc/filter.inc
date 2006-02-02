@@ -2056,6 +2056,21 @@ function process_carp_rules() {
 
 function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsense.restore_config_section') {
 	global $config, $g;
+	$config_copy = $config;
+
+	/* strip out nosync items */
+	for($x=0; $x<count($config_copy['nat']['advancedoutbound']['rule']); $x++) {
+		if(isset($config_copy['nat']['advancedoutbound']['rule'][$x]['nosync']))
+			unset($config_copy['nat']['advancedoutbound']['rule'][$x]['nosync']);
+	}
+	for($x=0; $x<count($config_copy['nat']['rule']); $x++) {
+		if(isset($config_copy['nat']['rule'][$x]['nosync']))
+			unset($config_copy['nat']['rule'][$x]['nosync']);
+	}
+	for($x=0; $x<count($config_copy['filter']['rule']); $x++) {
+		if(isset($config_copy['filter']['rule'][$x]['nosync']))
+			unset($config_copy['filter']['rule'][$x]['nosync']);
+	}
 
 	if($g['booting'])
 		return;
@@ -2064,7 +2079,7 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 		/* we can't use array_intersect_key()
 		   due to the vip 'special case' */
 		if($section != 'virtualip') {
-			$xml[$section] = $config[$section];
+			$xml[$section] = $config_copy[$section];
 		} else {
 			$xml[$section] = backup_vip_config_section();
 		}

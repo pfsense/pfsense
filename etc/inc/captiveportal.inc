@@ -183,10 +183,13 @@ EOD;
 		 * 	       addresses.
 		 */
 		$use_fastcgi = false;
+		
+		$cp_port = "8000";
 
 		if(isset($config['captiveportal']['httpslogin'])) {
 			$cert = base64_decode($config['captiveportal']['certificate']);
 			$key = base64_decode($config['captiveportal']['private-key']);
+			$cp_port = "8001";
 		}
 		
 		if ($config['captiveportal']['maxproc'])
@@ -196,7 +199,7 @@ EOD;
 
 		/* generate lighttpd configuration */
 		system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal.conf",
-			$cert, $key, "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/",
+			$cert, $key, "lighty-CaptivePortal.pid", $cp_port, "/usr/local/captiveportal/",
 				"cert-portal.pem", "1", $maxproc, $use_fastcgi, true);
 					
 		/* attempt to start lighttpd */

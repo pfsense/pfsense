@@ -132,7 +132,7 @@ include("fbegin.inc");
 						if($index['maintainer'] != "") {
 							echo "<a href='{$index['maintainer']}'>{$index['maintainer']}</a>";
 						} else {
-							echo "Unknown";
+							echo "Nobody. <a href='mailto:coreteam@pfsense.com'>Apply</a> for it!";
 						}
 					?>
                                 </td>									

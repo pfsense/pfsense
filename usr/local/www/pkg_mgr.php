@@ -130,7 +130,7 @@ include("fbegin.inc");
                                 <td class="listlr">
 					<?php
 						if($index['maintainer'] != "") {
-							echo "<a href='{$index['maintainer']}'>{$index['maintainer']}</a>";
+							echo "<a href='mailto:{$index['maintainer']}'>{$index['maintainer']}</a>";
 						} else {
 							echo "Nobody. <a href='mailto:coreteam@pfsense.com'>Apply</a> for it!";
 						}

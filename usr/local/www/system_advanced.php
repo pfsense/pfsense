@@ -44,10 +44,6 @@ $pconfig['harddiskstandby'] = $config['system']['harddiskstandby'];
 $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['filteringbridge_enable'] = isset($config['bridge']['filteringbridge']);
 $pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
-/* billm: alternate schedulers are currently disable */
-/* 
- * $pconfig['schedulertype'] = $config['shaper']['schedulertype'];
- */
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
 $pconfig['theme'] = $config['system']['theme'];
 $pconfig['disablerendevouz'] = $config['system']['disablerendevouz'];
@@ -182,8 +178,6 @@ if ($_POST) {
 			unset($config['system']['webgui']['noantilockout']);
 
 		/* Firewall and ALTQ options */
-		/* alternate scheduler types are currently unsupported */
-		//$config['shaper']['schedulertype'] = $_POST['schedulertype'];
 		$config['system']['maximumstates'] = $_POST['maximumstates'];
 
 		if($_POST['enablesshd'] == "yes") {
@@ -509,27 +503,6 @@ include("head.inc");
 				<br />
 			</td>
 		</tr>
-<!---
-		<tr>
-			<td width="22%" valign="top" class="vncell">Traffic Shaper Scheduler</td>
-			<td width="78%" class="vtable">
-				<select id="schedulertype" name="schedulertype" <?= $style ?>>
-					<option value="priq"<?php if($pconfig['schedulertype'] == 'priq') echo " selected"; ?>>Priority based queueing</option>
-					<option value="cbq"<?php if($pconfig['schedulertype'] == 'cbq') echo " selected"; ?>>Class based queueing</option>
-					<option value="hfsc"<?php if($pconfig['schedulertype'] == 'hfsc') echo " selected"; ?>>Hierarchical Fair Service Curve queueing</option>
-				</select>
-				<br />
-				<span class="vexpl"><b>Select which type of queueing you would like to use</b></span>
-				<?php if (is_array($config['shaper']['queue']) > 0): ?>
-				<script language="javascript" type="text/javascript">
-					document.iform.schedulertype.disabled = 1;
-				</script>
-				<br />
-				NOTE: This option is disabled since there are queues defined.
-				<?php endif; ?>
-			</td>
-		</tr>
--->
 		<tr>
 			<td width="22%" valign="top" class="vncell">Firewall Optimization Options</td>
 			<td width="78%" class="vtable">

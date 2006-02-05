@@ -689,6 +689,19 @@ function filter_nat_rules_generate() {
 				}
 			}
 
+			/*    does this rule redirect back to a internal host?
+			 *    if so, add some extra goo to help this work.
+			 */
+			$rule_friendly_if  = convert_friendly_interface_to_real_interface_name($rule['interface']);
+			$rule_interface_ip = find_interface_ip($rule_friendly_if);
+			$rule_interface_subnet = $config['interfaces'][$rule['interface']]['subnet'];
+			$rule_subnet = gen_subnet($rule_interface_ip, $rule_interface_subnet);
+			if($rule['external-address'] == "any" and $rule['interface'] == "lan") {
+				$natrules .= "\n";
+				$natrules .= "no nat on {$rule_friendly_if} proto tcp from {$rule_friendly_if} to {$rule_subnet}/{$rule_interface_subnet}\n";
+				$natrules .= "nat on {$rule_friendly_if} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$extport[0]} -> {$rule_friendly_if}\n";
+			}
+
 			/*    setup reflection rule for this item if requested
 			 *    sponsored by Robin Greenhagen www.gsihosting.com
 			 */
@@ -1651,15 +1664,22 @@ EOD;
 		else
 			$pptpdtarget = $pptpdcfg['redir'];
 
-		$ipfrules .= <<<EOD
+		if($pptpdtarget) {
+			$ipfrules .= <<<EOD
 
 # PPTPd rules
 anchor "pptp"
-pass in quick proto gre from any to $pptpdtarget keep state label "allow gre pptpd"
-pass in quick proto tcp from any to $pptpdtarget port = 1723 keep state label "allow pptpd {$pptpdtarget}"
-
+pass in quick proto gre from any to $pptpdtarget modulate state label "allow gre pptpd"
+pass in quick proto tcp from any to $pptpdtarget port = 1723 modulate state label "allow pptpd {$pptpdtarget}"
 
 EOD;
+
+		} else {
+			/*    this shouldnt ever happen but instead of breaking the clients ruleset
+			 *    log an error.
+                         */
+			log_error("ERROR!  PPTP enabled but could not resolve the \$pptpdtarget");
+		}
 	}
 
 	/* BigPond client enabled? */

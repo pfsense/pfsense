@@ -598,7 +598,12 @@ function vpn_pptpd_configure() {
 		killbypid("{$g['varrun_path']}/mpd-vpn.pid");
 		
 		/* wait for process to die */
-		sleep(2);
+		sleep(3);
+		
+		if(is_process_running("mpd -b")) {
+			killbypid("{$g['varrun_path']}/mpd-vpn.pid");
+			log_error("Could not kill mpd within 3 seconds.   Trying again.");
+		}
 		
 		/* remove mpd.conf, if it exists */
 		unlink_if_exists("{$g['varetc_path']}/mpd-vpn/mpd.conf");

@@ -53,6 +53,7 @@ function captiveportal_configure() {
 		
 		/* kill any running mini_httpd */
 		killbypid("{$g['varrun_path']}/lighty-CaptivePortal.pid");
+		killbypid("{$g['varrun_path']}/lighty-CaptivePortal-SSL.pid");
 		
 		/* kill any running minicron */
 		killbypid("{$g['varrun_path']}/minicron.pid");
@@ -159,7 +160,7 @@ EOD;
 		mwexec("/sbin/ipfw -f delete set 2");
 		mwexec("/sbin/ipfw -f delete set 3");
 		
-		/* XXX - seems like ipfw cannot accept rules directly on stdin,
+		/* ipfw cannot accept rules directly on stdin,
 		   so we have to write them to a temporary file first */
 		$fd = @fopen("{$g['tmp_path']}/ipfw.cp.rules", "w");
 		if (!$fd) {
@@ -184,26 +185,31 @@ EOD;
 		 */
 		$use_fastcgi = false;
 		
-		$cp_port = "8000";
-
 		if(isset($config['captiveportal']['httpslogin'])) {
 			$cert = base64_decode($config['captiveportal']['certificate']);
 			$key = base64_decode($config['captiveportal']['private-key']);
-			$cp_port = "8001";
+			/* generate lighttpd configuration */
+			system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal-SSL.conf",
+				$cert, $key, "lighty-CaptivePortal-ssl.pid", "8001", "/usr/local/captiveportal/",
+					"cert-portal.pem", "1", $maxproc, $use_fastcgi, true);
 		}
 		
 		if ($config['captiveportal']['maxproc'])
 			$maxproc = $config['captiveportal']['maxproc'];
 		else
 			$maxproc = 16;
-
+		
 		/* generate lighttpd configuration */
 		system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal.conf",
-			$cert, $key, "lighty-CaptivePortal.pid", $cp_port, "/usr/local/captiveportal/",
+			"", "", "lighty-CaptivePortal.pid", "8000", "/usr/local/captiveportal/",
 				"cert-portal.pem", "1", $maxproc, $use_fastcgi, true);
-					
+		
 		/* attempt to start lighttpd */
 		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-CaptivePortal.conf");
+		
+		/* fire up https instance */
+		if(isset($config['captiveportal']['httpslogin']))
+			$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-CaptivePortal-SSL.conf");
 		
 		/* start pruning process (interval defaults to 60 seconds) */
 		mwexec("/usr/local/bin/minicron $croninterval {$g['varrun_path']}/minicron.pid " .
@@ -219,7 +225,7 @@ EOD;
 				($config['captiveportal']['auth_method'] == "radius"))) {
 			$radiusip = $config['captiveportal']['radiusip'];
 			$radiusip2 = ($config['captiveportal']['radiusip2']) ? $config['captiveportal']['radiusip2'] : null;
-
+			
 			if ($config['captiveportal']['radiusport'])
 				$radiusport = $config['captiveportal']['radiusport'];
 			else
@@ -721,6 +727,7 @@ function captiveportal_allowedip_configure() {
 function captiveportal_get_last_activity($ruleno) {
 	
 	$ipfwoutput = "";
+	
 	exec("/sbin/ipfw -T list {$ruleno} 2>/dev/null", $ipfwoutput);
 	
 	/* in */

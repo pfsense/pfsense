@@ -101,7 +101,6 @@ fi
 
 if [ ! -L /etc/dhclient.conf ]; then
     rm -rf /etc/dhclient.conf
-    ln -s /var/etc/dhclient.conf /etc/dhclient.conf
 fi
 
 if [ ! -L /etc/sasyncd.conf ]; then

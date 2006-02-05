@@ -53,7 +53,7 @@ function system_resolvconf_generate($dynupdate = false) {
 
         if (isset($syscfg['dnsallowoverride'])) {
                 /* get dynamically assigned DNS servers (if any) */
-		$ns = get_nameservers();
+		$ns = array_unique(get_nameservers());
 		foreach($ns as $nameserver) {
 			if($nameserver) {
 				$resolvconf .= "nameserver $nameserver\n";

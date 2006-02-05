@@ -55,15 +55,18 @@ function system_resolvconf_generate($dynupdate = false) {
                 /* get dynamically assigned DNS servers (if any) */
 		$ns = get_nameservers();
 		foreach($ns as $nameserver) {
-			$resolvconf .= "nameserver $nameserver\n";
-			$havedns = true;			
+			if($nameserver) {
+				$resolvconf .= "nameserver $nameserver\n";
+				$havedns = true;
+			}
 		}
         }
         if (!$havedns && is_array($syscfg['dnsserver'])) {
                 foreach ($syscfg['dnsserver'] as $ns) {
-                        if ($ns)
+                        if ($ns) {
                                 $resolvconf .= "nameserver $ns\n";
-                        $havedns = true;
+				$havedns = true;
+			}
                 }
         }
 

@@ -48,7 +48,7 @@ if ($_POST['clear']) {
 }
 
 /* format filter logs */
-function conv_clog($logfile, $tail = 50) {
+function conv_clog_filter($logfile, $tail = 50) {
 	global $config;
 
 	/* make interface/port table */
@@ -121,7 +121,7 @@ function conv_clog($logfile, $tail = 50) {
 		
 		$counter++;
 		$filterlog[] = $flent;
-				
+
 	}
 
 	return $filterlog;
@@ -146,7 +146,7 @@ function format_ipf_ip($ipfip) {
 	return $ip . ", port " . $port;
 }
 
-$filterlog = conv_clog($filter_logfile, $nentries);
+$filterlog = conv_clog_filter($filter_logfile, $nentries);
 
 $pgtitle = "Diagnostics: System logs: Firewall";
 include("head.inc");
@@ -407,7 +407,7 @@ function handle_ajax() {
                  *  can update AJAX interface screen.
 		 */  
 		$new_rules = "";
-		$filterlog = conv_clog($filter_logfile, 50);
+		$filterlog = conv_clog_filter($filter_logfile, 50);
 		foreach($filterlog as $log_row) {
 			$time_regex = "";
 			preg_match("/.*([0-9][0-9]:[0-9][0-9]:[0-9][0-9])/", $log_row['time'], $time_regex);

@@ -69,63 +69,59 @@ function conv_clog($logfile, $tail = 50) {
 
 	foreach ($logarr as $logent) {
 
+		if($counter > $nentries) 
+			break;
+
 		$log_split = "";
-
-		/* pf: 6. 272592 rule 218/0(match): block in on fxp0: X.XXX.XXX.XXX.4503 > XX.X.XXX.X.6881: S 1163549441:1163549441(0) win 65535 <mss 1432,nop,nop,sackOK> */
 		  	
-		preg_match("/(.*)\s(.*)\spf:.*rule (.*)\(match\):\s(\w+)\sin\son\s(\w+:)\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,7})\s([\<|\>])\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,7}):.*/",$logent,$log_split);
-
-		if($log_split[5] == "")
-			preg_match("/(.*)\s(.*)\spf:.*rule (.*)\(match\):\s(\w+)\sin\son\s(\w+:)\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\s([\<|\>])\s([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}):.*/",$logent,$log_split);
-
+		preg_match("/(.*)\s.*\spf:\s.*\srule\s(.*)\(match\)\:\s(.*)\s\w+\son\s(\w+)\:\s(.*)\s>\s(.*)\:\s.*/", $logent, $log_split);
+		
 		$logent = strtoupper($logent);
 
 		$do_not_display = false;
-		if(stristr($logent, "UDP") == true)
+		
+		if(stristr(strtoupper($logent), "UDP") == true)
 			$flent['proto'] = "UDP";
-		else if(stristr($logent, "TCP") == true)
+		else if(stristr(strtoupper($logent), "TCP") == true)
 			$flent['proto'] = "TCP";
-		else if(stristr($logent, "ICMP") == true)
+		else if(stristr(strtoupper($logent), "ICMP") == true)
 			$flent['proto'] = "ICMP";
-		else if(stristr($logent, "HSRP") == true)
+		else if(stristr(strtoupper($logent), "HSRP") == true)
 			$flent['proto'] = "HSRP";			
-		else if(stristr($logent, "ESP") == true)
+		else if(stristr(strtoupper($logent), "ESP") == true)
 			$flent['proto'] = "ESP";	
-		else if(stristr($logent, "AH") == true)
+		else if(stristr(strtoupper($logent), "AH") == true)
 			$flent['proto'] = "AH";
-		else if(stristr($logent, "GRE") == true)
+		else if(stristr(strtoupper($logent), "GRE") == true)
 			$flent['proto'] = "GRE";
-		else if(stristr($logent, "IGMP") == true)
+		else if(stristr(strtoupper($logent), "IGMP") == true)
 			$flent['proto'] = "IGMP";
-		else if(stristr($logent, "CARP") == true)
+		else if(stristr(strtoupper($logent), "CARP") == true)
 			$flent['proto'] = "CARP";
-		else if(stristr($logent, "PFSYNC") == true)
+		else if(stristr(strtoupper($logent), "PFSYNC") == true)
 			$flent['proto'] = "PFSYNC";
 		else
 			$do_not_display = true;
-			
+		
 		$flent['time'] 		= $log_split[1];
-		$flent['act'] 		= $log_split[4];
-		$flent['interface'] 	= strtoupper(convert_real_interface_to_friendly_interface_name(str_replace(":","",$log_split[5])));
+		$flent['act'] 		= $log_split[3];
 		
-		if($flent['proto'] == "TCP" or $flent['proto'] == "UDP") {
-			$flent['src'] 		= convert_port_period_to_colon($log_split[6]);
-			$flent['dst'] 		= convert_port_period_to_colon($log_split[8]);
-		} else {
-			$flent['src'] 		= $log_split[6];
-			$flent['dst'] 		= $log_split[8];			
-		}
+		$friendly_int = convert_real_interface_to_friendly_interface_name($log_split[4]);
 		
-		$tmp = split("/", $log_split[3]);
+		$flent['interface'] 	=  strtoupper($friendly_int);
+		
+		if($config['interfaces'][$friendly_int]['descr'] <> "")
+			$flent['interface'] = "{$config['interfaces'][$friendly_int]['descr']}";
+		
+		$flent['src'] 		= convert_port_period_to_colon($log_split[5]);
+		$flent['dst'] 		= convert_port_period_to_colon($log_split[6]);
+		
+		$tmp = split("/", $log_split[2]);
 		$flent['rulenum'] = $tmp[0];
 		
-		if($flent['src'] == "" or $flent['dst'] == "" or $do_not_display == true) {
-			/* do not display me! */
-		} else {
-			$counter++;
-			$filterlog[] = $flent;
-		}
-		
+		$counter++;
+		$filterlog[] = $flent;
+				
 	}
 
 	return $filterlog;

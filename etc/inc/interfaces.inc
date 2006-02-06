@@ -692,6 +692,7 @@ EOD;
 	mwexec("$ifconfig $if" . " " . $apbridge);
 	mwexec("$ifconfig $if" . " " . $wme);
 	mwexec("$ifconfig $if" . " " . $wepset);
+	mwexec("$ifconfig $if" . " " . $txpower);
 	mwexec("$ifconfig $if" . " up");
 
 	if (isset($wlcfg['wpa']['enable'])) {

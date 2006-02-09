@@ -154,19 +154,24 @@ if(is_array($versions)) {
 										<td width="20%" class="listhdr">Type</td>
 									</tr>
 <?php
-		foreach($versions as $key => $value) {
-			if(($key == "current") or ($value == 1)) continue;
-			foreach($value as $version) {
-				if(!$version['time']) $version['time'] = "Unknown";
-				if(!$version['size']) $version['size'] = "Unknown";
-				if(!$version['type']) $version['type'] = "Unknown";
-				$version['category'] = $key;
-				$times[$version['time']][] = $version;
+		if(is_array($versions)) {
+			foreach($versions as $key => $value) {
+				if(($key == "current") or ($value == 1)) continue;
+				if(is_array($value)) {
+					foreach($value as $version) {
+						if(!$version['time']) $version['time'] = "Unknown";
+						if(!$version['size']) $version['size'] = "Unknown";
+						if(!$version['type']) $version['type'] = "Unknown";
+						$version['category'] = $key;
+						$times[$version['time']][] = $version;
+					}
+				}
 			}
 		}
 		asort($times);
-		foreach($times as $time) {
-			foreach($time as $version) {
+		if(is_array($times)) {
+			foreach($times as $time) {
+				foreach($time as $version) {
 ?>
 									<tr>
 										<td class="listlr">
@@ -184,6 +189,7 @@ if(is_array($versions)) {
 										<td class="listlr"><?= ucfirst($version['type']) ?></td>
 									</tr>
 <?php
+				}
 			}
 		}
 ?>

@@ -39,7 +39,7 @@
 	$ifinfo['hwif'] = $config['interfaces'][$if]['if'];
 	if(!$ifinfo['hwif'])
 		$ifinfo['hwif'] = $if;
-	if ($if == "wan")
+	if ($if == "wan" || $if == "ng0")
 		$ifinfo['if'] = get_real_wan_interface();
 	else
 		$ifinfo['if'] = $ifinfo['hwif'];	

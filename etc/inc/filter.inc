@@ -1548,10 +1548,10 @@ EOD;
 
 # allow PPTP client
 anchor "pptpclient"
-pass in quick on {$wancfg['if']} proto gre from any to any keep state label "allow PPTP client"
-pass out quick on {$wancfg['if']} proto gre from any to any  keep state label "allow PPTP client"
-pass in quick on {$wancfg['if']} proto tcp from any port = 1723 to any  flags S/SA keep state label "allow PPTP client"
-pass out quick on {$wancfg['if']} proto tcp from any to any port = 1723 flags S/SA keep state label "allow PPTP client"
+pass in quick on {$wancfg['if']} proto gre from any to any modulate state label "allow PPTP client"
+pass out quick on {$wancfg['if']} proto gre from any to any modulate state label "allow PPTP client"
+pass in quick on {$wancfg['if']} proto tcp from any port = 1723 to any flags S/SA modulate state label "allow PPTP client"
+pass out quick on {$wancfg['if']} proto tcp from any to any port = 1723 flags S/SA modulate state label "allow PPTP client"
 
 EOD;
 	}

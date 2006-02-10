@@ -110,7 +110,7 @@ EOD;
 			} else {
 				log_error("Warning!  DHCP Failover setup and no CARP virtual IP's defined!");
 			}
-			if($skew > 0) {
+			if($skew > 101) {
 				$type = "secondary";
 				$dhcpdconf_pri  = "mclt 600;\n";
 				$my_port = "520";

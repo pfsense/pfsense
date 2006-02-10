@@ -266,6 +266,11 @@
 		touch("/var/etc/console_lockdown");
 
 	filter_configure();
+
+	/*   start DHCP service again now that CARP has settled
+	 *   incase user is using primary/backup failover dhcp mode
+         */
+	services_dhcpd_configure();
 	
 	/* done */
 	unlink("{$g['varrun_path']}/booting");

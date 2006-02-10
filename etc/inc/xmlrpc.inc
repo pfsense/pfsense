@@ -105,9 +105,9 @@ function xmlrpc_auth(&$params) {
         global $config;
 	$localpass = $config['system']['password'];
         if(crypt($params[0], $localpass) == $localpass) {
-                array_shift($params);
+                unset($params[0]);
 		return true;
-	} elseif(crypt($params['xmlrpcauth'], $localpass) != $localpass) {
+	} elseif(crypt($params['xmlrpcauth'], $localpass) == $localpass) {
 		unset($params['xmlrpcauth']);
 		return true;
 	}

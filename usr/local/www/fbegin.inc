@@ -147,11 +147,7 @@ require_once("notices.inc");
 						<div>VPN</div>
 						<ul class="subdrop">
 							<li><a href="/vpn_ipsec.php" class="navlnk">IPsec</a></li>
-							<?php
-								if(isset($config['system']['developer'])) {
-									echo "<li><a href=\"/vpn_openvpn_srv.php\" class=\"navlnk\">OpenVPN</a></li>";
-								}
-							?>
+							<li><a href="/vpn_openvpn_srv.php" class="navlnk">OpenVPN</a></li>
 							<li><a href="/vpn_pptp.php" class="navlnk">PPTP</a></li>
 							<li><a href="/vpn_pppoe.php" class="navlnk">PPPoE</a></li>
 							<?php echo return_ext_menu("VPN"); ?>

@@ -123,7 +123,7 @@ EOD;
 					$real_dhcpif = convert_friendly_interface_to_real_interface_name($dhcpif);
 					if($int == $real_dhcpif) {
 						/* this is the interface! */
-						if($vipent['advskew'] == "0")
+						if($vipent['advskew'] < "20")
 							$skew = 0;
 					}
 				}

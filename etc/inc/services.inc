@@ -94,7 +94,7 @@ EOD;
 			 *    yep, failover peer is defined.
 			 *    does it match up to a defined vip?
 			 */
-			$skew = 1;
+			$skew = 110;
 			$a_vip = &$config['virtualip']['vip'];
 			if(is_array($a_vip)) {
 				foreach ($a_vip as $vipent) {

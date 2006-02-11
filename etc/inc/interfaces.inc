@@ -419,20 +419,13 @@ function interfaces_carp_configure() {
 			$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
 			if($vip['password'] != "") 
 				$password = " pass " . $vip['password'];
-			/* XXX: billm - carpdev not in our build?
-			    $carpdev = "";
-			    if(isset($vip['interface']) && ($vip['interface'] != "AUTO" && $vip['interface'] != "")) {
-			   	$ci = filter_opt_interface_to_real($vip['interface']);
-			   	$carpdev = " carpdev {$ci} ";
-			    }
-			*/
 			if($debugging)
 				echo "Configuring carp{$carp_instances_counter}.\n";
 			fwrite($fd, "/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew 200 " . $password . "\n");
 			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew 200 " . $password);
 			usleep(10);
 			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
-			fwrite($fd, "/sbin/ifconfig carp" . $carp_instances_counter . " up");
+			fwrite($fd, "/sbin/ifconfig carp" . $carp_instances_counter . " up\n");
 			$carp_instances_counter++;
 		}
 	}

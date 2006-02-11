@@ -140,7 +140,18 @@ if ($_GET['act'] == "del") {
 
 	write_config();
 	
+	/*   move all the interfaces up.  for example:
+	 *      opt1 --> opt1
+	 *	opt2 --> delete
+	 *	opt3 --> opt2
+         *      opt4 --> opt3
+         */
+	cleanup_opt_interfaces_after_removal($i);
+	
+	parse_config(true);
+	
 	$savemsg = "Interface has been deleted.";
+
 }
 
 if ($_GET['act'] == "add") {

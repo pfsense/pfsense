@@ -51,7 +51,7 @@ function services_dhcpd_configure() {
 	fwrite($fd, "mkdir -p /var/dhcpd/var/dhcpd\n");
 	fwrite($fd, "mkdir -p /var/dhcpd/lib\n");
 	fwrite($fd, "mkdir -p /var/dhcpd/run\n");
-	fwrite($fd, "chown -R dhcpd:_dhcp /var/dhcpd/*");
+	fwrite($fd, "chown -R dhcpd:_dhcp /var/dhcpd/*\n");
 	fwrite($fd, "cp /lib/libc.so.6 /var/dhcpd/lib/\n");
 	fwrite($fd, "cp /usr/local/sbin/dhcpd /var/dhcpd\n");
 	if(!trim($status)) 

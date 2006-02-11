@@ -39,8 +39,27 @@ function services_dhcpd_configure() {
 		echo "services_dhcpd_configure($if) being called $mt\n";
 	}
 
+	/* configure DHCPD chroot */
+	$fd = fopen("/tmp/dhcpd.sh","w");
+	$status = `mount | grep "/var/dhcpd/dev"`;
+	fwrite($fd, "mkdir -p /var/dhcpd/dev\n");
+	fwrite($fd, "mkdir -p /var/dhcpd\n");
+	fwrite($fd, "mkdir -p /var/dhcpd/etc\n");
+	fwrite($fd, "mkdir -p /var/dhcpd/usr/local/sbin\n");
+	fwrite($fd, "mkdir -p /var/dhcpd/var/db\n");
+	fwrite($fd, "mkdir -p /var/dhcpd/usr\n");
+	fwrite($fd, "mkdir -p /var/dhcpd/var/dhcpd\n");
+	fwrite($fd, "mkdir -p /var/dhcpd/lib\n");
+	fwrite($fd, "mkdir -p /var/dhcpd/run\n");
+	fwrite($fd, "cp /lib/libc.so.6 /var/dhcpd/lib/\n");
+	fwrite($fd, "cp /usr/local/sbin/dhcpd /var/dhcpd\n");
+	if(!trim($status)) 
+		fwrite($fd, "mount_devfs devfs /var/dhcpd/dev\n");
+	fclose($fd);
+	mwexec("/bin/sh /tmp/dhcpd.sh");
+
 	/* kill any running dhcpd */
-	killbypid("{$g['varrun_path']}/dhcpd.pid");
+	killbypid("/var/dhcpd/run/dhcpd.pid");
 
 	$syscfg = $config['system'];
 	$dhcpdcfg = $config['dhcpd'];
@@ -64,7 +83,7 @@ function services_dhcpd_configure() {
 		sleep(1);
 
 	/* write dhcpd.conf */
-	$fd = fopen("{$g['varetc_path']}/dhcpd.conf", "w");
+	$fd = fopen("/var/dhcpd/etc/dhcpd.conf", "w");
 	if (!$fd) {
 		printf("Error: cannot open dhcpd.conf in services_dhcpd_configure().\n");
 		return 1;
@@ -248,14 +267,14 @@ EOD;
 	fclose($fd);
 
 	/* create an empty leases database */
-	touch("{$g['vardb_path']}/dhcpd.leases");
+	touch("/var/dhcpd/var/db/dhcpd.leases");
 
-	/* fire up dhcpd */
-	mwexec("/usr/local/sbin/dhcpd -cf {$g['varetc_path']}/dhcpd.conf " .
+	/* fire up dhcpd in a chroot */
+	mwexec("/usr/local/sbin/dhcpd -user dhcpd -group _dhcp -chroot /var/dhcpd -cf /var/dhcpd/etc/dhcpd.conf " .
 		join(" ", $dhcpdifs));
 
 	if ($g['booting']) {
-                print "done.\n";
+		print "done.\n";
 	}
 
 	return 0;

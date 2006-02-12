@@ -140,6 +140,10 @@ if ($_POST) {
 		$config['dhcpd'][$if]['range']['to'] = $_POST['range_to'];
 		$config['dhcpd'][$if]['defaultleasetime'] = $_POST['deftime'];
 		$config['dhcpd'][$if]['maxleasetime'] = $_POST['maxtime'];
+		$previous = $config['dhcpd'][$if]['failover_peerip'];
+		if($previous <> $_POST['failover_peerip']) {
+			mwexec("rm -rf /var/dhcpd/var/db/*");	
+		}		
 		$config['dhcpd'][$if]['failover_peerip'] = $_POST['failover_peerip'];
 				
 		unset($config['dhcpd'][$if]['winsserver']);

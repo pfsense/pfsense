@@ -195,6 +195,7 @@ include("head.inc");
 	$tab_array[] = array("IPSEC VPN", false, "diag_logs_ipsec.php");
 	$tab_array[] = array("PPTP VPN", false, "diag_logs_vpn.php");
 	$tab_array[] = array("Load Balance", false, "diag_logs_slbd.php");
+	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");
 	$tab_array[] = array("Settings", false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>

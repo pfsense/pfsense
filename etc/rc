@@ -195,7 +195,9 @@ if [ ! "$PLATFORM" = "cdrom" ]; then
     
     for FILE in /usr/local/etc/rc.d/*.sh; do
 	echo -n " Starting ${FILE}..."
-	sh $FILE start >>/tmp/bootup_messages 2>&1
+	(set -T
+	trap 'exit 1' 2
+	sh $FILE start start)
 	echo "done."
     done
 fi
@@ -204,7 +206,7 @@ rm -rf /usr/local/pkg/pf/CVS
 
 /usr/local/bin/php -f /etc/rc.conf_mount_ro
 
-/usr/local/sbin/check_reload_status >/dev/null &
+/usr/local/sbin/check_reload_status
 
 echo "Bootup complete"
 

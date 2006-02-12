@@ -41,21 +41,21 @@ function services_dhcpd_configure() {
 
 	/* configure DHCPD chroot */
 	$fd = fopen("/tmp/dhcpd.sh","w");
-	$status = `mount | grep "/var/dhcpd/dev"`;
-	fwrite($fd, "mkdir -p /var/dhcpd/dev\n");
-	fwrite($fd, "mkdir -p /var/dhcpd\n");
-	fwrite($fd, "mkdir -p /var/dhcpd/etc\n");
-	fwrite($fd, "mkdir -p /var/dhcpd/usr/local/sbin\n");
-	fwrite($fd, "mkdir -p /var/dhcpd/var/db\n");
-	fwrite($fd, "mkdir -p /var/dhcpd/usr\n");
-	fwrite($fd, "mkdir -p /var/dhcpd/var/dhcpd\n");
-	fwrite($fd, "mkdir -p /var/dhcpd/lib\n");
-	fwrite($fd, "mkdir -p /var/dhcpd/run\n");
-	fwrite($fd, "chown -R dhcpd:_dhcp /var/dhcpd/*\n");
-	fwrite($fd, "cp /lib/libc.so.6 /var/dhcpd/lib/\n");
-	fwrite($fd, "cp /usr/local/sbin/dhcpd /var/dhcpd\n");
+	$status = `mount | grep "{$g['dhcpd_chroot_path']}/dev"`;
+	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}\n");
+	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/dev\n");
+	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/etc\n");
+	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/usr/local/sbin\n");
+	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/var/db\n");
+	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/usr\n");
+	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/lib\n");
+	fwrite($fd, "mkdir -p {$g['dhcpd_chroot_path']}/run\n");
+	fwrite($fd, "chown -R dhcpd:_dhcp {$g['dhcpd_chroot_path']}/*\n");
+	fwrite($fd, "cp /lib/libc.so.6 {$g['dhcpd_chroot_path']}/lib/\n");
+	fwrite($fd, "cp /usr/local/sbin/dhcpd {$g['dhcpd_chroot_path']}/usr/local/sbin/\n");
+	fwrite($fd, "chmod a+rx {$g['dhcpd_chroot_path']}/usr/local/sbin/dhcpd\n");
 	if(!trim($status)) 
-		fwrite($fd, "mount_devfs devfs /var/dhcpd/dev\n");
+		fwrite($fd, "mount_devfs devfs {$g['dhcpd_chroot_path']}/dev\n");
 	fclose($fd);
 	mwexec("/bin/sh /tmp/dhcpd.sh");
 
@@ -84,7 +84,7 @@ function services_dhcpd_configure() {
 		sleep(1);
 
 	/* write dhcpd.conf */
-	$fd = fopen("/var/dhcpd/etc/dhcpd.conf", "w");
+	$fd = fopen("{$g['dhcpd_chroot_path']}/etc/dhcpd.conf", "w");
 	if (!$fd) {
 		printf("Error: cannot open dhcpd.conf in services_dhcpd_configure().\n");
 		return 1;
@@ -268,10 +268,10 @@ EOD;
 	fclose($fd);
 
 	/* create an empty leases database */
-	touch("/var/dhcpd/var/db/dhcpd.leases");
+	touch("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases");
 
 	/* fire up dhcpd in a chroot */
-	mwexec("/usr/local/sbin/dhcpd -user dhcpd -group _dhcp -chroot /var/dhcpd -cf /var/dhcpd/etc/dhcpd.conf " .
+	mwexec("/usr/local/sbin/dhcpd -user dhcpd -group _dhcp -chroot {$g['dhcpd_chroot_path']} -cf {$g['dhcpd_chroot_path']}/etc/dhcpd.conf " .
 		join(" ", $dhcpdifs));
 
 	if ($g['booting']) {

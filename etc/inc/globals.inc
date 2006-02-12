@@ -32,6 +32,7 @@
 */
 
 $g = array(
+    "dhcpd_chroot_path" => "/var/dhcpd",
     "varrun_path" => "/var/run",
     "varetc_path" => "/var/etc",
     "vardb_path" => "/var/db",

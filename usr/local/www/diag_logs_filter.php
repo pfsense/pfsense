@@ -88,6 +88,7 @@ function conv_clog($logfile, $tail = 50) {
 
 		preg_match("/(.*)\s.*\spf:\s.*\srule\s(.*)\(match\)\:\s(.*)\s\w+\son\s(\w+)\:\s(.*)\s>\s(.*)\:\s.*/", $logent, $log_split);
 		
+		$beforeupper = $logent;
 		$logent = strtoupper($logent);
 
 		$do_not_display = false;
@@ -141,7 +142,7 @@ function conv_clog($logfile, $tail = 50) {
 			$counter++;
 			$filterlog[] = $flent;
 		} else {
-			log_error("There was a error parsing rule: $logent .   Please report to mailing list or forum.");
+			log_error("There was a error parsing rule: $beforeupper .   Please report to mailing list or forum.");
 		}
 		
 	}

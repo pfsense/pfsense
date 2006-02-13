@@ -142,7 +142,9 @@ function conv_clog($logfile, $tail = 50) {
 			$counter++;
 			$filterlog[] = $flent;
 		} else {
-			log_error("There was a error parsing rule: $beforeupper .   Please report to mailing list or forum.");
+			if($g['debug']) {
+				log_error("There was a error parsing rule: $beforeupper .   Please report to mailing list or forum.");
+			}
 		}
 		
 	}

@@ -130,12 +130,12 @@ function conv_clog($logfile, $tail = 50) {
 		
 		$shouldadd = true;
 		
-		if($flent['src'] == "")
+		if(trim($flent['src']) == "")
 			$shouldadd = false;
-		if($flent['dst'] == "")
-			$shouldadd = true;
-		if($flent['time'] == "")
-			$shouldadd = true;
+		if(trim($flent['dst']) == "")
+			$shouldadd = false;
+		if(trim($flent['time']) == "")
+			$shouldadd = false;
 
 		if($shouldadd == true) {
 			$counter++;

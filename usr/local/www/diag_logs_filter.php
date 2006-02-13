@@ -128,15 +128,21 @@ function conv_clog($logfile, $tail = 50) {
 		$tmp = split("/", $log_split[2]);
 		$flent['rulenum'] = $tmp[0];
 		
+		$shouldadd = true;
+		
 		if($flent['src'] == "")
-			continue;
+			$shouldadd = false;
 		if($flent['dst'] == "")
-			continue;
+			$shouldadd = true;
 		if($flent['time'] == "")
-			continue;
+			$shouldadd = true;
 
-		$counter++;
-		$filterlog[] = $flent;
+		if($shouldadd == true) {
+			$counter++;
+			$filterlog[] = $flent;
+		} else {
+			log_error("There was a error parsing rule: $logent .   Please report to mailing list or forum.");
+		}
 		
 	}
 

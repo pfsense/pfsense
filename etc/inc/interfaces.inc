@@ -352,8 +352,7 @@ function interfaces_carp_configure() {
 		echo "interfaces_carp_configure() being called $mt\n";
 	}
 	/* if neither items are arrays then redirect pfsync to loopback */
-	if (!is_array($config['virtualip']['vip']) or
-	    !is_array($config['installedpackages']['carpsettings']['config'])) {
+	if (!is_array($config['virtualip']['vip'])) {
 		mwexec("/sbin/ifconfig pfsync0 syncdev lo0 up");
 		mwexec("/sbin/sysctl net.inet.carp.allow=0");
 		if($g['booting']) {
@@ -367,11 +366,12 @@ function interfaces_carp_configure() {
 	if ($g['booting'] and !$debugging) {
 		echo "Configuring CARP interfaces...";
 		mute_kernel_msgs();
-	}	
+	}
+	/* enable carp preemption */
+	mwexec("/sbin/sysctl net.inet.carp.preempt=1");
 	foreach($config['installedpackages']['carpsettings']['config'] as $carp) {
 		if($carp['pfsyncenabled'] != "") {
 			mwexec("/sbin/sysctl net.inet.carp.allow=1");
-			mwexec("/sbin/sysctl net.inet.carp.preempt=1");
 			if($carp['balancing'] != "")
 				mwexec("/sbin/sysctl net.inet.carp.arpbalance=1");
 			if($debugging) 

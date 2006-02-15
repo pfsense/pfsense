@@ -152,6 +152,9 @@ function enable_hardware_offloading($interface) {
 	    mwexec("/sbin/ifconfig {$interface} rxcsum 2>/dev/null");    
 	if(stristr($options, "polling") == true)
 	    mwexec("/sbin/ifconfig {$interface} polling 2>/dev/null");
+	    mwexec("kern.polling.enable=1");
+	} else {
+		mwexec("kern.polling.enable=0");
 	}
 	return;
 }

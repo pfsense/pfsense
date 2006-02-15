@@ -361,8 +361,6 @@ function interfaces_carp_configure() {
 		}
 		return;
 	}
-	if(!$config['installedpackages']['carpsettings']['config'])
-		return;	
 	if ($g['booting'] and !$debugging) {
 		echo "Configuring CARP interfaces...";
 		mute_kernel_msgs();

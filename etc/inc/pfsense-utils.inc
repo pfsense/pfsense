@@ -1335,6 +1335,8 @@ function reload_interfaces_sync() {
 	/* delete all old interface information */
 	$iflist = split(" ", str_replace("\n", "", `/sbin/ifconfig -l`));
 	foreach ($iflist as $ifent => $ifname) {
+		if(stristr($ifname, "lo0") == true)
+			continue;		
 		$ifname_real = convert_friendly_interface_to_real_interface_name($ifname);
 		mwexec("/sbin/ifconfig {$ifname_real} down");
 		mwexec("/sbin/ifconfig {$ifname_real} delete");
@@ -1543,8 +1545,8 @@ function reload_all_sync() {
 	$iflist = split(" ", str_replace("\n", "", `/sbin/ifconfig -l`));
 	foreach ($iflist as $ifent => $ifname) {
 		$ifname_real = convert_friendly_interface_to_real_interface_name($ifname);
-		if($ifname_real == "lo0")
-		    continue;
+		if(stristr($ifname, "lo0") == true)
+			continue;
 		mwexec("/sbin/ifconfig {$ifname_real} down");
 		mwexec("/sbin/ifconfig {$ifname_real} delete");
 	}

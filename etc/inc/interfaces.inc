@@ -357,7 +357,6 @@ function interfaces_carp_configure() {
 		mwexec("/sbin/sysctl net.inet.carp.allow=0");
 		if($g['booting']) {
 			unmute_kernel_msgs();
-			echo "done.\n";
 		}
 		return;
 	}

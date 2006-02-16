@@ -36,7 +36,7 @@
 #     ep:op:  same as ap.
 #
 default:\
-	:al=root:cb:ce:ck:lc:fd#1000:im=\r\n%s/%m (%h) (%t)\r\n\r\n:sp#1200:\
+	::cb:ce:ck:lc:fd#1000:im=\r\n%s/%m (%h) (%t)\r\n\r\n:sp#1200:\
 	:if=/etc/issue:
 
 #
@@ -162,7 +162,7 @@ X|Xwindow|X window system:\
 	:fd@:nd@:cd@:rw:sp#9600:
 
 P|Pc|Pc console:\
-	:ht:np:sp#115200:
+	:ht:np:sp#115200:al=root:
 
 #
 # Wierdo special case for fast crt's with hardcopy devices

@@ -508,10 +508,18 @@ function guess_interface_from_ip($ipaddress) {
 	$ints_split = split(" ", $ints);
 	$ip_subnet_split = split("\.", $ipaddress);
 	$ip_subnet = $ip_subnet_split[0] . "." . $ip_subnet_split[1] . "." . $ip_subnet_split[2] . ".";
+	/* check first 3 octets */
 	foreach($ints_split as $int) {
 		$ip = find_interface_ip($int);
 		$ip_split = split("\.", $ip);
 		$ip_tocheck = $ip_split[0] . "." . $ip_split[1] . "." . $ip_split[2] . ".";
+		if(stristr($ip_tocheck, $ip_subnet) != false) return $int;
+	}
+	/* check first 2 octets since nothing found while checking 3 */
+	foreach($ints_split as $int) {
+		$ip = find_interface_ip($int);
+		$ip_split = split("\.", $ip);
+		$ip_tocheck = $ip_split[0] . "." . $ip_split[1] . ".";
 		if(stristr($ip_tocheck, $ip_subnet) != false) return $int;
 	}
 }

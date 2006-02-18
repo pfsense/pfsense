@@ -224,24 +224,32 @@ function setup_polling_defaults() {
  *   
  ******/
 function setup_polling() {
-	global $g, $config;
+	global $g, $config;		
 
 	setup_polling_defaults();
+	
+	if(isset($config['system']['polling']))
+		$supported_ints = array('dc', 'em', 'fwe', 'fwip', 'fxp', 'ixgb', 'ste', 'nge', 're', 'rl', 'sf', 'sis', 'ste', 'vge', 'vr', 'xl');
+	else
+		$supported_ints = array();
+
 	/* build an array of interfaces to work with */
 	$iflist = array("lan" => "LAN", "wan" => "WAN");
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
-		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];		
-	/*    activate polling for interface if it supports it
-	 *    man polling on a freebsd box for the following list
-	 */
-	/* loop through all interfaces and handle pftpx redirections */
-	foreach ($iflist as $ifent => $ifname) {	
-		$supported_ints = array('dc', 'em', 'fwe', 'fwip', 'fxp', 'ixgb', 'ste',
-			'nge', 're', 'rl', 'sf', 'sis', 'ste', 'vge', 'vr', 'xl');
-		if (in_array($ifname, $supported_ints) and isset($config['system']['polling'])) {
-			mwexec("/sbin/ifconfig {$interface} polling");
+		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];			
+
+	foreach ($iflist as $ifent => $ifname) {
+		$real_interface = convert_friendly_interface_to_real_interface_name($ifname);
+		$supported = false;
+		foreach($supported_ints as $supported) {
+			if(stristr($real_interface, $supported)) {
+				$supported = true;
+			} 
+		}
+		if ($supported == true) {
+			mwexec("/sbin/ifconfig {$real_interface} polling");
 		} else {
-			mwexec("/sbin/ifconfig {$interface} -polling");
+			mwexec("/sbin/ifconfig {$real_interface} -polling");
 		}
 	}
 }

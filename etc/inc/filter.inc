@@ -268,6 +268,22 @@ function filter_generate_aliases() {
 	return $aliases;
 }
 
+function get_vpns_list() {
+	global $config;
+	/* build list of vpns */
+	$vpns = "";
+	$isfirst = true;
+	if($config['ipsec']['tunnel']) {
+		foreach($config['ipsec']['tunnel'] as $tunnel) {
+			if($isfirst == false)
+				$vpns .= " ";
+			$vpns .= $tunnel['remote-subnet'];
+			$isfirst = false;
+		}
+	}
+	return $vpns;
+}
+
 function generate_optcfg_array(& $optcfg) {
 	global $config;
 	if(isset($config['system']['developerspew'])) {
@@ -573,7 +589,15 @@ function filter_nat_rules_generate() {
 		}
 		$tmp_port = 8021 + $interface_counter;
 		$tmp_interface = convert_friendly_interface_to_real_interface_name($ifname);
-		$natrules .= "rdr on {$tmp_interface} proto tcp from any to any port 21 -> 127.0.0.1 port {$tmp_port}\n";
+		$vpns = get_vpns_list();
+		/* if the user has defined, include the alias so that we do not redirect ftp
+		   connections across the tunnels to pftpx */
+		$vpns_list = get_vpns_list();
+		if($vpns_list)
+			$vpns = "{ ! $vpns_list }";
+		else
+			$vpns = "any";		
+		$natrules .= "rdr on {$tmp_interface} proto tcp from any to {$vpns} port 21 -> 127.0.0.1 port {$tmp_port}\n";
 		$interface_counter++;
 	}
 	$natrules .= "\n";

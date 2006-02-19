@@ -54,7 +54,7 @@ function adjust_gmt($dt) {
         return strftime("%Y/%m/%d %H:%M:%S", $ts);
 }
 
-$fp = @fopen("{$g['vardb_path']}/dhcpd.leases","r");
+$fp = @fopen("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases","r");
 
 if ($fp):
 

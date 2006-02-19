@@ -42,7 +42,7 @@ include("head.inc");
 
 <?php
 
-$fp = @fopen("{$g['vardb_path']}/dhcpd.leases","r");
+$fp = @fopen("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases","r");
 
 if ($fp) {
 

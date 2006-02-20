@@ -723,9 +723,6 @@ function filter_nat_rules_generate() {
 				$natrules .= "nat on {$rule_friendly_if} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$extport[0]} -> {$rule_friendly_if}\n";
 			}
 
-			/*    setup reflection rule for this item if requested
-			 *    sponsored by Robin Greenhagen www.gsihosting.com
-			 */
 			if(!isset($config['system']['disablenatreflection'])) {
 				
 				$natrules .= "\n# Reflection redirects\n";				

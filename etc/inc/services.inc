@@ -1090,8 +1090,9 @@ EODE;
 
 foreach($config['installedpackages']['olsrd']['config'] as $config) {
 	foreach($config['interface_array'] as $interface) {
+		$realinterface = convert_friendly_interface_to_real_interface_name($interface);
 $olsr .= <<<EOD
-Interface "{$interface}" 
+Interface "{$realinterface}" 
 {
 
     # IPv4 broadcast address to use. The

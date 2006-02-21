@@ -874,7 +874,7 @@ function setup_wireless_olsr() {
 		$mt = microtime();
 		echo "setup_wireless_olsr($interface) being called $mt\n";
 	}
-	foreach($config['installedpackages']['OLSRD']['config'] as $olsr) {
+	foreach($config['installedpackages']['olsrd']['config'] as $olsrd) {
 		$fd = fopen("{$g['varetc_path']}/olsr.conf", "w");
 		$olsr .= <<<EODA
 #
@@ -1045,8 +1045,8 @@ if($olsr['enablehttpinfo']) {
 
 LoadPlugin "/usr/local/lib/olsrd_httpinfo.so.0.1"
 {
-    PlParam     "port"   "{$olsr['port']}"
-    PlParam     "Net"    "{$olsr['allowedhttpinfohost']} {$olsr['allowedhttpinfosubnet']}"
+    PlParam     "port"   "{$olsrd['port']}"
+    PlParam     "Net"    "{$olsrd['allowedhttpinfohost']} {$olsrd['allowedhttpinfosubnet']}"
 }
 
 EODB;
@@ -1072,7 +1072,7 @@ LoadPlugin "/usr/local/lib/olsrd_dyn_gw.so.0.4"
 {
     # how often to look for a inet gw, in seconds
     # defaults to 5 secs, if commented out
-    PlParam     "Interval"   "{$olsr['polling']}"
+    PlParam     "Interval"   "{$olsrd['polling']}"
 
     # if one or more IPv4 addresses are given, do a ping on these in
     # descending order to validate that there is not only an entry in
@@ -1080,7 +1080,7 @@ LoadPlugin "/usr/local/lib/olsrd_dyn_gw.so.0.4"
     # these addresses could be pinged successfully, the test was
     # succesful, i.e. if the ping on the 1st address was successful,the
     # 2nd won't be pinged
-    PlParam     "Ping"       "{$olsr['ping']}"
+    PlParam     "Ping"       "{$olsrd['ping']}"
     #PlParam     "HNA"   "192.168.81.0 255.255.255.0"
 }
 
@@ -1174,7 +1174,6 @@ EOD;
 		mwexec("killall -HUP olsrd");
 	else 
 		mwexec_bg("/usr/local/sbin/olsrd -f {$g['varetc_path']}/olsr.conf");
-		
 }
 
 ?>

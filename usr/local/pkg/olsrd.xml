@@ -94,7 +94,7 @@
 		</field>
 		<field>
 			<fielddescr>Key</fielddescr>
-			<fieldname>key</fieldname>
+			<fieldname>securekey</fieldname>
 			<description>Paste the secure key information here.</description>
 			<type>textarea</type>
 			<rows>5</rows>
@@ -105,7 +105,7 @@
 	</custom_delete_php_command>
 	<custom_php_resync_config_command>
 		$fd = fopen("/usr/local/etc/olsrkey.txt","w");
-		fwrite($fd, $_POST['key']);
+		fwrite($fd, $_POST['securekey']);
 		fclose($fd);
 		foreach($_POST['interface_array'] as $iface) {
 				$if = convert_friendly_interface_to_real_interface_name($iface);

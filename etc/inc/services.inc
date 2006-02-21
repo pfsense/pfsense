@@ -560,7 +560,7 @@ function services_dnsmasq_configure() {
 
 		if (isset($config['dnsmasq']['regdhcp'])) {
 
-			$args .= " -l {$g['vardb_path']}/dhcpd.leases" .
+			$args .= " -l {$g['dhcpd_chroot_path']}/dhcpd.leases" .
 				" -s {$config['system']['domain']}";
 		}
 

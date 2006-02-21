@@ -874,8 +874,9 @@ function setup_wireless_olsr($interface) {
 		$mt = microtime();
 		echo "setup_wireless_olsr($interface) being called $mt\n";
 	}
-	$fd = fopen("{$g['varetc_path']}/{$interface}_olsr.conf", "w");
-	$olsr .= <<<EOD
+	foreach($config['installedpackages']['OLSRD']['config'] as $olsr) {
+		$fd = fopen("{$g['varetc_path']}/{$interface}_olsr.conf", "w");
+		$olsr .= <<<EODA
 #
 # olsr.org OLSR daemon config file
 #
@@ -1024,7 +1025,6 @@ Pollrate	0.05
 
 TcRedundancy	2
 
-
 #
 # MPR coverage
 # Specifies how many MPRs a node should
@@ -1036,50 +1036,67 @@ TcRedundancy	2
 
 MprCoverage	3
 
-
-# Olsrd plugins to load
-# This must be the absolute path to the file
-# or the loader will use the following scheme:
-# - Try the paths in the LD_LIBRARY_PATH 
-#   environment variable.
-# - The list of libraries cached in /etc/ld.so.cache
-# - /lib, followed by /usr/lib
-
 # Example plugin entry with parameters:
 
-#LoadPlugin "olsrd_dyn_gw.so.0.3"
-#{
-    # Here parameters are set to be sent to the
-    # plugin. Theese are on the form "key" "value".
-    # Parameters ofcause, differs from plugin to plugin.
-    # Consult the documentation of your plugin for details.
+EODA;
 
-    # Example: dyn_gw params
+if($olsr['enablehttpinfo']) {
+	$olsr .= <<<EODB
 
-    # how often to check for Internet connectivity
-    # defaults to 5 secs
-#   PlParam     "Interval"   "40"
-    
+LoadPlugin "/usr/local/lib/olsrd_httpinfo.so.0.1"
+{
+    PlParam     "port"   "{$olsr['port']}"
+    PlParam     "Net"    "{$olsr['allowedhttpinfohost']} {$olsr['allowedhttpinfosubnet']}"
+}
+
+EODB;
+
+}
+
+if($olsr['enabledyngw']) {
+	$olsr .= <<<EODC
+
+LoadPlugin "/usr/local/lib/olsrd_secure.so.0.4"
+{
+    PlParam     "Keyfile"   "/usr/local/etc/olsrkey.txt"
+}
+
+EODC;
+
+}
+
+if($olsr['enabledyngw']) {
+	$olsr .= <<<EODE
+
+LoadPlugin "/usr/local/lib/olsrd_dyn_gw.so.0.4"
+{
+    # how often to look for a inet gw, in seconds
+    # defaults to 5 secs, if commented out
+    PlParam     "Interval"   "40"
+
     # if one or more IPv4 addresses are given, do a ping on these in
     # descending order to validate that there is not only an entry in
     # routing table, but also a real internet connection. If any of
     # these addresses could be pinged successfully, the test was
     # succesful, i.e. if the ping on the 1st address was successful,the
     # 2nd won't be pinged
-#   PlParam     "Ping"       "141.1.1.1"
-#   PlParam     "Ping"       "194.25.2.129"
-#}
+    PlParam     "Ping"       "{$olsr['ping']}"
+    #PlParam     "Ping"       "194.25.2.129"
+    #lParam     "HNA"   "192.168.80.0 255.255.255.0"
+    #PlParam     "HNA"   "192.168.81.0 255.255.255.0"
+    #PlParam     "Ping"  "192.168.81.12"
+}
 
+EODE;
 
+}
 
+$olsr .= <<<EOD
 # Interfaces and their rules
 # Omitted options will be set to the
 # default values. Multiple interfaces
 # can be specified in the same block
 # and multiple blocks can be set.
-
-# !!CHANGE THE INTERFACE LABEL(s) TO MATCH YOUR INTERFACE(s)!!
-# (eg. wlan0 or eth1):
 
 Interface "{$interface}" 
 {
@@ -1150,8 +1167,9 @@ Interface "{$interface}"
 
 }
 EOD;
-	fwrite($fd, $olsr);
-	fclose($fd);
+		fwrite($fd, $olsr);
+		fclose($fd);
+	}
 	mwexec_bg("/usr/local/sbin/olsrd -f {$g['varetc_path']}/{$interface}_olsr.conf");
 }
 

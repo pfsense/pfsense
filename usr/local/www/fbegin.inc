@@ -138,7 +138,7 @@ require_once("notices.inc");
 							<li><a href="/services_dhcp.php" class="navlnk">DHCP server</a></li>
 							<li><a href="/services_dyndns.php" class="navlnk">Dynamic DNS</a></li>
 							<li><a href="/load_balancer_pool.php" class="navlnk">Load Balancer</a></li>
-							<li><a href="/pkg_edit.php?xml=olsrd.xml" class="navlnk">OLSR</a></li>
+							<li><a href="/pkg_edit.php?xml=olsrd.xml&id=0" class="navlnk">OLSR</a></li>
 							<li><a href="/services_snmp.php" class="navlnk">SNMP</a></li>
 							<li><a href="/services_wol.php" class="navlnk">Wake on LAN</a></li>
 							<?php echo return_ext_menu("Services"); ?>

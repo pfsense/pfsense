@@ -99,6 +99,13 @@ require_once("notices.inc");
 							<li><a href="/system_advanced.php" class="navlnk">Advanced</a></li>
 							<li><a href="/system_firmware.php" class="navlnk">Firmware</a></li>
 							<li><a href="/system.php" class="navlnk">General Setup</a></li>
+						<?php
+							/* generate logout button */
+							$proto = $config['system']['webgui']['protocol'];
+							$host = $_SERVER['HTTP_HOST'];
+							//$host = str_replace("://","://logout:logout@", $host);
+							echo "<li><a href=\"{$proto}://logout:logout@{$host}/\" class=\"navlnk\">Logout</a></li>";						
+						?>
 						<?php if($g['platform'] == "pfSense"): ?>
 							<li><a href="/pkg_mgr.php" class="navlnk">Packages</a></li>
 						<?php endif; ?>

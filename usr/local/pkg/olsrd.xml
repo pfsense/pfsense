@@ -3,7 +3,6 @@
 	<name>OLSRD</name>
 	<version>1.0</version>
 	<title>OLSRD</title>
-	<backup_file>/var/db/OLSRD</backup_file>
 	<!-- Menu is where this packages menu will appear -->
 	<menu>
 		<name>OLSRD</name>
@@ -12,7 +11,7 @@
 	</menu>
 	<service>
                 <name>OLSRD</name>
-                <rcfile></rcfile>
+                <rcfile>/usr/local/sbin/olsrd -f /var/etc/olsr.conf</rcfile>
     </service>
 	<tabs>
 		<tab>
@@ -60,7 +59,7 @@
 		<field>
 			<fielddescr>Allowed host(s)</fielddescr>
 			<fieldname>allowedhttpinfohost</fieldname>
-			<description>Enables the OLSR stats web server</description>
+			<description>Hosts that are allowed to access the HTTPInfo web service.</description>
 			<type>input</type>
 		</field>
 		<field>
@@ -81,6 +80,12 @@
 			<description>Pings this host to ensure connectivity</description>
 			<type>input</type>
 		</field>
+		<field>
+			<fielddescr>Poll</fielddescr>
+			<fieldname>polling</fieldname>
+			<description>How often to look for a inet gw, in seconds.</description>
+			<type>input</type>
+		</field>			
 		<field>
 			<fielddescr>Enable Secure Mode</fielddescr>
 			<fieldname>enabledsecure</fieldname>

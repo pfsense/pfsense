@@ -1164,6 +1164,7 @@ Interface "{$realinterface}"
 EOD;
 
 	}
+	break;
 }
 		fwrite($fd, $olsr);
 		fclose($fd);

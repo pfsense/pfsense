@@ -1167,7 +1167,12 @@ EOD;
 		fwrite($fd, $olsr);
 		fclose($fd);
 	}
-	mwexec_bg("/usr/local/sbin/olsrd -f {$g['varetc_path']}/olsr.conf");
+	
+	if(is_process_running("olsrd"))
+		mwexec("killall -HUP olsrd");
+	else 
+		mwexec_bg("/usr/local/sbin/olsrd -f {$g['varetc_path']}/olsr.conf");
+		
 }
 
 ?>

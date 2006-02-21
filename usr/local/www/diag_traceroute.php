@@ -84,6 +84,13 @@ if (!isset($do_traceroute)) {
 					<?php endfor; ?>
 					</select></td>
 				</tr>
+
+				<tr>
+				  <td width="22%" valign="top" class="vncellreq">Use ICMP</td>
+				  <td width="78%" class="vtable">
+					<input name="useicmp" type="checkbox">
+					</td>
+				</tr>
 				<tr>
 				  <td width="22%" valign="top">&nbsp;</td>
 				  <td width="78%"> 
@@ -98,7 +105,11 @@ if (!isset($do_traceroute)) {
 					echo("<br><strong>Traceroute output:</strong><br>");
 					echo('<pre>');
 					ob_end_flush();
-					system("/usr/sbin/traceroute -w 2 -m " . escapeshellarg($ttl) . " " . escapeshellarg($host));
+					if($_POST['useicmp'])
+						$useicmp = "-I";
+					else
+						$useicmp = "";
+					system("/usr/sbin/traceroute $useicmp -w 2 -m " . escapeshellarg($ttl) . " " . escapeshellarg($host));
 					echo('</pre>');
 				}
 				?>

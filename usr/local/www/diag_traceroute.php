@@ -88,7 +88,7 @@ if (!isset($do_traceroute)) {
 				<tr>
 				  <td width="22%" valign="top" class="vncellreq">Use ICMP</td>
 				  <td width="78%" class="vtable">
-					<input name="useicmp" type="checkbox">
+					<input name="useicmp" type="checkbox"<?php if($_POST['useicmp']) echo " CHECKED"; ?>>
 					</td>
 				</tr>
 				<tr>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<packagegui>
+	<name>OLSRD</name>
+	<version>1.0</version>
+	<title>OLSRD</title>
+	<backup_file>/var/db/OLSRD</backup_file>
+	<!-- Menu is where this packages menu will appear -->
+	<menu>
+		<name>OLSRD</name>
+		<section>Services</section>
+		<configfile>olsrd.xml</configfile>
+	</menu>
+	<service>
+                <name>OLSRD</name>
+                <rcfile></rcfile>
+    </service>
+	<tabs>
+		<tab>
+			<text>OLSRD Settings</text>
+			<url>/pkg_edit.php?xml=olsrd.xml&amp;id=0</url>
+		</tab>
+	</tabs>
+    	<additional_files_needed>
+	    <prefix>/usr/local/www/</prefix>
+	    <chmod>0755</chmod>
+	    <item>http://www.pfsense.com/packages/config/OLSRD_rules.php</item>
+	</additional_files_needed>
+	<!-- configpath gets expanded out automatically and config items will be
+         stored in that location -->
+	<configpath>['installedpackages']['OLSRD']['config']</configpath>
+	<!-- fields gets invoked when the user adds or edits a item.   the following items
+         will be parsed and rendered for the user as a gui with input, and selectboxes. -->
+	<fields>
+		<field>
+			<fielddescr>Enable OLSR</fielddescr>
+			<fieldname>enable</fieldname>
+			<description>Enables the dynamic mesh linking daemon</description>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fielddescr>Interfaces</fielddescr>
+			<fieldname>interface_array</fieldname>
+			<value>lan</value>
+			<multiple>true</multiple>
+			<size>3</size>
+			<type>interfaces_selection</type>
+		</field>
+		<field>
+			<fielddescr>Enable HTTPInfo Plugin</fielddescr>
+			<fieldname>enablehttpinfo</fieldname>
+			<description>Enables the OLSR stats web server</description>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fielddescr>HTTPInfo Port</fielddescr>
+			<fieldname>port</fieldname>
+			<description>Port that HTTPInfo will listen on</description>
+			<type>input</type>
+		</field>			
+		<field>
+			<fielddescr>Allowed host(s)</fielddescr>
+			<fieldname>allowedhttpinfohost</fieldname>
+			<description>Enables the OLSR stats web server</description>
+			<type>input</type>
+		</field>
+		<field>
+			<fielddescr>Allowed host(s) subnet</fielddescr>
+			<fieldname>allowedhttpinfosubnet</fieldname>
+			<description>Enter the subnet mask in form 255.255.255.0</description>
+			<type>input</type>
+		</field>
+		<field>
+			<fielddescr>Enable Dynamic Gateway</fielddescr>
+			<fieldname>enabledyngw</fieldname>
+			<description>Enables the OLSR Dynamic Gateways feature</description>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fielddescr>Ping</fielddescr>
+			<fieldname>ping</fieldname>
+			<description>Pings this host to ensure connectivity</description>
+			<type>input</type>
+		</field>
+		<field>
+			<fielddescr>Enable Secure Mode</fielddescr>
+			<fieldname>enabledsecure</fieldname>
+			<description>Enables the secure mode</description>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fielddescr>Key</fielddescr>
+			<fieldname>key</fieldname>
+			<description>Paste the secure key information here.</description>
+			<type>textarea</type>
+			<rows>5</rows>
+			<cols>50</cols>
+		</field>
+	</fields>
+	<custom_delete_php_command>
+	</custom_delete_php_command>
+	<custom_php_resync_config_command>
+		$fd = fopen("/usr/local/etc/olsrkey.txt","w");
+		fwrite($fd, $_POST['key']);
+		fclose($fd);
+		foreach($_POST['interface_array'] as $iface) {
+				$if = convert_friendly_interface_to_real_interface_name($iface);
+				if($if) {
+						setup_wireless_olsr($if);
+				}
+		}
+	</custom_php_resync_config_command>
+	<custom_php_install_command>
+	</custom_php_install_command>
+	<custom_php_deinstall_command>
+	</custom_php_deinstall_command>
+</packagegui>

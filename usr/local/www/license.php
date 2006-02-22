@@ -130,7 +130,7 @@ include("head.inc");
               This product includes PHP, freely available from <a href="http://www.php.net/" target="_blank">http://www.php.net</a>.<br>
               Copyright &copy; 1999 - 2003 The PHP Group. All rights reserved.<br>
               <br>
-              mini_httpd (<a href="http://www.acme.com/software/mini_httpd" target="_blank">http://www.acme.com/software/mini_httpd)</a><br>
+              LightTTPD (<a href="http://www.lighttpd.net" target="_blank">http://www.lighttpd.net)</a><br>
               Copyright &copy; 1999, 2000 by Jef Poskanzer &lt;jef@acme.com&gt;.
               All rights reserved.<br>
               <br>

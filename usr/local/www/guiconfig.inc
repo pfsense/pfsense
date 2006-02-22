@@ -556,7 +556,7 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 	global $g, $config;
     $sor = isset($config['syslog']['reverse']) ? "-r" : "";
     $logarr = "";
-	exec("/usr/sbin/clog {$logfile} | grep \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+	exec("/usr/sbin/clog {$logfile} | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
 
 	if(is_array($grepfor)) {
 		 $i = 0;

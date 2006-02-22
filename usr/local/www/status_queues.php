@@ -1,3 +1,4 @@
+#!/usr/local/bin/php
 <?php
 /* $Id$ */
 /*
@@ -31,7 +32,7 @@
 require("guiconfig.inc");
 
 if($_GET['reset'] <> "") {
-	mwexec("killall -9 pfctl pfctl");
+	mwexec("killall pfctl pfctl");
 	Header("Location: status_queues.php");
 	exit;
 }
@@ -50,7 +51,7 @@ foreach($pfctl_vsq_array as $pfctl) {
 			$a_queues[] = $match_array[1][0];	
 }
 
-$pgtitle = "Status: Traffic Shaper: Queues";
+$pgtitle = "Status: Traffic shaper: Queues";
 include("head.inc");
 
 ?>
@@ -148,12 +149,7 @@ While(!Connection_Aborted()) {
 
 		echo "<script language='javascript'>\n";
 
-		/* Since pps can be 0, let's not divide by zero */
-		if ($total_packets_s == 0) {
-			$packet_s = round(400 * (1 - $packet_sampled / $total_packets_s), 0);
-		} else {
-			$packet_s = 0;
-		}
+		$packet_s = round(400 * (1 - $packet_sampled / $total_packets_s), 0);
 
 		echo "document.queue{$i}widthb.style.width='{$packet_s}px';\n";
 		echo "document.queue{$i}widtha.style.width='" . (400 - $packet_s) . "px';\n";
@@ -178,10 +174,12 @@ While(!Connection_Aborted()) {
 		echo "Redirecting to <a href=\"status_queues.php\">Queue Status</a>.<p>";
 		echo "<meta http-equiv=\"refresh\" content=\"1;url={$_SERVER['PHP_SELF']}\">";
 		mwexec("/usr/bin/killall pfctl");
+		mwexec("/usr/bin/killall pfctl php");
 		exit;
 	}
 }
 
-mwexec("/usr/bin/killall pfctl");
+mwexec("/usr/bin/killall pfctl pfctl");
+mwexec("/usr/bin/killall pfctl php");
 
 ?>

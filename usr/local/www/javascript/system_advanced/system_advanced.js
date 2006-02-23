@@ -1,7 +1,6 @@
 function enable_change(enable_over) {
 	if (document.iform.ipv6nat_enable.checked || enable_over) {
-	document.iform.ipv6nat_ipaddr.disabled = 0;
-		document.iform.schedulertype.disabled = 0;
+		document.iform.ipv6nat_ipaddr.disabled = 0;
 	} else {
 		document.iform.ipv6nat_ipaddr.disabled = 1;
 	}

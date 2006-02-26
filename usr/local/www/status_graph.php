@@ -48,7 +48,7 @@ if ($_GET['if']) {
 	$curif = $_GET['if'];
 	$ifnum = $config['interfaces'][$curif]['if'];
 } else {
-	$curif = "wan";
+	$curif = "WAN";
 	$ifnum = get_real_wan_interface();
 }
 

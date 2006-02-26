@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <packagegui>
-	<name>OLSRD</name>
+	<name>olsrd</name>
 	<version>1.0</version>
 	<title>OLSRD</title>
 	<!-- Menu is where this packages menu will appear -->
@@ -27,6 +27,7 @@
 	<!-- configpath gets expanded out automatically and config items will be
          stored in that location -->
 	<configpath>['installedpackages']['OLSRD']['config']</configpath>
+	<aftersaveredirect>pkg_edit.php?xml=olsrd.xml&amp;id=0</aftersaveredirect>
 	<!-- fields gets invoked when the user adds or edits a item.   the following items
          will be parsed and rendered for the user as a gui with input, and selectboxes. -->
 	<fields>

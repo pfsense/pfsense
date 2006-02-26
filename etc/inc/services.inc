@@ -305,7 +305,7 @@ function interfaces_staticarp_configure($if) {
                 }
         } else {
                 mwexec("/sbin/ifconfig " . escapeshellarg($ifcfg['if']) . " -staticarp " );
-                mwexec("/usr/sbin/arp -ad > /dev/null 2>&1 ");
+                mwexec("/usr/sbin/arp -da > /dev/null 2>&1 ");
         }
 
         return 0;

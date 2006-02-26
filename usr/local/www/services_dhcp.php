@@ -175,7 +175,6 @@ if ($_POST) {
 			$config['dhcpd'][$if]['staticarp'] = true;
 		} else {
 			unset($config['dhcpd'][$if]['staticarp']);
-			mwexec("/usr/sbin/arp -da");
 		}
 
 		write_config();

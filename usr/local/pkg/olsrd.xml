@@ -19,11 +19,6 @@
 			<url>/pkg_edit.php?xml=olsrd.xml&amp;id=0</url>
 		</tab>
 	</tabs>
-    	<additional_files_needed>
-	    <prefix>/usr/local/www/</prefix>
-	    <chmod>0755</chmod>
-	    <item>http://www.pfsense.com/packages/config/OLSRD_rules.php</item>
-	</additional_files_needed>
 	<!-- configpath gets expanded out automatically and config items will be
          stored in that location -->
 	<configpath>['installedpackages']['OLSRD']['config']</configpath>

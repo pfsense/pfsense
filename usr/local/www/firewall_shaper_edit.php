@@ -60,7 +60,8 @@ if (isset($_GET['dup'])) {
 }
 
 if (isset($id) && $a_shaper[$id]) {
-	$pconfig['interface'] = $a_shaper[$id]['interface'];
+	$pconfig['in-interface'] = $a_shaper[$id]['in-interface'];
+	$pconfig['out-interface'] = $a_shaper[$id]['out-interface'];
 
 	if (isset($a_shaper[$id]['protocol']))
 		$pconfig['proto'] = $a_shaper[$id]['protocol'];
@@ -245,7 +246,8 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$shaperent = array();
-		$shaperent['interface'] = $_POST['interface'];
+		$shaperent['in-interface'] = $_POST['in-interface'];
+		$shaperent['out-interface'] = $_POST['out-interface'];
 
 		if ($_POST['proto'] != "any")
 			$shaperent['protocol'] = $_POST['proto'];
@@ -433,20 +435,34 @@ function dst_rep_change() {
                     <span class="vexpl">Set this option to disable this rule without removing it from the list.</span></td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Interface</td>
-                  <td width="78%" class="vtable"> <select name="interface" class="formfld">
+                  <td width="22%" valign="top" class="vncellreq">In Interface</td>
+                  <td width="78%" class="vtable"> <select name="in-interface" class="formfld">
                       <?php $interfaces = array('lan' => 'LAN', 'wan' => 'WAN', 'pptp' => 'PPTP');
 					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 					  	$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 					  }
 					  foreach ($interfaces as $iface => $ifacename): ?>
-                      <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
+                      <option value="<?=$iface;?>" <?php if ($iface == $pconfig['in-interface']) echo "selected"; ?>>
                       <?=htmlspecialchars($ifacename);?>
                       </option>
                       <?php endforeach; ?>
                     </select> <br>
-                    <span class="vexpl">Choose which interface packets must pass
-                    through to match this rule.</span></td>
+                    <span class="vexpl">Choose which interface packets must pass in to match this rule.</span></td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncellreq">Out Interface</td>
+                  <td width="78%" class="vtable"> <select name="out-interface" class="formfld">
+                      <?php $interfaces = array('lan' => 'LAN', 'wan' => 'WAN', 'pptp' => 'PPTP');
+					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+					  	$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+					  }
+					  foreach ($interfaces as $iface => $ifacename): ?>
+                      <option value="<?=$iface;?>" <?php if ($iface == $pconfig['out-interface']) echo "selected"; ?>>
+                      <?=htmlspecialchars($ifacename);?>
+                      </option>
+                      <?php endforeach; ?>
+                    </select> <br>
+                    <span class="vexpl">Choose which interface packets must pass out to match this rule.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Protocol</td>

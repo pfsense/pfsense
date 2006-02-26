@@ -105,6 +105,28 @@ if ($_POST) {
 		$input_errors[] = "The priority must be an integer between 1 and 100.";
 	}
 
+	switch($config['shaper']['schedulertype']) {
+		case 'hfsc':
+			/* HFSC validation */
+			if ($_POST['upperlimit1'] <> "" &&  $_POST['upperlimit2'] == "")
+				$input_errors[] = "upperlimit service curve defined but missing burst (d) value";
+			if ($_POST['upperlimit2'] <> "" &&  $_POST['upperlimit1'] == "")
+				$input_errors[] = "upperlimit service curve defined but missing initial bandwidth (m1) value";
+			if ($_POST['linkshare1'] <> "" &&  $_POST['linkshare2'] == "")
+				$input_errors[] = "linkshare service curve defined but missing burst (d) value";
+			if ($_POST['linkshare2'] <> "" &&  $_POST['linkshare1'] == "")
+				$input_errors[] = "linkshare service curve defined but missing initial bandwidth (m1) value";
+			if ($_POST['realtime1'] <> "" &&  $_POST['realtime2'] == "")
+				$input_errors[] = "realtime service curve defined but missing burst (d) value";
+			if ($_POST['realtime2'] <> "" &&  $_POST['realtime1'] == "")
+				$input_errors[] = "realtime service curve defined but missing initial bandwidth (m1) value";
+			break;
+		case 'cbq':
+			break;
+		case 'priq':
+			break;
+	}
+	
 	if (!$input_errors) {
 		$queue = array();
 		$queue['schedulertype'] = $_POST['schedulertype'];
@@ -115,8 +137,7 @@ if ($_POST) {
 		if($_POST['bandwidthtype'] == "")
 			unset($queue['bandwidth']);
 		$queue['priority'] = $_POST['priority'];
-		$queue['name'] = ereg_replace(" ", "", $_POST['name']);
-		$queue['name'] = substr($queue['name'], 0, 15);
+		$queue['name'] = substr(ereg_replace(" ", "", $_POST['name']), 0, 15);
 		$queue['borrow'] = $_POST['borrow'];
 		$queue['linkshare'] = $_POST['linkshare'];
 		$queue['linkshare3'] = $_POST['linkshare3'];
@@ -189,6 +210,52 @@ include("head.inc");
 
 ?>
 
+<script language="JavaScript">
+function enable_realtime(enable_over) {
+        if (document.iform.realtime.checked || enable_over) {
+                document.iform.realtime1.disabled = 0;
+                document.iform.realtime2.disabled = 0;
+                document.iform.realtime3.disabled = 0;
+        } else {
+                document.iform.realtime1.disabled = 1;
+                document.iform.realtime2.disabled = 1;
+                document.iform.realtime3.disabled = 1;
+        }
+}
+function enable_linkshare(enable_over) {
+        if (document.iform.linkshare.checked || enable_over) {
+                document.iform.linkshare1.disabled = 0;
+                document.iform.linkshare2.disabled = 0;
+                document.iform.linkshare3.disabled = 0;
+        } else {
+                document.iform.linkshare1.disabled = 1;
+                document.iform.linkshare2.disabled = 1;
+                document.iform.linkshare3.disabled = 1;
+        }
+}
+function enable_upperlimit(enable_over) {
+        if (document.iform.upperlimit.checked || enable_over) {
+                document.iform.upperlimit1.disabled = 0;
+                document.iform.upperlimit2.disabled = 0;
+                document.iform.upperlimit3.disabled = 0;
+        } else {
+                document.iform.upperlimit1.disabled = 1;
+                document.iform.upperlimit2.disabled = 1;
+                document.iform.upperlimit3.disabled = 1;
+        }
+}
+
+function enable_attachtoqueue(enable_over) {
+        if (document.iform.parentqueue.checked || enable_over) {
+                document.iform.attachtoqueue.disabled = 1;
+        } else {
+                document.iform.attachtoqueue.disabled = 0;
+		desc = document.getElementById("attachtoqueuedesc");
+		desc.className = "vncellreq";
+        }
+}
+</script>
+
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
@@ -229,7 +296,7 @@ include("head.inc");
 		</span></td>
 	    </tr>
 	    <tr>
-	      <td width="22%" valign="top" class="vncell"><b>Name</b></td>
+	      <td width="22%" valign="top" class="vncellreq">Name</td>
 	      <td width="78%" class="vtable"> <input name="name" type="text" class="formfld" id="name" size="15" value="<?=htmlspecialchars($pconfig['name']);?>">
 		<br> <span class="vexpl">Enter the name of the queue here.  Do not use spaces and limit the size to 15 characters.
 		</span></td>
@@ -246,20 +313,20 @@ include("head.inc");
 		<input type="checkbox" id="rio" name="rio" <?php if($rio) echo " CHECKED";?> > <a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#red">Random Early Detection In and Out</a><br>
 		<input type="checkbox" id="ecn" name="ecn" <?php if($ecn) echo " CHECKED";?> > <a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#ecn">Explicit Congestion Notification</a><br>
 	<?php if ($schedulertype == "hfsc" or $schedulertype == "cbq"): ?>
-		<input type="checkbox" id="parentqueue" name="parentqueue" <?php if($parentqueue) echo " CHECKED";?> > This is a parent queue<br>
+		<input type="checkbox" id="parentqueue" name="parentqueue" <?php if($parentqueue) echo " CHECKED";?> onChange="enable_attachtoqueue()" > This is a parent queue<br>
 	<?php endif; ?>
 	<span class="vexpl"><br>Select options for this queue
 	</tr>
 
 	<?php if ($schedulertype == "hfsc"): ?>
 	    <tr>
-	      <td width="22%" valign="top" class="vncell"><b>Service Curve (sc)</td>
+	      <td width="22%" valign="top" class="vncell">Service Curve (sc)</td>
 	      <td width="78%" class="vtable">	
 		<table>
-		<tr><td>&nbsp;</td><td><b><center>m1</td><td><b><center>d</td><td><b><center>m2</td></tr>
-		<tr><td><input type="checkbox" id="upperlimit" name="upperlimit" <?php if($upperlimit) echo " CHECKED";?> > Upperlimit:</td><td><input size="3" value="<?=htmlspecialchars($upperlimit1);?>" name="upperlimit1"></td><td><input size="3" value="<?=htmlspecialchars($upperlimit2);?>" name="upperlimit2"></td><td><input size="3" value="<?=htmlspecialchars($upperlimit3);?>" name="upperlimit3"></td><td>The maximum allowed bandwidth for the queue.</td></tr>
-		<tr><td><input type="checkbox" id="realtime" name="realtime" <?php if($realtime) echo " CHECKED";?> > Real time:</td><td><input size="3" value="<?=htmlspecialchars($realtime1);?>" name="realtime1"></td><td><input size="3" value="<?=htmlspecialchars($realtime2); ?>" name="realtime2"></td><td><input size="3" value="<?=htmlspecialchars($realtime3);?>" name="realtime3"></td><td>The minimum required bandwidth for the queue.</td></tr>
-		<tr><td><input type="checkbox" id="linkshare" id="linkshare" name="linkshare" <?php if($linkshare) echo " CHECKED";?> > Link share:</td><td><input size="3" value="<?=htmlspecialchars($linkshare1);?>" value="<?=htmlspecialchars($linkshare1);?>" id="linkshare1" name="linkshare1"></td><td><input size="3" value="<?=htmlspecialchars($linkshare2);?>" id="linkshare2" name="linkshare2"></td><td><input size="3" value="<?=htmlspecialchars($linkshare3);?>" id="linkshare3" name="linkshare3"></td><td>The bandwidth share of a backlogged queue.</td></tr>
+		<tr><td>&nbsp;</td><td><center>m1</center></td><td><center>d</center></td><td><center><b>m2</b></center></td></tr>
+		<tr><td><input type="checkbox" id="upperlimit" name="upperlimit" <?php if($upperlimit) echo " CHECKED";?> onChange="enable_upperlimit()"> Upperlimit:</td><td><input size="3" value="<?=htmlspecialchars($upperlimit1);?>" id="upperlimit1" name="upperlimit1"></td><td><input size="3" value="<?=htmlspecialchars($upperlimit2);?>" id="upperlimi2" name="upperlimit2"></td><td><input size="3" value="<?=htmlspecialchars($upperlimit3);?>" id="upperlimit3" name="upperlimit3"></td><td>The maximum allowed bandwidth for the queue.</td></tr>
+		<tr><td><input type="checkbox" id="realtime" name="realtime" <?php if($realtime) echo " CHECKED";?> onChange="enable_realtime()"> Real time:</td><td><input size="3" value="<?=htmlspecialchars($realtime1);?>" id="realtime1" name="realtime1"></td><td><input size="3" value="<?=htmlspecialchars($realtime2); ?>" id="realtime2" name="realtime2"></td><td><input size="3" value="<?=htmlspecialchars($realtime3);?>" id="realtime3" name="realtime3"></td><td>The minimum required bandwidth for the queue.</td></tr>
+		<tr><td><input type="checkbox" id="linkshare" id="linkshare" name="linkshare" <?php if($linkshare) echo " CHECKED";?> onChange="enable_linkshare()"> Link share:</td><td><input size="3" value="<?=htmlspecialchars($linkshare1);?>" value="<?=htmlspecialchars($linkshare1);?>" id="linkshare1" name="linkshare1"></td><td><input size="3" value="<?=htmlspecialchars($linkshare2);?>" id="linkshare2" name="linkshare2"></td><td><input size="3" value="<?=htmlspecialchars($linkshare3);?>" id="linkshare3" name="linkshare3"></td><td>The bandwidth share of a backlogged queue - this overrides priority.</td></tr>
 		</table><br>		
 			The format for service curve specifications is (m1, d, m2).  m2 controls
 			the bandwidth assigned to the queue.  m1 and d are optional and can be 
@@ -273,7 +340,7 @@ include("head.inc");
 	
 	<?php if ($schedulertype == "hfsc" or $schedulertype == "cbq"): ?>
 	    <tr>
-		<td width="22%" valign="top" class="vncell">Parent queue:</td>
+		<td width="22%" valign="top" class="vncell" id="attachtoqueuedesc">Parent queue:</td>
 		<td width="78%" class="vtable">
 		   <select id="attachtoqueue" name="attachtoqueue">
 			<?php
@@ -303,5 +370,11 @@ include("head.inc");
 	  </table>
 </form>
 <?php include("fend.inc"); ?>
+<script language="javascript">
+enable_realtime();
+enable_linkshare();
+enable_upperlimit();
+enable_attachtoqueue();
+</script>
 </body>
 </html>

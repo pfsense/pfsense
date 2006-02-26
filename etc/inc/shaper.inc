@@ -113,13 +113,22 @@ function filter_generate_altq_queues($altq_ints) {
 			if(isset($rule['defaultqueue']) and $rule['defaultqueue'] <> "")
 			$options .= " default";
 			if(isset($rule['upperlimit']) and $rule['upperlimit'] <> "") {
-				$options .= " upperlimit({$rule['upperlimit1']} {$rule['upperlimit2']} {$rule['upperlimit3']})";
+				if ($rule['upperlimit1'] <> "")
+					$options .= " upperlimit({$rule['upperlimit1']} {$rule['upperlimit2']} {$rule['upperlimit3']})";
+				else
+					$options .= " upperlimit {$rule['upperlimit3']}";
 			}
 			if(isset($rule['linkshare']) and $rule['linkshare'] <> "") {
-				$options .= " linkshare({$rule['linkshare1']} {$rule['linkshare2']} {$rule['linkshare3']})";
+				if ($rule['linkshare1'] <> "")
+					$options .= " linkshare({$rule['linkshare1']} {$rule['linkshare2']} {$rule['linkshare3']})";
+				else
+					$options .= " linkshare {$rule['linkshare3']}";
 			}
 			if(isset($rule['realtime']) and $rule['realtime'] <> "") {
-				$options .= " realtime({$rule['realtime1']} {$rule['realtime2']} {$rule['realtime3']})";
+				if ($rule['realtime1'] <> "")
+					$options .= " realtime({$rule['realtime1']} {$rule['realtime2']} {$rule['realtime3']})";
+				else
+					 $options .= " realtime {$rule['realtime3']}";
 			}
 			$scheduler_type = $config['shaper']['schedulertype'];
 			$altq_rules .= "{$scheduler_type} ";
@@ -176,7 +185,7 @@ function filter_is_queue_being_used_on_interface($queuename, $interface) {
 
 	if(!is_array($lconfig['shaper']['rule'])) return null;
 	foreach($lconfig['shaper']['rule'] as $rule) {
-		if(($rule['inqueue'] == $queuename && $rule['interface'] == $interface))
+		if(($rule['inqueue'] == $queuename && $rule['in-interface'] == $interface))
 		return $interface;
 	}
 	return null;
@@ -267,7 +276,7 @@ function queue_interface_recursive($queuename) {
 		}
 		foreach($config['shaper']['rule'] as $rule) {
 			if($rule['inqueue'] == $queuename)
-			return $rule['interface'];
+			return $rule['in-interface'];
 		}
 	}
 
@@ -341,7 +350,7 @@ function filter_generate_pf_altq_rules() {
 			continue;
 		}
 
-		switch($rule['interface']) {
+		switch($rule['in-interface']) {
 			case "pptp": /* does the rule deal with a PPTP interface? */
 				if ($pptpdcfg['mode'] != "server") {
 					if (($rule['source']['network'] == "pptp") ||
@@ -374,8 +383,8 @@ function filter_generate_pf_altq_rules() {
 				$ispppoe = true;
 				break;
 			default:
-				if (strstr($rule['interface'], "opt")) {
-					if (!array_key_exists($rule['interface'], $optcfg)) {
+				if (strstr($rule['in-interface'], "opt")) {
+					if (!array_key_exists($rule['in-interface'], $optcfg)) {
 						$i++;
 						continue;
 					}
@@ -419,17 +428,17 @@ function filter_generate_pf_altq_rules() {
 					if($ispppoe) {
 						$line .= " ng" . ($iif+1);
 					} else {
-						$if = $config['interfaces'][$rule['interface']]['if'];
+						$if = $config['interfaces'][$rule['in-interface']]['if'];
 					}
 
-					if ($rule['interface'] == "wan") {
+					if ($rule['in-interface'] == "wan") {
 						if($direction=="in") {
 							$if = $wanif;
 						} else {
 							$if = $lanif;
 						}
 					} else {
-						if($rule['interface'] == "lan") {
+						if($rule['in-interface'] == "lan") {
 							if($direction=="in") {
 								$if = $lanif;
 							} else {
@@ -587,6 +596,16 @@ function filter_generate_pf_altq_rules() {
 
 				$line .= "\n";
 				$shaperrules .= $line;
+				/* setup the outbound queue on the other interface */
+				switch($direction) {
+					case 'in':
+						$qouttag = "outqueue";
+						break;
+					case 'out':
+						$qouttag = "inqueue";
+						break;
+				}
+				$shaperrules .= "pass out on {$rule['out-interface']} all keep state tagged {$rule[$qtag]} tag {$rule[$qouttag]}";
 			}
 		}
 

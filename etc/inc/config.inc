@@ -744,6 +744,14 @@ function convert_config() {
 		$config['interfaces']['wan']['gateway'] = $config['system']['gateway'];
 		$config['version'] = "2.2";
 	}
+	/* Convert 2.2 -> 2.3 */
+	if ($config['version'] == "2.2") {
+		if(isset($config['shaper'])) {
+			/* wipe previous shaper configuration */
+			unset($config['shaper']);
+		}
+		$config['version'] = "2.3";
+	}
 
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");

@@ -99,7 +99,7 @@ max-lease-time 86400;
 authoritative;
 log-facility local7;
 ddns-update-style none;
-ne-lease-per-client true;
+one-lease-per-client true;
 
 EOD;
 

@@ -1162,11 +1162,6 @@ EOD;
 		for (; isset($config['interfaces']['opt' . ($i+1)]); $i++)
 			unset($config['interfaces']['opt' . ($i+1)]);
 		
-		conf_mount_rw();
-		
-		/* call the wizard */
-		touch("/conf/trigger_initial_wizard");
-		
 		write_config();
 		
 		echo <<<EOD

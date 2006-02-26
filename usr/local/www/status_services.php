@@ -152,12 +152,12 @@ if($services) {
 		echo '<tr><td class="listlr">' . $service['name'] . '</td>';
 		echo '<td class="listr">' . $service['description'] . '</td>';
 		if(is_service_running($service['name'], $ps) or is_process_running($service['name']) ) {
-			echo '<td class="listr">Running</td><td><img src="/themes/';
-			echo $g["theme"] . '/images/icons/icon_pass.gif"></td>';
+			echo '<td class="listr"><center>';
+			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_pass.gif\"> Running</td>";
 			$running = true;
 		} else {
-			echo '<td class="listbg"><font color="white">Stopped</td><td><img src="/themes/';
-			echo $g["theme"] . '/images/icons/icon_block.gif"></td>';
+			echo '<td class="listbg"><center>';
+			echo "<img src=\"/themes/" . $g["theme"] . "/images/icons/icon_block.gif\"> <font color=\"white\">Stopped</td>";
 			$running = false;
 		}
 		echo '<td valign="middle" class="list" nowrap>';

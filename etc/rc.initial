@@ -122,7 +122,5 @@ case ${opmode} in
         ;;
 esac
 
-sleep 1
-
 done
 

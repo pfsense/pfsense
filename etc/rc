@@ -194,9 +194,9 @@ if [ ! "$PLATFORM" = "cdrom" ]; then
     echo "Executing rc.d items... "
     
     for FILE in /usr/local/etc/rc.d/*.sh; do
-	echo -n " Starting ${FILE}..."
-	sh $FILE start >>/tmp/bootup_messages 2>&1
-	echo "done."
+		echo -n " Starting ${FILE}..."
+		sh $FILE start >>/tmp/bootup_messages 2>&1
+		echo "done."
     done
 fi
 
@@ -208,6 +208,6 @@ rm -rf /usr/local/pkg/pf/CVS
 
 echo "Bootup complete"
 
-/usr/local/bin/beep.sh start
+/usr/local/bin/beep.sh start 2>/dev/null
 
 exit 0

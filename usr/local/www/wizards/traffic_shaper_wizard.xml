@@ -476,7 +476,7 @@
 			    $voiplist = array();
 	    
 			    /* asterisk server / same as vonage */
-			    if( $_POST['provider'] == "Asterisk") || ($_POST['provider'] == "Vonage")) {
+			    if(($_POST['provider'] == "Asterisk") || ($_POST['provider'] == "Vonage")) {
 				$voiplist[] = array('Asterisk', 'udp', '5060', '5069', 'both');
 				$voiplist[] = array('Asterisk', 'udp', '10000', '20000', 'both');
 			    }

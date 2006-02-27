@@ -1354,6 +1354,7 @@ function reload_interfaces_sync() {
 			continue;		
 		$ifname_real = convert_friendly_interface_to_real_interface_name($ifname);
 		mwexec("/sbin/ifconfig {$ifname_real} down");
+		mwexec("/sbin/ifconfig {$ifname_real} delete");
 	}
 
 	/* set up VLAN virtual interfaces */
@@ -1562,6 +1563,7 @@ function reload_all_sync() {
 		if(stristr($ifname, "lo0") == true)
 			continue;
 		mwexec("/sbin/ifconfig {$ifname_real} down");
+		mwexec("/sbin/ifconfig {$ifname_real} delete");
 	}
 
 	/* set up VLAN virtual interfaces */

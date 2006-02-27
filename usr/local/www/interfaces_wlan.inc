@@ -363,7 +363,7 @@ function wireless_config_print() {
 					$if = $optcfg['if'];				
 				$results = `/sbin/ifconfig {$if} list channel`;
 			?>			
-			<td class="vtable"><textarea cols="73" rows="3"><?=$results?>;</textarea>
+			<td class="vtable"><textarea readonly onFocus="blur()" name="noedit" id="noedit" cols="73" rows="3"><?=$results?>;</textarea>
 			<br/>This is a list of the channels and the capabilities of your card.
 			</td>
 		</tr>		
@@ -500,4 +500,7 @@ function wireless_config_print() {
 			<br/>Setting this option will enable 802.1x authentication.
 			</td>
 		</tr>
+		<script language="JavaScript">
+		document.iform.noedit.enabled = false;
+		</script>
 <? } ?>

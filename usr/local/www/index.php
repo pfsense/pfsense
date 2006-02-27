@@ -56,8 +56,10 @@
 
 	## Check to see if we have a swap space,
 	## if true, display, if false, hide it ...
-	$swapinfo = `/usr/sbin/swapinfo`;
-	if(stristr($swapinfo,'%') == true) $showswap=true;
+	if(file_exists("/usr/sbin/swapinfo")) {
+		$swapinfo = `/usr/sbin/swapinfo`;
+		if(stristr($swapinfo,'%') == true) $showswap=true;
+	}
 
 
 	## User recently restored his config.

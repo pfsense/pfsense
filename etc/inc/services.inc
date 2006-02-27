@@ -875,6 +875,7 @@ function setup_wireless_olsr() {
 		$mt = microtime();
 		echo "setup_wireless_olsr($interface) being called $mt\n";
 	}
+	conf_mount_rw();
 	foreach($config['installedpackages']['olsrd']['config'] as $olsrd) {
 		$fd = fopen("{$g['varetc_path']}/olsr.conf", "w");
 		$olsr .= <<<EODA
@@ -1175,6 +1176,8 @@ EOD;
 		mwexec("killall -HUP olsrd");
 	else 
 		mwexec_bg("/usr/local/sbin/olsrd -f {$g['varetc_path']}/olsr.conf");
+		
+	conf_mount_ro();
 }
 
 ?>

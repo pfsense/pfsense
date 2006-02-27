@@ -485,4 +485,19 @@ function wireless_config_print() {
 			<br/>Setting this option will enable 802.1x authentication.
 			</td>
 		</tr>
+		<tr>
+			<td valign="top" class="vncell">Interface capabilities</td>
+			<?php
+				if($wancfg['if']) 
+					$if = $lancfg['if'];
+				if($wancfg['if']) 
+					$if = $lancfg['if'];
+				if($optcfg['if']) 
+					$if = $optcfg['if'];				
+				$results = `/sbin/ifconfig {$if} list channel`;
+			?>			
+			<td class="vtable"><textarea cols="73" rows="3"><?=$results?>;</textarea>
+			<br/>This is a list of the channels and the capabilities of your card.
+			</td>
+		</tr>
 <? } ?>

@@ -353,6 +353,21 @@ function wireless_config_print() {
 			use "ifconfig interface list channel" to list channels.</td>
 		</tr>
 		<tr>
+			<td valign="top" class="vncell">Interface capabilities</td>
+			<?php
+				if($wancfg['if']) 
+					$if = $lancfg['if'];
+				if($wancfg['if']) 
+					$if = $lancfg['if'];
+				if($optcfg['if']) 
+					$if = $optcfg['if'];				
+				$results = `/sbin/ifconfig {$if} list channel`;
+			?>			
+			<td class="vtable"><textarea cols="73" rows="3"><?=$results?>;</textarea>
+			<br/>This is a list of the channels and the capabilities of your card.
+			</td>
+		</tr>		
+		<tr>
 			<td valign="top" class="vncell">Distance setting</td>
 			<td class="vtable"><input name="distance" type="text" class="formfld" id="distance" size="5" value="<?=htmlspecialchars($pconfig['distance']);?>">
 			<br/>
@@ -483,21 +498,6 @@ function wireless_config_print() {
 			<td valign="top" class="vncell">Enable IEEE802.1X</td>
 			<td class="vtable"><input name="ieee8021x" type="checkbox" value="yes"  class="formfld" id="ieee8021x" <? if ($pconfig['ieee8021x']) echo "checked";?>>
 			<br/>Setting this option will enable 802.1x authentication.
-			</td>
-		</tr>
-		<tr>
-			<td valign="top" class="vncell">Interface capabilities</td>
-			<?php
-				if($wancfg['if']) 
-					$if = $lancfg['if'];
-				if($wancfg['if']) 
-					$if = $lancfg['if'];
-				if($optcfg['if']) 
-					$if = $optcfg['if'];				
-				$results = `/sbin/ifconfig {$if} list channel`;
-			?>			
-			<td class="vtable"><textarea cols="73" rows="3"><?=$results?>;</textarea>
-			<br/>This is a list of the channels and the capabilities of your card.
 			</td>
 		</tr>
 <? } ?>

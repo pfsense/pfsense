@@ -32,7 +32,7 @@
 require("guiconfig.inc");
 
 if($_GET['reset'] <> "") {
-	mwexec("killall pfctl pfctl");
+	mwexec("killall pfctl");
 	Header("Location: status_queues.php");
 	exit;
 }
@@ -136,7 +136,7 @@ While(!Connection_Aborted()) {
 	$i = 0;
 	foreach($stats_array as $stats_line) {
 		if($stat_line_split[2] == "" and $counter > 1) {
-			mwexec("/usr/bin/killall pfctl php");
+			mwexec("/usr/bin/killall pfctl");
 			exit;
 		}
 
@@ -174,12 +174,12 @@ While(!Connection_Aborted()) {
 		echo "Redirecting to <a href=\"status_queues.php\">Queue Status</a>.<p>";
 		echo "<meta http-equiv=\"refresh\" content=\"1;url={$_SERVER['PHP_SELF']}\">";
 		mwexec("/usr/bin/killall pfctl");
-		mwexec("/usr/bin/killall pfctl php");
+		mwexec("/usr/bin/killall pfctl");
 		exit;
 	}
 }
 
-mwexec("/usr/bin/killall pfctl pfctl");
-mwexec("/usr/bin/killall pfctl php");
+mwexec("/usr/bin/killall pfctl");
+mwexec("/usr/bin/killall pfctl");
 
 ?>

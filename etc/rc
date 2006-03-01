@@ -208,6 +208,6 @@ rm -rf /usr/local/pkg/pf/CVS
 
 echo "Bootup complete"
 
-/usr/local/bin/beep.sh start 2>/dev/null
+/usr/local/bin/beep.sh start 2>&1 >/dev/null
 
 exit 0

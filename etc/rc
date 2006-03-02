@@ -204,7 +204,7 @@ rm -rf /usr/local/pkg/pf/CVS
 
 /usr/local/bin/php -f /etc/rc.conf_mount_ro
 
-/usr/local/sbin/check_reload_status
+/usr/local/sbin/check_reload_status 2>/dev/null
 
 echo "Bootup complete"
 

@@ -43,11 +43,6 @@
 		    <fielddescr>PFSync Interface</fielddescr>
 		    <fieldname>pfsyncinterface</fieldname>
 	    </columnitem>
-	    <columnitem>
-		    <fielddescr>Load Balancing</fielddescr>
-		    <fieldname>balancing</fieldname>
-		    <type>checkbox</type>
-	    </columnitem>
 	</adddeleteeditpagefields>
 	<!-- fields gets invoked when the user adds or edits a item.   the following items
          will be parsed and rendered for the user as a gui with input, and selectboxes. -->
@@ -72,12 +67,6 @@
 			    &lt;br&gt;&lt;b&gt;NOTE:&lt;/b&gt;  You must define a IP on each machine participating in this failover group.
 			    &lt;br&gt;&lt;b&gt;NOTE:&lt;/b&gt;  You must have an IP assigned to the interface on any participating sync nodes.
 			</description>
-		</field>
-		<field>
-			<fielddescr>Load Balancing</fielddescr>
-			<fieldname>balancing</fieldname>
-			<description>If this feature is enabled, CARP source-hashes the originating IP of a request. The hash is then used to select a virtual host from the available pool to handle the request. This is disabled by default.</description>
-			<type>checkbox</type>
 		</field>
 		<field>
 			<fielddescr>Synchronize rules</fielddescr>

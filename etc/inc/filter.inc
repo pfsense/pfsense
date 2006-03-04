@@ -1865,60 +1865,61 @@ EOD;
 	$lan_subnet = $config['interfaces']['lan']['subnet'];
 	$wanif = get_real_wan_interface();
 	$wan_ip = find_interface_ip($wanif);
-	$internal_subnet = gen_subnet($lan_ip, $lan_subnet) . "/" . $config['interfaces']['lan']['subnet'];
-	/* Is IP Compression enabled? */
-	if(isset($config['ipsec']['ipcomp']))
-		exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=1");
-	else
-		exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=0");
-	/* determine ipsec address */
-	$ipsec_ip = $wan_ip;
-	/* set failover ip if defined */
-	if(isset($config['installedpackages']['sasyncd']['config']))
-	foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
-		if($sasyncd['ip'] <> "") 
-			$ipsec_ip = $sasyncd['ip'];
-	}
+	if($wan_ip) {
+		$internal_subnet = gen_subnet($lan_ip, $lan_subnet) . "/" . $config['interfaces']['lan']['subnet'];
+		/* Is IP Compression enabled? */
+		if(isset($config['ipsec']['ipcomp']))
+			exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=1");
+		else
+			exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=0");
+		/* determine ipsec address */
+		$ipsec_ip = $wan_ip;
+		/* set failover ip if defined */
+		if(isset($config['installedpackages']['sasyncd']['config']))
+		foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
+			if($sasyncd['ip'] <> "") 
+				$ipsec_ip = $sasyncd['ip'];
+		}
+		
+		if(is_array($config['ipsec']['tunnel']) && isset($config['ipsec']['enable'])) {
+			foreach ($config['ipsec']['tunnel'] as $tunnel) {
+				/* if tunnel is disabled, lets skip to next item */
+				if(isset($tunnel['disabled']))
+					continue;
+				/* is this a dynamic dns hostname? */
+				$remote_gateway = gethostbyname($tunnel['remote-gateway']);
+				if($remote_gateway == "")
+					$remote_gateway = $tunnel['remote-gateway'];
+				/* do not add items with blank remote_gateway */
+				if(!$remote_gateway) {
+					$ipfrules .= "# ERROR!  Remote gateway not found on ... pass quick on {$wanif} proto udp from {$ipsec_ip} to {$remote_gateway} port = 500 keep state label \"IPSEC: {$tunnel['descr']} udp\"\n";
+					continue;	
+				}
+				$local_subnet = return_vpn_subnet($tunnel['local-subnet']);
+				$ipfrules .= "pass out quick on {$wanif} proto udp from {$ipsec_ip} to {$remote_gateway} port = 500 keep state label \"IPSEC: {$tunnel['descr']} - outbound isakmp\"\n";
+				$ipfrules .= "pass in quick on {$wanif} proto udp from {$remote_gateway} to {$ipsec_ip} port = 500 keep state label \"IPSEC: {$tunnel['descr']} - inbound isakmp\"\n";
 	
-	if(is_array($config['ipsec']['tunnel']) && isset($config['ipsec']['enable'])) {
-		foreach ($config['ipsec']['tunnel'] as $tunnel) {
-			/* if tunnel is disabled, lets skip to next item */
-			if(isset($tunnel['disabled']))
-				continue;
-			/* is this a dynamic dns hostname? */
-			$remote_gateway = gethostbyname($tunnel['remote-gateway']);
-			if($remote_gateway == "")
-				$remote_gateway = $tunnel['remote-gateway'];
-			/* do not add items with blank remote_gateway */
-			if(!$remote_gateway) {
-				$ipfrules .= "# ERROR!  Remote gateway not found on ... pass quick on {$wanif} proto udp from {$ipsec_ip} to {$remote_gateway} port = 500 keep state label \"IPSEC: {$tunnel['descr']} udp\"\n";
-				continue;	
+				$ipfrules .= "pass out quick on {$wanif} proto esp from {$ipsec_ip} to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound esp proto\"\n";
+				$ipfrules .= "pass in quick on {$wanif} proto esp from {$remote_gateway} to {$ipsec_ip} keep state label \"IPSEC: {$tunnel['descr']} - inbound esp proto\"\n";
+	
+				$ipfrules .= "pass out quick on {$wanif} proto ah from {$ipsec_ip} to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound ah proto\"\n";
+				$ipfrules .= "pass in quick on {$wanif} proto ah from {$remote_gateway} to {$ipsec_ip} keep state label \"IPSEC: {$tunnel['descr']} - inbound ah proto\"\n";
+	
+				//$ipfrules .= "pass out quick on {$lanif} from {$tunnel['remote-subnet']} to {$local_subnet} keep state label \"IPSEC: {$tunnel['descr']} - remote to local\"\n";
+				//$ipfrules .= "pass in quick on {$lanif} from {$local_subnet} to {$tunnel['remote-subnet']} keep state label \"IPSEC:  {$tunnel['descr']} - local to remote\"\n";
 			}
-			$local_subnet = return_vpn_subnet($tunnel['local-subnet']);
-			$ipfrules .= "pass out quick on {$wanif} proto udp from {$ipsec_ip} to {$remote_gateway} port = 500 keep state label \"IPSEC: {$tunnel['descr']} - outbound isakmp\"\n";
-			$ipfrules .= "pass in quick on {$wanif} proto udp from {$remote_gateway} to {$ipsec_ip} port = 500 keep state label \"IPSEC: {$tunnel['descr']} - inbound isakmp\"\n";
-
-			$ipfrules .= "pass out quick on {$wanif} proto esp from {$ipsec_ip} to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound esp proto\"\n";
-			$ipfrules .= "pass in quick on {$wanif} proto esp from {$remote_gateway} to {$ipsec_ip} keep state label \"IPSEC: {$tunnel['descr']} - inbound esp proto\"\n";
-
-			$ipfrules .= "pass out quick on {$wanif} proto ah from {$ipsec_ip} to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound ah proto\"\n";
-			$ipfrules .= "pass in quick on {$wanif} proto ah from {$remote_gateway} to {$ipsec_ip} keep state label \"IPSEC: {$tunnel['descr']} - inbound ah proto\"\n";
-
-			//$ipfrules .= "pass out quick on {$lanif} from {$tunnel['remote-subnet']} to {$local_subnet} keep state label \"IPSEC: {$tunnel['descr']} - remote to local\"\n";
-			//$ipfrules .= "pass in quick on {$lanif} from {$local_subnet} to {$tunnel['remote-subnet']} keep state label \"IPSEC:  {$tunnel['descr']} - local to remote\"\n";
+		}
+	
+		/*     is mobile ipsec enabled?  if so lets allow some pretty 
+		 *     loose rules to allow mobile clients to phone in.
+		 */
+		$ipseccfg = $config['ipsec'];
+		if (isset($ipseccfg['mobileclients']['enable'])) {
+			$ipfrules .= "pass in quick on {$wanif} proto udp from any to any port = 500 keep state label \"IPSEC: Mobile - inbound isakmp\"\n";
+			$ipfrules .= "pass in quick on {$wanif} proto esp from any to any keep state label \"IPSEC: Mobile - inbound esp proto\"\n";
+			$ipfrules .= "pass in quick on {$wanif} proto ah from any to any  keep state label \"IPSEC: Mobile - inbound ah proto\"\n";
 		}
 	}
-
-	/*     is mobile ipsec enabled?  if so lets allow some pretty 
-	 *     loose rules to allow mobile clients to phone in.
-	 */
-	$ipseccfg = $config['ipsec'];
-	if (isset($ipseccfg['mobileclients']['enable'])) {
-		$ipfrules .= "pass in quick on {$wanif} proto udp from any to any port = 500 keep state label \"IPSEC: Mobile - inbound isakmp\"\n";
-		$ipfrules .= "pass in quick on {$wanif} proto esp from any to any keep state label \"IPSEC: Mobile - inbound esp proto\"\n";
-		$ipfrules .= "pass in quick on {$wanif} proto ah from any to any  keep state label \"IPSEC: Mobile - inbound ah proto\"\n";
-	}
-
 	$ipfrules .= <<<EOD
 
 #---------------------------------------------------------------------------

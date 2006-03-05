@@ -1219,7 +1219,7 @@
                         <type>checkbox</type>
                         <typehint>Other networking protocols</typehint>
                         <description>This will help raise or lower the priority of other protocols higher than most traffic.</description>
-			<enablefields>AIM,AppleRemoteDesktop,DNS,HTTP,ICMP,ICQ,IMAP,IPSEC,IRC,LotusNotes,MSN,MSRDP,MySqlServer,PCAnywhere,POP3,PPTP,RTSP,SMB,SMTP,SNMP,StreamingMP3,TeamSpeak,VNC</enablefields>
+			<enablefields>AIM,AppleRemoteDesktop,DNS,HTTP,ICMP,ICQ,IMAP,IPSEC,IRC,LotusNotes,MSN,MSRDP,MySqlServer,PCAnywhere,POP3,PPTP,RTSP,SMB,SMTP,SNMP,StreamingMP3,TeamSpeak,VNC,NNTP</enablefields>
 			<donotdisable>true</donotdisable>
 			<bindstofield>ezshaper->step6->enable</bindstofield>
                 </field>
@@ -1697,24 +1697,44 @@
                 </field> 
                 <field>
                         <name>MySQLServer</name>
-			<bindstofield>ezshaper->step6->mysqlserver</bindstofield>
-			<type>select</type>
-			<options>
-				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
-					<name>Default priority</name>
-					<value></value>
-				</option>
-				<option>
-					<name>Lower priority</name>
-					<value>L</value>
-				</option>
-			</options>
-			<typehint>MySQL Server</typehint>
+						<bindstofield>ezshaper->step6->mysqlserver</bindstofield>
+						<type>select</type>
+						<options>
+							<option>
+								<name>Higher priority</name>
+								<value>H</value>
+							</option>
+							<option>
+								<name>Default priority</name>
+								<value></value>
+							</option>
+							<option>
+								<name>Lower priority</name>
+								<value>L</value>
+							</option>
+						</options>
+						<typehint>MySQL Server</typehint>
                 </field>
+                <field>
+						<name>NNTP</name>
+						<bindstofield>ezshaper->step6->nntp</bindstofield>
+						<type>select</type>
+						<options>
+							<option>
+								<name>Higher priority</name>
+								<value>H</value>
+							</option>
+							<option>
+								<name>Default priority</name>
+								<value></value>
+							</option>
+							<option>
+								<name>Lower priority</name>
+								<value>L</value>
+							</option>
+						</options>
+						<typehint>Internet News</typehint>
+                </field>							
                 <field>
                         <name>Next</name>
                         <type>submit</type>
@@ -1929,7 +1949,13 @@
 		if($_POST['mysqlserver'] != "") {
 		    /* mysql server */
 		    $othersplist[] = array('MySQL1', 'tcp', '3306', '3306', 'both', $_POST['mysqlserver']);
-		}		
+		}
+		
+		if($_POST['nntp'] != "") {
+		    /* nntp */
+		    $othersplist[] = array('NNTP1', 'tcp', '119', '119', 'both', $_POST['mysqlserver']);
+			$othersplist[] = array('NNTP2', 'udp', '119', '119', 'both', $_POST['mysqlserver']);
+		}			
 
 		if($_POST['pcanwhere'] != "") {
 		    /* symantec pc anywhere */

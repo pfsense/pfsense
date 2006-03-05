@@ -459,10 +459,11 @@ function interfaces_carp_bring_up_final() {
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
 		if($vip['password'] != "") 
 			$password = " pass " . $vip['password'];
-		mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
 		if($debugging)
 			echo "/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew " . $vip['advskew'] . $password . "\n";
 		mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew " . $vip['advskew'] . $password);
+		sleep(1);
+		mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " up");
 		$carp_instances_counter++;
 	}
 	if($g['booting'])

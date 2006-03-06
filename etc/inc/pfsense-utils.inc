@@ -1173,11 +1173,15 @@ function call_pfsense_method($method, $params, $timeout = 0) {
 	$msg = new XML_RPC_Message($method, array(XML_RPC_Encode($params)));
 	$cli = new XML_RPC_Client($xmlrpc_path, $xmlrpc_base_url);
 	$resp = $cli->send($msg, $timeout);
-	if(!$resp or $resp->faultCode()) {
+	if(!$resp) {
+		log_error("XMLRPC communication error: " . $cli->errstr);
+		return false;
+	} elseif($resp->faultCode()) {
 		log_error("XMLRPC request failed with error " . $resp->faultCode() . ": " . $resp->faultString());
 		return false;
+	} else {
+		return XML_RPC_Decode($resp->value());
 	}
-	return XML_RPC_Decode($resp->value());
 }
 
 /*

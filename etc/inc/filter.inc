@@ -687,6 +687,9 @@ function filter_nat_rules_generate() {
 					$dontinstallrdr = true;
 				}
 			}
+			
+			if($extaddr == "")
+				$dontinstallrdr = true;			
 
 			if($dontinstallrdr == false) {
 				if ((!$extport[1]) || ($extport[0] == $extport[1])) {

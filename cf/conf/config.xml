@@ -27,6 +27,7 @@
 			<noantilockout></noantilockout>
 			-->
 		</webgui>
+                <disablenatreflection>yes</disablenatreflection>
 		<!-- <disableconsolemenu/> -->
 		<!-- <disablefirmwarecheck/> -->
 		<!-- <shellcmd></shellcmd> -->

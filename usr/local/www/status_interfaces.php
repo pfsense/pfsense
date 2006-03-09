@@ -169,15 +169,17 @@ function get_interface_info($ifdescr) {
 		exec("/sbin/ifconfig " . $ifinfo['hwif'], $ifconfiginfo);
 		$matches = "";
 		foreach ($ifconfiginfo as $ici) {
-			if (!isset($config['interfaces'][$ifdescr]['wireless'])) {
-				/* don't list media/speed for wireless cards, as it always
-				   displays 2 Mbps even though clients can connect at 11 Mbps */
-				if (preg_match("/media: .*? \((.*?)\)/", $ici, $matches)) {
-					$ifinfo['media'] = $matches[1];
-				} else if (preg_match("/media: Ethernet (.*)/", $ici, $matches)) {
-					$ifinfo['media'] = $matches[1];
-				}
+
+			/* don't list media/speed for wireless cards, as it always
+			   displays 2 Mbps even though clients can connect at 11 Mbps */
+			if (preg_match("/media: .*? \((.*?)\)/", $ici, $matches)) {
+				$ifinfo['media'] = $matches[1];
+			} else if (preg_match("/media: Ethernet (.*)/", $ici, $matches)) {
+				$ifinfo['media'] = $matches[1];
+			} else if (preg_match("/media: IEEE 802.11 Wireless Ethernet (.*)/", $ici, $matches)) {
+				$ifinfo['media'] = $matches[1];
 			}
+
 			if (preg_match("/status: (.*)$/", $ici, $matches)) {
 				if ($matches[1] != "active")
 					$ifinfo['status'] = $matches[1];

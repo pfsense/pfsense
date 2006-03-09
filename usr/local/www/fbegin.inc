@@ -51,23 +51,25 @@ require_once("notices.inc");
 					if(is_array($requests))
 						$request_string = implode("&", $requests);
 
-					foreach ($notices as $key => $value) {
-						$date = date("m-d-y H:i:s", $key);
-						$noticemsg = str_replace("'", "", $value['notice']);
-						$noticemsg = str_replace('"', "", $noticemsg);
-						$noticemsg = str_replace("\n", "", $noticemsg);
-						$noticemsg = str_replace("<p>", "", $noticemsg);
-						$noticemsg = str_replace("<pre>", "", $noticemsg);
-						$noticemsg = str_replace("</pre>", "", $noticemsg);
-						$noticemsg = str_replace("</p>", "", $noticemsg);
-						$noticemsg = str_replace("<br>", "", $noticemsg);
-						$notice_msgs = '<a href="?noticeaction=acknowledge&noticeid=all">Acknowledge All</a> &nbsp;&nbsp;&nbsp;&nbsp;.:.&nbsp;&nbsp;&nbsp;&nbsp; ';
-						if ($value['url']) {
-							$notice_msgs .= $date.' - <a href="'.$url.'?'.$request_string.'&noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']</a>';
-						} else {
-							$notice_msgs .= $date.' - <a href="?'.$request_string.'&noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']'.$noticemsg.'</a>';
+					if(is_array($notices)) {
+						foreach ($notices as $key => $value) {
+							$date = date("m-d-y H:i:s", $key);
+							$noticemsg = str_replace("'", "", $value['notice']);
+							$noticemsg = str_replace('"', "", $noticemsg);
+							$noticemsg = str_replace("\n", "", $noticemsg);
+							$noticemsg = str_replace("<p>", "", $noticemsg);
+							$noticemsg = str_replace("<pre>", "", $noticemsg);
+							$noticemsg = str_replace("</pre>", "", $noticemsg);
+							$noticemsg = str_replace("</p>", "", $noticemsg);
+							$noticemsg = str_replace("<br>", "", $noticemsg);
+							$notice_msgs = '<a href="?noticeaction=acknowledge&noticeid=all">Acknowledge All</a> &nbsp;&nbsp;&nbsp;&nbsp;.:.&nbsp;&nbsp;&nbsp;&nbsp; ';
+							if ($value['url']) {
+								$notice_msgs .= $date.' - <a href="'.$url.'?'.$request_string.'&noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']</a>';
+							} else {
+								$notice_msgs .= $date.' - <a href="?'.$request_string.'&noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']'.$noticemsg.'</a>';
+							}
+							$notice_msgs .= " &nbsp;&nbsp;&nbsp;&nbsp;.:.&nbsp;&nbsp;&nbsp;&nbsp; ";
 						}
-						$notice_msgs .= " &nbsp;&nbsp;&nbsp;&nbsp;.:.&nbsp;&nbsp;&nbsp;&nbsp; ";
 					}
 ?>
 					<div id="alerts">

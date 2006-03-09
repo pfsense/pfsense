@@ -171,16 +171,17 @@ function typesel_change() {
 	switch (document.iform.type.selectedIndex) {
 		case 0:	/* host */
 			var cmd;
-			document.iform.address_subnet.disabled = 1;
 			document.iform.address_subnet.value = "";
 			document.iform.address_subnet.selected = 0;
+			document.iform.address_subnet.disabled = 1;
 			newrows = totalrows+100;
-			for(i=2; i<newrows; i++) {
-				var item = document.getElementById('document.iform.address_subnet' + i);
+			for(i=1; i<newrows; i++) {
+				var working_with = 'address_subnet' + i;
+				var item = document.getElementById(working_with);
 				if(item) {
-					comd = 'document.iform.address_subnet' + i + '.disabled = 1;';
+					comd = 'document.iform.' + working_with + '.value = "";';
 					eval(comd);
-					comd = 'document.iform.address_subnet' + i + '.value = "";';
+					comd = 'document.iform.' + working_with + '.disabled = 1;';
 					eval(comd);
 				}
 			}
@@ -190,7 +191,7 @@ function typesel_change() {
 			document.iform.address_subnet.disabled = 0;
 			newrows = totalrows+100;
 			for(i=2; i<newrows; i++) {
-				var item = document.getElementById('document.iform.address_subnet' + i);
+				var item = document.getElementById('address_subnet' + i);
 				if(item) {
 					comd = 'document.iform.address_subnet' + i + '.disabled = 0;';
 					eval(comd);
@@ -203,7 +204,7 @@ function typesel_change() {
 			document.iform.address_subnet.value = "";
 			newrows = totalrows+100;
 			for(i=2; i<newrows; i++) {
-				var item = document.getElementById('document.iform.address_subnet' + i);
+				var item = document.getElementById('address_subnet' + i);
 				if(item) {
 					comd = 'document.iform.address_subnet' + i + '.disabled = 1;';
 					eval(comd);

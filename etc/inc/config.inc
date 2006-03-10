@@ -1283,7 +1283,7 @@ function system_start_ftp_helpers() {
 	/* build an array of interfaces to work with */
 	$iflist = array("lan" => "LAN");
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
-		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+		$iflist['opt' . $i] = "opt{$i}";
 
 	/* loop through all interfaces and handle pftpx */
 	$interface_counter = 0;
@@ -1294,12 +1294,12 @@ function system_start_ftp_helpers() {
                  *    here by not including -c {$port} -g 8021 first.
 		 */
 		$port = 8021 + $interface_counter;
-		if(isset($config['interfaces'][strtolower($ifname)]['disableftpproxy'])) {
+		if(isset($config['interfaces'][$ifname]['disableftpproxy'])) {
 			/*    item is disabled.  lets ++ the interface counter and
 			 *    keep processing interfaces. kill pftpx if already
                          *    running for this instance.
                          */
-			$helpers = exec("ps awux | grep \"/usr/local/sbin/pftpx -c {$port}\" | grep -v grep | sed \"s/  */ /g\" | cut -f2 -d\" \"");
+			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/pftpx -c {$port}\" | grep -v grep | sed \"s/  */ /g\" | cut -f2 -d\" \"");
 			if($helpers)
 				mwexec("/bin/kill {$helpers}");
 			$interface_counter++;

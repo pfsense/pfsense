@@ -3,6 +3,7 @@
         if(Connection_Aborted()) {
                 exit;
         }
+	require_once("auth.inc");
 	
 	require("../includes/sajax.class.php");
 	require("../includes/functions.inc.php");

@@ -39,7 +39,18 @@ if($_GET['mode'] == "restartservice" and $_GET['service']) {
 }
 
 if($_GET['mode'] == "startservice" and $_GET['service']) {
-        start_service($_GET['service']);
+		switch($_GET['service']) {
+				case 'bsnmpd';
+						services_snmpd_configure();	
+						break;
+				case 'dnsmasq';
+						services_dnsmasq_configure();
+						break;
+				case 'dhcpd';
+						services_dhcpd_configure();
+						break;
+				start_service($_GET['service']);
+		}
         $savemsg = "{$_GET['service']} has been started.";
 }
 

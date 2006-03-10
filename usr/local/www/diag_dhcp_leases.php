@@ -127,7 +127,7 @@ while ($data = array_shift($return)) {
 		if ($d[0] == "ethernet") {
 			$d = array_shift($return);
 			$leases[$i]['mac'] = $d[0];
-			$online = exec("/usr/sbin/arp -an |/usr/bin/grep {$d[0]}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
+			$online = exec("/usr/sbin/arp -an |/usr/bin/grep {$d[0]}| grep {$leases[$i]['ip']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
 			if ($online == 1) {
 				$leases[$i]['online'] = 'online';
 			} else {

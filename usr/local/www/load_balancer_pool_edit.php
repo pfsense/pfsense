@@ -150,6 +150,12 @@ function type_change(enable_change) {
 			clearcombo();
 			document.iform.serversSelect.clear;
 			document.iform.monitorip.disabled = 1;
+			monitorip_text = document.getElementById("monitorip_text");
+			monitorip_text.className = "vncell";
+			monitorport_text = document.getElementById("monitorport_text");
+			monitorport_text.className = "vncellreq";
+			monitorport_desc = document.getElementById("monitorport_desc");
+			monitorport_desc.innerHTML = "This is the port your servers are listening too.";
 			document.iform.monitorip.value = "";
 			document.iform.port.disabled = 0;
 			document.iform.monitor.selectedIndex = 0;
@@ -159,6 +165,12 @@ function type_change(enable_change) {
 			clearcombo();
 			document.iform.monitorip.disabled = 0;
 			document.iform.monitorip.value = "";
+			monitorip_text = document.getElementById("monitorip_text");
+			monitorip_text.className = "vncellreq";
+			monitorport_text = document.getElementById("monitorport_text");
+			monitorport_text.className = "vncell";
+			monitorport_desc = document.getElementById("monitorport_desc");
+			monitorport_desc.innerHTML = "";
 			document.iform.port.disabled = 1;
 			/* set to ICMP */
 			document.iform.monitor.selectedIndex = 1;
@@ -204,9 +216,9 @@ function clearcombo(){
 		</tr>
 		
 		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq">Port</td>
+			<td width="22%" valign="top" id="monitorport_text" class="vncellreq">Port</td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16"> - server pool port, this is the port your servers are listening to.
+				<input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16"><div id="monitorport_desc"></div>
 			</td>
 		</tr>
 		<tr align="left">
@@ -220,7 +232,7 @@ function clearcombo(){
 			</td>
 		</tr>
 		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq">Monitor IP</td>
+			<td width="22%" valign="top" id="monitorip_text" class="vncell">Monitor IP</td>
 			<td width="78%" class="vtable" colspan="2">
 				<input size="16" id="monitorip" name="monitorip" value="<?php echo $pconfig['monitorip']; ?>">
 			</td>
@@ -268,6 +280,7 @@ function clearcombo(){
 		</tr>
 	</table>
 	</form>
+<script language="javascript">type_change();</script>
 <?php include("fend.inc"); ?>
 </body>
 </html>

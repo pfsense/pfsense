@@ -38,7 +38,6 @@ function wireless_config_init() {
 	$pconfig['mode'] = $optcfg['wireless']['mode'];
 	$pconfig['protmode'] = $optcfg['wireless']['protmode'];
 	$pconfig['ssid'] = $optcfg['wireless']['ssid'];
-	$pconfig['stationname'] = $optcfg['wireless']['stationname'];
 	$pconfig['channel'] = $optcfg['wireless']['channel'];
 	$pconfig['txpower'] = $optcfg['wireless']['txpower'];
 	$pconfig['distance'] = $optcfg['wireless']['distance'];
@@ -139,7 +138,7 @@ function wireless_config_post() {
 		$optcfg['wireless']['mode'] = $_POST['mode'];
 		$optcfg['wireless']['protmode'] = $_POST['protmode'];
 		$optcfg['wireless']['ssid'] = $_POST['ssid'];
-		$optcfg['wireless']['stationname'] = $_POST['stationname'];
+	
 		$optcfg['wireless']['channel'] = $_POST['channel'];
 		$optcfg['wireless']['authmode'] = $_POST['authmode'];		
 		$optcfg['wireless']['txpower'] = $_POST['txpower'];
@@ -374,12 +373,6 @@ function wireless_config_print() {
 			Note: This field can be used to tune ACK/CTS timers to fit the distance between AP and Client<br/>
 			(measured in Meters and works only for Atheros based cards !)
 			</td>
-		</tr>
-		<tr>
-			<td valign="top" class="vncell">Station name</td>
-			<td class="vtable"><input name="stationname" type="text" class="formfld" id="stationname" size="20" value="<?=htmlspecialchars($pconfig['stationname']);?>">
-			<br/>
-			Hint: this field can usually be left blank</td>
 		</tr>
 		<tr>
 			<td valign="top" class="vncell">WEP</td>

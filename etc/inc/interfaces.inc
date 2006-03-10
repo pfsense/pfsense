@@ -498,12 +498,6 @@ function interfaces_wireless_configure($if, $wlcfg) {
 	/* Set ssid */
 	if($wlcfg['ssid'])  
 		$ssid = "ssid " . escapeshellarg($wlcfg['ssid']);
-
-	/* Set stationname */
-	if ($wlcfg['stationname'])
-		$stationname = "stationname " . escapeshellarg($wlcfg['stationname']);
-	else
-		$stationname = "stationname pfsense";
 		
 	/* Set wireless hostap mode */
 	if ($wlcfg['mode'] == "hostap")
@@ -657,7 +651,6 @@ EOD;
 	mwexec("$ifconfig $if" . " " . $protmode);
 	mwexec("$ifconfig $if" . " " . $channel);
 	mwexec("$ifconfig $if" . " " . $ssid);
-	mwexec("$ifconfig $if" . " " . $stationname);
 	mwexec("$ifconfig $if" . " " . $adhocmode);
 	/* fix turbo mode and reboot */
 	mwexec("$ifconfig $if" . " up"); 

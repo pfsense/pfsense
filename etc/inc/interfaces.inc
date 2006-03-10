@@ -473,11 +473,24 @@ function interfaces_carp_bring_up_final() {
 function interfaces_wireless_configure($if, $wlcfg) {
 	global $config, $g;
 	
+	/*    open up a shell script that will be used to output the commands.
+	 *    since wireless is changing a lot, these series of commands are fragile
+     *    and will sometimes need to be verified by a operator by executing the command
+     *    and returning the output of the command to the developers for inspection.  please
+     *    do not change this routine from a shell script to individul exec commands.  -sullrich
+	 */
+	$fd_set = fopen("/tmp/{$if}_setup.sh","w");
+	fwrite($fd_set, "#!/bin/sh\n");
+	fwrite($fd_set, "# pfSnese wireless configuration script.\n\n");
+	
+	fwrite($fd_set, "# enable shell debugging\n");
+	fwrite($fd_set, "set -x\n");
+	
 	/* set values for /path/program */
 	$hostapd = "/usr/sbin/hostapd";
 	$wpa_supplicant = "/usr/sbin/wpa_supplicant";
-	$ifconfig = "/sbin/ifconfig ";
-	$killall = "/usr/bin/killall ";
+	$ifconfig = "/sbin/ifconfig";
+	$killall = "/usr/bin/killall";
 
 	/* Set all wireless ifconfig variables (splitt up to get rid of needed checking) */
 
@@ -588,7 +601,7 @@ EOD;
 				fwrite($fd, "{$wpa}");
 				fclose($fd);
 
-				mwexec("{$killall} wpa_supplicant");
+				fwrite($fd_set, "{$killall} wpa_supplicant\n");
 			}
 		break;
 
@@ -627,52 +640,65 @@ EOD;
 				fwrite($fd, "{$wpa}");
 				fclose($fd);
 
-				mwexec("{$killall} hostapd");
+				fwrite($fd_set, "{$killall} hostapd\n");
 			}
 		break;
 
 		case 'adhoc':
-			mwexec("{$killall} hostapd");
-			mwexec("{$killall} wpa_supplicant");
+			fwrite($fd_set, "{$killall} hostapd\n");
+			fwrite($fd_set, "{$killall} wpa_supplicant\n");
 		break;
 	}	
 
-	/* all variables are set, lets start up everything */
+	/*
+	 *    all variables are set, lets start up everything
+     */
 	
 	/* set ack timers according to users preference (if he/she has any) */
-
 	if($distance) {
-		mwexec("/sbin/athctrl.sh -i {$if} -d {$distance}");
+		fwrite($fd_set, "# Enable ATH distance settings\n");
+		fwrite($fd_set, "/sbin/athctrl.sh -i {$if} -d {$distance}\n");
 	}
 
-	mwexec("$ifconfig $if" . " -mediaopt hostap,turbo");	// Fix bug with turbomode and reboot (hopefully)        
-	mwexec("$ifconfig $if" . " down"); 
-	mwexec("$ifconfig $if" . " " . $standard);
-	mwexec("$ifconfig $if" . " " . $protmode);
-	mwexec("$ifconfig $if" . " " . $channel);
-	mwexec("$ifconfig $if" . " " . $ssid);
-	mwexec("$ifconfig $if" . " " . $adhocmode);
-	/* fix turbo mode and reboot */
-	mwexec("$ifconfig $if" . " up"); 
-	mwexec("$ifconfig $if" . " " . $hostapmode);
-	mwexec("$ifconfig $if" . " " . $turbo);
-	mwexec("$ifconfig $if" . " down"); 
-	/* fix turbo mode and reboot */
-	mwexec("$ifconfig $if" . " " . $hidessid);
-	mwexec("$ifconfig $if" . " " . $pureg);
-	mwexec("$ifconfig $if" . " " . $apbridge);
-	mwexec("$ifconfig $if" . " " . $wme);
-	mwexec("$ifconfig $if" . " " . $wepset);
-	mwexec("$ifconfig $if" . " " . $txpower);
-	mwexec("$ifconfig $if" . " up");
+	$settings = <<<EOD
+
+{$ifconfig} {$if} -mediaopt hostap,turbo  
+{$ifconfig} {$if} down
+{$ifconfig} {$if} {$standard}
+{$ifconfig} {$if} {$protmode}
+{$ifconfig} {$if} {$channel}
+{$ifconfig} {$if} {$ssid}
+{$ifconfig} {$if} {$adhocmode}
+# fix turbo mode and reboot 
+#{$ifconfig} {$if} up
+{$ifconfig} {$if} {$hostapmode}
+{$ifconfig} {$if} {$turbo}
+#{$ifconfig} {$if} down
+# fix turbo mode and reboot 
+{$ifconfig} {$if} {$hidessid}
+{$ifconfig} {$if} {$pureg}
+{$ifconfig} {$if} {$apbridge}
+{$ifconfig} {$if} {$wme}
+{$ifconfig} {$if} {$wepset}
+{$ifconfig} {$if} {$txpower}
+{$ifconfig} {$if} up
+
+EOD;
+	
+	/* write out above <<EOD stuff */
+	fwrite($fd_set, $settings);
 
 	if (isset($wlcfg['wpa']['enable'])) {
-		if ($wlcfg['mode'] == bss) 
-			mwexec("{$wpa_supplicant} -B -i {$if} -c {$g['varetc_path']}/wpa_supplicant_{$if}.conf");
-		if ($wlcfg['mode'] == hostap) 
-			mwexec("{$hostapd} -B {$g['varetc_path']}/hostapd_{$if}.conf");
+		if ($wlcfg['mode'] == "bss") 
+			fwrite($fd_set, "{$wpa_supplicant} -B -i {$if} -c {$g['varetc_path']}/wpa_supplicant_{$if}.conf\n");
+		if ($wlcfg['mode'] == "hostap") 
+			fwrite($fd_set, "{$hostapd} -B {$g['varetc_path']}/hostapd_{$if}.conf\n");
 	}
 
+	fclose($fd_set);
+
+	/* execute commands now in shell */
+	mwexec("/bin/sh /tmp/{$if}_setup.sh");
 
 	if(isset($wlcfg['useolsr']))
 		setup_wireless_olsr($if);

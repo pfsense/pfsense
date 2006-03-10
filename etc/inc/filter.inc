@@ -99,7 +99,7 @@ function filter_configure_sync() {
 		 * we'll match only unshaped packets in the shaper code later
 		 * this allows the shaper to be first match
 		 */
-		$pf_altq_rules = "block all tag unshaped label \"SHAPER: first match rule\"\n";
+		$pf_altq_rules = "block in all tag unshaped label \"SHAPER: first match rule\"\n";
 		$pf_altq_rules .= filter_generate_pf_altq_rules();
 	}
 	

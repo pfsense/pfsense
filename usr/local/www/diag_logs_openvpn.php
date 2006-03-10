@@ -76,7 +76,7 @@ include("head.inc");
 			<div id="mainarea">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 		  		<tr>
-					<td colspan="2" class="listtopic">Last <?=$nentries;?> IPSEC log entries</td>
+					<td colspan="2" class="listtopic">Last <?=$nentries;?> OpenVPN log entries</td>
 		  		</tr>
 				<?php dump_clog($ipsec_logfile, $nentries); ?>
 				<tr>

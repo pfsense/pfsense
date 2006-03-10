@@ -180,8 +180,7 @@ if ($_POST) {
 		write_config();
 
 		/* static arp configuration */
-                if (isset($config['dhcpd'][$if]['staticarp']))
-			interfaces_staticarp_configure($if);
+		interfaces_staticarp_configure($if);
 		
 		$retval = 0;
 		config_lock();
@@ -368,7 +367,7 @@ function enable_change(enable_over) {
 							&nbsp;
 						</td>
 						<td>
-							<span class="red"><strong>Note:</strong></span> This feature is under development.  Only the machines listed below will be able to communicate with the firewall on this NIC.  Disabling this has been tested to be broken, a reboot will be required to disable.  Be warned!
+							<span class="red"><strong>Note:</strong></span> Only the machines listed below will be able to communicate with the firewall on this NIC.
 						</td>
 					</tr>
 				</table>

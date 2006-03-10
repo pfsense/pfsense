@@ -184,7 +184,7 @@ if($services) {
 </tr></table>
 </div>
 
-<meta http-equiv="refresh" content="120;url=status_services.php">
+<meta http-equiv="refresh" content="120;url=<?php echo $_SERVER['SCRIPT_NAME']; ?>">  
 
 <?php include("fend.inc"); ?>
 </body>

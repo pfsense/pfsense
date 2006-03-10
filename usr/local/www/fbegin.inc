@@ -203,6 +203,7 @@ require_once("notices.inc");
 							<li><a href="/halt.php" class="navlnk">Halt system</a></li>
 							<li><a href="/diag_ping.php" class="navlnk">Ping</a></li>
 							<li><a href="/reboot.php" class="navlnk">Reboot system</a></li>
+							<li><a href="/diag_routes.php" class="navlnk">Routes</a></li>
 							<li><a href="/diag_dump_states.php" class="navlnk">States</a></li>
 							<li><a href="/diag_traceroute.php" class="navlnk">Traceroute</a></li>
 							<?php echo return_ext_menu("Diagnostics"); ?>

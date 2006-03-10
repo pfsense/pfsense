@@ -605,7 +605,7 @@ function filter_generate_pf_altq_rules() {
 						$qouttag = "inqueue";
 						break;
 				}
-				$shaperrules .= "pass out on {$rule['out-interface']} all keep state tagged {$rule[$qtag]} tag {$rule[$qouttag]}\n";
+				$shaperrules .= "pass out on \${$rule['out-interface']} all keep state tagged {$rule[$qtag]} tag {$rule[$qouttag]}\n";
 			}
 		}
 

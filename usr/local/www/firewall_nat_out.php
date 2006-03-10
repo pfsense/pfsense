@@ -83,7 +83,7 @@ if (isset($_POST['save'])) {
                 $config['nat']['ipsecpassthru']['enable'] = false;
         if ($_POST['advancedoutbound'] == false)
                 $config['nat']['advancedoutbound']['enable'] = false;
-        if($was_enabled and $_POST['advancedoutbound'] <> "") {
+        if(!$was_enabled and $_POST['advancedoutbound'] <> "") {
                 /*
                  *    user has enabled advanced outbound nat -- lets automatically create entries
                  *    for all of the interfaces to make life easier on the pip-o-chap

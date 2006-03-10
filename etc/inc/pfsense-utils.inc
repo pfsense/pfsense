@@ -1636,11 +1636,11 @@ function auto_login($status) {
 	conf_mount_rw();
 	$fd = fopen("/etc/gettytab", "w");
 	foreach($getty_split as $gs) {
-		if(stristr($gs, "cb:ce:ck:lc") == true) {
+		if(stristr($gs, ":ht:np:sp#115200") == true) {
 			if($status == true) {
-				fwrite($fd, ":cb:ce:ck:lc:fd#1000:im=\\r\\n%s/%m (%h) (%t)\\r\\n\\r\\n:sp#1200:\\\n");
+				fwrite($fd, "	:ht:np:sp#115200:al=root:\n");
 			} else {
-				fwrite($fd, ":al=root:cb:ce:ck:lc:fd#1000:im=\\r\\n%s/%m (%h) (%t)\\r\\n\\r\\n:sp#1200:\\\n");
+				fwrite($fd, "	:ht:np:sp#115200:\n");
 			}
 		} else {
 			fwrite($fd, "{$gs}\n");

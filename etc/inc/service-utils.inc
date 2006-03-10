@@ -104,13 +104,16 @@ function stop_service($name) {
                                 if($service['stopcmd']) {
                                         eval($service['stopcmd']);
                                 }
-				if(!($service['rcfile'] or $service['stopcmd'])) {
-					mwexec_bg("/usr/bin/killall {$service['executable']}");
-				}
+								if(!($service['rcfile'] or $service['stopcmd'])) {
+									mwexec_bg("/usr/bin/killall {$service['executable']}");
+									return;
+								}
                                 break;
                         }
                 }
         }
+		/* finally if we get here lets simply kill the service name */
+		mwexec_bg("/usr/bin/killall {$name}");
 }
 
 function restart_service($name) {

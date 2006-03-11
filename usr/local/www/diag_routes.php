@@ -47,7 +47,7 @@ include('head.inc');
 <tr>
 <td class="vncellreq" width="22%">Name resolution</td>
 <td class="listr" width="78%">
-<input type="checkbox" class="formfld" name="resolve" value="yes" <?php if ($_POST['resolve'] == 'yes') echo 'checked'; ?>>Enable</input>
+<input type="checkbox" class="formfld" name="resolve" value="yes" <?php if ($_POST['resolve'] == 'yes') echo 'checked'; ?>> Enable</input>
 <br />
 <span class="expl">Enable this to attempt to resolve names when displaying the tables.</span>
 </tr>

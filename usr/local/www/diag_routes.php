@@ -40,8 +40,6 @@ include('head.inc');
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 
-<?php display_topbar('', '#eeeeee'); ?>
-
 <div id="mainarea">
 <form action="diag_routes.php" method="post">
 <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6">
@@ -60,7 +58,7 @@ include('head.inc');
 <input type="submit" class="formbtn" name="submit" value="Show" />
 <br />
 <br />
-<span class="vexpl"><span class="red"><strong>Note:</strong></span>By enabling name resolution, the query should take a bit longer. You can stop it at any time by clicking the Stop button in your browser.</span>
+<span class="vexpl"><span class="red"><strong>Note:</strong></span> By enabling name resolution, the query should take a bit longer. You can stop it at any time by clicking the Stop button in your browser.</span>
 </td>
 </tr>
 

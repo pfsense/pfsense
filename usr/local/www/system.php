@@ -169,7 +169,7 @@ if ($_POST) {
 
 		$savemsg = get_std_save_message($retval);
 		if ($restart_webgui)
-			$savemsg .= "<br />One moment...redirecting to {$url} in 20 seconds.";
+			$savemsg .= "<br />One moment...redirecting to {$url} in 10 seconds.";
 	}
 }
 
@@ -280,7 +280,7 @@ include("head.inc");
 <?php
 	// restart webgui if proto or port changed
 	if ($restart_webgui) {
-		echo "<meta http-equiv=\"refresh\" content=\"20;url={$url}\">";
+		echo "<meta http-equiv=\"refresh\" content=\"10;url={$url}\">";
 	}
 	ob_flush();
 	flush();

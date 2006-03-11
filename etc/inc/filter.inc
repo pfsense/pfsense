@@ -217,7 +217,7 @@ function filter_configure_sync() {
 }
 
 function filter_generate_aliases() {
-	global $config;
+	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_generate_aliases() being called $mt\n";
@@ -237,20 +237,23 @@ function filter_generate_aliases() {
 	$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";
 
 	/* build pptp alias */
-	$aliases .= "pptp = \"{ ";
-	for($x=0; $x<$g["n_pptp_units"]; $x++) {
-		$aliases .= "ng{$x} ";
-    }
+	$tmp = "pptp = \"{ ";
+	for($x=0; $x<$g["n_pptp_units"]; $x++) 
+		$tmp .= "ng{$x} ";
 	$counter = $x;
-	$aliases .= "}\" \n";
+	$tmp .= "}\" \n";
+	if($counter > 0)
+		$aliases .= $tmp;
 
 	/* build pppoe alias */
-	$aliases .= "pppoe = \"{ ";
+	$tmp = "pppoe = \"{ ";
 	for($x=0; $x<$g["n_pppoe_units"]; $x++) {
+		$tmp .= "ng{$counter} ";
 		$counter++;
-		$aliases .= "ng{$counter} ";
 	}
-	$aliases .= "}\" \n";
+	$tmp .= "}\" \n";
+	if($x > 0)
+		$aliases .= $tmp;
 
 	$ifdescrs = array();
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
@@ -664,9 +667,9 @@ function filter_nat_rules_generate() {
 
 			if (!$rule['interface'] || ($rule['interface'] == "wan"))
 				$natif = $wanif;
-			else if($rule['interface'] == "pptp")
+			else if($rule['interface'] == "\$pptp")
 				$natif = "pptp";
-			else if($rule['interface'] == "pppoe")
+			else if($rule['interface'] == "\$pppoe")
 				$natif = "pppoe";				
 			else
 				$natif = $config['interfaces'][$rule['interface']]['if'];

@@ -470,7 +470,7 @@ function system_webgui_start_old() {
 
                 if ($config['system']['webgui']['certificate'] && $config['system']['webgui']['private-key']) {
                         $cert = base64_decode($config['system']['webgui']['certificate']);
-                        $key = base64_decode($config['system']['webgui']['private-key']);
+                        $key  = base64_decode($config['system']['webgui']['private-key']);
                 } else {
                         /* default certificate/key */
                         $cert = <<<EOD
@@ -507,7 +507,10 @@ CsF1s0TdJLi/wzNQRAL37A8vqCeVFR/ng3Xpg96Yg+8Z
 
 EOD;
                 }
-
+				
+				$cert = str_replace("\r", "", $cert);
+				$key = str_replace("\r", "", $key);
+				
                 $fd = fopen("{$g['varetc_path']}/cert.pem", "w");
                 if (!$fd) {
                         printf("Error: cannot open cert.pem in system_webgui_start().\n");
@@ -758,6 +761,12 @@ debug.log-file-not-found   = "disable"
 {$cgi_config}
 
 EOD;
+
+	$cert = str_replace("\r", "", $cert);
+	$key = str_replace("\r", "", $key);	
+
+	$cert = str_replace("\n\n", "\n", $cert);
+	$key = str_replace("\n\n", "\n", $key);	
 
 	if($cert <> "" and $key <> "") {
 		$fd = fopen("{$g['varetc_path']}/{$cert_location}", "w");

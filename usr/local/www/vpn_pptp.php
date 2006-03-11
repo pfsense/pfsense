@@ -127,7 +127,7 @@ if ($_POST) {
 		$retval = 0;
 		
 		config_lock();
-		$retval = vpn_pptpd_configure();
+		$retval = vpn_setup();
 		config_unlock();
 		
 		$savemsg = get_std_save_message($retval);

@@ -33,6 +33,15 @@
 /* include all configuration functions */
 require_once("functions.inc");
 
+/* master setup for vpn (mpd) */
+function vpn_setup() {
+	/* start pptpd */
+	vpn_pptpd_configure();
+
+	/* start pppoe server */
+	vpn_pppoe_configure();	
+}
+
 function vpn_ipsec_failover_configure() {
 	global $config, $g;
 
@@ -836,14 +845,6 @@ function vpn_pppoe_configure() {
 			return 0;
 
 		echo "Configuring PPPoE VPN service... ";
-	} else {
-		/* kill mpd */
-		killbypid("{$g['varrun_path']}/mpd-vpn.pid");
-
-		/* wait for process to die */
-		sleep(2);
-		
-		vpn_pptpd_configure();
 	}
 
 	/* make sure mpd-vpn directory exists */

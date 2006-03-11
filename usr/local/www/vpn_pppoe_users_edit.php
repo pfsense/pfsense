@@ -103,7 +103,7 @@ if ($_POST) {
 		write_config();
 		
 		config_lock();
-		$retval = vpn_pppoe_configure();
+		$retval = vpn_setup();
 		config_unlock();	
 		
 		header("Location: vpn_pppoe_users.php");

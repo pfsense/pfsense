@@ -235,8 +235,22 @@ function filter_generate_aliases() {
 	$aliases .= "# System Aliases \n";
 	$aliases .= "lan = \"{ {$config['interfaces']['lan']['if']}{$lan_aliases} }\"\n";
 	$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";
-	$aliases .= "pptp = \"{ ng1 ng2 ng3 ng4 ng5 ng6 ng7 ng8 ng9 ng10 ng11 ng12 ng13 ng14 }\"\n";
-	$aliases .= "pppoe = \"{ ng1 ng2 ng3 ng4 ng5 ng6 ng7 ng8 ng9 ng10 ng11 ng12 ng13 ng14 }\"\n";
+
+	/* build pptp alias */
+	$aliases .= "pptp = \"{ ";
+	for($x=0; $x<$g["n_pptp_units"]; $x++) {
+		$aliases .= "ng{$x} ";
+    }
+	$counter = $x;
+	$aliases .= "}\" \n";
+
+	/* build pppoe alias */
+	$aliases .= "pppoe = \"{ ";
+	for($x=0; $x<$g["n_pppoe_units"]; $x++) {
+		$counter++;
+		$aliases .= "ng{$counter} ";
+	}
+	$aliases .= "}\" \n";
 
 	$ifdescrs = array();
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {

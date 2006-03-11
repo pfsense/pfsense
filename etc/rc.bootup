@@ -220,11 +220,8 @@
 	/* start the NTP client */
 	system_ntp_configure();
 
-	/* start pptpd */
-	vpn_pptpd_configure();
-
-	/* start pppoe server */
-	vpn_pppoe_configure();
+	/* setup pppoe and pptp */
+	vpn_setup();
 
 	/* start the captive portal */
 	captiveportal_configure();

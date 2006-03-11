@@ -1636,7 +1636,7 @@ function auto_login($status) {
 	conf_mount_rw();
 	$fd = fopen("/etc/gettytab", "w");
 	foreach($getty_split as $gs) {
-		if(stristr($gs, ":ht:np:sp#115200") == true) {
+		if(stristr($gs, "\:ht\:np\:sp\#115200") == true) {
 			if($status == true) {
 				fwrite($fd, "	:ht:np:sp#115200:al=root:\n");
 			} else {

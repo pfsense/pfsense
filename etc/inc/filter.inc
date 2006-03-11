@@ -2056,6 +2056,12 @@ function create_firewall_outgoing_rules_to_itself() {
 		if(does_interface_exist("gif{$x}") == true) 
 			$rule .="pass out quick on gif{$x} all keep state label \"let out anything from firewall host itself ipsec gif\"\n";
 	}
+
+	/* openvpn tun interfaces.  check for 100. */
+	for($x=0; $x<100; $x++) {
+		if(does_interface_exist("tun{$x}") == true) 
+			$rule .="pass out quick on tun{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
+	}
 	
 	return $rule;
 }

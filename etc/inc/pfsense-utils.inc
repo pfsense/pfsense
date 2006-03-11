@@ -1351,12 +1351,19 @@ function reload_interfaces_sync() {
 	/* parse config.xml again */
 	$config = parse_config(true);
 	
-	/* delete all old interface information */
-	$iflist = split(" ", str_replace("\n", "", `/sbin/ifconfig -l`));
+	$wan_if = $config['interfaces']['wan']['if'];
+	$lan_if = $config['interfaces']['lan']['if'];
+	
 	foreach ($iflist as $ifent => $ifname) {
-		if(stristr($ifname, "lo0") == true)
-			continue;		
 		$ifname_real = convert_friendly_interface_to_real_interface_name($ifname);
+		if(stristr($ifname, "lo0") == true)
+			continue;
+		/* do not process wan interface, its mandatory */
+		if($wan_if == $ifname_real)
+			continue;
+		/* do not process lan interface, its mandatory */
+		if($lan_if == $ifname_real)
+			continue;
 		mwexec("/sbin/ifconfig {$ifname_real} down");
 		mwexec("/sbin/ifconfig {$ifname_real} delete");
 	}
@@ -1562,9 +1569,19 @@ function reload_all_sync() {
 
 	/* delete all old interface information */
 	$iflist = split(" ", str_replace("\n", "", `/sbin/ifconfig -l`));
+	
+	$wan_if = $config['interfaces']['wan']['if'];
+	$lan_if = $config['interfaces']['lan']['if'];
+	
 	foreach ($iflist as $ifent => $ifname) {
 		$ifname_real = convert_friendly_interface_to_real_interface_name($ifname);
 		if(stristr($ifname, "lo0") == true)
+			continue;
+		/* do not process wan interface, its mandatory */
+		if($wan_if == $ifname_real)
+			continue;
+		/* do not process lan interface, its mandatory */
+		if($lan_if == $ifname_real)
 			continue;
 		mwexec("/sbin/ifconfig {$ifname_real} down");
 		mwexec("/sbin/ifconfig {$ifname_real} delete");

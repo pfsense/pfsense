@@ -18,4 +18,5 @@ www:*:80:
 nogroup:*:65533:
 nobody:*:65534:
 admin:*:0:
+audit:*:77:
 

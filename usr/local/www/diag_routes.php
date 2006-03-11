@@ -66,7 +66,7 @@ include('head.inc');
 </form>
 
 <?php
-if ($_POST['submit'] == 'Show') {
+
 	$netstat = ($_POST['resolve'] == 'yes' ? 'netstat -rW' : 'netstat -nrW');
 	list($dummy, $internet, $internet6) = explode("\n\n", shell_exec($netstat));
 
@@ -99,7 +99,7 @@ if ($_POST['submit'] == 'Show') {
 		}
 		print("</table>\n");
 	} 
-}
+
 ?>
 </table>
 

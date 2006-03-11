@@ -183,8 +183,6 @@ if ($_GET['act'] == "add") {
 	
 	write_config();
 
-	touch("/tmp/reload_interfaces");
-
 	$savemsg = "Interface has been added.";
 
 }
@@ -286,5 +284,8 @@ include("head.inc");
 		if (!$input_errors)
 			touch("/tmp/reload_interfaces");
 	}
+	
+	if ($_GET['act'] == "add") 
+		touch("/tmp/reload_interfaces");
 
 ?>

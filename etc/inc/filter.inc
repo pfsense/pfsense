@@ -264,7 +264,7 @@ function filter_generate_aliases() {
 		/* do not process tun interfaces */
 		/* do process tun interfaces for openvpn compatibility */
 		/* if(stristr(filter_opt_interface_to_real($ifname), "tun") == true) continue; */
-		$aliases .= filter_get_opt_interface_descr($ifname) . " = \"{ " . filter_opt_interface_to_real($ifname);
+		$aliases .= $ifname . " = \"{ " . filter_opt_interface_to_real($ifname);
 		if($config['interfaces'][$ifname]['bridge'] <> "") {
 			$aliases .= " bridge{$bridgetracker} ";
 			$bridgetracker++;
@@ -1043,7 +1043,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						$canadd = 0;
 				}
 				if($canadd == 0)
-					$line .= "on \$" . $interface . " ";
+					$line .= "on \$" . $rule['interface'] . " ";
 			}
 			
 			
@@ -2045,7 +2045,7 @@ function create_firewall_outgoing_rules_to_itself() {
 	/* is bridging turned on? */
 	for($x=0; $x<10; $x++) {
 		if(does_interface_exist("bridge{$x}") == true) 
-			$rule .="pass out quick on bridge{$x} all keep state label \"let out anything from firewall host itself\"\n";
+			$rule .="pass quick on bridge{$x} all keep state label \"let out anything from firewall host itself\"\n";
 	}
 	
 	/* netgraph pptp outgoing */

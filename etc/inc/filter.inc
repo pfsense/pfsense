@@ -625,7 +625,7 @@ function filter_nat_rules_generate() {
 	/* DIAG: add ipv6 NAT, if requested */
 	if (isset($config['diag']['ipv6nat']['enable']) and $config['diag']['ipv6nat']['ipaddr'] <> "") {
 		/* XXX: FIX ME!  IPV6 */
-		$natrules .= "rdr on $wanif proto ipv6 from any to any -> {$config['diag']['ipv6nat']['ipaddr']}\n";
+		$natrules .= "rdr on \$wan proto ipv6 from any to any -> {$config['diag']['ipv6nat']['ipaddr']}\n";
 	}
 
 	if(file_exists("/var/etc/inetd.conf"))
@@ -832,8 +832,8 @@ function filter_nat_rules_generate() {
 		$natrules .= <<<EOD
 
 # PPTP
-rdr on $wanif proto gre from any to any -> $pptpdtarget
-rdr on $wanif proto tcp from any to any port 1723 -> $pptpdtarget
+rdr on \$wan proto gre from any to any -> $pptpdtarget
+rdr on \$wan proto tcp from any to any port 1723 -> $pptpdtarget
 
 EOD;
 		}
@@ -841,7 +841,7 @@ EOD;
 
 	if (is_package_installed("squid") == 1) {
 		if(is_process_running("squid")) {
-			$natrules .= "rdr on {$lanif} inet proto tcp from any to !{$lanip} port www -> 127.0.0.1 port 3128\n";
+			$natrules .= "rdr on \$lan inet proto tcp from any to !{$lanip} port www -> 127.0.0.1 port 3128\n";
 		} else {
 			if($g['booting'] == false) {
 				log_error("SQUID is installed but failed to start.  Not installing redirector rule.");

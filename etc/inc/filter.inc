@@ -600,6 +600,7 @@ function filter_nat_rules_generate() {
 	$interface_counter = 0;
 	/* loop through all interfaces and handle pftpx redirections */
 	foreach ($iflist as $ifent => $ifname) {
+		$ifname_lower = strtolower($ifname);
 		if(isset($config['interfaces'][strtolower($ifname)]['disableftpproxy'])) {
 			$interface_counter++;
 			continue;
@@ -614,7 +615,7 @@ function filter_nat_rules_generate() {
 			$vpns = "{ ! $vpns_list }";
 		else
 			$vpns = "any";		
-		$natrules .= "rdr on {$tmp_interface} proto tcp from any to {$vpns} port 21 -> 127.0.0.1 port {$tmp_port}\n";
+		$natrules .= "rdr on \${$ifname_lower} proto tcp from any to {$vpns} port 21 -> 127.0.0.1 port {$tmp_port}\n";
 		$interface_counter++;
 	}
 	$natrules .= "\n";
@@ -712,21 +713,21 @@ function filter_nat_rules_generate() {
 				if ((!$extport[1]) || ($extport[0] == $extport[1])) {
 					if($rule['protocol'] == "tcp/udp")
 						$natrules .=
-						 "rdr on $natif proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
+						 "rdr on \${$rule['interface']} proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
 					else
 						if($extport[0]) 
 							$natrules .=
-							"rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
+							"rdr on \${$rule['interface']} proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
 						else 
 							$natrules .=
-							"rdr on $natif proto {$rule['protocol']} from any to {$extaddr} } -> {$target}{$localport}";	
+							"rdr on \${$rule['interface']} proto {$rule['protocol']} from any to {$extaddr} } -> {$target}{$localport}";	
 				} else {
 					if($rule['protocol'] == "tcp/udp")
 						$natrules .=
-						 "rdr on $natif proto { tcp udp } from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
+						 "rdr on \${$rule['interface']} proto { tcp udp } from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
 					else
 						$natrules .=
-						 "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
+						 "rdr on \${$rule['interface']} proto {$rule['protocol']} from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
 				}
 			}
 
@@ -786,8 +787,10 @@ function filter_nat_rules_generate() {
 									fwrite($fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait\tnobody\t/usr/bin/nc nc -w 20 {$target} {$x}\n");
 								}
 								
+								$ifname_lower = strtolower($ifname);
+								
 								$natrules .=
-								  "rdr on {$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
+								  "rdr on \${$ifname_lower} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
 								
 								if($starting_localhost_port > 19990) {
 									log_error("Not installing nat reflection rules. Maximum 1,000 reached.");

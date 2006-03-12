@@ -706,6 +706,7 @@ if ($_POST) {
 
 if (($config['system']['webgui']['certificate'] != $oldcert)
 		|| ($config['system']['webgui']['private-key'] != $oldkey)) {
+    ob_flush();
 	touch("/tmp/restart_webgui");
 }
 

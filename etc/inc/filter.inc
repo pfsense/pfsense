@@ -399,9 +399,11 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 		$staticnatport_txt = " static-port";
 	else
 		$staticnatport_txt = "";
-		
+
+	$if_friendly = convert_real_interface_to_friendly_interface_name($if);
+
 	/* Put all the pieces together */
-        $natrule = "{$nat} on {$if} from {$src} to {$dst} {$target}{$staticnatport_txt}\n";
+        $natrule = "{$nat} on \${$if_friendly} from {$src} to {$dst} {$target}{$staticnatport_txt}\n";
 
 	return $natrule;
 }

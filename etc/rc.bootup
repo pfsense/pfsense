@@ -185,7 +185,7 @@
 	echo "done.\n";
 
 	if($avail > 0 and $avail < 65) {
-		echo "System has less than 64 megabytes of ram.  Delaying webConfigurator startup...\n";
+		echo "System has less than 65 megabytes of ram.  Delaying webConfigurator startup...\n";
 		/* start webConfigurator up on final pass */
 		touch("/tmp/restart_webgui");
 	} else {

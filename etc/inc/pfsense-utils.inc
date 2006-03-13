@@ -1341,9 +1341,24 @@ function strncpy(&$dst, $src, $length) {
  *   none
  ******/
 function reload_interfaces_sync() {
-	global $config, $g;
+	global $config, $g, $debug;
+	
+	$shutdown_webgui_needed = false;
 	
 	touch("{$g['tmp_path']}/reloading_all");
+	
+	$memory = get_memory();
+	$avail = $memory[0];
+	/* we have way too little memory.  shutdown webConfigurator temporarily */
+	if($avail > 0 and $avail < 66) {
+		log_error("Not enough ram for reload.  Temporarily unloading webConfigurator.");
+		$shutdown_webgui_needed = true;
+		/* kill any running lighttpd */
+		killbypid("{$g['varrun_path']}/lighty-webConfigurator.pid");
+	}
+	
+	if($debug)
+		log_error("reload_interfaces_sync() is starting.");
 	
 	if(file_exists("{$g['tmp_path']}/config.cache"))
 		unlink("{$g['tmp_path']}/config.cache");
@@ -1354,47 +1369,79 @@ function reload_interfaces_sync() {
 	$wan_if = $config['interfaces']['wan']['if'];
 	$lan_if = $config['interfaces']['lan']['if'];
 	
+	if($debug)
+		log_error("Cleaning up Interfaces");
+	
 	foreach ($iflist as $ifent => $ifname) {
 		$ifname_real = convert_friendly_interface_to_real_interface_name($ifname);
 		if(stristr($ifname, "lo0") == true)
 			continue;
 		/* do not process wan interface, its mandatory */
-		if($wan_if == $ifname_real)
+		if(stristr($ifname, "$wan_if") == true)
 			continue;
 		/* do not process lan interface, its mandatory */
-		if($lan_if == $ifname_real)
+		if(stristr($ifname, "$lan_if") == true)
 			continue;
+		if($debug)
+			log_error("Downing and deleting $ifname_real - $ifname");
 		mwexec("/sbin/ifconfig {$ifname_real} down");
 		mwexec("/sbin/ifconfig {$ifname_real} delete");
 	}
 
 	/* set up VLAN virtual interfaces */
+	if($debug)
+		log_error("Configuring VLANS");
 	interfaces_vlan_configure();
 	
 	/* set up LAN interface */
+	if($debug)
+		log_error("Configuring LAN");
 	interfaces_lan_configure();
 
 	/* set up WAN interface */
+	if($debug)
+		log_error("Configuring WAN");
 	interfaces_wan_configure();
-
+	
 	/* set up Optional interfaces */
+	if($debug)
+		log_error("Configuring optional interfaces");
 	interfaces_optional_configure();
-        
+	    
 	/* set up static routes */
+	if($debug)
+		log_error("Configuring system Routing");
 	system_routing_configure();
 	
 	/* enable routing */
+	if($debug)
+		log_error("Enabling system routing");
 	system_routing_enable();
-	
+
 	/* setup captive portal if needed */
+	if($debug)
+		log_error("Configuring Captive portal");
 	captiveportal_configure();
 
 	/* bring up carp interfaces */
+	if($debug)
+		log_error("Configuring CARP");
 	interfaces_carp_configure();
 	
 	/* bring up carp interfaces*/
+	if($debug)
+		log_error("Bringing up CARP interfaces");
 	interfaces_carp_bring_up_final();
 	
+	/* restart webConfigurator if needed */
+	if($shutdown_webgui_needed == true) {
+		system_webgui_start();
+		log_error("webConfigurator restarted after reload.");
+	}
+	
+	/* remove reloading_all trigger */
+	if($debug)
+		log_error("Removing {$g['tmp_path']}/reloading_all");
 	unlink_if_exists("{$g['tmp_path']}/reloading_all");
 }
 
@@ -1548,6 +1595,18 @@ function reload_all_sync() {
 	global $config, $g;
 	
 	touch("{$g['tmp_path']}/reloading_all");
+
+	$shutdown_webgui_needed = false;
+
+	$memory = get_memory();
+	$avail = $memory[0];
+	/* we have way too little memory.  shutdown webConfigurator temporarily */
+	if($avail > 0 and $avail < 66) {
+		log_error("Not enough ram for reload.  Temporarily unloading webConfigurator.");
+		$shutdown_webgui_needed = true;
+		/* kill any running lighttpd */
+		killbypid("{$g['varrun_path']}/lighty-webConfigurator.pid");
+	}
 	
 	if(file_exists("{$g['tmp_path']}/config.cache"))
 		unlink("{$g['tmp_path']}/config.cache");
@@ -1642,6 +1701,12 @@ function reload_all_sync() {
 
 	/* restart sshd */
 	touch("/tmp/start_sshd");
+
+	/* restart webConfigurator if needed */
+	if($shutdown_webgui_needed == true) {
+		system_webgui_start();
+		log_error("webConfigurator restarted after reload.");
+	}
 	
 	unlink_if_exists("{$g['tmp_path']}/reloading_all");
 	

@@ -35,9 +35,11 @@
 
         /* WAN IP address has changed */
 
-        if($argv[1] <> "") {
-                $curwanip = find_interface_ip($argv[1]);
-                $interface = convert_real_interface_to_friendly_interface_name($argv[1]);
+        $argument = str_replace("\n", "", $argv[1]);
+
+        if($$argument <> "") {
+                $curwanip = find_interface_ip($$argument);
+                $interface = convert_real_interface_to_friendly_interface_name($$argument);
                 if($curwanip == "")
                         $curwanip = get_current_wan_address();       
         } else {

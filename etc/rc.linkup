@@ -40,8 +40,11 @@
                 $processing = true;
                 $counter = 1;
                 while($processing == true) {
-                        if($argv[$counter] == "" or $argv[$counter] == "\n")
+                        if($argv[$counter] == "" or $argv[$counter] == "\n") {
+                                if(file_exists("/tmp/rc.linkup"))
+                                        unlink("/tmp/rc.linkup");
                                 exit;
+                        }
                         echo "Processing {$argv[$counter]} - {$argv[$counter+1]}\n";
                         $friendly_interface = convert_real_interface_to_friendly_interface_name($argv[$counter]);
                         if($config['interfaces'][$friendly_interface]['ipaddr'] <> "dhcp" and

@@ -352,7 +352,7 @@ function system_webgui_start() {
 	if ($g['booting'])
 		echo "Starting webConfigurator... ";
 
-	/* kill any running mini_httpd */
+	/* kill any running lighttpd */
 	killbypid("{$g['varrun_path']}/lighty-webConfigurator.pid");
 
 	sleep(1);

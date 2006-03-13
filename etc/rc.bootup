@@ -48,6 +48,10 @@
 	require_once("config.inc");
 	
 	require_once("functions.inc");
+	
+	/* get system memory amount */
+	$memory = get_memory();
+	$avail = $memory[0];
 
 	/* start devd (dhclient now uses it */
 	echo "Starting device manager (devd)... ";
@@ -180,8 +184,14 @@
 	//unmute_kernel_msgs();
 	echo "done.\n";
 
-	/* start web server */
-	system_webgui_start();
+	if($avail > 0 and $avail < 65) {
+		echo "System has less than 64 megabytes of ram.  Delaying webConfigurator startup...\n";
+		/* start webConfigurator up on final pass */
+		touch("/tmp/restart_webgui");
+	} else {
+		/* start web server */
+		system_webgui_start();
+	}
 
 	/* start OpenVPN server & clients */
         ovpn_configure(false);

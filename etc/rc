@@ -204,6 +204,9 @@ rm -rf /usr/local/pkg/pf/CVS
 
 /usr/local/bin/php -f /etc/rc.conf_mount_ro
 
+# Remove stale files that have already been processed by bootup
+# scripts
+rm -f /tmp/rc.newwanip
 rm -f /tmp/rc.linkup
 /usr/local/sbin/check_reload_status 2>/dev/null
 

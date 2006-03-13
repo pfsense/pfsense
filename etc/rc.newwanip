@@ -37,7 +37,7 @@
 
         $argument = str_replace("\n", "", $argv[1]);
 
-        if($$argument <> "") {
+        if($argument <> "") {
                 $curwanip = find_interface_ip($$argument);
                 $interface = convert_real_interface_to_friendly_interface_name($$argument);
                 if($curwanip == "")

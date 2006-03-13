@@ -28,6 +28,11 @@ PLATFORM=`cat /etc/platform`
 # endless loop
 while : ; do
 
+if [ -f /tmp/ttybug ]; then
+	rm /tmp/ttybug
+	exit && exit && logout
+fi
+
 /etc/rc.banner
 
 # display a cheap menu

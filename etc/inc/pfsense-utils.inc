@@ -1434,10 +1434,8 @@ function reload_interfaces_sync() {
 	interfaces_carp_bring_up_final();
 	
 	/* restart webConfigurator if needed */
-	if($shutdown_webgui_needed == true) {
-		system_webgui_start();
-		log_error("webConfigurator restarted after reload.");
-	}
+	if($shutdown_webgui_needed == true) 
+		touch("/tmp/restart_webgui");
 	
 	/* remove reloading_all trigger */
 	if($debug)

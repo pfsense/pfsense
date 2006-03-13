@@ -1435,6 +1435,9 @@ function unmute_kernel_msgs() {
 
 function start_devd() {
 	exec("/sbin/devd");
+	sleep(1);
+	if(file_exists("/tmp/rc.linkup"))
+		unlink("/tmp/rc.linkup");	
 }
 
 ?>

@@ -285,7 +285,4 @@ include("head.inc");
 			touch("/tmp/reload_interfaces");
 	}
 	
-	if ($_GET['act'] == "add") 
-		touch("/tmp/reload_interfaces");
-
 ?>

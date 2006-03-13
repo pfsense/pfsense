@@ -1703,10 +1703,8 @@ function reload_all_sync() {
 	touch("/tmp/start_sshd");
 
 	/* restart webConfigurator if needed */
-	if($shutdown_webgui_needed == true) {
-		system_webgui_start();
-		log_error("webConfigurator restarted after reload.");
-	}
+	if($shutdown_webgui_needed == true) 
+		touch("/tmp/restart_webgui");
 	
 	unlink_if_exists("{$g['tmp_path']}/reloading_all");
 	

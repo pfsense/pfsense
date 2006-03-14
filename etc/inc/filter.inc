@@ -599,7 +599,7 @@ function filter_nat_rules_generate() {
 	/* build an array of interfaces to work with */
 	$iflist = array("lan" => "LAN");
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
-		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+		$iflist['opt' . $i] = "opt{$i}";
 	$interface_counter = 0;
 	/* loop through all interfaces and handle pftpx redirections */
 	foreach ($iflist as $ifent => $ifname) {

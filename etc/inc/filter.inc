@@ -237,24 +237,28 @@ function filter_generate_aliases() {
 	$aliases .= "lan = \"{ {$config['interfaces']['lan']['if']}{$lan_aliases} }\"\n";
 	$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";
 
-	/* build pptp alias */
-	$tmp = "pptp = \"{ ";
-	for($x=0; $x<$g["n_pptp_units"]; $x++) 
-		$tmp .= "ng{$x} ";
-	$counter = $x;
-	$tmp .= "}\" \n";
-	if($counter > 0)
-		$aliases .= $tmp;
-
-	/* build pppoe alias */
-	$tmp = "pppoe = \"{ ";
-	for($x=0; $x<$g["n_pppoe_units"]; $x++) {
-		$tmp .= "ng{$counter} ";
-		$counter++;
+    /* ng ordering is VERY important here.  do not alter orer */
+    if($config['pptpd']['mode'] == "server") {
+		/* build pptp alias */
+		$tmp = "pptp = \"{ ";
+		for($x=0; $x<$g["n_pptp_units"]; $x++) 
+			$tmp .= "ng{$x} ";
+		$counter = $x;
+		$tmp .= "}\" \n";
+		if($counter > 0)
+			$aliases .= $tmp;
 	}
-	$tmp .= "}\" \n";
-	if($x > 0)
-		$aliases .= $tmp;
+    if($config['pppoe']['mode'] == "server") {		
+		/* build pppoe alias */
+		$tmp = "pppoe = \"{ ";
+		for($x=0; $x<$g["n_pppoe_units"]; $x++) {
+			$tmp .= "ng{$counter} ";
+			$counter++;
+		}
+		$tmp .= "}\" \n";
+		if($x > 0)
+			$aliases .= $tmp;
+	}
 
 	$ifdescrs = array();
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {

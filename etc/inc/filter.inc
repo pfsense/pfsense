@@ -237,6 +237,9 @@ function filter_generate_aliases() {
 	$aliases .= "lan = \"{ {$config['interfaces']['lan']['if']}{$lan_aliases} }\"\n";
 	$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";
 
+    /* used to count netgraph interfaces */
+    $counter = 0;
+    
     /* ng ordering is VERY important here.  do not alter orer */
     if($config['pptpd']['mode'] == "server") {
 		/* build pptp alias */

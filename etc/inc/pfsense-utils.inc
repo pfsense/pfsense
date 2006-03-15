@@ -1799,24 +1799,23 @@ function print_value_list($list, $count = 10, $separator = ",") {
 function convert_friendly_interface_to_friendly_descr($interface) {
 	global $config;
 	/* attempt to resolve interface to friendly descr */
-	if($config['interfaces'][$interface]['descr'])
+	if($config['interfaces'][$interface]['descr']) 
 		return $config['interfaces'][$interface]['descr'];
-	/* is the person confused, calling the wrong function?  double check. */
-	if(convert_real_interface_to_friendly_descr($interface) <> $interface)
-		return convert_real_interface_to_friendly_descr($interface);
+	$tmp = convert_real_interface_to_friendly_descr($interface);
 	/* could not resolve, return back what was passed */
 	return $interface;
 }
 
 function convert_real_interface_to_friendly_descr($interface) {
 	global $config;
+	if($interface == $config['interfaces']['wan']['if'])
+		return "wan";
+	if($interface == $config['interfaces']['lan']['if'])
+		return "lan";
 	/* attempt to resolve interface to friendly descr */
 	$friendly_int = convert_real_interface_to_friendly_interface_name($interface);
 	if($config['interfaces'][$friendly_int]['descr'])
 		return $config['interfaces'][$friendly_int]['descr'];
-	/* is the person confused, calling the wrong function?  double check. */
-	if(convert_friendly_interface_to_friendly_descr($interface) <> $interface)
-		return convert_friendly_interface_to_friendly_descr($interface);
 	/* could not resolve, return back what was passed */
 	return $interface;
 }

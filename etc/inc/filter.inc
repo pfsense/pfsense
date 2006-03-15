@@ -269,7 +269,7 @@ function filter_generate_aliases() {
 		/* do not process tun interfaces */
 		/* do process tun interfaces for openvpn compatibility */
 		/* if(stristr(filter_opt_interface_to_real($ifname), "tun") == true) continue; */
-		$aliases .= $ifname . " = \"{ " . filter_opt_interface_to_real($ifname);
+		$aliases .= convert_friendly_interface_to_friendly_descr($ifname) . " = \"{ " . filter_opt_interface_to_real($ifname);
 		if($config['interfaces'][$ifname]['bridge'] <> "") {
 			$aliases .= " bridge{$bridgetracker} ";
 			$bridgetracker++;
@@ -405,7 +405,7 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 	else
 		$staticnatport_txt = "";
 
-	$if_friendly = convert_real_interface_to_friendly_interface_name($if);
+	$if_friendly = convert_real_interface_to_friendly_descr($if);
 
 	/* Put all the pieces together */
         $natrule = "{$nat} on \${$if_friendly} from {$src} to {$dst} {$target}{$staticnatport_txt}\n";
@@ -607,7 +607,7 @@ function filter_nat_rules_generate() {
 	$interface_counter = 0;
 	/* loop through all interfaces and handle pftpx redirections */
 	foreach ($iflist as $ifent => $ifname) {
-		$ifname_lower = strtolower($ifname);
+		$ifname_lower = convert_friendly_interface_to_friendly_descr(strtolower($ifname));
 		if(isset($config['interfaces'][strtolower($ifname)]['disableftpproxy'])) {
 			$interface_counter++;
 			continue;
@@ -714,27 +714,29 @@ function filter_nat_rules_generate() {
 			}
 			
 			if($extaddr == "")
-				$dontinstallrdr = true;			
+				$dontinstallrdr = true;
+				
+			$rdr_on = convert_real_interface_to_friendly_descr($rule['interface']);
 
 			if($dontinstallrdr == false) {
 				if ((!$extport[1]) || ($extport[0] == $extport[1])) {
 					if($rule['protocol'] == "tcp/udp")
 						$natrules .=
-						 "rdr on \${$rule['interface']} proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
+						 "rdr on \${$rdr_on} proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
 					else
 						if($extport[0]) 
 							$natrules .=
-							"rdr on \${$rule['interface']} proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
+							"rdr on \${$rdr_on} proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
 						else 
 							$natrules .=
-							"rdr on \${$rule['interface']} proto {$rule['protocol']} from any to {$extaddr} } -> {$target}{$localport}";	
+							"rdr on \${$rdr_on} proto {$rule['protocol']} from any to {$extaddr} } -> {$target}{$localport}";	
 				} else {
 					if($rule['protocol'] == "tcp/udp")
 						$natrules .=
-						 "rdr on \${$rule['interface']} proto { tcp udp } from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
+						 "rdr on \${$rdr_on} proto { tcp udp } from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
 					else
 						$natrules .=
-						 "rdr on \${$rule['interface']} proto {$rule['protocol']} from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
+						 "rdr on \${$rdr_on} proto {$rule['protocol']} from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
 				}
 			}
 
@@ -794,7 +796,7 @@ function filter_nat_rules_generate() {
 									fwrite($fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait\tnobody\t/usr/bin/nc nc -w 20 {$target} {$x}\n");
 								}
 								
-								$ifname_lower = strtolower($ifname);
+								$ifname_lower = convert_friendly_interface_to_friendly_descr(strtolower($ifname));
 								
 								$natrules .=
 								  "rdr on \${$ifname_lower} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
@@ -1053,7 +1055,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						$canadd = 0;
 				}
 				if($canadd == 0)
-					$line .= "on \$" . $rule['interface'] . " ";
+					$line .= "on \$" . convert_real_interface_to_friendly_descr($rule['interface']) . " ";
 			}
 			
 			
@@ -1071,7 +1073,6 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			} elseif ($config['interfaces'][$rule['interface']]['gateway'] <> "")  {
 				$rg = $config['interfaces'][$rule['interface']]['gateway'];
 			}
-
 
 			/* do not process reply-to for gateway'd rules */
 			if(($rule['gateway'] == "") and ($ri != "") and ($rg != "") and (stristr($rule['interface'],"opt") == true)) {

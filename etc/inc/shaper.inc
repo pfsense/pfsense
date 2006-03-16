@@ -583,7 +583,8 @@ function filter_generate_pf_altq_rules() {
 			$direction = 'out';
 			$qouttag = "{$direction}queue";
 			
-			$shaperrules .= "pass out on \${$rule['out-interface']}";
+			$friendly_desc = convert_friendly_interface_to_friendly_descr($rule['in-interface']);
+			$shaperrules .= "pass out on \${$friendly_desc}";
 			if(isset($proto) && $proto != "") {
 				$shaperrules .= " proto {$proto}";
 			}

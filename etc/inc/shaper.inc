@@ -442,21 +442,24 @@ function filter_generate_pf_altq_rules() {
 			if (isset($rule['source']['any'])) {
 				$src = "any";
 			} else if ($rule['source']['network']) {
-				if (strstr($rule['source']['network'], "opt")) {
+				if (stristr($rule['source']['network'], "opt") == true) {
 					$src = $optcfg[$rule['source']['network']]['sa'] . "/" .
-					$optcfg[$rule['source']['network']]['sn'];
+						$optcfg[$rule['source']['network']]['sn'];
 				} else {
 					switch ($rule['source']['network']) {
 						case 'lan':
-						$src = "$lansa/$lansn";
-						break;
+							$src = "$lansa/$lansn";
+							break;
 						case 'pptp':
-						$src = "$pptpsa/$pptpsn";
-						break;
+							$src = "$pptpsa/$pptpsn";
+							break;
 						case 'pppoe':
-						$src = "$pppoesa/$pppoesn";
-						break;
+							$src = "$pppoesa/$pppoesn";
+							break;
 					}
+					$src = alias_expand($rule['source']['network']);
+					if(!$src)
+						$src = $rule['source']['network'];
 				}
 			} else if ($rule['source']['address']) {
 				$src = alias_expand($rule['source']['address']);
@@ -502,22 +505,24 @@ function filter_generate_pf_altq_rules() {
 			if (isset($rule['destination']['any'])) {
 				$dst = "any";
 			} else if ($rule['destination']['network']) {
-
-				if (strstr($rule['destination']['network'], "opt")) {
+				if (stristr($rule['destination']['network'], "opt") == true) {
 					$dst = $optcfg[$rule['destination']['network']]['sa'] . "/" .
-					$optcfg[$rule['destination']['network']]['sn'];
+						$optcfg[$rule['destination']['network']]['sn'];
 				} else {
 					switch ($rule['destination']['network']) {
 						case 'lan':
-						$dst = "$lansa/$lansn";
-						break;
+							$dst = "$lansa/$lansn";
+							break;
 						case 'pptp':
-						$dst = "$pptpsa/$pptpsn";
-						break;
+							$dst = "$pptpsa/$pptpsn";
+							break;
 						case 'pppoe':
-						$dst = "$pppoesa/$pppoesn";
-						break;
+							$dst = "$pppoesa/$pppoesn";
+							break;
 					}
+					$dst = alias_expand($rule['destination']['network']);
+					if(!$dst)
+						$dst = $rule['destination']['network'];
 				}
 			} else if ($rule['destination']['address']) {
 				$dst = alias_expand($rule['destination']['address']);
@@ -526,7 +531,8 @@ function filter_generate_pf_altq_rules() {
 			}
 
 			if (!$dst) {
-				printf("No destination address found in rule $i\n");
+				printf("No destination address found in rule {$i}. \n");
+				print_r($rule['destination']['network']);
 				break;
 			}
 
@@ -561,7 +567,7 @@ function filter_generate_pf_altq_rules() {
 			}
 
 			if ($rule['iptos'])
-			$line .= "tos {$rule['iptos']} ";
+				$line .= "tos {$rule['iptos']} ";
 
 			$inflags = explode(",", $rule['tcpflags']);
 			$flags = " flags ";
@@ -583,8 +589,9 @@ function filter_generate_pf_altq_rules() {
 			$direction = 'out';
 			$qouttag = "{$direction}queue";
 			
-			$friendly_desc = convert_friendly_interface_to_friendly_descr($rule['in-interface']);
+			$friendly_desc = convert_friendly_interface_to_friendly_descr($rule['out-interface']);
 			$shaperrules .= "pass out on \${$friendly_desc}";
+			
 			if(isset($proto) && $proto != "") {
 				$shaperrules .= " proto {$proto}";
 			}

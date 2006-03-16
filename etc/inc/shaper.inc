@@ -428,7 +428,8 @@ function filter_generate_pf_altq_rules() {
 				$line .= " ng" . ($iif+1);
 			}			
 			else {
-				$line .= " \${$rule['in-interface']} ";
+				$friendly_desc = convert_friendly_interface_to_friendly_descr($rule['in-interface']);
+				$line .= " \${$friendly_desc} ";
 			}
 			
 			/* get protocol */

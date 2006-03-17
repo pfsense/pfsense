@@ -163,8 +163,22 @@ while ($data = array_shift($return)) {
 					break;
 			}
 		}
-	} else if (($data[0] == "}") && ($data[1] == 1))		// End of group
+	} else if (($data[0] == "}") && ($data[1] == 1)) {		// End of group
+
+		//updated leases are appended to the end of the lease file. if we aren't
+		//showing everything just show the most current lease in the list
+		if(!$_GET['all']) {
+			$l = $leases[$i]['ip'];
+			for($k = 0; $k < $i; $k++) {
+				if($leases[$k]['ip'] == $l) {
+					array_splice($leases, $k, 1);
+					--$i;
+					break;
+				}
+			}
+		}
 		$i++;
+	}
 }
 foreach($config['interfaces'] as $ifname => $ifarr) {
 	if (is_array($config['dhcpd'][$ifname]['staticmap'])) {

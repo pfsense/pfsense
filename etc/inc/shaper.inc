@@ -457,9 +457,6 @@ function filter_generate_pf_altq_rules() {
 							$src = "$pppoesa/$pppoesn";
 							break;
 					}
-					$src = alias_expand($rule['source']['network']);
-					if(!$src)
-						$src = $rule['source']['network'];
 				}
 			} else if ($rule['source']['address']) {
 				$src = alias_expand($rule['source']['address']);
@@ -520,9 +517,6 @@ function filter_generate_pf_altq_rules() {
 							$dst = "$pppoesa/$pppoesn";
 							break;
 					}
-					$dst = alias_expand($rule['destination']['network']);
-					if(!$dst)
-						$dst = $rule['destination']['network'];
 				}
 			} else if ($rule['destination']['address']) {
 				$dst = alias_expand($rule['destination']['address']);

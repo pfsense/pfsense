@@ -322,15 +322,14 @@ function enablechange() {
 				  $ifdescr = $iface['descr'];
 			  else
 				  $ifdescr = strtoupper($ifname);
-			  $ifname = $iface['descr'];
 			  $ip = "";
 			  if($field['all_interfaces'] <> "") {
 				$ifdescr = $iface;
 				$ip = " " . find_interface_ip($iface);
 			  }
 			  $SELECTED = "";
-			  if($value == $ifdescr) $SELECTED = " SELECTED";
-			  $to_echo =  "<option value='" . $ifdescr . "'" . $SELECTED . ">" . $ifdescr . $ip . "</option>\n";
+			  if ($value == $ifname) $SELECTED = " SELECTED";
+			  $to_echo = "<option value='" . $ifname . "'" . $SELECTED . ">" . $ifdescr . $ip . "</option>\n";
 			  $to_echo .= "<!-- {$value} -->";
 			  $canecho = 0;
 			  if($field['interface_filter'] <> "") {

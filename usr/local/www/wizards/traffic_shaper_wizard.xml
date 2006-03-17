@@ -111,8 +111,8 @@
 			header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid={$stepid}&amp;message={$message}");
 			exit;
 		}
-		$downq = "q" . strtoupper($config['ezshaper']['step2']['inside_int']);
-		$upq = "q" . strtoupper($config['ezshaper']['step2']['outside_int']);
+		$downq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['inside_int']);
+		$upq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['outside_int']);
 	    
 		/* Magic shaper scheduler */
 		$config['shaper']['schedulertype'] = "hfsc";
@@ -384,8 +384,8 @@
 		}
 
 		if ( $_POST['enable'] ) {
-			$downq = "q" . strtoupper($config['ezshaper']['step2']['inside_int']);
-			$upq = "q" . strtoupper($config['ezshaper']['step2']['outside_int']);
+			$downq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['inside_int']);
+			$upq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['outside_int']);
 			$downint = strtolower($config['ezshaper']['step2']['inside_int']);
 			$upint = strtolower($config['ezshaper']['step2']['outside_int']);
 
@@ -690,8 +690,8 @@
 
 	/* XXX - billm - needs to actually honor what the user selects still */
 	if ( $_POST['enable'] ) {
-		$downq = "q" . strtoupper($config['ezshaper']['step2']['inside_int']);
-		$upq = "q" . strtoupper($config['ezshaper']['step2']['outside_int']);
+		$downq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['inside_int']);
+		$upq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['outside_int']);
 		$downint = strtolower($config['ezshaper']['step2']['inside_int']);
 		$upint = strtolower($config['ezshaper']['step2']['outside_int']);
 
@@ -980,8 +980,8 @@
 	<stepsubmitphpaction>
 	/* XXX - billm - needs to actually honor what the user selects still */
 	if ( $_POST['enable'] ) {
-		$downq = "q" . strtoupper($config['ezshaper']['step2']['inside_int']);
-		$upq = "q" . strtoupper($config['ezshaper']['step2']['outside_int']);
+		$downq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['inside_int']);
+		$upq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['outside_int']);
 		$downint = strtolower($config['ezshaper']['step2']['inside_int']);
 		$upint = strtolower($config['ezshaper']['step2']['outside_int']);
 
@@ -1742,8 +1742,8 @@
         </fields>
 	<stepsubmitphpaction>
 	if ( $_POST['enable'] ) {
-		$downq = "q" . strtoupper($config['ezshaper']['step2']['inside_int']);
-		$upq = "q" . strtoupper($config['ezshaper']['step2']['outside_int']);
+		$downq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['inside_int']);
+		$upq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['outside_int']);
 		$downint = strtolower($config['ezshaper']['step2']['inside_int']);
 		$upint = strtolower($config['ezshaper']['step2']['outside_int']);
 		/* create qOthersUp queue */

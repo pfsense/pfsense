@@ -100,6 +100,7 @@ authoritative;
 log-facility local7;
 ddns-update-style none;
 one-lease-per-client true;
+deny duplicates;
 
 EOD;
 

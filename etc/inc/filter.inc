@@ -851,7 +851,11 @@ EOD;
 
 	if (is_package_installed("squid") == 1) {
 		if(is_process_running("squid")) {
-			$natrules .= "rdr on \$lan inet proto tcp from any to !{$lanip} port www -> 127.0.0.1 port 3128\n";
+			$transparent_proxy = $config['installedpackages']['squid']['config'][0]['transparent_proxy'];
+			if(isset($transparent_proxy) && ($transparent_proxy == "on")) {
+				$natrules .= "rdr on {$lanif} inet proto tcp from any to !{$lanip} port www -> 127.0.0.1 port 3128\n";
+			}
+			unset($transparent_proxy);
 		} else {
 			if($g['booting'] == false) {
 				log_error("SQUID is installed but failed to start.  Not installing redirector rule.");

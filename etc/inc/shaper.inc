@@ -473,7 +473,7 @@ function filter_generate_pf_altq_rules() {
 			}
 
 			if (isset($rule['source']['not'])) {
-				$src = " ! {$src} ";
+				$src = "!{$src}";
 			}
 			$line .= "from {$src} ";
 			
@@ -537,7 +537,7 @@ function filter_generate_pf_altq_rules() {
 			}
 
 			if (isset($rule['destination']['not'])) {
-				$dst .= " ! {$dst} ";
+				$dst = "!{$dst}";
 			}
 			$line .= "to {$dst} ";
 

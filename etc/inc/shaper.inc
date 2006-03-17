@@ -470,7 +470,29 @@ function filter_generate_pf_altq_rules() {
 			}
 
 			if (isset($rule['source']['not'])) {
-				$src = "!{$src}";
+				
+				/*pf is not really happy with this sexy ($src = "!{$src}";) approach of 
+				 * negating a list or macro. So we have to write out a ! on each entry.
+				 */				
+
+				/* not very happy with this! but it beats copying this section to 
+				 * several places.
+				 */
+				$alias = alias_expand(substr($src, 1));
+				
+				if(isset($alias) && stristr($alias, "$")) {
+					$alias = alias_expand_value(substr($src, 1));
+					$src = "{";
+					foreach(preg_split("/[\s]+/", $alias) as $item) {
+						if($item != "") {
+							$src .= " !{$item}";
+						}
+					}
+					$src .= " }";
+				}
+				else {
+					$src = "!{$src}";
+				}
 			}
 			$line .= "from {$src} ";
 			
@@ -531,7 +553,29 @@ function filter_generate_pf_altq_rules() {
 			}
 
 			if (isset($rule['destination']['not'])) {
-				$dst = "!{$dst}";
+				
+				/*pf is not really happy with this sexy ($dst = "!{$dst}";) approach of 
+				 * negating a list or macro. So we have to write out a ! on each entry.
+				 */				
+
+				/* not very happy with this! but it beats copying this section to 
+				 * several places.
+				 */
+				$alias = alias_expand(substr($dst, 1));
+				
+				if(isset($alias) && stristr($alias, "$")) {
+					$alias = alias_expand_value(substr($dst, 1));
+					$dst = "{";
+					foreach(preg_split("/[\s]+/", $alias) as $item) {
+						if($item != "") {
+							$dst .= " !{$item}";
+						}
+					}
+					$dst .= " }";
+				}
+				else {
+					$dst = "!{$dst}";
+				}
 			}
 			$line .= "to {$dst} ";
 

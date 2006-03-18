@@ -191,9 +191,15 @@ function system_routing_configure() {
 		}
 
 		foreach ($config['staticroutes']['route'] as $rtent) {
-			mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
-				" " . escapeshellarg($rtent['gateway']));
-
+			if(isset($rtent['interfacegateway'])) {
+				echo "/sbin/route add " . escapeshellarg($rtent['network']) .
+					" -iface " . escapeshellarg(convert_friendly_interface_to_real_interface_name($rtent['interface']));
+				mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
+					" -iface " . escapeshellarg(convert_friendly_interface_to_real_interface_name($rtent['interface'])));				
+			} else {
+				mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
+					" " . escapeshellarg($rtent['gateway']));
+			}
 			/* record route so it can be easily removed later (if necessary) */
 			fwrite($fd, $rtent['network'] . "\n");
 		}

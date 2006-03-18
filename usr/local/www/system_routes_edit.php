@@ -47,6 +47,7 @@ if (isset($id) && $a_routes[$id]) {
 		explode('/', $a_routes[$id]['network']);
 	$pconfig['gateway'] = $a_routes[$id]['gateway'];
 	$pconfig['descr'] = $a_routes[$id]['descr'];
+	$pconfig['interfacegateway'] = isset($a_routes[$id]['interfacegateway']);
 }
 
 if ($_POST) {
@@ -55,8 +56,13 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "interface network network_subnet gateway");
-	$reqdfieldsn = explode(",", "Interface,Destination network,Destination network bit count,Gateway");
+	if($_POST['interfacegateway']) {
+		$reqdfields = explode(" ", "interface network network_subnet");
+		$reqdfieldsn = explode(",", "Interface,Destination network,Destination network bit count");
+	} else {
+		$reqdfields = explode(" ", "interface network network_subnet gateway");
+		$reqdfieldsn = explode(",", "Interface,Destination network,Destination network bit count,Gateway");		
+	}
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
@@ -88,6 +94,12 @@ if ($_POST) {
 		$route['network'] = $osn;
 		$route['gateway'] = $_POST['gateway'];
 		$route['descr'] = $_POST['descr'];
+		
+		/* use interface as gateway */
+		if($_POST['interfacegateway']) 
+			$route['interfacegateway'] = true;
+		 else 
+			unset($route['interfacegateway']);
 
 		if (isset($id) && $a_routes[$id])
 			$a_routes[$id] = $route;
@@ -108,6 +120,15 @@ include("head.inc");
 
 ?>
 
+<script language="JavaScript">
+function enable_change() {
+	if (document.iform.interfacegateway.checked) {
+		document.iform.gateway.disabled = 1;
+	} else {
+		document.iform.gateway.disabled = 0;
+	}
+}
+</script>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
@@ -146,6 +167,12 @@ include("head.inc");
                     <br> <span class="vexpl">Destination network for this static route</span></td>
                 </tr>
 				<tr>
+                  <td width="22%" valign="top" class="vncellreq">Use Interface as gateway</td>
+                  <td width="78%" class="vtable"> 
+                    <input onClick="enable_change()" name="interfacegateway" type="checkbox" class="formfld" id="interfacegateway" size="40" value="on" <?php if($pconfig['interfacegateway']) echo " CHECKED"; ?>>
+                    <br> <span class="vexpl">Check this option to direct all traffic for the destination network out the interface.  This is useful for routing DNS traffic out correct interfaces, etc.</span></td>
+                </tr>
+				<tr>
                   <td width="22%" valign="top" class="vncellreq">Gateway</td>
                   <td width="78%" class="vtable"> 
                     <input name="gateway" type="text" class="formfld" id="gateway" size="40" value="<?=htmlspecialchars($pconfig['gateway']);?>">
@@ -170,5 +197,8 @@ include("head.inc");
               </table>
 </form>
 <?php include("fend.inc"); ?>
+<script language="JavaScript">
+	enable_change();
+</script>
 </body>
 </html>

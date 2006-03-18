@@ -132,7 +132,13 @@ include("head.inc");
                     <?=strtolower($route['network']);?>
                   </td>
                   <td class="listr" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
-                    <?=strtolower($route['gateway']);?>
+				  <?php
+					if(isset($route['interfacegateway'])) {
+						echo strtoupper($route['interface']) . " ";
+					} else {
+						echo strtolower($route['gateway']) . " ";
+					}
+				  ?>
                   </td>
                   <td class="listbg" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
                     <font color="#FFFFFF"><?=htmlspecialchars($route['descr']);?>&nbsp;

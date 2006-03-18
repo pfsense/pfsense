@@ -235,11 +235,14 @@ function filter_generate_aliases() {
 	$aliases .= "# System Aliases \n";
 	$aliases .= "loopback = \"{ lo0 }\"\n";
 	$aliases .= "lan = \"{ {$config['interfaces']['lan']['if']}{$lan_aliases} }\"\n";
-	$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";
 
-    if($config['interfaces']['wan']['ipaddr'] == "pppoe")
+    if($config['interfaces']['wan']['ipaddr'] == "pppoe") {
 		$aliases .= "ng0 = \"{ " . $config['interfaces']['wan']['if'] . " " . get_real_wan_interface() . " }\" \n";
-
+		$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";
+	} else {
+		$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} ng0 }\"\n";		
+	}
+	
     /* used to count netgraph interfaces */
     $counter = 0;
     

@@ -238,7 +238,7 @@ function filter_generate_aliases() {
 	$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";
 
     if($config['interfaces']['wan']['ipaddr'] == "pppoe")
-		$aliases .= "ng0 = \"{ " . $config['interfaces']['wan']['if'] . " }\" \n";
+		$aliases .= "ng0 = \"{ " . $config['interfaces']['wan']['if'] . " " . get_real_wan_interface() . " }\" \n";
 
     /* used to count netgraph interfaces */
     $counter = 0;

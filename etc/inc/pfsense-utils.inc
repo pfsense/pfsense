@@ -1128,6 +1128,14 @@ function get_memory() {
 		if (preg_match_all("/avail memory = .* \((.*) MB/", $mem, $matches))
 			$avail = $matches[1];
 		return array($real[0],$avail[0]);
+	} else {
+		$mem = `dmesg -a`;
+		$matches = "";
+		if (preg_match_all("/real memory  = .* \((.*) MB/", $mem, $matches))
+			$real = $matches[1];
+		if (preg_match_all("/avail memory = .* \((.*) MB/", $mem, $matches))
+			$avail = $matches[1];
+		return array($real[0],$avail[0]);	
 	}
 	return array("64","64");
 }

@@ -192,8 +192,6 @@ function system_routing_configure() {
 
 		foreach ($config['staticroutes']['route'] as $rtent) {
 			if(isset($rtent['interfacegateway'])) {
-				echo "/sbin/route add " . escapeshellarg($rtent['network']) .
-					" -iface " . escapeshellarg(convert_friendly_interface_to_real_interface_name($rtent['interface']));
 				mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
 					" -iface " . escapeshellarg(convert_friendly_interface_to_real_interface_name($rtent['interface'])));				
 			} else {

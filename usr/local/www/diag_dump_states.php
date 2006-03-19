@@ -41,6 +41,7 @@ if($_GET['filter']) {
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<script src="/javascript/sorttable.js"></script>
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -55,28 +56,29 @@ if($_GET['filter']) {
 
 <tr><td>
         <div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
-			<tr>
-				<td colspan="10">
-					<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
-						<form action="diag_dump_states.php" method="get" id="search">
-						<tr>
-							<td style="font-weight:bold;" width="50" align="right">Filter:&nbsp;
-								
-								<input name="filter" type="text" id="" value="<?=$_GET['filter'];?>" size="30" style="font-size:11px;">
-								<input type="submit" class="formbtn" value="Filter">
-								</form>
-							<td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-		
-		<tr>
-			<td class="listhdrr" width="10%">Proto</td>
-			<td class="listhdrr" width="65">Source -> Router -> Destination</td>
-			<td class="listhdr" width="25%">State</td>
-		</tr>
+				<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td colspan="9">
+							<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+								<tr>
+									<td style="font-weight:bold;" width="50" align="right">Filter:&nbsp;
+										
+										<input name="filter" type="text" id="" value="<?=$_GET['filter'];?>" size="30" style="font-size:11px;">
+										<input type="submit" class="formbtn" value="Filter">
+										</form>
+									<td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				<tr><td>
+				<table id="sortabletable" name="sortabletable" class="sortable" width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="listhdrr" width="10%">Proto</td>
+					<td class="listhdrr" width="65">Source -> Router -> Destination</td>
+					<td class="listhdr" width="15%">State</td>
+					<td class="list" width="1%"></td>
+				</tr>
 <?php
 $state_counter = 0;
 if(count($states) > 0) {
@@ -105,6 +107,7 @@ EOD;
 }
 
 ?>
+</td></tr></table>
 </table>
 </div>
 </center>

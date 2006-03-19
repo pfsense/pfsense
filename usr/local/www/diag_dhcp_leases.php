@@ -39,6 +39,7 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<script src="/javascript/sorttable.js"></script>
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php
@@ -206,7 +207,7 @@ foreach($config['interfaces'] as $ifname => $ifarr) {
 if ($_GET['order'])
 	usort($leases, "leasecmp");
 ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table class="sortable" id="sortabletable" name="sortabletable" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td class="listhdrr"><a href="?all=<?=$_GET['all'];?>&order=ip">IP address</a></td>
     <td class="listhdrr"><a href="?all=<?=$_GET['all'];?>&order=mac">MAC address</a></td>

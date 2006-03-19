@@ -33,6 +33,7 @@ $pgtitle = "Diagnostics: ARP Table";
 include("head.inc");
 ?>
 <body link="#000000" vlink="#000000" alink="#000000">
+<script src="/javascript/sorttable.js"></script>
 <? include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -185,7 +186,7 @@ function getHostName($mac,$ip)
 
 ?>
 
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table class="sortable" name="sortabletable" id="sortabletable" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td class="listhdrr">IP address</td>
     <td class="listhdrr">MAC address</td>

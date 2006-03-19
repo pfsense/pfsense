@@ -40,6 +40,7 @@ include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<script src="/javascript/sorttable.js"></script>
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php
@@ -86,7 +87,7 @@ if ($fp) {
 }
 captiveportal_unlock();
 ?>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table class="sortable" name="sortabletable" id="sortabletable" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td class="listhdrr"><a href="?order=ip&showact=<?=$_GET['showact'];?>">IP address</a></td>
     <td class="listhdrr"><a href="?order=mac&showact=<?=$_GET['showact'];?>">MAC address</a></td>

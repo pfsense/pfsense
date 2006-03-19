@@ -52,6 +52,7 @@ function ovpn_link_tap() {
 		$link_count = 1;
 		mwexec("/sbin/kldload if_tap");
 		$fd = fopen($g['vardb_path'] ."/ovpn_tap_link", 'w');
+		fclose($fd);
 	}
 	return true;
 }

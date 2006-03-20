@@ -612,11 +612,12 @@ function filter_nat_rules_generate() {
 	$natrules .= "\n# Load balancing anchor - slbd updates\n";
 	$natrules .= "rdr-anchor \"slb\"\n";
 
+	$natrules .= "\n# FTP Proxy/helper\n";
 	/* build an array of interfaces to work with */
 	$iflist = array("lan" => "LAN");
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
 		$iflist['opt' . $i] = "opt{$i}";
-	$interface_counter = 0;
+	$interface_counter = 0;	
 	/* loop through all interfaces and handle pftpx redirections */
 	foreach ($iflist as $ifent => $ifname) {
 		$ifname_lower = convert_friendly_interface_to_friendly_descr(strtolower($ifname));

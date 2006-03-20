@@ -592,6 +592,10 @@ function filter_nat_rules_generate() {
 	/* is SPAMD insalled? */
 	if (is_package_installed("spamd") == 1) {
 		$natrules .= "\n# spam table \n";
+		
+		$natrules .= "table <whitelist> persist\n";
+		$natrules .= "table <blacklist> persist\n";
+		
 		$natrules .= "table <spammers> persist\n";
 		$natrules .= "table <spamd> persist\n";
 		$natrules .= "table <spamd-white> persist\n";

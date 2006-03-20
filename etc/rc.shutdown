@@ -1,5 +1,10 @@
 #!/bin/sh
 
+if [ -f /var/run/config.lock ]; then
+	echo "Cannot reboot at this moment, a config write operation is in progress."
+	exit -1
+fi
+
 if [ -e /dev/ukbd0 ]; then
         /usr/sbin/vidcontrol -s 2
 fi

@@ -100,6 +100,7 @@
 	<custom_delete_php_command>
 	</custom_delete_php_command>
 	<custom_php_resync_config_command>
+		conf_mount_rw();
 		$fd = fopen("/usr/local/etc/olsrkey.txt","w");
 		fwrite($fd, $_POST['securekey']);
 		fclose($fd);
@@ -109,6 +110,7 @@
 						setup_wireless_olsr($if);
 				}
 		}
+		conf_mount_ro();
 	</custom_php_resync_config_command>
 	<custom_php_install_command>
 	</custom_php_install_command>

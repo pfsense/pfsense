@@ -2011,7 +2011,7 @@ function enable_rrd_graphing()
 	
 		$rrdupdatesh .= "sleep 60\n";
 		$rrdupdatesh .= "done\n";
-		PRINT "Creating rrd cron update script\n";
+		PRINT "Creating rrd update script\n";
 		/* write the rrd update script */
 		$updaterrdscript = "{$g['varrun_path']}/rrd/updaterrd.sh";
 		$fd = fopen("$updaterrdscript", "w");

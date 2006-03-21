@@ -273,6 +273,9 @@
 		touch("/var/etc/console_lockdown");
 
 	filter_configure();
+	
+    /* load graphing functions */
+    enable_rrd_graphing();	
 
 	/*   start DHCP service again now that CARP has settled
 	 *   incase user is using primary/backup failover dhcp mode

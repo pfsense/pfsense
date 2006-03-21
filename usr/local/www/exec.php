@@ -209,7 +209,7 @@ if (!isBlank($_POST['txtPHPCommand'])) {
 
 
 ?>
-
+<div id="niftyOutter">
 <form action="exec.php" method="POST" enctype="multipart/form-data" name="frmExecPlus" onSubmit="return frmExecPlus_onSubmit( this );">
   <table>
 	<tr>
@@ -282,6 +282,7 @@ if (!isBlank($_POST['txtPHPCommand'])) {
     </tr>
     
   </table>
+</div>
 <?php include("fend.inc"); ?>
 </form>
 <script language="Javascript">

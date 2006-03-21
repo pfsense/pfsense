@@ -1828,4 +1828,223 @@ function convert_real_interface_to_friendly_descr($interface) {
 	return $interface;
 }
 
+function enable_rrd_graphing()
+{
+// create a silent cron job for every 1 minute (because of GigE)
+// consider syncing the rrd files to usb storage (cdrom, embbedded)
+// FIXME: remove_text_from_file is broken and adds text instead
+// Needs to be called on rc.new_wan_ip, assign interface and boottime
+
+	global $config, $g;
+
+    $rrddbpath = "/var/run/rrd/";
+    $rrdgraphpath = "/usr/local/www/rrd";
+	$rrdtrafficinterval = 60;
+	$rrdqualityinterval = 60;
+	$rrdqueuesinterval = 60;
+
+	$traffic = "-traffic.rrd";
+	$quality = "-quality.rrd";
+	$queues = "-queues.rrd";
+	$rrdtool = "/usr/local/bin/rrdtool";
+	$netstat = "/usr/bin/netstat";
+	$awk = "/usr/bin/awk";
+	$gatewayip = exec("route -n get default | grep gateway | awk '{print $2}'");
+	$numpings = 15;
+	$btick = '`';
+
+	$trafficvalid = $rrdtrafficinterval*2 ;
+	$qualityvalid = $rrdtrafficinterval*2 ;
+	$queuesvalid = $rrdtrafficinterval*2 ;
+	/* Asume GigE for now */
+	$downstream = 12500000;
+	$upstream = 12500000;
+
+	$config['rrd']['enable'] = true;
+
+	if (isset($config['rrd']['enable'])) {
+
+		/* create directory if needed */
+		if(!is_dir("$rrddbpath")) {
+			mkdir("$rrddbpath", 0755);
+		}
+
+		/* if we are on livecd or embedded use a memoryfs. */
+		/* 3MB is enough for everyone. *cough* */
+		if($g['platform'] != "pfSense") {
+			system("/sbin/mdmfs -M -s 3m md2 $rrddbpath");
+		}
+
+		/* create symlink if needed */
+		if(!is_link("$rrdgraphpath")) {
+			exec("ln -s $rrddbpath $rrdgraphpath");
+		}
+
+		/* db update script */
+		$rrdupdatesh = "#!/bin/sh\n";
+		$rrdupdatesh .= "\n";
+		$rrdupdatesh .= "counter=1\n";
+		$rrdupdatesh .= "while [ \"\$counter\" -ne 0 ]\n";
+		$rrdupdatesh .= "do\n";
+		$rrdupdatesh .= "";
+
+		/* directory index */
+		$rrdgraphindexhtml = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">
+<HTML>
+<HEAD>
+    <TITLE>MRTG Index Page</TITLE>
+    <META HTTP-EQUIV=\"Refresh\" CONTENT=\"360\">
+    <META HTTP-EQUIV=\"Cache-Control\" content=\"no-cache\">
+    <META HTTP-EQUIV=\"Pragma\" CONTENT=\"no-cache\">
+    <META HTTP-EQUIV=\"Expires\" CONTENT=\"Tue, 22 May 2001 09:22:45 GMT\">
+</HEAD>
+<BODY bgcolor=\"#ffffff\" text=\"#000000\" link=\"#000000\" vlink=\"#000000\" alink=\"#000000\">
+<H1>MRTG Index Page</H1>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>";
+
+       		$i = 0;
+		$ifdescrs = get_interface_list();
+       		foreach ($ifdescrs as $realif => $ifdescr) {
+			$ifname = $ifdescr['friendly'];
+			$state = $ifdescr['up'];
+
+			/* skip interfaces that do not have a friendly name */
+			if("$ifname" == "") {
+				continue;
+			}
+			
+			/* or are down */
+			if(! $state) {
+				continue;
+			}
+
+			/* set up the rrd file */
+			if(! file_exists("$rrddbpath$ifname$traffic")) {
+				/* create rrd file if it does not exist */
+				$rrdcreate = "$rrdtool create $rrddbpath$ifname$traffic --step $rrdtrafficinterval \
+					DS:in:COUNTER:$trafficvalid:0:$downstream \
+					DS:out:COUNTER:$trafficvalid:0:$upstream \
+					RRA:AVERAGE:0.5:1:2000 \
+					RRA:AVERAGE:0.5:6:2000 \
+					RRA:AVERAGE:0.5:24:2000 \
+					RRA:AVERAGE:0.5:288:2000 \
+					RRA:MAX:0.5:1:2000 \
+					RRA:MAX:0.5:6:2000 \
+					RRA:MAX:0.5:24:2000 \
+					RRA:MAX:0.5:288:2000";
+
+				$rrdcreatel .= exec("$rrdcreate 2>&1");
+			}
+
+			$rrdupdatesh .= "\n";
+			$rrdupdatesh .= "# polling for interface $ifname $realif \n";
+
+	                /* use the lan ip address for polling snmp stats*/
+			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$traffic N:\\\n";
+			$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$7}'`:\\\n";
+			$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$10}'`\n";
+
+			$rrdgraphindexhtml .= "<TR>
+<TD><DIV><B>Traffic Analysis for $ifname -- day</B></DIV>
+<DIV><IMG BORDER=1 ALT=\"$ifname Traffic Graph\" SRC=\"$ifname-day.png\">
+<BR>
+</TD>
+<TD><DIV><B>Traffic Analysis for $ifname -- week</B></DIV>
+<DIV><IMG BORDER=1 ALT=\"$ifname Traffic Graph\" SRC=\"$ifname-week.png\">
+<BR>
+</TD>
+</TR>";
+
+			if("$ifname" == "wan") {
+				$pingtest = exec("ping -c $numpings -q $gatewayip");
+				if(! file_exists("$rrddbpath$ifname$quality")) {
+					/* create rrd file if it does not exist */
+					$rrdcreate = "$rrdtool create $rrddbpath$ifname$quality --step $rrdqualityinterval \
+							DS:loss:GAUGE:$qualityvalid:0:100 \
+							DS:roundtrip:GAUGE:$qualityvalid:0:10000 \
+							RRA:AVERAGE:0.5:1:120 \
+							RRA:AVERAGE:0.5:3:320 \
+							RRA:AVERAGE:0.5:10:288";
+
+					$rrdcreatel .= exec("$rrdcreate 2>&1");
+				}
+
+				/* the ping test function. We call this on the last line */
+				$rrdupdatesh .= "get_ping_stats () {
+					packetloss=100
+					roundtrip=0
+					local out
+					out=$btick ping -c $numpings -q $gatewayip $btick
+					if [ $? -eq 0 ]; then
+						packetloss=$btick echo \$out | cut -f18 -d' ' | cut -c -1 $btick
+						roundtrip=$btick echo \$out | cut -f24 -d' ' | cut -f2 -d'/' $btick
+					fi
+					$rrdtool update $rrddbpath$ifname$quality N:\$packetloss:\$roundtrip
+				}\n";
+
+				$rrdupdatesh .= "get_ping_stats &\n";
+
+				if(! file_exists("$rrddbpath$ifname$queues")) {
+					/* create rrd file if it does not exist */
+					$rrdcreate = "$rrdtool create $rrddbpath$ifname$queues --step $rrdqueuesinterval \
+						DS:pr0:COUNTER:$queuesvalid:0:$downstream \
+						DS:pr1:COUNTER:$queuesvalid:0:$downstream \
+						DS:pr2:COUNTER:$queuesvalid:0:$downstream \
+						DS:pr0u:COUNTER:$queuesvalid:0:$upstream  \
+						DS:pr1u:COUNTER:$queuesvalid:0:$upstream  \
+						DS:pr2u:COUNTER:$queuesvalid:0:$upstream  \
+						RRA:AVERAGE:0.5:1:120 \
+						RRA:AVERAGE:0.5:3:320 \
+						RRA:AVERAGE:0.5:10:288";
+
+					$rrdcreatel .= exec("$rrdcreate 2>&1");
+					$rrdcreatel .= "\n";
+				}
+			}
+
+	        }
+       		$i++;
+
+		$rrdgraphindexhtml .= "</TABLE>
+</BODY>
+</HTML>";
+	
+		$rrdupdatesh .= "sleep 60\n";
+		$rrdupdatesh .= "done\n";
+		PRINT "Creating rrd cron update script\n";
+		/* write the rrd update script */
+		$updaterrdscript = "{$g['varrun_path']}/rrd/updaterrd.sh";
+		$fd = fopen("$updaterrdscript", "w");
+		fwrite($fd, "$rrdupdatesh");
+		fclose($fd);
+
+		PRINT "Creating rrd graph index\n";
+		/* write the index.html script */
+		$rrdgraphindex = "{$g['varrun_path']}/rrd/index.html";
+		$fd = fopen("$rrdgraphindex", "w");
+		fwrite($fd, "$rrdgraphindexhtml");
+		fclose($fd);
+	
+		/* print database creation errors. */
+		print "$rrdcreatel\n";
+
+		/* kill off traffic collectors */
+		kill_traffic_collector();
+
+		/* start traffic collector */
+		mwexec_bg("/bin/sh $updaterrdscript");
+
+	} else {
+		/* unmount and remove */
+		system("/sbin/umount $rrddbpath");
+		exec("/sbin/mdconfig -d -u 2");
+		/* kill off traffic collectors */
+		kill_traffic_collector();
+	}
+}
+
+function kill_traffic_collector() {
+		mwexec("ps awwwux | grep '/[v]ar/run/rrd/updaterrd.sh' | awk '{print $2}' | xargs kill");
+}
+
 ?>

@@ -35,5 +35,7 @@
 	require_once("functions.inc");
 
 	set_networking_interfaces_ports();
+    /* reload graphing functions */
+    enable_rrd_graphing();	
 
 ?>

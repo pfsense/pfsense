@@ -83,7 +83,10 @@
         touch("/tmp/update_dyndns");
         
         /* signal filter reload */
-	touch("/tmp/filter_dirty");
+        touch("/tmp/filter_dirty");
+    
+        /* reload graphing functions */
+        enable_rrd_graphing();
         
         return 0;
 	

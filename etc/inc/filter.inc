@@ -122,6 +122,13 @@ function filter_configure_sync() {
 	else
 		$mssclamp = "";
 
+	/* configure no-df for linux nfs and others */
+
+	if ($config['system']['scrubnodf'])
+		$scrubnodf = "no-df random-id";
+	else
+		$scrubnodf = "";
+
         $fd = fopen("{$g['tmp_path']}/rules.debug", "w");
 	$rules = $aliases . " \n";
 
@@ -137,12 +144,12 @@ function filter_configure_sync() {
 		$rules.= "set limit states {$config['system']['maximumstates']}\n";
 	}
 	$rules.= "\n";
-	$rules.= "scrub on {$wanif} all {$mssclamp}\n"; // reassemble all directions
+	$rules.= "scrub on {$wanif} all {$scrubnodf} {$mssclamp}\n"; // reassemble all directions
         /* loop through optional interfaces.  if a gateway is set, lets scrub em down! */
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 		if($config['interfaces']["opt" . $j]['gateway'] <> "") {
 			$if = convert_friendly_interface_to_real_interface_name("opt{$j}");
-			$rules.= "scrub on {$if} all {$mssclamp}\n"; // reassemble all directions
+			$rules.= "scrub on {$if} all {$scrubnodf} {$mssclamp}\n"; // reassemble all directions
 		}
 	}
 

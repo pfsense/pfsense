@@ -35,6 +35,7 @@ require("guiconfig.inc");
 
 $pconfig['disablefilter'] = $config['system']['disablefilter'];
 $pconfig['rfc959workaround'] = $config['system']['rfc959workaround'];
+$pconfig['scrubnodf'] = $config['system']['scrubnodf'];
 $pconfig['ipv6nat_enable'] = isset($config['diag']['ipv6nat']['enable']);
 $pconfig['ipv6nat_ipaddr'] = $config['diag']['ipv6nat']['ipaddr'];
 $pconfig['cert'] = base64_decode($config['system']['webgui']['certificate']);
@@ -134,6 +135,11 @@ if ($_POST) {
 			$config['system']['rfc959workaround'] = "enabled";
 		else
 			unset($config['system']['rfc959workaround']);
+
+		if($_POST['scrubnodf'] == "yes")
+			$config['system']['scrubnodf'] = "enabled";
+		else
+			unset($config['system']['scrubnodf']);
 
 		if($_POST['ipv6nat_enable'] == "yes") {
 			$config['diag']['ipv6nat']['enable'] = true;
@@ -500,6 +506,14 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<input name="rfc959workaround" type="checkbox" id="rfc959workaround" value="yes" <?php if (isset($config['system']['rfc959workaround'])) echo "checked"; ?> onclick="enable_change(false)" />
 				<strong class="vexpl">Workaround for sites that violate RFC 959 which specifies that the data connection be sourced from the command port - 1 (typically port 20).  This workaround doesn't expose you to any extra risk as the firewall will still only allow connections on a port that the ftp-proxy is listening on.</strong>
+				<br />
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">Clear DF bit instead of dropping</td>
+			<td width="78%" class="vtable">
+				<input name="scrubnodf" type="checkbox" id="scrubnodf" value="yes" <?php if (isset($config['system']['scrubnodf'])) echo "checked"; ?> onclick="enable_change(false)" />
+				<strong class="vexpl">Workaround for operating systems that generate fragmented packets with the don't fragment (DF) bit set.  Linux NFS is known to do this.  This will cause the filter to not drop such packets but instead clear the don't fragment bit.  The filter will also randomize the IP identification field of outgoing packets with this option on, to compensate for operating systems that set the DF bit but set a zero IP identification header field.</strong>
 				<br />
 			</td>
 		</tr>

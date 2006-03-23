@@ -175,34 +175,34 @@ elseif(($curgraph == "quality") && (file_exists("$rrddbpath$curif$quality"))) {
 		COMMENT:\"               * Roundtrip *                                     * Packet loss *\\n\" \\
 		COMMENT:\"\\n\" \\
 		COMMENT:\"  \" \\
-		AREA:roundtrip#ee7000:\"> 420      ms\" \\
+		AREA:roundtrip#990000:\"> 420      ms\" \\
 		GPRINT:roundtrip:MIN:\"    Min\\: %7.2lf ms\" \\
 		COMMENT:\"               \" \\
 		GPRINT:loss:MIN:\"Min\\: %3.1lf %%\\n\" \\
 		COMMENT:\"  \" \\
-    		AREA:r3#eeb000:\"180-420    ms\" \\
+    		AREA:r3#a83c3c:\"180-420    ms\" \\
 		GPRINT:roundtrip:AVERAGE:\"    Avg\\: %7.2lf ms\" \\
 		COMMENT:\"               \" \\
 		GPRINT:loss:AVERAGE:\"Avg\\: %3.1lf %%\" \\
 		COMMENT:\"   Packet loss multiplied\\n\" \\
 		COMMENT:\"  \" \\
-		AREA:r2#eecc00:\"60-180     ms\" \\
+		AREA:r2#b36666:\"60-180     ms\" \\
 		GPRINT:roundtrip:MAX:\"    Max\\: %7.2lf ms\" \\
 		COMMENT:\"               \" \\
 		GPRINT:loss:MAX:\"Max\\: %3.1lf %%\" \\
 		COMMENT:\"   by 10 in graph.\\n\" \\
 		COMMENT:\"  \" \\
-		AREA:r1#e0e000:\"20-60      ms\" \\
+		AREA:r1#bd9090:\"20-60      ms\" \\
 		COMMENT:\"\\n\" \\
 		COMMENT:\"  \" \\
-		AREA:r0#eeee00:\"< 20       ms\" \\
+		AREA:r0#cccccc:\"< 20       ms\" \\
 		GPRINT:roundtrip:LAST:\"    Last\\: %7.2lf ms\" \\
 		COMMENT:\"              \" \\
 		GPRINT:loss:LAST:\"Last\: %3.1lf %%\" \\
 		COMMENT:\"   \" \\
 		AREA:loss10#ee0000:\"Packet loss\\n\" \\
 		COMMENT:\"  \" \\
-		LINE1:roundtrip#707070:\"roundtrip average\\n\" \\
+		LINE1:roundtrip#ff0000:\"roundtrip average\\n\" \\
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}
 else

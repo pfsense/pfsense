@@ -1837,8 +1837,8 @@ function enable_rrd_graphing()
 
 	global $config, $g;
 
-    $rrddbpath = "/var/db/rrd/";
-    $rrdgraphpath = "/usr/local/www/rrd";
+	$rrddbpath = "/var/db/rrd/";
+	$rrdgraphpath = "/usr/local/www/rrd";
 	$rrdtrafficinterval = 60;
 	$rrdqualityinterval = 60;
 	$rrdqueuesinterval = 60;
@@ -2013,14 +2013,14 @@ function enable_rrd_graphing()
 		$rrdupdatesh .= "done\n";
 		PRINT "Creating rrd update script\n";
 		/* write the rrd update script */
-		$updaterrdscript = "{$g['varrun_path']}/rrd/updaterrd.sh";
+		$updaterrdscript = "{$g['vardb_path']}/rrd/updaterrd.sh";
 		$fd = fopen("$updaterrdscript", "w");
 		fwrite($fd, "$rrdupdatesh");
 		fclose($fd);
 
 		PRINT "Creating rrd graph index\n";
 		/* write the index.html script */
-		$rrdgraphindex = "{$g['varrun_path']}/rrd/index.html";
+		$rrdgraphindex = "{$g['vardb_path']}/rrd/index.html";
 		$fd = fopen("$rrdgraphindex", "w");
 		fwrite($fd, "$rrdgraphindexhtml");
 		fclose($fd);

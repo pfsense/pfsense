@@ -1959,7 +1959,6 @@ function enable_rrd_graphing()
 </TR>";
 
 			if("$ifname" == "wan") {
-				$pingtest = exec("ping -c $numpings -q $gatewayip");
 				if(! file_exists("$rrddbpath$ifname$quality")) {
 					/* create rrd file if it does not exist */
 					$rrdcreate = "$rrdtool create $rrddbpath$ifname$quality --step $rrdqualityinterval \

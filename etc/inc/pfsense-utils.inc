@@ -1853,7 +1853,7 @@ function enable_rrd_graphing()
 	/* if an alternative gateway is defined, use it. */
 	if($config['system']['use_rrd_gateway'])
 		$gatewayip = $config['system']['use_rrd_gateway'];
-	$numpings = 5;
+	$numpings = 15;
 	$btick = '`';
 
 	$trafficvalid = $rrdtrafficinterval*2 ;

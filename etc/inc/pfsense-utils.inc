@@ -1850,6 +1850,9 @@ function enable_rrd_graphing()
 	$netstat = "/usr/bin/netstat";
 	$awk = "/usr/bin/awk";
 	$gatewayip = exec("route -n get default | grep gateway | awk '{print $2}'");
+	/* if an alternative gateway is defined, use it. */
+	if($config['system']['use_rrd_gateway'])
+		$gatewayip = $config['system']['use_rrd_gateway'];
 	$numpings = 15;
 	$btick = '`';
 

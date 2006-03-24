@@ -1837,7 +1837,7 @@ function enable_rrd_graphing()
 
 	global $config, $g;
 
-    $rrddbpath = "/var/run/rrd/";
+    $rrddbpath = "/var/db/rrd/";
     $rrdgraphpath = "/usr/local/www/rrd";
 	$rrdtrafficinterval = 60;
 	$rrdqualityinterval = 60;

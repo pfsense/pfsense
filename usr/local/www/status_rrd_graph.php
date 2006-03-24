@@ -105,7 +105,7 @@ $graphs['year']['seconds'] = 31536000;
 $graphs['year']['average'] = 86400;
 $graphs['year']['scale'] = "MONTH:1:MONTH:1:MONTH:1:0:%b";
 
-$rrddbpath = "/var/run/rrd/";
+$rrddbpath = "/var/db/rrd/";
 $traffic = "-traffic.rrd";
 $quality = "-quality.rrd";
 $queues = "-queues.rrd";

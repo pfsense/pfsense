@@ -39,6 +39,9 @@ require_once("pkg-utils.inc");
 require_once("notices.inc");
 require_once("shaper.inc");
 
+/* holds the items that will be executed *AFTER* the filter is fully loaded */
+$after_filter_configure_run = array();
+
 function filter_pflog_start() {
 	global $config, $g;
 	if(isset($config['system']['developerspew'])) {
@@ -66,7 +69,7 @@ function filter_configure() {
 
 /* reload filter sync */
 function filter_configure_sync() {
-	global $config, $g;
+	global $config, $g, $after_filter_configure_run;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_configure_sync() being called $mt\n";
@@ -218,6 +221,11 @@ function filter_configure_sync() {
 	*/
 	if($config['system']['afterfilterchangeshellcmd'] <> "") {
 		mwexec($config['system']['afterfilterchangeshellcmd']);
+	}
+	
+	/* run items scheduled for after filter configure run */
+	foreach($after_filter_configure_run as $afcr) {
+		mwexec($afcr);
 	}
 
 	return 0;
@@ -466,7 +474,7 @@ function is_one_to_one_or_server_nat_rule($iptocheck) {
 }
 
 function filter_nat_rules_generate() {
-	global $config, $g;
+	global $config, $g, $after_filter_configure_run;
 
 	$wancfg = $config['interfaces']['wan'];
 	$lancfg = $config['interfaces']['lan'];
@@ -629,6 +637,7 @@ function filter_nat_rules_generate() {
 	foreach ($iflist as $ifent => $ifname) {
 		$ifname_lower = convert_friendly_interface_to_friendly_descr(strtolower($ifname));
 		if(isset($config['interfaces'][strtolower($ifname)]['disableftpproxy'])) {
+			log_error("FTP proxy disabled for interface {$ifname} - ignoring.");
 			$interface_counter++;
 			continue;
 		}
@@ -726,8 +735,11 @@ function filter_nat_rules_generate() {
 						$external_address = $rule['external-address'];
 						if($external_address == "")
 							$external_address = find_interface_ip(get_real_wan_interface());
-						/* install a pftpx helper, do not set a rule */
-						mwexec("/usr/local/sbin/pftpx -f {$target} -b {$external_address} -c 21 -g 21");
+						/*   install a pftpx helper, do not set a rule.  also use the delay filter configure run
+						 *   routines because if this is the first bootup the filter is not completely configured 
+                                                 *   and thus pf is not fully running.   otherwise we end up with: pftpx: pf is disabled
+                                                 */
+						$after_filter_configure_run[] = "/usr/local/sbin/pftpx -f {$target} -b {$external_address} -c 21 -g 21 2>>/tmp/pftpx_errors";
 					}
 					$dontinstallrdr = true;
 				}
@@ -2187,6 +2199,10 @@ function process_carp_rules() {
 
 function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsense.restore_config_section') {
 	global $config, $g;
+
+	if($g['booting'])
+		return;
+	
 	$config_copy = $config;
 
 	/* strip out nosync items */

@@ -1716,6 +1716,8 @@ function reload_all_sync() {
 	if($shutdown_webgui_needed == true) 
 		touch("/tmp/restart_webgui");
 	
+	system("kill -HUP 0");
+	
 	unlink_if_exists("{$g['tmp_path']}/reloading_all");
 	
 }

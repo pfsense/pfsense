@@ -135,24 +135,30 @@ if(($curgraph == "traffic") && (file_exists("$rrddbpath$curif$traffic"))) {
 		\"CDEF:$curif-bytes_in=$curif-in_bytes,0,12500000,LIMIT,UN,0,$curif-in_bytes,IF,$average,*\" \\
 		\"CDEF:$curif-bytes_out=$curif-out_bytes,0,12500000,LIMIT,UN,0,$curif-out_bytes,IF,$average,*\" \\
 		\"CDEF:$curif-bytes=$curif-bytes_in,$curif-bytes_out,+\" \\
+		\"CDEF:$curif-bytes_in_t=$curif-in_bytes,0,12500000,LIMIT,UN,0,$curif-in_bytes,IF,$seconds,*\" \\
+		\"CDEF:$curif-bytes_out_t=$curif-out_bytes,0,12500000,LIMIT,UN,0,$curif-out_bytes,IF,$seconds,*\" \\
+		\"CDEF:$curif-bytes_t=$curif-bytes_in_t,$curif-bytes_out_t,+\" \\
 		AREA:$curif-in_bits#990000:$curif-in \\
 		AREA:$curif-out_bits_neg#666666:$curif-out \\
 		COMMENT:\"\\n\"\\
-		COMMENT:\"\t\t  maximum       average       current\\n\"\\
+		COMMENT:\"\t\t  maximum       average       current        period\\n\"\\
 		COMMENT:\"in\t\"\\
 		GPRINT:$curif-in_bits:MAX:'%7.2lf %sb/s'\\
 		GPRINT:$curif-in_bits:AVERAGE:'%7.2lf %Sb/s'\\
 		GPRINT:$curif-in_bits:LAST:'%7.2lf %Sb/s'\\
+		GPRINT:$curif-bytes_in_t:AVERAGE:'%7.2lf %sB i'\\
 		COMMENT:\"\\n\"\\
 		COMMENT:\"out\t\"\\
-		GPRINT:$curif-out_bits:MAX:'%7.2lf %Sb/s'\\
+		GPRINT:$curif-out_bits:MAX:'%7.2lf %sb/s'\\
 		GPRINT:$curif-out_bits:AVERAGE:'%7.2lf %Sb/s'\\
 		GPRINT:$curif-out_bits:LAST:'%7.2lf %Sb/s'\\
+		GPRINT:$curif-bytes_out_t:AVERAGE:'%7.2lf %sB o'\\
 		COMMENT:\"\\n\"\\
 		COMMENT:\"totals\"\\
-       		GPRINT:$curif-bytes_in:AVERAGE:'%7.2lf %sB i'\\
-        	GPRINT:$curif-bytes_out:AVERAGE:'%7.2lf %sB o'\\
-        	GPRINT:$curif-bytes:AVERAGE:'%7.2lf %sB t'\\
+		GPRINT:$curif-bytes_in:AVERAGE:'%7.2lf %sB i'\\
+		GPRINT:$curif-bytes_out:AVERAGE:'%7.2lf %sB o'\\
+		GPRINT:$curif-bytes:AVERAGE:'%7.2lf %sB t'\\
+		GPRINT:$curif-bytes_t:AVERAGE:'%7.2lf %sB t'\\
         	COMMENT:\"\\n\"\\
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}

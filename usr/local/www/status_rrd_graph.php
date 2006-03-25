@@ -208,7 +208,7 @@ elseif(($curgraph == "quality") && (file_exists("$rrddbpath$curif$quality"))) {
 		COMMENT:\"   \" \\
 		AREA:loss10#ee0000:\"Packet loss\\n\" \\
 		COMMENT:\"  \" \\
-		LINE1:roundtrip#ff0000:\"roundtrip average\\n\" \\
+		LINE1:roundtrip#000000:\"roundtrip average\\n\" \\
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}
 else

@@ -1447,12 +1447,19 @@ function reload_interfaces_sync() {
 	if($shutdown_webgui_needed == true) 
 		touch("/tmp/restart_webgui");
 	
-	system("/bin/kill -HUP 0");
+	reset_terminals();
 	
 	/* remove reloading_all trigger */
 	if($debug)
 		log_error("Removing {$g['tmp_path']}/reloading_all");
 	unlink_if_exists("{$g['tmp_path']}/reloading_all");
+}
+
+function reset_terminals() {
+	$tokill = array(split("\n", `ps awwwux | grep initial | grep -v grep | cut -d" " -f7`));
+	foreach ($tokill as $killme) {
+		mwexec("/bin/kill $killme");
+	}
 }
 
 /****f* pfsense-utils/reload_all
@@ -1718,7 +1725,7 @@ function reload_all_sync() {
 	if($shutdown_webgui_needed == true) 
 		touch("/tmp/restart_webgui");
 	
-	system("/bin/kill -HUP 0");
+	reset_terminals();
 	
 	unlink_if_exists("{$g['tmp_path']}/reloading_all");
 	

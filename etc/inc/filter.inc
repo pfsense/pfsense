@@ -2118,7 +2118,7 @@ function create_firewall_outgoing_rules_to_itself() {
 	/* is bridging turned on? */
 	for($x=0; $x<10; $x++) {
 		if(does_interface_exist("bridge{$x}") == true) 
-			$rule .="pass quick on bridge{$x} all keep state label \"let out anything from firewall host itself\"\n";
+			$rule .="pass out quick on bridge{$x} all keep state label \"let out anything from firewall host itself\"\n";
 	}
 	
 	/* netgraph pptp outgoing */

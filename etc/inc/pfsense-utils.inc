@@ -1364,6 +1364,9 @@ function reload_interfaces_sync() {
 		config_lock();
 		/* kill any running lighttpd */
 		killbypid("{$g['varrun_path']}/lighty-webConfigurator.pid");
+		sleep(2);
+		/* we really need you to exit, lighttpd */
+		system("killall -9 lighttpd");		
 		config_unlock();
 	}
 	
@@ -1615,6 +1618,9 @@ function reload_all_sync() {
 		config_lock();
 		/* kill any running lighttpd */
 		killbypid("{$g['varrun_path']}/lighty-webConfigurator.pid");
+		sleep(2);
+		/* we really need you to exit, lighttpd */
+		system("killall -9 lighttpd");		
 		config_unlock();
 	}
 	

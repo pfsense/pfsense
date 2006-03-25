@@ -148,11 +148,13 @@ function filter_configure_sync() {
 	}
 	$rules.= "\n";
 	$rules.= "scrub on {$wanif} all {$scrubnodf} {$mssclamp}\n"; // reassemble all directions
-        /* loop through optional interfaces.  if a gateway is set, lets scrub em down! */
+    
+	/* loop through optional interfaces.  if a gateway is set, lets scrub em down! */
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 		if($config['interfaces']["opt" . $j]['gateway'] <> "") {
 			$if = convert_friendly_interface_to_real_interface_name("opt{$j}");
-			$rules.= "scrub on {$if} all {$scrubnodf} {$mssclamp}\n"; // reassemble all directions
+			if($if)
+				$rules.= "scrub on {$if} all {$scrubnodf} {$mssclamp}\n"; // reassemble all directions
 		}
 	}
 

@@ -1460,7 +1460,7 @@ function reset_terminals() {
 	foreach ($tokill as $killme) {
 		mwexec("/bin/kill $killme");
 	}
-	$tokill = array(split("\n", `ps awwwux | grep rc.banner | grep -v grep | cut -d" " -f7`));
+	$tokill = array(split("\n", `ps awwwux | grep rc.banner | grep -v grep | cut -d" " -f5`));
 	foreach ($tokill as $killme) {
 		mwexec("/bin/kill $killme");
 	}

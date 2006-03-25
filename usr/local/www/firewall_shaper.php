@@ -68,6 +68,7 @@ if ($_POST['remove'] or $_GET['remove']) {
   touch($d_shaperconfdirty_path);
   unset($config['shaper']['enable']);
   write_config();
+  filter_configure();
   Header("Location: index.php");
   exit;
 }

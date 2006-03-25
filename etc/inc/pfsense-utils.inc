@@ -1447,7 +1447,7 @@ function reload_interfaces_sync() {
 	if($shutdown_webgui_needed == true) 
 		touch("/tmp/restart_webgui");
 	
-	system("kill -HUP 0");
+	system("/bin/kill -HUP 0");
 	
 	/* remove reloading_all trigger */
 	if($debug)
@@ -1718,7 +1718,7 @@ function reload_all_sync() {
 	if($shutdown_webgui_needed == true) 
 		touch("/tmp/restart_webgui");
 	
-	system("kill -HUP 0");
+	system("/bin/kill -HUP 0");
 	
 	unlink_if_exists("{$g['tmp_path']}/reloading_all");
 	

@@ -1456,14 +1456,28 @@ function reload_interfaces_sync() {
 }
 
 function reset_terminals() {
-	$tokill = array(split("\n", `ps awwwux | grep initial | grep -v grep | cut -d" " -f7`));
+	$tokill = split("\n", `ps awwwux | grep sh | grep initial | grep -v grep | cut -d" " -f6`);
 	foreach ($tokill as $killme) {
-		mwexec("/bin/kill $killme");
+		echo "Killing $killme <p>";
+		mwexec("/bin/kill -9 $killme");
 	}
-	$tokill = array(split("\n", `ps awwwux | grep rc.banner | grep -v grep | cut -d" " -f5`));
+	$tokill = split("\n", `ps awwwux | grep rc.banner | grep -v grep | cut -d" " -f5`);
 	foreach ($tokill as $killme) {
-		mwexec("/bin/kill $killme");
+		echo "Killing $killme <p>";
+		mwexec("/bin/kill -9 $killme");
 	}
+	$tokill = split("\n", `ps awwwux | grep tcsh | grep -v grep | cut -d" " -f5`);
+	foreach ($tokill as $killme) {
+		echo "Killing $killme <p>";
+		mwexec("/bin/kill -9 $killme");
+	}
+	$tokill = split("\n", `ps awwwux | grep "(sh)" | grep -v grep | cut -d" " -f5`);
+	foreach ($tokill as $killme) {
+		echo "Killing $killme <p>";
+		mwexec("/bin/kill -9 $killme");
+	}	
+	
+	
 }
 
 /****f* pfsense-utils/reload_all

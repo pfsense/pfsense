@@ -34,7 +34,7 @@
 	require_once("config.inc");
 	require_once("functions.inc");
 
-	if(file_exists("/var/run/lastlogin") {
+	if(file_exists("/var/run/lastlogin")) {
 		$last_login_time = file_get_contents("{$g['varrun_path']}/lastlogin");
 		$time_now = time();
 		if($time_now - $last_login_time < 20) {

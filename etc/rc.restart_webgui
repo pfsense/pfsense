@@ -10,6 +10,7 @@ mwexec("killall -9 lighttpd");
 echo "Restarting webConfigurator...";
 
 system_webgui_start();
+captiveportal_configure();
 
 echo " done.\n\n";
 

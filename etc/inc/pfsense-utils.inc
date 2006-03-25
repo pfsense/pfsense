@@ -1447,37 +1447,10 @@ function reload_interfaces_sync() {
 	if($shutdown_webgui_needed == true) 
 		touch("/tmp/restart_webgui");
 	
-	reset_terminals();
-	
 	/* remove reloading_all trigger */
 	if($debug)
 		log_error("Removing {$g['tmp_path']}/reloading_all");
 	unlink_if_exists("{$g['tmp_path']}/reloading_all");
-}
-
-function reset_terminals() {
-	$tokill = split("\n", `ps awwwux | grep sh | grep initial | grep -v grep | cut -d" " -f6`);
-	foreach ($tokill as $killme) {
-		echo "Killing $killme <p>";
-		mwexec("/bin/kill -9 $killme");
-	}
-	$tokill = split("\n", `ps awwwux | grep rc.banner | grep -v grep | cut -d" " -f5`);
-	foreach ($tokill as $killme) {
-		echo "Killing $killme <p>";
-		mwexec("/bin/kill -9 $killme");
-	}
-	$tokill = split("\n", `ps awwwux | grep tcsh | grep -v grep | cut -d" " -f5`);
-	foreach ($tokill as $killme) {
-		echo "Killing $killme <p>";
-		mwexec("/bin/kill -9 $killme");
-	}
-	$tokill = split("\n", `ps awwwux | grep "(sh)" | grep -v grep | cut -d" " -f5`);
-	foreach ($tokill as $killme) {
-		echo "Killing $killme <p>";
-		mwexec("/bin/kill -9 $killme");
-	}	
-	
-	
 }
 
 /****f* pfsense-utils/reload_all
@@ -1743,7 +1716,7 @@ function reload_all_sync() {
 	if($shutdown_webgui_needed == true) 
 		touch("/tmp/restart_webgui");
 	
-	reset_terminals();
+	
 	
 	unlink_if_exists("{$g['tmp_path']}/reloading_all");
 	

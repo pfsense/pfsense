@@ -83,7 +83,6 @@ if ($_POST) {
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-
 	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
 		$input_errors[] = "A valid IP address must be specified.";
 	}
@@ -128,13 +127,14 @@ if ($_POST) {
 		touch($d_landirty_path);
 
 		if ($_POST['apply'] <> "") {
+			interfaces_opt_configure();
+			
 			unlink($d_landirty_path);
+			
 			$savemsg = "The changes have been applied.  You may need to correct the web browsers ip address.";
 		}
-
 	}
 }
-
 
 $pgtitle = "Interfaces: LAN";
 include("head.inc");
@@ -256,9 +256,8 @@ function enable_change(enable_over) {
 
 if ($_POST['apply'] <> "") {
 
-	touch("/tmp/reload_interfaces");
 	if(file_exists($d_landirty_path))
-	unlink($d_landirty_path);
+		unlink($d_landirty_path);
 	
 }
 

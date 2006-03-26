@@ -224,6 +224,9 @@ function interfaces_optional_configure() {
 		/* restart dnsmasq */
 		services_dnsmasq_configure();
 
+		/* reload captive portal */
+		captiveportal_configure();
+
 		/* set the reload filter dity flag */
 		touch("{$g['tmp_path']}/filter_dirty");				
 	}
@@ -869,6 +872,9 @@ function interfaces_wan_configure() {
 
 		/* restart dnsmasq */
 		services_dnsmasq_configure();
+		
+		/* reload captive portal */
+		captiveportal_configure();
 	}
 
 	mwexec("/sbin/ifconfig {$wancfg['if']} up");

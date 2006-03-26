@@ -197,7 +197,7 @@ if ($_POST) {
 
 		write_config();
 		
-		touch("/tmp/reload_interfaces");
+		interfaces_opt_configure();
 		
 		/* sync filter configuration */
 		filter_configure();

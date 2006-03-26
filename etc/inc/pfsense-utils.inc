@@ -1435,6 +1435,9 @@ function reload_interfaces_sync() {
 	if($shutdown_webgui_needed == true) 
 		touch("/tmp/restart_webgui");
 	
+	/* start devd back up */
+	mwexec("/bin/rm /tmp/reload*");
+	
 	/* remove reloading_all trigger */
 	if($debug)
 		log_error("Removing {$g['tmp_path']}/reloading_all");
@@ -1591,7 +1594,7 @@ function reload_all_sync() {
 	global $config, $g;
 	
 	touch("{$g['tmp_path']}/reloading_all");
-
+	
 	$shutdown_webgui_needed = false;
 	
 	if(file_exists("{$g['tmp_path']}/config.cache"))
@@ -1687,12 +1690,12 @@ function reload_all_sync() {
 
 	/* restart sshd */
 	touch("/tmp/start_sshd");
-
+	
 	/* restart webConfigurator if needed */
 	if($shutdown_webgui_needed == true) 
 		touch("/tmp/restart_webgui");
 	
-	
+	mwexec("/bin/rm /tmp/reload*");
 	
 	unlink_if_exists("{$g['tmp_path']}/reloading_all");
 	

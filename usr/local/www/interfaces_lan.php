@@ -257,7 +257,10 @@ function enable_change(enable_over) {
 if ($_POST['apply'] <> "") {
 
 	interfaces_lan_configure();
-
+	
+	/* sync filter configuration */
+	filter_configure();
+	
 	if(file_exists($d_landirty_path))
 		unlink($d_landirty_path);
 	

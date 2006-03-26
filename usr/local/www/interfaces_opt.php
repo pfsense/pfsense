@@ -197,11 +197,6 @@ if ($_POST) {
 
 		write_config();
 		
-		interfaces_optional_configure_if($index);
-		
-		/* sync filter configuration */
-		filter_configure();
-
 		$savemsg = get_std_save_message($retval);
 	}
 }
@@ -422,3 +417,15 @@ enable_change(false);
 <?php include("fend.inc"); ?>
 </body>
 </html>
+
+<?php
+if ($_POST) {
+
+	if (!$input_errors) {
+		interfaces_optional_configure_if($index);
+		
+		/* sync filter configuration */
+		filter_configure();
+	}
+}
+?>

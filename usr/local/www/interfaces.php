@@ -268,8 +268,6 @@ if ($_POST) {
 
 		$retval = 0;
 
-		interfaces_opt_configure();
-
 		$savemsg = get_std_save_message($retval);
 	}
 }
@@ -693,3 +691,18 @@ type_change();
 <?php include("fend.inc"); ?>
 </body>
 </html>
+
+
+<?php
+
+if ($_POST) {
+
+	if (!$input_errors) {
+		interfaces_wan_configure();
+		
+		/* sync filter configuration */
+		filter_configure();
+	}
+}
+
+?>

@@ -128,8 +128,6 @@ if ($_POST) {
 
 		if ($_POST['apply'] <> "") {
 			
-			interfaces_lan_configure();
-			
 			unlink($d_landirty_path);
 			
 			$savemsg = "The changes have been applied.  You may need to correct the web browsers ip address.";
@@ -257,6 +255,8 @@ function enable_change(enable_over) {
 <?php
 
 if ($_POST['apply'] <> "") {
+
+	interfaces_lan_configure();
 
 	if(file_exists($d_landirty_path))
 		unlink($d_landirty_path);

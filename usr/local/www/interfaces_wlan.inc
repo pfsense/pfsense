@@ -29,8 +29,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$wlchannels = array(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,34,36,38,40,42,44,46,48,50,52,56,58,60,64,100,104,108,112,116,120,124,128,132,136,140,149,152,153,157,160,161,165);
-
 function wireless_config_init() {
 	global $optcfg, $pconfig;
 
@@ -44,7 +42,6 @@ function wireless_config_init() {
 	$pconfig['wme_enable'] = isset($optcfg['wireless']['wme']['enable']);
 	$pconfig['pureg_enable'] = isset($optcfg['wireless']['pureg']['enable']);
 	$pconfig['apbridge_enable'] = isset($optcfg['wireless']['apbridge']['enable']);
-	$pconfig['turbo_enable'] = isset($optcfg['wireless']['turbo']['enable']);
 	$pconfig['authmode'] = $optcfg['wireless']['authmode'];
 	$pconfig['hidessid_enable'] = isset($optcfg['wireless']['hidessid']['enable']);
 	$pconfig['debug_mode'] = $optcfg['wireless']['wpa']['debug_mode'];
@@ -203,8 +200,8 @@ function wireless_config_post() {
 		else
 			unset($optcfg['wireless']['apbridge']['enable']);
 
-		if($_POST['turbo_enable'] == "yes") 
-			$optcfg['wireless']['turbo']['enable'] = $_POST['turbo_enable'] = true;
+		if($_POST['standard'] == "11a Turbo") 
+			$optcfg['wireless']['turbo']['enable'] = true;
 		else
 			unset($optcfg['wireless']['turbo']['enable']);
 
@@ -224,8 +221,17 @@ function wireless_config_post() {
 	return $input_errors;
 }
 
+if($wancfg['if']) 
+	$curif = $lancfg['if'];
+if($wancfg['if']) 
+	$curif = $lancfg['if'];
+if($optcfg['if']) 
+	$curif = $optcfg['if'];				
+
+$wl_modes = get_wireless_modes($curif);
+
 function wireless_config_print() {
-	global $optcfg, $pconfig, $wlchannels, $g;
+	global $optcfg, $pconfig, $wl_modes, $g;
 ?>
 
 <script language="JavaScript">
@@ -249,9 +255,15 @@ function wireless_config_print() {
 			<td valign="top" class="vncellreq">Standard</td>
 			<td class="vtable">
 			<select name="standard" class="formfld" id="standard">
-				<option <? if ($pconfig['standard'] == '11b') echo "selected";?> value="11b">802.11b</option>
-				<option <? if ($pconfig['standard'] == '11g') echo "selected";?> value="11g">802.11g</option>
-				<option <? if ($pconfig['standard'] == '11a') echo "selected";?> value="11a">802.11a</option>
+				<?php
+				foreach($wl_modes as $wl_standard => $wl_channels) {
+					PRINT "<option ";
+					if ($pconfig['standard'] == "$wl_standard") {
+						PRINT "selected ";
+					}
+					PRINT "value=\"$wl_standard\">802.$wl_standard</option>\n";
+				}
+				?>
 				</select>
 			</td>
 		</tr>
@@ -299,13 +311,6 @@ function wireless_config_print() {
 			</td>
 		</tr>
 		<tr>
-			<td valign="top" class="vncell">Enable turbo mode</td>
-			<td class="vtable"><input name="turbo_enable" type="checkbox" class="formfld" id="turbo_enable" value="yes" <? if ($pconfig['turbo_enable']) echo "checked";?>>
-			<br/>Setting this option will force the card to use turbo mode.
-			<br/>use "ifconfig interface list channel" to list turbo capable channels.
-			</td>
-		</tr>
-		<tr>
 			<td valign="top" class="vncell">Enable WME</td>
 			<td class="vtable"><input name="wme_enable" type="checkbox" class="formfld" id="wme_enable" value="yes" <? if ($pconfig['wme_enable']) echo "checked";?>>
 			<br/>Setting this option will force the card to use WME (wireless QoS).
@@ -340,32 +345,24 @@ function wireless_config_print() {
 			<td valign="top" class="vncellreq">Channel</td>
 			<td class="vtable"><select name="channel" class="formfld" id="channel">
 				<option <? if ($pconfig['channel'] == 0) echo "selected";?> value="0">Auto</option>
-				<? foreach ($wlchannels as $channel): ?>
-				<option <? if ($channel == $pconfig['channel']) echo "selected";?> value="<?=$channel;?>">
-			<?=$channel;?>
-			</option>
-			<? endforeach; ?>
+				<?php
+				foreach($wl_modes as $wl_standard => $wl_channels) {
+					if($wl_standard == "11g") { $wl_standard = "11b/g"; }
+					foreach($wl_channels as $wl_channel) {
+						PRINT "<option ";
+						if ($pconfig['channel'] == "$wl_channel") {
+							PRINT "selected ";
+						}
+						PRINT "value=\"$wl_channel\">$wl_standard - $wl_channel</option>\n";
+					}
+				}
+				?>
 			</select>
 			<br/>
 			Note: Not all channels may be supported by your card
 			<br/>
 			use "ifconfig interface list channel" to list channels.</td>
 		</tr>
-		<tr>
-			<td valign="top" class="vncell">Interface capabilities</td>
-			<?php
-				if($wancfg['if']) 
-					$if = $lancfg['if'];
-				if($wancfg['if']) 
-					$if = $lancfg['if'];
-				if($optcfg['if']) 
-					$if = $optcfg['if'];				
-				$results = `/sbin/ifconfig {$if} list channel`;
-			?>			
-			<td class="vtable"><textarea readonly onFocus="blur()" name="noedit" id="noedit" cols="73" rows="3"><?=$results?>;</textarea>
-			<br/>This is a list of the channels and the capabilities of your card.
-			</td>
-		</tr>		
 		<tr>
 			<td valign="top" class="vncell">Distance setting</td>
 			<td class="vtable"><input name="distance" type="text" class="formfld" id="distance" size="5" value="<?=htmlspecialchars($pconfig['distance']);?>">

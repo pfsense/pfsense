@@ -197,7 +197,7 @@ if ($_POST) {
 
 		write_config();
 		
-		interfaces_opt_configure();
+		interfaces_optional_configure_if($index);
 		
 		/* sync filter configuration */
 		filter_configure();

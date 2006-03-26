@@ -127,11 +127,13 @@ if ($_POST) {
 		touch($d_landirty_path);
 
 		if ($_POST['apply'] <> "") {
-			interfaces_opt_configure();
+			
+			interfaces_lan_configure();
 			
 			unlink($d_landirty_path);
 			
 			$savemsg = "The changes have been applied.  You may need to correct the web browsers ip address.";
+			
 		}
 	}
 }

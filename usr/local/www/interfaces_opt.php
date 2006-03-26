@@ -422,6 +422,11 @@ enable_change(false);
 if ($_POST) {
 
 	if (!$input_errors) {
+		
+		ob_flush();
+		flush();
+		sleep(1);		
+		
 		interfaces_optional_configure_if($index);
 		
 		/* sync filter configuration */

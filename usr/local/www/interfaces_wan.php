@@ -698,6 +698,11 @@ type_change();
 if ($_POST) {
 
 	if (!$input_errors) {
+		
+		ob_flush();
+		flush();
+		sleep(1);		
+		
 		interfaces_wan_configure();
 		
 		/* sync filter configuration */

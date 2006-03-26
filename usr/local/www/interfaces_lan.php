@@ -258,7 +258,6 @@ if ($_POST['apply'] <> "") {
 
 	ob_flush();
 	flush();
-	sleep(1);
 	
 	interfaces_lan_configure();
 	

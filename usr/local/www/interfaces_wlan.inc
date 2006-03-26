@@ -78,8 +78,9 @@ function wireless_config_init() {
 }
 
 function wireless_config_post() {
-	global $optcfg, $pconfig, $input_errors;
+	global $optcfg, $pconfig;
 
+	$input_errors = "";
 	unset($input_errors);
 
 	/* input validation */
@@ -138,7 +139,6 @@ function wireless_config_post() {
 		$optcfg['wireless']['mode'] = $_POST['mode'];
 		$optcfg['wireless']['protmode'] = $_POST['protmode'];
 		$optcfg['wireless']['ssid'] = $_POST['ssid'];
-	
 		$optcfg['wireless']['channel'] = $_POST['channel'];
 		$optcfg['wireless']['authmode'] = $_POST['authmode'];		
 		$optcfg['wireless']['txpower'] = $_POST['txpower'];
@@ -449,6 +449,21 @@ function wireless_config_print() {
 			</td>
 		</tr>
 		<? /*
+		<tr>
+			<td valign="top" class="vncell">Enable MAC Filtering</td>
+			<td class="vtable"><input name="mac_acl_enable" type="checkbox" value="yes" class="formfld" id="mac_acl_enable" <? if ($pconfig['mac_acl_enable']) echo "checked"; ?>> 
+			Setting this option will enable the use of a mac filterlist to allow/deny association based on mac address
+			<br/><br/>
+			<select name="macaddr_acl" class="formfld" id="macaddr_acl">
+                        <option <? if ($pconfig['macaddr_acl'] == '0') echo "selected";?> value="0">Allow</option>
+			<option <? if ($pconfig['macaddr_acl'] == '1') echo "selected";?> value="1">Deny</option>
+			<option <? if ($pconfig['macaddr_acl'] == '2') echo "selected";?> value="2">Radius</option>
+			</select>
+			<br/><br/>
+			Setting this to "Allow" will allow all clients in not in deny list, while "Deny" will deny all clients not in allow list.
+			Radius will cause allow and deny list to be searched and then query radius.</br>
+			</td>
+		</tr>
 		*/ ?>
 		<tr>
 			<td valign="top" class="vncell">Authentication</td>
@@ -493,7 +508,4 @@ function wireless_config_print() {
 			<br/>Setting this option will enable 802.1x authentication.
 			</td>
 		</tr>
-		<script language="JavaScript">
-		document.iform.noedit.enabled = false;
-		</script>
 <? } ?>

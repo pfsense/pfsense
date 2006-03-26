@@ -1505,4 +1505,36 @@ function discover_bridge($interface1, $interface2) {
 	return "-1";
 }
 
+function get_wireless_modes($interface)
+{
+	/* return wireless modes and channels */
+	if(is_interface_wireless($interface)) {
+		$wi = 1;
+		$ifconfig = "/sbin/ifconfig";
+		$awk = "/usr/bin/awk";
+		$chan_list = "$ifconfig $interface list chan";
+		$stack_list = "$awk -F\"Channel \" '{print \$2 \"\\\n\" \$3 }'";
+		$format_list = "$awk '{print \$5 \" \" \$6 \",\" \$1}'";
+
+		exec("$chan_list | $stack_list | sort -u | $format_list 2>&1", $interface_channels);
+		$interface_channel_count = count($interface_channels);
+
+		$c = 0;
+		while ($c < $interface_channel_count)
+		{
+			$channel_line = explode(",", $interface_channels["$c"]);
+
+			$wireless_mode = trim($channel_line[0]);
+			$wireless_channel = trim($channel_line[1]);
+
+			if(trim($wireless_mode) != "") {
+				$wireless_modes["$wireless_mode"]["$c"] = $wireless_channel;
+			}
+			$c++;
+		}
+		
+	}
+	return($wireless_modes);
+}
+
 ?>

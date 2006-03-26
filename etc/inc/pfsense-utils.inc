@@ -1355,21 +1355,6 @@ function reload_interfaces_sync() {
 	
 	touch("{$g['tmp_path']}/reloading_all");
 	
-	$memory = get_memory();
-	$avail = $memory[0];
-	/* we have way too little memory.  shutdown webConfigurator temporarily */
-	if($avail > 0 and $avail < 66) {
-		log_error("Not enough ram for reload.  Temporarily unloading webConfigurator.");
-		$shutdown_webgui_needed = true;
-		config_lock();
-		/* kill any running lighttpd */
-		killbypid("{$g['varrun_path']}/lighty-webConfigurator.pid");
-		sleep(2);
-		/* we really need you to exit, lighttpd */
-		system("killall -9 lighttpd");		
-		config_unlock();
-	}
-	
 	if($debug)
 		log_error("reload_interfaces_sync() is starting.");
 	
@@ -1608,21 +1593,6 @@ function reload_all_sync() {
 	touch("{$g['tmp_path']}/reloading_all");
 
 	$shutdown_webgui_needed = false;
-
-	$memory = get_memory();
-	$avail = $memory[0];
-	/* we have way too little memory.  shutdown webConfigurator temporarily */
-	if($avail > 0 and $avail < 66) {
-		log_error("Not enough ram for reload.  Temporarily unloading webConfigurator.");
-		$shutdown_webgui_needed = true;
-		config_lock();
-		/* kill any running lighttpd */
-		killbypid("{$g['varrun_path']}/lighty-webConfigurator.pid");
-		sleep(2);
-		/* we really need you to exit, lighttpd */
-		system("killall -9 lighttpd");		
-		config_unlock();
-	}
 	
 	if(file_exists("{$g['tmp_path']}/config.cache"))
 		unlink("{$g['tmp_path']}/config.cache");

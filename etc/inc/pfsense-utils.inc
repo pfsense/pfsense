@@ -2027,7 +2027,7 @@ function enable_rrd_graphing()
 }
 
 function kill_traffic_collector() {
-		mwexec("ps awwwux | grep '/[v]ar/run/rrd/updaterrd.sh' | awk '{print $2}' | xargs kill");
+		mwexec("ps awwwux | grep '/[u]pdaterrd.sh' | awk '{print $2}' | xargs kill");
 }
 
 ?>

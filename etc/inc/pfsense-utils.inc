@@ -1994,22 +1994,22 @@ function enable_rrd_graphing()
 	
 		$rrdupdatesh .= "sleep 60\n";
 		$rrdupdatesh .= "done\n";
-		PRINT "Creating rrd update script\n";
 		/* write the rrd update script */
 		$updaterrdscript = "{$g['vardb_path']}/rrd/updaterrd.sh";
 		$fd = fopen("$updaterrdscript", "w");
 		fwrite($fd, "$rrdupdatesh");
 		fclose($fd);
 
-		PRINT "Creating rrd graph index\n";
 		/* write the index.html script */
 		$rrdgraphindex = "{$g['vardb_path']}/rrd/index.html";
 		$fd = fopen("$rrdgraphindex", "w");
 		fwrite($fd, "$rrdgraphindexhtml");
 		fclose($fd);
 	
-		/* print database creation errors. */
-		print "$rrdcreatel\n";
+		/* save rrd error. */		
+		$fd = fopen("/tmp/rrd_errors", "w");
+		fwrite($fd, "$rrdcreatel");
+		fclose($fd);
 
 		/* kill off traffic collectors */
 		kill_traffic_collector();

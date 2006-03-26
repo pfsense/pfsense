@@ -195,9 +195,6 @@ function interfaces_lan_configure() {
 
 		/* reload captive portal */
 		captiveportal_configure();
-	
-		/* reload webgui */
-		system_webgui_start();
 
 	}
 

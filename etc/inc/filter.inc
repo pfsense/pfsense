@@ -1534,12 +1534,14 @@ EOD;
 		$ipfrules .= "# enable ftp-proxy\n";
 		
 		$optcfg = array();
-		generate_optcfg_array($optcfg);	
+		generate_optcfg_array($optcfg);
+		$ftp_counter = "8022";
 		foreach($optcfg as $oc) {
 			if(!isset($oc['gateway']) && $oc['if'] <> "") {
-				$ipfrules .= "pass in quick on " . $oc['if'] . " inet proto tcp from any to \$loopback port 8021 keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
+				$ipfrules .= "pass in quick on " . $oc['if'] . " inet proto tcp from any to \$loopback port {$ftp_counter} keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
 				$ipfrules .= "pass in quick on " . $oc['if'] . " inet proto tcp from any to \$loopback port 21 keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
 			}
+			$ftp_counter++;
 		}
 		
 	$ipfrules .= <<<EOD

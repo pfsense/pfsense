@@ -193,11 +193,12 @@ function interfaces_lan_configure() {
 		/* reload dnsmasq */
 		services_dnsmasq_configure();
 
+		/* reload captive portal */
+		captiveportal_configure();
+	
 		/* reload webgui */
 		system_webgui_start();
 
-		/* reload captive portal */
-		captiveportal_configure();
 	}
 
 	return 0;

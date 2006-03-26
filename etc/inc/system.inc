@@ -581,7 +581,7 @@ function system_generate_lighty_config($filename,
 		$max_requests = 1;
 	}
 
-	if($avail > 0 and $avail < 49) {
+	if($avail > 0 and $avail < 65) {
 		$fast_cgi_enable = false;
 	}
 		

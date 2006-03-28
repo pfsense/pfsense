@@ -58,8 +58,8 @@ if ($_POST) {
 	if ($_POST['enable'] && !is_ipaddr($_POST['remoteserver'])) {
 		$input_errors[] = "A valid IP address must be specified.";
 	}
-	if (($_POST['nentries'] < 5) || ($_POST['nentries'] > 1000)) {
-		$input_errors[] = "Number of log entries to show must be between 5 and 1000.";
+	if (($_POST['nentries'] < 5) || ($_POST['nentries'] > 2000)) {
+		$input_errors[] = "Number of log entries to show must be between 5 and 2000.";
 	}
 
 	if (!$input_errors) {

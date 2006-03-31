@@ -35,11 +35,15 @@ if($pkg_info) {
 	$fout = fopen("{$g['tmp_path']}/pkg_info.cache", "w");
 	fwrite($fout, serialize($pkg_info));
 	fclose($fout);
-        //$pkg_sizes = get_pkg_sizes();
+    //$pkg_sizes = get_pkg_sizes();
 } else {
 	$using_cache = true;
-        $savemsg = "Unable to retrieve package info from {$g['xmlrpcbaseurl']}. Cached data will be used.";
-	$pkg_info = unserialize(@file_get_contents("{$g['tmp_path']}/pkg_info.cache"));
+	if(file_exists("{$g['tmp_path']}/pkg_info.cache")) {
+	    $savemsg = "Unable to retrieve package info from {$g['xmlrpcbaseurl']}. Cached data will be used.";
+		$pkg_info = unserialize(@file_get_contents("{$g['tmp_path']}/pkg_info.cache"));
+	} else {
+		$savemsg = "Unable to communicate to pfSense.com.  Please check DNS, default gateway, etc.";
+	}
 }
 
 $pgtitle = "System: Package Manager";

@@ -1175,6 +1175,9 @@ function make_dirs($path, $mode = 0755) {
  * call_pfsense_method(): Call a method exposed by the pfsense.com XMLRPC server.
  */
 function call_pfsense_method($method, $params, $timeout = 0) {
+	$ip = gethostbyname('www.pfsense.com');
+	if($ip == "www.pfsense.com")
+		return false;	
 	global $g, $config;
 	$xmlrpc_base_url = $g['xmlrpcbaseurl'];
 	$xmlrpc_path = $g['xmlrpcpath'];

@@ -537,154 +537,164 @@
         <description>Peer to Peer networking</description>
 	<disableallfieldsbydefault>true</disableallfieldsbydefault>
         <fields>
-	
-                <field>
-			<donotdisable>true</donotdisable>
-                        <name>Enable</name>
-                        <type>checkbox</type>
-                        <typehint>Lower priority of Peer-to-Peer traffic</typehint>
-                        <description>This will lower the priority of P2P traffic below all other traffic.  Please check the items that you would like to prioritize lower than normal traffic.</description>
-			<enablefields>Aimster,BitTorrent,BuddyShare,CuteMX,DCplusplus,dcc,DirectConnect,DirectFileExpress,EDonkey2000,FastTrack,Gnutella,grouper,hotComm,HotlineConnect,iMesh,Napster,OpenNap,Scour,Shareaza,SongSpy,WinMX</enablefields>
-			<bindstofield>ezshaper->step4->enable</bindstofield>
-                </field>
-                <field>
-                        <name>Next</name>
-                        <type>submit</type>
-                </field>
-                <field>
-                        <name>Enable/Disable specific P2P protocols</name>
-                        <type>listtopic</type>
-                </field>
-                <field>
-                        <name>Aimster</name>
-                        <type>checkbox</type>
-			<typehint>Aimster and other P2P using the Aimster protocol and ports</typehint>
-			<bindstofield>ezshaper->step4->aimster</bindstofield>
-                </field>
-                <field>
-                        <name>BitTorrent</name>
-                        <type>checkbox</type>
-			<typehint>Bittorrent and other P2P using the Torrent protocol and ports</typehint>
-			<bindstofield>ezshaper->step4->bittorrent</bindstofield>
-                </field>
-                <field>
-                        <name>BuddyShare</name>
-                        <type>checkbox</type>
-			<typehint>BuddyShare and other P2P using the BuddyShare protocol and ports</typehint>
-			<bindstofield>ezshaper->step4->buddyshare</bindstofield>
-                </field>
-                <field>
-                        <name>CuteMX</name>
-                        <type>checkbox</type>
-			<typehint>CuteMX and other P2P using the CuteMX protocol and ports</typehint>
-			<bindstofield>ezshaper->step4->cutemx</bindstofield>
-                </field>
-                <field>
-                        <name>DCplusplus</name>
-                        <type>checkbox</type>
-			<typehint>DC++ and other P2P using the DC++ protocol and ports</typehint>
-			<bindstofield>ezshaper->step4->dcplusplus</bindstofield>
-                </field>
-                <field>
-                        <name>DCC</name>
-                        <type>checkbox</type>
-			<typehint>irc DCC file transfers</typehint>
-			<bindstofield>ezshaper->step4->dcc</bindstofield>
-                </field>
-                <field>
-                        <name>DirectConnect</name>
-                        <type>checkbox</type>
-			<typehint>DirectConnect and other P2P using the DirectConnect protocol and ports</typehint>
-			<bindstofield>ezshaper->step4->directconnect</bindstofield>
-                </field>
-                <field>
-                        <name>DirectFileExpress</name>
-                        <type>checkbox</type>
-			<typehint>DirectFileExpress and other P2P using the DirectFileExpress protocol and ports</typehint>
-			<bindstofield>ezshaper->step4->directfileexpress</bindstofield>
-                </field>
-                <field>
-                        <name>eDonkey2000</name>
-                        <type>checkbox</type>
-			<typehint>eDonkey and other P2P using the eDonkey protocol and ports</typehint>
-			<bindstofield>ezshaper->step4->edonkey2000</bindstofield>
-                </field>
-                <field>
-                        <name>FastTrack</name>
-                        <type>checkbox</type>
-			<typehint>FastTrack and other P2P using the FastTrack protocol and ports</typehint>
-			<bindstofield>ezshaper->step4->fasttrack</bindstofield>
-                </field>
-                <field>
+            <field>
+				<donotdisable>true</donotdisable>
+                <name>Enable</name>
+                <type>checkbox</type>
+                <typehint>Lower priority of Peer-to-Peer traffic</typehint>
+                <description>This will lower the priority of P2P traffic below all other traffic.  Please check the items that you would like to prioritize lower than normal traffic.</description>
+				<enablefields>Aimster,BitTorrent,BuddyShare,CuteMX,DCplusplus,dcc,DirectConnect,DirectFileExpress,EDonkey2000,FastTrack,Gnutella,grouper,hotComm,HotlineConnect,iMesh,Napster,OpenNap,Scour,Shareaza,SongSpy,WinMX</enablefields>
+				<bindstofield>ezshaper->step4->enable</bindstofield>
+            </field>
+            <field>
+                    <name>Next</name>
+                    <type>submit</type>
+            </field>
+			<field>
+					<name>p2p Catch all</name>
+					<type>listtopic</type>
+			</field>
+			<field>
+				<donotdisable>true</donotdisable>
+				<name>p2pCatchAll</name>
+				<type>checkbox</type>
+				<typehint>When enabled, all uncategorized traffic is fed to the p2p queue.</typehint>
+				<bindstofield>ezshaper->step4->p2pcatchall</bindstofield>
+			</field>
+			<field>
+					<name>Enable/Disable specific P2P protocols</name>
+					<type>listtopic</type>
+			</field>			
+            <field>
+                <name>Aimster</name>
+                <type>checkbox</type>
+				<typehint>Aimster and other P2P using the Aimster protocol and ports</typehint>
+				<bindstofield>ezshaper->step4->aimster</bindstofield>
+            </field>
+            <field>
+				<name>BitTorrent</name>
+                <type>checkbox</type>
+				<typehint>Bittorrent and other P2P using the Torrent protocol and ports</typehint>
+				<bindstofield>ezshaper->step4->bittorrent</bindstofield>
+            </field>
+            <field>
+                <name>BuddyShare</name>
+                <type>checkbox</type>
+				<typehint>BuddyShare and other P2P using the BuddyShare protocol and ports</typehint>
+				<bindstofield>ezshaper->step4->buddyshare</bindstofield>
+            </field>
+            <field>
+                <name>CuteMX</name>
+                <type>checkbox</type>
+				<typehint>CuteMX and other P2P using the CuteMX protocol and ports</typehint>
+				<bindstofield>ezshaper->step4->cutemx</bindstofield>
+            </field>
+            <field>
+                <name>DCplusplus</name>
+                <type>checkbox</type>
+				<typehint>DC++ and other P2P using the DC++ protocol and ports</typehint>
+				<bindstofield>ezshaper->step4->dcplusplus</bindstofield>
+            </field>
+            <field>
+                <name>DCC</name>
+                <type>checkbox</type>
+				<typehint>irc DCC file transfers</typehint>
+				<bindstofield>ezshaper->step4->dcc</bindstofield>
+            </field>
+            <field>
+                <name>DirectConnect</name>
+                <type>checkbox</type>
+				<typehint>DirectConnect and other P2P using the DirectConnect protocol and ports</typehint>
+				<bindstofield>ezshaper->step4->directconnect</bindstofield>
+            </field>
+            <field>
+                    <name>DirectFileExpress</name>
+                    <type>checkbox</type>
+					<typehint>DirectFileExpress and other P2P using the DirectFileExpress protocol and ports</typehint>
+					<bindstofield>ezshaper->step4->directfileexpress</bindstofield>
+            </field>
+            <field>
+                    <name>eDonkey2000</name>
+                    <type>checkbox</type>
+				<typehint>eDonkey and other P2P using the eDonkey protocol and ports</typehint>
+				<bindstofield>ezshaper->step4->edonkey2000</bindstofield>
+            </field>
+            <field>
+                <name>FastTrack</name>
+                <type>checkbox</type>
+				<typehint>FastTrack and other P2P using the FastTrack protocol and ports</typehint>
+				<bindstofield>ezshaper->step4->fasttrack</bindstofield>
+            </field>
+            <field>
                         <name>Gnutella</name>
                         <type>checkbox</type>
-			<typehint>Gnutella and other P2P using the Gnutella protocol and ports</typehint>
-			<bindstofield>ezshaper->step4->gnutella</bindstofield>
-                </field>
-                <field>
-                        <name>grouper</name>
-                        <type>checkbox</type>
-			<typehint>grouper and other P2P using the grouper protocol and ports</typehint>
-			<bindstofield>ezshaper->step4->grouper</bindstofield>
-                </field>
-                <field>
-                        <name>hotComm</name>
-                        <type>checkbox</type>
-			<typehint>hotComm and other P2P using the hotComm protocol and ports</typehint>
-			<bindstofield>ezshaper->step4->hotcomm</bindstofield>
-                </field>
-                <field>
-                        <name>HotlineConnect</name>
-                        <type>checkbox</type>
-			<typehint>HotlineConnect and other P2P using the HotlineConnect protocol and ports</typehint>
-			<bindstofield>ezshaper->step4->hotlineconnect</bindstofield>
-                </field>
-                <field>
-                        <name>iMesh</name>
-                        <type>checkbox</type>
-			<typehint>iMesh and other P2P using the iMesh protocol and ports</typehint>
-			<bindstofield>ezshaper->step4->imesh</bindstofield>
-                </field>
-                <field>
-                        <name>Napster</name>
-                        <type>checkbox</type>
-			<typehint>Napster and other P2P using the Napster protocol and ports</typehint>
-			<bindstofield>ezshaper->step4->napster</bindstofield>
-                </field>
-                <field>
-                        <name>OpenNap</name>
-                        <type>checkbox</type>
-			<typehint>OpenNap and other P2P using the OpenNap protocol and ports</typehint>
-			<bindstofield>ezshaper->step4->opennap</bindstofield>
-                </field>
-                <field>
-                        <name>Scour</name>
-                        <type>checkbox</type>
-			<typehint>Scour and other P2P using the Scour protocol and ports</typehint>
-			<bindstofield>ezshaper->step4->scour</bindstofield>
-                </field>
-                <field>
-                        <name>Shareaza</name>
-                        <type>checkbox</type>
-			<typehint>Shareaza and other P2P using the Shareaza protocol and ports</typehint>
-			<bindstofield>ezshaper->step4->shareaza</bindstofield>
-                </field>
-                <field>
-                        <name>SongSpy</name>
-                        <type>checkbox</type>
-			<typehint>SongSpy and other P2P using the SongSpy protocol and ports</typehint>
-			<bindstofield>ezshaper->step4->songspy</bindstofield>
-                </field>
-                <field>
-                        <name>WinMX</name>
-                        <type>checkbox</type>
-			<typehint>WinMX and other P2P using the WinMX protocol and ports</typehint>
-			<bindstofield>ezshaper->step4->winmx</bindstofield>
-                </field>
-                <field>
-                        <name>Next</name>
-                        <type>submit</type>
-                </field>
+				<typehint>Gnutella and other P2P using the Gnutella protocol and ports</typehint>
+				<bindstofield>ezshaper->step4->gnutella</bindstofield>
+            </field>
+           <field>
+                <name>grouper</name>
+                <type>checkbox</type>
+				<typehint>grouper and other P2P using the grouper protocol and ports</typehint>
+				<bindstofield>ezshaper->step4->grouper</bindstofield>
+			</field>
+			<field>
+				<name>hotComm</name>
+				<type>checkbox</type>
+				<typehint>hotComm and other P2P using the hotComm protocol and ports</typehint>
+				<bindstofield>ezshaper->step4->hotcomm</bindstofield>
+            </field>
+            <field>
+                <name>HotlineConnect</name>
+                <type>checkbox</type>
+				<typehint>HotlineConnect and other P2P using the HotlineConnect protocol and ports</typehint>
+				<bindstofield>ezshaper->step4->hotlineconnect</bindstofield>
+            </field>
+            <field>
+                <name>iMesh</name>
+                <type>checkbox</type>
+				<typehint>iMesh and other P2P using the iMesh protocol and ports</typehint>
+				<bindstofield>ezshaper->step4->imesh</bindstofield>
+            </field>
+            <field>
+                <name>Napster</name>
+                <type>checkbox</type>
+				<typehint>Napster and other P2P using the Napster protocol and ports</typehint>
+				<bindstofield>ezshaper->step4->napster</bindstofield>
+            </field>
+            <field>
+                <name>OpenNap</name>
+                <type>checkbox</type>
+				<typehint>OpenNap and other P2P using the OpenNap protocol and ports</typehint>
+				<bindstofield>ezshaper->step4->opennap</bindstofield>
+            </field>
+            <field>
+                <name>Scour</name>
+		        <type>checkbox</type>
+				<typehint>Scour and other P2P using the Scour protocol and ports</typehint>
+				<bindstofield>ezshaper->step4->scour</bindstofield>
+            </field>
+            <field>
+                <name>Shareaza</name>
+                <type>checkbox</type>
+				<typehint>Shareaza and other P2P using the Shareaza protocol and ports</typehint>
+				<bindstofield>ezshaper->step4->shareaza</bindstofield>
+            </field>
+            <field>
+                <name>SongSpy</name>
+                <type>checkbox</type>
+				<typehint>SongSpy and other P2P using the SongSpy protocol and ports</typehint>
+				<bindstofield>ezshaper->step4->songspy</bindstofield>
+            </field>
+            <field>
+                <name>WinMX</name>
+                <type>checkbox</type>
+				<typehint>WinMX and other P2P using the WinMX protocol and ports</typehint>
+				<bindstofield>ezshaper->step4->winmx</bindstofield>
+            </field>
+            <field>
+                <name>Next</name>
+                <type>submit</type>
+            </field>
         </fields>
 	<stepsubmitphpaction>
 
@@ -1972,6 +1982,15 @@
 
 
 		/* XXX: add some more protocols here! */
+
+		/* install default p2p catch all rule if user has enabled option (MUST BE LAST!) */
+		if($config['ezshaper']['step4']['p2pcatchall'] == "on") {
+		    $othersplist[] = array('p2pCatchAll', 'tcp', '', '', 'both', 'p2p');
+		    $othersplist[] = array('p2pCatchAll2','tcp', '', '', 'both', 'p2p');
+		    $othersplist[] = array('p2pCatchAll', 'udp', '', '', 'both', 'p2p');
+		    $othersplist[] = array('p2pCatchAll2','udp', '', '', 'both', 'p2p');
+		}
+
     
 		/* Set up/down protocols as higher weight */
 		/* loop through othersplist[] */
@@ -1998,15 +2017,19 @@
 				    $rule['destination']['network'] = $downint;
 				    $rule['descr'] = "m_Other {$otherclient[0]} inbound";
 			    }
-    
-			    $rule['destination']['port'] = $otherclient[2]."-".$otherclient[3];
-			    if($otherclient[1] != '')
+				
+				if($otherclient[2] or $otherclient[3]) {
+				    $rule['destination']['port'] = $otherclient[2]."-".$otherclient[3];
+					if($otherclient[1] != '')
 				    $rule['protocol'] = $otherclient[1];
+				}
     
 			    $config['shaper']['rule'][] = $rule;
 		    }
 		}
-        }
+    }
+
+		
 	</stepsubmitphpaction>
 </step>
 <step>

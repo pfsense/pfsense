@@ -17,6 +17,7 @@
 		<tab>
 			<text>OLSRD Settings</text>
 			<url>/pkg_edit.php?xml=olsrd.xml&amp;id=0</url>
+			<active/>
 		</tab>
 	</tabs>
 	<!-- configpath gets expanded out automatically and config items will be

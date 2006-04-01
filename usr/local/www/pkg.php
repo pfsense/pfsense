@@ -48,10 +48,14 @@ if($pkg['donotsave'] <> "") {
 	header("Location:  pkg_edit.php?xml=" . $xml);
 }
 
+if ($pkg['include_file'] != "") {
+	require_once($pkg['include_file']);
+}
+
 $package_name = $pkg['menu'][0]['name'];
 $section      = $pkg['menu'][0]['section'];
 $config_path  = $pkg['configpath'];
-$title        = $section . ": " . $package_name;
+$title	      = $pkg['title'];
 
 $evaledvar = $config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 

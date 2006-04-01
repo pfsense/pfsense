@@ -45,11 +45,17 @@ if($xml == "") {
 } else {
             $pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
 }
+
+if($pkg['include_file'] <> "") {
+	require_once($pkg['include_file']);
+}
+
 $package_name = $pkg['menu'][0]['name'];
 $section      = $pkg['menu'][0]['section'];
 $config_path  = $pkg['configpath'];
 $name         = $pkg['name'];
-$title        = $section . ": " . $package_name;
+//$title        = $section . ": " . $package_name;
+$title		= $pkg['title'];
 $pgtitle      = $title;
 
 $id = $_GET['id'];
@@ -80,7 +86,7 @@ if ($_POST) {
 			    eval($pkg['custom_php_command_before_form']);
 		    eval($pkg['custom_delete_php_command']);
 		}
-		write_config();
+		write_config($pkg['delete_string']);
 		// resync the configuration file code if defined.
 		if($pkg['custom_php_resync_config_command'] <> "") {
 			if($pkg['custom_php_command_before_form'] <> "")
@@ -109,6 +115,20 @@ if ($_POST) {
 
 	$firstfield = "";
 	$rows = 0;
+
+	$input_errors = array();
+	$reqfields = array();
+	$reqfieldsn = array();
+	foreach ($pkg['fields']['field'] as $field) {
+		if (($field['type'] == 'input') && ($field['required'] == 'yes')) {
+			$reqfields[] = $field['fieldname'];
+			$reqfieldsn[] = $field['fielddescr'];
+		}
+	}
+	do_input_validation($_POST, $reqfields, $reqfieldsn, &$input_errors);
+
+	if ($pkg['custom_php_validation_command'])
+		eval($pkg['custom_php_validation_command']);
 
 	// store values in xml configration file.
 	if (!$input_errors) {
@@ -140,13 +160,16 @@ if ($_POST) {
 				if(is_array( $_POST[$fields['fieldname']] )) {
 					$pkgarr[$fields['fieldname']]=array();
 					foreach($_POST[$fields['fieldname']] as $v) {
-						$pkgarr[$fields['fieldname']][] = $v;
+						$pkgarr[$fields['fieldname']][] = trim($v);
 						eval($comd);								
 					}
 					continue;
 				}                                
 				$fieldname  = $fields['fieldname'];
-				$fieldvalue = $_POST[$fieldname];
+				if ($fields['encoding'] == 'base64')
+					$fieldvalue = base64_encode(trim($_POST[$fieldname]));
+				else
+					$fieldvalue = trim($_POST[$fieldname]);
 				$pkgarr[$fieldname] = $fieldvalue;
 			}
 		}
@@ -156,11 +179,7 @@ if ($_POST) {
 		else
 			$a_pkg[] = $pkgarr;
 
-		write_config();
-
-		if($pkg['include_file'] <> "") {
-			require_once($pkg['include_file']);
-		}
+		write_config($pkg['addedit_string']);
 
 		// late running code
 		if($pkg['custom_add_php_command_late'] <> "") {
@@ -191,15 +210,20 @@ if ($_POST) {
 		}
 		exit;
 	}
+	else
+		$get_from_post = true;
 }
 
 if($pkg['title'] <> "")
-	$title = $pkg['title'];
+	$title = $pkg['title'] . ': Edit';
 else
 	$title = "Package Editor";
 
 $pgtitle = $title;
 include("head.inc");
+
+if ($pkg['custom_php_after_head_command'])
+	eval($pkg['custom_php_after_head_command']);
 
 ?>
 
@@ -208,7 +232,7 @@ include("head.inc");
 <script language="JavaScript">
 <!--
 function enablechange() {
-<?php               
+<?php 
         foreach($pkg['fields']['field'] as $field) {
                 if(isset($field['enablefields']) or isset($field['checkenablefields'])) {
                         print "\t" . 'if (document.iform.' . strtolower($field['name']) . '.checked == false) {' . "\n";
@@ -252,7 +276,8 @@ function enablechange() {
 
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
-<form action="pkg_edit.php" method="post">
+<?php if (!empty($input_errors)) print_input_errors($input_errors); ?>
+<form name="iform" action="pkg_edit.php" method="post">
 <input type="hidden" name="xml" value="<?= $xml ?>">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -297,18 +322,23 @@ if ($pkg['tabs'] <> "") {
 	  $size = "";
 	  
 	  if(!$pkga['dontdisplayname']) {
-		echo "<td width=\"22%\" class=\"vncellreq\">";
+		unset($req);
+		if ($pkga['required'] == 'yes')
+			$req = 'req';
+		echo "<td width=\"22%\" class=\"vncell{$req}\">";
 		echo fixup_string($pkga['fielddescr']);
 		echo "</td>";
 	  }
 
 	  if(!$pkga['dontcombinecells'])
 		echo "<td class=\"vtable\">";
-
 		// if user is editing a record, load in the data.
-		if (isset($id) && $a_pkg[$id]) {
-			$fieldname = $pkga['fieldname'];
-			$value = $a_pkg[$id][$fieldname];
+		$fieldname = $pkga['fieldname'];
+		if ($get_from_post)
+			$value = $_POST[$fieldname];
+		else {
+			if (isset($id) && $a_pkg[$id])
+				$value = $a_pkg[$id][$fieldname];
 		}
 
 	      if($pkga['type'] == "input") {
@@ -321,7 +351,8 @@ if ($pkg['tabs'] <> "") {
 	      } else if($pkga['type'] == "select") {
                   if($pkga['size']) $size = " size='" . $pkga['size'] . "' ";
 		  if($pkga['multiple'] == "yes") $multiple = "MULTIPLE ";
-		    echo "<select " . $multiple . $size . "id='" . $pkga['fieldname'] . "' name='" . $pkga['fieldname'] . "'>\n";
+                  if ($pkga['onchange']) $onchange = 'onchange="' . $pkga['onchange'] . '" ';
+		    echo "<select " . $onchange . $multiple . $size . "id='" . $pkga['fieldname'] . "' name='" . $pkga['fieldname'] . "'>\n";
 		    foreach ($pkga['options']['option'] as $opt) {
 			  $selected = "";
 			  if($opt['value'] == $value) $selected = " SELECTED";
@@ -344,6 +375,7 @@ if ($pkg['tabs'] <> "") {
 	      } else if($pkga['type'] == "textarea") {
 		  if($pkga['rows']) $rows = " rows='" . $pkga['rows'] . "' ";
 		  if($pkga['cols']) $cols = " cols='" . $pkga['cols'] . "' ";
+                  if (($pkga['encoding'] == 'base64') && !$get_from_post && !empty($value)) $value = base64_decode($value);
 			echo "<textarea " . $rows . $cols . " name='" . $pkga['fieldname'] . "'>" . $value . "</textarea>\n";
 			echo "<br>" . fixup_string($pkga['description']) . "\n";
 		  } else if($pkga['type'] == "interfaces_selection") {
@@ -531,24 +563,27 @@ if ($pkg['tabs'] <> "") {
   <tr>
     <td width="22%" valign="top">&nbsp;</td>
     <td width="78%">
-      <input name="Submit" type="submit" class="formbtn" value="<?= $savevalue ?>"> <input class="formbtn" type="button" value="Cancel" onclick="history.back()">
-      <?php if (isset($id) && $a_pkg[$id]): ?>
-      <input name="id" type="hidden" value="<?=$id;?>">
-      <?php endif; ?>
+<?php
+if($pkg['note'] != "")
+	print("<p><span class=\"red\"><strong>Note:</strong></span> {$pkg['note']}</p>");
+if (isset($id) && $a_pkg[$id])
+      print("<input name=\"id\" type=\"hidden\" value=\"$id\">");
+?>
+      <input name="Submit" type="submit" class="formbtn" value="<?= $savevalue ?>">
+      <input class="formbtn" type="button" value="Cancel" onclick="history.back()">
     </td>
   </tr>
 </table>
 </div></tr></td></table>
-
-<?php if($pkga['note'] <> "") echo "<br><center>" . $pkga['note'] . "</center>"; ?>
-
 </form>
+
+<?php if ($pkg['custom_php_after_form_command']) eval($pkg['custom_php_after_form_command']); ?>
+
 <?php include("fend.inc"); ?>
 </body>
 </html>
 
 <?php
-
 /*
  * ROW Helpers function
  */

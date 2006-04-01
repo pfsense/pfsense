@@ -194,7 +194,7 @@
 	}
 
 	/* start OpenVPN server & clients */
-        ovpn_configure(false);
+    openvpn_resync_all();
 
 	/* set up static routes */
 	system_routing_configure();

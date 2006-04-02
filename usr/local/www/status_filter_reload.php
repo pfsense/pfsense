@@ -52,10 +52,12 @@ if($_GET['getstatus']) {
 
 <p><span class="pgtitle"><?=$pgtitle;?></span></p>
 
+<!--
 <div id="loadingicon" name="loadingicon">
 	<img src="/themes/metallic/images/misc/loader.gif">
 	<p/>
 </div>
+-->
 
 <div id="status" name="status" style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000;">
 	<?php echo $status; ?>
@@ -72,9 +74,9 @@ This page will automatically refresh every 3 seconds until the filter is done re
 
 <script language="javascript">
 /* init update "thread */
-$('loadingicon').style.visibility="visible";
+//$('loadingicon').style.visibility="visible";
 function update_status_thread() {
-	$('loadingicon').style.visibility="visible";
+	//$('loadingicon').style.visibility="visible";
 	getURL('status_filter_reload.php?getstatus=true', update_data);
 }
 function update_data(obj) {
@@ -84,13 +86,13 @@ function update_data(obj) {
 	result_text = result_text.replace("\n","");
 	result_text = result_text.replace("\r","");
 	if (result_text) {
-		$('status').innerHTML = result_text + '...';
+		$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif"> ' + result_text + '...';
 	} else {
 		$('status').innerHTML = 'Obtaining filter status...';
 	}
 	if(result_text == "Done") {
 		$('status').innerHTML = 'Done.';
-		$('loadingicon').style.visibility="hidden";
+		//$('loadingicon').style.visibility="hidden";
 		$('doneurl').style.visibility="visible";
 		$('doneurl').innerHTML = "<p/><a href='status_queues.php'>Queue Status</a>";
 	}

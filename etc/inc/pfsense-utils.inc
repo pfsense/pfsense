@@ -1814,15 +1814,12 @@ function convert_real_interface_to_friendly_descr($interface) {
 
 function enable_rrd_graphing()
 {
-// create a silent cron job for every 1 minute (because of GigE)
-// consider syncing the rrd files to usb storage (cdrom, embbedded)
-// FIXME: remove_text_from_file is broken and adds text instead
-// Needs to be called on rc.new_wan_ip, assign interface and boottime
+// consider syncing the rrd files to usb storage/xml (cdrom, embbedded)
 
 	global $config, $g;
 
-	$rrddbpath = "/var/db/rrd/";
-	$rrdgraphpath = "/usr/local/www/rrd";
+    $rrddbpath = "/var/db/rrd/";
+    $rrdgraphpath = "/usr/local/www/rrd";
 	$rrdtrafficinterval = 60;
 	$rrdqualityinterval = 60;
 	$rrdqueuesinterval = 60;
@@ -1844,8 +1841,8 @@ function enable_rrd_graphing()
 	$qualityvalid = $rrdtrafficinterval*2 ;
 	$queuesvalid = $rrdtrafficinterval*2 ;
 	/* Asume GigE for now */
-	$downstream = 12500000;
-	$upstream = 12500000;
+	$downstream = 125000000;
+	$upstream   = 125000000;
 
 	$config['rrd']['enable'] = true;
 
@@ -1890,7 +1887,8 @@ function enable_rrd_graphing()
 <TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>";
 
        		$i = 0;
-		$ifdescrs = get_interface_list();
+                $vfaces = array("vlan.?*");
+                $ifdescrs = get_interface_list(true, true, $vfaces);
        		foreach ($ifdescrs as $realif => $ifdescr) {
 			$ifname = $ifdescr['friendly'];
 			$state = $ifdescr['up'];
@@ -1943,6 +1941,7 @@ function enable_rrd_graphing()
 </TR>";
 
 			if("$ifname" == "wan") {
+				/* create link quality database */
 				if(! file_exists("$rrddbpath$ifname$quality")) {
 					/* create rrd file if it does not exist */
 					$rrdcreate = "$rrdtool create $rrddbpath$ifname$quality --step $rrdqualityinterval \
@@ -1997,22 +1996,22 @@ function enable_rrd_graphing()
 	
 		$rrdupdatesh .= "sleep 60\n";
 		$rrdupdatesh .= "done\n";
+		PRINT "Creating rrd update script\n";
 		/* write the rrd update script */
 		$updaterrdscript = "{$g['vardb_path']}/rrd/updaterrd.sh";
 		$fd = fopen("$updaterrdscript", "w");
 		fwrite($fd, "$rrdupdatesh");
 		fclose($fd);
 
+		PRINT "Creating rrd graph index\n";
 		/* write the index.html script */
 		$rrdgraphindex = "{$g['vardb_path']}/rrd/index.html";
 		$fd = fopen("$rrdgraphindex", "w");
 		fwrite($fd, "$rrdgraphindexhtml");
 		fclose($fd);
 	
-		/* save rrd error. */		
-		$fd = fopen("/tmp/rrd_errors", "w");
-		fwrite($fd, "$rrdcreatel");
-		fclose($fd);
+		/* print database creation errors. */
+		print "$rrdcreatel\n";
 
 		/* kill off traffic collectors */
 		kill_traffic_collector();

@@ -1744,7 +1744,27 @@
 							</option>
 						</options>
 						<typehint>Internet News</typehint>
-                </field>							
+                </field>
+                <field>
+						<name>CVSUP</name>
+						<bindstofield>ezshaper->step6->cvsup</bindstofield>
+						<type>select</type>
+						<options>
+							<option>
+								<name>Higher priority</name>
+								<value>H</value>
+							</option>
+							<option>
+								<name>Default priority</name>
+								<value></value>
+							</option>
+							<option>
+								<name>Lower priority</name>
+								<value>L</value>
+							</option>
+						</options>
+						<typehint>CVSUP</typehint>
+                </field>					
                 <field>
                         <name>Next</name>
                         <type>submit</type>
@@ -1980,6 +2000,10 @@
 		    $othersplist[] = array('teamspeak3', 'udp', '8767', '8768', 'both', $_POST['teamspeak']);
 		}		
 
+		if($_POST['cvsup'] != "") {
+		    /* teamspeak  */
+		    $othersplist[] = array('cvs', 'tcp', '5999', '5999', 'both', $_POST['teamspeak']);
+		}	
 
 		/* XXX: add some more protocols here! */
     

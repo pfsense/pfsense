@@ -153,6 +153,7 @@ include("head.inc");
 				</tr>
               </table>
             </form>
+			<p><b>Note:</b>  Do not enter static routes for networks assigned on any interface of this firewall.  Static routes are only used for networks reachable via a different router, and not reachable via your default gateway.</p>
 <?php include("fend.inc"); ?>
 </body>
 </html>

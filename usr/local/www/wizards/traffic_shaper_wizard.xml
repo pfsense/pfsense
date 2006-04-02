@@ -2092,7 +2092,7 @@
 		if($config['ezshaper']['step4']['p2pcatchall'] == "on") {
 			$othersplist = array();
 		    $othersplist[] = array('p2pCatchAll', 'tcp', '', '', 'both', '');
-		    $othersplist[] = array('p2pCatchAll2', 'udp', '', '', 'both', '');
+			$othersplist[] = array('p2pCatchAll2', 'udp', '', '', 'both', '');
 		} else {
 			$othersplist = array();
 		}

@@ -92,6 +92,7 @@ function filter_generate_altq_queues($altq_ints) {
 	$altq_rules = "";
 	if (is_array($config['shaper']['queue'])) {
 		foreach ($config['shaper']['queue'] as $rule) {
+			update_filter_reload_status("Generating ALTQ queue {$rule['descr']}...");
 			$options = "";
 			// check to make sure we're actually using this queue.
 			//if(stristr($altq_ints, $rule['name']) !== FALSE) {

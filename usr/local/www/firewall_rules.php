@@ -85,7 +85,7 @@ if ($_POST) {
 		if (file_exists($d_filterconfdirty_path))
 			unlink($d_filterconfdirty_path);
 
-		$savemsg = "The settings have been applied.  The firewall rules are now reloading in the background.";
+		$savemsg = "The settings have been applied.  The firewall rules are now reloading in the background.  You can also <a href='status_filter_reload.php'>monitor</a> the reload progress.";
 	}
 }
 

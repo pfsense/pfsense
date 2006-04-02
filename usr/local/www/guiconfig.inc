@@ -252,7 +252,7 @@ function format_bytes($bytes) {
 function get_std_save_message($ok) {
 	global $d_sysrebootreqd_path;
 
-	return "The changes have been applied successfully.";
+	return "The changes have been applied successfully.  You can also <a href='status_filter_reload.php'>monitor</a> the filter reload progress.";
 }
 
 function pprint_address($adr) {

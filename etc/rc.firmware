@@ -98,6 +98,7 @@ upgrade)
 
 	echo
 	echo "Firmware upgrade in progress..."  | logger -p daemon.info -i -t Upgrade
+	echo "Firmware upgrade in progress..." | wall
 
 	# backup config
 	mkdir /tmp/configbak

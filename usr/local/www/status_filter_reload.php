@@ -81,7 +81,9 @@ function update_data(obj) {
 	} else {
 		$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif"> Obtaining filter status...';
 	}
-	if(result_text == "Done") {
+	if(result_text == "Initializing") {
+		$('status').innerHTML = '<img src="/themes/metallic/images/misc/loader.gif"> Initializing...';
+	} else if(result_text == "Done") {
 		$('status').innerHTML = 'Done.  The filter rules have been reloaded.';
 		$('reloadinfo').style.visibility="hidden";
 		$('doneurl').style.visibility="visible";

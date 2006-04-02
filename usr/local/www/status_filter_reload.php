@@ -64,6 +64,10 @@ if($_GET['getstatus']) {
 <div id="doneurl" name="doneurl">
 </div>
 
+<p>
+
+This page will automatically refresh every 3 seconds until the filter is done reloading.
+
 <?php include("fend.inc"); ?>
 
 <script language="javascript">
@@ -140,10 +144,6 @@ if (typeof getURL == 'undefined') {
 }
 window.setTimeout('update_status_thread()', 2500);
 </script>
-
-<p>
-
-This page will automatically refresh every 3 seconds until the filter is done reloading.
 
 </body>
 </html>

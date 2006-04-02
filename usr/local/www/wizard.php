@@ -64,6 +64,9 @@ exec('/usr/bin/tar -tzf /usr/share/zoneinfo.tgz', $timezonelist);
 $timezonelist = array_filter($timezonelist, 'is_timezone');
 sort($timezonelist);
 
+if ($pkg['step'][$stepid]['includefile'])
+	require($pkg['step'][$stepid]['includefile']);
+
 if($pkg['step'][$stepid]['stepsubmitbeforesave']) {
 		eval($pkg['step'][$stepid]['stepsubmitbeforesave']);
 }

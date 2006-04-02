@@ -1987,7 +1987,7 @@
 			$othersplist[] = array('NNTP2', 'udp', '119', '119', 'both', $_POST['mysqlserver']);
 		}			
 
-		if($_POST['pcanwhere'] != "") {
+		if($_POST['pcanywhere'] != "") {
 		    /* symantec pc anywhere */
 		    $othersplist[] = array('pcany1', 'tcp', '5631', '5631', 'both', $_POST['pcanywhere']);
 		    $othersplist[] = array('pcany2', 'udp', '5632', '5632', 'both', $_POST['pcanywhere']);
@@ -2001,8 +2001,8 @@
 		}		
 
 		if($_POST['cvsup'] != "") {
-		    /* teamspeak  */
-		    $othersplist[] = array('cvs', 'tcp', '5999', '5999', 'both', $_POST['teamspeak']);
+		    /* cvsup */
+		    $othersplist[] = array('cvs', 'tcp', '5999', '5999', 'both', $_POST['cvsup']);
 		}	
 
 		/* XXX: add some more protocols here! */

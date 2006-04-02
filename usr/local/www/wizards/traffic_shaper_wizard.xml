@@ -2018,6 +2018,46 @@
 			    $config['shaper']['rule'][] = $rule;
 		    }
 		}
+    }		
+	</stepsubmitphpaction>
+</step>
+<step>
+        <id>7</id>
+        <title>pfSense Traffic Shaper Wizard</title>
+        <field>
+		<name>Reload profile notice</name>
+		<type>listtopic</type>
+        </field>	
+        <description>
+	    After pressing Finish the system will load the new profile.&lt;br/&gt;
+	    Please note that this may take a moment.&lt;br/&gt;
+	    Also note that the traffic shaper is stateful meaning that only new connections will be shaped.&lt;br/&gt;
+	    If this is an issue please reset the state table after loading the profile.&lt;br/&gt;
+	</description>
+	<fields>
+                <field>
+                        <name>Finish</name>
+                        <type>submit</type>
+                </field>
+	</fields>
+	<stepbeforeformdisplay>
+		if($config['shaper']['itemsshaped'] == "0") {
+		    /*    no shaper items have been selected 
+		     *    wipe previous
+		     */
+		    unset($config['shaper']['queue']);
+		    unset($config['shaper']['rule']);
+		    unset($config['shaper']);
+		    $config['shaper']['enable'] = FALSE;
+		    $message = "No items have been selected to shape.  Exiting traffic shaper wizard.";
+		    write_config("No shaper items picked, unsetting shaper configuration");
+		    header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=7&amp;message={$message}");
+		    exit;
+		}	    
+	</stepbeforeformdisplay>
+	<stepsubmitphpaction>
+		/* Sort rules by queue priority */
+		 sort_rule_by_queue_priority(); 
 
 		/* install default p2p catch all rule if user has enabled option (MUST BE LAST!) */
 		if($config['ezshaper']['step4']['p2pcatchall'] == "on") {
@@ -2063,47 +2103,6 @@
 			    $config['shaper']['rule'][] = $rule;
 		    }
 		}
-		
-    }		
-	</stepsubmitphpaction>
-</step>
-<step>
-        <id>7</id>
-        <title>pfSense Traffic Shaper Wizard</title>
-        <field>
-		<name>Reload profile notice</name>
-		<type>listtopic</type>
-        </field>	
-        <description>
-	    After pressing Finish the system will load the new profile.&lt;br/&gt;
-	    Please note that this may take a moment.&lt;br/&gt;
-	    Also note that the traffic shaper is stateful meaning that only new connections will be shaped.&lt;br/&gt;
-	    If this is an issue please reset the state table after loading the profile.&lt;br/&gt;
-	</description>
-	<fields>
-                <field>
-                        <name>Finish</name>
-                        <type>submit</type>
-                </field>
-	</fields>
-	<stepbeforeformdisplay>
-		if($config['shaper']['itemsshaped'] == "0") {
-		    /*    no shaper items have been selected 
-		     *    wipe previous
-		     */
-		    unset($config['shaper']['queue']);
-		    unset($config['shaper']['rule']);
-		    unset($config['shaper']);
-		    $config['shaper']['enable'] = FALSE;
-		    $message = "No items have been selected to shape.  Exiting traffic shaper wizard.";
-		    write_config("No shaper items picked, unsetting shaper configuration");
-		    header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=7&amp;message={$message}");
-		    exit;
-		}	    
-	</stepbeforeformdisplay>
-	<stepsubmitphpaction>
-		/* Sort rules by queue priority */
-		 sort_rule_by_queue_priority(); 
 
 		/* Enable shaper */
 		$config['shaper']['enable'] = TRUE;

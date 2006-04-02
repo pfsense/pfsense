@@ -513,6 +513,9 @@ function filter_nat_rules_generate() {
 	$natrules .= "# FTP proxy\n";
 	$natrules .= "rdr-anchor \"pftpx/*\"\n";
 
+
+	update_filter_reload_status("Creating 1:1 rules...");
+	
 	/* any 1:1 mappings? */
 	if (is_array($config['nat']['onetoone'])) {
 		foreach ($config['nat']['onetoone'] as $natent) {
@@ -953,6 +956,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			$mt = microtime();
 			echo "generate_user_filter_rule() being called $mt\n";
 		}
+
+		update_filter_reload_status("Creating filter rules {$rule['descr']} ...");
 
 		$wancfg = $config['interfaces']['wan'];
 		$lancfg = $config['interfaces']['lan'];
@@ -1968,6 +1973,8 @@ EOD;
 	}
 	
 	$ipfrules .= process_carp_rules();
+	
+	update_filter_reload_status("Creating carp rules...");
 
 	$ipfrules .= "\n# VPN Rules\n";
 	$lan_ip = $config['interfaces']['lan']['ipaddr'];
@@ -2099,7 +2106,7 @@ function create_firewall_outgoing_rules_to_itself() {
 		$ints = array();
 		$int = filter_translate_type_to_real_interface($ifname);
 		/* if the interface is pppoe, set the ng0 interface */
-
+		update_filter_reload_status("Creating firewall rules ($int)...");
 		$ip = find_interface_ip($int);
 		if ($config['interfaces'][$ifname]['ipaddr'] == "pppoe")
 			$int = " { " . filter_translate_type_to_real_interface($ifname) . " ng0 } ";
@@ -2339,6 +2346,7 @@ function carp_sync_client() {
 		        $sections[] = 'dnsmasq';
 		    }		    		    
 		    if(count($sections) > 0) {
+				update_filter_reload_status("Signaling CARP reload signal...");
 			    carp_sync_xml($synchronizetoip, $carp['password'], $sections, $port);
 			    $cli = new XML_RPC_Client('/xmlrpc.php', $synchronizetoip, $port);
 			    $msg = new XML_RPC_Message('pfsense.filter_configure', array(new XML_RPC_Value($carp['password'], 'string')));

@@ -350,6 +350,8 @@ function filter_generate_pf_altq_rules() {
 			continue;
 		}
 
+		update_filter_reload_status("Generating ALTQ rule {$rule['descr']}...");
+		
 		switch($rule['in-interface']) {
 			case "pptp": /* does the rule deal with a PPTP interface? */
 				if ($pptpdcfg['mode'] != "server") {

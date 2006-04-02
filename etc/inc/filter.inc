@@ -1914,7 +1914,7 @@ EOD;
 
 		/* This is ugly, but we generate one anchor per queue */
 		foreach ($config['shaper']['queue'] as $queue) {
-			update_filter_reload_status("Creating filter anchor for {$queue['descr']} ...");
+			update_filter_reload_status("Creating filter anchor for {$queue['name']} ...");
 			/* Add anchor to rules */
 			$ipfrules .= "anchor {$queue['name']} tagged {$queue['name']}\n";
 			/* Create rules for anchors */

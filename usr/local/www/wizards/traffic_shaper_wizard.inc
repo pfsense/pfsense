@@ -1,6 +1,7 @@
 <?php
 
 function step1_stepsubmitphpaction() {
+		global $g, $config;
 		/* wipe previous */
 		unset($config['shaper']['queue']);
 		unset($config['shaper']['rule']);
@@ -9,6 +10,7 @@ function step1_stepsubmitphpaction() {
 }
 
 function step2_stepsubmitphpaction() {
+		global $g, $config;
 		if ($config['ezshaper']['step2']['inside_int'] == $config['ezshaper']['step2']['outside_int']) {
 			$message="Inside and Outside interfaces cannot be the same";
 			header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid={$stepid}&amp;message={$message}");
@@ -125,6 +127,7 @@ function step2_stepsubmitphpaction() {
 		
 }
 function step3_stepsubmitphpaction() {
+		global $g, $config;
 		if($_POST['address']) {
 			if(!is_ipaddr($_POST['address'])) {
 				if(!is_alias($_POST['address'])) {
@@ -283,6 +286,7 @@ function step3_stepsubmitphpaction() {
 		}
 }
 function step4_stepsubmitphpaction() {
+	global $g, $config;
 	/* XXX - billm - needs to actually honor what the user selects still */
 	if ( $_POST['enable'] ) {
 		$downq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['inside_int']);
@@ -418,6 +422,7 @@ function step4_stepsubmitphpaction() {
 	}	
 }
 function step5_stepsubmitphpaction() {
+	global $g, $config;
 	/* XXX - billm - needs to actually honor what the user selects still */
 	if ( $_POST['enable'] ) {
 		$downq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['inside_int']);
@@ -648,6 +653,7 @@ function step5_stepsubmitphpaction() {
 	}
 }
 function step6_stepsubmitphpaction() {
+	global $g, $config;
 	if ( $_POST['enable'] ) {
 		$downq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['inside_int']);
 		$upq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['outside_int']);
@@ -922,6 +928,7 @@ function step6_stepsubmitphpaction() {
     }	
 }
 function step7_stepbeforeformdisplay() {
+		global $g, $config;
 		if($config['shaper']['itemsshaped'] == "0") {
 		    /*    no shaper items have been selected 
 		     *    wipe previous
@@ -938,6 +945,7 @@ function step7_stepbeforeformdisplay() {
 }
 
 function step7_stepsubmitphpaction() {
+		global $g, $config;
 		/* Sort rules by queue priority */
 		 sort_rule_by_queue_priority(); 
 
@@ -1010,6 +1018,7 @@ function step7_stepsubmitphpaction() {
 		header("Location: status_filter_reload.php");
 }
 function step8_stepsubmitphpaction() {
+	global $g, $config;
 	header("Location: status_filter_reload.php");
 }
 

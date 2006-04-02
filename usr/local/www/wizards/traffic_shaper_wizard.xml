@@ -2022,8 +2022,8 @@
 		/* install default p2p catch all rule if user has enabled option (MUST BE LAST!) */
 		if($config['ezshaper']['step4']['p2pcatchall'] == "on") {
 			$othersplist = array();
-		    $othersplist[] = array('p2pCatchAll', 'tcp', '', '', 'both', 'L');
-		    $othersplist[] = array('p2pCatchAll2', 'udp', '', '', 'both', 'L');
+		    $othersplist[] = array('p2pCatchAll', 'tcp', '', '', 'both', '');
+		    $othersplist[] = array('p2pCatchAll2', 'udp', '', '', 'both', '');
 		} else {
 			$othersplist = array();
 		}

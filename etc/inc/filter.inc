@@ -160,6 +160,8 @@ function filter_configure_sync() {
 	$rules.= "\n";
 	$rules.= "scrub on {$wanif} all {$scrubnodf} {$mssclamp}\n"; // reassemble all directions
     
+	update_filter_reload_status("Setting up SCRUB information");
+	
 	/* loop through optional interfaces.  if a gateway is set, lets scrub em down! */
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 		if($config['interfaces']["opt" . $j]['gateway'] <> "") {
@@ -517,7 +519,6 @@ function filter_nat_rules_generate() {
 	$natrules .= "# FTP proxy\n";
 	$natrules .= "rdr-anchor \"pftpx/*\"\n";
 
-
 	update_filter_reload_status("Creating 1:1 rules...");
 	
 	/* any 1:1 mappings? */
@@ -655,6 +656,8 @@ function filter_nat_rules_generate() {
 	/* load balancer anchor */
 	$natrules .= "\n# Load balancing anchor - slbd updates\n";
 	$natrules .= "rdr-anchor \"slb\"\n";
+
+	update_filter_reload_status("Setting up FTP helper");
 
 	$natrules .= "\n# FTP Proxy/helper\n";
 	/* build an array of interfaces to work with */
@@ -817,6 +820,8 @@ function filter_nat_rules_generate() {
 			}
 
 			if(!isset($config['system']['disablenatreflection'])) {
+				
+				update_filter_reload_status("Setting up reflection");
 				
 				$natrules .= "\n# Reflection redirects\n";				
 				foreach ($iflist as $ifent => $ifname) {
@@ -1079,6 +1084,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
 			$ifdescrs[] = "opt" . $i;
 		
+		update_filter_reload_status("Setting up pass/block rules");
+		
 		for ($iif = 0; $iif < $nif; $iif++) {
 			$type = $rule['type'];
 			if ($type != "pass" && $type != "block" && $type != "reject") {
@@ -1133,6 +1140,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			
 			/* set the gateway interface */
 			$ri = filter_translate_type_to_real_interface($rule['interface']);
+
+			update_filter_reload_status("Setting up pass/block rules {$rule['descr']}");
 
 			/*
 			 *    check to see if /tmp/{${ri}_router exists.  This file
@@ -1927,6 +1936,7 @@ EOD;
 	if (isset($config['filter']['rule'])) {
 		foreach ($config['filter']['rule'] as $rule) {
 			/* Pre-cache all our rules so we only have to generate them once */
+			update_filter_reload_status("Pre-caching information for {$rule['descr']} ...");
 			$line = "";
 			if (!isset($rule['disabled'])) {
 				if ($rule['interface'] == "pptp") {

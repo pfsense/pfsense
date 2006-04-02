@@ -203,15 +203,20 @@ function enablechange() {
 <center>
 
 &nbsp;<br>
+
 <?php
-	if($title == "Reload in progress")
+	if($title == "Reload in progress") {
 		$ip = "http://{$config['interfaces']['lan']['ipaddr']}";
-	else
+	} else {
 		$ip = "/";
-
+	}
+	if($xml == "traffic_shaper_wizard.xml") {
+		echo "<a href='/firewall_shaper.php?remove=remove'>";
+	} else {
+		echo "<a href='$ip'>"; 	
+	}
 ?>
-
-<a href="<?php echo $ip; ?>"><img border="0" src="./themes/<?= $g['theme']; ?>/images/logo.gif"></a>
+<img border="0" src="./themes/<?= $g['theme']; ?>/images/logo.gif"></a>
 <p>
 <div style="width:700px;background-color:#ffffff" id="roundme">
 <table bgcolor="#ffffff" width="600" cellspacing="0" cellpadding="3">

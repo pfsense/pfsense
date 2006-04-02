@@ -1229,7 +1229,7 @@
                         <type>checkbox</type>
                         <typehint>Other networking protocols</typehint>
                         <description>This will help raise or lower the priority of other protocols higher than most traffic.</description>
-			<enablefields>AIM,AppleRemoteDesktop,DNS,HTTP,ICMP,ICQ,IMAP,IPSEC,IRC,LotusNotes,MSN,MSRDP,MySqlServer,PCAnywhere,POP3,PPTP,RTSP,SMB,SMTP,SNMP,StreamingMP3,TeamSpeak,VNC,NNTP</enablefields>
+			<enablefields>AIM,AppleRemoteDesktop,DNS,HTTP,ICMP,ICQ,IMAP,IPSEC,IRC,LotusNotes,MSN,MSRDP,MySqlServer,PCAnywhere,POP3,PPTP,RTSP,SMB,SMTP,SNMP,StreamingMP3,TeamSpeak,VNC,NNTP,CVSUP</enablefields>
 			<donotdisable>true</donotdisable>
 			<bindstofield>ezshaper->step6->enable</bindstofield>
                 </field>

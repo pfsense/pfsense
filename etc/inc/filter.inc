@@ -144,6 +144,8 @@ function filter_configure_sync() {
         $fd = fopen("{$g['tmp_path']}/rules.debug", "w");
 	$rules = $aliases . " \n";
 
+	update_filter_reload_status("Setting up logging information");
+
 	$rules .= setup_logging_interfaces();
 
 	if($config['system']['optimization'] <> "")
@@ -199,6 +201,8 @@ function filter_configure_sync() {
 	}
 
 	unlink_if_exists("/usr/local/pkg/pf/carp_sync_client.php");
+	
+	update_filter_reload_status("Running plugins");
 	
 	/* process packager manager custom rules */
 	$files = return_dir_as_array("/usr/local/pkg/pf/");
@@ -539,6 +543,8 @@ function filter_nat_rules_generate() {
 		if (is_array($config['nat']['advancedoutbound']['rule'])) {
 			foreach ($config['nat']['advancedoutbound']['rule'] as $obent) {
 
+				update_filter_reload_status("Creating advanced outbound rule {$obent['descr']}");
+
 				$src = $obent['source']['network'];
 				if (isset($obent['destination']['not']) && !isset($obent['destination']['any']))
 					$dst = "!" . $obent['destination']['address'];
@@ -570,10 +576,14 @@ function filter_nat_rules_generate() {
 			$natrules .= filter_nat_rules_generate_if($wanif,
 				"{$lansa}/{$lancfg['subnet']}", 500, "", 500, null, 500, false);
 		}
+		
+		update_filter_reload_status("Creating outbound rules");
+		
 		$natrules .= filter_nat_rules_generate_if($wanif, "{$lansa}/{$lancfg['subnet']}");
-
+		
 		/* optional interfaces */
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+			update_filter_reload_status("Creating outbound rules (opt{$i})");
 			$optcfg = $config['interfaces']['opt' . $i];
 
 			if (isset($optcfg['enable']) && !$optcfg['bridge']) {
@@ -695,6 +705,8 @@ function filter_nat_rules_generate() {
 		}
 	
 		foreach ($config['nat']['rule'] as $rule) {
+
+			update_filter_reload_status("Creating NAT rule {$rule['descr']}");	
 
 			/* if item is an alias, expand */
 			if(alias_expand($rule['external-port']))
@@ -935,6 +947,7 @@ function run_command_return_string($cmd) {
 
 function generate_user_filter_rule_arr($rule, $ngcounter) {
 	global $config;
+	update_filter_reload_status("Creating filter rules {$rule['descr']} ...");
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "generate_user_filter_rule() being called $mt\n";
@@ -1230,6 +1243,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				}
 			}
 
+			update_filter_reload_status("Creating rule {$rule['descr']}");
+
 			/* source address */
 			if (isset($rule['source']['any'])) {
 				$src = "any";
@@ -1474,6 +1489,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 
 function filter_rules_generate() {
 	global $config, $g;
+
+	update_filter_reload_status("Creating default rules");
 
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -1888,6 +1905,7 @@ EOD;
 
 		/* This is ugly, but we generate one anchor per queue */
 		foreach ($config['shaper']['queue'] as $queue) {
+			update_filter_reload_status("Creating filter anchor for {$rule['descr']} ...");
 			/* Add anchor to rules */
 			$ipfrules .= "anchor {$queue['name']} tagged {$queue['name']}\n";
 			/* Create rules for anchors */
@@ -1946,6 +1964,7 @@ EOD;
 						if($line <> "") { 
 							if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
 								$defq = find_default_queue($rule['interface']);
+								update_filter_reload_status("Locating queue information for {$rule['descr']} ...");
 								$ackq = get_ack_queue($rule['interface']);
 								if (($defq != "") and ($ackq != ""))
 									$line .= " queue ({$defq}, {$ackq}) ";
@@ -2187,6 +2206,8 @@ function create_firewall_outgoing_rules_to_itself() {
 function process_carp_nat_rules() {
 	global $g, $config;
 	
+	update_filter_reload_status("Creating CARP NAT rules");
+	
 	$wan_interface = get_real_wan_interface();
 	
 	if(isset($config['system']['developerspew'])) {
@@ -2292,6 +2313,8 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 function carp_sync_client() {
 
 	global $config, $g;
+	
+	update_filter_reload_status("Building CARP sync information");
 
 	if($g['booting'])
 		return;

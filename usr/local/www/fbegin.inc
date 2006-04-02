@@ -163,6 +163,7 @@ require_once("notices.inc");
 							<?php endif; ?>
 							<li><a href="/carp_status.php" class="navlnk">CARP (failover)</a></li>		
 							<li><a href="/diag_dhcp_leases.php" class="navlnk">DHCP leases</a></li>
+							<li><a href="/status_filter_reload.php" class="navlnk">Filter Reload Status</a></li>
 							<li><a href="/status_interfaces.php" class="navlnk">Interfaces</a></li>
 							<li><a href="/diag_ipsec_sad.php" class="navlnk">IPsec</a></li>
 							<?php if($g['platform'] == "pfSense"): ?>

@@ -141,5 +141,9 @@ if (typeof getURL == 'undefined') {
 window.setTimeout('update_status_thread()', 2500);
 </script>
 
+<p>
+
+This page will automatically refresh every 3 seconds until the filter is done reloading.
+
 </body>
 </html>

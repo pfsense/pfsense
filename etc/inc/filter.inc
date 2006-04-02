@@ -837,6 +837,8 @@ function filter_nat_rules_generate() {
 						if($starting_localhost_port < 19991) {
 							for($x=$extport[0]; $x<$range_end; $x++) {
 								
+								update_filter_reload_status("Creating reflection rule for {$rule['descr']}...");
+								
 								$starting_localhost_port++;
 								
 								if($rule['protocol'] == "tcp/udp") {
@@ -1141,6 +1143,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				$foundlb = 0;
 				if(is_array($config['load_balancer']['lbpool'])) {
 					foreach($config['load_balancer']['lbpool'] as $lb) {
+						update_filter_reload_status("Creating load balancing item...");
 						if($lb['name'] == $rule['gateway']) {
 							$gateway = $rule['gateway'];
 							/*
@@ -1850,6 +1853,7 @@ EOD;
 		$rule_arr = array();
 		$ipfrules .= "# Anchors for rules that might be matched by queues\n";
 		foreach ($config['filter']['rule'] as $rule) {
+			update_filter_reload_status("Pre-caching {$rule['descr']}...");
 			$line = "";
 			if (!isset($rule['disabled'])) {
 				if ($rule['interface'] == "pptp") {
@@ -1901,10 +1905,10 @@ EOD;
 			fclose($fd);
 		}
 	}
-
-
+	
 	if (isset($config['filter']['rule'])) {
 		foreach ($config['filter']['rule'] as $rule) {
+			/* Pre-cache all our rules so we only have to generate them once */
 			$line = "";
 			if (!isset($rule['disabled'])) {
 				if ($rule['interface'] == "pptp") {
@@ -1999,6 +2003,7 @@ EOD;
 		
 		if(is_array($config['ipsec']['tunnel']) && isset($config['ipsec']['enable'])) {
 			foreach ($config['ipsec']['tunnel'] as $tunnel) {
+				update_filter_reload_status("Creating IPSEC tunnel items {$tunnel['descr']}...");
 				/* if tunnel is disabled, lets skip to next item */
 				if(isset($tunnel['disabled']))
 					continue;
@@ -2106,7 +2111,7 @@ function create_firewall_outgoing_rules_to_itself() {
 		$ints = array();
 		$int = filter_translate_type_to_real_interface($ifname);
 		/* if the interface is pppoe, set the ng0 interface */
-		update_filter_reload_status("Creating firewall rules ($int)...");
+		update_filter_reload_status("Creating IPSEC tunnel items {$tunnel['descr']}...");
 		$ip = find_interface_ip($int);
 		if ($config['interfaces'][$ifname]['ipaddr'] == "pppoe")
 			$int = " { " . filter_translate_type_to_real_interface($ifname) . " ng0 } ";

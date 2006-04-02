@@ -2124,7 +2124,8 @@
 				    $rule['protocol'] = $otherclient[1];
 				}
     
-			    $config['shaper']['rule'][] = $rule;
+				if($rule['inqueue'] != "") 
+					$config['shaper']['rule'][] = $rule;
 		    }
 		}
 

@@ -46,6 +46,7 @@ $pconfig['webguiport'] = $config['system']['webgui']['port'];
 $pconfig['timezone'] = $config['system']['timezone'];
 $pconfig['timeupdateinterval'] = $config['system']['time-update-interval'];
 $pconfig['timeservers'] = $config['system']['timeservers'];
+$pconfig['theme'] = $config['system']['theme'];
 
 if (!isset($pconfig['timeupdateinterval']))
 	$pconfig['timeupdateinterval'] = 300;
@@ -121,6 +122,9 @@ if ($_POST) {
 		update_if_changed("timezone", $config['system']['timezone'], $_POST['timezone']);
 		update_if_changed("NTP servers", $config['system']['timeservers'], strtolower($_POST['timeservers']));
 		update_if_changed("NTP update interval", $config['system']['time-update-interval'], $_POST['timeupdateinterval']);
+
+		/* pfSense themes */
+		update_if_changed("System Theme", $config['theme'], $_POST['theme']);		
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
 		unset($config['system']['dnsserver']);
@@ -269,7 +273,34 @@ include("head.inc");
                     hosts (only one required). Remember to set up at least one
                     DNS server if you enter a host name here!</span></td>
                 </tr>
-                <tr>
+				<tr>
+					<td colspan="2" class="list" height="12">&nbsp;</td>
+				</tr>	
+				<tr>
+					<td colspan="2" valign="top" class="listtopic">Theme</td>
+				</tr>
+				<tr>
+				<td width="22%" valign="top" class="vncell">&nbsp;</td>
+				<td width="78%" class="vtable">
+				    <select name="theme">
+<?php
+				$files = return_dir_as_array("/usr/local/www/themes/");
+				foreach($files as $f) {
+					if ( (substr($f, 0, 1) == "_") && !isset($config['system']['developer']) ) continue;
+					if($f == "CVS") continue;
+					$selected = "";
+					if($f == $config['theme'])
+						$selected = " SELECTED";
+					if($config['theme'] == "" and $f == "pfsense")
+						$selceted = " SELECTED";
+					echo "\t\t\t\t\t"."<option{$selected}>{$f}</option>\n";
+				}
+?>
+					</select>
+					<strong>This will change the look and feel of pfSense</strong>
+				</td>
+				</tr>				
+				<tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> <input name="Submit" type="submit" class="formbtn" value="Save">
                   </td>

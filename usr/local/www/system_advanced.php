@@ -46,7 +46,6 @@ $pconfig['noantilockout'] = isset($config['system']['webgui']['noantilockout']);
 $pconfig['filteringbridge_enable'] = isset($config['bridge']['filteringbridge']);
 $pconfig['tcpidletimeout'] = $config['filter']['tcpidletimeout'];
 $pconfig['maximumstates'] = $config['system']['maximumstates'];
-$pconfig['theme'] = $config['system']['theme'];
 $pconfig['disablerendevouz'] = $config['system']['disablerendevouz'];
 $pconfig['enableserial'] = $config['system']['enableserial'];
 $pconfig['disablefirmwarecheck'] = isset($config['system']['disablefirmwarecheck']);
@@ -202,9 +201,6 @@ if ($_POST) {
 	
 		$config['bridge']['filteringbridge'] = $_POST['filteringbridge_enable'] ? true : false;	
 	
-		/* pfSense themes */
-		$config['theme'] = $_POST['theme'];
-
 		write_config();
 			
 		$retval = 0;
@@ -306,33 +302,6 @@ include("head.inc");
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
 				<input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" />
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2" class="list" height="12">&nbsp;</td>
-		</tr>	
-		<tr>
-			<td colspan="2" valign="top" class="listtopic">Theme</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell">&nbsp;</td>
-			<td width="78%" class="vtable">
-			    <select name="theme">
-<?php
-				$files = return_dir_as_array("/usr/local/www/themes/");
-				foreach($files as $f) {
-					if ( (substr($f, 0, 1) == "_") && !isset($config['system']['developer']) ) continue;
-					if($f == "CVS") continue;
-					$selected = "";
-					if($f == $config['theme'])
-						$selected = " SELECTED";
-					if($config['theme'] == "" and $f == "pfsense")
-						$selceted = " SELECTED";
-					echo "\t\t\t\t\t"."<option{$selected}>{$f}</option>\n";
-				}
-?>
-				</select>
-				<strong>This will change the look and feel of pfSense</strong>
 			</td>
 		</tr>
 		<tr>
@@ -696,9 +665,6 @@ if ($_POST) {
 	
 		$config['bridge']['filteringbridge'] = $_POST['filteringbridge_enable'] ? true : false;	
 	
-		/* pfSense themes */
-		$config['theme'] = $_POST['theme'];
-
 		write_config();
 			
 		$retval = 0;

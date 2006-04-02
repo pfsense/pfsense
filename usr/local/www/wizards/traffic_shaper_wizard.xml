@@ -54,7 +54,7 @@
 	<stepsubmitphpaction>
 		step1_stepsubmitphpaction();
 	</stepsubmitphpaction>
-	<includefile>traffic_shaper_wizard.inc</includefile>
+	<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 </step>
 <step>
 	<id>2</id>
@@ -105,7 +105,7 @@
 	<stepsubmitphpaction>
 		step2_stepsubmitphpaction();
 	</stepsubmitphpaction>
-	<includefile>traffic_shaper_wizard.inc</includefile>
+	<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 </step>
 <step>
         <id>3</id>
@@ -259,7 +259,7 @@
 	<stepsubmitphpaction>
 		step3_stepsubmitphpaction();
 	</stepsubmitphpaction>
-	<includefile>traffic_shaper_wizard.inc</includefile>
+	<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 </step>
 <step>
         <id>4</id>
@@ -429,7 +429,7 @@
 	<stepsubmitphpaction>
 		step4_stepsubmitphpaction();
 	</stepsubmitphpaction>
-	<includefile>traffic_shaper_wizard.inc</includefile>
+	<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 </step>
 <step>
         <id>5</id>
@@ -588,7 +588,7 @@
 	<stepsubmitphpaction>
 		step5_stepsubmitphpaction();
 	</stepsubmitphpaction>
-	<includefile>traffic_shaper_wizard.inc</includefile>
+	<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 </step>
 <step>
         <id>6</id>
@@ -1145,7 +1145,7 @@
 	<stepsubmitphpaction>
 		step6_stepsubmitphpaction();
 	</stepsubmitphpaction>
-	<includefile>traffic_shaper_wizard.inc</includefile>
+	<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 </step>
 <step>
         <id>7</id>
@@ -1172,7 +1172,7 @@
 	<stepsubmitphpaction>
 		step7_stepsubmitphpaction();    
 	</stepsubmitphpaction>
-	<includefile>traffic_shaper_wizard.inc</includefile>
+	<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 </step>
 <step>
 	<id>8</id>
@@ -1183,7 +1183,7 @@
 			<type>submit</type>
 		</field>
 	</fields>
-	<includefile>traffic_shaper_wizard.inc</includefile>
+	<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 	<stepsubmitphpaction>
 		step8_stepsubmitphpaction();
 	</stepsubmitphpaction>

@@ -2033,4 +2033,13 @@ function kill_traffic_collector() {
 		mwexec("ps awwwux | grep '/[u]pdaterrd.sh' | awk '{print $2}' | xargs kill");
 }
 
+function update_filter_reload_status($text) {
+	global $g;
+	config_lock();
+	$fd = fopen("{$g['varrun_path']}/filter_reload_status", "w");
+	fwrite($fd, $text);
+	fclose($fd);
+	config_unlock();
+}
+
 ?>

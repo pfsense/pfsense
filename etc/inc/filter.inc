@@ -70,6 +70,7 @@ function filter_configure() {
 /* reload filter sync */
 function filter_configure_sync() {
 	global $config, $g, $after_filter_configure_run;
+	update_filter_reload_status("Initializing");
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_configure_sync() being called $mt\n";
@@ -81,20 +82,25 @@ function filter_configure_sync() {
 	
 	/* generate aliases */
 	if($g['booting'] == true) echo " aliases ";
+	update_filter_reload_status("Creating aliases");
 	$aliases = filter_generate_aliases();
 	/* generate nat rules */
 	  if($g['booting'] == true) echo " rules ";
+	update_filter_reload_status("Generating NAT rules");
 	$natrules = filter_nat_rules_generate();
 	/* generate pfctl rules */
 	if($g['booting'] == true) echo " filtering ";
+	update_filter_reload_status("Generating filter rules");
 	$pfrules = filter_rules_generate();
 
 	if(isset($config['shaper']['enable'])) {
 		/* generate altq interface setup parms */
 		if($g['booting'] == true) echo " altq-interfaces ";
+		update_filter_reload_status("Generating ALTQ interfaces");
 		$altq_ints = filter_setup_altq_interfaces();
 		/* generate altq queues */
 		if($g['booting'] == true) echo " altq-queues ";
+		update_filter_reload_status("Generating ALTQ queues");
 		$altq_queues = filter_generate_altq_queues($altq_ints);
 		/* generate altq rules */
 		if($g['booting'] == true) echo " altq-rules ";
@@ -103,8 +109,11 @@ function filter_configure_sync() {
 		 * this allows the shaper to be first match
 		 */
 		$pf_altq_rules = "block in all tag unshaped label \"SHAPER: first match rule\"\n";
+		update_filter_reload_status("Generating ALTQ rules");
 		$pf_altq_rules .= filter_generate_pf_altq_rules();
 	}
+	
+	update_filter_reload_status("Loading filter rules");
 	
 	/* enable pf if we need to, otherwise disable */
 	if( !isset( $config['system']['disablefilter'] ) ) {
@@ -185,6 +194,7 @@ function filter_configure_sync() {
 			$line_error = "The line in question reads [{$line_number}]: {$line_split[$line_number-1]}";
 		file_notice("filter_load", "There were error(s) loading the rules: {$rules_error} {$line_error}", "Filter Reload", "");
 		log_error("There were error(s) loading the rules: {$rules_error} - {$line_error}");
+		update_filter_reload_status("There were error(s) loading the rules: {$rules_error} - {$line_error}");
 		return;
 	}
 
@@ -213,6 +223,8 @@ function filter_configure_sync() {
 		}
 	}
 	
+	update_filter_reload_status("Syncing CARP data");
+	
 	/* sync carp entries to other firewalls */
 	carp_sync_client();
 	
@@ -229,6 +241,8 @@ function filter_configure_sync() {
 	foreach($after_filter_configure_run as $afcr) {
 		mwexec($afcr);
 	}
+	
+	update_filter_reload_status("Done");
 
 	return 0;
 }
@@ -2361,4 +2375,5 @@ function return_vpn_subnet($adr) {
 	return " # error - {$adr['network']} ";
 	
 }
+
 ?>

@@ -1982,15 +1982,6 @@
 
 
 		/* XXX: add some more protocols here! */
-
-		/* install default p2p catch all rule if user has enabled option (MUST BE LAST!) */
-		if($config['ezshaper']['step4']['p2pcatchall'] == "on") {
-		    $othersplist[] = array('p2pCatchAll', 'tcp', '', '', 'both', 'p2p');
-		    $othersplist[] = array('p2pCatchAll2','tcp', '', '', 'both', 'p2p');
-		    $othersplist[] = array('p2pCatchAll', 'udp', '', '', 'both', 'p2p');
-		    $othersplist[] = array('p2pCatchAll2','udp', '', '', 'both', 'p2p');
-		}
-
     
 		/* Set up/down protocols as higher weight */
 		/* loop through othersplist[] */
@@ -2027,9 +2018,53 @@
 			    $config['shaper']['rule'][] = $rule;
 		    }
 		}
-    }
 
+		/* install default p2p catch all rule if user has enabled option (MUST BE LAST!) */
+		if($config['ezshaper']['step4']['p2pcatchall'] == "on") {
+			$othersplist = array();
+		    $othersplist[] = array('p2pCatchAll', 'tcp', '', '', 'both', 'L');
+		    $othersplist[] = array('p2pCatchAll2', 'udp', '', '', 'both', 'L');
+		} else {
+			$othersplist = array();
+		}
+
+		/* Set up/down protocols as p2p weight */
+		/* loop through othersplist[] */
+		foreach ($othersplist as $otherclient) {
+		    foreach (array('source', 'destination') as $srcdest) {
+			    $rule = array();
+			    $config['shaper']['itemsshaped']++;
+			    if ($srcdest == 'source') {
+				    $destsrc = 'destination';
+				    $rule['inqueue'] = 'qP2PDown' . $otherclient[5]; /* posted value H or L */
+				    $rule['outqueue'] = 'qP2PUp' . $otherclient[5]; /* posted value H or L */
+				    $rule['in-interface'] = $downint;
+				    $rule['out-interface'] = $upint;
+				    $rule['source']['network'] = $downint;
+				    $rule['destination']['any'] = TRUE;
+				    $rule['descr'] = "p2pCatchAll outbound";
+			    } else {
+				    $destsrc = 'source';
+				    $rule['inqueue'] = 'qP2PUp' . $otherclient[5]; /* posted value H or L */
+				    $rule['outqueue'] = 'qP2PDown' . $otherclient[5]; /* posted value H or L */
+				    $rule['in-interface'] = $upint;
+				    $rule['out-interface'] = $downint;
+				    $rule['source']['any'] = TRUE;
+				    $rule['destination']['network'] = $downint;
+				    $rule['descr'] = "p2pCatchAll inbound";
+			    }
+				
+				if($otherclient[2] or $otherclient[3]) {
+				    $rule['destination']['port'] = $otherclient[2]."-".$otherclient[3];
+					if($otherclient[1] != '')
+				    $rule['protocol'] = $otherclient[1];
+				}
+    
+			    $config['shaper']['rule'][] = $rule;
+		    }
+		}
 		
+    }		
 	</stepsubmitphpaction>
 </step>
 <step>
@@ -2077,13 +2112,15 @@
 		unset($config['shaper']['itemsshaped']);
 
 		/* Create new rules */
-		filter_configure_sync();
+		filter_configure();
 
 		/* And we're no longer dirty! */
 		unlink_if_exists($d_shaperconfdirty_path);
 
+		update_filter_reload_status("Initializing");
+
 		/* Head over and check out the groovy queue stats */
-		header("Location: /status_queues.php");
+		header("Location: status_filter_reload.php");
 	</stepsubmitphpaction>
 </step>
 <step>
@@ -2096,7 +2133,7 @@
 		</field>
 	</fields>
 	<stepsubmitphpaction>
-		header("Location: /");
+		header("Location: status_filter_reload.php");
 	</stepsubmitphpaction>
 </step>
 </pfsensewizard>

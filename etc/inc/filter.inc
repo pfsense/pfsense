@@ -2221,6 +2221,8 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 	if($g['booting'])
 		return;
 	
+	update_filter_reload_status("Syncing CARP data to {$url}");
+
 	$config_copy = $config;
 
 	/* strip out nosync items */

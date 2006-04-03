@@ -994,9 +994,9 @@ function step7_stepsubmitphpaction() {
 					if($otherclient[1] != '')
 				    $rule['protocol'] = $otherclient[1];
 				}
-    
 				if($rule['inqueue'] != "" and $rule['in-interface'] != "" and $rule['out-interface'] != "") 
 					$config['shaper']['rule'][] = $rule;
+					
 		    }
 		}
 

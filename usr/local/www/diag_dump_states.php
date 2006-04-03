@@ -44,6 +44,7 @@ if($_GET['filter']) {
 <script src="/javascript/sorttable.js"></script>
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
+<form action="diag_dump_states.php" method="get" name="iform">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td>
 <?php

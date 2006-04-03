@@ -1030,7 +1030,7 @@ function system_setup_sysctl() {
 	$sysctl = return_filename_as_array("/etc/sysctl.conf");
 	foreach($sysctl as $sysc) {
 		if($sysc <> "")
-			mwexec("sysctl {$sysc}");
+			mwexec("sysctl {$sysc} 2>/dev/null");
 	}
 	if (isset($config['system']['sharednet'])) {
 		system_disable_arp_wrong_if();

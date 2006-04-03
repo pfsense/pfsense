@@ -75,7 +75,7 @@ function get_dns_servers() {
 *   null
 ******/
 function log_error($error) {
-	$page = $_SERVER['PHP_SELF'];
+	$page = $_SERVER['SCRIPT_NAME'];
 	syslog(LOG_WARNING, "$page: $error");
 	return;
 }

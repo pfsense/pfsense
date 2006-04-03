@@ -111,7 +111,7 @@ if(!isset($config['shaper']['enable'])) {
             </form>
 <br><a href="status_queues.php?reset=true">Reset</a> queues if they do not load.
 
-<meta http-equiv="refresh" content="60;url=<?php print $_SERVER['PHP_SELF']; ?>">
+<meta http-equiv="refresh" content="60;url=<?php print $_SERVER['SCRIPT_NAME']; ?>">
 
 <?php include("fend.inc"); ?>
 </body>
@@ -172,7 +172,7 @@ While(!Connection_Aborted()) {
 	$counter++;
 	if($counter > 40) {
 		echo "Redirecting to <a href=\"status_queues.php\">Queue Status</a>.<p>";
-		echo "<meta http-equiv=\"refresh\" content=\"1;url={$_SERVER['PHP_SELF']}\">";
+		echo "<meta http-equiv=\"refresh\" content=\"1;url={$_SERVER['SCRIPT_NAME']}\">";
 		mwexec("/usr/bin/killall pfctl");
 		mwexec("/usr/bin/killall pfctl");
 		exit;

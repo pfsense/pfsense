@@ -237,7 +237,7 @@ SRC=\"rrd/$curif-$interval-$curgraph.png\"><BR><BR>";
 
 </div>
 
-<meta http-equiv="refresh" content="300;url=<?php print $_SERVER['PHP_SELF']; ?>">
+<meta http-equiv="refresh" content="300;url=<?php print $_SERVER['SCRIPT_NAME']; ?>">
 
 <?php include("fend.inc"); ?>
 </body>

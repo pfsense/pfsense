@@ -290,6 +290,6 @@ function outputrule(req) {
 }
 </script>
 <?php include("fend.inc"); ?>
-<meta http-equiv="refresh" content="60;url=<?php print $_SERVER['PHP_SELF']; ?>">
+<meta http-equiv="refresh" content="60;url=<?php print $_SERVER['SCRIPT_NAME']; ?>">
 </body>
 </html>

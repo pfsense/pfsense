@@ -276,7 +276,7 @@ foreach ($leases as $data) {
 <p><strong>No leases file found. Is the DHCP server active?</strong></p>
 <?php endif; ?>
 
-<meta http-equiv="refresh" content="120;url=<?php print $_SERVER['PHP_SELF']; ?>">
+<meta http-equiv="refresh" content="120;url=<?php print $_SERVER['SCRIPT_NAME']; ?>">
 
 <?php include("fend.inc"); ?>
 </body>

@@ -145,7 +145,7 @@ foreach ($sad as $sa): ?>
 
 </table>
 
-<meta http-equiv="refresh" content="120;url=<?php print $_SERVER['PHP_SELF']; ?>">
+<meta http-equiv="refresh" content="120;url=<?php print $_SERVER['SCRIPT_NAME']; ?>">
 
 <?php include("fend.inc"); ?>
 </body>

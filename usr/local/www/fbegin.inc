@@ -150,7 +150,7 @@ require_once("notices.inc");
 						<div>VPN</div>
 						<ul class="subdrop">
 							<li><a href="/vpn_ipsec.php" class="navlnk">IPsec</a></li>
-							<li><a href="/vpn_openvpn_srv.php" class="navlnk">OpenVPN</a></li>
+							<li><a href="/pkg.php?xml=openvpn.xml" class="navlnk">OpenVPN</a></li>
 							<li><a href="/vpn_pptp.php" class="navlnk">PPTP</a></li>
 							<?php echo return_ext_menu("VPN"); ?>
 						</ul>

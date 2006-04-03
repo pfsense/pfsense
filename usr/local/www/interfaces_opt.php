@@ -428,6 +428,9 @@ if ($_POST) {
 		sleep(1);		
 		
 		interfaces_optional_configure_if($index);
+
+		/* load graphing functions */
+		enable_rrd_graphing();	
 		
 		/* sync filter configuration */
 		filter_configure();

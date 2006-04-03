@@ -197,6 +197,8 @@ include("head.inc");
                     <?=$natent['target'];?>
 					<?php if ($natent['external-address'])
 						echo "<br>(ext.: " . $natent['external-address'] . ")";
+					      else
+						echo "<br>(ext.: " . find_interface_ip(convert_friendly_interface_to_real_interface_name($natent['interface'])) . ")";
 					?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nnats;?>)" id="frd<?=$nnats;?>" ondblclick="document.location='firewall_nat_edit.php?id=<?=$nnats;?>';">

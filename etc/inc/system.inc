@@ -1043,7 +1043,7 @@ function system_disable_arp_wrong_if() {
 		$mt = microtime();
 		echo "system_disable_arp_wrong_if() being called $mt\n";
 	}	
-	mwexec("/sbin/sysctl -n net.link.ether.inet.log_arp_wrong_iface=0");
+	system("/sbin/sysctl -n net.link.ether.inet.log_arp_wrong_iface=0 2>/dev/null");
 }
 
 function system_enable_arp_wrong_if() {

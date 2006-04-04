@@ -222,8 +222,6 @@ if ($_POST) {
 	
 				$config['filter']['rule'][] = $filterent;
 				
-				touch($d_filterconfdirty_path);
-				
 				write_config();
 
 				header("Location: firewall_nat.php?savemsg=The%20changes%20have%20been%20saved.%20%20Please%20note%20that%20we%20have%20added%20an%20additional%20rule%20for%20the%20FTP%20helper.");

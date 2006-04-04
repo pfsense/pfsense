@@ -222,6 +222,8 @@ if ($_POST) {
 	
 				$config['filter']['rule'][] = $filterent;
 				
+				touch($d_filterconfdirty_path);
+				
 				write_config();
 
 				header("Location: firewall_nat.php?savemsg=The%20changes%20have%20been%20saved.%20%20Please%20note%20that%20we%20have%20added%20an%20additional%20rule%20for%20the%20FTP%20helper.");
@@ -257,7 +259,7 @@ include("fbegin.inc"); ?>
                   <td width="78%" class="vtable">
 					<select name="interface" class="formfld">
 						<?php
-						$interfaces = array('wan' => 'WAN', 'lan' => 'LAN', 'pptp' => 'PPTP');
+						$interfaces = array('wan' => 'WAN', 'lan' => 'LAN', 'pptp' => 'PPTP', 'pppoe' => 'PPPOE');
 						for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 							$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 						}

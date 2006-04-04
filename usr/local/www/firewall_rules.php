@@ -48,8 +48,8 @@ $iflist = array("lan" => "LAN", "wan" => "WAN");
 
 if ($config['pptpd']['mode'] == "server")
 	$iflist['pptp'] = "PPTP VPN";
-
-if ($config['pppoe']['mode'] == "server")
+	
+if (isset($config['pppoe']['enable']))
 	$iflist['pppoe'] = "PPPoE VPN";
 
 /* add ipsec filter gif interfaces */

@@ -38,6 +38,10 @@ if (!is_array($config['nat']['rule']))
 
 $a_nat = &$config['nat']['rule'];
 
+/* if a custom message has been passed along, lets process it */
+if ($_GET['savemsg'])
+	$savemsg = $_GET['savemsg'];
+
 if ($_POST) {
 
 	$pconfig = $_POST;
@@ -138,9 +142,13 @@ include("head.inc");
 <form action="firewall_nat.php" method="post" name="iform">
 <script type="text/javascript" language="javascript" src="row_toggle.js">
 </script>
-<?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_natconfdirty_path)): ?><p>
-<?php print_info_box_np("The NAT configuration has been changed.<br>You must apply the changes in order for them to take effect.");?>
+<?php
+	if($savemsg)
+		print_info_box_np("{$savemsg}<br>The NAT configuration has been changed.<br>You must apply the changes in order for them to take effect.");
+	else
+		print_info_box_np("The NAT configuration has been changed.<br>You must apply the changes in order for them to take effect.");
+?>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>

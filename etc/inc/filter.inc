@@ -1935,62 +1935,19 @@ EOD;
 			update_filter_reload_status("Pre-caching information for {$rule['descr']} ...");
 			$line = "";
 			if (!isset($rule['disabled'])) {
-				if ($rule['interface'] == "pptp") {
-					$n_pptp_units = $g['n_pptp_units'];
-					if($config['pptp']['n_pptp_units'] <> "")
-						$nif = $config['pptp']['n_pptp_units'];
-					/*
-					 *   now that PPTP server are user rules, detect
-					 *   that user is setting the pptp server rule 
-					 *   and setup for all netgraph interfaces
-					 */
-					$line = generate_user_filter_rule($rule, 0);
-					if($line <> "") { 
-						if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
-							$defq = find_default_queue($rule['interface']);
-							$ackq = get_ack_queue($rule['interface']);
-							if (($defq != "") and ($ackq != ""))
-								$line .= " queue ({$defq}, {$ackq}) ";
-						}
-						$ipfrules .= $line . "\n";
+				$line = generate_user_filter_rule($rule, 0);
+				if($line <> "") 
+					if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
+						$defq = find_default_queue($rule['interface']);
+						$ackq = get_ack_queue($rule['interface']);
+						if (($defq != "") and ($ackq != ""))
+							$line .= " queue ({$defq}, {$ackq}) ";
 					}
-				} else if($rule['interface'] == "pppoe") {
-					$n_pppoe_units = $g['n_pppoe_units'];
-					if($config['pppoe']['n_pppoe_units'] <> "")
-						$nif = $config['pppoe']['n_pppoe_units'];					
-					/*
-					 *   now that pppoe server are user rules, detect
-					 *   that user is setting the pppoe server rule 
-					 *   and setup for all netgraph interfaces
-					 */
-					$line = generate_user_filter_rule($rule, 0);
-					if($line <> "") { 
-						if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
-							$defq = find_default_queue($rule['interface']);
-							update_filter_reload_status("Locating queue information for {$rule['descr']} ...");
-							$ackq = get_ack_queue($rule['interface']);
-							if (($defq != "") and ($ackq != ""))
-								$line .= " queue ({$defq}, {$ackq}) ";
-						}
-						$ipfrules .= $line . "\n";
-					} else {
-						$ipfrules .= "# Error creating {$rule['descr']} \n";
-					}
-				} else {
-					$line = generate_user_filter_rule($rule, 0);
-					if($line <> "") 
-						if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
-							$defq = find_default_queue($rule['interface']);
-							$ackq = get_ack_queue($rule['interface']);
-							if (($defq != "") and ($ackq != ""))
-								$line .= " queue ({$defq}, {$ackq}) ";
-						}
-					// label
-					if($rule['descr'] <> "" and $line <> "")
-						$line .= " label \"USER_RULE: {$rule['descr']}\" ";
-					else
-						$line .= " label \"USER_RULE\" ";
-				}
+				// label
+				if($rule['descr'] <> "" and $line <> "")
+					$line .= " label \"USER_RULE: {$rule['descr']}\" ";
+				else
+					$line .= " label \"USER_RULE\" ";
 			}
 			$line .= "\n";
 			$ipfrules .= $line;

@@ -63,7 +63,7 @@ if($_GET['getstatus']) {
 
 <div id="reloadinfo" name="reloadinfo">This page will automatically refresh every 3 seconds until the filter is done reloading.</div>
 
-<?php include("fend.inc"); ?>
+
 
 <script language="javascript">
 /* init update "thread */
@@ -95,7 +95,7 @@ function update_data(obj) {
 </script>
 
 <script language="javascript">
-/**
+/*
  * getURL is a proprietary Adobe function, but it's simplicity has made it very
  * popular. If getURL is undefined we spin our own by wrapping XMLHttpRequest.
  */
@@ -140,6 +140,8 @@ if (typeof getURL == 'undefined') {
 }
 window.setTimeout('update_status_thread()', 2500);
 </script>
+
+<?php include("fend.inc"); ?>
 
 </body>
 </html>

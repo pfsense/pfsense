@@ -1030,7 +1030,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			$ispptp = true;
 		} else if($rule['interface'] == "pppoe") {
 			if ($pppoecfg['mode'] != "server") {
-				return "";
+				return " # Error creating pppoe rule";
 			}
 			$nif = $g['n_pppoe_units'];
 			if($config['pppoe']['n_pppoe_units'] <> "")
@@ -1119,7 +1119,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			if ($ispptp) {
 				$line .= "on ng" . (intval($ngcounter)+1) . " ";
 			} else if ($ispppoe) {
-				$line .= "on ng" . (intval($ngcounter)+1) . " ";
+				$line .= "on \$pppoe ";
 			} else {
 				// translate wan, man, lan, opt to real interface.
 				$interface = $rule['interface'];
@@ -1886,26 +1886,22 @@ EOD;
 					$n_pptp_units = $g['n_pptp_units'];
 					if($config['pptp']['n_pptp_units'] <> "")
 					$nif = $config['pptp']['n_pptp_units'];
-					for($xxx=0; $xxx < $n_pptp_units; $xxx++) {
-						/*
-						*   now that PPTP server are user rules, detect
-						*   that user is setting the pptp server rule
-						*   and setup for all netgraph interfaces
-						*/
-						$rule_arr[] = generate_user_filter_rule_arr($rule, $xxx);
-					}
+					/*
+					*   now that PPTP server are user rules, detect
+					*   that user is setting the pptp server rule
+					*   and setup for all netgraph interfaces
+					*/
+					$rule_arr[] = generate_user_filter_rule_arr($rule, 0);
 				} else if($rule['interface'] == "pppoe") {
 					$n_pppoe_units = $g['n_pppoe_units'];
 					if($config['pppoe']['n_pppoe_units'] <> "")
 						$nif = $config['pppoe']['n_pppoe_units'];
-					for($xxx=0; $xxx < $n_pppoe_units; $xxx++) {
-						/*
-						*   now that pppoe server are user rules, detect
-						*   that user is setting the pppoe server rule
-						*   and setup for all netgraph interfaces
-						*/
-						$rule_arr[] = generate_user_filter_rule_arr($rule, $xxx);
-					}					
+					/*
+					*   now that pppoe server are user rules, detect
+					*   that user is setting the pppoe server rule
+					*   and setup for all netgraph interfaces
+					*/
+					$rule_arr[] = generate_user_filter_rule_arr($rule, 0);
 				} else {
 					$rule_arr[] = generate_user_filter_rule_arr($rule, 0);
 				}
@@ -1942,48 +1938,44 @@ EOD;
 				if ($rule['interface'] == "pptp") {
 					$n_pptp_units = $g['n_pptp_units'];
 					if($config['pptp']['n_pptp_units'] <> "")
-						$nif = $config['pptp']['n_pptp_units'];					
-					for($xxx=0; $xxx < $n_pptp_units; $xxx++) {					
-						/*
-			 			 *   now that PPTP server are user rules, detect
-			 			 *   that user is setting the pptp server rule 
-                                      			 *   and setup for all netgraph interfaces
-                                     			 */
-						$line = generate_user_filter_rule($rule, $xxx);
-						if($line <> "") { 
-							if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
-								$defq = find_default_queue($rule['interface']);
-								$ackq = get_ack_queue($rule['interface']);
-								if (($defq != "") and ($ackq != ""))
-									$line .= " queue ({$defq}, {$ackq}) ";
-							}
-							$ipfrules .= $line . "\n";
+						$nif = $config['pptp']['n_pptp_units'];
+					/*
+					 *   now that PPTP server are user rules, detect
+					 *   that user is setting the pptp server rule 
+					 *   and setup for all netgraph interfaces
+					 */
+					$line = generate_user_filter_rule($rule, 0);
+					if($line <> "") { 
+						if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
+							$defq = find_default_queue($rule['interface']);
+							$ackq = get_ack_queue($rule['interface']);
+							if (($defq != "") and ($ackq != ""))
+								$line .= " queue ({$defq}, {$ackq}) ";
 						}
+						$ipfrules .= $line . "\n";
 					}
 				} else if($rule['interface'] == "pppoe") {
 					$n_pppoe_units = $g['n_pppoe_units'];
 					if($config['pppoe']['n_pppoe_units'] <> "")
 						$nif = $config['pppoe']['n_pppoe_units'];					
-					for($xxx=0; $xxx < $n_pppoe_units; $xxx++) {					
-						/*
-			 			 *   now that pppoe server are user rules, detect
-			 			 *   that user is setting the pppoe server rule 
-                                      	         *   and setup for all netgraph interfaces
-                                     		 */
-						$line = generate_user_filter_rule($rule, $xxx);
-						if($line <> "") { 
-							if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
-								$defq = find_default_queue($rule['interface']);
-								update_filter_reload_status("Locating queue information for {$rule['descr']} ...");
-								$ackq = get_ack_queue($rule['interface']);
-								if (($defq != "") and ($ackq != ""))
-									$line .= " queue ({$defq}, {$ackq}) ";
-							}
-							$ipfrules .= $line . "\n";
-						} else {
-							$ipfrules .= "# Error creating {$rule['descr']} \n";
+					/*
+					 *   now that pppoe server are user rules, detect
+					 *   that user is setting the pppoe server rule 
+					 *   and setup for all netgraph interfaces
+					 */
+					$line = generate_user_filter_rule($rule, 0);
+					if($line <> "") { 
+						if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
+							$defq = find_default_queue($rule['interface']);
+							update_filter_reload_status("Locating queue information for {$rule['descr']} ...");
+							$ackq = get_ack_queue($rule['interface']);
+							if (($defq != "") and ($ackq != ""))
+								$line .= " queue ({$defq}, {$ackq}) ";
 						}
-					}					
+						$ipfrules .= $line . "\n";
+					} else {
+						$ipfrules .= "# Error creating {$rule['descr']} \n";
+					}
 				} else {
 					$line = generate_user_filter_rule($rule, 0);
 					if($line <> "") 

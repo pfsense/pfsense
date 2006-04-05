@@ -2118,7 +2118,6 @@ function create_firewall_outgoing_rules_to_itself() {
 			/* first add a rule for the real interface, then for ng0 */
 			$rule .="pass out quick on {$int} all keep state label \"let out anything from firewall host itself\"\n";
 		}
-
 	}
 	
 	update_filter_reload_status("Setting up bridging items");
@@ -2129,24 +2128,10 @@ function create_firewall_outgoing_rules_to_itself() {
 	}
 	
 	update_filter_reload_status("Setting up pptp items");
-	/* netgraph pptp outgoing */
-	$n_pptp_units = $g['n_pptp_units'];
-	if($config['pptp']['n_pptp_units'] <> "")
-		$n_pptp_units = $config['pptp']['n_pptp_units'];	
-	for($x=0; $x<$n_pptp_units; $x++) {
-		if(does_interface_exist("ng{$x}") == true) 
-			$rule .="pass out quick on ng{$x} all keep state label \"let out anything from firewall host itself pptp\"\n";
-	}
+	$rule .="pass out quick on \$pptp all keep state label \"let out anything from firewall host itself pptp\"\n";
 	
 	update_filter_reload_status("Setting up pppoe items");
-	/* netgraph pppoe outgoing */
-	$n_pppoe_units = $g['n_pppoe_units'];
-	if($config['pppoe']['n_pppoe_units'] <> "")
-		$n_pppoe_units = $config['pppoe']['n_pppoe_units'];	
-	for($x=0; $x<$n_pppoe_units; $x++) {
-		if(does_interface_exist("ng{$x}") == true) 
-			$rule .="pass out quick on ng{$x} all keep state label \"let out anything from firewall host itself pppoe\"\n";
-	}
+	$rule .="pass out quick on \$pppoe all keep state label \"let out anything from firewall host itself pppoe\"\n";
 	
 	update_filter_reload_status("Setting up gif tunnels");
 	/* setup outgoing gif tunnels */

@@ -2128,10 +2128,12 @@ function create_firewall_outgoing_rules_to_itself() {
 	}
 	
 	update_filter_reload_status("Setting up pptp items");
-	$rule .="pass out quick on \$pptp all keep state label \"let out anything from firewall host itself pptp\"\n";
+	if($config['pptpd']['mode'] == "server")
+		$rule .="pass out quick on \$pptp all keep state label \"let out anything from firewall host itself pptp\"\n";
 	
 	update_filter_reload_status("Setting up pppoe items");
-	$rule .="pass out quick on \$pppoe all keep state label \"let out anything from firewall host itself pppoe\"\n";
+	if($config['pppoe']['mode'] == "server")
+		$rule .="pass out quick on \$pppoe all keep state label \"let out anything from firewall host itself pppoe\"\n";
 	
 	update_filter_reload_status("Setting up gif tunnels");
 	/* setup outgoing gif tunnels */

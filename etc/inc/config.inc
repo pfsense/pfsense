@@ -246,6 +246,7 @@ function generate_config_cache($config) {
 
 function discover_last_backup() {
         $backups = split("\n", `cd /cf/conf/backup && ls -lat | awk '{print \$9}' | grep -v "\\.\\."`);
+		$last_backup = "";
         foreach($backups as $backup)
                 if($backup)
                         $last_backup = $backup;

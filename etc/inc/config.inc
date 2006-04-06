@@ -276,7 +276,7 @@ function parse_config_bootup() {
 					echo "Resetting factory defaults...\n";
 					reset_factory_defaults();
 					if (file_exists("{$g['conf_path']}/config.xml")) {
-						config_unlock();
+						/* do nothing, we have a file. */
 					} else {
 						echo "No XML configuration file found - using factory defaults.\n";
 						echo "Make sure that the configuration floppy disk with the conf/config.xml\n";

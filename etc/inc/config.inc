@@ -244,6 +244,21 @@ function generate_config_cache($config) {
 	return true;
 }
 
+function discover_last_backup() {
+        $backups = split("\n", `cd /cf/conf/backup && ls -lat | awk '{print \$9}' | grep -v "\\.\\."`);
+        foreach($backups as $backup)
+                if($backup)
+                        $last_backup = $backup;
+        return $last_backup;
+}
+
+function restore_backup($file) {
+	if(file_exists($file)) {
+		conf_mount_rw();
+		system("mv $file /cf/conf/config.xml");
+	}
+}
+
 /****f* config/parse_config_bootup
  * NAME
  *   parse_config_bootup - Bootup-specific configuration checks.
@@ -260,15 +275,26 @@ function parse_config_bootup() {
 					/* try copying the default config. to the floppy */
 					echo "Resetting factory defaults...\n";
 					reset_factory_defaults();
-	
-					echo "No XML configuration file found - using factory defaults.\n";
-					echo "Make sure that the configuration floppy disk with the conf/config.xml\n";
-					echo "file is inserted. If it isn't, your configuration changes will be lost\n";
-					echo "on reboot.\n";
+					if (file_exists("{$g['conf_path']}/config.xml")) {
+						config_unlock();
+					} else {
+						echo "No XML configuration file found - using factory defaults.\n";
+						echo "Make sure that the configuration floppy disk with the conf/config.xml\n";
+						echo "file is inserted. If it isn't, your configuration changes will be lost\n";
+						echo "on reboot.\n";
+					}
 				} else {
-					echo "XML configuration file not found.  pfSense cannot continue booting.\n";
-					mwexec("/sbin/halt");
-					exit;
+					$last_backup = discover_last_backup();
+					if($last_backup) {
+						log_error("No config.xml found, attempting last known config restore.");
+						restore_backup("/cf/conf/backup/{$last_backup}");
+					}
+					if(!file_exists("{$g['conf_path']}/config.xml")) {
+						echo "XML configuration file not found.  pfSense cannot continue booting.\n";
+						mwexec("/sbin/halt");
+						exit;
+					}
+					log_error("Last known config found and restored.  Please double check your configuration file for accuracy.");
 				}
 			} else {
 				config_unlock();
@@ -276,7 +302,7 @@ function parse_config_bootup() {
 			}
 		}
 	}
-
+	
 	parse_config(true);
 	
 	if ((float)$config['version'] > (float)$g['latest_config']) {

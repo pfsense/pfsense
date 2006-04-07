@@ -976,7 +976,7 @@ function step7_stepbeforeformdisplay() {
 }
 
 function step7_stepsubmitphpaction() {
-		global $g, $config;
+		global $g, $config, $d_shaperconfdirty_path;
 		/* Sort rules by queue priority */
 		 sort_rule_by_queue_priority(); 
 

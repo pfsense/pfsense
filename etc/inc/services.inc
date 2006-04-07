@@ -442,6 +442,11 @@ function services_dyndns_configure() {
 
 		log_error("DynDns: Running updatedns()");
 
+		/* determine WAN interface name */
+		$wanif = get_real_wan_interface();
+		/* get ip */
+		$ip = find_interface_ip($wanif);
+
 		$dns = new updatedns($dnsService = $config['dyndns']['type'],
 							 $dnsHost = $config['dyndns']['host'],
 							 $dnsUser = $config['dyndns']['username'],

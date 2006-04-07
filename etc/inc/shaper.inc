@@ -229,7 +229,7 @@ function filter_setup_altq_interfaces() {
 /* Find the root queue for an interface */
 function find_root_queue($ifname) {
 	global $config;
-
+	$queue_names = "";
 	foreach ($config['shaper']['queue'] as $queue) {
 		$rule_interface = "";
 		$q = $queue;

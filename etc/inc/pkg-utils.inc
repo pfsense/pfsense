@@ -635,8 +635,7 @@ function delete_package($pkg, $pkgid) {
 	update_output_window($static_output);
 	$pkgid = get_pkg_id($pkgid);
 	$pkg_info = $config['installedpackages']['package'][$pkgid];
-	echo $id . "<p>";
-	echo $pkg_config . "<p>";
+
 	$configfile = $pkg_info['configurationfile'];
 	echo $configfile . "<p>";
 	if(file_exists("/usr/local/pkg/" . $configfile)) {

@@ -261,9 +261,9 @@ function f(ta_id){
 	    var srv_cert    ='<?= $servercert ?>';
 	    var dh_param    ='<?= $dhpem ?>';
 	    opener.document.forms[0].ca_cert.value=ca_cert;
-	    opener.document.forms[0].srv_key.value=srv_key;
-	    opener.document.forms[0].srv_cert.value=srv_cert;
-	    opener.document.forms[0].dh_param.value=dh_param;
+	    opener.document.forms[0].server_key.value=srv_key;
+	    opener.document.forms[0].server_cert.value=srv_cert;
+	    opener.document.forms[0].dh_params.value=dh_param;
 	    this.close();
 	-->
 	</script>

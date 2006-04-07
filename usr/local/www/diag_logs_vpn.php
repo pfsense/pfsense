@@ -48,6 +48,7 @@ function dump_clog_vpn($logfile, $tail) {
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
+	$logarr = "";
 	exec("/usr/sbin/clog " . $logfile . " | tail {$sor} -n " . $tail, $logarr);
 	
 	foreach ($logarr as $logent) {

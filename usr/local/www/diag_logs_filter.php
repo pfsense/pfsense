@@ -56,7 +56,7 @@ if ($_POST['clear']) {
 
 /* format filter logs */
 function conv_clog($logfile, $tail = 50) {
-	global $config, $nentries;
+	global $config, $nentries, $g;
 	$logarr = "";
 	/* make interface/port table */
 	$iftable = array();

@@ -1371,7 +1371,12 @@ function reload_interfaces_sync() {
 	
 	if($debug)
 		log_error("Cleaning up Interfaces");
-	
+
+	/* build an array of interfaces to work with */
+	$iflist = array("lan" => "LAN");
+	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+		$iflist['opt' . $i] = "opt{$i}";
+
 	foreach ($iflist as $ifent => $ifname) {
 		$ifname_real = convert_friendly_interface_to_real_interface_name($ifname);
 		if(stristr($ifname, "lo0") == true)

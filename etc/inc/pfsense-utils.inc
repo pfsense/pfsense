@@ -1627,7 +1627,12 @@ function reload_all_sync() {
 	
 	$wan_if = $config['interfaces']['wan']['if'];
 	$lan_if = $config['interfaces']['lan']['if'];
-	
+
+	/* build an array of interfaces to work with */
+	$iflist = array("lan" => "LAN");
+	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+		$iflist['opt' . $i] = "opt{$i}";
+
 	foreach ($iflist as $ifent => $ifname) {
 		$ifname_real = convert_friendly_interface_to_real_interface_name($ifname);
 		if(stristr($ifname, "lo0") == true)

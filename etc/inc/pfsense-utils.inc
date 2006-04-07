@@ -1373,7 +1373,7 @@ function reload_interfaces_sync() {
 		log_error("Cleaning up Interfaces");
 
 	/* build an array of interfaces to work with */
-	$iflist = array("lan" => "LAN");
+	$iflist = array("lan" => "LAN", "wan" => "WAN");
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
 		$iflist['opt' . $i] = "opt{$i}";
 
@@ -1629,7 +1629,7 @@ function reload_all_sync() {
 	$lan_if = $config['interfaces']['lan']['if'];
 
 	/* build an array of interfaces to work with */
-	$iflist = array("lan" => "LAN");
+	$iflist = array("lan" => "LAN", "wan" => "WAN");
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
 		$iflist['opt' . $i] = "opt{$i}";
 

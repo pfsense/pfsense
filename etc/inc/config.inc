@@ -1306,6 +1306,8 @@ EOD;
 function system_start_ftp_helpers() {
 	require_once("interfaces.inc");
 	global $config, $g;
+	
+	mwexec("/usr/bin/killall ftpsesame");
 
 	/* build an array of interfaces to work with */
 	$iflist = array("lan" => "LAN");
@@ -1338,13 +1340,14 @@ function system_start_ftp_helpers() {
 			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/pftpx -c {$port}\" | grep -v grep | sed \"s/  */ /g\"");
 			if(!$helpers && $ip)
  				mwexec("/usr/local/sbin/pftpx -c {$port} -g 8021 {$ip}");
+			if(!$helpers && !$ip)
+				mwexec("/usr/local/sbin/ftpsesame -i $int");				
 			$interface_counter++;
 		}
 	}
 	/* support bridged interfaces.  even they need ftp mojo */
 	$num_bridges = find_number_of_created_bridges();
 	$num_bridges++;
-	mwexec("/usr/bin/killall ftpsesame");
 	for($x=0; $x<$num_bridges; $x++) {
 		mwexec("/usr/local/sbin/ftpsesame -i bridge{$x}");
 	}	

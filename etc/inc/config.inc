@@ -1341,6 +1341,11 @@ function system_start_ftp_helpers() {
 			$interface_counter++;
 		}
 	}
+	$num_bridges = find_number_of_created_bridges();
+	mwexec("/usr/bin/killall ftpsesame");
+	for($x=0; $x<$num_bridges; $x++) {
+		mwexec("/usr/local/sbin/ftpsesame -i bridge{$x}");
+	}	
 }
 
 function cleanup_backupcache($revisions = 30) {

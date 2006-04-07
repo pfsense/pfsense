@@ -157,7 +157,7 @@
 		<field>
 			<fieldname>server_cert</fieldname>
 			<fielddescr>Server certificate</fielddescr>
-			<description>Paste your server certificate in X.509 format here.</description>
+			<description>Paste your server certificate in X.509 format here.  You can also create certificates &lt;a target="_new" href="vpn_openvpn_create_certs.php"&gt;automatically.&lt;/%gt;</description>
 			<type>textarea</type>
 			<encoding>base64</encoding>
 			<rows>8</rows>
@@ -166,7 +166,7 @@
 		<field>
 			<fieldname>server_key</fieldname>
 			<fielddescr>Server key</fielddescr>
-			<description>Paste your server key in RSA format here.</description>
+			<description>Paste your server key in RSA format here.  You can also create certificates &lt;a target="_new" href="vpn_openvpn_create_certs.php"&gt;automatically.&lt;/%gt;</description>
 			<type>textarea</type>
 			<encoding>base64</encoding>
 			<rows>8</rows>

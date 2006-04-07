@@ -343,6 +343,9 @@ function interfaces_optional_configure_if($opti) {
 
 function interfaces_carp_configure() {
 	global $g, $config, $debugging;
+	$balanacing = "";
+	$pfsyncinterface = "";
+	$pfsyncenabled = "";
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "interfaces_carp_configure() being called $mt\n";

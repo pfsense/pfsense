@@ -39,7 +39,7 @@
 		$time_now = time();
 		if($time_now - $last_login_time < 20) {
 			log_error("Console respawn bug detected.  CTRL-C to exit.");
-			sleep(600);
+			sleep(6600);
 		}
 	}
 	$fd = fopen("{$g['varrun_path']}/lastlogin", "w");

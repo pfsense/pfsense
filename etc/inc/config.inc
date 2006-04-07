@@ -1318,7 +1318,7 @@ function system_start_ftp_helpers() {
 		/*    if the ftp proxy is disabled for this interface then kill pftpx 
 		 *    instance and continue. note that the helpers for port forwards are 
 		 *    launched in a  different sequence so we are filtering them out 
-                 *    here by not including -c {$port} -g 8021 first.
+         *    here by not including -c {$port} -g 8021 first.
 		 */
 		$port = 8021 + $interface_counter;
 		if(isset($config['interfaces'][$ifname]['disableftpproxy'])) {
@@ -1341,7 +1341,9 @@ function system_start_ftp_helpers() {
 			$interface_counter++;
 		}
 	}
+	/* support bridged interfaces.  even they need ftp mojo */
 	$num_bridges = find_number_of_created_bridges();
+	$num_bridges++;
 	mwexec("/usr/bin/killall ftpsesame");
 	for($x=0; $x<$num_bridges; $x++) {
 		mwexec("/usr/local/sbin/ftpsesame -i bridge{$x}");

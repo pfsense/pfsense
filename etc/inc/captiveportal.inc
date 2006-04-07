@@ -184,7 +184,12 @@ EOD;
 		 * 	       addresses.
 		 */
 		$use_fastcgi = false;
-		
+
+		if ($config['captiveportal']['maxproc'])
+			$maxproc = $config['captiveportal']['maxproc'];
+		else
+			$maxproc = 16;
+					
 		if(isset($config['captiveportal']['httpslogin'])) {
 			$cert = base64_decode($config['captiveportal']['certificate']);
 			$key = base64_decode($config['captiveportal']['private-key']);
@@ -193,11 +198,6 @@ EOD;
 				$cert, $key, "lighty-CaptivePortal-ssl.pid", "8001", "/usr/local/captiveportal/",
 					"cert-portal.pem", "1", $maxproc, $use_fastcgi, true);
 		}
-		
-		if ($config['captiveportal']['maxproc'])
-			$maxproc = $config['captiveportal']['maxproc'];
-		else
-			$maxproc = 16;
 		
 		/* generate lighttpd configuration */
 		system_generate_lighty_config("{$g['varetc_path']}/lighty-CaptivePortal.conf",

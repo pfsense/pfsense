@@ -253,7 +253,9 @@ include("head.inc");
               <tr>
                 <td colspan="2" class="listtopic">
                   <?=htmlspecialchars($ifname);?>
-                  interface</td>
+				  interface 
+				  (<?=convert_friendly_interface_to_real_interface_name($ifname);?>)                  
+				</td>
               </tr>
               <tr>
                 <td width="22%" class="vncellt">Status</td>

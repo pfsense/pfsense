@@ -1137,7 +1137,6 @@ function get_memory() {
 			$avail = $matches[1];
 		return array($real[0],$avail[0]);	
 	}
-	return array("64","64");
 }
 
 /*

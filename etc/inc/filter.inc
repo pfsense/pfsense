@@ -1397,7 +1397,6 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			
 			if (!$dst || ($dst == "/")) {
 				return "# returning at $dst == \"/\"";
-				break;
 			}
 			
 			$line .= "to $dst ";

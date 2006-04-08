@@ -84,6 +84,12 @@ if [ ! -L /etc/syslog.conf ]; then
 fi
 
 # Repair symlinks if they are broken
+if [ ! -L /usr/local/www/rrd ]; then
+	rm -rf /usr/local/www/rrd
+	ln -s /var/db/rrd /usr/local/www/rrd
+fi
+
+# Repair symlinks if they are broken
 if [ ! -L /etc/hosts ]; then
 	rm -rf /etc/hosts
 	ln -s /var/etc/hosts /etc/hosts    

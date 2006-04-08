@@ -684,6 +684,7 @@ function filter_nat_rules_generate() {
 		else
 			$vpns = "any";
 		$int_ip = find_interface_ip($tmp_interface);
+		/* if interface lacks an ip, dont setup a rdr for ftp.  they are most likely on a bridged interface */
 		if($int_ip) 
 			$natrules .= "rdr on \${$ifname_lower} proto tcp from any to {$vpns} port 21 -> 127.0.0.1 port {$tmp_port}\n";
 		$interface_counter++;

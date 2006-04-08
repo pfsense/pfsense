@@ -10,7 +10,11 @@
 
 if [ -e /usr/local/etc/rc.d/dev_bootstrap.sh ]; then
 	echo
-	echo "A bootstrap is most likely in progress."
+	echo "A developer bootstrap is most likely in progress."
+	echo "This operation bootstraps all developer files from"
+	echo "pfSense.com and also FreeBSD.org and builds a ISO"
+	echo "to verify the environment is sane."
+	echo
 	echo -n "Would you like to tail the progress [n]? "
 	read ANSWER
 	if [ "$ANSWER" = "y" ]; then

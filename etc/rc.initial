@@ -8,6 +8,19 @@
 # Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 # All rights reserved.
 
+if [ -e /usr/local/etc/rc.d/dev_bootstrap.sh ]; then
+	echo
+	echo "A bootstrap is most likely in progress."
+	echo -n "Would you like to tail the progress [n]? "
+	read ANSWER
+	if [ "$ANSWER" = "y" ]; then
+		echo
+		echo "Press CTRL-C to abort."
+		echo
+		tail -f /tmp/bootup_messages
+	fi
+fi
+
 # make sure the user can't kill us by pressing Ctrl-C,
 # ctrl-z, etc.
 trap : 2

@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 /*
-        Copyright (C) 2005 Bill Marquette <bill.marquette@gmail.com>
+        Copyright (C) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
         All rights reserved.
 
         Redistribution and use in source and binary forms, with or without
@@ -61,7 +61,7 @@ function passwd_backed_basic_auth() {
 
 		/* Check to see if user even exists */
 		$username = $HTTP_SERVER_VARS['AUTH_USER'];
-                if(!($line = array_shift(preg_grep("/^$username:.*$/", $authfile))))
+		if(!($line = array_shift(preg_grep("/^$username:.*$/", $authfile))))
 			continue;
 
 		/* Get crypted password */
@@ -89,13 +89,14 @@ function htpasswd_backed_basic_auth() {
 
         $authfile = file("/var/run/htpasswd");
 
-	/* sanity check to ensure that /usr/local/www/.htpasswd doesn't exist */
-	unlink_if_exists("/usr/local/www/.htpasswd");
+		/* sanity check to ensure that /usr/local/www/.htpasswd doesn't exist */
+		unlink_if_exists("/usr/local/www/.htpasswd");
 
         /* Prompt three times and give up */
         for($attempt = 0; $attempt <= 3; basic_auth_prompt()){
                 $attempt++;
-                /* Check for AUTH_USER */
+                
+        /* Check for AUTH_USER */
 		if ($HTTP_SERVER_VARS['PHP_AUTH_USER'] <> "") {
 			$HTTP_SERVER_VARS['AUTH_USER'] = $HTTP_SERVER_VARS['PHP_AUTH_USER'];
 			$HTTP_SERVER_VARS['AUTH_PW'] = $HTTP_SERVER_VARS['PHP_AUTH_PW'];

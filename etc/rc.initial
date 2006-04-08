@@ -19,7 +19,11 @@ if [ -e /usr/local/etc/rc.d/dev_bootstrap.sh ]; then
 	read ANSWER
 	if [ "$ANSWER" = "y" ]; then
 		echo
+		echo "Tailing developer bootstrap process."
+		echo
 		echo "Press CTRL-C to abort."
+		echo
+		echo "Note, this tailing process will exit once the operation is completed."
 		echo
 		tail -f /tmp/bootup_messages
 	fi

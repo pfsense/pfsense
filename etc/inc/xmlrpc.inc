@@ -3,7 +3,7 @@
 	$Id$
 
         xmlrpc.inc
-        Copyright (C) 2005 Colin Smith
+        Copyright (C) 2005-2006 Colin Smith
         All rights reserved.
 
         Redistribution and use in source and binary forms, with or without

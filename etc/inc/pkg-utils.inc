@@ -8,7 +8,7 @@
  *   $Id$
  ******
  *
- * Copyright (C) 2005 Colin Smith (ethethlay@gmail.com)
+ * Copyright (C) 2005-2006 Colin Smith (ethethlay@gmail.com)
  * All rights reserved.
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:

@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	interfaces.inc
-	Copyright (C) 2004-2005 Scott Ullrich
+	Copyright (C) 2004-2006 Scott Ullrich
 	All rights reserved.
 
 	function interfaces_wireless_configure is

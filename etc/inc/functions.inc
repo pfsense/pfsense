@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
     functions.inc
-    Copyright (C) 2004 Scott Ullrich
+    Copyright (C) 2004-2006 Scott Ullrich
     All rights reserved.
 
     originally part of m0n0wall (http://m0n0.ch/wall)

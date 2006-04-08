@@ -3,7 +3,7 @@
 /*
     globals.inc
     part of pfSense (www.pfsense.com)
-    Copyright (C) 2004 Scott Ullrich
+    Copyright (C) 2004-2006 Scott Ullrich
 
     Originally Part of m0n0wall
     Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.

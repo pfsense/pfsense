@@ -8,7 +8,7 @@
  *   $Id$
  ******
  *
- * Copyright (C) 2005 Scott Ullrich (sullrich@gmail.com)
+ * Copyright (C) 2004-2006 Scott Ullrich (sullrich@gmail.com)
  * All rights reserved.
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:

@@ -2,8 +2,8 @@
 /* $Id$ */
 /*
 	shaper.inc
-	Copyright (C) 2004 Scott Ullrich
-	Copyright (C) 2005 Bill Marquette
+	Copyright (C) 2004-2006 Scott Ullrich
+	Copyright (C) 2005-2006 Bill Marquette
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without

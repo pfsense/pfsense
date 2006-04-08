@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	filter.inc
-	Copyright (C) 2004,2005 Scott Ullrich
+	Copyright (C) 2004-2006 Scott Ullrich
         Copyright (C) 2005 	Bill Marquette
 	All rights reserved.
 

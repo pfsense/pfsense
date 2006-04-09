@@ -860,19 +860,24 @@ function filter_nat_rules_generate() {
 								update_filter_reload_status("Creating reflection rule for {$rule['descr']}...");
 								
 								$starting_localhost_port++;
+
+								$ifname_real = convert_friendly_interface_to_friendly_descr(strtolower($ifname));
 								
-								if($rule['protocol'] == "tcp/udp") {
-									$protocol = "{ tcp udp }";
-									fwrite($fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait\tnobody\t/usr/bin/nc nc -w 20 {$target} {$x}\n");
-								} else {
-									$protocol = $rule['protocol'];
-									fwrite($fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait\tnobody\t/usr/bin/nc nc -w 20 {$target} {$x}\n");
+								switch($rule['protocol']) { 
+									case "tcp/udp":
+										$protocol = "{ tcp udp }";
+										fwrite($fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait\tnobody\t/usr/bin/nc nc -w 20 {$target} {$x}\n");
+								  		$natrules .= "rdr on {$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
+										break;
+									case "tcp":
+									case "udp":
+										$protocol = $rule['protocol'];
+										fwrite($fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait\tnobody\t/usr/bin/nc nc -w 20 {$target} {$x}\n");
+								  		$natrules .= "rdr on {$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
+										break;
+									default:
+										break;
 								}
-								
-								$ifname_lower = convert_friendly_interface_to_friendly_descr(strtolower($ifname));
-								
-								$natrules .=
-								  "rdr on \${$ifname_lower} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
 								
 								if($starting_localhost_port > 19990) {
 									log_error("Not installing nat reflection rules. Maximum 1,000 reached.");

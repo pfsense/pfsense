@@ -33,7 +33,7 @@
 
 require("guiconfig.inc");
 
-$specialsrcdst = explode(" ", "any wanip lan pptp pppoe");
+$specialsrcdst = explode(" ", "any wanip lanip lan pptp pppoe");
 
 if (!is_array($config['filter']['rule'])) {
 	$config['filter']['rule'] = array();

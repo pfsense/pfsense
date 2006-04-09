@@ -929,8 +929,18 @@ function step6_stepsubmitphpaction() {
 			    $config['shaper']['itemsshaped']++;
 			    if ($srcdest == 'source') {
 				    $destsrc = 'destination';
-				    $rule['inqueue'] = 'qOthersDown' . $otherclient[5]; /* posted value H or L */
-				    $rule['outqueue'] = 'qOthersUp' . $otherclient[5]; /* posted value H or L */
+				    switch ($otherclient[5]) {
+					case "H":
+					case "L":
+				    		$rule['inqueue'] = 'qOthersDown' . $otherclient[5]; /* posted value H or L */
+				    		$rule['outqueue'] = 'qOthersUp' . $otherclient[5]; /* posted value H or L */
+						break;
+					case "D":
+				    		$rule['inqueue'] = "q${downint}def"; /* posted value H or L */
+				    		$rule['outqueue'] = "q${upint}def"; /* posted value H or L */
+						break;
+				    }
+						
 				    $rule['in-interface'] = $downint;
 				    $rule['out-interface'] = $upint;
 				    $rule['source']['network'] = $downint;
@@ -938,8 +948,17 @@ function step6_stepsubmitphpaction() {
 				    $rule['descr'] = "m_Other {$otherclient[0]} outbound";
 			    } else {
 				    $destsrc = 'source';
-				    $rule['inqueue'] = 'qOthersUp' . $otherclient[5]; /* posted value H or L */
-				    $rule['outqueue'] = 'qOthersDown' . $otherclient[5]; /* posted value H or L */
+				    switch ($otherclient[5]) {
+					case "H":
+					case "L":
+				    		$rule['inqueue'] = 'qOthersUp' . $otherclient[5]; /* posted value H or L */
+				    		$rule['outqueue'] = 'qOthersDown' . $otherclient[5]; /* posted value H or L */
+						break;
+					case "D":
+				    		$rule['inqueue'] = "q${upint}def"; /* posted value H or L */
+				    		$rule['outqueue'] = "q${downint}def"; /* posted value H or L */
+						break;
+				    }
 				    $rule['in-interface'] = $upint;
 				    $rule['out-interface'] = $downint;
 				    $rule['source']['any'] = TRUE;

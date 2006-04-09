@@ -798,7 +798,7 @@ function filter_nat_rules_generate() {
 							"rdr on \${$rdr_on} proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
 						else 
 							$natrules .=
-							"rdr on \${$rdr_on} proto {$rule['protocol']} from any to {$extaddr} } -> {$target}{$localport}";	
+							"rdr on \${$rdr_on} proto {$rule['protocol']} from any to { {$extaddr} } -> {$target}{$localport}";	
 				} else {
 					if($rule['protocol'] == "tcp/udp")
 						$natrules .=

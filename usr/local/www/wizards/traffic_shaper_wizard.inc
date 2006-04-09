@@ -949,9 +949,9 @@ function step6_stepsubmitphpaction() {
 				
 				if($otherclient[2] or $otherclient[3]) {
 				    $rule['destination']['port'] = $otherclient[2]."-".$otherclient[3];
-					if($otherclient[1] != '')
-				    $rule['protocol'] = $otherclient[1];
 				}
+				if($otherclient[1] != '')
+				    $rule['protocol'] = $otherclient[1];
     
 			    $config['shaper']['rule'][] = $rule;
 		    }

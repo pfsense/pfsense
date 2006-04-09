@@ -789,23 +789,34 @@ function filter_nat_rules_generate() {
 
 			if($dontinstallrdr == false) {
 				if ((!$extport[1]) || ($extport[0] == $extport[1])) {
-					if($rule['protocol'] == "tcp/udp")
-						$natrules .=
-						 "rdr on \${$rdr_on} proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
-					else
-						if($extport[0]) 
-							$natrules .=
-							"rdr on \${$rdr_on} proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
-						else 
-							$natrules .=
-							"rdr on \${$rdr_on} proto {$rule['protocol']} from any to { {$extaddr} } -> {$target}{$localport}";	
+
+					switch ($rule['protocol']) {
+						case "tcp/udp":
+							$natrules .= "{$nordr}rdr on $natif proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
+							break;
+						case "udp":
+						case "tcp":
+							if($extport[0]) 
+								$natrules .= "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
+							else 
+								$natrules .= "rdr on $natif proto {$rule['protocol']} from any to { {$extaddr} } -> {$target}{$localport}";
+							break;
+						default:
+							$natrules .= "rdr on $natif proto {$rule['protocol']} from any to { {$extaddr} } -> {$target}";
+							break;
+					}
 				} else {
-					if($rule['protocol'] == "tcp/udp")
-						$natrules .=
-						 "rdr on \${$rdr_on} proto { tcp udp } from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
-					else
-						$natrules .=
-						 "rdr on \${$rdr_on} proto {$rule['protocol']} from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
+					switch ($rule['protocol']) {
+						case "tcp/udp":
+							$natrules .= "{$nordr}rdr on $natif proto { tcp udp } from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
+							break;
+						case "udp":
+						case "tcp":
+							$natrules .= "{$nordr}rdr on $natif proto {$rule['protocol']} from any to { {$extaddr} } port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
+							break;
+						default:
+							$natrules .= "{$nordr}rdr on $natif proto {$rule['protocol']} from any to { {$extaddr} } -> {$target}";
+					}
 				}
 			}
 

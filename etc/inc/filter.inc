@@ -1287,6 +1287,9 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						case 'wanip':
 							$src = $curwanip;
 							break;						
+						case 'lanip':
+							$src = $lanip;
+							break;						
 						case 'lan':
 							$src = "{$lansa}/{$lansn}";
 							break;
@@ -1375,6 +1378,9 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					switch ($rule['destination']['network']) {
 						case 'wanip':
 							$dst = $curwanip;
+							break;						
+						case 'lanip':
+							$dst = $lanip;
 							break;						
 						case 'lan':
 							$dst = "{$lansa}/{$lansn}";

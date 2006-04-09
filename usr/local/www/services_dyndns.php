@@ -136,9 +136,9 @@ function enable_change(enable_change) {
 
 	endis = !(document.iform.enable.checked || enable_change);
 	document.iform.host.disabled = endis;
-	document.iform.mx.disabled = endis;
+	//document.iform.mx.disabled = endis;
 	document.iform.type.disabled = endis;
-	document.iform.wildcard.disabled = endis;
+	//document.iform.wildcard.disabled = endis;
 	document.iform.username.disabled = endis;
 	document.iform.password.disabled = endis;
 
@@ -196,20 +196,6 @@ function enable_change(enable_change) {
 		    </span>		    
                   </td>
 		</tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">MX</td>
-                  <td width="78%" class="vtable">
-                    <input name="mx" type="text" class="formfld" id="mx" size="30" value="<?=htmlspecialchars($pconfig['mx']);?>">
-                    <br>
-                    Set this option only if you need a special MX record. Not
-                    all services support this.</td>
-				</tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq">Wildcards</td>
-                  <td width="78%" class="vtable">
-                    <input name="wildcard" type="checkbox" id="wildcard" value="yes" <?php if ($pconfig['wildcard']) echo "checked"; ?>>
-                    Enable Wildcard</td>
-				</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Username</td>
                   <td width="78%" class="vtable">

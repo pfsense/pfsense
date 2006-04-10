@@ -119,6 +119,8 @@ if(!isset($config['shaper']['enable'])) {
 
 <?php
 
+ob_flush();
+
 sleep(3);
 
 $counter = 0;

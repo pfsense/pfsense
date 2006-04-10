@@ -1827,10 +1827,6 @@ function enable_rrd_graphing()
 
 	global $config, $g;
 
-	/* cdrom platform not supported due to read only /usr/local/www (no symlink) */
-	if($g['platform'] == "cdrom") 
-		return;
-
     $rrddbpath = "/var/db/rrd/";
     $rrdgraphpath = "/usr/local/www/rrd";
 	$rrdtrafficinterval = 60;

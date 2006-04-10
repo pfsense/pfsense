@@ -108,9 +108,6 @@ include("head.inc");
               &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">traffic shaper TOS matching; magic shaper; DHCP deny unknown clients;<br>
 			  &nbsp;&nbsp;&nbsp;&nbsp;IPsec user FQDNs; DHCP relay</font></em><br>
 			  <br>
-              Fred Wright (<a href="mailto:fw@well.com">fw@well.com</a>)<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">ipfilter window scaling fix; ipnat ICMP checksum adjustment fix; IPsec dead SA fixes</font></em><br>
-			  <br>
               Michael Hanselmann (<a href="mailto:m0n0@hansmi.ch">m0n0@hansmi.ch</a>)<br>
               &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">IDE hard disk standby</font></em><br>
 			  <br>
@@ -138,9 +135,8 @@ include("head.inc");
               Copyright &copy; 1996-2003 Internet Software Consortium. All rights
               reserved.<br>
               <br>
-              ipfilter (<a href="http://www.ipfilter.org" target="_blank">http://www.ipfilter.org</a>)<br>
-              Copyright &copy; 1993-2002 by Darren Reed.<br>
-              <br>
+              PF (<a href="http://www.openbsd.org/faq/pf" target="_blank">http://www.openbsd.org</a>)<br>
+			  <br>
               MPD - Multi-link PPP daemon for FreeBSD (<a href="http://www.dellroad.org/mpd" target="_blank">http://www.dellroad.org/mpd</a>)<br>
               Copyright &copy; 2003-2004, Archie L. Cobbs, Michael Bretterklieber, Alexander Motin<br>
 All rights reserved.<br>

@@ -85,7 +85,7 @@ fi
 
 # Repair symlinks if they are broken
 if [ ! -L /usr/local/www/rrd ]; then
-	rm -rf /usr/local/www/rrd
+	rm -rf /usr/local/www/rrd 2>/dev/null
 	ln -s /var/db/rrd /usr/local/www/rrd 2>/dev/null
 fi
 

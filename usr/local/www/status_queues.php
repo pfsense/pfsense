@@ -111,7 +111,7 @@ if(!isset($config['shaper']['enable'])) {
             </form>
 <br><a href="status_queues.php?reset=true">Reset</a> queues if they do not load.
 
-<meta http-equiv="refresh" content="60;url=<?php print $_SERVER['SCRIPT_NAME']; ?>">
+<meta http-equiv="refresh" content="600;url=<?php print $_SERVER['SCRIPT_NAME']; ?>">
 
 <?php include("fend.inc"); ?>
 </body>

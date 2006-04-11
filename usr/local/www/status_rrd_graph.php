@@ -58,7 +58,7 @@ include("head.inc");
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php
 $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
-$graphs = array('traffic' => 'Traffic', 'quality' => 'Quality');
+$graphs = array('traffic' => 'Traffic', 'quality' => 'Quality', 'queues' => 'Queues', 'packets' => 'Packets', 'spamd' => 'Spamd');
 
 for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 	$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
@@ -91,24 +91,26 @@ foreach ($graphs as $graph => $graphd) {
 <div>
 <?php
 
-$periods = array("day", "week", "month", "year");
-$graphs['day']['seconds'] = 86400;
-$graphs['day']['average'] = 300;
-$graphs['day']['scale'] = "HOUR:1:HOUR:6:HOUR:2:0:%H";
-$graphs['week']['seconds'] = 604800;
-$graphs['week']['average'] = 1800;
-$graphs['week']['scale'] = "HOUR:6:DAY:1:DAY:1:0:%a";
-$graphs['month']['seconds'] = 2592000;
-$graphs['month']['average'] = 7200;
-$graphs['month']['scale'] = "DAY:1:WEEK:1:WEEK:1:0:Week %W";
-$graphs['year']['seconds'] = 31536000;
-$graphs['year']['average'] = 86400;
-$graphs['year']['scale'] = "MONTH:1:MONTH:1:MONTH:1:0:%b";
+$periods = array("6h", "30h", "10d", "400d");
+$graphs['6h']['seconds'] = 21600;
+$graphs['6h']['average'] = 300;
+$graphs['6h']['scale'] = "MINUTE:10:MINUTE:30:MINUTE:30:0:%H%:%M";
+$graphs['30h']['seconds'] = 108000;
+$graphs['30h']['average'] = 1200;
+$graphs['30h']['scale'] = "HOUR:1:HOUR:6:HOUR:2:0:%H";
+$graphs['10d']['seconds'] = 864000;
+$graphs['10d']['average'] = 7200;
+$graphs['10d']['scale'] = "HOUR:6:DAY:1:DAY:1:0:%a";
+$graphs['400d']['seconds'] = 34560000;
+$graphs['400d']['average'] = 86400;
+$graphs['400d']['scale'] = "MONTH:1:MONTH:1:MONTH:1:0:%b";
 
 $rrddbpath = "/var/db/rrd/";
 $traffic = "-traffic.rrd";
 $quality = "-quality.rrd";
 $queues = "-queues.rrd";
+$packets = "-packets.rrd";
+$spamd = "spamd.rrd";
 $rrdtool = "/usr/local/bin/rrdtool";
 $uptime = "/usr/bin/uptime";
 $sed = "/usr/bin/sed";
@@ -131,6 +133,7 @@ if(($curgraph == "traffic") && (file_exists("$rrddbpath$curif$traffic"))) {
 		DEF:$curif-out_bytes=$rrddbpath$curif$traffic:out:AVERAGE \\
 		\"CDEF:$curif-in_bits=$curif-in_bytes,8,*\" \\
 		\"CDEF:$curif-out_bits=$curif-out_bytes,8,*\" \\
+		\"CDEF:$curif-bits_io=$curif-in_bits,$curif-out_bits,+\" \\
 		\"CDEF:$curif-out_bits_neg=$curif-out_bits,-1,*\" \\
 		\"CDEF:$curif-bytes_in=$curif-in_bytes,0,12500000,LIMIT,UN,0,$curif-in_bytes,IF,$average,*\" \\
 		\"CDEF:$curif-bytes_out=$curif-out_bytes,0,12500000,LIMIT,UN,0,$curif-out_bytes,IF,$average,*\" \\
@@ -155,12 +158,102 @@ if(($curgraph == "traffic") && (file_exists("$rrddbpath$curif$traffic"))) {
 		GPRINT:$curif-bytes_out_t:AVERAGE:'%7.2lf %sB o'\\
 		COMMENT:\"\\n\"\\
 		COMMENT:\"totals\"\\
-		GPRINT:$curif-bytes_in:AVERAGE:'%7.2lf %sB i'\\
-		GPRINT:$curif-bytes_out:AVERAGE:'%7.2lf %sB o'\\
-		GPRINT:$curif-bytes:AVERAGE:'%7.2lf %sB t'\\
+		GPRINT:$curif-bits_io:MAX:'%7.2lf %sb/s'\\
+		GPRINT:$curif-bits_io:AVERAGE:'%7.2lf %sb/s'\\
+		GPRINT:$curif-bits_io:LAST:'%7.2lf %sb/s'\\
 		GPRINT:$curif-bytes_t:AVERAGE:'%7.2lf %sB t'\\
         	COMMENT:\"\\n\"\\
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
+	}
+elseif(($curgraph == "packets") && (file_exists("$rrddbpath$curif$packets"))) {
+	/* define graphcmd for packets stats */
+	$graphcmd = "$rrdtool graph $rrddbpath$curif-$interval-$curgraph.png \\
+		--start -$seconds -e -$average \\
+		--vertical-label \"packets/sec\" \\
+		--title \"`hostname` - $curgraph - $interval\" \\
+		--height 100 --width 650 -x \"$scale\" \\
+		DEF:$curif-in_pps=$rrddbpath$curif$packets:in:AVERAGE \\
+		DEF:$curif-out_pps=$rrddbpath$curif$packets:out:AVERAGE \\
+		\"CDEF:$curif-out_pps_neg=$curif-out_pps,-1,*\" \\
+		\"CDEF:$curif-pps_in=$curif-in_pps,0,12500000,LIMIT,UN,0,$curif-in_pps,IF,$average,*\" \\
+		\"CDEF:$curif-pps_out=$curif-out_pps,0,12500000,LIMIT,UN,0,$curif-out_pps,IF,$average,*\" \\
+		\"CDEF:$curif-pps_io=$curif-in_pps,$curif-out_pps,+\" \\
+		\"CDEF:$curif-pps=$curif-pps_in,$curif-pps_out,+\" \\
+		\"CDEF:$curif-pps_in_t=$curif-in_pps,0,12500000,LIMIT,UN,0,$curif-in_pps,IF,$seconds,*\" \\
+		\"CDEF:$curif-pps_out_t=$curif-out_pps,0,12500000,LIMIT,UN,0,$curif-out_pps,IF,$seconds,*\" \\
+		\"CDEF:$curif-pps_t=$curif-pps_in_t,$curif-pps_out_t,+\" \\
+		AREA:$curif-in_pps#990000:$curif-in \\
+		AREA:$curif-out_pps_neg#666666:$curif-out \\
+		COMMENT:\"\\n\"\\
+		COMMENT:\"\t\t  maximum       average       current        period\\n\"\\
+		COMMENT:\"in\t\"\\
+		GPRINT:$curif-in_pps:MAX:'%7.2lf %s pps'\\
+		GPRINT:$curif-in_pps:AVERAGE:'%7.2lf %S pps'\\
+		GPRINT:$curif-in_pps:LAST:'%7.2lf %S pps'\\
+		GPRINT:$curif-pps_in_t:AVERAGE:'%7.2lf %s pkts'\\
+		COMMENT:\"\\n\"\\
+		COMMENT:\"out\t\"\\
+		GPRINT:$curif-out_pps:MAX:'%7.2lf %s pps'\\
+		GPRINT:$curif-out_pps:AVERAGE:'%7.2lf %S pps'\\
+		GPRINT:$curif-out_pps:LAST:'%7.2lf %S pps'\\
+		GPRINT:$curif-pps_out_t:AVERAGE:'%7.2lf %s pkts'\\
+		COMMENT:\"\\n\"\\
+		COMMENT:\"totals\"\\
+		GPRINT:$curif-pps_io:MAX:'%7.2lf %s pps'\\
+		GPRINT:$curif-pps_io:AVERAGE:'%7.2lf %s pps'\\
+		GPRINT:$curif-pps_io:LAST:'%7.2lf %s pps'\\
+		GPRINT:$curif-pps_t:AVERAGE:'%7.2lf %s pkts'\\
+        	COMMENT:\"\\n\"\\
+		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
+	}
+elseif(($curgraph == "queues") && (file_exists("$rrddbpath$curif$queues"))) {
+	/* define graphcmd for queue stats */
+	$graphcmd = "$rrdtool graph $rrddbpath$curif-$interval-$curgraph.png \\
+		--start -$seconds -e -$average \\
+		--vertical-label \"bits/sec\" \\
+		--title \"`hostname` - $curgraph - $interval\" \\
+		--height 200 --width 650 -x \"$scale\" \\";
+		if (!is_array($config['shaper']['queue'])) {
+			$config['shaper']['queue'] = array();
+		}
+		$a_queues = &$config['shaper']['queue'];
+		/* determine in and out interface at a later time. Asume wan for now.*/
+		$i = 0;
+		$t = 0;
+		$colors = array('000000','7B0000','990000','BB0000','CC0000','D90000','EE0000','FF0000','CC0000');
+		/* compare bytes/sec counters */
+		$downstream = (22000000/8);
+		$upstream   =  (2000000/8);
+		foreach ($a_queues as $queue) {
+			$name = $queue['name'];
+			if((stristr($name, "wan")) || (stristr($name, "up"))) {
+				$color = $colors[$t];
+				if($t > 0) { $stack = ":STACK"; }
+				$graphcmd .= "DEF:$name=$rrddbpath$curif$queues:$name:AVERAGE \\
+					\"CDEF:$name-bytes_out=$name,0,$upstream,LIMIT,UN,0,$name,IF\" \\
+					\"CDEF:$name-bits_out=$name-bytes_out,8,*\" \\
+					\"CDEF:$name-bits_out_neg=$name-bits_out,-1,*\" \\
+					AREA:$name-bits_out_neg#${color}:$name$stack \\";
+					$t++;
+			}
+		}
+		$graphcmd .= "COMMENT:\"\\n\" \\";
+		$colors = array('000000','7B7B7B','999999','BBBBBB','CCCCCC','D9D9D9','EEEEEE','FFFFFF','CCCCCC');
+		$stack = "";
+		foreach ($a_queues as $queue) {
+			$name = $queue['name'];
+			if((stristr($name, "lan")) || (stristr($name, "down"))) {
+				$color = $colors[$i];
+				if($i > 0) { $stack = ":STACK"; }
+				$graphcmd .= "DEF:$name=$rrddbpath$curif$queues:$name:AVERAGE \\
+					\"CDEF:$name-bytes_in=$name,0,$downstream,LIMIT,UN,0,$name,IF\" \\
+					\"CDEF:$name-bits_in=$name-bytes_in,8,*\" \\
+					AREA:$name-bits_in#${color}:$name$stack \\";
+					$i++;
+			}
+		}
+		$graphcmd .= "COMMENT:\"\\n\" \\";
+		$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}
 elseif(($curgraph == "quality") && (file_exists("$rrddbpath$curif$quality"))) {
 	/* make a link quality graphcmd, we only have WAN for now, others too follow */
@@ -211,6 +304,44 @@ elseif(($curgraph == "quality") && (file_exists("$rrddbpath$curif$quality"))) {
 		LINE1:roundtrip#000000:\"roundtrip average\\n\" \\
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}
+elseif(($curgraph == "spamd") && (file_exists("$rrddbpath$spamd"))) {
+	/* graph a spamd statistics graph */
+	$graphcmd = "$rrdtool graph $rrddbpath$curif-$interval-$curgraph.png \\
+		--start -$seconds -e -$average \\
+		--title=\"Spamd statistics for last $interval\" \\
+		--vertical-label=\"Connections / Time, minutes\" --rigid \\
+		--height 100 --width 650 --no-gridfit \\
+		-x \"$scale\" --lower-limit 0 --upper-limit=30 \\
+		DEF:timemin=$rrddbpath$spamd:time:MIN \\
+		DEF:timeavg=$rrddbpath$spamd:time:AVERAGE \\
+		DEF:timemax=$rrddbpath$spamd:time:MAX \\
+		DEF:consmin=$rrddbpath$spamd:conn:MIN \\
+		DEF:consavg=$rrddbpath$spamd:conn:AVERAGE \\
+		DEF:consmax=$rrddbpath$spamd:conn:MAX \\
+		CDEF:timeminadj=timemin,UN,0,timemin,IF,60,/ \\
+		CDEF:timeavgadj=timeavg,UN,0,timeavg,IF,60,/ \\
+		CDEF:timemaxadj=timemax,UN,0,timemax,IF,60,/ \\
+		CDEF:t1=timeminadj,timeavgadj,+,2,/,timeminadj,- \\
+		CDEF:t2=timeavgadj,timemaxadj,+,2,/,timeminadj,-,t1,- \\
+		CDEF:t3=timemaxadj,timeminadj,-,t1,-,t2,- \\
+		AREA:timeminadj \\
+		AREA:t1#DDDDFF::STACK \\
+		AREA:t2#AAAAFF::STACK \\
+		AREA:t3#DDDDFF::STACK \\
+		LINE2:timeavgadj#000066:\"Time \" \\
+		GPRINT:timeminadj:MIN:\"Min\\:%6.2lf\\t\" \\
+		GPRINT:timeavgadj:AVERAGE:\"Avg\\:%6.2lf\\t\" \\
+		GPRINT:timemaxadj:MAX:\"Max\\:%6.2lf\\n\" \\
+		AREA:consmax#00AA00BB \\
+		AREA:consmin#FFFFFFFF \\
+		LINE1:consmin#00660088 \\
+		LINE1:consmax#FFFFFF88 \\
+		LINE1:consavg#006600:\"Cons \" \\
+		GPRINT:consmin:MIN:\"Min\\:%6.2lf\\t\" \\
+		GPRINT:consavg:AVERAGE:\"Avg\\:%6.2lf\\t\" \\
+		GPRINT:consmax:MAX:\"Max\\:%6.2lf\\n\" \\
+		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
+	}
 else
 	{
 		PRINT "<b>Sorry we do not have data to graph $curgraph for $curif with.</b><br>";
@@ -237,7 +368,7 @@ SRC=\"rrd/$curif-$interval-$curgraph.png\"><BR><BR>";
 
 </div>
 
-<meta http-equiv="refresh" content="300;url=<?php print $_SERVER['SCRIPT_NAME']; ?>">
+<meta http-equiv="refresh" content="300;url=<?php print $_SERVER['PHP_SELF']; ?>">
 
 <?php include("fend.inc"); ?>
 </body>

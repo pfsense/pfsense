@@ -51,10 +51,20 @@ if ($_GET['graph']) {
 $pgtitle = "Status: RRD Graphs";
 include("head.inc");
 
+/*  Create an array of image names.  We
+ *  will use javascript code to automatically
+ *  refresh the images instead of a meta refresh
+ *  tag.
+ */
+$page_images = array();
+
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
+<script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
+
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php
 $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
@@ -125,6 +135,7 @@ $average = $graphs[$interval]['average'];
 $scale = $graphs[$interval]['scale'];
 
 if(($curgraph == "traffic") && (file_exists("$rrddbpath$curif$traffic"))) {
+	$page_images[] = "{$curif}-{$interval}-{$curgraph}";
 	/* define graphcmd for traffic stats */
 	$graphcmd = "$rrdtool graph $rrddbpath$curif-$interval-$curgraph.png \\
 		--start -$seconds -e -$average \\
@@ -168,6 +179,7 @@ if(($curgraph == "traffic") && (file_exists("$rrddbpath$curif$traffic"))) {
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}
 elseif(($curgraph == "packets") && (file_exists("$rrddbpath$curif$packets"))) {
+	$page_images[] = "{$curif}-{$interval}-{$curgraph}";
 	/* define graphcmd for packets stats */
 	$graphcmd = "$rrdtool graph $rrddbpath$curif-$interval-$curgraph.png \\
 		--start -$seconds -e -$average \\
@@ -209,6 +221,7 @@ elseif(($curgraph == "packets") && (file_exists("$rrddbpath$curif$packets"))) {
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}
 elseif(($curgraph == "queues") && (file_exists("$rrddbpath$curif$queues"))) {
+	$page_images[] = "{$curif}-{$interval}-{$curgraph}";
 	/* define graphcmd for queue stats */
 	$graphcmd = "$rrdtool graph $rrddbpath$curif-$interval-$curgraph.png \\
 		--start -$seconds -e -$average \\
@@ -258,6 +271,7 @@ elseif(($curgraph == "queues") && (file_exists("$rrddbpath$curif$queues"))) {
 		$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}
 elseif(($curgraph == "quality") && (file_exists("$rrddbpath$curif$quality"))) {
+	$page_images[] = "{$curif}-{$interval}-{$curgraph}";
 	/* make a link quality graphcmd, we only have WAN for now, others too follow */
 	$graphcmd = "$rrdtool graph $rrddbpath$curif-$interval-$curgraph.png \\
 		--start -$seconds -e -$average \\
@@ -307,6 +321,7 @@ elseif(($curgraph == "quality") && (file_exists("$rrddbpath$curif$quality"))) {
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}
 elseif(($curgraph == "spamd") && (file_exists("$rrddbpath$spamd"))) {
+	$page_images[] = "{$curif}-{$interval}-{$curgraph}";
 	/* graph a spamd statistics graph */
 	$graphcmd = "$rrdtool graph $rrddbpath$curif-$interval-$curgraph.png \\
 		--start -$seconds -e -$average \\
@@ -362,15 +377,28 @@ else
 	}
 
 PRINT "<B>Analysis for $curif -- $interval $curgraph</B><BR>";
-PRINT "<IMG BORDER=1 ALT=\"$ifname $curgraph Graph\" 
-SRC=\"rrd/$curif-$interval-$curgraph.png\"><BR><BR>";
+PRINT "<IMG BORDER=\"1\" id=\"{$curif}-{$interval}-{$curgraph}\" name=\"{$curif}-{$interval}-{$curgraph}\" ALT=\"$ifname $curgraph Graph\" 
+SRC=\"rrd/{$curif}-{$interval}-{$curgraph}.png\"><BR><BR>";
 }
 
 ?>
 
 </div>
+<script language="javascript">
+	function update_graph_images() {
+		<?php
+			/* generate update events utilizing prototype $('') feature */
+			echo "\n";
+			foreach($page_images as $pi) {
+				echo "\t\t\$('{$pi}').src='/rrd/{$pi}.png?tmp=" . rand() . "';\n";	
+			}
+		?>	
+		window.setTimeout('update_graph_images()', 25000);
+	}
+	window.setTimeout('update_graph_images()', 25000);
+</script>
 
-<meta http-equiv="refresh" content="300;url=<?php print $_SERVER['PHP_SELF']; ?>">
+<!--<meta http-equiv="refresh" content="300;url=<?php print $_SERVER['PHP_SELF']; ?>">-->
 
 <?php include("fend.inc"); ?>
 </body>

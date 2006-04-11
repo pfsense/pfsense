@@ -1844,7 +1844,7 @@ function enable_rrd_graphing()
 	$netstat = "/usr/bin/netstat";
 	$awk = "/usr/bin/awk";
 	$php = "/usr/local/bin/php";
-	$spamd_gather = "/usr/local/bin/spamd_gather.php";
+	$spamd_gather = "/usr/local/bin/spamd_gather_stats.php";
 
 	$gatewayip = exec("route -n get default | grep gateway | awk '{print $2}'");
 	/* if an alternative gateway is defined, use it. */

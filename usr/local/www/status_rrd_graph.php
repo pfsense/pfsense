@@ -66,6 +66,7 @@ for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 ?>
 <form name="form1" action="status_rrd_graph.php" method="get" style="padding-bottom: 10px; margin-bottom: 14px; 
 border-bottom: 1px solid #999999">
+<?php if ($curgraph <> "spamd"): ?>
 Interface:
 <select name="if" class="formfld" style="z-index: -10;" onchange="document.form1.submit()">
 <?php
@@ -76,6 +77,7 @@ foreach ($ifdescrs as $ifn => $ifd) {
 }
 ?>
 </select>
+<?php endif; ?>
 Graph:
 <select name="graph" class="formfld" style="z-index: -10;" onchange="document.form1.submit()">
 <?php
@@ -308,7 +310,7 @@ elseif(($curgraph == "spamd") && (file_exists("$rrddbpath$spamd"))) {
 	/* graph a spamd statistics graph */
 	$graphcmd = "$rrdtool graph $rrddbpath$curif-$interval-$curgraph.png \\
 		--start -$seconds -e -$average \\
-		--title=\"Spamd statistics for last $interval\" \\
+		--title=\"SpamD statistics for last $interval\" \\
 		--vertical-label=\"Connections/Timespan\" --rigid \\
 		--height 100 --width 650 --no-gridfit \\
 		-x \"$scale\" --lower-limit 0 --upper-limit=30 \\

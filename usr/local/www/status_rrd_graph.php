@@ -309,7 +309,7 @@ elseif(($curgraph == "spamd") && (file_exists("$rrddbpath$spamd"))) {
 	$graphcmd = "$rrdtool graph $rrddbpath$curif-$interval-$curgraph.png \\
 		--start -$seconds -e -$average \\
 		--title=\"Spamd statistics for last $interval\" \\
-		--vertical-label=\"Connections / Time, minutes\" --rigid \\
+		--vertical-label=\"Connections / Timespan\" --rigid \\
 		--height 100 --width 650 --no-gridfit \\
 		-x \"$scale\" --lower-limit 0 --upper-limit=30 \\
 		DEF:timemin=$rrddbpath$spamd:time:MIN \\

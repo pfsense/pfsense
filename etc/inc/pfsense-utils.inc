@@ -2018,7 +2018,7 @@ function enable_rrd_graphing()
 				}
 				$a_queues = &$config['shaper']['queue'];
 
-				if((file_exists("$rrddbpath$ifname$queues")) && (isset($config['shaper']['enable']))) {
+				if((!file_exists("$rrddbpath$ifname$queues")) && (isset($config['shaper']['enable']))) {
 					/* create rrd file if it does not exist */
 					$rrdcreate = "$rrdtool create $rrddbpath$ifname$queues --step $rrdqueuesinterval \\\n";
 					/* loop list of shaper queues */

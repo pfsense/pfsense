@@ -2066,9 +2066,9 @@ function enable_rrd_graphing()
 
 		$config['installedpackages']['spamdsettings']['enablerrd'] = true;
 
-		if((! file_exists("$rrddbpath$spamd")) && (isset($config['installedpackages']['spamdsettings']['enablerrd']))) {
+		if((file_exists("$rrddbpath$spamd")) && (isset($config['installedpackages']['spamdsettings']['enablerrd']))) {
 			/* set up the spamd rrd file */
-			if(! file_exists("$rrddbpath$spamd")) {
+			if(file_exists("$rrddbpath$spamd")) {
 				/* create rrd file if it does not exist */
 				$rrdcreate = "$rrdtool create $rrddbpath$spamd --step $rrdspamdinterval \
 					DS:conn:GAUGE:$trafficvalid:0:10000 \

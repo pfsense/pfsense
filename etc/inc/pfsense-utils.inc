@@ -2118,7 +2118,7 @@ function enable_rrd_graphing()
 		kill_traffic_collector();
 
 		/* start traffic collector */
-		mwexec_bg("/bin/sh $updaterrdscript");
+		mwexec_bg("/usr/bin/nice -n20 /bin/sh $updaterrdscript");
 
 	} else {
 		/* unmount and remove */

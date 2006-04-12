@@ -1199,6 +1199,9 @@ function call_pfsense_method($method, $params, $timeout = 0) {
  */
 function check_firmware_version($tocheck = "all", $return_php = true) {
 	global $g, $config;
+	$ip = gethostbyname('www.pfsense.com');
+	if($ip == "www.pfsense.com")
+		return false;		
 	$rawparams = array("firmware" => array("version" => trim(file_get_contents('/etc/version'))),
 		"kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel'))),
 		"base"     => array("version" => trim(file_get_contents('/etc/version_base'))),

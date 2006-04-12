@@ -1136,7 +1136,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			$line .= "quick ";
 			
 			if ($ispptp) {
-				$line .= "on ng" . (intval($ngcounter)+1) . " ";
+				$line .= "on \$pptp ";
 			} else if ($ispppoe) {
 				$line .= "on \$pppoe ";
 			} else {

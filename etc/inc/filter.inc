@@ -980,7 +980,7 @@ function generate_user_filter_rule_arr($rule, $ngcounter) {
 	$line = generate_user_filter_rule($rule, $ngcounter);
 	$ret['rule'] = $line;
 	if($rule['descr'] != "" and $line != "")
-		$ret['descr'] = "label \"USER_RULE: {$rule['descr']}\"";
+		$ret['descr'] = "label \"USER_RULE: " . str_replace('"', '', $rule['descr']) . "\"";
 	else
 		$ret['descr'] = "label \"USER_RULE\"";
 	$ret['ackq'] = get_ack_queue($rule['interface']);

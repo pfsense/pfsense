@@ -1928,6 +1928,7 @@ function enable_rrd_graphing()
 			/* set up the rrd file */
 			if(! file_exists("$rrddbpath$ifname$traffic")) {
 				/* create rrd file if it does not exist */
+				print "Create rrd database $ifname$traffic \n";
 				$rrdcreate = "$rrdtool create $rrddbpath$ifname$traffic --step $rrdtrafficinterval \
 					DS:in:COUNTER:$trafficvalid:0:$downstream \
 					DS:out:COUNTER:$trafficvalid:0:$upstream \
@@ -1952,6 +1953,7 @@ function enable_rrd_graphing()
 			/* set up the rrd file */
 			if(! file_exists("$rrddbpath$ifname$packets")) {
 				/* create rrd file if it does not exist */
+				print "Create rrd database $ifname$packets \n";
 				$rrdcreate = "$rrdtool create $rrddbpath$ifname$packets --step $rrdpacketsinterval \
 					DS:in:COUNTER:$packetsvalid:0:$downstream \
 					DS:out:COUNTER:$packetsvalid:0:$upstream \
@@ -1988,6 +1990,7 @@ function enable_rrd_graphing()
 				/* create link quality database */
 				if(! file_exists("$rrddbpath$ifname$quality")) {
 					/* create rrd file if it does not exist */
+					print "Create rrd database $ifname$quality \n";
 					$rrdcreate = "$rrdtool create $rrddbpath$ifname$quality --step $rrdqualityinterval \
 							DS:loss:GAUGE:$qualityvalid:0:100 \
 							DS:roundtrip:GAUGE:$qualityvalid:0:10000 \
@@ -2018,24 +2021,26 @@ function enable_rrd_graphing()
 				}
 				$a_queues = &$config['shaper']['queue'];
 
-				if((!file_exists("$rrddbpath$ifname$queues")) && (isset($config['shaper']['enable']))) {
-					/* create rrd file if it does not exist */
-					$rrdcreate = "$rrdtool create $rrddbpath$ifname$queues --step $rrdqueuesinterval \\\n";
-					/* loop list of shaper queues */
-					$q = 0;
-					 foreach ($a_queues as $queue) {
-						$name = $queue['name'];
-						$rrdcreate .= "DS:$name:COUNTER:$queuesvalid:0:$downstream \\\n";
+				if(isset($config['shaper']['enable'])) {
+					if(!file_exists("$rrddbpath$ifname$queues")) {
+						/* create rrd file if it does not exist */
+						print "Create rrd database $ifname$queues \n";
+						$rrdcreate = "$rrdtool create $rrddbpath$ifname$queues --step $rrdqueuesinterval \\\n";
+						/* loop list of shaper queues */
+						$q = 0;
+						 foreach ($a_queues as $queue) {
+							$name = $queue['name'];
+							$rrdcreate .= "DS:$name:COUNTER:$queuesvalid:0:$downstream \\\n";
+						}
+
+						$rrdcreate .= "RRA:AVERAGE:0.5:1:576 \
+						RRA:AVERAGE:0.5:6:672 \
+						RRA:AVERAGE:0.5:24:732 \
+						RRA:AVERAGE:0.5:288:1460 ";
+	
+						$rrdcreatel .= exec("$rrdcreate 2>&1");
+						$rrdcreatel .= "\n";
 					}
-
-					$rrdcreate .= "RRA:AVERAGE:0.5:1:576 \
-					RRA:AVERAGE:0.5:6:672 \
-					RRA:AVERAGE:0.5:24:732 \
-					RRA:AVERAGE:0.5:288:1460 ";
-
-					$rrdcreatel .= exec("$rrdcreate 2>&1");
-					$rrdcreatel .= "\n";
-				}
 
 				/* awk function to gather shaper data */
 				/* yes, it's special */
@@ -2054,7 +2059,7 @@ function enable_rrd_graphing()
 						dsdata = substr(dsdata,2); \\
 						printf \"-t \" dsname \" N:\" dsdata }' \\
 						dsname=\"\" dsdata=\"\"`\n\n";
-
+				}
 			}
 
 	        }
@@ -2066,10 +2071,11 @@ function enable_rrd_graphing()
 
 		$config['installedpackages']['spamdsettings']['enablerrd'] = true;
 
-		if((file_exists("$rrddbpath$spamd")) && (isset($config['installedpackages']['spamdsettings']['enablerrd']))) {
+		if(isset($config['installedpackages']['spamdsettings']['enablerrd'])) {
 			/* set up the spamd rrd file */
-			if(file_exists("$rrddbpath$spamd")) {
+			if(! file_exists("$rrddbpath$spamd")) {
 				/* create rrd file if it does not exist */
+				print "Create rrd database $spamd \n";
 				$rrdcreate = "$rrdtool create $rrddbpath$spamd --step $rrdspamdinterval \
 					DS:conn:GAUGE:$trafficvalid:0:10000 \
 					DS:time:GAUGE:$trafficvalid:0:86400 \
@@ -2093,6 +2099,7 @@ function enable_rrd_graphing()
 			$rrdupdatesh .= "# polling spamd for connections and tarpitness \n";
 			$rrdupdatesh .= "$rrdtool update $rrddbpath$spamd \\\n";
 			$rrdupdatesh .= "`$php -q $spamd_gather`\n";
+
 		}
 	
 		$rrdupdatesh .= "sleep 60\n";

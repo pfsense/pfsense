@@ -100,10 +100,6 @@ foreach ($graphs as $graph => $graphd) {
 </select>
 </form>
 
-<div id="loadingi" name="loadingi" style="visibility:visible">
-	<img src="/themes/metallic/images/misc/loader.gif">	
-</div>
-
 <p>
 
 <div>

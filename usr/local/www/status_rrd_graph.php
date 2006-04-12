@@ -99,7 +99,13 @@ foreach ($graphs as $graph => $graphd) {
 ?>
 </select>
 </form>
+
+<div id="loadingi" name="loadingi" style="visibility:visible">
+	<img src="/themes/metallic/images/misc/loader.gif">	
+</div>
+
 <p>
+
 <div>
 <?php
 
@@ -384,22 +390,10 @@ SRC=\"rrd/{$curif}-{$interval}-{$curgraph}.png\"><BR><BR>";
 ?>
 
 </div>
-<script language="javascript">
-	function update_graph_images() {
-		<?php
-			/* generate update events utilizing prototype $('') feature */
-			echo "\n";
-			foreach($page_images as $pi) {
-				echo "\t\t\$('{$pi}').src='/rrd/{$pi}.png?tmp=" . rand() . "';\n";	
-			}
-		?>	
-		window.setTimeout('update_graph_images()', 25000);
-	}
-	window.setTimeout('update_graph_images()', 25000);
-</script>
 
-<!--<meta http-equiv="refresh" content="300;url=<?php print $_SERVER['PHP_SELF']; ?>">-->
+<meta http-equiv="refresh" content="300;url=<?php print $_SERVER['PHP_SELF']; ?>">
 
 <?php include("fend.inc"); ?>
+
 </body>
 </html>

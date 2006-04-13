@@ -350,12 +350,12 @@ else
 
 	/* check modification time to see if we need to generate image */
 	if (file_exists("$rrddbpath$curif-$interval-$curgraph.png")) {
-		if((time() - filemtime("$rrddbpath$curif-$interval-$curgraph.png")) >= 60 ) {
-			system("$graphcmd 2>&1");
+		if((time() - filemtime("$rrddbpath$curif-$interval-$curgraph.png")) >= 280 ) {
+			system("$graphcmd >/dev/null");
 			usleep(500);
 		}			
 	} else {
-		system("$graphcmd 2>&1");
+		system("$graphcmd >/dev/null");
 		usleep(500);
 	}
 

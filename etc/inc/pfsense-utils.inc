@@ -1931,7 +1931,7 @@ function enable_rrd_graphing()
 			/* set up the rrd file */
 			if(! file_exists("$rrddbpath$ifname$traffic")) {
 				/* create rrd file if it does not exist */
-				print "Create rrd database $ifname$traffic \n";
+				
 				$rrdcreate = "$rrdtool create $rrddbpath$ifname$traffic --step $rrdtrafficinterval \
 					DS:in:COUNTER:$trafficvalid:0:$downstream \
 					DS:out:COUNTER:$trafficvalid:0:$upstream \
@@ -1956,7 +1956,7 @@ function enable_rrd_graphing()
 			/* set up the rrd file */
 			if(! file_exists("$rrddbpath$ifname$packets")) {
 				/* create rrd file if it does not exist */
-				print "Create rrd database $ifname$packets \n";
+				
 				$rrdcreate = "$rrdtool create $rrddbpath$ifname$packets --step $rrdpacketsinterval \
 					DS:in:COUNTER:$packetsvalid:0:$downstream \
 					DS:out:COUNTER:$packetsvalid:0:$upstream \
@@ -2107,14 +2107,14 @@ function enable_rrd_graphing()
 	
 		$rrdupdatesh .= "sleep 60\n";
 		$rrdupdatesh .= "done\n";
-		PRINT "Creating rrd update script\n";
+
 		/* write the rrd update script */
 		$updaterrdscript = "{$g['vardb_path']}/rrd/updaterrd.sh";
 		$fd = fopen("$updaterrdscript", "w");
 		fwrite($fd, "$rrdupdatesh");
 		fclose($fd);
 
-		PRINT "Creating rrd graph index\n";
+
 		/* write the index.html script */
 		$rrdgraphindex = "{$g['vardb_path']}/rrd/index.html";
 		$fd = fopen("$rrdgraphindex", "w");
@@ -2122,7 +2122,7 @@ function enable_rrd_graphing()
 		fclose($fd);
 	
 		/* print database creation errors. */
-		PRINT  "$rrdcreatel\n";
+
 
 		/* kill off traffic collectors */
 		kill_traffic_collector();

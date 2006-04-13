@@ -1013,6 +1013,12 @@ EOD;
 		}
 	}
 
+if(file_exists("/usr/sbin/kbdmap")) {
+	echo "Would you like to change the keyboard mapping [n]? ";
+	if (strcasecmp(chop(fgets($fp)), "y") == 0)
+		exec("/usr/sbin/kbdmap");
+}
+
 	echo <<<EOD
 
 Do you want to set up VLANs first?

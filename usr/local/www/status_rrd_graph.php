@@ -51,20 +51,10 @@ if ($_GET['graph']) {
 $pgtitle = "Status: RRD Graphs";
 include("head.inc");
 
-/*  Create an array of image names.  We
- *  will use javascript code to automatically
- *  refresh the images instead of a meta refresh
- *  tag.
- */
-$page_images = array();
-
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
-<script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
-
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php
 $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
@@ -76,7 +66,6 @@ for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 ?>
 <form name="form1" action="status_rrd_graph.php" method="get" style="padding-bottom: 10px; margin-bottom: 14px; 
 border-bottom: 1px solid #999999">
-<?php if ($curgraph <> "spamd"): ?>
 Interface:
 <select name="if" class="formfld" style="z-index: -10;" onchange="document.form1.submit()">
 <?php
@@ -87,7 +76,6 @@ foreach ($ifdescrs as $ifn => $ifd) {
 }
 ?>
 </select>
-<?php endif; ?>
 Graph:
 <select name="graph" class="formfld" style="z-index: -10;" onchange="document.form1.submit()">
 <?php
@@ -99,9 +87,7 @@ foreach ($graphs as $graph => $graphd) {
 ?>
 </select>
 </form>
-
 <p>
-
 <div>
 <?php
 
@@ -137,7 +123,6 @@ $average = $graphs[$interval]['average'];
 $scale = $graphs[$interval]['scale'];
 
 if(($curgraph == "traffic") && (file_exists("$rrddbpath$curif$traffic"))) {
-	$page_images[] = "{$curif}-{$interval}-{$curgraph}";
 	/* define graphcmd for traffic stats */
 	$graphcmd = "$rrdtool graph $rrddbpath$curif-$interval-$curgraph.png \\
 		--start -$seconds -e -$average \\
@@ -181,7 +166,6 @@ if(($curgraph == "traffic") && (file_exists("$rrddbpath$curif$traffic"))) {
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}
 elseif(($curgraph == "packets") && (file_exists("$rrddbpath$curif$packets"))) {
-	$page_images[] = "{$curif}-{$interval}-{$curgraph}";
 	/* define graphcmd for packets stats */
 	$graphcmd = "$rrdtool graph $rrddbpath$curif-$interval-$curgraph.png \\
 		--start -$seconds -e -$average \\
@@ -223,7 +207,6 @@ elseif(($curgraph == "packets") && (file_exists("$rrddbpath$curif$packets"))) {
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}
 elseif(($curgraph == "queues") && (file_exists("$rrddbpath$curif$queues"))) {
-	$page_images[] = "{$curif}-{$interval}-{$curgraph}";
 	/* define graphcmd for queue stats */
 	$graphcmd = "$rrdtool graph $rrddbpath$curif-$interval-$curgraph.png \\
 		--start -$seconds -e -$average \\
@@ -273,7 +256,6 @@ elseif(($curgraph == "queues") && (file_exists("$rrddbpath$curif$queues"))) {
 		$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}
 elseif(($curgraph == "quality") && (file_exists("$rrddbpath$curif$quality"))) {
-	$page_images[] = "{$curif}-{$interval}-{$curgraph}";
 	/* make a link quality graphcmd, we only have WAN for now, others too follow */
 	$graphcmd = "$rrdtool graph $rrddbpath$curif-$interval-$curgraph.png \\
 		--start -$seconds -e -$average \\
@@ -323,26 +305,25 @@ elseif(($curgraph == "quality") && (file_exists("$rrddbpath$curif$quality"))) {
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}
 elseif(($curgraph == "spamd") && (file_exists("$rrddbpath$spamd"))) {
-	$page_images[] = "{$curif}-{$interval}-{$curgraph}";
 	/* graph a spamd statistics graph */
 	$graphcmd = "$rrdtool graph $rrddbpath$curif-$interval-$curgraph.png \\
 		--start -$seconds -e -$average \\
-		--title=\"SpamD statistics for last $interval\" \\
-		--vertical-label=\"Connections/Timespan\" --rigid \\
-		--height 100 --width 650 --no-gridfit \\
-		-x \"$scale\" --lower-limit 0 --upper-limit=30 \\
-		DEF:timemin=$rrddbpath$spamd:time:MIN \\
-		DEF:timeavg=$rrddbpath$spamd:time:AVERAGE \\
-		DEF:timemax=$rrddbpath$spamd:time:MAX \\
+		--title=\"Spamd statistics for last $interval\" \\
+		--vertical-label=\"Conn / Time, sec.\" \\
+		--height 150 --width 650 --no-gridfit \\
+		-x \"$scale\" --lower-limit 0  \\
 		DEF:consmin=$rrddbpath$spamd:conn:MIN \\
 		DEF:consavg=$rrddbpath$spamd:conn:AVERAGE \\
 		DEF:consmax=$rrddbpath$spamd:conn:MAX \\
-		CDEF:timeminadj=timemin,UN,0,timemin,IF,60,/ \\
-		CDEF:timeavgadj=timeavg,UN,0,timeavg,IF,60,/ \\
-		CDEF:timemaxadj=timemax,UN,0,timemax,IF,60,/ \\
-		CDEF:t1=timeminadj,timeavgadj,+,2,/,timeminadj,- \\
-		CDEF:t2=timeavgadj,timemaxadj,+,2,/,timeminadj,-,t1,- \\
-		CDEF:t3=timemaxadj,timeminadj,-,t1,-,t2,- \\
+		DEF:timemin=$rrddbpath$spamd:time:MIN \\
+		DEF:timeavg=$rrddbpath$spamd:time:AVERAGE \\
+		DEF:timemax=$rrddbpath$spamd:time:MAX \\
+		\"CDEF:timeminadj=timemin,0,86400,LIMIT,UN,0,timemin,IF\" \\
+		\"CDEF:timeavgadj=timeavg,0,86400,LIMIT,UN,0,timeavg,IF\" \\
+		\"CDEF:timemaxadj=timemax,0,86400,LIMIT,UN,0,timemax,IF\" \\
+		\"CDEF:t1=timeminadj,timeavgadj,+,2,/,timeminadj,-\" \\
+		\"CDEF:t2=timeavgadj,timemaxadj,+,2,/,timeminadj,-,t1,-\" \\
+		\"CDEF:t3=timemaxadj,timeminadj,-,t1,-,t2,-\" \\
 		AREA:timeminadj \\
 		AREA:t1#DDDDFF::STACK \\
 		AREA:t2#AAAAFF::STACK \\
@@ -369,18 +350,18 @@ else
 
 	/* check modification time to see if we need to generate image */
 	if (file_exists("$rrddbpath$curif-$interval-$curgraph.png")) {
-		if((time() - filemtime("$rrddbpath$curif-$interval-$curgraph.png")) >= 280 ) {
-			system("$graphcmd >/dev/null");
+		if((time() - filemtime("$rrddbpath$curif-$interval-$curgraph.png")) >= 60 ) {
+			system("$graphcmd 2>&1");
 			usleep(500);
 		}			
 	} else {
-		system("$graphcmd >/dev/null");
+		system("$graphcmd 2>&1");
 		usleep(500);
 	}
 
 PRINT "<B>Analysis for $curif -- $interval $curgraph</B><BR>";
-PRINT "<IMG BORDER=\"1\" id=\"{$curif}-{$interval}-{$curgraph}\" name=\"{$curif}-{$interval}-{$curgraph}\" ALT=\"$ifname $curgraph Graph\" 
-SRC=\"rrd/{$curif}-{$interval}-{$curgraph}.png\"><BR><BR>";
+PRINT "<IMG BORDER=1 ALT=\"$ifname $curgraph Graph\" 
+SRC=\"rrd/$curif-$interval-$curgraph.png\"><BR><BR>";
 }
 
 ?>
@@ -390,6 +371,5 @@ SRC=\"rrd/{$curif}-{$interval}-{$curgraph}.png\"><BR><BR>";
 <meta http-equiv="refresh" content="300;url=<?php print $_SERVER['PHP_SELF']; ?>">
 
 <?php include("fend.inc"); ?>
-
 </body>
 </html>

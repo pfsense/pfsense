@@ -808,11 +808,11 @@ function filter_nat_rules_generate() {
 				} else {
 					switch ($rule['protocol']) {
 						case "tcp/udp":
-							$natrules .= "{$nordr}rdr on $natif proto { tcp udp } from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
+							$natrules .= "{$nordr}rdr on $natif proto { tcp udp } from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target}{$localport}:*";
 							break;
 						case "udp":
 						case "tcp":
-							$natrules .= "{$nordr}rdr on $natif proto {$rule['protocol']} from any to { {$extaddr} } port {$extport[0]}:{$extport[1]} -> {$target} port {$extport[0]}:*";
+							$natrules .= "{$nordr}rdr on $natif proto {$rule['protocol']} from any to { {$extaddr} } port {$extport[0]}:{$extport[1]} -> {$target}{$localport}:*";
 							break;
 						default:
 							$natrules .= "{$nordr}rdr on $natif proto {$rule['protocol']} from any to { {$extaddr} } -> {$target}";
@@ -860,36 +860,39 @@ function filter_nat_rules_generate() {
 						
 					$range_end++;
 					
+					if($rule['local-port']) 
+						$lrange_start = $rule['local-port'];
+
 					if($range_end - $extport[0] > 500) {
 						$range_end = $extport[0]+1;
 						log_error("Not installing nat reflection rules for a port range > 500");
 					} else {					
 						/* only install reflection rules for < 19991 items */
 						if($starting_localhost_port < 19991) {
+							$loc_pt = $lrange_start;
 							for($x=$extport[0]; $x<$range_end; $x++) {
 								
 								update_filter_reload_status("Creating reflection rule for {$rule['descr']}...");
 								
 								$starting_localhost_port++;
 
-								$ifname_real = convert_friendly_interface_to_friendly_descr(strtolower($ifname));
-								
 								switch($rule['protocol']) { 
+
 									case "tcp/udp":
 										$protocol = "{ tcp udp }";
-										fwrite($fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait.420\tnobody\t/usr/bin/nc nc -w 20 {$target} {$x}\n");
-								  		$natrules .= "rdr on \${$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
+										fwrite($fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$loc_pt}\n");
+								  		$natrules .= "rdr on {$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
 										break;
 									case "tcp":
 									case "udp":
 										$protocol = $rule['protocol'];
-										fwrite($fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait.420\tnobody\t/usr/bin/nc nc -w 20 {$target} {$x}\n");
-								  		$natrules .= "rdr on \${$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
+										fwrite($fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$loc_pt}\n");
+								  		$natrules .= "rdr on {$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
 										break;
 									default:
 										break;
 								}
-								
+								$loc_pt++;
 								if($starting_localhost_port > 19990) {
 									log_error("Not installing nat reflection rules. Maximum 1,000 reached.");
 									$x = $range_end+1;
@@ -909,7 +912,7 @@ function filter_nat_rules_generate() {
 			fclose($fd);				
 			$helpers = trim(exec("/bin/ps ax | /usr/bin/grep inetd | /usr/bin/grep -v grep | /usr/bin/grep 127"));
 			if(!$helpers)
-				mwexec("/usr/sbin/inetd -a 127.0.0.1 /var/etc/inetd.conf");
+				mwexec("/usr/sbin/inetd -wW -R 0 -a 127.0.0.1 /var/etc/inetd.conf");
 			else
 				mwexec("/usr/bin/killall -HUP inetd");
 			

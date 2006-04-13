@@ -876,18 +876,20 @@ function filter_nat_rules_generate() {
 								
 								$starting_localhost_port++;
 
+								$ifname_real = convert_friendly_interface_to_friendly_descr(strtolower($ifname));
+
 								switch($rule['protocol']) { 
 
 									case "tcp/udp":
 										$protocol = "{ tcp udp }";
 										fwrite($fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$loc_pt}\n");
-								  		$natrules .= "rdr on {$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
+								  		$natrules .= "rdr on \${$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
 										break;
 									case "tcp":
 									case "udp":
 										$protocol = $rule['protocol'];
 										fwrite($fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$loc_pt}\n");
-								  		$natrules .= "rdr on {$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
+								  		$natrules .= "rdr on \${$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
 										break;
 									default:
 										break;

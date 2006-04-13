@@ -73,6 +73,7 @@ echo " 8)  Shell"
 echo " 9)  PFtop"
 echo "10)  Filter Logs"
 echo "11)  Restart webConfigurator"
+echo "12)  Change keyboard mapping"
 if [ -f /var/db/pfi/capable_* ]; then
     if [ ! -L /cf/conf ]; then
 	echo "98)  Move configuration file to removable device"
@@ -125,6 +126,9 @@ case ${opmode} in
 	;;
 11)
 	/etc/rc.restart_webgui
+	;;
+12)
+	/usr/sbin/kbdmap
 	;;
 98)
 	if [ ! -f /tmp/config_moved ]; then

@@ -913,6 +913,7 @@ function captiveportal_write_elements() {
 			fwrite($fd,$decoded);
 			fclose($fd);
 			unlink_if_exists("{$g['captiveportal_path']}/{$data['name']}");
+			unlink_if_exists("{$g['captiveportal_path']}/{$data['name']}");
 			mwexec("cd {$g['captiveportal_path']}/ && ln -s {$g['captiveportal_element_path']}/{$data['name']} {$data['name']}");
 		}
 		conf_mount_ro();

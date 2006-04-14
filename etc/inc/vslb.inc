@@ -95,12 +95,15 @@ function slbd_configure() {
 				
 			/* pool name */
 			$slbdconf .= "\t:poolname={$lbpool['name']}:\\\n";
-			/* virtual IP */
-			$slbdconf .= "\t:vip={$lbpool['ipaddr']}:\\\n";
-			/* fallback port */
-			$slbdconf .= "\t:sitedown-port={$lbpool['port']}:\\\n";
-			/* setup ping status */
-			$slbdconf .= "\t:ping={$lbpool['monitorip']}:\\\n";
+	
+			/* enumerate servers and install ping items */
+			foreach($lbpool['servers'] as $server) {
+				$server_split = split("|", $server);
+				$server_ip = $server_split[0];
+				$server_monitor_ip = $server_split[1];
+				/* setup ping status */
+				$slbdconf .= "\t:ping={$lbpool['$server_monitor_ip']}:\\\n";
+			}
 			
 			$should_start = 1;				
 		}

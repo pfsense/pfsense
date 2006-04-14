@@ -1212,27 +1212,27 @@ function generate_user_filter_rule($rule, $ngcounter) {
 							} else {
 								$lbs = $lb['servers'];
 							}
-							/* iterate through $lbs and setup items accordingly */
-							foreach($lbs as $server) {
-								if($foundlb == 1)
-									$line .= ", ";
-								/*   we are seperating the monitor address from the gateway
-								 *   using the | character
-								 */  
-								if(stristr($server, "|") == true) {
-									$split_ip = split("\|", $server);
-									$rule['gateway'] = $split_ip[0];
-									$gateway = $split_ip[0];
+
+                                                        /* iterate through $lbs and setup items accordingly */
+                                                        foreach($lbs as $server) {
+								for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
+				                                        foreach ($config['load_balancer']['lbpool'][$i]['servers'] as $lbsvr) {
+                                				                $lbsvr_split=split("\|", $lbsvr);
+										if ($lbsvr_split[1] == $server)
+											$gateway = $lbsvr_split[1];
+				                                        }
 								}
-								/* determine interface from gateway address */
-								$int = guess_interface_from_ip($gateway);
-								$line .=  "( {$int} {$gateway} ) ";
-								if($int == "") {
-									$line = "# error resolving load balancing {$gateway}";
-								}
-								$foundlb = 1;
-							}
-							$line .= "} round-robin ";
+                                                                if($foundlb == 1)
+                                                                        $line .= ", ";
+                                                                /* determine interface from gateway address */
+                                                                $int = guess_interface_from_ip($gateway);
+                                                                $line .=  "( {$int} {$gateway} ) ";
+                                                                if($int == "") {
+                                                                        $line = "# error resolving load balancing {$gateway}";
+                                                                }
+                                                                $foundlb = 1;
+                                                        }
+                                                        $line .= "} round-robin ";
 						}
 					}
 				}

@@ -1913,6 +1913,9 @@ EOD;
 			$line = "";
 			if (!isset($rule['disabled'])) {
 				if ($rule['interface'] == "pptp") {
+					/* we have a pptp rule but its turned off, ignore */
+					if(!$config['pptpd']['mode'] == "server")	
+						continue;
 					$n_pptp_units = $g['n_pptp_units'];
 					if($config['pptp']['n_pptp_units'] <> "")
 					$nif = $config['pptp']['n_pptp_units'];
@@ -1923,6 +1926,8 @@ EOD;
 					*/
 					$rule_arr[] = generate_user_filter_rule_arr($rule, 0);
 				} else if($rule['interface'] == "pppoe") {
+					if(!$config['pppoe']['mode'] == "server")
+						continue;					
 					$n_pppoe_units = $g['n_pppoe_units'];
 					if($config['pppoe']['n_pppoe_units'] <> "")
 						$nif = $config['pppoe']['n_pppoe_units'];
@@ -1961,6 +1966,14 @@ EOD;
 	
 	if (isset($config['filter']['rule'])) {
 		foreach ($config['filter']['rule'] as $rule) {
+			if($rule['interface'] == "pptp") {
+				if(!$config['pptpd']['mode'] == "server")	
+					continue;				
+			}
+			if($rule['interface'] == "pppoe") {
+				if(!$config['pppoe']['mode'] == "server")	
+					continue;				
+			}
 			/* Pre-cache all our rules so we only have to generate them once */
 			update_filter_reload_status("Pre-caching information for {$rule['descr']} ...");
 			$line = "";

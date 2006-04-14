@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	vslb.inc
-    Copyright (C) 2005-2006 Bill Marquette
+        Copyright (C) 2005 Bill Marquette
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -56,11 +56,12 @@ function slbd_configure() {
 			$slbdconf .= "\t:vip={$vsent['ipaddr']}:\\\n";
 			/* virtual port */
 			$slbdconf .= "\t:vip-port={$vsent['port']}:\\\n";
-			/* fallback IP */
-			$slbdconf .= "\t:sitedown={$vsent['sitedown']}:\\\n";
-			/* fallback port */
-			$slbdconf .= "\t:sitedown-port={$vsent['port']}:\\\n";
-	
+			if($vsent['port'] <> "" and $vsent['sitedown'] <> "") {
+				/* fallback IP */
+				$slbdconf .= "\t:sitedown={$vsent['sitedown']}:\\\n";
+				/* fallback port */
+				$slbdconf .= "\t:sitedown-port={$vsent['port']}:\\\n";
+			}
 			for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 				if ($config['load_balancer']['lbpool'][$i]['name'] == $vsent['pool']) {
 					$svrcnt = 0;
@@ -81,43 +82,47 @@ function slbd_configure() {
 			$should_start=1;
 		}
 	}
-
-	/* handle pool entries */
 	if(is_array($a_pool)) {
-		foreach ($a_pool as $lbpool) {
-			if($lbpool['type'] <> "gateway") 
-				continue;
-				
-			if ($lbpool['desc'] == "")
-				$slbdconf .= "{$lbpool['name']}:\\\n";
+		foreach ($a_pool as $vspool) {
+			if ($vspool['desc'] == "")
+				$slbdconf .= "{$vspool['name']}:\\\n";
 			else
-				$slbdconf .= "{$lbpool['name']}|{$lbpool['desc']}:\\\n";
-				
-			/* pool name */
-			$slbdconf .= "\t:poolname={$lbpool['name']}:\\\n";
+				$slbdconf .= "{$vspool['name']}|{$vspool['desc']}:\\\n";
 	
-			/* enumerate servers and install ping items */
-			foreach($lbpool['servers'] as $server) {
-				$server_split = split("|", $server);
-				$server_ip = $server_split[0];
-				$server_monitor_ip = $server_split[1];
-				/* setup ping status */
-				$slbdconf .= "\t:ping={$lbpool['$server_monitor_ip']}:\\\n";
+			/* pool name */
+			$slbdconf .= "\t:poolname={$vspool['name']}:\\\n";
+			/* virtual IP */
+			$slbdconf .= "\t:vip={$vspool['ipaddr']}:\\\n";
+
+			for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
+				if ($config['load_balancer']['lbpool'][$i]['name'] == $vspool['name']) {
+					$svrcnt = 0;
+					$svrtxt = "";
+					foreach ($config['load_balancer']['lbpool'][$i]['servers'] as $lbsvr) {
+						$lbsvr_split=split("\|", $lbsvr);
+						$svrtxt .= "\t:{$svrcnt}={$lbsvr_split[0]}:\\\n";
+						$svrcnt++;
+					}
+					$slbdconf .= "\t:method=round-robin:\\\n";
+					$slbdconf .= "\t:services={$svrcnt}:\\\n";
+					$slbdconf .= $svrtxt;
+				}
 			}
 			
-			$should_start = 1;				
+			$slbdconf .= "\t:ping:send=:expect=:\n";
+			
+			$should_start=1;
 		}
 	}
-
 	
 	if($should_start == 1) {
 		fwrite($fd, $slbdconf);
 		fclose($fd);
-		mwexec("/usr/bin/pkill -9 slbd");
+		mwexec("/usr/bin/killall -9 slbd");
 		/* startup slbd pointing it's config at /var/etc/slbd.conf with a polling interval of 5 seconds */
 		mwexec("/usr/local/sbin/slbd -c{$g['varetc_path']}/slbd.conf -r5000");
 	} else {
-		fclose($fd);	
+		fclose($fd);
 	}
 }
 

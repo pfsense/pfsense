@@ -993,12 +993,6 @@ function set_networking_interfaces_ports() {
 	global $g;
 	global $fp;
 
-	if(file_exists("/usr/sbin/kbdmap")) {
-		echo "Would you like to change the keyboard mapping [n]? ";
-		if (strcasecmp(chop(fgets($fp)), "y") == 0)
-			exec("/usr/sbin/kbdmap");
-	}
-
 	$fp = fopen('php://stdin', 'r');
 
 	$iflist = get_interface_list();

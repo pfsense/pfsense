@@ -92,16 +92,16 @@ function slbd_configure() {
 			/* pool name */
 			$slbdconf .= "\t:poolname={$vspool['name']}:\\\n";
 			/* virtual IP */
-			$slbdconf .= "\t:vip={$vspool['ipaddr']}:\\\n";
+			$slbdconf .= "\t:vip=127.0.0.1:\\\n";
 
 			for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 				if ($config['load_balancer']['lbpool'][$i]['name'] == $vspool['name']) {
 					$svrcnt = 0;
 					$svrtxt = "";
 					foreach ($config['load_balancer']['lbpool'][$i]['servers'] as $lbsvr) {
+						$svrcnt++;
 						$lbsvr_split=split("\|", $lbsvr);
 						$svrtxt .= "\t:{$svrcnt}={$lbsvr_split[0]}:\\\n";
-						$svrcnt++;
 					}
 					$slbdconf .= "\t:method=round-robin:\\\n";
 					$slbdconf .= "\t:services={$svrcnt}:\\\n";

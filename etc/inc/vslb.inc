@@ -37,7 +37,7 @@ function slbd_configure() {
 	global $config, $g;
 	
 	$a_vs = &$config['load_balancer']['virtual_server'];
-	$a_pool = &$config['load_balancer']['pool'];
+	$a_pool = &$config['load_balancer']['lbpool'];
 
 	$should_start=0;
 
@@ -81,6 +81,31 @@ function slbd_configure() {
 			$should_start=1;
 		}
 	}
+
+	/* handle pool entries */
+	if(is_array($a_pool)) {
+		foreach ($a_pool as $lbpool) {
+			if($lbpool['type'] <> "gateway") 
+				continue;
+				
+			if ($lbpool['desc'] == "")
+				$slbdconf .= "{$lbpool['name']}:\\\n";
+			else
+				$slbdconf .= "{$lbpool['name']}|{$lbpool['desc']}:\\\n";
+				
+			/* pool name */
+			$slbdconf .= "\t:poolname={$lbpool['name']}:\\\n";
+			/* virtual IP */
+			$slbdconf .= "\t:vip={$lbpool['ipaddr']}:\\\n";
+			/* fallback port */
+			$slbdconf .= "\t:sitedown-port={$lbpool['port']}:\\\n";
+			/* setup ping status */
+			$slbdconf .= "\t:ping={$lbpool['monitorip']}:\\\n";
+			
+			$should_start = 1;				
+		}
+	}
+
 	
 	if($should_start == 1) {
 		fwrite($fd, $slbdconf);

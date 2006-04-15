@@ -280,7 +280,7 @@ function clearcombo(){
 		</tr>
 	</table>
 	</form>
-<script language="javascript">type_change();</script>
+<br>
 <?php include("fend.inc"); ?>
 </body>
 </html>

@@ -1215,6 +1215,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 
                                                         /* iterate through $lbs and setup items accordingly */
                                                         foreach($lbs as $server) {
+								if ($server == "")
+									continue;
 								for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 				                                        foreach ($config['load_balancer']['lbpool'][$i]['servers'] as $lbsvr) {
                                 				                $lbsvr_split=split("\|", $lbsvr);

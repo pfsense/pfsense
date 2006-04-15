@@ -27,6 +27,9 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+Header("Location: system_firmware.php");
+exit;
+
 require("guiconfig.inc");
 
 if ($_POST) {

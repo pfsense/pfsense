@@ -33,6 +33,9 @@
 		* modify pfSense.com XMLRPC server to return md5 hashes of firmware updates.
 */
 
+Header("Location: system_firmware.php");
+exit;
+
 require_once("guiconfig.inc");
 require_once("xmlrpc.inc");
 

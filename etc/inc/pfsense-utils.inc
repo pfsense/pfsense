@@ -1864,7 +1864,7 @@ function enable_rrd_graphing()
 		/* 3MB is enough for everyone. *cough* */
 		if($g['platform'] != "pfSense") {
 			/* determine highest MD device */
-			$mdnr = `mount | awk -F"md" '/dev\/md/ {print $2}'|cut -c 1`;
+			$mdnr = `mount | grep md | awk -F"md" '{print $2}'|tail -1 |cut -c 1`;
 			$mdnr = $mdnr +1;
 			system("/sbin/mdmfs -M -s 3m md$mdnr $rrddbpath");
 		}

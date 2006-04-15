@@ -511,7 +511,7 @@ function find_interface_ip($interface) {
 }
 
 function guess_interface_from_ip($ipaddress) {
-	$ret = exec_command("/sbin/route get {$ipaddress} | /usr/bin/grep interface | /usr/bin/awk '{ print \$2
+	$ret = exec_command("/sbin/route -n get {$ipaddress} | /usr/bin/grep interface | /usr/bin/awk '{ print \$2
 ; };'");
 	return $ret;
 }

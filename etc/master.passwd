@@ -22,5 +22,5 @@ dhcpd:*:1002:1002::0:0:DHCP Daemon:/nonexistent:/sbin/nologin
 admin:$1$iUpbXUIV$7PberecIXo0.xSD8RoX/N.:0:0::0:0:Admin User:/root:/etc/rc.initial
 _dhcp:*:65:65::0:0:dhcp programs:/var/empty:/usr/sbin/nologin
 _isakmpd:*:68:68::0:0:isakmpd privsep:/var/empty:/sbin/nologin
-uucp:*:66:66:UUCP pseudo-user:/var/spool/uucppublic:/usr/local/libexec/uucp/uucico
-pop:*:68:6:Post Office Owner:/nonexistent:/usr/sbin/nologin
+uucp:*:66:66::0:0:UUCP pseudo-user:/var/spool/uucppublic:/usr/local/libexec/uucp/uucico
+pop:*:68:6::0:0:Post Office Owner:/nonexistent:/usr/sbin/nologin

@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	vslb.inc
-        Copyright (C) 2005 Bill Marquette
+    Copyright (C) 2005 Bill Marquette
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -43,6 +43,8 @@ function slbd_configure() {
 
 	$fd = fopen("{$g['varetc_path']}/slbd.conf", "w");
 
+
+	/* Virtual server pools */
 	if(is_array($a_vs)) {
 		foreach ($a_vs as $vsent) {
 			if ($vsent['desc'] == "")
@@ -82,8 +84,13 @@ function slbd_configure() {
 			$should_start=1;
 		}
 	}
+
+	/* Gateway Pools */
 	if(is_array($a_pool)) {
 		foreach ($a_pool as $vspool) {
+			if ($vspool['type'] != "gateway")
+				continue;
+
 			if ($vspool['desc'] == "")
 				$slbdconf .= "{$vspool['name']}:\\\n";
 			else
@@ -93,23 +100,31 @@ function slbd_configure() {
 			$slbdconf .= "\t:poolname={$vspool['name']}:\\\n";
 			/* virtual IP */
 			$slbdconf .= "\t:vip=127.0.0.1:\\\n";
+			$slbdconf .= "\t:vip-port=666:\\\n";
+			/* fallback IP */
+			$slbdconf .= "\t:sitedown=127.0.0.1:\\\n";
+			/* fallback port */
+			$slbdconf .= "\t:sitedown-port=666:\\\n";
 
-			for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
-				if ($config['load_balancer']['lbpool'][$i]['name'] == $vspool['name']) {
-					$svrcnt = 0;
-					$svrtxt = "";
-					foreach ($config['load_balancer']['lbpool'][$i]['servers'] as $lbsvr) {
-						$svrcnt++;
-						$lbsvr_split=split("\|", $lbsvr);
-						$svrtxt .= "\t:{$svrcnt}={$lbsvr_split[0]}:\\\n";
-					}
-					$slbdconf .= "\t:method=round-robin:\\\n";
-					$slbdconf .= "\t:services={$svrcnt}:\\\n";
-					$slbdconf .= $svrtxt;
+			$svrcnt = 0;
+			$svrtxt = "";
+			foreach ($vspool['servers'] as $lbsvr) {
+				$lbsvr_split=split("\|", $lbsvr);
+				$svrtxt .= "\t:{$svrcnt}={$lbsvr_split[1]}:\\\n";
+				$svrcnt++;
+				/* Add static routes to the monitor IPs */
+				$next_hop = exec_command("/sbin/route -n get {$lbsvr_split[1]} | /usr/bin/grep gateway |/usr/bin/awk '{ print \$2; };'");
+				if ($next_hop != $lbsvr_split[0]) {
+					mwexec("/sbin/route delete -host {$lbsvr_split[1]} 1>/dev/null 2>&1");
+					mwexec("/sbin/route add -host {$lbsvr_split[1]} {$lbsvr_split[0]} 1> /dev/null 2>&1");
 				}
 			}
+			$slbdconf .= "\t:service-port=666:\\\n";
+			$slbdconf .= "\t:method=round-robin:\\\n";
+			$slbdconf .= "\t:services={$svrcnt}:\\\n";
+			$slbdconf .= $svrtxt;
 			
-			$slbdconf .= "\t:ping:send=:expect=:\n";
+			$slbdconf .= "\t:ping:\n";
 			
 			$should_start=1;
 		}

@@ -259,14 +259,14 @@ function enable_change(whichone) {
                 </tr>
 
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq">System location</td>
+                  <td width="22%" valign="top" class="vncell">System location</td>
                   <td width="78%" class="vtable"> 
                     <input name="syslocation" type="text" class="formfld" id="syslocation" size="40" value="<?=htmlspecialchars($pconfig['syslocation']);?>"> 
                   </td>
                 </tr>
 
                 <tr> 
-                  <td width="22%" valign="top" class="vncellreq">System contact</td>
+                  <td width="22%" valign="top" class="vncell">System contact</td>
                   <td width="78%" class="vtable"> 
                     <input name="syscontact" type="text" class="formfld" id="syscontact" size="40" value="<?=htmlspecialchars($pconfig['syscontact']);?>"> 
                   </td>

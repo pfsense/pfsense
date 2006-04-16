@@ -9,6 +9,8 @@
 
 #CFDEVICE=`cat /var/etc/cfdevice`
 
+exec 3>&2 2>>/tmp/firmware_update.log
+
 export ACTION=$1
 export IMG=$2
 if [ $# -eq 3 ]; then	

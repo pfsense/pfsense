@@ -799,10 +799,10 @@ function filter_nat_rules_generate() {
 							if($extport[0]) 
 								$natrules .= "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
 							else 
-								$natrules .= "rdr on $natif proto {$rule['protocol']} from any to { {$extaddr} } -> {$target}{$localport}";
+								$natrules .= "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} -> {$target}{$localport}";
 							break;
 						default:
-							$natrules .= "rdr on $natif proto {$rule['protocol']} from any to { {$extaddr} } -> {$target}";
+							$natrules .= "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} -> {$target}";
 							break;
 					}
 				} else {
@@ -812,10 +812,10 @@ function filter_nat_rules_generate() {
 							break;
 						case "udp":
 						case "tcp":
-							$natrules .= "{$nordr}rdr on $natif proto {$rule['protocol']} from any to { {$extaddr} } port {$extport[0]}:{$extport[1]} -> {$target}{$localport}:*";
+							$natrules .= "{$nordr}rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target}{$localport}:*";
 							break;
 						default:
-							$natrules .= "{$nordr}rdr on $natif proto {$rule['protocol']} from any to { {$extaddr} } -> {$target}";
+							$natrules .= "{$nordr}rdr on $natif proto {$rule['protocol']} from any to {$extaddr} -> {$target}";
 					}
 				}
 			}

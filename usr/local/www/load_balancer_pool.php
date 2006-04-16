@@ -48,7 +48,7 @@ if ($_POST) {
 		config_unlock();
 
 		$savemsg = get_std_save_message($retval);
-		//unlink_if_exists($d_poolconfdirty_path);
+		unlink_if_exists($d_vsconfdirty_path);
 	}
 }
 
@@ -67,7 +67,7 @@ if ($_GET['act'] == "del") {
 		if (!$input_errors) {
 			unset($a_pool[$_GET['id']]);
 			write_config();
-			touch($d_poolconfdirty_path);
+			touch($d_vsconfdirty_path);
 			header("Location: load_balancer_pool.php");
 			exit;
 		}
@@ -84,7 +84,7 @@ include("head.inc");
 <form action="load_balancer_pool.php" method="post">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_vipconfdirty_path)): ?><p>
+<?php if (file_exists($d_vsconfdirty_path)): ?><p>
 <?php print_info_box_np("The load balancer configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

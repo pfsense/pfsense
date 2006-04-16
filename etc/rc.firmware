@@ -161,7 +161,7 @@ pfSenseupgrade)
 	echo "Image installed $IMG." | logger -p daemon.info -i -t Upgrade
 
         # process custom image if its passed
-        if [ -r $CUSTOMIMG ]; then
+        if [ -f $CUSTOMIMG ]; then
             echo "Custom image $CUSTOMIMG found." | logger -p daemon.info -i -t Upgrade
             PWD_DIR=`pwd`
             cd / && /usr/bin/tar xzPUf $CUSTOMIMG | logger -p daemon.info -i -t Upgrade

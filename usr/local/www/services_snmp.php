@@ -77,13 +77,7 @@ if ($_POST) {
 		$reqdfieldsn = explode(",", "Polling Port");
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 		
-		$reqdfields = explode(" ", "syscontact");
-		$reqdfieldsn = explode(",", "System contact");
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);		
-
-		$reqdfields = explode(" ", "syslocation");
-		$reqdfieldsn = explode(",", "System location");
-		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);			
+	
 	}
 
 	if ($_POST['trapenable']) {

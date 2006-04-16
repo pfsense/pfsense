@@ -76,7 +76,6 @@ $d_passthrumacsdirty_path = $g['varrun_path'] . "/passthrumacs.dirty";
 $d_allowedipsdirty_path = $g['varrun_path'] . "/allowedips.dirty";
 $d_ovpnclidirty_path = $g['varrun_path'] . "/ovpnclient.dirty";
 $d_vipconfdirty_path = $g['varrun_path'] . "/vip.conf.dirty";
-$d_poolconfdirty_path = $g['varrun_path'] . "/pool.conf.dirty";
 $d_vsconfdirty_path = $g['varrun_path'] . "/vs.conf.dirty";
 $d_shaperconfdirty_path = $g['varrun_path'] . "/shaper.conf.dirty";
 

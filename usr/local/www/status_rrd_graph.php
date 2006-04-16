@@ -91,19 +91,25 @@ foreach ($graphs as $graph => $graphd) {
 <div>
 <?php
 
-$periods = array("6h", "30h", "10d", "400d");
+$periods = array("2h", "6h", "48h", "14d", "2m", "18m");
+$graphs['2h']['seconds'] = 7200;
+$graphs['2h']['average'] = 60;
+$graphs['2h']['scale'] = "MINUTE:5:MINUTE:10:MINUTE:30:0:%H%:%M";
 $graphs['6h']['seconds'] = 21600;
 $graphs['6h']['average'] = 300;
 $graphs['6h']['scale'] = "MINUTE:10:MINUTE:30:MINUTE:30:0:%H%:%M";
-$graphs['30h']['seconds'] = 108000;
-$graphs['30h']['average'] = 1200;
-$graphs['30h']['scale'] = "HOUR:1:HOUR:6:HOUR:2:0:%H";
-$graphs['10d']['seconds'] = 864000;
-$graphs['10d']['average'] = 7200;
-$graphs['10d']['scale'] = "HOUR:6:DAY:1:DAY:1:0:%a";
-$graphs['400d']['seconds'] = 34560000;
-$graphs['400d']['average'] = 86400;
-$graphs['400d']['scale'] = "MONTH:1:MONTH:1:MONTH:1:0:%b";
+$graphs['48h']['seconds'] = 108000;
+$graphs['48h']['average'] = 300;
+$graphs['48h']['scale'] = "HOUR:1:HOUR:6:HOUR:2:0:%H";
+$graphs['14d']['seconds'] = 1209600;
+$graphs['14d']['average'] = 600;
+$graphs['14d']['scale'] = "HOUR:6:DAY:1:DAY:1:0:%a";
+$graphs['2m']['seconds'] = 5184000;
+$graphs['2m']['average'] = 3600;
+$graphs['2m']['scale'] = "DAY:1:WEEK:1:WEEK:1:0:Week %W";
+$graphs['18m']['seconds'] = 46656000;
+$graphs['18m']['average'] = 86400;
+$graphs['18m']['scale'] = "MONTH:1:MONTH:1:MONTH:1:0:%b";
 
 $rrddbpath = "/var/db/rrd/";
 $traffic = "-traffic.rrd";
@@ -114,6 +120,16 @@ $spamd = "spamd.rrd";
 $rrdtool = "/usr/local/bin/rrdtool";
 $uptime = "/usr/bin/uptime";
 $sed = "/usr/bin/sed";
+
+/* FIXME: We need real shaper speeds here, yes i have a 22/2Mbps 
+internet connection */
+/* compare bytes/sec counters, divide bps by 8 */
+$downstream = (22000000/8);
+$upstream   =  (2000000/8);
+
+/* FIXME: determine down and up interface, note: case insensitive */
+$upif = "wan";
+$downif = "lan";
 
 foreach($periods as $period => $interval) {
 
@@ -221,13 +237,10 @@ elseif(($curgraph == "queues") && (file_exists("$rrddbpath$curif$queues"))) {
 		$i = 0;
 		$t = 0;
 		$colors = array('000000','7B0000','990000','BB0000','CC0000','D90000','EE0000','FF0000','CC0000');
-		/* compare bytes/sec counters */
-		$downstream = (22000000/8);
-		$upstream   =  (2000000/8);
 		foreach ($a_queues as $queue) {
 			$name = $queue['name'];
-			if((stristr($name, "wan")) || (stristr($name, "up"))) {
-				$color = $colors[$t];
+			if((stristr($name, "$upif")) || (stristr($name, "up"))) {
+				$color = "$colors[$t]";
 				if($t > 0) { $stack = ":STACK"; }
 				$graphcmd .= "DEF:$name=$rrddbpath$curif$queues:$name:AVERAGE \\
 					\"CDEF:$name-bytes_out=$name,0,$upstream,LIMIT,UN,0,$name,IF\" \\
@@ -235,6 +248,7 @@ elseif(($curgraph == "queues") && (file_exists("$rrddbpath$curif$queues"))) {
 					\"CDEF:$name-bits_out_neg=$name-bits_out,-1,*\" \\
 					AREA:$name-bits_out_neg#${color}:$name$stack \\";
 					$t++;
+					if($t > 7) { $t = 0; }
 			}
 		}
 		$graphcmd .= "COMMENT:\"\\n\" \\";
@@ -242,14 +256,15 @@ elseif(($curgraph == "queues") && (file_exists("$rrddbpath$curif$queues"))) {
 		$stack = "";
 		foreach ($a_queues as $queue) {
 			$name = $queue['name'];
-			if((stristr($name, "lan")) || (stristr($name, "down"))) {
-				$color = $colors[$i];
+			if((stristr($name, "$downif")) || (stristr($name, "down"))) {
+				$color = "$colors[$i]";
 				if($i > 0) { $stack = ":STACK"; }
 				$graphcmd .= "DEF:$name=$rrddbpath$curif$queues:$name:AVERAGE \\
 					\"CDEF:$name-bytes_in=$name,0,$downstream,LIMIT,UN,0,$name,IF\" \\
 					\"CDEF:$name-bits_in=$name-bytes_in,8,*\" \\
 					AREA:$name-bits_in#${color}:$name$stack \\";
 					$i++;
+					if($i > 7) { $i = 0; }
 			}
 		}
 		$graphcmd .= "COMMENT:\"\\n\" \\";

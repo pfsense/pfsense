@@ -1831,6 +1831,7 @@ function enable_rrd_graphing()
 	$rrdtool = "/usr/local/bin/rrdtool";
 	$netstat = "/usr/bin/netstat";
 	$awk = "/usr/bin/awk";
+	$tar = "/usr/bin/tar";
 	$php = "/usr/local/bin/php";
 	$spamd_gather = "/usr/local/bin/spamd_gather_stats.php";
 
@@ -1858,18 +1859,28 @@ function enable_rrd_graphing()
 		/* create directory if needed */
 		safe_mkdir("$rrddbpath", 0755);
 
-		/* if we are on livecd or embedded use a memoryfs. */
-		/* 3MB is enough for everyone. *cough* */
-		if($g['platform'] != "pfSense") {
-			/* determine highest MD device */
-			$mdnr = `mount |grep md | awk -F"md" '{print $2}'|tail -1 |cut -c 1`;
-			$mdnr = $mdnr +1;
-			system("/sbin/mdmfs -M -s 3m md$mdnr $rrddbpath");
-		}
+		if($g['booting']) {
+			/* if we are on livecd or embedded use a memoryfs. */
+			/* 3MB is enough for everyone. *cough* */
+			if($g['platform'] != "pfSense") {
+				/* determine highest MD device */
+				$mdnr = `mount |grep md | awk -F"md" '{print $2}'|tail -1 |cut -c 1`;
+				$mdnr = $mdnr +1;
+				system("/sbin/mdmfs -M -s 3m md$mdnr $rrddbpath");
+			}
+			/* we now have something to write "on", restore the databases if we have them */
+			if(file_exists("{$g['cf_conf_path']}/rrd.tgz")) {
+				exec("cd /;/usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz", $rrdrestore, $rrdreturn);
+				if($rrdrestore != 0) {
+					log_error("RRD restore failed exited with $rrdreturn, the
+						error is: $rrdrestore[0]\n");
+				}
+			}
 
-		/* create symlink if needed */
-		if(!is_link("$rrdgraphpath")) {
-			exec("ln -s $rrddbpath $rrdgraphpath");
+			/* create symlink if needed */
+			if(!is_link("$rrdgraphpath")) {
+				exec("ln -s $rrddbpath $rrdgraphpath");
+			}
 		}
 
 		/* db update script */
@@ -1929,7 +1940,7 @@ function enable_rrd_graphing()
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 				if($rrdcreatereturn != 0) {
-			                log_error("RRD create failed exited with $graphcmdreturn, the 
+			                log_error("RRD create failed exited with $rrdcreatereturn, the 
 						error is: $rrdcreateoutput[0]\n");
 				}
 			}
@@ -1958,7 +1969,7 @@ function enable_rrd_graphing()
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 				if($rrdcreatereturn != 0) {
-			                log_error("RRD create failed exited with $graphcmdreturn, the 
+			                log_error("RRD create failed exited with $rrdcreatereturn, the 
 						error is: $rrdcreateoutput[0]\n");
 				}
 			}
@@ -1995,7 +2006,7 @@ function enable_rrd_graphing()
 
 					$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 					if($rrdcreatereturn != 0) {
-				                log_error("RRD create failed exited with $graphcmdreturn, the 
+				                log_error("RRD create failed exited with $rrdcreatereturn, the 
 							error is: $rrdcreateoutput[0]\n");
 					}
 				}
@@ -2039,7 +2050,7 @@ function enable_rrd_graphing()
 
 						$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 						if($rrdcreatereturn != 0) {
-				        	        log_error("RRD create failed exited with $graphcmdreturn, the 
+				        	        log_error("RRD create failed exited with $rrdcreatereturn, the 
 								error is: $rrdcreateoutput[0]\n");
 						}
 					}
@@ -2094,7 +2105,7 @@ function enable_rrd_graphing()
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 				if($rrdcreatereturn != 0) {
-		        	        log_error("RRD create failed exited with $graphcmdreturn, the 
+		        	        log_error("RRD create failed exited with $rrdcreatereturn, the 
 						error is: $rrdcreateoutput[0]\n");
 				}
 			}

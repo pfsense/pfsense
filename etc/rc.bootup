@@ -176,6 +176,9 @@
 	filter_pflog_start();
 
 	setup_filter_bridge();
+
+	/* start load balancer daemon */
+	slbd_configure();
 	
 	/* setup altq + pf */
 	echo "Configuring firewall... ";
@@ -251,9 +254,6 @@
 	
 	/* start IPsec tunnels */
 	vpn_ipsec_configure();
-
-	/* start load balancer daemon */
-	slbd_configure();
 
 	/* start ftp proxy helpers if they are enabled */
 	echo "Starting FTP helpers... ";

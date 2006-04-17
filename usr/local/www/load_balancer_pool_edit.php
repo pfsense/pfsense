@@ -127,7 +127,7 @@ if ($_POST) {
 		if ($changecount > 0) {
 			/* Mark pool dirty */
 			conf_mount_rw();
-			touch($d_poolconfdirty_path);
+			touch($d_vsconfdirty_path);
 			write_config($changedesc);
 		}
 

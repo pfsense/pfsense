@@ -240,7 +240,9 @@ function openvpn_print_javascript($mode) {
 <script language="JavaScript">
 <!--
 function onAuthMethodChanged() {
-	var endis = (document.iform.auth_method.options.value == 'shared_key');
+	var method = document.iform.auth_method;
+	var endis = (method.options[method.selectedIndex].value == 'shared_key');
+
 	document.iform.shared_key.disabled = !endis;
 	document.iform.ca_cert.disabled = endis;
 	document.iform.{$mode}_cert.disabled = endis;

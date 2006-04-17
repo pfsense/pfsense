@@ -147,7 +147,7 @@ include("head.inc");
 function type_change(enable_change) {
 	switch (document.iform.type.selectedIndex) {
 		case 0:
-			clearcombo();
+			//clearcombo();
 			document.iform.serversSelect.clear;
 			document.iform.monitorip.disabled = 1;
 			monitorip_text = document.getElementById("monitorip_text");
@@ -162,7 +162,7 @@ function type_change(enable_change) {
 			document.iform.monitor.disabled = 0;
 			break;
 		case 1:
-			clearcombo();
+			//clearcombo();
 			document.iform.monitorip.disabled = 0;
 			document.iform.monitorip.value = "";
 			monitorip_text = document.getElementById("monitorip_text");
@@ -281,6 +281,9 @@ function clearcombo(){
 	</table>
 	</form>
 <br>
+<script language="javascript">
+	type_change();
+</script>
 <?php include("fend.inc"); ?>
 </body>
 </html>

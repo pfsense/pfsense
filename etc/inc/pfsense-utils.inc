@@ -1834,7 +1834,7 @@ function enable_rrd_graphing()
 	$php = "/usr/local/bin/php";
 	$spamd_gather = "/usr/local/bin/spamd_gather_stats.php";
 
-	$gatewayip = exec("route -n get default | grep gateway | awk '{print $2}'");
+	$gatewayip = exec("/sbin/route -n get default | /usr/bin/grep gateway | /usr/bin/awk '{print $2}'");
 	/* if an alternative gateway is defined, use it. */
 	if($config['system']['use_rrd_gateway'])
 		$gatewayip = $config['system']['use_rrd_gateway'];
@@ -1856,15 +1856,13 @@ function enable_rrd_graphing()
 	if (isset($config['rrd']['enable'])) {
 
 		/* create directory if needed */
-		if(!is_dir("$rrddbpath")) {
-			mkdir("$rrddbpath", 0755);
-		}
+		safe_mkdir("$rrddbpath", 0755);
 
 		/* if we are on livecd or embedded use a memoryfs. */
 		/* 3MB is enough for everyone. *cough* */
 		if($g['platform'] != "pfSense") {
 			/* determine highest MD device */
-			$mdnr = `mount | grep md | awk -F"md" '{print $2}'|tail -1 |cut -c 1`;
+			$mdnr = `mount |grep md | awk -F"md" '{print $2}'|tail -1 |cut -c 1`;
 			$mdnr = $mdnr +1;
 			system("/sbin/mdmfs -M -s 3m md$mdnr $rrddbpath");
 		}
@@ -1916,7 +1914,7 @@ function enable_rrd_graphing()
 			/* set up the rrd file */
 			if(! file_exists("$rrddbpath$ifname$traffic")) {
 				/* create rrd file if it does not exist */
-				
+				log_error("Create RRD database $rrddbpath$ifname$traffic");
 				$rrdcreate = "$rrdtool create $rrddbpath$ifname$traffic --step $rrdtrafficinterval \
 					DS:in:COUNTER:$trafficvalid:0:$downstream \
 					DS:out:COUNTER:$trafficvalid:0:$upstream \
@@ -1927,9 +1925,13 @@ function enable_rrd_graphing()
 					RRA:MAX:0.5:1:1000 \
 					RRA:MAX:0.5:5:1000 \
 					RRA:MAX:0.5:60:1000 \
-					RRA:MAX:0.5:360:1000";
+					RRA:MAX:0.5:3600:1000";
 
-				$rrdcreatel .= exec("$rrdcreate 2>&1");
+				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
+				if($rrdcreatereturn != 0) {
+			                log_error("RRD create failed exited with $graphcmdreturn, the 
+						error is: $rrdcreateoutput[0]\n");
+				}
 			}
 
 			$rrdupdatesh .= "\n";
@@ -1941,7 +1943,7 @@ function enable_rrd_graphing()
 			/* set up the rrd file */
 			if(! file_exists("$rrddbpath$ifname$packets")) {
 				/* create rrd file if it does not exist */
-				
+				log_error("Create RRD database $rrddbpath$ifname$packets");
 				$rrdcreate = "$rrdtool create $rrddbpath$ifname$packets --step $rrdpacketsinterval \
 					DS:in:COUNTER:$packetsvalid:0:$downstream \
 					DS:out:COUNTER:$packetsvalid:0:$upstream \
@@ -1954,7 +1956,11 @@ function enable_rrd_graphing()
 					RRA:MAX:0.5:60:1000 \
 					RRA:MAX:0.5:360:1000";
 
-				$rrdcreatel .= exec("$rrdcreate 2>&1");
+				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
+				if($rrdcreatereturn != 0) {
+			                log_error("RRD create failed exited with $graphcmdreturn, the 
+						error is: $rrdcreateoutput[0]\n");
+				}
 			}
 
 			$rrdupdatesh .= "\n";
@@ -1978,7 +1984,7 @@ function enable_rrd_graphing()
 				/* create link quality database */
 				if(! file_exists("$rrddbpath$ifname$quality")) {
 					/* create rrd file if it does not exist */
-					print "Create rrd database $ifname$quality \n";
+					log_error("Create RRD database $rrddbpath$ifname$quality");
 					$rrdcreate = "$rrdtool create $rrddbpath$ifname$quality --step $rrdqualityinterval \
 							DS:loss:GAUGE:$qualityvalid:0:100 \
 							DS:roundtrip:GAUGE:$qualityvalid:0:10000 \
@@ -1987,7 +1993,11 @@ function enable_rrd_graphing()
 							RRA:AVERAGE:0.5:60:1000 \
 							RRA:AVERAGE:0.5:360:1000";
 
-					$rrdcreatel .= exec("$rrdcreate 2>&1");
+					$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
+					if($rrdcreatereturn != 0) {
+				                log_error("RRD create failed exited with $graphcmdreturn, the 
+							error is: $rrdcreateoutput[0]\n");
+					}
 				}
 
 				/* the ping test function. We call this on the last line */
@@ -2013,7 +2023,7 @@ function enable_rrd_graphing()
 				if(isset($config['shaper']['enable'])) {
 					if(!file_exists("$rrddbpath$ifname$queues")) {
 						/* create rrd file if it does not exist */
-						print "Create rrd database $ifname$queues \n";
+						log_error("Create RRD database $rrddbpath$ifname$queues");
 						$rrdcreate = "$rrdtool create $rrddbpath$ifname$queues --step $rrdqueuesinterval \\\n";
 						/* loop list of shaper queues */
 						$q = 0;
@@ -2023,12 +2033,15 @@ function enable_rrd_graphing()
 						}
 
 						$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 \
-								RRA:AVERAGE:0.5:5:1000 \
-								RRA:AVERAGE:0.5:60:1000 \
-								RRA:AVERAGE:0.5:360:1000";
-	
-						$rrdcreatel .= exec("$rrdcreate 2>&1");
-						$rrdcreatel .= "\n";
+							RRA:AVERAGE:0.5:5:1000 \
+							RRA:AVERAGE:0.5:60:1000 \
+							RRA:AVERAGE:0.5:360:1000";
+
+						$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
+						if($rrdcreatereturn != 0) {
+				        	        log_error("RRD create failed exited with $graphcmdreturn, the 
+								error is: $rrdcreateoutput[0]\n");
+						}
 					}
 
 				/* awk function to gather shaper data */
@@ -2062,7 +2075,7 @@ function enable_rrd_graphing()
 			/* set up the spamd rrd file */
 			if(! file_exists("$rrddbpath$spamd")) {
 				/* create rrd file if it does not exist */
-				print "Create rrd database $spamd \n";
+				log_error("Create RRD database $rrddbpath$spamd");
 				$rrdcreate = "$rrdtool create $rrddbpath$spamd --step $rrdspamdinterval \
 					DS:conn:GAUGE:$trafficvalid:0:10000 \
 					DS:time:GAUGE:$trafficvalid:0:86400 \
@@ -2079,7 +2092,11 @@ function enable_rrd_graphing()
 					RRA:MAX:0.5:60:1000 \
 					RRA:MAX:0.5:360:1000";
 
-				passthru("$rrdcreate 2>&1");
+				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
+				if($rrdcreatereturn != 0) {
+		        	        log_error("RRD create failed exited with $graphcmdreturn, the 
+						error is: $rrdcreateoutput[0]\n");
+				}
 			}
 		
 			$rrdupdatesh .= "\n";
@@ -2091,23 +2108,20 @@ function enable_rrd_graphing()
 	
 		$rrdupdatesh .= "sleep 60\n";
 		$rrdupdatesh .= "done\n";
-
+		log_error("Creating rrd update script");
 		/* write the rrd update script */
 		$updaterrdscript = "{$g['vardb_path']}/rrd/updaterrd.sh";
 		$fd = fopen("$updaterrdscript", "w");
 		fwrite($fd, "$rrdupdatesh");
 		fclose($fd);
 
-
+		log_error("Creating rrd graph index");
 		/* write the index.html script */
 		$rrdgraphindex = "{$g['vardb_path']}/rrd/index.html";
 		$fd = fopen("$rrdgraphindex", "w");
 		fwrite($fd, "$rrdgraphindexhtml");
 		fclose($fd);
 	
-		/* print database creation errors. */
-
-
 		/* kill off traffic collectors */
 		kill_traffic_collector();
 

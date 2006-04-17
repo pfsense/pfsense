@@ -27,4 +27,7 @@ export PATH
 PLATFORM=`cat /etc/platform`
 if [ "$PLATFORM" = "pfSense" ]; then
 	rm -rf /tmp/*
+else
+	# Save the rrd databases to the config path.
+	tar -czf /cf/conf/rrd.tgz /var/db/rrd/*.rrd
 fi

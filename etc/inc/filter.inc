@@ -944,7 +944,14 @@ EOD;
 		if(is_process_running("squid")) {
 			$transparent_proxy = $config['installedpackages']['squid']['config'][0]['transparent_proxy'];
 			if(isset($transparent_proxy) && ($transparent_proxy == "on")) {
-				$natrules .= "rdr on {$lanif} inet proto tcp from any to !{$lanip} port www -> 127.0.0.1 port 3128\n";
+				$active_interface = $config['installedpackages']['squid']['config'][0]['active_interface'];
+				$proxy_port = $config['installedpackages']['squid']['config'][0]['proxy_port'];
+				$squid_if  = convert_friendly_interface_to_real_interface_name($active_interface);
+				if($squid_if == "") 
+					$squid_if = $lanif;
+				if($proxy_port == "")
+					$proxy_port = "3128";
+				$natrules .= "rdr on {$squid_if} inet proto tcp from any to !({$squid_if}) port www -> ({$squid_if}) port {$proxy_port}\n";
 			}
 			unset($transparent_proxy);
 		} else {
@@ -1587,10 +1594,12 @@ function filter_rules_generate() {
 		$log = "";
 
 	/* if squid is installed, lets install its rule */
+	/* swat pass in and pass out rule allow firewall rules to dictate: XXX Leon.
 	if (is_package_installed("squid") == 1) {
 		$ipfrules .= "pass in quick on {$lanif} inet proto tcp from any to 127.0.0.1 port 3128 flags S/SA keep state label \"transparent proxy\"\n";
 		$ipfrules .= "pass out quick on {$wanif} inet proto tcp from ($wanif) to any port www flags S/SA keep state label \"transparent proxy\"\n";
 	}
+	*/
 
 	$ipfrules .= <<<EOD
 

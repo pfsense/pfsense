@@ -366,12 +366,15 @@ else
 	/* check modification time to see if we need to generate image */
 	if (file_exists("$rrddbpath$curif-$interval-$curgraph.png")) {
 		if((time() - filemtime("$rrddbpath$curif-$interval-$curgraph.png")) >= 280 ) {
-			system("$graphcmd >/dev/null");
+			exec("$graphcmd 2>&1", $graphcmdoutput, $graphcmdreturn);
 			usleep(500);
 		}			
 	} else {
-		system("$graphcmd >/dev/null");
+		exec("$graphcmd 2>&1", $graphcmdoutput, $graphcmdreturn);
 		usleep(500);
+	}
+	if($graphcmdreturn != 0) {
+		PRINT "Failed to create graph with error code $graphcmdreturn, the error is: $graphcmdoutput[0] <br>\n";
 	}
 
 PRINT "<B>Analysis for $curif -- $interval $curgraph</B><BR>";

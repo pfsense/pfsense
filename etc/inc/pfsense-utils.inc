@@ -1920,14 +1920,14 @@ function enable_rrd_graphing()
 				$rrdcreate = "$rrdtool create $rrddbpath$ifname$traffic --step $rrdtrafficinterval \
 					DS:in:COUNTER:$trafficvalid:0:$downstream \
 					DS:out:COUNTER:$trafficvalid:0:$upstream \
-					RRA:AVERAGE:0.5:1:576 \
-					RRA:AVERAGE:0.5:6:672 \
-					RRA:AVERAGE:0.5:24:732 \
-					RRA:AVERAGE:0.5:288:1460 \
-					RRA:MAX:0.5:1:576 \
-					RRA:MAX:0.5:6:672 \
-					RRA:MAX:0.5:24:732 \
-					RRA:MAX:0.5:288:1460";
+					RRA:AVERAGE:0.5:1:1000 \
+					RRA:AVERAGE:0.5:5:1000 \
+					RRA:AVERAGE:0.5:60:1000 \
+					RRA:AVERAGE:0.5:360:1000 \
+					RRA:MAX:0.5:1:1000 \
+					RRA:MAX:0.5:5:1000 \
+					RRA:MAX:0.5:60:1000 \
+					RRA:MAX:0.5:360:1000";
 
 				$rrdcreatel .= exec("$rrdcreate 2>&1");
 			}
@@ -1945,14 +1945,14 @@ function enable_rrd_graphing()
 				$rrdcreate = "$rrdtool create $rrddbpath$ifname$packets --step $rrdpacketsinterval \
 					DS:in:COUNTER:$packetsvalid:0:$downstream \
 					DS:out:COUNTER:$packetsvalid:0:$upstream \
-					RRA:AVERAGE:0.5:1:576 \
-					RRA:AVERAGE:0.5:6:672 \
-					RRA:AVERAGE:0.5:24:732 \
-					RRA:AVERAGE:0.5:288:1460 \
-					RRA:MAX:0.5:1:576 \
-					RRA:MAX:0.5:6:672 \
-					RRA:MAX:0.5:24:732 \
-					RRA:MAX:0.5:288:1460";
+					RRA:AVERAGE:0.5:1:1000 \
+					RRA:AVERAGE:0.5:5:1000 \
+					RRA:AVERAGE:0.5:60:1000 \
+					RRA:AVERAGE:0.5:360:1000 \
+					RRA:MAX:0.5:1:1000 \
+					RRA:MAX:0.5:5:1000 \
+					RRA:MAX:0.5:60:1000 \
+					RRA:MAX:0.5:360:1000";
 
 				$rrdcreatel .= exec("$rrdcreate 2>&1");
 			}
@@ -1982,9 +1982,10 @@ function enable_rrd_graphing()
 					$rrdcreate = "$rrdtool create $rrddbpath$ifname$quality --step $rrdqualityinterval \
 							DS:loss:GAUGE:$qualityvalid:0:100 \
 							DS:roundtrip:GAUGE:$qualityvalid:0:10000 \
-							RRA:AVERAGE:0.5:1:120 \
-							RRA:AVERAGE:0.5:6:320 \
-							RRA:AVERAGE:0.5:24:640";
+							RRA:AVERAGE:0.5:1:1000 \
+							RRA:AVERAGE:0.5:5:1000 \
+							RRA:AVERAGE:0.5:60:1000 \
+							RRA:AVERAGE:0.5:360:1000";
 
 					$rrdcreatel .= exec("$rrdcreate 2>&1");
 				}
@@ -2021,10 +2022,10 @@ function enable_rrd_graphing()
 							$rrdcreate .= "DS:$name:COUNTER:$queuesvalid:0:$downstream \\\n";
 						}
 
-						$rrdcreate .= "RRA:AVERAGE:0.5:1:576 \
-						RRA:AVERAGE:0.5:6:672 \
-						RRA:AVERAGE:0.5:24:732 \
-						RRA:AVERAGE:0.5:288:1460 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 \
+								RRA:AVERAGE:0.5:5:1000 \
+								RRA:AVERAGE:0.5:60:1000 \
+								RRA:AVERAGE:0.5:360:1000";
 	
 						$rrdcreatel .= exec("$rrdcreate 2>&1");
 						$rrdcreatel .= "\n";
@@ -2065,18 +2066,18 @@ function enable_rrd_graphing()
 				$rrdcreate = "$rrdtool create $rrddbpath$spamd --step $rrdspamdinterval \
 					DS:conn:GAUGE:$trafficvalid:0:10000 \
 					DS:time:GAUGE:$trafficvalid:0:86400 \
-					RRA:MIN:0.5:1:576 \
-					RRA:MIN:0.5:6:672 \
-					RRA:MIN:0.5:24:732 \
-					RRA:MIN:0.5:288:1460 \
-					RRA:AVERAGE:0.5:1:576 \
-					RRA:AVERAGE:0.5:6:672 \
-					RRA:AVERAGE:0.5:24:732 \
-					RRA:AVERAGE:0.5:288:1460 \
-					RRA:MAX:0.5:1:576 \
-					RRA:MAX:0.5:6:672 \
-					RRA:MAX:0.5:24:732 \
-					RRA:MAX:0.5:288:1460";
+					RRA:MIN:0.5:1:1000 \
+					RRA:MIN:0.5:5:1000 \
+					RRA:MIN:0.5:60:1000 \
+					RRA:MIN:0.5:360:1000 \
+					RRA:AVERAGE:0.5:1:1000 \
+					RRA:AVERAGE:0.5:5:1000 \
+					RRA:AVERAGE:0.5:60:1000 \
+					RRA:AVERAGE:0.5:360:1000 \
+					RRA:MAX:0.5:1:1000 \
+					RRA:MAX:0.5:5:1000 \
+					RRA:MAX:0.5:60:1000 \
+					RRA:MAX:0.5:360:1000";
 
 				passthru("$rrdcreate 2>&1");
 			}

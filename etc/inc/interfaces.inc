@@ -388,7 +388,7 @@ function interfaces_carp_configure() {
 		exec("/sbin/pfctl -f /tmp/rules.boot");
 	}			
 	/* setup pfsync interface */
-	if($carp_sync_int) 	
+	if($carp_sync_int and $pfsyncenabled) 
 		mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} up");
 	else 
 		mwexec("/sbin/ifconfig pfsync0 syncdev lo0 up");

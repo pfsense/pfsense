@@ -139,7 +139,7 @@ function filter_configure_sync() {
 	if ($config['system']['scrubnodf'])
 		$scrubnodf = "no-df random-id";
 	else
-		$scrubnodf = "";
+		$scrubnodf = "random-id";
 
         $fd = fopen("{$g['tmp_path']}/rules.debug", "w");
 	$rules = $aliases . " \n";
@@ -158,7 +158,7 @@ function filter_configure_sync() {
 		$rules.= "set limit states {$config['system']['maximumstates']}\n";
 	}
 	$rules.= "\n";
-	$rules.= "scrub on {$wanif} all {$scrubnodf} {$mssclamp} random-id\n"; // reassemble all directions
+	$rules.= "scrub on {$wanif} all {$scrubnodf} {$mssclamp}\n"; // reassemble all directions
     
 	update_filter_reload_status("Setting up SCRUB information");
 	

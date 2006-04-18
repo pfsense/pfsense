@@ -2000,7 +2000,7 @@ EOD;
 				// label
 				if($rule['descr'] <> "" and $line <> "")
 					$line .= " label \"USER_RULE: {$rule['descr']}\" ";
-				else
+				else if($line <> "")
 					$line .= " label \"USER_RULE\" ";
 			}
 			$line .= "\n";

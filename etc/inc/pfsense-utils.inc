@@ -584,9 +584,9 @@ function get_carp_interface_status($carpinterface) {
 	$found_interface = 0;
 	foreach($carp_query as $int) {
 		if($found_interface == 1) {
-			if(stristr($int, "MASTER") == true) return "MASTER";
-			if(stristr($int, "BACKUP") == true) return "BACKUP";
-			if(stristr($int, "INIT") == true) return "INIT";
+			if(stristr($int, "MASTER")) return "MASTER";
+			if(stristr($int, "BACKUP")) return "BACKUP";
+			if(stristr($int, "INIT")) return "INIT";
 			return false;
 		}
 		if(stristr($int, $carpinterface) == true)

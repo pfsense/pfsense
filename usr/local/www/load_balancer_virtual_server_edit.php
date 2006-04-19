@@ -153,10 +153,12 @@ include("head.inc");
                   <td width="78%" class="vtable" colspan="2">
                     <select id="pool" name="pool">
 			<?php
-				if ( $config['load_balancer']['lbpool'][$i]['name'] == $pconfig['pool'] ) {
-				       echo "<option value=\"{$pconfig['pool']}\" selected>{$pconfig['pool']}</option>";
-				} else {
-				       echo "<option value=\"{$config['load_balancer']['lbpool'][$i]['name']}\">{$config['load_balancer']['lbpool'][$i]['name']}</option>";
+				for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
+ 	 				if ( $config['load_balancer']['lbpool'][$i]['name'] == $pconfig['pool'] ) {
+						echo "<option value=\"{$pconfig['pool']}\" selected>{$pconfig['pool']}</option>";
+					} else {
+						echo "<option value=\"{$config['load_balancer']['lbpool'][$i]['name']}\">{$config['load_balancer']['lbpool'][$i]['name']}</option>";
+					}
 				}
 			?>
 			</select>

@@ -414,7 +414,8 @@ if ($pkg['tabs'] <> "") {
 				$ip = " " . find_interface_ip($iface);
 			  }
 			  $SELECTED = "";
-			  if(in_array($ifdescr,$value)) $SELECTED = " SELECTED";
+			  if(is_array($value))
+			  	if(in_array($ifdescr,$value)) $SELECTED = " SELECTED";
 			  if($value == $ifdescr) $SELECTED = " SELECTED";
 			  $to_echo =  "<option value='" . $ifdescr . "'" . $SELECTED . ">" . $ifdescr . $ip . "</option>\n";
 			  $to_echo .= "<!-- {$value} -->";

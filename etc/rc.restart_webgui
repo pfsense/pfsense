@@ -10,7 +10,10 @@ mwexec("killall -9 lighttpd");
 echo "Restarting webConfigurator...";
 
 system_webgui_start();
+
 captiveportal_configure();
+
+enable_rrd_graphing();
 
 echo " done.\n\n";
 

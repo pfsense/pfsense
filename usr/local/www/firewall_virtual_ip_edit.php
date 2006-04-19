@@ -154,6 +154,7 @@ if ($_POST) {
 
 		/* setup carp interfaces */
 		interfaces_carp_configure();
+		interfaces_carp_bring_up_final();
 
 		write_config();
 

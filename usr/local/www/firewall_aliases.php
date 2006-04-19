@@ -64,11 +64,50 @@ if ($_POST) {
 
 if ($_GET['act'] == "del") {
 	if ($a_aliases[$_GET['id']]) {
-		unset($a_aliases[$_GET['id']]);
-		write_config();
-		touch($d_aliasesdirty_path);
-		header("Location: firewall_aliases.php");
-		exit;
+		/* make sure rule is not being referenced by any nat or filter rules */
+		$is_alias_referenced = false;
+		$referenced_by = false;
+		$alias_name = $a_aliases[$_GET['id']]['name'];
+		foreach($config['nat']['rule'] as $rule) {
+			if($rule['localip'] == $alias_name) {
+				$is_alias_referenced = true;
+				$referenced_by = $rule['descr'];
+				break;
+			}
+		}
+		if($is_alias_referenced == false) {
+			foreach($config['filter']['rule'] as $rule) {
+				if($rule['source']['address'] == $alias_name) {
+					$is_alias_referenced = true;
+					$referenced_by = $rule['descr'];
+					break;
+				}
+				if($rule['source']['address'] == $alias_name) {
+					$is_alias_referenced = true;
+					$referenced_by = $rule['descr'];
+					break;
+				}
+				if($rule['source']['port'] == $alias_name) {
+					$is_alias_referenced = true;
+					$referenced_by = $rule['descr'];
+					break;
+				}
+				if($rule['destination']['port'] == $alias_name) {
+					$is_alias_referenced = true;
+					$referenced_by = $rule['descr'];
+					break;
+				}				
+			}		
+		}
+		if($is_alias_referenced == true) {
+			$savemsg = "Cannot delete rule.  Currently in use by {$referenced_by}";
+		} else {
+			unset($a_aliases[$_GET['id']]);
+			write_config();
+			touch($d_aliasesdirty_path);
+			header("Location: firewall_aliases.php");
+			exit;
+		}
 	}
 }
 

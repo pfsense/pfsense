@@ -49,8 +49,8 @@ if($_GET['mode'] == "startservice" and $_GET['service']) {
 				case 'dhcpd';
 						services_dhcpd_configure();
 						break;
-				start_service($_GET['service']);
 		}
+	start_service($_GET['service']);
         $savemsg = "{$_GET['service']} has been started.";
 }
 

@@ -399,7 +399,7 @@ if ($pkg['tabs'] <> "") {
 				$interfaces = array();
 				foreach ($ints as $int) {
 					$interfaces[]['descr'] = $int;
-					$interfaces[] = $int;
+					$interfaces[] = str_replace("\n", "", $int);
 				}
 			}
 			foreach ($interfaces as $ifname => $iface) {

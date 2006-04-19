@@ -402,11 +402,13 @@ function interfaces_carp_configure() {
 	}
 	foreach ($viparr as $vip) {
 		if ($vip['mode'] == "carp") {
+			$vip_password = $vip['password'];
+			$vip_password = str_replace(" ", "", $vip_password);			
 			/* create the carp interface and setup */
 			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " create");
 			$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
 			if($vip['password'] != "") 
-				$password = " pass \"" . $vip['password'] . "\"";
+				$password = " pass \"" . $vip_password . "\"";
 			if($debugging)
 				echo "Configuring carp{$carp_instances_counter}.\n";
 			fwrite($fd, "/sbin/ifconfig carp" . $carp_instances_counter . " " . $vip['subnet'] . "/" . $vip['subnet_bits'] . " broadcast " . $broadcast_address . " vhid " . $vip['vhid'] . "{$carpdev} advskew 200 " . $password . "\n");

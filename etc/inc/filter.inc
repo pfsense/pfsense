@@ -1258,16 +1258,20 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						if(is_file("{$g['tmp_path']}/{$int}_router")) {
 							$gatewayip = file_get_contents("{$g['tmp_path']}/{$int}_router");
 							$gatewayip = rtrim($gatewayip);
-							$line .= " route-to ( {$int} {$gatewayip} ) ";
+							if (is_ipaddr($gatewayip)) {
+								$line .= " route-to ( {$int} {$gatewayip} ) ";
+							}
 						} else {
 							log_error("Could not find {$g['tmp_path']}/{$int}_router.  Needed for dhcp gateway information");
 							continue;
 						}
 					} else {
 						/* user picked a real gateway ip */
-						$gatewayip = $rule['gateway'];
-						$int = guess_interface_from_ip($gatewayip);
-						$line .= " route-to ( {$int} {$gatewayip} ) ";
+						if(is_ipaddr($rule['gateway'])) {
+							$gatewayip = $rule['gateway'];
+							$int = guess_interface_from_ip($gatewayip);
+							$line .= " route-to ( " . guess_interface_from_ip($rule['gateway']) . " {$rule['gateway']} ) ";
+						}
 					}
 				}
 			}

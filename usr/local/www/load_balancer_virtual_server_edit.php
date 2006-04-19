@@ -154,10 +154,11 @@ include("head.inc");
                     <select id="pool" name="pool">
 			<?php
 				for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
- 	 				if ( $config['load_balancer']['lbpool'][$i]['name'] == $pconfig['pool'] ) {
-						echo "<option value=\"{$pconfig['pool']}\" selected>{$pconfig['pool']}</option>";
-					} else {
-						echo "<option value=\"{$config['load_balancer']['lbpool'][$i]['name']}\">{$config['load_balancer']['lbpool'][$i]['name']}</option>";
+					if ($config['load_balancer']['lbpool'][$i]['type'] == "server") {
+						$selected = "";
+						if ( $config['load_balancer']['lbpool'][$i]['name'] == $pconfig['pool'] )
+							$selected = " SELECTED";
+						echo "<option value=\"{$config['load_balancer']['lbpool'][$i]['name']}\"{$selected}>{$config['load_balancer']['lbpool'][$i]['name']}</option>";
 					}
 				}
 			?>

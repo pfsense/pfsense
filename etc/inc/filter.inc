@@ -510,7 +510,9 @@ function filter_nat_rules_generate() {
 
 	$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
 
-	$natrules = "";
+	$natrules = "# UPnPd rdr anchor\n";
+	$natrules .= "\"rdr-anchor \"upnpd/*\"\n";
+
 	$natrules .= "nat-anchor \"pftpx/*\"\n";
 
 	$natrules .= "nat-anchor \"natearly/*\"\n";

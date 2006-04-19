@@ -1194,6 +1194,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			/* if user has selected a custom gateway, lets work with it */
 			if($rule['gateway'] <> "") {
 				$foundlb = 0;
+				$routeto = " route-to { ";
 				if(is_array($config['load_balancer']['lbpool'])) {
 					foreach($config['load_balancer']['lbpool'] as $lb) {
 						update_filter_reload_status("Creating load balancing item...");
@@ -1212,7 +1213,6 @@ function generate_user_filter_rule($rule, $ngcounter) {
 									continue;
 								}
 							}
-							$line .= " route-to { ";
 							/* if /tmp/$lbname.pool exists then read in our gateway hints from slbd */
 							if(file_exists("{$g['tmp_path']}/{$lb['name']}.pool")) {
 								$lbs = split("\n", file_get_contents("{$g['tmp_path']}/{$lb['name']}.pool"));
@@ -1232,18 +1232,21 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				                                        }
 								}
                                                                 if($foundlb == 1)
-                                                                        $line .= ", ";
+                                                                        $routeto .= ", ";
                                                                 /* determine interface from gateway address */
                                                                 $int = guess_interface_from_ip($gateway);
-                                                                $line .=  "( {$int} {$gateway} ) ";
+                                                                $routeto .=  "( {$int} {$gateway} ) ";
                                                                 if($int == "") {
                                                                         $line = "# error resolving load balancing {$gateway}";
                                                                 }
                                                                 $foundlb = 1;
                                                         }
-                                                        $line .= "} round-robin ";
+                                                        $routeto .= "} round-robin ";
 						}
 					}
+					/* Add the load balanced gateways */
+					if ($foundlb = 1)
+						$line .= $routeto;
 				}
 				/*  we're not using load balancing, just setup gateway */
 				if($foundlb == 0) {

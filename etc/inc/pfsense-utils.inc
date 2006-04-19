@@ -1767,9 +1767,9 @@ function setup_serial_port() {
 		}
 	}
 	if(isset($config['system']['disableconsolemenu'])) {
-		auto_login(true);
-	} else {
 		auto_login(false);
+	} else {
+		auto_login(true);
 	}	
 	conf_mount_ro();
 	return;	

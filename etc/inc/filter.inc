@@ -2159,6 +2159,8 @@ function create_firewall_outgoing_rules_to_itself() {
 			$defq = find_default_queue($ifname);
 			/* Handle all tagged packets */
 			foreach ($config['shaper']['queue'] as $queue) {
+				if(!filter_is_queue_being_used_on_interface($queue['name'], $ifname, 'out'))
+                	continue;
 				if ($ackq == "" || $defq == "") {
 					/* Shaper must not be enabled on this interface */
 					$q = "";

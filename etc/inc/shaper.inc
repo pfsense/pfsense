@@ -180,13 +180,15 @@ function is_subqueue_used_on_interface($queuename, $interface) {
 	return 0;
 }
 
-function filter_is_queue_being_used_on_interface($queuename, $interface) {
+function filter_is_queue_being_used_on_interface($queuename, $interface, $direction = 'in') {
 	global $config;
 	$lconfig = $config;
 
 	if(!is_array($lconfig['shaper']['rule'])) return null;
 	foreach($lconfig['shaper']['rule'] as $rule) {
-		if(($rule['inqueue'] == $queuename && $rule['in-interface'] == $interface))
+		$q  = $direction . 'queue';
+		$if = $direction . '-interface';
+		if(($rule[$q] == $queuename && $rule[$if] == $interface))
 		return $interface;
 	}
 	return null;

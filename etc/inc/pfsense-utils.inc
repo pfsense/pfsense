@@ -2083,7 +2083,7 @@ function enable_rrd_graphing()
 </BODY>
 </HTML>";
 
-		if(isset($config['installedpackages']['spamdsettings']['config']['enablerrd'])) {
+		if(isset($config['installedpackages']['spamdsettings']['config'][0]['enablerrd'])) {
 			/* set up the spamd rrd file */
 			if(! file_exists("$rrddbpath$spamd")) {
 				/* create rrd file if it does not exist */

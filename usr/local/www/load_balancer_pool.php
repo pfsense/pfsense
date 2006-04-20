@@ -103,7 +103,8 @@ include("head.inc");
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="10%" class="listhdrr">Name</td>
-                  <td width="25%" class="listhdrr">Servers/Gateways</td>
+                  <td width="10%" class="listhdrr">Type</td>
+                  <td width="15%" class="listhdrr">Servers/Gateways</td>
                   <td width="10%" class="listhdrr">Port</td>
                   <td width="15%" class="listhdrr">Monitor</td>
                   <td width="30%" class="listhdr">Description</td>
@@ -114,16 +115,31 @@ include("head.inc");
                   <td class="listlr" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
 				<?=$vipent['name'];?>
                   </td>
-                  <td class="listlr" align="center" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
-			  <?php foreach ($vipent['servers'] as $server): ?>
-				<?=$server;?><br>
-			<?php endforeach; ?>
+                  <td class="listr" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
+				<?=$vipent['type'];?>
                   </td>
-                  <td class="listlr" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
+                  <td class="listr" align="center" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
+                        <?php
+                                foreach ((array) $vipent['servers'] as $server) {
+                                        $svr = split("\|", $server);
+                                        echo "{$svr[0]}<br />";
+                                }
+                        ?>
+                  </td>
+                  <td class="listr" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
 				<?=$vipent['port'];?>
                   </td>
-                  <td class="listlr" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
-				<?=$vipent['monitor'];?>
+                  <td class="listr" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
+                        <?php
+                                if ($vipent['type'] == "gateway") {
+                                        foreach ((array) $vipent['servers'] as $server) {
+                                                $svr = split("\|", $server);
+                                                echo "{$svr[1]}<br />";
+                                        }
+                                } else {
+                                        echo $vipent['monitor'];
+                                }
+                        ?>
                   </td>
                   <td class="listbg" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
 				<font color="#FFFFFF"><?=$vipent['desc'];?></font>
@@ -139,7 +155,7 @@ include("head.inc");
                 </tr>
                 <?php $i++; endforeach; ?>
                 <tr>
-                  <td class="list" colspan="5"></td>
+                  <td class="list" colspan="6"></td>
                   <td class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>

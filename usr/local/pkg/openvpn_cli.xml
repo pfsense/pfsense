@@ -30,10 +30,6 @@
 			<fielddescr>Protocol</fielddescr>
 		</columnitem>
 		<columnitem>
-			<fieldname>ipblock</fieldname>
-			<fielddescr>IP block</fielddescr>
-		</columnitem>
-		<columnitem>
 			<fieldname>description</fieldname>
 			<fielddescr>Description</fielddescr>
 		</columnitem>
@@ -43,112 +39,81 @@
 			<fieldname>disable</fieldname>
 			<fielddescr>Disable this tunnel</fielddescr>
 			<description>This allows you to disable this tunnel without removing it from the list.</description>
-			<required>yes</required>
+			<required/>
 			<type>checkbox</type>
 		</field>
-                <!--<field>
-                        <fieldname>interface</fieldname>
-                        <fielddescr>Interface</fielddescr>
-                        <description>The interface to be used for the VPN. Choose TUN here unless you want bridging.</description>
-			<required>yes</required>
-                        <type>select</type>
-                        <options>
-                                <option>
-                                        <value>tun</value>
-                                        <name>TUN</name>
-                                </option>
-                                <option>
-                                        <value>tap</value>
-                                        <name>TAP</name>
-                                </option>
-                        </options>
-                </field>-->
 		<field>
 			<fieldname>protocol</fieldname>
 			<fielddescr>Protocol</fielddescr>
 			<description>The protocol to be used for the VPN.</description>
-			<required>yes</required>
+			<required/>
 			<type>select</type>
 			<options>
-				<option>
-					<value>UDP</value>
-					<name>UDP</name>
-				</option>
 				<option>
 					<value>TCP</value>
 					<name>TCP</name>
 				</option>
+				<option>
+					<value>UDP</value>
+					<name>UDP</name>
+				</option>
 			</options>
+			<default_value>UDP</default_value>
 		</field>
 		<field>
-			<fieldname>port</fieldname>
-			<fielddescr>Local port</fielddescr>
-			<description>The port OpenVPN will use to connect to the remote endpoint. Should be set to 1194, unless this port is already in use.</description>
-			<required>yes</required>
+			<fieldname>serveraddr</fieldname>
+			<fielddescr>Server address</fielddescr>
+			<description>This is the address OpenVPN will try to connect to in order to establish the tunnel. Set it to the remote endpoint's address.</description>
+			<required/>
 			<type>input</type>
+		</field>
+		<field>
+			<fieldname>serverport</fieldname>
+			<fielddescr>Server port</fielddescr>
+			<description>The port OpenVPN will use to connect to the server. Most people would want to use 1194 here.</description>
+			<required/>
+			<type>input</type>
+			<default_value>1194</default_value>
 			<size>5</size>
 		</field>
-                <field>
-                        <fieldname>serveraddr</fieldname>
-                        <fielddescr>Server address</fielddescr>
-                        <description>This is the address OpenVPN will try to connect to in order to establish the tunnel. Set it to the remote endpoint's address.</description>
-			<required>yes</required>
-                        <type>input</type>
-                </field>
-                <field>
-                        <fieldname>serverport</fieldname>
-                        <fielddescr>Server port</fielddescr>
-                        <description>The port OpenVPN will use to connect to the server. Most people would want to use 1194 here.</description>
-			<required>yes</required>
-                        <type>input</type>
-                        <size>5</size>
-                </field>
 		<field>
-			<fieldname>local_ip</fieldname>
-			<fielddescr>Local IP</fielddescr>
-			<description>This is the local IP of the VPN.</description>
-			<required>yes</required>
+			<fieldname>interface_ip</fieldname>
+			<fielddescr>Interface IP</fielddescr>
+			<description>This specifies the IPs to be assigned to the local interface. Expressed as a CIDR range. The first address in the range will be set to the remote endpoint of the interface, and the second will be assigned to the local endpoint. For TLS VPNs, the interface IPs are assigned by the server pool.</description>
 			<type>input</type>
 		</field>
 		<field>
-			<fieldname>remote_ip</fieldname>
-			<fielddescr>Remote IP</fielddescr>
-			<description>This is the remote IP of the VPN.</description>
-			<required>yes</required>
-			<type>input</type>
-		</field>
-		<field>
-			<fieldname>ipblock</fieldname>
-			<fielddescr>IP block</fielddescr>
-			<description>This is the remote IP block in (expressed as a CIDR range) that will be accessable from your endpoint, e.g.: '10.2.0.0/16'.</description>
-			<required>yes</required>
-			<type>input</type>
+			<fieldname>remote_network</fieldname>
+			<fielddescr>Remote network</fielddescr>
+			<description>This is the network that will be accessable from your endpoint. Expressed as a CIDR range. You may leave this blank if all you want is to access the VPN clients. You normally want this set to the remote endpoint's LAN network.</description>
+                        <type>input</type>
 		</field>
 		<field>
 			<fieldname>crypto</fieldname>
 			<fielddescr>Cryptography</fielddescr>
 			<description>Here you can choose the cryptography algorithm to be used.</description>
-			<required>yes</required>
+			<required/>
 			<type>select</type>
+			<default_value>BF-CBC</default_value>
 		</field>
-                <field>
-                        <fieldname>auth_method</fieldname>
-                        <fielddescr>Authentication method</fielddescr>
-                        <description>The authentication method to be used.</description>
-			<required>yes</required>
-                        <type>select</type>
-                        <options>
-                                <option>
-                                        <value>shared_key</value>
-                                        <name>Shared key</name>
-                                </option>
-                                <option>
-                                        <value>pki</value>
-                                        <name>PKI (Public Key Infrastructure)</name>
-                                </option>
-                        </options>
-                        <onchange>onAuthMethodChanged()</onchange>
-                </field>
+		<field>
+			<fieldname>auth_method</fieldname>
+			<fielddescr>Authentication method</fielddescr>
+			<description>The authentication method to be used.</description>
+			<required/>
+			<type>select</type>
+			<options>
+				<option>
+					<value>shared_key</value>
+					<name>Shared key</name>
+				</option>
+				<option>
+					<value>pki</value>
+					<name>PKI (Public Key Infrastructure)</name>
+				</option>
+			</options>
+			<onchange>onAuthMethodChanged()</onchange>
+		</field>
 		<field>
 			<fieldname>shared_key</fieldname>
 			<fielddescr>Shared key</fielddescr>
@@ -158,33 +123,33 @@
 			<rows>8</rows>
 			<cols>40</cols>
 		</field>
-                <field>
-                        <fieldname>ca_cert</fieldname>
-                        <fielddescr>CA certificate</fielddescr>
-                        <description>Paste the server's CA certificate in X.509 format here.</description>
-                        <type>textarea</type>
-                        <encoding>base64</encoding>
-                        <rows>8</rows>
-                        <cols>40</cols>
-                </field>
-                <field>
-                        <fieldname>client_cert</fieldname>
-                        <fielddescr>Client certificate</fielddescr>
-                        <description>Paste your client certificate in X.509 format here.</description>
-                        <type>textarea</type>
-                        <encoding>base64</encoding>
-                        <rows>8</rows>
-                        <cols>40</cols>
-                </field>
-                <field>
-                        <fieldname>client_key</fieldname>
-                        <fielddescr>Client key</fielddescr>
-                        <description>Paste your client key in RSA format here.</description>
-                        <type>textarea</type>
-                        <encoding>base64</encoding>
-                        <rows>8</rows>
-                        <cols>40</cols>
-                </field>
+		<field>
+			<fieldname>ca_cert</fieldname>
+			<fielddescr>CA certificate</fielddescr>
+			<description>Paste the server's CA certificate in X.509 format here.</description>
+			<type>textarea</type>
+			<encoding>base64</encoding>
+			<rows>8</rows>
+			<cols>40</cols>
+		</field>
+		<field>
+			<fieldname>client_cert</fieldname>
+			<fielddescr>Client certificate</fielddescr>
+			<description>Paste your client certificate in X.509 format here.</description>
+			<type>textarea</type>
+			<encoding>base64</encoding>
+			<rows>8</rows>
+			<cols>40</cols>
+		</field>
+		<field>
+			<fieldname>client_key</fieldname>
+			<fielddescr>Client key</fielddescr>
+			<description>Paste your client key in RSA format here.</description>
+			<type>textarea</type>
+			<encoding>base64</encoding>
+			<rows>8</rows>
+			<cols>40</cols>
+		</field>
 		<field>
 			<fieldname>use_lzo</fieldname>
 			<fielddescr>LZO compression</fielddescr>
@@ -201,16 +166,16 @@
 	<custom_php_command_before_form>
 		openvpn_get_ciphers(&amp;$pkg);
 	</custom_php_command_before_form>
-        <custom_php_after_head_command>
-                openvpn_print_javascript('client');
-        </custom_php_after_head_command>
-        <custom_php_after_form_command>
-                openvpn_print_javascript2();
-        </custom_php_after_form_command>
+	<custom_php_after_head_command>
+		openvpn_print_javascript('client');
+	</custom_php_after_head_command>
+	<custom_php_after_form_command>
+		openvpn_print_javascript2();
+	</custom_php_after_form_command>
 	<custom_php_validation_command>
 		openvpn_validate_input('client', $_POST, &amp;$input_errors);
 	</custom_php_validation_command>
 	<custom_php_resync_config_command>
-		openvpn_resync('client', $_POST['id']);
+		openvpn_resync('client', $id);
 	</custom_php_resync_config_command>
 </packagegui>

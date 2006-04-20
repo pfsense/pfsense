@@ -26,8 +26,8 @@
 			<fielddescr>Protocol</fielddescr>
 		</columnitem>
 		<columnitem>
-			<fieldname>ipblock</fieldname>
-			<fielddescr>IP block</fielddescr>
+			<fieldname>addresspool</fieldname>
+			<fielddescr>Address pool</fielddescr>
 		</columnitem>
 		<columnitem>
 			<fieldname>description</fieldname>
@@ -39,42 +39,26 @@
 			<fieldname>disable</fieldname>
 			<fielddescr>Disable this tunnel</fielddescr>
 			<description>This allows you to disable this tunnel without removing it from the list.</description>
-			<required>yes</required>
+			<required/>
 			<type>checkbox</type>
 		</field>
-		<!--<field>
-			<fieldname>interface</fieldname>
-			<fielddescr>Interface</fielddescr>
-			<description>The interface to be used for the VPN. Choose TUN here unless you want bridging.</description>
-			<required>yes</required>
-			<type>select</type>
-			<options>
-				<option>
-					<value>tun</value>
-					<name>TUN</name>
-				</option>
-				<option>
-					<value>tap</value>
-					<name>TAP</name>
-				</option>
-			</options>
-		</field>-->
 		<field>
 			<fieldname>protocol</fieldname>
 			<fielddescr>Protocol</fielddescr>
 			<description>The protocol to be used for the VPN.</description>
-			<required>yes</required>
+			<required/>
 			<type>select</type>
 			<options>
-				<option>
-					<value>UDP</value>
-					<name>UDP</name>
-				</option>
 				<option>
 					<value>TCP</value>
 					<name>TCP</name>
 				</option>
+				<option>
+					<value>UDP</value>
+					<name>UDP</name>
+				</option>
 			</options>
+			<default_value>UDP</default_value>
 		</field>
 		<field>
 			<fieldname>dynamic_ip</fieldname>
@@ -83,46 +67,54 @@
 			<type>checkbox</type>
 		</field>
 		<field>
-			<fieldname>port</fieldname>
+			<fieldname>local_port</fieldname>
 			<fielddescr>Local port</fielddescr>
-			<description>The port OpenVPN will use to connect to the remote endpoint. Should be set to 1194, unless this port is already in use.</description>
-			<required>yes</required>
+			<description>The port OpenVPN will listen on. You generally want 1194 here.</description>
+			<required/>
 			<type>input</type>
+			<default_value>1194</default_value>
 			<size>5</size>
 		</field>
 		<field>
-			<fieldname>local_ip</fieldname>
-			<fielddescr>Local IP</fielddescr>
-			<description>This is the local IP of the VPN.</description>
-			<required>yes</required>
+			<fieldname>addresspool</fieldname>
+			<fielddescr>Address pool</fielddescr>
+			<description>This is the address pool to be assigned to the clients. Expressed as a CIDR range (eg. 10.0.8.0/24). If the 'Use static IPs' field isn't set, clients will be assigned addresses from this pool. Otherwise, this will be used to set the local interface's IP.</description>
+			<required/>
 			<type>input</type>
 		</field>
 		<field>
-			<fieldname>remote_ip</fieldname>
-			<fielddescr>Remote IP</fielddescr>
-			<description>This is the remote IP of the VPN.</description>
-			<required>yes</required>
+			<fieldname>nopool</fieldname>
+			<fielddescr>Use static IPs</fielddescr>
+			<description>If this option is set, IPs won't be assigned to clients. Instead, the server will use static IPs on its side, and the clients are expected to use this same value in the 'Address pool' field.</description>
+			<required/>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fieldname>local_network</fieldname>
+			<fielddescr>Local network</fielddescr>
+			<description>This is the network that will be accessable from the remote endpoint. Expressed as a CIDR range. You may leave this blank you don't want to add a route to your network through this tunnel in the remote machine. This is generally set to your LAN network.</description>
 			<type>input</type>
 		</field>
 		<field>
-			<fieldname>ipblock</fieldname>
-			<fielddescr>IP block</fielddescr>
-			<description>This is the remote IP block in (expressed as a CIDR range) that will be accessable from your endpoint, e.g.: '10.2.0.0/16'.</description>
-			<required>yes</required>
-			<type>input</type>
+			<fieldname>client2client</fieldname>
+			<fielddescr>Client-to-client VPN</fielddescr>
+			<description>If this option is set, clients will be able to talk to each other. Otherwise, they will only be able to talk to the server.</description>
+			<required/>
+			<type>checkbox</type>
 		</field>
 		<field>
 			<fieldname>crypto</fieldname>
 			<fielddescr>Cryptography</fielddescr>
 			<description>Here you can choose the cryptography algorithm to be used.</description>
-			<required>yes</required>
+			<required/>
 			<type>select</type>
+			<default_value>BF-CBC</default_value>
 		</field>
 		<field>
 			<fieldname>auth_method</fieldname>
 			<fielddescr>Authentication method</fielddescr>
 			<description>The authentication method to be used.</description>
-			<required>yes</required>
+			<required/>
 			<type>select</type>
 			<options>
 				<option>
@@ -157,7 +149,7 @@
 		<field>
 			<fieldname>server_cert</fieldname>
 			<fielddescr>Server certificate</fielddescr>
-			<description>Paste your server certificate in X.509 format here.  You can also create certificates &lt;a target="_new" href="vpn_openvpn_create_certs.php"&gt;automatically.&lt;/%gt;</description>
+			<description>Paste your server certificate in X.509 format here.</description>
 			<type>textarea</type>
 			<encoding>base64</encoding>
 			<rows>8</rows>
@@ -166,7 +158,7 @@
 		<field>
 			<fieldname>server_key</fieldname>
 			<fielddescr>Server key</fielddescr>
-			<description>Paste your server key in RSA format here.  You can also create certificates &lt;a target="_new" href="vpn_openvpn_create_certs.php"&gt;automatically.&lt;/%gt;</description>
+			<description>Paste your server key in RSA format here.</description>
 			<type>textarea</type>
 			<encoding>base64</encoding>
 			<rows>8</rows>
@@ -216,6 +208,6 @@
 		openvpn_validate_input('server', $_POST, &amp;$input_errors);
 	</custom_php_validation_command>
 	<custom_php_resync_config_command>
-		openvpn_resync('server', $_POST['id']);
+		openvpn_resync('server', $id);
 	</custom_php_resync_config_command>
 </packagegui>

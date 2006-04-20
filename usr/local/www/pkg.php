@@ -30,6 +30,10 @@
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
+function gettext($text) {
+	return $text;
+}
+
 function gentitle_pkg($pgname) {
 	global $config;
 	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
@@ -38,7 +42,7 @@ function gentitle_pkg($pgname) {
 $xml = $_GET['xml'];
 
 if($xml == "") {
-            print_info_box_np("ERROR: No package defined.");
+            print_info_box_np(gettext("ERROR: No package defined."));
             die;
 } else {
             $pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
@@ -161,9 +165,9 @@ if ($pkg['tabs'] <> "") {
 						    $fieldname = $ip[xml_safe_fieldname($column['fieldname'])];
 						    if($column['type'] == "checkbox") {
 							if($fieldname == "") {
-							    echo "No";
+							    echo gettext("No");
 							} else {
-							    echo "Yes";
+							    echo gettext("Yes");
 							}
 						    } else {
 							echo $column['prefix'] . $fieldname . $column['suffix'];
@@ -177,7 +181,7 @@ if ($pkg['tabs'] <> "") {
                           <table border="0" cellspacing="0" cellpadding="1">
                             <tr>
                               <td valign="middle"><a href="pkg_edit.php?xml=<?=$xml?>&act=edit&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
-			      <td valign="middle"><a href="pkg.php?xml=<?=$xml?>&act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this item?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+			      <td valign="middle"><a href="pkg.php?xml=<?=$xml?>&act=del&id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this item?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
                             </tr>
                           </table>
 			</td>
@@ -191,7 +195,7 @@ if ($pkg['tabs'] <> "") {
                  <td>
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
-                        <td valign="middle"><a href="pkg_edit.php?xml=<?=$xml?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+                        <td valign="middle"><a href="pkg_edit.php?xml=<?=$xml?>&id=<?=$i?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
                      </tr>
                    </table>
                  </td>

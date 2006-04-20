@@ -30,6 +30,10 @@
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
+function gettext($text) {
+	return $text;
+}
+
 function gentitle_pkg($pgname) {
 	global $pfSense_config;
 	return $pfSense_config['system']['hostname'] . "." . $pfSense_config['system']['domain'] . " - " . $pgname;
@@ -40,7 +44,7 @@ $xml = $_GET['xml'];
 if($_POST['xml']) $xml = $_POST['xml'];
 
 if($xml == "") {
-            print_info_box_np("ERROR: No package defined.");
+            print_info_box_np(gettext("ERROR: No package defined."));
             die;
 } else {
             $pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
@@ -50,12 +54,16 @@ if($pkg['include_file'] <> "") {
 	require_once($pkg['include_file']);
 }
 
+if (!isset($pkg['adddeleteeditpagefields']))
+	$only_edit = true;
+else
+	$only_edit = false;
+
 $package_name = $pkg['menu'][0]['name'];
 $section      = $pkg['menu'][0]['section'];
 $config_path  = $pkg['configpath'];
 $name         = $pkg['name'];
-//$title        = $section . ": " . $package_name;
-$title		= $pkg['title'];
+$title        = $pkg['title'];
 $pgtitle      = $title;
 
 $id = $_GET['id'];
@@ -120,7 +128,7 @@ if ($_POST) {
 	$reqfields = array();
 	$reqfieldsn = array();
 	foreach ($pkg['fields']['field'] as $field) {
-		if (($field['type'] == 'input') && ($field['required'] == 'yes')) {
+		if (($field['type'] == 'input') && isset($field['required'])) {
 			$reqfields[] = $field['fieldname'];
 			$reqfieldsn[] = $field['fielddescr'];
 		}
@@ -214,10 +222,12 @@ if ($_POST) {
 		$get_from_post = true;
 }
 
-if($pkg['title'] <> "")
-	$title = $pkg['title'] . ': Edit';
+if($pkg['title'] <> "") {
+	$edit = ($only_edit ? '' : ': Edit');
+	$title = $pkg['title'] . $edit;
+}
 else
-	$title = "Package Editor";
+	$title = gettext("Package Editor");
 
 $pgtitle = $title;
 include("head.inc");
@@ -311,7 +321,7 @@ if ($pkg['tabs'] <> "") {
 <tr><td><div id="mainarea"><table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
   <?php
   $cols = 0;
-  $savevalue = "Save";
+  $savevalue = gettext("Save");
   if($pkg['savetext'] <> "") $savevalue = $pkg['savetext'];
   foreach ($pkg['fields']['field'] as $pkga) { ?>
 	  
@@ -323,7 +333,7 @@ if ($pkg['tabs'] <> "") {
 	  
 	  if(!$pkga['dontdisplayname']) {
 		unset($req);
-		if ($pkga['required'] == 'yes')
+		if (isset($pkga['required']))
 			$req = 'req';
 		echo "<td width=\"22%\" class=\"vncell{$req}\">";
 		echo fixup_string($pkga['fielddescr']);
@@ -339,6 +349,8 @@ if ($pkg['tabs'] <> "") {
 		else {
 			if (isset($id) && $a_pkg[$id])
 				$value = $a_pkg[$id][$fieldname];
+			else
+				$value = $pkga['default_value'];
 		}
 
 	      if($pkga['type'] == "input") {
@@ -370,7 +382,9 @@ if ($pkg['tabs'] <> "") {
 	      } else if($pkga['type'] == "checkbox") {
 			$checkboxchecked = "";
 			if($value == "on") $checkboxchecked = " CHECKED";
-			echo "<input type='checkbox' name='" . $pkga['fieldname'] . "'" . $checkboxchecked . ">\n";
+			if (isset($pkga['enablefields']) || isset($pkga['checkenablefields']))
+				$onclick = ' onclick="javascript:enablechange();"';
+			echo "<input type='checkbox' name='" . $pkga['fieldname'] . "'" . $checkboxchecked . $onclick . ">\n";
 			echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "textarea") {
 		  if($pkga['rows']) $rows = " rows='" . $pkga['rows'] . "' ";
@@ -499,7 +513,7 @@ if ($pkg['tabs'] <> "") {
 
 						$rowcounter++;
 						echo "<td>";
-						echo "<input type=\"image\" src=\"./themes/".$g['theme']."/images/icons/icon_x.gif\" onclick=\"removeRow(this); return false;\" value=\"Delete\">";
+						echo "<input type=\"image\" src=\"./themes/".$g['theme']."/images/icons/icon_x.gif\" onclick=\"removeRow(this); return false;\" value=\"" . gettext("Delete") . "\">";
 						echo "</td>\n";
 						echo "</tr>\n";
 					}
@@ -566,12 +580,14 @@ if ($pkg['tabs'] <> "") {
     <td width="78%">
 <?php
 if($pkg['note'] != "")
-	print("<p><span class=\"red\"><strong>Note:</strong></span> {$pkg['note']}</p>");
-if (isset($id) && $a_pkg[$id])
+	print("<p><span class=\"red\"><strong>" . gettext("Note") . ":</strong></span> {$pkg['note']}</p>");
+//if (isset($id) && $a_pkg[$id]) // We'll always have a valid ID in our hands
       print("<input name=\"id\" type=\"hidden\" value=\"$id\">");
 ?>
       <input name="Submit" type="submit" class="formbtn" value="<?= $savevalue ?>">
-      <input class="formbtn" type="button" value="Cancel" onclick="history.back()">
+<?php if (!$only_edit): ?>
+      <input class="formbtn" type="button" value="<?=gettext("Cancel");?>" onclick="history.back()">
+<?php endif; ?>
     </td>
   </tr>
 </table>

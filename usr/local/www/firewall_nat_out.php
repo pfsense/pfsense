@@ -34,19 +34,15 @@
 require("guiconfig.inc");
 
 if (!is_array($config['nat']['advancedoutbound']['rule']))
-    $config['nat']['advancedoutbound']['rule'] = array();
+	$config['nat']['advancedoutbound']['rule'] = array();
 
 $a_out = &$config['nat']['advancedoutbound']['rule'];
 
-if ($_POST) {
 
-    $pconfig = $_POST;
+if ($_POST['apply']) {
+	write_config();
 
-    if ($_POST['apply']) {
-
-        write_config();
-
-        $retval = 0;
+	$retval = 0;
 
 	config_lock();
 	$retval |= filter_configure();
@@ -57,65 +53,61 @@ if ($_POST) {
 	else
 		$savemsg = $retval;
 
-        if ($retval == 0) {
-            if (file_exists($d_natconfdirty_path))
-                unlink($d_natconfdirty_path);
-            if (file_exists($d_filterconfdirty_path))
-                unlink($d_filterconfdirty_path);
+	if ($retval == 0) {
+		unlink_if_exists($d_natconfdirty_path);
+		unlink_if_exists($d_filterconfdirty_path);
         }
-    }
 }
 
 
 
-if (isset($_POST['save'])) {
-        $was_enabled = isset($config['nat']['advancedoutbound']['enable']);
+if (isset($_POST['save']) && $_POST['save'] == "Save") {
         /* mutually exclusive settings - if user wants advanced NAT, we don't help with IPSec */
-        if ($_POST['ipsecpassthru'] == true) {
-                $config['nat']['ipsecpassthru']['enable'] = true;
-                $config['nat']['advancedoutbound']['enable'] = false;
-        }
-        if ($_POST['advancedoutbound'] == true) {
-                $config['nat']['advancedoutbound']['enable'] = true;
-                $config['nat']['ipsecpassthru']['enable'] = false;
-        }
-        if ($_POST['ipsecpassthru'] == false)
-                $config['nat']['ipsecpassthru']['enable'] = false;
-        if ($_POST['advancedoutbound'] == false)
-                $config['nat']['advancedoutbound']['enable'] = false;
-        if($was_enabled == false and $_POST['advancedoutbound'] <> "") {
-                /*
-                 *    user has enabled advanced outbound nat -- lets automatically create entries
-                 *    for all of the interfaces to make life easier on the pip-o-chap
-                 */
-                $a_out = &$config['nat']['advancedoutbound']['rule'];
-                $ifdescrs = array('lan');
-                for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) 
-                        $ifdescrs[] = "opt" . $j;
-                foreach($ifdescrs as $if) {
-			if($if <> "lan" and $if <> "wan") {
-				/* interface is an optional.  is it enabled? */
-				if(!isset($config['interfaces'][$if]['enabled'])) {
-					continue;
+	switch ($_POST['advancedoripsec']) {
+	case "ipsecpassthru":
+               	$config['nat']['ipsecpassthru']['enable'] = true;
+               	unset($config['nat']['advancedoutbound']['enable']);
+               	if(count($config['nat']['advancedoutbound']['rule']) == 0)
+			unset($config['nat']['advancedoutbound']['rule']);
+		break;
+	case "advancedoutboundnat":
+        	$was_enabled = isset($config['nat']['advancedoutbound']['enable']);
+		$config['nat']['advancedoutbound']['enable'] = true;
+		unset($config['nat']['ipsecpassthru']['enable']);
+		if($was_enabled == false) {
+			/*
+			 *    user has enabled advanced outbound nat -- lets automatically create entries
+			 *    for all of the interfaces to make life easier on the pip-o-chap
+			 */
+			$ifdescrs = array('lan');
+			for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) 
+				$ifdescrs[] = "opt" . $j;
+			foreach($ifdescrs as $if) {
+				if($if <> "lan" and $if <> "wan") {
+					/* interface is an optional.  is it enabled? */
+					if(!isset($config['interfaces'][$if]['enabled'])) {
+						continue;
+					}
 				}
+				$natent = array();
+				$osn = gen_subnet($config['interfaces'][$if]['ipaddr'],
+					$config['interfaces'][$if]['subnet']);
+				$natent['source']['network'] = $osn . "/" . $config['interfaces'][$if]['subnet'];
+				$natent['sourceport'] = "";
+				$int_description = $config['interfaces'][$if]['descr'];
+				if($if == "lan")
+					$int_description = "LAN";
+				$natent['descr'] = "Auto created rule for {$int_description}";
+				$natent['target'] = "";
+				$natent['interface'] = "wan";
+				$natent['destination']['any'] = true;
+				$natent['natport'] = "";
+				$a_out[] = $natent;
 			}
-                        $natent = array();
-                        $osn = gen_subnet($config['interfaces'][$if]['ipaddr'],
-                                $config['interfaces'][$if]['subnet']);
-                        $natent['source']['network'] = $osn . "/" . $config['interfaces'][$if]['subnet'];
-                        $natent['sourceport'] = "";
-                        $int_description = $config['interfaces'][$if]['descr'];
-                        if($if == "lan")
-                                $int_description = "LAN";
-                        $natent['descr'] = "Auto created rule for {$int_description}";
-                        $natent['target'] = "";
-                        $natent['interface'] = "wan";
-                        $natent['destination']['any'] = true;
-                        $natent['natport'] = "";
-                        $a_out[] = $natent;
-                }
-                $savemsg = "Default rules for each interface have been created.";
-        }
+			$savemsg = "Default rules for each interface have been created.";
+		}
+		break;
+	}
         write_config();
         touch($d_natconfdirty_path);
         header("Location: firewall_nat_out.php");
@@ -128,6 +120,9 @@ if (isset($_POST['del_x'])) {
                 foreach ($_POST['rule'] as $rulei) {
                         unset($a_out[$rulei]);
                 }
+                if (count($a_out) == 0)
+			unset($config['nat']['advancedoutbound']);
+
                 write_config();
                 touch($d_natconfdirty_path);
                 header("Location: firewall_nat_out.php");
@@ -170,7 +165,11 @@ if (isset($_POST['del_x'])) {
                         if (!in_array($i, $_POST['rule']))
                                 $a_out_new[] = $a_out[$i];
                 }
-                $a_out = $a_out_new;
+                if (count($a_out_new) > 0)
+			$a_out = $a_out_new;
+		else
+			unset($config['nat']['advancedoutbound']);
+
                 write_config();
                 touch($d_natconfdirty_path);
                 header("Location: firewall_nat_out.php");
@@ -208,13 +207,13 @@ include("head.inc");
               <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
               <tr>
                   <td class="vtable"><p>
-                      <input name="ipsecpassthru" type="checkbox" id="ipsecpassthru" value="yes" onClick="document.iform.advancedoutbound.checked=false" <?php if (isset($config['nat']['ipsecpassthru']['enable'])) echo "checked";?>>
+                      <input name="advancedoripsec" type="radio" id="ipsecpassthru" value="ipsecpassthru" <?php if (isset($config['nat']['ipsecpassthru']['enable'])) echo "checked";?>>
                       <strong>Enable IPSec passthru</strong></p>
                   </td>
                 </tr>
                 <tr>
                   <td class="vtable"><p>
-                      <input name="advancedoutbound" type="checkbox" id="advancedoutbound" value="yes" onClick="document.iform.ipsecpassthru.checked=false" <?php if (isset($config['nat']['advancedoutbound']['enable'])) echo "checked";?>>
+                      <input name="advancedoripsec" type="radio" id="advancedoutbound" value="advancedoutboundnat" <?php if (isset($config['nat']['advancedoutbound']['enable'])) echo "checked";?>>
                       <strong>Enable advanced outbound NAT</strong></p></td>
                 </tr>
                 <tr>

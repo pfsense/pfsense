@@ -252,7 +252,7 @@ function sourcesel_change() {
     switch (document.iform.source_type.selectedIndex) {
         case 1: // network
             document.iform.source.disabled = 0;
-            document.iform.source.disabled = 0;
+            document.iform.source_subnet.disabled = 0;
             break;
         default:
 	    document.iform.source.value = "";

@@ -1091,8 +1091,13 @@ EOD;
 		if ($optif[$i])
 			$i++;
 		$i1 = $i + 1;
+		
+		if($config['interfaces']['opt' . $i1]['descr']) 
+			echo "\nOptional interface {$i1} description found: {$config['interfaces']['opt' . $i1]['descr']}";
+		
 		echo "\nEnter the Optional {$i1} interface name or 'a' for auto-detection\n" .
 			"(or nothing if finished): ";
+		
 		$optif[$i] = chop(fgets($fp));
 
 		if ($optif[$i]) {

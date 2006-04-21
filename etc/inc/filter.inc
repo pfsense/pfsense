@@ -2277,15 +2277,15 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 	/* strip out nosync items */
 	for($x=0; $x<count($config_copy['nat']['advancedoutbound']['rule']); $x++) {
 		if(isset($config_copy['nat']['advancedoutbound']['rule'][$x]['nosync']))
-			unset($config_copy['nat']['advancedoutbound']['rule'][$x]['nosync']);
+			unset($config_copy['nat']['advancedoutbound']['rule'][$x]);
 	}
 	for($x=0; $x<count($config_copy['nat']['rule']); $x++) {
 		if(isset($config_copy['nat']['rule'][$x]['nosync']))
-			unset($config_copy['nat']['rule'][$x]['nosync']);
+			unset($config_copy['nat']['rule'][$x]);
 	}
 	for($x=0; $x<count($config_copy['filter']['rule']); $x++) {
 		if(isset($config_copy['filter']['rule'][$x]['nosync']))
-			unset($config_copy['filter']['rule'][$x]['nosync']);
+			unset($config_copy['filter']['rule'][$x]);
 	}
 
 	if($g['booting'])

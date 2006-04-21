@@ -380,14 +380,15 @@ include("fbegin.inc"); ?>
                     <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
-                </tr><?php if ((!(isset($id) && $a_nat[$id])) || (isset($_GET['dup']))): ?>
+                </tr>
 				<tr>
 					<td width="22%" valign="top" class="vncell">No XMLRPC Sync</td>
 					<td width="78%" class="vtable">
 						<input type="checkbox" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
 						HINT: This prevents the rule from automatically syncing to other carp members.
 					</td>
-				</tr>
+				</tr>                
+                <?php if ((!(isset($id) && $a_nat[$id])) || (isset($_GET['dup']))): ?>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">

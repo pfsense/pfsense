@@ -1589,6 +1589,8 @@ function get_netgaph_interface_assignment($friendly_interface) {
 function reload_all_sync() {
 	global $config, $g;
 	
+	$g['booting'] = false;
+	
 	touch("{$g['tmp_path']}/reloading_all");
 	
 	$shutdown_webgui_needed = false;

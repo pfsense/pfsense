@@ -1206,6 +1206,8 @@ EOD;
 
 		echo "One moment while we reload the settings...";
 
+		$g['booting'] = false;
+
 		/* resync everything */
 		reload_all_sync();
 		

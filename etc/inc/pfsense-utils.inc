@@ -1855,7 +1855,13 @@ function enable_rrd_graphing()
 	$downstream = 125000000;
 	$upstream   = 125000000;
 
+	$rrdrestore = "";
+	$rrdreturn = "";
+
 	$config['rrd']['enable'] = true;
+
+	if($g['platform'] == "cdrom") 
+		return;
 
 	if (isset($config['rrd']['enable'])) {
 

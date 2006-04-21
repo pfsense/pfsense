@@ -282,12 +282,6 @@ function interfaces_optional_configure_if($opti) {
 			mwexec($cmd);
 		}
 
-		/* OpenVPN configuration? */
- 		if (isset($optcfg['ovpn'])) {
- 			if (strstr($optcfg['if'], "tap"))
- 				ovpn_link_tap();
- 		}
-
 		/* bridged? */
 		if ($optcfg['bridge']) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " delete up");

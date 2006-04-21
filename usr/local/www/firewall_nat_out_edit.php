@@ -62,8 +62,8 @@ if (isset($id) && $a_out[$id]) {
 		$pconfig['interface'] = "wan";
     $pconfig['descr'] = $a_out[$id]['descr'];
     $pconfig['nonat'] = $a_out[$id]['nonat'];
-    $pconfig['nosync'] = isset($a_out[$id]['nosync']);
-    $pconfig['staticnatport'] = isset($a_out[$id]['staticnatport']);    
+    $pconfig['staticnatport'] = isset($a_out[$id]['staticnatport']);
+    $pconfig['nosync'] = isset($a_out[$id]['nosync']);    
 } else {
     $pconfig['source_subnet'] = 24;
     $pconfig['destination'] = "any";
@@ -180,17 +180,17 @@ if ($_POST) {
         $natent['target'] = $_POST['target'];
         $natent['interface'] = $_POST['interface'];
 
-	/* static-port */	
-	if(isset($_POST['staticnatport'])) 
-		$natent['staticnatport'] = true;
-	else 
-		unset($natent['staticnatport']);
+		/* static-port */	
+		if(isset($_POST['staticnatport'])) 
+			$natent['staticnatport'] = true;
+		else 
+			unset($natent['staticnatport']);
 
-	/* if user has selected not nat, set it here */
-	if(isset($_POST['nonat'])) 
-		$natent['nonat'] = true;
-	else 
-		unset($natent['nonat']);
+		/* if user has selected not nat, set it here */
+		if(isset($_POST['nonat'])) 
+			$natent['nonat'] = true;
+		else 
+			unset($natent['nonat']);
 
         if ($ext == "any")
             $natent['destination']['any'] = true;
@@ -200,22 +200,22 @@ if ($_POST) {
         $natent['natport'] = $_POST['natport'];
         $natent['dstport'] = $_POST['dstport'];
 
-	if($_POST['nosync'] == "yes")
-		$natent['nosync'] = true;
-	else
-		unset($natent['nosync']);
-
+		if($_POST['nosync'] == "yes")
+			$natent['nosync'] = true;
+		else
+			unset($natent['nosync']);
+	
         if (isset($_POST['destination_not']) && $ext != "any")
             $natent['destination']['not'] = true;
-
-	if (isset($id) && $a_out[$id])
-		$a_out[$id] = $natent;
-	else {
-		if (is_numeric($after))
-			array_splice($a_out, $after+1, 0, array($natent));
-		else
-			$a_out[] = $natent;
-	}
+	
+		if (isset($id) && $a_out[$id])
+			$a_out[$id] = $natent;
+		else {
+			if (is_numeric($after))
+				array_splice($a_out, $after+1, 0, array($natent));
+			else
+				$a_out[] = $natent;
+		}
 
         touch($d_natconfdirty_path);
 
@@ -405,20 +405,20 @@ function sourcesel_change() {
 			</table>
 		  </td>
                 </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">No XMLRPC Sync</td>
-                  <td width="78%" class="vtable">
-                    <input value="yes" name="nosync" type="checkbox" class="formfld" id="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
-		    HINT: This prevents the rule from automatically syncing to other carp members.
-		  </td>
-                </tr>
+				<tr>
+				  <td width="22%" valign="top" class="vncell">No XMLRPC Sync</td>
+				  <td width="78%" class="vtable">
+					<input value="yes" name="nosync" type="checkbox" class="formfld" id="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
+				   			 HINT: This prevents the rule from automatically syncing to other carp members.
+				  </td>
+				</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
-                </tr>
+          </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">

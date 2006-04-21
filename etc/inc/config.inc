@@ -1016,8 +1016,8 @@ EOD;
 	echo <<<EOD
 
 Do you want to set up VLANs first?
-If you are not going to use VLANs, or only for optional interfaces, you
-should say no here and use the webGUI to configure VLANs later, if required.
+If you are not going to use VLANs, or only for optional interfaces, you should 
+say no here and use the webConfigurator to configure VLANs later, if required.
 
 Do you want to set up VLANs now [y|n]?
 EOD;

@@ -137,7 +137,7 @@ if ($_POST) {
 					} else {
 						restore_config_section($_POST['restorearea'], $rules);
 						filter_configure();
-						$savemsg = "The configuration area has been restored.";
+						$savemsg = "The configuration area has been restored.  The firewall is now rebooting.";
 					}
 				} else {
 					$rules = file_get_contents($_FILES['conffile']['tmp_name']);
@@ -167,7 +167,7 @@ if ($_POST) {
 							}
 							if(isset($config['captiveportal']['enable'])) {
 								/* for some reason ipfw doesn't init correctly except on bootup sequence */
-								$savemsg = "The configuration has been restored.<p>The firewall is now rebooting due to captive portal.";
+								$savemsg = "The configuration has been restored.<p>The firewall is now rebooting.";
 								$reboot_needed = true;
 							}
 							setup_serial_port();

@@ -681,6 +681,9 @@ if ($_POST) {
 if (($config['system']['webgui']['certificate'] != $oldcert)
 		|| ($config['system']['webgui']['private-key'] != $oldkey)) {
     ob_flush();
+    flush();
+    log_error("webConfigurator certificates have changed.  Restarting webConfigurator.");
+    sleep(1);
 	touch("/tmp/restart_webgui");
 }
 

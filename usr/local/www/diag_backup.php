@@ -286,7 +286,12 @@ include("head.inc");
 <?php
 
 if($reboot_needed == true) {
-	mwexec("/etc/rc.reboot");
+	ob_flush();
+	flush();
+	sleep(5);
+	while(file_exists("{$g['varrun_path']}/config.lock"))
+		sleep(3);
+	mwexec("/sbin/shutdown -r now");
 	exit;
 }
 

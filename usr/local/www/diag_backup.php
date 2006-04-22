@@ -149,10 +149,9 @@ if ($_POST) {
 							/* this will be picked up by /index.php */
 							conf_mount_rw();
 							touch("/needs_package_sync");
-							$reloadall = true;
 							$reboot_needed = true;
 							$savemsg = "The configuration has been restored. The firewall is now rebooting.";
-							/* remove cache, we will force a config reload */
+							/* remove cache, we will force a config reboot */
 							if(file_exists("/tmp/config.cache"))
 								unlink("/tmp/config.cache");
 							$config = parse_config(true);
@@ -188,10 +187,10 @@ if ($_POST) {
 			if ($ver2restore <> "") {
 				$conf_file = "{$g['cf_conf_path']}/bak/config-" . strtotime($ver2restore) . ".xml";
                                 if (config_install($conf_file) == 0) {
-					$reloadall = true;
-                                        $savemsg = "The configuration has been restored. The firewall is now rebooting.";
+									$reboot_needed = true;
+                                    $savemsg = "The configuration has been restored. The firewall is now rebooting.";
                                 } else {
-                                        $input_errors[] = "The configuration could not be restored.";
+                                	$input_errors[] = "The configuration could not be restored.";
                                 }
                         } else {
                                 $input_errors[] = "No version selected.";
@@ -255,7 +254,7 @@ include("head.inc");
 						Open a pfSense configuration XML file and click the button below to restore the configuration. <br /><br /> Restore area: <?php spit_out_select_items("restorearea"); ?>
 						<p><input name="conffile" type="file" class="formfld" id="conffile" size="40"></p>
 						<p><input name="Submit" type="submit" class="formbtn" id="restore" value="Restore configuration"></p>
-                      	<p><strong><span class="red">Note:</span></strong><br />The firewall will reload the settings after restoring the configuration.<br /></p>
+                      	<p><strong><span class="red">Note:</span></strong><br />The firewall will reboot after restoring the configuration.<br /></p>
 					</td>
 				</tr>
 				<?php if($config['installedpackages']['package'] != "") { ?>
@@ -289,17 +288,6 @@ include("head.inc");
 if($reboot_needed == true) {
 	mwexec("/etc/rc.reboot");
 	exit;
-}
-
-if($reloadall == true) {
-	
-	if(file_exists("{$g['tmp_path']}/config.cache"))
-		unlink("{$g['tmp_path']}/config.cache");
-		
-	parse_config();
-	
-	reload_all();
-	
 }
 
 ?>

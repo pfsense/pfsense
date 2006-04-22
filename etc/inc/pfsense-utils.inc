@@ -1854,19 +1854,18 @@ function enable_rrd_graphing()
 	/* Asume GigE for now */
 	$downstream = 125000000;
 	$upstream   = 125000000;
-
+	
 	$rrdrestore = "";
-	$rrdreturn = "";
+	$rrdreturn = "";	
 
 	$config['rrd']['enable'] = true;
-
-	if($g['platform'] == "cdrom") 
-		return;
 
 	if (isset($config['rrd']['enable'])) {
 
 		/* create directory if needed */
-		safe_mkdir("$rrddbpath", 0755);
+		if(!is_dir("$rrddbpath")) { 	                 
+			mkdir("$rrddbpath", 0755); 	 
+		}
 
 		if($g['booting']) {
 			/* if we are on livecd or embedded use a memoryfs. */
@@ -1876,13 +1875,14 @@ function enable_rrd_graphing()
 				$mdnr = `mount |grep md | awk -F"md" '{print $2}'|tail -1 |cut -c 1`;
 				$mdnr = $mdnr +1;
 				system("/sbin/mdmfs -M -s 3m md$mdnr $rrddbpath");
-			}
-			/* we now have something to write "on", restore the databases if we have them */
-			if(file_exists("{$g['cf_conf_path']}/rrd.tgz")) {
-				exec("cd /;/usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz", $rrdrestore, $rrdreturn);
-				if($rrdrestore != 0) {
-					log_error("RRD restore failed exited with $rrdreturn, the
-						error is: $rrdrestore[0]\n");
+
+				/* we now have something to write "on", restore the databases if we have them */
+				if(file_exists("{$g['cf_conf_path']}/rrd.tgz")) {
+					exec("cd /;/usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz", $rrdrestore, $rrdreturn);
+					if($rrdrestore != 0) {
+						log_error("RRD restore failed exited with $rrdreturn, the
+							error is: $rrdrestore[0]\n");
+					}
 				}
 			}
 
@@ -1946,6 +1946,9 @@ function enable_rrd_graphing()
 					RRA:MAX:0.5:5:1000 \
 					RRA:MAX:0.5:60:1000 \
 					RRA:MAX:0.5:3600:1000";
+					
+				$rrdcreateoutput = "";
+				$rrdcreatereturn = "";
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 				if($rrdcreatereturn != 0) {

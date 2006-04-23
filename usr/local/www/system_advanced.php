@@ -561,6 +561,9 @@ include("head.inc");
 <?php
 
 if ($_POST) {
+    ob_flush();
+    flush();
+    sleep(1)	;
 	if (!$input_errors) {
 		if($_POST['disablefilter'] == "yes") {
 			$config['system']['disablefilter'] = "enabled";

@@ -64,6 +64,10 @@ exec('/usr/bin/tar -tzf /usr/share/zoneinfo.tgz', $timezonelist);
 $timezonelist = array_filter($timezonelist, 'is_timezone');
 sort($timezonelist);
 
+/* kill carriage returns */
+for($x=0; $x<count($timezonelist); $x++) 
+		$timezonelist[$x] = str_replace("\n", "", $timezonelist[$x]);
+
 if ($pkg['step'][$stepid]['includefile'])
 	require($pkg['step'][$stepid]['includefile']);
 

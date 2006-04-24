@@ -61,12 +61,13 @@ for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 }
 
 $periods = array("2h", "6h", "48h", "14d", "2m", "18m");
-/*
-if(! array_key_exists($interval, $periods)) {
-	PRINT "Graph interval $interval is not valid <br>\n";
-	die();
+
+$found = 0;
+foreach($periods as $period) if($period == $interval) $found = 1;
+if($found == 0) {
+        PRINT "Graph interval $interval is not valid <br>\n";
+        die();
 }
-*/
 
 $graphs['2h']['seconds'] = 7200;
 $graphs['2h']['average'] = 60;

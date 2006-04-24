@@ -52,6 +52,9 @@ include("head.inc");
 
 ?>
 
+<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
+<script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
+
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
@@ -95,15 +98,27 @@ $periods = array("2h", "6h", "48h", "14d", "2m", "18m");
 foreach($periods as $period => $interval) {
 
 	PRINT "<B>Analysis for $curif -- $interval $curgraph</B><BR>";
-	PRINT "<IMG BORDER=1 ALT=\"$ifname $curgraph Graph\" 
-	SRC=\"status_rrd_graph_img.php?if=$curif&interval=$interval&graph=$curgraph\"><BR><BR>";
+	PRINT "\n<IMG BORDER='1' name='{$curif}-{$interval}-{$curgraph}' id='{$curif}-{$interval}-{$curgraph}' ALT=\"$ifname $curgraph Graph\" SRC=\"status_rrd_graph_img.php?if=$curif&interval=$interval&graph=$curgraph\"><BR><BR>";
 }
 
 ?>
 
 </div>
 
-<meta http-equiv="refresh" content="300;url=<?php print $_SERVER['PHP_SELF']; ?>">
+<script language="javascript">
+	function update_graph_images() {
+		//alert('updating');
+		var randomid = Math.floor(Math.random()*11);
+		<?php
+			/* generate update events utilizing prototype $('') feature */
+			echo "\n";
+			foreach($periods as $period => $interval) 
+				echo "\t\t\$('{$curif}-{$interval}-{$curgraph}').src='status_rrd_graph_img.php?if={$curif}&interval={$interval}&graph={$curgraph}&tmp=' + randomid;\n";	
+		?>	
+		window.setTimeout('update_graph_images()', 355000);
+	}
+	window.setTimeout('update_graph_images()', 355000);
+</script>
 
 <?php include("fend.inc"); ?>
 </body>

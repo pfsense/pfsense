@@ -34,6 +34,9 @@
 
 require("guiconfig.inc");
 
+function gettext($text) {
+	return $text;	
+}
 if ($_GET['if']) {
 	$curif = $_GET['if'];
 	$ifnum = $config['interfaces'][$curif]['if'];

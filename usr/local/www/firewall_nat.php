@@ -199,6 +199,8 @@ include("head.inc");
 				  			echo $beginport;
 							if ($wkports[$beginport])
 								echo " (" . $wkports[$beginport] . ")";
+							else
+								echo "&nbsp;";
 						} else
 							echo $beginport . " - " . $endport;
 				  ?>
@@ -216,6 +218,8 @@ include("head.inc");
 				  			echo $natent['local-port'];
 							if ($wkports[$natent['local-port']])
 								echo " (" . $wkports[$natent['local-port']] . ")";
+							else
+								echo "&nbsp;";
 						} else
 							echo $natent['local-port'] . " - " .
 								($natent['local-port']+$endport-$beginport);

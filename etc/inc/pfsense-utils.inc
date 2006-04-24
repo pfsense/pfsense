@@ -1886,10 +1886,6 @@ function enable_rrd_graphing()
 				}
 			}
 
-			/* create symlink if needed */
-			if(!is_link("$rrdgraphpath")) {
-				exec("ln -s $rrddbpath $rrdgraphpath");
-			}
 		}
 
 		/* db update script */

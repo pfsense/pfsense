@@ -172,7 +172,7 @@ While(!Connection_Aborted()) {
 	 *   firefox and ie can be a bear on ram usage!
          */
 	$counter++;
-	if($counter > 40) {
+	if($counter > 100) {
 		echo "Redirecting to <a href=\"status_queues.php\">Queue Status</a>.<p>";
 		echo "<meta http-equiv=\"refresh\" content=\"1;url={$_SERVER['SCRIPT_NAME']}\">";
 		mwexec("/usr/bin/killall pfctl");

@@ -44,7 +44,7 @@ if(isset($config['shaper']['enable'])) {
 		Header("Location: wizard.php?xml=traffic_shaper_wizard.xml");
 }
 
-$specialsrcdst = explode(" ", "any lan pptp");
+$specialsrcdst = explode(" ", "any wanip lanip lan pptp");
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
@@ -492,6 +492,10 @@ function dst_rep_change() {
                             Single host or alias</option>
                             <option value="network" <?php if (!$sel) echo "selected"; ?>>
                             Network</option>
+							<option value="wanip" <?php if ($pconfig['src'] == "wanip") { echo "selected"; } ?>>
+                            WAN address</option>
+							<option value="lanip" <?php if ($pconfig['src'] == "lanip") { echo "selected"; } ?>>
+                            LAN address</option>
                             <option value="lan" <?php if ($pconfig['src'] == "lan") { echo "selected"; } ?>>
                             LAN subnet</option>
                             <option value="pptp" <?php if ($pconfig['src'] == "pptp") { echo "selected"; } ?>>
@@ -572,6 +576,10 @@ function dst_rep_change() {
                             Single host or alias</option>
                             <option value="network" <?php if (!$sel) echo "selected"; ?>>
                             Network</option>
+							<option value="wanip" <?php if ($pconfig['dst'] == "wanip") { echo "selected"; } ?>>
+                            WAN address</option>
+							<option value="lanip" <?php if ($pconfig['dst'] == "lanip") { echo "selected"; } ?>>
+                            LAN address</option>
                             <option value="lan" <?php if ($pconfig['dst'] == "lan") { echo "selected"; } ?>>
                             LAN subnet</option>
                             <option value="pptp" <?php if ($pconfig['dst'] == "pptp") { echo "selected"; } ?>>

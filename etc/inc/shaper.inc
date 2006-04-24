@@ -422,6 +422,9 @@ function filter_generate_pf_altq_rules() {
 			continue;
 		}
 
+		$lanip = find_interface_ip($config['interfaces']['lan']['if']);
+		$wanip = find_interface_ip(get_real_wan_interface());
+
 		for ($iif = 0; $iif < $nif; $iif++) {
 			$direction = 'in';
 			$line = "pass {$direction} on ";
@@ -452,6 +455,12 @@ function filter_generate_pf_altq_rules() {
 						$optcfg[$rule['source']['network']]['sn'];
 				} else {
 					switch ($rule['source']['network']) {
+						case 'wanip':
+							$src = $wanip;
+							break;
+						case 'lanip':
+							$src = $lanip;
+							break;
 						case 'lan':
 							$src = "$lansa/$lansn";
 							break;
@@ -534,6 +543,12 @@ function filter_generate_pf_altq_rules() {
 						$optcfg[$rule['destination']['network']]['sn'];
 				} else {
 					switch ($rule['destination']['network']) {
+						case 'wanip':
+							$dst = $wanip;
+							break;
+						case 'lanip':
+							$dst = $lanip;
+							break;
 						case 'lan':
 							$dst = "$lansa/$lansn";
 							break;

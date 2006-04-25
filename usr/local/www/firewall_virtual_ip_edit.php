@@ -130,7 +130,7 @@ if ($_POST) {
 			$can_post = false;
 		}
 		if($can_post == false) 
-			$input_errors[] = "Sorry, we could not locate an interface with a matching subnet for {$cannot_find}.<p>Please add an ip in this subnet on a real interface.";
+			$input_errors[] = "Sorry, we could not locate an interface with a matching subnet for {$cannot_find}.  Please add an ip in this subnet on a real interface.";
 	}
 
 	if (!$input_errors) {

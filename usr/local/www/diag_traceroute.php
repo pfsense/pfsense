@@ -116,13 +116,11 @@ if (!isset($do_traceroute)) {
 				</td>
 				</tr>
 				<tr>
-				 <td valign="top" colspan="2">
-				 	&nbsp;
-				 </td>
-				 <td width="78%"> 
+				  <td width="22%" valign="top">&nbsp;</td>
+				  <td width="78%"> 
 					<B>NOTE!</B> Multi-wan is not supported from this utility currently. 
 				 </td>
-				</tr>				
+				</tr>					
 			</table>
 </form>
 <?php include("fend.inc"); ?>

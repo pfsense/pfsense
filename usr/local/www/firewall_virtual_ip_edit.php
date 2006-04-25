@@ -111,7 +111,7 @@ if ($_POST) {
 	/* make sure new ip is within the subnet of a valid ip
 	 * on one of our interfaces (wan, lan optX)
 	 */
-	if ($_POST['mode'] === "carp") {
+	if ($_POST['mode'] == "carp") {
 		$can_post = true;
 		$found = false;
 		$subnet_ip = return_first_three_octets($_POST['subnet']);

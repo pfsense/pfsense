@@ -39,24 +39,27 @@ if($_GET['mode'] == "restartservice" and $_GET['service']) {
 }
 
 if($_GET['mode'] == "startservice" and $_GET['service']) {
-		switch($_GET['service']) {
-				case 'bsnmpd';
-						services_snmpd_configure();	
-						break;
-				case 'dnsmasq';
-						services_dnsmasq_configure();
-						break;
-				case 'dhcpd';
-						services_dhcpd_configure();
-						break;
-		}
+	switch($_GET['service']) {
+		case 'bsnmpd':
+			services_snmpd_configure();	
+			break;
+		case 'dnsmasq':
+			services_dnsmasq_configure();
+			break;
+		case 'dhcpd':
+			services_dhcpd_configure();
+			break;
+		default:
+			start_service($_GET['service']);
+			break;
+	}
 	start_service($_GET['service']);
-        $savemsg = "{$_GET['service']} has been started.";
+    $savemsg = "{$_GET['service']} has been started.";
 }
 
 if($_GET['mode'] == "stopservice" and $_GET['service']) {
-        stop_service($_GET['service']);
-        $savemsg = "{$_GET['service']} has been stopped.";
+    stop_service($_GET['service']);
+    $savemsg = "{$_GET['service']} has been stopped.";
 }
 
 /* batch mode, allow other scripts to call this script */

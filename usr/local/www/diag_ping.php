@@ -151,6 +151,14 @@ include("head.inc"); ?>
 				?>
 				</td>
 				</tr>
+				<tr>
+				 <td valign="top" colspan="2">
+				 	&nbsp;
+				 </td>
+				 <td width="78%"> 
+					<B>NOTE!</B> Multi-wan is not supported from this utility currently. 
+				 </td>
+				</tr>			
 			</table>
 </form>
 </td></tr></table>

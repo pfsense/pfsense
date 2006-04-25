@@ -1247,7 +1247,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						}
 					}
 					/* Add the load balanced gateways */
-					if ($foundlb = 1)
+					if ($foundlb == 1)
 						$line .= $routeto;
 				}
 				/*  we're not using load balancing, just setup gateway */

@@ -209,7 +209,7 @@ rm -rf /usr/local/pkg/pf/CVS
 rm -f /tmp/filter_dirty
 rm -f /tmp/rc.newwanip
 rm -f /tmp/rc.linkup
-/usr/local/sbin/check_reload_status 2>/dev/null
+/usr/bin/nice -n20 /usr/local/sbin/check_reload_status 2>/dev/null
 
 echo "Bootup complete"
 

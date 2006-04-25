@@ -33,7 +33,7 @@ form input {
 
 #header {
 	height: 70px;
-	width: 800px;
+	width: 900px;
 }
 #header-left {
 	position: relative;
@@ -149,7 +149,7 @@ table#marquee div#container div#scroller {
 	border-top: 1px solid #FFFFFF;
 	margin-top: 0px;
 	padding-top: 0px;
-	width: 800px;
+	width: 900px;
 }
 
 #footer {
@@ -157,7 +157,7 @@ table#marquee div#container div#scroller {
 	top: 10px;
 	padding: 0px;
 	margin: 6px;
-	width: 800px;
+	width: 900px;
 	background-color: #990000;
 	text-align: center;
 	color: #ffffff;
@@ -178,7 +178,7 @@ table#marquee div#container div#scroller {
 	/*margin-left: 171px;*/
 	margin-left: 170px;
 	margin-top: 5px;
-	width: 620px;
+	width: 720px;
 }
 
 

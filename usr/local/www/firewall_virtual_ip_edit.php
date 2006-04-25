@@ -49,6 +49,11 @@ if (isset($_POST['id']))
 else
 	$id = $_GET['id'];
 
+function return_first_three_octets($ip) {
+	$ip_split = split("\.", $ip);	
+	return $ip_split[0] . "." . $ip_split[1] . "." . $ip_split[2]; 
+}
+
 if (isset($id) && $a_vip[$id]) {
 	$pconfig['mode'] = $a_vip[$id]['mode'];
 	$pconfig['vhid'] = $a_vip[$id]['vhid'];
@@ -101,6 +106,31 @@ if ($_POST) {
 				break;
 			}
 		}
+	}
+
+	/* make sure new ip is within the subnet of a valid ip
+	 * on one of our interfaces (wan, lan optX)
+	 */
+	if ($_POST['mode'] === "carp") {
+		$can_post = true;
+		$found = false;
+		$subnet_ip = return_first_three_octets($_POST['subnet']);
+		$iflist = array("lan", "wan");
+		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+			$iflist['opt' . $i] = 'opt' . $i;
+		foreach($iflist as $if) {
+			$ww_subnet_ip = return_first_three_octets($config['interfaces'][$if]['ipaddr']);
+			if($ww_subnet_ip == $subnet_ip) {
+				$found = true;
+				break;
+			}
+		}
+		if($found == false) {
+			$cannot_find = $_POST['subnet'];
+			$can_post = false;
+		}
+		if($can_post == false) 
+			$input_error[] = "Sorry, we could not locate an interface with a matching subnet for {$cannot_find}.<p>Please add an ip in this subnet on a real interface.";
 	}
 
 	if (!$input_errors) {

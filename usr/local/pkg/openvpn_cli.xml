@@ -14,6 +14,10 @@
 			<url>/pkg.php?xml=openvpn_cli.xml</url>
 			<active/>
 		</tab>
+		<tab>
+			<text>Client-specific configuration</text>
+			<url>/pkg.php?xml=openvpn_csc.xml</url>
+		</tab>
 	</tabs>
 	<adddeleteeditpagefields>
 		<columnitem>
@@ -86,7 +90,21 @@
 			<fieldname>remote_network</fieldname>
 			<fielddescr>Remote network</fielddescr>
 			<description>This is the network that will be accessable from your endpoint. Expressed as a CIDR range. You may leave this blank if all you want is to access the VPN clients. You normally want this set to the remote endpoint's LAN network.</description>
+			<type>input</type>
+		</field>
+		<field>
+			<fieldname>proxy_hostname</fieldname>
+			<fielddescr>Proxy Host</fielddescr>
+			<description>Proxy server hostname.</description>
                         <type>input</type>
+		</field>
+		<field>
+			<fieldname>proxy_port</fieldname>
+			<fielddescr>Proxy port</fielddescr>
+			<description>The port OpenVPN will use on the proxy server.</description>
+			<type>input</type>
+			<default_value>3128</default_value>
+			<size>5</size>
 		</field>
 		<field>
 			<fieldname>crypto</fieldname>
@@ -155,6 +173,12 @@
 			<fielddescr>LZO compression</fielddescr>
 			<description>Checking this will compress the packets using the LZO algorithm before sending them.</description>
 			<type>checkbox</type>
+		</field>
+		<field>
+			<fieldname>custom_options</fieldname>
+			<fielddescr>Custom options</fielddescr>
+			<description>You can put your own custom options here, separated by semi-colons (;). They'll be added to the client configuration.</description>
+			<type>input</type>
 		</field>
 		<field>
 			<fieldname>description</fieldname>

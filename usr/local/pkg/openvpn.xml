@@ -14,6 +14,10 @@
 			<text>Client</text>
 			<url>/pkg.php?xml=openvpn_cli.xml</url>
 		</tab>
+		<tab>
+			<text>Client-specific configuration</text>
+			<url>/pkg.php?xml=openvpn_csc.xml</url>
+		</tab>
 	</tabs>
 	<adddeleteeditpagefields>
 		<columnitem>
@@ -93,6 +97,12 @@
 			<fieldname>local_network</fieldname>
 			<fielddescr>Local network</fielddescr>
 			<description>This is the network that will be accessable from the remote endpoint. Expressed as a CIDR range. You may leave this blank you don't want to add a route to your network through this tunnel in the remote machine. This is generally set to your LAN network.</description>
+			<type>input</type>
+		</field>
+		<field>
+			<fieldname>remote_network</fieldname>
+			<fielddescr>Remote network</fielddescr>
+			<description>This is a network that will be routed through the tunnel, so that a site-to-site VPN can be established without manually changing the routing tables. Expressed as a CIDR range. If this is a site-to-site VPN, enter here the remote LAN here. You may leave this blank if you don't want a site-to-site VPN.</description>
 			<type>input</type>
 		</field>
 		<field>
@@ -187,6 +197,12 @@
 			<fielddescr>LZO compression</fielddescr>
 			<description>Checking this will compress the packets using the LZO algorithm before sending them.</description>
 			<type>checkbox</type>
+		</field>
+		<field>
+			<fieldname>custom_options</fieldname>
+			<fielddescr>Custom options</fielddescr>
+			<description>You can put your own custom options here, separated by semi-colons (;). They'll be added to the server configuration.</description>
+			<type>input</type>
 		</field>
 		<field>
 			<fieldname>description</fieldname>

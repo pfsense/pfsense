@@ -104,6 +104,7 @@
 		</field>
 		<field>
 			<fielddescr>Link Quality Level</fielddescr>
+			<size>1</size>			
 			<fieldname>enablelqe</fieldname>
 			<description>Enables Link Quality Extensions.  Setting to 1 or 2 breaks RFC3626 compability!</description>
 			<type>select</type>

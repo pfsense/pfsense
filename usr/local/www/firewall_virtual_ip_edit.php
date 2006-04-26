@@ -49,9 +49,9 @@ if (isset($_POST['id']))
 else
 	$id = $_GET['id'];
 
-function return_first_three_octets($ip) {
+function return_first_two_octets($ip) {
 	$ip_split = split("\.", $ip);	
-	return $ip_split[0] . "." . $ip_split[1] . "." . $ip_split[2]; 
+	return $ip_split[0] . "." . $ip_split[1]; 
 }
 
 if (isset($id) && $a_vip[$id]) {
@@ -119,7 +119,7 @@ if ($_POST) {
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
 			$iflist['opt' . $i] = 'opt' . $i;
 		foreach($iflist as $if) {
-			$ww_subnet_ip = return_first_three_octets($config['interfaces'][$if]['ipaddr']);
+			$ww_subnet_ip = return_first_two_octets($config['interfaces'][$if]['ipaddr']);
 			if($ww_subnet_ip == $subnet_ip) {
 				$found = true;
 				break;

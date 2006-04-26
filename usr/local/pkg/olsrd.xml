@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <packagegui>
-	<name>olsrd</name>
+	<name>OLSRD</name>
 	<version>1.0</version>
 	<title>OLSRD</title>
 	<!-- Menu is where this packages menu will appear -->
@@ -17,13 +17,17 @@
 		<tab>
 			<text>OLSRD Settings</text>
 			<url>/pkg_edit.php?xml=olsrd.xml&amp;id=0</url>
-			<active/>
+			<active/>			
 		</tab>
 	</tabs>
+    	<additional_files_needed>
+	    <prefix>/usr/local/www/</prefix>
+	    <chmod>0755</chmod>
+	    <item>http://www.pfsense.com/packages/config/OLSRD_rules.php</item>
+	</additional_files_needed>
 	<!-- configpath gets expanded out automatically and config items will be
          stored in that location -->
 	<configpath>['installedpackages']['OLSRD']['config']</configpath>
-	<aftersaveredirect>pkg_edit.php?xml=olsrd.xml&amp;id=0</aftersaveredirect>
 	<!-- fields gets invoked when the user adds or edits a item.   the following items
          will be parsed and rendered for the user as a gui with input, and selectboxes. -->
 	<fields>
@@ -40,6 +44,7 @@
 			<multiple>true</multiple>
 			<size>3</size>
 			<type>interfaces_selection</type>
+			<description>Select the interfaces that OLSR will bind to.  You can use the CTRL or COMMAND key to select multiple interfaces.</description>
 		</field>
 		<field>
 			<fielddescr>Enable HTTPInfo Plugin</fielddescr>
@@ -97,6 +102,26 @@
 			<rows>5</rows>
 			<cols>50</cols>
 		</field>
+		<field>
+			<fielddescr>Link Quality Level</fielddescr>
+			<fieldname>enablelqe</fieldname>
+			<description>Enables Link Quality Extensions.  Setting to 1 or 2 breaks RFC3626 compability!</description>
+			<type>select</type>
+			<options>
+				<option>
+					<value>0</value>
+					<name>Run in RFC3626 mode</name>
+				</option>
+				<option>
+					<value>1</value>
+					<name>Link quality is used when calculating MPRs</name>
+				</option>
+				<option>
+					<value>2</value>
+					<name>Routes will also be calculated based on distributed link quality information</name>
+				</option>
+			</options>
+		</field>		
 	</fields>
 	<custom_delete_php_command>
 	</custom_delete_php_command>

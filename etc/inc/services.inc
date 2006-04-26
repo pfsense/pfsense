@@ -1008,7 +1008,7 @@ UseHysteresis	no
 # 2 = use link quality for MPR selection and routing
 # Defaults to 0
 
-LinkQualityLevel	2
+LinkQualityLevel	{$olsrd['enablelqe']}
 
 # Link quality window size
 # Defaults to 10

@@ -35,7 +35,16 @@ $if = $_GET['if'];
 if ($_POST['if'])
 	$if = $_POST['if'];
 	
-$iflist = array("lan" => "LAN");
+/* if OLSRD is enabled, allow WAN to house DHCP. */
+foreach($config['installedpackages']['olsrd']['config'] as $olsrd) {
+		if($olsr['enable']) {
+			$iflist = array("lan" => "LAN", "wan" => "WAN");
+			break;
+		}
+}
+
+if(!$iflist)
+	$iflist = array("lan" => "LAN");
 
 for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 	$oc = $config['interfaces']['opt' . $i];

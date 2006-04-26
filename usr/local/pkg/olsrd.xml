@@ -38,6 +38,17 @@
 			<type>checkbox</type>
 		</field>
 		<field>
+			<fielddescr>Link Quality Level</fielddescr>
+			<fieldname>enablelqe</fieldname>
+			<type>select</type>
+			<size>1</size>
+			<options>
+				<option><value>0</value><name>0</name></option>
+				<option><value>1</value><name>1</name></option>
+				<option><value>2</value><name>2</name></option>
+			</options>
+		</field>		
+		<field>
 			<fielddescr>Interfaces</fielddescr>
 			<fieldname>interface_array</fieldname>
 			<value>lan</value>
@@ -102,27 +113,6 @@
 			<rows>5</rows>
 			<cols>50</cols>
 		</field>
-		<field>
-			<fielddescr>Link Quality Level</fielddescr>
-			<size>1</size>			
-			<fieldname>enablelqe</fieldname>
-			<description>Enables Link Quality Extensions.  Setting to 1 or 2 breaks RFC3626 compability!</description>
-			<type>select</type>
-			<options>
-				<option>
-					<value>0</value>
-					<name>Run in RFC3626 mode</name>
-				</option>
-				<option>
-					<value>1</value>
-					<name>Link quality is used when calculating MPRs</name>
-				</option>
-				<option>
-					<value>2</value>
-					<name>Routes will also be calculated based on distributed link quality information</name>
-				</option>
-			</options>
-		</field>		
 	</fields>
 	<custom_delete_php_command>
 	</custom_delete_php_command>

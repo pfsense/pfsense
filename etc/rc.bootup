@@ -282,6 +282,9 @@
          */
 	services_dhcpd_configure();
 
+	/* startup OLSR if needed */
+	setup_wireless_olsr();
+
 	/* enable watchdog if supported */
 	enable_watchdog();
 		

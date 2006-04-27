@@ -700,9 +700,6 @@ EOD;
 	/* execute commands now in shell */
 	mwexec("/bin/sh /tmp/{$if}_setup.sh");
 
-	if(isset($wlcfg['useolsr']))
-		setup_wireless_olsr($if);
-
 	return 0;
 
 }

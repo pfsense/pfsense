@@ -1055,5 +1055,20 @@ function system_enable_arp_wrong_if() {
 	mwexec("/sbin/sysctl -n net.link.ether.inet.log_arp_wrong_iface=1");
 }
 
+function enable_watchdog() {
+	global $config;
+	$install_watchdog = false;
+	$supported_watchdogs = array("Geode");
+	$file = file_get_contents("/var/log/dmesg.boot");
+	foreach($supported_watchdogs as $sd) {
+		if(stristr($file, "Geode")) {
+			$install_watchdog = true;
+		}
+	}
+	if($install_watchdog == true) {
+		exec("/usr/bin/killall watchdogd");
+		exec("/usr/sbin/watchdogd");		
+	}
+}
 
 ?>

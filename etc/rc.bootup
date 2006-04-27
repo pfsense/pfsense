@@ -281,7 +281,10 @@
 	 *   incase user is using primary/backup failover dhcp mode
          */
 	services_dhcpd_configure();
-	
+
+	/* enable watchdog if supported */
+	enable_watchdog();
+		
 	/* done */
 	unlink("{$g['varrun_path']}/booting");
 	$g['booting'] = FALSE;

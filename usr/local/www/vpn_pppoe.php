@@ -87,6 +87,15 @@ if ($_POST) {
 				$input_errors[] = "The specified server address is equal to the LAN interface address.";	
 			}
 		}
+	} else {
+		/* turning pppoe off, lets dump any custom rules */
+		$rules = &$config['filter']['rule'];
+		for($x=0; $x<count($rules); $x++) {
+			if($rules[$x]['interface'] == "pppoe") { 
+				unset($rules[$x]);
+			}
+		}
+		write_config();		
 	}
 	
 	if (!$input_errors) {

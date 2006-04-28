@@ -1028,7 +1028,7 @@ MprCoverage	3
 
 EODA;
 
-if($olsr['enablehttpinfo']) {
+if($olsr['enablehttpinfo'] == "on") {
 	$olsr .= <<<EODB
 
 LoadPlugin "/usr/local/lib/olsrd_httpinfo.so.0.1"
@@ -1041,10 +1041,10 @@ EODB;
 
 }
 
-if($olsr['enabledyngw']) {
+if($olsr['enabledyngw'] == "on") {
 	$olsr .= <<<EODC
 
-LoadPlugin "/usr/local/lib/olsrd_secure.so.0.4"
+LoadPlugin "/usr/local/lib/olsrd_secure.so.0.5"
 {
     PlParam     "Keyfile"   "/usr/local/etc/olsrkey.txt"
 }
@@ -1053,7 +1053,7 @@ EODC;
 
 }
 
-if($olsr['enabledyngw']) {
+if($olsr['enabledyngw'] == "on") {
 	$olsr .= <<<EODE
 
 LoadPlugin "/usr/local/lib/olsrd_dyn_gw.so.0.4"
@@ -1159,7 +1159,7 @@ EOD;
 	}
 	
 	if(is_process_running("olsrd"))
-		mwexec("killall -HUP olsrd");
+		mwexec("/usr/bin/killall -HUP olsrd");
 	else 
 		mwexec_bg("/usr/local/sbin/olsrd -f {$g['varetc_path']}/olsr.conf");
 		

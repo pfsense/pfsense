@@ -911,30 +911,10 @@ IpVersion	4
 
 ClearScreen     yes
 
-# HNA IPv4 routes
-# syntax: netaddr netmask
-# Example Internet gateway:
-# 0.0.0.0 0.0.0.0
-
 Hna4
 {
-#   Internet gateway:
-#   0.0.0.0      0.0.0.0
-#   more entries can be added:
-#   192.168.1.0  255.255.255.0
+    0.0.0.0 0.0.0.0
 }
-
-# HNA IPv6 routes
-# syntax: netaddr prefix
-# Example Internet gateway:
-Hna6
-{
-#   Internet gateway:
-#   ::              0
-#   more entries can be added:
-#   fec0:2200:106:: 48
-}
-
 
 # Should olsrd keep on running even if there are
 # no interfaces available? This is a good idea

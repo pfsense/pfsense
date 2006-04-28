@@ -96,6 +96,15 @@ if ($_POST) {
 		if (($_POST['redir'] && !is_ipaddr($_POST['redir']))) {
 			$input_errors[] = "A valid target address must be specified.";
 		}
+	} else {
+		/* turning pptp off, lets dump any custom rules */
+		$rules = &$config['filter']['rule'];
+		for($x=0; $x<count($rules); $x++) {
+			if($rules[$x]['interface'] == "pptp") { 
+				unset($rules[$x]);
+			}
+		}
+		write_config();
 	}
 
 	if (!$input_errors) {

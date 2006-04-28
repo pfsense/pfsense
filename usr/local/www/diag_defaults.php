@@ -63,6 +63,7 @@ include("head.inc");
 		  <li>Reboot after changes are installed</li>
 		  <li>WAN interface will be set to obtain an address automatically from a DHCP server</li>
 		  <li>Default webConfigurator password will be reset to 'pfsense'</li>
+		  <li>Default webConfigurator username will be reset to 'admin'</li>
 		</ul>
                 Are you sure you want to proceed?</strong></p>
         <p>

@@ -2264,6 +2264,18 @@ function process_carp_rules() {
 	return $lines;
 }
 
+function remove_special_characters($string) {
+		$match_array = "";
+        preg_match_all("/[a-zA-Z0-9\_\-]+/",$string,$match_array);
+        $string = "";
+        foreach($match_array[0] as $ma) {
+                if($string <> "")
+                        $string .= " ";
+                $string .= $ma;
+        }
+        return $string;
+}
+
 function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsense.restore_config_section') {
 	global $config, $g;
 
@@ -2272,20 +2284,24 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 	
 	update_filter_reload_status("Syncing CARP data to {$url}");
 
+	/* make a copy of config */
 	$config_copy = $config;
 
 	/* strip out nosync items */
 	for($x=0; $x<count($config_copy['nat']['advancedoutbound']['rule']); $x++) {
 		if(isset($config_copy['nat']['advancedoutbound']['rule'][$x]['nosync']))
 			unset($config_copy['nat']['advancedoutbound']['rule'][$x]);
+		$config_copy['nat']['advancedoutbound']['rule'][$x]['descr'] = remove_special_characters($config_copy['nat']['advancedoutbound']['rule'][$x]['descr']);
 	}
 	for($x=0; $x<count($config_copy['nat']['rule']); $x++) {
 		if(isset($config_copy['nat']['rule'][$x]['nosync']))
 			unset($config_copy['nat']['rule'][$x]);
+		$config_copy['nat']['rule'][$x]['descr'] = remove_special_characters($config_copy['nat']['rule'][$x]['descr']);
 	}
 	for($x=0; $x<count($config_copy['filter']['rule']); $x++) {
 		if(isset($config_copy['filter']['rule'][$x]['nosync']))
 			unset($config_copy['filter']['rule'][$x]);
+		$config_copy['filter']['rule'][$x]['descr'] = remove_special_characters($config_copy['filter']['rule'][$x]['descr']);
 	}
 
 	if($g['booting'])

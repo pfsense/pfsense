@@ -883,6 +883,9 @@ function setup_wireless_olsr() {
 	}
 	conf_mount_rw();
 	foreach($config['installedpackages']['olsrd']['config'] as $olsrd) {
+		$olsr_enable = $olsrd['enable'];
+		if($olsr_enable <> "on")
+			return;		
 		$fd = fopen("{$g['varetc_path']}/olsr.conf", "w");
 		$olsr .= <<<EODA
 #

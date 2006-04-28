@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <packagegui>
-	<name>OLSRD</name>
+	<name>olsrd</name>
 	<version>1.0</version>
 	<title>OLSRD</title>
 	<!-- Menu is where this packages menu will appear -->

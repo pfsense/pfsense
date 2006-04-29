@@ -395,6 +395,27 @@ function find_number_of_created_carp_interfaces() {
 	return $tmp;
 }
 
+/****f* pfsense-utils/link_int_to_bridge_interface
+ * NAME
+ *   link_int_to_bridge_interface - Finds out a bridge group for an interface
+ * INPUTS
+ *   $ip
+ * RESULT
+ *   bridge[0-99]
+ ******/
+function link_int_to_bridge_interface($int) {
+	global $config, $g;
+	$real_int = convert_friendly_interface_to_real_interface_name($int);
+	$num_bridges = find_number_of_created_bridges();
+	for($x=0; $x<$num_bridges; $x++) {
+		$matches = "";
+		$bridge_info = `/sbin/ifconfig bridge{$x}`;
+		if(stristr($bridge_info, "member: {$real_int}")) {
+			return "bridge{$x}";
+		}
+	}	
+}
+
 /****f* pfsense-utils/link_ip_to_carp_interface
  * NAME
  *   link_ip_to_carp_interface - Find where a CARP interface links to.

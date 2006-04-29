@@ -269,6 +269,11 @@ function filter_generate_aliases() {
 	$lan_aliases = " " . link_ip_to_carp_interface($lanip);
 	$wan_aliases = " " . link_ip_to_carp_interface($wanip);
 
+	if(link_int_to_bridge_interface("lan")) 
+		$lan_aliases .= " " . link_int_to_bridge_interface("lan");
+	if(link_int_to_bridge_interface("wan")) 
+		$wan_aliases .= " " . link_int_to_bridge_interface("wan");
+
 	$aliases .= "# System Aliases \n";
 	$aliases .= "loopback = \"{ lo0 }\"\n";
 	$aliases .= "lan = \"{ {$config['interfaces']['lan']['if']}{$lan_aliases} }\"\n";
@@ -316,10 +321,8 @@ function filter_generate_aliases() {
 		/* do process tun interfaces for openvpn compatibility */
 		/* if(stristr(filter_opt_interface_to_real($ifname), "tun") == true) continue; */
 		$aliases .= convert_friendly_interface_to_friendly_descr($ifname) . " = \"{ " . filter_opt_interface_to_real($ifname);
-		if($config['interfaces'][$ifname]['bridge'] <> "") {
-			$aliases .= " bridge{$bridgetracker} ";
-			$bridgetracker++;
-		}
+		if(link_int_to_bridge_interface($ifname)) 
+			$aliases .= " " . link_int_to_bridge_interface($ifname);	
 		$aliases .= " }\"\n";
 	}
 	$aliases .= "# User Aliases \n";

@@ -1679,9 +1679,9 @@ EOD;
 
 # allow access to DHCP server on LAN
 anchor "dhcpserverlan"
-pass in quick on $lanif proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server on LAN"
-pass in quick on $lanif proto udp from any port = 68 to $lanip port = 67 label "allow access to DHCP server on LAN"
-pass out quick on $lanif proto udp from $lanip port = 67 to any port = 68 label "allow access to DHCP server on LAN"
+pass in quick on \$lan proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server on LAN"
+pass in quick on \$lan proto udp from any port = 68 to $lanip port = 67 label "allow access to DHCP server on LAN"
+pass out quick on \$lan proto udp from $lanip port = 67 to any port = 68 label "allow access to DHCP server on LAN"
 
 EOD;
 
@@ -1693,10 +1693,10 @@ EOD;
 			$ipfrules .= <<<EOD
 
 # allow access to DHCP server on {$on}
-anchor "dhcpserver{$oc['if']}"
-pass in quick on {$oc['if']} proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server"
-pass in quick on {$oc['if']} proto udp from any port = 68 to {$oc['ip']} port = 67 label "allow access to DHCP server"
-pass out quick on {$oc['if']} proto udp from {$oc['ip']} port = 67 to any port = 68 label "allow access to DHCP server"
+anchor "dhcpserver{$on}"
+pass in quick on \${$on} proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server"
+pass in quick on \${$on} proto udp from any port = 68 to {$oc['ip']} port = 67 label "allow access to DHCP server"
+pass out quick on \${$on} proto udp from {$oc['ip']} port = 67 to any port = 68 label "allow access to DHCP server"
 
 EOD;
 		}
@@ -1726,10 +1726,10 @@ EOD;
 			if ($sa) {
 				$ipfrules .= <<<EOD
 anchor "staticrouted"
-pass in quick on {$if} from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"
-pass in quick on {$if} from {$route['network']} to {$sa}/{$sn} label "pass traffic between statically routed subnets"
-pass out quick on {$if} from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"
-pass out quick on {$if} from {$route['network']} to {$sa}/{$sn} label "pass traffic between statically routed subnets"
+pass in quick on \${$route['interface']} from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"
+pass in quick on \${$route['interface']} from {$route['network']} to {$sa}/{$sn} label "pass traffic between statically routed subnets"
+pass out quick on \${$route['interface']} from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"
+pass out quick on \${$route['interface']} from {$route['network']} to {$sa}/{$sn} label "pass traffic between statically routed subnets"
 
 EOD;
 			}
@@ -1743,7 +1743,7 @@ EOD;
 
 # WAN spoof check
 anchor "wanspoof"
-block in $log quick on $wanif from $lansa/$lansn to any label "WAN spoof check"
+block in $log quick on \$wan from $lansa/$lansn to any label "WAN spoof check"
 
 EOD;
 
@@ -1754,7 +1754,7 @@ EOD;
 		if (!$oc['bridge'])
 			if($oc['sa'] <> "") 
 				if(isset($oc['enable']))
-					$ipfrules .= "block in $log quick on $wanif from {$oc['sa']}/{$oc['sn']} to any label \"interface spoof check\"\n";
+					$ipfrules .= "block in $log quick on \$wan from {$oc['sa']}/{$oc['sn']} to any label \"interface spoof check\"\n";
 	}
 
 	/* allow PPTP traffic if PPTP client is enabled on WAN */
@@ -1763,10 +1763,10 @@ EOD;
 
 # allow PPTP client
 anchor "pptpclient"
-pass in quick on {$wancfg['if']} proto gre from any to any modulate state label "allow PPTP client"
-pass out quick on {$wancfg['if']} proto gre from any to any modulate state label "allow PPTP client"
-pass in quick on {$wancfg['if']} proto tcp from any port = 1723 to any flags S/SA modulate state label "allow PPTP client"
-pass out quick on {$wancfg['if']} proto tcp from any to any port = 1723 flags S/SA modulate state label "allow PPTP client"
+pass in quick on \$wan proto gre from any to any modulate state label "allow PPTP client"
+pass out quick on \$wan proto gre from any to any modulate state label "allow PPTP client"
+pass in quick on \$wan proto tcp from any port = 1723 to any flags S/SA modulate state label "allow PPTP client"
+pass out quick on \$wan proto tcp from any to any port = 1723 flags S/SA modulate state label "allow PPTP client"
 
 EOD;
 	}
@@ -1777,17 +1777,17 @@ EOD;
 
 # allow our DHCP client out to the WAN
 anchor "wandhcp"
-pass out quick on $wanif proto udp from any port = 68 to any port = 67 label "allow dhcp client out wan"
+pass out quick on \$wan proto udp from any port = 68 to any port = 67 label "allow dhcp client out wan"
 
 EOD;
 	}
 
 if($config['interfaces']['lan']['bridge'] <> "wan" and $config['interfaces']['wan']['bridge'] <> "lan")
-	$ipfrules .= "block in $log quick on $wanif proto udp from any port = 67 to {$lansa_sn_combo} port = 68 label \"allow dhcp client out wan\"\n";
+	$ipfrules .= "block in $log quick on \$wan proto udp from any port = 67 to {$lansa_sn_combo} port = 68 label \"allow dhcp client out wan\"\n";
 
 	$ipfrules .= <<<EOD
 
-pass in quick on $wanif proto udp from any port = 67 to any port = 68 label "allow dhcp client out wan"
+pass in quick on \$wan proto udp from any port = 67 to any port = 68 label "allow dhcp client out wan"
 
 # LAN/OPT spoof check (needs to be after DHCP because of broadcast addresses)
 
@@ -1813,10 +1813,10 @@ EOD;
 
 # block anything from private networks on WAN interface
 anchor "spoofing"
-block in $log quick on $wanif from 10.0.0.0/8 to any label "block private networks from wan block 10/8"
-block in $log quick on $wanif from 127.0.0.0/8 to any label "block private networks from wan block 127/8"
-block in $log quick on $wanif from 172.16.0.0/12 to any label "block private networks from wan block 172.16/12"
-block in $log quick on $wanif from 192.168.0.0/16 to any label "block private networks from wan block 192.168/16"
+block in $log quick on \$wan from 10.0.0.0/8 to any label "block private networks from wan block 10/8"
+block in $log quick on \$wan from 127.0.0.0/8 to any label "block private networks from wan block 127/8"
+block in $log quick on \$wan from 172.16.0.0/12 to any label "block private networks from wan block 172.16/12"
+block in $log quick on \$wan from 192.168.0.0/16 to any label "block private networks from wan block 192.168/16"
 
 EOD;
 
@@ -1843,7 +1843,7 @@ EODF;
 # http://www.cymru.com/Documents/bogon-bn-nonagg.txt
 anchor "wanbogons"
 table <bogons> persist file "/etc/bogons"
-block in $log quick on $wanif from <bogons> to any label "block bogon networks from wan"
+block in $log quick on \$wan from <bogons> to any label "block bogon networks from wan"
 
 EOD;
 	}

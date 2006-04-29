@@ -877,6 +877,8 @@ EOD;
 
 function setup_wireless_olsr() {
 	global $config, $g;
+	if(!$config['installedpackages']['olsrd'] || !$config['installedpackages'])
+		return;	
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "setup_wireless_olsr($interface) being called $mt\n";

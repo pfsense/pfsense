@@ -1684,15 +1684,16 @@ EOD;
 
 	/* allow access to DHCP server on optional interfaces */
 	foreach ($optcfg as $on => $oc) {
-		if (isset($config['dhcpd'][$on]['enable']) && (!$oc['bridge'])) {
+		if (isset($config['dhcpd'][$on]['enable']) && (!$oc['bridge'])  ||
+				($oc['bridge'] && isset($config['dhcpd'][$oc['bridge_if']]['enable']))) {
+			
 			$ipfrules .= <<<EOD
 
 # allow access to DHCP server on {$on}
-anchor "dhcpserver"
+anchor "dhcpserver{$oc['if']}"
 pass in quick on {$oc['if']} proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server"
 pass in quick on {$oc['if']} proto udp from any port = 68 to {$oc['ip']} port = 67 label "allow access to DHCP server"
 pass out quick on {$oc['if']} proto udp from {$oc['ip']} port = 67 to any port = 68 label "allow access to DHCP server"
-pass out on {$oc['if']} proto icmp from any to any keep state label "allow access to DHCP server"
 
 EOD;
 		}
@@ -1702,7 +1703,7 @@ EOD;
 	   interface in question to avoid problems with complicated routing
 	   topologies */
 	$sa = "";
-	if (is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
+	if (isset($config['filter']['bypassstaticroutes']) && is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
 		foreach ($config['staticroutes']['route'] as $route) {
 			unset($sa);
 
@@ -1790,13 +1791,17 @@ pass in quick on $wanif proto udp from any port = 67 to any port = 68 label "all
 EOD;
 
 	/* LAN spoof check */
-	$ipfrules .= filter_rules_spoofcheck_generate('lan', $lanif, $lansa, $lansn, $log);
+	$lanbridge = false;
+	foreach($config['interfaces'] as $int) 
+		if($int['bridge'] == "lan")
+			$lanbridge = true;	
+	if(!$lanbridge)
+		$ipfrules .= filter_rules_spoofcheck_generate('lan', $lanif, $lansa, $lansn, $log);
 
 	/* OPT spoof check */
-	foreach ($optcfg as $on => $oc) {
-		if ($oc['ip'])
+	foreach ($optcfg as $on => $oc) 
+		if ($oc['ip'] && (!$oc['bridge'] || !isset($config['bridge']['filteringbridge'])))
 			$ipfrules .= filter_rules_spoofcheck_generate($on, $oc['if'], $oc['sa'], $oc['sn'], $log);
-	}
 
 	/* block private networks on WAN? */
 	if (isset($config['interfaces']['wan']['blockpriv'])) {

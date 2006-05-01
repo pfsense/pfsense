@@ -85,7 +85,7 @@ if ($_POST) {
 	/* input validation */
 	if(strtoupper($_POST['proto']) == "TCP" or strtoupper($_POST['proto']) == "UDP" or strtoupper($_POST['proto']) == "TCP/UDP") {
 		$reqdfields = explode(" ", "interface proto beginport localip localbeginport");
-		$reqdfieldsn = explode(",", "Interface,Protocol,External begin port,External End port,NAT IP,Local port");
+		$reqdfieldsn = explode(",", "Interface,Protocol,External port from,External port to,NAT IP,Local port");
 	} else {
 		$reqdfields = explode(" ", "interface proto localip");
 		$reqdfieldsn = explode(",", "Interface,Protocol,NAT IP");		

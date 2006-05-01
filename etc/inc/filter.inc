@@ -1690,13 +1690,15 @@ EOD;
 		if (isset($config['dhcpd'][$on]['enable']) && (!$oc['bridge'])  ||
 				($oc['bridge'] && isset($config['dhcpd'][$oc['bridge_if']]['enable']))) {
 			
+				$friendly_on = filter_get_opt_interface_descr($on);
+			
 			$ipfrules .= <<<EOD
 
 # allow access to DHCP server on {$on}
-anchor "dhcpserver{$on}"
-pass in quick on \${$on} proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server"
-pass in quick on \${$on} proto udp from any port = 68 to {$oc['ip']} port = 67 label "allow access to DHCP server"
-pass out quick on \${$on} proto udp from {$oc['ip']} port = 67 to any port = 68 label "allow access to DHCP server"
+anchor "dhcpserver{$friendly_on}"
+pass in quick on \${$friendly_on} proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server"
+pass in quick on \${$friendly_on} proto udp from any port = 68 to {$oc['ip']} port = 67 label "allow access to DHCP server"
+pass out quick on \${$friendly_on} proto udp from {$oc['ip']} port = 67 to any port = 68 label "allow access to DHCP server"
 
 EOD;
 		}

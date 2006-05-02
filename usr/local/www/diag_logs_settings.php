@@ -134,7 +134,7 @@ function enable_change(enable_over) {
 	$tab_array[] = array("Portal Auth", false, "diag_logs_auth.php");
 	$tab_array[] = array("IPSEC VPN", false, "diag_logs_ipsec.php");
 	$tab_array[] = array("PPTP VPN", false, "diag_logs_vpn.php");
-	$tab_array[] = array("Load Balance", false, "diag_logs_slbd.php");
+	$tab_array[] = array("Load Balancer", false, "diag_logs_slbd.php");
 	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");
 	$tab_array[] = array("Settings", true, "diag_logs_settings.php");
 	display_top_tabs($tab_array);

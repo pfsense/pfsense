@@ -102,16 +102,16 @@ function php_value_to_xmlrpc($value, $force_array = false) {
  *                the array before returning it.
  */
 function xmlrpc_auth(&$params) {
-        global $config;
+	global $config;
 	$localpass = $config['system']['password'];
-        if(crypt($params[0], $localpass) == $localpass) {
-                array_shift($params);
+	if(crypt($params[0], $localpass) == $localpass) {
+		array_shift($params);
 		return true;
-	} else if(crypt($params['xmlrpcauth'],  $localpass)  !=  $localpass)  {  
+	} else if(crypt($params['xmlrpcauth'],  $localpass)  !=  $localpass)  {
+		log_error("An error occured while syncing the XML configuration.  Invalid password.");  
 		unset($params['xmlrpcauth']);
-		return true;
+		return false;
 	}
-        return false;
 }
 
 ?>

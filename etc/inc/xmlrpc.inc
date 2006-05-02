@@ -108,10 +108,11 @@ function xmlrpc_auth(&$params) {
 		array_shift($params);
 		return true;
 	} else if(crypt($params['xmlrpcauth'],  $localpass)  !=  $localpass)  {
-		log_error("An error occured while syncing the XML configuration.  Invalid password.");  
 		unset($params['xmlrpcauth']);
 		return false;
 	}
+	unset($params['xmlrpcauth']);
+	return false;
 }
 
 ?>

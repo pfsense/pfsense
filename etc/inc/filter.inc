@@ -1832,7 +1832,8 @@ EOD;
 # Support for allow limiting of TCP connections by establishment rate
 anchor "limitingesr"
 table <virusprot>
-	
+block in quick from <virusprot> to any label "virusprot overload table"
+
 EODF;
 
 	/* block bogon networks on WAN */

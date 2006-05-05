@@ -66,12 +66,12 @@ $tab_array = array();
 $mode = "";
 foreach($config['interfaces'] as $interface) {
 	if($interface['wireless'] <> "") {
-		if($if == $interface['if'])
+		if($if == $interface['if']) {
 			$enabled = true;
-		else
+			$mode = $interface['wireless']['mode'];
+		} else
 			$enabled = false;
 		$friendly = convert_real_interface_to_friendly_interface_name($interface['if']);
-		$mode = $interface['wireless']['mode'];
 		if($interface['descr'] <> "")
 			$friendly = $interface['descr'];
 		$tab_array[] = array("Status ($friendly)", $enabled, "status_wireless.php?if={$interface['if']}");

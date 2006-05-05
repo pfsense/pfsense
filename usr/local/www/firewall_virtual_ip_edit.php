@@ -114,7 +114,7 @@ if ($_POST) {
 	if ($_POST['mode'] == "carp") {
 		$can_post = true;
 		$found = false;
-		$subnet_ip = return_first_three_octets($_POST['subnet']);
+		$subnet_ip = return_first_two_octets($_POST['subnet']);
 		$iflist = array("lan", "wan");
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
 			$iflist['opt' . $i] = 'opt' . $i;

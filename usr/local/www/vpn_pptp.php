@@ -104,6 +104,7 @@ if ($_POST) {
 				unset($rules[$x]);
 			}
 		}
+		unset($config['pptpd']['mode']);
 		write_config();
 	}
 

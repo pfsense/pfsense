@@ -71,10 +71,12 @@ if(file_exists("/cf/conf/config.xml")) {
 		echo "Upgrading m0n0wall configuration to pfSense... ";
 		$config_contents = str_replace("m0n0wall","pfsense", $config_contents);
 		if (!config_validate($config_contents))
-			log_error("ERROR!  Could not convert m0n0wall -> pfsense in config.xml");	
+			log_error("ERROR!  Could not convert m0n0wall -> pfsense in config.xml");
+		conf_mount_rw();	
 		$fd = fopen("/cf/conf/config.xml", "w");
 		fwrite($fd, $config_contents);
 		fclose($fd);
+		conf_mount_ro();
 		echo "done.";
 	}
 }

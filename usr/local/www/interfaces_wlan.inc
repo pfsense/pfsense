@@ -344,7 +344,6 @@ function wireless_config_print() {
                 <tr> 
 			<td valign="top" class="vncellreq">Channel</td>
 			<td class="vtable"><select name="channel" class="formfld" id="channel">
-				<option <? if ($pconfig['channel'] == 0) echo "selected";?> value="0">Auto</option>
 				<?php
 				foreach($wl_modes as $wl_standard => $wl_channels) {
 					if($wl_standard == "11g") { $wl_standard = "11b/g"; }

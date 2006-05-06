@@ -660,27 +660,31 @@ EOD;
 		fwrite($fd_set, "# Enable ATH distance settings\n");
 		fwrite($fd_set, "/sbin/athctrl.sh -i {$if} -d {$distance}\n");
 	}
-
+	
+	$standard_no_turbo = str_replace(" Turbo", "", $standard);
+	
 	$settings = <<<EOD
 
+# We need to undo any previous 
+# settings in clean way so that the
+# hal doesnt get confused.   
 {$ifconfig} {$if} down
 {$ifconfig} {$if} -mediaopt hostap,turbo
 {$ifconfig} {$if} -pureg
 {$ifconfig} {$if} -apbridge
-{$ifconfig} {$if} {$hostapmode}
-{$ifconfig} {$if} {$channel}
-{$ifconfig} {$if} {$turbo}
-{$ifconfig} {$if} {$ssid}
-{$ifconfig} {$if} {$hidessid}
-{$ifconfig} {$if} {$adhocmode}
-{$ifconfig} {$if} {$standard}
-{$ifconfig} {$if} {$protmode}
-{$ifconfig} {$if} {$pureg}
-{$ifconfig} {$if} {$apbridge}
-{$ifconfig} {$if} {$wme}
-{$ifconfig} {$if} {$wepset}
-{$ifconfig} {$if} {$txpower}
-# Issue the commands twice, this hal is %&@*&%@ picky!
+{$ifconfig} {$if} mediaopt hostap
+{$ifconfig} {$if} channel '0'
+{$ifconfig} {$if} ssid 'pfsense'
+{$ifconfig} {$if} hidessid
+{$ifconfig} {$if} -mediaopt adhoc
+{$ifconfig} {$if} {$standard_no_turbo}
+{$ifconfig} {$if} protmode 'off'
+{$ifconfig} {$if} -pureg
+{$ifconfig} {$if} apbridge
+{$ifconfig} {$if} -wme
+{$ifconfig} {$if} authmode open wepmode off
+{$ifconfig} {$if} txpower '99'
+# Now setup the card how the user wants
 {$ifconfig} {$if} {$hostapmode}
 {$ifconfig} {$if} {$channel}
 {$ifconfig} {$if} {$turbo}

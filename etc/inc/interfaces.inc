@@ -479,9 +479,10 @@ function interfaces_wireless_configure($if, $wlcfg) {
      *    and returning the output of the command to the developers for inspection.  please
      *    do not change this routine from a shell script to individul exec commands.  -sullrich
 	 */
+	conf_mount_rw();
 	$fd_set = fopen("/tmp/{$if}_setup.sh","w");
 	fwrite($fd_set, "#!/bin/sh\n");
-	fwrite($fd_set, "# pfSnese wireless configuration script.\n\n");
+	fwrite($fd_set, "# pfSense wireless configuration script.\n\n");
 	
 	fwrite($fd_set, "# enable shell debugging\n");
 	fwrite($fd_set, "set -x\n");
@@ -662,25 +663,36 @@ EOD;
 
 	$settings = <<<EOD
 
-{$ifconfig} {$if} -mediaopt hostap,turbo  
 {$ifconfig} {$if} down
+{$ifconfig} {$if} -mediaopt hostap,turbo
+{$ifconfig} {$if} {$hostapmode}
+{$ifconfig} {$if} {$channel}
+{$ifconfig} {$if} {$turbo}
+{$ifconfig} {$if} {$ssid}
+{$ifconfig} {$if} {$hidessid}
+{$ifconfig} {$if} {$adhocmode}
 {$ifconfig} {$if} {$standard}
 {$ifconfig} {$if} {$protmode}
-{$ifconfig} {$if} {$channel}
-{$ifconfig} {$if} {$ssid}
-{$ifconfig} {$if} {$adhocmode}
-# fix turbo mode and reboot 
-#{$ifconfig} {$if} up
-{$ifconfig} {$if} {$hostapmode}
-{$ifconfig} {$if} {$turbo}
-#{$ifconfig} {$if} down
-# fix turbo mode and reboot 
-{$ifconfig} {$if} {$hidessid}
 {$ifconfig} {$if} {$pureg}
 {$ifconfig} {$if} {$apbridge}
 {$ifconfig} {$if} {$wme}
 {$ifconfig} {$if} {$wepset}
 {$ifconfig} {$if} {$txpower}
+# Issue the commands twice, this hal is %&@*&%@ picky!
+{$ifconfig} {$if} {$hostapmode}
+{$ifconfig} {$if} {$channel}
+{$ifconfig} {$if} {$turbo}
+{$ifconfig} {$if} {$ssid}
+{$ifconfig} {$if} {$hidessid}
+{$ifconfig} {$if} {$adhocmode}
+{$ifconfig} {$if} {$standard}
+{$ifconfig} {$if} {$protmode}
+{$ifconfig} {$if} {$pureg}
+{$ifconfig} {$if} {$apbridge}
+{$ifconfig} {$if} {$wme}
+{$ifconfig} {$if} {$wepset}
+{$ifconfig} {$if} {$txpower}
+# done, bring it up.
 {$ifconfig} {$if} up
 
 EOD;
@@ -696,6 +708,8 @@ EOD;
 	}
 
 	fclose($fd_set);
+
+	conf_mount_ro();
 
 	/* execute commands now in shell */
 	mwexec("/bin/sh /tmp/{$if}_setup.sh");

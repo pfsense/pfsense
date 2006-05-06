@@ -479,7 +479,11 @@ function interfaces_wireless_configure($if, $wlcfg) {
      *    and returning the output of the command to the developers for inspection.  please
      *    do not change this routine from a shell script to individul exec commands.  -sullrich
 	 */
+	
 	conf_mount_rw();
+	
+	unlink_if_exists("{$g['tmp_path']}/{$if}_setup.sh");
+	
 	$fd_set = fopen("/tmp/{$if}_setup.sh","w");
 	fwrite($fd_set, "#!/bin/sh\n");
 	fwrite($fd_set, "# pfSense wireless configuration script.\n\n");
@@ -665,40 +669,19 @@ EOD;
 	
 	$settings = <<<EOD
 
-# We need to undo any previous 
-# settings in clean way so that the
-# hal doesnt get confused.   
-{$ifconfig} {$if} down
-{$ifconfig} {$if} -mediaopt hostap,turbo
-{$ifconfig} {$if} -pureg
-{$ifconfig} {$if} -apbridge
-{$ifconfig} {$if} mediaopt hostap
-{$ifconfig} {$if} channel '0'
-{$ifconfig} {$if} ssid 'pfsense'
-{$ifconfig} {$if} hidessid
-{$ifconfig} {$if} -mediaopt adhoc
-{$ifconfig} {$if} {$standard_no_turbo}
-{$ifconfig} {$if} protmode 'off'
-{$ifconfig} {$if} -pureg
-{$ifconfig} {$if} apbridge
-{$ifconfig} {$if} -wme
-{$ifconfig} {$if} authmode open wepmode off
-{$ifconfig} {$if} txpower '99'
-# Now setup the card how the user wants
 {$ifconfig} {$if} {$hostapmode}
+{$ifconfig} {$if} {$standard_no_turbo}
 {$ifconfig} {$if} {$channel}
 {$ifconfig} {$if} {$turbo}
 {$ifconfig} {$if} {$ssid}
 {$ifconfig} {$if} {$hidessid}
 {$ifconfig} {$if} {$adhocmode}
-{$ifconfig} {$if} {$standard}
 {$ifconfig} {$if} {$protmode}
 {$ifconfig} {$if} {$pureg}
 {$ifconfig} {$if} {$apbridge}
 {$ifconfig} {$if} {$wme}
 {$ifconfig} {$if} {$wepset}
 {$ifconfig} {$if} {$txpower}
-# done, bring it up.
 {$ifconfig} {$if} up
 
 EOD;
@@ -718,6 +701,8 @@ EOD;
 	conf_mount_ro();
 
 	/* execute commands now in shell */
+	mwexec("/bin/sh /tmp/{$if}_setup.sh");
+	sleep(1);
 	mwexec("/bin/sh /tmp/{$if}_setup.sh");
 
 	return 0;

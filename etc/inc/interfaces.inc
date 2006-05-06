@@ -665,6 +665,8 @@ EOD;
 
 {$ifconfig} {$if} down
 {$ifconfig} {$if} -mediaopt hostap,turbo
+{$ifconfig} {$if} -pureg
+{$ifconfig} {$if} -apbridge
 {$ifconfig} {$if} {$hostapmode}
 {$ifconfig} {$if} {$channel}
 {$ifconfig} {$if} {$turbo}
@@ -1265,7 +1267,6 @@ EOD;
 	set ipcp ranges 0.0.0.0/0 0.0.0.0/0
 
 EOD;
-
 	if (isset($config['system']['dnsallowoverride'])) {
 		$mpdconf .= <<<EOD
 	set ipcp enable req-pri-dns

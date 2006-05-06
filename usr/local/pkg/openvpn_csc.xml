@@ -1,0 +1,89 @@
+<packagegui>
+	<name>openvpncsc</name>
+	<title>OpenVPN: Client-specific configuration</title>
+	<include_file>openvpn.inc</include_file>
+	<delete_string>An OpenVPN client-specific configuration has been deleted.</delete_string>
+	<addedit_string>An OpenVPN client-specific configuration has been created/modified.</addedit_string>
+	<tabs>
+		<tab>
+			<text>Server</text>
+			<url>/pkg.php?xml=openvpn.xml</url>
+		</tab>
+		<tab>
+			<text>Client</text>
+			<url>/pkg.php?xml=openvpn_cli.xml</url>
+		</tab>
+		<tab>
+			<text>Client-specific configuration</text>
+			<url>/pkg.php?xml=openvpn_csc.xml</url>
+			<active/>
+		</tab>
+	</tabs>
+	<adddeleteeditpagefields>
+		<columnitem>
+			<fieldname>disable</fieldname>
+			<fielddescr>Disabled</fielddescr>
+			<type>checkbox</type>
+		</columnitem>
+		<columnitem>
+			<fieldname>commonname</fieldname>
+			<fielddescr>Common name</fielddescr>
+		</columnitem>
+		<columnitem>
+			<fieldname>description</fieldname>
+			<fielddescr>Description</fielddescr>
+		</columnitem>
+	</adddeleteeditpagefields>
+	<fields>
+		<field>
+			<fieldname>disable</fieldname>
+			<fielddescr>Disabled</fielddescr>
+			<description>Set this option to disable this client-specific configuration without removing it from the list.</description>
+			<required/>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fieldname>commonname</fieldname>
+			<fielddescr>Common name</fielddescr>
+			<description>Enter the client's X.509 common name here.</description>
+			<required/>
+			<type>input</type>
+		</field>
+		<field>
+			<fieldname>block</fieldname>
+			<fielddescr>Blocked</fielddescr>
+			<description>Check this to block (disable) this client, based on its common name. Don't use this option to disable a client due to key or password compromise. Use a CRL (certificate revocation list) instead.</description>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fieldname>push_reset</fieldname>
+			<fielddescr>Push reset</fielddescr>
+			<description>Setting this option will make this client not inherit the global push options.</description>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fieldname>ifconfig_push</fieldname>
+			<fielddescr>Interface IP</fielddescr>
+			<description>Set this option to push an IP to the client's interface. Expressed as a CIDR range (e.g. 10.5.0.0/16). The first IP in the range will be used as the remote IP of the interface, and the second IP will be used as the local IP of the interface.</description>
+			<type>input</type>
+		</field>
+		<field>
+			<fieldname>custom_options</fieldname>
+			<fielddescr>Custom options</fielddescr>
+			<description>You can put your own custom options here, separated by semi-colons (;). They'll be added to the client-specific configuration.</description>
+			<type>input</type>
+		</field>
+		<field>
+			<fieldname>description</fieldname>
+			<fielddescr>Description</fielddescr>
+			<description>You may enter a description here for your reference (not parsed).</description>
+			<type>input</type>
+		</field>
+	</fields>
+	<custom_php_validation_command>
+		openvpn_validate_input_csc($_POST, &amp;$input_errors);
+	</custom_php_validation_command>
+	<custom_php_resync_config_command>
+		openvpn_resync_csc($id);
+	</custom_php_resync_config_command>
+</packagegui>

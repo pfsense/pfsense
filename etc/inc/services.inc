@@ -1059,6 +1059,10 @@ EODC;
 }
 
 if($olsr['enabledyngw'] == "on") {
+
+	/* unset default route, olsr auto negotiates */
+	mwexec("/sbin/route delete default");
+	
 	$olsr .= <<<EODE
 
 LoadPlugin "/usr/local/lib/olsrd_dyn_gw.so.0.4"

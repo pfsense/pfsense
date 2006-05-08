@@ -810,7 +810,19 @@ function interfaces_wan_configure() {
 			}
 			/* install default route */
 			mwexec("/sbin/route delete default");
-			mwexec("/sbin/route add default " . escapeshellarg($config['interfaces']['wan']['gateway']));
+			
+			$dont_add_route = false;
+			/* if OLSRD is enabled, allow WAN to house DHCP. */
+			if($config['installedpackages']['olsrd']) {
+				foreach($config['installedpackages']['olsrd']['config'] as $olsrd) {
+						if($olsrd['enabledyngw'] == "on") {
+							$dont_add_route = true;
+						}
+				}
+			}
+			
+			if($dont_add_route == false) 
+				mwexec("/sbin/route add default " . escapeshellarg($config['interfaces']['wan']['gateway']));
 
 			/* resync pf (done automatically for DHCP/PPPoE/PPTP) */
 			filter_configure();

@@ -1033,7 +1033,7 @@ MprCoverage	3
 
 EODA;
 
-if($olsr['enablehttpinfo'] == "on") {
+if($olsrd['enablehttpinfo'] == "on") {
 	$olsr .= <<<EODB
 
 LoadPlugin "/usr/local/lib/olsrd_httpinfo.so.0.1"
@@ -1046,7 +1046,7 @@ EODB;
 
 }
 
-if($olsr['enabledyngw'] == "on") {
+if($olsrd['enabledyngw'] == "on") {
 	$olsr .= <<<EODC
 
 LoadPlugin "/usr/local/lib/olsrd_secure.so.0.5"
@@ -1058,7 +1058,7 @@ EODC;
 
 }
 
-if($olsr['enabledyngw'] == "on") {
+if($olsrd['enabledyngw'] == "on") {
 
 	/* unset default route, olsr auto negotiates */
 	mwexec("/sbin/route delete default");

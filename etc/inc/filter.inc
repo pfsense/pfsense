@@ -278,7 +278,7 @@ function filter_generate_aliases() {
 	$aliases .= "loopback = \"{ lo0 }\"\n";
 	$aliases .= "lan = \"{ {$config['interfaces']['lan']['if']}{$lan_aliases} }\"\n";
 
-    if($config['interfaces']['wan']['ipaddr'] == "pppoe") {
+    if($config['interfaces']['wan']['ipaddr'] == "pppoe" or $config['interfaces']['wan']['ipaddr'] == "pptp") {
 		$aliases .= "ng0 = \"{ " . $config['interfaces']['wan']['if'] . " " . get_real_wan_interface() . " }\" \n";
 		$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";
 	} else {
@@ -1854,7 +1854,7 @@ EOD;
 	$ipfrules .= <<<EOD
 
 # let out anything from the firewall host itself and decrypted IPsec traffic
-# pass out quick on $wanif all keep state label "let out anything from firewall host itself"
+pass out quick on $wanif all keep state label "let out anything from firewall host itself"
 
 EOD;
 

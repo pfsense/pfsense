@@ -78,7 +78,7 @@ include("head.inc");
 		  		<tr>
 					<td colspan="2" class="listtopic">Last <?=$nentries;?> OpenVPN log entries</td>
 		  		</tr>
-				<?php dump_clog($ipsec_logfile, $nentries); ?>
+				<?php dump_clog($openvpn_logfile, $nentries); ?>
 				<tr>
 					<td>
 						<br>

@@ -77,6 +77,12 @@ else
 fi
 echo " done."
 
+# Make sure symlink is correct on embedded
+if [ "$PLATFORM" = "embedded" ] ; then
+	rm /conf
+	ln -s /cf/conf/ /conf 
+fi
+
 # Repair symlinks if they are broken
 if [ ! -L /etc/syslog.conf ]; then
 	rm -rf /etc/syslog.conf

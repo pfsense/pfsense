@@ -619,12 +619,12 @@
 			<bindstofield>ezshaper->step6->msrdp</bindstofield>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -639,12 +639,12 @@
 			<type>select</type>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -659,12 +659,12 @@
 			<type>select</type>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -679,12 +679,12 @@
 			<type>select</type>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -703,12 +703,12 @@
 			<bindstofield>ezshaper->step6->irc</bindstofield>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -723,12 +723,12 @@
 			<type>select</type>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -743,12 +743,12 @@
 			<type>select</type>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -763,12 +763,12 @@
 			<type>select</type>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -783,12 +783,12 @@
 			<type>select</type>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -807,12 +807,12 @@
 			<bindstofield>ezshaper->step6->pptp</bindstofield>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -827,12 +827,12 @@
 			<bindstofield>ezshaper->step6->ipsec</bindstofield>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -851,12 +851,12 @@
 			<bindstofield>ezshaper->step6->streamingmp3</bindstofield>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -871,12 +871,12 @@
 			<type>select</type>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -895,12 +895,12 @@
 			<bindstofield>ezshaper->step6->http</bindstofield>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -919,12 +919,12 @@
 			<bindstofield>ezshaper->step6->smtp</bindstofield>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -939,12 +939,12 @@
 			<bindstofield>ezshaper->step6->pop3</bindstofield>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -959,12 +959,12 @@
 			<type>select</type>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -979,12 +979,12 @@
 			<type>select</type>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -1003,12 +1003,12 @@
 			<bindstofield>ezshaper->step6->dns</bindstofield>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -1023,12 +1023,12 @@
 			<type>select</type>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -1043,12 +1043,12 @@
 			<type>select</type>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -1063,12 +1063,12 @@
 			<type>select</type>
 			<options>
 				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
 					<name>Default priority</name>
 					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
 				</option>
 				<option>
 					<name>Lower priority</name>
@@ -1083,13 +1083,13 @@
 						<type>select</type>
 						<options>
 							<option>
+								<name>Default priority</name>
+								<value>D</value>
+							</option>
 								<name>Higher priority</name>
 								<value>H</value>
 							</option>
 							<option>
-								<name>Default priority</name>
-								<value>D</value>
-							</option>
 							<option>
 								<name>Lower priority</name>
 								<value>L</value>
@@ -1103,12 +1103,12 @@
 						<type>select</type>
 						<options>
 							<option>
-								<name>Higher priority</name>
-								<value>H</value>
-							</option>
-							<option>
 								<name>Default priority</name>
 								<value>D</value>
+							</option>
+							<option>
+								<name>Higher priority</name>
+								<value>H</value>
 							</option>
 							<option>
 								<name>Lower priority</name>
@@ -1123,12 +1123,12 @@
 						<type>select</type>
 						<options>
 							<option>
-								<name>Higher priority</name>
-								<value>H</value>
-							</option>
-							<option>
 								<name>Default priority</name>
 								<value>D</value>
+							</option>
+							<option>
+								<name>Higher priority</name>
+								<value>H</value>
 							</option>
 							<option>
 								<name>Lower priority</name>

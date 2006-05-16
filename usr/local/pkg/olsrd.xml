@@ -43,9 +43,9 @@
 			<type>select</type>
 			<size>1</size>
 			<options>
+				<option><value>2</value><name>2</name></option>			
 				<option><value>0</value><name>0</name></option>
 				<option><value>1</value><name>1</name></option>
-				<option><value>2</value><name>2</name></option>
 			</options>
 		</field>		
 		<field>
@@ -87,6 +87,18 @@
 			<description>Enables the OLSR Dynamic Gateways feature</description>
 			<type>checkbox</type>
 		</field>
+		<field>
+			<fielddescr>Announce self as Dynamic Gateway</fielddescr>
+			<fieldname>enableannounce</fieldname>
+			<description>Enables the OLSR Dynamic Gateways Announcing feature</description>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fielddescr>Announce Dynamic local route</fielddescr>
+			<fieldname>announcedynamicroute</fieldname>
+			<description>Enter the IP/Netmask</description>
+			<type>input</type>
+		</field>				
 		<field>
 			<fielddescr>Ping</fielddescr>
 			<fieldname>ping</fieldname>

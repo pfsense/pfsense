@@ -39,6 +39,12 @@ function services_dhcpd_configure() {
 		echo "services_dhcpd_configure($if) being called $mt\n";
 	}
 
+	/* if OLSRD is enabled, allow WAN to house DHCP. */
+	if($config['installedpackages']['olsrd']) 
+		foreach($config['installedpackages']['olsrd']['config'] as $olsrd) 
+				if($olsrd['enable']) 
+					$is_olsr_enabled = true;
+
 	/* configure DHCPD chroot */
 	$fd = fopen("/tmp/dhcpd.sh","w");
 	$status = `mount | grep "{$g['dhcpd_chroot_path']}/dev"`;
@@ -175,6 +181,10 @@ EOPP;
 
 		$subnet = gen_subnet($ifcfg['ipaddr'], $ifcfg['subnet']);
 		$subnetmask = gen_subnet_mask($ifcfg['subnet']);
+
+		if($is_olsr_enabled == true)
+			if($dhcpifconf['netmask']) 
+				$subnetmask = $dhcpifconf['netmask'];
 
 		$dnscfg = "";
 
@@ -889,6 +899,15 @@ function setup_wireless_olsr() {
 		if($olsr_enable <> "on")
 			return;		
 		$fd = fopen("{$g['varetc_path']}/olsr.conf", "w");
+
+		if($olsrd['enableannounce'] == "on") 
+			$enableannounce = "0.0.0.0 0.0.0.0";
+		else 
+			$enableannounce = "";
+
+		if($olsrd['announcedynamicroute'] == "on")
+			$enableannounce .= "\n{$olsrd['announcedynamicroute']}"; 
+
 		$olsr .= <<<EODA
 #
 # olsr.org OLSR daemon config file
@@ -918,7 +937,7 @@ ClearScreen     yes
 
 Hna4
 {
-    0.0.0.0 0.0.0.0
+    {$enableannounce}
 }
 
 # Should olsrd keep on running even if there are

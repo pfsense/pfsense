@@ -40,6 +40,7 @@ if($config['installedpackages']['olsrd']) {
 	foreach($config['installedpackages']['olsrd']['config'] as $olsrd) {
 			if($olsrd['enable']) {
 				$iflist = array("lan" => "LAN", "wan" => "WAN");
+				$is_olsr_enabled = true;
 				break;
 			}
 	}
@@ -70,6 +71,7 @@ $pconfig['enable'] = isset($config['dhcpd'][$if]['enable']);
 $pconfig['denyunknown'] = isset($config['dhcpd'][$if]['denyunknown']);
 $pconfig['staticarp'] = isset($config['dhcpd'][$if]['staticarp']);
 $pconfig['failover_peerip'] = $config['dhcpd'][$if]['failover_peerip'];
+$pconfig['netmask'] = $config['dhcpd'][$if]['netmask'];
 
 $ifcfg = $config['interfaces'][$if];
 
@@ -151,6 +153,7 @@ if ($_POST) {
 		$config['dhcpd'][$if]['range']['to'] = $_POST['range_to'];
 		$config['dhcpd'][$if]['defaultleasetime'] = $_POST['deftime'];
 		$config['dhcpd'][$if]['maxleasetime'] = $_POST['maxtime'];
+		$config['dhcpd'][$if]['netmask'] = $_POST['netmask'];
 		$previous = $config['dhcpd'][$if]['failover_peerip'];
 		if($previous <> $_POST['failover_peerip']) {
 			mwexec("rm -rf /var/dhcpd/var/db/*");	
@@ -303,6 +306,24 @@ function enable_change(enable_over) {
                           <?=long2ip(ip2long($ifcfg['ipaddr']) | (~gen_subnet_mask_long($ifcfg['subnet']))); ?>
                         </td>
                       </tr>
+					  <?php if($is_olsr_enabled): ?>
+                      <tr> 
+                        <td width="22%" valign="top" class="vncellreq">Subnet Mask</td>
+                        <td width="78%" class="vtable"> 
+	                        <select name="netmask" class="formfld" id="netmask">
+							<?php
+							for ($i = 32; $i > 0; $i--) {
+								if($i <> 31) {
+									echo "<option value=\"{$i}\" ";
+									if ($i == $pconfig['subnet']) echo "selected";
+									echo ">" . $i . "</option>";
+								}
+							}
+							?>
+							</select>
+                        </td>
+                      </tr>
+                      <?php endif; ?>                 
                       <tr> 
                         <td width="22%" valign="top" class="vncellreq">Range</td>
                         <td width="78%" class="vtable"> 

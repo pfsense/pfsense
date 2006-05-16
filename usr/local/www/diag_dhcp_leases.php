@@ -227,11 +227,25 @@ foreach ($leases as $data) {
 			$fspans = $fspane = "";
 		}
                 $lip = ip2long($data['ip']);
-                foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
-                        if (($lip >= ip2long($dhcpifconf['range']['from'])) && ($lip <= ip2long($dhcpifconf['range']['to']))) {
-                                $data['if'] = $dhcpif;
-                                break;
-                        }
+		if ($data['act'] == "static") {
+			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
+				foreach ($dhcpifconf['staticmap'] as $staticent) {
+					if ($data['ip'] == $staticent['ipaddr']) {
+						$data['if'] = $dhcpif;
+						break;
+					}
+				}
+				/* exit as soon as we have an interface */
+				if ($data['if'] != "")
+					break;
+			}
+		} else {
+                	foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
+                        	if (($lip >= ip2long($dhcpifconf['range']['from'])) && ($lip <= ip2long($dhcpifconf['range']['to']))) {
+                                	$data['if'] = $dhcpif;
+                                	break;
+                        	}
+			}
                 }		
 		echo "<tr>\n";
                 echo "<td class=\"listlr\">{$fspans}{$data['ip']}{$fspane}&nbsp;</td>\n";

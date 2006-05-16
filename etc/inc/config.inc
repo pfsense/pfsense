@@ -802,7 +802,6 @@ function convert_config() {
 function write_config($desc="Unknown", $backup = true) {
 	global $config, $g;
 
-	if($g['platform'] <> "embedded" and $g['platform'] <> "wrap") 
 	if($backup) 
 		backup_config();
 
@@ -829,6 +828,16 @@ function write_config($desc="Unknown", $backup = true) {
 		die("Unable to open {$g['cf_conf_path']}/config.xml for writing in write_config()\n");
 	fwrite($fd, $xmlconfig);
 	fclose($fd);
+
+	if($g['platform'] == "embedded") {
+		/*   backup last config.xml and remove all others to avoid
+		 *   filling up the compact flash dedicated config partition
+		 */
+		$last_backup = discover_last_backup();
+		mwexec("/bin/mv /cf/conf/backup/{$last_backup} /tmp/lastconfig.xml");
+		mwexec("/bin/rm /cf/conf/backup/*");
+		mwexec("/bin/mv /tmp/lastconfig.xml /cf/conf/backup/{$last_backup}");
+	}
 
 	if($g['booting'] <> true) {
 		conf_mount_ro();

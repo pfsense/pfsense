@@ -1086,6 +1086,7 @@
 								<name>Default priority</name>
 								<value>D</value>
 							</option>
+							<option>
 								<name>Higher priority</name>
 								<value>H</value>
 							</option>

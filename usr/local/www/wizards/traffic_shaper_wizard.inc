@@ -47,6 +47,11 @@ function step2_stepsubmitphpaction() {
 			header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid={$stepid}&amp;message={$message}");
 			exit;
 		}
+		if ($_POST['download'] == "" or $_POST['upload]'] == "") {
+			$message="Upload or download speeds cannot be empty!";
+			header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid={$stepid}&amp;message={$message}");
+			exit;
+		}		
 		$downq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['inside_int']);
 		$upq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['outside_int']);
 	    

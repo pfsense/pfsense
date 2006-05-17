@@ -906,7 +906,7 @@ function setup_wireless_olsr() {
 			$enableannounce = "";
 
 		if($olsrd['announcedynamicroute'] == "on")
-			$enableannounce .= "\n{$olsrd['announcedynamicroute']}"; 
+			$enableannounce .= "\nHna4\n{\n\t{$olsrd['announcedynamicroute']}\n}\n"; 
 
 		$olsr .= <<<EODA
 #
@@ -935,10 +935,7 @@ IpVersion	4
 
 ClearScreen     yes
 
-Hna4
-{
-    {$enableannounce}
-}
+{$enableannounce}
 
 # Should olsrd keep on running even if there are
 # no interfaces available? This is a good idea

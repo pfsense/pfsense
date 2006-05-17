@@ -184,7 +184,7 @@ EOPP;
 
 		if($is_olsr_enabled == true)
 			if($dhcpifconf['netmask']) 
-				$subnetmask = $dhcpifconf['netmask'];
+				$subnetmask = gen_subnet_mask($dhcpifconf['netmask']);
 
 		$dnscfg = "";
 

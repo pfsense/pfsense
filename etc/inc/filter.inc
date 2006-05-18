@@ -1851,12 +1851,16 @@ block in $log quick on \$wan from <bogons> to any label "block bogon networks fr
 EOD;
 	}
 
+if (!isset($config['shaper']['enable']) && !is_array($config['shaper']['queue'])) {
+
 	$ipfrules .= <<<EOD
 
 # let out anything from the firewall host itself and decrypted IPsec traffic
 pass out quick on $wanif all keep state label "let out anything from firewall host itself"
 
 EOD;
+
+}
 
 	$ipfrules .= create_firewall_outgoing_rules_to_itself();
 

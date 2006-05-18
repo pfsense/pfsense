@@ -120,9 +120,6 @@ if (isset($_POST['del_x'])) {
                 foreach ($_POST['rule'] as $rulei) {
                         unset($a_out[$rulei]);
                 }
-                if (count($a_out) == 0)
-			unset($config['nat']['advancedoutbound']);
-
                 write_config();
                 touch($d_natconfdirty_path);
                 header("Location: firewall_nat_out.php");

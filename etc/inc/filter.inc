@@ -1678,6 +1678,142 @@ EOD;
 		}
 	}
 
+        $ipfrules .= <<<EOD
+
+# NAT Reflection rules
+
+EOD;
+
+        if (isset($config['nat']['rule'])) {
+                $natrules .= "# NAT Inbound Redirects\n";
+
+                if(!isset($config['system']['disablenatreflection'])) {
+                        $fd = fopen("/var/etc/inetd.conf","w");
+                        /* start redirects on port 19000 of localhost */
+                        $starting_localhost_port = 18999;
+                }
+
+                foreach ($config['nat']['rule'] as $rule) {
+
+                        update_filter_reload_status("Creating NAT rule {$rule['descr']}");
+
+                        /* if item is an alias, expand */
+                        if(alias_expand($rule['external-port']))
+                                $extport[0] = alias_expand_value($rule['external-port']);
+                        else
+                                $extport = explode("-", $rule['external-port']);
+
+                        /* if item is an alias, expand */
+                        if(alias_expand($rule['local-port']))
+                                $localport = "";
+                        else
+                                $localport = " port {$rule['local-port']}";
+
+                        $target = alias_expand_host($rule['target']);
+
+                        if (!$target)
+                                continue;       /* unresolvable alias */
+
+                        if ($rule['external-address'])
+                                if($rule['external-address'] <> "any")
+                                        $extaddr = $rule['external-address'] . "/32";
+                                else
+                                        $extaddr = $rule['external-address'];
+                        else
+                                $extaddr = get_current_wan_address($rule['interface']);
+
+                        if (!$rule['interface'] || ($rule['interface'] == "wan"))
+                                $natif = $wanif;
+                        else if($rule['interface'] == "\$pptp")
+                                $natif = "pptp";
+                        else if($rule['interface'] == "\$pppoe")
+                                $natif = "pppoe";
+                        else
+                                $natif = $config['interfaces'][$rule['interface']]['if'];
+
+                        $lanif = $lancfg['if'];
+
+                        /*
+                         *   Expand aliases
+                         *   XXX: may want to integrate this into pf macros
+                         */
+                        if(alias_expand($target))
+                                $target = alias_expand($target);
+                        if(alias_expand($extaddr))
+                                $extaddr = alias_expand($extaddr);
+
+                        if(!isset($config['system']['disablenatreflection'])) {
+
+                                /* if list */
+                                $iflist = array("lan" => "LAN");
+                        for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
+                                $iflist['opt' . $i] = "opt{$i}";
+
+                        foreach ($iflist as $ifent => $ifname) {
+
+                                /* do not process interfaces with gateways*/
+                                if($config['interfaces'][$ifname]['gateway'] <> "")
+                                        continue;
+
+                                        /* do not process interfaces that will end up with gateways */
+                                        if($config['interfaces'][$ifname]['ipaddr'] == "dhcp" or
+                                           $config['interfaces'][$ifname]['ipaddr'] == "bigpond" or
+                                           $config['interfaces'][$ifname]['ipaddr'] == "pppoe" or
+                                           $config['interfaces'][$ifname]['ipaddr'] == "pptp")
+
+                                                continue;
+
+                                        $ifname_real = convert_friendly_interface_to_real_interface_name($ifname);
+
+                                        if($extport[1])
+                                                $range_end = ($extport[1]);
+                                        else
+                                                $range_end = ($extport[0]);
+
+                                        $range_end++;
+
+                                        if($rule['local-port'])
+                                                $lrange_start = $rule['local-port'];
+
+                                        if($range_end - $extport[0] > 500) {
+                                                $range_end = $extport[0]+1;
+                                                log_error("Not installing nat reflection rules for a port range > 500");
+                                        } else {
+                                                /* only install reflection rules for < 19991 items */
+                                                if($starting_localhost_port < 19991) {
+                                                        $loc_pt = $lrange_start;
+                                                        for($x=$extport[0]; $x<$range_end; $x++) {
+
+                                                                $starting_localhost_port++;
+                                                                $ifname_real = convert_friendly_interface_to_friendly_descr(strtolower($ifname));
+
+                                                                switch($rule['protocol']) {
+                                                                        case "tcp/udp":
+                                                                                $protocol = "{ tcp udp }";
+                                                                                $ipfrules .= "pass in quick on \${$ifname_real} inet proto tcp from any to \$loopback port {$starting_localhost_port} keep state label \"NAT REFLECT: Allow traffic to localhost\"\n";
+                                                                                break;
+                                                                        case "tcp":
+                                                                        case "udp":
+                                                                                $protocol = $rule['protocol'];
+                                                                                $ipfrules .= "pass in quick on \${$ifname_real} inet proto tcp from any to \$loopback port {$starting_localhost_port} keep state label \"NAT REFLECT: Allow traffic to localhost\"\n";
+                                                                                break;
+                                                                        default:
+                                                                                break;
+                                                                }
+                                                                $loc_pt++;
+                                                                if($starting_localhost_port > 19990) {
+                                                                        log_error("Not installing nat reflection rules. Maximum 1,000 reached.");
+                                                                        $x = $range_end+1;
+                                                                }
+                                                        }
+                                                }
+                                        }
+                                }
+
+                        }
+                }
+        }
+
 	$ipfrules .= <<<EOD
 
 # allow access to DHCP server on LAN

@@ -2048,13 +2048,11 @@ EOD;
 			exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=1");
 		else
 			exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=0");
-		/* determine ipsec address */
-		$ipsec_ip = $wan_ip;
 		/* set failover ip if defined */
 		if(isset($config['installedpackages']['sasyncd']['config']))
 		foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
 			if($sasyncd['ip'] <> "") 
-				$ipsec_ip = $sasyncd['ip'];
+				$ipsec_failoverip = $sasyncd['ip'];
 		}
 		
 		if(is_array($config['ipsec']['tunnel']) && isset($config['ipsec']['enable'])) {
@@ -2063,6 +2061,11 @@ EOD;
 				/* if tunnel is disabled, lets skip to next item */
 				if(isset($tunnel['disabled']))
 					continue;
+				/* determine ipsec address */
+				if ($ipsec_failoverip)
+					$ipsec_ip = $ipsec_failoverip;
+				else
+					$ipsec_ip = get_current_wan_address($tunnel['interface']);;
 				/* is this a dynamic dns hostname? */
 				$remote_gateway = gethostbyname($tunnel['remote-gateway']);
 				if($remote_gateway == "")
@@ -2076,11 +2079,15 @@ EOD;
 				$ipfrules .= "pass out quick on {$wanif} proto udp from {$ipsec_ip} to {$remote_gateway} port = 500 keep state label \"IPSEC: {$tunnel['descr']} - outbound isakmp\"\n";
 				$ipfrules .= "pass in quick on {$wanif} proto udp from {$remote_gateway} to {$ipsec_ip} port = 500 keep state label \"IPSEC: {$tunnel['descr']} - inbound isakmp\"\n";
 	
+				if ($tunnel['p2']['protocol'] == 'esp') {
 				$ipfrules .= "pass out quick on {$wanif} proto esp from {$ipsec_ip} to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound esp proto\"\n";
 				$ipfrules .= "pass in quick on {$wanif} proto esp from {$remote_gateway} to {$ipsec_ip} keep state label \"IPSEC: {$tunnel['descr']} - inbound esp proto\"\n";
+				}
 	
+				if ($tunnel['p2']['protocol'] == 'ah') {
 				$ipfrules .= "pass out quick on {$wanif} proto ah from {$ipsec_ip} to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound ah proto\"\n";
 				$ipfrules .= "pass in quick on {$wanif} proto ah from {$remote_gateway} to {$ipsec_ip} keep state label \"IPSEC: {$tunnel['descr']} - inbound ah proto\"\n";
+				}
 	
 				//$ipfrules .= "pass out quick on {$lanif} from {$tunnel['remote-subnet']} to {$local_subnet} keep state label \"IPSEC: {$tunnel['descr']} - remote to local\"\n";
 				//$ipfrules .= "pass in quick on {$lanif} from {$local_subnet} to {$tunnel['remote-subnet']} keep state label \"IPSEC:  {$tunnel['descr']} - local to remote\"\n";

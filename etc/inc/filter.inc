@@ -2227,10 +2227,12 @@ function create_firewall_outgoing_rules_to_itself() {
 	update_filter_reload_status("Setting up tun interfaces (openvpn)");
 	/* openvpn tun interfaces.  check for 100. */
 	for($x=0; $x<100; $x++) {
-		if(does_interface_exist("tun{$x}") == true) 
-			$rule .="pass quick on tun{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
+		if(does_interface_exist("tun{$x}") == true) { 
+			$rule .="pass out quick on tun{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
+			$rule .="pass in quick on tun{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
+		}
 	}
-	
+		
 	return $rule;
 }
 

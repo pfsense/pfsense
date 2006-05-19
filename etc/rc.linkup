@@ -83,10 +83,10 @@
                                         log_error("HOTPLUG: Configuring lan interface {$interface}");
                                         interfaces_lan_configure();
                                 } else {
-                                        log_error("HOTPLUG: Configuring optional interface {$interface}");
-                                        interfaces_optional_configure_if($int);
                                         $int = str_replace("opt", "", $interface);
+                                        interfaces_optional_configure_if($int);                                        
                                         echo "interfaces_optional_configure_if($int);\n";
+										log_error("HOTPLUG: Configuring optional interface {$interface}");
                                 }
                                 
                                 $counter++;

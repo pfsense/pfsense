@@ -280,9 +280,9 @@ function filter_generate_aliases() {
 
     if($config['interfaces']['wan']['ipaddr'] == "pppoe" or $config['interfaces']['wan']['ipaddr'] == "pptp") {
 		$aliases .= "ng0 = \"{ " . $config['interfaces']['wan']['if'] . " " . get_real_wan_interface() . " }\" \n";
-		$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";
+		$aliases .= "wan = \"{ " . $config['interfaces']['wan']['if'] . "{$wan_aliases} }\"\n";
 	} else {
-		$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} ng0 }\"\n";		
+		$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";		
 	}
 	
     /* used to count netgraph interfaces */
@@ -292,7 +292,10 @@ function filter_generate_aliases() {
     if($config['pptpd']['mode'] == "server") {
 		/* build pptp alias */
 		$tmp = "pptp = \"{ ";
-		for($x=0; $x<$g["n_pptp_units"]; $x++) 
+		$starting_pptp = 0;
+		if($config['interfaces']['wan']['ipaddr'] == "pppoe") 
+			$starting_pptp = 1;
+		for($x=$starting_pptp; $x<$g["n_pptp_units"]+$starting_pptp; $x++) 
 			$tmp .= "ng{$x} ";
 		$counter = $x;
 		$tmp .= "}\" \n";

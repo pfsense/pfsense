@@ -900,13 +900,17 @@ function setup_wireless_olsr() {
 			return;		
 		$fd = fopen("{$g['varetc_path']}/olsr.conf", "w");
 
-		if($olsrd['enableannounce'] == "on") 
-			$enableannounce = "0.0.0.0 0.0.0.0";
-		else 
+		if($olsrd['announcedynamicroute'] or $olsrd['enableannounce'] == "on") {
+			$enableannounce .= "\nHna4\n";
+			$enableannounce .= "{\n";
+			if($olsrd['announcedynamicroute'] == "on")
+				$enableannounce .= "\t{$olsrd['announcedynamicroute']}\n}\n";
+			if($olsrd['enableannounce']) 
+				$enableannounce .= "0.0.0.0 0.0.0.0";
+			$enableannounce .= "\n}\n";
+		} else {
 			$enableannounce = "";
-
-		if($olsrd['announcedynamicroute'] == "on")
-			$enableannounce .= "\nHna4\n{\n\t{$olsrd['announcedynamicroute']}\n}\n"; 
+		}
 
 		$olsr .= <<<EODA
 #

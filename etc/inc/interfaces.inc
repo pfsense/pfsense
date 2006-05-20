@@ -1520,13 +1520,12 @@ function discover_bridge($interface1, $interface2) {
 function get_wireless_modes($interface)
 {
 	/* return wireless modes and channels */
-	$wireless_modes = array();
 	if(is_interface_wireless($interface)) {
 		$wi = 1;
 		$ifconfig = "/sbin/ifconfig";
 		$awk = "/usr/bin/awk";
 		$chan_list = "$ifconfig $interface list chan";
-		$stack_list = "$awk -F\"Channel \" '{print \$2 \"\\\n\" \$3 }'";
+		$stack_list = "$awk -F\"Channel \" '{ gsub(/\\*/, \" \"); print \$2 \"\\\n\" \$3 }'";
 		$format_list = "$awk '{print \$5 \" \" \$6 \",\" \$1}'";
 
 		$interface_channels = "";
@@ -1539,17 +1538,17 @@ function get_wireless_modes($interface)
 			$channel_line = explode(",", $interface_channels["$c"]);
 			$wireless_mode = trim($channel_line[0]);
 			$wireless_channel = trim($channel_line[1]);
-            if(trim($wireless_mode) != "") {
-                    /* if we only have 11g also set 11b channels */
-                    if($wireless_mode == "11g") {
-                            //$wireless_modes["11b"] = true;
-                    }
-                    $wireless_modes[$wireless_mode][$c] = $wireless_channel;
-            }
+			if(trim($wireless_mode) != "") {
+				/* if we only have 11g also set 11b channels */
+				if($wireless_mode == "11g") {
+					$wireless_modes["11b"] = array();
+				}
+				$wireless_modes["$wireless_mode"]["$c"] = $wireless_channel;
+			}
 			$c++;
 		}
-		return($wireless_modes);
 	}
+	return($wireless_modes);
 }
 
 ?>

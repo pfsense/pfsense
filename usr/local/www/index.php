@@ -77,9 +77,6 @@
 	## If it is the first time webGUI has been
 	## accessed since initial install show this stuff.
 	if(file_exists('/conf/trigger_initial_wizard')) {
-		conf_mount_rw();
-		unlink('/conf/trigger_initial_wizard');
-		conf_mount_ro();
 
 		$pgtitle = 'pfSense first time setup';
 		include('head.inc');

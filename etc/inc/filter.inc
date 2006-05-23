@@ -280,7 +280,7 @@ function filter_generate_aliases() {
 
     if($config['interfaces']['wan']['ipaddr'] == "pppoe" or $config['interfaces']['wan']['ipaddr'] == "pptp") {
 		$aliases .= "ng0 = \"{ " . $config['interfaces']['wan']['if'] . " " . get_real_wan_interface() . " }\" \n";
-		$aliases .= "wan = \"{ " . $config['interfaces']['wan']['if'] . "{$wan_aliases} }\"\n";
+		$aliases .= "wan = \"{ " . $config['interfaces']['wan']['if'] . "{$wan_aliases} ng0 }\"\n";
 	} else {
 		$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";		
 	}

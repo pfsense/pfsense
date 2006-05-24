@@ -105,25 +105,48 @@ function RADIUS_AUTHENTICATION($username,$password,$radiusip,$radiusport,$radius
 	// 3 -> Access-Reject
 	// See RFC2865 for this.
 }
-
+/*
+* $password = users password
+* $key = shared secret
+* $RA = Request Authenticator (random value it seems like)
+*/
 function Encrypt($password,$key,$RA) {
 	global $debug;
 
-	$keyRA=$key.$RA;
-
 	if ($debug)
-	    echo "<br>key: $key<br>password: $password<hr>\n";
+		echo "<br>key: $key<br>password: $password<hr>\n";
 
-	$md5checksum=md5($keyRA);
 	$output="";
-
-	for ($i=0;$i<=15;$i++) {
-	    if (2*$i>strlen($md5checksum)) $m=0; else $m=hexdec(substr($md5checksum,2*$i,2));
-	    if ($i>strlen($keyRA)) $k=0; else $k=ord(substr($keyRA,$i,1));
-	    if ($i>strlen($password)) $p=0; else $p=ord(substr($password,$i,1));
-	    $c=$m^$p;
-	    $output.=chr($c);
+	$passlen = strlen($password);
+	/* figure out the number of xor rounds we need to run through */
+	for ($i=16; $i <= 128; $i += 16) {
+		if ($len <= $i) {
+			$rounds = $i/16;
+			break;
+		}
 	}
+
+	$z = 0; // How many chars have we xor'd
+	for ($x=0; $x<=$rounds; $x++) {
+		$keyRA=$key.$RA;
+		$md5checksum=md5($keyRA);
+
+		// Loop 16 times (md5() output / 2)
+		for ($i=0;$i<=15;$i++) {
+			// Convert md5 hex output to decimal (md5 lengths are 32 chars)
+			if (2*$i>32) $m=0; else $m=hexdec(substr($md5checksum,2*$i,2));
+			// get the decimal character value for this character in the password
+			if ($z>$passlen-1) $p=0; else $p=ord(substr($password,$z,1));
+			// xor the md5 character with the password character
+			$c=$m^$p;
+			// Convert back to 8-bit output
+			$output.=chr($c);
+			$z++;
+		}
+		$RA=$output;
+	}
+
 	return $output;
 }
+
 ?>

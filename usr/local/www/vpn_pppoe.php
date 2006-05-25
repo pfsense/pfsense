@@ -95,6 +95,7 @@ if ($_POST) {
 				unset($rules[$x]);
 			}
 		}
+		unset($config['pppoe']);
 		write_config();		
 	}
 	

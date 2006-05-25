@@ -45,7 +45,7 @@
 	</fields>
 	<stepbeforeformdisplay>
 		conf_mount_rw(); 
-		unlink('/conf/trigger_initial_wizard'); 
+		unlink_if_exists('/conf/trigger_initial_wizard'); 
 		conf_mount_ro(); 
 	</stepbeforeformdisplay>		
 </step>

@@ -117,6 +117,14 @@ if ($_POST) {
 			break;
 		}
 	}
+	
+	/* check for name interface description conflicts */
+	foreach($config['interfaces'] as $interface) {
+		if($interface['descr'] == $_POST['name']) {
+			$input_errors[] = gettext("An interface description with this name already exists.");
+			break;	
+		}
+	}	
 
 	if (!$input_errors) {
 		$alias = array();

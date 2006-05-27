@@ -1827,7 +1827,7 @@ EOD;
 	/* allow access to DHCP server on optional interfaces */
 	foreach ($optcfg as $on => $oc) {
 		if (isset($config['dhcpd'][$on]['enable']) && (!$oc['bridge'])  ||
-				($oc['bridge'] && isset($config['dhcpd'][$oc['bridge_if']]['enable']))) {
+				($oc['bridge'] && isset($config['dhcpd'][$oc['bridge']]['enable']))) {
 			
 				$friendly_on = filter_get_opt_interface_descr($on);
 			
@@ -1946,7 +1946,7 @@ EOD;
 	foreach ($optcfg as $on => $oc) {
    		$isbridged = false;
 		foreach ($optcfg as $on2 => $oc2) {
-			if ($oc2['bridge'] && $oc2['bridge_if'] == $on) {
+			if ($oc2['bridge'] && $oc2['bridge'] == $on) {
 				$isbridged = true;
 				break;
 			}

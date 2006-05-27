@@ -1943,10 +1943,18 @@ EOD;
 		$ipfrules .= filter_rules_spoofcheck_generate('lan', $lanif, $lansa, $lansn, $log);
 
 	/* OPT spoof check */
-	foreach ($optcfg as $on => $oc) 
-		if ($oc['ip'] && (!$oc['bridge'] || !isset($config['bridge']['filteringbridge'])))
+	foreach ($optcfg as $on => $oc) {
+   		$isbridged = false;
+		foreach ($optcfg as $on2 => $oc2) {
+			if ($oc2['bridge'] && $oc2['bridge_if'] == $on) {
+				$isbridged = true;
+				break;
+			}
+		}
+		if ($oc['ip'] && !(($oc['bridge'] || $isbridged) && isset($config['bridge']['filteringbridge'])))
 			$ipfrules .= filter_rules_spoofcheck_generate($on, $oc['if'], $oc['sa'], $oc['sn'], $log);
-
+	}
+	
 	/* block private networks on WAN? */
 	if (isset($config['interfaces']['wan']['blockpriv'])) {
 		$ipfrules .= <<<EOD

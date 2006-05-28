@@ -79,6 +79,10 @@ function services_dhcpd_configure() {
 			(isset($config['interfaces'][$dhcpif]['enable']) &&
 			$config['interfaces'][$dhcpif]['if'] && (!$config['interfaces'][$dhcpif]['bridge']))))
 			$dhcpdenable = true;
+		if (isset($dhcpifconf['enable']) &&
+			(($dhcpif == "wan") || (isset($config['interfaces'][$dhcpif]['enable']) &&
+			$config['interfaces'][$dhcpif]['if'] && (!$config['interfaces'][$dhcpif]['bridge']))))
+			$dhcpdenable = true;			
 	}
 
 	if (!$dhcpdenable)

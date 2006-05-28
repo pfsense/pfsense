@@ -72,6 +72,9 @@ if ($_POST) {
 	if(!is_ipaddr($_POST['ipaddr']))
 		$input_errors[] = "{$_POST['ipaddr']} is not a valid IP address.";
 
+        if(!isset($_POST['sitedown']) || $_POST['sitedown'] == "")
+                $input_errors[] = "Pool Down Server is required.";
+
 	if(($_POST['sitedown'] != "") && (!is_ipaddr($_POST['sitedown'])))
 		$input_errors[] = "{$_POST['sitedown']} is not a valid IP address.";
 

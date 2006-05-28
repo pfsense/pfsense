@@ -601,7 +601,7 @@ function filter_nat_rules_generate() {
 				/*    setup nat mappings for lan -> opt[$i]
 				 *    interface if a gateway is defined
                                  */
-				if($optcfg['gateway'] <> "") 
+				if($optcfg['gateway'] <> "" or $optcfg['ipaddr'] == "dhcp") 
 					$natrules .= filter_nat_rules_generate_if($optcfg['if'],
 						"{$lansa}/{$lancfg['subnet']}", null, "", null, null, null, isset($optcfg['nonat']));
 					

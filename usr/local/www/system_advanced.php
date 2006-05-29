@@ -204,18 +204,21 @@ if ($_POST) {
 		write_config();
 			
 		$retval = 0;
-		config_lock();
-		$retval = filter_configure();
+		
 		if(stristr($retval, "error") <> true)
 		    $savemsg = get_std_save_message($retval);
 		else
 		    $savemsg = $retval;
-		$retval |= interfaces_optional_configure();
-		config_unlock();
-			
+
+		$retval = filter_configure();
+		
+		conf_mount_rw();
+		
 		setup_serial_port();
 		
 		setup_filter_bridge();
+		
+		conf_mount_ro();
 		
 	}
 }

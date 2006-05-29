@@ -408,7 +408,7 @@ include("head.inc");
 				<span class="vexpl">This will cause pfSense not to check for newer firmware versions when the <a href="system_firmware.php">System: Firmware</a> page is viewed.</span>
 			</td>
 		</tr>
-<?php if($g['platform'] == "pfSense"): ?>		
+<?php if($g['platform'] == "pfSenseDISABLED"): ?>		
 		<tr>
 			<td width="22%" valign="top" class="vncell">Hard disk standby time </td>
 			<td width="78%" class="vtable">

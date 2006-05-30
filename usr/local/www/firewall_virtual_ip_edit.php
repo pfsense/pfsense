@@ -77,15 +77,17 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-	if (($_POST['subnet'] && !is_ipaddr($_POST['subnet']))) {
+	if (($_POST['subnet'] && !is_ipaddr($_POST['subnet']))) 
 		$input_errors[] = "A valid IP address must be specified.";
-	}
 
 	if ($_POST['ipaddr'] == $config['interfaces']['wan']['ipaddr'])
 		$input_errors[] = "The WAN IP address may not be used in a virtual entry.";
 
 	if ($_POST['ipaddr'] == $config['interfaces']['lan']['ipaddr'])
 		$input_errors[] = "The LAN IP address may not be used in a virtual entry.";
+
+	 if($_POST['subnet_bits'] == "32" and $_POST['type'] == "carp") 
+	 	$input_errors[] = "The /32 subnet mask is invalid for CARP IP's.";
 
 	/* check for overlaps with other virtual IP */
 	foreach ($a_vip as $vipent) {
@@ -120,13 +122,14 @@ if ($_POST) {
 			$iflist['opt' . $i] = 'opt' . $i;
 		foreach($iflist as $if) {
 			$ww_subnet_ip = return_first_two_octets($config['interfaces'][$if]['ipaddr']);
-			if($ww_subnet_ip == $subnet_ip) {
+			$ww_subnet_bits = return_first_two_octets($config['interfaces'][$if]['subnet']);
+			if($ww_subnet_ip == $subnet_ip and $ww_subnet_bits == $_POST['subnet_bits']) {
 				$found = true;
 				break;
 			}
 		}
 		if($found == false) {
-			$cannot_find = $_POST['subnet'];
+			$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
 			$can_post = false;
 		}
 		if($can_post == false) 

@@ -133,9 +133,8 @@ function restart_service($name) {
 }
 
 function is_process_running($process) {
-    $status = `/bin/ps awux | /usr/bin/grep {$process} | grep -v grep | wc -l`;
-    if($status > 0) return 1;
-    return 0;
+	$running = (trim(shell_exec("ps axwu | grep $process | grep -v grep")) != '');
+	return $running;
 }
 
 function is_dhcp_running($interface) {

@@ -170,10 +170,6 @@ if ($_POST) {
 			$vipent['subnet'] = $_POST['subnet'];		
 		}
 
-		/* force a netmask of /32 for carp ip's */
-		if ($vipent['type'] == "carp") 
-			$vipent['subnet_bits'] = "32";
-
 		if (isset($id) && $a_vip[$id]) {
 			/* modify all virtual IP rules with this address */
 			for ($i = 0; isset($config['nat']['rule'][$i]); $i++) {

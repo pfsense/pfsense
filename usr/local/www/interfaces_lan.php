@@ -261,7 +261,7 @@ if ($_POST['apply'] <> "") {
 	
 	interfaces_lan_configure();
 	
-	interfaces_carp_bring_up_final();
+	reset_carp();
 	
 	/* sync filter configuration */
 	filter_configure();

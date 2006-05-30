@@ -37,6 +37,27 @@ function get_tmp_file() {
 	return "/tmp/tmp-" . time();
 }
 
+/****f* pfsense-utils/reset_carp
+ * NAME
+ *   reset_carp - resets carp after primary interface changes
+ * INPUTS
+ *   null
+ * RESULT
+ *   null
+ ******/
+function reset_carp() {
+	$carp_counter=find_number_of_created_carp_interfaces();
+	mwexec("/sbin/sysctl net.inet.carp.allow=0");
+	for($x=0; $x<$carp_counter; $x++) {
+		mwexec("/sbin/ifconfig carp{$x} down");
+		mwexec("/sbin/ifconfig carp{$x} destroy");
+	}
+	sleep(1);
+	mwexec("/sbin/sysctl net.inet.carp.allow=1");
+	interfaces_carp_configure();
+	interfaces_carp_bring_up_final();
+}
+
 /****f* pfsense-utils/get_dns_servers
  * NAME
  *   get_dns_servres - get system dns servers

@@ -705,6 +705,8 @@ if ($_POST) {
 		
 		interfaces_wan_configure();
 		
+		interfaces_carp_bring_up_final();
+		
 		/* sync filter configuration */
 		filter_configure();
 	}

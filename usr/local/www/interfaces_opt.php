@@ -428,6 +428,8 @@ if ($_POST) {
 		sleep(1);		
 		
 		interfaces_optional_configure_if($index);
+		
+		interfaces_carp_bring_up_final();
 
 		/* load graphing functions */
 		enable_rrd_graphing();	

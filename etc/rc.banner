@@ -37,8 +37,10 @@
 	if(file_exists("/var/run/lastlogin")) {
 		$last_login_time = file_get_contents("{$g['varrun_path']}/lastlogin");
 		$time_now = time();
-		if($time_now - $last_login_time < 20) {
+		$time_diff = $time_now - $last_login_time;
+		if($time_diff < 25) {
 			log_error("Console respawn bug detected.  CTRL-C to exit.");
+			echo "Console respawn bug detected.  CTRL-C to exit. {$time_diff}";
 			sleep(6600);
 		}
 	}

@@ -512,9 +512,6 @@ NiftyCheck();
 Rounded("div#roundme","all","#333333","#FFFFFF","smooth");
 </script>
 
-</body>
-</html>
-
 <?php
 
 $fieldnames_array = Array();
@@ -625,3 +622,7 @@ function is_timezone($elt) {
 }
 
 ?>
+
+</body>
+</html>
+

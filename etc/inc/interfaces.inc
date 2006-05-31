@@ -1502,6 +1502,7 @@ function discover_bridge($interface1, $interface2) {
 	if(!$interface1) return;
 	if(!$interface2) return;
 	$total_bridges = get_number_of_bridged_interfaces();
+	$total_bridges++;
 	$interfaces = `/sbin/ifconfig -l`;
 	$x=0;
 	for($x=0; $x<$total_bridges; $x++) {
@@ -1509,10 +1510,9 @@ function discover_bridge($interface1, $interface2) {
 		if(!stristr($interfaces, "bridge{$x}")) 
 			continue;
 		$bridge_text = `/sbin/ifconfig bridge{$x} | grep member`;
-		if(stristr($bridge_text, $interface1) == true and
-		   stristr($bridge_text, $interface2) == true) {
-			return "{$x}";			
-		}
+		if(stristr($bridge_text, $interface1))
+			if(stristr($bridge_text, $interface2))
+				return $x;
 	}
 	return "-1";
 }

@@ -120,6 +120,7 @@ function filter_configure_sync() {
 		mwexec("/sbin/pfctl -e");
 	} else {
 		mwexec("/sbin/pfctl -d");
+		update_filter_reload_status("Filter is disabled.  Not loading rules.");
 		return;
 	}
 

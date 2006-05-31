@@ -119,7 +119,7 @@ if(($curgraph == "traffic") && (file_exists("$rrddbpath$curif$traffic"))) {
 		--start -$seconds -e -$average \\
 		--vertical-label \"bits/sec\" \\
 		--title \"`hostname` - $curgraph - $interval\" \\
-		--height 100 --width 650 -x \"$scale\" \\
+		--height 100 --width 620 -x \"$scale\" \\
 		DEF:$curif-in_bytes=$rrddbpath$curif$traffic:in:AVERAGE \\
 		DEF:$curif-out_bytes=$rrddbpath$curif$traffic:out:AVERAGE \\
 		\"CDEF:$curif-in_bits=$curif-in_bytes,8,*\" \\
@@ -154,7 +154,7 @@ if(($curgraph == "traffic") && (file_exists("$rrddbpath$curif$traffic"))) {
 		GPRINT:$curif-bits_io:LAST:'%7.2lf %sb/s'\\
 		GPRINT:$curif-bytes_t:AVERAGE:'%7.2lf %sB t'\\
         	COMMENT:\"\\n\"\\
-		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
+		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}
 elseif(($curgraph == "packets") && (file_exists("$rrddbpath$curif$packets"))) {
 	/* define graphcmd for packets stats */
@@ -162,7 +162,7 @@ elseif(($curgraph == "packets") && (file_exists("$rrddbpath$curif$packets"))) {
 		--start -$seconds -e -$average \\
 		--vertical-label \"packets/sec\" \\
 		--title \"`hostname` - $curgraph - $interval\" \\
-		--height 100 --width 650 -x \"$scale\" \\
+		--height 100 --width 620 -x \"$scale\" \\
 		DEF:$curif-in_pps=$rrddbpath$curif$packets:in:AVERAGE \\
 		DEF:$curif-out_pps=$rrddbpath$curif$packets:out:AVERAGE \\
 		\"CDEF:$curif-out_pps_neg=$curif-out_pps,-1,*\" \\
@@ -195,7 +195,7 @@ elseif(($curgraph == "packets") && (file_exists("$rrddbpath$curif$packets"))) {
 		GPRINT:$curif-pps_io:LAST:'%7.2lf %s pps'\\
 		GPRINT:$curif-pps_t:AVERAGE:'%7.2lf %s pkts'\\
         	COMMENT:\"\\n\"\\
-		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
+		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}
 elseif(($curgraph == "queues") && (file_exists("$rrddbpath$curif$queues"))) {
 	/* define graphcmd for queue stats */
@@ -203,7 +203,7 @@ elseif(($curgraph == "queues") && (file_exists("$rrddbpath$curif$queues"))) {
 		--start -$seconds -e -$average \\
 		--vertical-label \"bits/sec\" \\
 		--title \"`hostname` - $curgraph - $interval\" \\
-		--height 200 --width 650 -x \"$scale\" \\";
+		--height 200 --width 620 -x \"$scale\" \\";
 		if (!is_array($config['shaper']['queue'])) {
 			$config['shaper']['queue'] = array();
 		}
@@ -243,7 +243,7 @@ elseif(($curgraph == "queues") && (file_exists("$rrddbpath$curif$queues"))) {
 			}
 		}
 		$graphcmd .= "COMMENT:\"\\n\" \\";
-		$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
+		$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}
 elseif(($curgraph == "quality") && (file_exists("$rrddbpath$curif$quality"))) {
 	/* make a link quality graphcmd, we only have WAN for now, others too follow */
@@ -251,7 +251,7 @@ elseif(($curgraph == "quality") && (file_exists("$rrddbpath$curif$quality"))) {
 		--start -$seconds -e -$average \\
 		--title=\"Link quality last $interval for $curif\" \\
 		--vertical-label \"ms / %\" \\
-		--height 100 --width 650 \\
+		--height 100 --width 620 \\
 		-x \"$scale\" --lower-limit 0 \\
 		DEF:roundtrip=$rrddbpath$curif$quality:roundtrip:AVERAGE \\
 		DEF:loss=$rrddbpath$curif$quality:loss:AVERAGE \\
@@ -292,7 +292,7 @@ elseif(($curgraph == "quality") && (file_exists("$rrddbpath$curif$quality"))) {
 		AREA:loss10#ee0000:\"Packet loss\\n\" \\
 		COMMENT:\"  \" \\
 		LINE1:roundtrip#000000:\"roundtrip average\\n\" \\
-		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
+		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}
 elseif(($curgraph == "spamd") && (file_exists("$rrddbpath$spamd"))) {
 	/* graph a spamd statistics graph */
@@ -300,7 +300,7 @@ elseif(($curgraph == "spamd") && (file_exists("$rrddbpath$spamd"))) {
 		--start -$seconds -e -$average \\
 		--title=\"Spamd statistics for last $interval\" \\
 		--vertical-label=\"Conn / Time, sec.\" \\
-		--height 150 --width 650 --no-gridfit \\
+		--height 150 --width 620 --no-gridfit \\
 		-x \"$scale\" --lower-limit 0  \\
 		DEF:consmin=$rrddbpath$spamd:conn:MIN \\
 		DEF:consavg=$rrddbpath$spamd:conn:AVERAGE \\
@@ -330,7 +330,7 @@ elseif(($curgraph == "spamd") && (file_exists("$rrddbpath$spamd"))) {
 		GPRINT:consmin:MIN:\"Min\\:%6.2lf\\t\" \\
 		GPRINT:consavg:AVERAGE:\"Avg\\:%6.2lf\\t\" \\
 		GPRINT:consmax:MAX:\"Max\\:%6.2lf\\n\" \\
-		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
+		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}
 else
 	{

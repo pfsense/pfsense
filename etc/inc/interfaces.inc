@@ -710,7 +710,7 @@ EOD;
 }
 
 function kill_hostapd($interface) {
-	mwexec("/bin/ps awwuxx | grep hostatpd | grep $interface | awk '{ print \$2 }' | xargs kill");
+	mwexec("/bin/ps awwuxx | grep hostapd | grep $interface | awk '{ print \$2 }' | xargs kill");
 }
 
 function kill_wpasupplicant($interface) {

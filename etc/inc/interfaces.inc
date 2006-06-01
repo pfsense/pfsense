@@ -606,7 +606,7 @@ EOD;
 				fwrite($fd, "{$wpa}");
 				fclose($fd);
 
-				fwrite($fd_set, "{$killall} wpa_supplicant\n");
+				kill_wpasupplicant($if);
 			}
 		break;
 
@@ -645,13 +645,13 @@ EOD;
 				fwrite($fd, "{$wpa}");
 				fclose($fd);
 
-				fwrite($fd_set, "{$killall} hostapd\n");
+				kill_hostapd($if);
 			}
 		break;
 
 		case 'adhoc':
-			fwrite($fd_set, "{$killall} hostapd\n");
-			fwrite($fd_set, "{$killall} wpa_supplicant\n");
+			kill_hostapd($if);
+			kill_wpasupplicant($if);
 		break;
 	}	
 
@@ -707,6 +707,14 @@ EOD;
 
 	return 0;
 
+}
+
+function kill_hostapd($interface) {
+	mwexec("/bin/ps awwuxx | grep hostatpd | grep $interface | awk '{ print \$2 }' | xargs kill");
+}
+
+function kill_wpasupplicant($interface) {
+	mwexec("/bin/ps awwuxx | grep wpa_supplicant | grep $interface | awk '{ print \$2 }' | xargs kill");
 }
 
 function find_dhclient_process($interface) {

@@ -32,7 +32,10 @@
 function get_wan_dhcp_server() {
 	global $config, $g;
 	$dhclientfn = $g['vardb_path'] . "/dhclient.leases";
-	$leases = file($dhclientfn);
+	if(file_exists($dhclientfn))
+		$leases = file($dhclientfn);
+	else 
+		$leases = array();
 	/* Start at the end, work backwards finding the latest lease for the WAN */
 	$dhcpserver = "";
 	$iface = "";

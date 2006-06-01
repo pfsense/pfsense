@@ -361,8 +361,9 @@ if ($pkg['tabs'] <> "") {
 			echo "<input type='password' " . $size . " name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
 			echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "select") {
+		  $multiple = "";
                   if($pkga['size']) $size = " size='" . $pkga['size'] . "' ";
-		  if($pkga['multiple'] == "yes") $multiple = "MULTIPLE ";
+		  if($pkga['multiple'] == "yes") $multiple = 'multiple="MULTIPLE" ';
                   if ($pkga['onchange']) $onchange = 'onchange="' . $pkga['onchange'] . '" ';
 		    echo "<select " . $onchange . $multiple . $size . "id='" . $pkga['fieldname'] . "' name='" . $pkga['fieldname'] . "'>\n";
 		    foreach ($pkga['options']['option'] as $opt) {
@@ -398,7 +399,7 @@ if ($pkg['tabs'] <> "") {
 			$fieldname = $pkga['fieldname'];
 			if($pkga['size'] <> "") $size = " size=\"" . $pkga['size'] . "\"";
 			if($pkga['multiple'] <> "" and $pkga['multiple'] <> "0") {
-			  $multiple = " multiple=\"multiple\"";
+			  $multiple = ' multiple="MULTIPLE" ';
 			  $fieldname .= "[]";
 			}
 			echo "<select name='" . $fieldname . "'" . $size . $multiple . ">\n";

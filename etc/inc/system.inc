@@ -597,7 +597,7 @@ fastcgi.server             = ( ".php" =>
                                    "socket" => "/tmp/php-fastcgi.socket",
 				   "min-procs" => 1,
 				   "max-procs" => {$max_procs},
-				   "max-load-per-proc" => 1,
+				   "max-load-per-proc" => 10,
 				   "idle-timeout" => 1,
 				   "bin-environment" => ( 
 				      "PHP_FCGI_CHILDREN" => "{$max_procs}",

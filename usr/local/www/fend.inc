@@ -3,8 +3,8 @@
 	</div> <!-- Content DIV -->
 	
 	<div id="footer">
-		<a target="_blank" href="http://www.pfSense.com" class="redlnk">pfSense</a> is &copy; 2004-2006 by Scott Ullrich. All Rights Reserved.</p>
-		[<a href="/license.php" class="tblnk">view license</a>] </p>
+		<a target="_blank" href="http://www.pfSense.com" class="redlnk">pfSense</a> is &copy; 2004-2006 by Scott Ullrich. All Rights Reserved.
+		[<a href="/license.php" class="tblnk">view license</a>] 
 	</div> <!-- Footer DIV -->
 
 </div> <!-- Wrapper Div -->

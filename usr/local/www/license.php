@@ -127,8 +127,8 @@ include("head.inc");
               This product includes PHP, freely available from <a href="http://www.php.net/" target="_blank">http://www.php.net</a>.<br>
               Copyright &copy; 1999 - 2003 The PHP Group. All rights reserved.<br>
               <br>
-              LightTTPD (<a href="http://www.lighttpd.net" target="_blank">http://www.lighttpd.net)</a><br>
-              Copyright &copy; 1999, 2000 by Jef Poskanzer &lt;jef@acme.com&gt;.
+              LightTPD (<a href="http://www.lighttpd.net" target="_blank">http://www.lighttpd.net)</a><br>
+              Copyright &copy; 2004 by Jan Kneschke <jan@kneschke.de>
               All rights reserved.<br>
               <br>
               ISC DHCP server (<a href="http://www.isc.org/products/DHCP/" target="_blank">http://www.isc.org/products/DHCP</a>)<br>
@@ -139,7 +139,7 @@ include("head.inc");
 			  <br>
               MPD - Multi-link PPP daemon for FreeBSD (<a href="http://www.dellroad.org/mpd" target="_blank">http://www.dellroad.org/mpd</a>)<br>
               Copyright &copy; 2003-2004, Archie L. Cobbs, Michael Bretterklieber, Alexander Motin<br>
-All rights reserved.<br>
+			  All rights reserved.<br>
               <br>
               Circular log support for FreeBSD syslogd (<a href="http://software.wwwi.com/syslogd/" target="_blank">http://software.wwwi.com/syslogd</a>)<br>
               Copyright &copy; 2001 Jeff Wheelhouse (jdw@wwwi.com)<br>
@@ -165,8 +165,7 @@ All rights reserved.<br>
               <br>
               choparp (<a href="http://choparp.sourceforge.net/" target="_blank">http://choparp.sourceforge.net</a>)<br>
               Copyright &copy; 1997 Takamichi Tateoka (tree@mma.club.uec.ac.jp)<br>
-			  Copyright
-&copy; 2002 Thomas Quinot (thomas@cuivre.fr.eu.org)<br>
+			 Copyright &copy; 2002 Thomas Quinot (thomas@cuivre.fr.eu.org)<br>
               <br>
               BPALogin (<a href="http://bpalogin.sourceforge.net/" target="_blank">http://bpalogin.sourceforge.net</a>) - lightweight portable BIDS2 login client<br>
               Copyright &copy; 2001-3 Shane Hyde, and others.<br>
@@ -177,6 +176,9 @@ All rights reserved.<br>
 			  <br>
 			  wol (<a href="http://ahh.sourceforge.net/wol" target="_blank">http://ahh.sourceforge.net/wol</a>)<br>
 			  Copyright &copy; 2000,2001,2002,2003,2004 Thomas Krennwallner &lt;krennwallner@aon.at&gt;
+			  <br>
+			  OpenVPN (<a href="http://openvpn.net/" target="_blank">http://openvpn.net/</a>)
+			  Copyright (C) 2002-2005 OpenVPN Solutions LLC <info@openvpn.net>
 			  <?php include("fend.inc"); ?>
 </body>
 </html>

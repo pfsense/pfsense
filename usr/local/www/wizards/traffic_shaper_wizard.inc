@@ -414,7 +414,7 @@ function step4_stepsubmitphpaction() {
 		$queue['name'] = "qP2PUp";
                 $queue['attachtoqueue'] = "{$upq}Root";
 		$queue['associatedrule'] = 0;
-		$queue['priority'] = 0;
+		$queue['priority'] = 1;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
 		if ($config['shaper']['schedulertype'] == "hfsc") {
@@ -435,7 +435,7 @@ function step4_stepsubmitphpaction() {
 		$queue['name'] = "qP2PDown";
                 $queue['attachtoqueue'] = "{$downq}Root";
 		$queue['associatedrule'] = 0;
-		$queue['priority'] = 0;
+		$queue['priority'] = 1;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
 		if ($config['shaper']['schedulertype'] == "hfsc") {
@@ -695,7 +695,7 @@ function step6_stepsubmitphpaction() {
 		$queue['name'] = "qOthersUpH";
                 $queue['attachtoqueue'] = "{$upq}Root";
 		$queue['associatedrule'] = 0;
-		$queue['priority'] = 6;
+		$queue['priority'] = 4;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
 		if ($config['shaper']['schedulertype'] == "hfsc") {
@@ -715,7 +715,7 @@ function step6_stepsubmitphpaction() {
 		$queue['name'] = "qOthersDownH";
                 $queue['attachtoqueue'] = "{$downq}Root";
 		$queue['associatedrule'] = 0;
-		$queue['priority'] = 6;
+		$queue['priority'] = 4;
 		$queue['red'] = "on";
 		$queue['ecn'] = "on";
 		if ($config['shaper']['schedulertype'] == "hfsc") {

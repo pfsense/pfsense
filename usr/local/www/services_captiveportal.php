@@ -500,7 +500,7 @@ to access after they've authenticated.</td>
 	  <td width="78%" class="vtable">    
 		<?=$mandfldhtml;?><input type="file" name="htmlfile" class="formfld" id="htmlfile"><br>
 		<?php if ($config['captiveportal']['page']['htmltext']): ?>
-		<a href="?act=viewhtml" target="_blank">View current page</a>                      
+		<a href="?act=viewhtml" target="_blank">View current page</a> NOTE: images will be broken.                      
 		  <br>
 		  <br>
 		<?php endif; ?>

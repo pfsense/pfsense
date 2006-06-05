@@ -57,6 +57,7 @@
 	echo "Starting device manager (devd)... ";
 	mute_kernel_msgs();
 	start_devd();
+	set_device_perms();
 	unmute_kernel_msgs();
 	echo "done.\n";
 

@@ -1495,4 +1495,21 @@ function start_devd() {
 		unlink("/tmp/rc.linkup");	
 }
 
+function set_device_perms() {
+	$devices = array(
+		'pf'	=> array(	'user'	=> 'proxy',
+					'group'	=> 'proxy',
+					'mode'	=> 0660),
+		);
+
+	foreach ($devices as $name => $attr) {
+		$path = "/dev/$name";
+		if (file_exists($path)) {
+			chown($path, $attr['user']);
+			chgrp($path, $attr['group']);
+			chmod($path, $attr['mode']);
+		}
+	}
+}
+
 ?>

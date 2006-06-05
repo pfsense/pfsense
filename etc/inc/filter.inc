@@ -598,14 +598,25 @@ function filter_nat_rules_generate() {
 
 			if (isset($optcfg['enable']) && !$optcfg['bridge']) {
 				$optsa = gen_subnet($optcfg['ipaddr'], $optcfg['subnet']);
-				
+
 				/*    setup nat mappings for lan -> opt[$i]
 				 *    interface if a gateway is defined
-                                 */
+                 */
 				if($optcfg['gateway'] <> "" or $optcfg['ipaddr'] == "dhcp") 
 					$natrules .= filter_nat_rules_generate_if($optcfg['if'],
 						"{$lansa}/{$lancfg['subnet']}", null, "", null, null, null, isset($optcfg['nonat']));
-					
+				
+				/* create outbound nat entries for all opt wans */
+				$optints = array();
+				generate_optcfg_array($optints);
+				foreach($optints as $oc) {
+					$opt_interface = $oc['if'];
+					if($oc['gateway'] == "" or $oc['if'] <> "dhcp")
+						$natrules .= filter_nat_rules_generate_if($opt_interface,
+							"{$optsa}/{$optcfg['subnet']}", null, "", null, null, null, isset($optcfg['nonat']));
+				}
+				
+				/* create outbound nat entries for primary wan */
 				$natrules .= filter_nat_rules_generate_if($wanif,
 					"{$optsa}/{$optcfg['subnet']}", null, "", null, null, null, isset($optcfg['nonat']));
 			}

@@ -499,8 +499,16 @@ to access after they've authenticated.</td>
 	  <td width="22%" valign="top" class="vncellreq">Portal page contents</td>
 	  <td width="78%" class="vtable">    
 		<?=$mandfldhtml;?><input type="file" name="htmlfile" class="formfld" id="htmlfile"><br>
+		<?php
+			list($host) = explode(":", $_SERVER['HTTP_HOST']);
+			if(isset($config['captiveportal']['httpslogin'])) {
+				$href = "https://$host:8001";
+			} else {
+				$href = "http://$host:8000";
+			}		
+		?>
 		<?php if ($config['captiveportal']['page']['htmltext']): ?>
-		<a href="?act=viewhtml" target="_blank">View current page</a> NOTE: images will be broken.                      
+		<a href="<?=$href?>" target="_new">View current page</a>                  
 		  <br>
 		  <br>
 		<?php endif; ?>

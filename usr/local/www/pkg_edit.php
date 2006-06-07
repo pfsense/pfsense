@@ -30,10 +30,6 @@
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
-function gettext($text) {
-	return $text;
-}
-
 function gentitle_pkg($pgname) {
 	global $pfSense_config;
 	return $pfSense_config['system']['hostname'] . "." . $pfSense_config['system']['domain'] . " - " . $pgname;
@@ -74,8 +70,6 @@ if($pkg['custom_php_global_functions'] <> "")
         eval($pkg['custom_php_global_functions']);
 
 // grab the installedpackages->package_name section.
-$a_pkg = &$config['installedpackages'][$name]['config'];
-
 if(!is_array($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']))
 	$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'] = array();
 
@@ -109,8 +103,7 @@ if ($_POST) {
 <?php include("head.inc"); ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
-				<?php
+<?php
 			}
 			if($pkg['preoutput']) echo "<pre>";
 			eval($pkg['custom_add_php_command']);
@@ -162,22 +155,15 @@ if ($_POST) {
 					}
 				}
 			} else {
-				// simply loop through all field names looking for posted
-				// values matching the fieldnames.  if found, save to package
-				// configuration area.
-				if(is_array( $_POST[$fields['fieldname']] )) {
-					$pkgarr[$fields['fieldname']]=array();
-					foreach($_POST[$fields['fieldname']] as $v) {
-						$pkgarr[$fields['fieldname']][] = trim($v);
-						eval($comd);								
-					}
-					continue;
-				}                                
 				$fieldname  = $fields['fieldname'];
-				if ($fields['encoding'] == 'base64')
-					$fieldvalue = base64_encode(trim($_POST[$fieldname]));
-				else
-					$fieldvalue = trim($_POST[$fieldname]);
+				$fieldvalue = $_POST[$fieldname];
+				if (is_array($fieldvalue))
+					$fieldvalue = implode(',', $fieldvalue);
+				else {
+					$fieldvalue = trim($fieldvalue);
+					if ($fields['encoding'] == 'base64')
+						$fieldvalue = base64_encode($fieldvalue);
+				}
 				$pkgarr[$fieldname] = $fieldvalue;
 			}
 		}
@@ -210,11 +196,11 @@ if ($_POST) {
 		    exec($pkg['restart_command'] . ">/dev/null 2&>1");
 
 		if($pkg['aftersaveredirect'] <> "") {
-		    header("Location:  " . $pkg['aftersaveredirect']);
+		    pfSenseHeader($pkg['aftersaveredirect']);
 		} elseif(!$pkg['adddeleteeditpagefields']) {
-		    header("Location:  pkg_edit.php?xml={$xml}&id=0");
+		    pfSenseHeader("pkg_edit.php?xml={$xml}&id=0");
 		} elseif(!$pkg['preoutput']) {
-		    header("Location:  pkg.php?xml=" . $xml);
+		    pfSenseHeader("pkg.php?xml=" . $xml);
 		}
 		exit;
 	}
@@ -243,39 +229,35 @@ if ($pkg['custom_php_after_head_command'])
 <!--
 function enablechange() {
 <?php 
-        foreach($pkg['fields']['field'] as $field) {
-                if(isset($field['enablefields']) or isset($field['checkenablefields'])) {
-                        print "\t" . 'if (document.iform.' . strtolower($field['name']) . '.checked == false) {' . "\n";
-                        if(isset($field['enablefields'])) {
-                                $enablefields = explode(',', $field['enablefields']);
-                                foreach($enablefields as $enablefield) {
-                                        $enablefield = strtolower($enablefield);
-                                        print "\t\t" . 'document.iform.' . $enablefield . '.disabled = 1;' . "\n";
-                                }   
-                        }
-                        if(isset($field['checkenablefields'])) {
-                                $checkenablefields = explode(',', $field['checkenablefields']);
-                                foreach($checkenablefields as $checkenablefield) {
-                                        $checkenablefield = strtolower($checkenablefield);
-                                        print "\t\t" . 'document.iform.' . $checkenablefield . '.checked = 0;' . "\n";
-                                }
-                        }
-                        print "\t" . '} else {' . "\n";
-                        if(isset($field['enablefields'])) { 
-                                foreach($enablefields as $enablefield) {
-                                        $enablefield = strtolower($enablefield);
-                                        print "\t\t" . 'document.iform.' . $enablefield . '.disabled = 0;' . "\n";
-                                }
-                        }
-                        if(isset($field['checkenablefields'])) {
-                                foreach($checkenablefields as $checkenablefield) {
-                                        $checkenablefield = strtolower($checkenablefield);
-                                        print "\t\t" . 'document.iform.' . $checkenablefield . '.checked = 1;' . "\n";
-                                }
-                        }
-                        print "\t" . '}' . "\n";
-                }
-        }
+foreach ($pkg['fields']['field'] as $field) {
+	if (isset($field['enablefields']) or isset($field['checkenablefields'])) {
+		print("\tif (document.iform.elements[\"{$field['fieldname']}\"].checked == false) {\n");
+
+		if (isset($field['enablefields'])) {
+			foreach (explode(',', $field['enablefields']) as $enablefield)
+				print("\t\tdocument.iform.elements[\"$enablefield\"].disabled = 1;\n");
+		}
+
+		if (isset($field['checkenablefields'])) {
+			foreach (explode(',', $field['checkenablefields']) as $checkenablefield)
+				print("\t\tdocument.iform.elements[\"$checkenablefield\"].checked = 0;\n");
+		}
+
+		print("\t}\n\telse {\n");
+
+		if (isset($field['enablefields'])) {
+			foreach (explode(',', $field['enablefields']) as $enablefield)
+				print("\t\tdocument.iform.elements[\"$enablefield\"].disabled = 0;\n");
+		}
+
+		if (isset($field['checkenablefields'])) {
+			foreach(explode(',', $field['checkenablefields']) as $checkenablefield)
+				print("\t\tdocument.iform.elements[\"$checkenablefield\"].checked = 1;\n");
+		}
+
+		print("\t}\n");
+	}
+}
 ?>
 }
 //-->
@@ -285,9 +267,10 @@ function enablechange() {
 </script>
 
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php if (!empty($input_errors)) print_input_errors($input_errors); ?>
 <form name="iform" action="pkg_edit.php" method="post">
+<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
+<script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
 <input type="hidden" name="xml" value="<?= $xml ?>">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -344,8 +327,10 @@ if ($pkg['tabs'] <> "") {
 		echo "<td class=\"vtable\">";
 		// if user is editing a record, load in the data.
 		$fieldname = $pkga['fieldname'];
-		if ($get_from_post)
+		if ($get_from_post) {
 			$value = $_POST[$fieldname];
+			if (is_array($value)) $value = implode(',', $value);
+		}
 		else {
 			if (isset($id) && $a_pkg[$id])
 				$value = $a_pkg[$id][$fieldname];
@@ -361,18 +346,27 @@ if ($pkg['tabs'] <> "") {
 			echo "<input type='password' " . $size . " name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
 			echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "select") {
-		  $multiple = "";
-                  if($pkga['size']) $size = " size='" . $pkga['size'] . "' ";
-		  if($pkga['multiple'] == "yes") $multiple = 'multiple="MULTIPLE" ';
-                  if ($pkga['onchange']) $onchange = 'onchange="' . $pkga['onchange'] . '" ';
-		    echo "<select " . $onchange . $multiple . $size . "id='" . $pkga['fieldname'] . "' name='" . $pkga['fieldname'] . "'>\n";
-		    foreach ($pkga['options']['option'] as $opt) {
-			  $selected = "";
-			  if($opt['value'] == $value) $selected = " SELECTED";
-			  echo "\t<option name='" . $opt['name'] . "' value='" . $opt['value'] . "'" . $selected . ">" . $opt['name'] . "</option>\n";
-		    }
-		    echo "</select>\n";
-		    echo "<br>" . fixup_string($pkga['description']) . "\n";
+                  $fieldname = $pkga['fieldname'];
+                  if (isset($pkga['multiple'])) {
+                    $multiple = 'multiple';
+                    $fieldname .= '[]';
+                    $items = explode(',', $value);
+                  }
+                  else {
+                    $multiple = '';
+                    $items = array($value);
+                  }
+                  $size = (isset($pkga['size']) ? "size=\"{$pkga['size']}\"" : '');
+                  $onchange = (isset($pkga['onchange']) ? "onchange=\"{$pkga['onchange']}\"" : '');
+
+                  print("<select $multiple $size $onchange id=\"$fieldname\" name=\"$fieldname\">\n");
+                  foreach ($pkga['options']['option'] as $opt) {
+                      $selected = '';
+                      if (in_array($opt['value'], $items)) $selected = 'selected';
+                      print("\t<option name=\"{$opt['name']}\" value=\"{$opt['value']}\" $selected>{$opt['name']}</option>\n");
+                  }
+
+                  print("</select>\n<br />\n" . fixup_string($pkga['description']) . "\n");
 	      } else if($pkga['type'] == "vpn_selection") {
 		    echo "<select name='" . $vpn['name'] . "'>\n";
 		    foreach ($config['ipsec']['tunnel'] as $vpn) {
@@ -394,58 +388,37 @@ if ($pkg['tabs'] <> "") {
 			echo "<textarea " . $rows . $cols . " name='" . $pkga['fieldname'] . "'>" . $value . "</textarea>\n";
 			echo "<br>" . fixup_string($pkga['description']) . "\n";
 		  } else if($pkga['type'] == "interfaces_selection") {
-			$size = "";
-			$multiple = "";
+			$size = ($pkga['size'] ? "size=\"{$pkga['size']}\"" : '');
+			$multiple = '';
 			$fieldname = $pkga['fieldname'];
-			if($pkga['size'] <> "") $size = " size=\"" . $pkga['size'] . "\"";
-			if($pkga['multiple'] <> "" and $pkga['multiple'] <> "0") {
-			  $multiple = ' multiple="MULTIPLE" ';
-			  $fieldname .= "[]";
+			if (isset($pkga['multiple'])) {
+				$fieldname .= '[]';
+				$multiple = 'multiple';
 			}
-			echo "<select name='" . $fieldname . "'" . $size . $multiple . ">\n";
-			if($pkga['add_to_interfaces_selection'] <> "") {
-				$SELECTED = "";
-				if($pkga['add_to_interfaces_selection'] == $value) $SELECTED = " SELECTED";
-				echo "<option value='" . $pkga['add_to_interfaces_selection'] . "'" . $SELECTED . ">" . $pkga['add_to_interfaces_selection'] . "</option>\n";
+			print("<select name=\"$fieldname\" $size $multiple>\n");
+
+			if (isset($pkga['all_interfaces']))
+				$ifaces = explode(' ', trim(shell_exec('ifconfig -l')));
+			else
+				$ifaces = $config['interfaces'];
+
+			$additional_ifaces = $pkga['add_to_interfaces_selection'];
+			if (!empty($additional_ifaces))
+				$ifaces = array_merge($ifaces, explode(',', $additional_ifaces));
+
+			$values = explode(',', $value);
+			foreach($ifaces as $ifname => $iface) {
+				if (isset($iface['descr']))
+					$ifdescr = $iface['descr'];
+				else
+					$ifdescr = strtoupper($ifname);
+				if ($ip = find_interface_ip($iface))
+					$ip = " ($ip)";
+				$selected = (in_array($ifname, $values) ? 'selected' : '');
+				print("<option value=\"$ifname\" $selected>$ifdescr</option>\n");
 			}
-			$interfaces = &$config['interfaces'];
-			if($pkga['all_interfaces'] <> "") {
-				$ints = split(" ", `/sbin/ifconfig -l`);
-				$interfaces = array();
-				foreach ($ints as $int) {
-					$interfaces[]['descr'] = $int;
-					$interfaces[] = str_replace("\n", "", $int);
-				}
-			}
-			foreach ($interfaces as $ifname => $iface) {
-			  if ($iface['descr'])
-				  $ifdescr = $iface['descr'];
-			  else
-				  $ifdescr = strtoupper($ifname);
-			  $ifname = $iface['descr'];
-			  $ip = "";
-			  if($pkga['all_interfaces'] <> "") {
-				$ifdescr = $iface;
-				$ip = " " . find_interface_ip($iface);
-			  }
-			  $SELECTED = "";
-			  if(is_array($value))
-			  	if(in_array($ifdescr,$value)) $SELECTED = " SELECTED";
-			  if($value == $ifdescr) $SELECTED = " SELECTED";
-			  $to_echo =  "<option value='" . $ifdescr . "'" . $SELECTED . ">" . $ifdescr . $ip . "</option>\n";
-			  $to_echo .= "<!-- {$value} -->";
-			  $to_echo .= "<!-- {$iface} -->";
-			  $canecho = 0;
-			  if($pkga['interface_filter'] <> "") {
-				if(stristr($iface, $pkga['interface_filter']) == true)
-					$canecho = 1;
-			  } else {
-				$canecho = 1;
-			  }
-			  if($canecho == 1) 
-				echo $to_echo;
-			}
-			echo "</select>\n<br>" . fixup_string($pkga['description']) . "\n";
+
+			print("</select>\n<br />" . fixup_string($pkga['description']) . "\n");
 	      } else if($pkga['type'] == "radio") {
 			echo "<input type='radio' name='" . $pkga['fieldname'] . "' value='" . $value . "'>";
 	      } else if($pkga['type'] == "rowhelper") {

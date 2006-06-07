@@ -392,6 +392,19 @@ function typesel_change() {
                     <?php endif; ?>
                   </td>
                 </tr>
+				<tr>
+				  <td colspan="4">
+				      <p>
+				      	<span class="vexpl">
+				      		<span class="red">
+				      			<strong>Note:<br></strong>
+				      		</span>&nbsp;&nbsp;
+				      		ProxyARP type IP addresses *DO NOT* work with the FTP Helper and addon packages such as squid.  Use a CARP type address in this case.
+						</span>
+					  </p>
+				  </td>
+				</tr>
+                
               </table>
 </form>
 <script language="JavaScript">

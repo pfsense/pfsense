@@ -1189,13 +1189,15 @@ function safe_mkdir($path, $mode=0755) {
  * create directory tree recursively (mkdir -p)
  */
 function make_dirs($path, $mode = 0755) {
-	/* is dir already created? */
-	if(is_dir($path)) return;
-	/* create directory in question */
-	$to_create = explode("/", $path);
-	foreach($to_create as $tc) 
-		if(!is_dir($tc))
-			safe_mkdir($path, $mode);
+	$base = '';
+	foreach (explode('/', $path) as $dir) {
+		$base .= "/$dir";
+		if (!is_dir($base)) {
+			if (!@mkdir($base, $mode))
+				return false;
+		}
+	}
+	return true;
 }
 
 /*

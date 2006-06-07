@@ -576,7 +576,7 @@ function system_generate_lighty_config($filename,
 	$memory = get_memory();
 	$avail = $memory[0];
 
-	if($avail > 0 and $avail < 65) {
+	if($avail > 0 and $avail < 75) {
 		$max_procs = 1;
 		$max_requests = 1;
 	}
@@ -597,7 +597,7 @@ fastcgi.server             = ( ".php" =>
                                    "socket" => "/tmp/php-fastcgi.socket",
 				   "min-procs" => 1,
 				   "max-procs" => {$max_procs},
-				   "max-load-per-proc" => 10,
+				   "max-load-per-proc" => 100,
 				   "idle-timeout" => 1,
 				   "bin-environment" => ( 
 				      "PHP_FCGI_CHILDREN" => "{$max_procs}",

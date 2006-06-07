@@ -38,9 +38,9 @@
 		$last_login_time = file_get_contents("{$g['varrun_path']}/lastlogin");
 		$time_now = time();
 		$time_diff = $time_now - $last_login_time;
-		if($time_diff < 25) {
+		if($time_diff < 30) {
 			log_error("Console respawn bug detected.  CTRL-C to exit.");
-			echo "Console respawn bug detected.  CTRL-C to exit. {$time_diff}";
+			echo "\nPress CTRL-C to get started. ({$time_diff})\n";
 			sleep(6600);
 		}
 	}

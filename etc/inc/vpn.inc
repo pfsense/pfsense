@@ -74,7 +74,7 @@ function vpn_ipsec_failover_configure() {
 	mwexec("killall sasyncd");
 	
 	/* launch sasyncd, oh wise one */
-	mwexec_bg("/usr/local/sbin/sasyncd -d -v -v -v");
+	/* mwexec_bg("/usr/local/sbin/sasyncd -d -v -v -v"); */
 }
 
 function find_last_gif_device() {

@@ -362,10 +362,20 @@ EOD;
 
 # redirect non-authenticated clients to captive portal
 add 19900 set 1 fwd 127.0.0.1,8000 tcp from any to any 80 in
+
+# --- for redir ssl
+# redirect non-authenticated clients to captive portal on ssl
+add 19901 set 1 fwd 127.0.0.1,8001 tcp from any to any 443 in
+
 # let the responses from the captive portal web server back out
-add 19901 set 1 pass tcp from any 80 to any out
+add 19902 set 1 pass tcp from any 443 to any out
+
+# --- End redir ssl
+
+# let the responses from the captive portal web server back out
+add 19903 set 1 pass tcp from any 80 to any out
 # block everything else
-add 19902 set 1 deny all from any to any
+add 19904 set 1 deny all from any to any
 
 # ... 20000-29899: layer2 block rules per authenticated client go here...
 

@@ -1597,7 +1597,7 @@ function get_number_of_wan_netgraph_interfaces_needed() {
 		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 	$ng_interfaces_needed = 0;
 	foreach ($iflist as $ifent => $ifname) {
-		if($config['inerfaces'][$ifname]['ipaddr'] == "pppoe") {
+		if($config['interfaces'][$ifname]['ipaddr'] == "pppoe") {
 			$ng_interfaces_needed++;
 		}
 	}
@@ -1613,7 +1613,7 @@ function get_netgaph_interface_assignment($friendly_interface) {
 		$ng_interfaces_needed = 0;
 		$ng_interfaces_number = 0;
 		foreach ($iflist as $ifent => $ifname) {
-		if($config['inerfaces'][$ifname]['ipaddr'] == "pppoe") {
+		if($config['interfaces'][$ifname]['ipaddr'] == "pppoe") {
 			$ng_interfaces_number++;
 		}
 		if($friendly_interface == $ifname)

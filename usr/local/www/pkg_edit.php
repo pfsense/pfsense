@@ -277,6 +277,7 @@ foreach ($pkg['fields']['field'] as $field) {
 <script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
 <input type="hidden" name="xml" value="<?= $xml ?>">
 <?php if ($savemsg) print_info_box($savemsg); ?>
+<br>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <?php
 if ($pkg['tabs'] <> "") {

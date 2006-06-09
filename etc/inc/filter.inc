@@ -725,7 +725,7 @@ function filter_nat_rules_generate() {
 		$natrules .= "# NAT Inbound Redirects\n";
 		
 		if(!isset($config['system']['disablenatreflection'])) {
-			$fd = fopen("/var/etc/inetd.conf","w");		
+			$inetd_fd = fopen("/var/etc/inetd.conf","w");		
 			/* start redirects on port 19000 of localhost */
 			$starting_localhost_port = 18999;
 		}
@@ -902,13 +902,13 @@ function filter_nat_rules_generate() {
 
 									case "tcp/udp":
 										$protocol = "{ tcp udp }";
-										fwrite($fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$loc_pt}\n");
+										fwrite($inetd_fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$loc_pt}\n");
 								  		$natrules .= "rdr on \${$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
 										break;
 									case "tcp":
 									case "udp":
 										$protocol = $rule['protocol'];
-										fwrite($fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$loc_pt}\n");
+										fwrite($inetd_fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$loc_pt}\n");
 								  		$natrules .= "rdr on \${$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
 										break;
 									default:
@@ -931,7 +931,7 @@ function filter_nat_rules_generate() {
 		}
 		
 		if(!isset($config['system']['disablenatreflection'])) {
-			fclose($fd);				
+			fclose($inetd_fd);				
 			$helpers = trim(exec("/bin/ps ax | /usr/bin/grep inetd | /usr/bin/grep -v grep | /usr/bin/grep 127"));
 			if(!$helpers)
 				mwexec("/usr/sbin/inetd -wW -R 0 -a 127.0.0.1 /var/etc/inetd.conf");
@@ -1691,7 +1691,7 @@ EOD;
                 $natrules .= "# NAT Inbound Redirects\n";
 
                 if(!isset($config['system']['disablenatreflection'])) {
-                        $fd = fopen("/var/etc/inetd.conf","w");
+                        //$fd = fopen("/var/etc/inetd.conf","w");
                         /* start redirects on port 19000 of localhost */
                         $starting_localhost_port = 18999;
                 }

@@ -845,8 +845,19 @@ function write_config($desc="Unknown", $backup = true) {
 
 	config_unlock();
 
-	// Always reparse the config after it's written - something is getting lost in serialize().
-	$config = parse_config(true);
+	/* re-read configuration */
+	$config = parse_xml_config("{$g['conf_path']}/config.xml", $g['xml_rootobj']);
+
+	/* write config cache */
+	$fd = @fopen("{$g['tmp_path']}/config.cache", "wb");
+	if ($fd) {
+		fwrite($fd, serialize($config));
+		fclose($fd);
+	}
+
+	/* tell kernel to sync fs data */
+	mwexec("/bin/sync");
+
 	return $config;
 }
 

@@ -843,8 +843,6 @@ function write_config($desc="Unknown", $backup = true) {
 		conf_mount_ro();
 	}
 
-	config_unlock();
-
 	/* re-read configuration */
 	$config = parse_xml_config("{$g['conf_path']}/config.xml", $g['xml_rootobj']);
 
@@ -854,6 +852,8 @@ function write_config($desc="Unknown", $backup = true) {
 		fwrite($fd, serialize($config));
 		fclose($fd);
 	}
+
+	config_unlock();
 
 	/* tell kernel to sync fs data */
 	mwexec("/bin/sync");

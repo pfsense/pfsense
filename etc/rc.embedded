@@ -15,7 +15,7 @@ echo -n "Setting up embedded specific environment..."
 if (/bin/mkdir -p /var/.diskless 2> /dev/null); then
        rmdir /var/.diskless
 else
-        varsize="8m"
+        varsize="20m"
        mdmfs -S -M -s ${varsize} md /var
 fi
 

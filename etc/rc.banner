@@ -34,20 +34,6 @@
 	require_once("config.inc");
 	require_once("functions.inc");
 
-	if(file_exists("/var/run/lastlogin")) {
-		$last_login_time = file_get_contents("{$g['varrun_path']}/lastlogin");
-		$time_now = time();
-		$time_diff = $time_now - $last_login_time;
-		if($time_diff < 30) {
-			log_error("Console respawn bug detected.  CTRL-C to exit.");
-			echo "\nPress CTRL-C to get started. ({$time_diff})\n";
-			sleep(6600);
-		}
-	}
-	$fd = fopen("{$g['varrun_path']}/lastlogin", "w");
-	fwrite($fd, time());
-	fclose($fd);
-
 	$version = trim(file_get_contents("{$g['etc_path']}/version"));
 	$platform = trim(file_get_contents("{$g['etc_path']}/platform"));
 	$hostname = $config['system']['hostname'];

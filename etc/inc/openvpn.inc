@@ -176,8 +176,8 @@ function openvpn_reconfigure($mode, $id) {
 	$cipher = $settings['crypto'];
 	$openvpn_conf = <<<EOD
 writepid $pidfile
-user nobody
-group nobody
+#user nobody
+#group nobody
 daemon
 keepalive 10 60
 ping-timer-rem

@@ -308,9 +308,6 @@ function captiveportal_rules_generate() {
 		$cprules .= "add 30 set 1 skipto 50000 all from any to any in via {$int} keep-state\n";
 	}
 	
-	/* Needed for WPA */
-	$cprules .= "add 1 set 1 allow all from any to any layer2";
-	
 	/* captive portal on LAN interface? */
 	if ($cpifn == "lan") {
 		/* add anti-lockout rules */
@@ -329,6 +326,8 @@ add 1001 set 1 pass layer2 not via $cpif
 
 # layer 2: pass ARP
 add 1100 set 1 pass layer2 mac-type arp
+# pfsense requires for WPA
+add 1100 set 1 pass layer2 mac-type 0x888e
 # layer 2: block anything else non-IP
 add 1101 set 1 deny layer2 not mac-type ip
 # layer 2: check if MAC addresses of authenticated clients are correct

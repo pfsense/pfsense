@@ -308,6 +308,9 @@ function captiveportal_rules_generate() {
 		$cprules .= "add 30 set 1 skipto 50000 all from any to any in via {$int} keep-state\n";
 	}
 	
+	/* Needed for WPA */
+	$cprules .= "add 1 set 1 allow all from any to any layer2";
+	
 	/* captive portal on LAN interface? */
 	if ($cpifn == "lan") {
 		/* add anti-lockout rules */

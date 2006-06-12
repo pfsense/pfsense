@@ -1352,10 +1352,9 @@ function display_topbar($text = "", $bg_color="#990000", $replace_color="#FFFFFF
  *   $mac - a random mac address
  ******/
 function generate_random_mac_address() {
-	$mac = "00:a0:8e";
-	for($x=0; $x<3; $x++) 
+	$mac = "02";
+	for($x=0; $x<5; $x++) 
 		$mac .= ":" . dechex(rand(16, 255));
-
 	return $mac;
 }
 

@@ -112,6 +112,9 @@ if ($_POST) {
 		update_if_changed("port", $poolent['port'], $_POST['port']);
 		update_if_changed("servers", $poolent['servers'], $_POST['servers']);
 		update_if_changed("monitor", $poolent['monitor'], $_POST['monitor']);
+	
+		/* kill off old static route */
+		mwexec("route delete {$_POST['monitorip']}");
 
 		if (isset($id) && $a_pool[$id]) {
 			/* modify all virtual servers with this name */

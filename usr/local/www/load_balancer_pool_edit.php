@@ -105,6 +105,10 @@ if ($_POST) {
 		if($poolent['name'] != "")
 			$changedesc .= " modified '{$poolent['name']}' pool:";
 		
+		/* kill off old static route */
+		if(is_ipaddr($poolent['monitor']))
+			mwexec("route delete {$poolent['monitor']}");
+		
 		update_if_changed("type", $poolent['type'], $_POST['type']);
 		update_if_changed("monitorip", $poolent['monitorip'], $_POST['monitorip']);
 		update_if_changed("name", $poolent['name'], $_POST['name']);
@@ -113,9 +117,6 @@ if ($_POST) {
 		update_if_changed("servers", $poolent['servers'], $_POST['servers']);
 		update_if_changed("monitor", $poolent['monitor'], $_POST['monitor']);
 	
-		/* kill off old static route */
-		mwexec("route delete {$_POST['monitorip']}");
-
 		if (isset($id) && $a_pool[$id]) {
 			/* modify all virtual servers with this name */
 			for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {

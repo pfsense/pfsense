@@ -106,8 +106,8 @@ if ($_POST) {
 			$changedesc .= " modified '{$poolent['name']}' pool:";
 		
 		/* kill off old static route */
-		if(is_ipaddr($poolent['monitor']))
-			mwexec("route delete {$poolent['monitor']}");
+		if(is_ipaddr($poolent['monitorip']))
+			mwexec("route delete {$poolent['monitorip']}");
 		
 		update_if_changed("type", $poolent['type'], $_POST['type']);
 		update_if_changed("monitorip", $poolent['monitorip'], $_POST['monitorip']);

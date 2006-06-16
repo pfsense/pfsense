@@ -74,7 +74,7 @@ function openvpn_validate_input($mode, $post, $input_errors) {
 				$input_errors[] = 'The field \'Proxy Host\' must contain a valid IP address or domain name.';
 			if (!is_port($post['proxy_port']))
 				$input_errors[] = 'The field \'Proxy port\' must contain a valid port number.';
-			if ($settings['protocol'] != "TCP") 
+			if ($post['protocol'] != "TCP") 
 				$input_errors[] = 'The protocol must be TCP to use a HTTP proxy server.';
 		}
 				

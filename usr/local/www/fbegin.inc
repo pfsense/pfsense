@@ -167,6 +167,7 @@ require_once("notices.inc");
 							<li><a href="/status_filter_reload.php" class="navlnk">Filter Reload Status</a></li>
 							<li><a href="/status_interfaces.php" class="navlnk">Interfaces</a></li>
 							<li><a href="/diag_ipsec_sad.php" class="navlnk">IPsec</a></li>
+							<li><a href="/status_slbd_pool.php" class="navlnk">Load Balancer</a></li>
 							<?php if($g['platform'] == "pfSense"): ?>
 							<li><a href="/diag_pkglogs.php" class="navlnk">Package logs</a></li>
 							<?php endif; ?>

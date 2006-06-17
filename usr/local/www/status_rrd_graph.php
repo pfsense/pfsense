@@ -53,6 +53,14 @@ if ($_GET['graph']) {
 $pgtitle = gettext("Status: RRD Graphs");
 include("head.inc");
 
+$rrddbpath = "/var/db/rrd/";
+$traffic = "-traffic.rrd";
+$quality = "-quality.rrd";
+$queues = "-queues.rrd";
+$queuesdrop = "-queuesdrop.rrd";
+$packets = "-packets.rrd";
+$spamd = "spamd.rrd";
+
 ?>
 
 <script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
@@ -98,12 +106,14 @@ foreach ($graphs as $graph => $graphd) {
 
 $periods = array("2h", "6h", "48h", "14d", "2m", "18m");
 
-foreach($periods as $period => $interval) {
-
-	PRINT "<B>Analysis for $curif -- $interval $curgraph</B><BR>";
-	PRINT "\n<IMG BORDER='1' name='{$curif}-{$interval}-{$curgraph}' id='{$curif}-{$interval}-{$curgraph}' ALT=\"$ifname $curgraph Graph\" SRC=\"status_rrd_graph_img.php?if=$curif&interval=$interval&graph=$curgraph\"><BR><BR>";
+if(file_exists("{$rrddbpath}{$curif}-{$curgraph}.rrd")) {
+	foreach($periods as $period => $interval) {
+		PRINT "<B>Analysis for $curif -- $interval $curgraph</B><BR>";
+	PRINT "\n<IMG BORDER='1' name='{$curif}-{$interval}-{$curgraph}' id='{$curif}-{$interval}-{$curgraph}' ALT=\"$ifname $curgraph Graph\" SRC=\"status_rrd_graph_img.php?if=$curif&interval=$interval&graph=$curgraph&style={$curstyle}&color={$curcolor}\"><BR><BR>";
+	}
+} else {
+	PRINT "<b>There is no database available to generate $curgraph from.</b><br>";
 }
-
 ?>
 
 </div>

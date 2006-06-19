@@ -34,7 +34,7 @@
 function listtags() {
 	$ret = explode(" ", "element alias aliasurl allowedip cacert config columnitem dnsserver domainoverrides " .
 		"earlyshellcmd encryption-algorithm-option field fieldname hash-algorithm-option " .
-		"hosts interface_array item key lbpool menu mobilekey onetoone option package passthrumac proxyarpnet " .
+		"hosts group interface_array item key lbpool menu mobilekey onetoone option package passthrumac proxyarpnet " .
 		"queue pages pipe route row rule service servernat servers earlyshellcmd shellcmd staticmap subqueue " .
                 "tunnel user vip virtual_server vlan winsserver wolentry depends_on_package");
 	return $ret;

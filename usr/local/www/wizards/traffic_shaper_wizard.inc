@@ -213,7 +213,7 @@ function step3_stepsubmitphpaction() {
 			$config['shaper']['itemsshaped']++;
 
 			/* If user specifies an IP, we don't bother with providers */
-			if( is_ipaddr($_POST['address']) ) {
+			if( is_ipaddr($_POST['address']) or is_alias($_POST['address'])) {
 			    /* create VOIP rules */
 			    $rule = array();
 			    $rule['descr'] = "VOIP Adapter";

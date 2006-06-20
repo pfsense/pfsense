@@ -54,7 +54,7 @@ $pconfig['enablesshd'] = $config['system']['enablesshd'];
 $pconfig['sshport'] = $config['system']['ssh']['port'];
 $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['polling_enable'] = isset($config['system']['polling']);
-
+$pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
 
 if ($_POST) {
@@ -200,6 +200,7 @@ if ($_POST) {
                 $config['ipsec']['preferoldsa'] = $_POST['preferoldsa_enable'] ? true : false;
 	
 		$config['bridge']['filteringbridge'] = $_POST['filteringbridge_enable'] ? true : false;	
+		$config['filter']['bypassstaticroutes'] = $_POST['bypassstaticroutes'] ? true : false;
 	
 		write_config();
 			
@@ -444,6 +445,18 @@ include("head.inc");
 				in, or you will lock yourself out!).
 				<br />
 				Hint: the &quot;set LAN IP address&quot; option in the console menu  resets this setting as well.
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">Static route filtering</td>
+			<td width="78%" class="vtable">
+				<input name="bypassstaticroutes" type="checkbox" id="bypassstaticroutes" value="yes" <?php if ($pconfig['bypassstaticroutes']) echo "checked"; ?> />
+				<strong>Bypass firewall rules for traffic on the same interface</strong>
+				<br />
+				This option only applies if you have defined one or more static routes. If it is enabled, traffic that enters and 
+ 				leaves through the same interface will not be checked by the firewall. This may be desirable in some situations where 
+				multiple subnets are connected to the same interface.
+				<br />
 			</td>
 		</tr>
 		<tr>

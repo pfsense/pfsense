@@ -76,6 +76,8 @@ if ($_POST) {
 		$oldnologdefaultblock = isset($config['syslog']['nologdefaultblock']);
 		$config['syslog']['nologdefaultblock'] = $_POST['logdefaultblock'] ? false : true;
 		$config['syslog']['rawfilter'] = $_POST['rawfilter'] ? true : false;
+		if($config['syslog']['enable'] == false) 
+			unset($config['syslog']['remoteserver']);
 		
 		write_config();
 		

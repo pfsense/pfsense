@@ -566,18 +566,22 @@ function interfaces_wireless_configure($if, $wlcfg) {
 		$wme = "-wme";
 	
 	/* set up wep if enabled */
-        if (isset($wlcfg['wep']['enable']) && is_array($wlcfg['wep']['key'])) {
-                $wepset .= "authmode shared wepmode on ";
-                $i = 1;
-                foreach ($wlcfg['wep']['key'] as $wepkey) {
-                        $wepset .= "wepkey " . escapeshellarg("{$i}:{$wepkey['value']}") . " ";
-                        if (isset($wepkey['txkey'])) {
-                                $wepset .= "weptxkey {$i} ";
-                        }
-                        $i++;
-                }
-        } else {
-                $wepset = "authmode open wepmode off";
+    if (isset($wlcfg['wep']['enable']) && is_array($wlcfg['wep']['key'])) {
+		if($wlcfg['wpa']['auth_algs'] == "1") 
+			$wepset .= "authmode open wepmode on ";
+		else if($wlcfg['wpa']['auth_algs'] == "2")
+			$wepset .= "authmode shared wepmode on ";
+		else if($wlcfg['wpa']['auth_algs'] == "3")
+			$wepset .= "authmode mixed wepmode on "; 
+		$i = 1;
+		foreach ($wlcfg['wep']['key'] as $wepkey) {
+			$wepset .= "wepkey " . escapeshellarg("{$i}:{$wepkey['value']}") . " ";
+			if (isset($wepkey['txkey'])) 
+				$wepset .= "weptxkey {$i} ";
+			$i++;
+		}
+    } else {
+    	$wepset .= "authmode open wepmode off ";
 	}
 
 	/* generate wpa_supplicant/hostap config if wpa is enabled */
@@ -669,6 +673,7 @@ EOD;
 	
 	$settings = <<<EOD
 
+{$ifconfig} {$if} down
 {$ifconfig} {$if} {$hostapmode}
 {$ifconfig} {$if} {$standard_no_turbo}
 {$ifconfig} {$if} {$channel}

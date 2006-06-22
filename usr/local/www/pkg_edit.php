@@ -451,7 +451,6 @@ if ($pkg['tabs'] <> "") {
 				  echo "<td><b>" . fixup_string($rowhelper['fielddescr']) . "</td>\n";
 				}
 				echo "</tr>";
-				echo "<tbody>";
 
 				echo "<tr>";
 				  // XXX: traverse saved fields, add back needed rows.
@@ -527,7 +526,7 @@ if ($pkg['tabs'] <> "") {
 				}
 			?>
 
-			  </tbody>
+			  <tbody></tbody>
 			</table>
 
 		<br><a onClick="javascript:addRowTo('maintable'); return false;" href="#"><img border="0" src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif"></a>

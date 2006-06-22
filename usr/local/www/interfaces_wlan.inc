@@ -463,7 +463,7 @@ function wireless_config_print() {
 			<td class="vtable"><select name="auth_algs" class="formfld" id="auth_algs">
 			<option <? if ($pconfig['auth_algs'] == '1') echo "selected";?> value="1">Open System Authentication</option>
 			<option <? if ($pconfig['auth_algs'] == '2') echo "selected";?> value="2">Shared Key Authentication</option>
-			<option <? if ($pconfig['auth_algs'] == 'both') echo "selected";?> value="3">Both</option>
+			<option <? if ($pconfig['auth_algs'] == '3') echo "selected";?> value="3">Both</option>
 			</select>
 			<br/>Note: Shared Key Authentication requires WEP.</br>
 			</td>

@@ -2212,4 +2212,27 @@ function update_filter_reload_status($text) {
 	config_unlock();
 }
 
+function get_interface_gateway($interface) {
+	global $config, $g;
+	$interface = strtolower($interface);
+	/*  if we are dhclient, obtain the gateway from the tmp file, otherwise
+	 *  grab the address from the configuration file.
+	 */
+	$tmpif = convert_real_interface_to_friendly_interface_name($interface);
+	if($tmpif <> $interface)
+		$interface = $tmpif;
+	$realif = $config['interfaces'][$interface]['if'];
+	if(file_exists("{$g['tmp_path']}/{$realif}_router")) {
+		$gw = file_get_contents("{$g['tmp_path']}/{$realif}_router");
+		$gw = rtrim($gw);
+	} else {
+		$gw = $config['interfaces'][$interface]['gateway'];	
+	}
+	/* if wan is requested, return it */
+	if($interface == "wan")
+		return str_replace("\n", "", `route -n get default | grep gateway | awk '{ print $2 }'`);
+	/* return gateway */
+	return $gw;
+}
+
 ?>

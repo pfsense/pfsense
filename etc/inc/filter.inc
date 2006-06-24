@@ -159,7 +159,7 @@ function filter_configure_sync() {
 		$rules.= "set limit states {$config['system']['maximumstates']}\n";
 	}
 	$rules.= "\n";
-	$rules.= "scrub on {$wanif} all {$scrubnodf} {$mssclamp}\n"; // reassemble all directions
+	$rules.= "scrub on {$wanif} all {$scrubnodf} {$mssclamp} fragment reassemble\n"; // reassemble all directions
     
 	update_filter_reload_status("Setting up SCRUB information");
 	
@@ -168,7 +168,7 @@ function filter_configure_sync() {
 		if($config['interfaces']["opt" . $j]['gateway'] <> "") {
 			$if = convert_friendly_interface_to_real_interface_name("opt{$j}");
 			if($if)
-				$rules.= "scrub on {$if} all {$scrubnodf} {$mssclamp}\n"; // reassemble all directions
+				$rules.= "scrub on {$if} all {$scrubnodf} {$mssclamp} fragment reassemble\n"; // reassemble all directions
 		}
 	}
 

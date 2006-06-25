@@ -470,7 +470,7 @@ function step5_stepsubmitphpaction() {
 		if ($config['shaper']['schedulertype'] == "hfsc") {
 			$queue['realtime'] = "on";
 			$queue['realtime3'] = "1Kb";
-			$queue['bandwidth'] = 1;
+			$queue['bandwidth'] = 5;
 			$queue['bandwidthtype'] = '%';
 		} elseif ($config['shaper']['schedulertype'] == "cbq") {
 			$queue['borrow'] = "on";
@@ -488,7 +488,7 @@ function step5_stepsubmitphpaction() {
 		if ($config['shaper']['schedulertype'] == "hfsc") {
 			$queue['realtime'] = "on";
 			$queue['realtime3'] = "1Kb";
-			$queue['bandwidth'] = 1;
+			$queue['bandwidth'] = 5;
 			$queue['bandwidthtype'] = '%';
 		} elseif ($config['shaper']['schedulertype'] == "cbq") {
 			$queue['borrow'] = "on";

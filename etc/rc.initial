@@ -152,9 +152,8 @@ case ${opmode} in
         ;;
 esac
 
+done
+
 echo One moment please...
 
 sleep 10
-
-done
-

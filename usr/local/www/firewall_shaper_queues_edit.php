@@ -104,6 +104,8 @@ if ($_POST) {
 			|| ($_POST['priority'] < 1) || ($_POST['priority'] > 100))) {
 		$input_errors[] = "The priority must be an integer between 1 and 100.";
 	}
+	if (!preg_match("/^[a-zA-Z0-9_-]*$/", $_POST['name']))
+		$input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
 
 	switch($config['shaper']['schedulertype']) {
 		case 'hfsc':

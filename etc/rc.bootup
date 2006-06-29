@@ -180,6 +180,9 @@
 
 	/* start load balancer daemon */
 	slbd_configure();
+
+	/* start OpenVPN server & clients */
+    openvpn_resync_all();
 	
 	/* setup altq + pf */
 	echo "Configuring firewall... ";
@@ -196,10 +199,7 @@
 		/* start web server */
 		system_webgui_start();
 	}
-
-	/* start OpenVPN server & clients */
-    openvpn_resync_all();
-
+	
 	/* set up static routes */
 	system_routing_configure();
 

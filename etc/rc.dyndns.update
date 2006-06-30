@@ -33,8 +33,6 @@ require_once("config.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 
-log_error("Informational: services_dyndns_configure() is starting.");
-
 services_dyndns_configure();
 
 ?>

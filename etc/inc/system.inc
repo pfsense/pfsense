@@ -256,6 +256,7 @@ function system_syslogd_start() {
 !-racoon,{$facilitylist}
 !openvpn
 *.*							%{$g['varlog_path']}/openvpn.log
+!-openvpn,{$facilitylist}
 local0.*					%{$g['varlog_path']}/filter.log
 local3.*					%{$g['varlog_path']}/vpn.log
 local4.*					%{$g['varlog_path']}/portalauth.log

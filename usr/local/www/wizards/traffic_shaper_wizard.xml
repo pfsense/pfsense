@@ -601,7 +601,7 @@
                         <type>checkbox</type>
                         <typehint>Other networking protocols</typehint>
                         <description>This will help raise or lower the priority of other protocols higher than most traffic.</description>
-			<enablefields>AIM,AppleRemoteDesktop,DNS,HTTP,ICMP,ICQ,IMAP,IPSEC,IRC,LotusNotes,MSN,MSRDP,MySqlServer,PCAnywhere,POP3,PPTP,RTSP,SMB,SMTP,SNMP,StreamingMP3,TeamSpeak,VNC,NNTP,CVSUP</enablefields>
+			<enablefields>AIM,AppleRemoteDesktop,DNS,HTTP,ICMP,ICQ,IMAP,IPSEC,IRC,Jabber,LotusNotes,MSN,MSRDP,MySqlServer,PCAnywhere,POP3,PPTP,RTSP,SMB,SMTP,SNMP,StreamingMP3,TeamSpeak,VNC,NNTP,CVSUP</enablefields>
 			<donotdisable>true</donotdisable>
 			<bindstofield>ezshaper->step6->enable</bindstofield>
                 </field>
@@ -716,6 +716,26 @@
 				</option>
 			</options>
 			<typehint>Internet Relay Chat</typehint>
+                </field>
+                <field>
+                        <name>Jabber</name>
+			<type>select</type>
+			<bindstofield>ezshaper->step6->jabber</bindstofield>
+			<options>
+				<option>
+					<name>Default priority</name>
+					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Lower priority</name>
+					<value>L</value>
+				</option>
+			</options>
+			<typehint>Jabber</typehint>
                 </field>
                 <field>
                         <name>ICQ</name>

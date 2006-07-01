@@ -805,6 +805,12 @@ function step6_stepsubmitphpaction() {
 		    $othersplist[] = array('IRC', 'tcp', '6667', '6670', 'both', $_POST['irc']);
 		}
 
+		if($_POST['jabber'] != "") {
+		    /* jabber */
+		    $othersplist[] = array('IRC', 'tcp', '5222', '5222', 'both', $_POST['jabber']);
+		    $othersplist[] = array('IRC', 'tcp', '5269', '5269', 'both', $_POST['jabber']);
+		}
+
 		if($_POST['dns'] != "") {
 		    /* domain name system */
 		    $othersplist[] = array('DNS1', 'tcp', '53', '53', 'both', $_POST['dns']);

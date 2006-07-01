@@ -90,7 +90,7 @@ if ($_POST) {
 		/* make sure no interfaces are bridged */
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 			$coptif = &$config['interfaces']['opt' . $i];
-			if (isset($coptif['enable']) && $coptif['bridge']) {
+			if (isset($coptif['enable']) && $coptif['bridge'] == $pconfig['cinterface']) {
 				$input_errors[] = "The captive portal cannot be used when one or more interfaces are bridged.";
 				break;
 			}

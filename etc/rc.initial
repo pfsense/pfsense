@@ -143,17 +143,18 @@ case ${opmode} in
 	fi
 	;;
 100)
-        if grep "$WORD" "$CONFIG"
-        then
-        	links "https://localhost"
-        else
-        	links "http://localhost"
-        fi
-        ;;
+    if grep "$WORD" "$CONFIG"
+    then
+    	links "https://localhost"
+    else
+    	links "http://localhost"
+    fi
+    ;;
+"")
+	echo -n "Press CTRL-C to continue."
+	sleep 1000000
+	;;
 esac
 
 done
 
-echo One moment please...
-
-sleep 10

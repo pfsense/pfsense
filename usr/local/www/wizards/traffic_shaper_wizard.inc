@@ -42,6 +42,11 @@ function step1_stepsubmitphpaction() {
 
 function step2_stepsubmitphpaction() {
 		global $g, $config;
+		if(!is_numeric($_POST['upload']) or !is_numeric($_POST['download'])) {
+			$message="Upload and download speeds must be a number only!  Values should be Kbits/second.";
+			header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=1&amp;message={$message}");
+			exit;
+		}
 		if ($config['ezshaper']['step2']['inside_int'] == $config['ezshaper']['step2']['outside_int']) {
 			$message="Inside and Outside interfaces cannot be the same";
 			header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=1&amp;message={$message}");
@@ -807,8 +812,9 @@ function step6_stepsubmitphpaction() {
 
 		if($_POST['jabber'] != "") {
 		    /* jabber */
-		    $othersplist[] = array('IRC', 'tcp', '5222', '5222', 'both', $_POST['jabber']);
-		    $othersplist[] = array('IRC', 'tcp', '5269', '5269', 'both', $_POST['jabber']);
+		    $othersplist[] = array('IRC', 'tcp', '5222', '5222', 'both', $_POST['jabber1']);
+		    $othersplist[] = array('IRC', 'tcp', '5223', '5223', 'both', $_POST['jabber2']);
+		    $othersplist[] = array('IRC', 'tcp', '5269', '5269', 'both', $_POST['jabber3']);
 		}
 
 		if($_POST['dns'] != "") {

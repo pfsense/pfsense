@@ -735,7 +735,7 @@
 					<value>L</value>
 				</option>
 			</options>
-			<typehint>Jabber</typehint>
+			<typehint>Jabber instant messanger</typehint>
                 </field>
                 <field>
                         <name>ICQ</name>

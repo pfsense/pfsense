@@ -73,7 +73,7 @@ function get_dns_servers() {
 	foreach($dns_s as $dns) {
 		$matches = "";
 		if (preg_match("/nameserver (.*)/", $dns, $matches))
-			$dns_servers[] = $matches[1];		
+			$dns_servers[] = $matches[1];
 	}
 	$dns_server_master = array();
 	sort($dns_servers);
@@ -86,7 +86,7 @@ function get_dns_servers() {
 	}
 	return $dns_server_master;
 }
- 	
+
 /****f* pfsense-utils/log_error
 * NAME
 *   log_error  - Sends a string to syslog.
@@ -169,8 +169,8 @@ function enable_hardware_offloading($interface) {
 
 	if(stristr($options, "txcsum") == true)
 	    mwexec("/sbin/ifconfig {$interface} txcsum 2>/dev/null");
-	if(stristr($options, "rxcsum") == true)    
-	    mwexec("/sbin/ifconfig {$interface} rxcsum 2>/dev/null");    
+	if(stristr($options, "rxcsum") == true)
+	    mwexec("/sbin/ifconfig {$interface} rxcsum 2>/dev/null");
 	if(stristr($options, "polling") == true)
 	    mwexec("/sbin/ifconfig {$interface} polling 2>/dev/null");
 	} else {
@@ -183,11 +183,11 @@ function enable_hardware_offloading($interface) {
  * NAME
  *   checks to see if an alias is currently in use by a rule
  * INPUTS
- *   
+ *
  * RESULT
  *   true or false
  * NOTES
- *   
+ *
  ******/
 function is_alias_inuse($alias) {
 	global $g, $config;
@@ -209,7 +209,7 @@ function is_alias_inuse($alias) {
 			if($rule['target'] == $alias)
 				return true;
 			if($rule['external-address'] == $alias)
-				return true;	
+				return true;
 		}
 	return false;
 }
@@ -218,11 +218,11 @@ function is_alias_inuse($alias) {
  * NAME
  *   sets up sysctls for pollingS
  * INPUTS
- *   
+ *
  * RESULT
  *   null
  * NOTES
- *   
+ *
  ******/
 function setup_polling_defaults() {
 	global $g, $config;
@@ -231,24 +231,24 @@ function setup_polling_defaults() {
 	if($config['system']['polling_burst_max'])
 		mwexec("sysctl kern.polling.burst_max={$config['system']['polling_burst_max']}");
 	if($config['system']['polling_user_frac'])
-		mwexec("sysctl kern.polling.user_frac={$config['system']['polling_user_frac']}");		
+		mwexec("sysctl kern.polling.user_frac={$config['system']['polling_user_frac']}");
 }
 
 /****f* pfsense-utils/setup_polling
  * NAME
  *   sets up polling
  * INPUTS
- *   
+ *
  * RESULT
  *   null
  * NOTES
- *   
+ *
  ******/
 function setup_polling() {
-	global $g, $config;		
+	global $g, $config;
 
 	setup_polling_defaults();
-	
+
 	if(isset($config['system']['polling']))
 		$supported_ints = array('dc', 'em', 'fwe', 'fwip', 'fxp', 'ixgb', 'ste', 'nge', 're', 'rl', 'sf', 'sis', 'ste', 'vge', 'vr', 'xl');
 	else
@@ -256,8 +256,8 @@ function setup_polling() {
 
 	/* build an array of interfaces to work with */
 	$iflist = array("lan" => "LAN", "wan" => "WAN");
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
-		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];			
+	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
+		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 
 	foreach ($iflist as $ifent => $ifname) {
 		$real_interface = convert_friendly_interface_to_real_interface_name($ifname);
@@ -265,7 +265,7 @@ function setup_polling() {
 		foreach($supported_ints as $supported) {
 			if(stristr($real_interface, $supported)) {
 				$supported = true;
-			} 
+			}
 		}
 		if ($supported == true) {
 			mwexec("/sbin/ifconfig {$real_interface} polling");
@@ -280,7 +280,7 @@ function setup_polling() {
  *   enumerates all interfaces and calls enable_hardware_offloading which
  *   enables a NIC's supported hardware features.
  * INPUTS
- *   
+ *
  * RESULT
  *   null
  * NOTES
@@ -434,7 +434,7 @@ function link_int_to_bridge_interface($int) {
 		if(stristr($bridge_info, "member: {$real_int}")) {
 			return "bridge{$x}";
 		}
-	}	
+	}
 }
 
 /****f* pfsense-utils/link_ip_to_carp_interface
@@ -503,7 +503,7 @@ function is_jumbo_capable($int) {
 	/* Per:
 	 * http://www.freebsd.org/cgi/man.cgi?query=vlan&manpath=FreeBSD+6.0-RELEASE&format=html
 	 * Only the following drivers support large frames
-         * 
+         *
 	 * 'de' chipset purposely left out of this list
 	 * requires defining BIG_PACKET in the
 	 * /usr/src/sys/pci/if_de.c source file and rebuilding the
@@ -511,9 +511,9 @@ function is_jumbo_capable($int) {
 	 * 21140, and 21140A chips.
 	 */
 	global $g;
-	
+
 	$capable = $g['vlan_long_frame'];
-	
+
 	$int_family = preg_split("/[0-9]+/", $int);
 
 	if (in_array($int_family[0], $capable))
@@ -675,7 +675,7 @@ function setup_filter_bridge() {
 	if(isset($config['bridge']['filteringbridge'])) {
 		mwexec("/sbin/sysctl net.link.bridge.pfil_member=1");
 		mwexec("/sbin/sysctl net.link.bridge.pfil_bridge=1");
-	} else {		
+	} else {
 		mwexec("/sbin/sysctl net.link.bridge.pfil_member=0");
 		mwexec("/sbin/sysctl net.link.bridge.pfil_bridge=0");
 	}
@@ -902,15 +902,15 @@ function WakeOnLan($addr, $mac)
 {
 	$addr_byte = explode(':', $mac);
 	$hw_addr = '';
-	
+
 	for ($a=0; $a < 6; $a++)
 		$hw_addr .= chr(hexdec($addr_byte[$a]));
-	
+
 	$msg = chr(255).chr(255).chr(255).chr(255).chr(255).chr(255);
-	
+
 	for ($a = 1; $a <= 16; $a++)
 		$msg .= $hw_addr;
-	
+
 	// send it to the broadcast address using UDP
 	$s = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 	if ($s == false) {
@@ -926,7 +926,7 @@ function WakeOnLan($addr, $mac)
 		log_error("Magic Packet sent ({$e}) to {$addr} MAC={$mac}");
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -992,7 +992,7 @@ function backup_vip_config_section() {
 	$new_section = &$config['virtualip'];
 	foreach($new_section['vip'] as $section) {
 		if($section['mode'] == "proxyarp") {
-			unset($section);		
+			unset($section);
 		}
 		if($section['advskew'] <> "") {
 			$section_val = intval($section['advskew']);
@@ -1163,7 +1163,7 @@ function get_memory() {
 			$real = $matches[1];
 		if (preg_match_all("/avail memory = .* \((.*) MB/", $mem, $matches))
 			$avail = $matches[1];
-		return array($real[0],$avail[0]);	
+		return array($real[0],$avail[0]);
 	}
 }
 
@@ -1177,7 +1177,7 @@ function safe_mkdir($path, $mode=0755) {
 	/* cdrom is ro. */
 	if($g['platform'] == "cdrom")
 		return false;
-	
+
 	if (!is_file($path) && !is_dir($path))
 		return mkdir($path, $mode);
 	else
@@ -1206,7 +1206,7 @@ function make_dirs($path, $mode = 0755) {
 function call_pfsense_method($method, $params, $timeout = 0) {
 	$ip = gethostbyname('www.pfsense.com');
 	if($ip == "www.pfsense.com")
-		return false;	
+		return false;
 	global $g, $config;
 	$xmlrpc_base_url = $g['xmlrpcbaseurl'];
 	$xmlrpc_path = $g['xmlrpcpath'];
@@ -1231,7 +1231,7 @@ function check_firmware_version($tocheck = "all", $return_php = true) {
 	global $g, $config;
 	$ip = gethostbyname('www.pfsense.com');
 	if($ip == "www.pfsense.com")
-		return false;		
+		return false;
 	$rawparams = array("firmware" => array("version" => trim(file_get_contents('/etc/version'))),
 		"kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel'))),
 		"base"     => array("version" => trim(file_get_contents('/etc/version_base'))),
@@ -1306,11 +1306,11 @@ function display_top_tabs($tab_array) {
 	}
 	echo " </tr>\n";
 	echo "</table>\n";
-	    
+
 	echo "<script type=\"text/javascript\">";
 	echo "NiftyCheck();\n";
 	echo "Rounded(\"div#tabactive\",\"top\",\"#FFF\",\"#EEEEEE\",\"smooth\");\n";
-	for($x=0; $x<$tabscounter; $x++) 
+	for($x=0; $x<$tabscounter; $x++)
 		echo "Rounded(\"div#tabdeactive{$x}\",\"top\",\"#FFF\",\"#777777\",\"smooth\");\n";
 	echo "</script>";
 }
@@ -1324,7 +1324,7 @@ function display_top_tabs($tab_array) {
  * RESULT
  *   null
  ******/
-function display_topbar($text = "", $bg_color="#990000", $replace_color="#FFFFFF", $rounding_style="smooth") {	    
+function display_topbar($text = "", $bg_color="#990000", $replace_color="#FFFFFF", $rounding_style="smooth") {
 	echo "     <table width='100%' cellpadding='0' cellspacing='0'>\n";
 	echo "       <tr height='1'>\n";
 	echo "         <td width='100%' valign='top' color='{$bg_color}' bgcolor='{$bg_color}'>";
@@ -1353,7 +1353,7 @@ function display_topbar($text = "", $bg_color="#990000", $replace_color="#FFFFFF
  ******/
 function generate_random_mac_address() {
 	$mac = "02";
-	for($x=0; $x<5; $x++) 
+	for($x=0; $x<5; $x++)
 		$mac .= ":" . dechex(rand(16, 255));
 	return $mac;
 }
@@ -1384,29 +1384,29 @@ function strncpy(&$dst, $src, $length) {
  ******/
 function reload_interfaces_sync() {
 	global $config, $g, $debug;
-	
+
 	$shutdown_webgui_needed = false;
-	
+
 	touch("{$g['tmp_path']}/reloading_all");
-	
+
 	if($debug)
 		log_error("reload_interfaces_sync() is starting.");
-	
+
 	if(file_exists("{$g['tmp_path']}/config.cache"))
 		unlink("{$g['tmp_path']}/config.cache");
-	
+
 	/* parse config.xml again */
 	$config = parse_config(true);
-	
+
 	$wan_if = $config['interfaces']['wan']['if'];
 	$lan_if = $config['interfaces']['lan']['if'];
-	
+
 	if($debug)
 		log_error("Cleaning up Interfaces");
 
 	/* build an array of interfaces to work with */
 	$iflist = array("lan" => "LAN", "wan" => "WAN");
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
 		$iflist['opt' . $i] = "opt{$i}";
 
 	foreach ($iflist as $ifent => $ifname) {
@@ -1429,7 +1429,7 @@ function reload_interfaces_sync() {
 	if($debug)
 		log_error("Configuring VLANS");
 	interfaces_vlan_configure();
-	
+
 	/* set up LAN interface */
 	if($debug)
 		log_error("Configuring LAN");
@@ -1439,17 +1439,17 @@ function reload_interfaces_sync() {
 	if($debug)
 		log_error("Configuring WAN");
 	interfaces_wan_configure();
-	
+
 	/* set up Optional interfaces */
 	if($debug)
 		log_error("Configuring optional interfaces");
 	interfaces_optional_configure();
-	    
+
 	/* set up static routes */
 	if($debug)
 		log_error("Configuring system Routing");
 	system_routing_configure();
-	
+
 	/* enable routing */
 	if($debug)
 		log_error("Enabling system routing");
@@ -1464,19 +1464,19 @@ function reload_interfaces_sync() {
 	if($debug)
 		log_error("Configuring CARP");
 	interfaces_carp_configure();
-	
+
 	/* bring up carp interfaces*/
 	if($debug)
 		log_error("Bringing up CARP interfaces");
 	interfaces_carp_bring_up_final();
-	
+
 	/* restart webConfigurator if needed */
-	if($shutdown_webgui_needed == true) 
+	if($shutdown_webgui_needed == true)
 		touch("/tmp/restart_webgui");
-	
+
 	/* start devd back up */
 	mwexec("/bin/rm /tmp/reload*");
-	
+
 	/* remove reloading_all trigger */
 	if($debug)
 		log_error("Removing {$g['tmp_path']}/reloading_all");
@@ -1525,16 +1525,16 @@ function sync_webgui_passwords() {
 	}
 	/* set admin account */
 	$username = $config['system']['username'];
-	
+
 	/* set defined user account */
 	if($username <> "admin") {
 		$username = $config['system']['username'];
 		fwrite($fd, $username . ":" . $config['system']['password'] . "\n");
 	} else {
-		fwrite($fd, $username . ":" . $config['system']['password'] . "\n");	
-	}	
+		fwrite($fd, $username . ":" . $config['system']['password'] . "\n");
+	}
 	fclose($fd);
-	chmod("{$g['varrun_path']}/htpasswd", 0600);	
+	chmod("{$g['varrun_path']}/htpasswd", 0600);
 	$crypted_pw = $config['system']['password'];
 	mwexec("/usr/sbin/pwd_mkdb -d /etc -p /etc/master.passwd");
 	mwexec("/usr/sbin/pwd_mkdb -p /etc/master.passwd");
@@ -1563,6 +1563,8 @@ function sync_webgui_passwords() {
  ******/
 function cleanup_opt_interfaces_after_removal($opt_interface_num) {
 	global $config;
+	config_lock();
+	conf_mount_rw();
 	unlink_if_exists("/tmp/config.cache");
 	$config_file = file_get_contents("/cf/conf/config.xml");
 	/* loop through and reassign optional items */
@@ -1572,10 +1574,13 @@ function cleanup_opt_interfaces_after_removal($opt_interface_num) {
 		/* replace opt$i with $i -1 */
 		str_replace("opt" . $i, "opt" . ($i-1), $config_file);
 	}
+	conf_mount_rw();
 	$fd = fopen("/cf/conf/config.xml", "w");
 	fwrite($fd, $config_file);
 	fclose($fd);
 	$config = parse_config(true);
+	conf_mount_ro();
+	config_unlock();
 	return true;
 }
 
@@ -1592,7 +1597,7 @@ function get_number_of_wan_netgraph_interfaces_needed() {
 	global $config, $g;
 	/* build an array of interfaces to work with */
 	$iflist = array("wan" => "WAN");
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
 		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 	$ng_interfaces_needed = 0;
 	foreach ($iflist as $ifent => $ifname) {
@@ -1607,7 +1612,7 @@ function get_netgaph_interface_assignment($friendly_interface) {
 	global $config, $g;
 	/* build an array of interfaces to work with */
 	$iflist = array("wan" => "WAN");
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
 		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 		$ng_interfaces_needed = 0;
 		$ng_interfaces_number = 0;
@@ -1618,7 +1623,7 @@ function get_netgaph_interface_assignment($friendly_interface) {
 		if($friendly_interface == $ifname)
 			break;
 	}
-	return $ng_interfaces_number;	
+	return $ng_interfaces_number;
 }
 
 /****f* pfsense-utils/reload_all_sync
@@ -1631,16 +1636,16 @@ function get_netgaph_interface_assignment($friendly_interface) {
  ******/
 function reload_all_sync() {
 	global $config, $g;
-	
+
 	$g['booting'] = false;
-	
+
 	touch("{$g['tmp_path']}/reloading_all");
-	
+
 	$shutdown_webgui_needed = false;
-	
+
 	if(file_exists("{$g['tmp_path']}/config.cache"))
 		unlink("{$g['tmp_path']}/config.cache");
-	
+
 	/* parse config.xml again */
 	$config = parse_config(true);
 
@@ -1658,13 +1663,13 @@ function reload_all_sync() {
 
 	/* delete all old interface information */
 	$iflist = split(" ", str_replace("\n", "", `/sbin/ifconfig -l`));
-	
+
 	$wan_if = $config['interfaces']['wan']['if'];
 	$lan_if = $config['interfaces']['lan']['if'];
 
 	/* build an array of interfaces to work with */
 	$iflist = array("lan" => "LAN", "wan" => "WAN");
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
 		$iflist['opt' . $i] = "opt{$i}";
 
 	foreach ($iflist as $ifent => $ifname) {
@@ -1683,7 +1688,7 @@ function reload_all_sync() {
 
 	/* set up VLAN virtual interfaces */
 	interfaces_vlan_configure();
-	
+
 	/* set up LAN interface */
 	interfaces_lan_configure();
 
@@ -1692,16 +1697,16 @@ function reload_all_sync() {
 
 	/* set up Optional interfaces */
 	interfaces_optional_configure();
-        
+
 	/* bring up carp interfaces */
 	interfaces_carp_configure();
-	
+
 	/* set up static routes */
 	system_routing_configure();
 
 	/* enable routing */
 	system_routing_enable();
-	
+
 	/* ensure passwords are sync'd */
 	system_password_configure();
 
@@ -1728,7 +1733,7 @@ function reload_all_sync() {
 
 	/* bring up carp interfaces*/
 	interfaces_carp_bring_up_final();
-	
+
 	/* sync pw database */
 	conf_mount_rw();
 	mwexec("/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd");
@@ -1736,15 +1741,15 @@ function reload_all_sync() {
 
 	/* restart sshd */
 	touch("/tmp/start_sshd");
-	
+
 	/* restart webConfigurator if needed */
-	if($shutdown_webgui_needed == true) 
+	if($shutdown_webgui_needed == true)
 		touch("/tmp/restart_webgui");
-	
+
 	mwexec("/bin/rm /tmp/reload*");
-	
+
 	unlink_if_exists("{$g['tmp_path']}/reloading_all");
-	
+
 }
 
 function auto_login($status) {
@@ -1764,7 +1769,7 @@ function auto_login($status) {
 		}
 	}
 	fclose($fd);
-	conf_mount_ro();	
+	conf_mount_ro();
 }
 
 function setup_serial_port() {
@@ -1775,14 +1780,14 @@ function setup_serial_port() {
 		$boot_config = file_get_contents("/boot.config");
 	else
 		$boot_config = "";
-	
+
 	if($g['platform'] <> "cdrom") {
 		$boot_config_split = split("\n", $boot_config);
 		$fd = fopen("/boot.config","w");
 		if($fd) {
 			foreach($boot_config_split as $bcs) {
 				if(stristr($bcs, "-D")) {
-					/* DONT WRITE OUT, WE'LL DO IT LATER */	
+					/* DONT WRITE OUT, WE'LL DO IT LATER */
 				} else {
 					if($bcs <> "")
 						fwrite($fd, "{$bcs}\n");
@@ -1790,17 +1795,17 @@ function setup_serial_port() {
 			}
 			if(isset($config['system']['enableserial'])) {
 				fwrite($fd, "-D");
-			}			
+			}
 			fclose($fd);
 		}
 		/* serial console - write out /boot/loader.conf */
-		$boot_config = file_get_contents("/boot/loader.conf");	
+		$boot_config = file_get_contents("/boot/loader.conf");
 		$boot_config_split = split("\n", $boot_config);
 		$fd = fopen("/boot/loader.conf","w");
 		if($fd) {
 			foreach($boot_config_split as $bcs) {
 				if(stristr($bcs, "console")) {
-					/* DONT WRITE OUT, WE'LL DO IT LATER */	
+					/* DONT WRITE OUT, WE'LL DO IT LATER */
 				} else {
 					if($bcs <> "")
 						fwrite($fd, "{$bcs}\n");
@@ -1816,9 +1821,9 @@ function setup_serial_port() {
 		auto_login(false);
 	} else {
 		auto_login(true);
-	}	
+	}
 	conf_mount_ro();
-	return;	
+	return;
 }
 
 function print_value_list($list, $count = 10, $separator = ",") {
@@ -1834,7 +1839,7 @@ function print_value_list($list, $count = 10, $separator = ",") {
 function convert_friendly_interface_to_friendly_descr($interface) {
 	global $config;
 	/* attempt to resolve interface to friendly descr */
-	if($config['interfaces'][$interface]['descr']) 
+	if($config['interfaces'][$interface]['descr'])
 		return $config['interfaces'][$interface]['descr'];
 	$tmp = convert_real_interface_to_friendly_descr($interface);
 	/* could not resolve, return back what was passed */
@@ -1897,17 +1902,17 @@ function enable_rrd_graphing()
 	/* Asume GigE for now */
 	$downstream = 125000000;
 	$upstream   = 125000000;
-	
+
 	$rrdrestore = "";
-	$rrdreturn = "";	
+	$rrdreturn = "";
 
 	$config['rrd']['enable'] = true;
 
 	if (isset($config['rrd']['enable'])) {
 
 		/* create directory if needed */
-		if(!is_dir("$rrddbpath")) { 	                 
-			mkdir("$rrddbpath", 0755); 	 
+		if(!is_dir("$rrddbpath")) {
+			mkdir("$rrddbpath", 0755);
 		}
 
 		if($g['booting']) {
@@ -1964,7 +1969,7 @@ function enable_rrd_graphing()
 			if("$ifname" == "") {
 				continue;
 			}
-			
+
 			/* or are down */
 			if(! $state) {
 				continue;
@@ -1985,13 +1990,13 @@ function enable_rrd_graphing()
 					RRA:MAX:0.5:5:1000 \
 					RRA:MAX:0.5:60:1000 \
 					RRA:MAX:0.5:3600:1000";
-					
+
 				$rrdcreateoutput = "";
 				$rrdcreatereturn = "";
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 				if($rrdcreatereturn != 0) {
-			                log_error("RRD create failed exited with $rrdcreatereturn, the 
+			                log_error("RRD create failed exited with $rrdcreatereturn, the
 						error is: $rrdcreateoutput[0]\n");
 				}
 			}
@@ -2020,7 +2025,7 @@ function enable_rrd_graphing()
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 				if($rrdcreatereturn != 0) {
-			                log_error("RRD create failed exited with $rrdcreatereturn, the 
+			                log_error("RRD create failed exited with $rrdcreatereturn, the
 						error is: $rrdcreateoutput[0]\n");
 				}
 			}
@@ -2057,7 +2062,7 @@ function enable_rrd_graphing()
 
 					$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 					if($rrdcreatereturn != 0) {
-				                log_error("RRD create failed exited with $rrdcreatereturn, the 
+				                log_error("RRD create failed exited with $rrdcreatereturn, the
 							error is: $rrdcreateoutput[0]\n");
 					}
 				}
@@ -2101,7 +2106,7 @@ function enable_rrd_graphing()
 
 						$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 						if($rrdcreatereturn != 0) {
-				        	        log_error("RRD create failed exited with $rrdcreatereturn, the 
+				        	        log_error("RRD create failed exited with $rrdcreatereturn, the
 								error is: $rrdcreateoutput[0]\n");
 						}
 					}
@@ -2156,18 +2161,18 @@ function enable_rrd_graphing()
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 				if($rrdcreatereturn != 0) {
-		        	        log_error("RRD create failed exited with $rrdcreatereturn, the 
+		        	        log_error("RRD create failed exited with $rrdcreatereturn, the
 						error is: $rrdcreateoutput[0]\n");
 				}
 			}
-		
+
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling spamd for connections and tarpitness \n";
 			$rrdupdatesh .= "$rrdtool update $rrddbpath$spamd \\\n";
 			$rrdupdatesh .= "`$php -q $spamd_gather`\n";
 
 		}
-	
+
 		$rrdupdatesh .= "sleep 60\n";
 		$rrdupdatesh .= "done\n";
 		log_error("Creating rrd update script");
@@ -2183,7 +2188,7 @@ function enable_rrd_graphing()
 		$fd = fopen("$rrdgraphindex", "w");
 		fwrite($fd, "$rrdgraphindexhtml");
 		fclose($fd);
-	
+
 		/* kill off traffic collectors */
 		kill_traffic_collector();
 
@@ -2226,7 +2231,7 @@ function get_interface_gateway($interface) {
 		$gw = file_get_contents("{$g['tmp_path']}/{$realif}_router");
 		$gw = rtrim($gw);
 	} else {
-		$gw = $config['interfaces'][$interface]['gateway'];	
+		$gw = $config['interfaces'][$interface]['gateway'];
 	}
 	/* if wan is requested, return it */
 	if($interface == "wan")

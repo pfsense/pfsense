@@ -114,7 +114,7 @@ function is_ipaddroralias($ipaddr) {
 		return true;
 	else
 		return is_ipaddr($ipaddr);
-	
+
 }
 
 /* returns true if $ipaddr is a valid dotted IPv4 address or any alias */
@@ -230,6 +230,11 @@ function is_port($port) {
 		return false;
 	else
 		return true;
+}
+
+/* returns true if $val is a valid shaper bandwidth value */
+function is_valid_shaperbw($val) {
+	return (preg_match("/^[0-9]+(Kb|Mb|Gb|%)$/", $val));
 }
 
 /*
@@ -391,7 +396,7 @@ function is_alias($name) {
 	global $aliastable;
 
 	return isset($aliastable[$name]);
-}	
+}
 
 function alias_expand_value($name) {
 

@@ -114,12 +114,30 @@ if ($_POST) {
 				$input_errors[] = "upperlimit service curve defined but missing burst (d) value";
 			if ($_POST['upperlimit2'] <> "" &&  $_POST['upperlimit1'] == "")
 				$input_errors[] = "upperlimit service curve defined but missing initial bandwidth (m1) value";
+			if ($_POST['upperlimit1'] <> "" && !is_valid_shaperbw($_POST['upperlimit1']))
+				$input_errors[] = gettext("upperlimit m1 value needs to be Kb, Mb, Gb, or %");
+			if ($_POST['upperlimit2'] <> "" && !is_numeric($_POST['upperlimit2']))
+				$input_errors[] = gettext("upperlimit d value needs to be numeric");
+			if ($_POST['upperlimit3'] <> "" && !is_valid_shaperbw($_POST['upperlimit3']))
+				$input_errors[] = gettext("upperlimit m2 value needs to be Kb, Mb, Gb, or %");
 			if ($_POST['linkshare1'] <> "" &&  $_POST['linkshare2'] == "")
 				$input_errors[] = "linkshare service curve defined but missing burst (d) value";
+			if ($_POST['linkshare1'] <> "" && !is_valid_shaperbw($_POST['linkshare1']))
+				$input_errors[] = gettext("linkshare m1 value needs to be Kb, Mb, Gb, or %");
+			if ($_POST['linkshare2'] <> "" && !is_numeric($_POST['linkshare2']))
+				$input_errors[] = gettext("linkshare d value needs to be numeric");
+			if ($_POST['linkshare3'] <> "" && !is_valid_shaperbw($_POST['linkshare3']))
+				$input_errors[] = gettext("linkshare m2 value needs to be Kb, Mb, Gb, or %");
 			if ($_POST['linkshare2'] <> "" &&  $_POST['linkshare1'] == "")
 				$input_errors[] = "linkshare service curve defined but missing initial bandwidth (m1) value";
 			if ($_POST['realtime1'] <> "" &&  $_POST['realtime2'] == "")
 				$input_errors[] = "realtime service curve defined but missing burst (d) value";
+			if ($_POST['realtime1'] <> "" && !is_valid_shaperbw($_POST['realtime1']))
+				$input_errors[] = gettext("realtime m1 value needs to be Kb, Mb, Gb, or %");
+			if ($_POST['realtime2'] <> "" && !is_numeric($_POST['realtime2']))
+				$input_errors[] = gettext("realtime d value needs to be numeric");
+			if ($_POST['realtime3'] <> "" && !is_valid_shaperbw($_POST['realtime3']))
+				$input_errors[] = gettext("realtime m2 value needs to be Kb, Mb, Gb, or %");
 			if ($_POST['realtime2'] <> "" &&  $_POST['realtime1'] == "")
 				$input_errors[] = "realtime service curve defined but missing initial bandwidth (m1) value";
 			break;
@@ -128,13 +146,13 @@ if ($_POST) {
 		case 'priq':
 			break;
 	}
-	
+
 	if (!$input_errors) {
 		$queue = array();
 		$queue['schedulertype'] = $_POST['schedulertype'];
 		$queue['bandwidth'] = $_POST['bandwidth'];
 		$queue['bandwidthtype'] = $_POST['bandwidthtype'];
-		if($_POST['bandwidth'] == "") 
+		if($_POST['bandwidth'] == "")
 			unset($queue['bandwidthtype']);
 		if($_POST['bandwidthtype'] == "")
 			unset($queue['bandwidth']);
@@ -323,23 +341,23 @@ function enable_attachtoqueue(enable_over) {
 	<?php if ($schedulertype == "hfsc"): ?>
 	    <tr>
 	      <td width="22%" valign="top" class="vncell">Service Curve (sc)</td>
-	      <td width="78%" class="vtable">	
+	      <td width="78%" class="vtable">
 		<table>
 		<tr><td>&nbsp;</td><td><center>m1</center></td><td><center>d</center></td><td><center><b>m2</b></center></td></tr>
 		<tr><td><input type="checkbox" id="upperlimit" name="upperlimit" <?php if($upperlimit) echo " CHECKED";?> onChange="enable_upperlimit()"> Upperlimit:</td><td><input size="6" value="<?=htmlspecialchars($upperlimit1);?>" id="upperlimit1" name="upperlimit1"></td><td><input size="6" value="<?=htmlspecialchars($upperlimit2);?>" id="upperlimi2" name="upperlimit2"></td><td><input size="6" value="<?=htmlspecialchars($upperlimit3);?>" id="upperlimit3" name="upperlimit3"></td><td>The maximum allowed bandwidth for the queue.</td></tr>
 		<tr><td><input type="checkbox" id="realtime" name="realtime" <?php if($realtime) echo " CHECKED";?> onChange="enable_realtime()"> Real time:</td><td><input size="6" value="<?=htmlspecialchars($realtime1);?>" id="realtime1" name="realtime1"></td><td><input size="6" value="<?=htmlspecialchars($realtime2); ?>" id="realtime2" name="realtime2"></td><td><input size="6" value="<?=htmlspecialchars($realtime3);?>" id="realtime3" name="realtime3"></td><td>The minimum required bandwidth for the queue.</td></tr>
 		<tr><td><input type="checkbox" id="linkshare" id="linkshare" name="linkshare" <?php if($linkshare) echo " CHECKED";?> onChange="enable_linkshare()"> Link share:</td><td><input size="6" value="<?=htmlspecialchars($linkshare1);?>" value="<?=htmlspecialchars($linkshare1);?>" id="linkshare1" name="linkshare1"></td><td><input size="6" value="<?=htmlspecialchars($linkshare2);?>" id="linkshare2" name="linkshare2"></td><td><input size="6" value="<?=htmlspecialchars($linkshare3);?>" id="linkshare3" name="linkshare3"></td><td>The bandwidth share of a backlogged queue - this overrides priority.</td></tr>
-		</table><br>		
+		</table><br>
 			The format for service curve specifications is (m1, d, m2).  m2 controls
-			the bandwidth assigned to the queue.  m1 and d are optional and can be 
+			the bandwidth assigned to the queue.  m1 and d are optional and can be
 			used to control the initial bandwidth assignment.  For the first d milliseconds the queue gets the bandwidth given as m1, afterwards the value
 			given in m2.
 		</span></td>
 	    </tr>
 	<?php endif; ?>
-	
 
-	
+
+
 	<?php if ($schedulertype == "hfsc" or $schedulertype == "cbq"): ?>
 	    <tr>
 		<td width="22%" valign="top" class="vncell" id="attachtoqueuedesc">Parent queue:</td>

@@ -35,6 +35,10 @@ require("guiconfig.inc");
 
 $a_queues = &$config['shaper']['queue'];
 
+function gettext($text) {
+	return $text;
+}
+
 /* redirect to wizard if shaper isn't already configured */
 if(isset($config['shaper']['enable'])) {
 	$pconfig['enable'] = TRUE;

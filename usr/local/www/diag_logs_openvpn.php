@@ -31,7 +31,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("Diagnostics","System logs","OpenVPN");
+$pgtitle = "Diagnostics: System logs: OpenVPN";
 
 require("guiconfig.inc");
 
@@ -44,7 +44,7 @@ if (!$nentries)
 if ($_POST['clear']) {
 	exec("killall syslogd");
 	exec("/usr/sbin/clog -i -s 262144 {$openvpn_logfile}");
-	system_syslogd_start();	
+	system_syslogd_start();
 }
 
 include("head.inc");

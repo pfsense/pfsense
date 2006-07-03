@@ -91,9 +91,10 @@ include("head.inc");
                                                 $svr = split("\|", $server);
 						$monitorip = $svr[1];
 						$logstates = return_clog($slbd_logfile, $nentries, array("$monitorip", "marking"), true);
+						$logstates = $logstates[0];
 
-						if(stristr($logstates[0], $monitorip)) {
-							$date = split(" ", $logstates[0]);
+						if(stristr($logstates, $monitorip)) {
+							$date = preg_split("/[ ]+/" , $logstates);
 							$lastchange = "$date[0] $date[1] $year $date[2]";
 						}
 						if(stristr($poolstatus, $monitorip)) {
@@ -107,7 +108,13 @@ include("head.inc");
 							$online = "Offline";
 							$bgcolor = "lightcoral";
 						}
-						PRINT "<tr><td bgcolor=\"$bgcolor\" > $online </td><td> Last change $lastchange</td></tr>";
+						PRINT "<tr><td bgcolor=\"$bgcolor\" > $online </td><td>";
+						if($lastchange <> "") {
+							PRINT "Last change $lastchange";
+						} else {
+							PRINT "No changes found in logfile";
+						}
+						PRINT "</td></tr>";
                                         }
                                 } else {
 					PRINT "<tr><td> {$vipent['monitor']} </td></tr>";

@@ -50,7 +50,7 @@
 		</field>		
 		<field>
 			<fielddescr>Interfaces</fielddescr>
-			<fieldname>interface_array</fieldname>
+			<fieldname>iface_array</fieldname>
 			<value>lan</value>
 			<multiple>true</multiple>
 			<size>3</size>

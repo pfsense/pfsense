@@ -477,7 +477,7 @@ include("head.inc");
 							<a href="#" onClick="show_source_port_range();">Advanced - Show source port range</a>
 			</td>
 		</tr>
-		<tr>
+		<tr style="display:none" id="sourceportrangetable" name="sourceportrangetable">
 			<td width="22%" valign="top" class="vncellreq">Source port range</td>
 			<td width="78%" class="vtable">
 				<table border="0" cellspacing="0" cellpadding="0">

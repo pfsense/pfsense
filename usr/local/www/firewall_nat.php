@@ -51,7 +51,7 @@ if ($_POST) {
 		write_config();
 
 		$retval = 0;
-		
+
 		config_lock();
 		$retval |= filter_configure();
 		config_unlock();
@@ -183,7 +183,7 @@ include("head.inc");
 		    <?php
 			if (!$natent['interface'] || ($natent['interface'] == "wan"))
 				echo "WAN";
-			else if($natent['interface'] == "LAN")
+			else if(strtolower($natent['interface']) == "lan")
 				echo "LAN";
 			else
 				echo strtoupper($config['interfaces'][$natent['interface']]['descr']);

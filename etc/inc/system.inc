@@ -249,14 +249,35 @@ function system_syslogd_start() {
 			printf("Error: cannot open syslog.conf in system_syslogd_start().\n");
 			return 1;
 		}
+		$syslogconf .= "!racoon\n";
+		if (!isset($syslogcfg['disablelocallogging'])) {
+			$syslogconf .= <<<EOD
+*.*						%{$g['varlog_path']}/ipsec.log
+
+EOD;
+		}
+		if (isset($syslogcfg['vpn'])) {
+			$syslogconf .= <<<EOD
+*.*						@{$syslogcfg['remoteserver']}
+
+EOD;
+		}
+		$syslogconf .= "!-racoon,{$facilitylist}\n!openvpn\n";
+		if (!isset($syslogcfg['disablelocallogging'])) {
+			$syslogconf .= <<<EOD
+*.*						%{$g['varlog_path']}/openvpn.log
+
+EOD;
+		}
+		if (isset($syslogcfg['vpn'])) {
+			$syslogconf .= <<<EOD
+*.*						@{$syslogcfg['remoteserver']}
+
+EOD;
+		}
+		$syslogconf .= "!-openvpn,{$facilitylist}\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 		$syslogconf .= <<<EOD
-!racoon
-*.*						%{$g['varlog_path']}/ipsec.log
-!-racoon,{$facilitylist}
-!openvpn
-*.*							%{$g['varlog_path']}/openvpn.log
-!-openvpn,{$facilitylist}
 local0.*					%{$g['varlog_path']}/filter.log
 local3.*					%{$g['varlog_path']}/vpn.log
 local4.*					%{$g['varlog_path']}/portalauth.log

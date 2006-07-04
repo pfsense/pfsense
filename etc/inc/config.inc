@@ -72,7 +72,7 @@ if(file_exists("/cf/conf/config.xml")) {
 		$config_contents = str_replace("m0n0wall","pfsense", $config_contents);
 		if (!config_validate($config_contents))
 			log_error("ERROR!  Could not convert m0n0wall -> pfsense in config.xml");
-		conf_mount_rw();	
+		conf_mount_rw();
 		$fd = fopen("/cf/conf/config.xml", "w");
 		fwrite($fd, $config_contents);
 		fclose($fd);
@@ -208,18 +208,18 @@ function parse_config($parse = false) {
 		$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
 		generate_config_cache($config);
 	}
-	
+
 	alias_make_table($config);
 	config_unlock();
 
 	/*    override some global configuration parms if they exist
 	 *    instead of hard coding these checks into the codebase
-     */	
+     */
 	if($config['pptp']['n_pptp_units'])
 		$g['n_pptp_units'] = $config['pptp']['n_pptp_units'];
 	if($config['pptp']['pptp_subnet'])
 		$g['pptp_subnet'] = $config['pptp']['pptp_subnet'];
-    
+
 	if($config['pppoe']['n_pppoe_units'])
 		$g['n_pppoe_units'] = $config['pppoe']['n_pppoe_units'];
 	if($config['pppoe']['pppoe_subnet'])
@@ -305,9 +305,9 @@ function parse_config_bootup() {
 			}
 		}
 	}
-	
+
 	parse_config(true);
-	
+
 	if ((float)$config['version'] > (float)$g['latest_config']) {
 		echo <<<EOD
 
@@ -346,6 +346,8 @@ function conf_mount_rw() {
 	$status = mwexec("/sbin/umount -f {$g['cf_path']}");
 	$status = mwexec("/sbin/mount -w {$g['cf_path']}");
 	if($status <> 0) {
+		if($g['booting'])
+			echo "Disk is dirty.  Running fsck -y\n";
 		mwexec("/sbin/fsck -y {$g['cf_path']}");
 		$status = mwexec("/sbin/mount -w {$g['cf_path']}");
 	}
@@ -363,27 +365,27 @@ function conf_mount_rw() {
 			$status = mwexec("/sbin/mount -w /");
 		}
 	}
-	
+
 	usleep(100);
-	
+
 }
 
 /****f* config/conf_mount_ro
- * NAME         
+ * NAME
  *   conf_mount_ro - Mount filesystems readonly.
  * RESULT
- *   null        
+ *   null
  ******/
 function conf_mount_ro() {
 	global $g;
 
 	if($g['booting'] == true)
 		return;
-	
+
 	/* do not umount if generating ssh keys */
 	if(file_exists("/tmp/keys_generating"))
 		return;
-	
+
 	/* do not umount on cdrom or pfSense platforms */
 	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
 		return;
@@ -396,13 +398,13 @@ function conf_mount_ro() {
 	mwexec("/bin/sync");
 	mwexec("/bin/sync");
 	mwexec("/sbin/mount -r /");
-	
+
 	usleep(100);
 
 }
 
 /****f* config/convert_config
- * NAME         
+ * NAME
  *   convert_config - Attempt to update config.xml.
  * DESCRIPTION
  *   convert_config() reads the current global configuration
@@ -410,7 +412,7 @@ function conf_mount_ro() {
  *   config.xml version. This allows major formatting changes
  *   to be made with a minimum of breakage.
  * RESULT
- *   null        
+ *   null
  ******/
 /* convert configuration, if necessary */
 function convert_config() {
@@ -671,7 +673,7 @@ function convert_config() {
 
 		$config['version'] = "1.6";
 	}
-	
+
 	/* Convert 1.6 -> 1.7 */
 	if ($config['version'] == "1.6") {
 		/* wipe previous shaper configuration */
@@ -680,9 +682,9 @@ function convert_config() {
 		unset($config['interfaces']['wan']['bandwidth']);
 		unset($config['interfaces']['wan']['bandwidthtype']);
 		unset($config['interfaces']['lan']['bandwidth']);
-		unset($config['interfaces']['lan']['bandwidthtype']);		
+		unset($config['interfaces']['lan']['bandwidthtype']);
 		$config['shaper']['enable'] = FALSE;
-		$config['version'] = "1.7";	
+		$config['version'] = "1.7";
 	}
 	/* Convert 1.7 -> 1.8 */
 	if ($config['version'] == "1.7") {
@@ -730,12 +732,12 @@ function convert_config() {
 		}
 		/* Server NAT is no longer needed */
 		unset($config['nat']['servernat']);
-		
+
 		/* enable SSH */
 		if ($config['version'] == "1.8") {
 			$config['system']['sshenabled'] = true;
 		}
-		
+
 		$config['version'] = "1.9";
 	}
 
@@ -796,25 +798,25 @@ function convert_config() {
  *   $desc	- string containing the a description of configuration changes
  *   $backup	- boolean: do not back up current configuration if false.
  * RESULT
- *   null       
+ *   null
  ******/
 /* save the system configuration */
 function write_config($desc="Unknown", $backup = true) {
 	global $config, $g;
 
-	if($backup) 
+	if($backup)
 		backup_config();
 
 	if (time() > mktime(0, 0, 0, 9, 1, 2004))       /* make sure the clock settings are plausible */
 		$changetime = time();
 
-	/* Log the running script so it's not entirely unlogged what changed */ 
-    if ($desc == "Unknown") 
-		$desc = "{$_SERVER['SCRIPT_NAME']} made unknown change";  
+	/* Log the running script so it's not entirely unlogged what changed */
+    if ($desc == "Unknown")
+		$desc = "{$_SERVER['SCRIPT_NAME']} made unknown change";
 
 	$config['revision']['description'] = $desc;
 	$config['revision']['time'] = $changetime;
-	
+
 	config_lock();
 
 	/* generate configuration XML */
@@ -887,10 +889,10 @@ function reset_factory_defaults() {
 
 	/* copy default configuration */
 	copy("{$g['conf_default_path']}/config.xml", "{$g['conf_path']}/config.xml");
-	
+
 	/* call the wizard */
 	touch("/conf/trigger_initial_wizard");
-	
+
 	conf_mount_ro();
 	config_unlock();
 
@@ -899,18 +901,18 @@ function reset_factory_defaults() {
 
 function config_restore($conffile) {
 	global $config, $g;
-       
+
 	if (!file_exists($conffile))
 		return 1;
-        
+
     config_lock();
-    conf_mount_rw();        
-    
+    conf_mount_rw();
+
     backup_config();
     copy($conffile, "{$g['cf_conf_path']}/config.xml");
 	$config = parse_config(true);
     write_config("Reverted to " . array_pop(explode("/", $conffile)) . ".", false);
-    
+
     conf_mount_ro();
     config_unlock();
 
@@ -919,7 +921,7 @@ function config_restore($conffile) {
 
 function config_install($conffile) {
 	global $config, $g;
-        
+
 	if (!file_exists($conffile))
 		return 1;
 
@@ -928,16 +930,16 @@ function config_install($conffile) {
 
 	if($g['booting'] == true)
 		echo "Installing configuration...\n";
- 
+
     config_lock();
     conf_mount_rw();
-	
+
     copy($conffile, "{$g['conf_path']}/config.xml");
 
 	/* unlink cache file if it exists */
 	if(file_exists("{$g['tmp_path']}/config.cache"))
 		unlink("{$g['tmp_path']}/config.cache");
-  
+
     conf_mount_ro();
     config_unlock();
 
@@ -949,12 +951,12 @@ function config_validate($conffile) {
 	global $g, $xmlerr;
 
 	$xml_parser = xml_parser_create();
-	
+
 	if (!($fp = fopen($conffile, "r"))) {
 		$xmlerr = "XML error: unable to open file";
 		return false;
 	}
-	
+
 	while ($data = fread($fp, 4096)) {
 		if (!xml_parse($xml_parser, $data, feof($fp))) {
 			$xmlerr = sprintf("%s at line %d",
@@ -964,14 +966,14 @@ function config_validate($conffile) {
 		}
 	}
 	xml_parser_free($xml_parser);
-	
+
 	fclose($fp);
-	
+
 	return true;
 }
 
-/*   lock configuration file, decide that the lock file 
- *   is stale after 10 seconds 
+/*   lock configuration file, decide that the lock file
+ *   is stale after 10 seconds
  */
 function config_lock() {
 	global $g, $process_lock;
@@ -1038,7 +1040,7 @@ EOD;
 	echo <<<EOD
 
 Do you want to set up VLANs first?
-If you are not going to use VLANs, or only for optional interfaces, you should 
+If you are not going to use VLANs, or only for optional interfaces, you should
 say no here and use the webConfigurator to configure VLANs later, if required.
 
 Do you want to set up VLANs now [y|n]?
@@ -1113,13 +1115,13 @@ EOD;
 		if ($optif[$i])
 			$i++;
 		$i1 = $i + 1;
-		
-		if($config['interfaces']['opt' . $i1]['descr']) 
+
+		if($config['interfaces']['opt' . $i1]['descr'])
 			echo "\nOptional interface {$i1} description found: {$config['interfaces']['opt' . $i1]['descr']}";
-		
+
 		echo "\nEnter the Optional {$i1} interface name or 'a' for auto-detection\n" .
 			"(or nothing if finished): ";
-		
+
 		$optif[$i] = chop(fgets($fp));
 
 		if ($optif[$i]) {
@@ -1184,7 +1186,7 @@ EOD;
 		} else {
 			unset($config['interfaces']['lan']['wireless']);
 		}
-		
+
 		$config['interfaces']['wan']['if'] = $wanif;
 		if (preg_match($g['wireless_regex'], $wanif)) {
 			if (!is_array($config['interfaces']['wan']['wireless']))
@@ -1192,13 +1194,13 @@ EOD;
 		} else {
 			unset($config['interfaces']['wan']['wireless']);
 		}
-		
+
 		for ($i = 0; $i < count($optif); $i++) {
 			if (!is_array($config['interfaces']['opt' . ($i+1)]))
 				$config['interfaces']['opt' . ($i+1)] = array();
-			
+
 			$config['interfaces']['opt' . ($i+1)]['if'] = $optif[$i];
-			
+
 			/* wireless interface? */
 			if (preg_match($g['wireless_regex'], $optif[$i])) {
 				if (!is_array($config['interfaces']['opt' . ($i+1)]['wireless']))
@@ -1206,17 +1208,17 @@ EOD;
 			} else {
 				unset($config['interfaces']['opt' . ($i+1)]['wireless']);
 			}
-			
+
 			unset($config['interfaces']['opt' . ($i+1)]['enable']);
 			$config['interfaces']['opt' . ($i+1)]['descr'] = "OPT" . ($i+1);
 		}
-		
+
 		/* remove all other (old) optional interfaces */
 		for (; isset($config['interfaces']['opt' . ($i+1)]); $i++)
 			unset($config['interfaces']['opt' . ($i+1)]);
-		
+
 		write_config();
-		
+
 		echo <<<EOD
 
 
@@ -1232,9 +1234,9 @@ EOD;
 
 		/* resync everything */
 		reload_all_sync();
-		
+
 		echo " done!\n";
-		
+
 		touch("{$g['tmp_path']}/assign_complete");
 
 	}
@@ -1334,20 +1336,20 @@ EOD;
 function system_start_ftp_helpers() {
 	require_once("interfaces.inc");
 	global $config, $g;
-	
+
 	mwexec("/usr/bin/killall ftpsesame");
 
 	/* build an array of interfaces to work with */
 	$iflist = array("lan" => "LAN");
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
 		$iflist['opt' . $i] = "opt{$i}";
 
 	/* loop through all interfaces and handle pftpx */
 	$interface_counter = 0;
 	foreach ($iflist as $ifent => $ifname) {
-		/*    if the ftp proxy is disabled for this interface then kill pftpx 
-		 *    instance and continue. note that the helpers for port forwards are 
-		 *    launched in a  different sequence so we are filtering them out 
+		/*    if the ftp proxy is disabled for this interface then kill pftpx
+		 *    instance and continue. note that the helpers for port forwards are
+		 *    launched in a  different sequence so we are filtering them out
          *    here by not including -c {$port} -g 8021 first.
 		 */
 		$port = 8021 + $interface_counter;
@@ -1369,7 +1371,7 @@ function system_start_ftp_helpers() {
 			if(!$helpers && $ip)
  				mwexec("/usr/local/sbin/pftpx -c {$port} -g 8021 {$ip}");
 			if(!$ip)
-				mwexec("/usr/local/sbin/ftpsesame -i $int");				
+				mwexec("/usr/local/sbin/ftpsesame -i $int");
 			$interface_counter++;
 		}
 	}
@@ -1378,7 +1380,7 @@ function system_start_ftp_helpers() {
 	$num_bridges++;
 	for($x=0; $x<$num_bridges; $x++) {
 		mwexec("/usr/local/sbin/ftpsesame -i bridge{$x}");
-	}	
+	}
 }
 
 function cleanup_backupcache($revisions = 30) {
@@ -1393,13 +1395,13 @@ function cleanup_backupcache($revisions = 30) {
 		$tocache = array();
 		unset($backups['versions']);
        		foreach($bakfiles as $backup) { // Check for backups in the directory not represented in the cache.
-				$tocheck = array_shift(explode('.', array_pop(explode('-', $backup))));	
+				$tocheck = array_shift(explode('.', array_pop(explode('-', $backup))));
                 if(!in_array($tocheck, $baktimes)) {
 					$i = true;
-					if($g['booting']) 
+					if($g['booting'])
 						print " " . $tocheck . "a";
 					$newxml = parse_xml_config($backup, $g['xml_rootobj']);
-					if($newxml['revision']['description'] == "") 
+					if($newxml['revision']['description'] == "")
 						$newxml['revision']['description'] = "Unknown";
 					$tocache[$tocheck] = array('description' => $newxml['revision']['description']);
 				}
@@ -1412,10 +1414,10 @@ function cleanup_backupcache($revisions = 30) {
 				if($g['booting']) print " " . $tocheck . "r";
 			}
 		}
-		foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description']);	
+		foreach($newbaks as $todo) $tocache[$todo['time']] = array('description' => $todo['description']);
 		if(is_int($revisions) and (count($tocache) > $revisions)) {
 			$toslice = array_slice(array_keys($tocache), 0, $revisions);
-			foreach($toslice as $sliced) 
+			foreach($toslice as $sliced)
 				$newcache[$sliced] = $tocache[$sliced];
 			foreach($tocache as $version => $versioninfo) {
 				if(!in_array($version, array_keys($newcache))) {
@@ -1436,8 +1438,8 @@ function cleanup_backupcache($revisions = 30) {
 		}
 	}
 }
-  	 
-function get_backups() { 	 
+
+function get_backups() {
 	global $g;
 	if(file_exists("{$g['cf_conf_path']}/backup/backup.cache")) {
 		$confvers = unserialize(file_get_contents("{$g['cf_conf_path']}/backup/backup.cache"));
@@ -1445,10 +1447,10 @@ function get_backups() {
 		$toreturn = array();
 		sort($bakvers);
 		// 	$bakvers = array_reverse($bakvers);
-		foreach(array_reverse($bakvers) as $bakver) 
+		foreach(array_reverse($bakvers) as $bakver)
 			$toreturn[] = array('time' => $bakver, 'description' => $confvers[$bakver]['description']);
-	} else { 	 
-		return false; 	 
+	} else {
+		return false;
 	}
 	$toreturn['versions'] = $bakvers;
 	return $toreturn;
@@ -1485,9 +1487,9 @@ function backup_config() {
     $bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
     fwrite($bakout, serialize($backupcache));
     fclose($bakout);
-	
+
 	conf_mount_ro();
-	
+
 	return true;
 }
 
@@ -1503,7 +1505,7 @@ function start_devd() {
 	exec("/sbin/devd");
 	sleep(1);
 	if(file_exists("/tmp/rc.linkup"))
-		unlink("/tmp/rc.linkup");	
+		unlink("/tmp/rc.linkup");
 }
 
 function set_device_perms() {

@@ -473,8 +473,10 @@ include("head.inc");
 						</td>
 					</tr>
 				</table>
-							<p>
-							<a href="#" onClick="show_source_port_range();">Advanced - Show source port range</a>
+				<div id="showadvancedboxspr">
+					<p>
+					<a href="#" onClick="show_source_port_range();">Advanced - Show source port range</a>
+				</div>
 			</td>
 		</tr>
 		<tr style="display:none" id="sourceportrangetable" name="sourceportrangetable">

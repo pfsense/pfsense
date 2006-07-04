@@ -475,7 +475,7 @@ include("head.inc");
 				</table>
 				<div id="showadvancedboxspr">
 					<p>
-					<a href="#" onClick="show_source_port_range();">Advanced - Show source port range</a>
+					<input type="button" onClick="show_source_port_range()" value="Advanced"></input> Show source port range</a>
 				</div>
 			</td>
 		</tr>

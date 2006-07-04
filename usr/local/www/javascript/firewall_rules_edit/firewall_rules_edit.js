@@ -40,6 +40,10 @@ function ext_change() {
 	}
 }
 
+function show_source_port_range() {
+	document.getElementById("sourceportrangetable").style.display = "table-row";
+}
+
 function typesel_change() {
 	switch (document.iform.srctype.selectedIndex) {
 		case 1:	/* single */

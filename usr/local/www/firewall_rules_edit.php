@@ -85,14 +85,14 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['disabled'] = isset($a_filter[$id]['disabled']);
 	$pconfig['log'] = isset($a_filter[$id]['log']);
 	$pconfig['descr'] = $a_filter[$id]['descr'];
-	
+
 	/* advanced */
         $pconfig['max-src-nodes'] = $a_filter[$id]['max-src-nodes'];
         $pconfig['max-src-states'] = $a_filter[$id]['max-src-states'];
         $pconfig['statetype'] = $a_filter[$id]['statetype'];
 	$pconfig['statetimeout'] = $a_filter[$id]['statetimeout'];
-	
-	$pconfig['nosync'] = isset($a_filter[$id]['nosync']);	
+
+	$pconfig['nosync'] = isset($a_filter[$id]['nosync']);
 
 	/* advanced - new connection per second banning*/
 	$pconfig['max-src-conn-rate'] = $a_filter[$id]['max-src-conn-rate'];
@@ -261,7 +261,7 @@ if ($_POST) {
 		$filterent['os'] = $_POST['os'];
 
 		/* Nosync directive - do not xmlrpc sync this item */
-		if($_POST['nosync'] <> "") 
+		if($_POST['nosync'] <> "")
 			$filterent['nosync'] = true;
 		else
 			unset($filterent['nosync']);
@@ -350,7 +350,7 @@ include("head.inc");
 					<?=htmlspecialchars($type);?>
 					</option>
 					<?php endforeach; ?>
-				</select> 
+				</select>
 				<br/>
 				<span class="vexpl">
 					Choose what to do with packets that match the criteria specified below. <br/>
@@ -378,7 +378,7 @@ include("head.inc");
 					foreach ($interfaces as $iface => $ifacename): ?>
 						<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>><?=htmlspecialchars($ifacename);?></option>
 <?php 				endforeach; ?>
-				</select> 
+				</select>
 				<br />
 				<span class="vexpl">Choose on which interface packets must come in to match this rule.</span>
 			</td>
@@ -453,7 +453,7 @@ include("head.inc");
 								<option value="lanip" 	<?php if ($pconfig['src'] == "lanip") { echo "selected"; } ?>>LAN address</option>
 								<option value="lan"     <?php if ($pconfig['src'] == "lan") { echo "selected"; } ?>>LAN subnet</option>
 								<option value="pptp"    <?php if ($pconfig['src'] == "pptp") { echo "selected"; } ?>>PPTP clients</option>
-								<option value="pppoe"   <?php if ($pconfig['src'] == "pppoe") { echo "selected"; } ?>>PPPoE clients</option>			    
+								<option value="pppoe"   <?php if ($pconfig['src'] == "pppoe") { echo "selected"; } ?>>PPPoE clients</option>
 <?php
 								for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): ?>
 									<option value="opt<?=$i;?>" <?php if ($pconfig['src'] == "opt" . $i) { echo "selected"; } ?>><?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?> subnet</option>
@@ -473,6 +473,8 @@ include("head.inc");
 						</td>
 					</tr>
 				</table>
+							<p>
+							<a href="#" onClick="show_source_port_range();">Advanced - Show source port range</a>
 			</td>
 		</tr>
 		<tr>
@@ -488,7 +490,7 @@ include("head.inc");
 <?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcbeginport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
-							</select> 
+							</select>
 							<input autocomplete='off' class="formfldalias" name="srcbeginport_cust" id="srcbeginport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcbeginport']) echo $pconfig['srcbeginport']; ?>">
 						</td>
 					</tr>
@@ -501,7 +503,7 @@ include("head.inc");
 <?php							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['srcendport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php							endforeach; ?>
-							</select> 
+							</select>
 							<input autocomplete='off' class="formfldalias" name="srcendport_cust" id="srcendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['srcendport']) echo $pconfig['srcendport']; ?>">
 						</td>
 					</tr>
@@ -510,7 +512,7 @@ include("head.inc");
 				<span class="vexpl">Specify the port or port range for the source of the packet for this rule. This is usually not equal to the destination port range (and is often &quot;any&quot;). <br /> Hint: you can leave the <em>'to'</em> field empty if you only want to filter a single port</span><br/>
 				<span class="vexpl"><B>NOTE:</B> You will not need to enter anything here in 99.99999% of the circumstances.  If you're unsure, do not enter anything here!</span>
 			</td>
-		</tr>		
+		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Source OS</td>
 			<td width="78%" class="vtable">OS Type:&nbsp;
@@ -610,7 +612,7 @@ include("head.inc");
 <?php							foreach ($wkports as $wkport => $wkportdesc): ?>
 									<option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['dstendport']) { echo "selected"; $bfound = 1; } ?>><?=htmlspecialchars($wkportdesc);?></option>
 <?php 							endforeach; ?>
-							</select> 
+							</select>
 							<input autocomplete='off' class="formfldalias" name="dstendport_cust" id="dstendport_cust" type="text" size="5" value="<?php if (!$bfound && $pconfig['dstendport']) echo $pconfig['dstendport']; ?>">
 						</td>
 					</tr>
@@ -690,7 +692,7 @@ include("head.inc");
 				<input type="checkbox" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
 				HINT: This prevents the rule from automatically syncing to other carp members.
 			</td>
-		</tr>		
+		</tr>
 <?php
 			/* build a list of gateways */
 			$gateways = array();
@@ -712,7 +714,7 @@ include("head.inc");
 						$selected = "";
 					}
 					if ($gw == "default") {
-						echo "<option value=\"\" {$selected}>{$gw}</option>\n";	
+						echo "<option value=\"\" {$selected}>{$gw}</option>\n";
 					} else {
 						echo "<option value=\"{$gw}\" {$selected}>{$gw}</option>\n";
 					}
@@ -722,7 +724,7 @@ include("head.inc");
 						echo "<option value=\"{$lb['name']}\" SELECTED>{$lb['name']}</option>\n";
 					} else {
 						echo "<option value=\"{$lb['name']}\">{$lb['name']}</option>\n";
-					}		
+					}
 				}
 				for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 					if($config['interfaces']['opt' . $i]['ipaddr'] == "dhcp") {

@@ -637,14 +637,6 @@ include("head.inc");
 			</td>
 		</tr>
 		<tr>
-			<td width="22%" valign="top" class="vncell">Description</td>
-			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld" id="descr" size="52" maxlength="52" value="<?=htmlspecialchars($pconfig['descr']);?>">
-				<br />
-				<span class="vexpl">You may enter a description here for your reference (not parsed).</span>
-			</td>
-		</tr>
-		<tr>
 			<td width="22%" valign="top" class="vncell">Advanced Options</td>
 			<td width="78%" class="vtable">
 			<div id="aoadv" name="aoadv">
@@ -752,6 +744,14 @@ include("head.inc");
 ?>
 				</select>
 				<p><strong>Leave as 'default' to use the system routing table.  Or choose a gateway to utilize policy based routing.</strong></p>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">Description</td>
+			<td width="78%" class="vtable">
+				<input name="descr" type="text" class="formfld" id="descr" size="52" maxlength="52" value="<?=htmlspecialchars($pconfig['descr']);?>">
+				<br />
+				<span class="vexpl">You may enter a description here for your reference (not parsed).</span>
 			</td>
 		</tr>
 		<tr>

@@ -117,8 +117,6 @@ function proto_change() {
 		document.getElementById("sprtable").style.display = 'none';
 		document.getElementById("dprtr").style.display = 'none';
 	}
-
-	alert(document.iform.proto.selectedIndex);
 }
 
 function src_rep_change() {

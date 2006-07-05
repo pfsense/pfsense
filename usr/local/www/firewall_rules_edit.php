@@ -721,11 +721,13 @@ include("head.inc");
 						echo "<option value=\"{$gw}\" {$selected}>{$gw}</option>\n";
 					}
 				}
-				foreach($config['load_balancer']['lbpool'] as $lb) {
-					if($pconfig['gateway'] == $lb['name']) {
-						echo "<option value=\"{$lb['name']}\" SELECTED>{$lb['name']}</option>\n";
-					} else {
-						echo "<option value=\"{$lb['name']}\">{$lb['name']}</option>\n";
+				if(is_array($config['load_balancer']['lbpool'])) {
+					foreach($config['load_balancer']['lbpool'] as $lb) {
+						if($pconfig['gateway'] == $lb['name']) {
+							echo "<option value=\"{$lb['name']}\" SELECTED>{$lb['name']}</option>\n";
+						} else {
+							echo "<option value=\"{$lb['name']}\">{$lb['name']}</option>\n";
+						}
 					}
 				}
 				for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {

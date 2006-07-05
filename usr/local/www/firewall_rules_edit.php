@@ -397,7 +397,7 @@ include("head.inc");
 				<span class="vexpl">Choose which IP protocol this rule should match. <br /> Hint: in most cases, you should specify <em>TCP</em> &nbsp;here.</span>
 			</td>
 		</tr>
-		<tr>
+		<tr id="icmpbox" name="icmpbox">
 			<td valign="top" class="vncell">ICMP type</td>
 			<td class="vtable">
 				<select name="icmptype" class="formfld">
@@ -479,7 +479,7 @@ include("head.inc");
 				</div>
 			</td>
 		</tr>
-		<tr style="display:none" id="sourceportrangetable" name="sourceportrangetable">
+		<tr style="display:none" id="sprtable" name="sprtable">
 			<td width="22%" valign="top" class="vncellreq">Source port range</td>
 			<td width="78%" class="vtable">
 				<table border="0" cellspacing="0" cellpadding="0">
@@ -588,7 +588,7 @@ include("head.inc");
 
 			</td>
 		</tr>
-		<tr>
+		<tr id="dprtr" name="dprtr">
 			<td width="22%" valign="top" class="vncellreq">Destination port range </td>
 			<td width="78%" class="vtable">
 				<table border="0" cellspacing="0" cellpadding="0">

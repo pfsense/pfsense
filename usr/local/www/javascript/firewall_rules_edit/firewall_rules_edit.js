@@ -103,6 +103,20 @@ function proto_change() {
 	}
 
 	ext_change();
+
+	if(document.iform.proto.selectedIndex == 3 || document.iform.proto.selectedIndex == 4) {
+		document.getElementById("icmpbox").style.display = '';
+	} else {
+		document.getElementById("icmpbox").style.display = 'none';
+	}
+
+	if(document.iform.proto.selectedIndex >= 0 && document.iform.proto.selectedIndex <= 3) {
+		document.getElementById("sprtable").style.display = '';
+		document.getElementById("dprtr").style.display = '';
+	} else {
+		document.getElementById("sprtable").style.display = 'none';
+		document.getElementById("dprtr").style.display = 'none';
+	}
 }
 
 function src_rep_change() {

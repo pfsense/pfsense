@@ -656,9 +656,14 @@ include("head.inc");
 						if($x == $pconfig['max-src-conn-rates']) $selected = " selected"; else $selected = "";
 						echo "<option value=\"{$x}\"{$selected}>{$x}</option>\n";
 					} ?>
-				</select>
-				<br />
+				</select><br />
 				Maximum new connections / per second
+				<p>
+
+				<input name="statetimeout" value="<?php echo $pconfig['statetimeout'] ?>"><br>
+				<?=gettext("State Timeout in seconds");?>
+				<p />
+
 				<p><strong>NOTE: Leave these fields blank to disable this feature.</strong>
 			</td>
 		</tr>
@@ -679,13 +684,6 @@ include("head.inc");
 					<tr><td width="25%"><ul><li>none</li></td><td>do not use state mechanisms to keep track.  this is only useful if your doing advanced queueing in certain situations.  please check the faq.</ul></td></tr>
 				</table>
 				</p>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell">State Timeout</td>
-			<td width="78%" class="vtable">
-				<input name="statetimeout" value="<?php echo $pconfig['statetimeout'] ?>">
-				<p><strong>Leave blank for default.  Amount is in seconds.</strong></p>
 			</td>
 		</tr>
 		<tr>

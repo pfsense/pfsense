@@ -119,14 +119,18 @@ function proto_change() {
 	}
 }
 
+function show_aodiv() {
+	document.getElementById("aoadv").innerHTML='';
+	aodiv = document.getElementById('aodivmain');
+	aodiv.style.display = "block";
+}
+
 function src_rep_change() {
 	document.iform.srcendport.selectedIndex = document.iform.srcbeginport.selectedIndex;
 }
 function dst_rep_change() {
 	document.iform.dstendport.selectedIndex = document.iform.dstbeginport.selectedIndex;
 }
-
-
 
 window.onload = function () {
 	var oTextbox1 = new AutoSuggestControl(document.getElementById("src"), new StateSuggestions(addressarray));

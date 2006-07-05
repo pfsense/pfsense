@@ -647,6 +647,10 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">Advanced Options</td>
 			<td width="78%" class="vtable">
+			<div id="aoadv" name="aoadv">
+				<input type="button" onClick="show_aodiv();" value="Advanced">
+			</div>
+			<div id="aodivmain" name="aodivmain" style="display:none">
 				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo $pconfig['max-src-nodes'] ?>"><br> Simultaneous client connection limit<p>
 				<input name="max-src-states" id="max-src-states" value="<?php echo $pconfig['max-src-states'] ?>"><br> Maximum state entries per host<p>
 				<input name="max-src-conn-rate" id="max-src-conn-rate" value="<?php echo $pconfig['max-src-conn-rate'] ?>"> /
@@ -665,6 +669,7 @@ include("head.inc");
 				<p />
 
 				<p><strong>NOTE: Leave these fields blank to disable this feature.</strong>
+			  </div>
 			</td>
 		</tr>
 		<tr>

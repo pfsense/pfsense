@@ -665,7 +665,7 @@ include("head.inc");
 				<p>
 
 				<input name="statetimeout" value="<?php echo $pconfig['statetimeout'] ?>"><br>
-				<?=gettext("State Timeout in seconds");?>
+				State Timeout in seconds
 				<p />
 
 				<p><strong>NOTE: Leave these fields blank to disable this feature.</strong>

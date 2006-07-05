@@ -112,6 +112,7 @@ function proto_change() {
 
 	if(document.iform.proto.selectedIndex >= 0 && document.iform.proto.selectedIndex <= 3) {
 		document.getElementById("dprtr").style.display = '';
+		document.getElementById("showadvancedboxspr").innerHTML='<p><input type="button" onClick="show_source_port_range()" value="Advanced"></input> Show source port range</a>';
 	} else {
 		document.getElementById("sprtable").style.display = 'none';
 		document.getElementById("dprtr").style.display = 'none';

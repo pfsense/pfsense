@@ -111,7 +111,6 @@ function proto_change() {
 	}
 
 	if(document.iform.proto.selectedIndex >= 0 && document.iform.proto.selectedIndex <= 3) {
-		document.getElementById("sprtable").style.display = '';
 		document.getElementById("dprtr").style.display = '';
 	} else {
 		document.getElementById("sprtable").style.display = 'none';

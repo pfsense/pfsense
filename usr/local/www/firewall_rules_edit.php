@@ -648,7 +648,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell">Advanced Options</td>
 			<td width="78%" class="vtable">
 			<div id="aoadv" name="aoadv">
-				<input type="button" onClick="show_aodiv();" value="Advanced">
+				<input type="button" onClick="show_aodiv();" value="Advanced"> - Show advanced options
 			</div>
 			<div id="aodivmain" name="aodivmain" style="display:none">
 				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo $pconfig['max-src-nodes'] ?>"><br> Simultaneous client connection limit<p>

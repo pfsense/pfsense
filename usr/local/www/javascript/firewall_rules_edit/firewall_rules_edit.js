@@ -41,7 +41,7 @@ function ext_change() {
 }
 
 function show_source_port_range() {
-	document.getElementById("sourceportrangetable").style.display = "table-row";
+	document.getElementById("sourceportrangetable").style.display = '';
 	document.getElementById("showadvancedboxspr").innerHTML='';
 }
 

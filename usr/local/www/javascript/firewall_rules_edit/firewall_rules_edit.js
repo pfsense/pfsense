@@ -125,6 +125,12 @@ function show_aodiv() {
 	aodiv.style.display = "block";
 }
 
+function show_advanced_state() {
+	document.getElementById("showadvstatebox").innerHTML='';
+	aodiv = document.getElementById('showstateadv');
+	aodiv.style.display = "block";
+}
+
 function src_rep_change() {
 	document.iform.srcendport.selectedIndex = document.iform.srcbeginport.selectedIndex;
 }

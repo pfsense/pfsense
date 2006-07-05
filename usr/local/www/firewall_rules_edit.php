@@ -675,20 +675,25 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">State Type</td>
 			<td width="78%" class="vtable">
-				<select name="statetype">
-					<option value="keep state" <?php if(!isset($pconfig['statetype']) or $pconfig['statetype'] == "keep state") echo "selected"; ?>>keep state</option>
-					<option value="modulate state" <?php if($pconfig['statetype'] == "modulate state")  echo "selected"; ?>>modulate state</option>
-					<option value="synproxy state"<?php if($pconfig['statetype'] == "synproxy state")  echo "selected"; ?>>synproxy state</option>
-					<option value="none"<?php if($pconfig['statetype'] == "none") echo "selected"; ?>>none</option>
-				</select><br>HINT: Select which type of state tracking mechanism you would like to use.  If in doubt, use keep state.
-				<p>
-				<table width="90%">
-					<tr><td width="25%"><ul><li>keep state</li></td><td>works with TCP, UDP, and ICMP.</ul></td></tr>
-					<tr><td width="25%"><ul><li>modulate state</li></td><td>works only with TCP. pfSense will generate strong Initial Sequence Numbers (ISNs) for packets matching this rule.</li></ul></td></tr>
-					<tr><td width="25%"><ul><li>synproxy state</li></td><td>proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined.</ul></td></tr>
-					<tr><td width="25%"><ul><li>none</li></td><td>do not use state mechanisms to keep track.  this is only useful if your doing advanced queueing in certain situations.  please check the faq.</ul></td></tr>
-				</table>
-				</p>
+				<div id="showadvstatebox">
+					<input type="button" onClick="show_advanced_state()" value="Advanced"></input> - Show state</a>
+				</div>
+				<div id="showstateadv" style="display:none">
+					<select name="statetype">
+						<option value="keep state" <?php if(!isset($pconfig['statetype']) or $pconfig['statetype'] == "keep state") echo "selected"; ?>>keep state</option>
+						<option value="modulate state" <?php if($pconfig['statetype'] == "modulate state")  echo "selected"; ?>>modulate state</option>
+						<option value="synproxy state"<?php if($pconfig['statetype'] == "synproxy state")  echo "selected"; ?>>synproxy state</option>
+						<option value="none"<?php if($pconfig['statetype'] == "none") echo "selected"; ?>>none</option>
+					</select><br>HINT: Select which type of state tracking mechanism you would like to use.  If in doubt, use keep state.
+					<p>
+					<table width="90%">
+						<tr><td width="25%"><ul><li>keep state</li></td><td>works with TCP, UDP, and ICMP.</ul></td></tr>
+						<tr><td width="25%"><ul><li>modulate state</li></td><td>works only with TCP. pfSense will generate strong Initial Sequence Numbers (ISNs) for packets matching this rule.</li></ul></td></tr>
+						<tr><td width="25%"><ul><li>synproxy state</li></td><td>proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined.</ul></td></tr>
+						<tr><td width="25%"><ul><li>none</li></td><td>do not use state mechanisms to keep track.  this is only useful if your doing advanced queueing in certain situations.  please check the faq.</ul></td></tr>
+					</table>
+					</p>
+			  </div>
 			</td>
 		</tr>
 		<tr>

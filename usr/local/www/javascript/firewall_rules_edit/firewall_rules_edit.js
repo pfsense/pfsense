@@ -110,13 +110,15 @@ function proto_change() {
 		document.getElementById("icmpbox").style.display = 'none';
 	}
 
-	if(document.iform.proto.selectedIndex >= 0 && document.iform.proto.selectedIndex <= 3) {
+	if(document.iform.proto.selectedIndex >= 0 && document.iform.proto.selectedIndex <= 2) {
 		document.getElementById("dprtr").style.display = '';
 		document.getElementById("showadvancedboxspr").innerHTML='<p><input type="button" onClick="show_source_port_range()" value="Advanced"></input> Show source port range</a>';
 	} else {
 		document.getElementById("sprtable").style.display = 'none';
 		document.getElementById("dprtr").style.display = 'none';
 	}
+
+	alert(document.iform.proto.selectedIndex);
 }
 
 function src_rep_change() {

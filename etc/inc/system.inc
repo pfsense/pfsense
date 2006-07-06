@@ -119,7 +119,7 @@ function system_hosts_generate() {
 
 	$fd = fopen("{$g['varetc_path']}/hosts", "w");
 	if (!$fd) {
-		printf("Error: cannot open hosts file in system_hosts_generate().\n");
+		log_error("Error: cannot open hosts file in system_hosts_generate().\n");
 		return 1;
 	}
 

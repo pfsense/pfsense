@@ -41,7 +41,7 @@ if($_GET['mode'] == "restartservice" and $_GET['service']) {
 if($_GET['mode'] == "startservice" and $_GET['service']) {
 	switch($_GET['service']) {
 		case 'bsnmpd':
-			services_snmpd_configure();	
+			services_snmpd_configure();
 			break;
 		case 'dnsmasq':
 			services_dnsmasq_configure();
@@ -93,7 +93,7 @@ include("fbegin.inc");
 
 <?php
 
-exec("/bin/ps ax | awk '{ print $5 }'", $psout); 
+exec("/bin/ps ax | awk '{ print $5 }'", $psout);
 array_shift($psout);
 foreach($psout as $line) {
 	$ps[] = trim(array_pop(explode(' ', array_pop(explode('/', $line)))));
@@ -122,8 +122,8 @@ if(isset($config['captiveportal']['enable'])) {
 $iflist = array("lan" => "LAN");
 for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 	$oc = $config['interfaces']['opt' . $i];
-	if (isset($oc['enable']) && $oc['if'] && (!$oc['bridge'])) 
-		$iflist['opt' . $i] = "opt{$i}";	
+	if (isset($oc['enable']) && $oc['if'] && (!$oc['bridge']))
+		$iflist['opt' . $i] = "opt{$i}";
 }
 $show_dhcprelay = false;
 foreach($iflist as $if) {
@@ -138,7 +138,7 @@ if($show_dhcprelay == true) {
 	unset($pconfig);
 }
 
-if(isset($config['dhcpd']['enable'])) {
+if(is_dhcp_server_enabled()) {
 	$pconfig['name'] = "dhcpd";
 	$pconfig['description'] = "DHCP Server";
 	$services[] = $pconfig;
@@ -198,7 +198,7 @@ if($services) {
 </tr></table>
 </div>
 
-<meta http-equiv="refresh" content="120;url=<?php echo $_SERVER['SCRIPT_NAME']; ?>">  
+<meta http-equiv="refresh" content="120;url=<?php echo $_SERVER['SCRIPT_NAME']; ?>">
 
 <?php include("fend.inc"); ?>
 </body>

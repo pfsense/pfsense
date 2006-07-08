@@ -72,7 +72,7 @@ else
     SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
 
     /sbin/swapon -a 2>/dev/null >/dev/null
-    
+
     /usr/local/bin/php -f /etc/rc.conf_mount_rw
 fi
 echo " done."
@@ -80,7 +80,7 @@ echo " done."
 # Make sure symlink is correct on embedded
 if [ "$PLATFORM" = "embedded" ] ; then
 	rm /conf
-	ln -s /cf/conf/ /conf 
+	ln -s /cf/conf/ /conf
 fi
 
 # Repair symlinks if they are broken
@@ -92,12 +92,12 @@ fi
 # Repair symlinks if they are broken
 if [ ! -L /etc/hosts ]; then
 	rm -rf /etc/hosts
-	ln -s /var/etc/hosts /etc/hosts    
+	ln -s /var/etc/hosts /etc/hosts
 fi
 
 if [ ! -L /etc/resolv.conf ]; then
     rm -rf /etc/resolv.conf
-    ln -s /var/etc/resolv.conf /etc/resolv.conf    
+    ln -s /var/etc/resolv.conf /etc/resolv.conf
 fi
 
 # Malloc debugging check
@@ -151,7 +151,7 @@ else
     clog -i -s 512144 /var/log/filter.log
     clog -i -s 32768 /var/log/dhcpd.log
     clog -i -s 32768 /var/log/vpn.log
-	clog -i -s 10000 /var/log/openvpn.log    
+	clog -i -s 10000 /var/log/openvpn.log
     clog -i -s 32768 /var/log/portalauth.log
     clog -i -s 10000 /var/log/ipsec.log
     clog -i -s 262144 /var/log/slbd.log
@@ -184,7 +184,12 @@ if [ -f "/dev/kbdmux0" ]; then
 	echo "Starting Keyboard Mux Services..."
 	kbdcontrol -k /dev/kbdmux0 < /dev/console
 	[ -c "/dev/atkbd0" ] && kbdcontrol -a atkbd0 < /dev/console
-	[ -c "/dev/ukbd0" ] && kbdcontrol -a ukbd0 < /dev/console	
+	[ -c "/dev/ukbd0" ] && kbdcontrol -a ukbd0 < /dev/console
+fi
+
+# Fire up unionfs if mount points exist.
+if [ -f /dist/uniondirs ]; then
+	/etc/rc.d/unionfs start
 fi
 
 # let the PHP-based configuration subsystem set up the system now
@@ -198,9 +203,9 @@ if [ ! "$PLATFORM" = "cdrom" ]; then
 
     echo "Syncing packages..."
     /etc/rc.packages 2>/dev/null
-    
+
     echo "Executing rc.d items... "
-    
+
     for FILE in /usr/local/etc/rc.d/*.sh; do
 		echo -n " Starting ${FILE}..."
 		sh $FILE start >>/tmp/bootup_messages 2>&1 &

@@ -457,6 +457,9 @@ include("head.inc");
 <?php
 								for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): ?>
 									<option value="opt<?=$i;?>" <?php if ($pconfig['src'] == "opt" . $i) { echo "selected"; } ?>><?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?> subnet</option>
+									<option value="opt<?=$i;?>ip"<?php if ($pconfig['src'] == "opt" . $i . "ip") { echo "selected"; } ?>>
+										<?=$config['interfaces']['opt' . $i]['descr']?> address
+									</option>
 <?php 							endfor; ?>
 							</select>
 						</td>

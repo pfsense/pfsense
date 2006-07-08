@@ -1334,6 +1334,13 @@ function generate_user_filter_rule($rule, $ngcounter) {
 							$src = "{$pppoesa}/{$pppoesn}";
 							break;
 					}
+					/* check for opt$NUMip here */
+					$matches = "";
+					if (preg_match("/opt([0-9999])ip/", $rule['source']['network'], $matches)) {
+						$optnum = $matches[0];
+						$real_int = convert_friendly_interface_to_real_interface_name("opt{$optnum}");
+						$dst = find_interface_ip($real_int);
+					}
 					if (isset($rule['source']['not'])) $src = "!{$src}";
 				}
 			} else if ($rule['source']['address']) {
@@ -1425,6 +1432,13 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						case 'pppoe':
 							$dst = "{$ppoesa}/{$pppoesn}";
 							break;
+					}
+					/* check for opt$NUMip here */
+					$matches = "";
+					if (preg_match("/opt([0-9999])ip/", $rule['destination']['network'], $matches)) {
+						$optnum = $matches[0];
+						$real_int = convert_friendly_interface_to_real_interface_name("opt{$optnum}");
+						$dst = find_interface_ip($real_int);
 					}
 					if (isset($rule['destination']['not'])) $dst = " !{$dst}";
 				}

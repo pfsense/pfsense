@@ -37,7 +37,7 @@ function system_resolvconf_generate($dynupdate = false) {
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_resolvconf_generate() being called $mt\n";
-	}	
+	}
 
         $syscfg = $config['system'];
 
@@ -96,8 +96,8 @@ function get_nameservers() {
 		return $master_list;
 	$dns = `cat /var/etc/nameservers.conf`;
 	$dns_s = split("\n", $dns);
-	foreach($dns_s as $dns) 
-		$master_list[] = $dns;	
+	foreach($dns_s as $dns)
+		$master_list[] = $dns;
 	return $master_list;
 }
 
@@ -146,7 +146,7 @@ function system_hostname_configure() {
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_hostname_configure() being called $mt\n";
-	}	
+	}
 
 	$syscfg = $config['system'];
 
@@ -161,7 +161,7 @@ function system_routing_configure() {
 		$mt = microtime();
 		echo "system_routing_configure() being called $mt\n";
 	}
-	
+
 	/* Enable fast routing, if enabled */
 	if(isset($config['staticroutes']['enablefastrouting']))
 		mwexec("/sbin/sysctl net.inet.ip.fastforwarding=1");
@@ -193,7 +193,7 @@ function system_routing_configure() {
 		foreach ($config['staticroutes']['route'] as $rtent) {
 			if(isset($rtent['interfacegateway'])) {
 				mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
-					" -iface " . escapeshellarg(convert_friendly_interface_to_real_interface_name($rtent['interface'])));				
+					" -iface " . escapeshellarg(convert_friendly_interface_to_real_interface_name($rtent['interface'])));
 			} else {
 				mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
 					" " . escapeshellarg($rtent['gateway']));
@@ -235,7 +235,7 @@ function system_syslogd_start() {
 	if (isset($syslogcfg)) {
 		if($config['installedpackages']['package']) {
                         foreach($config['installedpackages']['package'] as $package) {
-                                if($package['logging']) {	
+                                if($package['logging']) {
 					$pkgfacilities[] = $package['logging']['facilityname'];
 					$facilitylist = implode(',', $pkgfacilities);
 					mwexec("clog -i -s 10000 {$g['varlog_path']}/{$package['logging']['logfilename']}");
@@ -288,7 +288,9 @@ local7.none					%{$g['varlog_path']}/system.log
 security.*					%{$g['varlog_path']}/system.log
 auth.info;authpriv.info;daemon.info		%{$g['varlog_path']}/system.log
 local1.*					%{$g['varlog_path']}/slbd.log
+auth.info;authpriv.info		|exec /usr/local/sbin/sshlockout_pf
 *.emerg						*
+
 
 EOD;
 		}
@@ -535,10 +537,10 @@ CsF1s0TdJLi/wzNQRAL37A8vqCeVFR/ng3Xpg96Yg+8Z
 
 EOD;
                 }
-				
+
 				$cert = str_replace("\r", "", $cert);
 				$key = str_replace("\r", "", $key);
-				
+
                 $fd = fopen("{$g['varetc_path']}/cert.pem", "w");
                 if (!$fd) {
                         printf("Error: cannot open cert.pem in system_webgui_start().\n");
@@ -608,7 +610,7 @@ function system_generate_lighty_config($filename,
 	if($avail > 0 and $avail < 45) {
 		$fast_cgi_enable = false;
 	}
-		
+
 	if($fast_cgi_enable == true) {
 		$module = "\"mod_fastcgi\", \"mod_cgi\"";
 		$cgi_config = "";
@@ -623,14 +625,14 @@ fastcgi.server             = ( ".php" =>
 				   "max-procs" => {$max_procs},
 				   "max-load-per-proc" => 100,
 				   "idle-timeout" => 1,
-				   "bin-environment" => ( 
+				   "bin-environment" => (
 				      "PHP_FCGI_CHILDREN" => "{$max_procs}",
 				      "PHP_FCGI_MAX_REQUESTS" => "{$max_requests}"
-				   ),				   
+				   ),
                                    "bin-path" => "/usr/local/bin/php"
                                  )
                                )
-                            )		
+                            )
 
 #### CGI module
 cgi.assign                 = ( ".cgi" => "" )
@@ -643,10 +645,10 @@ EOD;
 #### CGI module
 cgi.assign                 = ( ".php"  => "/usr/local/bin/php",
                                ".cgi" => "" )
-		
+
 EOD;
 	}
-	
+
 	$lighty_config .= <<<EOD
 #
 # lighttpd configuration file
@@ -795,10 +797,10 @@ debug.log-file-not-found   = "disable"
 EOD;
 
 	$cert = str_replace("\r", "", $cert);
-	$key = str_replace("\r", "", $key);	
+	$key = str_replace("\r", "", $key);
 
 	$cert = str_replace("\n\n", "\n", $cert);
-	$key = str_replace("\n\n", "\n", $key);	
+	$key = str_replace("\n\n", "\n", $key);
 
 	if($cert <> "" and $key <> "") {
 		$fd = fopen("{$g['varetc_path']}/{$cert_location}", "w");
@@ -814,7 +816,7 @@ EOD;
 		$lighty_config .= "\n";
 		$lighty_config .= "## ssl configuration\n";
 		$lighty_config .= "ssl.engine = \"enable\"\n";
-		$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";	
+		$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";
 	}
 
 	$fd = fopen("{$filename}", "w");
@@ -849,7 +851,7 @@ function system_timezone_configure() {
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_timezone_configure() being called $mt\n";
-	}	
+	}
 
 	$syscfg = $config['system'];
 
@@ -952,14 +954,14 @@ function system_do_shell_commands($early = 0) {
 		$cmdn = "shellcmd";
 
 	if (is_array($config['system'][$cmdn])) {
-		
+
 		/* *cmd is an array, loop through */
 		foreach ($config['system'][$cmdn] as $cmd) {
 			exec($cmd);
 		}
 
 	} elseif($config['system'][$cmdn] <> "") {
-		
+
 		/* execute single item */
 		exec($config['system'][$cmdn]);
 
@@ -971,7 +973,7 @@ function system_console_configure() {
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_console_configure() being called $mt\n";
-	}	
+	}
 
 	if (isset($config['system']['disableconsolemenu'])) {
 		touch("{$g['varetc_path']}/disableconsole");
@@ -1066,7 +1068,7 @@ function system_disable_arp_wrong_if() {
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_disable_arp_wrong_if() being called $mt\n";
-	}	
+	}
 	system("/sbin/sysctl -n net.link.ether.inet.log_arp_wrong_iface=0 2>/dev/null");
 }
 
@@ -1091,7 +1093,7 @@ function enable_watchdog() {
 	}
 	if($install_watchdog == true) {
 		exec("/usr/bin/killall watchdogd");
-		exec("/usr/sbin/watchdogd");		
+		exec("/usr/sbin/watchdogd");
 	}
 }
 

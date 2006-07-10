@@ -282,13 +282,13 @@ local0.*					%{$g['varlog_path']}/filter.log
 local3.*					%{$g['varlog_path']}/vpn.log
 local4.*					%{$g['varlog_path']}/portalauth.log
 local7.*					%{$g['varlog_path']}/dhcpd.log
-*.notice;kern.debug;lpr.info;mail.crit;		%{$g['varlog_path']}/system.log
-news.err;local0.none;local3.none;local4.none;	%{$g['varlog_path']}/system.log
+*.notice;kern.debug;lpr.info;mail.crit; 		%{$g['varlog_path']}/system.log
+news.err;local0.none;local3.none;local4.none; 	%{$g['varlog_path']}/system.log
 local7.none					%{$g['varlog_path']}/system.log
 security.*					%{$g['varlog_path']}/system.log
 auth.info;authpriv.info;daemon.info		%{$g['varlog_path']}/system.log
 local1.*					%{$g['varlog_path']}/slbd.log
-auth.info;authpriv.info		|exec /usr/local/sbin/sshlockout_pf
+auth.info;authpriv.info 						|exec /usr/local/sbin/sshlockout_pf
 *.emerg						*
 
 

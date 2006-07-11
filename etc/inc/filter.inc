@@ -241,7 +241,6 @@ function filter_configure_sync() {
 
 	/* run items scheduled for after filter configure run */
 	foreach($after_filter_configure_run as $afcr) {
-		log_error("Starting {$afcr}");
 		mwexec($afcr);
 	}
 
@@ -786,18 +785,17 @@ function filter_nat_rules_generate() {
 			 *    a ftp server then launch a helper
 			 */
 			$dontinstallrdr = false;
-			log_error("FTP proxy");
 			if($target <> "") {
-				log_error("target <> ''");
 				if($extport[0] == "21" and !isset($config['interfaces'][strtolower($rule['interface'])]['disableftpproxy'])) {
 					if($extaddr == "any") {
 						$external_address_text = "";
 					} else {
 						$external_address_text = " -b {$extaddr}";
 					}
-					$helpers = exec("/bin/ps awux | grep \"{$target}{$external_address_text}\" | grep -v grep");
+					//log_error("Testing /bin/ps awux | grep \"{$target}{$external_address_text}\" | grep -v grep | grep pftpx");
+					$helpers = exec("/bin/ps awux | grep \"{$target}{$external_address_text}\" | grep -v grep | grep pftpx");
 					if(!$helpers) {
-						log_error("no helper detected");
+						//log_error("no helper detected");
 						$external_address = $rule['external-address'];
 						if($external_address == "")
 							$external_address = find_interface_ip(get_real_wan_interface());

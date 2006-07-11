@@ -809,7 +809,7 @@ function filter_nat_rules_generate() {
 								$force_ftp_source_ip = $rule['force_ftp_source_ip'];
 							else
 								$force_ftp_source_ip = "";
-							$after_filter_configure_run[] = "/usr/local/sbin/pftpx -f {$target} -b {$external_address} -c 21 -g 21 {$force_ftp_source_ip} 2>>/tmp/pftpx_errors";
+							$after_filter_configure_run[] = "/usr/local/sbin/pftpx -f {$target}{$external_address_text} -c 21 -g 21 {$force_ftp_source_ip} 2>>/tmp/pftpx_errors";
 					}
 					$dontinstallrdr = true;
 				}

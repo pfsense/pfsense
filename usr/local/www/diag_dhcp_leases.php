@@ -229,10 +229,12 @@ foreach ($leases as $data) {
                 $lip = ip2long($data['ip']);
 		if ($data['act'] == "static") {
 			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
-				foreach ($dhcpifconf['staticmap'] as $staticent) {
-					if ($data['ip'] == $staticent['ipaddr']) {
-						$data['if'] = $dhcpif;
-						break;
+				if(is_array($dhcpifconf['staticmap'])) {
+					foreach ($dhcpifconf['staticmap'] as $staticent) {
+						if ($data['ip'] == $staticent['ipaddr']) {
+							$data['if'] = $dhcpif;
+							break;
+						}
 					}
 				}
 				/* exit as soon as we have an interface */

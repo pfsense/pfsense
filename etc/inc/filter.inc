@@ -230,11 +230,6 @@ function filter_configure_sync() {
 		}
 	}
 
-	update_filter_reload_status("Syncing CARP data");
-
-	/* sync carp entries to other firewalls */
-	carp_sync_client();
-
 	/*
 	    we need a way to let a user run a shell cmd after each
 	    filter_configure() call.  run this xml command after
@@ -246,8 +241,14 @@ function filter_configure_sync() {
 
 	/* run items scheduled for after filter configure run */
 	foreach($after_filter_configure_run as $afcr) {
+		log_error("Starting {$afcr}");
 		mwexec($afcr);
 	}
+
+	update_filter_reload_status("Syncing CARP data");
+
+	/* sync carp entries to other firewalls */
+	carp_sync_client();
 
 	update_filter_reload_status("Done");
 
@@ -785,10 +786,14 @@ function filter_nat_rules_generate() {
 			 *    a ftp server then launch a helper
 			 */
 			$dontinstallrdr = false;
+			log_error("FTP proxy");
 			if($target <> "") {
+				log_error("target <> ''");
 				if($extport[0] == "21" and !isset($config['interfaces'][strtolower($rule['interface'])]['disableftpproxy'])) {
-					$helpers = exec("/bin/ps awux | grep {$target} -b {$external_address} | grep -v grep");
+					log_error("Testing for /bin/ps awux | grep \"{$target} -b {$external_address}\" | grep -v grep");
+					$helpers = exec("/bin/ps awux | grep \"{$target} -b {$external_address}\" | grep -v grep");
 					if(!$helpers) {
+						log_error("no helper detected");
 						$external_address = $rule['external-address'];
 						if($external_address == "")
 							$external_address = find_interface_ip(get_real_wan_interface());

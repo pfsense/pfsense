@@ -54,6 +54,8 @@ if ($_POST) {
 		$retval = services_proxyarp_configure();
 		/* Bring up any configured CARP interfaces */
 		interfaces_carp_configure();
+		sleep(1);
+		interfaces_carp_bring_up_final();
 		$retval |= filter_configure();
 		config_unlock();
 

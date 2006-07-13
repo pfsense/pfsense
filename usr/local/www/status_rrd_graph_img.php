@@ -89,6 +89,7 @@ $graphs['18m']['average'] = 86400;
 $graphs['18m']['scale'] = "MONTH:1:MONTH:1:MONTH:1:0:%b";
 
 $rrddbpath = "/var/db/rrd/";
+$rrdtmppath = "/tmp/";
 $traffic = "-traffic.rrd";
 $quality = "-quality.rrd";
 $queues = "-queues.rrd";
@@ -115,7 +116,7 @@ $scale = $graphs[$interval]['scale'];
 
 if(($curgraph == "traffic") && (file_exists("$rrddbpath$curif$traffic"))) {
 	/* define graphcmd for traffic stats */
-	$graphcmd = "$rrdtool graph $rrddbpath$curif-$interval-$curgraph.png \\
+	$graphcmd = "$rrdtool graph $rrdtmppath$curif-$interval-$curgraph.png \\
 		--start -$seconds -e -$average \\
 		--vertical-label \"bits/sec\" \\
 		--title \"`hostname` - $curgraph - $interval\" \\
@@ -158,7 +159,7 @@ if(($curgraph == "traffic") && (file_exists("$rrddbpath$curif$traffic"))) {
 	}
 elseif(($curgraph == "packets") && (file_exists("$rrddbpath$curif$packets"))) {
 	/* define graphcmd for packets stats */
-	$graphcmd = "$rrdtool graph $rrddbpath$curif-$interval-$curgraph.png \\
+	$graphcmd = "$rrdtool graph $rrdtmppath$curif-$interval-$curgraph.png \\
 		--start -$seconds -e -$average \\
 		--vertical-label \"packets/sec\" \\
 		--title \"`hostname` - $curgraph - $interval\" \\
@@ -199,7 +200,7 @@ elseif(($curgraph == "packets") && (file_exists("$rrddbpath$curif$packets"))) {
 	}
 elseif(($curgraph == "queues") && (file_exists("$rrddbpath$curif$queues"))) {
 	/* define graphcmd for queue stats */
-	$graphcmd = "$rrdtool graph $rrddbpath$curif-$interval-$curgraph.png \\
+	$graphcmd = "$rrdtool graph $rrdtmppath$curif-$interval-$curgraph.png \\
 		--start -$seconds -e -$average \\
 		--vertical-label \"bits/sec\" \\
 		--title \"`hostname` - $curgraph - $interval\" \\
@@ -247,7 +248,7 @@ elseif(($curgraph == "queues") && (file_exists("$rrddbpath$curif$queues"))) {
 	}
 elseif(($curgraph == "quality") && (file_exists("$rrddbpath$curif$quality"))) {
 	/* make a link quality graphcmd, we only have WAN for now, others too follow */
-	$graphcmd = "$rrdtool graph $rrddbpath$curif-$interval-$curgraph.png \\
+	$graphcmd = "$rrdtool graph $rrdtmppath$curif-$interval-$curgraph.png \\
 		--start -$seconds -e -$average \\
 		--title=\"Link quality last $interval for $curif\" \\
 		--vertical-label \"ms / %\" \\
@@ -296,7 +297,7 @@ elseif(($curgraph == "quality") && (file_exists("$rrddbpath$curif$quality"))) {
 	}
 elseif(($curgraph == "spamd") && (file_exists("$rrddbpath$spamd"))) {
 	/* graph a spamd statistics graph */
-	$graphcmd = "$rrdtool graph $rrddbpath$curif-$interval-$curgraph.png \\
+	$graphcmd = "$rrdtool graph $rrdtmppath$curif-$interval-$curgraph.png \\
 		--start -$seconds -e -$average \\
 		--title=\"Spamd statistics for last $interval\" \\
 		--vertical-label=\"Conn / Time, sec.\" \\
@@ -339,7 +340,7 @@ else
 
 	/* check modification time to see if we need to generate image */
 	if (file_exists("$rrddbpath$curif-$interval-$curgraph.png")) {
-		if((time() - filemtime("$rrddbpath$curif-$interval-$curgraph.png")) >= 280 ) {
+		if((time() - filemtime("$rrdtmppath$curif-$interval-$curgraph.png")) >= 280 ) {
 			exec("$graphcmd 2>&1", $graphcmdoutput, $graphcmdreturn);
 			usleep(500);
 		}			
@@ -352,14 +353,14 @@ else
 $graphcmdreturn, the error is: $graphcmdoutput[0]";
 	}
 
-	if(file_exists("$rrddbpath/$curif-$interval-$curgraph.png")) {
+	$file= "$rrdtmppath$curif-$interval-$curgraph.png";
+	if(file_exists("$file")) {
 		header("Content-type: image/png");
 		header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 		header("Cache-Control: no-store, no-cache, must-revalidate");
 		header("Cache-Control: post-check=0, pre-check=0", false);
 		header("Pragma: no-cache");
-		$file= "$rrddbpath/$curif-$interval-$curgraph.png";
 		$size= filesize($file);
 		header("Content-Length: $size bytes");
 		readfile($file);

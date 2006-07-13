@@ -806,7 +806,7 @@ function filter_nat_rules_generate() {
 							 *   routines because if this is the first bootup the filter is not completely configured
 	                         *   and thus pf is not fully running.   otherwise we end up with: pftpx: pf is disabled
 	                         */
-							$after_filter_configure_run[] = "/usr/local/sbin/pftpx -f {$target}{$external_address_text} -c 21 -g 21 2>>/tmp/pftpx_errors";
+							$after_filter_configure_run[] = "/usr/local/sbin/pftpx -f {$target}{$external_address_text} -c 21 2>>/tmp/pftpx_errors";
 					}
 					$dontinstallrdr = true;
 				}

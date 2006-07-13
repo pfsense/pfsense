@@ -790,7 +790,10 @@ function filter_nat_rules_generate() {
 					if($extaddr == "any") {
 						$external_address_text = "";
 					} else {
-						$external_address_text = " -b {$extaddr}";
+							if($rule['force_ftp_source_ip'])
+								$external_address_text = " -b {$rule['force_ftp_source_ip']}";
+							else
+								$external_address_text = " -b {$extaddr}";
 					}
 					//log_error("Testing /bin/ps awux | grep \"{$target}{$external_address_text}\" | grep -v grep | grep pftpx");
 					$helpers = exec("/bin/ps awux | grep \"{$target}{$external_address_text}\" | grep -v grep | grep pftpx");
@@ -803,11 +806,7 @@ function filter_nat_rules_generate() {
 							 *   routines because if this is the first bootup the filter is not completely configured
 	                         *   and thus pf is not fully running.   otherwise we end up with: pftpx: pf is disabled
 	                         */
-							if($rule['force_ftp_source_ip'])
-								$force_ftp_source_ip = $rule['force_ftp_source_ip'];
-							else
-								$force_ftp_source_ip = "";
-							$after_filter_configure_run[] = "/usr/local/sbin/pftpx -f {$target}{$external_address_text} -c 21 -g 21 {$force_ftp_source_ip} 2>>/tmp/pftpx_errors";
+							$after_filter_configure_run[] = "/usr/local/sbin/pftpx -f {$target}{$external_address_text} -c 21 -g 21 2>>/tmp/pftpx_errors";
 					}
 					$dontinstallrdr = true;
 				}

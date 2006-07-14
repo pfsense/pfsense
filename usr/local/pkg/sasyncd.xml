@@ -51,34 +51,9 @@
          will be parsed and rendered for the user as a gui with input, and selectboxes. -->
 	<fields>
 		<field>
-			<fielddescr>Enable</fielddescr>
-			<fieldname>enable</fieldname>
-			<type>checkbox</type>
-		</field>
-		<field>
-			<fielddescr>Interface</fielddescr>
-			<fieldname>interface</fieldname>
-			<description>Select the carp interface to use.</description>
-			<interface_filter>carp</interface_filter>
-			<type>interfaces_selection</type>
-			<all_interfaces>true</all_interfaces>
-		</field>
-		<field>
 			<fielddescr>Failover IP</fielddescr>
 			<fieldname>ip</fieldname>
 			<description>Enter the IP address you would like to use for failover.  HINT:  You normally want to use a public CARP ip.</description>
-			<type>input</type>
-		</field>
-		<field>
-			<fielddescr>Peer IP</fielddescr>
-			<fieldname>peerip</fieldname>
-			<description>Enter the peers ip address.   HINT: You normally want to enter the peers REAL LAN IP here.</description>
-			<type>input</type>
-		</field>
-		<field>
-			<fielddescr>Shared Key</fielddescr>
-			<fieldname>sharedkey</fieldname>
-			<description>The shared AES key used to encrypt messages between sasyncd(8) hosts.  This configuration setting is required and must be either 16, 24 or 32 bytes long (corresponding to AES using a 128, 192 or 256 bit key).</description>
 			<type>input</type>
 		</field>
 	</fields>

@@ -787,26 +787,16 @@ function filter_nat_rules_generate() {
 			$dontinstallrdr = false;
 			if($target <> "") {
 				if($extport[0] == "21" and !isset($config['interfaces'][strtolower($rule['interface'])]['disableftpproxy'])) {
-					if($extaddr == "any") {
-						$external_address_text = "";
-					} else {
-							if($rule['force_ftp_source_ip'])
-								$external_address_text = " -b {$rule['force_ftp_source_ip']}";
-							else
-								$external_address_text = " -b {$extaddr}";
-					}
-					//log_error("Testing /bin/ps awux | grep \"{$target}{$external_address_text}\" | grep -v grep | grep pftpx");
-					$helpers = exec("/bin/ps awux | grep \"{$target}{$external_address_text}\" | grep -v grep | grep pftpx");
+					$helpers = exec("/bin/ps awux | grep {$target} -b {$external_address} | grep -v grep");
 					if(!$helpers) {
-						//log_error("no helper detected");
 						$external_address = $rule['external-address'];
 						if($external_address == "")
 							$external_address = find_interface_ip(get_real_wan_interface());
-							/*   install a pftpx helper, do not set a rule.  also use the delay filter configure run
-							 *   routines because if this is the first bootup the filter is not completely configured
-	                         *   and thus pf is not fully running.   otherwise we end up with: pftpx: pf is disabled
-	                         */
-							$after_filter_configure_run[] = "/usr/local/sbin/pftpx -f {$target}{$external_address_text} -c 21 2>>/tmp/pftpx_errors";
+						/*   install a pftpx helper, do not set a rule.  also use the delay filter configure run
+						 *   routines because if this is the first bootup the filter is not completely configured 
+                                                 *   and thus pf is not fully running.   otherwise we end up with: pftpx: pf is disabled
+                                                 */
+						$after_filter_configure_run[] = "/usr/local/sbin/pftpx -f {$target} -b {$external_address} -c 21 -g 21 2>>/tmp/pftpx_errors";
 					}
 					$dontinstallrdr = true;
 				}

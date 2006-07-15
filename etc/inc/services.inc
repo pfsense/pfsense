@@ -40,9 +40,9 @@ function services_dhcpd_configure() {
 	}
 
 	/* if OLSRD is enabled, allow WAN to house DHCP. */
-	if($config['installedpackages']['olsrd']) 
-		foreach($config['installedpackages']['olsrd']['config'] as $olsrd) 
-				if($olsrd['enable']) 
+	if($config['installedpackages']['olsrd'])
+		foreach($config['installedpackages']['olsrd']['config'] as $olsrd)
+				if($olsrd['enable'])
 					$is_olsr_enabled = true;
 
 	/* configure DHCPD chroot */
@@ -60,7 +60,7 @@ function services_dhcpd_configure() {
 	fwrite($fd, "cp /lib/libc.so.6 {$g['dhcpd_chroot_path']}/lib/\n");
 	fwrite($fd, "cp /usr/local/sbin/dhcpd {$g['dhcpd_chroot_path']}/usr/local/sbin/\n");
 	fwrite($fd, "chmod a+rx {$g['dhcpd_chroot_path']}/usr/local/sbin/dhcpd\n");
-	if(!trim($status)) 
+	if(!trim($status))
 		fwrite($fd, "mount_devfs devfs {$g['dhcpd_chroot_path']}/dev\n");
 	fclose($fd);
 	mwexec("/bin/sh /tmp/dhcpd.sh");
@@ -82,7 +82,7 @@ function services_dhcpd_configure() {
 		if (isset($dhcpifconf['enable']) &&
 			(($dhcpif == "wan") || (isset($config['interfaces'][$dhcpif]['enable']) &&
 			$config['interfaces'][$dhcpif]['if'] && (!$config['interfaces'][$dhcpif]['bridge']))))
-			$dhcpdenable = true;			
+			$dhcpdenable = true;
 	}
 
 	if (!$dhcpdenable)
@@ -100,7 +100,7 @@ function services_dhcpd_configure() {
 		return 1;
 	}
 
-	
+
 
 	$dhcpdconf = <<<EOD
 option domain-name "{$syscfg['domain']}";
@@ -115,7 +115,7 @@ deny duplicates;
 EOD;
 
 	$dhcpdifs = array();
-	
+
 	/*    loop through and deterimine if we need to setup
 	 *    failover peer "bleh" entries
 	 */
@@ -155,7 +155,7 @@ EOD;
 				$dhcpdconf_pri .= "  mclt 600;\n";
 			}
 			$dhcpdconf .= <<<EOPP
-failover peer "dhcp{$dhcpnum}" { 
+failover peer "dhcp{$dhcpnum}" {
   {$type};
   address {$intip};
   port {$my_port};
@@ -187,7 +187,7 @@ EOPP;
 		$subnetmask = gen_subnet_mask($ifcfg['subnet']);
 
 		if($is_olsr_enabled == true)
-			if($dhcpifconf['netmask']) 
+			if($dhcpifconf['netmask'])
 				$subnetmask = gen_subnet_mask($dhcpifconf['netmask']);
 
 		$dnscfg = "";
@@ -214,10 +214,10 @@ EOPP;
 				$dhcpdconf .= ",{$dhcpifconf['dnsserver'][1]}";
 			$dhcpdconf .= ";\n";
 		}
-		
-		if($dhcpifconf['failover_peerip'] <> "") 
+
+		if($dhcpifconf['failover_peerip'] <> "")
 			$dhcpdconf .= "		deny dynamic bootp clients;\n";
-		
+
 		if (isset($dhcpifconf['denyunknown']))
 		   $dhcpdconf .= "		deny unknown clients;\n";
 
@@ -303,7 +303,7 @@ function interfaces_staticarp_configure($if) {
 		$mt = microtime();
 		echo "interfaces_staticarp_configure($if) being called $mt\n";
 	}
-        
+
         $ifcfg = $config['interfaces'][$if];
 
         /* Enable staticarp, if enabled */
@@ -316,7 +316,7 @@ function interfaces_staticarp_configure($if) {
                                 mwexec("/usr/sbin/arp -s " . escapeshellarg($arpent['ipaddr']) . " " . escapeshellarg($arpent['mac']));
 
                         }
-                        
+
                 }
         } else {
                 mwexec("/sbin/ifconfig " . escapeshellarg($ifcfg['if']) . " -staticarp " );
@@ -442,15 +442,15 @@ function services_dyndns_configure() {
 				echo " [Using ez-ipupdate] ";
 				services_dyndns_configure_old();
 				return;
-			}	
+			}
 		} else {
 			sleep(1);
 			if(isset($config['system']['use_old_dyndns'])) {
 				services_dyndns_configure_old();
 				return;
-			}			
+			}
 		}
-		
+
 		/* load up the dyndns.class */
 		require_once("dyndns.class");
 
@@ -676,7 +676,7 @@ EOD;
 		}
 */
 
-		
+
 		if(isset($config['snmpd']['trapenable']) && preg_match('/^\S+$/', $config['snmpd']['trapserver'])){
 		    $snmpdconf .= <<<EOD
 begemotTrapSinkStatus.[$(traphost)].$(trapport) = 4
@@ -824,20 +824,20 @@ function services_dnsupdate_process() {
 
 	/* Dynamic DNS updating active? */
 	if (isset($config['dnsupdate']['enable'])) {
-		
+
 		$wanip = get_current_wan_address();
 		if ($wanip) {
-			
+
 			$keyname = $config['dnsupdate']['keyname'];
 			/* trailing dot */
 			if (substr($keyname, -1) != ".")
 				$keyname .= ".";
-			
+
 			$hostname = $config['dnsupdate']['host'];
 			/* trailing dot */
 			if (substr($hostname, -1) != ".")
 				$hostname .= ".";
-			
+
 			/* write private key file
 			   this is dumb - public and private keys are the same for HMAC-MD5,
 			   but nsupdate insists on having both */
@@ -850,7 +850,7 @@ Key: {$config['dnsupdate']['keydata']}
 EOD;
 			fwrite($fd, $privkey);
 			fclose($fd);
-			
+
 			/* write public key file */
 			if ($config['dnsupdate']['keytype'] == "zone") {
 				$flags = 257;
@@ -862,37 +862,37 @@ EOD;
 				$flags = 0;
 				$proto = 2;
 			}
-			
+
 			$fd = fopen("{$g['varetc_path']}/K{$keyname}+157+00000.key", "w");
 			fwrite($fd, "{$keyname} IN KEY {$flags} {$proto} 157 {$config['dnsupdate']['keydata']}\n");
 			fclose($fd);
-			
+
 			/* generate update instructions */
 			$upinst =  "update delete {$config['dnsupdate']['host']} A\n";
 			$upinst .= "update add {$config['dnsupdate']['host']} {$config['dnsupdate']['ttl']} A {$wanip}\n";
 			$upinst .= "\n";	/* mind that trailing newline! */
-			
+
 			$fd = fopen("{$g['varetc_path']}/nsupdatecmds", "w");
 			fwrite($fd, $upinst);
 			fclose($fd);
-			
+
 			/* invoke nsupdate */
 			$cmd = "/usr/sbin/nsupdate -k {$g['varetc_path']}/K{$keyname}+157+00000.key";
 			if (isset($config['dnsupdate']['usetcp']))
 				$cmd .= " -v";
 			$cmd .= " {$g['varetc_path']}/nsupdatecmds";
-			
+
 			mwexec_bg($cmd);
 		}
 	}
-	
+
 	return 0;
 }
 
 function setup_wireless_olsr() {
 	global $config, $g;
 	if(!$config['installedpackages']['olsrd'] || !$config['installedpackages'])
-		return;	
+		return;
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "setup_wireless_olsr($interface) being called $mt\n";
@@ -901,7 +901,7 @@ function setup_wireless_olsr() {
 	foreach($config['installedpackages']['olsrd']['config'] as $olsrd) {
 		$olsr_enable = $olsrd['enable'];
 		if($olsr_enable <> "on")
-			return;		
+			return;
 		$fd = fopen("{$g['varetc_path']}/olsr.conf", "w");
 
 		if($olsrd['announcedynamicroute'] or $olsrd['enableannounce'] == "on") {
@@ -909,7 +909,7 @@ function setup_wireless_olsr() {
 			$enableannounce .= "{\n";
 			if($olsrd['announcedynamicroute'] == "on")
 				$enableannounce .= "\t{$olsrd['announcedynamicroute']}\n}\n";
-			if($olsrd['enableannounce']) 
+			if($olsrd['enableannounce'])
 				$enableannounce .= "0.0.0.0 0.0.0.0";
 			$enableannounce .= "\n}\n";
 		} else {
@@ -983,11 +983,11 @@ IpcConnect
      Host            127.0.0.1
      #Host            10.0.0.5
 
-     # You can also specify entire net-ranges 
+     # You can also specify entire net-ranges
      # that are allowed to connect. Multiple
      # entries are allowed
 
-     #Net             192.168.1.0 255.255.255.0     
+     #Net             192.168.1.0 255.255.255.0
 }
 
 # Wether to use hysteresis or not
@@ -998,7 +998,7 @@ IpcConnect
 UseHysteresis	no
 
 # Hysteresis parameters
-# Do not alter these unless you know 
+# Do not alter these unless you know
 # what you are doing!
 # Set to auto by default. Allowed
 # values are floating point values
@@ -1024,7 +1024,7 @@ LinkQualityLevel	{$olsrd['enablelqe']}
 
 LinkQualityWinSize	10
 
-# Polling rate in seconds(float). 
+# Polling rate in seconds(float).
 # Default value 0.05 sec
 
 Pollrate	0.05
@@ -1086,7 +1086,7 @@ if($olsrd['enabledyngw'] == "on") {
 
 	/* unset default route, olsr auto negotiates */
 	mwexec("/sbin/route delete default");
-	
+
 	$olsr .= <<<EODE
 
 LoadPlugin "/usr/local/lib/olsrd_dyn_gw.so.0.4"
@@ -1110,40 +1110,12 @@ EODE;
 }
 
 foreach($config['installedpackages']['olsrd']['config'] as $conf) {
-	foreach($conf['interface_array'] as $interface) {
+	$interfaces = explode(',', $conf['iface_array']);
+	foreach($interfaces as $interface) {
 		$realinterface = convert_friendly_interface_to_real_interface_name($interface);
-$olsr .= <<<EOD
-Interface "{$realinterface}" 
+$olsr .= <<<EODAD
+Interface "{$realinterface}"
 {
-
-    # IPv4 broadcast address to use. The
-    # one usefull example would be 255.255.255.255
-    # If not defined the broadcastaddress
-    # every card is configured with is used
-
-    # Ip4Broadcast		255.255.255.255
-
-    # IPv6 address scope to use.
-    # Must be 'site-local' or 'global'
-
-    # Ip6AddrType		site-local
-
-    # IPv6 multicast address to use when
-    # using site-local addresses.
-    # If not defined, ff05::15 is used
-
-    # Ip6MulticastSite		ff05::11
-
-    # IPv6 multicast address to use when
-    # using global addresses
-    # If not defined, ff0e::1 is used
-
-    # Ip6MulticastGlobal	ff0e::1
-
-
-    # Emission intervals.
-    # If not defined, RFC proposed values will
-    # be used in most cases.
 
     # Hello interval in seconds(float)
     HelloInterval    2.0
@@ -1182,7 +1154,7 @@ Interface "{$realinterface}"
 
 }
 
-EOD;
+EODAD;
 
 	}
 	break;
@@ -1190,12 +1162,12 @@ EOD;
 		fwrite($fd, $olsr);
 		fclose($fd);
 	}
-	
+
 	if(is_process_running("olsrd"))
 		mwexec("/usr/bin/killall -HUP olsrd");
-	else 
+	else
 		mwexec_bg("/usr/local/sbin/olsrd -f {$g['varetc_path']}/olsr.conf");
-		
+
 	conf_mount_ro();
 }
 

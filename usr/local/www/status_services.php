@@ -34,7 +34,20 @@ function gentitle_pkg($pgname) {
 }
 
 if($_GET['mode'] == "restartservice" and $_GET['service']) {
-	restart_service($_GET['service']);
+	switch($_GET['service']) {
+		case 'bsnmpd':
+			services_snmpd_configure();
+			break;
+		case 'dnsmasq':
+			services_dnsmasq_configure();
+			break;
+		case 'dhcpd':
+			services_dhcpd_configure();
+			break;
+		default:
+			restart_service($_GET['service']);
+			break;
+	}
 	$savemsg = "{$_GET['service']} has been restarted.";
 }
 

@@ -1991,13 +1991,12 @@ function enable_rrd_graphing()
 					RRA:MAX:0.5:60:1000 \
 					RRA:MAX:0.5:3600:1000";
 
-				$rrdcreateoutput = "";
+				$rrdcreateoutput = array();
 				$rrdcreatereturn = "";
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 				if($rrdcreatereturn != 0) {
-			                log_error("RRD create failed exited with $rrdcreatereturn, the
-						error is: $rrdcreateoutput[0]\n");
+			                log_error("RRD create failed exited with $rrdcreatereturn, the error is: $rrdcreateoutput[0]\n");
 				}
 			}
 
@@ -2025,8 +2024,7 @@ function enable_rrd_graphing()
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 				if($rrdcreatereturn != 0) {
-			                log_error("RRD create failed exited with $rrdcreatereturn, the
-						error is: $rrdcreateoutput[0]\n");
+			                log_error("RRD create failed exited with $rrdcreatereturn, the error is: $rrdcreateoutput[0]\n");
 				}
 			}
 

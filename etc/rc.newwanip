@@ -38,10 +38,10 @@
         $argument = str_replace("\n", "", $argv[1]);
 
         if($argument <> "") {
-                $curwanip = find_interface_ip($$argument);
-                $interface = convert_real_interface_to_friendly_interface_name($$argument);
+                $curwanip = find_interface_ip($argument);
+                $interface = convert_real_interface_to_friendly_interface_name($argument);
                 if($curwanip == "")
-                        $curwanip = get_current_wan_address();       
+                        $curwanip = get_current_wan_address();
         } else {
                 $curwanip = get_current_wan_address();
                 $interface = "wan";
@@ -52,7 +52,7 @@
                 $old_ip = file_get_contents("/tmp/rc.newwanip_oldip");
                 $helpers = exec("/bin/ps awux | grep {$old_ip} | grep -v grep | cut -d\" \" -f6");
                 mwexec("kill " . trim($helpers));
-                unlink("/tmp/rc.newwanip_oldip");        
+                unlink("/tmp/rc.newwanip_oldip");
 	}
 
         /* reconfigure IPsec tunnels */
@@ -77,17 +77,17 @@
                 fwrite($fd, $curwanip);
                 fclose($fd);
         }
-        
+
         log_error("Informational: DHClient spawned /etc/rc.newwanip and the new ip is {$interface} - {$curwanip}.");
-        
+
         touch("/tmp/update_dyndns");
-        
+
         /* signal filter reload */
         touch("/tmp/filter_dirty");
-    
+
         /* reload graphing functions */
         enable_rrd_graphing();
-        
+
         return 0;
-	
+
 ?>

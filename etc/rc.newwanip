@@ -51,7 +51,8 @@
         if(file_exists("/tmp/rc.newwanip_oldip")) {
                 $old_ip = file_get_contents("/tmp/rc.newwanip_oldip");
                 $helpers = exec("/bin/ps awux | grep \"{$old_ip}\" | grep -v \"grep\" | awk '{ print $6 }'");
-                mwexec("kill " . trim($helpers));
+                if($helpers)
+	                mwexec("kill " . trim($helpers));
                 unlink("/tmp/rc.newwanip_oldip");
 		}
 

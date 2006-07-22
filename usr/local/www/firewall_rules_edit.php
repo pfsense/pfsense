@@ -533,7 +533,8 @@ include("head.inc");
 		                 "Solaris" => "Solaris",
 		                 "MacOS" => "MacOS",
 		                 "Windows" => "Windows",
-		                 "Novell" => "Novell"
+		                 "Novell" => "Novell",
+		                 "NMAP" => "NMAP"
 		           );
 
 					foreach ($ostypes as $ostype => $descr): ?>

@@ -591,7 +591,7 @@ function system_generate_lighty_config($filename,
 
 	if($captive_portal == true)  {
 		$captiveportal = ",\"mod_rewrite\"";
-		$captive_portal_rewrite = "url.rewrite-once = ( \"(.*captiveportal.*)\" => \"$1\", \"(.*)\" => \"/index.php?redirurl=$1\" )";
+		$captive_portal_rewrite = "url.rewrite-once = ( \"(.*captiveportal.*)\" => \"$1\", \"(.*)\" => \"/index.php?redirurl=$1\" )\n";
 	}
 
 	if($port <> "")

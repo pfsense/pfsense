@@ -34,11 +34,6 @@ require("config.inc");
 require("radius_authentication.inc");
 require("radius_accounting.inc");
 
-header("Expires: 0");
-header("Cache-Control: no-store, no-cache, must-revalidate");
-header("Cache-Control: post-check=0, pre-check=0", false);
-header("Pragma: no-cache");
-
 $orig_host = $_ENV['HTTP_HOST'];
 $orig_request = $_GET['redirurl'];
 $lockfile = "{$g['varrun_path']}/captiveportal.lock";
@@ -135,7 +130,7 @@ if ($clientmac && portal_mac_fixed($clientmac)) {
 <HEAD><TITLE>Disconnecting...</TITLE></HEAD>
 <BODY BGCOLOR="#435370">
 <SPAN STYLE="color: #ffffff; font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">
-<B>You've been disconnected.</B>
+<B>You have been disconnected.</B>
 </SPAN>
 <SCRIPT LANGUAGE="JavaScript">
 <!--
@@ -148,8 +143,14 @@ setTimeout('window.close();',5000) ;
 EOD;
 } else if (($_ENV['SERVER_PORT'] != 8001) && isset($config['captiveportal']['httpslogin'])) {
 	/* redirect to HTTPS login page */
-	header("Location: https://{$config['captiveportal']['httpsname']}:8001/?redirurl=" . urlencode("http://{$orig_host}{$orig_request}"));
+	header("Location: https://{$config['captiveportal']['httpsname']}:8001/index.php?redirurl=" . urlencode("http://{$orig_host}{$orig_request}"));
 } else {
+	
+	header("Expires: 0");
+	header("Cache-Control: no-store, no-cache, must-revalidate");
+	header("Cache-Control: post-check=0, pre-check=0", false);
+	header("Pragma: no-cache");	
+	
 	/* display captive portal page */
 	$htmltext = file_get_contents("{$g['varetc_path']}/captiveportal.html");
 	

@@ -591,7 +591,7 @@ function system_generate_lighty_config($filename,
 
 	if($captive_portal == true)  {
 		$captiveportal = ",\"mod_rewrite\"";
-		$captive_portal_rewrite = "url.rewrite-once = ( \"(.*.[Gg][iI][fF]|.*.[Pp][nN][Gg]|.*.[Jj][Pp][Gg])\" => \"$1\", \"(.*)\" => \"/index.php?redirurl=$1\" )";
+		$captive_portal_rewrite = "url.rewrite-once = ( \"(.*[hH][tT][mM][lL]|.*[hH][tT][mM]|.*.[Gg][iI][fF]|.*.[Pp][nN][Gg]|.*.[Jj][Pp][Gg])\" => \"$1\", \"(.*)\" => \"/index.php?redirurl=$1\" )";
 	}
 
 	if($port <> "")

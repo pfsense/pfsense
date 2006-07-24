@@ -85,6 +85,21 @@ if ($_POST) {
 
 	$pconfig = $_POST;
 
+	if($_POST['gateway']) {
+		/* enumerate slbd gateways and make sure we are not creating a route loop */
+		if(is_array($config['load_balancer']['lbpool'])) {
+			foreach($config['load_balancer']['lbpool'] as $lbpool) {
+				if($lbpool['type'] == "gateway") {
+				    foreach ((array) $lbpool['servers'] as $server) {
+			            $svr = split("\|", $server);
+			            if($svr[1] == $_POST['gateway']) 
+			            		$intput_errors[] = "Cannot change {$svr[1]} gateway.  It is currently referenced by the load balancer pools.";
+					}
+				}
+			}	
+		}
+	}
+
 	/* input validation */
 	if ($_POST['enable']) {
 

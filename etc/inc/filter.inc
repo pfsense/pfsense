@@ -2224,7 +2224,7 @@ EOD;
 		/* build an interface collection */
 		$ifdescrs = array ("wan");
 		for ($j = 1; isset ($config['interfaces']['opt' . $j]); $j++) {
-			$ifdescrs['opt' . $j] = "opt" . $j;
+			$ifdescrs['opt' . $j] = filter_get_opt_interface_descr("opt" . $j);
 		}
 
 		if(is_array($config['ipsec']['tunnel']) && isset($config['ipsec']['enable'])) {

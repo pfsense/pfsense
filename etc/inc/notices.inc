@@ -59,7 +59,7 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	$queueout = fopen($notice_path, "w");
 	fwrite($queueout, serialize($queue));
 	fclose($queueout);
-	log_error("New alert found: $notice");
+	log_error("New alert found: {$notice}");
 	return $queuekey;
 }
 

@@ -99,11 +99,19 @@ if ($_POST) {
 				if($lbpool['type'] == "gateway") {
 				    foreach ((array) $lbpool['servers'] as $server) {
 			            $svr = split("\|", $server);
-			            if($svr[1] == $_POST['gateway']) 
+			            if($svr[1] == $pconfig['gateway'])  {
+			            		$_POST['gateway']  = $pconfig['gateway'];
 			            		$input_errors[] = "Cannot change {$svr[1]} gateway.  It is currently referenced by the load balancer pools.";
+			            }
 					}
 				}
-			}	
+			}
+			foreach($config['filter']['rule'] as $rule) {
+				if($rule['gateway'] == $pconfig['gateway']) {
+	            		$_POST['gateway']  = $pconfig['gateway'];
+	            		$input_errors[] = "Cannot change {$svr[1]} gateway.  It is currently referenced by the filter rules via policy based routing.";
+				}
+			}
 		}
 	}
 

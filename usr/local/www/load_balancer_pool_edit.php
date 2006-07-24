@@ -100,8 +100,9 @@ if ($_POST) {
 			$ifdescrs['opt' . $j] = "opt" . $j;
 		}
 		foreach($ifdescrs as $iface) {
-			if($config['interfaces'][$iface]['gateway'] == $_POST['gateway']) 
-				$input_errors[] = "{$_POST['gateway']} is currently being referenced by an interface ip address.";
+			if($config['interfaces'][$iface]['gateway'] <> "") 
+				if($config['interfaces'][$iface]['gateway'] == $_POST['gateway']) 
+					$input_errors[] = "{$_POST['gateway']} is currently being referenced by an interface ip address.";
 		}
 	}
 

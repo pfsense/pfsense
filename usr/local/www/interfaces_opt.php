@@ -83,9 +83,7 @@ if ($_POST) {
 	/* filter out spaces from descriptions  */
 	$POST['descr'] = remove_bad_chars($POST['descr']);
 
-	$pconfig = $_POST;
-
-	if($_POST['gateway']) {
+	if($_POST['gateway'] and $pconfig['gateway'] <> $_POST['gateway']) {
 		/* enumerate slbd gateways and make sure we are not creating a route loop */
 		if(is_array($config['load_balancer']['lbpool'])) {
 			foreach($config['load_balancer']['lbpool'] as $lbpool) {
@@ -99,6 +97,8 @@ if ($_POST) {
 			}	
 		}
 	}
+
+	$pconfig = $_POST;
 
 	/* input validation */
 	if ($_POST['enable']) {

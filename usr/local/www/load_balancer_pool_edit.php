@@ -101,7 +101,7 @@ if ($_POST) {
 		}
 		foreach($ifdescrs as $iface) {
 			if($config[$iface]['gateway'] == $_POST['gateway']) 
-				$input_errors[] = "{$config[$iface]['gateway']} is currently being referenced by an interface ip address.";
+				$input_errors[] = "{$_POST['gateway']} is currently being referenced by an interface ip address.";
 		}
 	}
 

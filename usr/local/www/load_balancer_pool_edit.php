@@ -93,6 +93,18 @@ if ($_POST) {
 		}
 	}
 
+	/* make sure that we are not entering a interface ip as a gateway.  This creates a routing loop. */
+	if($_POST['type'] == "gateway") {
+		$ifdescrs = array ("wan");
+		for ($j = 1; isset ($config['interfaces']['opt' . $j]); $j++) {
+			$ifdescrs['opt' . $j] = "opt" . $j;
+		}
+		foreach($ifdescrs as $iface) {
+			if($iface['gateway'] == $_POST['gateway']) 
+				$input_errors[] = "{$iface['gateway']} is currently being referenced by a interface ip address.";
+		}
+	}
+
 	if($POST['type'] == "server") {
 		if ($_POST['monitor'] != "TCP" && $_POST['monitor'] != "HTTP" && $_POST['monitor'] != "ICMP")
 			$input_errors[] = "Invalid monitor chosen.";

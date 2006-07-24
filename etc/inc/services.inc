@@ -907,10 +907,10 @@ function setup_wireless_olsr() {
 		if($olsrd['announcedynamicroute'] or $olsrd['enableannounce'] == "on") {
 			$enableannounce .= "\nHna4\n";
 			$enableannounce .= "{\n";
-			if($olsrd['announcedynamicroute'] == "on")
-				$enableannounce .= "\t{$olsrd['announcedynamicroute']}\n}\n";
-			if($olsrd['enableannounce'])
-				$enableannounce .= "0.0.0.0 0.0.0.0";
+		if($olsrd['announcedynamicroute'])
+			$enableannounce .= "\t{$olsrd['announcedynamicroute']}\n";
+		if($olsrd['enableannounce'] == "on")
+			$enableannounce .= "0.0.0.0 0.0.0.0";
 			$enableannounce .= "\n}\n";
 		} else {
 			$enableannounce = "";

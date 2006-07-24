@@ -126,7 +126,6 @@ if ($_POST) {
 include("head.inc");
 
 ?>
-?>
 <?php include("fbegin.inc"); ?>
 <script language="javascript" type="text/javascript" src="datetimepicker.js">
 <!--

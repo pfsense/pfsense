@@ -156,12 +156,17 @@ include("head.inc");
 	<span class="vexpl"><span class="red"><strong>
 	Note:<br>
 	</strong></span>
-	Any files that you upload here will be made available in the root directory
-	of the captive portal HTTP(S) server. You may reference them directly from
-	your portal page HTML code using relative paths. Example: you've uploaded
-	an image with the name 'test.jpg' using the file manager. Then you can
-	include it in your portal page like this:<br><br>
-	<tt>&lt;img src=&quot;test.jpg&quot; width=... height=...&gt;</tt>
+	Any files that you upload here with the filename prefix of captiveportal- will 
+	be made available in the root directory of the captive portal HTTP(S) server. 
+	You may reference them directly from your portal page HTML code using relative paths. 
+	Example: you've uploaded an image with the name 'captiveportal-test.jpg' using the 
+	file manager. Then you can include it in your portal page like this:<br><br>
+	<tt>&lt;img src=&quot;captiveportal-test.jpg&quot; width=... height=...&gt;</tt>
+	<br><br>
+	In addition, you can also upload .php files for execution.  You can pass the filename
+	to your custom page from the initial page by using text similar to:
+	<br><br>
+	<tt>&lt;a href="/captiveportal-aup.php?redirurl=$PORTAL_REDIRURL$"&gt;Acceptable usage policy&lt/a&gt;</tt>
 	<br><br>
 	The total size limit for all files is <?=format_bytes($g['captiveportal_element_sizelimit']);?>.</span>
 </td>

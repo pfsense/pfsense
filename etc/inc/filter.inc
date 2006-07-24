@@ -1114,11 +1114,11 @@ function generate_user_filter_rule($rule, $ngcounter) {
 
 		/* check for unresolvable aliases */
 		if ($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
-			file_notice("# unresolvable source aliases {$rule['descr']}");
+			file_notice("Filter_Reload", "# unresolvable source aliases {$rule['descr']}");
 			return "# unresolvable source aliases {$rule['descr']}";
 		}
 		if ($rule['destination']['address'] && !alias_expand($rule['destination']['address'])) {
-			file_notice("# unresolvable dest aliases {$rule['descr']}");
+			file_notice("Filter_Reload", "# unresolvable dest aliases {$rule['descr']}");
 			return "# unresolvable dest aliases {$rule['descr']}";
 		}
 

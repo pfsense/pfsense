@@ -99,10 +99,13 @@ if ($_POST) {
 		for ($j = 1; isset ($config['interfaces']['opt' . $j]); $j++) {
 			$ifdescrs['opt' . $j] = "opt" . $j;
 		}
-		foreach($ifdescrs as $iface) {
-			if($config['interfaces'][$iface]['ipaddr'] <> "") 
-				if($config['interfaces'][$iface]['ipaddr'] == $_POST['gateway']) 
-					$input_errors[] = "{$_POST['gateway']} is currently being referenced by an interface ip address on {$iface}.";
+		foreach($pconfig['servers'] as $svrent) {
+			$split_ip = split("\|", $svrent);
+			foreach($ifdescrs as $iface) {
+				if($config['interfaces'][$iface]['ipaddr'] <> "") 
+					if($config['interfaces'][$iface]['ipaddr'] == $split_ip[0]) 
+						$input_errors[] = "{$split_ip[0]} is currently being referenced by an interface ip address on {$iface}.";
+			}
 		}
 	}
 

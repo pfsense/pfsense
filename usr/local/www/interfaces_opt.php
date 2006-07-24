@@ -93,7 +93,7 @@ if ($_POST) {
 				    foreach ((array) $lbpool['servers'] as $server) {
 			            $svr = split("\|", $server);
 			            if($svr[1] == $_POST['gateway']) 
-			            		$intput_errors[] = "Cannot change {$svr[1]} gateway.  It is currently referenced by the load balancer pools.";
+			            		$input_errors[] = "Cannot change {$svr[1]} gateway.  It is currently referenced by the load balancer pools.";
 					}
 				}
 			}	

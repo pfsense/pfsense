@@ -115,62 +115,44 @@ function filter_configure_sync() {
 
 	update_filter_reload_status("Loading filter rules");
 
-	/* enable pf if we need to, otherwise disable */
-	if( !isset( $config['system']['disablefilter'] ) ) {
-		mwexec("/sbin/pfctl -e");
-	} else {
-		mwexec("/sbin/pfctl -d");
-		update_filter_reload_status("Filter is disabled.  Not loading rules.");
-		return;
-	}
-
-	/* get our wan interface? */
-	$wanif = get_real_wan_interface();
-
-	/* set up MSS clamping */
-       if ($config['interfaces']['wan']['mtu'] <> "" and is_numeric($config['interfaces']['wan']['mtu']))
-		$mssclamp = "max-mss " . (intval($config['interfaces']['wan']['mtu'] - 40));
-	else if ($config['interfaces']['wan']['ipaddr'] == "pppoe")
-		$mssclamp = "max-mss 1452";
-	else
-		$mssclamp = "";
-
-	/* configure no-df for linux nfs and others */
-
-	if ($config['system']['scrubnodf'])
-		$scrubnodf = "no-df random-id";
-	else
-		$scrubnodf = "random-id";
-
-        $fd = fopen("{$g['tmp_path']}/rules.debug", "w");
+	$fd = fopen("{$g['tmp_path']}/rules.debug", "w");
 	$rules = $aliases . " \n";
 
 	update_filter_reload_status("Setting up logging information");
 
 	$rules .= setup_logging_interfaces();
 
-	if($config['system']['optimization'] <> "")
-        	$rules.= "set optimization {$config['system']['optimization']}\n";
+	if ($config['system']['optimization'] <> "")
+		$rules .= "set optimization {$config['system']['optimization']}\n";
 	else
-        	$rules.= "set optimization normal\n";
+		$rules .= "set optimization normal\n";
 
-	if($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
+	if ($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
 		/* User defined maximum states in Advanced menu. */
-		$rules.= "set limit states {$config['system']['maximumstates']}\n";
+		$rules .= "set limit states {$config['system']['maximumstates']}\n";
 	}
-	$rules.= "\n";
-	$rules.= "scrub on {$wanif} all {$scrubnodf} {$mssclamp} fragment reassemble\n"; // reassemble all directions
+	$rules .= "\n";
+
 
 	update_filter_reload_status("Setting up SCRUB information");
+	/* get our wan interface? */
+	$wanif = get_real_wan_interface();
 
-	/* loop through optional interfaces.  if a gateway is set, lets scrub em down! */
-	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-		if($config['interfaces']["opt" . $j]['gateway'] <> "") {
-			$if = convert_friendly_interface_to_real_interface_name("opt{$j}");
-			if($if)
-				$rules.= "scrub on {$if} all {$scrubnodf} {$mssclamp} fragment reassemble\n"; // reassemble all directions
-		}
-	}
+	/* set up MSS clamping */
+	if ($config['interfaces']['wan']['mtu'] <> "" and is_numeric($config['interfaces']['wan']['mtu']))
+		$mssclamp = "max-mss " . (intval($config['interfaces']['wan']['mtu'] - 40));
+	else
+		if ($config['interfaces']['wan']['ipaddr'] == "pppoe")
+			$mssclamp = "max-mss 1452";
+		else
+			$mssclamp = "";
+
+	/* configure no-df for linux nfs and others */
+	if ($config['system']['scrubnodf'])
+		$scrubnodf = "no-df random-id";
+	else
+		$scrubnodf = "random-id";
+	$rules .= "scrub all {$scrubnodf} {$mssclamp} fragment reassemble\n"; // reassemble all directions
 
 	$rules.= "{$altq_ints}\n";
 	$rules.= "{$altq_queues}\n";

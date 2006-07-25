@@ -115,6 +115,16 @@ function filter_configure_sync() {
 
 	update_filter_reload_status("Loading filter rules");
 
+	/* enable pf if we need to, otherwise disable */
+	if (!isset ($config['system']['disablefilter'])) {
+		mwexec("/sbin/pfctl -e");
+	} else {
+		mwexec("/sbin/pfctl -d");
+		unlink("{$g['tmp_path']}/filter_loading");
+		update_filter_reload_status("Filter is disabled.  Not loading rules.");
+		return;
+	}
+
 	$fd = fopen("{$g['tmp_path']}/rules.debug", "w");
 	$rules = $aliases . " \n";
 

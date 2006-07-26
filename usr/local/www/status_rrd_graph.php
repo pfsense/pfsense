@@ -74,7 +74,9 @@ $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
 $graphs = array('traffic' => 'Traffic', 'quality' => 'Quality', 'queues' => 'Queues', 'packets' => 'Packets', 'spamd' => 'Spamd');
 
 for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-	$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
+	if(isset($config['interfaces']['opt' . $j]['enable'])) {
+		$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
+	}
 }
 ?>
 <form name="form1" action="status_rrd_graph.php" method="get" style="padding-bottom: 10px; margin-bottom: 14px; 

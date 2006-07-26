@@ -2216,7 +2216,7 @@ EOD;
 		/* build an interface collection */
 		$ifdescrs = array ("wan");
 		for ($j = 1; isset ($config['interfaces']['opt' . $j]); $j++) {
-			if($config['interfaces']['opt' . $j]['enable'])
+			if(isset($config['interfaces']['opt' . $j]['enable']))
 				$ifdescrs['opt' . $j] = filter_get_opt_interface_descr("opt" . $j);
 		}
 

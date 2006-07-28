@@ -785,7 +785,7 @@ function filter_nat_rules_generate() {
 						if($external_address == "")
 							$external_address = find_interface_ip(get_real_wan_interface());
 						/*   install a pftpx helper, do not set a rule.  also use the delay filter configure run
-						 *   routines because if this is the first bootup the filter is not completely configured 
+						 *   routines because if this is the first bootup the filter is not completely configured
                                                  *   and thus pf is not fully running.   otherwise we end up with: pftpx: pf is disabled
                                                  */
 						$after_filter_configure_run[] = "/usr/local/sbin/pftpx -f {$target} -b {$external_address} -c 21 -g 21 2>>/tmp/pftpx_errors";
@@ -1935,7 +1935,7 @@ EOD;
 	}
 
 if($config['interfaces']['lan']['bridge'] <> "wan" and $config['interfaces']['wan']['bridge'] <> "lan")
-	$ipfrules .= "block in $log quick on \$wan proto udp from any port = 67 to {$lansa_sn_combo} port = 68 label \"allow dhcp client out wan\"\n";
+	$ipfrules .= "block in $log quick on \$wan proto udp from any port = 67 to {$lansa_sn_combo} port = 68 label \"block dhcp client out wan\"\n";
 
 	$ipfrules .= <<<EOD
 
@@ -2244,17 +2244,17 @@ EOD;
 				foreach($ifdescrs as $iface) {
 					$ipfrules .= "pass out quick on \${$iface} proto udp from \${$iface} to {$remote_gateway} port = 500 keep state label \"IPSEC: {$tunnel['descr']} - outbound isakmp\"\n";
 					$ipfrules .= "pass in quick on \${$iface} proto udp from {$remote_gateway} to \${$iface} port = 500 keep state label \"IPSEC: {$tunnel['descr']} - inbound isakmp\"\n";
-	
+
 					if ($tunnel['p2']['protocol'] == 'esp') {
 						$ipfrules .= "pass out quick on \${$iface} proto esp from \${$iface} to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound esp proto\"\n";
 						$ipfrules .= "pass in quick on \${$iface} proto esp from {$remote_gateway} to \${$iface} keep state label \"IPSEC: {$tunnel['descr']} - inbound esp proto\"\n";
 					}
-	
+
 					if ($tunnel['p2']['protocol'] == 'ah') {
 						$ipfrules .= "pass out quick on \${$iface} proto ah from \${$iface} to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound ah proto\"\n";
 						$ipfrules .= "pass in quick on \${$iface} proto ah from {$remote_gateway} to \${$iface} keep state label \"IPSEC: {$tunnel['descr']} - inbound ah proto\"\n";
 					}
-				}			
+				}
 			}
 		}
 

@@ -151,7 +151,7 @@ function do_input_validation($postdata, $reqdfields, $reqdfieldsn, $input_errors
 	}
 
 	for ($i = 0; $i < count($reqdfields); $i++) {
-		if ($_POST[$reqdfields[$i]] == "") { 
+		if ($_POST[$reqdfields[$i]] == "") {
 			$input_errors[] = "The field '" . $reqdfieldsn[$i] . "' is required.";
 		}
 	}
@@ -297,11 +297,11 @@ function pprint_port($port) {
 
 function captiveportal_users_sort() {
 	global $g, $config;
-	
+
 	function cpusercmp($a, $b) {
 		return strcasecmp($a['name'], $b['name']);
 	}
-	
+
 	usort($config['captiveportal']['user'], "cpusercmp");
 }
 
@@ -494,7 +494,7 @@ function cpelements_sort() {
 	function cpelementscmp($a, $b) {
 		return strcasecmp($a['name'], $b['name']);
 	}
-	
+
 	usort($config['captiveportal']['element'],"cpelementscmp");
 }
 
@@ -530,7 +530,7 @@ function sort_rule_by_queue_priority() {
 
 		if ($ra == $rb)
 			return 0;
-		/* reverse sort - we want higher priority first */	
+		/* reverse sort - we want higher priority first */
 		return ($ra < $rb) ? 1 : -1;
 	}
 
@@ -562,22 +562,22 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 
 	if(is_array($grepfor)) {
 		 $i = 0;
-                 foreach($grepfor as $agrep) { 	 
-                         $regexp = "/" . $agrep . "/i"; 	 
-                         if($grepinvert[$i]) { 	 
-                                 $logarr = preg_grep($regexp, $logarr, PREG_GREP_INVERT); 	 
-                         } else { 	 
-                                 $logarr = preg_grep($regexp, $logarr); 	 
+                 foreach($grepfor as $agrep) {
+                         $regexp = "/" . $agrep . "/i";
+                         if($grepinvert[$i]) {
+                                 $logarr = preg_grep($regexp, $logarr, PREG_GREP_INVERT);
+                         } else {
+                                 $logarr = preg_grep($regexp, $logarr);
                          }
 			 $i++;
-                 } 	 
+                 }
         }
         foreach ($logarr as $logent) {
                 $logent = preg_split("/\s+/", $logent, 6);
                 echo "<tr valign=\"top\">\n";
                 if ($withorig) {
                 		$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
-                		if(strlen($entry_date_time) > 17) 
+                		if(strlen($entry_date_time) > 17 or strlen($entry_date_time) < 15)
                 			continue;
                         echo "<td class=\"listlr\" nowrap>" . $entry_date_time  . "</td>\n";
                         echo "<td class=\"listr\">" . htmlspecialchars($logent[4] . " " . $logent[5]) . "</td>\n";
@@ -599,10 +599,10 @@ function return_clog($logfile, $tail, $grepfor = "", $grepinvert = "", $grepreve
 		$i = 0;
 		foreach($grepfor as $agrep) {
 			$regexp = "/" . $agrep . "/i";
-			if($grepinvert[$i]) { 	 
-				$logarr = preg_grep($regexp, $logarr, PREG_GREP_INVERT); 	 
+			if($grepinvert[$i]) {
+				$logarr = preg_grep($regexp, $logarr, PREG_GREP_INVERT);
 			} else {
-				$logarr = preg_grep($regexp, $logarr); 	 
+				$logarr = preg_grep($regexp, $logarr);
 			}
 			$i++;
 		}
@@ -633,8 +633,8 @@ function update_if_changed($varname, & $orig, $new) {
 		}
 		$orig = $new;
 		return true;
-			
-	} else { 
+
+	} else {
 		if ($orig != $new) {
 			update_changedesc("{$varname}: \"{$orig}\" -> \"{$new}\"");
 			$orig = $new;

@@ -226,6 +226,17 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 		file_notice($package['name'], "The {$package['name']} package is missing its configuration file and must be reinstalled.", "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
 	} else {
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
+
+		/* Bring in package include files */
+		if (isset($pkg_config['include_file']) && $pkg_config['include_file'] != ""
+) {
+			$include_file = $pkg_config['include_file'];
+			if (file_exists('/usr/local/pkg/' . $include_file))
+				require_once('/usr/local/pkg/' . $include_file);
+			else
+				require_once($include_file);
+		}
+
 		/* XXX: Zend complains about the next line "Wrong break depth"
 		 * The code is obviously wrong, but I'm not sure what it's supposed to do?
 		 */

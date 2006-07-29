@@ -221,7 +221,10 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 		if(!isset($config['installedpackages']['package'][$pkg_id]))
 		return;  // No package belongs to the pkg_id passed to this function.
 	}
-	$package = $config['installedpackages']['package'][$pkg_id];
+        if (is_array($config['installedpackages']['package'][$pkg_id]))
+                $package = $config['installedpackages']['package'][$pkg_id];
+        else
+                return; /* empty package tag */
 	if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
 		file_notice($package['name'], "The {$package['name']} package is missing its configuration file and must be reinstalled.", "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
 	} else {

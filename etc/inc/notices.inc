@@ -57,9 +57,13 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 			);
 	$queue[$queuekey] = $toqueue;
 	$queueout = fopen($notice_path, "w");
+	if(!$queueout) {
+		log_error("Could not open {$notice_path} for writing");
+		return;
+	}
 	fwrite($queueout, serialize($queue));
 	fclose($queueout);
-	log_error("New alert found: {$notice}");
+	log_error("notice", "New alert found: {$notice}");
 	return $queuekey;
 }
 
@@ -163,13 +167,13 @@ function print_notice_box($category = "all") {
 	return;
 }
 
-   	 
-function are_notices_pending($category = "all") { 	 
-	global $notice_path; 	 
-	if(file_exists($notice_path)) { 	 
-		return true; 	 
-	} 	 
-	return false; 	 
+
+function are_notices_pending($category = "all") {
+	global $notice_path;
+	if(file_exists($notice_path)) {
+		return true;
+	}
+	return false;
 }
 
 ?>

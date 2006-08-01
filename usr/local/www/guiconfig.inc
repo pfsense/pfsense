@@ -577,7 +577,7 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
                 echo "<tr valign=\"top\">\n";
                 if ($withorig) {
                 		$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
-                		if(strlen($entry_date_time) > 17 or strlen($entry_date_time) < 15)
+                		if(strlen($entry_date_time) > 17)
                 			continue;
                         echo "<td class=\"listlr\" nowrap>" . $entry_date_time  . "</td>\n";
                         echo "<td class=\"listr\">" . htmlspecialchars($logent[4] . " " . $logent[5]) . "</td>\n";

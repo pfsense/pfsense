@@ -1093,14 +1093,28 @@ function generate_user_filter_rule($rule, $ngcounter) {
 
 		if ($rule['source']['network'] && strstr($rule['source']['network'], "opt")) {
 			if (!array_key_exists($rule['source']['network'], $optcfg)) {
-				return "# {$rule['source']['network']} !array_key_exists source network " . $rule['descr'];
+				if(preg_match("/opt([0-999])/", $rule['source']['network'], $optmatch)) {
+					$real_opt_int = convert_friendly_interface_to_real_interface_name("opt" . $optmatch[1]);
+					$opt_ip = find_interface_ip($real_opt_int);
+					if(!$opt_ip)
+						return "# unresolvable optarray $real_opt_int - $optmatch[0] - $opt_ip";
+				} else {
+					return "# {$rule['source']['network']} !array_key_exists source network " . $rule['descr'];
+				}
 			}
 		}
 		if ($rule['destination']['network'] && strstr($rule['destination']['network'], "opt")) {
 			if (!array_key_exists($rule['destination']['network'], $optcfg)) {
 				$item = "";
-				foreach($optcfg as $oc) $item .= $oc;
-				return "# {$item} {$rule['destination']['network']} !array_key_exists dest network " . $rule['descr'];
+				foreach ($optcfg as $oc)
+					$item .= $oc;
+				if(preg_match("/opt([0-999])/", $rule['destination']['network'], $optmatch)) {
+					$real_opt_int = convert_friendly_interface_to_real_interface_name("opt" . $optmatch[1]);
+					$opt_ip = find_interface_ip($real_opt_int);
+					if(!$opt_ip)
+						return "# unresolvable oparray $real_opt_int - $optmatch[0] - $opt_ip";
+				}
+				//return "# {$item} {$rule['destination']['network']} !array_key_exists dest network " . $rule['descr'];
 			}
 		}
 
@@ -1306,6 +1320,13 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					$src = $optcfg[$rule['source']['network']]['sa'] . "/" .
 						$optcfg[$rule['source']['network']]['sn'];
 					if (isset($rule['source']['not'])) $src = " !{$src}";
+					/* check for opt$NUMip here */
+					$matches = "";
+					if (preg_match("/opt([0-9999])ip/", $rule['source']['network'], $matches)) {
+						$optnum = $matches[1];
+						$real_int = convert_friendly_interface_to_real_interface_name("opt{$optnum}");
+						$src = find_interface_ip($real_int);
+					}
 				} else {
 					switch ($rule['source']['network']) {
 						case 'wanip':
@@ -1323,13 +1344,6 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						case 'pppoe':
 							$src = "{$pppoesa}/{$pppoesn}";
 							break;
-					}
-					/* check for opt$NUMip here */
-					$matches = "";
-					if (preg_match("/opt([0-9999])ip/", $rule['source']['network'], $matches)) {
-						$optnum = $matches[0];
-						$real_int = convert_friendly_interface_to_real_interface_name("opt{$optnum}");
-						$dst = find_interface_ip($real_int);
 					}
 					if (isset($rule['source']['not'])) $src = "!{$src}";
 				}
@@ -1404,6 +1418,13 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				if (strstr($rule['destination']['network'], "opt")) {
 					$dst = $optcfg[$rule['destination']['network']]['sa'] . "/" .
 						$optcfg[$rule['destination']['network']]['sn'];
+					/* check for opt$NUMip here */
+					$matches = "";
+					if (preg_match("/opt([0-9999])ip/", $rule['destination']['network'], $matches)) {
+						$optnum = $matches[1];
+						$real_int = convert_friendly_interface_to_real_interface_name("opt{$optnum}");
+						$dst = find_interface_ip($real_int);
+					}
 					if (isset($rule['destination']['not'])) $dst = " !{$dst}";
 				} else {
 					switch ($rule['destination']['network']) {
@@ -1422,13 +1443,6 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						case 'pppoe':
 							$dst = "{$ppoesa}/{$pppoesn}";
 							break;
-					}
-					/* check for opt$NUMip here */
-					$matches = "";
-					if (preg_match("/opt([0-9999])ip/", $rule['destination']['network'], $matches)) {
-						$optnum = $matches[0];
-						$real_int = convert_friendly_interface_to_real_interface_name("opt{$optnum}");
-						$dst = find_interface_ip($real_int);
 					}
 					if (isset($rule['destination']['not'])) $dst = " !{$dst}";
 				}
@@ -1459,7 +1473,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			}
 
 			if (!$dst || ($dst == "/")) {
-				return "# returning at $dst == \"/\"";
+				return "# returning at dst $dst == \"/\"";
 			}
 
 			$line .= "to $dst ";

@@ -9,14 +9,14 @@
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -47,12 +47,15 @@ foreach ($a_element as $element) {
 
 if ($_POST) {
     unset($input_errors);
-    
+
     if (is_uploaded_file($_FILES['new']['tmp_name'])) {
-    	
-    	$name = $_FILES['new']['name'];
+
+    	if(!stristr($_FILES['new']['name'], "captiveportal-"))
+    		$name = "captiveportal-" . $_FILES['new']['name'];
+    	else
+    		$name = $_FILES['new']['name'];
     	$size = filesize($_FILES['new']['tmp_name']);
-    	
+
     	// is there already a file with that name?
     	foreach ($a_element as $element) {
 			if ($element['name'] == $name) {
@@ -60,21 +63,21 @@ if ($_POST) {
 				break;
 			}
 		}
-		
+
 		// check total file size
 		if (($total_size + $size) > $g['captiveportal_element_sizelimit']) {
 			$input_errors[] = "The total size of all files uploaded may not exceed " .
 				format_bytes($g['captiveportal_element_sizelimit']) . ".";
 		}
-		
+
 		if (!$input_errors) {
 			$element = array();
 			$element['name'] = $name;
 			$element['size'] = $size;
 			$element['content'] = base64_encode(file_get_contents($_FILES['new']['tmp_name']));
-			
+
 			$a_element[] = $element;
-			
+
 			write_config();
 			captiveportal_write_elements();
 			header("Location: services_captiveportal_filemanager.php");
@@ -129,7 +132,7 @@ include("head.inc");
 		</td>
 	  </tr>
   <?php $i++; endforeach; ?>
-  
+
   <?php if (count($a_element) > 0): ?>
   	  <tr>
 		<td class="listlr" style="background-color: #eee"><strong>TOTAL</strong></td>
@@ -137,10 +140,10 @@ include("head.inc");
 		<td valign="middle" nowrap class="list"></td>
 	  </tr>
   <?php endif; ?>
-  
+
   <?php if ($_GET['act'] == 'add'): ?>
 	  <tr>
-		<td class="listlr" colspan="2"><input type="file" name="new" class="formfld" size="40" id="new"> 
+		<td class="listlr" colspan="2"><input type="file" name="new" class="formfld" size="40" id="new">
 		<input name="Submit" type="submit" class="formbtn" value="Upload"></td>
 		<td valign="middle" nowrap class="list">
 		<a href="services_captiveportal_filemanager.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="cancel" width="17" height="17" border="0"></a>
@@ -156,10 +159,10 @@ include("head.inc");
 	<span class="vexpl"><span class="red"><strong>
 	Note:<br>
 	</strong></span>
-	Any files that you upload here with the filename prefix of captiveportal- will 
-	be made available in the root directory of the captive portal HTTP(S) server. 
-	You may reference them directly from your portal page HTML code using relative paths. 
-	Example: you've uploaded an image with the name 'captiveportal-test.jpg' using the 
+	Any files that you upload here with the filename prefix of captiveportal- will
+	be made available in the root directory of the captive portal HTTP(S) server.
+	You may reference them directly from your portal page HTML code using relative paths.
+	Example: you've uploaded an image with the name 'captiveportal-test.jpg' using the
 	file manager. Then you can include it in your portal page like this:<br><br>
 	<tt>&lt;img src=&quot;captiveportal-test.jpg&quot; width=... height=...&gt;</tt>
 	<br><br>
@@ -173,4 +176,4 @@ include("head.inc");
 </tr>
 </table>
 </form>
-<?php include("fend.inc"); ?>	
+<?php include("fend.inc"); ?>

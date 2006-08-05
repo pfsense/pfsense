@@ -263,7 +263,11 @@ function pprint_address($adr) {
 	if (isset($adr['any'])) {
 		$padr = "*";
 	} else if ($adr['network']) {
-		$padr = $specialnets[$adr['network']];
+		if (preg_match("/opt[0-999]ip/", $adr['network'])) {
+			$padr = "Interface IP address";
+		} else {
+			$padr = $specialnets[$adr['network']];
+		}
 	} else {
 		$padr = $adr['address'];
 	}

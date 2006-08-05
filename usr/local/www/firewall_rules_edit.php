@@ -571,7 +571,7 @@ include("head.inc");
 								<option value="pppoe" <?php if ($pconfig['dst'] == "pppoe") { echo "selected"; } ?>>PPPoE clients</option>
 <?php 							for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): ?>
 									<option value="opt<?=$i;?>" <?php if ($pconfig['dst'] == "opt" . $i) { echo "selected"; } ?>><?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?> subnet</option>
-									<option value="opt<?=$i;?>ip"<?php if ($pconfig['src'] == "opt" . $i . "ip") { echo "selected"; } ?>>
+									<option value="opt<?=$i;?>ip"<?php if ($pconfig['dst'] == "opt" . $i . "ip") { echo "selected"; } ?>>
 										<?=$config['interfaces']['opt' . $i]['descr']?> address
 									</option>
 <?php 							endfor; ?>

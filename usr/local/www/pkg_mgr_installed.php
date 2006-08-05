@@ -52,7 +52,7 @@ include("head.inc");
 	$tab_array[0] = array("Available Packages", false, "pkg_mgr.php");
 	$tab_array[1] = array("Installed Packages", true, "pkg_mgr_installed.php");
 	display_top_tabs($tab_array);
-?>  
+?>
   </td></tr>
   <tr>
     <td>
@@ -86,17 +86,17 @@ include("head.inc");
 						// We can't determine this package's version status.
 						?><td class="listlr"><?php
 						echo "Current: Unknown.<br>Installed: " . $pkg['version'];
-                                       		?></td><?php 
+                                       		?></td><?php
 					} elseif(strcmp($pkg['version'], $latest_package) > 0) {
                                             /* we're running a newer version of the package */
 					    ?><td class="listbggrey"><font color="#FFFFFF"><?php
-                                            echo "Current: {$latest_version}";
+                                            echo "Current: {$latest_package}";
                                             echo "<br>Installed: {$pkg['version']}";
 					    ?></td><?php
                                         } elseif(strcmp($pkg['version'], $latest_package) < 0) {
 					    /* our package is out of date */
 					    ?><td class="listbg"><font color="#FFFFFF"><?php
-                                            echo "Current: {$latest_version}";
+                                            echo "Current: {$latest_package}";
 					    echo "<br>Installed: {$pkg['version']}";
 					    ?></td><?php
                                         } else {

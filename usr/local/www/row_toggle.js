@@ -31,11 +31,11 @@ function fr_insline(id, on) {
 		if (prevcells[i].id == 'frd' + (id-1)) {
 			if (on) {
 				prevcells[i].style.borderBottom = "3px solid #990000";
-				prevcells[i].style.paddingBottom = (id != 0) ? 2 : 3;
+				prevcells[i].style.paddingBottom = (id != 0) ? 2 : 3 + "px";
 			} else {
 				prevcells[i].style.borderBottom = "1px solid #999999";
 				prevcells[i].style.borderBottomWidth = "1px";
-				prevcells[i].style.paddingBottom = (id != 0) ? 4 : 5;
+				prevcells[i].style.paddingBottom = (id != 0) ? 4 : 5 + "px";
 			}
 		}
 	}
@@ -44,10 +44,10 @@ function fr_insline(id, on) {
 		if (cells[i].id == 'frd' + (id)) {
 			if (on) {
 				cells[i].style.borderTop = "2px solid #990000";
-				cells[i].style.paddingTop = 2;
+				cells[i].style.paddingTop = 2 + "px";
 			} else {
 				cells[i].style.borderTopWidth = 0;
-				cells[i].style.paddingTop = 4;
+				cells[i].style.paddingTop = 4 + "px";
 			}
 		}
 	}

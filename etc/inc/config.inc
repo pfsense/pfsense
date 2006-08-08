@@ -207,6 +207,14 @@ function parse_config($parse = false) {
 			}
 		} else {
 			config_unlock();
+			if(!file_exists($g['conf_path'] . "/config.xml")) {
+				log_error(gettext("No config.xml found, attempting last known config restore."));
+				$last_backup = discover_last_backup();
+				if ($last_backup)
+					restore_backup("/cf/conf/backup/{$last_backup}");
+				else
+					log_error(gettext("Could not restore config.xml."));
+			}
 			$config = parse_config(true);
 		}
 	} else {
@@ -252,7 +260,7 @@ function generate_config_cache($config) {
 }
 
 function discover_last_backup() {
-        $backups = split("\n", `cd /cf/conf/backup && ls -lat | awk '{print \$9}' | grep -v "\\.\\."`);
+        $backups = split("\n", `cd /cf/conf/backup && ls -lat *.xml | awk '{print \$9}' | grep -v "\\.\\."`);
 		$last_backup = "";
         foreach($backups as $backup)
                 if($backup)

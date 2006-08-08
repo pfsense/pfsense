@@ -143,9 +143,13 @@ if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
 		}
 
 		if (!$cfgdevice) {
-			/* no device found, print an error and die */
-			echo <<<EOD
-
+			$last_backup = discover_last_backup();
+			if($last_backup) {
+				log_error("No config.xml found, attempting last known config restore.");
+				restore_backup("/cf/conf/backup/{$last_backup}");
+			} else {
+				/* no device found, print an error and die */
+				echo <<<EOD
 
 *******************************************************************************
 * FATAL ERROR                                                                 *
@@ -156,8 +160,9 @@ if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
 
 EOD;
 
-			mwexec("/sbin/halt");
-			exit;
+				mwexec("/sbin/halt");
+				exit;
+			}
 		}
 
 		/* write device name to a file for rc.firmware */

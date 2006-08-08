@@ -535,7 +535,8 @@ function filter_nat_rules_generate() {
 			else
 				$natif = $config['interfaces'][$natent['interface']]['if'];
 
-			$natrules .= "binat on {$natif} from {$natent['internal']}/{$sn} to any -> {$natent['external']}/{$sn}\n";
+			if($natif)
+				$natrules .= "binat on {$natif} from {$natent['internal']}/{$sn} to any -> {$natent['external']}/{$sn}\n";
 		}
 	}
 
@@ -698,7 +699,8 @@ function filter_nat_rules_generate() {
 		$int_ip = find_interface_ip($tmp_interface);
 		/* if interface lacks an ip, dont setup a rdr for ftp.  they are most likely on a bridged interface */
 		if($int_ip)
-			$natrules .= "rdr on \${$ifname_lower} proto tcp from any to {$vpns} port 21 -> 127.0.0.1 port {$tmp_port}\n";
+			if($ifname_lower)
+				$natrules .= "rdr on \${$ifname_lower} proto tcp from any to {$vpns} port 21 -> 127.0.0.1 port {$tmp_port}\n";
 		$interface_counter++;
 	}
 	$natrules .= "\n";
@@ -804,14 +806,17 @@ function filter_nat_rules_generate() {
 
 					switch ($rule['protocol']) {
 						case "tcp/udp":
-							$natrules .= "{$nordr}rdr on $natif proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
+							if($natif)
+								$natrules .= "{$nordr}rdr on $natif proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
 							break;
 						case "udp":
 						case "tcp":
 							if($extport[0])
-								$natrules .= "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
+								if($natif)
+									$natrules .= "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
 							else
-								$natrules .= "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} -> {$target}{$localport}";
+								if($natif)
+									$natrules .= "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} -> {$target}{$localport}";
 							break;
 						default:
 							$natrules .= "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} -> {$target}";
@@ -820,14 +825,17 @@ function filter_nat_rules_generate() {
 				} else {
 					switch ($rule['protocol']) {
 						case "tcp/udp":
-							$natrules .= "{$nordr}rdr on $natif proto { tcp udp } from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target}{$localport}:*";
+							if($natif)
+								$natrules .= "{$nordr}rdr on $natif proto { tcp udp } from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target}{$localport}:*";
 							break;
 						case "udp":
 						case "tcp":
-							$natrules .= "{$nordr}rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target}{$localport}:*";
+							if($natif)
+								$natrules .= "{$nordr}rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port {$extport[0]}:{$extport[1]} -> {$target}{$localport}:*";
 							break;
 						default:
-							$natrules .= "{$nordr}rdr on $natif proto {$rule['protocol']} from any to {$extaddr} -> {$target}";
+							if($natif)
+								$natrules .= "{$nordr}rdr on $natif proto {$rule['protocol']} from any to {$extaddr} -> {$target}";
 					}
 				}
 			}
@@ -841,8 +849,10 @@ function filter_nat_rules_generate() {
 			$rule_subnet = gen_subnet($rule_interface_ip, $rule_interface_subnet);
 			if($rule['external-address'] == "any" and $rule['interface'] == "lan") {
 				$natrules .= "\n";
-				$natrules .= "no nat on {$rule_friendly_if} proto tcp from {$rule_friendly_if} to {$rule_subnet}/{$rule_interface_subnet}\n";
-				$natrules .= "nat on {$rule_friendly_if} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$extport[0]} -> {$rule_friendly_if}\n";
+				if($rule_friendly_if)
+					$natrules .= "no nat on {$rule_friendly_if} proto tcp from {$rule_friendly_if} to {$rule_subnet}/{$rule_interface_subnet}\n";
+				if($rule_friendly_if)
+					$natrules .= "nat on {$rule_friendly_if} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$extport[0]} -> {$rule_friendly_if}\n";
 			}
 
 			if(!isset($config['system']['disablenatreflection'])) {
@@ -895,13 +905,15 @@ function filter_nat_rules_generate() {
 									case "tcp/udp":
 										$protocol = "{ tcp udp }";
 										fwrite($inetd_fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$loc_pt}\n");
-								  		$natrules .= "rdr on \${$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
+								  		if($ifname_real)
+								  			$natrules .= "rdr on \${$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
 										break;
 									case "tcp":
 									case "udp":
 										$protocol = $rule['protocol'];
 										fwrite($inetd_fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$loc_pt}\n");
-								  		$natrules .= "rdr on \${$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
+										if($ifname_real)
+								  			$natrules .= "rdr on \${$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
 										break;
 									default:
 										break;
@@ -2258,7 +2270,7 @@ EOD;
 				foreach($ifdescrs as $iface) {
 					if(!$config['interfaces'][$iface]['ipaddr'])
 						continue;
-					if($iface == "wan") 
+					if($iface == "wan")
 						$interface_ip = find_interface_ip(get_real_wan_interface());
 					else
 						$interface_ip = find_interface_ip(convert_friendly_interface_to_real_interface_name($iface));
@@ -2450,7 +2462,8 @@ function process_carp_nat_rules() {
 		}
 		if($int != false and $int != $wan_interface) {
 		    $ipnet = convert_ip_to_network_format($ip, $carp['netmask']);
-		    $lines .= "nat on {$int} inet from {$ipnet} to any -> ({$carp_int}) \n";
+		    if($int)
+		    	$lines .= "nat on {$int} inet from {$ipnet} to any -> ({$carp_int}) \n";
 		}
 	    }
 	return $lines;

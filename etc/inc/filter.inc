@@ -4,6 +4,7 @@
 	filter.inc
 	Copyright (C) 2004-2006 Scott Ullrich
         Copyright (C) 2005 	Bill Marquette
+	Copyright (C) 2006 	Peter Allgeyer
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -1147,7 +1148,10 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		update_filter_reload_status("Setting up pass/block rules");
 
 		for ($iif = 0; $iif < $nif; $iif++) {
+
 			$type = $rule['type'];
+
+
 			if ($type != "pass" && $type != "block" && $type != "reject") {
 				/* default (for older rules) is pass */
 				$type = "pass";
@@ -1375,11 +1379,18 @@ function generate_user_filter_rule($rule, $ngcounter) {
 								$src .= " {$not}{$item}";
 							}
 						}
-						$src .= " }";
+						/* added support for tables */
+						$src .= " 0/0 }";
+						$src_table = "<not" . $rule['source']['address'] . ">";
 					}
 					else {
 						$src = "{ {$not} " . alias_expand_value($rule['source']['address']) . " } ";
+						$src_table = "<" . $rule['source']['address'] . ">";
 					}
+
+					/* support for tables */
+					$src_table_line = "table $src_table const {$src}\n";
+					$src = $src_table;
 				}
 				else
 					$src = "{ {$not} {$expsrc} }";
@@ -1466,20 +1477,27 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				else
 					$not = "";
 
-				if (stristr($expdst, "$")) {
-					if($not) {
-						$dst = "{";
-						foreach(preg_split("/[\s]+/", alias_expand_value($rule['destination']['address'])) as $item) {
-							if($item != "") {
-								$dst .= " {$not}{$item}";
-							}
-						}
-						$dst .= " }";
-					}
-					else {
-						$dst = "{ {$not} " . alias_expand_value($rule['destination']['address']) . " } ";
-					}
-				}
+                                if (stristr($expdst, "$")) {
+                                        if($not) {
+                                                $dst = "{";
+                                                foreach(preg_split("/[\s]+/", alias_expand_value($rule['destination']['address'])) as $item) {
+                                                        if($item != "") {
+                                                                $dst .= " {$not}{$item}";
+                                                        }
+                                                }
+                                                /* added support for tables */
+						$dst .= " 0/0 }";
+						$dst_table = "<not" . $rule['destination']['address'] . ">";
+                                        }
+                                        else {
+                                                $dst = "{ {$not} " . alias_expand_value($rule['destination']['address']) . " } ";
+						$dst_table = "<" . $rule['destination']['address'] . ">";
+                                        }
+
+					/* support for tables */
+					$dst_table_line = "table $dst_table const {$dst}\n";
+					$dst = $dst_table;
+                                }
 				else
 					$dst = "{ {$not} {$expdst} }";
 			}
@@ -1581,6 +1599,12 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				$line .= "flags S/SA ";
 			}
 	}
+
+	if ("$src_table_line" == "$dst_table_line")
+		$line = "$src_table_line" . "$line";
+	else
+		$line = "$src_table_line" . "$dst_table_line" . "$line";
+
 	return $line;
 }
 

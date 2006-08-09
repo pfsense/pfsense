@@ -38,7 +38,7 @@ if (($_POST['submit'] == "Load") && file_exists($_POST['savetopath'])) {
 	if(stristr($_POST['savetopath'], ".php") == true)
 		$language = "php";
 	else if(stristr($_POST['savetopath'], ".inc") == true)
-		$language = "php";		
+		$language = "php";
 	else if(stristr($_POST['savetopath'], ".sh") == true)
 		$language = "core";
 	else if(stristr($_POST['savetopath'], ".xml") == true)
@@ -51,6 +51,8 @@ if (($_POST['submit'] == "Load") && file_exists($_POST['savetopath'])) {
 	fclose($fd);
 	$edit_area="";
 	$savemsg = "Saved text to " . $_POST['savetopath'];
+	if($_POST['savetopath'] == "/cf/conf/config.xml")
+		unlink_if_exists("/tmp/config.cache");
 	conf_mount_ro();
 } else if (($_POST['submit'] == "Load") && !file_exists($_POST['savetopath'])) {
 	$savemsg = "File not found " . $_POST['savetopath'];
@@ -134,10 +136,10 @@ function sf() { document.forms[0].savetopath.focus(); }
 	<input name="submit" type="submit"  class="button" id="Load" value="Load"> <input name="submit" type="submit"  class="button" id="Save" value="Save">
 	<hr noshade>
 	<?php if($_POST['highlight'] == "no"): ?>
-	   Rows: <input size="3" name="rows" value="<? echo $rows; ?>"> 
+	   Rows: <input size="3" name="rows" value="<? echo $rows; ?>">
 	   Cols: <input size="3" name="cols" value="<? echo $cols; ?>">
 	<?php endif; ?>
-	 | 
+	 |
 	Highlighting: <input name="highlight" type="radio" value="yes"
 	<?php if($highlight == "yes") echo " checked"; ?>>Enabled
 	<input name="highlight" type="radio" value="no"<?php if($highlight == "no") echo " checked"; ?>>Disabled

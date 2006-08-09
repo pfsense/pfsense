@@ -279,7 +279,7 @@ function discover_last_backup() {
 function restore_backup($file) {
 	if(file_exists($file)) {
 		conf_mount_rw();
-		system("mv $file /cf/conf/config.xml");
+		system("cp $file /cf/conf/config.xml");
 	}
 }
 

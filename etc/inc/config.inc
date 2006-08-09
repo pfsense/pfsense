@@ -218,6 +218,14 @@ function parse_config($parse = false) {
 			$config = parse_config(true);
 		}
 	} else {
+		if(!file_exists($g['conf_path'] . "/config.xml")) {
+			log_error(gettext("No config.xml found, attempting last known config restore."));
+			$last_backup = discover_last_backup();
+			if ($last_backup)
+				restore_backup("/cf/conf/backup/{$last_backup}");
+			else
+				log_error(gettext("Could not restore config.xml."));
+		}
 		$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
 		generate_config_cache($config);
 	}

@@ -51,10 +51,10 @@ function step2_stepsubmitphpaction() {
 			$message="Inside and Outside interfaces cannot be the same";
 			header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=1&amp;message={$message}");
 			exit;
-		}	
+		}
 		$downq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['inside_int']);
 		$upq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['outside_int']);
-	    
+
 		/* Magic shaper scheduler */
 		$config['shaper']['schedulertype'] = "hfsc";
 
@@ -132,7 +132,7 @@ function step2_stepsubmitphpaction() {
 		if ($config['shaper']['schedulertype'] == "hfsc") {
                 	$queue['realtime'] = "on";
                 	$queue['realtime3'] = "10%";
-			$queue['bandwidth'] = 5;
+			$queue['bandwidth'] = 10;
 			$queue['bandwidthtype'] = '%';
 		} elseif ($config['shaper']['schedulertype'] == "cbq") {
 			$queue['borrow'] = "on";
@@ -151,7 +151,7 @@ function step2_stepsubmitphpaction() {
 		if ($config['shaper']['schedulertype'] == "hfsc") {
                 	$queue['realtime'] = "on";
                 	$queue['realtime3'] = "10%";
-			$queue['bandwidth'] = 5;
+			$queue['bandwidth'] = 10;
 			$queue['bandwidthtype'] = '%';
 		} elseif ($config['shaper']['schedulertype'] == "cbq") {
 			$queue['borrow'] = "on";
@@ -160,7 +160,7 @@ function step2_stepsubmitphpaction() {
 		}
                 $config['shaper']['queue'][] = $queue;
 
-		
+
 }
 function step3_stepsubmitphpaction() {
 		global $g, $config;
@@ -190,7 +190,7 @@ function step3_stepsubmitphpaction() {
 			if ($config['shaper']['schedulertype'] == "hfsc") {
 				$queue['realtime'] = "on";
 	                	$queue['realtime3'] = $_POST['bandwidth'] . "Kb";
-				$queue['bandwidth'] = 1;
+				$queue['bandwidth'] = 25;
 				$queue['bandwidthtype'] = '%';
 			} elseif ($config['shaper']['schedulertype'] == "cbq") {
                         	$queue['bandwidth'] = $_POST['bandwidth'];
@@ -207,13 +207,13 @@ function step3_stepsubmitphpaction() {
 			if ($config['shaper']['schedulertype'] == "hfsc") {
  	                	$queue['realtime'] = "on";
  	                	$queue['realtime3'] = $_POST['bandwidth'] . "Kb";
-				$queue['bandwidth'] = 1;
+				$queue['bandwidth'] = 25;
 				$queue['bandwidthtype'] = '%';
 			} elseif ($config['shaper']['schedulertype'] == "cbq") {
                         	$queue['bandwidth'] = $_POST['bandwidth'];
                         	$queue['bandwidthtype'] = 'Kb';
 			}
- 	                $config['shaper']['queue'][] = $queue;			
+ 	                $config['shaper']['queue'][] = $queue;
 
 			$config['shaper']['itemsshaped']++;
 
@@ -264,9 +264,9 @@ function step3_stepsubmitphpaction() {
 			    $rule['iptos'] = "lowdelay";
 			    $config['shaper']['rule'][] = $rule;
 			} else {
-			
+
 			    $voiplist = array();
-	    
+
 			    /* asterisk server / same as vonage */
 			    if(($_POST['provider'] == "Asterisk") || ($_POST['provider'] == "Vonage")) {
 				$voiplist[] = array('Asterisk', 'udp', '5060', '5069', 'both');
@@ -310,14 +310,14 @@ function step3_stepsubmitphpaction() {
 						$rule['destination']['network'] = $downint;
 						$rule['descr'] = "m_voip {$voip[0]} inbound";
 					}
-				    
+
 					$rule['destination']['port'] = $voip[2]."-".$voip[3];
 					if($voip[1] != '')
 						$rule['protocol'] = $voip[1];
-		
+
 					$config['shaper']['rule'][] = $rule;
 				}
-			    }                
+			    }
 			}
 		}
 }
@@ -333,49 +333,49 @@ function step4_stepsubmitphpaction() {
 		$p2plist = array();
 
 		/* To add p2p clients, push Descr,Protocol,Start,End,src/dest/both onto p2plist */
-		if($_POST['aimster'] != "") 
+		if($_POST['aimster'] != "")
 		    $p2plist[] = array('Aimster', 'tcp', '7668', '7668', 'both');
-		if($_POST['bittorrent'] != "") 		    
+		if($_POST['bittorrent'] != "")
 		    $p2plist[] = array('BitTorrent', 'tcp', '6881', '6999', 'both');
-		if($_POST['buddyshare'] != "") 		
+		if($_POST['buddyshare'] != "")
 		    $p2plist[] = array('BuddyShare', 'tcp', '7788', '7788', 'both');
-		if($_POST['cutemx'] != "") 		
+		if($_POST['cutemx'] != "")
 		    $p2plist[] = array('CuteMX', 'tcp', '2340', '2340', 'both');
-		if($_POST['dc++'] != "") 		
+		if($_POST['dc++'] != "")
 		    $p2plist[] = array('DC++', 'tcp', '1412', '1412', 'both');
-		if($_POST['dcc'] != "") 		
+		if($_POST['dcc'] != "")
 		    $p2plist[] = array('dcc', 'tcp', '6666', '6668', 'both');
-		if($_POST['directconnect'] != "") 		
+		if($_POST['directconnect'] != "")
 		    $p2plist[] = array('DirectConnect', 'tcp', '412', '412', 'both');
-		if($_POST['directfileexpress'] != "") 		
+		if($_POST['directfileexpress'] != "")
 		    $p2plist[] = array('DirectFileExpress', 'tcp', '1044', '1045', 'both');
-		if($_POST['edonkey2000'] != "") 		
+		if($_POST['edonkey2000'] != "")
 		    $p2plist[] = array('EDonkey2000', 'tcp', '4661', '4665', 'both');
-		if($_POST['fastTrack'] != "") 		
+		if($_POST['fastTrack'] != "")
 		    $p2plist[] = array('FastTrack', 'tcp', '1214', '1214', 'both');
-		if($_POST['gnutella'] != "") { 		
+		if($_POST['gnutella'] != "") {
 		    $p2plist[] = array('Gnutella-TCP', 'tcp', '6346', '6346', 'both');
 		    $p2plist[] = array('Gnutella-UDP', 'udp', '6346', '6346', 'both');
 		}
-		if($_POST['grouper'] != "") 		
+		if($_POST['grouper'] != "")
 		    $p2plist[] = array('grouper', 'tcp', '8038', '8039', 'both');
-		if($_POST['hotcomm'] != "") 		
+		if($_POST['hotcomm'] != "")
 		    $p2plist[] = array('hotComm', 'tcp', '28864', '28865', 'both');
-		if($_POST['hotlineconnect'] != "") 		
+		if($_POST['hotlineconnect'] != "")
 		    $p2plist[] = array('HotlineConnect', 'tcp', '5500', '5503', 'both');
-		if($_POST['imesh'] != "") 		
+		if($_POST['imesh'] != "")
 		    $p2plist[] = array('iMesh', 'tcp', '4329', '4329', 'both');
-		if($_POST['napster'] != "") 		
+		if($_POST['napster'] != "")
 		    $p2plist[] = array('Napster', 'tcp', '6699', '6701', 'both');
-		if($_POST['opennap'] != "") 		
+		if($_POST['opennap'] != "")
 		    $p2plist[] = array('OpenNap', 'tcp', '8888', '8889', 'both');
-		if($_POST['scour'] != "") 		
+		if($_POST['scour'] != "")
 		    $p2plist[] = array('Scour', 'tcp', '8311', '8311', 'both');
-		if($_POST['shareaza'] != "") 		
+		if($_POST['shareaza'] != "")
 		    $p2plist[] = array('Shareaza', 'tcp', '6346', '6346', 'both');
-		if($_POST['songspy'] != "") 		
+		if($_POST['songspy'] != "")
 		    $p2plist[] = array('SongSpy', 'tcp', '5190', '5190', 'both');
-		if($_POST['winmx'] != "") 		
+		if($_POST['winmx'] != "")
 		    $p2plist[] = array('WinMX', 'tcp', '6699', '6699', 'both');
 
 		/* Set up/down p2p as lowest weight */
@@ -455,7 +455,7 @@ function step4_stepsubmitphpaction() {
                         $queue['bandwidthtype'] = 'Kb';
                 }
 		$config['shaper']['queue'][] = $queue;
-	}	
+	}
 }
 function step5_stepsubmitphpaction() {
 	global $g, $config;
@@ -475,7 +475,7 @@ function step5_stepsubmitphpaction() {
 		if ($config['shaper']['schedulertype'] == "hfsc") {
 			$queue['realtime'] = "on";
 			$queue['realtime3'] = "1Kb";
-			$queue['bandwidth'] = 5;
+			$queue['bandwidth'] = 10;
 			$queue['bandwidthtype'] = '%';
 		} elseif ($config['shaper']['schedulertype'] == "cbq") {
 			$queue['borrow'] = "on";
@@ -483,7 +483,7 @@ function step5_stepsubmitphpaction() {
                         $queue['bandwidthtype'] = 'Kb';
                 }
 		$config['shaper']['queue'][] = $queue;
-	    
+
 		/* create qGamesDown queue */
 		$queue = array();
 		$queue['name'] = "qGamesDown";
@@ -493,7 +493,7 @@ function step5_stepsubmitphpaction() {
 		if ($config['shaper']['schedulertype'] == "hfsc") {
 			$queue['realtime'] = "on";
 			$queue['realtime3'] = "1Kb";
-			$queue['bandwidth'] = 5;
+			$queue['bandwidth'] = 10;
 			$queue['bandwidthtype'] = '%';
 		} elseif ($config['shaper']['schedulertype'] == "cbq") {
 			$queue['borrow'] = "on";
@@ -541,7 +541,7 @@ function step5_stepsubmitphpaction() {
 		if($_POST['tigerwoods2004ps2'] != "") {
 		    /* tiger woods 2004 ps2 */
 		    $gamesplist[] = array('Outbound2Player', 'udp', '3658', '3658', 'both');
-		    $gamesplist[] = array('Outbound2Player2', 'udp', '6000', '6000', 'both');	    
+		    $gamesplist[] = array('Outbound2Player2', 'udp', '6000', '6000', 'both');
 		    $gamesplist[] = array('Outbound2EA', 'tcp', '10300', '10301', 'both');
 		}
 
@@ -651,7 +651,7 @@ function step5_stepsubmitphpaction() {
 		}
 
 		/* XXX: add some more games before this line!! */
-    
+
 		/* Set up/down games as higher weight */
 		/* loop through p2plist[] */
 		foreach ($gamesplist as $Gameclient) {
@@ -677,12 +677,12 @@ function step5_stepsubmitphpaction() {
 				    $rule['destination']['network'] = $downint;
 				    $rule['descr'] = "m_Game {$Gameclient[0]} inbound";
 			    }
-    
+
 			    $rule['destination']['port'] = $Gameclient[2]."-".$Gameclient[3];
 
 			    if($Gameclient[1] != '')
 				    $rule['protocol'] = $Gameclient[1];
-    
+
 			    $config['shaper']['rule'][] = $rule;
 		    }
 		}
@@ -706,7 +706,7 @@ function step6_stepsubmitphpaction() {
 		if ($config['shaper']['schedulertype'] == "hfsc") {
 			$queue['realtime'] = "on";
 			$queue['realtime3'] = "1Kb";
-			$queue['bandwidth'] = 5;
+			$queue['bandwidth'] = 25;
 			$queue['bandwidthtype'] = '%';
 		} elseif ($config['shaper']['schedulertype'] == "cbq") {
 			$queue['borrow'] = "on";
@@ -714,7 +714,7 @@ function step6_stepsubmitphpaction() {
                         $queue['bandwidthtype'] = 'Kb';
                 }
 		$config['shaper']['queue'][] = $queue;
-	    
+
 		/* create qOthersDown queue */
 		$queue = array();
 		$queue['name'] = "qOthersDownH";
@@ -726,7 +726,7 @@ function step6_stepsubmitphpaction() {
 		if ($config['shaper']['schedulertype'] == "hfsc") {
 			$queue['realtime'] = "on";
 			$queue['realtime3'] = "1Kb";
-			$queue['bandwidth'] = 5;
+			$queue['bandwidth'] = 25;
 			$queue['bandwidthtype'] = '%';
 		} elseif ($config['shaper']['schedulertype'] == "cbq") {
 			$queue['borrow'] = "on";
@@ -734,7 +734,7 @@ function step6_stepsubmitphpaction() {
                         $queue['bandwidthtype'] = 'Kb';
                 }
 		$config['shaper']['queue'][] = $queue;
-                
+
 
 		/* create qOthersUp queue */
 		$queue = array();
@@ -756,7 +756,7 @@ function step6_stepsubmitphpaction() {
                         $queue['bandwidthtype'] = 'Kb';
                 }
 		$config['shaper']['queue'][] = $queue;
-	    
+
 		/* create qOthersDown queue */
 		$queue = array();
 		$queue['name'] = "qOthersDownL";
@@ -777,16 +777,16 @@ function step6_stepsubmitphpaction() {
                         $queue['bandwidthtype'] = 'Kb';
                 }
 		$config['shaper']['queue'][] = $queue;
-		
+
 		$othersplist = array();
-		
+
 		/* Unlike other areas we are posting the queue H or L or BLANK */
-		
+
 		if($_POST['msrdp'] != "") {
 		    /* MSRDP */
 		    $othersplist[] = array('MSRDP', 'tcp', '3389', '3389', 'both', $_POST['msrdp']);
 		}
-		
+
 		if($_POST['pptp'] != "") {
 		    /* PPTP */
 		    $othersplist[] = array('PPTP', 'tcp', '1723', '1723', 'both', $_POST['pptp']);
@@ -799,12 +799,12 @@ function step6_stepsubmitphpaction() {
 		    $othersplist[] = array('IPSEC', 'ah', '', '', 'both', $_POST['ipsec']);
 		    $othersplist[] = array('IPSEC', 'esp', '', '', 'both', $_POST['ipsec']);
 		}
-		
+
 		if($_POST['streamingmp3'] != "") {
 		    /* streaming mp3 media aka shoutcast */
 		    $othersplist[] = array('STREAMINGMP3', 'tcp', '8000', '8100', 'both', $_POST['streamingmp3']);
 		}
-		
+
 		if($_POST['irc'] != "") {
 		    /* internet relay chat */
 		    $othersplist[] = array('IRC', 'tcp', '6667', '6670', 'both', $_POST['irc']);
@@ -822,13 +822,13 @@ function step6_stepsubmitphpaction() {
 		    $othersplist[] = array('DNS1', 'tcp', '53', '53', 'both', $_POST['dns']);
 		    $othersplist[] = array('DNS2', 'udp', '53', '53', 'both', $_POST['dns']);
 		}
-		
+
 		if($_POST['http'] != "") {
 		    /* HTTP aka Web Traffic */
 		    $othersplist[] = array('HTTP', 'tcp', '80', '80', 'both', $_POST['http']);
 		    $othersplist[] = array('HTTPS', 'tcp', '443', '443', 'both', $_POST['http']);
 		}
-		
+
 		if($_POST['smtp'] != "") {
 		    /* Secure shell traffic */
 		    $othersplist[] = array('SMTP', 'tcp', '25', '25', 'both', $_POST['smtp']);
@@ -838,11 +838,11 @@ function step6_stepsubmitphpaction() {
 		    /* Post Office Protocol - POP3 */
 		    $othersplist[] = array('POP3', 'tcp', '110', '110', 'both', $_POST['pop3']);
 		}
-		
+
 		if($_POST['icmp'] != "") {
 		    /* ICMP */
 		    $othersplist[] = array('ICMP', 'icmp', '', '', 'both', $_POST['icmp']);
-		}		
+		}
 
 		if($_POST['imap'] != "") {
 		    /* IMAP */
@@ -868,7 +868,7 @@ function step6_stepsubmitphpaction() {
 		if($_POST['vnc'] != "") {
 		    /* virtual network control */
 		    $othersplist[] = array('VNC', 'tcp', '5900', '5930', 'both', $_POST['vnc']);
-		}		
+		}
 
 		if($_POST['appleremotedesktop'] != "") {
 		    /* apple remote desktop */
@@ -876,19 +876,19 @@ function step6_stepsubmitphpaction() {
 		    $othersplist[] = array('AppleRemoteDesktop2', 'tcp', '5900', '5900', 'both', $_POST['appleremotedesktop']);
 		    $othersplist[] = array('AppleRemoteDesktop3', 'udp', '3283', '3283', 'both', $_POST['appleremotedesktop']);
 		    $othersplist[] = array('AppleRemoteDesktop4', 'udp', '5900', '5900', 'both', $_POST['appleremotedesktop']);
-		}		
+		}
 
 		if($_POST['icq'] != "") {
 		    /* icq */
 		    $othersplist[] = array('ICQ1', 'tcp', '5190', '5190', 'both', $_POST['icq']);
 		    $othersplist[] = array('ICQ2', 'udp', '5190', '5190', 'both', $_POST['icq']);
-		}		
-		
+		}
+
 		if($_POST['lotusnotes'] != "") {
 		    /* lotus notes */
 		    $othersplist[] = array('LotusNotes1', 'tcp', '1352', '1352', 'both', $_POST['lotusnotes']);
 		    $othersplist[] = array('LotusNotes2', 'udp', '1352', '1352', 'both', $_POST['lotusnotes']);
-		}		
+		}
 		if($_POST['aolinstantmessenger'] != "") {
 		    /* AIM */
 		    $othersplist[] = array('AIM', 'tcp', '5190', '5190', 'both', $_POST['aolinstantmessenger']);
@@ -900,39 +900,39 @@ function step6_stepsubmitphpaction() {
 		    $othersplist[] = array('MSN2', 'tcp', '6891', '6900', 'both', $_POST['msnmessenger']);
 		    $othersplist[] = array('MSN3', 'tcp', '6901', '6901', 'both', $_POST['msnmessenger']);
 		    $othersplist[] = array('MSN4', 'udp', '6901', '6901', 'both', $_POST['msnmessenger']);
-		}		
+		}
 
 		if($_POST['mysqlserver'] != "") {
 		    /* mysql server */
 		    $othersplist[] = array('MySQL1', 'tcp', '3306', '3306', 'both', $_POST['mysqlserver']);
 		}
-		
+
 		if($_POST['nntp'] != "") {
 		    /* nntp */
 		    $othersplist[] = array('NNTP1', 'tcp', '119', '119', 'both', $_POST['mysqlserver']);
 			$othersplist[] = array('NNTP2', 'udp', '119', '119', 'both', $_POST['mysqlserver']);
-		}			
+		}
 
 		if($_POST['pcanywhere'] != "") {
 		    /* symantec pc anywhere */
 		    $othersplist[] = array('pcany1', 'tcp', '5631', '5631', 'both', $_POST['pcanywhere']);
 		    $othersplist[] = array('pcany2', 'udp', '5632', '5632', 'both', $_POST['pcanywhere']);
-		    }		
+		    }
 
 		if($_POST['teamspeak'] != "") {
 		    /* teamspeak  */
 		    $othersplist[] = array('teamspeak1', 'tcp', '14534', '14534', 'both', $_POST['teamspeak']);
 		    $othersplist[] = array('teamspeak2', 'tcp', '51234', '51234', 'both', $_POST['teamspeak']);
 		    $othersplist[] = array('teamspeak3', 'udp', '8767', '8768', 'both', $_POST['teamspeak']);
-		}		
+		}
 
 		if($_POST['cvsup'] != "") {
 		    /* cvsup */
 		    $othersplist[] = array('cvs', 'tcp', '5999', '5999', 'both', $_POST['cvsup']);
-		}	
+		}
 
 		/* XXX: add some more protocols here! */
-    
+
 		/* Set up/down protocols as higher weight */
 		/* loop through othersplist[] */
 		foreach ($othersplist as $otherclient) {
@@ -952,7 +952,7 @@ function step6_stepsubmitphpaction() {
 				    		$rule['outqueue'] = "q${upint}def"; /* posted value H or L */
 						break;
 				    }
-						
+
 				    $rule['in-interface'] = $downint;
 				    $rule['out-interface'] = $upint;
 				    $rule['source']['network'] = $downint;
@@ -977,22 +977,22 @@ function step6_stepsubmitphpaction() {
 				    $rule['destination']['network'] = $downint;
 				    $rule['descr'] = "m_Other {$otherclient[0]} inbound";
 			    }
-				
+
 				if($otherclient[2] or $otherclient[3]) {
 				    $rule['destination']['port'] = $otherclient[2]."-".$otherclient[3];
 				}
 				if($otherclient[1] != '')
 				    $rule['protocol'] = $otherclient[1];
-    
+
 			    $config['shaper']['rule'][] = $rule;
 		    }
 		}
-    }	
+    }
 }
 function step7_stepbeforeformdisplay() {
 		global $g, $config;
 		if($config['shaper']['itemsshaped'] == "0") {
-		    /*    no shaper items have been selected 
+		    /*    no shaper items have been selected
 		     *    wipe previous
 		     */
 		    unset($config['shaper']['queue']);
@@ -1003,19 +1003,19 @@ function step7_stepbeforeformdisplay() {
 		    write_config("No shaper items picked, unsetting shaper configuration");
 		    header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=7&amp;message={$message}");
 		    exit;
-		}	
+		}
 }
 
 function step7_stepsubmitphpaction() {
 		global $g, $config, $d_shaperconfdirty_path;
 		/* Sort rules by queue priority */
-		 sort_rule_by_queue_priority(); 
+		 sort_rule_by_queue_priority();
 
 		$downq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['inside_int']);
 		$upq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['outside_int']);
 		$downint = strtolower($config['ezshaper']['step2']['inside_int']);
 		$upint = strtolower($config['ezshaper']['step2']['outside_int']);
-	
+
 		/* install default p2p catch all rule if user has enabled option (MUST BE LAST!) */
 		if($config['ezshaper']['step4']['p2pcatchall'] == "on") {
 			$othersplist = array();
@@ -1050,15 +1050,15 @@ function step7_stepsubmitphpaction() {
 				    $rule['destination']['network'] = $downint;
 				    $rule['descr'] = "p2pCatchAll inbound";
 			    }
-				
+
 				if($otherclient[2] or $otherclient[3]) {
 				    $rule['destination']['port'] = $otherclient[2]."-".$otherclient[3];
 					if($otherclient[1] != '')
 				    $rule['protocol'] = $otherclient[1];
 				}
-				if($rule['inqueue'] != "" and $rule['in-interface'] != "" and $rule['out-interface'] != "") 
+				if($rule['inqueue'] != "" and $rule['in-interface'] != "" and $rule['out-interface'] != "")
 					$config['shaper']['rule'][] = $rule;
-					
+
 		    }
 		}
 

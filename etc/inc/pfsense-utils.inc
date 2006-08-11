@@ -561,11 +561,16 @@ function convert_ip_to_network_format($ip, $subnet) {
  * find_interface_ip($interface): return the interface ip (first found)
  */
 function find_interface_ip($interface) {
+	global $interface_ip_arr_cache;
 	$interface = str_replace("\n", "", $interface);
 	if(does_interface_exist($interface) == false) return;
-	$ip = exec_command("/sbin/ifconfig {$interface} | /usr/bin/grep -w \"inet\" | /usr/bin/cut -d\" \" -f 2");
-	$ip = str_replace("\n","",$ip);
-	return $ip;
+	/* Setup IP cache */
+	if (!isset($interface_ip_arr_cache[$interface])) {
+		$interface_ip_arr_cache[$interface] = exec_command("/sbin/ifconfig {$interface} | /usr/bin/grep -w \"inet\" | /usr/bin/cut -d\" \" -f 2");
+		$interface_ip_arr_cache[$interface] = str_replace("\n", "", $interface_ip_arr_cache[$interface]);
+	}
+
+	return $interface_ip_arr_cache[$interface];
 }
 
 function guess_interface_from_ip($ipaddress) {

@@ -32,15 +32,15 @@
 */
 
 /* include all configuration functions */
-require_once("captiveportal.inc");
-require_once("filter.inc");
-require_once("interfaces.inc");
-require_once("services.inc");
-require_once("system.inc");
-require_once("openvpn.inc");
-require_once("pfsense-utils.inc");
-require_once("util.inc");
-require_once("vpn.inc");
-require_once("vslb.inc");
+require("captiveportal.inc");
+require("filter.inc");
+require("interfaces.inc");
+require("services.inc");
+require("system.inc");
+require("openvpn.inc");
+require("pfsense-utils.inc");
+require("util.inc");
+require("vpn.inc");
+require("vslb.inc");
 
 ?>

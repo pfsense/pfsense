@@ -424,7 +424,8 @@ function interfaces_carp_configure() {
 	}
 
 	/* update cache */
-	find_number_of_created_carp_interfaces(); 
+	if ($carp_instances_counter != find_number_of_created_carp_interfaces())
+		find_number_of_created_carp_interfaces(true); 
 }
 
 function interfaces_carp_bring_up_final() {

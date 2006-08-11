@@ -56,9 +56,6 @@ function reset_carp() {
 	mwexec("/sbin/sysctl net.inet.carp.allow=1");
 	interfaces_carp_configure();
 	interfaces_carp_bring_up_final();
-
-	/* update cache */
-	find_number_of_created_carp_interfaces();
 }
 
 /****f* pfsense-utils/get_dns_servers
@@ -404,10 +401,10 @@ function is_interface_wireless($interface) {
  * RESULT
  *   $tmp	- Number of currently created CARP interfaces.
  ******/
-function find_number_of_created_carp_interfaces() {
+function find_number_of_created_carp_interfaces($flush = false) {
 	global $carp_interface_count_cache; 
 
-	if (!isset($carp_interface_count_cache)) {
+	if (!isset($carp_interface_count_cache) or $flush) {
 		$command = "/sbin/ifconfig | /usr/bin/grep \"carp*:\" | /usr/bin/wc -l";
 		$fd = popen($command . " 2>&1 ", "r");
 		if(!$fd) {

@@ -32,7 +32,7 @@
 */
 
 /* include all configuration functions */
-require("captiveportal.inc");
+require_once("captiveportal.inc");
 require_once("filter.inc");
 require_once("interfaces.inc");
 require_once("services.inc");

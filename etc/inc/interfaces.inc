@@ -159,6 +159,8 @@ function interfaces_lan_configure() {
 		mwexec("/sbin/ifconfig bridge{$bridges_total} up");
 		
 		$bridges_total++;
+		/* update cache */
+		find_number_of_created_bridges();
 	}
 	
 	/* media */
@@ -319,7 +321,8 @@ function interfaces_optional_configure_if($opti) {
 			mwexec("/sbin/ifconfig bridge{$bridges_total} up");
 			
 			$bridges_total++;
-			
+			/* update cache */
+			find_number_of_created_bridges();
 		} else {
 			/* if user has selected DHCP type then act accordingly */
 			if($optcfg['ipaddr'] == "dhcp") {
@@ -876,6 +879,8 @@ function interfaces_wan_configure() {
 		mwexec("/sbin/ifconfig bridge{$bridges_total} up");
 		
 		$bridges_total++;
+		/* update cache */
+		find_number_of_created_bridges();
 	}
 
 	if (!$g['booting']) {

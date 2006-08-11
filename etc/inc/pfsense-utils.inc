@@ -705,7 +705,11 @@ function setup_filter_bridge() {
  * find_number_of_created_bridges(): returns the number of currently created bridges
  */
 function find_number_of_created_bridges() {
-	return `/sbin/ifconfig | grep "bridge[0-999]" | wc -l`;
+	global $bridge_interface_count_cache;
+	if(!isset($bridge_interface_count_cache))
+		$bridge_interface_count_cache = exec_command('/sbin/ifconfig | /usr/bin/grep "bridge[0-999]" | /usr/bin/wc -l');
+
+	return $bridge_interface_count_cache;
 }
 
 /*

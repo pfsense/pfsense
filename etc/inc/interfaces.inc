@@ -422,6 +422,9 @@ function interfaces_carp_configure() {
 		unmute_kernel_msgs();
 		echo "done.\n";
 	}
+
+	/* update cache */
+	find_number_of_created_carp_interfaces(); 
 }
 
 function interfaces_carp_bring_up_final() {

@@ -56,6 +56,9 @@ function reset_carp() {
 	mwexec("/sbin/sysctl net.inet.carp.allow=1");
 	interfaces_carp_configure();
 	interfaces_carp_bring_up_final();
+
+	/* update cache */
+	find_number_of_created_carp_interfaces();
 }
 
 /****f* pfsense-utils/get_dns_servers
@@ -402,18 +405,22 @@ function is_interface_wireless($interface) {
  *   $tmp	- Number of currently created CARP interfaces.
  ******/
 function find_number_of_created_carp_interfaces() {
-	$command = "/sbin/ifconfig | /usr/bin/grep \"carp*:\" | /usr/bin/wc -l";
-	$fd = popen($command . " 2>&1 ", "r");
-	if(!$fd) {
-		log_error("Warning, could not execute command {$command}");
-		return 0;
+	global $carp_interface_count_cache; 
+
+	if (!isset($carp_interface_count_cache)) {
+		$command = "/sbin/ifconfig | /usr/bin/grep \"carp*:\" | /usr/bin/wc -l";
+		$fd = popen($command . " 2>&1 ", "r");
+		if(!$fd) {
+			log_error("Warning, could not execute command {$command}");
+			return 0;
+		}
+		while(!feof($fd)) {
+			$tmp .= fread($fd,49);
+		}
+		fclose($fd);
+		$carp_interface_count_cache = intval($tmp);
 	}
-	while(!feof($fd)) {
-		$tmp .= fread($fd,49);
-	}
-	fclose($fd);
-	$tmp = intval($tmp);
-	return $tmp;
+	return $carp_interface_count_cache;
 }
 
 /****f* pfsense-utils/link_int_to_bridge_interface

@@ -173,11 +173,14 @@ function filter_configure_sync() {
 	fwrite($fd, $rules);
         fclose($fd);
 
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "pfctl being called at $mt\n";
+	}
         $rules_loading = mwexec("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
-	if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
-		foreach ($config['shaper']['queue'] as $queue) {
-        		mwexec("/sbin/pfctl -a {$queue['name']} -f {$g['tmp_path']}/{$queue['name']}.rules");
-		}
+	if(isset($config['system']['developerspew'])) {
+		$mt = microtime();
+		echo "pfctl done at $mt\n";
 	}
 
 	/* check for a error while loading the rules file.  if an error has occured
@@ -1005,6 +1008,7 @@ function generate_user_filter_rule_arr($rule, $ngcounter) {
 	$ret = array();
 	$line = generate_user_filter_rule($rule, $ngcounter);
 	$ret['rule'] = $line;
+	$ret['interface'] = $rule['interface'];
 	if($rule['descr'] != "" and $line != "")
 		$ret['descr'] = "label \"USER_RULE: " . str_replace('"', '', $rule['descr']) . "\"";
 	else
@@ -1016,10 +1020,18 @@ function generate_user_filter_rule_arr($rule, $ngcounter) {
 
 function generate_user_filter_rule($rule, $ngcounter) {
 		global $config, $g;
+		global $table_cache;
 
 		if(isset($config['system']['developerspew'])) {
 			$mt = microtime();
 			echo "generate_user_filter_rule() being called $mt\n";
+		}
+
+		/* Setup cache array if not already existing */
+		if (!isset($table_cache)) {
+			if ($g['debug'])
+				echo "Creating table cache\n";
+			$table_cache = array();
 		}
 
 		update_filter_reload_status("Creating filter rules {$rule['descr']} ...");
@@ -1389,7 +1401,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					}
 
 					/* support for tables */
-					$src_table_line = "table $src_table const {$src}\n";
+					$src_table_line = "table $src_table {$src}\n";
 					$src = $src_table;
 				}
 				else
@@ -1495,7 +1507,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
                                         }
 
 					/* support for tables */
-					$dst_table_line = "table $dst_table const {$dst}\n";
+					$dst_table_line = "table $dst_table {$dst}\n";
 					$dst = $dst_table;
                                 }
 				else
@@ -1600,16 +1612,31 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			}
 	}
 
-	if ("$src_table_line" == "$dst_table_line")
-		$line = "$src_table_line" . "$line";
-	else
-		$line = "$src_table_line" . "$dst_table_line" . "$line";
-
+	/* cache entries */
+	if (isset($src_table))
+		if (isset($table_cache[$src_table])) {
+			if ($g['debug'])
+				echo "{$src_table} found in cache\n";
+		} else {
+			if ($g['debug'])
+				echo "{$src_table} NOT found in cache...adding\n";
+			$table_cache[$src_table] = $src_table_line;
+		}
+	if (isset($dst_table))
+		if (isset($table_cache[$dst_table])) {
+			if ($g['debug'])
+				echo "{$dst_table} found in cache\n";
+		} else {
+			if ($g['debug'])
+				echo "{$dst_table} NOT found in cache...adding\n";
+			$table_cache[$dst_table] = $dst_table_line;
+		}
+		
 	return $line;
 }
 
 function filter_rules_generate() {
-	global $config, $g;
+	global $config, $g, $table_cache;
 
 	update_filter_reload_status("Creating default rules");
 
@@ -2144,13 +2171,9 @@ EOD;
 	$ipfrules .= "\n# SSH lockout\n";
 	$ipfrules .= "block in log proto tcp from <sshlockout> to any port 22 label \"sshlockout\"\n\n";
 
-	$ipfrules .= "\n# User-defined rules follow\n";
-
-	if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue']) && isset($config['filter']['rule'])) {
+	if (isset($config['filter']['rule'])) {
 		/* Pre-cache all our rules so we only have to generate them once */
-		/* XXX: billm - twice really, this needs to be made useable for "normal rules too" */
 		$rule_arr = array();
-		$ipfrules .= "# Anchors for rules that might be matched by queues\n";
 		foreach ($config['filter']['rule'] as $rule) {
 			update_filter_reload_status("Pre-caching {$rule['descr']}...");
 			$line = "";
@@ -2186,54 +2209,55 @@ EOD;
 			}
 		}
 
-		/* This is ugly, but we generate one anchor per queue */
-		foreach ($config['shaper']['queue'] as $queue) {
-			update_filter_reload_status("Creating filter anchor for {$queue['name']} ...");
-			/* Add anchor to rules */
-			$ipfrules .= "anchor {$queue['name']} tagged {$queue['name']}\n";
-			/* Create rules for anchors */
-			$fd = fopen("{$g['tmp_path']}/{$queue['name']}.rules", "w");
-			/* aliases don't recurse to anchors */
-			$line = filter_generate_aliases();
-			fwrite($fd, $line);
-			foreach($rule_arr as $rule) {
-				if($rule['ackq'] != "")
-				$line = "{$rule['rule'] } queue ({$queue['name']}, {$rule['ackq']}) {$rule['descr']}\n";
-				else
-				$line = "{$rule['rule'] } queue {$queue['name']} {$rule['descr']}\n";
-				fwrite($fd, $line);
-			}
-			fclose($fd);
+		$ipfrules .= "\n# User-defined aliases follow\n";
+		/* tables for aliases */
+		foreach($table_cache as $table) {
+			$ipfrules .= $table;
 		}
-	}
 
-	if (isset($config['filter']['rule'])) {
-		foreach ($config['filter']['rule'] as $rule) {
-			if($rule['interface'] == "pptp") {
-				if(!$config['pptpd']['mode'] == "server")
-					continue;
+		/* Shaper rules */
+		if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue']) && isset($config['filter']['rule'])) {
+			$ipfrules .= "\n# Anchors for rules that might be matched by queues\n";
+
+			/* This is ugly, but we generate one anchor per queue */
+			foreach ($config['shaper']['queue'] as $queue) {
+				update_filter_reload_status("Creating filter anchor for {$queue['name']} ...");
+				/* Add anchor to rules */
+				$ipfrules .= "anchor {$queue['name']} tagged {$queue['name']}\n";
+				$ipfrules .= "load anchor {$queue['name']} from \"{$g['tmp_path']}/{$queue['name']}.rules\"\n";
+				/* Create rules for anchors */
+				$fd = fopen("{$g['tmp_path']}/{$queue['name']}.rules", "w");
+				/* aliases don't recurse to anchors */
+				$line = filter_generate_aliases();
+				fwrite($fd, $line);
+				foreach($rule_arr as $rule) {
+					if($rule['ackq'] != "")
+					$line = "{$rule['rule'] } queue ({$queue['name']}, {$rule['ackq']}) {$rule['descr']}\n";
+					else
+					$line = "{$rule['rule'] } queue {$queue['name']} {$rule['descr']}\n";
+					fwrite($fd, $line);
+				}
+				fclose($fd);
 			}
-			if($rule['interface'] == "pppoe") {
-				if(!$config['pppoe']['mode'] == "server")
-					continue;
-			}
-			/* Pre-cache all our rules so we only have to generate them once */
-			update_filter_reload_status("Pre-caching information for {$rule['descr']} ...");
+		}
+
+		$ipfrules .= "\n# User-defined rules follow\n";
+		/* Generate user rule lines */
+		foreach($rule_arr as $rule) {
 			$line = "";
 			if (!isset($rule['disabled'])) {
-				$line = generate_user_filter_rule($rule, 0);
-				if($line <> "")
+				$line = $rule['rule'];
+				if($line <> "") {
+					/* Add default queue if we're using the shaper */
 					if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
 						$defq = find_default_queue($rule['interface']);
-						$ackq = get_ack_queue($rule['interface']);
+						$ackq = $rule['ackq'];
 						if (($defq != "") and ($ackq != ""))
 							$line .= " queue ({$defq}, {$ackq}) ";
 					}
-				// label
-				if($rule['descr'] <> "" and $line <> "")
-					$line .= " label \"USER_RULE: {$rule['descr']}\" ";
-				else if($line <> "")
-					$line .= " label \"USER_RULE\" ";
+					/* label */
+					$line .= " {$rule['descr']}";
+				}
 			}
 			$line .= "\n";
 			$ipfrules .= $line;

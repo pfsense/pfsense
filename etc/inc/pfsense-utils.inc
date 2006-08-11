@@ -529,11 +529,11 @@ function is_jumbo_capable($int) {
 /*
  * Return the interface array
  */
-function get_interface_arr() {
+function get_interface_arr($flush = false) {
 	global $interface_arr_cache;
 
 	/* If the cache doesn't exist, build it */
-	if (!isset($interface_arr_cache))
+	if (!isset($interface_arr_cache) or $flush)
 		$interface_arr_cache = exec_command("/sbin/ifconfig -l");
 
 	return $interface_arr_cache;
@@ -564,12 +564,12 @@ function convert_ip_to_network_format($ip, $subnet) {
 /*
  * find_interface_ip($interface): return the interface ip (first found)
  */
-function find_interface_ip($interface) {
+function find_interface_ip($interface, $flush = false) {
 	global $interface_ip_arr_cache;
 	$interface = str_replace("\n", "", $interface);
 	if(does_interface_exist($interface) == false) return;
 	/* Setup IP cache */
-	if (!isset($interface_ip_arr_cache[$interface])) {
+	if (!isset($interface_ip_arr_cache[$interface]) or $flush) {
 		$interface_ip_arr_cache[$interface] = exec_command("/sbin/ifconfig {$interface} | /usr/bin/grep -w \"inet\" | /usr/bin/cut -d\" \" -f 2");
 		$interface_ip_arr_cache[$interface] = str_replace("\n", "", $interface_ip_arr_cache[$interface]);
 	}
@@ -708,9 +708,9 @@ function setup_filter_bridge() {
 /*
  * find_number_of_created_bridges(): returns the number of currently created bridges
  */
-function find_number_of_created_bridges() {
+function find_number_of_created_bridges($flush = false) {
 	global $bridge_interface_count_cache;
-	if(!isset($bridge_interface_count_cache))
+	if(!isset($bridge_interface_count_cache) or $flush)
 		$bridge_interface_count_cache = exec_command('/sbin/ifconfig | /usr/bin/grep "bridge[0-999]" | /usr/bin/wc -l');
 
 	return $bridge_interface_count_cache;

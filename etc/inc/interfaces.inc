@@ -77,6 +77,9 @@ function interfaces_vlan_configure() {
 
 			mwexec($cmd);
 
+			/* invalidate interface cache */
+			get_interface_arr(true);
+
 			/* make sure the parent interface is up */
 			mwexec("/sbin/ifconfig " . escapeshellarg($vlan['if']) . " up");
 
@@ -160,7 +163,8 @@ function interfaces_lan_configure() {
 		
 		$bridges_total++;
 		/* update cache */
-		find_number_of_created_bridges();
+		if ($bridges_total != find_number_of_created_bridges())
+			find_number_of_created_bridges(true);
 	}
 	
 	/* media */
@@ -289,6 +293,9 @@ function interfaces_optional_configure_if($opti) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " delete up");
                         /* use open/netBSD style bridge */
 			mwexec("/sbin/ifconfig bridge{$bridges_total} create");
+
+			/* invalidate interface cache */
+			get_interface_arr(true);
 			
 			/* force all bridged interfaces to use same mtu */
 			$mtu = get_interface_mtu($config['interfaces'][$optcfg['bridge']]['if']);
@@ -322,7 +329,8 @@ function interfaces_optional_configure_if($opti) {
 			
 			$bridges_total++;
 			/* update cache */
-			find_number_of_created_bridges();
+			if ($bridges_total != find_number_of_created_bridges())
+				find_number_of_created_bridges(true);
 		} else {
 			/* if user has selected DHCP type then act accordingly */
 			if($optcfg['ipaddr'] == "dhcp") {
@@ -403,6 +411,10 @@ function interfaces_carp_configure() {
 			$vip_password = str_replace(" ", "", $vip_password);			
 			/* create the carp interface and setup */
 			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " create");
+
+			/* invalidate interface cache */
+			get_interface_arr(true);
+
 			$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);
 			if($vip['password'] != "") 
 				$password = " pass \"" . $vip_password . "\"";
@@ -851,6 +863,9 @@ function interfaces_wan_configure() {
 	if ($wancfg['bridge']) {
 		/* use open/netBSD style bridge */
 		mwexec("/sbin/ifconfig bridge{$bridges_total} create");
+
+		/* invalidate interface cache */
+		get_interface_arr(true);
 		
 		/* force all bridged interfaces to use same mtu */
 		$mtu = get_interface_mtu($config['interfaces'][$wancfg['bridge']]['if']);
@@ -884,7 +899,8 @@ function interfaces_wan_configure() {
 		
 		$bridges_total++;
 		/* update cache */
-		find_number_of_created_bridges();
+		if ($bridges_total != find_number_of_created_bridges())
+			find_number_of_created_bridges(true);
 	}
 
 	if (!$g['booting']) {

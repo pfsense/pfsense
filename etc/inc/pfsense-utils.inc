@@ -523,10 +523,25 @@ function is_jumbo_capable($int) {
 }
 
 /*
- * does_interface_exist($interface): return true or false if a interface is detected.
+ * Return the interface array
+ */
+function get_interface_arr() {
+	global $interface_arr_cache;
+
+	/* If the cache doesn't exist, build it */
+	if (!isset($interface_arr_cache))
+		$interface_arr_cache = exec_command("/sbin/ifconfig -l");
+
+	return $interface_arr_cache;
+}
+
+/*
+ * does_interface_exist($interface): return true or false if a interface is
+ * detected.
  */
 function does_interface_exist($interface) {
-	$ints = exec_command("/sbin/ifconfig -l");
+        $ints = get_interface_arr();
+
 	if(stristr($ints, $interface) !== false)
 		return true;
 	else

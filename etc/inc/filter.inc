@@ -740,7 +740,7 @@ function filter_nat_rules_generate() {
 
 			/* if item is an alias, expand */
 			if(alias_expand($rule['local-port']))
-				$localport = " port " . alias_expand_value($rule['local-port']);
+				$localport = "";
 			else
 				$localport = " port {$rule['local-port']}";
 
@@ -1631,7 +1631,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				echo "{$dst_table} NOT found in cache...adding\n";
 			$table_cache[$dst_table] = $dst_table_line;
 		}
-		
+
 	return $line;
 }
 

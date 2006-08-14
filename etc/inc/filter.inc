@@ -740,7 +740,7 @@ function filter_nat_rules_generate() {
 
 			/* if item is an alias, expand */
 			if(alias_expand($rule['local-port']))
-				$localport = "";
+				$localport = " port " . alias_expand_value($rule['local-port']);
 			else
 				$localport = " port {$rule['local-port']}";
 

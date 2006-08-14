@@ -268,7 +268,7 @@ function generate_config_cache($config) {
 }
 
 function discover_last_backup() {
-        $backups = split("\n", `cd /cf/conf/backup && ls -lat *.xml | awk '{print \$9}' | grep -v "\\.\\."`);
+        $backups = split("\n", `cd /cf/conf/backup && ls -ltr *.xml | awk '{print \$9}' | grep -v "\\.\\."`);
 		$last_backup = "";
         foreach($backups as $backup)
                 if($backup)

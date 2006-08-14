@@ -271,8 +271,7 @@ function discover_last_backup() {
         $backups = split("\n", `cd /cf/conf/backup && ls -ltr *.xml | awk '{print \$9}' | grep -v "\\.\\."`);
 		$last_backup = "";
         foreach($backups as $backup)
-                if($backup)
-                        $last_backup = $backup;
+	        $last_backup = $backup;
         return $last_backup;
 }
 

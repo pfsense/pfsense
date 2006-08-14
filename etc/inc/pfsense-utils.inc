@@ -50,8 +50,7 @@ function reset_carp() {
 	mwexec("/sbin/sysctl net.inet.carp.allow=0");
 	for($x=0; $x<$carp_counter; $x++) {
 		mwexec("/sbin/ifconfig carp{$x} down");
-		/* do not destroy, freebsd bug lurks */
-		//mwexec("/sbin/ifconfig carp{$x} destroy");
+		mwexec("/sbin/ifconfig carp{$x} destroy");
 	}
 	find_number_of_created_carp_interfaces(true);
 	sleep(1);

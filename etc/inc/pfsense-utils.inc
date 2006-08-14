@@ -1957,7 +1957,7 @@ function enable_rrd_graphing()
 				/* we now have something to write "on", restore the databases if we have them */
 				if(file_exists("{$g['cf_conf_path']}/rrd.tgz")) {
 					exec("cd /;/usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz", $rrdrestore, $rrdreturn);
-					if($rrdrestore != 0) {
+					if((int)$rrdrestore <> 0) {
 						log_error("RRD restore failed exited with $rrdreturn, the
 							error is: $rrdrestore[0]\n");
 					}

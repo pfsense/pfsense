@@ -50,8 +50,8 @@ else
 	$id = $_GET['id'];
 
 function return_first_two_octets($ip) {
-	$ip_split = split("\.", $ip);	
-	return $ip_split[0] . "." . $ip_split[1]; 
+	$ip_split = split("\.", $ip);
+	return $ip_split[0] . "." . $ip_split[1];
 }
 
 if (isset($id) && $a_vip[$id]) {
@@ -77,7 +77,7 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-	if (($_POST['subnet'] && !is_ipaddr($_POST['subnet']))) 
+	if (($_POST['subnet'] && !is_ipaddr($_POST['subnet'])))
 		$input_errors[] = "A valid IP address must be specified.";
 
 	if ($_POST['ipaddr'] == $config['interfaces']['wan']['ipaddr'])
@@ -86,7 +86,7 @@ if ($_POST) {
 	if ($_POST['ipaddr'] == $config['interfaces']['lan']['ipaddr'])
 		$input_errors[] = "The LAN IP address may not be used in a virtual entry.";
 
-	 if($_POST['subnet_bits'] == "32" and $_POST['type'] == "carp") 
+	 if($_POST['subnet_bits'] == "32" and $_POST['type'] == "carp")
 	 	$input_errors[] = "The /32 subnet mask is invalid for CARP IP's.";
 
 	/* check for overlaps with other virtual IP */
@@ -118,7 +118,7 @@ if ($_POST) {
 		$found = false;
 		$subnet_ip = return_first_two_octets($_POST['subnet']);
 		$iflist = array("lan", "wan");
-		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
 			$iflist['opt' . $i] = 'opt' . $i;
 		foreach($iflist as $if) {
 			$ww_subnet_ip = return_first_two_octets($config['interfaces'][$if]['ipaddr']);
@@ -132,16 +132,16 @@ if ($_POST) {
 			$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
 			$can_post = false;
 		}
-		if($can_post == false) 
+		if($can_post == false)
 			$input_errors[] = "Sorry, we could not locate an interface with a matching subnet for {$cannot_find}.  Please add an ip in this subnet on a real interface.";
 	}
 
 	if (!$input_errors) {
 		$vipent = array();
-		
+
 		$vipent['mode'] = $_POST['mode'];
 		$vipent['interface'] = $_POST['interface'];
-		
+
 		/* ProxyARP specific fields */
 		if ($_POST['mode'] === "proxyarp") {
 			if ($_POST['type'] == "range") {
@@ -149,14 +149,14 @@ if ($_POST) {
 				$vipent['range']['to'] = $_POST['range_to'];
 			}
 		}
-		
-		/* CARP specific fields */	
+
+		/* CARP specific fields */
 		if ($_POST['mode'] === "carp") {
 			$vipent['vhid'] = $_POST['vhid'];
 			$vipent['advskew'] = $_POST['advskew'];
 			$vipent['password'] = $_POST['password'];
 		}
-		
+
 		/* Common fields */
 		$vipent['descr'] = $_POST['descr'];
 		if (isset($_POST['type']))
@@ -170,7 +170,7 @@ if ($_POST) {
 			} else {
 				$vipent['subnet_bits'] = $_POST['subnet_bits'];
 			}
-			$vipent['subnet'] = $_POST['subnet'];		
+			$vipent['subnet'] = $_POST['subnet'];
 		}
 
 		if (isset($id) && $a_vip[$id]) {
@@ -184,9 +184,6 @@ if ($_POST) {
 			$a_vip[] = $vipent;
 
 		touch($d_vipconfdirty_path);
-
-		/* setup carp interfaces */
-		reset_carp();
 
 		write_config();
 
@@ -248,7 +245,7 @@ function enable_change(enable_over) {
 			note.removeChild(note.firstChild);
 		}
 	}
-		
+
 }
 function typesel_change() {
     switch (document.iform.type.selectedIndex) {
@@ -286,10 +283,10 @@ function typesel_change() {
 					<input name="mode" type="radio" onclick="enable_change(false)" value="carp"
 					<?php if ($pconfig['mode'] == "carp") echo "checked";?>> CARP
 					<input name="mode" type="radio" onclick="enable_change(false)" value="other"
-					<?php if ($pconfig['mode'] == "other") echo "checked";?>> Other 
+					<?php if ($pconfig['mode'] == "other") echo "checked";?>> Other
 				  </td>
 				</tr>
-				<tr> 
+				<tr>
 				  <td width="22%" valign="top" class="vncellreq">Interface</td>
 				  <td width="78%" class="vtable">
 					<select name="interface" class="formfld">
@@ -298,7 +295,7 @@ function typesel_change() {
 						$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 					  }
 					  foreach ($interfaces as $iface => $ifacename): ?>
-						<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>> 
+						<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
 						<?=htmlspecialchars($ifacename);?>
 						</option>
 					  <?php endforeach; ?>
@@ -352,7 +349,7 @@ function typesel_change() {
 				  <td class="vtable"><input type='password'  name='password' value="<?=htmlspecialchars($pconfig['password']);?>">
 					<br>Enter the VHID group password.
 				  </td>
-				</tr>	  
+				</tr>
 				<tr valign="top">
 				  <td width="22%" class="vncellreq">VHID Group</td>
 				  <td class="vtable"><select id='vhid' name='vhid'>
@@ -364,7 +361,7 @@ function typesel_change() {
                       </select>
 					<br>Enter the VHID group that the machines will share
 				  </td>
-				</tr>	  
+				</tr>
 				<tr valign="top">
 				  <td width="22%" class="vncellreq">Advertising Frequency</td>
 				  <td class="vtable"><select id='advskew' name='advskew'>
@@ -404,7 +401,7 @@ function typesel_change() {
 					  </p>
 				  </td>
 				</tr>
-                
+
               </table>
 </form>
 <script language="JavaScript">

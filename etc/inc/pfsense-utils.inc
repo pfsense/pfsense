@@ -52,6 +52,7 @@ function reset_carp() {
 		mwexec("/sbin/ifconfig carp{$x} down");
 		mwexec("/sbin/ifconfig carp{$x} destroy");
 	}
+	find_number_of_created_carp_interfaces(true);
 	sleep(1);
 	mwexec("/sbin/sysctl net.inet.carp.allow=1");
 	interfaces_carp_configure();
@@ -402,7 +403,7 @@ function is_interface_wireless($interface) {
  *   $tmp	- Number of currently created CARP interfaces.
  ******/
 function find_number_of_created_carp_interfaces($flush = false) {
-	global $carp_interface_count_cache; 
+	global $carp_interface_count_cache;
 
 	if (!isset($carp_interface_count_cache) or $flush) {
 		$command = "/sbin/ifconfig | /usr/bin/grep \"carp*:\" | /usr/bin/wc -l";

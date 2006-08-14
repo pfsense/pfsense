@@ -946,7 +946,7 @@ function config_install($conffile) {
 	if (!file_exists($conffile))
 		return 1;
 
-	if (!config_validate($conffile))
+	if (!config_validate("{$g['conf_path']}/config.xml"))
 		return 1;
 
 	if($g['booting'] == true)

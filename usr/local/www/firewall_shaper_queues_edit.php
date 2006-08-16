@@ -98,6 +98,10 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
+	$needs_rrd_reload = false;
+	if($rule['descr'] <> $pconfig['descr']) 
+		$needs_rrd_reload = true;
+
 	/* input validation */
 	//$reqdfields = explode(" ", "priority");
 	//$reqdfieldsn = explode(",", "Priority");
@@ -200,6 +204,11 @@ if ($_POST) {
 
 		write_config();
 
+		if($needs_rrd_reload) {
+			system("rm -f /var/db/rrd/wan-queues.rrd");
+			enable_rrd_graphing();
+		}
+		
 		touch($d_shaperconfdirty_path);
 
 		header("Location: firewall_shaper_queues.php");

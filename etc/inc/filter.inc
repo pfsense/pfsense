@@ -457,7 +457,8 @@ function filter_nat_rules_generate_if($if, $src = "any", $srcport = "", $dst = "
 	$if_friendly = convert_real_interface_to_friendly_descr($if);
 
 	/* Put all the pieces together */
-        $natrule = "{$nat} on \${$if_friendly} from {$src} to {$dst} {$target}{$staticnatport_txt}\n";
+	if($if_friendly)
+		$natrule = "{$nat} on \${$if_friendly} from {$src} to {$dst} {$target}{$staticnatport_txt}\n";
 
 	return $natrule;
 }

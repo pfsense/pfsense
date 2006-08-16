@@ -1071,6 +1071,10 @@ function step7_stepsubmitphpaction() {
 		/* Create new rules */
 		filter_configure();
 
+		/* reset rrd queues */
+		system("rm -f /var/db/rrd/wan-queues.rrd");
+		enable_rrd_graphing();
+			
 		/* And we're no longer dirty! */
 		unlink_if_exists($d_shaperconfdirty_path);
 

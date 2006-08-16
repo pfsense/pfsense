@@ -99,6 +99,30 @@ if ($_GET['act'] == "del") {
 				}				
 			}		
 		}
+		if($is_alias_referenced == false) {
+			foreach($config['nat']['rule'] as $rule) {
+				if($rule['target'] == $alias_name) {
+					$is_alias_referenced = true;
+					$referenced_by = $rule['descr'];
+					break;
+				}
+				if($rule['external-address'] == $alias_name) {
+					$is_alias_referenced = true;
+					$referenced_by = $rule['descr'];
+					break;
+				}
+				if($rule['external-port'] == $alias_name) {
+					$is_alias_referenced = true;
+					$referenced_by = $rule['descr'];
+					break;
+				}
+				if($rule['local-port'] == $alias_name) {
+					$is_alias_referenced = true;
+					$referenced_by = $rule['descr'];
+					break;
+				}				
+			}		
+		}				
 		if($is_alias_referenced == true) {
 			$savemsg = "Cannot delete rule.  Currently in use by {$referenced_by}";
 		} else {

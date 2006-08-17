@@ -227,12 +227,22 @@ function dump_xml_config_sub($arr, $indent) {
 function dump_xml_config($arr, $rootobj) {
 	global $listtags;
 	$listtags = listtags();
+        if (isset($GLOBALS['custom_listtags'])) {
+          foreach($GLOBALS['custom_listtags'] as $tag) {
+            $listtags[] = $tag;
+          }
+        }
 	return dump_xml_config_raw($arr, $rootobj);
 }
 
 function dump_xml_config_pkg($arr, $rootobj) {
 	global $listtags;
 	$listtags = listtags_pkg();
+        if (isset($GLOBALS['custom_listtags_pkg'])) {
+          foreach($GLOBALS['custom_listtags_pkg'] as $tag) {
+            $listtags[] = $tag;
+          }
+        }
 	return dump_xml_config_raw($arr, $rootobj);
 }
 

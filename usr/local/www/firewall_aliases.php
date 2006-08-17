@@ -68,61 +68,67 @@ if ($_GET['act'] == "del") {
 		$is_alias_referenced = false;
 		$referenced_by = false;
 		$alias_name = $a_aliases[$_GET['id']]['name'];
-		foreach($config['nat']['rule'] as $rule) {
-			if($rule['localip'] == $alias_name) {
-				$is_alias_referenced = true;
-				$referenced_by = $rule['descr'];
-				break;
+		if(is_array($config['nat']['rule'])) {
+			foreach($config['nat']['rule'] as $rule) {
+				if($rule['localip'] == $alias_name) {
+					$is_alias_referenced = true;
+					$referenced_by = $rule['descr'];
+					break;
+				}
 			}
 		}
 		if($is_alias_referenced == false) {
-			foreach($config['filter']['rule'] as $rule) {
-				if($rule['source']['address'] == $alias_name) {
-					$is_alias_referenced = true;
-					$referenced_by = $rule['descr'];
-					break;
+			if(is_array($config['filter']['rule'])) {
+				foreach($config['filter']['rule'] as $rule) {
+					if($rule['source']['address'] == $alias_name) {
+						$is_alias_referenced = true;
+						$referenced_by = $rule['descr'];
+						break;
+					}
+					if($rule['source']['address'] == $alias_name) {
+						$is_alias_referenced = true;
+						$referenced_by = $rule['descr'];
+						break;
+					}
+					if($rule['source']['port'] == $alias_name) {
+						$is_alias_referenced = true;
+						$referenced_by = $rule['descr'];
+						break;
+					}
+					if($rule['destination']['port'] == $alias_name) {
+						$is_alias_referenced = true;
+						$referenced_by = $rule['descr'];
+						break;
+					}
 				}
-				if($rule['source']['address'] == $alias_name) {
-					$is_alias_referenced = true;
-					$referenced_by = $rule['descr'];
-					break;
-				}
-				if($rule['source']['port'] == $alias_name) {
-					$is_alias_referenced = true;
-					$referenced_by = $rule['descr'];
-					break;
-				}
-				if($rule['destination']['port'] == $alias_name) {
-					$is_alias_referenced = true;
-					$referenced_by = $rule['descr'];
-					break;
-				}				
-			}		
+			}
 		}
 		if($is_alias_referenced == false) {
-			foreach($config['nat']['rule'] as $rule) {
-				if($rule['target'] == $alias_name) {
-					$is_alias_referenced = true;
-					$referenced_by = $rule['descr'];
-					break;
+			if(is_array($config['nat']['rule'])) {
+				foreach($config['nat']['rule'] as $rule) {
+					if($rule['target'] == $alias_name) {
+						$is_alias_referenced = true;
+						$referenced_by = $rule['descr'];
+						break;
+					}
+					if($rule['external-address'] == $alias_name) {
+						$is_alias_referenced = true;
+						$referenced_by = $rule['descr'];
+						break;
+					}
+					if($rule['external-port'] == $alias_name) {
+						$is_alias_referenced = true;
+						$referenced_by = $rule['descr'];
+						break;
+					}
+					if($rule['local-port'] == $alias_name) {
+						$is_alias_referenced = true;
+						$referenced_by = $rule['descr'];
+						break;
+					}
 				}
-				if($rule['external-address'] == $alias_name) {
-					$is_alias_referenced = true;
-					$referenced_by = $rule['descr'];
-					break;
-				}
-				if($rule['external-port'] == $alias_name) {
-					$is_alias_referenced = true;
-					$referenced_by = $rule['descr'];
-					break;
-				}
-				if($rule['local-port'] == $alias_name) {
-					$is_alias_referenced = true;
-					$referenced_by = $rule['descr'];
-					break;
-				}				
-			}		
-		}				
+			}
+		}
 		if($is_alias_referenced == true) {
 			$savemsg = "Cannot delete rule.  Currently in use by {$referenced_by}";
 		} else {
@@ -177,7 +183,7 @@ include("head.inc");
     <?=htmlspecialchars($alias['descr']);?>&nbsp;
   </td>
   <td valign="middle" nowrap class="list">
-    <table border="0" cellspacing="0" cellpadding="1"> 
+    <table border="0" cellspacing="0" cellpadding="1">
       <tr>
         <td valign="middle"><a href="firewall_aliases_edit.php?id=<?=$i;?>"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" title="edit alias"></a></td>
         <td><a href="firewall_aliases.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this alias? All elements that still use it will become invalid (e.g. filter rules)!')"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" title="delete alias"></a></td>

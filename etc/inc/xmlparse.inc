@@ -123,12 +123,22 @@ function cData($parser, $data) {
 function parse_xml_config($cffile, $rootobj, $isstring = "false") {
 	global $listtags;
 	$listtags = listtags();
+        if (isset($GLOBALS['custom_listtags'])) {
+          foreach($GLOBALS['custom_listtags'] as $tag) {
+            $listtags[] = $tag;
+          }
+        }
 	return parse_xml_config_raw($cffile, $rootobj, $isstring);
 }
 
 function parse_xml_config_pkg($cffile, $rootobj, $isstring = "false") {
 	global $listtags;
 	$listtags = listtags_pkg();
+        if (isset($GLOBALS['custom_listtags_pkg'])) {
+          foreach($GLOBALS['custom_listtags_pkg'] as $tag) {
+            $listtags[] = $tag;
+          }
+        }
 	return parse_xml_config_raw($cffile, $rootobj, $isstring);
 }
 

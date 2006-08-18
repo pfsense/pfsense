@@ -33,12 +33,19 @@
  *
  */
 
-/* compatibility goo with HEAD */
+/* BEGIN compatibility goo with HEAD */
 if(!function_exists("gettext")) {
 	function gettext($text) {
 		return $text;
 	}
 }
+
+if(!function_exists("pfSenseHeader")) {
+	function pfSenseHeader($location) {
+		header("Location: $location");
+	}
+}
+/* END compatibility goo with HEAD */
 
 function get_tmp_file() {
 	return "/tmp/tmp-" . time();

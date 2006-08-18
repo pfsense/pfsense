@@ -33,6 +33,13 @@
  *
  */
 
+/* compatibility goo with HEAD */
+if(!function_exists("gettext")) {
+	function gettext($text) {
+		return $text;
+	}
+}
+
 function get_tmp_file() {
 	return "/tmp/tmp-" . time();
 }

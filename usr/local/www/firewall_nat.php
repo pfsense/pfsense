@@ -71,22 +71,22 @@ if ($_POST) {
 }
 
 if (isset($_POST['del_x'])) {
-        /* delete selected rules */
-        if (is_array($_POST['rule']) && count($_POST['rule'])) {
-                foreach ($_POST['rule'] as $rulei) {
+    /* delete selected rules */
+    if (is_array($_POST['rule']) && count($_POST['rule'])) {
+	    foreach ($_POST['rule'] as $rulei) {
 			$target = $rule['target'];
-			$helpers = exec("/bin/ps auwx | grep pftpx | grep {$target} | grep -v grep | cut -d\" \" -f5");
+			$helpers = exec("/bin/ps awwux | grep pftpx | grep \"{$target}\" | grep -v grep | awk '{ print \$2 }'");
 			if($helpers) {
 				/* kill ftp proxy helper */
 				mwexec("/bin/kill {$helpers}");
 			}
-                        unset($a_nat[$rulei]);
-                }
-                write_config();
-                touch($d_natconfdirty_path);
-                header("Location: firewall_nat.php");
-                exit;
-        }
+	        unset($a_nat[$rulei]);
+	    }
+	    write_config();
+	    touch($d_natconfdirty_path);
+	    header("Location: firewall_nat.php");
+	    exit;
+	}
 
 } else {
         /* yuck - IE won't send value attributes for image buttons, while Mozilla does - so we use .x/.y to find move button clicks instead... */

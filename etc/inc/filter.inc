@@ -899,6 +899,8 @@ function filter_nat_rules_generate() {
 							$loc_pt = $lrange_start;
 							for($x=$extport[0]; $x<$range_end; $x++) {
 
+								$xxx = $x;
+
 								update_filter_reload_status("Creating reflection rule for {$rule['descr']}...");
 
 								$starting_localhost_port++;
@@ -909,24 +911,54 @@ function filter_nat_rules_generate() {
 
 									case "tcp/udp":
 										$protocol = "{ tcp udp }";
-										if(is_alias($loc_pt))
+										$toadd_array = array();
+										if(is_alias($loc_pt)) {
 											$loc_pt_translated = alias_expand_value($loc_pt);
-										else
+											if(stristr($loc_pt_translated, " ")) {
+												/* XXX: we should deal with multiple ports */
+												$loc_pt_translated_split = split(" ", $loc_pt_translated);
+												foreach($loc_pt_translated_split as $lpts)
+													$toadd_array[] = $lpts;
+											} else {
+												$toadd_array[] = $loc_pt_translated;
+											}
+										} else {
 											$loc_pt_translated = $loc_pt;
-										fwrite($inetd_fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$loc_pt_translated}\n");
-								  		if($ifname_real)
-								  			$natrules .= "rdr on \${$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
+											$toadd_array[] = $loc_pt_translated;
+										}
+										foreach($toadd_array as $tda){
+											fwrite($inetd_fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$tda}\n");
+									  		if($ifname_real)
+									  			$natrules .= "rdr on \${$ifname_real} proto {$protocol} from any to {$extaddr} port { {$tda} } -> 127.0.0.1 port {$starting_localhost_port}\n";
+									  		$xxx++;
+									  		$starting_localhost_port++;
+										}
 										break;
 									case "tcp":
 									case "udp":
-										if(is_alias($loc_pt))
-											$loc_pt_translated = alias_expand_value($loc_pt);
-										else
-											$loc_pt_translated = $loc_pt;
 										$protocol = $rule['protocol'];
-										fwrite($inetd_fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$loc_pt_translated}\n");
-										if($ifname_real)
-								  			$natrules .= "rdr on \${$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
+										$toadd_array = array();
+										if(is_alias($loc_pt)) {
+											$loc_pt_translated = alias_expand_value($loc_pt);
+											if(stristr($loc_pt_translated, " ")) {
+												/* XXX: we should deal with multiple ports */
+												$loc_pt_translated_split = split(" ", $loc_pt_translated);
+												foreach($loc_pt_translated_split as $lpts)
+													$toadd_array[] = $lpts;
+											} else {
+												$toadd_array[] = $loc_pt_translated;
+											}
+										} else {
+											$loc_pt_translated = $loc_pt;
+											$toadd_array[] = $loc_pt_translated;
+										}
+										foreach($toadd_array as $tda){
+											fwrite($inetd_fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$tda}\n");
+											if($ifname_real)
+									  			$natrules .= "rdr on \${$ifname_real} proto {$protocol} from any to {$extaddr} port { {$tda} } -> 127.0.0.1 port {$starting_localhost_port}\n";
+									  		$xxx++;
+									  		$starting_localhost_port++;
+										}
 										break;
 									default:
 										break;

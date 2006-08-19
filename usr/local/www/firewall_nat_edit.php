@@ -54,7 +54,7 @@ if (isset($id) && $a_nat[$id]) {
 	$pconfig['localbeginport'] = $a_nat[$id]['local-port'];
 	$pconfig['descr'] = $a_nat[$id]['descr'];
 	$pconfig['interface'] = $a_nat[$id]['interface'];
-	$pconfig['nosync'] = isset($a_nat[$id]['nosync']);	
+	$pconfig['nosync'] = isset($a_nat[$id]['nosync']);
 	if (!$pconfig['interface'])
 		$pconfig['interface'] = "wan";
 } else {
@@ -88,7 +88,7 @@ if ($_POST) {
 		$reqdfieldsn = explode(",", "Interface,Protocol,External port from,External port to,NAT IP,Local port");
 	} else {
 		$reqdfields = explode(" ", "interface proto localip");
-		$reqdfieldsn = explode(",", "Interface,Protocol,NAT IP");		
+		$reqdfieldsn = explode(",", "Interface,Protocol,NAT IP");
 	}
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
@@ -123,7 +123,7 @@ if ($_POST) {
 			if (($_POST['endport'] - $_POST['beginport'] + $_POST['localbeginport']) > 65535)
 				$input_errors[] = "The target port range must be an integer between 1 and 65535.";
 		}
-		
+
 	}
 
 	/* check for overlaps */
@@ -136,14 +136,14 @@ if ($_POST) {
 			continue;
 		if (($natent['proto'] != $_POST['proto']) && ($natent['proto'] != "tcp/udp") && ($_POST['proto'] != "tcp/udp"))
 			continue;
-		
+
 		list($begp,$endp) = explode("-", $natent['external-port']);
 		if (!$endp)
 			$endp = $begp;
-		
+
 		if (!(   (($_POST['beginport'] < $begp) && ($_POST['endport'] < $begp))
 		      || (($_POST['beginport'] > $endp) && ($_POST['endport'] > $endp)))) {
-			
+
 			$input_errors[] = "The external port range overlaps with an existing entry.";
 			break;
 		}
@@ -209,33 +209,33 @@ if ($_POST) {
 				$filterent['interface'] = $_POST['interface'];
 				$filterent['protocol'] = $_POST['proto'];
 				$filterent['source']['any'] = "";
-				
-				if($_POST['extaddr'] == "wanip") {
+
+				if($_POST['extaddr'] == "") {
 					$filterent['destination']['network'] = "wanip";
 				} else {
 					$filterent['destination']['address'] = $_POST['extaddr'];
 				}
-	
+
 				$dstpfrom = $_POST['localbeginport'];
 				$dstpto = $dstpfrom + $_POST['endport'] - $_POST['beginport'];
-	
+
 				if ($dstpfrom == $dstpto)
 					$filterent['destination']['port'] = $dstpfrom;
 				else
 					$filterent['destination']['port'] = $dstpfrom . "-" . $dstpto;
-	
+
 				$filterent['descr'] = "NAT " . $_POST['descr'];
-	
+
 				$config['filter']['rule'][] = $filterent;
-				
+
 				touch($d_filterconfdirty_path);
-				
+
 				write_config();
 
 				header("Location: firewall_nat.php?savemsg=The%20changes%20have%20been%20saved.%20%20Please%20note%20that%20we%20have%20added%20an%20additional%20rule%20for%20the%20FTP%20helper.");
-				
+
 				exit;
-				
+
 			}
 
 			touch($d_filterconfdirty_path);
@@ -387,7 +387,7 @@ include("fbegin.inc"); ?>
 						<input type="checkbox" value="yes" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
 						HINT: This prevents the rule from automatically syncing to other carp members.
 					</td>
-				</tr>                
+				</tr>
                 <?php if ((!(isset($id) && $a_nat[$id])) || (isset($_GET['dup']))): ?>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

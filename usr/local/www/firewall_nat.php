@@ -52,14 +52,13 @@ if ($_POST) {
 
 		$retval = 0;
 
-		config_lock();
-		$retval |= filter_configure();
-		config_unlock();
-
 		if(stristr($retval, "error") <> true)
 		    $savemsg = get_std_save_message($retval);
 		else
 		    $savemsg = $retval;
+
+		unlink_if_exists("/tmp/config.cache");
+		$retval |= filter_configure_sync();
 
 		if ($retval == 0) {
 			if (file_exists($d_natconfdirty_path))
@@ -67,6 +66,7 @@ if ($_POST) {
 			if (file_exists($d_filterconfdirty_path))
 				unlink($d_filterconfdirty_path);
 		}
+
 	}
 }
 

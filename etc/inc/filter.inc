@@ -910,7 +910,7 @@ function filter_nat_rules_generate() {
 									case "tcp/udp":
 										$protocol = "{ tcp udp }";
 										if(is_alias($loc_pt))
-											$loc_pt_translated = alias_expand($loc_pt);
+											$loc_pt_translated = alias_expand_value($loc_pt);
 										else
 											$loc_pt_translated = $loc_pt;
 										fwrite($inetd_fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$loc_pt_translated}\n");
@@ -920,7 +920,7 @@ function filter_nat_rules_generate() {
 									case "tcp":
 									case "udp":
 										if(is_alias($loc_pt))
-											$loc_pt_translated = alias_expand($loc_pt);
+											$loc_pt_translated = alias_expand_value($loc_pt);
 										else
 											$loc_pt_translated = $loc_pt;
 										$protocol = $rule['protocol'];

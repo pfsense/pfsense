@@ -909,14 +909,22 @@ function filter_nat_rules_generate() {
 
 									case "tcp/udp":
 										$protocol = "{ tcp udp }";
-										fwrite($inetd_fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$loc_pt}\n");
+										if(is_alias($loc_pt))
+											$loc_pt_translated = alias_expand($loc_pt);
+										else
+											$loc_pt_translated = $loc_pt;
+										fwrite($inetd_fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$loc_pt_translated}\n");
 								  		if($ifname_real)
 								  			$natrules .= "rdr on \${$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
 										break;
 									case "tcp":
 									case "udp":
+										if(is_alias($loc_pt))
+											$loc_pt_translated = alias_expand($loc_pt);
+										else
+											$loc_pt_translated = $loc_pt;
 										$protocol = $rule['protocol'];
-										fwrite($inetd_fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$loc_pt}\n");
+										fwrite($inetd_fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$loc_pt_translated}\n");
 										if($ifname_real)
 								  			$natrules .= "rdr on \${$ifname_real} proto {$protocol} from any to {$extaddr} port { {$x} } -> 127.0.0.1 port {$starting_localhost_port}\n";
 										break;

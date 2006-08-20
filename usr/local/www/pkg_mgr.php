@@ -72,11 +72,10 @@ include("fbegin.inc");
 	$version = file_get_contents("/etc/version");
 	$tab_array = array();
 	$tab_array[] = array("Available {$version} Packages", $requested_version <> "" ? false : true, "pkg_mgr.php");
-	$tab_array[] = array("Packages with a different Version", $requested_version == "other" ? true : false, "pkg_mgr.php?ver=other");
 	$tab_array[] = array("Packages with no version info", $requested_version == "none" ? true : false, "pkg_mgr.php?ver=none");
 	$tab_array[] = array("Installed Packages", false, "pkg_mgr_installed.php");
 	display_top_tabs($tab_array);
-?> 
+?>
   </td></tr>
   <tr>
     <td>
@@ -158,7 +157,7 @@ include("fbegin.inc");
 							echo "Nobody. <a href='mailto:coreteam@pfsense.com'>Apply</a> for it!";
 						}
 					?>
-                                </td>									
+                                </td>
                                 <td class="listbg" class="listbg" style="color: #FFFFFF; overflow: hidden;">
                                     <?= $index['descr'] ?>
                                 </td>

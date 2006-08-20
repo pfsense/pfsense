@@ -51,7 +51,6 @@ include("head.inc");
 	$version = file_get_contents("/etc/version");
 	$tab_array = array();
 	$tab_array[] = array("Available {$version} Packages", false, "pkg_mgr.php");
-	$tab_array[] = array("Packages with a different Version", false, "pkg_mgr.php?ver=other");
 	$tab_array[] = array("Packages with no version info", false, "pkg_mgr.php?ver=none");
 	$tab_array[] = array("Installed Packages", true, "pkg_mgr_installed.php");
 	display_top_tabs($tab_array);

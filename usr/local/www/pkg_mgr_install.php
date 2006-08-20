@@ -56,12 +56,11 @@ include("head.inc");
 	$version = file_get_contents("/etc/version");
 	$tab_array = array();
 	$tab_array[] = array("Available {$version} Packages", false, "pkg_mgr.php");
-	$tab_array[] = array("Packages with a different Version", false, "pkg_mgr.php?ver=other");
 	$tab_array[] = array("Packages with no version info", false, "pkg_mgr.php?ver=none");
 	$tab_array[] = array("Installed Packages", false, "pkg_mgr_installed.php");
         $tab_array[] = array("Package Installer", true, "");
 	display_top_tabs($tab_array);
-?>    
+?>
   </td></tr>
   <tr>
     <td class="tabcont">
@@ -143,7 +142,7 @@ switch($_GET['mode']) {
             break;
 	case "reinstallall":
 	    if($config['installedpackages']['package'] <> "")
-			foreach($config['installedpackages']['package'] as $package) 
+			foreach($config['installedpackages']['package'] as $package)
 	                        $todo[] = array('name' => $package['name'], 'version' => $package['version']);
             foreach($todo as $pkgtodo) {
                     $static_output = "";
@@ -160,7 +159,7 @@ switch($_GET['mode']) {
             $status = install_package($_GET['id']);
 	    if($status == -1) {
 		update_status("Installation of {$_GET['id']} FAILED!");
-                $static_output .= "\n\nInstallation halted.";		
+                $static_output .= "\n\nInstallation halted.";
 	    } else {
                 update_status("Installation of {$_GET['id']} completed.");
 		$static_output .= "\n\nInstallation completed.";

@@ -53,10 +53,13 @@ include("head.inc");
 <div id="mainareapkg">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
 <?php
+	$version = file_get_contents("/etc/version");
 	$tab_array = array();
-	$tab_array[0] = array("Available Packages", false, "pkg_mgr.php");
-	$tab_array[1] = array("Installed Packages", false, "pkg_mgr_installed.php");
-        $tab_array[2] = array("Package Installer", true, "");
+	$tab_array[] = array("Available {$version} Packages", false, "pkg_mgr.php");
+	$tab_array[] = array("Packages with a different Version", false, "pkg_mgr.php?ver=other");
+	$tab_array[] = array("Packages with no version info", false, "pkg_mgr.php?ver=none");
+	$tab_array[] = array("Installed Packages", false, "pkg_mgr_installed.php");
+        $tab_array[] = array("Package Installer", true, "");
 	display_top_tabs($tab_array);
 ?>    
   </td></tr>

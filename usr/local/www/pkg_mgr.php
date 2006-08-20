@@ -30,7 +30,7 @@
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
-$pkg_info = get_pkg_info('all', array('name', 'category', 'website', 'version', 'status', 'descr', 'maintainer'));
+$pkg_info = get_pkg_info('all', array('name', 'category', 'website', 'version', 'status', 'descr', 'maintainer', 'required_version'));
 if($pkg_info) {
 	$fout = fopen("{$g['tmp_path']}/pkg_info.cache", "w");
 	fwrite($fout, serialize($pkg_info));
@@ -44,6 +44,12 @@ if($pkg_info) {
 	} else {
 		$savemsg = "Unable to communicate to pfSense.com.  Please check DNS, default gateway, etc.";
 	}
+}
+
+if (! empty($_GET)) {
+  if (isset($_GET['ver'])) {
+    $requested_version = $_GET['ver'];
+  }
 }
 
 $pgtitle = "System: Package Manager";
@@ -63,9 +69,12 @@ include("fbegin.inc");
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
 <?php
+	$version = file_get_contents("/etc/version");
 	$tab_array = array();
-	$tab_array[0] = array("Available Packages", true, "pkg_mgr.php");
-	$tab_array[1] = array("Installed Packages", false, "pkg_mgr_installed.php");
+	$tab_array[] = array("Available {$version} Packages", $requested_version <> "" ? false : true, "pkg_mgr.php");
+	$tab_array[] = array("Packages with a different Version", $requested_version == "other" ? true : false, "pkg_mgr.php?ver=other");
+	$tab_array[] = array("Packages with no version info", $requested_version == "none" ? true : false, "pkg_mgr.php?ver=none");
+	$tab_array[] = array("Installed Packages", false, "pkg_mgr_installed.php");
 	display_top_tabs($tab_array);
 ?> 
   </td></tr>
@@ -102,10 +111,20 @@ include("fbegin.inc");
 		    	foreach($pkg_keys as $key) {
 			    $index = &$pkg_info[$key];
 			    if(in_array($index['name'], $instpkgs)) continue;
+			/* do not display packages with no version info if not explicitely requested */
+			if (empty($index['required_version']) &&
+				$requested_version <> "none") { continue; }
+			/* do not display packages for a different platform info if not explicitely requested */
+			if($index['required_version'] <> $version &&
+				$requested_version <> "other") { continue; }
+			if (isset($index['required_version']) &&
+				$requested_version == "none") { continue; }
+			if($index['required_version'] == $version &&
+				$requested_version == "other") { continue; }
                             ?>
                             <tr valign="top">
                                 <td class="listlr">
-                                    <A target="_new" href="<?= $index['website'] ?>"><?= $index['name'] ?></a>
+                                    <A target="_blank" href="<?= $index['website'] ?>"><?= $index['name'] ?></a>
                                 </td>
                                 <td class="listlr">
                                     <?= $index['category'] ?>
@@ -128,6 +147,8 @@ include("fbegin.inc");
 					<?= $index['status'] ?>
 					<br>
 					<?= $index['version'] ?>
+					<br />
+					platform: <?= $index['required_version'] ?>
                                 </td>
                                 <td class="listlr">
 					<?php
@@ -138,8 +159,7 @@ include("fbegin.inc");
 						}
 					?>
                                 </td>									
-                                <td class="listbg">
-                                    <font color="#ffffff">
+                                <td class="listbg" class="listbg" style="color: #FFFFFF; overflow: hidden;">
                                     <?= $index['descr'] ?>
                                 </td>
                                 <td valign="middle" class="list" nowrap>

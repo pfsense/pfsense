@@ -99,7 +99,7 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	$needs_rrd_reload = false;
-	if($rule['descr'] <> $pconfig['descr']) 
+	if($rule['descr'] <> $pconfig['descr'])
 		$needs_rrd_reload = true;
 
 	/* input validation */
@@ -208,7 +208,7 @@ if ($_POST) {
 			system("rm -f /var/db/rrd/wan-queues.rrd");
 			enable_rrd_graphing();
 		}
-		
+
 		touch($d_shaperconfdirty_path);
 
 		header("Location: firewall_shaper_queues.php");
@@ -325,8 +325,7 @@ function enable_attachtoqueue(enable_over) {
 	    <tr>
 	      <td width="22%" valign="top" class="vncellreq">Priority</td>
 	      <td width="78%" class="vtable"> <input name="priority" type="text" id="priority" size="5" value="<?=htmlspecialchars($pconfig['priority']);?>">
-		<br> <span class="vexpl">The priority of the queue. For class based queueing the priority range is 0 to 7 and for priority based queueing the range is 0 to 15. Priority 0 is the lowest priority. When not specified, a default of 1 is used.
-		</span></td>
+		<br> <span class="vexpl">For hfsc, the range is 0 to 7.	The default is 1.  Hfsc queues with a higher priority are preferred in the case of overload.</span></td>
 	    </tr>
 	    <tr>
 	      <td width="22%" valign="top" class="vncellreq">Name</td>

@@ -122,7 +122,7 @@ if ($_POST) {
 			}
 		}
 		if($_POST['password'] == "")
-			$input_errors[] = "You must specify a CARP password that is shared between the 2 VHID members.";
+			$input_errors[] = "You must specify a CARP password that is shared between the two VHID members.";
 		$can_post = true;
 		$found = false;
 		$subnet_ip = return_first_two_octets($_POST['subnet']);

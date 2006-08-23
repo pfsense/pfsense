@@ -114,10 +114,12 @@ if ($_POST) {
 	 * on one of our interfaces (wan, lan optX)
 	 */
 	if ($_POST['mode'] == "carp") {
-		/* verify against reusage of vhids */
-		foreach($config['virtualip']['vip'] as $vip) {
-			if($vip['vhid'] == $_POST['vhid'])
-				$input_errors[] = "VHID {$_POST['vhid']} is already in use.  Pick a unique number.";
+		if(!$id) {
+			/* verify against reusage of vhids */
+			foreach($config['virtualip']['vip'] as $vip) {
+				if($vip['vhid'] == $_POST['vhid'])
+					$input_errors[] = "VHID {$_POST['vhid']} is already in use.  Pick a unique number.";
+			}
 		}
 		$can_post = true;
 		$found = false;

@@ -64,7 +64,7 @@ function find_number_of_needed_carp_interfaces() {
 	$carp_counter=0;
 	foreach($config['virtualip']['vip'] as $vip) {
 		if($vip['mode'] == "carp")
-			$carp_counter++;	
+			$carp_counter++;
 	}
 	return $carp_counter;
 }
@@ -84,8 +84,10 @@ function reset_carp() {
 	for($x=0; $x<$carp_counter; $x++) {
 		mwexec("/sbin/ifconfig carp{$x} down");
 		mwexec("/sbin/ifconfig carp{$x} delete");
+		log_error("CARP: $needed_carp_interfaces < $carp_counter");
 		if($needed_carp_interfaces < $carp_counter) {
 			$needed_carp_interfaces--;
+			log_error("Destroying carp interface.");
 			mwexec("/sbin/ifconfig carp{$x} destroy");
 		}
 	}

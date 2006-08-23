@@ -1982,11 +1982,12 @@ EOD;
 	if (isset($config['filter']['bypassstaticroutes']) && is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
 		foreach ($config['staticroutes']['route'] as $route) {
 			unset($sa);
-
+			$friendly_int = convert_friendly_interface_to_friendly_descr($route['interface']);
 			if ($route['interface'] == "lan") {
 				$sa = $lansa;
 				$sn = $lansn;
 				$if = $lanif;
+				$friendly_int = "lan";
 			} else if (strstr($route['interface'], "opt")) {
 				$oc = $optcfg[$route['interface']];
 				if ($oc['ip']) {
@@ -1999,10 +2000,10 @@ EOD;
 			if ($sa) {
 				$ipfrules .= <<<EOD
 anchor "staticrouted"
-pass in quick on \${$route['interface']} from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"
-pass in quick on \${$route['interface']} from {$route['network']} to {$sa}/{$sn} label "pass traffic between statically routed subnets"
-pass out quick on \${$route['interface']} from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"
-pass out quick on \${$route['interface']} from {$route['network']} to {$sa}/{$sn} label "pass traffic between statically routed subnets"
+pass in quick on \${$friendly_int} from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"
+pass in quick on \${$friendly_int} from {$route['network']} to {$sa}/{$sn} label "pass traffic between statically routed subnets"
+pass out quick on \${$friendly_int} from {$sa}/{$sn} to {$route['network']} label "pass traffic between statically routed subnets"
+pass out quick on \${$friendly_int} from {$route['network']} to {$sa}/{$sn} label "pass traffic between statically routed subnets"
 
 EOD;
 			}

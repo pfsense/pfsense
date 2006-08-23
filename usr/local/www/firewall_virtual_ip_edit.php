@@ -121,6 +121,8 @@ if ($_POST) {
 					$input_errors[] = "VHID {$_POST['vhid']} is already in use.  Pick a unique number.";
 			}
 		}
+		if($_POST['password'] == "")
+			$input_errors[] = "You must specify a CARP password that is shared between the 2 VHID members.";
 		$can_post = true;
 		$found = false;
 		$subnet_ip = return_first_two_octets($_POST['subnet']);

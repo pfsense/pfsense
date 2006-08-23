@@ -1070,7 +1070,7 @@ EODB;
 
 }
 
-if($olsrd['enabledyngw'] == "on") {
+if($olsrd['enabledsecure'] == "on") {
 	$olsr .= <<<EODC
 
 LoadPlugin "/usr/local/lib/olsrd_secure.so.0.5"

@@ -51,6 +51,24 @@ function get_tmp_file() {
 	return "/tmp/tmp-" . time();
 }
 
+/****f* pfsense-utils/find_number_of_needed_carp_interfaces
+ * NAME
+ *   find_number_of_needed_carp_interfaces
+ * INPUTS
+ *   null
+ * RESULT
+ *   the number of needed carp interfacs
+ ******/
+function find_number_of_needed_carp_interfaces() {
+	global $config, $g;
+	$carp_counter=0;
+	foreach($config['virtualip']['vip'] as $vip) {
+		if($vip['mode'] == "carp")
+			$carp_counter++;	
+	}
+	return $carp_counter;
+}
+
 /****f* pfsense-utils/reset_carp
  * NAME
  *   reset_carp - resets carp after primary interface changes
@@ -61,10 +79,15 @@ function get_tmp_file() {
  ******/
 function reset_carp() {
 	$carp_counter=find_number_of_created_carp_interfaces();
+	$needed_carp_interfaces = find_number_of_needed_carp_interfaces();
 	mwexec("/sbin/sysctl net.inet.carp.allow=0");
 	for($x=0; $x<$carp_counter; $x++) {
 		mwexec("/sbin/ifconfig carp{$x} down");
-		mwexec("/sbin/ifconfig carp{$x} destroy");
+		mwexec("/sbin/ifconfig carp{$x} delete");
+		if($needed_carp_interfaces < $carp_counter) {
+			$needed_carp_interfaces--;
+			mwexec("/sbin/ifconfig carp{$x} destroy");
+		}
 	}
 	find_number_of_created_carp_interfaces(true);
 	sleep(1);

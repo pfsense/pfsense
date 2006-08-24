@@ -1,33 +1,27 @@
 <?php
-/**
- * PEAR, the PHP Extension and Application Repository
- *
- * PEAR class and PEAR_Error class
- *
- * PHP versions 4 and 5
- *
- * LICENSE: This source file is subject to version 3.0 of the PHP license
- * that is available through the world-wide-web at the following URI:
- * http://www.php.net/license/3_0.txt.  If you did not receive a copy of
- * the PHP License and are unable to obtain it through the web, please
- * send a note to license@php.net so we can mail you a copy immediately.
- *
- * @category   pear
- * @package    PEAR
- * @author     Sterling Hughes <sterling@php.net>
- * @author     Stig Bakken <ssb@php.net>
- * @author     Tomas V.V.Cox <cox@idecnet.com>
- * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2006 The PHP Group
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    CVS: $Id$
- * @link       http://pear.php.net/package/PEAR
- * @since      File available since Release 0.1
- */
+// $Id$
 
-/**#@+
- * ERROR constants
- */
+//
+// +--------------------------------------------------------------------+
+// | PEAR, the PHP Extension and Application Repository                 |
+// +--------------------------------------------------------------------+
+// | Copyright (c) 1997-2004 The PHP Group                              |
+// +--------------------------------------------------------------------+
+// | This source file is subject to version 3.0 of the PHP license,     |
+// | that is bundled with this package in the file LICENSE, and is      |
+// | available through the world-wide-web at the following url:         |
+// | http://www.php.net/license/3_0.txt.                                |
+// | If you did not receive a copy of the PHP license and are unable to |
+// | obtain it through the world-wide-web, please send a note to        |
+// | license@php.net so we can mail you a copy immediately.             |
+// +--------------------------------------------------------------------+
+// | Authors: Sterling Hughes <sterling@php.net>                        |
+// |          Stig Bakken <ssb@php.net>                                 |
+// |          Tomas V.V.Cox <cox@idecnet.com>                           |
+// +--------------------------------------------------------------------+
+//
+//
+
 define('PEAR_ERROR_RETURN',     1);
 define('PEAR_ERROR_PRINT',      2);
 define('PEAR_ERROR_TRIGGER',    4);
@@ -38,7 +32,6 @@ define('PEAR_ERROR_CALLBACK',  16);
  * @deprecated
  */
 define('PEAR_ERROR_EXCEPTION', 32);
-/**#@-*/
 define('PEAR_ZE2', (function_exists('version_compare') &&
                     version_compare(zend_version(), "2-dev", "ge")));
 
@@ -86,18 +79,9 @@ $GLOBALS['_PEAR_error_handler_stack']    = array();
  * IMPORTANT! To use the emulated destructors you need to create the
  * objects by reference: $obj =& new PEAR_child;
  *
- * @category   pear
- * @package    PEAR
- * @author     Stig Bakken <ssb@php.net>
- * @author     Tomas V.V. Cox <cox@idecnet.com>
- * @author     Greg Beaver <cellog@php.net>
- * @copyright  1997-2006 The PHP Group
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.6
- * @link       http://pear.php.net/package/PEAR
- * @see        PEAR_Error
- * @since      Class available since PHP 4.0.2
- * @link        http://pear.php.net/manual/en/core.pear.php#core.pear.pear
+ * @since PHP 4.0.2
+ * @author Stig Bakken <ssb@php.net>
+ * @see http://pear.php.net/manual/
  */
 class PEAR
 {
@@ -509,7 +493,7 @@ class PEAR
      * @see PEAR::setErrorHandling
      * @since PHP 4.0.5
      */
-    function &raiseError($message = null,
+    function raiseError($message = null,
                          $code = null,
                          $mode = null,
                          $options = null,
@@ -554,11 +538,9 @@ class PEAR
             $ec = 'PEAR_Error';
         }
         if ($skipmsg) {
-            $a = &new $ec($code, $mode, $options, $userinfo);
-            return $a;
+            return new $ec($code, $mode, $options, $userinfo);
         } else {
-            $a = &new $ec($message, $code, $mode, $options, $userinfo);
-            return $a;
+            return new $ec($message, $code, $mode, $options, $userinfo);
         }
     }
 
@@ -572,16 +554,14 @@ class PEAR
      * @param string $message
      *
      */
-    function &throwError($message = null,
+    function throwError($message = null,
                          $code = null,
                          $userinfo = null)
     {
         if (isset($this) && is_a($this, 'PEAR')) {
-            $a = &$this->raiseError($message, $code, null, null, $userinfo);
-            return $a;
+            return $this->raiseError($message, $code, null, null, $userinfo);
         } else {
-            $a = &PEAR::raiseError($message, $code, null, null, $userinfo);
-            return $a;
+            return PEAR::raiseError($message, $code, null, null, $userinfo);
         }
     }
 
@@ -790,23 +770,7 @@ function _PEAR_call_destructors()
 }
 
 // }}}
-/**
- * Standard PEAR error class for PHP 4
- *
- * This class is supserseded by {@link PEAR_Exception} in PHP 5
- *
- * @category   pear
- * @package    PEAR
- * @author     Stig Bakken <ssb@php.net>
- * @author     Tomas V.V. Cox <cox@idecnet.com>
- * @author     Gregory Beaver <cellog@php.net>
- * @copyright  1997-2006 The PHP Group
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    Release: 1.4.6
- * @link       http://pear.php.net/manual/en/core.pear.pear-error.php
- * @see        PEAR::raiseError(), PEAR::throwError()
- * @since      Class available since PHP 4.0.2
- */
+
 class PEAR_Error
 {
     // {{{ properties
@@ -896,8 +860,8 @@ class PEAR_Error
             }
         }
         if ($this->mode & PEAR_ERROR_EXCEPTION) {
-            trigger_error("PEAR_ERROR_EXCEPTION is obsolete, use class PEAR_Exception for exceptions", E_USER_WARNING);
-            eval('$e = new Exception($this->message, $this->code);throw($e);');
+            trigger_error("PEAR_ERROR_EXCEPTION is obsolete, use class PEAR_ErrorStack for exceptions", E_USER_WARNING);
+            eval('$e = new Exception($this->message, $this->code);$e->PEAR_Error = $this;throw($e);');
         }
     }
 
@@ -1012,9 +976,6 @@ class PEAR_Error
      */
     function getBacktrace($frame = null)
     {
-        if (defined('PEAR_IGNORE_BACKTRACE')) {
-            return null;
-        }
         if ($frame === null) {
             return $this->backtrace;
         }

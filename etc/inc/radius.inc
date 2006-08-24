@@ -1,58 +1,58 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4: */
 /*
-Copyright (c) 2003, Michael Bretterklieber <michael@bretterklieber.com>
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without 
-modification, are permitted provided that the following conditions 
-are met:
-
-1. Redistributions of source code must retain the above copyright 
-   notice, this list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright 
-   notice, this list of conditions and the following disclaimer in the 
-   documentation and/or other materials provided with the distribution.
-3. The names of the authors may not be used to endorse or promote products 
-   derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
-BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY 
-OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
-NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
-EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-This code cannot simply be copied and put under the GNU Public License or 
-any other GPL-like (LGPL, GPL2) License.
-
     $Id$
 
-    This version of RADIUS.php has been modified by
-    Jonathan De Graeve <jonathan@imelda.be> to integrate with M0n0wall <http://www.m0n0.ch/wall>
+    Copyright (c) 2003, Michael Bretterklieber <michael@bretterklieber.com>
+    All rights reserved.
 
-    $Id_jdg: 2005/12/22 14:22:42
+    Redistribution and use in source and binary forms, with or without 
+    modification, are permitted provided that the following conditions 
+    are met:
 
-    Changes made include:
-    * StandardAttributes for M0n0wall use
-    * Removed internal Session-Id creation
-    * Adding of ReplyMessage to getAttributes()
-    * Adding of listAttributes()
-    * Adding of VENDOR Bay Networks (Nortel)
-    * Adding of VENDOR Nomadix
-    * Adding of VENDOR WISPr (Wi-Fi Alliance)
-    
+    1. Redistributions of source code must retain the above copyright 
+       notice, this list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright 
+       notice, this list of conditions and the following disclaimer in the 
+       documentation and/or other materials provided with the distribution.
+    3. The names of the authors may not be used to endorse or promote products 
+       derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+    IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+    INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+    BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
+    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY 
+    OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
+    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+    This code cannot simply be copied and put under the GNU Public License or 
+    any other GPL-like (LGPL, GPL2) License.
+
+        This version of RADIUS.php has been modified by
+        Jonathan De Graeve <jonathan@imelda.be> to integrate with M0n0wall <http://www.m0n0.ch/wall>
+
+        Changes made include:
+        * StandardAttributes for M0n0wall use
+        * Removed internal Session-Id creation
+        * Adding of ReplyMessage to getAttributes()
+        * Adding of listAttributes()
+        * Adding of VENDOR Bay Networks (Nortel)
+        * Adding of VENDOR Nomadix
+        * Adding of VENDOR WISPr (Wi-Fi Alliance)
+
 */
 
-require_once("PEAR.inc");
+require_once("pear.inc");
+require_once("radius_authentication.inc");
+require_once("radius_accounting.inc");
 
 /**
 * Client implementation of RADIUS. This are wrapper classes for
-* the RADIUS PECL. 
+* the RADIUS PECL
 * Provides RADIUS Authentication (RFC2865) and RADIUS Accounting (RFC2866).
 *
 * @package Auth_RADIUS
@@ -78,21 +78,21 @@ class Auth_RADIUS extends PEAR {
      * @see  addServer(), putServer()
      */
     var $_servers  = array();
-    
+
     /**
      * Path to the configuration-file.
      * @var  string
      * @see  setConfigFile()
      */
     var $_configfile = null;
-    
+
     /**
      * Resource.
      * @var  resource
      * @see  open(), close()
      */
     var $res = null;
-    
+
     /**
      * Username for authentication and accounting requests.
      * @var  string
@@ -111,7 +111,7 @@ class Auth_RADIUS extends PEAR {
      * @see  dumpAttributes(), getAttributes()
      */
     var $attributes = array();
-    
+
     /**
      * List of raw attributes.
      * @var  array
@@ -124,8 +124,8 @@ class Auth_RADIUS extends PEAR {
      * @var  array
      * @see  dumpAttributes(), getAttributes()
      */
-    var $rawVendorAttributes = array();    
-    
+    var $rawVendorAttributes = array();
+
     /**
      * Constructor
      *
@@ -137,11 +137,11 @@ class Auth_RADIUS extends PEAR {
     {
         $this->PEAR();
     }
-    
+
     /**
      * Adds a RADIUS server to the list of servers for requests.
      *
-     * At most 10 servers may be specified.	When multiple servers 
+     * At most 10 servers may be specified.    When multiple servers 
      * are given, they are tried in round-robin fashion until a 
      * valid response is received
      *
@@ -150,14 +150,14 @@ class Auth_RADIUS extends PEAR {
      * @param  integer $port         Portnumber
      * @param  string  $sharedSecret Shared secret
      * @param  integer $timeout      Timeout for each request
-     * @param  integer $maxtries     Max. retries for each request          
+     * @param  integer $maxtries     Max. retries for each request
      * @return void
      */
     function addServer($servername = 'localhost', $port = 0, $sharedSecret = 'testing123', $timeout = 5, $maxtries = 3) 
     {
-        $this->_servers[] = array($servername, $port, $sharedSecret, $timeout, $maxtries);    
+        $this->_servers[] = array($servername, $port, $sharedSecret, $timeout, $maxtries);
     }
-    
+
     /**
      * Returns an error message, if an error occurred.
      *
@@ -168,14 +168,14 @@ class Auth_RADIUS extends PEAR {
     {
         return radius_strerror($this->res);
     }
-    
+
     /**
      * Sets the configuration-file.
      *
      * @access public
-     * @param  string  $file Path to the configuration file    
+     * @param  string  $file Path to the configuration file
      * @return void
-     */    
+     */
     function setConfigfile($file) 
     {
         $this->_configfile = $file;
@@ -189,7 +189,7 @@ class Auth_RADIUS extends PEAR {
      * @param  mixed   $port         Attribute-value
      * @param  type    $type         Attribute-type
      * @return bool  true on success, false on error
-     */    
+     */
     function putAttribute($attrib, $value, $type = null) 
     {
         if ($type == null) {
@@ -198,18 +198,19 @@ class Auth_RADIUS extends PEAR {
 
         switch ($type) {
         case 'integer':
-            return radius_put_int($this->res, $attrib, $value);
-        
+            // Fix a conversion error so we should be able to handle 4GB values
+            return radius_put_int($this->res, $attrib, (float)$value);
+
         case 'addr':
             return radius_put_addr($this->res, $attrib, $value);
-            
+
         case 'string':
         default:
             return radius_put_attr($this->res, $attrib, $value);
         }
 
     }
-    
+
     /**
      * Puts a vendor-specific attribute.
      *
@@ -222,30 +223,30 @@ class Auth_RADIUS extends PEAR {
      */ 
     function putVendorAttribute($vendor, $attrib, $value, $type = null) 
     {
-        
+
         if ($type == null) {
             $type = gettype($value);
         }
-        
+
         switch ($type) {
         case 'integer':
             return radius_put_vendor_int($this->res, $vendor, $attrib, $value);
-        
+
         case 'addr':
             return radius_put_vendor_addr($this->res, $vendor,$attrib, $value);
-            
+
         case 'string':
         default:
             return radius_put_vendor_attr($this->res, $vendor, $attrib, $value);
         }
-        
-    }    
+
+    }
 
     /**
      * Prints known attributes received from the server.
      *
      * @access public
-     */     
+     */
     function dumpAttributes()
     {
         foreach ($this->attributes as $name => $data) {
@@ -267,7 +268,7 @@ class Auth_RADIUS extends PEAR {
      * Overwrite this. 
      *
      * @access public
-     */         
+     */
     function open() 
     {
     }
@@ -276,34 +277,41 @@ class Auth_RADIUS extends PEAR {
      * Overwrite this.
      *
      * @access public
-     */         
+     */
     function createRequest()
     {
     }
-    
+
     /**
      * Puts standard attributes.
      *
+     * These attributes will always be present in a radius request
+     *
      * @access public
-     */ 
+     */
     function putStandardAttributes()
     {
-        $this->putAttribute(RADIUS_NAS_PORT_TYPE, RADIUS_ETHERNET);
-        $this->putAttribute(RADIUS_SERVICE_TYPE, RADIUS_LOGIN);
+
+        // Add support for sending NAS-IP-Address, set this explicitly as an ip_addr
+        $this->putAttribute(RADIUS_NAS_IP_ADDRESS, getNasIP(), "addr");
+
+        // Add support for sending NAS-Identifier
+        $this->putAttribute(RADIUS_NAS_IDENTIFIER, getNasID());
+
     }
-    
+
     /**
      * Puts custom attributes.
      *
      * @access public
-     */ 
+     */
     function putAuthAttributes()
     {
         if (isset($this->username)) {
-            $this->putAttribute(RADIUS_USER_NAME, $this->username);        
+            $this->putAttribute(RADIUS_USER_NAME, $this->username);
         }
     }
-    
+
     /**
      * Configures the radius library.
      *
@@ -312,10 +320,10 @@ class Auth_RADIUS extends PEAR {
      * @param  integer $port         Portnumber
      * @param  string  $sharedSecret Shared secret
      * @param  integer $timeout      Timeout for each request
-     * @param  integer $maxtries     Max. retries for each request          
+     * @param  integer $maxtries     Max. retries for each request
      * @return bool  true on success, false on error
      * @see addServer()
-     */      
+     */
     function putServer($servername, $port = 0, $sharedsecret = 'testing123', $timeout = 3, $maxtries = 3) 
     {
         if (!radius_add_server($this->res, $servername, $port, $sharedsecret, $timeout, $maxtries)) {
@@ -323,22 +331,22 @@ class Auth_RADIUS extends PEAR {
         }
         return true;
     }
-    
+
     /**
      * Configures the radius library via external configurationfile
      *
      * @access public
      * @param  string  $servername   Servername or IP-Address
      * @return bool  true on success, false on error
-     */      
+     */
     function putConfigfile($file) 
     {
         if (!radius_config($this->res, $file)) {
             return false;
         }
         return true;
-    }    
-        
+    }
+
     /**
      * Initiates a RADIUS request. 
      *
@@ -350,32 +358,32 @@ class Auth_RADIUS extends PEAR {
         if (!$this->open()) {
             return false;
         }
-        
+
         foreach ($this->_servers as $s) {
-	        // Servername, port, sharedsecret, timeout, retries
+            // Servername, port, sharedsecret, timeout, retries
             if (!$this->putServer($s[0], $s[1], $s[2], $s[3], $s[4])) {
                 return false;
             }
         }
-        
+
         if (!empty($this->_configfile)) {
             if (!$this->putConfigfile($this->_configfile)) {
                 return false;
             }
         }
-        
+
         $this->createRequest();
-	$this->putStandardAttributes();
+        $this->putStandardAttributes();
         $this->putAuthAttributes();
         return true;
     }
-    
+
     /**
      * Sends a prepared RADIUS request and waits for a response
      *
      * @access public
      * @return mixed  true on success, false on reject, PEAR_Error on error
-     */ 
+     */
     function send()
     {
         $req = radius_send_request($this->res);
@@ -392,7 +400,7 @@ class Auth_RADIUS extends PEAR {
 
         case RADIUS_ACCESS_REJECT:
             return false;
-            
+
         case RADIUS_ACCOUNTING_RESPONSE:
             if (is_subclass_of($this, 'auth_radius_pap')) {
                 return $this->raiseError('RADIUS_ACCOUNTING_RESPONSE is unexpected for authentication');
@@ -401,22 +409,22 @@ class Auth_RADIUS extends PEAR {
 
         default:
             return $this->raiseError("Unexpected return value: $req");
-        }    
-        
+        }
+
     }
 
     /**
      * Reads all received attributes after sending the request.
      *
-     * This methos stores know attributes in the property attributes, 
-     * all attributes (including known attibutes) are stored in rawAttributes 
+     * This methos stores know attributes in the property attributes,
+     * all attributes (including known attibutes) are stored in rawAttributes
      * or rawVendorAttributes.
-     * NOTE: call this functio also even if the request was rejected, because the 
+     * NOTE: call this functio also even if the request was rejected, because the
      * Server returns usualy an errormessage
      *
      * @access public
      * @return bool   true on success, false on error
-     */     
+     */
     function getAttributes()
     {
 
@@ -485,11 +493,11 @@ class Auth_RADIUS extends PEAR {
                 if (!is_array($attribv)) {
                     return false;
                 }
-                    
+
                 $vendor = $attribv['vendor'];
                 $attrv = $attribv['attr'];
                 $datav = $attribv['data'];
-                
+
                 $this->rawVendorAttributes[$vendor][$attrv] = $datav;
 
                 if ($vendor == RADIUS_VENDOR_MICROSOFT) {
@@ -535,16 +543,16 @@ class Auth_RADIUS extends PEAR {
                     }
                 }
 
-                if ($vendor == RADIUS_VENDOR_BAY) {
+                if ($vendor == 1584) {
 
                     switch ($attrv) {
-                    case RADIUS_BAY_CES_GROUP:
+                    case 102:
                         $this->attributes['ces_group'] = radius_cvt_string($datav);
                         break;
                     }
                 }
 
-                if ($vendor == 3309) {	/* RADIUS_VENDOR_NOMADIX */
+                if ($vendor == 3309) {    /* RADIUS_VENDOR_NOMADIX */
 
                     switch ($attrv) {
                     case 1: /* RADIUS_NOMADIX_BW_UP */
@@ -571,53 +579,53 @@ class Auth_RADIUS extends PEAR {
                     }
                 } 
 
-		if ($vendor == 14122) { /* RADIUS_VENDOR_WISPr Wi-Fi Alliance */
+        if ($vendor == 14122) { /* RADIUS_VENDOR_WISPr Wi-Fi Alliance */
 
-		    switch ($attrv) {
-		    case 1: /* WISPr-Location-ID */
-			$this->attributes['location_id'] = radius_cvt_string($datav);
-			break;
-		    case 2: /* WISPr-Location-Name */
-			$this->attributes['location_name'] = radius_cvt_string($datav);
-			break;
-		    case 3: /* WISPr-Logoff-URL */
-			$this->attributes['url_logoff'] = radius_cvt_string($datav);
-			break;
-		    case 4: /* WISPr-Redirection-URL */
-			$this->attributes['url_redirection'] = radius_cvt_string($datav);
-			break;
-		    case 5: /* WISPr-Bandwidth-Min-Up */
-			$this->attributes['bw_minbytesup'] = radius_cvt_int($datav);
-			break;
-		    case 6: /* WISPr-Bandwidth-Min-Down */
-			$this->attributes['bw_minbytesdown'] = radius_cvt_int($datav);
-			break;
-		    case 7: /* WIPSr-Bandwidth-Max-Up */
-			$this->attributes['bw_maxbytesup'] = radius_cvt_int($datav);
-			break;
-		    case 8: /* WISPr-Bandwidth-Max-Down */
-			$this->attributes['bw_maxbytesdown'] = radius_cvt_int($datav);
-			break;
-		    case 9: /* WISPr-Session-Terminate-Time */
-			$this->attributes['session_terminate_time'] = radius_cvt_string($datav);
-			break;
-		    case 10: /* WISPr-Session-Terminate-End-Of-Day */
-			$this->attributes['session_terminate_endofday'] = radius_cvt_int($datav);
-			break;
-		    case 11: /* WISPr-Billing-Class-Of-Service */
-			$this->attributes['billing_class_of_service'] = radius_cvt_string($datav);
-			break;
-		   }
-		}
+            switch ($attrv) {
+            case 1: /* WISPr-Location-ID */
+            $this->attributes['location_id'] = radius_cvt_string($datav);
+            break;
+            case 2: /* WISPr-Location-Name */
+            $this->attributes['location_name'] = radius_cvt_string($datav);
+            break;
+            case 3: /* WISPr-Logoff-URL */
+            $this->attributes['url_logoff'] = radius_cvt_string($datav);
+            break;
+            case 4: /* WISPr-Redirection-URL */
+            $this->attributes['url_redirection'] = radius_cvt_string($datav);
+            break;
+            case 5: /* WISPr-Bandwidth-Min-Up */
+            $this->attributes['bw_minbytesup'] = radius_cvt_int($datav);
+            break;
+            case 6: /* WISPr-Bandwidth-Min-Down */
+            $this->attributes['bw_minbytesdown'] = radius_cvt_int($datav);
+            break;
+            case 7: /* WIPSr-Bandwidth-Max-Up */
+            $this->attributes['bw_maxbytesup'] = radius_cvt_int($datav);
+            break;
+            case 8: /* WISPr-Bandwidth-Max-Down */
+            $this->attributes['bw_maxbytesdown'] = radius_cvt_int($datav);
+            break;
+            case 9: /* WISPr-Session-Terminate-Time */
+            $this->attributes['session_terminate_time'] = radius_cvt_string($datav);
+            break;
+            case 10: /* WISPr-Session-Terminate-End-Of-Day */
+            $this->attributes['session_terminate_endofday'] = radius_cvt_int($datav);
+            break;
+            case 11: /* WISPr-Billing-Class-Of-Service */
+            $this->attributes['billing_class_of_service'] = radius_cvt_string($datav);
+            break;
+           }
+        }
 
                 break;
-                
+
             }
-        }    
+        }
 
         return true;
     }
-    
+
     /**
      * Frees resources.
      *
@@ -625,7 +633,7 @@ class Auth_RADIUS extends PEAR {
      * attributes are filled with Nullbytes to leave nothing in the mem.
      *
      * @access public
-     */   
+     */
     function close()
     {
         if ($this->res != null) {
@@ -635,14 +643,14 @@ class Auth_RADIUS extends PEAR {
         $this->username = str_repeat("\0", strlen($this->username));
         $this->password = str_repeat("\0", strlen($this->password));
     }
-    
+
 }
 
 /**
  * class Auth_RADIUS_PAP
  *
  * Class for authenticating using PAP (Plaintext)
- * 
+ *
  * @package Auth_RADIUS 
  */
 class Auth_RADIUS_PAP extends Auth_RADIUS 
@@ -661,7 +669,7 @@ class Auth_RADIUS_PAP extends Auth_RADIUS
         $this->username = $username;
         $this->password = $password;
     }
-    
+
     /**
      * Creates a RADIUS resource
      *
@@ -678,7 +686,7 @@ class Auth_RADIUS_PAP extends Auth_RADIUS
         }
         return true;
     }
-    
+
     /**
      * Creates an authentication request 
      *
@@ -703,7 +711,7 @@ class Auth_RADIUS_PAP extends Auth_RADIUS
     function putAuthAttributes()
     {
         if (isset($this->username)) {
-            $this->putAttribute(RADIUS_USER_NAME, $this->username);        
+            $this->putAttribute(RADIUS_USER_NAME, $this->username);
         }
         if (isset($this->password)) {
             $this->putAttribute(RADIUS_USER_PASSWORD, $this->password);
@@ -718,7 +726,7 @@ class Auth_RADIUS_PAP extends Auth_RADIUS
  * Class for authenticating using CHAP-MD5 see RFC1994.
  * Instead og the plaintext password the challenge and 
  * the response are needed.
- * 
+ *
  * @package Auth_RADIUS 
  */
 class Auth_RADIUS_CHAP_MD5 extends Auth_RADIUS_PAP
@@ -734,13 +742,13 @@ class Auth_RADIUS_CHAP_MD5 extends Auth_RADIUS_PAP
      * @var  string
      */
     var $response = null;
-    
+
     /**
      * Id of the authentication request. Should incremented after every request.
      * @var  integer
      */
     var $chapid = 1;
-    
+
     /**
      * Constructor
      *
@@ -756,7 +764,7 @@ class Auth_RADIUS_CHAP_MD5 extends Auth_RADIUS_PAP
         $this->challenge = $challenge;
         $this->chapid = $chapid;
     }
-    
+
     /**
      * Put CHAP-MD5 specific attributes
      *
@@ -778,7 +786,7 @@ class Auth_RADIUS_CHAP_MD5 extends Auth_RADIUS_PAP
             $this->putAttribute(RADIUS_CHAP_CHALLENGE, $this->challenge);
         }
     }
-    
+
     /**
      * Frees resources.
      *
@@ -786,21 +794,21 @@ class Auth_RADIUS_CHAP_MD5 extends Auth_RADIUS_PAP
      * attributes are filled with Nullbytes to leave nothing in the mem.
      *
      * @access public
-     */   
+     */
     function close()
     {
         Auth_RADIUS_PAP::close();
         $this->challenge =  str_repeat("\0", strlen($this->challenge));
         $this->response =  str_repeat("\0", strlen($this->response));
-    }    
-    
+    }
+
 }
 
 /**
  * class Auth_RADIUS_MSCHAPv1
  *
  * Class for authenticating using MS-CHAPv1 see RFC2433
- * 
+ *
  * @package Auth_RADIUS 
  */
 class Auth_RADIUS_MSCHAPv1 extends Auth_RADIUS_CHAP_MD5 
@@ -817,7 +825,7 @@ class Auth_RADIUS_MSCHAPv1 extends Auth_RADIUS_CHAP_MD5
      * @var  bool
      */
     var $flags = 1;
-    
+
     /**
      * Put MS-CHAPv1 specific attributes 
      *
@@ -829,13 +837,13 @@ class Auth_RADIUS_MSCHAPv1 extends Auth_RADIUS_CHAP_MD5
      *   u_char lm_response[24];
      *   u_char response[24];
      * };
-     * 
+     *
      * @return void
      */
     function putAuthAttributes()
     {
         if (isset($this->username)) {
-            $this->putAttribute(RADIUS_USER_NAME, $this->username);        
+            $this->putAttribute(RADIUS_USER_NAME, $this->username);
         }
         if (isset($this->response) || isset($this->lmResponse)) {
             $lmResp = isset($this->lmResponse) ? $this->lmResponse : str_repeat ("\0", 24);
@@ -843,17 +851,17 @@ class Auth_RADIUS_MSCHAPv1 extends Auth_RADIUS_CHAP_MD5
             $resp = pack('CC', $this->chapid, $this->flags) . $lmResp . $ntResp;
             $this->putVendorAttribute(RADIUS_VENDOR_MICROSOFT, RADIUS_MICROSOFT_MS_CHAP_RESPONSE, $resp);
         }
-        if (isset($this->challenge)) {        
+        if (isset($this->challenge)) {
             $this->putVendorAttribute(RADIUS_VENDOR_MICROSOFT, RADIUS_MICROSOFT_MS_CHAP_CHALLENGE, $this->challenge);
         }
-    }    
+    }
 }
 
 /**
  * class Auth_RADIUS_MSCHAPv2
  *
  * Class for authenticating using MS-CHAPv2 see RFC2759
- * 
+ *
  * @package Auth_RADIUS 
  */
 class Auth_RADIUS_MSCHAPv2 extends Auth_RADIUS_MSCHAPv1 
@@ -863,7 +871,7 @@ class Auth_RADIUS_MSCHAPv2 extends Auth_RADIUS_MSCHAPv1
      * @var  string
      */
     var $challenge = null;
-    
+
     /**
      * 16 Bytes binary Peer Challenge
      * @var  string
@@ -884,7 +892,7 @@ class Auth_RADIUS_MSCHAPv2 extends Auth_RADIUS_MSCHAPv1
      * };
      * where pchallenge is the peer challenge. Like for MS-CHAPv1 we set the flags field to 1.
      * @return void
-     */    
+     */
     function putAuthAttributes()
     {
         if (isset($this->username)) {
@@ -898,8 +906,8 @@ class Auth_RADIUS_MSCHAPv2 extends Auth_RADIUS_MSCHAPv1
         if (isset($this->challenge)) {
             $this->putVendorAttribute(RADIUS_VENDOR_MICROSOFT, RADIUS_MICROSOFT_MS_CHAP_CHALLENGE, $this->challenge);
         }
-    }    
-    
+    }
+
     /**
      * Frees resources.
      *
@@ -912,7 +920,7 @@ class Auth_RADIUS_MSCHAPv2 extends Auth_RADIUS_MSCHAPv1
     {
         Auth_RADIUS_MSCHAPv1::close();
         $this->peerChallenge = str_repeat("\0", strlen($this->peerChallenge));
-    }       
+    }
 }
 
 /**
@@ -949,7 +957,7 @@ class Auth_RADIUS_Acct extends Auth_RADIUS
      * @var  string
      */    
     var $session_id = null;
-    
+
     /**
      * Constructor
      *
@@ -961,7 +969,7 @@ class Auth_RADIUS_Acct extends Auth_RADIUS
     function Auth_RADIUS_Acct()
     {
         $this->Auth_RADIUS();
-        
+
         if (isset($_SERVER)) {
             $var = &$_SERVER;
         } else {
@@ -1013,8 +1021,8 @@ class Auth_RADIUS_Acct extends Auth_RADIUS
             return false;
         }
         return true;
-    }   
-   
+    }
+
   /**
      * Put attributes for accounting.
      *
@@ -1024,7 +1032,9 @@ class Auth_RADIUS_Acct extends Auth_RADIUS
      */ 
     function putAuthAttributes()
     {
-        $this->putAttribute(RADIUS_ACCT_SESSION_ID, $this->session_id);
+        if (isset($this->username)) {
+            $this->putAttribute(RADIUS_USER_NAME, $this->username);
+        }
         $this->putAttribute(RADIUS_ACCT_STATUS_TYPE, $this->status_type);
         if (isset($this->session_time) && $this->status_type == RADIUS_STOP) {
             $this->putAttribute(RADIUS_ACCT_SESSION_TIME, $this->session_time);
@@ -1032,9 +1042,9 @@ class Auth_RADIUS_Acct extends Auth_RADIUS
         if (isset($this->authentic)) {
             $this->putAttribute(RADIUS_ACCT_AUTHENTIC, $this->authentic);
         }
-        
-    }    
-    
+
+    }
+
 }
 
 /**
@@ -1050,7 +1060,7 @@ class Auth_RADIUS_Acct_Start extends Auth_RADIUS_Acct
      * Defines the type of the accounting request.
      * It is set to RADIUS_START by default in this class.
      * @var  integer
-     */    
+     */
     var $status_type = RADIUS_START;
 }
 

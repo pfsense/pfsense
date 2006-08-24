@@ -406,7 +406,7 @@ function typesel_change() {
 				      			<strong>Note:<br></strong>
 				      		</span>&nbsp;&nbsp;
 				      		ProxyARP type IP addresses *DO NOT* work with the FTP Helper and addon packages such as squid.  Use a CARP type address in this case.
-				      		<p>&nbsp;&nbsp;For more information on CARP and the above values, visit the OpenBSD <a href='http://www.openbsd.org/faq/pf/carp.html'>CARP faq</A>.
+				      		<p>&nbsp;&nbsp;&nbsp;For more information on CARP and the above values, visit the OpenBSD <a href='http://www.openbsd.org/faq/pf/carp.html'>CARP faq</A>.
 						</span>
 					  </p>
 				  </td>

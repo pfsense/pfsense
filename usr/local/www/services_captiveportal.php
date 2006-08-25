@@ -1,21 +1,21 @@
-<?php 
+<?php
 /*
 	services_captiveportal.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -84,9 +84,9 @@ if ($_POST) {
 	if ($_POST['enable']) {
 		$reqdfields = explode(" ", "cinterface");
 		$reqdfieldsn = explode(",", "Interface");
-		
+
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-		
+
 		/* make sure no interfaces are bridged */
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 			$coptif = &$config['interfaces']['opt' . $i];
@@ -95,7 +95,7 @@ if ($_POST) {
 				break;
 			}
 		}
-		
+
 		if ($_POST['httpslogin_enable']) {
 		 	if (!$_POST['cert'] || !$_POST['key']) {
 				$input_errors[] = "Certificate and key must be specified for HTTPS login.";
@@ -105,13 +105,13 @@ if ($_POST) {
 				if (!strstr($_POST['key'], "BEGIN RSA PRIVATE KEY") || !strstr($_POST['key'], "END RSA PRIVATE KEY"))
 					$input_errors[] = "This key does not appear to be valid.";
 			}
-			
+
 			if (!$_POST['httpsname'] || !is_domain($_POST['httpsname'])) {
 				$input_errors[] = "The HTTPS server name must be specified for HTTPS login.";
 			}
 		}
 	}
-	
+
 	if ($_POST['timeout'] && (!is_numeric($_POST['timeout']) || ($_POST['timeout'] < 1))) {
 		$input_errors[] = "The timeout must be at least 1 minute.";
 	}
@@ -171,15 +171,15 @@ if ($_POST) {
 		$config['captiveportal']['radiuskey2'] = $_POST['radiuskey2'];
 		$config['captiveportal']['radiusvendor'] = $_POST['radiusvendor'] ? $_POST['radiusvendor'] : false;
 		$config['captiveportal']['radiussession_timeout'] = $_POST['radiussession_timeout'] ? true : false;
-		
+
 		/* file upload? */
 		if (is_uploaded_file($_FILES['htmlfile']['tmp_name']))
 			$config['captiveportal']['page']['htmltext'] = base64_encode(file_get_contents($_FILES['htmlfile']['tmp_name']));
 		if (is_uploaded_file($_FILES['errfile']['tmp_name']))
 			$config['captiveportal']['page']['errtext'] = base64_encode(file_get_contents($_FILES['errfile']['tmp_name']));
-			
+
 		write_config();
-		
+
 		$retval = 0;
 		if (!file_exists($d_sysrebootreqd_path)) {
 			config_lock();
@@ -198,7 +198,7 @@ function enable_change(enable_change) {
 	var endis, radius_endis;
 	endis = !(document.iform.enable.checked || enable_change);
 	radius_endis = !((!endis && document.iform.auth_method[2].checked) || enable_change);
-	
+
 	document.iform.cinterface.disabled = endis;
 	//document.iform.maxproc.disabled = endis;
 	//document.iform.maxprocperip.disabled = endis;
@@ -211,8 +211,8 @@ function enable_change(enable_change) {
 	document.iform.radiusport2.disabled = radius_endis;
 	document.iform.radiuskey.disabled = radius_endis;
 	document.iform.radiuskey2.disabled = radius_endis;
-	document.iform.radacct_enable.disabled = radius_endis;
-	document.iform.reauthenticate.disabled = radius_endis;
+	//document.iform.radacct_enable.disabled = radius_endis;
+	//document.iform.reauthenticate.disabled = radius_endis;
 	document.iform.auth_method[0].disabled = endis;
 	document.iform.auth_method[1].disabled = endis;
 	document.iform.auth_method[2].disabled = endis;
@@ -228,15 +228,15 @@ function enable_change(enable_change) {
 	document.iform.radiussession_timeout.disabled = radius_endis;
 	document.iform.htmlfile.disabled = endis;
 	document.iform.errfile.disabled = endis;
-	
-	document.iform.radiusacctport.disabled = (radius_endis || !document.iform.radacct_enable.checked) && !enable_change;
-	
+
+	//document.iform.radiusacctport.disabled = (radius_endis || !document.iform.radacct_enable.checked) && !enable_change;
+
 	document.iform.radmac_secret.disabled = (radius_endis || !document.iform.radmac_enable.checked) && !enable_change;
-	
+
 	var reauthenticate_dis = (radius_endis || !document.iform.reauthenticate.checked) && !enable_change;
-	document.iform.reauthenticateacct[0].disabled = reauthenticate_dis;
-	document.iform.reauthenticateacct[1].disabled = reauthenticate_dis;
-	document.iform.reauthenticateacct[2].disabled = reauthenticate_dis;
+	//document.iform.reauthenticateacct[0].disabled = reauthenticate_dis;
+	//document.iform.reauthenticateacct[1].disabled = reauthenticate_dis;
+	//document.iform.reauthenticateacct[2].disabled = reauthenticate_dis;
 }
 //-->
 </script>
@@ -258,13 +258,13 @@ function enable_change(enable_change) {
   <tr>
   <td class="tabcont">
   <table width="100%" border="0" cellpadding="6" cellspacing="0">
-	<tr> 
+	<tr>
 	  <td width="22%" valign="top" class="vtable">&nbsp;</td>
 	  <td width="78%" class="vtable">
 		<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
 		<strong>Enable captive portal </strong></td>
 	</tr>
-	<tr> 
+	<tr>
 	  <td width="22%" valign="top" class="vncellreq">Interface</td>
 	  <td width="78%" class="vtable">
 		<select name="cinterface" class="formfld" id="cinterface">
@@ -274,7 +274,7 @@ function enable_change(enable_change) {
 				$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 		  }
 		  foreach ($interfaces as $iface => $ifacename): ?>
-		  <option value="<?=$iface;?>" <?php if ($iface == $pconfig['cinterface']) echo "selected"; ?>> 
+		  <option value="<?=$iface;?>" <?php if ($iface == $pconfig['cinterface']) echo "selected"; ?>>
 		  <?=htmlspecialchars($ifacename);?>
 		  </option>
 		  <?php endforeach; ?>
@@ -288,16 +288,16 @@ function enable_change(enable_change) {
 minutes<br>
 Clients will be disconnected after this amount of inactivity. They may log in again immediately, though. Leave this field blank for no idle timeout.</td>
 	</tr>
-	<tr> 
+	<tr>
 	  <td width="22%" valign="top" class="vncell">Hard timeout</td>
-	  <td width="78%" class="vtable"> 
-		<input name="timeout" type="text" class="formfld" id="timeout" size="6" value="<?=htmlspecialchars($pconfig['timeout']);?>"> 
+	  <td width="78%" class="vtable">
+		<input name="timeout" type="text" class="formfld" id="timeout" size="6" value="<?=htmlspecialchars($pconfig['timeout']);?>">
 		minutes<br>
 	  Clients will be disconnected after this amount of time, regardless of activity. They may log in again immediately, though. Leave this field blank for no hard timeout (not recommended unless an idle timeout is set).</td>
 	</tr>
-	<tr> 
+	<tr>
 	  <td width="22%" valign="top" class="vncell">Logout popup window</td>
-	  <td width="78%" class="vtable"> 
+	  <td width="78%" class="vtable">
 		<input name="logoutwin_enable" type="checkbox" class="formfld" id="logoutwin_enable" value="yes" <?php if($pconfig['logoutwin_enable']) echo "checked"; ?>>
 		<strong>Enable logout popup window</strong><br>
 	  If enabled, a popup window will appear when clients are allowed through the captive portal. This allows clients to explicitly disconnect themselves before the idle or hard timeout occurs.</td>
@@ -326,28 +326,28 @@ to access after they've authenticated.</td>
     This is required when the MAC address of the client cannot be determined (usually because there are routers between pfSense and the clients).
     If this is enabled, RADIUS MAC authentication cannot be used.</td>
 	  </tr>
-	<tr> 
+	<tr>
 	  <td width="22%" valign="top" class="vncell">Authentication</td>
-	  <td width="78%" class="vtable"> 
+	  <td width="78%" class="vtable">
 		<table cellpadding="0" cellspacing="0">
 		<tr>
 		  <td colspan="2"><input name="auth_method" type="radio" id="auth_method" value="none" onClick="enable_change(false)" <?php if($pconfig['auth_method']!="local" && $pconfig['auth_method']!="radius") echo "checked"; ?>>
-  No authentication</td>  
+  No authentication</td>
 		  </tr>
 		<tr>
 		  <td colspan="2"><input name="auth_method" type="radio" id="auth_method" value="local" onClick="enable_change(false)" <?php if($pconfig['auth_method']=="local") echo "checked"; ?>>
-  Local <a href="services_captiveportal_users.php">user manager</a></td>  
+  Local <a href="services_captiveportal_users.php">user manager</a></td>
 		  </tr>
 		<tr>
 		  <td colspan="2"><input name="auth_method" type="radio" id="auth_method" value="radius" onClick="enable_change(false)" <?php if($pconfig['auth_method']=="radius") echo "checked"; ?>>
-  RADIUS authentication</td>  
+  RADIUS authentication</td>
 		  </tr><tr>
 		  <td>&nbsp;</td>
 		  <td>&nbsp;</td>
 		  </tr>
 		</table>
 		<table width="100%" border="0" cellpadding="6" cellspacing="0">
-        	<tr> 
+        	<tr>
             	<td colspan="2" valign="top" class="optsect_t2">Primary RADIUS server</td>
 			</tr>
 			<tr>
@@ -365,7 +365,7 @@ to access after they've authenticated.</td>
 				<td class="vtable"><input name="radiuskey" type="text" class="formfld" id="radiuskey" size="16" value="<?=htmlspecialchars($pconfig['radiuskey']);?>"><br>
 				Leave this field blank to not use a RADIUS shared secret (not recommended).</td>
 			</tr>
-			<tr> 
+			<tr>
 			  <td colspan="2" class="list" height="12"></td>
 			</tr>
 			<tr>
@@ -384,47 +384,10 @@ to access after they've authenticated.</td>
 				<td class="vncell" valign="top">Shared secret&nbsp;&nbsp;</td>
 				<td class="vtable"><input name="radiuskey2" type="text" class="formfld" id="radiuskey2" size="16" value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 			</tr>
-			<tr> 
-			  <td colspan="2" class="list" height="12"></td>
-			</tr>
-			<tr>
-				<td colspan="2" valign="top" class="optsect_t2">Accounting</td>
-			</tr>
-			<tr>
-				<td class="vncell">&nbsp;</td>
-				<td class="vtable"><input name="radacct_enable" type="checkbox" id="radacct_enable" value="yes" onClick="enable_change(false)" <?php if($pconfig['radacct_enable']) echo "checked"; ?>>
-				<strong>send RADIUS accounting packets</strong><br>
-				If this is enabled, RADIUS accounting packets will be sent to the primary RADIUS server.</td>
-			</tr>
-			<tr>
-			  <td class="vncell" valign="top">Accounting port</td>
-			  <td class="vtable"><input name="radiusacctport" type="text" class="formfld" id="radiusacctport" size="5" value="<?=htmlspecialchars($pconfig['radiusacctport']);?>"><br>
-			  Leave blank to use the default port (1813).</td>
-			  </tr>
 			<tr>
 			  <td colspan="2" class="list" height="12"></td>
 			</tr>
-			<tr>
-				<td colspan="2" valign="top" class="optsect_t2">Reauthentication</td>
-			</tr>
-			<tr>
-				<td class="vncell">&nbsp;</td>
-				<td class="vtable"><input name="reauthenticate" type="checkbox" id="reauthenticate" value="yes" onClick="enable_change(false)" <?php if($pconfig['reauthenticate']) echo "checked"; ?>>
-			  <strong>Reauthenticate connected users every minute</strong><br>
-			  If reauthentication is enabled, Access-Requests will be sent to the RADIUS server for each user that is
-			  logged in every minute. If an Access-Reject is received for a user, that user is disconnected from the captive portal immediately.</td>
-			</tr>
-			<tr>
-			  <td class="vncell" valign="top">Accounting updates</td>
-			  <td class="vtable">
-			  <input name="reauthenticateacct" type="radio" value="" <?php if(!$pconfig['reauthenticateacct']) echo "checked"; ?>> no accounting updates<br>
-			  <input name="reauthenticateacct" type="radio" value="stopstart" <?php if($pconfig['reauthenticateacct'] == "stopstart") echo "checked"; ?>> stop/start accounting<br>
-			  <input name="reauthenticateacct" type="radio" value="interimupdate" <?php if($pconfig['reauthenticateacct'] == "interimupdate") echo "checked"; ?>> interim update
-			  </td>
-			</tr>
-			<tr>
-			  <td colspan="2" class="list" height="12"></td>
-			</tr>
+
 			<tr>
 				<td colspan="2" valign="top" class="optsect_t2">RADIUS MAC authentication</td>
 			</tr>
@@ -454,7 +417,7 @@ to access after they've authenticated.</td>
 				<td class="vncell" valign="top">Type</td>
 				<td class="vtable"><select name="radiusvendor" id="radiusvendor">
 				<option>default</option>
-				<?php 
+				<?php
 				$radiusvendors = array("cisco");
 				foreach ($radiusvendors as $radiusvendor){
 					if ($pconfig['radiusvendor'] == $radiusvendor)
@@ -495,9 +458,9 @@ to access after they've authenticated.</td>
         <br>
     Paste an RSA private key in PEM format here.</td>
 	  </tr>
-	<tr> 
+	<tr>
 	  <td width="22%" valign="top" class="vncellreq">Portal page contents</td>
-	  <td width="78%" class="vtable">    
+	  <td width="78%" class="vtable">
 		<?=$mandfldhtml;?><input type="file" name="htmlfile" class="formfld" id="htmlfile"><br>
 		<?php
 			list($host) = explode(":", $_SERVER['HTTP_HOST']);
@@ -505,10 +468,10 @@ to access after they've authenticated.</td>
 				$href = "https://$host:8001";
 			} else {
 				$href = "http://$host:8000";
-			}		
+			}
 		?>
 		<?php if ($config['captiveportal']['page']['htmltext']): ?>
-		<a href="<?=$href?>" target="_new">View current page</a>                  
+		<a href="<?=$href?>" target="_new">View current page</a>
 		  <br>
 		  <br>
 		<?php endif; ?>
@@ -531,20 +494,20 @@ Example code for the form:<br>
 	  <td class="vtable">
 		<input name="errfile" type="file" class="formfld" id="errfile"><br>
 		<?php if ($config['captiveportal']['page']['errtext']): ?>
-		<a href="?act=viewerrhtml" target="_blank">View current page</a>                      
+		<a href="?act=viewerrhtml" target="_blank">View current page</a>
 		  <br>
 		  <br>
 		<?php endif; ?>
 The contents of the HTML file that you upload here are displayed when an authentication error occurs.
 You may include &quot;$PORTAL_MESSAGE$&quot;, which will be replaced by the error or reply messages from the RADIUS server, if any.</td>
 	</tr>
-	<tr> 
+	<tr>
 	  <td width="22%" valign="top">&nbsp;</td>
-	  <td width="78%"> 
-		<input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change(true)"> 
+	  <td width="78%">
+		<input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change(true)">
 	  </td>
 	</tr>
-	<tr> 
+	<tr>
 	  <td width="22%" valign="top">&nbsp;</td>
 	  <td width="78%"><span class="vexpl"><span class="red"><strong>Note:<br>
 		</strong></span>Changing any settings on this page will disconnect all clients! Don't forget to enable the DHCP server on your captive portal interface! Make sure that the default/maximum DHCP lease time is higher than the timeout entered on this page. Also, the DNS forwarder needs to be enabled for DNS lookups by unauthenticated clients to work. </span></td>

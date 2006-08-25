@@ -606,9 +606,9 @@ function system_generate_lighty_config($filename,
 		$max_procs = 1;
 		$max_requests = 1;
 	}
-	
+
 	/* we told you that 64 megs would be slow */
-	if ($avail > 0 and $avail < 65) 
+	if ($avail > 0 and $avail < 65)
 		$fast_cgi_enable = false;
 
 	if($fast_cgi_enable == true) {
@@ -899,7 +899,7 @@ function system_ntp_configure() {
 
 		$timeservers = "";
 		foreach (explode(' ', $syscfg['timeservers']) as $ts)
-			$timeservers .= " " . $ts;
+			$timeservers .= " " . gethostbyname($ts);
 
 		mwexec_bg("/usr/local/bin/runmsntp.sh " .
 			escapeshellarg("{$g['varrun_path']}/runmsntp.pid") . " " .

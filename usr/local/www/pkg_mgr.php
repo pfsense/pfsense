@@ -70,9 +70,16 @@ include("fbegin.inc");
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
 <?php
 	$version = file_get_contents("/etc/version");
+  $dot = strpos($version, ".");
+  $hyphen = strpos($version, "-");
+  $major = substr($version, 0, $dot);
+  $minor = substr($version, $dot + 1, $hyphen - $dot - 1);
+  $testing_version = substr($version, $hyphen + 1, strlen($version) - $hyphen);
+
 	$tab_array = array();
-	$tab_array[] = array("Available {$version} Packages", $requested_version <> "" ? false : true, "pkg_mgr.php");
-	$tab_array[] = array("Packages with no version info", $requested_version == "none" ? true : false, "pkg_mgr.php?ver=none");
+	$tab_array[] = array("Available {$version} packages", $requested_version <> "" ? false : true, "pkg_mgr.php");
+	$tab_array[] = array("Packages for any platform", $requested_version == "none" ? true : false, "pkg_mgr.php?ver=none");
+/*  $tab_array[] = array("Packages with a different version", $requested_version == "other" ? true : false, "pkg_mgr.php?ver=other"); */
 	$tab_array[] = array("Installed Packages", false, "pkg_mgr_installed.php");
 	display_top_tabs($tab_array);
 ?>
@@ -110,16 +117,21 @@ include("fbegin.inc");
 		    	foreach($pkg_keys as $key) {
 			    $index = &$pkg_info[$key];
 			    if(in_array($index['name'], $instpkgs)) continue;
-			/* do not display packages with no version info if not explicitely requested */
-			if (empty($index['required_version']) &&
-				$requested_version <> "none") { continue; }
-			/* do not display packages for a different platform info if not explicitely requested */
-			if($index['required_version'] <> $version &&
-				$requested_version <> "other") { continue; }
-			if (isset($index['required_version']) &&
-				$requested_version == "none") { continue; }
-			if($index['required_version'] == $version &&
-				$requested_version == "other") { continue; }
+          $dot = strpos($index['required_version'], ".");
+          $index['major_version'] = substr($index['required_version'], 0, $dot);
+
+          if ($version <> "HEAD" &&
+              $index['required_version'] == "HEAD" &&
+              $requested_version <> "other") { continue; }
+          if (empty($index['required_version']) &&
+                    $requested_version <> "none") { continue; }
+          if($index['major_version'] > $major &&
+             $requested_version <> "other") { continue; }
+          if(isset($index['major_version']) &&
+             $requested_version == "none") { continue; }
+          if($index['major_version'] == $major &&
+             $requested_version == "other") { continue; }
+
                             ?>
                             <tr valign="top">
                                 <td class="listlr">

@@ -364,13 +364,12 @@ function conf_mount_rw() {
 	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
 		return;
 
-	$status = mwexec("/sbin/umount -f {$g['cf_path']}");
-	$status = mwexec("/sbin/mount -w {$g['cf_path']}");
+	$status = mwexec("/sbin/mount -u -w {$g['cf_path']}");
 	if($status <> 0) {
 		if($g['booting'])
 			echo "Disk is dirty.  Running fsck -y\n";
 		mwexec("/sbin/fsck -y {$g['cf_path']}");
-		$status = mwexec("/sbin/mount -w {$g['cf_path']}");
+		$status = mwexec("/sbin/mount -u -w {$g['cf_path']}");
 	}
 
 	/*    if the platform is soekris or wrap or pfSense, lets mount the
@@ -378,17 +377,14 @@ function conf_mount_rw() {
          */
 	if($g['platform'] == "wrap" or $g['platform'] == "net45xx"
 	   or $g['platform'] == "embedded") {
-		$status = mwexec("/sbin/mount -w /");
+		$status = mwexec("/sbin/mount -u -w /");
 		/* we could not mount this correctly.  kick off fsck */
 		if($status <> 0) {
 			log_error("File system is dirty.  Launching FSCK for /");
-			mwexec("/sbin/fsck -y");
-			$status = mwexec("/sbin/mount -w /");
+			mwexec("/sbin/fsck -y /");
+			$status = mwexec("/sbin/mount -u -w /");
 		}
 	}
-
-	usleep(100);
-
 }
 
 /****f* config/conf_mount_ro
@@ -411,17 +407,10 @@ function conf_mount_ro() {
 	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
 		return;
 
-	/* sync data, then force a umount the remount of /cf */
+	/* sync data, then force a remount of /cf */
 	mwexec("/bin/sync");
-	mwexec("/bin/sync");
-	mwexec("/sbin/umount -f {$g['cf_path']}");
-	mwexec("/sbin/mount -r {$g['cf_path']}");
-	mwexec("/bin/sync");
-	mwexec("/bin/sync");
-	mwexec("/sbin/mount -r /");
-
-	usleep(100);
-
+	mwexec("/sbin/mount -u -r -f {$g['cf_path']}");
+	mwexec("/sbin/mount -u -r -f /");
 }
 
 /****f* config/convert_config

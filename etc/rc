@@ -67,16 +67,17 @@ fi
 if [ "$PLATFORM" = "cdrom" ] ; then
 	# do nothing for cdrom platform
 elif [ "$PLATFORM" = "embedded" ] ; then
-    #/usr/local/bin/php -f /etc/rc.conf_mount_rw
+    /usr/local/bin/php -f /etc/rc.conf_mount_rw
 else
     SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
 
     /sbin/swapon -a 2>/dev/null >/dev/null
 
-    /usr/local/bin/php -f /etc/rc.conf_mount_rw
+    #/usr/local/bin/php -f /etc/rc.conf_mount_rw
 fi
 echo " done."
 
+echo -n "Creating symlinks "
 # Make sure symlink is correct on embedded
 if [ "$PLATFORM" = "embedded" ] ; then
 	rm /conf
@@ -136,6 +137,7 @@ mkdir -p /var/run /var/log /var/etc /var/db/entropy /var/at/jobs/ /var/empty 2>/
 rm -rf /var/log/*
 rm -rf /var/run/*
 
+echo -n " logs "
 # generate circular logfiles
 if [ ! "$PLATFORM" = "cdrom" ]; then
     clog -i -s 10000 /var/log/system.log
@@ -162,6 +164,7 @@ chmod 0600 /var/log/system.log /var/log/filter.log /var/log/dhcpd.log /var/log/v
 
 /sbin/adjkerntz -i
 
+echo -n " devfs "
 DEVFS=`mount | grep devfs | wc -l | cut -d" " -f8`
 if [ "$DEVFS" = "0" ]; then
     mount_devfs devfs /dev
@@ -170,9 +173,8 @@ fi
 # Create an initial utmp file
 cd /var/run && cp /dev/null utmp && chmod 644 utmp
 
+echo -n " libraries "
 /sbin/ldconfig -elf /usr/lib /usr/local/lib /lib
-
-/usr/local/bin/php -f /etc/rc.conf_mount_rw
 
 # Make sure /etc/rc.conf doesn't exist.
 if [ -f /etc/rc.conf ]; then
@@ -181,7 +183,7 @@ fi
 
 # Launching kbdmux(4)
 if [ -f "/dev/kbdmux0" ]; then
-	echo "Starting Keyboard Mux Services..."
+	echo -n " keyboard_mux "
 	kbdcontrol -k /dev/kbdmux0 < /dev/console
 	[ -c "/dev/atkbd0" ] && kbdcontrol -a atkbd0 < /dev/console
 	[ -c "/dev/ukbd0" ] && kbdcontrol -a ukbd0 < /dev/console
@@ -189,8 +191,11 @@ fi
 
 # Fire up unionfs if mount points exist.
 if [ -f /dist/uniondirs ]; then
+	echo -n " unionfs "
 	/etc/rc.d/unionfs start
 fi
+
+echo " done."
 
 # let the PHP-based configuration subsystem set up the system now
 /etc/rc.bootup

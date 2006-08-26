@@ -139,10 +139,6 @@ function sf() { document.forms[0].savetopath.focus(); }
 	   Rows: <input size="3" name="rows" value="<? echo $rows; ?>">
 	   Cols: <input size="3" name="cols" value="<? echo $cols; ?>">
 	<?php endif; ?>
-	 |
-	Highlighting: <input name="highlight" type="radio" value="yes"
-	<?php if($highlight == "yes") echo " checked"; ?>>Enabled
-	<input name="highlight" type="radio" value="no"<?php if($highlight == "no") echo " checked"; ?>>Disabled
   </td>
  </tr>
 </table>

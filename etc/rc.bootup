@@ -31,27 +31,36 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-	require_once("globals.inc");
-	require_once("pfsense-utils.inc");
+	echo " done.\n";
 
+	echo "Initializing...";
+	echo ".";
+	require_once("globals.inc");
+	echo ".";
+	require_once("pfsense-utils.inc");
+	echo ".";
 	/* let the other functions know we're booting */
 	$pkg_interface = 'console';
+	echo ".";
 	$g['booting'] = TRUE;
+	echo ".";
 	touch("{$g['varrun_path']}/booting");
-
+	echo ".";
 	if($g['platform'] == "cdrom") {
 		$motd = trim(file_get_contents("/etc/motd"));
 		if(strlen($motd) > 2) echo "\n{$motd}\n\n";
 	}
 
 	/* parse the configuration and include all functions used below */
+	echo ".";
 	require_once("config.inc");
-	
+	echo ".";
 	require_once("functions.inc");
-	
+	echo ".";
 	/* get system memory amount */
 	$memory = get_memory();
 	$avail = $memory[0];
+	echo " done.\n";
 
 	/* start devd (dhclient now uses it */
 	echo "Starting device manager (devd)... ";
@@ -70,8 +79,8 @@
 
 	/*
 	 *  Determine if we need to throw a interface exception
-         *  and ask the user to reassign interfaces.  This will
-         *  avoid a reboot and thats a good thing.
+     *  and ask the user to reassign interfaces.  This will
+     *  avoid a reboot and thats a good thing.
 	 */
 	$do_assign = 0;
 	/* we need to ignore the vlan interface checks) */
@@ -102,7 +111,7 @@
 	echo "Cleaning backup cache... ";
 	cleanup_backupcache(true);
 	echo "done.\n";
-	
+
 	/* read in /etc/sysctl.conf and set values if needed */
 	echo "Setting up extended sysctls... ";
 	system_setup_sysctl();
@@ -163,7 +172,7 @@
 	if(!$debugging)
 		mute_kernel_msgs();
 	interfaces_optional_configure();
-	if(!$debugging) 
+	if(!$debugging)
 		unmute_kernel_msgs();
 	echo "done.\n";
 
@@ -183,7 +192,7 @@
 
 	/* start OpenVPN server & clients */
     openvpn_resync_all();
-	
+
 	/* setup altq + pf */
 	echo "Configuring firewall... ";
 	//mute_kernel_msgs();
@@ -199,13 +208,13 @@
 		/* start web server */
 		system_webgui_start();
 	}
-	
+
 	/* set up static routes */
 	system_routing_configure();
 
 	/* enable routing */
 	system_routing_enable();
-	
+
 	/* ensure passwords are sync'd */
 	system_password_configure();
 
@@ -217,7 +226,7 @@
 
 	/* start dyndns service */
 	services_dyndns_configure();
-	
+
 	/* static IP address? -> attempt DNS update */
 	if (is_ipaddr($config['interfaces']['wan']['ipaddr']))
 		services_dnsupdate_process();
@@ -250,9 +259,9 @@
 	echo "Setting up microcode and tx/rx offloading... ";
 	setup_microcode();
 	echo "done.\n";
-		
+
 	mwexec("/sbin/pfctl -f /tmp/rules.debug");
-	
+
 	/* start IPsec tunnels */
 	vpn_ipsec_configure();
 
@@ -274,9 +283,9 @@
 		touch("/var/etc/console_lockdown");
 
 	filter_configure();
-	
+
 	/* load graphing functions */
-	enable_rrd_graphing();	
+	enable_rrd_graphing();
 
 	/*   start DHCP service again now that CARP has settled
 	 *   incase user is using primary/backup failover dhcp mode
@@ -288,7 +297,7 @@
 
 	/* enable watchdog if supported */
 	enable_watchdog();
-		
+
 	/* done */
 	unlink("{$g['varrun_path']}/booting");
 	$g['booting'] = FALSE;

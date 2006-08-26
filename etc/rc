@@ -196,6 +196,7 @@ fi
 echo " done."
 
 # let the PHP-based configuration subsystem set up the system now
+echo -n "Launching PHP init system..."
 /etc/rc.bootup
 
 echo -n "Starting CRON... "

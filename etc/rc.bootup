@@ -37,26 +37,19 @@
 	echo ".";
 	require_once("globals.inc");
 	echo ".";
-	require_once("pfsense-utils.inc");
-	echo ".";
 	/* let the other functions know we're booting */
 	$pkg_interface = 'console';
-	echo ".";
 	$g['booting'] = TRUE;
-	echo ".";
 	touch("{$g['varrun_path']}/booting");
-	echo ".";
 	if($g['platform'] == "cdrom") {
 		$motd = trim(file_get_contents("/etc/motd"));
 		if(strlen($motd) > 2) echo "\n{$motd}\n\n";
 	}
 
 	/* parse the configuration and include all functions used below */
-	echo ".";
 	require_once("config.inc");
 	echo ".";
 	require_once("functions.inc");
-	echo ".";
 	/* get system memory amount */
 	$memory = get_memory();
 	$avail = $memory[0];

@@ -38,6 +38,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+if($g['booting']) echo ".";
+
 /* do not load this file twice. */
 if($config_inc_loaded == true)
 	return;
@@ -46,11 +48,15 @@ else
 
 /* include globals/utility/XML parser files */
 require_once("globals.inc");
+if($g['booting']) echo ".";
 require_once("util.inc");
+if($g['booting']) echo ".";
 require_once("pfsense-utils.inc");
+if($g['booting']) echo ".";
 require_once("xmlparse.inc");
 
 /* read platform */
+if($g['booting']) echo ".";
 if (file_exists("{$g['etc_path']}/platform")) {
 	$g['platform'] = chop(file_get_contents("{$g['etc_path']}/platform"));
 } else {
@@ -64,6 +70,7 @@ if(file_exists("/debugging")) {
 	$g['debug'] = true;
 }
 
+if($g['booting']) echo ".";
 if(file_exists("/cf/conf/config.xml")) {
 	$config_contents = file_get_contents("/cf/conf/config.xml");
 	if(stristr($config_contents, "<m0n0wall>") == true) {
@@ -77,12 +84,12 @@ if(file_exists("/cf/conf/config.xml")) {
 		fwrite($fd, $config_contents);
 		fclose($fd);
 		conf_mount_ro();
-		echo "done.";
 	}
 }
 
 /* if our config file exists bail out, we're already set. */
 if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
+	if($g['booting']) echo ".";
 	/* find the device where config.xml resides and write out an fstab */
 	unset($cfgdevice);
 
@@ -105,6 +112,7 @@ if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
 			echo "   CFG: {$cfgpartition}\n";
 			echo "  TYPE: {$cfgfstype}\n";
 		} else {
+			if($g['booting']) echo ".";
 			/* probe kernel known disks until we find one with config.xml */
 			$disks = explode(" ", trim(preg_replace("/kern.disks: /", "", exec("/sbin/sysctl kern.disks"))));
 			foreach ($disks as $mountdisk) {
@@ -141,7 +149,7 @@ if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
 				}
 			}
 		}
-
+		if($g['booting']) echo ".";
 		if (!$cfgdevice) {
 			$last_backup = discover_last_backup();
 			if($last_backup) {
@@ -184,6 +192,7 @@ EOD;
 	mwexec("/sbin/mount -a");
 }
 
+if($g['booting']) echo ".";
 $config = parse_config();
 
 /****f* config/parse_config
@@ -1534,5 +1543,7 @@ function set_device_perms() {
 		}
 	}
 }
+
+if($g['booting']) echo ".";
 
 ?>

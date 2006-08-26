@@ -67,13 +67,10 @@ fi
 if [ "$PLATFORM" = "cdrom" ] ; then
 	# do nothing for cdrom platform
 elif [ "$PLATFORM" = "embedded" ] ; then
-    # /usr/local/bin/php -f /etc/rc.conf_mount_rw
+    # do nothing for embedded platform
 else
     SWAPDEVICE=`cat /etc/fstab | grep swap | cut -f1`
-
     /sbin/swapon -a 2>/dev/null >/dev/null
-
-    #/usr/local/bin/php -f /etc/rc.conf_mount_rw
 fi
 echo " done."
 

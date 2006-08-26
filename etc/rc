@@ -162,8 +162,6 @@ fi
 # change permissions on newly created clog files.
 chmod 0600 /var/log/system.log /var/log/filter.log /var/log/dhcpd.log /var/log/vpn.log /var/log/portalauth.log /var/log/slbd.log
 
-/sbin/adjkerntz -i
-
 echo -n " devfs "
 DEVFS=`mount | grep devfs | wc -l | cut -d" " -f8`
 if [ "$DEVFS" = "0" ]; then

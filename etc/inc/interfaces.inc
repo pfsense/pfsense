@@ -948,7 +948,7 @@ function interfaces_opt_dhcp_configure($interface) {
 
 	if ($optcfg['dhcphostname']) {
 		$dhclientconf_hostname = "send dhcp-client-identifier \"{$optcfg['dhcphostname']}\";\n";
-		$dhclientconf_hostname .= "send host-name \"{$optcfg['dhcphostname']}\";\n";
+		$dhclientconf_hostname .= "\tsend host-name \"{$optcfg['dhcphostname']}\";\n";
 	} else {
 		$dhclientconf_hostname = "";
 	}
@@ -992,7 +992,7 @@ function interfaces_dhcp_configure($interface) {
 
 	if ($optcfg['dhcphostname']) {
 		$dhclientconf_hostname =  "send dhcp-client-identifier \"{$optcfg['dhcphostname']}\";\n";
-		$dhclientconf_hostname .= "send host-name \"{$optcfg['dhcphostname']}\";\n";
+		$dhclientconf_hostname .= "\tsend host-name \"{$optcfg['dhcphostname']}\";\n";
 	} else {
 		$dhclientconf_hostname = "";
 	}
@@ -1039,7 +1039,7 @@ function interfaces_wan_dhcp_configure() {
 
 	if ($wancfg['dhcphostname']) {
 		$dhclientconf_hostname = "send dhcp-client-identifier \"{$wancfg['dhcphostname']}\";\n";
-		$dhclientconf_hostname .= "send host-name \"{$optcfg['dhcphostname']}\";\n";
+		$dhclientconf_hostname .= "\tsend host-name \"{$wancfg['dhcphostname']}\";\n";
 	} else {
 		$dhclientconf_hostname = "";
 	}

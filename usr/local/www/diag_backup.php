@@ -33,6 +33,10 @@
 $omit_nocacheheaders = true;
 require("guiconfig.inc");
 
+function remove_bad_chars($string) {
+	return preg_replace('/[^a-z|_|0-9]/i','',$string);
+}
+
 function spit_out_select_items($area) {
 	$select = <<<EOD
 	<select name="{$area}">
@@ -156,10 +160,16 @@ if ($_POST) {
 								unlink("/tmp/config.cache");
 							$config = parse_config(true);
 							if($m0n0wall_upgrade == true) {
-								if($config['system']['gateway'] <> "") {
+								if($config['system']['gateway'] <> "")
 									$config['interfaces']['wan']['gateway'] = $config['system']['gateway'];
-								}
 								unset($config['shaper']);
+								/* build an interface collection */
+								for ($j = 1; isset ($config['interfaces']['opt' . $j]); $j++)
+									$ifdescrs['opt' . $j] = "opt" . $j;
+								/* remove special characters from interface descriptions */
+								foreach($ifdescrs as $iface)
+									$config['interfaces'][$iface]['descr'] = remove_bad_chars($config['interfaces'][$iface]['descr']);
+								unlink_if_exists("/tmp/config.cache");
 								write_config();
 								conf_mount_ro();
 								$savemsg = "The m0n0wall configuration has been restored and upgraded to pfSense.<p>The firewall is now rebooting.";
@@ -224,7 +234,7 @@ include("head.inc");
 		$tab_array[0] = array("Remote", false, "diag_confbak.php");
 		$tab_array[1] = array("Local", true, "diag_backup.php");
 		display_top_tabs($tab_array);
-?>			
+?>
 		</td>
 	</tr>
 	<tr>

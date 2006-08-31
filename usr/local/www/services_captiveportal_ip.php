@@ -2,20 +2,20 @@
 /*
 	services_captiveportal_ip.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2004 Dinesh Nair <dinesh@alphaque.com>
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -74,9 +74,8 @@ include("head.inc");
 <p class="pgtitle"><?=$pgtitle?></p>
 <form action="services_captiveportal_ip.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_allowedipsdirty_path)): ?><p>
+<?php if (file_exists($d_allowedipsdirty_path)): ?>
 <?php print_info_box_np("The captive portal IP address configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
-<input name="apply" type="submit" class="formbtn" id="apply" value="Apply changes"></p>
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
@@ -101,13 +100,13 @@ include("head.inc");
   <?php $i = 0; foreach ($a_allowedips as $ip): ?>
 	<tr>
 	  <td class="listlr">
-		<?php if($ip['dir'] == "to") 
+		<?php if($ip['dir'] == "to")
 			echo "any <img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\">";
-		?>	
+		?>
 		<?=strtolower($ip['ip']);?>
-		<?php if($ip['dir'] == "from") 
+		<?php if($ip['dir'] == "from")
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_in.gif\" width=\"11\" height=\"11\" align=\"absmiddle\"> any";
-		?>	
+		?>
 	  </td>
 	  <td class="listbg">
 		<?=htmlspecialchars($ip['descr']);?>&nbsp;
@@ -116,7 +115,7 @@ include("head.inc");
 		 &nbsp;<a href="services_captiveportal_ip.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this address?')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="delete address" width="17" height="17" border="0"></a></td>
 	</tr>
   <?php $i++; endforeach; ?>
-	<tr> 
+	<tr>
 	  <td class="list" colspan="2">&nbsp;</td>
 	  <td class="list"> <a href="services_captiveportal_ip_edit.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="add address" width="17" height="17" border="0"></a></td>
 	</tr>

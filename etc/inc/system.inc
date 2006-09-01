@@ -792,7 +792,7 @@ debug.log-file-not-found   = "disable"
 
 #server.network-backend = "writev"
 
-server.upload-dirs = ( "{$g['upload_path']}" )
+server.upload-dirs = ( "{$g['upload_path']}", "/tmp", "/var/" )
 
 server.max-request-size = 2097152
 

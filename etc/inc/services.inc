@@ -66,7 +66,8 @@ function services_dhcpd_configure() {
 	mwexec("/bin/sh /tmp/dhcpd.sh");
 
 	/* kill any running dhcpd */
-	mwexec("killall dhcpd");
+	if(is_process_running("dhcpd"))
+		mwexec("killall dhcpd");
 
 	$syscfg = $config['system'];
 	$dhcpdcfg = $config['dhcpd'];

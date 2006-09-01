@@ -373,6 +373,10 @@ function conf_mount_rw() {
 	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
 		return;
 
+	/* firmare upgrade in progress */
+	if(file_exists($g['varrun_path'] . "/fwup.enabled"))
+		return;
+
 	$status = mwexec("/sbin/mount -u -w {$g['cf_path']}");
 	if($status <> 0) {
 		if($g['booting'])

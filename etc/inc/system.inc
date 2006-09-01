@@ -662,7 +662,7 @@ server.event-handler        = "freebsd-kqueue"
 
 ## modules to load
 server.modules              =   (
-				  "mod_access",
+				  "mod_access", "mod_accesslog",
                                   {$module}{$captiveportal}
 				)
 
@@ -692,7 +692,7 @@ server.document-root        = "{$document_root}"
 {$captive_portal_rewrite}
 
 ## where to send error-messages to
-#server.errorlog             = "/var/log/lighttpd.error.log"
+server.errorlog             = "/var/log/lighttpd.error.log"
 
 # files to check for if .../ is requested
 server.indexfiles           = ( "index.php", "index.html",
@@ -790,7 +790,13 @@ debug.log-file-not-found   = "disable"
 #compress.cache-dir         = "/tmp/lighttpd/cache/compress/"
 #compress.filetype          = ("text/plain", "text/html")
 
+server.upload-dirs = ( "{$g['upload_path']}", "/tmp" )
+
+#server.network-backend = "writev"
+
 server.upload-dirs = ( "{$g['upload_path']}" )
+
+server.max-request-size = 2097152
 
 {$fastcgi_config}
 

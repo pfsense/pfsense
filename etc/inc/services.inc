@@ -89,7 +89,7 @@ function services_dhcpd_configure() {
 		return 0;
 
 	if ($g['booting'])
-		echo "Starting DHCP service... ";
+		echo "Starting DHCP service...";
 	else
 		sleep(1);
 
@@ -354,7 +354,7 @@ function services_dhcrelay_configure() {
 		return 0;
 
 	if ($g['booting'])
-		echo "Starting DHCP relay service... ";
+		echo "Starting DHCP relay service...";
 	else
 		sleep(1);
 
@@ -437,7 +437,7 @@ function services_dyndns_configure() {
 	if (isset($dyndnscfg['enable'])) {
 
 		if ($g['booting']) {
-			echo "Starting DynDNS client... ";
+			echo "Starting DynDNS client...";
 			if(isset($config['system']['use_old_dyndns'])) {
 				echo " [Using ez-ipupdate] ";
 				services_dyndns_configure_old();
@@ -492,7 +492,7 @@ function services_dyndns_configure_old() {
         if (isset($dyndnscfg['enable'])) {
 
                 if ($g['booting'])
-                        echo "Starting DynDNS client... ";
+                        echo "Starting DynDNS client...";
                 else
                         sleep(1);
 
@@ -570,7 +570,7 @@ function services_dnsmasq_configure() {
 	if (isset($config['dnsmasq']['enable'])) {
 
 		if ($g['booting'])
-			echo "Starting DNS forwarder... ";
+			echo "Starting DNS forwarder...";
 		else
 			sleep(1);
 

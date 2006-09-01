@@ -228,7 +228,7 @@ function system_syslogd_start() {
 	$syslogcfg = $config['syslog'];
 
 	if ($g['booting'])
-		echo "Starting syslog... ";
+		echo "Starting syslog...";
 	else
 		killbypid("{$g['varrun_path']}/syslog.pid");
 
@@ -357,7 +357,7 @@ function system_pccard_start() {
 	}
 
 	if ($g['booting'])
-		echo "Initializing PCMCIA... ";
+		echo "Initializing PCMCIA...";
 
 	/* kill any running pccardd */
 	killbypid("{$g['varrun_path']}/pccardd.pid");
@@ -380,7 +380,7 @@ function system_webgui_start() {
 	global $config, $g;
 
 	if ($g['booting'])
-		echo "Starting webConfigurator... ";
+		echo "Starting webConfigurator...";
 
 	/* kill any running lighttpd */
 	killbypid("{$g['varrun_path']}/lighty-webConfigurator.pid");
@@ -480,7 +480,7 @@ function system_webgui_start_old() {
 	}
 
         if ($g['booting'])
-                echo "Starting webConfigurator... ";
+                echo "Starting webConfigurator...";
 
         /* kill any running mini_httpd */
         killbypid("{$g['varrun_path']}/mini_httpd.pid");
@@ -862,7 +862,7 @@ function system_timezone_configure() {
 	$syscfg = $config['system'];
 
 	if ($g['booting'])
-		echo "Setting timezone... ";
+		echo "Setting timezone...";
 
 	/* extract appropriate timezone file */
 	$timezone = $syscfg['timezone'];
@@ -890,7 +890,7 @@ function system_ntp_configure() {
 	$syscfg = $config['system'];
 
 	if ($g['booting'])
-		echo "Starting NTP client... ";
+		echo "Starting NTP client...";
 	else {
 		killbypid("{$g['varrun_path']}/runmsntp.pid");
 		killbypid("{$g['varrun_path']}/msntp.pid");

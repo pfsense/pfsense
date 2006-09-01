@@ -56,14 +56,14 @@
 	echo " done.\n";
 
 	/* start devd (dhclient now uses it */
-	echo "Starting device manager (devd)... ";
+	echo "Starting device manager (devd)...";
 	mute_kernel_msgs();
 	start_devd();
 	set_device_perms();
 	unmute_kernel_msgs();
 	echo "done.\n";
 
-	echo "Loading configuration... ";
+	echo "Loading configuration...";
 	parse_config_bootup();
 	echo "done.\n";
 
@@ -97,25 +97,25 @@
 	unmute_kernel_msgs();
 
 	/* convert config and clean backups */
-	echo "Updating configuration... ";
+	echo "Updating configuration...";
 	convert_config();
 	echo "done.\n";
 
-	echo "Cleaning backup cache... ";
+	echo "Cleaning backup cache...";
 	cleanup_backupcache(true);
 	echo "done.\n";
 
 	/* read in /etc/sysctl.conf and set values if needed */
-	echo "Setting up extended sysctls... ";
+	echo "Setting up extended sysctls...";
 	system_setup_sysctl();
 	echo "done.\n";
 
 	/* sync user passwords */
-	echo "Syncing user passwords... ";
+	echo "Syncing user passwords...";
 	sync_webgui_passwords();
 	echo "done.\n";
 
-	echo "Starting Secure Shell Services... ";
+	echo "Starting Secure Shell Services...";
 	mwexec_bg("/etc/sshd");
 	echo "done.\n";
 
@@ -147,21 +147,21 @@
 	interfaces_vlan_configure();
 
 	/* set up LAN interface */
-	echo "Configuring LAN interface... ";
+	echo "Configuring LAN interface...";
 	mute_kernel_msgs();
 	interfaces_lan_configure();
 	unmute_kernel_msgs();
 	echo "done.\n";
 
 	/* set up WAN interface */
-	echo "Configuring WAN interface... ";
+	echo "Configuring WAN interface...";
 	mute_kernel_msgs();
 	interfaces_wan_configure();
 	unmute_kernel_msgs();
 	echo "done.\n";
 
 	/* set up Optional interfaces */
-	echo "Configuring OPT interfaces... ";
+	echo "Configuring OPT interfaces...";
 	if(!$debugging)
 		mute_kernel_msgs();
 	interfaces_optional_configure();
@@ -249,7 +249,7 @@
 	setup_polling();
 
 	/* setup interface microcode which improves tcp/ip speed */
-	echo "Setting up microcode and tx/rx offloading... ";
+	echo "Setting up microcode and tx/rx offloading...";
 	setup_microcode();
 	echo "done.\n";
 
@@ -259,7 +259,7 @@
 	vpn_ipsec_configure();
 
 	/* start ftp proxy helpers if they are enabled */
-	echo "Starting FTP helpers... ";
+	echo "Starting FTP helpers...";
 	system_start_ftp_helpers();
 	echo "done.\n";
 

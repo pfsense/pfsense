@@ -354,7 +354,6 @@ if ($pkg['tabs'] <> "") {
                   $fieldname = $pkga['fieldname'];
                   if (isset($pkga['multiple'])) {
                     $multiple = 'multiple';
-                    $fieldname .= '[]';
                     $items = explode(',', $value);
                   }
                   else {

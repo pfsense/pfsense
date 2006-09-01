@@ -2069,6 +2069,10 @@ function enable_rrd_graphing()
 				}
 			}
 
+			if($g['booting']) {
+				exec("$rrdtool update $rrddbpath$ifname$traffic N:U:U");
+			}
+
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling traffic for interface $ifname $realif \n";
 			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$traffic N:\\\n";
@@ -2095,6 +2099,10 @@ function enable_rrd_graphing()
 				if($rrdcreatereturn != 0) {
 			                log_error("RRD create failed exited with $rrdcreatereturn, the error is: $rrdcreateoutput[0]\n");
 				}
+			}
+
+			if($g['booting']) {
+				exec("$rrdtool update $rrddbpath$ifname$packets N:U:U");
 			}
 
 			$rrdupdatesh .= "\n";
@@ -2176,6 +2184,14 @@ function enable_rrd_graphing()
 				        	        log_error("RRD create failed exited with $rrdcreatereturn, the
 								error is: $rrdcreateoutput[0]\n");
 						}
+					}
+
+					if($g['booting']) {
+						$rrducommand = "$rrdtool update $rrddbpath$ifname$queues N";
+						foreach ($a_queues as $queue) {
+							$rrducommand .= ":U";
+						}
+						exec("$rrducommand");
 					}
 
 				/* awk function to gather shaper data */

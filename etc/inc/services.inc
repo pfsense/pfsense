@@ -1164,9 +1164,11 @@ EODAD;
 	}
 
 	if(is_process_running("olsrd"))
-		mwexec("/usr/bin/killall -HUP olsrd");
-	else
-		mwexec_bg("/usr/local/sbin/olsrd -f {$g['varetc_path']}/olsr.conf");
+		mwexec("/usr/bin/killall olsrd");
+
+	sleep(2);
+
+	mwexec_bg("/usr/local/sbin/olsrd -f {$g['varetc_path']}/olsr.conf");
 
 	conf_mount_ro();
 }

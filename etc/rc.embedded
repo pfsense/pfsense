@@ -9,7 +9,14 @@ partsize="3m"
 echo -n "Setting up embedded specific environment..."
 # Run some initialization routines
 [ -f /etc/rc.d/uzip ] && /etc/rc.d/uzip start
-/etc/rc.d/tmp start
+
+# Initialize MFS for /tmp. Partly taken from /etc/rc.d/var
+if (/bin/mkdir -p /tmp/.diskless 2> /dev/null); then
+       rmdir /tmp/.diskless
+else
+        varsize="40m"
+       mdmfs -S -M -s ${varsize} md /tmp
+fi
 
 # Initialize MFS for /var. Partly taken from /etc/rc.d/var
 if (/bin/mkdir -p /var/.diskless 2> /dev/null); then

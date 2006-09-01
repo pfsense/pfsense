@@ -373,8 +373,6 @@ EOD;
 function conf_mount_rw() {
 	global $g;
 
-	if($g['booting']) echo ".";
-
 	/* do not mount on cdrom platform */
 	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
 		return;
@@ -417,8 +415,6 @@ function conf_mount_ro() {
 	/* firmare upgrade in progress */
 	if(file_exists($g['varrun_path'] . "/fwup.enabled"))
 		return;
-
-	if($g['booting']) echo ".";
 
 	/* do not umount if generating ssh keys */
 	if(file_exists("/tmp/keys_generating"))
@@ -1273,8 +1269,6 @@ EOD;
 	}
 }
 
-if($g['booting']) echo ".";
-
 function autodetect_interface($ifname, $fp) {
 	$iflist_prev = get_interface_list("media");
 	echo <<<EOD
@@ -1557,7 +1551,5 @@ function set_device_perms() {
 		}
 	}
 }
-
-if($g['booting']) echo ".";
 
 ?>

@@ -74,7 +74,7 @@ else
 fi
 echo " done."
 
-echo -n "Creating symlinks "
+echo -n "Creating symlinks..."
 # Make sure symlink is correct on embedded
 if [ "$PLATFORM" = "embedded" ] ; then
 	rm /conf
@@ -134,7 +134,7 @@ mkdir -p /var/run /var/log /var/etc /var/db/entropy /var/at/jobs/ /var/empty 2>/
 rm -rf /var/log/*
 rm -rf /var/run/*
 
-echo -n " logs "
+echo -n "."
 # generate circular logfiles
 if [ ! "$PLATFORM" = "cdrom" ]; then
     clog -i -s 10000 /var/log/system.log
@@ -159,7 +159,7 @@ fi
 # change permissions on newly created clog files.
 chmod 0600 /var/log/system.log /var/log/filter.log /var/log/dhcpd.log /var/log/vpn.log /var/log/portalauth.log /var/log/slbd.log
 
-echo -n " devfs "
+echo -n "."
 DEVFS=`mount | grep devfs | wc -l | cut -d" " -f8`
 if [ "$DEVFS" = "0" ]; then
     mount_devfs devfs /dev
@@ -168,7 +168,7 @@ fi
 # Create an initial utmp file
 cd /var/run && cp /dev/null utmp && chmod 644 utmp
 
-echo -n " libraries "
+echo -n "."
 /sbin/ldconfig -elf /usr/lib /usr/local/lib /lib
 
 # Make sure /etc/rc.conf doesn't exist.
@@ -178,7 +178,7 @@ fi
 
 # Launching kbdmux(4)
 if [ -f "/dev/kbdmux0" ]; then
-	echo -n " keyboard_mux "
+	echo -n "."
 	kbdcontrol -k /dev/kbdmux0 < /dev/console
 	[ -c "/dev/atkbd0" ] && kbdcontrol -a atkbd0 < /dev/console
 	[ -c "/dev/ukbd0" ] && kbdcontrol -a ukbd0 < /dev/console
@@ -186,11 +186,11 @@ fi
 
 # Fire up unionfs if mount points exist.
 if [ -f /dist/uniondirs ]; then
-	echo -n " unionfs "
+	echo -n "."
 	/etc/rc.d/unionfs start
 fi
 
-echo " done."
+echo "done."
 
 # let the PHP-based configuration subsystem set up the system now
 echo -n "Launching PHP init system..."

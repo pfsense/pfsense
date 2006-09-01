@@ -215,6 +215,16 @@ if ($_POST) {
 		$input_errors[] = "The end destination port must be an alias or integer between 1 and 65535.";
 	}
 
+	/* if user enters an alias and selects "network" then disallow. */
+	if($_POST['srctype'] == "network") {
+		if(is_alias($_POST['src']))
+			$input_errors[] = "You must specify single host or alias for alias entries.";
+	}
+	if($_POST['dsttype'] == "network") {
+		if(is_alias($_POST['dst']))
+			$input_errors[] = "You must specify single host or alias for alias entries.";
+	}
+
 	if (!is_specialnet($_POST['srctype'])) {
 		if (($_POST['src'] && !is_ipaddroranyalias($_POST['src']))) {
 			$input_errors[] = "A valid source IP address or alias must be specified.";

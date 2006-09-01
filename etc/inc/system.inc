@@ -790,6 +790,8 @@ debug.log-file-not-found   = "disable"
 #compress.cache-dir         = "/tmp/lighttpd/cache/compress/"
 #compress.filetype          = ("text/plain", "text/html")
 
+server.upload-dirs = ( "{$g['upload_path']}" )
+
 {$fastcgi_config}
 
 {$cgi_config}

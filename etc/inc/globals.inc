@@ -32,6 +32,7 @@
 */
 
 $g = array(
+	"upload_path" => "/root",
     "dhcpd_chroot_path" => "/var/dhcpd",
     "varrun_path" => "/var/run",
     "varetc_path" => "/var/etc",
@@ -58,12 +59,12 @@ $g = array(
     "xmlrpcbaseurl" => "www.pfsense.com",
     "captiveportal_path" => "/usr/local/captiveportal",
     "captiveportal_element_path" => "/var/db/cpelements",
-    "captiveportal_element_sizelimit" => 262144,    
+    "captiveportal_element_sizelimit" => 262144,
     "xmlrpcpath" => "/pfSense/xmlrpc.php",
     "embeddedbootupslice" => "/dev/ad0a",
     "wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|wai|iwi|awi|wlan)/",
     "vlan_native_supp" => array("bfe", "dc", "fxp", "gem", "hme", "rl", "sis", "ste", "tl", "tx", "xl"),
-    "vlan_long_frame" =>  array("bfe", "bge", "dc", "em", "fxp", "gem", "hme", "ixgb", "nge", "re", "rl", "sis", "ste", "ti", "tl", "tx", "txp", "xl", "sk")    
+    "vlan_long_frame" =>  array("bfe", "bge", "dc", "em", "fxp", "gem", "hme", "ixgb", "nge", "re", "rl", "sis", "ste", "ti", "tl", "tx", "txp", "xl", "sk")
 );
 
 /* IP TOS flags */

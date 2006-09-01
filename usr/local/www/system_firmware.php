@@ -86,10 +86,10 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 						unlink($d_fwupenabled_path);
 				} else {
 					/* move the image so PHP won't delete it */
-					rename($_FILES['ulfile']['tmp_name'], "{$g['tmp_path']}/firmware.tgz");
+					rename($_FILES['ulfile']['tmp_name'], "{$g['upload_path']}/firmware.tgz");
 
 					/* check digital signature */
-					$sigchk = verify_digital_signature("{$g['tmp_path']}/firmware.tgz");
+					$sigchk = verify_digital_signature("{$g['upload_path']}/firmware.tgz");
 
 					if ($sigchk == 1)
 						$sig_warning = "The digital signature on this image is invalid.";
@@ -100,22 +100,22 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 
 					if (!verify_gzip_file("{$g['tmp_path']}/firmware.tgz")) {
 						$input_errors[] = "The image file is corrupt.";
-						unlink("{$g['tmp_path']}/firmware.tgz");
+						unlink("{$g['upload_path']}/firmware.tgz");
 					}
 				}
 			}
 
-                        /* Check for input errors, firmware locks, warnings, then check for firmware if sig_override is set */
-                        if (!$input_errors && !file_exists($d_firmwarelock_path) && (!$sig_warning || $_POST['sig_override'])) {
-                                if (file_exists("{$g['tmp_path']}/firmware.tgz")) {
-                                        /* fire up the update script in the background */
-                                        touch($d_firmwarelock_path);
-                                        $savemsg = "The firmware is now being updated. The firewall will reboot automatically.";
-                                        mwexec_bg("/etc/rc.firmware pfSenseupgrade {$g['tmp_path']}/firmware.tgz");
-                                } else {
-                                        $savemsg = "Firmware image missing or other error, please try again.";
-                                }
-                        }
+            /* Check for input errors, firmware locks, warnings, then check for firmware if sig_override is set */
+            if (!$input_errors && !file_exists($d_firmwarelock_path) && (!$sig_warning || $_POST['sig_override'])) {
+                    if (file_exists("{$g['upload_path']}/firmware.tgz")) {
+                            /* fire up the update script in the background */
+                            touch($d_firmwarelock_path);
+                            $savemsg = "The firmware is now being updated. The firewall will reboot automatically.";
+                            mwexec_bg("/etc/rc.firmware pfSenseupgrade {$g['upload_path']}/firmware.tgz");
+                    } else {
+                            $savemsg = "Firmware image missing or other error, please try again.";
+                    }
+            }
 		}
 	}
 }
@@ -128,7 +128,7 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>  	 
+<?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if ($fwinfo <> "") print_info_box($fwinfo); ?>
 <?php if ($sig_warning && !$input_errors): ?>
 <form action="system_firmware.php" method="post">

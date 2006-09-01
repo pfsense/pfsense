@@ -82,29 +82,29 @@ function filter_configure_sync() {
 	$wan_if = get_real_wan_interface();
 
 	/* generate aliases */
-	if($g['booting'] == true) echo " aliases ";
+	if($g['booting'] == true) echo ".";
 	update_filter_reload_status("Creating aliases");
 	$aliases = filter_generate_aliases();
 	/* generate nat rules */
-	  if($g['booting'] == true) echo " rules ";
+	  if($g['booting'] == true) echo ".";
 	update_filter_reload_status("Generating NAT rules");
 	$natrules = filter_nat_rules_generate();
 	/* generate pfctl rules */
-	if($g['booting'] == true) echo " filtering ";
+	if($g['booting'] == true) echo ".";
 	update_filter_reload_status("Generating filter rules");
 	$pfrules = filter_rules_generate();
 
 	if(isset($config['shaper']['enable'])) {
 		/* generate altq interface setup parms */
-		if($g['booting'] == true) echo " altq-interfaces ";
+		if($g['booting'] == true) echo ".";
 		update_filter_reload_status("Generating ALTQ interfaces");
 		$altq_ints = filter_setup_altq_interfaces();
 		/* generate altq queues */
-		if($g['booting'] == true) echo " altq-queues ";
+		if($g['booting'] == true) echo ".";
 		update_filter_reload_status("Generating ALTQ queues");
 		$altq_queues = filter_generate_altq_queues($altq_ints);
 		/* generate altq rules */
-		if($g['booting'] == true) echo " altq-rules ";
+		if($g['booting'] == true) echo ".";
 		/* Setup a default rule that tags ALL packets as unshaped
 		 * we'll match only unshaped packets in the shaper code later
 		 * this allows the shaper to be first match

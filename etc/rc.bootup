@@ -187,7 +187,7 @@
     openvpn_resync_all();
 
 	/* setup altq + pf */
-	echo "Configuring firewall... ";
+	echo "Configuring firewall...";
 	//mute_kernel_msgs();
 	filter_configure_sync();
 	//unmute_kernel_msgs();

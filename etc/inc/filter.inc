@@ -1759,9 +1759,6 @@ anchor "packageearly"
 # carp
 anchor "carp"
 
-# uPnPd
-anchor "miniupnpd"
-
 EOD;
 
 	if(!isset($config['system']['disableftpproxy'])) {
@@ -2394,6 +2391,9 @@ EOD;
 		}
 	}
 	$ipfrules .= <<<EOD
+
+# uPnPd
+anchor "miniupnpd"
 
 #---------------------------------------------------------------------------
 # default rules (just to be sure)

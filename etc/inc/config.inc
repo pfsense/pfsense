@@ -74,6 +74,7 @@ if($g['booting']) echo ".";
 if(file_exists("/cf/conf/config.xml")) {
 	$config_contents = file_get_contents("/cf/conf/config.xml");
 	if(stristr($config_contents, "<m0n0wall>") == true) {
+		if($g['booting']) echo ".";
 		/* user has just upgraded to m0n0wall, replace root xml tags */
 		log_error("Upgrading m0n0wall configuration to pfSense... ");
 		$config_contents = str_replace("m0n0wall","pfsense", $config_contents);
@@ -92,10 +93,10 @@ if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
 	if($g['booting']) echo ".";
 	/* find the device where config.xml resides and write out an fstab */
 	unset($cfgdevice);
-
+	if($g['booting']) echo ".";
 	/* check if there's already an fstab (NFS booting?) */
 	if (!file_exists("{$g['etc_path']}/fstab")) {
-
+		if($g['booting']) echo ".";
 		if (strstr($g['platform'], "cdrom")) {
 			/* config is on floppy disk for CD-ROM version */
 			$cfgdevice = $cfgpartition = "fd0";
@@ -134,6 +135,7 @@ if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
 						break;
 				}
 				if (mwexec("/sbin/mount -r /dev/{$mountdisk}d {$g['cf_path']}") == 0) {
+					if($g['booting']) echo ".";
 					if (file_exists("{$g['cf_conf_path']}/config.xml")) {
 						/* found it */
 						$cfgdevice = $mountdisk;
@@ -187,7 +189,7 @@ EOD;
 		fwrite($fd, $fstab);
 		fclose($fd);
 	}
-
+	if($g['booting']) echo ".";
 	/* mount all filesystems */
 	mwexec("/sbin/mount -a");
 }
@@ -205,7 +207,7 @@ $config = parse_config();
  ******/
 function parse_config($parse = false) {
 	global $g;
-
+	if($g['booting']) echo ".";
 	config_lock();
 	if(!$parse) {
 		if(file_exists($g['tmp_path'] . '/config.cache')) {
@@ -228,6 +230,7 @@ function parse_config($parse = false) {
 		}
 	} else {
 		if(!file_exists($g['conf_path'] . "/config.xml")) {
+			if($g['booting']) echo ".";
 			log_error("No config.xml found, attempting last known config restore.");
 			$last_backup = discover_last_backup();
 			if ($last_backup)
@@ -238,7 +241,7 @@ function parse_config($parse = false) {
 		$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
 		generate_config_cache($config);
 	}
-
+	if($g['booting']) echo ".";
 	alias_make_table($config);
 	config_unlock();
 
@@ -300,6 +303,7 @@ function restore_backup($file) {
  ******/
 function parse_config_bootup() {
 	global $config, $g, $noparseconfig;
+	if($g['booting']) echo ".";
 	if (!$noparseconfig) {
 		if (!file_exists("{$g['conf_path']}/config.xml")) {
 			config_lock();
@@ -369,12 +373,10 @@ EOD;
 function conf_mount_rw() {
 	global $g;
 
+	if($g['booting']) echo ".";
+
 	/* do not mount on cdrom platform */
 	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
-		return;
-
-	/* firmare upgrade in progress */
-	if(file_exists($g['varrun_path'] . "/fwup.enabled"))
 		return;
 
 	$status = mwexec("/sbin/mount -u -w {$g['cf_path']}");
@@ -411,6 +413,12 @@ function conf_mount_ro() {
 
 	if($g['booting'] == true)
 		return;
+
+	/* firmare upgrade in progress */
+	if(file_exists($g['varrun_path'] . "/fwup.enabled"))
+		return;
+
+	if($g['booting']) echo ".";
 
 	/* do not umount if generating ssh keys */
 	if(file_exists("/tmp/keys_generating"))
@@ -1264,6 +1272,8 @@ EOD;
 
 	}
 }
+
+if($g['booting']) echo ".";
 
 function autodetect_interface($ifname, $fp) {
 	$iflist_prev = get_interface_list("media");

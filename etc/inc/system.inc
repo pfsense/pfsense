@@ -1098,7 +1098,8 @@ function enable_watchdog() {
 		}
 	}
 	if($install_watchdog == true) {
-		exec("/usr/bin/killall watchdogd");
+		if(is_process_running("watchdogd"))
+			exec("/usr/bin/killall watchdogd");
 		exec("/usr/sbin/watchdogd");
 	}
 }

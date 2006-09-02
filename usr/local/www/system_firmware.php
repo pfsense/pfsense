@@ -62,8 +62,8 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 	else if (stristr($_POST['Submit'], "Upgrade") || $_POST['sig_override'])
 		$mode = "upgrade";
 	else if ($_POST['sig_no']) {
-		if(file_exists("{$g['tmp_path']}/firmware.tgz"))
-				unlink("{$g['tmp_path']}/firmware.tgz");
+		if(file_exists("{$g['upload_path']}/firmware.tgz"))
+				unlink("{$g['upload_path']}/firmware.tgz");
 	}
 	if ($mode) {
 		if ($mode == "enable") {
@@ -100,7 +100,7 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 					else if (($sigchk == 3) || ($sigchk == 4))
 						$sig_warning = "There has been an error verifying the signature on this image.";
 
-					if (!verify_gzip_file("{$g['tmp_path']}/firmware.tgz")) {
+					if (!verify_gzip_file("{$g['upload_path']}/firmware.tgz")) {
 						$input_errors[] = "The image file is corrupt.";
 						unlink("{$g['upload_path']}/firmware.tgz");
 					}

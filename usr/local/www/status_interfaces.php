@@ -234,7 +234,8 @@ function get_interface_info($ifdescr) {
 	$int = convert_friendly_interface_to_real_interface_name($ifdescr);
 	$bridge = link_int_to_bridge_interface($int);
 	if($bridge) {
-		$bridge_text = `/sbin/ifconfig {$bridge}  | grep \"$int\"`;
+		echo "/sbin/ifconfig {$bridge}  | grep \"$int\"";
+		$bridge_text = `/sbin/ifconfig {$bridge}`;
 		if(stristr($bridge_text, "blocking") <> false) {
 			$ifinfo['bridge'] = "<b><font color='red'>blocking</font></b> - check for ethernet loops";
 			$ifinfo['bridgeint'] = $bridge;

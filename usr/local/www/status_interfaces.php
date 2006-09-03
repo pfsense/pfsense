@@ -1,4 +1,3 @@
-#!/usr/local/bin/php
 <?php
 /* $Id$ */
 /*
@@ -230,6 +229,24 @@ function get_interface_info($ifdescr) {
 		}
 	}
 
+	$bridge = "";
+	$int = "";
+	$int = convert_friendly_interface_to_real_interface_name($ifdescr);
+	$bridge = link_int_to_bridge_interface($int);
+	if($bridge) {
+		$bridge_text = `/sbin/ifconfig {$bridge}`;
+		if(stristr($bridge_text, "blocking") <> false) {
+			$ifinfo['bridge'] = "<b><font color='red'>blocking</font></b> - check for ethernet loops";
+			$ifinfo['bridgeint'] = $bridge;
+		} else if(stristr($bridge_text, "learning") <> false) {
+			$ifinfo['bridge'] = "learning";
+			$ifinfo['bridgeint'] = $bridge;
+		} else if(stristr($bridge_text, "forwarding") <> false) {
+			$ifinfo['bridge'] = "forwarding";
+			$ifinfo['bridgeint'] = $bridge;
+		}
+	}
+
 	return $ifinfo;
 }
 
@@ -378,6 +395,16 @@ include("head.inc");
                 </td>
               </tr><?php endif; ?>
 	      <?php endif; ?>
+
+		  <?php if ($ifinfo['bridge']): ?>
+		  <tr>
+		    <td width="22%" class="vncellt">Bridge (<?=$ifinfo['bridgeint']?>)</td>
+		    <td width="78%" class="listr">
+		      <?=$ifinfo['bridge'];?>
+		    </td>
+		  </tr>
+		  <?php endif; ?>
+
               <?php $i++; endforeach; ?>
             </table>
 <br/>

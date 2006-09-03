@@ -220,6 +220,12 @@ function get_interface_info($ifdescr) {
 						$ifinfo['gateway'] = $matches[1];
 					}
 				}
+			} else {
+				/* deterimine interface gateway */
+				$int = convert_friendly_interface_to_real_interface_name($ifdescr);
+				$gw = get_interface_gateway($int);
+				if($gw)
+					$ifinfo['gateway'] = $gw;
 			}
 		}
 	}
@@ -253,8 +259,8 @@ include("head.inc");
               <tr>
                 <td colspan="2" class="listtopic">
                   <?=htmlspecialchars($ifname);?>
-				  interface 
-				  (<?=convert_friendly_interface_to_real_interface_name($ifname);?>)                  
+				  interface
+				  (<?=convert_friendly_interface_to_real_interface_name($ifname);?>)
 				</td>
               </tr>
               <tr>
@@ -330,7 +336,7 @@ include("head.inc");
 			$dns_servers = get_dns_servers();
 			foreach($dns_servers as $dns) {
 				echo "{$dns}<br>";
-			}	
+			}
 		?>
 		</td>
 			  <?php endif; endif; if ($ifinfo['media']): ?>
@@ -378,7 +384,7 @@ include("head.inc");
 </strong>Using dial-on-demand will bring the connection up again if any packet
 triggers it. To substantiate this point: disconnecting manually
 will <strong>not</strong> prevent dial-on-demand from making connections
-to the outside! Don't use dial-on-demand if you want to make sure that the line 
+to the outside! Don't use dial-on-demand if you want to make sure that the line
 is kept disconnected.
 <p>
 <span class="red"><strong>Note:</strong></span> In/out counters will wrap at 32bit (4 Gigabyte) ! <br/>

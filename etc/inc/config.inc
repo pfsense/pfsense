@@ -1379,6 +1379,10 @@ function system_start_ftp_helpers() {
 		 *    launched in a  different sequence so we are filtering them out
          *    here by not including -c {$port} -g 8021 first.
 		 */
+		 /* only install a ftp helper for enabled interfaces. wan and lan are always enabled. */
+		if(stristr($ifname, "opt") <> false)
+			if(!isset($config['interfaces'][strtolower($ifname)]['enable']))
+				continue;
 		$port = 8021 + $interface_counter;
 		if(isset($config['interfaces'][$ifname]['disableftpproxy'])) {
 			/*    item is disabled.  lets ++ the interface counter and

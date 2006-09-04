@@ -298,7 +298,7 @@ include("fbegin.inc"); ?>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Protocol</td>
                   <td width="78%" class="vtable">
-                    <select name="proto" class="formfld" onChange="proto_change();">
+                    <select name="proto" class="formfld" onChange="proto_change(); check_for_aliases();">
                       <?php $protocols = explode(" ", "TCP UDP TCP/UDP GRE ESP"); foreach ($protocols as $proto): ?>
                       <option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['proto']) echo "selected"; ?>><?=htmlspecialchars($proto);?></option>
                       <?php endforeach; ?>
@@ -313,7 +313,7 @@ include("fbegin.inc"); ?>
                     <table border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>from:&nbsp;&nbsp;</td>
-                        <td><select name="beginport" class="formfld" onChange="ext_rep_change();ext_change()">
+                        <td><select name="beginport" class="formfld" onChange="ext_rep_change(); ext_change(); check_for_aliases();">
                             <option value="">(other)</option>
                             <?php $bfound = 0; foreach ($wkports as $wkport => $wkportdesc): ?>
                             <option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['beginport']) {
@@ -323,11 +323,11 @@ include("fbegin.inc"); ?>
 							<?=htmlspecialchars($wkportdesc);?>
 							</option>
                             <?php endforeach; ?>
-                          </select> <input autocomplete='off' class="formfldalias" name="beginport_cust" id="beginport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['beginport']; ?>"></td>
+                          </select> <input onChange="check_for_aliases();" autocomplete='off' class="formfldalias" name="beginport_cust" id="beginport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['beginport']; ?>"></td>
                       </tr>
                       <tr>
                         <td>to:</td>
-                        <td><select name="endport" class="formfld" onChange="ext_change()">
+                        <td><select name="endport" class="formfld" onChange="ext_change(); check_for_aliases();">
                             <option value="">(other)</option>
                             <?php $bfound = 0; foreach ($wkports as $wkport => $wkportdesc): ?>
                             <option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['endport']) {
@@ -337,7 +337,7 @@ include("fbegin.inc"); ?>
 							<?=htmlspecialchars($wkportdesc);?>
 							</option>
 							<?php endforeach; ?>
-                          </select> <input class="formfldalias"  autocomplete='off' name="endport_cust" id="endport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['endport']; ?>"></td>
+                          </select> <input onChange="check_for_aliases();" class="formfldalias" autocomplete='off' name="endport_cust" id="endport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['endport']; ?>"></td>
                       </tr>
                     </table>
                     <br> <span class="vexpl">Specify the port or port range on
@@ -356,7 +356,7 @@ include("fbegin.inc"); ?>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Local port</td>
                   <td width="78%" class="vtable">
-                    <select name="localbeginport" class="formfld" onChange="ext_change()">
+                    <select name="localbeginport" class="formfld" onChange="ext_change();check_for_aliases();">
                       <option value="">(other)</option>
                       <?php $bfound = 0; foreach ($wkports as $wkport => $wkportdesc): ?>
                       <option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['localbeginport']) {
@@ -366,7 +366,7 @@ include("fbegin.inc"); ?>
 					  <?=htmlspecialchars($wkportdesc);?>
 					  </option>
                       <?php endforeach; ?>
-                    </select> <input  autocomplete='off' class="formfldalias" name="localbeginport_cust" id="localbeginport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['localbeginport']; ?>">
+                    </select> <input onChange="check_for_aliases();" autocomplete='off' class="formfldalias" name="localbeginport_cust" id="localbeginport_cust" type="text" size="5" value="<?php if (!$bfound) echo $pconfig['localbeginport']; ?>">
                     <br>
                     <span class="vexpl">Specify the port on the machine with the
                     IP address entered above. In case of a port range, specify

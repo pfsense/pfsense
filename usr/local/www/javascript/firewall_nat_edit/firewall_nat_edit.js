@@ -25,6 +25,44 @@ function ext_rep_change() {
 	document.iform.localbeginport.selectedIndex = document.iform.beginport.selectedIndex;
 }
 
+function check_for_aliases() {
+	/*  if External port range is an alias, then disallow
+	 *  entry of Local port
+	 */
+	document.iform.endport_cust.disabled = 0;
+	document.iform.localbeginport.disabled = 0;
+	for(i=0; i<customarray.length; i++) {
+		if(document.iform.beginport_cust.value == customarray[i]) {
+			alert(customarray[i]);
+			document.iform.endport_cust.value = "";
+			document.iform.endport_cust.disabled = 1;
+			document.iform.localbeginport_cust.value = "";
+			document.iform.localbeginport.disabled = 1;
+			document.iform.localbeginport_cust.disabled = 1;
+		}
+		if(document.iform.beginport.value == customarray[i]) {
+			document.iform.endport_cust.value = "";
+			document.iform.endport_cust.disabled = 1;
+			document.iform.localbeginport_cust.value = "";
+			document.iform.localbeginport.disabled = 1;
+			document.iform.localbeginport_cust.disabled = 1;
+		}
+		if(document.iform.endport_cust.value == customarray[i]) {
+			document.iform.endport_cust.value = "";
+			document.iform.endport_cust.disabled = 1;
+			document.iform.localbeginport_cust.value = "";
+			document.iform.localbeginport.disabled = 1;
+			document.iform.localbeginport_cust.disabled = 1;
+		}
+		if(document.iform.endport.value == customarray[i]) {
+			document.iform.endport_cust.value = "";
+			document.iform.endport_cust.disabled = 1;
+			document.iform.localbeginport_cust.value = "";
+			document.iform.localbeginport.disabled = 1;
+			document.iform.localbeginport_cust.disabled = 1;
+		}
+	}
+}
 
 function proto_change() {
 	if(document.iform.proto.selectedIndex > 2) {
@@ -33,16 +71,15 @@ function proto_change() {
 		document.iform.beginport.disabled = 1;
 		document.iform.endport.disabled = 1;
 		document.iform.localbeginport_cust.disabled = 1;
-		document.iform.localbeginport.disabled = 1;		
+		document.iform.localbeginport.disabled = 1;
 	} else {
 		document.iform.beginport_cust.disabled = 0;
 		document.iform.endport_cust.disabled = 0;
 		document.iform.beginport.disabled = 0;
 		document.iform.endport.disabled = 0;
 		document.iform.localbeginport_cust.disabled = 0;
-		document.iform.localbeginport.disabled = 0;		
+		document.iform.localbeginport.disabled = 0;
 	}
-	
 }
 
 window.onload = function () {

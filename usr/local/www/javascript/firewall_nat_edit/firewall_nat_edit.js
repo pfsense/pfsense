@@ -34,7 +34,6 @@ function check_for_aliases() {
 	document.iform.localbeginport_cust.disabled = 0;
 	for(i=0; i<customarray.length; i++) {
 		if(document.iform.beginport_cust.value == customarray[i]) {
-			alert(customarray[i]);
 			document.iform.endport_cust.value = "";
 			document.iform.localbeginport_cust.value = "";
 			document.iform.endport_cust.disabled = 1;

@@ -31,33 +31,34 @@ function check_for_aliases() {
 	 */
 	document.iform.endport_cust.disabled = 0;
 	document.iform.localbeginport.disabled = 0;
+	document.iform.localbeginport_cust.disabled = 0;
 	for(i=0; i<customarray.length; i++) {
 		if(document.iform.beginport_cust.value == customarray[i]) {
 			alert(customarray[i]);
 			document.iform.endport_cust.value = "";
-			document.iform.endport_cust.disabled = 1;
 			document.iform.localbeginport_cust.value = "";
+			document.iform.endport_cust.disabled = 1;
 			document.iform.localbeginport.disabled = 1;
 			document.iform.localbeginport_cust.disabled = 1;
 		}
 		if(document.iform.beginport.value == customarray[i]) {
 			document.iform.endport_cust.value = "";
-			document.iform.endport_cust.disabled = 1;
 			document.iform.localbeginport_cust.value = "";
+			document.iform.endport_cust.disabled = 1;
 			document.iform.localbeginport.disabled = 1;
 			document.iform.localbeginport_cust.disabled = 1;
 		}
 		if(document.iform.endport_cust.value == customarray[i]) {
 			document.iform.endport_cust.value = "";
-			document.iform.endport_cust.disabled = 1;
 			document.iform.localbeginport_cust.value = "";
+			document.iform.endport_cust.disabled = 1;
 			document.iform.localbeginport.disabled = 1;
 			document.iform.localbeginport_cust.disabled = 1;
 		}
 		if(document.iform.endport.value == customarray[i]) {
 			document.iform.endport_cust.value = "";
-			document.iform.endport_cust.disabled = 1;
 			document.iform.localbeginport_cust.value = "";
+			document.iform.endport_cust.disabled = 1;
 			document.iform.localbeginport.disabled = 1;
 			document.iform.localbeginport_cust.disabled = 1;
 		}

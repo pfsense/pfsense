@@ -807,18 +807,27 @@ function filter_nat_rules_generate() {
 			$rdr_on = convert_real_interface_to_friendly_descr($rule['interface']);
 
 			if($dontinstallrdr == false) {
+				/* is rule a port range? */
 				if ((!$extport[1]) || ($extport[0] == $extport[1])) {
 
 					switch ($rule['protocol']) {
 						case "tcp/udp":
-							if($natif)
-								$natrules .= "{$nordr}rdr on $natif proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
+							if($natif) {
+								if($rule['external-port'] <> $rule['local-port'])
+									$natrules .= "{$nordr}rdr on $natif proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
+								else
+									$natrules .= "{$nordr}rdr on $natif proto { tcp udp } from any to {$extaddr} port { {$extport[0]} } -> {$target}";
+							}
 							break;
 						case "udp":
 						case "tcp":
 							if($extport[0])
-								if($natif)
-									$natrules .= "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
+								if($natif) {
+									if($rule['external-port'] <> $rule['local-port'])
+										$natrules .= "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}{$localport}";
+									else
+										$natrules .= "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} port { {$extport[0]} } -> {$target}";
+								}
 							else
 								if($natif)
 									$natrules .= "rdr on $natif proto {$rule['protocol']} from any to {$extaddr} -> {$target}{$localport}";

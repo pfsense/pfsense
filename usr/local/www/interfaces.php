@@ -4,7 +4,7 @@
 	interfaces_wan.php
         Copyright (C) 2004 Scott Ullrich
 	All rights reserved.
-        
+
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
@@ -207,7 +207,7 @@ if ($_POST) {
 		if($bridge <> "-1") {
 			destroy_bridge($bridge);
 		}
-	
+
 		unset($wancfg['ipaddr']);
 		unset($wancfg['subnet']);
 		unset($config['interfaces']['wan']['gateway']);
@@ -231,12 +231,12 @@ if ($_POST) {
 		unset($config['bigpond']['authdomain']);
 		unset($config['bigpond']['minheartbeatinterval']);
 		unset($wancfg['disableftpproxy']);
-		
+
 		/* per interface pftpx helper */
 		if($_POST['disableftpproxy'] == "yes") {
 			$wancfg['disableftpproxy'] = true;
 			system_start_ftp_helpers();
-		} else {			
+		} else {
 			system_start_ftp_helpers();
 		}
 
@@ -278,12 +278,12 @@ if ($_POST) {
 			$wancfg['blockpriv'] = true;
 		else
 			unset($wancfg['blockpriv']);
-		
+
 		if($_POST['blockbogons'] == "yes")
 			$wancfg['blockbogons'] = true;
 		else
 			unset($wancfg['blockbogons']);
-		
+
 		$wancfg['spoofmac'] = $_POST['spoofmac'];
 		$wancfg['mtu'] = $_POST['mtu'];
 
@@ -479,7 +479,7 @@ function type_change(enable_change,enable_change_pptp) {
 			$mac = `/usr/sbin/arp -an | grep {$ip} | cut -d" " -f4`;
 			$mac = str_replace("\n","",$mac);
 		    ?>
-		    <a OnClick="document.forms[0].spoofmac.value='<?=$mac?>';" href="#">Copy my MAC address</a>   
+		    <a OnClick="document.forms[0].spoofmac.value='<?=$mac?>';" href="#">Copy my MAC address</a>
 		    <br>
                     This field can be used to modify (&quot;spoof&quot;) the MAC
                     address of the WAN interface<br>
@@ -661,7 +661,7 @@ function type_change(enable_change,enable_change_pptp) {
                 </tr>
                 <tr>
                   <td colspan="2" valign="top" class="listtopic">FTP Helper</td>
-                </tr>		
+                </tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell">FTP Helper</td>
 			<td width="78%" class="vtable">
@@ -698,7 +698,7 @@ function type_change(enable_change,enable_change_pptp) {
                     are reserved (but not RFC 1918) or not yet assigned by IANA.<br>
                     Bogons are prefixes that should never appear in the Internet routing table, and obviously should not appear as the source address in any packets you receive.</td>
 		</tr>
-	
+
                 <tr>
                   <td width="100" valign="top">&nbsp;</td>
                   <td> &nbsp;<br> <input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change_pptp(true)&&enable_change(true)">
@@ -721,15 +721,17 @@ type_change();
 if ($_POST) {
 
 	if (!$input_errors) {
-		
+
+		unlink_if_exists("{$g['tmp_path']}/config.cache");
+
 		ob_flush();
 		flush();
-		sleep(1);		
-		
+		sleep(1);
+
 		interfaces_wan_configure();
-		
+
 		reset_carp();
-		
+
 		/* sync filter configuration */
 		filter_configure();
 	}

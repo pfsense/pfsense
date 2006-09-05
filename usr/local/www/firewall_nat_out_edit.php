@@ -43,17 +43,17 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
-if (isset($_GET['dup']))  { 
-	$id  =  $_GET['dup']; 
-	$after  =  $_GET['dup']; 
-}  
+if (isset($_GET['dup']))  {
+	$id  =  $_GET['dup'];
+	$after  =  $_GET['dup'];
+}
 
 if (isset($id) && $a_out[$id]) {
     list($pconfig['source'],$pconfig['source_subnet']) = explode('/', $a_out[$id]['source']['network']);
     $pconfig['sourceport'] = $a_out[$id]['sourceport'];
     address_to_pconfig($a_out[$id]['destination'], $pconfig['destination'],
 	   $pconfig['destination_subnet'], $pconfig['destination_not'],
-	   $none, $none); 
+	   $none, $none);
     $pconfig['dstport'] = $a_out[$id]['dstport'];
     $pconfig['natport'] = $a_out[$id]['natport'];
     $pconfig['target'] = $a_out[$id]['target'];
@@ -63,7 +63,7 @@ if (isset($id) && $a_out[$id]) {
     $pconfig['descr'] = $a_out[$id]['descr'];
     $pconfig['nonat'] = $a_out[$id]['nonat'];
     $pconfig['staticnatport'] = isset($a_out[$id]['staticnatport']);
-    $pconfig['nosync'] = isset($a_out[$id]['nosync']);    
+    $pconfig['nosync'] = isset($a_out[$id]['nosync']);
 } else {
     $pconfig['source_subnet'] = 24;
     $pconfig['destination'] = "any";
@@ -133,8 +133,8 @@ if ($_POST) {
 	$osn = "any";
     } else {
 	$osn = gen_subnet($_POST['source'], $_POST['source_subnet']) . "/" . $_POST['source_subnet'];
-    }	
-    
+    }
+
     /* check for existing entries */
     if ($_POST['destination_type'] == "any")
         $ext = "any";
@@ -180,16 +180,16 @@ if ($_POST) {
         $natent['target'] = $_POST['target'];
         $natent['interface'] = $_POST['interface'];
 
-		/* static-port */	
-		if(isset($_POST['staticnatport'])) 
+		/* static-port */
+		if(isset($_POST['staticnatport']))
 			$natent['staticnatport'] = true;
-		else 
+		else
 			unset($natent['staticnatport']);
 
 		/* if user has selected not nat, set it here */
-		if(isset($_POST['nonat'])) 
+		if(isset($_POST['nonat']))
 			$natent['nonat'] = true;
-		else 
+		else
 			unset($natent['nonat']);
 
         if ($ext == "any")
@@ -204,10 +204,10 @@ if ($_POST) {
 			$natent['nosync'] = true;
 		else
 			unset($natent['nosync']);
-	
+
         if (isset($_POST['destination_not']) && $ext != "any")
             $natent['destination']['not'] = true;
-	
+
 		if (isset($id) && $a_out[$id])
 			$a_out[$id] = $natent;
 		else {
@@ -234,6 +234,14 @@ include("head.inc");
 
 <script language="JavaScript">
 <!--
+function staticportchange() {
+	if(document.iform.staticnatport.checked) {
+		document.iform.natport.value = "";
+		document.iform.natport.disabled = 1;
+	} else {
+		document.iform.natport.disabled = 0;
+	}
+}
 function typesel_change() {
     switch (document.iform.destination_type.selectedIndex) {
         case 1: // network
@@ -308,7 +316,7 @@ function sourcesel_change() {
 			    <select name="source_type" class="formfld" onChange="sourcesel_change()">
                               <option value="any" <?php if ($pconfig['source'] == "any") echo "selected"; ?>>any</option>
                               <option value="network" <?php if ($pconfig['source'] != "any") echo "selected"; ?>>Network</option>
-                            </select>			
+                            </select>
 			</td></tr>
                         <td>Address:&nbsp;&nbsp;</td>
                         <td><input name="source" type="text" class="formfld" id="source" size="20" value="<?=htmlspecialchars($pconfig['source']);?>">/<select name="source_subnet" class="formfld" id="source_subnet">
@@ -397,8 +405,8 @@ function sourcesel_change() {
 			</tr>
 			<tr>
                           <td>Static-port:&nbsp;&nbsp;</td>
-                          <td><input name="staticnatport" type="checkbox" class="formfld" id="staticnatport" size="5"<?php if($pconfig['staticnatport']) echo " CHECKED";?>></td>
-			</tr>			
+                          <td><input onChange="staticportchange();" name="staticnatport" type="checkbox" class="formfld" id="staticnatport" size="5"<?php if($pconfig['staticnatport']) echo " CHECKED";?>></td>
+			</tr>
 			<tr><td>&nbsp;</td><td>
                         <span class="vexpl">Enter the source port for the outbound NAT mapping.</span>
 			</td></tr>

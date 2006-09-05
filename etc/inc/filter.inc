@@ -747,8 +747,16 @@ function filter_nat_rules_generate() {
 
 			$target = alias_expand_host($rule['target']);
 
-			if (!$target)
-				continue;	/* unresolvable alias */
+			if (!$target) {
+				$natrules .= "# Unresolvable alias {$rule['target']}\n";
+				continue;       /* unresolvable alias */
+			}
+
+			# use tables for aliases in rdr
+			if (!is_ipaddr($target)) {
+				$natrules .= "table <{$rule['target']}> { $target }\n";
+				$target = "<{$rule['target']}>";
+			}
 
 			if ($rule['external-address'])
 				if($rule['external-address'] <> "any")

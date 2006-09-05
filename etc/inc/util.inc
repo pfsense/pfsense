@@ -425,12 +425,16 @@ function alias_expand($name) {
 
 /* expand a host alias, if necessary */
 function alias_expand_host($name) {
-
 	global $aliastable;
 
-	if (isset($aliastable[$name]) && is_ipaddr($aliastable[$name]))
+	if (isset($aliastable[$name])) {
+		$ip_arr = explode(" ", $aliastable[$name]);
+		foreach($ip_arr as $ip) {
+			if (!is_ipaddr($ip))
+				return null;
+		}
 		return $aliastable[$name];
-	else if (is_ipaddr($name))
+	} else if (is_ipaddr($name))
 		return $name;
 	else
 		return null;

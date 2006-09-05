@@ -441,6 +441,7 @@ function sourcesel_change() {
 <script language="JavaScript">
 <!--
 typesel_change();
+staticportchange();
 //-->
 </script>
 <?php include("fend.inc"); ?>

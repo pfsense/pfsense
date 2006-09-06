@@ -344,6 +344,7 @@ function get_vpns_list() {
 	/* build list of vpns */
 	$vpns = "";
 	$isfirst = true;
+	/* ipsec */
 	if($config['ipsec']['tunnel']) {
 		foreach($config['ipsec']['tunnel'] as $tunnel) {
 			if($isfirst == false)
@@ -352,6 +353,15 @@ function get_vpns_list() {
 			$isfirst = false;
 		}
 	}
+	/* openvpn */
+	if($config['installedpackages']['openvpncsc']['config']) {
+		foreach ($config['installedpackages']['openvpncsc']['config'] as $tunnel) {
+			if($isfirst == false)
+				$vpns .= " ";
+			$vpns .= $tunnel['remote_network'];
+			$isfirst = false;
+		}
+	}	
 	return $vpns;
 }
 
@@ -698,14 +708,17 @@ function filter_nat_rules_generate() {
 		   connections across the tunnels to pftpx */
 		$vpns_list = get_vpns_list();
 		if($vpns_list)
-			$vpns = "{ ! $vpns_list }";
+			$vpns = "{ $vpns_list }";
 		else
 			$vpns = "any";
 		$int_ip = find_interface_ip($tmp_interface);
 		/* if interface lacks an ip, dont setup a rdr for ftp.  they are most likely on a bridged interface */
 		if($int_ip)
-			if($ifname_lower)
-				$natrules .= "rdr on \${$ifname_lower} proto tcp from any to {$vpns} port 21 -> 127.0.0.1 port {$tmp_port}\n";
+			if($ifname_lower) {
+				$natrules .= "no rdr on \${$ifname_lower} proto tcp from any to <$vpns> port 21 -> 127.0.0.1 port {$tmp_port}\n";
+				$natrules .= "no rdr on \${$ifname_lower} proto tcp from <vpns> to any port 21 -> 127.0.0.1 port {$tmp_port}\n";
+				$natrules .= "no rdr on \${$ifname_lower} proto tcp from any to any port 21 -> 127.0.0.1 port {$tmp_port}\n";
+			}
 		$interface_counter++;
 	}
 	$natrules .= "\n";

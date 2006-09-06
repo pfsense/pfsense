@@ -286,7 +286,7 @@ function sourcesel_change() {
                   <td width="78%" class="vtable">
 			<input type="checkbox" name="nonat"<?php if(isset($pconfig['nonat'])) echo " CHECKED"; ?>>
                      <span class="vexpl">Enabling this option will disable natting for the item and stop processing outgoing nat rules.
-		     <br>Hint: in most cases, you'll not use this option unless you know what your doing.</span></td>
+		     <br>Hint: in most cases, you'll not use this option unless you know what you're doing.</span></td>
                 </tr>
 	        <tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>

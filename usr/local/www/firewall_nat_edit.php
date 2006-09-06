@@ -385,7 +385,7 @@ include("fbegin.inc"); ?>
 					<td width="22%" valign="top" class="vncell">No XMLRPC Sync</td>
 					<td width="78%" class="vtable">
 						<input type="checkbox" value="yes" name="nosync"<?php if($pconfig['nosync']) echo " CHECKED"; ?>><br>
-						HINT: This prevents the rule from automatically syncing to other carp members.
+						HINT: This prevents the rule from automatically syncing to other CARP members.
 					</td>
 				</tr>
                 <?php if ((!(isset($id) && $a_nat[$id])) || (isset($_GET['dup']))): ?>

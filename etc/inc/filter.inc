@@ -698,7 +698,8 @@ function filter_nat_rules_generate() {
 		$iflist['opt' . $i] = "opt{$i}";
 	$interface_counter = 0;
 	$vpns_list = get_vpns_list();
-	$natrules .= "table <vpns> { $vpns_list }\n";
+	if($vpns_list)
+		$natrules .= "table <vpns> { $vpns_list }\n";
 	/* loop through all interfaces and handle pftpx redirections */
 	foreach ($iflist as $ifent => $ifname) {
 		$ifname_lower = convert_friendly_interface_to_friendly_descr(strtolower($ifname));
@@ -714,7 +715,7 @@ function filter_nat_rules_generate() {
 		   connections across the tunnels to pftpx */
 		$int_ip = find_interface_ip($tmp_interface);
 		/* if interface lacks an ip, dont setup a rdr for ftp.  they are most likely on a bridged interface */
-		if($int_ip)
+		if($int_ip and $vpns_list)
 			if($ifname_lower) {
 				$natrules .= "no rdr on \${$ifname_lower} proto tcp from any to <vpns> port 21\n";
 				$natrules .= "no rdr on \${$ifname_lower} proto tcp from <vpns> to any port 21\n";

@@ -345,23 +345,27 @@ function get_vpns_list() {
 	$vpns = "";
 	$isfirst = true;
 	/* ipsec */
-	if($config['ipsec']['tunnel']) {
-		foreach($config['ipsec']['tunnel'] as $tunnel) {
-			if($isfirst == false)
+	if ($config['ipsec']['tunnel']) {
+		foreach ($config['ipsec']['tunnel'] as $tunnel) {
+			if ($isfirst == false)
 				$vpns .= " ";
 			$vpns .= $tunnel['remote-subnet'];
 			$isfirst = false;
 		}
 	}
 	/* openvpn */
-	if($config['installedpackages']['openvpncsc']['config']) {
-		foreach ($config['installedpackages']['openvpncsc']['config'] as $tunnel) {
-			if($isfirst == false)
-				$vpns .= " ";
+	$isfirst = true;
+	foreach (array('client', 'server') as $type) {
+		$conf =& $config['installedpackages']["openvpn$type"]['config'];
+		if (!is_array($conf)) continue;
+
+		foreach ($conf as $tunnel) {
+			if ($isfirst == false)
+				$vpns .= ' ';
 			$vpns .= $tunnel['remote_network'];
 			$isfirst = false;
 		}
-	}	
+	}
 	return $vpns;
 }
 

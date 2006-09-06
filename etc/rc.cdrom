@@ -9,6 +9,8 @@ partsize="3m"
 # Run some initialization routines
 /etc/rc.d/uzip start
 
+export VARMFS_COPYDBPKG=yes
+
 for i in tmp varmfs etcmfs rootmfs; do
        if [ -f /etc/rc.d/$i ]; then
                sh /etc/rc.d/$i start
@@ -22,7 +24,7 @@ done
 # a tiny mfs under /conf and populate with stock
 # configuration.
 if [ ! -f /conf/config.xml ]; then
-       echo -n "Generating a MFS /conf partition... "       
+       echo -n "Generating a MFS /conf partition... "
        device=$(mdconfig -a -t malloc -s ${partsize})
        newfs /dev/${device} > /dev/null 2>&1
        mount /dev/${device} /conf

@@ -918,6 +918,12 @@ function filter_nat_rules_generate() {
 
 								$xxx = $x;
 
+								/*   do not install reflection rules for FTP.  This simply
+								 *   opens up pandoras box.
+								 */
+								if($xxx == "21")
+									continue;
+
 								update_filter_reload_status("Creating reflection rule for {$rule['descr']}...");
 
 								$starting_localhost_port++;

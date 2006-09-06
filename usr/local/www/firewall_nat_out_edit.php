@@ -94,6 +94,15 @@ if ($_POST) {
 
     do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
+	if($_POST['sourceport'] <> "" and !is_numericint($_POST['sourceport']))
+		$input_errors[] = "You must supply either a valid port for the source port entry.";
+
+	if($_POST['dstport'] <> "" and !is_numericint($_POST['dstport']))
+		$input_errors[] = "You must supply either a valid port for the destination port entry.";
+
+	if($_POST['natport'] <> "" and !is_numericint($_POST['natport']))
+		$input_errors[] = "You must supply either a valid port for the nat port entry.";
+
     if ($_POST['source_type'] != "any") {
         if ($_POST['source'] && !is_ipaddr($_POST['source']) && $_POST['source'] <> "any") {
             $input_errors[] = "A valid source must be specified.";

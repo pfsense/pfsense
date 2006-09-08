@@ -31,6 +31,20 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+/* BEGIN compatibility goo with HEAD */
+if(!function_exists("gettext")) {
+	function gettext($text) {
+		return $text;
+	}
+}
+
+if(!function_exists("pfSenseHeader")) {
+	function pfSenseHeader($location) {
+		header("Location: $location");
+	}
+}
+/* END compatibility goo with HEAD */
+
 /* include all configuration functions */
 require_once("captiveportal.inc");
 require_once("filter.inc");

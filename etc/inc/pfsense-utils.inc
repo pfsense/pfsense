@@ -1890,11 +1890,11 @@ function setup_serial_port() {
 	$ttys_split = split("\n", $ttys);
 	$fd = fopen("/etc/ttys", "w");
 	foreach($ttys_split as $tty) {
-		if(stristr("ttyd0")) {
-			if(isset($config['system']['disableconsolemenu'])) {
-				fwrite($fd, "ttyd0	\"/usr/libexec/getty bootupcli\"	dialup	off	secure\n");
-			} else {
+		if(stristr($tty, "ttyd0")) {
+			if(isset($config['system']['enableserial'])) {
 				fwrite($fd, "ttyd0	\"/usr/libexec/getty bootupcli\"	dialup	on	secure\n");
+			} else {
+				fwrite($fd, "ttyd0	\"/usr/libexec/getty bootupcli\"	dialup	off	secure\n");
 			}
 		} else {
 			fwrite($fd, $tty . "\n");

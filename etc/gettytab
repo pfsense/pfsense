@@ -164,6 +164,10 @@ X|Xwindow|X window system:\
 P|Pc|Pc console:\
 	:ht:np:sp#115200:al=root:
 
+bootupcli:\
+	tc=std.9600:\
+	:ht:np:sp#115200:al=root:
+
 #
 # Wierdo special case for fast crt's with hardcopy devices
 #

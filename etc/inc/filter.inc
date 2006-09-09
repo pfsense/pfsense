@@ -964,7 +964,11 @@ function filter_nat_rules_generate() {
 											$toadd_array[] = $loc_pt_translated;
 										}
 										foreach($toadd_array as $tda){
-											fwrite($inetd_fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$tda}\n");
+											if($protocol == "udp")
+												$dash_u = " -u ";
+											else
+												$dash_u = "";
+											fwrite($inetd_fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc {$dash_u}-w 20 {$target} {$tda}\n");
 									  		if($ifname_real)
 									  			$natrules .= "rdr on \${$ifname_real} proto {$protocol} from any to {$extaddr} port { {$xxx} } -> 127.0.0.1 port {$starting_localhost_port}\n";
 									  		$xxx++;
@@ -990,7 +994,11 @@ function filter_nat_rules_generate() {
 											$toadd_array[] = $loc_pt_translated;
 										}
 										foreach($toadd_array as $tda){
-											fwrite($inetd_fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$tda}\n");
+											if($protocol == "udp")
+												$dash_u = " -u ";
+											else
+												$dash_u = "";
+											fwrite($inetd_fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc {$dash_u}-w 20 {$target} {$tda}\n");
 											if($ifname_real)
 									  			$natrules .= "rdr on \${$ifname_real} proto {$protocol} from any to {$extaddr} port { {$xxx} } -> 127.0.0.1 port {$starting_localhost_port}\n";
 									  		$xxx++;
@@ -1957,11 +1965,12 @@ EOD;
                                                                         case "tcp/udp":
                                                                                 $protocol = "{ tcp udp }";
                                                                                 $ipfrules .= "pass in quick on \${$ifname_real} inet proto tcp from any to \$loopback port {$starting_localhost_port} keep state label \"NAT REFLECT: Allow traffic to localhost\"\n";
+                                                                                $ipfrules .= "pass in quick on \${$ifname_real} inet proto udp from any to \$loopback port {$starting_localhost_port} keep state label \"NAT REFLECT: Allow traffic to localhost\"\n";
                                                                                 break;
                                                                         case "tcp":
                                                                         case "udp":
                                                                                 $protocol = $rule['protocol'];
-                                                                                $ipfrules .= "pass in quick on \${$ifname_real} inet proto tcp from any to \$loopback port {$starting_localhost_port} keep state label \"NAT REFLECT: Allow traffic to localhost\"\n";
+                                                                                $ipfrules .= "pass in quick on \${$ifname_real} inet proto udp from any to \$loopback port {$starting_localhost_port} keep state label \"NAT REFLECT: Allow traffic to localhost\"\n";
                                                                                 break;
                                                                         default:
                                                                                 break;

@@ -709,7 +709,7 @@ function filter_nat_rules_generate() {
 			continue;
 		}
 		if(stristr($ifname, "opt"))
-			if(!isset($config['interfaces'][$ifname]['enabled']))
+			if(!isset($config['interfaces'][$ifname]['enable']))
 				continue;
 		$tmp_port = 8021 + $interface_counter;
 		$tmp_interface = convert_friendly_interface_to_real_interface_name($ifname);
@@ -721,10 +721,10 @@ function filter_nat_rules_generate() {
 		/* if interface lacks an ip, dont setup a rdr for ftp.  they are most likely on a bridged interface */
 		if($int_ip and $vpns_list)
 			if($ifname_lower) {
-				$natrules .= "no rdr on \${$ifname_lower} proto tcp from any to <vpns> port 21\n";
+				$natrules .= "no rdr on $tmp_interface proto tcp from any to <vpns> port 21\n";
 			}
 		if($ifname_lower)
-			$natrules .= "rdr on \${$ifname_lower} proto tcp from any to any port 21 -> 127.0.0.1 port {$tmp_port}\n";
+			$natrules .= "rdr on $tmp_interface proto tcp from any to any port 21 -> 127.0.0.1 port {$tmp_port}\n";
 		$interface_counter++;
 	}
 	$natrules .= "\n";

@@ -2669,9 +2669,6 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 		$config_copy['filter']['rule'][$x]['descr'] = remove_special_characters($config_copy['filter']['rule'][$x]['descr']);
 	}
 
-	if($g['booting'])
-		return;
-
 	foreach($sections as $section) {
 		/* we can't use array_intersect_key()
 		   due to the vip 'special case' */

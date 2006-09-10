@@ -82,15 +82,15 @@ function step2_stepsubmitphpaction() {
 		$config['shaper']['queue'][] = $queue;
 
 		/* WAN default queue */
-                $queue = array();
-                $queue['name'] = "{$upq}def";
-                $queue['attachtoqueue'] = "{$upq}Root";
-                $queue['associatedrule'] = 0;
+        $queue = array();
+        $queue['name'] = "{$upq}def";
+        $queue['attachtoqueue'] = "{$upq}Root";
+        $queue['associatedrule'] = 0;
 		$queue['defaultqueue'] = 'true';
-                $queue['priority'] = 3;
+		$queue['priority'] = 1;
 		if ($config['shaper']['schedulertype'] == "hfsc") {
-                	$queue['realtime'] = "on";
-                	$queue['realtime3'] = "1%";
+        	$queue['realtime'] = "on";
+        	$queue['realtime3'] = "1%";
 			$queue['bandwidth'] = 1;
 			$queue['bandwidthtype'] = '%';
 			$queue['qlimit'] = 500;
@@ -103,15 +103,15 @@ function step2_stepsubmitphpaction() {
 
 
 		/* LAN default queue */
-                $queue = array();
-                $queue['name'] = "{$downq}def";
-                $queue['priority'] = 3;
-                $queue['attachtoqueue'] = "{$downq}Root";
-                $queue['associatedrule'] = 0;
+        $queue = array();
+        $queue['name'] = "{$downq}def";
+        $queue['priority'] = 1;
+        $queue['attachtoqueue'] = "{$downq}Root";
+        $queue['associatedrule'] = 0;
 		$queue['defaultqueue'] = 'true';
 		if ($config['shaper']['schedulertype'] == "hfsc") {
-                	$queue['realtime'] = "on";
-                	$queue['realtime3'] = "1%";
+        	$queue['realtime'] = "on";
+        	$queue['realtime3'] = "1%";
 			$queue['bandwidth'] = 1;
 			$queue['bandwidthtype'] = '%';
 			$queue['qlimit'] = 500;
@@ -120,18 +120,18 @@ function step2_stepsubmitphpaction() {
 			$queue['bandwidth'] = 6;
 			$queue['bandwidthtype'] = 'Kb';
 		}
-                $config['shaper']['queue'][] = $queue;
+        $config['shaper']['queue'][] = $queue;
 
 		/* WAN ack queue */
-                $queue = array();
-                $queue['name'] = "{$upq}acks";
-		$queue['ack'] = TRUE;
-                $queue['attachtoqueue'] = "{$upq}Root";
-                $queue['associatedrule'] = 0;
-                $queue['priority'] = 7;
+            $queue = array();
+            $queue['name'] = "{$upq}acks";
+			$queue['ack'] = TRUE;
+            $queue['attachtoqueue'] = "{$upq}Root";
+            $queue['associatedrule'] = 0;
+            $queue['priority'] = 7;
 		if ($config['shaper']['schedulertype'] == "hfsc") {
-                	$queue['realtime'] = "on";
-                	$queue['realtime3'] = "10%";
+        	$queue['realtime'] = "on";
+        	$queue['realtime3'] = "10%";
 			$queue['bandwidth'] = 25;
 			$queue['bandwidthtype'] = '%';
 		} elseif ($config['shaper']['schedulertype'] == "cbq") {
@@ -139,18 +139,18 @@ function step2_stepsubmitphpaction() {
 			$queue['bandwidth'] = 6;
 			$queue['bandwidthtype'] = 'Kb';
 		}
-                $config['shaper']['queue'][] = $queue;
-                $queue = array();
+	    $config['shaper']['queue'][] = $queue;
+	    $queue = array();
 
 		/* LAN ack queue */
-                $queue['name'] = "{$downq}acks";
+        $queue['name'] = "{$downq}acks";
 		$queue['ack'] = TRUE;
-                $queue['attachtoqueue'] = "{$downq}Root";
-                $queue['associatedrule'] = 0;
-                $queue['priority'] = 7;
+        $queue['attachtoqueue'] = "{$downq}Root";
+        $queue['associatedrule'] = 0;
+        $queue['priority'] = 7;
 		if ($config['shaper']['schedulertype'] == "hfsc") {
-                	$queue['realtime'] = "on";
-                	$queue['realtime3'] = "10%";
+        	$queue['realtime'] = "on";
+        	$queue['realtime3'] = "10%";
 			$queue['bandwidth'] = 25;
 			$queue['bandwidthtype'] = '%';
 		} elseif ($config['shaper']['schedulertype'] == "cbq") {
@@ -525,7 +525,9 @@ function step5_stepsubmitphpaction() {
 		    $gamesplist[] = array('Masterserver', 'udp', '27010', '27010', 'both');
 		    $gamesplist[] = array('Mod-Server', 'udp', '27011', '27011', 'both');
 		    $gamesplist[] = array('Chat', 'udp', '27012', '27012', 'both');
-		    $gamesplist[] = array('HL-Serverport ', 'udp', '27015', '27015', 'both');
+		    $gamesplist[] = array('HL-Serverport1', 'udp', '27013', '27013', 'both');
+		    $gamesplist[] = array('HL-Serverport2', 'udp', '27014', '27014', 'both');
+		    $gamesplist[] = array('HL-Serverport', 'udp', '27015', '27015', 'both');
 		}
 
 		if($_POST['deltaforce'] != "") {
@@ -1074,7 +1076,7 @@ function step7_stepsubmitphpaction() {
 		/* reset rrd queues */
 		system("rm -f /var/db/rrd/wan-queues.rrd");
 		enable_rrd_graphing();
-			
+
 		/* And we're no longer dirty! */
 		unlink_if_exists($d_shaperconfdirty_path);
 

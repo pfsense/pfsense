@@ -708,6 +708,9 @@ function filter_nat_rules_generate() {
 			$interface_counter++;
 			continue;
 		}
+		if(stristr($ifname, "opt"))
+			if(!isset($config['interfaces'][$ifname]['enabled']))
+				continue;
 		$tmp_port = 8021 + $interface_counter;
 		$tmp_interface = convert_friendly_interface_to_real_interface_name($ifname);
 		$ifname_lower = strtolower(convert_friendly_interface_to_friendly_descr($ifname));

@@ -710,6 +710,7 @@ function filter_nat_rules_generate() {
 		}
 		$tmp_port = 8021 + $interface_counter;
 		$tmp_interface = convert_friendly_interface_to_real_interface_name($ifname);
+		$ifname_lower = strtolower(convert_friendly_interface_to_friendly_descr($ifname));
 		$vpns = get_vpns_list();
 		/* if the user has defined, include the alias so that we do not redirect ftp
 		   connections across the tunnels to pftpx */

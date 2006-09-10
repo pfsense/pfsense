@@ -718,8 +718,9 @@ function filter_nat_rules_generate() {
 		if($int_ip and $vpns_list)
 			if($ifname_lower) {
 				$natrules .= "no rdr on \${$ifname_lower} proto tcp from any to <vpns> port 21\n";
-				$natrules .= "rdr on \${$ifname_lower} proto tcp from any to any port 21 -> 127.0.0.1 port {$tmp_port}\n";
 			}
+		if($ifname_lower)
+			$natrules .= "rdr on \${$ifname_lower} proto tcp from any to any port 21 -> 127.0.0.1 port {$tmp_port}\n";
 		$interface_counter++;
 	}
 	$natrules .= "\n";

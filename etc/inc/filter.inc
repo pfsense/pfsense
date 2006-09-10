@@ -970,7 +970,7 @@ function filter_nat_rules_generate() {
 										}
 										foreach($toadd_array as $tda){
 											if($protocol == "udp")
-												$dash_u = " -u ";
+												$dash_u = "-u ";
 											else
 												$dash_u = "";
 											fwrite($inetd_fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc {$dash_u}-w 20 {$target} {$tda}\n");
@@ -1000,7 +1000,7 @@ function filter_nat_rules_generate() {
 										}
 										foreach($toadd_array as $tda){
 											if($protocol == "udp")
-												$dash_u = " -u ";
+												$dash_u = "-u ";
 											else
 												$dash_u = "";
 											fwrite($inetd_fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc {$dash_u}-w 20 {$target} {$tda}\n");
@@ -1975,7 +1975,7 @@ EOD;
                                                                         case "tcp":
                                                                         case "udp":
                                                                                 $protocol = $rule['protocol'];
-                                                                                $ipfrules .= "pass in quick on \${$ifname_real} inet proto udp from any to \$loopback port {$starting_localhost_port} keep state label \"NAT REFLECT: Allow traffic to localhost\"\n";
+                                                                                $ipfrules .= "pass in quick on \${$ifname_real} inet proto {$rule['protocol']} from any to \$loopback port {$starting_localhost_port} keep state label \"NAT REFLECT: Allow traffic to localhost\"\n";
                                                                                 break;
                                                                         default:
                                                                                 break;

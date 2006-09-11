@@ -1970,6 +1970,7 @@ EOD;
                                                                         case "tcp/udp":
                                                                                 $protocol = "{ tcp udp }";
                                                                                 $ipfrules .= "pass in quick on \${$ifname_real} inet proto tcp from any to \$loopback port {$starting_localhost_port} keep state label \"NAT REFLECT: Allow traffic to localhost\"\n";
+                                                                                $starting_localhost_port++;
                                                                                 $ipfrules .= "pass in quick on \${$ifname_real} inet proto udp from any to \$loopback port {$starting_localhost_port} keep state label \"NAT REFLECT: Allow traffic to localhost\"\n";
                                                                                 break;
                                                                         case "tcp":

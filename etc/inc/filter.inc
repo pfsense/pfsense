@@ -945,8 +945,6 @@ function filter_nat_rules_generate() {
 
 								update_filter_reload_status("Creating reflection rule for {$rule['descr']}...");
 
-								$starting_localhost_port++;
-
 								$ifname_real = convert_friendly_interface_to_friendly_descr(strtolower($ifname));
 
 								switch($rule['protocol']) {

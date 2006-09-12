@@ -1867,7 +1867,7 @@ EOD;
                 if(!isset($config['system']['disablenatreflection'])) {
                         //$fd = fopen("/var/etc/inetd.conf","w");
                         /* start redirects on port 19000 of localhost */
-                        $starting_localhost_port = 18999;
+                        $starting_localhost_port = 19000;
                 }
 
                 foreach ($config['nat']['rule'] as $rule) {

@@ -2,8 +2,10 @@
 <?php
 /*
         rc.newwanip
-        part of m0n0wall (http://m0n0.ch/wall)
+        Copyright (C) 2006 Scott Ullrich (sullrich@gmail.com)
+        part of pfSense (http://www.pfsense.com)
 
+		Originally part of m0n0wall (http://m0n0.ch)
         Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
         All rights reserved.
 
@@ -29,66 +31,77 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 
-        /* parse the configuration and include all functions used below */
-        require_once("config.inc");
-        require_once("functions.inc");
+/* parse the configuration and include all functions used below */
+require_once("globals.inc");
+require_once("config.inc");
+require_once("functions.inc");
 
-        /* WAN IP address has changed */
+/* WAN IP address has changed */
 
-        $argument = str_replace("\n", "", $argv[1]);
+$argument = str_replace("\n", "", $argv[1]);
 
-        if($argument <> "") {
-                $curwanip = find_interface_ip($argument);
-                $interface = convert_real_interface_to_friendly_interface_name($argument);
-                if($curwanip == "")
-                        $curwanip = get_current_wan_address();
-        } else {
-                $curwanip = get_current_wan_address();
-                $interface = "wan";
-        }
+if($argument <> "") {
+	$curwanip = find_interface_ip($argument);
+	$interface = convert_real_interface_to_friendly_interface_name($argument);
+	if($curwanip == "")
+	        $curwanip = get_current_wan_address();
+} else {
+    $curwanip = get_current_wan_address();
+    $interface = "wan";
+}
 
-		/* grab the prior ip for pftpx tests */
-        if(file_exists("/tmp/rc.newwanip_oldip")) {
-                $old_ip = file_get_contents("/tmp/rc.newwanip_oldip");
-                $helpers = exec("/bin/ps awux | grep \"{$old_ip}\" | grep -v \"grep\" | awk '{ print $6 }'");
-                if($helpers)
-	                mwexec("kill " . trim($helpers));
-                unlink("/tmp/rc.newwanip_oldip");
-		}
+/* grab the prior ip for pftpx tests */
+if(file_exists("/tmp/rc.newwanip_oldip")) {
+	/* grab hint from dhclient */
+	$old_ip = file_get_contents("/tmp/rc.newwanip_oldip");
+	unlink("/tmp/rc.newwanip_oldip");
+}
+/* fallback to rc.newwanip ip if needed */
+if(!$old_ip)
+	if(file_exists("{$g['vardb_path']}/{$interface}_ip"))
+		$old_ip = file_get_contents("{$g['vardb_path']}/{$interface}_ip");
+if($old_ip) {
+	$helpers = exec("/bin/ps awux | grep \"{$old_ip}\" | grep -v \"grep\" | awk '{ print $6 }'");
+	if($helpers)
+	    mwexec("kill " . trim($helpers));
+} else {
+	log_error("WARNING! /etc/rc.newwanip could not deterimine the previous ip address ( $interface ).");
+}
 
-        /* reconfigure IPsec tunnels */
-        vpn_ipsec_configure(true);
+/* reconfigure IPsec tunnels */
+vpn_ipsec_configure(true);
 
-        /* regenerate resolv.conf if DNS overrides are allowed or the BigPond
-           client is enabled */
-        if (isset($config['system']['dnsallowoverride']) ||
-                        ($config['interfaces'][$interface]['ipaddr'] == "bigpond"))
-                system_resolvconf_generate(true);
+/* regenerate resolv.conf if DNS overrides are allowed or the BigPond
+   client is enabled */
+if (isset($config['system']['dnsallowoverride']) ||
+	($config['interfaces'][$interface]['ipaddr'] == "bigpond"))
+		system_resolvconf_generate(true);
 
-        /* fire up the BigPond client, if necessary */
-        if ($config['interfaces'][$interface]['ipaddr'] == "bigpond")
-                interfaces_wan_bigpond_configure($curwanip);
+/* fire up the BigPond client, if necessary */
+if ($config['interfaces'][$interface]['ipaddr'] == "bigpond")
+	interfaces_wan_bigpond_configure($curwanip);
 
-        /* perform RFC 2136 DNS update */
-        services_dnsupdate_process();
+/* perform RFC 2136 DNS update */
+services_dnsupdate_process();
 
-        /* write current WAN IP to file */
-        $fd = fopen("{$g['vardb_path']}/{$interface}_ip", "w");
-        if ($fd) {
-                fwrite($fd, $curwanip);
-                fclose($fd);
-        }
+/* write current WAN IP to file */
+$fd = fopen("{$g['vardb_path']}/{$interface}_ip", "w");
+if ($fd) {
+	fwrite($fd, $curwanip);
+	fclose($fd);
+}
 
-        log_error("Informational: DHClient spawned /etc/rc.newwanip and the new ip is {$interface} - {$curwanip}.");
+log_error("Informational: DHClient spawned /etc/rc.newwanip and the new ip is {$interface} - {$curwanip}.");
 
-        touch("/tmp/update_dyndns");
+touch("/tmp/update_dyndns");
 
-        /* signal filter reload */
-        touch("/tmp/filter_dirty");
+/* signal filter reload */
+unlink_if_exists("/tmp/config.cache");
+touch("/tmp/filter_dirty");
 
-        /* reload graphing functions */
-        enable_rrd_graphing();
+/* reload graphing functions */
+enable_rrd_graphing();
 
-        return 0;
+return 0;
 
 ?>

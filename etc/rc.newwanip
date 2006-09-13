@@ -61,7 +61,7 @@ if(!$old_ip)
 	if(file_exists("{$g['vardb_path']}/{$interface}_ip"))
 		$old_ip = file_get_contents("{$g['vardb_path']}/{$interface}_ip");
 if($old_ip) {
-	$helpers = exec("/bin/ps awux | grep \"{$old_ip}\" | grep -v \"grep\" | awk '{ print $6 }'");
+	$helpers = exec("/bin/ps awux | grep \"{$old_ip}\" | grep -v \"grep\" | awk '{ print $2 }'");
 	if($helpers)
 	    mwexec("kill " . trim($helpers));
 } else {

@@ -237,8 +237,11 @@ function filter_configure_sync() {
 
 	/* run items scheduled for after filter configure run */
 	foreach($after_filter_configure_run as $afcr) {
-		mwexec($afcr);
+		$fda = fopen("/tmp/commands.txt", "w");
+		fwrite($fda, $afcr . "\n");
+		fclose($fda);
 	}
+	mwexec("sh /tmp/commands.txt &");
 
 	update_filter_reload_status("Syncing CARP data");
 
@@ -822,7 +825,7 @@ function filter_nat_rules_generate() {
 						 *   routines because if this is the first bootup the filter is not completely configured
                                                  *   and thus pf is not fully running.   otherwise we end up with: pftpx: pf is disabled
                                                  */
-						$after_filter_configure_run[] = "/usr/local/sbin/pftpx -f {$target} -b {$external_address} -c 21 -g 21 2>>/tmp/pftpx_errors";
+						$after_filter_configure_run[] = "/usr/local/sbin/pftpx -f {$target} -b {$external_address} -c 21 -g 21";
 					}
 					$dontinstallrdr = true;
 				}

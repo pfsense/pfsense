@@ -241,7 +241,10 @@ function filter_configure_sync() {
 		fwrite($fda, $afcr . "\n");
 		fclose($fda);
 	}
-	mwexec("sh /tmp/commands.txt &");
+	if(file_exists("/tmp/commands.txt")) {
+		mwexec("sh /tmp/commands.txt &");
+		unlink("sh /tmp/commands.txt");
+	}
 
 	update_filter_reload_status("Syncing CARP data");
 

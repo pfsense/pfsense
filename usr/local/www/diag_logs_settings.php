@@ -76,18 +76,18 @@ if ($_POST) {
 		$oldnologdefaultblock = isset($config['syslog']['nologdefaultblock']);
 		$config['syslog']['nologdefaultblock'] = $_POST['logdefaultblock'] ? false : true;
 		$config['syslog']['rawfilter'] = $_POST['rawfilter'] ? true : false;
-		if($config['syslog']['enable'] == false) 
+		if($config['syslog']['enable'] == false)
 			unset($config['syslog']['remoteserver']);
-		
+
 		write_config();
-		
+
 		$retval = 0;
 		config_lock();
 		$retval = system_syslogd_start();
 		if ($oldnologdefaultblock !== isset($config['syslog']['nologdefaultblock']))
 			$retval |= filter_configure();
 		config_unlock();
-		
+
 		$savemsg = get_std_save_message($retval);
 	}
 }
@@ -180,8 +180,8 @@ function enable_change(enable_over) {
                       <tr>
                         <td width="22%" valign="top" class="vtable">&nbsp;</td>
                         <td width="78%" class="vtable"> <input name="disablelocallogging" type="checkbox" id="disablelocallogging" value="yes" <?php if ($pconfig['disablelocallogging']) echo "checked"; ?> onClick="enable_change(false)">
-                          <strong>Disable writing log files to the local disk</strong></td>
-                       </tr>		      
+                          <strong>Disable writing log files to the local ram disk</strong></td>
+                       </tr>
                       <tr>
                         <td width="22%" valign="top" class="vncell">Remote syslog
                           server</td>

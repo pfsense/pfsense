@@ -18,7 +18,7 @@ if [ -e /usr/local/etc/rc.d/dev_bootstrap.sh ]; then
 	echo "During this process, /usr/src is automatically downloaded"
 	echo "and many supporting files are built, installed, etc."
 	echo
-	echo -n "Would you like to tail the progress [n]? "
+	echo -n "Would you like to tail the progress (y/n) [n]? "
 	read ANSWER
 	if [ "$ANSWER" = "y" ]; then
 		echo

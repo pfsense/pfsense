@@ -312,7 +312,7 @@ function filter_altq_get_queuename($queuenum) {
 function filter_generate_pf_altq_rules() {
 	/* I don't think we're in IPFW anymore Toto */
 	$i = 0;
-	
+
 	global $config, $g, $tcpflags;
 
 	$lancfg = $config['interfaces']['lan'];
@@ -354,7 +354,7 @@ function filter_generate_pf_altq_rules() {
 		}
 
 		update_filter_reload_status("Generating ALTQ rule {$rule['descr']}...");
-		
+
 		switch($rule['in-interface']) {
 			case "pptp": /* does the rule deal with a PPTP interface? */
 				if ($pptpdcfg['mode'] != "server") {
@@ -431,15 +431,15 @@ function filter_generate_pf_altq_rules() {
 
 			if ($ispptp) {
 				$line .= " ng" . ($iif+1);
-			} 
+			}
 			else if($ispppoe) {
 				$line .= " ng" . ($iif+1);
-			}			
+			}
 			else {
 				$friendly_desc = convert_friendly_interface_to_friendly_descr($rule['in-interface']);
 				$line .= " \${$friendly_desc} ";
 			}
-			
+
 			/* get protocol */
 			$proto = $rule['protocol'];
 			if (isset($proto)) {
@@ -484,16 +484,16 @@ function filter_generate_pf_altq_rules() {
 			}
 
 			if (isset($rule['source']['not'])) {
-				
-				/*pf is not really happy with this sexy ($src = "!{$src}";) approach of 
-				 * negating a list or macro. So we have to write out a ! on each entry.
-				 */				
 
-				/* not very happy with this! but it beats copying this section to 
+				/*pf is not really happy with this sexy ($src = "!{$src}";) approach of
+				 * negating a list or macro. So we have to write out a ! on each entry.
+				 */
+
+				/* not very happy with this! but it beats copying this section to
 				 * several places.
 				 */
 				$alias = alias_expand(substr($src, 1));
-				
+
 				if(isset($alias) && stristr($alias, "$")) {
 					$alias = alias_expand_value(substr($src, 1));
 					$src = "{";
@@ -509,7 +509,7 @@ function filter_generate_pf_altq_rules() {
 				}
 			}
 			$line .= "from {$src} ";
-			
+
 			/* get source port */
 			if (!isset($rule['protocol']) || in_array($rule['protocol'], array("tcp","udp"))) {
 				if ($rule['source']['port']) {
@@ -573,16 +573,16 @@ function filter_generate_pf_altq_rules() {
 			}
 
 			if (isset($rule['destination']['not'])) {
-				
-				/*pf is not really happy with this sexy ($dst = "!{$dst}";) approach of 
-				 * negating a list or macro. So we have to write out a ! on each entry.
-				 */				
 
-				/* not very happy with this! but it beats copying this section to 
+				/*pf is not really happy with this sexy ($dst = "!{$dst}";) approach of
+				 * negating a list or macro. So we have to write out a ! on each entry.
+				 */
+
+				/* not very happy with this! but it beats copying this section to
 				 * several places.
 				 */
 				$alias = alias_expand(substr($dst, 1));
-				
+
 				if(isset($alias) && stristr($alias, "$")) {
 					$alias = alias_expand_value(substr($dst, 1));
 					$dst = "{";
@@ -597,7 +597,7 @@ function filter_generate_pf_altq_rules() {
 					$dst = "!{$dst}";
 				}
 			}
-			$line .= "to {$dst} ";
+			$line .= " to {$dst} ";
 
 			if (!isset($rule['protocol']) || in_array($rule['protocol'], array("tcp","udp"))) {
 				if ($rule['destination']['port']) {
@@ -642,14 +642,14 @@ function filter_generate_pf_altq_rules() {
 
 			$line .= "\n";
 			$shaperrules .= $line;
-			
+
 			/* setup the outbound queue on the other interface */
 			$direction = 'out';
 			$qouttag = "{$direction}queue";
-			
+
 			$friendly_desc = convert_friendly_interface_to_friendly_descr($rule['out-interface']);
 			$shaperrules .= "pass out on \${$friendly_desc}";
-			
+
 			if(isset($proto) && $proto != "") {
 				$shaperrules .= " proto {$proto}";
 			}
@@ -663,9 +663,9 @@ function filter_generate_pf_altq_rules() {
 			if($flags <> " flags ") {
 				$shaperrules .= "{$flags}/SAFRPU";
 			}
-			
+
 			$shaperrules .= " keep state tagged {$rule[$qtag]} tag {$rule[$qouttag]}\n";
-			
+
 			unset($src);
 			unset($dst);
 			unset($srcport);

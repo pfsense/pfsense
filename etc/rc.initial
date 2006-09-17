@@ -15,6 +15,9 @@ if [ -e /usr/local/etc/rc.d/dev_bootstrap.sh ]; then
 	echo "pfSense.com and also FreeBSD.org and builds a ISO"
 	echo "to verify the environment is sane."
 	echo
+	echo "During this process, /usr/src is automatically downloaded"
+	echo "and many supporting files are built, installed, etc."
+	echo
 	echo -n "Would you like to tail the progress [n]? "
 	read ANSWER
 	if [ "$ANSWER" = "y" ]; then
@@ -129,7 +132,7 @@ case ${opmode} in
 	;;
 12)
 	/etc/rc.banner
-	;;	
+	;;
 98)
 	if [ ! -f /tmp/config_moved ]; then
 		/etc/rc.initial.store_config_to_removable_device
@@ -138,7 +141,7 @@ case ${opmode} in
 99)
 	if [ -e /dev/ukbd0 ]; then
 	    env TERM=cons25 /scripts/lua_installer
-	else 
+	else
             /scripts/lua_installer
 	fi
 	;;

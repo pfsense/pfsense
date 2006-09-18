@@ -41,7 +41,7 @@
 		<field>
 			<name>Next</name>
 			<type>submit</type>
-			<warning>Going any further will wipe your existing shaper config!  If you do not wish to continue, please click the pfSense logo at the top to return to the webConfigurator.</warning>
+			<warning>Going any further will wipe your existing shaper config!  If you do not wish to continue, please click the pfSense logo at the top to return to the webConfigurator.  Also note that currently the traffic shaper is not compatible with bridging.</warning>
 		</field>
 	</fields>
 	<stepbeforeformdisplay>
@@ -148,7 +148,7 @@
                                 <option>
                                         <name>Asterisk</name>
                                         <value>Asterisk</value>
-				</option>			
+				</option>
                                 <option>
                                         <name>PanasonicTDA</name>
                                         <value>Panasonic</value>
@@ -294,7 +294,7 @@
 			<field>
 					<name>Enable/Disable specific P2P protocols</name>
 					<type>listtopic</type>
-			</field>			
+			</field>
             <field>
                 <name>Aimster</name>
                 <type>checkbox</type>
@@ -453,7 +453,7 @@
                 <field>
                         <name>Enable/Disable specific games</name>
                         <type>listtopic</type>
-                </field>		
+                </field>
                 <field>
                         <name>BattleNET</name>
                         <type>checkbox</type>
@@ -612,7 +612,7 @@
                 <field>
                         <name>Remote Service / Terminal emulation</name>
 			<type>listtopic</type>
-                </field>		
+                </field>
                 <field>
                         <name>MSRDP</name>
 			<type>select</type>
@@ -1096,7 +1096,7 @@
 				</option>
 			</options>
 			<typehint>Simple Network Management Protocol</typehint>
-                </field> 
+                </field>
                 <field>
                         <name>MySQLServer</name>
 						<bindstofield>ezshaper->step6->mysqlserver</bindstofield>
@@ -1156,7 +1156,7 @@
 							</option>
 						</options>
 						<typehint>CVSUP</typehint>
-                </field>					
+                </field>
                 <field>
                         <name>Next</name>
                         <type>submit</type>
@@ -1173,7 +1173,7 @@
         <field>
 		<name>Reload profile notice</name>
 		<type>listtopic</type>
-        </field>	
+        </field>
         <description>
 	    After pressing Finish the system will load the new profile.&lt;br/&gt;
 	    Please note that this may take a moment.&lt;br/&gt;
@@ -1187,10 +1187,10 @@
                 </field>
 	</fields>
 	<stepbeforeformdisplay>
-		step7_stepbeforeformdisplay();    
+		step7_stepbeforeformdisplay();
 	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
-		step7_stepsubmitphpaction();    
+		step7_stepsubmitphpaction();
 	</stepsubmitphpaction>
 	<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 </step>

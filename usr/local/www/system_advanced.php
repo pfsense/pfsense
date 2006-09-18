@@ -110,11 +110,11 @@ if ($_POST) {
 		} else {
 			unset($config['system']['enablesshd']);
 			mwexec("/usr/bin/killall sshd");
-		}		
+		}
 		$oldsshport = $config['system']['ssh']['port'];
 		$config['system']['ssh']['port'] = $_POST['sshport'];
 
-		if($_POST['polling_enable'] == "yes") { 
+		if($_POST['polling_enable'] == "yes") {
 			$config['system']['polling'] = true;
 			setup_polling();
 		} else {
@@ -128,7 +128,7 @@ if ($_POST) {
 		} else {
 			unset($config['system']['sharednet']);
 			system_enable_arp_wrong_if();
-		}		
+		}
 
 		if($_POST['rfc959workaround'] == "yes")
 			$config['system']['rfc959workaround'] = "enabled";
@@ -160,7 +160,7 @@ if ($_POST) {
 		}
 		unset($config['system']['webgui']['expanddiags']);
 		$config['system']['optimization'] = $_POST['optimization'];
-		
+
 		if($_POST['disablefirmwarecheck'] == "yes")
 			$config['system']['disablefirmwarecheck'] = true;
 		else
@@ -196,31 +196,31 @@ if ($_POST) {
 		} else {
 			unset($config['system']['disablenatreflection']);
 		}
-	
+
                 $config['ipsec']['preferoldsa'] = $_POST['preferoldsa_enable'] ? true : false;
-	
-		$config['bridge']['filteringbridge'] = $_POST['filteringbridge_enable'] ? true : false;	
+
+		$config['bridge']['filteringbridge'] = $_POST['filteringbridge_enable'] ? true : false;
 		$config['filter']['bypassstaticroutes'] = $_POST['bypassstaticroutes'] ? true : false;
-	
+
 		write_config();
-			
+
 		$retval = 0;
-		
+
 		if(stristr($retval, "error") <> true)
 		    $savemsg = get_std_save_message($retval);
 		else
 		    $savemsg = $retval;
 
 		$retval = filter_configure();
-		
+
 		conf_mount_rw();
-		
+
 		setup_serial_port();
-		
+
 		setup_filter_bridge();
-		
+
 		conf_mount_ro();
-		
+
 	}
 }
 
@@ -263,7 +263,7 @@ include("head.inc");
 		</tr>
 		<tr>
 			<td colspan="2" class="list" height="12"></td>
-		</tr>		
+		</tr>
 		<?php endif; ?>
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">Secure Shell</td>
@@ -291,7 +291,7 @@ include("head.inc");
 		</tr>
 		<tr>
 			<td colspan="2" class="list" height="12">&nbsp;</td>
-		</tr>		
+		</tr>
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">Shared Physical Network</td>
 		</tr>
@@ -326,21 +326,21 @@ include("head.inc");
 		</tr>
 		<tr>
 			<td colspan="2" class="list" height="12">&nbsp;</td>
-		</tr>		
+		</tr>
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">Filtering Bridge</td>
 		</tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncell">&nbsp;</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="filteringbridge_enable" type="checkbox" id="filteringbridge_enable" value="yes" <?php if ($pconfig['filteringbridge_enable']) echo "checked"; ?>>
                     <strong>Enable filtering bridge</strong><span class="vexpl"><br>
-                    This will cause bridged packets to pass through the packet 
-                    filter in the same way as routed packets do (by default bridged 
-                    packets are always passed). If you enable this option, you'll 
-                    have to add filter rules to selectively permit traffic from 
+                    This will cause bridged packets to pass through the packet
+                    filter in the same way as routed packets do (by default bridged
+                    packets are always passed). If you enable this option, you'll
+                    have to add filter rules to selectively permit traffic from
                     bridged interfaces.</span></td>
-                </tr>			
+                </tr>
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
@@ -393,7 +393,7 @@ include("head.inc");
                                         per second). Not all NICs support polling; see the pfSense homepage for a list of supported cards.
                   </td>
                 </tr>
-		
+
 		<tr>
 			<td width="22%" valign="top" class="vncell">Console menu </td>
 			<td width="78%" class="vtable">
@@ -403,16 +403,7 @@ include("head.inc");
 				<span class="vexpl">Changes to this option will take effect after a reboot.</span>
 			</td>
 		</tr>
-		<tr>
-			<td valign="top" class="vncell">Firmware version check</td>
-			<td class="vtable">
-				<input name="disablefirmwarecheck" type="checkbox" id="disablefirmwarecheck" value="yes" <?php if ($pconfig['disablefirmwarecheck']) echo "checked"; ?>  />
-				<strong>Disable firmware version check</strong>
-				<br />
-				<span class="vexpl">This will cause pfSense not to check for newer firmware versions when the <a href="system_firmware.php">System: Firmware</a> page is viewed.</span>
-			</td>
-		</tr>
-<?php if($g['platform'] == "pfSenseDISABLED"): ?>		
+<?php if($g['platform'] == "pfSenseDISABLED"): ?>
 		<tr>
 			<td width="22%" valign="top" class="vncell">Hard disk standby time </td>
 			<td width="78%" class="vtable">
@@ -433,15 +424,15 @@ include("head.inc");
 				access has elapsed. <em>Do not set this for CF cards.</em>
 			</td>
 		</tr>
-<?php endif; ?>		
+<?php endif; ?>
 		<tr>
 			<td width="22%" valign="top" class="vncell">webGUI anti-lockout</td>
 			<td width="78%" class="vtable">
 				<input name="noantilockout" type="checkbox" id="noantilockout" value="yes" <?php if ($pconfig['noantilockout']) echo "checked"; ?> />
 				<strong>Disable webGUI anti-lockout rule</strong>
 				<br />
-				By default, access to the webGUI on the LAN interface is always permitted, regardless of the user-defined filter 
-				rule set. Enable this feature to control webGUI access (make sure to have a filter rule in place that allows you 
+				By default, access to the webGUI on the LAN interface is always permitted, regardless of the user-defined filter
+				rule set. Enable this feature to control webGUI access (make sure to have a filter rule in place that allows you
 				in, or you will lock yourself out!).
 				<br />
 				Hint: the &quot;set LAN IP address&quot; option in the console menu  resets this setting as well.
@@ -453,8 +444,8 @@ include("head.inc");
 				<input name="bypassstaticroutes" type="checkbox" id="bypassstaticroutes" value="yes" <?php if ($pconfig['bypassstaticroutes']) echo "checked"; ?> />
 				<strong>Bypass firewall rules for traffic on the same interface</strong>
 				<br />
-				This option only applies if you have defined one or more static routes. If it is enabled, traffic that enters and 
- 				leaves through the same interface will not be checked by the firewall. This may be desirable in some situations where 
+				This option only applies if you have defined one or more static routes. If it is enabled, traffic that enters and
+ 				leaves through the same interface will not be checked by the firewall. This may be desirable in some situations where
 				multiple subnets are connected to the same interface.
 				<br />
 			</td>
@@ -467,7 +458,7 @@ include("head.inc");
 				<br />
 				By default, if several SAs match, the newest one is preferred if it's at least 30 seconds old.Select this option to always prefer old SAs over new ones.
 			</td>
-		</tr>		
+		</tr>
 		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
@@ -541,7 +532,7 @@ include("head.inc");
 		</tr>
 		<tr>
 			<td colspan="2" class="list" height="12">&nbsp;</td>
-		</tr>		
+		</tr>
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">Network Address Translation</td>
 		</tr>
@@ -592,11 +583,11 @@ if ($_POST) {
 		} else {
 			unset($config['system']['enablesshd']);
 			mwexec("/usr/bin/killall sshd");
-		}		
+		}
 		$oldsshport = $config['system']['ssh']['port'];
 		$config['system']['ssh']['port'] = $_POST['sshport'];
 
-		if($_POST['polling_enable'] == "yes") { 
+		if($_POST['polling_enable'] == "yes") {
 			$config['system']['polling'] = true;
 			setup_polling();
 		} else {
@@ -610,7 +601,7 @@ if ($_POST) {
 		} else {
 			unset($config['system']['sharednet']);
 			system_enable_arp_wrong_if();
-		}		
+		}
 
 		if($_POST['rfc959workaround'] == "yes")
 			$config['system']['rfc959workaround'] = "enabled";
@@ -637,7 +628,7 @@ if ($_POST) {
 		}
 		unset($config['system']['webgui']['expanddiags']);
 		$config['system']['optimization'] = $_POST['optimization'];
-		
+
 		if($_POST['disablefirmwarecheck'] == "yes")
 			$config['system']['disablefirmwarecheck'] = true;
 		else
@@ -673,13 +664,13 @@ if ($_POST) {
 		} else {
 			unset($config['system']['disablenatreflection']);
 		}
-	
+
                 $config['ipsec']['preferoldsa'] = $_POST['preferoldsa_enable'] ? true : false;
-	
-		$config['bridge']['filteringbridge'] = $_POST['filteringbridge_enable'] ? true : false;	
-	
+
+		$config['bridge']['filteringbridge'] = $_POST['filteringbridge_enable'] ? true : false;
+
 		write_config();
-			
+
 		$retval = 0;
 		config_lock();
 		$retval = filter_configure();
@@ -689,11 +680,11 @@ if ($_POST) {
 		    $savemsg = $retval;
 		$retval |= interfaces_optional_configure();
 		config_unlock();
-			
+
 		setup_serial_port();
-		
+
 		setup_filter_bridge();
-		
+
 	}
 }
 

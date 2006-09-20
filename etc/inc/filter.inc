@@ -52,7 +52,7 @@ function filter_pflog_start() {
 
 	mute_kernel_msgs();
 
-	mwexec_bg("/usr/sbin/tcpdump -l -n -e -ttt -v -i pflog0 | logger -t pf -p local0.info");
+	mwexec_bg("/usr/sbin/tcpdump -l -n -e -ttt -i pflog0 | logger -t pf -p local0.info");
 
 	unmute_kernel_msgs();
 

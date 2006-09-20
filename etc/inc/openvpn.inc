@@ -74,10 +74,10 @@ function openvpn_validate_input($mode, $post, $input_errors) {
 				$input_errors[] = 'The field \'Proxy Host\' must contain a valid IP address or domain name.';
 			if (!is_port($post['proxy_port']))
 				$input_errors[] = 'The field \'Proxy port\' must contain a valid port number.';
-			if ($post['protocol'] != "TCP") 
+			if ($post['protocol'] != "TCP")
 				$input_errors[] = 'The protocol must be TCP to use a HTTP proxy server.';
 		}
-				
+
 	}
 
 	if ($result = openvpn_validate_cidr($post['remote_network'], 'Remote network'))
@@ -321,12 +321,12 @@ function openvpn_restart($mode, $id) {
 	if ($settings['disable']) return;
 
 	$configfile = $g['varetc_path'] . "/openvpn_{$mode}{$id}.conf";
-	mwexec("openvpn --config $configfile");
+	mwexec("openvpn --down \"touch /tmp/filter_dirty\" --ipchange \"touch /tmp/filter_dirty\" --learn-address \"touch /tmp/filter_dirty\" --route-up \"touch /tmp/filter_dirty\" --up touch \"/tmp/filter_dirty\" --config $configfile");
 	touch("{$g['tmp_path']}/filter_dirty");
 }
 
 
-// Resync the configuration and restart the VPN 
+// Resync the configuration and restart the VPN
 function openvpn_resync($mode, $id) {
 	openvpn_reconfigure($mode, $id);
 	openvpn_restart($mode, $id);

@@ -360,7 +360,6 @@ function get_vpns_list() {
 		}
 	}
 	/* openvpn */
-	$isfirst = true;
 	foreach (array('client', 'server') as $type) {
 		$conf =& $config['installedpackages']["openvpn$type"]['config'];
 		if (!is_array($conf)) continue;

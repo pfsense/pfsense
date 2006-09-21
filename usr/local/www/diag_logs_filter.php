@@ -91,8 +91,6 @@ function conv_clog($logfile, $tail = 50) {
 		$beforeupper = $logent;
 		$logent = strtoupper($logent);
 
-		$do_not_display = false;
-
 		if(stristr(strtoupper($logent), "UDP") == true)
 			$flent['proto'] = "UDP";
 		else if(stristr(strtoupper($logent), "TCP") == true)
@@ -116,7 +114,7 @@ function conv_clog($logfile, $tail = 50) {
 		else if(stristr($logent, "sack") == true)
 			$flent['proto'] = "TCP";
 		else
-			$do_not_display = true;
+			continue;
 
 		$flent['time'] 		= $log_split[1];
 		$flent['act'] 		= $log_split[3];

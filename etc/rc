@@ -147,7 +147,7 @@ if [ ! "$PLATFORM" = "cdrom" ]; then
     clog -i -s 65535 /var/log/slbd.log
 else
 	clog -i -s 512144 /var/log/system.log
-	clog -i -s 512144 /var/log/filter.log
+	clog -i -s 784144 /var/log/filter.log
 	clog -i -s 65535 /var/log/dhcpd.log
 	clog -i -s 65535 /var/log/vpn.log
 	clog -i -s 65535 /var/log/openvpn.log

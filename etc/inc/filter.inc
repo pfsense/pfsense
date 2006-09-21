@@ -533,9 +533,6 @@ function filter_nat_rules_generate() {
 
 	$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
 
-	$natrules = "# UPnPd rdr anchor\n";
-	$natrules .= "rdr-anchor \"miniupnpd\"\n";
-
 	$natrules .= "nat-anchor \"pftpx/*\"\n";
 
 	$natrules .= "nat-anchor \"natearly/*\"\n";
@@ -1073,6 +1070,9 @@ EOD;
 	}
 
 	$natrules .= process_carp_nat_rules();
+
+	$natrules = "# UPnPd rdr anchor\n";
+	$natrules .= "rdr-anchor \"miniupnpd\"\n";
 
 	return $natrules;
 }

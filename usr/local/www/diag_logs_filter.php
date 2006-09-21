@@ -51,7 +51,7 @@ if (!$nentries)
 if ($_POST['clear']) {
 	exec("killall syslogd");
 	exec("/usr/sbin/clog -i -s 262144 /var/log/filter.log");
-	system_syslogd_start();	
+	system_syslogd_start();
 }
 
 /* format filter logs */
@@ -74,25 +74,25 @@ function conv_clog($logfile, $tail = 50) {
 	$counter = 1;
 
 	foreach ($logarr as $logent) {
-	
-		if($counter > $nentries) 
+
+		if($counter > $nentries)
 			break;
 
 		$log_split = "";
-		
-		
+
+
 		preg_match("/(\b(?:\d{1,3}\.){3}\d{1,3}(\.\w+)?)\s.*\s(\b(?:\d{1,3}\.){3}\d{1,3}(\.\w+)?)/", $logent, $log_split);
 
 		$flent['src'] 		= convert_port_period_to_colon($log_split[1]);
-		$flent['dst'] 		= convert_port_period_to_colon($log_split[3]);	
+		$flent['dst'] 		= convert_port_period_to_colon($log_split[3]);
 
 		preg_match("/(.*)\s.*\spf:\s.*\srule\s(.*)\(match\)\:\s(.*)\s\w+\son\s(\w+)\:\s(.*)\s>\s(.*)\:\s.*/", $logent, $log_split);
-		
+
 		$beforeupper = $logent;
 		$logent = strtoupper($logent);
 
 		$do_not_display = false;
-		
+
 		if(stristr(strtoupper($logent), "UDP") == true)
 			$flent['proto'] = "UDP";
 		else if(stristr(strtoupper($logent), "TCP") == true)
@@ -100,9 +100,9 @@ function conv_clog($logfile, $tail = 50) {
 		else if(stristr(strtoupper($logent), "ICMP") == true)
 			$flent['proto'] = "ICMP";
 		else if(stristr(strtoupper($logent), "HSRP") == true)
-			$flent['proto'] = "HSRP";			
+			$flent['proto'] = "HSRP";
 		else if(stristr(strtoupper($logent), "ESP") == true)
-			$flent['proto'] = "ESP";	
+			$flent['proto'] = "ESP";
 		else if(stristr(strtoupper($logent), "AH") == true)
 			$flent['proto'] = "AH";
 		else if(stristr(strtoupper($logent), "GRE") == true)
@@ -113,24 +113,26 @@ function conv_clog($logfile, $tail = 50) {
 			$flent['proto'] = "CARP";
 		else if(stristr(strtoupper($logent), "PFSYNC") == true)
 			$flent['proto'] = "PFSYNC";
+		else if(stristr($logent, "sack") == true)
+			$flent['proto'] = "TCP";
 		else
 			$do_not_display = true;
-		
+
 		$flent['time'] 		= $log_split[1];
 		$flent['act'] 		= $log_split[3];
-		
+
 		$friendly_int = convert_real_interface_to_friendly_interface_name($log_split[4]);
-		
+
 		$flent['interface'] 	=  strtoupper($friendly_int);
-		
+
 		if($config['interfaces'][$friendly_int]['descr'] <> "")
 			$flent['interface'] = "{$config['interfaces'][$friendly_int]['descr']}";
-		
+
 		$tmp = split("/", $log_split[2]);
 		$flent['rulenum'] = $tmp[0];
-		
+
 		$shouldadd = true;
-		
+
 		if(trim($flent['src']) == "")
 			$shouldadd = false;
 		if(trim($flent['dst']) == "")
@@ -146,7 +148,7 @@ function conv_clog($logfile, $tail = 50) {
 				log_error("There was a error parsing rule: $beforeupper .   Please report to mailing list or forum.");
 			}
 		}
-		
+
 	}
 
 	return $filterlog;
@@ -272,7 +274,7 @@ if (typeof getURL == 'undefined') {
 			}
 		}
 		if (!http_request)
-			throw 'Both getURL and XMLHttpRequest are undefined';		
+			throw 'Both getURL and XMLHttpRequest are undefined';
 		http_request.onreadystatechange = function() {
 			if (http_request.readyState == 4) {
 				callback( { success : true,

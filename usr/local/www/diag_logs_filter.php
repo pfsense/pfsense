@@ -114,7 +114,7 @@ function conv_clog($logfile, $tail = 50) {
 		else if(stristr($logent, "sack") == true)
 			$flent['proto'] = "TCP";
 		else
-			continue;
+			$flent['proto'] = "TCP";
 
 		$flent['time'] 		= $log_split[1];
 		$flent['act'] 		= $log_split[3];

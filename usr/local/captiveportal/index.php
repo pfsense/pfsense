@@ -430,29 +430,4 @@ function disconnect_client($sessionid, $logoutReason = "LOGOUT", $term_cause = 1
     captiveportal_unlock();
 }
 
-/*
- * This function will calculate the lowest free firewall ruleno
- * within the range specified based on the actual installed rules
- *
- */
-
-function captiveportal_get_next_ipfw_ruleno($rulenos_start = 10000, $rulenos_range_max = 9899) {
-
-	exec("/sbin/ipfw show", $fwrules);
-	foreach ($fwrules as $fwrule) {
-		preg_match("/^(\d+)\s+/", $fwrule, $matches);
-		$rulenos_used[] = $matches[1];
-	}
-	$rulenos_used = array_unique($rulenos_used);
-	$rulenos_range = count($rulenos_used);
-	if ($rulenos_range > $rulenos_range_max) {
-		return NULL;
-	}
-	$rulenos_pool = range($rulenos_start, ($rulenos_start + $rulenos_range));
-	$rulenos_free = array_diff($rulenos_pool, $rulenos_used);
-	$ruleno = array_shift($rulenos_free);
-
-	return $ruleno;
-}
-
 ?>

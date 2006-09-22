@@ -220,6 +220,8 @@ persist-key
 dev tun
 proto $proto
 cipher $cipher
+up /etc/rc.filter_configure
+down /etc/rc.filter_configure
 
 EOD;
 
@@ -355,7 +357,7 @@ function openvpn_restart($mode, $id) {
 	if ($settings['disable']) return;
 
 	$configfile = $g['varetc_path'] . "/openvpn_{$mode}{$id}.conf";
-	mwexec("openvpn --config $configfile --down /etc/rc.filter_configure --learn-address /etc/rc.filter_configure --route-up /etc/rc.filter_configure --up /etc/rc.filter_configure");
+	mwexec("openvpn --config $configfile");
 	touch("{$g['tmp_path']}/filter_dirty");
 }
 

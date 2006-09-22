@@ -355,7 +355,7 @@ function openvpn_restart($mode, $id) {
 	if ($settings['disable']) return;
 
 	$configfile = $g['varetc_path'] . "/openvpn_{$mode}{$id}.conf";
-	mwexec("openvpn --config $configfile --down \"touch /tmp/filter_dirty\" --learn-address \"touch /tmp/filter_dirty\" --route-up \"touch /tmp/filter_dirty\" --up \"touch /tmp/filter_dirty\" ");
+	mwexec("openvpn --config $configfile --down /etc/rc.filter_configure --learn-address /etc/rc.filter_configure --route-up /etc/rc.filter_configure --up /etc/rc.filter_configure");
 	touch("{$g['tmp_path']}/filter_dirty");
 }
 

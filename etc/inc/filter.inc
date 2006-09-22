@@ -369,14 +369,14 @@ function get_vpns_list() {
 	foreach (array('client', 'server') as $type) {
 		$conf =& $config['installedpackages']["openvpn$type"]['config'];
 		if (!is_array($conf)) continue;
-
 		foreach ($conf as $tunnel) {
 			if ($isfirst == false)
-				$vpns .= ' ';
+				$vpns .= " ";
 			$vpns .= $tunnel['remote_network'];
 			$isfirst = false;
 		}
 	}
+	$vpns .= " ";
 	return $vpns;
 }
 

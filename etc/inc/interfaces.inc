@@ -1491,7 +1491,7 @@ function is_altq_capable($int) {
          * Only the following drivers have ALTQ support
          */
         $capable = array("an", "ath", "awi", "bfe", "bge", "dc", "de", "ed",
-		"em", "fxp", "hme", "lnc", "le", "re", "rl", "ndis", "sf", "sis", "sk",
+		"em", "fxp", "hme", "lnc", "le", "nve", "re", "rl", "ndis", "sf", "sis", "sk",
 		"tun", "vr", "wi", "xl", "vlan", "ste");
 
         $int_family = preg_split("/[0-9]+/", $int);

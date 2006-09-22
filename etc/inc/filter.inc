@@ -243,7 +243,7 @@ function filter_configure_sync() {
 	}
 	if(file_exists("/tmp/commands.txt")) {
 		mwexec("sh /tmp/commands.txt &");
-		unlink("sh /tmp/commands.txt");
+		unlink("/tmp/commands.txt");
 	}
 
 	update_filter_reload_status("Syncing CARP data");

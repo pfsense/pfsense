@@ -330,9 +330,11 @@ function filter_generate_aliases() {
 		if(link_int_to_bridge_interface($ifname))
 			$aliases .= " " . link_int_to_bridge_interface($ifname);
 		$optip = find_interface_ip($config['interfaces'][$ifname]['if']);
-		$opt_carp_ints = link_ip_to_carp_interface();
-		if($opt_carp_ints)
-			$aliases .= $opt_carp_ints;
+		if($optip) {
+			$opt_carp_ints = link_ip_to_carp_interface($optip);
+			if($opt_carp_ints)
+				$aliases .= $opt_carp_ints;
+		}
 		$aliases .= " }\"\n";
 	}
 	$aliases .= "# User Aliases \n";
@@ -1075,7 +1077,7 @@ EOD;
 
 	$natrules .= process_carp_nat_rules();
 
-	$natrules = "# UPnPd rdr anchor\n";
+	$natrules .= "# UPnPd rdr anchor\n";
 	$natrules .= "rdr-anchor \"miniupnpd\"\n";
 
 	return $natrules;

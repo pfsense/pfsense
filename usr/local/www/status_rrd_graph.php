@@ -108,7 +108,7 @@ foreach ($graphs as $graph => $graphd) {
 
 $periods = array("2h", "6h", "48h", "14d", "2m", "18m");
 
-if(file_exists("{$rrddbpath}{$curif}-{$curgraph}.rrd")) {
+if((file_exists("{$rrddbpath}{$curif}-{$curgraph}.rrd")) or (file_exists("{$rrddbpath}{$curgraph}.rrd"))) {
 	foreach($periods as $period => $interval) {
 		PRINT "<B>Analysis for $curif -- $interval $curgraph</B><BR>";
 	PRINT "\n<IMG BORDER='1' name='{$curif}-{$interval}-{$curgraph}' id='{$curif}-{$interval}-{$curgraph}' ALT=\"$ifname $curgraph Graph\" SRC=\"status_rrd_graph_img.php?if=$curif&interval=$interval&graph=$curgraph&style={$curstyle}&color={$curcolor}\"><BR><BR>";

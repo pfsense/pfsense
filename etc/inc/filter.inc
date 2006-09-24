@@ -1820,52 +1820,6 @@ anchor "carp"
 
 EOD;
 
-	if(!isset($config['system']['disableftpproxy'])) {
-
-		$ipfrules .= "# enable ftp-proxy\n";
-
-		$optcfg = array();
-		generate_optcfg_array($optcfg);
-		$ftp_counter = "8022";
-		foreach($optcfg as $oc) {
-			if(!isset($oc['gateway']) && $oc['if'] <> "") {
-				$ipfrules .= "pass in quick on " . $oc['if'] . " inet proto tcp from any to \$loopback port {$ftp_counter} keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
-				$ipfrules .= "pass in quick on " . $oc['if'] . " inet proto tcp from any to \$loopback port 21 keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
-			}
-			$ftp_counter++;
-		}
-
-	$ipfrules .= <<<EOD
-
-anchor "ftpproxy"
-anchor "pftpx/*"
-pass in quick on $lanif inet proto tcp from any to \$loopback port 8021 keep state label "FTP PROXY: Allow traffic to localhost"
-pass in quick on $lanif inet proto tcp from any to \$loopback port 21 keep state label "FTP PROXY: Allow traffic to localhost"
-pass in quick on $wanif inet proto tcp from port 20 to ($wanif) port > 49000 user proxy flags S/SA keep state label "FTP PROXY: PASV mode data connection"
-
-EOD;
-
-
-		if(isset($config['system']['rfc959workaround'])) {
-		$ipfrules .= <<<EOD
-
-# Fix sites that violate RFC 959 which specifies that the data connection
-# be sourced from the command port - 1 (typically port 20)
-# This workaround doesn't expose us to any extra risk as we'll still only allow
-# connections to the firewall on a port that ftp-proxy is listening on
-pass in quick on $wanif inet proto tcp from any to ($wanif) port > 49000 user proxy flags S/SA keep state label "FTP PROXY: RFC959 violation workaround"
-
-EOD;
-
-			$optcfg = array();
-			generate_optcfg_array($optcfg);
-			foreach($optcfg as $oc) {
-				if($oc['gateway'] <> "")
-					$ipfrules .= "pass in quick on {$oc['if']} inet proto tcp from any to ({$oc['if']}) port > 49000 user proxy flags S/SA keep state label \"FTP PROXY: RFC959 violation workaround\" \n";
-			}
-		}
-	}
-
         $ipfrules .= <<<EOD
 
 # NAT Reflection rules
@@ -2461,6 +2415,51 @@ EOD;
 
 # uPnPd
 anchor "miniupnpd"
+
+anchor "ftpproxy"
+anchor "pftpx/*"
+pass in quick on $lanif inet proto tcp from any to \$loopback port 8021 keep state label "FTP PROXY: Allow traffic to localhost"
+pass in quick on $lanif inet proto tcp from any to \$loopback port 21 keep state label "FTP PROXY: Allow traffic to localhost"
+pass in quick on $wanif inet proto tcp from port 20 to ($wanif) port > 49000 user proxy flags S/SA keep state label "FTP PROXY: PASV mode data connection"
+
+EOD;
+
+	if(!isset($config['system']['disableftpproxy'])) {
+
+		$ipfrules .= "# enable ftp-proxy\n";
+
+		$optcfg = array();
+		generate_optcfg_array($optcfg);
+		$ftp_counter = "8022";
+		foreach($optcfg as $oc) {
+			if(!isset($oc['gateway']) && $oc['if'] <> "") {
+				$ipfrules .= "pass in quick on " . $oc['if'] . " inet proto tcp from any to \$loopback port {$ftp_counter} keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
+				$ipfrules .= "pass in quick on " . $oc['if'] . " inet proto tcp from any to \$loopback port 21 keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
+			}
+			$ftp_counter++;
+		}
+
+		if(isset($config['system']['rfc959workaround'])) {
+			$ipfrules .= <<<EODEOD
+
+# Fix sites that violate RFC 959 which specifies that the data connection
+# be sourced from the command port - 1 (typically port 20)
+# This workaround doesn't expose us to any extra risk as we'll still only allow
+# connections to the firewall on a port that ftp-proxy is listening on
+pass in quick on $wanif inet proto tcp from any to ($wanif) port > 49000 user proxy flags S/SA keep state label "FTP PROXY: RFC959 violation workaround"
+
+EODEOD;
+
+			$optcfg = array();
+			generate_optcfg_array($optcfg);
+			foreach($optcfg as $oc) {
+				if($oc['gateway'] <> "")
+					$ipfrules .= "pass in quick on {$oc['if']} inet proto tcp from any to ({$oc['if']}) port > 49000 user proxy flags S/SA keep state label \"FTP PROXY: RFC959 violation workaround\" \n";
+			}
+		}
+	}
+
+	$ipfrules .= <<<EOD
 
 #---------------------------------------------------------------------------
 # default rules (just to be sure)

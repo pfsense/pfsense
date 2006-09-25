@@ -60,7 +60,7 @@ function is_package_installed($packagename) {
 	if($pkg == -1) return false;
 	return true;
 }
-            
+
 /****f* pkg-utils/get_pkg_id
  * NAME
  *   get_pkg_id - Find a package's numeric ID.
@@ -103,7 +103,7 @@ function get_pkg_sizes($pkgs = 'all') {
 	$params = array("pkg" => $pkgs);
 	$msg = new XML_RPC_Message('pfsense.get_pkg_sizes', array(php_value_to_xmlrpc($params)));
 	$cli = new XML_RPC_Client($g['xmlrpcpath'], $g['xmlrpcbaseurl']);
-	$resp = $cli->send($msg, 10);  
+	$resp = $cli->send($msg, 10);
 	if($resp and !$resp->faultCode()) {
 		$raw_versions = $resp->value();
 		return xmlrpc_value_to_php($raw_versions);
@@ -284,7 +284,7 @@ function pkg_fetch_recursive($pkgname, $filename, $dependlevel = 0, $base_url = 
 	$fetchto = "/tmp/apkg_" . $pkgname . $pkg_extension;
 	download_file_with_progress_bar($base_url . '/' . $filename, $fetchto);
 	$static_output .= " (extracting)";
-	update_output_window($static_output);	
+	update_output_window($static_output);
 		$slaveout = "";
 	exec("/usr/bin/tar --fast-read -O -f {$fetchto} -x +CONTENTS 2>&1", $slaveout);
 	$workingdir = preg_grep("/instmp/", $slaveout);
@@ -366,6 +366,7 @@ function read_body($ch, $string) {
 		$lastseen = $downloadProgress;
 	}
 	fwrite($fout, $string);
+	ob_flush();
 	return $length;
 }
 
@@ -430,8 +431,8 @@ function install_package($package, $pkg_info = "") {
 	$static_output .= "done.\n";
 	update_output_window($static_output);
 	$static_output .= "Starting service.\n";
-	update_output_window($static_output);	
-	start_service($pkg_info['config_file']);	
+	update_output_window($static_output);
+	start_service($pkg_info['config_file']);
 }
 
 function eval_once($toeval) {
@@ -519,7 +520,7 @@ function install_package_xml($pkg) {
 	if(file_exists("/usr/local/pkg/" . $configfile)) {
 		$static_output .= "Loading package configuration... ";
 		update_output_window($static_output);
-		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $configfile, "packagegui");	
+		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $configfile, "packagegui");
 		$static_output .= "done.\n";
 		update_output_window($static_output);
 		$static_output .= "Configuring package components...\n";
@@ -582,7 +583,7 @@ function install_package_xml($pkg) {
 			update_output_window($static_output);
 			fwrite($fd_log, "require_once('include_file')\n");
 			require_once($pkg_config['include_file']);
-		}			
+		}
 		/* sidebar items */
 		if($pkg_config['menu'] != "") {
 			$static_output .= "\tMenu items... ";
@@ -615,7 +616,7 @@ function install_package_xml($pkg) {
 		update_output_window($static_output);
 		if($pkg_config['custom_php_global_functions'] <> "") {
 			$static_output = "Executing custom_php_global_functions()...";
-			update_output_window($static_output);			
+			update_output_window($static_output);
 			eval_once($pkg_config['custom_php_global_functions']);
 		}
 		if($pkg_config['custom_php_install_command']) {
@@ -666,7 +667,7 @@ function delete_package($pkg, $pkgid) {
 		}
 	}
 	$static_output .= "\Starting package deletion...\n";
-	update_output_window($static_output);	
+	update_output_window($static_output);
 	delete_package_recursive($pkg);
 	$static_output .= "done.\n";
 	update_output_window($static_output);
@@ -759,11 +760,11 @@ function delete_package_xml($pkg) {
 			if(file_exists($pkg_config['include_file']))
 				require_once($pkg_config['include_file']);
 			fwrite($fd_log, "require_once('include_file') included\n");
-		}		
+		}
 		/* evalate this package's global functions and pre deinstall commands */
 		if($pkg_config['custom_php_global_functions'] <> "")
 			eval_once($pkg_config['custom_php_global_functions']);
-		if($pkg_config['custom_php_pre_deinstall_command'] <> "") 
+		if($pkg_config['custom_php_pre_deinstall_command'] <> "")
 			eval_once($pkg_config['custom_php_pre_deinstall_command']);
 		/* remove all additional files */
 		if($pkg_config['additional_files_needed'] <> "") {

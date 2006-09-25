@@ -2413,8 +2413,8 @@ EOD;
 	}
 	$ipfrules .= <<<EOD
 
-# uPnPd
-anchor "miniupnpd"
+# snort2c
+table <snort2c> persist
 
 anchor "ftpproxy"
 anchor "pftpx/*"
@@ -2460,6 +2460,9 @@ EODEOD;
 	}
 
 	$ipfrules .= <<<EOD
+
+# uPnPd
+anchor "miniupnpd"
 
 #---------------------------------------------------------------------------
 # default rules (just to be sure)

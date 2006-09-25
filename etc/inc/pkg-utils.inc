@@ -345,6 +345,7 @@ function read_header($ch, $string) {
 	if($regs[2] <> "") {
 	$file_size = intval($regs[2]);
 	}
+	ob_flush();
 	return $length;
 }
 

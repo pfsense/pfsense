@@ -1806,6 +1806,10 @@ function filter_rules_generate() {
 
 	$ipfrules .= <<<EOD
 
+# snort2c
+table <snort2c> persist
+block in quick from <snort2c> to any label "Block snort2c hosts"
+
 # loopback
 anchor "loopback"
 pass in quick on \$loopback all label "pass loopback"
@@ -2412,9 +2416,6 @@ EOD;
 		}
 	}
 	$ipfrules .= <<<EOD
-
-# snort2c
-table <snort2c> persist
 
 anchor "ftpproxy"
 anchor "pftpx/*"

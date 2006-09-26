@@ -29,6 +29,24 @@
 
 require("guiconfig.inc");
 
+if (($_GET['submit'] == "Load") && file_exists($_GET['savetopath'])) {
+	$fd = fopen($_GET['savetopath'], "r");
+	$content = fread($fd, filesize($_GET['savetopath']));
+	fclose($fd);
+	$edit_area="";
+	$loadmsg = gettext("Loaded text from")." " . $_GET['savetopath'];
+	if(stristr($_GET['savetopath'], ".php") == true)
+		$language = "php";
+	else if(stristr($_GET['savetopath'], ".inc") == true)
+		$language = "php";
+	else if(stristr($_GET['savetopath'], ".sh") == true)
+		$language = "core";
+	else if(stristr($_GET['savetopath'], ".xml") == true)
+		$language = "xml";
+
+	$savetopath = $_GET['savetopath'];
+}
+
 if (($_POST['submit'] == "Load") && file_exists($_POST['savetopath'])) {
 	$fd = fopen($_POST['savetopath'], "r");
 	$content = fread($fd, filesize($_POST['savetopath']));
@@ -43,6 +61,7 @@ if (($_POST['submit'] == "Load") && file_exists($_POST['savetopath'])) {
 		$language = "core";
 	else if(stristr($_POST['savetopath'], ".xml") == true)
 		$language = "xml";
+	$savetopath = $_POST['savetopath'];
 } else if (($_POST['submit'] == "Save")) {
 	conf_mount_rw();
 	$content = ereg_replace("\r","",$_POST['code']) ;
@@ -54,6 +73,7 @@ if (($_POST['submit'] == "Load") && file_exists($_POST['savetopath'])) {
 	if($_POST['savetopath'] == "/cf/conf/config.xml")
 		unlink_if_exists("/tmp/config.cache");
 	conf_mount_ro();
+	$savetopath = $_POST['savetopath'];
 } else if (($_POST['submit'] == "Load") && !file_exists($_POST['savetopath'])) {
 	$savemsg = "File not found " . $_POST['savetopath'];
 	$content = "";
@@ -132,7 +152,7 @@ function sf() { document.forms[0].savetopath.focus(); }
  <tr>
   <td>
 	<center>
-	Save/Load from path: <input size="42" id="savetopath" name="savetopath" value="<?php echo $_POST['savetopath']; ?>">
+	Save/Load from path: <input size="42" id="savetopath" name="savetopath" value="<?php echo $savetopath; ?>">
 	<input name="submit" type="submit"  class="button" id="Load" value="Load"> <input name="submit" type="submit"  class="button" id="Save" value="Save">
 	<hr noshade>
 	<?php if($_POST['highlight'] == "no"): ?>

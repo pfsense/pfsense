@@ -32,6 +32,9 @@
 require_once("config.inc");
 require_once("filter.inc");
 
+/* invalidate interface cache */
+get_interface_arr(true);
+
 filter_configure_sync();
 
 ?>

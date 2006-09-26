@@ -31,7 +31,7 @@ require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
 /* dummy stubs needed by some code that was MFC'd */
-function gettext($text) { return $text; } 
+function gettext($text) { return $text; }
 function pfSenseHeader($location) { header("Location: $location"); }
 
 function gentitle_pkg($pgname) {
@@ -232,7 +232,7 @@ if ($pkg['custom_php_after_head_command'])
 <script language="JavaScript">
 <!--
 function enablechange() {
-<?php 
+<?php
 foreach ($pkg['fields']['field'] as $field) {
 	if (isset($field['enablefields']) or isset($field['checkenablefields'])) {
 		print("\tif (document.iform.elements[\"{$field['fieldname']}\"].checked == false) {\n");
@@ -312,13 +312,13 @@ if ($pkg['tabs'] <> "") {
   $savevalue = gettext("Save");
   if($pkg['savetext'] <> "") $savevalue = $pkg['savetext'];
   foreach ($pkg['fields']['field'] as $pkga) { ?>
-	  
+
 	  <?php if(!$pkga['combinefieldsend']) echo "<tr valign=\"top\">"; ?>
 
 	  <?php
-	  
+
 	  $size = "";
-	  
+
 	  if(!$pkga['dontdisplayname']) {
 		unset($req);
 		if (isset($pkga['required']))
@@ -410,7 +410,8 @@ if ($pkg['tabs'] <> "") {
 			if (!empty($additional_ifaces))
 				$ifaces = array_merge($ifaces, explode(',', $additional_ifaces));
 
-			$values = explode(',', $value);
+			/* value is already an array, no need to explode it */
+			$values = $value;
 			foreach($ifaces as $ifname => $iface) {
 				if (isset($iface['descr']))
 					$ifdescr = $iface['descr'];
@@ -611,7 +612,7 @@ function fixup_string($string) {
 		$urlport = ":" . $port;
 	else
 		$urlport = "";
-		
+
 	if($config['system']['webguiproto'] == "https") $https = "s";
 	$myurl = "http" . $https . "://" . getenv("HTTP_HOST") . $urlport;
 	$newstring = str_replace("\$myurl", $myurl, $string);

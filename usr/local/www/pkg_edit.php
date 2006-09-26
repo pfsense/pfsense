@@ -409,9 +409,11 @@ if ($pkg['tabs'] <> "") {
 			$additional_ifaces = $pkga['add_to_interfaces_selection'];
 			if (!empty($additional_ifaces))
 				$ifaces = array_merge($ifaces, explode(',', $additional_ifaces));
+			if(is_array($value))
+				$values = $value;
+			else
+				$values  =  explode(',',  $value);
 
-			/* value is already an array, no need to explode it */
-			$values = $value;
 			foreach($ifaces as $ifname => $iface) {
 				if (isset($iface['descr']))
 					$ifdescr = $iface['descr'];

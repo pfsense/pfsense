@@ -134,6 +134,7 @@ switch($_GET['mode']) {
             update_status("Package reinstalled.");
             $static_output .= "\n\nPackage reinstalled.";
             update_output_window($static_output);
+            start_service($_GET['pkg']);
             break;
 	case "reinstallxml":
             delete_package_xml($_GET['pkg']);

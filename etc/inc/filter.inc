@@ -72,6 +72,8 @@ function filter_configure() {
 function filter_configure_sync() {
 	global $config, $g, $after_filter_configure_run;
 	update_filter_reload_status("Initializing");
+	/* invalidate interface cache */
+	get_interface_arr(true);	
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_configure_sync() being called $mt\n";

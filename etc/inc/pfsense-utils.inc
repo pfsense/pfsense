@@ -756,10 +756,12 @@ function add_rule_to_anchor($anchor, $rule, $label) {
  */
 function remove_text_from_file($file, $text) {
 	global $fd_log;
-	fwrite($fd_log, "Adding needed text items:\n");
+	if($fd_log)
+		fwrite($fd_log, "Adding needed text items:\n");
 	$filecontents = exec_command_and_return_text("cat " . $file);
 	$textTMP = str_replace($text, "", $filecontents);
 	$text .= $textTMP;
+	if($fd_log)
 	fwrite($fd_log, $text . "\n");
 	$fd = fopen($file, "w");
 	fwrite($fd, $text);

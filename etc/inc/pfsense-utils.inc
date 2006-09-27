@@ -758,11 +758,11 @@ function remove_text_from_file($file, $text) {
 	global $fd_log;
 	if($fd_log)
 		fwrite($fd_log, "Adding needed text items:\n");
-	$filecontents = exec_command_and_return_text("cat " . $file);
+	$filecontents = file_get_contents($file);
 	$textTMP = str_replace($text, "", $filecontents);
-	$text .= $textTMP;
+	$text = $textTMP;
 	if($fd_log)
-	fwrite($fd_log, $text . "\n");
+		fwrite($fd_log, $text);
 	$fd = fopen($file, "w");
 	fwrite($fd, $text);
 	fclose($fd);
@@ -774,15 +774,13 @@ function remove_text_from_file($file, $text) {
  */
 function add_text_to_file($file, $text) {
 	if(file_exists($file) and is_writable($file)) {
-		$filecontents = file($file);
-		$filecontents[] = $text;
-		$tmpfile = get_tmp_file();
-		$fout = fopen($tmpfile, "w");
-		foreach($filecontents as $line) {
-			fwrite($fout, rtrim($line) . "\n");
-		}
+		$filecontents = split("\n", file_get_contents($file));
+		$fout = fopen($file, "w");
+		foreach($filecontents as $line)
+			if($line)
+				fwrite($fout, rtrim($line) . "\n");
+		fwrite($fout, rtrim($text) . "\n");
 		fclose($fout);
-		rename($tmpfile, $file);
 		return true;
 	} else {
 		return false;

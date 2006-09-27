@@ -133,14 +133,15 @@ switch($_GET['mode']) {
             install_package($_GET['pkg']);
             update_status("Package reinstalled.");
             $static_output .= "\n\nPackage reinstalled.";
-            update_output_window($static_output);
             start_service($_GET['pkg']);
+            update_output_window($static_output);            
             break;
 	case "reinstallxml":
             delete_package_xml($_GET['pkg']);
             install_package($_GET['pkg']);
             $static_output .= "\n\nPackage reinstalled.";
-            update_output_window($static_output);
+            start_service($_GET['pkg']);
+            update_output_window($static_output);            
             break;
 	case "reinstallall":
 	    if($config['installedpackages']['package'] <> "")
@@ -155,7 +156,8 @@ switch($_GET['mode']) {
             }
             update_status("All packages reinstalled.");
             $static_output .= "\n\nAll packages reinstalled.";
-            update_output_window($static_output);
+            start_service($_GET['pkg']);
+            update_output_window($static_output);            
 	    break;
 	default:
             $status = install_package($_GET['id']);

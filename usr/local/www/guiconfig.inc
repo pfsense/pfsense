@@ -562,32 +562,31 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 	global $g, $config;
     $sor = isset($config['syslog']['reverse']) ? "-r" : "";
     $logarr = "";
-	exec("/usr/sbin/clog {$logfile} | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
-
+	$grepline = "  ";
 	if(is_array($grepfor)) {
-		 $i = 0;
-                 foreach($grepfor as $agrep) {
-                         $regexp = "/" . $agrep . "/i";
-                         if($grepinvert[$i]) {
-                                 $logarr = preg_grep($regexp, $logarr, PREG_GREP_INVERT);
-                         } else {
-                                 $logarr = preg_grep($regexp, $logarr);
-                         }
-			 $i++;
-                 }
-        }
-        foreach ($logarr as $logent) {
-                $logent = preg_split("/\s+/", $logent, 6);
-                echo "<tr valign=\"top\">\n";
-                if ($withorig) {
-                		$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
-                        echo "<td class=\"listlr\" nowrap>" . $entry_date_time  . "</td>\n";
-                        echo "<td class=\"listr\">" . htmlspecialchars($logent[4] . " " . $logent[5]) . "</td>\n";
-                } else {
-                        echo "<td class=\"listlr\" colspan=\"2\">" . htmlspecialchars($logent[5]) . "</td>\n";
-                }
-                echo "</tr>\n";
-        }
+		 foreach($grepfor as $agrep) {
+	         $regexp = $agrep;
+             if($grepinvert[$i]) {
+                     $grepline .= " | grep \"$regexp\"";
+             } else {
+                     $grepline .= " | grep -v \"$regexp\"";
+             }
+		}
+    }
+	exec("/usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+    echo "<!-- /usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail} -->";
+    foreach ($logarr as $logent) {
+            $logent = preg_split("/\s+/", $logent, 6);
+            echo "<tr valign=\"top\">\n";
+            if ($withorig) {
+            		$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
+                    echo "<td class=\"listlr\" nowrap>" . $entry_date_time  . "</td>\n";
+                    echo "<td class=\"listr\">" . htmlspecialchars($logent[4] . " " . $logent[5]) . "</td>\n";
+            } else {
+                    echo "<td class=\"listlr\" colspan=\"2\">" . htmlspecialchars($logent[5]) . "</td>\n";
+            }
+            echo "</tr>\n";
+    }
 }
 
 function return_clog($logfile, $tail, $grepfor = "", $grepinvert = "", $grepreverse = false) {

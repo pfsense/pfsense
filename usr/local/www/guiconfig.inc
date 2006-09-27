@@ -594,8 +594,18 @@ function return_clog($logfile, $tail, $grepfor = "", $grepinvert = "", $grepreve
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 	$sor = isset($grepreverse) ? "-r" : "";
 	$logarr = "";
-	exec("/usr/sbin/clog {$logfile} | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
-
+	$grepline = "  ";
+	if(is_array($grepfor)) {
+		 foreach($grepfor as $agrep) {
+	         $regexp = $agrep;
+             if($grepinvert[$i]) {
+                     $grepline .= " | grep \"$regexp\"";
+             } else {
+                     $grepline .= " | grep -v \"$regexp\"";
+             }
+		}
+    }
+	exec("/usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
 	if(is_array($grepfor)) {
 		$i = 0;
 		foreach($grepfor as $agrep) {

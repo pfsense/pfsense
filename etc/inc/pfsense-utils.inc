@@ -776,10 +776,14 @@ function add_text_to_file($file, $text) {
 	if(file_exists($file) and is_writable($file)) {
 		$filecontents = split("\n", file_get_contents($file));
 		$fout = fopen($file, "w");
-		foreach($filecontents as $line)
+		$new_file_text = "";
+		foreach($filecontents as $line) {
 			if($line)
-				fwrite($fout, rtrim($line) . "\n");
-		fwrite($fout, rtrim($text) . "\n");
+				$new_file_text .= rtrim($line) . "\n";
+		}
+		$new_file_text .= $text . "\n";
+		$file_text = str_replace("\n\n", "\n", $new_file_text);
+		fwrite($fout, $file_text);
 		fclose($fout);
 		return true;
 	} else {

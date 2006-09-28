@@ -169,8 +169,9 @@ if ($_POST) {
 								for ($j = 1; isset ($config['interfaces']['opt' . $j]); $j++)
 									$ifdescrs['opt' . $j] = "opt" . $j;
 								/* remove special characters from interface descriptions */
-								foreach($ifdescrs as $iface)
-									$config['interfaces'][$iface]['descr'] = remove_bad_chars($config['interfaces'][$iface]['descr']);
+								if(is_array($ifdescrs))
+									foreach($ifdescrs as $iface)
+										$config['interfaces'][$iface]['descr'] = remove_bad_chars($config['interfaces'][$iface]['descr']);
 								unlink_if_exists("/tmp/config.cache");
 								write_config();
 								conf_mount_ro();

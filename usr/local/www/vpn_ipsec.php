@@ -2,20 +2,20 @@
 /*
 	vpn_ipsec.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -50,17 +50,17 @@ if ($_POST) {
 		}
 	} else if ($_POST['submit']) {
 		$pconfig = $_POST;
-		
+
 		$config['ipsec']['enable'] = $_POST['enable'] ? true : false;
-		
+
 		write_config();
-	
+
 		$retval = 0;
 		config_lock();
 		$retval = vpn_ipsec_configure();
 		config_unlock();
 		/* reload the filter in the background */
-		mwexec_bg("/etc/rc.filter_configure");
+		filter_configure();
 
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {
@@ -104,19 +104,19 @@ include("head.inc");
 	$tab_array[3] = array("CAs", false, "vpn_ipsec_ca.php");
 	$tab_array[4] = array("Failover IPSEC", false, "/pkg_edit.php?xml=sasyncd.xml&id=0");
 	display_top_tabs($tab_array);
-?>  
+?>
   </td></tr>
-  <tr> 
+  <tr>
     <td>
 	<div id="mainarea">
         <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr> 
+                <tr>
                   <td class="vtable">
                       <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked";?>>
                       <strong>Enable IPsec</strong></td>
                 </tr>
-                <tr> 
-                  <td> <input name="submit" type="submit" class="formbtn" value="Save"> 
+                <tr>
+                  <td> <input name="submit" type="submit" class="formbtn" value="Save">
                   </td>
                 </tr>
         </table>
@@ -140,7 +140,7 @@ include("head.inc");
 					}
 				?>
                 <tr valign="top">
-                  <td nowrap class="listlr" ondblclick="document.location='vpn_ipsec_edit.php?id=<?=$i;?>'"><?=$spans;?> 
+                  <td nowrap class="listlr" ondblclick="document.location='vpn_ipsec_edit.php?id=<?=$i;?>'"><?=$spans;?>
                     <?php	if ($ipsecent['local-subnet']['network'])
 								echo strtoupper($ipsecent['local-subnet']['network']);
 							else
@@ -157,7 +157,7 @@ include("head.inc");
 							  $if = htmlspecialchars($iflabels[$ipsecent['interface']]);
 						} else
 							$if = "WAN";
-						
+
 						echo $if . "<br>" . $ipsecent['remote-gateway'];
 					?>
                   <?=$spane;?></td>
@@ -173,11 +173,11 @@ include("head.inc");
                   <td class="listbg" ondblclick="document.location='vpn_ipsec_edit.php?id=<?=$i;?>'"><?=$spans;?><font color="#FFFFFF">
                     <?=htmlspecialchars($ipsecent['descr']);?>&nbsp;
                   <?=$spane;?></td>
-                  <td valign="middle" nowrap class="list"> <a href="vpn_ipsec_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit tunnel" width="17" height="17" border="0"></a> 
+                  <td valign="middle" nowrap class="list"> <a href="vpn_ipsec_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit tunnel" width="17" height="17" border="0"></a>
                     &nbsp;<a href="vpn_ipsec.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this tunnel?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="delete tunnel" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
-                <tr> 
+                <tr>
                   <td class="list" colspan="6"></td>
                   <td class="list"> <a href="vpn_ipsec_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add tunnel" width="17" height="17" border="0"></a></td>
 				</tr>

@@ -2,7 +2,7 @@
 <?php
 /* $Id$ */
 /*
-    rc.filter_configure
+    rc.filter_configure_sync
     part of pfSense (http://www.pfSense.com)
     Copyright (C) 2004 Scott Ullrich
     All rights reserved.

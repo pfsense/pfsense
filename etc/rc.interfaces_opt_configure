@@ -2,7 +2,7 @@
 <?php
 /* $Id$ */
 /*
-    rc.filter_configure
+    rc.interfaces_opt_configure
     part of pfSense (http://www.pfSense.com)
     Copyright (C) 2004 Scott Ullrich
     All rights reserved.

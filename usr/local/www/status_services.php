@@ -33,6 +33,15 @@ function gentitle_pkg($pgname) {
 	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
 }
 
+function get_pkg_descr($package_name) {
+	global $config;
+	foreach($config['installedpackages']['package'] as $pkg) {
+		if($pkg['name'] == $package_name)
+			return $pkg['descr'];
+	}
+	return "Not available.";
+}
+
 if($_GET['mode'] == "restartservice" and $_GET['service']) {
 	switch($_GET['service']) {
 		case 'bsnmpd':
@@ -174,7 +183,7 @@ if(isset($config['proxyarp']['proxyarpnet'])) {
 if($services) {
 	foreach($services as $service) {
 		if(!$service['name']) continue;
-		if(!$service['description']) $service['description'] = "Unknown";
+		if(!$service['description']) $service['description'] = get_pkg_descr($service['name']);
 		echo '<tr><td class="listlr">' . $service['name'] . '</td>';
 		echo '<td class="listr">' . $service['description'] . '</td>';
 		if(is_service_running($service['name'], $ps) or is_process_running($service['name']) ) {

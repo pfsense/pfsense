@@ -209,18 +209,16 @@ function filter_configure_sync() {
 	$files = return_dir_as_array("/usr/local/pkg/pf/");
 	if($files <> "") {
 		foreach ($files as $file) {
-			if($file <> "") {
+			if($file) {
 				$text = file_get_contents("/usr/local/pkg/pf/" . $file);
 				if($text) {
 					if(stristr($file, ".sh") == true) {
 						mwexec("/usr/local/pkg/pf/" . $file . " start");
 					} else {
-						if(stristr($file,"CVS") == false) {
+						if(!stristr($file,"CVS")) {
 							if($g['booting'] == true)
 								echo "\t{$file}... ";
 							eval($text);
-							if($g['booting'] == true)
-								echo "done.\n";
 						}
 					}
 				}

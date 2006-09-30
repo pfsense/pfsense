@@ -46,15 +46,19 @@ if($_GET['mode'] == "restartservice" and $_GET['service']) {
 	switch($_GET['service']) {
 		case 'bsnmpd':
 			services_snmpd_configure();
+			sleep(5);
 			break;
 		case 'dnsmasq':
 			services_dnsmasq_configure();
+			sleep(5);
 			break;
 		case 'dhcpd':
 			services_dhcpd_configure();
+			sleep(5);
 			break;
 		default:
 			restart_service($_GET['service']);
+			sleep(5);
 			break;
 	}
 	$savemsg = "{$_GET['service']} has been restarted.";
@@ -64,15 +68,19 @@ if($_GET['mode'] == "startservice" and $_GET['service']) {
 	switch($_GET['service']) {
 		case 'bsnmpd':
 			services_snmpd_configure();
+			sleep(5);
 			break;
 		case 'dnsmasq':
 			services_dnsmasq_configure();
+			sleep(5);
 			break;
 		case 'dhcpd':
 			services_dhcpd_configure();
+			sleep(5);
 			break;
 		default:
 			start_service($_GET['service']);
+			sleep(5);
 			break;
 	}
     $savemsg = "{$_GET['service']} has been started.";

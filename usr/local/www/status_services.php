@@ -81,6 +81,7 @@ if($_GET['mode'] == "startservice" and $_GET['service']) {
 if($_GET['mode'] == "stopservice" and $_GET['service']) {
     stop_service($_GET['service']);
     $savemsg = "{$_GET['service']} has been stopped.";
+    sleep(5);
 }
 
 /* batch mode, allow other scripts to call this script */

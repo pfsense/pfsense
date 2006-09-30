@@ -170,14 +170,14 @@ if($show_dhcprelay == true) {
 
 if(is_dhcp_server_enabled()) {
 	$pconfig['name'] = "dhcpd";
-	$pconfig['description'] = "DHCP Server";
+	$pconfig['description'] = "DHCP Service";
 	$services[] = $pconfig;
 	unset($pconfig);
 }
 
 if(isset($config['snmpd']['enable'])) {
 	$pconfig['name'] = "bsnmpd";
-	$pconfig['description'] = "SNMP";
+	$pconfig['description'] = "SNMP Service";
 	$services[] = $pconfig;
 	unset($pconfig);
 }

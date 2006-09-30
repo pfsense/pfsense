@@ -63,9 +63,9 @@ function start_service($name) {
 	global $config;
 	/* make sure service is stopped before starting */
 	stop_service($name);
-	sleep(1);
+	sleep(2);
 	if(file_exists("/usr/local/etc/rc.d/{$name}.sh")) {
-		exec("/usr/local/etc/rc.d/{$name}.sh start");
+		exec("/bin/sh /usr/local/etc/rc.d/{$name}.sh start");
 		return;
 	}
 	if($config['installedpackages']['service']) {

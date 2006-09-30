@@ -49,7 +49,7 @@ function write_rcfile($params) {
 		$tokill = array_pop(explode('/', array_shift(explode(' ', $params['start']))));
 	}
 	$towrite .= "rc_stop() {\n\t" . $tokill . "\n}\n\n";
-	
+
 	/* begin rcfile logic */
 	$towrite .= "case $1 in\n\tstart)\n\t\trc_start\n\t\t;;\n\tstop)\n\t\trc_stop\n\t\t;;\n\trestart)\n\t\trc_stop\n\t\trc_start\n\t\t;;\nesac\n\n";
 	$fout = fopen($fileprefix . $params['file'], "w");
@@ -63,6 +63,11 @@ function start_service($name) {
 	global $config;
 	/* make sure service is stopped before starting */
 	stop_service($name);
+	sleep(1);
+	if(file_exists("/usr/local/etc/rc.d/{$name}.sh")) {
+		exec("/usr/local/etc/rc.d/{$name}.sh start");
+		return;
+	}
 	if($config['installedpackages']['service']) {
 		foreach($config['installedpackages']['service'] as $service) {
 			if(strtolower($service['name']) == strtolower($name)) {
@@ -147,7 +152,7 @@ function is_dhcp_running($interface) {
 
 function restart_service_if_running($service) {
 	global $config;
-	if(is_service_running($service)) 
+	if(is_service_running($service))
 		restart_service($service);
 	return;
 }

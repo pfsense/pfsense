@@ -73,7 +73,7 @@ function filter_configure_sync() {
 	global $config, $g, $after_filter_configure_run;
 	update_filter_reload_status("Initializing");
 	/* invalidate interface cache */
-	get_interface_arr(true);	
+	get_interface_arr(true);
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_configure_sync() being called $mt\n";
@@ -146,7 +146,6 @@ function filter_configure_sync() {
 	}
 	$rules .= "\n";
 
-
 	update_filter_reload_status("Setting up SCRUB information");
 	/* get our wan interface? */
 	$wanif = get_real_wan_interface();
@@ -203,6 +202,17 @@ function filter_configure_sync() {
 
 	unlink_if_exists("/usr/local/pkg/pf/carp_sync_client.php");
 
+	/* run items scheduled for after filter configure run */
+	foreach($after_filter_configure_run as $afcr) {
+		$fda = fopen("/tmp/commands.txt", "w");
+		fwrite($fda, $afcr . "\n");
+		fclose($fda);
+	}
+	if(file_exists("/tmp/commands.txt")) {
+		mwexec("sh /tmp/commands.txt &");
+		unlink("/tmp/commands.txt");
+	}
+
 	update_filter_reload_status("Running plugins");
 
 	/* process packager manager custom rules */
@@ -218,37 +228,25 @@ function filter_configure_sync() {
 						if(!stristr($file,"CVS")) {
 							if($g['booting'] == true)
 								echo "\t{$file}... ";
-							eval($text);
+							require_once("/usr/local/pkg/pf/" . $file);
 						}
 					}
 				}
 			}
 		}
 	}
+	update_filter_reload_status("Plugins completed.");
 
 	/*
 	    we need a way to let a user run a shell cmd after each
 	    filter_configure() call.  run this xml command after
             each change.
 	*/
-	if($config['system']['afterfilterchangeshellcmd'] <> "") {
+	if($config['system']['afterfilterchangeshellcmd'] <> "")
 		mwexec($config['system']['afterfilterchangeshellcmd']);
-	}
-
-	/* run items scheduled for after filter configure run */
-	foreach($after_filter_configure_run as $afcr) {
-		$fda = fopen("/tmp/commands.txt", "w");
-		fwrite($fda, $afcr . "\n");
-		fclose($fda);
-	}
-	if(file_exists("/tmp/commands.txt")) {
-		mwexec("sh /tmp/commands.txt &");
-		unlink("/tmp/commands.txt");
-	}
-
-	update_filter_reload_status("Syncing CARP data");
 
 	/* sync carp entries to other firewalls */
+	update_filter_reload_status("Syncing CARP data");
 	carp_sync_client();
 
 	update_filter_reload_status("Done");

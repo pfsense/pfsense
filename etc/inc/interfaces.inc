@@ -1591,4 +1591,14 @@ function get_wireless_modes($interface)
 	return($wireless_modes);
 }
 
+function get_interface_mac($interface) {
+
+        /* build interface list with netstat */
+        exec("/usr/bin/netstat -I $interface -nW -f link", $linkinfo);
+        array_shift($linkinfo);
+        $alink = preg_split("/\s+/", $linkinfo[0]);
+        $mac = chop($alink[3]);
+        return $mac;
+}
+
 ?>

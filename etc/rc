@@ -201,19 +201,8 @@ echo -n "Starting CRON... "
 /usr/sbin/cron 2>>/tmp/bootup_messages
 echo "done."
 
-if [ ! "$PLATFORM" = "cdrom" ]; then
-
-    echo "Syncing packages..."
-    /etc/rc.packages 2>/dev/null
-
-    echo "Executing rc.d items... "
-
-    for FILE in /usr/local/etc/rc.d/*.sh; do
-		echo -n " Starting ${FILE}..."
-		sh $FILE start >>/tmp/bootup_messages 2>&1 &
-		echo "done."
-    done
-fi
+# Start packages
+/etc/rc.start_packages
 
 rm -rf /usr/local/pkg/pf/CVS
 

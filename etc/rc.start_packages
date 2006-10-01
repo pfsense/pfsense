@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# Set our operating platform
+PLATFORM=`cat /etc/platform`
+
+if [ ! "$PLATFORM" = "cdrom" ]; then
+
+    echo "Syncing packages..."
+    /etc/rc.packages 2>/dev/null
+
+    echo "Executing rc.d items... "
+
+    for FILE in /usr/local/etc/rc.d/*.sh; do
+		echo -n " Starting ${FILE}..."
+		sh $FILE start >>/tmp/bootup_messages 2>&1 &
+		echo "done."
+    done
+fi
+

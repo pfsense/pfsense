@@ -102,6 +102,9 @@ touch("/tmp/filter_dirty");
 /* reload graphing functions */
 enable_rrd_graphing();
 
+/* restart packages */
+exec("/etc/rc.start_packages");
+
 return 0;
 
 ?>

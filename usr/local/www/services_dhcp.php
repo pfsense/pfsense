@@ -1,22 +1,22 @@
-<?php 
+<?php
 /* $Id$ */
 /*
 	services_dhcp.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -34,7 +34,7 @@ require("guiconfig.inc");
 $if = $_GET['if'];
 if ($_POST['if'])
 	$if = $_POST['if'];
-	
+
 /* if OLSRD is enabled, allow WAN to house DHCP. */
 if($config['installedpackages']['olsrd']) {
 	foreach($config['installedpackages']['olsrd']['config'] as $olsrd) {
@@ -51,7 +51,7 @@ if(!$iflist)
 
 for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 	$oc = $config['interfaces']['opt' . $i];
-	
+
 	if (isset($oc['enable']) && $oc['if'] && (!$oc['bridge'])) {
 		$iflist['opt' . $i] = $oc['descr'];
 	}
@@ -98,7 +98,7 @@ if ($_POST) {
 	if ($_POST['enable']) {
 		$reqdfields = explode(" ", "range_from range_to");
 		$reqdfieldsn = explode(",", "Range begin,Range end");
-		
+
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 		foreach($a_maps as $mapent) {
@@ -107,7 +107,7 @@ if ($_POST) {
 			}
 
 		}
-		
+
 		if (($_POST['range_from'] && !is_ipaddr($_POST['range_from']))) {
 			$input_errors[] = "A valid range must be specified.";
 		}
@@ -128,24 +128,30 @@ if ($_POST) {
 		if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] <= $_POST['deftime']))) {
 			$input_errors[] = "The maximum lease time must be at least 60 seconds and higher than the default lease time.";
 		}
-		
+
 		if (!$input_errors) {
 			/* make sure the range lies within the current subnet */
 			$subnet_start = (ip2long($ifcfg['ipaddr']) & gen_subnet_mask_long($ifcfg['subnet']));
 			$subnet_end = (ip2long($ifcfg['ipaddr']) | (~gen_subnet_mask_long($ifcfg['subnet'])));
-			
+
 			if ((ip2long($_POST['range_from']) < $subnet_start) || (ip2long($_POST['range_from']) > $subnet_end) ||
 			    (ip2long($_POST['range_to']) < $subnet_start) || (ip2long($_POST['range_to']) > $subnet_end)) {
-				$input_errors[] = "The specified range lies outside of the current subnet.";	
+				$input_errors[] = "The specified range lies outside of the current subnet.";
 			}
-			
+
 			if (ip2long($_POST['range_from']) > ip2long($_POST['range_to']))
 				$input_errors[] = "The range is invalid (first element higher than second element).";
-			
+
 			/* make sure that the DHCP Relay isn't enabled on this interface */
 			if (isset($config['dhcrelay'][$if]['enable']))
 				$input_errors[] = "You must disable the DHCP relay on the {$iflist[$if]} interface before enabling the DHCP server.";
 		}
+
+        $retval = 0;
+        config_lock();
+        $retval = services_dhcpd_configure();
+        config_unlock();
+
 	}
 
 	if (!$input_errors) {
@@ -156,10 +162,10 @@ if ($_POST) {
 		$config['dhcpd'][$if]['netmask'] = $_POST['netmask'];
 		$previous = $config['dhcpd'][$if]['failover_peerip'];
 		if($previous <> $_POST['failover_peerip']) {
-			mwexec("rm -rf /var/dhcpd/var/db/*");	
-		}		
+			mwexec("rm -rf /var/dhcpd/var/db/*");
+		}
 		$config['dhcpd'][$if]['failover_peerip'] = $_POST['failover_peerip'];
-				
+
 		unset($config['dhcpd'][$if]['winsserver']);
 		if ($_POST['wins1'])
 			$config['dhcpd'][$if]['winsserver'][] = $_POST['wins1'];
@@ -168,14 +174,14 @@ if ($_POST) {
 
 		unset($config['dhcpd'][$if]['dnsserver']);
 
-		if ($_POST['dns1']) 		
+		if ($_POST['dns1'])
 			$config['dhcpd'][$if]['dnsserver'][] = $_POST['dns1'];
-		if ($_POST['dns2']) 
+		if ($_POST['dns2'])
 			$config['dhcpd'][$if]['dnsserver'][] = $_POST['dns2'];
-			
+
 		$config['dhcpd'][$if]['gateway'] = $_POST['gateway'];
 
-		if($_POST['denyunknown'] == "yes") 
+		if($_POST['denyunknown'] == "yes")
 			$config['dhcpd'][$if]['denyunknown'] = true;
 		else
 			unset($config['dhcpd'][$if]['denyunknown']);
@@ -184,7 +190,7 @@ if ($_POST) {
 			$config['dhcpd'][$if]['enable'] = $_POST['enable'];
 		else
 			unset($config['dhcpd'][$if]['enable']);
-		
+
 		if($_POST['staticarp'] == "yes") {
 			$config['dhcpd'][$if]['staticarp'] = true;
 		} else {
@@ -195,7 +201,7 @@ if ($_POST) {
 
 		/* static arp configuration */
 		interfaces_staticarp_configure($if);
-		
+
 		$retval = 0;
 		config_lock();
 		$retval = services_dhcpd_configure();
@@ -208,6 +214,10 @@ if ($_GET['act'] == "del") {
 	if ($a_maps[$_GET['id']]) {
 		unset($a_maps[$_GET['id']]);
 		write_config();
+        $retval = 0;
+        config_lock();
+        $retval = services_dhcpd_configure();
+        config_unlock();
 		header("Location: services_dhcp.php?if={$if}");
 		exit;
 	}
@@ -265,15 +275,15 @@ function enable_change(enable_over) {
 	display_top_tabs($tab_array);
   ?>
   </td></tr>
-  <tr> 
+  <tr>
     <td>
 	<div id="mainarea">
               <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
-                      <tr> 
+                      <tr>
                         <td width="22%" valign="top" class="vtable">&nbsp;</td>
                         <td width="78%" class="vtable">
 			  <input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
-                          <strong>Enable DHCP server on 
+                          <strong>Enable DHCP server on
                           <?=htmlspecialchars($iflist[$if]);?>
                           interface</strong></td>
                       </tr>
@@ -284,32 +294,32 @@ function enable_change(enable_over) {
                       <strong>Deny unknown clients</strong><br>
                       If this is checked, only the clients defined below will get DHCP leases from this server. </td>
 		      		  </tr>
-                      <tr> 
+                      <tr>
                         <td width="22%" valign="top" class="vncellreq">Subnet</td>
-                        <td width="78%" class="vtable"> 
+                        <td width="78%" class="vtable">
                           <?=gen_subnet($ifcfg['ipaddr'], $ifcfg['subnet']);?>
                         </td>
                       </tr>
-                      <tr> 
-                        <td width="22%" valign="top" class="vncellreq">Subnet 
+                      <tr>
+                        <td width="22%" valign="top" class="vncellreq">Subnet
                           mask</td>
-                        <td width="78%" class="vtable"> 
+                        <td width="78%" class="vtable">
                           <?=gen_subnet_mask($ifcfg['subnet']);?>
                         </td>
                       </tr>
-                      <tr> 
-                        <td width="22%" valign="top" class="vncellreq">Available 
+                      <tr>
+                        <td width="22%" valign="top" class="vncellreq">Available
                           range</td>
-                        <td width="78%" class="vtable"> 
+                        <td width="78%" class="vtable">
                           <?=long2ip(ip2long($ifcfg['ipaddr']) & gen_subnet_mask_long($ifcfg['subnet']));?>
-                          - 
+                          -
                           <?=long2ip(ip2long($ifcfg['ipaddr']) | (~gen_subnet_mask_long($ifcfg['subnet']))); ?>
                         </td>
                       </tr>
 					  <?php if($is_olsr_enabled): ?>
-                      <tr> 
+                      <tr>
                         <td width="22%" valign="top" class="vncellreq">Subnet Mask</td>
-                        <td width="78%" class="vtable"> 
+                        <td width="78%" class="vtable">
 	                        <select name="netmask" class="formfld" id="netmask">
 							<?php
 							for ($i = 32; $i > 0; $i--) {
@@ -323,54 +333,54 @@ function enable_change(enable_over) {
 							</select>
                         </td>
                       </tr>
-                      <?php endif; ?>                 
-                      <tr> 
+                      <?php endif; ?>
+                      <tr>
                         <td width="22%" valign="top" class="vncellreq">Range</td>
-                        <td width="78%" class="vtable"> 
-                          <input name="range_from" type="text" class="formfld" id="range_from" size="20" value="<?=htmlspecialchars($pconfig['range_from']);?>"> 
+                        <td width="78%" class="vtable">
+                          <input name="range_from" type="text" class="formfld" id="range_from" size="20" value="<?=htmlspecialchars($pconfig['range_from']);?>">
                           &nbsp;to&nbsp; <input name="range_to" type="text" class="formfld" id="range_to" size="20" value="<?=htmlspecialchars($pconfig['range_to']);?>">
 			</td>
                       </tr>
-                      <tr> 
+                      <tr>
                         <td width="22%" valign="top" class="vncell">WINS servers</td>
-                        <td width="78%" class="vtable"> 
+                        <td width="78%" class="vtable">
                           <input name="wins1" type="text" class="formfld" id="wins1" size="20" value="<?=htmlspecialchars($pconfig['wins1']);?>"><br>
                           <input name="wins2" type="text" class="formfld" id="wins2" size="20" value="<?=htmlspecialchars($pconfig['wins2']);?>">
 			</td>
                       </tr>
-                      <tr> 
+                      <tr>
                         <td width="22%" valign="top" class="vncell">DNS servers</td>
-                        <td width="78%" class="vtable"> 
+                        <td width="78%" class="vtable">
                           <input name="dns1" type="text" class="formfld" id="dns1" size="20" value="<?=htmlspecialchars($pconfig['dns1']);?>"><br>
                           <input name="dns2" type="text" class="formfld" id="dns2" size="20" value="<?=htmlspecialchars($pconfig['dns2']);?>"><br>
 			  NOTE: leave blank to use the system default DNS servers.  This option is handy when your doing CARP+DHCP Failover, etc.
 			</td>
                       </tr>
-                     <tr> 
+                     <tr>
                        <td width="22%" valign="top" class="vncell">Gateway</td>
-                       <td width="78%" class="vtable"> 
+                       <td width="78%" class="vtable">
                          <input name="gateway" type="text" class="formfld" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>"><br>
 			 The default is to use the IP of the firewall as the gateway.  Specify an alternate gateway here if this is not the correct gateway for your network.
-			</td> 
+			</td>
                      </tr>
-                      <tr> 
-                        <td width="22%" valign="top" class="vncell">Default lease 
+                      <tr>
+                        <td width="22%" valign="top" class="vncell">Default lease
                           time</td>
-                        <td width="78%" class="vtable"> 
+                        <td width="78%" class="vtable">
                           <input name="deftime" type="text" class="formfld" id="deftime" size="10" value="<?=htmlspecialchars($pconfig['deftime']);?>">
                           seconds<br>
-                          This is used for clients that do not ask for a specific 
+                          This is used for clients that do not ask for a specific
                           expiration time.<br>
                           The default is 7200 seconds.
 			</td>
                       </tr>
-                      <tr> 
-                        <td width="22%" valign="top" class="vncell">Maximum lease 
+                      <tr>
+                        <td width="22%" valign="top" class="vncell">Maximum lease
                           time</td>
-                        <td width="78%" class="vtable"> 
+                        <td width="78%" class="vtable">
                           <input name="maxtime" type="text" class="formfld" id="maxtime" size="10" value="<?=htmlspecialchars($pconfig['maxtime']);?>">
                           seconds<br>
-                          This is the maximum lease time for clients that ask 
+                          This is the maximum lease time for clients that ask
                           for a specific expiration time.<br>
                           The default is 86400 seconds.
 			</td>
@@ -405,22 +415,22 @@ function enable_change(enable_over) {
 				</table>
 			</td>
                       </tr>
-                      <tr> 
+                      <tr>
                         <td width="22%" valign="top">&nbsp;</td>
-                        <td width="78%"> 
-                          <input name="if" type="hidden" value="<?=$if;?>"> 
-                          <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)"> 
+                        <td width="78%">
+                          <input name="if" type="hidden" value="<?=$if;?>">
+                          <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
                         </td>
                       </tr>
-                      <tr> 
+                      <tr>
                         <td width="22%" valign="top">&nbsp;</td>
                         <td width="78%"> <p><span class="vexpl"><span class="red"><strong>Note:<br>
-                            </strong></span>The DNS servers entered in <a href="system.php">System: 
-                            General setup</a> (or the <a href="services_dnsmasq.php">DNS 
-                            forwarder</a>, if enabled) </span><span class="vexpl">will 
+                            </strong></span>The DNS servers entered in <a href="system.php">System:
+                            General setup</a> (or the <a href="services_dnsmasq.php">DNS
+                            forwarder</a>, if enabled) </span><span class="vexpl">will
                             be assigned to clients by the DHCP server.<br>
                             <br>
-                            The DHCP lease table can be viewed on the <a href="diag_dhcp_leases.php">Diagnostics: 
+                            The DHCP lease table can be viewed on the <a href="diag_dhcp_leases.php">Diagnostics:
                             DHCP leases</a> page.<br>
                             </span></p>
 			</td>
@@ -459,7 +469,7 @@ function enable_change(enable_over) {
 		<?php endif; ?>
 		<?php $i++; endforeach; ?>
 		<?php endif; ?>
-                <tr> 
+                <tr>
                   <td class="list" colspan="3"></td>
                   <td class="list">
                     <table border="0" cellspacing="0" cellpadding="1">

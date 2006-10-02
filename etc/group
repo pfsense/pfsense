@@ -28,3 +28,4 @@ nogroup:*:65533:
 nobody:*:65534:
 admin:*:0:
 audit:*:77:
+_ntp:*:123:

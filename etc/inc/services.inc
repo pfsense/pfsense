@@ -615,6 +615,8 @@ function services_snmpd_configure() {
 
 	/* kill any running snmpd */
 	sigkillbypid("{$g['varrun_path']}/snmpd.pid", "TERM");
+	if(is_process_running("bsnmpd")) 
+		exec("/usr/bin/killall bsnmpd");
 
 	if (isset($config['snmpd']['enable'])) {
 

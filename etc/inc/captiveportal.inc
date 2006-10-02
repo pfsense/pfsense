@@ -38,6 +38,7 @@
 require_once("functions.inc");
 require_once("radius_authentication.inc");
 require_once("radius_accounting.inc");
+require_once("radius.inc");
 
 $lockfile = "{$g['varrun_path']}/captiveportal.lock";
 
@@ -988,6 +989,34 @@ function captiveportal_get_next_ipfw_ruleno($rulenos_start = 10000, $rulenos_ran
 	$ruleno = array_shift($rulenos_free);
 
 	return $ruleno;
+}
+
+/**
+ * Get the NAS-Identifier
+ *
+ * We will use our local hostname to make up the nas_id
+ */
+function getNasID()
+{
+    exec("/bin/hostname", $nasId);
+    if(!$nasId[0])
+        $nasId[0] = "pfSense";
+    return $nasId[0];
+}
+
+/**
+ * Get the NAS-IP-Address based on the current wan address
+ *
+ * Use functions in interfaces.inc to find this out
+ *
+ */
+
+function getNasIP()
+{
+    $nasIp = get_current_wan_address();
+    if(!$nasIp)
+        $nasIp = "0.0.0.0";
+    return $nasIp;
 }
 
 ?>

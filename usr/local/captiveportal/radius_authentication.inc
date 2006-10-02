@@ -1,152 +1,160 @@
 <?php
-    //
-    // $Id$
-    //
-    // radius authentication v1.0 by Edwin Groothuis (edwin@mavetju.org)
-    //
-    // If you didn't get this file via http://www.mavetju.org, please
-    // check for the availability of newer versions.
-    //
-    // See LICENSE for distribution issues. If this file isn't in
-    // the distribution, please inform me about it.
-    //
-    // If you want to use this script, fill in the configuration in
-    // radius_authentication.conf and call the function
-    // RADIUS_AUTHENTICATION() with the username and password
-    // provided by the user. If it returns a 2, the authentication
-    // was successfull!
-
-    // If you want to use this, make sure that you have raw sockets
-    // enabled during compile-time: "./configure --enable-sockets".
-
-	// This version has been modified by Dinesh Nair <dinesh@alphaque.com>
-	// for use in the m0n0wall distribution http://m0n0.ch/wall/
-	//
-	// Changes include moving from raw sockets to fsockopen
-	// and the removal of dependency on external conf file
-	// An existing bug which resulted in a malformed RADIUS packet
-	// was also fixed and patches submitted to Edwin. This bug would
-	// have caused authentication to fail on every access.
-
-function RADIUS_AUTHENTICATION($username,$password,$radiusip,$radiusport,$radiuskey) {
-	$sharedsecret=$radiuskey ;
-	global $debug, $errno, $nasHostname, $errstr;
-	# $debug = 1 ;
-
-	exec("/bin/hostname", $nasHostname) ;
-	if(!$nasHostname[0])
-		$nasHostname[0] = "m0n0wall" ;
-
-	$fd = @fsockopen("udp://$radiusip",$radiusport,$errno,$errstr,3) ;
-	if(!$fd) 
-		return 1 ; /* error return */
-	
-	/* set 5 second timeout on socket i/o */
-	stream_set_timeout($fd, 5) ;
-
-	if ($debug)
-	    echo "<br>radius-port: $radiusport<br>radius-host: $radiusip<br>username: $username<hr>\n";
-
-	$RA=pack("CCCCCCCCCCCCCCCC",				// auth code
-	    1+rand()%255, 1+rand()%255, 1+rand()%255, 1+rand()%255,
-	    1+rand()%255, 1+rand()%255, 1+rand()%255, 1+rand()%255,
-	    1+rand()%255, 1+rand()%255, 1+rand()%255, 1+rand()%255,
-	    1+rand()%255, 1+rand()%255, 1+rand()%255, 1+rand()%255);
-
-	$encryptedpassword=Encrypt($password,$sharedsecret,$RA);
-
-	$length=4+				// header
-		16+				// auth code
-		6+				// service type
-		2+strlen($username)+		// username
-		2+strlen($encryptedpassword)+	// userpassword
-		2+strlen($nasHostname[0])+			// nasIdentifier
-		6+				// nasPort
-		6;				// nasPortType
-
-	$thisidentifier=rand()%256;
-	//          v   v v     v   v   v   v     v     v
-	// Line #   1   2 3     4   5   6   7     8     E
-	$data=pack("CCCCa*CCCCCCCCa*CCa*CCa*CCCCCCCCCCCC",
-	    1,$thisidentifier,$length/256,$length%256,		// header
-	    $RA,						// authcode
-	    6,6,0,0,0,1,					// service type
-	    1,2+strlen($username),$username,			// username
-	    2,2+strlen($encryptedpassword),$encryptedpassword,	// userpassword
-	    32,2+strlen($nasHostname[0]),$nasHostname[0],	// nasIdentifier
-	    5,6,0,0,0,0,						// nasPort
-	    61,6,0,0,0,15						// nasPortType = Ethernet
-	    );
-
-	if($debug) {
-		echo "username is $username with len " . strlen($username) ."\n" ;
-		echo "encryptedpassword is $encryptedpassword with len " . strlen($encryptedpassword) ."\n" ;
-		echo "nasHostname is {$nasHostname[0]} with len " . strlen($nasHostname[0]) ."\n" ;
-	}	
-
-	$ret = fwrite($fd,$data) ;
-	if( !$ret || ($ret != $length) ) 
-		return 1; /* error return */
-
-	if ($debug)
-	    echo "<br>writing $length bytes<hr>\n";
-
-	$readdata = fgets($fd,2) ; /* read 1 byte */
-	$status = socket_get_status($fd) ;
-	fclose($fd) ;
-
-	if($status['timed_out'])
-		$retvalue = 1 ;
-	else
-		$retvalue = ord($readdata) ;
-
-	return $retvalue ;
-	// 2 -> Access-Accept
-	// 3 -> Access-Reject
-	// See RFC2865 for this.
-}
+/* vim: set expandtab tabstop=4 shiftwidth=4: */
 /*
-* $password = users password
-* $key = shared secret
-* $RA = Request Authenticator (random value it seems like)
+    $Id$
+
+    Copyright (c) 2006, Jonathan De Graeve <jonathan.de.graeve@imelda.be>
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions
+    are met:
+
+    1. Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
+    3. The names of the authors may not be used to endorse or promote products
+       derived from this software without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+    IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+    INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+    BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+    OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+    This code cannot simply be copied and put under the GNU Public License or
+    any other GPL-like (LGPL, GPL2) License.
+
+        This code is made possible thx to samples made by Michael Bretterklieber <michael@bretterklieber.com>
+        author of the PHP PECL Radius package
+
 */
-function Encrypt($password,$key,$RA) {
-	global $debug;
 
-	if ($debug)
-		echo "<br>key: $key<br>password: $password<hr>\n";
+/*
+RADIUS AUTHENTICATION
+---------------------
+*/
 
-	$output="";
-	$passlen = strlen($password);
-	/* figure out the number of xor rounds we need to run through */
-	for ($i=16; $i <= 128; $i += 16) {
-		if ($len <= $i) {
-			$rounds = $i/16;
-			break;
-		}
-	}
+function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$clientmac,$ruleno) {
 
-	$z = 0; // How many chars have we xor'd
-	for ($x=0; $x<=$rounds; $x++) {
-		$keyRA=$key.$RA;
-		$md5checksum=md5($keyRA);
+    global $config;
 
-		// Loop 16 times (md5() output / 2)
-		for ($i=0;$i<=15;$i++) {
-			// Convert md5 hex output to decimal (md5 lengths are 32 chars)
-			if (2*$i>32) $m=0; else $m=hexdec(substr($md5checksum,2*$i,2));
-			// get the decimal character value for this character in the password
-			if ($z>$passlen-1) $p=0; else $p=ord(substr($password,$z,1));
-			// xor the md5 character with the password character
-			$c=$m^$p;
-			// Convert back to 8-bit output
-			$output.=chr($c);
-			$z++;
-		}
-		$RA=$output;
-	}
+    $retvalue = array();
+    $nas_mac = mac_format(get_interface_mac($config['interfaces']['wan']['if']));
+    $clientmac = mac_format($clientmac);
+    $nas_port = $ruleno - 10000;
+    $radiusvendor = $config['captiveportal']['radiusvendor'] ? $config['captiveportal']['radiusvendor'] : null;
+    // Do we even need to set it to NULL?
+    $retvalue['error'] = $retvalue['reply_message'] = $retvalue['url_redirection'] = $retvalue['session_timeout'] = $retvalue['idle_timeout'] = $retvalue['session_terminate_time'] = null;
 
-	return $output;
+    switch($radiusvendor) {
+
+        case 'cisco':
+        $calledstationid = $clientmac;
+        $callingstationid = $clientip;
+        break;
+
+        default:
+        $calledstationid = $nas_mac;
+        $callingstationid = $clientmac;
+    }
+
+    // Create our instance
+    $rauth = new Auth_RADIUS_PAP($username, $password);
+
+    /*
+    Add support for more then one radiusserver.
+    At most 10 servers may be specified.
+    When multiple servers are given, they are tried in round-robin fashion until a valid response is received
+    */
+
+    foreach ($radiusservers as $radsrv) {
+
+        // Add a new server to our instance
+        $rauth->addServer($radsrv['ipaddr'], $radsrv['port'], $radsrv['key']);
+
+    }
+
+    // Construct data package
+    $rauth->username = $username;
+    $rauth->password = $password;
+
+    if (PEAR::isError($rauth->start())) {
+        $retvalue['auth_val'] = 1;
+        $retvalue['error'] = $rauth->getError();
+        if ($debug)
+            printf("Radius start: %s<br>\n", $retvalue['error']);
+        // If we encounter an error immediately stop this function and go back
+        $rauth->close();
+        return $retvalue;
+    }
+
+    // Default attributes
+    $rauth->putAttribute(RADIUS_SERVICE_TYPE, RADIUS_LOGIN);
+    $rauth->putAttribute(RADIUS_NAS_PORT_TYPE, RADIUS_ETHERNET);
+    $rauth->putAttribute(RADIUS_NAS_PORT, $nas_port);
+
+    // Extra data to identify the client and nas
+    $rauth->putAttribute(RADIUS_FRAMED_IP_ADDRESS, $clientip, addr);
+    $rauth->putAttribute(RADIUS_CALLED_STATION_ID, $calledstationid);
+    $rauth->putAttribute(RADIUS_CALLING_STATION_ID, $callingstationid);
+
+    // Send request
+    $result = $rauth->send();
+
+    // Evaluation of the response
+    // 1 -> Access-Request => We will use this value as an error indicator since we can't get a 1 back from the radius
+    // 2 -> Access-Accept
+    // 3 -> Access-Reject
+    // See RFC2865 for this.
+    if (PEAR::isError($result)) {
+        $retvalue['auth_val'] = 1;
+        $retvalue['error'] = $result->getMessage();
+        if ($debug)
+            printf("Radius send failed: %s<br>\n", $retvalue['error']);
+    } else if ($result === true) {
+        $retvalue['auth_val'] = 2;
+        if ($debug)
+            printf("Radius Auth succeeded<br>\n");
+    } else {
+        $retvalue['auth_val'] = 3;
+        if ($debug)
+            printf("Radius Auth rejected<br>\n");
+    }
+
+    // Get attributes, even if auth failed.
+    // We will push the results in the retvalue array
+    if (!$rauth->getAttributes()) {
+        $retvalue['error'] = $rauth->getError();
+        if ($debug)
+            printf("Radius getAttributes: No attributes<br>\n", $retvalue['error']);
+    } else {
+        $retvalue = array_merge($retvalue,$rauth->listAttributes());
+        if ($debug) {
+            if (!$rauth->listAttributes())
+                printf("No Attributes<br>\n");
+            else
+            print_r($rauth->listAttributes());
+        }
+        // We convert the session_terminate_time to unixtimestamp if its set before returning the whole array to our caller
+        if (!empty($retvalue['session_terminate_time'])) {
+        $stt = &$retvalue['session_terminate_time'];
+        $stt = strtotime(preg_replace("/\+(\d+):(\d+)$/", " +\${1}\${2}", preg_replace("/(\d+)T(\d+)/", "\${1} \${2}",$stt)));
+         }
+    }
+
+    // close OO RADIUS_AUTHENTICATION
+    $rauth->close();
+
+    return $retvalue;
+
 }
 
 ?>

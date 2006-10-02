@@ -211,8 +211,8 @@ function enable_change(enable_change) {
 	document.iform.radiusport2.disabled = radius_endis;
 	document.iform.radiuskey.disabled = radius_endis;
 	document.iform.radiuskey2.disabled = radius_endis;
-	//document.iform.radacct_enable.disabled = radius_endis;
-	//document.iform.reauthenticate.disabled = radius_endis;
+	document.iform.radacct_enable.disabled = radius_endis;
+	document.iform.reauthenticate.disabled = radius_endis;
 	document.iform.auth_method[0].disabled = endis;
 	document.iform.auth_method[1].disabled = endis;
 	document.iform.auth_method[2].disabled = endis;
@@ -229,14 +229,14 @@ function enable_change(enable_change) {
 	document.iform.htmlfile.disabled = endis;
 	document.iform.errfile.disabled = endis;
 
-	//document.iform.radiusacctport.disabled = (radius_endis || !document.iform.radacct_enable.checked) && !enable_change;
+	document.iform.radiusacctport.disabled = (radius_endis || !document.iform.radacct_enable.checked) && !enable_change;
 
-	document.iform.radmac_secret.disabled = (radius_endis || !document.iform.radmac_enable.checked) && !enable_change;
+	document.iform.radmac_secret.disabled = (radius_endis || !document.iform.radmac_enable.checked) && !enable_change;
 
 	var reauthenticate_dis = (radius_endis || !document.iform.reauthenticate.checked) && !enable_change;
-	//document.iform.reauthenticateacct[0].disabled = reauthenticate_dis;
-	//document.iform.reauthenticateacct[1].disabled = reauthenticate_dis;
-	//document.iform.reauthenticateacct[2].disabled = reauthenticate_dis;
+	document.iform.reauthenticateacct[0].disabled = reauthenticate_dis;
+	document.iform.reauthenticateacct[1].disabled = reauthenticate_dis;
+	document.iform.reauthenticateacct[2].disabled = reauthenticate_dis;
 }
 //-->
 </script>
@@ -387,7 +387,44 @@ to access after they've authenticated.</td>
 			<tr>
 			  <td colspan="2" class="list" height="12"></td>
 			</tr>
-
+			<tr>
+				<td colspan="2" valign="top" class="optsect_t2">Accounting</td>
+			</tr>
+			<tr>
+				<td class="vncell">&nbsp;</td>
+				<td class="vtable"><input name="radacct_enable" type="checkbox" id="radacct_enable" value="yes" onClick="enable_change(false)" <?php if($pconfig['radacct_enable']) echo "checked"; ?>>
+				<strong>send RADIUS accounting packets</strong><br>
+				If this is enabled, RADIUS accounting packets will be sent to the primary RADIUS server.</td>
+			</tr>
+			<tr>
+			  <td class="vncell" valign="top">Accounting port</td>
+			  <td class="vtable"><input name="radiusacctport" type="text" class="formfld" id="radiusacctport" size="5" value="<?=htmlspecialchars($pconfig['radiusacctport']);?>"><br>
+			  Leave blank to use the default port (1813).</td>
+			  </tr>
+			<tr>
+			  <td colspan="2" class="list" height="12"></td>
+			</tr>
+			<tr>
+				<td colspan="2" valign="top" class="optsect_t2">Reauthentication</td>
+			</tr>
+			<tr>
+				<td class="vncell">&nbsp;</td>
+				<td class="vtable"><input name="reauthenticate" type="checkbox" id="reauthenticate" value="yes" onClick="enable_change(false)" <?php if($pconfig['reauthenticate']) echo "checked"; ?>>
+			  <strong>Reauthenticate connected users every minute</strong><br>
+			  If reauthentication is enabled, Access-Requests will be sent to the RADIUS server for each user that is
+			  logged in every minute. If an Access-Reject is received for a user, that user is disconnected from the captive portal immediately.</td>
+			</tr>
+			<tr>
+			  <td class="vncell" valign="top">Accounting updates</td>
+			  <td class="vtable">
+			  <input name="reauthenticateacct" type="radio" value="" <?php if(!$pconfig['reauthenticateacct']) echo "checked"; ?>> no accounting updates<br>
+			  <input name="reauthenticateacct" type="radio" value="stopstart" <?php if($pconfig['reauthenticateacct'] == "stopstart") echo "checked"; ?>> stop/start accounting<br>
+			  <input name="reauthenticateacct" type="radio" value="interimupdate" <?php if($pconfig['reauthenticateacct'] == "interimupdate") echo "checked"; ?>> interim update
+			  </td>
+			</tr>
+			<tr>
+			  <td colspan="2" class="list" height="12"></td>
+			</tr>
 			<tr>
 				<td colspan="2" valign="top" class="optsect_t2">RADIUS MAC authentication</td>
 			</tr>

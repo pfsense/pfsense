@@ -882,40 +882,37 @@ function system_timezone_configure() {
 
 function system_ntp_configure() {
 	global $config, $g;
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "system_ntp_configure() being called $mt\n";
-	}
 
 	$syscfg = $config['system'];
 
-	if ($g['booting'])
-		echo "Starting NTP client...";
-	else {
-		killbypid("{$g['varrun_path']}/runmsntp.pid");
-		killbypid("{$g['varrun_path']}/msntp.pid");
+	/* open configuration for wrting or bail */
+	$fd = fopen("{$g['varetc_path']}/ntpd.conf","w");
+	if(!$fd) {
+		log_error("Could not open {$g['varetc_path']}/ntpd.conf");
+		return;
 	}
 
-	/* start ntp client if needed - needs to be forced into background */
-	$updateinterval = $syscfg['time-update-interval'];
+	fwrite($fd, "# \n");
+	fwrite($fd, "# pfSense OpenNTPD configuration file \n");
+	fwrite($fd, "# \n\n");
 
-	if ($updateinterval > 0) {
-		if ($updateinterval < 6)
-			$updateinterval = 6;
+	/* foreach through servers and write out to ntpd.conf */
+	$timeservers = "";
+	foreach (explode(' ', $syscfg['timeservers']) as $ts)
+		fwrite($fd, "servers {$ts}\n");
 
-		$timeservers = "";
-		foreach (explode(' ', $syscfg['timeservers']) as $ts)
-			$timeservers .= " " . gethostbyname($ts);
+	fwrite($fd, "\n");
 
-		mwexec_bg("/usr/local/bin/runmsntp.sh " .
-			escapeshellarg("{$g['varrun_path']}/runmsntp.pid") . " " .
-			escapeshellarg("{$g['varrun_path']}/msntp.pid") . " " .
-			escapeshellarg($updateinterval) . " " .
-			escapeshellarg($timeservers));
-	}
+	/* slurp! */
+	fclose($fd);
 
-	if ($g['booting'])
-		echo "done.\n";
+	/* if openntpd is running, kill it */
+	if(is_process_running("ntpd"))
+		exec("/usr/bin/killall ntpd");
+
+	/* start opentpd, set time now and use /var/etc/ntpd.conf */
+	exec("/usr/local/sbin/ntpd -s -f {$g['varetc_path']}/ntpd.conf");
+
 }
 
 function system_halt() {

@@ -124,7 +124,7 @@ if ($_POST) {
 		update_if_changed("NTP update interval", $config['system']['time-update-interval'], $_POST['timeupdateinterval']);
 
 		/* pfSense themes */
-		update_if_changed("System Theme", $config['theme'], $_POST['theme']);		
+		update_if_changed("System Theme", $config['theme'], $_POST['theme']);
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
 		unset($config['system']['dnsserver']);
@@ -134,13 +134,13 @@ if ($_POST) {
 			$config['system']['dnsserver'][] = $_POST['dns2'];
 
 		$olddnsallowoverride = $config['system']['dnsallowoverride'];
-		
+
 		unset($config['system']['dnsallowoverride']);
 		$config['system']['dnsallowoverride'] = $_POST['dnsallowoverride'] ? true : false;
                 if ($_POST['password']) {
                         $config['system']['password'] = crypt($_POST['password']);
 			update_changedesc("password changed via webConfigurator");
-			sync_webgui_passwords();			
+			sync_webgui_passwords();
                 }
 
 		if ($changecount > 0)
@@ -260,12 +260,14 @@ include("head.inc");
                     </select> <br> <span class="vexpl">Select the location closest
                     to you</span></td>
                 </tr>
+                <!--
                 <tr>
                   <td width="22%" valign="top" class="vncell">Time update interval</td>
                   <td width="78%" class="vtable"> <input name="timeupdateinterval" type="text" class="formfld" id="timeupdateinterval" size="4" value="<?=htmlspecialchars($pconfig['timeupdateinterval']);?>">
                     <br> <span class="vexpl">Minutes between network time sync.;
                     300 recommended, or 0 to disable </span></td>
                 </tr>
+                -->
                 <tr>
                   <td width="22%" valign="top" class="vncell">NTP time server</td>
                   <td width="78%" class="vtable"> <input name="timeservers" type="text" class="formfld" id="timeservers" size="40" value="<?=htmlspecialchars($pconfig['timeservers']);?>">
@@ -275,7 +277,7 @@ include("head.inc");
                 </tr>
 				<tr>
 					<td colspan="2" class="list" height="12">&nbsp;</td>
-				</tr>	
+				</tr>
 				<tr>
 					<td colspan="2" valign="top" class="listtopic">Theme</td>
 				</tr>
@@ -299,7 +301,7 @@ include("head.inc");
 					</select>
 					<strong>This will change the look and feel of pfSense</strong>
 				</td>
-				</tr>				
+				</tr>
 				<tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%"> <input name="Submit" type="submit" class="formbtn" value="Save">

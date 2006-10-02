@@ -24,3 +24,4 @@ _dhcp:*:65:65::0:0:dhcp programs:/var/empty:/usr/sbin/nologin
 _isakmpd:*:68:68::0:0:isakmpd privsep:/var/empty:/sbin/nologin
 uucp:*:66:66::0:0:UUCP pseudo-user:/var/spool/uucppublic:/usr/local/libexec/uucp/uucico
 pop:*:68:6::0:0:Post Office Owner:/nonexistent:/usr/sbin/nologin
+_ntp:*:123:123::0:0:NTP daemon:/var/empty:/sbin/nologin

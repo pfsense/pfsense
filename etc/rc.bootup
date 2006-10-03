@@ -293,6 +293,10 @@
 	system_ntp_configure();
 	echo "done.\n";
 
+	/* if <system><afterbootupshellcmd> exists, execute the command */
+	if($config['system']['afterbootupshellcmd'] <> "")
+		mwexec($config['system']['afterbootupshellcmd']);
+
 	/* done */
 	unlink("{$g['varrun_path']}/booting");
 	$g['booting'] = FALSE;

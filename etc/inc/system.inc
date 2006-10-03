@@ -888,7 +888,7 @@ function system_ntp_configure() {
 	/* open configuration for wrting or bail */
 	$fd = fopen("{$g['varetc_path']}/ntpd.conf","w");
 	if(!$fd) {
-		log_error("Could not open {$g['varetc_path']}/ntpd.conf");
+		log_error("Could not open {$g['varetc_path']}/ntpd.conf for writing");
 		return;
 	}
 
@@ -907,8 +907,16 @@ function system_ntp_configure() {
 	fclose($fd);
 
 	/* if openntpd is running, kill it */
-	if(is_process_running("ntpd"))
+	while(is_process_running("ntpd")) {
 		exec("/usr/bin/killall ntpd");
+		sleep(3);
+	}
+
+	/* if /var/empty does not exist, create it */
+	if(!is_dir("/var/empty"))
+		exec("/bin/mkdir -p /var/empty && chmod ug+rw /var/empty/.");
+
+	sleep(1);
 
 	/* start opentpd, set time now and use /var/etc/ntpd.conf */
 	exec("/usr/local/sbin/ntpd -s -f {$g['varetc_path']}/ntpd.conf");

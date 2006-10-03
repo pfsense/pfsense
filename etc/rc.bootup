@@ -233,11 +233,6 @@
 	/* start proxy ARP service */
 	services_proxyarp_configure();
 
-	/* start the NTP client */
-	echo "Starting OpenNTP time client...";
-	system_ntp_configure();
-	echo "done.\n";
-
 	/* setup pppoe and pptp */
 	vpn_setup();
 
@@ -292,6 +287,11 @@
 
 	/* enable watchdog if supported */
 	enable_watchdog();
+
+	/* start the NTP client */
+	echo "Starting OpenNTP time client...";
+	system_ntp_configure();
+	echo "done.\n";
 
 	/* done */
 	unlink("{$g['varrun_path']}/booting");

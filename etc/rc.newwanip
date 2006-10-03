@@ -103,7 +103,7 @@ touch("/tmp/filter_dirty");
 enable_rrd_graphing();
 
 /* restart msntp */
-system_ntp_configure();
+//touch("touch /tmp/start_ntpd");
 
 /* restart packages */
 exec("/etc/rc.start_packages");

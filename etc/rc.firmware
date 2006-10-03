@@ -131,6 +131,13 @@ upgrade)
         sleep 5
 
 	echo "Done."
+
+	# If /tmp/post_upgrade_command exists after update
+	# then execute the command.
+	if [ -f /tmp/post_upgrade_command ]; then
+		sh /tmp/post_upgrade_command
+	fi
+
 	# If the archive has unpacked a file called
 	# /tmp/no_upgrade_reboot_required then do
 	# not reboot after upgrade.
@@ -212,6 +219,13 @@ pfSenseupgrade)
 	fi
 	/bin/sync
 	echo "Done." | logger -p daemon.info -i -t Upgrade
+
+	# If /tmp/post_upgrade_command exists after update
+	# then execute the command.
+	if [ -f /tmp/post_upgrade_command ]; then
+		sh /tmp/post_upgrade_command
+	fi
+
 	# If the archive has unpacked a file called
 	# /tmp/no_upgrade_reboot_required then do
 	# not reboot after upgrade.

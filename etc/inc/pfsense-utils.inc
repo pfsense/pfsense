@@ -481,9 +481,8 @@ function link_ip_to_carp_interface($ip) {
 	if($ip == "") return;
 
 	$ifdescrs = array('wan', 'lan');
-	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
 		$ifdescrs['opt' . $j] = "opt" . $j;
-	}
 
 	$ft = split("\.", $ip);
 	$ft_ip = $ft[0] . "." . $ft[1] . "." . $ft[2] . ".";
@@ -494,16 +493,31 @@ function link_ip_to_carp_interface($ip) {
 		for($x=0; $x<$num_carp_ints; $x++) {
 			$carp_int = "carp{$x}";
 			$carp_ip = find_interface_ip($carp_int);
-			$carp_ft = split("\.", $carp_ip);
-			$carp_ft_ip = $carp_ft[0] . "." . $carp_ft[1] . "." . $carp_ft[2] . ".";
-			$result = does_interface_exist($carp_int);
-			if($result <> true) break;
-			if($ft_ip == $carp_ft_ip)
-			if(stristr($carp_ints,$carp_int) == false)
-			$carp_ints .= " " . $carp_int;
+			$carp_subnet = find_virtual_ip_netmask($carp_ip);
+			if(ip_in_subnet($ip, "{$carp_ip}/{$carp_subnet}"))
+				if(!stristr($carp_ints, $carp_int))
+					$carp_ints .= " " . $carp_int;
 		}
 	}
 	return $carp_ints;
+}
+
+/****f* pfsense-utils/find_virtual_ip_netmask
+ * NAME
+ *   find_virtual_ip_netmask - Finds a virtual ip's subnet mask'
+ * INPUTS
+ *   $ip - ip address to locate subnet mask of
+ * RESULT
+ *   String containing the command's result.
+ * NOTES
+ *   This function returns the command's stdout and stderr.
+ ******/
+function find_virtual_ip_netmask($ip) {
+        global $config;
+        foreach($config['virtualip']['vip'] as $vip) {
+                if($ip == $vip['subnet'])
+                        return $vip['subnet_bits'];
+        }
 }
 
 /****f* pfsense-utils/exec_command

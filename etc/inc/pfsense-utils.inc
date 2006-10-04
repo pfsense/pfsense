@@ -494,7 +494,8 @@ function link_ip_to_carp_interface($ip) {
 			$carp_int = "carp{$x}";
 			$carp_ip = find_interface_ip($carp_int);
 			$carp_subnet = find_virtual_ip_netmask($carp_ip);
-			if(ip_in_subnet($ip, "{$carp_ip}/{$carp_subnet}"))
+			$starting_ip = gen_subnet("{$carp_ip}", "{$carp_subnet}");
+			if(ip_in_subnet($ip, "{$starting_ip}/{$carp_subnet}"))
 				if(!stristr($carp_ints, $carp_int))
 					$carp_ints .= " " . $carp_int;
 		}

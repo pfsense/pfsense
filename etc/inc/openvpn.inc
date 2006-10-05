@@ -357,7 +357,7 @@ function openvpn_restart($mode, $id) {
 	if ($settings['disable']) return;
 
 	$configfile = $g['varetc_path'] . "/openvpn_{$mode}{$id}.conf";
-	mwexec("openvpn --config $configfile");
+	mwexec_bg("openvpn --config $configfile");
 	touch("{$g['tmp_path']}/filter_dirty");
 }
 

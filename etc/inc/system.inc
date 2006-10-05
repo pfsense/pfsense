@@ -269,7 +269,7 @@ EOD;
 
 EOD;
 		}
-		$syslogconf .= "!-racoon,{$facilitylist}\n!openvpn\n!ntpd\n";
+		$syslogconf .= "!-racoon,{$facilitylist}\n!openvpn\n\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= <<<EOD
 *.*						%{$g['varlog_path']}/openvpn.log

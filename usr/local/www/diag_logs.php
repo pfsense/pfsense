@@ -42,7 +42,7 @@ if (!$nentries)
 if ($_POST['clear']) {
 	exec("killall syslogd");
 	exec("/usr/sbin/clog -i -s 262144 {$system_logfile}");
-	system_syslogd_start();	
+	system_syslogd_start();
 }
 
 $pgtitle = "Diagnostics: System logs: System";
@@ -66,6 +66,7 @@ include("head.inc");
 	$tab_array[] = array("PPTP VPN", false, "diag_logs_vpn.php");
 	$tab_array[] = array("Load Balancer", false, "diag_logs_slbd.php");
 	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");
+	$tab_array[] = array("OpenNTPD", false, "diag_logs_ntpd.php");
 	$tab_array[] = array("Settings", false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>

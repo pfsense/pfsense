@@ -1,11 +1,9 @@
 <?php
 /* $Id$ */
 /*
-	diag_logs.php
-	Copyright (C) 2004 Scott Ullrich
-	All rights reserved.
-
-	originally part of m0n0wall (http://m0n0.ch/wall)
+	diag_logs_ntpd.php
+	part of pfSense
+	Copyright (C) 2005 Bill Marquette <bill.marquette@gmail.com>.
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -33,7 +31,7 @@
 
 require("guiconfig.inc");
 
-$ipsec_logfile = "{$g['varlog_path']}/ipsec.log";
+$slbd_logfile = "{$g['varlog_path']}/ntpd.log";
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
@@ -41,56 +39,52 @@ if (!$nentries)
 
 if ($_POST['clear']) {
 	exec("killall syslogd");
-	exec("/usr/sbin/clog -i -s 262144 {$ipsec_logfile}");
+	exec("/usr/sbin/clog -i -s 262144 {$slbd_logfile}");
 	system_syslogd_start();
 }
 
-$pgtitle = "Diagnostics: System logs: IPSEC VPN";
+$pgtitle = "Diagnostics: System logs: Load Balancer";
 include("head.inc");
 
 ?>
+
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
- 	<tr>
-		<td>
+  <tr><td>
 <?php
 	$tab_array = array();
 	$tab_array[] = array("System", false, "diag_logs.php");
 	$tab_array[] = array("Firewall", false, "diag_logs_filter.php");
 	$tab_array[] = array("DHCP", false, "diag_logs_dhcp.php");
 	$tab_array[] = array("Portal Auth", false, "diag_logs_auth.php");
-	$tab_array[] = array("IPSEC VPN", true, "diag_logs_ipsec.php");
+	$tab_array[] = array("IPSEC VPN", false, "diag_logs_ipsec.php");
 	$tab_array[] = array("PPTP VPN", false, "diag_logs_vpn.php");
 	$tab_array[] = array("Load Balancer", false, "diag_logs_slbd.php");
 	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");
-	$tab_array[] = array("OpenNTPD", false, "diag_logs_ntpd.php");
+	$tab_array[] = array("OpenNTPD", true, "diag_logs_ntpd.php");
 	$tab_array[] = array("Settings", false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
-  		</td>
-	</tr>
-	<tr>
-    	<td>
-			<div id="mainarea">
-			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
-		  		<tr>
-					<td colspan="2" class="listtopic">Last <?=$nentries;?> IPSEC log entries</td>
-		  		</tr>
-				<?php dump_clog($ipsec_logfile, $nentries); ?>
-				<tr>
-					<td>
-						<br>
-						<form action="diag_logs_ipsec.php" method="post">
-						<input name="clear" type="submit" class="formbtn" value="Clear log">
-						</form>
-					</td>
-				</tr>
-			</table>
-			</div>
-		</td>
-	</tr>
+  </td></tr>
+  <tr>
+    <td>
+	<div id="mainarea">
+		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+		  <tr>
+			<td colspan="2" class="listtopic">
+			  Last <?=$nentries;?> Load Balancer log entries</td>
+		  </tr>
+		  <?php dump_clog($slbd_logfile, $nentries); ?>
+		<tr><td><br>
+		<form action="diag_logs_slbd.php" method="post">
+			<input name="clear" type="submit" class="formbtn" value="Clear log"></td></tr>
+		</table>
+	</div>
+</form>
+	</td>
+  </tr>
 </table>
 <?php include("fend.inc"); ?>
 <meta http-equiv="refresh" content="60;url=<?php print $_SERVER['SCRIPT_NAME']; ?>">

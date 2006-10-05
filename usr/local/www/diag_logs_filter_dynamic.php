@@ -44,7 +44,7 @@ if (!$nentries)
 if ($_POST['clear']) {
 	exec("killall syslogd");
 	exec("/usr/sbin/clog -i -s 262144 /var/log/filter.log");
-	system_syslogd_start();	
+	system_syslogd_start();
 }
 
 /* format filter logs */
@@ -62,7 +62,7 @@ function conv_clog_filter($logfile, $tail = 50) {
 
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
 
-	$logarr = "";	
+	$logarr = "";
 	exec("/usr/sbin/clog {$logfile} | /usr/bin/tail {$sor} -n {$tail}", $logarr);
 
 	$filterlog = array();
@@ -71,17 +71,17 @@ function conv_clog_filter($logfile, $tail = 50) {
 
 	foreach ($logarr as $logent) {
 
-		if($counter > $nentries) 
+		if($counter > $nentries)
 			break;
 
 		$log_split = "";
-		  	
+
 		preg_match("/(.*)\s.*\spf:\s.*\srule\s(.*)\(match\)\:\s(.*)\s\w+\son\s(\w+)\:\s(.*)\s>\s(.*)\:\s.*/", $logent, $log_split);
-		
+
 		$logent = strtoupper($logent);
 
 		$do_not_display = false;
-		
+
 		if(stristr(strtoupper($logent), "UDP") == true)
 			$flent['proto'] = "UDP";
 		else if(stristr(strtoupper($logent), "TCP") == true)
@@ -89,9 +89,9 @@ function conv_clog_filter($logfile, $tail = 50) {
 		else if(stristr(strtoupper($logent), "ICMP") == true)
 			$flent['proto'] = "ICMP";
 		else if(stristr(strtoupper($logent), "HSRP") == true)
-			$flent['proto'] = "HSRP";			
+			$flent['proto'] = "HSRP";
 		else if(stristr(strtoupper($logent), "ESP") == true)
-			$flent['proto'] = "ESP";	
+			$flent['proto'] = "ESP";
 		else if(stristr(strtoupper($logent), "AH") == true)
 			$flent['proto'] = "AH";
 		else if(stristr(strtoupper($logent), "GRE") == true)
@@ -104,23 +104,23 @@ function conv_clog_filter($logfile, $tail = 50) {
 			$flent['proto'] = "PFSYNC";
 		else
 			$do_not_display = true;
-		
+
 		$flent['time'] 		= $log_split[1];
 		$flent['act'] 		= $log_split[3];
-		
+
 		$friendly_int = convert_real_interface_to_friendly_interface_name($log_split[4]);
-		
+
 		$flent['interface'] 	=  strtoupper($friendly_int);
-		
+
 		if($config['interfaces'][$friendly_int]['descr'] <> "")
 			$flent['interface'] = "{$config['interfaces'][$friendly_int]['descr']}";
-		
+
 		$flent['src'] 		= convert_port_period_to_colon($log_split[5]);
 		$flent['dst'] 		= convert_port_period_to_colon($log_split[6]);
-		
+
 		$tmp = split("/", $log_split[2]);
 		$flent['rulenum'] = $tmp[0];
-		
+
 		$counter++;
 		$filterlog[] = $flent;
 
@@ -196,6 +196,7 @@ include("head.inc");
 	$tab_array[] = array("PPTP VPN", false, "diag_logs_vpn.php");
 	$tab_array[] = array("Load Balancer", false, "diag_logs_slbd.php");
 	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");
+	$tab_array[] = array("OpenNTPD", false, "diag_logs_ntpd.php");
 	$tab_array[] = array("Settings", false, "diag_logs_settings.php");
 	display_top_tabs($tab_array);
 ?>
@@ -205,7 +206,7 @@ include("head.inc");
 	<div id="mainarea">
 		<div class="listtopic">
 			Last <?php echo $nentries; ?> records
-		</div>	
+		</div>
 		<div id="log">
 			<div class="log-header">
                                 <span class="log-action">Act</span>
@@ -213,7 +214,7 @@ include("head.inc");
                                 <span class="log-interface">If</span>
                                 <span class="log-source">Source</span>
                                 <span class="log-destination">Destination</span>
-                                <span class="log-protocol">Proto</span>				
+                                <span class="log-protocol">Proto</span>
 			</div>
 			<?php $counter=0; foreach ($filterlog as $filterent): ?>
 			<?php
@@ -226,13 +227,13 @@ include("head.inc");
 
 				} else {
 					/* non-reverse logging */
-					if($counter == count($filterlog)) 
+					if($counter == count($filterlog))
 						$activerow = " id=\"firstrow\"";
 					else
 						$activerow = "";
 				}
 			?>
-			<div class="log-entry" <?php echo $activerow; ?>>				
+			<div class="log-entry" <?php echo $activerow; ?>>
 				<span class="log-action" nowrap><a href="#" onClick="javascript:getURL('diag_logs_filter.php?getrulenum=<?php echo $filterent['rulenum']; ?>', outputrule);">
 				<?php
 					if (strstr(strtolower($filterent['act']), "p"))
@@ -280,7 +281,7 @@ if (typeof getURL == 'undefined') {
 			}
 		}
 		if (!http_request)
-			throw 'Both getURL and XMLHttpRequest are undefined';		
+			throw 'Both getURL and XMLHttpRequest are undefined';
 		http_request.onreadystatechange = function() {
 			if (http_request.readyState == 4) {
 				callback( { success : true,
@@ -340,7 +341,7 @@ function update_div_rows(data) {
 	var showanim = 1;
 	if (isIE) {
 		showanim = 0;
-	}	
+	}
 	for(var x=1; x<data.length; x++) {
 		var numrows = rows.length;
 		/*    if reverse logging is enabled we need to show the
@@ -356,7 +357,7 @@ function update_div_rows(data) {
 			for (var i = 2; i < numrows - 1; i++) {
 				nextrecord = i + 1;
 				rows[i].innerHTML = rows[nextrecord].innerHTML;
-			}		
+			}
 		}
 		var item = document.getElementById('firstrow');
 		if (showanim) {
@@ -398,7 +399,7 @@ function handle_ajax() {
 		echo "The rule that triggered this action is:\n\n{$rule}";
 		exit;
 	}
-	
+
 	if($_GET['lastsawtime'] or $_POST['lastsawtime']) {
 		global $filter_logfile,$filterent;
 		if($_GET['lastsawtime'])
@@ -408,7 +409,7 @@ function handle_ajax() {
 		/*  compare lastsawrule's time stamp to filter logs.
 		 *  afterwards return the newer records so that client
                  *  can update AJAX interface screen.
-		 */  
+		 */
 		$new_rules = "";
 		$filterlog = conv_clog_filter($filter_logfile, 50);
 		foreach($filterlog as $log_row) {
@@ -427,7 +428,7 @@ function handle_ajax() {
 		}
 		echo $new_rules;
 		exit;
-	}	
+	}
 }
 
 ?>

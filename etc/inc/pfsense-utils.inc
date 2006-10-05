@@ -48,6 +48,10 @@ function get_tmp_file() {
 function find_number_of_needed_carp_interfaces() {
 	global $config, $g;
 	$carp_counter=0;
+	if(!$config['virtualip'])
+		return 0;
+	if(!$config['virtualip']['vip'])
+		return 0;
 	foreach($config['virtualip']['vip'] as $vip) {
 		if($vip['mode'] == "carp")
 			$carp_counter++;

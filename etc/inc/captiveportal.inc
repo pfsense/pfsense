@@ -992,6 +992,41 @@ function captiveportal_get_next_ipfw_ruleno($rulenos_start = 10000, $rulenos_ran
 }
 
 /**
+ * This function will calculate the traffic produced by a client
+ * based on its firewall rule
+ *
+ * Point of view: NAS
+ *
+ * Input means: from the client
+ * Output means: to the client
+ *
+ */
+
+function getVolume($ruleno) {
+
+    $volume = array();
+
+    // Initialize vars properly, since we don't want NULL vars
+    $volume['input_pkts'] = $volume['input_bytes'] = $volume['output_pkts'] = $volume['output_bytes'] = 0 ;
+
+    // Ingress
+    exec("/sbin/ipfw show {$ruleno}", $ipfw);
+    preg_match("/(\d+)\s+(\d+)\s+(\d+)\s+.*/", $ipfw[0], $matches);
+    $volume['input_pkts'] = $matches[2];
+    $volume['input_bytes'] = $matches[3];
+
+    // Flush internal buffer
+    unset($matches);
+
+    // Outgress
+    preg_match("/(\d+)\s+(\d+)\s+(\d+)\s+.*/", $ipfw[1], $matches);
+    $volume['output_pkts'] = $matches[2];
+    $volume['output_bytes'] = $matches[3];
+
+    return $volume;
+}
+
+/**
  * Get the NAS-Identifier
  *
  * We will use our local hostname to make up the nas_id

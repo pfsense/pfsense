@@ -79,7 +79,7 @@ include("head.inc");
 				<tr>
 					<td colspan="2" class="listtopic">Last <?=$nentries;?> system log entries</td>
 				</tr>
-				<?php dump_clog($system_logfile, $nentries, true, array("racoon"), array("pppoe")); ?>
+				<?php dump_clog($system_logfile, $nentries, true, array("racoon","ntpd"), array("pppoe")); ?>
 				<tr>
 					<td>
 						<br>

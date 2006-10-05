@@ -78,7 +78,7 @@ include("head.inc");
 		  </tr>
 		  <?php dump_clog($slbd_logfile, $nentries); ?>
 		<tr><td><br>
-		<form action="diag_logs_slbd.php" method="post">
+		<form action="diag_logs_ntpd.php" method="post">
 			<input name="clear" type="submit" class="formbtn" value="Clear log"></td></tr>
 		</table>
 	</div>

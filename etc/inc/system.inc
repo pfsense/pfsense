@@ -249,7 +249,7 @@ function system_syslogd_start() {
 			printf("Error: cannot open syslog.conf in system_syslogd_start().\n");
 			return 1;
 		}
-		$syslogconf .= "!-racoon,{$facilitylist}\n!openvpn\n!ntpd\n";
+		$syslogconf .= "!ntpd\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= <<<EOD
 *.*						%{$g['varlog_path']}/ntpd.log
@@ -269,7 +269,7 @@ EOD;
 
 EOD;
 		}
-		$syslogconf .= "!-racoon,{$facilitylist}\n!openvpn\nntpd\n";
+		$syslogconf .= "!-racoon,{$facilitylist}\n!openvpn\n!ntpd\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= <<<EOD
 *.*						%{$g['varlog_path']}/openvpn.log

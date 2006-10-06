@@ -74,7 +74,7 @@ include("head.inc");
 		<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 		  <tr>
 			<td colspan="2" class="listtopic">
-			  Last <?=$nentries;?> Load Balancer log entries</td>
+			  Last <?=$nentries;?> OpenNTPD log entries</td>
 		  </tr>
 		  <?php dump_clog($slbd_logfile, $nentries); ?>
 		<tr><td><br>

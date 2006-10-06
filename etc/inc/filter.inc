@@ -2599,6 +2599,12 @@ function create_firewall_outgoing_rules_to_itself() {
 			$rule .="pass in quick on tun{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
 		}
 	}
+	for($x=0; $x<100; $x++) {
+		if(does_interface_exist("tap{$x}") == true) {
+			$rule .="pass out quick on tap{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
+			$rule .="pass in quick on tap{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
+		}
+	}	
 
 	return $rule;
 }

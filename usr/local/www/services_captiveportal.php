@@ -73,7 +73,8 @@ $pconfig['radiusacctport'] = $config['captiveportal']['radiusacctport'];
 $pconfig['radiuskey'] = $config['captiveportal']['radiuskey'];
 $pconfig['radiuskey2'] = $config['captiveportal']['radiuskey2'];
 $pconfig['radiusvendor'] = $config['captiveportal']['radiusvendor'];
-$pconfig['radiussession_timeout'] = isset($config['captiveportal']['radiussession_timeout']);
+
+//$pconfig['radiussession_timeout'] = isset($config['captiveportal']['radiussession_timeout']);
 
 if ($_POST) {
 
@@ -170,7 +171,7 @@ if ($_POST) {
 		$config['captiveportal']['radiuskey'] = $_POST['radiuskey'];
 		$config['captiveportal']['radiuskey2'] = $_POST['radiuskey2'];
 		$config['captiveportal']['radiusvendor'] = $_POST['radiusvendor'] ? $_POST['radiusvendor'] : false;
-		$config['captiveportal']['radiussession_timeout'] = $_POST['radiussession_timeout'] ? true : false;
+		//$config['captiveportal']['radiussession_timeout'] = $_POST['radiussession_timeout'] ? true : false;
 
 		/* file upload? */
 		if (is_uploaded_file($_FILES['htmlfile']['tmp_name']))
@@ -225,7 +226,7 @@ function enable_change(enable_change) {
 	document.iform.nomacfilter.disabled = endis;
 	document.iform.noconcurrentlogins.disabled = endis;
 	document.iform.radiusvendor.disabled = radius_endis;
-	document.iform.radiussession_timeout.disabled = radius_endis;
+	//document.iform.radiussession_timeout.disabled = radius_endis;
 	document.iform.htmlfile.disabled = endis;
 	document.iform.errfile.disabled = endis;
 
@@ -445,11 +446,15 @@ to access after they've authenticated.</td>
 			<tr>
 				<td colspan="2" valign="top" class="optsect_t2">RADIUS options</td>
 			</tr>
+
+			<!--
 			<tr>
 				<td class="vncell" valign="top">Session-Timeout</td>
 				<td class="vtable"><input name="radiussession_timeout" type="checkbox" id="radiussession_timeout" value="yes" <?php if ($pconfig['radiussession_timeout']) echo "checked"; ?>><strong>Use RADIUS Session-Timeout attributes</strong><br>
 				When this is enabled, clients will be disconnected after the amount of time retrieved from the RADIUS Session-Timeout attribute.</td>
 			</tr>
+			-->
+
 			<tr>
 				<td class="vncell" valign="top">Type</td>
 				<td class="vtable"><select name="radiusvendor" id="radiusvendor">

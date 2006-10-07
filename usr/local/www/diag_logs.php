@@ -45,6 +45,12 @@ if ($_POST['clear']) {
 	system_syslogd_start();
 }
 
+if ($_GET['filtertext'])
+	$filtertext = $_GET['filtertext'];
+
+if ($_POST['filtertext'])
+	$filtertext = $_POST['filtertext'];
+
 $pgtitle = "Diagnostics: System logs: System";
 include("head.inc");
 
@@ -79,12 +85,22 @@ include("head.inc");
 				<tr>
 					<td colspan="2" class="listtopic">Last <?=$nentries;?> system log entries</td>
 				</tr>
-				<?php dump_clog($system_logfile, $nentries, true, array(), array("racoon", "ntpd", "pppoe")); ?>
+				<?php
+					if($filtertext)
+						dump_clog($system_logfile, $nentries, true, array("$filtertext"), array("racoon", "ntpd", "pppoe"));
+					else
+						dump_clog($system_logfile, $nentries, true, array(), array("racoon", "ntpd", "pppoe"));
+				?>
 				<tr>
-					<td>
-						<br>
-						<form action="diag_logs.php" method="post">
-						<input name="clear" type="submit" class="formbtn" value="Clear log">
+					<td align="left" valign="top">
+						<form id="filterform" name="filterform" action="diag_logs.php" method="post" style="margin-top: 14px;">
+              				<input id="submit" name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log");?>" />
+						</form>
+					</td>
+					<td align="right" valign="top" >
+						<form id="clearform" name="clearform" action="diag_logs.php" method="post" style="margin-top: 14px;">
+              				<input id="filtertext" name="filtertext" value="<?=gettext($filtertext);?>" />
+              				<input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" value="<?=gettext("Filter");?>" />
 						</form>
 					</td>
 				</tr>

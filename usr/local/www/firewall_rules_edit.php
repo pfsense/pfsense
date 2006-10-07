@@ -115,6 +115,9 @@ if (isset($_GET['dup']))
 
 if ($_POST) {
 
+	if ($_POST['type'] == "reject" && $_POST['proto'] <> "tcp")
+		$input_errors[] = "Reject type rules only works when the protocol is set to TCP.";
+
 	if (($_POST['proto'] != "tcp") && ($_POST['proto'] != "udp") && ($_POST['proto'] != "tcp/udp")) {
 		$_POST['srcbeginport'] = 0;
 		$_POST['srcendport'] = 0;

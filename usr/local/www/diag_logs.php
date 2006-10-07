@@ -51,6 +51,9 @@ if ($_GET['filtertext'])
 if ($_POST['filtertext'])
 	$filtertext = $_POST['filtertext'];
 
+if ($filtertext)
+	$filtertextmeta="&filtertext=$filtertext";
+
 $pgtitle = "Diagnostics: System logs: System";
 include("head.inc");
 
@@ -110,6 +113,6 @@ include("head.inc");
 	</tr>
 </table>
 <?php include("fend.inc"); ?>
-<meta http-equiv="refresh" content="60;url=<?php print $_SERVER['PHP_SELF']; ?>">
+<meta http-equiv="refresh" content="60;url=<?php print $_SERVER['PHP_SELF']; ?><?=$filtertextmeta?>">
 </body>
 </html>

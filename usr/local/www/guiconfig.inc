@@ -564,6 +564,7 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
     $logarr = "";
 	$grepline = "  ";
 	if(is_array($grepfor)) {
+		 $i = 0;
 		 foreach($grepfor as $agrep) {
 	         $regexp = $agrep;
              if($grepinvert[$i]) {
@@ -571,6 +572,7 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
              } else {
                      $grepline .= " | grep -v \"$regexp\"";
              }
+             $i++;
 		}
     }
 	exec("/usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
@@ -596,6 +598,7 @@ function return_clog($logfile, $tail, $grepfor = "", $grepinvert = "", $grepreve
 	$logarr = "";
 	$grepline = "  ";
 	if(is_array($grepfor)) {
+		 $i = 0;
 		 foreach($grepfor as $agrep) {
 	         $regexp = $agrep;
              if($grepinvert[$i]) {
@@ -603,6 +606,7 @@ function return_clog($logfile, $tail, $grepfor = "", $grepinvert = "", $grepreve
              } else {
                      $grepline .= " | grep -v \"$regexp\"";
              }
+             $i++;
 		}
     }
 	exec("/usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);

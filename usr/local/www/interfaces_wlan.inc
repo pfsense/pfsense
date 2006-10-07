@@ -1,22 +1,22 @@
-<? 
+<?
 /* $Id$ */
 /*
 	interfaces_wlan.inc
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -85,7 +85,7 @@ function wireless_config_post() {
 		$reqdfields = explode(" ", "mode ssid");
 		$reqdfieldsn = explode(",", "Mode,SSID");
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-		
+
 		if (!$input_errors) {
 			/* bridge check (hostap only!) */
 			if ($pconfig['bridge'] && ($pconfig['mode'] != "hostap"))
@@ -112,7 +112,7 @@ function wireless_config_post() {
 					$_POST['key' . $i] = "0x" . $_POST['key' . $i];
 				}
 				continue;
-			}			
+			}
 			/* 128 bit */
 			if(strlen($_POST['key' . $i]) == 13)
 				continue;
@@ -120,7 +120,7 @@ function wireless_config_post() {
 				/* hex key */
 				if(stristr($_POST['key' . $i], "0x") == false) {
 					$_POST['key' . $i] = "0x" . $_POST['key' . $i];
-				}			
+				}
 				continue;
 			}
 			if(strlen($_POST['key' . $i]) == 28)
@@ -137,7 +137,7 @@ function wireless_config_post() {
 		$optcfg['wireless']['protmode'] = $_POST['protmode'];
 		$optcfg['wireless']['ssid'] = $_POST['ssid'];
 		$optcfg['wireless']['channel'] = $_POST['channel'];
-		$optcfg['wireless']['authmode'] = $_POST['authmode'];		
+		$optcfg['wireless']['authmode'] = $_POST['authmode'];
 		$optcfg['wireless']['txpower'] = $_POST['txpower'];
 		$optcfg['wireless']['distance'] = $_POST['distance'];
 		$optcfg['wireless']['wpa']['macaddr_acl'] = $_POST['macaddr_acl'];
@@ -150,12 +150,12 @@ function wireless_config_post() {
 		$optcfg['wireless']['wpa']['passphrase'] = $_POST['passphrase'];
 		$optcfg['wireless']['wpa']['ext_wpa_sw'] = $_POST['ext_wpa_sw'];
 
-		if($_POST['hidessid_enable'] == "yes") 
+		if($_POST['hidessid_enable'] == "yes")
 			$optcfg['wireless']['hidessid']['enable'] = true;
 		else
 			unset($optcfg['wireless']['hidessid']['enable']);
 
-		if($_POST['mac_acl_enable'] == "yes") 
+		if($_POST['mac_acl_enable'] == "yes")
 			$optcfg['wireless']['wpa']['mac_acl_enable'] = true;
 		else
 			unset($optcfg['wireless']['wpa']['mac_acl_enable']);
@@ -164,28 +164,28 @@ function wireless_config_post() {
 			$optcfg['wireless']['wpa']['ieee8021x']['enable'] = true;
 		else
 			unset($optcfg['wireless']['wpa']['ieee8021x']['enable']);
-		
+
 		if($_POST['wpa_strict_rekey'] == "yes")
 			$optcfg['wireless']['wpa']['wpa_strict_rekey'] = true;
 		else
 			unset($optcfg['wireless']['wpa']['wpa_strict_rekey']);
 
-		if($_POST['debug_mode'] == "yes") 
+		if($_POST['debug_mode'] == "yes")
 			$optcfg['wireless']['wpa']['debug_mode'] = true;
 		else
 			unset($optcfg['wireless']['wpa']['debug_mode']);
 
-		if($_POST['wpa_enable'] == "yes") 
+		if($_POST['wpa_enable'] == "yes")
 			$optcfg['wireless']['wpa']['enable'] = $_POST['wpa_enable'] = true;
 		else
 			unset($optcfg['wireless']['wpa']['enable']);
 
-		if($_POST['wep_enable'] == "yes") 
+		if($_POST['wep_enable'] == "yes")
 			$optcfg['wireless']['wep']['enable'] = $_POST['wep_enable'] = true;
 		else
 			unset($optcfg['wireless']['wep']['enable']);
 
-		if($_POST['wme_enable'] == "yes") 
+		if($_POST['wme_enable'] == "yes")
 			$optcfg['wireless']['wme']['enable'] = $_POST['wme_enable'] = true;
 		else
 			unset($optcfg['wireless']['wme']['enable']);
@@ -195,12 +195,12 @@ function wireless_config_post() {
 		else
 			unset($optcfg['wireless']['pureg']['enable']);
 
-		if($_POST['apbridge_enable'] == "yes") 
+		if($_POST['apbridge_enable'] == "yes")
 			$optcfg['wireless']['apbridge']['enable'] = $_POST['apbridge_enable'] = true;
 		else
 			unset($optcfg['wireless']['apbridge']['enable']);
 
-		if($_POST['standard'] == "11a Turbo") 
+		if($_POST['standard'] == "11a Turbo")
 			$optcfg['wireless']['turbo']['enable'] = true;
 		else
 			unset($optcfg['wireless']['turbo']['enable']);
@@ -217,16 +217,16 @@ function wireless_config_post() {
 			}
 		}
 	}
-	
+
 	return $input_errors;
 }
 
-if($wancfg['if']) 
+if($wancfg['if'])
 	$curif = $lancfg['if'];
-if($wancfg['if']) 
+if($wancfg['if'])
 	$curif = $lancfg['if'];
-if($optcfg['if']) 
-	$curif = $optcfg['if'];				
+if($optcfg['if'])
+	$curif = $optcfg['if'];
 
 $wl_modes = get_wireless_modes($curif);
 
@@ -244,11 +244,11 @@ function wireless_config_print() {
 		}
 	}
 </script>
-                <tr> 
+                <tr>
                   <td colspan="2" valign="top" height="16"></td>
 		</tr>
 
-                <tr> 
+                <tr>
                   <td colspan="2" valign="top" class="listtopic">Wireless configuration</td>
 		</tr>
 		<tr>
@@ -301,6 +301,8 @@ function wireless_config_print() {
 			<br/>When operating as an access point in 802.11g mode allow only 11g-capable stations to associate (11b-only stations are not permitted to associate).
 			</td>
 		</tr>
+
+		<!--
 		<tr>
 			<td valign="top" class="vncell">Allow intra-BSS communication</td>
 			<td class="vtable"><input name="apbridge_enable" type="checkbox" value="yes"  class="formfld" id="apbridge_enable" <? if ($pconfig['apbridge_enable']) echo "checked";?>>
@@ -310,6 +312,8 @@ function wireless_config_print() {
 			Disabling the internal bridging is useful when traffic is to be processed with packet filtering.
 			</td>
 		</tr>
+		-->
+
 		<tr>
 			<td valign="top" class="vncell">Enable WME</td>
 			<td class="vtable"><input name="wme_enable" type="checkbox" class="formfld" id="wme_enable" value="yes" <? if ($pconfig['wme_enable']) echo "checked";?>>
@@ -323,8 +327,8 @@ function wireless_config_print() {
 			Setting this option will force the card to NOT broadcast it's SSID
 			<br/>
 			(this might create problems for some clients). </td>
-		</tr> 
-                <tr> 
+		</tr>
+                <tr>
 			<td valign="top" class="vncellreq">Transmit power</td>
 			<td class="vtable">
 			<select name="txpower">
@@ -341,7 +345,7 @@ function wireless_config_print() {
 			Note: Typically only a few discreet power settings are available and the driver will use the setting closest to the specified value.  Not all adaptors support changing the transmit power setting.
 			</td>
 		</tr>
-                <tr> 
+                <tr>
 			<td valign="top" class="vncellreq">Channel</td>
 			<td class="vtable"><select name="channel" class="formfld" id="channel">
 				<option <? if ($pconfig['channel'] == 0) echo "selected"; ?> value="0">Auto</option>
@@ -371,30 +375,30 @@ function wireless_config_print() {
 		</tr>
 		<tr>
 			<td valign="top" class="vncell">WEP</td>
-			<td class="vtable"> <input name="wep_enable" type="checkbox" id="wep_enable" value="yes" <? if ($pconfig['wep_enable']) echo "checked"; ?>> 
+			<td class="vtable"> <input name="wep_enable" type="checkbox" id="wep_enable" value="yes" <? if ($pconfig['wep_enable']) echo "checked"; ?>>
 			<strong>Enable WEP</strong>
 			<table border="0" cellspacing="0" cellpadding="0">
-		<tr> 
+		<tr>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
                         <td>&nbsp;TX key&nbsp;</td>
 		</tr>
-		<tr> 
+		<tr>
                         <td>Key 1:&nbsp;&nbsp;</td>
                         <td> <input name="key1" type="text" class="formfld" id="key1" size="30" value="<?=htmlspecialchars($pconfig['key1']);?>"></td>
                         <td align="center"> <input name="txkey" type="radio" value="1" <? if ($pconfig['txkey'] == 1) echo "checked";?>></td>
 		</tr>
-		<tr> 
+		<tr>
                         <td>Key 2:&nbsp;&nbsp;</td>
                         <td> <input name="key2" type="text" class="formfld" id="key2" size="30" value="<?=htmlspecialchars($pconfig['key2']);?>"></td>
                         <td align="center"> <input name="txkey" type="radio" value="2" <? if ($pconfig['txkey'] == 2) echo "checked";?>></td>
 		</tr>
-		<tr> 
+		<tr>
                         <td>Key 3:&nbsp;&nbsp;</td>
                         <td> <input name="key3" type="text" class="formfld" id="key3" size="30" value="<?=htmlspecialchars($pconfig['key3']);?>"></td>
                         <td align="center"> <input name="txkey" type="radio" value="3" <? if ($pconfig['txkey'] == 3) echo "checked";?>></td>
 		</tr>
-		<tr> 
+		<tr>
                         <td>Key 4:&nbsp;&nbsp;</td>
                         <td> <input name="key4" type="text" class="formfld" id="key4" size="30" value="<?=htmlspecialchars($pconfig['key4']);?>"></td>
                         <td align="center"> <input name="txkey" type="radio" value="4" <? if ($pconfig['txkey'] == 4) echo "checked";?>></td>
@@ -405,13 +409,13 @@ function wireless_config_print() {
 			104 (128) bit keys may be entered as 13 ASCII characters or 26 hex digits preceded by '0x'.
 		   	</td>
                 </tr>
-                <tr> 
+                <tr>
 			<td valign="top" class="vncell"><strong>WPA</strong></td>
-			<td class="vtable"><input name="wpa_enable" type="checkbox" class="formfld" id="wpa_enable" value="yes" <? if ($pconfig['wpa_enable']) echo "checked"; ?>> 
+			<td class="vtable"><input name="wpa_enable" type="checkbox" class="formfld" id="wpa_enable" value="yes" <? if ($pconfig['wpa_enable']) echo "checked"; ?>>
 			<strong>Enable WPA</strong>
 			<br/><br/>
 			<table border="0" cellspacing="0" cellpadding="0">
-			<tr> 
+			<tr>
                         <td>&nbsp;</td>
                         <td>&nbsp;WPA Pre Shared Key&nbsp;</td>
 			</tr>
@@ -444,7 +448,7 @@ function wireless_config_print() {
 		<? /*
 		<tr>
 			<td valign="top" class="vncell">Enable MAC Filtering</td>
-			<td class="vtable"><input name="mac_acl_enable" type="checkbox" value="yes" class="formfld" id="mac_acl_enable" <? if ($pconfig['mac_acl_enable']) echo "checked"; ?>> 
+			<td class="vtable"><input name="mac_acl_enable" type="checkbox" value="yes" class="formfld" id="mac_acl_enable" <? if ($pconfig['mac_acl_enable']) echo "checked"; ?>>
 			Setting this option will enable the use of a mac filterlist to allow/deny association based on mac address
 			<br/><br/>
 			<select name="macaddr_acl" class="formfld" id="macaddr_acl">

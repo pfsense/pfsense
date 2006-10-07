@@ -563,18 +563,12 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
     $sor = isset($config['syslog']['reverse']) ? "-r" : "";
     $logarr = "";
 	$grepline = "  ";
-	if(is_array($grepfor)) {
-		 $i = 0;
-		 foreach($grepfor as $agrep) {
-	         $regexp = $agrep;
-             if($grepinvert[$i]) {
-                     $grepline .= " | grep \"$regexp\"";
-             } else {
-                     $grepline .= " | grep -v \"$regexp\"";
-             }
-             $i++;
-		}
-    }
+	if(is_array($grepfor))
+		foreach($grepfor as $agrep)
+			$grepline .= " | grep \"$agrep\"";
+	if(is_array($grepinvert))
+		foreach($grepinvert as $agrep)
+			$grepline .= " | grep -v \"$agrep\"";
 	exec("/usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
     echo "<!-- /usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail} -->";
     foreach ($logarr as $logent) {
@@ -597,37 +591,15 @@ function return_clog($logfile, $tail, $grepfor = "", $grepinvert = "", $grepreve
 	$sor = isset($grepreverse) ? "-r" : "";
 	$logarr = "";
 	$grepline = "  ";
-	if(is_array($grepfor)) {
-		 $i = 0;
-		 foreach($grepfor as $agrep) {
-	         $regexp = $agrep;
-             if($grepinvert[$i]) {
-                     $grepline .= " | grep \"$regexp\"";
-             } else {
-                     $grepline .= " | grep -v \"$regexp\"";
-             }
-             $i++;
-		}
-    }
+	if(is_array($grepfor))
+		foreach($grepfor as $agrep)
+			$grepline .= " | grep \"$agrep\"";
+	if(is_array($grepinvert))
+		foreach($grepinvert as $agrep)
+			$grepline .= " | grep -v \"$agrep\"";
+	echo "<!-- /usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail} -->";
 	exec("/usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
-	if(is_array($grepfor)) {
-		$i = 0;
-		foreach($grepfor as $agrep) {
-			$regexp = "/" . $agrep . "/i";
-			if($grepinvert[$i]) {
-				$logarr = preg_grep($regexp, $logarr, PREG_GREP_INVERT);
-			} else {
-				$logarr = preg_grep($regexp, $logarr);
-			}
-			$i++;
-		}
-	}
-	$i = 0;
-	foreach ($logarr as $logent) {
-		$logarray[$i] = "$logent";
-		$i++;
-	}
-	return($logarray);
+	return($logarr);
 }
 
 /* Check if variable has changed, update and log if it has

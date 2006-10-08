@@ -297,6 +297,11 @@
 	if($config['system']['afterbootupshellcmd'] <> "")
 		mwexec($config['system']['afterbootupshellcmd']);
 
+	if($avail < 128) {
+		require_once("notices.inc");
+		file_notice("pfSenseMemoryRequirements, "pfSense requires atleast 128 megabytes of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
+	}
+
 	/* done */
 	unlink("{$g['varrun_path']}/booting");
 	$g['booting'] = FALSE;

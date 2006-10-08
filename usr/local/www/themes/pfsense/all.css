@@ -13,7 +13,9 @@ form input {
 	font-size: 1.1em;
 }
 
-
+body {
+	background-color: #ffffff;
+}
 
 /* ID Based CSS Definitions */
 
@@ -121,7 +123,7 @@ span#marquee-container {
 	top: -100px;
 	left: -10000px;
 }
-div#marquee-text {	
+div#marquee-text {
 	font-size: 1.18em;
 	font-weight: bold;
 	font: Verdana;
@@ -202,7 +204,7 @@ table#marquee div#container div#scroller {
 	width: 100%;
 }
 
-#navigation ul li { 
+#navigation ul li {
 	display: block;
 	padding-left: 10px;
 }

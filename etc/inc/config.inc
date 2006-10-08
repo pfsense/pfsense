@@ -1053,7 +1053,7 @@ function set_networking_interfaces_ports() {
 		echo "\n\n\n";
 		echo "DANGER!  WARNING!\n\n";
 		echo "pfSense requires *ATLEAST* 128 megs of ram to function correctly.\n";
-		echo "Only ($avail) megs of ram has been detected.";
+		echo "Only ($avail) megs of ram has been detected.\n";
 		echo "\nPress ENTER to continue.";
 		fgets($fp);
 		echo "\n";

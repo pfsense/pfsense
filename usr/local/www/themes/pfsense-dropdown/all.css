@@ -13,11 +13,13 @@ form input {
 	font-size: 1.1em;
 }
 
-
+body {
+	background-color: #ffffff;
+}
 
 /* ID Based CSS Definitions */
 #wrapper {
-	
+
 }
 
 #header {
@@ -109,7 +111,7 @@ span#marquee-container {
 	top: -100px;
 	left: -10000px;
 }
-div#marquee-text {	
+div#marquee-text {
 	font-size: 1.18em;
 	font-weight: bold;
 	font: Verdana;
@@ -213,7 +215,7 @@ table#marquee div#container div#scroller {
 /* initially hidden with absolute position */
 #navigation ul li ul {
 	display: none;
-	position: absolute; 
+	position: absolute;
 	top: 2em;
 	left: 0px;
 	font-weight: normal;
@@ -230,7 +232,7 @@ table#marquee div#container div#scroller {
 }
 /* Show initial drop down upon mouse over, but do not show */
 /* nested side drop menus within listed elements */
-#navigation ul li:hover ul { 
+#navigation ul li:hover ul {
 	display: block;
 	cursor: hand;
 }

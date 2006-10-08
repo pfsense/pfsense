@@ -1046,6 +1046,19 @@ function set_networking_interfaces_ports() {
 
 	$fp = fopen('php://stdin', 'r');
 
+	$memory = get_memory();
+	$avail = $memory[0];
+
+	if($avail < 128) {
+		echo "\n\n\n";
+		echo "DANGER!  WARNING!\n\n";
+		echo "pfSense requires *ATLEAST* 128 megs of ram to function correctly.\n";
+		echo "Only ($avail) megs of ram has been detected.";
+		echo "\nPress ENTER to continue.";
+		fgets($fp);
+		echo "\n";
+	}
+
 	$iflist = get_interface_list();
 
 	echo <<<EOD

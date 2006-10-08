@@ -299,7 +299,7 @@
 
 	if($avail < 128) {
 		require_once("notices.inc");
-		file_notice("pfSenseMemoryRequirements, "pfSense requires atleast 128 megabytes of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
+		file_notice("pfSenseMemoryRequirements", "pfSense requires atleast 128 megabytes of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
 	}
 
 	/* done */

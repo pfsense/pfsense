@@ -599,6 +599,12 @@ function system_generate_lighty_config($filename,
 	if($captive_portal == true)  {
 		$captiveportal = ",\"mod_rewrite\"";
 		$captive_portal_rewrite = "url.rewrite-once = ( \"(.*captiveportal.*)\" => \"$1\", \"(.*)\" => \"/index.php?redirurl=$1\" )\n";
+		$captive_portal_module = "\"mod_accesslog\", ";
+		$maxprocperip = $config['captiveportal']['maxprocperip'];
+		$captive_portal_mod_evasive = "evasive.max-conns-per-ip = {$maxprocperip}";
+	} else {
+		$captive_portal_module = "";
+		$captive_portal_mod_evasive = "";
 	}
 
 	if($port <> "")
@@ -609,8 +615,28 @@ function system_generate_lighty_config($filename,
 	$memory = get_memory();
 	$avail = $memory[0];
 
-	if($avail > 0 and $avail < 75) {
+	if($avail > 0 and $avail < 98) {
 		$max_procs = 1;
+		$max_requests = 1;
+	}
+
+	if($avail > 97 and $avail < 128) {
+		$max_procs = 2;
+		$max_requests = 1;
+	}
+
+	if($avail > 127 and $avail < 256) {
+		$max_procs = 2;
+		$max_requests = 1;
+	}
+
+	if($avail > 255 and $avail < 384) {
+		$max_procs = 3;
+		$max_requests = 1;
+	}
+
+	if($avail > 383 and $avail < 512) {
+		$max_procs = 4;
 		$max_requests = 1;
 	}
 
@@ -624,22 +650,16 @@ function system_generate_lighty_config($filename,
 		$fastcgi_config = <<<EOD
 #### fastcgi module
 ## read fastcgi.txt for more info
-fastcgi.server             = ( ".php" =>
-                               ( "localhost" =>
-                                 (
-                                   "socket" => "/tmp/php-fastcgi.socket",
-				   "min-procs" => 1,
-				   "max-procs" => {$max_procs},
-				   "max-load-per-proc" => 100,
-				   "idle-timeout" => 1,
-				   "bin-environment" => (
-				      "PHP_FCGI_CHILDREN" => "{$max_procs}",
-				      "PHP_FCGI_MAX_REQUESTS" => "{$max_requests}"
-				   ),
-                                   "bin-path" => "/usr/local/bin/php"
-                                 )
-                               )
-                            )
+fastcgi.server = ( ".php" =>
+	( "localhost" =>
+		(
+			"socket" => "/tmp/php-fastcgi.socket",
+			"min-procs" => 1,
+			"max-procs" => {$max_procs},
+			"bin-path" => "/usr/local/bin/php"
+		)
+	)
+)
 
 #### CGI module
 cgi.assign                 = ( ".cgi" => "" )
@@ -669,6 +689,7 @@ server.event-handler        = "freebsd-kqueue"
 
 ## modules to load
 server.modules              =   (
+				  {$captive_portal_module}
 				  "mod_access", "mod_accesslog",
                                   {$module}{$captiveportal}
 				)
@@ -806,6 +827,8 @@ server.max-request-size = 2097152
 {$fastcgi_config}
 
 {$cgi_config}
+
+{$captive_portal_mod_evasive}
 
 EOD;
 

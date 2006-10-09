@@ -283,6 +283,18 @@ function enable_change(enable_change) {
 		<span class="vexpl">Choose which interface to run the captive portal on.</span></td>
 	</tr>
 	<tr>
+	  <td valign="top" class="vncell">Maximum concurrent connections</td>
+	  <td class="vtable">
+		<table cellpadding="0" cellspacing="0">
+                 <tr>
+           			<td><input name="maxprocperip" type="text" class="formfld" id="maxprocperip" size="5" value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> per client IP address (0 = no limit)</td>
+                 </tr>
+               </table>
+This setting limits the number of concurrent connections to the captive portal HTTP(S) server. This does not set how many users can be logged in
+to the captive portal, but rather how many users can load the portal page or authenticate at the same time!
+Default is 4 connections per client IP address, with a total maximum of 16 connections.</td>
+	</tr>
+	<tr>
 	  <td valign="top" class="vncell">Idle timeout</td>
 	  <td class="vtable">
 		<input name="idletimeout" type="text" class="formfld" id="idletimeout" size="6" value="<?=htmlspecialchars($pconfig['idletimeout']);?>">

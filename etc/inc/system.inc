@@ -601,7 +601,10 @@ function system_generate_lighty_config($filename,
 		$captive_portal_rewrite = "url.rewrite-once = ( \"(.*captiveportal.*)\" => \"$1\", \"(.*)\" => \"/index.php?redirurl=$1\" )\n";
 		$captive_portal_module = "\"mod_accesslog\", ";
 		$maxprocperip = $config['captiveportal']['maxprocperip'];
-		$captive_portal_mod_evasive = "evasive.max-conns-per-ip = {$maxprocperip}";
+		if(!$maxprocperip and $maxprocperip > 0)
+			$captive_portal_mod_evasive = "evasive.max-conns-per-ip = {$maxprocperip}";
+		else
+			$captive_portal_mod_evasive = "";
 	} else {
 		$captive_portal_module = "";
 		$captive_portal_mod_evasive = "";

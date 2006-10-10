@@ -33,6 +33,9 @@
 require_once("functions.inc");
 
 function opcode_cache_configuration() {
+		global $g;
+        if($g['platform'] == "cdrom")
+        	return;
         /* get system memory amount */
         $memory = get_memory();
         $avail = $memory[0];

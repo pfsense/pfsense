@@ -32,6 +32,52 @@
 /* include all configuration functions */
 require_once("functions.inc");
 
+function opcode_cache_configuration() {
+        /* get system memory amount */
+        $memory = get_memory();
+        $avail = $memory[0];
+
+		/* disable apc for platforms less than 90 megs of ram */
+        if($memory > 90) {
+        	$opcode_cacher = "extension=apc.so\n";
+        	$opcode_cacher .= "apc.enabled=\"1\"\n";
+			$opcode_cacher .= "apc.enable_cli=\"1\"\n";
+			$opcode_cacher .= "apc.shm_size=\"30\"\n";
+        } else {
+			$opcode_cacher = "";
+        }
+
+		/* create a php.ini variable */
+		$php_conf = file_get_contents("/usr/local/lib/php.ini");
+
+$php_ini = <<<EOFF
+output_buffering = "0"
+implicit_flush = true
+magic_quotes_gpc = Off
+max_execution_time = 99999999
+max_input_time = 99999999
+register_argc_argv = On
+file_uploads = On
+upload_tmp_dir = /tmp
+upload_max_filesize = 100M
+post_max_size = 100M
+html_errors = Off
+include_path = ".:/etc/inc:/usr/local/www:/usr/local/captiveportal:/usr/local/pkg"
+extension=radius.so
+{$opcode_cacher}
+
+EOFF;
+
+		conf_mount_rw();
+
+		/* open up php.ini and write back out contents */
+		$fd = fopen("/usr/local/lib/php.ini","w");
+		fwrite($fd, $php_ini);
+		fclose($fd);
+
+		conf_mount_ro();
+}
+
 function system_resolvconf_generate($dynupdate = false) {
 	global $config, $g;
 	if(isset($config['system']['developerspew'])) {

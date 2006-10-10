@@ -31,16 +31,21 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-	echo " done.\n";
-
-	echo "Initializing...";
-	echo ".";
-	require_once("globals.inc");
-	echo ".";
 	/* let the other functions know we're booting */
 	$pkg_interface = 'console';
 	$g['booting'] = TRUE;
 	touch("{$g['varrun_path']}/booting");
+
+	echo " done.\n";
+
+	echo "Initializing...";
+
+	/* setup php.ini */
+	opcode_cache_configuration();
+
+	echo ".";
+	require_once("globals.inc");
+	echo ".";
 	if($g['platform'] == "cdrom") {
 		$motd = trim(file_get_contents("/etc/motd"));
 		if(strlen($motd) > 2) echo "\n{$motd}\n\n";

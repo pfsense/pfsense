@@ -39,10 +39,6 @@
 	echo " done.\n";
 
 	echo "Initializing...";
-
-	/* setup php.ini */
-	opcode_cache_configuration();
-
 	echo ".";
 	require_once("globals.inc");
 	echo ".";
@@ -50,6 +46,9 @@
 		$motd = trim(file_get_contents("/etc/motd"));
 		if(strlen($motd) > 2) echo "\n{$motd}\n\n";
 	}
+
+	/* setup php.ini */
+	opcode_cache_configuration();
 
 	/* parse the configuration and include all functions used below */
 	require_once("config.inc");

@@ -78,7 +78,6 @@ function filter_configure_sync() {
 		$mt = microtime();
 		echo "filter_configure_sync() being called $mt\n";
 	}
-	unlink_if_exists("{$g['tmp_path']}/filter_dirty");
 
 	$lan_if = $config['interfaces']['lan']['if'];
 	$wan_if = get_real_wan_interface();

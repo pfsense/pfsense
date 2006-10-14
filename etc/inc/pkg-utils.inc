@@ -211,7 +211,7 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
  */
 function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 	global $config;
-
+	require_once("notices.inc");
 	if(!$config['installedpackages']['package']) return;
 	if(!is_numeric($pkg_name)) {
 		$pkg_id = get_pkg_id($pkg_name);

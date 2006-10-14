@@ -150,6 +150,7 @@ function is_freebsd_pkg_installed($pkg) {
  */
 function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $return_nosync = 1) {
 	global $config;
+	require_once("notices.inc");
 	$pkg_id = get_pkg_id($pkg_name);
 	if(!is_numeric($pkg_name)) {
 		if($pkg_id == -1) return -1; // This package doesn't really exist - exit the function.

@@ -288,13 +288,17 @@
 				case 'zoneedit':
 					$needsIP = FALSE;
 					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+
 					$server = "https://dynamic.zoneedit.com/auth/dynamic.html";
 					$port = "";
 					if($this->_dnsServer)
 						$server = $this->_dnsServer;
 					if($this->_dnsPort)
 						$port = ":" . $this->_dnsPort;
-					curl_setopt($ch, CURLOPT_URL, '{$server}{$port}?host='.$this->_dnsHost.'&dnsto='.$this->_dnsIP);
+					curl_setopt($ch, CURLOPT_URL, "{$server}{$port}?host=" .$this->_dnsHost);
+
 					$data = curl_exec($ch);
 					if (@curl_error($ch)) log_error("Curl errror occured: " . curl_error($ch));
 					curl_close($ch);

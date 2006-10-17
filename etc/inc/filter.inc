@@ -2232,6 +2232,9 @@ EOD;
 	$ipfrules .= "\n# SSH lockout\n";
 	$ipfrules .= "block in log proto tcp from <sshlockout> to any port 22 label \"sshlockout\"\n\n";
 
+	$ipfrules .= "anchor \"ftpproxy\"\n";
+	$ipfrules .= "anchor \"pftpx/*\"\n";
+
 	if (isset($config['filter']['rule'])) {
 		/* Pre-cache all our rules so we only have to generate them once */
 		$rule_arr = array();
@@ -2417,8 +2420,6 @@ EOD;
 	}
 	$ipfrules .= <<<EOD
 
-anchor "ftpproxy"
-anchor "pftpx/*"
 pass in quick on $lanif inet proto tcp from any to \$loopback port 8021 keep state label "FTP PROXY: Allow traffic to localhost"
 pass in quick on $lanif inet proto tcp from any to \$loopback port 21 keep state label "FTP PROXY: Allow traffic to localhost"
 pass in quick on $wanif inet proto tcp from port 20 to ($wanif) port > 49000 user proxy flags S/SA keep state label "FTP PROXY: PASV mode data connection"
@@ -2603,7 +2604,7 @@ function create_firewall_outgoing_rules_to_itself() {
 			$rule .="pass out quick on tap{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
 			$rule .="pass in quick on tap{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
 		}
-	}	
+	}
 
 	return $rule;
 }

@@ -87,7 +87,6 @@ PermitRootLogin yes
 #UsePrivilegeSeparation yes
 #PermitUserEnvironment no
 
-#ClientAliveCountMax 3
 #PidFile /var/run/sshd.pid
 #MaxStartups 10
 
@@ -96,6 +95,7 @@ PermitRootLogin yes
 
 Compression yes
 ClientAliveInterval 30
+ClientAliveCountMax 5
 UseDNS no
 X11Forwarding no
 

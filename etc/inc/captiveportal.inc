@@ -568,6 +568,10 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 		mwexec("/sbin/ipfw delete " . ($dbent[1]+40500));
 		mwexec("/sbin/ipfw delete " . ($dbent[1]+45500));
 	}
+
+	/* ensure all pf states are killed (pfSense) */
+	mwexec("pfctl -k {$dbent[2]}");
+
 }
 
 /* remove a single client by ipfw rule number */

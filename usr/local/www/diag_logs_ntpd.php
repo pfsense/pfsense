@@ -43,7 +43,7 @@ if ($_POST['clear']) {
 	system_syslogd_start();
 }
 
-$pgtitle = "Diagnostics: System logs: Load Balancer";
+$pgtitle = "Diagnostics: System logs: OpenNTPD";
 include("head.inc");
 
 ?>

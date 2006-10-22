@@ -123,9 +123,8 @@ function disk_usage()
 
 function swap_usage()
 {
-	$swapUsage = `/usr/sbin/swapinfo | /usr/bin/cut -c45-55 | /usr/bin/grep "%"`;
+	$swapUsage = `/usr/sbin/swapinfo | /usr/bin/awk '{print $5;'}|/usr/bin/grep '%'`;
 	$swapUsage = ereg_replace('%', "", $swapUsage);
-	$swapUsage = ereg_replace(' ', "", $swapUsage);
 	$swapUsage = rtrim($swapUsage);
 
 	return $swapUsage;

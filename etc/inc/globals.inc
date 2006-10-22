@@ -68,7 +68,7 @@ $g = array(
 );
 
 /* IP TOS flags */
-$iptos = array("lowdelay", "throughput", "reliability", "congestion");
+$iptos = array("lowdelay", "throughput", "reliability");
 
 /* TCP flags */
 $tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg");

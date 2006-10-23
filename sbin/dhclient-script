@@ -30,6 +30,13 @@ IFCONFIG=/sbin/ifconfig
 
 LOCALHOST=127.0.0.1
 
+# Ensure check_reload_status is running at all times.
+PS_COUNT=`ps awux | grep -v grep | grep check_reload_status | wc -l`
+if [ $PS_COUNT -lt 1 ]; then
+        echo "Launching check_reload_status"
+        /usr/bin/nice -n20 /usr/local/sbin/check_reload_status 2>/dev/null
+fi
+
 if [ -x /usr/bin/logger ]; then
 	LOGGER="/usr/bin/logger -s -p user.notice -t dhclient"
 else
@@ -77,7 +84,7 @@ add_new_address() {
 	$LOGGER "New Subnet Mask ($interface): $new_subnet_mask"
 	$LOGGER "New Broadcast Address ($interface): $new_broadcast_address"
 	$LOGGER "New Routers ($interface): $new_routers"
-        
+
         echo $new_routers > /tmp/${interface}_router
 	echo $new_ip_address > /var/db/${interface}_ip
 }
@@ -155,13 +162,13 @@ add_new_routes() {
                         echo $new_routers > /tmp/${interface}_router
 		done
 	fi
-	
+
 	# last ditch effort if no route exists.
 	DEFAULTROUTE=`$NETSTAT -rn | $GREP default`
 	if [ -z "${DEFAULTROUTE}" ]; then
 	    $ROUTE add default -iface $interface
 	fi
-	
+
 }
 
 add_new_resolv_conf() {
@@ -182,11 +189,11 @@ add_new_resolv_conf() {
 			# so that mulitple wans work correctly with multiple dns
 			# also backup the nameserver for later route removal
 			echo $nameserver >>/var/etc/nameserver_$interface
-			route add $nameserver -if $interface			
+			route add $nameserver -if $interface
 		done
 		echo $new_domain_name >/var/etc/defaultdomain.conf
 	fi
-	
+
 	return 0
 }
 

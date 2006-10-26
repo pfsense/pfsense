@@ -1811,7 +1811,8 @@ function filter_rules_generate() {
 
 # snort2c
 table <snort2c> persist
-block in quick from <snort2c> to any label "Block snort2c hosts"
+block quick from <snort2c> to any label "Block snort2c hosts"
+block quick from any to <snort2c> label "Block snort2c hosts"
 
 # loopback
 anchor "loopback"

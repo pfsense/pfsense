@@ -282,16 +282,19 @@ function system_syslogd_start() {
 		killbypid("{$g['varrun_path']}/syslog.pid");
 
 	if (isset($syslogcfg)) {
+		$separatelogfacilities = array('ntpd','racoon','openvpn');
 		if($config['installedpackages']['package']) {
                         foreach($config['installedpackages']['package'] as $package) {
                                 if($package['logging']) {
 					$pkgfacilities[] = $package['logging']['facilityname'];
+					$separatelogfacilities = $separatelogfacilities + $pkgfacilities;
 					$facilitylist = implode(',', $pkgfacilities);
 					mwexec("clog -i -s 10000 {$g['varlog_path']}/{$package['logging']['logfilename']}");
-                                	$syslogconf .= "!{$package['logging']['facilityname']}\n*.*\t\t\t\t\t\t%{$g['varlog_path']}/{$package['logging']['logfilename']}\n!-{$facilitylist}\n";
+                                	$syslogconf .= "!{$facilitylist}\n*.*\t\t\t\t\t\t%{$g['varlog_path']}/{$package['logging']['logfilename']}\n";
 				}
                         }
                 }
+		$facilitylist = implode(',', array_unique($separatelogfacilities));
 		/* write syslog.conf */
 		$fd = fopen("{$g['varetc_path']}/syslog.conf", "w");
 		if (!$fd) {
@@ -318,7 +321,7 @@ EOD;
 
 EOD;
 		}
-		$syslogconf .= "!-racoon,{$facilitylist}\n!openvpn\n\n";
+		$syslogconf .= "!openvpn\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= <<<EOD
 *.*						%{$g['varlog_path']}/openvpn.log
@@ -331,22 +334,21 @@ EOD;
 
 EOD;
 		}
-		$syslogconf .= "!-openvpn,{$facilitylist}\n";
+		$syslogconf .= "!-{$facilitylist}\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 		$syslogconf .= <<<EOD
 local0.*					%{$g['varlog_path']}/filter.log
 local3.*					%{$g['varlog_path']}/vpn.log
 local4.*					%{$g['varlog_path']}/portalauth.log
 local7.*					%{$g['varlog_path']}/dhcpd.log
-*.notice;kern.debug;lpr.info;mail.crit; 		%{$g['varlog_path']}/system.log
+*.notice;kern.debug;lpr.info;mail.crit; 	%{$g['varlog_path']}/system.log
 news.err;local0.none;local3.none;local4.none; 	%{$g['varlog_path']}/system.log
 local7.none					%{$g['varlog_path']}/system.log
 security.*					%{$g['varlog_path']}/system.log
 auth.info;authpriv.info;daemon.info		%{$g['varlog_path']}/system.log
 local1.*					%{$g['varlog_path']}/slbd.log
-auth.info;authpriv.info 						|exec /usr/local/sbin/sshlockout_pf
+auth.info;authpriv.info 			|exec /usr/local/sbin/sshlockout_pf
 *.emerg						*
-
 
 EOD;
 		}
@@ -388,6 +390,7 @@ news.err;local0.none;local3.none;local7.none	@{$syslogcfg['remoteserver']}
 security.*					@{$syslogcfg['remoteserver']}
 auth.info;authpriv.info;daemon.info		@{$syslogcfg['remoteserver']}
 *.emerg						@{$syslogcfg['remoteserver']}
+
 EOD;
 		}
 		fwrite($fd, $syslogconf);

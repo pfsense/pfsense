@@ -30,12 +30,13 @@ IFCONFIG=/sbin/ifconfig
 
 LOCALHOST=127.0.0.1
 
+
 # Ensure check_reload_status is running at all times.
-PS_COUNT=`ps awux | grep -v grep | grep check_reload_status | wc -l`
-if [ $PS_COUNT -lt 1 ]; then
-        echo "check_reload_status not running, restarting."  | logger -p daemon.info -i -t dhclient-script
-        /usr/bin/nice -n20 /usr/local/sbin/check_reload_status 2>/dev/null
-fi
+#PS_COUNT=`ps awux | grep -v grep | grep check_reload_status | wc -l`
+#if [ $PS_COUNT -lt 1 ]; then
+#        echo "check_reload_status not running, restarting."  | logger -p daemon.info -i -t dhclient-script
+#        /usr/bin/nice -n20 /usr/local/sbin/check_reload_status 2>/dev/null
+#fi
 
 if [ -x /usr/bin/logger ]; then
 	LOGGER="/usr/bin/logger -s -p user.notice -t dhclient"

@@ -66,7 +66,7 @@ function filter_configure() {
 	}
 	global $g;
 	/* Make sure that the checker process is running */
-	if(!is_process_running("check_reload_status"))
+	if(!$g['booting'] && !is_process_running("check_reload_status"))
 		mwexec_bg("/usr/bin/nice -n20 /usr/local/sbin/check_reload_status 2>/dev/null");	
 	touch($g['tmp_path'] . "/filter_dirty");
 }

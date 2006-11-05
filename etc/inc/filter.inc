@@ -764,6 +764,7 @@ function filter_nat_rules_generate() {
 			update_filter_reload_status("Creating NAT rule {$rule['descr']}");
 
 			/* if item is an alias, expand */
+			unset($extport);
 			if(alias_expand($rule['external-port']))
 				$extport[0] = alias_expand_value($rule['external-port']);
 			else

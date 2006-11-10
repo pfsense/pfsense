@@ -145,8 +145,9 @@ function get_nameservers() {
 		return $master_list;
 	$dns = `cat /var/etc/nameservers.conf`;
 	$dns_s = split("\n", $dns);
-	foreach($dns_s as $dns)
-		$master_list[] = $dns;
+	if(is_array($dns_s))
+		foreach($dns_s as $dns)
+			$master_list[] = $dns;
 	return $master_list;
 }
 

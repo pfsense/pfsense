@@ -956,7 +956,7 @@ function system_timezone_configure() {
 
 	conf_mount_rw();
 
-	exec("/usr/bin/tar xzfO /usr/share/zoneinfo.tgz " .
+	exec("LANG=C /usr/bin/tar xzfO /usr/share/zoneinfo.tgz " .
 		escapeshellarg($timezone) . " > /etc/localtime");
 
 	conf_mount_ro();

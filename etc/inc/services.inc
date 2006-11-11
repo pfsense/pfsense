@@ -560,6 +560,8 @@ EOD;
 
 function services_dnsmasq_configure() {
 	global $config, $g;
+	$return = 0;
+	
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "services_dnsmasq_configure() being called $mt\n";
@@ -576,7 +578,8 @@ function services_dnsmasq_configure() {
 			sleep(1);
 
 		/* generate hosts file */
-		system_hosts_generate();
+		if(system_hosts_generate()!=0)
+			$return = 1;
 
 		$args = "";
 
@@ -600,10 +603,11 @@ function services_dnsmasq_configure() {
 	}
 
 	if (!$g['booting']) {
-		services_dhcpd_configure();
+		if(services_dhcpd_configure()!=0)
+			$return = 1;
 	}
 
-	return 0;
+	return $return;
 }
 
 function services_snmpd_configure() {

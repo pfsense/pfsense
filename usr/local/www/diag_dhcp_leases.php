@@ -191,7 +191,7 @@ foreach($config['interfaces'] as $ifname => $ifarr) {
 			$slease['start'] = gmdate("M d Y H:i:s", time());
 			$slease['end'] = gmdate("M d Y H:i:s", time());
 			$slease['end'] = gmdate("M d Y H:i:s", strtotime('+5 minutes'));
-			$slease['hostname'] = $static['descr'];
+			$slease['hostname'] = $static['hostname'];
 			$slease['act'] = "static";
 			$online = exec("/usr/sbin/arp -an |/usr/bin/grep {$slease['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
 			if ($online == 1) {
@@ -263,7 +263,7 @@ foreach ($leases as $data) {
                 echo "<td class=\"listr\">{$fspans}{$data['act']}{$fspane}&nbsp;</td>\n";
 		
 		if ($data['type'] == "dynamic") {
-                	echo "<td class=\"list\" valign=\"middle\"><a href=\"services_dhcp_edit.php?if={$data['if']}&mac={$data['mac']}&descr={$data['hostname']}\">";
+                	echo "<td class=\"list\" valign=\"middle\"><a href=\"services_dhcp_edit.php?if={$data['if']}&mac={$data['mac']}&hostname={$data['hostname']}\">";
 			echo "<img src=\"/themes/{$g['theme']}/images/icons/icon_plus.gif\" width=\"17\" height=\"17\" border=\"0\" title=\"add a static mapping for this MAC address\"></a></td>\n";
 		} else {
                 	echo "<td class=\"list\" valign=\"middle\">";

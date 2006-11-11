@@ -33,6 +33,7 @@ require("guiconfig.inc");
 
 $pconfig['enable']  = isset($config['dnsmasq']['enable']);
 $pconfig['regdhcp'] = isset($config['dnsmasq']['regdhcp']);
+$pconfig['regdhcpstatic'] = isset($config['dnsmasq']['regdhcpstatic']);
 
 if (!is_array($config['dnsmasq']['hosts'])) 
 	$config['dnsmasq']['hosts'] = array();
@@ -51,6 +52,7 @@ if ($_POST) {
 
 	$config['dnsmasq']['enable'] = ($_POST['enable']) ? true : false;
 	$config['dnsmasq']['regdhcp'] = ($_POST['regdhcp']) ? true : false;
+	$config['dnsmasq']['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
 
 	write_config();
 
@@ -94,10 +96,21 @@ include("head.inc");
 
 ?>
 
+<script language="JavaScript">
+<!--
+function enable_change(enable_over) {
+	var endis;
+	endis = !(document.iform.enable.checked || enable_over);
+	document.iform.regdhcp.disabled = endis;
+	document.iform.regdhcpstatic.disabled = endis;
+}
+//-->
+</script>
+
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
-<form action="services_dnsmasq.php" method="post">
+<form action="services_dnsmasq.php" method="post" name="iform" id="iform">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_hostsdirty_path)): ?><p>
 <?php print_info_box_np("The DNS forwarder configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
@@ -105,7 +118,7 @@ include("head.inc");
 	<table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td class="vtable"><p>
-                      <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] == "yes") echo "checked";?>>
+                      <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] == "yes") echo "checked";?> onClick="enable_change(false)">
                       <strong>Enable DNS forwarder<br>
                       </strong></p></td>
                 </tr>
@@ -121,7 +134,17 @@ include("head.inc");
                     </td>
                 </tr>
                 <tr>
-                  <td> <input name="submit" type="submit" class="formbtn" value="Save">
+                  <td class="vtable"><p>
+                      <input name="regdhcpstatic" type="checkbox" id="regdhcpstatic" value="yes" <?php if ($pconfig['regdhcpstatic'] == "yes") echo "checked";?>>
+                      <strong>Register DHCP static mappings in DNS forwarder<br>
+                      </strong>If this option is set, then DHCP static mappings will 
+					  be registered in the DNS forwarder, so that their name can be 
+					  resolved. You should also set the domain in <a href="system.php">
+					  System: General setup</a> to the proper value.</p>
+                    </td>
+                </tr>				
+                <tr>
+                  <td> <input name="submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
                   </td>
                 </tr>
                 <tr>
@@ -221,6 +244,11 @@ include("head.inc");
 	       </tr>
         </table>
         </form>
+<script language="JavaScript">
+<!--
+enable_change(false);
+//-->
+</script>
 <?php include("fend.inc"); ?>
 </body>
 </html>

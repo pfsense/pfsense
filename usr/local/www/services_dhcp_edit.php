@@ -53,10 +53,12 @@ if (isset($_POST['id']))
 
 if (isset($id) && $a_maps[$id]) {
         $pconfig['mac'] = $a_maps[$id]['mac'];
+		$pconfig['hostname'] = $a_maps[$id]['hostname'];
         $pconfig['ipaddr'] = $a_maps[$id]['ipaddr'];
         $pconfig['descr'] = $a_maps[$id]['descr'];
 } else {
         $pconfig['mac'] = $_GET['mac'];
+		$pconfig['hostname'] = $_GET['hostname'];
         $pconfig['descr'] = $_GET['descr'];
 }
 
@@ -74,6 +76,9 @@ if ($_POST) {
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$_POST['mac'] = strtolower(str_replace("-", ":", $_POST['mac']));
 	
+	if (($_POST['host'] && !is_hostname($_POST['host']))) {
+		$input_errors[] = "A valid host name must be specified.";
+	}
 	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
 		$input_errors[] = "A valid IP address must be specified.";
 	}
@@ -86,8 +91,8 @@ if ($_POST) {
 		if (isset($id) && ($a_maps[$id]) && ($a_maps[$id] === $mapent))
 			continue;
 
-		if (($mapent['mac'] == $_POST['mac']) || ($_POST['ipaddr'] && (ip2long($mapent['ipaddr']) == ip2long($_POST['ipaddr'])))) {
-			$input_errors[] = "This IP or MAC address already exists.";
+		if (($mapent['hostname'] == $_POST['hostname']) || ($mapent['mac'] == $_POST['mac']) || ($_POST['ipaddr'] && (ip2long($mapent['ipaddr']) == ip2long($_POST['ipaddr'])))) {
+			$input_errors[] = "This Hostname, IP or MAC address already exists.";
 			break;
 		}
 	}
@@ -113,6 +118,7 @@ if ($_POST) {
 		$mapent = array();
 		$mapent['mac'] = $_POST['mac'];
 		$mapent['ipaddr'] = $_POST['ipaddr'];
+		$mapent['hostname'] = $_POST['hostname'];
 		$mapent['descr'] = $_POST['descr'];
 
 		if (isset($id) && $a_maps[$id])
@@ -122,15 +128,11 @@ if ($_POST) {
 		
 		write_config();
 
-                if (isset($config['dhcpd'][$if]['staticarp']))
-			interfaces_staticarp_configure($if);		
-
-                $retval = 0;
-                config_lock();
-                $retval = services_dhcpd_configure();
-                config_unlock();
-
-                $savemsg = get_std_save_message($retval);
+		if(isset($config['dhcpd'][$if]['enable'])) {
+			touch($d_staticmapsdirty_path);
+			if (isset($config['dnsmasq']['regdhcpstatic']))	
+				touch($d_hostsdirty_path);
+		}
 
 		header("Location: services_dhcp.php?if={$if}");
 		exit;
@@ -169,6 +171,12 @@ include("head.inc");
                     <br>
                     If no IP address is given, one will be dynamically allocated  from the pool.</td>
                 </tr>
+                <tr> 
+                  <td width="22%" valign="top" class="vncell">Hostname</td>
+                  <td width="78%" class="vtable"> 
+                    <input name="hostname" type="text" class="formfld" id="hostname" size="20" value="<?=htmlspecialchars($pconfig['hostname']);?>">
+                    <br> <span class="vexpl">Name of the host, without domain part.</span></td>
+                </tr>				
                 <tr> 
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable"> 

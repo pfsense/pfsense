@@ -114,8 +114,9 @@ if ($_POST) {
 		if (($_POST['range_to'] && !is_ipaddr($_POST['range_to']))) {
 			$input_errors[] = "A valid range must be specified.";
 		}
-		if (($_POST['gateway'] && !is_ipaddr($_POST['gateway'])))
+		if (($_POST['gateway'] && !is_ipaddr($_POST['gateway']))) {
 			$input_errors[] = "A valid IP address must be specified for the gateway.";
+		}
 		if (($_POST['wins1'] && !is_ipaddr($_POST['wins1'])) || ($_POST['wins2'] && !is_ipaddr($_POST['wins2']))) {
 			$input_errors[] = "A valid IP address must be specified for the primary/secondary WINS servers.";
 		}
@@ -146,12 +147,6 @@ if ($_POST) {
 			if (isset($config['dhcrelay'][$if]['enable']))
 				$input_errors[] = "You must disable the DHCP relay on the {$iflist[$if]} interface before enabling the DHCP server.";
 		}
-
-        $retval = 0;
-        config_lock();
-        $retval = services_dhcpd_configure();
-        config_unlock();
-
 	}
 
 	if (!$input_errors) {
@@ -173,29 +168,15 @@ if ($_POST) {
 			$config['dhcpd'][$if]['winsserver'][] = $_POST['wins2'];
 
 		unset($config['dhcpd'][$if]['dnsserver']);
-
 		if ($_POST['dns1'])
 			$config['dhcpd'][$if]['dnsserver'][] = $_POST['dns1'];
 		if ($_POST['dns2'])
 			$config['dhcpd'][$if]['dnsserver'][] = $_POST['dns2'];
 
 		$config['dhcpd'][$if]['gateway'] = $_POST['gateway'];
-
-		if($_POST['denyunknown'] == "yes")
-			$config['dhcpd'][$if]['denyunknown'] = true;
-		else
-			unset($config['dhcpd'][$if]['denyunknown']);
-
-		if($_POST['enable'] == "yes")
-			$config['dhcpd'][$if]['enable'] = $_POST['enable'];
-		else
-			unset($config['dhcpd'][$if]['enable']);
-
-		if($_POST['staticarp'] == "yes") {
-			$config['dhcpd'][$if]['staticarp'] = true;
-		} else {
-			unset($config['dhcpd'][$if]['staticarp']);
-		}
+		$config['dhcpd'][$if]['denyunknown'] = ($_POST['denyunknown']) ? true : false;
+		$config['dhcpd'][$if]['enable'] = ($_POST['enable']) ? true : false;
+		$config['dhcpd'][$if]['staticarp'] = ($_POST['staticarp']) ? true : false;
 
 		write_config();
 
@@ -203,9 +184,29 @@ if ($_POST) {
 		interfaces_staticarp_configure($if);
 
 		$retval = 0;
+		$retvaldhcp = 0;
+		$retvaldns = 0;
 		config_lock();
-		$retval = services_dhcpd_configure();
+		/* dnsmasq_configure calls dhcpd_configure */
+		/* no need to restart dhcpd twice */
+		if (isset($config['dnsmasq']['regdhcpstatic']))	{
+			$retvaldns = services_dnsmasq_configure();
+			if ($retvaldns == 0) {
+				if (file_exists($d_hostsdirty_path))
+					unlink($d_hostsdirty_path);
+				if (file_exists($d_staticmapsdirty_path))
+					unlink($d_staticmapsdirty_path);
+			}					
+		} else {
+			$retvaldhcp = services_dhcpd_configure();	
+			if ($retvaldhcp == 0) {
+				if (file_exists($d_staticmapsdirty_path))
+					unlink($d_staticmapsdirty_path);
+			}
+		}	
 		config_unlock();
+		if($retvaldhcp == 1 || $retvaldns == 1)
+			$retval = 1;
 		$savemsg = get_std_save_message($retval);
 	}
 }
@@ -214,10 +215,11 @@ if ($_GET['act'] == "del") {
 	if ($a_maps[$_GET['id']]) {
 		unset($a_maps[$_GET['id']]);
 		write_config();
-        $retval = 0;
-        config_lock();
-        $retval = services_dhcpd_configure();
-        config_unlock();
+		if(isset($config['dhcpd'][$if]['enable'])) {
+			touch($d_staticmapsdirty_path);
+			if (isset($config['dnsmasq']['regdhcpstatic']))
+				touch($d_hostsdirty_path);
+		}
 		header("Location: services_dhcp.php?if={$if}");
 		exit;
 	}
@@ -438,9 +440,10 @@ function enable_change(enable_over) {
                     </table>
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td width="35%" class="listhdrr">MAC address</td>
-                  <td width="20%" class="listhdrr">IP address</td>
-                  <td width="35%" class="listhdr">Description</td>
+                  <td width="25%" class="listhdrr">MAC address</td>
+                  <td width="15%" class="listhdrr">IP address</td>
+				  <td width="20%" class="listhdrr">Hostname</td>
+                  <td width="30%" class="listhdr">Description</td>
                   <td width="10%" class="list">
 		  </td>
 		</tr>
@@ -454,6 +457,9 @@ function enable_change(enable_over) {
                   <td class="listr" ondblclick="document.location='services_dhcp_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
                     <?=htmlspecialchars($mapent['ipaddr']);?>&nbsp;
                   </td>
+                  <td class="listr" ondblclick="document.location='services_dhcp_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
+                    <?=htmlspecialchars($mapent['hostname']);?>&nbsp;
+                  </td>	
                   <td class="listbg" ondblclick="document.location='services_dhcp_edit.php?if=<?=$if;?>&id=<?=$i;?>';">
                     <font color="#FFFFFF"><?=htmlspecialchars($mapent['descr']);?>&nbsp;</font>
                   </td>
@@ -470,7 +476,7 @@ function enable_change(enable_over) {
 		<?php $i++; endforeach; ?>
 		<?php endif; ?>
                 <tr>
-                  <td class="list" colspan="3"></td>
+                  <td class="list" colspan="4"></td>
                   <td class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>

@@ -185,6 +185,13 @@ EOD;
 		else
 			$hosts .= "{$host['ip']}	{$host['domain']}\n";
 	}
+	if (isset($dnsmasqcfg['regdhcpstatic'])) {
+		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf)
+			if(is_array($dhcpifconf['staticmap']) && isset($dhcpifconf['enable']))
+					foreach ($dhcpifconf['staticmap'] as $host) 
+						if ($host['ipaddr'] && $host['hostname'])
+							$hosts .= "{$host['ipaddr']}	{$host['hostname']}.{$syscfg['domain']} {$host['hostname']}\n";
+	}	
 	fwrite($fd, $hosts);
 	fclose($fd);
 

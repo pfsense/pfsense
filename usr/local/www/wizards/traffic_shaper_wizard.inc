@@ -330,6 +330,9 @@ function step4_stepsubmitphpaction() {
 		$downint = strtolower($config['ezshaper']['step2']['inside_int']);
 		$upint = strtolower($config['ezshaper']['step2']['outside_int']);
 
+		if($_POST['p2pcatchall'] != "")
+			$config['shaper']['itemsshaped']++;
+
 		$p2plist = array();
 
 		/* To add p2p clients, push Descr,Protocol,Start,End,src/dest/both onto p2plist */

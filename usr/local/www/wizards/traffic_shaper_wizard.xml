@@ -273,7 +273,7 @@
                 <type>checkbox</type>
                 <typehint>Lower priority of Peer-to-Peer traffic</typehint>
                 <description>This will lower the priority of P2P traffic below all other traffic.  Please check the items that you would like to prioritize lower than normal traffic.</description>
-				<enablefields>Aimster,BitTorrent,BuddyShare,CuteMX,DCplusplus,dcc,DirectConnect,DirectFileExpress,EDonkey2000,FastTrack,Gnutella,grouper,hotComm,HotlineConnect,iMesh,Napster,OpenNap,Scour,Shareaza,SongSpy,WinMX</enablefields>
+				<enablefields>p2pCatchAll,Aimster,BitTorrent,BuddyShare,CuteMX,DCplusplus,dcc,DirectConnect,DirectFileExpress,EDonkey2000,FastTrack,Gnutella,grouper,hotComm,HotlineConnect,iMesh,Napster,OpenNap,Scour,Shareaza,SongSpy,WinMX</enablefields>
 				<bindstofield>ezshaper->step4->enable</bindstofield>
             </field>
             <field>
@@ -285,7 +285,6 @@
 					<type>listtopic</type>
 			</field>
 			<field>
-				<donotdisable>true</donotdisable>
 				<name>p2pCatchAll</name>
 				<type>checkbox</type>
 				<typehint>When enabled, all uncategorized traffic is fed to the p2p queue.</typehint>

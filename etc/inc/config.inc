@@ -194,9 +194,6 @@ EOD;
 	mwexec("/sbin/mount -a");
 }
 
-if($g['booting']) echo ".";
-$config = parse_config();
-
 /****f* config/parse_config
  * NAME
  *   parse_config - Read in config.cache or config.xml if needed and return $config array
@@ -1572,5 +1569,8 @@ function set_device_perms() {
 		}
 	}
 }
+
+if($g['booting']) echo ".";
+$config = parse_config();
 
 ?>

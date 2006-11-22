@@ -1046,7 +1046,7 @@ function set_networking_interfaces_ports() {
 	$memory = get_memory();
 	$avail = $memory[0];
 
-	if($avail < 128) {
+	if($avail > 97 and $avail < 128) {
 		echo "\n\n\n";
 		echo "DANGER!  WARNING!\n\n";
 		echo "pfSense requires *ATLEAST* 128 megs of ram to function correctly.\n";

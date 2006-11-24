@@ -2490,6 +2490,9 @@ EODEOD;
 
 	$ipfrules .= <<<EOD
 
+# IMSpector
+anchor "imspector"
+
 # uPnPd
 anchor "miniupnpd"
 

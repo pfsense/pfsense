@@ -202,8 +202,6 @@ add_new_resolv_conf() {
 exit_with_hooks() {
 	echo $interface > /tmp/rc.newwanip
 	echo $old_ip_address > /tmp/rc.newwanip_oldip
-	# probably should do something with exit status of the local script
-	exit 0
 }
 
 #

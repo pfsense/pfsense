@@ -1097,6 +1097,10 @@ EOD;
 		require_once('clamav.inc');
 		$natrules .= clamav_generate_rules('nat');
 	}
+	if (is_package_installed('frickin') && file_exists('/usr/local/pkg/frickin.inc')) {
+		require_once ('frickin.inc');
+		$ipfrules .= frickin_generate_rules('filter');
+	}
 
 	if (is_package_installed('frickin') && file_exists('/usr/local/pkg/frickin.inc')) {
 		require_once ('frickin.inc');

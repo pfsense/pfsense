@@ -1098,6 +1098,11 @@ EOD;
 		$natrules .= clamav_generate_rules('nat');
 	}
 
+	if (is_package_installed('frickin') && file_exists('/usr/local/pkg/frickin.inc')) {
+		require_once ('frickin.inc');
+		$natrules .= frickin_generate_rules('nat');
+	}
+
 	$natrules .= process_carp_nat_rules();
 
 	$natrules .= "# IMSpector rdr anchor\n";

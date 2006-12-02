@@ -2635,13 +2635,27 @@ function create_firewall_outgoing_rules_to_itself() {
 	for($x=0; $x<100; $x++) {
 		if(does_interface_exist("tun{$x}") == true) {
 			$rule .="pass out quick on tun{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
-			$rule .="pass in quick on tun{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
+			$friendlytunif = convert_real_interface_to_friendly_interface_name("tun{$x}");
+			/* If the interface has a gateway we do not add a pass in rule. */
+			/* Some people use a TUN tunnel with public IP as a Multiwan interface */
+			if(isset($config['interfaces'][$friendlytunif]['gateway'])) {
+				$rule .= "# Not adding default pass in rule for interface $friendlytunif - tun{$x} with a gateway!";
+			} else {
+				$rule .="pass in quick on tun{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
+			}
 		}
 	}
 	for($x=0; $x<100; $x++) {
 		if(does_interface_exist("tap{$x}") == true) {
 			$rule .="pass out quick on tap{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
-			$rule .="pass in quick on tap{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
+			$friendlytapif = convert_real_interface_to_friendly_interface_name("tap{$x}");
+			/* If the interface has a gateway we do not add a pass in rule. */
+			/* Some people use a TAP tunnel with public IP as a Multiwan interface */
+			if(isset($config['interfaces'][$friendlytapif]['gateway'])) {
+				$rule .= "# Not adding default pass in rule for interface $friendlytapif - tap{$x} with a gateway!";
+			} else {
+				$rule .="pass in quick on tap{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
+			}
 		}
 	}
 

@@ -40,9 +40,9 @@ require_once("notices.inc");
 <?
 				if (are_notices_pending()) {
 					$notices = get_notices();
-					
+
 					$requests=array();
-					
+
 					## Get Query Arguments from URL ###
 					foreach ($_REQUEST as $key => $value) {
 						if ($key != "PHPSESSID")
@@ -76,7 +76,7 @@ require_once("notices.inc");
 						<script type="text/javascript">
 							var content='<div id="marquee-text"><?= $notice_msgs; ?></div>'
 						</script>
-						<script type="text/javascript" src="/ticker.js"></script>				
+						<script type="text/javascript" src="/ticker.js"></script>
 					</div>
 <?
 				} else {
@@ -112,12 +112,12 @@ require_once("notices.inc");
 						<div>Interfaces</div>
 						<ul class="subdrop">
 							<?php if (!isset($config['system']['webgui']['noassigninterfaces'])): ?><li><a href="/interfaces_assign.php" class="navlnks">(assign)</a></li><?php endif; ?>
-							<li><a href="/interfaces_wan.php" class="navlnk">WAN</a></li>							
+							<li><a href="/interfaces_wan.php" class="navlnk">WAN</a></li>
 							<li><a href="/interfaces_lan.php" class="navlnk">LAN</a></li>
 							<?php for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): if (!isset($config['interfaces']['opt' . $i]['ovpn'])): ?>
 							<li><a href="/interfaces_opt.php?index=<?=$i;?>" class="navlnk"><?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?></a></li>
 							<?php endif; endfor; ?>
-							<?php echo return_ext_menu("Interfaces"); ?>							
+							<?php echo return_ext_menu("Interfaces"); ?>
 						</ul>
 					</li>
 					<li class="drop">
@@ -125,7 +125,7 @@ require_once("notices.inc");
 						<ul class="subdrop">
 							<li><a href="/firewall_aliases.php" class="navlnk">Aliases</a></li>
 							<li><a href="/firewall_nat.php" class="navlnk">NAT</a></li>
-							<li><a href="/firewall_rules.php" class="navlnk">Rules</a></li>              
+							<li><a href="/firewall_rules.php" class="navlnk">Rules</a></li>
 							<li><a href="/firewall_shaper.php" class="navlnk">Traffic Shaper</a></li>
 							<li><a href="/firewall_virtual_ip.php" class="navlnk">Virtual IPs</a></li>
 							<?php echo return_ext_menu("Firewall"); ?>
@@ -142,6 +142,7 @@ require_once("notices.inc");
 							<li><a href="/load_balancer_pool.php" class="navlnk">Load Balancer</a></li>
 							<li><a href="/pkg_edit.php?xml=olsrd.xml&id=0" class="navlnk">OLSR</a></li>
 							<li><a href="/services_snmp.php" class="navlnk">SNMP</a></li>
+							<li><a href="/status_upnp.php" class="navlnk">Miniupnpd</a></li>
 							<li><a href="/services_wol.php" class="navlnk">Wake on LAN</a></li>
 							<?php echo return_ext_menu("Services"); ?>
 						</ul>
@@ -162,7 +163,7 @@ require_once("notices.inc");
 							<?php if (isset($config['captiveportal']['enable'])): ?>
 							<li><a href="/status_captiveportal.php" class="navlnk">Captive portal</a></li>
 							<?php endif; ?>
-							<li><a href="/carp_status.php" class="navlnk">CARP (failover)</a></li>		
+							<li><a href="/carp_status.php" class="navlnk">CARP (failover)</a></li>
 							<li><a href="/diag_dhcp_leases.php" class="navlnk">DHCP leases</a></li>
 							<li><a href="/status_filter_reload.php" class="navlnk">Filter Reload Status</a></li>
 							<li><a href="/status_interfaces.php" class="navlnk">Interfaces</a></li>
@@ -180,7 +181,7 @@ require_once("notices.inc");
 							<?php $i = 0; $ifdescrs = array();
 							if (is_array($config['interfaces']['wan']['wireless']) &&
 								preg_match($g['wireless_regex'], $config['interfaces']['wan']['if']))
-									$ifdescrs['wan'] = 'WAN';									
+									$ifdescrs['wan'] = 'WAN';
 							if (is_array($config['interfaces']['lan']['wireless']) &&
 								preg_match($g['wireless_regex'], $config['interfaces']['lan']['if']))
 									$ifdescrs['lan'] = 'LAN';
@@ -190,10 +191,10 @@ require_once("notices.inc");
 									 preg_match($g['wireless_regex'], $config['interfaces']['opt' . $j]['if']))
 										$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
 							}
-							if (count($ifdescrs) > 0): ?>	      
+							if (count($ifdescrs) > 0): ?>
 							<li><a href="/status_wireless.php" class="navlnk">Wireless</a></li>
 							<?php endif; ?>
-							<?php echo return_ext_menu("Status"); ?>							
+							<?php echo return_ext_menu("Status"); ?>
 						</ul>
 					</li>
 					<li class="lastdrop">
@@ -219,11 +220,11 @@ require_once("notices.inc");
 					</li>
 				</ul>
 			</div>
-		
+
 		</div> <!-- Left DIV -->
-		
+
 		<div id="right">
-	     
+
 
 <?php
 	/* display a top alert bar if need be */
@@ -234,7 +235,7 @@ require_once("notices.inc");
 		if(!$notices) {
 			$need_alert_display = true;
 			$display_text = print_notices() . "<br>";
-		}			
+		}
 	}
 	if($need_alert_display == true) {
                 echo "<div style=\"background-color:#000000\" id=\"roundalert\">";
@@ -247,5 +248,5 @@ require_once("notices.inc");
 		echo "</table>";
 		echo "</div>";
 	}
-	
+
 ?>

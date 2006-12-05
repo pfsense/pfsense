@@ -56,12 +56,12 @@
 			<fielddescr>Maximum Download Speed (Kbits/second)</fielddescr>
 			<fieldname>download</fieldname>
 			<type>input</type>
-		</field>	
+		</field>
 		<field>
 			<fielddescr>Maximum Upload Speed (Kbits/second)</fielddescr>
 			<fieldname>upload</fieldname>
 			<type>input</type>
-		</field>	
+		</field>
 		<field>
 			<fielddescr>Override WAN address</fielddescr>
 			<fieldname>overridewanip</fieldname>
@@ -71,12 +71,12 @@
 			<fielddescr>Log packets handled by miniupnpd rules?</fielddescr>
 			<fieldname>logpackets</fieldname>
 			<type>checkbox</type>
-		</field>	
+		</field>
 		<field>
 			<fielddescr>Use system uptime instead of miniupnpd uptime?</fielddescr>
 			<fieldname>sysuptime</fieldname>
 			<type>checkbox</type>
-		</field>	
+		</field>
 	</fields>
 	<custom_php_command_before_form>
 		before_form_miniupnpd(&amp;$pkg);
@@ -86,7 +86,7 @@
 	</custom_php_validation_command>
 	<custom_php_resync_config_command>
 		sync_package_miniupnpd();
-	</custom_php_resync_config_command>    
+	</custom_php_resync_config_command>
 	<custom_php_install_command>
 		sync_package_miniupnpd();
 	</custom_php_install_command>

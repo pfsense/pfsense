@@ -6,7 +6,7 @@
 
 	function upnp_notice ($msg) { syslog(LOG_NOTICE, "miniupnpd: $msg"); return; }
 	function upnp_warn ($msg) { syslog(LOG_WARNING, "miniupnpd: $msg"); return; }
-	
+
 	function upnp_config ($name) {
 		global $config;
 		if($config['installedpackages']['miniupnpd']['config'][0]["{$name}"])
@@ -17,16 +17,16 @@
 
 	function upnp_validate_ip($ip) {
 		if(!eregi("^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$", $ip))
-			return FALSE;   
+			return FALSE;
 		foreach(explode(".", $ip) as $sub)
-			if($sub<0 || $sub>256) 
+			if($sub<0 || $sub>256)
 				return FALSE;
 		return TRUE;
 	}
-	
+
 	function before_form_miniupnpd($pkg) {
 		global $config;
-		
+
 		/* if shaper connection speed defined hide fields */
 		if($config['ezshaper']['step2']['download'] && $config['ezshaper']['step2']['upload']) {
 			$i=0;
@@ -56,19 +56,19 @@
 	function sync_package_miniupnpd() {
 		global $config;
 		global $input_errors;
-		$ifaces_final = "";		
+		$ifaces_final = "";
 		$wanif = get_real_wan_interface();
 
 		upnp_notice("Syncing package");
 
 		conf_mount_rw();
-		config_lock();	
+		config_lock();
 
-		/* since config is written before this file invoked we don't need to read post data */			
+		/* since config is written before this file invoked we don't need to read post data */
 		if(upnp_config("iface_array"))
-			$iface_array = explode(",",upnp_config("iface_array"));		
+			$iface_array = explode(",",upnp_config("iface_array"));
 
-		if($iface_array) {		
+		if($iface_array) {
 			foreach($iface_array as $iface) {
 				$if = convert_friendly_interface_to_real_interface_name($iface);
 				/* above function returns iface if fail */
@@ -91,7 +91,7 @@
 				$overridewanip = upnp_config("overridewanip");
 				$logpackets = upnp_config("logpackets");
 				$sysuptime = upnp_config("sysuptime");
-				
+
 				/* if shaper connection speed defined use those values */
 				if($config['ezshaper']['step2']['download'] && $config['ezshaper']['step2']['upload']) {
 					$download = $config['ezshaper']['step2']['download']*1000;
@@ -99,16 +99,16 @@
 				} else {
 					$download = upnp_config("download")*1000;
 					$upload = upnp_config("upload")*1000;
-				}	
-					
+				}
+
 				/* valid paramters lets create rc file and start miniupnpd */
-			
+
 				$stop = <<<EOD
 if [ `pgrep miniupnpd | wc -l` != 0  ]; then
 		/usr/bin/killall miniupnpd
 		while [ `pgrep miniupnpd | wc -l` != 0 ]; do
 			sleep 1
-		done	
+		done
 	fi
 	# Clear existing rules and rdr entries
 	if [ `pfctl -aminiupnpd -sr | wc -l` != 0  ]; then
@@ -118,7 +118,7 @@ if [ `pgrep miniupnpd | wc -l` != 0  ]; then
 		/sbin/pfctl -aminiupnpd -Fn 2>&1 >/dev/null
 	fi
 EOD;
-			
+
 				$start = $stop."\n\t/usr/local/sbin/miniupnpd -p 2869 -i {$wanif}{$ifaces_final}";
 
 				/* define maximum downstream and upstream bitrates */
@@ -128,15 +128,15 @@ EOD;
 				/* override wan ip address, common for carp, etc */
 				if($overridewanip)
 					$start .= " -o {$overridewanip}";
-				
+
 				/* enable logging of packets handled by miniupnpd rules */
 				if($logpackets)
 					$start .= " -L";
 
 				/* enable system uptime instead of miniupnpd uptime */
 				if($sysuptime)
-					$start .= " -U";				
-				
+					$start .= " -U";
+
 				write_rcfile(array(
 					    "file" => "miniupnpd.sh",
 					    "start" => $start,
@@ -149,19 +149,19 @@ EOD;
 				if((int)exec("pgrep miniupnpd | wc -l") != 1 || $_POST['iface_array']) {
 					upnp_notice("Starting service");
 					start_service("miniupnpd");
-				} 	
-			} 
+				}
+			}
 		}
 
 		if(!$iface_array || !$ifaces_final) {
 			/* no parameters user does not want miniupnpd running */
 			/* lets stop the service and remove the rc file */
-		
+
 			stop_service("miniupnpd");
 			upnp_warn("No interfaces stopping service");
 			exec("rm -f /usr/local/etc/rc.d/miniupnpd*");
 		}
-		
+
 		config_unlock();
 		conf_mount_ro();
 	}

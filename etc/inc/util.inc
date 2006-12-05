@@ -171,7 +171,7 @@ function is_domain($domain) {
 	if (!is_string($domain))
 		return false;
 
-	if (preg_match("/^([_a-z0-9\-]+\.?)*$/i", $domain))
+	if (preg_match("/^([a-z0-9\-]+\.?)+$/i", $domain))
 		return true;
 	else
 		return false;
@@ -391,7 +391,6 @@ function alias_make_table($config) {
 		}
 	}
 }
-
 /* check if an alias exists */
 function is_alias($name) {
 

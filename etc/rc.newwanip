@@ -38,13 +38,6 @@ require_once("functions.inc");
 
 log_error("Informational: rc.newwanip is starting.");
 
-/*   hack! xxx: needs to be fixed. check_reload_status is inheriting
- *   socket descriptors from openvpn, etc.
- */
-system("/usr/bin/killall -9 check_reload_status");
-sleep(1);
-system("/usr/local/sbin/check_reload_status");
-
 /* WAN IP address has changed */
 
 $argument = str_replace("\n", "", $argv[1]);

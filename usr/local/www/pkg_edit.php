@@ -589,6 +589,11 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 	echo "<td>\n";
 	if($type == "input") {
 		echo "<input size='" . $size . "' name='" . $fieldname . $trc . "' value='" . $value . "'>\n";
+	} else if($type == "checkbox") {
+		if($value)
+			echo "<input size='" . $size . "' type='checkbox' name='" . $fieldname . $trc . "' value='" . $value . "' CHECKED>\n";
+		else
+			echo "<input size='" . $size . "' type='checkbox' name='" . $fieldname . $trc . "' value='" . $value . "'>\n";
 	} else if($type == "password") {
 		echo "<input size='" . $size . "' type='password' name='" . $fieldname . $trc . "' value='" . $value . "'>\n";
 	} else if($type == "textarea") {

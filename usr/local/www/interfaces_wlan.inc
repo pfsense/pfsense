@@ -301,8 +301,6 @@ function wireless_config_print() {
 			<br/>When operating as an access point in 802.11g mode allow only 11g-capable stations to associate (11b-only stations are not permitted to associate).
 			</td>
 		</tr>
-
-		<!--
 		<tr>
 			<td valign="top" class="vncell">Allow intra-BSS communication</td>
 			<td class="vtable"><input name="apbridge_enable" type="checkbox" value="yes"  class="formfld" id="apbridge_enable" <? if ($pconfig['apbridge_enable']) echo "checked";?>>
@@ -312,8 +310,6 @@ function wireless_config_print() {
 			Disabling the internal bridging is useful when traffic is to be processed with packet filtering.
 			</td>
 		</tr>
-		-->
-
 		<tr>
 			<td valign="top" class="vncell">Enable WME</td>
 			<td class="vtable"><input name="wme_enable" type="checkbox" class="formfld" id="wme_enable" value="yes" <? if ($pconfig['wme_enable']) echo "checked";?>>

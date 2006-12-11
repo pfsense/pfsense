@@ -44,7 +44,7 @@ RADIUS AUTHENTICATION
 
 function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$clientmac,$ruleno) {
 
-    global $config;
+    global $config, $debug;
 
     $retvalue = array();
     $nas_mac = mac_format(get_interface_mac($config['interfaces']['wan']['if']));

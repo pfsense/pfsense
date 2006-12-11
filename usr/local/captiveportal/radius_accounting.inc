@@ -45,7 +45,7 @@ RADIUS ACCOUNTING START
 
 function RADIUS_ACCOUNTING_START($ruleno,$username,$sessionid,$radiusip,$radiusport,$radiuskey,$clientip,$clientmac) {
 
-    global $config;
+    global $config, $debug;
 
     $retvalue = array();
     $nas_mac = mac_format(get_interface_mac($config['interfaces']['wan']['if']));
@@ -152,7 +152,7 @@ RADIUS ACCOUNTING STOP/UPDATE
 
 function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radiusip,$radiusport,$radiuskey,$clientip,$clientmac, $term_cause = 1, $interimupdate=false,$stop_time = null) {
 
-    global $config;
+    global $config, $debug;
 
     $retvalue = array();
     $nas_mac = mac_format(get_interface_mac($config['interfaces']['wan']['if']));

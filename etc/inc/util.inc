@@ -160,7 +160,7 @@ function is_hostname($hostname) {
 	if (!is_string($hostname))
 		return false;
 
-	if (preg_match("/^([_a-z0-9\-]+\.?)+$/i", $domain))
+	if (preg_match("/^([_a-z0-9\-]+\.?)+$/i", $hostname))
 		return true;
 	else
 		return false;

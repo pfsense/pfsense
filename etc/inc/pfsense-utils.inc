@@ -2024,15 +2024,8 @@ function enable_rrd_graphing() {
 		}
 
 		if ($g['booting']) {
-			/* if we are on livecd or embedded use a memoryfs. */
-			/* 6MB is enough for everyone. *cough* */
 			if ($g['platform'] != "pfSense") {
-				/* determine highest MD device */
-				$mdnr = `mount |grep md | awk -F"md" '{print $2}'|tail -1 |cut -c 1`;
-				$mdnr = $mdnr +1;
-				system("/sbin/mdmfs -M -s 6m md$mdnr $rrddbpath");
-
-				/* we now have something to write "on", restore the databases if we have them */
+				/* restore the databases if we have them */
 				if (file_exists("{$g['cf_conf_path']}/rrd.tgz")) {
 					exec("cd /;/usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz", $rrdrestore, $rrdreturn);
 					if((int)$rrdrestore <> 0) {

@@ -237,7 +237,7 @@ function portal_mac_radius($clientmac,$clientip) {
 
 function portal_allow($clientip,$clientmac,$username,$password = null, $attributes = null, $ruleno = null)  {
 
-    global $redirurl, $g, $config;
+    global $redirurl, $g, $config, $url_redirection;
 
     /* See if a ruleno is passed, if not start locking the sessions because this means there isn't one atm */
     if ($ruleno == null) {

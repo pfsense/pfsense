@@ -783,6 +783,7 @@ function filter_nat_rules_generate() {
 			update_filter_reload_status("Creating NAT rule {$rule['descr']}");
 
 			/* if item is an alias, expand */
+			$extport = "";
 			unset($extport);
 			if(alias_expand($rule['external-port']))
 				$extport[0] = alias_expand_value($rule['external-port']);
@@ -1253,6 +1254,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 
 		if ($rule['source']['network'] && strstr($rule['source']['network'], "opt")) {
 			if (!array_key_exists($rule['source']['network'], $optcfg)) {
+				$optmatch = "";
 				if(preg_match("/opt([0-999])/", $rule['source']['network'], $optmatch)) {
 					$real_opt_int = convert_friendly_interface_to_real_interface_name("opt" . $optmatch[1]);
 					$opt_ip = find_interface_ip($real_opt_int);

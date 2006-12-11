@@ -953,6 +953,8 @@ function captiveportal_write_elements() {
 
 function get_next_ipfw_ruleno($rulenos_start = 10000, $rulenos_range_max = 9899) {
 
+	$fwrules = "";
+	$matches = "";
 	exec("/sbin/ipfw show", $fwrules);
 	foreach ($fwrules as $fwrule) {
 		preg_match("/^(\d+)\s+/", $fwrule, $matches);
@@ -978,6 +980,8 @@ function get_next_ipfw_ruleno($rulenos_start = 10000, $rulenos_range_max = 9899)
 
 function captiveportal_get_next_ipfw_ruleno($rulenos_start = 10000, $rulenos_range_max = 9899) {
 
+	$fwrules = "";
+	$matches = "";
 	exec("/sbin/ipfw show", $fwrules);
 	foreach ($fwrules as $fwrule) {
 		preg_match("/^(\d+)\s+/", $fwrule, $matches);
@@ -1014,6 +1018,8 @@ function getVolume($ruleno) {
     $volume['input_pkts'] = $volume['input_bytes'] = $volume['output_pkts'] = $volume['output_bytes'] = 0 ;
 
     // Ingress
+    $ipfw = "";
+    $matches = "";
     exec("/sbin/ipfw show {$ruleno}", $ipfw);
     preg_match("/(\d+)\s+(\d+)\s+(\d+)\s+.*/", $ipfw[0], $matches);
     $volume['input_pkts'] = $matches[2];
@@ -1037,6 +1043,7 @@ function getVolume($ruleno) {
  */
 function getNasID()
 {
+    $nasId = "";
     exec("/bin/hostname", $nasId);
     if(!$nasId[0])
         $nasId[0] = "pfSense";

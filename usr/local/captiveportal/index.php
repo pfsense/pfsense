@@ -335,7 +335,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
                                                             $clientip,
                                                             $clientmac);
             if ($acct_val == 1)
-                captiveportal_logportalauth($username,$clientmac,$clientip,$type,"RADIUS ACCOUNTING FAILED");
+                captiveportal_logportalauth($username,$clientmac,$clientip,$cpdb[$i][2],"RADIUS ACCOUNTING FAILED");
         }
 
 

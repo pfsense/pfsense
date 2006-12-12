@@ -573,7 +573,7 @@ function methodsel_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncell">Automatically ping host</td>
                   <td width="78%" class="vtable">
-                    <input name="pinghost" type="text" class="formfld" id="pinghost" size="20" value="<?=$pconfig['pinghost'];?>"></td>
+                    <input name="pinghost" type="text" class="formfld" id="pinghost" size="20" value="<?=$pconfig['pinghost'];?>"> IP address</td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

@@ -237,7 +237,7 @@ function portal_mac_radius($clientmac,$clientip) {
 
 function portal_allow($clientip,$clientmac,$username,$password = null, $attributes = null, $ruleno = null)  {
 
-    global $redirurl, $g, $config, $url_redirection;
+    global $redirurl, $g, $config, $url_redirection, $type;
 
     /* See if a ruleno is passed, if not start locking the sessions because this means there isn't one atm */
     if ($ruleno == null) {
@@ -335,7 +335,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
                                                             $clientip,
                                                             $clientmac);
             if ($acct_val == 1)
-                captiveportal_logportalauth($username,$clientmac,$clientip,$cpdb[$i][2],"RADIUS ACCOUNTING FAILED");
+                captiveportal_logportalauth($username,$clientmac,$clientip,$type,"RADIUS ACCOUNTING FAILED");
         }
 
 

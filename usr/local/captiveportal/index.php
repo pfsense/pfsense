@@ -336,7 +336,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
                                                             $clientip,
                                                             $clientmac);
 
-            if(!type)                                                
+            if(!$type)                                                
 				log_error("WARNING: \$type has not been set in captiveportal/index.php");                                                            
                                                             
             if ($acct_val == 1)

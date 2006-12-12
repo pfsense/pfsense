@@ -248,6 +248,7 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
     /* if the pool is empty, return appropriate message and exit */
     if (is_null($ruleno)) {
         portal_reply_page($redirurl, "error", "System reached maximum login capacity");
+        log_error("WARNING!  Captive portal has reached maximum login capacity");
         captiveportal_unlock();
         exit;
     }

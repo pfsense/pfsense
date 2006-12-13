@@ -1813,6 +1813,16 @@ function filter_rules_generate() {
 		$ipfrules .= clamav_generate_rules('filter');
 	}
 
+	/* if captive portal is enabled, ensure that access to this port
+	 * is allowed on a locked down interface
+	 */
+	if (isset($config['captiveportal']['enable'])) {
+		$cp_interface = $config['captiveportal']['interface'];
+		$cp_interface_real = convert_friendly_interface_to_real_interface_name($cp_interface);
+		$cp_interface_ip = find_interface_ip($cp_interface_real);
+		$ipfrules .= "pass in quick from any to {$cp_interface_ip} port { 8000-8001 } keep state\n";
+	}
+
 	/* ftp-sesame */
 	$ipfrules .= "anchor \"ftpsesame/*\" \n";
 

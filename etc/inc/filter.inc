@@ -1820,7 +1820,8 @@ function filter_rules_generate() {
 		$cp_interface = $config['captiveportal']['interface'];
 		$cp_interface_real = convert_friendly_interface_to_real_interface_name($cp_interface);
 		$cp_interface_ip = find_interface_ip($cp_interface_real);
-		$ipfrules .= "pass in quick from any to {$cp_interface_ip} port { 8000-8001 } keep state\n";
+		if($cp_interface_ip and $cp_interface_real)
+			$ipfrules .= "pass in quick on {$cp_interface_real} from any to {$cp_interface_ip} port { 8000-8001 } keep state\n";
 	}
 
 	/* ftp-sesame */

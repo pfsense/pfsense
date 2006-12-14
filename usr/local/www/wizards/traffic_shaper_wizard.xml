@@ -31,7 +31,7 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 </copyright>
-<totalsteps>8</totalsteps>
+<totalsteps>9</totalsteps>
 <step>
 	<id>1</id>
 	<title>pfSense Traffic Shaper Wizard</title>
@@ -264,6 +264,59 @@
 <step>
         <id>4</id>
         <title>pfSense Traffic Shaper Wizard</title>
+        <description>Penalty Box</description>
+        <fields>
+                <field>
+                        <name>Enable</name>
+                        <type>checkbox</type>
+			<typehint>Penalize IP or Alias</typehint>
+                        <description>This will lower the priority of traffic from this IP or alias.</description>
+			<bindstofield>ezshaper->step4->enable</bindstofield>
+                </field>
+                <field>
+                        <name>Next</name>
+                        <type>submit</type>
+                </field>
+                <field>
+                        <name>PenaltyBox specific settings</name>
+                        <type>listtopic</type>
+                </field>
+		<field>
+                        <name>Address</name>
+			<type>inputalias</type>
+			<description>This allows you to just provide the IP address of the computer(s) or Penalize. NOTE: You can also use a Firewall Alias in this location.</description>
+			<bindstofield>ezshaper->step4->address</bindstofield>
+			<message>IP Address field is non-blank and doesn't look like an IP address.</message>
+		</field>
+                <field>
+                        <name>BandwidthUp</name>
+                        <description>The upload limit in Kbits/second.</description>
+                        <type>input</type>
+			<validate>^[0-9]*$</validate>
+			<message>Upload speed must be numerical</message>
+			<bindstofield>ezshaper->step4->bandwidthup</bindstofield>
+                </field>
+                <field>
+                        <name>BandwidthDown</name>
+                        <description>The download limit Kbits/second.</description>
+                        <type>input</type>
+			<validate>^[0-9]*$</validate>
+			<message>Download speed must be numerical</message>
+			<bindstofield>ezshaper->step4->bandwidthdown</bindstofield>
+                </field>
+                <field>
+                        <name>Next</name>
+                        <type>submit</type>
+                </field>
+        </fields>
+	<stepsubmitphpaction>
+		step4_stepsubmitphpaction();
+	</stepsubmitphpaction>
+	<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
+</step>
+<step>
+        <id>5</id>
+        <title>pfSense Traffic Shaper Wizard</title>
         <description>Peer to Peer networking</description>
 	<disableallfieldsbydefault>true</disableallfieldsbydefault>
         <fields>
@@ -274,7 +327,7 @@
                 <typehint>Lower priority of Peer-to-Peer traffic</typehint>
                 <description>This will lower the priority of P2P traffic below all other traffic.  Please check the items that you would like to prioritize lower than normal traffic.</description>
 				<enablefields>p2pCatchAll,Aimster,BitTorrent,BuddyShare,CuteMX,DCplusplus,dcc,DirectConnect,DirectFileExpress,EDonkey2000,FastTrack,Gnutella,grouper,hotComm,HotlineConnect,iMesh,Napster,OpenNap,Scour,Shareaza,SongSpy,WinMX</enablefields>
-				<bindstofield>ezshaper->step4->enable</bindstofield>
+				<bindstofield>ezshaper->step5->enable</bindstofield>
             </field>
             <field>
                     <name>Next</name>
@@ -288,7 +341,7 @@
 				<name>p2pCatchAll</name>
 				<type>checkbox</type>
 				<typehint>When enabled, all uncategorized traffic is fed to the p2p queue.</typehint>
-				<bindstofield>ezshaper->step4->p2pcatchall</bindstofield>
+				<bindstofield>ezshaper->step5->p2pcatchall</bindstofield>
 			</field>
 			<field>
 					<name>Enable/Disable specific P2P protocols</name>
@@ -298,127 +351,127 @@
                 <name>Aimster</name>
                 <type>checkbox</type>
 				<typehint>Aimster and other P2P using the Aimster protocol and ports</typehint>
-				<bindstofield>ezshaper->step4->aimster</bindstofield>
+				<bindstofield>ezshaper->step5->aimster</bindstofield>
             </field>
             <field>
 				<name>BitTorrent</name>
                 <type>checkbox</type>
 				<typehint>Bittorrent and other P2P using the Torrent protocol and ports</typehint>
-				<bindstofield>ezshaper->step4->bittorrent</bindstofield>
+				<bindstofield>ezshaper->step5->bittorrent</bindstofield>
             </field>
             <field>
                 <name>BuddyShare</name>
                 <type>checkbox</type>
 				<typehint>BuddyShare and other P2P using the BuddyShare protocol and ports</typehint>
-				<bindstofield>ezshaper->step4->buddyshare</bindstofield>
+				<bindstofield>ezshaper->step5->buddyshare</bindstofield>
             </field>
             <field>
                 <name>CuteMX</name>
                 <type>checkbox</type>
 				<typehint>CuteMX and other P2P using the CuteMX protocol and ports</typehint>
-				<bindstofield>ezshaper->step4->cutemx</bindstofield>
+				<bindstofield>ezshaper->step5->cutemx</bindstofield>
             </field>
             <field>
                 <name>DCplusplus</name>
                 <type>checkbox</type>
 				<typehint>DC++ and other P2P using the DC++ protocol and ports</typehint>
-				<bindstofield>ezshaper->step4->dcplusplus</bindstofield>
+				<bindstofield>ezshaper->step5->dcplusplus</bindstofield>
             </field>
             <field>
                 <name>DCC</name>
                 <type>checkbox</type>
 				<typehint>irc DCC file transfers</typehint>
-				<bindstofield>ezshaper->step4->dcc</bindstofield>
+				<bindstofield>ezshaper->step5->dcc</bindstofield>
             </field>
             <field>
                 <name>DirectConnect</name>
                 <type>checkbox</type>
 				<typehint>DirectConnect and other P2P using the DirectConnect protocol and ports</typehint>
-				<bindstofield>ezshaper->step4->directconnect</bindstofield>
+				<bindstofield>ezshaper->step5->directconnect</bindstofield>
             </field>
             <field>
                     <name>DirectFileExpress</name>
                     <type>checkbox</type>
 					<typehint>DirectFileExpress and other P2P using the DirectFileExpress protocol and ports</typehint>
-					<bindstofield>ezshaper->step4->directfileexpress</bindstofield>
+					<bindstofield>ezshaper->step5->directfileexpress</bindstofield>
             </field>
             <field>
                     <name>eDonkey2000</name>
                     <type>checkbox</type>
 				<typehint>eDonkey and other P2P using the eDonkey protocol and ports</typehint>
-				<bindstofield>ezshaper->step4->edonkey2000</bindstofield>
+				<bindstofield>ezshaper->step5->edonkey2000</bindstofield>
             </field>
             <field>
                 <name>FastTrack</name>
                 <type>checkbox</type>
 				<typehint>FastTrack and other P2P using the FastTrack protocol and ports</typehint>
-				<bindstofield>ezshaper->step4->fasttrack</bindstofield>
+				<bindstofield>ezshaper->step5->fasttrack</bindstofield>
             </field>
             <field>
                         <name>Gnutella</name>
                         <type>checkbox</type>
 				<typehint>Gnutella and other P2P using the Gnutella protocol and ports</typehint>
-				<bindstofield>ezshaper->step4->gnutella</bindstofield>
+				<bindstofield>ezshaper->step5->gnutella</bindstofield>
             </field>
            <field>
                 <name>grouper</name>
                 <type>checkbox</type>
 				<typehint>grouper and other P2P using the grouper protocol and ports</typehint>
-				<bindstofield>ezshaper->step4->grouper</bindstofield>
+				<bindstofield>ezshaper->step5->grouper</bindstofield>
 			</field>
 			<field>
 				<name>hotComm</name>
 				<type>checkbox</type>
 				<typehint>hotComm and other P2P using the hotComm protocol and ports</typehint>
-				<bindstofield>ezshaper->step4->hotcomm</bindstofield>
+				<bindstofield>ezshaper->step5->hotcomm</bindstofield>
             </field>
             <field>
                 <name>HotlineConnect</name>
                 <type>checkbox</type>
 				<typehint>HotlineConnect and other P2P using the HotlineConnect protocol and ports</typehint>
-				<bindstofield>ezshaper->step4->hotlineconnect</bindstofield>
+				<bindstofield>ezshaper->step5->hotlineconnect</bindstofield>
             </field>
             <field>
                 <name>iMesh</name>
                 <type>checkbox</type>
 				<typehint>iMesh and other P2P using the iMesh protocol and ports</typehint>
-				<bindstofield>ezshaper->step4->imesh</bindstofield>
+				<bindstofield>ezshaper->step5->imesh</bindstofield>
             </field>
             <field>
                 <name>Napster</name>
                 <type>checkbox</type>
 				<typehint>Napster and other P2P using the Napster protocol and ports</typehint>
-				<bindstofield>ezshaper->step4->napster</bindstofield>
+				<bindstofield>ezshaper->step5->napster</bindstofield>
             </field>
             <field>
                 <name>OpenNap</name>
                 <type>checkbox</type>
 				<typehint>OpenNap and other P2P using the OpenNap protocol and ports</typehint>
-				<bindstofield>ezshaper->step4->opennap</bindstofield>
+				<bindstofield>ezshaper->step5->opennap</bindstofield>
             </field>
             <field>
                 <name>Scour</name>
 		        <type>checkbox</type>
 				<typehint>Scour and other P2P using the Scour protocol and ports</typehint>
-				<bindstofield>ezshaper->step4->scour</bindstofield>
+				<bindstofield>ezshaper->step5->scour</bindstofield>
             </field>
             <field>
                 <name>Shareaza</name>
                 <type>checkbox</type>
 				<typehint>Shareaza and other P2P using the Shareaza protocol and ports</typehint>
-				<bindstofield>ezshaper->step4->shareaza</bindstofield>
+				<bindstofield>ezshaper->step5->shareaza</bindstofield>
             </field>
             <field>
                 <name>SongSpy</name>
                 <type>checkbox</type>
 				<typehint>SongSpy and other P2P using the SongSpy protocol and ports</typehint>
-				<bindstofield>ezshaper->step4->songspy</bindstofield>
+				<bindstofield>ezshaper->step5->songspy</bindstofield>
             </field>
             <field>
                 <name>WinMX</name>
                 <type>checkbox</type>
 				<typehint>WinMX and other P2P using the WinMX protocol and ports</typehint>
-				<bindstofield>ezshaper->step4->winmx</bindstofield>
+				<bindstofield>ezshaper->step5->winmx</bindstofield>
             </field>
             <field>
                 <name>Next</name>
@@ -426,12 +479,12 @@
             </field>
         </fields>
 	<stepsubmitphpaction>
-		step4_stepsubmitphpaction();
+		step5_stepsubmitphpaction();
 	</stepsubmitphpaction>
 	<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 </step>
 <step>
-        <id>5</id>
+        <id>6</id>
         <title>pfSense Traffic Shaper Wizard</title>
 	<disableallfieldsbydefault>true</disableallfieldsbydefault>
         <description>Network Games</description>
@@ -443,7 +496,7 @@
                         <description>This will raise the priority of gaming traffic to higher than most traffic.</description>
 			<enablefields>BattleNET,Battlefield2,CallOfDuty,Counterstrike,DeltaForce,DOOM3,EmpireEarth,Everquest,Everquest2,FarCry,GunZOnline,HalfLife,HalfLife2,Halo2,Lineage2,PlanetSide,QuakeIII,TigerWoods2004PS2,UnrealTournament,WolfensteinEnemyTerritory,WorldOfWarcraft</enablefields>
 			<donotdisable>true</donotdisable>
-			<bindstofield>ezshaper->step5->enable</bindstofield>
+			<bindstofield>ezshaper->step6->enable</bindstofield>
                 </field>
                 <field>
                         <name>Next</name>
@@ -457,127 +510,127 @@
                         <name>BattleNET</name>
                         <type>checkbox</type>
 			<typehint>Battle.net - Virtually every game from Blizzard publishing should match this.  This includes the following game series: Starcraft, Diablo, Warcraft.  Guild Wars also uses this port.</typehint>
-			<bindstofield>ezshaper->step5->battlenet</bindstofield>
+			<bindstofield>ezshaper->step6->battlenet</bindstofield>
                 </field>
                 <field>
                         <name>Battlefield2</name>
                         <type>checkbox</type>
 			<typehint>Battlefield 2 - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
-			<bindstofield>ezshaper->step5->battlefield2</bindstofield>
+			<bindstofield>ezshaper->step6->battlefield2</bindstofield>
                 </field>
                 <field>
                         <name>CallOfDuty</name>
                         <type>checkbox</type>
 			<typehint>Call Of Duty (United Offensive)</typehint>
-			<bindstofield>ezshaper->step5->callofduty</bindstofield>
+			<bindstofield>ezshaper->step6->callofduty</bindstofield>
                 </field>
                 <field>
                         <name>Counterstrike</name>
                         <type>checkbox</type>
 			<typehint>Counterstrike.   The ultimate 1st person shooter.</typehint>
-			<bindstofield>ezshaper->step5->counterstrike</bindstofield>
+			<bindstofield>ezshaper->step6->counterstrike</bindstofield>
                 </field>
                 <field>
                         <name>DeltaForce</name>
                         <type>checkbox</type>
 			<typehint>Delta Force</typehint>
-			<bindstofield>ezshaper->step5->deltaforce</bindstofield>
+			<bindstofield>ezshaper->step6->deltaforce</bindstofield>
                 </field>
                 <field>
                         <name>DOOM3</name>
                         <type>checkbox</type>
 			<typehint>DOOM3</typehint>
-			<bindstofield>ezshaper->step5->doom3</bindstofield>
+			<bindstofield>ezshaper->step6->doom3</bindstofield>
                 </field>
                 <field>
                         <name>EmpireEarth</name>
                         <type>checkbox</type>
 			<typehint>Empire Earth</typehint>
-			<bindstofield>ezshaper->step5->empireearth</bindstofield>
+			<bindstofield>ezshaper->step6->empireearth</bindstofield>
                 </field>
                 <field>
                         <name>Everquest</name>
                         <type>checkbox</type>
 			<typehint>Everquest - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
-			<bindstofield>ezshaper->step5->everquest</bindstofield>
+			<bindstofield>ezshaper->step6->everquest</bindstofield>
                 </field>
                 <field>
 			<name>Everquest2</name>
 			<type>checkbox</type>
 			<typehint>Everquest II</typehint>
-			<bindstofield>ezshaper->step5->everquest2</bindstofield>
+			<bindstofield>ezshaper->step6->everquest2</bindstofield>
 		</field>
                 <field>
                         <name>GunZOnline</name>
                         <type>checkbox</type>
 			<typehint>GunZ Online</typehint>
-			<bindstofield>ezshaper->step5->gunzonline</bindstofield>
+			<bindstofield>ezshaper->step6->gunzonline</bindstofield>
                 </field>
                 <field>
                         <name>FarCry</name>
                         <type>checkbox</type>
 			<typehint>Far Cry</typehint>
-			<bindstofield>ezshaper->step5->farcry</bindstofield>
+			<bindstofield>ezshaper->step6->farcry</bindstofield>
                 </field>
                 <field>
                         <name>HalfLife</name>
                         <type>checkbox</type>
 			<typehint>HalfLife</typehint>
-			<bindstofield>ezshaper->step5->halflife</bindstofield>
+			<bindstofield>ezshaper->step6->halflife</bindstofield>
                 </field>
                 <field>
                         <name>HalfLife2</name>
                         <type>checkbox</type>
 			<typehint>HalfLife 2</typehint>
-			<bindstofield>ezshaper->step5->halflife2</bindstofield>
+			<bindstofield>ezshaper->step6->halflife2</bindstofield>
                 </field>
                 <field>
                         <name>Halo2</name>
                         <type>checkbox</type>
 			<typehint>Halo2 via Xbox live</typehint>
-			<bindstofield>ezshaper->step5->halo2xbox</bindstofield>
+			<bindstofield>ezshaper->step6->halo2xbox</bindstofield>
                 </field>
                 <field>
                         <name>Lineage2</name>
                         <type>checkbox</type>
 			<typehint>Lineage II</typehint>
-			<bindstofield>ezshaper->step5->lineage2</bindstofield>
+			<bindstofield>ezshaper->step6->lineage2</bindstofield>
                 </field>
                 <field>
                         <name>PlanetSide</name>
                         <type>checkbox</type>
 			<typehint>PlanetSide</typehint>
-			<bindstofield>ezshaper->step5->planetside</bindstofield>
+			<bindstofield>ezshaper->step6->planetside</bindstofield>
                 </field>
                 <field>
                         <name>QuakeIII</name>
                         <type>checkbox</type>
 			<typehint>Quake III</typehint>
-			<bindstofield>ezshaper->step5->quakeiii</bindstofield>
+			<bindstofield>ezshaper->step6->quakeiii</bindstofield>
                 </field>
                 <field>
                         <name>TigerWoods2004PS2</name>
                         <type>checkbox</type>
 			<typehint>Tiger Woods 2004 for PS2</typehint>
-			<bindstofield>ezshaper->step5->tigerwoods2004ps2</bindstofield>
+			<bindstofield>ezshaper->step6->tigerwoods2004ps2</bindstofield>
                 </field>
                 <field>
                         <name>UnrealTournament</name>
                         <type>checkbox</type>
 			<typehint>Unreal Tournament</typehint>
-			<bindstofield>ezshaper->step5->unrealtournament</bindstofield>
+			<bindstofield>ezshaper->step6->unrealtournament</bindstofield>
                 </field>
                 <field>
                         <name>WolfensteinEnemyTerritory</name>
                         <type>checkbox</type>
 			<typehint>Wolfenstein Enemy Territory</typehint>
-			<bindstofield>ezshaper->step5->wolfet</bindstofield>
+			<bindstofield>ezshaper->step6->wolfet</bindstofield>
                 </field>
                 <field>
                         <name>WorldOfWarcraft</name>
                         <type>checkbox</type>
 			<typehint>World of Warcraft</typehint>
-			<bindstofield>ezshaper->step5->wow</bindstofield>
+			<bindstofield>ezshaper->step6->wow</bindstofield>
                 </field>
                 <field>
                         <name>Next</name>
@@ -585,12 +638,12 @@
                 </field>
         </fields>
 	<stepsubmitphpaction>
-		step5_stepsubmitphpaction();
+		step6_stepsubmitphpaction();
 	</stepsubmitphpaction>
 	<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 </step>
 <step>
-        <id>6</id>
+        <id>7</id>
         <title>pfSense Traffic Shaper Wizard</title>
 	<disableallfieldsbydefault>true</disableallfieldsbydefault>
         <description>Raise or lower other Applications</description>
@@ -602,7 +655,7 @@
                         <description>This will help raise or lower the priority of other protocols higher than most traffic.</description>
 			<enablefields>AIM,AppleRemoteDesktop,DNS,HTTP,ICMP,ICQ,IMAP,IPSEC,IRC,Jabber,LotusNotes,MSN,MSRDP,MySqlServer,PCAnywhere,POP3,PPTP,RTSP,SMB,SMTP,SNMP,StreamingMP3,TeamSpeak,VNC,NNTP,CVSUP</enablefields>
 			<donotdisable>true</donotdisable>
-			<bindstofield>ezshaper->step6->enable</bindstofield>
+			<bindstofield>ezshaper->step7->enable</bindstofield>
                 </field>
                 <field>
                         <name>Next</name>
@@ -615,7 +668,7 @@
                 <field>
                         <name>MSRDP</name>
 			<type>select</type>
-			<bindstofield>ezshaper->step6->msrdp</bindstofield>
+			<bindstofield>ezshaper->step7->msrdp</bindstofield>
 			<options>
 				<option>
 					<name>Default priority</name>
@@ -634,7 +687,7 @@
                 </field>
                 <field>
                         <name>VNC</name>
-			<bindstofield>ezshaper->step6->vnc</bindstofield>
+			<bindstofield>ezshaper->step7->vnc</bindstofield>
 			<type>select</type>
 			<options>
 				<option>
@@ -654,7 +707,7 @@
                 </field>
                 <field>
                         <name>AppleRemoteDesktop</name>
-			<bindstofield>ezshaper->step6->appleremotedesktop</bindstofield>
+			<bindstofield>ezshaper->step7->appleremotedesktop</bindstofield>
 			<type>select</type>
 			<options>
 				<option>
@@ -674,7 +727,7 @@
                 </field>
                 <field>
                         <name>PCAnywhere</name>
-			<bindstofield>ezshaper->step6->pcanywhere</bindstofield>
+			<bindstofield>ezshaper->step7->pcanywhere</bindstofield>
 			<type>select</type>
 			<options>
 				<option>
@@ -699,7 +752,7 @@
                 <field>
                         <name>IRC</name>
 			<type>select</type>
-			<bindstofield>ezshaper->step6->irc</bindstofield>
+			<bindstofield>ezshaper->step7->irc</bindstofield>
 			<options>
 				<option>
 					<name>Default priority</name>
@@ -719,7 +772,7 @@
                 <field>
                         <name>Jabber</name>
 			<type>select</type>
-			<bindstofield>ezshaper->step6->jabber</bindstofield>
+			<bindstofield>ezshaper->step7->jabber</bindstofield>
 			<options>
 				<option>
 					<name>Default priority</name>
@@ -738,7 +791,7 @@
                 </field>
                 <field>
                         <name>ICQ</name>
-			<bindstofield>ezshaper->step6->icq</bindstofield>
+			<bindstofield>ezshaper->step7->icq</bindstofield>
 			<type>select</type>
 			<options>
 				<option>
@@ -758,7 +811,7 @@
                 </field>
                 <field>
                         <name>AIM</name>
-			<bindstofield>ezshaper->step6->aolinstantmessenger</bindstofield>
+			<bindstofield>ezshaper->step7->aolinstantmessenger</bindstofield>
 			<type>select</type>
 			<options>
 				<option>
@@ -778,7 +831,7 @@
                 </field>
                 <field>
                         <name>MSN</name>
-			<bindstofield>ezshaper->step6->msnmessenger</bindstofield>
+			<bindstofield>ezshaper->step7->msnmessenger</bindstofield>
 			<type>select</type>
 			<options>
 				<option>
@@ -798,7 +851,7 @@
                 </field>
                 <field>
                 <name>Teamspeak</name>
-			<bindstofield>ezshaper->step6->teamspeak</bindstofield>
+			<bindstofield>ezshaper->step7->teamspeak</bindstofield>
 			<type>select</type>
 			<options>
 				<option>
@@ -823,7 +876,7 @@
                 <field>
                         <name>PPTP</name>
 			<type>select</type>
-			<bindstofield>ezshaper->step6->pptp</bindstofield>
+			<bindstofield>ezshaper->step7->pptp</bindstofield>
 			<options>
 				<option>
 					<name>Default priority</name>
@@ -843,7 +896,7 @@
                 <field>
                         <name>IPSEC</name>
 			<type>select</type>
-			<bindstofield>ezshaper->step6->ipsec</bindstofield>
+			<bindstofield>ezshaper->step7->ipsec</bindstofield>
 			<options>
 				<option>
 					<name>Default priority</name>
@@ -867,7 +920,7 @@
                 <field>
                         <name>StreamingMP3</name>
 			<type>select</type>
-			<bindstofield>ezshaper->step6->streamingmp3</bindstofield>
+			<bindstofield>ezshaper->step7->streamingmp3</bindstofield>
 			<options>
 				<option>
 					<name>Default priority</name>
@@ -886,7 +939,7 @@
                 </field>
                 <field>
                         <name>RTSP</name>
-			<bindstofield>ezshaper->step6->rtsp</bindstofield>
+			<bindstofield>ezshaper->step7->rtsp</bindstofield>
 			<type>select</type>
 			<options>
 				<option>
@@ -911,7 +964,7 @@
                 <field>
                         <name>HTTP</name>
 			<type>select</type>
-			<bindstofield>ezshaper->step6->http</bindstofield>
+			<bindstofield>ezshaper->step7->http</bindstofield>
 			<options>
 				<option>
 					<name>Default priority</name>
@@ -935,7 +988,7 @@
                 <field>
                         <name>SMTP</name>
 			<type>select</type>
-			<bindstofield>ezshaper->step6->smtp</bindstofield>
+			<bindstofield>ezshaper->step7->smtp</bindstofield>
 			<options>
 				<option>
 					<name>Default priority</name>
@@ -955,7 +1008,7 @@
                 <field>
                         <name>POP3</name>
 			<type>select</type>
-			<bindstofield>ezshaper->step6->pop3</bindstofield>
+			<bindstofield>ezshaper->step7->pop3</bindstofield>
 			<options>
 				<option>
 					<name>Default priority</name>
@@ -974,7 +1027,7 @@
                 </field>
                 <field>
                         <name>IMAP</name>
-			<bindstofield>ezshaper->step6->imap</bindstofield>
+			<bindstofield>ezshaper->step7->imap</bindstofield>
 			<type>select</type>
 			<options>
 				<option>
@@ -994,7 +1047,7 @@
                 </field>
                 <field>
                         <name>LotusNotes</name>
-			<bindstofield>ezshaper->step6->lotusnotes</bindstofield>
+			<bindstofield>ezshaper->step7->lotusnotes</bindstofield>
 			<type>select</type>
 			<options>
 				<option>
@@ -1019,7 +1072,7 @@
                                <field>
                         <name>DNS</name>
 			<type>select</type>
-			<bindstofield>ezshaper->step6->dns</bindstofield>
+			<bindstofield>ezshaper->step7->dns</bindstofield>
 			<options>
 				<option>
 					<name>Default priority</name>
@@ -1038,7 +1091,7 @@
                 </field>
                 <field>
                         <name>ICMP</name>
-			<bindstofield>ezshaper->step6->icmp</bindstofield>
+			<bindstofield>ezshaper->step7->icmp</bindstofield>
 			<type>select</type>
 			<options>
 				<option>
@@ -1058,7 +1111,7 @@
                 </field>
                 <field>
                         <name>SMB</name>
-			<bindstofield>ezshaper->step6->smb</bindstofield>
+			<bindstofield>ezshaper->step7->smb</bindstofield>
 			<type>select</type>
 			<options>
 				<option>
@@ -1078,7 +1131,7 @@
                 </field>
                 <field>
                         <name>SNMP</name>
-			<bindstofield>ezshaper->step6->snmp</bindstofield>
+			<bindstofield>ezshaper->step7->snmp</bindstofield>
 			<type>select</type>
 			<options>
 				<option>
@@ -1098,63 +1151,63 @@
                 </field>
                 <field>
                         <name>MySQLServer</name>
-						<bindstofield>ezshaper->step6->mysqlserver</bindstofield>
-						<type>select</type>
-						<options>
-							<option>
-								<name>Default priority</name>
-								<value>D</value>
-							</option>
-							<option>
-								<name>Higher priority</name>
-								<value>H</value>
-							</option>
-							<option>
-								<name>Lower priority</name>
-								<value>L</value>
-							</option>
-						</options>
-						<typehint>MySQL Server</typehint>
+			<bindstofield>ezshaper->step7->mysqlserver</bindstofield>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Default priority</name>
+					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Lower priority</name>
+					<value>L</value>
+				</option>
+			</options>
+			<typehint>MySQL Server</typehint>
                 </field>
                 <field>
-						<name>NNTP</name>
-						<bindstofield>ezshaper->step6->nntp</bindstofield>
-						<type>select</type>
-						<options>
-							<option>
-								<name>Default priority</name>
-								<value>D</value>
-							</option>
-							<option>
-								<name>Higher priority</name>
-								<value>H</value>
-							</option>
-							<option>
-								<name>Lower priority</name>
-								<value>L</value>
-							</option>
-						</options>
-						<typehint>Internet News</typehint>
+			<name>NNTP</name>
+			<bindstofield>ezshaper->step7->nntp</bindstofield>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Default priority</name>
+					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Lower priority</name>
+					<value>L</value>
+				</option>
+			</options>
+			<typehint>Internet News</typehint>
                 </field>
                 <field>
-						<name>CVSUP</name>
-						<bindstofield>ezshaper->step6->cvsup</bindstofield>
-						<type>select</type>
-						<options>
-							<option>
-								<name>Default priority</name>
-								<value>D</value>
-							</option>
-							<option>
-								<name>Higher priority</name>
-								<value>H</value>
-							</option>
-							<option>
-								<name>Lower priority</name>
-								<value>L</value>
-							</option>
-						</options>
-						<typehint>CVSUP</typehint>
+			<name>CVSUP</name>
+			<bindstofield>ezshaper->step7->cvsup</bindstofield>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Default priority</name>
+					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Lower priority</name>
+					<value>L</value>
+				</option>
+			</options>
+			<typehint>CVSUP</typehint>
                 </field>
                 <field>
                         <name>Next</name>
@@ -1162,12 +1215,12 @@
                 </field>
         </fields>
 	<stepsubmitphpaction>
-		step6_stepsubmitphpaction();
+		step7_stepsubmitphpaction();
 	</stepsubmitphpaction>
 	<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 </step>
 <step>
-        <id>7</id>
+        <id>8</id>
         <title>pfSense Traffic Shaper Wizard</title>
         <field>
 		<name>Reload profile notice</name>
@@ -1186,15 +1239,15 @@
                 </field>
 	</fields>
 	<stepbeforeformdisplay>
-		step7_stepbeforeformdisplay();
+		step8_stepbeforeformdisplay();
 	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
-		step7_stepsubmitphpaction();
+		step8_stepsubmitphpaction();
 	</stepsubmitphpaction>
 	<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 </step>
 <step>
-	<id>8</id>
+	<id>9</id>
         <title>pfSense Traffic Shaper Wizard</title>
 	<fields>
 		<field>
@@ -1204,7 +1257,7 @@
 	</fields>
 	<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 	<stepsubmitphpaction>
-		step8_stepsubmitphpaction();
+		step9_stepsubmitphpaction();
 	</stepsubmitphpaction>
 </step>
 </pfsensewizard>

@@ -11,4 +11,3 @@ HOME=/var/log
 */60	 *	 	*	 	*	 	*	 	root	 /usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 virusprot
 */60	 *	 	*	 	*	 	* 	 	root	 /usr/bin/nice -n20 /usr/local/sbin/expiretable -t 1800 snort2c
 */60	 *	 	*	 	*	 	* 	 	root	 /usr/bin/nice -n20 /usr/local/sbin/expiretable -t 1800 snort2c
-*/360	 *	 	*	 	*	 	* 	 	root	 /usr/bin/nice -n20 /etc/rc.dhclient_cron

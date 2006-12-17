@@ -8,7 +8,18 @@ require_once("notices.inc");
 			foreach($config['installedpackages']['menu'] as $menuitem) {
 				if($menuitem['section'] != $section) continue;
 				if($menuitem['url'] <> "") {
-					$description = str_replace('$myurl', getenv("HTTP_HOST"), $menuitem['url']);
+				 	$addresswithport = getenv("HTTP_HOST");
+					$colonpos = strpos($addresswithport, ":");	
+					if ($colonpos !== False){
+						//my url is actually just the IP address of the pfsense box
+						$myurl = substr($addresswithport, 0, $colonpos);	
+					}
+					else
+					{
+						$myurl = $addresswithport;	
+					}
+					
+					$description = str_replace('$myurl', $myurl, $menuitem['url']);
 				} else {
 					$description = '/pkg.php?xml=' . $menuitem['configfile'];
 				}

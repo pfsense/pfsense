@@ -293,9 +293,19 @@ if ($pkg['tabs'] <> "") {
 	if($tab['url'] <> "") $urltmp = $tab['url'];
 	if($tab['xml'] <> "") $urltmp = "pkg_edit.php?xml=" . $tab['xml'];
 
-	$myurl = getenv("HTTP_HOST");
+ 	$addresswithport = getenv("HTTP_HOST");
+	$colonpos = strpos($addresswithport, ":");
+	if ($colonpos !== False){
+		//my url is actually just the IP address of the pfsense box
+		$myurl = substr($addresswithport, 0, $colonpos);
+	}
+	else
+	{
+		$myurl = $addresswithport;
+	}
 	// eval url so that above $myurl item can be processed if need be.
 	$url = str_replace('$myurl', $myurl, $urltmp);
+
 	$tab_array[] = array(
 				$tab['text'],
 				$active,

@@ -1036,7 +1036,7 @@ class Auth_RADIUS_Acct extends Auth_RADIUS
             $this->putAttribute(RADIUS_USER_NAME, $this->username);
         }
         $this->putAttribute(RADIUS_ACCT_STATUS_TYPE, $this->status_type);
-        if (isset($this->session_time) && $this->status_type == RADIUS_STOP) {
+        if (isset($this->session_time)) {
             $this->putAttribute(RADIUS_ACCT_SESSION_TIME, $this->session_time);
         }
         if (isset($this->authentic)) {

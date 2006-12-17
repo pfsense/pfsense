@@ -45,16 +45,18 @@ $argument = str_replace("\n", "", $argv[1]);
 if($argument <> "") {
 	$curwanip = find_interface_ip($argument);
 	$interface = convert_real_interface_to_friendly_interface_name($argument);
+	$interface_real = convert_friendly_interface_to_real_interface_name($argument);
 	if($curwanip == "")
 	        $curwanip = get_current_wan_address();
 } else {
     $curwanip = get_current_wan_address();
-    $interface = $config['interfaces']['wan']['if'];
+    $interface = "wan";
+    $interface_real = $config['interfaces']['wan']['if'];
 }
 
 if($curwanip == "0.0.0.0") {
         log_error("Failed to update WAN IP, restarting dhclient.");
-        exec("dhclient {$interface}");
+        exec("dhclient {$interface_real}");
         /* die now, dhclient will kick off rc.newwanip again? */
         exit;
 }

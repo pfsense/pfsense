@@ -744,7 +744,7 @@ function kill_wpasupplicant($interface) {
 function find_dhclient_process($interface) {
 	if(filter_translate_type_to_real_interface($interface) <> "")
         	$realinterface = filter_translate_type_to_real_interface($interface);
-	$pid = `/usr/bin/pgrep -f "dhclient: {$realinterface}(\$| .*)"`;
+	$pid = exec("/usr/bin/pgrep -f \"dhclient (.*){$realinterface}\"");
 	return $pid;
 }
 
@@ -757,7 +757,9 @@ function interfaces_wan_configure() {
 		mute_kernel_msgs();
 
 		/* find dhclient process for wan and kill it */
-		killbypid(find_dhclient_process("wan"));
+		$dhclient_pid = find_dhclient_process("wan");
+		if($dhclient_pid)
+			mwexec("kill {$dhclient_pid}");
 
 		/* remove wanup file if it exists */
 		unlink_if_exists("{$g['tmp_path']}/wanup");
@@ -1065,9 +1067,9 @@ function interfaces_dhcp_down($interface) {
 		$realinterface = filter_translate_type_to_real_interface($interface);
 	mwexec("/sbin/ifconfig {$realinterface} down");
 	sleep(1);
-	$pid = find_dhclient_process($interface);
-	if($pid)
-		mwexec("kill {$pid}");
+	$dhclient_pid = find_dhclient_process($interface);
+	if($dhclient_pid)
+		mwexec("kill {$dhclient_pid}");
 }
 
 function interfaces_dhcp_up($interface) {

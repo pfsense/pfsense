@@ -1,4 +1,8 @@
 <?php
+
+/* start GZIP php/lighttpd handler */
+ob_start("ob_gzhandler");
+
 require_once("notices.inc");
 /* $Id$ */
 	function return_ext_menu($section) {

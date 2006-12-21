@@ -188,10 +188,10 @@ EOD;
 	if (isset($dnsmasqcfg['regdhcpstatic'])) {
 		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf)
 			if(is_array($dhcpifconf['staticmap']) && isset($dhcpifconf['enable']))
-					foreach ($dhcpifconf['staticmap'] as $host) 
+					foreach ($dhcpifconf['staticmap'] as $host)
 						if ($host['ipaddr'] && $host['hostname'])
 							$hosts .= "{$host['ipaddr']}	{$host['hostname']}.{$syscfg['domain']} {$host['hostname']}\n";
-	}	
+	}
 	fwrite($fd, $hosts);
 	fclose($fd);
 
@@ -748,7 +748,7 @@ EOD;
 ############ Options you really have to take care of ####################
 
 # FreeBSD!
-server.event-handler        = "freebsd-kqueue"
+server.event-handler        = "freebsd-sendfile"
 
 ## modules to load
 server.modules              =   (

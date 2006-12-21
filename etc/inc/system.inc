@@ -747,8 +747,11 @@ EOD;
 #
 ############ Options you really have to take care of ####################
 
-# FreeBSD!
-server.event-handler        = "freebsd-sendfile"
+## FreeBSD!
+server.event-handler		= "freebsd-kqueue"
+
+## Network handler
+server.network-backend		= "freebsd-sendfile"
 
 ## modules to load
 server.modules              =   (

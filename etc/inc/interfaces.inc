@@ -957,7 +957,6 @@ function interfaces_opt_dhcp_configure($interface) {
 
 	$dhclientconf .= <<<EOD
 interface "{$optif}" {
-	script "/sbin/dhclient-script";
 	{$dhclientconf_hostname}
 }
 
@@ -970,7 +969,7 @@ EOD;
         mwexec("/sbin/ifconfig {$optif} up");
 
         /* fire up dhclient */
-        mwexec("/sbin/dhclient -cf {$g['varetc_path']}/dhclient_{$optif}.conf {$optif}");
+        mwexec("/sbin/dhclient -nw -cf  {$g['varetc_path']}/dhclient_{$optif}.conf -sf /sbin/dhclient-script {$optif}");
 
 	return 0;
 }
@@ -1002,7 +1001,6 @@ function interfaces_dhcp_configure($interface) {
 	$dhclientconf .= <<<EOD
 interface "{$realinterface}" {
 	{$dhclientconf_hostname}
-	script "/sbin/dhclient-script";
 }
 
 EOD;
@@ -1016,10 +1014,10 @@ EOD;
         mwexec("/sbin/ifconfig {$optif} up");
 
         /* fire up dhclient */
-        mwexec("/sbin/dhclient -cf {$g['varetc_path']}/dhclient_{$optif}.conf {$optif} >/tmp/{$optif}_output 2>/tmp/{$optif}_error_output");
+        mwexec("/sbin/dhclient -nw -cf {$g['varetc_path']}/dhclient_{$optif}.conf -sf /sbin/dhclient-script  {$optif} ");
 
 	$fout = fopen("/tmp/ifconfig_{$optif}","w");
-	fwrite($fout, "/sbin/dhclient -cf {$g['varetc_path']}/dhclient_{$optif}.conf {$optif}");
+	fwrite($fout, "/sbin/dhclient -nw -cf {$g['varetc_path']}/dhclient_{$optif}.conf -sf /sbin/dhclient-script {$optif}");
 	fclose($fout);
 
 	return 0;
@@ -1049,7 +1047,6 @@ function interfaces_wan_dhcp_configure() {
 	$dhclientconf .= <<<EOD
 interface "{$wancfg['if']}" {
 	{$dhclientconf_hostname}
-	script "/sbin/dhclient-script";
 }
 
 EOD;
@@ -1063,10 +1060,10 @@ EOD;
         mwexec("/sbin/ifconfig {$wanif} up");
 
         /* fire up dhclient */
-        mwexec("/sbin/dhclient -cf {$g['varetc_path']}/dhclient_wan.conf {$wanif} >/tmp/{$wanif}_output 2>/tmp/{$wanif}_error_output");
+        mwexec("/sbin/dhclient -nw -cf {$g['varetc_path']}/dhclient_wan.conf -sf /sbin/dhclient-script {$wanif}");
 
 	$fout = fopen("/tmp/ifconfig_{$wanif}","w");
-	fwrite($fout, "/sbin/dhclient -cf {$g['varetc_path']}/dhclient_wan.conf {$wanif}");
+	fwrite($fout, "/sbin/dhclient -nw -cf {$g['varetc_path']}/dhclient_wan.conf -sf /sbin/dhclient-script {$wanif}");
 	fclose($fout);
 
 	return 0;

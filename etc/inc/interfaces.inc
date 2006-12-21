@@ -946,18 +946,12 @@ function interfaces_opt_dhcp_configure($interface) {
 		return 1;
 	}
 
-	if ($optcfg['dhcphostname']) {
-		$dhclientconf_hostname = "send dhcp-client-identifier \"{$optcfg['dhcphostname']}\";\n";
-		$dhclientconf_hostname .= "\tsend host-name \"{$optcfg['dhcphostname']}\";\n";
-	} else {
-		$dhclientconf_hostname = "";
-	}
-
  	$dhclientconf = "";
 
 	$dhclientconf .= <<<EOD
+send dhcp-client-identifier "{$optcfg['dhcphostname']}";
 interface "{$optif}" {
-	{$dhclientconf_hostname}
+	send host-name "{$optcfg['dhcphostname']}";
 }
 
 EOD;
@@ -989,18 +983,12 @@ function interfaces_dhcp_configure($interface) {
 		return 1;
 	}
 
-	if ($optcfg['dhcphostname']) {
-		$dhclientconf_hostname =  "send dhcp-client-identifier \"{$optcfg['dhcphostname']}\";\n";
-		$dhclientconf_hostname .= "\tsend host-name \"{$optcfg['dhcphostname']}\";\n";
-	} else {
-		$dhclientconf_hostname = "";
-	}
-
  	$dhclientconf = "";
 
 	$dhclientconf .= <<<EOD
+send dhcp-client-identifier "{$optcfg['dhcphostname']}";
 interface "{$realinterface}" {
-	{$dhclientconf_hostname}
+	 send host-name "{$optcfg['dhcphostname']}";
 }
 
 EOD;
@@ -1035,18 +1023,12 @@ function interfaces_wan_dhcp_configure() {
 		return 1;
 	}
 
-	if ($wancfg['dhcphostname']) {
-		$dhclientconf_hostname = "send dhcp-client-identifier \"{$wancfg['dhcphostname']}\";\n";
-		$dhclientconf_hostname .= "\tsend host-name \"{$wancfg['dhcphostname']}\";\n";
-	} else {
-		$dhclientconf_hostname = "";
-	}
-
  	$dhclientconf = "";
 
 	$dhclientconf .= <<<EOD
+send dhcp-client-identifier "{$wancfg['dhcphostname']}";
 interface "{$wancfg['if']}" {
-	{$dhclientconf_hostname}
+    send host-name "{$wancfg['dhcphostname']}";
 }
 
 EOD;

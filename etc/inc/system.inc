@@ -655,9 +655,9 @@ function system_generate_lighty_config($filename,
 	 * tests have shown that it is actually slower on embedded.
 	 */
 	if(stristr("pfSense", $g['platform']))
-		$network_handler = "";
-	else
 		$network_handler = "server.network-backend		= \"freebsd-sendfile\"\n";
+	else
+		$network_handler = "";
 
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();

@@ -651,6 +651,14 @@ function system_generate_lighty_config($filename,
 
 	global $config, $g;
 
+	/* only use freebsd-sendfile network handler on full installations
+	 * tests have shown that it is actually slower on embedded.
+	 */
+	if(stristr("pfSense", $g['platform']))
+		$network_handler = "";
+	else
+		$network_handler = "server.network-backend		= \"freebsd-sendfile\"\n";
+
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "system_generate_lighty_config() being called $mt\n";
@@ -750,8 +758,7 @@ EOD;
 ## FreeBSD!
 server.event-handler		= "freebsd-kqueue"
 
-## Network handler
-server.network-backend		= "freebsd-sendfile"
+{$network_handler}
 
 ## modules to load
 server.modules              =   (

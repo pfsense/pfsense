@@ -743,7 +743,7 @@ function kill_wpasupplicant($interface) {
 
 function find_dhclient_process($interface) {
 	$interface = convert_friendly_interface_to_real_interface_name($interface);
-	$pid = exec("/bin/ps awwux | /usr/bin/grep dhclient | /usr/bin/grep -v grep | /usr/bin/grep {$interface}");
+	$pid = exec("/bin/ps awwux | /usr/bin/grep dhclient | /usr/bin/grep -v grep | /usr/bin/grep {$interface} | /usr/bin/awk '{ print \$2 }'");
 	return $pid;
 }
 
@@ -1053,22 +1053,19 @@ EOD;
 }
 
 function interfaces_wan_dhcp_down() {
-	global $config;
-	$wancfg = $config['interfaces']['wan'];
-	$wanif = $wancfg['if'];
-	mwexec("/sbin/ifconfig {$wanif} delete");
-	sleep(1);
+	interfaces_dhcp_down("wan");
 }
 
 function interfaces_dhcp_down($interface) {
-	global $config;
-	if(filter_translate_type_to_real_interface($interface) <> "")
-		$realinterface = filter_translate_type_to_real_interface($interface);
-	mwexec("/sbin/ifconfig {$realinterface} down");
-	sleep(1);
+	global $config, $g;
+	$interface = convert_friendly_interface_to_real_interface_name($interface);
 	$dhclient_pid = find_dhclient_process($interface);
 	if($dhclient_pid)
-		mwexec("kill {$dhclient_pid}");
+		exec("kill {$dhclient_pid}");
+	log_error("deleting interface $interface");
+	sleep(2);
+	exec("/sbin/ifconfig {$interface} delete");
+	exec("/sbin/ifconfig {$interface} down");
 }
 
 function interfaces_dhcp_up($interface) {

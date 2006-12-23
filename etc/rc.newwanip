@@ -54,13 +54,6 @@ if($argument <> "") {
     $interface_real = $config['interfaces']['wan']['if'];
 }
 
-if($curwanip == "0.0.0.0") {
-        log_error("Failed to update WAN IP, restarting dhclient.");
-        exec("dhclient {$interface_real}");
-        /* die now, dhclient will kick off rc.newwanip again? */
-        exit;
-}
-
 /* grab the prior ip for pftpx tests */
 if(file_exists("/tmp/rc.newwanip_oldip")) {
 	/* grab hint from dhclient */

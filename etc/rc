@@ -116,10 +116,6 @@ if [ ! -L /etc/sasyncd.conf ]; then
     chmod 0600 /var/etc/sasyncd.conf
 fi
 
-if [ ! -L /usr/local/sbin/dhclient-script ]; then
-	ln -s /sbin/dhclient-script /usr/local/sbin/dhclient-script
-fi
-
 [ ! -d /var/tmp ] || mkdir -p /var/tmp 2>/dev/null
 
 [ ! -d /cf/conf/backup/ ] || mkdir -p /cf/conf/backup/ 2>/dev/null

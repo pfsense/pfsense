@@ -143,12 +143,11 @@ function is_process_running($process) {
 }
 
 function is_dhcp_running($interface) {
-	if(filter_translate_type_to_real_interface($interface) <> "")
-		$interface = filter_translate_type_to_real_interface($interface);
+	$interface = convert_friendly_interface_to_real_interface_name($interface);
 	$status = find_dhclient_process($interface);
 	if($status <> "")
-		return 1;
-	return 0;
+		return true;
+	return false;
 }
 
 function restart_service_if_running($service) {

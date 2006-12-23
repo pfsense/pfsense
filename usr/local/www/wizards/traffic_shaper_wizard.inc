@@ -322,100 +322,6 @@ function step3_stepsubmitphpaction() {
 		}
 }
 function step4_stepsubmitphpaction() {
-		global $g, $config;
-		if(!is_numeric($_POST['bandwidthup']) or !is_numeric($_POST['bandwidthdown'])) {
-			$message="Upload and download speeds must be a number only!  Values should be Kbits/second.";
-			header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=4&amp;message={$message}");
-			exit;
-		}
-		if($_POST['address']) {
-			if(!is_ipaddr($_POST['address'])) {
-				if(!is_alias($_POST['address'])) {
-					/* item is not an ip or alias.  error out */
-					$message=gettext("Address must be a valid IP address or Firewall Alias.  Please correct this value to continue.");
-					header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=4&amp;message={$message}");
-					exit;
-				}
-			}
-		}
-
-		if ( $_POST['enable'] ) {
-			$downq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['inside_int']);
-			$upq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['outside_int']);
-			$downint = strtolower($config['ezshaper']['step2']['inside_int']);
-			$upint = strtolower($config['ezshaper']['step2']['outside_int']);
-
-		/* create qPenaltyUp queue */
-		$queue = array();
-		$queue['name'] = "qPenaltyUp";
-                $queue['attachtoqueue'] = "{$upq}Root";
-		$queue['associatedrule'] = 0;
-		$queue['priority'] = 2;
-		$queue['red'] = "on";
-		$queue['ecn'] = "on";
-		if ($config['shaper']['schedulertype'] == "hfsc") {
-			$queue['upperlimit'] = "on";
-			$queue['upperlimit3'] = $_POST['bandwidthup'] . "Kb";
-			$queue['bandwidth'] = 1;
-			$queue['bandwidthtype'] = '%';
-			$queue['qlimit'] = 500;
-		} elseif ($config['shaper']['schedulertype'] == "cbq") {
-			$queue['borrow'] = "off";
-			$queue['bandwidth'] = $_POST['bandwidthup'];
-                        $queue['bandwidthtype'] = 'Kb';
-                }
-		$config['shaper']['queue'][] = $queue;
-
-		/* create qPenaltyDown queue */
-		$queue = array();
-		$queue['name'] = "qPenaltyDown";
-                $queue['attachtoqueue'] = "{$downq}Root";
-		$queue['associatedrule'] = 0;
-		$queue['priority'] = 2;
-		$queue['red'] = "on";
-		$queue['ecn'] = "on";
-		if ($config['shaper']['schedulertype'] == "hfsc") {
-			$queue['upperlimit'] = "on";
-			$queue['upperlimit3'] = $_POST['bandwidthdown'] . "Kb";
-			$queue['bandwidth'] = 1;
-			$queue['bandwidthtype'] = '%';
-			$queue['qlimit'] = 500;
-		} elseif ($config['shaper']['schedulertype'] == "cbq") {
-			$queue['borrow'] = "off";
-			$queue['bandwidth'] = $_POST['bandwidthdown'];
-                        $queue['bandwidthtype'] = 'Kb';
-                }
-		$config['shaper']['queue'][] = $queue;
-
-		$config['shaper']['itemsshaped']++;
-
-		/* If user specifies an IP, we don't bother with providers */
-		if( is_ipaddr($_POST['address']) or is_alias($_POST['address'])) {
-		    /* create Penalty rules */
-		    $rule = array();
-		    $rule['descr'] = gettext("Penalty IP");
-		    $rule['inqueue'] = "qPenaltyDown";
-		    $rule['outqueue'] = "qPenaltyUp";
-		    $rule['in-interface'] = $downint;
-		    $rule['out-interface'] = $upint;
-		    /* $rule['source']['network'] = $downint; */
-		    $rule['source']['address'] = $_POST['address'];
-		    $rule['destination']['any'] = TRUE;
-		    $config['shaper']['rule'][] = $rule;
-
-		    $rule = array();
-		    $rule['descr'] = gettext("Penalty IP");
-		    $rule['inqueue'] = "qPenaltyUp";
-		    $rule['outqueue'] = "qPenaltyDown";
-		    $rule['in-interface'] = $upint;
-		    $rule['out-interface'] = $downint;
-		    $rule['source']['any'] = TRUE;
-		    $rule['destination']['address'] = $_POST['address'];
-		    $config['shaper']['rule'][] = $rule;
-		}
-	}
-}
-function step5_stepsubmitphpaction() {
 	global $g, $config;
 	/* XXX - billm - needs to actually honor what the user selects still */
 	if ( $_POST['enable'] ) {
@@ -554,7 +460,7 @@ function step5_stepsubmitphpaction() {
 		$config['shaper']['queue'][] = $queue;
 	}
 }
-function step6_stepsubmitphpaction() {
+function step5_stepsubmitphpaction() {
 	global $g, $config;
 	/* XXX - billm - needs to actually honor what the user selects still */
 	if ( $_POST['enable'] ) {
@@ -787,7 +693,7 @@ function step6_stepsubmitphpaction() {
 		}
 	}
 }
-function step7_stepsubmitphpaction() {
+function step6_stepsubmitphpaction() {
 	global $g, $config;
 	if ( $_POST['enable'] ) {
 		$downq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['inside_int']);
@@ -1088,7 +994,7 @@ function step7_stepsubmitphpaction() {
 		}
     }
 }
-function step8_stepbeforeformdisplay() {
+function step7_stepbeforeformdisplay() {
 		global $g, $config;
 		if($config['shaper']['itemsshaped'] == "0") {
 		    /*    no shaper items have been selected
@@ -1100,12 +1006,12 @@ function step8_stepbeforeformdisplay() {
 		    $config['shaper']['enable'] = FALSE;
 		    $message = "No items have been selected to shape.  Exiting traffic shaper wizard.";
 		    write_config("No shaper items picked, unsetting shaper configuration");
-		    header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=8&amp;message={$message}");
+		    header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=7&amp;message={$message}");
 		    exit;
 		}
 }
 
-function step8_stepsubmitphpaction() {
+function step7_stepsubmitphpaction() {
 		global $g, $config, $d_shaperconfdirty_path;
 		/* Sort rules by queue priority */
 		 sort_rule_by_queue_priority();
@@ -1116,7 +1022,7 @@ function step8_stepsubmitphpaction() {
 		$upint = strtolower($config['ezshaper']['step2']['outside_int']);
 
 		/* install default p2p catch all rule if user has enabled option (MUST BE LAST!) */
-		if($config['ezshaper']['step5']['p2pcatchall'] == "on") {
+		if($config['ezshaper']['step4']['p2pcatchall'] == "on") {
 			$othersplist = array();
 		    $othersplist[] = array('p2pCatchAll', 'tcp', '', '', 'both', '');
 			$othersplist[] = array('p2pCatchAll2', 'udp', '', '', 'both', '');
@@ -1182,7 +1088,7 @@ function step8_stepsubmitphpaction() {
 		/* Head over and check out the groovy queue stats */
 		header("Location: status_filter_reload.php");
 }
-function step9_stepsubmitphpaction() {
+function step8_stepsubmitphpaction() {
 	global $g, $config;
 	header("Location: status_filter_reload.php");
 }

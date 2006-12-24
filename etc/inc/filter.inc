@@ -1561,7 +1561,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						$srcporta = $srcport[0];
 					if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
 						if(alias_expand($srcport[0]))
-							$line .= "port { {$srcporta} } ";
+							$line .= "port {$srcporta} ";
 						else
 							$line .= "port = {$srcporta} ";
 					} else if (($srcport[0] == 1) && ($srcport[1] == 65535)) {

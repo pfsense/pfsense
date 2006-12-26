@@ -32,7 +32,8 @@
 require("guiconfig.inc");
 
 /* Defaults to this page but if no settings are present, redirect to setup page */
-if(!$config['installedpackages']['miniupnpd']['config'][0]['iface_array'])
+if(!$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||
+	!$config['installedpackages']['miniupnpd']['config'][0]['enable'])
 	Header("Location: /pkg_edit.php?xml=miniupnpd.xml&id=0");
 
 if ($_POST) {
@@ -65,8 +66,8 @@ include("head.inc");
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 <?php
 	$tab_array = array();
-	$tab_array[] = array(gettext("UPNP Status "), true, "/status_upnp.php");
-	$tab_array[] = array(gettext("miniupnpd Settings "), false, "/pkg_edit.php?xml=miniupnpd.xml&id=0");
+	$tab_array[] = array(gettext("UPnP Status "), true, "/status_upnp.php");
+	$tab_array[] = array(gettext("MiniUPnPd Settings "), false, "/pkg_edit.php?xml=miniupnpd.xml&id=0");
 	display_top_tabs($tab_array);
 ?>
 </table>
@@ -88,7 +89,7 @@ include("head.inc");
           <td width="60%" class="listhdr"><?=gettext("Description")?></td>
 		</tr>
 		<?php $i = 0; foreach ($rdr_entries as $rdr_entry) {
-			if (preg_match("/rdr on (.*) inet proto (.*) from any to any port = (.*) label \"(.*)\" -> (.*) port (.*)/", $rdr_entry, $matches))
+			if (preg_match("/on (.*) inet proto (.*) from any to any port = (.*) label \"(.*)\" -> (.*) port (.*)/", $rdr_entry, $matches))
 			$rdr_proto = $matches[2];
 			$rdr_port = $matches[3];
 			$rdr_ip = $matches[5];

@@ -46,48 +46,59 @@ if($_GET['mode'] == "restartservice" and $_GET['service']) {
 	switch($_GET['service']) {
 		case 'bsnmpd':
 			services_snmpd_configure();
-			sleep(5);
 			break;
 		case 'dnsmasq':
 			services_dnsmasq_configure();
-			sleep(5);
 			break;
 		case 'dhcpd':
 			services_dhcpd_configure();
-			sleep(5);
+			break;
+		case 'miniupnpd':
+			if(file_exists('/usr/local/etc/rc.d/miniupnpd.sh'))
+				mwexec('/usr/local/etc/rc.d/miniupnpd.sh restart');
 			break;
 		default:
 			restart_service($_GET['service']);
-			sleep(5);
 			break;
 	}
 	$savemsg = "{$_GET['service']} has been restarted.";
+	sleep(5);
 }
 
 if($_GET['mode'] == "startservice" and $_GET['service']) {
 	switch($_GET['service']) {
 		case 'bsnmpd':
 			services_snmpd_configure();
-			sleep(5);
 			break;
 		case 'dnsmasq':
 			services_dnsmasq_configure();
-			sleep(5);
 			break;
 		case 'dhcpd':
 			services_dhcpd_configure();
-			sleep(5);
+			break;
+		case 'miniupnpd':
+			if(file_exists('/usr/local/etc/rc.d/miniupnpd.sh'))
+				mwexec('/usr/local/etc/rc.d/miniupnpd.sh start');
 			break;
 		default:
 			start_service($_GET['service']);
-			sleep(5);
 			break;
 	}
     $savemsg = "{$_GET['service']} has been started.";
+	sleep(5);
 }
 
 if($_GET['mode'] == "stopservice" and $_GET['service']) {
+	switch($_GET['service']) {
+		case 'miniupnpd':
+			/* can't just killbyname since we need to clear pf rules */
+			if(file_exists('/usr/local/etc/rc.d/miniupnpd.sh'))
+				mwexec('/usr/local/etc/rc.d/miniupnpd.sh stop');
+			break;		
+		default:
     stop_service($_GET['service']);
+			break;
+	}
     $savemsg = "{$_GET['service']} has been stopped.";
     sleep(5);
 }
@@ -189,6 +200,13 @@ if(isset($config['proxyarp']['proxyarpnet'])) {
 	unset($pconfig);
 }
 
+if($config['installedpackages']['miniupnpd']['config'][0]['enable']) {
+    $pconfig['name'] = "miniupnpd";
+    $pconfig['description'] = gettext("MiniUPnPd Service");
+    $services[] = $pconfig;
+    unset($pconfig);
+}
+
 if($services) {
 	foreach($services as $service) {
 		if(!$service['name']) continue;
@@ -233,4 +251,3 @@ if($services) {
 <?php include("fend.inc"); ?>
 </body>
 </html>
-

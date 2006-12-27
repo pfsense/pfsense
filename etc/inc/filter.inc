@@ -197,8 +197,8 @@ function filter_configure_sync() {
 		if(is_array($line_split))
 			$line_error = "The line in question reads [{$line_number}]: {$line_split[$line_number-1]}";
 		if($line_error and $line_number) {
-			file_notice("filter_load", "There where error(s) loading the rules: {$rules_error} {$line_error}", "Filter Reload", "");
-			log_error("There where error(s) loading the rules: {$rules_error} - {$line_error}");
+			file_notice("filter_load", "There were error(s) loading the rules: {$rules_error} {$line_error}", "Filter Reload", "");
+			log_error("There were error(s) loading the rules: {$rules_error} - {$line_error}");
 			update_filter_reload_status("There were error(s) loading the rules: {$rules_error} - {$line_error}");
 			return;
 		}

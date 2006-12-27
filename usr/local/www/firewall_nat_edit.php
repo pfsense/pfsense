@@ -198,12 +198,17 @@ if ($_POST) {
 				$filterent['destination']['port'] = $dstpfrom . "-" . $dstpto;
 
 			$filterent['descr'] = "NAT " . $_POST['descr'];
+			/*
+			 * Our firewall filter description may be no longer than
+			 * 63 characters, so don't let it be.
+			 */
+			$filterent['descr'] = substr("NAT " . $_POST['descr'], 0, 63);
 
 			$config['filter']['rule'][] = $filterent;
 
 			/*    auto add rule to external port 21 as well since we are using
 			 *    pftpx to help open up ports automatically
-             */
+			 */
 			if($_POST['endport'] == "21") {
 				$filterent = array();
 				$filterent['interface'] = $_POST['interface'];
@@ -225,6 +230,8 @@ if ($_POST) {
 					$filterent['destination']['port'] = $dstpfrom . "-" . $dstpto;
 
 				$filterent['descr'] = "NAT " . $_POST['descr'];
+				/* See comment above */
+				$filterent['descr'] = substr("NAT " . $_POST['descr'], 0, 63);
 
 				$config['filter']['rule'][] = $filterent;
 

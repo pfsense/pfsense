@@ -1672,17 +1672,17 @@ function cleanup_opt_interfaces_after_removal($opt_interface_num) {
 	fclose($fd);
 	$config = parse_config(true);
 	/* loop through and delete old rules */
-	$num_rules = array_count($config['filter']['rule']);
+	$num_rules = array_count_values($config['filter']['rule']);
 	for($x = $num_rules; $x > 0; $x--) {
 		if($config['filter']['rule'][$x]['interface'] == "optXXXX")
 		 	unset($config['filter']['rule'][$x]['interface']);
 	}
-	$num_rules = array_count($config['nat']['advancedoutbound']['rule']);
+	$num_rules = array_count_values($config['nat']['advancedoutbound']['rule']);
 	for($x = $num_rules; $x > 0; $x--) {
 		if($config['nat']['advancedoutbound']['rule'][$x]['interface'] == "optXXXX")
 		 	unset($config['nat']['advancedoutbound']['rule'][$x]['interface']);
 	}
-	$num_rules = array_count($config['nat']['rule']);
+	$num_rules = array_count_values($config['nat']['rule']);
 	for($x = $num_rules; $x > 0; $x--) {
 		if($config['nat']['rule'][$x]['interface'] == "optXXXX")
 		 	unset($config['nat']['rule'][$x]['interface']);

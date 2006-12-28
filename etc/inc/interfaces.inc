@@ -744,7 +744,7 @@ function kill_wpasupplicant($interface) {
 function find_dhclient_process($interface) {
 	if(filter_translate_type_to_real_interface($interface) <> "")
         	$realinterface = filter_translate_type_to_real_interface($interface);
-	$pid = `/usr/bin/pgrep -f "dhclient: {$realinterface}(\$| .*)"`;
+	$pid = `ps awwwux | grep dhclient | grep -v grep | grep {$realinterface} | awk '{ print \$2 }'`;
 	return $pid;
 }
 

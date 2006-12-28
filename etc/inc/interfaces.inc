@@ -742,8 +742,9 @@ function kill_wpasupplicant($interface) {
 }
 
 function find_dhclient_process($interface) {
-	$interface = convert_friendly_interface_to_real_interface_name($interface);
-	$pid = exec("/bin/ps awwux | /usr/bin/grep dhclient | /usr/bin/grep -v grep | /usr/bin/grep {$interface} | /usr/bin/awk '{ print \$2 }'");
+	if(filter_translate_type_to_real_interface($interface) <> "")
+        	$realinterface = filter_translate_type_to_real_interface($interface);
+	$pid = `/usr/bin/pgrep -f "dhclient: {$realinterface}(\$| .*)"`;
 	return $pid;
 }
 
@@ -756,9 +757,7 @@ function interfaces_wan_configure() {
 		mute_kernel_msgs();
 
 		/* find dhclient process for wan and kill it */
-		$dhclient_pid = find_dhclient_process("wan");
-		if($dhclient_pid)
-			mwexec("kill {$dhclient_pid}");
+		killbypid(find_dhclient_process("wan"));
 
 		/* remove wanup file if it exists */
 		unlink_if_exists("{$g['tmp_path']}/wanup");
@@ -947,12 +946,19 @@ function interfaces_opt_dhcp_configure($interface) {
 		return 1;
 	}
 
+	if ($optcfg['dhcphostname']) {
+		$dhclientconf_hostname = "send dhcp-client-identifier \"{$optcfg['dhcphostname']}\";\n";
+		$dhclientconf_hostname .= "\tsend host-name \"{$optcfg['dhcphostname']}\";\n";
+	} else {
+		$dhclientconf_hostname = "";
+	}
+
  	$dhclientconf = "";
 
 	$dhclientconf .= <<<EOD
-send dhcp-client-identifier "{$optcfg['dhcphostname']}";
 interface "{$optif}" {
-	send host-name "{$optcfg['dhcphostname']}";
+	script "/sbin/dhclient-script";
+	{$dhclientconf_hostname}
 }
 
 EOD;
@@ -964,7 +970,7 @@ EOD;
         mwexec("/sbin/ifconfig {$optif} up");
 
         /* fire up dhclient */
-        mwexec("/sbin/dhclient -cf  {$g['varetc_path']}/dhclient_{$optif}.conf -sf /sbin/dhclient-script {$optif}");
+        mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$optif}.conf {$optif}");
 
 	return 0;
 }
@@ -984,12 +990,19 @@ function interfaces_dhcp_configure($interface) {
 		return 1;
 	}
 
+	if ($optcfg['dhcphostname']) {
+		$dhclientconf_hostname =  "send dhcp-client-identifier \"{$optcfg['dhcphostname']}\";\n";
+		$dhclientconf_hostname .= "\tsend host-name \"{$optcfg['dhcphostname']}\";\n";
+	} else {
+		$dhclientconf_hostname = "";
+	}
+
  	$dhclientconf = "";
 
 	$dhclientconf .= <<<EOD
-send dhcp-client-identifier "{$optcfg['dhcphostname']}";
 interface "{$realinterface}" {
-	 send host-name "{$optcfg['dhcphostname']}";
+	{$dhclientconf_hostname}
+	script "/sbin/dhclient-script";
 }
 
 EOD;
@@ -1003,10 +1016,10 @@ EOD;
         mwexec("/sbin/ifconfig {$optif} up");
 
         /* fire up dhclient */
-        mwexec("/sbin/dhclient -cf {$g['varetc_path']}/dhclient_{$optif}.conf -sf /sbin/dhclient-script  {$optif} ");
+        mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$optif}.conf {$optif} >/tmp/{$optif}_output >/tmp/{$optif}_error_output");
 
 	$fout = fopen("/tmp/ifconfig_{$optif}","w");
-	fwrite($fout, "/sbin/dhclient -cf {$g['varetc_path']}/dhclient_{$optif}.conf -sf /sbin/dhclient-script {$optif}");
+	fwrite($fout, "/sbin/dhclient -c {$g['varetc_path']}/dhclient_{$optif}.conf {$optif}");
 	fclose($fout);
 
 	return 0;
@@ -1024,12 +1037,19 @@ function interfaces_wan_dhcp_configure() {
 		return 1;
 	}
 
+	if ($wancfg['dhcphostname']) {
+		$dhclientconf_hostname = "send dhcp-client-identifier \"{$wancfg['dhcphostname']}\";\n";
+		$dhclientconf_hostname .= "\tsend host-name \"{$wancfg['dhcphostname']}\";\n";
+	} else {
+		$dhclientconf_hostname = "";
+	}
+
  	$dhclientconf = "";
 
 	$dhclientconf .= <<<EOD
-send dhcp-client-identifier "{$wancfg['dhcphostname']}";
 interface "{$wancfg['if']}" {
-    send host-name "{$wancfg['dhcphostname']}";
+	{$dhclientconf_hostname}
+	script "/sbin/dhclient-script";
 }
 
 EOD;
@@ -1043,29 +1063,32 @@ EOD;
         mwexec("/sbin/ifconfig {$wanif} up");
 
         /* fire up dhclient */
-        mwexec("/sbin/dhclient -cf {$g['varetc_path']}/dhclient_wan.conf -sf /sbin/dhclient-script {$wanif}");
+        mwexec("/sbin/dhclient -c {$g['varetc_path']}/dhclient_wan.conf {$wanif} >/tmp/{$wanif}_output >/tmp/{$wanif}_error_output");
 
 	$fout = fopen("/tmp/ifconfig_{$wanif}","w");
-	fwrite($fout, "/sbin/dhclient -cf {$g['varetc_path']}/dhclient_wan.conf -sf /sbin/dhclient-script {$wanif}");
+	fwrite($fout, "/sbin/dhclient -c {$g['varetc_path']}/dhclient_wan.conf {$wanif}");
 	fclose($fout);
 
 	return 0;
 }
 
 function interfaces_wan_dhcp_down() {
-	interfaces_dhcp_down("wan");
+	global $config;
+	$wancfg = $config['interfaces']['wan'];
+	$wanif = $wancfg['if'];
+	mwexec("/sbin/ifconfig {$wanif} delete");
+	sleep(1);
 }
 
 function interfaces_dhcp_down($interface) {
-	global $config, $g;
-	$interface = convert_friendly_interface_to_real_interface_name($interface);
-	$dhclient_pid = find_dhclient_process($interface);
-	if($dhclient_pid)
-		exec("kill {$dhclient_pid}");
-	log_error("deleting interface $interface");
-	sleep(2);
-	exec("/sbin/ifconfig {$interface} delete");
-	exec("/sbin/ifconfig {$interface} down");
+	global $config;
+	if(filter_translate_type_to_real_interface($interface) <> "")
+		$realinterface = filter_translate_type_to_real_interface($interface);
+	mwexec("/sbin/ifconfig {$realinterface} down");
+	sleep(1);
+	$pid = find_dhclient_process($interface);
+	if($pid)
+		mwexec("kill {$pid}");
 }
 
 function interfaces_dhcp_up($interface) {

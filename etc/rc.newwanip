@@ -112,6 +112,12 @@ enable_rrd_graphing();
 /* restart packages */
 exec("/etc/rc.start_packages");
 
+/* reload slbd */
+/* if ($config['load_balancer']['lbpool']['type'] == "gateway") */
+slbd_configure();
+log_error("Configuring slbd");
+                                        
+
 return 0;
 
 ?>

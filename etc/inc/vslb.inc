@@ -112,12 +112,12 @@ function slbd_configure() {
 				$lbsvr_split=split("\|", $lbsvr);
 				$svrtxt .= "\t:{$svrcnt}={$lbsvr_split[1]}:\\\n";
 				$svrcnt++;
+
 				/* Add static routes to the monitor IPs */
-				$next_hop = exec_command("/sbin/route -n get {$lbsvr_split[1]} | /usr/bin/grep gateway |/usr/bin/awk '{ print \$2; };'");
-				if ($next_hop != $lbsvr_split[0]) {
-					mwexec("/sbin/route delete -host {$lbsvr_split[1]} 1>/dev/null 2>&1");
-					mwexec("/sbin/route add -host {$lbsvr_split[1]} {$lbsvr_split[0]} 1> /dev/null 2>&1");
-				}
+				$int = convert_friendly_interface_to_real_interface_name($lbsvr_split[0]);
+				$gateway = get_interface_gateway($int);
+				mwexec("/sbin/route delete -host {$lbsvr_split[1]} 1>/dev/null 2>&1");
+				mwexec("/sbin/route add -host {$lbsvr_split[1]} {$gateway} 1> /dev/null 2>&1");
 			}
 			$slbdconf .= "\t:service-port=666:\\\n";
 			$slbdconf .= "\t:method=round-robin:\\\n";

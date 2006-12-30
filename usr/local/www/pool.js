@@ -32,10 +32,16 @@
  */
 function AddServerToPool(form) {
 
+    var IntOrIp
 	var theSel = form['servers[]'];
-	for(i=theSel.length-1; i>=0; i--)
+	if (form.type.selectedIndex == 0)
+	    IntOrIp = form.ipaddr;
+	else
+	    IntOrIp = form.interface;
+	    
+	for(i = theSel.length - 1; i >= 0; i--)
 	{
-		if(theSel.options[i].value == form.ipaddr.value) {
+		if(theSel.options[i].value == IntOrIp.value) {
 			alert("IP Address Already In List");
 			return true;
 		}
@@ -48,11 +54,11 @@ function AddServerToPool(form) {
 		}
 	}
 
-	var ServerPort=form.ipaddr.value;
+	var ServerPort = IntOrIp.value;
 	if(form.type.selectedIndex == 0)
-		var ServerPort=form.ipaddr.value;
+		var ServerPort = IntOrIp.value;
 	else
-		var ServerPort=form.ipaddr.value + "|" + form.monitorip.value;
+		var ServerPort = IntOrIp.value + "|" + form.monitorip.value;
 	form['servers[]'].options[form['servers[]'].options.length] = new Option(ServerPort,ServerPort);
 }
 

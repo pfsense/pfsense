@@ -31,7 +31,7 @@
 
 require("guiconfig.inc");
 if (!is_array($config['load_balancer']['lbpool'])) {
-        $config['load_balancer']['lbpool'] = array();
+	$config['load_balancer']['lbpool'] = array();
 }
 $a_pool = &$config['load_balancer']['lbpool'];
 
@@ -84,8 +84,8 @@ if ($_POST) {
 					$input_errors[] = "{$svrent} is not a valid IP address.";
 				} else {
 					$split_ip = split("\|", $svrent);
-					if(!is_ipaddr($split_ip[0]))
-						$input_errors[] = "{$split_ip[0]} is not a valid IP address.";
+					/* if(!is_ipaddr($split_ip[0]))
+						$input_errors[] = "{$split_ip[0]} is not a valid IP address."; */
 					if(!is_ipaddr($split_ip[1]))
 						$input_errors[] = "{$split_ip[1]} is not a valid IP address.";
 				}
@@ -99,12 +99,14 @@ if ($_POST) {
 		for ($j = 1; isset ($config['interfaces']['opt' . $j]); $j++) {
 			$ifdescrs['opt' . $j] = "opt" . $j;
 		}
-		foreach($pconfig['servers'] as $svrent) {
-			$split_ip = split("\|", $svrent);
-			foreach($ifdescrs as $iface) {
-				if($config['interfaces'][$iface]['ipaddr'] <> "") 
-					if($config['interfaces'][$iface]['ipaddr'] == $split_ip[0]) 
-						$input_errors[] = "{$split_ip[0]} is currently being referenced by an interface ip address on {$iface}.";
+		if(is_array($pconfig['servers'])) {
+			foreach($pconfig['servers'] as $svrent) {
+				$split_ip = split("\|", $svrent);
+				foreach($ifdescrs as $iface) {
+					if($config['interfaces'][$iface]['ipaddr'] <> "") 
+						if($config['interfaces'][$iface]['ipaddr'] == $split_ip[0]) 
+							$input_errors[] = "{$split_ip[0]} is currently being referenced by an interface ip address on {$iface}.";
+				}
 			}
 		}
 	}
@@ -132,7 +134,7 @@ if ($_POST) {
 		update_if_changed("port", $poolent['port'], $_POST['port']);
 		update_if_changed("servers", $poolent['servers'], $_POST['servers']);
 		update_if_changed("monitor", $poolent['monitor'], $_POST['monitor']);
-	
+
 		if (isset($id) && $a_pool[$id]) {
 			/* modify all virtual servers with this name */
 			for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
@@ -142,8 +144,7 @@ if ($_POST) {
 			$a_pool[$id] = $poolent;
 		} else
 			$a_pool[] = $poolent;
-
-
+		
 		if ($changecount > 0) {
 			/* Mark pool dirty */
 			conf_mount_rw();
@@ -156,6 +157,116 @@ if ($_POST) {
 	}
 }
 
+function get_interface_info($ifdescr) {
+	
+	global $config, $linkinfo, $netstatrninfo;
+	
+	$ifinfo = array();
+	
+	/* find out interface name */
+	$ifinfo['hwif'] = $config['interfaces'][$ifdescr]['if'];
+	if ($ifdescr == "wan")
+		$ifinfo['if'] = get_real_wan_interface();
+	else
+		$ifinfo['if'] = $ifinfo['hwif'];
+	
+	/* run netstat to determine link info */
+	
+	unset($linkinfo);
+	exec("/usr/bin/netstat -I " . $ifinfo['hwif'] . " -nWb -f link", $linkinfo);
+	$linkinfo = preg_split("/\s+/", $linkinfo[1]);
+	if (preg_match("/\*$/", $linkinfo[0])) {
+		$ifinfo['status'] = "down";
+	} else {
+		$ifinfo['status'] = "up";
+	}
+	
+	/* PPPoE interface? -> get status from virtual interface */
+	if (($ifdescr == "wan") && ($config['interfaces']['wan']['ipaddr'] == "pppoe")) {
+		unset($linkinfo);
+		exec("/usr/bin/netstat -I " . $ifinfo['if'] . " -nWb -f link", $linkinfo);
+		$linkinfo = preg_split("/\s+/", $linkinfo[1]);
+		if (preg_match("/\*$/", $linkinfo[0])) {
+			$ifinfo['pppoelink'] = "down";
+		} else {
+			/* get PPPoE link status for dial on demand */
+			$ifconfiginfo = "";
+			unset($ifconfiginfo);
+			exec("/sbin/ifconfig " . $ifinfo['if'], $ifconfiginfo);
+			
+			$ifinfo['pppoelink'] = "up";
+			
+			foreach ($ifconfiginfo as $ici) {
+				if (strpos($ici, 'LINK0') !== false)
+					$ifinfo['pppoelink'] = "down";
+			}
+		}
+	}
+	
+	/* PPTP interface? -> get status from virtual interface */
+	if (($ifdescr == "wan") && ($config['interfaces']['wan']['ipaddr'] == "pptp")) {
+		unset($linkinfo);
+		exec("/usr/bin/netstat -I " . $ifinfo['if'] . " -nWb -f link", $linkinfo);
+		$linkinfo = preg_split("/\s+/", $linkinfo[1]);
+		if (preg_match("/\*$/", $linkinfo[0])) {
+			$ifinfo['pptplink'] = "down";
+		} else {
+			/* get PPTP link status for dial on demand */
+			unset($ifconfiginfo);
+			exec("/sbin/ifconfig " . $ifinfo['if'], $ifconfiginfo);
+			
+			$ifinfo['pptplink'] = "up";
+			
+			foreach ($ifconfiginfo as $ici) {
+				if (strpos($ici, 'LINK0') !== false)
+					$ifinfo['pptplink'] = "down";
+			}
+		}
+	}
+	
+	if ($ifinfo['status'] == "up") {
+		/* try to determine media with ifconfig */
+		$matches = "";
+		
+		if ($ifinfo['pppoelink'] != "down" && $ifinfo['pptplink'] != "down") {
+			/* try to determine IP address and netmask with ifconfig */
+			unset($ifconfiginfo);
+			exec("/sbin/ifconfig " . $ifinfo['if'], $ifconfiginfo);
+			
+			foreach ($ifconfiginfo as $ici) {
+				if (preg_match("/inet (\S+)/", $ici, $matches)) {
+					$ifinfo['ipaddr'] = $matches[1];
+				}
+				if (preg_match("/netmask (\S+)/", $ici, $matches)) {
+					if (preg_match("/^0x/", $matches[1]))
+						$ifinfo['subnet'] = long2ip(hexdec($matches[1]));
+				}
+			}
+			
+			if ($ifdescr == "wan") {
+				/* run netstat to determine the default gateway */
+				unset($netstatrninfo);
+				exec("/usr/bin/netstat -rnf inet", $netstatrninfo);
+				
+				foreach ($netstatrninfo as $nsr) {
+					if (preg_match("/^default\s*(\S+)/", $nsr, $matches)) {
+						$ifinfo['gateway'] = $matches[1];
+					}
+				}
+			} else {
+				/* deterimine interface gateway */
+				$int = convert_friendly_interface_to_real_interface_name($ifdescr);
+				$gw = get_interface_gateway($int);
+				if($gw)
+					$ifinfo['gateway'] = $gw;
+			}
+		}
+	}
+	
+	return $ifinfo;
+}
+
+
 $pgtitle = "Load Balancer: Pool: Edit";
 include("head.inc");
 
@@ -165,40 +276,78 @@ include("head.inc");
 <script type="text/javascript" language="javascript" src="pool.js"></script>
 
 <script language="javascript">
+function gateway_change()
+{
+	if (document.iform.gatewayip.options[document.iform.gatewayip.selectedIndex].value == "other")
+	{
+		//document.iform.monitorip.value = "";
+		document.iform.monitorip.style.display = "block";
+	}
+	else
+	{
+		document.iform.monitorip.value = document.iform.gatewayip.options[document.iform.gatewayip.selectedIndex].value;
+		document.iform.monitorip.style.display = "none";
+	}
+	
+}
+
 function type_change(enable_change) {
 	switch (document.iform.type.selectedIndex) {
 		case 0:
+			// Server;
 			//clearcombo();
+			document.iform.gatewayip.disabled = 1;
+			document.iform.ipaddr.style.display = "block";
+			document.iform.interface.style.display = "none";
 			document.iform.serversSelect.clear;
 			document.iform.monitorip.disabled = 1;
-			monitorip_text = document.getElementById("monitorip_text");
+			var monitorIpNote = document.getElementById("monitorIpNote");
+			monitorIpNote.disabled = 1;
+			var monitorip_text = document.getElementById("monitorip_text");
 			monitorip_text.className = "vncell";
-			monitorport_text = document.getElementById("monitorport_text");
+			monitorip_text.disabled = 1;
+			var monitorport_text = document.getElementById("monitorport_text");
 			monitorport_text.className = "vncellreq";
-			monitorport_desc = document.getElementById("monitorport_desc");
-			monitorport_desc.innerHTML = "This is the port your servers are listening too.";
+			monitorport_text.disabled = 0;
+			document.getElementById("monitorport_desc").disabled = 0;
 			document.iform.monitorip.value = "";
 			document.iform.port.disabled = 0;
 			document.iform.monitor.selectedIndex = 0;
 			document.iform.monitor.disabled = 0;
+			var interfacename_text = document.getElementById("interfacename_text");
+			interfacename_text.innerHTML = "Server IP Address";
+			var interfacename_desc = document.getElementById("interfacename_desc");
+			interfacename_desc.innerHTML = "Enter the IP Address of the inbound load balanced server here.";
 			break;
 		case 1:
+			// Gateway;
 			//clearcombo();
+			document.iform.gatewayip.disabled = 0;
+			document.iform.ipaddr.style.display = "none";
+			document.iform.interface.style.display = "block";
 			document.iform.monitorip.disabled = 0;
 			document.iform.monitorip.value = "";
-			monitorip_text = document.getElementById("monitorip_text");
+			var monitorIpNote = document.getElementById("monitorIpNote");
+			monitorIpNote.disabled = 0;
+			var monitorip_text = document.getElementById("monitorip_text");
 			monitorip_text.className = "vncellreq";
-			monitorport_text = document.getElementById("monitorport_text");
+			monitorip_text.disabled = 0;
+			var monitorport_text = document.getElementById("monitorport_text");
 			monitorport_text.className = "vncell";
-			monitorport_desc = document.getElementById("monitorport_desc");
-			monitorport_desc.innerHTML = "";
+			monitorport_text.disabled = 1;
+			document.getElementById("monitorport_desc").disabled = 1;
 			document.iform.port.disabled = 1;
-			/* set to ICMP */
+			// set to ICMP
 			document.iform.monitor.selectedIndex = 1;
 			document.iform.monitor.disabled = 1;
+			var interfacename_text = document.getElementById("interfacename_text");
+			interfacename_text.innerHTML = "Interface Name";
+			var interfacename_desc = document.getElementById("interfacename_desc");
+			interfacename_desc.innerHTML = "Select the Interface to be used for outbound load balancing.";
 			break;
 	}
 }
+
 function clearcombo(){
   for (var i=document.iform.serversSelect.options.length-1; i>=0; i--){
     document.iform.serversSelect.options[i] = null;
@@ -239,7 +388,8 @@ function clearcombo(){
 		<tr align="left">
 			<td width="22%" valign="top" id="monitorport_text" class="vncellreq">Port</td>
 			<td width="78%" class="vtable" colspan="2">
-				<input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16"><div id="monitorport_desc"></div>
+				<input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16"><br>
+				<div id="monitorport_desc">This is the port your servers are listening too.</div>
 			</td>
 		</tr>
 		<tr align="left">
@@ -255,14 +405,56 @@ function clearcombo(){
 		<tr align="left">
 			<td width="22%" valign="top" id="monitorip_text" class="vncell">Monitor IP</td>
 			<td width="78%" class="vtable" colspan="2">
-				<input size="16" id="monitorip" name="monitorip" value="<?php echo $pconfig['monitorip']; ?>">
+				<div style="float: none;">
+				<select id="gatewayip" name="gatewayip" onchange="gateway_change();" style="float: left;">
+<?php
+					$interfaces = array('wan' => 'WAN');
+					for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+						$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+					}
+					foreach ($interfaces as $iface => $ifacename) {
+						$ifinfo = get_interface_info($iface);
+						if(isset($ifinfo['gateway'])) { ?>
+							<option value="<?=$ifinfo['gateway'];?>"><?=htmlspecialchars($ifacename);?>'s Gateway</option>
+<?php						}
+					}
+					$dns_servers = get_dns_servers();
+					$iDns = 1;
+					foreach($dns_servers as $dns) { ?>
+						<option value="<?=$dns;?>">DNS Server <?=$iDns;?> (<?=$dns;?>)</option>
+<?php					$iDns++;
+					}
+					/*	Would be really nice to actually ping to get these live each time, 
+						as they mostly all support round-robin */?>
+						<option value="72.14.209.99">www.google.com</option>
+						<option value="209.191.93.52">www.yahoo.com</option>
+						<option value="69.147.83.33">www.freebsd.org</option>
+						<option value="other" selected>other</option>
+				</select>
+				<input size="16" id="monitorip" name="monitorip" value="<?php echo $pconfig['monitorip']; ?>" style="float: left;">
+				</div><br><br>
+				<div id="monitorIpNote" style="float: none;">Note: Some gateways have ping capability disabled.</div>
 			</td>
-		</tr>			
+		</tr>
 		<tr align="left">
-			<td width="22%" valign="top" class="vncellreq">IP</td>
-			<td width="78%" class="vtable">
-				<input name="ipaddr" type="text" size="16"> 
-				<input class="formbtn" type="button" name="button1" value="Add to pool" onclick="AddServerToPool(document.iform);">
+			<td width="22%" valign="top" class="vncellreq"><div id="interfacename_text"></div></td>
+			<td width="78%" class="vtable" colspan="2">
+				<input name="ipaddr" type="text" size="16" style="float: left;">
+				<select id="interface" name="interface" style="float: left; display: none;">
+<?php
+					$interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
+					for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+						$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+					}
+					foreach ($interfaces as $iface => $ifacename) {
+						$ifinfo = get_interface_info($iface);
+						if(isset($ifinfo['gateway'])) { ?>
+							<option value="<?=$iface;?>"><?=htmlspecialchars($ifacename);?></option>
+<?php 						}
+					} ?>
+				</select>
+				<input class="formbtn" type="button" name="button1" value="Add to pool" onclick="AddServerToPool(document.iform);"><br>
+				<div id="interfacename_desc"></div>
 			</td>
 		</tr>
 		<tr>
@@ -275,12 +467,12 @@ function clearcombo(){
 							<select id="serversSelect" name="servers[]" multiple="true" size="5">
 							
 <?php
-							if (is_array($pconfig['servers'])) {
-								foreach($pconfig['servers'] as $svrent) {
-									echo "    <option value=\"{$svrent}\">{$svrent}</option>\n";
-								}
-							}
-							echo "</select>";
+if (is_array($pconfig['servers'])) {
+	foreach($pconfig['servers'] as $svrent) {
+		echo "    <option value=\"{$svrent}\">{$svrent}</option>\n";
+	}
+}
+echo "</select>";
 ?>
 						</td>
 						<td valign="top">
@@ -292,7 +484,8 @@ function clearcombo(){
 			</td>
 		</tr>
 		<tr align="left">
-			<td colspan="2" align="center" align="left" valign="bottom">
+			<td width="22%" valign="top">&nbsp;</td>
+			<td width="78%">
 				<input name="Submit" type="submit" class="formbtn" value="Save" onClick="AllServers('serversSelect', true)">
 				<?php if (isset($id) && $a_pool[$id]): ?>
 				<input name="id" type="hidden" value="<?=$id;?>">
@@ -304,6 +497,7 @@ function clearcombo(){
 <br>
 <script language="javascript">
 	type_change();
+	gateway_change();
 </script>
 <?php include("fend.inc"); ?>
 </body>

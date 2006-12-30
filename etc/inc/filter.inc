@@ -1410,13 +1410,13 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				                                        foreach ($config['load_balancer']['lbpool'][$i]['servers'] as $lbsvr) {
                                 				                $lbsvr_split=split("\|", $lbsvr);
 										if ($lbsvr_split[1] == $server)
-											$gateway = $lbsvr_split[0];
+											/* deterimine interface gateway */
+											$int = convert_friendly_interface_to_real_interface_name($lbsvr_split[0]);
+											$gateway = get_interface_gateway($int);
 				                                        }
 								}
                                                                 if($foundlb == 1)
                                                                         $routeto .= ", ";
-                                                                /* determine interface from gateway address */
-                                                                $int = guess_interface_from_ip($gateway);
                                                                 $routeto .=  "( {$int} {$gateway} ) ";
                                                                 if($int == "") {
                                                                         $line = "# error resolving load balancing {$gateway}";

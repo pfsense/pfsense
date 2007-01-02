@@ -180,6 +180,7 @@ EOPP;
 		$ifcfg = $config['interfaces'][$dhcpif];
 
 		if (!isset($dhcpifconf['enable']) ||
+			($ifcfg['ipaddr'] == "dhcp") ||
 			(($dhcpif != "lan") &&
 			(!isset($ifcfg['enable']) || !$ifcfg['if'] || $ifcfg['bridge'])))
 			continue;

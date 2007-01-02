@@ -2023,7 +2023,14 @@ EOD;
 
 	/* allow access to DHCP server on optional interfaces */
 	foreach ($optcfg as $on => $oc) {
-		if (isset($config['dhcpd'][$on]['enable']) && (!$oc['bridge'])  ||
+		if (isset($config[interfaces][$on][ipaddr]) == "dhcp" ) {
+			$friendly_on = filter_get_opt_interface_descr($on);
+			$ipfrules .= <<<EOD
+
+# Not installing DHCP server firewall rules for $friendly_on which is configured for DHCP.
+
+EOD;
+		} elseif (isset($config['dhcpd'][$on]['enable']) && (!$oc['bridge'])  ||
 				($oc['bridge'] && isset($config['dhcpd'][$oc['bridge']]['enable']))) {
 
 				$friendly_on = filter_get_opt_interface_descr($on);

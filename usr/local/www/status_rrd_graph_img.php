@@ -155,7 +155,7 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 		--start -$seconds -e -$average \\
 		--vertical-label \"bits/sec\" \\
 		--title \"`hostname` - $prettydb - $interval\" \\
-		--height 100 --width 620 -x \"$scale\" \\
+		--height 200 --width 620 -x \"$scale\" \\
 		DEF:$curif-in_bytes=$rrddbpath$curdatabase:in:AVERAGE \\
 		DEF:$curif-out_bytes=$rrddbpath$curdatabase:out:AVERAGE \\
 		\"CDEF:$curif-in_bits=$curif-in_bytes,8,*\" \\
@@ -198,7 +198,7 @@ elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdat
 		--start -$seconds -e -$average \\
 		--vertical-label \"packets/sec\" \\
 		--title \"`hostname` - $prettydb - $interval\" \\
-		--height 100 --width 620 -x \"$scale\" \\
+		--height 200 --width 620 -x \"$scale\" \\
 		DEF:$curif-in_pps=$rrddbpath$curdatabase:in:AVERAGE \\
 		DEF:$curif-out_pps=$rrddbpath$curdatabase:out:AVERAGE \\
 		\"CDEF:$curif-out_pps_neg=$curif-out_pps,$multiplier,*\" \\
@@ -239,7 +239,7 @@ elseif((strstr($curdatabase, "-states.rrd")) && (file_exists("$rrddbpath$curdata
 		--start -$seconds -e -$average \\
 		--vertical-label \"states, ip\" \\
 		--title \"`hostname` - $prettydb - $interval\" \\
-		--height 100 --width 620 -x \"$scale\" \\
+		--height 200 --width 620 -x \"$scale\" \\
 		DEF:$curif-pfrate=$rrddbpath$curdatabase:pfrate:AVERAGE \\
 		DEF:$curif-pfstates=$rrddbpath$curdatabase:pfstates:AVERAGE \\
 		DEF:$curif-pfnat=$rrddbpath$curdatabase:pfnat:AVERAGE \\
@@ -292,7 +292,7 @@ elseif((strstr($curdatabase, "-processor.rrd")) && (file_exists("$rrddbpath$curd
 		--start -$seconds -e -$average \\
 		--vertical-label \"utilization, number\" \\
 		--title \"`hostname` - $prettydb - $interval\" \\
-		--height 100 --width 620 -x \"$scale\" \\
+		--height 200 --width 620 -x \"$scale\" \\
 		DEF:user=$rrddbpath$curdatabase:user:AVERAGE \\
 		DEF:nice=$rrddbpath$curdatabase:nice:AVERAGE \\
 		DEF:system=$rrddbpath$curdatabase:system:AVERAGE \\
@@ -388,7 +388,7 @@ elseif((strstr($curdatabase, "-queuesdrop.rrd")) && (file_exists("$rrddbpath$cur
 		--start -$seconds -e -$average \\
 		--vertical-label \"drops / sec\" \\
 		--title \"`hostname` - $prettydb - $interval\" \\
-		--height 150 --width 620 -x \"$scale\" \\";
+		--height 200 --width 620 -x \"$scale\" \\";
 		if (!is_array($config['shaper']['queue'])) {
 			$config['shaper']['queue'] = array();
 		}
@@ -433,7 +433,7 @@ elseif((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdat
 		--start -$seconds -e -$average \\
 		--title=\"Link quality last $interval for $curif\" \\
 		--vertical-label \"ms / %\" \\
-		--height 100 --width 620 \\
+		--height 200 --width 620 \\
 		-x \"$scale\" --lower-limit 0 \\
 		DEF:roundtrip=$rrddbpath$curdatabase:roundtrip:AVERAGE \\
 		DEF:loss=$rrddbpath$curdatabase:loss:AVERAGE \\
@@ -482,7 +482,7 @@ elseif((strstr($curdatabase, "spamd.rrd")) && (file_exists("$rrddbpath$curdataba
 		--start -$seconds -e -$average \\
 		--title=\"Spamd statistics for last $interval\" \\
 		--vertical-label=\"Conn / Time, sec.\" \\
-		--height 150 --width 620 --no-gridfit \\
+		--height 200 --width 620 --no-gridfit \\
 		-x \"$scale\" --lower-limit 0  \\
 		DEF:consmin=$rrddbpath$curdatabase:conn:MIN \\
 		DEF:consavg=$rrddbpath$curdatabase:conn:AVERAGE \\

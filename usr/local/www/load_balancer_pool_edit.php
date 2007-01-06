@@ -43,6 +43,7 @@ else
 if (isset($id) && $a_pool[$id]) {
 	$pconfig['monitorip'] = $a_pool[$id]['monitorip'];
 	$pconfig['type'] = $a_pool[$id]['type'];
+	$pconfig['behaviour'] = $a_pool[$id]['behaviour'];
 	$pconfig['name'] = $a_pool[$id]['name'];
 	$pconfig['desc'] = $a_pool[$id]['desc'];
 	$pconfig['port'] = $a_pool[$id]['port'];
@@ -60,7 +61,7 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	if($POST['type'] == "server") {
+	if($_POST['type'] == "server") {
 		$reqdfields = explode(" ", "name port monitor servers");
 		$reqdfieldsn = explode(",", "Name,Port,Monitor,Server List");
 	} else {
@@ -75,12 +76,12 @@ if ($_POST) {
 		if (($_POST['name'] == $config['load_balancer']['lbpool'][$i]['name']) && ($i != $id))
 			$input_errors[] = "This pool name has already been used.  Pool names must be unique.";
 	if (!is_port($_POST['port']))
-		if($POST['type'] == "server")
+		if($_POST['type'] == "server")
 			$input_errors[] = "The port must be an integer between 1 and 65535.";
 	if (is_array($_POST['servers'])) {
 		foreach($pconfig['servers'] as $svrent) {
 			if (!is_ipaddr($svrent)) {
-				if($POST['type'] == "server") {
+				if($_POST['type'] == "server") {
 					$input_errors[] = "{$svrent} is not a valid IP address.";
 				} else {
 					$split_ip = split("\|", $svrent);
@@ -111,9 +112,13 @@ if ($_POST) {
 		}
 	}
 
-	if($POST['type'] == "server") {
+	if($_POST['type'] == "server") {
 		if ($_POST['monitor'] != "TCP" && $_POST['monitor'] != "HTTP" && $_POST['monitor'] != "ICMP")
 			$input_errors[] = "Invalid monitor chosen.";
+	}
+
+	if(!isset($_POST['behaviour'])) {
+			$input_errors[] = "No pool behaviour chosen.";
 	}
 
 	if (!$input_errors) {
@@ -128,6 +133,7 @@ if ($_POST) {
 			mwexec("route delete {$poolent['monitorip']}");
 		
 		update_if_changed("type", $poolent['type'], $_POST['type']);
+		update_if_changed("behaviour", $poolent['behaviour'], $_POST['behaviour']);
 		update_if_changed("monitorip", $poolent['monitorip'], $_POST['monitorip']);
 		update_if_changed("name", $poolent['name'], $_POST['name']);
 		update_if_changed("description", $poolent['desc'], $_POST['desc']);
@@ -385,6 +391,17 @@ function clearcombo(){
 			</td>
 		</tr>
 		
+		<tr align="left">
+			<td width="22%" valign="top" class="vncellreq"><?=gettext("Behaviour");?></td>
+			<td width="78%" class="vtable" colspan="2">
+				<input type="radio" name="behaviour" id="behaviour" value="balance"<?php if($pconfig['behaviour'] == 
+"balance") echo " CHECKED"; ?>><?=gettext("Load Balancing");?><br>
+				<input type="radio" name="behaviour" id="behaviour" value="failover"<?php if($pconfig['behaviour'] == 
+"failover") echo " CHECKED"; ?>><?=gettext("Failover");?><br>
+				Load Balancing: both active. Failover order: top -> down.
+			</td>
+		</tr>
+
 		<tr align="left">
 			<td width="22%" valign="top" id="monitorport_text" class="vncellreq">Port</td>
 			<td width="78%" class="vtable" colspan="2">

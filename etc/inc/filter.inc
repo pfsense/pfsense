@@ -1402,6 +1402,14 @@ function generate_user_filter_rule($rule, $ngcounter) {
 								$lbs = $lb['servers'];
 							}
 
+							/* If we want failover we only return the first (top) server from the list 
+							 * and work our way down from there. This way we order the failover order.
+							 */
+							if($lb['behaviour'] == "failover") {
+								$firstsrv = $lbs[0];
+								$lbs = array("$firstsrv");
+							}
+
                                                         /* iterate through $lbs and setup items accordingly */
                                                         foreach($lbs as $server) {
 								if ($server == "")

@@ -76,7 +76,7 @@ if($old_ip) {
 vpn_ipsec_configure(true);
 
 /* start OpenVPN server & clients */
-openvpn_resync_all();
+exec("killall -HUP openvpn 2>/dev/null");
 
 /* regenerate resolv.conf if DNS overrides are allowed or the BigPond
    client is enabled */

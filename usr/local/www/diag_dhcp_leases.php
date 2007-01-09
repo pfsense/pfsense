@@ -44,8 +44,6 @@ include("head.inc");
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php
 
-flush();
-
 function leasecmp($a, $b) {
         return strcmp($a[$_GET['order']], $b[$_GET['order']]);
 }
@@ -55,132 +53,119 @@ function adjust_gmt($dt) {
         return strftime("%Y/%m/%d %H:%M:%S", $ts);
 }
 
-$fp = @fopen("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases","r");
-
-if ($fp):
-
-$return = array();
-
-while ($line = fgets($fp)) {
-	$matches = "";
-
-	// Sort out comments
-	// C-style comments not supported!
-	if (preg_match("/^\s*[\r|\n]/", $line, $matches[0]) ||
-				preg_match("/^([^\"#]*)#.*$/", $line, $matches[1]) ||
-				preg_match("/^([^\"]*)\/\/.*$/", $line, $matches[2]) ||
-				preg_match("/\s*#(.*)/", $line, $matches[3]) ||
-				preg_match("/\\\"\176/", $line, $matches[4])
-		) {
-		$line = "";
-		continue;
-	}
-
-	if (preg_match("/(.*)#(.*)/", $line, $matches))
-		$line = $matches[0];
-
-	// Tokenize lines
-	do {
-		if (preg_match("/^\s*\"([^\"]*)\"(.*)$/", $line, $matches)) {
-			$line = $matches[2];
-			$return[] = array($matches[1], 0);
-		} else if (preg_match("/^\s*([{};])(.*)$/", $line, $matches)) {
-			$line = $matches[2];
-			$return[] = array($matches[0], 1);
-		} else if (preg_match("/^\s*([^{}; \t]+)(.*)$/", $line, $matches)) {
-			$line = $matches[2];
-			$return[] = array($matches[1], 0);
-		} else
-			break;
-
-	} while($line);
-
-	$lines++;
+function remove_duplicate($array, $field)
+{
+  foreach ($array as $sub)
+   $cmp[] = $sub[$field];
+  $unique = array_unique($cmp);
+  foreach ($unique as $k => $rien)
+   $new[] = $array[$k];
+  return $new;
 }
 
-fclose($fp);
+$leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";
+$awk = "/usr/bin/awk";
+/* this pattern sticks comments into a single array item */
+$cleanpattern = "'{ gsub(\"#.*\", \"\");} { gsub(\";\", \"\"); print;}'";
+/* We then split the leases file by } */
+$splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i; printf \" }\\n\";}'";
 
+/* stuff the leases file in a proper format into a array by line */
+exec("cat {$leasesfile} | {$awk} {$cleanpattern} | {$awk} {$splitpattern}", $leases_content);
+$leases_count = count($leases_content);
+
+$pools = array();
 $leases = array();
 $i = 0;
 
 // Put everything together again
-while ($data = array_shift($return)) {
-	if ($data[0] == "next") {
-		$d = array_shift($return);
-	}
-	if ($data[0] == "lease") {
-		$d = array_shift($return);
-		$leases[$i]['ip'] = $d[0];
-		$leases[$i]['type'] = "dynamic";
-	}
-	if ($data[0] == "client-hostname") {
-		$d = array_shift($return);
-		if($d[0] <> "") {
-			$leases[$i]['hostname'] = $d[0];
-		} else {
-			if(gethostbyaddr($leases[$i]['ip']) <> "") {
-				$leases[$i]['hostname'] = gethostbyaddr($leases[$i]['ip']);
-			}
+while($i < $leases_count) {
+	/* split the line by space */
+	$data = explode(" ", $leases_content[$i]);
+	/* walk the fields */
+	$f = 0;
+	$fcount = count($data);
+	while($f < $fcount) {
+		if ($data[$f] == "lease") {
+			$leases[$i]['ip'] = $data[$f+1];
+			$leases[$i]['type'] = "dynamic";
 		}
-	}	
-	if ($data[0] == "hardware") {
-		$d = array_shift($return);
-		if ($d[0] == "ethernet") {
-			$d = array_shift($return);
-			$leases[$i]['mac'] = $d[0];
-			$online = exec("/usr/sbin/arp -an |/usr/bin/grep {$d[0]}| grep {$leases[$i]['ip']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
-			if ($online == 1) {
-				$leases[$i]['online'] = 'online';
+		if ($data[$f] == "failover") {
+			$pools[$i]['name'] = $data[$f+2];
+			$pools[$i]['mystate'] = $data[$f+7];
+			$pools[$i]['peerstate'] = $data[$f+14];
+			$pools[$i]['mydate'] = $data[$f+10];
+			$pools[$i]['mydate'] .= " " . $data[$f+11];
+			$pools[$i]['peerdate'] = $data[$f+17];
+			$pools[$i]['peerdate'] .= " " . $data[$f+18];
+		}
+		if ($data[$f] == "client-hostname") {
+			if($data[$f] <> "") {
+				$leases[$i]['hostname'] = $data[$f+1];
 			} else {
-				$leases[$i]['online'] = 'offline';
+				$hostname = gethostbyaddr($leases[$i]['ip']);
+				if($hostname <> "") {
+					$leases[$i]['hostname'] = $hostname;
+				}
 			}
-		}
-	} else if ($data[0] == "starts") {
-		$d = array_shift($return);
-		$d = array_shift($return);
-		$leases[$i]['start'] = $d[0];
-		$d = array_shift($return);
-		$leases[$i]['start'] .= " " . $d[0];
-	} else if ($data[0] == "ends") {
-		$d = array_shift($return);
-		$d = array_shift($return);
-		$leases[$i]['end'] = $d[0];
-		$d = array_shift($return);
-		$leases[$i]['end'] .= " " . $d[0];
-	} else if ($data[0] == "binding") {
-		$d = array_shift($return);
-		if ($d[0] == "state") {
-			$d = array_shift($return);
-			switch($d[0]) {
-				case 'active':
-					$leases[$i]['act'] = 'active';
-					break;
-				case 'free':
-					$leases[$i]['act'] = 'expired';
-					break;
-				case 'backup':
-					$leases[$i]['act'] = 'reserved';	
+		}	
+		if ($data[$f] == "hardware") {
+			if ($data[$f+1] == "ethernet") {
+				$leases[$i]['mac'] = $data[$f+2];
+				/* check if it's online */
+				$online = exec("/usr/sbin/arp -an |/usr/bin/grep {$d[0]}| grep {$leases[$i]['ip']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
+				if ($online == 1) {
+					$leases[$i]['online'] = 'online';
+				} else {
 					$leases[$i]['online'] = 'offline';
-					break;
+				}
 			}
-		}
-	} else if (($data[0] == "}") && ($data[1] == 1)) {		// End of group
-
-		//updated leases are appended to the end of the lease file. if we aren't
-		//showing everything just show the most current lease in the list
-		if(!$_GET['all']) {
-			$l = $leases[$i]['ip'];
-			for($k = 0; $k < $i; $k++) {
-				if($leases[$k]['ip'] == $l) {
-					array_splice($leases, $k, 1);
-					--$i;
-					break;
+		} else if ($data[$f] == "starts") {
+			$leases[$i]['start'] = $data[$f+2];
+			$leases[$i]['start'] .= " " . $data[$f+3];
+		} else if ($data[$f] == "ends") {
+			$leases[$i]['end'] = $data[$f+2];
+			$leases[$i]['end'] .= " " . $data[$f+3];
+		} else if ($data[$f] == "binding") {
+			if ($data[$f+1] == "state") {
+				switch($data[$f+2]) {
+					case 'active':
+						$leases[$i]['act'] = 'active';
+						break;
+					case 'free':
+						$leases[$i]['act'] = 'expired';
+						break;
+					case 'backup':
+						$leases[$i]['act'] = 'reserved';	
+						$leases[$i]['online'] = 'offline';
+						break;
+				}
+			}
+		} elseif (($data[$f] == "}") && ($data[1] == 1)) {
+			// End of group
+			//updated leases are appended to the end of the lease file. if we aren't
+			//showing everything just show the most current lease in the list
+			if(!$_GET['all']) {
+				$l = $leases[$i]['ip'];
+				for($k = 0; $k < $i; $k++) {
+					if($leases[$k]['ip'] == $l) {
+						array_splice($leases, $k, 1);
+						--$i;
+						break;
+						}
 				}
 			}
 		}
-		$i++;
+		$f++;
 	}
+	$i++;
 }
+
+/* remove duplicate items by mac address */
+$leases = remove_duplicate($leases,"mac");
+$pools = remove_duplicate($pools,"name");
+asort($pools);
+
 foreach($config['interfaces'] as $ifname => $ifarr) {
 	if (is_array($config['dhcpd'][$ifname]['staticmap'])) {
 		foreach($config['dhcpd'][$ifname]['staticmap'] as $static) {
@@ -206,7 +191,44 @@ foreach($config['interfaces'] as $ifname => $ifarr) {
 
 if ($_GET['order'])
 	usort($leases, "leasecmp");
+
 ?>
+
+<?php
+/* only print pool status when we have one */
+if(count($pools) > 0) {
+?>
+<table class="sortable" id="sortabletable" name="sortabletable" width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td class="listhdrr">Failover Group</a></td>
+    <td class="listhdrr">My State</a></td>
+    <td class="listhdrr">Since</a></td>
+    <td class="listhdrr">Peer State</a></td>
+    <td class="listhdrr">Since</a></td>
+  </tr>
+<?php
+foreach ($pools as $data) {
+	echo "<tr>\n";
+	echo "<td class=\"listlr\">{$fspans}{$data['name']}{$fspane}&nbsp;</td>\n";
+	echo "<td class=\"listr\">{$fspans}{$data['mystate']}{$fspane}&nbsp;</td>\n";
+	echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['mydate']) . "{$fspane}&nbsp;</td>\n";
+	echo "<td class=\"listr\">{$fspans}{$data['peerstate']}{$fspane}&nbsp;</td>\n";
+	echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['peerdate']) . "{$fspane}&nbsp;</td>\n";
+	echo "<td class=\"list\" valign=\"middle\" width=\"17\">&nbsp;</td>\n";
+	echo "<td class=\"list\" valign=\"middle\" width=\"17\">&nbsp;</td>\n";
+	echo "</tr>\n";
+}
+
+?>
+</table>
+
+<?php
+/* only print pool status when we have one */
+}
+?>
+
+<p>
+
 <table class="sortable" id="sortabletable" name="sortabletable" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td class="listhdrr"><a href="?all=<?=$_GET['all'];?>&order=ip">IP address</a></td>
@@ -275,6 +297,7 @@ foreach ($leases as $data) {
                 echo "</tr>\n";
 	}
 }
+
 ?>
 </table>
 <p>
@@ -288,7 +311,7 @@ foreach ($leases as $data) {
 <input type="submit" class="formbtn" value="Show all configured leases">
 <?php endif; ?>
 </form>
-<?php else: ?>
+<?php if($leases == 0): ?>
 <p><strong>No leases file found. Is the DHCP server active?</strong></p>
 <?php endif; ?>
 

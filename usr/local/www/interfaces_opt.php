@@ -93,6 +93,7 @@ if ($_POST) {
 			            if($svr[1] == $pconfig['gateway'])  {
 			            		$_POST['gateway']  = $pconfig['gateway'];
 			            		$input_errors[] = "Cannot change {$svr[1]} gateway.  It is currently referenced by the load balancer pools.";
+			            		break;
 			            }
 					}
 				}
@@ -100,7 +101,8 @@ if ($_POST) {
 			foreach($config['filter']['rule'] as $rule) {
 				if($rule['gateway'] == $pconfig['gateway']) {
 	            		$_POST['gateway']  = $pconfig['gateway'];
-	            		$input_errors[] = "Cannot change {$svr[1]} gateway.  It is currently referenced by the filter rules via policy based routing.";
+	            		$input_errors[] = "Cannot change {$_POST['gateway']} gateway.  It is currently referenced by the filter rules via policy based routing.";
+	            		break;
 				}
 			}
 		}

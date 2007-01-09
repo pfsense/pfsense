@@ -99,8 +99,7 @@ if ($_POST) {
 				}
 			}
 			foreach($config['filter']['rule'] as $rule) {
-				if($rule['gateway'] == $pconfig['gateway']) {
-	            		$_POST['gateway']  = $pconfig['gateway'];
+				if($rule['gateway'] == $_POST['gateway']) {
 	            		$input_errors[] = "Cannot change {$_POST['gateway']} gateway.  It is currently referenced by the filter rules via policy based routing.";
 	            		break;
 				}

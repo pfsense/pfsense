@@ -162,9 +162,13 @@ while($i < $leases_count) {
 }
 
 /* remove duplicate items by mac address */
-$leases = remove_duplicate($leases,"mac");
-$pools = remove_duplicate($pools,"name");
-asort($pools);
+if(count($leases) > 0) {
+	$leases = remove_duplicate($leases,"mac");
+}
+if(count($pools) > 0) {
+	$pools = remove_duplicate($pools,"name");
+	asort($pools);
+}
 
 foreach($config['interfaces'] as $ifname => $ifarr) {
 	if (is_array($config['dhcpd'][$ifname]['staticmap'])) {

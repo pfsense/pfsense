@@ -1425,10 +1425,10 @@ function generate_user_filter_rule($rule, $ngcounter) {
 								}
                                                                 if($foundlb == 1)
                                                                         $routeto .= ", ";
-                                                                $routeto .=  "( {$int} {$gateway} ) ";
-                                                                if($int == "") {
+                                                                if(($int == "") || ($gateway == "")) {
                                                                         $line = "# error resolving load balancing {$gateway}";
                                                                 }
+                                                                $routeto .=  "( {$int} {$gateway} ) ";
                                                                 $foundlb = 1;
                                                         }
                                                         $routeto .= "} round-robin ";

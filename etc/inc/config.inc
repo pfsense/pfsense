@@ -808,6 +808,13 @@ function convert_config() {
 		$config['version'] = "2.3";
 	}
 
+	/* Convert 2.4 -> 2.5 */
+	if ($config['version'] == "2.4") {
+		$config['interfaces']['wan']['use_rrd_gateway'] = $config['system']['use_rrd_gateway'];
+		unset($config['system']['use_rrd_gateway']);
+ 		$config['version'] = "2.5";
+	}
+
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
 }

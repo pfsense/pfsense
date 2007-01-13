@@ -2011,15 +2011,6 @@ function enable_rrd_graphing() {
 	$top = "/usr/bin/top";
 	$spamd_gather = "/usr/local/bin/spamd_gather_stats.php";
 
-	/* if an alternative gateway is defined, use it */
-	if ($config['system']['use_rrd_gateway'] <> "")
-		$gatewayip = $config['system']['use_rrd_gateway'];
-	else
-		$gatewayip = exec("/sbin/route -n get default | /usr/bin/grep gateway | /usr/bin/awk '{print $2}'");
-
-	$numpings = 5;
-	$btick = '`';
-
 	$rrdtrafficinterval = 60;
 	$rrdqualityinterval = 60;
 	$rrdqueuesinterval = 60;
@@ -2058,9 +2049,9 @@ function enable_rrd_graphing() {
 
 		if ($g['booting']) {
 			if ($g['platform'] != "pfSense") {
-				/* restore the databases if we have them */
+				/* restore the databases, if we have one */
 				if (file_exists("{$g['cf_conf_path']}/rrd.tgz")) {
-					exec("cd /;/usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz", $rrdrestore, $rrdreturn);
+					exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/rrd.tgz", $rrdrestore, $rrdreturn);
 					if((int)$rrdrestore <> 0) {
 						log_error("RRD restore failed exited with $rrdreturn, the error is: $rrdrestore[0]\n");
 					}
@@ -2099,17 +2090,17 @@ function enable_rrd_graphing() {
 			if (!file_exists("$rrddbpath$ifname$traffic")) {
 				/* create rrd file if it does not exist */
 				log_error("Create RRD database $rrddbpath$ifname$traffic");
-				$rrdcreate = "$rrdtool create $rrddbpath$ifname$traffic --step $rrdtrafficinterval \
-						DS:in:COUNTER:$trafficvalid:0:$downstream \
-						DS:out:COUNTER:$trafficvalid:0:$upstream \
-						RRA:AVERAGE:0.5:1:1000 \
-						RRA:AVERAGE:0.5:5:1000 \
-						RRA:AVERAGE:0.5:60:1000 \
-						RRA:AVERAGE:0.5:720:1000 \
-						RRA:MAX:0.5:1:1000 \
-						RRA:MAX:0.5:5:1000 \
-						RRA:MAX:0.5:60:1000 \
-						RRA:MAX:0.5:720:1000";
+				$rrdcreate = "$rrdtool create $rrddbpath$ifname$traffic --step $rrdtrafficinterval ";
+				$rrdcreate .= "DS:in:COUNTER:$trafficvalid:0:$downstream ";
+				$rrdcreate .= "DS:out:COUNTER:$trafficvalid:0:$upstream ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:5:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:60:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:720:1000";
 
 				$rrdcreateoutput = array();
 				$rrdcreatereturn = "";
@@ -2136,17 +2127,17 @@ function enable_rrd_graphing() {
 			if (!file_exists("$rrddbpath$ifname$packets")) {
 				/* create rrd file if it does not exist */
 				log_error("Create RRD database $rrddbpath$ifname$packets");
-				$rrdcreate = "$rrdtool create $rrddbpath$ifname$packets --step $rrdpacketsinterval \
-						DS:in:COUNTER:$packetsvalid:0:$downstream \
-						DS:out:COUNTER:$packetsvalid:0:$upstream \
-						RRA:AVERAGE:0.5:1:1000 \
-						RRA:AVERAGE:0.5:5:1000 \
-						RRA:AVERAGE:0.5:60:1000 \
-						RRA:AVERAGE:0.5:720:1000 \
-						RRA:MAX:0.5:1:1000 \
-						RRA:MAX:0.5:5:1000 \
-						RRA:MAX:0.5:60:1000 \
-						RRA:MAX:0.5:720:1000";
+				$rrdcreate = "$rrdtool create $rrddbpath$ifname$packets --step $rrdpacketsinterval ";
+				$rrdcreate .= "DS:in:COUNTER:$packetsvalid:0:$downstream ";
+				$rrdcreate .= "DS:out:COUNTER:$packetsvalid:0:$upstream ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:5:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:60:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:720:1000";
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 				if ($rrdcreatereturn != 0) {
@@ -2166,20 +2157,29 @@ function enable_rrd_graphing() {
 			$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$5}'`:\\\n";
 			$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$8}'`\n\n";
 
-			/* WAN interface only statistics */
-			if ("$ifname" == "wan") {
+			/* if an alternative gateway is defined, use it */
+			if ($config['system']['interfaces'][$ifname]['use_rrd_gateway'] <> "") {
+				$gatewayip = get_interface_gateway($ifname);
+				$monitorip = $config['system']['interfaces'][$ifname]['use_rrd_gateway'];
+				mwexec("/sbin/route add -host {$monitorip} {$gatewayip} 1> /dev/null 2>&1");
+			} else {
+				$monitorip = get_interface_gateway($ifname);
+			}
+			$numpings = 5;
+			$btick = '`';
 
+			if($monitorip <> "") {
 				/* QUALITY, create link quality database */
 				if (!file_exists("$rrddbpath$ifname$quality")) {
 					/* create rrd file if it does not exist */
 					log_error("Create RRD database $rrddbpath$ifname$quality");
-					$rrdcreate = "$rrdtool create $rrddbpath$ifname$quality --step $rrdqualityinterval \
-							DS:loss:GAUGE:$qualityvalid:0:100 \
-							DS:roundtrip:GAUGE:$qualityvalid:0:10000 \
-							RRA:AVERAGE:0.5:1:1000 \
-							RRA:AVERAGE:0.5:5:1000 \
-							RRA:AVERAGE:0.5:60:1000 \
-							RRA:AVERAGE:0.5:720:1000";
+					$rrdcreate = "$rrdtool create $rrddbpath$ifname$quality --step $rrdqualityinterval ";
+					$rrdcreate .= "DS:loss:GAUGE:$qualityvalid:0:100 ";
+					$rrdcreate .= "DS:roundtrip:GAUGE:$qualityvalid:0:10000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:720:1000";
 
 					$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 					if ($rrdcreatereturn != 0) {
@@ -2193,19 +2193,23 @@ function enable_rrd_graphing() {
 				}
 
 				/* the ping test function. We call this on the last line */
-				$rrdupdatesh .= "get_ping_stats () {
-							packetloss=100
-							roundtrip=0
-							local out
-							out=$btick ping -c $numpings -q $gatewayip $btick
-							if [ $? -eq 0 ]; then
-							packetloss=$btick echo \$out | cut -f18 -d' ' | cut -c -1 $btick
-							roundtrip=$btick echo \$out | cut -f24 -d' ' | cut -f2 -d'/' $btick
-							fi
-							$rrdtool update $rrddbpath$ifname$quality N:\$packetloss:\$roundtrip
-							}\n\n";
+				$rrdupdatesh .= "get_quality_stats_{$ifname} () {\n";
+				$rrdupdatesh .= "packetloss=100\n";
+				$rrdupdatesh .= "	roundtrip=0\n";
+				$rrdupdatesh .= "	local out\n";
+				$rrdupdatesh .= "	out=$btick ping -c $numpings -q $monitorip $btick\n";
+				$rrdupdatesh .= "	if [ $? -eq 0 ]; then\n";
+				$rrdupdatesh .= "		packetloss=$btick echo \$out | cut -f18 -d' ' | cut -c -1 $btick\n";
+				$rrdupdatesh .= "		roundtrip=$btick echo \$out | cut -f24 -d' ' | cut -f2 -d'/' $btick\n";
+				$rrdupdatesh .= "	fi\n";
+				$rrdupdatesh .= "	$rrdtool update $rrddbpath$ifname$quality N:\$packetloss:\$roundtrip\n";
+				$rrdupdatesh .= "}\n\n";
 
-				$rrdupdatesh .= "get_ping_stats &\n\n";
+				$rrdupdatesh .= "get_quality_stats_{$ifname} &\n\n";
+			}
+
+			/* WAN interface only statistics */
+			if ("$ifname" == "wan") {
 
 				/* QUEUES, set up the queues databases */
 				if (!is_array($config['shaper']['queue'])) {
@@ -2217,18 +2221,18 @@ function enable_rrd_graphing() {
 					if (!file_exists("$rrddbpath$ifname$queues")) {
 						/* create rrd file if it does not exist */
 						log_error("Create RRD database $rrddbpath$ifname$queues");
-						$rrdcreate = "$rrdtool create $rrddbpath$ifname$queues --step $rrdqueuesinterval \\\n";
+						$rrdcreate = "$rrdtool create $rrddbpath$ifname$queues --step $rrdqueuesinterval ";
 						/* loop list of shaper queues */
 						$q = 0;
 						foreach ($a_queues as $queue) {
 							$name = $queue['name'];
-							$rrdcreate .= "DS:$name:COUNTER:$queuesvalid:0:$downstream \\\n";
+							$rrdcreate .= "DS:$name:COUNTER:$queuesvalid:0:$downstream ";
 						}
 
-						$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 \
-								RRA:AVERAGE:0.5:5:1000 \
-								RRA:AVERAGE:0.5:60:1000 \
-								RRA:AVERAGE:0.5:720:1000";
+						$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:720:1000";
 
 						$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 						if ($rrdcreatereturn != 0) {
@@ -2240,18 +2244,18 @@ function enable_rrd_graphing() {
 					if (!file_exists("$rrddbpath$ifname$queuesdrop")) {
 						/* create rrd file if it does not exist */
 						log_error("Create RRD database $rrddbpath$ifname$queuesdrop");
-						$rrdcreate = "$rrdtool create $rrddbpath$ifname$queuesdrop --step $rrdqueuesdropinterval \\\n";
+						$rrdcreate = "$rrdtool create $rrddbpath$ifname$queuesdrop --step $rrdqueuesdropinterval ";
 						/* loop list of shaper queues */
 						$q = 0;
 						foreach ($a_queues as $queue) {
 							$name = $queue['name'];
-							$rrdcreate .= "DS:$name:COUNTER:$queuesdropvalid:0:$downstream \\\n";
+							$rrdcreate .= "DS:$name:COUNTER:$queuesdropvalid:0:$downstream ";
 						}
 
-						$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 \
-	                                                        RRA:AVERAGE:0.5:5:1000 \
-	                                                        RRA:AVERAGE:0.5:60:1000 \
-	                                                        RRA:AVERAGE:0.5:720:1000";
+						$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:720:1000";
 
 						$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 						if ($rrdcreatereturn != 0) {
@@ -2278,37 +2282,37 @@ function enable_rrd_graphing() {
 
 					/* awk function to gather shaper data */
 					/* yes, it's special */
-					$rrdupdatesh .= "` pfctl -vsq | awk 'BEGIN {printf \"$rrdtool update $rrddbpath$ifname$queues \" } \\
-								{ \\
-								if ((\$1 == \"queue\") && ( \$2 ~ /^q/ )) { \\
-								dsname = dsname \":\" \$2 ; \\
-								q=1; \\
-								} \\
-								else if ((\$4 == \"bytes:\") && ( q == 1 ) ) { \\
-								dsdata = dsdata \":\" \$5 ; \\
-								q=0; \\
-								} \\
-								} END { \\
-								dsname = substr(dsname,2); \\
-								dsdata = substr(dsdata,2); \\
-								printf \"-t \" dsname \" N:\" dsdata }' \\
-								dsname=\"\" dsdata=\"\"`\n\n";
+					$rrdupdatesh .= "` pfctl -vsq | awk 'BEGIN {printf \"$rrdtool update $rrddbpath$ifname$queues \" } ";
+					$rrdupdatesh .= "{ ";
+					$rrdupdatesh .= "if ((\$1 == \"queue\") && ( \$2 ~ /^q/ )) { ";
+					$rrdupdatesh .= "dsname = dsname \":\" \$2 ; ";
+					$rrdupdatesh .= "q=1; ";
+					$rrdupdatesh .= "} ";
+					$rrdupdatesh .= "else if ((\$4 == \"bytes:\") && ( q == 1 ) ) { ";
+					$rrdupdatesh .= "dsdata = dsdata \":\" \$5 ; ";
+					$rrdupdatesh .= "q=0; ";
+					$rrdupdatesh .= "} ";
+					$rrdupdatesh .= "} END { ";
+					$rrdupdatesh .= "dsname = substr(dsname,2); ";
+					$rrdupdatesh .= "dsdata = substr(dsdata,2); ";
+					$rrdupdatesh .= "printf \"-t \" dsname \" N:\" dsdata }' ";
+					$rrdupdatesh .= "dsname=\"\" dsdata=\"\"`\n\n";
 
-					$rrdupdatesh .= "` pfctl -vsq | awk 'BEGIN {printf \"$rrdtool update $rrddbpath$ifname$queuesdrop \" } \\
-								{ \\
-								if ((\$1 == \"queue\") && ( \$2 ~ /^q/ )) { \\
-								dsname = dsname \":\" \$2 ; \\
-								q=1; \\
-								} \\
-								else if ((\$4 == \"bytes:\") && ( q == 1 ) ) { \\
-								dsdata = dsdata \":\" \$8 ; \\
-								q=0; \\
-								} \\
-								} END { \\
-								dsname = substr(dsname,2); \\
-								dsdata = substr(dsdata,2); \\
-								printf \"-t \" dsname \" N:\" dsdata }' \\
-								dsname=\"\" dsdata=\"\"`\n\n";
+					$rrdupdatesh .= "` pfctl -vsq | awk 'BEGIN {printf \"$rrdtool update $rrddbpath$ifname$queuesdrop \" } ";
+					$rrdupdatesh .= "{ ";
+					$rrdupdatesh .= "if ((\$1 == \"queue\") && ( \$2 ~ /^q/ )) { ";
+					$rrdupdatesh .= "dsname = dsname \":\" \$2 ; ";
+					$rrdupdatesh .= "q=1; ";
+					$rrdupdatesh .= "} ";
+					$rrdupdatesh .= "else if ((\$4 == \"bytes:\") && ( q == 1 ) ) { ";
+					$rrdupdatesh .= "dsdata = dsdata \":\" \$8 ; ";
+					$rrdupdatesh .= "q=0; ";
+					$rrdupdatesh .= "} ";
+					$rrdupdatesh .= "} END { ";
+					$rrdupdatesh .= "dsname = substr(dsname,2); ";
+					$rrdupdatesh .= "dsdata = substr(dsdata,2); ";
+					$rrdupdatesh .= "printf \"-t \" dsname \" N:\" dsdata }' ";
+					$rrdupdatesh .= "dsname=\"\" dsdata=\"\"`\n\n";
 				}
 			}
 		}
@@ -2321,24 +2325,24 @@ function enable_rrd_graphing() {
 			if(! file_exists("$rrddbpath$ifname$states")) {
 				/* create rrd file if it does not exist */
 				log_error("Create RRD database $rrddbpath$ifname$states");
-				$rrdcreate = "$rrdtool create $rrddbpath$ifname$states --step $rrdstatesinterval \
-						DS:pfrate:GAUGE:$statesvalid:0:10000000 \
-						DS:pfstates:GAUGE:$statesvalid:0:10000000 \
-						DS:pfnat:GAUGE:$statesvalid:0:10000000 \
-						DS:srcip:GAUGE:$statesvalid:0:10000000 \
-						DS:dstip:GAUGE:$statesvalid:0:10000000 \
-						RRA:MIN:0.5:1:1000 \
-						RRA:MIN:0.5:5:1000 \
-						RRA:MIN:0.5:60:1000 \
-						RRA:MIN:0.5:360:1000 \
-						RRA:AVERAGE:0.5:1:1000 \
-						RRA:AVERAGE:0.5:5:1000 \
-						RRA:AVERAGE:0.5:60:1000 \
-						RRA:AVERAGE:0.5:360:1000 \
-						RRA:MAX:0.5:1:1000 \
-						RRA:MAX:0.5:5:1000 \
-						RRA:MAX:0.5:60:1000 \
-						RRA:MAX:0.5:360:1000";
+				$rrdcreate = "$rrdtool create $rrddbpath$ifname$states --step $rrdstatesinterval ";
+				$rrdcreate .= "DS:pfrate:GAUGE:$statesvalid:0:10000000 ";
+				$rrdcreate .= "DS:pfstates:GAUGE:$statesvalid:0:10000000 ";
+				$rrdcreate .= "DS:pfnat:GAUGE:$statesvalid:0:10000000 ";
+				$rrdcreate .= "DS:srcip:GAUGE:$statesvalid:0:10000000 ";
+				$rrdcreate .= "DS:dstip:GAUGE:$statesvalid:0:10000000 ";
+				$rrdcreate .= "RRA:MIN:0.5:1:1000 ";
+				$rrdcreate .= "RRA:MIN:0.5:5:1000 ";
+				$rrdcreate .= "RRA:MIN:0.5:60:1000 ";
+				$rrdcreate .= "RRA:MIN:0.5:360:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:360:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:5:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:60:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:360:1000";
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 				if($rrdcreatereturn != 0) {
@@ -2353,15 +2357,13 @@ function enable_rrd_graphing() {
 			}
 
  			/* the pf states gathering function. */
- 			$rrdupdatesh .= "
- 				pfrate=\"` $pfctl -si | egrep \"inserts|removals\" | awk '{ pfrate = \$3 + pfrate } {print pfrate}'|tail -1 `\"
- 				pfstates=\"` $pfctl -ss | egrep -v \"<\\-.*?<\\-|\\->.*?\\->\" | wc -l|sed 's/ //g'`\"
- 				pfnat=\"` $pfctl -ss | egrep '<\\-.*?<\\-|\\->.*?\\->' | wc -l|sed 's/ //g' `\"
- 				srcip=\"` $pfctl -ss | egrep -v '<\\-.*?<\\-|\\->.*?\\->' | grep '\\->' | awk '{print \$3}' | awk -F: '{print \$1}' | sort -u|wc -l|sed 's/ //g' `\"
- 				dstip=\"` $pfctl -ss | egrep -v '<\\-.*?<\\-|\\->.*?\\->' | grep '<\\-' | awk '{print \$3}' | awk -F: '{print \$1}' | sort -u|wc -l|sed 's/ //g' `\"
-
-				$rrdtool update $rrddbpath$ifname$states N:\$pfrate:\$pfstates:\$pfnat:\$srcip:\$dstip
-				\n\n";
+ 			$rrdupdatesh .= "\n";
+ 			$rrdupdatesh .= "pfrate=\"` $pfctl -si | egrep \"inserts|removals\" | awk '{ pfrate = \$3 + pfrate } {print pfrate}'|tail -1 `\"\n";
+ 			$rrdupdatesh .= "pfstates=\"` $pfctl -ss | egrep -v \"<\\-.*?<\\-|\\->.*?\\->\" | wc -l|sed 's/ //g'`\"\n";
+			$rrdupdatesh .= "pfnat=\"` $pfctl -ss | egrep '<\\-.*?<\\-|\\->.*?\\->' | wc -l|sed 's/ //g' `\"\n";
+ 			$rrdupdatesh .= "srcip=\"` $pfctl -ss | egrep -v '<\\-.*?<\\-|\\->.*?\\->' | grep '\\->' | awk '{print \$3}' | awk -F: '{print \$1}' | sort -u|wc -l|sed 's/ //g' `\"\n";
+ 			$rrdupdatesh .= "dstip=\"` $pfctl -ss | egrep -v '<\\-.*?<\\-|\\->.*?\\->' | grep '<\\-' | awk '{print \$3}' | awk -F: '{print \$1}' | sort -u|wc -l|sed 's/ //g' `\"\n";
+			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$states N:\$pfrate:\$pfstates:\$pfnat:\$srcip:\$dstip\n\n";
 
 			/* End pf states statistics */
 
@@ -2369,24 +2371,24 @@ function enable_rrd_graphing() {
 			if(! file_exists("$rrddbpath$ifname$proc")) {
 				/* create rrd file if it does not exist */
 				log_error("Create RRD database $rrddbpath$ifname$proc");
-				$rrdcreate = "$rrdtool create $rrddbpath$ifname$proc --step $rrdprocinterval \
-						DS:user:GAUGE:$procvalid:0:10000000 \
-						DS:nice:GAUGE:$procvalid:0:10000000 \
-						DS:system:GAUGE:$procvalid:0:10000000 \
-						DS:interrupt:GAUGE:$procvalid:0:10000000 \
-						DS:processes:GAUGE:$procvalid:0:10000000 \
-						RRA:MIN:0.5:1:1000 \
-						RRA:MIN:0.5:5:1000 \
-						RRA:MIN:0.5:60:1000 \
-						RRA:MIN:0.5:360:1000 \
-						RRA:AVERAGE:0.5:1:1000 \
-						RRA:AVERAGE:0.5:5:1000 \
-						RRA:AVERAGE:0.5:60:1000 \
-						RRA:AVERAGE:0.5:360:1000 \
-						RRA:MAX:0.5:1:1000 \
-						RRA:MAX:0.5:5:1000 \
-						RRA:MAX:0.5:60:1000 \
-						RRA:MAX:0.5:360:1000";
+				$rrdcreate = "$rrdtool create $rrddbpath$ifname$proc --step $rrdprocinterval ";
+				$rrdcreate .= "DS:user:GAUGE:$procvalid:0:10000000 ";
+				$rrdcreate .= "DS:nice:GAUGE:$procvalid:0:10000000 ";
+				$rrdcreate .= "DS:system:GAUGE:$procvalid:0:10000000 ";
+				$rrdcreate .= "DS:interrupt:GAUGE:$procvalid:0:10000000 ";
+				$rrdcreate .= "DS:processes:GAUGE:$procvalid:0:10000000 ";
+				$rrdcreate .= "RRA:MIN:0.5:1:1000 ";
+				$rrdcreate .= "RRA:MIN:0.5:5:1000 ";
+				$rrdcreate .= "RRA:MIN:0.5:60:1000 ";
+				$rrdcreate .= "RRA:MIN:0.5:360:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:360:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:5:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:60:1000 ";
+				$rrdcreate .= "RRA:MAX:0.5:360:1000";
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 				if($rrdcreatereturn != 0) {
@@ -2401,49 +2403,45 @@ function enable_rrd_graphing() {
 			}
 
  			/* the CPU stats gathering function. */
- 			$rrdupdatesh .= "`$top -d 2 -s 1 0 | $awk '{gsub(/%/, \"\")} BEGIN { \\
-							printf \"$rrdtool update $rrddbpath$ifname$proc \" } \\
-							{ if ( \$2 == \"processes:\" ) { \\
-								processes = \$1; \\
-							} \\
-							else if ( \$1 == \"CPU\" ) { \\
-								user = \$3; \\
-								nice = \$5; \\
-								sys = \$7; \\
-								interrupt = \$9; \\
-							} \\
-						} END { \\
-							printf \"N:\"user\":\"nice\":\"sys\":\"interrupt\":\"processes \\
-						}'`\n\n";
+ 			$rrdupdatesh .= "`$top -d 2 -s 1 0 | $awk '{gsub(/%/, \"\")} BEGIN { ";
+			$rrdupdatesh .= "printf \"$rrdtool update $rrddbpath$ifname$proc \" } ";
+			$rrdupdatesh .= "{ if ( \$2 == \"processes:\" ) { ";
+			$rrdupdatesh .= "processes = \$1; ";
+			$rrdupdatesh .= "} ";
+			$rrdupdatesh .= "else if ( \$1 == \"CPU\" ) { ";
+			$rrdupdatesh .= "user = \$3; ";
+			$rrdupdatesh .= "nice = \$5; ";
+			$rrdupdatesh .= "sys = \$7; ";
+			$rrdupdatesh .= "interrupt = \$9; ";
+			$rrdupdatesh .= "} ";
+			$rrdupdatesh .= "} END { ";
+			$rrdupdatesh .= "printf \"N:\"user\":\"nice\":\"sys\":\"interrupt\":\"processes ";
+			$rrdupdatesh .= "}'`\n\n";
 
 			/* End CPU statistics */
 
 			/* SPAMD, set up the spamd rrd file */
 			if (isset($config['installedpackages']['spamdsettings']) &&
-				isset ($config['installedpackages']['spamdsettings']['config'][0]['enablerrd'])) {
-				/* Move old name to new name */
-				if (file_exists("{$rrddbpath}spamd.rrd")) {
-					rename("{$rrddbpath}spamd.rrd", "$rrddbpath$ifname$spamd");
-				}
+				 isset ($config['installedpackages']['spamdsettings']['config'][0]['enablerrd'])) {
 				/* set up the spamd rrd file */
 				if (!file_exists("$rrddbpath$ifname$spamd")) {
 						/* create rrd file if it does not exist */
 						log_error("Create RRD database $rrddbpath$ifname$spamd");
-						$rrdcreate = "$rrdtool create $rrddbpath$ifname$spamd --step $rrdspamdinterval \
-							DS:conn:GAUGE:$spamdvalid:0:10000 \
-							DS:time:GAUGE:$spamdvalid:0:86400 \
-							RRA:MIN:0.5:1:1000 \
-							RRA:MIN:0.5:5:1000 \
-							RRA:MIN:0.5:60:1000 \
-							RRA:MIN:0.5:720:1000 \
-							RRA:AVERAGE:0.5:1:1000 \
-							RRA:AVERAGE:0.5:5:1000 \
-							RRA:AVERAGE:0.5:60:1000 \
-							RRA:AVERAGE:0.5:720:1000 \
-							RRA:MAX:0.5:1:1000 \
-							RRA:MAX:0.5:5:1000 \
-							RRA:MAX:0.5:60:1000 \
-							RRA:MAX:0.5:720:1000";
+						$rrdcreate = "$rrdtool create $rrddbpath$ifname$spamd --step $rrdspamdinterval ";
+						$rrdcreate .= "DS:conn:GAUGE:$spamdvalid:0:10000 ";
+						$rrdcreate .= "DS:time:GAUGE:$spamdvalid:0:86400 ";
+						$rrdcreate .= "RRA:MIN:0.5:1:1000 ";
+						$rrdcreate .= "RRA:MIN:0.5:5:1000 ";
+						$rrdcreate .= "RRA:MIN:0.5:60:1000 ";
+						$rrdcreate .= "RRA:MIN:0.5:720:1000 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
+						$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
+						$rrdcreate .= "RRA:MAX:0.5:5:1000 ";
+						$rrdcreate .= "RRA:MAX:0.5:60:1000 ";
+						$rrdcreate .= "RRA:MAX:0.5:720:1000";
 
 					$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 					if ($rrdcreatereturn != 0) {
@@ -2476,14 +2474,10 @@ function enable_rrd_graphing() {
 		mwexec_bg("/usr/bin/nice -n20 /bin/sh $updaterrdscript");
 
 	} else {
-		/* unmount and remove */
-		system("/sbin/umount $rrddbpath");
-		exec("/sbin/mdconfig -d -u 2");
 		/* kill off traffic collectors */
 		kill_traffic_collector();
 	}
 }
-
 function kill_traffic_collector() {
 		mwexec("ps awwwux | grep '/[u]pdaterrd.sh' | awk '{print $2}' | xargs kill");
 }

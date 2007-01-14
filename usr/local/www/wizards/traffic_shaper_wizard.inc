@@ -768,6 +768,20 @@ function step6_stepsubmitphpaction() {
 		    $gamesplist[] = array('GunZOnline', 'udp', '7700', '7700', 'both');
 		}
 
+		if($_POST['xbox360'] != "") {
+		    /* XBox360 */
+		    $gamesplist[] = array('xbox360-1', 'udp', '88', '88', 'both');
+		    $gamesplist[] = array('xbox360-2', 'udp', '3074', '3074', 'both');
+		    $gamesplist[] = array('xbox360-3', 'tcp', '3074', '3074', 'both');
+		}
+
+		if($_POST['xbox360'] != "") {
+		    /* XBox360 */
+		    $gamesplist[] = array('xbox360-1', 'udp', '88', '88', 'both');
+		    $gamesplist[] = array('xbox360-2', 'udp', '3074', '3074', 'both');
+		    $gamesplist[] = array('xbox360-3', 'tcp', '3074', '3074', 'both');
+		}
+
 		/* XXX: add some more games before this line!! */
 
 		/* Set up/down games as higher weight */

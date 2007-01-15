@@ -460,13 +460,13 @@ elseif((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdat
 		\"CDEF:r3=roundtrip,420,MIN\" \\
 		COMMENT:\"\t\t\t\t\t\tRoundtrip\t\t\tPacket loss\\n\" \\
 		AREA:roundtrip#$colorqualityrtt[0]:\"> 420      ms\" \\
-		GPRINT:roundtrip:MIN:\"    Min\\: %7.2lf ms\" \\
+		GPRINT:roundtrip:MIN:\"    Min\\:  %7.2lf ms\" \\
 		GPRINT:loss:MIN:\"Min\\: %3.1lf %%\\n\" \\
     		AREA:r3#$colorqualityrtt[1]:\"180-420    ms\" \\
 		GPRINT:roundtrip:AVERAGE:\"    Avg\\:  %7.2lf ms\" \\
 		GPRINT:loss:AVERAGE:\"Avg\\: %3.1lf %%\\n\" \\
 		AREA:r2#$colorqualityrtt[2]:\"60-180     ms\" \\
-		GPRINT:roundtrip:MAX:\"    Max\\: %7.2lf ms\" \\
+		GPRINT:roundtrip:MAX:\"    Max\\:  %7.2lf ms\" \\
 		GPRINT:loss:MAX:\"Max\\: %3.1lf %%\\n\" \\
 		AREA:r1#$colorqualityrtt[3]:\"20-60      ms\\n\" \\
 		AREA:r0#$colorqualityrtt[4]:\"< 20       ms\" \\

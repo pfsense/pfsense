@@ -453,41 +453,26 @@ elseif((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdat
 		DEF:roundtrip=$rrddbpath$curdatabase:roundtrip:AVERAGE \\
 		DEF:loss=$rrddbpath$curdatabase:loss:AVERAGE \\
 		\"CDEF:roundavg=roundtrip,PREV(roundtrip),+,2,/\" \\
-		\"CDEF:loss10=loss,$multiplier,*,10,*\" \\
+		\"CDEF:loss10=loss,$multiplier,*\" \\
 		\"CDEF:r0=roundtrip,20,MIN\" \\
 		\"CDEF:r1=roundtrip,60,MIN\" \\
 		\"CDEF:r2=roundtrip,180,MIN\" \\
 		\"CDEF:r3=roundtrip,420,MIN\" \\
-		COMMENT:\"               * Roundtrip *                                     * Packet loss *\\n\" \\
-		COMMENT:\"\\n\" \\
-		COMMENT:\"  \" \\
+		COMMENT:\"\t\t\t\t\t\tRoundtrip\t\t\tPacket loss\\n\" \\
 		AREA:roundtrip#$colorqualityrtt[0]:\"> 420      ms\" \\
 		GPRINT:roundtrip:MIN:\"    Min\\: %7.2lf ms\" \\
-		COMMENT:\"               \" \\
 		GPRINT:loss:MIN:\"Min\\: %3.1lf %%\\n\" \\
-		COMMENT:\"  \" \\
     		AREA:r3#$colorqualityrtt[1]:\"180-420    ms\" \\
-		GPRINT:roundtrip:AVERAGE:\"    Avg\\: %7.2lf ms\" \\
-		COMMENT:\"               \" \\
-		GPRINT:loss:AVERAGE:\"Avg\\: %3.1lf %%\" \\
-		COMMENT:\"   Packet loss multiplied\\n\" \\
-		COMMENT:\"  \" \\
+		GPRINT:roundtrip:AVERAGE:\"    Avg\\:  %7.2lf ms\" \\
+		GPRINT:loss:AVERAGE:\"Avg\\: %3.1lf %%\\n\" \\
 		AREA:r2#$colorqualityrtt[2]:\"60-180     ms\" \\
 		GPRINT:roundtrip:MAX:\"    Max\\: %7.2lf ms\" \\
-		COMMENT:\"               \" \\
-		GPRINT:loss:MAX:\"Max\\: %3.1lf %%\" \\
-		COMMENT:\"   by 10 in graph.\\n\" \\
-		COMMENT:\"  \" \\
-		AREA:r1#$colorqualityrtt[3]:\"20-60      ms\" \\
-		COMMENT:\"\\n\" \\
-		COMMENT:\"  \" \\
+		GPRINT:loss:MAX:\"Max\\: %3.1lf %%\\n\" \\
+		AREA:r1#$colorqualityrtt[3]:\"20-60      ms\\n\" \\
 		AREA:r0#$colorqualityrtt[4]:\"< 20       ms\" \\
 		GPRINT:roundtrip:LAST:\"    Last\\: %7.2lf ms\" \\
-		COMMENT:\"              \" \\
-		GPRINT:loss:LAST:\"Last\: %3.1lf %%\" \\
-		COMMENT:\"   \" \\
+		GPRINT:loss:LAST:\"Last\: %3.1lf %%\\n\" \\
 		AREA:loss10#$colorqualityloss:\"Packet loss\\n\" \\
-		COMMENT:\"  \" \\
 		LINE1:roundtrip#$colorqualityrtt[5]:\"roundtrip average\\n\" \\
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}

@@ -126,7 +126,7 @@ while($i < $leases_count) {
 		} else if ($data[$f] == "ends") {
 			$leases[$i]['end'] = $data[$f+2];
 			$leases[$i]['end'] .= " " . $data[$f+3];
-		} else if ($data[$f] == "binding") {
+		} else if (($data[$f] == "binding") && (!isset($leases[$i]['act']))){
 			if ($data[$f+1] == "state") {
 				switch($data[$f+2]) {
 					case 'active':

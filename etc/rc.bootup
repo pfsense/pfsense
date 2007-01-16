@@ -35,7 +35,7 @@
 
 	echo "Initializing...";
 	echo ".";
-	require_once("globals.inc");
+	require_once("/etc/inc/globals.inc");
 	echo ".";
 	/* let the other functions know we're booting */
 	$pkg_interface = 'console';
@@ -47,9 +47,9 @@
 	}
 
 	/* parse the configuration and include all functions used below */
-	require_once("config.inc");
+	require_once("/etc/inc/config.inc");
 	echo ".";
-	require_once("functions.inc");
+	require_once("/etc/inc/functions.inc");
 	/* get system memory amount */
 	$memory = get_memory();
 	$avail = $memory[0];
@@ -301,7 +301,7 @@
 		mwexec($config['system']['afterbootupshellcmd']);
 
 	if($avail < 126) {
-		require_once("notices.inc");
+		require_once("/etc/inc/notices.inc");
 		file_notice("pfSenseMemoryRequirements", "pfSense requires atleast 128 megabytes of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
 	}
 

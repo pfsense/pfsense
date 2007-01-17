@@ -1,0 +1,7 @@
+# Format: <event_name>=<jsfunction_name> !<forbidden_page_0>,<forbidden_page_1>...<forbidden_page_n>
+#  where: forbidden pages are those pages that should *not* use
+#         the particular JavaScript function within the JS event
+#         specified below.
+# $Id$
+#
+onload=tmenuinit(); !wizard.php

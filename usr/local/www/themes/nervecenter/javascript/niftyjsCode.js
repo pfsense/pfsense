@@ -78,16 +78,14 @@ if(!el.passed){
     }
 el.passed=true;
 }
-    
+
 function AddTop(el,bk,color,bc,cn){
 var i,lim=4,d=CreateEl("b");
 
 if(cn.indexOf("s")>=0) lim=2;
 if(bc) d.className="artop";
 else d.className="rtop";
-if (dontUseCustomBGColor) {
-    d.style.backgroundColor=bk;
-}
+d.style.backgroundColor=bk;
 for(i=1;i<=lim;i++){
     var x=CreateEl("b");
     x.className=cn + i;
@@ -105,9 +103,7 @@ var i,lim=4,d=CreateEl("b");
 if(cn.indexOf("s")>=0) lim=2;
 if(bc) d.className="artop";
 else d.className="rtop";
-if (dontUseCustomBGColor) {
-    d.style.backgroundColor=bk;
-}
+d.style.backgroundColor=bk;
 for(i=lim;i>0;i--){
     var x=CreateEl("b");
     x.className=cn + i;

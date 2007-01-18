@@ -3,7 +3,7 @@
 <pfsense>
 	<version>2.0</version>
 	<lastchange></lastchange>
-	<theme>metallic</theme>
+	<theme>nervecenter</theme>
 	<system>
 		<optimization>normal</optimization>
 		<schedulertype>priq</schedulertype>
@@ -436,7 +436,7 @@
 	<ipsec>
                 <preferredoldsa/>
 		<!-- <enable/> -->
-		<!-- syntax:    
+		<!-- syntax:
 		<tunnel>
 			<disabled/>
 			<auto/>

@@ -65,7 +65,7 @@ $timezonelist = array_filter($timezonelist, 'is_timezone');
 sort($timezonelist);
 
 /* kill carriage returns */
-for($x=0; $x<count($timezonelist); $x++) 
+for($x=0; $x<count($timezonelist); $x++)
 		$timezonelist[$x] = str_replace("\n", "", $timezonelist[$x]);
 
 if ($pkg['step'][$stepid]['includefile'])
@@ -116,7 +116,7 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 		eval($text);
 		return;
 	}
-	
+
 	if($field_type == "interfaces_selection") {
 		$text = "unset(\$config" . $field_conv . ");";
 		eval($text);
@@ -124,7 +124,7 @@ function update_config_field($field, $updatetext, $unset, $arraynum, $field_type
 		eval($text);
 		return;
 	}
-	
+
 	if($unset <> "") {
 		$text = "unset(\$config" . $field_conv . ");";
 		eval($text);
@@ -155,11 +155,11 @@ include("head.inc");
 <script language="JavaScript">
 <!--
 
-function  FieldValidate(userinput,  regexp,  message) 
-{ 
-                if(!userinput.match(regexp)) 
-                                alert(message); 
-} 
+function  FieldValidate(userinput,  regexp,  message)
+{
+                if(!userinput.match(regexp))
+                                alert(message);
+}
 
 function enablechange() {
 <?php
@@ -192,7 +192,7 @@ function enablechange() {
                                         $checkenablefield = strtolower($checkenablefield);
                                         print "\t\t" . 'document.iform.' . $checkenablefield . '.checked = 1;' . "\n";
                                 }
-                        }   
+                        }
                         print "\t" . '}' . "\n";
                 }
         }
@@ -220,7 +220,7 @@ function enablechange() {
 	if($xml == "traffic_shaper_wizard.xml") {
 		echo "<a href='/firewall_shaper.php?remove=remove'>";
 	} else {
-		echo "<a href='$ip'>"; 	
+		echo "<a href='$ip'>";
 	}
 ?>
 <img border="0" src="./themes/<?= $g['theme']; ?>/images/logo.gif"></a>
@@ -284,7 +284,7 @@ function enablechange() {
 			echo ">\n";
 
 
-			
+
 		    } else if ($field['type'] == "inputalias") {
 			if(!$field['dontdisplayname']) {
 				echo "<td width=\"22%\" align=\"right\" class=\"vncellreq\">\n";
@@ -297,10 +297,10 @@ function enablechange() {
 			echo "<input  autocomplete='off' class='formfldalias' id='" . $name . "' name='" . $name . "' value='" . $value . "'";
 			if($field['validate'])
 				echo " onChange='FieldValidate(this.value, \"{$field['validate']}\", \"{$field['message']}\");'";
-			echo ">\n";			
+			echo ">\n";
 
 
-		
+
 		    } else if($field['type'] == "interfaces_selection") {
 			$size = "";
 			$multiple = "";
@@ -350,7 +350,7 @@ function enablechange() {
 			  } else {
 				$canecho = 1;
 			  }
-			  if($canecho == 1) 
+			  if($canecho == 1)
 				echo $to_echo;
 			}
 				echo "</select>\n";
@@ -509,7 +509,8 @@ function enablechange() {
 </script>
 <script type="text/javascript">
 NiftyCheck();
-Rounded("div#roundme","all","#333333","#FFFFFF","smooth");
+var bgcolor = document.getElementsByTagName("body")[0].style.backgroundColor;
+Rounded("div#roundme","all",bgcolor,"#FFFFFF","smooth");
 </script>
 
 <?php

@@ -14,7 +14,12 @@ else
 <head>
 	<title><?=gentitle($pgtitle);?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	<link rel="stylesheet" href="/themes/<?php echo $g['theme']; ?>/all.css" media="all" />
+        <?php if (strpos($_SERVER["SCRIPT_FILENAME"], "wizard.php") !== false &&
+                  file_exists("{$g['www_path']}/themes/{$g['theme']}/wizard.css")): ?>
+        <link rel="stylesheet" href="/themes/<?php echo $g['theme']; ?>/wizard.css" media="all" />
+        <?php else: ?>
+        <link rel="stylesheet" href="/themes/<?php echo $g['theme']; ?>/all.css" media="all" />
+        <?php endif; ?>
 	<link rel="stylesheet" type="text/css" href="/niftycssprintCode.css" media="print" />
 	<script type="text/javascript">var theme = "<?php echo $g['theme']; ?>"</script>
 	<script type="text/javascript" src="/themes/<?php echo $g['theme']; ?>/loader.js"></script>

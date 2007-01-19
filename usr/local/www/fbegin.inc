@@ -223,6 +223,7 @@ require_once("notices.inc");
 							<li><a href="/diag_routes.php" class="navlnk">Routes</a></li>
 							<li><a href="/diag_dump_states.php" class="navlnk">States</a></li>
 							<li><a href="/diag_traceroute.php" class="navlnk">Traceroute</a></li>
+							<li><a href="/diag_packet_capture.php" class="navlnk">Packet Capture</a></li>
 							<?php echo return_ext_menu("Diagnostics"); ?>
 							<?php if(isset($config['system']['developer'])): ?>
 							<li><hr width="80%"/></li>

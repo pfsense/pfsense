@@ -2,20 +2,20 @@
 /*
 	vpn_pptp_users_edit.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -46,7 +46,7 @@ if (isset($id) && $a_secret[$id]) {
 }
 
 if ($_POST) {
-	
+
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -58,22 +58,22 @@ if ($_POST) {
 		$reqdfields = explode(" ", "username password");
 		$reqdfieldsn = explode(",", "Username,Password");
 	}
-	
+
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-	
+
 	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['username']))
 		$input_errors[] = "The username contains invalid characters.";
-		
-	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['password']))
+
+	if (preg_match("/[[:cntrl:]\"]/", $_POST['password']))
 		$input_errors[] = "The password contains invalid characters.";
-	
+
 	if (($_POST['password']) && ($_POST['password'] != $_POST['password2'])) {
 		$input_errors[] = "The passwords do not match.";
 	}
 	if (($_POST['ip'] && !is_ipaddr($_POST['ip']))) {
 		$input_errors[] = "The IP address entered is not valid.";
 	}
-	
+
 	if (!$input_errors && !(isset($id) && $a_secret[$id])) {
 		/* make sure there are no dupes */
 		foreach ($a_secret as $secretent) {
@@ -85,24 +85,24 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-	
+
 		if (isset($id) && $a_secret[$id])
 			$secretent = $a_secret[$id];
-	
+
 		$secretent['name'] = $_POST['username'];
 		$secretent['ip'] = $_POST['ip'];
-		
+
 		if ($_POST['password'])
 			$secretent['password'] = $_POST['password'];
-		
+
 		if (isset($id) && $a_secret[$id])
 			$a_secret[$id] = $secretent;
 		else
 			$a_secret[] = $secretent;
-		
+
 		write_config();
 		touch($d_pptpuserdirty_path);
-		
+
 		header("Location: vpn_pptp_users.php");
 		exit;
 	}
@@ -119,30 +119,30 @@ include("head.inc");
             <form action="vpn_pptp_users_edit.php" method="post" name="iform" id="iform">
               <div id="mainarea">
 	      <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">Username</td>
                   <td width="78%" class="vtable">
-					<?=$mandfldhtml;?><input name="username" type="text" class="formfld" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>"> 
+					<?=$mandfldhtml;?><input name="username" type="text" class="formfld" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
                   </td>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncellreq">Password</td>
-                  <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="password" type="password" class="formfld" id="password" size="20"> 
-                    <br><?=$mandfldhtml;?><input name="password2" type="password" class="formfld" id="password2" size="20"> 
+                  <td width="78%" class="vtable">
+                    <?=$mandfldhtml;?><input name="password" type="password" class="formfld" id="password" size="20">
+                    <br><?=$mandfldhtml;?><input name="password2" type="password" class="formfld" id="password2" size="20">
                     &nbsp;(confirmation)<?php if (isset($id) && $a_secret[$id]): ?><br>
-                    <span class="vexpl">If you want to change the users' password, 
+                    <span class="vexpl">If you want to change the users' password,
                     enter it here twice.</span><?php endif; ?></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td width="22%" valign="top" class="vncell">IP address</td>
-                  <td width="78%" class="vtable"> 
-                    <input name="ip" type="text" class="formfld" id="ip" size="20" value="<?=htmlspecialchars($pconfig['ip']);?>"> 
+                  <td width="78%" class="vtable">
+                    <input name="ip" type="text" class="formfld" id="ip" size="20" value="<?=htmlspecialchars($pconfig['ip']);?>">
                     <br><span class="vexpl">If you want the user to be assigned a specific IP address, enter it here.</span></td>
                 </tr>
-                <tr> 
+                <tr>
                   <td class="vncell" width="22%" valign="top">&nbsp;</td>
-                  <td class="vncell" width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save"> 
+                  <td class="vncell" width="78%">
+                    <input name="Submit" type="submit" class="formbtn" value="Save">
                     <?php if (isset($id) && $a_secret[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">
                     <?php endif; ?>

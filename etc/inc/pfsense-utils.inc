@@ -2199,8 +2199,8 @@ function enable_rrd_graphing() {
 				$rrdupdatesh .= "	local out_{$ifname}\n";
 				$rrdupdatesh .= "	out_{$ifname}=$btick ping -c $numpings -q $monitorip $btick\n";
 				$rrdupdatesh .= "	if [ $? -eq 0 ]; then\n";
-				$rrdupdatesh .= "		packetloss_{$ifname}=$btick echo \$out | cut -f18 -d' ' | cut -c -1 $btick\n";
-				$rrdupdatesh .= "		roundtrip_{$ifname}=$btick echo \$out | cut -f24 -d' ' | cut -f2 -d'/' $btick\n";
+				$rrdupdatesh .= "		packetloss_{$ifname}=$btick echo \$out_{$ifname} | cut -f18 -d' ' | cut -c -1 $btick\n";
+				$rrdupdatesh .= "		roundtrip_{$ifname}=$btick echo \$out_{$ifname} | cut -f24 -d' ' | cut -f2 -d'/' $btick\n";
 				$rrdupdatesh .= "	fi\n";
 				$rrdupdatesh .= "	$rrdtool update $rrddbpath$ifname$quality N:\$packetloss_{$ifname}:\$roundtrip_{$ifname}\n";
 				$rrdupdatesh .= "}\n\n";

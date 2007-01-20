@@ -363,8 +363,9 @@ if ($pkg['tabs'] <> "") {
 	      } else if($pkga['type'] == "select") {
                   $fieldname = $pkga['fieldname'];
                   if (isset($pkga['multiple'])) {
-                    $multiple = 'multiple';
+                    $multiple = 'multiple="multiple"';
                     $items = explode(',', $value);
+                    $fieldname .= "[]";
                   }
                   else {
                     $multiple = '';
@@ -376,7 +377,7 @@ if ($pkg['tabs'] <> "") {
                   print("<select $multiple $size $onchange id=\"$fieldname\" name=\"$fieldname\">\n");
                   foreach ($pkga['options']['option'] as $opt) {
                       $selected = '';
-                      if (in_array($opt['value'], $items)) $selected = 'selected';
+                      if (in_array($opt['value'], $items)) $selected = 'selected="selected"';
                       print("\t<option name=\"{$opt['name']}\" value=\"{$opt['value']}\" $selected>{$opt['name']}</option>\n");
                   }
 

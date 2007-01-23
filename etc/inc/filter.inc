@@ -2035,7 +2035,7 @@ EOD;
 
 	/* allow access to DHCP server on optional interfaces */
 	foreach ($optcfg as $on => $oc) {
-		if (isset($config[interfaces][$on][ipaddr]) == "dhcp" ) {
+		if ($config[interfaces][$on][ipaddr] == "dhcp" ) {
 			$friendly_on = filter_get_opt_interface_descr($on);
 			$ipfrules .= <<<EOD
 

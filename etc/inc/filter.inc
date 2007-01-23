@@ -1415,16 +1415,16 @@ function generate_user_filter_rule($rule, $ngcounter) {
 								for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 				                                        foreach ($config['load_balancer']['lbpool'][$i]['servers'] as $lbsvr) {
                                 				                $lbsvr_split=split("\|", $lbsvr);
-										if ($lbsvr_split[1] == $server) {
+										if ($lbsvr_split[1] == $server)
 											/* deterimine interface gateway */
 											if(is_ipaddr($lbsvr_split[0])) {
-												$int = find_ip_interface($lbsvr_split[0]);
+												$int = guess_interface_from_ip($lbsvr_split[0]);
+												$gateway = $lbsvr_split[0];
 												log_error("Load balancer pool member contains IP address instead of interface name. Please reconfigure the load balancer pool {$config['load_balancer']['lbpool'][$i]['name']}");
 											} else {
 												$int = convert_friendly_interface_to_real_interface_name($lbsvr_split[0]);
+												$gateway = get_interface_gateway($int);
 											}
-											$gateway = get_interface_gateway($int);
-										}
 				                                        }
 								}
                                                                 if($foundlb == 1)

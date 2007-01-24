@@ -232,6 +232,16 @@ function is_port($port) {
 		return true;
 }
 
+/* returns true if $portrange is a valid TCP/UDP portrange ("<port>:<port>") */
+function is_portrange($portrange) {
+        $ports = explode(":", $portrange);
+
+        if(count($ports) == 2 && is_port($ports[0]) && is_port($ports[1]))
+                return true;
+        else
+                return false;
+}
+
 /* returns true if $val is a valid shaper bandwidth value */
 function is_valid_shaperbw($val) {
 	return (preg_match("/^[0-9]+(Kb|Mb|Gb|%)$/", $val));

@@ -31,6 +31,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+$pgtitle = "Firewall: Aliases: Edit";
+
 require("guiconfig.inc");
 
 if (!is_array($config['aliases']['alias']))
@@ -59,8 +61,31 @@ if (isset($id) && $a_aliases[$id]) {
 			$pconfig['type'] = "host";
 		else
 			$pconfig['type'] = "port";
-			
-	$pconfig['descr'] = $a_aliases[$id]['descr'];
+
+	$pconfig['descr'] = html_entity_decode($a_aliases[$id]['descr']);
+
+	/* Explode out details for entry details */
+	$address_details = explode('||', $a_aliases[$id]['detail']);
+	if (is_array($address_details))
+			$address_detail = $address_details[0];
+	else
+		$address_detail = $address_details;
+
+	if($a_aliases[$id]['aliasurl'] <> "") {
+		$pconfig['type'] = "url";
+		if(is_array($a_aliases[$id]['aliasurl'])) {
+			$isfirst = 0;
+			$pconfig['address'] = "";
+			foreach($a_aliases[$id]['aliasurl'] as $aa) {
+				if($isfirst == 1)
+					$pconfig['address'] .= " ";
+				$isfirst = 1;
+				$pconfig['address'] .= $aa;
+			}
+		} else {
+			$pconfig['address'] = $a_aliases[$id]['aliasurl'];
+		}
+	}
 }
 
 if ($_POST) {
@@ -89,7 +114,7 @@ if ($_POST) {
 		$input_errors[] = "Reserved word used for alias name.";
 	} else {
 		if (is_validaliasname($_POST['name']) == false)
-			$input_errors[] = "The alias name may only consist of the characters a-z, A-Z, 0-9.";
+			$input_errors[] = "The alias name may only consist of the characters a-z, A-Z, 0-9, -, _.";
 	}
 	if ($_POST['type'] == "host")
 		if (!is_ipaddr($_POST['address'])) {
@@ -103,9 +128,15 @@ if ($_POST) {
 			$input_errors[] = "A valid subnet bit count must be specified.";
 		}
 	}
+
+	if ($_POST['type'] == "url") {
+		if(stristr($_POST['address'], "http") == false)
+			$input_errors[] = "You must provide a valid URL to the resource.";
+	}
+
 	if ($_POST['type'] == "port")
-		if (!is_port($_POST['address']))
-			$input_errors[] = "The port must be an integer between 1 and 65535.";
+		if (! is_port($_POST['address']) && ! is_portrange($_POST['address']))
+			$input_errors[] = "Please specify a valid port or portrange.";
 
 	/* check for name conflicts */
 	foreach ($a_aliases as $alias) {
@@ -117,14 +148,14 @@ if ($_POST) {
 			break;
 		}
 	}
-	
+
 	/* check for name interface description conflicts */
 	foreach($config['interfaces'] as $interface) {
 		if($interface['descr'] == $_POST['name']) {
-			$input_errors[] = gettext("An interface description with this name already exists.");
-			break;	
+			$input_errors[] = "An interface description with this name already exists.";
+			break;
 		}
-	}	
+	}
 
 	if (!$input_errors) {
 		$alias = array();
@@ -136,185 +167,338 @@ if ($_POST) {
 			$alias['address'] = $_POST['address'];
 
 		$address = $alias['address'];
+		$final_address_detail = htmlentities($_POST['detail'], ENT_QUOTES, 'UTF-8');
+      		if($final_address_detail <> "") {
+		       	$final_address_details .= $final_address_detail;
+		} else {
+   			$final_address_details .= "Entry added" . " ";
+       			$final_address_details .= date('r');
+    		}
+	    	$final_address_details .= "||";
 		$isfirst = 0;
-		for($x=0; $x<99; $x++) {
-			$comd = "\$subnet = \$_POST['address" . $x . "'];";
-			eval($comd);
-			$comd = "\$subnet_address = \$_POST['address_subnet" . $x . "'];";
-			eval($comd);
-			if($subnet <> "") {
-				$address .= " ";
-				$address .= $subnet;
-				if($subnet_address <> "") $address .= "/" . $subnet_address;
+
+		if($_POST['type'] == "url") {
+			$address = "";
+			$isfirst = 0;
+			$address_count = 2;
+
+			/* item is a url type */
+			if($_POST['address'])
+				$_POST['address0'] = $_POST['address'];
+			for($x=0; $x<99; $x++) {
+				if($_POST['address' . $x]) {
+					/* fetch down and add in */
+					$isfirst = 0;
+					$temp_filename = tempnam("/tmp/", "alias_import");
+					unlink($temp_filename);
+					$fda = fopen("/tmp/tmpfetch","w");
+					fwrite($fda, "/usr/bin/fetch -q -o \"{$temp_filename}/aliases\" \"" . $_POST['address' . $x] . "\"");
+					fclose($fda);
+					mwexec("mkdir -p {$temp_filename}");
+					mwexec("/usr/bin/fetch -q -o \"{$temp_filename}/aliases\" \"" . $_POST['address' . $x] . "\"");
+					/* if the item is tar gzipped then extract */
+					if(stristr($_POST['address' . $x], ".tgz"))
+						process_alias_tgz($temp_filename);
+					if(file_exists("{$temp_filename}/aliases")) {
+						$file_contents = file_get_contents("{$temp_filename}/aliases");
+						$file_contents = str_replace("#", "\n#", $file_contents);
+						$file_contents_split = split("\n", $file_contents);
+						foreach($file_contents_split as $fc) {
+							$tmp = trim($fc);
+							if(stristr($fc, "#")) {
+								$tmp_split = split("#", $tmp);
+								$tmp = trim($tmp_split[0]);
+							}
+							if(trim($tmp) <> "") {
+								if($isfirst == 1)
+									$address .= " ";
+								$address .= $tmp;
+								$isfirst = 1;
+							}
+						}
+						if($isfirst == 0) {
+							/* nothing was found */
+							$input_errors[] = "You must provide a valid URL. Could not fetch usable data.";
+							$dont_update = true;
+							break;
+						}
+						$alias['aliasurl'][] = $_POST['address' . $x];
+						mwexec("/bin/rm -rf {$temp_filename}");
+					} else {
+						$input_errors[] = "You must provide a valid URL.";
+						$dont_update = true;
+						break;
+					}
+				}
+			}
+		} else {
+			/* item is a normal alias type */
+			for($x=0; $x<99; $x++) {
+				$comd = "\$subnet = \$_POST['address" . $x . "'];";
+				eval($comd);
+				$comd = "\$subnet_address = \$_POST['address_subnet" . $x . "'];";
+				eval($comd);
+				if($subnet <> "") {
+					$address .= " ";
+					$address .= $subnet;
+					if($subnet_address <> "") $address .= "/" . $subnet_address;
+
+					/* Compress in details to a single key, data separated by pipes.
+					   Pulling details here lets us only pull in details for valid
+					   address entries, saving us from having to track which ones to
+					   process later. */
+		       $comd = "\$final_address_detail = htmlentities( \$_POST['detail" . $x . "'], ENT_QUOTES, 'UTF-8' );";
+		       eval($comd);
+		       if($final_address_detail <> "") {
+		       $final_address_details .= $final_address_detail;
+		       } else {
+			       $final_address_details .= "Entry added" . " ";
+			       $final_address_details .= date('r');
+		       }
+		       $final_address_details .= "||";
+				}
 			}
 		}
 
-		$alias['address'] = $address;
-		$alias['descr'] = $_POST['descr'];
+		if($dont_update <> true) {
 
-		if (isset($id) && $a_aliases[$id])
-			$a_aliases[$id] = $alias;
-		else
-			$a_aliases[] = $alias;
+			$alias['address'] = $address;
+			$alias['descr'] = htmlentities($_POST['descr'], ENT_QUOTES, 'UTF-8');
+			$alias['type'] = $_POST['type'];
+			$alias['detail'] = $final_address_details;
 
-		touch($d_aliasesdirty_path);
+			if (isset($id) && $a_aliases[$id])
+				$a_aliases[$id] = $alias;
+			else
+				$a_aliases[] = $alias;
 
-		write_config();
+			touch($d_aliasesdirty_path);
 
-		filter_configure();
+			write_config();
+			filter_configure();
 
-		header("Location: firewall_aliases.php");
-		exit;
+			header("Location: firewall_aliases.php");
+			exit;
+		}
 	}
 }
 
 $pgtitle = "System: Firewall: Aliases: Edit";
 include("head.inc");
 
-?>
+$jscriptstr = <<<EOD
 
-<script language="JavaScript">
-<!--
+<script type="text/javascript">
 function typesel_change() {
 	switch (document.iform.type.selectedIndex) {
 		case 0:	/* host */
 			var cmd;
+
+			document.iform.address_subnet.disabled = 1;
 			document.iform.address_subnet.value = "";
 			document.iform.address_subnet.selected = 0;
-			document.iform.address_subnet.disabled = 1;
-			newrows = totalrows+100;
-			for(i=1; i<newrows; i++) {
-				var working_with = 'address_subnet' + i;
-				var item = document.getElementById(working_with);
-				if(item) {
-					comd = 'document.iform.' + working_with + '.value = "";';
-					eval(comd);
-					comd = 'document.iform.' + working_with + '.disabled = 1;';
-					eval(comd);
-				}
+			newrows = totalrows+1;
+			for(i=2; i<newrows; i++) {
+				comd = 'document.iform.address_subnet' + i + '.disabled = 1;';
+				eval(comd);
+				comd = 'document.iform.address_subnet' + i + '.value = "";';
+				eval(comd);
 			}
 			break;
 		case 1:	/* network */
 			var cmd;
+
 			document.iform.address_subnet.disabled = 0;
-			newrows = totalrows+100;
+			newrows = totalrows+1;
 			for(i=2; i<newrows; i++) {
-				var item = document.getElementById('address_subnet' + i);
-				if(item) {
-					comd = 'document.iform.address_subnet' + i + '.disabled = 0;';
-					eval(comd);
-				}
+				comd = 'document.iform.address_subnet' + i + '.disabled = 0;';
+				eval(comd);
 			}
 			break;
 		case 2:	/* port */
 			var cmd;
+
 			document.iform.address_subnet.disabled = 1;
 			document.iform.address_subnet.value = "";
-			newrows = totalrows+100;
+			newrows = totalrows+1;
 			for(i=2; i<newrows; i++) {
-				var item = document.getElementById('address_subnet' + i);
-				if(item) {
-					comd = 'document.iform.address_subnet' + i + '.disabled = 1;';
-					eval(comd);
-					comd = 'document.iform.address_subnet' + i + '.value = "32";';
-					eval(comd);
-				}
+				comd = 'document.iform.address_subnet' + i + '.disabled = 1;';
+				eval(comd);
+				comd = 'document.iform.address_subnet' + i + '.value = "32";';
+				eval(comd);
+			}
+			break;
+		case 3:	/* url */
+			var cmd;
+			document.iform.address_subnet.disabled = 0;
+			newrows = totalrows+1;
+			for(i=2; i<newrows; i++) {
+				comd = 'document.iform.address_subnet' + i + '.disabled = 0;';
+				eval(comd);
 			}
 			break;
 	}
 }
 
+EOD;
+
+$network_str = gettext("Network");
+$networks_str = gettext("Network(s)");
+$cidr_str = gettext("CIDR");
+$description_str = gettext("Description");
+$hosts_str = gettext("Host(s)");
+$ip_str = gettext("IP");
+$ports_str = gettext("Port(s)");
+$port_str = gettext("Port");
+$url_str = gettext("URL");
+$update_freq_str = gettext("Update Freq.");
+
+$networks_help = gettext("Networks can be expressed like 10.0.0.0 format.  Select the CIDR (network mask) that pertains to each entry.");
+$hosts_help = gettext("Enter as many hosts as you would like.  Hosts should be expressed in their ip address format.");
+$ports_help = gettext("Enter as many ports as you wish.  Port ranges can be expressed by seperating with a colon.");
+$url_help = gettext("Enter as many urls as you wish.  Also set the time that you would like the url refreshed in days.  After saving {$g['product_name']} will download the URL and import the items into the alias.");
+
+$jscriptstr .= <<<EOD
+
 function update_box_type() {
 	var indexNum = document.forms[0].type.selectedIndex;
 	var selected = document.forms[0].type.options[indexNum].text;
-	if(selected == 'Network(s)') {
-		document.getElementById ("addressnetworkport").firstChild.data = "Network(s)";
+	if(selected == '{$networks_str}') {
+		document.getElementById ("addressnetworkport").firstChild.data = "{$networks_str}";
 		document.getElementById ("address_subnet").visible = true;
 		document.getElementById ("address_subnet").disabled = false;
-	} else if(selected == 'Host(s)') {
-		document.getElementById ("addressnetworkport").firstChild.data = "Host(s)";
+		document.getElementById ("onecolumn").firstChild.data = "{$network_str}";
+		document.getElementById ("twocolumn").firstChild.data = "{$cidr_str}";
+		document.getElementById ("threecolumn").firstChild.data = "{$description_str}";
+		document.getElementById ("itemhelp").firstChild.data = "{$networks_help}";
+	} else if(selected == '{$hosts_str}') {
+		document.getElementById ("addressnetworkport").firstChild.data = "{$hosts_str}";
 		document.getElementById ("address_subnet").visible = false;
 		document.getElementById ("address_subnet").disabled = true;
-	} else if(selected == 'Port(s)') {
-		document.getElementById ("addressnetworkport").firstChild.data = "Port(s)";
+		document.getElementById ("onecolumn").firstChild.data = "{$ip_str}";
+		document.getElementById ("twocolumn").firstChild.data = "";
+		document.getElementById ("threecolumn").firstChild.data = "{$description_str}";
+		document.getElementById ("itemhelp").firstChild.data = "{$hosts_help}";
+	} else if(selected == '{$ports_str}') {
+		document.getElementById ("addressnetworkport").firstChild.data = "{$ports_str}";
 		document.getElementById ("address_subnet").visible = false;
 		document.getElementById ("address_subnet").disabled = true;
+		document.getElementById ("onecolumn").firstChild.data = "{$port_str}";
+		document.getElementById ("twocolumn").firstChild.data = "";
+		document.getElementById ("threecolumn").firstChild.data = "{$description_str}";
+		document.getElementById ("itemhelp").firstChild.data = "{$ports_help}";
+	} else if(selected == '{$url_str}') {
+		document.getElementById ("addressnetworkport").firstChild.data = "{$url_str}";
+		document.getElementById ("address_subnet").visible = true;
+		document.getElementById ("address_subnet").disabled = false;
+		document.getElementById ("onecolumn").firstChild.data = "{$url_str}";
+		document.getElementById ("twocolumn").firstChild.data = "{$update_freq_str}";
+		document.getElementById ("threecolumn").firstChild.data = "{$description_str}";
+		document.getElementById ("itemhelp").firstChild.data = "{$url_help}";
 	}
 }
-
--->
 </script>
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+EOD
 
-<script type="text/javascript" language="javascript" src="row_helper.js">
+?>
+
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
+<?php
+	include("fbegin.inc");
+	echo $jscriptstr;
+?>
+
+<script type="text/javascript" src="row_helper.js">
 </script>
 
-<input type='hidden' name='address_type' value='textbox'></input>
-<input type='hidden' name='address_subnet_type' value='select'></input>
+<input type='hidden' name='address_type' value='textbox' />
+<input type='hidden' name='address_subnet_type' value='select' />
 
-<script type="text/javascript" language='javascript'>
-<!--
+<script type="text/javascript">
+	rowname[0] = "address";
+	rowtype[0] = "textbox";
+	rowsize[0] = "30";
 
-rowname[0] = "address";
-rowtype[0] = "textbox";
+	rowname[1] = "address_subnet";
+	rowtype[1] = "select";
+	rowsize[1] = "1";
 
-rowname[1] = "address_subnet";
-rowtype[1] = "select";
-
-rowname[2] = "address_subnet";
-rowtype[2] = "select";
--->
+	rowname[2] = "detail";
+	rowtype[2] = "textbox";
+	rowsize[2] = "61";
 </script>
 
 <p class="pgtitle"><?=$pgtitle?></p>
+
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-            <form action="firewall_aliases_edit.php" method="post" name="iform" id="iform">
-              <table width="100%" border="0" cellpadding="6" cellspacing="0">
+<div id="inputerrors"></div>
+
+<form action="firewall_aliases_edit.php" method="post" name="iform" id="iform">
+<table width="100%" border="0" cellpadding="6" cellspacing="0">
 <?php if(is_alias_inuse($pconfig['name']) == true): ?>
-                <tr>
-                  <td valign="top" class="vncellreq">Name</td>
-                  <td class="vtable"> <input name="name" type="hidden" class="formfld" id="name" size="40" value="<?=htmlspecialchars($pconfig['name']);?>">
+  <tr>
+    <td valign="top" class="vncellreq">Name</td>
+    <td class="vtable"> <input name="name" type="hidden" id="name" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
 		  <?php echo $pconfig['name']; ?>
-                    <p><span class="vexpl">NOTE: This alias is in use so the name may not be modified!</span></td>
-                </tr>
+      <p>
+        <span class="vexpl">NOTE: This alias is in use so the name may not be modified!</span>
+      </p>
+    </td>
+  </tr>
 <?php else: ?>
-                <tr>
-                  <td valign="top" class="vncellreq">Name</td>
-                  <td class="vtable"> <input name="name" type="text" class="formfld" id="name" size="40" value="<?=htmlspecialchars($pconfig['name']);?>">
-                    <br> <span class="vexpl">The name of the alias may only consist
-                    of the characters a-z, A-Z and 0-9.</span></td>
-                </tr>
+  <tr>
+    <td valign="top" class="vncellreq">Name</td>
+    <td class="vtable">
+      <input name="name" type="text" id="name" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
+      <br />
+      <span class="vexpl">
+        The name of the alias may only consist of the characters a-z, A-Z and 0-9.
+      </span>
+    </td>
+  </tr>
 <?php endif; ?>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">Description</td>
-                  <td width="78%" class="vtable"> <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
-                    <br> <span class="vexpl">You may enter a description here
-                    for your reference (not parsed).</span></td>
-                </tr>
-                <tr>
-                  <td valign="top" class="vncellreq">Type</td>
-                  <td class="vtable">
-                    <select name="type" class="formfld" id="type" onChange="update_box_type(); typesel_change();">
-                      <option value="host" <?php if ($pconfig['type'] == "host") echo "selected"; ?>>Host(s)</option>
-                      <option value="network" <?php if ($pconfig['type'] == "network") echo "selected"; ?>>Network(s)</option>
-		      <option value="port" <?php if ($pconfig['type'] == "port") echo "selected"; ?>>Port(s)</option>
-                    </select>
-                  </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncellreq"><div id="addressnetworkport" name="addressnetworkport">Host(s)</div></td>
-                  <td width="78%" class="vtable">
-
-
-		    <table name="maintable" id="maintable">
-		      <tbody>
+  <tr>
+    <td width="22%" valign="top" class="vncell">Description</td>
+    <td width="78%" class="vtable">
+      <input name="descr" type="text"  id="descr" size="40" value="<?=$pconfig['descr'];?>" />
+      <br />
+      <span class="vexpl">
+        You may enter a description here for your reference (not parsed).
+      </span>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" class="vncellreq">Type</td>
+    <td class="vtable">
+      <select name="type" class="formselect" id="type" onchange="update_box_type(); typesel_change();">
+        <option value="host" <?php if ($pconfig['type'] == "host") echo "selected"; ?>>Host(s)</option>
+        <option value="network" <?php if ($pconfig['type'] == "network") echo "selected"; ?>>Network(s)</option>
+        <option value="port" <?php if ($pconfig['type'] == "port") echo "selected"; ?>>Port(s)</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <td width="22%" valign="top" class="vncellreq"><div id="addressnetworkport">Host(s)</div></td>
+    <td width="78%" class="vtable">
+      <table id="maintable">
+        <tbody>
+          <tr>
+            <td colspan="4">
+      		    <div style="padding:5px; margin-top: 16px; margin-bottom: 16px; border:1px dashed #000066; background-color: #ffffff; color: #000000; font-size: 8pt;" id="itemhelp">Item information</div>
+            </td>
+          </tr>
+          <tr>
+            <td><div id="onecolumn">Network</div></td>
+            <td><div id="twocolumn">CIDR</div></td>
+           <td><div id="threecolumn">Description</div></td>
+          </tr>
 
 			<?php
 			$counter = 0;
 			$address = $a_aliases[$id]['address'];
 			$item = explode(" ", $address);
+			$item3 = explode("||", $a_aliases[$id]['detail']);
 			foreach($item as $ww) {
 				$address = $item[$counter];
 				$address_subnet = "";
@@ -325,49 +509,85 @@ rowtype[2] = "select";
 						$address_subnet = $item2[1];
 					}
 				}
+				$item4 = $item3[$counter];
 				if($counter > 0) $tracker = $counter + 1;
 			?>
-			<tr><td> <input name="address<?php echo $tracker; ?>" type="text" class="formfld" id="address<?php echo $tracker; ?>" size="20" value="<?=htmlspecialchars($address);?>"></td><td>
-			<select name="address_subnet<?php echo $tracker; ?>" class="formfld" id="address_subnet<?php echo $tracker; ?>">
-			  <option></option>
-			  <?php for ($i = 32; $i >= 1; $i--): ?>
-			  <option value="<?=$i;?>" <?php if ($i == $address_subnet) echo "selected"; ?>><?=$i;?></option>
-			  <?php endfor; ?>
-			</select>
-			  <?php
-				if($counter > 0)
-					echo "<input type=\"image\" src=\"/themes/".$g['theme']."/images/icons/icon_x.gif\" onclick=\"removeRow(this); return false;\" value=\"Delete\">";
-			  ?>
+          <tr>
+            <td>
+              <input name="address<?php echo $tracker; ?>" type="text"  id="address<?php echo $tracker; ?>" size="30" value="<?=htmlspecialchars($address);?>" />
+            </td>
+            <td>
+			        <select name="address_subnet<?php echo $tracker; ?>" class="formselect" id="address_subnet<?php echo $tracker; ?>">
+			          <option></option>
+			          <?php for ($i = 32; $i >= 1; $i--): ?>
+			          <option value="<?=$i;?>" <?php if ($i == $address_subnet) echo "selected"; ?>><?=$i;?></option>
+			          <?php endfor; ?>
+			        </select>
+			      </td>
+            <td>
+              <input name="detail<?php echo $tracker; ?>" type="text"  id="detail<?php echo $tracker; ?>" size="50" value="<?=$item4;?>" />
+            </td>
+            <td>
+    			  <?php
+    				if($counter > 0)
+    					echo "<input type=\"image\" src=\"/themes/".$g['theme']."/images/icons/icon_x.gif\" onclick=\"removeRow(this); return false;\" value=\"Delete\" />";
+    			  ?>
+			      </td>
+          </tr>
+			<?php
+        $counter++;
 
-			</td></tr>
-			<?php $counter++; } ?>
+        } // end foreach
+      ?>
+        </tbody>
+        <tfoot>
 
-		     </tbody>
-		    </table>
-			<a onClick="javascript:addRowTo('maintable'); typesel_change(); return false;" href="#"><img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add another entry"></a>
-		    </td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> <input name="Submit" type="submit" class="formbtn" value="Save"> <input class="formbtn" type="button" value="Cancel" onclick="history.back()">
-                    <?php if (isset($id) && $a_aliases[$id]): ?>
-                    <input name="id" type="hidden" value="<?=$id;?>">
-                    <?php endif; ?>
-                  </td>
-                </tr>
-              </table>
+        </tfoot>
+		  </table>
+			<a onclick="javascript:addRowTo('maintable'); typesel_change(); return false;" href="#">
+        <img border="0" src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="" title="add another entry" />
+      </a>
+		</td>
+  </tr>
+  <tr>
+    <td width="22%" valign="top">&nbsp;</td>
+    <td width="78%">
+      <input id="submit" name="submit" type="submit" class="formbtn" value="Save" />
+      <input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="Cancel" onclick="history.back()" />
+      <?php if (isset($id) && $a_aliases[$id]): ?>
+      <input name="id" type="hidden" value="<?=$id;?>" />
+      <?php endif; ?>
+    </td>
+  </tr>
+</table>
 </form>
-<script language="JavaScript">
-<!--
-field_counter_js = 2;
-rows = 1;
-totalrows = <?php echo $counter; ?>;
-loaded = <?php echo $counter; ?>;
-typesel_change();
-update_box_type();
 
-//-->
+<script type="text/javascript">
+	field_counter_js = 3;
+	rows = 1;
+	totalrows = <?php echo $counter; ?>;
+	loaded = <?php echo $counter; ?>;
+	typesel_change();
+	update_box_type();
 </script>
+
 <?php include("fend.inc"); ?>
 </body>
 </html>
+
+<?php
+function process_alias_tgz($temp_filename) {
+	mwexec("/bin/mv {$temp_filename}/aliases {$temp_filename}/aliases.tgz");
+	mwexec("/usr/bin/tar xzf {$temp_filename}/aliases.tgz -C {$temp_filename}/aliases/");
+	unlink("{$temp_filename}/aliases.tgz");
+	$files_to_process = return_dir_as_array("{$temp_filename}/");
+	/* foreach through all extracted files and build up aliases file */
+	$fd = fopen("{$temp_filename}/aliases", "a");
+	foreach($files_to_process as $f2p) {
+		$file_contents = file_get_contents($f2p);
+		fwrite($fd, $file_contents);
+		unlink($f2p);
+	}
+	fclose($fd);
+}
+?>

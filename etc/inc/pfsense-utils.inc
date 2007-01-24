@@ -1104,6 +1104,27 @@ function restore_config_section($section, $new_contents) {
 }
 
 /*
+ *  merge_config_section($section, new_contents):   restore a configuration section,
+ *                                                  and write the configuration out
+ *                                                  to disk/cf.  But preserve the prior
+ * 													structure if needed
+ */
+function merge_config_section($section, $new_contents) {
+	global $config;
+	conf_mount_rw();
+	$fname = get_tmp_filename();
+	$fout = fopen($fname, "w");
+	fwrite($fout, $new_contents);
+	fclose($fout);
+	$section_xml = parse_xml_config($fname, $section);
+	$config[$section] = $section_xml;
+	unlink($fname);
+	write_config("Restored {$section} of config file (maybe from CARP partner)");
+	conf_mount_ro();
+	return;
+}
+
+/*
  * http_post($server, $port, $url, $vars): does an http post to a web server
  *                                         posting the vars array.
  * written by nf@bigpond.net.au

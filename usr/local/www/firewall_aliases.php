@@ -134,6 +134,7 @@ if ($_GET['act'] == "del") {
 		} else {
 			unset($a_aliases[$_GET['id']]);
 			write_config();
+			filter_configure();
 			touch($d_aliasesdirty_path);
 			header("Location: firewall_aliases.php");
 			exit;

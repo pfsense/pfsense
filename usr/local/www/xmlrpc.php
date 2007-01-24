@@ -1,7 +1,7 @@
 <?php
 /*
 	$Id$
-	
+
         xmlrpc.php
         Copyright (C) 2005 Colin Smith
         All rights reserved.
@@ -93,6 +93,28 @@ function restore_config_section_xmlrpc($raw_params) {
 
 /*****************************/
 
+
+$merge_config_section_doc = 'XMLRPC wrapper for merge_config_section. This method must be called with two parameters: a string containing the local system\'s password and an array to merge into the system\'s config. This function returns true upon completion.';
+$merge_config_section_sig = array(
+					array(
+						$XML_RPC_Boolean,
+						$XML_RPC_String,
+						$XML_RPC_Struct
+					)
+				);
+
+function merge_config_section_xmlrpc($raw_params) {
+	global $config, $xmlrpc_g;
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
+	$config = array_merge($config, $params[0]);
+	$mergedkeys = implode(",", array_keys($params[0]));
+	write_config("Merged in config ({$mergedkeys} sections) from XMLRPC client.");
+	return $xmlrpc_g['return']['true'];
+}
+
+/*****************************/
+
 $filter_configure_doc = 'Basic XMLRPC wrapper for filter_configure. This method must be called with one paramater: a string containing the local system\'s password. This function returns true upon completion.';
 $filter_configure_sig = array(
 				array(
@@ -144,7 +166,7 @@ function reboot_xmlrpc($raw_params) {
 
 $get_notices_sig = array(
 				array(
-					$XML_RPC_Array, 
+					$XML_RPC_Array,
 					$XML_RPC_String
 				),
 				array(
@@ -192,6 +214,9 @@ $server = new XML_RPC_Server(
 	    'pfsense.restore_config_section' => array('function' => 'restore_config_section_xmlrpc',
 							'signature' => $restore_config_section_sig,
 							'docstring' => $restore_config_section_doc),
+	    'pfsense.merge_config_section' => array('function' => 'merge_config_section_xmlrpc',
+							'signature' => $merge_config_section_sig,
+							'docstring' => $merge_config_section_doc),
 	    'pfsense.filter_configure' => 	array('function' => 'filter_configure_xmlrpc',
 							'signature' => $filter_configure_sig,
 							'docstring' => $filter_configure_doc),

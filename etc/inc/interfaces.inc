@@ -50,10 +50,10 @@ function interfaces_vlan_configure() {
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 
 		/* devices with native VLAN support */
-		$vlan_native_supp = explode(" ", "bge em gx nge ti txp");
+		$vlan_native_supp = explode(" ", "bge em ixgb nge re ti txp vge");
 
 		/* devices with long frame support */
-		$vlan_long_supp = explode(" ", "dc fxp sis ste tl tx xl");
+		$vlan_long_supp = explode(" ", "bfe dc fxp gem hme le rl sis sk ste tl tx xl");
 
 		$i = 0;
 

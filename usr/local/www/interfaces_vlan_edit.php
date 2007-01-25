@@ -1,22 +1,22 @@
-<?php 
+<?php
 /* $Id$ */
 /*
 	interfaces_vlan_edit.php
 	part of m0n0wall (http://m0n0.ch/wall)
-	
+
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
-	
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
-	
+
 	1. Redistributions of source code must retain the above copyright notice,
 	   this list of conditions and the following disclaimer.
-	
+
 	2. Redistributions in binary form must reproduce the above copyright
 	   notice, this list of conditions and the following disclaimer in the
 	   documentation and/or other materials provided with the distribution.
-	
+
 	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
 	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
@@ -56,9 +56,9 @@ if ($_POST) {
 	/* input validation */
 	$reqdfields = explode(" ", "if tag");
 	$reqdfieldsn = explode(",", "Parent interface,VLAN tag");
-	
+
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-	
+
 	if ($_POST['tag'] && (!is_numericint($_POST['tag']) || ($_POST['tag'] < '1') || ($_POST['tag'] > '4094'))) {
 		$input_errors[] = "The VLAN tag must be an integer between 1 and 4094.";
 	}
@@ -66,11 +66,11 @@ if ($_POST) {
 	foreach ($a_vlans as $vlan) {
 		if (isset($id) && ($a_vlans[$id]) && ($a_vlans[$id] === $vlan))
 			continue;
-		
+
 		if (($vlan['if'] == $_POST['if']) && ($vlan['tag'] == $_POST['tag'])) {
 			$input_errors[] = "A VLAN with the tag {$vlan['tag']} is already defined on this interface.";
 			break;
-		}	
+		}
 	}
 
 	if (!$input_errors) {
@@ -83,11 +83,11 @@ if ($_POST) {
 			$a_vlans[$id] = $vlan;
 		else
 			$a_vlans[] = $vlan;
-		
-		write_config();		
-		
-		reload_interfaces();
-		
+
+		write_config();
+
+		interfaces_vlan_configure();
+
 		header("Location: interfaces_vlan.php");
 		exit;
 	}
@@ -106,10 +106,10 @@ include("head.inc");
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
                   <td width="22%" valign="top" class="vncellreq">Parent interface</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <select name="if" class="formfld">
                       <?php
-					  foreach ($portlist as $ifn => $ifinfo) 
+					  foreach ($portlist as $ifn => $ifinfo)
 						if (is_jumbo_capable($ifn)) {
 							echo "<option value=\"{$ifn}\"";
 							if ($ifn == $pconfig['if'])
@@ -132,14 +132,14 @@ include("head.inc");
 			    </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
-                  <td width="78%" class="vtable"> 
+                  <td width="78%" class="vtable">
                     <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
+                  <td width="78%">
                     <input name="Submit" type="submit" class="formbtn" value="Save"> <input type="button" value="Cancel" onclick="history.back()">
                     <?php if (isset($id) && $a_vlans[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>">

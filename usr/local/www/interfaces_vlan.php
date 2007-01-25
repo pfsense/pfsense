@@ -77,9 +77,9 @@ if ($_GET['act'] == "del") {
 			$config['interfaces']['opt' . $i]['if'] = renumber_vlan($config['interfaces']['opt' . $i]['if'], $_GET['id']);
 
 		write_config();
-		
-		reload_interfaces();
-		
+
+		interfaces_vlan_configure();
+
 		header("Location: interfaces_vlan.php");
 		exit;
 	}

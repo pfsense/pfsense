@@ -54,6 +54,11 @@ if($argument <> "") {
     $interface_real = $config['interfaces']['wan']['if'];
 }
 
+if($curwanip == "0.0.0.0") {
+        log_error("Failed to update WAN IP, restarting dhclient.");
+        exec("dhclient $interface_real");
+}
+
 /* grab the prior ip for pftpx tests */
 if(file_exists("/tmp/rc.newwanip_oldip")) {
 	/* grab hint from dhclient */
@@ -116,7 +121,7 @@ exec("/etc/rc.start_packages");
 /* if ($config['load_balancer']['lbpool']['type'] == "gateway") */
 slbd_configure();
 log_error("Configuring slbd");
-                                        
+
 
 return 0;
 

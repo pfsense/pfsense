@@ -55,6 +55,11 @@ function interfaces_vlan_configure() {
 		/* devices with long frame support */
 		$vlan_long_supp = explode(" ", "bfe dc fxp gem hme le rl sis sk ste tl tx xl");
 
+		/* sweep through and axe old interfaces */
+		$vlan_count = get_number_of_vlan_interfaces();
+		for($x=0; $x<$vlan_count; $x++)
+			exec("/sbin/ifconfig vlan{$x} delete down");
+
 		$i = 0;
 
 		foreach ($config['vlans']['vlan'] as $vlan) {
@@ -1514,6 +1519,20 @@ function get_number_of_bridged_interfaces() {
 		}
 	}
 	return "{$bridges_total}";
+}
+
+function get_number_of_vlan_interfaces() {
+        $vlans_total = 0;
+        $vlans = split("\n", `/sbin/ifconfig -a | /usr/bin/grep vlan | grep flags`);
+        foreach($vlans as $bridge) {
+                $match_array = "";
+                preg_match_all("/vlan(.*):/",$bridge,$match_array);
+                if($match_array[1][0] <> "") {
+                        if($match_array[1][0] > $vlans_total)
+                                $vlans_total = $match_array[1][0];
+                }
+        }
+        return "{$vlans_total}";
 }
 
 function get_next_available_bridge_interface() {

@@ -1400,7 +1400,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 								$lbs = $lb['servers'];
 							}
 
-							/* If we want failover we only return the first (top) server from the list 
+							/* If we want failover we only return the first (top) server from the list
 							 * and work our way down from there. This way we order the failover order.
 							 */
 							if($lb['behaviour'] == "failover") {
@@ -1806,6 +1806,8 @@ function filter_rules_generate() {
 	$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
 	$lansn = $lancfg['subnet'];
 
+	$wanip = find_interface_ip(get_real_wan_interface());
+
 	if($lansa)
 		$lansa_sn_combo = "{$lansa}/{$lansn}";
 	else
@@ -1870,6 +1872,9 @@ function filter_rules_generate() {
 table <snort2c> persist
 block quick from <snort2c> to any label "Block snort2c hosts"
 block quick from any to <snort2c> label "Block snort2c hosts"
+
+# permit wan interface to ping out (ping_hosts.sh)
+pass quick proto icmp from {$wanip} to any
 
 # loopback
 anchor "loopback"

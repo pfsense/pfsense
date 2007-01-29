@@ -64,8 +64,8 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	fwrite($queueout, serialize($queue));
 	fclose($queueout);
 	log_error("New alert found: {$notice}");
-	if(file_exists("/dev/led1"))
-		exec("echo 1 > /dev/led1");
+	if(file_exists("/dev/led/error"))
+		exec("echo 1 > /dev/led/error");
 	return $queuekey;
 }
 
@@ -118,8 +118,8 @@ function close_notice($id) {
 	} else {
 		unlink_if_exists($notice_path);
 	}
-	if(file_exists("/dev/led1"))
-		exec("echo 0 > /dev/led1");
+	if(file_exists("/dev/led/error"))
+		exec("echo 0 > /dev/led/error");
 	return;
 }
 

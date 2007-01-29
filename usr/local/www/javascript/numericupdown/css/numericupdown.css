@@ -1,0 +1,42 @@
+.buttonInc,
+.buttonDec
+        {
+        margin:0;
+        padding:0;
+        width:11px;
+        height:8px;
+        vertical-align:top;
+        background-color:#ccc;
+        text-indent:-999px;
+        overflow:hidden;
+        background:#ccc url(../images/up.gif) no-repeat 50% 50%;
+        border-top:1px solid #eee;
+        border-left:1px solid #eee;
+        border-bottom:1px solid #777;
+        border-right:1px solid #777;
+        voice-family: "\"}\"";
+        voice-family: inherit;
+        height:9px;
+        }
+html>body .buttonInc,
+html>body .buttonDec
+        {
+        height:9px;
+        }
+.buttonDec
+        {
+        margin:9px 0 0 -11px;
+        background:#ccc url(../images/down.gif) no-repeat 50% 50%;
+        voice-family: "\"}\"";
+        voice-family: inherit;
+        margin:10px 0 0 -11px;
+        }
+html>body .buttonDec
+        {
+        margin:10px 0 0 -11px;
+        }
+button
+        {
+        font-family:monospace;
+        line-height:1em;
+        }

@@ -1,0 +1,178 @@
+/* This is a very basic stylesheet for the date-picker. Feel free to create your own. */
+
+/* The wrapper div */
+.datePicker
+        {
+        position:absolute;
+        min-width:21em;
+        width:21em;
+        z-index:9999;
+        text-align:center;
+        font:900 0.8em/0.8em Verdana, Sans-Serif;
+        background:transparent;
+        }
+/*
+   Quirksmode necessity
+   --------------------
+   
+   If your HTML document renders in quirksmode (i.e. has no doctype declaration)
+   then uncomment the following CSS rule or the datePicker will be HUGE...
+
+.datePicker th,
+.datePicker td
+        {
+        font-size:11px;
+        }
+*/
+/* The iframe hack to cover selectlists in Internet Explorer <= v6 */
+.iehack
+        {
+        position:absolute;
+        background:#fff;
+        z-index:9998;
+        padding:0;
+        border:0;
+        display:none;
+        }
+/* The button created beside each input */
+.date-picker-control
+        {
+        border:0 none;
+        padding:0;
+        margin-left:4px;
+        background:transparent url(../media/cal.gif) no-repeat 0 0;
+        width:16px;
+        height:16px;
+        margin-top:0;
+        vertical-align:top;
+        cursor:pointer;
+        }
+/* The next & previous buttons */
+.datePicker th button
+        {
+        display:inline;
+        padding:0;
+        margin:0;
+        color:#000;
+        height:1em;
+        width:0.8em;
+        line-height:0.8em;
+        border-width:0;
+        font-family: georgia, times new roman, palatino, times, bookman, serif;
+        background:transparent;
+        font-weight:bold;
+        cursor:pointer;
+        }
+.datePicker th button:active,
+.datePicker th button:focus,
+.date-picker-control:active,
+.date-picker-control:focus
+        {
+        outline:none;
+        }
+.datePicker th button.prev-but
+        {
+        text-align:left;
+        }
+.datePicker th button.next-but
+        {
+        text-align:right;
+        }
+/* The mon, tue, wed etc day buttons */
+.datePicker th button.fd-day-header
+        {
+        text-align:center;
+        margin:0 auto;
+        font:900 1em Verdana, Sans-Serif;
+        height:auto;
+        width:auto;
+        text-decoration:none;
+        line-height:1.4em;
+        }
+/* The table */
+.datePicker table
+        {
+        position:relative;
+        margin:0;
+        padding:0;
+        border:1px solid #ccc;
+        background:#fff url(../media/gradient-e5e5e5-ffffff.gif) repeat-x 0 -20px;
+        text-align:center;
+        width:100%;
+        }
+.datePicker table tfoot td
+        {
+        background:#fff url(../media/gradient-e5e5e5-ffffff.gif) repeat-x 0 -40px;
+        }
+/* Common TD & TH styling */
+.datePicker table td
+        {
+        border: 1px solid #ccc;
+        padding:0.6em 0.5em 0.5em 0.5em;
+        /* Opera requires a line-height bigger than 1em in order to redraw properly */
+        line-height:1.2em;
+        cursor:default;
+        background:#fff url(../media/gradient-e5e5e5-ffffff.gif) repeat-x 0 -50px;
+        }
+.datePicker table th
+        {
+        border:0 none;
+        padding:0;
+        line-height:1em;
+        font-weight:bold;
+        color:#222;
+        text-align:center;
+        }
+/* The "mon tue wed etc" day header button styles */
+.datePicker table th.date-picker-day-header
+        {
+        text-transform:lowercase;
+        cursor:help;
+        }
+/* The "todays date" style */
+.datePicker table td.date-picker-today
+        {
+        background:#fff url(../media/bullet2.gif) no-repeat 0 0;
+        color:rgb(100,100,100) !important;
+        }
+/* The "selected date" style */
+.datePicker table td.date-picker-selected-date
+        {
+        color:#333 !important;
+        border-color:#333 !important;
+        }
+/* the "highlight days" style */
+td.date-picker-highlight
+        {
+        color:#a86666;
+        }
+/* The date "out of range" style */
+.datePicker table td.out-of-range
+        {
+        color:#ccc !important;
+        font-style:oblique;
+        background:transparent !important;
+        cursor:default !important;
+        }
+/* The "disabled days" style */
+.datePicker table td.day-disabled
+        {
+        color:#aaa !important;
+        background:transparent !important;
+        cursor:default !important;
+        }
+/* The "active cursor" style */
+.datePicker table td#date-picker-hover
+        {
+        background:#fff url(../media/bg_header.jpg) no-repeat 0 0;
+        cursor:pointer;
+        border-color:rgb(100,130,170);
+        color:rgb(100,130,170);
+        }
+/* Remove the images for Internet Explorer <= v6 using the "* html" hack */
+* html .datePicker table td.date-picker-selected,
+* html .datePicker table td.date-picker-hover,
+* html .datePicker table td
+        {
+        background-image:none;
+        }

@@ -1851,6 +1851,9 @@ function reload_all_sync() {
 	/* start DHCP service */
 	services_dhcpd_configure();
 
+	/* configure cron service */
+	configure_cron();
+
 	/* start the NTP client */
 	system_ntp_configure();
 

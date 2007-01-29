@@ -1181,4 +1181,52 @@ EODAD;
 	conf_mount_ro();
 }
 
+/* configure cron service */
+function configure_cron() {
+	global $g, $config;
+	if (!$g['booting'])
+		conf_mount_rw();
+	/* preserve existing crontab entries */
+	$crontab_contents = file_get_contents("/etc/crontab");
+	$crontab_contents_a = split("\n", $crontab_contents);
+	
+	for ($i = 0; $i < count($crontab_contents_a); $i++) {
+		$item =& $crontab_contents_a[$i];
+		if (strpos($item, "# pfSense specific crontab entries") !== false) {
+			array_splice($crontab_contents_a, $i - 1);
+			break;
+		}
+	}
+	$crontab_contents = implode("\n", $crontab_contents_a) . "\n";
+	
+	
+	if (is_array($config['cron']['item'])) {
+		$crontab_contents .= "#\n";
+		$crontab_contents .= "# pfSense specific crontab entries\n";
+		$crontab_contents .= "# Created: " . date("F j, Y, g:i a") . "\n";
+		$crontab_contents .= "#\n";
+
+		foreach ($config['cron']['item'] as $item) {
+			$crontab_contents .= "\n{$item['minute']}\t";
+			$crontab_contents .= "{$item['hour']}\t";
+			$crontab_contents .= "{$item['mday']}\t";
+			$crontab_contents .= "{$item['month']}\t";
+			$crontab_contents .= "{$item['wday']}\t";
+			$crontab_contents .= "{$item['who']}\t";
+			$crontab_contents .= "{$item['command']}";
+		}
+    
+		$crontab_contents .= "\n#\n";
+		$crontab_contents .= "# If possible do not add items to this file manually.\n";
+		$crontab_contents .= "# If you do so, this file must be terminated with a blank line (e.g. new line)\n";
+		$crontab_contents .= "#\n\n";
+	}
+	
+	/* please maintain the newline at the end of file */
+	file_put_contents("/etc/crontab", $crontab_contents);
+	
+	if (!$g['booting'])
+		conf_mount_ro();
+}
+
 ?>

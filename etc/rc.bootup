@@ -205,6 +205,9 @@
 		system_webgui_start();
 	}
 
+	/* configure cron service */
+	configure_cron();
+
 	/* set up static routes */
 	system_routing_configure();
 

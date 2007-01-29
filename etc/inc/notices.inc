@@ -66,7 +66,7 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	log_error("New alert found: {$notice}");
 	/* soekris */
 	if(file_exists("/dev/led/error"))
-		exec("echo 1 > /dev/led/error");
+		exec("/bin/echo 1 > /dev/led/error");
 	/* wrap */
 	if(file_exists("/dev/led/led2"))
 		exec("/bin/echo f5 > /dev/led/led2");
@@ -95,6 +95,12 @@ function get_notices($category = "all") {
 function close_notice($id) {
 	global $notice_path;
 	require_once("util.inc");
+	/* soekris */
+	if(file_exists("/dev/led/error"))
+		exec("/bin/echo 0 > /dev/led/error");
+	/* wrap */
+	if(file_exists("/dev/led/led2"))
+		exec("/bin/echo 0 > /dev/led/led2");
 	$ids = array();
 	if(!$notices = get_notices()) return;
 	if($id == "all") {
@@ -123,12 +129,6 @@ function close_notice($id) {
 	} else {
 		unlink_if_exists($notice_path);
 	}
-	/* soekris */
-	if(file_exists("/dev/led/error"))
-		exec("echo 0 > /dev/led/error");
-	/* wrap */
-	if(file_exists("/dev/led/led2"))
-		exec("/bin/echo 0 > /dev/led/led2");
 
 	return;
 }

@@ -70,7 +70,19 @@ if ($_POST) {
 	elseif ($_POST['stopbtn']!= "")
 	{
 		$action = "Stop";
-		stop_service(tcpdump);
+		$processes_running = trim(shell_exec("ps axw -O pid= | grep tcpdump | grep $fn"));
+
+		//explode processes into an array, (delimiter is new line)
+		$processes_running_array = explode("\n", $processes_running);
+
+		//kill each of the packetcapture processes
+		foreach ($processes_running_array as $process)
+		{
+			$process_id_pos = strpos($process, ' ');
+			$process_id = substr($process, 0, $process_id_pos);
+			exec("kill $process_id");
+		}
+
 	}
 	else //download file
 	{
@@ -90,6 +102,8 @@ $pgtitle = "Diagnostics: Packet Capture";
 include("head.inc"); ?>
 <body link="#000000" vlink="#0000CC" alink="#0000CC">
 <? include("fbegin.inc"); ?>
+
+
 
 <p class="pgtitle"><?=$pgtitle?></p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -169,8 +183,16 @@ include("head.inc"); ?>
 				  <td width="17%" valign="top">&nbsp;</td>
 				  <td width="83%">
                     <?php
-					if (is_process_running(tcpdump))
+
+                    /*check to see if packet capture tcpdump is already running*/
+					$processcheck = (trim(shell_exec("ps axwu | grep tcpdump | grep -v 'grep' | grep -i $fn")));
+
+					$processisrunning = False;
+
+					if ($processcheck != False)
 						$processisrunning = True;
+
+
 					if (($action == "Stop" or $action == "") and $processisrunning != True)
 						echo "<input type=\"submit\" name=\"startbtn\" value=\"Start\">&nbsp;";
 				  	else
@@ -210,6 +232,7 @@ include("head.inc"); ?>
 						}
 					else //action = stop
 					{
+
 						echo("<strong>Packet Capture stopped. <br><br>Packets Captured:</strong><br>");
 						?>
 						<textarea style="width:98%" name="code" rows="15" cols="66" wrap="off" readonly="readonly">

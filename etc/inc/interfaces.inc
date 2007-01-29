@@ -1238,6 +1238,12 @@ EOD;
 	return 0;
 }
 
+function interfaces_wan_pppoe_restart() {
+	interfaces_wan_pppoe_down();
+	sleep(1);
+	interfaces_wan_pppoe_up();
+}
+
 function interfaces_wan_pppoe_down() {
 	global $g;
 	sigkillbypid("{$g['varrun_path']}/mpd.pid", "SIGUSR2");
@@ -1356,6 +1362,12 @@ EOD;
 	mwexec("/usr/local/sbin/mpd -b -d {$g['varetc_path']} -p {$g['varrun_path']}/mpd.pid pptp");
 
 	return 0;
+}
+
+function interfaces_wan_pptp_restart() {
+	interfaces_wan_pptp_down();
+	sleep(1);
+	interfaces_wan_pptp_up();
 }
 
 function interfaces_wan_pptp_down() {

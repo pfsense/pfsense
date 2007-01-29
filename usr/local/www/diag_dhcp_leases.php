@@ -101,7 +101,7 @@ while($i < $leases_count) {
 		}
 		if ($data[$f] == "client-hostname") {
 			if($data[$f] <> "") {
-				$leases[$i]['hostname'] = $data[$f+1];
+				$leases[$i]['hostname'] = preg_replace('/"/','',$data[$f+1]);
 			} else {
 				$hostname = gethostbyaddr($leases[$i]['ip']);
 				if($hostname <> "") {
@@ -113,7 +113,7 @@ while($i < $leases_count) {
 			if ($data[$f+1] == "ethernet") {
 				$leases[$i]['mac'] = $data[$f+2];
 				/* check if it's online */
-				$online = exec("/usr/sbin/arp -an |/usr/bin/grep {$d[0]}| grep {$leases[$i]['ip']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
+				$online = exec("/usr/sbin/arp -an |/usr/bin/grep {$leases[$i]['mac']}| grep {$leases[$i]['ip']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
 				if ($online == 1) {
 					$leases[$i]['online'] = 'online';
 				} else {

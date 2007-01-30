@@ -57,6 +57,7 @@
 			<size>3</size>
 			<type>interfaces_selection</type>
 			<description>You can use the CTRL or COMMAND key to select multiple interfaces.</description>
+			<required/>
 		</field>
 		<field>
 			<fielddescr>Maximum Download Speed (Kbits/second)</fielddescr>

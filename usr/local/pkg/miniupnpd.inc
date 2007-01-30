@@ -226,7 +226,7 @@ EOD;
 				conf_mount_ro();
 
 				/* if miniupnpd not running start it */
-				if(!upnpd_running) {
+				if(!upnp_running()) {
 					upnp_notice("Starting service on interface: {$ifaces_active}");
 					upnp_action('start');	
 				}

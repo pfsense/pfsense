@@ -58,7 +58,7 @@ if ($_POST) {
 		    $savemsg = $retval;
 
 		unlink_if_exists("/tmp/config.cache");
-		$retval |= filter_configure_sync();
+		$retval |= filter_configure();
 
 		if ($retval == 0) {
 			if (file_exists($d_natconfdirty_path))

@@ -1873,9 +1873,6 @@ table <snort2c> persist
 block quick from <snort2c> to any label "Block snort2c hosts"
 block quick from any to <snort2c> label "Block snort2c hosts"
 
-# permit wan interface to ping out (ping_hosts.sh)
-pass quick proto icmp from {$wanip} to any
-
 # loopback
 anchor "loopback"
 pass in quick on \$loopback all label "pass loopback"
@@ -1887,6 +1884,14 @@ anchor "packageearly"
 
 # carp
 anchor "carp"
+
+EOD;
+
+if($wanip)
+ 	$ipfrules .= <<<EOD
+
+# permit wan interface to ping out (ping_hosts.sh)
+pass quick proto icmp from {$wanip} to any
 
 EOD;
 

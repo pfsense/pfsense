@@ -814,6 +814,99 @@ function convert_config() {
 		unset($config['system']['use_rrd_gateway']);
  		$config['version'] = "2.5";
 	}
+	
+	/* Convert 2.5 -> 2.6 */
+	if ($config['version'] == "2.5") {
+		$cron_item = array();
+		$cron_item['minute'] = "0";
+		$cron_item['hour'] = "*";
+		$cron_item['mday'] = "*";
+		$cron_item['month'] = "*";
+		$cron_item['wday'] = "*";
+		$cron_item['who'] = "root";
+		$cron_item['command'] = "/usr/bin/nice -n20 newsyslog";
+		
+		$config['cron']['item'][] = $cron_item;
+		
+		$cron_item = array();
+		$cron_item['minute'] = "1,31";
+		$cron_item['hour'] = "0-5";
+		$cron_item['mday'] = "*";
+		$cron_item['month'] = "*";
+		$cron_item['wday'] = "*";
+		$cron_item['who'] = "root";
+		$cron_item['command'] = "/usr/bin/nice -n20 adjkerntz -a";
+		
+		$config['cron']['item'][] = $cron_item;
+		
+		$cron_item = array();
+		$cron_item['minute'] = "1";
+		$cron_item['hour'] = "*";
+		$cron_item['mday'] = "1";
+		$cron_item['month'] = "*";
+		$cron_item['wday'] = "*";
+		$cron_item['who'] = "root";
+		$cron_item['command'] = "/usr/bin/nice -n20 /etc/rc.update_bogons.sh";
+		
+		$config['cron']['item'][] = $cron_item;
+		
+		$cron_item = array();
+		$cron_item['minute'] = "*/60";
+		$cron_item['hour'] = "*";
+		$cron_item['mday'] = "*";
+		$cron_item['month'] = "*";
+		$cron_item['wday'] = "*";
+		$cron_item['who'] = "root";
+		$cron_item['command'] = "/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 sshlockout";
+		
+		$config['cron']['item'][] = $cron_item;
+		
+		$cron_item = array();
+		$cron_item['minute'] = "1";
+		$cron_item['hour'] = "1";
+		$cron_item['mday'] = "*";
+		$cron_item['month'] = "*";
+		$cron_item['wday'] = "*";
+		$cron_item['who'] = "root";
+		$cron_item['command'] = "/usr/bin/nice -n20 /etc/rc.dyndns.update";
+		
+		$config['cron']['item'][] = $cron_item;
+		
+		$cron_item = array();
+		$cron_item['minute'] = "*/60";
+		$cron_item['hour'] = "*";
+		$cron_item['mday'] = "*";
+		$cron_item['month'] = "*";
+		$cron_item['wday'] = "*";
+		$cron_item['who'] = "root";
+		$cron_item['command'] = "/usr/bin/nice -n20 /usr/local/sbin/expiretable -v -t 3600 virusprot";
+		
+		$config['cron']['item'][] = $cron_item;
+		
+		$cron_item = array();
+		$cron_item['minute'] = "*/60";
+		$cron_item['hour'] = "*";
+		$cron_item['mday'] = "*";
+		$cron_item['month'] = "*";
+		$cron_item['wday'] = "*";
+		$cron_item['who'] = "root";
+		$cron_item['command'] = "/usr/bin/nice -n20 /usr/local/sbin/expiretable -t 1800 snort2c";
+		
+		$config['cron']['item'][] = $cron_item;
+		
+		$cron_item = array();
+		$cron_item['minute'] = "*/5";
+		$cron_item['hour'] = "*";
+		$cron_item['mday'] = "*";
+		$cron_item['month'] = "*";
+		$cron_item['wday'] = "*";
+		$cron_item['who'] = "root";
+		$cron_item['command'] = "/usr/local/bin/checkreload.sh";
+		
+		$config['cron']['item'][] = $cron_item;
+		
+ 		$config['version'] = "2.6";
+	}
 
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");

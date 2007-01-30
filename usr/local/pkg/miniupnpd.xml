@@ -2,7 +2,7 @@
 <packagegui>
 	<title>Services: MiniUPnPd</title>
 	<name>miniupnpd</name>
-	<version>20070112</version>
+	<version>20070130</version>
 	<savetext>Change</savetext>
 	<include_file>/usr/local/pkg/miniupnpd.inc</include_file>
 	<aftersaveredirect>status_upnp.php</aftersaveredirect>
@@ -83,6 +83,40 @@
 			<fieldname>sysuptime</fieldname>
 			<type>checkbox</type>
 		</field>
+		<field>
+			<fielddescr>By default deny access to miniupnpd?</fielddescr>
+			<fieldname>permdefault</fieldname>
+			<type>checkbox</type>
+		</field>
+		<field>
+			<fielddescr>User specified persmissions 1</fielddescr>
+			<fieldname>permuser1</fieldname>
+			<description>Format: [allow or deny] [ext port or range] [int ipaddr or ipaddr/cdir] [int port or range]
+			&lt;br /&gt;Example: allow 1024-65535 192.168.0.0/24 1024-65535</description>
+			<type>input</type>
+			<size>60</size>
+		</field>
+		<field>
+			<fielddescr>User specified persmissions 2</fielddescr>
+			<fieldname>permuser2</fieldname>
+			<description>Format: [allow or deny] [ext port or range] [int ipaddr or ipaddr/cdir] [int port or range]</description>
+			<type>input</type>
+			<size>60</size>
+		</field>
+		<field>
+			<fielddescr>User specified persmissions 3</fielddescr>
+			<fieldname>permuser3</fieldname>
+			<description>Format: [allow or deny] [ext port or range] [int ipaddr or ipaddr/cdir] [int port or range]</description>
+			<type>input</type>
+			<size>60</size>
+		</field>
+		<field>
+			<fielddescr>User specified persmissions 4</fielddescr>
+			<fieldname>permuser4</fieldname>
+			<description>Format: [allow or deny] [ext port or range] [int ipaddr or ipaddr/cdir] [int port or range]</description>
+			<type>input</type>
+			<size>60</size>
+		</field>	
 	</fields>
 	<custom_php_command_before_form>
 		before_form_miniupnpd(&amp;$pkg);

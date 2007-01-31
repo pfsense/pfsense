@@ -401,7 +401,7 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<select name="proto" class="formfld" onchange="proto_change()">
 <?php
-				$protocols = explode(" ", "TCP UDP TCP/UDP ICMP ICMP6 ESP AH GRE IPv6 IGMP any carp pfsync");
+				$protocols = explode(" ", "TCP UDP TCP/UDP ICMP IPV6-ICMP ESP AH GRE IPv6 IGMP any carp pfsync");
 				foreach ($protocols as $proto): ?>
 					<option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['proto']) echo "selected"; ?>><?=htmlspecialchars($proto);?></option>
 <?php 			endforeach; ?>

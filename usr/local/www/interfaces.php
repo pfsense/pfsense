@@ -36,7 +36,7 @@ define("CRON_WEEKLY_PATTERN", "0 0 * * 0");
 define("CRON_DAILY_PATTERN", "0 0 * * *");
 define("CRON_HOURLY_PATTERN", "0 * * * *");
 define("CRON_PPPOE_CMD_FILE", "/etc/pppoerestart");
-define("CRON_PPPOE_CMD", "#!/bin/sh echo '<?php require(\"interfaces.inc\"); interfaces_wan_pppoe_restart(); ?>' | /usr/local/bin/php -q");
+define("CRON_PPPOE_CMD", "#!/bin/sh echo\n'<?php require(\"interfaces.inc\"); interfaces_wan_pppoe_restart(); ?>' | /usr/local/bin/php -q");
 
 function getMPDCRONSettings() {
   global $config;

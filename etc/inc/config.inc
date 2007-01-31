@@ -904,6 +904,9 @@ function convert_config() {
 		$cron_item['command'] = "/usr/local/bin/checkreload.sh";
 		
 		$config['cron']['item'][] = $cron_item;
+
+		/* write crontab entries to file */
+		configure_cron();
 		
  		$config['version'] = "2.6";
 	}

@@ -449,7 +449,7 @@ function convert_config() {
 	$prev_version = $config['version'];
 
 	/* convert 1.0 -> 1.1 */
-	if ($config['version'] == "1.0") {
+	if ($config['version'] <= 1.0) {
 		$opti = 1;
 		$ifmap = array('lan' => 'lan', 'wan' => 'wan', 'pptp' => 'pptp');
 
@@ -599,7 +599,7 @@ function convert_config() {
 	}
 
 	/* convert 1.1 -> 1.2 */
-	if ($config['version'] == "1.1") {
+	if ($config['version'] <= 1.1) {
 		/* move LAN DHCP server config */
 		$tmp = $config['dhcpd'];
 		$config['dhcpd'] = array();
@@ -612,7 +612,7 @@ function convert_config() {
 	}
 
 	/* convert 1.2 -> 1.3 */
-	if ($config['version'] == "1.2") {
+	if ($config['version'] <= 1.2) {
 		/* convert advanced outbound NAT config */
 		for ($i = 0; isset($config['nat']['advancedoutbound']['rule'][$i]); $i++) {
 			$curent = &$config['nat']['advancedoutbound']['rule'][$i];
@@ -632,7 +632,7 @@ function convert_config() {
 	}
 
 	/* convert 1.3 -> 1.4 */
-	if ($config['version'] == "1.3") {
+	if ($config['version'] <= 1.3) {
 		/* convert shaper rules (make pipes) */
 		if (is_array($config['pfqueueing']['rule'])) {
 			$config['pfqueueing']['pipe'] = array();
@@ -660,7 +660,7 @@ function convert_config() {
 	}
 
 	/* Convert 1.4 -> 1.5 */
-	if ($config['version'] == "1.4") {
+	if ($config['version'] <= 1.4) {
 
 		/* Default route moved */
 		if (isset($config['interfaces']['wan']['gateway']))
@@ -683,7 +683,7 @@ function convert_config() {
 	}
 
 	/* Convert 1.5 -> 1.6 */
-	if ($config['version'] == "1.5") {
+	if ($config['version'] <= 1.5) {
 		/* Alternate firmware URL moved */
 		if (isset($config['system']['firmwareurl']) && isset($config['system']['firmwarename'])) { // Only convert if *both* are defined.
 			$config['system']['alt_firmware_url'] = array();
@@ -699,7 +699,7 @@ function convert_config() {
 	}
 
 	/* Convert 1.6 -> 1.7 */
-	if ($config['version'] == "1.6") {
+	if ($config['version'] <= 1.6) {
 		/* wipe previous shaper configuration */
 		unset($config['shaper']['queue']);
 		unset($config['shaper']['rule']);
@@ -711,7 +711,7 @@ function convert_config() {
 		$config['version'] = "1.7";
 	}
 	/* Convert 1.7 -> 1.8 */
-	if ($config['version'] == "1.7") {
+	if ($config['version'] <= 1.7) {
 		if(isset($config['proxyarp']) && is_array($config['proxyarp']['proxyarpnet'])) {
 			$proxyarp = &$config['proxyarp']['proxyarpnet'];
 			foreach($proxyarp as $arpent){
@@ -766,12 +766,12 @@ function convert_config() {
 	}
 
 	/* Convert 1.8 -> 1.9 */
-	if ($config['version'] == "1.8") {
+	if ($config['version'] <= 1.8) {
 		$config['theme']="metallic";
 		$config['version'] = "1.9";
 	}
 	/* Convert 1.9 -> 2.0 */
-	if ($config['version'] == "1.9") {
+	if ($config['version'] <= 1.9) {
 		if(is_array($config['ipsec']['tunnel'])) {
 			reset($config['ipsec']['tunnel']);
 			while (list($index, $tunnel) = each($config['ipsec']['tunnel'])) {
@@ -785,7 +785,7 @@ function convert_config() {
 		$config['version'] = "2.0";
 	}
 	/* Convert 2.0 -> 2.1 */
-	if ($config['version'] == "2.0") {
+	if ($config['version'] <= 2.0) {
 		/* shaper scheduler moved */
 		if(isset($config['system']['schedulertype'])) {
 			$config['shaper']['schedulertype'] = $config['system']['schedulertype'];
@@ -794,13 +794,13 @@ function convert_config() {
 		$config['version'] = "2.1";
 	}
 	/* Convert 2.1 -> 2.2 */
-	if ($config['version'] == "2.1") {
+	if ($config['version'] <= 2.1) {
 		/* move gateway to wan interface */
 		$config['interfaces']['wan']['gateway'] = $config['system']['gateway'];
 		$config['version'] = "2.2";
 	}
 	/* Convert 2.2 -> 2.3 */
-	if ($config['version'] == "2.2") {
+	if ($config['version'] <= 2.2) {
 		if(isset($config['shaper'])) {
 			/* wipe previous shaper configuration */
 			unset($config['shaper']);
@@ -809,14 +809,14 @@ function convert_config() {
 	}
 
 	/* Convert 2.4 -> 2.5 */
-	if ($config['version'] == "2.4") {
+	if ($config['version'] <= 2.4) {
 		$config['interfaces']['wan']['use_rrd_gateway'] = $config['system']['use_rrd_gateway'];
 		unset($config['system']['use_rrd_gateway']);
  		$config['version'] = "2.5";
 	}
 	
 	/* Convert 2.5 -> 2.6 */
-	if ($config['version'] == "2.5") {
+	if ($config['version'] <= 2.5) {
 		$cron_item = array();
 		$cron_item['minute'] = "0";
 		$cron_item['hour'] = "*";

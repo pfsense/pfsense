@@ -729,7 +729,9 @@ function filter_nat_rules_generate() {
 	/* prevent 1:1 ips from pftpx, they will be handled by ftp-sesame */
 	if($config['nat']['onetoone'])
 		foreach ($config['nat']['onetoone'] as $vipent)
-			$vpns_list .= "{$vipent['internal']} ";
+			$onetoone_list .= "{$vipent['internal']} ";
+	if($onetoone_list)
+		$natrules .= "table <onetoonelist> { $onetoone_list }\n";
 	if($vpns_list)
 		$natrules .= "table <vpns> { $vpns_list }\n";
 	/* loop through all interfaces and handle pftpx redirections */
@@ -754,6 +756,8 @@ function filter_nat_rules_generate() {
 		if($int_ip and $vpns_list)
 			if($ifname_lower) {
 				$natrules .= "no rdr on $tmp_interface proto tcp from any to <vpns> port 21\n";
+				if($onetoone_list)
+					$natrules .= "no rdr on $tmp_interface proto tcp from <onetoonelist> to any port 21\n";
 			}
 		if($ifname_lower)
 			$natrules .= "rdr on $tmp_interface proto tcp from any to any port 21 -> 127.0.0.1 port {$tmp_port}\n";

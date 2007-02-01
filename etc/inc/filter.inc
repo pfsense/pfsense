@@ -726,6 +726,10 @@ function filter_nat_rules_generate() {
 		$iflist['opt' . $i] = "opt{$i}";
 	$interface_counter = 0;
 	$vpns_list = get_vpns_list();
+	/* prevent 1:1 ips from pftpx, they will be handled by ftp-sesame */
+	if($config['nat']['onetoone'])
+		foreach ($config['nat']['onetoone'] as $vipent)
+			$vpns_list .= "{$vipent['internal']} ";
 	if($vpns_list)
 		$natrules .= "table <vpns> { $vpns_list }\n";
 	/* loop through all interfaces and handle pftpx redirections */

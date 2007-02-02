@@ -87,7 +87,7 @@
                                         $int = str_replace("opt", "", $interface);
                                         interfaces_optional_configure_if($int);
                                         echo "interfaces_optional_configure_if($int);\n";
-										log_error("HOTPLUG: Configuring optional interface {$interface}");
+										log_error("HOTPLUG: Configuring optional interface {$interface} - opt{$int}");
                                 }
 
                                 $counter++;

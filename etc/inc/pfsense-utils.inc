@@ -953,6 +953,8 @@ function convert_real_interface_to_friendly_interface_name($interface) {
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
 		$ifdescrs['opt' . $j] = "opt" . $j;
 	foreach ($ifdescrs as $ifdescr => $ifname) {
+		if($config['interfaces']['$ifname']['if'] == $interface)
+			return $ifname;
 		$int = filter_translate_type_to_real_interface($ifname);
 		if($ifname == $interface) return $ifname;
 		if($int == $interface) return $ifname;

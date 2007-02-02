@@ -2238,6 +2238,8 @@ if (!isset($config['shaper']['enable']) && !is_array($config['shaper']['queue'])
 	$ipfrules .= <<<EOD
 
 # let out anything from the firewall host itself and decrypted IPsec traffic
+pass out quick on \$lan proto icmp keep state label "let out anything from firewall host itself"
+pass out quick on \$wan proto icmp keep state label "let out anything from firewall host itself"
 pass out quick on $wanif all keep state label "let out anything from firewall host itself"
 
 EOD;
@@ -2252,6 +2254,7 @@ EOD;
 
 
 # let out anything from the firewall host itself and decrypted IPsec traffic
+pass out quick on {$oc['if']} proto icmp keep state label "let out anything from firewall host itself"
 pass out quick on {$oc['if']} all keep state label "let out anything from firewall host itself"
 
 EOD;

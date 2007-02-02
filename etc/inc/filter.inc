@@ -1899,7 +1899,7 @@ if($wanip)
  	$ipfrules .= <<<EOD
 
 # permit wan interface to ping out (ping_hosts.sh)
-pass quick proto icmp from {$wanip} to any
+pass quick proto icmp from {$wanip} to any keep state
 
 EOD;
 

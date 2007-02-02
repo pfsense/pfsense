@@ -44,7 +44,7 @@
 	                       	log_error("Arguments passed incorrectly to rc.linkup.  Exiting.");
 							exit;
                         }
-                        log_error("Processing {$argv[$counter]} - {$argv[$counter+1]}\n");
+                        log_error("Processing {$argv[$counter]} - {$argv[$counter+1]}");
                         $friendly_interface = convert_real_interface_to_friendly_interface_name($argv[$counter]);
                         if($config['interfaces'][$friendly_interface]['ipaddr'] <> "dhcp" and
                                 $config['interfaces'][$friendly_interface]['ipaddr'] <> "pppoe" and

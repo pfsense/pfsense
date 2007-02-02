@@ -134,14 +134,14 @@ switch($_GET['mode']) {
             update_status("Package reinstalled.");
             $static_output .= "\n\nPackage reinstalled.";
             start_service($_GET['pkg']);
-            update_output_window($static_output);            
+            update_output_window($static_output);
             break;
 	case "reinstallxml":
             delete_package_xml($_GET['pkg']);
             install_package($_GET['pkg']);
             $static_output .= "\n\nPackage reinstalled.";
             start_service($_GET['pkg']);
-            update_output_window($static_output);            
+            update_output_window($static_output);
             break;
 	case "reinstallall":
 	    if($config['installedpackages']['package'] <> "")
@@ -157,7 +157,7 @@ switch($_GET['mode']) {
             update_status("All packages reinstalled.");
             $static_output .= "\n\nAll packages reinstalled.";
             start_service($_GET['pkg']);
-            update_output_window($static_output);            
+            update_output_window($static_output);
 	    break;
 	default:
             $status = install_package($_GET['id']);
@@ -165,8 +165,8 @@ switch($_GET['mode']) {
 		update_status("Installation of {$_GET['id']} FAILED!");
                 $static_output .= "\n\nInstallation halted.";
 	    } else {
-                update_status("Installation of {$_GET['id']} completed.");
-		$static_output .= "\n\nInstallation completed.";
+			update_status("Installation of {$_GET['id']} completed.");
+			$static_output .= "\n\nInstallation completed.   Please check to make sure that the package is configured from the respective menu then start the package.";
 	    }
 	    update_output_window($static_output);
 

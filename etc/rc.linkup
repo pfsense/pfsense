@@ -41,7 +41,8 @@
                 $counter = 1;
                 while($processing == true) {
                         if($argv[$counter] == "" or $argv[$counter] == "\n") {
-                                exit;
+	                       	log_error("Arguments passed incorrectly to rc.linkup.  Exiting.");
+							exit;
                         }
                         log_error("Processing {$argv[$counter]} - {$argv[$counter+1]}\n");
                         $friendly_interface = convert_real_interface_to_friendly_interface_name($argv[$counter]);

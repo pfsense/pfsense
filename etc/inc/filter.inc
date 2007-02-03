@@ -2261,6 +2261,13 @@ EOD;
 
 	}
 
+	if($config['interfaces']['wan']['ipaddr'] == "pppoe")
+		$ipfrules .= <<<EOD
+# permit wan interface to ping out (ping_hosts.sh)
+pass out quick on ng0 proto icmp keep state label "let out anything from firewall host itself"
+
+EOD;
+
 	if (!isset($config['system']['webgui']['noantilockout'])) {
 
 		if($lansa and $lansn) {

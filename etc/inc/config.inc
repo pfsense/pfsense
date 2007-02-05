@@ -913,6 +913,27 @@ function convert_config() {
  		$config['version'] = "2.6";
 	}
 
+	/* Convert 2.7 -> 2.8 */
+	if ($config['version'] <= 2.7) {
+		$founditem = false;
+		foreach($config['cron']['item'] as $cronitem) {
+			if($cronitem['command'] == "/usr/local/bin/checkreload.sh")
+				$founditem = true;
+		}
+		if($founditem == false) {
+			$cron_item = array();
+			$cron_item['minute'] = "*/5";
+			$cron_item['hour'] = "*";
+			$cron_item['mday'] = "*";
+			$cron_item['month'] = "*";
+			$cron_item['wday'] = "*";
+			$cron_item['who'] = "root";
+			$cron_item['command'] = "/usr/local/bin/checkreload.sh";
+			$config['cron']['item'][] = $cron_item;	
+		}
+		$config['version'] = "2.8";
+	}
+
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
 }

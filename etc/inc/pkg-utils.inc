@@ -244,10 +244,12 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 			if (file_exists('/usr/local/pkg/' . $include_file))
 				require_once('/usr/local/pkg/' . $include_file);
 			else
-				if (file_exists($include_file))
+				if (file_exists('/usr/local/pkg/' . $include_file)) {
 					require_once($include_file);
-				else
+				} else {
 					log_error("Could not locate {$include_file}.");
+					force_remove_package($package['name']);
+				}
 		}
 
 		/* XXX: Zend complains about the next line "Wrong break depth"

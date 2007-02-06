@@ -41,7 +41,8 @@
                 $counter = 1;
                 while($processing == true) {
                         if($argv[$counter] == "" or $argv[$counter] == "\n") {
-	                       	log_error("Arguments passed incorrectly to rc.linkup.  Exiting.");
+                        	$argspassed = file_get_contents("/tmp/rc.linkup");
+	                       	log_error("Arguments passed incorrectly to rc.linkup.  '{$argspassed}' Exiting.");
 							exit;
                         }
                         log_error("Processing {$argv[$counter]} - {$argv[$counter+1]}");

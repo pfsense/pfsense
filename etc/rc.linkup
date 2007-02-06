@@ -48,9 +48,9 @@
 							exit;
                         }
                         /* do not process nics twice */
-                        if (in_array($argv[$counter], $processed_nics))
+                        if (in_array($argv[$counter] . $argv[$counter+1], $processed_nics))
                         	continue;
-                        $processed_nics[] = $argv[$counter];
+                       	$processed_nics[] = $argv[$counter] . $argv[$counter+1];
                         log_error("Processing {$argv[$counter]} - {$argv[$counter+1]}");
                         $friendly_interface = convert_real_interface_to_friendly_interface_name($argv[$counter]);
                         if($config['interfaces'][$friendly_interface]['ipaddr'] <> "dhcp" and

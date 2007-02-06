@@ -230,9 +230,11 @@ function enablechange() {
     <!-- wizard goes here -->
     <tr><td>&nbsp;</td></tr>
     <tr><td colspan='2'>
-<?php	if ($_GET['message'] != "") {
+<?php
+	if ($_GET['message'] != "")
 		print_info_box($_GET['message']);
-	}
+	if ($_POST['message'] != "")
+		print_info_box($_POST['message']);
 ?></td></tr>
     <tr><td colspan='2'><center><b><?= fixup_string($description) ?></b></center></td></tr><tr><td>&nbsp;</td></tr>
     <?php

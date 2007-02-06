@@ -41,12 +41,14 @@
         } else {
                 $processing = true;
                 $counter = 1;
+				$argspassed = file_get_contents("/tmp/rc.linkup");
+				log_error("Arguments passed rc.linkup.  '{$argspassed}'");
                 while($processing == true) {
-						$argspassed = file_get_contents("/tmp/rc.linkup");
-						log_error("Arguments passed rc.linkup.  '{$argspassed}'");
                         /* do not process nics twice */
                         if (in_array($argv[$counter] . $argv[$counter+1], $processed_nics))
                         	continue;
+                        if($argv[$counter] == "")
+                        	exit;
                        	$processed_nics[] = $argv[$counter] . $argv[$counter+1];
                         log_error("Processing {$argv[$counter]} - {$argv[$counter+1]}");
                         $friendly_interface = convert_real_interface_to_friendly_interface_name($argv[$counter]);

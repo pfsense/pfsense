@@ -159,7 +159,7 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 	}
 	$package = $config['installedpackages']['package'][$pkg_id];
 	if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
-		file_notice($package['name'], "The {$package['name']} package is missing its configuration file and must be reinstalled.", "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
+		log_error("The {$package['name']} package is missing required dependencies and must be reinstalled.");
 		return;
 	}
 	$pkg_xml = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
@@ -174,9 +174,8 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 			} else {
 				$prefix = "/usr/local/pkg/";
 			}
-			if(!file_exists($prefix . $pkg_name)) {
-				file_notice($package['name'], "The {$package['name']} package is missing required dependencies and must be reinstalled.", "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
-			}
+			if(!file_exists($prefix . $pkg_name))
+				log_error("The {$package['name']} package is missing required dependencies and must be reinstalled.");
 			switch ($format) {
 				case "files":
 				$depends[] = $depend_file;
@@ -238,7 +237,10 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 			if (file_exists('/usr/local/pkg/' . $include_file))
 				require_once('/usr/local/pkg/' . $include_file);
 			else
-				require_once($include_file);
+				if (file_exists($include_file))
+					require_once($include_file);
+				else
+					log_error("Could not locate {$include_file}.");
 		}
 
 		/* XXX: Zend complains about the next line "Wrong break depth"

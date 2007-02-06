@@ -44,12 +44,12 @@ function step2_stepsubmitphpaction() {
 		global $g, $config;
 		if(!is_numeric($_POST['upload']) or !is_numeric($_POST['download'])) {
 			$message="Upload and download speeds must be a number only!  Values should be Kbits/second.";
-			header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=1&amp;message={$message}");
+			header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
 			exit;
 		}
 		if ($config['ezshaper']['step2']['inside_int'] == $config['ezshaper']['step2']['outside_int']) {
 			$message="Inside and Outside interfaces cannot be the same.  Please select a unique interface for both.";
-			header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=1&amp;message={$message}");
+			header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
 			exit;
 		}
 		$downq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['inside_int']);

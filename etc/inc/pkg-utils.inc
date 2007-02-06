@@ -159,7 +159,9 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 	}
 	$package = $config['installedpackages']['package'][$pkg_id];
 	if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
-		log_error("The {$package['name']} package is missing required dependencies and must be reinstalled.");
+		log_error("The {$package['name']} package is missing required dependencies and must be reinstalled. Deinstalling.");
+		unset($config['installedpackages']['package'][$pkg_id]);
+		write_config();
 		return;
 	}
 	$pkg_xml = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
@@ -206,6 +208,11 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 	}
 }
 
+function force_remove_package($pkg_name) {
+	global $config;
+	delete_package_xml($pkg_name);
+}
+
 /*
  * sync_package($pkg_name, $sync_depends = true, $show_message = false) Force a package to setup its configuration and rc.d files.
  */
@@ -222,17 +229,17 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 		return;  // No package belongs to the pkg_id passed to this function.
 	}
         if (is_array($config['installedpackages']['package'][$pkg_id]))
-                $package = $config['installedpackages']['package'][$pkg_id];
+			$package = $config['installedpackages']['package'][$pkg_id];
         else
-                return; /* empty package tag */
+			return; /* empty package tag */
 	if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
-		file_notice($package['name'], "The {$package['name']} package is missing its configuration file and must be reinstalled.", "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
+		log_error("The {$package['name']} package is missing its configuration file and must be reinstalled.");
+		force_remove_package($package['name']);
 	} else {
 		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");
 
 		/* Bring in package include files */
-		if (isset($pkg_config['include_file']) && $pkg_config['include_file'] != ""
-) {
+		if (isset($pkg_config['include_file']) && $pkg_config['include_file'] != "") {
 			$include_file = $pkg_config['include_file'];
 			if (file_exists('/usr/local/pkg/' . $include_file))
 				require_once('/usr/local/pkg/' . $include_file);

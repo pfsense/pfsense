@@ -48,7 +48,7 @@ function step2_stepsubmitphpaction() {
 			exit;
 		}
 		if ($config['ezshaper']['step2']['inside_int'] == $config['ezshaper']['step2']['outside_int']) {
-			$message="Inside and Outside interfaces cannot be the same";
+			$message="Inside and Outside interfaces cannot be the same.  Please select a unique interface for both.";
 			header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=1&amp;message={$message}");
 			exit;
 		}

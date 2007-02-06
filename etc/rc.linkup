@@ -42,11 +42,7 @@
                 $processing = true;
                 $counter = 1;
                 while($processing == true) {
-                        if($argv[$counter] == "" or $argv[$counter] == "\n") {
-                        	$argspassed = file_get_contents("/tmp/rc.linkup");
-	                       	log_error("Arguments passed incorrectly to rc.linkup.  '{$argspassed}' Exiting.");
-							exit;
-                        }
+						log_error("Arguments passed rc.linkup.  '{$argspassed}'");
                         /* do not process nics twice */
                         if (in_array($argv[$counter] . $argv[$counter+1], $processed_nics))
                         	continue;

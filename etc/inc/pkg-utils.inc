@@ -124,6 +124,7 @@ function resync_all_package_configs($show_message = false) {
 	if($show_message == true) print "Syncing packages:";
 	foreach($config['installedpackages']['package'] as $package) {
 		if($show_message == true) print " " . $package['name'];
+		get_pkg_depends($package['name'], "all");
 		sync_package($i, true, true);
 		$i++;
 	}
@@ -248,7 +249,7 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 					require_once($include_file);
 				} else {
 					log_error("Could not locate {$include_file}.");
-					force_remove_package($package['name']);
+					install_package($package['name']);
 				}
 		}
 

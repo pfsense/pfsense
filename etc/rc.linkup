@@ -34,6 +34,8 @@
         require_once("config.inc");
         require_once("functions.inc");
 
+		$processed_nics = array();
+
         if($g['booting'] == true) {
                 /* ignore all linkup events */
         } else {
@@ -45,6 +47,10 @@
 	                       	log_error("Arguments passed incorrectly to rc.linkup.  '{$argspassed}' Exiting.");
 							exit;
                         }
+                        /* do not process nics twice */
+                        if (in_array($argv[$counter], $processed_nics))
+                        	continue;
+                        $processed_nics[] = $argv[$counter];
                         log_error("Processing {$argv[$counter]} - {$argv[$counter+1]}");
                         $friendly_interface = convert_real_interface_to_friendly_interface_name($argv[$counter]);
                         if($config['interfaces'][$friendly_interface]['ipaddr'] <> "dhcp" and

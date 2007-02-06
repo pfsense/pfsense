@@ -161,8 +161,7 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 	$package = $config['installedpackages']['package'][$pkg_id];
 	if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
 		log_error("The {$package['name']} package is missing required dependencies and must be reinstalled. Deinstalling.");
-		unset($config['installedpackages']['package'][$pkg_id]);
-		write_config();
+		install_package($package['name']);
 		return;
 	}
 	$pkg_xml = parse_xml_config_pkg("/usr/local/pkg/" . $package['configurationfile'], "packagegui");

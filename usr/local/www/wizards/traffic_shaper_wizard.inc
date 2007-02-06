@@ -169,7 +169,7 @@ function step3_stepsubmitphpaction() {
 				if(!is_alias($_POST['address'])) {
 					/* item is not an ip or alias.  error out */
 					$message="Address must be a valid IP address or Firewall Alias.  Please correct this value to continue.";
-					header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=3&amp;message={$message}");
+					header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&stepid=3&message={$message}");
 					exit;
 				}
 			}
@@ -326,14 +326,14 @@ function step4_stepsubmitphpaction() {
 		if ( $_POST['enable'] ) {
 			if(!is_numeric($_POST['bandwidthup']) or !is_numeric($_POST['bandwidthdown'])) {
 				$message="Upload and download speeds must be a number only!  Values should be Kbits/second.";
-				header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=4&amp;message={$message}");
+				header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&stepid=4&message={$message}");
 				exit;
 			}
 			if(!is_ipaddr($_POST['address'])) {
 				if(!is_alias($_POST['address'])) {
 					/* item is not an ip or alias.  error out */
 					$message=gettext("Address must be a valid IP address or Firewall Alias.  Please correct this value to continue.");
-					header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=4&amp;message={$message}");
+					header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&stepid=4&message={$message}");
 					exit;
 				}
 			}
@@ -422,7 +422,7 @@ function step5_stepsubmitphpaction() {
 		if (( $_POST['bandwidthup'] ) || ($_POST['bandwidthdown'])) {
 			if(!is_numeric($_POST['bandwidthup']) or !is_numeric($_POST['bandwidthdown'])) {
 				$message="Upload and download speeds must be a number only!  Values should be Kbits/second.";
-				header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=4&amp;message={$message}");
+				header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&stepid=4&message={$message}");
 				exit;
 			}
 		}
@@ -1133,7 +1133,7 @@ function step8_stepbeforeformdisplay() {
 		    $config['shaper']['enable'] = FALSE;
 		    $message = "No items have been selected to shape.  Exiting traffic shaper wizard.";
 		    write_config("No shaper items picked, unsetting shaper configuration");
-		    header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=8&amp;message={$message}");
+		    header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&stepid=8&message={$message}");
 		    exit;
 		}
 }

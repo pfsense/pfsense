@@ -356,34 +356,39 @@ function update_div_rows(data) {
 	//alert(data.length);
 	for(var x=0; x<data.length; x++) {
 		var numrows = rows.length;
+		var appearatrow;
 		/*    if reverse logging is enabled we need to show the
-                 *    records in a reverse order with new items appearing
-                 *    on the top
-                 */
+		 *    records in a reverse order with new items appearing
+         *    on the top
+         */
 		if(isReverse == false) {
-			for (var i = numrows-1; i > 1; i--) {
-				previousrecord = i - 1;
-				rows[i].innerHTML = rows[previousrecord].innerHTML;
+			for (var i = 2; i < numrows; i++) {
+				nextrecord = i + 1;
+				if(nextrecord < numrows)
+					rows[i].innerHTML = rows[nextrecord].innerHTML;
 			}
+			appearatrow = numrows - 1;
 		} else {
 			for (var i = numrows; i > 0; i--) {
 				nextrecord = i + 1;
 				if(nextrecord < numrows)
 					rows[nextrecord].innerHTML = rows[i].innerHTML;
 			}
+			appearatrow = 1;
 		}
 		var item = document.getElementById('firstrow');
 		if(x == data.length-1) {
-				/* nothing */
+			/* nothing */
+			showanim = false;
 		} else {
 			showanim = false;
 		}
 		if (showanim) {
-			rows[1].style.display = 'none';
-			rows[1].innerHTML = data[x];
-			new Effect.Appear(item);
+			rows[appearatrow].style.display = 'none';
+			rows[appearatrow].innerHTML = data[x];
+			new Effect.Appear(rows[appearatrow]);
 		} else {
-			rows[1].innerHTML = data[x];
+			rows[appearatrow].innerHTML = data[x];
 		}
 	}
 	/* rechedule AJAX interval */

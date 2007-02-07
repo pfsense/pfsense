@@ -361,21 +361,21 @@ function update_div_rows(data) {
 		 *    records in a reverse order with new items appearing
          *    on the top
          */
-		if(isReverse == false) {
-			for (var i = 2; i < numrows; i++) {
-				nextrecord = i + 1;
-				if(nextrecord < numrows)
-					rows[i].innerHTML = rows[nextrecord].innerHTML;
-			}
-			appearatrow = numrows - 1;
-		} else {
+		//if(isReverse == false) {
+		//	for (var i = 2; i < numrows; i++) {
+		//		nextrecord = i + 1;
+		//		if(nextrecord < numrows)
+		//			rows[i].innerHTML = rows[nextrecord].innerHTML;
+		//	}
+		//	appearatrow = numrows - 1;
+		//} else {
 			for (var i = numrows; i > 0; i--) {
 				nextrecord = i + 1;
 				if(nextrecord < numrows)
 					rows[nextrecord].innerHTML = rows[i].innerHTML;
 			}
 			appearatrow = 1;
-		}
+		//}
 		var item = document.getElementById('firstrow');
 		if(x == data.length-1) {
 			/* nothing */

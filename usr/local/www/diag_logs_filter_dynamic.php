@@ -103,7 +103,7 @@ function conv_clog_filter($logfile, $tail = 50) {
 		else if(stristr(strtoupper($logent), "PFSYNC") == true)
 			$flent['proto'] = "PFSYNC";
 		else
-			$do_not_display = true;
+			$flent['proto'] = "TCP";
 
 		$flent['time'] 		= $log_split[1];
 		$flent['act'] 		= $log_split[3];
@@ -308,10 +308,13 @@ function fetch_new_rules() {
 function fetch_new_rules_callback(callback_data) {
 	if(isPaused)
 		return;
+
 	var data_split;
 	var new_data_to_add = Array();
 	var data = callback_data.content;
+
 	data_split = data.split("\n");
+
 	for(var x=0; x<data_split.length-1; x++) {
 		/* loop through rows */
 		row_split = data_split[x].split("||");
@@ -324,7 +327,7 @@ function fetch_new_rules_callback(callback_data) {
 		line += '  <span class="log-destination" nowrap>' + row_split[4] + '</span>';
 		line += '  <span class="log-protocol" nowrap>' + row_split[5] + '</span>';
 		line += '</div>';
-		lastsawtime  = row_split[6];
+		lastsawtime = row_split[6];
 		new_data_to_add[new_data_to_add.length] = line;
 	}
 	update_div_rows(new_data_to_add);
@@ -333,6 +336,7 @@ function fetch_new_rules_callback(callback_data) {
 function update_div_rows(data) {
 	if(isPaused)
 		return;
+
 	var isIE = navigator.appName.indexOf('Microsoft') != -1;
 	var isSafari = navigator.userAgent.indexOf('Safari') != -1;
 	var isOpera = navigator.userAgent.indexOf('Opera') != -1;
@@ -342,7 +346,8 @@ function update_div_rows(data) {
 	if (isIE) {
 		showanim = 0;
 	}
-	for(var x=1; x<data.length; x++) {
+	//alert(data.length);
+	for(var x=0; x<data.length; x++) {
 		var numrows = rows.length;
 		/*    if reverse logging is enabled we need to show the
                  *    records in a reverse order with new items appearing
@@ -360,6 +365,7 @@ function update_div_rows(data) {
 			}
 		}
 		var item = document.getElementById('firstrow');
+		//alert('updating');
 		if (showanim) {
 			rows[1].style.display = 'none';
 			rows[1].innerHTML = data[x];

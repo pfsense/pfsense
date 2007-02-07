@@ -147,10 +147,12 @@
 					/* check that the interface has an ip address before adding parameters */
 					if($addr) {
 						$configtext .= "listening_ip={$addr}\n";
-						if(!$ifaces_active)
+						if(!$ifaces_active) {
+							$webgui_ip = $addr;
 							$ifaces_active = $iface;
-						else
+						} else {
 							$ifaces_active .= ", {$iface}";
+						}
 					} else {
 						upnp_warn("Interface {$iface} has no ip address, ignoring");
 					}
@@ -187,6 +189,14 @@
 				if(upnp_config('sysuptime'))
 					$configtext .= "system_uptime=yes\n";
 
+				/* set webgui url */
+				if($config['system']['webgui']['protocol']) {
+					$configtext .= "presentation_url=".$config['system']['webgui']['protocol'].	"://{$webgui_ip}";
+					if($config['system']['webgui']['port'])
+						$configtext .= ":".$config['system']['webgui']['port'];
+					$configtext .= "/\n";
+				}
+	
 				/* upnp access restrictions */
 				for($i=1; $i<=4; $i++) {
 					if(upnp_config("permuser{$i}"))

@@ -176,7 +176,7 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 			} else {
 				$prefix = "/usr/local/pkg/";
 			}
-			if(!file_exists($prefix . $pkg_name))
+			if(!file_exists($prefix . $depend_file))
 				log_error("The {$package['name']} package is missing required dependencies and must be reinstalled.");
 			switch ($format) {
 				case "files":
@@ -241,10 +241,10 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 		/* Bring in package include files */
 		if (isset($pkg_config['include_file']) && $pkg_config['include_file'] != "") {
 			$include_file = $pkg_config['include_file'];
-			if (file_exists('/usr/local/pkg/' . $include_file))
-				require_once('/usr/local/pkg/' . $include_file);
+			if (file_exists($include_file))
+				require_once($include_file);
 			else
-				if (file_exists('/usr/local/pkg/' . $include_file)) {
+				if (file_exists($include_file)) {
 					require_once($include_file);
 				} else {
 					log_error("Could not locate {$include_file}.");

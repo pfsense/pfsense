@@ -73,8 +73,10 @@ if ($_POST) {
 	}
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-	if (($_POST['host'] && !is_domain($_POST['host']))) {
-		$input_errors[] = "The host name contains invalid characters.";
+	if($pconfig['type'] <> "zoneedit") {
+		if (($_POST['host'] && !is_domain($_POST['host']))) {
+			$input_errors[] = "The host name contains invalid characters.";
+		}
 	}
 	if (($_POST['mx'] && !is_domain($_POST['mx']))) {
 		$input_errors[] = "The MX contains invalid characters.";
@@ -192,7 +194,7 @@ function enable_change(enable_change) {
 		    <span class="red"><strong>Note:<br></strong>
 		    </span>
 			Enter the complete host/domain name.  example:  myhost.dyndns.org
-		    </span>		    
+		    </span>
                   </td>
 		</tr>
                 <tr>
@@ -227,10 +229,10 @@ function enable_change(enable_change) {
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
                     <input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change(true)">
-                  </td>		
+                  </td>
                 <tr>
                   <td colspan="2" class="list" height="12">&nbsp;</td>
-                </tr>		
+                </tr>
                 </tr>
                 <tr>
                   <td colspan="2" valign="top" class="optsect_t">

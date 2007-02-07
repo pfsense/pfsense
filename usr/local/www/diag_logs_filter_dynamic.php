@@ -169,7 +169,7 @@ include("head.inc");
 	lastsawtime = '<?php echo time(); ?>;';
 	var lines = Array();
 	var timer;
-	var updateDelay = 4000;
+	var updateDelay = 7000;
 	var isBusy = false;
 	var isPaused = false;
 <?php
@@ -366,13 +366,18 @@ function update_div_rows(data) {
 				rows[i].innerHTML = rows[previousrecord].innerHTML;
 			}
 		} else {
-			for (var i = 2; i < numrows - 1; i++) {
+			for (var i = numrows; i > 0; i--) {
 				nextrecord = i + 1;
-				rows[i].innerHTML = rows[nextrecord].innerHTML;
+				if(nextrecord < numrows)
+					rows[nextrecord].innerHTML = rows[i].innerHTML;
 			}
 		}
 		var item = document.getElementById('firstrow');
-		//alert('updating');
+		if(x == data.length-1) {
+				/* nothing */
+		} else {
+			showanim = false;
+		}
 		if (showanim) {
 			rows[1].style.display = 'none';
 			rows[1].innerHTML = data[x];

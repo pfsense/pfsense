@@ -123,6 +123,8 @@ function conv_clog_filter($logfile, $tail = 50) {
 		$flent['src'] 		= convert_port_period_to_colon($log_split[5]);
 		$flent['dst'] 		= convert_port_period_to_colon($log_split[6]);
 
+		$flent['dst'] = str_replace(": NBT UDP PACKET(137)", "", $flent['dst']);
+
 		$tmp = split("/", $log_split[2]);
 		$flent['rulenum'] = $tmp[0];
 

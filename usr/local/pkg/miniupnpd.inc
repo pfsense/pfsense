@@ -18,16 +18,14 @@
 	function upnp_running () {
 		if((int)exec("pgrep miniupnpd | wc -l") > 0)
 			return true;
-		else
-			return false;
+		return false;
 	}	
 
 	function upnp_config ($name) {
 		global $config;
 		if($config['installedpackages']['miniupnpd']['config'][0]["{$name}"])
 			return $config['installedpackages']['miniupnpd']['config'][0]["{$name}"];
-		else
-			return NULL;
+		return NULL;
 	}
 
 	function upnp_write_config($conf_file, $conf_text) {
@@ -38,7 +36,15 @@
 		}
 		fwrite($conf, $conf_text);
 		fclose($conf);	
-	}		
+	}
+
+	function upnp_uuid() {
+		/* md5 hash of wan mac */
+		$arp = explode(' ',exec('arp -an -i '.get_real_wan_interface()));
+		$uuid = md5($arp[3]);
+		/* put uuid in correct format 8-4-4-4-12 */
+		return substr($uuid,0,8)."-".substr($uuid,9,4)."-".substr($uuid,13,4)."-".substr($uuid,17,4)."-".substr($uuid,21,12);
+	}
 
 	function upnp_validate_ip($ip,$check_cdir) {
 		/* validate cdir */	
@@ -128,7 +134,7 @@
 		global $config;
 		global $input_errors;
 
-		config_lock();		
+		config_lock();	
 
 		$configtext = "ext_ifname=".get_real_wan_interface()."\n";
 		$configtext .= "port=2189\n";
@@ -191,11 +197,18 @@
 
 				/* set webgui url */
 				if($config['system']['webgui']['protocol']) {
-					$configtext .= "presentation_url=".$config['system']['webgui']['protocol'].	"://{$webgui_ip}";
+					$configtext .= "presentation_url=".$config['system']['webgui']['protocol']."://{$webgui_ip}";
 					if($config['system']['webgui']['port'])
 						$configtext .= ":".$config['system']['webgui']['port'];
 					$configtext .= "/\n";
 				}
+
+				/* set uuid and serial */
+				$configtext .= "uuid=".upnp_uuid()."\n";
+				$configtext .= "serial=".strtoupper(substr(upnp_uuid(),0,8))."\n";
+
+				/* set model number */
+				$configtext .= "model_number=".exec("cat /etc/version")."\n";
 	
 				/* upnp access restrictions */
 				for($i=1; $i<=4; $i++) {

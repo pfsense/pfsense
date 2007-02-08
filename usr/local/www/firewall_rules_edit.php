@@ -384,7 +384,7 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<select name="interface" class="formfld">
 <?php
-					$interfaces = array('wan' => 'WAN', 'lan' => 'LAN', 'pptp' => 'PPTP', 'pppoe' => 'PPPOE');
+					$interfaces = array('wan' => 'WAN', 'lan' => 'LAN', 'pptp' => 'PPTP', 'pppoe' => 'PPPOE', 'enc0' => 'IPSEC');
 					for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 						$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 					}

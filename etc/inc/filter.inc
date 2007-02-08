@@ -288,6 +288,8 @@ function filter_generate_aliases() {
 		$aliases .= "wan = \"{ " . get_real_wan_interface() . "{$wan_aliases} }\"\n";
 	}
 
+	$aliases .= "enc0 = \"{ enc0 }\"\n";
+
     /* used to count netgraph interfaces */
     $counter = 0;
 
@@ -2718,6 +2720,9 @@ function create_firewall_outgoing_rules_to_itself() {
 			}
 		}
 	}
+
+	/* permit internal ipsec outbound traffic */
+	$rule .="pass out quick on \$enc0 label \"IPSEC internal host to host\"";
 
 	return $rule;
 }

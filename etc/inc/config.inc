@@ -945,10 +945,12 @@ function convert_config() {
 	if ($config['version'] <= 2.8) {
 		$rule_item = array();
 		$a_filter = &$config['filter']['rule'];
-		$rule_item['interface'] = "IPSEC";
+		$rule_item['interface'] = "enc0";
 		$rule_item['type'] = "pass";
-		$rule_item['src'] = "any";
-		$rule_item['dst'] = "any";
+		$rule_item['source']['any'] = true;
+		$rule_item['destination']['any'] = true;
+		$rule_item['descr'] = "Permit IPSEC traffic.";
+		$rule_item['statetype'] = "keep state";
 		$a_filter[] = $rule_item;
 		$config['version'] = "2.9";
 	}

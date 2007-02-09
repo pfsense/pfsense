@@ -115,7 +115,8 @@ touch("/tmp/filter_dirty");
 enable_rrd_graphing();
 
 /* restart packages */
-exec("/etc/rc.start_packages");
+if($old_ip <> $curwanip)
+	exec("/etc/rc.start_packages");
 
 /* reload slbd */
 /* if ($config['load_balancer']['lbpool']['type'] == "gateway") */

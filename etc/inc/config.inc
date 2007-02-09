@@ -942,7 +942,7 @@ function convert_config() {
 	}
 
 	/* Convert 2.8 -> 2.9 */
-	if ($config['version'] <= 2.7) {
+	if ($config['version'] <= 2.8) {
 		$rule_item = array();
 		$a_filter = &$config['filter']['rule'];
 		$rule_item['interface'] = "IPSEC";

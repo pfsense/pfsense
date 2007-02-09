@@ -913,7 +913,7 @@ function convert_config() {
  		$config['version'] = "2.6";
 	}
 
-	/* Convert 2.7 -> 2.8 */
+	/* Convert 2.6 -> 2.7 */
 	if ($config['version'] <= 2.7) {
 		$founditem = false;
 		foreach($config['cron']['item'] as $cronitem) {

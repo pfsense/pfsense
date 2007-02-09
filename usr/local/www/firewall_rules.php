@@ -44,11 +44,11 @@ $if = $_GET['if'];
 if ($_POST['if'])
 	$if = $_POST['if'];
 
-$iflist = array("lan" => "LAN", "wan" => "WAN");
+$iflist = array("lan" => "LAN", "wan" => "WAN", "enc0" => "IPSEC");
 
 if ($config['pptpd']['mode'] == "server")
 	$iflist['pptp'] = "PPTP VPN";
-	
+
 if ($config['pppoe']['mode'] == "server")
 	$iflist['pppoe'] = "PPPoE VPN";
 

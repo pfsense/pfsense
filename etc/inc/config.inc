@@ -929,8 +929,18 @@ function convert_config() {
 			$cron_item['wday'] = "*";
 			$cron_item['who'] = "root";
 			$cron_item['command'] = "/usr/local/bin/checkreload.sh";
-			$config['cron']['item'][] = $cron_item;	
+			$config['cron']['item'][] = $cron_item;
 		}
+		$config['version'] = "2.8";
+	}
+
+	/* Convert 2.7 -> 2.8 */
+	if ($config['version'] <= 2.7) {
+		$rule_item = array();
+		$rule_item['interface'] = "IPSEC";
+		$rule_item['type'] = "pass";
+		$rule_item['src'] = "any";
+		$rule_item['dst'] = "any";
 		$config['version'] = "2.8";
 	}
 

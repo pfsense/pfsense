@@ -950,7 +950,7 @@ function convert_config() {
 		$rule_item['src'] = "any";
 		$rule_item['dst'] = "any";
 		$a_filter[] = $rule_item;
-		$config['version'] = "2.8";
+		$config['version'] = "2.9";
 	}
 
 	if ($prev_version != $config['version'])

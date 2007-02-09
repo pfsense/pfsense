@@ -914,6 +914,13 @@ function convert_config() {
 	}
 
 	/* Convert 2.6 -> 2.7 */
+	if ($config['version'] <= 2.6) {
+		$config['interfaces']['wan']['use_rrd_gateway'] = $config['system']['use_rrd_gateway'];
+		unset($config['system']['use_rrd_gateway']);
+		$config['version'] = "2.7";
+	}
+
+	/* Convert 2.7 -> 2.8 */
 	if ($config['version'] <= 2.7) {
 		$founditem = false;
 		foreach($config['cron']['item'] as $cronitem) {
@@ -934,7 +941,7 @@ function convert_config() {
 		$config['version'] = "2.8";
 	}
 
-	/* Convert 2.7 -> 2.8 */
+	/* Convert 2.8 -> 2.9 */
 	if ($config['version'] <= 2.7) {
 		$rule_item = array();
 		$a_filter = &$config['filter']['rule'];

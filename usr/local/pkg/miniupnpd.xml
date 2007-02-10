@@ -5,7 +5,7 @@
 	<version>20070208</version>
 	<savetext>Change</savetext>
 	<include_file>/usr/local/pkg/miniupnpd.inc</include_file>
-	<aftersaveredirect>status_upnp.php</aftersaveredirect>
+	<aftersaveredirect>/status_upnp.php</aftersaveredirect>
 	<menu>
 		<name>MiniUPnPd</name>
 		<tooltiptext>Set miniupnpd settings such as interfaces to listen on.</tooltiptext>
@@ -35,7 +35,7 @@
 	<tabs>
 		<tab>
 			<text>UPnP Status</text>
-			<url>status_upnp.php</url>
+			<url>/status_upnp.php</url>
 		</tab>
 		<tab>
 			<text>MiniUPnPd Settings</text>
@@ -90,7 +90,7 @@
 			<type>checkbox</type>
 		</field>
 		<field>
-			<fielddescr>User specified persmissions 1</fielddescr>
+			<fielddescr>User specified permissions 1</fielddescr>
 			<fieldname>permuser1</fieldname>
 			<description>Format: [allow or deny] [ext port or range] [int ipaddr or ipaddr/cdir] [int port or range]
 			&lt;br /&gt;Example: allow 1024-65535 192.168.0.0/24 1024-65535</description>
@@ -98,21 +98,21 @@
 			<size>60</size>
 		</field>
 		<field>
-			<fielddescr>User specified persmissions 2</fielddescr>
+			<fielddescr>User specified permissions 2</fielddescr>
 			<fieldname>permuser2</fieldname>
 			<description>Format: [allow or deny] [ext port or range] [int ipaddr or ipaddr/cdir] [int port or range]</description>
 			<type>input</type>
 			<size>60</size>
 		</field>
 		<field>
-			<fielddescr>User specified persmissions 3</fielddescr>
+			<fielddescr>User specified permissions 3</fielddescr>
 			<fieldname>permuser3</fieldname>
 			<description>Format: [allow or deny] [ext port or range] [int ipaddr or ipaddr/cdir] [int port or range]</description>
 			<type>input</type>
 			<size>60</size>
 		</field>
 		<field>
-			<fielddescr>User specified persmissions 4</fielddescr>
+			<fielddescr>User specified permissions 4</fielddescr>
 			<fieldname>permuser4</fieldname>
 			<description>Format: [allow or deny] [ext port or range] [int ipaddr or ipaddr/cdir] [int port or range]</description>
 			<type>input</type>

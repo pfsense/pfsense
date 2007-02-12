@@ -4,6 +4,67 @@ html, body, td, th, input, select {
 	font-size: 0.9em;
 }
 
+/* DOM Tooltip CSS definitions */
+div.niceTitle
+{
+	background-color: #333333;
+	color: #FFFFFF;
+	font-weight: bold;
+	font-size: 13px;
+	font-family: "Trebuchet MS", sans-serif;
+	width: 220px;
+	left: 0;
+	top: 0;
+	padding: 4px;
+	position: absolute;
+	text-align: left;
+	z-index: 20;
+	-moz-border-radius: 0 10px 10px 10px;
+	filter: progid:DXImageTransform.Microsoft.Alpha(opacity=87);
+	-moz-opacity: .87;
+	-khtml-opacity: .87;
+	opacity: .87;
+}
+div.niceTitle h1
+{
+  background: #990000;
+  border-bottom: 1px dotted #FFFFFF;
+	font-weight: bold;
+	font-size: 13px;
+	font-family: "Trebuchet MS", sans-serif;
+	margin: 3px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 3px;
+  text-align: left;
+	left: 0;
+	top: 0;
+  -moz-border-radius: 0 8px 0 0;
+  -moz-opacity: 1;
+}
+div.niceTitle .contents
+{
+	margin: 0;
+	padding: 0 3px;
+	filter: progid:DXImageTransform.Microsoft.Alpha(opacity=100);
+	-moz-opacity: 1;
+	-khtml-opacity: 1;
+	opacity: 1;
+}
+div.niceTitle p
+{
+  background: #FFFFFF;
+  border: 1px solid #990000;
+	color: #000000;
+	font-size: 11px;
+	font-family: "Trebuchet MS", sans-serif;
+	padding: 5px;
+	margin: 3px;
+	text-align: left;
+	-moz-opacity: 1;
+  -moz-border-radius: 0 0 8px 8px;
+}
+
 body {
 	background-color: #333333;
 	margin: 5px auto;

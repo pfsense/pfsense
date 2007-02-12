@@ -166,11 +166,18 @@ if (isset($_POST['del_x'])) {
 		exit;
 	}
 }
+$closehead = false;
 
 $pgtitle = "Firewall: Rules";
 include("head.inc");
 
+echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/domLib.js\"></script>";
+echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/domTT.js\"></script>";
+echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/behaviour.js\"></script>";
+echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/fadomatic.js\"></script>";
 ?>
+</head>
+
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
@@ -181,6 +188,30 @@ include("head.inc");
 <?php if (file_exists($d_filterconfdirty_path)): ?><p>
 <?php print_info_box_np("The firewall rule configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>
+<?php
+	$aliases_array = array();
+	if($config['aliases']['alias'] <> "" and is_array($config['aliases']['alias']))
+	{
+		foreach($config['aliases']['alias'] as $alias_name) 
+		{	
+		 	$alias_addresses = explode (" ", $alias_name['address']);
+		 	$alias_details = explode ("||", $alias_name['detail']);
+		 	$alias_objects_with_details = "";
+		 	$counter = 0;
+		 	foreach($alias_addresses as $alias_ports_address)
+		 	{
+				$alias_objects_with_details .= $alias_addresses[$counter];
+				$alias_detail_default = strpos ($alias_details[$counter],"Entry added");
+				if ($alias_details[$counter] != "" && $alias_detail_default === False){
+					$alias_objects_with_details .=" - " . $alias_details[$counter];
+				}  
+				$alias_objects_with_details .= "<br>";
+				$counter++;
+			}
+			$aliases_array[] = array($alias_name['name'], $alias_name['descr'], $alias_objects_with_details);
+		}		
+	}
+?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
   <?php
@@ -296,22 +327,76 @@ include("head.inc");
 				  <br><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="15" border="0">
 				  <?php endif; ?>
 				  </td>
+				<?php
+				$span_begin = "";
+				$span_end = "";
+				$alias_src_span_begin = "";
+				$alias_src_span_end = "";
+				$alias_src_port_span_begin = "";
+				$alias_src_port_span_end = "";
+				$alias_dst_span_begin = "";
+				$alias_dst_span_end = "";
+				$alias_dst_port_span_begin = "";
+				$alias_dst_port_span_end = "";
+				$alias_content_text = "";
+				//max character length for caption field
+				$maxlength = 60;
+				
+				foreach ($aliases_array as $alias)
+				{
+					$alias_id_substr = $alias[0];
+					$alias_descr_substr = $alias[1];
+					$alias_content_text = htmlspecialchars($alias[2]);
+					$alias_caption = htmlspecialchars($alias_descr_substr . ":");
+					$strlength = strlen ($alias_caption);
+					if ($strlength >= $maxlength) 
+						$alias_caption = substr($alias_caption, 0, $maxlength) . "...";					
+					
+					$alias_check_src = $filterent['source']['address'];
+					$alias_check_srcport = pprint_port($filterent['source']['port']);
+					$alias_check_dst = $filterent['destination']['address'];
+					$alias_check_dstport = pprint_port($filterent['destination']['port']);
+					
+					$span_begin = "<span style=\"cursor: help;\" onmouseover=\"domTT_activate(this, event, 'content', '<h1>$alias_caption</h1><p>$alias_content_text</p>', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><U>";
+					$span_end = "</U></span>";
+					
+				 	if ($alias_id_substr == $alias_check_src)
+				 	{										
+						$alias_src_span_begin = $span_begin;
+						$alias_src_span_end = $span_end;
+					}
+				 	if ($alias_id_substr == $alias_check_srcport)
+				 	{									
+						$alias_src_port_span_begin = $span_begin;
+						$alias_src_port_span_end = $span_end;					
+					}
+					if ($alias_id_substr == $alias_check_dst)
+				 	{										
+						$alias_dst_span_begin = $span_begin;
+						$alias_dst_span_end = $span_end;											
+					}
+					if ($alias_id_substr == $alias_check_dstport)
+				 	{											
+						$alias_dst_port_span_begin = $span_begin;
+						$alias_dst_port_span_end = $span_end;											
+					}										
+				}
+				?>
                   <td class="listlr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
                     <?=$textss;?><?php if (isset($filterent['protocol'])) echo strtoupper($filterent['protocol']); else echo "*"; ?><?=$textse;?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
-				    <?=$textss;?><?php echo htmlspecialchars(pprint_address($filterent['source'])); ?><?=$textse;?>
+				    <?=$textss;?><?php echo $alias_src_span_begin;?><?php echo htmlspecialchars(pprint_address($filterent['source']));?><?php echo $alias_src_span_end;?><?=$textse;?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
-                    <?=$textss;?><?php echo htmlspecialchars(pprint_port($filterent['source']['port'])); ?><?=$textse;?>
+                    <?=$textss;?><?php echo $alias_src_port_span_begin;?><?php echo htmlspecialchars(pprint_port($filterent['source']['port'])); ?><?php echo $alias_src_port_span_end;?><?=$textse;?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
-				    <?=$textss;?><?php echo htmlspecialchars(pprint_address($filterent['destination'])); ?><?=$textse;?>
+				    <?=$textss;?><?php echo $alias_dst_span_begin;?><?php echo htmlspecialchars(pprint_address($filterent['destination'])); ?><?php echo $alias_dst_span_end;?><?=$textse;?>
                   </td>
-                  <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
-                    <?=$textss;?><?php echo htmlspecialchars(pprint_port($filterent['destination']['port'])); ?><?=$textse;?>
+	              <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
+                    <?=$textss;?><?php echo $alias_dst_port_span_begin;?><?php echo htmlspecialchars(pprint_port($filterent['destination']['port'])); ?><?php echo $alias_dst_port_span_end;?><?=$textse;?>
                   </td>
-
                   <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
                     <?=$textss;?><?php if (isset($config['interfaces'][$filterent['gateway']]['descr'])) echo htmlspecialchars($config['interfaces'][$filterent['gateway']]['descr']); else  echo htmlspecialchars(pprint_port($filterent['gateway'])); ?><?=$textse;?>
                   </td>

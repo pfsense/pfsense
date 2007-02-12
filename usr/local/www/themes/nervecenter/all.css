@@ -20,11 +20,10 @@ div.niceTitle
 {
 	background-color: #333333;
 	color: #FFFFFF;
-  border-bottom: 1px dotted #FFFFFF;
 	font-weight: bold;
 	font-size: 13px;
 	font-family: "Trebuchet MS", sans-serif;
-	width: 250px;
+	width: 220px;
 	left: 0;
 	top: 0;
 	padding: 4px;
@@ -68,7 +67,8 @@ div.niceTitle p
   background: #FFFFFF;
   border: 1px solid #990000;
 	color: #000000;
-	font-size: 9px;
+	font-size: 11px;
+	font-family: "Trebuchet MS", sans-serif;
 	padding: 5px;
 	margin: 3px;
 	text-align: left;

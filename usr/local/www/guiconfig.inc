@@ -284,7 +284,7 @@ function pprint_port($port) {
 	$pport = "";
 
 	if (!$port)
-		echo "*";
+		return "*";
 	else {
 		$srcport = explode("-", $port);
 		if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {

@@ -56,7 +56,7 @@ $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['polling_enable'] = isset($config['system']['polling']);
 $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
-$pconfig['disablechecksumoffloading'] = $config['system']['disablechecksumoffloading'];
+$pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
 
 if ($_POST) {
 

@@ -116,8 +116,18 @@ function slbd_configure() {
 				/* Add static routes to the monitor IPs */
 				$int = convert_friendly_interface_to_real_interface_name($lbsvr_split[0]);
 				$gateway = get_interface_gateway($int);
-				mwexec("/sbin/route delete -host {$lbsvr_split[1]} 1>/dev/null 2>&1");
-				mwexec("/sbin/route add -host {$lbsvr_split[1]} {$gateway} 1> /dev/null 2>&1");
+				$int_ip = find_interface_ip($int);
+				if($int_ip == "0.0.0.0") {
+					/*   DHCP Corner case.  If DHCP is down, we delete the route then
+					 *   there is a chance the monitor ip gateway will go out the link
+					 *   that is up.
+					 */
+					mwexec("/sbin/route delete -host {$lbsvr_split[1]} 1>/dev/null 2>&1");
+					mwexec("/sbin/route add -host {$lbsvr_split[1]} 127.0.0.1 1> /dev/null 2>&1");
+				} else {
+					mwexec("/sbin/route delete -host {$lbsvr_split[1]} 1>/dev/null 2>&1");
+					mwexec("/sbin/route add -host {$lbsvr_split[1]} {$gateway} 1> /dev/null 2>&1");					
+				}
 			}
 			$slbdconf .= "\t:service-port=666:\\\n";
 			$slbdconf .= "\t:method=round-robin:\\\n";

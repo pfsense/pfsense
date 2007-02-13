@@ -198,6 +198,9 @@ function enable_hardware_offloading($interface) {
 	if (in_array($int_family, $supported_ints))
 		mwexec("/sbin/ifconfig {$interface} link0");
 
+	if($config['system']['disablechecksumoffloading'])
+		return;
+
 	if(stristr($options, "txcsum") == true)
 	    mwexec("/sbin/ifconfig {$interface} txcsum 2>/dev/null");
 	if(stristr($options, "rxcsum") == true)

@@ -56,6 +56,7 @@ $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['polling_enable'] = isset($config['system']['polling']);
 $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
+$pconfig['disablechecksumoffloading'] = $config['system']['disablechecksumoffloading'];
 
 if ($_POST) {
 
@@ -98,130 +99,6 @@ if ($_POST) {
 		}
 	}
 
-	if (!$input_errors) {
-		if($_POST['disablefilter'] == "yes") {
-			$config['system']['disablefilter'] = "enabled";
-		} else {
-			unset($config['system']['disablefilter']);
-		}
-		if($_POST['enablesshd'] == "yes") {
-			$config['system']['enablesshd'] = "enabled";
-			touch("{$g['tmp_path']}/start_sshd");
-		} else {
-			unset($config['system']['enablesshd']);
-			mwexec("/usr/bin/killall sshd");
-		}
-		$oldsshport = $config['system']['ssh']['port'];
-		$config['system']['ssh']['port'] = $_POST['sshport'];
-
-		if($_POST['polling_enable'] == "yes") {
-			$config['system']['polling'] = true;
-			setup_polling();
-		} else {
-			unset($config['system']['polling']);
-			setup_polling();
-		}
-
-		if($_POST['sharednet'] == "yes") {
-			$config['system']['sharednet'] = true;
-			system_disable_arp_wrong_if();
-		} else {
-			unset($config['system']['sharednet']);
-			system_enable_arp_wrong_if();
-		}
-
-		if($_POST['rfc959workaround'] == "yes")
-			$config['system']['rfc959workaround'] = "enabled";
-		else
-			unset($config['system']['rfc959workaround']);
-
-		if($_POST['scrubnodf'] == "yes")
-			$config['system']['scrubnodf'] = "enabled";
-		else
-			unset($config['system']['scrubnodf']);
-
-		if($_POST['ipv6nat_enable'] == "yes") {
-			$config['diag']['ipv6nat']['enable'] = true;
-			$config['diag']['ipv6nat']['ipaddr'] = $_POST['ipv6nat_ipaddr'];
-		} else {
-			unset($config['diag']['ipv6nat']['enable']);
-			unset($config['diag']['ipv6nat']['ipaddr']);
-		}
-		$oldcert = $config['system']['webgui']['certificate'];
-		$oldkey = $config['system']['webgui']['private-key'];
-		$config['system']['webgui']['certificate'] = base64_encode($_POST['cert']);
-		$config['system']['webgui']['private-key'] = base64_encode($_POST['key']);
-		if($_POST['disableconsolemenu'] == "yes") {
-			$config['system']['disableconsolemenu'] = true;
-			auto_login(true);
-		} else {
-			unset($config['system']['disableconsolemenu']);
-			auto_login(false);
-		}
-		unset($config['system']['webgui']['expanddiags']);
-		$config['system']['optimization'] = $_POST['optimization'];
-
-		if($_POST['disablefirmwarecheck'] == "yes")
-			$config['system']['disablefirmwarecheck'] = true;
-		else
-			unset($config['system']['disablefirmwarecheck']);
-
-		if ($_POST['enableserial'] == "yes")
-			$config['system']['enableserial'] = true;
-		else
-			unset($config['system']['enableserial']);
-
-		if($_POST['harddiskstandby'] <> "") {
-			$config['system']['harddiskstandby'] = $_POST['harddiskstandby'];
-			system_set_harddisk_standby();
-		} else
-			unset($config['system']['harddiskstandby']);
-
-		if ($_POST['noantilockout'] == "yes")
-			$config['system']['webgui']['noantilockout'] = true;
-		else
-			unset($config['system']['webgui']['noantilockout']);
-
-		/* Firewall and ALTQ options */
-		$config['system']['maximumstates'] = $_POST['maximumstates'];
-
-		if($_POST['enablesshd'] == "yes") {
-			$config['system']['enablesshd'] = $_POST['enablesshd'];
-		} else {
-			unset($config['system']['enablesshd']);
-		}
-
-		if($_POST['disablenatreflection'] == "yes") {
-			$config['system']['disablenatreflection'] = $_POST['disablenatreflection'];
-		} else {
-			unset($config['system']['disablenatreflection']);
-		}
-
-                $config['ipsec']['preferoldsa'] = $_POST['preferoldsa_enable'] ? true : false;
-
-		$config['bridge']['filteringbridge'] = $_POST['filteringbridge_enable'] ? true : false;
-		$config['filter']['bypassstaticroutes'] = $_POST['bypassstaticroutes'] ? true : false;
-
-		write_config();
-
-		$retval = 0;
-
-		if(stristr($retval, "error") <> true)
-		    $savemsg = get_std_save_message($retval);
-		else
-		    $savemsg = $retval;
-
-		$retval = filter_configure();
-
-		conf_mount_rw();
-
-		setup_serial_port();
-
-		setup_filter_bridge();
-
-		conf_mount_ro();
-
-	}
 }
 
 $pgtitle = "System: Advanced functions";
@@ -544,6 +421,26 @@ include("head.inc");
 			</td>
 		</tr>
 		<tr>
+			<td colspan="2" class="list" height="12">&nbsp;</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top">&nbsp;</td>
+			<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" /></td>
+		</tr>
+		<tr>
+			<td colspan="2" class="list" height="12">&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top" class="listtopic">Hardware Checksum Offloading</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">Disable Hardware Checksum Offloading</td>
+			<td width="78%" class="vtable">
+				<input name="disablechecksumoffloading" type="checkbox" id="disablechecksumoffloading" value="yes" <?php if (isset($config['system']['disablechecksumoffloading'])) echo "checked"; ?> onclick="enable_change(false)" />
+				<strong>Checking this option will prevent hardware checksum offloading.  FreeBSD sometimes has difficulties with certain drivers.</strong>
+			</td>
+		</tr>		
+		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" /></td>
 		</tr>
@@ -570,7 +467,6 @@ include("head.inc");
 if ($_POST) {
     ob_flush();
     flush();
-    sleep(1)	;
 	if (!$input_errors) {
 		if($_POST['disablefilter'] == "yes") {
 			$config['system']['disablefilter'] = "enabled";
@@ -602,6 +498,11 @@ if ($_POST) {
 			unset($config['system']['sharednet']);
 			system_enable_arp_wrong_if();
 		}
+
+		if($_POST['scrubnodf'] == "yes")
+			$config['system']['scrubnodf'] = "enabled";
+		else
+			unset($config['system']['scrubnodf']);
 
 		if($_POST['rfc959workaround'] == "yes")
 			$config['system']['rfc959workaround'] = "enabled";
@@ -659,15 +560,21 @@ if ($_POST) {
 			unset($config['system']['enablesshd']);
 		}
 
+		if($_POST['disablechecksumoffloading'] == "yes") {
+			$config['system']['disablechecksumoffloading'] = $_POST['disablechecksumoffloading'];
+		} else {
+			unset($config['system']['disablechecksumoffloading']);
+		}
+
 		if($_POST['disablenatreflection'] == "yes") {
 			$config['system']['disablenatreflection'] = $_POST['disablenatreflection'];
 		} else {
 			unset($config['system']['disablenatreflection']);
 		}
 
-                $config['ipsec']['preferoldsa'] = $_POST['preferoldsa_enable'] ? true : false;
-
+		$config['ipsec']['preferoldsa'] = $_POST['preferoldsa_enable'] ? true : false;
 		$config['bridge']['filteringbridge'] = $_POST['filteringbridge_enable'] ? true : false;
+		$config['filter']['bypassstaticroutes'] = $_POST['bypassstaticroutes'] ? true : false;
 
 		write_config();
 
@@ -678,12 +585,19 @@ if ($_POST) {
 		    $savemsg = get_std_save_message($retval);
 		else
 		    $savemsg = $retval;
-		$retval |= interfaces_optional_configure();
+
 		config_unlock();
+
+		setup_filter_bridge();
+		
+		conf_mount_rw();
 
 		setup_serial_port();
 
 		setup_filter_bridge();
+
+		conf_mount_ro();		
+		
 
 	}
 }

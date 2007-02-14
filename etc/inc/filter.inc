@@ -293,7 +293,7 @@ function filter_generate_aliases() {
     /* used to count netgraph interfaces */
     $counter = 0;
 
-    /* ng ordering is VERY important here.  do not alter orer */
+    /* ng ordering is VERY important here.  do not alter order */
     if($config['pptpd']['mode'] == "server") {
 		/* build pptp alias */
 		$tmp = "pptp = \"{ ";
@@ -1317,30 +1317,30 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			if ($type == "reject") {
 				/* special reject packet */
 				if ($rule['protocol'] == "tcp") {
-					$line = "block return-rst";
+					$aline['type'] = "block return-rst";
 				} else if ($rule['protocol'] == "udp") {
-					$line = "block return-icmp";
+					$aline['type'] = "block return-icmp";
 				} else if ($rule['protocol'] == "tcp/udp") {
-                                        $line = "block return";
+                                        $aline['type'] = "block return";
 				} else {
-					$line = "block";
+					$aline['type'] = "block";
 				}
 			} else {
-				$line = $type;
+				$aline['type'] = $type;
 			}
 
 			/* ensure the direction is in */
-			$line .= " in ";
+			$aline['direction'] = " in ";
 
 			if (isset($rule['log']))
-				$line .= "log ";
+				$aline['log'] = "log ";
 
-			$line .= "quick ";
+			$aline['quick'] = "quick ";
 
 			if ($ispptp) {
-				$line .= "on \$pptp ";
+				$aline['interface'] = "on \$pptp ";
 			} else if ($ispppoe) {
-				$line .= "on \$pppoe ";
+				$aline['interface'] = "on \$pppoe ";
 			} else {
 				// translate wan, man, lan, opt to real interface.
 				$interface = $rule['interface'];
@@ -1355,7 +1355,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						$canadd = 0;
 				}
 				if($canadd == 0)
-					$line .= "on \$" . convert_real_interface_to_friendly_descr($rule['interface']) . " ";
+					$aline['interface'] = "on \$" . convert_real_interface_to_friendly_descr($rule['interface']) . " ";
 			}
 
 
@@ -1378,7 +1378,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 
 			/* do not process reply-to for gateway'd rules */
 			if(($rule['gateway'] == "") and ($ri != "") and ($rg != "") and (stristr($rule['interface'],"opt") == true)) {
-				$line .= "reply-to (" . $ri . " " . $rg . ") ";
+				$aline['reply'] = "reply-to (" . $ri . " " . $rg . ") ";
 			}
 
 			/* if user has selected a custom gateway, lets work with it */
@@ -1418,13 +1418,13 @@ function generate_user_filter_rule($rule, $ngcounter) {
 								$lbs = array("$firstsrv");
 							}
 
-                                                        /* iterate through $lbs and setup items accordingly */
-                                                        foreach($lbs as $server) {
+							/* iterate through $lbs and setup items accordingly */
+							foreach($lbs as $server) {
 								if ($server == "")
 									continue;
 								for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 				                                        foreach ($config['load_balancer']['lbpool'][$i]['servers'] as $lbsvr) {
-                                				                $lbsvr_split=split("\|", $lbsvr);
+										$lbsvr_split=split("\|", $lbsvr);
 										if ($lbsvr_split[1] == $server)
 											/* deterimine interface gateway */
 											if(is_ipaddr($lbsvr_split[0])) {
@@ -1437,20 +1437,20 @@ function generate_user_filter_rule($rule, $ngcounter) {
 											}
 				                                        }
 								}
-                                                                if($foundlb == 1)
-                                                                        $routeto .= ", ";
-                                                                if(($int == "") || ($gateway == "")) {
-                                                                        $line = "# error resolving load balancing {$gateway}";
-                                                                }
-                                                                $routeto .=  "( {$int} {$gateway} ) ";
-                                                                $foundlb = 1;
-                                                        }
-                                                        $routeto .= "} round-robin ";
+								if($foundlb == 1)
+									$routeto .= ", ";
+								if(($int == "") || ($gateway == "")) {
+									$aline['route'] = "# error resolving load balancing {$gateway}";
+								}
+								$routeto .=  "( {$int} {$gateway} ) ";
+								$foundlb = 1;
+							}
+							$routeto .= "} round-robin ";
 						}
 					}
 					/* Add the load balanced gateways */
 					if ($foundlb == 1)
-						$line .= $routeto;
+						$aline['route'] = $routeto;
 				}
 				/*  we're not using load balancing, just setup gateway */
 				if($foundlb == 0) {
@@ -1466,7 +1466,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 							$gatewayip = file_get_contents("{$g['tmp_path']}/{$int}_router");
 							$gatewayip = rtrim($gatewayip);
 							if (is_ipaddr($gatewayip)) {
-								$line .= " route-to ( {$int} {$gatewayip} ) ";
+								$aline['route'] = " route-to ( {$int} {$gatewayip} ) ";
 							}
 						} else {
 							log_error("Could not find {$g['tmp_path']}/{$int}_router.  Needed for dhcp gateway information");
@@ -1477,7 +1477,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						if(is_ipaddr($rule['gateway'])) {
 							$gatewayip = $rule['gateway'];
 							$int = guess_interface_from_ip($gatewayip);
-							$line .= " route-to ( " . guess_interface_from_ip($rule['gateway']) . " {$rule['gateway']} ) ";
+							$aline['route'] = " route-to ( " . guess_interface_from_ip($rule['gateway']) . " {$rule['gateway']} ) ";
 						}
 					}
 				}
@@ -1485,14 +1485,14 @@ function generate_user_filter_rule($rule, $ngcounter) {
 
 			if (isset($rule['protocol'])) {
 				if($rule['protocol'] == "tcp/udp")
-					$line .= "proto { tcp udp } ";
+					$aline['prot'] = "proto { tcp udp } ";
 				elseif($rule['protocol'] == "icmp")
-					$line .= "inet proto icmp ";
+					$aline['prot'] = "inet proto icmp ";
 				else
-					$line .= "proto {$rule['protocol']} ";
+					$aline['prot'] = "proto {$rule['protocol']} ";
 			} else {
 				if($rule['source']['port'] <> "" || $rule['destination']['port'] <> "") {
-					$line .= "proto tcp ";
+					$aline['prot'] = "proto tcp ";
 				}
 			}
 
@@ -1571,7 +1571,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				return "# at the break!";
 			}
 
-			$line .= "from $src ";
+			$aline['src'] = "from $src ";
 
 			if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
 
@@ -1583,24 +1583,24 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						$srcporta = $srcport[0];
 					if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
 						if(alias_expand($srcport[0]))
-							$line .= "port {$srcporta} ";
+							$aline['srcport'] = "port {$srcporta} ";
 						else
-							$line .= "port = {$srcporta} ";
+							$aline['srcport'] = "port = {$srcporta} ";
 					} else if (($srcport[0] == 1) && ($srcport[1] == 65535)) {
 						/* no need for a port statement here */
 					} else if ($srcport[1] == 65535) {
-						$line .= "port >= {$srcport[0]} ";
+						$aline['srcport'] = "port >= {$srcport[0]} ";
 					} else if ($srcport[0] == 1) {
-						$line .= "port <= {$srcport[1]} ";
+						$aline['srcport']= "port <= {$srcport[1]} ";
 					} else {
 						$srcport[0]--;
 						$srcport[1]++;
-						$line .= "port {$srcport[0]} >< {$srcport[1]} ";
+						$aline['srcport'] = "port {$srcport[0]} >< {$srcport[1]} ";
 					}
 				}
                                 /* OS signatures */
                                 if (($rule['protocol'] == "tcp") && ($rule['os'] <> ""))
-                                        $line .= "os {$rule['os']} ";
+                                        $aline['os'] = "os {$rule['os']} ";
 
 			}
 
@@ -1677,7 +1677,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				return "# returning at dst $dst == \"/\"";
 			}
 
-			$line .= "to $dst ";
+			$aline['dst'] = "to $dst ";
 
 			if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
 
@@ -1689,32 +1689,32 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						$dstporta = $dstport[0];
 					if ((!$dstport[1]) || ($dstport[0] == $dstport[1])) {
 						if(alias_expand($dstport[0]))
-							$line .= "port {$dstporta} ";
+							$aline['dstport'] = "port {$dstporta} ";
 						else
-							$line .= "port = {$dstporta} ";
+							$aline['dstport'] = "port = {$dstporta} ";
 					} else if (($dstport[0] == 1) && ($dstport[1] == 65535)) {
 						/* no need for a port statement here */
 					} else if ($dstport[1] == 65535) {
-						$line .= "port >= {$dstport[0]} ";
+						$aline['dstport'] = "port >= {$dstport[0]} ";
 					} else if ($dstport[0] == 1) {
-						$line .= "port <= {$dstport[1]} ";
+						$aline['dstport'] = "port <= {$dstport[1]} ";
 					}  else {
 						$dstport[0]--;
 						$dstport[1]++;
-						$line .= "port {$dstport[0]} >< {$dstport[1]} ";
+						$aline['dstport'] = "port {$dstport[0]} >< {$dstport[1]} ";
 					}
 				}
 			}
 
 			if (($rule['protocol'] == "icmp") && $rule['icmptype']) {
-				$line .= "icmp-type {$rule['icmptype']} ";
+				$aline['icmp-type'] = "icmp-type {$rule['icmptype']} ";
 			}
 
 			if ($type == "pass") {
 
 				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states']) )
 					if($rule['protocol'] == "tcp")
-						$line .= "flags S/SA ";
+						$aline['flags'] = "flags S/SA ";
 				/*
 					# keep state
 						works with TCP, UDP, and ICMP.
@@ -1735,39 +1735,39 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						case "modulate state":
 						case "synproxy state":
 							if($rule['protocol'] == "tcp")
-								$line .= "{$rule['statetype']} ";
+								$aline['flags'] = "{$rule['statetype']} ";
 							break;
 						default:
-							$line .= "{$rule['statetype']} ";
+							$aline['flags'] = "{$rule['statetype']} ";
 					}
 				} else {
-					$line .= "keep state ";
+					$aline['flags'] = "keep state ";
 				}
 				if( isset($rule['source-track']) and $rule['source-track'] <> "" or
 				  isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "" or
 				   isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "" or
 				    isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> "" or
 				     isset($rule['max-src-states']) and $rule['max-src-states'] <> "" ) {
-					$line .= "( ";
+					$aline['flags'] .= "( ";
 					if(isset($rule['source-track']) and $rule['source-track'] <> "")
-						$line .= "source-track rule ";
+						$aline['flags'] .= "source-track rule ";
 					if(isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "")
-						$line .= "max-src-nodes " . $rule['max-src-nodes'] . " ";
+						$aline['flags'] .= "max-src-nodes " . $rule['max-src-nodes'] . " ";
 					if(isset($rule['max-src-states']) and $rule['max-src-states'] <> "")
-						$line .= "max-src-states " . $rule['max-src-states'] . " ";
+						$aline['flags'] .= "max-src-states " . $rule['max-src-states'] . " ";
 					if(isset($rule['statetimeout']) and $rule['statetimeout'] <> "")
-						$line .= "tcp.established " . $rule['statetimeout'] . " ";
+						$aline['flags'] .= "tcp.established " . $rule['statetimeout'] . " ";
 					if(isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> ""
 					   and isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> "") {
-						$line .= "max-src-conn-rate " . $rule['max-src-conn-rate'] . " ";
-						$line .= "/" . $rule['max-src-conn-rates'] . ", overload <virusprot> flush global ";
+						$aline['flags'] .= "max-src-conn-rate " . $rule['max-src-conn-rate'] . " ";
+						$aline['flags'] .= "/" . $rule['max-src-conn-rates'] . ", overload <virusprot> flush global ";
 					   }
-					$line .= " ) ";
+					$aline['flags'] .= " ) ";
 				}
 			}
 			if ($type == "reject" && $rule['protocol'] == "tcp") {
 				/* special reject packet */
-				$line .= "flags S/SA ";
+				$aline['flags'] .= "flags S/SA ";
 			}
 	}
 
@@ -1790,6 +1790,22 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				echo "{$dst_table} NOT found in cache...adding\n";
 			$table_cache[$dst_table] = $dst_table_line;
 		}
+
+	/* exception(s) to a user rules can go here. */
+	/* rules with a gateway or pool should create another rule for routing to local networks or vpns */
+	/* we only trigger this for a rule with the destination of any */
+	if (($aline['route'] <> "") && ($aline['type'] == "pass") && ($dst == "any")) {
+		$vpns = " to <vpns> ";
+		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['prot'] .
+			$aline['src'] . $aline['srcport'] . $aline['os'] . $vpns . $aline['dstport'].
+			$aline['icmp-type'] . $aline['flags'] .
+			" label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";
+	}
+
+	/* piece together the actual user rule */
+	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['reply'] .
+		$aline['route'] . $aline['prot'] . $aline['src'] . $aline['srcport'] . $aline['os'] . $aline['dst'] .
+		$aline['dstport'] . $aline['icmp-type'] . $aline['flags'];
 
 	return $line;
 }

@@ -123,7 +123,7 @@ function filter_configure_sync() {
 		mwexec("/sbin/pfctl -e");
 	} else {
 		mwexec("/sbin/pfctl -d");
-		unlink("{$g['tmp_path']}/filter_loading");
+		unlink_if_exists("{$g['tmp_path']}/filter_loading");
 		update_filter_reload_status("Filter is disabled.  Not loading rules.");
 		return;
 	}

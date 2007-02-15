@@ -155,6 +155,7 @@ require_once("notices.inc");
 							<li><a href="/pkg_edit.php?xml=olsrd.xml&id=0" class="navlnk">OLSR</a></li>
 							<li><a href="/services_snmp.php" class="navlnk">SNMP</a></li>
 							<li><a href="/status_upnp.php" class="navlnk">MiniUPnPd</a></li>
+							<li><a href="/pkg_edit.php?xml=openntpd.xml&id=0">OpenNTPD</a></li>
 							<li><a href="/services_wol.php" class="navlnk">Wake on LAN</a></li>
 							<?php echo return_ext_menu("Services"); ?>
 						</ul>

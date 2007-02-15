@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<packagegui>
+	<include_file>openntpd.inc</include_file>
+	<custom_php_install_command>
+		openntpd_install();
+	</custom_php_install_command>
+	<menu>
+		<name>NTP server</name>
+		<tooltiptext>Configure the time server settings.</tooltiptext>
+		<section>Services</section>
+		<url>/pkg_edit.php?xml=openntpd.xml&amp;id=0</url>
+	</menu>
+	<service>
+		<name>OpenNTPD</name>
+		<description>NTP server.</description>
+		<rcfile>openntpd.sh</rcfile>
+		<executable>ntpd</executable>
+	</service>
+	<!-- Interface -->
+	<name>openntpd</name>
+	<title>NTP server</title>
+	<fields>
+		<field>
+			<fieldname>enable</fieldname>
+			<fielddescr>Enable</fielddescr>
+			<description>Check this to enable the NTP server.</description>
+			<type>checkbox</type>
+			<enablefields>interface</enablefields>
+		</field>
+		<field>
+			<fieldname>interface</fieldname>
+			<fielddescr>Interface</fielddescr>
+			<description>Select the interface the NTP server will listen on.</description>
+			<default_value>lan</default_value>
+			<type>interfaces_selection</type>
+			<multiple/>
+		</field>
+	</fields>
+	<custom_php_resync_config_command>
+		openntpd_resync();
+	</custom_php_resync_config_command>
+</packagegui>

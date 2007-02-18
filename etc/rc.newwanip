@@ -54,6 +54,8 @@ if($argument <> "") {
     $interface_real = $config['interfaces']['wan']['if'];
 }
 
+log_error("Failed to update WAN IP, restarting dhclient.");
+
 if($curwanip == "0.0.0.0") {
         log_error("Failed to update WAN IP, restarting dhclient.");
         exec("dhclient $interface_real");

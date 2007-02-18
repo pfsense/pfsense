@@ -36,11 +36,11 @@ require_once("globals.inc");
 require_once("config.inc");
 require_once("functions.inc");
 
-log_error("Informational: rc.newwanip is starting.");
-
 /* WAN IP address has changed */
 
 $argument = str_replace("\n", "", $argv[1]);
+
+log_error("Informational: rc.newwanip is starting {$argument}.");
 
 if($argument <> "") {
 	$curwanip = find_interface_ip($argument);

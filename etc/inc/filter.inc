@@ -1406,10 +1406,21 @@ function generate_user_filter_rule($rule, $ngcounter) {
 							/* if /tmp/$lbname.pool exists then read in our gateway hints from slbd */
 							if(file_exists("{$g['tmp_path']}/{$lb['name']}.pool")) {
 								$lbs = split("\n", file_get_contents("{$g['tmp_path']}/{$lb['name']}.pool"));
+								if(empty($lbs)) {
+									log_error("There are no servers found in the status file, using XML config settings!");
+									foreach ($lb['servers'] as $lbsvr) {
+										$lbsvr_split = split("\|", $lbsvr);
+										$lbs[] = $lbsvr_split[1];
+									}
+								}
 							} else {
-								$lbs = $lb['servers'];
+								log_error("There is no server status file, using XML config settings!");
+								$lbs = array();
+									foreach ($lb['servers'] as $lbsvr) {
+									$lbsvr_split = split("\|", $lbsvr);
+									$lbs[] = $lbsvr_split[1];
+								}
 							}
-
 							/* If we want failover we only return the first (top) server from the list
 							 * and work our way down from there. This way we order the failover order.
 							 */

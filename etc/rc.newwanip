@@ -59,6 +59,7 @@ log_error("rc.newwanip working with IP address {$curwanip} {$interface} {$interf
 if($curwanip == "0.0.0.0") {
         log_error("Failed to update WAN IP, restarting dhclient.");
         exec("dhclient $interface_real");
+        exit;
 }
 
 /* grab the prior ip for pftpx tests */

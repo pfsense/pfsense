@@ -49,15 +49,15 @@ fi
 #
 
 check_hostname() {
-#	current_hostname=`$HOSTNAME`
-#	if [ -z "$current_hostname" ]; then
-#		$LOGGER "New Hostname ($interface): $new_host_name"
-#		$HOSTNAME $new_host_name
-#	elif [ "$current_hostname" = "$old_host_name" -a \
-#	       "$new_host_name" != "$old_host_name" ]; then
-#		$LOGGER "New Hostname ($interface): $new_host_name"
-#		$HOSTNAME $new_host_name
-#	fi
+	current_hostname=`$HOSTNAME`
+	if [ -z "$current_hostname" ]; then
+		$LOGGER "New Hostname ($interface): $new_host_name"
+		$HOSTNAME $new_host_name
+	elif [ "$current_hostname" = "$old_host_name" -a \
+	       "$new_host_name" != "$old_host_name" ]; then
+		$LOGGER "New Hostname ($interface): $new_host_name"
+		$HOSTNAME $new_host_name
+	fi
 }
 
 arp_flush() {

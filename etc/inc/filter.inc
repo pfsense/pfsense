@@ -45,6 +45,7 @@ $after_filter_configure_run = array();
 
 function filter_pflog_start() {
 	global $config, $g;
+	
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "filter_pflog_start() being called $mt\n";
@@ -52,7 +53,9 @@ function filter_pflog_start() {
 
 	mute_kernel_msgs();
 
-	mwexec_bg("/usr/sbin/tcpdump -l -n -e -ttt -i pflog0 | logger -t pf -p local0.info");
+	$pid = `ps awwwux | grep -v "grep" | grep "tcpdump -l -n -e -ttt -i pflog0"  | awk '{ print $2 }'`;
+	if(!$pid)
+		mwexec_bg("/usr/sbin/tcpdump -l -n -e -ttt -i pflog0 | logger -t pf -p local0.info");
 
 	unmute_kernel_msgs();
 
@@ -72,6 +75,7 @@ function filter_configure() {
 /* reload filter sync */
 function filter_configure_sync() {
 	global $config, $g, $after_filter_configure_run;
+	filter_pflog_start();
 	update_filter_reload_status("Initializing");
 	/* invalidate interface cache */
 	get_interface_arr(true);

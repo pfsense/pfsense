@@ -10,16 +10,16 @@ require_once("notices.inc");
 				if($menuitem['section'] != $section) continue;
 				if($menuitem['url'] <> "") {
 				 	$addresswithport = getenv("HTTP_HOST");
-					$colonpos = strpos($addresswithport, ":");	
+					$colonpos = strpos($addresswithport, ":");
 					if ($colonpos !== False){
 						//my url is actually just the IP address of the pfsense box
-						$myurl = substr($addresswithport, 0, $colonpos);	
+						$myurl = substr($addresswithport, 0, $colonpos);
 					}
 					else
 					{
-						$myurl = $addresswithport;	
+						$myurl = $addresswithport;
 					}
-					
+
 					$description = str_replace('$myurl', $myurl, $menuitem['url']);
 				} else {
 					$description = '/pkg.php?xml=' . $menuitem['configfile'];
@@ -155,7 +155,7 @@ require_once("notices.inc");
 							<li><a href="/pkg_edit.php?xml=olsrd.xml&id=0" class="navlnk">OLSR</a></li>
 							<li><a href="/services_snmp.php" class="navlnk">SNMP</a></li>
 							<li><a href="/status_upnp.php" class="navlnk">MiniUPnPd</a></li>
-							<li><a href="/pkg_edit.php?xml=openntpd.xml&id=0">OpenNTPD</a></li>
+							<li><a href="/pkg_edit.php?xml=openntpd.xml&id=0" class="navlnk">OpenNTPD</a></li>
 							<li><a href="/services_wol.php" class="navlnk">Wake on LAN</a></li>
 							<?php echo return_ext_menu("Services"); ?>
 						</ul>

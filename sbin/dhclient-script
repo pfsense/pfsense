@@ -72,8 +72,12 @@ delete_old_address() {
 
 add_new_address() {
 
+	$LOGGER "Starting add_new_address()"
+
 	# Kill off old pftpx process.
 	kill `ps awux | grep "pftpx -b" | grep -v grep | grep $old_ip_address | cut -d" " -f5`
+
+	$LOGGER "ifconfig $interface inet $new_ip_address netmask $new_subnet_mask broadcast $new_broadcast_address $medium"
 
 	$IFCONFIG $interface \
 		inet $new_ip_address \
@@ -81,13 +85,13 @@ add_new_address() {
 		broadcast $new_broadcast_address \
 		$medium
 
-	$LOGGER "New IP Address ($interface): $new_ip_address"
-	$LOGGER "New Subnet Mask ($interface): $new_subnet_mask"
-	$LOGGER "New Broadcast Address ($interface): $new_broadcast_address"
-	$LOGGER "New Routers ($interface): $new_routers"
+		$LOGGER "New IP Address ($interface): $new_ip_address"
+		$LOGGER "New Subnet Mask ($interface): $new_subnet_mask"
+		$LOGGER "New Broadcast Address ($interface): $new_broadcast_address"
+		$LOGGER "New Routers ($interface): $new_routers"
 
         echo $new_routers > /tmp/${interface}_router
-	echo $new_ip_address > /var/db/${interface}_ip
+		echo $new_ip_address > /var/db/${interface}_ip
 }
 
 delete_old_alias() {
@@ -106,6 +110,7 @@ add_new_alias() {
 }
 
 delete_old_routes() {
+	$LOGGER "Deleting old routes"
 	$ROUTE delete "$old_ip_address" $LOCALHOST >/dev/null 2>&1
 	# Only allow the default route to be overridden if it's on our own interface
 	DEFAULTROUTE_IFACE=`route get default | grep interface | awk '{print $2};'`
@@ -131,6 +136,7 @@ delete_old_routes() {
 }
 
 add_new_routes() {
+	$LOGGER "Adding new routes"
 	$ROUTE add $new_ip_address $LOCALHOST >/dev/null 2>&1
 
 	# Only allow the default route to be overridden if it's on our own interface
@@ -173,6 +179,7 @@ add_new_routes() {
 }
 
 add_new_resolv_conf() {
+	$LOGGER "Creating resolv.conf"
 	/bin/rm -f /var/etc/nameservers.conf
 	if [ ! -f "/var/etc/nameserver_$interface" ]; then
 		# Make sure file exists to avoid errors
@@ -200,6 +207,7 @@ add_new_resolv_conf() {
 
 # Must be used on exit.   Invokes the local dhcp client exit hooks, if any.
 exit_with_hooks() {
+	$LOGGER "exit_with_hooks()"
 	echo $interface > /tmp/rc.newwanip
 	echo $old_ip_address > /tmp/rc.newwanip_oldip
 }
@@ -210,6 +218,7 @@ exit_with_hooks() {
 
 # Invoke the local dhcp client enter hooks, if they exist.
 if [ -f /etc/dhclient-enter-hooks ]; then
+	$LOGGER "dhclient-enter-hooks"
 	exit_status=0
 	. /etc/dhclient-enter-hooks
 	# allow the local script to abort processing of this state
@@ -220,28 +229,34 @@ if [ -f /etc/dhclient-enter-hooks ]; then
 fi
 
 if [ -x $NETSTAT ]; then
+	$LOGGER "netstat"
 	if_defaulroute=`$NETSTAT -rn | $GREP "^default" | $AWK '{print $6}'`
 else
+	$LOGGER "if_defaultroute"
 	if_defaultroute="x"
 fi
 
 case $reason in
 MEDIUM)
+	$LOGGER "MEDIUM"
 	$IFCONFIG $interface $medium
 	$IFCONFIG $interface inet -alias 0.0.0.0 $medium >/dev/null 2>&1
 	/bin/sleep 1
 	;;
 
 PREINIT)
+	$LOGGER "PREINIT"
 	delete_old_alias
 	$IFCONFIG $interface inet 0.0.0.0 netmask 0.0.0.0 broadcast 255.255.255.255 up
-        /bin/rm -f /tmp/${interface}_router
+	/bin/rm -f /tmp/${interface}_router
 	;;
 
 ARPCHECK|ARPSEND)
+	$LOGGER "PREINIT"
 	;;
 
 BOUND|RENEW|REBIND|REBOOT)
+	$LOGGER "BOUND RENEW REBIND REBOOT"
 	check_hostname
 	if [ -n "$old_ip_address" ]; then
 		if [ "$old_ip_address" != "$alias_ip_address" ]; then
@@ -266,6 +281,7 @@ BOUND|RENEW|REBIND|REBOOT)
 	;;
 
 EXPIRE|FAIL)
+	$LOGGER "EXPIRE FAIL"
 	delete_old_alias
 	if [ -n "$old_ip_address" ]; then
 		delete_old_address
@@ -279,6 +295,7 @@ EXPIRE|FAIL)
 	;;
 
 TIMEOUT)
+	$LOGGER "TIMEOUT"
 	delete_old_alias
 	add_new_address
 	/bin/sleep 1

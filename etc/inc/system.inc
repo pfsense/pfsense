@@ -290,7 +290,7 @@ function system_syslogd_start() {
 		killbypid("{$g['varrun_path']}/syslog.pid");
 
 	if (isset($syslogcfg)) {
-		$separatelogfacilities = array('ntpd','racoon','openvpn');
+		$separatelogfacilities = array('ntpd','racoon','openvpn','ntpdate');
 		if($config['installedpackages']['package']) {
                         foreach($config['installedpackages']['package'] as $package) {
                                 if($package['logging']) {
@@ -309,7 +309,7 @@ function system_syslogd_start() {
 			printf("Error: cannot open syslog.conf in system_syslogd_start().\n");
 			return 1;
 		}
-		$syslogconf .= "!ntpd\n";
+		$syslogconf .= "!ntpd,!ntpdate\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= <<<EOD
 *.*						%{$g['varlog_path']}/ntpd.log

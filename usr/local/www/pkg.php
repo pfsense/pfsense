@@ -77,16 +77,15 @@ if ($_GET['act'] == "del") {
 	    $a_pkg = &$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
 	    if ($a_pkg[$_GET['id']]) {
-		if($pkg['custom_delete_php_command'] <> "") {
-		    if($pkg['custom_php_command_before_form'] <> "")
-			eval($pkg['custom_php_command_before_form']);
-		    eval($pkg['custom_delete_php_command']);
-		}
-
-		unset($a_pkg[$_GET['id']]);
-		write_config();
-		header("Location:  pkg.php?xml=" . $xml);
-		exit;
+			unset($a_pkg[$_GET['id']]);
+			write_config();
+			if($pkg['custom_delete_php_command'] <> "") {
+			    if($pkg['custom_php_command_before_form'] <> "")
+					eval($pkg['custom_php_command_before_form']);
+		    		eval($pkg['custom_delete_php_command']);
+			}
+			header("Location:  pkg.php?xml=" . $xml);
+			exit;
 	    }
 }
 

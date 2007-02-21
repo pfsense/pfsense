@@ -198,6 +198,9 @@ fi
 
 echo "done."
 
+# Recreate capabilities DB
+cap_mkdb /etc/login.conf
+
 # let the PHP-based configuration subsystem set up the system now
 echo -n "Launching PHP init system..."
 /etc/rc.bootup

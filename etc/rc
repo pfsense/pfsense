@@ -134,7 +134,7 @@ chmod 777 /tmp/uploadbar
 
 # make some directories in /var
 mkdir -p /var/run /var/log /var/etc /var/db/entropy /var/at/jobs/ /var/empty 2>/dev/null
-rm /var/log/*
+rm /var/log/* 2>/dev/null
 rm -rf /var/run/*
 
 echo -n "."

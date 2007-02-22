@@ -6,7 +6,6 @@ PLATFORM=`cat /etc/platform`
 if [ ! "$PLATFORM" = "cdrom" ]; then
 
     echo "Syncing packages..."
-    $pkg_interface = "console";
     /etc/rc.packages 2>/dev/null
 
     echo "Executing rc.d items... "

@@ -869,7 +869,12 @@ function get_dir($dir) {
  *   update_output_window: update top textarea dynamically.
  */
 function update_status($status) {
-	echo "\n<script language=\"JavaScript\">document.forms[0].status.value=\"" . $status . "\";</script>";
+	global $pkg_interface;
+	if($pkg_interface == "console") {
+		echo $status . "\n";
+	} else {
+		echo "\n<script type=\"text/javascript\">document.forms[0].status.value=\"" . $status . "\";</script>";
+	}
 	/* ensure that contents are written out */
 	ob_flush();
 }

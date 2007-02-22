@@ -748,9 +748,29 @@ function filter_nat_rules_generate() {
 			$interface_counter++;
 			continue;
 		}
-		if(stristr($ifname, "opt"))
-			if(!isset($config['interfaces'][$ifname]['enable']))
+		if(stristr($ifname, "opt")) {
+			if(!isset($config['interfaces'][$ifname]['enable'])) {
 				continue;
+			}
+		}
+		if(isset($config['nat']['advancedoutbound']['enable'])) {
+			$sourcenat = 0;
+			/* we are using advanced outbound nat, are we in routing mode? */
+			$realif = convert_friendly_interface_to_real_interface_name($ifname);
+			/* if the interface address lies within a outbound NAT source network we should skip */
+			if(! empty($config['nat']['advancedoutbound']['rule'])) {
+				foreach($config['nat']['advancedoutbound']['rule'] as $natnetwork) {
+					if(ip_in_subnet($config['interfaces'][$ifname]['ipaddr'], $natnetwork['source']['network'])) {
+						$sourcenat++;
+					}
+				}
+			}
+			if($sourcenat == 0) {
+				log_error("No source NAT rule found for interface {$ifname} - not using the FTP proxy");
+				$interface_counter++;
+				continue;
+			}
+		}
 		$tmp_port = 8021 + $interface_counter;
 		$tmp_interface = convert_friendly_interface_to_real_interface_name($ifname);
 		$ifname_lower = strtolower(convert_friendly_interface_to_friendly_descr($ifname));

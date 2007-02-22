@@ -841,8 +841,13 @@ function get_filename_from_url($url) {
  *   update_output_window: update bottom textarea dynamically.
  */
 function update_output_window($text) {
+	global $pkg_interface;
 	$log = ereg_replace("\n", "\\n", $text);
-	echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"" . $log . "\";</script>";
+	if($pkg_interface == "console") {
+		echo " $log";
+	} else {
+		echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"" . $log . "\";</script>";
+	}
 	/* ensure that contents are written out */
 	ob_flush();
 }

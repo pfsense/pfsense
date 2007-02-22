@@ -170,7 +170,7 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 			if (($return_nosync == 0) && (isset($item['nosync']))) continue; // Do not return depends with nosync set if not required.
 			$depend_file = substr(strrchr($item['item']['0'], '/'),1); // Strip URLs down to filenames.
 			$depend_name = substr(substr($depend_file,0,strpos($depend_file,".")+1),0,-1); // Strip filename down to dependency name.
-			if (($filetype != "all") && (!preg_match("/${filetype}/i", $depend_file))) continue;
+			if (($filetype != "all") && (!preg_match("/{$filetype}/i", $depend_file))) continue;
 			if ($item['prefix'] != "") {
 				$prefix = $item['prefix'];
 			} else {

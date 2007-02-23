@@ -384,7 +384,8 @@ function read_body($ch, $string) {
 		update_progress_bar($downloadProgress);
 		$lastseen = $downloadProgress;
 	}
-	fwrite($fout, $string);
+	if($fout)
+		fwrite($fout, $string);
 	ob_flush();
 	return $length;
 }

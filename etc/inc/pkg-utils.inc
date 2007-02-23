@@ -117,7 +117,7 @@ function get_pkg_sizes($pkgs = 'all') {
  * This function may also print output to the terminal indicating progress.
  */
 function resync_all_package_configs($show_message = false) {
-	global $config, $restart_sync;
+	global $config, $restart_sync, $pkg_interface;
 	$i = 0;
 	log_error("Resyncing configuration for all packages.");
 	if(!$config['installedpackages']['package']) return;

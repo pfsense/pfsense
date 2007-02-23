@@ -197,9 +197,9 @@ add_new_resolv_conf() {
 	return 0
 }
 
-# Must be used on exit.   Invokes the local dhcp client exit hooks, if any.
-exit_with_hooks() {
-	$LOGGER "exit_with_hooks()"
+# Notify rc.newwanip of changes to an interface
+notify_rc_newwanip() {
+	$LOGGER "notify_rc_newwanip()"
 	echo $interface > /tmp/rc.newwanip
 	echo $old_ip_address > /tmp/rc.newwanip_oldip
 }
@@ -222,41 +222,42 @@ fi
 
 if [ -x $NETSTAT ]; then
 	$LOGGER "netstat"
-	if_defaulroute=`$NETSTAT -rn | $GREP "^default" | $AWK '{print $6}'`
+	if_defaultroute=`$NETSTAT -rn | $GREP "^default" | $AWK '{print $6}'`
 else
 	$LOGGER "if_defaultroute"
 	if_defaultroute="x"
 fi
 
+$LOGGER $reason
 case $reason in
 MEDIUM)
-	$LOGGER "MEDIUM"
 	$IFCONFIG $interface $medium
 	$IFCONFIG $interface inet -alias 0.0.0.0 $medium >/dev/null 2>&1
 	/bin/sleep 1
 	;;
 
 PREINIT)
-	$LOGGER "PREINIT"
 	delete_old_alias
 	$IFCONFIG $interface inet 0.0.0.0 netmask 0.0.0.0 broadcast 255.255.255.255 up
 	/bin/rm -f /tmp/${interface}_router
 	;;
 
 ARPCHECK|ARPSEND)
-	$LOGGER "PREINIT"
 	;;
 
 BOUND|RENEW|REBIND|REBOOT)
-	$LOGGER "BOUND RENEW REBIND REBOOT"
 	check_hostname
+	changes=no
 	if [ -n "$old_ip_address" ]; then
-		if [ "$old_ip_address" != "$alias_ip_address" ]; then
+		if [ -n "$alias_ip_address" ] && \
+		   [ "$old_ip_address" != "$alias_ip_address" ]; then
 			delete_old_alias
+			changes=yes
 		fi
 		if [ "$old_ip_address" != "$new_ip_address" ]; then
 			delete_old_address
 			delete_old_routes
+			changes=yes
 		fi
 	fi
 	if [ "$reason" = BOUND ] || \
@@ -265,29 +266,28 @@ BOUND|RENEW|REBIND|REBOOT)
 	   [ "$old_ip_address" != "$new_ip_address" ]; then
 		add_new_address
 		add_new_routes
+		changes=yes
 	fi
-	if [ "$new_ip_address" != "$alias_ip_address" ]; then
+	if [ -n "$alias_ip_address" ] && \
+       [ "$new_ip_address" != "$alias_ip_address" ]; then
 		add_new_alias
+		changes=yes
 	fi
 	add_new_resolv_conf
+	if [ "$changes" = "yes" ] ; then
+		notify_rc_newwanip
+	fi
 	;;
 
 EXPIRE|FAIL)
-	$LOGGER "EXPIRE FAIL"
 	delete_old_alias
 	if [ -n "$old_ip_address" ]; then
 		delete_old_address
 		delete_old_routes
 	fi
-	# XXX Why add alias we just deleted above?
-	add_new_alias
-	if [ -f /var/etc/resolv.conf.save ]; then
-		#cat /var/etc/resolv.conf.save > /var/etc/resolv.conf
-	fi
 	;;
 
 TIMEOUT)
-	$LOGGER "TIMEOUT"
 	delete_old_alias
 	add_new_address
 	/bin/sleep 1
@@ -300,14 +300,21 @@ TIMEOUT)
 			fi
 			add_new_routes
 			if add_new_resolv_conf; then
-				exit_with_hooks
+				notify_rc_newwanip
 			fi
 		fi
 	fi
 	$IFCONFIG $interface inet -alias $new_ip_address $medium
 	delete_old_routes
-	exit_with_hooks
 	;;
 esac
 
-exit_with_hooks 0
+# Invoke the local dhcp client exit hooks, if they exist.
+if [ -f /etc/dhclient-exit-hooks ]; then
+	$LOGGER "dhclient-exit-hooks"
+	exit_status=0
+	. /etc/dhclient-exit-hooks
+	# allow the local script to abort processing of this state
+	# local script must set exit_status variable to nonzero.
+	exit $exit_status
+fi

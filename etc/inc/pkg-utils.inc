@@ -454,8 +454,6 @@ function install_package($package, $pkg_info = "") {
 	$static_output .= "Starting service.\n";
 	update_output_window($static_output);
 	start_service($pkg_info['config_file']);
-	if($pkg_interface == "console") 
-		echo "\n";
 	$restart_sync = true;
 }
 

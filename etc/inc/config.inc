@@ -1538,7 +1538,7 @@ function system_start_ftp_helpers() {
 		/*    if the ftp proxy is disabled for this interface then kill pftpx
 		 *    instance and continue. note that the helpers for port forwards are
 		 *    launched in a  different sequence so we are filtering them out
-         *    here by not including -c {$port} -g 8021 first.
+	         *    here by not including -c {$port} -g 8021 first.
 		 */
 		 /* only install a ftp helper for enabled interfaces. wan and lan are always enabled. */
 		if(stristr($ifname, "opt") <> false)
@@ -1558,6 +1558,24 @@ function system_start_ftp_helpers() {
 			/* grab the current interface IP address */
 			$int = convert_friendly_interface_to_real_interface_name($ifname);
 			$ip = find_interface_ip($int);
+			if(isset($config['nat']['advancedoutbound']['enable'])) {
+				$sourcenat = 0;
+				/* we are using advanced outbound nat, are we in routing mode? */
+				/* if the interface address lies within a outbound NAT source network we should skip */
+				if(! empty($config['nat']['advancedoutbound']['rule'])) {
+					foreach($config['nat']['advancedoutbound']['rule'] as $natnetwork) {
+						if(ip_in_subnet($ip, $natnetwork['source']['network'])) {
+							$sourcenat++;
+						}
+					}
+				}
+				if($sourcenat == 0) {
+					log_error("No source NAT rule found for interface {$ifname} - installing ftpsesame");
+					mwexec("/usr/local/sbin/ftpsesame -i $int");
+					$interface_counter++;
+					continue;
+				}
+			}
 			/* if pftpx is already running then do not launch it again */
 			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/pftpx -c {$port}\" | grep -v grep | sed \"s/  */ /g\"");
 			if(!$helpers && $ip)

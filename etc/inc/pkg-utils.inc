@@ -117,7 +117,7 @@ function get_pkg_sizes($pkgs = 'all') {
  * This function may also print output to the terminal indicating progress.
  */
 function resync_all_package_configs($show_message = false) {
-	global $config;
+	global $config, $restart_sync;
 	$i = 0;
 	log_error("Resyncing configuration for all packages.");
 	if(!$config['installedpackages']['package']) return;
@@ -126,6 +126,11 @@ function resync_all_package_configs($show_message = false) {
 		if($show_message == true) print " " . $package['name'];
 		get_pkg_depends($package['name'], "all");
 		sync_package($i, true, true);
+		if($restart_sync == true) {
+			$restart_sync = false;
+			if($pkg_interface == "console") 
+				echo "\nSyncing packages: ";
+		}
 		$i++;
 	}
 	if($show_message == true) print ".\n";
@@ -385,7 +390,7 @@ function read_body($ch, $string) {
 }
 
 function install_package($package, $pkg_info = "") {
-	global $g, $config, $pkg_interface, $fd_log, $static_output, $pkg_interface;
+	global $g, $config, $pkg_interface, $fd_log, $static_output, $pkg_interface, $restart_sync;
 	if($pkg_interface == "console") 	
 		echo "\n";
 	/* open logfiles and begin installation */
@@ -449,6 +454,9 @@ function install_package($package, $pkg_info = "") {
 	$static_output .= "Starting service.\n";
 	update_output_window($static_output);
 	start_service($pkg_info['config_file']);
+	if($pkg_interface == "console") 
+		echo "\n";
+	$restart_sync = true;
 }
 
 function eval_once($toeval) {

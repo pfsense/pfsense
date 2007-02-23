@@ -129,7 +129,7 @@ function resync_all_package_configs($show_message = false) {
 		if($restart_sync == true) {
 			$restart_sync = false;
 			if($pkg_interface == "console") 
-				echo "\nSyncing packages: ";
+				echo "\nSyncing packages:";
 		}
 		$i++;
 	}

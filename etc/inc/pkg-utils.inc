@@ -461,12 +461,14 @@ function eval_once($toeval) {
 }
 
 function install_package_xml($pkg) {
-	global $g, $config, $fd_log, $static_output;
+	global $g, $config, $fd_log, $static_output, $pkg_interface;
 	if(($pkgid = get_pkg_id($pkg)) == -1) {
 		$static_output .= "The {$pkg} package is not installed.\n\nInstallation aborted.";
 		update_output_window($static_output);
-		echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
-		echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
+		if($pkg_interface <> "console") {
+			echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
+			echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
+		}
 		sleep(1);
 		return;
 	} else {
@@ -523,8 +525,10 @@ function install_package_xml($pkg) {
 				update_output_window($static_output);
 				fwrite($fd_log, "Package WAS NOT installed properly.\n");
 				fclose($fd_log);
-				echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
-				echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
+				if($pkg_interface <> "console") {
+					echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
+					echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
+				}
 				sleep(1);
 				die;
 			}
@@ -650,8 +654,10 @@ function install_package_xml($pkg) {
 		update_output_window($static_output);
 		fwrite($fd_log, "Unable to load package configuration. Installation aborted.\n");
 		fclose($fd_log);
-		echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
-		echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
+		if($pkg_interface <> "console") {
+			echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
+			echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
+		}
 		sleep(1);
 		return;
 	}
@@ -708,12 +714,14 @@ function delete_package_recursive($pkg) {
 }
 
 function delete_package_xml($pkg) {
-	global $g, $config, $fd_log, $static_output;
+	global $g, $config, $fd_log, $static_output, $pkg_interface;
 	if(($pkgid = get_pkg_id($pkg)) == -1) {
 		$static_output .= "The {$pkg} package is not installed.\n\nDeletion aborted.";
 		update_output_window($static_output);
-		echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
-		echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
+		if($pkg_interface <> "console") {
+			echo "\n<script language=\"JavaScript\">document.progressbar.style.visibility='hidden';</script>";
+			echo "\n<script language=\"JavaScript\">document.progholder.style.visibility='hidden';</script>";
+		}
 		ob_flush();
 		sleep(1);
 		return;

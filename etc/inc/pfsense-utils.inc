@@ -844,7 +844,7 @@ function update_output_window($text) {
 	global $pkg_interface;
 	$log = ereg_replace("\n", "\\n", $text);
 	if($pkg_interface == "console") {
-		echo " $log";
+		echo " $log\n";
 	} else {
 		echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"" . $log . "\";</script>";
 	}
@@ -903,9 +903,11 @@ function exec_command_and_return_text($command) {
  *   exec_command_and_return_text: execute command and update output window dynamically
  */
 function execute_command_return_output($command) {
-	global $fd_log;
+	global $fd_log, $pkg_interface;
 	$fd = popen($command . " 2>&1 ", "r");
-	echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"\";</script>";
+	if($pkg_interface <> "console") {
+		echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"\";</script>";
+	}
 	$counter = 0;
 	$counter2 = 0;
 	while(!feof($fd)) {
@@ -928,11 +930,15 @@ function execute_command_return_output($command) {
 	    $counter++;
 		}
 		if($counter2 > 600) {
-			echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"\";</script>";
+			if($pkg_interface <> "console") {
+				echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"\";</script>";
+			}
 			$counter2 = 0;
 		} else
 			$counter2++;
-		echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = this.document.forms[0].output.value + \"" . $text . $extrabreak .  "\"; f('output'); </script>";
+		if($pkg_interface <> "console") {
+			echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = this.document.forms[0].output.value + \"" . $text . $extrabreak .  "\"; f('output'); </script>";
+		}
 	}
 	fclose($fd);
 }
@@ -980,9 +986,13 @@ function convert_real_interface_to_friendly_interface_name($interface) {
  */
 function update_progress_bar($percent) {
 	if($percent > 100) $percent = 1;
-	echo "\n<script type=\"text/javascript\" language=\"javascript\">";
-	echo "\ndocument.progressbar.style.width='" . $percent . "%';";
-	echo "\n</script>";
+	if($pkg_interface <> "console") {
+		echo "\n<script type=\"text/javascript\" language=\"javascript\">";
+		echo "\ndocument.progressbar.style.width='" . $percent . "%';";
+		echo "\n</script>";
+	} else {
+		echo " $percent";
+	}
 }
 
 /****f* pfsense-utils/WakeOnLan

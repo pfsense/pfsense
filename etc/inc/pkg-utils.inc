@@ -45,6 +45,20 @@ if($g['platform'] == "pfSense") {
 	safe_mkdir("/usr/local/pkg/pf");
 }
 
+/****f* pkg-utils/remove_package
+ * NAME
+ *   remove_package - Removes package from FreeBSD if it exists
+ * INPUTS
+ *   $packagestring	- name/string to check for
+ * RESULT
+ *   none
+ * NOTES
+ *   
+ ******/
+function remove_freebsd_package($packagestring) {
+	exec("cd /var/db/pkg && pkg_delete `ls | grep $packagestring`");
+}
+
 /****f* pkg-utils/is_package_installed
  * NAME
  *   is_package_installed - Check whether a package is installed.

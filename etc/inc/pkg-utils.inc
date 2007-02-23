@@ -125,6 +125,7 @@ function resync_all_package_configs($show_message = false) {
 	foreach($config['installedpackages']['package'] as $package) {
 		if($show_message == true) print " " . $package['name'];
 		get_pkg_depends($package['name'], "all");
+		stop_service($package['name']);
 		sync_package($i, true, true);
 		if($restart_sync == true) {
 			$restart_sync = false;

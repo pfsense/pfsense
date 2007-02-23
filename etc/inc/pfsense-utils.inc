@@ -985,6 +985,7 @@ function convert_real_interface_to_friendly_interface_name($interface) {
  * update_progress_bar($percent): updates the javascript driven progress bar.
  */
 function update_progress_bar($percent) {
+	global $pkg_interface;
 	if($percent > 100) $percent = 1;
 	if($pkg_interface <> "console") {
 		echo "\n<script type=\"text/javascript\" language=\"javascript\">";

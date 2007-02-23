@@ -743,6 +743,8 @@ function filter_nat_rules_generate() {
 	/* loop through all interfaces and handle pftpx redirections */
 	foreach ($iflist as $ifent => $ifname) {
 		$ifname_lower = convert_friendly_interface_to_friendly_descr(strtolower($ifname));
+		$realif = convert_friendly_interface_to_real_interface_name(strtolower($ifname));
+		$int_ip = find_interface_ip($realif);
 		if(isset($config['interfaces'][strtolower($ifname)]['disableftpproxy'])) {
 			log_error("FTP proxy disabled for interface {$ifname} - ignoring.");
 			$interface_counter++;
@@ -760,7 +762,7 @@ function filter_nat_rules_generate() {
 			/* if the interface address lies within a outbound NAT source network we should skip */
 			if(! empty($config['nat']['advancedoutbound']['rule'])) {
 				foreach($config['nat']['advancedoutbound']['rule'] as $natnetwork) {
-					if(ip_in_subnet($config['interfaces'][$ifname]['ipaddr'], $natnetwork['source']['network'])) {
+					if(ip_in_subnet($int_ip, $natnetwork['source']['network'])) {
 						$sourcenat++;
 					}
 				}

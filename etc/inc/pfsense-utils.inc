@@ -844,7 +844,7 @@ function update_output_window($text) {
 	global $pkg_interface;
 	$log = ereg_replace("\n", "\\n", $text);
 	if($pkg_interface == "console") {
-		echo " $log\n";
+		/* too chatty */
 	} else {
 		echo "\n<script language=\"JavaScript\">this.document.forms[0].output.value = \"" . $log . "\";</script>";
 	}

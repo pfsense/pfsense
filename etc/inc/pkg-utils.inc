@@ -385,7 +385,9 @@ function read_body($ch, $string) {
 }
 
 function install_package($package, $pkg_info = "") {
-	global $g, $config, $pkg_interface, $fd_log, $static_output;
+	global $g, $config, $pkg_interface, $fd_log, $static_output, $pkg_interface;
+	if($pkg_interface == "console") 	
+		echo "\n";
 	/* open logfiles and begin installation */
 	if(!$fd_log) {
 		if(!$fd_log = fopen("{$g['tmp_path']}/pkg_mgr_{$package}.log", "w")) {
@@ -499,6 +501,8 @@ function install_package_xml($pkg) {
 
 	/* pkg_add the package and its dependencies */
 	if($pkg_info['depends_on_package_base_url'] != "") {
+		if($pkg_interface == "console") 
+			echo "\n";
 		update_status("Installing " . $pkg_info['name'] . " and its dependencies.");
 		$static_output .= "Downloading " . $pkg_info['name'] . " and its dependencies... ";
 		$static_orig = $static_output;

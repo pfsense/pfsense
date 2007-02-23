@@ -350,7 +350,8 @@ function download_file_with_progress_bar($url_file, $destination_file) {
 
 	curl_exec($ch);
 	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-	fclose($fout);
+	if($fout)
+		fclose($fout);
 	curl_close($ch);
 	return ($http_code == 200) ? true : $http_code;
 }

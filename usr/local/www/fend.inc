@@ -3,7 +3,7 @@
 	</div> <!-- Content DIV -->
 	
 	<div id="footer">
-		<a target="_blank" href="http://www.pfSense.com" class="redlnk">pfSense</a> is &copy; 2004-2006 by Scott Ullrich. All Rights Reserved.
+		<a target="_blank" href="http://www.pfSense.com" class="redlnk">pfSense</a> is &copy; 2004-2007 by Scott Ullrich. All Rights Reserved.
 		[<a href="/license.php" class="tblnk">view license</a>] 
 	</div> <!-- Footer DIV -->
 

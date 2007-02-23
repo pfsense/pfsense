@@ -992,7 +992,7 @@ function update_progress_bar($percent) {
 		echo "\ndocument.progressbar.style.width='" . $percent . "%';";
 		echo "\n</script>";
 	} else {
-		echo " $percent";
+		echo " {$percent}%";
 	}
 }
 

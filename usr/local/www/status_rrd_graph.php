@@ -30,10 +30,20 @@
 
 require("guiconfig.inc");
 
-if ($_GET['database']) {
-	$curdatabase = $_GET['database'];
+if ($_GET['cat']) {
+	$curcat = $_GET['cat'];
 } else {
-	$curdatabase = "wan-traffic.rrd";
+	$curcat = "system";
+}
+
+if ($_GET['option']) {
+	$curoption = $_GET['option'];
+} else {
+	if($curcat == "system") {
+		$curoption = "states";
+	} else {
+		$curoption = "wan";
+	}
 }
 
 if ($_GET['style']) {
@@ -42,96 +52,157 @@ if ($_GET['style']) {
 	$curstyle = "inverse";
 }
 
-$pgtitle = gettext("Status: RRD Graphs");
-include("head.inc");
-
 $rrddbpath = "/var/db/rrd/";
 
 /* XXX: (billm) do we have an exec() type function that does this type of thing? */
 exec("cd $rrddbpath;/usr/bin/find -name *.rrd", $databases);
 rsort($databases);
 
-/* Deduce a interface if possible and use the description */
-$curif = split("-", $curdatabase);
-$curif = "$curif[0]";
-$friendly = convert_friendly_interface_to_friendly_descr(strtolower($curif));
-$search = array("-", ".rrd", $curif);
-$replace = array(" :: ", "", $friendly);
-$prettydb = ucwords(str_replace($search, $replace, $curdatabase));
+$styles = array('inverse' => 'Inverse',
+		'absolute' => 'Absolute');
 
-$styles = array('inverse' => 'Inverse', 'absolute' => 'Absolute');
+$pgtitle = gettext("Status: RRD Graphs");
+include("head.inc");
 
 ?>
 <script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
 <script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
-
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
-<p><b><?=gettext("Note: Change of color and/or style may not take effect until the next 
-refresh");?></b></p>
-<form name="form1" action="status_rrd_graph.php" method="get" style="padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid #999999">
-<?=gettext("Graphs:");?>
-<select name="database" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
-<?php
-foreach ($databases as $db => $database) {
-	echo "<option value=\"$database\"";
-	if ($database == $curdatabase) echo " selected";
-	/* Deduce a interface if possible and use the description */
-	$curif = split("-", $database);
-	$curif = "$curif[0]";
-	$friendly = convert_friendly_interface_to_friendly_descr(strtolower($curif));
-	$search = array("-", ".rrd", $curif);
-	$replace = array(" :: ", "", $friendly);
-	$prettyprint = ucwords(str_replace($search, $replace, $database));
-	echo ">" . htmlspecialchars($prettyprint) . "</option>\n";
-}
-?>
-</select>
-<?=gettext("Style:");?>
-<select name="style" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
-<?php
-foreach ($styles as $style => $styled) {
-	echo "<option value=\"$style\"";
-	if ($style == $curstyle) echo " selected";
-	echo ">" . htmlspecialchars($styled) . "</option>\n";
-}
-?>
-</select>
-</form>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+                <td>
+			<form name="form1" action="status_rrd_graph.php" method="get">
+			<input type="hidden" name="cat" value="<?php echo "$curcat"; ?>">
+			<input type="hidden" name="option" value="<?php echo "$curoption"; ?>">
+			<?php
+			        $tab_array = array();
+				if($curcat == "system") { $tabactive = True; } else { $tabactive = False; }
+			        $tab_array[] = array("System", $tabactive, "status_rrd_graph.php?cat=system");
+				if($curcat == "traffic") { $tabactive = True; } else { $tabactive = False; }
+			        $tab_array[] = array("Traffic", $tabactive, "status_rrd_graph.php?cat=traffic");
+				if($curcat == "packets") { $tabactive = True; } else { $tabactive = False; }
+			        $tab_array[] = array("Packets", $tabactive, "status_rrd_graph.php?cat=packets");
+				if($curcat == "quality") { $tabactive = True; } else { $tabactive = False; }
+			        $tab_array[] = array("Quality", $tabactive, "status_rrd_graph.php?cat=quality");
+			        display_top_tabs($tab_array);
+			?>
+                </td>
+        </tr>
+        <tr>
+                <td>
+                        <div id="mainarea">
+                        <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
+                                <tr>
+                                        <td colspan="2" class="list"><p><b><?=gettext("Note: Change of color and/or style may not take effect until the next refresh");?></b></p></td>
+				</tr>
+				<tr>
+                                        <td colspan="2" class="list">
+					<?=gettext("Graphs:");?>
+					<select name="option" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
+					<?php
 
-<div style="text-align: center;">
-<?php
+					echo "<option value=\"allgraphs\">All graphs</option>\n";
+					foreach ($databases as $db => $database) {
+						if(! stristr($database, $curcat)) {
+							continue;
+						}
+						/* Deduce a interface if possible and use the description */
+						$optionc = split("-", $database);
+						$search = array("-", ".rrd", $optionc);
+						if($curcat == "system") {
+							$optionc = str_replace($search, $replace, $optionc[1]);
+							echo "<option value=\"$optionc\"";
+							$prettyprint = ucwords(str_replace($search, $replace, $optionc));
+						} else {
+							$optionc = str_replace($search, $replace, $optionc[0]);
+							echo "<option value=\"$optionc\"";
+							$prettyprint = convert_friendly_interface_to_friendly_descr(strtolower($optionc));
+							$prettyprint = ucwords(str_replace($search, $replace, $prettyprint));
+						}
+						if ($optionc == $curoption) echo " selected";
+						echo ">" . htmlspecialchars($prettyprint) . "</option>\n";
+					}
 
-$periods = array("4h", "16h", "48h", "32d", "6m", "16m");
+					?>
+					</select>
 
-if((file_exists("{$rrddbpath}{$curdatabase}"))) {
-	foreach($periods as $period => $interval) {
-		PRINT "<B>Analysis for $prettydb -- $interval</B><br />";
-		PRINT "\n<IMG BORDER='1' name='{$interval}-{$curif}' id='{$interval}-{$curif}' ALT=\"$prettydb Graph\" SRC=\"status_rrd_graph_img.php?interval=$interval&amp;database={$curdatabase}&amp;style={$curstyle}\" /><br /><br />";
-	}
-} else {
-	PRINT "<b>There is no database available to generate $prettydb from.</b><br />";
-}
+					<?=gettext("Style:");?>
+					<select name="style" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
+					<?php
+					foreach ($styles as $style => $styled) {
+						echo "<option value=\"$style\"";
+						if ($style == $curstyle) echo " selected";
+						echo ">" . htmlspecialchars($styled) . "</option>\n";
+					}
+					?>
 
-?>
+					</select>
 
-</div>
+					<?php
 
-<script language="javascript">
-	function update_graph_images() {
-		//alert('updating');
-		var randomid = Math.floor(Math.random()*11);
-		<?php
-			/* generate update events utilizing prototype $('') feature */
-			echo "\n";
-			foreach($periods as $period => $interval)
-				echo "\t\t\$('{$interval}-{$curif}').src='status_rrd_graph_img.php?interval={$interval}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid;\n";
-		?>
-		window.setTimeout('update_graph_images()', 355000);
-	}
-	window.setTimeout('update_graph_images()', 355000);
-</script>
+					$periods = array("4h", "16h", "48h", "32d", "6m", "16m");
+
+					foreach($periods as $period => $interval) {
+						/* check which databases are valid for our category */
+						foreach($databases as $curdatabase) {
+							if(! stristr($curdatabase, $curcat)) {
+								continue;
+							}
+							switch($curoption) {
+								case "outbound":
+									/* only show interfaces with a gateway */
+									if(! stristr($curdatabase, $curoption)) {
+										continue 2;
+									}
+									break;;
+								case "allgraphs":
+									echo "<!-- matched $curdatabase all option $curoption -->\n";
+									break;;
+								default:
+									/* just use the name here */
+									if(! stristr($curdatabase, $curoption)) {
+										continue 2;
+									}
+							}
+							if((file_exists("{$rrddbpath}{$curdatabase}"))) {
+								echo "<tr><td colspan=2 class=\"list\">\n";
+								echo "<IMG BORDER='0' name='{$interval}-{$curif}' id='{$interval}-{$curif}' ALT=\"$prettydb Graph\" SRC=\"status_rrd_graph_img.php?interval=$interval&amp;database={$curdatabase}&amp;style={$curstyle}\" />\n";
+								echo "<br /><hr><br />\n";								
+								echo "</td></tr>\n";
+							} else {
+								echo "<b>There is no database available to generate $prettydb from.</b>";
+							}
+						}
+					}
+					?>
+					</td>
+				</tr>
+				<tr>
+					<td colspan=2 class="list">
+					<script language="javascript">
+						function update_graph_images() {
+							//alert('updating');
+							var randomid = Math.floor(Math.random()*11);
+							<?php
+								/* generate update events utilizing prototype $('') feature */
+								echo "\n";
+								foreach($periods as $period => $interval)
+									echo "\t\t\$('{$interval}-{$curif}').src='status_rrd_graph_img.php?interval={$interval}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid;\n";
+							?>
+							window.setTimeout('update_graph_images()', 355000);
+						}
+						window.setTimeout('update_graph_images()', 355000);
+					</script>
+					</form>
+					</td>
+				</tr>
+			</table>
+		</div>
+		</td>
+	</tr>
+</table>
 
 <?php include("fend.inc"); ?>
 </body>

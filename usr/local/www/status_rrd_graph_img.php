@@ -169,6 +169,7 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png \\
 		--start -$seconds -e -$average \\
 		--vertical-label \"bits/sec\" \\
+		--color SHADEA#eeeeee --color SHADEB#eeeeee \\
 		--title \"`hostname` - $prettydb - $hperiod - $havg average\" \\
 		--height 200 --width 620 -x \"$scale\" \\
 		DEF:$curif-in_bytes=$rrddbpath$curdatabase:in:AVERAGE \\
@@ -212,6 +213,7 @@ elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdat
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png \\
 		--start -$seconds -e -$average \\
 		--vertical-label \"packets/sec\" \\
+		--color SHADEA#eeeeee --color SHADEB#eeeeee \\
 		--title \"`hostname` - $prettydb - $hperiod - $havg average\" \\
 		--height 200 --width 620 -x \"$scale\" \\
 		DEF:$curif-in_pps=$rrddbpath$curdatabase:in:AVERAGE \\
@@ -253,6 +255,7 @@ elseif((strstr($curdatabase, "-states.rrd")) && (file_exists("$rrddbpath$curdata
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png \\
 		--start -$seconds -e -$average \\
 		--vertical-label \"states, ip\" \\
+		--color SHADEA#eeeeee --color SHADEB#eeeeee \\
 		--title \"`hostname` - $prettydb - $hperiod - $havg average\" \\
 		--height 200 --width 620 -x \"$scale\" \\
 		DEF:$curif-pfrate=$rrddbpath$curdatabase:pfrate:AVERAGE \\
@@ -306,6 +309,7 @@ elseif((strstr($curdatabase, "-processor.rrd")) && (file_exists("$rrddbpath$curd
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png \\
 		--start -$seconds -e -$average \\
 		--vertical-label \"utilization, number\" \\
+		--color SHADEA#eeeeee --color SHADEB#eeeeee \\
 		--title \"`hostname` - $prettydb - $hperiod - $havg average\" \\
 		--height 200 --width 620 -x \"$scale\" \\
 		DEF:user=$rrddbpath$curdatabase:user:AVERAGE \\
@@ -357,6 +361,7 @@ elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdata
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png \\
 		--start -$seconds -e -$average \\
 		--vertical-label \"bits/sec\" \\
+		--color SHADEA#eeeeee --color SHADEB#eeeeee \\
 		--title \"`hostname` - $prettydb - $hperiod - $havg average\" \\
 		--height 200 --width 620 -x \"$scale\" \\";
 		if (!is_array($config['shaper']['queue'])) {
@@ -402,6 +407,7 @@ elseif((strstr($curdatabase, "-queuesdrop.rrd")) && (file_exists("$rrddbpath$cur
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png \\
 		--start -$seconds -e -$average \\
 		--vertical-label \"drops / sec\" \\
+		--color SHADEA#eeeeee --color SHADEB#eeeeee \\
 		--title \"`hostname` - $prettydb - $hperiod - $havg average\" \\
 		--height 200 --width 620 -x \"$scale\" \\";
 		if (!is_array($config['shaper']['queue'])) {
@@ -447,6 +453,7 @@ elseif((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdat
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png \\
 		--start -$seconds -e -$average \\
 		--title \"`hostname` - $prettydb - $hperiod - $havg average\" \\
+		--color SHADEA#eeeeee --color SHADEB#eeeeee \\
 		--vertical-label \"ms / %\" \\
 		--height 200 --width 620 \\
 		-x \"$scale\" --lower-limit 0 \\
@@ -481,6 +488,7 @@ elseif((strstr($curdatabase, "spamd.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png \\
 		--start -$seconds -e -$average \\
 		--title \"`hostname` - $prettydb - $hperiod - $havg average\" \\
+		--color SHADEA#eeeeee --color SHADEB#eeeeee \\
 		--vertical-label=\"Conn / Time, sec.\" \\
 		--height 200 --width 620 --no-gridfit \\
 		-x \"$scale\" --lower-limit 0  \\

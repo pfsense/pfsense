@@ -43,9 +43,9 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-		if (!file_exists($d_sysrebootreqd_path)) {
-			$retval = captiveportal_allowedip_configure();
-		}
+
+		$retval = captiveportal_allowedip_configure();
+
 		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {
 			if (file_exists($d_allowedipsdirty_path)) {

@@ -158,7 +158,6 @@ include("head.inc");
 									}
 									break;;
 								case "allgraphs":
-									echo "<!-- matched $curdatabase all option $curoption -->\n";
 									break;;
 								default:
 									/* just use the name here */
@@ -168,7 +167,9 @@ include("head.inc");
 							}
 							if((file_exists("{$rrddbpath}{$curdatabase}"))) {
 								echo "<tr><td colspan=2 class=\"list\">\n";
-								echo "<IMG BORDER='0' name='{$interval}-{$curif}' id='{$interval}-{$curif}' ALT=\"$prettydb Graph\" SRC=\"status_rrd_graph_img.php?interval=$interval&amp;database={$curdatabase}&amp;style={$curstyle}\" />\n";
+								echo "<IMG BORDER='0' name='{$interval}-{$curoption}-{$curdatabase}' ";
+								echo "id='{$interval}-{$curoption}-{$curdatabase}' ALT=\"$prettydb Graph\" ";
+								echo "SRC=\"status_rrd_graph_img.php?interval=$interval&amp;database={$curdatabase}&amp;style={$curstyle}\" />\n";
 								echo "<br /><hr><br />\n";								
 								echo "</td></tr>\n";
 							} else {
@@ -186,10 +187,42 @@ include("head.inc");
 							//alert('updating');
 							var randomid = Math.floor(Math.random()*11);
 							<?php
-								/* generate update events utilizing prototype $('') feature */
-								echo "\n";
-								foreach($periods as $period => $interval)
-									echo "\t\t\$('{$interval}-{$curif}').src='status_rrd_graph_img.php?interval={$interval}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid;\n";
+							foreach($periods as $period => $interval) {
+								/* check which databases are valid for our category */
+								foreach($databases as $curdatabase) {
+									if(! stristr($curdatabase, $curcat)) {
+										continue;
+									}
+									$optionc = split("-", $curdatabase);
+									$search = array("-", ".rrd", $optionc);
+									$replace = array(" :: ", "", $friendly);
+									switch($curoption) {
+										case "outbound":
+											/* only show interfaces with a gateway */
+												$optionc = "$optionc[0]";
+												$friendly = convert_friendly_interface_to_friendly_descr(strtolower($optionc));
+												$realif = convert_friendly_interface_to_real_interface_name(strtolower($optionc));
+												$monitorip = get_interface_gateway(strtolower($optionc));
+												if($monitorip == "") {
+												continue 2; 
+											}
+											if(! stristr($curdatabase, $optionc)) {
+													continue 2;
+											}
+											break;;
+										case "allgraphs":
+											break;;
+										default:
+											/* just use the name here */
+											if(! stristr($curdatabase, $curoption)) {
+												continue 2;
+											}
+									}
+									/* generate update events utilizing prototype $('') feature */
+									echo "\n";
+									echo "\t\t\$('{$interval}-{$curoption}-{$curdatabase}').src='status_rrd_graph_img.php?interval={$interval}&database={$curdatabase}&style={$curstyle}&tmp=' + randomid;\n";
+									}
+								}
 							?>
 							window.setTimeout('update_graph_images()', 355000);
 						}

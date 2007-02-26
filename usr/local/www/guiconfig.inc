@@ -176,8 +176,6 @@ function exec_rc_script($scriptname) {
 
 	global $d_sysrebootreqd_path;
 
-	if (file_exists($d_sysrebootreqd_path))
-		return 0;
 	$execoutput = "";
 	$retval = "";
 	exec($scriptname . " >/dev/null 2>&1", $execoutput, $retval);
@@ -189,8 +187,6 @@ function exec_rc_script_async($scriptname) {
 	global $d_sysrebootreqd_path;
 	$execoutput = "";
 	$retval = "";
-	if (file_exists($d_sysrebootreqd_path))
-		return 0;
 
 	exec("nohup " . $scriptname . " >/dev/null 2>&1 &", $execoutput, $retval);
 	return $retval;

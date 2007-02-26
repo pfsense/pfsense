@@ -75,7 +75,6 @@ include("head.inc");
                 <td>
 			<form name="form1" action="status_rrd_graph.php" method="get">
 			<input type="hidden" name="cat" value="<?php echo "$curcat"; ?>">
-			<input type="hidden" name="option" value="<?php echo "$curoption"; ?>">
 			<?php
 			        $tab_array = array();
 				if($curcat == "system") { $tabactive = True; } else { $tabactive = False; }
@@ -104,24 +103,30 @@ include("head.inc");
 					<?php
 
 					echo "<option value=\"allgraphs\">All graphs</option>\n";
+					if (($curcat == "traffic") || ($curcat == "packets")) {
+						echo "<option value=\"outbound\">Outbound</option>\n";
+					}
 					foreach ($databases as $db => $database) {
 						if(! stristr($database, $curcat)) {
 							continue;
 						}
-						/* Deduce a interface if possible and use the description */
 						$optionc = split("-", $database);
 						$search = array("-", ".rrd", $optionc);
+						$replace = array(" :: ", "", $friendly);
 						if($curcat == "system") {
 							$optionc = str_replace($search, $replace, $optionc[1]);
 							echo "<option value=\"$optionc\"";
 							$prettyprint = ucwords(str_replace($search, $replace, $optionc));
 						} else {
-							$optionc = str_replace($search, $replace, $optionc[0]);
+							/* Deduce a interface if possible and use the description */
+							$optionc = "$optionc[0]";
+							$friendly = convert_friendly_interface_to_friendly_descr(strtolower($optionc));
+							$search = array("-", ".rrd", $optionc);
+							$replace = array(" :: ", "", $friendly);
 							echo "<option value=\"$optionc\"";
-							$prettyprint = convert_friendly_interface_to_friendly_descr(strtolower($optionc));
-							$prettyprint = ucwords(str_replace($search, $replace, $prettyprint));
+							$prettyprint = ucwords(str_replace($search, $replace, $friendly));
 						}
-						if ($optionc == $curoption) echo " selected";
+						if($optionc == $curoption) echo " selected ";
 						echo ">" . htmlspecialchars($prettyprint) . "</option>\n";
 					}
 
@@ -150,10 +155,20 @@ include("head.inc");
 							if(! stristr($curdatabase, $curcat)) {
 								continue;
 							}
+							$optionc = split("-", $curdatabase);
+							$search = array("-", ".rrd", $optionc);
+							$replace = array(" :: ", "", $friendly);
 							switch($curoption) {
 								case "outbound":
 									/* only show interfaces with a gateway */
-									if(! stristr($curdatabase, $curoption)) {
+									$optionc = "$optionc[0]";
+									$friendly = convert_friendly_interface_to_friendly_descr(strtolower($optionc));
+									$realif = convert_friendly_interface_to_real_interface_name(strtolower($optionc));
+									$monitorip = get_interface_gateway(strtolower($optionc));
+									if($monitorip == "") {
+										continue 2; 
+									}
+									if(! stristr($curdatabase, $optionc)) {
 										continue 2;
 									}
 									break;;

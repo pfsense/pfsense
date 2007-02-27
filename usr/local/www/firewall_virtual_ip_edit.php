@@ -116,9 +116,11 @@ if ($_POST) {
 	if ($_POST['mode'] == "carp") {
 		if(!$id) {
 			/* verify against reusage of vhids */
+			$idtracker=0;
 			foreach($config['virtualip']['vip'] as $vip) {
-				if($vip['vhid'] == $_POST['vhid'])
+				if($vip['vhid'] == $_POST['vhid'] and $idtracker <> $id)
 					$input_errors[] = "VHID {$_POST['vhid']} is already in use.  Pick a unique number.";
+				$idtracker++;
 			}
 		}
 		if($_POST['password'] == "")

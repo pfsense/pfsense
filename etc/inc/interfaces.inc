@@ -478,6 +478,10 @@ function interfaces_carp_bring_up_final() {
 		echo " done.\n";
 	}
 	foreach ($viparr as $vip) {
+		/* bail if this isn't a carp VIP */
+		if ($vip['mode'] != "carp")
+			continue;
+
 		if($debugging)
 			echo "Upping interface carp{$carp_instances_counter}.\n";
 		$broadcast_address = gen_subnet_max($vip['subnet'], $vip['subnet_bits']);

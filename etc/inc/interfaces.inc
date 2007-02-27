@@ -154,7 +154,9 @@ function interfaces_lan_configure() {
 		fwrite($fd, "/sbin/ifconfig {$config['interfaces'][$lancfg['bridge']]['if']} mtu {$mtu}\n");
 		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} create\n");
 		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} addm {$lancfg['if']} addm {$config['interfaces'][$lancfg['bridge']]['if']}\n");
-		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$lancfg['if']} stp {$config['interfaces'][$lancfg['bridge']]['if']}\n");
+		if(!is_interface_wireless($lancfg['if']) and
+		   !is_interface_wireless($config['interfaces'][$lancfg['bridge']]['if']))		
+				fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$lancfg['if']} stp {$config['interfaces'][$lancfg['bridge']]['if']}\n");
 		fclose($fd);
 
 		/* bring up interfaces */
@@ -320,7 +322,9 @@ function interfaces_optional_configure_if($opti) {
 			fwrite($fd, "/sbin/ifconfig {$config['interfaces'][$optcfg['bridge']]['if']} mtu {$mtu}\n");
 			fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} create\n");
 			fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} addm {$optcfg['if']} addm {$config['interfaces'][$optcfg['bridge']]['if']} up\n");
-			fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$optcfg['if']} stp {$config['interfaces'][$optcfg['bridge']]['if']}\n");
+			if(!is_interface_wireless($optcfg['if']) and
+			   !is_interface_wireless($config['interfaces'][$optcfg['bridge']]['if']))
+					fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$optcfg['if']} stp {$config['interfaces'][$optcfg['bridge']]['if']}\n");
 			fclose($fd);
 
 			/* bring up interfaces */
@@ -894,7 +898,9 @@ function interfaces_wan_configure() {
 		fwrite($fd, "/sbin/ifconfig {$config['interfaces'][$wancfg['bridge']]['if']} mtu {$mtu}\n");
 		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} create\n");
 		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} addm {$wancfg['if']} addm {$config['interfaces'][$wancfg['bridge']]['if']}\n");
-		fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$wancfg['if']} stp {$config['interfaces'][$wancfg['bridge']]['if']}\n");
+		if(!is_interface_wireless($wancfg['if']) and
+		   !is_interface_wireless($config['interfaces'][$wancfg['bridge']]['if']))
+				fwrite($fd, "/sbin/ifconfig bridge{$bridges_total} stp {$wancfg['if']} stp {$config['interfaces'][$wancfg['bridge']]['if']}\n");
 		fclose($fd);
 
 		/* bring up interfaces */

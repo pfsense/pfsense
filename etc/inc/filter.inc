@@ -2876,7 +2876,7 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 		$config_copy['dnsmasq']['hosts'][$x]['descr'] = remove_special_characters($config_copy['dnsmasq']['hosts'][$x]['descr']);
 	}
 	for ($x = 0; $x < count($config_copy['virtualip']['vip']); $x++) {
-		if (isset ($config_copy['virtualip']['vip'][$x]['nosync']))
+		if (isset ($config_copy['virtualip']['vip'][$x]['nosync']) or $config_copy['virtualip']['vip'][$x]['mode'] == "proxyarp")
 			unset ($config_copy['virtualip']['vip'][$x]);
 		$config_copy['virtualip']['vip'][$x]['descr'] = remove_special_characters($config_copy['virtualip']['vip'][$x]['descr']);
 	}

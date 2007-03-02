@@ -59,6 +59,7 @@ include("head.inc");
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="10%" class="listhdrr">Name</td>
+		  <td width="10%" class="listhdrr">Type</td>
                   <td width="10%" class="listhdrr">Gateways</td>
                   <td width="30%" class="listhdrr">Status</td>
                   <td width="30%" class="listhdr">Description</td>
@@ -67,6 +68,11 @@ include("head.inc");
                 <tr>
                   <td class="listlr">
 				<?=$vipent['name'];?>
+                  </td>
+                  <td class="listr" align="center" >
+                                <?=$vipent['type'];?>
+                                <br />
+                                (<?=$vipent['behaviour'];?>)
                   </td>
                   <td class="listr" align="center" >
 			<table border="0" cellpadding="0" cellspacing="2">

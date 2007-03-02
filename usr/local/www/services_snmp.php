@@ -42,6 +42,8 @@ if (!is_array($config['snmpd']['modules'])) {
 	$config['snmpd']['modules']['mibii'] = true;
 	$config['snmpd']['modules']['netgraph'] = true;
 	$config['snmpd']['modules']['pf'] = true;
+	$config['snmpd']['modules']['hostres'] = true;
+	$config['snmpd']['modules']['bridge'] = true;
 }
 $pconfig['enable'] = isset($config['snmpd']['enable']);
 $pconfig['pollport'] = $config['snmpd']['pollport'];
@@ -60,6 +62,8 @@ $pconfig['trapstring'] = $config['snmpd']['trapstring'];
 $pconfig['mibii'] = isset($config['snmpd']['modules']['mibii']);
 $pconfig['netgraph'] = isset($config['snmpd']['modules']['netgraph']);
 $pconfig['pf'] = isset($config['snmpd']['modules']['pf']);
+$pconfig['hostres'] = isset($config['snmpd']['modules']['hostres']);
+$pconfig['bridge'] = isset($config['snmpd']['modules']['bridge']);
 $pconfig['bindlan'] = isset($config['snmpd']['bindlan']);
 
 if ($_POST) {
@@ -123,6 +127,8 @@ if ($_POST) {
 		$config['snmpd']['modules']['mibii'] = $_POST['mibii'] ? true : false;
 		$config['snmpd']['modules']['netgraph'] = $_POST['netgraph'] ? true : false;
 		$config['snmpd']['modules']['pf'] = $_POST['pf'] ? true : false;
+		$config['snmpd']['modules']['hostres'] = $_POST['hostres'] ? true : false;
+		$config['snmpd']['modules']['bridge'] = $_POST['bridge'] ? true : false;
 		$config['snmpd']['bindlan'] = $_POST['bindlan'] ? true : false;
 			
 		write_config();
@@ -209,6 +215,8 @@ function enable_change(whichone) {
 	    document.iform.mibii.disabled = false;
 	    document.iform.netgraph.disabled = false;
 	    document.iform.pf.disabled = false;
+	    document.iform.hostres.disabled = false;
+	    document.iform.bridge.disabled = false;
 	}
 	else
 	{
@@ -228,6 +236,8 @@ function enable_change(whichone) {
             document.iform.mibii.disabled = true;
             document.iform.netgraph.disabled = true;
             document.iform.pf.disabled = true;
+            document.iform.hostres.disabled = true;
+            document.iform.bridge.disabled = true;
 	    
 	    document.iform.bindlan.disabled = true;
 	}
@@ -300,13 +310,6 @@ function enable_change(whichone) {
 		    	*/ 
 ?>
 
-                <tr> 
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change(true)"> 
-                  </td>
-                </tr>
-
 		<tr><td>&nbsp;</td></tr>
 
                 <tr> 
@@ -342,13 +345,6 @@ function enable_change(whichone) {
 		  </td>
                 </tr>
 
-                <tr> 
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change(true)"> 
-                  </td>
-                </tr>
-
 		<tr><td>&nbsp;</td></tr>
 
                 <tr> 
@@ -363,10 +359,14 @@ function enable_change(whichone) {
 		  <td width="22%" valign="top" class="vncellreq">SNMP Modules</td>
 		  <td width="78%" class="vtable">
 		    <input name="mibii" type="checkbox" id="mibii" value="yes" <?php if ($pconfig['mibii']) echo "checked"; ?> >MibII
-		    <br>
+		    <br />
 		    <input name="netgraph" type="checkbox" id="netgraph" value="yes" <?php if ($pconfig['netgraph']) echo "checked"; ?> >Netgraph
-		    <br>
+		    <br />
 		    <input name="pf" type="checkbox" id="pf" value="yes" <?php if ($pconfig['pf']) echo "checked"; ?> >PF
+		    <br />
+		    <input name="hostres" type="checkbox" id="hostres" value="yes" <?php if ($pconfig['hostres']) echo "checked"; ?> >Host Resources
+		    <br />
+		    <input name="bridge" type="checkbox" id="bridge" value="yes" <?php if ($pconfig['bridge']) echo "checked"; ?> >Bridge
 		  </td>
 		</tr>
                 <tr> 

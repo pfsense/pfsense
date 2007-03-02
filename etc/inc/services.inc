@@ -747,6 +747,19 @@ EOD;
 		    if(isset($config['snmpd']['modules']['pf'])) {
 			$snmpdconf .= <<<EOD
 begemotSnmpdModulePath."pf"     = "/usr/lib/snmp_pf.so"
+
+EOD;
+		    }
+
+		    if(isset($config['snmpd']['modules']['hostres'])) {
+			$snmpdconf .= <<<EOD
+begemotSnmpdModulePath."hostres"     = "/usr/lib/snmp_hostres.so"
+
+EOD;
+		    }
+		    if(isset($config['snmpd']['modules']['bridge'])) {
+			$snmpdconf .= <<<EOD
+begemotSnmpdModulePath."bridge"     = "/usr/lib/snmp_bridge.so"
 # config must end with blank line
 
 

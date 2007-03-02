@@ -68,7 +68,7 @@ $awk = "/usr/bin/awk";
 /* this pattern sticks comments into a single array item */
 $cleanpattern = "'{ gsub(\"#.*\", \"\");} { gsub(\";\", \"\"); print;}'";
 /* We then split the leases file by } */
-$splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i; printf \" }\\n\";}'";
+$splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i; printf \"}\\n\";}'";
 
 /* stuff the leases file in a proper format into a array by line */
 exec("cat {$leasesfile} | {$awk} {$cleanpattern} | {$awk} {$splitpattern}", $leases_content);
@@ -77,6 +77,8 @@ $leases_count = count($leases_content);
 $pools = array();
 $leases = array();
 $i = 0;
+$l = 0;
+$p = 0;
 
 // Put everything together again
 while($i < $leases_count) {
@@ -85,86 +87,110 @@ while($i < $leases_count) {
 	/* walk the fields */
 	$f = 0;
 	$fcount = count($data);
+	/* with less then 20 fields there is nothing useful */
+	if($fcount < 20) {
+		$i++;
+		continue;
+	}
 	while($f < $fcount) {
-		if ($data[$f] == "lease") {
-			$leases[$i]['ip'] = $data[$f+1];
-			$leases[$i]['type'] = "dynamic";
-		}
-		if ($data[$f] == "failover") {
-			$pools[$i]['name'] = $data[$f+2];
-			$pools[$i]['mystate'] = $data[$f+7];
-			$pools[$i]['peerstate'] = $data[$f+14];
-			$pools[$i]['mydate'] = $data[$f+10];
-			$pools[$i]['mydate'] .= " " . $data[$f+11];
-			$pools[$i]['peerdate'] = $data[$f+17];
-			$pools[$i]['peerdate'] .= " " . $data[$f+18];
-		}
-		if ($data[$f] == "client-hostname") {
-			if($data[$f] <> "") {
-				$leases[$i]['hostname'] = preg_replace('/"/','',$data[$f+1]);
-			} else {
-				$hostname = gethostbyaddr($leases[$i]['ip']);
-				if($hostname <> "") {
-					$leases[$i]['hostname'] = $hostname;
-				}
-			}
-		}	
-		if ($data[$f] == "hardware") {
-			if ($data[$f+1] == "ethernet") {
-				$leases[$i]['mac'] = $data[$f+2];
-				/* check if it's online */
-				$online = exec("/usr/sbin/arp -an |/usr/bin/grep {$leases[$i]['mac']}| grep {$leases[$i]['ip']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
-				if ($online == 1) {
-					$leases[$i]['online'] = 'online';
-				} else {
-					$leases[$i]['online'] = 'offline';
-				}
-			}
-		} else if ($data[$f] == "starts") {
-			$leases[$i]['start'] = $data[$f+2];
-			$leases[$i]['start'] .= " " . $data[$f+3];
-		} else if ($data[$f] == "ends") {
-			$leases[$i]['end'] = $data[$f+2];
-			$leases[$i]['end'] .= " " . $data[$f+3];
-		} else if (($data[$f] == "binding") && (!isset($leases[$i]['act']))){
-			if ($data[$f+1] == "state") {
+		switch($data[$f]) {
+			case "failover":
+				$pools[$p]['name'] = $data[$f+2];
+				$pools[$p]['mystate'] = $data[$f+7];
+				$pools[$p]['peerstate'] = $data[$f+14];
+				$pools[$p]['mydate'] = $data[$f+10];
+				$pools[$p]['mydate'] .= " " . $data[$f+11];
+				$pools[$p]['peerdate'] = $data[$f+17];
+				$pools[$p]['peerdate'] .= " " . $data[$f+18];
+				$p++;
+				$i++;
+				continue 3;
+			case "lease":
+				$leases[$l]['ip'] = $data[$f+1];
+				$leases[$l]['type'] = "dynamic";
+				$f = $f+2;
+				break;
+			case "starts":
+				$leases[$l]['start'] = $data[$f+2];
+				$leases[$l]['start'] .= " " . $data[$f+3];
+				$f = $f+3;
+				break;
+			case "ends":
+				$leases[$l]['end'] = $data[$f+2];
+				$leases[$l]['end'] .= " " . $data[$f+3];
+				$f = $f+3;
+				break;
+			case "tstp":
+				$f = $f+3;
+				break;
+			case "tsfp":
+				$f = $f+3;
+				break;
+			case "atsfp":
+				$f = $f+3;
+				break;
+			case "cltt":
+				$f = $f+3;
+				break;
+			case "binding":
 				switch($data[$f+2]) {
-					case 'active':
-						$leases[$i]['act'] = 'active';
+					case "active":
+						$leases[$l]['act'] = "active";
 						break;
-					case 'free':
-						$leases[$i]['act'] = 'expired';
+					case "free":
+						$leases[$l]['act'] = "expired";
+						$leases[$l]['online'] = "offline";
 						break;
-					case 'backup':
-						$leases[$i]['act'] = 'reserved';	
-						$leases[$i]['online'] = 'offline';
+					case "backup":
+						$leases[$l]['act'] = "reserved";
+						$leases[$l]['online'] = "offline";
 						break;
 				}
-			}
-		} elseif (($data[$f] == "}") && ($data[1] == 1)) {
-			// End of group
-			//updated leases are appended to the end of the lease file. if we aren't
-			//showing everything just show the most current lease in the list
-			if(!$_GET['all']) {
-				$l = $leases[$i]['ip'];
-				for($k = 0; $k < $i; $k++) {
-					if($leases[$k]['ip'] == $l) {
-						array_splice($leases, $k, 1);
-						--$i;
-						break;
-						}
+				$f = $f+1;
+				break;
+			case "next":
+				/* skip the next binding statement */
+				$f = $f+3;
+				break;
+			case "hardware":
+				$leases[$l]['mac'] = $data[$f+2];
+				/* check if it's online and the lease is active */
+				if($leases[$l]['act'] == "active") {
+					$online = exec("/usr/sbin/arp -an |/usr/bin/awk '/{$leases[$l]['ip']}/ {print}'|wc -l");
+					if ($online == 1) {
+						$leases[$l]['online'] = 'online';
+					} else {
+						$leases[$l]['online'] = 'offline';
+					}
 				}
-			}
+				$f = $f+2;
+				break;
+			case "client-hostname":
+				if($data[$f+1] <> "") {
+					$leases[$l]['hostname'] = preg_replace('/"/','',$data[$f+1]);
+				} else {
+					$hostname = gethostbyaddr($leases[$l]['ip']);
+					if($hostname <> "") {
+						$leases[$l]['hostname'] = $hostname;
+					}
+				}
+				$f = $f+1;
+				break;
+			case "uid":
+				$f = $f+1;
+				break;
 		}
 		$f++;
 	}
+	$l++;
 	$i++;
 }
 
 /* remove duplicate items by mac address */
 if(count($leases) > 0) {
-	$leases = remove_duplicate($leases,"mac");
+	$leases = remove_duplicate($leases,"ip");
 }
+
 if(count($pools) > 0) {
 	$pools = remove_duplicate($pools,"name");
 	asort($pools);

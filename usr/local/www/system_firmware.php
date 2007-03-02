@@ -183,7 +183,7 @@ print_info_box($sig_warning);
                     <br><br>
 		    <input name="Submit" type="submit" class="formbtn" value="Upgrade firmware">
 				  <?php endif; else: ?>
-				    <strong>You must reboot the system before you can upgrade the firmware.</strong>
+
 				  <?php endif; ?>
                   </td>
 		</td>

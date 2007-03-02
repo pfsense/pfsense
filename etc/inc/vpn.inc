@@ -270,13 +270,15 @@ function vpn_ipsec_configure($ipchg = false) {
 
 				}
 				$interface_ip = $sasyncd['ip'];
-				$racoonconf .= <<<EOD
+				if($interface_ip <> "") {
+					$racoonconf .= <<<EOD
 listen {
 	isakmp {$interface_ip} [500];
 	{$natt}
 }
 
 EOD;
+				}
 			}
 
 			$racoonconf .= "path pre_shared_key \"{$g['varetc_path']}/psk.txt\";\n\n";

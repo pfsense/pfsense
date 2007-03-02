@@ -2604,7 +2604,7 @@ function get_interfaces_with_gateway() {
 }
 
 /* return true if interface has a gateway */
-function interfaces_has_gateway($friendly) {
+function interface_has_gateway($friendly) {
 	return (in_array($friendly, get_interfaces_with_gateway()));
 }
 

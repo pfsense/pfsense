@@ -34,9 +34,9 @@ fi
 
 # make sure the user can't kill us by pressing Ctrl-C,
 # ctrl-z, etc.
-trap : 2
-trap : 3
-trap : 4
+#trap : 2
+#trap : 3
+#trap : 4
 
 CONFIG="/cf/conf/config.xml"
 WORD="https"

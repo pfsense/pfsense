@@ -645,10 +645,6 @@ function filter_get_opt_interface_descr($opt) {
 function get_friendly_interface_list_as_array() {
 	global $config;
 	$ints = array();
-	$ifdescrs = array('wan', 'lan');
-	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-		$ifdescrs['opt' . $j] = "opt" . $j;
-	}
 	$ifdescrs = get_interface_list();
 	foreach ($ifdescrs as $ifdescr => $ifname) {
 		array_push($ints,$ifdescr);
@@ -2576,6 +2572,40 @@ function is_dhcp_server_enabled() {
 			$dhcpdenable = true;
 	}
 	return $dhcpdenable;
+}
+
+/* return outside interfaces with a gateway */
+function get_interfaces_with_gateway() {
+	global $config;
+	$ints = array();
+	$ifdescrs = get_interface_list();
+
+	/* loop interfaces, check config for outbound */
+	foreach ($ifdescrs as $ifdescr => $ifname) {
+		$friendly = $ifname['friendly'];
+		if ($config['interfaces'][$friendly]['ipaddr'] == "dhcp") {
+			$ints[] = $friendly;
+			continue;
+		}
+		if ($config['interfaces'][$friendly]['ipaddr'] == "pppoe") {
+			$ints[] = $friendly;
+			continue;
+		}
+		if ($config['interfaces'][$friendly]['ipaddr'] == "pptp") {
+			$ints[] = $friendly;
+			continue;
+		}
+		if ($config['interfaces'][$friendly]['gateway'] <> "") {
+			$ints[] = $friendly;
+			continue;
+		}
+	}
+	return $ints;
+}
+
+/* return true if interface has a gateway */
+function interfaces_has_gateway($friendly) {
+	return (in_array($friendly, get_interfaces_with_gateway()));
 }
 
 ?>

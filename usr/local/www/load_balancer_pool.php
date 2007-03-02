@@ -115,8 +115,10 @@ include("head.inc");
                   <td class="listlr" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
 				<?=$vipent['name'];?>
                   </td>
-                  <td class="listr" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
+                  <td class="listr" align="center" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
 				<?=$vipent['type'];?>
+				<br />
+				(<?=$vipent['behaviour'];?>)
                   </td>
                   <td class="listr" align="center" ondblclick="document.location='load_balancer_pool_edit.php?id=<?=$i;?>';">
                         <?php

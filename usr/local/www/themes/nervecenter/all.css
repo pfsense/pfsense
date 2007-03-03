@@ -502,59 +502,59 @@ ul#wzdnav a:active {
 }
 .saved {
   /* background: url('/themes/nione/images/icons/icon_wzd_saved.png') no-repeat 0 1px #FFFFFF; */
-  list-style-image: url('/themes/metallic/images/icons/icon_wzd_saved.png') ! important;
+  list-style-image: url('/themes/nervecenter/images/icons/icon_wzd_saved.png') ! important;
 }
 .notsaved {
   /* background: url('/themes/nione/images/icons/icon_wzd_nsaved.png') no-repeat 0 1px #FFFFFF; */
-  list-style-image: url('/themes/metallic/images/icons/icon_wzd_nsaved.png') ! important;
+  list-style-image: url('/themes/nervecenter/images/icons/icon_wzd_nsaved.png') ! important;
 }
 .en {
-  background: url('/themes/metallic/images/icons/icon_flag_en.png') no-repeat 0 1px #FFFFFF;
+  background: url('/themes/nervecenter/images/icons/icon_flag_en.png') no-repeat 0 1px #FFFFFF;
 }
 .de {
-  background: url('/themes/metallic/images/icons/icon_flag_de.png') no-repeat 0 1px #FFFFFF;
+  background: url('/themes/nervecenter/images/icons/icon_flag_de.png') no-repeat 0 1px #FFFFFF;
 }
 .es {
-  background: url('/themes/metallic/images/icons/icon_flag_es.png') no-repeat 0 1px #FFFFFF;
+  background: url('/themes/nervecenter/images/icons/icon_flag_es.png') no-repeat 0 1px #FFFFFF;
 }
 .pt_BR {
-  background: url('/themes/metallic/images/icons/icon_flag_pt_BR.png') no-repeat 0 1px #FFFFFF;
+  background: url('/themes/nervecenter/images/icons/icon_flag_pt_BR.png') no-repeat 0 1px #FFFFFF;
 }
 .host {
-  background: url('/themes/metallic/images/icons/icon_frmfld_host.png') no-repeat 0 1px #FFFFFF;
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_host.png') no-repeat 0 1px #FFFFFF;
 }
 .search {
-  background: url('/themes/metallic/images/icons/icon_frmfld_search.png') no-repeat 0 1px #FFFFFF;
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_search.png') no-repeat 0 1px #FFFFFF;
 }
 .file {
-  background: url('/themes/metallic/images/icons/icon_frmfld_file.png') no-repeat 0 1px #FFFFFF;
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_file.png') no-repeat 0 1px #FFFFFF;
 }
 .mail {
-  background: url('/themes/metallic/images/icons/icon_frmfld_mail.png') no-repeat 0 1px #FFFFFF;
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_mail.png') no-repeat 0 1px #FFFFFF;
 }
 .imp {
-  background: url('/themes/metallic/images/icons/icon_frmfld_imp.png') no-repeat 0 1px #FFFFFF;
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_imp.png') no-repeat 0 1px #FFFFFF;
 }
 .pwd {
-  background: url('/themes/metallic/images/icons/icon_frmfld_pwd.png') no-repeat 0 1px #FFFFFF;
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_pwd.png') no-repeat 0 1px #FFFFFF;
 }
 .user {
-  background: url('/themes/metallic/images/icons/icon_frmfld_user.png') no-repeat 0 1px #FFFFFF ;
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_user.png') no-repeat 0 1px #FFFFFF ;
 }
 .group {
-  background: url('/themes/metallic/images/icons/icon_frmfld_group.png') no-repeat 0 1px #FFFFFF;
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_group.png') no-repeat 0 1px #FFFFFF;
 }
 .url {
-  background: url('/themes/metallic/images/icons/icon_frmfld_url.png') no-repeat 0 1px #FFFFFF;
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_url.png') no-repeat 0 1px #FFFFFF;
 }
 .time {
-  background: url('/themes/metallic/images/icons/icon_frmfld_time.png') no-repeat 0 1px #FFFFFF;
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_time.png') no-repeat 0 1px #FFFFFF;
 }
 .unknown {
-  background: url('/themes/metallic/images/icons/icon_frmfld_unknown.png') no-repeat 0 1px #FFFFFF;
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_unknown.png') no-repeat 0 1px #FFFFFF;
 }
 .formfld_cert {
-  background: url('/themes/metallic/images/icons/icon_frmfld_cert.png') no-repeat 0 1px #FFFFFF;
+  background: url('/themes/nervecenter/images/icons/icon_frmfld_cert.png') no-repeat 0 1px #FFFFFF;
   padding-left: 28px;
 	font-family: Courier New, Courier, monospaced;
 	font-size: 11px;

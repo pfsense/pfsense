@@ -360,7 +360,6 @@ add 1305 set 1 pass tcp from $cpip 8001 to any out
 EOD;
 	}
 
-    if (isset($config['captiveportal']['pppoeaccess'])) {
         $cprules .= <<<EOD
 #PPPoE Discovery Stage
 add 1100 set 1 pass layer2 mac-type 0x8863
@@ -368,15 +367,13 @@ add 1100 set 1 pass layer2 mac-type 0x8863
 add 1100 set 1 pass layer2 mac-type 0x8864
 
 EOD;
-    }
 
-    if (isset($config['captiveportal']['wpaaccess'])) {
         $cprules .= <<<EOD
 # Allow WPA
 add 1100 set 1 pass layer2 mac-type 0x888e
 
 EOD;
-    }
+
 
     $cprules .= <<<EOD
 

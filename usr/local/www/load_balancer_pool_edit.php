@@ -441,11 +441,7 @@ function clearcombo(){
 						<option value="<?=$dns;?>">DNS Server <?=$iDns;?> (<?=$dns;?>)</option>
 <?php					$iDns++;
 					}
-					/*	Would be really nice to actually ping to get these live each time, 
-						as they mostly all support round-robin */?>
-						<option value="72.14.209.99">www.google.com</option>
-						<option value="209.191.93.52">www.yahoo.com</option>
-						<option value="69.147.83.33">www.freebsd.org</option>
+?>
 						<option value="other" selected>other</option>
 				</select>
 				<input size="16" id="monitorip" name="monitorip" value="<?php echo $pconfig['monitorip']; ?>" style="float: left;">

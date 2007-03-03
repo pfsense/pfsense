@@ -41,6 +41,8 @@ if ($_GET['option']) {
 } else {
 	if($curcat == "system") {
 		$curoption = "states";
+	} else if($curcat == "queues") {
+		$curoption = "queues.";
 	} else {
 		$curoption = "wan";
 	}
@@ -85,6 +87,8 @@ include("head.inc");
 			        $tab_array[] = array("Packets", $tabactive, "status_rrd_graph.php?cat=packets");
 				if($curcat == "quality") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array("Quality", $tabactive, "status_rrd_graph.php?cat=quality");
+				if($curcat == "queues") { $tabactive = True; } else { $tabactive = False; }
+			        $tab_array[] = array("Queues", $tabactive, "status_rrd_graph.php?cat=queues");
 			        display_top_tabs($tab_array);
 			?>
                 </td>
@@ -116,6 +120,10 @@ include("head.inc");
 						if($curcat == "system") {
 							$optionc = str_replace($search, $replace, $optionc[1]);
 							echo "<option value=\"$optionc\"";
+							$prettyprint = ucwords(str_replace($search, $replace, $optionc));
+						} else if($curcat == "queues") {
+							$optionc = str_replace($search, $replace, $optionc[1]);
+							echo "<option value=\"$optionc.\"";
 							$prettyprint = ucwords(str_replace($search, $replace, $optionc));
 						} else {
 							/* Deduce a interface if possible and use the description */

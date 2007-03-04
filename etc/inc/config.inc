@@ -376,6 +376,9 @@ function conf_mount_rw() {
 	if($g['platform'] == "cdrom" or $g['platform'] == "pfSense")
 		return;
 
+	if(isset($config['system']['enablesoftupdates'])) 
+		exec("/sbin/tunefs -n enable / 2>/dev/null");
+		
 	$status = mwexec("/sbin/mount -u -w {$g['cf_path']}");
 	if($status <> 0) {
 		if($g['booting'])

@@ -1301,16 +1301,14 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		}
 		if ($rule['destination']['network'] && strstr($rule['destination']['network'], "opt")) {
 			if (!array_key_exists($rule['destination']['network'], $optcfg)) {
-				$item = "";
-				foreach ($optcfg as $oc)
-					$item .= $oc;
 				if(preg_match("/opt([0-999])/", $rule['destination']['network'], $optmatch)) {
 					$real_opt_int = convert_friendly_interface_to_real_interface_name("opt" . $optmatch[1]);
 					$opt_ip = find_interface_ip($real_opt_int);
 					if(!$opt_ip)
 						return "# unresolvable oparray $real_opt_int - $optmatch[0] - $opt_ip";
+				} else {
+					return "# {$item} {$rule['destination']['network']} !array_key_exists dest network " . $rule['descr'];
 				}
-				//return "# {$item} {$rule['destination']['network']} !array_key_exists dest network " . $rule['descr'];
 			}
 		}
 

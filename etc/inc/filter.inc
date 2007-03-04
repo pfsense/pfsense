@@ -1,4 +1,4 @@
-f<?php
+<?php
 /* $Id$ */
 /*
 	filter.inc

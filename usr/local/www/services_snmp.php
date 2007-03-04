@@ -365,8 +365,6 @@ function enable_change(whichone) {
 		    <input name="pf" type="checkbox" id="pf" value="yes" <?php if ($pconfig['pf']) echo "checked"; ?> >PF
 		    <br />
 		    <input name="hostres" type="checkbox" id="hostres" value="yes" <?php if ($pconfig['hostres']) echo "checked"; ?> >Host Resources
-		    <br />
-		    <input name="bridge" type="checkbox" id="bridge" value="yes" <?php if ($pconfig['bridge']) echo "checked"; ?> >Bridge
 		  </td>
 		</tr>
                 <tr> 

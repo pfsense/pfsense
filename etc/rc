@@ -38,14 +38,14 @@ if [ "$PLATFORM" = "embedded" ]; then
 	/etc/rc.embedded
 fi
 
-# Enable console output if its muted.
-/sbin/conscontrol mute off >/dev/null
-
 # Enable Softupdates if enablesoftupdates is found in config.xml
 SOFTUPDATES=`/usr/bin/grep "enablesoftupdates" /cf/conf/config.xml | wc -l`
 if [ $SOFTUPDATES -gt 0 ]; then
 	/sbin/tunefs -n enable / 2>/dev/null
 fi
+
+# Enable console output if its muted.
+/sbin/conscontrol mute off >/dev/null
 
 # Mount memory file system if it exists
 echo -n "Mounting filesystems..."

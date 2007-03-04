@@ -1558,7 +1558,9 @@ function system_start_ftp_helpers() {
 			/* grab the current interface IP address */
 			$int = convert_friendly_interface_to_real_interface_name($ifname);
 			$ip = find_interface_ip($int);
-			if(isset($config['nat']['advancedoutbound']['enable'])) {
+			/* are we in routed mode? no source nat rules and not a outside interface? */
+			/* If we have advanced outbound nat we skip the FTP proxy, we use ftpsesame */
+			if((isset($config['nat']['advancedoutbound']['enable'])) && (! interface_has_gateway($ifname))) {
 				$sourcenat = 0;
 				/* we are using advanced outbound nat, are we in routing mode? */
 				/* if the interface address lies within a outbound NAT source network we should skip */

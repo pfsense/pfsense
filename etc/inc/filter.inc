@@ -1,4 +1,4 @@
-<?php
+f<?php
 /* $Id$ */
 /*
 	filter.inc
@@ -2775,7 +2775,7 @@ function create_firewall_outgoing_rules_to_itself() {
 	}
 
 	/* permit internal ipsec outbound traffic */
-	$rule .="pass out quick on \$enc0 label \"IPSEC internal host to host\"";
+	$rule .="pass out quick on \$enc0 keep state label \"IPSEC internal host to host\"";
 
 	return $rule;
 }

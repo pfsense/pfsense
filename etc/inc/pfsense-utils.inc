@@ -2605,7 +2605,14 @@ function get_interfaces_with_gateway() {
 
 /* return true if interface has a gateway */
 function interface_has_gateway($friendly) {
-	return (in_array($friendly, get_interfaces_with_gateway()));
+	$friendly = strtolower($friendly);
+	if(in_array($friendly, get_interfaces_with_gateway())) {
+		return true;
+	} else {
+		/* extra check for real interface names if it falls through */
+		$friendly = convert_real_interface_to_friendly_interface_name($friendly);
+		return(in_array($friendly, get_interfaces_with_gateway()));
+	}
 }
 
 ?>

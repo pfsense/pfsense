@@ -324,6 +324,7 @@ add 1001 set 1 pass layer2 not via $cpif
 add 1100 set 1 pass layer2 mac-type arp
 # pfsense requires for WPA
 add 1100 set 1 pass layer2 mac-type 0x888e
+add 1100 set 1 pass layer2 mac-type 0x88c7
 
 # PPP Over Ethernet Discovery Stage
 add 1100 set 1 pass layer2 mac-type 0x8863

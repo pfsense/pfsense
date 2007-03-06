@@ -140,9 +140,6 @@
 	/* generate resolv.conf */
 	system_resolvconf_generate();
 
-	/* Sync the system time at boot before service startup */
-	sync_system_time();
-
 	/* configure loopback interface */
 	interfaces_loopback_configure();
 
@@ -180,6 +177,9 @@
 
 	/* generate resolv.conf */
 	system_resolvconf_generate();
+
+	/* Sync the system time at boot before service startup */
+	sync_system_time();
 
 	/* start pflog */
 	filter_pflog_start();

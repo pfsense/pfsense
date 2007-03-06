@@ -1567,15 +1567,18 @@ function system_start_ftp_helpers() {
 				if(! empty($config['nat']['advancedoutbound']['rule'])) {
 					foreach($config['nat']['advancedoutbound']['rule'] as $natnetwork) {
 						if(ip_in_subnet($ip, $natnetwork['source']['network'])) {
+							/* if the interface address is matched in the AON Rule we need the ftp proxy */
 							$sourcenat++;
 						}
 					}
 				}
 				if($sourcenat == 0) {
-					log_error("No source NAT rule found for interface {$ifname} - installing ftpsesame");
+					log_error("Config: No AON rule matched for interface {$ifname} - not using FTP proxy");
 					mwexec("/usr/local/sbin/ftpsesame -i $int");
 					$interface_counter++;
 					continue;
+				} else {
+					log_error("Config: AON rule matched for interface {$ifname} - using FTP proxy");
 				}
 			}
 			/* if pftpx is already running then do not launch it again */

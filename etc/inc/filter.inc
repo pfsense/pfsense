@@ -746,7 +746,7 @@ function filter_nat_rules_generate() {
 		$realif = convert_friendly_interface_to_real_interface_name(strtolower($ifname));
 		$int_ip = find_interface_ip($realif);
 		if(isset($config['interfaces'][strtolower($ifname)]['disableftpproxy'])) {
-			log_error("FTP proxy disabled for interface {$ifname} - ignoring.");
+			log_error("Filter: FTP proxy disabled for interface {$ifname} - ignoring.");
 			$interface_counter++;
 			continue;
 		}
@@ -765,14 +765,17 @@ function filter_nat_rules_generate() {
 			if(! empty($config['nat']['advancedoutbound']['rule'])) {
 				foreach($config['nat']['advancedoutbound']['rule'] as $natnetwork) {
 					if(ip_in_subnet($int_ip, $natnetwork['source']['network'])) {
+						/* if the interface address is matched in the AON Rule we need the ftp proxy */
 						$sourcenat++;
 					}
 				}
 			}
 			if($sourcenat == 0) {
-				log_error("No source NAT rule found for interface {$ifname} - not using the FTP proxy");
+				log_error("Filter: No AON rule matched for interface {$ifname} - not using the FTP proxy");
 				$interface_counter++;
 				continue;
+			} else {
+				log_error("Filter: AON Rule matched for interface {$ifname} - using FTP proxy");
 			}
 		}
 		$tmp_port = 8021 + $interface_counter;

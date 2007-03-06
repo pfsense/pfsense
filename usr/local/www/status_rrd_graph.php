@@ -60,6 +60,18 @@ $rrddbpath = "/var/db/rrd/";
 exec("cd $rrddbpath;/usr/bin/find -name *.rrd", $databases);
 rsort($databases);
 
+/* these boilerplate databases are required for the other menu choices */
+$dbheader = array("allgraphs-traffic.rrd",
+		"allgraphs-quality.rrd",
+		"allgraphs-packets.rrd",
+		"system-allgraphs.rrd",
+		"outbound-quality.rrd",
+		"outbound-packets.rrd",
+		"outbound-traffic.rrd");
+
+/* append the existing array to the header */
+$databases = array_merge($dbheader, $databases);
+
 $styles = array('inverse' => 'Inverse',
 		'absolute' => 'Absolute');
 
@@ -106,10 +118,6 @@ include("head.inc");
 					<select name="option" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 					<?php
 
-					echo "<option value=\"allgraphs\">All graphs</option>\n";
-					if (($curcat == "traffic") || ($curcat == "packets")) {
-						echo "<option value=\"outbound\">Outbound</option>\n";
-					}
 					foreach ($databases as $db => $database) {
 						if(! stristr($database, $curcat)) {
 							continue;
@@ -117,24 +125,29 @@ include("head.inc");
 						$optionc = split("-", $database);
 						$search = array("-", ".rrd", $optionc);
 						$replace = array(" :: ", "", $friendly);
-						if($curcat == "system") {
-							$optionc = str_replace($search, $replace, $optionc[1]);
-							echo "<option value=\"$optionc\"";
-							$prettyprint = ucwords(str_replace($search, $replace, $optionc));
-						} else if($curcat == "queues") {
-							$optionc = str_replace($search, $replace, $optionc[1]);
-							echo "<option value=\"$optionc.\"";
-							$prettyprint = ucwords(str_replace($search, $replace, $optionc));
-						} else {
-							/* Deduce a interface if possible and use the description */
-							$optionc = "$optionc[0]";
-							$friendly = convert_friendly_interface_to_friendly_descr(strtolower($optionc));
-							$search = array("-", ".rrd", $optionc);
-							$replace = array(" :: ", "", $friendly);
-							echo "<option value=\"$optionc\"";
-							$prettyprint = ucwords(str_replace($search, $replace, $friendly));
+						switch($curcat) {
+							case "system":
+								$optionc = str_replace($search, $replace, $optionc[1]);
+								echo "<option value=\"$optionc\"";
+								$prettyprint = ucwords(str_replace($search, $replace, $optionc));
+								break;
+							case "queues":
+								$optionc = str_replace($search, $replace, $optionc[1]);
+								echo "<option value=\"$optionc.\"";
+								$prettyprint = ucwords(str_replace($search, $replace, $optionc));
+								break;
+							default:
+								/* Deduce a interface if possible and use the description */
+								$optionc = "$optionc[0]";
+								$friendly = convert_friendly_interface_to_friendly_descr(strtolower($optionc));
+								$search = array("-", ".rrd", $optionc);
+								$replace = array(" :: ", "", $friendly);
+								echo "<option value=\"$optionc\"";
+								$prettyprint = ucwords(str_replace($search, $replace, $friendly));
 						}
-						if($optionc == $curoption) echo " selected ";
+						if($curoption == $optionc) {
+							echo " selected ";
+						}
 						echo ">" . htmlspecialchars($prettyprint) . "</option>\n";
 					}
 
@@ -179,9 +192,13 @@ include("head.inc");
 									if(! stristr($curdatabase, $optionc)) {
 										continue 2;
 									}
-									break;;
+									break;
 								case "allgraphs":
-									break;;
+									/* make sure we do not show the placeholder databases in the all view */
+									if((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
+										continue 2;
+									}
+									break;
 								default:
 									/* just use the name here */
 									if(! stristr($curdatabase, $curoption)) {
@@ -232,9 +249,13 @@ include("head.inc");
 											if(! stristr($curdatabase, $optionc)) {
 													continue 2;
 											}
-											break;;
+											break;
 										case "allgraphs":
-											break;;
+											/* make sure we do not show the placeholder databases in the all view */
+											if((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
+												continue 2;
+											}
+											break;
 										default:
 											/* just use the name here */
 											if(! stristr($curdatabase, $curoption)) {

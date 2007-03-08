@@ -1034,12 +1034,16 @@ function sync_system_time() {
 	$syscfg = $config['system'];
 
 	if ($g['booting'])
-		echo "Syncing system time before startup ...";
+		echo "Syncing system time before startup...";
 
 	/* foreach through servers and write out to ntpd.conf */
 	foreach (explode(' ', $syscfg['timeservers']) as $ts) {
 		mwexec("/usr/sbin/ntpdate -s $ts");
 	}
+	
+	if ($g['booting'])
+		echo "done.\n";
+	
 }
 
 function system_halt() {

@@ -183,6 +183,8 @@ function openvpn_reconfigure($mode, $id) {
 	$settings = $config['installedpackages']["openvpn$mode"]['config'][$id];
 	if ($settings['disable']) return;
 
+	$lport = 1194 + $id;
+
 	// Set the keys up
 	// Note that the keys' extension is also the directive that goes to the config file
 	$base_file = $g['varetc_path'] . "/openvpn_{$mode}{$id}.";
@@ -216,6 +218,7 @@ daemon
 keepalive 10 60
 ping-timer-rem
 persist-tun
+lport $lport
 persist-key
 dev tun
 proto $proto

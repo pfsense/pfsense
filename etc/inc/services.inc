@@ -197,6 +197,13 @@ EOPP;
 		if ($dhcpifconf['domain']) {
 			$dnscfg .= "	option domain-name \"{$dhcpifconf['domain']}\";\n";
 		}
+		if (isset($dhcpifconf['ddnsupdate'])) {
+			if($dhcpifconf['ddnsdomain'] <> "") {
+				$dnscfg .= "	ddns-domainname \"{$dhcpifconf['ddnsdomain']}\";\n";
+			}
+			$dnscfg .= "	ddns-update-style interim;\n";
+		}
+
 
 		if (is_array($dhcpifconf['dnsserver']) && ($dhcpifconf['dnsserver'][0])) {
 			$dnscfg .= "	option domain-name-servers " . join(",", $dhcpifconf['dnsserver']) . ";";
@@ -251,11 +258,12 @@ EOD;
 			$dhcpdconf .= "	option netbios-node-type 8;\n";
 		}
 
-		if ($dhcpifconf['next-server'])
-			$dhcpdconf .= "	next-server {$dhcpifconf['next-server']};\n";
-		if ($dhcpifconf['filename'])
-			$dhcpdconf .= "	filename \"{$dhcpifconf['filename']}\";\n";
-
+		if(isset($dhcpifconf['netboot'])) {
+			if (($dhcpifconf['next-server'] <> "") && ($dhcpifconf['filename'] <> "")) {
+				$dhcpdconf .= "	next-server {$dhcpifconf['next-server']};\n";
+				$dhcpdconf .= "	filename \"{$dhcpifconf['filename']}\";\n";
+			}
+		}
 		$dhcpdconf .= <<<EOD
 }
 

@@ -70,6 +70,11 @@ list($pconfig['dns1'],$pconfig['dns2']) = $config['dhcpd'][$if]['dnsserver'];
 $pconfig['enable'] = isset($config['dhcpd'][$if]['enable']);
 $pconfig['denyunknown'] = isset($config['dhcpd'][$if]['denyunknown']);
 $pconfig['staticarp'] = isset($config['dhcpd'][$if]['staticarp']);
+$pconfig['ddnsdomain'] = $config['dhcpd'][$if]['ddnsdomain'];
+$pconfig['ddnsupdate'] = isset($config['dhcpd'][$if]['ddnsupdate']);
+$pconfig['netboot'] = isset($config['dhcpd'][$if]['netboot']);
+$pconfig['nextserver'] = $config['dhcpd'][$if]['next-server'];
+$pconfig['filename'] = $config['dhcpd'][$if]['filename'];
 $pconfig['failover_peerip'] = $config['dhcpd'][$if]['failover_peerip'];
 $pconfig['netmask'] = $config['dhcpd'][$if]['netmask'];
 
@@ -129,6 +134,13 @@ if ($_POST) {
 		if ($_POST['maxtime'] && (!is_numeric($_POST['maxtime']) || ($_POST['maxtime'] < 60) || ($_POST['maxtime'] <= $_POST['deftime']))) {
 			$input_errors[] = "The maximum lease time must be at least 60 seconds and higher than the default lease time.";
 		}
+		if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain']))) {
+			$input_errors[] = "A valid domain name must be specified for the dynamic DNS registration.";
+		}
+		if (($_POST['nextserver'] && !is_ipaddr($_POST['nextserver']))) {
+			$input_errors[] = "A valid IP address must be specified for the network boot server.";
+		}
+
 
 		if (!$input_errors) {
 			/* make sure the range lies within the current subnet */
@@ -177,6 +189,11 @@ if ($_POST) {
 		$config['dhcpd'][$if]['denyunknown'] = ($_POST['denyunknown']) ? true : false;
 		$config['dhcpd'][$if]['enable'] = ($_POST['enable']) ? true : false;
 		$config['dhcpd'][$if]['staticarp'] = ($_POST['staticarp']) ? true : false;
+		$config['dhcpd'][$if]['ddnsdomain'] = $_POST['ddnsdomain'];
+		$config['dhcpd'][$if]['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
+		$config['dhcpd'][$if]['netboot'] = ($_POST['netboot']) ? true : false;
+		$config['dhcpd'][$if]['next-server'] = $_POST['nextserver'];
+		$config['dhcpd'][$if]['filename'] = $_POST['filename'];
 
 		write_config();
 
@@ -230,8 +247,8 @@ include("head.inc");
 
 ?>
 
-<script language="JavaScript">
-<!--
+<script type="text/javascript" language="JavaScript">
+
 function enable_change(enable_over) {
 	var endis;
 	endis = !(document.iform.enable.checked || enable_over);
@@ -246,9 +263,26 @@ function enable_change(enable_over) {
 	document.iform.gateway.disabled = endis;
 	document.iform.failover_peerip.disabled = endis;
 	document.iform.staticarp.disabled = endis;
+	document.iform.ddnsdomain.disabled = endis;
+	document.iform.ddnsupdate.disabled = endis;
+	document.iform.netboot.disabled = endis;
+	document.iform.nextserver.disabled = endis;
+	document.iform.filename.disabled = endis;
 	document.iform.denyunknown.disabled = endis;
 }
-//-->
+
+function show_ddns_config() {
+	document.getElementById("showddnsbox").innerHTML='';
+	aodiv = document.getElementById('showddns');
+	aodiv.style.display = "block";
+}
+
+function show_netboot_config() {
+	document.getElementById("shownetbootbox").innerHTML='';
+	aodiv = document.getElementById('shownetboot');
+	aodiv.style.display = "block";
+}
+
 </script>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -390,7 +424,7 @@ function enable_change(enable_over) {
                       <tr>
                         <td width="22%" valign="top" class="vncell">Failover peer IP:</td>
                         <td width="78%" class="vtable">
-				<input name="failover_peerip" type="text" class="formfld" id="failover_peerip" size="10" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br>
+				<input name="failover_peerip" type="text" class="formfld" id="failover_peerip" size="20" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br>
 				Leave blank to disable.  Enter the REAL address of the other machine.  Machines must be using CARP.
 			</td>
 		      </tr>
@@ -417,6 +451,41 @@ function enable_change(enable_over) {
 				</table>
 			</td>
                       </tr>
+                      <tr>
+                        <td width="22%" valign="top" class="vncell">Dynamic DNS</td>
+                        <td width="78%" class="vtable">
+				<div id="showddnsbox">
+					<input type="button" onClick="show_ddns_config()" value="Advanced"></input> - Show Dynamic DNS</a>
+				</div>
+				<div id="showddns" style="display:none">
+					<input valign="middle" type="checkbox" value="yes" name="ddnsupdate" id="ddnsupdate" <?php if($pconfig['ddnsupdate']) echo " checked"; ?>>&nbsp;
+					<b>Enable registration of DHCP client names in DNS.</b><br />
+					<p>
+					<input name="ddnsdomain" type="text" class="formfld" id="ddnsdomain" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomain']);?>"><br />
+					Note: Leave blank to disable dynamic DNS registration.<br />
+					Enter the dynamic DNS domain which will be used to register client names in the DNS server.
+				</div>
+			</td>
+		      </tr>
+                      <tr>
+                        <td width="22%" valign="top" class="vncell">Enable Network booting</td>
+                        <td width="78%" class="vtable">
+				<div id="shownetbootbox">
+					<input type="button" onClick="show_netboot_config()" value="Advanced"></input> - Show Network booting</a>
+				</div>
+				<div id="shownetboot" style="display:none">
+					<input valign="middle" type="checkbox" value="yes" name="netboot" id="netboot" <?php if($pconfig['netboot']) echo " checked"; ?>>&nbsp;
+					<b>Enables network booting.</b>
+					<p>
+					<input name="nextserver" type="text" class="formfld" id="nextserver" size="20" value="<?=htmlspecialchars($pconfig['nextserver']);?>"><br>
+					Enter the IP address from the network boot server.
+					<p>
+					<input name="filename" type="text" class="formfld" id="filename" size="20" value="<?=htmlspecialchars($pconfig['filename']);?>"><br>
+					Enter the filename used for network booting.<br />
+					Note: You need both a filename and a boot server configured for this to work!
+				</div>
+			</td>
+		      </tr>
                       <tr>
                         <td width="22%" valign="top">&nbsp;</td>
                         <td width="78%">

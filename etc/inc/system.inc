@@ -61,6 +61,7 @@ max_execution_time = 99999999
 max_input_time = 99999999
 register_argc_argv = On
 file_uploads = On
+extension_dir=/usr/local/lib/php/extensions/no-debug-non-zts-20020429/
 upload_tmp_dir = /tmp
 upload_max_filesize = 100M
 post_max_size = 100M

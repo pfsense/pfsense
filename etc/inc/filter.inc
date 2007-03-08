@@ -568,8 +568,10 @@ function filter_nat_rules_generate() {
 			else
 				$natif = $config['interfaces'][$natent['interface']]['if'];
 
+			$rule_friendly_if  = convert_friendly_interface_to_real_interface_name($natif);
+
 			if($natif)
-				$natrules .= "binat on {$natif} from {$natent['internal']}/{$sn} to any -> {$natent['external']}/{$sn}\n";
+				$natrules .= "binat on \${$rule_friendly_if} from {$natent['internal']}/{$sn} to any -> {$natent['external']}/{$sn}\n";
 		}
 	}
 
@@ -587,8 +589,10 @@ function filter_nat_rules_generate() {
 			else
 				$natif = $config['interfaces'][$natent['interface']]['if'];
 
+			$rule_friendly_if  = convert_friendly_interface_to_real_interface_name($natif);
+
 			if($natent['interface'])
-				$natrules .= "binat on \${$natent['interface']} from {$natent['internal']}/{$sn} to any -> {$natent['external']}/{$sn}\n";
+				$natrules .= "binat on \${$rule_friendly_if} from {$natent['internal']}/{$sn} to any -> {$natent['external']}/{$sn}\n";
 		}
 	}
 

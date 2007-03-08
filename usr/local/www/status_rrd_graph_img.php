@@ -84,18 +84,20 @@ $graphs['16m']['seconds'] = 42854400;
 $graphs['16m']['average'] = 43200;
 $graphs['16m']['scale'] = "MONTH:1:MONTH:1:MONTH:1:0:%b";
 
+/* generate the graphs when we request the page. */
+$seconds = $graphs[$interval]['seconds'];
+$average = $graphs[$interval]['average'];
+$scale = $graphs[$interval]['scale'];
+
 $rrddbpath = "/var/db/rrd/";
 $rrdtmppath = "/tmp/";
-$traffic = "-traffic.rrd";
-$quality = "-quality.rrd";
-$queues = "-queues.rrd";
-$queuesdrop = "-queuesdrop.rrd";
-$packets = "-packets.rrd";
-$states = "-states.rrd";
-$spamd = "-spamd.rrd";
 $rrdtool = "/usr/local/bin/rrdtool";
 $uptime = "/usr/bin/uptime";
 $sed = "/usr/bin/sed";
+
+/* XXX: (billm) do we have an exec() type function that does this type of thing? */
+exec("cd $rrddbpath;/usr/bin/find -name *.rrd", $databases);
+rsort($databases);
 
 /* compare bytes/sec counters, divide bps by 8 */
 if (isset($config['ezshaper']['step2']['download'])) {
@@ -109,12 +111,6 @@ if (isset($config['ezshaper']['step2']['download'])) {
 	$upif = "wan";
 	$downif = "lan";
 }
-
-
-/* generate the graphs when we request the page. */
-$seconds = $graphs[$interval]['seconds'];
-$average = $graphs[$interval]['average'];
-$scale = $graphs[$interval]['scale'];
 
 /* select theme colors if the inclusion file exists */
 $rrdcolors = "./themes/{$g['theme']}/rrdcolors.inc.php";
@@ -205,6 +201,83 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 		GPRINT:$curif-bits_io:AVERAGE:'%7.2lf %sb/s'\\
 		GPRINT:$curif-bits_io:LAST:'%7.2lf %sb/s'\\
 		GPRINT:$curif-bytes_t:AVERAGE:'%7.2lf %sB t'\\
+        	COMMENT:\"\\n\"\\
+		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
+	}
+elseif(strstr($curdatabase, "-throughput.rrd")) {
+	/* define graphcmd for throughput stats */
+	/* this gathers all interface statistics, the database does not actually exist */
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png \\
+		--start -$seconds -e -$average \\
+		--vertical-label \"bits/sec\" \\
+		--color SHADEA#eeeeee --color SHADEB#eeeeee \\
+		--title \"`hostname` - $prettydb - $hperiod - $havg average\" \\
+		--height 200 --width 620 -x \"$scale\" ";
+	$vfaces = array ("vlan.?*");
+	$ifdescrs = get_interface_list();
+	$g = 0;
+	$operand = "";
+	$comma = "";
+	$graphtputbi = "";
+	$graphtputbo = "";
+	$graphtputbt = "";
+	$graphtputbyi = "";
+	$graphtputbyo = "";
+	$graphtputbyt = "";
+	foreach($ifdescrs as $ifdescr) {
+		$ifname = $ifdescr['friendly'];
+		/* collect all interface stats */
+		$graphcmd .= "\"DEF:{$ifname}-in_bytes={$rrddbpath}{$ifname}-traffic.rrd:in:AVERAGE\" ";
+		$graphcmd .= "\"DEF:{$ifname}-out_bytes={$rrddbpath}{$ifname}-traffic.rrd:out:AVERAGE\" ";
+		$graphcmd .= "\"CDEF:{$ifname}-in_bits={$ifname}-in_bytes,8,*\"  ";
+		$graphcmd .= "\"CDEF:{$ifname}-out_bits={$ifname}-out_bytes,8,*\" ";
+		$graphcmd .= "\"CDEF:{$ifname}-bits_io={$ifname}-in_bits,{$ifname}-out_bits,+\" ";
+		$graphcmd .= "\"CDEF:{$ifname}-out_bits_neg={$ifname}-out_bits,$multiplier,*\" ";
+		$graphcmd .= "\"CDEF:{$ifname}-bytes_in={$ifname}-in_bytes,0,$downstream,LIMIT,UN,0,{$ifname}-in_bytes,IF,$average,*\" ";
+		$graphcmd .= "\"CDEF:{$ifname}-bytes_out={$ifname}-out_bytes,0,$upstream,LIMIT,UN,0,{$ifname}-out_bytes,IF,$average,*\" ";
+		$graphcmd .= "\"CDEF:{$ifname}-bytes={$ifname}-bytes_in,{$ifname}-bytes_out,+\" ";
+		$graphcmd .= "\"CDEF:{$ifname}-bytes_in_t={$ifname}-in_bytes,0,$downstream,LIMIT,UN,0,{$ifname}-in_bytes,IF,$seconds,*\" ";
+		$graphcmd .= "\"CDEF:{$ifname}-bytes_out_t={$ifname}-out_bytes,0,$upstream,LIMIT,UN,0,{$ifname}-out_bytes,IF,$seconds,*\" ";
+		$graphcmd .= "\"CDEF:{$ifname}-bytes_t={$ifname}-bytes_in_t,{$ifname}-bytes_out_t,+\" ";
+		if ($g > 0) {
+			$operand .= ",+";
+			$comma = ",";
+		}
+		$graphtputbi .= "{$comma}{$ifname}-in_bits";
+		$graphtputbo .= "{$comma}{$ifname}-out_bits_neg";
+		$graphtputbt .= "{$comma}{$ifname}-bits_io";
+		$graphtputbyi .= "{$comma}{$ifname}-bytes_in_t";
+		$graphtputbyo .= "{$comma}{$ifname}-bytes_out_t";
+		$graphtputbyt .= "{$comma}{$ifname}-bytes_t";
+		$g++;
+	}
+	$graphcmd .= "\"CDEF:tput-in_bits={$graphtputbi}{$operand}\" ";
+	$graphcmd .= "\"CDEF:tput-out_bits={$graphtputbo}{$operand}\" ";
+	$graphcmd .= "\"CDEF:tput-bits_io={$graphtputbt}{$operand}\" ";
+	$graphcmd .= "\"CDEF:tput-bytes_in_t={$graphtputbyi}{$operand}\" ";
+	$graphcmd .= "\"CDEF:tput-bytes_out_t={$graphtputbyo}{$operand}\" ";
+	$graphcmd .= "\"CDEF:tput-bytes_t={$graphtputbyt}{$operand}\" ";
+	$graphcmd .= "AREA:tput-in_bits#$colortrafficdown:in \\
+		$AREA:tput-out_bits#$colortrafficup:out \\
+		COMMENT:\"\\n\"\\
+		COMMENT:\"\t\t  maximum       average       current        period\\n\"\\
+		COMMENT:\"in\t\"\\
+		GPRINT:tput-in_bits:MAX:'%7.2lf %sb/s'\\
+		GPRINT:tput-in_bits:AVERAGE:'%7.2lf %Sb/s'\\
+		GPRINT:tput-in_bits:LAST:'%7.2lf %Sb/s'\\
+		GPRINT:tput-bytes_in_t:AVERAGE:'%7.2lf %sB i'\\
+		COMMENT:\"\\n\"\\
+		COMMENT:\"out\t\"\\
+		GPRINT:tput-out_bits:MAX:'%7.2lf %sb/s'\\
+		GPRINT:tput-out_bits:AVERAGE:'%7.2lf %Sb/s'\\
+		GPRINT:tput-out_bits:LAST:'%7.2lf %Sb/s'\\
+		GPRINT:tput-bytes_out_t:AVERAGE:'%7.2lf %sB o'\\
+		COMMENT:\"\\n\"\\
+		COMMENT:\"totals\"\\
+		GPRINT:tput-bits_io:MAX:'%7.2lf %sb/s'\\
+		GPRINT:tput-bits_io:AVERAGE:'%7.2lf %sb/s'\\
+		GPRINT:tput-bits_io:LAST:'%7.2lf %sb/s'\\
+		GPRINT:tput-bytes_t:AVERAGE:'%7.2lf %sB t'\\
         	COMMENT:\"\\n\"\\
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}
@@ -540,9 +613,11 @@ else
 		flush();
 		usleep(500);
 	}
-
+	if(!empty($graphcmdoutput)) {
+		$graphcmdoutput = implode(" ", $graphcmdoutput);
+	}
 	if(($graphcmdreturn != 0) || ($nodata != 0)) {
-		log_error("Failed to create graph with error code $graphcmdreturn, the error is: $graphcmdoutput[0]");
+		log_error("Failed to create graph with error code $graphcmdreturn, the error is: $graphcmdoutput");
 		if(strstr($curdatabase, "queues")) {
 			log_error("failed to create graph from $rrddbpath$curdatabase, removing database");
 			exec("/bin/rm -f $rrddbpath$curif$queues");

@@ -65,6 +65,7 @@ $dbheader = array("allgraphs-traffic.rrd",
 		"allgraphs-quality.rrd",
 		"allgraphs-packets.rrd",
 		"system-allgraphs.rrd",
+		"system-throughput.rrd",
 		"outbound-quality.rrd",
 		"outbound-packets.rrd",
 		"outbound-traffic.rrd");
@@ -205,7 +206,7 @@ include("head.inc");
 										continue 2;
 									}
 							}
-							if((file_exists("{$rrddbpath}{$curdatabase}"))) {
+							if(in_array($curdatabase, $databases)) {
 								echo "<tr><td colspan=2 class=\"list\">\n";
 								echo "<IMG BORDER='0' name='{$interval}-{$curoption}-{$curdatabase}' ";
 								echo "id='{$interval}-{$curoption}-{$curdatabase}' ALT=\"$prettydb Graph\" ";

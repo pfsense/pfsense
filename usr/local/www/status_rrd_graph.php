@@ -40,7 +40,7 @@ if ($_GET['option']) {
 	$curoption = $_GET['option'];
 } else {
 	if($curcat == "system") {
-		$curoption = "states";
+		$curoption = "processor";
 	} else if($curcat == "queues") {
 		$curoption = "queues.";
 	} else {

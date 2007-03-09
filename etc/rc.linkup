@@ -39,13 +39,7 @@
         } else {
 		for ($i = 1; $i <= $ARGC; $i++)
 			$argspassed .= $ARGV[$i] . " ";
-		log_error("Arguments passed rc.linkup.  '{$argspassed}'");
 	
-		if ( $ARGC != 2 ) {
-			log_error("Incorrect number of arguments passed rc.linkup...exiting.");
-			exit;
-		}
-
 		log_error("Processing {$ARGV[1]} - {$ARGV[2]}");
 		$iface = convert_real_interface_to_friendly_interface_name($ARGV[1]);
 		/* XXX: billm - is this correct?  we claim DHCP, but we're checking other types too */

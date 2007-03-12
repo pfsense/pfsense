@@ -37,6 +37,7 @@
 		</field>
 	</fields>
 	<custom_php_resync_config_command>
+		openntpd_install();
 		openntpd_resync();
 	</custom_php_resync_config_command>
 </packagegui>

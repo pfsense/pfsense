@@ -37,60 +37,58 @@
         if($g['booting'] == true) {
                 /* ignore all linkup events */
         } else {
-		for ($i = 1; $i <= $ARGC; $i++)
-			$argspassed .= $ARGV[$i] . " ";
-	
-	
-		log_error("Processing {$ARGV[1]} - {$ARGV[2]}");
-		$iface = convert_real_interface_to_friendly_interface_name($ARGV[1]);
-		/* XXX: billm - is this correct?  we claim DHCP, but we're checking other types too */
-		if($config['interfaces'][$friendly_interface]['ipaddr'] <> "dhcp" and
-			$config['interfaces'][$iface]['ipaddr'] <> "pppoe" and
-			$config['interfaces'][$iface]['ipaddr'] <> "bigpond" and
-			$config['interfaces'][$iface]['ipaddr'] <> "pptp") {
-			log_error("Hotplug event detected for {$ARGV[1]} but ignoring since interface is not set for DHCP");
-		} else {
-			switch ($ARGV[1]) {
-			case "stop":
-			case "down":
-				{
-					log_error("DEVD Ethernet detached event for {$ARGV[1]}");
-					exec("/sbin/ifconfig {$ARGV[1]} delete");
-					exec("/usr/sbin/arp -da");
-					/* XXX: billm - this feels right, but is new and may be wrong */
-					exit;
-					break; /* LINT - NOT REACHED */
-				}
-			case "start":
-			case "up":
-				{
-					log_error("DEVD Ethernet attached event for {$ARGV[1]}");
-					exec("/sbin/ifconfig {$ARGV[1]} up");
-					exec("/usr/sbin/arp -da");
-					break;
-                                }
+			for ($i = 1; $i <= $ARGC; $i++) {
+				$argspassed .= $ARGV[$i] . " ";
+				$argument1 = $ARGV[$i];
+				$argument2 = $ARGV[$i+1];
+				handle_argument_group($argument1, $argument2);
 			}
-
-			switch ($iface) {
-			case "wan":
-				if($config['interfaces'][$iface]['ipaddr'] <> "pppoe") {
-					/* do not reconfigure on hotplug events when using pppoe */
-					log_error("HOTPLUG: Configuring wan interface {$ARGV[1]}");
-					interfaces_wan_configure();
+		}
+	
+		function handle_argument_group($argument1, $argument2) {
+			log_error("Processing {$argument1} - {$argument2}");
+			$iface = convert_real_interface_to_friendly_interface_name($argument1);
+			if($config['interfaces'][$friendly_interface]['ipaddr'] <> "dhcp" and
+				$config['interfaces'][$iface]['ipaddr'] <> "pppoe" and
+				$config['interfaces'][$iface]['ipaddr'] <> "bigpond" and
+				$config['interfaces'][$iface]['ipaddr'] <> "pptp") {
+				log_error("Hotplug event detected for {$argument1} but ignoring since interface is not set for DHCP");
+			} else {
+				switch ($argument1) {
+					case "stop":
+					case "down":
+						log_error("DEVD Ethernet detached event for {$argument1}");
+						exec("/sbin/ifconfig {$argument1} delete");
+						exec("/usr/sbin/arp -da");
+						exit;
+						break; /* LINT - NOT REACHED */
+					case "start":
+					case "up":
+						log_error("DEVD Ethernet attached event for {$argument1}");
+						exec("/sbin/ifconfig {$argument1} up");
+						exec("/usr/sbin/arp -da");
+						break;
 				}
-				break;
-			case "lan":
-				log_error("HOTPLUG: Configuring lan interface {$ARGV[1]}");
-				interfaces_lan_configure();
-				break;
-			default:
-				$int = str_replace("opt", "", $interface);
-				interfaces_optional_configure_if($int);
-				echo "interfaces_optional_configure_if($int);\n";
-				log_error("HOTPLUG: Configuring optional interface {$interface} - opt{$int}");
-				break;
-                        }
-                }
-        }
+				switch ($iface) {
+					case "wan":
+						if($config['interfaces'][$iface]['ipaddr'] <> "pppoe") {
+							/* do not reconfigure on hotplug events when using pppoe */
+							log_error("HOTPLUG: Configuring wan interface {$argument1}");
+							interfaces_wan_configure();
+						}
+						break;
+					case "lan":
+						log_error("HOTPLUG: Configuring lan interface {$argument1}");
+						interfaces_lan_configure();
+						break;
+					default:
+						$int = str_replace("opt", "", $interface);
+						interfaces_optional_configure_if($int);
+						echo "interfaces_optional_configure_if($int);\n";
+						log_error("HOTPLUG: Configuring optional interface {$interface} - opt{$int}");
+						break;
+				}
+			}
+		}
 
 ?>

@@ -2036,6 +2036,9 @@ function enable_rrd_graphing() {
 
 	global $config, $g;
 
+	if($g['booting']) 
+		echo "Generating RRD graphs...";
+
 	$rrddbpath = "/var/db/rrd/";
 	$rrdgraphpath = "/usr/local/www/rrd";
 
@@ -2523,7 +2526,12 @@ function enable_rrd_graphing() {
 		/* kill off traffic collectors */
 		kill_traffic_collector();
 	}
+
+	if($g['booting']) 
+		echo "done.\n";
+		
 }
+
 function kill_traffic_collector() {
 		mwexec("ps awwwux | grep '/[u]pdaterrd.sh' | awk '{print $2}' | xargs kill");
 }

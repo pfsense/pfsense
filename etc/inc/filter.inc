@@ -382,6 +382,13 @@ function get_vpns_list() {
 			$isfirst = false;
 		}
 	}
+	/* pppoe */
+	if ($config['pppoe']['remoteip']) {
+		if ($isfirst == false)
+			$vpns .= " ";
+		$vpns .= $config['pppoe']['remoteip'] ."/". $config['pppoe']['n_pppoe_units'];
+		$isfirst = false;
+	}
 	$vpns .= " ";
 	return $vpns;
 }
@@ -1458,24 +1465,39 @@ function generate_user_filter_rule($rule, $ngcounter) {
 								$lbs = array("$firstsrv");
 							}
 
+							/* create server/gateway gateway/monitor array */
+							$l = 0;
+							$lbconfig = array();
+		                                        foreach ($lb['servers'] as $lbsvr) {
+								$lbsvr_split=split("\|", $lbsvr);
+								$lbconfig['gateway'][$l] = $lbsvr_split[0];
+								$lbconfig['monitor'][$l] = $lbsvr_split[1];
+								$l++;
+							}
+
+							$l = 0;
 							/* iterate through $lbs and setup items accordingly */
 							foreach($lbs as $server) {
 								if ($server == "")
 									continue;
-								for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
-				                                        foreach ($config['load_balancer']['lbpool'][$i]['servers'] as $lbsvr) {
-										$lbsvr_split=split("\|", $lbsvr);
-										if ($lbsvr_split[1] == $server)
-											/* deterimine interface gateway */
-											if(is_ipaddr($lbsvr_split[0])) {
-												$int = guess_interface_from_ip($lbsvr_split[0]);
-												$gateway = $lbsvr_split[0];
-												log_error("Load balancer pool member contains IP address instead of interface name. Please reconfigure the load balancer pool {$config['load_balancer']['lbpool'][$i]['name']}");
-											} else {
-												$int = convert_friendly_interface_to_real_interface_name($lbsvr_split[0]);
-												$gateway = get_interface_gateway($int);
-											}
-				                                        }
+								if(in_array($server, $lbconfig['monitor'])) {
+									if ($lbconfig['monitor'][$l] == $server) {
+										/* determine interface gateway */
+										if(is_ipaddr($lbconfig['gateway'][$l])) {
+											$int = guess_interface_from_ip($lbconfig['gateway'][$l]);
+											$gateway = $lbconfig['gateway'][$l];
+											log_error("SLBD pool {$lb['name']} is old style. Please recreate.");
+										} else if(interface_has_gateway($lbconfig['gateway'][$l])) {
+											$int = convert_friendly_interface_to_real_interface_name($lbconfig['gateway'][$l]);
+											$gateway = get_interface_gateway($int);
+										} else {
+											log_error("No match for {$lbconfig['gateway'][$l]} with {$lbconfig['monitor'][$l]}");
+										}
+									}
+								} else {
+									$dump = implode(" ", $lbconfig['monitor']);
+									log_error("load balancer configuration is not valid - bailing - $dump");
+									$aline['route'] = "# error resolving load balancing {$lbconfig['monitor']} with $server";
 								}
 								if($foundlb == 1)
 									$routeto .= ", ";
@@ -1484,6 +1506,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 								}
 								$routeto .=  "( {$int} {$gateway} ) ";
 								$foundlb = 1;
+								$l++;
 							}
 							$routeto .= "} round-robin ";
 						}
@@ -1833,8 +1856,9 @@ function generate_user_filter_rule($rule, $ngcounter) {
 
 	/* exception(s) to a user rules can go here. */
 	/* rules with a gateway or pool should create another rule for routing to local networks or vpns */
-	/* we only trigger this for a rule with the destination of any */
-	if (($aline['route'] <> "") && ($aline['type'] == "pass") && ($dst == "any")) {
+	/* we only trigger this for a rule with the destination of any and without a gateway */
+	if (($aline['route'] <> "") && ($aline['type'] == "pass") && ($dst == "any") && (! interface_has_gateway($aline['interface']))) {
+		/* negate VPN/PPTP/PPPoE networks for load balancer rules */
 		$vpns = " to <vpns> ";
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['prot'] .
 			$aline['src'] . $aline['srcport'] . $aline['os'] . $vpns . $aline['dstport'].

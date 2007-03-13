@@ -45,7 +45,7 @@ function opcode_cache_configuration() {
         	$opcode_cacher = "extension=apc.so\n";
         	$opcode_cacher .= "apc.enabled=\"1\"\n";
 			$opcode_cacher .= "apc.enable_cli=\"1\"\n";
-			$opcode_cacher .= "apc.shm_size=\"10\"\n";
+			$opcode_cacher .= "apc.shm_size=\"8\"\n";
         } else {
 			$opcode_cacher = "";
         }

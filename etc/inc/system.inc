@@ -39,16 +39,13 @@ function opcode_cache_configuration() {
         /* get system memory amount */
         $memory = get_memory();
         $avail = $memory[0];
-	$cache_size = floor($avail/10);
-	if($cache_size < 8)  $cache_size = 8;
-	if($cache_size > 25) $cache_size = 25;
 
 		/* disable apc for platforms less than 90 megs of ram */
         if($memory > 90) {
         	$opcode_cacher = "extension=apc.so\n";
         	$opcode_cacher .= "apc.enabled=\"1\"\n";
 			$opcode_cacher .= "apc.enable_cli=\"1\"\n";
-			$opcode_cacher .= "apc.shm_size=\"$cache_size\"\n";
+			$opcode_cacher .= "apc.shm_size=\"10\"\n";
         } else {
 			$opcode_cacher = "";
         }

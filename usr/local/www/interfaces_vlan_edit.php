@@ -87,6 +87,9 @@ if ($_POST) {
 		write_config();
 
 		interfaces_vlan_configure();
+		interfaces_lan_configure();
+		interfaces_wan_configure();
+		interfaces_optional_configure();
 
 		header("Location: interfaces_vlan.php");
 		exit;

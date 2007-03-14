@@ -173,6 +173,7 @@ print_info_box($sig_warning);
               upload&quot; below, then choose the image file (<?=$g['platform'];?>-*.tgz)
 			  to be uploaded.<br>Click &quot;Upgrade firmware&quot;
               to start the upgrade process.</p>
+                    <?php if (!file_exists($d_sysrebootreqd_path)): ?>
                     <?php if (!file_exists($d_fwupenabled_path)): ?>
                     <input name="Submit" type="submit" class="formbtn" value="Enable firmware upload">
 				  <?php else: ?>
@@ -183,7 +184,7 @@ print_info_box($sig_warning);
                     <br><br>
 		    <input name="Submit" type="submit" class="formbtn" value="Upgrade firmware">
 				  <?php endif; else: ?>
-
+				    <strong>You must reboot the system before you can upgrade the firmware.</strong>
 				  <?php endif; ?>
                   </td>
 		</td>
@@ -201,7 +202,7 @@ print_info_box($sig_warning);
 </table>
 
 </form>
-<?php endif; ?>
+<?php endif; endif; ?>
 <?php include("fend.inc"); ?>
 </body>
 </html>

@@ -218,7 +218,6 @@ daemon
 keepalive 10 60
 ping-timer-rem
 persist-tun
-lport $lport
 persist-key
 dev tun
 proto $proto
@@ -259,6 +258,7 @@ EOD;
 
 		// The port we'll listen at
 		$openvpn_conf .= "lport {$settings['local_port']}\n";
+
 	}
 
 	else { // $mode == client
@@ -266,6 +266,11 @@ EOD;
 		$openvpn_conf .= "remote {$settings['serveraddr']} {$settings['serverport']}\n";
 
 		if ($settings['auth_method'] == 'pki') $openvpn_conf .= "client\n";
+
+		if ($settings['use_dynamicport']) $openvpn_conf .= "nobind\n";
+			else
+			// The port we'll listen at
+			$openvpn_conf .= "lport {$lport}\n";
 
 		if (!empty($settings['interface_ip'])) {
 			// Configure the IPs according to the address pool

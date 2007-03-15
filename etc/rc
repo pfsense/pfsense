@@ -38,6 +38,10 @@ if [ "$PLATFORM" = "embedded" ]; then
 	/etc/rc.embedded
 fi
 
+if [ "$PLATFORM" = "pfSense" ]; then
+	mdmfs -S -M -s 2m md /var/run
+fi
+
 # Enable Softupdates if enablesoftupdates is found in config.xml
 SOFTUPDATES=`/usr/bin/grep "enablesoftupdates" /cf/conf/config.xml | wc -l`
 if [ $SOFTUPDATES -gt 0 ]; then

@@ -2033,7 +2033,6 @@ function convert_real_interface_to_friendly_descr($interface) {
 }
 
 function enable_rrd_graphing() {
-
 	global $config, $g;
 
 	if($g['booting']) 
@@ -2118,9 +2117,14 @@ function enable_rrd_graphing() {
 
 		$i = 0;
 		$vfaces = array (
-			"vlan.?*"
+			"vlan.?*",
+			"enc.?*"
 		);
 		$ifdescrs = get_interface_list(true, true, $vfaces);
+		$ifdescrs['enc0']['friendly'] = "ipsec";
+		$ifdescrs['enc0']['descr'] = "IPSEC";
+		$ifdescrs['enc0']['up'] = true;
+
 		foreach ($ifdescrs as $realif => $ifdescr) {
 			$ifname = $ifdescr['friendly'];
 			$state = $ifdescr['up'];

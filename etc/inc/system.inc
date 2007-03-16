@@ -66,7 +66,6 @@ upload_tmp_dir = /tmp
 upload_max_filesize = 100M
 post_max_size = 100M
 html_errors = Off
-memory_limit = 32M
 include_path = ".:/etc/inc:/usr/local/www:/usr/local/captiveportal:/usr/local/pkg"
 extension=radius.so
 {$opcode_cacher}

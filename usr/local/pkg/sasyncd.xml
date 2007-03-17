@@ -54,7 +54,9 @@
 			<fielddescr>Failover IP</fielddescr>
 			<fieldname>ip</fieldname>
 			<description>Enter the IP address you would like to use for failover.  HINT:  You normally want to use a public CARP ip.</description>
-			<type>input</type>
+			<type>textarea</type>
+			<rows>3</rows>
+			<cols>20</cols><type>input</type>
 		</field>
 	</fields>
 	<custom_add_php_command>

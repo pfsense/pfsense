@@ -270,10 +270,15 @@ function vpn_ipsec_configure($ipchg = false) {
 
 				}
 				$interface_ip = $sasyncd['ip'];
+				$interface_ips = split("\n", $interface_ip);
 				if($interface_ip <> "") {
+					foreach($interface_ips as $intip) {
+						if($intip) 
+							$racoon_ips .= "isakmp {$intip} [500];\n";
+					}
 					$racoonconf .= <<<EOD
 listen {
-	isakmp {$interface_ip} [500];
+	{$racoon_ips}
 	{$natt}
 }
 

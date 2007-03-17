@@ -142,7 +142,11 @@ function log_error($error) {
  ******/
 function get_interface_mac_address($interface) {
 	$mac = exec("ifconfig {$interface} | awk '/ether/ {print $2}'");
-	return trim($mac);
+	if(is_macaddr($mac)) {
+		return trim($mac);
+	} else {
+		return "";
+	}
 }
 
 /****f* pfsense-utils/return_dir_as_array
@@ -2173,8 +2177,11 @@ function enable_rrd_graphing() {
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling traffic for interface $ifname $realif \n";
 			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$traffic N:\\\n";
-			$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$7}'`:\\\n";
-			$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$10}'`\n\n";
+			if(! is_macaddr(get_interface_mac($realif))) {
+				$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$6 \":\" \$9}'`\n";
+			} else {
+				$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$7 \":\" \$10}'`\n";
+			}
 
 			/* PACKETS, set up the rrd file */
 			if (!file_exists("$rrddbpath$ifname$packets")) {
@@ -2207,9 +2214,11 @@ function enable_rrd_graphing() {
 			$rrdupdatesh .= "\n";
 			$rrdupdatesh .= "# polling packets for interface $ifname $realif \n";
 			$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$packets N:\\\n";
-			$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$5}'`:\\\n";
-			$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$8}'`\n\n";
-
+			if(! is_macaddr(get_interface_mac($realif))) {
+				$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$4 \":\" \$7}'`\n";
+			} else {
+				$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$5 \":\" \$8}'`\n";
+			}
 			/* if an alternative gateway is defined, use it */
 			if ($config['system']['interfaces'][$ifname]['use_rrd_gateway'] <> "") {
 				$gatewayip = get_interface_gateway($ifname);

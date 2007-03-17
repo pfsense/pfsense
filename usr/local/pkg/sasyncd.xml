@@ -53,7 +53,7 @@
 		<field>
 			<fielddescr>Failover IP</fielddescr>
 			<fieldname>ip</fieldname>
-			<description>Enter the IP address you would like to use for failover.  HINT:  You normally want to use a public CARP ip.</description>
+			<description>Enter the IP address you would like to use for failover.  HINT:  You normally want to use a public CARP ip.  Seperate multiple addresses with a carraige return.</description>
 			<type>textarea</type>
 			<rows>3</rows>
 			<cols>20</cols><type>input</type>

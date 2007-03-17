@@ -186,6 +186,8 @@ EOD;
 		else
 			$maxproc = 16;
 
+		$use_fastcgi = true;
+
 		if(isset($config['captiveportal']['httpslogin'])) {
 			$cert = base64_decode($config['captiveportal']['certificate']);
 			$key = base64_decode($config['captiveportal']['private-key']);

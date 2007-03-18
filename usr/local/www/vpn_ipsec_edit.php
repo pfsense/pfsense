@@ -327,7 +327,7 @@ function methodsel_change() {
                        $carpips = find_number_of_needed_carp_interfaces();
                        for($i=0; $i<$carpips; $i++) {
                        	$carpip = find_interface_ip("carp" . $i);
-                       	$interfaces['carp' . $i] = "CARP{$i} - $carpip"; 
+                       	$interfaces['carp' . $i] = "CARP{$i} ({$carpip})"; 
                        }
 					  foreach ($interfaces as $iface => $ifacename): ?>
                       <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>

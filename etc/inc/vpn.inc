@@ -270,7 +270,7 @@ function vpn_ipsec_configure($ipchg = false) {
 
 				}
 				$interface_ip = $sasyncd['ip'];
-				$interface_ips = split("\n", $interface_ip);
+				$interface_ips = split(",", $interface_ip);
 				if($interface_ip <> "") {
 					foreach($interface_ips as $intip) {
 						if($intip) 

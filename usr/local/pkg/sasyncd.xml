@@ -56,7 +56,7 @@
 			<description>Enter the IP address you would like to use for failover.  HINT:  You normally want to use a public CARP ip.  Seperate multiple addresses with a carraige return.</description>
 			<type>textarea</type>
 			<rows>3</rows>
-			<cols>20</cols><type>input</type>
+			<cols>20</cols>
 		</field>
 	</fields>
 	<custom_add_php_command>

@@ -153,9 +153,9 @@ include("head.inc");
 				  <?php if ($ipsecent['interface']) {
 							$iflabels = array('lan' => 'LAN', 'wan' => 'WAN');
                  	        $carpips = find_number_of_needed_carp_interfaces();
-                         	    for($i=0; $i<$carpips; $i++) {
-                       			$carpip = find_interface_ip("carp" . $i);
-                      	 		$iflabels['carp' . $i] = "CARP{$i} - $carpip"; 
+                         	    for($j=0; $j<$carpips; $j++) {
+                       				$carpip = find_interface_ip("carp" . $j);
+                      	 			$iflabels['carp' . $j] = "CARP{$j} - $carpip"; 
                      		    }
 							for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
 								$iflabels['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];

@@ -154,7 +154,7 @@ include("head.inc");
                  	        $carpips = find_number_of_needed_carp_interfaces();
                          	    for($j=0; $j<$carpips; $j++) {
                        				$carpip = find_interface_ip("carp" . $j);
-                      	 			$iflabels['carp' . $j] = "CARP{$j} - $carpip"; 
+                      	 			$iflabels['carp' . $j] = "CARP{$j} ({$carpip})"; 
                      		    }
 							for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
 								$iflabels['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];

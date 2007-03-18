@@ -274,11 +274,11 @@ function vpn_ipsec_configure($ipchg = false) {
 				if($interface_ip <> "") {
 					foreach($interface_ips as $intip) {
 						if($intip) 
-							$racoon_ips .= "isakmp {$intip} [500];\n";
+							$racoon_ips .= "\tisakmp {$intip} [500];\n";
 					}
 					$racoonconf .= <<<EOD
 listen {
-	{$racoon_ips}
+{$racoon_ips}
 	{$natt}
 }
 

@@ -153,6 +153,7 @@ require_once("notices.inc");
 							<li><a href="/services_dyndns.php" class="navlnk">Dynamic DNS</a></li>
 							<li><a href="/load_balancer_pool.php" class="navlnk">Load Balancer</a></li>
 							<li><a href="/pkg_edit.php?xml=olsrd.xml&id=0" class="navlnk">OLSR</a></li>
+							<li><a href="/pkg_edit.php?xml=routed/routed.xml&id=0" class="navlnk">RIP</a></li>
 							<li><a href="/services_snmp.php" class="navlnk">SNMP</a></li>
 							<li><a href="/status_upnp.php" class="navlnk">MiniUPnPd</a></li>
 							<li><a href="/pkg_edit.php?xml=openntpd.xml&id=0" class="navlnk">OpenNTPD</a></li>

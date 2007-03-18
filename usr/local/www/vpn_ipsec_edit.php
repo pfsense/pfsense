@@ -316,13 +316,19 @@ function methodsel_change() {
                     <span class="vexpl">Set this option to disable this tunnel without
 					removing it from the list.</span></td>
                 </tr>
-		<tr>
+			   <tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable"><select name="interface" class="formfld">
-                      <?php $interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
+                      <?php 
+                       $interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
 					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 					  	$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 					  }
+                       $carpips = find_number_of_needed_carp_interfaces();
+                       for($i=0; $i<$carpips; $i++) {
+                       	$carpip = find_interface_ip("carp" . $i);
+                       	$interfaces['carp' . $i] = "CARP{$i} - $carpip"; 
+                       }
 					  foreach ($interfaces as $iface => $ifacename): ?>
                       <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>>
                       <?=htmlspecialchars($ifacename);?>

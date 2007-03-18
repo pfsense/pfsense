@@ -597,8 +597,12 @@ function get_interface_arr($flush = false) {
  * detected.
  */
 function does_interface_exist($interface) {
-        $ints = get_interface_arr();
-
+    if(!$interface)
+    		return false;
+    $ints = get_interface_arr();
+	$carpips = find_number_of_needed_carp_interfaces();
+	for($i=0; $i<$carpips; $i++)
+		$ints = " carp{$i}";
 	if(stristr($ints, $interface) !== false)
 		return true;
 	else

@@ -129,11 +129,6 @@ function vpn_ipsec_configure($ipchg = false) {
 	}
 
 	$curwanip = get_current_wan_address();
-	if($config['installedpackages']['sasyncd']['config'] <> "")
-		foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
-			if($sasyncd['ip'] <> "")
-				$curwanip = $sasyncd['ip'];
-		}
 
 	$syscfg = $config['system'];
 	$ipseccfg = $config['ipsec'];
@@ -197,8 +192,10 @@ function vpn_ipsec_configure($ipchg = false) {
 						continue;
 
 					$ep = vpn_endpoint_determine($tunnel, $curwanip);
-					if (!$ep)
-						continue;
+					if (!$ep) {
+						log_error("Could not deterimine VPN endpoint for {$tunnel['descr']}");
+						continue;	
+					}
 
 					vpn_localnet_determine($tunnel['local-subnet'], $sa, $sn);
 
@@ -221,11 +218,7 @@ function vpn_ipsec_configure($ipchg = false) {
 						$number_of_gifs = find_last_gif_device();
 						$number_of_gifs++;
 						$curwanip = get_current_wan_address();
-						if($config['installedpackages']['sasyncd']['config'] <> "")
-							foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
-								if($sasyncd['ip'] <> "")
-									$curwanip = $sasyncd['ip'];
-							}
+
 						mwexec("/sbin/ifconfig gif" . $number_of_gifs . " tunnel" . $curwanip . " " . $tunnel['remote-gateway']);
 						mwexec("/sbin/ifconfig gif" . $number_of_gifs . " {$lansa}/{$lansn} {$lanip}/32");
 					}
@@ -256,35 +249,6 @@ function vpn_ipsec_configure($ipchg = false) {
 			}
 
 			$racoonconf = "";
-
-
-	if($config['installedpackages']['sasyncd']['config'] <> "")
-		foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
-			if($sasyncd['ip'] <> "")
-				$curwanip = $sasyncd['ip'];
-				/* natt - turn on if <developer/> exists */
-				if(isset($config['system']['developer']) <> "") {
-					$lanip = $config['interfaces']['lan']['ipaddr'];
-					if($lanip <> "")
-						$natt = "isakmp_natt {$lanip}[4500];\n";
-
-				}
-				$interface_ip = $sasyncd['ip'];
-				$interface_ips = split(",", $interface_ip);
-				if($interface_ip <> "") {
-					foreach($interface_ips as $intip) {
-						if($intip) 
-							$racoon_ips .= "\tisakmp {$intip} [500];\n";
-					}
-					$racoonconf .= <<<EOD
-listen {
-{$racoon_ips}
-	{$natt}
-}
-
-EOD;
-				}
-			}
 
 			$racoonconf .= "path pre_shared_key \"{$g['varetc_path']}/psk.txt\";\n\n";
 			$racoonconf .= "path certificate  \"{$g['varetc_path']}\";\n\n";
@@ -832,6 +796,10 @@ function vpn_endpoint_determine($tunnel, $curwanip) {
 		return $config['interfaces']['lan']['ipaddr'];
 	} else {
 		$oc = $config['interfaces'][$tunnel['interface']];
+		/* carp ips, etc */
+		$ip = find_interface_ip($tunnel['interface']);
+		if($ip) 
+			return $ip;
 
 		if (isset($oc['enable']) && $oc['if']) {
 			return $oc['ipaddr'];

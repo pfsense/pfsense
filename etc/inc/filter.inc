@@ -2544,41 +2544,37 @@ EOD;
 					continue;
 				/* determine ipsec address */
 				if ($ipsec_failoverip)
-					$ipsec_ip = $ipsec_failoverip;
+					$ipsec_ips = split("\,",$ipsec_failoverip);
 				else
-					$ipsec_ip = get_current_wan_address($tunnel['interface']);;
+					$ipsec_ips = array(get_current_wan_address($tunnel['interface']));
 				/* is this a dynamic dns hostname? */
 				$remote_gateway = gethostbyname($tunnel['remote-gateway']);
 				if($remote_gateway == "")
 					$remote_gateway = $tunnel['remote-gateway'];
 				/* do not add items with blank remote_gateway */
 				if(!$remote_gateway) {
-					$ipfrules .= "# ERROR!  Remote gateway not found on ... pass quick on {$wanif} proto udp from {$ipsec_ip} to {$remote_gateway} port = 500 keep state label \"IPSEC: {$tunnel['descr']} udp\"\n";
+					$ipfrules .= "# ERROR!  Remote gateway not found on {$tunnel['remote-gateway']}\n";
 					continue;
 				}
 				$local_subnet = return_vpn_subnet($tunnel['local-subnet']);
 				foreach($ifdescrs as $iface) {
-					if(!$config['interfaces'][$iface]['ipaddr'])
-						continue;
-					if($iface == "wan")
-						$interface_ip = find_interface_ip(get_real_wan_interface());
-					else
-						$interface_ip = find_interface_ip(convert_friendly_interface_to_real_interface_name($iface));
-					/* if failover ip is set, use it */
-					if(isset($config['installedpackages']['sasyncd']))
-						if ($config['installedpackages']['sasyncd']['config'] <> "")
-							foreach ($config['installedpackages']['sasyncd']['config'] as $sasyncd)
-								if ($sasyncd['ip'] <> "")
-									$interface_ip = $sasyncd['ip'];
-					$ipfrules .= "pass out quick on \${$iface} proto udp from {$interface_ip} to {$remote_gateway} port = 500 keep state label \"IPSEC: {$tunnel['descr']} - outbound isakmp\"\n";
-					$ipfrules .= "pass in quick on \${$iface} proto udp from {$remote_gateway} to $interface_ip port = 500 keep state label \"IPSEC: {$tunnel['descr']} - inbound isakmp\"\n";
-					if ($tunnel['p2']['protocol'] == 'esp') {
-						$ipfrules .= "pass out quick on \${$iface} proto esp from {$interface_ip} to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound esp proto\"\n";
-						$ipfrules .= "pass in quick on \${$iface} proto esp from {$remote_gateway} to {$interface_ip} keep state label \"IPSEC: {$tunnel['descr']} - inbound esp proto\"\n";
-					}
-					if ($tunnel['p2']['protocol'] == 'ah') {
-						$ipfrules .= "pass out quick on \${$iface} proto ah from {$interface_ip} to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound ah proto\"\n";
-						$ipfrules .= "pass in quick on \${$iface} proto ah from {$remote_gateway} to {$interface_ip} keep state label \"IPSEC: {$tunnel['descr']} - inbound ah proto\"\n";
+					foreach($ipsec_ips as $interface_ip) {
+						if(!$config['interfaces'][$iface]['ipaddr'])
+							continue;
+						if($iface == "wan")
+							$interface_ip = find_interface_ip(get_real_wan_interface());
+						else
+							$interface_ip = find_interface_ip(convert_friendly_interface_to_real_interface_name($iface));
+						$ipfrules .= "pass out quick on \${$iface} proto udp from {$interface_ip} to {$remote_gateway} port = 500 keep state label \"IPSEC: {$tunnel['descr']} - outbound isakmp\"\n";
+						$ipfrules .= "pass in quick on \${$iface} proto udp from {$remote_gateway} to $interface_ip port = 500 keep state label \"IPSEC: {$tunnel['descr']} - inbound isakmp\"\n";
+						if ($tunnel['p2']['protocol'] == 'esp') {
+							$ipfrules .= "pass out quick on \${$iface} proto esp from {$interface_ip} to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound esp proto\"\n";
+							$ipfrules .= "pass in quick on \${$iface} proto esp from {$remote_gateway} to {$interface_ip} keep state label \"IPSEC: {$tunnel['descr']} - inbound esp proto\"\n";
+						}
+						if ($tunnel['p2']['protocol'] == 'ah') {
+							$ipfrules .= "pass out quick on \${$iface} proto ah from {$interface_ip} to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound ah proto\"\n";
+							$ipfrules .= "pass in quick on \${$iface} proto ah from {$remote_gateway} to {$interface_ip} keep state label \"IPSEC: {$tunnel['descr']} - inbound ah proto\"\n";
+						}
 					}
 				}
 			}

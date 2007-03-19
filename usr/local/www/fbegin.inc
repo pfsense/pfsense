@@ -74,7 +74,16 @@ require_once("notices.inc");
 							$noticemsg = str_replace("</pre>", "", $noticemsg);
 							$noticemsg = str_replace("</p>", "", $noticemsg);
 							$noticemsg = str_replace("<br>", "", $noticemsg);
-							$notice_msgs = '<a href="?noticeaction=acknowledge&noticeid=all">Acknowledge All</a> &nbsp;&nbsp;&nbsp;&nbsp;.:.&nbsp;&nbsp;&nbsp;&nbsp; ';
+							$extra_args = "";
+							if($_GET['xml']) 
+								$extraargs="&xml=" . $_GET['xml'];
+							if($_POST['xml']) 
+								$extraargs="&xml=" . $_POST['xml'];
+							if($_GET['id']) 
+								$extraargs="&xml=" . $_GET['id'];
+							if($_POST['id'])
+								$extraargs="&xml=" . $_POST['id'];
+							$notice_msgs = '<a href="?noticeaction=acknowledge&noticeid=all' . $extraargs . '">Acknowledge All</a> &nbsp;&nbsp;&nbsp;&nbsp;.:.&nbsp;&nbsp;&nbsp;&nbsp; ';
 							if ($value['url']) {
 								$notice_msgs .= $date.' - <a href="'.$url.'?'.$request_string.'&noticeaction=acknowledge&noticeid='.$key.'">['.$value['id'].']</a>';
 							} else {

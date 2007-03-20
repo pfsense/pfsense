@@ -33,7 +33,7 @@
 	<name>routed</name>
 	<version>1.1</version>
 	<title>Services: RIP</title>
-	<include_file>routed.inc</include_file>
+	<include_file>routed/routed.inc</include_file>
 
 	<additional_files_needed>
 		<item>http://www.pfsense.org/packages/config/routed/routed.inc</item>

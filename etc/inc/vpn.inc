@@ -232,6 +232,13 @@ function vpn_ipsec_configure($ipchg = false) {
 						"{$sa}/{$sn} any -P in ipsec " .
 						"{$tunnel['p2']['protocol']}/tunnel/{$tunnel['remote-gateway']}-" .
 						"{$ep}/unique;\n";
+				
+					if($tunnel['interface'] <> "wan") {
+						/* static route needed? */
+						if(strstr("carp", $tunnel['interface'])) {
+							
+						}
+					}
 				}
 
 				fwrite($fd, $spdconf);

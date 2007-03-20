@@ -479,6 +479,28 @@ function link_int_to_bridge_interface($int) {
 	}
 }
 
+function link_carp_interface_to_parent($interface) {
+	global $config;
+	if($interface == "") return;
+
+	$ifdescrs = array('wan', 'lan');
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
+		$ifdescrs['opt' . $j] = "opt" . $j;
+
+	$carp_ints = "";
+	$num_carp_ints = find_number_of_created_carp_interfaces();
+	foreach ($ifdescrs as $ifdescr => $ifname) {
+		$carp_int = $interface;
+		$carp_ip = find_interface_ip($interface);
+		$carp_subnet = find_virtual_ip_netmask($carp_ip);
+		$starting_ip = gen_subnet("{$carp_ip}", "{$carp_subnet}");
+		if(ip_in_subnet($starting_ip, "{$carp_ip}/{$carp_subnet}"))
+			if(!stristr($carp_ints, $carp_int))
+				return $ifname;
+	}
+	return $carp_ints;
+}
+
 /****f* pfsense-utils/link_ip_to_carp_interface
  * NAME
  *   link_ip_to_carp_interface - Find where a CARP interface links to.

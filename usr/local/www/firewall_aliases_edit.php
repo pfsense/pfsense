@@ -283,7 +283,6 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "System: Firewall: Aliases: Edit";
 include("head.inc");
 
 $jscriptstr = <<<EOD
@@ -399,7 +398,7 @@ function update_box_type() {
 }
 </script>
 
-EOD
+EOD;
 
 ?>
 

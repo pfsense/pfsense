@@ -1441,8 +1441,18 @@ function generate_user_filter_rule($rule, $ngcounter) {
 							}
 							/* if /tmp/$lbname.pool exists then read in our gateway hints from slbd */
 							if(file_exists("{$g['tmp_path']}/{$lb['name']}.pool")) {
-								$lbs = split("\n", file_get_contents("{$g['tmp_path']}/{$lb['name']}.pool"));
-								if(empty($lbs)) {
+								$lbs_tmp = split("\n", file_get_contents("{$g['tmp_path']}/{$lb['name']}.pool"));
+								$lbs = array();
+								/* process the entire file to prevent empty lines */
+								foreach($lbs_tmp as $lb_tmp) {
+									if(is_ipaddr($lb_tmp)) {
+										$lbs[] = $lb_tmp;
+									}
+								}
+								$lbs_count = count($lbs);
+								log_error("We found $lbs_count valid entries in status file {$g['tmp_path']}/{$lb['name']}.pool");
+
+								if(count($lbs) == 0) {
 									log_error("There are no servers found in the status file, using XML config settings!");
 									foreach ($lb['servers'] as $lbsvr) {
 										$lbsvr_split = split("\|", $lbsvr);
@@ -1474,13 +1484,15 @@ function generate_user_filter_rule($rule, $ngcounter) {
 								$lbconfig['monitor'][$l] = $lbsvr_split[1];
 								$l++;
 							}
+							$lbconfig_count = count($lbconfig['gateway']);
 
 							$l = 0;
-							/* iterate through $lbs and setup items accordingly */
-							foreach($lbs as $server) {
-								if ($server == "")
-									continue;
-								if(in_array($server, $lbconfig['monitor'])) {
+							while($l < $lbconfig_count) {
+								/* iterate through $lbs and setup items accordingly */
+								foreach($lbs as $server) {
+									if ($server == "")
+										continue;
+									unset($gateway, $int);
 									if ($lbconfig['monitor'][$l] == $server) {
 										/* determine interface gateway */
 										if(is_ipaddr($lbconfig['gateway'][$l])) {
@@ -1490,22 +1502,20 @@ function generate_user_filter_rule($rule, $ngcounter) {
 										} else if(interface_has_gateway($lbconfig['gateway'][$l])) {
 											$int = convert_friendly_interface_to_real_interface_name($lbconfig['gateway'][$l]);
 											$gateway = get_interface_gateway($int);
-										} else {
-											log_error("No match for {$lbconfig['gateway'][$l]} with {$lbconfig['monitor'][$l]}");
 										}
+										log_error("Setting up route with {$lbconfig['gateway'][$l]} om $int for monitor {$lbconfig['monitor'][$l]} on gateway $gateway");
+										if($foundlb == 1)
+											$routeto .= ", ";
+										if(($int == "") || ($gateway == "")) {
+											$aline['route'] = "# error resolving load balancing {$gateway}";
+										}
+										$routeto .=  "( {$int} {$gateway} ) ";
+										$foundlb = 1;
+										/* we have a match, go forth and try the next LB item so we don't setup multiples incorrectly */
+										$l++;
+										continue;
 									}
-								} else {
-									$dump = implode(" ", $lbconfig['monitor']);
-									log_error("load balancer configuration is not valid - bailing - $dump");
-									$aline['route'] = "# error resolving load balancing {$lbconfig['monitor']} with $server";
 								}
-								if($foundlb == 1)
-									$routeto .= ", ";
-								if(($int == "") || ($gateway == "")) {
-									$aline['route'] = "# error resolving load balancing {$gateway}";
-								}
-								$routeto .=  "( {$int} {$gateway} ) ";
-								$foundlb = 1;
 								$l++;
 							}
 							$routeto .= "} round-robin ";

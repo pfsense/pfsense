@@ -403,6 +403,13 @@ function openvpn_resync_all() {
 		foreach ($config['installedpackages']['openvpncsc']['config'] as $id => $csc)
 			openvpn_resync_csc($id);
 	}
+	
+	/* give speedy machines time to settle */
+	sleep(5);
+	
+	/* reload the filter policy */
+	filter_configure();
+	
 }
 
 

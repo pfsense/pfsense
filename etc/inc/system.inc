@@ -1001,9 +1001,21 @@ function system_ntp_configure() {
 	fwrite($fd, "# \n\n");
 
 	/* foreach through servers and write out to ntpd.conf */
-	$timeservers = "";
 	foreach (explode(' ', $syscfg['timeservers']) as $ts)
 		fwrite($fd, "servers {$ts}\n");
+
+    /* server config is in coregui1 */
+	$xmlsettings = $config['installedpackages']['openntpd']['config'][0];
+	if ($xmlsettings['enable'] == 'on') {
+		$ifaces = explode(',', $xmlsettings['interface']);
+		$ifaces = array_map('convert_friendly_interface_to_real_interface_name', $ifaces);
+		$ifaces = array_filter($ifaces, 'does_interface_exist');
+		$ips = array_map('find_interface_ip', $ifaces);
+		foreach ($ips as $ip) {
+			if (is_ipaddr($ip))
+				fwrite($fd, "listen on $ip\n");
+		}
+	}
 
 	fwrite($fd, "\n");
 

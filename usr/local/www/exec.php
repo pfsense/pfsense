@@ -7,7 +7,6 @@
 	(modified for m0n0wall by Manuel Kasper <mk@neon1.net>)
 */
 
-$omit_nocacheheaders = true;
 
 if (($_POST['submit'] == "Download") && file_exists($_POST['dlPath'])) {
 	session_cache_limiter('public');

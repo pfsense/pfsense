@@ -29,7 +29,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$omit_nocacheheaders = true;
 
 header("Content-Type: text/plain");
 include("guiconfig.inc");

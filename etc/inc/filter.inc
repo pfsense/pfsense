@@ -1508,14 +1508,13 @@ function generate_user_filter_rule($rule, $ngcounter) {
 											$int = convert_friendly_interface_to_real_interface_name($lbconfig['gateway'][$l]);
 											$gateway = get_interface_gateway($int);
 										}
-										log_error("Setting up route with {$lbconfig['gateway'][$l]} om $int for monitor {$lbconfig['monitor'][$l]} on gateway $gateway");
-										if($foundlb == 1)
-											$routeto .= ", ";
-										if(($int == "") || ($gateway == "")) {
-											$aline['route'] = "# error resolving load balancing {$gateway}";
+										if(($int <> "") && ($gateway <> "")) {
+											log_error("Setting up route with {$lbconfig['gateway'][$l]} om $int for monitor {$lbconfig['monitor'][$l]} on gateway $gateway");
+											if($foundlb == 1)
+												$routeto .= ", ";
+											$routeto .=  "( {$int} {$gateway} ) ";
+											$foundlb = 1;
 										}
-										$routeto .=  "( {$int} {$gateway} ) ";
-										$foundlb = 1;
 										/* we have a match, go forth and try the next LB item so we don't setup multiples incorrectly */
 										$l++;
 										continue;

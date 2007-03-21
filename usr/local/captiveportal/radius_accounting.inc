@@ -249,16 +249,13 @@ function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radius
     if (PEAR::isError($result)) {
         $retvalue['acct_val'] = 1;
         $retvalue['error'] = $result->getMessage();
-        if ($debug)
-            printf("Radius send failed: %s<br>\n", $retvalue['error']);
+
     } else if ($result === true) {
         $retvalue['acct_val'] = 5 ;
-        if ($debug)
-            printf("Radius Accounting succeeded<br>\n");
+
     } else {
         $retvalue['acct_val'] = 1 ;
-        if ($debug)
-            printf("Radius Accounting rejected<br>\n");
+
     }
 
     // close OO RADIUS_ACCOUNTING

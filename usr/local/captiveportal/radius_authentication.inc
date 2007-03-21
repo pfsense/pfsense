@@ -116,32 +116,23 @@ function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$cli
     if (PEAR::isError($result)) {
         $retvalue['auth_val'] = 1;
         $retvalue['error'] = $result->getMessage();
-        if ($debug)
-            printf("Radius send failed: %s<br>\n", $retvalue['error']);
+
     } else if ($result === true) {
         $retvalue['auth_val'] = 2;
-        if ($debug)
-            printf("Radius Auth succeeded<br>\n");
+
     } else {
         $retvalue['auth_val'] = 3;
-        if ($debug)
-            printf("Radius Auth rejected<br>\n");
+
     }
 
     // Get attributes, even if auth failed.
     // We will push the results in the retvalue array
     if (!$rauth->getAttributes()) {
         $retvalue['error'] = $rauth->getError();
-        if ($debug)
-            printf("Radius getAttributes: No attributes<br>\n", $retvalue['error']);
+
     } else {
         $retvalue = array_merge($retvalue,$rauth->listAttributes());
-        if ($debug) {
-            if (!$rauth->listAttributes())
-                printf("No Attributes<br>\n");
-            else
-            print_r($rauth->listAttributes());
-        }
+
         // We convert the session_terminate_time to unixtimestamp if its set before returning the whole array to our caller
         if (!empty($retvalue['session_terminate_time'])) {
         $stt = &$retvalue['session_terminate_time'];

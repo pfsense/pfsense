@@ -226,6 +226,15 @@ elseif(strstr($curdatabase, "-throughput.rrd")) {
 	$graphtputbyt = "";
 	foreach($ifdescrs as $ifdescr) {
 		$ifname = $ifdescr['friendly'];
+		$state = $ifdescr['up'];
+		/* skip interfaces that do not have a friendly name */
+		if ("$ifname" == "") {
+			continue;
+		}
+		/* or are down */
+		if (!$state) {
+			continue;
+		}
 		/* collect all interface stats */
 		$graphcmd .= "\"DEF:{$ifname}-in_bytes={$rrddbpath}{$ifname}-traffic.rrd:in:AVERAGE\" ";
 		$graphcmd .= "\"DEF:{$ifname}-out_bytes={$rrddbpath}{$ifname}-traffic.rrd:out:AVERAGE\" ";

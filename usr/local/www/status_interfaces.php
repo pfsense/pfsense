@@ -405,6 +405,22 @@ include("head.inc");
 		  </tr>
 		  <?php endif; ?>
 
+	<?php if(file_exists("/usr/bin/vmstat")): ?>
+     <tr>
+        <td width="22%" class="vncellt">Interrupts/Second</td>
+        <td width="78%" class="listr">
+          <?php
+			$real_interface = convert_friendly_interface_to_real_interface_name($ifname);
+          	$interrupt_total = `vmstat -i | grep $real_interface | awk '{ print $3 }'`;
+          	$interrupt_sec = `vmstat -i | grep $real_interface | awk '{ print $4 }'`;
+          	echo $interrupt_total . " total";
+          	echo "<br/>";
+          	echo $interrupt_sec . " rate";
+          ?>
+        </td>
+      </tr>
+	<?php endif; ?>
+	
               <?php $i++; endforeach; ?>
             </table>
 <br/>

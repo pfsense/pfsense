@@ -154,21 +154,24 @@ function filter_configure_sync() {
 	/* get our wan interface? */
 	$wanif = get_real_wan_interface();
 
-	/* set up MSS clamping */
-	if ($config['interfaces']['wan']['mtu'] <> "" and is_numeric($config['interfaces']['wan']['mtu']))
-		$mssclamp = "max-mss " . (intval($config['interfaces']['wan']['mtu'] - 40));
-	else
-		if ($config['interfaces']['wan']['ipaddr'] == "pppoe")
-			$mssclamp = "max-mss 1452";
+	/* disable scrub option */
+	if(!isset($config['system']['disablescrub'])) {
+		/* set up MSS clamping */
+		if ($config['interfaces']['wan']['mtu'] <> "" and is_numeric($config['interfaces']['wan']['mtu']))
+			$mssclamp = "max-mss " . (intval($config['interfaces']['wan']['mtu'] - 40));
 		else
-			$mssclamp = "";
-
-	/* configure no-df for linux nfs and others */
-	if ($config['system']['scrubnodf'])
-		$scrubnodf = "no-df random-id";
-	else
-		$scrubnodf = "random-id";
-	$rules .= "scrub all {$scrubnodf} {$mssclamp} fragment reassemble\n"; // reassemble all directions
+			if ($config['interfaces']['wan']['ipaddr'] == "pppoe")
+				$mssclamp = "max-mss 1452";
+			else
+				$mssclamp = "";
+	
+		/* configure no-df for linux nfs and others */
+		if ($config['system']['scrubnodf'])
+			$scrubnodf = "no-df random-id";
+		else
+			$scrubnodf = "random-id";
+		$rules .= "scrub all {$scrubnodf} {$mssclamp} fragment reassemble\n"; // reassemble all directions
+	}
 
 	$rules.= "{$altq_ints}\n";
 	$rules.= "{$altq_queues}\n";

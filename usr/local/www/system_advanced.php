@@ -57,6 +57,7 @@ $pconfig['polling_enable'] = isset($config['system']['polling']);
 $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
+$pconfig['disablescrub'] = isset($config['system']['disablescrub']);
 
 if ($_POST) {
 
@@ -201,6 +202,12 @@ if ($_POST) {
 			$config['system']['disablechecksumoffloading'] = $_POST['disablechecksumoffloading'];
 		} else {
 			unset($config['system']['disablechecksumoffloading']);
+		}
+
+		if($_POST['disablescrub'] == "yes") {
+			$config['system']['disablescrub'] = $_POST['disablescrub'];
+		} else {
+			unset($config['system']['disablescrub']);
 		}
 
 		if($_POST['disablenatreflection'] == "yes") {
@@ -529,6 +536,15 @@ include("head.inc");
 				<span class="vexpl">Note:  This basically converts pfSense into a routing only platform!<br>
 				                    Note:  This will turn off NAT!
 				</span>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">Disable Firewall Scrub</td>
+			<td width="78%" class="vtable">
+				<input name="disablescrub" type="checkbox" id="disablescrub" value="yes" <?php if (isset($config['system']['disablescrub'])) echo "checked"; ?> onclick="enable_change(false)" />
+				<strong>Disables the PF scrubbing option which can sometimes interfere with NFS and PPTP traffic.</strong>
+				<br/>
+				Click <a href='http://www.openbsd.org/faq/pf/scrub.html' target='_new'>here</a> for more information.
 			</td>
 		</tr>
 		<tr>

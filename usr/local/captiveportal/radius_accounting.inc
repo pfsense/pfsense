@@ -86,8 +86,7 @@ function RADIUS_ACCOUNTING_START($ruleno,$username,$sessionid,$radiusip,$radiusp
     if (PEAR::isError($racct->start())) {
         $retvalue['acct_val'] = 1;
         $retvalue['error'] = $racct->getMessage();
-        if ($debug)
-            printf("Radius start: %s<br>\n", $retvalue['error']);
+
         // If we encounter an error immediately stop this function and go back
         $racct->close();
         return $retvalue;
@@ -126,16 +125,13 @@ function RADIUS_ACCOUNTING_START($ruleno,$username,$sessionid,$radiusip,$radiusp
     if (PEAR::isError($result)) {
         $retvalue['acct_val'] = 1;
         $retvalue['error'] = $result->getMessage();
-        if ($debug)
-            printf("Radius send failed: %s<br>\n", $retvalue['error']);
+
     } else if ($result === true) {
         $retvalue['acct_val'] = 5 ;
-        if ($debug)
-            printf("Radius Accounting succeeded<br>\n");
+
     } else {
         $retvalue['acct_val'] = 1 ;
-        if ($debug)
-            printf("Radius Accounting rejected<br>\n");
+
     }
 
     // close OO RADIUS_ACCOUNTING
@@ -211,8 +207,7 @@ function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radius
     if (PEAR::isError($racct->start())) {
         $retvalue['acct_val'] = 1;
         $retvalue['error'] = $racct->getMessage();
-        if ($debug)
-            printf("Radius start: %s<br>\n", $retvalue['error']);
+
         // If we encounter an error immediately stop this function and go back
         $racct->close();
         return $retvalue;

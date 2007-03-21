@@ -89,8 +89,7 @@ function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$cli
     if (PEAR::isError($rauth->start())) {
         $retvalue['auth_val'] = 1;
         $retvalue['error'] = $rauth->getError(); 
-        if ($debug)
-            printf("Radius start: %s<br>\n", $retvalue['error']);
+
         // If we encounter an error immediately stop this function and go back
         $rauth->close();
         return $retvalue;

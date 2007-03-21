@@ -1233,6 +1233,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
 		$lansn = $lancfg['subnet'];
 
+		$int = "";
+
 		$optcfg = array();
 		generate_optcfg_array($optcfg);
 

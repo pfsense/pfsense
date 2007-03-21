@@ -139,6 +139,8 @@
 		$configtext = "ext_ifname=".get_real_wan_interface()."\n";
 		$configtext .= "port=2189\n";
 
+		$ifaces_active = "";
+
 		/* since config is written before this file invoked we don't need to read post data */
 		if(upnp_config('enable') && upnp_config('iface_array'))
 			$iface_array = explode(',',upnp_config('iface_array'));

@@ -413,6 +413,10 @@ include("head.inc");
 			$real_interface = convert_friendly_interface_to_real_interface_name($ifname);
           	$interrupt_total = `vmstat -i | grep $real_interface | awk '{ print $3 }'`;
           	$interrupt_sec = `vmstat -i | grep $real_interface | awk '{ print $4 }'`;
+          	if(strstr($interrupt_total, "uhci")) {
+    	      	$interrupt_total = `vmstat -i | grep $real_interface | awk '{ print $4 }'`;
+	          	$interrupt_sec = `vmstat -i | grep $real_interface | awk '{ print $5 }'`;          	
+          	}
           	echo $interrupt_total . " total";
           	echo "<br/>";
           	echo $interrupt_sec . " rate";

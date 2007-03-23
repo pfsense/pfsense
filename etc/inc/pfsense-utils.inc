@@ -37,6 +37,73 @@ function get_tmp_file() {
 	return "/tmp/tmp-" . time();
 }
 
+/****f* pfsense-utils/get_time_based_rule_status
+ * NAME
+ *   get_time_based_rule_status
+ * INPUTS
+ *   xml schedule block
+ * RESULT
+ *   true/false - true if the rule should be installed
+ ******/
+/*
+ <schedules>
+   <schedule>
+     <name>ScheduleMultipleTime</name>
+     <descr>main descr</descr>
+     <time>
+       <day>0,1,2,012</day>
+       <hour>0:0/24</hour>
+       <desc>time range 2</desc>
+     </time>
+     <time>
+       <day>4,5,6,456</day>
+       <hour>0:0-24:0</hour>
+       <desc>time range 1</desc>
+     </time>
+   </schedule>
+ </schedules>
+*/
+function get_time_based_rule_status($schedule) {
+	$should_add_rule = true;
+	/* no schedule? rule should be installed */
+	if($schedule == "") 
+		return true;
+	foreach($schedule['time'] as $time) {
+		if($timeday['day']) 
+			$day = $timeday['day'];
+		else 
+			$day = "";
+		if($timeday['hour']) 
+			$hour = $timeday['hour'];
+		else 
+			$hour = "";
+		if($timeday['desc']) 
+			$desc = $timeday['desc'];
+		else 
+			$desc = "";
+		
+	}
+
+	/* reset open states affected by this rule */
+	return $should_add_rule;
+}
+
+function tdr_day($schedule) {
+	return false;
+}
+
+function tdr_hour($schedule) {
+	return false;
+}
+
+function tdr_position($schedule) {
+	return false;
+}
+
+function tdr_week($schedule) {
+	return false;
+}
+
 /****f* pfsense-utils/find_number_of_needed_carp_interfaces
  * NAME
  *   find_number_of_needed_carp_interfaces

@@ -1885,7 +1885,14 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		$aline['route'] . $aline['prot'] . $aline['src'] . $aline['srcport'] . $aline['os'] . $aline['dst'] .
 		$aline['dstport'] . $aline['icmp-type'] . $aline['flags'];
 
-	return $line;
+	/* is a time based rule schedule attached? */
+	if($rule['schedule']) {
+		$status = get_time_based_rule_status($rule['schedule']);
+		if($status) 
+			return $line;
+	} else {
+		return $line;
+	}
 }
 
 function filter_rules_generate() {

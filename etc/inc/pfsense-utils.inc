@@ -146,7 +146,19 @@ function tdr_position($schedule) {
 	 * ...
 	 */
 	global $debug;
+	$weekdays = array(0 => "Sunday", 
+					  1 => "Monday",
+					  2 => "Tuesday",
+					  3 => "Wednesday",
+					  4 => "Thursday",
+					  5 => "Friday",
+					  6 => "Saturday");
 	$weekday	= date("w");
+	$schedule_days = split(",", $schedule);
+	foreach($schedule_days as $day) {
+		if($day == $weekday) 
+			return true;
+	}
 	return false;
 }
 

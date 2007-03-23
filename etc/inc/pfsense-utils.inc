@@ -51,12 +51,12 @@ function get_tmp_file() {
      <name>ScheduleMultipleTime</name>
      <descr>main descr</descr>
      <time>
-       <day>0,1,2,012</day>
-       <hour>0:0/24</hour>
+       <day>0,1,2</day>
+       <hour>0:0-24:0</hour>
        <desc>time range 2</desc>
      </time>
      <time>
-       <day>4,5,6,456</day>
+       <day>4,5,6</day>
        <hour>0:0-24:0</hour>
        <desc>time range 1</desc>
      </time>
@@ -65,10 +65,19 @@ function get_tmp_file() {
 */
 function get_time_based_rule_status($schedule) {
 	$should_add_rule = true;
+	global $debug;
 	/* no schedule? rule should be installed */
 	if($schedule == "") 
 		return true;
+	/*
+	 * iterate through time blocks and deterimine
+	 * if the rule should be installed or not.
+	 */
 	foreach($schedule['time'] as $time) {
+		if($timeday['week']) 
+			$week = $timeday['week'];
+		else 
+			$week = "";	
 		if($timeday['day']) 
 			$day = $timeday['day'];
 		else 
@@ -77,30 +86,77 @@ function get_time_based_rule_status($schedule) {
 			$hour = $timeday['hour'];
 		else 
 			$hour = "";
+		if($timeday['position']) 
+			$position = $timeday['position'];
+		else 
+			$position = "";
 		if($timeday['desc']) 
 			$desc = $timeday['desc'];
 		else 
 			$desc = "";
-		
+		if($week) {
+			$weekstatus = tdr_week($week);
+		}
+		if($day) {
+			$daystatus = tdr_day($day);
+		}
+		if($hour) {
+			$hourstatus = tdr_hour($hour);
+		}
+		if($position) {
+			$positionstatus = tdr_position($position);
+		}
 	}
 
-	/* reset open states affected by this rule */
+	/* TODO: reset open states affected by this rule */
 	return $should_add_rule;
 }
 
 function tdr_day($schedule) {
+	/*
+	 * Calculate day of month. 
+	 * IE: 29th of may
+	 */
+	global $debug;
+	$weekday	= date("w");
+	$date	 	= date("d");
 	return false;
 }
 
 function tdr_hour($schedule) {
+	/* $schedule should be a string such as 16:00-19:00 */
+	global $debug;
+	$tmp = split("-", $schedule);
+	$starting_time = strtotime($tmp[0]);
+	$ending_time = strtotime($tmp[1]);
+	$now = strtotime("now");
+	if($debug) 
+		echo "S: $starting_time E: $ending_time N: $now \n";
+	if($now > $starting_time and $now < $ending_time) 
+		return true;
 	return false;
 }
 
 function tdr_position($schedule) {
+	/*
+	 * Calculate possition, ie: day of week.
+	 * Sunday = 0, Monday = 1, Tuesday = 2
+	 * Weds = 3, Thursday = 4, Friday = 5,
+	 * Saturday = 6
+	 * ...
+	 */
+	global $debug;
+	$weekday	= date("w");
 	return false;
 }
 
 function tdr_week($schedule) {
+	/*
+	 * Calculate week, ie:
+	 * week 1, week 2, week 3, week 4
+	 */
+	global $debug;
+	$week 		= date("W");
 	return false;
 }
 

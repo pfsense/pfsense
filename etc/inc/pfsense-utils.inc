@@ -64,7 +64,7 @@ function get_tmp_file() {
  </schedules>
 */
 function get_time_based_rule_status($schedule) {
-	$should_add_rule = true;
+	$should_add_rule = false;
 	global $debug;
 	/* no schedule? rule should be installed */
 	if($schedule == "") 

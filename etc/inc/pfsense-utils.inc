@@ -96,19 +96,41 @@ function get_time_based_rule_status($schedule) {
 			$desc = "";
 		if($week) {
 			$weekstatus = tdr_week($week);
+		} else {
+			$weekstatus = true;
 		}
 		if($day) {
 			$daystatus = tdr_day($day);
+		} else {
+			$daystatus = true;
 		}
 		if($hour) {
 			$hourstatus = tdr_hour($hour);
+		} else {
+			$hourstatus = true;
 		}
 		if($position) {
 			$positionstatus = tdr_position($position);
+		} else {
+			$positionstatus = true;
+		}
+		if($week) {
+			if($day) {
+				if($hour) {
+					if($position) {
+						if($should_add_rule == false) 
+							$should_add_rule = true;
+					}
+				}
+			}
 		}
 	}
-
-	/* TODO: reset open states affected by this rule */
+	
+	/*
+	 *  TODO: 
+	 *		reset open states affected by this rule 
+     */
+	
 	return $should_add_rule;
 }
 

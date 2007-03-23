@@ -168,7 +168,12 @@ function tdr_week($schedule) {
 	 * week 1, week 2, week 3, week 4
 	 */
 	global $debug;
-	$week 		= date("W");
+	$todays_week 		= date("W");
+	$weeks = split(",", $schedule);
+	foreach($weeks as $week) {
+		if($week == $todays_week) 
+			return true;
+	}
 	return false;
 }
 

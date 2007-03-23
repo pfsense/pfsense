@@ -47,29 +47,24 @@ if (isset($_POST['id']))
 
 if (isset($id) && $a_aliases[$id]) {
 	$pconfig['name'] = $a_aliases[$id]['name'];
-	$addresses = explode(' ', $a_aliases[$id]['address']);
-	if (is_array($addresses))
-		$address = $addresses[0];
+	$pconfig['detail'] = $a_aliases[$id]['detail'];
+	$pconfig['address'] = $a_aliases[$id]['address'];
+	$pconfig['descr'] = html_entity_decode($a_aliases[$id]['descr']);
+	
+	$addresses = explode(' ', $pconfig['address']);
+	$address = explode("/", $addresses[0]);
+	if ($address[1])
+		$addresssubnettest = true;
 	else
-		$address = $addresses;
-	list($pconfig['address'],$pconfig['address_subnet']) =
-		explode('/', $address);
-	if ($pconfig['address_subnet'])
+		$addresssubnettest = false;	
+	
+	if ($addresssubnettest)
 		$pconfig['type'] = "network";
 	else
-		if (is_ipaddr($pconfig['address']))
+		if (is_ipaddr($address[0]))
 			$pconfig['type'] = "host";
 		else
 			$pconfig['type'] = "port";
-
-	$pconfig['descr'] = html_entity_decode($a_aliases[$id]['descr']);
-
-	/* Explode out details for entry details */
-	$address_details = explode('||', $a_aliases[$id]['detail']);
-	if (is_array($address_details))
-			$address_detail = $address_details[0];
-	else
-		$address_detail = $address_details;
 
 	if($a_aliases[$id]['aliasurl'] <> "") {
 		$pconfig['type'] = "url";
@@ -156,130 +151,135 @@ if ($_POST) {
 			break;
 		}
 	}
+	
+	$alias = array();
+	$alias['name'] = $_POST['name'];
+	if ($_POST['type'] == "network")
+		$alias['address'] = $_POST['address'] . "/" . $_POST['address_subnet'];
 
-	if (!$input_errors) {
-		$alias = array();
-		$alias['name'] = $_POST['name'];
-		if ($_POST['type'] == "network")
-			$alias['address'] = $_POST['address'] . "/" . $_POST['address_subnet'];
+	else
+		$alias['address'] = $_POST['address'];
 
-		else
-			$alias['address'] = $_POST['address'];
+	$address = $alias['address'];
+	$final_address_detail = htmlentities($_POST['detail'], ENT_QUOTES, 'UTF-8');
+  		if($final_address_detail <> "") {
+	       	$final_address_details .= $final_address_detail;
+	} else {
+		$final_address_details .= "Entry added" . " ";
+   			$final_address_details .= date('r');
+		}
+    	$final_address_details .= "||";
+	$isfirst = 0;
 
-		$address = $alias['address'];
-		$final_address_detail = htmlentities($_POST['detail'], ENT_QUOTES, 'UTF-8');
-      		if($final_address_detail <> "") {
-		       	$final_address_details .= $final_address_detail;
-		} else {
-   			$final_address_details .= "Entry added" . " ";
-       			$final_address_details .= date('r');
-    		}
-	    	$final_address_details .= "||";
+	if($_POST['type'] == "url") {
+		$address = "";
 		$isfirst = 0;
+		$address_count = 2;
 
-		if($_POST['type'] == "url") {
-			$address = "";
-			$isfirst = 0;
-			$address_count = 2;
-
-			/* item is a url type */
-			if($_POST['address'])
-				$_POST['address0'] = $_POST['address'];
-			for($x=0; $x<99; $x++) {
-				if($_POST['address' . $x]) {
-					/* fetch down and add in */
-					$isfirst = 0;
-					$temp_filename = tempnam("/tmp/", "alias_import");
-					unlink($temp_filename);
-					$fda = fopen("/tmp/tmpfetch","w");
-					fwrite($fda, "/usr/bin/fetch -q -o \"{$temp_filename}/aliases\" \"" . $_POST['address' . $x] . "\"");
-					fclose($fda);
-					mwexec("mkdir -p {$temp_filename}");
-					mwexec("/usr/bin/fetch -q -o \"{$temp_filename}/aliases\" \"" . $_POST['address' . $x] . "\"");
-					/* if the item is tar gzipped then extract */
-					if(stristr($_POST['address' . $x], ".tgz"))
-						process_alias_tgz($temp_filename);
-					if(file_exists("{$temp_filename}/aliases")) {
-						$file_contents = file_get_contents("{$temp_filename}/aliases");
-						$file_contents = str_replace("#", "\n#", $file_contents);
-						$file_contents_split = split("\n", $file_contents);
-						foreach($file_contents_split as $fc) {
-							$tmp = trim($fc);
-							if(stristr($fc, "#")) {
-								$tmp_split = split("#", $tmp);
-								$tmp = trim($tmp_split[0]);
-							}
-							if(trim($tmp) <> "") {
-								if($isfirst == 1)
-									$address .= " ";
-								$address .= $tmp;
-								$isfirst = 1;
-							}
+		/* item is a url type */
+		if($_POST['address'])
+			$_POST['address0'] = $_POST['address'];
+		for($x=0; $x<99; $x++) {
+			if($_POST['address' . $x]) {
+				/* fetch down and add in */
+				$isfirst = 0;
+				$temp_filename = tempnam("/tmp/", "alias_import");
+				unlink($temp_filename);
+				$fda = fopen("/tmp/tmpfetch","w");
+				fwrite($fda, "/usr/bin/fetch -q -o \"{$temp_filename}/aliases\" \"" . $_POST['address' . $x] . "\"");
+				fclose($fda);
+				mwexec("mkdir -p {$temp_filename}");
+				mwexec("/usr/bin/fetch -q -o \"{$temp_filename}/aliases\" \"" . $_POST['address' . $x] . "\"");
+				/* if the item is tar gzipped then extract */
+				if(stristr($_POST['address' . $x], ".tgz"))
+					process_alias_tgz($temp_filename);
+				if(file_exists("{$temp_filename}/aliases")) {
+					$file_contents = file_get_contents("{$temp_filename}/aliases");
+					$file_contents = str_replace("#", "\n#", $file_contents);
+					$file_contents_split = split("\n", $file_contents);
+					foreach($file_contents_split as $fc) {
+						$tmp = trim($fc);
+						if(stristr($fc, "#")) {
+							$tmp_split = split("#", $tmp);
+							$tmp = trim($tmp_split[0]);
 						}
-						if($isfirst == 0) {
-							/* nothing was found */
-							$input_errors[] = "You must provide a valid URL. Could not fetch usable data.";
-							$dont_update = true;
-							break;
+						if(trim($tmp) <> "") {
+							if($isfirst == 1)
+								$address .= " ";
+							$address .= $tmp;
+							$isfirst = 1;
 						}
-						$alias['aliasurl'][] = $_POST['address' . $x];
-						mwexec("/bin/rm -rf {$temp_filename}");
-					} else {
-						$input_errors[] = "You must provide a valid URL.";
+					}
+					if($isfirst == 0) {
+						/* nothing was found */
+						$input_errors[] = "You must provide a valid URL. Could not fetch usable data.";
 						$dont_update = true;
 						break;
 					}
-				}
-			}
-		} else {
-			/* item is a normal alias type */
-			for($x=0; $x<99; $x++) {
-				$comd = "\$subnet = \$_POST['address" . $x . "'];";
-				eval($comd);
-				$comd = "\$subnet_address = \$_POST['address_subnet" . $x . "'];";
-				eval($comd);
-				if($subnet <> "") {
-					$address .= " ";
-					$address .= $subnet;
-					if($subnet_address <> "") $address .= "/" . $subnet_address;
-
-					/* Compress in details to a single key, data separated by pipes.
-					   Pulling details here lets us only pull in details for valid
-					   address entries, saving us from having to track which ones to
-					   process later. */
-		       $comd = "\$final_address_detail = htmlentities( \$_POST['detail" . $x . "'], ENT_QUOTES, 'UTF-8' );";
-		       eval($comd);
-		       if($final_address_detail <> "") {
-		       $final_address_details .= $final_address_detail;
-		       } else {
-			       $final_address_details .= "Entry added" . " ";
-			       $final_address_details .= date('r');
-		       }
-		       $final_address_details .= "||";
+					$alias['aliasurl'][] = $_POST['address' . $x];
+					mwexec("/bin/rm -rf {$temp_filename}");
+				} else {
+					$input_errors[] = "You must provide a valid URL.";
+					$dont_update = true;
+					break;
 				}
 			}
 		}
+	} else {
+		/* item is a normal alias type */
+		for($x=0; $x<99; $x++) {
+			$comd = "\$subnet = \$_POST['address" . $x . "'];";
+			eval($comd);
+			$comd = "\$subnet_address = \$_POST['address_subnet" . $x . "'];";
+			eval($comd);
+			if($subnet <> "") {
+				$address .= " ";
+				$address .= $subnet;
+				if($subnet_address <> "") $address .= "/" . $subnet_address;
 
-		if($dont_update <> true) {
-
-			$alias['address'] = $address;
-			$alias['descr'] = htmlentities($_POST['descr'], ENT_QUOTES, 'UTF-8');
-			$alias['type'] = $_POST['type'];
-			$alias['detail'] = $final_address_details;
-
-			if (isset($id) && $a_aliases[$id])
-				$a_aliases[$id] = $alias;
-			else
-				$a_aliases[] = $alias;
-
-			touch($d_aliasesdirty_path);
-
-			write_config();
-			filter_configure();
-
-			header("Location: firewall_aliases.php");
-			exit;
+				/* Compress in details to a single key, data separated by pipes.
+				   Pulling details here lets us only pull in details for valid
+				   address entries, saving us from having to track which ones to
+				   process later. */
+	       $comd = "\$final_address_detail = htmlentities( \$_POST['detail" . $x . "'], ENT_QUOTES, 'UTF-8' );";
+	       eval($comd);
+	       if($final_address_detail <> "") {
+	       $final_address_details .= $final_address_detail;
+	       } else {
+		       $final_address_details .= "Entry added" . " ";
+		       $final_address_details .= date('r');
+	       }
+	       $final_address_details .= "||";
+			}
 		}
+	}
+
+	if (!$input_errors) {
+		$alias['address'] = $address;
+		$alias['descr'] = htmlentities($_POST['descr'], ENT_QUOTES, 'UTF-8');
+		$alias['type'] = $_POST['type'];
+		$alias['detail'] = $final_address_details;
+
+		if (isset($id) && $a_aliases[$id])
+			$a_aliases[$id] = $alias;
+		else
+			$a_aliases[] = $alias;
+
+		touch($d_aliasesdirty_path);
+
+		write_config();
+		filter_configure();
+
+		header("Location: firewall_aliases.php");
+		exit;		
+	}
+	//we received input errors, copy data to prevent retype
+	else
+	{
+		$pconfig['descr'] = htmlentities($_POST['descr'], ENT_QUOTES, 'UTF-8');
+		$pconfig['address'] = $address;
+		$pconfig['type'] = $_POST['type'];
+		$pconfig['detail'] = $final_address_details;;
 	}
 }
 
@@ -495,9 +495,9 @@ EOD;
 
 			<?php
 			$counter = 0;
-			$address = $a_aliases[$id]['address'];
+			$address = $pconfig['address'];
 			$item = explode(" ", $address);
-			$item3 = explode("||", $a_aliases[$id]['detail']);
+			$item3 = explode("||", $pconfig['detail']);
 			foreach($item as $ww) {
 				$address = $item[$counter];
 				$address_subnet = "";

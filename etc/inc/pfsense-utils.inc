@@ -120,6 +120,11 @@ function tdr_day($schedule) {
 	global $debug;
 	$weekday	= date("w");
 	$date	 	= date("d");
+	$defined_days = split(",", $schedule);
+	foreach($defined_days as $dd) {
+		if($date == $dd)
+			return true;
+	}
 	return false;
 }
 

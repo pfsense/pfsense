@@ -1,6 +1,6 @@
 <?php
 /*
-	firewall_aliases.php
+	firewall_schedule.php
 	Copyright (C) 2004 Scott Ullrich
 	All rights reserved.
 

@@ -443,6 +443,17 @@ function aliases_sort() {
 	usort($config['aliases']['alias'], "aliascmp");
 }
 
+function schedule_sort(){
+	global $g, $config;
+
+	function schedulecmp($a, $b) {
+		return strcmp($a['name'], $b['name']);
+	}
+
+	usort($config['schedules']['schedule'], "schedulecmp");
+
+}
+
 function ipsec_mobilekey_sort() {
 	global $g, $config;
 

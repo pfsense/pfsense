@@ -147,6 +147,7 @@ require_once("notices.inc");
 							<li><a href="/firewall_aliases.php" class="navlnk">Aliases</a></li>
 							<li><a href="/firewall_nat.php" class="navlnk">NAT</a></li>
 							<li><a href="/firewall_rules.php" class="navlnk">Rules</a></li>
+							<li><a href="/firewall_schedule.php" class="navlnk">Schedules</a></li>
 							<li><a href="/firewall_shaper.php" class="navlnk">Traffic Shaper</a></li>
 							<li><a href="/firewall_virtual_ip.php" class="navlnk">Virtual IPs</a></li>
 							<?php echo return_ext_menu("Firewall"); ?>

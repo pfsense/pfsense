@@ -100,6 +100,9 @@ if (isset($id) && $a_filter[$id]) {
 
 	/* Multi-WAN next-hop support */
 	$pconfig['gateway'] = $a_filter[$id]['gateway'];
+	
+	//schedule support
+	$pconfig['sched'] = $a_filter[$id]['sched'];
 
 } else {
 	/* defaults */
@@ -318,6 +321,10 @@ if ($_POST) {
 
 		if ($_POST['gateway'] != "") {
 			$filterent['gateway'] = $_POST['gateway'];
+		}
+
+		if ($_POST['sched'] != "") {
+			$filterent['sched'] = $_POST['sched'];
 		}
 
 		if (isset($id) && $a_filter[$id])
@@ -715,10 +722,42 @@ include("head.inc");
 				HINT: This prevents the rule from automatically syncing to other carp members.
 			</td>
 		</tr>
+		<?php
+			//build list of schedules
+			$schedules = array();
+			$schedules[] = "none";//leave none to leave rule enabled all the time
+			foreach ($config['schedules']['schedule'] as $schedule)
+			{
+				if ($schedule['name'] <> "")
+					$schedules[] = $schedule['name'];
+			} 		
+		?>
+		<tr>
+			<td width="22%" valign="top" class="vncell">Schedule</td>
+			<td width="78%" class="vtable">
+				<select name='sched'>
+<?php
+				foreach($schedules as $schedule) {
+					if($schedule == $pconfig['sched']) {
+						$selected = " SELECTED";
+					} else {
+						$selected = "";
+					}
+					if ($schedule == "none") {
+						echo "<option value=\"\" {$selected}>{$schedule}</option>\n";
+					} else {
+						echo "<option value=\"{$schedule}\" {$selected}>{$schedule}</option>\n";
+					}
+				}?>
+				</select>
+				<p>Leave as 'none' to leave the rule enabled all the time.</p>
+			</td>
+		</tr>
+		
 <?php
 			/* build a list of gateways */
 			$gateways = array();
-                        $gateways[] = "default"; // default to don't use this feature :)
+			$gateways[] = "default"; // default to don't use this feature :)
 			foreach($config['interfaces'] as $int) {
 				if($int['gateway'] <> "")
 					$gateways[]=$int['gateway'];

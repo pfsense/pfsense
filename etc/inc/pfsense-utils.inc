@@ -114,15 +114,8 @@ function get_time_based_rule_status($schedule) {
 		} else {
 			$positionstatus = true;
 		}
-		if($week) {
-			if($day) {
-				if($hour) {
-					if($position) {
-						if($should_add_rule == false) 
-							$should_add_rule = true;
-					}
-				}
-			}
+		if($week && $day && $hour && $position) {
+			$should_add_rule = true;
 		}
 	}
 	
@@ -188,7 +181,7 @@ function tdr_week($schedule) {
 	 * week 1, week 2, week 3, week 4
 	 */
 	global $debug;
-	$todays_week 		= date("W");
+	$todays_week = date("W");
 	$weeks = split(",", $schedule);
 	foreach($weeks as $week) {
 		if($week == $todays_week) 

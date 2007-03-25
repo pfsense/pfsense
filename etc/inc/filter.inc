@@ -41,8 +41,6 @@ require_once("notices.inc");
 
 if($config['system']['shapertype'] <> "m0n0")
 	require_once ("shaper.inc");
-else 
-	require_once ("m0n0/shaper.inc");
 
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
 $after_filter_configure_run = array();
@@ -253,9 +251,11 @@ function filter_configure_sync() {
 	}
 	update_filter_reload_status("Plugins completed.");
 
-	if($config['system']['shapertype'] == "m0n0")
+	if($config['system']['shapertype'] == "m0n0") {
+		require_once ("/etc/inc/m0n0/shaper.inc");
 		shaper_configure();	
-	
+	}
+
 	/*
 	    we need a way to let a user run a shell cmd after each
 	    filter_configure() call.  run this xml command after

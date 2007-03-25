@@ -38,7 +38,11 @@
 require_once("functions.inc");
 require_once("pkg-utils.inc");
 require_once("notices.inc");
-require_once("shaper.inc");
+
+if($config['system']['shapertype'] <> "m0n0")
+	require_once ("shaper.inc");
+else 
+	require_once ("m0n0/shaper.inc");
 
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
 $after_filter_configure_run = array();
@@ -100,7 +104,7 @@ function filter_configure_sync() {
 	update_filter_reload_status("Generating filter rules");
 	$pfrules = filter_rules_generate();
 
-	if(isset($config['shaper']['enable'])) {
+	if (isset($config['shaper']['enable']) and $config['system']['shapertype'] <> "m0n0") {
 		/* generate altq interface setup parms */
 		if($g['booting'] == true) echo ".";
 		update_filter_reload_status("Generating ALTQ interfaces");
@@ -173,11 +177,14 @@ function filter_configure_sync() {
 		$rules .= "scrub all {$scrubnodf} {$mssclamp} fragment reassemble\n"; // reassemble all directions
 	}
 
-	$rules.= "{$altq_ints}\n";
-	$rules.= "{$altq_queues}\n";
+	if($config['system']['shapertype'] <> "m0n0") {
+		$rules.= "{$altq_ints}\n";
+		$rules.= "{$altq_queues}\n";
+	}
 	$rules.= "{$natrules}\n";
-        $rules.= "{$pf_altq_rules}\n";
-        $rules.= "{$pfrules}\n";
+	if($config['system']['shapertype'] <> "m0n0") 
+		$rules.= "{$pf_altq_rules}\n";
+	$rules.= "{$pfrules}\n";
 	fwrite($fd, $rules);
         fclose($fd);
 
@@ -246,6 +253,9 @@ function filter_configure_sync() {
 	}
 	update_filter_reload_status("Plugins completed.");
 
+	if($config['system']['shapertype'] == "m0n0")
+		shaper_configure();	
+	
 	/*
 	    we need a way to let a user run a shell cmd after each
 	    filter_configure() call.  run this xml command after
@@ -2336,7 +2346,7 @@ block in $log quick on \$wan from <bogons> to any label "block bogon networks fr
 EOD;
 	}
 
-if (!isset($config['shaper']['enable']) && !is_array($config['shaper']['queue'])) {
+if (!isset($config['shaper']['enable']) && !is_array($config['shaper']['queue']) and $config['system']['shapertype'] <> "m0n0") {
 
 	$ipfrules .= <<<EOD
 
@@ -2479,7 +2489,8 @@ EOD;
 		}
 
 		/* Shaper rules */
-		if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue']) && isset($config['filter']['rule'])) {
+		if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue']) && isset($config['filter']['rule']) and $config['system']['shapertype'] <> "m0n0")  {
+			
 			$ipfrules .= "\n# Anchors for rules that might be matched by queues\n";
 
 			/* This is ugly, but we generate one anchor per queue */
@@ -2512,7 +2523,7 @@ EOD;
 				$line = $rule['rule'];
 				if($line <> "") {
 					/* Add default queue if we're using the shaper */
-					if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
+					if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue']) and $config['system']['shapertype'] <> "m0n0") {
 						$defq = find_default_queue($rule['interface']);
 						$ackq = $rule['ackq'];
 						if (($defq != "") and ($ackq != ""))
@@ -2736,7 +2747,7 @@ function create_firewall_outgoing_rules_to_itself() {
 		$ip = find_interface_ip($int);
 		if ($config['interfaces'][$ifname]['ipaddr'] == "pppoe")
 			$int = " { " . filter_translate_type_to_real_interface($ifname) . " ng0 } ";
-		if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue'])) {
+		if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue']) and $config['system']['shapertype'] <> "m0n0") {
 			$ackq = get_ack_queue($ifname);
 			$defq = find_default_queue($ifname);
 			/* Handle all tagged packets */

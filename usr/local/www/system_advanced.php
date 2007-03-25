@@ -58,6 +58,7 @@ $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
 $pconfig['disablescrub'] = isset($config['system']['disablescrub']);
+$pconfig['shapertype']             = $config['system']['shapertype'];
 
 if ($_POST) {
 
@@ -216,6 +217,9 @@ if ($_POST) {
 			unset($config['system']['disablenatreflection']);
 		}
 
+		// Traffic shaper
+		$config['system']['shapertype'] = $_POST['shapertype'];
+		
 		$config['ipsec']['preferoldsa'] = $_POST['preferoldsa_enable'] ? true : false;
 		$config['bridge']['filteringbridge'] = $_POST['filteringbridge_enable'] ? true : false;
 		$config['filter']['bypassstaticroutes'] = $_POST['bypassstaticroutes'] ? true : false;
@@ -254,9 +258,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
 <?php include("fbegin.inc"); ?>
-
 <p class="pgtitle"><?=$pgtitle?></p>
-
 <form action="system_advanced.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -492,6 +494,15 @@ include("head.inc");
 		</tr>
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">Traffic Shaper and Firewall Advanced</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">Traffic shaper type</td>
+			<td width="78%" class="vtable">
+				<select name="shapertype" class="formselect">
+					<option value="pfSense"<?php if($pconfig['shapertype'] == 'pfSense') echo " selected"; ?>><?= $g['product_name'] ?> (ALTQ)</option>
+					<option value="m0n0"<?php if($pconfig['shapertype'] == 'm0n0') echo " selected"; ?>>M0n0wall (dummynet)</option>
+				</select>
+			</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell">FTP RFC 959 data port violation workaround</td>

@@ -141,6 +141,12 @@ require_once("notices.inc");
 							<?php echo return_ext_menu("Interfaces"); ?>
 						</ul>
 					</li>
+<?php
+        if($config['system']['shapertype'] <> "m0n0")
+          $shaper = "firewall_shaper.php";
+        else
+          $shaper = "m0n0/firewall_shaper.php";
+?>
 					<li class="drop">
 						<div>Firewall</div>
 						<ul class="subdrop">
@@ -148,7 +154,7 @@ require_once("notices.inc");
 							<li><a href="/firewall_nat.php" class="navlnk">NAT</a></li>
 							<li><a href="/firewall_rules.php" class="navlnk">Rules</a></li>
 <!--							<li><a href="/firewall_schedule.php" class="navlnk">Schedules</a></li> -->
-							<li><a href="/firewall_shaper.php" class="navlnk">Traffic Shaper</a></li>
+							<li><a href="$shaper" class="navlnk">Traffic Shaper</a></li>
 							<li><a href="/firewall_virtual_ip.php" class="navlnk">Virtual IPs</a></li>
 							<?php echo return_ext_menu("Firewall"); ?>
 						</ul>

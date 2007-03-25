@@ -495,6 +495,8 @@ include("head.inc");
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">Traffic Shaper and Firewall Advanced</td>
 		</tr>
+<?php
+/*
 		<tr>
 			<td width="22%" valign="top" class="vncell">Traffic shaper type</td>
 			<td width="78%" class="vtable">
@@ -504,6 +506,8 @@ include("head.inc");
 				</select>
 			</td>
 		</tr>
+*/
+?>
 		<tr>
 			<td width="22%" valign="top" class="vncell">FTP RFC 959 data port violation workaround</td>
 			<td width="78%" class="vtable">

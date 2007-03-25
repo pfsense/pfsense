@@ -100,10 +100,6 @@ if ($_POST) {
 
 $pgtitle = "Firewall: Traffic Shaper - Pipes Edit";
 include("head.inc");
-/* put your custom HTML head content here        */
-/* using some of the $pfSenseHead function calls */
-echo $pfSenseHead->getHTML();
-
 ?>
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>

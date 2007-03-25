@@ -110,9 +110,6 @@ if ($_GET['act'] == "del") {
 
 $pgtitle = "Firewall: Traffic Shaper";
 include("head.inc");
-/* put your custom HTML head content here        */
-/* using some of the $pfSenseHead function calls */
-echo $pfSenseHead->getHTML();
 
 ?>
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">

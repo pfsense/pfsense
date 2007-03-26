@@ -210,7 +210,7 @@ echo -n "Launching PHP init system..."
 /etc/rc.bootup
 
 echo -n "Starting CRON... "
-cd /tmp && /usr/sbin/cron -s
+cd /tmp && /usr/sbin/cron -s 2>/dev/null
 echo "done."
 
 # Start packages

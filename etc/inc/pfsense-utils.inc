@@ -255,14 +255,21 @@ function tdr_create_ipfw_rule($rule, $type) {
 			}
 
 			$aline['src'] = "from $src ";
-
+			$srcporta = "";
 			if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
 				if ($rule['source']['port']) {
 					$srcport = explode("-", $rule['source']['port']);
-					if(alias_expand($srcport[0]))
-						$srcporta = alias_expand($srcport[0]);
-					else
+					if(alias_expand($srcport[0])) {
+						$first_time = true;
+						foreach(preg_split("/[\s]+/", alias_expand_value($srcport[0])) as $item) {
+							if(!$first_time) 
+								$srcporta .= ",";				
+							$srcporta .= $item;
+							$first_time = false;
+						}
+					} else {
 						$srcporta = $srcport[0];
+					}
 					if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
 						if(alias_expand($srcport[0]))
 							$aline['srcport'] = "{$srcporta} ";
@@ -350,14 +357,21 @@ function tdr_create_ipfw_rule($rule, $type) {
 			}
 
 			$aline['dst'] = "to $dst ";
-
+			$dstporta = "";
 			if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
 				if ($rule['destination']['port']) {
 					$dstport = explode("-", $rule['destination']['port']);
-					if(alias_expand($dstport[0]))
-						$dstporta = alias_expand($dstport[0]);
-					else
+					if(alias_expand($dstport[0])) {
+						$first_time = true;
+						foreach(preg_split("/[\s]+/", alias_expand_value($dstport[0])) as $item) {
+							if(!$first_time)
+							 	$dstporta .= ",";
+							$dstporta .= $item;			
+							$first_time = false;
+						}
+					} else {
 						$dstporta = $dstport[0];
+					}
 					if ((!$dstport[1]) || ($dstport[0] == $dstport[1])) {
 						if(alias_expand($dstport[0]))
 							$aline['dstport'] = "{$dstporta} ";

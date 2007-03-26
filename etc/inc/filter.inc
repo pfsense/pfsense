@@ -269,6 +269,10 @@ function filter_configure_sync() {
 		shaper_configure();	
 	}
 
+	/* if time based rules are enabled then swap in the set */
+	if($time_based_rules == true) 
+		tdr_install_set();
+
 	/*
 	    we need a way to let a user run a shell cmd after each
 	    filter_configure() call.  run this xml command after

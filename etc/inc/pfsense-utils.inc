@@ -37,6 +37,14 @@ function get_tmp_file() {
 	return "/tmp/tmp-" . time();
 }
 
+/****f* pfsense-utils/tdr_create_ipfw_rule
+ * NAME
+ *   tdr_create_ipfw_rule
+ * INPUTS
+ *   $rule xml firewall rule array, $type allow or deny
+ * RESULT
+ *   text string with ipfw rule already formatted
+ ******/
 function tdr_create_ipfw_rule($rule, $type) {
 		global $config, $g;
 
@@ -401,10 +409,26 @@ function tdr_create_ipfw_rule($rule, $type) {
 
 }
 
+/****f* pfsense-utils/tdr_install_rule
+ * NAME
+ *   tdr_install_rule
+ * INPUTS
+ *   $rule - ascii string containing the ifpw rule to add
+ * RESULT
+ *   none
+ ******/
 function tdr_install_rule($rule) {
 	mwexec("/sbin/ipfw -f add 1 set 9 $rule");
 }
 
+/****f* pfsense-utils/tdr_install_set
+ * NAME
+ *   tdr_install_set
+ * INPUTS
+ *  none
+ * RESULT
+ *   swaps in the temporary ipfw time based rule set
+ ******/
 function tdr_install_set() {
 	/* set 8 contains time based rules */
 	mwexec("/sbin/ipfw -f delete set 8");

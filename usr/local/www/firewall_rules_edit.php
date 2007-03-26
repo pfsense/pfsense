@@ -726,11 +726,12 @@ include("head.inc");
 			//build list of schedules
 			$schedules = array();
 			$schedules[] = "none";//leave none to leave rule enabled all the time
-			foreach ($config['schedules']['schedule'] as $schedule)
-			{
-				if ($schedule['name'] <> "")
-					$schedules[] = $schedule['name'];
-			} 		
+			if(is_array($config['schedules']['schedule'])) {
+				foreach ($config['schedules']['schedule'] as $schedule) {
+					if ($schedule['name'] <> "")
+						$schedules[] = $schedule['name'];
+				}
+			}
 		?>
 		<tr>
 			<td width="22%" valign="top" class="vncell">Schedule</td>

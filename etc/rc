@@ -42,19 +42,6 @@ if [ "$PLATFORM" = "pfSense" ]; then
 	mdmfs -S -M -s 2m md /var/run
 fi
 
-# Enable Softupdates if enablesoftupdates is found in config.xml
-SOFTUPDATES=`/usr/bin/grep "enablesoftupdates" /cf/conf/config.xml | wc -l`
-if [ $SOFTUPDATES -gt 0 ]; then
-	FILESYSTEM=`cat /etc/fstab | grep "/" | grep ufs | awk '{ print $1 }'`
-	/sbin/tunefs -n enable $FILESYSTEM 2>/dev/null
-	if [ $? != 0 ]; then
-		echo "Cleaning filesystem..."
-		fsck -y $FILESYSTEM
-		echo "Attempting soft updates enable again..."
-		/sbin/tunefs -n enable $FILESYSTEM
-	fi
-fi
-
 # Enable console output if its muted.
 /sbin/conscontrol mute off >/dev/null
 

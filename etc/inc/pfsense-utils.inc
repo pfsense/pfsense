@@ -37,6 +37,366 @@ function get_tmp_file() {
 	return "/tmp/tmp-" . time();
 }
 
+function tdr_create_ipfw_rule($rule, $type) {
+		global $config, $g;
+
+		$wancfg = $config['interfaces']['wan'];
+		$lancfg = $config['interfaces']['lan'];
+		$pptpdcfg = $config['pptpd'];
+		$pppoecfg = $config['pppoe'];
+
+		$lanif = $lancfg['if'];
+		$wanif = get_real_wan_interface();
+
+		$lanip = $lancfg['ipaddr'];
+		$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
+		$lansn = $lancfg['subnet'];
+
+		$int = "";
+
+		$optcfg = array();
+		generate_optcfg_array($optcfg);
+
+		$curwanip = get_current_wan_address();
+
+		/* don't include disabled rules */
+		if (isset($rule['disabled'])) {
+			return "";
+		}
+
+		$pptpdcfg = $config['pptpd'];
+		$pppoecfg = $config['pppoe'];
+
+		if ($pptpdcfg['mode'] == "server") {
+			$pptpip = $pptpdcfg['localip'];
+			$pptpsa = $pptpdcfg['remoteip'];
+			$pptpsn = $g['pptp_subnet'];
+			if($config['pptp']['pptp_subnet'] <> "")
+				$pptpsn = $config['pptp']['pptp_subnet'];
+		}
+
+		if ($pppoecfg['mode'] == "server") {
+			$pppoeip = $pppoecfg['localip'];
+			$pppoesa = $pppoecfg['remoteip'];
+			$pppoesn = $g['pppoe_subnet'];
+			if($config['pppoe']['pppoe_subnet'] <> "")
+				$pppoesn = $config['pppoe']['pppoe_subnet'];
+		}
+
+		/* does the rule deal with a PPTP interface? */
+		if ($rule['interface'] == "pptp") {
+			if ($pptpdcfg['mode'] != "server")
+				return "";
+			$nif = $g['n_pptp_units'];
+			if($config['pptp']['n_pptp_units'] <> "")
+				$nif = $config['pptp']['n_pptp_units'];
+			$ispptp = true;
+		} else if($rule['interface'] == "pppoe") {
+			if ($pppoecfg['mode'] != "server") {
+				return " # Error creating pppoe rule";
+			}
+			$nif = $g['n_pppoe_units'];
+			if($config['pppoe']['n_pppoe_units'] <> "")
+				$nif = $config['pppoe']['n_pppoe_units'];
+			$ispppoe = true;
+		} else {
+
+			/* Check to see if the interface is opt and in our opt list */
+			if (strstr($rule['interface'], "opt")) {
+ 				if (!array_key_exists($rule['interface'], $optcfg)) {
+					$item = "";
+					foreach($optcfg as $oc) $item .= $oc['if'];
+					return "# {$real_int} {$item} {$rule['interface']} array key does not exist for " . $rule['descr'];
+				}
+			}
+
+			$nif = 1;
+			$ispptp = false;
+			$ispppoe = false;
+		}
+		if ($pptpdcfg['mode'] != "server") {
+			if (($rule['source']['network'] == "pptp") ||
+				($rule['destination']['network'] == "pptp")) {
+					return "# source network or destination network == pptp on " . $rule['descr'];
+				}
+		}
+		if ($rule['source']['network'] && strstr($rule['source']['network'], "opt")) {
+			if (!array_key_exists($rule['source']['network'], $optcfg)) {
+				$optmatch = "";
+				if(preg_match("/opt([0-999])/", $rule['source']['network'], $optmatch)) {
+					$real_opt_int = convert_friendly_interface_to_real_interface_name("opt" . $optmatch[1]);
+					$opt_ip = find_interface_ip($real_opt_int);
+					if(!$opt_ip)
+						return "# unresolvable optarray $real_opt_int - $optmatch[0] - $opt_ip";
+				} else {
+					return "# {$rule['source']['network']} !array_key_exists source network " . $rule['descr'];
+				}
+			}
+		}
+		if ($rule['destination']['network'] && strstr($rule['destination']['network'], "opt")) {
+			if (!array_key_exists($rule['destination']['network'], $optcfg)) {
+				if(preg_match("/opt([0-999])/", $rule['destination']['network'], $optmatch)) {
+					$real_opt_int = convert_friendly_interface_to_real_interface_name("opt" . $optmatch[1]);
+					$opt_ip = find_interface_ip($real_opt_int);
+					if(!$opt_ip)
+						return "# unresolvable oparray $real_opt_int - $optmatch[0] - $opt_ip";
+				} else {
+					return "# {$item} {$rule['destination']['network']} !array_key_exists dest network " . $rule['descr'];
+				}
+			}
+		}
+		/* check for unresolvable aliases */
+		if ($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
+			file_notice("Filter_Reload", "# unresolvable source aliases {$rule['descr']}");
+			return "# tdr unresolvable source aliases {$rule['descr']}";
+		}
+		if ($rule['destination']['address'] && !alias_expand($rule['destination']['address'])) {
+			file_notice("Filter_Reload", "# unresolvable dest aliases {$rule['descr']}");
+			return "# tdr unresolvable dest aliases {$rule['descr']}";
+		}
+
+		$ifdescrs = array();
+		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
+			$ifdescrs[] = "opt" . $i;
+
+		for ($iif = 0; $iif < $nif; $iif++) {
+
+			if ($ispptp) {
+				$aline['interface'] = "on \$pptp ";
+			} else if ($ispppoe) {
+				$aline['interface'] = "on \$pppoe ";
+			} else {
+				// translate wan, man, lan, opt to real interface.
+				$interface = $rule['interface'];
+				$temp = filter_get_opt_interface_descr($interface);
+				if($temp <> "") $interface = $temp;
+				$aline['interface'] = "on " . convert_friendly_interface_to_real_interface_name($rule['interface']) . " ";
+			}
+
+			if (isset($rule['protocol'])) {
+				if($rule['protocol'] == "tcp/udp")
+					$aline['prot'] = "ip ";
+				elseif($rule['protocol'] == "icmp")
+					$aline['prot'] = "icmp ";
+				else
+					$aline['prot'] = "{$rule['protocol']} ";
+			} else {
+				if($rule['source']['port'] <> "" || $rule['destination']['port'] <> "") {
+					$aline['prot'] = "tcp ";
+				}
+			}
+
+			/* source address */
+			if (isset($rule['source']['any'])) {
+				$src = "any";
+			} else if ($rule['source']['network']) {
+
+				if (strstr($rule['source']['network'], "opt")) {
+					$src = $optcfg[$rule['source']['network']]['sa'] . "/" .
+						$optcfg[$rule['source']['network']]['sn'];
+					if (isset($rule['source']['not'])) $src = " !{$src}";
+					/* check for opt$NUMip here */
+					$matches = "";
+					if (preg_match("/opt([0-9999])ip/", $rule['source']['network'], $matches)) {
+						$optnum = $matches[1];
+						$real_int = convert_friendly_interface_to_real_interface_name("opt{$optnum}");
+						$src = find_interface_ip($real_int);
+					}
+				} else {
+					switch ($rule['source']['network']) {
+						case 'wanip':
+							$src = $curwanip;
+							break;
+						case 'lanip':
+							$src = $lanip;
+							break;
+						case 'lan':
+							$src = "{$lansa}/{$lansn}";
+							break;
+						case 'pptp':
+							$src = "{$pptpsa}/{$pptpsn}";
+							break;
+						case 'pppoe':
+							$src = "{$pppoesa}/{$pppoesn}";
+							break;
+					}
+					if (isset($rule['source']['not'])) $src = "!{$src}";
+				}
+			} else if ($rule['source']['address']) {
+				$expsrc = alias_expand_value($rule['source']['address']);
+				if(!$expsrc) 
+					$expsrc = $rule['source']['address'];
+					
+				if (isset($rule['source']['not']))
+					$not = " not";
+				else
+					$not = "";
+
+				if(alias_expand_value($rule['source']['address'])) {
+					$src = "{";
+					$first_item = true;
+					foreach(preg_split("/[\s]+/", alias_expand_value($rule['source']['address'])) as $item) {
+						if($item != "") {
+							if(!$first_item) 
+								$src .= " or";
+							$src .= " {$not}{$item}";
+							$first_item = false;
+						}
+					}
+					$src .= " }";
+				} else {
+					$src = "{$not}" . $expsrc;
+				}
+
+			}
+
+			if (!$src || ($src == "/")) {
+				return "# tdr at the break!";
+			}
+
+			$aline['src'] = "from $src ";
+
+			if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
+				if ($rule['source']['port']) {
+					$srcport = explode("-", $rule['source']['port']);
+					if(alias_expand($srcport[0]))
+						$srcporta = alias_expand($srcport[0]);
+					else
+						$srcporta = $srcport[0];
+					if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
+						if(alias_expand($srcport[0]))
+							$aline['srcport'] = "{$srcporta} ";
+						else
+							$aline['srcport'] = "{$srcporta} ";
+					} else if (($srcport[0] == 1) && ($srcport[1] == 65535)) {
+						/* no need for a port statement here */
+					} else if ($srcport[1] == 65535) {
+						$aline['srcport'] = "port >= {$srcport[0]} ";
+					} else if ($srcport[0] == 1) {
+						$aline['srcport']= "port <= {$srcport[1]} ";
+					} else {
+						$srcport[0]--;
+						$srcport[1]++;
+						$aline['srcport'] = "port {$srcport[0]} >< {$srcport[1]} ";
+					}
+				}
+			}
+
+			/* destination address */
+			if (isset($rule['destination']['any'])) {
+				$dst = "any";
+			} else if ($rule['destination']['network']) {
+
+				if (strstr($rule['destination']['network'], "opt")) {
+					$dst = $optcfg[$rule['destination']['network']]['sa'] . "/" .
+						$optcfg[$rule['destination']['network']]['sn'];
+					/* check for opt$NUMip here */
+					$matches = "";
+					if (preg_match("/opt([0-9999])ip/", $rule['destination']['network'], $matches)) {
+						$optnum = $matches[1];
+						$real_int = convert_friendly_interface_to_real_interface_name("opt{$optnum}");
+						$dst = find_interface_ip($real_int);
+					}
+					if (isset($rule['destination']['not'])) $dst = " !{$dst}";
+				} else {
+					switch ($rule['destination']['network']) {
+						case 'wanip':
+							$dst = $curwanip;
+							break;
+						case 'lanip':
+							$dst = $lanip;
+							break;
+						case 'lan':
+							$dst = "{$lansa}/{$lansn}";
+							break;
+						case 'pptp':
+							$dst = "{$pptpsa}/{$pptpsn}";
+							break;
+						case 'pppoe':
+							$dst = "{$ppoesa}/{$pppoesn}";
+							break;
+					}
+					if (isset($rule['destination']['not'])) $dst = " !{$dst}";
+				}
+			} else if ($rule['destination']['address']) {
+				$expdst = alias_expand_value($rule['destination']['address']);
+				if(!$expdst) 
+					$expdst = $rule['destination']['address'];
+
+				if (isset($rule['destination']['not']))
+					$not = " not ";
+				else
+					$not = "";
+
+				if(alias_expand_value($rule['destination']['address'])) {
+					$dst = "{";
+					$first_item = true;
+					foreach(preg_split("/[\s]+/", alias_expand_value($rule['destination']['address'])) as $item) {
+						if($item != "") {
+							if(!$first_item) 
+								$dst .= " or";
+							$dst .= " {$not}{$item}";
+							$first_item = false;
+						}
+					}
+					$dst .= " }";
+				} else {
+					$dst = "{$not}" . $expdst;
+				}
+			}
+
+			if (!$dst || ($dst == "/")) {
+				return "# returning at dst $dst == \"/\"";
+			}
+
+			$aline['dst'] = "to $dst ";
+
+			if (in_array($rule['protocol'], array("tcp","udp","tcp/udp"))) {
+				if ($rule['destination']['port']) {
+					$dstport = explode("-", $rule['destination']['port']);
+					if(alias_expand($dstport[0]))
+						$dstporta = alias_expand($dstport[0]);
+					else
+						$dstporta = $dstport[0];
+					if ((!$dstport[1]) || ($dstport[0] == $dstport[1])) {
+						if(alias_expand($dstport[0]))
+							$aline['dstport'] = "{$dstporta} ";
+						else
+							$aline['dstport'] = "{$dstporta} ";
+					} else if (($dstport[0] == 1) && ($dstport[1] == 65535)) {
+						/* no need for a port statement here */
+					} else if ($dstport[1] == 65535) {
+						$aline['dstport'] = "port >= {$dstport[0]} ";
+					} else if ($dstport[0] == 1) {
+						$aline['dstport'] = "port <= {$dstport[1]} ";
+					}  else {
+						$dstport[0]--;
+						$dstport[1]++;
+						$aline['dstport'] = "port {$dstport[0]} >< {$dstport[1]} ";
+					}
+				}
+			}
+
+	}
+
+	/* piece together the actual user rule */
+	$line .= $type . " " . $aline['prot'] . $aline['interface'] . $aline['src'] . 
+	$aline['srcport'] . $aline['dst'] . $aline['dstport'];
+
+	return $line;
+
+}
+
+function tdr_install_rule($rule) {
+	mwexec("/sbin/ipfw -f add set 9 $rule");
+}
+
+function tdr_install_set() {
+	/* set 8 contains time based rules */
+	mwexec("/sbin/ipfw -f delete set 8");
+	mwexec("/sbin/ipfw -f set swap 9 8");
+}
+
 /****f* pfsense-utils/get_time_based_rule_status
  * NAME
  *   get_time_based_rule_status
@@ -73,7 +433,7 @@ function get_time_based_rule_status($schedule) {
 	 * iterate through time blocks and deterimine
 	 * if the rule should be installed or not.
 	 */
-	foreach($schedule['time'] as $time) {
+	foreach($schedule['time'] as $timeday) {
 		if($timeday['week']) 
 			$week = $timeday['week'];
 		else 

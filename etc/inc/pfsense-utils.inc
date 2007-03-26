@@ -402,12 +402,13 @@ function tdr_create_ipfw_rule($rule, $type) {
 }
 
 function tdr_install_rule($rule) {
-	mwexec("/sbin/ipfw -f add set 9 $rule");
+	mwexec("/sbin/ipfw -f add 1 set 9 $rule");
 }
 
 function tdr_install_set() {
 	/* set 8 contains time based rules */
 	mwexec("/sbin/ipfw -f delete set 8");
+	mwexec("/sbin/ipfw -f delete 1");
 	mwexec("/sbin/ipfw -f set swap 9 8");
 }
 

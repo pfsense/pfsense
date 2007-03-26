@@ -86,6 +86,19 @@ function filter_configure_sync() {
 		echo "filter_configure_sync() being called $mt\n";
 	}
 
+	/* check to see if any rules reference a schedule
+	 * and if so load ipfw for later usage.
+	 */
+	foreach($config['filter']['rule'] as $rule) {
+		if($rule['schedule'])
+			$time_based_rules = true;
+	}
+	if($time_based_rules == true) {
+		$status =`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`;
+		if($status < 1) 
+			mwexec("/sbin/kldload ipfw");
+	}
+
 	$lan_if = $config['interfaces']['lan']['if'];
 	$wan_if = get_real_wan_interface();
 
@@ -1898,8 +1911,13 @@ function generate_user_filter_rule($rule, $ngcounter) {
 	/* is a time based rule schedule attached? */
 	if($rule['schedule']) {
 		$status = get_time_based_rule_status($rule['schedule']);
-		if($status) 
+		if($status) {
 			return $line;
+		} else {
+			/* rule is turned off, lets block the item */
+			$ipfw_rule = tdr_create_ipfw_rule($rule, "deny");
+			tdr_install_rule($ipfw_rule);
+		}
 	} else {
 		return $line;
 	}

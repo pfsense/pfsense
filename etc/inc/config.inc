@@ -1583,7 +1583,7 @@ function system_start_ftp_helpers() {
 			}
 			if(isset($config['shaper']['enable'])) {
 				if($config['ezshaper']['step5']['p2pcatchall']) {
-					$shaper_queue = "-q qP2PUp ";
+					$shaper_queue = "-q qP2PDown ";
 				} else { 
 					$downq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['inside_int']);
 					$shaper_queue = "-q {$downq}def ";

@@ -515,7 +515,7 @@ function get_time_based_rule_status($schedule) {
 		} else {
 			$positionstatus = true;
 		}
-		if($week or $day or $hour or $position) {
+		if($monthstatus and $daystatus and $hourstatus and $positionstatus) {
 			$should_add_rule = true;
 		}
 	}

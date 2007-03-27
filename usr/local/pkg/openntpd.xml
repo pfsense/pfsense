@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <packagegui>
 	<include_file>system.inc</include_file>
-	<custom_php_install_command>
-		openntpd_install();
-	</custom_php_install_command>
 	<name>openntpd</name>
 	<title>NTP server</title>
 	<fields>

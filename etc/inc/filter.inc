@@ -95,7 +95,7 @@ function filter_configure_sync() {
 	}
 	if($time_based_rules == true) {
 		$status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
-		if($status < 1) 
+		if($status == "0") 
 			mwexec("/sbin/kldload ipfw");
 	}
 

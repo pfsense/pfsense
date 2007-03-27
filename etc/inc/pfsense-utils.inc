@@ -452,12 +452,12 @@ function tdr_install_set() {
      <name>ScheduleMultipleTime</name>
      <descr>main descr</descr>
      <time>
-       <day>0,1,2</day>
+       <position>0,1,2</position>
        <hour>0:0-24:0</hour>
        <desc>time range 2</desc>
      </time>
      <time>
-       <day>4,5,6</day>
+       <position>4,5,6</position>
        <hour>0:0-24:0</hour>
        <desc>time range 1</desc>
      </time>

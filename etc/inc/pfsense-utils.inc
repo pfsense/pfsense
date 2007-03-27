@@ -170,15 +170,15 @@ function tdr_create_ipfw_rule($rule, $type) {
 		for ($iif = 0; $iif < $nif; $iif++) {
 
 			if ($ispptp) {
-				$aline['interface'] = "on \$pptp ";
+				$aline['interface'] = "\$pptp ";
 			} else if ($ispppoe) {
-				$aline['interface'] = "on \$pppoe ";
+				$aline['interface'] = "\$pppoe ";
 			} else {
 				// translate wan, man, lan, opt to real interface.
 				$interface = $rule['interface'];
 				$temp = filter_get_opt_interface_descr($interface);
 				if($temp <> "") $interface = $temp;
-				$aline['interface'] = "on " . convert_friendly_interface_to_real_interface_name($rule['interface']) . " ";
+				$aline['interface'] = convert_friendly_interface_to_real_interface_name($rule['interface']) . " ";
 			}
 
 			if (isset($rule['protocol'])) {
@@ -400,10 +400,13 @@ function tdr_create_ipfw_rule($rule, $type) {
 			}
 
 	}
-
+	
+	if($aline['prot'] == "")
+		$aline['prot'] = "ip ";
+		
 	/* piece together the actual user rule */
-	$line .= $type . " " . $aline['prot'] . $aline['interface'] . $aline['src'] . 
-	$aline['srcport'] . $aline['dst'] . $aline['dstport'];
+	$line .= $type . " " . $aline['prot'] . $aline['src'] . 
+	$aline['srcport'] . $aline['dst'] . $aline['dstport'] . "via " . $aline['interface'];
 
 	return $line;
 
@@ -432,7 +435,6 @@ function tdr_install_rule($rule) {
 function tdr_install_set() {
 	/* set 8 contains time based rules */
 	mwexec("/sbin/ipfw -f delete set 8");
-	mwexec("/sbin/ipfw -f delete 1");
 	mwexec("/sbin/ipfw -f set swap 9 8");
 }
 
@@ -517,12 +519,7 @@ function get_time_based_rule_status($schedule) {
 			$should_add_rule = true;
 		}
 	}
-	
-	/*
-	 *  TODO: 
-	 *		reset open states affected by this rule 
-     */
-	
+		
 	return $should_add_rule;
 }
 

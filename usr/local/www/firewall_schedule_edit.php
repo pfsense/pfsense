@@ -48,6 +48,7 @@ if (!is_array($config['schedules']['schedule']))
 schedule_sort();
 $a_schedules = &$config['schedules']['schedule'];
 
+
 $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
@@ -56,7 +57,6 @@ if (isset($id) && $a_schedules[$id]) {
 	$pconfig['name'] = $a_schedules[$id]['name'];
 	$pconfig['descr'] = html_entity_decode($a_schedules[$id]['descr']);
 	$pconfig['timerange'] = $a_schedules[$id]['timerange'];
-	$pconfig['timedescr']  = html_entity_decode($a_schedules[$id]['timedescr']);
 	$getSchedule = true;
 }
 
@@ -66,6 +66,8 @@ if ($_POST) {
 		$input_errors[] = "Schedule may not be named LAN.";
 	if(strtolower($_POST['name']) == "wan")
 		$input_errors[] = "Schedule may not be named WAN.";
+	if(strtolower($_POST['name']) == "")
+		$input_errors[] = "Schedule name cannot be blank.";
 
 	$x = is_validaliasname($_POST['name']);
 	if (!isset($x)) {
@@ -85,32 +87,68 @@ if ($_POST) {
 			break;
 		}
 	}
-	$schedule = array();	
+	$schedule = array();
+	
+	$schedule['name'] = $_POST['name'];
+	$schedule['descr'] = htmlentities($_POST['descr'], ENT_QUOTES, 'UTF-8');	
+	
 	
 	for ($x=0; $x<99; $x++){
 		if($_POST['schedule' . $x]) {
-			$timestr .= $_POST['schedule' . $x];
-			$timestr .= $_POST['starttime' . $x];
-			$timestr .= "-";
-			$timestr .= $_POST['stoptime' . $x]; 
-			$timestr .= "||";
-			$timedescrstr .= htmlentities($_POST['timedescr' . $x], ENT_QUOTES, 'UTF-8'); 
-			$timedescrstr .= "||";					
+			$timeparts = array();
+			$firstprint = false;
+			$timestr = $_POST['schedule' . $x];
+			$timehourstr = $_POST['starttime' . $x];
+			$timehourstr .= "-";
+			$timehourstr .= $_POST['stoptime' . $x];
+			$timedescrstr = htmlentities($_POST['timedescr' . $x], ENT_QUOTES, 'UTF-8'); 
+			$dashpos = strpos($timestr, '-');
+			if ($dashpos === false)
+			{
+				$timeparts['day'] = $timestr;
+			}
+			else
+			{
+				$tempindarray = array();
+				$monthstr = "";
+				$daystr = "";
+				$tempindarray = explode(",", $timestr);
+				foreach ($tempindarray as $currentselection)
+				{
+					if ($currentselection){
+						if ($firstprint)
+						{
+							$monthstr .= ",";
+							$daystr .= ",";						
+						}
+						$tempstr = "";
+						$monthpos = strpos($currentselection, "m");
+						$daypos = strpos($currentselection, "d");
+						$monthstr .= substr($currentselection, $monthpos+1, $daypos-$monthpos-1);
+						$daystr .=  substr($currentselection, $daypos+1);
+			
+						$firstprint = true;
+					}
+				}
+				$timeparts['month'] = $monthstr;
+				$timeparts['day'] = $daystr;
+			}			
+			$timeparts['hour'] = $timehourstr;
+			$timeparts['rangedescr'] = $timedescrstr;
+			$schedule['timerange'][$x] = $timeparts;
 		}
 	}
+		
 	
-	$schedule['name'] = $_POST['name'];
-	$schedule['descr'] = htmlentities($_POST['descr'], ENT_QUOTES, 'UTF-8');		
-	$schedule['timerange'] = $timestr;
-	$schedule['timedescr'] = $timedescrstr;
 		
 	if (!$input_errors) {		
 		
-		if (isset($id) && $a_schedules[$id])
+		if (isset($id) && $a_schedules[$id]){
 			$a_schedules[$id] = $schedule;
-		else
+		}
+		else{
 			$a_schedules[] = $schedule;
-		
+		}
 		write_config();
 			
 		header("Location: firewall_schedule.php");
@@ -121,9 +159,9 @@ if ($_POST) {
 	else
 	{
 		$getSchedule = true;
-		$pconfig['descr'] = $schedule['descr'] = htmlentities($_POST['descr'], ENT_QUOTES, 'UTF-8');
+		$pconfig['name'] = $schedule['name'];
+		$pconfig['descr'] = $schedule['descr'];
 		$pconfig['timerange'] = $schedule['timerange'];
-		$pconfig['timedescr'] = $schedule['timedescr'];
 	}	
 
 }
@@ -138,6 +176,8 @@ var daysSelected = "";
 var month_array = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 var day_array = ['Sun','Mon','Tues','Wed','Thur','Fri','Sat'];
 var schCounter = 0;
+
+
 
 function repeatExistingDays(){
 	var tempstr, tempstrdaypos, week, daypos, dayposdone = "";
@@ -303,7 +343,7 @@ function checkTimeLimits(){
 	if (starttimehour > 23)
 		document.getElementById("starttimehour").value = 23;
 	if (starttimemin > 59)
-		document.getElementById("starttimemin").value = 59;
+		document.getElementById("starttimemin").value = 00;
 	if (stoptimehour >= 24){
 		document.getElementById("stoptimehour").value = 24;
 		document.getElementById("stoptimemin").value = 0;
@@ -313,6 +353,7 @@ function checkTimeLimits(){
 			document.getElementById("stoptimemin").value = 59;
 		else 
 			document.getElementById("stoptimemin").value = 0;
+			
 }
 
 function processEntries(){
@@ -325,13 +366,15 @@ function processEntries(){
 	stoptimehour = parseInt(document.getElementById("stoptimehour").value);
 	stoptimemin = parseInt(document.getElementById("stoptimemin").value);
 
+
 	//do time checks	
 	if (starttimehour > stoptimehour)
 	{
 		errors = "Error: Start Hour cannot be greater than Stop Hour.";
 		passedValidiation = false;
+		
 	}
-	else if (starttimehour = stoptimehour)
+	else if (starttimehour == stoptimehour)
 	{
 		if (starttimemin > stoptimemin){
 			errors = "Error: Start Minute cannot be greater than Stop Minute.";
@@ -339,21 +382,36 @@ function processEntries(){
 		}
 	}	
 	
+	if (stoptimemin != 15 && stoptimemin != 30 && stoptimemin != 45 && stoptimemin != 0){
+		errors = "Error: Stop Minute must be in 15 minute increments.";
+		passedValidiation = false;
+	}
+	if (starttimemin != 15 && starttimemin != 30 && starttimemin != 45 && starttimemin != 0){
+		errors = "Error: Start Minute must be in 15 minute increments.";
+		passedValidiation = false;
+	}
+		
 	if (passedValidiation){
 		addTimeRange();
 	}
-	else if (errors != "")
-		alert(errors);
+	else {
+		if (errors != "")
+			alert(errors);
+	}
 }
 
 function addTimeRange(){
 	var tempdayarray = daysSelected.split(",");
-	var tempstr, tempFriendlyDay, starttimehour, starttimemin, stoptimehour, tempFriendlyTime, tempID, stoptimemin, timeRange, tempstrdaypos, week, daypos, day, month, dashpos, tempTime = "";
-	tempFriendlyTime = "";
-	tempID = "";
+	var tempstr, tempFriendlyDay, starttimehour, starttimemin, stoptimehour, nrtempFriendlyTime, rtempFriendlyTime, nrtempID, rtempID = "";
+	var stoptimemin, timeRange, tempstrdaypos, week, daypos, day, month, dashpos, nrtempTime, rtempTime = "";
+	rtempFriendlyTime = "";
+	nrtempFriendlyTime = "";
+	nrtempID = "";
+	rtempID = "";
+	nrtempTime = "";
+	rtempTime = "";
 	tempdayarray.sort();	
-	tempFriendlyDay = "";
-	
+	rtempFriendlyDay = "";
 	
 	//check for existing entries
 	var findCurrentCounter;
@@ -361,13 +419,11 @@ function addTimeRange(){
 		findCurrentCounter = document.getElementById("schedule" + u);
 		if (!findCurrentCounter)
 		{
-			//found last entry, bump id number up by 1
-			u++
 			schCounter = u;
 			break;
 		}
 	}
-	
+		
 	if (daysSelected != ""){
 		//get days selected
 		for (i=0; i<tempdayarray.length; i++)
@@ -381,7 +437,8 @@ function addTimeRange(){
 				dashpos = tempstr.search("-");			
 				
 				if (dashpos != "-1")
-				{				
+				{	
+					var nonrepeatingfound = true;
 					daypos = tempstr.substring(tempstrdaypos+1, dashpos);
 					daypos = parseInt(daypos);	
 					monthpos = tempstr.search("m");	
@@ -390,15 +447,16 @@ function addTimeRange(){
 					month = parseInt(month);
 					day = tempstr.substring(tempstrdaypos+1);
 					day = parseInt(day);
-					tempFriendlyTime += month_array[month-1] +  " " + day + ",";
-					tempID += tempstr + ",";
+					nrtempFriendlyTime += month_array[month-1] +  " " + day + ",";
+					nrtempID += tempstr + ",";
 				}
 				else
 				{	
+					var repeatingfound = true;
 					daypos = tempstr.substr(tempstrdaypos+1);
 					daypos = parseInt(daypos);	
-					tempFriendlyDay += daypos + ",";
-					tempID += daypos + ",";					
+					rtempFriendlyDay += daypos + ",";
+					rtempID += daypos + ",";					
 				}		
 			}				
 		}	
@@ -406,8 +464,8 @@ function addTimeRange(){
 		var foundEnd = false;
 		var firstDayFound = false;
 		var firstprint = false;
-		var tempFriendlyDayArray = tempFriendlyDay.split(",");
-
+		var tempFriendlyDayArray = rtempFriendlyDay.split(",");
+		tempFriendlyDayArray.sort();
 		var currentDay, firstDay, nextDay = "";
 		for (k=0; k<tempFriendlyDayArray.length; k++){
 			tempstr = tempFriendlyDayArray[k];
@@ -426,20 +484,36 @@ function addTimeRange(){
 				currentDay++;					
 				if (currentDay != nextDay){
 					if (firstprint)
-						tempFriendlyTime += ", ";
+						rtempFriendlyTime += ", ";
 					currentDay--;
 					if (currentDay != firstDay)
-						tempFriendlyTime += day_array[firstDay] + " - " + day_array[currentDay];
+						rtempFriendlyTime += day_array[firstDay] + " - " + day_array[currentDay];
 					else
-						tempFriendlyTime += day_array[firstDay];
+						rtempFriendlyTime += day_array[firstDay];
 					firstDayFound = false;	
 					firstprint = true;			
 				}
 			}
 		}			
 		
-		 
-		tempTime += tempID;
+		//sort the tempID
+		var tempsortArray = rtempID.split(",");
+		var isFirstdone = false;
+		tempsortArray.sort();
+		//clear tempID
+		rtempID = "";
+		for (t=0; t<tempsortArray.length; t++)
+		{
+			if (tempsortArray[t] != ""){
+				if (!isFirstdone){
+					rtempID += tempsortArray[t];
+					isFirstdone = true;
+				}
+				else
+					rtempID += "," + tempsortArray[t];
+			}
+		} 
+		
 		 
 		//get time specified
 		starttimehour = document.getElementById("starttimehour").value;
@@ -450,16 +524,39 @@ function addTimeRange(){
 		timeRange = "||" + starttimehour + ":";
 		timeRange += starttimemin + "-";
 		timeRange += stoptimehour + ":";	
-		timeRange += stoptimemin;
-		
-		//add time ranges
-		tempTime += timeRange;
-		
+		timeRange += stoptimemin;		
+				
 		//get description for time range
-		var tempdescr = document.getElementById("timerangedescr").value
+		var tempdescr = document.getElementById("timerangedescr").value		
 		
-		tempTime += "||" + tempdescr;
+		if (nonrepeatingfound){
+			nrtempTime += nrtempID;
+			//add time ranges
+			nrtempTime += timeRange;			
+			//add description
+			nrtempTime += "||" + tempdescr;
+			insertElements(nrtempFriendlyTime, starttimehour, starttimemin, stoptimehour, stoptimemin, tempdescr, nrtempTime, nrtempID);
+		}
 		
+		if (repeatingfound){
+			rtempTime += rtempID;
+			//add time ranges
+			rtempTime += timeRange;
+			//add description
+			rtempTime += "||" + tempdescr;
+			insertElements(rtempFriendlyTime, starttimehour, starttimemin, stoptimehour, stoptimemin, tempdescr, rtempTime, rtempID);
+		}
+		
+	}
+	else
+	{
+		//no days were selected, alert user
+		alert ("You must select at least 1 day before adding time");
+	}
+}
+
+function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimehour, stoptimemin, tempdescr, tempTime, tempID){
+	
 		//add it to the schedule list
 		d = document;
 		tbody = d.getElementById("scheduletable").getElementsByTagName("tbody").item(0);
@@ -499,12 +596,6 @@ function addTimeRange(){
 		clearCalendar();
 		clearTime();
 		clearDescr();
-	}
-	else
-	{
-		//no days were selected, alert user
-		alert ("You must select at least 1 day before adding time");
-	}
 }
 
 
@@ -567,20 +658,22 @@ function editRow(incTime) {
 	document.getElementById("timerangedescr").value = descr;
 
 	//toggle the appropriate days
-	for (i=0; i<tempdayArray.length-1; i++)
+	for (i=0; i<tempdayArray.length; i++)
 	{
-		var tempweekstr = tempdayArray[i];
-		dashpos = tempweekstr.search("-");			
-				
-		if (dashpos == "-1")
-		{
-			tempstr = "w2p" + tempdayArray[i];
+		if (tempdayArray[i]){
+			var tempweekstr = tempdayArray[i];
+			dashpos = tempweekstr.search("-");			
+					
+			if (dashpos == "-1")
+			{
+				tempstr = "w2p" + tempdayArray[i];
+			}
+			else
+			{
+				tempstr = tempdayArray[i];
+			}
+			daytoggle(tempstr);
 		}
-		else
-		{
-			tempstr = tempdayArray[i];
-		}
-		daytoggle(tempstr);
 	}
 }
 
@@ -640,53 +733,63 @@ EOD;
                     	<?php 
                     	$monthcounter = date("n");
                     	$monthlimit = $monthcounter + 12;
-                    	for ($monthcounter; $monthcounter<$monthlimit; $monthcounter++){?>
+                    	for ($k=0; $k<12; $k++){?>	             
                     		<option value="<?php echo $monthcounter;?>"><?php echo date("F y", mktime(0, 0, 0, date($monthcounter), 1, date("Y")));?></option>
-                          <?php } ?>      	
+                          <?php        	
+                          if ($monthcounter == 12)
+							{
+								$monthcounter = 1;
+							}
+							else
+							{
+								$monthcounter++;
+							}	
+						} ?>      	
                     </select><br><br>
             		<?php
             		$firstmonth = TRUE;
-            		$weekcounter = 1;
             		$monthcounter = date("n");
-            		$monthlimit = $monthcounter + 12;
-            		for ($monthcounter; $monthcounter<$monthlimit; $monthcounter++){
+            		for ($k=0; $k<12; $k++){
 						$firstdayofmonth = date("w", mktime(0, 0, 0, date($monthcounter), 1, date("Y")));
-						$daycounter = 1;//number of day in month
+						$daycounter = 1;
+						//number of day in month
 						$numberofdays = date("t", mktime(0, 0, 0, date($monthcounter), 1, date("Y")));
+						$weekcounter =  date("W", mktime(0, 0, 0, date($monthcounter), date($daycounter), date("Y")));
+						//trim leading zeros
+						$weekcounter = ltrim($weekcounter, "0");
 						$firstdayprinted = FALSE;
 						$lasttr = FALSE;
-						$weekdaycounter = 0;//0 for Sun, 1 for Mon, etc						
+						$positioncounter = 0;//0 for Sun, 1 for Mon, 2 for Tues, etc						
 						?>	
 	                        <div id="<?php echo date("F y",mktime(0, 0, 0, date($monthcounter), 1, date("Y")));?>" z-index:-1000; style="position:relative; display:<?php if($firstmonth)echo "block";else echo "none";?>">    	
 		                   	<TABLE BORDER=1 CELLSPACING=1 CELLPADDING=1 id="calTable" class="tabcont">
 								<TR><TD COLSPAN="7" ALIGN=center class="listbg"><B><font color="white"><?php echo date("F Y", mktime(0, 0, 0, date($monthcounter), 1, date("Y")));?></B></TD>
-								</TR>				
-								
+								</TR>							
 								<TR>
-									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p0');"><u><b>Sun</b></u></TD>
+									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p0');"><u><b>Sun</b></u></TD>																
 									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p1');"><u><b>Mon</b></u></TD>
 									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p2');"><u><b>Tue</b></u></TD>
 									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p3');"><u><b>Wed</b></u></TD>
 									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p4');"><u><b>Thu</b></u></TD>
 									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p5');"><u><b>Fri</b></u></TD>
-									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p6');"><u><b>Sa</b>t</u></TD>
+									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p6');"><u><b>Sat</b></u></TD>
 								</TR>
 								<?php			
 								$firstmonth = FALSE;				
-								for ($i=0; $daycounter<=$numberofdays; $i++){
-									if ($weekdaycounter == 0)
+								while ($daycounter<=$numberofdays){
+									if ($positioncounter == 0)
 									{
 										echo "<tr>";
 									}											
-									if ($firstdayofmonth == $weekdaycounter){?>
-										<TD ALIGN=center style="cursor: pointer;" class="listr" id="w<?=$weekcounter;?>p<?=$weekdaycounter;?>" onClick="daytoggle('w<?=$weekcounter;?>p<?=$weekdaycounter;?>-m<?=$monthcounter;?>d<?=$daycounter;?>');">
+									if ($firstdayofmonth == $positioncounter){?>
+										<TD ALIGN=center style="cursor: pointer;" class="listr" id="w<?=$weekcounter;?>p<?=$positioncounter;?>" onClick="daytoggle('w<?=$weekcounter;?>p<?=$positioncounter;?>-m<?=$monthcounter;?>d<?=$daycounter;?>');">
 										<?php echo $daycounter;
 										$daycounter++;
 										$firstdayprinted = TRUE;
 										echo "</td>";
 									}
 									elseif ($firstdayprinted == TRUE && $daycounter <= $numberofdays){?>
-										<TD ALIGN=center style="cursor: pointer;" class="listr" id="w<?=$weekcounter;?>p<?=$weekdaycounter;?>" onClick="daytoggle('w<?=$weekcounter;?>p<?=$weekdaycounter;?>-m<?=$monthcounter;?>d<?=$daycounter;?>');">
+										<TD ALIGN=center style="cursor: pointer;" class="listr" id="w<?=$weekcounter;?>p<?=$positioncounter;?>" onClick="daytoggle('w<?=$weekcounter;?>p<?=$positioncounter;?>-m<?=$monthcounter;?>d<?=$daycounter;?>');">
 										<?php echo $daycounter;
 										$daycounter++;
 										echo "</td>";
@@ -696,20 +799,32 @@ EOD;
 										echo "<td align=center class=\"listr\"></td>";
 									}
 									
-									//if day is Saturday, 
-									if ($weekdaycounter == 6)
+									//if day is Sunday, 
+									if ($positioncounter == 6)
 									{
-										$weekdaycounter = 0;
-										$weekcounter++;
+										$positioncounter = 0;
+										$weekcounter =  date("W", mktime(0, 0, 0, date($monthcounter), date($daycounter+1), date("Y")));
+										//trim leading zeros
+										$weekcounter = ltrim($weekcounter, "0");
 										echo "</tr>";
 									}
 									else{
-										$weekdaycounter++;
+										$positioncounter++;
 									}									
-								}?>	
+								}//end while loop?>	
 							</TABLE>
 							</div>
-					<?php } //end for loop
+					<?php 
+						
+						if ($monthcounter == 12)
+						{
+							$monthcounter = 1;
+						}
+						else
+						{
+							$monthcounter++;
+						}					
+					} //end for loop
 					?>
 							<br/>
 					Click individual date to select that date only. Click the appropriate weekday Header to select all occurences of that weekday.
@@ -734,7 +849,7 @@ EOD;
 				  			</td>
 				  		</tr>
 				  	</table><br>
-                    Enter the time range (in 24 hour format) for the day(s) selected on the Month(s) above.
+                    Enter the time range (in 24 hour format) for the day(s) selected on the Month(s) above. The start and stop minutes can only be in 15 minute increments. I.E. 15, 30, 45 or 00.
 					</td>
 				</tr>
 				<tr>
@@ -772,55 +887,69 @@ EOD;
 								<?php
 								if ($getSchedule){
 									$counter = 0;
-									$tempFriendlyTime = "";
-									$timerangearray = explode("||", $pconfig['timerange']);
-									$timerangedescrarray = explode("||", $pconfig['timedescr']);
-									foreach($timerangearray as $timerange) {
-										$dayFriendly = "";
+																		
+									foreach($pconfig['timerange'] as $timerange) {
+										$firstPrint = false;
 										$tempFriendlyTime = "";
-										$monthpos = "";
+										$tempID = "";
 										if ($timerange){
-											$timedescr = $timerangedescrarray[$counter];									
+											$dayFriendly = "";
+											$tempFriendlyTime = "";
+											$timedescr = $timerange['rangedescr'];									
 											$daytimeseparator = strrpos($timerange, ",");
-											$tempID = substr($timerange, 0, $daytimeseparator+1); 
-											$temptimerange = substr($timerange, $daytimeseparator+1);
+												
+											//get hours
+											$temptimerange = $timerange['hour'];
 											$temptimeseparator = strrpos($temptimerange, "-");
 											
 											$starttime = substr ($temptimerange, 0, $temptimeseparator); 
 											$stoptime = substr ($temptimerange, $temptimeseparator+1); 
-											$tempTime = $tempID . "||" . $starttime . "-" . $stoptime . "||" . $timedescr;	
-											
-											$tempdayRange = explode(",", $tempID);
-											foreach ($tempdayRange as $day)
-											{												
-												if ($day != "")
-												{
-													$monthpos = strpos($day, "m");
-													if (!$monthpos)
-													{
-														$dayFriendly .= $day . ",";
-													} 
+												
+											if ($timerange['month']){
+												$tempmontharray = explode(",", $timerange['month']);
+												$tempdayarray = explode(",",$timerange['day']);
+												$arraycounter = 0;
+												foreach ($tempmontharray as $monthtmp){
+													$month = $tempmontharray[$arraycounter];
+													$day = $tempdayarray[$arraycounter];
+													$daypos = date("w", mktime(0, 0, 0, date($month), date($day), date("Y")));
+													//if sunday, move to monday to get correct week number. This is due to php limitations on ISO-8601. When we move to php5.1 we can change this.
+													if ($daypos == 0)
+														$weeknumber = date("W", mktime(0, 0, 0, date($month), date($day+1), date("Y")));
 													else
-													{
-														$daypos = strpos($day, "d");
-														$month = substr($day, $monthpos+1, $daypos-$monthpos-1);
-														$day = substr($day, $daypos+1);
-														$month = $monthArray[$month-1];
+														$weeknumber = date("W", mktime(0, 0, 0, date($month), date($day), date("Y")));
 														
-														$tempFriendlyTime .= $month . " " . $day . ",";
+													$weeknumber = ltrim($weeknumber, "0");														
+													$monthstr = $monthArray[$month-1];
+													$tempFriendlyTime .= $monthstr . " " . $day . ",";
+													
+													$tempID .= "w" . $weeknumber . "p" . $daypos . "-m" .  $month . "d" . $day;
+													if (!$firstPrint)
+													{
+														$tempID .= ",";
+														$firstPrint = true;
 													}
+													$arraycounter++;													
 												}
 											}
+											else
+											{
+												$dayFriendly = $timerange['day'];
+												$tempID = $dayFriendly;
+											}											
 											
-												$foundEnd = false;
-												$firstDayFound = false;
-												$firstprint = false;
-												$tempFriendlyDayArray = explode(",", $dayFriendly);
-
-												$currentDay = "";
-												$firstDay = "";
-												$nextDay = "";
-												$i = 0;													
+											$tempTime = $tempID . "||" . $starttime . "-" . $stoptime . "||" . $timedescr;
+									
+											//following code makes the days friendly appearing, IE instead of Mon, Tues, Wed it will show Mon - Wed
+											$foundEnd = false;
+											$firstDayFound = false;
+											$firstprint = false;
+											$tempFriendlyDayArray = explode(",", $dayFriendly);
+											$currentDay = "";
+											$firstDay = "";
+											$nextDay = "";
+											$i = 0;
+											if (!$timerange['month']){										
 												foreach ($tempFriendlyDayArray as $day){
 													if ($day != ""){
 														if (!$firstDayFound)
@@ -845,7 +974,8 @@ EOD;
 														}
 														$i++;
 													}
-												}			
+												}		
+											}	
 												
 																																													
 									?>

@@ -152,6 +152,9 @@ defCmdT("config.xml","dumpconfigxml");
 
 defCmdT("DMESG","/sbin/dmesg -a");
 
+defCmdT("netstat -mb","netstat -mb");
+defCmdT("vmstat -z","vmstat -z");
+
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
 

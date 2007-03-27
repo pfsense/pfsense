@@ -90,7 +90,7 @@ function filter_configure_sync() {
 	 * and if so load ipfw for later usage.
 	 */
 	foreach($config['filter']['rule'] as $rule) {
-		if($rule['schedule'])
+		if($rule['sched'])
 			$time_based_rules = true;
 	}
 	if($time_based_rules == true) {
@@ -1913,8 +1913,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		$aline['dstport'] . $aline['icmp-type'] . $aline['flags'];
 
 	/* is a time based rule schedule attached? */
-	if($rule['schedule']) {
-		$status = get_time_based_rule_status($rule['schedule']);
+	if($rule['sched']) {
+		$status = get_time_based_rule_status($rule['sched']);
 		if($status) {
 			return $line;
 		} else {

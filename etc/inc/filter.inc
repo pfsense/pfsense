@@ -1914,7 +1914,14 @@ function generate_user_filter_rule($rule, $ngcounter) {
 
 	/* is a time based rule schedule attached? */
 	if($rule['sched']) {
-		$status = get_time_based_rule_status($rule['sched']);
+		if($config['schedules']) {
+			foreach($config['schedules']['schedule'] as $sched) {
+				if($sched['name'] == $rule['sched'])
+					$schedule_xml_block = $sched;					
+			}
+		}
+		if($schedule_xml_block)
+			$status = get_time_based_rule_status($schedule_xml_block);
 		if($status) {
 			return $line;
 		} else {

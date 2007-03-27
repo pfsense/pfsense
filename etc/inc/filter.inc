@@ -273,7 +273,7 @@ function filter_configure_sync() {
 	if($time_based_rules == true) {
 		$status = intval(`ps awux | grep -v grep | grep minicron | grep filter_configure_sync | wc -l | awk '{ print $1 }'`);
 		if($status == "0") 
-			exec("/usr/local/bin/minicron 900 /etc/rc.filter_configure_sync");
+			exec("/usr/local/bin/minicron 900 /var/run/filter_configure_sync_minicron.pid /etc/rc.filter_configure_sync");
 		tdr_install_set();
 	}
 

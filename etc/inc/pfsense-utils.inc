@@ -472,9 +472,9 @@ function get_time_based_rule_status($schedule) {
 	 * iterate through time blocks and deterimine
 	 * if the rule should be installed or not.
 	 */
-	foreach($schedule['time'] as $timeday) {
-		if($timeday['week']) 
-			$week = $timeday['week'];
+	foreach($schedule['timerange'] as $timeday) {
+		if($timeday['month']) 
+			$month = $timeday['month'];
 		else 
 			$week = "";	
 		if($timeday['day']) 
@@ -493,10 +493,10 @@ function get_time_based_rule_status($schedule) {
 			$desc = $timeday['desc'];
 		else 
 			$desc = "";
-		if($week) {
-			$weekstatus = tdr_week($week);
+		if($month) {
+			$monthstatus = tdr_month($month);
 		} else {
-			$weekstatus = true;
+			$monthstatus = true;
 		}
 		if($day) {
 			$daystatus = tdr_day($day);
@@ -559,9 +559,9 @@ function tdr_hour($schedule) {
 function tdr_position($schedule) {
 	/*
 	 * Calculate possition, ie: day of week.
-	 * Sunday = 0, Monday = 1, Tuesday = 2
-	 * Weds = 3, Thursday = 4, Friday = 5,
-	 * Saturday = 6
+	 * Sunday = 1, Monday = 2, Tuesday = 3
+	 * Weds = 4, Thursday = 5, Friday = 6,
+	 * Saturday = 7
 	 * ...
 	 */
 	global $debug;
@@ -574,16 +574,15 @@ function tdr_position($schedule) {
 	return false;
 }
 
-function tdr_week($schedule) {
+function tdr_month($schedule) {
 	/*
-	 * Calculate week, ie:
-	 * week 1, week 2, week 3, week 4
+	 * Calculate month
 	 */
 	global $debug;
-	$todays_week = date("W");
-	$weeks = split(",", $schedule);
-	foreach($weeks as $week) {
-		if($week == $todays_week) 
+	$todays_month = date("n");
+	$months = split(",", $schedule);
+	foreach($months as $month) {
+		if($month == $todays_month) 
 			return true;
 	}
 	return false;

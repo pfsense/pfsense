@@ -1581,12 +1581,22 @@ function system_start_ftp_helpers() {
 					log_error("Config: AON rule matched for interface {$ifname} - using FTP proxy");
 				}
 			}
+			if(isset($config['shaper']['enable'])) {
+				if($config['ezshaper']['step5']['p2pcatchall']) {
+					$shaper_queue = "-q qP2PUp ";
+				} else { 
+					$downq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['inside_int']);
+					$shaper_queue = "-q {$downq}def ";
+				}
+			} else {
+				$shaper_queue = "";
+			}
 			/* if pftpx is already running then do not launch it again */
 			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/pftpx -c {$port}\" | grep -v grep | sed \"s/  */ /g\"");
 			if(!$helpers && $ip)
- 				mwexec("/usr/local/sbin/pftpx -c {$port} -g 8021 {$ip}");
+ 				mwexec("/usr/local/sbin/pftpx {$shaper_queue}-c {$port} -g 8021 {$ip}");
 			if(!$ip)
-				mwexec("/usr/local/sbin/ftpsesame -i $int");
+				mwexec("/usr/local/sbin/ftpsesame {$shaper_queue}-i $int");
 			$interface_counter++;
 		}
 	}
@@ -1594,7 +1604,7 @@ function system_start_ftp_helpers() {
 	$num_bridges = find_number_of_created_bridges();
 	$num_bridges++;
 	for($x=0; $x<$num_bridges; $x++) {
-		mwexec("/usr/local/sbin/ftpsesame -i bridge{$x}");
+		mwexec("/usr/local/sbin/ftpsesame {$shaper_queue}-i bridge{$x}");
 	}
 }
 

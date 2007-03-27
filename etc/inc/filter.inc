@@ -934,7 +934,17 @@ function filter_nat_rules_generate() {
 						 *   routines because if this is the first bootup the filter is not completely configured
                                                  *   and thus pf is not fully running.   otherwise we end up with: pftpx: pf is disabled
                                                  */
-						$after_filter_configure_run[] = "/usr/local/sbin/pftpx -f {$target} -b {$external_address} -c 21 -g 21";
+						if(isset($config['shaper']['enable'])) {
+							if($config['ezshaper']['step5']['p2pcatchall'])  {
+								$shaper_queue = "-q qP2PUp ";
+							} else {
+								$upq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['outside_int']);
+								$shaper_queue = "-q {$upq}def ";
+							}
+						} else {
+							$shaper_queue = "";
+						}
+						$after_filter_configure_run[] = "/usr/local/sbin/pftpx {$shaper_queue}-f {$target} -b {$external_address} -c 21 -g 21";
 					}
 					$dontinstallrdr = true;
 				}

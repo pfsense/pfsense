@@ -133,7 +133,7 @@ include("head.inc");
 							}
 							else
 							{
-								$tempdayFriendly = $timerange['day'];
+								$tempdayFriendly = $timerange['position'];
 								$firstDayFound = false;
 								$tempFriendlyDayArray = explode(",", $tempdayFriendly);								
 								$currentDay = "";

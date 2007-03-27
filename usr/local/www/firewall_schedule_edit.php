@@ -105,7 +105,7 @@ if ($_POST) {
 			$dashpos = strpos($timestr, '-');
 			if ($dashpos === false)
 			{
-				$timeparts['day'] = $timestr;
+				$timeparts['position'] = $timestr;
 			}
 			else
 			{
@@ -934,7 +934,7 @@ EOD;
 											}
 											else
 											{
-												$dayFriendly = $timerange['day'];
+												$dayFriendly = $timerange['position'];
 												$tempID = $dayFriendly;
 											}											
 											

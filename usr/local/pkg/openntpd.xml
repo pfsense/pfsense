@@ -4,19 +4,6 @@
 	<custom_php_install_command>
 		openntpd_install();
 	</custom_php_install_command>
-	<menu>
-		<name>NTP server</name>
-		<tooltiptext>Configure the time server settings.</tooltiptext>
-		<section>Services</section>
-		<url>/pkg_edit.php?xml=openntpd.xml&amp;id=0</url>
-	</menu>
-	<service>
-		<name>OpenNTPD</name>
-		<description>NTP server.</description>
-		<rcfile>openntpd.sh</rcfile>
-		<executable>ntpd</executable>
-	</service>
-	<!-- Interface -->
 	<name>openntpd</name>
 	<title>NTP server</title>
 	<fields>

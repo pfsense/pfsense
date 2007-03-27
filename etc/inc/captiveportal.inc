@@ -268,7 +268,14 @@ EOD;
 
 		if (!isset($config['shaper']['enable'])) {
 			/* unload ipfw */
-			mwexec("/sbin/kldunload ipfw");
+			$installed_time_based_rules = false;
+			if($config['schedules']) {
+				foreach($config['schedules']['schedule'] as $sched) {
+					$installed_time_based_rules = true;
+				}
+			}
+			if($installed_time_based_rules == false)
+				mwexec("/sbin/kldunload ipfw");
 		} else {
 			/* shaper is on - just remove our rules */
 			mwexec("/sbin/ipfw -f delete set 1");

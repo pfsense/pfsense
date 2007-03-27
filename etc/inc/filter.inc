@@ -94,7 +94,7 @@ function filter_configure_sync() {
 			$time_based_rules = true;
 	}
 	if($time_based_rules == true) {
-		$status =`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`;
+		$status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
 		if($status < 1) 
 			mwexec("/sbin/kldload ipfw");
 	}
@@ -270,8 +270,12 @@ function filter_configure_sync() {
 	}
 
 	/* if time based rules are enabled then swap in the set */
-	if($time_based_rules == true) 
+	if($time_based_rules == true) {
+		$status = intval(`ps awux | grep -v grep | grep minicron | grep filter_configure_sync | wc -l | awk '{ print $1 }'`);
+		if($status == "0") 
+			exec("/usr/local/bin/minicron 900 /etc/rc.filter_configure_sync");
 		tdr_install_set();
+	}
 
 	/*
 	    we need a way to let a user run a shell cmd after each

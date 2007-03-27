@@ -411,11 +411,11 @@ function is_alias($name) {
 function alias_expand_value($name) {
 
 	global $aliastable, $config;
-
-	foreach($config['aliases']['alias'] as $alias) {
-		if($alias['name'] == $name)
-			return $alias['address'];
-	}
+	if($config['aliases']['alias'])
+		foreach($config['aliases']['alias'] as $alias) {
+			if($alias['name'] == $name)
+				return $alias['address'];
+		}
 
 }
 

@@ -1195,6 +1195,13 @@ EOD;
 EOD;
 	}
 
+	if (!isset($config['pppoe']['dnsnosec'])) {
+			$mpdconf .= <<<EOD
+	set ipcp enable req-sec-dns
+
+EOD;
+	}
+	
 	$mpdconf .= <<<EOD
 	open iface
 

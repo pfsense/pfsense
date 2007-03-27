@@ -36,8 +36,8 @@ require("guiconfig.inc");
 $starttimehr = 00;
 $starttimemin = 00;
 
-$stoptimehr = 24;
-$stoptimemin = 00;
+$stoptimehr = 23;
+$stoptimemin = 59;
 
 $dayArray = array ('Sun','Mon','Tues','Wed','Thur','Fri','Sat');
 $monthArray = array ('January','February','March','April','May','June','July','August','September','October','November','December');
@@ -76,6 +76,10 @@ if ($_POST) {
 		if (is_validaliasname($_POST['name']) == false)
 			$input_errors[] = "The schedule name may only consist of the characters a-z, A-Z, 0-9, -, _.";
 	}
+	
+	if (!$_POST['schedule0'])
+		$input_errors[] = "The schedule must have at least one time range configured.";
+	
 	
 	/* check for name conflicts */
 	foreach ($a_schedules as $schedule) {
@@ -382,12 +386,12 @@ function processEntries(){
 		}
 	}	
 	
-	if (stoptimemin != 15 && stoptimemin != 30 && stoptimemin != 45 && stoptimemin != 0){
-		errors = "Error: Stop Minute must be in 15 minute increments.";
+	if (stoptimemin != 15 && stoptimemin != 30 && stoptimemin != 45 && stoptimemin != 0 && stoptimemin != 59){
+		errors = "Error: Stop Minute can only be 0, 15, 30, 45, or 59.";
 		passedValidiation = false;
 	}
-	if (starttimemin != 15 && starttimemin != 30 && starttimemin != 45 && starttimemin != 0){
-		errors = "Error: Start Minute must be in 15 minute increments.";
+	if (starttimemin != 15 && starttimemin != 30 && starttimemin != 45 && starttimemin != 0 && starttimemin != 59){
+		alert ("Error: Start Minute can only be 0, 15, 30, 45, or 59.");
 		passedValidiation = false;
 	}
 		

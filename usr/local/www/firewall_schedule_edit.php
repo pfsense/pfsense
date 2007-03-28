@@ -716,7 +716,7 @@ EOD;
 				  <td width="85%" class="vtable">
 				  <input name="name" type="text" id="name" size="40" class="formfld" value="<?=htmlspecialchars($pconfig['name']);?>"><br>
 				      	<span class="vexpl">
-     					   The name of the alias may only consist of the characters a-z, A-Z and 0-9.
+     					   The name of the alias may only consist of the characters a-z, A-Z and 0-9, -, _
       					</span>					
 				  </td>
 				</tr>
@@ -853,7 +853,8 @@ EOD;
 				  			</td>
 				  		</tr>
 				  	</table><br>
-                    Enter the time range (in 24 hour format) for the day(s) selected on the Month(s) above. The start and stop minutes can only be in 15 minute increments. I.E. 15, 30, 45 or 00.
+                    Enter the time range (in 24 hour format) for the day(s) selected on the Month(s) above. The start and stop minutes can only be in 15 minute increments. I.E. 00, 15, 30, 45 or 59.
+                    <br>A full day is 0:0-23:59.
 					</td>
 				</tr>
 				<tr>

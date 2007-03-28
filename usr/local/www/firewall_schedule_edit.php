@@ -162,7 +162,10 @@ if ($_POST) {
 	//we received input errors, copy data to prevent retype
 	else
 	{
-		$getSchedule = true;
+		if (!$_POST['schedule0'])
+			$getSchedule = false;
+		else
+			$getSchedule = true;
 		$pconfig['name'] = $schedule['name'];
 		$pconfig['descr'] = $schedule['descr'];
 		$pconfig['timerange'] = $schedule['timerange'];
@@ -318,19 +321,16 @@ function update_month(){
 	}
 }
 
-//limit numbers only input for time range input boxes
-function checkKeyEntry(incEvent)
-{	
-	//cross browser support
-	if (incEvent.which) 
-		var code = incEvent.which;
-	else
-		var code = event.keyCode;
-		
-	if (code > 31 && (code < 48 || code > 57))
+function checkForRanges(){
+	if (daysSelected != "")
+	{
+		alert("You have not saved the specified time range. Please click 'Add Time' button to save the time range");
 		return false;
+	}
 	else
+	{
 		return true;
+	}
 }
 
 //check time limits
@@ -520,7 +520,7 @@ function addTimeRange(){
 		
 		 
 		//get time specified
-		starttimehour = document.getElementById("starttimehour").value;
+		starttimehour =  document.getElementById("starttimehour").value
 		starttimemin = document.getElementById("starttimemin").value;
 		stoptimehour = document.getElementById("stoptimehour").value;
 		stoptimemin = document.getElementById("stoptimemin").value;
@@ -578,7 +578,7 @@ function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimeh
 		tr.appendChild(td);
 		
 		td = d.createElement("td");
-		td.innerHTML=td.innerHTML="<input type='text' readonly class='formfld' name='timedescr" + schCounter + "' id='timedescr" + schCounter + "' style=' word-wrap:break-word; width:100%; border:0px solid;' value='" + tempdescr + "'>";
+		td.innerHTML="<input type='text' readonly class='formfld' name='timedescr" + schCounter + "' id='timedescr" + schCounter + "' style=' word-wrap:break-word; width:100%; border:0px solid;' value='" + tempdescr + "'>";
 		tr.appendChild(td);
 		
 		td = d.createElement("td");
@@ -843,18 +843,52 @@ EOD;
 				  		</tr>
 				  		<tr>
 				  			<td>
-				  				<input name="starttimehour" type="text" onkeypress="return checkKeyEntry(event)" onkeyup="javascript:checkTimeLimits();" class="formfld" id="starttimehour" size="2" maxlength="2" value="<?=$starttimehr;?>">&nbsp;Hr&nbsp;&nbsp;
-				  				<input name="starttimemin" type="text" onkeypress="return checkKeyEntry(event)" onkeyup="javascript:checkTimeLimits();" class="formfld" id="starttimemin" size="2" maxlength="2" value="<?=$starttimemin;?>">&nbsp;Min
+				  				<select name="starttimehour" onchange="javascript:checkTimeLimits();" class="formfld" id="starttimehour">
+				  					<?php 
+				  						for ($i=0; $i<24; $i++)
+				  						{				  							
+				  							echo "<option value=\"$i\">";
+				  							echo $i;
+				  							echo "</option>";
+				  						}
+				  					?>
+				  				</select>&nbsp;Hr&nbsp;&nbsp;
+				  				<select name="starttimemin" onchange="javascript:checkTimeLimits();" class="formfld" id="starttimemin">
+				  					<option value="0">0</option>
+				  					<option value="15">15</option>
+				  					<option value="30">30</option>
+				  					<option value="45">45</option>
+				  					<option value="59">59</option>
+				  				</select>&nbsp;Min
 				  			</td>
 				  			<td></td>
 				  			<td>
-				  				<input name="stoptimehour" type="text" onkeypress="return checkKeyEntry(event)" onkeyup="javascript:checkTimeLimits();" class="formfld" id="stoptimehour" size="2" maxlength="2" value="<?=$stoptimehr;?>">&nbsp;Hr&nbsp;&nbsp;
-				  				<input name="stoptimemin" type="text" onkeypress="return checkKeyEntry(event)" onkeyup="javascript:checkTimeLimits();" class="formfld" id="stoptimemin" size="2" maxlength="2" value="<?=$stoptimemin;?>">&nbsp;Min
+				  				<select name="stoptimehour" onchange="javascript:checkTimeLimits();" class="formfld" id="stoptimehour">
+				  				<?php 
+				  						for ($i=0; $i<24; $i++)
+				  						{
+				  							if ($i==23)
+				  								$selected = "SELECTED";
+				  							else
+				  								$selected = "";
+				  								
+				  							echo "<option value=\"$i\" $selected>";
+				  							echo $i;
+				  							echo "</option>";
+				  						}
+				  					?>
+				  				</select>&nbsp;Hr&nbsp;&nbsp;
+				  				<select name="stoptimemin"  onchange="javascript:checkTimeLimits();" class="formfld" id="stoptimemin">
+				  					<option value="0">0</option>
+				  					<option value="15">15</option>
+				  					<option value="30">30</option>
+				  					<option value="45">45</option>
+				  					<option value="59" SELECTED>59</option>
+				  				</select>&nbsp;Min
 				  			</td>
 				  		</tr>
 				  	</table><br>
-                    Enter the time range (in 24 hour format) for the day(s) selected on the Month(s) above. The start and stop minutes can only be in 15 minute increments. I.E. 00, 15, 30, 45 or 59.
-                    <br>A full day is 0:0-23:59.
+                    Select the time range for the day(s) selected on the Month(s) above. A full day is 0:0-23:59.
 					</td>
 				</tr>
 				<tr>
@@ -1020,7 +1054,7 @@ EOD;
 			 	<tr>
 				    <td width="15%" valign="top">&nbsp;</td>
 				    <td width="85%">
-				      <input id="submit" name="submit" type="submit" class="formbtn" value="Save" />
+				      <input id="submit" name="submit" type="submit" onclick="return checkForRanges();" class="formbtn" value="Save" />
 				      <input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="Cancel" onclick="history.back()" />
 				      <?php if (isset($id) && $a_schedules[$id]): ?>
 				      <input name="id" type="hidden" value="<?=$id;?>" />

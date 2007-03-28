@@ -333,33 +333,6 @@ function checkForRanges(){
 	}
 }
 
-//check time limits
-function checkTimeLimits(){
-	var starttimehour, starttimemin, stoptimehour, stoptimemin = "";
-	
-	//get time specified
-	starttimehour = parseInt(document.getElementById("starttimehour").value);
-	starttimemin = parseInt(document.getElementById("starttimemin").value);
-	stoptimehour = parseInt(document.getElementById("stoptimehour").value);
-	stoptimemin = parseInt(document.getElementById("stoptimemin").value);
-
-	//check limits
-	if (starttimehour > 23)
-		document.getElementById("starttimehour").value = 23;
-	if (starttimemin > 59)
-		document.getElementById("starttimemin").value = 00;
-	if (stoptimehour >= 24){
-		document.getElementById("stoptimehour").value = 24;
-		document.getElementById("stoptimemin").value = 0;
-	}
-	if (stoptimemin > 59)
-		if (stoptimehour != 24)
-			document.getElementById("stoptimemin").value = 59;
-		else 
-			document.getElementById("stoptimemin").value = 0;
-			
-}
-
 function processEntries(){
 	var tempstr, starttimehour, starttimemin, stoptimehour, stoptimemin, errors = "";
 	var passedValidiation = true;
@@ -385,15 +358,6 @@ function processEntries(){
 			passedValidiation = false;
 		}
 	}	
-	
-	if (stoptimemin != 15 && stoptimemin != 30 && stoptimemin != 45 && stoptimemin != 0 && stoptimemin != 59){
-		errors = "Error: Stop Minute can only be 0, 15, 30, 45, or 59.";
-		passedValidiation = false;
-	}
-	if (starttimemin != 15 && starttimemin != 30 && starttimemin != 45 && starttimemin != 0 && starttimemin != 59){
-		alert ("Error: Start Minute can only be 0, 15, 30, 45, or 59.");
-		passedValidiation = false;
-	}
 		
 	if (passedValidiation){
 		addTimeRange();
@@ -843,7 +807,7 @@ EOD;
 				  		</tr>
 				  		<tr>
 				  			<td>
-				  				<select name="starttimehour" onchange="javascript:checkTimeLimits();" class="formfld" id="starttimehour">
+				  				<select name="starttimehour" class="formfld" id="starttimehour">
 				  					<?php 
 				  						for ($i=0; $i<24; $i++)
 				  						{				  							
@@ -853,7 +817,7 @@ EOD;
 				  						}
 				  					?>
 				  				</select>&nbsp;Hr&nbsp;&nbsp;
-				  				<select name="starttimemin" onchange="javascript:checkTimeLimits();" class="formfld" id="starttimemin">
+				  				<select name="starttimemin" class="formfld" id="starttimemin">
 				  					<option value="0">0</option>
 				  					<option value="15">15</option>
 				  					<option value="30">30</option>
@@ -863,7 +827,7 @@ EOD;
 				  			</td>
 				  			<td></td>
 				  			<td>
-				  				<select name="stoptimehour" onchange="javascript:checkTimeLimits();" class="formfld" id="stoptimehour">
+				  				<select name="stoptimehour" class="formfld" id="stoptimehour">
 				  				<?php 
 				  						for ($i=0; $i<24; $i++)
 				  						{
@@ -878,7 +842,7 @@ EOD;
 				  						}
 				  					?>
 				  				</select>&nbsp;Hr&nbsp;&nbsp;
-				  				<select name="stoptimemin"  onchange="javascript:checkTimeLimits();" class="formfld" id="stoptimemin">
+				  				<select name="stoptimemin" class="formfld" id="stoptimemin">
 				  					<option value="0">0</option>
 				  					<option value="15">15</option>
 				  					<option value="30">30</option>

@@ -1950,6 +1950,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			/* rule is turned off, lets block the item */
 			$ipfw_rule = tdr_create_ipfw_rule($rule, "deny");
 			tdr_install_rule($ipfw_rule);
+			return $line;
 		}
 	} else {
 		return $line;
@@ -2557,9 +2558,9 @@ EOD;
 				fwrite($fd, $line);
 				foreach($rule_arr as $rule) {
 					if($rule['ackq'] != "")
-					$line = "{$rule['rule'] } queue ({$queue['name']}, {$rule['ackq']}) {$rule['descr']}\n";
+					$line = "{$rule['rule']} queue ({$queue['name']}, {$rule['ackq']}) {$rule['descr']}\n";
 					else
-					$line = "{$rule['rule'] } queue {$queue['name']} {$rule['descr']}\n";
+					$line = "{$rule['rule']} queue {$queue['name']} {$rule['descr']}\n";
 					fwrite($fd, $line);
 				}
 				fclose($fd);

@@ -935,7 +935,7 @@ function filter_nat_rules_generate() {
                                                  *   and thus pf is not fully running.   otherwise we end up with: pftpx: pf is disabled
                                                  */
 						if(isset($config['shaper']['enable'])) {
-							if($config['ezshaper']['step5']['p2pcatchall'])  {
+							if(isset($config['ezshaper']['step5']['p2pcatchall']))  {
 								$shaper_queue = "-q qP2PUp ";
 							} else {
 								$upq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['outside_int']);

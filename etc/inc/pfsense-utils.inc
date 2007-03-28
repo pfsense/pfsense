@@ -564,6 +564,8 @@ function tdr_day($schedule) {
 	 */
 	global $debug;
 	$weekday	= date("w");
+	if ($weekday == 0)
+		$weekday = 7;
 	$date	 	= date("d");
 	$defined_days = split(",", $schedule);
 	foreach($defined_days as $dd) {
@@ -590,13 +592,15 @@ function tdr_hour($schedule) {
 function tdr_position($schedule) {
 	/*
 	 * Calculate possition, ie: day of week.
-	 * Sunday = 0, Monday = 1, Tuesday = 2
+	 * Sunday = 7, Monday = 1, Tuesday = 2
 	 * Weds = 3, Thursday = 4, Friday = 5,
 	 * Saturday = 6
 	 * ...
 	 */
 	global $debug;
 	$weekday	= date("w");
+	if ($weekday == 0)
+		$weekday = 7;
 	$schedule_days = split(",", $schedule);
 	foreach($schedule_days as $day) {
 		if($day == $weekday) 

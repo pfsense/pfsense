@@ -33,7 +33,7 @@
 
 $pgtitle = "Firewall: Schedules";
 
-$dayArray = array ('Sun','Mon','Tues','Wed','Thur','Fri','Sat');
+$dayArray = array ('Mon','Tues','Wed','Thur','Fri','Sat','Sun');
 $monthArray = array ('January','February','March','April','May','June','July','August','September','October','November','December');
 
 require("guiconfig.inc");
@@ -156,9 +156,9 @@ include("head.inc");
 												$dayFriendly .= ", ";
 											$currentDay--;
 											if ($currentDay != $firstDay)
-												$dayFriendly .= $dayArray[$firstDay] . " - " . $dayArray[$currentDay];
+												$dayFriendly .= $dayArray[$firstDay-1] . " - " . $dayArray[$currentDay-1];
 											else
-												$dayFriendly .= $dayArray[$firstDay];
+												$dayFriendly .= $dayArray[$firstDay-1];
 											$firstDayFound = false;	
 											$firstprint = true;			
 										}
@@ -168,7 +168,7 @@ include("head.inc");
 							}		
 		
 						
-							$dayFriendly .= ": " . $starttime . "-" . $stoptime;											
+							$dayFriendly .= " : " . $starttime . "-" . $stoptime . " : " . $timerange['rangedescr'];											
 							echo $dayFriendly;	
 							echo "<br/>";
 						}

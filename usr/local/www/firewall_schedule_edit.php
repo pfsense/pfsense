@@ -39,7 +39,7 @@ $starttimemin = 00;
 $stoptimehr = 23;
 $stoptimemin = 59;
 
-$dayArray = array ('Sun','Mon','Tues','Wed','Thur','Fri','Sat');
+$dayArray = array ('Mon','Tues','Wed','Thur','Fri','Sat','Sun');
 $monthArray = array ('January','February','March','April','May','June','July','August','September','October','November','December');
 
 if (!is_array($config['schedules']['schedule']))
@@ -129,8 +129,7 @@ if ($_POST) {
 						$monthpos = strpos($currentselection, "m");
 						$daypos = strpos($currentselection, "d");
 						$monthstr .= substr($currentselection, $monthpos+1, $daypos-$monthpos-1);
-						$daystr .=  substr($currentselection, $daypos+1);
-			
+						$daystr .=  substr($currentselection, $daypos+1);			
 						$firstprint = true;
 					}
 				}
@@ -181,7 +180,7 @@ $jscriptstr = <<<EOD
 
 var daysSelected = "";
 var month_array = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-var day_array = ['Sun','Mon','Tues','Wed','Thur','Fri','Sat'];
+var day_array = ['Mon','Tues','Wed','Thur','Fri','Sat','Sun'];
 var schCounter = 0;
 
 
@@ -455,9 +454,9 @@ function addTimeRange(){
 						rtempFriendlyTime += ", ";
 					currentDay--;
 					if (currentDay != firstDay)
-						rtempFriendlyTime += day_array[firstDay] + " - " + day_array[currentDay];
+						rtempFriendlyTime += day_array[firstDay-1] + " - " + day_array[currentDay-1];
 					else
-						rtempFriendlyTime += day_array[firstDay];
+						rtempFriendlyTime += day_array[firstDay-1];
 					firstDayFound = false;	
 					firstprint = true;			
 				}
@@ -575,7 +574,7 @@ function clearCalendar(){
 	for (j=1; j<=53; j++)
 	{
 		//loop through all 7 days
-		for (k=0; k<7; k++){
+		for (k=1; k<8; k++){
 			tempstr = 'w' + j + 'p' + k;
 			daycell = eval('document.getElementById(tempstr)');
 			if (daycell != null){
@@ -701,12 +700,14 @@ EOD;
                     	<?php 
                     	$monthcounter = date("n");
                     	$monthlimit = $monthcounter + 12;
+                    	$yearcounter = date("Y");
                     	for ($k=0; $k<12; $k++){?>	             
-                    		<option value="<?php echo $monthcounter;?>"><?php echo date("F y", mktime(0, 0, 0, date($monthcounter), 1, date("Y")));?></option>
+                    		<option value="<?php echo $monthcounter;?>"><?php echo date("F y", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter)));?></option>
                           <?php        	
                           if ($monthcounter == 12)
 							{
 								$monthcounter = 1;
+								$yearcounter++;
 							}
 							else
 							{
@@ -717,35 +718,38 @@ EOD;
             		<?php
             		$firstmonth = TRUE;
             		$monthcounter = date("n");
+            		$yearcounter = date("Y");
             		for ($k=0; $k<12; $k++){
-						$firstdayofmonth = date("w", mktime(0, 0, 0, date($monthcounter), 1, date("Y")));
+						$firstdayofmonth = date("w", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter)));
+						if ($firstdayofmonth == 0)
+							$firstdayofmonth = 7;
+							
 						$daycounter = 1;
 						//number of day in month
-						$numberofdays = date("t", mktime(0, 0, 0, date($monthcounter), 1, date("Y")));
-						$weekcounter =  date("W", mktime(0, 0, 0, date($monthcounter), date($daycounter), date("Y")));
-						//trim leading zeros
-						$weekcounter = ltrim($weekcounter, "0");
+						$numberofdays = date("t", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter)));
 						$firstdayprinted = FALSE;
 						$lasttr = FALSE;
-						$positioncounter = 0;//0 for Sun, 1 for Mon, 2 for Tues, etc						
+						$positioncounter = 1;//7 for Sun, 1 for Mon, 2 for Tues, etc						
 						?>	
-	                        <div id="<?php echo date("F y",mktime(0, 0, 0, date($monthcounter), 1, date("Y")));?>" z-index:-1000; style="position:relative; display:<?php if($firstmonth)echo "block";else echo "none";?>">    	
+	                        <div id="<?php echo date("F y",mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter)));?>" z-index:-1000; style="position:relative; display:<?php if($firstmonth)echo "block";else echo "none";?>">    	
 		                   	<TABLE BORDER=1 CELLSPACING=1 CELLPADDING=1 id="calTable" class="tabcont">
-								<TR><TD COLSPAN="7" ALIGN=center class="listbg"><B><font color="white"><?php echo date("F Y", mktime(0, 0, 0, date($monthcounter), 1, date("Y")));?></B></TD>
+								<TR><TD COLSPAN="7" ALIGN=center class="listbg"><B><font color="white"><?php echo date("F Y", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter)));?></B></TD>
 								</TR>							
-								<TR>
-									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p0');"><u><b>Sun</b></u></TD>																
+								<TR>																
 									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p1');"><u><b>Mon</b></u></TD>
 									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p2');"><u><b>Tue</b></u></TD>
 									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p3');"><u><b>Wed</b></u></TD>
 									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p4');"><u><b>Thu</b></u></TD>
 									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p5');"><u><b>Fri</b></u></TD>
 									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p6');"><u><b>Sat</b></u></TD>
+									<TD ALIGN=center class="listhdrr" style="cursor: pointer;" onClick="daytoggle('w1p7');"><u><b>Sun</b></u></TD>
 								</TR>
 								<?php			
 								$firstmonth = FALSE;				
 								while ($daycounter<=$numberofdays){
-									if ($positioncounter == 0)
+									$weekcounter =  date("W", mktime(0, 0, 0, date($monthcounter), date($daycounter), date($yearcounter)));
+									$weekcounter = ltrim($weekcounter, "0");
+									if ($positioncounter == 1)
 									{
 										echo "<tr>";
 									}											
@@ -767,18 +771,14 @@ EOD;
 										echo "<td align=center class=\"listr\"></td>";
 									}
 									
-									//if day is Sunday, 
-									if ($positioncounter == 6)
-									{
-										$positioncounter = 0;
-										$weekcounter =  date("W", mktime(0, 0, 0, date($monthcounter), date($daycounter+1), date("Y")));
-										//trim leading zeros
-										$weekcounter = ltrim($weekcounter, "0");
+									if ($positioncounter ==7){
+										$positioncounter = 1;
 										echo "</tr>";
 									}
 									else{
 										$positioncounter++;
-									}									
+									}
+								
 								}//end while loop?>	
 							</TABLE>
 							</div>
@@ -787,6 +787,7 @@ EOD;
 						if ($monthcounter == 12)
 						{
 							$monthcounter = 1;
+							$yearcounter++;
 						}
 						else
 						{
@@ -916,22 +917,20 @@ EOD;
 													$month = $tempmontharray[$arraycounter];
 													$day = $tempdayarray[$arraycounter];
 													$daypos = date("w", mktime(0, 0, 0, date($month), date($day), date("Y")));
-													//if sunday, move to monday to get correct week number. This is due to php limitations on ISO-8601. When we move to php5.1 we can change this.
+													//if sunday, set position to 7 to get correct week number. This is due to php limitations on ISO-8601. When we move to php5.1 we can change this.
 													if ($daypos == 0)
-														$weeknumber = date("W", mktime(0, 0, 0, date($month), date($day+1), date("Y")));
-													else
-														$weeknumber = date("W", mktime(0, 0, 0, date($month), date($day), date("Y")));
-														
+														$day = 7;													
+													$weeknumber = date("W", mktime(0, 0, 0, date($month), date($day), date("Y")));
 													$weeknumber = ltrim($weeknumber, "0");														
 													$monthstr = $monthArray[$month-1];
 													$tempFriendlyTime .= $monthstr . " " . $day . ",";
-													
-													$tempID .= "w" . $weeknumber . "p" . $daypos . "-m" .  $month . "d" . $day;
-													if (!$firstPrint)
+													if ($firstPrint)
 													{
 														$tempID .= ",";
-														$firstPrint = true;
 													}
+													$tempID .= "w" . $weeknumber . "p" . $daypos . "-m" .  $month . "d" . $day;
+													$firstPrint = true;
+
 													$arraycounter++;													
 												}
 											}
@@ -969,9 +968,9 @@ EOD;
 																$tempFriendlyTime .= ", ";
 															$currentDay--;
 															if ($currentDay != $firstDay)
-																$tempFriendlyTime .= $dayArray[$firstDay] . " - " . $dayArray[$currentDay];
+																$tempFriendlyTime .= $dayArray[$firstDay-1] . " - " . $dayArray[$currentDay-1];
 															else
-																$tempFriendlyTime .= $dayArray[$firstDay];
+																$tempFriendlyTime .= $dayArray[$firstDay-1];
 															$firstDayFound = false;	
 															$firstprint = true;			
 														}

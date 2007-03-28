@@ -437,7 +437,8 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td class="list">&nbsp;</td>
                   <td class="list">&nbsp;</td>
                   <td class="list">&nbsp;</td>
-		  <td class="list">&nbsp;</td>
+		 		  <td class="list">&nbsp;</td>
+				  <td class="list">&nbsp;</td>
                   <td class="list">&nbsp;</td>
                   <td class="list">&nbsp;</td>
                   <td class="list">&nbsp;</td>

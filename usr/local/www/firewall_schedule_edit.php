@@ -74,7 +74,7 @@ if ($_POST) {
 		$input_errors[] = "Reserved word used for schedule name.";
 	} else {
 		if (is_validaliasname($_POST['name']) == false)
-			$input_errors[] = "The schedule name may only consist of the characters a-z, A-Z, 0-9, -, _.";
+			$input_errors[] = "The schedule name may only consist of the characters a-z, A-Z, 0-9, -";
 	}
 	
 	if (!$_POST['schedule0'])

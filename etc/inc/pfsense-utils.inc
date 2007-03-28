@@ -33,10 +33,27 @@
  *
  */
 
+/****f* pfsense-utils/get_tmp_file
+ * NAME
+ *   get_tmp_file
+ * INPUTS
+ *	 none
+ * RESULT
+ *   returns a temporary filename
+ ******/
 function get_tmp_file() {
 	return "/tmp/tmp-" . time();
 }
 
+/****f* pfsense-utils/tdr_install_cron
+ * NAME
+ *   tdr_install_cron
+ * INPUTS
+ *   $should_install true if the cron entry should be installed, false
+ *   if the entry should be removed if it is present
+ * RESULT
+ *   none
+ ******/
 function tdr_install_cron($should_install) {
 	global $config;
 	$is_installed = false;

@@ -271,10 +271,10 @@ function filter_configure_sync() {
 
 	/* if time based rules are enabled then swap in the set */
 	if($time_based_rules == true) {
-		$status = intval(`ps awux | grep -v grep | grep minicron | grep filter_configure_sync | wc -l | awk '{ print $1 }'`);
-		if($status == "0") 
-			exec("/usr/local/bin/minicron 900 /var/run/filter_configure_sync_minicron.pid /etc/rc.filter_configure_sync");
+		tdr_install_cron(true);
 		tdr_install_set();
+	} else {
+		tdr_install_cron(false);
 	}
 
 	/*

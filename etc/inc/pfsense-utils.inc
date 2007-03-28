@@ -37,6 +37,40 @@ function get_tmp_file() {
 	return "/tmp/tmp-" . time();
 }
 
+function tdr_install_cron($should_install) {
+	global $config;
+	$is_installed = false;
+	foreach($config['cron']['item'] as $item) {
+		$x=0;
+		if(strstr($item['command'], "filter_configure_sync.sh")) {
+			$is_installed = true;
+			$x++;
+		}
+	}
+	switch($should_install) {
+		case true:
+			if(!$is_installed) {
+				$cron_item = array();
+				$cron_item['minute'] = "0,15,30,45";
+				$cron_item['hour'] = "*";
+				$cron_item['mday'] = "*";
+				$cron_item['month'] = "*";
+				$cron_item['wday'] = "*";
+				$cron_item['who'] = "root";
+				$cron_item['command'] = "/etc/rc.filter_configure_sync.sh";		
+				$config['cron']['item'][] = $cron_item;
+				write_config("Installed 15 minute filter reload for Time Based Rules");
+				configure_cron();
+			}
+		break;
+		case false:
+			unset($config['cron']['item'][$x]);
+			write_config();
+			configure_cron();
+		break;
+	}
+}
+
 /****f* pfsense-utils/tdr_create_ipfw_rule
  * NAME
  *   tdr_create_ipfw_rule

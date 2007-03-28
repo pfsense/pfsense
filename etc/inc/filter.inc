@@ -1088,12 +1088,16 @@ function filter_nat_rules_generate() {
 											$loc_pt_translated = $loc_pt;
 											$toadd_array[] = $loc_pt_translated;
 										}
+										if($config['system']['reflectiontimeout']) 
+											$reflectiontimeout = $config['system']['reflectiontimeout'];
+										else 
+											$reflectiontimeout = "20";											
 										foreach($toadd_array as $tda){
-											fwrite($inetd_fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -u -w 20 {$target} {$tda}\n");
+											fwrite($inetd_fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -u -w {$reflectiontimeout} {$target} {$tda}\n");
 									  		if($ifname_real)
 									  			$natrules .= "rdr on \${$ifname_real} proto tcp from any to {$extaddr} port { {$xxx} } -> 127.0.0.1 port {$starting_localhost_port}\n";
 									  		$starting_localhost_port++;
-									  		fwrite($inetd_fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -w 20 {$target} {$tda}\n");
+									  		fwrite($inetd_fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -w {$reflectiontimeout} {$target} {$tda}\n");
 									  		if($ifname_real)
 									  			$natrules .= "rdr on \${$ifname_real} proto udp from any to {$extaddr} port { {$xxx} } -> 127.0.0.1 port {$starting_localhost_port}\n";
 									  		$xxx++;
@@ -1123,7 +1127,11 @@ function filter_nat_rules_generate() {
 												$dash_u = "-u ";
 											else
 												$dash_u = "";
-											fwrite($inetd_fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc {$dash_u}-w 20 {$target} {$tda}\n");
+											if($config['system']['reflectiontimeout']) 
+												$reflectiontimeout = $config['system']['reflectiontimeout'];
+											else 
+												$reflectiontimeout = "20";												
+											fwrite($inetd_fd, "{$starting_localhost_port}\tstream\t{$protocol}\tnowait/0\tnobody\t/usr/bin/nc nc {$dash_u}-w {$reflectiontimeout} {$target} {$tda}\n");
 											if($ifname_real)
 									  			$natrules .= "rdr on \${$ifname_real} proto {$protocol} from any to {$extaddr} port { {$xxx} } -> 127.0.0.1 port {$starting_localhost_port}\n";
 									  		$xxx++;

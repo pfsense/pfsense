@@ -253,7 +253,8 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listr" style="background-color: #e0e0e0">*</td>
-		  <td class="listr" style="background-color: #e0e0e0">*</td>
+                  <td class="listr" style="background-color: #e0e0e0">*</td>
+		 		 <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listbg" style="background-color: #990000"><font color="white">Block private networks</td>
                   <td valign="middle" nowrap class="list">
 				    <table border="0" cellspacing="0" cellpadding="1">
@@ -274,11 +275,12 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td width="3%" class="list">&nbsp;</td>
                   <td class="listt" align="center"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" width="11" height="11" border="0"></td>
                   <td class="listlr" style="background-color: #e0e0e0">*</td>
-                  <td class="listr" style="background-color: #e0e0e0">reserved/not assigned by IANA</td>
+                  <td class="listr" style="background-color: #e0e0e0">Reserved/not assigned by IANA</td>
                   <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listr" style="background-color: #e0e0e0">*</td>
-		  <td class="listr" style="background-color: #e0e0e0">*</td>
+				  <td class="listr" style="background-color: #e0e0e0">*</td>
+				   <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listbg" style="background-color: #990000"><font color="white">Block private networks</td>
                   <td valign="middle" nowrap class="list">
 				    <table border="0" cellspacing="0" cellpadding="1">
@@ -424,7 +426,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 			  <?php if ($nrules == 0): ?>
               <td class="listt"></td>
 			  <td class="listt"></td>
-			  <td class="listlr" colspan="7" align="center" valign="middle">
+			  <td class="listlr" colspan="8" align="center" valign="middle">
 			  <span class="gray">
 			  No rules are currently defined for this interface.<br>
 			  All incoming connections on this interface will be blocked until you add pass rules.<br><br>

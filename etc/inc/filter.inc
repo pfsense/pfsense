@@ -1947,8 +1947,13 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		if($status) {
 			return $line;
 		} else {
-			/* rule is turned off, lets block the item */
-			$ipfw_rule = tdr_create_ipfw_rule($rule, "deny");
+            /*   rule is turned off, if type == pass, deny traffic until 
+             *   active else allow traffic until active 
+             */
+           if ($type == "pass")
+               $ipfw_rule = tdr_create_ipfw_rule($rule, "deny");
+           else
+               $ipfw_rule = tdr_create_ipfw_rule($rule, "allow");
 			tdr_install_rule($ipfw_rule);
 			return $line;
 		}

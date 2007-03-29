@@ -837,10 +837,10 @@ function is_alias_inuse($alias) {
 	/* loop through firewall rules looking for alias in use */
 	if(is_array($config['filter']['rule']))
 		foreach($config['filter']['rule'] as $rule) {
-			if(is_array($rule['source']['address']))
+			if($rule['source']['address'])
 				if($rule['source']['address'] == $alias)
 					return true;
-			if(is_array($rule['destination']['address']))
+			if($rule['destination']['address'])
 				if($rule['destination']['address'] == $alias)
 					return true;
 		}

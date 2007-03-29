@@ -91,8 +91,8 @@ if ($_POST) {
 		if (isset($id) && ($a_maps[$id]) && ($a_maps[$id] === $mapent))
 			continue;
 
-		if (($mapent['mac'] == $_POST['mac']) || ($_POST['ipaddr'] && (ip2long($mapent['ipaddr']) == ip2long($_POST['ipaddr'])))) {
-			$input_errors[] = "This IP or MAC address already exists.";
+		if (($mapent['hostname'] == $_POST['hostname']) || ($mapent['mac'] == $_POST['mac']) || ($_POST['ipaddr'] && (ip2long($mapent['ipaddr']) == ip2long($_POST['ipaddr'])))) {
+			$input_errors[] = "This Hostname, IP or MAC address already exists.";
 			break;
 		}
 	}

@@ -2649,9 +2649,8 @@ EOD;
 				}
 				$local_subnet = return_vpn_subnet($tunnel['local-subnet']);
 				foreach($ifdescrs as $iface) {
+					echo "processing $iface\n";
 					foreach($ipsec_ips as $interface_ip) {
-						if(!$config['interfaces'][$iface]['ipaddr'])
-							continue;
 						if($iface == "wan")
 							$interface_ip = find_interface_ip(get_real_wan_interface());
 						else

@@ -932,8 +932,8 @@ function filter_nat_rules_generate() {
 							$external_address = find_interface_ip(get_real_wan_interface());
 						/*   install a pftpx helper, do not set a rule.  also use the delay filter configure run
 						 *   routines because if this is the first bootup the filter is not completely configured
-                                                 *   and thus pf is not fully running.   otherwise we end up with: pftpx: pf is disabled
-                                                 */
+						 *   and thus pf is not fully running.   otherwise we end up with: pftpx: pf is disabled
+						 */
 						if(isset($config['shaper']['enable'])) {
 							if(isset($config['ezshaper']['step5']['p2pcatchall']))  {
 								$shaper_queue = "-q qP2PUp ";

@@ -264,6 +264,8 @@ function filter_configure_sync() {
 	}
 	update_filter_reload_status("Plugins completed.");
 
+	system_start_ftp_helpers();
+	
 	if($config['system']['shapertype'] == "m0n0") {
 		require_once ("/etc/inc/m0n0/shaper.inc");
 		shaper_configure();	

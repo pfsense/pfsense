@@ -59,7 +59,7 @@ function tdr_install_cron($should_install) {
 	$is_installed = false;
 	foreach($config['cron']['item'] as $item) {
 		$x=0;
-		if(strstr($item['command'], "filter_configure_sync.sh")) {
+		if(strstr($item['command'], "filter_configure_sync")) {
 			$is_installed = true;
 			$x++;
 		}
@@ -74,7 +74,7 @@ function tdr_install_cron($should_install) {
 				$cron_item['month'] = "*";
 				$cron_item['wday'] = "*";
 				$cron_item['who'] = "root";
-				$cron_item['command'] = "/etc/rc.filter_configure_sync.sh";		
+				$cron_item['command'] = "/etc/rc.filter_configure_sync";		
 				$config['cron']['item'][] = $cron_item;
 				write_config("Installed 15 minute filter reload for Time Based Rules");
 				configure_cron();

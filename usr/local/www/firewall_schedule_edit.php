@@ -153,6 +153,8 @@ if ($_POST) {
 			$a_schedules[] = $schedule;
 		}
 		write_config();
+		
+		filter_configure();
 			
 		header("Location: firewall_schedule.php");
 		exit;

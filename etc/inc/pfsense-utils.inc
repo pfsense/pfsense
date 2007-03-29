@@ -874,9 +874,8 @@ function is_schedule_inuse($schedule) {
 	/* loop through firewall rules looking for schedule in use */
 	if(is_array($config['filter']['rule']))
 		foreach($config['filter']['rule'] as $rule) {
-			if(is_array($rule['sched']))
-				if($rule['sched'] == $schedule)
-					return true;
+			if($rule['sched'] == $schedule)
+				return true;
 		}
 	return false;
 }

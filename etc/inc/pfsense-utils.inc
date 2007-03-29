@@ -857,6 +857,30 @@ function is_alias_inuse($alias) {
 	return false;
 }
 
+/****f* pfsense-utils/is_schedule_inuse
+ * NAME
+ *   checks to see if a schedule is currently in use by a rule
+ * INPUTS
+ *
+ * RESULT
+ *   true or false
+ * NOTES
+ *
+ ******/
+function is_schedule_inuse($schedule) {
+	global $g, $config;
+
+	if($schedule == "") return false;
+	/* loop through firewall rules looking for schedule in use */
+	if(is_array($config['filter']['rule']))
+		foreach($config['filter']['rule'] as $rule) {
+			if(is_array($rule['sched']))
+				if($rule['sched'] == $schedule)
+					return true;
+		}
+	return false;
+}
+
 /****f* pfsense-utils/setup_polling_defaults
  * NAME
  *   sets up sysctls for pollingS

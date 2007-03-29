@@ -835,7 +835,7 @@ function is_alias_inuse($alias) {
 
 	if($alias == "") return false;
 	/* loop through firewall rules looking for alias in use */
-	if(is_array($config['nat']['rule']))
+	if(is_array($config['filter']['rule']))
 		foreach($config['filter']['rule'] as $rule) {
 			if(is_array($rule['source']['address']))
 				if($rule['source']['address'] == $alias)

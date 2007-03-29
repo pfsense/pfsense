@@ -253,7 +253,7 @@ function tdr_create_ipfw_rule($rule, $type) {
 				if (strstr($rule['source']['network'], "opt")) {
 					$src = $optcfg[$rule['source']['network']]['sa'] . "/" .
 						$optcfg[$rule['source']['network']]['sn'];
-					if (isset($rule['source']['not'])) $src = " !{$src}";
+					if (isset($rule['source']['not'])) $src = " not {$src}";
 					/* check for opt$NUMip here */
 					$matches = "";
 					if (preg_match("/opt([0-9999])ip/", $rule['source']['network'], $matches)) {
@@ -279,7 +279,7 @@ function tdr_create_ipfw_rule($rule, $type) {
 							$src = "{$pppoesa}/{$pppoesn}";
 							break;
 					}
-					if (isset($rule['source']['not'])) $src = "!{$src}";
+					if (isset($rule['source']['not'])) $src = " not {$src}";
 				}
 			} else if ($rule['source']['address']) {
 				$expsrc = alias_expand_value($rule['source']['address']);
@@ -363,7 +363,7 @@ function tdr_create_ipfw_rule($rule, $type) {
 						$real_int = convert_friendly_interface_to_real_interface_name("opt{$optnum}");
 						$dst = find_interface_ip($real_int);
 					}
-					if (isset($rule['destination']['not'])) $dst = " !{$dst}";
+					if (isset($rule['destination']['not'])) $dst = " not {$dst}";
 				} else {
 					switch ($rule['destination']['network']) {
 						case 'wanip':
@@ -382,7 +382,7 @@ function tdr_create_ipfw_rule($rule, $type) {
 							$dst = "{$ppoesa}/{$pppoesn}";
 							break;
 					}
-					if (isset($rule['destination']['not'])) $dst = " !{$dst}";
+					if (isset($rule['destination']['not'])) $dst = " not {$dst}";
 				}
 			} else if ($rule['destination']['address']) {
 				$expdst = alias_expand_value($rule['destination']['address']);

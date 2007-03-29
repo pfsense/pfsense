@@ -101,7 +101,8 @@ function slbd_configure() {
 			/* pool name */
 			$slbdconf .= "\t:poolname={$vspool['name']}:\\\n";
 			/* remove pool status files so we don't end up with a mismatch */
-			unlink("{$g['tmp_path']}/{$vspool['name']}.pool");
+			if(file_exists("{$g['tmp_path']}/{$vspool['name']}.pool"))
+				unlink("{$g['tmp_path']}/{$vspool['name']}.pool");
 			/* virtual IP */
 			$slbdconf .= "\t:vip=127.0.0.1:\\\n";
 			$slbdconf .= "\t:vip-port=666:\\\n";

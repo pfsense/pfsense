@@ -74,7 +74,7 @@ if ($_POST) {
 		$input_errors[] = "Reserved word used for schedule name.";
 	} else {
 		if (is_validaliasname($_POST['name']) == false)
-			$input_errors[] = "The schedule name may only consist of the characters a-z, A-Z, 0-9, -";
+			$input_errors[] = "The schedule name may only consist of the characters a-z, A-Z, 0-9";
 	}
 	
 	if (!$_POST['schedule0'])
@@ -325,7 +325,7 @@ function update_month(){
 function checkForRanges(){
 	if (daysSelected != "")
 	{
-		alert("You have not saved the specified time range. Please click 'Add Time' button to save the time range");
+		alert("You have not saved the specified time range. Please click 'Add Time' button to save the time range.");
 		return false;
 	}
 	else
@@ -547,7 +547,7 @@ function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimeh
 		tr.appendChild(td);
 		
 		td = d.createElement("td");
-		td.innerHTML = "<input type='image' src='/themes/" + theme + "/images/icons/icon_e.gif' onclick='editRow(\"" + tempTime + "\"); removeRow(this); return false;' value='Edit'>";
+		td.innerHTML = "<input type='image' src='/themes/" + theme + "/images/icons/icon_e.gif' onclick='editRow(\"" + tempTime + "\",this); return false;' value='Edit'>";
 		tr.appendChild(td);
 			
 		td = d.createElement("td");
@@ -597,56 +597,62 @@ function clearDescr(){
 	document.getElementById("timerangedescr").value = "";
 }
 
-function editRow(incTime) {
-	//reset calendar and time
-	clearCalendar();
-	clearTime();
+function editRow(incTime, el) {
+	var check = checkForRanges();
 	
-	var starttimehour, descr, days, tempstr, starttimemin, hours, stoptimehour, stoptimemin = ""; 
+	if (check){  
+		
+		//reset calendar and time
+		clearCalendar();
+		clearTime();
+		
+		var starttimehour, descr, days, tempstr, starttimemin, hours, stoptimehour, stoptimemin = ""; 
+		
+		tempArray = incTime.split ("||");
+		
+		days = tempArray[0];
+		hours = tempArray[1];
+		descr = tempArray[2];
+		
+		var tempdayArray = days.split(",");
+		var temphourArray = hours.split("-");
+		tempstr = temphourArray[0];
+		var temphourArray2 = tempstr.split(":");
 	
-	tempArray = incTime.split ("||");
+		document.getElementById("starttimehour").value = temphourArray2[0];
+		document.getElementById("starttimemin").value = temphourArray2[1];	
+		
+		tempstr = temphourArray[1];
+		temphourArray2 = tempstr.split(":");
+		
+		document.getElementById("stoptimehour").value = temphourArray2[0];
+		document.getElementById("stoptimemin").value = temphourArray2[1];
+		
+		document.getElementById("timerangedescr").value = descr;
 	
-	days = tempArray[0];
-	hours = tempArray[1];
-	descr = tempArray[2];
-	
-	var tempdayArray = days.split(",");
-	var temphourArray = hours.split("-");
-	tempstr = temphourArray[0];
-	var temphourArray2 = tempstr.split(":");
-
-	document.getElementById("starttimehour").value = temphourArray2[0];
-	document.getElementById("starttimemin").value = temphourArray2[1];	
-	
-	tempstr = temphourArray[1];
-	temphourArray2 = tempstr.split(":");
-	
-	document.getElementById("stoptimehour").value = temphourArray2[0];
-	document.getElementById("stoptimemin").value = temphourArray2[1];
-	
-	document.getElementById("timerangedescr").value = descr;
-
-	//toggle the appropriate days
-	for (i=0; i<tempdayArray.length; i++)
-	{
-		if (tempdayArray[i]){
-			var tempweekstr = tempdayArray[i];
-			dashpos = tempweekstr.search("-");			
-					
-			if (dashpos == "-1")
-			{
-				tempstr = "w2p" + tempdayArray[i];
+		//toggle the appropriate days
+		for (i=0; i<tempdayArray.length; i++)
+		{
+			if (tempdayArray[i]){
+				var tempweekstr = tempdayArray[i];
+				dashpos = tempweekstr.search("-");			
+						
+				if (dashpos == "-1")
+				{
+					tempstr = "w2p" + tempdayArray[i];
+				}
+				else
+				{
+					tempstr = tempdayArray[i];
+				}
+				daytoggle(tempstr);
 			}
-			else
-			{
-				tempstr = tempdayArray[i];
-			}
-			daytoggle(tempstr);
 		}
+		removeRownoprompt(el);
 	}
 }
 
-function removeRow(el) {
+function removeRownoprompt(el) {
     var cel;
     while (el && el.nodeName.toLowerCase() != "tr")
 	    el = el.parentNode;
@@ -655,6 +661,21 @@ function removeRow(el) {
 	cel = el.getElementsByTagName("td").item(0);
 	el.parentNode.removeChild(el);
     }
+}
+
+
+function removeRow(el) {
+	var check = confirm ("Do you really want to delete this time range?");
+	if (check){
+	    var cel;
+	    while (el && el.nodeName.toLowerCase() != "tr")
+		    el = el.parentNode;
+	
+	    if (el && el.parentNode) {
+		cel = el.getElementsByTagName("td").item(0);
+		el.parentNode.removeChild(el);
+	    }
+	}
 }
 
 </script>
@@ -679,19 +700,28 @@ EOD;
                	<tr>
 				  <td width="15%" valign="top" class="vncellreq">Schedule Name</td>
 				  <td width="85%" class="vtable">
-				  <input name="name" type="text" id="name" size="40" class="formfld" value="<?=htmlspecialchars($pconfig['name']);?>"><br>
+				  <?php if(is_schedule_inuse($pconfig['name']) == true): ?>
+				  			<input name="name" type="hidden" id="name" size="40"  value="<?=htmlspecialchars($pconfig['name']);?>" />
+						  <?php echo $pconfig['name']; ?>
+						      <p>
+						        <span class="vexpl">NOTE: This schedule is in use so the name may not be modified!</span>
+						      </p>
+				<?php else: ?>
+				  <input name="name" type="text" id="name" size="40" maxlength="40" class="formfld" value="<?=htmlspecialchars($pconfig['name']);?>"><br>
 				      	<span class="vexpl">
-     					   The name of the alias may only consist of the characters a-z, A-Z and 0-9, -, _
-      					</span>					
+     					   The name of the alias may only consist of the characters a-z, A-Z and 0-9
+      					</span>
+      			<?php endif; ?>   					
 				  </td>
 				</tr>
 				<tr>
 					<td width="15%" valign="top" class="vncell">Description</td>
-					<td width="85%" class="vtable"><input name="descr" type="text" id="descr" size="40" class="formfld" value="<?=htmlspecialchars($pconfig['descr']);?>"><br>
+					<td width="85%" class="vtable"><input name="descr" type="text" id="descr" size="40" maxlength="40" class="formfld" value="<?=htmlspecialchars($pconfig['descr']);?>"><br>
  						<span class="vexpl">
 				        	You may enter a description here for your reference (not parsed).
-				      	</span>     
-				      </td>
+				      	</span>
+				  
+					</td>
 				</tr>
 				<tr>
 				</tr>
@@ -860,7 +890,7 @@ EOD;
 				</tr>
 				<tr>
 					<td width="15%" valign="top" class="vncell">Time Range Description</td>
-					<td width="85%" class="vtable"><input name="timerangedescr" type="text" class="formfld" id="timerangedescr" size="40" maxlength="40" value=""><br>
+					<td width="85%" class="vtable"><input name="timerangedescr" type="text" class="formfld" id="timerangedescr" size="40" maxlength="40"><br>
  						<span class="vexpl">
 				        	You may enter a description here for your reference (not parsed).
 				      	</span>     
@@ -997,7 +1027,7 @@ EOD;
 							        	<input type='text' readonly class='formfld' name='timedescr<?php echo $counter; ?>' id='timedescr<?php echo $counter; ?>' style=' word-wrap:break-word; width:100%; border:0px solid;' value='<?php echo $timedescr; ?>'>
 							        </td>
 							        <td>
-							        	<input type='image' src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif' onclick='editRow("<?php echo $tempTime; ?>"); removeRow(this); return false;' value='Edit'>
+							        	<input type='image' src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif' onclick='editRow("<?php echo $tempTime; ?>",this); return false;' value='Edit'>
 							        </td>
 							        <td>
 							        	<input type='image' src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif' onclick='removeRow(this); return false;' value='Delete'>

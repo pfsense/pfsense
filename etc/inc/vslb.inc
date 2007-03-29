@@ -55,7 +55,8 @@ function slbd_configure() {
 			/* pool name */
 			$slbdconf .= "\t:poolname={$vsent['name']}:\\\n";
 			/* remove pool status files so we don't end up with a mismatch */
-			unlink("{$g['tmp_path']}/{$vsent['name']}.pool");
+			if(file_exists("{$g['tmp_path']}/{$vsent['name']}.pool"))
+				unlink("{$g['tmp_path']}/{$vsent['name']}.pool");
 			/* virtual IP */
 			$slbdconf .= "\t:vip={$vsent['ipaddr']}:\\\n";
 			/* virtual port */

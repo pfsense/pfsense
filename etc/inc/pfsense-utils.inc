@@ -339,13 +339,11 @@ function tdr_create_ipfw_rule($rule, $type) {
 					} else if (($srcport[0] == 1) && ($srcport[1] == 65535)) {
 						/* no need for a port statement here */
 					} else if ($srcport[1] == 65535) {
-						$aline['srcport'] = "port >= {$srcport[0]} ";
+						$aline['srcport'] = ">={$srcport[0]} ";
 					} else if ($srcport[0] == 1) {
-						$aline['srcport']= "port <= {$srcport[1]} ";
+						$aline['srcport']= "<={$srcport[1]} ";
 					} else {
-						$srcport[0]--;
-						$srcport[1]++;
-						$aline['srcport'] = "port {$srcport[0]} >< {$srcport[1]} ";
+						$aline['srcport'] = "{$srcport[0]}-{$srcport[1]} ";
 					}
 				}
 			}
@@ -441,13 +439,11 @@ function tdr_create_ipfw_rule($rule, $type) {
 					} else if (($dstport[0] == 1) && ($dstport[1] == 65535)) {
 						/* no need for a port statement here */
 					} else if ($dstport[1] == 65535) {
-						$aline['dstport'] = "port >= {$dstport[0]} ";
+						$aline['dstport'] = ">= {$dstport[0]} ";
 					} else if ($dstport[0] == 1) {
-						$aline['dstport'] = "port <= {$dstport[1]} ";
+						$aline['dstport'] = "<= {$dstport[1]} ";
 					}  else {
-						$dstport[0]--;
-						$dstport[1]++;
-						$aline['dstport'] = "port {$dstport[0]} >< {$dstport[1]} ";
+						$aline['dstport'] = "{$dstport[0]}-{$dstport[1]} ";
 					}
 				}
 			}

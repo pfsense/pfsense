@@ -372,7 +372,7 @@ function processEntries(){
 function addTimeRange(){
 	var tempdayarray = daysSelected.split(",");
 	var tempstr, tempFriendlyDay, starttimehour, starttimemin, stoptimehour, nrtempFriendlyTime, rtempFriendlyTime, nrtempID, rtempID = "";
-	var stoptimemin, timeRange, tempstrdaypos, week, daypos, day, month, dashpos, nrtempTime, rtempTime = "";
+	var stoptimemin, timeRange, tempstrdaypos, week, daypos, day, month, dashpos, nrtempTime, rtempTime, monthstr, daystr = "";
 	rtempFriendlyTime = "";
 	nrtempFriendlyTime = "";
 	nrtempID = "";
@@ -381,6 +381,8 @@ function addTimeRange(){
 	rtempTime = "";
 	tempdayarray.sort();	
 	rtempFriendlyDay = "";
+	monthstr = "";
+	daystr = "";
 	
 	//check for existing entries
 	var findCurrentCounter;
@@ -416,7 +418,8 @@ function addTimeRange(){
 					month = parseInt(month);
 					day = tempstr.substring(tempstrdaypos+1);
 					day = parseInt(day);
-					nrtempFriendlyTime += month_array[month-1] +  " " + day + ",";
+					monthstr += month + ",";
+					daystr += day + ",";
 					nrtempID += tempstr + ",";
 				}
 				else
@@ -430,12 +433,53 @@ function addTimeRange(){
 			}				
 		}	
 		
+		//code below spits out friendly look format for nonrepeating schedules
 		var foundEnd = false;
 		var firstDayFound = false;
 		var firstprint = false;
-		var tempFriendlyDayArray = rtempFriendlyDay.split(",");
+		var tempFriendlyMonthArray = monthstr.split(",");
+		var tempFriendlyDayArray = daystr.split(",");
+		var currentDay, firstDay, nextDay, currentMonth, nextMonth, firstDay, firstMonth = "";
+		for (k=0; k<tempFriendlyMonthArray.length; k++){
+			tempstr = tempFriendlyMonthArray[k];
+			if (tempstr != ""){
+				if (!firstDayFound)
+				{
+					firstDay = tempFriendlyDayArray[k];
+					firstDay = parseInt(firstDay);
+					firstMonth = tempFriendlyMonthArray[k];
+					firstMonth = parseInt(firstMonth);
+					firstDayFound = true;
+				}
+				currentDay = tempFriendlyDayArray[k];
+				currentDay = parseInt(currentDay);
+				//get next day
+				nextDay = tempFriendlyDayArray[k+1];
+				nextDay = parseInt(nextDay);
+				//get next month
+				
+				currentDay++;						
+				if ((currentDay != nextDay) || (tempFriendlyMonthArray[k] != tempFriendlyMonthArray[k+1])){
+					if (firstprint)
+						nrtempFriendlyTime += ", ";
+					currentDay--;
+					if (currentDay != firstDay)
+						nrtempFriendlyTime += month_array[firstMonth-1] + " " + firstDay + "-" + currentDay;
+					else
+						nrtempFriendlyTime += month_array[firstMonth-1] + " " + currentDay; 
+					firstDayFound = false;	
+					firstprint = true;			
+				}
+			}			
+		}		
+		
+		//code below spits out friendly look format for repeating schedules
+		foundEnd = false;
+		firstDayFound = false;
+		firstprint = false;
+		tempFriendlyDayArray = rtempFriendlyDay.split(",");
 		tempFriendlyDayArray.sort();
-		var currentDay, firstDay, nextDay = "";
+		currentDay, firstDay, nextDay = "";
 		for (k=0; k<tempFriendlyDayArray.length; k++){
 			tempstr = tempFriendlyDayArray[k];
 			if (tempstr != ""){
@@ -531,7 +575,7 @@ function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimeh
 		tbody = d.getElementById("scheduletable").getElementsByTagName("tbody").item(0);
 		tr = d.createElement("tr");
 		td = d.createElement("td");
-		td.innerHTML= "<input type='text' readonly class='formfld' name='dayselected" + schCounter + "' id='dayselected" + schCounter + "' style=' word-wrap:break-word; width:100%; border:0px solid;' value='" + tempFriendlyTime + "'>";
+		td.innerHTML= "<span class='vexpl'>" + tempFriendlyTime + "</span>";
 		tr.appendChild(td);	
 			
 		td = d.createElement("td");
@@ -925,7 +969,6 @@ EOD;
 									$counter = 0;
 																		
 									foreach($pconfig['timerange'] as $timerange) {
-										$firstPrint = false;
 										$tempFriendlyTime = "";
 										$tempID = "";
 										if ($timerange){
@@ -940,7 +983,14 @@ EOD;
 											
 											$starttime = substr ($temptimerange, 0, $temptimeseparator); 
 											$stoptime = substr ($temptimerange, $temptimeseparator+1); 
-												
+											$currentDay = "";
+											$firstDay = "";
+											$nextDay = "";
+											$foundEnd = false;
+											$firstDayFound = false;
+											$firstPrint = false;	
+											$firstprint2 = false;
+											
 											if ($timerange['month']){
 												$tempmontharray = explode(",", $timerange['month']);
 												$tempdayarray = explode(",",$timerange['day']);
@@ -950,21 +1000,43 @@ EOD;
 													$day = $tempdayarray[$arraycounter];
 													$daypos = date("w", mktime(0, 0, 0, date($month), date($day), date("Y")));
 													//if sunday, set position to 7 to get correct week number. This is due to php limitations on ISO-8601. When we move to php5.1 we can change this.
-													if ($daypos == 0)
-														$day = 7;													
+													if ($daypos == 0){
+														$daypos = 7;
+													}									
 													$weeknumber = date("W", mktime(0, 0, 0, date($month), date($day), date("Y")));
-													$weeknumber = ltrim($weeknumber, "0");														
-													$monthstr = $monthArray[$month-1];
-													$tempFriendlyTime .= $monthstr . " " . $day . ",";
+													$weeknumber = ltrim($weeknumber, "0");		
+																										
 													if ($firstPrint)
 													{
 														$tempID .= ",";
 													}
 													$tempID .= "w" . $weeknumber . "p" . $daypos . "-m" .  $month . "d" . $day;
 													$firstPrint = true;
-
-													$arraycounter++;													
-												}
+													
+													if (!$firstDayFound)
+													{
+														$firstDay = $day;
+														$firstmonth = $month;
+														$firstDayFound = true;
+													}
+														
+													$currentDay = $day;
+													$nextDay = $tempdayarray[$arraycounter+1];
+													$currentDay++;
+													if (($currentDay != $nextDay) || ($tempmontharray[$arraycounter] != $tempmontharray[$arraycounter+1])){
+														if ($firstprint2)
+															$tempFriendlyTime .= ", ";
+														$currentDay--;
+														if ($currentDay != $firstDay)
+															$tempFriendlyTime .= $monthArray[$firstmonth-1] . " " . $firstDay . " - " . $currentDay ;
+														else
+															$tempFriendlyTime .=  $monthArray[$month-1] . " " . $day;
+														$firstDayFound = false;	
+														$firstprint2 = true;
+													}													
+													$arraycounter++;			
+												}																						
+												
 											}
 											else
 											{
@@ -1015,7 +1087,7 @@ EOD;
 									?>
 						          <tr>
 						          	<td>
-						          		<input type='text' readonly class='formfld' name='dayselected<?php echo $counter; ?>' id='dayselected<?php echo $counter; ?>' style=' word-wrap:break-word; width:100%; border:0px solid;' value='<?php echo $tempFriendlyTime; ?>'>
+						          		<span class="vexpl"><?php echo $tempFriendlyTime; ?><span>
 						          	</td>
 									<td>
 						              <input type='text' readonly class='formfld' name='starttime<?php echo $counter; ?>' id='starttime<?php echo $counter; ?>' style=' word-wrap:break-word; width:100%; border:0px solid;' value='<?php echo $starttime; ?>'>

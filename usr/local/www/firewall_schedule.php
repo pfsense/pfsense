@@ -82,7 +82,7 @@ include("head.inc");
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <form action="firewall_schedule.php" method="post">
-	<table class="sortable" width="98%" border="0" cellpadding="0" cellspacing="0">
+	<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 	  <td width="25%" class="listhdrr">Name</td>
 	  <td width="35%" class="listhdrr">Time Range(s)</td>
@@ -95,6 +95,7 @@ include("head.inc");
     <?=htmlspecialchars($schedule['name']);?>
   		</td>
   		<td class="listlr" ondblclick="document.location='firewall_schedule_edit.php?id=<?=$i;?>';">
+  			<table width="98%" border="0" cellpadding="0" cellspacing="0">
 			<?php 					
 
 					foreach($schedule['timerange'] as $timerange) {
@@ -117,18 +118,34 @@ include("head.inc");
 								$tempmontharray = explode(",", $timerange['month']);
 								$tempdayarray = explode(",",$timerange['day']);
 								$arraycounter = 0;
+								$firstDayFound = false;
+								$firstPrint = false;
 								foreach ($tempmontharray as $monthtmp){
-									if ($firstprint)
-									{
-										$dayFriendly .= ", ";										
-									}	
 									$month = $tempmontharray[$arraycounter];
 									$day = $tempdayarray[$arraycounter];
-									$monthstr = $monthArray[$month-1];
-									$dayFriendly .= $monthstr . " " . $day;
-									$arraycounter++;
-									$firstprint = true;
-				
+									
+									if (!$firstDayFound)
+									{
+										$firstDay = $day;
+										$firstmonth = $month;
+										$firstDayFound = true;
+									}
+										
+									$currentDay = $day;
+									$nextDay = $tempdayarray[$arraycounter+1];
+									$currentDay++;
+									if (($currentDay != $nextDay) || ($tempmontharray[$arraycounter] != $tempmontharray[$arraycounter+1])){
+										if ($firstPrint)
+											$dayFriendly .= "<br/>";
+										$currentDay--;
+										if ($currentDay != $firstDay)
+											$dayFriendly .= $monthArray[$firstmonth-1] . " " . $firstDay . " - " . $currentDay ;
+										else
+											$dayFriendly .=  $monthArray[$month-1] . " " . $day;
+										$firstDayFound = false;	
+										$firstPrint = true;
+									}													
+									$arraycounter++;	
 								}
 							}
 							else
@@ -153,7 +170,7 @@ include("head.inc");
 										$currentDay++;					
 										if ($currentDay != $nextDay){
 											if ($firstprint)
-												$dayFriendly .= ", ";
+												$dayFriendly .= "<br/>";
 											$currentDay--;
 											if ($currentDay != $firstDay)
 												$dayFriendly .= $dayArray[$firstDay-1] . " - " . $dayArray[$currentDay-1];
@@ -164,15 +181,14 @@ include("head.inc");
 										}
 										$counter++;
 									}
-								}	
+								}
 							}		
-		
-						
-							$dayFriendly .= " : " . $starttime . "-" . $stoptime . " : " . $timerange['rangedescr'];											
-							echo $dayFriendly;	
-							echo "<br/>";
+							$timeFriendly = $starttime . "-" . $stoptime;
+							$description = $timerange['rangedescr'];	
+							
+							?><tr><td class="listlr"><?echo $dayFriendly;?></td><td class="listlr"><?echo $timeFriendly;?></td><td class="listlr"><?echo $description;?></td><tr/><?php
 						}
-					}//end for?>
+					}//end for?></table>
 	  </td>
 	 <td class="listbg" ondblclick="document.location='firewall_schedule_edit.php?id=<?=$i;?>';">
     	<font color="#FFFFFF">

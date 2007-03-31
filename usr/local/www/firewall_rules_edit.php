@@ -770,6 +770,8 @@ include("head.inc");
 				<select name='gateway'>
 <?php
 				foreach($gateways as $gw) {
+					if($gw == "") 
+						continue;
 					if($gw == $pconfig['gateway']) {
 						$selected = " SELECTED";
 					} else {
@@ -783,6 +785,8 @@ include("head.inc");
 				}
 				if(is_array($config['load_balancer']['lbpool'])) {
 					foreach($config['load_balancer']['lbpool'] as $lb) {
+						if($lb['name'] == "") 
+							continue;
 						if($pconfig['gateway'] == $lb['name']) {
 							echo "<option value=\"{$lb['name']}\" SELECTED>{$lb['name']}</option>\n";
 						} else {
@@ -798,7 +802,8 @@ include("head.inc");
 						} else {
 							$selected = "";
 						}
-						echo "<option value=\"opt{$i}\" {$selected}>OPT{$i} - {$descr}</option>\n";
+						if($descr <> "") 
+							echo "<option value=\"opt{$i}\" {$selected}>OPT{$i} - {$descr}</option>\n";
 					}
 				}
 ?>

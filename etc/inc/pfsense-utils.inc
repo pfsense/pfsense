@@ -583,9 +583,12 @@ function tdr_day($schedule) {
 		$weekday = 7;
 	$date	 	= date("d");
 	$defined_days = split(",", $schedule);
+	log_error("[TDR DEBUG] tdr_day($schedule)");
 	foreach($defined_days as $dd) {
-		if($date == $dd)
+		if($date == $dd) {
+			log_error("[TDR DEBUG] tdr_day($schedule) returning true");
 			return true;
+		}
 	}
 	return false;
 }
@@ -597,10 +600,11 @@ function tdr_hour($schedule) {
 	$starting_time = strtotime($tmp[0]);
 	$ending_time = strtotime($tmp[1]);
 	$now = strtotime("now");
-	if($debug) 
-		echo "S: $starting_time E: $ending_time N: $now \n";
-	if($now >= $starting_time and $now <= $ending_time) 
+	log_error("[TDR DEBUG] S: $starting_time E: $ending_time N: $now \n");
+	if($now >= $starting_time and $now <= $ending_time) {
+		log_error("[TDR DEBUG] tdr_hour() returning true \n");
 		return true;
+	}
 	return false;
 }
 
@@ -614,12 +618,15 @@ function tdr_position($schedule) {
 	 */
 	global $debug;
 	$weekday	= date("w");
+	log_error("[TDR DEBUG] tdr_position($schedule) $weekday");
 	if ($weekday == 0)
 		$weekday = 7;
 	$schedule_days = split(",", $schedule);
 	foreach($schedule_days as $day) {
-		if($day == $weekday) 
+		if($day == $weekday) {
+			log_error("[TDR DEBUG] tdr_position() returning true $day");
 			return true;
+		}
 	}
 	return false;
 }
@@ -631,9 +638,12 @@ function tdr_month($schedule) {
 	global $debug;
 	$todays_month = date("n");
 	$months = split(",", $schedule);
+	log_error("[TDR DEBUG] tdr_month($schedule)");
 	foreach($months as $month) {
-		if($month == $todays_month) 
+		if($month == $todays_month) {
+			log_error("[TDR DEBUG] tdr_month($schedule) is returning true $todays_month - $month");
 			return true;
+		}
 	}
 	return false;
 }

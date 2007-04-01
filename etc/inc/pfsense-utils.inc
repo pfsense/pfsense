@@ -600,9 +600,9 @@ function tdr_hour($schedule) {
 	$starting_time = strtotime($tmp[0]);
 	$ending_time = strtotime($tmp[1]);
 	$now = strtotime("now");
-	log_error("[TDR DEBUG] S: $starting_time E: $ending_time N: $now \n");
+	log_error("[TDR DEBUG] S: $starting_time E: $ending_time N: $now");
 	if($now >= $starting_time and $now <= $ending_time) {
-		log_error("[TDR DEBUG] tdr_hour() returning true \n");
+		log_error("[TDR DEBUG] tdr_hour($schedule) returning true");
 		return true;
 	}
 	return false;
@@ -624,7 +624,7 @@ function tdr_position($schedule) {
 	$schedule_days = split(",", $schedule);
 	foreach($schedule_days as $day) {
 		if($day == $weekday) {
-			log_error("[TDR DEBUG] tdr_position() returning true $day");
+			log_error("[TDR DEBUG] tdr_position($schedule) returning true $day");
 			return true;
 		}
 	}

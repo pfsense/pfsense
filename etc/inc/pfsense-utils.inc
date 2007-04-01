@@ -599,7 +599,7 @@ function tdr_hour($schedule) {
 	$now = strtotime("now");
 	if($debug) 
 		echo "S: $starting_time E: $ending_time N: $now \n";
-	if($now > $starting_time and $now < $ending_time) 
+	if($now >= $starting_time and $now <= $ending_time) 
 		return true;
 	return false;
 }

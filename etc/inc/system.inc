@@ -1215,6 +1215,7 @@ function system_disable_arp_wrong_if() {
 		echo "system_disable_arp_wrong_if() being called $mt\n";
 	}
 	mwexec("/sbin/sysctl -n net.link.ether.inet.log_arp_wrong_iface=0");
+	mwexec("/sbin/sysctl -n net.link.ether.inet.log_arp_movement=0");
 }
 
 function system_enable_arp_wrong_if() {
@@ -1224,6 +1225,7 @@ function system_enable_arp_wrong_if() {
 		echo "system_enable_arp_wrong_if() being called $mt\n";
 	}
 	mwexec("/sbin/sysctl -n net.link.ether.inet.log_arp_wrong_iface=1");
+	mwexec("/sbin/sysctl -n net.link.ether.inet.log_arp_movement=1");
 }
 
 function enable_watchdog() {

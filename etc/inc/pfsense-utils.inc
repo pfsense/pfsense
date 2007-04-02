@@ -568,7 +568,10 @@ function get_time_based_rule_status($schedule) {
 			$should_add_rule = true;
 		}
 	}
-		
+	if($should_add_rule == true) 
+		log_error("[TDR DEBUG] should_add_rule == true");
+	else 
+		log_error("[TDR DEBUG] should_add_rule == true");
 	return $should_add_rule;
 }
 

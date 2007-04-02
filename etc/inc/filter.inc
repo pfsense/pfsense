@@ -1947,7 +1947,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		if($schedule_xml_block)
 			$status = get_time_based_rule_status($schedule_xml_block);
 		if($status) {
-			return $line;
+			return "$line";
 		} else {
             /*   rule is turned off, if type == pass, deny traffic until 
              *   active else allow traffic until active 
@@ -1957,7 +1957,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
            else
                $ipfw_rule = tdr_create_ipfw_rule($rule, "allow");
 			tdr_install_rule($ipfw_rule);
-			return $line;
+			return "# $line;";
 		}
 	} else {
 		return $line;

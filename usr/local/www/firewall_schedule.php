@@ -186,7 +186,7 @@ include("head.inc");
 							$timeFriendly = $starttime . "-" . $stoptime;
 							$description = $timerange['rangedescr'];	
 							
-							?><tr><td class="listlr"><?echo $dayFriendly;?></td><td class="listlr"><?echo $timeFriendly;?></td><td class="listlr"><?echo $description;?></td><tr/><?php
+							?><tr><td><?echo $dayFriendly;?></td><td><?echo $timeFriendly;?></td><td><?echo $description;?></td><tr/><?php
 						}
 					}//end for?></table>
 	  </td>

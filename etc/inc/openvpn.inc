@@ -35,6 +35,7 @@
 */
 
 require_once('config.inc');
+require_once('pfsense-utils.inc');
 require_once('util.inc');
 
 // Return the list of ciphers OpenVPN supports
@@ -346,7 +347,6 @@ function openvpn_resync_csc($id) {
 		}
 	}
 
-	openvpn_create_cscdir();
 	$filename = "{$g['varetc_path']}/openvpn_csc/{$settings['commonname']}";
 	file_put_contents($filename, $conf);
 	chown($filename, 'nobody');
@@ -380,11 +380,11 @@ function openvpn_create_cscdir() {
 	global $g;
 
 	$csc_dir = "{$g['varetc_path']}/openvpn_csc";
-	if (!is_dir($csc_dir)) {
-		mkdir($csc_dir);
-		chown($csc_dir, 'nobody');
-		chgrp($csc_dir, 'nobody');
-	}
+	if (is_dir($csc_dir))
+		rmdir_recursive($csc_dir);
+	make_dirs($csc_dir);
+	chown($csc_dir, 'nobody');
+	chgrp($csc_dir, 'nobody');
 }
 
 // Resync and restart all VPNs

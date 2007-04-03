@@ -2490,6 +2490,9 @@ function reload_all_sync() {
 	/* generate resolv.conf */
 	system_resolvconf_generate();
 
+	/* Set up our loopback interface */
+	interfaces_loopback_configure();
+
 	/* delete all old interface information */
 	$iflist = split(" ", str_replace("\n", "", `/sbin/ifconfig -l`));
 

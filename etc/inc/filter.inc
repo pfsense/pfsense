@@ -1947,13 +1947,20 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		if($schedule_xml_block)
 			$status = get_time_based_rule_status($schedule_xml_block);
 		if($status) {
+			log_error("[TDR DEBUG] status true -- rule type '$type'");
+			if($type == "block") {
+				$ipfw_rule = tdr_create_ipfw_rule($rule, "deny");
+				tdr_install_rule($ipfw_rule);
+			}
 			return "$line";
 		} else {
             /*   rule is turned off, if type == pass, deny traffic until 
              *   active else allow traffic until active 
              */
-			$ipfw_rule = tdr_create_ipfw_rule($rule, "deny");
-			tdr_install_rule($ipfw_rule);
+            if($type == "pass") {
+				$ipfw_rule = tdr_create_ipfw_rule($rule, "deny");
+				tdr_install_rule($ipfw_rule);
+			}
 			return "# $line;";
 		}
 	} else {

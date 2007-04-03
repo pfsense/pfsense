@@ -83,8 +83,8 @@ function tdr_install_cron($should_install) {
 			}
 		break;
 		case false:
-			unset($config['cron']['item'][$x]);
-			write_config();
+			//unset($config['cron']['item'][$x]);
+			//write_config();
 			configure_cron();
 		break;
 	}

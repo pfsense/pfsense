@@ -899,6 +899,7 @@ EOD;
 				  					<option value="15">15</option>
 				  					<option value="30">30</option>
 				  					<option value="45">45</option>
+				  					<option value="59">59</option>
 				  				</select>&nbsp;Min
 				  			</td>
 				  			<td></td>

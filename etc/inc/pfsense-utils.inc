@@ -570,15 +570,20 @@ function get_time_based_rule_status($schedule) {
 		else 
 			log_error("[TDR DEBUG] hourstatus has been set to false");
 
-		if($monthstatus and $daystatus and $positionstatus and $hourstatus) {
-			$should_add_rule = true;
-			log_error("[TDR DEBUG] setting should add rule to true");
-		}
+		if($monthstatus == true) 
+			if($daystatus == true) 
+				if($positionstatus == true) 
+					if($hourstatus == true) {
+						$should_add_rule = true;
+						log_error("[TDR DEBUG] setting should add rule to true");
+					}
 	}
+	
 	if($should_add_rule == true) 
 		log_error("[TDR DEBUG] should_add_rule == true");
 	else 
 		log_error("[TDR DEBUG] should_add_rule == true");
+
 	return $should_add_rule;
 }
 

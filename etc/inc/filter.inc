@@ -1951,6 +1951,9 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			if($type == "block") {
 				$ipfw_rule = tdr_create_ipfw_rule($rule, "deny");
 				tdr_install_rule($ipfw_rule);
+			} else {
+				$ipfw_rule = tdr_create_ipfw_rule($rule, "allow");
+				tdr_install_rule($ipfw_rule);
 			}
 			return "$line";
 		} else {

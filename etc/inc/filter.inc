@@ -1961,8 +1961,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
              *   active else allow traffic until active 
              */
             if($type == "pass") {
-				$ipfw_rule = tdr_create_ipfw_rule($rule, "deny");
-				tdr_install_rule($ipfw_rule);
+				//$ipfw_rule = tdr_create_ipfw_rule($rule, "deny");
+				//tdr_install_rule($ipfw_rule);
 			}
 			return "# $line;";
 		}

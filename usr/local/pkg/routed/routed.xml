@@ -43,13 +43,13 @@
 	<menu>
 		<name>RIP</name>
 		<section>Services</section>
-		<configfile>routed.xml</configfile>
-		<url>pkg_edit.php?xml=routed.xml&amp;id=0</url>
+		<configfile>routed/routed.xml</configfile>
+		<url>pkg_edit.php?xml=routed/routed.xml&amp;id=0</url>
 	</menu>
 	<tabs>
 		<tab>
 			<text>ROUTED Settings</text>
-			<url>/pkg_edit.php?xml=routed.xml</url>
+			<url>/pkg_edit.php?xml=routed/routed.xml</url>
 			<active/>			
 		</tab>
 	</tabs>
@@ -97,7 +97,7 @@
 			<type>input</type>
 		</field>
 	</fields>
-	<aftersaveredirect>pkg_edit.php?xml=routed.xml&amp;id=0</aftersaveredirect>
+	<aftersaveredirect>pkg_edit.php?xml=routed/routed.xml&amp;id=0</aftersaveredirect>
         <custom_php_command_before_form>
         </custom_php_command_before_form>
 	<custom_delete_php_command>

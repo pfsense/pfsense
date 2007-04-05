@@ -443,8 +443,10 @@ function step5_stepsubmitphpaction() {
 		/* To add p2p clients, push Descr,Protocol,Start,End,src/dest/both onto p2plist */
 		if($_POST['aimster'] != "")
 		    $p2plist[] = array('Aimster', 'tcp', '7668', '7668', 'both');
-		if($_POST['bittorrent'] != "")
+		if($_POST['bittorrent'] != "") {
 		    $p2plist[] = array('BitTorrent', 'tcp', '6881', '6999', 'both');
+		    $p2plist[] = array('BitTorrent', 'udp', '6881', '6999', 'both');
+		}
 		if($_POST['buddyshare'] != "")
 		    $p2plist[] = array('BuddyShare', 'tcp', '7788', '7788', 'both');
 		if($_POST['cutemx'] != "")

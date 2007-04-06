@@ -37,6 +37,7 @@ $a_ipsec = &$config['ipsec']['tunnel'];
 $wancfg = &$config['interfaces']['wan'];
 
 $pconfig['enable'] = isset($config['ipsec']['enable']);
+$pconfig['ipcomp'] = isset($config['ipsec']['ipcomp']);
 
 if ($_POST) {
 
@@ -52,7 +53,8 @@ if ($_POST) {
 		$pconfig = $_POST;
 
 		$config['ipsec']['enable'] = $_POST['enable'] ? true : false;
-
+		$config['ipsec']['ipcomp'] = $_POST['ipcomp'] ? true : false;
+		
 		write_config();
 
 		$retval = 0;
@@ -113,6 +115,12 @@ include("head.inc");
                   <td class="vtable">
                       <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked";?>>
                       <strong>Enable IPsec</strong></td>
+                </tr>
+                <tr>
+                  <td class="vtable">
+                      <input name="ipcomp" type="checkbox" id="ipcomp" value="yes" <?php if ($pconfig['ipcomp']) echo "checked=\"checked\"";?> />
+                      <strong>Enable IPsec Compression</strong>
+				  </td>
                 </tr>
                 <tr>
                   <td> <input name="submit" type="submit" class="formbtn" value="Save">

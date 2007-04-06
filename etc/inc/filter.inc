@@ -2620,12 +2620,6 @@ EOD;
 			exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=1");
 		else
 			exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=0");
-		/* set failover ip if defined */
-		if(isset($config['installedpackages']['sasyncd']['config']))
-		foreach($config['installedpackages']['sasyncd']['config'] as $sasyncd) {
-			if($sasyncd['ip'] <> "")
-				$ipsec_failoverip = $sasyncd['ip'];
-		}
 
 		/* build an interface collection */
 		$ifdescrs = array ("wan");
@@ -2636,15 +2630,11 @@ EOD;
 
 		if(is_array($config['ipsec']['tunnel']) && isset($config['ipsec']['enable'])) {
 			foreach ($config['ipsec']['tunnel'] as $tunnel) {
-				update_filter_reload_status("Creating IPSEC tunnel items {$tunnel['descr']}...");
-				/* if tunnel is disabled, lets skip to next item */
 				if(isset($tunnel['disabled']))
 					continue;
-				/* determine ipsec address */
-				if ($ipsec_failoverip)
-					$ipsec_ips = split("\,",$ipsec_failoverip);
-				else
-					$ipsec_ips = array(get_current_wan_address($tunnel['interface']));
+				update_filter_reload_status("Creating IPSEC tunnel items {$tunnel['descr']}...");
+				/* if tunnel is disabled, lets skip to next item */
+				$ipsec_ips = array(get_current_wan_address($tunnel['interface']));
 				/* is this a dynamic dns hostname? */
 				$remote_gateway = gethostbyname($tunnel['remote-gateway']);
 				if($remote_gateway == "")
@@ -2661,8 +2651,6 @@ EOD;
 							$interface_ip = find_interface_ip(get_real_wan_interface());
 						else
 							$interface_ip = find_interface_ip(convert_friendly_interface_to_real_interface_name($iface));
-						if($tunnel['interface'] <> $iface and strstr($tunnel['interface'], "carp") == false)
-							continue;
 						$ipfrules .= "pass out quick on \${$iface} proto udp from {$interface_ip} to {$remote_gateway} port = 500 keep state label \"IPSEC: {$tunnel['descr']} - outbound isakmp\"\n";
 						$ipfrules .= "pass in quick on \${$iface} proto udp from {$remote_gateway} to $interface_ip port = 500 keep state label \"IPSEC: {$tunnel['descr']} - inbound isakmp\"\n";
 						if ($tunnel['p2']['protocol'] == 'esp') {

@@ -2651,6 +2651,10 @@ EOD;
 							$interface_ip = find_interface_ip(get_real_wan_interface());
 						else
 							$interface_ip = find_interface_ip(convert_friendly_interface_to_real_interface_name($iface));
+						if(!$interface_ip) 
+							continue;
+						if(!$remote_gateway) 
+							continue;
 						$ipfrules .= "pass out quick on \${$iface} proto udp from {$interface_ip} to {$remote_gateway} port = 500 keep state label \"IPSEC: {$tunnel['descr']} - outbound isakmp\"\n";
 						$ipfrules .= "pass in quick on \${$iface} proto udp from {$remote_gateway} to $interface_ip port = 500 keep state label \"IPSEC: {$tunnel['descr']} - inbound isakmp\"\n";
 						if ($tunnel['p2']['protocol'] == 'esp') {

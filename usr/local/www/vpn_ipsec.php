@@ -117,12 +117,6 @@ include("head.inc");
                       <strong>Enable IPsec</strong></td>
                 </tr>
                 <tr>
-                  <td class="vtable">
-                      <input name="ipcomp" type="checkbox" id="ipcomp" value="yes" <?php if ($pconfig['ipcomp']) echo "checked=\"checked\"";?> />
-                      <strong>Enable IPsec Compression</strong>
-				  </td>
-                </tr>
-                <tr>
                   <td> <input name="submit" type="submit" class="formbtn" value="Save">
                   </td>
                 </tr>

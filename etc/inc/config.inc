@@ -1619,19 +1619,24 @@ function cleanup_backupcache($revisions = 30) {
 		$baktimes = $backups['versions'];
 		$tocache = array();
 		unset($backups['versions']);
-       		foreach($bakfiles as $backup) { // Check for backups in the directory not represented in the cache.
-				$tocheck = array_shift(explode('.', array_pop(explode('-', $backup))));
-                if(!in_array($tocheck, $baktimes)) {
-					$i = true;
-					if($g['booting'])
-						print " " . $tocheck . "a";
-					$newxml = parse_xml_config($backup, $g['xml_rootobj']);
-					if($newxml['revision']['description'] == "")
-						$newxml['revision']['description'] = "Unknown";
-					$tocache[$tocheck] = array('description' => $newxml['revision']['description']);
-				}
-        	}
+   		foreach($bakfiles as $backup) { // Check for backups in the directory not represented in the cache.
+   			if(filesize($backup) == 0) {
+   				unlink($backup);
+   				continue;
+   			}
+			$tocheck = array_shift(explode('.', array_pop(explode('-', $backup))));
+            if(!in_array($tocheck, $baktimes)) {
+				$i = true;
+				if($g['booting'])
+					print " " . $tocheck . "a";
+				$newxml = parse_xml_config($backup, $g['xml_rootobj']);
+				if($newxml['revision']['description'] == "")
+					$newxml['revision']['description'] = "Unknown";
+				$tocache[$tocheck] = array('description' => $newxml['revision']['description']);
+			}
+    	}
 		foreach($backups as $checkbak) {
+
 			if(count(preg_grep('/' . $checkbak['time'] . '/i', $bakfiles)) != 0) {
 				$newbaks[] = $checkbak;
 			} else {

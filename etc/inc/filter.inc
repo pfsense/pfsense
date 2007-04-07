@@ -203,7 +203,7 @@ function filter_configure_sync() {
 		$mt = microtime();
 		echo "pfctl being called at $mt\n";
 	}
-        $rules_loading = mwexec("/sbin/pfctl -f {$g['tmp_path']}/rules.debug");
+        $rules_loading = mwexec("/sbin/pfctl -o -f {$g['tmp_path']}/rules.debug");
 	if(isset($config['system']['developerspew'])) {
 		$mt = microtime();
 		echo "pfctl done at $mt\n";

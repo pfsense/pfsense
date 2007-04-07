@@ -929,7 +929,7 @@ EOD;
 				  			</td>
 				  		</tr>
 				  	</table><br>
-                    Select the time range for the day(s) selected on the Month(s) above. A full day is 0:0-23:59.
+                    Select the time range for the day(s) selected on the Month(s) above. A full day is 0:00-23:59.
 					</td>
 				</tr>
 				<tr>

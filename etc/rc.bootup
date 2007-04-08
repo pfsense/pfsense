@@ -294,6 +294,10 @@
 	/* startup OLSR if needed */
 	setup_wireless_olsr();
 
+	/* startup routed if needed */
+	include_once("/usr/local/pkg/routed/routed.inc");
+	setup_routed();
+
 	/* enable watchdog if supported */
 	enable_watchdog();
 

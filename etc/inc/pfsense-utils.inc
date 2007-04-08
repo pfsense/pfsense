@@ -2896,7 +2896,7 @@ function enable_rrd_graphing() {
 				$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$5 \":\" \$8}'`\n";
 			}
 			/* if an alternative gateway is defined, use it */
-			if ($config['system']['interfaces'][$ifname]['use_rrd_gateway'] <> "") {
+			if ($config['interfaces'][$ifname]['use_rrd_gateway'] <> "") {
 				$gatewayip = get_interface_gateway($ifname);
 				$monitorip = $config['system']['interfaces'][$ifname]['use_rrd_gateway'];
 				mwexec("/sbin/route add -host {$monitorip} {$gatewayip} 1> /dev/null 2>&1");

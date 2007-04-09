@@ -185,6 +185,9 @@ EOPP;
 			(!isset($ifcfg['enable']) || !$ifcfg['if'] || $ifcfg['bridge'])))
 			continue;
 
+		if($dhcpif == "lan" && $ifcfg['bridge'])
+			continue;
+
 		$subnet = gen_subnet($ifcfg['ipaddr'], $ifcfg['subnet']);
 		$subnetmask = gen_subnet_mask($ifcfg['subnet']);
 

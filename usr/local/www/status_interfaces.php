@@ -407,6 +407,9 @@ include("head.inc");
 
 	<?php if(file_exists("/usr/bin/vmstat")): ?>
 	<?php
+			$real_interface = "";
+			$interrupt_total = "";
+			$interrupt_sec = "";
 			$real_interface = convert_friendly_interface_to_real_interface_name($ifname);
           	$interrupt_total = `vmstat -i | grep $real_interface | awk '{ print $3 }'`;
           	$interrupt_sec = `vmstat -i | grep $real_interface | awk '{ print $4 }'`;

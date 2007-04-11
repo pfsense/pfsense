@@ -95,8 +95,11 @@ function filter_configure_sync() {
 	}
 	if($time_based_rules == true) {
 		$status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
-		if($status == "0") 
+		if($status == "0") {
+			mute_kernel_msgs();
 			mwexec("/sbin/kldload ipfw");
+			unmute_kernel_msgs();
+		}
 	}
 
 	$lan_if = $config['interfaces']['lan']['if'];

@@ -567,25 +567,14 @@ function get_time_based_rule_status($schedule) {
 			$positionstatus = true;
 		}
 
-		if($hourstatus == true) 
-			log_error("[TDR DEBUG] hourstatus has been set to true");
-		else 
-			log_error("[TDR DEBUG] hourstatus has been set to false");
-
 		if($monthstatus == true) 
 			if($daystatus == true) 
 				if($positionstatus == true) 
 					if($hourstatus == true) {
 						$should_add_rule = true;
-						log_error("[TDR DEBUG] setting should add rule to true");
 					}
 	}
 	
-	if($should_add_rule == true) 
-		log_error("[TDR DEBUG] should_add_rule == true");
-	else 
-		log_error("[TDR DEBUG] should_add_rule == false");
-
 	return $should_add_rule;
 }
 
@@ -603,7 +592,6 @@ function tdr_day($schedule) {
 	log_error("[TDR DEBUG] tdr_day($schedule)");
 	foreach($defined_days as $dd) {
 		if($date == $dd) {
-			log_error("[TDR DEBUG] tdr_day($schedule) returning true");
 			return true;
 		}
 	}
@@ -619,7 +607,6 @@ function tdr_hour($schedule) {
 	$now = strtotime("now");
 	log_error("[TDR DEBUG] S: $starting_time E: $ending_time N: $now");
 	if($now >= $starting_time and $now <= $ending_time) {
-		log_error("[TDR DEBUG] tdr_hour($schedule) returning true");
 		return true;
 	}
 	return false;
@@ -641,7 +628,6 @@ function tdr_position($schedule) {
 	$schedule_days = split(",", $schedule);
 	foreach($schedule_days as $day) {
 		if($day == $weekday) {
-			log_error("[TDR DEBUG] tdr_position($schedule) returning true $day");
 			return true;
 		}
 	}
@@ -658,7 +644,6 @@ function tdr_month($schedule) {
 	log_error("[TDR DEBUG] tdr_month($schedule)");
 	foreach($months as $month) {
 		if($month == $todays_month) {
-			log_error("[TDR DEBUG] tdr_month($schedule) is returning true $todays_month - $month");
 			return true;
 		}
 	}
@@ -702,7 +687,6 @@ function reset_carp() {
 	for($x=0; $x<$carp_counter; $x++) {
 		mwexec("/sbin/ifconfig carp{$x} down");
 		mwexec("/sbin/ifconfig carp{$x} delete");
-		log_error("CARP: $needed_carp_interfaces < $carp_counter");
 		if($needed_carp_interfaces < $carp_counter) {
 			$needed_carp_interfaces--;
 			log_error("Destroying carp interface.");

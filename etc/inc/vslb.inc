@@ -73,10 +73,11 @@ function slbd_configure() {
 					$svrtxt = "";
 					$svrtxt = "\t:service-port={$config['load_balancer']['lbpool'][$i]['port']}:\\\n";
 					if($config['load_balancer']['lbpool'])
-						foreach ($config['load_balancer']['lbpool'][$i]['servers'] as $lbsvr) {
-							$svrtxt .= "\t:{$svrcnt}={$lbsvr}:\\\n";
-							$svrcnt++;
-						}
+						if(is_array($config['load_balancer']['lbpool']))
+							foreach ($config['load_balancer']['lbpool'][$i]['servers'] as $lbsvr) {
+								$svrtxt .= "\t:{$svrcnt}={$lbsvr}:\\\n";
+								$svrcnt++;
+							}
 					$slbdconf .= "\t:method=round-robin:\\\n";
 					$slbdconf .= "\t:services={$svrcnt}:\\\n";
 					$slbdconf .= $svrtxt;

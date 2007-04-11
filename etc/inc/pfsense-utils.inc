@@ -735,7 +735,6 @@ function get_dns_servers() {
 			$dns_servers[] = $matches[1];
 	}
 	$dns_server_master = array();
-	sort($dns_servers);
 	$lastseen = "";
 	foreach($dns_servers as $t) {
 		if($t <> $lastseen)

@@ -122,11 +122,13 @@ require_once("notices.inc");
 							<li><a href="/system_advanced.php" class="navlnk">Advanced</a></li>
 							<li><a href="/system_firmware.php" class="navlnk">Firmware</a></li>
 							<li><a href="/system.php" class="navlnk">General Setup</a></li>
+							<li><a href="/index.php?logout" class="navlnk">Logout</a></li>
 						<?php if($g['platform'] == "pfSense"): ?>
 							<li><a href="/pkg_mgr.php" class="navlnk">Packages</a></li>
 						<?php endif; ?>
 							<li><a href="/wizard.php?xml=setup_wizard.xml" class="navlnk">Setup wizard</a></li>
 							<li><a href="/system_routes.php" class="navlnk">Static routes</a></li>
+							<li><a href="/system_usermanager.php" class="navlnk">User Manager</a></li>
 						</ul>
 					</li>
 					<li class="drop">

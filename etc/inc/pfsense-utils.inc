@@ -2293,26 +2293,38 @@ function reload_interfaces() {
  *   none
  ******/
 function sync_webgui_passwords() {
-	global $config, $g;
+	global $config, $g, $groupindex, $userindex;
+
 	conf_mount_rw();
 	$fd = fopen("{$g['varrun_path']}/htpasswd", "w");
+
 	if (!$fd) {
-		printf("Error: cannot open htpasswd in system_password_configure().\n");
+		log_error("Error: cannot open htpasswd in sync_webgui_passwords().\n");
 		return 1;
 	}
-	/* set admin account */
-	$username = $config['system']['username'];
 
-	/* set defined user account */
-	if($username <> "admin") {
-		$username = $config['system']['username'];
-		fwrite($fd, $username . ":" . $config['system']['password'] . "\n");
-	} else {
-		fwrite($fd, $username . ":" . $config['system']['password'] . "\n");
+	/* loop through custom users and add "virtual" entries */
+	if ($config['system']['user']) {
+		foreach ($config['system']['user'] as $user)
+			fwrite($fd, "{$user['name']}:{$user['password']}\n");
 	}
+
 	fclose($fd);
 	chmod("{$g['varrun_path']}/htpasswd", 0600);
-	$crypted_pw = $config['system']['password'];
+
+	if ($config['system']['user']) {
+		$root =& getUNIXRoot();
+		$crypted_pw = $root['password'];
+	}
+
+	if (empty ($crypted_pw)) {
+		log_error("Error: cannot determine root pwd in sync_webgui_passwords().\nRoot user struct follows:\n");
+		empty($root) ? log_error("Unable to determine root user!\n") : print_r($root);
+		log_error("Testing whether your system has the necessary users... ");
+		empty($config['system']['user']) ? log_error("users are missing.\n") : log_error("users found.\n");
+		return 1;
+	}
+
 	mwexec("/usr/sbin/pwd_mkdb -d /etc -p /etc/master.passwd");
 	mwexec("/usr/sbin/pwd_mkdb -p /etc/master.passwd");
 	/* sync root */
@@ -2320,16 +2332,79 @@ function sync_webgui_passwords() {
 	fwrite($fd, $crypted_pw);
 	pclose($fd);
 	mwexec("/usr/sbin/pw usermod -n root -s /bin/sh");
-	/* sync admin */
-	$fd = popen("/usr/sbin/pw usermod -n admin -H 0", "w");
-	fwrite($fd, $crypted_pw);
-	pclose($fd);
-	mwexec("/usr/sbin/pw usermod -n admin -s /etc/rc.initial");
+
+	/* and again for shell users */
+	/* only users with hasShellAccess() == true should be synced */
+	if($config['system']['user']) {
+		$home_base = $g['platform'] == "pfSense" ? "/home" : "/var/home";
+
+		if(! is_dir($home_base))
+			mkdir($home_base, 0755);
+
+		foreach($config['system']['user'] as $user) {
+			if (hasShellAccess($user['name']) || isAllowedToCopyFiles($user['name'])) {
+				$home  = hasShellAccess($user['name']) ? "{$home_base}/{$user['name']}" : "{$home_base}/scponly";
+				$shell = isAllowedToCopyFiles($user['name']) ? "/usr/local/bin/scponly" : "/etc/rc.initial";
+				if (isAllowedToCopyFiles($user['name']))
+					$user['groupname'] = "scponly";
+
+				$fd = popen("/usr/sbin/pw groupshow -n {$user['groupname']} 2>&1", "r");
+				$pwread = fgets($fd, 4096);
+				pclose($fd);
+
+				if (strpos($pwread, "unknown group") !== false) {
+					$groupname = $user['groupname'];
+					$group = $config['system']['group'][$groupindex[$groupname]];
+
+					if (isset($group) && is_array($group)) {
+						$fd = popen("/usr/sbin/pw groupadd -g {$group['gid']} -n {$group['name']}", "r");
+						pclose($fd);
+					} elseif (isAllowedToCopyFiles($user['name'])) {
+						$fd = popen("/usr/sbin/pw groupadd -g 100 -n scponly", "r");
+						pclose($fd);
+					}
+				}
+
+				$fd = popen("/usr/sbin/pw usershow -n {$user['name']} 2>&1", "r");
+				$pwread = fgets($fd, 4096);
+				pclose($fd);
+
+				isSystemAdmin($user['name']) ? $group = "wheel" : $group = "staff";
+
+				if (strpos($pwread, "no such user") === false) {
+					$fd = popen("/usr/sbin/pw usermod -n {$user['name']} -g ${user['groupname']} -G {$group} -H 0", "w");
+					fwrite($fd, $user['password']);
+					pclose($fd);
+				} else {
+					$fd = popen("/usr/sbin/pw useradd -u {$user['uid']} -n {$user['name']} -c '{$user['fullname']}' -g ${user['groupname']} -G {$group} -H 0", "w");
+					fwrite($fd, $user['password']);
+					pclose($fd);
+				}
+
+				/* common user related operations */
+				mwexec("/usr/sbin/pw usermod -n {$user['name']} -s {$shell}");
+
+				if(! is_dir($home)) mkdir($home, 0755);
+				mwexec("/usr/sbin/pw usermod -n {$user['name']} -d {$home} -m");
+
+				if (isAllowedToCopyFiles($user['name'])) {
+					mwexec("/usr/sbin/pw usermod -n {$user['name']} -g scponly");
+				}
+
+				if (file_exists("{$home_base}/scponly"))
+					mwexec("chmod 0660 {$home_base}/scponly");
+
+				if(isset($config['system']['ssh']['sshdkeyonly']) && ! isAllowedToCopyFiles($user['name'])) {
+					create_authorized_keys($user['name'], $home);
+				}
+			}
+		}
+	}
+
 	mwexec("/usr/sbin/pwd_mkdb -d /etc -p /etc/master.passwd");
 	mwexec("/usr/sbin/pwd_mkdb -p /etc/master.passwd");
 	conf_mount_ro();
 }
-
 /****f* pfsense-utils/cleanup_opt_interfaces_after_removal
  * NAME
  *   cleanup_opt_interfaces_after_removal - renumber interfaces after removing
@@ -3290,5 +3365,18 @@ function interface_has_gateway($friendly) {
 		return(in_array($friendly, get_interfaces_with_gateway()));
 	}
 }
+
+/****f* pfsense-utils/isAjax
+ * NAME
+ *   isAjax - reports if the request is driven from prototype
+ * INPUTS
+ *   none
+ * RESULT
+ *   true/false
+ ******/
+function isAjax() {
+	return isset ($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
+}
+
 
 ?>

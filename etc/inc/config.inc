@@ -955,6 +955,57 @@ function convert_config() {
 		$config['version'] = "2.9";
 	}
 
+	/* Convert 2.9 -> 3.0 */
+	if ($config['version'] <= 2.9) {
+		$config['system']['webgui']['auth_method'] = "session";
+		$config['system']['webgui']['backing_method'] = "htpasswd";
+
+		if (isset ($config['system']['username'])) {
+			$config['system']['group'] = array();
+			$config['system']['group'][0]['name'] = "admins";
+			$config['system']['group'][0]['description'] = "System Administrators";
+			$config['system']['group'][0]['scope'] = "system";
+			$config['system']['group'][0]['pages'] = "ANY";
+			$config['system']['group'][0]['home'] = "index.php";
+			$config['system']['group'][0]['gid'] = "110";
+
+			$config['system']['user'] = array();
+			$config['system']['user'][0]['name'] = "{$config['system']['username']}";
+			$config['system']['user'][0]['fullname'] = "System Administrator";
+			$config['system']['user'][0]['scope'] = "system";
+			$config['system']['user'][0]['groupname'] = "admins";
+			$config['system']['user'][0]['password'] = "{$config['system']['password']}";
+			$config['system']['user'][0]['uid'] = "0";
+
+			$config['system']['user'][0]['priv'] = array();
+			$config['system']['user'][0]['priv'][0]['id'] = "lockwc";
+			$config['system']['user'][0]['priv'][0]['name'] = "Lock webConfigurator";
+			$config['system']['user'][0]['priv'][0]['descr'] = "Indicates whether this user will lock access to the webConfigurator for other users.";
+			$config['system']['user'][0]['priv'][1]['id'] = "lock-ipages";
+			$config['system']['user'][0]['priv'][1]['name'] = "Lock individual pages";
+			$config['system']['user'][0]['priv'][1]['decr'] = "Indicates whether this user will lock individual HTML pages after having accessed a particular page (the lock will be freed if the user leaves or saves the page form).";
+			$config['system']['user'][0]['priv'][2]['id'] = "hasshell";
+			$config['system']['user'][0]['priv'][2]['name'] = "Has shell access";
+			$config['system']['user'][0]['priv'][2]['descr'] = "Indicates whether this user is able to login for example via SSH.";
+			$config['system']['user'][0]['priv'][3]['id'] = "copyfiles";
+			$config['system']['user'][0]['priv'][3]['name'] = "Is allowed to copy files";
+			$config['system']['user'][0]['priv'][3]['descr'] = "Indicates whether this user is allowed to copy files onto the {$g['product_name']} appliance via SCP/SFTP. If you are going to use this privilege, you must install scponly on the appliance (Hint: pkg_add -r scponly).";
+			$config['system']['user'][0]['priv'][4]['id'] = "isroot";
+			$config['system']['user'][0]['priv'][4]['name'] = "Is root user";
+			$config['system']['user'][0]['priv'][4]['descr'] = "This user is associated with the UNIX root user (you should associate this privilege only with one single user).";
+
+			$config['system']['nextuid'] = "111";
+			$config['system']['nextgid'] = "111";
+
+			/* wipe previous auth configuration */
+			unset ($config['system']['username']);
+			unset ($config['system']['password']);
+		}
+
+		$config['version'] = "3.0";
+	}
+
+
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
 }

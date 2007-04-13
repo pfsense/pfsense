@@ -41,7 +41,7 @@ if (!$omit_nocacheheaders) {
 
 /* Include authentication routines */
 /* THIS MUST BE ABOVE ALL OTHER CODE */
-require_once("auth.inc");
+require_once("authgui.inc");
 
 /* parse the configuration and include all configuration functions */
 require_once("config.inc");
@@ -303,6 +303,26 @@ function captiveportal_users_sort() {
 	}
 
 	usort($config['captiveportal']['user'], "cpusercmp");
+}
+
+function admin_groups_sort() {
+	global $g, $config;
+
+	function cpusercmp($a, $b) {
+		return strcasecmp($a['name'], $b['name']);
+	}
+
+	usort($config['system']['group'], "cpusercmp");
+}
+
+function admin_users_sort() {
+	global $g, $config;
+
+	function cpusercmp($a, $b) {
+		return strcasecmp($a['name'], $b['name']);
+	}
+
+	usort($config['system']['user'], "cpusercmp");
 }
 
 /* sort by interface only, retain the original order of rules that apply to

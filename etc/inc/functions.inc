@@ -46,6 +46,7 @@ if(!function_exists("pfSenseHeader")) {
 /* END compatibility goo with HEAD */
 
 /* include all configuration functions */
+require_once("auth.inc");
 require_once("captiveportal.inc");
 require_once("filter.inc");
 require_once("interfaces.inc");

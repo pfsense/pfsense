@@ -751,7 +751,8 @@ include("head.inc");
 					}
 				}?>
 				</select>
-				<p>Leave as 'none' to leave the rule enabled all the time.</p>
+				<p>Leave as 'none' to leave the rule enabled all the time.</p><br/>
+				<strong>NOTE:  schedule logic can be a bit different.  Click <a target="_new" href='firewall_rules_schedule_logic.php'>here</a> for more information.</strong>
 			</td>
 		</tr>
 		

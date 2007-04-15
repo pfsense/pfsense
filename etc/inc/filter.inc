@@ -3100,6 +3100,9 @@ function carp_sync_client() {
 		    if($carp['synchronizednsforwarder'] != "" and is_array($config['dnsmasq'])) {
 		        $sections[] = 'dnsmasq';
 		    }
+		    if($carp['synchronizeschedules'] != "" and is_array($config['schedules'])) {
+		        $sections[] = 'schedules';
+		    }
 		    if(count($sections) > 0) {
 				update_filter_reload_status("Signaling CARP reload signal...");
 			    carp_sync_xml($synchronizetoip, $carp['password'], $sections, $port);

@@ -63,8 +63,9 @@ function tdr_install_cron($should_install) {
 	foreach($config['cron']['item'] as $item) {
 		if(strstr($item['command'], "filter_configure_sync")) {
 			$is_installed = true;
-			$x++;
+			break;
 		}
+		$x++;
 	}
 	switch($should_install) {
 		case true:

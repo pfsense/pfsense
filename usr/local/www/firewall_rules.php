@@ -391,11 +391,14 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				$schedule_span_begin = "";
 				$schedule_span_end = "";
 				$sched_caption = "";
+				$schedstatus = false;
 				$dayArray = array ('Mon','Tues','Wed','Thur','Fri','Sat','Sun');
 				$monthArray = array ('January','February','March','April','May','June','July','August','September','October','November','December');
 				foreach ($a_schedules as $schedule)
 				{
 					if ($schedule['name'] == $filterent['sched'] ){
+						$schedstatus = get_time_based_rule_status($schedule);
+						
 						foreach($schedule['timerange'] as $timerange) {
 							$tempFriendlyTime = "";
 							$tempID = "";
@@ -512,7 +515,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                     <?=$textss;?><?php if (isset($config['interfaces'][$filterent['gateway']]['descr'])) echo htmlspecialchars($config['interfaces'][$filterent['gateway']]['descr']); else  echo htmlspecialchars(pprint_port($filterent['gateway'])); ?><?=$textse;?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';"><font color="black">
-                    <?=$textss;?><?php echo $schedule_span_begin;?><?=htmlspecialchars($filterent['sched']);?><?php echo $schedule_span_end; ?>&nbsp;<?=$textse;?>
+                    <?=$textss;?><?php echo $schedule_span_begin;?><?=htmlspecialchars($filterent['sched']);?><?php echo $schedule_span_end; ?><?=$textse;?>&nbsp; <?php if ($schedstatus) { ?><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_frmfld_time.png" title="Schedule is currently active" width="17" height="17" border="0"><?php } ?>
                   </td>
                   <td class="listbg" onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';" bcolor="#990000"><font color="white">
                     <?=$textss;?><?=htmlspecialchars($filterent['descr']);?>&nbsp;<?=$textse;?>

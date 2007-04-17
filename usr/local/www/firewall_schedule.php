@@ -105,7 +105,6 @@ include("head.inc");
 						if ($timerange){
 							$dayFriendly = "";
 							$tempFriendlyTime = "";							
-							$daytimeseparator = strrpos($timerange, ",");
 								
 							//get hours
 							$temptimerange = $timerange['hour'];

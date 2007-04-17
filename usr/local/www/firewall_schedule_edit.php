@@ -579,15 +579,15 @@ function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimeh
 		tr.appendChild(td);	
 			
 		td = d.createElement("td");
-		td.innerHTML="<input type='text' readonly class='formfld' name='starttime" + schCounter + "' id='starttime" + schCounter + "' style=' word-wrap:break-word; width:100%; border:0px solid;' value='" + starttimehour + ":" + starttimemin + "'>";
+		td.innerHTML="<input type='text' readonly class='vexpl' name='starttime" + schCounter + "' id='starttime" + schCounter + "' style=' word-wrap:break-word; width:100%; border:0px solid;' value='" + starttimehour + ":" + starttimemin + "'>";
 		tr.appendChild(td);
 		
 		td = d.createElement("td");
-		td.innerHTML="<input type='text' readonly class='formfld' name='stoptime" + schCounter + "' id='stoptime" + schCounter + "' style=' word-wrap:break-word; width:100%; border:0px solid;' value='" + stoptimehour + ":" + stoptimemin + "'>";
+		td.innerHTML="<input type='text' readonly class='vexpl' name='stoptime" + schCounter + "' id='stoptime" + schCounter + "' style=' word-wrap:break-word; width:100%; border:0px solid;' value='" + stoptimehour + ":" + stoptimemin + "'>";
 		tr.appendChild(td);
 		
 		td = d.createElement("td");
-		td.innerHTML="<input type='text' readonly class='formfld' name='timedescr" + schCounter + "' id='timedescr" + schCounter + "' style=' word-wrap:break-word; width:100%; border:0px solid;' value='" + tempdescr + "'>";
+		td.innerHTML="<input type='text' readonly class='vexpl' name='timedescr" + schCounter + "' id='timedescr" + schCounter + "' style=' word-wrap:break-word; width:100%; border:0px solid;' value='" + tempdescr + "'>";
 		tr.appendChild(td);
 		
 		td = d.createElement("td");
@@ -920,7 +920,7 @@ EOD;
 				  					?>
 				  				</select>&nbsp;Hr&nbsp;&nbsp;
 				  				<select name="stoptimemin" class="formfld" id="stoptimemin">
-				  					<option value="0">0</option>
+				  					<option value="00">00</option>
 				  					<option value="15">15</option>
 				  					<option value="30">30</option>
 				  					<option value="45">45</option>
@@ -974,8 +974,7 @@ EOD;
 										if ($timerange){
 											$dayFriendly = "";
 											$tempFriendlyTime = "";
-											$timedescr = $timerange['rangedescr'];									
-											$daytimeseparator = strrpos($timerange, ",");
+											$timedescr = $timerange['rangedescr'];			
 												
 											//get hours
 											$temptimerange = $timerange['hour'];
@@ -1090,13 +1089,13 @@ EOD;
 						          		<span class="vexpl"><?php echo $tempFriendlyTime; ?><span>
 						          	</td>
 									<td>
-						              <input type='text' readonly class='formfld' name='starttime<?php echo $counter; ?>' id='starttime<?php echo $counter; ?>' style=' word-wrap:break-word; width:100%; border:0px solid;' value='<?php echo $starttime; ?>'>
+						              <input type='text' readonly class='vexpl' name='starttime<?php echo $counter; ?>' id='starttime<?php echo $counter; ?>' style=' word-wrap:break-word; width:100%; border:0px solid;' value='<?php echo $starttime; ?>'>
 							        </td>
 						            <td>
-						              <input type='text' readonly class='formfld' name='stoptime<?php echo $counter; ?>' id='stoptime<?php echo $counter; ?>' style=' word-wrap:break-word; width:100%; border:0px solid;' value='<?php echo $stoptime; ?>'> 
+						              <input type='text' readonly class='vexpl' name='stoptime<?php echo $counter; ?>' id='stoptime<?php echo $counter; ?>' style=' word-wrap:break-word; width:100%; border:0px solid;' value='<?php echo $stoptime; ?>'> 
 							        </td>
 							        <td>
-							        	<input type='text' readonly class='formfld' name='timedescr<?php echo $counter; ?>' id='timedescr<?php echo $counter; ?>' style=' word-wrap:break-word; width:100%; border:0px solid;' value='<?php echo $timedescr; ?>'>
+							        	<input type='text' readonly class='vexpl' name='timedescr<?php echo $counter; ?>' id='timedescr<?php echo $counter; ?>' style=' word-wrap:break-word; width:100%; border:0px solid;' value='<?php echo $timedescr; ?>'>
 							        </td>
 							        <td>
 							        	<input type='image' src='/themes/<?php echo $g['theme']; ?>/images/icons/icon_e.gif' onclick='editRow("<?php echo $tempTime; ?>",this); return false;' value='Edit'>

@@ -1497,8 +1497,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 								if(is_file("{$g['tmp_path']}/{$gateway}_router")) {
 									$return_gateway = file_get_contents("{$g['tmp_path']}/{$gateway}_router");
 								} else {
-									if($g['debug'])
-										log_error("Could not find {$g['tmp_path']}/{$gateway}_router.  Needed for dhcp gateway information");
+									log_error("Could not find {$g['tmp_path']}/{$gateway}_router.  Needed for dhcp gateway information");
 									continue;
 								}
 							}

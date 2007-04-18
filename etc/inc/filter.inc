@@ -1569,7 +1569,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 											$gateway = get_interface_gateway($int);
 										}
 										if(($int <> "") && ($gateway <> "")) {
-											log_error("Setting up route with {$lbconfig['gateway'][$l]} om $int for monitor {$lbconfig['monitor'][$l]} on gateway $gateway");
+											if($g['debug'])
+												log_error("Setting up route with {$lbconfig['gateway'][$l]} om $int for monitor {$lbconfig['monitor'][$l]} on gateway $gateway");
 											if($foundlb == 1)
 												$routeto .= ", ";
 											$routeto .=  "( {$int} {$gateway} ) ";

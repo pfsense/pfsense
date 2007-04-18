@@ -391,6 +391,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				$schedule_span_begin = "";
 				$schedule_span_end = "";
 				$sched_caption = "";
+				$sched_content = "";
 				$schedstatus = false;
 				$dayArray = array ('Mon','Tues','Wed','Thur','Fri','Sat','Sun');
 				$monthArray = array ('January','February','March','April','May','June','July','August','September','October','November','December');
@@ -486,7 +487,6 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 								$timeFriendly = $starttime . " - " . $stoptime;
 								$description = $timerange['rangedescr'];
 								$sched_content .= $dayFriendly . "; " . $timeFriendly . "<br>";
-
 							}
 						}
 						$sched_caption = $schedule['descr'];

@@ -1962,7 +1962,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		if($schedule_xml_block)
 			$status = get_time_based_rule_status($schedule_xml_block);
 		if($status) {
-			log_error("[TDR DEBUG] status true -- rule type '$type'");
+			if($g['debug'])
+				log_error("[TDR DEBUG] status true -- rule type '$type'");
 			if($type == "block") {
 				$ipfw_rule = tdr_create_ipfw_rule($rule, "deny");
 				tdr_install_rule($ipfw_rule);

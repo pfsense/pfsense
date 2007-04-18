@@ -1576,7 +1576,12 @@ function generate_user_filter_rule($rule, $ngcounter) {
 								}
 								$l++;
 							}
-							$routeto .= "} round-robin ";
+							/* If we want failover just use route-to else round-robin */
+							if($lb['behaviour'] == "failover") {
+								$routeto .= "} ";
+							} else {
+								$routeto .= "} round-robin ";
+							}
 						}
 					}
 					/* Add the load balanced gateways */

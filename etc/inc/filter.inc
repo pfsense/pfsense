@@ -3039,11 +3039,11 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 	/* send our XMLRPC message and timeout after 240 seconds */
 	$resp = $cli->send($msg, "240");
 	if(!$resp) {
-		$error = "A communications error occured while attempting XMLRPC sync with {$url}:{$port}.";
+		$error = "A communications error occured while attempting XMLRPC sync with username admin {$url}:{$port}.";
 		log_error($error);
 		file_notice("sync_settings", $error, "Settings Sync", "");
 	} elseif($resp->faultCode()) {
-		$error = "An error code was received while attempting XMLRPC sync with {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
+		$error = "An error code was received while attempting XMLRPC sync with username admin {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
 		log_error($error);
 		file_notice("sync_settings", $error, "Settings Sync", "");
 	} else {

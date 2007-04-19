@@ -1890,7 +1890,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				  isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "" or
 				   isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "" or
 				    isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> "" or
-				     isset($rule['max-src-states']) and $rule['max-src-states'] <> "" ) {
+				     isset($rule['max-src-states']) and $rule['max-src-states'] <> "" or
+				      isset($rule['statetimeout']) and $rule['statetimeout'] <> "") {
 					$aline['flags'] .= "( ";
 					if(isset($rule['source-track']) and $rule['source-track'] <> "")
 						$aline['flags'] .= "source-track rule ";

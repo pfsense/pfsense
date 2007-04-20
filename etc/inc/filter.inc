@@ -2064,6 +2064,10 @@ function filter_rules_generate() {
 
 	$ipfrules .= <<<EOD
 
+# We use the mighty pf, we cannot be fooled.
+block quick proto { tcp, udp } from any port = 0 to any
+block quick proto { tcp, udp } from any to any port = 0
+
 # snort2c
 table <snort2c> persist
 block quick from <snort2c> to any label "Block snort2c hosts"

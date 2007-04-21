@@ -238,6 +238,13 @@ function parse_config($parse = false) {
 				log_error("Could not restore config.xml.");
 		}
 		$config = parse_xml_config($g['conf_path'] . '/config.xml', $g['xml_rootobj']);
+		if($config == "-1") {
+			$last_backup = discover_last_backup();
+			if ($last_backup)
+				restore_backup("/cf/conf/backup/{$last_backup}");
+			else
+				log_error(gettext("Could not restore config.xml."));
+		}
 		generate_config_cache($config);
 	}
 	if($g['booting']) echo ".";
@@ -293,6 +300,7 @@ function restore_backup($file) {
 	if(file_exists($file)) {
 		conf_mount_rw();
 		system("cp $file /cf/conf/config.xml");
+		log_error("pfSense is restoring the configuration $file");
 	}
 }
 

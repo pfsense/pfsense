@@ -102,7 +102,7 @@ function tdr_install_cron($should_install) {
  *   text string with ipfw rule already formatted
  ******/
 function tdr_create_ipfw_rule($rule, $type) {
-		global $config, $g;
+		global $config, $g, $tdr_get_next_ipfw_rule;
 
 		$wancfg = $config['interfaces']['wan'];
 		$lancfg = $config['interfaces']['lan'];
@@ -455,7 +455,15 @@ function tdr_create_ipfw_rule($rule, $type) {
 	
 	if($aline['prot'] == "")
 		$aline['prot'] = "ip ";
-		
+
+	tdr_get_next_ipfw_rule();
+
+ 	/* piece together the actual user rule */
+	if($type == "allow") {
+		$next_rule = tdr_get_next_ipfw_rule+2;
+		$type = "skipto $next_rule";
+	}
+
 	/* piece together the actual user rule */
 	$line .= $type . " " . $aline['prot'] . $aline['src'] . 
 	$aline['srcport'] . $aline['dst'] . $aline['dstport'] . " in recv " . $aline['interface'];
@@ -473,8 +481,25 @@ function tdr_create_ipfw_rule($rule, $type) {
  *   none
  ******/
 function tdr_install_rule($rule) {
-	mwexec("/sbin/ipfw -f add 2 set 9 $rule");
+	global $tdr_next_ipfw_rule;
+	mwexec("/sbin/ipfw -f add $tdr_next_ipfw_rule set 9 $rule");
+	$tdr_next_ipfw_rule++;
 }
+
+/****f* pfsense-utils/tdr_get_next_ipfw_rule
+ * NAME
+ *   tdr_get_next_ipfw_rule
+ * INPUTS
+ *  none
+ * RESULT
+ *   returns the next available ipfw rule number
+ ******/
+function tdr_get_next_ipfw_rule() {
+	global $tdr_next_ipfw_rule;
+	if(!$tdr_next_ipfw_rule) 
+		$tdr_next_ipfw_rule = 2;
+	return $tdr_next_ipfw_rule;
+ }
 
 /****f* pfsense-utils/tdr_install_set
  * NAME
@@ -594,6 +619,7 @@ function tdr_day($schedule) {
 		$weekday = 7;
 	$date	 	= date("d");
 	$defined_days = split(",", $schedule);
+	log_error("[TDR DEBUG] tdr_day($schedule)");
 	foreach($defined_days as $dd) {
 		if($date == $dd) {
 			return true;
@@ -609,6 +635,7 @@ function tdr_hour($schedule) {
 	$starting_time = strtotime($tmp[0]);
 	$ending_time = strtotime($tmp[1]);
 	$now = strtotime("now");
+	log_error("[TDR DEBUG] S: $starting_time E: $ending_time N: $now");
 	if($now >= $starting_time and $now <= $ending_time) {
 		return true;
 	}
@@ -625,6 +652,7 @@ function tdr_position($schedule) {
 	 */
 	global $debug;
 	$weekday	= date("w");
+	log_error("[TDR DEBUG] tdr_position($schedule) $weekday");
 	if ($weekday == 0)
 		$weekday = 7;
 	$schedule_days = split(",", $schedule);
@@ -643,6 +671,7 @@ function tdr_month($schedule) {
 	global $debug;
 	$todays_month = date("n");
 	$months = split(",", $schedule);
+	log_error("[TDR DEBUG] tdr_month($schedule)");
 	foreach($months as $month) {
 		if($month == $todays_month) {
 			return true;

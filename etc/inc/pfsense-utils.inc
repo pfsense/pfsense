@@ -458,7 +458,7 @@ function tdr_create_ipfw_rule($rule, $type) {
 		
 	/* piece together the actual user rule */
 	$line .= $type . " " . $aline['prot'] . $aline['src'] . 
-	$aline['srcport'] . $aline['dst'] . $aline['dstport'] . " in via " . $aline['interface'];
+	$aline['srcport'] . $aline['dst'] . $aline['dstport'] . " in recv " . $aline['interface'];
 
 	return $line;
 
@@ -473,7 +473,7 @@ function tdr_create_ipfw_rule($rule, $type) {
  *   none
  ******/
 function tdr_install_rule($rule) {
-	mwexec("/sbin/ipfw -f add 1 set 9 $rule");
+	mwexec("/sbin/ipfw -f add 2 set 9 $rule");
 }
 
 /****f* pfsense-utils/tdr_install_set
@@ -486,6 +486,10 @@ function tdr_install_rule($rule) {
  ******/
 function tdr_install_set() {
 	/* set 8 contains time based rules */
+	mwexec("/sbin/ipfw delete 1");
+	mwexec("/sbin/ipfw delete 65534");
+	mwexec("/sbin/ipfw add 1 allow all from me to any keep-state");
+	mwexec("/sbin/ipfw add 65534 check-state");
 	mwexec("/sbin/ipfw -f delete set 8");
 	mwexec("/sbin/ipfw -f set swap 9 8");
 }

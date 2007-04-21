@@ -2397,6 +2397,7 @@ EOD;
 
 # block anything from private networks on WAN interface
 anchor "spoofing"
+antispoof for \$wan
 block in $log quick on \$wan from 10.0.0.0/8 to any label "block private networks from wan block 10/8"
 block in $log quick on \$wan from 127.0.0.0/8 to any label "block private networks from wan block 127/8"
 block in $log quick on \$wan from 172.16.0.0/12 to any label "block private networks from wan block 172.16/12"

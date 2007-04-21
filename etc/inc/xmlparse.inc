@@ -161,9 +161,10 @@ function parse_xml_config_raw($cffile, $rootobj, $isstring = "false") {
 
 	while ($data = fread($fp, 4096)) {
 		if (!xml_parse($xml_parser, $data, feof($fp))) {
-			die(sprintf("XML error: %s at line %d\n",
+			log_error(sprintf("XML error: %s at line %d\n",
 						xml_error_string(xml_get_error_code($xml_parser)),
 						xml_get_current_line_number($xml_parser)));
+			return -1;
 		}
 	}
 	xml_parser_free($xml_parser);

@@ -72,7 +72,7 @@ function slbd_configure() {
 					$svrcnt = 0;
 					$svrtxt = "";
 					$svrtxt = "\t:service-port={$config['load_balancer']['lbpool'][$i]['port']}:\\\n";
-					if($config['load_balancer']['lbpool']['servers'])
+					if($config['load_balancer']['lbpool'])
 						if(is_array($config['load_balancer']['lbpool'][$i]['servers']))
 							foreach ($config['load_balancer']['lbpool'][$i]['servers'] as $lbsvr) {
 								$svrtxt .= "\t:{$svrcnt}={$lbsvr}:\\\n";

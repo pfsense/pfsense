@@ -1179,6 +1179,8 @@ function config_lock() {
 			return;
 		} else {
 			/* file locked, wait and try again */
+			if($n == 4) 
+				log_error("[DEBUG] Lock recursion detected.");
 			$process_lock = false;
 			sleep(1);
 			$n++;

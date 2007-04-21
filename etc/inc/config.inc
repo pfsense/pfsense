@@ -300,7 +300,7 @@ function restore_backup($file) {
 	config_lock();
 	if(file_exists($file)) {
 		conf_mount_rw();
-		copy("$file /cf/conf/config.xml");
+		copy("$file","/cf/conf/config.xml");
 		unlink_if_exists("/tmp/config.cache");
 		log_error("pfSense is restoring the configuration $file");
 		conf_mount_ro();

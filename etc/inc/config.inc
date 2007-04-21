@@ -1664,6 +1664,7 @@ function system_start_ftp_helpers() {
 function cleanup_backupcache($revisions = 30) {
 	global $g;
 	$i = false;
+	config_lock();
 	if(file_exists($g['cf_conf_path'] . '/backup/backup.cache')) {
 		conf_mount_rw();
 		$backups = get_backups();
@@ -1720,6 +1721,7 @@ function cleanup_backupcache($revisions = 30) {
 			print "done.\n";
 		}
 	}
+	config_unlock();
 }
 
 function get_backups() {

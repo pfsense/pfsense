@@ -1684,6 +1684,11 @@ function cleanup_backupcache($revisions = 30) {
 				if($g['booting'])
 					print " " . $tocheck . "a";
 				$newxml = parse_xml_config($backup, $g['xml_rootobj']);
+				if($newxml == "-1") {
+					log_error("The backup cache file $backup is corrupted.  Unlinking.");
+					unlink($backup);
+					continue;
+				}
 				if($newxml['revision']['description'] == "")
 					$newxml['revision']['description'] = "Unknown";
 				$tocache[$tocheck] = array('description' => $newxml['revision']['description']);

@@ -212,7 +212,7 @@
 		</field>
 	</fields>
 	<custom_php_command_before_form>
-		if(!$config['installedpackages']['openvpnserver'][0]['protocol'])
+		if(!$config['installedpackages']['openvpnserver'][config][0]['protocol'])
 			unset($evaledvar);
 		openvpn_get_ciphers(&amp;$pkg);
 	</custom_php_command_before_form>

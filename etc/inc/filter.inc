@@ -1260,6 +1260,7 @@ function generate_user_filter_rule_arr($rule, $ngcounter) {
 function generate_user_filter_rule($rule, $ngcounter) {
 		global $config, $g;
 		global $table_cache;
+		global $schedule_enabled;
 
 		if(isset($config['system']['developerspew'])) {
 			$mt = microtime();
@@ -1951,6 +1952,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			foreach($config['schedules']['schedule'] as $sched) {
 				if($sched['name'] == $rule['sched'])
 					$schedule_xml_block = $sched;					
+					$schedule_enabled = true;
 			}
 		}
 		if($schedule_xml_block)
@@ -1980,6 +1982,10 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			return "# $line";
 		}
 	} else {
+		if($schedule_enabled) {
+			$ipfw_rule = tdr_create_ipfw_rule($rule, "noschedallow");
+			tdr_install_rule($ipfw_rule);			
+		}	
 		return $line;
 	}
 }

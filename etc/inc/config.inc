@@ -1091,10 +1091,10 @@ function write_config($desc="Unknown", $backup = true) {
 		fclose($fd);
 	}
 
-	config_unlock();
-
 	/* tell kernel to sync fs data */
 	mwexec("/bin/sync");
+
+	config_unlock();
 
 	return $config;
 }

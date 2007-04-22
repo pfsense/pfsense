@@ -72,6 +72,7 @@ extension=radius.so
 
 EOFF;
 
+        config_lock();
 		conf_mount_rw();
 
 		/* open up php.ini and write back out contents */
@@ -80,6 +81,9 @@ EOFF;
 		fclose($fd);
 
 		conf_mount_ro();
+		exec("sync");
+		config_unlock();
+
 }
 
 function system_resolvconf_generate($dynupdate = false) {

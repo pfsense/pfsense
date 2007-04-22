@@ -465,6 +465,10 @@ function tdr_create_ipfw_rule($rule, $type) {
 		$type = "skipto $next_rule";
 	}
 
+	if($type == "noschedallow") {
+		$type = "allow";
+	}	
+
 	/* piece together the actual user rule */
 	$line .= $type . " " . $aline['prot'] . $aline['src'] . 
 	$aline['srcport'] . $aline['dst'] . $aline['dstport'] . " in recv " . $aline['interface'];

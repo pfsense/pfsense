@@ -510,11 +510,21 @@ function tdr_get_next_ipfw_rule() {
  *   swaps in the temporary ipfw time based rule set
  ******/
 function tdr_install_set() {
-	/* set 8 contains time based rules */
+	global $config;
+	
 	mwexec("/sbin/ipfw delete 1");
 	mwexec("/sbin/ipfw delete 65534");
 	mwexec("/sbin/ipfw add 1 allow all from me to any keep-state");
+	if (!isset ($config['system']['webgui']['noantilockout'])) {
+		/* lan ip lockout */
+		$lancfg = $config['interfaces']['lan'];
+		$lanip = $lancfg['ipaddr'];
+		$lansn = $lancfg['subnet'];
+		$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
+		mwexec("/sbin/ipfw add 1 allow all from {$lansa}/{$lansn} to $lanip keep-state");
+	}
 	mwexec("/sbin/ipfw add 65534 check-state");
+	/* set 8 contains time based rules */
 	mwexec("/sbin/ipfw -f delete set 8");
 	mwexec("/sbin/ipfw -f set swap 9 8");
 }

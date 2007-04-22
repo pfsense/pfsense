@@ -126,8 +126,11 @@ function filter_configure_sync() {
 
 	/* load ipfw / dummynet early on if required */
 	if($config['system']['dummynetshaper']) {
-			mwexec("/sbin/kldload ipfw");
-			mwexec("/sbin/kldload dummynet");
+				$status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
+				if($status == "0") {
+					mwexec("/sbin/kldload ipfw");
+					mwexec("/sbin/kldload dummynet");
+				}
 		} else {	
 			/* check to see if any rules reference a schedule
 			 * and if so load ipfw for later usage.

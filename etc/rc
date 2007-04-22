@@ -205,6 +205,33 @@ echo "done."
 # Recreate capabilities DB
 cap_mkdb /etc/login.conf
 
+if [ "$PLATFORM" != "cdrom" ]; then
+# Populate a dummy php.ini to avoid
+# the file being clobbered and the firewall
+# not being able to boot back up.
+cat >/usr/local/lib/php.ini <<EOF
+output_buffering = "0"
+implicit_flush = true
+magic_quotes_gpc = Off
+max_execution_time = 99999999
+max_input_time = 99999999
+register_argc_argv = Off
+file_uploads = On
+upload_tmp_dir = /tmp
+upload_max_filesize = 90M
+post_max_size = 90M
+html_errors = Off
+include_path = ".:/etc/inc:/usr/local/www:/usr/local/captiveportal:/usr/local/pkg"
+apc.enabled="1"
+apc.enable_cli="1"
+apc.shm_size="30"
+extension_dir=/usr/local/lib/php/extensions/no-debug-non-zts-20020429/
+extension=apc.so
+extension=radius.so
+
+EOF
+fi
+
 # let the PHP-based configuration subsystem set up the system now
 echo -n "Launching PHP init system..."
 /etc/rc.bootup

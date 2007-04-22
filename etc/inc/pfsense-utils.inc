@@ -460,7 +460,8 @@ function tdr_create_ipfw_rule($rule, $type) {
 
  	/* piece together the actual user rule */
 	if($type == "allow") {
-		$next_rule = tdr_get_next_ipfw_rule+2;
+		$next_rule = tdr_get_next_ipfw_rule();
+		$next_rule = $next_rule+1;
 		$type = "skipto $next_rule";
 	}
 

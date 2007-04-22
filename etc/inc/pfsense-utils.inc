@@ -496,7 +496,7 @@ function tdr_install_rule($rule) {
  ******/
 function tdr_get_next_ipfw_rule() {
 	global $tdr_next_ipfw_rule;
-	if(!$tdr_next_ipfw_rule) 
+	if(intval($tdr_next_ipfw_rule) < 2) 
 		$tdr_next_ipfw_rule = 2;
 	return $tdr_next_ipfw_rule;
  }

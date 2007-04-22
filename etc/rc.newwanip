@@ -119,8 +119,10 @@ enable_rrd_graphing();
 
 /* restart packages */
 if($old_ip <> "") 
-	if($old_ip <> $curwanip)
+	if($old_ip <> $curwanip) {
 		exec("/etc/rc.start_packages");
+		log_error("pfSense package system has detected an ip change $old_ip ->  $curwanip ... Restarting packages.");
+	}
 
 /* reload slbd */
 /* if ($config['load_balancer']['lbpool']['type'] == "gateway") */

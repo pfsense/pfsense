@@ -702,7 +702,7 @@ function filter_nat_rules_generate() {
 				generate_optcfg_array($optints);
 				foreach($optints as $oc) {
 					$opt_interface = $oc['if'];
-					if($oc['gateway'] <> "" or $oc['if'] <> "dhcp")
+					if($oc['gateway'] <> "" or $oc['if'] == "dhcp")
 						$natrules .= filter_nat_rules_generate_if($opt_interface,
 							"{$optsa}/{$optcfg['subnet']}", null, "", null, null, null, isset($optcfg['nonat']));
 				}

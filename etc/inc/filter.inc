@@ -86,20 +86,26 @@ function filter_configure_sync() {
 		echo "filter_configure_sync() being called $mt\n";
 	}
 
-	/* check to see if any rules reference a schedule
-	 * and if so load ipfw for later usage.
-	 */
-	foreach($config['filter']['rule'] as $rule) {
-		if($rule['sched'])
-			$time_based_rules = true;
-	}
-	if($time_based_rules == true) {
-		$status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
-		if($status == "0") {
-			mute_kernel_msgs();
+	/* load ipfw / dummynet early on if required */
+	if($config['system']['dummynetshaper']) {
 			mwexec("/sbin/kldload ipfw");
-			unmute_kernel_msgs();
-		}
+			mwexec("/sbin/kldload dummynet");
+		} else {	
+			/* check to see if any rules reference a schedule
+			 * and if so load ipfw for later usage.
+			 */
+			foreach($config['filter']['rule'] as $rule) {
+				if($rule['sched'])
+					$time_based_rules = true;
+			}
+			if($time_based_rules == true) {
+				$status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
+				if($status == "0") {
+					mute_kernel_msgs();
+					mwexec("/sbin/kldload ipfw");
+					unmute_kernel_msgs();
+				}
+			}
 	}
 
 	$lan_if = $config['interfaces']['lan']['if'];

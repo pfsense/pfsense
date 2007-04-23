@@ -1275,6 +1275,13 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		global $table_cache;
 		global $schedule_enabled;
 
+		if($config['schedules']) {
+			foreach($config['schedules']['schedule'] as $sched) {
+				$schedule_enabled = true;
+				break;
+			}
+		}
+
 		if(isset($config['system']['developerspew'])) {
 			$mt = microtime();
 			echo "generate_user_filter_rule() being called $mt\n";

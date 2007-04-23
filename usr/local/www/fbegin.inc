@@ -114,7 +114,7 @@ require_once("notices.inc");
 	</div> <!-- Header DIV -->
 	<div id="content">
 		<div id="left">
-			<div id="navigation">
+			<div id="navigation" style="z-index:1000">
 				<ul id="menu">
 					<li class="firstdrop">
 						<div>System</div>

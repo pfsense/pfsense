@@ -112,6 +112,10 @@ function openvpn_validate_input($mode, $post, $input_errors) {
 			if ($post['protocol'] != "TCP")
 				$input_errors[] = 'The protocol must be TCP to use a HTTP proxy server.';
 		}
+		if (isset($post['use_shaper']) && $post['use_shaper'] != "") {
+			if (!is_numeric($post['use_shaper']))
+				$input_errors[] = 'The field \'Limit outgoing bandwith\' must be numeric.';
+		}
 
 	}
 
@@ -305,6 +309,8 @@ EOD;
 		$openvpn_conf .= "persist-remote-ip\n";
 		$openvpn_conf .= "float\n";
 	}
+
+	if (!empty($settings['use_shaper'])) $openvpn_conf .= "shaper {$settings['use_shaper']}\n";
 
 	if (!empty($settings['custom_options'])) {
 		$options = explode(';', $settings['custom_options']);

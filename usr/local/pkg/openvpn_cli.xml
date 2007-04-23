@@ -175,6 +175,12 @@
 			<type>checkbox</type>
 		</field>
 		<field>
+			<fieldname>use_shaper</fieldname>
+			<fielddescr>Limit outgoing bandwith</fielddescr>
+			<description>Maximum outgoing bandwith for this tunnel. Leave empty for no limit. The imput value has to be something between 100 bytes/sec and 100 Mbytes/sec (entered as bytes per second).</description>
+			<type>input</type>
+		</field>
+		<field>
 			<fieldname>use_dynamicport</fieldname>
 			<fielddescr>Dynamic sourceport</fielddescr>
 			<description>Checking this will let the openvpn client choose a dynamic sourceport for this connection.</description>

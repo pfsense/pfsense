@@ -518,6 +518,7 @@ function tdr_install_set() {
 	global $config;
 	
 	mwexec("/sbin/ipfw delete 1");
+	mwexec("/sbin/ipfw add 1 check-state");
 	mwexec("/sbin/ipfw delete 65534");
 	mwexec("/sbin/ipfw add 1 allow all from me to any keep-state");
 	if (!isset ($config['system']['webgui']['noantilockout'])) {

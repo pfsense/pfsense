@@ -471,7 +471,7 @@ function tdr_create_ipfw_rule($rule, $type) {
 
 	/* piece together the actual user rule */
 	$line .= $type . " " . $aline['prot'] . $aline['src'] . 
-	$aline['srcport'] . $aline['dst'] . $aline['dstport'] . " in recv " . $aline['interface'] . " check-state";
+	$aline['srcport'] . $aline['dst'] . $aline['dstport'] . " in recv " . $aline['interface'];
 
 	return $line;
 

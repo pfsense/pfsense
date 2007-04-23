@@ -1277,6 +1277,13 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			echo "generate_user_filter_rule() being called $mt\n";
 		}
 
+		if($config['schedules']) {
+			foreach($config['schedules']['schedule'] as $sched) {
+				$schedule_enabled = true;
+				break;
+			}
+		}
+
 		/* Setup cache array if not already existing */
 		if (!isset($table_cache)) {
 			if ($g['debug'])

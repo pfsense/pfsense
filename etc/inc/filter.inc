@@ -146,6 +146,7 @@ function filter_configure_sync() {
 					mwexec("/sbin/kldload ipfw");
 					unmute_kernel_msgs();
 				}
+				exec("/sbin/ipfw delete 1-500");
 			}
 	}
 

@@ -1810,6 +1810,28 @@ function start_devd() {
 		unlink("/tmp/rc.linkup");
 }
 
+function is_interface_mismatch() {
+	global $config, $g;
+	$lan_if = $config['interfaces']['lan']['if'];
+	$wan_if = get_real_wan_interface();
+	$do_assign = 0;
+	/* we need to ignore the vlan interface checks) */
+	if (stristr($lan_if, "vlan") == false and stristr($wan_if, "vlan") == false) {
+		if (does_interface_exist($lan_if) == false)
+			$do_assign = 1;
+		if ($config['interfaces']['wan']['ipaddr'] <> "pppoe" && $config['interfaces']['wan']['ipaddr'] <> "pptp" && $do_assign == 0)
+			if (does_interface_exist($wan_if) == false)
+				$do_assign = 1;
+	}
+	/* XXX: enumerate OPT interfaces looking for mismatches */
+	if (file_exists("{$g['tmp_path']}/assign_complete"))
+		return false;
+	if ($do_assign == 1)
+		return true;
+	else
+		return false;
+}
+
 function set_device_perms() {
 	$devices = array(
 		'pf'	=> array(	'user'	=> 'proxy',

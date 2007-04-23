@@ -184,6 +184,11 @@ if ($_POST) {
 								$reboot_needed = true;
 							}
 							setup_serial_port();
+							if(is_interface_mismatch() == true) {
+								touch("/var/run/interface_mismatch_reboot_needed");
+								$reboot_needed = false;
+								header("Location: interfaces_assign.php");
+							}
 						} else {
 							$input_errors[] = "The configuration could not be restored.";
 						}

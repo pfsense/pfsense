@@ -114,7 +114,29 @@
 		fclose($fd);
 	}
 
+	//set variables for WAN traffic graph
+	$curif = "WAN";
+	$ifnum = get_real_wan_interface();
+	$width = "300";
+	$height = "150";
+	
+$jscriptstr = <<<EOD
+<script type="text/javascript">
 
+function showgraph(){
+	//add it to the schedule list
+	d = document;
+	tbody = d.getElementById("wangraph").getElementsByTagName("tbody").item(0);
+	div = d.createElement("div");
+	div.innerHTML= "<embed id='graph' src='graph.php?ifnum=$ifnum&ifname=$curif' type='image/svg+xml' width='$width' height='$height' pluginspage='http://www.adobe.com/svg/viewer/install/auto' />";
+	tbody.appendChild(div);
+	textlink = d.getElementById("graphlink");
+	textlink.parentNode.removeChild(textlink);
+}
+	
+</script>
+EOD;
+	
 	## Set Page Title and Include Header
 	$pgtitle = "pfSense webGUI";
 	include("head.inc");
@@ -127,6 +149,7 @@ var ajaxStarted = false;
 </script>
 <?php
 include("fbegin.inc");
+echo $jscriptstr;
 	if(!file_exists("/usr/local/www/themes/{$g['theme']}/no_big_logo"))
 		echo "<center><img src=\"./themes/".$g['theme']."/images/logobig.jpg\"></center><br>";
 ?>
@@ -134,103 +157,168 @@ include("fbegin.inc");
 
 <div id="niftyOutter">
 <form action="index.php" method="post">
-<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
-	<tbody>
+<table  width="100%" border="0" cellspacing="0" cellpadding="5">
 		<tr>
-			<td colspan="2" class="listtopic">System information</td>
-		</tr>
-		<tr>
-			<td width="25%" class="vncellt">Name</td>
-			<td width="75%" class="listr"><?php echo $config['system']['hostname'] . "." . $config['system']['domain']; ?></td>
-		</tr>
-		<tr>
-			<td width="25%" valign="top" class="vncellt">Version</td>
-			<td width="75%" class="listr">
-				<strong><?php readfile("/etc/version"); ?></strong>
-				<br />
-				built on <?php readfile("/etc/version.buildtime"); ?>
-			</td>
-		</tr>
-		<tr>
-			<td width="25%" class="vncellt">Platform</td>
-			<td width="75%" class="listr"><?=htmlspecialchars($g['platform']);?></td>
-		</tr>
-		<?php if ($hwcrypto): ?>
-		<tr>
-			<td width="25%" class="vncellt">Hardware crypto</td>
-			<td width="75%" class="listr"><?=htmlspecialchars($hwcrypto);?></td>
-		</tr>
-		<?php endif; ?>
-		<tr>
-			<td width="25%" class="vncellt">Uptime</td>
-			<td width="75%" class="listr"><input style="border: 0px solid white;" size="30" name="uptime" id="uptime" value="<?= htmlspecialchars(get_uptime()); ?>" /></td>
-		</tr>
-		<?php if ($config['lastchange']): ?>
-		<tr>
-			<td width="25%" class="vncellt">Last config change</td>
-			<td width="75%" class="listr"><?= htmlspecialchars(date("D M j G:i:s T Y", $config['revision']['time']));?></td>
-		</tr>
-		<?php endif; ?>
-		<tr>
-			<td width="25%" class="vncellt">State table size</td>
-			<td width="75%" class="listr">
-				<input style="border: 0px solid white;" size="30" name="pfstate" id="pfstate" value="<?= htmlspecialchars(get_pfstate()); ?>" />
-		    	<br />
-		    	<a href="diag_dump_states.php">Show states</a>
-			</td>
-		</tr>
-		<tr>
-			<td width="25%" class="vncellt">CPU usage</td>
-			<td width="75%" class="listr">
-				<?php $cpuUsage = "0"; ?>
-				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="cpuwidtha" id="cpuwidtha" width="<?= $cpuUsage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="cpuwidthb" id="cpuwidthb" width="<?= (100 - $cpuUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
-				&nbsp;
-				<input style="border: 0px solid white;" size="30" name="cpumeter" id="cpumeter" value="(Updating in 5 seconds)" />
-			</td>
-		</tr>
-		<tr>
-			<td width="25%" class="vncellt">Memory usage</td>
-			<td width="75%" class="listr">
-				<?php $memUsage = mem_usage(); ?>
-				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="memwidtha" id="memwidtha" width="<?= $memUsage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="memwidthb" id="memwidthb" width="<?= (100 - $memUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
-				&nbsp;
-				<input style="border: 0px solid white;" size="30" name="memusagemeter" id="memusagemeter" value="<?= $memUsage.'%'; ?>" />
-			</td>
-		</tr>
-		<?php if($showswap == true): ?>
-		<tr>
-			<td width="25%" class="vncellt">SWAP usage</td>
-			<td width="75%" class="listr">
-				<?php $swapusage = swap_usage(); ?>
-				<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" width="<?= $swapUsage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" width="<?= (100 - $swapUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
-				&nbsp;
-				<input style="border: 0px solid white;" size="30" name="swapusagemeter" id="swapusagemeter" value="<?= $swapusage.'%'; ?>" />
-			</td>
-		</tr>
-		<?php endif; ?>
-<?php
-		if(has_temp()):
-?>
-		<tr>
-			<td width='25%' class='vncellt'>Temperature</td>
-			<td width='75%' class='listr'>
-				<?php $temp = get_temp(); ?>
-				<img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_blue.gif" height="15" name="tempwidtha" id="tempwidtha" width="<?= $temp; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_gray.gif" height="15" name="tempwidthb" id="tempwidthb" width="<?= (100 - $temp); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
-				&nbsp;
-				<input style="border: 0px solid white;" size="30" name="tempmeter" id="tempmeter" value="<?= $temp."C"; ?>" />
-			</td>
-		</tr>
-		<?php endif; ?>
-		<tr>
-			<td width="25%" class="vncellt">Disk usage</td>
-			<td width="75%" class="listr">
-				<?php $diskusage = disk_usage(); ?>
-				<img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_blue.gif" height="15" width="<?= $diskusage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_gray.gif" height="15" width="<?= (100 - $diskusage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
-				&nbsp;
-				<input style="border: 0px solid white;" size="30" name="diskusagemeter" id="diskusagemeter" value="<?= $diskusage.'%'; ?>" />
-			</td>
-		</tr>
-	</tbody>
+			<td valign="top">
+			<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tbody>
+				<tr>
+					<td colspan="2" class="listtopic">System information</td>
+				</tr>
+				<tr>
+					<td width="25%" class="vncellt">Name</td>
+					<td width="75%" class="listr"><?php echo $config['system']['hostname'] . "." . $config['system']['domain']; ?></td>
+				</tr>
+				<tr>
+					<td width="25%" valign="top" class="vncellt">Version</td>
+					<td width="75%" class="listr">
+						<strong><?php readfile("/etc/version"); ?></strong>
+						<br />
+						built on <?php readfile("/etc/version.buildtime"); ?>
+					</td>
+				</tr>
+				<tr>
+					<td width="25%" class="vncellt">Platform</td>
+					<td width="75%" class="listr"><?=htmlspecialchars($g['platform']);?></td>
+				</tr>
+				<tr>
+					<td width="25%" class="vncellt">CPU Type</td>
+					<td width="75%" class="listr">
+					<?php 
+						$cpumodel = "";
+						exec("/sbin/sysctl -n hw.model", $cpumodel);
+						$cpumodel = implode(" ", $cpumodel);
+						echo (htmlspecialchars($cpumodel)); ?>
+					</td>
+				</tr>
+				<?php if ($hwcrypto): ?>
+				<tr>
+					<td width="25%" class="vncellt">Hardware crypto</td>
+					<td width="75%" class="listr"><?=htmlspecialchars($hwcrypto);?></td>
+				</tr>
+				<?php endif; ?>
+				<tr>
+					<td width="25%" class="vncellt">Uptime</td>
+					<td width="75%" class="listr"><input style="border: 0px solid white;" size="30" name="uptime" id="uptime" value="<?= htmlspecialchars(get_uptime()); ?>" /></td>
+				</tr>
+				<?php if ($config['lastchange']): ?>
+				<tr>
+					<td width="25%" class="vncellt">Last config change</td>
+					<td width="75%" class="listr"><?= htmlspecialchars(date("D M j G:i:s T Y", $config['revision']['time']));?></td>
+				</tr>
+				<?php endif; ?>
+				<tr>
+					<td width="25%" class="vncellt">State table size</td>
+					<td width="75%" class="listr">
+						<input style="border: 0px solid white;" size="30" name="pfstate" id="pfstate" value="<?= htmlspecialchars(get_pfstate()); ?>" />
+				    	<br />
+				    	<a href="diag_dump_states.php">Show states</a>
+					</td>
+				</tr>
+				<tr>
+					<td width="25%" class="vncellt">CPU usage</td>
+					<td width="75%" class="listr">
+						<?php $cpuUsage = "0"; ?>
+						<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="cpuwidtha" id="cpuwidtha" width="<?= $cpuUsage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="cpuwidthb" id="cpuwidthb" width="<?= (100 - $cpuUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
+						&nbsp;
+						<input style="border: 0px solid white;" size="30" name="cpumeter" id="cpumeter" value="(Updating in 5 seconds)" />
+					</td>
+				</tr>
+				<tr>
+					<td width="25%" class="vncellt">Memory usage</td>
+					<td width="75%" class="listr">
+						<?php $memUsage = mem_usage(); ?>
+						<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="memwidtha" id="memwidtha" width="<?= $memUsage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="memwidthb" id="memwidthb" width="<?= (100 - $memUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
+						&nbsp;
+						<input style="border: 0px solid white;" size="30" name="memusagemeter" id="memusagemeter" value="<?= $memUsage.'%'; ?>" />
+					</td>
+				</tr>
+				<?php if($showswap == true): ?>
+				<tr>
+					<td width="25%" class="vncellt">SWAP usage</td>
+					<td width="75%" class="listr">
+						<?php $swapusage = swap_usage(); ?>
+						<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" width="<?= $swapUsage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" width="<?= (100 - $swapUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
+						&nbsp;
+						<input style="border: 0px solid white;" size="30" name="swapusagemeter" id="swapusagemeter" value="<?= $swapusage.'%'; ?>" />
+					</td>
+				</tr>
+				<?php endif; ?>
+		<?php
+				if(has_temp()):
+		?>
+				<tr>
+					<td width='25%' class='vncellt'>Temperature</td>
+					<td width='75%' class='listr'>
+						<?php $temp = get_temp(); ?>
+						<img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_blue.gif" height="15" name="tempwidtha" id="tempwidtha" width="<?= $temp; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_gray.gif" height="15" name="tempwidthb" id="tempwidthb" width="<?= (100 - $temp); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
+						&nbsp;
+						<input style="border: 0px solid white;" size="30" name="tempmeter" id="tempmeter" value="<?= $temp."C"; ?>" />
+					</td>
+				</tr>
+				<?php endif; ?>
+				<tr>
+					<td width="25%" class="vncellt">Disk usage</td>
+					<td width="75%" class="listr">
+						<?php $diskusage = disk_usage(); ?>
+						<img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_blue.gif" height="15" width="<?= $diskusage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_gray.gif" height="15" width="<?= (100 - $diskusage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
+						&nbsp;
+						<input style="border: 0px solid white;" size="30" name="diskusagemeter" id="diskusagemeter" value="<?= $diskusage.'%'; ?>" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		</td>
+		<td valign="top">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0" id="wangraph">
+			<tbody>
+				<tr>
+					<td colspan="2" class="listtopic">Current WAN Traffic</td>
+				</tr>
+				<tr>
+					<td valign="middle" class="listr">
+					
+					<?php
+					 if (get_cpu_speed() >= 500) { ?>
+						<div>
+							<embed id="graph" src="graph.php?ifnum=<?=$ifnum;?>&ifname=<?=rawurlencode($curif);?>" type="image/svg+xml" width="<? echo $width; ?>" height="<? echo $height; ?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
+						</div>
+					<? } else { ?>
+							<span id="graphlink" onclick="return showgraph();"><u>Click here to show WAN Current traffic</u></span>
+					<? } ?>
+					
+					</td>
+				</tr>
+				</tbody>
+			</table><br>
+			<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td colspan="2" class="listtopic">Interfaces</td>
+				</tr> 
+					<?php $i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
+					for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+						$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
+					}
+					 foreach ($ifdescrs as $ifdescr => $ifname){
+						$ifinfo = get_interface_info($ifdescr);
+					?>
+					<tr> 
+					<?php if ($ifinfo['status'] != "down"){ ?>
+					<td class="vncellt" width="25%"><strong><?=htmlspecialchars($ifname);?></strong></td>
+					<td width="75%"  class="listr">
+					
+					  <?php if ($ifinfo['dhcplink'] != "down" && $ifinfo['pppoelink'] != "down" && $ifinfo['pptplink'] != "down"){ ?>
+					  <?php if ($ifinfo['ipaddr']){ ?>
+		                  <?=htmlspecialchars($ifinfo['ipaddr']);?>
+		                  &nbsp; </td>
+		            </tr><?php }
+					  			}
+					  		}
+					  } ?>					
+				</table>
+			</td>	
+	</tr>
+</tbody>
 </table>
 </form>
 </div>

@@ -3307,7 +3307,23 @@ function is_dhcp_server_enabled() {
 function get_interfaces_with_gateway() {
 	global $config;
 	$ints = array();
-	$ifdescrs = get_interface_list();
+	$vfaces = array(
+			'bridge.?*',
+			'ppp.?*',
+			'sl.?*',
+			'gif.?*',
+			'faith.?*',
+			'lo.?*',
+			'ng.?*',
+			'vlan.?*',
+			'pflog.?*',
+			'pfsync.?*',
+			'enc.?*',
+			'tun.?*',
+			'carp.?*'
+		);	
+	$ifdescrs = get_interface_list("active","physical",$vfaces);
+
 
 	/* loop interfaces, check config for outbound */
 	foreach ($ifdescrs as $ifdescr => $ifname) {

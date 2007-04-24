@@ -255,34 +255,26 @@ function is_valid_shaperbw($val) {
  *           "media"  - use ifconfig to check physical connection
  *			status (much slower)
  */
-/*
- *   get_interface_list() - Return a list of all physical interfaces
- *   along with MAC and status.
- *
- *   $mode = "active" - use ifconfig -lu
- *           "media"  - use ifconfig to check physical connection
- *			status (much slower)
- */
 function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "") {
         global $config;
 	$upints = array();
         /* get a list of virtual interface types */
         if(!$vfaces) {
-		$vfaces = array(
-				'bridge.?*',
-				'ppp.?*',
-				'sl.?*',
-				'gif.?*',
-				'faith.?*',
-				'lo.?*',
-				'ng.?*',
-				'vlan.?*',
-				'pflog.?*',
-				'pfsync.?*',
-				'enc.?*',
-				'tun.?*',
-				'carp.?*'
-			);
+		$vfaces = array (
+				'bridge',
+				'ppp',
+				'sl',
+				'gif',
+				'faith',
+				'lo',
+				'ng',
+				'vlan',
+				'pflog',
+				'pfsync',
+				'enc',
+				'tun',
+				'carp'
+		);
 	}
 	switch($mode) {
 	case "active":

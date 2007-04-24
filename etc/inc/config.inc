@@ -158,6 +158,7 @@ if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
 			$last_backup = discover_last_backup();
 			if($last_backup) {
 				log_error("No config.xml found, attempting last known config restore.");
+				file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "");
 				restore_backup("/cf/conf/backup/{$last_backup}");
 			} else {
 				/* no device found, print an error and die */
@@ -210,6 +211,7 @@ function parse_config($parse = false) {
 		$last_backup = discover_last_backup();
 		if($last_backup) {
 			log_error("No config.xml found, attempting last known config restore.");
+			file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "");
 			restore_backup("{$g['conf_path']}/backup/{$last_backup}");
 		} else {
 			die("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup.");
@@ -229,6 +231,7 @@ function parse_config($parse = false) {
 			config_unlock();
 			if(!file_exists($g['conf_path'] . "/config.xml")) {
 				log_error("No config.xml found, attempting last known config restore.");
+				file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "");
 				$last_backup = discover_last_backup();
 				if ($last_backup)
 					restore_backup("/cf/conf/backup/{$last_backup}");
@@ -241,6 +244,7 @@ function parse_config($parse = false) {
 		if(!file_exists($g['conf_path'] . "/config.xml")) {
 			if($g['booting']) echo ".";
 			log_error("No config.xml found, attempting last known config restore.");
+			file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "");
 			$last_backup = discover_last_backup();
 			if ($last_backup)
 				restore_backup("/cf/conf/backup/{$last_backup}");
@@ -313,6 +317,7 @@ function restore_backup($file) {
 		copy("$file","/cf/conf/config.xml");
 		unlink_if_exists("/tmp/config.cache");
 		log_error("pfSense is restoring the configuration $file");
+		file_notice("config.xml", "pfSense is restoring the configuration $file", "pfSenseConfigurator", "");
 		conf_mount_ro();
 	}
 	config_unlock();
@@ -347,6 +352,7 @@ function parse_config_bootup() {
 					$last_backup = discover_last_backup();
 					if($last_backup) {
 						log_error("No config.xml found, attempting last known config restore.");
+						file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "");
 						restore_backup("/cf/conf/backup/{$last_backup}");
 					}
 					if(!file_exists("{$g['conf_path']}/config.xml")) {
@@ -355,6 +361,7 @@ function parse_config_bootup() {
 						exit;
 					}
 					log_error("Last known config found and restored.  Please double check your configuration file for accuracy.");
+					file_notice("config.xml", "Last known config found and restored.  Please double check your configuration file for accuracy.", "pfSenseConfigurator", "");
 				}
 			} else {
 				config_unlock();
@@ -367,6 +374,7 @@ function parse_config_bootup() {
 		$last_backup = discover_last_backup();
 		if($last_backup) {
 			log_error("No config.xml found, attempting last known config restore.");
+			file_notice("config.xml", "No config.xml found, attempting last known config restore.", "pfSenseConfigurator", "");
 			restore_backup("{$g['conf_path']}/backup/{$last_backup}");
 		} else {
 			die("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup.");

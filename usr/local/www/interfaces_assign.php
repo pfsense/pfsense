@@ -191,9 +191,14 @@ if ($_GET['act'] == "add") {
 
 }
 
-
 $pgtitle = "Interfaces: Assign";
 include("head.inc");
+
+if(file_exists("/var/run/interface_mismatch_reboot_needed")) 
+	if ($_POST) 
+		$savemsg = "The firewall is now rebooting.";
+	else
+		$savemsg = "Interface mismatch deteceted.  Please resolved the mismatch and click Save.  The firewall will reboot afterwards.";
 
 ?>
 
@@ -287,6 +292,8 @@ include("head.inc");
 	if ($_POST) {
 		if (!$input_errors)
 			touch("/tmp/reload_interfaces");
+		if(file_exists("/var/run/interface_mismatch_reboot_needed")) 
+			exec("/etc/rc.reboot");
 	}
 	
 ?>

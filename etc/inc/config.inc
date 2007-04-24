@@ -352,6 +352,16 @@ function parse_config_bootup() {
 			}
 		}
 	}
+	
+	if(filesize("{$g['conf_path']}/config.xml") == 0) {
+		$last_backup = discover_last_backup();
+		if($last_backup) {
+			log_error("No config.xml found, attempting last known config restore.");
+			restore_backup("{$g['conf_path']}/backup/{$last_backup}");
+		} else {
+			die("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup.");
+		}
+	}
 
 	parse_config(true);
 

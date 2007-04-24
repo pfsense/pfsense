@@ -196,7 +196,10 @@ $pgtitle = "Interfaces: Assign";
 include("head.inc");
 
 if(file_exists("/var/run/interface_mismatch_reboot_needed")) 
-	$savemsg = "Interface mismatch deteceted.  Please resolved the mismatch and click Save.  The firewall will reboot afterwards.";
+	if ($_POST) 
+		$savemsg = "The firewall is now rebooting.";
+	else
+		$savemsg = "Interface mismatch deteceted.  Please resolved the mismatch and click Save.  The firewall will reboot afterwards.";
 
 ?>
 

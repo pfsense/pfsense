@@ -395,103 +395,105 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				$schedstatus = false;
 				$dayArray = array ('Mon','Tues','Wed','Thur','Fri','Sat','Sun');
 				$monthArray = array ('January','February','March','April','May','June','July','August','September','October','November','December');
-				foreach ($a_schedules as $schedule)
-				{
-					if ($schedule['name'] == $filterent['sched'] ){
-						$schedstatus = get_time_based_rule_status($schedule);
-						
-						foreach($schedule['timerange'] as $timerange) {
-							$tempFriendlyTime = "";
-							$tempID = "";
-							$firstprint = false;
-							if ($timerange){
-								$dayFriendly = "";
-								$tempFriendlyTime = "";							
-									
-								//get hours
-								$temptimerange = $timerange['hour'];
-								$temptimeseparator = strrpos($temptimerange, "-");
-								
-								$starttime = substr ($temptimerange, 0, $temptimeseparator); 
-								$stoptime = substr ($temptimerange, $temptimeseparator+1); 
-									
-								if ($timerange['month']){
-									$tempmontharray = explode(",", $timerange['month']);
-									$tempdayarray = explode(",",$timerange['day']);
-									$arraycounter = 0;
-									$firstDayFound = false;
-									$firstPrint = false;
-									foreach ($tempmontharray as $monthtmp){
-										$month = $tempmontharray[$arraycounter];
-										$day = $tempdayarray[$arraycounter];
+				if($config['schedules']['schedule'] <> "" and is_array($config['schedules']['schedule'])){
+					foreach ($a_schedules as $schedule)
+					{
+						if ($schedule['name'] == $filterent['sched'] ){
+							$schedstatus = get_time_based_rule_status($schedule);
+							
+							foreach($schedule['timerange'] as $timerange) {
+								$tempFriendlyTime = "";
+								$tempID = "";
+								$firstprint = false;
+								if ($timerange){
+									$dayFriendly = "";
+									$tempFriendlyTime = "";							
 										
-										if (!$firstDayFound)
-										{
-											$firstDay = $day;
-											$firstmonth = $month;
-											$firstDayFound = true;
-										}
+									//get hours
+									$temptimerange = $timerange['hour'];
+									$temptimeseparator = strrpos($temptimerange, "-");
+									
+									$starttime = substr ($temptimerange, 0, $temptimeseparator); 
+									$stoptime = substr ($temptimerange, $temptimeseparator+1); 
+										
+									if ($timerange['month']){
+										$tempmontharray = explode(",", $timerange['month']);
+										$tempdayarray = explode(",",$timerange['day']);
+										$arraycounter = 0;
+										$firstDayFound = false;
+										$firstPrint = false;
+										foreach ($tempmontharray as $monthtmp){
+											$month = $tempmontharray[$arraycounter];
+											$day = $tempdayarray[$arraycounter];
 											
-										$currentDay = $day;
-										$nextDay = $tempdayarray[$arraycounter+1];
-										$currentDay++;
-										if (($currentDay != $nextDay) || ($tempmontharray[$arraycounter] != $tempmontharray[$arraycounter+1])){
-											if ($firstPrint)
-												$dayFriendly .= ", ";
-											$currentDay--;
-											if ($currentDay != $firstDay)
-												$dayFriendly .= $monthArray[$firstmonth-1] . " " . $firstDay . " - " . $currentDay ;
-											else
-												$dayFriendly .=  $monthArray[$month-1] . " " . $day;
-											$firstDayFound = false;	
-											$firstPrint = true;
-										}													
-										$arraycounter++;	
-									}
-								}
-								else
-								{
-									$tempdayFriendly = $timerange['position'];
-									$firstDayFound = false;
-									$tempFriendlyDayArray = explode(",", $tempdayFriendly);								
-									$currentDay = "";
-									$firstDay = "";
-									$nextDay = "";
-									$counter = 0;													
-									foreach ($tempFriendlyDayArray as $day){
-										if ($day != ""){
 											if (!$firstDayFound)
 											{
-												$firstDay = $tempFriendlyDayArray[$counter];
+												$firstDay = $day;
+												$firstmonth = $month;
 												$firstDayFound = true;
 											}
-											$currentDay =$tempFriendlyDayArray[$counter];
-											//get next day
-											$nextDay = $tempFriendlyDayArray[$counter+1];
-											$currentDay++;					
-											if ($currentDay != $nextDay){
-												if ($firstprint)
+												
+											$currentDay = $day;
+											$nextDay = $tempdayarray[$arraycounter+1];
+											$currentDay++;
+											if (($currentDay != $nextDay) || ($tempmontharray[$arraycounter] != $tempmontharray[$arraycounter+1])){
+												if ($firstPrint)
 													$dayFriendly .= ", ";
 												$currentDay--;
 												if ($currentDay != $firstDay)
-													$dayFriendly .= $dayArray[$firstDay-1] . " - " . $dayArray[$currentDay-1];
+													$dayFriendly .= $monthArray[$firstmonth-1] . " " . $firstDay . " - " . $currentDay ;
 												else
-													$dayFriendly .= $dayArray[$firstDay-1];
+													$dayFriendly .=  $monthArray[$month-1] . " " . $day;
 												$firstDayFound = false;	
-												$firstprint = true;			
-											}
-											$counter++;
+												$firstPrint = true;
+											}													
+											$arraycounter++;	
 										}
 									}
-								}		
-								$timeFriendly = $starttime . " - " . $stoptime;
-								$description = $timerange['rangedescr'];
-								$sched_content .= $dayFriendly . "; " . $timeFriendly . "<br>";
+									else
+									{
+										$tempdayFriendly = $timerange['position'];
+										$firstDayFound = false;
+										$tempFriendlyDayArray = explode(",", $tempdayFriendly);								
+										$currentDay = "";
+										$firstDay = "";
+										$nextDay = "";
+										$counter = 0;													
+										foreach ($tempFriendlyDayArray as $day){
+											if ($day != ""){
+												if (!$firstDayFound)
+												{
+													$firstDay = $tempFriendlyDayArray[$counter];
+													$firstDayFound = true;
+												}
+												$currentDay =$tempFriendlyDayArray[$counter];
+												//get next day
+												$nextDay = $tempFriendlyDayArray[$counter+1];
+												$currentDay++;					
+												if ($currentDay != $nextDay){
+													if ($firstprint)
+														$dayFriendly .= ", ";
+													$currentDay--;
+													if ($currentDay != $firstDay)
+														$dayFriendly .= $dayArray[$firstDay-1] . " - " . $dayArray[$currentDay-1];
+													else
+														$dayFriendly .= $dayArray[$firstDay-1];
+													$firstDayFound = false;	
+													$firstprint = true;			
+												}
+												$counter++;
+											}
+										}
+									}		
+									$timeFriendly = $starttime . " - " . $stoptime;
+									$description = $timerange['rangedescr'];
+									$sched_content .= $dayFriendly . "; " . $timeFriendly . "<br>";
+								}
 							}
+							$sched_caption = $schedule['descr'];
+							$schedule_span_begin = "<span style=\"cursor: help;\" onmouseover=\"domTT_activate(this, event, 'content', '<h1>$sched_caption</h1><p>$sched_content</p>', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><U>";
+							$schedule_span_end = "</U></span>";
 						}
-						$sched_caption = $schedule['descr'];
-						$schedule_span_begin = "<span style=\"cursor: help;\" onmouseover=\"domTT_activate(this, event, 'content', '<h1>$sched_caption</h1><p>$sched_content</p>', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><U>";
-						$schedule_span_end = "</U></span>";
 					}
 				}
 				

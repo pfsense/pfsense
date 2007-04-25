@@ -648,6 +648,8 @@ function filter_nat_rules_generate() {
 		}
 	}
 
+	$natrules .= "\n# Outbound NAT rules\n";
+
 	/* outbound rules - advanced or standard */
 	if (isset($config['nat']['advancedoutbound']['enable'])) {
 		/* advanced outbound rules */
@@ -688,7 +690,7 @@ function filter_nat_rules_generate() {
 				"{$lansa}/{$lancfg['subnet']}", 500, "", 500, null, 500, false);
 		}
 
-		update_filter_reload_status("Creating outbound rules");
+		update_filter_reload_status("Creating outbound NAT rules");
 
 		$natrules .= filter_nat_rules_generate_if($wanif, "{$lansa}/{$lancfg['subnet']}");
 
@@ -702,19 +704,20 @@ function filter_nat_rules_generate() {
 
 				/*    setup nat mappings for lan -> opt[$i]
 				 *    interface if a gateway is defined
-                 */
-				if($optcfg['gateway'] <> "" or $optcfg['ipaddr'] == "dhcp")
+		                 */
+				if((interface_has_gateway("opt{$i}"))) {
 					$natrules .= filter_nat_rules_generate_if($optcfg['if'],
 						"{$lansa}/{$lancfg['subnet']}", null, "", null, null, null, isset($optcfg['nonat']));
-
+				}
 				/* create outbound nat entries for all opt wans */
 				$optints = array();
 				generate_optcfg_array($optints);
 				foreach($optints as $oc) {
 					$opt_interface = $oc['if'];
-					if($oc['gateway'] <> "" or $oc['if'] == "dhcp")
+					if (interface_has_gateway("opt{$i}")) {
 						$natrules .= filter_nat_rules_generate_if($opt_interface,
 							"{$optsa}/{$optcfg['subnet']}", null, "", null, null, null, isset($optcfg['nonat']));
+					}
 				}
 
 				/* create outbound nat entries for primary wan */
@@ -730,6 +733,15 @@ function filter_nat_rules_generate() {
 				$pptp_subnet = $config['pptp']['pptp_subnet'];
 			$natrules .= filter_nat_rules_generate_if($wanif,
 				"{$pptpdcfg['remoteip']}/{$pptp_subnet}");
+
+			/* generate nat mappings for opts with a gateway opts */
+			foreach($optints as $oc) {
+				$opt_interface = $oc['if'];
+				if ((is_private_ip($pptpdcfg['remoteip'])) && (interface_has_gateway($opt_interface))) {
+					$natrules .= filter_nat_rules_generate_if($opt_interface,
+						"{$pptpdcfg['remoteip']}/{$pptp_subnet}");
+				}
+			}
 		}
 
 		/* PPPoE subnet */
@@ -739,14 +751,34 @@ function filter_nat_rules_generate() {
 				$pppoe_subnet = $config['pppoe']['pppoe_subnet'];
 			$natrules .= filter_nat_rules_generate_if($wanif,
 				"{$pppoecfg['remoteip']}/{$pppoe_subnet}");
+
+			/* generate nat mappings for opts with a gateway opts */
+			foreach($optints as $oc) {
+				$opt_interface = $oc['if'];
+				if ((is_private_ip($pppoecfg['remoteip'])) && (interface_has_gateway($opt_interface))) {
+					$natrules .= filter_nat_rules_generate_if($opt_interface,
+						"{$pppoecfg['remoteip']}/{$pppoe_subnet}");
+				}
+			}
 		}
 
 		/* static routes */
 		if (is_array($config['staticroutes']['route'])) {
 			foreach ($config['staticroutes']['route'] as $route) {
-				if ($route['interface'] != "wan")
+				$netip = explode("/", $route['network']);
+				if ((! interface_has_gateway($route['interface'])) && (is_private_ip($netip[0]))) {
 					$natrules .= filter_nat_rules_generate_if($wanif,
 						$route['network'], "", null);
+				}
+				/* generate nat mapping for static routes on opts */
+				foreach($optints as $oc) {
+					$opt_interface = $oc['if'];
+					if ((! interface_has_gateway($route['interface'])) && (is_private_ip($netip[0])) && (interface_has_gateway($opt_interface))) {
+						$natrules .= filter_nat_rules_generate_if($opt_interface,
+							$route['network'], "", null);
+					}
+				}
+
 			}
 		}
 

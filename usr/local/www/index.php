@@ -114,23 +114,28 @@
 		fclose($fd);
 	}
 
-	//set variables for WAN traffic graph
-	$curif = "WAN";
-	$ifnum = get_real_wan_interface();
+	//set variables for traffic graph
 	$width = "300";
 	$height = "150";
 	
 $jscriptstr = <<<EOD
 <script type="text/javascript">
 
-function showgraph(){
-	//add it to the schedule list
-	d = document;
-	tbody = d.getElementById("wangraph").getElementsByTagName("tbody").item(0);
+function showgraph(incInterface){
+
+	d = document;	
+	var tempArray = incInterface.split("-");
+	selectInt = tempArray[1];
+	realInt = tempArray[0];
+	tr = d.getElementById(selectInt);
+
 	div = d.createElement("div");
-	div.innerHTML= "<embed id='graph' src='graph.php?ifnum=$ifnum&ifname=$curif' type='image/svg+xml' width='$width' height='$height' pluginspage='http://www.adobe.com/svg/viewer/install/auto' />";
-	tbody.appendChild(div);
-	textlink = d.getElementById("graphlink");
+	selectIntID = selectInt + "graphdiv";
+	div.setAttribute ('id', selectIntID);
+	div.innerHTML= "<embed id='" + selectIntID + "' name='graph' src='graph.php?ifnum=" + realInt + "&ifname=" + selectInt + "' type='image/svg+xml' width='$width' height='$height' pluginspage='http://www.adobe.com/svg/viewer/install/auto' />";
+	tr.appendChild(div);
+	selectIntLink = selectInt + "graphlink";
+	textlink = d.getElementById(selectIntLink);
 	textlink.parentNode.removeChild(textlink);
 }
 	
@@ -270,36 +275,51 @@ echo $jscriptstr;
 		</table>
 		</td>
 		<td valign="top">
-			<table width="100%" border="0" cellspacing="0" cellpadding="0" id="wangraph">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0" id="wangraphtable">
 			<tbody>
-				<tr>
-					<td colspan="2" class="listtopic">Current WAN Traffic</td>
-				</tr>
-				<tr>
-					<td valign="middle" class="listr">
+					<?php $i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
+					for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+						$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
+					}
+					$firstgraphshown = false;
+					foreach ($ifdescrs as $ifdescr => $ifname){
+						$ifinfo = get_interface_info($ifdescr);					
+						$ifnum = convert_friendly_interface_to_real_interface_name($ifname);
+						
+					?>
+					<tr>
+					<td colspan="2" class="listtopic">Current <?=$ifname;?> Traffic</td>
+					</tr>
+					<tr>
+						<td id="<?=$ifname;?>" valign="middle" class="listr"><?php 
+						
+						 if (get_cpu_speed() >= 500) { 
+						 	if(!$firstgraphshown){
+						 	?>
+							<div id="<?=$ifname;?>graphdiv">
+								<embed id="graph" src="graph.php?ifnum=<?=$ifnum;?>&ifname=<?=rawurlencode($ifname);?>" type="image/svg+xml" width="<? echo $width; ?>" height="<? echo $height; ?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
+							</div>
+						<?
+							$firstgraphshown = true;
+							}
+							else
+							{ ?>
+								<span id="<?=$ifname;?>graphlink" onclick='return showgraph("<?php echo $ifnum; echo "-"; echo $ifname; ?>");'><center><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_check.gif" height="32" width="28" border="0" align="middle" alt="Click here to show current <?=$ifname;?> traffic" /></center>
+							<? }
+						 } else { ?>
+								<span id="<?=$ifname;?>graphlink" onclick='return showgraph("<?php echo $ifnum; echo "-"; echo $ifname; ?>");'><center><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_check.gif" height="32" width="28" border="0" align="middle" alt="Click here to show current <?=$ifname;?> traffic" /></center>
+						<? } ?>
+						</td>
+					</tr><tr><td>&nbsp;</td></tr>
+					 <? } ?>	
 					
-					<?php
-					 if (get_cpu_speed() >= 500) { ?>
-						<div>
-							<embed id="graph" src="graph.php?ifnum=<?=$ifnum;?>&ifname=<?=rawurlencode($curif);?>" type="image/svg+xml" width="<? echo $width; ?>" height="<? echo $height; ?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
-						</div>
-					<? } else { ?>
-							<span id="graphlink" onclick="return showgraph();"><u>Click here to show WAN Current traffic</u></span>
-					<? } ?>
-					
-					</td>
-				</tr>
 				</tbody>
 			</table><br>
 			<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
 					<td colspan="2" class="listtopic">Interfaces</td>
 				</tr> 
-					<?php $i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
-					for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-						$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
-					}
-					 foreach ($ifdescrs as $ifdescr => $ifname){
+				<?php foreach ($ifdescrs as $ifdescr => $ifname){
 						$ifinfo = get_interface_info($ifdescr);
 					?>
 					<tr> 

@@ -286,6 +286,7 @@ echo $jscriptstr;
 						$ifinfo = get_interface_info($ifdescr);					
 						$ifnum = convert_friendly_interface_to_real_interface_name($ifname);
 						
+					 if ($ifinfo['status'] != "down"){ 					
 					?>
 					<tr>
 					<td colspan="2" class="listtopic">Current <?=$ifname;?> Traffic</td>
@@ -311,7 +312,8 @@ echo $jscriptstr;
 						<? } ?>
 						</td>
 					</tr><tr><td>&nbsp;</td></tr>
-					 <? } ?>	
+					 <? } 
+					}?>	
 					
 				</tbody>
 			</table><br>

@@ -62,7 +62,7 @@ if ($_POST['apply']) {
 
 
 if (isset($_POST['save']) && $_POST['save'] == "Save") {
-        /* mutually exclusive settings - if user wants advanced NAT, we don't help with IPSec */
+	/* mutually exclusive settings - if user wants advanced NAT, we don't generate automatic rules */
 	switch ($_POST['advancedoripsec']) {
 	case "ipsecpassthru":
                	$config['nat']['ipsecpassthru']['enable'] = true;
@@ -205,13 +205,13 @@ include("head.inc");
               <tr>
                   <td class="vtable"><p>
                       <input name="advancedoripsec" type="radio" id="ipsecpassthru" value="ipsecpassthru" <?php if (isset($config['nat']['ipsecpassthru']['enable'])) echo "checked";?>>
-                      <strong>Enable IPSec passthru</strong></p>
+                      <strong><?=gettext("Automatic outbound NAT rule generation (IPSEC passthrough)");?></strong></p>
                   </td>
                 </tr>
                 <tr>
                   <td class="vtable"><p>
                       <input name="advancedoripsec" type="radio" id="advancedoutbound" value="advancedoutboundnat" <?php if (isset($config['nat']['advancedoutbound']['enable'])) echo "checked";?>>
-                      <strong>Enable advanced outbound NAT</strong></p></td>
+                      <strong><?=gettext("Manual Outbound NAT rule generation (Advanced Outbound NAT (AON))");?></strong></p></td>
                 </tr>
                 <tr>
                   <td> <input name="save" type="submit" class="formbtn" value="Save">

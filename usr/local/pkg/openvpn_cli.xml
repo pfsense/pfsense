@@ -190,7 +190,9 @@
 			<fieldname>custom_options</fieldname>
 			<fielddescr>Custom options</fielddescr>
 			<description>You can put your own custom options here, separated by semi-colons (;). They'll be added to the client configuration.</description>
-			<type>input</type>
+			<type>textarea</type>
+			<cols>65</cols>
+			<rows>5</rows>
 		</field>
 		<field>
 			<fieldname>description</fieldname>

@@ -33,6 +33,29 @@
  *
  */
 
+/****f* pfsense-utils/is_private_ip
+ * NAME
+ *   is_private_ip
+ * INPUTS
+ *	 none
+ * RESULT
+ *   returns true if an ip address is in a private range
+ ******/
+function is_private_ip($iptocheck) {
+        $isprivate = false;
+        $ip_private_list=array(
+               "10.0.0.0/8",
+               "172.16.0.0/12",
+               "192.168.0.0/16",
+               "99.0.0.0/8"
+        );
+        foreach($ip_private_list as $private) {
+                if(ip_in_subnet($iptocheck,$private)==true)
+                        $isprivate = true;
+        }
+        return $isprivate;
+}
+
 /****f* pfsense-utils/get_tmp_file
  * NAME
  *   get_tmp_file

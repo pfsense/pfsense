@@ -64,7 +64,9 @@ include("head.inc");
                   <td width="30%" class="listhdrr">Status</td>
                   <td width="30%" class="listhdr">Description</td>
 				</tr>
-			  <?php $i = 0; foreach ($a_pool as $vipent): ?>
+			  <?php $i = 0; foreach ($a_pool as $vipent):
+				if ($vipent['type'] == "gateway") {
+			  ?>
                 <tr>
                   <td class="listlr">
 				<?=$vipent['name'];?>
@@ -132,7 +134,11 @@ include("head.inc");
 				<font color="#FFFFFF"><?=$vipent['desc'];?></font>
                   </td>
                 </tr>
-                <?php $i++; endforeach; ?>
+		<?php
+			}
+			$i++;
+		 endforeach;
+		 ?>
               </table>
 	   </div>
 	</table>

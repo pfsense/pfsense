@@ -277,6 +277,8 @@ EOD;
 			// The port we'll listen at
 			$openvpn_conf .= "lport {$lport}\n";
 
+		if (!empty($settings['use_shaper'])) $openvpn_conf .= "shaper {$settings['use_shaper']}\n";
+
 		if (!empty($settings['interface_ip'])) {
 			// Configure the IPs according to the address pool
 			list($ip, $mask) = explode('/', $settings['interface_ip']);
@@ -309,8 +311,6 @@ EOD;
 		$openvpn_conf .= "persist-remote-ip\n";
 		$openvpn_conf .= "float\n";
 	}
-
-	if (!empty($settings['use_shaper'])) $openvpn_conf .= "shaper {$settings['use_shaper']}\n";
 
 	if (!empty($settings['custom_options'])) {
 		$options = explode(';', $settings['custom_options']);

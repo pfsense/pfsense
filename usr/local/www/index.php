@@ -118,6 +118,9 @@
 	$width = "300";
 	$height = "150";
 	
+	//set variables for log
+	$system_logfile = "{$g['varlog_path']}/system.log";
+	
 $jscriptstr = <<<EOD
 <script type="text/javascript">
 
@@ -137,15 +140,43 @@ function showgraph(incInterface){
 	selectIntLink = selectInt + "graphlink";
 	textlink = d.getElementById(selectIntLink);
 	textlink.parentNode.removeChild(textlink);
+	
+	selectIntID = selectInt + "closegraph";
+	closelink = d.getElementById(selectIntID);
+	closelink.style.display="block";
+	
+}
+
+function closegraph(incInterface, imagelocation){
+	d = document;	
+	var tempArray = incInterface.split("-");
+	selectInt = tempArray[1];
+	realInt = tempArray[0];
+	selectIntLink = selectInt + "graphdiv";
+	close = d.getElementById(selectIntLink);
+	close.parentNode.removeChild(close);
+		
+	selectIntLink = selectInt + "closegraph";
+	closelink = d.getElementById(selectIntLink);
+	closelink.style.display = "none";
+	tr = d.getElementById(selectInt);
+	span = d.createElement("div");
+	selectedIntID = selectInt + "graphlink";
+	span.setAttribute ('id', selectedIntID);
+	onclick = "return showgraph('" + realInt + "-" + selectInt + "')";
+	span.setAttribute ("onclick", onclick);
+	span.innerHTML = "<center><img src='" + imagelocation + "' height='32' width='28' border='0' align='middle' alt='Click here to show current " + selectInt + " traffic'' /></center>";
+	
+	tr.appendChild(span);			
+	
 }
 	
 </script>
 EOD;
-	
+
 	## Set Page Title and Include Header
 	$pgtitle = "pfSense webGUI";
 	include("head.inc");
-
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
@@ -165,7 +196,7 @@ echo $jscriptstr;
 <table  width="100%" border="0" cellspacing="0" cellpadding="5">
 		<tr>
 			<td valign="top">
-			<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tbody>
 				<tr>
 					<td colspan="2" class="listtopic">System information</td>
@@ -205,7 +236,18 @@ echo $jscriptstr;
 				<tr>
 					<td width="25%" class="vncellt">Uptime</td>
 					<td width="75%" class="listr"><input style="border: 0px solid white;" size="30" name="uptime" id="uptime" value="<?= htmlspecialchars(get_uptime()); ?>" /></td>
-				</tr>
+				</tr>			
+				 <tr>
+		             <td width="30%" class="vncellt">DNS server(s)</td>
+		             <td width="70%" class="listr">
+							<?php
+								$dns_servers = get_dns_servers();
+								foreach($dns_servers as $dns) {
+									echo "{$dns}<br>";
+								}
+							?>
+					</td>
+				</tr>	
 				<?php if ($config['lastchange']): ?>
 				<tr>
 					<td width="25%" class="vncellt">Last config change</td>
@@ -271,6 +313,16 @@ echo $jscriptstr;
 						<input style="border: 0px solid white;" size="30" name="diskusagemeter" id="diskusagemeter" value="<?= $diskusage.'%'; ?>" />
 					</td>
 				</tr>
+				<tr><td>&nbsp;</td></tr>
+				<tr>
+					<td  colspan="2" class="listtopic">Last 5 System Logs</td>
+				</tr>
+				<tr>
+						<?php
+						//show logs here
+						dump_clog($system_logfile, 5, true, array(), array("racoon", "ntpd", "pppoe"));
+						?>
+				</tr>		
 			</tbody>
 		</table>
 		</td>
@@ -289,10 +341,12 @@ echo $jscriptstr;
 					 if ($ifinfo['status'] != "down"){ 					
 					?>
 					<tr>
-					<td colspan="2" class="listtopic">Current <?=$ifname;?> Traffic</td>
+					<td class="listtopic" colspan="2">Current <?=$ifname;?> Traffic
+						<div id="<?=$ifname;?>closegraph" align="right" onclick='return closegraph("<?php echo $ifnum; echo "-"; echo $ifname; ?>","./themes/<?= $g['theme']; ?>/images/icons/icon_check.gif")' style="display:<?php if(!$firstgraphshown)echo "block";else echo "none";?>">[close graph]</div>
+					</td>
 					</tr>
 					<tr>
-						<td id="<?=$ifname;?>" valign="middle" class="listr"><?php 
+						<td id="<?=$ifname;?>" valign="middle"><?php 
 						
 						 if (get_cpu_speed() >= 500) { 
 						 	if(!$firstgraphshown){
@@ -305,10 +359,10 @@ echo $jscriptstr;
 							}
 							else
 							{ ?>
-								<span id="<?=$ifname;?>graphlink" onclick='return showgraph("<?php echo $ifnum; echo "-"; echo $ifname; ?>");'><center><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_check.gif" height="32" width="28" border="0" align="middle" alt="Click here to show current <?=$ifname;?> traffic" /></center>
+								<div  id="<?=$ifname;?>graphlink" onclick='return showgraph("<?php echo $ifnum; echo "-"; echo $ifname; ?>");'><center><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_check.gif" height="32" width="28" border="0" align="middle" alt="Click here to show current <?=$ifname;?> traffic" /></center></div>
 							<? }
 						 } else { ?>
-								<span id="<?=$ifname;?>graphlink" onclick='return showgraph("<?php echo $ifnum; echo "-"; echo $ifname; ?>");'><center><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_check.gif" height="32" width="28" border="0" align="middle" alt="Click here to show current <?=$ifname;?> traffic" /></center>
+								<div id="<?=$ifname;?>graphlink" onclick='return showgraph("<?php echo $ifnum; echo "-"; echo $ifname; ?>");'><center><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_check.gif" height="32" width="28" border="0" align="middle" alt="Click here to show current <?=$ifname;?> traffic" /></center></div>
 						<? } ?>
 						</td>
 					</tr><tr><td>&nbsp;</td></tr>
@@ -326,8 +380,8 @@ echo $jscriptstr;
 					?>
 					<tr> 
 					<?php if ($ifinfo['status'] != "down"){ ?>
-					<td class="vncellt" width="25%"><strong><?=htmlspecialchars($ifname);?></strong></td>
-					<td width="75%"  class="listr">
+					<td class="vncellt" width="30%"><strong><?=htmlspecialchars($ifname);?></strong></td>
+					<td width="70%"  class="listr">
 					
 					  <?php if ($ifinfo['dhcplink'] != "down" && $ifinfo['pppoelink'] != "down" && $ifinfo['pptplink'] != "down"){ ?>
 					  <?php if ($ifinfo['ipaddr']){ ?>
@@ -336,7 +390,7 @@ echo $jscriptstr;
 		            </tr><?php }
 					  			}
 					  		}
-					  } ?>					
+					  } 					?> 
 				</table>
 			</td>	
 	</tr>

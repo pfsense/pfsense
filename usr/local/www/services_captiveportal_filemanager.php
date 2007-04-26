@@ -101,6 +101,7 @@ include("head.inc");
 
 ?>
 <?php include("fbegin.inc"); ?>
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <p class="pgtitle"><?=$pgtitle?></p>
 <form action="services_captiveportal_filemanager.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
@@ -177,3 +178,6 @@ include("head.inc");
 </table>
 </form>
 <?php include("fend.inc"); ?>
+</body>
+</html>
+

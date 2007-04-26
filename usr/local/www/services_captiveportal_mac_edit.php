@@ -94,8 +94,9 @@ if ($_POST) {
 include("head.inc");
 ?>
 <?php include("fbegin.inc"); ?>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <p class="pgtitle"><?=$pgtitle?></p>
+<?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="services_captiveportal_mac_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
 				<tr>
@@ -124,3 +125,5 @@ include("head.inc");
               </table>
 </form>
 <?php include("fend.inc"); ?>
+</body>
+</html>

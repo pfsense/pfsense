@@ -250,6 +250,7 @@ function enable_change(enable_change) {
 }
 //-->
 </script>
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -607,3 +608,6 @@ enable_change(false);
 //-->
 </script>
 <?php include("fend.inc"); ?>
+</body>
+</html>
+

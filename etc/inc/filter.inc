@@ -684,7 +684,6 @@ function filter_nat_rules_generate() {
 		}
 	} else {
 		/* standard outbound rules (one for each interface) */
-
 		update_filter_reload_status("Creating outbound NAT rules");
 
 		$natrules .= filter_nat_rules_generate_if($wanif,
@@ -694,6 +693,22 @@ function filter_nat_rules_generate() {
 		$natrules .= filter_nat_rules_generate_if($wanif,
 			"{$lansa}/{$lancfg['subnet']}");
 
+		$optints = array();
+		generate_optcfg_array($optints);
+
+		/* generate lan nat mappings for opts with a gateway opts */
+		foreach($optints as $oc) {
+			$opt_interface = $oc['if'];
+			if (interface_has_gateway("$opt_interface")) {
+				$natrules .= filter_nat_rules_generate_if($opt_interface,
+					"{$lansa}/{$lancfg['subnet']}", 500, "", 500, null, 500, false);
+				$natrules .= filter_nat_rules_generate_if($opt_interface,
+					"{$lansa}/{$lancfg['subnet']}", 5060, "", 5060, null, 5060, false);
+				$natrules .= filter_nat_rules_generate_if($opt_interface,
+					"{$lansa}/{$lancfg['subnet']}");
+			}
+		}
+
 		/* optional interfaces */
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 			update_filter_reload_status("Creating outbound rules (opt{$i})");
@@ -701,18 +716,6 @@ function filter_nat_rules_generate() {
 
 			if (isset($optcfg['enable']) && !$optcfg['bridge']) {
 				$optsa = gen_subnet($optcfg['ipaddr'], $optcfg['subnet']);
-
-				/*    setup nat mappings for lan -> opt[$i]
-				 *    interface if a gateway is defined
-		                 */
-				if((interface_has_gateway("opt{$i}"))) {
-					$natrules .= filter_nat_rules_generate_if($optcfg['if'],
-						"{$lansa}/{$lancfg['subnet']}", 500, "", 500, null, 500, false);
-					$natrules .= filter_nat_rules_generate_if($optcfg['if'],
-						"{$lansa}/{$lancfg['subnet']}", 5060, "", 5060, null, 5060, false);
-					$natrules .= filter_nat_rules_generate_if($optcfg['if'],
-						"{$lansa}/{$lancfg['subnet']}", null, "", null, null, null, isset($optcfg['nonat']));
-				}
 
 				/* create outbound nat entries for primary wan */
 				$natrules .= filter_nat_rules_generate_if($wanif,
@@ -723,11 +726,9 @@ function filter_nat_rules_generate() {
 					"{$optsa}/{$optcfg['subnet']}", null, "", null, null, null, isset($optcfg['nonat']));
 
 				/* create outbound nat entries for all opt wans */
-				$optints = array();
-				generate_optcfg_array($optints);
 				foreach($optints as $oc) {
 					$opt_interface = $oc['if'];
-					if (interface_has_gateway("opt{$i}")) {
+					if (interface_has_gateway("$opt_interface")) {
 						$natrules .= filter_nat_rules_generate_if($opt_interface,
 							"{$optsa}/{$optcfg['subnet']}", 500, "", 500, null, 500, false);
 						$natrules .= filter_nat_rules_generate_if($opt_interface,

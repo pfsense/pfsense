@@ -31,7 +31,8 @@ IFCONFIG=/sbin/ifconfig
 LOCALHOST=127.0.0.1
 
 if [ -x /usr/bin/logger ]; then
-	LOGGER="/usr/bin/logger -s -p user.notice -t dhclient"
+#	LOGGER="/usr/bin/logger -s -p user.notice -t dhclient"
+	LOGGER="/bin/true"
 else
 	LOGGER=echo
 fi

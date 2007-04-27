@@ -34,6 +34,9 @@ require("guiconfig.inc");
 if (!is_array($config['load_balancer']['lbpool'])) {
 	$config['load_balancer']['lbpool'] = array();
 }
+if (!is_array($config['load_balancer']['virtual_server'])) {
+	$config['load_balancer']['virtual_server'] = array();
+}
 $a_vs = &$config['load_balancer']['virtual_server'];
 $a_pool = &$config['load_balancer']['lbpool'];
 
@@ -54,6 +57,15 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td class="tabnavtbl">
+  <?php
+        /* active tabs */
+        $tab_array = array();
+        $tab_array[] = array("Pools", false, "status_slbd_pool.php");
+        $tab_array[] = array("Virtual Servers", true, "status_slbd_vs.php");
+        display_top_tabs($tab_array);
+  ?>
+  </td></tr>
   <tr>
     <td>
 	<div id="mainarea">

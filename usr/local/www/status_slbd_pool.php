@@ -53,6 +53,15 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td class="tabnavtbl">
+  <?php
+        /* active tabs */
+        $tab_array = array();
+        $tab_array[] = array("Pools", true, "status_slbd_pool.php");
+        $tab_array[] = array("Virtual Servers", false, "status_slbd_vs.php");
+        display_top_tabs($tab_array);
+  ?>
+  </td></tr>
   <tr>
     <td>
 	<div id="mainarea">

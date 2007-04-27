@@ -78,7 +78,9 @@ function get_tmp_file() {
  *   none
  ******/
 function tdr_install_cron($should_install) {
-	global $config;
+	global $config, $g;
+	if($g['booting']==true) 
+		return;
 	$is_installed = false;
 	if(!$config['cron']['item'])
 		return;

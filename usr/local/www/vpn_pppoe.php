@@ -45,6 +45,7 @@ $pconfig['radiusserver'] = $pppoecfg['radius']['server'];
 $pconfig['radiussecret'] = $pppoecfg['radius']['secret'];
 $pconfig['radiusissueips'] = isset($pppoecfg['radius']['radiusissueips']);
 $pconfig['n_pppoe_units'] = $pppoecfg['n_pppoe_units'];
+$pconfig['pppoe_subnet'] = $pppoecfg['pppoe_subnet'];
 
 if ($_POST) {
 
@@ -77,7 +78,7 @@ if ($_POST) {
 		if (!$input_errors) {	
 			$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $g['pppoe_subnet']);
 			$subnet_start = ip2long($_POST['remoteip']);
-			$subnet_end = ip2long($_POST['remoteip']) + $g['n_pppoe_units'] - 1;
+			$subnet_end = ip2long($_POST['remoteip']) + $g['pppoe_subnet'] - 1;
 						
 			if ((ip2long($_POST['localip']) >= $subnet_start) && 
 			    (ip2long($_POST['localip']) <= $subnet_end)) {
@@ -105,7 +106,7 @@ if ($_POST) {
 		$pppoecfg['mode'] = $_POST['mode'];
 		$pppoecfg['interface'] = $_POST['interface'];
 		$pppoecfg['n_pppoe_units'] = $_POST['n_pppoe_units'];	
-
+		$pppoecfg['pppoe_subnet'] = $_POST['pppoe_subnet'];
 		$pppoecfg['radius']['server'] = $_POST['radiusserver'];
 		$pppoecfg['radius']['secret'] = $_POST['radiussecret'];
 
@@ -163,6 +164,7 @@ function enable_change(enable_over) {
 		document.iform.radiusissueips.disabled = 0;
 		document.iform.interface.disabled = 0;
 		document.iform.n_pppoe_units.disabled = 0;		
+		document.iform.pppoe_subnet.disabled = 0;		
 		if (document.iform.radiusenable.checked || enable_over) {
 			document.iform.radacct_enable.disabled = 0;
 			document.iform.radiusserver.disabled = 0;
@@ -177,6 +179,7 @@ function enable_change(enable_over) {
 	} else {
 		document.iform.interface.disabled = 1;
 		document.iform.n_pppoe_units.disabled = 1;		
+		document.iform.pppoe_subnet.disabled = 1;		
 		document.iform.remoteip.disabled = 1;
 		document.iform.localip.disabled = 1;
 		document.iform.radiusenable.disabled = 1;
@@ -242,10 +245,10 @@ function enable_change(enable_over) {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Subnet netmask</td>
                   <td width="78%" class="vtable">
-		    <select id="n_pppoe_units" name="n_pppoe_units">
+		    <select id="pppoe_subnet" name="pppoe_subnet">
 		    <?php
 		     for($x=0; $x<33; $x++) {
-			if($x == $pconfig['n_pppoe_units'])
+			if($x == $pconfig['pppoe_subnet'])
 				$SELECTED = " SELECTED";
 			else
 				$SELECTED = "";
@@ -254,6 +257,23 @@ function enable_change(enable_over) {
 		    ?>
 		    </select>
 		    <br>Hint: 24 is 255.255.255.0
+                  </td>
+		</tr>
+                <tr> 
+                  <td width="22%" valign="top" class="vncellreq">No. PPPOE users</td>
+                  <td width="78%" class="vtable">
+		    <select id="n_pppoe_units" name="n_pppoe_units">
+		    <?php
+		     for($x=0; $x<255; $x++) {
+			if($x == $pconfig['n_pppoe_units'])
+				$SELECTED = " SELECTED";
+			else
+				$SELECTED = "";
+			echo "<option value=\"{$x}\"{$SELECTED}>{$x}</option>\n";			
+		     }
+		    ?>
+		    </select>
+		    <br>Hint: 10 is TEN pppoe clients
                   </td>
 		</tr>
                 <tr> 

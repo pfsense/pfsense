@@ -435,7 +435,7 @@ function get_vpns_list() {
 	if ($config['pppoe']['remoteip']) {
 		if ($isfirst == false)
 			$vpns .= " ";
-		$vpns .= $config['pppoe']['remoteip'] ."/". $config['pppoe']['n_pppoe_units'];
+		$vpns .= $config['pppoe']['remoteip'] ."/". $config['pppoe']['pppoe_subnet'];
 		$isfirst = false;
 	}
 	$vpns .= " ";

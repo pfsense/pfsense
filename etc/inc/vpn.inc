@@ -936,7 +936,7 @@ EOD;
 				if (isset($pppoecfg['radius']['accounting'])) {
 					$mpdconf .= <<<EOD
 	set bundle enable radius-acct
-
+	set radius acct-update 300
 EOD;
 				}
 			}

@@ -78,7 +78,9 @@ function get_tmp_file() {
  *   none
  ******/
 function tdr_install_cron($should_install) {
-	global $config;
+	global $config, $g;
+	if($g['booting']==true) 
+		return;
 	$is_installed = false;
 	if(!$config['cron']['item'])
 		return;
@@ -102,6 +104,7 @@ function tdr_install_cron($should_install) {
 				$cron_item['who'] = "root";
 				$cron_item['command'] = "/etc/rc.filter_configure_sync";		
 				$config['cron']['item'][] = $cron_item;
+				parse_config(true);
 				write_config("Installed 15 minute filter reload for Time Based Rules");
 				configure_cron();
 			}
@@ -110,6 +113,7 @@ function tdr_install_cron($should_install) {
 			if($is_installed == true) {
 				if($x > 0) {
 					unset($config['cron']['item'][$x]);
+					parse_config(true);
 					write_config();
 				}
 				configure_cron();

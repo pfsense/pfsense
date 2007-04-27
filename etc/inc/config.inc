@@ -1014,6 +1014,9 @@ function convert_config() {
 function write_config($desc="Unknown", $backup = true) {
 	global $config, $g;
 
+	if($g['bootup']) 
+		log_error("WARNING! Configuration written on bootup.  This can cause stray openvpn and load balancing items in config.xml");
+
 	if($backup)
 		backup_config();
 

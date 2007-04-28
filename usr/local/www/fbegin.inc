@@ -208,6 +208,7 @@ require_once("notices.inc");
 							<li><a href="/index.php" class="navlnk">System</a></li>
 							<li><a href="/diag_logs.php" class="navlnk">System logs</a></li>
 							<li><a href="/status_graph.php?if=wan" class="navlnk">Traffic graph</a></li>
+							<li><a href="/status_upnp.php" class="navlnk">UPnP</a></li>
 							<?php $i = 0; $ifdescrs = array();
 							if (is_array($config['interfaces']['wan']['wireless']) &&
 								preg_match($g['wireless_regex'], $config['interfaces']['wan']['if']))

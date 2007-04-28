@@ -1,10 +1,10 @@
 <?php
 /* $Id$ */
 /*
-	status_slbd_pool.php
+	status_slbd_vs.php
 	part of pfSense (http://www.pfsense.com/)
 
-	Copyright (C) 2006 Seth Mos <seth.mos@xs4all.nl>.
+	Copyright (C) 2007 Seth Mos <seth.mos@xs4all.nl>.
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,7 @@ require("guiconfig.inc");
 if (!is_array($config['load_balancer']['lbpool'])) {
 	$config['load_balancer']['lbpool'] = array();
 }
+$a_vs = &$config['load_balancer']['virtual_server'];
 $a_pool = &$config['load_balancer']['lbpool'];
 
 $slbd_logfile = "{$g['varlog_path']}/slbd.log";
@@ -45,7 +46,7 @@ if (!$nentries)
 $now = time();
 $year = date("Y");
 
-$pgtitle = "Status: Load Balancer: Pool";
+$pgtitle = "Status: Load Balancer: Virtual Server";
 include("head.inc");
 
 ?>
@@ -68,45 +69,45 @@ include("head.inc");
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="10%" class="listhdrr">Name</td>
-		  <td width="10%" class="listhdrr">Type</td>
-                  <td width="10%" class="listhdrr">Gateways</td>
+		  <td width="10%" class="listhdrr">Port</td>
+                  <td width="10%" class="listhdrr">Servers</td>
                   <td width="30%" class="listhdrr">Status</td>
                   <td width="30%" class="listhdr">Description</td>
 				</tr>
-			  <?php $i = 0; foreach ($a_pool as $vipent):
-				if ($vipent['type'] == "gateway") {
-			  ?>
+			  <?php $i = 0; foreach ($a_vs as $vsent): ?>
                 <tr>
                   <td class="listlr">
-				<?=$vipent['name'];?>
+				<?=$vsent['name'];?>
                   </td>
                   <td class="listr" align="center" >
-                                <?=$vipent['type'];?>
+                                <?=$vsent['port'];?>
                                 <br />
-                                (<?=$vipent['behaviour'];?>)
                   </td>
                   <td class="listr" align="center" >
 			<table border="0" cellpadding="0" cellspacing="2">
                         <?php
-                                foreach ((array) $vipent['servers'] as $server) {
-                                        $svr = split("\|", $server);
-					PRINT "<tr><td> {$svr[0]} </td></tr>";
-                                }
-                        ?>
+			foreach ($a_pool as $vipent) {
+				if ($vipent['name'] == $vsent['pool']) {
+					foreach ((array) $vipent['servers'] as $server) {
+						PRINT "<tr><td> {$server} </td></tr>";
+					}
+				}
+			}
+			?>
 			</table>
                   </td>
                   <td class="listr" >
 			<table border="0" cellpadding="0" cellspacing="2">
                         <?php
-				if ($vipent['type'] == "gateway") {
-					$poolfile = "{$g['tmp_path']}/{$vipent['name']}.pool";
-					if(file_exists("$poolfile")) {
-						$poolstatus = file_get_contents("$poolfile");
-					}
+				$poolfile = "{$g['tmp_path']}/{$vsent['name']}.pool";
+				if(file_exists("$poolfile")) {
+					$poolstatus = file_get_contents("$poolfile");
+				}
+				foreach ($a_pool as $vipent) {
+					if ($vipent['name'] == $vsent['pool']) {
                                         foreach ((array) $vipent['servers'] as $server) {
 						$lastchange = "";
-                                                $svr = split("\|", $server);
-						$monitorip = $svr[1];
+						$monitorip = $server;
 						$logstates = return_clog($slbd_logfile, $nentries, array("$monitorip", "marking"), true);
 						$logstates = $logstates[0];
 
@@ -133,9 +134,8 @@ include("head.inc");
 						}
 						PRINT "</td></tr>";
                                         }
-                                } else {
-					PRINT "<tr><td> {$vipent['monitor']} </td></tr>";
-                                }
+				}
+			}
                         ?>
 			</table>
                   </td>
@@ -143,12 +143,8 @@ include("head.inc");
 				<font color="#FFFFFF"><?=$vipent['desc'];?></font>
                   </td>
                 </tr>
-		<?php
-			}
-			$i++;
-		 endforeach;
-		 ?>
-              </table>
+		<?php $i++; endforeach; ?>
+             </table>
 	   </div>
 	</table>
 

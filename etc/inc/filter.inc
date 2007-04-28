@@ -147,6 +147,8 @@ function filter_configure_sync() {
 					unmute_kernel_msgs();
 				}
 				exec("/sbin/ipfw delete set 9");
+				exec("/sbin/ipfw delete 2");
+				exec("/sbin/ipfw delete 3");
 			}
 	}
 

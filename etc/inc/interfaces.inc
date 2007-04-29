@@ -1140,8 +1140,9 @@ function interfaces_wan_pppoe_configure() {
 	}
 
 	$mpdconf = <<<EOD
-pppoe:
-	new -i ng0 pppoe pppoe
+startup:
+pppoeclient:
+	new -i ng0 pppoeclient pppoeclient
 	set iface route default
 	set iface {$ondemand} on-demand
 	set iface idle {$idle}
@@ -1175,8 +1176,8 @@ EOD;
 
 	$mpdconf .= <<<EOD
 	set bundle disable multilink
-	set bundle authname "{$pppoecfg['username']}"
-	set bundle password "{$pppoecfg['password']}"
+	set auth authname "{$pppoecfg['username']}"
+	set auth password "{$pppoecfg['password']}"
 	set link keep-alive 10 60
 	set link max-redial 0
 	set link no acfcomp protocomp
@@ -1185,6 +1186,8 @@ EOD;
 	set link mtu 1492
 	set ipcp yes vjcomp
 	set ipcp ranges 0.0.0.0/0 0.0.0.0/0
+
+
 
 EOD;
 
@@ -1203,7 +1206,7 @@ EOD;
 	}
 	
 	$mpdconf .= <<<EOD
-	open iface
+	open
 
 EOD;
 
@@ -1218,7 +1221,7 @@ EOD;
 	}
 
 	$mpdconf = <<<EOD
-pppoe:
+pppoeclient:
 	set link type pppoe
 	set pppoe iface {$wancfg['if']}
 	set pppoe service "{$pppoecfg['provider']}"
@@ -1230,16 +1233,16 @@ EOD;
 	fwrite($fd, $mpdconf);
 	fclose($fd);
 
-	if(file_exists("{$g['varrun_path']}/mpd.pid") and $g['booting']) {
+	if(file_exists("{$g['varrun_path']}/mpdpppoe.pid") and $g['booting']) {
 		/* if we are booting and mpd has already been started then don't start again. */
 	} else {
 		/* if mpd is active, lets take it down */
-		if(file_exists("{$g['varrun_path']}/mpd.pid")) {
-			killbypid("{$g['varrun_path']}/mpd.pid");
+		if(file_exists("{$g['varrun_path']}/mpdpppoe.pid")) {
+			killbypid("{$g['varrun_path']}/mpdpppoe.pid");
 			sleep(3);
 		}
 		/* fire up mpd */
-		mwexec("/usr/local/sbin/mpd -b -d {$g['varetc_path']} -p {$g['varrun_path']}/mpd.pid pppoe");
+		mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']} -p {$g['varrun_path']}/mpdpppoe.pid pppoeclient");
 	}
 
         /* sleep until wan is up - or 30 seconds, whichever comes first */
@@ -1263,13 +1266,13 @@ function interfaces_wan_pppoe_restart() {
 
 function interfaces_wan_pppoe_down() {
 	global $g;
-	sigkillbypid("{$g['varrun_path']}/mpd.pid", "SIGUSR2");
+	sigkillbypid("{$g['varrun_path']}/mpdpppoe.pid", "SIGUSR2");
 	sleep(1);
 }
 
 function interfaces_wan_pppoe_up() {
 	global $g;
-	sigkillbypid("{$g['varrun_path']}/mpd.pid", "SIGUSR1");
+	sigkillbypid("{$g['varrun_path']}/mpdpppoe.pid", "SIGUSR1");
 	sleep(1);
 }
 

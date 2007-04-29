@@ -578,6 +578,8 @@ function vpn_pptpd_configure() {
 	$syscfg = $config['system'];
 	$pptpdcfg = $config['pptpd'];
 
+    $starting_ng = get_number_of_wan_netgraph_interfaces_needed();
+
 	if ($g['booting']) {
 		if (!$pptpdcfg['mode'] || ($pptpdcfg['mode'] == "off"))
 			return 0;
@@ -585,75 +587,81 @@ function vpn_pptpd_configure() {
 		echo "Configuring PPTP VPN service... ";
 	} else {
 		/* kill mpd */
-		killbypid("{$g['varrun_path']}/mpd-vpn.pid");
+        killbypid("{$g['varrun_path']}/mpd-pptpd.pid");
 
 		/* wait for process to die */
 		sleep(3);
 
-		if(is_process_running("mpd -b")) {
-			killbypid("{$g['varrun_path']}/mpd-vpn.pid");
+        if (is_process_running("mpd4 -b")) {
+            killbypid("{$g['varrun_path']}/mpd-pptpd.pid");
 			log_error("Could not kill mpd within 3 seconds.   Trying again.");
 		}
 
 		/* remove mpd.conf, if it exists */
-		unlink_if_exists("{$g['varetc_path']}/mpd-vpn/mpd.conf");
-		unlink_if_exists("{$g['varetc_path']}/mpd-vpn/mpd.links");
-		unlink_if_exists("{$g['varetc_path']}/mpd-vpn/mpd.secret");
+        unlink_if_exists("{$g['varetc_path']}/mpd-pptpd/mpd.conf");
+        unlink_if_exists("{$g['varetc_path']}/mpd-pptpd/mpd.links");
+        unlink_if_exists("{$g['varetc_path']}/mpd-pptpd/mpd.secret");
 	}
 
 	/* make sure mpd-vpn directory exists */
-	if (!file_exists("{$g['varetc_path']}/mpd-vpn"))
-		mkdir("{$g['varetc_path']}/mpd-vpn");
+    if (!file_exists("{$g['varetc_path']}/mpd-pptpd"))
+        mkdir("{$g['varetc_path']}/mpd-pptpd");
 
 	switch ($pptpdcfg['mode']) {
 
 		case 'server':
 
 			/* write mpd.conf */
-			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.conf", "w");
+			$fd = fopen("{$g['varetc_path']}/mpd-pptpd/mpd.conf", "w");
 			if (!$fd) {
 				printf("Error: cannot open mpd.conf in vpn_pptpd_configure().\n");
 				return 1;
 			}
 
 			$mpdconf = <<<EOD
+startup:
 pptpd:
 
 EOD;
 
-			for ($i = 0; $i < $g['n_pptp_units']; $i++) {
+			for ($i = 0; $i < $pptpdcfg['n_pptp_units']; $i++) {
 				$mpdconf .= "	load pt{$i}\n";
 			}
 
-			for ($i = 0; $i < $g['n_pptp_units']; $i++) {
+			for ($i = 0; $i < $pptpdcfg['n_pptp_units']; $i++) {
 
 				$clientip = long2ip(ip2long($pptpdcfg['remoteip']) + $i);
 				$ngif = "ng" . ($i+1);
+
+				if(isset($pptpdcfg['radius']['radiusissueips']) && isset($pptpdcfg['radius']['enable'])) {
+					$isssue_ip_type = "set ipcp ranges {$pptpdcfg['localip']}/32 0.0.0.0/0";
+				} else {
+					$isssue_ip_type = "set ipcp ranges {$pptpdcfg['localip']}/32 {$clientip}/32";
+				}
 
 				$mpdconf .= <<<EOD
 
 pt{$i}:
 	new -i {$ngif} pt{$i} pt{$i}
-	set ipcp ranges {$pptpdcfg['localip']}/32 {$clientip}/32
-	load pts
+	{$isssue_ip_type}
+	load pptpd_standard
 
 EOD;
 			}
 
 			$mpdconf .= <<<EOD
 
-pts:
-	set iface disable on-demand
-	set iface enable proxy-arp
-	set iface enable tcpmssfix
-	set iface idle 1800
+pptpd_standard:
 	set iface up-script /usr/local/sbin/vpn-linkup
 	set iface down-script /usr/local/sbin/vpn-linkdown
+	set iface disable on-demand
+	set iface enable proxy-arp
+	set iface idle 1800
+	set iface enable tcpmssfix
 	set bundle enable multilink
-	set bundle enable crypt-reqd
 	set link yes acfcomp protocomp
 	set link no pap chap
-	set link enable chap-msv2
+	set link enable chap
 	set link mtu 1460
 	set link keep-alive 10 60
 	set ipcp yes vjcomp
@@ -667,7 +675,6 @@ EOD;
 			if (!isset($pptpdcfg['req128'])) {
 				$mpdconf .= <<<EOD
 	set ccp yes mpp-e40
-	set ccp yes mpp-e56
 
 EOD;
 			}
@@ -686,27 +693,50 @@ EOD;
 
 			if (isset($pptpdcfg['radius']['enable'])) {
 				$mpdconf .= <<<EOD
-	set radius server {$pptpdcfg['radius']['server']} "{$pptpdcfg['radius']['secret']}"
+	load radius
+
+radius: 
 	set radius retries 3
-	set radius timeout 10
-	set bundle enable radius-auth
-	set bundle disable radius-fallback
+	set radius timeout 3 
+	set radius me {$pptpdcfg['radius_nasip']}
+	set auth enable radius-auth 
+	set radius enable message-authentic
 
 EOD;
 
-				if (isset($pptpdcfg['radius']['accounting'])) {
+				if (isset($pptpdcfg['radius']['secenable'])) {
 					$mpdconf .= <<<EOD
-	set bundle enable radius-acct
+	set radius server {$pptpdcfg['radius']['server2']} "{$pptpdcfg['radius']['secret2']}" 1812 1813 
 
 EOD;
 				}
+
+			if (isset($pptpdcfg['radius']['enable'])) {
+				$mpdconf .= <<<EOD
+	set radius server {$pptpdcfg['radius']['server']} "{$pptpdcfg['radius']['secret']}" 1812 1813 
+
+EOD;
 			}
 
+				if (isset($pptpdcfg['radius']['accounting'])) {
+					$mpdconf .= <<<EOD
+	set auth enable radius-acct 
+	set auth acct-update {$pptpdcfg['radius_acct_update']}
+EOD;
+				}
+			} else {
+				$mpdconf .= <<<EOD
+	set auth enable system
+	set auth timeout 30
+
+EOD;
+
+		}
 			fwrite($fd, $mpdconf);
 			fclose($fd);
 
 			/* write mpd.links */
-			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.links", "w");
+			$fd = fopen("{$g['varetc_path']}/mpd-pptpd/mpd.links", "w");
 			if (!$fd) {
 				printf("Error: cannot open mpd.links in vpn_pptpd_configure().\n");
 				return 1;
@@ -719,10 +749,9 @@ EOD;
 
 pt{$i}:
 	set link type pptp
+	set pptp self 127.0.0.1
 	set pptp enable incoming
 	set pptp disable originate
-	set pptp disable windowing
-	set pptp self 127.0.0.1
 
 EOD;
 			}
@@ -731,7 +760,7 @@ EOD;
 			fclose($fd);
 
 			/* write mpd.secret */
-			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.secret", "w");
+			$fd = fopen("{$g['varetc_path']}/mpd-pptpd/mpd.secret", "w");
 			if (!$fd) {
 				printf("Error: cannot open mpd.secret in vpn_pptpd_configure().\n");
 				return 1;
@@ -746,10 +775,10 @@ EOD;
 
 			fwrite($fd, $mpdsecret);
 			fclose($fd);
-			chmod("{$g['varetc_path']}/mpd-vpn/mpd.secret", 0600);
+			chmod("{$g['varetc_path']}/mpd-pptpd/mpd.secret", 0600);
 
 			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd -b -d {$g['varetc_path']}/mpd-vpn -p {$g['varrun_path']}/mpd-vpn.pid pptpd");
+			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/mpd-pptpd -p {$g['varrun_path']}/mpd-pptpd.pid pptpd");
 
 			break;
 
@@ -822,20 +851,29 @@ function vpn_pppoe_configure() {
 	$syscfg = $config['system'];
 	$pppoecfg = $config['pppoe'];
 
+   $starting_ng = get_number_of_wan_netgraph_interfaces_needed();
+
 	/* create directory if it does not exist */
-	if(!is_dir("{$g['varetc_path']}/mpd-vpn"))
-		mkdir("{$g['varetc_path']}/mpd-vpn");
+    if (!is_dir("{$g['varetc_path']}/mpd-pppoe"))
+        mkdir("{$g['varetc_path']}/mpd-pppoe");
 
 	if ($g['booting']) {
 		if (!$pppoecfg['mode'] || ($pppoecfg['mode'] == "off"))
 			return 0;
 
 		echo "Configuring PPPoE VPN service... ";
+    } else {
+        /* kill mpd */
+        killbypid("{$g['varrun_path']}/mpd-pppoe.pid");
+
+        /* wait for process to die */
+        sleep(2);
+
 	}
 
 	/* make sure mpd-vpn directory exists */
-	if (!file_exists("{$g['varetc_path']}/mpd-vpn"))
-		mkdir("{$g['varetc_path']}/mpd-vpn");
+    if (!file_exists("{$g['varetc_path']}/mpd-pppoe"))
+        mkdir("{$g['varetc_path']}/mpd-pppoe");
 
 	switch ($pppoecfg['mode']) {
 
@@ -844,13 +882,14 @@ function vpn_pppoe_configure() {
 			$pppoe_interface = filter_translate_type_to_real_interface($pppoecfg['interface']);
 
 			/* write mpd.conf */
-			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.conf", "a");
+			$fd = fopen("{$g['varetc_path']}/mpd-pppoe/mpd.conf", "a");
 			if (!$fd) {
 				printf("Error: cannot open mpd.conf in vpn_pppoe_configure().\n");
 				return 1;
 			}
 			$mpdconf = "\n\n";
 			$mpdconf .= <<<EOD
+startup:
 pppoe:
 
 EOD;
@@ -866,7 +905,6 @@ EOD;
 
 				if(isset($pppoecfg['radius']['radiusissueips']) && isset($pppoecfg['radius']['enable'])) {
 					$isssue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 0.0.0.0/0";
-					$isssue_ip_type .="\n\tset ipcp yes radius-ip";
 				} else {
 					$isssue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 {$clientip}/32";
 				}
@@ -887,30 +925,28 @@ pppoe_standart:
 	set link type pppoe
 	set pppoe iface {$pppoe_interface}
 	set pppoe service "*"
-	set pppoe disable originate
-	set pppoe enable incoming
-	set bundle no multilink
+	set iface up-script /usr/local/sbin/vpn-linkup
+	set iface down-script /usr/local/sbin/vpn-linkdown
 	set bundle enable compression
-	set bundle max-logins 1
-	set iface idle 0
+	set auth max-logins 1
+	set link max-redial -1
+	set pppoe enable incoming
+	set pppoe disable originate
 	set iface disable on-demand
 	set iface disable proxy-arp
+	set iface idle 0 
 	set iface enable tcpmssfix
-	set iface mtu 1500
+	set bundle no multilink  
+	set link no acfcomp 
+	set link no protocomp 
 	set link no pap chap
 	set link enable chap
-	set link keep-alive 60 180
-	set ipcp yes vjcomp
-	set ipcp no vjcomp
-	set link max-redial -1
-	set link mtu 1492
-	set link mru 1492
+	set link keep-alive 30 100 
+	set link mtu 1460 
 	set ccp yes mpp-e40
 	set ccp yes mpp-e128
 	set ccp yes mpp-stateless
-	set link latency 1
-	#set ipcp dns 10.10.1.3
-	#set bundle accept encryption
+	set ipcp no vjcomp 
 
 EOD;
 
@@ -925,27 +961,48 @@ EOD;
 
 			if (isset($pppoecfg['radius']['enable'])) {
 				$mpdconf .= <<<EOD
-	set radius server {$pppoecfg['radius']['server']} "{$pppoecfg['radius']['secret']}"
+	load radius
+
+radius: 
 	set radius retries 3
-	set radius timeout 10
-	set bundle enable radius-auth
-	set bundle disable radius-fallback
+	set radius timeout 3 
+	set radius me {$pppoecfg['radius_nasip']}
+	set auth enable radius-auth 
+	set radius enable message-authentic
 
 EOD;
+				if (isset($pppoecfg['radius']['secenable'])) {
+					$mpdconf .= <<<EOD
+	set radius server {$pppoecfg['radius']['server2']} "{$pppoecfg['radius']['secret2']}" 1812 1813 
+
+EOD;
+				}
+
+			if (isset($pppoecfg['radius']['enable'])) {
+					$mpdconf .= <<<EOD
+	set radius server {$pppoecfg['radius']['server']} "{$pppoecfg['radius']['secret']}" 1812 1813 
+
+EOD;
+				}
 
 				if (isset($pppoecfg['radius']['accounting'])) {
 					$mpdconf .= <<<EOD
-	set bundle enable radius-acct
-	set radius acct-update 300
+	set auth enable radius-acct 
+	set auth acct-update {$pppoecfg['radius_acct_update']}
 EOD;
-				}
 			}
+			} else {
+				$mpdconf .= <<<EOD
+	set auth enable system
+	set auth timeout 30
 
+EOD;
+			}
 			fwrite($fd, $mpdconf);
 			fclose($fd);
 
 			/* write mpd.links */
-			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.links", "a");
+			$fd = fopen("{$g['varetc_path']}/mpd-pppoe/mpd.links", "a");
 			if (!$fd) {
 				printf("Error: cannot open mpd.links in vpn_pppoe_configure().\n");
 				return 1;
@@ -959,6 +1016,10 @@ EOD;
 pppoe:
 	set link type pppoe
 	set pppoe iface {$pppoe_interface}
+        set pppoe service "*"
+	 set pppoe disable incoming
+	 set pppoe enable originate
+
 
 EOD;
 			}
@@ -967,7 +1028,7 @@ EOD;
 			fclose($fd);
 
 			/* write mpd.secret */
-			$fd = fopen("{$g['varetc_path']}/mpd-vpn/mpd.secret", "a");
+			$fd = fopen("{$g['varetc_path']}/mpd-pppoe/mpd.secret", "a");
 			if (!$fd) {
 				printf("Error: cannot open mpd.secret in vpn_pppoe_configure().\n");
 				return 1;
@@ -982,10 +1043,10 @@ EOD;
 
 			fwrite($fd, $mpdsecret);
 			fclose($fd);
-			chmod("{$g['varetc_path']}/mpd-vpn/mpd.secret", 0600);
+			chmod("{$g['varetc_path']}/mpd-pppoe/mpd.secret", 0600);
 
 			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd -b -d {$g['varetc_path']}/mpd-vpn -p {$g['varrun_path']}/mpd-vpn.pid pppoe");
+			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/mpd-pppoe -p {$g['varrun_path']}/mpd-pppoe.pid pppoe");
 
 			break;
 

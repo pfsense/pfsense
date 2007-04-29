@@ -76,6 +76,7 @@ echo " 8)  Shell"
 echo " 9)  PFtop"
 echo "10)  Filter Logs"
 echo "11)  Restart webConfigurator"
+echo "12)  pfSense PHP shell"
 for i in /var/db/pfi/capable_*; do
     if [ -f $i -a ! -L /cf/conf ]; then
 	echo "98)  Move configuration file to removable device"
@@ -131,6 +132,9 @@ case ${opmode} in
 	/etc/rc.restart_webgui
 	;;
 12)
+	/usr/local/sbin/pfSsh.php
+	;;
+13)
 	/etc/rc.banner
 	;;
 98)

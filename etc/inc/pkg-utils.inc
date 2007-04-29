@@ -417,14 +417,14 @@ function install_package($package, $pkg_info = "") {
 			update_output_window("Warning, could not open log for writing.");
 		}
 	}
-	@fwrite($fd_log, "Beginning package installation.\n");
-	log_error('Beginning package installation for ' . $package . '.');
-	update_status("Beginning package installation for " . $package . "...");
 	/* fetch package information if needed */
 	if(!$pkg_info or !is_array($pkg_info[$package])) {
 		$pkg_info = get_pkg_info(array($package));
 		$pkg_info = $pkg_info[$package]; // We're only dealing with one package, so we can strip away the extra array.
 	}
+	@fwrite($fd_log, "Beginning package installation.\n");
+	log_error('Beginning package installation for ' . $pkg_info['name'] . '.');
+	update_status("Beginning package installation for " . $pkg_info['name'] . "...");	
 	/* fetch the package's configuration file */
 	if($pkg_info['config_file'] != "") {
 		$static_output .= "Downloading package configuration file... ";

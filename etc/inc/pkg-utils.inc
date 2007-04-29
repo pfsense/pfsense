@@ -284,7 +284,7 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 			$depends = get_pkg_depends($pkg_name, ".xml", "files", 1); // Call dependency handler and do a little more error checking.
 			if(is_array($depends)) {
 				foreach($depends as $item) {
-					if(!file_exists("/usr/local/pkg" . $item)) {
+					if(!file_exists("/usr/local/pkg/" . $item)) {
 						file_notice($package['name'], "The {$package['name']} package is missing required dependencies and must be reinstalled.", "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
 						log_error("Could not find {$item}. Reinstalling package.");
 						install_package($pkg_name);

@@ -20,7 +20,7 @@ echo ".\n\n";
 $shell_active = true;
 
 echo "Example commands:\n\n";
-echo "    print_r($config);\n";
+echo "    print_r(\$config);\n";
 echo "    \$config['interfaces']['lan']['ipaddr'] = \"192.168.1.1\";\n";
 echo "    write_config();\n";
 

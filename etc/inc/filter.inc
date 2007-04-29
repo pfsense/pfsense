@@ -86,6 +86,34 @@ function filter_configure_sync() {
 		echo "filter_configure_sync() being called $mt\n";
 	}
 
+	/* load ipfw / dummynet early on if required */
+	if($config['system']['dummynetshaper']) {
+				$status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
+				if($status == "0") {
+					mwexec("/sbin/kldload ipfw");
+					mwexec("/sbin/kldload dummynet");
+				}
+		} else {	
+			/* check to see if any rules reference a schedule
+			 * and if so load ipfw for later usage.
+			 */
+			foreach($config['filter']['rule'] as $rule) {
+				if($rule['sched'])
+					$time_based_rules = true;
+			}
+			if($time_based_rules == true) {
+				$status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
+				if($status == "0") {
+					mute_kernel_msgs();
+					mwexec("/sbin/kldload ipfw");
+					unmute_kernel_msgs();
+				}
+				exec("/sbin/ipfw delete set 9");
+				exec("/sbin/ipfw delete 2");
+				exec("/sbin/ipfw delete 3");
+			}
+	}
+
 	$lan_if = $config['interfaces']['lan']['if'];
 	$wan_if = get_real_wan_interface();
 
@@ -123,34 +151,6 @@ function filter_configure_sync() {
 	}
 
 	update_filter_reload_status("Loading filter rules");
-
-	/* load ipfw / dummynet early on if required */
-	if($config['system']['dummynetshaper']) {
-				$status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
-				if($status == "0") {
-					mwexec("/sbin/kldload ipfw");
-					mwexec("/sbin/kldload dummynet");
-				}
-		} else {	
-			/* check to see if any rules reference a schedule
-			 * and if so load ipfw for later usage.
-			 */
-			foreach($config['filter']['rule'] as $rule) {
-				if($rule['sched'])
-					$time_based_rules = true;
-			}
-			if($time_based_rules == true) {
-				$status = intval(`kldstat | grep ipfw | wc -l | awk '{ print $1 }'`);
-				if($status == "0") {
-					mute_kernel_msgs();
-					mwexec("/sbin/kldload ipfw");
-					unmute_kernel_msgs();
-				}
-				exec("/sbin/ipfw delete set 9");
-				exec("/sbin/ipfw delete 2");
-				exec("/sbin/ipfw delete 3");
-			}
-	}
 
 	/* enable pf if we need to, otherwise disable */
 	if (!isset ($config['system']['disablefilter'])) {

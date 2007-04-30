@@ -2057,9 +2057,11 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			if($g['debug'])
 				log_error("[TDR DEBUG] status true -- rule type '$type'");
 			if($type == "block") {
+				// active deny rules should deny
 				$ipfw_rule = tdr_create_ipfw_rule($rule, "deny");
 				tdr_install_rule($ipfw_rule);
 			} else {
+				// active allow rules should allow
 				$ipfw_rule = tdr_create_ipfw_rule($rule, "allow");
 				tdr_install_rule($ipfw_rule);
 			}
@@ -2069,17 +2071,20 @@ function generate_user_filter_rule($rule, $ngcounter) {
              *   active else allow traffic until active 
              */
             if($type == "pass") {
+            	// inactive pass rules should deny
 				$ipfw_rule = tdr_create_ipfw_rule($rule, "deny");
 				tdr_install_rule($ipfw_rule);
 			} else {
-				$ipfw_rule = tdr_create_ipfw_rule($rule, "allow");
+				// inactive block rules should skipto
+				$ipfw_rule = tdr_create_ipfw_rule($rule, "skipto");
 				tdr_install_rule($ipfw_rule);			
 			}
 			return "# $line";
 		}
 	} else {
 		if($schedule_enabled) {
-			$ipfw_rule = tdr_create_ipfw_rule($rule, "noschedallow");
+			// no schedule allow rules should simply allow
+			$ipfw_rule = tdr_create_ipfw_rule($rule, "allow");
 			tdr_install_rule($ipfw_rule);			
 		}
 		return $line;			

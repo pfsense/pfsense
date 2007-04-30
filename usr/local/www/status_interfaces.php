@@ -417,6 +417,7 @@ include("head.inc");
     	      	$interrupt_total = `vmstat -i | grep $real_interface | awk '{ print $4 }'`;
 	          	$interrupt_sec = `vmstat -i | grep $real_interface | awk '{ print $5 }'`;          	
           	}	
+          	$interrupt_total = "";
 	?>
 	<?php if($interrupt_total): ?>
      <tr>

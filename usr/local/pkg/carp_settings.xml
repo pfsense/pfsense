@@ -166,6 +166,12 @@
 		foreach($ifdescrs as $descr) 
 			if($config['interfaces']['$descr']['ipaddr'] == $_POST["synchronizetoip"]) 
 				$input_errors[] = "CARP sync IP must be the backup firewall ip!  You cannot specify this firewalls IP in this location.";
+		if($config['virtualip']['vip']) {
+			foreach($config['virtualip']['vip'] as $vip) {
+				if($vip['subnet'] == $_POST["synchronizetoip"]) 				
+					$input_errors[] = "CARP sync IP must be the backup firewall ip!  You cannot specify this firewalls IP in this location.";
+			}
+		}				
 	</custom_php_validation_command>
 	<custom_add_php_command_late>
 		/* setup carp interfaces */

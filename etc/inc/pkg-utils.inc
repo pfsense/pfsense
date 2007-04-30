@@ -181,7 +181,8 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 	$package = $config['installedpackages']['package'][$pkg_id];
 	if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
 		log_error("The {$package['name']} package is missing required dependencies and must be reinstalled." . $package['configurationfile']);
-		delete_package_xml($package['name']);
+		install_package($package['name']);
+		uninstall_package_from_name($package['name']);
 		install_package($package['name']);
 		return;
 	}
@@ -229,6 +230,13 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 	}
 }
 
+function uninstall_package_from_name($pkg_name) {
+	$id = get_pkg_id($pkg_name);
+	$todel = substr(reverse_strrchr($config['installedpackages']['package'][$id]['depends_on_package'], "."), 0, -1);
+	delete_package($todel, $pkg_name);
+	delete_package_xml($pkg_name);
+}
+
 function force_remove_package($pkg_name) {
 	global $config;
 	delete_package_xml($pkg_name);
@@ -269,7 +277,8 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 					require_once($include_file);
 				} else {
 					log_error("Could not locate {$include_file}.");
-					delete_package_xml($package['name']);
+					install_package($package['name']);
+					uninstall_package_from_name($package['name']);
 					install_package($package['name']);
 				}
 		}
@@ -289,7 +298,8 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 					if(!file_exists("/usr/local/pkg/" . $item)) {
 						file_notice($package['name'], "The {$package['name']} package is missing required dependencies and must be reinstalled.", "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
 						log_error("Could not find {$item}. Reinstalling package.");
-						delete_package_xml($pkg_name);
+						install_package($pkg_name);
+						uninstall_package_from_name($pkg_name);
 						install_package($pkg_name);
 					} else {
 						$item_config = parse_xml_config_pkg("/usr/local/pkg/" . $item, "packagegui");

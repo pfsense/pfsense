@@ -1099,13 +1099,9 @@ function write_config($desc="Unknown", $backup = true) {
 	fclose($fd);
 
 	if($g['platform'] == "embedded") {
-		/*   backup last config.xml and remove all others to avoid
-		 *   filling up the compact flash dedicated config partition
-		 */
-		$last_backup = discover_last_backup();
-		mwexec("/bin/mv /cf/conf/backup/{$last_backup} /tmp/lastconfig.xml");
-		mwexec("/bin/rm /cf/conf/backup/*");
-		mwexec("/bin/mv /tmp/lastconfig.xml /cf/conf/backup/{$last_backup}");
+		cleanup_backupcache(5);
+	} else {
+		cleanup_backupcache(30);
 	}
 
 	if($g['booting'] <> true) {

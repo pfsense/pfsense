@@ -181,6 +181,7 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 	$package = $config['installedpackages']['package'][$pkg_id];
 	if(!file_exists("/usr/local/pkg/" . $package['configurationfile'])) {
 		log_error("The {$package['name']} package is missing required dependencies and must be reinstalled. " . $package['configurationfile']);
+		delete_package_xml($package['name']);
 		install_package($package['name']);
 		return;
 	}
@@ -268,7 +269,7 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 					require_once($include_file);
 				} else {
 					log_error("Could not locate {$include_file}.");
-					delete_package($package['name']);
+					delete_package_xml($package['name']);
 					install_package($package['name']);
 				}
 		}
@@ -288,7 +289,7 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 					if(!file_exists("/usr/local/pkg/" . $item)) {
 						file_notice($package['name'], "The {$package['name']} package is missing required dependencies and must be reinstalled.", "Packages", "/pkg_mgr_install.php?mode=reinstallpkg&pkg={$package['name']}", 1);
 						log_error("Could not find {$item} ... Reinstalling package.");
-						delete_package($pkg_name);
+						delete_package_xml($pkg_name);
 						install_package($pkg_name);
 					} else {
 						$item_config = parse_xml_config_pkg("/usr/local/pkg/" . $item, "packagegui");

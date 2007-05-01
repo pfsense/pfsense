@@ -37,6 +37,20 @@ require_once("config.inc");
 require_once("functions.inc");
 require_once("array_intersect_key.inc");
 
+/* grab sync to ip if enabled */
+if ($config['installedpackages']['carpsettings']['config']) {
+	foreach ($config['installedpackages']['carpsettings']['config'] as $carp) {
+		$synchronizetoip = $carp['synchronizetoip'];
+	}
+}
+
+if($synchronizetoip) {
+	if($synchronizetoip == $_SERVER['REMOTE_ADDR']) {
+		log_error("Disallowing CARP sync loop.");
+		die;	
+	}
+}
+
 $xmlrpc_g = array(
 			"return" => array(
 						"true" => new XML_RPC_Response(new XML_RPC_Value(true, $XML_RPC_Boolean)),

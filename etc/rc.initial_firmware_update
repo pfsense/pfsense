@@ -38,7 +38,24 @@ switch ($command) {
 		$url = chop(fgets($fp));
 		$status = does_url_exist($url);
 		if($status) {
+			echo "\nFetching file...\n";
 			exec("fetch -v -o /tmp/firmware.tgz \"$url\"");
+			$status = does_url_exist("$url.md5");
+			if($status) { 
+				echo "\nFetching MD5...\n";
+				exec("fetch -v -o /tmp/firmware.tgz.md5 \"$url.md5\"");
+			}
+			if(file_exists("/tmp/firmware.tgz.md5")) {
+				$source_md5 = trim(`cat /tmp/firmware.tgz.md5 | awk '{ print \$4 }'`,"\r");
+				$file_md5 = trim(`md5 /tmp/firmware.tgz | awk '{ print \$4 }'`,"\r");
+				if($source_md5 <> $file_md5) {
+					echo "\nURL MD5: $source_md5";
+					echo "\nDownloaded file MD5: $file_md5";
+					echo "\n\nMD5 checksum does not match.  Cancelling upgrade.\n\n";
+					die -1;
+				}
+				echo "\nMD5 checksum matches.\n";
+			}
 			if(file_exists("/tmp/firmware.tgz"))
 				do_upgrade("/tmp/firmware.tgz");
 		} else {

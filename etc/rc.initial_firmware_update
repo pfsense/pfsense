@@ -36,6 +36,8 @@ switch ($command) {
 	case "1":
 		echo "\nEnter the URL to the .tgz update file:\n> ";
 		$url = chop(fgets($fp));
+		if(!$url) 
+			die;
 		$status = does_url_exist($url);
 		if($status) {
 			echo "\nFetching file...\n";
@@ -65,6 +67,8 @@ switch ($command) {
 	case "2":
 		echo "\nEnter the complete path to the .tgz update file: ";
 		$path = chop(fgets($fp));
+		if(!$path) 
+			die;
 		if(file_exists($path)) {
 			do_upgrade($path);
 		} else {

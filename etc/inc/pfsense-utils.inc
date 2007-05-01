@@ -42,7 +42,7 @@
  *   returns true if a url is available
  ******/
 function does_url_exist($url) {
-	$fd = fopen("http://us3.php.net/manual/en/function.header.php","r");
+	$fd = fopen("$url","r");
 	fclose($fd);
 	if($fd) {
    		return true;    

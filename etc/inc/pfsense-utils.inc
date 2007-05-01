@@ -33,6 +33,24 @@
  *
  */
 
+/****f* pfsense-utils/does_url_exist
+ * NAME
+ *   does_url_exist
+ * INPUTS
+ *	 none
+ * RESULT
+ *   returns true if a url is available
+ ******/
+function does_url_exist($url) {
+	$fd = fopen("http://us3.php.net/manual/en/function.header.php","r");
+	fclose($fd);
+	if($fd) {
+   		return true;    
+	} else {
+        return false;
+	}
+}
+
 /****f* pfsense-utils/is_private_ip
  * NAME
  *   is_private_ip

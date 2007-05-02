@@ -1286,11 +1286,7 @@ EOD;
 		require_once('clamav.inc');
 		$natrules .= clamav_generate_rules('nat');
 	}
-	if (is_package_installed('frickin') && file_exists('/usr/local/pkg/frickin.inc')) {
-		require_once ('frickin.inc');
-		$ipfrules .= frickin_generate_rules('filter');
-	}
-
+	
 	if (is_package_installed('frickin') && file_exists('/usr/local/pkg/frickin.inc')) {
 		require_once ('frickin.inc');
 		$natrules .= frickin_generate_rules('nat');
@@ -2132,6 +2128,16 @@ function filter_rules_generate() {
 	if (is_package_installed('clamav') && file_exists('/usr/local/pkg/clamav.inc')) {
 		require_once('clamav.inc');
 		$ipfrules .= clamav_generate_rules('filter');
+	}
+
+	if (is_package_installed('clamav') && file_exists('/usr/local/pkg/clamav.inc')) {
+		require_once('clamav.inc');
+		$ipfrules .= clamav_generate_rules('filter');
+	}
+
+	if (is_package_installed('frickin') && file_exists('/usr/local/pkg/frickin.inc')) {
+		require_once ('frickin.inc');
+		$ipfrules .= frickin_generate_rules('filter');
 	}
 
 	/* if captive portal is enabled, ensure that access to this port

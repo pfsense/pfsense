@@ -1536,17 +1536,18 @@ function remove_text_from_file($file, $text) {
  * add_text_to_file($file, $text): adds $text to $file.
  * replaces the text if it already exists.
  */
-function add_text_to_file($file, $text) {
+function add_text_to_file($file, $text, $replace = false) {
 	if(file_exists($file) and is_writable($file)) {
-		$filecontents = split("\n", file_get_contents($file));
+		$filecontents = file($file);
 		$fout = fopen($file, "w");
-		$new_file_text = "";
-		foreach($filecontents as $line) {
-			if($line)
-				$new_file_text .= rtrim($line) . "\n";
-		}
-		$new_file_text .= $text . "\n";
-		$file_text = str_replace("\n\n", "\n", $new_file_text);
+
+		$filecontents = array_map('rtrim', $filecontents);
+		array_push($filecontents, $text);
+		if ($replace)
+			$filecontents = array_unique($filecontents);
+
+		$file_text = implode("\n", $filecontents);
+
 		fwrite($fout, $file_text);
 		fclose($fout);
 		return true;

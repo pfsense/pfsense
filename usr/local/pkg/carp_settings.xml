@@ -147,13 +147,14 @@
 			<fieldname>synchronizetoip</fieldname>
 			<description>Enter the IP address of the firewall you would like to synchronize your rules to.</description>
 			<type>input</type>
-			<note>Note: CARP sync is currently only supported over http connections - make sure the remote system's WebGUI protocol is set to this!</note>
+			<note>Note: CARP sync is currently only supported over http connections - make sure the remote system's WebGUI protocol is set to this!   Also note that you will not use the Syncrhonize to IP and password option on backup cluster members!</note>
 		</field>
 		<field>
 	        <fielddescr>Remote System Password</fielddescr>
 	        <fieldname>password</fieldname>
 	        <description>Enter the webGUI password of the system that you would like to synchronize with.</description>
 	        <type>password</type>
+	        <note>NOTE: You will not use the Syncrhonize to IP and password option on backup cluster members!</note>
 		</field>
 	</fields>
 	<custom_php_validation_command>

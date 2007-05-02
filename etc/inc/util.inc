@@ -215,7 +215,7 @@ function is_validaliasname($name) {
 	if (in_array($name, $reserved, true))
 		return; /* return NULL */
 
-	if (!preg_match("/[^a-zA-Z0-9\-_]/", $name))
+	if (!preg_match("/[^a-zA-Z0-9_]/", $name))
 		return true;
 	else
 		return false;

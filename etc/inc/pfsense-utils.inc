@@ -43,8 +43,8 @@
  ******/
 function does_url_exist($url) {
 	$fd = fopen("$url","r");
-	fclose($fd);
 	if($fd) {
+		fclose($fd);
    		return true;    
 	} else {
         return false;

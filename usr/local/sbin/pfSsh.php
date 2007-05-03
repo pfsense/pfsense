@@ -44,7 +44,7 @@ echo "\$config['interfaces']['optx']['wireless']['standard'] = \"11a\";\n";
 echo "\$config['interfaces']['optx']['wireless']['mode'] = \"hostap\";\n";
 echo "\$config['interfaces']['optx']['wireless']['channel'] = \"6\";\n";
 
-echo "\n/* to enable server */\n";
+echo "\n/* to enable dhcp server for an optx interface */\n";
 echo "\$config['dhcpd']['optx']['enable'] = true;\n";
 echo "\$config['dhcpd']['optx']['range']['from'] = \"192.168.31.100\";\n";
 echo "\$config['dhcpd']['optx']['range']['to'] = \"192.168.31.150\";\n";

@@ -107,7 +107,6 @@ function services_dhcpd_configure() {
 option domain-name "{$syscfg['domain']}";
 default-lease-time 7200;
 max-lease-time 86400;
-authoritative;
 log-facility local7;
 ddns-update-style none;
 one-lease-per-client true;
@@ -122,6 +121,10 @@ EOD;
 	 */
 	$dhcpnum = 0;
 	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
+
+		if(!isset($dhcpifconf['disableauthoritative']))
+			$dhcpdconf .= "authoritative;\n";
+
 		if($dhcpifconf['failover_peerip'] <> "") {
 			/*
 			 *    yep, failover peer is defined.

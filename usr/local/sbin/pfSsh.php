@@ -36,6 +36,9 @@ echo "multiline\n";
 echo "\n/* to exit the php pfSense shell */\n";
 echo "exit\n";
 
+echo "\n/* to output supported wireless modes for an interface */\n";
+echo "print_r(get_wireless_modes(\"ath0\"));\n";
+
 echo "\n/* to enable SSH */\n";
 echo "\$config['system']['enablesshd'] = true;\n";
 

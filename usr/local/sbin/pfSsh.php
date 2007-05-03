@@ -22,7 +22,13 @@ $shell_active = true;
 echo "\nExample commands:\n";
 
 echo "\n/* to output a configuration array */\n";
-echo "nprint_r(\$config);\n";
+echo "print_r(\$config);\n";
+
+echo "\n/* to output the interfaces configuration portion of the configuration */\n";
+echo "print_r(\$config['interfaces']);\n";
+
+echo "\n/* to output the dhcp server configuration */\n";
+echo "print_r(\$config['dhcpd']);\n";
 
 echo "\n/* to enable multiline input mode */\n";
 echo "multiline\n";

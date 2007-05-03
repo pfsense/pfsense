@@ -154,7 +154,8 @@ if ($_POST) {
 						if (config_install($_FILES['conffile']['tmp_name']) == 0) {
 							/* this will be picked up by /index.php */
 							conf_mount_rw();
-							touch("/needs_package_sync");
+							if($g['platform'] <> "cdrom")
+								touch("/needs_package_sync");
 							$reboot_needed = true;
 							$savemsg = "The configuration has been restored. The firewall is now rebooting.";
 							/* remove cache, we will force a config reboot */

@@ -56,7 +56,10 @@ echo "\$config['interfaces']['wan']['ipaddr'] = \"192.168.100.1\";\n";
 echo "\$config['interfaces']['wan']['subnet'] = \"24\";\n";
 
 echo "\n/* to save out the new configuration (config.xml) */\n";
-echo "write_config();";
+echo "write_config();\n";
+
+echo "\n/* to reboot the system after saving */\n";
+echo "system_reboot_sync();";
 
 while($shell_active == true) {
         echo "\n\npfSense shell> ";

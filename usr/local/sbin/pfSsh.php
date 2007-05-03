@@ -21,10 +21,37 @@ $shell_active = true;
 
 echo "Example commands:\n\n";
 echo "    print_r(\$config);\n";
-echo "    \$config['interfaces']['lan']['ipaddr'] = \"192.168.1.1\";\n";
-echo "    write_config();\n";
-echo "    multiline\n";
-echo "    exit";
+
+echo "\n/* to enable SSH */\n";
+echo "\$config['system']['enablesshd'] = true;\n";
+
+echo "multiline\n";
+echo "exit\n";
+
+echo "\n/* change OPTX to the OPT interface name such as BACKHAUL */\n";
+echo "\$config['interfaces']['optx']['wireless']['standard'] = \"11a\";\n";
+echo "\$config['interfaces']['optx']['wireless']['mode'] = \"hostap\";\n";
+echo "\$config['interfaces']['optx']['wireless']['channel'] = \"6\";\n";
+
+echo "\n/* to enable server */\n";
+echo "\$config['dhcpd']['optx']['enable'] = true;\n";
+echo "\$config['dhcpd']['optx']['range']['from'] = \"192.168.31.100\";\n";
+echo "\$config['dhcpd']['optx']['range']['to'] = \"192.168.31.150\";\n";
+
+echo "\n/* to disable the firewall filter */\n";
+echo "\$config['system']['disablefilter'] = true;\n";
+
+echo "\n/* to enable an interface and set it for dhcp */\n";
+echo "\$config['interfaces']['optx']['disabled'] = false;\n";
+echo "\$config['interfaces']['optx']['ipaddr'] = \"dhcp\";\n";
+
+echo "\n/* to enable an interface and set a static ip address */\n";
+echo "\$config['interfaces']['wan']['disabled'] = false;\n";
+echo "\$config['interfaces']['wan']['ipaddr'] = \"192.168.100.1\";\n";
+echo "\$config['interfaces']['wan']['subnet'] = \"24\";\n";
+
+echo "/* to save out the new configuration (config.xml) */\n";
+echo "write_config();\n";
 
 while($shell_active == true) {
         echo "\n\npfSense shell> ";

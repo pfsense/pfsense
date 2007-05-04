@@ -41,18 +41,24 @@ $pconfig['redir'] = $pptpcfg['redir'];
 $pconfig['mode'] = $pptpcfg['mode'];
 $pconfig['wins'] = $pptpcfg['wins'];
 $pconfig['req128'] = isset($pptpcfg['req128']);
-$pconfig['radiusenable'] = isset($pptpcfg['radius']['enable']);
-$pconfig['radiusissueips'] = isset($pptpdcfg['radius']['radiusissueips']);
-$pconfig['radiussecenable'] = isset($pptpcfg['radius']['secenable']);
-$pconfig['radacct_enable'] = isset($pptpcfg['radius']['accounting']);
-$pconfig['radiusserver'] = $pptpcfg['radius']['server'];
-$pconfig['radiussecret'] = $pptpcfg['radius']['secret'];
-$pconfig['radiusserver2'] = $pptpcfg['radius']['server2'];
-$pconfig['radiussecret2'] = $pptpcfg['radius']['secret2'];
 $pconfig['n_pptp_units'] = $pptpcfg['n_pptp_units'];
 $pconfig['pptp_subnet'] = $pptpcfg['pptp_subnet'];
-$pconfig['radius_acct_update'] = $pptpcfg['radius_acct_update'];
-$pconfig['radius_nasip'] = $pptpcfg['radius_nasip'];
+$pconfig['pptp_dns1'] = $pptpcfg['dns1'];
+$pconfig['pptp_dns2'] = $pptpcfg['dns2'];
+$pconfig['radiusenable'] = isset($pptpcfg['radius']['enable']);
+$pconfig['radiusissueips'] = isset($pptpcfg['radius']['radiusissueips']);
+$pconfig['radiussecenable'] = isset($pptpcfg['radius']['server2']['enable']);
+$pconfig['radacct_enable'] = isset($pptpcfg['radius']['accounting']);
+$pconfig['radiusserver'] = $pptpcfg['radius']['server']['ip'];
+$pconfig['radiusserverport'] = $pptpcfg['radius']['server']['port'];
+$pconfig['radiusserveracctport'] = $pptpcfg['radius']['server']['acctport'];
+$pconfig['radiussecret'] = $pptpcfg['radius']['server']['secret'];
+$pconfig['radiusserver2'] = $pptpcfg['radius']['server2']['ip'];
+$pconfig['radiusserver2port'] = $pptpcfg['radius']['server2']['port'];
+$pconfig['radiusserver2acctport'] = $pptpcfg['radius']['server2']['acctport'];
+$pconfig['radiussecret2'] = $pptpcfg['radius']['server2']['secret2'];
+$pconfig['radius_acct_update'] = $pptpcfg['radius']['acct_update'];
+$pconfig['radius_nasip'] = $pptpcfg['radius']['nasip'];
 
 if ($_POST) {
 
@@ -120,17 +126,31 @@ if ($_POST) {
 	if (!$input_errors) {
 		$pptpcfg['remoteip'] = $_POST['remoteip'];
 		$pptpcfg['redir'] = $_POST['redir'];
-		$pptp['localip'] = $_POST['localip'];
+		$pptpcfg['localip'] = $_POST['localip'];
 		$pptpcfg['mode'] = $_POST['mode'];
 		$pptpcfg['wins'] = $_POST['wins'];
 		$pptpcfg['n_pptp_units'] = $_POST['n_pptp_units'];	
 		$pptpcfg['pptp_subnet'] = $_POST['pptp_subnet'];
-		$pptpcfg['radius']['server'] = $_POST['radiusserver'];
-		$pptpcfg['radius']['secret'] = $_POST['radiussecret'];
-		$pptpcfg['radius']['server2'] = $_POST['radiusserver2'];
-		$pptpcfg['radius']['secret2'] = $_POST['radiussecret2'];
-		$pptpcfg['radius_nasip'] = $_POST['radius_nasip'];
-		$pptpcfg['radius_acct_update'] = $_POST['radius_acct_update'];
+		$pptpcfg['radius']['server']['ip'] = $_POST['radiusserver'];
+		$pptpcfg['radius']['server']['port'] = $_POST['radiusserverport'];
+		$pptpcfg['radius']['server']['acctport'] = $_POST['radiusserveracctport'];
+		$pptpcfg['radius']['server']['secret'] = $_POST['radiussecret'];
+		$pptpcfg['radius']['server2']['ip'] = $_POST['radiusserver2'];
+		$pptpcfg['radius']['server2']['port'] = $_POST['radiusserver2port'];
+		$pptpcfg['radius']['server2']['acctport'] = $_POST['radiusserver2acctport'];
+		$pptpcfg['radius']['server2']['secret2'] = $_POST['radiussecret2'];
+		$pptpcfg['radius']['nasip'] = $_POST['radius_nasip'];
+		$pptpcfg['radius']['acct_update'] = $_POST['radius_acct_update'];
+
+ 		if ($_POST['pptp_dns1'] == "") 
+        		unset($pptpcfg['dns1']);
+		else
+			$pptpcfg['dns1'] = $_POST['pptp_dns1'];
+
+ 		if ($_POST['pptp_dns2'] == "") 
+        		unset($pptpcfg['dns2']);
+		else
+			$pptpcfg['dns2'] = $_POST['pptp_dns2'];
 
 		if($_POST['req128'] == "yes") 
 			$pptpcfg['req128'] = true;
@@ -138,14 +158,14 @@ if ($_POST) {
 			unset($pptpcfg['req128']);
 
 		if($_POST['radiusenable'] == "yes") 
-			$pptpcfg['radius']['enable'] = true;
+			$pptpcfg['radius']['server']['enable'] = true;
 		else 
-			unset($pptpcfg['radius']['enable']);
+			unset($pptpcfg['radius']['server']['enable']);
 			
 		if($_POST['radiussecenable'] == "yes") 
-			$pptpcfg['radius']['secenable'] = true;
+			$pptpcfg['radius']['server']['enable'] = true;
 		else 
-			unset($pptpcfg['radius']['secenable']);
+			unset($pptpcfg['radius']['server2']['enable']);
 			
 		if($_POST['radacct_enable'] == "yes") 
 			$pptpcfg['radius']['accounting'] = true;
@@ -199,46 +219,62 @@ function enable_change(enable_over) {
 		document.iform.wins.disabled = 0;
 		document.iform.n_pptp_units.disabled = 0;
 		document.iform.pptp_subnet.disabled = 0;	
+		document.iform.pptp_dns1.disabled = 0;
+		document.iform.pptp_dns2.disabled = 0;	
 		
 		if (document.iform.radiusenable.checked || enable_over) {
 			document.iform.radiussecenable.disabled = 0;
 			document.iform.radacct_enable.disabled = 0;
 			document.iform.radiusserver.disabled = 0;
+			document.iform.radiusserverport.disabled = 0;
+			document.iform.radiusserveracctport.disabled = 0;
 			document.iform.radiussecret.disabled = 0;
 			document.iform.radius_nasip.disabled = 0;	
 			document.iform.radius_acct_update.disabled = 0;	
 			document.iform.radiusissueips.disabled = 0;		
+			if (document.iform.radiussecenable.checked || enable_over) {
+				document.iform.radiusserver2.disabled = 0;
+				document.iform.radiussecret2.disabled = 0;
+				document.iform.radiusserver2port.disabled = 0;
+				document.iform.radiusserver2acctport.disabled = 0;
+			} else {
+	
+				document.iform.radiusserver2.disabled = 1;
+				document.iform.radiussecret2.disabled = 1;
+				document.iform.radiusserver2port.disabled = 1;
+				document.iform.radiusserver2acctport.disabled = 1;
+			}	
 		} else {
 			document.iform.radacct_enable.disabled = 1;
 			document.iform.radiusserver.disabled = 1;
+			document.iform.radiusserverport.disabled = 1;
+			document.iform.radiusserveracctport.disabled = 1;
 			document.iform.radiussecret.disabled = 1;
 			document.iform.radius_nasip.disabled = 1;	
 			document.iform.radius_acct_update.disabled = 1;	
 			document.iform.radiusissueips.disabled = 1;
 		}
 
-		if (document.iform.radiussecenable.checked || enable_over) {
-			document.iform.radiusserver2.disabled = 0;
-			document.iform.radiussecret2.disabled = 0;
-		} else {
-
-			document.iform.radiusserver2.disabled = 1;
-			document.iform.radiussecret2.disabled = 1;
-		}
 	} else {
 		document.iform.remoteip.disabled = 1;
 		document.iform.localip.disabled = 1;
 		document.iform.req128.disabled = 1;
 		document.iform.n_pptp_units.disabled = 1;
 		document.iform.pptp_subnet.disabled = 1;	
+		document.iform.pptp_dns1.disabled = 1;
+		document.iform.pptp_dns2.disabled = 1;
 		document.iform.radiusenable.disabled = 1;
 		document.iform.radacct_enable.disabled = 1;
 		document.iform.radiusserver.disabled = 1;
+		document.iform.radiusserverport.disabled = 1;
+		document.iform.radiusserveracctport.disabled = 1;
 		document.iform.radiussecret.disabled = 1;
 		document.iform.radius_nasip.disabled = 1;	
 		document.iform.radius_acct_update.disabled = 1;
 		document.iform.radiussecenable.disabled = 1;
 		document.iform.radiusserver2.disabled = 1;
+		document.iform.radiusserver2port.disabled = 1;
+		document.iform.radiusserver2acctport.disabled = 1;
 		document.iform.radiussecret2.disabled = 1;	
 		document.iform.wins.disabled = 1;
 		document.iform.radiusissueips.disabled = 1;
@@ -276,7 +312,7 @@ function enable_change(enable_over) {
                 <tr> 
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable">
-<input type="radio" name="mode" value="redir" onclick="enable_change(false)" <?php if ($pconfig['mode'] == "redir") echo "checked"; ?>>
+			<input type="radio" name="mode" value="redir" onclick="enable_change(false)" <?php if ($pconfig['mode'] == "redir") echo "checked"; ?>>
                     Redirect incoming PPTP connections to:</td>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">PPTP redirection</td>
@@ -288,14 +324,9 @@ function enable_change(enable_over) {
                 <tr> 
                   <td width="22%" valign="top" class="vtable">&nbsp;</td>
                   <td width="78%" class="vtable">
-<input type="radio" name="mode" value="server" onclick="enable_change(false)" <?php if ($pconfig['mode'] == "server") echo "checked"; ?>>
+			<input type="radio" name="mode" value="server" onclick="enable_change(false)" <?php if ($pconfig['mode'] == "server") echo "checked"; ?>>
                     Enable PPTP server</td>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Max. concurrent 
-                    connections</td>
-                  <td width="78%" class="vtable"> 
-                    <?=$g['n_pptp_units'];?>
-                  </td>
+                </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Server address</td>
                   <td width="78%" class="vtable"> 
@@ -347,54 +378,37 @@ function enable_change(enable_over) {
                   </td>
                 </tr>
                 <tr> 
+                  <td width="22%" valign="top" class="vncellreq">PPTP DNS Servers</td>
+                  <td width="78%" class="vtable"> 
+                    <?=$mandfldhtml;?><input name="pptp_dns1" type="text" class="formfld" id="pptp_dns1" size="20" value="<?=htmlspecialchars($pconfig['pptp_dns1']);?>">
+                    <br>
+			<input name="pptp_dns2" type="text" class="formfld" id="pptp_dns2" size="20" value="<?=htmlspecialchars($pconfig['pptp_dns2']);?>">
+                    <br>
+
+                   primary and secondary dns servers for pptp clients<br>
+                </tr>
+                <tr> 
+                  <td width="22%" valign="top" class="vncell">WINS Server</td>
+                  <td width="78%" valign="top" class="vtable">
+                      <input name="wins" class="formfld" id="wins" size="20" value="<?=htmlspecialchars($pconfig['wins']);?>">
+                  </td>
+                </tr>
+                <tr> 
                   <td width="22%" valign="top" class="vncell">RADIUS</td>
                   <td width="78%" class="vtable"> 
                       <input name="radiusenable" type="checkbox" id="radiusenable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radiusenable']) echo "checked"; ?>>
-                      <strong>Use a RADIUS server for authentication<br>
-                      </strong>When set, all users will be authenticated using 
+                      <strong>Use a RADIUS server for authentication</strong><br>
+                      When set, all users will be authenticated using 
                       the RADIUS server specified below. The local user database 
                       will not be used.<br>
                       <br>
                       <input name="radacct_enable" type="checkbox" id="radacct_enable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radacct_enable']) echo "checked"; ?>>
                       <strong>Enable RADIUS accounting <br>
-                      </strong>Sends accounting packets to the RADIUS server.</td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncell">RADIUS server </td>
-                  <td width="78%" class="vtable">
-                      <input name="radiusserver" type="text" class="formfld" id="radiusserver" size="20" value="<?=htmlspecialchars($pconfig['radiusserver']);?>">
-                      <br>
-                      Enter the IP address of the RADIUS server.</td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncell">RADIUS shared secret</td>
-                  <td width="78%" valign="top" class="vtable">
-                      <input name="radiussecret" type="password" class="formfld" id="radiussecret" size="20" value="<?=htmlspecialchars($pconfig['radiussecret']);?>">
-                      <br>
-                      Enter the shared secret that will be used to authenticate 
-                      to the RADIUS server.</td>
-                </tr>
-                  <td width="78%" class="vtable"> 
+                      </strong>Sends accounting packets to the RADIUS server.<br>
+			 <br>
                       <input name="radiussecenable" type="checkbox" id="radiussecenable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radiussecenable']) echo "checked"; ?>>
-                      <strong>Use a backup RADIUS server for failover authentication<br>
-                      </strong>When set, all users will be authenticated using 
-                      the RADIUS server specified below. The local user database 
-                      will not be used</td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncell">BACKUP RADIUS server </td>
-                  <td width="78%" class="vtable">
-                      <input name="radiusserver2" type="text" class="formfld" id="radiusserver2" size="20" value="<?=htmlspecialchars($pconfig['radiusserver2']);?>">
-                      <br>
-                      Enter the IP address of the RADIUS server.</td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncell">BACKUP RADIUS shared secret</td>
-                  <td width="78%" valign="top" class="vtable">
-                      <input name="radiussecret2" type="password" class="formfld" id="radiussecret2" size="20" value="<?=htmlspecialchars($pconfig['radiussecret2']);?>">
-                      <br>
-                      Enter the shared secret that will be used to authenticate 
-                      to the RADIUS server.</td>
+                      <strong>backup RADIUS server for failover authentication</strong><br>
+                      When set, if primary radius fails all request will go to the backup server</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">Radius NAS IP</td>
@@ -413,14 +427,41 @@ function enable_change(enable_over) {
                   <td width="78%" valign="top" class="vtable">
                       <input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips"<?php if($pconfig['radiusissueips']) echo " CHECKED"; ?>>
                       <br>Issue IP Addresses via RADIUS server.
-
-                  </td>
+                 </td>
                 </tr>
                 <tr> 
-                  <td width="22%" valign="top" class="vncell">WINS Server</td>
+                  <td width="22%" valign="top" class="vncell">RADIUS server </td>
+                  <td width="78%" class="vtable">
+                      <input name="radiusserver" type="text" class="formfld" id="radiusserver" size="20" value="<?=htmlspecialchars($pconfig['radiusserver']);?>">
+                      <input name="radiusserverport" type="text" class="formfld" id="radiusserverport" size="4" value="<?=htmlspecialchars($pconfig['radiusserverport']);?>">
+                      <input name="radiusserveracctport" type="text" class="formfld" id="radiusserveracctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserveracctport']);?>">
+                      <br>
+                      Enter the IP address of the RADIUS server.</td>
+                </tr>
+                <tr> 
+                  <td width="22%" valign="top" class="vncell">RADIUS shared secret</td>
                   <td width="78%" valign="top" class="vtable">
-                      <input name="wins" class="formfld" id="wins" size="20" value="<?=htmlspecialchars($pconfig['wins']);?>">
-                  </td>
+                      <input name="radiussecret" type="password" class="formfld" id="radiussecret" size="20" value="<?=htmlspecialchars($pconfig['radiussecret']);?>">
+                      <br>
+                      Enter the shared secret that will be used to authenticate 
+                      to the RADIUS server.</td>
+                </tr>
+                <tr> 
+                  <td width="22%" valign="top" class="vncell">BACKUP RADIUS server </td>
+                  <td width="78%" class="vtable">
+                      <input name="radiusserver2" type="text" class="formfld" id="radiusserver2" size="20" value="<?=htmlspecialchars($pconfig['radiusserver2']);?>">
+                      <input name="radiusserver2port" type="text" class="formfld" id="radiusserver2port" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2port']);?>">
+                      <input name="radiusserver2acctport" type="text" class="formfld" id="radiusserver2acctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2acctport']);?>">
+                      <br>
+                      Enter the IP address of the RADIUS server.</td>
+                </tr>
+                <tr> 
+                  <td width="22%" valign="top" class="vncell">BACKUP RADIUS shared secret</td>
+                  <td width="78%" valign="top" class="vtable">
+                      <input name="radiussecret2" type="password" class="formfld" id="radiussecret2" size="20" value="<?=htmlspecialchars($pconfig['radiussecret2']);?>">
+                      <br>
+                      Enter the shared secret that will be used to authenticate 
+                      to the RADIUS server.</td>
                 </tr>
                 <tr> 
                   <td height="16" colspan="2" valign="top"></td>
@@ -461,4 +502,3 @@ enable_change(false);
 <?php include("fend.inc"); ?>
 </body>
 </html>
-

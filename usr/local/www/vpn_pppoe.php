@@ -39,17 +39,26 @@ $pconfig['remoteip'] = $pppoecfg['remoteip'];
 $pconfig['localip'] = $pppoecfg['localip'];
 $pconfig['mode'] = $pppoecfg['mode'];
 $pconfig['interface'] = $pppoecfg['interface'];
-$pconfig['radiusenable'] = isset($pppoecfg['radius']['enable']);
-$pconfig['radacct_enable'] = isset($pppoecfg['radius']['accounting']);
-$pconfig['radiusserver'] = $pppoecfg['radius']['server'];
-$pconfig['radiussecret'] = $pppoecfg['radius']['secret'];
-$pconfig['radiusserver2'] = $pppoecfg['radius']['server2'];
-$pconfig['radiussecret2'] = $pppoecfg['radius']['secret2'];
-$pconfig['radiusissueips'] = isset($pppoecfg['radius']['radiusissueips']);
 $pconfig['n_pppoe_units'] = $pppoecfg['n_pppoe_units'];
 $pconfig['pppoe_subnet'] = $pppoecfg['pppoe_subnet'];
-$pconfig['radius_nasip'] = $pppoecfg['radius_nasip'];
-$pconfig['radius_acct_update'] = $pppoecfg['radius_acct_update'];
+$pconfig['pppoe_dns1'] = $pppoecfg['dns1'];
+$pconfig['pppoe_dns2'] = $pppoecfg['dns2'];
+$pconfig['radacct_enable'] = isset($pppoecfg['radius']['accounting']);
+$pconfig['radiusissueips'] = isset($pppoecfg['radius']['radiusissueips']);
+$pconfig['radiusenable'] = isset($pppoecfg['radius']['server']['enable']);
+$pconfig['radiusserver'] = $pppoecfg['radius']['server']['ip'];
+$pconfig['radiusserverport'] = $pppoecfg['radius']['server']['port'];
+$pconfig['radiusserveracctport'] = $pppoecfg['radius']['server']['acctport'];
+$pconfig['radiussecret'] = $pppoecfg['radius']['server']['secret'];
+$pconfig['radiussecenable'] = isset($pppoecfg['radius']['server2']['enable']);
+$pconfig['radiusserver2'] = $pppoecfg['radius']['server2']['ip'];
+$pconfig['radiusserver2port'] = $pppoecfg['radius']['server2']['port'];
+$pconfig['radiusserver2acctport'] = $pppoecfg['radius']['server2']['acctport'];
+$pconfig['radiussecret2'] = $pppoecfg['radius']['server2']['secret2'];
+$pconfig['radiusissueips'] = isset($pppoecfg['radius']['radiusissueips']);
+$pconfig['radius_nasip'] = $pppoecfg['radius']['nasip'];
+$pconfig['radius_acct_update'] = $pppoecfg['radius']['acct_update'];
+
 
 if ($_POST) {
 
@@ -111,22 +120,36 @@ if ($_POST) {
 		$pppoecfg['interface'] = $_POST['interface'];
 		$pppoecfg['n_pppoe_units'] = $_POST['n_pppoe_units'];	
 		$pppoecfg['pppoe_subnet'] = $_POST['pppoe_subnet'];
-		$pppoecfg['radius']['server'] = $_POST['radiusserver'];
-		$pppoecfg['radius']['secret'] = $_POST['radiussecret'];
-		$pppoecfg['radius']['server2'] = $_POST['radiusserver2'];
-		$pppoecfg['radius']['secret2'] = $_POST['radiussecret2'];
-		$pppoecfg['radius_nasip'] = $_POST['radius_nasip'];
-		$pppoecfg['radius_acct_update'] = $_POST['radius_acct_update'];
+		$pppoecfg['radius']['server']['ip'] = $_POST['radiusserver'];
+		$pppoecfg['radius']['server']['secret'] = $_POST['radiussecret'];
+		$pppoecfg['radius']['server']['port'] = $_POST['radiusserverport'];
+		$pppoecfg['radius']['server']['acctport'] = $_POST['radiusserveracctport'];
+		$pppoecfg['radius']['server2']['ip'] = $_POST['radiusserver2'];
+		$pppoecfg['radius']['server2']['secret2'] = $_POST['radiussecret2'];
+		$pppoecfg['radius']['server2']['port'] = $_POST['radiusserver2port'];
+		$pppoecfg['radius']['server2']['acctport'] = $_POST['radiusserver2acctport'];
+		$pppoecfg['radius']['nasip'] = $_POST['radius_nasip'];
+		$pppoecfg['radius']['acct_update'] = $_POST['radius_acct_update'];
+
+ 		if ($_POST['pppoe_dns1'] == "") 
+        		unset($pppoecfg['dns1']);
+		else
+			$pppoecfg['dns1'] = $_POST['pppoe_dns1'];
+
+ 		if ($_POST['pppoe_dns2'] == "") 
+        		unset($pppoecfg['dns2']);
+		else
+			$pppoecfg['dns2'] = $_POST['pppoe_dns2'];
 
 		if($_POST['radiusenable'] == "yes")
-			$pppoecfg['radius']['enable'] = true;
+			$pppoecfg['radius']['server']['enable'] = true;
 		else
-			unset($pppoecfg['radius']['enable']);
+			unset($pppoecfg['radius']['server']['enable']);
 			
-		if($_POST['radiussecondnas'] == "yes")
-			$pppoecfg['radius']['secenable'] = true;
+		if($_POST['radiussecenable'] == "yes")
+			$pppoecfg['radius']['server2']['enable'] = true;
 		else
-				unset($pppoecfg['radius']['secenable']);
+			unset($pppoecfg['radius']['server2']['enable']);
 			
 		if($_POST['radacct_enable'] == "yes")
 			$pppoecfg['radius']['accounting'] = true;
@@ -174,34 +197,45 @@ function enable_change(enable_over) {
 		document.iform.remoteip.disabled = 0;
 		document.iform.localip.disabled = 0;
 		document.iform.radiusenable.disabled = 0;
-		document.iform.radiusissueips.disabled = 0;
 		document.iform.interface.disabled = 0;
 		document.iform.n_pppoe_units.disabled = 0;		
 		document.iform.pppoe_subnet.disabled = 0;		
+		document.iform.pppoe_dns1.disabled = 0;
+		document.iform.pppoe_dns2.disabled = 0;		
 		if (document.iform.radiusenable.checked || enable_over) {
 			document.iform.radacct_enable.disabled = 0;
 			document.iform.radiusserver.disabled = 0;
 			document.iform.radiussecret.disabled = 0;
+			document.iform.radiusserverport.disabled = 0;
+			document.iform.radiusserveracctport.disabled = 0;
 			document.iform.radiusissueips.disabled = 0;
 			document.iform.radius_nasip.disabled = 0;
-			if (document.iform.radiussecondnas.checked || enable_over) {
-				document.iform.radiusserver2.disabled = 0;
-				document.iform.radiussecret2.disabled = 0;
 			document.iform.radiusissueips.disabled = 0;
 			document.iform.radius_nasip.disabled = 0;
 			document.iform.radius_acct_update = 0;
+			document.iform.radiussecenable.disabled = 0;
+			if (document.iform.radiussecenable.checked || enable_over) {
+				document.iform.radiusserver2.disabled = 0;
+				document.iform.radiussecret2.disabled = 0;
+				document.iform.radiusserver2port.disabled = 0;
+				document.iform.radiusserver2acctport.disabled = 0;
 			} else {
 
 				document.iform.radiusserver2.disabled = 1;
 				document.iform.radiussecret2.disabled = 1;
+				document.iform.radiusserver2port.disabled = 1;
+				document.iform.radiusserver2acctport.disabled = 1;
 			}
 		} else {
 			document.iform.radacct_enable.disabled = 1;
 			document.iform.radiusserver.disabled = 1;
 			document.iform.radiussecret.disabled = 1;
+			document.iform.radiusserverport.disabled = 1;
+			document.iform.radiusserveracctport.disabled = 1;
 			document.iform.radiusissueips.disabled = 1;
 			document.iform.radius_nasip.disabled = 1;
 			document.iform.radius_acct_update = 1;
+			document.iform.radiussecenable.disabled = 1;
 		}
 	} else {
 		document.iform.interface.disabled = 1;
@@ -209,12 +243,19 @@ function enable_change(enable_over) {
 		document.iform.pppoe_subnet.disabled = 1;		
 		document.iform.remoteip.disabled = 1;
 		document.iform.localip.disabled = 1;
+		document.iform.pppoe_dns1.disabled = 1;
+		document.iform.pppoe_dns2.disabled = 1;
 		document.iform.radiusenable.disabled = 1;
+		document.iform.radiussecenable.disabled = 1;
 		document.iform.radacct_enable.disabled = 1;
 		document.iform.radiusserver.disabled = 1;
 		document.iform.radiussecret.disabled = 1;
+		document.iform.radiusserverport.disabled = 1;
+		document.iform.radiusserveracctport.disabled = 1;
 		document.iform.radiusserver2.disabled = 1;
 		document.iform.radiussecret2.disabled = 1;
+		document.iform.radiusserver2port.disabled = 1;
+		document.iform.radiusserver2acctport.disabled = 1;
 		document.iform.radiusissueips.disabled = 1;
 		document.iform.radius_nasip.disabled = 1;
 		document.iform.radius_acct_update = 1;
@@ -323,7 +364,16 @@ function enable_change(enable_over) {
                     Specify the starting address for the client IP address subnet.<br>
                     </td>
                 </tr>
-
+                <tr> 
+                  <td width="22%" valign="top" class="vncellreq">DNS servers</td>
+                  <td width="78%" class="vtable"> 
+                    <?=$mandfldhtml;?><input name="pppoe_dns1" type="text" class="formfld" id="pppoe_dns1" size="20" value="<?=htmlspecialchars($pconfig['pppoe_dns1']);?>">
+                    <br>
+			<input name="pppoe_dns2" type="text" class="formfld" id="pppoe_dns2" size="20" value="<?=htmlspecialchars($pconfig['pppoe_dns2']);?>">
+                    <br>
+                    If entered they will be given to all pppoe clients else lan dns and one wan dns will go to all clients<br>
+                    </td>
+                </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">RADIUS</td>
                   <td width="78%" class="vtable"> 
@@ -335,36 +385,56 @@ function enable_change(enable_over) {
                       <br>
                       <input name="radacct_enable" type="checkbox" id="radacct_enable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radacct_enable']) echo "checked"; ?>>
                       <strong>Enable RADIUS accounting <br>
-                      </strong>Sends accounting packets to the RADIUS server.</td>
+			 <br>
+                      </strong>Sends accounting packets to the RADIUS server.<br>
+                      <input name="radiussecenable" type="checkbox" id="radiussecenable" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radiussecenable']) echo "checked"; ?>>
+                      <strong>Use Backup Radius Server</strong><br>
+                      When set, if primary server fails all requests will be sent via backup server</td>
+                </tr>
+                <tr> 
+                  <td width="22%" valign="top" class="vncellreq">NAS IP ADDRESS</td>
+                  <td width="78%" class="vtable"> 
+                    <?=$mandfldhtml;?><input name="radius_nasip" type="text" class="formfld" id="radius_nasip" size="20" value="<?=htmlspecialchars($pconfig['radius_nasip']);?>">
+                    <br>radius server NAS ip Address<br>
+                    </td>
+                </tr>
+                <tr> 
+                  <td width="22%" valign="top" class="vncellreq">Radius Accounting Update</td>
+                  <td width="78%" class="vtable"> 
+                    <?=$mandfldhtml;?><input name="radius_acct_update" type="text" class="formfld" id="radius_acct_update" size="20" value="<?=htmlspecialchars($pconfig['radius_acct_update']);?>">
+                    <br>Radius accounting update period in seconds
+                    </td>
+                </tr>
+                <tr> 
+                  <td width="22%" valign="top" class="vncell">RADIUS issued IP's</td>
+                  <td width="78%" valign="top" class="vtable">
+                      <input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips"<?php if($pconfig['radiusissueips']) echo " CHECKED"; ?>>
+                      <br>Issue IP Addresses via RADIUS server.</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">RADIUS server Primary</td>
                   <td width="78%" class="vtable">
                       <input name="radiusserver" type="text" class="formfld" id="radiusserver" size="20" value="<?=htmlspecialchars($pconfig['radiusserver']);?>">
-                      <br>
-                      Enter the IP address of the RADIUS server.</td>
+			 <input name="radiusserverport" type="text" class="formfld" id="radiusserverport" size="4" value="<?=htmlspecialchars($pconfig['radiusserverport']);?>">
+			 <input name="radiusserveracctport" type="text" class="formfld" id="radiusserveracctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserveracctport']);?>">
+                      <br>Enter the IP address and portof the RADIUS server. Format ip auth_port acct_port<br>
+			 <br> standard port 1812 and 1813 accounting</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">RADIUS primary shared secret</td>
                   <td width="78%" valign="top" class="vtable">
                       <input name="radiussecret" type="password" class="formfld" id="radiussecret" size="20" value="<?=htmlspecialchars($pconfig['radiussecret']);?>">
-                      <br>
-                      Enter the shared secret that will be used to authenticate 
+                      <br>Enter the shared secret that will be used to authenticate 
                       to the RADIUS server.</td>
-                </tr>
-                  <td width="78%" class="vtable"> 
-                      <input name="radiussecondnas" type="checkbox" id="radiussecondnas" onclick="enable_change(false)" value="yes" <?php if ($pconfig['radiussecondnas']) echo "checked"; ?>>
-                      <strong>Use Backup Radius Server<br>
-                      </strong>When set, all users will be authenticated using 
-                      the RADIUS server specified below. The local user database 
-                      will not be used.</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">RADIUS server Secondary</td>
                   <td width="78%" class="vtable">
                       <input name="radiusserver2" type="text" class="formfld" id="radiusserver2" size="20" value="<?=htmlspecialchars($pconfig['radiusserver2']);?>">
-                      <br>
-                      Enter the IP address of the RADIUS server.</td>
+			 <input name="radiusserver2port" type="text" class="formfld" id="radiusserver2port" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2port']);?>">
+			 <input name="radiusserver2acctport" type="text" class="formfld" id="radiusserver2acctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2acctport']);?>">
+                      <br>Enter the IP address and port of the BACKUP RADIUS server. Format ip auth_port acct_port<br>
+			 <br> standard port 1812 and 1813 accounting</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">RADIUS secondary shared secret</td>
@@ -374,29 +444,6 @@ function enable_change(enable_over) {
                       Enter the shared secret that will be used to authenticate 
                       to the RADIUS server.</td>
                 </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">NAS IP ADDRESS</td>
-                  <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="radius_nasip" type="text" class="formfld" id="radius_nasip" size="20" value="<?=htmlspecialchars($pconfig['radius_nasip']);?>">
-                    <br>
-                    radius server NAS ip Address<br>
-                    </td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Radius Accounting Update</td>
-                  <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="radius_acct_update" type="text" class="formfld" id="radius_acct_update" size="20" value="<?=htmlspecialchars($pconfig['radius_acct_update']);?>">
-                    <br>Radius accounting update period in seconds<br>
-                    </td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vncell">RADIUS issued IP's</td>
-                  <td width="78%" valign="top" class="vtable">
-                      <input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips"<?php if($pconfig['radiusissueips']) echo " CHECKED"; ?>>
-                      <br>Issue IP Addresses via RADIUS server.
-                      
-                  </td>
-                </tr>		
                 <tr> 
                   <td height="16" colspan="2" valign="top"></td>
                 </tr>
@@ -426,4 +473,3 @@ enable_change(false);
 <?php include("fend.inc"); ?>
 </body>
 </html>
-

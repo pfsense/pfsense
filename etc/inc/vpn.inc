@@ -678,10 +678,17 @@ EOD;
 
 EOD;
 			}
-			if  (isset($pptpdcfg["wins"]))
-				$mpdconf  .=  "	set ipcp nbns {$pptpdcfg['wins']}\n";
-			if (is_array($pptpdcfg['dnsserver']) && ($pptpdcfg['dnsserver'][0])) {
-				$mpdconf .= "	set ipcp dns " . join(" ", $pptpdcfg['dnsserver']) . "\n";
+			if (isset($pptpdcfg['wins'])) {
+				$mpdconf .= <<<EOD
+	set ipcp nbns {$pptpdcfg['wins']}
+
+EOD;
+			}
+		       if (isset($pptpdcfg['dns1'])) {
+					$mpdconf .= <<<EOD
+	set ipcp dns {$pptpdcfg['dns1']} {$pptpdcfg['dns2']}
+
+EOD;
 			} else if (isset($config['dnsmasq']['enable'])) {
 				$mpdconf .= "	set ipcp dns " . $config['interfaces']['lan']['ipaddr'];
 				if ($syscfg['dnsserver'][0])
@@ -691,29 +698,29 @@ EOD;
 				$mpdconf .= "	set ipcp dns " . join(" ", $syscfg['dnsserver']) . "\n";
 			}
 
-			if (isset($pptpdcfg['radius']['enable'])) {
+			if (isset($pptpdcfg['radius']['server']['enable'])) {
 				$mpdconf .= <<<EOD
 	load radius
 
 radius: 
 	set radius retries 3
 	set radius timeout 3 
-	set radius me {$pptpdcfg['radius_nasip']}
+	set radius me {$pptpdcfg['radius']['nasip']}
 	set auth enable radius-auth 
 	set radius enable message-authentic
 
 EOD;
 
-				if (isset($pptpdcfg['radius']['secenable'])) {
+				if (isset($pptpdcfg['radius']['server2']['enable'])) {
 					$mpdconf .= <<<EOD
-	set radius server {$pptpdcfg['radius']['server2']} "{$pptpdcfg['radius']['secret2']}" 1812 1813 
+	set radius server {$pptpdcfg['radius']['server2']['ip']} "{$pptpdcfg['radius']['server2']['secret']}" {$pptpdcfg['radius']['server2']['port']} {$pptpdcfg['radius']['server2']['acctport']} 
 
 EOD;
 				}
 
-			if (isset($pptpdcfg['radius']['enable'])) {
+			if (isset($pptpdcfg['radius']['server']['enable'])) {
 				$mpdconf .= <<<EOD
-	set radius server {$pptpdcfg['radius']['server']} "{$pptpdcfg['radius']['secret']}" 1812 1813 
+	set radius server {$pptpdcfg['radius']['server']['ip']} "{$pptpdcfg['radius']['server']['secret']}" {$pptpdcfg['radius']['server']['port']} {$pptpdcfg['radius']['server']['acctport']} 
 
 EOD;
 			}
@@ -721,7 +728,7 @@ EOD;
 				if (isset($pptpdcfg['radius']['accounting'])) {
 					$mpdconf .= <<<EOD
 	set auth enable radius-acct 
-	set auth acct-update {$pptpdcfg['radius_acct_update']}
+	set auth acct-update {$pptpdcfg['radius']['acct_update']}
 EOD;
 				}
 			} else {
@@ -868,7 +875,9 @@ function vpn_pppoe_configure() {
 
         /* wait for process to die */
         sleep(2);
-
+        unlink_if_exists("{$g['varetc_path']}/mpd-pppoe/mpd.conf");
+        unlink_if_exists("{$g['varetc_path']}/mpd-pppoe/mpd.links");
+        unlink_if_exists("{$g['varetc_path']}/mpd-pppoe/mpd.secret");
 	}
 
 	/* make sure mpd-vpn directory exists */
@@ -949,8 +958,13 @@ pppoe_standart:
 	set ipcp no vjcomp 
 
 EOD;
+		if (isset($pppoecfg['dns1'])) {
+					$mpdconf .= <<<EOD
+	set ipcp dns {$pppoecfg['dns1']} {$pppoecfg['dns2']}
 
-			if (isset($config['dnsmasq']['enable'])) {
+EOD;
+
+			} else if (isset($config['dnsmasq']['enable'])) {
 				$mpdconf .= "	set ipcp dns " . $config['interfaces']['lan']['ipaddr'];
 				if ($syscfg['dnsserver'][0])
 					$mpdconf .= " " . $syscfg['dnsserver'][0];
@@ -959,28 +973,28 @@ EOD;
 				$mpdconf .= "	set ipcp dns " . join(" ", $syscfg['dnsserver']) . "\n";
 			}
 
-			if (isset($pppoecfg['radius']['enable'])) {
+			if (isset($pppoecfg['radius']['server']['enable'])) {
 				$mpdconf .= <<<EOD
 	load radius
 
 radius: 
 	set radius retries 3
 	set radius timeout 3 
-	set radius me {$pppoecfg['radius_nasip']}
+	set radius me {$pppoecfg['radius']['nasip']}
 	set auth enable radius-auth 
 	set radius enable message-authentic
 
 EOD;
-				if (isset($pppoecfg['radius']['secenable'])) {
+				if (isset($pppoecfg['radius']['server2']['enable'])) {
 					$mpdconf .= <<<EOD
-	set radius server {$pppoecfg['radius']['server2']} "{$pppoecfg['radius']['secret2']}" 1812 1813 
+	set radius server {$pppoecfg['radius']['server2']['ip']} "{$pppoecfg['radius']['server2']['secret']}" {$pppoecfg['radius']['server2']['port']} {$pppoecfg['radius']['server2']['acctport']}
 
 EOD;
 				}
 
-			if (isset($pppoecfg['radius']['enable'])) {
+			if (isset($pppoecfg['radius']['server']['enable'])) {
 					$mpdconf .= <<<EOD
-	set radius server {$pppoecfg['radius']['server']} "{$pppoecfg['radius']['secret']}" 1812 1813 
+	set radius server {$pppoecfg['radius']['server']['ip']} "{$pppoecfg['radius']['server']['secret']}" {$pppoecfg['radius']['server']['port']} {$pppoecfg['radius']['server']['acctport']}
 
 EOD;
 				}
@@ -988,7 +1002,7 @@ EOD;
 				if (isset($pppoecfg['radius']['accounting'])) {
 					$mpdconf .= <<<EOD
 	set auth enable radius-acct 
-	set auth acct-update {$pppoecfg['radius_acct_update']}
+	set auth acct-update {$pppoecfg['radius']['acct_update']}
 EOD;
 			}
 			} else {

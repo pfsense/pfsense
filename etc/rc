@@ -106,7 +106,7 @@ fi
 # have trouble overriding the PREFIX configure
 # argument since we build our packages in a
 # seperated PREFIX area
-ln -s /tmp/tmp /
+ln -s / /tmp/tmp
 
 # Malloc debugging check
 if [ ! -L /etc/malloc.conf ]; then

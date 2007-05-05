@@ -323,11 +323,11 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				  ?>
 				  <a href="?if=<?=$if;?>&act=toggle&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="11" border="0" title="click to toggle enabled/disabled status"></a>
 				  <?php if (isset($filterent['log'])):
-							$iconfn = "log_s";
+							$iconfnlog = "log_s";
 						if (isset($filterent['disabled']))
-							$iconfn .= "_d";
+							$iconfnlog .= "_d";
 				  	?>
-				  <br><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfn;?>.gif" width="11" height="15" border="0">
+				  <br><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_<?=$iconfnlog;?>.gif" width="11" height="15" border="0">
 				  <?php endif; ?>
 				  </td>
 				<?php
@@ -384,6 +384,35 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 						$alias_dst_port_span_end = $span_end;											
 					}										
 				}
+				$printicon = false;
+				 if ($schedstatus) 
+				 { 
+				 	if ($iconfn == "block" || $iconfn == "reject")
+				 	{
+				 		$image = "icon_clock_red";
+				 		$alttest = "Traffic matching this rule is currently being denied";
+				 	}
+				 	else
+				 	{
+				 		$image = "icon_clock_green";
+				 		$alttest = "Traffic matching this rule is currently being allowed";
+				 	}
+				 	$printicon = true;
+				  }
+				  else if ($filterent['sched'] )
+				  { 
+				 	if ($iconfn == "block" || $iconfn == "reject")
+				 	{
+				 		$image = "icon_clock_green";
+				 		$alttext = "Traffic matching this rule is currently being allowed";
+				 	}
+				 	else
+				 	{
+				 		$image = "icon_clock_red";
+				 		$alttext = "Traffic matching this rule is currently being denied";
+				 	}
+				 	$printicon = true;				  	
+				  }
 				
 				//build Schedule popup box
 				$a_schedules = &$config['schedules']['schedule'];
@@ -514,7 +543,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                     <?=$textss;?><?php if (isset($config['interfaces'][$filterent['gateway']]['descr'])) echo htmlspecialchars($config['interfaces'][$filterent['gateway']]['descr']); else  echo htmlspecialchars(pprint_port($filterent['gateway'])); ?><?=$textse;?>
                   </td>
                   <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';"><font color="black">
-                    <?=$textss;?><?php echo $schedule_span_begin;?><?=htmlspecialchars($filterent['sched']);?><?php echo $schedule_span_end; ?><?=$textse;?>&nbsp; <?php if ($schedstatus) { ?><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_frmfld_time.png" title="Schedule is currently active" width="17" height="17" border="0"><?php } ?>
+                    <?=$textss;?><?php echo $schedule_span_begin;?><?=htmlspecialchars($filterent['sched']);?><?php echo $schedule_span_end; ?><?=$textse;?>&nbsp; <?php if ($printicon) { ?><img src="./themes/<?= $g['theme']; ?>/images/icons/<?php echo $image; ?>.gif" title="<?php echo $alttext;?>" width="12" height="12" border="0"><?php } ?>
                   </td>
                   <td class="listbg" onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';" bcolor="#990000"><font color="white">
                     <?=$textss;?><?=htmlspecialchars($filterent['descr']);?>&nbsp;<?=$textse;?>

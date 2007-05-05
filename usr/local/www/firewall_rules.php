@@ -504,12 +504,12 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 					 { 
 					 	if ($iconfn == "block" || $iconfn == "reject")
 					 	{
-					 		$image = "icon_clock_red";
+					 		$image = "icon_block";
 					 		$alttext = "Traffic matching this rule is currently being denied";
 					 	}
 					 	else
 					 	{
-					 		$image = "icon_clock_green";
+					 		$image = "icon_pass";
 					 		$alttext = "Traffic matching this rule is currently being allowed";
 					 	}
 					 	$printicon = true;
@@ -518,12 +518,12 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 					  { 
 					 	if ($iconfn == "block" || $iconfn == "reject")
 					 	{
-					 		$image = "icon_clock_grey";
+					 		$image = "icon_block_d";
 					 		$alttext = "Traffic matching this rule is currently being allowed";
 					 	}
 					 	else
 					 	{
-					 		$image = "icon_clock_red";
+					 		$image = "icon_block";
 					 		$alttext = "Traffic matching this rule is currently being denied";
 					 	}
 					 	$printicon = true;				  	

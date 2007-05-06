@@ -1646,7 +1646,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 											log_error("SLBD pool {$lb['name']} is old style. Please recreate.");
 										} else if(interface_has_gateway($lbconfig['gateway'][$l])) {
 											$int = convert_friendly_interface_to_real_interface_name($lbconfig['gateway'][$l]);
-											$gateway = get_interface_gateway($int);
+											$gateway = get_interface_gateway($lbconfig['gateway'][$l]);
 										}
 										if(($int <> "") && ($gateway <> "")) {
 											log_error("Setting up route with {$lbconfig['gateway'][$l]} om $int for monitor {$lbconfig['monitor'][$l]} on gateway $gateway");

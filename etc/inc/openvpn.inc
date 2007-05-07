@@ -87,6 +87,25 @@ function openvpn_validate_input($mode, $post, $input_errors) {
 
 		if ($result = openvpn_validate_cidr($post['local_network'], 'Local network'))
 			$input_errors[] = $result;
+
+// DHCP-Options logic-check
+    $servers = explode(';', $post['dhcp_dns']);
+      foreach ($servers as $server) if (!is_ipaddr($server)) 
+        {$input_errors[] = 'The field \'DHCP-Opt.: DNS-Server\' must contain a valid IP address and no whitespaces.';
+        break;}
+    $servers = explode(';', $post['dhcp_wins']);
+      foreach ($servers as $server) if (!is_ipaddr($server)) 
+        {$input_errors[] = 'The field \'DHCP-Opt.: WINS-Server\' must contain a valid IP address and no whitespaces.';
+        break;}
+    $servers = explode(';', $post['dhcp_nbdd']);
+      foreach ($servers as $server) if (!is_ipaddr($server)) 
+        {$input_errors[] = 'The field \'DHCP-Opt.: NBDD-Server\' must contain a valid IP address and no whitespaces.';
+        break;}
+    $servers = explode(';', $post['dhcp_ntp']);
+      foreach ($servers as $server) if (!is_ipaddr($server)) 
+        {$input_errors[] = 'The field \'DHCP-Opt.: NTP-Server\' must contain a valid IP address and no whitespaces.';
+        break;}     
+
 	}
 
 	else { // Client mode
@@ -263,6 +282,53 @@ EOD;
 
 		// The port we'll listen at
 		$openvpn_conf .= "lport {$settings['local_port']}\n";
+
+		// DHCP-Options
+	  if (!empty($settings['dhcp_domainname'])) $openvpn_conf .= "push \"dhcp-option DOMAIN {$settings['dhcp_domainname']}\"\n";
+	      	
+    if (!empty($settings['dhcp_dns'])) {
+	   	$servers = explode(';', $settings['dhcp_dns']);
+   	  if (is_array($servers)) {
+			 foreach ($servers as $server) $openvpn_conf .= "push \"dhcp-option DNS {$server}\"\n";
+  	  }
+		  else {
+			$openvpn_conf .= "push \"dhcp-option DNS {$settings['dhcp_dns']}\"\n";
+		  }
+    }
+  
+    if (!empty($settings['dhcp_wins'])) {
+	   	$servers = explode(';', $settings['dhcp_wins']);
+   	  if (is_array($servers)) {
+			 foreach ($servers as $server) $openvpn_conf .= "push \"dhcp-option WINS {$server}\"\n";
+  	  }
+		  else {
+			$openvpn_conf .= "push \"dhcp-option WINS {$settings['dhcp_wins']}\"\n";
+		  }
+    }	
+
+    if (!empty($settings['dhcp_nbdd'])) {
+	   	$servers = explode(';', $settings['dhcp_nbdd']);
+   	  if (is_array($servers)) {
+			 foreach ($servers as $server) $openvpn_conf .= "push \"dhcp-option NBDD {$server}\"\n";
+  	  }
+		  else {
+			$openvpn_conf .= "push \"dhcp-option NBDD {$settings['dhcp_nbdd']}\"\n";
+		  }
+    }	
+
+    if (!empty($settings['dhcp_ntp'])) {
+	   	$servers = explode(';', $settings['dhcp_ntp']);
+   	  if (is_array($servers)) {
+			 foreach ($servers as $server) $openvpn_conf .= "push \"dhcp-option NTP {$server}\"\n";
+  	  }
+		  else {
+			$openvpn_conf .= "push \"dhcp-option NTP {$settings['dhcp_ntp']}\"\n";
+		  }
+    }	
+
+  	if (!empty($settings['dhcp_nbttype']) && $settings['dhcp_nbttype'] !=0) $openvpn_conf .= "push \"dhcp-option NBT {$settings['dhcp_nbttype']}\"\n";
+    if (!empty($settings['dhcp_nbtscope'])) $openvpn_conf .= "push \"dhcp-option NBS {$settings['dhcp_nbtscope']}\"\n";
+   	if ($settings['dhcp_nbtdisable']) $openvpn_conf .= "push \"dhcp-option DISABLE-NBT\"\n";
 
 	}
 

@@ -139,11 +139,11 @@ else
 	while (false !== ($filename = readdir($dirhandle))) {
    		$periodpos = strpos($filename, ".");
 		$widgetname = substr($filename, 0, $periodpos);	
-   		if ($widgetname != "system information")
+   		if ($widgetname != "system_information")
    			$widgetfiles[] = $filename;   		
 	}
 	sort($widgetfiles);
-	array_unshift($widgetfiles, "system information.widget.php");
+	array_unshift($widgetfiles, "system_information.widget.php");
 }
 	
 	
@@ -274,7 +274,7 @@ echo $jscriptstr;
 				$periodpos = strpos($widget, ".");
 				$widgetname = substr($widget, 0, $periodpos);
 				$nicename = $widgetname;
-				$widgetname = str_replace(" ", "", $widgetname);
+				$nicename = str_replace("_", " ", $nicename);
 				//make the title look nice
 				$nicename = ucwords($nicename);?>
 				<span style="cursor: pointer;" onclick='return showDiv("<?php echo $widgetname; ?>div",false)'><u><?php echo $nicename; ?></u></span><br><?php
@@ -287,9 +287,6 @@ echo $jscriptstr;
 
 <p class="pgtitle">System Overview&nbsp;&nbsp;&nbsp;
 <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="Click here to add widgets" style="cursor: help;" onmouseup="domTT_activate(this, event, 'content', document.getElementById('content1'), 'type', 'velcro', 'delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
-
-
-
 
 <div style="clear:both;"></div>
 
@@ -324,7 +321,7 @@ echo $jscriptstr;
 		$periodpos = strpos($widget, ".");
 		$widgetname = substr($widget, 0, $periodpos);	
 		$nicename = $widgetname;
-		$widgetname = str_replace(" ", "", $widgetname);
+		$nicename = str_replace("_", " ", $nicename);
 			
 		//make the title look nice
 		$nicename = ucwords($nicename);

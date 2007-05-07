@@ -173,7 +173,7 @@ require_once("notices.inc");
 							<li><a href="/pkg_edit.php?xml=olsrd.xml&id=0" class="navlnk">OLSR</a></li>
 							<li><a href="/pkg_edit.php?xml=routed/routed.xml&id=0" class="navlnk">RIP</a></li>
 							<li><a href="/services_snmp.php" class="navlnk">SNMP</a></li>
-							<li><a href="/status_upnp.php" class="navlnk">UPNP</a></li>
+							<li><a href="/status_upnp.php" class="navlnk">UPnP</a></li>
 							<li><a href="/pkg_edit.php?xml=openntpd.xml&id=0" class="navlnk">OpenNTPD</a></li>
 							<li><a href="/services_wol.php" class="navlnk">Wake on LAN</a></li>
 							<?php echo return_ext_menu("Services"); ?>
@@ -210,7 +210,7 @@ require_once("notices.inc");
 							<li><a href="/index.php" class="navlnk">System</a></li>
 							<li><a href="/diag_logs.php" class="navlnk">System logs</a></li>
 							<li><a href="/status_graph.php?if=wan" class="navlnk">Traffic graph</a></li>
-							<li><a href="/status_upnp.php" class="navlnk">UPNP</a></li>
+							<li><a href="/status_upnp.php" class="navlnk">UPnP</a></li>
 							<?php $i = 0; $ifdescrs = array();
 							if (is_array($config['interfaces']['wan']['wireless']) &&
 								preg_match($g['wireless_regex'], $config['interfaces']['wan']['if']))

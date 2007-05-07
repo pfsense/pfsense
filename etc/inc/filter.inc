@@ -716,7 +716,7 @@ function filter_nat_rules_generate() {
 			update_filter_reload_status("Creating outbound rules (opt{$i})");
 			$optcfg = $config['interfaces']['opt' . $i];
 
-			if ((isset ($optcfg['enable'])) && (!$optcfg['bridge']) && (interface_has_gateway("$opt_interface"))) {
+			if ((isset ($optcfg['enable'])) && (!$optcfg['bridge']) && (!interface_has_gateway("opt{$i}"))) {
 				$optsa = gen_subnet($optcfg['ipaddr'], $optcfg['subnet']);
 
 				/* create outbound nat entries for primary wan */

@@ -35,7 +35,6 @@
 	require_once('guiconfig.inc');
 	require_once('notices.inc');
 
-
 	## Load Functions Files
 	require_once('includes/functions.inc.php');
 
@@ -113,300 +112,287 @@
 		}
 		fclose($fd);
 	}
+	/*
+if (!is_array($config['widgets']['widget']))
+$config['widgets']['widget'] = array();
 
-	//set variables for traffic graph
-	$width = "300";
-	$height = "150";
+$a_schedules = &$config['widgets']['widget'];
 	
-	//set variables for log
-	$system_logfile = "{$g['varlog_path']}/system.log";
-	
-$jscriptstr = <<<EOD
-<script type="text/javascript">
-
-function showgraph(incInterface){
-
-	d = document;	
-	var tempArray = incInterface.split("-");
-	selectInt = tempArray[1];
-	realInt = tempArray[0];
-	tr = d.getElementById(selectInt);
-
-	div = d.createElement("div");
-	selectIntID = selectInt + "graphdiv";
-	div.setAttribute ('id', selectIntID);
-	div.innerHTML= "<embed id='" + selectIntID + "' name='graph' src='graph.php?ifnum=" + realInt + "&ifname=" + selectInt + "' type='image/svg+xml' width='$width' height='$height' pluginspage='http://www.adobe.com/svg/viewer/install/auto' />";
-	tr.appendChild(div);
-	selectIntLink = selectInt + "graphlink";
-	textlink = d.getElementById(selectIntLink);
-	textlink.parentNode.removeChild(textlink);
-	
-	selectIntID = selectInt + "closegraph";
-	closelink = d.getElementById(selectIntID);
-	closelink.style.display="block";
+if ($_POST){
 	
 }
-
-function closegraph(incInterface, imagelocation){
-	d = document;	
-	var tempArray = incInterface.split("-");
-	selectInt = tempArray[1];
-	realInt = tempArray[0];
-	selectIntLink = selectInt + "graphdiv";
-	close = d.getElementById(selectIntLink);
-	close.parentNode.removeChild(close);
+*/
+	
+if ($config['widgets'])
+{
+	foreach ($config['widgets'] as $widget)
+	{
 		
-	selectIntLink = selectInt + "closegraph";
-	closelink = d.getElementById(selectIntLink);
-	closelink.style.display = "none";
-	tr = d.getElementById(selectInt);
-	span = d.createElement("div");
-	selectedIntID = selectInt + "graphlink";
-	span.setAttribute ('id', selectedIntID);
-	onclick = "return showgraph('" + realInt + "-" + selectInt + "')";
-	span.setAttribute ("onclick", onclick);
-	span.innerHTML = "<center><img src='" + imagelocation + "' height='32' width='28' border='0' align='middle' alt='Click here to show current " + selectInt + " traffic'' /></center>";
-	
-	tr.appendChild(span);			
-	
+	}
+}
+else
+{
+	//build list of widgets
+	$directory = "widgets/widgets/";
+	$dirhandle  = opendir($directory);
+	$filename = "";
+	while (false !== ($filename = readdir($dirhandle))) {
+   		$periodpos = strpos($filename, ".");
+		$widgetname = substr($filename, 0, $periodpos);	
+   		if ($widgetname != "system information")
+   			$widgetfiles[] = $filename;   		
+	}
+	sort($widgetfiles);
+	array_unshift($widgetfiles, "system information.widget.php");
 }
 	
+	
+
+	
+	//build list of php include files
+	$phpincludefiles = Array();
+	$directory = "widgets/include/";
+	$dirhandle  = opendir($directory);
+	$filename = "";
+	while (false !== ($filename = readdir($dirhandle))) {
+   		$phpincludefiles[] = $filename;
+	}
+	foreach($phpincludefiles as $includename) {
+		if(!stristr($includename, ".inc"))
+			continue;	
+		include($directory . $includename);
+	}
+	
+	
+
+$jscriptstr = <<<EOD
+<script language="javascript" type="text/javascript">
+
+
+function showDiv(selectedDiv,swapButtons){
+		//appear element
+    Effect.BlindDown(selectedDiv, {duration:1});      
+    
+    if (swapButtons){
+	    d = document;	
+	    selectIntLink = selectedDiv + "-min";
+		textlink = d.getElementById(selectIntLink);
+		textlink.style.display = "inline";
+	    
+	    
+	    selectIntLink = selectedDiv + "-open";
+		textlink = d.getElementById(selectIntLink);
+		textlink.style.display = "none";
+		
+		selectIntLink = selectedDiv + "-input";
+		textlink = d.getElementById(selectIntLink);
+		textlink.value = "show";	
+    }
+    updatePref();
+}
+	
+function minimizeDiv(selectedDiv,swapButtons){
+	//fade element
+    Effect.BlindUp(selectedDiv, {duration:1});      
+    if (swapButtons){
+	    d = document;	
+	    selectIntLink = selectedDiv + "-open";
+		textlink = d.getElementById(selectIntLink);
+		textlink.style.display = "inline";	    
+	    
+	    selectIntLink = selectedDiv + "-min";
+		textlink = d.getElementById(selectIntLink);
+		textlink.style.display = "none";
+		
+		selectIntLink = selectedDiv + "-input";
+		textlink = d.getElementById(selectIntLink);
+		textlink.value = "hide";	
+    }
+    updatePref();
+}
+
+function closeDiv(selectedDiv){
+	selectedDiv = selectedDiv + "div";
+	Effect.Fade(selectedDiv, {duration:1}); 
+	selectIntLink = selectedDiv + "-input";
+	textlink = d.getElementById(selectIntLink);
+	textlink.value = "close";	
+	updatePref();
+}
+
+function updatePref(){
+	Effect.Appear('submitpref',{duration:1});
+	Sortable.serialize('col1');
+	Sortable.serialize('col2');
+}
+
+
 </script>
 EOD;
+$closehead = false;
 
-	## Set Page Title and Include Header
-	$pgtitle = "pfSense webGUI";
-	include("head.inc");
+## Set Page Title and Include Header
+$pgtitle = "pfSense webGUI";
+include("head.inc");
+	
+	
+echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/domLib.js\"></script>";
+echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/domTT.js\"></script>";
+echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/behaviour.js\"></script>";
+echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/fadomatic.js\"></script>";
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<script language="javascript">
-var ajaxStarted = false;
+<form action="index.php" method="post">
+<script language="javascript" type="text/javascript">
+// <![CDATA[
+columns = ['col1','col2'];
+// ]]>
+
 </script>
+
+
+<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
+<script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
+
 <?php
 include("fbegin.inc");
 echo $jscriptstr;
 	if(!file_exists("/usr/local/www/themes/{$g['theme']}/no_big_logo"))
 		echo "<center><img src=\"./themes/".$g['theme']."/images/logobig.jpg\"></center><br>";
 ?>
-<p class="pgtitle">System Overview</p>
 
-<div id="niftyOutter">
-<form action="index.php" method="post">
-<table  width="100%" border="0" cellspacing="0" cellpadding="5">
-		<tr>
-			<td valign="top">
-			<table width="100%" border="0" cellspacing="0" cellpadding="0">
-				<tbody>
-				<tr>
-					<td colspan="2" class="listtopic">System information</td>
-				</tr>
-				<tr>
-					<td width="25%" class="vncellt">Name</td>
-					<td width="75%" class="listr"><?php echo $config['system']['hostname'] . "." . $config['system']['domain']; ?></td>
-				</tr>
-				<tr>
-					<td width="25%" valign="top" class="vncellt">Version</td>
-					<td width="75%" class="listr">
-						<strong><?php readfile("/etc/version"); ?></strong>
-						<br />
-						built on <?php readfile("/etc/version.buildtime"); ?>
-					</td>
-				</tr>
-				<tr>
-					<td width="25%" class="vncellt">Platform</td>
-					<td width="75%" class="listr"><?=htmlspecialchars($g['platform']);?></td>
-				</tr>
-				<tr>
-					<td width="25%" class="vncellt">CPU Type</td>
-					<td width="75%" class="listr">
-					<?php 
-						$cpumodel = "";
-						exec("/sbin/sysctl -n hw.model", $cpumodel);
-						$cpumodel = implode(" ", $cpumodel);
-						echo (htmlspecialchars($cpumodel)); ?>
-					</td>
-				</tr>
-				<?php if ($hwcrypto): ?>
-				<tr>
-					<td width="25%" class="vncellt">Hardware crypto</td>
-					<td width="75%" class="listr"><?=htmlspecialchars($hwcrypto);?></td>
-				</tr>
-				<?php endif; ?>
-				<tr>
-					<td width="25%" class="vncellt">Uptime</td>
-					<td width="75%" class="listr"><input style="border: 0px solid white;" size="30" name="uptime" id="uptime" value="<?= htmlspecialchars(get_uptime()); ?>" /></td>
-				</tr>			
-				 <tr>
-		             <td width="30%" class="vncellt">DNS server(s)</td>
-		             <td width="70%" class="listr">
-							<?php
-								$dns_servers = get_dns_servers();
-								foreach($dns_servers as $dns) {
-									echo "{$dns}<br>";
-								}
-							?>
-					</td>
-				</tr>	
-				<?php if ($config['lastchange']): ?>
-				<tr>
-					<td width="25%" class="vncellt">Last config change</td>
-					<td width="75%" class="listr"><?= htmlspecialchars(date("D M j G:i:s T Y", $config['revision']['time']));?></td>
-				</tr>
-				<?php endif; ?>
-				<tr>
-					<td width="25%" class="vncellt">State table size</td>
-					<td width="75%" class="listr">
-						<input style="border: 0px solid white;" size="30" name="pfstate" id="pfstate" value="<?= htmlspecialchars(get_pfstate()); ?>" />
-				    	<br />
-				    	<a href="diag_dump_states.php">Show states</a>
-					</td>
-				</tr>
-				<tr>
-					<td width="25%" class="vncellt">CPU usage</td>
-					<td width="75%" class="listr">
-						<?php $cpuUsage = "0"; ?>
-						<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="cpuwidtha" id="cpuwidtha" width="<?= $cpuUsage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="cpuwidthb" id="cpuwidthb" width="<?= (100 - $cpuUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
-						&nbsp;
-						<input style="border: 0px solid white;" size="30" name="cpumeter" id="cpumeter" value="(Updating in 5 seconds)" />
-					</td>
-				</tr>
-				<tr>
-					<td width="25%" class="vncellt">Memory usage</td>
-					<td width="75%" class="listr">
-						<?php $memUsage = mem_usage(); ?>
-						<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" name="memwidtha" id="memwidtha" width="<?= $memUsage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" name="memwidthb" id="memwidthb" width="<?= (100 - $memUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
-						&nbsp;
-						<input style="border: 0px solid white;" size="30" name="memusagemeter" id="memusagemeter" value="<?= $memUsage.'%'; ?>" />
-					</td>
-				</tr>
-				<?php if($showswap == true): ?>
-				<tr>
-					<td width="25%" class="vncellt">SWAP usage</td>
-					<td width="75%" class="listr">
-						<?php $swapusage = swap_usage(); ?>
-						<img src="./themes/<?= $g['theme']; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_blue.gif" height="15" width="<?= $swapUsage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_gray.gif" height="15" width="<?= (100 - $swapUsage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g['theme']; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
-						&nbsp;
-						<input style="border: 0px solid white;" size="30" name="swapusagemeter" id="swapusagemeter" value="<?= $swapusage.'%'; ?>" />
-					</td>
-				</tr>
-				<?php endif; ?>
-		<?php
-				if(has_temp()):
+<?php 
+	?>
+<div id="widgetcontainer" style="display:none">
+		<div id="content1"><h1>Available Widgets</h1><p><?php
+			foreach($widgetfiles as $widget) {
+			
+				if(!stristr($widget, "widget.php"))
+					continue;		
+				
+				$periodpos = strpos($widget, ".");
+				$widgetname = substr($widget, 0, $periodpos);
+				$nicename = $widgetname;
+				$widgetname = str_replace(" ", "", $widgetname);
+				//make the title look nice
+				$nicename = ucwords($nicename);?>
+				<span style="cursor: pointer;" onclick='return showDiv("<?php echo $widgetname; ?>div",false)'><u><?php echo $nicename; ?></u></span><br><?php
+			}
 		?>
-				<tr>
-					<td width='25%' class='vncellt'>Temperature</td>
-					<td width='75%' class='listr'>
-						<?php $temp = get_temp(); ?>
-						<img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_blue.gif" height="15" name="tempwidtha" id="tempwidtha" width="<?= $temp; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_gray.gif" height="15" name="tempwidthb" id="tempwidthb" width="<?= (100 - $temp); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
-						&nbsp;
-						<input style="border: 0px solid white;" size="30" name="tempmeter" id="tempmeter" value="<?= $temp."C"; ?>" />
-					</td>
-				</tr>
-				<?php endif; ?>
-				<tr>
-					<td width="25%" class="vncellt">Disk usage</td>
-					<td width="75%" class="listr">
-						<?php $diskusage = disk_usage(); ?>
-						<img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_blue.gif" height="15" width="<?= $diskusage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_gray.gif" height="15" width="<?= (100 - $diskusage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
-						&nbsp;
-						<input style="border: 0px solid white;" size="30" name="diskusagemeter" id="diskusagemeter" value="<?= $diskusage.'%'; ?>" />
-					</td>
-				</tr>
-				<tr><td>&nbsp;</td></tr>
-				<tr>
-					<td  colspan="2" class="listtopic">Last 5 System Logs</td>
-				</tr>
-				<tr>
-						<?php
-						//show logs here
-						dump_clog($system_logfile, 5, true, array(), array("racoon", "ntpd", "pppoe"));
-						?>
-				</tr>		
-			</tbody>
-		</table>
-		</td>
-		<td valign="top">
-			<table width="100%" border="0" cellspacing="0" cellpadding="0" id="wangraphtable">
-			<tbody>
-					<?php $i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
-					for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
-						$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
-					}
-					$firstgraphshown = false;
-					foreach ($ifdescrs as $ifdescr => $ifname){
-						$ifinfo = get_interface_info($ifdescr);					
-						$ifnum = convert_friendly_interface_to_real_interface_name($ifname);
-						
-					 if ($ifinfo['status'] != "down"){ 					
-					?>
-					<tr>
-					<td class="listtopic" colspan="2">Current <?=$ifname;?> Traffic
-						<div id="<?=$ifname;?>closegraph" align="right" onclick='return closegraph("<?php echo $ifnum; echo "-"; echo $ifname; ?>","./themes/<?= $g['theme']; ?>/images/icons/icon_check.gif")' style="display:<?php if(!$firstgraphshown)echo "block";else echo "none";?>">[close graph]</div>
-					</td>
-					</tr>
-					<tr>
-						<td id="<?=$ifname;?>" valign="middle"><?php 
-						
-						 if (get_cpu_speed() >= 500) { 
-						 	if(!$firstgraphshown){
-						 	?>
-							<div id="<?=$ifname;?>graphdiv">
-								<embed id="graph" src="graph.php?ifnum=<?=$ifnum;?>&ifname=<?=rawurlencode($ifname);?>" type="image/svg+xml" width="<? echo $width; ?>" height="<? echo $height; ?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
-							</div>
-						<?
-							$firstgraphshown = true;
-							}
-							else
-							{ ?>
-								<div  id="<?=$ifname;?>graphlink" onclick='return showgraph("<?php echo $ifnum; echo "-"; echo $ifname; ?>");'><center><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_check.gif" height="32" width="28" border="0" align="middle" alt="Click here to show current <?=$ifname;?> traffic" /></center></div>
-							<? }
-						 } else { ?>
-								<div id="<?=$ifname;?>graphlink" onclick='return showgraph("<?php echo $ifnum; echo "-"; echo $ifname; ?>");'><center><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_check.gif" height="32" width="28" border="0" align="middle" alt="Click here to show current <?=$ifname;?> traffic" /></center></div>
-						<? } ?>
-						</td>
-					</tr><tr><td>&nbsp;</td></tr>
-					 <? } 
-					}?>	
-					
-				</tbody>
-			</table><br>
-			<table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
-				<tr>
-					<td colspan="2" class="listtopic">Interfaces</td>
-				</tr> 
-				<?php foreach ($ifdescrs as $ifdescr => $ifname){
-						$ifinfo = get_interface_info($ifdescr);
-					?>
-					<tr> 
-					<?php if ($ifinfo['status'] != "down"){ ?>
-					<td class="vncellt" width="30%"><strong><?=htmlspecialchars($ifname);?></strong></td>
-					<td width="70%"  class="listr">
-					
-					  <?php if ($ifinfo['dhcplink'] != "down" && $ifinfo['pppoelink'] != "down" && $ifinfo['pptplink'] != "down"){ ?>
-					  <?php if ($ifinfo['ipaddr']){ ?>
-		                  <?=htmlspecialchars($ifinfo['ipaddr']);?>
-		                  &nbsp; </td>
-		            </tr><?php }
-					  			}
-					  		}
-					  } 					?> 
-				</table>
-			</td>	
-	</tr>
-</tbody>
-</table>
-</form>
+		</p>
+	</div>
+</div>
+
+
+<p class="pgtitle">System Overview&nbsp;&nbsp;&nbsp;
+<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="Click here to add widgets" style="cursor: help;" onmouseup="domTT_activate(this, event, 'content', document.getElementById('content1'), 'type', 'velcro', 'delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
+
+
+
+
+<div style="clear:both;"></div>
+
+<div id="submitpref" align="center" style="display:none;width:17%;margin:5px;padding: 5px;background:#CCCCCC">
+	<div class="listtopic">
+		Save your changes<div style="clear:both;"></div>
+	</div>
+	<div><center>
+		<input id="submit" name="submit" type="submit" onclick="return checkForRanges();" class="formbtn" value="Save" />
+		</center>
+	</div>
+</div></p>
+
+<div style="clear:both;"></div>
+<div id="niftyOutter">
+	<?php
+	$totalwidgets = count($widgetfiles);
+	$halftotal = $totalwidgets / 2;
+	$widgetcounter = 1;
+	$directory = "widgets/widgets/";
+	$printed = false;
+	$firstprint = false;
+	?> 
+	<div id="col1" style="float:left;width:49%;padding: 2px;padding-bottom:40px">		
+	<?php
+	
+	foreach($widgetfiles as $widget) {
+	
+		if(!stristr($widget, "widget.php"))
+			continue;		
+		
+		$periodpos = strpos($widget, ".");
+		$widgetname = substr($widget, 0, $periodpos);	
+		$nicename = $widgetname;
+		$widgetname = str_replace(" ", "", $widgetname);
+			
+		//make the title look nice
+		$nicename = ucwords($nicename);
+		
+		$display = "block";
+		
+		
+		if ($widgetcounter >= $halftotal && $printed == false){
+			$printed = true;
+			?>
+			</div>
+			<div id="col2" style="float:right;width:49%;padding: 2px;padding-bottom:40px">		
+			<?php
+		}			
+		?>		
+		<div style="clear:both;"></div>
+		<div  id="<?php echo $widgetname;?>div" class="widgetdiv" style="display:<?php echo $display; ?>;">
+			<input type="hidden" value="" id="<?php echo $widgetname;?>-input">
+			<div id="<?php echo $widgetname;?>topic" class="widgetheader" style="cursor:move">
+				<div style="float:left;">
+					<?php echo $nicename;?>
+				</div>
+				<div align="right" style="float:right;">					
+					<div id="<?php echo $widgetname;?>-open" onclick='return showDiv("<?php echo $widgetname;?>",true)' style="display:none; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_open.gif" /></div>	
+					<div id="<?php echo $widgetname;?>-min" onclick='return minimizeDiv("<?php echo $widgetname;?>",true)' style="display:inline; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_minus.gif"/></div>												
+					<div id="<?php echo $widgetname;?>-close" onclick='return closeDiv("<?php echo $widgetname;?>",true)' style="display:inline; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_close.gif" /></div>	
+				</div>
+				<div style="clear:both;"></div>
+			</div>
+			<div id="<?php echo $widgetname;?>">
+				<?php include($directory . $widget); ?>
+			</div>
+			<div style="clear:both;"></div>
+		</div>
+		<?php 	
+	$widgetcounter++;
+	
+	}//end foreach	
+	?>			
+	</div><!-- end col -->
+	<div style="clear:both;"></div>
 </div>
 
 <?php include("fend.inc"); ?>
 	    
 <script type="text/javascript">
-	NiftyCheck();
-	Rounded("div#nifty","top","#FFF","#EEEEEE","smooth");
+
+	// <![CDATA[
+	Sortable.create("col1", {tag:'div',dropOnEmpty:true,containment:columns,handle:'widgetheader',constraint:false,only:'moveable',onChange:updatePref});	
+	Sortable.create("col2", {tag:'div',dropOnEmpty:true,containment:columns,handle:'widgetheader',constraint:false,only:'moveable',onChange:updatePref});		
+	// ]]>	
+	
+	<?php
+	//build list of javascript include files
+	$jsincludefiles = Array();
+	$directory = "widgets/javascript/";
+	$dirhandle  = opendir($directory);
+	$filename = "";
+	while (false !== ($filename = readdir($dirhandle))) {
+   		$jsincludefiles[] = $filename;
+	}
+	foreach($jsincludefiles as $jsincludename) {
+		if(!stristr($jsincludename, ".js"))
+			continue;	
+		include($directory . $jsincludename);
+	}
+	?>
 </script>
-
-<meta http-equiv="refresh" content="120;url=<?php print $_SERVER['PHP_SELF']; ?>">
-
+</form>
 </body>
 </html>

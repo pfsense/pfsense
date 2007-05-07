@@ -77,10 +77,6 @@ if ($_POST) {
 			$input_errors[] = "The schedule name may only consist of the characters a-z, A-Z, 0-9";
 	}
 	
-	if (!$_POST['schedule0'])
-		$input_errors[] = "The schedule must have at least one time range configured.";
-	
-	
 	/* check for name conflicts */
 	foreach ($a_schedules as $schedule) {
 		if (isset($id) && ($a_schedules[$id]) && ($a_schedules[$id] === $schedule))
@@ -96,9 +92,10 @@ if ($_POST) {
 	$schedule['name'] = $_POST['name'];
 	$schedule['descr'] = htmlentities($_POST['descr'], ENT_QUOTES, 'UTF-8');	
 	
-	
+	$timerangeFound = false;
 	for ($x=0; $x<99; $x++){
 		if($_POST['schedule' . $x]) {
+			$timerangeFound = true;
 			$timeparts = array();
 			$firstprint = false;
 			$timestr = $_POST['schedule' . $x];
@@ -141,8 +138,9 @@ if ($_POST) {
 			$schedule['timerange'][$x] = $timeparts;
 		}
 	}
-		
 	
+	if (!$timerangeFound)
+		$input_errors[] = "The schedule must have at least one time range configured.";
 		
 	if (!$input_errors) {		
 		

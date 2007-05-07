@@ -3405,4 +3405,23 @@ function interface_has_gateway($friendly) {
 	}
 }
 
+/* check if the wan interface is up
+ * Wait for a maximum of 10 seconds
+ * If the interface is up before then continue
+ */
+function is_wan_interface_up($interface) {
+	global $g;
+	global $config;
+	$i = 0;
+	while($i < 10) {
+		if(get_interface_gateway($interface)) {
+			return true;
+		} else {
+			sleep(1);
+		}
+		$i++;
+	}
+	return false;
+}
+
 ?>

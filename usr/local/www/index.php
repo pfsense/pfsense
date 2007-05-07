@@ -370,8 +370,8 @@ echo $jscriptstr;
 <script type="text/javascript">
 
 	// <![CDATA[
-	Sortable.create("col1", {tag:'div',dropOnEmpty:true,containment:columns,handle:'widgetheader',constraint:false,only:'moveable',onChange:updatePref});	
-	Sortable.create("col2", {tag:'div',dropOnEmpty:true,containment:columns,handle:'widgetheader',constraint:false,only:'moveable',onChange:updatePref});		
+	Sortable.create("col1", {tag:'div',dropOnEmpty:true,containment:columns,handle:'widgetheader',constraint:false,only:'widgetdiv',onChange:updatePref});	
+	Sortable.create("col2", {tag:'div',dropOnEmpty:true,containment:columns,handle:'widgetheader',constraint:false,only:'widgetdiv',onChange:updatePref});		
 	// ]]>	
 	
 	<?php

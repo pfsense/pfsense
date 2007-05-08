@@ -264,6 +264,9 @@ EOD;
 			$dhcpdconf .= "	option netbios-node-type 8;\n";
 		}
 
+		if (is_array($dhcpifconf['ntpserver']) && $dhcpifconf['ntpserver'][0])
+			$dhcpdconf .= "	option ntp-servers " . join(",", $dhcpifconf['ntpserver']) . ";\n";
+
 		if(isset($dhcpifconf['netboot'])) {
 			if (($dhcpifconf['next-server'] <> "") && ($dhcpifconf['filename'] <> "")) {
 				$dhcpdconf .= "	next-server {$dhcpifconf['next-server']};\n";

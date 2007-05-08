@@ -613,6 +613,12 @@ function services_dnsmasq_configure() {
                         }
                 }
 
+		/* suppose that dnsmasq handles our domain and don't send
+		requests for our local domain to upstream servers */
+		if (!empty($config['system']['domain'])) {
+			$args .= sprintf(' --local=/%s/', $config['system']['domain']);
+		}
+
 		/* run dnsmasq */
 		mwexec("/usr/local/sbin/dnsmasq {$args}");
 

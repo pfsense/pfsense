@@ -173,7 +173,14 @@ include("head.inc");
                   <td width="20%" class="listhdrr">NAT IP</td>
                   <td width="20%" class="listhdrr">Int. port range</td>
                   <td width="20%" class="listhdr">Description</td>
-                  <td width="5%" class="list"></td>
+                  <td width="5%" class="list">
+                    <table border="0" cellspacing="0" cellpadding="1">
+                      <tr>
+			<td width="17"></td>
+                        <td><a href="firewall_nat_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+                      </tr>
+                    </table>
+		  </td>
 		</tr>
 	<?php $nnats = $i = 0; foreach ($a_nat as $natent): ?>
                 <tr valign="top" id="fr<?=$nnats;?>">
@@ -252,7 +259,8 @@ include("head.inc");
                       <tr>
                         <td><?php if ($nnats == 0): ?><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="delete selected rules" border="0"><?php else: ?><input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="delete selected mappings" onclick="return confirm('Do you really want to delete the selected mappings?')"><?php endif; ?></td>
                       </tr>
-                    </table></td>
+                    </table>
+		  </td>
                 </tr>
 	</table>
 	</div>

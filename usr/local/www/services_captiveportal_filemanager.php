@@ -121,7 +121,14 @@ include("head.inc");
       <tr>
         <td width="70%" class="listhdrr">Name</td>
         <td width="20%" class="listhdr">Size</td>
-        <td width="10%" class="list"></td>
+        <td width="10%" class="list">
+		<table border="0" cellspacing="0" cellpadding="1">
+		    <tr>
+			<td width="17" heigth="17"></td>
+			<td><a href="services_captiveportal_filemanager.php?act=add"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="add file" width="17" height="17" border="0"></a></td>
+		    </tr>
+		</table>
+	</td>
       </tr>
   <?php $i = 0; foreach ($a_element as $element): ?>
   	  <tr>
@@ -152,7 +159,14 @@ include("head.inc");
   <?php else: ?>
 	  <tr>
 		<td class="list" colspan="2"></td>
-		<td class="list"> <a href="services_captiveportal_filemanager.php?act=add"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="add file" width="17" height="17" border="0"></a></td>
+		<td class="list">
+			<table border="0" cellspacing="0" cellpadding="1">
+			    <tr>
+				<td width="17" heigth="17"></td>
+				<td><a href="services_captiveportal_filemanager.php?act=add"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="add file" width="17" height="17" border="0"></a></td>
+			    </tr>
+			</table>
+		</td>
 	  </tr>
   <?php endif; ?>
 	</table>

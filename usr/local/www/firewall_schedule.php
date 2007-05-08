@@ -87,7 +87,14 @@ include("head.inc");
 	  <td width="25%" class="listhdrr">Name</td>
 	  <td width="35%" class="listhdrr">Time Range(s)</td>
 	  <td width="35%" class="listhdr">Description</td>
-	  <td width="5%" class="list sort_ignore"></td>
+	  <td width="5%" class="list sort_ignore">
+	    <table border="0" cellspacing="0" cellpadding="1">
+	      <tr>
+		<td width="17"></td>
+	        <td valign="middle"><a href="firewall_schedule_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new schedule");?>" alt="" /></a></td>
+	      </tr>
+	    </table>
+	  </td>
 	</tr>
 	<?php $i = 0; foreach ($a_schedules as $schedule): ?>
 	<tr>
@@ -209,21 +216,18 @@ include("head.inc");
   <td class="list">
     <table border="0" cellspacing="0" cellpadding="1">
       <tr>
-	        <td valign="middle">
-	          <a href="firewall_schedule_edit.php">
-	            <img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new schedule");?>" alt="" />
-	          </a>
-	         </td>
-	      </tr>
-	    </table>
-	  </td>
-	</tr>
-	<tr>
-	  <td class="tabcont" colspan="3">
-	   <p><span class="vexpl"><span class="red"><strong>Note:<br></strong></span>Schedules act as placeholders for time ranges to be used in Firewall Rules.</span></p>
-	  </td>
-	</tr>
-	</table>
+	<td width="17"></td>
+        <td valign="middle"><a href="firewall_schedule_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="<?=gettext("add a new schedule");?>" alt="" /></a></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+  <td class="tabcont" colspan="3">
+   <p><span class="vexpl"><span class="red"><strong>Note:<br></strong></span>Schedules act as placeholders for time ranges to be used in Firewall Rules.</span></p>
+  </td>
+</tr>
+</table>
 
 </form>
 

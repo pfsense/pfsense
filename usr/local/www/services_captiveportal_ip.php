@@ -95,7 +95,14 @@ include("head.inc");
 	<tr>
 	  <td width="30%" class="listhdrr">IP address</td>
 	  <td width="60%" class="listhdr">Description</td>
-	  <td width="10%" class="list"></td>
+	  <td width="10%" class="list">
+		<table border="0" cellspacing="0" cellpadding="1">
+		   <tr>
+			<td width="17" heigth="17"></td>
+			<td><a href="services_captiveportal_ip_edit.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="add address" width="17" height="17" border="0"></a></td>
+		   </tr>
+		</table>
+	  </td>
 	</tr>
   <?php $i = 0; foreach ($a_allowedips as $ip): ?>
 	<tr>
@@ -117,7 +124,14 @@ include("head.inc");
   <?php $i++; endforeach; ?>
 	<tr>
 	  <td class="list" colspan="2">&nbsp;</td>
-	  <td class="list"> <a href="services_captiveportal_ip_edit.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="add address" width="17" height="17" border="0"></a></td>
+	  <td class="list">
+		<table border="0" cellspacing="0" cellpadding="1">
+		   <tr>
+			<td width="17" heigth="17"></td>
+			<td><a href="services_captiveportal_ip_edit.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="add address" width="17" height="17" border="0"></a></td>
+		   </tr>
+		</table>
+	  </td>
 	</tr>
 	<tr>
 	<td colspan="2" class="list"><p class="vexpl"><span class="red"><strong>

@@ -545,6 +545,12 @@ function show_netboot_config() {
 				  <td width="20%" class="listhdrr">Hostname</td>
                   <td width="30%" class="listhdr">Description</td>
                   <td width="10%" class="list">
+                    <table border="0" cellspacing="0" cellpadding="1">
+                      <tr>
+			<td valign="middle" width="17"></td>
+                        <td valign="middle"><a href="services_dhcp_edit.php?if=<?=$if;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+                      </tr>
+                    </table>
 		  </td>
 		</tr>
 			  <?php if(is_array($a_maps)): ?>
@@ -580,6 +586,7 @@ function show_netboot_config() {
                   <td class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
+			<td valign="middle" width="17"></td>
                         <td valign="middle"><a href="services_dhcp_edit.php?if=<?=$if;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>

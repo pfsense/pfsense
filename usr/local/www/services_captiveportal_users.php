@@ -86,7 +86,14 @@ include("head.inc");
                   <td width="35%" class="listhdrr">Username</td>
                   <td width="20%" class="listhdrr">Full name</td>
                   <td width="35%" class="listhdr">Expires</td>
-                  <td width="10%" class="list"></td>
+                  <td width="10%" class="list">
+			<table border="0" cellspacing="0" cellpadding="1">
+			     <tr>
+				<td width="17" heigth="17"></td>
+				<td><a href="services_captiveportal_users_edit.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="add user" width="17" height="17" border="0"></a></td>
+			     </tr>
+			</table>
+		  </td>
 		</tr>
 	<?php $i = 0; foreach($a_user as $userent): ?>
 		<tr>
@@ -105,7 +112,14 @@ include("head.inc");
 	<?php $i++; endforeach; ?>
 		<tr> 
 			  <td class="list" colspan="3"></td>
-			  <td class="list"> <a href="services_captiveportal_users_edit.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="add user" width="17" height="17" border="0"></a></td>
+			  <td class="list">
+				<table border="0" cellspacing="0" cellpadding="1">
+				     <tr>
+					<td width="17" heigth="17"></td>
+					<td><a href="services_captiveportal_users_edit.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_plus.gif" title="add user" width="17" height="17" border="0"></a></td>
+				     </tr>
+				</table>
+			  </td>
 		</tr>
  </table>     
 </td>

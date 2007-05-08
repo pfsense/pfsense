@@ -242,8 +242,28 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 				  <td width="5%" class="listhdrr">Gateway</td>
 				  <td width="5%" class="listhdrr">Schedule</td>
                   <td width="22%" class="listhdr">Description</td>
-                  <td width="10%" class="list"></td>
-				</tr>
+                  <td width="10%" class="list">
+			<table border="0" cellspacing="0" cellpadding="1">
+			   <tr>
+				<?php
+					$nrules = 0;
+					for ($i = 0; isset($a_filter[$i]); $i++) {
+						$filterent = $a_filter[$i];
+						if ($filterent['interface'] != $if)
+							continue;
+						$nrules++;
+					}
+				?>
+				<td>
+				<?php if ($nrules == 0): ?>
+				<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="delete selected rules" border="0"><?php else: ?>
+				<input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="delete selected rules" onclick="return confirm('Do you really want to delete the selected rules?')"><?php endif; ?>
+				</td>
+				<td align="center" valign="middle"><a href="firewall_rules_edit.php?if=<?=$if;?>&after=-1"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add new rule" width="17" height="17" border="0"></a></td>
+			   </tr>
+			</table>
+		  </td>
+		</tr>
 <?php if (($if == "wan") && isset($config['interfaces']['wan']['blockpriv'])): ?>
                 <tr valign="top" id="frrfc1918">
                   <td width="3%" class="list">&nbsp;</td>
@@ -254,7 +274,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listr" style="background-color: #e0e0e0">*</td>
-		 		 <td class="listr" style="background-color: #e0e0e0">*</td>
+	 		 <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listbg" style="background-color: #990000"><font color="white">Block private networks</td>
                   <td valign="middle" nowrap class="list">
 				    <table border="0" cellspacing="0" cellpadding="1">
@@ -596,7 +616,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 					  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="delete selected rules" border="0"><?php else: ?>
 					  <input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="delete selected rules" onclick="return confirm('Do you really want to delete the selected rules?')"><?php endif; ?>
 					  </td>
-					  <td><a href="firewall_rules_edit.php?if=<?=$if;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add new rule" width="17" height="17" border="0"></a></td>
+			                  <td><a href="firewall_rules_edit.php?if=<?=$if;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add new rule" width="17" height="17" border="0"></a></td>
 					</tr>
 				    </table>
 				  </td>

@@ -68,12 +68,16 @@ if ($_POST) {
 	if ($_POST['startbtn'] != "" )
 	{
 		$action = "Start";
+		
+	 	//delete previous packet capture if it exists
+	 	if (file_exists($fp.$fn))
+	 		unlink ($fp.$fn);
 
 	}
 	elseif ($_POST['stopbtn']!= "")
 	{
 		$action = "Stop";
-		$processes_running = trim(shell_exec("ps axw -O pid= | grep tcpdump | grep $fn"));
+		$processes_running = trim(shell_exec("ps axw -O pid= | grep tcpdump | grep $fn | grep -v pflog"));
 
 		//explode processes into an array, (delimiter is new line)
 		$processes_running_array = explode("\n", $processes_running);
@@ -188,7 +192,7 @@ include("head.inc"); ?>
                     <?php
 
                     /*check to see if packet capture tcpdump is already running*/
-					$processcheck = (trim(shell_exec("ps axwu | grep tcpdump | grep -v 'grep' | grep -i $fn")));
+					$processcheck = (trim(shell_exec("ps axw -O pid= | grep tcpdump | grep $fn | grep -v pflog")));
 
 					$processisrunning = False;
 
@@ -198,8 +202,9 @@ include("head.inc"); ?>
 
 					if (($action == "Stop" or $action == "") and $processisrunning != True)
 						echo "<input type=\"submit\" name=\"startbtn\" value=\"Start\">&nbsp;";
-				  	else
+				  	else{
 					  	echo "<input type=\"submit\" name=\"stopbtn\" value=\"Stop\">&nbsp;";
+				  	}
 					if (file_exists($fp.$fn)){
 						echo "<input type=\"submit\" name=\"downloadbtn\" value=\"Download Capture\">";
 						echo "&nbsp;&nbsp;(The packet capture file was last updated: " . date("F jS, Y g:i:s a.", filemtime($fp.$fn)) . ")";
@@ -214,26 +219,38 @@ include("head.inc"); ?>
 					echo "<font face='terminal' size='2'>";
 
 					if ($port != "")
-					{
-						$searchport = "and port ".$port;
-					}
-					else
-					{
-						$searchport = "";
-					}
+                    {
+                       $searchport = "and port ".$port;
+                       if($host <> "")                        
+							$searchport = "and port ".$port;
+						else
+							$searchport = "port ".$port;
+                    }
+                    else
+                    {
+                        $searchport = "";
+                    }
+
+       				if ($host != "")
+         	       {
+             	       $searchhost = " host " . $host;
+            	   }
+             	   else
+                	{
+                       $searchhost = "";
+             		} 
 
 					$selectedif = convert_friendly_interface_to_real_interface_name($selectedif);
-
+				
+					if ($processisrunning)
+						echo("<strong>Packet Capture is running.</strong><br>");
+						
 					if ($action == "Start")
 					{
-					 	//delete previous packet capture if it exists
-					 	if (file_exists($fp.$fn))
-					 		unlink ($fp.$fn);
-
-				 		echo("<strong>Packet Capture is running.</strong><br>");
-					 	exec ("/usr/sbin/tcpdump -i $selectedif -v -c $count -s $packetlength -w $fn host $host $searchport");
+						echo("<strong>Packet Capture is running.</strong><br>");
+					 	mwexec_bg ("/usr/sbin/tcpdump -i $selectedif -v -c $count -s $packetlength -w $fn $searchhost $searchport");
 						}
-					else //action = stop
+					else  //action = stop
 					{
 
 						echo("<strong>Packet Capture stopped. <br><br>Packets Captured:</strong><br>");
@@ -243,9 +260,7 @@ include("head.inc"); ?>
 						system ("/usr/sbin/tcpdump $disabledns $detail -r $fn");?>
 						</textarea><?php
 					}
-				}
-				if ($processisrunning)
-					echo("<strong>Packet Capture is running.</strong><br>");?>
+				}?>
 				</td>
 				</tr>
 				<tr>

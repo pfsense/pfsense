@@ -130,8 +130,14 @@ include("head.inc");
                   <td class="listhdrr">P1 Enc. Algo</td>
                   <td class="listhdrr">P1 Hash Algo</td>
                   <td class="listhdr">Description</td>
-                  <td class="list"></td>
-				</tr>
+                  <td class="list" >
+			<table border="0" cellspacing="0" cellpadding="1">
+			     <tr>
+				<td width="17" heigth="17"></td>
+				<td><a href="vpn_ipsec_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add tunnel" width="17" height="17" border="0"></a></td>
+			     </tr>
+			</table>
+		</tr>
                 <?php $i = 0; foreach ($a_ipsec as $ipsecent):
 					if (isset($ipsecent['disabled'])) {
 						$spans = "<span class=\"gray\">";
@@ -179,15 +185,32 @@ include("head.inc");
                   <td class="listbg" ondblclick="document.location='vpn_ipsec_edit.php?id=<?=$i;?>'"><?=$spans;?><font color="#FFFFFF">
                     <?=htmlspecialchars($ipsecent['descr']);?>&nbsp;
                   <?=$spane;?></td>
-                  <td valign="middle" nowrap class="list"> <a href="vpn_ipsec_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit tunnel" width="17" height="17" border="0"></a>
-                    &nbsp;<a href="vpn_ipsec.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this tunnel?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="delete tunnel" width="17" height="17" border="0"></a></td>
-				</tr>
+                  <td valign="middle" nowrap class="list">
+			<table border="0" cellspacing="0" cellpadding="1">
+			     <tr>
+				<td><a href="vpn_ipsec_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit tunnel" width="17" height="17" border="0"></a></td>
+                    		<td><a href="vpn_ipsec.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this tunnel?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="delete tunnel" width="17" height="17" border="0"></a></td>
+			     </tr>
+			     <tr>
+				<td></td>
+				<td><a href="vpn_ipsec_edit.php?dup=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add a new rule based on this one" width="17" height="17" border="0"></a></td>
+			     </tr>
+			</table>
+		  </td>
+		</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
                   <td class="list" colspan="6"></td>
-                  <td class="list"> <a href="vpn_ipsec_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add tunnel" width="17" height="17" border="0"></a></td>
-				</tr>
-<td colspan="4">
+		  <td class="list">
+			<table border="0" cellspacing="0" cellpadding="1">
+			     <tr>
+				<td width="17"></td>
+				<td><a href="vpn_ipsec_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add tunnel" width="17" height="17" border="0"></a></td>
+			     </tr>
+			</table>
+		  <td>
+                </tr>
+		    <td colspan="4">
 		      <p><span class="vexpl"><span class="red"><strong>Note:<br>
                       </strong></span>You can check your IPSEC status at <a href="diag_ipsec_sad.php">Status:IPSEC</a>.</span></p>
 		  </td>

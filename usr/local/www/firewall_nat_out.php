@@ -244,7 +244,14 @@ include("head.inc");
                   <td width="10%" class="listhdrr">NAT Port</td>
 		  <td width="10%" class="listhdrr">Static Port</td>
                   <td width="25%" class="listhdr">Description</td>
-                  <td width="5%" class="list"></td>
+                  <td width="5%" class="list">
+                    <table border="0" cellspacing="0" cellpadding="1">
+                      <tr>
+			<td width="17"></td>
+                        <td><a href="firewall_nat_out_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="add new mapping"></a></td>
+                      </tr>
+                    </table>
+		  </td>
                 </tr>
               <?php $nnats = $i = 0; foreach ($a_out as $natent): ?>
                 <tr valign="top" id="fr<?=$nnats;?>">

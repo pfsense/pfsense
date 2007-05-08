@@ -97,8 +97,15 @@ include("head.inc");
                   <td width="10%" class="listhdrr">Port</td>
                   <td width="20%" class="listhdrr">Pool</td>
                   <td width="30%" class="listhdr">Description</td>
-                  <td width="10%" class="list"></td>
-				</tr>
+                  <td width="10%" class="list">
+                    <table border="0" cellspacing="0" cellpadding="1">
+                      <tr>
+			<td width="17"></td>
+                        <td valign="middle"><a href="load_balancer_virtual_server_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+                      </tr>
+                    </table>
+		  </td>
+		</tr>
 			  <?php $i = 0; foreach ($a_vs as $vsent): ?>
                 <tr>
                   <td class="listlr" ondblclick="document.location='load_balancer_virtual_server_edit.php?id=<?=$i;?>';">
@@ -130,6 +137,7 @@ include("head.inc");
                   <td class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
+			<td width="17"></td>
                         <td valign="middle"><a href="load_balancer_virtual_server_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>

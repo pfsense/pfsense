@@ -161,7 +161,14 @@ include("head.inc");
   <td width="25%" class="listhdrr">Name</td>
   <td width="25%" class="listhdrr">Values</td>
   <td width="25%" class="listhdr">Description</td>
-  <td width="10%" class="list"></td>
+  <td width="10%" class="list">
+    <table border="0" cellspacing="0" cellpadding="1">
+      <tr>
+	<td valign="middle" width="17">&nbsp;</td>
+        <td valign="middle"><a href="firewall_aliases_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="add a new alias"></a></td>
+      </tr>
+    </table>
+  </td>
 </tr>
 	  <?php $i = 0; foreach ($a_aliases as $alias): ?>
 <tr>
@@ -198,8 +205,8 @@ include("head.inc");
   <td class="list">
     <table border="0" cellspacing="0" cellpadding="1">
       <tr>
+	<td valign="middle" width="17">&nbsp;</td>
         <td valign="middle"><a href="firewall_aliases_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="add a new alias"></a></td>
-		<td valign="middle">&nbsp;</td>
       </tr>
     </table>
   </td>

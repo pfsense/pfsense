@@ -99,7 +99,14 @@ include("head.inc");
                   <td width="20%" class="listhdrr">External IP</td>
                   <td width="20%" class="listhdrr">Internal IP</td>
                   <td width="40%" class="listhdr">Description</td>
-                  <td width="10%" class="list"></td>
+                  <td width="10%" class="list">
+                    <table border="0" cellspacing="0" cellpadding="1">
+                      <tr>
+			<td width="17"></td>
+                        <td valign="middle"><a href="firewall_nat_1to1_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="add rule"></a></td>
+                      </tr>
+                    </table>
+		  </td>
 				</tr>
 			  <?php $i = 0; foreach ($a_1to1 as $natent): ?>
                 <tr>
@@ -137,6 +144,7 @@ include("head.inc");
                   <td class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
+			<td width="17"></td>
                         <td valign="middle"><a href="firewall_nat_1to1_edit.php"><img src="/themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0" title="add rule"></a></td>
                       </tr>
                     </table>

@@ -95,8 +95,15 @@ include("head.inc");
                 <tr> 
                   <td class="listhdrr">Username</td>
                   <td class="listhdr">IP address</td>
-                  <td class="list"></td>
-				</tr>
+                  <td class="list">
+			<table border="0" cellspacing="0" cellpadding="1">
+			   <tr>
+				<td width="17"></td>
+				<td><a href="vpn_pppoe_users_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add user" width="17" height="17" border="0"></a></td>
+			   </tr>
+			</table>
+		  </td>
+		</tr>
 			  <?php $i = 0; foreach ($a_secret as $secretent): ?>
                 <tr> 
                   <td class="listlr">
@@ -112,8 +119,15 @@ include("head.inc");
 			  <?php $i++; endforeach; ?>
                 <tr> 
                   <td class="list" colspan="2"></td>
-                  <td class="list"> <a href="vpn_pppoe_users_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add user" width="17" height="17" border="0"></a></td>
-				</tr>
+                  <td class="list">
+			<table border="0" cellspacing="0" cellpadding="1">
+			   <tr>
+				<td width="17"></td>
+				<td><a href="vpn_pppoe_users_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add user" width="17" height="17" border="0"></a></td>
+			   </tr>
+			</table>
+		  </td>
+		</tr>
               </table>
 </div>
 			</td>

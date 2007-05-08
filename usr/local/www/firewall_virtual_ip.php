@@ -117,8 +117,15 @@ include("head.inc");
                   <td width="30%" class="listhdrr">Virtual IP address</td>
                   <td width="10%" class="listhdrr">Type</td>
                   <td width="40%" class="listhdr">Description</td>
-                  <td width="10%" class="list"></td>
-				</tr>
+                  <td width="10%" class="list">
+                    <table border="0" cellspacing="0" cellpadding="1">
+                      <tr>
+			<td width="17"></td>
+                        <td valign="middle"><a href="firewall_virtual_ip_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+                      </tr>
+                    </table>
+		  </td>
+		</tr>
 			  <?php $i = 0; foreach ($a_vip as $vipent): ?>
 			  <?php if($vipent['subnet'] <> "" or $vipent['range'] <> "" or
 			        $vipent['subnet_bits'] <> "" or $vipent['range']['from'] <> ""): ?>
@@ -129,6 +136,7 @@ include("head.inc");
 							if ($vipent['type'] == "range")
 								echo "{$vipent['range']['from']}-{$vipent['range']['to']}";
 					?>
+					<?php if($vipent['mode'] == "carp") echo " (vhid {$vipent['vhid']})"; ?>
                   </td>
                   <td class="listlr" align="center" ondblclick="document.location='firewall_virtual_ip_edit.php?id=<?=$i;?>';">
                     <? if($vipent['mode'] == "proxyarp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_parp.gif' title='Proxy ARP'>"; elseif($vipent['mode'] == "carp") echo "<img src='./themes/".$g['theme']."/images/icons/icon_carp.gif' title='CARP'>"; elseif($vipent['mode'] == "other") echo "<img src='./themes/".$g['theme']."/images/icons/icon_other.gif' title='Other'>";?>
@@ -152,6 +160,7 @@ include("head.inc");
                   <td class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
+			<td width="17"></td>
                         <td valign="middle"><a href="firewall_virtual_ip_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>

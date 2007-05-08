@@ -117,8 +117,15 @@ include("head.inc");
                   <td width="25%" class="listhdrr">Network</td>
                   <td width="20%" class="listhdrr">Gateway</td>
                   <td width="30%" class="listhdr">Description</td>
-                  <td width="10%" class="list"></td>
-				</tr>
+                  <td width="10%" class="list">
+			<table border="0" cellspacing="0" cellpadding="1">
+			   <tr>
+				<td width="20"></td>
+				<td><a href="system_routes_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+			   </tr>
+			</table>
+		  </td>
+		</tr>
 			  <?php $i = 0; foreach ($a_routes as $route): ?>
                 <tr>
                   <td class="listlr" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
@@ -149,8 +156,15 @@ include("head.inc");
 			  <?php $i++; endforeach; ?>
                 <tr>
                   <td class="list" colspan="4"></td>
-                  <td class="list"> <a href="system_routes_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
-				</tr>
+                  <td class="list">
+			<table border="0" cellspacing="0" cellpadding="1">
+			   <tr>
+				<td width="20"></td>
+				<td><a href="system_routes_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+			   </tr>
+			</table>
+		  </td>
+		</tr>
               </table>
             </form>
 			<p><b>Note:</b>  Do not enter static routes for networks assigned on any interface of this firewall.  Static routes are only used for networks reachable via a different router, and not reachable via your default gateway.</p>

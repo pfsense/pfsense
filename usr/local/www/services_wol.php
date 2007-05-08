@@ -146,8 +146,15 @@ You also can wake all clients at once: <a href="services_wol.php?wakeall=true"><
                   <td width="15%" class="listhdrr">Interface</td>
                   <td width="25%" class="listhdrr">MAC address</td>
                   <td width="50%" class="listhdr">Description</td>
-                  <td width="10%" class="list"></td>
-				</tr>
+                  <td width="10%" class="list">
+                    <table border="0" cellspacing="0" cellpadding="1">
+                      <tr>
+			<td valign="middle" width="17"></td>
+                        <td valign="middle"><a href="services_wol_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
+                      </tr>
+                    </table>
+		  </td>
+		</tr>
 			  <?php $i = 0; foreach ($a_wol as $wolent): ?>
                 <tr>
                   <td class="listlr" ondblclick="document.location='services_wol_edit.php?id=<?=$i;?>';">
@@ -178,11 +185,8 @@ You also can wake all clients at once: <a href="services_wol.php?wakeall=true"><
                   <td class="list">
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
-                        <td valign="middle">
-				<a href="services_wol_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a>
-				
-			</td>
-
+			<td valign="middle" width="17"></td>
+                        <td valign="middle"><a href="services_wol_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
                       </tr>
                     </table>
                   </td>

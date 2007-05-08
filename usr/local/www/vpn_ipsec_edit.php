@@ -41,6 +41,10 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
+if (isset($_GET['dup'])) {
+	$id = $_GET['dup'];
+}
+
 if (isset($id) && $a_ipsec[$id]) {
 	$pconfig['disabled'] = isset($a_ipsec[$id]['disabled']);
 	$pconfig['auto'] = isset($a_ipsec[$id]['auto']);
@@ -108,6 +112,9 @@ if (isset($id) && $a_ipsec[$id]) {
 	$pconfig['p2pfsgroup'] = "0";
 	$pconfig['remotebits'] = 32;
 }
+
+if (isset($_GET['dup']))
+	unset($id);
 
 if ($_POST) {
 	if (is_specialnet($_POST['localnettype'])) {

@@ -330,7 +330,7 @@ function interfaces_staticarp_configure($if) {
 
                         foreach ($config['dhcpd'][$if]['staticmap'] as $arpent) {
                                 mwexec("/usr/sbin/arp -s " . escapeshellarg($arpent['ipaddr']) . " " . escapeshellarg($arpent['mac']));
-
+								log_error("/usr/sbin/arp -s " . escapeshellarg($arpent['ipaddr']) . " " . escapeshellarg($arpent['mac']));
                         }
 
                 }

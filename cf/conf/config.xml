@@ -163,6 +163,7 @@
 			<gateway>xxx.xxx.xxx.xxx</gateway>
 			<domain></domain>
 			<dnsserver></dnsserver>
+			<ntpserver>xxx.xxx.xxx.xxx</ntpserver>
 			<next-server></next-server>
 			<filename></filename>
 			-->

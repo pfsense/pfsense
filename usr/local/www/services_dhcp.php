@@ -72,6 +72,7 @@ $pconfig['denyunknown'] = isset($config['dhcpd'][$if]['denyunknown']);
 $pconfig['staticarp'] = isset($config['dhcpd'][$if]['staticarp']);
 $pconfig['ddnsdomain'] = $config['dhcpd'][$if]['ddnsdomain'];
 $pconfig['ddnsupdate'] = isset($config['dhcpd'][$if]['ddnsupdate']);
+list($pconfig['ntp1'],$pconfig['ntp2']) = $config['dhcpd'][$if]['ntpserver'];
 $pconfig['netboot'] = isset($config['dhcpd'][$if]['netboot']);
 $pconfig['nextserver'] = $config['dhcpd'][$if]['next-server'];
 $pconfig['filename'] = $config['dhcpd'][$if]['filename'];
@@ -137,6 +138,9 @@ if ($_POST) {
 		if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain']))) {
 			$input_errors[] = "A valid domain name must be specified for the dynamic DNS registration.";
 		}
+		if (($_POST['ntp1'] && !is_ipaddr($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddr($_POST['ntp2']))) {
+			$input_errors[] = "A valid IP address must be specified for the primary/secondary NTP servers.";
+		}
 		if (($_POST['nextserver'] && !is_ipaddr($_POST['nextserver']))) {
 			$input_errors[] = "A valid IP address must be specified for the network boot server.";
 		}
@@ -191,6 +195,13 @@ if ($_POST) {
 		$config['dhcpd'][$if]['staticarp'] = ($_POST['staticarp']) ? true : false;
 		$config['dhcpd'][$if]['ddnsdomain'] = $_POST['ddnsdomain'];
 		$config['dhcpd'][$if]['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
+
+		unset($config['dhcpd'][$if]['ntpserver']);
+		if ($_POST['ntp1'])
+			$config['dhcpd'][$if]['ntpserver'][] = $_POST['ntp1'];
+		if ($_POST['ntp2'])
+			$config['dhcpd'][$if]['ntpserver'][] = $_POST['ntp2'];
+
 		$config['dhcpd'][$if]['netboot'] = ($_POST['netboot']) ? true : false;
 		$config['dhcpd'][$if]['next-server'] = $_POST['nextserver'];
 		$config['dhcpd'][$if]['filename'] = $_POST['filename'];
@@ -265,6 +276,8 @@ function enable_change(enable_over) {
 	document.iform.staticarp.disabled = endis;
 	document.iform.ddnsdomain.disabled = endis;
 	document.iform.ddnsupdate.disabled = endis;
+	document.iform.ntp1.disabled = endis;
+	document.iform.ntp2.disabled = endis;
 	document.iform.netboot.disabled = endis;
 	document.iform.nextserver.disabled = endis;
 	document.iform.filename.disabled = endis;
@@ -274,6 +287,12 @@ function enable_change(enable_over) {
 function show_ddns_config() {
 	document.getElementById("showddnsbox").innerHTML='';
 	aodiv = document.getElementById('showddns');
+	aodiv.style.display = "block";
+}
+
+function show_ntp_config() {
+	document.getElementById("showntpbox").innerHTML='';
+	aodiv = document.getElementById('showntp');
 	aodiv.style.display = "block";
 }
 
@@ -467,6 +486,18 @@ function show_netboot_config() {
 				</div>
 			</td>
 		      </tr>
+                      <tr>
+                        <td width="22%" valign="top" class="vncell">NTP servers</td>
+                        <td width="78%" class="vtable">
+				<div id="showntpbox">
+					<input type="button" onClick="show_ntp_config()" value="Advanced"></input> - Show NTP configuration</a>
+				</div>
+				<div id="showntp" style="display:none">
+					<input name="ntp1" type="text" class="formfld" id="ntp1" size="20" value="<?=htmlspecialchars($pconfig['ntp1']);?>"><br>
+					<input name="ntp2" type="text" class="formfld" id="ntp2" size="20" value="<?=htmlspecialchars($pconfig['ntp2']);?>">
+				</div>
+			</td>
+                      </tr>
                       <tr>
                         <td width="22%" valign="top" class="vncell">Enable Network booting</td>
                         <td width="78%" class="vtable">

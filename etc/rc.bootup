@@ -163,6 +163,9 @@
 	/* generate resolv.conf */
 	system_resolvconf_generate();
 
+	/* check if the wan interface is up, this might delay upto 10 seconds */
+	is_wan_interface_up("wan");
+
 	/* Sync the system time at boot before service startup */
 	sync_system_time();
 

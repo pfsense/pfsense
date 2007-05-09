@@ -59,6 +59,7 @@ $pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
 $pconfig['disablescrub'] = isset($config['system']['disablescrub']);
 $pconfig['shapertype']             = $config['system']['shapertype'];
+$pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
 
 if ($_POST) {
 
@@ -129,6 +130,11 @@ if ($_POST) {
 			unset($config['system']['polling']);
 			setup_polling();
 		}
+
+		if($_POST['lb_use_sticky'] == "yes")
+			$config['system']['lb_use_sticky'] = true;
+		else
+			unset($config['system']['lb_use_sticky']);
 
 		if($_POST['sharednet'] == "yes") {
 			$config['system']['sharednet'] = true;
@@ -315,7 +321,7 @@ include("head.inc");
 		</tr>
 		<tr>
 			<td colspan="2" class="list" height="12">&nbsp;</td>
-		</tr>
+		</tr>	
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">Shared Physical Network</td>
 		</tr>
@@ -397,6 +403,29 @@ include("head.inc");
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
 				<input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" />
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" class="list" height="12">&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="2" valign="top" class="listtopic">Load Balancing</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">Load Balancing</td>
+			<td width="78%" class="vtable">
+				<input name="lb_use_sticky" type="checkbox" id="lb_use_sticky" value="yes" <?php if ($pconfig['lb_use_sticky']) echo "checked=\"checked\""; ?> />
+				<strong>Use sticky connections</strong>
+				<br />
+				<span class="vexpl">
+				Successive connections will be redirected to the servers in a round-robin manner with connections from the same source being sent to the same web server. This \"sticky connection\" will exist as long as there are states that refer to this connection. Once the states expire, so will the sticky connection. Further connections from that host will be redirected to the next web server in the round robin.
+				</span>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top">&nbsp;</td>
+			<td width="78%">
+				<input type="submit" class="formbtn" value="<?=gettext("Save");?>" onclick="enable_change(true)" />
 			</td>
 		</tr>
 		<tr>

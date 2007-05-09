@@ -32,6 +32,14 @@
 /* include all configuration functions */
 require_once("functions.inc");
 
+function load_balancer_use_sticky() {
+	global $config, $g;
+	if (isset ($config['system']['lb_use_sticky']))
+		touch("/var/etc/use_pf_pool__stickyaddr");
+	else
+		unlink_if_exists("/var/etc/use_pf_pool__stickyaddr");
+}
+
 function services_dhcpd_configure() {
 	global $config, $g;
 	if(isset($config['system']['developerspew'])) {

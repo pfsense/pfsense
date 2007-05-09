@@ -175,6 +175,7 @@
 	setup_filter_bridge();
 
 	/* start load balancer daemon */
+	load_balancer_use_sticky();
 	slbd_configure();
 
 	/* start OpenVPN server & clients */

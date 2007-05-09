@@ -1,0 +1,9 @@
+#!/bin/sh
+
+touch /var/run/config.lock
+/etc/rc.conf_mount_rw
+
+# Now turn on or off serial console as needed
+php -f /tmp/post_upgrade_command.php
+
+rm /var/run/config.lock

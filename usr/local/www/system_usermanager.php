@@ -34,11 +34,11 @@
 
 require("guiconfig.inc");
 // The page title for non-admins
-$pgtitle = array(gettext("System"), gettext("User password"));
+$pgtitle = "System: User Password";
 
 if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
     // Page title for main admin
-    $pgtitle = array(gettext("System"), gettext("User manager"));
+    $pgtitle = "System: User Manager";
 
     $id = $_GET['id'];
     if (isset($_POST['id']))
@@ -161,11 +161,11 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
     }
 
     include("head.inc");
-    //echo $pfSenseHead->getHTML();
 ?>
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc");?>
+<p class="pgtitle"><?=$pgtitle;?></p>
 <?php if ($input_errors) print_input_errors($input_errors);?>
 <?php if ($savemsg) print_info_box($savemsg);?>
   <table width="100%" border="0" cellpadding="0" cellspacing="0">

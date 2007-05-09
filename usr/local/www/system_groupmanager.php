@@ -39,7 +39,7 @@ require("guiconfig.inc");
 
 $_SESSION['NO_AJAX'] = true;
 
-$pgtitle = array(gettext("System"), gettext("Group manager"));
+$pgtitle = "System: Group manager";
 $treeItemID = 0;
 
 function walkArea($title,
@@ -235,7 +235,7 @@ function getAdminPageList()
                         continue;
                     }
 
-                    $tmp[$file] = convert_array_to_pgtitle($pgtitle);
+                    $tmp[$file] = $pgtitle;
 
                     /* break out of the for loop, on to next file */
                     break;
@@ -401,6 +401,8 @@ if ($_POST) {
 include("head.inc");
 
 $checkallstr = <<<EOD
+<script type="text/javascript">
+
   function checkallareas(enable) {
     var elem = document.iform.elements.length;
     var endis = (document.iform.checkall.checked || enable);
@@ -412,7 +414,8 @@ $checkallstr = <<<EOD
       }
     }
   }
-
+  
+</script>
 EOD;
 
 // XXX: billm TODO
@@ -421,8 +424,10 @@ EOD;
 //echo $pfSenseHead->getHTML();
 
 ?>
+
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc");?>
+<p class="pgtitle"><?=$pgtitle;?></p>
 <?php if ($input_errors) print_input_errors($input_errors);?>
 <?php if ($savemsg) print_info_box($savemsg);?>
   <table width="100%" border="0" cellpadding="0" cellspacing="0">

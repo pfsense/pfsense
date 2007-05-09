@@ -71,6 +71,7 @@ include("head.inc");
 
 ?>
 <?php include("fbegin.inc"); ?>
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <p class="pgtitle"><?=$pgtitle?></p>
 <form action="services_captiveportal_mac.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
@@ -126,3 +127,5 @@ include("head.inc");
   </table>
 </form>
 <?php include("fend.inc"); ?>
+</body>
+</html>

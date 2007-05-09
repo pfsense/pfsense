@@ -66,6 +66,7 @@ include("head.inc");
 
 ?>
 <?php include("fbegin.inc"); ?>
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <p class="pgtitle"><?=$pgtitle?></p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
@@ -126,3 +127,5 @@ include("head.inc");
 </tr>
 </table>
 <?php include("fend.inc"); ?>
+</body>
+</html>

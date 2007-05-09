@@ -127,6 +127,8 @@ include("head.inc");
 
 ?>
 <?php include("fbegin.inc"); ?>
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
+<p class="pgtitle"><?=$pgtitle?></p>
 <script language="javascript" type="text/javascript" src="datetimepicker.js">
 <!--
 //Date Time Picker script- by TengYong Ng of http://www.rainforestnet.com
@@ -135,7 +137,6 @@ include("head.inc");
 // -->
 </script>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="services_captiveportal_users_edit.php" method="post" name="iform" id="iform">
   <table width="100%" border="0" cellpadding="6" cellspacing="0">
 	<tr> 
@@ -181,3 +182,5 @@ include("head.inc");
   </table>
  </form>
 <?php include("fend.inc"); ?>
+</body>
+</html>

@@ -200,6 +200,9 @@ pfSenseupgrade)
 
 	restore_chflags
 
+	# Remove upgrade file
+	rm -f $IMG
+
 	rm -f /var/run/firmware.lock
 
 	/bin/sync

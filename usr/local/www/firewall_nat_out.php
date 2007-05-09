@@ -1,9 +1,5 @@
 <?php
-<<<<<<< firewall_nat_out.php
 /* $Id$ */
-=======
-/* $Id$ */
->>>>>>> 1.47.2.16.2.1
 /*
     firewall_nat_out.php
     Copyright (C) 2004 Scott Ullrich

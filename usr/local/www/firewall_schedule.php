@@ -99,7 +99,12 @@ include("head.inc");
 	<?php $i = 0; foreach ($a_schedules as $schedule): ?>
 	<tr>
 	   <td class="listlr" ondblclick="document.location='firewall_schedule_edit.php?id=<?=$i;?>';">
-    <?=htmlspecialchars($schedule['name']);?>
+			<?=htmlspecialchars($schedule['name']); 
+			  	 $schedstatus = get_time_based_rule_status($schedule);
+					 if ($schedstatus) { ?>
+					 	&nbsp;<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_frmfld_time.png" title="Schedule is currently active" width="17" height="17" border="0">
+					 <?php } ?>
+    
   		</td>
   		<td class="listlr" ondblclick="document.location='firewall_schedule_edit.php?id=<?=$i;?>';">
   			<table width="98%" border="0" cellpadding="0" cellspacing="0">

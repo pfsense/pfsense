@@ -45,27 +45,27 @@ switch ($command) {
 			$file_size = trim($file_size, "\r");
 			echo "\nFile size: $file_size\n";
 			echo "\nFetching file...\n";
-			exec("fetch -1 -w15 -a -v -o /tmp/firmware.tgz \"$url\"");
-			if($file_size <> filesize("/tmp/firmware.tgz")) {
+			exec("fetch -1 -w15 -a -v -o /root/firmware.tgz \"$url\"");
+			if($file_size <> filesize("/root/firmware.tgz")) {
 				echo "\nFile size mismatch.  Upgrade cancelled.\n\n";
 				die;
 			}			
-			if(!file_exists("/tmp/firmware.tgz")) {
+			if(!file_exists("/root/firmware.tgz")) {
 				echo "Something went wrong during file transfer.  Exiting.\n\n";
 				die;
 			}
 			$status = does_url_exist("$url.md5");
 			if($status) { 
 				echo "\nFetching MD5...\n";
-				exec("fetch -1 -w15 -a -v -o /tmp/firmware.tgz.md5 \"$url.md5\"");
+				exec("fetch -1 -w15 -a -v -o /root/firmware.tgz.md5 \"$url.md5\"");
 			} else {
 				echo "\n\nWARNING.\n";
 				echo "\nCould not locate a MD5 file.  We cannot verify the download once its done.\n\n";
 				sleep(15);
 			}
-			if(file_exists("/tmp/firmware.tgz.md5")) {
-				$source_md5 = trim(`cat /tmp/firmware.tgz.md5 | awk '{ print \$4 }'`,"\r");
-				$file_md5 = trim(`md5 /tmp/firmware.tgz | awk '{ print \$4 }'`,"\r");
+			if(file_exists("/root/firmware.tgz.md5")) {
+				$source_md5 = trim(`cat /root/firmware.tgz.md5 | awk '{ print \$4 }'`,"\r");
+				$file_md5 = trim(`md5 /root/firmware.tgz | awk '{ print \$4 }'`,"\r");
 				echo "URL MD5: $source_md5\n";
 				echo "Downloaded file MD5: $file_md5\n";
 				if($source_md5 <> $file_md5) {
@@ -74,8 +74,8 @@ switch ($command) {
 				}
 				echo "\nMD5 checksum matches.\n";
 			}
-			if(file_exists("/tmp/firmware.tgz"))
-				do_upgrade("/tmp/firmware.tgz");
+			if(file_exists("/root/firmware.tgz"))
+				do_upgrade("/root/firmware.tgz");
 		} else {
 			echo "\nCould not download update.\n\n";
 			die -1;

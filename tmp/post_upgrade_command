@@ -1,5 +1,6 @@
 #!/bin/sh
 
+touch /var/run/config.lock
 /etc/rc.conf_mount_rw
 
 # Make sure gettytab is correct
@@ -546,3 +547,4 @@ EOFEOFA
 # Now turn on or off serial console as needed
 php -f /tmp/post_upgrade_command.php
 
+rm /var/run/config.lock

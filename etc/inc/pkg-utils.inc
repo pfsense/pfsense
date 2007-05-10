@@ -231,6 +231,7 @@ function get_pkg_depends($pkg_name, $filetype = ".xml", $format = "files", $retu
 }
 
 function uninstall_package_from_name($pkg_name) {
+	global $config;
 	$id = get_pkg_id($pkg_name);
 	$todel = substr(reverse_strrchr($config['installedpackages']['package'][$id]['depends_on_package'], "."), 0, -1);
 	delete_package($todel, $pkg_name);

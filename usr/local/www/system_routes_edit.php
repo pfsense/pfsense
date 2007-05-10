@@ -41,6 +41,10 @@ $id = $_GET['id'];
 if (isset($_POST['id']))
 	$id = $_POST['id'];
 
+if (isset($_GET['dup'])) {
+	$id = $_GET['dup'];
+}
+
 if (isset($id) && $a_routes[$id]) {
 	$pconfig['interface'] = $a_routes[$id]['interface'];
 	list($pconfig['network'],$pconfig['network_subnet']) = 
@@ -48,6 +52,9 @@ if (isset($id) && $a_routes[$id]) {
 	$pconfig['gateway'] = $a_routes[$id]['gateway'];
 	$pconfig['descr'] = $a_routes[$id]['descr'];
 }
+
+if (isset($_GET['dup']))
+	unset($id);
 
 if ($_POST) {
 

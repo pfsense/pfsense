@@ -137,6 +137,7 @@ include("head.inc");
 				<td><a href="vpn_ipsec_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add tunnel" width="17" height="17" border="0"></a></td>
 			     </tr>
 			</table>
+		  </td>
 		</tr>
                 <?php $i = 0; foreach ($a_ipsec as $ipsecent):
 					if (isset($ipsecent['disabled'])) {

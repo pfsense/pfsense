@@ -137,12 +137,10 @@ function vpn_ipsec_configure($ipchg = false) {
 	$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
 	$lansn = $lancfg['subnet'];
 
-	if ($g['booting']) {
-		if (!isset($ipseccfg['enable']))
-			return 0;
+	if (!isset($ipseccfg['enable'])) {
+		mwexec("/sbin/ifconfig enc0 down");
+		mwexec("/sbin/ifconfig enc0 destroy");
 
-		echo "Configuring IPsec VPN... ";
-	} else {
 		/* kill racoon */
 		mwexec("/usr/bin/killall racoon");
 
@@ -151,11 +149,17 @@ function vpn_ipsec_configure($ipchg = false) {
 
 		/* send a SIGKILL to be sure */
 		sigkillbypid("{$g['varrun_path']}/racoon.pid", "KILL");
+
+		/* flush SPD and SAD */
+		mwexec("/sbin/setkey -FP");
+		mwexec("/sbin/setkey -F");
+
+		return true;
 	}
 
-	/* flush SPD and SAD */
-	mwexec("/sbin/setkey -FP");
-	mwexec("/sbin/setkey -F");
+	if ($g['booting']) {
+		echo "Configuring IPsec VPN... ";
+	}
 
 	if (isset($ipseccfg['enable'])) {
 
@@ -554,8 +558,20 @@ EOD;
 			fclose($fd);
 			chmod("{$g['varetc_path']}/psk.txt", 0600);
 
-			/* start racoon */
-			mwexec("/usr/local/sbin/racoon -f {$g['varetc_path']}/racoon.conf");
+			if(is_process_running("racoon")) {
+				/* We are already online, reload */
+				mwexec("/usr/local/sbin/racoonctl reload-config");
+			} else {
+				/* flush SPD and SAD */
+				mwexec("/sbin/setkey -FP");
+				mwexec("/sbin/setkey -F");
+
+				/* sleep for a bit */
+				sleep (2);
+
+				/* start racoon */
+				mwexec("/usr/local/sbin/racoon -f {$g['varetc_path']}/racoon.conf");
+			}
 		}
 	}
 

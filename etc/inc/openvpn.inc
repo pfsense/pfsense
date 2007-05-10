@@ -89,22 +89,26 @@ function openvpn_validate_input($mode, $post, $input_errors) {
 			$input_errors[] = $result;
 
 // DHCP-Options logic-check
+	if (!empty($post['dhcp_dns'])) {
     $servers = explode(';', $post['dhcp_dns']);
       foreach ($servers as $server) if (!is_ipaddr($server)) 
         {$input_errors[] = 'The field \'DHCP-Opt.: DNS-Server\' must contain a valid IP address and no whitespaces.';
-        break;}
+        break;}}
+	if (!empty($post['dhcp_wins'])) {
     $servers = explode(';', $post['dhcp_wins']);
       foreach ($servers as $server) if (!is_ipaddr($server)) 
         {$input_errors[] = 'The field \'DHCP-Opt.: WINS-Server\' must contain a valid IP address and no whitespaces.';
-        break;}
+        break;}}
+	if (!empty($post['dhcp_nbdd'])) {
     $servers = explode(';', $post['dhcp_nbdd']);
       foreach ($servers as $server) if (!is_ipaddr($server)) 
         {$input_errors[] = 'The field \'DHCP-Opt.: NBDD-Server\' must contain a valid IP address and no whitespaces.';
-        break;}
+        break;}}
+	if (!empty($post['dhcp_ntp'])) {
     $servers = explode(';', $post['dhcp_ntp']);
       foreach ($servers as $server) if (!is_ipaddr($server)) 
         {$input_errors[] = 'The field \'DHCP-Opt.: NTP-Server\' must contain a valid IP address and no whitespaces.';
-        break;}     
+        break;}}
 
 	}
 

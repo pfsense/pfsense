@@ -1667,6 +1667,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 								$routeto .= "} ";
 							} else {
 								$routeto .= "} round-robin ";
+								if(isset($config['system']['lb_use_sticky'])) 
+									$routeto .= " sticky-address ";									
 							}
 						}
 					}

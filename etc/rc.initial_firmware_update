@@ -40,6 +40,7 @@ switch ($command) {
 			die;
 		$status = does_url_exist($url);
 		if($status) {
+			/etc/rc.conf_mount_rw
 			echo "\nFetching file size...\n";
 			$file_size = exec("fetch -s \"$url\"");
 			$file_size = trim($file_size, "\r");

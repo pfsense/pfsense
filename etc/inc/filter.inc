@@ -201,6 +201,8 @@ function filter_configure_sync() {
 		else
 			$scrubnodf = "random-id";
 		$rules .= "scrub all {$scrubnodf} {$mssclamp} fragment reassemble\n"; // reassemble all directions
+	} else if ($config['interfaces']['wan']['mtu'] <> "" and is_numeric($config['interfaces']['wan']['mtu'])) {
+		$rules .= "scrub {$mssclamp}\n"; // reassemble all directions
 	}
 
 	if($config['system']['shapertype'] <> "m0n0") {

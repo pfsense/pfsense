@@ -282,13 +282,13 @@ function display_login_form() {
           <span style="text-align: left;">
             <?=gettext("Username"); ?>:&nbsp;&nbsp;
           </span>
-          <input onclick="clearError();" onchange="clearError();" id="usernamefld" type="text" name="usernamefld" class="formfld user" tabindex="1" />
+          <input onclick="clearError();" onchange="clearError();" id="usernamefld" type="text" name="usernamefld" class="formfld" tabindex="1" />
         </p>
         <p>
           <span style="text-align: left;">
             <?=gettext("Password"); ?>:&nbsp;&nbsp;
           </span>
-          <input onclick="clearError();" onchange="clearError();" id="passwordfld" type="password" name="passwordfld" class="formfld pwd" tabindex="2" />
+          <input onclick="clearError();" onchange="clearError();" id="passwordfld" type="password" name="passwordfld" class="formfld" tabindex="2" />
         </p>
         <table width="90%" style="margin-right: auto; margin-left: auto;">
           <tr>

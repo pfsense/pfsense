@@ -561,11 +561,12 @@ EOD;
 			if(is_process_running("racoon")) {
 				/* We are already online, reload */
 				mwexec("/usr/local/sbin/racoonctl reload-config");
+				sleep(1);
+				exec("/usr/bin/ps auxw | grep \"/usr/local/sbin/[r]acoon\" | awk '{print $2}'", $racoonpid);
+				if(! empty($racoonpid)) {
+					mwexec("/usr/bin/kill -HUP $racoonpid[0]");
+				}
 			} else {
-				/* flush SPD and SAD */
-				mwexec("/sbin/setkey -FP");
-				mwexec("/sbin/setkey -F");
-
 				/* sleep for a bit */
 				sleep (2);
 

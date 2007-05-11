@@ -78,7 +78,7 @@ else {
 	function removeComplete(req) {
 		var values = req.responseText.split("|");
 		if(values[3] != "0") {
-			alert('<?=gettext("An error occured.");?>');
+			alert('<?=gettext("An error occurred.");?>');
 			return;
 		}
 

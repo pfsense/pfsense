@@ -352,7 +352,7 @@ function filter_generate_aliases() {
     if($config['pptpd']['mode'] == "server") {
 		/* build pptp alias */
 		$tmp = "pptp = \"{ ";
-		$starting_pptp = 0;
+		$starting_pptp = 1;
 		if($config['interfaces']['wan']['ipaddr'] == "pppoe")
 			$starting_pptp = 1;
 		for($x=$starting_pptp; $x<$g["n_pptp_units"]+$starting_pptp; $x++)
@@ -365,7 +365,10 @@ function filter_generate_aliases() {
     if($config['pppoe']['mode'] == "server") {
 		/* build pppoe alias */
 		$tmp = "pppoe = \"{ ";
-		for($x=0; $x<$g["n_pppoe_units"]; $x++) {
+		$starting_pppoe = 1;
+		if($config['interfaces']['wan']['ipaddr'] == "pppoe")
+			$starting_pppoe = 1;
+		for($x=0; $x<$g["n_pppoe_units"]+$starting_pppoe; $x++) {
 			$tmp .= "ng{$counter} ";
 			$counter++;
 		}

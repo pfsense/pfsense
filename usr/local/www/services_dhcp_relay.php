@@ -146,19 +146,10 @@ include("head.inc");
 
 <script language="JavaScript">
 <!--
-function enable_change(enable_over) {
-	if (document.iform.enable.checked || enable_over) {
-		document.iform.server.disabled = 0;
-		document.iform.agentoption.disabled = 0;
-		document.iform.proxydhcp.disabled = 0;
-	} else {
-		document.iform.server.disabled = 1;
-		document.iform.agentoption.disabled = 1;
-		document.iform.proxydhcp.disabled = 1;
-	}
-	if (document.iform.proxydhcp.checked) {
-		document.iform.server.disabled = 1;
-	}
+function enable_change() {
+	document.iform.agentoption.disabled  = !document.iform.enable.checked;
+	document.iform.proxydhcp.disabled    = !document.iform.enable.checked;
+	document.iform.server.disabled       = !(document.iform.enable.checked && document.iform.proxydhcp.checked);
 }
 //-->
 </script>
@@ -194,7 +185,7 @@ function enable_change(enable_over) {
                       <tr>
                         <td width="22%" valign="top" class="vtable">&nbsp;</td>
                         <td width="78%" class="vtable">
-<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change(false)">
+<input name="enable" type="checkbox" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?> onClick="enable_change()">
                           <strong>Enable DHCP relay on
                           <?=htmlspecialchars($iflist[$if]);?>
                           interface</strong></td>
@@ -204,12 +195,12 @@ function enable_change(enable_over) {
                       <td width="78%" class="vtable">
 <input name="agentoption" type="checkbox" value="yes" <?php if ($pconfig['agentoption']) echo "checked"; ?>>
                       <strong>Append circuit ID and agent ID to requests</strong><br>
-                      If this is checked, the DHCP relay will append the circuit ID (pfSense interface number) and the agent ID to the DHCP request.</td>
+                      If this is checked, the DHCP relay will append the circuit ID (SolidCache interface number) and the agent ID to the DHCP request.</td>
         		  </tr>
                       <tr>
                         <td width="22%" valign="top" class="vncell">Destination server</td>
                         <td width="78%" class="vtable">
-			<input name="proxydhcp" type="checkbox" value="yes" <?php if ($pconfig['proxydhcp']) echo "checked"; ?> onClick="enable_change(false)">  Proxy requests to DHCP server on WAN subnet
+			<input name="proxydhcp" type="checkbox" value="yes" <?php if ($pconfig['proxydhcp']) echo "checked"; ?> onClick="enable_change()">  Proxy requests to DHCP server on WAN subnet
                           <br><br><input name="server" type="text" class="formfld" id="server" size="20" value="<?=htmlspecialchars($pconfig['server']);?>">
                           <br>
 			  This is the IP address of the server to which the DHCP packet is relayed.  Select "Proxy requests to DHCP server on WAN subnet" to relay DHCP packets to the server that was used on the WAN interface.
@@ -219,7 +210,7 @@ function enable_change(enable_over) {
                         <td width="22%" valign="top">&nbsp;</td>
                         <td width="78%">
                           <input name="if" type="hidden" value="<?=$if;?>">
-                          <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)">
+                          <input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change()">
                         </td>
                       </tr>
                     </table>
@@ -230,7 +221,7 @@ function enable_change(enable_over) {
 </form>
 <script language="JavaScript">
 <!--
-enable_change(false);
+enable_change();
 //-->
 </script>
 <?php include("fend.inc"); ?>

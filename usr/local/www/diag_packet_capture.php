@@ -134,38 +134,39 @@ include("head.inc"); ?>
                       </option>
                       <?php endforeach;?>
                     </select>
-                    <br>Select the interface the traffic will be passing through. Typically this will be the WAN interface.
+                    <br/>Select the interface the traffic will be passing through. Typically this will be the WAN interface.
 				  </td>
 				</tr>
 			    <tr>
 				  <td width="17%" valign="top" class="vncellreq">Host Address</td>
 				  <td width="83%" class="vtable">
                     <input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>">
-					<br>This value is either the Source or Destination IP address. The packet capture will look for this address in either field.
-					<br>This value can be a domain name or IP address.
+					<br/>This value is either the Source or Destination IP address. The packet capture will look for this address in either field.
+					<br/>This value can be a domain name or IP address.
+					<br/>If you leave this field blank all packets on the specified interface will be captured 
 					</td>
 				</tr>
 				<tr>
 				  <td width="17%" valign="top" class="vncellreq">Port</td>
 				  <td width="83%" class="vtable">
                     <input name="port" type="text" class="formfld" id="port" size="5" value="<?=$port;?>">
-					<br>The port can be either the source or destination port. The packet capture will look for this port in either field.
-					<br>Leave blank if you do not want to the capture to filter by port.
+					<br/>The port can be either the source or destination port. The packet capture will look for this port in either field.
+					<br/>Leave blank if you do not want to the capture to filter by port.
 					</td>
 				</tr>
 				<tr>
 				  <td width="17%" valign="top" class="vncellreq">Packet Length</td>
 				  <td width="83%" class="vtable">
                     <input name="snaplen" type="text" class="formfld" id="snaplen" size="5" value="<?=$snaplen;?>">
-					<br>The Packet length is the number of bytes the packet will capture for each payload. Default value is 1500.
-					<br>This value should be the same as the MTU of the Interface selected above.
+					<br/>The Packet length is the number of bytes the packet will capture for each payload. Default value is 1500.
+					<br/>This value should be the same as the MTU of the Interface selected above.
 					</td>
 				</tr>
 				<tr>
 				  <td width="17%" valign="top" class="vncellreq">Count</td>
 				  <td width="83%" class="vtable">
                     <input name="count" type="text" class="formfld" id="count" size="5" value="<?=$count;?>">
-					<br>This is the number of packets the packet capture will grab. Default value is 100.
+					<br/>This is the number of packets the packet capture will grab. Default value is 100. <br/>Enter 0 (zero) for no count limit.
 				</tr>
 				<tr>
 				  <td width="17%" valign="top" class="vncellreq">Level of Detail</td>
@@ -176,14 +177,14 @@ include("head.inc"); ?>
 						<option value="-vv" <?php if ($detail == "-vv") echo "selected"; ?>>High</option>
 						<option value="-vv -e" <?php if ($detail == "-vv -e") echo "selected"; ?>>Full</option>
 					</select>
-					<br>This is the level of detail that will be displayed after hitting 'Stop' when the packets have been captured. <br><b>Note:</b> This option does not affect the level of detail when downloading the packet capture.
+					<br/>This is the level of detail that will be displayed after hitting 'Stop' when the packets have been captured. <br/><b>Note:</b> This option does not affect the level of detail when downloading the packet capture.
 				</tr>
 				<tr>
 				  <td width="17%" valign="top" class="vncellreq">Reverse DNS Lookup</td>
 				  <td width="83%" class="vtable">
 					<input name="dnsquery" type="checkbox"<?php if($_POST['dnsquery']) echo " CHECKED"; ?>>
-					<br>This check box will cause the packet capture to perform a reverse DNS lookup associated with all IP addresses.
-					<br><b>Note: </b>This option can be CPU intensive for large packet captures.
+					<br/>This check box will cause the packet capture to perform a reverse DNS lookup associated with all IP addresses.
+					<br/><b>Note: </b>This option can be CPU intensive for large packet captures.
 					</td>
 				</tr>
 				<tr>
@@ -233,27 +234,35 @@ include("head.inc"); ?>
 
        				if ($host != "")
          	       {
-             	       $searchhost = " host " . $host;
+             	       $searchhost = "host " . $host;
             	   }
              	   else
                 	{
                        $searchhost = "";
-             		} 
+             		}
+             		if ($count != "0" )
+             		{
+             			 $searchcount = "-c " . $count;
+             		}
+             		else
+             		{
+             			$searchcount = "";
+             		}
 
 					$selectedif = convert_friendly_interface_to_real_interface_name($selectedif);
 				
 					if ($processisrunning)
-						echo("<strong>Packet Capture is running.</strong><br>");
+						echo("<strong>Packet Capture is running.</strong><br/>");
 						
 					if ($action == "Start")
 					{
-						echo("<strong>Packet Capture is running.</strong><br>");
-					 	mwexec_bg ("/usr/sbin/tcpdump -i $selectedif -v -c $count -s $packetlength -w $fn $searchhost $searchport");
+						echo("<strong>Packet Capture is running.</strong><br/>");
+					 	mwexec_bg ("/usr/sbin/tcpdump -i $selectedif $searchcount -s $packetlength -w $fn $searchhost $searchport");
 						}
 					else  //action = stop
 					{
 
-						echo("<strong>Packet Capture stopped. <br><br>Packets Captured:</strong><br>");
+						echo("<strong>Packet Capture stopped. <br/><br/>Packets Captured:</strong><br/>");
 						?>
 						<textarea style="width:98%" name="code" rows="15" cols="66" wrap="off" readonly="readonly">
 						<?php

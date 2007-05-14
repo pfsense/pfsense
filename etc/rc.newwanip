@@ -65,13 +65,13 @@ if($curwanip == "0.0.0.0") {
 /* grab the prior ip for pftpx tests */
 if(file_exists("/tmp/rc.newwanip_oldip")) {
 	/* grab hint from dhclient */
-	$old_ip = trim(file_get_contents("/tmp/rc.newwanip_oldip", "\r");
+	$old_ip = trim(file_get_contents("/tmp/rc.newwanip_oldip", "\r"));
 	unlink("/tmp/rc.newwanip_oldip");
 }
 /* fallback to rc.newwanip ip if needed */
 if(!$old_ip)
 	if(file_exists("{$g['vardb_path']}/{$interface}_ip"))
-		$old_ip = trim(file_get_contents("{$g['vardb_path']}/{$interface}_ip", "\r");
+		$old_ip = trim(file_get_contents("{$g['vardb_path']}/{$interface}_ip", "\r"));
 if($old_ip) {
 	$helpers = exec("/bin/ps awux | grep \"{$old_ip}\" | grep -v \"grep\" | awk '{ print $2 }'");
 	if($helpers)

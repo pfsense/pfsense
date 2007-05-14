@@ -27,7 +27,7 @@ $pgtitle = array("Diagnostics", "Packet Capture");
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 
-$fp = "/usr/local/www/";
+$fp = "/tmp/";
 $fn = "packetcapture.cap";
 $snaplen = 1500;//default packet length
 $count = 100;//default number of packets to capture
@@ -143,7 +143,7 @@ include("head.inc"); ?>
                     <input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>">
 					<br/>This value is either the Source or Destination IP address. The packet capture will look for this address in either field.
 					<br/>This value can be a domain name or IP address.
-					<br/>If you leave this field blank all packets on the specified interface will be captured.
+					<br/>If you leave this field blank all packets on the specified interface will be captured 
 					</td>
 				</tr>
 				<tr>
@@ -194,14 +194,13 @@ include("head.inc"); ?>
 
                     /*check to see if packet capture tcpdump is already running*/
 					$processcheck = (trim(shell_exec("ps axw -O pid= | grep tcpdump | grep $fn | grep -v pflog")));
+					
+					$processisrunning = false;
 
-					$processisrunning = False;
-
-					if ($processcheck != False)
-						$processisrunning = True;
-
-
-					if (($action == "Stop" or $action == "") and $processisrunning != True)
+					if ($processcheck != false)
+						$processisrunning = true;
+						
+					if (($action == "Stop" or $action == "") and $processisrunning != true)
 						echo "<input type=\"submit\" name=\"startbtn\" value=\"Start\">&nbsp;";
 				  	else{
 					  	echo "<input type=\"submit\" name=\"stopbtn\" value=\"Stop\">&nbsp;";
@@ -216,8 +215,11 @@ include("head.inc"); ?>
 				<tr>
 				<td valign="top" colspan="2">
 				<?php
-				if ($do_tcpdump) {
-					echo "<font face='terminal' size='2'>";
+				echo "<font face='terminal' size='2'>";
+				if ($processisrunning == true)
+						echo("<strong>Packet Capture is running.</strong><br/>");
+						
+				if ($do_tcpdump) {					
 
 					if ($port != "")
                     {
@@ -251,13 +253,12 @@ include("head.inc"); ?>
 
 					$selectedif = convert_friendly_interface_to_real_interface_name($selectedif);
 				
-					if ($processisrunning)
-						echo("<strong>Packet Capture is running.</strong><br/>");
+					
 						
 					if ($action == "Start")
 					{
 						echo("<strong>Packet Capture is running.</strong><br/>");
-					 	mwexec_bg ("/usr/sbin/tcpdump -i $selectedif $searchcount -s $packetlength -w $fn $searchhost $searchport");
+					 	mwexec_bg ("/usr/sbin/tcpdump -i $selectedif $searchcount -s $packetlength -w $fp$fn $searchhost $searchport");
 						}
 					else  //action = stop
 					{
@@ -266,7 +267,7 @@ include("head.inc"); ?>
 						?>
 						<textarea style="width:98%" name="code" rows="15" cols="66" wrap="off" readonly="readonly">
 						<?php
-						system ("/usr/sbin/tcpdump $disabledns $detail -r $fn");?>
+						system ("/usr/sbin/tcpdump $disabledns $detail -r $fp$fn");?>
 						</textarea><?php
 					}
 				}?>

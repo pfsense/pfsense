@@ -55,6 +55,12 @@
 	$avail = $memory[0];
 	echo " done.\n";
 
+	conf_mount_rw();
+
+	/* remove previous firmware upgrade if present */
+	if(file_exists("/root/firmware.tgz")) 
+		unlink(""/root/firmware.tgz"");
+
 	/* start devd (dhclient now uses it */
 	echo "Starting device manager (devd)...";
 	mute_kernel_msgs();

@@ -69,6 +69,14 @@
 			</description>
 		</field>
 		<field>
+			<fielddescr>pfSync sync peer IP</fielddescr>
+			<fieldname>pfsyncpeerip</fieldname>
+			<type>input</type>
+			<description>
+				Setting this option will force pfSync to synchronize its stable tables to this IP address.  The default is directed multicast.
+			</description>
+		</field>
+		<field>
 			<fielddescr>Synchronize rules</fielddescr>
 			<fieldname>synchronizerules</fieldname>
 			<description>When this option is enabled, this system will automatically sync the firewalls rules over to the other carp when changes are made..</description>

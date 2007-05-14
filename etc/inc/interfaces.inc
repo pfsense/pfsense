@@ -379,6 +379,7 @@ function interfaces_carp_configure() {
 			$pfsyncenabled = $carp['pfsyncenabled'];
 			$balanacing = $carp['balancing'];
 			$pfsyncinterface = $carp['pfsyncinterface'];
+			$pfsyncpeerip = $carp['pfsyncpeerip'];
 		}
 	} else {
 		unset($pfsyncinterface);
@@ -402,10 +403,15 @@ function interfaces_carp_configure() {
 		exec("/sbin/pfctl -f /tmp/rules.boot");
 	}
 	/* setup pfsync interface */
-	if($carp_sync_int and $pfsyncenabled)
-		mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} up");
-	else
+	if($carp_sync_int and $pfsyncenabled) {
+		if($pfsyncpeerip) {
+			mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} syncpeer {$pfsyncpeerip} up");
+		} else {
+			mwexec("/sbin/ifconfig pfsync0 syncdev {$carp_sync_int} up");
+		}
+	} else {
 		mwexec("/sbin/ifconfig pfsync0 syncdev lo0 up");
+	}
 	$fd = fopen("/tmp/carp.sh", "w");
 	if($config['virtualip']['vip']) {
 		$viparr = &$config['virtualip']['vip'];

@@ -57,6 +57,9 @@ if($_GET['mode'] == "restartservice" and $_GET['service']) {
 			if(file_exists('/usr/local/etc/rc.d/miniupnpd.sh'))
 				mwexec('/usr/local/etc/rc.d/miniupnpd.sh restart');
 			break;
+        case 'racoon':
+        	exec("killall -9 racoon");
+        	vpn_ipsec_configure(true);
 		default:
 			restart_service($_GET['service']);
 			break;
@@ -80,6 +83,9 @@ if($_GET['mode'] == "startservice" and $_GET['service']) {
 			if(file_exists('/usr/local/etc/rc.d/miniupnpd.sh'))
 				mwexec('/usr/local/etc/rc.d/miniupnpd.sh start');
 			break;
+        case 'racoon':
+        	exec("killall -9 racoon");
+        	vpn_ipsec_configure(true);
 		default:
 			start_service($_GET['service']);
 			break;
@@ -88,18 +94,42 @@ if($_GET['mode'] == "startservice" and $_GET['service']) {
 	sleep(5);
 }
 
-if($_GET['mode'] == "stopservice" and $_GET['service']) {
+/* stop service */
+if($_GET['mode'] == "stopservice" && $_GET['service']) {
 	switch($_GET['service']) {
+		case 'bsnmpd':
+			killbypid("{$g['varrun_path']}/snmpd.pid");
+			break;
+		case 'choparp':
+			killbyname("choparp");
+			break;
+        case 'dhcpd':
+			killbyname("dhcpd");
+            break;
+        case 'dhcrelay':
+            killbypid("{$g['varrun_path']}/dhcrelay.pid");
+            break;
+        case 'dnsmasq':
+			killbypid("{$g['varrun_path']}/dnsmasq.pid");
+			break;
 		case 'miniupnpd':
 			/* can't just killbyname since we need to clear pf rules */
 			if(file_exists('/usr/local/etc/rc.d/miniupnpd.sh'))
 				mwexec('/usr/local/etc/rc.d/miniupnpd.sh stop');
-			break;		
+			break;
+		case 'ntpd':
+			killbyname("ntpd");
+            break;
+        case 'sshd':
+			killbyname("sshd");
+            break;
+        case 'racoon':
+        	exec("killall -9 racoon");
 		default:
-    stop_service($_GET['service']);
+		    stop_service($_GET['service']);
 			break;
 	}
-    $savemsg = "{$_GET['service']} has been stopped.";
+    $savemsg = "{$_GET['service']} " . gettext("has been stopped.");
     sleep(5);
 }
 
@@ -203,6 +233,13 @@ if(isset($config['proxyarp']['proxyarpnet'])) {
 if($config['installedpackages']['miniupnpd']['config'][0]['enable']) {
     $pconfig['name'] = "miniupnpd";
     $pconfig['description'] = gettext("MiniUPnPd Service");
+    $services[] = $pconfig;
+    unset($pconfig);
+}
+
+if (isset($config['ipsec']['enable'])) {
+    $pconfig['name'] = "racoon";
+    $pconfig['description'] = gettext("IPSEC VPN");
     $services[] = $pconfig;
     unset($pconfig);
 }

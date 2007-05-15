@@ -81,7 +81,7 @@ if($old_ip) {
 }
 
 /* reconfigure IPsec tunnels */
-vpn_ipsec_configure(true);
+vpn_ipsec_force_reload();
 
 /* start OpenVPN server & clients */
 exec("killall -HUP openvpn 2>/dev/null");

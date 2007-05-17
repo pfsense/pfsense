@@ -204,6 +204,16 @@ function addDiv(selectedDiv){
 	showSave(); 
 }
 
+function configureDiv(selectedDiv){
+	selectIntLink = selectedDiv + "-settings";	
+	d = document;
+	textlink = d.getElementById(selectIntLink);
+	if (textlink.style.display == "none")
+		Effect.BlindDown(selectIntLink, {duration:1});
+	else
+		Effect.BlindUp(selectIntLink, {duration:1});
+}
+
 function showDiv(selectedDiv,swapButtons){
 		//appear element
     Effect.BlindDown(selectedDiv, {duration:1});      
@@ -437,7 +447,7 @@ echo $jscriptstr;
 					<?php echo $nicename;?>
 				</div>
 				<div align="right" style="float:right;">	
-					<div id="<?php echo $widgetname;?>-settings" onclick='return configureDiv("<?php echo $widgetname;?>",false)' style="display:none; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_configure.gif" /></div>									
+					<div id="<?php echo $widgetname;?>-configure" onclick='return configureDiv("<?php echo $widgetname;?>")' style="display:none; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_configure.gif" /></div>									
 					<div id="<?php echo $widgetname;?>-open" onclick='return showDiv("<?php echo $widgetname;?>",true)' style="display:<?php echo $showdiv;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_open.gif" /></div>	
 					<div id="<?php echo $widgetname;?>-min" onclick='return minimizeDiv("<?php echo $widgetname;?>",true)' style="display:<?php echo $mindiv;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_minus.gif"/></div>												
 					<div id="<?php echo $widgetname;?>-close" onclick='return closeDiv("<?php echo $widgetname;?>",true)' style="display:inline; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_close.gif" /></div>	

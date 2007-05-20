@@ -1018,4 +1018,43 @@ EOD;
 	return 0;
 }
 
+/* Forcefully restart IPSEC
+ * This is required for when dynamic interfaces reload
+ * For all other occasions the normal vpn_ipsec_configure()
+ * will gracefully reload the settings without restarting
+ */
+function vpn_ipsec_force_reload() {
+	global $config;
+	global $g;
+
+	$ipseccfg = $config['ipsec'];
+
+	/* kill any ipsec communications regardless when we are invoked */
+	mwexec("/sbin/ifconfig enc0 down");
+	mwexec("/sbin/ifconfig enc0 destroy");
+
+	/* kill racoon */
+	mwexec("/usr/bin/killall racoon");
+
+	/* wait for process to die */
+	sleep(2);
+
+	/* send a SIGKILL to be sure */
+	sigkillbypid("{$g['varrun_path']}/racoon.pid", "KILL");
+
+	/* flush SPD and SAD */
+	mwexec("/sbin/setkey -FP");
+	mwexec("/sbin/setkey -F");
+
+	/* wait for flushing to finish */
+	sleep(5);
+
+	/* if ipsec is enabled, start up again */
+	if (isset($ipseccfg['enable'])) {
+		log_error("Forcefully reloading IPSEC racoon daemon");
+		vpn_ipsec_configure();
+	}
+
+}
+
 ?>

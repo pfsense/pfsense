@@ -259,7 +259,7 @@ rm -rf /usr/local/pkg/pf/CVS
 # scripts
 rm -f /tmp/filter_dirty
 rm -f /tmp/rc.linkup
-/usr/bin/nice -n20 /usr/local/sbin/check_reload_status & 2>/dev/null
+nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status &
 
 # Start ping handler for every 240 seconds
 minicron 240 /var/run/ping_hosts.pid /etc/ping_hosts.sh

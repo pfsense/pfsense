@@ -783,7 +783,7 @@ function reset_carp() {
 		if($needed_carp_interfaces < $carp_counter) {
 			$needed_carp_interfaces--;
 			log_error("Destroying carp interface.");
-			mwexec("/sbin/ifconfig carp{$x} destroy");
+			//mwexec("/sbin/ifconfig carp{$x} destroy");
 		}
 	}
 	find_number_of_created_carp_interfaces(true);

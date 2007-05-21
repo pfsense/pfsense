@@ -773,6 +773,7 @@ function reset_carp() {
 	mwexec("/sbin/sysctl net.inet.carp.allow=0");
 	for($x=0; $x<$carp_counter; $x++) {
 		mwexec("/sbin/ifconfig carp{$x} down");
+		usleep(1000);
 		mwexec("/sbin/ifconfig carp{$x} delete");
 		if($needed_carp_interfaces < $carp_counter) {
 			$needed_carp_interfaces--;

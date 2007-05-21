@@ -165,6 +165,8 @@ include("head.inc");
 </body>
 </html>
 
+<?php 
+
 if ($_POST) {
 	$pconfig = $_POST;
 
@@ -186,3 +188,5 @@ if ($_POST) {
 		}
 	}
 }
+
+?>

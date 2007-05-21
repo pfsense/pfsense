@@ -53,8 +53,8 @@ if ($_GET['act'] == "del") {
 				if($rule['external-address'] <> "") {
 					if ($rule['external-address'] == $a_vip[$_GET['id']]['ipaddr']) {
 						$input_errors[] = "This entry cannot be deleted because it is still referenced by at least one NAT mapping.";
-
-						unlink("/tmp/carp_reboot_needed");
+						if($rule['mode'] == "carp") 
+							unlink("/tmp/carp_reboot_needed");
 						break;
 					}
 				}

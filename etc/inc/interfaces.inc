@@ -461,7 +461,7 @@ function interfaces_carp_bring_up_final() {
 		$mt = microtime();
 		echo "interfaces_carp_bring_up_final() being called $mt\n";
 	}
-	if(!$config['installedpackages']['carpsettings']['config'])
+	if(!$config['virtualip']['vip'])
 		return;
 	$viparr = &$config['virtualip']['vip'];
 	/* could not locate an array, return */

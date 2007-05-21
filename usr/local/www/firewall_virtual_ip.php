@@ -46,15 +46,13 @@ $a_vip = &$config['virtualip']['vip'];
 
 if ($_GET['act'] == "del") {
 	if ($a_vip[$_GET['id']]) {
-		touch("/tmp/carp_reboot_needed");
 		/* make sure no inbound NAT mappings reference this entry */
 		if (is_array($config['nat']['rule'])) {
 			foreach ($config['nat']['rule'] as $rule) {
 				if($rule['external-address'] <> "") {
 					if ($rule['external-address'] == $a_vip[$_GET['id']]['ipaddr']) {
 						$input_errors[] = "This entry cannot be deleted because it is still referenced by at least one NAT mapping.";
-						if($rule['mode'] == "carp") 
-							unlink("/tmp/carp_reboot_needed");
+						unlink("/tmp/carp_reboot_needed");
 						break;
 					}
 				}
@@ -62,6 +60,8 @@ if ($_GET['act'] == "del") {
 		}
 
 		if (!$input_errors) {
+			if($a_vip[$_GET['id']]['mode'] == "carp")  
+				touch("/tmp/carp_reboot_needed");
 			unset($a_vip[$_GET['id']]);
 			write_config();
 			touch($d_vipconfdirty_path);

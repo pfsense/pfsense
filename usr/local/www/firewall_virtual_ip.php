@@ -44,24 +44,6 @@ if (!is_array($config['virtualip']['vip'])) {
 }
 $a_vip = &$config['virtualip']['vip'];
 
-if ($_POST) {
-	$pconfig = $_POST;
-
-	if ($_POST['apply']) {
-		$retval = 0;
-
-		config_lock();
-		$retval = services_proxyarp_configure();
-		/* Bring up any configured CARP interfaces */
-		reset_carp();
-		$retval |= filter_configure();
-		config_unlock();
-
-		$savemsg = get_std_save_message($retval);
-		unlink_if_exists($d_vipconfdirty_path);
-	}
-}
-
 if ($_GET['act'] == "del") {
 	if ($a_vip[$_GET['id']]) {
 		/* make sure no inbound NAT mappings reference this entry */
@@ -180,3 +162,21 @@ include("head.inc");
 <?php include("fend.inc"); ?>
 </body>
 </html>
+
+if ($_POST) {
+	$pconfig = $_POST;
+
+	if ($_POST['apply']) {
+		$retval = 0;
+
+		config_lock();
+		$retval = services_proxyarp_configure();
+		/* Bring up any configured CARP interfaces */
+		reset_carp();
+		$retval |= filter_configure();
+		config_unlock();
+
+		$savemsg = get_std_save_message($retval);
+		unlink_if_exists($d_vipconfdirty_path);
+	}
+}

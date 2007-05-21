@@ -46,12 +46,14 @@ $a_vip = &$config['virtualip']['vip'];
 
 if ($_GET['act'] == "del") {
 	if ($a_vip[$_GET['id']]) {
+		$savemsg = "The firewall will reboot due to CARP entry deletion.  Please wait...";
 		/* make sure no inbound NAT mappings reference this entry */
 		if (is_array($config['nat']['rule'])) {
 			foreach ($config['nat']['rule'] as $rule) {
 				if($rule['external-address'] <> "") {
 					if ($rule['external-address'] == $a_vip[$_GET['id']]['ipaddr']) {
 						$input_errors[] = "This entry cannot be deleted because it is still referenced by at least one NAT mapping.";
+						$savemsg = "";
 						break;
 					}
 				}
@@ -167,16 +169,20 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	if ($_POST['apply']) {
-		$retval = 0;
+		if ($_GET['act'] == "del") {
+			mwexec("/sbin/shutdown -r now");
+		} else {
+			$retval = 0;
+	
+			config_lock();
+			$retval = services_proxyarp_configure();
+			/* Bring up any configured CARP interfaces */
+			reset_carp();
+			$retval |= filter_configure();
+			config_unlock();
 
-		config_lock();
-		$retval = services_proxyarp_configure();
-		/* Bring up any configured CARP interfaces */
-		reset_carp();
-		$retval |= filter_configure();
-		config_unlock();
-
-		$savemsg = get_std_save_message($retval);
-		unlink_if_exists($d_vipconfdirty_path);
+			$savemsg = get_std_save_message($retval);
+			unlink_if_exists($d_vipconfdirty_path);
+		}
 	}
 }

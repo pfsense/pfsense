@@ -174,7 +174,10 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		if (file_exists("/tmp/carp_reboot_needed") == "del") {
-			mwexec("/sbin/shutdown -r now");
+			ob_flush();
+			usleep(1000);
+			mwexec_bg("/sbin/shutdown -r now");
+			exit;
 		} else {
 			$retval = 0;
 	

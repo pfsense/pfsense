@@ -46,6 +46,7 @@ $a_vip = &$config['virtualip']['vip'];
 
 if ($_GET['act'] == "del") {
 	if ($a_vip[$_GET['id']]) {
+		touch("/tmp/carp_reboot_needed");
 		$savemsg = "The firewall will reboot due to CARP entry deletion.  Please wait...";
 		/* make sure no inbound NAT mappings reference this entry */
 		if (is_array($config['nat']['rule'])) {
@@ -54,6 +55,7 @@ if ($_GET['act'] == "del") {
 					if ($rule['external-address'] == $a_vip[$_GET['id']]['ipaddr']) {
 						$input_errors[] = "This entry cannot be deleted because it is still referenced by at least one NAT mapping.";
 						$savemsg = "";
+						unlink("/tmp/carp_reboot_needed");
 						break;
 					}
 				}
@@ -171,7 +173,7 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	if ($_POST['apply']) {
-		if ($_GET['act'] == "del") {
+		if (file_exists("/tmp/carp_reboot_needed") == "del") {
 			mwexec("/sbin/shutdown -r now");
 		} else {
 			$retval = 0;

@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <packagegui>
-	<title>Services: MiniUPnPd</title>
+	<title>Services: UPnP</title>
 	<name>miniupnpd</name>
-	<version>20070208</version>
+	<version>20070521</version>
 	<savetext>Change</savetext>
 	<include_file>/usr/local/pkg/miniupnpd.inc</include_file>
-	<aftersaveredirect>/status_upnp.php</aftersaveredirect>
 	<menu>
-		<name>MiniUPnPd</name>
-		<tooltiptext>Set miniupnpd settings such as interfaces to listen on.</tooltiptext>
+		<name>UPnP</name>
+		<tooltiptext>Set UPnP settings such as interfaces to listen on.</tooltiptext>
 		<section>Services</section>
-		<url>/status_upnp.php</url>
+		<url>/pkg_edit.php?xml=miniupnpd.xml&amp;id=0</url>
 	</menu>
 	<additional_files_needed>
 		<item>http://www.pfsense.org/packages/config/miniupnpd/miniupnpd.inc</item>
@@ -34,18 +33,14 @@
 	</service>
 	<tabs>
 		<tab>
-			<text>UPnP Status</text>
-			<url>/status_upnp.php</url>
-		</tab>
-		<tab>
-			<text>MiniUPnPd Settings</text>
+			<text>UPnP Settings</text>
 			<url>/pkg_edit.php?xml=miniupnpd.xml&amp;id=0</url>
 			<active/>
 		</tab>
 	</tabs>
 	<fields>
 		<field>
-			<fielddescr>Enable MiniUPnPd</fielddescr>
+			<fielddescr>Enable UPnP</fielddescr>
 			<fieldname>enable</fieldname>
 			<type>checkbox</type>
 		</field>			
@@ -75,17 +70,17 @@
 			<type>input</type>
 		</field>
 		<field>
-			<fielddescr>Log packets handled by miniupnpd rules?</fielddescr>
+			<fielddescr>Log packets handled by UPnP rules?</fielddescr>
 			<fieldname>logpackets</fieldname>
 			<type>checkbox</type>
 		</field>
 		<field>
-			<fielddescr>Use system uptime instead of miniupnpd uptime?</fielddescr>
+			<fielddescr>Use system uptime instead of UPnP service uptime?</fielddescr>
 			<fieldname>sysuptime</fieldname>
 			<type>checkbox</type>
 		</field>
 		<field>
-			<fielddescr>By default deny access to miniupnpd?</fielddescr>
+			<fielddescr>By default deny access to UPnP?</fielddescr>
 			<fieldname>permdefault</fieldname>
 			<type>checkbox</type>
 		</field>

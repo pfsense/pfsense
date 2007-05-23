@@ -173,7 +173,7 @@ require_once("notices.inc");
 							<li><a href="/pkg_edit.php?xml=olsrd.xml&id=0" class="navlnk">OLSR</a></li>
 							<li><a href="/pkg_edit.php?xml=routed/routed.xml&id=0" class="navlnk">RIP</a></li>
 							<li><a href="/services_snmp.php" class="navlnk">SNMP</a></li>
-							<li><a href="/status_upnp.php" class="navlnk">UPnP</a></li>
+							<li><a href="/pkg_edit.php?xml=miniupnpd.xml&id=0" class="navlnk">UPnP</a></li>
 							<li><a href="/pkg_edit.php?xml=openntpd.xml&id=0" class="navlnk">OpenNTPD</a></li>
 							<li><a href="/services_wol.php" class="navlnk">Wake on LAN</a></li>
 							<?php echo return_ext_menu("Services"); ?>

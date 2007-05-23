@@ -232,7 +232,7 @@ if(isset($config['proxyarp']['proxyarpnet'])) {
 
 if($config['installedpackages']['miniupnpd']['config'][0]['enable']) {
     $pconfig['name'] = "miniupnpd";
-    $pconfig['description'] = gettext("MiniUPnPd Service");
+    $pconfig['description'] = gettext("UPnP Service");
     $services[] = $pconfig;
     unset($pconfig);
 }

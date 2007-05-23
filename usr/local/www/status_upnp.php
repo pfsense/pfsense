@@ -31,11 +31,6 @@
 
 require("guiconfig.inc");
 
-/* Defaults to this page but if no settings are present, redirect to setup page */
-if(!$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||
-	!$config['installedpackages']['miniupnpd']['config'][0]['enable'])
-	Header("Location: /pkg_edit.php?xml=miniupnpd.xml&id=0");
-
 if ($_POST) {
 	if ($_POST['clear'] == "Clear") {
 		mwexec("/bin/sh /usr/local/etc/rc.d/miniupnpd.sh restart");
@@ -61,16 +56,15 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></font></p>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-
-<div id="mainlevel">
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
 <?php
-	$tab_array = array();
-	$tab_array[] = array(gettext("UPnP Status "), true, "/status_upnp.php");
-	$tab_array[] = array(gettext("MiniUPnPd Settings "), false, "/pkg_edit.php?xml=miniupnpd.xml&id=0");
-	display_top_tabs($tab_array);
+if(!$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||
+	!$config['installedpackages']['miniupnpd']['config'][0]['enable']) {
+	echo gettext("UPnP is currently disabled.");
+	include("fend.inc");
+	exit;
+}
 ?>
-</table>
+<div id="mainlevel">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
    <tr>
      <td class="tabcont" >

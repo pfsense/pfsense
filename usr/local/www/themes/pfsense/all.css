@@ -646,6 +646,105 @@ ul#tabnav li.tabact {
 }
 
 
+/* Widget CSS */
+.widgetsubheader {
+	border-right: 1px solid #999999;
+	font-size: 11px;
+	background-color: #999999;
+	padding-right: 6px;
+	padding-left: 6px;
+	color: #FFFFFF;
+	font-weight: bold;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+.widgetheader {
+	border-right: 1px solid #999999;
+	font-size: 11px;
+	background-color: #990000;
+	padding-right: 6px;
+	padding-left: 6px;
+	color: #FFFFFF;
+	font-weight: bold;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+.widgetdiv{
+	margin:5px;
+	padding: 5px;
+	background:#CCCCCC;
+}
+
+
+/* CSS for Dynamic Log Viewer */
+/* Author: Erik Kristensen    */
+div#log div.log-entry {
+	clear: both;
+}
+
+div#log div.log-entry span,
+div#log div.log-header span {
+	padding: 3px 2px 3px 2px;
+	padding-left: 8px;
+}
+
+div#log div.log-entry span.log-action {
+	padding-bottom: 6px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+div#log div.log-header span {
+	border-top: 1px solid #999;
+	background-color: #bbb;
+	font-weight: bold;
+	text-align: left;
+}
+
+div#log span.log-action,
+div#log span.log-time,
+div#log span.log-interface,
+div#log span.log-source,
+div#log span.log-destination,
+div#log span.log-protocol {
+	float: left;
+	text-align: left;
+	border-left: 1px solid #999;
+	border-bottom: 1px solid #999;
+}
+
+div#log span.log-general {
+
+}
+
+div#log span.log-protocol {
+	border-right: 1px solid #999;
+}
+
+div#log span.log-action {
+	width: 2em;
+	text-align: center;
+}
+
+div#log span.log-time {
+	width: 12.5em;
+}
+
+div#log span.log-interface {
+	width: 5em;
+}
+
+div#log span.log-source,
+div#log span.log-destination {
+	width: 17.6em;
+}
+
+div#log span.log-protocol {
+	width: 5.5em;
+}
+/* END CSS FOR DYNAMIC LOG VIEWER */
+
+
 /* Auto Complete Suggestions */
 div.suggestions {
     -moz-box-sizing: border-box;
@@ -669,7 +768,73 @@ div.suggestions div.current {
 }
 /* End Auto Complete Suggestions */
 
+/* CSS for Dynamic Log Viewer */
+/* Author: Erik Kristensen    */
+div#log div.log-entry {
+	clear: both;
+}
 
+div#log div.log-entry span,
+div#log div.log-header span {
+	padding: 3px 2px 3px 2px;
+	padding-left: 8px;
+}
+
+div#log div.log-entry span.log-action {
+	padding-bottom: 6px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+div#log div.log-header span {
+	border-top: 1px solid #999;
+	background-color: #bbb;
+	font-weight: bold;
+	text-align: left;
+}
+
+div#log span.log-action,
+div#log span.log-time,
+div#log span.log-interface,
+div#log span.log-source,
+div#log span.log-destination,
+div#log span.log-protocol {
+	float: left;
+	text-align: left;
+	border-left: 1px solid #999;
+	border-bottom: 1px solid #999;
+}
+
+div#log span.log-general {
+
+}
+
+div#log span.log-protocol {
+	border-right: 1px solid #999;
+}
+
+div#log span.log-action {
+	width: 2em;
+	text-align: center;
+}
+
+div#log span.log-time {
+	width: 12.5em;
+}
+
+div#log span.log-interface {
+	width: 5em;
+}
+
+div#log span.log-source,
+div#log span.log-destination {
+	width: 17.6em;
+}
+
+div#log span.log-protocol {
+	width: 5.5em;
+}
+/* END CSS FOR DYNAMIC LOG VIEWER */
 
 /* Nifty Corners Crap */
 .rtop,.artop{display:block}

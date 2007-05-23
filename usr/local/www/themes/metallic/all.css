@@ -782,7 +782,34 @@ div.suggestions div.current {
 .rer1,.rel1,.re1,.res1,.resl1,.resr1{border-width:1px 0 0;height:0px !important;height /**/:1px}
 /* End Nifty Corners Crap */
 
-
+/* Widget CSS */
+.widgetsubheader {
+	border-right: 1px solid #999999;
+	font-size: 11px;
+	background-color: #999999;
+	padding-right: 6px;
+	padding-left: 6px;
+	color: #FFFFFF;
+	font-weight: bold;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+.widgetheader {
+	border-right: 1px solid #999999;
+	font-size: 11px;
+	background-color: #990000;
+	padding-right: 6px;
+	padding-left: 6px;
+	color: #FFFFFF;
+	font-weight: bold;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+.widgetdiv{
+	margin:5px;
+	padding: 5px;
+	background:#CCCCCC;
+}
 
 /* CSS for Dynamic Log Viewer */
 /* Author: Erik Kristensen    */

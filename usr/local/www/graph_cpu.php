@@ -38,8 +38,8 @@ $fetch_link = "stats.php?stats=cpu";
 
 //SVG attributes
 $attribs['axis']='fill="black" stroke="black"';
-$attribs['cpu']='fill="#435370" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="7"';
-$attribs['graph_cpu']='fill="none" stroke="#435370" stroke-opacity="0.8"';
+$attribs['cpu']='fill="#FF0000" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="7"';
+$attribs['graph_cpu']='fill="none" stroke="#FF0000" stroke-opacity="0.8"';
 $attribs['legend']='fill="black" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="4"';
 $attribs['grid_txt']='fill="gray" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="6"';
 $attribs['grid']='stroke="gray" stroke-opacity="0.5"';

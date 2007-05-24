@@ -117,17 +117,19 @@
 $directory = "widgets/widgets/";
 $dirhandle  = opendir($directory);
 $filename = "";
-$widgetnames = array();
+$widgetnames = array ();
 $widgetfiles = array();
 
 while (false !== ($filename = readdir($dirhandle))) {
 	$periodpos = strpos($filename, ".");
-	$widgetnames[] = substr($filename, 0, $periodpos);		
-	if ($widgetnames != "system_information")
+	$widgetname = substr($filename, 0, $periodpos);
+	$widgetnames[] = $widgetname;
+	if ($widgetname != "system_information")
 		$widgetfiles[] = $filename;   		
 }
 sort($widgetfiles);
-	
+array_unshift($widgetfiles, "system_information.widget.php");
+
 
 if (!is_array($config['widgets'])) {
 	$config['widgets'] = array();
@@ -389,34 +391,54 @@ echo $jscriptstr;
 		//make the title look nice
 		$nicename = ucwords($nicename);
 		
-		
-		if ($displayarray[$widgetcounter] == "show"){
-			$divdisplay = "block";
-			$display = "block";
-			$inputdisplay = "show";					
-			$showdiv = "none";
-			$mindiv = "inline";
+		if ($config['widgets']){
+			if ($displayarray[$widgetcounter] == "show"){
+				$divdisplay = "block";
+				$display = "block";
+				$inputdisplay = "show";					
+				$showdiv = "none";
+				$mindiv = "inline";
+			}
+			else if ($displayarray[$widgetcounter] == "hide") {
+				$divdisplay = "block";
+				$display = "none";
+				$inputdisplay = "hide";		
+				$showdiv = "inline";
+				$mindiv = "none";
+			}
+			else if ($displayarray[$widgetcounter] == "close"){
+				$divdisplay = "none";
+				$display = "block";
+				$inputdisplay = "close";			
+				$showdiv = "none";
+				$mindiv = "inline";
+			}
+			else{
+				$divdisplay = "block";
+				$display = "block";
+				$inputdisplay = "show";
+				$showdiv = "none";
+				$mindiv = "inline";
+			}
 		}
-		else if ($displayarray[$widgetcounter] == "hide") {
-			$divdisplay = "block";
-			$display = "none";
-			$inputdisplay = "hide";		
-			$showdiv = "inline";
-			$mindiv = "none";
-		}
-		else if ($displayarray[$widgetcounter] == "close"){
-			$divdisplay = "none";
-			$display = "block";
-			$inputdisplay = "close";			
-			$showdiv = "none";
-			$mindiv = "inline";
-		}
-		else{
-			$divdisplay = "block";
-			$display = "block";
-			$inputdisplay = "show";
-			$showdiv = "none";
-			$mindiv = "inline";
+		else
+		{
+			if ($firstprint == false){
+				$divdisplay = "block";
+				$display = "block";
+				$inputdisplay = "show";					
+				$showdiv = "none";
+				$mindiv = "inline";
+				$firstprint = true;
+			}
+			else
+			{
+				$divdisplay = "none";
+				$display = "block";
+				$inputdisplay = "close";			
+				$showdiv = "none";
+				$mindiv = "inline";
+			}
 		}
 			
 		
@@ -486,7 +508,7 @@ echo $jscriptstr;
 	
 	<?php
 	//build list of javascript include files
-	$jsincludefiles = Array();
+	$jsincludefiles = array();
 	$directory = "widgets/javascript/";
 	$dirhandle  = opendir($directory);
 	$filename = "";

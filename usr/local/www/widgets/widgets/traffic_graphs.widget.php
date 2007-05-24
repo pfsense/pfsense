@@ -102,8 +102,8 @@ Refresh Interval:
 						<div id="<?=$ifname;?>graphdiv" style="display:<?php echo $graphdisplay;?>">
 							<embed id="graph" src="graph.php?ifnum=<?=$ifnum;?>&ifname=<?=rawurlencode($ifname);?>&timeint=<?=$refreshInterval;?>" type="image/svg+xml" width="<? echo $width; ?>" height="<? echo $height; ?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
 						</div>
-				<? $firstgraphshown = true; $graphcounter++;} ?>
+				<? $firstgraphshown = true; $graphcounter++; ?>
 					</div>											 
-	 <?  
+	 <?  }
 	} 
 ?>

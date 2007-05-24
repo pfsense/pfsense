@@ -850,6 +850,15 @@ div#log span.log-protocol {
 	padding: 5px;
 	background:#CCCCCC;
 }
+.widgetconfigdiv{
+	background:#BBBBBB;
+	font-size: 11px;
+	color: #000000;
+	padding-right: 5px;
+	padding-left: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
 
 div#log div.log-entry-mini {
 	clear: both;

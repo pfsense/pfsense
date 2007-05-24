@@ -2,7 +2,7 @@
 lastsawtime = '<?php echo time(); ?>;';
 var lines = Array();
 var timer;
-var updateDelay = 12000;
+var updateDelay = 30000;
 var isBusy = false;
 var isPaused = false;
 

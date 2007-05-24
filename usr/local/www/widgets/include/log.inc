@@ -10,7 +10,7 @@ $filterlog = conv_clog_filter($filter_logfile, $nentries);
 	
 
 /* format filter logs */	
-function conv_clog_filter($logfile, $tail = 50) {
+function conv_clog_filter($logfile, $tail = 8) {
 	global $config, $nentries, $logfile;
 
 	$logfile = "/var/log/filter.log";
@@ -144,7 +144,7 @@ function handle_ajax() {
                  *  can update AJAX interface screen.
 		 */
 		$new_rules = "";
-		$filterlog = conv_clog_filter($filter_logfile, 50);
+		$filterlog = conv_clog_filter($filter_logfile, 8);
 		foreach($filterlog as $log_row) {
 			$time_regex = "";
 			preg_match("/.*([0-9][0-9]:[0-9][0-9]:[0-9][0-9])/", $log_row['time'], $time_regex);

@@ -54,6 +54,10 @@ function updateGraphDisplays(){
 		graphsdisplayed += textlink;
 		firstprint = true;
 	}
+	selectIntLink = "refreshInterval";
+	graphsdisplayed += ",refreshInterval=";
+	graphsdisplayed += d.getElementById(selectIntLink).value;
+	
     selectIntLink = "traffic_graphs-config";
 	textlink = d.getElementById(selectIntLink);
 	textlink.value = graphsdisplayed;

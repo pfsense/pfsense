@@ -9,7 +9,39 @@
 					$height = "150";
 					$showngraphlist = explode(",", $pconfig['traffic_graphs-config']);
 					$graphcounter = 0;
+					if($config['widgets']['traffic_graphs-config']){
+						$graphlistcount = count($showngraphlist);
+						$refreshintervalstring = $showngraphlist[$graphlistcount-1];
+						$eqposition = strpos($refreshintervalstring,"=");
+						$refreshInterval = substr($refreshintervalstring, $eqposition+1);
+					}
+					else {
+						$refreshInterval = "3";
+					}
 					
+?>
+
+<div id="traffic_graphs-settings" name="traffic_graphs-settings" class="widgetconfigdiv" style="display:none;">
+Refresh Interval: 
+	<select name="refreshInterval" class="formfld" id="refreshInterval" onchange="updateGraphDisplays();">
+		<option value="1" <?php if ($refreshInterval == "1") echo "SELECTED";?>>1</option>
+		<option value="2" <?php if ($refreshInterval == "2") echo "SELECTED";?>>2</option>
+		<option value="3" <?php if ($refreshInterval == "3") echo "SELECTED";?>>3</option>
+		<option value="4" <?php if ($refreshInterval == "4") echo "SELECTED";?>>4</option>
+		<option value="5" <?php if ($refreshInterval == "5") echo "SELECTED";?>>5</option>
+	</select>&nbsp; Seconds<br>&nbsp; &nbsp; &nbsp; <b>Note:</b> changing this settings can affect CPU Performance on the pfSense Box<br><br>
+	<input id="submit" name="submit" type="submit" onclick="return updatePref();" class="formbtn" value="Save Settings" />
+</div>
+
+<script language="javascript" type="text/javascript">
+			d = document;
+			selectIntLink = "traffic_graphs-configure";
+			textlink = d.getElementById(selectIntLink);
+			textlink.style.display = "inline";
+	</script>
+
+<?php
+
 					 if (get_cpu_speed() >= 500) 
 						$firstgraphshown = false;
 					else
@@ -68,7 +100,7 @@
 							<div style="clear:both;"></div>
 						</div>						
 						<div id="<?=$ifname;?>graphdiv" style="display:<?php echo $graphdisplay;?>">
-							<embed id="graph" src="graph.php?ifnum=<?=$ifnum;?>&ifname=<?=rawurlencode($ifname);?>" type="image/svg+xml" width="<? echo $width; ?>" height="<? echo $height; ?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
+							<embed id="graph" src="graph.php?ifnum=<?=$ifnum;?>&ifname=<?=rawurlencode($ifname);?>&timeint=<?=$refreshInterval;?>" type="image/svg+xml" width="<? echo $width; ?>" height="<? echo $height; ?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
 						</div>
 				<? $firstgraphshown = true; $graphcounter++;} ?>
 					</div>											 

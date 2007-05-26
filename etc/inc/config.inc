@@ -1046,8 +1046,12 @@ function convert_config() {
 			$config['version'] = "3.0";
 		}
 
-		/* Convert 3.0 -> 3.1 */
-		if ($config['version'] <= 3.1 and !$config['sysctl']['item']) {
+	}
+		
+	/* Convert 3.0 -> 3.1 */
+	if ($config['version'] <= 3.0) {
+		if(!$config['sysctl']) {
+
 			$config['sysctl']['item'] = array();
 	
 			$config['sysctl']['item'][0]['tunable'] = "net.inet.tcp.blackhole";

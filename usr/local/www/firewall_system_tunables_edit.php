@@ -28,7 +28,7 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array(gettext("Firewall"),gettext("System Tunables"),gettext("Edit"));
+$pgtitle = array("Firewall","System Tunables","Edit");
 
 require("guiconfig.inc");
 if (!is_array($config['sysctl']['item'])) {
@@ -94,19 +94,19 @@ include("fbegin.inc");
               <?display_topbar()?>
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
-		  		  <td width="22%" valign="top" class="vncellreq"><?=gettext("Tunable");?></td>
+		  		  <td width="22%" valign="top" class="vncellreq">Tunable</td>
                   <td width="78%" class="vtable">
 						<input size="55" name="tunable" value="<?php echo $pconfig['tunable']; ?>">
 				  </td>
 				</tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Description");?></td>
+                  <td width="22%" valign="top" class="vncellreq">Description</td>
                   <td width="78%">
 						<textarea rows="3" cols="40" name="desc"><?php echo $pconfig['desc']; ?></textarea>
                   </td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq"><?=gettext("Value");?></td>
+                  <td width="22%" valign="top" class="vncellreq">Value</td>
                   <td width="78%">
 						<input size="55" name="value" value="<?php echo $pconfig['value']; ?>">
                   </td>
@@ -114,8 +114,8 @@ include("fbegin.inc");
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>
                   <td width="78%">
-                    <input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-                    <input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="<?=gettext("Cancel");?>" onclick="history.back()" />
+                    <input id="submit" name="Submit" type="submit" class="formbtn" value="Save" />
+                    <input id="cancelbutton" name="cancelbutton" type="button" class="formbtn" value="Cancel" onclick="history.back()" />
                     <?php if (isset($id) && $a_tunable[$id]): ?>
                     <input name="id" type="hidden" value="<?=$id;?>" />
                     <?php endif; ?>

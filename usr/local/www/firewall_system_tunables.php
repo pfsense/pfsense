@@ -28,7 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array(gettext("Firewall"),gettext("System Tunables"));
+$pgtitle = array("Firewall","System Tunables");
 
 require("guiconfig.inc");
 
@@ -76,7 +76,7 @@ include("fbegin.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_sysctldirty_path)): ?><p>
-<?php print_info_box_np(gettext("The firewall tunables have changed.  You must apply the configuration to take affect."));?><br />
+<?php print_info_box_np("The firewall tunables have changed.  You must apply the configuration to take affect.");?><br />
 <?php endif; ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
@@ -84,9 +84,9 @@ include("fbegin.inc");
 	<div id="mainarea">
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td width="20%" class="listhdrr"><?=gettext("Tunable Name");?></td>
-                  <td width="60%" class="listhdrr"><?=gettext("Description");?></td>                 
-                  <td width="20%" class="listhdrr"><?=gettext("Value");?></td>
+                  <td width="20%" class="listhdrr">Tunable Name</td>
+                  <td width="60%" class="listhdrr">Description</td>                 
+                  <td width="20%" class="listhdrr">Value</td>
 				</tr>
 			  <?php $i = 0; foreach ($config['sysctl']['item'] as $tunable): ?>
                 <tr>
@@ -103,7 +103,7 @@ include("fbegin.inc");
                     <table border="0" cellspacing="0" cellpadding="1">
                       <tr>
                         <td valign="middle"><a href="firewall_system_tunables_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0" alt="" /></a></td>
-                        <td valign="middle"><a href="firewall_system_tunables.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this entry?");?>')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="" /></a></td>
+                        <td valign="middle"><a href="firewall_system_tunables.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('Do you really want to delete this entry?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0" alt="" /></a></td>
                       </tr>
                     </table>
                   </td>                  

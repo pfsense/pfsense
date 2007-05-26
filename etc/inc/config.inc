@@ -1075,7 +1075,7 @@ function convert_config() {
 			$config['sysctl']['item'][4]['value'] =   "0";
 	
 			$config['sysctl']['item'][5]['tunable'] = "net.inet6.ip6.redirect";
-			$config['sysctl']['item'][5]['desc'] =    "Disable sending IPv4/IPv6 redirects";
+			$config['sysctl']['item'][5]['desc'] =    "Disable sending IPv6 redirects";
 			$config['sysctl']['item'][5]['value'] =   "0";
 	
 			$config['sysctl']['item'][6]['tunable'] = "net.inet.tcp.syncookies";
@@ -1083,11 +1083,11 @@ function convert_config() {
 			$config['sysctl']['item'][6]['value'] =   "1";
 	
 			$config['sysctl']['item'][7]['tunable'] = "net.inet.tcp.recvspace";
-			$config['sysctl']['item'][7]['desc'] =    "Maximum incoming/outgoing TCP datagram size";
+			$config['sysctl']['item'][7]['desc'] =    "Maximum incoming TCP datagram size";
 			$config['sysctl']['item'][7]['value'] =   "65228";
 	
 			$config['sysctl']['item'][8]['tunable'] = "net.inet.tcp.sendspace";
-			$config['sysctl']['item'][8]['desc'] =    "Maximum incoming/outgoing TCP datagram size";
+			$config['sysctl']['item'][8]['desc'] =    "Maximum outgoing TCP datagram size";
 			$config['sysctl']['item'][8]['value'] =   "65228";
 	
 			$config['sysctl']['item'][9]['tunable'] = "net.inet.ip.fastforwarding";

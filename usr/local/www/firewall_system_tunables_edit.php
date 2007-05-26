@@ -102,7 +102,7 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Description</td>
                   <td width="78%">
-						<textarea rows="3" cols="40" name="desc"><?php echo $pconfig['desc']; ?></textarea>
+						<textarea rows="5" cols="40" name="desc"><?php echo $pconfig['desc']; ?></textarea>
                   </td>
                 </tr>
                 <tr>

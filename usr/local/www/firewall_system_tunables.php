@@ -66,7 +66,6 @@ if ($_GET['act'] == "del") {
 }
 
 include("head.inc");
-include("fbegin.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">

@@ -80,7 +80,6 @@ if ($_POST) {
 }
 
 include("head.inc");
-include("fbegin.inc");
 
 ?>
 

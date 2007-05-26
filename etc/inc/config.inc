@@ -1042,10 +1042,12 @@ function convert_config() {
 			/* wipe previous auth configuration */
 			unset ($config['system']['username']);
 			unset ($config['system']['password']);
+			
+			$config['version'] = "3.0";
 		}
 
 		/* Convert 3.0 -> 3.1 */
-		if ($config['version'] <= 3.0 and !$config['sysctl']['item']) {
+		if ($config['version'] <= 3.1 and !$config['sysctl']['item']) {
 			$config['sysctl']['item'] = array();
 	
 			$config['sysctl']['item'][0]['tunable'] = "net.inet.tcp.blackhole";
@@ -1115,9 +1117,10 @@ function convert_config() {
 			$config['sysctl']['item'][16]['tunable'] = "net.inet.tcp.inflight.enable";
 			$config['sysctl']['item'][16]['desc'] =    "The system will attempt to calculate the bandwidth delay product for each connection and limit the amount of data queued to the network to just the amount required to maintain optimum throughput. ";
 			$config['sysctl']['item'][16]['value'] =   "3";
+
+			$config['version'] = "3.1";
 		}
 
-		$config['version'] = "3.1";
 	}
 
 	if ($prev_version != $config['version'])

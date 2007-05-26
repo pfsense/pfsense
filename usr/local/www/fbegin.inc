@@ -128,6 +128,7 @@ require_once("notices.inc");
 						<?php endif; ?>
 							<li><a href="/wizard.php?xml=setup_wizard.xml" class="navlnk">Setup wizard</a></li>
 							<li><a href="/system_routes.php" class="navlnk">Static routes</a></li>
+							<li><a href="/firewall_system_tunables.php" class="navlnk">Tunables</a></li>
 							<li><a href="/system_usermanager.php" class="navlnk">User Manager</a></li>
 						</ul>
 					</li>

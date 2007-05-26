@@ -32,6 +32,13 @@
 /* include all configuration functions */
 require_once("functions.inc");
 
+function activate_sysctls() {
+	global $config, $g;
+	foreach ($config['sysctl']['item'] as $tunable) {
+		mwexec("sysctl " . $tunable['tunable'] . "=\"" . $tunable['value'] .  "\"");
+	}
+}
+
 function opcode_cache_configuration() {
 		global $g;
         if($g['platform'] == "cdrom")
@@ -1202,11 +1209,8 @@ function system_setup_sysctl() {
 		echo "system_setup_sysctl() being called $mt\n";
 	}
 
-	$sysctl = return_filename_as_array("/etc/sysctl.conf");
-	foreach($sysctl as $sysc) {
-		if($sysc <> "")
-			mwexec("sysctl {$sysc} 2>/dev/null");
-	}
+	activate_sysctls();	
+
 	if (isset($config['system']['sharednet'])) {
 		system_disable_arp_wrong_if();
 	}

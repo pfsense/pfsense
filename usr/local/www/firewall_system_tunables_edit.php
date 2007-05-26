@@ -28,7 +28,7 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("Firewall","System Tunables","Edit");
+$pgtitle = "Firewall: System Tunables: Edit";
 
 require("guiconfig.inc");
 if (!is_array($config['sysctl']['item'])) {

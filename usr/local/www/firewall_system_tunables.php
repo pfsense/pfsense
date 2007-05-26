@@ -28,7 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = array("Firewall","System Tunables");
+$pgtitle = "Firewall: System: Tunables";
 
 require("guiconfig.inc");
 

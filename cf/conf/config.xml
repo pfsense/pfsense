@@ -6,6 +6,41 @@
 	<theme>nervecenter</theme>
 	<sysctl>
 		<item>
+			<desc>Drop packets to closed TCP ports without returning a RST</desc>
+			<tunable>net.inet.tcp.blackhole</tunable>
+			<value>2</value>
+		</item>
+		<item>
+			<desc>Do not send ICMP port unreachable messages for closed UDP ports</desc>
+			<tunable>net.inet.udp.blackhole</tunable>
+			<value>1</value>
+		</item>
+		<item>
+			<desc>Randomize the ID field in IP packets (default is 0: sequential IP IDs)</desc>
+			<tunable>net.inet.ip.random_id</tunable>
+			<value>1</value>
+		</item>
+		<item>
+			<desc>Drop SYN-FIN packets (breaks RFC1379, but nobody uses it anyway)</desc>
+			<tunable>net.inet.tcp.drop_synfin</tunable>
+			<value>1</value>
+		</item>
+		<item>
+			<desc>Disable sending IPv4 redirects</desc>
+			<tunable>net.inet.ip.redirect</tunable>
+			<value>0</value>
+		</item>
+		<item>
+			<desc>Disable sending IPv6 redirects</desc>
+			<tunable>net.inet6.ip6.redirect</tunable>
+			<value>0</value>
+		</item>	
+		<item>
+			<desc>Generate SYN cookies for outbound SYN-ACK packets</desc>
+			<tunable>net.inet.tcp.syncookies</tunable>
+			<value>1</value>
+		</item>
+		<item>
 			<desc>Maximum incoming/outgoing TCP datagram size (receive)</desc>
 			<tunable>net.inet.tcp.recvspace</tunable>
 			<value>65228</value>

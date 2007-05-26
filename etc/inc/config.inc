@@ -1044,9 +1044,81 @@ function convert_config() {
 			unset ($config['system']['password']);
 		}
 
-		$config['version'] = "3.0";
-	}
+		/* Convert 3.0 -> 3.1 */
+		if ($config['version'] <= 3.0 and !$config['sysctl']['item']) {
+			$config['sysctl']['item'] = array();
+	
+			$config['sysctl']['item'][0]['tunable'] = "net.inet.tcp.blackhole";
+			$config['sysctl']['item'][0]['desc'] =    "Drop packets to closed TCP ports without returning a RST";
+			$config['sysctl']['item'][0]['value'] =   "2";
+	
+			$config['sysctl']['item'][1]['tunable'] = "net.inet.udp.blackhole";
+			$config['sysctl']['item'][1]['desc'] =    "Do not send ICMP port unreachable messages for closed UDP ports";
+			$config['sysctl']['item'][1]['value'] =   "1";
+	
+			$config['sysctl']['item'][2]['tunable'] = "net.inet.ip.random_id";
+			$config['sysctl']['item'][2]['desc'] =    "Randomize the ID field in IP packets (default is 0: sequential IP IDs)";
+			$config['sysctl']['item'][2]['value'] =   "1";
+	
+			$config['sysctl']['item'][3]['tunable'] = "net.inet.tcp.drop_synfin";
+			$config['sysctl']['item'][3]['desc'] =    "Drop SYN-FIN packets (breaks RFC1379, but nobody uses it anyway)";
+			$config['sysctl']['item'][3]['value'] =   "1";
+	
+			$config['sysctl']['item'][4]['tunable'] = "net.inet.ip.redirect";
+			$config['sysctl']['item'][4]['desc'] =    "Disable sending IPv4 redirects";
+			$config['sysctl']['item'][4]['value'] =   "0";
+	
+			$config['sysctl']['item'][5]['tunable'] = "net.inet6.ip6.redirect";
+			$config['sysctl']['item'][5]['desc'] =    "Disable sending IPv4/IPv6 redirects";
+			$config['sysctl']['item'][5]['value'] =   "0";
+	
+			$config['sysctl']['item'][6]['tunable'] = "net.inet.tcp.syncookies";
+			$config['sysctl']['item'][6]['desc'] =    "Generate SYN cookies for outbound SYN-ACK packets";
+			$config['sysctl']['item'][6]['value'] =   "1";
+	
+			$config['sysctl']['item'][7]['tunable'] = "net.inet.tcp.recvspace";
+			$config['sysctl']['item'][7]['desc'] =    "Maximum incoming/outgoing TCP datagram size";
+			$config['sysctl']['item'][7]['value'] =   "65228";
+	
+			$config['sysctl']['item'][8]['tunable'] = "net.inet.tcp.sendspace";
+			$config['sysctl']['item'][8]['desc'] =    "Maximum incoming/outgoing TCP datagram size";
+			$config['sysctl']['item'][8]['value'] =   "65228";
+	
+			$config['sysctl']['item'][9]['tunable'] = "net.inet.ip.fastforwarding";
+			$config['sysctl']['item'][9]['desc'] =    "Fastforwarding (see http://lists.freebsd.org/pipermail/freebsd-net/2004-January/002534.html)";
+			$config['sysctl']['item'][9]['value'] =   "1";
+	
+			$config['sysctl']['item'][10]['tunable'] = "net.inet.tcp.delayed_ack";
+			$config['sysctl']['item'][10]['desc'] =    "Do not delay ACK to try and piggyback it onto a data packet";
+			$config['sysctl']['item'][10]['value'] =   "0";
+	
+			$config['sysctl']['item'][11]['tunable'] = "net.inet.udp.maxdgram";
+			$config['sysctl']['item'][11]['desc'] =    "Maximum outgoing UDP datagram size";
+			$config['sysctl']['item'][11]['value'] =   "57344";
+	
+			$config['sysctl']['item'][12]['tunable'] = "net.link.bridge.pfil_onlyip";
+			$config['sysctl']['item'][12]['desc'] =    "Handling of non-IP packets which are not passed to pfil (see if_bridge(4))";
+			$config['sysctl']['item'][12]['value'] =   "0";
+	
+			$config['sysctl']['item'][13]['tunable'] = "net.link.tap.user_open";
+			$config['sysctl']['item'][13]['desc'] =    "Allow unprivileged access to tap(4) device nodes";
+			$config['sysctl']['item'][13]['value'] =   "1";
+	
+			$config['sysctl']['item'][14]['tunable'] = "kern.rndtest.verbose";
+			$config['sysctl']['item'][14]['desc'] =    "Verbosity of the rndtest driver (0: do not display results on console)";
+			$config['sysctl']['item'][14]['value'] =   "0";
+	
+			$config['sysctl']['item'][15]['tunable'] = "kern.randompid";
+			$config['sysctl']['item'][15]['desc'] =    "Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())";
+			$config['sysctl']['item'][15]['value'] =   "347";
+	
+			$config['sysctl']['item'][16]['tunable'] = "net.inet.tcp.inflight.enable";
+			$config['sysctl']['item'][16]['desc'] =    "The system will attempt to calculate the bandwidth delay product for each connection and limit the amount of data queued to the network to just the amount required to maintain optimum throughput. ";
+			$config['sysctl']['item'][16]['value'] =   "3";
+		}
 
+		$config['version'] = "3.1";
+	}
 
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");

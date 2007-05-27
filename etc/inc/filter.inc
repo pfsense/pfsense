@@ -308,6 +308,8 @@ function filter_configure_sync() {
 	update_filter_reload_status("Syncing CARP data");
 	carp_sync_client();
 
+	system_routing_configure();
+	
 	update_filter_reload_status("Done");
 
 	return 0;

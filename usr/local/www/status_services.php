@@ -203,7 +203,7 @@ foreach($iflist as $if) {
 }
 
 if($show_dhcprelay == true) {
-	$pconfig['name'] = "dhcprelay";
+	$pconfig['name'] = "dhcrelay";
 	$pconfig['description'] = "DHCP Relay";
 	$services[] = $pconfig;
 	unset($pconfig);

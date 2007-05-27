@@ -95,19 +95,19 @@ include("head.inc");
                 <tr>
 		  		  <td width="22%" valign="top" class="vncellreq">Tunable</td>
                   <td width="78%" class="vtable">
-						<input size="55" name="tunable" value="<?php echo $pconfig['tunable']; ?>">
+						<input size="65" name="tunable" value="<?php echo $pconfig['tunable']; ?>">
 				  </td>
 				</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Description</td>
                   <td width="78%">
-						<textarea rows="7" cols="40" name="desc"><?php echo $pconfig['desc']; ?></textarea>
+						<textarea rows="7" cols="50" name="desc"><?php echo $pconfig['desc']; ?></textarea>
                   </td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Value</td>
                   <td width="78%">
-						<input size="55" name="value" value="<?php echo $pconfig['value']; ?>">
+						<input size="65" name="value" value="<?php echo $pconfig['value']; ?>">
                   </td>
                 </tr>
                 <tr>

@@ -169,7 +169,6 @@ function output_ipsec_tunnel_status($tunnel) {
 	global $g, $config, $sad;
 	$if = "WAN";
 	$interfaceip = get_ipsec_tunnel_src($tunnel);
-	echo $interfaceip;
 	$foundsrc = false;
 	$founddst = false;
 	foreach($sad as $sa) {

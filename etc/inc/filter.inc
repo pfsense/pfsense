@@ -2457,10 +2457,10 @@ EOD;
 
 # allow PPTP client
 anchor "pptpclient"
-pass in quick on \$wan proto gre from any to any modulate state label "allow PPTP client"
-pass out quick on \$wan proto gre from any to any modulate state label "allow PPTP client"
-pass in quick on \$wan proto tcp from any port = 1723 to any flags S/SA modulate state label "allow PPTP client"
-pass out quick on \$wan proto tcp from any to any port = 1723 flags S/SA modulate state label "allow PPTP client"
+pass quick on \$wan proto gre from any to any modulate state label "allow PPTP client"
+pass quick on \$wan proto gre from any to any modulate state label "allow PPTP client"
+pass quick on \$wan proto tcp from any port = 1723 to any flags S/SA modulate state label "allow PPTP client"
+pass quick on \$wan proto tcp from any to any port = 1723 flags S/SA modulate state label "allow PPTP client"
 
 EOD;
 	}
@@ -2614,7 +2614,7 @@ EOD;
 
 # PPTPd rules
 anchor "pptp"
-pass in quick on \$wan proto gre from any to $pptpdtarget modulate state label "allow gre pptpd"
+pass quick proto gre from any to $pptpdtarget modulate state label "allow gre pptpd"
 pass in quick on \$wan proto tcp from any to $pptpdtarget port = 1723 modulate state label "allow pptpd {$pptpdtarget}"
 
 EOD;

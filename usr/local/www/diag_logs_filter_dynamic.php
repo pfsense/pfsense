@@ -169,7 +169,7 @@ include("head.inc");
 	lastsawtime = '<?php echo time(); ?>;';
 	var lines = Array();
 	var timer;
-	var updateDelay = 12500;
+	var updateDelay = 25500;
 	var isBusy = false;
 	var isPaused = false;
 <?php

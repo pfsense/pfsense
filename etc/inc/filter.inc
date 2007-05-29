@@ -1962,6 +1962,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				if(isset($rule['statetype']) && $rule['statetype'] <> "") {
 					switch($rule['statetype']) {
 						case "none":
+							$noadvoptions = false;
 							break;
 						case "modulate state":
 						case "synproxy state":
@@ -1974,7 +1975,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				} else {
 					$aline['flags'] = "keep state ";
 				}
-				if($aline['flags']) 
+				if($noadvoptions == false) 
 					if( isset($rule['source-track']) and $rule['source-track'] <> "" or
 					  isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "" or
 					   isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "" or

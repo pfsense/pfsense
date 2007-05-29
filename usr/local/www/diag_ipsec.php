@@ -96,13 +96,25 @@ if ($fd) {
   <tr>
                 <td nowrap class="listhdrr">Source</td>
                 <td nowrap class="listhdrr">Destination</a></td>
+                <td nowrap class="listhdrr">Description</a></td>
                 <td nowrap class="listhdrr">Status</td>
 	</tr>
 <?php
 foreach ($config['ipsec']['tunnel'] as $ipsec): ?>
 	<tr>
-		<td class="listlr"><?=htmlspecialchars(get_ipsec_tunnel_src($ipsec));?></td>
-		<td class="listr"><?=htmlspecialchars($ipsec['remote-gateway']);?></td>
+		<td class="listlr"><?=htmlspecialchars(get_ipsec_tunnel_src($ipsec));?>
+		<br/>
+        <?php	if ($ipsec['local-subnet']['network'])
+					echo strtoupper($ipsecent['local-subnet']['network']);
+				else
+					echo $ipsec['local-subnet']['address'];
+		?>		
+		</td>
+		<td class="listr"><?=htmlspecialchars($ipsec['remote-gateway']);?>
+		<br/>
+		<?=$ipsec['remote-subnet'];?>
+		</td>
+		<td class="listr"><?=htmlspecialchars($ipsec['descr']);?></td>
 		<td class="listr"><?php echo output_ipsec_tunnel_status($ipsec); ?></td>
 	</tr>
 <?php endforeach; ?>

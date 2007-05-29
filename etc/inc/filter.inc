@@ -1959,6 +1959,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						do not use state mechanisms to keep track. this is only useful if your doing advanced
 						queueing in certain situations. please check the faq.
 				*/
+				$noadvoptions = false;
 				if(isset($rule['statetype']) && $rule['statetype'] <> "") {
 					switch($rule['statetype']) {
 						case "none":

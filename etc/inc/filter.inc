@@ -2615,7 +2615,7 @@ EOD;
 
 # PPTPd rules
 anchor "pptp"
-pass quick proto gre from any to $pptpdtarget modulate state label "allow gre pptpd"
+pass quick proto gre from any to $pptpdtarget keep state label "allow gre pptpd"
 pass in quick on \$wan proto tcp from any to $pptpdtarget port = 1723 modulate state label "allow pptpd {$pptpdtarget}"
 
 EOD;

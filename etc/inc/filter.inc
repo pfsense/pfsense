@@ -956,12 +956,12 @@ function filter_nat_rules_generate() {
 	if (isset($config['nat']['rule'])) {
 		$natrules .= "# NAT Inbound Redirects\n";
 
+		$inetd_fd = fopen("/var/etc/inetd.conf","w");
+
+		/* add tftp protocol helper */
+		fwrite($inetd_fd, "tftp\tdgram\tudp\twait\t\troot\t/usr/local/sbin/tftp-proxy -v\n");
+
 		if(!isset($config['system']['disablenatreflection'])) {
-			$inetd_fd = fopen("/var/etc/inetd.conf","w");
-
-			/* add tftp protocol helper */
-			fwrite($inetd_fd, "tftp\tdgram\tudp\twait\t\troot\t/usr/local/sbin/tftp-proxy -v\n");
-
 			/* start redirects on port 19000 of localhost */
 			$starting_localhost_port = 19000;
 		}

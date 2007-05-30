@@ -936,7 +936,7 @@ function filter_nat_rules_generate() {
 			}
 		if($ifname_lower) {
 			$natrules .= "rdr on $tmp_interface proto tcp from any to any port 21 -> 127.0.0.1 port {$tmp_port}\n";
-			$natrules .= "rdr on \${$ifdescr} proto udp from any to $vpns port tftp -> 127.0.0.1 port 6969\n";
+			$natrules .= "rdr on $tmp_interface proto udp from any to any port tftp -> 127.0.0.1 port 6969\n";
 		}
 		$interface_counter++;
 	}
@@ -960,7 +960,7 @@ function filter_nat_rules_generate() {
 			$inetd_fd = fopen("/var/etc/inetd.conf","w");
 
 			/* add tftp protocol helper */
-			fwrite($fd, "tftp\tdgram\tudp\twait\troot\t/usr/local/sbin/tftp-proxy -v\n");
+			fwrite($inetd_fd, "tftp\tdgram\tudp\twait\troot\t/usr/local/sbin/tftp-proxy -v\n");
 
 			/* start redirects on port 19000 of localhost */
 			$starting_localhost_port = 19000;

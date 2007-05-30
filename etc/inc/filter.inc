@@ -617,6 +617,7 @@ function filter_nat_rules_generate() {
 
 	$natrules .= "# FTP proxy\n";
 	$natrules .= "rdr-anchor \"pftpx/*\"\n";
+	$natrules .= "rdr-anchor \"tftp-proxy/*\"\n";
 
 	update_filter_reload_status("Creating 1:1 rules...");
 
@@ -860,6 +861,9 @@ function filter_nat_rules_generate() {
 
 	update_filter_reload_status("Setting up FTP helper");
 
+	/* do not nat tftp proxy */
+	$natrules .= "\nno nat on \$wan to port tftp\n\n";
+
 	$natrules .= "\n# FTP Proxy/helper\n";
 	/* build an array of interfaces to work with */
 	$iflist = array("lan" => "LAN");
@@ -924,11 +928,16 @@ function filter_nat_rules_generate() {
 		if($int_ip and $vpns_list)
 			if($ifname_lower) {
 				$natrules .= "no rdr on $tmp_interface proto tcp from any to <vpns> port 21\n";
-				if($onetoone_list)
+				$natrules .= "no rdr on $tmp_interface proto udp from any to <vpns> port tftp\n";
+				if($onetoone_list) {
 					$natrules .= "no rdr on $tmp_interface proto tcp from <onetoonelist> to any port 21\n";
+					$natrules .= "no rdr on $tmp_interface proto udp from <onetoonelist> to any port tftp\n";
+				}
 			}
-		if($ifname_lower)
+		if($ifname_lower) {
 			$natrules .= "rdr on $tmp_interface proto tcp from any to any port 21 -> 127.0.0.1 port {$tmp_port}\n";
+			$natrules .= "rdr on \${$ifdescr} proto udp from any to $vpns port tftp -> 127.0.0.1 port 6969\n";
+		}
 		$interface_counter++;
 	}
 	$natrules .= "\n";
@@ -941,6 +950,7 @@ function filter_nat_rules_generate() {
 
 	if(file_exists("/var/etc/inetd.conf"))
 		mwexec("rm /var/etc/inetd.conf");
+	
 	touch("/var/etc/inetd.conf");
 
 	if (isset($config['nat']['rule'])) {
@@ -948,6 +958,10 @@ function filter_nat_rules_generate() {
 
 		if(!isset($config['system']['disablenatreflection'])) {
 			$inetd_fd = fopen("/var/etc/inetd.conf","w");
+
+			/* add tftp protocol helper */
+			fwrite($fd, "tftp\tdgram\tudp\twait\troot\t/usr/local/sbin/tftp-proxy -v\n");
+
 			/* start redirects on port 19000 of localhost */
 			$starting_localhost_port = 19000;
 		}

@@ -40,11 +40,13 @@
 				
 				  <?php if ($ifinfo['dhcplink'] != "down" && $ifinfo['pppoelink'] != "down" && $ifinfo['pptplink'] != "down"){ ?>
 	                 <?php if($ifinfo['status'] == "up") { ?> 
-		                  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" title="<?=$ifname;?> is up" />&nbsp; 
-		                  <? } else if ($ifinfo['status'] == "down") { ?>
-		                  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is down" />&nbsp; 
+		                  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" />&nbsp; 
+		                  <? } else if ($ifinfo['status'] == "no carrier") { ?>
+		                  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" />&nbsp; 
+		                  <? }  else if ($ifinfo['status'] == "down") { ?>
+		                  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" />&nbsp; 
 		                  <? } else if ($ifinfo['status'] == "associated") { ?>
-		                  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_pass.gif" title="<?=$ifname;?> is associated" />&nbsp; 
+		                  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is associated" />&nbsp; 
 		                  <? } else { ?><?=htmlspecialchars($ifinfo['status']);
 				}?>				
 				  <?php if ($ifinfo['ipaddr']){ ?>

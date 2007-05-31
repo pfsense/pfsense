@@ -194,7 +194,7 @@ EOPP;
 			continue;
 
 		if($dhcpif == "lan" && $ifcfg['bridge'])
-			continue;
+			log_error("NOTE: DHCP Server on LAN is enabled.");
 
 		$subnet = gen_subnet($ifcfg['ipaddr'], $ifcfg['subnet']);
 		$subnetmask = gen_subnet_mask($ifcfg['subnet']);

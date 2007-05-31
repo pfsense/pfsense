@@ -205,7 +205,7 @@ require_once("notices.inc");
 							<li><a href="/status_queues.php" class="navlnk">Queues</a></li>
 							<li><a href="/status_rrd_graph.php" class="navlnk">RRD Graphs</a></li>
 							<li><a href="/status_services.php" class="navlnk">Services</a></li>
-							<li><a href="/index.php" class="navlnk">System</a></li>
+							<li><a href="/index.php" class="navlnk">Dashboard</a></li>
 							<li><a href="/diag_logs.php" class="navlnk">System logs</a></li>
 							<li><a href="/status_graph.php?if=wan" class="navlnk">Traffic graph</a></li>
 							<li><a href="/status_upnp.php" class="navlnk">UPnP</a></li>

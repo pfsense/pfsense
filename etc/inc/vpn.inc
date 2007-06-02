@@ -563,7 +563,7 @@ EOD;
 
 			if(is_process_running("racoon")) {
 				/* We are already online, reload */
-				mwexec("/usr/bin/kill -HUP racoon");
+				mwexec("/usr/bin/killall -HUP racoon");
 			} else {
 				/* sleep for a bit */
 				sleep (2);

@@ -31,13 +31,16 @@ switch ($command) {
 	case "q":
 	case "quit":
 		echo "\n";
+		fclose($fp);
 		die;
 	break;
 	case "1":
 		echo "\nEnter the URL to the .tgz update file:\n> ";
 		$url = chop(fgets($fp));
-		if(!$url) 
+		if(!$url) { 
+			fclose($fp);
 			die;
+		}
 		$status = does_url_exist($url);
 		if($status) {
 			conf_mount_rw();
@@ -49,10 +52,12 @@ switch ($command) {
 			exec("fetch -1 -w15 -a -v -o /root/firmware.tgz \"$url\"");
 			if($file_size <> filesize("/root/firmware.tgz")) {
 				echo "\nFile size mismatch.  Upgrade cancelled.\n\n";
+				fclose($fp);
 				die;
 			}			
 			if(!file_exists("/root/firmware.tgz")) {
 				echo "Something went wrong during file transfer.  Exiting.\n\n";
+				fclose($fp);
 				die;
 			}
 			$status = does_url_exist("$url.md5");
@@ -71,6 +76,7 @@ switch ($command) {
 				echo "Downloaded file MD5: $file_md5\n";
 				if($source_md5 <> $file_md5) {
 					echo "\n\nMD5 checksum does not match.  Cancelling upgrade.\n\n";
+					fclose($fp);
 					die -1;
 				}
 				echo "\nMD5 checksum matches.\n";
@@ -79,20 +85,26 @@ switch ($command) {
 				do_upgrade("/root/firmware.tgz");
 		} else {
 			echo "\nCould not download update.\n\n";
+			fclose($fp);
 			die -1;
 		}
 	case "2":
 		echo "\nEnter the complete path to the .tgz update file: ";
 		$path = chop(fgets($fp));
-		if(!$path) 
+		if(!$path) {
+			fclose($fp);
 			die;
+		}
 		if(file_exists($path)) {
 			do_upgrade($path);
 		} else {
 			echo "\nCould not find file.\n\n";
+			fclose($fp);
 			die -1;
 		}
 }
+
+fclose($fp);
 
 function do_upgrade($path) {
 	echo "\nOne moment please... Invoking firmware upgrade...\n";

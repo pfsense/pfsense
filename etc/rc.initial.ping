@@ -45,4 +45,6 @@
 		echo "\nPress ENTER to continue.\n";
 		fgets($fp);
 	}
+	
+	fclose($fp);
 ?>

@@ -52,6 +52,8 @@ $pconfig['disablefirmwarecheck'] = isset($config['system']['disablefirmwarecheck
 $pconfig['preferoldsa_enable'] = isset($config['ipsec']['preferoldsa']);
 $pconfig['enablesshd'] = $config['system']['enablesshd'];
 $pconfig['sshport'] = $config['system']['ssh']['port'];
+$pconfig['sshdkeyonly'] = $config['system']['ssh']['sshdkeyonly'];
+$pconfig['authorizedkeys'] = base64_decode($config['system']['ssh']['authorizedkeys']);
 $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['polling_enable'] = isset($config['system']['polling']);
 $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
@@ -101,6 +103,12 @@ if ($_POST) {
 			$input_errors[] = "You must specify a valid port number";
 		}
 	}
+	if($_POST['sshdkeyonly'] == "yes") {
+		$config['system']['ssh']['sshdkeyonly'] = "enabled";
+	} else {
+		unset($config['system']['ssh']['sshdkeyonly']);
+	}		
+	$config['system']['ssh']['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
 
 }
 
@@ -305,6 +313,13 @@ include("head.inc");
 				<strong>Enable Secure Shell</strong>
 			</td>
 		</tr>
+ 		<tr>
+			<td width="22%" valign="top" class="vncell">&nbsp;</td>
+			<td width="78%" class="vtable">
+				<input name="sshdkeyonly" type="checkbox" id="sshdkeyonly" value="yes" <?php if (isset($pconfig['sshdkeyonly'])) echo "checked"; ?> onclick="enable_change(false)" />
+				<strong>Disable Passwordlogin for Secure Shell (KEY only)</strong>
+			</td>
+		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell">SSH port</td>
 			<td width="78%" class="vtable">
@@ -314,6 +329,14 @@ include("head.inc");
 			</td>
 		</tr>
 		<tr>
+			<td width="22%" valign="top" class="vncell"><?=gettext("Authorizedkeys");?></td>
+			<td width="78%" class="vtable">
+				<textarea name="authorizedkeys" cols="65" rows="7" id="authorizedkeys" class="formfld_cert"><?=htmlspecialchars($pconfig['authorizedkeys']);?></textarea>
+				<br />
+				Paste an authorized keys file here.
+ 			</td>
+		</tr>
+		<tr>
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
 				<input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" />
@@ -321,7 +344,7 @@ include("head.inc");
 		</tr>
 		<tr>
 			<td colspan="2" class="list" height="12">&nbsp;</td>
-		</tr>	
+		</tr>
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">Shared Physical Network</td>
 		</tr>

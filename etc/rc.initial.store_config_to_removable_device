@@ -85,5 +85,5 @@
 	echo "done.\n";
 	echo "\nYour configuration has been moved to {$move_config_to_device}\n";
 	touch("/tmp/config_moved");
-
+	fclose($fp);
 ?>

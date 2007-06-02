@@ -562,7 +562,7 @@ EOD;
 				/* We are already online, reload */
 				mwexec("/usr/local/sbin/racoonctl reload-config");
 				sleep(1);
-				exec("/bin/ps auxw | grep \"/usr/local/sbin/[r]acoon\" | awk '{print $2}'", $racoonpid);
+				exec("/bin/ps auxw | grep \"racoon\" | awk '{print $2}'", $racoonpid);
 				if(! empty($racoonpid)) {
 					mwexec("/usr/bin/kill -HUP $racoonpid[0]");
 				}

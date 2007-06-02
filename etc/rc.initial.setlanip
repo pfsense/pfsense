@@ -40,6 +40,7 @@
 		echo "\nEnter the new LAN IP address: ";
 		$lanip = chop(fgets($fp));
 		if ($lanip === "") {
+			fclose($fp);
 			exit(0);
 		}
 	} while (!is_ipaddr($lanip));
@@ -53,6 +54,7 @@
 		echo "Enter the new LAN subnet bit count: ";
 		$lanbits = chop(fgets($fp));
 		if ($lanbits === "") {
+			fclose($fp);
 			exit(0);
 		}
 	} while (!is_numeric($lanbits) || ($lanbits < 1) || ($lanbits > 31));
@@ -67,6 +69,7 @@
 			echo "Enter the start address of the client address range: ";
 			$dhcpstartip = chop(fgets($fp));
 			if ($dhcpstartip === "") {
+				fclose($fp);
 				exit(0);
 			}
 		} while (!is_ipaddr($dhcpstartip));
@@ -75,6 +78,7 @@
 			echo "Enter the end address of the client address range: ";
 			$dhcpendip = chop(fgets($fp));
 			if ($dhcpendip === "") {
+				fclose($fp);
 				exit(0);
 			}
 		} while (!is_ipaddr($dhcpendip));
@@ -115,4 +119,5 @@ Press ENTER to continue.
 EOD;
 
 	fgets($fp);
+	fclose($fp);
 ?>

@@ -59,7 +59,9 @@ if($_GET['mode'] == "restartservice" and $_GET['service']) {
 			break;
         case 'racoon':
         	exec("killall -9 racoon");
-        	vpn_ipsec_configure(true);
+        	sleep(1);
+        	vpn_ipsec_force_reload();
+        	break;
 		default:
 			restart_service($_GET['service']);
 			break;
@@ -85,7 +87,9 @@ if($_GET['mode'] == "startservice" and $_GET['service']) {
 			break;
         case 'racoon':
         	exec("killall -9 racoon");
-        	vpn_ipsec_configure(true);
+        	sleep(1);
+        	vpn_ipsec_force_reload();
+        	break;
 		default:
 			start_service($_GET['service']);
 			break;

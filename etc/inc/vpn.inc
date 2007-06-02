@@ -247,6 +247,9 @@ function vpn_ipsec_configure($ipchg = false) {
 
 				fwrite($fd, $spdconf);
 				fclose($fd);
+				
+				/* flushie, flushie spds */
+				mwexec("/sbin/setkey -FP");
 
 				/* load SPD */
 				mwexec("/sbin/setkey -c < {$g['varetc_path']}/spd.conf");
@@ -560,12 +563,7 @@ EOD;
 
 			if(is_process_running("racoon")) {
 				/* We are already online, reload */
-				mwexec("/usr/local/sbin/racoonctl reload-config");
-				sleep(1);
-				exec("/bin/ps auxw | grep \"racoon\" | awk '{print $2}'", $racoonpid);
-				if(! empty($racoonpid)) {
-					mwexec("/usr/bin/kill -HUP $racoonpid[0]");
-				}
+				mwexec("/usr/bin/kill -HUP racoon");
 			} else {
 				/* sleep for a bit */
 				sleep (2);

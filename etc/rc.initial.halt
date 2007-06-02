@@ -55,4 +55,7 @@ EOD;
 
 		system_halt();
 	}
+	
+	fclose($fp);
+	
 ?>

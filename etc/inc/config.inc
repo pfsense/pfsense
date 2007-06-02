@@ -1439,6 +1439,7 @@ EOD;
 		echo "\nEnter the LAN interface name or 'a' for auto-detection: ";
 		$lanif = chop(fgets($fp));
 		if ($lanif === "") {
+			fclose($fp);
 			return;
 		}
 
@@ -1512,7 +1513,7 @@ EOD;
 Error: you cannot assign the same interface name twice!
 
 EOD;
-
+				fclose($fp);
 				return;
 			}
 		}
@@ -1583,6 +1584,8 @@ EOD;
 
 
 EOD;
+
+		fclose($fp);
 
 		if($g['booting'])
 			return;

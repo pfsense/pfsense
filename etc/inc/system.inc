@@ -723,10 +723,6 @@ function system_generate_lighty_config($filename,
 		$max_requests = 1;
 	}
 
-	/* we told you that 64 megs would be slow */
-	if ($avail > 0 and $avail < 65)
-		$fast_cgi_enable = false;
-
 	if($fast_cgi_enable == true) {
 		$module = "\"mod_fastcgi\", \"mod_cgi\"";
 		$cgi_config = "";

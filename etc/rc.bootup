@@ -308,6 +308,8 @@
 	if($avail < 126) {
 		require_once("/etc/inc/notices.inc");
 		file_notice("pfSenseMemoryRequirements", "pfSense requires atleast 128 megabytes of RAM.  Expect unusual performance.  This platform is not supported.", "Memory", "", 1);
+		mwexec("sysctl net.inet.tcp.recvspace=4096");
+		mwexec("sysctl net.inet.tcp.sendspace=4096");
 	}
 
 	/* done */

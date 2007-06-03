@@ -162,8 +162,7 @@ case ${opmode} in
     fi
     ;;
 "")
-	echo -n "Press CTRL-C to continue."
-	sleep 1000000
+		killall login ; exit
 	;;
 esac
 

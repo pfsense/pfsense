@@ -253,7 +253,11 @@ function display_login_form() {
     <title><?=gettext("Login"); ?></title>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     <link rel="shortcut icon" href="/themes/<?= $g['theme'] ?>/images/icons/favicon.ico" />
+    <?php if (file_exists("{$g['www_path']}/themes/{$g['theme']}/login.css")): ?>
+    <link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/login.css" media="all" />
+    <?php else: ?>
     <link rel="stylesheet" type="text/css" href="/themes/<?= $g['theme'] ?>/all.css" media="all" />
+    <?php endif; ?>
     <script type="text/javascript">
     <!--
       function page_load() {

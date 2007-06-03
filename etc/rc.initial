@@ -50,7 +50,7 @@ echo `tty` > /tmp/last_term_seen
 PLATFORM=`cat /etc/platform`
 
 # endless loop
-while : ; do
+# while : ; do
 
 if [ -f /tmp/ttybug ]; then
 	rm /tmp/ttybug
@@ -161,11 +161,7 @@ case ${opmode} in
     	links "http://localhost"
     fi
     ;;
-"")
-	echo -n "Press CTRL-C to continue."
-	sleep 1000000
-	;;
 esac
 
-done
+#done
 

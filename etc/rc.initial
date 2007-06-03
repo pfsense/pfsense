@@ -161,6 +161,9 @@ case ${opmode} in
 	    	links "http://localhost"
 	    fi
 	    ;;
+"")
+		killall login ; exit
+	;;
 esac
 
 done

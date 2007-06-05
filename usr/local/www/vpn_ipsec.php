@@ -59,7 +59,7 @@ if ($_POST) {
 
 		$retval = 0;
 		config_lock();
-		$retval = vpn_ipsec_force_reload();
+		$retval = vpn_ipsec_configure();
 		config_unlock();
 		/* reload the filter in the background */
 		filter_configure();

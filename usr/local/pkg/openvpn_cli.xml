@@ -169,6 +169,15 @@
 			<cols>40</cols>
 		</field>
 		<field>
+			<fieldname>tls</fieldname>
+			<fielddescr>TLS</fielddescr>
+			<description>Paste your HMAC signature (TLS) here (optional).</description>
+			<type>textarea</type>
+			<encoding>base64</encoding>
+			<rows>8</rows>
+			<cols>40</cols>
+		</field>
+		<field>
 			<fieldname>use_lzo</fieldname>
 			<fielddescr>LZO compression</fielddescr>
 			<description>Checking this will compress the packets using the LZO algorithm before sending them.</description>

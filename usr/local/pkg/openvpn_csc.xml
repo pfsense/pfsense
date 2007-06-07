@@ -67,11 +67,86 @@
 			<description>Set this option to push an IP to the client's interface. Expressed as a CIDR range (e.g. 10.5.0.0/16). The first IP in the range will be used as the remote IP of the interface, and the second IP will be used as the local IP of the interface.</description>
 			<type>input</type>
 		</field>
+		
+		<field>
+			<fieldname>dhcp_domainname</fieldname>
+			<fielddescr>DHCP-Opt.: DNS-Domainname</fielddescr>
+			<description>Set connection-specific DNS Suffix.</description>
+			<type>input</type>
+		</field>
+		<field>
+			<fieldname>dhcp_dns</fieldname>
+			<fielddescr>DHCP-Opt.: DNS-Server</fielddescr>
+			<description>Set domain name server addressses, separated by semi-colons (;).</description>
+			<type>input</type>
+		</field>
+		<field>
+			<fieldname>dhcp_wins</fieldname>
+			<fielddescr>DHCP-Opt.: WINS-Server</fielddescr>
+			<description>Set WINS server addressses (NetBIOS over TCP/IP Name Server), separated by semi-colons (;).</description>
+			<type>input</type>
+		</field>
+		<field>
+			<fieldname>dhcp_nbdd</fieldname>
+			<fielddescr>DHCP-Opt.: NBDD-Server</fielddescr>
+			<description>Set NBDD server addresses (NetBIOS over TCP/IP Datagram Distribution Server), separated by semi-colons (;).</description>
+			<type>input</type>
+		</field>
+		<field>
+			<fieldname>dhcp_ntp</fieldname>
+			<fielddescr>DHCP-Opt.: NTP-Server</fielddescr>
+			<description>Set NTP server addresses (Network Time Protocol), separated by semi-colons (;).</description>
+			<type>input</type>
+		</field>
+		<field>
+			<fieldname>dhcp_nbttype</fieldname>
+			<fielddescr>DHCP-Opt.: NetBIOS node type</fielddescr>
+			<description>Set NetBIOS over TCP/IP Node type. Possible options: b-node (broadcasts), p-node (point-to-point name queries to a WINS server), m-node (broadcast then query name server), and h-node (query name server, then broadcast).</description>
+			<type>select</type>
+			<options>
+				<option>
+					<value>0</value>
+					<name>none</name>
+				</option>
+				<option>
+				<value>1</value>
+					<name>b-node</name>
+				</option>
+				<option>
+					<value>2</value>
+					<name>p-node</name>
+				</option>
+				<option>
+					<value>4</value>
+					<name>m-node</name>
+				</option>
+				<option>
+					<value>8</value>
+					<name>h-node</name>
+				</option>
+			</options>
+			<default_value>0</default_value>
+		</field>
+		<field>
+			<fieldname>dhcp_nbtscope</fieldname>
+			<fielddescr>DHCP-Opt.: NetBIOS Scope</fielddescr>
+			<description>Set NetBIOS over TCP/IP Scope. A NetBIOS Scope ID provides an extended naming service for NetBIOS over TCP/IP. The NetBIOS scope ID isolates NetBIOS traffic on a single network to only those nodes with the same NetBIOS scope ID.</description>
+			<type>input</type>
+		</field>
+		<field>
+			<fieldname>dhcp_nbtdisable</fieldname>
+			<fielddescr>DHCP-Opt.: Disable NetBIOS</fielddescr>
+			<description>If this option is set, Netbios-over-TCP/IP will be disabled.</description>
+			<type>checkbox</type>
+		</field>
+		
 		<field>
 			<fieldname>custom_options</fieldname>
 			<fielddescr>Custom options</fielddescr>
 			<description>You can put your own custom options here, separated by semi-colons (;). They'll be added to the client-specific configuration.</description>
-			<type>input</type>
+			<type>textarea</type>
+			<cols>65</cols>
+			<rows>5</rows>
 		</field>
 		<field>
 			<fieldname>description</fieldname>

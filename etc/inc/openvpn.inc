@@ -90,28 +90,28 @@ function openvpn_validate_input($mode, $post, $input_errors) {
 
 	if (!empty($post['dhcp_dns'])) {
     $servers = explode(';', $post['dhcp_dns']);
-      foreach ($servers as $server) if (!is_ipaddr($server)) 
+      foreach ($servers as $server) if (!is_ipaddr($server))
         {$input_errors[] = 'The field \'DHCP-Opt.: DNS-Server\' must contain a valid IP address and no whitespaces.';
         break;}}
 	if (!empty($post['dhcp_wins'])) {
     $servers = explode(';', $post['dhcp_wins']);
-      foreach ($servers as $server) if (!is_ipaddr($server)) 
+      foreach ($servers as $server) if (!is_ipaddr($server))
         {$input_errors[] = 'The field \'DHCP-Opt.: WINS-Server\' must contain a valid IP address and no whitespaces.';
         break;}}
 	if (!empty($post['dhcp_nbdd'])) {
     $servers = explode(';', $post['dhcp_nbdd']);
-      foreach ($servers as $server) if (!is_ipaddr($server)) 
+      foreach ($servers as $server) if (!is_ipaddr($server))
         {$input_errors[] = 'The field \'DHCP-Opt.: NBDD-Server\' must contain a valid IP address and no whitespaces.';
         break;}}
 	if (!empty($post['dhcp_ntp'])) {
     $servers = explode(';', $post['dhcp_ntp']);
-      foreach ($servers as $server) if (!is_ipaddr($server)) 
+      foreach ($servers as $server) if (!is_ipaddr($server))
         {$input_errors[] = 'The field \'DHCP-Opt.: NTP-Server\' must contain a valid IP address and no whitespaces.';
         break;}}
 	if (isset($post['maxclients']) && $post['maxclients'] != "") {
 		if (!is_numeric($post['maxclients']))
 			$input_errors[] = 'The field \'Maximum clients\' must be numeric.';
-		}        
+		}
 
 	}
 
@@ -191,7 +191,7 @@ function openvpn_validate_input($mode, $post, $input_errors) {
 					'name' => "$Mode key");
 	  $items[] = array(	'field' => 'tls',
 		      'string' => 'OpenVPN Static key V1',
-		      'name' => 'TLS'); 
+		      'name' => 'TLS');
 		if ($mode == 'server') {
 			$items[] = array(	'field' => 'dh_params',
 						'string' => 'DH PARAMETERS',
@@ -228,34 +228,34 @@ function openvpn_validate_input_csc($post, $input_errors) {
     elseif ($post['dhcp_nbttype'])
         $input_errors[] = 'It makes no sense to unselect push reset and configure dhcp-options';
     elseif (!empty($post['dhcp_nbtscope']))
-        $input_errors[] = 'It makes no sense to unselect push reset and configure dhcp-options';        
+        $input_errors[] = 'It makes no sense to unselect push reset and configure dhcp-options';
     elseif ($post['dhcp_nbtdisable'])
-        $input_errors[] = 'It makes no sense to unselect push reset and configure dhcp-options';     
+        $input_errors[] = 'It makes no sense to unselect push reset and configure dhcp-options';
 
   }
   else {
 
 	if (!empty($post['dhcp_dns'])) {
     $servers = explode(';', $post['dhcp_dns']);
-      foreach ($servers as $server) if (!is_ipaddr($server)) 
+      foreach ($servers as $server) if (!is_ipaddr($server))
         {$input_errors[] = 'The field \'DHCP-Opt.: DNS-Server\' must contain a valid IP address and no whitespaces.';
         break;}}
 	if (!empty($post['dhcp_wins'])) {
     $servers = explode(';', $post['dhcp_wins']);
-      foreach ($servers as $server) if (!is_ipaddr($server)) 
+      foreach ($servers as $server) if (!is_ipaddr($server))
         {$input_errors[] = 'The field \'DHCP-Opt.: WINS-Server\' must contain a valid IP address and no whitespaces.';
         break;}}
 	if (!empty($post['dhcp_nbdd'])) {
     $servers = explode(';', $post['dhcp_nbdd']);
-      foreach ($servers as $server) if (!is_ipaddr($server)) 
+      foreach ($servers as $server) if (!is_ipaddr($server))
         {$input_errors[] = 'The field \'DHCP-Opt.: NBDD-Server\' must contain a valid IP address and no whitespaces.';
         break;}}
 	if (!empty($post['dhcp_ntp'])) {
     $servers = explode(';', $post['dhcp_ntp']);
-      foreach ($servers as $server) if (!is_ipaddr($server)) 
+      foreach ($servers as $server) if (!is_ipaddr($server))
         {$input_errors[] = 'The field \'DHCP-Opt.: NTP-Server\' must contain a valid IP address and no whitespaces.';
-        break;}}		
-		
+        break;}}
+
 }}
 
 // Rewrite the settings
@@ -283,7 +283,7 @@ function openvpn_reconfigure($mode, $id) {
 			$keys[] = array('field' => 'crl', 'ext' => 'crl', 'directive' => 'crl-verify');
 		if ($settings['tls'])
 		  $keys[] = array('field' => 'tls', 'ext' => 'tls', 'directive' => 'tls-auth');
-			
+
 	}
 	foreach($keys as $key) {
 		$filename = $base_file . $key['ext'];
@@ -346,7 +346,7 @@ EOD;
 
 		// DHCP-Options
 	  if (!empty($settings['dhcp_domainname'])) $openvpn_conf .= "push \"dhcp-option DOMAIN {$settings['dhcp_domainname']}\"\n";
-	      	
+
     if (!empty($settings['dhcp_dns'])) {
 	   	$servers = explode(';', $settings['dhcp_dns']);
    	  if (is_array($servers)) {
@@ -356,7 +356,7 @@ EOD;
 			$openvpn_conf .= "push \"dhcp-option DNS {$settings['dhcp_dns']}\"\n";
 		  }
     }
-  
+
     if (!empty($settings['dhcp_wins'])) {
 	   	$servers = explode(';', $settings['dhcp_wins']);
    	  if (is_array($servers)) {
@@ -365,7 +365,7 @@ EOD;
 		  else {
 			$openvpn_conf .= "push \"dhcp-option WINS {$settings['dhcp_wins']}\"\n";
 		  }
-    }	
+    }
 
     if (!empty($settings['dhcp_nbdd'])) {
 	   	$servers = explode(';', $settings['dhcp_nbdd']);
@@ -375,7 +375,7 @@ EOD;
 		  else {
 			$openvpn_conf .= "push \"dhcp-option NBDD {$settings['dhcp_nbdd']}\"\n";
 		  }
-    }	
+    }
 
     if (!empty($settings['dhcp_ntp'])) {
 	   	$servers = explode(';', $settings['dhcp_ntp']);
@@ -385,7 +385,7 @@ EOD;
 		  else {
 			$openvpn_conf .= "push \"dhcp-option NTP {$settings['dhcp_ntp']}\"\n";
 		  }
-    }	
+    }
 
   	if (!empty($settings['dhcp_nbttype']) && $settings['dhcp_nbttype'] !=0) $openvpn_conf .= "push \"dhcp-option NBT {$settings['dhcp_nbttype']}\"\n";
     if (!empty($settings['dhcp_nbtscope'])) $openvpn_conf .= "push \"dhcp-option NBS {$settings['dhcp_nbtscope']}\"\n";
@@ -476,10 +476,10 @@ function openvpn_resync_csc($id) {
 		$baselong = ip2long($ip) & gen_subnet_mask_long($mask);
 		$conf .= 'ifconfig-push ' . long2ip($baselong + 1) . ' ' . long2ip($baselong + 2) . "\n";
 	}
-	
+
 // DHCP-Options
 	  if (!empty($settings['dhcp_domainname'])) $conf .= "push \"dhcp-option DOMAIN {$settings['dhcp_domainname']}\"\n";
-	      	
+
     if (!empty($settings['dhcp_dns'])) {
 	   	$servers = explode(';', $settings['dhcp_dns']);
    	  if (is_array($servers)) {
@@ -489,7 +489,7 @@ function openvpn_resync_csc($id) {
 			$conf .= "push \"dhcp-option DNS {$settings['dhcp_dns']}\"\n";
 		  }
     }
-  
+
     if (!empty($settings['dhcp_wins'])) {
 	   	$servers = explode(';', $settings['dhcp_wins']);
    	  if (is_array($servers)) {
@@ -498,7 +498,7 @@ function openvpn_resync_csc($id) {
 		  else {
 			$conf .= "push \"dhcp-option WINS {$settings['dhcp_wins']}\"\n";
 		  }
-    }	
+    }
 
     if (!empty($settings['dhcp_nbdd'])) {
 	   	$servers = explode(';', $settings['dhcp_nbdd']);
@@ -508,7 +508,7 @@ function openvpn_resync_csc($id) {
 		  else {
 			$conf .= "push \"dhcp-option NBDD {$settings['dhcp_nbdd']}\"\n";
 		  }
-    }	
+    }
 
     if (!empty($settings['dhcp_ntp'])) {
 	   	$servers = explode(';', $settings['dhcp_ntp']);
@@ -518,13 +518,13 @@ function openvpn_resync_csc($id) {
 		  else {
 			$conf .= "push \"dhcp-option NTP {$settings['dhcp_ntp']}\"\n";
 		  }
-    }	
+    }
 
   	if (!empty($settings['dhcp_nbttype']) && $settings['dhcp_nbttype'] !=0) $conf .= "push \"dhcp-option NBT {$settings['dhcp_nbttype']}\"\n";
     if (!empty($settings['dhcp_nbtscope'])) $conf .= "push \"dhcp-option NBS {$settings['dhcp_nbtscope']}\"\n";
    	if ($settings['dhcp_nbtdisable']) $conf .= "push \"dhcp-option DISABLE-NBT\"\n";
 
-	
+
 	if (!empty($settings['custom_options'])) {
 		$options = explode(';', $settings['custom_options']);
 		if (is_array($options)) {
@@ -540,7 +540,7 @@ function openvpn_resync_csc($id) {
 	file_put_contents($filename, $conf);
 	chown($filename, 'nobody');
 	chgrp($filename, 'nogroup');
-	
+
 }
 
 
@@ -593,13 +593,13 @@ function openvpn_resync_all() {
 		foreach ($config['installedpackages']['openvpncsc']['config'] as $id => $csc)
 			openvpn_resync_csc($id);
 	}
-	
+
 	/* give speedy machines time to settle */
 	sleep(5);
-	
+
 	/* reload the filter policy */
 	filter_configure();
-	
+
 }
 
 function openvpn_print_javascript($mode) {
@@ -614,7 +614,7 @@ function onAuthMethodChanged() {
 	document.iform.ca_cert.disabled = endis;
 	document.iform.{$mode}_cert.disabled = endis;
 	document.iform.{$mode}_key.disabled = endis;
-  document.iform.tls.disabled = endis;
+    document.iform.tls.disabled = endis;
 
 EOD;
 	if ($mode == 'server') {

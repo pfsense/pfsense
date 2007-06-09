@@ -936,19 +936,23 @@ function captiveportal_write_elements() {
         mkdir($g['captiveportal_element_path']);
     }
     
-    if (is_array($config['captiveportal']['element'])) {
-    
-        foreach ($config['captiveportal']['element'] as $data) {
-            $fd = @fopen($g['captiveportal_element_path'] . '/' . $data['name'], "wb");
-            if (!$fd) {
-                printf("Error: cannot open '{$data['name']}' in captiveportal_write_elements().\n");
-                return 1;
-            }
-            $decoded = base64_decode($data['content']);
-            fwrite($fd,$decoded);
-            fclose($fd);
-        }
-    }
+	if (is_array($config['captiveportal']['element'])) {
+		conf_mount_rw();
+		foreach ($config['captiveportal']['element'] as $data) {
+			$fd = @fopen($g['captiveportal_element_path'] . '/' . $data['name'], "wb");
+			if (!$fd) {
+				printf("Error: cannot open '{$data['name']}' in captiveportal_write_elements().\n");
+				return 1;
+			}
+			$decoded = base64_decode($data['content']);
+			fwrite($fd,$decoded);
+			fclose($fd);
+			unlink_if_exists("{$g['captiveportal_path']}/{$data['name']}");
+			unlink_if_exists("{$g['captiveportal_path']}/{$data['name']}");
+			mwexec("cd {$g['captiveportal_path']}/ && ln -s {$g['captiveportal_element_path']}/{$data['name']} {$data['name']}");
+		}
+		conf_mount_ro();
+	}
     
     return 0;
 }

@@ -43,9 +43,9 @@ $argument = str_replace("\n", "", $argv[1]);
 log_error("Informational: rc.newwanip is starting {$argument}.");
 
 if($argument <> "") {
-	$curwanip = find_interface_ip($argument);
 	$interface = convert_real_interface_to_friendly_interface_name($argument);
 	$interface_real = convert_friendly_interface_to_real_interface_name($argument);
+	$curwanip = find_interface_ip($interface_real);
 	if($curwanip == "")
 	        $curwanip = get_current_wan_address();
 } else {

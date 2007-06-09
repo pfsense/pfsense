@@ -1228,8 +1228,7 @@ EODAD;
 /* configure cron service */
 function configure_cron() {
 	global $g, $config;
-	if (!$g['booting'])
-		conf_mount_rw();
+	conf_mount_rw();
 	/* preserve existing crontab entries */
 	$crontab_contents = file_get_contents("/etc/crontab");
 	$crontab_contents_a = split("\n", $crontab_contents);

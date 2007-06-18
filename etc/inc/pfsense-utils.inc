@@ -3046,7 +3046,7 @@ function enable_rrd_graphing() {
 			/* if an alternative gateway is defined, use it */
 			if ($config['interfaces'][$ifname]['use_rrd_gateway'] <> "") {
 				$gatewayip = get_interface_gateway($ifname);
-				$monitorip = $config['system']['interfaces'][$ifname]['use_rrd_gateway'];
+				$monitorip = $config['interfaces'][$ifname]['use_rrd_gateway'];
 				mwexec("/sbin/route add -host {$monitorip} {$gatewayip} 1> /dev/null 2>&1");
 			} else {
 				$monitorip = get_interface_gateway($ifname);

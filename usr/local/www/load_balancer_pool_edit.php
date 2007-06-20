@@ -288,7 +288,8 @@ function clearcombo(){
 "balance") echo " CHECKED"; ?>><?=gettext("Load Balancing");?><br>
 				<input type="radio" name="behaviour" id="behaviour" value="failover"<?php if($pconfig['behaviour'] == 
 "failover") echo " CHECKED"; ?>><?=gettext("Failover");?><br>
-				Load Balancing: both active. Failover order: top -> down.
+				Load Balancing: both active. Failover order: top -> down.<br>
+				NOTE: Failover mode only applies to outgoing rules (multi-wan).
 			</td>
 		</tr>
 

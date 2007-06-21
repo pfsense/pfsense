@@ -181,10 +181,7 @@ function is_service_running($service, $ps = "") {
 					return false;
 				}
 				*/
-				if ($service == "openvpn") {
-				} else {
-					return is_process_running($aservice['executable']) ? true : false;
-				}
+				return is_process_running($aservice['executable']) ? true : false;
 			}
 		}
 	}

@@ -94,51 +94,57 @@ function start_service($name) {
 }
 
 function stop_service($name) {
-        global $config;
-        if($config['installedpackages']['service']) {
-                foreach($config['installedpackages']['service'] as $service) {
-                        if(strtolower($service['name']) == strtolower($name)) {
-                                if($service['rcfile']) {
-                                        if($service['prefix']) {
-                                                $prefix =& $service['prefix'];
-                                        } else {
-                                                $prefix = "/usr/local/etc/rc.d/";
-                                        }
-                                        mwexec_bg($prefix . $service['rcfile'] . " stop");
-                                }
-                                if($service['stopcmd']) {
-                                        eval($service['stopcmd']);
-                                }
-								if(!($service['rcfile'] or $service['stopcmd'])) {
-									mwexec_bg("/usr/bin/killall {$service['executable']}");
-									return;
-								}
-                                break;
-                        }
-                }
-        }
-		/* finally if we get here lets simply kill the service name */
-		mwexec_bg("/usr/bin/killall {$name}");
+	global $config;
+	if($config['installedpackages']['service']) {
+		foreach($config['installedpackages']['service'] as $service) {
+			if(strtolower($service['name']) == strtolower($name)) {
+				if($service['rcfile']) {
+					if($service['prefix']) {
+						$prefix =& $service['prefix'];
+					} else {
+						$prefix = "/usr/local/etc/rc.d/";
+					}
+					mwexec_bg($prefix . $service['rcfile'] . " stop");
+				}
+				if($service['stopcmd']) {
+					eval($service['stopcmd']);
+				}
+				if(!($service['rcfile'] or $service['stopcmd'])) {
+					mwexec_bg("/usr/bin/killall {$service['executable']}");
+					return;
+				}
+				break;
+			}
+		}
+	}
+	/* finally if we get here lets simply kill the service name */
+	mwexec_bg("/usr/bin/killall {$name}");
 }
 
 function restart_service($name) {
-    global $config;
+	global $config;
 	stop_service($name);
 	start_service($name);
-        if($config['installedpackages']['service']) {
-                foreach($config['installedpackages']['service'] as $service) {
-                        if(strtolower($service['name']) == strtolower($name)) {
-                                if($service['restartcmd']) {
-                                        eval($service['restartcmd']);
-                                }
-                                break;
-                        }
-                }
-        }
+	if($config['installedpackages']['service']) {
+		foreach($config['installedpackages']['service'] as $service) {
+			if(strtolower($service['name']) == strtolower($name)) {
+				if($service['restartcmd']) {
+					eval($service['restartcmd']);
+				}
+				break;
+			}
+		}
+	}
 }
 
 function is_process_running($process) {
 	$running = (trim(shell_exec("ps axwu | grep '\b{$process}\b' | grep -v 'grep'")) != '');
+	return $running;
+}
+
+function is_pid_running($pidfile) {
+	$pid = trim(file_get_contents($pidfile));
+	$running = (trim(shell_exec("ps axwu | grep '\b{$pid}\b' | grep -v 'grep'")) != '');
 	return $running;
 }
 
@@ -165,8 +171,8 @@ function is_service_running($service, $ps = "") {
 	}
 	*/
 	if(is_array($config['installedpackages']['service'])) {
-                foreach($config['installedpackages']['service'] as $aservice) {
-                        if(strtolower($service) == strtolower($aservice['name'])) {
+		foreach($config['installedpackages']['service'] as $aservice) {
+			if(strtolower($service) == strtolower($aservice['name'])) {
 				if(!$aservice['executable']) return false;
 				/*
 				if(count(preg_grep("/{$aservice['executable']}/i", $ps))) {
@@ -175,10 +181,13 @@ function is_service_running($service, $ps = "") {
 					return false;
 				}
 				*/
-				return is_process_running($aservice['executable']) ? true : false;
-                        }
-                }
-        }
+				if ($service == "openvpn") {
+				} else {
+					return is_process_running($aservice['executable']) ? true : false;
+				}
+			}
+		}
+	}
 }
 
 ?>

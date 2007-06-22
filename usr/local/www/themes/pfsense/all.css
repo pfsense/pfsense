@@ -863,10 +863,10 @@ div#log span.log-protocol {
 .widgetsubheader {
 	border-right: 1px solid #999999;
 	font-size: 11px;
-	background-color: #999999;
+	background-color: #B1B1B1;
 	padding-right: 6px;
 	padding-left: 6px;
-	color: #FFFFFF;
+	color: #000000;
 	font-weight: bold;
 	padding-top: 5px;
 	padding-bottom: 5px;

@@ -372,10 +372,20 @@ echo $jscriptstr;
 	<div id="col1" style="float:left;width:49%;padding: 2px;padding-bottom:40px">		
 	<?php
 	
-	if ($config['widgets'])
+	if ($config['widgets']){
 		$widgetlist = $savedwidgetfiles;
+		
+		//add widgets that may not be in the saved configuration, in case they want to be added later
+		foreach ($widgetfiles as $defaultwidgets){
+			
+			if (!in_array($defaultwidgets, $savedwidgetfiles)){
+				$widgetlist[] = $defaultwidgets;
+			}
+		}		
+		
+	}
 	else
-		$widgetlist = $widgetfiles;
+		$widgetlist = $widgetfiles;	
 	
 	foreach($widgetlist as $widget) {
 	
@@ -414,9 +424,9 @@ echo $jscriptstr;
 				$mindiv = "inline";
 			}
 			else{
-				$divdisplay = "block";
+				$divdisplay = "none";
 				$display = "block";
-				$inputdisplay = "show";
+				$inputdisplay = "none";
 				$showdiv = "none";
 				$mindiv = "inline";
 			}

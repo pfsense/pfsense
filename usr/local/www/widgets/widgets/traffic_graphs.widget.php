@@ -91,7 +91,7 @@ Refresh Interval:
 					<input type="hidden" id="<?php echo $ifname;?>_graph-config" name="<?php echo $ifname;?>_graph-config" class="graphsettings" value="<?=$interfacevalue;?>">
 						<div id="<?=$ifname;?>topic" class="widgetsubheader">
 							<div style="float:left;width:49%">
-								<a href="/status_graph.php?if=<?=$ifdescr;?>"><span style="color:#000000">Current <?=$ifname;?> Traffic</span></a>
+								<span onClick="location.href='/status_graph.php?if=<?=$ifdescr;?>'" style="cursor:pointer">Current <?=$ifname;?> Traffic</span>
 							</div>
 							<div align="right" style="float:right;width:49%">
 								<div id="<?=$ifname;?>graphdiv-min" onclick='return  trafficminimizeDiv("<?php echo $ifname;?>",true)' style="display:<?php echo $mingraphbutton;?>; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_minus.gif" alt="Minimize <?=$ifname;?> traffic graph" /></div>								

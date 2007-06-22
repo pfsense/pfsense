@@ -3,7 +3,7 @@
     <span class="log-interface-mini-header">IF</span>
     <span class="log-source-mini-header">Source</span>
     <span class="log-destination-mini-header">Destination</span>
-    <span class="log-protocol-mini-header">Proto</span>
+    <span class="log-protocol-mini-header">Prot</span>
 </div>
 <?php $counter=0; foreach ($filterlog as $filterent): ?>
 <?php

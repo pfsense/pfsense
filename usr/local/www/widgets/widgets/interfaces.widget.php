@@ -24,17 +24,17 @@
 				<strong>
 				<?php
 				if ($ifname == "WAN") { ?>
-					<a href="/interfaces_wan.php">					
+					<span onClick="location.href='/interfaces_wan.php'" style="cursor:pointer">				
 				<? } else if ($ifname == "LAN") { ?>
-					<a href="/interfaces_lan.php">
+					<span onClick="location.href='/interfaces_lan.php'" style="cursor:pointer">
 				<? } else { ?>				
-					<a href="/interfaces_opt.php?index=<?=$counter; ?>">
+					<span onClick="location.href='/interfaces_opt.php?index=<?=$counter; ?>'" style="cursor:pointer">
 				<? 
 				$counter++;
 				} ?>			
 				
 				
-				<span style="color:#000000"><?=htmlspecialchars($ifname);?></span></a></strong>
+				<?=htmlspecialchars($ifname);?></span></a></strong>
 				</td>
 				<td width="70%"  class="listr">
 				

@@ -196,6 +196,12 @@
 			<type>checkbox</type>
 		</field>
 		<field>
+			<fieldname>passtos</fieldname>
+			<fielddescr>Pass Type-Of-Service</fielddescr>
+			<description>Checking this will set the TOS field of the tunnel packet to what the payload's TOS is.</description>
+			<type>checkbox</type>
+		</field>
+		<field>
 			<fieldname>custom_options</fieldname>
 			<fielddescr>Custom options</fielddescr>
 			<description>You can put your own custom options here, separated by semi-colons (;). They'll be added to the client configuration.</description>

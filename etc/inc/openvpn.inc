@@ -441,6 +441,8 @@ EOD;
 
 	if ($settings['use_lzo']) $openvpn_conf .= "comp-lzo\n";
 
+	if ($settings['passtos']) $openvpn_conf .= "passtos\n";
+
 	if ($settings['dynamic_ip']) {
 		$openvpn_conf .= "persist-remote-ip\n";
 		$openvpn_conf .= "float\n";

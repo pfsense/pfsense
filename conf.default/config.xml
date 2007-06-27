@@ -606,6 +606,15 @@
 			<who>root</who>
 			<command>/etc/ping_hosts.sh</command>
 		</item>
+		<item>
+			<minute>*/300</minute>
+			<hour>*</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+			<who>root</who>
+			<command>/usr/local/bin/reset_slbd.sh</command>
+		</item>
 	</cron>
 	<wol>
 		<!--

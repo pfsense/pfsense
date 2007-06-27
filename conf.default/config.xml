@@ -613,7 +613,7 @@
 			<month>*</month>
 			<wday>*</wday>
 			<who>root</who>
-			<command>/usr/local/bin/reset_slbd.sh</command>
+			<command>/usr/local/sbin/reset_slbd.sh</command>
 		</item>
 	</cron>
 	<wol>

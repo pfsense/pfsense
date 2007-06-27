@@ -34,7 +34,7 @@
 			<desc>Disable sending IPv6 redirects</desc>
 			<tunable>net.inet6.ip6.redirect</tunable>
 			<value>0</value>
-		</item>	
+		</item>
 		<item>
 			<desc>Generate SYN cookies for outbound SYN-ACK packets</desc>
 			<tunable>net.inet.tcp.syncookies</tunable>
@@ -696,6 +696,15 @@
 			<wday>*</wday>
 			<who>root</who>
 			<command>/etc/ping_hosts.sh</command>
+		</item>
+		<item>
+			<minute>*/300</minute>
+			<hour>*</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+			<who>root</who>
+			<command>/usr/local/bin/reset_slbd.sh</command>
 		</item>
 	</cron>
 	<installedpackages>

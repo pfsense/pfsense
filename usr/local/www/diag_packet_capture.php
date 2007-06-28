@@ -93,9 +93,9 @@ if ($_POST) {
 	}
 	else //download file
 	{
-		$fs = filesize($fn);
+		$fs = filesize($fp.$fn);
 		header("Content-Type: application/octet-stream");
-        header("Content-Disposition: attachment; filename=$fn");
+        header("Content-Disposition: attachment; filename=$fp.$fn");
 		header("Content-Length: $fs");
 		readfile($fp.$fn);
 	}

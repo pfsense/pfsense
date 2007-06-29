@@ -2665,6 +2665,8 @@ EOD;
 	$ipfrules .= "anchor \"ftpproxy\"\n";
 	$ipfrules .= "anchor \"pftpx/*\"\n";
 
+	$ipfrules .= process_carp_rules();
+
 	if (isset($config['filter']['rule'])) {
 		/* Pre-cache all our rules so we only have to generate them once */
 		$rule_arr = array();
@@ -2758,8 +2760,6 @@ EOD;
 			$ipfrules .= $line;
 		}
 	}
-
-	$ipfrules .= process_carp_rules();
 
 	update_filter_reload_status("Creating carp rules...");
 

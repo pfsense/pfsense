@@ -2507,6 +2507,13 @@ EOD;
 	foreach($config['interfaces'] as $int)
 		if($int['bridge'] == "lan")
 			$lanbridge = true;
+	$wanbridge = false;
+	foreach($config['interfaces'] as $int)
+		if($int['bridge'] == "wan")
+			$wanbridge = true;			
+	if($config['interfaces']['lan']['bridge'] == "wan") 
+		$wanbridge = true;
+			
 	if(!$lanbridge)
 		$ipfrules .= filter_rules_spoofcheck_generate('lan', $lanif, $lansa, $lansn, $log);
 
@@ -2522,14 +2529,15 @@ EOD;
 		if ($oc['ip'] && !(($oc['bridge'] || $isbridged) && isset($config['bridge']['filteringbridge'])))
 			$ipfrules .= filter_rules_spoofcheck_generate($on, $oc['if'], $oc['sa'], $oc['sn'], $log);
 	}
+	
+	$ipfrules .= "\nanchor \"spoofing\"\n";
 
 	/* block private networks on WAN? */
 	if (isset($config['interfaces']['wan']['blockpriv'])) {
-		$ipfrules .= <<<EOD
-
+		if($wanbridge == false) {
+			$ipfrules .= <<<EOD
 
 # block anything from private networks on WAN interface
-anchor "spoofing"
 antispoof for \$wan
 block in $log quick on \$wan from 10.0.0.0/8 to any label "block private networks from wan block 10/8"
 block in $log quick on \$wan from 127.0.0.0/8 to any label "block private networks from wan block 127/8"
@@ -2538,6 +2546,7 @@ block in $log quick on \$wan from 192.168.0.0/16 to any label "block private net
 
 EOD;
 
+		}
 	}
 
 	/*

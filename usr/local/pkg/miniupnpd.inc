@@ -4,7 +4,6 @@
 
 	/* MiniUPnPd */
 
-	define('UPNP_RCFILE', '/usr/local/etc/rc.d/miniupnpd.sh');
 	define('UPNP_CONFIG','/var/etc/miniupnpd.conf');
 
 	function upnp_notice ($msg) { syslog(LOG_NOTICE, "miniupnpd: {$msg}"); return; }
@@ -40,6 +39,7 @@
 	}
 
 	function upnp_write_config($conf_file, $conf_text) {
+		$conf_file = "/var/etc/miniupnpd.conf";
 		$conf = fopen($conf_file, "w");
 		if(!$conf) {
 			upnp_warn("Could not open {$conf_file} for writing.");
@@ -253,12 +253,6 @@ EOD;
 				/* write out the configuration */
 				conf_mount_rw();
 				upnp_write_config(UPNP_CONFIG,$configtext);
-				write_rcfile(array(
-					    'file' => 'miniupnpd.sh',
-					    'start' => $start,
-					    'stop' => $stop
-				    )
-				);
 				conf_mount_ro();
 				
 				/* if miniupnpd not running start it */

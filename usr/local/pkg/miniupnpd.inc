@@ -4,9 +4,6 @@
 
 	/* MiniUPnPd */
 
-	define('UPNP_RCFILE', '/usr/local/etc/rc.d/miniupnpd.sh');
-	define('UPNP_CONFIG','/var/etc/miniupnpd.conf');
-
 	function upnp_notice ($msg) { syslog(LOG_NOTICE, "miniupnpd: {$msg}"); return; }
 	function upnp_warn ($msg) { syslog(LOG_WARNING, "miniupnpd: {$msg}"); return; }
 
@@ -40,9 +37,11 @@
 	}
 
 	function upnp_write_config($conf_file, $conf_text) {
+		$conf_file = "/var/etc/miniupnpd.conf";
 		$conf = fopen($conf_file, "w");
 		if(!$conf) {
 			upnp_warn("Could not open {$conf_file} for writing.");
+			echo "Could not open {$conf_file} for writing.";
 			exit;
 		}
 		fwrite($conf, $conf_text);
@@ -156,6 +155,9 @@
 		if(upnp_config('enable') && upnp_config('iface_array'))
 			$iface_array = explode(',',upnp_config('iface_array'));
 
+		echo upnp_config('iface_array');
+		echo $iface_array;
+
 		if($iface_array) {
 			foreach($iface_array as $iface) {
 				$if = convert_friendly_interface_to_real_interface_name($iface);
@@ -248,17 +250,12 @@ if [ `pgrep miniupnpd | wc -l` != 0  ]; then
 		/sbin/pfctl -aminiupnpd -Fn 2>&1 >/dev/null
 	fi
 EOD;
-				$start = $stop."\n\t/usr/local/sbin/miniupnpd -f ".UPNP_CONFIG;
+				$start = $stop."\n\t/usr/local/sbin/miniupnpd -f /var/etc/miniupnpd.conf";
 
 				/* write out the configuration */
 				conf_mount_rw();
-				upnp_write_config(UPNP_CONFIG,$configtext);
-				write_rcfile(array(
-					    'file' => 'miniupnpd.sh',
-					    'start' => $start,
-					    'stop' => $stop
-				    )
-				);
+				echo "Writing configuration file...";
+				upnp_write_config("/var/etc/miniupnpd.conf",$configtext);
 				conf_mount_ro();
 				
 				/* if miniupnpd not running start it */
@@ -288,7 +285,7 @@ EOD;
 
 				conf_mount_rw();
 				unlink(UPNP_RCFILE);
-				unlink(UPNP_CONFIG);
+				unlink("/var/etc/miniupnpd.conf");
 				conf_mount_ro();
 			}
 		}

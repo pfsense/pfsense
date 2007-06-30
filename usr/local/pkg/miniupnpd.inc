@@ -251,7 +251,6 @@ EOD;
 
 				/* write out the configuration */
 				conf_mount_rw();
-				echo "Writing configuration file...";
 				upnp_write_config("/var/etc/miniupnpd.conf",$configtext);
 				conf_mount_ro();
 				

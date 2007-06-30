@@ -155,9 +155,6 @@
 		if(upnp_config('enable') && upnp_config('iface_array'))
 			$iface_array = explode(',',upnp_config('iface_array'));
 
-		echo upnp_config('iface_array');
-		echo $iface_array;
-
 		if($iface_array) {
 			foreach($iface_array as $iface) {
 				$if = convert_friendly_interface_to_real_interface_name($iface);

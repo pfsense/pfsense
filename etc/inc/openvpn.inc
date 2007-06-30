@@ -468,8 +468,12 @@ function openvpn_resync_csc($id) {
 
 	$settings = $config['installedpackages']['openvpncsc']['config'][$id];
 
-	if ($settings['disable'] == 'on') return;
-
+	if ($settings['disable'] == 'on') {
+		$filename = "{$g['varetc_path']}/openvpn_csc/{$settings['commonname']}";
+		unlink_if_exists($filename);
+		return;
+	}
+	
 	$conf = '';
 	if ($settings['block'] == 'on') $conf .= "disable\n";
 	if ($settings['push_reset'] == 'on') $conf .= "push-reset\n";

@@ -315,6 +315,9 @@ function vpn_ipsec_configure($ipchg = false) {
 				} else if (isset($tunnel['p1']['myident']['ufqdn'])) {
 					$myidentt = "user_fqdn";
 					$myident = $tunnel['p1']['myident']['ufqdn'];
+				} else if (isset($tunnel['p1']['myident']['asn1dn'])) {
+					$myidentt = "asn1dn";
+					$myident = $tunnel['p1']['myident']['asn1dn'];
  				} else if (isset($tunnel['p1']['myident']['dyn_dns'])) {
 					$myidentt = "dyn_dns";
 					$myident = gethostbyname($tunnel['p1']['myident']['dyn_dns']);
@@ -376,10 +379,13 @@ function vpn_ipsec_configure($ipchg = false) {
 EOD;
 					}
 				}
+				$myidentifier = $myidentt;
+				if (!empty($myident)) 
+					$myidentifier .= ' "' . $myident . '"';
 				$racoonconf .= <<<EOD
 remote {$tunnel['remote-gateway']} \{
 	exchange_mode {$tunnel['p1']['mode']};
-	my_identifier {$myidentt} "{$myident}";
+	my_identifier {$myidentifier};
 	{$certline}
 	peers_identifier address {$tunnel['remote-gateway']};
 	initial_contact on;
@@ -440,6 +446,9 @@ EOD;
 				} else if (isset($tunnel['p1']['myident']['ufqdn'])) {
 					$myidentt = "user_fqdn";
 					$myident = $tunnel['p1']['myident']['ufqdn'];
+				} else if (isset($tunnel['p1']['myident']['asn1dn'])) {
+					$myidentt = "asn1dn";
+					$myident = $tunnel['p1']['myident']['asn1dn'];
  				}
 
 				if (isset($tunnel['p1']['authentication_method'])) {

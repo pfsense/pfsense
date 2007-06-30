@@ -152,6 +152,7 @@ $my_identifier_list = array('myaddress' => 'My IP address',
 				'address' => 'IP address',
 				'fqdn' => 'Domain name',
 				'user_fqdn' => 'User FQDN',
+				'asn1dn' => 'Distinguished Name',
 				'dyn_dns' => 'Dynamic DNS');
 
 $p1_ealgos = array('des' => 'DES', '3des' => '3DES', 'blowfish' => 'Blowfish',

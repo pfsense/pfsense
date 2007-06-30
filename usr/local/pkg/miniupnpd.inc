@@ -5,7 +5,7 @@
 	/* MiniUPnPd */
 
 	define('UPNP_RCFILE', '/usr/local/etc/rc.d/miniupnpd.sh');
-	define('UPNP_CONFIG','/usr/local/etc/miniupnpd.conf');
+	define('UPNP_CONFIG','/var/etc/miniupnpd.conf');
 
 	function upnp_notice ($msg) { syslog(LOG_NOTICE, "miniupnpd: {$msg}"); return; }
 	function upnp_warn ($msg) { syslog(LOG_WARNING, "miniupnpd: {$msg}"); return; }

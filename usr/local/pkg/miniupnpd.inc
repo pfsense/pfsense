@@ -11,8 +11,19 @@
 	function upnp_warn ($msg) { syslog(LOG_WARNING, "miniupnpd: {$msg}"); return; }
 
 	function upnp_action ($action) {
-		if (file_exists(UPNP_RCFILE))
-			mwexec(UPNP_RCFILE.' '.$action);
+		switch($action) {
+			case "start":
+				mwexec("killall miniupnpd 2>/dev/null");
+				upnp_start();
+				break;
+			case "stop":
+				mwexec("killall miniupnpd");
+				break;
+			case "restart":
+				mwexec("killall miniupnpd");
+				upnp_start();
+				break;
+		}
 	}
 
 	function upnp_running () {

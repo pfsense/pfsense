@@ -317,6 +317,8 @@
 		mwexec("sysctl net.inet.tcp.sendspace=4096");
 	}
 
+	upnp_start();
+
 	/* done */
 	unlink("{$g['varrun_path']}/booting");
 	$g['booting'] = FALSE;

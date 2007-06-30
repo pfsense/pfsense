@@ -5,7 +5,7 @@
 	/* MiniUPnPd */
 
 	define('UPNP_RCFILE', '/usr/local/etc/rc.d/miniupnpd.sh');
-	define('UPNP_CONFIG','/usr/local/etc/miniupnpd.conf');
+	define('UPNP_CONFIG','/var/etc/miniupnpd.conf');
 
 	function upnp_notice ($msg) { syslog(LOG_NOTICE, "miniupnpd: {$msg}"); return; }
 	function upnp_warn ($msg) { syslog(LOG_WARNING, "miniupnpd: {$msg}"); return; }
@@ -220,35 +220,6 @@
 
 				if(upnp_config('permdefault'))
 					$configtext .= "deny 0-65535 0.0.0.0/0 0-65535\n";
-
-				/* generate rc file start and stop */
-				$stop = <<<EOD
-if [ `pgrep miniupnpd | wc -l` != 0  ]; then
-		/usr/bin/killall miniupnpd
-		while [ `pgrep miniupnpd | wc -l` != 0 ]; do
-			sleep 1
-		done
-	fi
-	# Clear existing rules and rdr entries
-	if [ `pfctl -aminiupnpd -sr | wc -l` != 0  ]; then
-		/sbin/pfctl -aminiupnpd -Fr 2>&1 >/dev/null
-	fi
-	if [ `pfctl -aminiupnpd -sn | wc -l` != 0  ]; then
-		/sbin/pfctl -aminiupnpd -Fn 2>&1 >/dev/null
-	fi
-EOD;
-				$start = $stop."\n\t/usr/local/sbin/miniupnpd -f ".UPNP_CONFIG;
-
-				/* write out the configuration */
-				conf_mount_rw();
-				upnp_write_config(UPNP_CONFIG,$configtext);
-				write_rcfile(array(
-					    'file' => 'miniupnpd.sh',
-					    'start' => $start,
-					    'stop' => $stop
-				    )
-				);
-				conf_mount_ro();
 
 				/* if miniupnpd not running start it */
 				if(!upnp_running()) {

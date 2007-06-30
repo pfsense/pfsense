@@ -1272,4 +1272,10 @@ function configure_cron() {
 		conf_mount_ro();
 }
 
+function upnp_start() {
+	if($config['installedpackages']['miniupnpd']['config'][0]["enable"]) {
+		mwexec_bg("/usr/local/sbin/miniupnpd -f /var/etc/miniupnpd.conf");
+	}
+}
+
 ?>

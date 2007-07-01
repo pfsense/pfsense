@@ -1071,13 +1071,6 @@ div#log span.log-protocol {
 	text-indent: 10px;
 }
 
-#login #username, #password {
-	font-size: 1em;
-	width: 60%;
-	padding: 3px;
-	margin: 0em;
-}
-
 #login #submit {
 	font-size: 1em;
 	font-weight: bold;

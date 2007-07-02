@@ -32,7 +32,7 @@ LOCALHOST=127.0.0.1
 
 if [ -x /usr/bin/logger ]; then
 #	LOGGER="/usr/bin/logger -s -p user.notice -t dhclient"
-	LOGGER="/bin/true"
+	LOGGER="/usr/bin/true"
 else
 	LOGGER=echo
 fi

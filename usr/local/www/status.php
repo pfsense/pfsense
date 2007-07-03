@@ -95,6 +95,8 @@ global $g;
 defCmdT("System uptime","uptime");
 defCmdT("Interfaces","/sbin/ifconfig -a");
 
+defCmdT("PF Info","pfctl -s info");
+
 defCmdT("Routing tables","netstat -nr");
 
 defCmdT("top | head -n5", "/usr/bin/top | /usr/bin/head -n5");

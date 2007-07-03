@@ -30,14 +30,8 @@
         ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
         POSSIBILITY OF SUCH DAMAGE.
 */
-
 ?>
 
-<div id="<?=$ifname;?>trafficdiv" style="padding: 5px">
-<input type="hidden" id="<?php echo $ifname;?>_graph-config" name="<?php echo $ifname;?>_graph-config" class="graphsettings" value="<?=$interfacevalue;?>">
-        <div id="<?=$ifname;?>topic" class="widgetsubheader">
-                <div style="float:left;width:49%">
-                <embed id="graph" src="graph_cpu.php" type="image/svg+xml" width="<? echo $width; ?>" height="<? echo $height; ?>" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
-                </div>
-        </div>
-</div>                                  
+<div style="float:left;width:49%">
+<embed id="graph" src="graph_cpu.php" type="image/svg+xml" width="356" height="150" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
+</div>

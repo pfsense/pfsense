@@ -247,12 +247,6 @@ function vpn_ipsec_configure($ipchg = false) {
 
 				fwrite($fd, $spdconf);
 				fclose($fd);
-
-				/* flushie, flushie spds */
-				mwexec("/sbin/setkey -FP");
-
-				/* load SPD */
-				mwexec("/sbin/setkey -c < {$g['varetc_path']}/spd.conf");
 			}
 
 			/* generate racoon.conf */
@@ -573,12 +567,24 @@ EOD;
 			if(is_process_running("racoon")) {
 				/* We are already online, reload */
 				mwexec("/usr/bin/killall -HUP racoon");
+				// sleep(2);
+				/* flushie, flushie spds */
+				mwexec("/usr/local/sbin/setkey -FP");
+				mwexec("/usr/local/sbin/setkey -F");
+				/* load SPD */
+				mwexec("/bin/cat {$g['varetc_path']}/spd.conf | /usr/local/bin/slowdownpipe.sh | /usr/local/sbin/setkey -c");
+				sleep(1);
 			} else {
-				/* sleep for a bit */
-				sleep (2);
-
 				/* start racoon */
 				mwexec("/usr/local/sbin/racoon -f {$g['varetc_path']}/racoon.conf");
+				/* sleep for a bit */
+				// sleep (2);
+				/* flushie, flushie spds */
+				mwexec("/usr/local/sbin/setkey -FP");
+				mwexec("/usr/local/sbin/setkey -F");
+				/* load SPD */
+				mwexec("/bin/cat {$g['varetc_path']}/spd.conf | /usr/local/bin/slowdownpipe.sh | /usr/local/sbin/setkey -c");
+				sleep(1);
 			}
 		}
 	}
@@ -1115,17 +1121,13 @@ function vpn_ipsec_force_reload() {
 	mwexec("/usr/bin/killall racoon");
 
 	/* wait for process to die */
-	sleep(2);
+	sleep(4);
 
 	/* send a SIGKILL to be sure */
 	sigkillbypid("{$g['varrun_path']}/racoon.pid", "KILL");
 
-	/* flush SPD and SAD */
-	mwexec("/sbin/setkey -FP");
-	mwexec("/sbin/setkey -F");
-
 	/* wait for flushing to finish */
-	sleep(5);
+	sleep(1);
 
 	/* if ipsec is enabled, start up again */
 	if (isset($ipseccfg['enable'])) {

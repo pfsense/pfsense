@@ -885,7 +885,8 @@ function filter_nat_rules_generate() {
 		$realif = convert_friendly_interface_to_real_interface_name(strtolower($ifname));
 		$int_ip = find_interface_ip($realif);
 		if(isset($config['interfaces'][strtolower($ifname)]['disableftpproxy'])) {
-			log_error("Filter: FTP proxy disabled for interface {$ifname} - ignoring.");
+			if($g['debug'])
+				log_error("Filter: FTP proxy disabled for interface {$ifname} - ignoring.");
 			$interface_counter++;
 			continue;
 		}
@@ -910,11 +911,13 @@ function filter_nat_rules_generate() {
 				}
 			}
 			if($sourcenat == 0) {
-				log_error("Filter: No AON rule matched for interface {$ifname} - not using the FTP proxy");
+				if($g['debug'])
+					log_error("Filter: No AON rule matched for interface {$ifname} - not using the FTP proxy");
 				$interface_counter++;
 				continue;
 			} else {
-				log_error("Filter: AON Rule matched for interface {$ifname} - using FTP proxy");
+				if($g['debug'])
+					log_error("Filter: AON Rule matched for interface {$ifname} - using FTP proxy");
 			}
 		}
 		$tmp_port = 8021 + $interface_counter;
@@ -1616,17 +1619,20 @@ function generate_user_filter_rule($rule, $ngcounter) {
 									}
 								}
 								$lbs_count = count($lbs);
-								log_error("We found $lbs_count valid entries in status file {$g['tmp_path']}/{$lb['name']}.pool");
+								if($g['debug'])
+									log_error("We found $lbs_count valid entries in status file {$g['tmp_path']}/{$lb['name']}.pool");
 
 								if(count($lbs) == 0) {
-									log_error("There are no servers found in the status file, using XML config settings!");
+									if($g['debug'])
+										log_error("There are no servers found in the status file, using XML config settings!");
 									foreach ($lb['servers'] as $lbsvr) {
 										$lbsvr_split = split("\|", $lbsvr);
 										$lbs[] = $lbsvr_split[1];
 									}
 								}
 							} else {
-								log_error("There is no server status file, using XML config settings!");
+								if($g['debug'])
+									log_error("There is no server status file, using XML config settings!");
 								$lbs = array();
 									foreach ($lb['servers'] as $lbsvr) {
 									$lbsvr_split = split("\|", $lbsvr);
@@ -1670,7 +1676,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 											$gateway = get_interface_gateway($lbconfig['gateway'][$l]);
 										}
 										if(($int <> "") && ($gateway <> "")) {
-											log_error("Setting up route with {$lbconfig['gateway'][$l]} om $int for monitor {$lbconfig['monitor'][$l]} on gateway $gateway");
+											if($g['debug'])
+												log_error("Setting up route with {$lbconfig['gateway'][$l]} om $int for monitor {$lbconfig['monitor'][$l]} on gateway $gateway");
 											if($foundlb == 1)
 												$routeto .= ", ";
 											$routeto .=  "( {$int} {$gateway} ) ";

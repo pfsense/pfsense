@@ -61,5 +61,11 @@
           	<?=htmlspecialchars($ipaddress);}?>
           </tr><?php }
                   }
+            else
+            {
+            	?>
+            	<tr><td class="listr">No CARP Interfaces Defined. Click <a href="carp_status.php">here</a> to configure CARP.</td></tr>
+            	<?php
+            }
            ?>
 </table>

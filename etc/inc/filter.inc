@@ -331,10 +331,10 @@ function filter_generate_aliases() {
 	$lan_aliases = " " . link_ip_to_carp_interface($lanip);
 	$wan_aliases = " " . link_ip_to_carp_interface($wanip);
 
-	if(link_int_to_bridge_interface("lan"))
-		$lan_aliases .= " " . link_int_to_bridge_interface("lan");
-	if(link_int_to_bridge_interface("wan"))
-		$wan_aliases .= " " . link_int_to_bridge_interface("wan");
+//	if(link_int_to_bridge_interface("lan"))
+//		$lan_aliases .= " " . link_int_to_bridge_interface("lan");
+//	if(link_int_to_bridge_interface("wan"))
+//		$wan_aliases .= " " . link_int_to_bridge_interface("wan");
 
 	$aliases .= "# System Aliases \n";
 	$aliases .= "loopback = \"{ lo0 }\"\n";

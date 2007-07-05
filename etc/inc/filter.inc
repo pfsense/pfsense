@@ -2807,7 +2807,7 @@ EOD;
 							continue;
 						if(!$remote_gateway) 
 							continue;
-						$ipfrules .= "pass out quick on \${$iface} proto udp from \${$iface} to {$remote_gateway} port = 500 keep state label \"IPSEC: {$tunnel['descr']} - outbound isakmp\"\n";
+						$ipfrules .= "pass out quick on \${$iface} proto udp from any to {$remote_gateway} port = 500 keep state label \"IPSEC: {$tunnel['descr']} - outbound isakmp\"\n";
 						$ipfrules .= "pass in quick on \${$iface} proto udp from {$remote_gateway} to any port = 500 keep state label \"IPSEC: {$tunnel['descr']} - inbound isakmp\"\n";
 						if ($tunnel['p2']['protocol'] == 'esp') {
 							$ipfrules .= "pass out quick on \${$iface} proto esp from any to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound esp proto\"\n";

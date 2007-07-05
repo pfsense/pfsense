@@ -204,7 +204,7 @@ include("head.inc");
 ?>
 		<tr>
 		  <td colspan="6" class="listtopic">
-			    Last <?=$nentries;?> firewall log entries &nbsp;&nbsp;&nbsp;(<a href='/diag_logs_filter_dynamic.php'>switch</a> to dynamic view)</td>
+			    Last <?=$nentries;?> firewall log entries</td>
 			</tr>
 			<tr>
 			  <td width="10%" class="listhdrr">Act</td>

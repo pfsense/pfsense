@@ -6,6 +6,11 @@
 	<theme>nervecenter</theme>
 	<sysctl>
 		<item>
+			<desc>Set the ephemeral port range to be lower.</desc>
+			<tunable>net.inet.ip.portrange.first</tunable>
+			<value>1024</value>
+		</item>
+		<item>
 			<desc>Drop packets to closed TCP ports without returning a RST</desc>
 			<tunable>net.inet.tcp.blackhole</tunable>
 			<value>2</value>

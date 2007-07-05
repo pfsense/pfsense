@@ -44,7 +44,7 @@ $if = $_GET['if'];
 if ($_POST['if'])
 	$if = $_POST['if'];
 
-$iflist = array("lan" => "LAN", "wan" => "WAN", "enc0" => "IPSEC");
+$iflist = array("lan" => "LAN", "wan" => "WAN");
 
 if ($config['pptpd']['mode'] == "server")
 	$iflist['pptp'] = "PPTP VPN";
@@ -56,6 +56,7 @@ if ($config['pppoe']['mode'] == "server")
 if (is_array($config['ipsec']['tunnel']) && isset($config['ipsec']['enable'])) {
 	$a_ipsec = &$config['ipsec']['tunnel'];
 	if(is_array($a_ipsec)) {
+		$iflist["enc0"] = "IPsec";
 		$i = 0; foreach ($a_ipsec as $ipsecent) {
 			if(isset($ipsecent['creategif'])) {
 				$iflist["gif{$i}"] = "{$ipsecent['descr']}";

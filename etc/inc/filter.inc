@@ -2626,7 +2626,7 @@ EOD;
 
 # make sure the user cannot lock himself out of the webGUI or SSH
 anchor "anti-lockout"
-pass in quick from any to $lanip keep state label "anti-lockout web rule"
+pass in quick on $lan from any to $lanip keep state label "anti-lockout web rule"
 
 EOD;
 		}

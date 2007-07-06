@@ -33,16 +33,27 @@
 function AddServerToPool(form) {
 
     var IntOrIp
-	var theSel = form['servers[]'];
+	var enabledSel = form['servers[]'];
+	var disabledSel = form['serversdisabled[]'];
 	if (form.type.selectedIndex == 0)
 	    IntOrIp = form.ipaddr;
 	else
 	    IntOrIp = form.interface;
 	    
-	for(i = theSel.length - 1; i >= 0; i--)
+	// Check items in "enabled" list
+	for(i = enabledSel.length - 1; i >= 0; i--)
 	{
-		if(theSel.options[i].value == IntOrIp.value) {
-			alert("IP Address Already In List");
+		if(enabledSel.options[i].value == IntOrIp.value) {
+			alert("IP Address Already In 'Enabled' List");
+			return true;
+		}
+	}
+
+	// Check items in "disabled" list
+	for(i = disabledSel.length - 1; i >= 0; i--)
+	{
+		if(disabledSel.options[i].value == IntOrIp.value) {
+			alert("IP Address Already In 'Disabled' List");
 			return true;
 		}
 	}
@@ -72,9 +83,9 @@ function AllServers(id, selectAll) {
 }
 
 
-function RemoveServerFromPool(form)
+function RemoveServerFromPool(form, field)
 {
-	var theSel = form['servers[]'];
+	var theSel = form[field];
 	var selIndex = theSel.selectedIndex;
 	if (selIndex != -1) {
 		for(i=theSel.length-1; i>=0; i--)
@@ -86,6 +97,95 @@ function RemoveServerFromPool(form)
 		}
 		if (theSel.length > 0) {
 			theSel.selectedIndex = selIndex == 0 ? 0 : selIndex - 1;
+		}
+	}
+}
+
+function addOption(theSel, theText, theValue)
+{
+	var newOpt = new Option(theText, theValue);
+	var selLength = theSel.length;
+	theSel.options[selLength] = newOpt;
+}
+
+function deleteOption(theSel, theIndex)
+{ 
+	var selLength = theSel.length;
+	if(selLength>0)
+	{
+		theSel.options[theIndex] = null;
+	}
+}
+
+function moveOptions(theSelFrom, theSelTo)
+{
+	var selLength = theSelFrom.length;
+	var selectedText = new Array();
+	var selectedValues = new Array();
+	var selectedCount = 0;
+
+	var i;
+
+	// Find the selected Options in reverse order
+	// and delete them from the 'from' Select.
+	for(i=selLength-1; i>=0; i--)
+	{
+		if(theSelFrom.options[i].selected)
+		{
+			selectedText[selectedCount] = theSelFrom.options[i].text;
+			selectedValues[selectedCount] = theSelFrom.options[i].value;
+			deleteOption(theSelFrom, i);
+			selectedCount++;
+		}
+	}
+
+	// Add the selected text/values in reverse order.
+	// This will add the Options to the 'to' Select
+	// in the same order as they were in the 'from' Select.
+	for(i=selectedCount-1; i>=0; i--)
+	{
+		addOption(theSelTo, selectedText[i], selectedValues[i]);
+	}
+}
+
+// functions up() and down() modified from http://www.babailiica.com/js/sorter/
+
+function up(obj) {
+	var sel = new Array();
+	for (var i=0; i<obj.length; i++) {
+		if (obj[i].selected == true) {
+			sel[sel.length] = i;
+		}
+	}
+	for (i in sel) {
+		if (sel[i] != 0 && !obj[sel[i]-1].selected) {
+			var tmp = new Array(obj[sel[i]-1].text, obj[sel[i]-1].value);
+			obj[sel[i]-1].text = obj[sel[i]].text;
+			obj[sel[i]-1].value = obj[sel[i]].value;
+			obj[sel[i]].text = tmp[0];
+			obj[sel[i]].value = tmp[1];
+			obj[sel[i]-1].selected = true;
+			obj[sel[i]].selected = false;
+		}
+	}
+}
+
+function down(obj) {
+	var sel = new Array();
+	for (var i=obj.length-1; i>-1; i--) {
+		if (obj[i].selected == true) {
+			sel[sel.length] = i;
+		}
+	}
+	for (i in sel) {
+		if (sel[i] != obj.length-1 && !obj[sel[i]+1].selected) {
+			var tmp = new Array(obj[sel[i]+1].text, obj[sel[i]+1].value);
+			obj[sel[i]+1].text = obj[sel[i]].text;
+			obj[sel[i]+1].value = obj[sel[i]].value;
+			obj[sel[i]].text = tmp[0];
+			obj[sel[i]].value = tmp[1];
+			obj[sel[i]+1].selected = true;
+			obj[sel[i]].selected = false;
 		}
 	}
 }

@@ -48,6 +48,7 @@ if (isset($id) && $a_pool[$id]) {
 	$pconfig['desc'] = $a_pool[$id]['desc'];
 	$pconfig['port'] = $a_pool[$id]['port'];
 	$pconfig['servers'] = &$a_pool[$id]['servers'];
+	$pconfig['serversdisabled'] = &$a_pool[$id]['serversdisabled'];
 	$pconfig['monitor'] = $a_pool[$id]['monitor'];
 }
 
@@ -82,13 +83,24 @@ if ($_POST) {
 		foreach($pconfig['servers'] as $svrent) {
 			if (!is_ipaddr($svrent)) {
 				if($_POST['type'] == "server") {
-					$input_errors[] = "{$svrent} is not a valid IP address.";
+					$input_errors[] = "{$svrent} is not a valid IP address (in \"enabled\" list).";
 				} else {
 					$split_ip = split("\|", $svrent);
-					/* if(!is_ipaddr($split_ip[0]))
-						$input_errors[] = "{$split_ip[0]} is not a valid IP address."; */
 					if(!is_ipaddr($split_ip[1]))
-						$input_errors[] = "{$split_ip[1]} is not a valid IP address.";
+						$input_errors[] = "{$split_ip[1]} is not a valid IP address (in \"enabled\" list).";
+				}
+			}
+		}
+	}
+	if (is_array($_POST['serversdisabled'])) {
+		foreach($pconfig['serversdisabled'] as $svrent) {
+			if (!is_ipaddr($svrent)) {
+				if($_POST['type'] == "server") {
+					$input_errors[] = "{$svrent} is not a valid IP address (in \"disabled\" list).";
+				} else {
+					$split_ip = split("\|", $svrent);
+					if(!is_ipaddr($split_ip[1]))
+						$input_errors[] = "{$split_ip[1]} is not a valid IP address (in \"disabled\" list).";
 				}
 			}
 		}
@@ -139,6 +151,7 @@ if ($_POST) {
 		update_if_changed("description", $poolent['desc'], $_POST['desc']);
 		update_if_changed("port", $poolent['port'], $_POST['port']);
 		update_if_changed("servers", $poolent['servers'], $_POST['servers']);
+		update_if_changed("serversdisabled", $poolent['serversdisabled'], $_POST['serversdisabled']);
 		update_if_changed("monitor", $poolent['monitor'], $_POST['monitor']);
 
 		if (isset($id) && $a_pool[$id]) {
@@ -398,8 +411,7 @@ function clearcombo(){
 "balance") echo " CHECKED"; ?>><?=gettext("Load Balancing");?><br>
 				<input type="radio" name="behaviour" id="behaviour" value="failover"<?php if($pconfig['behaviour'] == 
 "failover") echo " CHECKED"; ?>><?=gettext("Failover");?><br>
-				Load Balancing: both active. Failover order: top -> down.<br>
-				NOTE: Failover mode only applies to outgoing rules (multi-wan).
+				Load Balancing: both active. Failover order: top -&gt; down.
 			</td>
 		</tr>
 
@@ -478,6 +490,28 @@ function clearcombo(){
 					<tbody>
 					<tr>
 						<td>
+							Disabled<br/>
+							<select id="serversDisabledSelect" name="serversdisabled[]" multiple="true" size="5">
+							
+<?php
+if (is_array($pconfig['serversdisabled'])) {
+	foreach($pconfig['serversdisabled'] as $svrent) {
+		if($svrent != '') echo "    <option value=\"{$svrent}\">{$svrent}</option>\n";
+	}
+}
+echo "</select>";
+?>
+							<br/>
+							<input class="formbtn" type="button" name="removeDisabled" value="Remove" onclick="RemoveServerFromPool(document.iform, 'serversdisabled[]');" />
+						</td>
+
+						<td valign="middle">
+							<input class="formbtn" type="button" name="moveToEnabled" value=">" onclick="moveOptions(document.iform.serversDisabledSelect, document.iform.serversSelect);" /><br/>
+							<input class="formbtn" type="button" name="moveToDisabled" value="<" onclick="moveOptions(document.iform.serversSelect, document.iform.serversDisabledSelect);" />
+						</td>
+
+						<td>
+							Enabled (default)<br/>
 							<select id="serversSelect" name="servers[]" multiple="true" size="5">
 							
 <?php
@@ -488,9 +522,12 @@ if (is_array($pconfig['servers'])) {
 }
 echo "</select>";
 ?>
+							<br/>
+							<input class="formbtn" type="button" name="removeEnabled" value="Remove" onclick="RemoveServerFromPool(document.iform, 'servers[]');" />
 						</td>
 						<td valign="top">
-							<input class="formbtn" type="button" name="button2" value="Remove from pool" onclick="RemoveServerFromPool(document.iform);">
+							<input class="formbtn" type="button" name="moveUp" value="Move up" onclick="up(document.iform.serversSelect);" /><br/>
+							<input class="formbtn" type="button" name="moveDown" value="Move down" onclick="down(document.iform.serversSelect);" />
 						</td>
 					</tr>
 					</tbody>
@@ -500,7 +537,7 @@ echo "</select>";
 		<tr align="left">
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%">
-				<input name="Submit" type="submit" class="formbtn" value="Save" onClick="AllServers('serversSelect', true)">
+				<input name="Submit" type="submit" class="formbtn" value="Save" onClick="AllServers('serversSelect', true); AllServers('serversDisabledSelect', true);">
 				<?php if (isset($id) && $a_pool[$id]): ?>
 				<input name="id" type="hidden" value="<?=$id;?>">
 				<?php endif; ?>

@@ -41,7 +41,7 @@ $nb_plot=120;                   //NB plot in graph
 if ($_GET["timeint"])
 	$time_interval = $_GET["timeint"];		//Refresh time Interval
 else
-	$time_interval = 1;
+	$time_interval = 3;
 
 $fetch_link = "ifstats.php?if={$ifnum}";
 

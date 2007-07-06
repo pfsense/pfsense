@@ -42,7 +42,7 @@ if ($_GET['option']) {
 	if($curcat == "system") {
 		$curoption = "processor";
 	} else if($curcat == "queues") {
-		$curoption = "queues.";
+		$curoption = "queues";
 	} else {
 		$curoption = "wan";
 	}
@@ -120,7 +120,7 @@ include("head.inc");
 					<?php
 
 					foreach ($databases as $db => $database) {
-						if(! stristr($database, $curcat)) {
+						if(! preg_match("/($curcat)/i", $database)) {
 							continue;
 						}
 						$optionc = split("-", $database);
@@ -134,7 +134,7 @@ include("head.inc");
 								break;
 							case "queues":
 								$optionc = str_replace($search, $replace, $optionc[1]);
-								echo "<option value=\"$optionc.\"";
+								echo "<option value=\"$optionc\"";
 								$prettyprint = ucwords(str_replace($search, $replace, $optionc));
 								break;
 							default:
@@ -174,7 +174,7 @@ include("head.inc");
 					foreach($periods as $period => $interval) {
 						/* check which databases are valid for our category */
 						foreach($databases as $curdatabase) {
-							if(! stristr($curdatabase, $curcat)) {
+							if(! preg_match("/($curcat)/i", $curdatabase)) {
 								continue;
 							}
 							$optionc = split("-", $curdatabase);
@@ -190,7 +190,7 @@ include("head.inc");
 									if($monitorip == "") {
 										continue 2; 
 									}
-									if(! stristr($curdatabase, $optionc)) {
+									if(! preg_match("/($optionc)[-.]/i", $curdatabase)) {
 										continue 2;
 									}
 									break;
@@ -202,7 +202,7 @@ include("head.inc");
 									break;
 								default:
 									/* just use the name here */
-									if(! stristr($curdatabase, $curoption)) {
+									if(! preg_match("/($curoption)[-.]/i", $curdatabase)) {
 										continue 2;
 									}
 							}

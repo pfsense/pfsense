@@ -62,6 +62,17 @@ function is_timezone($elt) {
 	return !preg_match("/\/$/", $elt);
 }
 
+if($pconfig['timezone'] <> $_POST['timezone']) {
+	/* restart firewall log dumper helper */
+	require_once("functions.inc");
+	$pid = `ps awwwux | grep -v "grep" | grep "tcpdump -vv -l -n -e -ttt -i pflog0"  | awk '{ print $2 }'`;
+	if($pid) {
+		mwexec("kill $pid");
+		usleep(1000);
+	}		
+	filter_pflog_start();
+}
+
 exec('/usr/bin/tar -tzf /usr/share/zoneinfo.tgz', $timezonelist);
 $timezonelist = array_filter($timezonelist, 'is_timezone');
 sort($timezonelist);

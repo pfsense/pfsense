@@ -130,7 +130,7 @@ if ($_POST) {
 			
 			unlink($d_landirty_path);
 			
-			$savemsg = "The changes have been applied.  You may need to correct the web browsers ip address.";
+			$savemsg = "The changes have been applied.  You may need to correct your web browser's IP address.";
 			
 		}
 	}

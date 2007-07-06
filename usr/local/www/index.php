@@ -352,8 +352,30 @@ echo $jscriptstr;
 	</div>
 </div>
 
+<div id="welcomecontainer" style="display:none">
+		<div id="welcome-div">
+			<h1>
+				<div style="float:left;padding: 2px">
+					Welcome to the New Dashboard page!
+				</div>
+				<div onclick="domTT_close(this);" style="float:right; cursor:pointer;padding: 5px;" >
+					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_close.gif" />
+				</div>
+				<div style="clear:both;"></div>
+			</h1>
+			<p>
+			This page allows you to customize the information you want to be displayed!<br/>
+			To get started click the <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif"> icon to add additional widgets.<br/>
+			<br/>
+			You can move any widget around by clicking and dragging the title.			
+			</p>
+	</div>
+</div>
+
+
+
 <input type="hidden" value="" name="sequence" id="sequence">
-<p class="pgtitle">System Overview&nbsp;&nbsp;&nbsp;
+<p class="pgtitle">Dashboard&nbsp;&nbsp;&nbsp;
 <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="Click here to add widgets" style="cursor: help;" onmouseup="domTT_activate(this, event, 'content', document.getElementById('content1'), 'type', 'velcro', 'delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
 &nbsp;&nbsp;&nbsp;
 		<input id="submit" name="submit" type="submit" style="display:none" onclick="return updatePref();" class="formbtn" value="Save Settings" />
@@ -507,10 +529,18 @@ echo $jscriptstr;
 	<div style="clear:both;"></div>
 </div>
 
+
+
 <?php include("fend.inc"); ?>
 	    
 <script type="text/javascript">
 
+	<?php if (!$config['widgets']){ ?>
+	window.onload = function(in_event)
+	{
+			domTT_activate('welcome1', null, 'x', 272, 'y', 107, 'content', document.getElementById('welcome-div'), 'type', 'sticky', 'closeLink', '','delay', 500, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');
+	}
+	<?php } ?>
 	// <![CDATA[
 	Sortable.create("col1", {tag:'div',dropOnEmpty:true,containment:columns,handle:'widgetheader',constraint:false,only:'widgetdiv',onChange:showSave});	
 	Sortable.create("col2", {tag:'div',dropOnEmpty:true,containment:columns,handle:'widgetheader',constraint:false,only:'widgetdiv',onChange:showSave});		

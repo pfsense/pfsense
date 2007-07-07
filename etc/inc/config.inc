@@ -1702,7 +1702,7 @@ function system_start_ftp_helpers() {
 	mwexec("/usr/bin/killall ftpsesame");
 
 	/* build an array of interfaces to work with */
-	$iflist = array("lan" => "LAN");
+	$iflist = array("lan" => "lan");
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
 		$iflist['opt' . $i] = "opt{$i}";
 

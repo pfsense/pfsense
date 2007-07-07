@@ -1577,6 +1577,16 @@ function system_start_ftp_helpers() {
 
 	/* loop through all interfaces and handle pftpx */
 	$interface_counter = 0;
+	if(isset($config['shaper']['enable'])) {
+		if(isset($config['ezshaper']['step5']['p2pcatchall'])) {
+			$shaper_queue = "-q qP2PDown ";
+		} else { 
+			$downq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['inside_int']);
+			$shaper_queue = "-q {$downq}def ";
+		}
+	} else {
+		$shaper_queue = "";
+	}
 	foreach ($iflist as $ifent => $ifname) {
 		/*    if the ftp proxy is disabled for this interface then kill pftpx
 		 *    instance and continue. note that the helpers for port forwards are
@@ -1593,7 +1603,7 @@ function system_start_ftp_helpers() {
 			 *    keep processing interfaces. kill pftpx if already
 			 *    running for this instance.
 			 */
-			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/pftpx -c {$port}\" | grep -v grep | sed \"s/  */ /g\" | cut -f2 -d\" \"");
+			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/pftpx {$shaper_queue}-c {$port}\" | grep -v grep | sed \"s/  */ /g\" | cut -f2 -d\" \"");
 			if($helpers)
 				mwexec("/bin/kill {$helpers}");
 			$interface_counter++;
@@ -1626,18 +1636,8 @@ function system_start_ftp_helpers() {
 						log_error("Config: AON rule matched for interface {$ifname} - using FTP proxy");
 				}
 			}
-			if(isset($config['shaper']['enable'])) {
-				if(isset($config['ezshaper']['step5']['p2pcatchall'])) {
-					$shaper_queue = "-q qP2PDown ";
-				} else { 
-					$downq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['inside_int']);
-					$shaper_queue = "-q {$downq}def ";
-				}
-			} else {
-				$shaper_queue = "";
-			}
 			/* if pftpx is already running then do not launch it again */
-			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/pftpx -c {$port}\" | grep -v grep | sed \"s/  */ /g\"");
+			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/pftpx {$shaper_queue}-c {$port}\" | grep -v grep | sed \"s/  */ /g\"");
 			if(!$helpers && $ip)
  				mwexec("/usr/local/sbin/pftpx {$shaper_queue}-c {$port} -g 8021 {$ip}");
 			if(!$ip)

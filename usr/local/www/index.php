@@ -196,14 +196,22 @@ foreach($phpincludefiles as $includename) {
 $jscriptstr = <<<EOD
 <script language="javascript" type="text/javascript">
 
-function addDiv(selectedDiv){
+function addDiv(selectedDiv){	
 	selectedDiv = selectedDiv + "-div";
-	Effect.Appear(selectedDiv, {duration:1});
-	d = document;	
-	selectIntLink = selectedDiv + "-input";
-	textlink = d.getElementById(selectIntLink);
-	textlink.value = "show";	
-	showSave(); 
+	textlink = d.getElementById(selectedDiv);
+	if (textlink.style.display != "none")
+	{
+		Effect.Shake(selectedDiv);	
+	}
+	else
+	{
+		Effect.Appear(selectedDiv, {duration:1});
+		d = document;	
+		selectIntLink = selectedDiv + "-input";
+		textlink = d.getElementById(selectIntLink);
+		textlink.value = "show";	
+		showSave();
+	}
 }
 
 function configureDiv(selectedDiv){
@@ -296,6 +304,14 @@ function updatePref(){
 	return true;	
 }
 
+function hideAllWidgets(){		
+		Effect.Fade('niftyOutter', {to: 0.2});
+}
+
+function showAllWidgets(){		
+		Effect.Fade('niftyOutter', {to: 1.0});
+}
+
 </script>
 EOD;
 $closehead = false;
@@ -358,14 +374,14 @@ echo $jscriptstr;
 				<div style="float:left;padding: 2px">
 					Welcome to the New Dashboard page!
 				</div>
-				<div onclick="domTT_close(this);" style="float:right; cursor:pointer;padding: 5px;" >
+				<div onclick="domTT_close(this);showAllWidgets();	" style="float:right; cursor:pointer;padding: 5px;" >
 					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_close.gif" />
 				</div>
 				<div style="clear:both;"></div>
 			</h1>
 			<p>
 			This page allows you to customize the information you want to be displayed!<br/>
-			To get started click the <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif"> icon to add additional widgets.<br/>
+			To get started click the <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif"> icon to add widgets.<br/>
 			<br/>
 			You can move any widget around by clicking and dragging the title.			
 			</p>
@@ -376,7 +392,11 @@ echo $jscriptstr;
 
 <input type="hidden" value="" name="sequence" id="sequence">
 <p class="pgtitle">Dashboard&nbsp;&nbsp;&nbsp;
-<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="Click here to add widgets" style="cursor: help;" onmouseup="domTT_activate(this, event, 'content', document.getElementById('content1'), 'type', 'velcro', 'delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
+<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="Click here to add widgets" style="cursor: pointer;" onmouseup="domTT_activate(this, event, 'content', document.getElementById('content1'), 'type', 'velcro', 'delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
+
+<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_info_pkg.gif" alt="Click here for help" style="cursor: help;" onmouseup="hideAllWidgets();domTT_activate(this, event, 'content', document.getElementById('welcome-div'), 'type', 'sticky', 'closeLink', '','delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
+
+
 &nbsp;&nbsp;&nbsp;
 		<input id="submit" name="submit" type="submit" style="display:none" onclick="return updatePref();" class="formbtn" value="Save Settings" />
 </p>
@@ -537,8 +557,9 @@ echo $jscriptstr;
 
 	<?php if (!$config['widgets']){ ?>
 	window.onload = function(in_event)
-	{
-			domTT_activate('welcome1', null, 'x', 272, 'y', 107, 'content', document.getElementById('welcome-div'), 'type', 'sticky', 'closeLink', '','delay', 500, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');
+	{		
+			hideAllWidgets();		    
+			domTT_activate('welcome1', null, 'x', 287, 'y', 107, 'content', document.getElementById('welcome-div'), 'type', 'sticky', 'closeLink', '','delay', 1000, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');		
 	}
 	<?php } ?>
 	// <![CDATA[

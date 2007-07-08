@@ -560,10 +560,10 @@ EOD;
 				mwexec("/usr/bin/killall -HUP racoon");
 				// sleep(2);
 				/* flushie, flushie spds */
-				mwexec("/usr/local/sbin/setkey -FP");
-				mwexec("/usr/local/sbin/setkey -F");
+				mwexec("/sbin/setkey -FP");
+				mwexec("/sbin/setkey -F");
 				/* load SPD */
-				mwexec("/bin/cat {$g['varetc_path']}/spd.conf | /usr/local/bin/slowdownpipe.sh | /usr/local/sbin/setkey -c");
+				mwexec("/bin/cat {$g['varetc_path']}/spd.conf | /usr/local/bin/slowdownpipe.sh | /sbin/setkey -c");
 				sleep(1);
 			} else {
 				/* start racoon */
@@ -571,10 +571,10 @@ EOD;
 				/* sleep for a bit */
 				// sleep (2);
 				/* flushie, flushie spds */
-				mwexec("/usr/local/sbin/setkey -FP");
-				mwexec("/usr/local/sbin/setkey -F");
+				mwexec("/sbin/setkey -FP");
+				mwexec("/sbin/setkey -F");
 				/* load SPD */
-				mwexec("/bin/cat {$g['varetc_path']}/spd.conf | /usr/local/bin/slowdownpipe.sh | /usr/local/sbin/setkey -c");
+				mwexec("/bin/cat {$g['varetc_path']}/spd.conf | /usr/local/bin/slowdownpipe.sh | /sbin/setkey -c");
 				sleep(1);
 			}
 		}

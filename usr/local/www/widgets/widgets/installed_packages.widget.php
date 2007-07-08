@@ -41,16 +41,18 @@ if(is_array($config['installedpackages']['package'])) {
 
 <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
-                  <td width="15%" class="listhdrr">Package Name</td>
-                  <td width="20%" class="listhdrr">Category</td>
-		  <td width="10%" class="listhdrr">Package Version</td>
+                    <td width="15%" class="listhdrr">Package Name</td>
+                    <td width="15%" class="listhdrr">Category</td>
+		  			<td width="30%" class="listhdrr">Package Version</td>
                 </tr>
 		<?php
                  if($config['installedpackages']['package'] != "") {
 		    $instpkgs = array();
 		    foreach($config['installedpackages']['package'] as $instpkg) $instpkgs[] = $instpkg['name'];
 		    asort($instpkgs);
+		    $y=1;
 		    foreach ($instpkgs as $index => $pkgname){
+		    	
 			$pkg = $config['installedpackages']['package'][$index];
                         if($pkg['name'] <> "") {
                             ?>
@@ -77,15 +79,19 @@ if(is_array($config['installedpackages']['package'])) {
 					}
 					elseif(strcmp($pkg['version'], $latest_package) < 0) 
 					{
-						/* our package is out of date */					    
-						echo "Current: {$latest_package}";
-					    echo "<br>Installed: {$pkg['version']}";
-					    
+						/* our package is out of date */
+						?>
+						<div id="updatediv-<?php echo $y; ?>" style="color:red">
+							<b>Update Available!</b></div><div style="float:left">							
+							Current: <?php echo $latest_package; ?><br/>
+						    Installed: <?php echo $pkg['version']; ?></div><div style="float:right">
+					    <a href="pkg_mgr_install.php?mode=reinstallpkg&pkg=<?= $pkg['name']; ?>"><img title="Update this package." src="./themes/<?= $g['theme']; ?>/images/icons/icon_reinstall_pkg.gif" width="17" height="17" border="0"</a>
+					    </div>				    
+					    <?php	$y++;				    
 					}
 					else 
 					{					    
-					    echo $pkg['version'];
-					    
+					    echo $pkg['version'];					    
 					}
                     ?></td>
                     </tr>
@@ -97,3 +103,15 @@ if(is_array($config['installedpackages']['package'])) {
                  }
 		?>
         </table>
+        
+
+<script language="javascript" type="text/javascript">
+	window.onload = function(in_event)
+	{	
+		for (y=1; y<=<?php echo $y;?>; y++){			
+			textID = "updatediv-" + y;
+			Effect.Pulsate(textID,{from:0.1});
+		}
+	}
+</script>
+        

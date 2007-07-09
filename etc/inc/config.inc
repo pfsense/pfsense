@@ -1757,12 +1757,14 @@ function system_start_ftp_helpers() {
 					}
 				}
 				if($sourcenat == 0) {
-					log_error("Config: No AON rule matched for interface {$ifname} - not using FTP proxy");
+					if($g['debug'])
+						log_error("Config: No AON rule matched for interface {$ifname} - not using FTP proxy");
 					mwexec("/usr/local/sbin/ftpsesame -i $int");
 					$interface_counter++;
 					continue;
 				} else {
-					log_error("Config: AON rule matched for interface {$ifname} - using FTP proxy");
+					if($g['debug'])
+						log_error("Config: AON rule matched for interface {$ifname} - using FTP proxy");
 				}
 			}
 			/* if pftpx is already running then do not launch it again */

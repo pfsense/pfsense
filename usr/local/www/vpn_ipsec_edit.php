@@ -169,11 +169,35 @@ if ($_POST) {
 	if (($_POST['remotenet'] && !is_ipaddr($_POST['remotenet'])) or $_POST['remotenet'] == "0.0.0.0") {
 		/* allow 0.0.0.0 remote net usage */
 		if($_POST['remotenet'] <> "0.0.0.0")
-		$input_errors[] = "A valid remote network address must be specified.";
+			$input_errors[] = "A valid remote network address must be specified.";
+	}
+	if (($_POST['remotenet'] && is_ipaddr($_POST['remotenet']) && !isset($_POST['disabled']) )) {
+		$t = 0;
+		foreach($a_ipsec as $tunnel) {
+			if($id <> $t) {
+				$tremotecidr = $pconfig['remotenet'] ."/". $pconfig['remotebits'];
+				if(($tunnel['remote-subnet'] == $tremotecidr) && !isset($tunnel['disabled'])) {
+					$input_errors[] = "The remote network \"$tremotecidr\" is already used by tunnel \"${tunnel['descr']}\".";
+ 				}
+			}
+			$t++;
+		}
 	}
 	if (($_POST['remotegw'] && !is_ipaddr($_POST['remotegw']))) {
 		if(is_domain($_POST['remotegw']) == false)
 			$input_errors[] = "A valid remote gateway address must be specified.";
+	}
+	if (($_POST['remotegw'] && is_ipaddr($_POST['remotegw']) && !isset($_POST['disabled']) )) {
+		$t = 0;
+		foreach($a_ipsec as $tunnel) {
+			if($id <> $t) {
+				$tremotegw = $pconfig['remotegw'];
+				if(($tunnel['remote-gateway'] == $tremotegw) && !isset($tunnel['disabled'])) {
+					$input_errors[] = "The remote gateway \"$tremotegw\" is already used by tunnel \"${tunnel['descr']}\".";
+				}
+			}
+			$t++;
+		}
 	}
 	if ((($_POST['p1myidentt'] == "address") && !is_ipaddr($_POST['p1myident']))) {
 		$input_errors[] = "A valid IP address for 'My identifier' must be specified.";

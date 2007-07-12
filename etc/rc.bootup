@@ -223,9 +223,6 @@
 	/* configure console menu */
 	system_console_configure();
 
-	/* start dnsmasq service */
-	services_dnsmasq_configure();
-
 	/* start dyndns service */
 	services_dyndns_configure();
 
@@ -235,6 +232,9 @@
 
 	/* start DHCP service */
 	services_dhcpd_configure();
+
+	/* start dnsmasq service */
+	services_dnsmasq_configure();
 
 	/* start DHCP relay */
 	services_dhcrelay_configure();

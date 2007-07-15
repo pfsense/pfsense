@@ -351,7 +351,9 @@ echo $jscriptstr;
 	?>
 <div id="widgetcontainer" style="display:none">
 		<div id="content1"><h1>Available Widgets</h1><p><?php
-			foreach($widgetfiles as $widget) {			
+			$widgetfiles_add = $widgetfiles;
+			sort($widgetfiles_add);
+			foreach($widgetfiles_add as $widget) {			
 				if(!stristr($widget, "widget.php"))
 					continue;		
 				
@@ -360,8 +362,21 @@ echo $jscriptstr;
 				$nicename = $widgetname;
 				$nicename = str_replace("_", " ", $nicename);
 				//make the title look nice
-				$nicename = ucwords($nicename);?>
-				<span style="cursor: pointer;" onclick='return addDiv("<?php echo $widgetname; ?>")'><u><?php echo $nicename; ?></u></span><br><?php
+				$nicename = ucwords($nicename);
+				
+				$widgettitle = $widgetname . "_title";
+				$widgettitlelink = $widgetname . "_title_link";
+					if ($$widgettitle != "")
+					{
+						//echo widget title ?>
+						<span style="cursor: pointer;" onclick='return addDiv("<?php echo $widgetname; ?>")'>
+						<u><?php echo $$widgettitle; ?></u></span><br>
+						<?php 
+					}
+					else {?>
+						<span style="cursor: pointer;" onclick='return addDiv("<?php echo $widgetname; ?>")'>
+						<u><?php echo $nicename; ?></u></span><br><?php
+					}
 			}
 		?>
 		</p>
@@ -371,10 +386,10 @@ echo $jscriptstr;
 <div id="welcomecontainer" style="display:none">
 		<div id="welcome-div">
 			<h1>
-				<div style="float:left;padding: 2px">
+				<div style="float:left;width:80%;padding: 2px">
 					Welcome to the New Dashboard page!
 				</div>
-				<div onclick="domTT_close(this);showAllWidgets();	" style="float:right; cursor:pointer;padding: 5px;" >
+				<div onclick="domTT_close(this);showAllWidgets();" style="float:right;width:8%; cursor:pointer;padding: 5px;" >
 					<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_close.gif" />
 				</div>
 				<div style="clear:both;"></div>
@@ -511,14 +526,39 @@ echo $jscriptstr;
 			<div id="col2" style="float:right;width:49%;padding: 2px;padding-bottom:40px">		
 			<?php
 		}
-					
-		?>		
+		
+		?>
 		<div style="clear:both;"></div>
 		<div  id="<?php echo $widgetname;?>-div" class="widgetdiv" style="display:<?php echo $divdisplay; ?>;">
 			<input type="hidden" value="<?php echo $inputdisplay;?>" id="<?php echo $widgetname;?>-div-input" name="<?php echo $widgetname;?>-div-input">
 			<div id="<?php echo $widgetname;?>topic" class="widgetheader" style="cursor:move">
 				<div style="float:left;">
-					<?php echo $nicename;?>
+					<?php 
+					
+					$widgettitle = $widgetname . "_title";
+					$widgettitlelink = $widgetname . "_title_link";
+					if ($$widgettitle != "")
+					{
+						//only show link if defined
+						if ($$widgettitlelink != "") {?>						
+						<u><span onClick="location.href='/<?php echo $$widgettitlelink;?>'" style="cursor:pointer">
+						<?php }
+							//echo widget title
+							echo $$widgettitle; 
+						if ($$widgettitlelink != "") { ?>
+						</span></u>						
+						<?php }
+					}
+					else{		
+						if ($$widgettitlelink != "") {?>						
+						<u><span onClick="location.href='/<?php echo $$widgettitlelink;?>'" style="cursor:pointer">
+						<?php }
+						echo $nicename;
+							if ($$widgettitlelink != "") { ?>
+						</span></u>						
+						<?php }
+					}
+					?>
 				</div>
 				<div align="right" style="float:right;">	
 					<div id="<?php echo $widgetname;?>-configure" onclick='return configureDiv("<?php echo $widgetname;?>")' style="display:none; cursor:pointer" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_configure.gif" /></div>									

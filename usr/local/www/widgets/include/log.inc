@@ -1,5 +1,9 @@
 <?php
 
+//set variable for custom title
+$log_title = "Firewall Logs";
+$log_title_link = "diag_logs_filter.php";
+
 //set variables for log
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 $nentries = 5;

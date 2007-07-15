@@ -368,7 +368,8 @@ echo $jscriptstr;
 				$widgettitlelink = $widgetname . "_title_link";
 					if ($$widgettitle != "")
 					{
-						//echo widget title ?>
+						//echo widget title 
+						?>
 						<span style="cursor: pointer;" onclick='return addDiv("<?php echo $widgetname; ?>")'>
 						<u><?php echo $$widgettitle; ?></u></span><br>
 						<?php 

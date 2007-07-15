@@ -2978,10 +2978,6 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:5:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:60:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:720:1000";
 
 				$rrdcreateoutput = array();
 				$rrdcreatereturn = "";
@@ -3018,10 +3014,6 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:5:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:60:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:720:1000";
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 				if ($rrdcreatereturn != 0) {
@@ -3217,18 +3209,10 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "DS:pfnat:GAUGE:$statesvalid:0:10000000 ";
 				$rrdcreate .= "DS:srcip:GAUGE:$statesvalid:0:10000000 ";
 				$rrdcreate .= "DS:dstip:GAUGE:$statesvalid:0:10000000 ";
-				$rrdcreate .= "RRA:MIN:0.5:1:1000 ";
-				$rrdcreate .= "RRA:MIN:0.5:5:1000 ";
-				$rrdcreate .= "RRA:MIN:0.5:60:1000 ";
-				$rrdcreate .= "RRA:MIN:0.5:360:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:360:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:5:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:60:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:360:1000";
+				$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 				if($rrdcreatereturn != 0) {
@@ -3263,18 +3247,10 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "DS:system:GAUGE:$procvalid:0:10000000 ";
 				$rrdcreate .= "DS:interrupt:GAUGE:$procvalid:0:10000000 ";
 				$rrdcreate .= "DS:processes:GAUGE:$procvalid:0:10000000 ";
-				$rrdcreate .= "RRA:MIN:0.5:1:1000 ";
-				$rrdcreate .= "RRA:MIN:0.5:5:1000 ";
-				$rrdcreate .= "RRA:MIN:0.5:60:1000 ";
-				$rrdcreate .= "RRA:MIN:0.5:360:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:360:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:5:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:60:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:360:1000";
+				$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 				if($rrdcreatereturn != 0) {

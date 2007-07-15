@@ -48,24 +48,24 @@
 		//build data arrays
 		foreach ($ifdescrs as $ifdescr => $ifname){
 			$ifinfo = get_interface_info($ifdescr);
-			
-			$array_in_packets[] = $ifinfo['inpkts'];
-			$array_out_packets[] = $ifinfo['outpkts'];
-			$array_in_bytes[] = format_bytes($ifinfo['inbytes']);
-			$array_out_bytes[] = format_bytes($ifinfo['outbytes']);
-			if (isset($ifinfo['inerrs'])){
-				$array_in_errors[] = $ifinfo['inerrs'];
-				$array_out_errors[] = $ifinfo['outerrs'];
+			if ($ifinfo['status'] != "down"){ 		
+				$array_in_packets[] = $ifinfo['inpkts'];
+				$array_out_packets[] = $ifinfo['outpkts'];
+				$array_in_bytes[] = format_bytes($ifinfo['inbytes']);
+				$array_out_bytes[] = format_bytes($ifinfo['outbytes']);
+				if (isset($ifinfo['inerrs'])){
+					$array_in_errors[] = $ifinfo['inerrs'];
+					$array_out_errors[] = $ifinfo['outerrs'];
+				}
+				else{
+					$array_in_errors[] = "n/a";
+					$array_out_errors[] = "n/a";
+				}
+				if (isset($ifinfo['collisions']))
+					$array_collisions[] = htmlspecialchars($ifinfo['collisions']);
+				else
+					$array_collisions[] = "n/a";
 			}
-			else{
-				$array_in_errors[] = "n/a";
-				$array_out_errors[] = "n/a";
-			}
-			if (isset($ifinfo['collisions']))
-				$array_collisions[] = htmlspecialchars($ifinfo['collisions']);
-			else
-				$array_collisions[] = "n/a";
-		
 					
 			
 		}//end for
@@ -106,11 +106,14 @@
 	              <tr>
 		                <tr>
 		                <?php 
-		                	foreach ($ifdescrs as $ifdescr => $ifname): ?>
+		                	foreach ($ifdescrs as $ifdescr => $ifname): 
+		                	$ifinfo = get_interface_info($ifdescr);
+		                	if ($ifinfo['status'] != "down"){ ?>
 			                	<td class="widgetsubheader" nowrap  style="height:25px">
 			                  		<?=htmlspecialchars($ifname);?>
 								</td>
-							<?php endforeach; ?>
+							<?php } 
+							endforeach; ?>
 		              </tr>
 		              
 		              <tr>

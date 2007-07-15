@@ -55,7 +55,7 @@
 		              <? } else { ?>
 		                  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_cablenic.gif"/>
 		                  <? } ?>&nbsp; 
-				<strong>
+				<strong><u>
 				<?php
 				if ($ifname == "WAN") { ?>
 					<span onClick="location.href='/interfaces_wan.php'" style="cursor:pointer">				
@@ -65,10 +65,10 @@
 					<span onClick="location.href='/interfaces_opt.php?index=<?=$counter; ?>'" style="cursor:pointer">
 				<? 
 				$counter++;
-				} ?>			
+				} ?>	
 				
 				
-				<?=htmlspecialchars($ifname);?></span></a></strong>
+				<?=htmlspecialchars($ifname);?></span></u></strong>
 				</td>
 				<td width="70%"  class="listr">
 				

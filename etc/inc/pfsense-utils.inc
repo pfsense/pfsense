@@ -3150,15 +3150,15 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "RRA:MIN:0.5:1:1000 ";
 				$rrdcreate .= "RRA:MIN:0.5:5:1000 ";
 				$rrdcreate .= "RRA:MIN:0.5:60:1000 ";
-				$rrdcreate .= "RRA:MIN:0.5:360:1000 ";
+				$rrdcreate .= "RRA:MIN:0.5:720:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:360:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
 				$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
 				$rrdcreate .= "RRA:MAX:0.5:5:1000 ";
 				$rrdcreate .= "RRA:MAX:0.5:60:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:360:1000";
+				$rrdcreate .= "RRA:MAX:0.5:720:1000";
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 				if($rrdcreatereturn != 0) {
@@ -3196,15 +3196,15 @@ function enable_rrd_graphing() {
 				$rrdcreate .= "RRA:MIN:0.5:1:1000 ";
 				$rrdcreate .= "RRA:MIN:0.5:5:1000 ";
 				$rrdcreate .= "RRA:MIN:0.5:60:1000 ";
-				$rrdcreate .= "RRA:MIN:0.5:360:1000 ";
+				$rrdcreate .= "RRA:MIN:0.5:720:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
 				$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
-				$rrdcreate .= "RRA:AVERAGE:0.5:360:1000 ";
+				$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
 				$rrdcreate .= "RRA:MAX:0.5:1:1000 ";
 				$rrdcreate .= "RRA:MAX:0.5:5:1000 ";
 				$rrdcreate .= "RRA:MAX:0.5:60:1000 ";
-				$rrdcreate .= "RRA:MAX:0.5:360:1000";
+				$rrdcreate .= "RRA:MAX:0.5:720:1000";
 
 				$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
 				if($rrdcreatereturn != 0) {

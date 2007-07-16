@@ -75,6 +75,7 @@ $databases = array_merge($dbheader, $databases);
 
 $styles = array('inverse' => 'Inverse',
 		'absolute' => 'Absolute');
+$periods = array("4h", "16h", "48h", "32d", "6m", "1y", "4y");
 
 $pgtitle = gettext("Status: RRD Graphs");
 include("head.inc");
@@ -168,8 +169,6 @@ include("head.inc");
 					</select>
 
 					<?php
-
-					$periods = array("4h", "16h", "48h", "32d", "6m", "16m");
 
 					foreach($periods as $period => $interval) {
 						/* check which databases are valid for our category */

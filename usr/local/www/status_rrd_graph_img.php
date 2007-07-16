@@ -56,7 +56,7 @@ $search = array("-", ".rrd", $curif);
 $replace = array(" :: ", "", $friendly);
 $prettydb = ucwords(str_replace($search, $replace, $curdatabase));
 
-$periods = array("4h", "16h", "48h", "32d", "6m", "16m");
+$periods = array("4h", "16h", "48h", "32d", "6m", "1y", "4y");
 
 $found = 0;
 foreach($periods as $period) if($period == $interval) $found = 1;
@@ -80,9 +80,12 @@ $graphs['32d']['scale'] = "DAY:1:WEEK:1:WEEK:1:0:Week %W";
 $graphs['6m']['seconds'] = 16070400;
 $graphs['6m']['average'] = 43200;
 $graphs['6m']['scale'] = "WEEK:1:MONTH:1:MONTH:1:0:%b";
-$graphs['16m']['seconds'] = 42854400;
-$graphs['16m']['average'] = 43200;
-$graphs['16m']['scale'] = "MONTH:1:MONTH:1:MONTH:1:0:%b";
+$graphs['1y']['seconds'] = 31622400;
+$graphs['1y']['average'] = 43200;
+$graphs['1y']['scale'] = "MONTH:1:MONTH:3:MONTH:1:0:%b";
+$graphs['4y']['seconds'] = 126489600;
+$graphs['4y']['average'] = 86400;
+$graphs['4y']['scale'] = "MONTH:1:YEAR:1:MONTH:3:0:%b";
 
 /* generate the graphs when we request the page. */
 $seconds = $graphs[$interval]['seconds'];

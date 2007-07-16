@@ -39,7 +39,7 @@
 	<input type="hidden" id="traffic_graphs-config" name="traffic_graphs-config" value="">
 	<?php 
 					//set variables for traffic graph
-					$width = "347";
+					$width = "100%";
 					$height = "150";
 					$showngraphlist = explode(",", $pconfig['traffic_graphs-config']);
 					$graphcounter = 0;

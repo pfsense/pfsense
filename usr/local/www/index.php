@@ -417,7 +417,6 @@ echo $jscriptstr;
 		<input id="submit" name="submit" type="submit" style="display:none" onclick="return updatePref();" class="formbtn" value="Save Settings" />
 </p>
 
-<div style="clear:both;"></div>
 <div id="niftyOutter">
 	<?php
 	$totalwidgets = count($widgetfiles);

@@ -336,9 +336,6 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
                                                             $clientip,
                                                             $clientmac);
 
-            if(!$type)                                                
-				log_error("WARNING: \$type has not been set in captiveportal/index.php");                                                            
-                                                            
             if ($acct_val == 1)
                 captiveportal_logportalauth($username,$clientmac,$clientip,$type,"RADIUS ACCOUNTING FAILED");
         }

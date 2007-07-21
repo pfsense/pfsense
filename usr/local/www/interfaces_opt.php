@@ -1,6 +1,10 @@
 <?php
 /* $Id$ */
 /*
+        interfaces_opt.php
+	Copyright (C) 2007 Scott Ullrich
+        All rights reserved.
+
 	interfaces_opt.php
 	part of m0n0wall (http://m0n0.ch/wall)
 
@@ -68,6 +72,7 @@ if (isset($optcfg['wireless'])) {
 if ($optcfg['ipaddr'] == "dhcp") {
 	$pconfig['type'] = "DHCP";
 	$pconfig['dhcphostname'] = $optcfg['dhcphostname'];
+	$pconfig['rrdgateway'] = $optcfg['rrdgateway'];
 } else {
 	$pconfig['type'] = "Static";
 	$pconfig['ipaddr'] = $optcfg['ipaddr'];
@@ -203,6 +208,11 @@ if ($_POST) {
 		$optcfg['bridge'] = $_POST['bridge'];
 		$optcfg['enable'] = $_POST['enable'] ? true : false;
 
+		/* per interface rrd gateway monitor helper */
+		if($_POST['rrdgateway'] <> "") {
+			$wancfg['rrdgateway'] = $_POST['rrdgateway'];
+		}
+
 		if ($_POST['type'] == "Static") {
 			$optcfg['ipaddr'] = $_POST['ipaddr'];
 			$optcfg['subnet'] = $_POST['subnet'];
@@ -258,6 +268,13 @@ function type_change(enable_change,enable_change_pptp) {
 			break;
 	}
 }
+
+function show_mon_config() {
+	document.getElementById("showmonbox").innerHTML='';
+	aodiv = document.getElementById('showmon');
+	aodiv.style.display = "block";
+}
+
 //-->
 </script>
 
@@ -383,7 +400,7 @@ function type_change(enable_change,enable_change_pptp) {
                   <td colspan="2" valign="top" height="16"></td>
                 </tr>
                 <tr>
-                  <td colspan="2" valign="top" class="listtopic">FTP Helper</td>
+                  <td colspan="2" valign="top" class="listtopic">Other</td>
                 </tr>		
 		<tr>
 			<td width="22%" valign="top" class="vncell">FTP Helper</td>
@@ -392,7 +409,23 @@ function type_change(enable_change,enable_change_pptp) {
 				<strong>Disable the userland FTP-Proxy application</strong>
 				<br />
 			</td>
-		</tr>			
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">Monitor IP</td>
+			<td width="78%" class="vtable">
+			<div id="showmonbox">
+				<input type="button" onClick="show_mon_config()" value="Advanced"></input> - Show Monitor IP configuration
+			</div>
+			<div id="showmon" style="display:none">
+				<input name="rrdgateway" type="text" id="rrdgateway" value="<?php echo ($wancfg['rrdgateway']) ; ?>" />
+					<strong>Alternative monitor IP</strong> <br />
+					Enter a alternative address here to be used to monitor the link. This is used for the
+					quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond
+					to icmp requests.</strong>
+					<br />
+				</div>
+			</td>
+		</tr>
 				<?php /* Wireless interface? */
 				if (isset($optcfg['wireless']))
 					wireless_config_print();

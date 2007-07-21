@@ -2,7 +2,7 @@
 /* $Id$ */
 /*
 	interfaces_wan.php
-        Copyright (C) 2004 Scott Ullrich
+        Copyright (C) 2007 Scott Ullrich
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -134,6 +134,7 @@ $pconfig['bigpond_authdomain'] = $config['bigpond']['authdomain'];
 $pconfig['bigpond_minheartbeatinterval'] = $config['bigpond']['minheartbeatinterval'];
 
 $pconfig['dhcphostname'] = $wancfg['dhcphostname'];
+$pconfig['rrdgateway'] = $wancfg['rrdgateway'];
 
 if ($wancfg['ipaddr'] == "dhcp") {
 	$pconfig['type'] = "DHCP";
@@ -167,20 +168,20 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
   
-  /* okay first of all, cause we are just hidding the PPPoE HTML
-   * fields releated to PPPoE resets, we are going to unset $_POST
-   * vars, if the reset feature should not be used. Otherwise the
-   * data validation procedure below, may trigger a false error
-   * message.
-   */
-  if (empty($_POST['pppoe_preset'])) {
-    unset($_POST['pppoe_pr_type']);
-    unset($_POST['pppoe_resethour']);
-    unset($_POST['pppoe_resetminute']);
-    unset($_POST['pppoe_resetdate']);
-    unset($_POST['pppoe_pr_preset_val']);
-    unlink_if_exists(CRON_PPPOE_CMD_FILE);
-  }
+	/* okay first of all, cause we are just hidding the PPPoE HTML
+	 * fields releated to PPPoE resets, we are going to unset $_POST
+	 * vars, if the reset feature should not be used. Otherwise the
+	 * data validation procedure below, may trigger a false error
+	 * message.
+	 */
+	if (empty($_POST['pppoe_preset'])) {
+		unset($_POST['pppoe_pr_type']);
+		unset($_POST['pppoe_resethour']);
+		unset($_POST['pppoe_resetminute']);
+		unset($_POST['pppoe_resetdate']);
+		unset($_POST['pppoe_pr_preset_val']);
+		unlink_if_exists(CRON_PPPOE_CMD_FILE);
+	}
 
 	if($_POST['gateway'] and $pconfig['gateway'] <> $_POST['gateway']) {
 		/* enumerate slbd gateways and make sure we are not creating a route loop */
@@ -255,21 +256,20 @@ if ($_POST) {
 	if (($_POST['pppoe_idletimeout'] != "") && !is_numericint($_POST['pppoe_idletimeout'])) {
 		$input_errors[] = "The idle timeout value must be an integer.";
 	}
-  if ($_POST['pppoe_resethour'] <> "" && 
-      !is_numericint($_POST['pppoe_resethour']) && 
-    $_POST['pppoe_resethour'] >= 0 && 
-    $_POST['pppoe_resethour'] <=23) {
-    $input_errors[] = gettext("A valid PPPoE reset hour must be specified (0-23).");
-  }
-  if ($_POST['pppoe_resetminute'] <> "" && 
-      !is_numericint($_POST['pppoe_resetminute']) && 
-    $_POST['pppoe_resetminute'] >= 0 && 
-    $_POST['pppoe_resetminute'] <=59) {
-    $input_errors[] = gettext("A valid PPPoE reset minute must be specified (0-59).");
-  }
-  if ($_POST['pppoe_resetdate'] <> "" && !is_numeric(str_replace("/", "", $_POST['pppoe_resetdate']))) {
-    $input_errors[] = gettext("A valid PPPoE reset date must be specified (mm/dd/yyyy).");
-  }
+	if (($_POST['rrdgateway'] && !is_ipaddr($_POST['rrdgateway']))) {
+		$input_errors[] = "A valid monitor IP address must be specified.";
+	}
+	if ($_POST['pppoe_resethour'] <> "" && !is_numericint($_POST['pppoe_resethour']) && 
+		$_POST['pppoe_resethour'] >= 0 && $_POST['pppoe_resethour'] <=23) {
+		$input_errors[] = gettext("A valid PPPoE reset hour must be specified (0-23).");
+	}
+	if ($_POST['pppoe_resetminute'] <> "" && !is_numericint($_POST['pppoe_resetminute']) && 
+		$_POST['pppoe_resetminute'] >= 0 && $_POST['pppoe_resetminute'] <=59) {
+		$input_errors[] = gettext("A valid PPPoE reset minute must be specified (0-59).");
+	}
+	if ($_POST['pppoe_resetdate'] <> "" && !is_numeric(str_replace("/", "", $_POST['pppoe_resetdate']))) {
+		$input_errors[] = gettext("A valid PPPoE reset date must be specified (mm/dd/yyyy).");
+	}
 	if (($_POST['pptp_local'] && !is_ipaddr($_POST['pptp_local']))) {
 		$input_errors[] = "A valid PPTP local IP address must be specified.";
 	}
@@ -318,23 +318,23 @@ if ($_POST) {
 		unset($config['interfaces']['wan']['gateway']);
 		unset($wancfg['pointtopoint']);
 		unset($wancfg['dhcphostname']);
-    if (is_array($wancfg['pppoe'])) {
-      unset($config['pppoe']['username']);
-      unset($config['pppoe']['password']);
-      unset($config['pppoe']['provider']);
-      unset($config['pppoe']['ondemand']);
-      unset($config['pppoe']['timeout']);
-      unset($wancfg['pppoe']['pppoe-reset-type']);
-    }
-    if (is_array($wancfg['pptp'])) {
-      unset($config['pptp']['username']);
-      unset($config['pptp']['password']);
-      unset($config['pptp']['local']);
-      unset($config['pptp']['subnet']);
-      unset($config['pptp']['remote']);
-      unset($config['pptp']['ondemand']);
-      unset($config['pptp']['timeout']);
-    }
+		if (is_array($wancfg['pppoe'])) {
+			unset($config['pppoe']['username']);
+			unset($config['pppoe']['password']);
+			unset($config['pppoe']['provider']);
+			unset($config['pppoe']['ondemand']);
+			unset($config['pppoe']['timeout']);
+			unset($wancfg['pppoe']['pppoe-reset-type']);
+		}
+		if (is_array($wancfg['pptp'])) {
+			unset($config['pptp']['username']);
+			unset($config['pptp']['password']);
+			unset($config['pptp']['local']);
+			unset($config['pptp']['subnet']);
+			unset($config['pptp']['remote']);
+			unset($config['pptp']['ondemand']);
+			unset($config['pptp']['timeout']);
+		}
 		unset($config['bigpond']['username']);
 		unset($config['bigpond']['password']);
 		unset($config['bigpond']['authserver']);
@@ -348,6 +348,11 @@ if ($_POST) {
 			system_start_ftp_helpers();
 		} else {
 			system_start_ftp_helpers();
+		}
+
+		/* per interface rrd gateway monitor helper */
+		if($_POST['rrdgateway'] <> "") {
+			$wancfg['rrdgateway'] = $_POST['rrdgateway'];
 		}
 
 		if ($_POST['type'] == "Static") {
@@ -367,89 +372,86 @@ if ($_POST) {
 			$config['pppoe']['ondemand'] = $_POST['pppoe_dialondemand'] ? true : false;
 			$config['pppoe']['timeout'] = $_POST['pppoe_idletimeout'];
       
-      /* perform a periodic reset? */
-      if (isset($_POST['pppoe_preset'])) {
-        if (! is_array($config['cron']['item'])) { $config['cron']['item'] = array(); }
+			/* perform a periodic reset? */
+			if (isset($_POST['pppoe_preset'])) {
+				if (! is_array($config['cron']['item'])) { $config['cron']['item'] = array(); }
 
-        $itemhash = getMPDCRONSettings();
-        $item = $itemhash['ITEM'];
+					$itemhash = getMPDCRONSettings();
+					$item = $itemhash['ITEM'];
 
-        if (empty($item)) {
-          $item = array();
-        }
+					if (empty($item)) {
+						$item = array();
+					}
 
-        if (isset($_POST['pppoe_pr_type']) && $_POST['pppoe_pr_type'] == "custom") {
-          $wancfg['pppoe']['pppoe-reset-type'] = "custom";
-          $pconfig['pppoe_pr_custom'] = true;
+					if (isset($_POST['pppoe_pr_type']) && $_POST['pppoe_pr_type'] == "custom") {
+						$wancfg['pppoe']['pppoe-reset-type'] = "custom";
+						$pconfig['pppoe_pr_custom'] = true;
 
-          $item['minute'] = $_POST['pppoe_resetminute'];
-          $item['hour'] = $_POST['pppoe_resethour'];
+						$item['minute'] = $_POST['pppoe_resetminute'];
+						$item['hour'] = $_POST['pppoe_resethour'];
 
-          if (isset($_POST['pppoe_resetdate']) && 
-              $_POST['pppoe_resetdate'] <> "" && 
-              strlen($_POST['pppoe_resetdate']) == 10) {
-            $date = explode("/", $_POST['pppoe_resetdate']);
+						if (isset($_POST['pppoe_resetdate']) && 
+							$_POST['pppoe_resetdate'] <> "" && 
+							strlen($_POST['pppoe_resetdate']) == 10) {
+							$date = explode("/", $_POST['pppoe_resetdate']);
+							$item['mday'] = $date[1];
+							$item['month'] = $date[0];
+						} else {
+							$item['mday'] = "*";
+							$item['month'] = "*";
+						}
+						$item['wday'] = "*";
+						$item['who'] = "root";
+						$item['command'] = CRON_PPPOE_CMD_FILE;
+					} else if (isset($_POST['pppoe_pr_type']) && $_POST['pppoe_pr_type'] = "preset") {
+						$wancfg['pppoe']['pppoe-reset-type'] = "preset";
+						$pconfig['pppoe_pr_preset'] = true;
 
-            $item['mday'] = $date[1];
-            $item['month'] = $date[0];
-          } else {
-            $item['mday'] = "*";
-            $item['month'] = "*";
-          }
-
-          $item['wday'] = "*";
-          $item['who'] = "root";
-          $item['command'] = CRON_PPPOE_CMD_FILE;
-        } else if (isset($_POST['pppoe_pr_type']) && $_POST['pppoe_pr_type'] = "preset") {
-          $wancfg['pppoe']['pppoe-reset-type'] = "preset";
-          $pconfig['pppoe_pr_preset'] = true;
-
-          switch ($_POST['pppoe_pr_preset_val']) {
-            case "monthly":
-              $item['minute'] = "0";
-              $item['hour'] = "0";
-              $item['mday'] = "1";
-              $item['month'] = "*";
-              $item['wday'] = "*";
-              $item['who'] = "root";
-              $item['command'] = CRON_PPPOE_CMD_FILE;
-              break;
-            case "weekly":
-              $item['minute'] = "0";
-              $item['hour'] = "0";
-              $item['mday'] = "*";
-              $item['month'] = "*";
-              $item['wday'] = "0";
-              $item['who'] = "root";
-              $item['command'] = CRON_PPPOE_CMD_FILE;
-              break;
-            case "daily":
-              $item['minute'] = "0";
-              $item['hour'] = "0";
-              $item['mday'] = "*";
-              $item['month'] = "*";
-              $item['wday'] = "*";
-              $item['who'] = "root";
-              $item['command'] = CRON_PPPOE_CMD_FILE;
-              break;
-            case "hourly":
-              $item['minute'] = "0";
-              $item['hour'] = "*";
-              $item['mday'] = "*";
-              $item['month'] = "*";
-              $item['wday'] = "*";
-              $item['who'] = "root";
-              $item['command'] = CRON_PPPOE_CMD_FILE;
-              break;
-          } // end switch
-        } // end if
-
-        if (isset($itemhash['ID'])) {
-          $config['cron']['item'][$itemhash['ID']] = $item;
-        } else {
-          $config['cron']['item'][] = $item;
-        }
-      } // end if
+						switch ($_POST['pppoe_pr_preset_val']) {
+							case "monthly":
+								$item['minute'] = "0";
+								$item['hour'] = "0";
+								$item['mday'] = "1";
+								$item['month'] = "*";
+								$item['wday'] = "*";
+								$item['who'] = "root";
+								$item['command'] = CRON_PPPOE_CMD_FILE;
+								break;
+					        	case "weekly":
+								$item['minute'] = "0";
+								$item['hour'] = "0";
+								$item['mday'] = "*";
+								$item['month'] = "*";
+								$item['wday'] = "0";
+								$item['who'] = "root";
+								$item['command'] = CRON_PPPOE_CMD_FILE;
+								break;
+							case "daily":
+								$item['minute'] = "0";
+								$item['hour'] = "0";
+								$item['mday'] = "*";
+								$item['month'] = "*";
+								$item['wday'] = "*";
+								$item['who'] = "root";
+								$item['command'] = CRON_PPPOE_CMD_FILE;
+								break;
+							case "hourly":
+								$item['minute'] = "0";
+								$item['hour'] = "*";
+								$item['mday'] = "*";
+								$item['month'] = "*";
+								$item['wday'] = "*";
+								$item['who'] = "root";
+								$item['command'] = CRON_PPPOE_CMD_FILE;
+								break;
+						} // end switch
+					} // end if
+				if (isset($itemhash['ID'])) {
+					$config['cron']['item'][$itemhash['ID']] = $item;
+				} else {
+					$config['cron']['item'][] = $item;
+				}
+			} // end if
 		} else if ($_POST['type'] == "PPTP") {
 			$wancfg['ipaddr'] = "pptp";
 			$config['pptp']['username'] = $_POST['pptp_username'];
@@ -468,14 +470,13 @@ if ($_POST) {
 			$config['bigpond']['minheartbeatinterval'] = $_POST['bigpond_minheartbeatinterval'];
 		}
     
-    /* reset cron items if necessary */
-    if (empty($_POST['pppoe_preset'])) {
-      /* test whether a cron item exists and unset() it if necessary */
-      $itemhash = getMPDCRONSettings();
-      $item = $itemhash['ITEM'];
-
-      if (isset($item)) { unset($config['cron']['item'][$itemhash['ID']]); }
-    }
+		/* reset cron items if necessary */
+		if (empty($_POST['pppoe_preset'])) {
+			/* test whether a cron item exists and unset() it if necessary */
+			$itemhash = getMPDCRONSettings();
+			$item = $itemhash['ITEM'];
+			if (isset($item)) { unset($config['cron']['item'][$itemhash['ID']]); }
+		}
 
 		if($_POST['blockpriv'] == "yes")
 			$wancfg['blockpriv'] = true;
@@ -494,24 +495,23 @@ if ($_POST) {
     
 		/* finally install the pppoerestart file */
 		if (isset($_POST['pppoe_preset'])) {
-      config_lock();
-      conf_mount_rw();
+		config_lock();
+		conf_mount_rw();
       
-      if (! file_exists(CRON_PPPOE_CMD_FILE)) {
-        file_put_contents(CRON_PPPOE_CMD_FILE, CRON_PPPOE_CMD);
-        chmod(CRON_PPPOE_CMD_FILE, 0700);
-      }
+		if (! file_exists(CRON_PPPOE_CMD_FILE)) {
+			file_put_contents(CRON_PPPOE_CMD_FILE, CRON_PPPOE_CMD);
+			chmod(CRON_PPPOE_CMD_FILE, 0700);
+		}
       
-      /* regenerate cron settings/crontab file */
-      configure_cron();
-      sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
+		/* regenerate cron settings/crontab file */
+		configure_cron();
+		sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
       
-      conf_mount_ro();
-      config_unlock();
+		conf_mount_ro();
+		config_unlock();
 		}
 
 		$retval = 0;
-
 		$savemsg = get_std_save_message($retval);
 	}
 }
@@ -559,9 +559,9 @@ function type_change(enable_change,enable_change_pptp) {
 			document.iform.provider.disabled = 1;
 			document.iform.pppoe_dialondemand.disabled = 1;
 			document.iform.pppoe_idletimeout.disabled = 1;
-      document.iform.pppoe_preset.disabled = 1;
-      document.iform.pppoe_preset.checked = 0;
-      Effect.Fade('presetwrap', { duration: 1.0 });
+			document.iform.pppoe_preset.disabled = 1;
+			document.iform.pppoe_preset.checked = 0;
+			Effect.Fade('presetwrap', { duration: 1.0 });
 			document.iform.ipaddr.disabled = 0;
 			document.iform.subnet.disabled = 0;
 			document.iform.gateway.disabled = 0;
@@ -585,9 +585,9 @@ function type_change(enable_change,enable_change_pptp) {
 			document.iform.provider.disabled = 1;
 			document.iform.pppoe_dialondemand.disabled = 1;
 			document.iform.pppoe_idletimeout.disabled = 1;
-      document.iform.pppoe_preset.disabled = 1;
-      document.iform.pppoe_preset.checked = 0;
-      Effect.Fade('presetwrap', { duration: 1.0 });
+			document.iform.pppoe_preset.disabled = 1;
+			document.iform.pppoe_preset.checked = 0;
+			Effect.Fade('presetwrap', { duration: 1.0 });
 			document.iform.ipaddr.disabled = 1;
 			document.iform.subnet.disabled = 1;
 			document.iform.gateway.disabled = 1;
@@ -615,7 +615,7 @@ function type_change(enable_change,enable_change_pptp) {
 			} else {
 				document.iform.pppoe_idletimeout.disabled = 1;
 			}
-      document.iform.pppoe_preset.disabled = 0;
+			document.iform.pppoe_preset.disabled = 0;
 			document.iform.ipaddr.disabled = 1;
 			document.iform.subnet.disabled = 1;
 			document.iform.gateway.disabled = 1;
@@ -639,9 +639,9 @@ function type_change(enable_change,enable_change_pptp) {
 			document.iform.provider.disabled = 1;
 			document.iform.pppoe_dialondemand.disabled = 1;
 			document.iform.pppoe_idletimeout.disabled = 1;
-      document.iform.pppoe_preset.disabled = 1;
-      document.iform.pppoe_preset.checked = 0;
-      Effect.Fade('presetwrap', { duration: 1.0 });			
+			document.iform.pppoe_preset.disabled = 1;
+			document.iform.pppoe_preset.checked = 0;
+			Effect.Fade('presetwrap', { duration: 1.0 });			
 			document.iform.ipaddr.disabled = 1;
 			document.iform.subnet.disabled = 1;
 			document.iform.gateway.disabled = 1;
@@ -669,9 +669,9 @@ function type_change(enable_change,enable_change_pptp) {
 			document.iform.provider.disabled = 1;
 			document.iform.pppoe_dialondemand.disabled = 1;
 			document.iform.pppoe_idletimeout.disabled = 1;
-      document.iform.pppoe_preset.disabled = 1;
-      document.iform.pppoe_preset.checked = 0;
-      Effect.Fade('presetwrap', { duration: 1.0 });
+			document.iform.pppoe_preset.disabled = 1;
+			document.iform.pppoe_preset.checked = 0;
+			Effect.Fade('presetwrap', { duration: 1.0 });
 			document.iform.ipaddr.disabled = 1;
 			document.iform.subnet.disabled = 1;
 			document.iform.gateway.disabled = 1;
@@ -691,6 +691,13 @@ function type_change(enable_change,enable_change_pptp) {
 			break;
 	}
 }
+
+function show_mon_config() {
+	document.getElementById("showmonbox").innerHTML='';
+	aodiv = document.getElementById('showmon');
+	aodiv.style.display = "block";
+}
+
 //-->
 </script>
 </head>
@@ -961,7 +968,7 @@ function type_change(enable_change,enable_change_pptp) {
                   <td colspan="2" valign="top" height="16"></td>
                 </tr>
                 <tr>
-                  <td colspan="2" valign="top" class="listtopic">FTP Helper</td>
+                  <td colspan="2" valign="top" class="listtopic">Other</td>
                 </tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell">FTP Helper</td>
@@ -969,6 +976,22 @@ function type_change(enable_change,enable_change_pptp) {
 				<input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if ($pconfig['disableftpproxy']) echo "checked"; ?> onclick="enable_change(false)" />
 				<strong>Disable the userland FTP-Proxy application</strong>
 				<br />
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">Monitor IP</td>
+			<td width="78%" class="vtable">
+				<div id="showmonbox">
+					<input type="button" onClick="show_mon_config()" value="Advanced"></input> - Show Monitor IP configuration</a>
+				</div>
+				<div id="showmon" style="display:none">
+					<input name="rrdgateway" type="text" id="rrdgateway" value="<?php echo ($wancfg['rrdgateway']) ; ?>" />
+					<strong>Alternative monitor IP</strong> <br />
+					Enter a alternative address here to be used to monitor the link. This is used for the 
+					quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond 
+					to icmp requests.</strong>
+					<br />
+				</div>
 			</td>
 		</tr>
 		        <?php

@@ -317,7 +317,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell">&nbsp;</td>
 			<td width="78%" class="vtable">
 				<input name="sshdkeyonly" type="checkbox" id="sshdkeyonly" value="yes" <?php if (isset($pconfig['sshdkeyonly'])) echo "checked"; ?> onclick="enable_change(false)" />
-				<strong>Disable Passwordlogin for Secure Shell (KEY only)</strong>
+				<strong>Disable Password login for Secure Shell (KEY only)</strong>
 			</td>
 		</tr>
 		<tr>

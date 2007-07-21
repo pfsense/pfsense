@@ -997,8 +997,8 @@ function convert_config() {
 		$config['version'] = "2.9";
 	}
 
-	/* Convert 2.9 -> 3.0 */
-	if ($config['version'] <= 2.9) {
+	/* Convert 2.9 -> 4.0 */
+	if ($config['version'] <= 3.9) {
 		$config['system']['webgui']['auth_method'] = "session";
 		$config['system']['webgui']['backing_method'] = "htpasswd";
 
@@ -1043,13 +1043,13 @@ function convert_config() {
 			unset ($config['system']['username']);
 			unset ($config['system']['password']);
 			
-			$config['version'] = "3.0";
+			$config['version'] = "4.0";
 		}
 
 	}
 		
-	/* Convert 3.0 -> 3.1 */
-	if ($config['version'] <= 3.0) {
+	/* Convert 4.0 -> 4.1 */
+	if ($config['version'] <= 4.0) {
 		if(!$config['sysctl']) {
 
 			$config['sysctl']['item'] = array();
@@ -1122,9 +1122,16 @@ function convert_config() {
 			$config['sysctl']['item'][16]['desc'] =    "The system will attempt to calculate the bandwidth delay product for each connection and limit the amount of data queued to the network to just the amount required to maintain optimum throughput. ";
 			$config['sysctl']['item'][16]['value'] =   "3";
 
-			$config['version'] = "3.1";
+			$config['version'] = "4.1";
 		}
 
+	}
+
+	/* Convert 4.1 -> 4.2 */
+	if ($config['version'] <= 4.1) {
+		/* enable the rrd config setting by default */
+		$config['rrd']['enable'] = true;
+		$config['version'] = "4.2";
 	}
 
 	if ($prev_version != $config['version'])

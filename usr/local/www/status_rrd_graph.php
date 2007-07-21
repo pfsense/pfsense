@@ -3,7 +3,7 @@
 /*
 	status_rrd_graph.php
 	Part of pfSense
-	Copyright (C) 2006 Seth Mos <seth.mos@xs4all.nl>
+	Copyright (C) 2007 Seth Mos <seth.mos@xs4all.nl>
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,11 @@ require("guiconfig.inc");
 if ($_GET['cat']) {
 	$curcat = $_GET['cat'];
 } else {
-	$curcat = "system";
+	if(! empty($config['rrd']['category'])) {
+		$curcat = $config['rrd']['category'];
+	} else {
+		$curcat = "system";
+	}
 }
 
 if ($_GET['option']) {
@@ -51,7 +55,11 @@ if ($_GET['option']) {
 if ($_GET['style']) {
 	$curstyle = $_GET['style'];
 } else {
-	$curstyle = "inverse";
+	if(! empty($config['rrd']['style'])) {
+		$curstyle = $config['rrd']['style'];
+	} else {
+		$curstyle = "inverse";
+	}
 }
 
 $rrddbpath = "/var/db/rrd/";
@@ -103,6 +111,8 @@ include("head.inc");
 			        $tab_array[] = array("Quality", $tabactive, "status_rrd_graph.php?cat=quality");
 				if($curcat == "queues") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array("Queues", $tabactive, "status_rrd_graph.php?cat=queues");
+				if($curcat == "settings") { $tabactive = True; } else { $tabactive = False; }
+			        $tab_array[] = array("Settings", $tabactive, "status_rrd_graph_settings.php");
 			        display_top_tabs($tab_array);
 			?>
                 </td>

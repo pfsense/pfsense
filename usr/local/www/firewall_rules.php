@@ -53,7 +53,8 @@ if ($config['pppoe']['mode'] == "server")
 	$iflist['pppoe'] = "PPPoE VPN";
 
 /* add ipsec filter gif interfaces */
-if (is_array($config['ipsec']['tunnel']) && isset($config['ipsec']['enable'])) {
+if (is_array($config['ipsec']['tunnel']) && isset($config['ipsec']['enable'])
+    or $config['ipsec']['mobileclients']) {
 	$a_ipsec = &$config['ipsec']['tunnel'];
 	if(is_array($a_ipsec)) {
 		$iflist["enc0"] = "IPsec";

@@ -190,8 +190,42 @@ foreach($phpincludefiles as $includename) {
 		continue;	
 	include($directory . $includename);
 }
+
+//function to create widget tabs when called
+function display_widget_tabs(& $tab_array) {	
+	echo "<div id='tabs'>";
+	$tabscounter = 0;
+	foreach ($tab_array as $ta) {
+	$dashpos = strpos($ta[2],'-');
+	$tabname = $ta[2] . "-tab";
+	$tabclass = substr($ta[2],0,$dashpos);
+	$tabclass = $tabclass . "-class";
+		if ($ta[1] == true) {
+			$tabActive = "table-cell";
+			$tabNonActive = "none";
+		} 
+		else {
+			$tabActive = "none";
+			$tabNonActive = "table-cell";
+		}
+		echo "<div id='{$ta[2]}-active' class='{$tabclass}-tabactive' style='display:{$tabActive}; background-color:#EEEEEE; color:black;'>";
+		echo "<B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
+		echo "&nbsp;&nbsp;&nbsp;</B>";
+		echo "</div>";
+		
+		echo "<div id='{$ta[2]}-deactive' class='{$tabclass}-tabdeactive' style='display:{$tabNonActive}; background-color:#777777; color:white; cursor: pointer;' onClick=\"return changeTabDIV('{$ta[2]}')\">";
+		echo "<B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
+		echo "&nbsp;&nbsp;&nbsp;</B>";
+		echo "</div>";
+	}
 	
-	
+	echo "<script type=\"text/javascript\">";
+	echo "NiftyCheck();\n";
+	echo "Rounded(\"div.{$tabclass}-tabactive\",\"top\",\"#CCCCCC\",\"#EEEEEE\",\"smooth\");\n";
+	echo "Rounded(\"div.{$tabclass}-tabdeactive\",\"top\",\"#CCCCCC\",\"#777777\",\"smooth\");\n";
+	echo "</script>";
+	echo "</div>";
+}
 
 $jscriptstr = <<<EOD
 <script language="javascript" type="text/javascript">

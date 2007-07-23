@@ -33,7 +33,7 @@ require("guiconfig.inc");
 
 if ($_POST) {
 	if ($_POST['clear'] == "Clear") {
-		mwexec("/bin/sh /usr/local/etc/rc.d/miniupnpd.sh restart");
+		upnp_action('restart');
 		$savemsg = "Rules have been cleared and the daemon restarted";
 	}
 }

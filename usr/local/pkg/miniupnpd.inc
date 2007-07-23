@@ -9,22 +9,6 @@
 	function upnp_notice ($msg) { syslog(LOG_NOTICE, "miniupnpd: {$msg}"); return; }
 	function upnp_warn ($msg) { syslog(LOG_WARNING, "miniupnpd: {$msg}"); return; }
 
-	function upnp_action ($action) {
-		switch($action) {
-			case "start":
-				mwexec("killall miniupnpd 2>/dev/null");
-				upnp_start();
-				break;
-			case "stop":
-				mwexec("killall miniupnpd");
-				break;
-			case "restart":
-				mwexec("killall miniupnpd");
-				upnp_start();
-				break;
-		}
-	}
-
 	function upnp_running () {
 		if((int)exec("pgrep miniupnpd | wc -l") > 0)
 			return true;
@@ -39,10 +23,10 @@
 	}
 
 	function upnp_write_config($conf_file, $conf_text) {
-		$conf_file = "/var/etc/miniupnpd.conf";
 		$conf = fopen($conf_file, "w");
 		if(!$conf) {
 			upnp_warn("Could not open {$conf_file} for writing.");
+			echo "Could not open {$conf_file} for writing.";
 			exit;
 		}
 		fwrite($conf, $conf_text);
@@ -155,8 +139,6 @@
 		/* since config is written before this file invoked we don't need to read post data */
 		if(upnp_config('enable') && upnp_config('iface_array'))
 			$iface_array = explode(',',upnp_config('iface_array'));
-		else 
-			upnp_action("stop");
 
 		if($iface_array) {
 			foreach($iface_array as $iface) {
@@ -234,28 +216,8 @@
 				if(upnp_config('permdefault'))
 					$configtext .= "deny 0-65535 0.0.0.0/0 0-65535\n";
 
-				/* generate rc file start and stop */
-				$stop = <<<EOD
-if [ `pgrep miniupnpd | wc -l` != 0  ]; then
-		/usr/bin/killall miniupnpd
-		while [ `pgrep miniupnpd | wc -l` != 0 ]; do
-			sleep 1
-		done
-	fi
-	# Clear existing rules and rdr entries
-	if [ `pfctl -aminiupnpd -sr | wc -l` != 0  ]; then
-		/sbin/pfctl -aminiupnpd -Fr 2>&1 >/dev/null
-	fi
-	if [ `pfctl -aminiupnpd -sn | wc -l` != 0  ]; then
-		/sbin/pfctl -aminiupnpd -Fn 2>&1 >/dev/null
-	fi
-EOD;
-				$start = $stop."\n\t/usr/local/sbin/miniupnpd -f ".UPNP_CONFIG;
-
 				/* write out the configuration */
-				conf_mount_rw();
 				upnp_write_config(UPNP_CONFIG,$configtext);
-				conf_mount_ro();
 				
 				/* if miniupnpd not running start it */
 				if(!upnp_running()) {
@@ -274,18 +236,15 @@ EOD;
 			/* no parameters user does not want miniupnpd running */
 			/* lets stop the service and remove the rc file */
 
-			if(file_exists(UPNP_RCFILE)) {
+			if(file_exists(UPNP_CONFIG)) {
 				if(!upnp_config('enable'))
 					upnp_notice('Stopping service: miniupnpd disabled');
 				else
-					upnp_notice('Stopping service: no interfaces selected');
-					
-				upnp_action('stop');
+					upnp_notice('Stopping service: no interfaces selected');				
 
-				conf_mount_rw();
-				unlink(UPNP_RCFILE);
+				upnp_notice('Stopping service: miniupnpd disabled');
+				upnp_action('stop');
 				unlink(UPNP_CONFIG);
-				conf_mount_ro();
 			}
 		}
 

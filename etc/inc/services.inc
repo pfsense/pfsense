@@ -1272,10 +1272,37 @@ function configure_cron() {
 		conf_mount_ro();
 }
 
+function upnp_action ($action) {
+	switch($action) {
+		case "start":
+			if(file_exists('/var/etc/miniupnpd.conf'))
+				mwexec_bg('/usr/local/sbin/miniupnpd -f /var/etc/miniupnpd.conf');
+			break;
+		case "stop":
+			while((int)exec("pgrep miniupnpd | wc -l") > 0)
+				mwexec('killall miniupnpd 2>/dev/null');
+			mwexec('/sbin/pfctl -aminiupnpd -Fr 2>&1 >/dev/null');
+			mwexec('/sbin/pfctl -aminiupnpd -Fn 2>&1 >/dev/null');
+			break;
+		case "restart":
+			upnp_action('stop');
+			upnp_action('start');
+			break;
+	}
+}
+
 function upnp_start() {
-	global $config;
-	if($config['installedpackages']['miniupnpd']['config'][0]["enable"]) {
-		mwexec_bg("/usr/local/sbin/miniupnpd -f /var/etc/miniupnpd.conf");
+	global $config, $g;
+	if($config['installedpackages']['miniupnpd']['config'][0]['enable']) {
+		if($g['booting']) {
+			echo "Starting UPnP service... ";
+			include('/usr/local/pkg/miniupnpd.inc');
+			sync_package_miniupnpd();
+			echo "done.\n";
+		}
+		else {
+			upnp_action('start');
+		}
 	}
 }
 

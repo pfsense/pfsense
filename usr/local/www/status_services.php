@@ -54,8 +54,7 @@ if($_GET['mode'] == "restartservice" and $_GET['service']) {
 			services_dhcpd_configure();
 			break;
 		case 'miniupnpd':
-			if(file_exists('/usr/local/etc/rc.d/miniupnpd.sh'))
-				mwexec('/usr/local/etc/rc.d/miniupnpd.sh restart');
+			upnp_action('restart');	
 			break;
 		case 'racoon':
 			exec("killall -9 racoon");
@@ -95,8 +94,7 @@ if($_GET['mode'] == "startservice" and $_GET['service']) {
 			services_dhcpd_configure();
 			break;
 		case 'miniupnpd':
-			if(file_exists('/usr/local/etc/rc.d/miniupnpd.sh'))
-				mwexec('/usr/local/etc/rc.d/miniupnpd.sh start');
+			upnp_action('start');
 			break;
 		case 'racoon':
 			exec("killall -9 racoon");
@@ -140,9 +138,7 @@ if($_GET['mode'] == "stopservice" && $_GET['service']) {
 			killbypid("{$g['varrun_path']}/dnsmasq.pid");
 			break;
 		case 'miniupnpd':
-			/* can't just killbyname since we need to clear pf rules */
-			if(file_exists('/usr/local/etc/rc.d/miniupnpd.sh'))
-				mwexec('/usr/local/etc/rc.d/miniupnpd.sh stop');
+			upnp_action('stop');
 			break;
 		case 'ntpd':
 			killbyname("ntpd");

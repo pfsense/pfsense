@@ -37,6 +37,8 @@ if(is_array($config['installedpackages']['package'])) {
 	}
 	$currentvers = get_pkg_info($tocheck, array('version', 'xmlver'));
 }
+
+$updateavailable = false;
 ?>
 
 <table width="100%" border="0" cellpadding="6" cellspacing="0">
@@ -80,6 +82,7 @@ if(is_array($config['installedpackages']['package'])) {
 					elseif(strcmp($pkg['version'], $latest_package) < 0) 
 					{
 						/* our package is out of date */
+						$updateavailable = true;
 						?>
 						<div id="updatediv-<?php echo $y; ?>" style="color:red">
 							<b>Update Available!</b></div><div style="float:left">							
@@ -104,7 +107,7 @@ if(is_array($config['installedpackages']['package'])) {
 		?>
         </table>
         
-
+<?php if ($updateavailable): ?>
 <script language="javascript" type="text/javascript">
 	window.onload = function(in_event)
 	{	
@@ -114,4 +117,4 @@ if(is_array($config['installedpackages']['package'])) {
 		}
 	}
 </script>
-        
+<?php endif; ?>

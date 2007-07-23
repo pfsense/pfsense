@@ -123,10 +123,4 @@
 	<custom_php_resync_config_command>
 		sync_package_miniupnpd();
 	</custom_php_resync_config_command>
-	<custom_php_install_command>
-		sync_package_miniupnpd();
-	</custom_php_install_command>
-	<custom_php_deinstall_command>
-		exec("rm -f /usr/local/etc/rc.d/miniupnpd*");
-	</custom_php_deinstall_command>
 </packagegui>

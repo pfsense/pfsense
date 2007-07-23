@@ -72,7 +72,7 @@ if (isset($optcfg['wireless'])) {
 if ($optcfg['ipaddr'] == "dhcp") {
 	$pconfig['type'] = "DHCP";
 	$pconfig['dhcphostname'] = $optcfg['dhcphostname'];
-	$pconfig['rrdgateway'] = $optcfg['rrdgateway'];
+	$pconfig['use_rrd_gateway'] = $optcfg['use_rrd_gateway'];
 } else {
 	$pconfig['type'] = "Static";
 	$pconfig['ipaddr'] = $optcfg['ipaddr'];
@@ -209,8 +209,8 @@ if ($_POST) {
 		$optcfg['enable'] = $_POST['enable'] ? true : false;
 
 		/* per interface rrd gateway monitor helper */
-		if($_POST['rrdgateway'] <> "") {
-			$wancfg['rrdgateway'] = $_POST['rrdgateway'];
+		if($_POST['use_rrd_gateway'] <> "") {
+			$optcfg['use_rrd_gateway'] = $_POST['use_rrd_gateway'];
 		}
 
 		if ($_POST['type'] == "Static") {
@@ -417,7 +417,7 @@ function show_mon_config() {
 				<input type="button" onClick="show_mon_config()" value="Advanced"></input> - Show Monitor IP configuration
 			</div>
 			<div id="showmon" style="display:none">
-				<input name="rrdgateway" type="text" id="rrdgateway" value="<?php echo ($wancfg['rrdgateway']) ; ?>" />
+				<input name="use_rrd_gateway" type="text" id="use_rrd_gateway" value="<?php echo ($optcfg['use_rrd_gateway']) ; ?>" />
 					<strong>Alternative monitor IP</strong> <br />
 					Enter a alternative address here to be used to monitor the link. This is used for the
 					quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond

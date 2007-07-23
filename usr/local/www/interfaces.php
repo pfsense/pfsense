@@ -134,7 +134,7 @@ $pconfig['bigpond_authdomain'] = $config['bigpond']['authdomain'];
 $pconfig['bigpond_minheartbeatinterval'] = $config['bigpond']['minheartbeatinterval'];
 
 $pconfig['dhcphostname'] = $wancfg['dhcphostname'];
-$pconfig['rrdgateway'] = $wancfg['rrdgateway'];
+$pconfig['use_rrd_gateway'] = $wancfg['use_rrd_gateway'];
 
 if ($wancfg['ipaddr'] == "dhcp") {
 	$pconfig['type'] = "DHCP";
@@ -256,7 +256,7 @@ if ($_POST) {
 	if (($_POST['pppoe_idletimeout'] != "") && !is_numericint($_POST['pppoe_idletimeout'])) {
 		$input_errors[] = "The idle timeout value must be an integer.";
 	}
-	if (($_POST['rrdgateway'] && !is_ipaddr($_POST['rrdgateway']))) {
+	if (($_POST['use_rrd_gateway'] && !is_ipaddr($_POST['use_rrd_gateway']))) {
 		$input_errors[] = "A valid monitor IP address must be specified.";
 	}
 	if ($_POST['pppoe_resethour'] <> "" && !is_numericint($_POST['pppoe_resethour']) && 
@@ -351,8 +351,8 @@ if ($_POST) {
 		}
 
 		/* per interface rrd gateway monitor helper */
-		if($_POST['rrdgateway'] <> "") {
-			$wancfg['rrdgateway'] = $_POST['rrdgateway'];
+		if($_POST['use_rrd_gateway'] <> "") {
+			$wancfg['use_rrd_gateway'] = $_POST['use_rrd_gateway'];
 		}
 
 		if ($_POST['type'] == "Static") {
@@ -985,7 +985,7 @@ function show_mon_config() {
 					<input type="button" onClick="show_mon_config()" value="Advanced"></input> - Show Monitor IP configuration</a>
 				</div>
 				<div id="showmon" style="display:none">
-					<input name="rrdgateway" type="text" id="rrdgateway" value="<?php echo ($wancfg['rrdgateway']) ; ?>" />
+					<input name="use_rrd_gateway" type="text" id="use_rrd_gateway" value="<?php echo ($wancfg['use_rrd_gateway']) ; ?>" />
 					<strong>Alternative monitor IP</strong> <br />
 					Enter a alternative address here to be used to monitor the link. This is used for the 
 					quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond 

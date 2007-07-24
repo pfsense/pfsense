@@ -550,20 +550,20 @@ elseif((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdat
 		\"CDEF:r1=roundtrip,60,MIN\" \\
 		\"CDEF:r2=roundtrip,180,MIN\" \\
 		\"CDEF:r3=roundtrip,420,MIN\" \\
-		COMMENT:\"\t\t\t\t\t\tRoundtrip\t\t\tPacket loss\\n\" \\
+		COMMENT:\"\t\t\t\t\tRoundtrip\t\t\tPacket loss\\n\" \\
 		AREA:roundtrip#$colorqualityrtt[0]:\"> 420      ms\" \\
-		GPRINT:roundtrip:MIN:\"    Min\\:  %7.2lf ms\" \\
-		GPRINT:loss:MIN:\"Min\\: %3.1lf %%\\n\" \\
+		GPRINT:roundtrip:MIN:\"\t\tMin\\:  %7.2lf ms\" \\
+		GPRINT:loss:MIN:\"\tMin\\: %3.1lf %%\\n\" \\
     		AREA:r3#$colorqualityrtt[1]:\"180-420    ms\" \\
-		GPRINT:roundtrip:AVERAGE:\"    Avg\\:  %7.2lf ms\" \\
-		GPRINT:loss:AVERAGE:\"Avg\\: %3.1lf %%\\n\" \\
+		GPRINT:roundtrip:AVERAGE:\"\t\tAvg\\:  %7.2lf ms\" \\
+		GPRINT:loss:AVERAGE:\"\tAvg\\: %3.1lf %%\\n\" \\
 		AREA:r2#$colorqualityrtt[2]:\"60-180     ms\" \\
-		GPRINT:roundtrip:MAX:\"    Max\\:  %7.2lf ms\" \\
-		GPRINT:loss:MAX:\"Max\\: %3.1lf %%\\n\" \\
+		GPRINT:roundtrip:MAX:\"\t\tMax\\:  %7.2lf ms\" \\
+		GPRINT:loss:MAX:\"\tMax\\: %3.1lf %%\\n\" \\
 		AREA:r1#$colorqualityrtt[3]:\"20-60      ms\\n\" \\
 		AREA:r0#$colorqualityrtt[4]:\"< 20       ms\" \\
-		GPRINT:roundtrip:LAST:\"    Last\\: %7.2lf ms\" \\
-		GPRINT:loss:LAST:\"Last\: %3.1lf %%\\n\" \\
+		GPRINT:roundtrip:LAST:\"\t\tLast\\: %7.2lf ms\" \\
+		GPRINT:loss:LAST:\"\tLast\: %3.1lf %%\\n\" \\
 		AREA:loss10#$colorqualityloss:\"Packet loss\\n\" \\
 		LINE1:roundtrip#$colorqualityrtt[5]:\"roundtrip average\\n\" \\
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";

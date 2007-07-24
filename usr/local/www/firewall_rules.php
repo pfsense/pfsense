@@ -46,29 +46,19 @@ if ($_POST['if'])
 
 $iflist = array("lan" => "LAN", "wan" => "WAN");
 
+for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+	$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+}
+
 if ($config['pptpd']['mode'] == "server")
 	$iflist['pptp'] = "PPTP VPN";
 
 if ($config['pppoe']['mode'] == "server")
 	$iflist['pppoe'] = "PPPoE VPN";
 
-/* add ipsec filter gif interfaces */
-if (is_array($config['ipsec']['tunnel']) && isset($config['ipsec']['enable'])
-    or $config['ipsec']['mobileclients']) {
-	$a_ipsec = &$config['ipsec']['tunnel'];
-	if(is_array($a_ipsec)) {
-		$iflist["enc0"] = "IPsec";
-		$i = 0; foreach ($a_ipsec as $ipsecent) {
-			if(isset($ipsecent['creategif'])) {
-				$iflist["gif{$i}"] = "{$ipsecent['descr']}";
-				$i++;
-			}
-		}
-	}
-}
-
-for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-	$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+/* add ipsec interfaces */
+if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable'])){ 
+	$iflist["enc0"] = "IPSEC";
 }
 
 if (!$if || !isset($iflist[$if]))

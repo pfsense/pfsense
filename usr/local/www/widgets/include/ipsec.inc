@@ -33,10 +33,13 @@ function output_ipsec_tunnel_status($tunnel) {
 	$foundsrc = false;
 	$founddst = false;
 	foreach($sad as $sa) {
-		$sourceIF = find_ip_interface($sa['src']);
-		$sourceIF = convert_real_interface_to_friendly_interface_name($sourceIF);
-		if($sourceIF == $tunnel['interface'])
-			$foundsrc = true;
+		if (!$foundsrc){
+			$sourceIF = find_ip_interface($sa['src']);
+			$sourceIF = convert_real_interface_to_friendly_interface_name($sourceIF);
+			
+			if($sourceIF == $tunnel['interface'])
+				$foundsrc = true;
+		}
 		if($sa['dst'] == $tunnel['remote-gateway']) 
 			$founddst = true;
 	}
@@ -49,6 +52,4 @@ function output_ipsec_tunnel_status($tunnel) {
 	}
 	return $iconfn;
 }
-
-
 ?>

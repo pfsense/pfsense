@@ -30,13 +30,42 @@
         ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
         POSSIBILITY OF SUCH DAMAGE.
 */
+	if($config['widgets']['ipsec-config']){
+		$ipsecDetail = $pconfig['ipsec-config'];
+		$eqposition = strpos($ipsecDetail,"=");
+		$ipsecDetail = substr($ipsecDetail, $eqposition+1);
+	}
+	else {
+		$ipsecDetail = "notchecked";
+	}
 ?>
 
+
+
+<div id="ipsec-settings" name="ipsec-settings" class="widgetconfigdiv" style="display:none;">
+	<input id="ipsecDetailed" name="ipsecDetailed" type="checkbox" onchange="updateIpsec();" <?php if ($ipsecDetail == "true") echo "checked";?>> 
+	Enable Detailed Tunnel Status display 
+	<br><br>
+	<b>Note:</b> changing this setting can affect Load times when loading the dashboard page (especially with many IPSEC tunnels)
+	<br><br>
+	<input id="submit" name="submit" type="submit" onclick="return updatePref();" class="formbtn" value="Save Setting" />
+</div>
+
 <div>&nbsp;</div>
+<input type="hidden" id="ipsec-config" name="ipsec-config" value="">
+
+<script language="javascript" type="text/javascript">
+		d = document;
+		selectIntLink = "ipsec-configure";
+		textlink = d.getElementById(selectIntLink);
+		textlink.style.display = "inline";
+</script>
+
 <?php
 	$tab_array = array();
 	$tab_array[0] = array("Overview", true, "ipsec-Overview");
-	$tab_array[1] = array("Tunnel Status", false, "ipsec-tunnel");
+	if ($ipsecDetail == "true")
+		$tab_array[1] = array("Tunnel Status", false, "ipsec-tunnel");
 	display_widget_tabs($tab_array);
 
 	/* query SAD */
@@ -70,45 +99,6 @@
 		}
 		if (is_array($cursa) && count($cursa))
 			$sad[] = $cursa;
-		pclose($fd);
-	}
-	
-	
-	/* query SAD */
-	$fd = @popen("/sbin/setkey -DP", "r");
-	$spd = array();
-	if ($fd) {
-		while (!feof($fd)) {
-			$line = chop(fgets($fd));
-			if (!$line)
-				continue;
-			if ($line == "No SPD entries.")
-				break;
-			if ($line[0] != "\t") {
-				if (is_array($cursp))
-					$spd[] = $cursp;
-				$cursp = array();
-				$linea = explode(" ", $line);
-				$cursp['src'] = substr($linea[0], 0, strpos($linea[0], "["));
-				$cursp['dst'] = substr($linea[1], 0, strpos($linea[1], "["));
-				$i = 0;
-			} else if (is_array($cursp)) {
-				$linea = explode(" ", trim($line));
-				if ($i == 1) {
-					if ($linea[1] == "none")	/* don't show default anti-lockout rule */
-						unset($cursp);
-					else
-						$cursp['dir'] = $linea[0];
-				} else if ($i == 2) {
-					$upperspec = explode("/", $linea[0]);
-					$cursp['proto'] = $upperspec[0];
-					list($cursp['ep_src'], $cursp['ep_dst']) = explode("-", $upperspec[2]);
-				}
-			}
-			$i++;
-		}
-		if (is_array($cursp) && count($cursp))
-			$spd[] = $cursp;
 		pclose($fd);
 	}
 ?>
@@ -160,7 +150,7 @@
 </div>
 
 
-
+<?php if ($ipsecDetail == "true"): ?>
 <div id="ipsec-tunnel" style="display:none;background-color:#EEEEEE;">
 	<div style="padding: 10px">
 		<div style="display:table-row;">
@@ -172,7 +162,8 @@
 		<div style="max-height:105px;overflow:auto;">
 	<?php
 	foreach ($config['ipsec']['tunnel'] as $ipsec): 
-	
+		$ipsecstatus = false;
+		
 		if (isset($ipsec['disabled'])) {
 			$spans = "<span class=\"gray\">";
 			$spane = "</span>";
@@ -190,7 +181,7 @@
 				?>		
 				<?=$spane;?>
 			</div>
-			<div class="listr"  style="display:table-cell;width:90px"><?=$spans;?>			
+			<div class="listr"  style="display:table-cell;width:100px"><?=$spans;?>			
 				<?=$ipsec['remote-subnet'];?>
 				<br/>
 				(<?=htmlspecialchars($ipsec['remote-gateway']);?>)<?=$spane;?>
@@ -236,5 +227,5 @@
 	</div>
 	</div>
 </div>
-
+<? endif; ?>
 

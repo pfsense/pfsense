@@ -91,6 +91,7 @@ captiveportal_unlock();
   <tr>
     <td class="listhdrr"><a href="?order=ip&showact=<?=$_GET['showact'];?>">IP address</a></td>
     <td class="listhdrr"><a href="?order=mac&showact=<?=$_GET['showact'];?>">MAC address</a></td>
+	<td class="listhdrr"><a href="?order=user&amp;showact=<?=$_GET['showact'];?>">Username</a></td>
 	<?php if ($_GET['showact']): ?>
     <td class="listhdrr"><a href="?order=start&showact=<?=$_GET['showact'];?>">Session start</a></td>
     <td class="listhdr"><a href="?order=lastact&showact=<?=$_GET['showact'];?>">Last activity</a></td>
@@ -103,6 +104,7 @@ captiveportal_unlock();
   <tr>
     <td class="listlr"><?=$cpent[2];?></td>
     <td class="listr"><?=$cpent[3];?>&nbsp;</td>
+	<td class="listr"><?=$cpent[4];?>&nbsp;</td>
     <td class="listr"><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]));?></td>
 	<?php if ($_GET['showact']): ?>
     <td class="listr"><?php if ($cpent[4]) echo htmlspecialchars(date("m/d/Y H:i:s", $cpent[4]));?></td>

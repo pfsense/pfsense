@@ -242,7 +242,6 @@
 				else
 					upnp_notice('Stopping service: no interfaces selected');				
 
-				upnp_notice('Stopping service: miniupnpd disabled');
 				upnp_action('stop');
 				unlink(UPNP_CONFIG);
 			}

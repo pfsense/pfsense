@@ -104,7 +104,7 @@ if ($_POST) {
 	if(strtolower($_POST['name']) == "wan")
 		$input_errors[] = "Aliases may not be named WAN.";
 	if(strtolower($_POST['name']) == "pptp")
-		$input_errors[] = gettext("Aliases may not be named WAN.");
+		$input_errors[] = gettext("Aliases may not be named PPTP.");
 
 	$x = is_validaliasname($_POST['name']);
 	if (!isset($x)) {

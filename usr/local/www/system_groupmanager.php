@@ -4,6 +4,9 @@
         part of pfSense (http://www.pfSense.com)
     originally part of part of m0n0wall (http://m0n0.ch/wall)
 
+    Copyright (C) 2007 Bill Marquette <bill.marquette@gmail.com>.
+    All rights reserved.
+
     Copyright (C) 2006 Scott Ullrich <sullrich@gmail.com>.
     All rights reserved.
 
@@ -37,7 +40,7 @@
 
 require("guiconfig.inc");
 
-$_SESSION['NO_AJAX'] = true;
+//$_SESSION['NO_AJAX'] = true;
 
 $pgtitle = "System: Group manager";
 $treeItemID = 0;
@@ -77,8 +80,8 @@ function walkArea($title,
       $this_id = str_replace("/", "", $this_id);
       $stripped_session = str_replace("/tmp/", "", $tmpfname);
       $allowed = false;
-      if (is_array($group['pages'][0]['page'])) {
-          foreach($group['pages'][0]['page'] as $page) {
+      if (is_array($group['pages'])) {
+          foreach($group['pages'] as $page) {
               if (stristr($aa, $page))
                   $allowed = true;
               // echo "$page || $aa";
@@ -108,7 +111,7 @@ function walkArea($title,
   } // end foreach
 }
 
-function init_ajax_helper_file($tmpfname)
+function init_ajax_helper_file()
 {
     global $config, $id, $global;
     $a_group = &$config['system']['group'];
@@ -117,12 +120,7 @@ function init_ajax_helper_file($tmpfname)
         $group = $a_group[$id];
     else
         $group = array();
-    $fd = fopen("/tmp/{$tmpfname}", "w");
-    if ($group['pages'][0]['page'])
-        foreach($group['pages'][0]['page'] as $page) {
-        fwrite($fd, $page . "\n");
-    }
-    fclose($fd);
+    $_SESSION['group_pages'] = $group['pages'];
     return;
 }
 
@@ -269,7 +267,7 @@ function getAdminPageList()
                 // Is this a .xml file? pfSense!
                 if (fnmatch('*.xml', $file)) {
                     /* parse package and retrieve the package title */
-                    $pkg = parse_xml_config_pkg("{$g['pkg_path']}/{$file}", "packagegui");
+                    $pkg = @parse_xml_config_pkg("{$g['pkg_path']}/{$file}", "packagegui");
                     $title = $pkg['title'];
                     if ($title)
                         $tmp[$file] = trim($title);
@@ -391,8 +389,6 @@ if ($_POST) {
 
         write_config();
 
-        unlink_if_exists("/tmp/" . $_GET['session']);
-
         pfSenseHeader("system_groupmanager.php");
         exit;
     }
@@ -400,8 +396,7 @@ if ($_POST) {
 
 include("head.inc");
 
-$checkallstr = <<<EOD
-<script type="text/javascript">
+?><script type="text/javascript">
 
   function checkallareas(enable) {
     var elem = document.iform.elements.length;
@@ -416,11 +411,13 @@ $checkallstr = <<<EOD
   }
   
 </script>
-EOD;
+<link href="/tree/tree.css" rel="stylesheet" type="text/css" />
+<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
+<script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
+
+<?
 
 // XXX: billm TODO
-//$pfSenseHead->addScript("<script type=\"text/javascript\">\n" . $checkallstr . "</script>\n");
-//$pfSenseHead->addLink("<link href=\"/tree/tree.css\" rel=\"stylesheet\" type=\"text/css\" />");
 //echo $pfSenseHead->getHTML();
 
 ?>
@@ -444,263 +441,7 @@ EOD;
     </tr>
     <tr>
       <td class="tabcont">
-<?php
-if ($_GET['act'] == "new" || $_GET['act'] == "edit") {
-    $tmpfname = tempnam("/tmp", "edit_add_groupmanager");
-    $tmpfname = str_replace("/tmp/", "", $tmpfname);
-    unlink("/tmp/$tmpfname");
-    init_ajax_helper_file($tmpfname);
-    if ($_GET['act'] == "edit") {
-        if (isset($id) && $a_group[$id]) {
-            $pconfig['name'] = $a_group[$id]['name'];
-            $pconfig['description'] = $a_group[$id]['description'];
-            $pconfig['home'] = $a_group[$id]['home'];
-            $pconfig['gtype'] = $a_group[$id]['scope'];
-            $pconfig['pages'] = $a_group[$id]['pages'][0]['page'];
-        }
-    } else if ($_GET['act'] == "new") {
-      /* set this value cause the text field is read only
-       * and the user should not be able to mess with this
-       * setting.
-       */
-      $pconfig['gtype'] = "user";
-    }
 
-?>
-      <form action="system_groupmanager.php" method="post" name="iform" id="iform">
-        <div id="inputerrors"></div>
-<script type="text/javascript">
-if (typeof getURL == 'undefined') {
-    getURL = function(url, callback) {
-        if (!url)
-            throw 'No URL for getURL';
-        try {
-            if (typeof callback.operationComplete == 'function')
-                callback = callback.operationComplete;
-        } catch (e) {}
-            if (typeof callback != 'function')
-                throw 'No callback function for getURL';
-        var http_request = null;
-        if (typeof XMLHttpRequest != 'undefined') {
-            http_request = new XMLHttpRequest();
-        }
-        else if (typeof ActiveXObject != 'undefined') {
-            try {
-                http_request = new ActiveXObject('Msxml2.XMLHTTP');
-            } catch (e) {
-                try {
-                    http_request = new ActiveXObject('Microsoft.XMLHTTP');
-                } catch (e) {}
-            }
-        }
-        if (!http_request)
-            throw 'Both getURL and XMLHttpRequest are undefined';
-        http_request.onreadystatechange = function() {
-            if (http_request.readyState == 4) {
-                callback( { success : true,
-                  content : http_request.responseText,
-                  contentType : http_request.getResponseHeader("Content-Type") } );
-            }
-        }
-        http_request.open('GET', url, true);
-        http_request.send(null);
-    }
-}
-function after_request_callback(callback_data) {
-    var data = callback_data.content;
-    data_split = data.split("||");
-    var item = document.getElementById(data_split[0]);
-    var check = document.getElementById("chk-" + data_split[0]);
-    item.style.backgroundImage = 'url(' + data_split[1] + ')';
-    if (data_split[1] == "/tree/page-file_play.gif") {
-      check.checked = true;
-    } else {
-      check.checked = false;
-    }
-  $('troot_text').innerHTML = '<?= gettext("webConfigurator"); ?>';
-}
-
-function rotate() {
-  $('troot_text').innerHTML = '<img src="/themes/<?= $g['theme'] ?>/images/misc/loader.gif" alt="" />';
-}
-</script>
-
-        <input type="hidden" name="session" value="<?=$tmpfname?>" />
-        <table width="100%" border="0" cellpadding="6" cellspacing="0">
-          <tr>
-            <td width="22%" valign="top" class="vncellreq">
-                <?=gettext("Group name");?>
-            </td>
-            <td width="78%" class="vtable">
-              <input name="groupname" type="text" class="formfld group" id="groupname" size="20" value="<?=htmlspecialchars($pconfig['name']);?>" />
-            </td>
-          </tr>
-          <tr>
-            <td width="22%" valign="top" class="vncell">
-                <?=gettext("Home Page");?>
-            </td>
-            <td width="78%" class="vtable">
-              <input name="homepage" type="text" class="formfld url" id="homepage" size="20" value="<?=htmlspecialchars($pconfig['home']);?>" />
-              <br />
-              <?=gettext("A webpage that should be shown to the user after having logged in.");?>
-            </td>
-          </tr>
-          <tr>
-            <td width="22%" valign="top" class="vncellreq">
-                <?=gettext("Group Type");?>
-            </td>
-            <td width="78%" class="vtable">
-              <input name="gtype" type="text" class="formfld unknown" id="gtype" size="20" value="<?=htmlspecialchars($pconfig['gtype']);?>" readonly="readonly" />
-              <br />
-              <?=gettext("Indicates whether this is a system (aka non-deletable) group or a group created by the user.");?>
-            </td>
-          </tr>
-          <tr>
-            <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>
-            <td width="78%" class="vtable">
-              <textarea name="description" class="formpre" id="description" rows="2" cols="20"><?=htmlspecialchars($pconfig['description']);?></textarea>
-              <br />
-              <?=gettext("Group description, for your own information only");?>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="5">
-              <script type="text/javascript" src="/tree/tree.js"></script>
-<?php
-    if (isset($id) && $a_group[$id])
-        $group = $a_group[$id];
-    else
-        $group = array();
-    $menu_array = array();
-    /* build up an array similar to fbegin.inc's $menu */
-    foreach ($pages as $fname => $title) {
-        $identifier = str_replace('.php', '', $fname);
-        $identifier = $fname;
-        $title_split = split(": ", $title);
-        $tmp = "\$menu_array";
-        foreach($title_split as $ts)
-        $tmp .= "['{$ts}']";
-        $tmp .= " = \"{$identifier}\";";
-        echo "<!-- $tmp -->\n";
-        eval($tmp);
-    }
-
-    echo "<span id=\"troot_text\" style=\"position: relative; top: 12px;\">" . gettext("webConfigurator") . "</span><ul class=\"tree\" id=\"troot\">\n";
-    $counter = 0;
-    /* XXX: we may wanna pull from or add to each row a +e item (+edit) */
-    $script_tag = "";
-
-    if (is_array($menu_array) && count($menu_array) > 0) {
-      foreach($menu_array as $title => $m) {
-          echo "<li class=\"closed\"><a id=\"treeitem_{$treeItemID}\" href=\"#\">$title</a><ul>";
-          $treeItemID++;
-          if (is_array($m) && count($m) > 0) {
-            foreach($m as $t => $area) {
-                if (is_array($area) && count($area) > 0) {
-                  echo "<li class=\"closed\"><a id=\"treeitem_{$treeItemID}\" href=\"#\">$t</a><ul>";
-                  $treeItemID++;
-                  walkArea("{$title}_{$t}",
-                           $t,
-                           $area,
-                           $id,
-                           $counter,
-                           $script_tag,
-                           $tmpfname,
-                           $group);
-                  echo "</ul>\n";
-                } else {
-                    $trimmed_title = trim($title);
-                    $trimmed_t = trim($t);
-                    $this_id = "{$trimmed_title}_{$trimmed_t}_{$counter}";
-                    $this_id = str_replace(" ", "", $this_id);
-                    $this_id = str_replace("/", "", $this_id);
-                    $allowed = false;
-                    if (is_array($group['pages'][0]['page'])) {
-                        foreach($group['pages'][0]['page'] as $page) {
-                            if (stristr($area, $page))
-                                $allowed = true;
-                            // echo "$page || $area || $t";
-                        }
-                    }
-                    $allowed ? $checked = " checked=\"checked\"" : $checked = "";
-                    $stripped_session = str_replace("/tmp/", "", $tmpfname);
-                    echo"<li id=\"treeitem_{$treeItemID}\" class=\"closed\" title=\"{$area}\"><a name=\"anchor_{$treeItemID}\" style=\"display: none;\">&nbsp;</a>";
-                    $idForOnClick = $treeItemID;
-                    $treeItemID++;
-                    echo "  <input type=\"checkbox\" class=\"formfld\" id=\"treeitem_{$treeItemID}\" ";
-                    $treeItemID++;
-                    echo "name=\"treeitem_{$treeItemID}\" title=\"{$area}\" onclick=\"getURL('system_groupmanager.php?id={$id}&amp;toggle={$area}&amp;item={$idForOnClick}&amp;session={$stripped_session}', after_request_callback); rotate();\" {$checked}/>&nbsp;";
-                    echo "  <a id=\"treeitem_{$treeItemID}\" ";
-                    $idForScript = $treeItemID;
-                    $treeItemID++;
-                    echo "href=\"#anchor_{$idForOnClick}\" onclick=\"getURL('system_groupmanager.php?id={$id}&amp;toggle={$area}&amp;item={$idForOnClick}&amp;session={$stripped_session}', after_request_callback); rotate();\">{$t}</a></li>\n";
-                    $treeItemID++;
-                    $script_tag .= "var item = document.getElementById('treeitem_{$idForScript}');\n";
-                    if ($allowed) {
-                        $script_tag .= "item.style.backgroundImage = \"url('/tree/page-file_play.gif')\";\n";
-                    } else {
-                        $script_tag .= "item.style.backgroundImage = \"url('/tree/page-file_x.gif')\";\n";
-                    }
-                    $counter++;
-                }
-            }
-          }
-          echo "</ul>\n";
-      }
-    }
-    echo "</ul>\n";
-
-?>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="5">
-              <table>
-                <tr>
-                  <td><input type="checkbox" name="checkall" id="checkall" title="Check/Uncheck all areas" onclick="checkallareas();"/></td>
-                  <td><?=gettext("Check/Uncheck all areas");?></td>
-                </tr>
-                <tr>
-                  <td><img src="/tree/page-file_play.gif" alt="" /></td>
-                  <td><?=gettext("Allowed access to area");?></td>
-                </tr>
-                <tr>
-                  <td><img src="/tree/page-file_x.gif" alt="" /></td>
-                  <td><?=gettext("Disallowed access to area");?></td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="5">
-              <?=gettext("Select that pages that this group may access.  Members of this group will be able to perform all actions that are possible from each individual web page.  Ensure you set access levels appropriately.");?>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="5">
-              <input id="submit" name="save" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-              <?php if (isset($id) && $a_group[$id]): ?>
-              <input name="id" type="hidden" value="<?=$id;?>" />
-              <?php endif;?>
-              <p>
-                <span class="vexpl">
-                  <span class="red">
-                    <strong><?=gettext("Note");?>: </strong>
-                  </span>
-                  <?=gettext("Pages marked with an * are strongly recommended for every group.");?>
-                </span>
-              </p>
-            </td>
-          </tr>
-        </table>
-      </form>
-      </td> <!-- end <td class="tabcont"/> -->
-    </tr>
-  </table>
-<?php
-} else {
-
-?>
   <table width="100%" border="0" cellpadding="0" cellspacing="0">
     <tr>
       <td width="35%" class="listhdrr"><?=gettext("Group name");?></td>
@@ -744,17 +485,17 @@ function rotate() {
 		?>
       </td>
       <td class="listbg">
-        <?php if(is_array($group['pages'][0])): ?>
-        <font color="white"><?=count($group['pages'][0]['page']);?></font>
-        <?php elseif (isset($group['pages'][0])): ?>
-          <font color="white"><?=$group['pages'][0];?></font>
-        <?php else: ?>
-          <font color="white"><?=gettext("NOT SET");?></font>
+        <?php if(is_array($group['pages'])): ?>
+          <?php if ($group['pages'][0] == 'ANY'): ?>
+        <font color="white">ANY</font>
+          <? else: ?>
+        <font color="white"><?=count($group['pages']);?> pages</font>
+          <?php endif; ?>
         <?php endif; ?>
       </td>
       <?php if($group['scope'] == "user"): ?>
       <td valign="middle" nowrap class="list">
-        <a href="system_groupmanager.php?act=edit&amp;id=<?=$i;?>">
+        <a href="system_groupmanager_edit.php?act=edit&amp;id=<?=$i;?>">
           <img src="/themes/<?= $g['theme'];?>/images/icons/icon_e.gif" title="<?=gettext("edit group");?>" width="17" height="17" border="0" alt="" />
         </a>
         <a href="system_groupmanager.php?act=del&amp;id=<?=$i;?>" onclick="return confirm('<?=gettext("Do you really want to delete this group?");?>')">
@@ -770,7 +511,7 @@ function rotate() {
     <tr>
       <td class="list" colspan="3"></td>
       <td class="list">
-        <a href="system_groupmanager.php?act=new">
+        <a href="system_groupmanager_edit.php?act=new">
           <img src="/themes/<?= $g['theme'];?>/images/icons/icon_plus.gif" title="<?=gettext("add group");?>" width="17" height="17" border="0" alt="" />
         </a>
       </td>
@@ -786,18 +527,16 @@ function rotate() {
       </td>
     </tr>
   </table>
-</td></tr>
+  </td></tr>
 </table>
-<?php
-}
-?>
 
 <script type="text/javascript">
-    window.setTimeout('afterload()', '10');
-    function afterload() {
-        <?php echo $script_tag ?>
-    }
+  window.setTimeout('afterload()', '10');
+  function afterload() {
+    <?php echo $script_tag ?>
+  }
 </script>
 <?php include("fend.inc");?>
 </body>
 </html>
+        

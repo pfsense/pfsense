@@ -1,0 +1,136 @@
+/*
+ * CSS for Standard tree layout
+ * Copyright (C) 2005 SilverStripe Limited
+ * Feel free to use this on your websites, but please leave this message in the fies
+ * http://www.silverstripe.com/blog
+ */
+ 
+ul.tree{
+	width: auto;
+	padding-left : 0px;
+	margin-left : 0px;
+}
+
+ul.tree img{
+ 	border : none;
+}
+ 
+
+ul.tree, ul.tree ul {
+	padding-left: 0;
+}
+
+ul.tree ul {
+	margin-left: 16px;
+		
+}
+ul.tree li.closed ul {
+	display: none;
+}
+
+
+ul.tree li {
+	list-style: none;
+	background: url(i-repeater.gif) 0 0 repeat-y;
+	display: block;
+	width: auto;
+	/* background-color:#FFFFFF; */
+}
+
+
+
+ul.tree li.last {
+	list-style: none;
+	background-image: none;
+}
+
+
+
+/* Span-A: I/L/I glpyhs */
+ul.tree span.a {
+	background: url(t.gif) 0 50% no-repeat;
+	display: block;
+}
+ul.tree span.a.last {
+	background: url(l.gif) 0 50% no-repeat;
+}
+
+/* Span-B: Plus/Minus icon */
+ul.tree span.b {
+}
+ul.tree span.a.children span.b {
+	background: url(minus.gif) 0 50% no-repeat;
+	cursor: pointer;
+}
+ul.tree li.closed span.a.children span.b {
+	background: url(plus.gif) 0 50% no-repeat;
+	cursor: pointer;
+}
+
+/* Span-C: Spacing and extending tree line below the icon */
+ul.tree span.c {
+	margin-left: 16px;
+}
+ul.tree span.a.children span.c {
+	background: url(i-bottom.gif) 0 50% no-repeat;
+}
+ul.tree span.a.spanClosed span.c {
+	background-image: none;
+}
+
+
+/* Anchor tag: Page icon */
+ul.tree a  {
+	white-space: nowrap;
+	overflow: hidden;
+	
+/*	padding: 10px 0px 10px 18px; */
+	padding: 3px 0px 3px 18px;
+	line-height: 16px;
+
+/*	background: url(page-file.png) 0 50% no-repeat; */
+	background: url(page-file.png) 0 0 no-repeat;
+}
+ul.tree span.a.children a {
+	background-image: url(page-openfoldericon.png);
+}
+ul.tree span.a.children.spanClosed a {
+	background-image: url(page-foldericon.png);
+}
+
+/* Unformatted tree */
+ul.tree.unformatted li {
+	background-image: none;
+	padding-left: 16px;
+}
+ul.tree.unformatted li li {
+	background-image: none;
+	padding-left: 0px;
+}
+
+/*
+ * Divs, by default store vertically aligned data
+ */
+
+ul.tree li div {
+	float: right;
+	clear: right;
+	height: 1em;
+	margin-top: -26px;
+}
+/* As inside DIVs should be treated normally */
+ul.tree div a  {
+	padding: 0;
+	background-image: none;
+	min-height: auto;
+	height: auto;
+}
+
+ul.tree li A:link, ul.tree li A:hover, ul.tree li A:visited {
+	color : #111111;
+}
+
+
+ul.tree li .over{
+	background-color : pink;
+}

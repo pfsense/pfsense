@@ -312,6 +312,15 @@
 		mwexec("sysctl net.inet.tcp.sendspace=4096");
 	}
 
+	/* if we are operating at 1000 then increase timeouts.
+	   this was never accounted for after moving to 1000 hz */
+	$kern_hz = `sysctl kern.clockrate | awk '{ print $5 }' | cut -d"," -f1`;
+	$kern_hz = trim($kern_hz, "\r\n");
+	if($kern_hz == "1000") {
+		mwexec("sysctl net.inet.tcp.rexmit_min=30");
+		mwexec("sysctl net.inet.tcp.rexmit_min=30");		
+	}
+
 	upnp_start();
 
 	/* done */

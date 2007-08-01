@@ -143,6 +143,9 @@ if ($_POST) {
 		if (($_POST['ntp1'] && !is_ipaddr($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddr($_POST['ntp2']))) {
 			$input_errors[] = "A valid IP address must be specified for the primary/secondary NTP servers.";
 		}
+		if (($_POST['tftp'] && !is_ipaddr($_POST['nextserver']))) {
+			$input_errors[] = "A valid IP address must be specified for the network boot server.";
+		}
 		if (($_POST['nextserver'] && !is_ipaddr($_POST['nextserver']))) {
 			$input_errors[] = "A valid IP address must be specified for the network boot server.";
 		}

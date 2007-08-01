@@ -113,6 +113,7 @@ function services_dhcpd_configure() {
 
 	$dhcpdconf = <<<EOD
 option domain-name "{$syscfg['domain']}";
+option ldap-server code 95 = text;
 default-lease-time 7200;
 max-lease-time 86400;
 log-facility local7;
@@ -274,6 +275,12 @@ EOD;
 
 		if (is_array($dhcpifconf['ntpserver']) && $dhcpifconf['ntpserver'][0])
 			$dhcpdconf .= "	option ntp-servers " . join(",", $dhcpifconf['ntpserver']) . ";\n";
+
+		if (isset($dhcpifconf['tftp']))
+			$dhcpdconf .= "	option tftp-server-name \"{$dhcpifconf['tftp']}\";\n";
+
+		if (isset($dhcpifconf['ldap']))
+			$dhcpdconf .= "	option ldap-server \"{$dhcpifconf['ldap']}\";\n";
 
 		if(isset($dhcpifconf['netboot'])) {
 			if (($dhcpifconf['next-server'] <> "") && ($dhcpifconf['filename'] <> "")) {

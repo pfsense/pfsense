@@ -73,6 +73,8 @@ $pconfig['staticarp'] = isset($config['dhcpd'][$if]['staticarp']);
 $pconfig['ddnsdomain'] = $config['dhcpd'][$if]['ddnsdomain'];
 $pconfig['ddnsupdate'] = isset($config['dhcpd'][$if]['ddnsupdate']);
 list($pconfig['ntp1'],$pconfig['ntp2']) = $config['dhcpd'][$if]['ntpserver'];
+$pconfig['tftp'] = $config['dhcpd'][$if]['tftp'];
+$pconfig['ldap'] = $config['dhcpd'][$if]['ldap'];
 $pconfig['netboot'] = isset($config['dhcpd'][$if]['netboot']);
 $pconfig['nextserver'] = $config['dhcpd'][$if]['next-server'];
 $pconfig['filename'] = $config['dhcpd'][$if]['filename'];
@@ -202,6 +204,8 @@ if ($_POST) {
 		if ($_POST['ntp2'])
 			$config['dhcpd'][$if]['ntpserver'][] = $_POST['ntp2'];
 
+		$config['dhcpd'][$if]['tftp'] = $_POST['tftp'];
+		$config['dhcpd'][$if]['ldap'] = $_POST['ldap'];
 		$config['dhcpd'][$if]['netboot'] = ($_POST['netboot']) ? true : false;
 		$config['dhcpd'][$if]['next-server'] = $_POST['nextserver'];
 		$config['dhcpd'][$if]['filename'] = $_POST['filename'];
@@ -278,6 +282,8 @@ function enable_change(enable_over) {
 	document.iform.ddnsupdate.disabled = endis;
 	document.iform.ntp1.disabled = endis;
 	document.iform.ntp2.disabled = endis;
+	document.iform.tftp.disabled = endis;
+	document.iform.ldap.disabled = endis;
 	document.iform.netboot.disabled = endis;
 	document.iform.nextserver.disabled = endis;
 	document.iform.filename.disabled = endis;
@@ -293,6 +299,18 @@ function show_ddns_config() {
 function show_ntp_config() {
 	document.getElementById("showntpbox").innerHTML='';
 	aodiv = document.getElementById('showntp');
+	aodiv.style.display = "block";
+}
+
+function show_tftp_config() {
+	document.getElementById("showtftpbox").innerHTML='';
+	aodiv = document.getElementById('showtftp');
+	aodiv.style.display = "block";
+}
+
+function show_ldap_config() {
+	document.getElementById("showldapbox").innerHTML='';
+	aodiv = document.getElementById('showldap');
 	aodiv.style.display = "block";
 }
 
@@ -495,6 +513,30 @@ function show_netboot_config() {
 				<div id="showntp" style="display:none">
 					<input name="ntp1" type="text" class="formfld" id="ntp1" size="20" value="<?=htmlspecialchars($pconfig['ntp1']);?>"><br>
 					<input name="ntp2" type="text" class="formfld" id="ntp2" size="20" value="<?=htmlspecialchars($pconfig['ntp2']);?>">
+				</div>
+			</td>
+                      </tr>
+                      <tr>
+                        <td width="22%" valign="top" class="vncell">TFTP server</td>
+                        <td width="78%" class="vtable">
+				<div id="showtftpbox">
+					<input type="button" onClick="show_tftp_config()" value="Advanced"></input> - Show TFTP configuration</a>
+				</div>
+				<div id="showtftp" style="display:none">
+					<input name="tftp" type="text" class="formfld" id="tftp" size="50" value="<?=htmlspecialchars($pconfig['tftp']);?>"><br>
+					Leave blank to disable.  Enter a full hostname or IP for the TFTP server.
+				</div>
+			</td>
+                      </tr>
+                      <tr>
+                        <td width="22%" valign="top" class="vncell">LDAP URI</td>
+                        <td width="78%" class="vtable">
+				<div id="showldapbox">
+					<input type="button" onClick="show_ldap_config()" value="Advanced"></input> - Show LDAP configuration</a>
+				</div>
+				<div id="showldap" style="display:none">
+					<input name="ldap" type="text" class="formfld" id="ldap" size="80" value="<?=htmlspecialchars($pconfig['ldap']);?>"><br>
+					Leave blank to disable.  Enter a full URI for the LDAP server in the form ldap://ldap.example.com/dc=example,dc=com
 				</div>
 			</td>
                       </tr>

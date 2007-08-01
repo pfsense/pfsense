@@ -81,7 +81,7 @@ if ($_SESSION) {
 // Now, we give them access only to the appropriate pages for their group.
 if (!(isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']))) {
   $allowed[] = '';
-  if (isset($config['system']['group'][$groupindex[$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['groupname']]]['pages'][0])) {
+  if (isset($config['system']['group'][$groupindex[$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['groupname']]]['pages'])) {
     $allowed = &$config['system']['group'][$groupindex[$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['groupname']]]['pages'];
   }
 
@@ -94,16 +94,20 @@ if (!(isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']))) {
   /* okay but if the user realy tries to explicitely access a particular
    * page, set $home to that page instead.
    */
-  if (isset($_POST['scriptname']) && $_POST['scriptname'] <> "/" && $_POST['scriptname'] <> "/index.php")
-    $home = basename($_POST['scriptname']);
+  if (isset($_POST['scriptname']) && $_POST['scriptname'] <> "/" && $_POST['scriptname'] <> "/index.php") {
+    $home = str_replace('.php', '', basename($_POST['scriptname']));
+    $pagereq = $home;
+   }
 
   // If the user is attempting to hit the default page, set it to specifically look for /index.php.
   // Without this, any user would have access to the index page.
   //if ($_SERVER['SCRIPT_NAME'] == '/')
   //  $_SERVER['SCRIPT_NAME'] = $home;
+    if ($pagereq == "")
+    	$pagereq = str_replace('.php', '', basename($_SERVER['SCRIPT_NAME']));
 
   // Strip the leading / from the currently requested PHP page
-  if (!in_array(basename($_SERVER['SCRIPT_NAME']),$allowed) && !in_array("ANY", $allowed)) {
+  if (!in_array($pagereq,$allowed) && !in_array("ANY", $allowed)) {
     // The currently logged in user is not allowed to access the page
     // they are attempting to go to.  Redirect them to an allowed page.
 
@@ -112,7 +116,8 @@ if (!(isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']))) {
       exit;
     }
 
-    if ($home <> "" && (in_array($home, $allowed) || in_array("ANY", $allowed))) {
+
+    if ($pagereq <> "" && (in_array($pagereq, $allowed) || in_array("ANY", $allowed))) {
       pfSenseHeader("{$home}");
       exit;
     } else {

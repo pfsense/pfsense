@@ -28,3 +28,6 @@ fi
 if [ -d /kernels ]; then
 	rm -rf /kernels/*
 fi
+
+rm /var/run/config.lock
+/etc/rc.conf_mount_ro

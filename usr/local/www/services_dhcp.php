@@ -65,6 +65,7 @@ $pconfig['range_to'] = $config['dhcpd'][$if]['range']['to'];
 $pconfig['deftime'] = $config['dhcpd'][$if]['defaultleasetime'];
 $pconfig['maxtime'] = $config['dhcpd'][$if]['maxleasetime'];
 $pconfig['gateway'] = $config['dhcpd'][$if]['gateway'];
+$pconfig['domain'] = $config['dhcpd'][$if]['domain'];
 list($pconfig['wins1'],$pconfig['wins2']) = $config['dhcpd'][$if]['winsserver'];
 list($pconfig['dns1'],$pconfig['dns2']) = $config['dhcpd'][$if]['dnsserver'];
 $pconfig['enable'] = isset($config['dhcpd'][$if]['enable']);
@@ -195,6 +196,7 @@ if ($_POST) {
 			$config['dhcpd'][$if]['dnsserver'][] = $_POST['dns2'];
 
 		$config['dhcpd'][$if]['gateway'] = $_POST['gateway'];
+		$config['dhcpd'][$if]['domain'] = $_POST['domain'];
 		$config['dhcpd'][$if]['denyunknown'] = ($_POST['denyunknown']) ? true : false;
 		$config['dhcpd'][$if]['enable'] = ($_POST['enable']) ? true : false;
 		$config['dhcpd'][$if]['staticarp'] = ($_POST['staticarp']) ? true : false;
@@ -280,6 +282,7 @@ function enable_change(enable_over) {
 	document.iform.maxtime.disabled = endis;
 	document.iform.gateway.disabled = endis;
 	document.iform.failover_peerip.disabled = endis;
+	document.iform.domain.disabled = endis;
 	document.iform.staticarp.disabled = endis;
 	document.iform.ddnsdomain.disabled = endis;
 	document.iform.ddnsupdate.disabled = endis;
@@ -437,6 +440,13 @@ function show_netboot_config() {
                        <td width="78%" class="vtable">
                          <input name="gateway" type="text" class="formfld" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>"><br>
 			 The default is to use the IP of the firewall as the gateway.  Specify an alternate gateway here if this is not the correct gateway for your network.
+			</td>
+                     </tr>
+                                          <tr>
+                       <td width="22%" valign="top" class="vncell">Domain-Name</td>
+                       <td width="78%" class="vtable">
+                         <input name="domain" type="text" class="formfld" id="domain" size="20" value="<?=htmlspecialchars($pconfig['domain']);?>"><br>
+			 The default is to use the domainname of the router as DNS-Search string that is served via DHCP. Specify an alternate DNS-Search string here.
 			</td>
                      </tr>
                       <tr>

@@ -273,6 +273,9 @@ EOD;
 			$dhcpdconf .= "	option netbios-node-type 8;\n";
 		}
 
+		if ($dhcpifconf['domain'])
+			$dhcpdconf .= "	option domain-name \"{$dhcpifconf['domain']}\";\n";
+
 		if (is_array($dhcpifconf['ntpserver']) && $dhcpifconf['ntpserver'][0])
 			$dhcpdconf .= "	option ntp-servers " . join(",", $dhcpifconf['ntpserver']) . ";\n";
 

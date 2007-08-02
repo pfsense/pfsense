@@ -25,4 +25,6 @@ if [ $KERNELTYPE = "SMP" ]; then
 		cp /kernels/kernel_SMP.gz /boot/kernel/kernel.gz
 	fi
 fi
-rm -rf /kernels/*
+if [ -d /kernels ]; then
+	rm -rf /kernels/*
+fi

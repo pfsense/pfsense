@@ -79,6 +79,8 @@ $pconfig['ldap'] = $config['dhcpd'][$if]['ldap'];
 $pconfig['netboot'] = isset($config['dhcpd'][$if]['netboot']);
 $pconfig['nextserver'] = $config['dhcpd'][$if]['next-server'];
 $pconfig['filename'] = $config['dhcpd'][$if]['filename'];
+$pconfig['rootpathip'] = $config['dhcpd'][$if]['rootpathip'];
+$pconfig['rootpath'] = $config['dhcpd'][$if]['rootpath'];
 $pconfig['failover_peerip'] = $config['dhcpd'][$if]['failover_peerip'];
 $pconfig['netmask'] = $config['dhcpd'][$if]['netmask'];
 
@@ -144,11 +146,17 @@ if ($_POST) {
 		if (($_POST['ntp1'] && !is_ipaddr($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddr($_POST['ntp2']))) {
 			$input_errors[] = "A valid IP address must be specified for the primary/secondary NTP servers.";
 		}
-		if (($_POST['tftp'] && !is_ipaddr($_POST['nextserver']))) {
-			$input_errors[] = "A valid IP address must be specified for the network boot server.";
+		if (($_POST['domain'] && !is_domain($_POST['domain']))) {
+			$input_errors[] = "A valid domain name must be specified for the DNS domain.";
+    }
+		if (($_POST['tftp'] && !is_ipaddr($_POST['tftp']))) {
+			$input_errors[] = "A valid IP address must be specified for the tftp server.";
 		}
 		if (($_POST['nextserver'] && !is_ipaddr($_POST['nextserver']))) {
 			$input_errors[] = "A valid IP address must be specified for the network boot server.";
+		}
+		if (($_POST['rootpathip'] && !is_ipaddr($_POST['rootpathip']))) {
+			$input_errors[] = "A valid IP address must be specified for the NFS server.";
 		}
 
 
@@ -214,6 +222,8 @@ if ($_POST) {
 		$config['dhcpd'][$if]['netboot'] = ($_POST['netboot']) ? true : false;
 		$config['dhcpd'][$if]['next-server'] = $_POST['nextserver'];
 		$config['dhcpd'][$if]['filename'] = $_POST['filename'];
+		$config['dhcpd'][$if]['rootpathip'] = $_POST['rootpathip'];
+		$config['dhcpd'][$if]['rootpath'] = $_POST['rootpath'];
 
 		write_config();
 
@@ -293,6 +303,8 @@ function enable_change(enable_over) {
 	document.iform.netboot.disabled = endis;
 	document.iform.nextserver.disabled = endis;
 	document.iform.filename.disabled = endis;
+	document.iform.rootpathip.disabled = endis;
+	document.iform.rootpath.disabled = endis;
 	document.iform.denyunknown.disabled = endis;
 }
 
@@ -563,15 +575,20 @@ function show_netboot_config() {
 					<input valign="middle" type="checkbox" value="yes" name="netboot" id="netboot" <?php if($pconfig['netboot']) echo " checked"; ?>>&nbsp;
 					<b>Enables network booting.</b>
 					<p>
-					<input name="nextserver" type="text" class="formfld" id="nextserver" size="20" value="<?=htmlspecialchars($pconfig['nextserver']);?>"><br>
-					Enter the IP address from the network boot server.
-					<p>
+					Enter the IP of the <b>next-server</b>
+          <input name="nextserver" type="text" class="formfld" id="nextserver" size="20" value="<?=htmlspecialchars($pconfig['nextserver']);?>">
+					and the filename					
 					<input name="filename" type="text" class="formfld" id="filename" size="20" value="<?=htmlspecialchars($pconfig['filename']);?>"><br>
-					Enter the filename used for network booting.<br />
 					Note: You need both a filename and a boot server configured for this to work!
-				</div>
+				  <p>
+					Enter the IP of the NFS-server
+          <input name="rootpathip" type="text" class="formfld" id="rootpathip" size="20" value="<?=htmlspecialchars($pconfig['rootpathip']);?>">
+					and the <b>rootpath</b>					
+					<input name="rootpath" type="text" class="formfld" id="rootpath" size="20" value="<?=htmlspecialchars($pconfig['rootpath']);?>"><br>
+					Note: You need both a NFS-server and a path configured for this to work!
+        </div>
 			</td>
-		      </tr>
+		                  </tr>
                       <tr>
                         <td width="22%" valign="top">&nbsp;</td>
                         <td width="78%">

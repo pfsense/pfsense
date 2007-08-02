@@ -276,10 +276,10 @@ EOD;
 		if (is_array($dhcpifconf['ntpserver']) && $dhcpifconf['ntpserver'][0])
 			$dhcpdconf .= "	option ntp-servers " . join(",", $dhcpifconf['ntpserver']) . ";\n";
 
-		if (isset($dhcpifconf['tftp']))
+		if ($dhcpifconf['tftp'] <> "")
 			$dhcpdconf .= "	option tftp-server-name \"{$dhcpifconf['tftp']}\";\n";
 
-		if (isset($dhcpifconf['ldap']))
+    if ($dhcpifconf['ldap'] <> "")
 			$dhcpdconf .= "	option ldap-server \"{$dhcpifconf['ldap']}\";\n";
 
 		if(isset($dhcpifconf['netboot'])) {
@@ -287,7 +287,11 @@ EOD;
 				$dhcpdconf .= "	next-server {$dhcpifconf['next-server']};\n";
 				$dhcpdconf .= "	filename \"{$dhcpifconf['filename']}\";\n";
 			}
+			if (($dhcpifconf['rootpathip'] <> "") && ($dhcpifconf['rootpath'] <> "")) {
+				$dhcpdconf .= "	option root-path \"{$dhcpifconf['rootpathip']}:{$dhcpifconf['rootpath']}\";\n";
+      }
 		}
+		
 		$dhcpdconf .= <<<EOD
 }
 

@@ -694,7 +694,7 @@
 			<command>/etc/ping_hosts.sh</command>
 		</item>
 		<item>
-			<minute>*/300</minute>
+			<minute>*/140</minute>
 			<hour>*</hour>
 			<mday>*</mday>
 			<month>*</month>

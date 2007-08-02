@@ -10,12 +10,19 @@ rm /var/run/config.lock
 
 KERNELTYPE=`cat /boot/kernel/pfsense_kernel.txt`
 if [ $KERNELTYPE = "wrap" ]; then
-	cp /kernels/kernel_SMP.gz /boot/kernel/kernel.gz
+	if [ -f /kernels/kernel_wrap.gz ]; then 
+		cp /kernels/kernel_wrap.gz /boot/kernel/kernel.gz
+		cp /etc/ttys_wrap /etc/ttys
+	fi
 fi
 if [ $KERNELTYPE = "Developers" ]; then
-	cp /kernels/kernel_Dev.gz /boot/kernel/kernel.gz
+	if [ -f /kernels/kernel_Dev.gz ]; then 
+		cp /kernels/kernel_Dev.gz /boot/kernel/kernel.gz
+	fi
 fi
 if [ $KERNELTYPE = "SMP" ]; then
-	cp /kernels/kernel_SMP.gz /boot/kernel/kernel.gz
+	if [ -f /kernels/kernel_SMP.gz ]; then 
+		cp /kernels/kernel_SMP.gz /boot/kernel/kernel.gz
+	fi
 fi
 rm -rf /kernels/*

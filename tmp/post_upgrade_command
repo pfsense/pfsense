@@ -7,3 +7,15 @@ touch /var/run/config.lock
 php -f /tmp/post_upgrade_command.php
 
 rm /var/run/config.lock
+
+KERNELTYPE=`cat /boot/kernel/pfsense_kernel.txt`
+if [ $KERNELTYPE = "wrap" ]; then
+	cp /kernels/kernel_SMP.gz /boot/kernel/kernel.gz
+fi
+if [ $KERNELTYPE = "Developers" ]; then
+	cp /kernels/kernel_Dev.gz /boot/kernel/kernel.gz
+fi
+if [ $KERNELTYPE = "SMP" ]; then
+	cp /kernels/kernel_SMP.gz /boot/kernel/kernel.gz
+fi
+rm -rf /kernels/*

@@ -40,40 +40,9 @@
 	$tab_array[1] = array("Tunnel Status", false, "ipsec-tunnel");
 	display_widget_tabs($tab_array);
 
-	/* query SAD */
-	$fd = @popen("/sbin/setkey -D", "r");
 	$sad = array();
-	if ($fd) {
-		while (!feof($fd)) {
-			$line = chop(fgets($fd));
-			if (!$line)
-				continue;
-			if ($line == "No SAD entries.")
-				break;
-			if ($line[0] != "\t") {
-				if (is_array($cursa))
-					$sad[] = $cursa;
-				$cursa = array();
-				list($cursa['src'],$cursa['dst']) = explode(" ", $line);
-				$i = 0;
-			} else {
-				$linea = explode(" ", trim($line));
-				if ($i == 1) {
-					$cursa['proto'] = $linea[0];
-					$cursa['spi'] = substr($linea[2], strpos($linea[2], "x")+1, -1);
-				} else if ($i == 2) {
-					$cursa['ealgo'] = $linea[1];
-				} else if ($i == 3) {
-					$cursa['aalgo'] = $linea[1];
-				}
-			}
-			$i++;
-		}
-		if (is_array($cursa) && count($cursa))
-			$sad[] = $cursa;
-		pclose($fd);
-	}
-	
+	$sad = get_ipsec_tunnel_sad();
+
 	$activecounter = 0;
 	$inactivecounter = 0;
 	
@@ -86,19 +55,7 @@
 		$foundsrc = false;
 		$founddst = false; 
 		
-		foreach($sad as $sa) {
-			if (!$foundsrc){
-				$sourceIF = find_ip_interface($sa['src']);
-				$sourceIF = convert_real_interface_to_friendly_interface_name($sourceIF);
-				
-				if($sourceIF == $tunnel['interface'])
-					$foundsrc = true;
-			}
-			if($sa['dst'] == $tunnel['remote-gateway']) 
-				$founddst = true;
-		}
-		
-		if($foundsrc && $founddst) { 
+		if(output_ipsec_tunnel_status($tunnel)) {
 			/* tunnel is up */
 			$iconfn = "true";
 			$activecounter++;
@@ -108,12 +65,16 @@
 			$inactivecounter++;
 		}
 		
-		if (isset($tunnel['disabled']))
+		if (isset($tunnel['disabled'])) {
 			$tun_disabled = "true";
-			
-		$ipsec_detail_array[] = array('src' => $tunnel['interface'], 'dest' => $tunnel['remote-gateway'], 'remote-subnet' => $tunnel['remote-subnet'], 'descr' => $tunnel['descr'], 'status' => $iconfn, 'disabled' => $tun_disabled);
-		
-	}	
+		}		
+		$ipsec_detail_array[] = array('src' => $tunnel['interface'],
+					'dest' => $tunnel['remote-gateway'],
+					'remote-subnet' => $tunnel['remote-subnet'],
+					'descr' => $tunnel['descr'],
+					'status' => $iconfn,
+					'disabled' => $tun_disabled);
+	}
 	
 ?>
 <div id="ipsec-Overview" style="display:block;background-color:#EEEEEE;">
@@ -156,7 +117,7 @@
 		</div>
 		<div style="max-height:105px;overflow:auto;">
 	<?php
-	foreach ($ipsec_detail_array as $ipsec): 
+	foreach ($ipsec_detail_array as $ipsec) :
 		
 		if ($ipsec['disabled'] == "true"){
 			$spans = "<span class=\"gray\">";

@@ -23,33 +23,4 @@ function get_ipsec_tunnel_src($tunnel) {
 	}
 	return $interfaceip;
 }
-
-function output_ipsec_tunnel_status($tunnel) {
-	global $g, $config, $sad;
-	$if = "WAN";
-	$interfaceip = get_ipsec_tunnel_src($tunnel);
-	$interfaceip = strtolower($interfaceip); 
-	
-	$foundsrc = false;
-	$founddst = false;
-	foreach($sad as $sa) {
-		if (!$foundsrc){
-			$sourceIF = find_ip_interface($sa['src']);
-			$sourceIF = convert_real_interface_to_friendly_interface_name($sourceIF);
-			
-			if($sourceIF == $tunnel['interface'])
-				$foundsrc = true;
-		}
-		if($sa['dst'] == $tunnel['remote-gateway']) 
-			$founddst = true;
-	}
-	if($foundsrc && $founddst) { 
-		/* tunnel is up */
-		$iconfn = true;
-	} else {
-		/* tunnel is down */
-		$iconfn = false;
-	}
-	return $iconfn;
-}
 ?>

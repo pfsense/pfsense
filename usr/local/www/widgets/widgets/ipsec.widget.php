@@ -30,42 +30,14 @@
         ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
         POSSIBILITY OF SUCH DAMAGE.
 */
-	if($config['widgets']['ipsec-config']){
-		$ipsecDetail = $pconfig['ipsec-config'];
-		$eqposition = strpos($ipsecDetail,"=");
-		$ipsecDetail = substr($ipsecDetail, $eqposition+1);
-	}
-	else {
-		$ipsecDetail = "notchecked";
-	}
+
 ?>
 
-
-
-<div id="ipsec-settings" name="ipsec-settings" class="widgetconfigdiv" style="display:none;">
-	<input id="ipsecDetailed" name="ipsecDetailed" type="checkbox" onchange="updateIpsec();" <?php if ($ipsecDetail == "true") echo "checked";?>> 
-	Enable Detailed Tunnel Status display 
-	<br><br>
-	<b>Note:</b> changing this setting can affect Load times when loading the dashboard page (especially with many IPSEC tunnels)
-	<br><br>
-	<input id="submit" name="submit" type="submit" onclick="return updatePref();" class="formbtn" value="Save Setting" />
-</div>
-
 <div>&nbsp;</div>
-<input type="hidden" id="ipsec-config" name="ipsec-config" value="">
-
-<script language="javascript" type="text/javascript">
-		d = document;
-		selectIntLink = "ipsec-configure";
-		textlink = d.getElementById(selectIntLink);
-		textlink.style.display = "inline";
-</script>
-
 <?php
 	$tab_array = array();
 	$tab_array[0] = array("Overview", true, "ipsec-Overview");
-	if ($ipsecDetail == "true")
-		$tab_array[1] = array("Tunnel Status", false, "ipsec-tunnel");
+	$tab_array[1] = array("Tunnel Status", false, "ipsec-tunnel");
 	display_widget_tabs($tab_array);
 
 	/* query SAD */
@@ -101,56 +73,79 @@
 			$sad[] = $cursa;
 		pclose($fd);
 	}
+	
+	$activecounter = 0;
+	$inactivecounter = 0;
+	
+	$ipsec_detail_array = array();
+	
+	foreach ($config['ipsec']['tunnel'] as $tunnel){ 
+		$ipsecstatus = false;
+		
+		$tun_disabled = "false";
+		$foundsrc = false;
+		$founddst = false; 
+		
+		foreach($sad as $sa) {
+			if (!$foundsrc){
+				$sourceIF = find_ip_interface($sa['src']);
+				$sourceIF = convert_real_interface_to_friendly_interface_name($sourceIF);
+				
+				if($sourceIF == $tunnel['interface'])
+					$foundsrc = true;
+			}
+			if($sa['dst'] == $tunnel['remote-gateway']) 
+				$founddst = true;
+		}
+		
+		if($foundsrc && $founddst) { 
+			/* tunnel is up */
+			$iconfn = "true";
+			$activecounter++;
+		} else {
+			/* tunnel is down */
+			$iconfn = "false";
+			$inactivecounter++;
+		}
+		
+		if (isset($tunnel['disabled']))
+			$tun_disabled = "true";
+			
+		$ipsec_detail_array[] = array('src' => $tunnel['interface'], 'dest' => $tunnel['remote-gateway'], 'remote-subnet' => $tunnel['remote-subnet'], 'descr' => $tunnel['descr'], 'status' => $iconfn, 'disabled' => $tun_disabled);
+		
+	}	
+	
 ?>
 <div id="ipsec-Overview" style="display:block;background-color:#EEEEEE;">
 	<div>
-	  <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
-	
-	  <tr>
-	        <td nowrap class="listhdrr">Active Tunnels</td>
-	        <td nowrap class="listhdrr">Inactive Tunnels</td>
-		</tr>
-	<?php
-		$activecounter = 0;
-		$inactivecounter = 0;
-		foreach ($config['ipsec']['tunnel'] as $ipsec): 
-			$ipsecstatus = output_ipsec_tunnel_status($ipsec);
-			if ($ipsecstatus)
-			{
-				$activecounter++;
-			}
-			else
-			{
-				$inactivecounter++;
-			}
-	?>
-	<?php endforeach; ?>
-		<tr>
-			<td class="listlr"><?=$activecounter;?></td>
-			<td class="listr"><?=$inactivecounter;?></td>
-		</tr>
-		 
-	  <tr>
-	    <td colspan="4">
-			  <p>
-	        <span class="vexpl">
-	          <span class="red">
-	            <strong>
-	              Note:<br />
-	            </strong>
-	          </span>
-	          You can configure your IPSEC 
-	          <a href="vpn_ipsec.php">here</a>.
-	        </span>
-	      </p>
+	  <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">	
+		  <tr>
+		        <td nowrap class="listhdrr">Active Tunnels</td>
+		        <td nowrap class="listhdrr">Inactive Tunnels</td>
+			</tr>
+			<tr>
+				<td class="listlr"><?=$activecounter;?></td>
+				<td class="listr"><?=$inactivecounter;?></td>
+			</tr>		 
+		  <tr>
+		    <td colspan="4">
+				<p>
+				<span class="vexpl">
+			          <span class="red">
+			            <strong>
+			              Note:<br />
+			            </strong>
+			          </span>
+			          You can configure your IPSEC 
+			          <a href="vpn_ipsec.php">here</a>.
+				</span>
+		      </p>
 			</td>
-	  </tr>
-	</table>
+		  </tr>
+		</table>
 	</div>
 </div>
 
-
-<?php if ($ipsecDetail == "true"): ?>
 <div id="ipsec-tunnel" style="display:none;background-color:#EEEEEE;">
 	<div style="padding: 10px">
 		<div style="display:table-row;">
@@ -161,37 +156,34 @@
 		</div>
 		<div style="max-height:105px;overflow:auto;">
 	<?php
-	foreach ($config['ipsec']['tunnel'] as $ipsec): 
-		$ipsecstatus = false;
+	foreach ($ipsec_detail_array as $ipsec): 
 		
-		if (isset($ipsec['disabled'])) {
+		if ($ipsec['disabled'] == "true"){
 			$spans = "<span class=\"gray\">";
 			$spane = "</span>";
-		} else {
+		} 
+		else {
 			$spans = $spane = "";
-		}?>
+		}		
+
+		?>
 	
 		<div style="display:table-row;">
-			<div class="listlr" style="display:table-cell;width:39px"><?=$spans;?><?=htmlspecialchars(get_ipsec_tunnel_src($ipsec));?>
-				<br/>
-		        <?php	if ($ipsec['local-subnet']['network'])
-							echo strtoupper($ipsecent['local-subnet']['network']);
-						else
-							echo $ipsec['local-subnet']['address'];
-				?>		
+			<div class="listlr" style="display:table-cell;width:39px">
+				<?=$spans;?>
+					<?=htmlspecialchars($ipsec['src']);?>						
 				<?=$spane;?>
 			</div>
 			<div class="listr"  style="display:table-cell;width:100px"><?=$spans;?>			
 				<?=$ipsec['remote-subnet'];?>
 				<br/>
-				(<?=htmlspecialchars($ipsec['remote-gateway']);?>)<?=$spane;?>
+				(<?=htmlspecialchars($ipsec['dest']);?>)<?=$spane;?>
 			</div>
 			<div class="listr"  style="display:table-cell;width:90px"><?=$spans;?><?=htmlspecialchars($ipsec['descr']);?><?=$spane;?></div>
 			<div class="listr"  style="display:table-cell;width:37px"><?=$spans;?><center>
 			<?php 
-			$ipsecstatus = output_ipsec_tunnel_status($ipsec); 
 			
-			if($ipsecstatus) { 
+			if($ipsec['status'] == "true") { 
 				/* tunnel is up */
 				$iconfn = "interface_up";
 			} else {
@@ -227,5 +219,4 @@
 	</div>
 	</div>
 </div>
-<? endif; ?>
 

@@ -49,6 +49,7 @@ if (count($a_ipsec) == 0) {
 	$pconfig['p2pfsgroup'] = "0";
 } else {
 	$pconfig['enable'] = isset($a_ipsec['enable']);
+	$pconfig['natt'] = isset($a_ipsec['natt']);
 	$pconfig['p1mode'] = $a_ipsec['p1']['mode'];
 		
 	if (isset($a_ipsec['p1']['myident']['myaddress']))
@@ -120,6 +121,7 @@ if ($_POST) {
 		$ipsecent = array();
 		$ipsecent['enable'] = $_POST['enable'] ? true : false;
 		$ipsecent['p1']['mode'] = $_POST['p1mode'];
+		$ipsecent['natt'] = $_POST['natt'] ? true : false;
 		
 		$ipsecent['p1']['myident'] = array();
 		switch ($_POST['p1myidentt']) {
@@ -210,6 +212,14 @@ function methodsel_change() {
                         <td width="78%"> 
                     <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked"; ?>>
                     <strong>Allow mobile clients</strong></td>
+                </tr>
+				<tr> 
+                  <td width="22%" valign="top">&nbsp;</td>
+                  <td width="78%"> 
+                    <input name="natt" type="checkbox" id="natt" value="yes" <?php if ($pconfig['natt']) echo "checked"; ?>>
+                    <strong>Enable NAT Traversal (NAT-T)</strong><br>
+                    <span class="vexpl">Set this option to enable the use of NAT-T (i.e. the encapsulation of ESP in UDP packets) if needed,
+                    	which can help with clients that are behind restrictive firewalls.</span></td>
                 </tr>
                 <tr> 
                   <td colspan="2" valign="top" class="listtopic">Phase 1 proposal 

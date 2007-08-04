@@ -314,6 +314,11 @@ function vpn_ipsec_configure($ipchg = false) {
 					$myident = gethostbyname($tunnel['p1']['myident']['dyn_dns']);
  				}
 
+				$nattline = '';
+				if (isset($tunnel['natt'])) {
+					$nattline = "nat_traversal on;";
+				}
+
 				if (isset($tunnel['p1']['authentication_method'])) {
 					$authmethod = $tunnel['p1']['authentication_method'];
 				} else {$authmethod = 'pre_shared_key';}
@@ -480,6 +485,7 @@ EOD;
 remote anonymous \{
 	exchange_mode {$tunnel['p1']['mode']};
 	my_identifier {$myidentt} "{$myident}";
+	{$nattline}
 	{$certline}
 	initial_contact on;
 	passive on;

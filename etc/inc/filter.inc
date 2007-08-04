@@ -699,6 +699,8 @@ function filter_nat_rules_generate() {
 		$natrules .= filter_nat_rules_generate_if($wanif,
 			"{$lansa}/{$lancfg['subnet']}", 500, "", 500, null, 500, false);
 		$natrules .= filter_nat_rules_generate_if($wanif,
+			"{$lansa}/{$lancfg['subnet']}", 4500, "", 4500, null, 4500, false);
+		$natrules .= filter_nat_rules_generate_if($wanif,
 			"{$lansa}/{$lancfg['subnet']}", 5060, "", 5060, null, 5060, false);
 		$natrules .= filter_nat_rules_generate_if($wanif,
 			"{$lansa}/{$lancfg['subnet']}");
@@ -712,6 +714,8 @@ function filter_nat_rules_generate() {
 			if (interface_has_gateway("$opt_interface")) {
 				$natrules .= filter_nat_rules_generate_if($opt_interface,
 					"{$lansa}/{$lancfg['subnet']}", 500, "", 500, null, 500, false);
+				$natrules .= filter_nat_rules_generate_if($opt_interface,
+					"{$lansa}/{$lancfg['subnet']}", 4500, "", 4500, null, 4500, false);
 				$natrules .= filter_nat_rules_generate_if($opt_interface,
 					"{$lansa}/{$lancfg['subnet']}", 5060, "", 5060, null, 5060, false);
 				$natrules .= filter_nat_rules_generate_if($opt_interface,
@@ -731,6 +735,8 @@ function filter_nat_rules_generate() {
 				$natrules .= filter_nat_rules_generate_if($wanif,
 					"{$optsa}/{$optcfg['subnet']}", 500, "", 500, null, 500, false);
 				$natrules .= filter_nat_rules_generate_if($wanif,
+					"{$optsa}/{$optcfg['subnet']}", 4500, "", 4500, null, 4500, false);
+				$natrules .= filter_nat_rules_generate_if($wanif,
 					"{$optsa}/{$optcfg['subnet']}", 5060, "", 5060, null, 5060, false);
 				$natrules .= filter_nat_rules_generate_if($wanif,
 					"{$optsa}/{$optcfg['subnet']}", null, "", null, null, null, isset($optcfg['nonat']));
@@ -741,6 +747,8 @@ function filter_nat_rules_generate() {
 					if (interface_has_gateway("$opt_interface")) {
 						$natrules .= filter_nat_rules_generate_if($opt_interface,
 							"{$optsa}/{$optcfg['subnet']}", 500, "", 500, null, 500, false);
+						$natrules .= filter_nat_rules_generate_if($opt_interface,
+							"{$optsa}/{$optcfg['subnet']}", 4500, "", 4500, null, 4500, false);
 						$natrules .= filter_nat_rules_generate_if($opt_interface,
 							"{$optsa}/{$optcfg['subnet']}", 5060, "", 5060, null, 5060, false);
 						$natrules .= filter_nat_rules_generate_if($opt_interface,
@@ -758,6 +766,8 @@ function filter_nat_rules_generate() {
 			$natrules .= filter_nat_rules_generate_if($wanif,
 				"{$pptpdcfg['remoteip']}/{$pptp_subnet}", 500, "", 500, null, 500, false);
 			$natrules .= filter_nat_rules_generate_if($wanif,
+				"{$pptpdcfg['remoteip']}/{$pptp_subnet}", 4500, "", 4500, null, 4500, false);
+			$natrules .= filter_nat_rules_generate_if($wanif,
 				"{$pptpdcfg['remoteip']}/{$pptp_subnet}", 5060, "", 5060, null, 5060, false);
 			$natrules .= filter_nat_rules_generate_if($wanif,
 				"{$pptpdcfg['remoteip']}/{$pptp_subnet}");
@@ -768,6 +778,8 @@ function filter_nat_rules_generate() {
 				if ((is_private_ip($pptpdcfg['remoteip'])) && (interface_has_gateway($opt_interface))) {
 					$natrules .= filter_nat_rules_generate_if($opt_interface,
 						"{$pptpdcfg['remoteip']}/{$pptp_subnet}", 500, "", 500, null, 500, false);
+					$natrules .= filter_nat_rules_generate_if($opt_interface,
+						"{$pptpdcfg['remoteip']}/{$pptp_subnet}", 4500, "", 4500, null, 4500, false);
 					$natrules .= filter_nat_rules_generate_if($opt_interface,
 						"{$pptpdcfg['remoteip']}/{$pptp_subnet}", 5060, "", 5060, null, 5060, false);
 					$natrules .= filter_nat_rules_generate_if($opt_interface,
@@ -784,6 +796,8 @@ function filter_nat_rules_generate() {
 			$natrules .= filter_nat_rules_generate_if($wanif,
 				"{$pppoecfg['remoteip']}/{$pppoe_subnet}", 500, "", 500, null, 500, false);
 			$natrules .= filter_nat_rules_generate_if($wanif,
+				"{$pppoecfg['remoteip']}/{$pppoe_subnet}", 4500, "", 4500, null, 4500, false);
+			$natrules .= filter_nat_rules_generate_if($wanif,
 				"{$pppoecfg['remoteip']}/{$pppoe_subnet}", 5060, "", 5060, null, 5060, false);
 			$natrules .= filter_nat_rules_generate_if($wanif,
 				"{$pppoecfg['remoteip']}/{$pppoe_subnet}");
@@ -794,6 +808,8 @@ function filter_nat_rules_generate() {
 				if ((is_private_ip($pppoecfg['remoteip'])) && (interface_has_gateway($opt_interface))) {
 					$natrules .= filter_nat_rules_generate_if($opt_interface,
 						"{$pppoecfg['remoteip']}/{$pppoe_subnet}", 500, "", 500, null, 500, false);
+					$natrules .= filter_nat_rules_generate_if($opt_interface,
+						"{$pppoecfg['remoteip']}/{$pppoe_subnet}", 4500, "", 4500, null, 4500, false);
 					$natrules .= filter_nat_rules_generate_if($opt_interface,
 						"{$pppoecfg['remoteip']}/{$pppoe_subnet}", 5060, "", 5060, null, 5060, false);
 					$natrules .= filter_nat_rules_generate_if($opt_interface,
@@ -810,6 +826,8 @@ function filter_nat_rules_generate() {
 					$natrules .= filter_nat_rules_generate_if($wanif,
 						"{$route['network']}", 500, "", 500, null, 500, false);
 					$natrules .= filter_nat_rules_generate_if($wanif,
+						"{$route['network']}", 4500, "", 4500, null, 4500, false);
+					$natrules .= filter_nat_rules_generate_if($wanif,
 						"{$route['network']}", 5060, "", 5060, null, 5060, false);
 					$natrules .= filter_nat_rules_generate_if($wanif,
 						"{$route['network']}", "", null);
@@ -820,6 +838,8 @@ function filter_nat_rules_generate() {
 					if ((! interface_has_gateway($route['interface'])) && (is_private_ip($netip[0])) && (interface_has_gateway($opt_interface))) {
 						$natrules .= filter_nat_rules_generate_if($opt_interface,
 							"{$route['network']}", 500, "", 500, null, 500, false);
+						$natrules .= filter_nat_rules_generate_if($opt_interface,
+							"{$route['network']}", 4500, "", 4500, null, 4500, false);
 						$natrules .= filter_nat_rules_generate_if($opt_interface,
 							"{$route['network']}", 5060, "", 5060, null, 5060, false);
 						$natrules .= filter_nat_rules_generate_if($opt_interface,

@@ -288,16 +288,16 @@ function display_login_form() {
       <form id="iform" name="login_iform" method="post" autocomplete="off" action="<?= $_SERVER['SCRIPT_NAME'] ?>">
         <div id="inputerrors"></div>
         <p>
-          <span style="text-align: left;">
+          <span style="text-align: left;width=40%">
             <?=gettext("Username"); ?>:&nbsp;&nbsp;
+          <input onclick="clearError();" onchange="clearError();" id="usernamefld" type="text" name="usernamefld" class="formfld user" tabindex="1" />
           </span>
-          <input onclick="clearError();" onchange="clearError();" id="usernamefld" type="text" name="usernamefld" class="formfld" tabindex="1" />
         </p>
         <p>
-          <span style="text-align: left;">
+          <span style="text-align: left;width=40%;">
             <?=gettext("Password"); ?>:&nbsp;&nbsp;
           </span>
-          <input onclick="clearError();" onchange="clearError();" id="passwordfld" type="password" name="passwordfld" class="formfld" tabindex="2" />
+          <input onclick="clearError();" onchange="clearError();" id="passwordfld" type="password" name="passwordfld" class="formfld pwd" tabindex="2" />
         </p>
         <table width="90%" style="margin-right: auto; margin-left: auto;">
           <tr>

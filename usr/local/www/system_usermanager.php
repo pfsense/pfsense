@@ -125,6 +125,7 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
         }
 
         if (!$input_errors) {
+			$userent = "";
             if (isset($id) && $a_user[$id])
                 $userent = $a_user[$id];
 

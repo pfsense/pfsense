@@ -1025,7 +1025,7 @@ function convert_config() {
 			$config['system']['user'][0]['priv'][0]['descr'] = "Indicates whether this user will lock access to the webConfigurator for other users.";
 			$config['system']['user'][0]['priv'][1]['id'] = "lock-ipages";
 			$config['system']['user'][0]['priv'][1]['name'] = "Lock individual pages";
-			$config['system']['user'][0]['priv'][1]['decr'] = "Indicates whether this user will lock individual HTML pages after having accessed a particular page (the lock will be freed if the user leaves or saves the page form).";
+			$config['system']['user'][0]['priv'][1]['descr'] = "Indicates whether this user will lock individual HTML pages after having accessed a particular page (the lock will be freed if the user leaves or saves the page form).";
 			$config['system']['user'][0]['priv'][2]['id'] = "hasshell";
 			$config['system']['user'][0]['priv'][2]['name'] = "Has shell access";
 			$config['system']['user'][0]['priv'][2]['descr'] = "Indicates whether this user is able to login for example via SSH.";

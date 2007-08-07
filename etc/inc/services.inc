@@ -114,6 +114,7 @@ function services_dhcpd_configure() {
 	$dhcpdconf = <<<EOD
 option domain-name "{$syscfg['domain']}";
 option ldap-server code 95 = text;
+option domain-search-list code 119 = text;
 default-lease-time 7200;
 max-lease-time 86400;
 log-facility local7;
@@ -212,13 +213,17 @@ EOPP;
 		if ($dhcpifconf['domain']) {
 			$dnscfg .= "	option domain-name \"{$dhcpifconf['domain']}\";\n";
 		}
+		
+    if($dhcpifconf['domainsearchlist'] <> "") {
+			$dnscfg .= "	option domain-search-list \"{$dhcpifconf['domainsearchlist']}\";\n";
+    }
+
 		if (isset($dhcpifconf['ddnsupdate'])) {
 			if($dhcpifconf['ddnsdomain'] <> "") {
 				$dnscfg .= "	ddns-domainname \"{$dhcpifconf['ddnsdomain']}\";\n";
 			}
 			$dnscfg .= "	ddns-update-style interim;\n";
 		}
-
 
 		if (is_array($dhcpifconf['dnsserver']) && ($dhcpifconf['dnsserver'][0])) {
 			$dnscfg .= "	option domain-name-servers " . join(",", $dhcpifconf['dnsserver']) . ";";
@@ -262,8 +267,8 @@ EOPP;
 $dnscfg
 
 EOD;
-
-		if ($dhcpifconf['defaultleasetime'])
+    
+    if ($dhcpifconf['defaultleasetime'])
 			$dhcpdconf .= "	default-lease-time {$dhcpifconf['defaultleasetime']};\n";
 		if ($dhcpifconf['maxleasetime'])
 			$dhcpdconf .= "	max-lease-time {$dhcpifconf['maxleasetime']};\n";

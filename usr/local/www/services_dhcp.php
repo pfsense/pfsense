@@ -66,6 +66,7 @@ $pconfig['deftime'] = $config['dhcpd'][$if]['defaultleasetime'];
 $pconfig['maxtime'] = $config['dhcpd'][$if]['maxleasetime'];
 $pconfig['gateway'] = $config['dhcpd'][$if]['gateway'];
 $pconfig['domain'] = $config['dhcpd'][$if]['domain'];
+$pconfig['domainsearchlist'] = $config['dhcpd'][$if]['domainsearchlist'];
 list($pconfig['wins1'],$pconfig['wins2']) = $config['dhcpd'][$if]['winsserver'];
 list($pconfig['dns1'],$pconfig['dns2']) = $config['dhcpd'][$if]['dnsserver'];
 $pconfig['enable'] = isset($config['dhcpd'][$if]['enable']);
@@ -205,6 +206,7 @@ if ($_POST) {
 
 		$config['dhcpd'][$if]['gateway'] = $_POST['gateway'];
 		$config['dhcpd'][$if]['domain'] = $_POST['domain'];
+		$config['dhcpd'][$if]['domainsearchlist'] = $_POST['domainsearchlist'];
 		$config['dhcpd'][$if]['denyunknown'] = ($_POST['denyunknown']) ? true : false;
 		$config['dhcpd'][$if]['enable'] = ($_POST['enable']) ? true : false;
 		$config['dhcpd'][$if]['staticarp'] = ($_POST['staticarp']) ? true : false;
@@ -293,6 +295,7 @@ function enable_change(enable_over) {
 	document.iform.gateway.disabled = endis;
 	document.iform.failover_peerip.disabled = endis;
 	document.iform.domain.disabled = endis;
+	document.iform.domainsearchlist.disabled = endis;
 	document.iform.staticarp.disabled = endis;
 	document.iform.ddnsdomain.disabled = endis;
 	document.iform.ddnsupdate.disabled = endis;
@@ -454,7 +457,7 @@ function show_netboot_config() {
 			 The default is to use the IP of the firewall as the gateway.  Specify an alternate gateway here if this is not the correct gateway for your network.
 			</td>
                      </tr>
-                                          <tr>
+                      <tr>
                        <td width="22%" valign="top" class="vncell">Domain-Name</td>
                        <td width="78%" class="vtable">
                          <input name="domain" type="text" class="formfld" id="domain" size="20" value="<?=htmlspecialchars($pconfig['domain']);?>"><br>
@@ -462,8 +465,14 @@ function show_netboot_config() {
 			</td>
                      </tr>
                       <tr>
-                        <td width="22%" valign="top" class="vncell">Default lease
-                          time</td>
+                       <td width="22%" valign="top" class="vncell">Domain-Searchlist</td>
+                       <td width="78%" class="vtable">
+                         <input name="domainsearchlist" type="text" class="formfld" id="domainsearchlist" size="20" value="<?=htmlspecialchars($pconfig['domainsearchlist']);?>"><br>
+			 DNS-Searchlist: the DHCP server can serve a list of domains to be searched.
+			</td>
+                     </tr>                     
+                      <tr>
+                        <td width="22%" valign="top" class="vncell">Default lease time</td>
                         <td width="78%" class="vtable">
                           <input name="deftime" type="text" class="formfld" id="deftime" size="10" value="<?=htmlspecialchars($pconfig['deftime']);?>">
                           seconds<br>
@@ -473,8 +482,7 @@ function show_netboot_config() {
 			</td>
                       </tr>
                       <tr>
-                        <td width="22%" valign="top" class="vncell">Maximum lease
-                          time</td>
+                        <td width="22%" valign="top" class="vncell">Maximum lease time</td>
                         <td width="78%" class="vtable">
                           <input name="maxtime" type="text" class="formfld" id="maxtime" size="10" value="<?=htmlspecialchars($pconfig['maxtime']);?>">
                           seconds<br>

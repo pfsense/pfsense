@@ -1717,10 +1717,10 @@ function system_start_ftp_helpers() {
 	$interface_counter = 0;
 	if(isset($config['shaper']['enable'])) {
 		if(isset($config['ezshaper']['step5']['p2pcatchall'])) {
-			$shaper_queue = "-q qP2PDown ";
-		} else { 
+			$shaper_queue = "-q qP2PDown";
+		} else {
 			$downq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['inside_int']);
-			$shaper_queue = "-q {$downq}def ";
+			$shaper_queue = "-q {$downq}def";
 		}
 	} else {
 		$shaper_queue = "";
@@ -1741,7 +1741,7 @@ function system_start_ftp_helpers() {
 			 *    keep processing interfaces. kill pftpx if already
 			 *    running for this instance.
 			 */
-			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/pftpx {$shaper_queue}-c {$port}\" | grep -v grep | sed \"s/  */ /g\" | cut -f2 -d\" \"");
+			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/pftpx {$shaper_queue} -c {$port}\" | grep -v grep | sed \"s/  */ /g\" | cut -f2 -d\" \"");
 			if($helpers)
 				mwexec("/bin/kill {$helpers}");
 			$interface_counter++;
@@ -1759,6 +1759,11 @@ function system_start_ftp_helpers() {
 					foreach($config['nat']['advancedoutbound']['rule'] as $natnetwork) {
 						if(ip_in_subnet($ip, $natnetwork['source']['network'])) {
 							/* if the interface address is matched in the AON Rule we need the ftp proxy */
+							if(is_ipaddr($natnetwork['target']) && ($natnetwork['interface'] == "wan")) {
+								$pftpxsourceaddr = "-p {$natnetwork['target']}";
+								if($g['debug'])
+									log_error("Config: AON: using the external ip source {$pftpxsourceaddr} for the ftp proxy");
+							}
 							$sourcenat++;
 						}
 					}
@@ -1775,11 +1780,11 @@ function system_start_ftp_helpers() {
 				}
 			}
 			/* if pftpx is already running then do not launch it again */
-			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/pftpx {$shaper_queue}-c {$port}\" | grep -v grep | sed \"s/  */ /g\"");
+			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/pftpx {$shaper_queue} -c {$port}\" | grep -v grep | sed \"s/  */ /g\"");
 			if(!$helpers && $ip)
- 				mwexec("/usr/local/sbin/pftpx {$shaper_queue}-c {$port} -g 8021 {$ip}");
+ 				mwexec("/usr/local/sbin/pftpx {$shaper_queue} -c {$port} -g 8021 {$pftpxsourceaddr} {$ip}");
 			if(!$ip)
-				mwexec("/usr/local/sbin/ftpsesame {$shaper_queue}-i $int");
+				mwexec("/usr/local/sbin/ftpsesame {$shaper_queue} -i $int");
 			$interface_counter++;
 		}
 	}

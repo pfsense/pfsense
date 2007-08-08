@@ -34,6 +34,10 @@ function gentitle_pkg($pgname) {
 	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
 }
 
+unset($interface_arr_cache);
+unset($carp_interface_count_cache);
+unset($carp_query);
+
 $status = get_carp_status();
 if($_POST['disablecarp'] <> "") {
 	if($status == true) {

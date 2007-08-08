@@ -37,6 +37,7 @@ function gentitle_pkg($pgname) {
 unset($interface_arr_cache);
 unset($carp_interface_count_cache);
 unset($carp_query);
+unset($interface_ip_arr_cache);
 
 $status = get_carp_status();
 if($_POST['disablecarp'] <> "") {

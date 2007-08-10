@@ -34,6 +34,16 @@
 require("guiconfig.inc");
 
 $ipsec_logfile = "{$g['varlog_path']}/ipsec.log";
+$ipsec_logarr = return_clog($ipsec_logfile, $nentries);
+
+/* Create array with all IPSEC tunnel descriptions */
+$search = array();
+$replace = array();
+foreach($config['ipsec']['tunnel'] as $tunnel) {
+	$gateway = "{$tunnel['remote-gateway']}";
+	$search[] = "/(racoon: )([A-Z:].*?)({$gateway}\[[0-9].+\]|{$gateway})/i";
+	$replace[] = "$1<strong>[{$tunnel['descr']}]</strong>: $2$3$4";
+}
 
 $nentries = $config['syslog']['nentries'];
 if (!$nentries)
@@ -78,7 +88,17 @@ include("head.inc");
 		  		<tr>
 					<td colspan="2" class="listtopic">Last <?=$nentries;?> IPSEC log entries</td>
 		  		</tr>
-				<?php dump_clog($ipsec_logfile, $nentries); ?>
+				<?php
+				foreach($ipsec_logarr as $logent){
+					$logent = preg_replace($search, $replace, $logent);
+					$logent = preg_split("/\s+/", $logent, 6);
+					echo "<tr valign=\"top\">\n";
+					$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
+					echo "<td class=\"listlr\" nowrap>" . $entry_date_time  . "</td>\n";
+					echo "<td class=\"listr\">" . $logent[4] . " " . $logent[5] . "</td>\n";
+					echo "</tr>\n";
+				}
+				?>
 				<tr>
 					<td>
 						<br>

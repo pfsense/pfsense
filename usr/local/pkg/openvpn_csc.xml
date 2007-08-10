@@ -77,13 +77,13 @@
 		<field>
 			<fieldname>dhcp_dns</fieldname>
 			<fielddescr>DHCP-Opt.: DNS-Server</fielddescr>
-			<description>Set domain name server addressses, separated by semi-colons (;).</description>
+			<description>Set domain name server addresses, separated by semi-colons (;).</description>
 			<type>input</type>
 		</field>
 		<field>
 			<fieldname>dhcp_wins</fieldname>
 			<fielddescr>DHCP-Opt.: WINS-Server</fielddescr>
-			<description>Set WINS server addressses (NetBIOS over TCP/IP Name Server), separated by semi-colons (;).</description>
+			<description>Set WINS server addresses (NetBIOS over TCP/IP Name Server), separated by semi-colons (;).</description>
 			<type>input</type>
 		</field>
 		<field>

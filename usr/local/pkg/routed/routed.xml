@@ -64,7 +64,7 @@
 			<fieldname>enable</fieldname>
 			<description>Enables the Routing Information Protocol daemon</description>
 			<type>checkbox</type>
-      <enablefields>iface_array,ripversion,passwd</enablefields>
+      <enablefields>iface_array[],ripversion,passwd</enablefields>
 		</field>
 		<field>
 			<fielddescr>Interfaces</fielddescr>

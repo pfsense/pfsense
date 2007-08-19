@@ -106,12 +106,17 @@ else {
 
 <!-- Start of tab content -->
 
+<?php
+	$current_statecount=`pfctl -si | grep "current entries" | awk '{ print $3 }'`;
+?>
+
 <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td>
 			<form action="<?=$_SERVER['SCRIPT_NAME'];?>" method="get">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
+					<td>Current state count: <?=$current_statecount?></td>
 					<td style="font-weight:bold;" align="right">
 						<?=gettext("Filter expression:");?>
 						<input type="text" name="filter" class="formfld search" value="<?=$_GET['filter'];?>" size="30" />

@@ -146,5 +146,16 @@
 				<input style="border: 0px solid white;" size="30" name="diskusagemeter" id="diskusagemeter" value="<?= $diskusage.'%'; ?>" />
 			</td>
 		</tr>
+		<tr>
+			<td width="25%" class="vncellt">MBUF Usage</td>
+			<td width="75%" class="listr">
+				<?php
+					$mbufs_inuse=`netstat -mb | grep "mbuf clusters in use" | awk '{ print $1 }' | cut -d"/" -f1`;
+					$mbufs_total=`netstat -mb | grep "mbuf clusters in use" | awk '{ print $1 }' | cut -d"/" -f3`;
+				?>
+				Total: <?=$mbufs_total?><br>
+				In use: <?=$mbufs_inuse?>
+			</td>
+		</tr>
 	</tbody>
 </table>

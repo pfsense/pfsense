@@ -180,6 +180,16 @@ include("fbegin.inc");
 			</td>
 		</tr>
 		<tr>
+			<td width="25%" class="vncellt">MBUF Usage</td>
+			<td width="75%" class="listr">
+				<?php
+					$mbufs_inuse=`netstat -mb | grep "mbuf clusters in use" | awk '{ print $1 }' | cut -d"/" -f1`;
+					$mbufs_total=`netstat -mb | grep "mbuf clusters in use" | awk '{ print $1 }' | cut -d"/" -f3`;
+				?>
+				<?=$mbufs_inuse?>/<?=$mbufs_total?>
+			</td>
+		</tr>
+		<tr>
 			<td width="25%" class="vncellt">CPU usage</td>
 			<td width="75%" class="listr">
 				<?php $cpuUsage = "0"; ?>

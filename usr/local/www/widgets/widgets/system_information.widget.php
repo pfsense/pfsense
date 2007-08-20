@@ -96,6 +96,16 @@
 			</td>
 		</tr>
 		<tr>
+			<td width="25%" class="vncellt">MBUF Usage</td>
+			<td width="75%" class="listr">
+				<?php
+					$mbufs_inuse=`netstat -mb | grep "mbuf clusters in use" | awk '{ print $1 }' | cut -d"/" -f1`;
+					$mbufs_total=`netstat -mb | grep "mbuf clusters in use" | awk '{ print $1 }' | cut -d"/" -f3`;
+				?>
+				<?=$mbufs_inuse?>/<?=$mbufs_total?>
+			</td>
+		</tr>
+		<tr>
 			<td width="25%" class="vncellt">CPU usage</td>
 			<td width="75%" class="listr">
 				<?php $cpuUsage = "0"; ?>
@@ -144,17 +154,6 @@
 				<img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_left.gif" height="15" width="4" border="0" align="middle" alt="left bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_blue.gif" height="15" width="<?= $diskusage; ?>" border="0" align="middle" alt="red bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_gray.gif" height="15" width="<?= (100 - $diskusage); ?>" border="0" align="middle" alt="gray bar" /><img src="./themes/<?= $g["theme"]; ?>/images/misc/bar_right.gif" height="15" width="5" border="0" align="middle" alt="right bar" />
 				&nbsp;
 				<input style="border: 0px solid white;" size="30" name="diskusagemeter" id="diskusagemeter" value="<?= $diskusage.'%'; ?>" />
-			</td>
-		</tr>
-		<tr>
-			<td width="25%" class="vncellt">MBUF Usage</td>
-			<td width="75%" class="listr">
-				<?php
-					$mbufs_inuse=`netstat -mb | grep "mbuf clusters in use" | awk '{ print $1 }' | cut -d"/" -f1`;
-					$mbufs_total=`netstat -mb | grep "mbuf clusters in use" | awk '{ print $1 }' | cut -d"/" -f3`;
-				?>
-				Total: <?=$mbufs_total?><br>
-				In use: <?=$mbufs_inuse?>
 			</td>
 		</tr>
 	</tbody>

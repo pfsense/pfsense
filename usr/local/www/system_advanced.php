@@ -687,13 +687,15 @@ include("head.inc");
 
 <?php
 
-if (($config['system']['webgui']['certificate'] != $oldcert)
-		|| ($config['system']['webgui']['private-key'] != $oldkey)) {
-    ob_flush();
-    flush();
-    log_error("webConfigurator certificates have changed.  Restarting webConfigurator.");
-    sleep(1);
-	touch("/tmp/restart_webgui");
+if($_POST['cert'] || $_POST['key']) {
+	if (($config['system']['webgui']['certificate'] != $oldcert)
+			|| ($config['system']['webgui']['private-key'] != $oldkey)) {
+	    ob_flush();
+	    flush();
+	    log_error("webConfigurator certificates have changed.  Restarting webConfigurator.");
+	    sleep(1);
+		touch("/tmp/restart_webgui");
+	}
 }
 
 ?>

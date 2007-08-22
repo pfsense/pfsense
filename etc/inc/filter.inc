@@ -2077,6 +2077,31 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			$aline['src'] . $aline['srcport'] . $aline['os'] . $vpns . $aline['dstport'].
 			$aline['icmp-type'] . $aline['flags'] .
 			" label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";
+		/* if list */
+		$iflist = array("lan", "wan");
+		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
+			$iflist['opt' . $i] = "opt{$i}";
+		/* build local networks list */
+		$localnets = "to { ";
+		foreach ($iflist as $ifent => $ifname) {
+			if(stristr($ifname, "opt")) {
+				if(!isset($config['interfaces'][$ifname]['enable'])) {
+					continue;
+				}
+			}
+			/* do not process interfaces that will end up with gateways */
+			if(! interface_has_gateway($ifname)) {
+				$sa = gen_subnet($config['interfaces'][$ifname]['ipaddr'], $config['interfaces'][$ifname]['subnet']);
+				$sn = $config['interfaces'][$ifname]['subnet'];
+				$localnets .= "{$sa}/{$sn} ";
+			}
+		}
+		$localnets .= " } ";
+		/* return the line */
+		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['prot'] .
+			$aline['src'] . $aline['srcport'] . $aline['os'] . $localnets . $aline['dstport'].
+			$aline['icmp-type'] . $aline['flags'] .
+			" label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";
 	}
 
 	/* piece together the actual user rule */

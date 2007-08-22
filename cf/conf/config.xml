@@ -90,6 +90,11 @@
 			<tunable>kern.randompid</tunable>
 			<value>347</value>
 		</item>
+		<item>
+			<desc>Maximum size of the IP input queue</desc>
+			<tunable>net.inet.ip.intr_queue_maxlen</tunable>
+			<value>1000</value>
+		</item>
 	</sysctl>
 	<system>
 		<optimization>normal</optimization>

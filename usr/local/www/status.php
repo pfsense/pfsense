@@ -113,6 +113,8 @@ defCmdT("pfctl -s rules -vv","/sbin/pfctl -s rules -vv");
 defCmdT("pfctl -s queue -v","/sbin/pfctl -s queue -v");
 defCmdT("pfctl -s queue -v","/sbin/pfctl -s nat -v");
 
+defCmdT("netstat -s -ppfsync","netstat -s -ppfsync");
+
 defCmdT("pfctl -vsq","/sbin/pfctl -vsq");
 
 defCmdT("pfctl -vs Tables","pfctl -vs Tables");

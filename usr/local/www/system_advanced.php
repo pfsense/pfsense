@@ -144,7 +144,7 @@ if ($_POST) {
 		else
 			unset($config['system']['lb_use_sticky']);
 
-		if($config['interfaces']['wan']['ipaddr'] = "pppoe") 
+		if($config['interfaces']['wan']['ipaddr'] == "pppoe") 
 			unset($config['system']['lb_use_sticky']);
 
 		if($_POST['sharednet'] == "yes") {
@@ -438,7 +438,7 @@ include("head.inc");
 			<td colspan="2" valign="top" class="listtopic">Load Balancing</td>
 		</tr>
 <?php
-if($config['interfaces']['wan']['ipaddr'] = "pppoe")  {
+if($config['interfaces']['wan']['ipaddr'] <> "pppoe")  {
 ?>
 		<tr>
 			<td width="22%" valign="top" class="vncell">Load Balancing</td>

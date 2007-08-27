@@ -236,6 +236,7 @@ function RADIUS_ACCOUNTING_STOP($ruleno,$username,$sessionid,$start_time,$radius
     $racct->putAttribute(RADIUS_ACCT_OUTPUT_PACKETS, $volume['output_pkts'], "integer");
     $racct->putAttribute(RADIUS_ACCT_OUTPUT_OCTETS, $volume['output_bytes_radius'], "integer");
     $racct->putAttribute(RADIUS_ACCT_OUTPUT_GIGAWORDS, $volume['output_gigawords'], "integer");
+	$racct->putAttribute(RADIUS_ACCT_SESSION_TIME, $session_time, "integer");
 
     if (!$interimupdate)
         $racct->putAttribute(RADIUS_ACCT_TERMINATE_CAUSE, $term_cause);

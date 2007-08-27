@@ -292,8 +292,8 @@ EOD;
 				$dhcpdconf .= "	next-server {$dhcpifconf['next-server']};\n";
 				$dhcpdconf .= "	filename \"{$dhcpifconf['filename']}\";\n";
 			}
-			if (($dhcpifconf['rootpathip'] <> "") && ($dhcpifconf['rootpath'] <> "")) {
-				$dhcpdconf .= "	option root-path \"{$dhcpifconf['rootpathip']}:{$dhcpifconf['rootpath']}\";\n";
+			if ($dhcpifconf['rootpath'] <> "") {
+				$dhcpdconf .= "	option root-path \"{$dhcpifconf['rootpath']}\";\n";
       }
 		}
 		

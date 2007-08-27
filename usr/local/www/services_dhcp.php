@@ -80,7 +80,6 @@ $pconfig['ldap'] = $config['dhcpd'][$if]['ldap'];
 $pconfig['netboot'] = isset($config['dhcpd'][$if]['netboot']);
 $pconfig['nextserver'] = $config['dhcpd'][$if]['next-server'];
 $pconfig['filename'] = $config['dhcpd'][$if]['filename'];
-$pconfig['rootpathip'] = $config['dhcpd'][$if]['rootpathip'];
 $pconfig['rootpath'] = $config['dhcpd'][$if]['rootpath'];
 $pconfig['failover_peerip'] = $config['dhcpd'][$if]['failover_peerip'];
 $pconfig['netmask'] = $config['dhcpd'][$if]['netmask'];
@@ -156,10 +155,6 @@ if ($_POST) {
 		if (($_POST['nextserver'] && !is_ipaddr($_POST['nextserver']))) {
 			$input_errors[] = "A valid IP address must be specified for the network boot server.";
 		}
-		if (($_POST['rootpathip'] && !is_ipaddr($_POST['rootpathip']))) {
-			$input_errors[] = "A valid IP address must be specified for the NFS server.";
-		}
-
 
 		if (!$input_errors) {
 			/* make sure the range lies within the current subnet */
@@ -224,7 +219,6 @@ if ($_POST) {
 		$config['dhcpd'][$if]['netboot'] = ($_POST['netboot']) ? true : false;
 		$config['dhcpd'][$if]['next-server'] = $_POST['nextserver'];
 		$config['dhcpd'][$if]['filename'] = $_POST['filename'];
-		$config['dhcpd'][$if]['rootpathip'] = $_POST['rootpathip'];
 		$config['dhcpd'][$if]['rootpath'] = $_POST['rootpath'];
 
 		write_config();
@@ -306,7 +300,6 @@ function enable_change(enable_over) {
 	document.iform.netboot.disabled = endis;
 	document.iform.nextserver.disabled = endis;
 	document.iform.filename.disabled = endis;
-	document.iform.rootpathip.disabled = endis;
 	document.iform.rootpath.disabled = endis;
 	document.iform.denyunknown.disabled = endis;
 }
@@ -589,11 +582,9 @@ function show_netboot_config() {
 					<input name="filename" type="text" class="formfld" id="filename" size="20" value="<?=htmlspecialchars($pconfig['filename']);?>"><br>
 					Note: You need both a filename and a boot server configured for this to work!
 				  <p>
-					Enter the IP of the NFS-server
-          <input name="rootpathip" type="text" class="formfld" id="rootpathip" size="20" value="<?=htmlspecialchars($pconfig['rootpathip']);?>">
-					and the <b>rootpath</b>					
-					<input name="rootpath" type="text" class="formfld" id="rootpath" size="20" value="<?=htmlspecialchars($pconfig['rootpath']);?>"><br>
-					Note: You need both a NFS-server and a path configured for this to work!
+					Enter the <b>root-path</b>-string
+          <input name="rootpath" type="text" class="formfld" id="rootpath" size="90" value="<?=htmlspecialchars($pconfig['rootpath']);?>"><br>
+          Note: string-format: iscsi:(servername):(protocol):(port):(LUN):targetname
         </div>
 			</td>
 		                  </tr>

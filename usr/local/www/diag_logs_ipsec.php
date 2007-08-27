@@ -34,15 +34,20 @@
 require("guiconfig.inc");
 
 $ipsec_logfile = "{$g['varlog_path']}/ipsec.log";
-$ipsec_logarr = return_clog($ipsec_logfile, $nentries);
 
 /* Create array with all IPSEC tunnel descriptions */
 $search = array();
 $replace = array();
 foreach($config['ipsec']['tunnel'] as $tunnel) {
 	$gateway = "{$tunnel['remote-gateway']}";
-	$search[] = "/(racoon: )([A-Z:].*?)({$gateway}\[[0-9].+\]|{$gateway})/i";
+	$search[] = "/(racoon: )([A-Z:].*?)({$gateway}\[[0-9].+\]|{$gateway})(.*)/i";
 	$replace[] = "$1<strong>[{$tunnel['descr']}]</strong>: $2$3$4";
+}
+/* collect all our own ip addresses */
+exec("/sbin/ifconfig|/usr/bin/awk '/inet / {print $2}'", $ip_address_list);
+foreach($ip_address_list as $address) {
+	$search[] = "/(racoon: )([A-Z:].*?)({$address}\[[0-9].+\])(.*isakmp.*)/i";
+	$replace[] = "$1<strong>[Self]</strong>: $2$3$4";
 }
 
 $nentries = $config['syslog']['nentries'];
@@ -54,6 +59,8 @@ if ($_POST['clear']) {
 	exec("/usr/sbin/clog -i -s 262144 {$ipsec_logfile}");
 	system_syslogd_start();
 }
+
+$ipsec_logarr = return_clog($ipsec_logfile, $nentries);
 
 $pgtitle = "Diagnostics: System logs: IPSEC VPN";
 include("head.inc");
@@ -90,7 +97,17 @@ include("head.inc");
 		  		</tr>
 				<?php
 				foreach($ipsec_logarr as $logent){
-					$logent = preg_replace($search, $replace, $logent);
+					foreach($search as $string) {
+						if(preg_match($string, $logent))
+							$match = true;
+					}
+					if(isset($match)) {
+						$logent = preg_replace($search, $replace, $logent);
+					} else {
+						$searchs = "/(racoon: )([A-Z:].*?)([0-9].+\.[0-9].+.[0-9].+.[0-9].+\[[0-9].+\])(.*)/i";
+						$replaces = "$1<strong><font color=red>[Unknown Gateway/Dynamic]</font></strong>: $2$3$4";
+						$logent = preg_replace($searchs, $replaces, $logent);
+					}
 					$logent = preg_split("/\s+/", $logent, 6);
 					echo "<tr valign=\"top\">\n";
 					$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));

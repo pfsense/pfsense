@@ -105,6 +105,7 @@ switch ($command) {
 }
 
 function check_for_kernel_file() {
+	global $fp;
 	if(!file_exists("/boot/kernel/pfsense_kernel.txt")) {
 		echo "\nPlease select which kernel you would like to use:\n";
 		echo "\n1. Non SMP kernel";
@@ -132,6 +133,7 @@ function check_for_kernel_file() {
 }
 
 function do_upgrade($path) {
+	global $fp;
 	check_for_kernel_file();
 	echo "\nOne moment please... Invoking firmware upgrade...\n";
 	exec("/etc/rc.firmware pfSenseupgrade $path");

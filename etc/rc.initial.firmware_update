@@ -104,8 +104,6 @@ switch ($command) {
 		}
 }
 
-fclose($fp);
-
 function check_for_kernel_file() {
 	if(!file_exists("/boot/kernel/pfsense_kernel.txt")) {
 		echo "\nPlease select which kernel you would like to use:\n";
@@ -139,5 +137,7 @@ function do_upgrade($path) {
 	exec("/etc/rc.firmware pfSenseupgrade $path");
 	unlink_if_exists($path);
 }
+
+fclose($fp);
 
 ?>

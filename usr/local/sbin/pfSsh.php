@@ -72,6 +72,8 @@ echo ".\n\n";
 
 $shell_active = true;
 
+$pkg_interface='console';
+
 echo "Type \"help\" to show common usage scnenarios.";
 
 while($shell_active == true) {

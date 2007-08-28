@@ -70,6 +70,8 @@ $fp = fopen('php://stdin', 'r');
 
 echo ".\n\n";
 
+$pkg_interface='console';
+
 $shell_active = true;
 
 echo "Type \"help\" to show common usage scnenarios.";

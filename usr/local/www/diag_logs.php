@@ -54,7 +54,7 @@ if ($_POST['filtertext'])
 if ($filtertext)
 	$filtertextmeta="?filtertext=$filtertext";
 
-$pgtitle = "Diagnostics: System logs: System";
+$pgtitle = "Status: System logs: System";
 include("head.inc");
 
 ?>

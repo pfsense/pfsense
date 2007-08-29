@@ -30,7 +30,7 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-$pgtitle = "Diagnostics: Filter Reload Status";
+$pgtitle = "Status: Filter Reload Status";
 
 include("head.inc");
 

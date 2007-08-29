@@ -41,7 +41,7 @@ if ($_POST['clear']) {
 	exec("/usr/sbin/clog -i -s 262144 {$portal_logfile}");
 }
 
-$pgtitle = "Diagnostics: System logs: Portal Auth";
+$pgtitle = "Status: System logs: Portal Auth";
 include("head.inc");
 
 ?>

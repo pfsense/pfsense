@@ -43,7 +43,7 @@ if ($_POST['clear']) {
 	exec("/usr/sbin/clog -i -s 262144 {$dhcpd_logfile}");
 }
 
-$pgtitle = "Diagnostics: System logs: DHCP";
+$pgtitle = "Status: System logs: DHCP";
 include("head.inc");
 
 ?>

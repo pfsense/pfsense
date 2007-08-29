@@ -66,7 +66,7 @@ if(!$apkg) { // If we aren't looking for a specific package, locate the first pa
 	$i = $apkgid;
 }
 
-$pgtitle = "Diagnostics: Package logs";
+$pgtitle = "Status: Package logs";
 include("head.inc");
 
 ?>

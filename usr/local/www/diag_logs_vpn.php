@@ -29,7 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = "Diagnostics: System logs: PPTP VPN";
+$pgtitle = "Status: System logs: PPTP VPN";
 require("guiconfig.inc");
 
 $nentries = $config['syslog']['nentries'];

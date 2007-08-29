@@ -33,7 +33,7 @@
 
 require("guiconfig.inc");
 
-$pgtitle = "Diagnostics: IPSec: SPD";
+$pgtitle = "Status: IPsec: SPD";
 include("head.inc");
 
 ?>
@@ -154,7 +154,7 @@ foreach ($spd as $sp): ?>
 <?php endif; ?>
 <td colspan="4">
 		      <p><span class="vexpl"><span class="red"><strong>Note:<br>
-                      </strong></span>You can configure your IPSEC <a href="vpn_ipsec.php">here</a>.</span></p>
+                      </strong></span>You can configure your IPsec <a href="vpn_ipsec.php">here</a>.</span></p>
 		  </td>
 </table>
 </div>

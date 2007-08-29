@@ -92,7 +92,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "Diagnostics: System logs: Settings";
+$pgtitle = "Status: System logs: Settings";
 include("head.inc");
 
 ?>

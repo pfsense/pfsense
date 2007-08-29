@@ -171,7 +171,7 @@ function format_ipf_ip($ipfip) {
 	return $ip . ", port " . $port;
 }
 
-$pgtitle = "Diagnostics: System logs: Firewall";
+$pgtitle = "Status: System logs: Firewall";
 include("head.inc");
 
 ?>

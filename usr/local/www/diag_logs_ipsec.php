@@ -62,7 +62,7 @@ if ($_POST['clear']) {
 
 $ipsec_logarr = return_clog($ipsec_logfile, $nentries);
 
-$pgtitle = "Diagnostics: System logs: IPSEC VPN";
+$pgtitle = "Status: System logs: IPSEC VPN";
 include("head.inc");
 
 ?>

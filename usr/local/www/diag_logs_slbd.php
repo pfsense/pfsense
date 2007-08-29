@@ -44,7 +44,7 @@ if ($_POST['clear']) {
 	system_syslogd_start();
 }
 
-$pgtitle = "Diagnostics: System logs: Load Balancer";
+$pgtitle = "Status: System logs: Load Balancer";
 include("head.inc");
 
 ?>

@@ -33,7 +33,7 @@
 
 require("guiconfig.inc");
 
-$pgtitle = "Diagnostics: DHCP leases";
+$pgtitle = "Status: DHCP leases";
 include("head.inc");
 
 ?>

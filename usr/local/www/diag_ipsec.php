@@ -30,7 +30,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = "Diagnostics: IPSec";
+$pgtitle = "Status: IPsec";
 
 require("guiconfig.inc");
 include("head.inc");
@@ -136,7 +136,7 @@ foreach ($config['ipsec']['tunnel'] as $ipsec): ?>
               Note:<br />
             </strong>
           </span>
-          You can configure your IPSEC 
+          You can configure your IPsec 
           <a href="vpn_ipsec.php">here</a>.
         </span>
       </p>

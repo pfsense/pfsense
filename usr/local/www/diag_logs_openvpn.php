@@ -31,7 +31,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = "Diagnostics: System logs: OpenVPN";
+$pgtitle = "Status: System logs: OpenVPN";
 
 require("guiconfig.inc");
 

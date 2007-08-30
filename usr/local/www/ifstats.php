@@ -53,7 +53,12 @@
 		$ifinfo['status'] = "up";
 	}
 
-	if (!strstr($ifinfo['if'],'tun')) {
+	if(preg_match("/^enc|^tun/i", $ifinfo['if'])) {
+		$ifinfo['inpkts'] = $linkinfo[3];
+		$ifinfo['inbytes'] = $linkinfo[5];
+		$ifinfo['outpkts'] = $linkinfo[6];
+		$ifinfo['outbytes'] = $linkinfo[8];
+	} else {
 		$ifinfo['macaddr'] = $linkinfo[3];
 		$ifinfo['inpkts'] = $linkinfo[4];
 		$ifinfo['inerrs'] = $linkinfo[5];
@@ -62,13 +67,7 @@
 		$ifinfo['outerrs'] = $linkinfo[8];
 		$ifinfo['outbytes'] = $linkinfo[9];
 		$ifinfo['collisions'] = $linkinfo[10];
-	} else {
-		$ifinfo['inpkts'] = $linkinfo[3];
-		$ifinfo['inbytes'] = $linkinfo[5];
-		$ifinfo['outpkts'] = $linkinfo[6];
-		$ifinfo['outbytes'] = $linkinfo[8];
 	}
-	
 	$temp = gettimeofday();
 	$timing = (double)$temp["sec"] + (double)$temp["usec"] / 1000000.0;
 

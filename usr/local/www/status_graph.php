@@ -44,6 +44,9 @@ if ($_POST['height'])
 else
 	$height = "275";
 
+/* link the ipsec interface magically */
+$config['interfaces']['ipsec']['if'] = "enc0";
+
 if ($_GET['if']) {
 	$curif = $_GET['if'];
 	$ifnum = $config['interfaces'][$curif]['if'];
@@ -63,9 +66,13 @@ include("head.inc");
 <?php
 $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
 
-for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+for ($j = 1; isset($config['interfaces']['opt' . $j]['enable']); $j++) {
 	$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
 }
+if((isset($config['ipsec']['enable'])) || (isset($config['ipsec']['mobileclients']['enable']))) {
+	$ifdescrs['ipsec'] = "IPSEC";
+}
+
 ?>
 <form name="form1" action="status_graph.php" method="get" style="padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid #999999">
 Interface:

@@ -125,13 +125,13 @@ include("head.inc");
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Username</td>
                   <td width="78%" class="vtable">
-					<?=$mandfldhtml;?><input name="username" type="text" class="formfld" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>"> 
+					<?=$mandfldhtml;?><input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>"> 
                   </td>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Password</td>
                   <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="password" type="password" class="formfld" id="password" size="20"> 
-                    <br><?=$mandfldhtml;?><input name="password2" type="password" class="formfld" id="password2" size="20"> 
+                    <?=$mandfldhtml;?><input name="password" type="password" class="formfld pwd" id="password" size="20"> 
+                    <br><?=$mandfldhtml;?><input name="password2" type="password" class="formfld pwd" id="password2" size="20"> 
                     &nbsp;(confirmation)<?php if (isset($id) && $a_secret[$id]): ?><br>
                     <span class="vexpl">If you want to change the users' password, 
                     enter it here twice.</span><?php endif; ?></td>
@@ -139,7 +139,7 @@ include("head.inc");
                 <tr> 
                   <td width="22%" valign="top" class="vncell">IP address</td>
                   <td width="78%" class="vtable"> 
-                    <input name="ip" type="text" class="formfld" id="ip" size="20" value="<?=htmlspecialchars($pconfig['ip']);?>"> 
+                    <input name="ip" type="text" class="formfld unknown" id="ip" size="20" value="<?=htmlspecialchars($pconfig['ip']);?>"> 
                     <br><span class="vexpl">If you want the user to be assigned a specific IP address, enter it here.</span></td>
                 </tr>
                 <tr> 

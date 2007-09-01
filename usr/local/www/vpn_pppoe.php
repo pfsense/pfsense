@@ -297,7 +297,7 @@ function enable_change(enable_over) {
                   <td width="22%" valign="top" class="vncell"><b>Interface</b></td>
                   <td width="78%" valign="top" class="vtable">
 
-			<select name="interface" class="formfld" id="interface">
+			<select name="interface" class="formselect" id="interface">
 			  <?php
 				$interfaces = array('lan' => 'LAN', 'wan' => 'WAN');
 				for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
@@ -351,7 +351,7 @@ function enable_change(enable_over) {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Server address</td>
                   <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="localip" type="text" class="formfld" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>"> 
+                    <?=$mandfldhtml;?><input name="localip" type="text" class="formfld unknown" id="localip" size="20" value="<?=htmlspecialchars($pconfig['localip']);?>"> 
                     <br>
                     Enter the IP address the PPPoE server should use on its side 
                     for all clients.</td>
@@ -359,7 +359,7 @@ function enable_change(enable_over) {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Remote address range</td>
                   <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="remoteip" type="text" class="formfld" id="remoteip" size="20" value="<?=htmlspecialchars($pconfig['remoteip']);?>">
+                    <?=$mandfldhtml;?><input name="remoteip" type="text" class="formfld unknown" id="remoteip" size="20" value="<?=htmlspecialchars($pconfig['remoteip']);?>">
                     <br>
                     Specify the starting address for the client IP address subnet.<br>
                     </td>
@@ -367,9 +367,9 @@ function enable_change(enable_over) {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">DNS servers</td>
                   <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="pppoe_dns1" type="text" class="formfld" id="pppoe_dns1" size="20" value="<?=htmlspecialchars($pconfig['pppoe_dns1']);?>">
+                    <?=$mandfldhtml;?><input name="pppoe_dns1" type="text" class="formfld unkown" id="pppoe_dns1" size="20" value="<?=htmlspecialchars($pconfig['pppoe_dns1']);?>">
                     <br>
-			<input name="pppoe_dns2" type="text" class="formfld" id="pppoe_dns2" size="20" value="<?=htmlspecialchars($pconfig['pppoe_dns2']);?>">
+			<input name="pppoe_dns2" type="text" class="formfld unknown" id="pppoe_dns2" size="20" value="<?=htmlspecialchars($pconfig['pppoe_dns2']);?>">
                     <br>
                     If entered they will be given to all pppoe clients else lan dns and one wan dns will go to all clients<br>
                     </td>
@@ -394,14 +394,14 @@ function enable_change(enable_over) {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">NAS IP ADDRESS</td>
                   <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="radius_nasip" type="text" class="formfld" id="radius_nasip" size="20" value="<?=htmlspecialchars($pconfig['radius_nasip']);?>">
+                    <?=$mandfldhtml;?><input name="radius_nasip" type="text" class="formfld unknown" id="radius_nasip" size="20" value="<?=htmlspecialchars($pconfig['radius_nasip']);?>">
                     <br>radius server NAS ip Address<br>
                     </td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Radius Accounting Update</td>
                   <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="radius_acct_update" type="text" class="formfld" id="radius_acct_update" size="20" value="<?=htmlspecialchars($pconfig['radius_acct_update']);?>">
+                    <?=$mandfldhtml;?><input name="radius_acct_update" type="text" class="formfld unknown" id="radius_acct_update" size="20" value="<?=htmlspecialchars($pconfig['radius_acct_update']);?>">
                     <br>Radius accounting update period in seconds
                     </td>
                 </tr>
@@ -414,32 +414,32 @@ function enable_change(enable_over) {
                 <tr> 
                   <td width="22%" valign="top" class="vncell">RADIUS server Primary</td>
                   <td width="78%" class="vtable">
-                      <input name="radiusserver" type="text" class="formfld" id="radiusserver" size="20" value="<?=htmlspecialchars($pconfig['radiusserver']);?>">
-			 <input name="radiusserverport" type="text" class="formfld" id="radiusserverport" size="4" value="<?=htmlspecialchars($pconfig['radiusserverport']);?>">
-			 <input name="radiusserveracctport" type="text" class="formfld" id="radiusserveracctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserveracctport']);?>">
+                      <input name="radiusserver" type="text" class="formfld unknown" id="radiusserver" size="20" value="<?=htmlspecialchars($pconfig['radiusserver']);?>">
+			 <input name="radiusserverport" type="text" class="formfld unknown" id="radiusserverport" size="4" value="<?=htmlspecialchars($pconfig['radiusserverport']);?>">
+			 <input name="radiusserveracctport" type="text" class="formfld unknown" id="radiusserveracctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserveracctport']);?>">
                       <br>Enter the IP address and portof the RADIUS server. Format ip auth_port acct_port<br>
 			 <br> standard port 1812 and 1813 accounting</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">RADIUS primary shared secret</td>
                   <td width="78%" valign="top" class="vtable">
-                      <input name="radiussecret" type="password" class="formfld" id="radiussecret" size="20" value="<?=htmlspecialchars($pconfig['radiussecret']);?>">
+                      <input name="radiussecret" type="password" class="formfld pwd" id="radiussecret" size="20" value="<?=htmlspecialchars($pconfig['radiussecret']);?>">
                       <br>Enter the shared secret that will be used to authenticate 
                       to the RADIUS server.</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">RADIUS server Secondary</td>
                   <td width="78%" class="vtable">
-                      <input name="radiusserver2" type="text" class="formfld" id="radiusserver2" size="20" value="<?=htmlspecialchars($pconfig['radiusserver2']);?>">
-			 <input name="radiusserver2port" type="text" class="formfld" id="radiusserver2port" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2port']);?>">
-			 <input name="radiusserver2acctport" type="text" class="formfld" id="radiusserver2acctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2acctport']);?>">
+                      <input name="radiusserver2" type="text" class="formfld unknown" id="radiusserver2" size="20" value="<?=htmlspecialchars($pconfig['radiusserver2']);?>">
+			 <input name="radiusserver2port" type="text" class="formfld unknown" id="radiusserver2port" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2port']);?>">
+			 <input name="radiusserver2acctport" type="text" class="formfld unknown" id="radiusserver2acctport" size="4" value="<?=htmlspecialchars($pconfig['radiusserver2acctport']);?>">
                       <br>Enter the IP address and port of the BACKUP RADIUS server. Format ip auth_port acct_port<br>
 			 <br> standard port 1812 and 1813 accounting</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">RADIUS secondary shared secret</td>
                   <td width="78%" valign="top" class="vtable">
-                      <input name="radiussecret2" type="password" class="formfld" id="radiussecret2" size="20" value="<?=htmlspecialchars($pconfig['radiussecret2']);?>">
+                      <input name="radiussecret2" type="password" class="formfld pwd" id="radiussecret2" size="20" value="<?=htmlspecialchars($pconfig['radiussecret2']);?>">
                       <br>
                       Enter the shared secret that will be used to authenticate 
                       to the RADIUS server.</td>

@@ -151,7 +151,7 @@ include("head.inc");
 
   <?php if ($_GET['act'] == 'add'): ?>
 	  <tr>
-		<td class="listlr" colspan="2"><input type="file" name="new" class="formfld" size="40" id="new">
+		<td class="listlr" colspan="2"><input type="file" name="new" class="formfld file" size="40" id="new">
 		<input name="Submit" type="submit" class="formbtn" value="Upload"></td>
 		<td valign="middle" nowrap class="list">
 		<a href="services_captiveportal_filemanager.php"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" title="cancel" width="17" height="17" border="0"></a>

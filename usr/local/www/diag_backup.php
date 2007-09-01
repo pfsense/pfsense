@@ -271,7 +271,7 @@ include("head.inc");
 					<td width="22%" valign="baseline" class="vncell">&nbsp;</td>
 					<td width="78%" class="vtable">
 						Open a pfSense configuration XML file and click the button below to restore the configuration. <br /><br /> Restore area: <?php spit_out_select_items("restorearea"); ?>
-						<p><input name="conffile" type="file" class="formfld" id="conffile" size="40"></p>
+						<p><input name="conffile" type="file" class="formfld unknown" id="conffile" size="40"></p>
 						<p><input name="Submit" type="submit" class="formbtn" id="restore" value="Restore configuration"></p>
                       	<p><strong><span class="red">Note:</span></strong><br />The firewall will reboot after restoring the configuration.<br /></p>
 					</td>

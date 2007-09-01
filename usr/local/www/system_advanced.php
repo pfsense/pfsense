@@ -373,7 +373,7 @@ include("head.inc");
 				<input name="ipv6nat_enable" type="checkbox" id="ipv6nat_enable" value="yes" <?php if ($pconfig['ipv6nat_enable']) echo "checked"; ?> onclick="enable_change(false)" />
 				<strong>NAT encapsulated IPv6 packets (IP protocol 41/RFC2893) to:</strong>
 				<br /> <br />
-				<input name="ipv6nat_ipaddr" type="text" class="formfld" id="ipv6nat_ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipv6nat_ipaddr']);?>" />
+				<input name="ipv6nat_ipaddr" type="text" class="formfld unknown" id="ipv6nat_ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipv6nat_ipaddr']);?>" />
 				&nbsp;(IP address)<span class="vexpl"><br /> Don't forget to add a firewall rule to permit IPv6 packets!</span>
 			</td>
 		</tr>
@@ -488,7 +488,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">Hard disk standby time </td>
 			<td width="78%" class="vtable">
-				<select name="harddiskstandby" class="formfld">
+				<select name="harddiskstandby" class="formselect">
 <?php
 				 	## Values from ATA-2 http://www.t13.org/project/d0948r3-ATA-2.pdf (Page 66)
 					$sbvals = explode(" ", "0.5,6 1,12 2,24 3,36 4,48 5,60 7.5,90 10,120 15,180 20,240 30,241 60,242");

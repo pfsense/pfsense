@@ -723,7 +723,7 @@ function show_mon_config() {
                 </tr>
                 <tr>
                   <td valign="middle" class="vncell"><strong>Type</strong></td>
-                  <td class="vtable"> <select name="type" class="formfld" id="type" onchange="type_change()">
+                  <td class="vtable"> <select name="type" class="formselect" id="type" onchange="type_change()">
                       <?php $opts = split(" ", "Static DHCP PPPoE PPTP BigPond");
 				foreach ($opts as $opt): ?>
                       <option <?php if ($opt == $pconfig['type']) echo "selected";?>>
@@ -734,7 +734,7 @@ function show_mon_config() {
                 </tr>
                 <tr>
                   <td valign="top" class="vncell">MAC address</td>
-                  <td class="vtable"> <input name="spoofmac" type="text" class="formfld" id="spoofmac" size="30" value="<?=htmlspecialchars($pconfig['spoofmac']);?>">
+                  <td class="vtable"> <input name="spoofmac" type="text" class="formfld unknown" id="spoofmac" size="30" value="<?=htmlspecialchars($pconfig['spoofmac']);?>">
 		    <?php
 			$ip = getenv('REMOTE_ADDR');
 			$mac = `/usr/sbin/arp -an | grep {$ip} | cut -d" " -f4`;
@@ -750,7 +750,7 @@ function show_mon_config() {
                 </tr>
                 <tr>
                   <td valign="top" class="vncell">MTU</td>
-                  <td class="vtable"> <input name="mtu" type="text" class="formfld" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>">
+                  <td class="vtable"> <input name="mtu" type="text" class="formfld unknown" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>">
                     <br>
                     If you enter a value in this field, then MSS clamping for
                     TCP connections to the value entered above minus 40 (TCP/IP
@@ -766,9 +766,9 @@ function show_mon_config() {
                 </tr>
                 <tr>
                   <td width="100" valign="top" class="vncellreq">IP address</td>
-                  <td class="vtable"> <input name="ipaddr" type="text" class="formfld" id="ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>">
+                  <td class="vtable"> <input name="ipaddr" type="text" class="formfld unknown" id="ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>">
                     /
-                    <select name="subnet" class="formfld" id="subnet">
+                    <select name="subnet" class="formselect" id="subnet">
 			<?php
 			for ($i = 32; $i > 0; $i--) {
 				if($i <> 31) {
@@ -783,12 +783,12 @@ function show_mon_config() {
                 <tr>
                   <td valign="top" class="vncellreq">Point-to-point IP address </td>
                   <td class="vtable">
-                    <input name="pointtopoint" type="text" class="formfld" id="pointtopoint" size="20" value="<?=htmlspecialchars($pconfig['pointtopoint']);?>">
+                    <input name="pointtopoint" type="text" class="formfld unknown" id="pointtopoint" size="20" value="<?=htmlspecialchars($pconfig['pointtopoint']);?>">
                   </td>
                 </tr><?php endif; ?>
                 <tr>
                   <td valign="top" class="vncellreq">Gateway</td>
-                  <td class="vtable"> <input name="gateway" type="text" class="formfld" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>">
+                  <td class="vtable"> <input name="gateway" type="text" class="formfld unknown" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>">
                   </td>
                 </tr>
                 <tr>
@@ -799,7 +799,7 @@ function show_mon_config() {
                 </tr>
                 <tr>
                   <td valign="top" class="vncell">Hostname</td>
-                  <td class="vtable"> <input name="dhcphostname" type="text" class="formfld" id="dhcphostname" size="40" value="<?=htmlspecialchars($pconfig['dhcphostname']);?>">
+                  <td class="vtable"> <input name="dhcphostname" type="text" class="formfld unknown" id="dhcphostname" size="40" value="<?=htmlspecialchars($pconfig['dhcphostname']);?>">
                     <br>
                     The value in this field is sent as the DHCP client identifier
                     and hostname when requesting a DHCP lease. Some ISPs may require
@@ -807,7 +807,7 @@ function show_mon_config() {
                 </tr>
                 <tr>
                   <td width="100" valign="top" class="vncellreq">Alias IP address</td>
-                  <td class="vtable"> <input name="alias-address" type="text" class="formfld" id="alias-address" size="20" value="<?=htmlspecialchars($pconfig['alias-address']);?>">
+                  <td class="vtable"> <input name="alias-address" type="text" class="formfld unknown" id="alias-address" size="20" value="<?=htmlspecialchars($pconfig['alias-address']);?>">
                     <select name="alias-subnet" class="formselect" id="alias-subnet">
 			<?php
 			for ($i = 32; $i > 0; $i--) {
@@ -830,17 +830,17 @@ function show_mon_config() {
                 </tr>
                 <tr>
                   <td valign="top" class="vncellreq">Username</td>
-                  <td class="vtable"><input name="username" type="text" class="formfld" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
+                  <td class="vtable"><input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
                   </td>
                 </tr>
                 <tr>
                   <td valign="top" class="vncellreq">Password</td>
-                  <td class="vtable"><input name="password" type="text" class="formfld" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
+                  <td class="vtable"><input name="password" type="text" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
                   </td>
                 </tr>
                 <tr>
                   <td valign="top" class="vncell">Service name</td>
-                  <td class="vtable"><input name="provider" type="text" class="formfld" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>">
+                  <td class="vtable"><input name="provider" type="text" class="formfld unknown" id="provider" size="20" value="<?=htmlspecialchars($pconfig['provider']);?>">
                     <br> <span class="vexpl">Hint: this field can usually be left
                     empty</span></td>
                 </tr>
@@ -853,7 +853,8 @@ function show_mon_config() {
                 <tr>
                   <td valign="top" class="vncell">Idle timeout</td>
                   <td class="vtable">
-                    <input name="pppoe_idletimeout" type="text" class="formfld" id="pppoe_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pppoe_idletimeout']);?>"> seconds<br>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</td>
+                    <input name="pppoe_idletimeout" type="text" class="formfld unknown" id="pppoe_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pppoe_idletimeout']);?>"> 
+seconds<br>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</td>
                 </tr>
                 <tr>
                   <td valign="top" class="vncell"><?=gettext("Periodic reset");?></td>
@@ -920,19 +921,21 @@ function show_mon_config() {
                 </tr>
                 <tr>
                   <td valign="top" class="vncellreq">Username</td>
-                  <td class="vtable"><input name="pptp_username" type="text" class="formfld" id="pptp_username" size="20" value="<?=htmlspecialchars($pconfig['pptp_username']);?>">
+                  <td class="vtable"><input name="pptp_username" type="text" class="formfld user" id="pptp_username" size="20" value="<?=htmlspecialchars($pconfig['pptp_username']);?>">
                   </td>
                 </tr>
                 <tr>
                   <td valign="top" class="vncellreq">Password</td>
-                  <td class="vtable"><input name="pptp_password" type="text" class="formfld" id="pptp_password" size="20" value="<?=htmlspecialchars($pconfig['pptp_password']);?>">
+                  <td class="vtable"><input name="pptp_password" type="text" class="formfld pwd" id="pptp_password" size="20" 
+value="<?=htmlspecialchars($pconfig['pptp_password']);?>">
                   </td>
                 </tr>
                 <tr>
                   <td width="100" valign="top" class="vncellreq">Local IP address</td>
-                  <td class="vtable"> <input name="pptp_local" type="text" class="formfld" id="pptp_local" size="20" value="<?=htmlspecialchars($pconfig['pptp_local']);?>">
+                  <td class="vtable"> <input name="pptp_local" type="text" class="formfld unknown" id="pptp_local" size="20" 
+value="<?=htmlspecialchars($pconfig['pptp_local']);?>">
                     /
-                    <select name="pptp_subnet" class="formfld" id="pptp_subnet">
+                    <select name="pptp_subnet" class="formselect" id="pptp_subnet">
                       <?php for ($i = 31; $i > 0; $i--): ?>
                       <option value="<?=$i;?>" <?php if ($i == $pconfig['pptp_subnet']) echo "selected"; ?>>
                       <?=$i;?>
@@ -942,7 +945,7 @@ function show_mon_config() {
                 </tr>
                 <tr>
                   <td width="100" valign="top" class="vncellreq">Remote IP address</td>
-                  <td class="vtable"> <input name="pptp_remote" type="text" class="formfld" id="pptp_remote" size="20" value="<?=htmlspecialchars($pconfig['pptp_remote']);?>">
+                  <td class="vtable"> <input name="pptp_remote" type="text" class="formfld unknown" id="pptp_remote" size="20" value="<?=htmlspecialchars($pconfig['pptp_remote']);?>">
                   </td>
                 </tr>
                 <tr>
@@ -954,7 +957,8 @@ function show_mon_config() {
                 <tr>
                   <td valign="top" class="vncell">Idle timeout</td>
                   <td class="vtable">
-                    <input name="pptp_idletimeout" type="text" class="formfld" id="pptp_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pptp_idletimeout']);?>"> seconds<br>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</td>
+                    <input name="pptp_idletimeout" type="text" class="formfld unknown" id="pptp_idletimeout" size="8" value="<?=htmlspecialchars($pconfig['pptp_idletimeout']);?>"> 
+seconds<br>If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. An idle timeout of zero disables this feature.</td>
                 </tr>
                 <tr>
                   <td colspan="2" valign="top" height="16"></td>
@@ -964,23 +968,23 @@ function show_mon_config() {
                 </tr>
                 <tr>
                   <td valign="top" class="vncellreq">Username</td>
-                  <td class="vtable"><input name="bigpond_username" type="text" class="formfld" id="bigpond_username" size="20" value="<?=htmlspecialchars($pconfig['bigpond_username']);?>">
+                  <td class="vtable"><input name="bigpond_username" type="text" class="formfld user" id="bigpond_username" size="20" value="<?=htmlspecialchars($pconfig['bigpond_username']);?>">
                   </td>
                 </tr>
                 <tr>
                   <td valign="top" class="vncellreq">Password</td>
-                  <td class="vtable"><input name="bigpond_password" type="text" class="formfld" id="bigpond_password" size="20" value="<?=htmlspecialchars($pconfig['bigpond_password']);?>">
+                  <td class="vtable"><input name="bigpond_password" type="text" class="formfld pwd" id="bigpond_password" size="20" value="<?=htmlspecialchars($pconfig['bigpond_password']);?>">
                   </td>
                 </tr>
                 <tr>
                   <td valign="top" class="vncell">Authentication server</td>
-                  <td class="vtable"><input name="bigpond_authserver" type="text" class="formfld" id="bigpond_authserver" size="20" value="<?=htmlspecialchars($pconfig['bigpond_authserver']);?>">
+                  <td class="vtable"><input name="bigpond_authserver" type="text" class="formfld unknown" id="bigpond_authserver" size="20" value="<?=htmlspecialchars($pconfig['bigpond_authserver']);?>">
                     <br>
                   <span class="vexpl">If this field is left empty, the default (&quot;dce-server&quot;) is used. </span></td>
                 </tr>
                 <tr>
                   <td valign="top" class="vncell">Authentication domain</td>
-                  <td class="vtable"><input name="bigpond_authdomain" type="text" class="formfld" id="bigpond_authdomain" size="20" value="<?=htmlspecialchars($pconfig['bigpond_authdomain']);?>">
+                  <td class="vtable"><input name="bigpond_authdomain" type="text" class="formfld unknown" id="bigpond_authdomain" size="20" value="<?=htmlspecialchars($pconfig['bigpond_authdomain']);?>">
                     <br>
                   <span class="vexpl">If this field is left empty, the domain name assigned via DHCP will be used.<br>
                   <br>
@@ -989,7 +993,7 @@ function show_mon_config() {
                 <tr>
                   <td valign="top" class="vncell">Min. heartbeat interval</td>
                   <td class="vtable">
-                    <input name="bigpond_minheartbeatinterval" type="text" class="formfld" id="bigpond_minheartbeatinterval" size="8" value="<?=htmlspecialchars($pconfig['bigpond_minheartbeatinterval']);?>">seconds<br>Setting this to a sensible value (e.g. 60 seconds) can protect against DoS attacks. </td>
+                    <input name="bigpond_minheartbeatinterval" type="text" class="formfld unknown" id="bigpond_minheartbeatinterval" size="8" value="<?=htmlspecialchars($pconfig['bigpond_minheartbeatinterval']);?>">seconds<br>Setting this to a sensible value (e.g. 60 seconds) can protect against DoS attacks. </td>
                 </tr>
                 <tr>
                   <td colspan="2" valign="top" height="16"></td>

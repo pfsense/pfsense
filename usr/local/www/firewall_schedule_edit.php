@@ -749,7 +749,7 @@ EOD;
 						        <span class="vexpl">NOTE: This schedule is in use so the name may not be modified!</span>
 						      </p>
 				<?php else: ?>
-				  <input name="name" type="text" id="name" size="40" maxlength="40" class="formfld" value="<?=htmlspecialchars($pconfig['name']);?>"><br>
+				  <input name="name" type="text" id="name" size="40" maxlength="40" class="formfld unknown" value="<?=htmlspecialchars($pconfig['name']);?>"><br>
 				      	<span class="vexpl">
      					   The name of the alias may only consist of the characters a-z, A-Z and 0-9
       					</span>
@@ -758,7 +758,7 @@ EOD;
 				</tr>
 				<tr>
 					<td width="15%" valign="top" class="vncell">Description</td>
-					<td width="85%" class="vtable"><input name="descr" type="text" id="descr" size="40" maxlength="40" class="formfld" value="<?=htmlspecialchars($pconfig['descr']);?>"><br>
+					<td width="85%" class="vtable"><input name="descr" type="text" id="descr" size="40" maxlength="40" class="formfld unknown" value="<?=htmlspecialchars($pconfig['descr']);?>"><br>
  						<span class="vexpl">
 				        	You may enter a description here for your reference (not parsed).
 				      	</span>
@@ -882,7 +882,7 @@ EOD;
 				  		</tr>
 				  		<tr>
 				  			<td>
-				  				<select name="starttimehour" class="formfld" id="starttimehour">
+				  				<select name="starttimehour" class="formselect" id="starttimehour">
 				  					<?php 
 				  						for ($i=0; $i<24; $i++)
 				  						{				  							
@@ -892,7 +892,7 @@ EOD;
 				  						}
 				  					?>
 				  				</select>&nbsp;Hr&nbsp;&nbsp;
-				  				<select name="starttimemin" class="formfld" id="starttimemin">
+				  				<select name="starttimemin" class="formselect" id="starttimemin">
 				  					<option value="00">00</option>
 				  					<option value="15">15</option>
 				  					<option value="30">30</option>
@@ -902,7 +902,7 @@ EOD;
 				  			</td>
 				  			<td></td>
 				  			<td>
-				  				<select name="stoptimehour" class="formfld" id="stoptimehour">
+				  				<select name="stoptimehour" class="formselect" id="stoptimehour">
 				  				<?php 
 				  						for ($i=0; $i<24; $i++)
 				  						{
@@ -917,7 +917,7 @@ EOD;
 				  						}
 				  					?>
 				  				</select>&nbsp;Hr&nbsp;&nbsp;
-				  				<select name="stoptimemin" class="formfld" id="stoptimemin">
+				  				<select name="stoptimemin" class="formselect" id="stoptimemin">
 				  					<option value="00">00</option>
 				  					<option value="15">15</option>
 				  					<option value="30">30</option>
@@ -932,7 +932,7 @@ EOD;
 				</tr>
 				<tr>
 					<td width="15%" valign="top" class="vncell">Time Range Description</td>
-					<td width="85%" class="vtable"><input name="timerangedescr" type="text" class="formfld" id="timerangedescr" size="40" maxlength="40"><br>
+					<td width="85%" class="vtable"><input name="timerangedescr" type="text" class="formfld unknown" id="timerangedescr" size="40" maxlength="40"><br>
  						<span class="vexpl">
 				        	You may enter a description here for your reference (not parsed).
 				      	</span>     

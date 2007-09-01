@@ -112,35 +112,35 @@ if($_GET['act']=="new" || $_GET['act']=="edit"){
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Username</td>
                   <td width="78%" class="vtable">
-                    <input name="username" type="text" class="formfld" id="username" size="20" value="<? echo $_GET['username']; ?>">
+                    <input name="username" type="text" class="formfld user" id="username" size="20" value="<? echo $_GET['username']; ?>">
                     <br>
                     <span class="vexpl">Enter the desired username.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Password</td>
                   <td width="78%" class="vtable">
-                    <input name="password1" type="password" class="formfld" id="password1" size="20" value="<?php echo ($_GET['act']=='edit' ? "********" : "" ); ?>">
+                    <input name="password1" type="password" class="formfld pwd" id="password1" size="20" value="<?php echo ($_GET['act']=='edit' ? "********" : "" ); ?>">
                     <br>
                     <span class="vexpl">Enter the desired password.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Password confirmation</td>
                   <td width="78%" class="vtable">
-                    <input name="password2" type="password" class="formfld" id="password2" size="20" value="<?php echo ($_GET['act']=='edit' ? "********" : "" ); ?>">
+                    <input name="password2" type="password" class="formfld pwd" id="password2" size="20" value="<?php echo ($_GET['act']=='edit' ? "********" : "" ); ?>">
                     <br>
                     <span class="vexpl">Confirm the above password.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Full name</td>
                   <td width="78%" class="vtable">
-                    <input name="fullname" type="text" class="formfld" id="fullname" size="20" value="<? echo $user['fullname']; ?>">
+                    <input name="fullname" type="text" class="formfld unknown" id="fullname" size="20" value="<? echo $user['fullname']; ?>">
                     <br>
                     Enter the user's full name.</td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Expiration Date</td>
                   <td width="78%" class="vtable">
-                    <input name="expirationdate" type="text" class="formfld" id="expirationdate" size="10" value="<? echo $user['expirationdate']; ?>">
+                    <input name="expirationdate" type="text" class="formfld unknown" id="expirationdate" size="10" value="<? echo $user['expirationdate']; ?>">
                     <a href="javascript:NewCal('expirationdate','mmddyyyy')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_cal.gif" width="16" height="16" border="0" alt="Pick a date"></a>
                     <br> <span class="vexpl">Enter this acocunt's expiration date in us-format (mm/dd/yyyy) or leave this field empty for no expiration.</span></td>
                 </tr>

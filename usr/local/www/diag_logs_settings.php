@@ -157,7 +157,7 @@ function enable_change(enable_over) {
                         <td width="22%" valign="top" class="vtable">&nbsp;</td>
                         <td width="78%" class="vtable">Number of log entries to
                           show:
-                          <input name="nentries" id="nentries" type="text" class="formfld" size="4" value="<?=htmlspecialchars($pconfig['nentries']);?>"></td>
+                          <input name="nentries" id="nentries" type="text" class="formfld unknown" size="4" value="<?=htmlspecialchars($pconfig['nentries']);?>"></td>
                       </tr>
                       <tr>
                         <td valign="top" class="vtable">&nbsp;</td>
@@ -186,7 +186,7 @@ function enable_change(enable_over) {
                       <tr>
                         <td width="22%" valign="top" class="vncell">Remote syslog
                           server</td>
-                        <td width="78%" class="vtable"> <input name="remoteserver" id="remoteserver" type="text" class="formfld" size="20" value="<?=htmlspecialchars($pconfig['remoteserver']);?>">
+                        <td width="78%" class="vtable"> <input name="remoteserver" id="remoteserver" type="text" class="formfld host" size="20" value="<?=htmlspecialchars($pconfig['remoteserver']);?>">
                           <br>
                           IP address of remote syslog server<br> <br> <input name="system" id="system" type="checkbox" value="yes" onclick="enable_change(false)" <?php if ($pconfig['system']) echo "checked"; ?>>
                           system events <br> <input name="filter" id="filter" type="checkbox" value="yes" <?php if ($pconfig['filter']) echo "checked"; ?>>

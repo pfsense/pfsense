@@ -402,7 +402,7 @@ function dst_rep_change() {
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td valign="top" class="vncellreq">Target</td>
-                  <td class="vtable"> <select name="outqueue" class="formfld">
+                  <td class="vtable"> <select name="outqueue" class="formselect">
                       <?php
 					  foreach ($config['shaper']['queue'] as $queuei => $queue): ?>
                       <option value="<?=$queue['name'];?>" <?php if ($queue['name'] == $pconfig['outqueue']) echo "selected"; ?>>
@@ -413,7 +413,7 @@ function dst_rep_change() {
 			?>
                       </option>
                       <?php endforeach; ?>
-                    </select>/<select name="inqueue" class="formfld">
+                    </select>/<select name="inqueue" class="formselect">
                       <?php
 					  foreach ($config['shaper']['queue'] as $queuei => $queue): ?>
                       <option value="<?=$queue['name'];?>" <?php if ($queue['name'] == $pconfig['inqueue']) echo "selected"; ?>>
@@ -436,7 +436,7 @@ function dst_rep_change() {
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">In Interface</td>
-                  <td width="78%" class="vtable"> <select name="in-interface" class="formfld">
+                  <td width="78%" class="vtable"> <select name="in-interface" class="formselect">
                       <?php $interfaces = array('lan' => 'LAN', 'wan' => 'WAN', 'pptp' => 'PPTP');
 					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 					  	$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
@@ -451,7 +451,7 @@ function dst_rep_change() {
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Out Interface</td>
-                  <td width="78%" class="vtable"> <select name="out-interface" class="formfld">
+                  <td width="78%" class="vtable"> <select name="out-interface" class="formselect">
                       <?php $interfaces = array('lan' => 'LAN', 'wan' => 'WAN', 'pptp' => 'PPTP');
 					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 					  	$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
@@ -466,7 +466,7 @@ function dst_rep_change() {
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Protocol</td>
-                  <td width="78%" class="vtable"> <select name="proto" class="formfld" onchange="proto_change()">
+                  <td width="78%" class="vtable"> <select name="proto" class="formselect" onchange="proto_change()">
                       <?php $protocols = explode(" ", "TCP UDP ICMP ESP AH GRE IPv6 IGMP any"); foreach ($protocols as $proto): ?>
                       <option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['proto']) echo "selected"; ?>>
                       <?=htmlspecialchars($proto);?>
@@ -484,7 +484,7 @@ function dst_rep_change() {
                     <table border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>Type:&nbsp;&nbsp;</td>
-                        <td><select name="srctype" class="formfld" onChange="typesel_change()">
+                        <td><select name="srctype" class="formselect" onChange="typesel_change()">
                             <?php $sel = is_specialnet($pconfig['src']); ?>
                             <option value="any" <?php if ($pconfig['src'] == "any") { echo "selected"; } ?>>
                             any</option>
@@ -511,7 +511,7 @@ function dst_rep_change() {
                         <td>Address:&nbsp;&nbsp;</td>
                         <td><input autocomplete='off' name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>">
                           /
-                          <select name="srcmask" class="formfld" id="srcmask">
+                          <select name="srcmask" class="formselect" id="srcmask">
                             <?php for ($i = 31; $i > 0; $i--): ?>
                             <option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected"; ?>>
                             <?=$i;?>
@@ -527,7 +527,7 @@ function dst_rep_change() {
                   <td width="78%" class="vtable"> <table border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>from:&nbsp;&nbsp;</td>
-                        <td><select name="srcbeginport" class="formfld" onchange="src_rep_change();ext_change()">
+                        <td><select name="srcbeginport" class="formselect" onchange="src_rep_change();ext_change()">
                             <option value="">(other)</option>
                             <option value="any" <?php $bfound = 0; if ($pconfig['srcbeginport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
                             <?php foreach ($wkports as $wkport => $wkportdesc): ?>
@@ -542,7 +542,7 @@ function dst_rep_change() {
                       </tr>
                       <tr>
                         <td>to:</td>
-                        <td><select name="srcendport" class="formfld" onchange="ext_change()">
+                        <td><select name="srcendport" class="formselect" onchange="ext_change()">
                             <option value="">(other)</option>
                             <option value="any" <?php $bfound = 0; if ($pconfig['srcendport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
                             <?php foreach ($wkports as $wkport => $wkportdesc): ?>
@@ -568,7 +568,7 @@ function dst_rep_change() {
                     <table border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>Type:&nbsp;&nbsp;</td>
-                        <td><select name="dsttype" class="formfld" onChange="typesel_change()">
+                        <td><select name="dsttype" class="formselect" onChange="typesel_change()">
                             <?php $sel = is_specialnet($pconfig['dst']); ?>
                             <option value="any" <?php if ($pconfig['dst'] == "any") { echo "selected"; } ?>>
                             any</option>
@@ -595,7 +595,7 @@ function dst_rep_change() {
                         <td>Address:&nbsp;&nbsp;</td>
                         <td><input name="dst" autocomplete='off' type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
                           /
-                          <select name="dstmask" class="formfld" id="dstmask">
+                          <select name="dstmask" class="formselect" id="dstmask">
                             <?php for ($i = 31; $i > 0; $i--): ?>
                             <option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo "selected"; ?>>
                             <?=$i;?>
@@ -611,7 +611,7 @@ function dst_rep_change() {
                   <td width="78%" class="vtable"> <table border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>from:&nbsp;&nbsp;</td>
-                        <td><select name="dstbeginport" class="formfld" onchange="dst_rep_change();ext_change()">
+                        <td><select name="dstbeginport" class="formselect" onchange="dst_rep_change();ext_change()">
                             <option value="">(other)</option>
                             <option value="any" <?php $bfound = 0; if ($pconfig['dstbeginport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
                             <?php foreach ($wkports as $wkport => $wkportdesc): ?>
@@ -626,7 +626,7 @@ function dst_rep_change() {
                       </tr>
                       <tr>
                         <td>to:</td>
-                        <td><select name="dstendport" class="formfld" onchange="ext_change()">
+                        <td><select name="dstendport" class="formselect" onchange="ext_change()">
                             <option value="">(other)</option>
                             <option value="any" <?php $bfound = 0; if ($pconfig['dstendport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
                             <?php foreach ($wkports as $wkport => $wkportdesc): ?>
@@ -646,7 +646,7 @@ function dst_rep_change() {
                     want to filter a single port</span></td>
                 <tr>
                   <td valign="top" class="vncell">Direction</td>
-                  <td class="vtable"> <select name="direction" class="formfld">
+                  <td class="vtable"> <select name="direction" class="formselect">
                       <option value="" <?php if (!$pconfig['direction']) echo "selected"; ?>>any</option>
                       <option value="in" <?php if ($pconfig['direction'] == "in") echo "selected"; ?>>in</option>
                       <option value="out" <?php if ($pconfig['direction'] == "out") echo "selected"; ?>>out</option>
@@ -701,7 +701,7 @@ function dst_rep_change() {
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
-                  <td width="78%" class="vtable"> <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+                  <td width="78%" class="vtable"> <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
                 </tr>

@@ -202,22 +202,22 @@ include("head.inc");
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Hostname</td>
-                  <td width="78%" class="vtable"> <input name="hostname" type="text" class="formfld" id="hostname" size="40" value="<?=htmlspecialchars($pconfig['hostname']);?>">
+                  <td width="78%" class="vtable"> <input name="hostname" type="text" class="formfld unknown" id="hostname" size="40" value="<?=htmlspecialchars($pconfig['hostname']);?>">
                     <br> <span class="vexpl">name of the firewall host, without
                     domain part<br>
                     e.g. <em>firewall</em></span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Domain</td>
-                  <td width="78%" class="vtable"> <input name="domain" type="text" class="formfld" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>">
+                  <td width="78%" class="vtable"> <input name="domain" type="text" class="formfld unknown" id="domain" size="40" value="<?=htmlspecialchars($pconfig['domain']);?>">
                     <br> <span class="vexpl">e.g. <em>mycorp.com</em> </span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">DNS servers</td>
                   <td width="78%" class="vtable"> <p>
-                      <input name="dns1" type="text" class="formfld" id="dns1" size="20" value="<?=htmlspecialchars($pconfig['dns1']);?>">
+                      <input name="dns1" type="text" class="formfld unknown" id="dns1" size="20" value="<?=htmlspecialchars($pconfig['dns1']);?>">
                       <br>
-                      <input name="dns2" type="text" class="formfld" id="dns22" size="20" value="<?=htmlspecialchars($pconfig['dns2']);?>">
+                      <input name="dns2" type="text" class="formfld unknown" id="dns22" size="20" value="<?=htmlspecialchars($pconfig['dns2']);?>">
                       <br>
                       <span class="vexpl">IP addresses; these are also used for
                       the DHCP service, DNS forwarder and for PPTP VPN clients<br>
@@ -231,22 +231,6 @@ include("head.inc");
                       PPTP VPN clients, though.</span></p></td>
                 </tr>
                 <tr>
-                  <td valign="top" class="vncell">Username</td>
-                  <td class="vtable"> <input name="username" type="text" class="formfld" id="username" size="20" value="<?=$pconfig['username'];?>">
-                    <br>
-                     <span class="vexpl">If you want
-                    to change the username for accessing the webGUI, enter it
-                    here.</span></td>
-                </tr>
-                <tr>
-                  <td width="22%" valign="top" class="vncell">Password</td>
-                  <td width="78%" class="vtable"> <input name="password" type="password" class="formfld" id="password" size="20">
-                    <br> <input name="password2" type="password" class="formfld" id="password2" size="20">
-                    &nbsp;(confirmation) <br> <span class="vexpl">If you want
-                    to change the password for accessing the webGUI, enter it
-                    here twice.</span></td>
-                </tr>
-                <tr>
                   <td width="22%" valign="top" class="vncell">webGUI protocol</td>
                   <td width="78%" class="vtable"> <input name="webguiproto" type="radio" value="http" <?php if ($pconfig['webguiproto'] == "http") echo "checked"; ?>>
                     HTTP &nbsp;&nbsp;&nbsp; <input type="radio" name="webguiproto" value="https" <?php if ($pconfig['webguiproto'] == "https") echo "checked"; ?>>
@@ -254,7 +238,7 @@ include("head.inc");
                 </tr>
                 <tr>
                   <td valign="top" class="vncell">webGUI port</td>
-                  <td class="vtable"> <input name="webguiport" type="text" class="formfld" id="webguiport" "size="5" value="<?=htmlspecialchars($config['system']['webgui']['port']);?>">
+                  <td class="vtable"> <input name="webguiport" type="text" class="formfld unknown" id="webguiport" "size="5" value="<?=htmlspecialchars($config['system']['webgui']['port']);?>">
                     <br>
                     <span class="vexpl">Enter a custom port number for the webGUI
                     above if you want to override the default (80 for HTTP, 443
@@ -274,14 +258,14 @@ include("head.inc");
                 <!--
                 <tr>
                   <td width="22%" valign="top" class="vncell">Time update interval</td>
-                  <td width="78%" class="vtable"> <input name="timeupdateinterval" type="text" class="formfld" id="timeupdateinterval" size="4" value="<?=htmlspecialchars($pconfig['timeupdateinterval']);?>">
+                  <td width="78%" class="vtable"> <input name="timeupdateinterval" type="text" class="formfld unknown" id="timeupdateinterval" size="4" value="<?=htmlspecialchars($pconfig['timeupdateinterval']);?>">
                     <br> <span class="vexpl">Minutes between network time sync.;
                     300 recommended, or 0 to disable </span></td>
                 </tr>
                 -->
                 <tr>
                   <td width="22%" valign="top" class="vncell">NTP time server</td>
-                  <td width="78%" class="vtable"> <input name="timeservers" type="text" class="formfld" id="timeservers" size="40" value="<?=htmlspecialchars($pconfig['timeservers']);?>">
+                  <td width="78%" class="vtable"> <input name="timeservers" type="text" class="formfld unknown" id="timeservers" size="40" value="<?=htmlspecialchars($pconfig['timeservers']);?>">
                     <br> <span class="vexpl">Use a space to separate multiple
                     hosts (only one required). Remember to set up at least one
                     DNS server if you enter a host name here!</span></td>

@@ -407,7 +407,7 @@ function show_netboot_config() {
                       <tr>
                         <td width="22%" valign="top" class="vncellreq">Subnet Mask</td>
                         <td width="78%" class="vtable">
-	                        <select name="netmask" class="formfld" id="netmask">
+	                        <select name="netmask" class="formselect" id="netmask">
 							<?php
 							for ($i = 32; $i > 0; $i--) {
 								if($i <> 31) {
@@ -424,50 +424,50 @@ function show_netboot_config() {
                       <tr>
                         <td width="22%" valign="top" class="vncellreq">Range</td>
                         <td width="78%" class="vtable">
-                          <input name="range_from" type="text" class="formfld" id="range_from" size="20" value="<?=htmlspecialchars($pconfig['range_from']);?>">
-                          &nbsp;to&nbsp; <input name="range_to" type="text" class="formfld" id="range_to" size="20" value="<?=htmlspecialchars($pconfig['range_to']);?>">
+                          <input name="range_from" type="text" class="formfld unknown" id="range_from" size="20" value="<?=htmlspecialchars($pconfig['range_from']);?>">
+                          &nbsp;to&nbsp; <input name="range_to" type="text" class="formfld unknown" id="range_to" size="20" value="<?=htmlspecialchars($pconfig['range_to']);?>">
 			</td>
                       </tr>
                       <tr>
                         <td width="22%" valign="top" class="vncell">WINS servers</td>
                         <td width="78%" class="vtable">
-                          <input name="wins1" type="text" class="formfld" id="wins1" size="20" value="<?=htmlspecialchars($pconfig['wins1']);?>"><br>
-                          <input name="wins2" type="text" class="formfld" id="wins2" size="20" value="<?=htmlspecialchars($pconfig['wins2']);?>">
+                          <input name="wins1" type="text" class="formfld unknown" id="wins1" size="20" value="<?=htmlspecialchars($pconfig['wins1']);?>"><br>
+                          <input name="wins2" type="text" class="formfld unknown" id="wins2" size="20" value="<?=htmlspecialchars($pconfig['wins2']);?>">
 			</td>
                       </tr>
                       <tr>
                         <td width="22%" valign="top" class="vncell">DNS servers</td>
                         <td width="78%" class="vtable">
-                          <input name="dns1" type="text" class="formfld" id="dns1" size="20" value="<?=htmlspecialchars($pconfig['dns1']);?>"><br>
-                          <input name="dns2" type="text" class="formfld" id="dns2" size="20" value="<?=htmlspecialchars($pconfig['dns2']);?>"><br>
+                          <input name="dns1" type="text" class="formfld unknown" id="dns1" size="20" value="<?=htmlspecialchars($pconfig['dns1']);?>"><br>
+                          <input name="dns2" type="text" class="formfld unknown" id="dns2" size="20" value="<?=htmlspecialchars($pconfig['dns2']);?>"><br>
 			  NOTE: leave blank to use the system default DNS servers.  This option is handy when your doing CARP+DHCP Failover, etc.
 			</td>
                       </tr>
                      <tr>
                        <td width="22%" valign="top" class="vncell">Gateway</td>
                        <td width="78%" class="vtable">
-                         <input name="gateway" type="text" class="formfld" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>"><br>
+                         <input name="gateway" type="text" class="formfld host" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>"><br>
 			 The default is to use the IP of the firewall as the gateway.  Specify an alternate gateway here if this is not the correct gateway for your network.
 			</td>
                      </tr>
                       <tr>
                        <td width="22%" valign="top" class="vncell">Domain-Name</td>
                        <td width="78%" class="vtable">
-                         <input name="domain" type="text" class="formfld" id="domain" size="20" value="<?=htmlspecialchars($pconfig['domain']);?>"><br>
+                         <input name="domain" type="text" class="formfld unknown" id="domain" size="20" value="<?=htmlspecialchars($pconfig['domain']);?>"><br>
 			 The default is to use the domainname of the router as DNS-Search string that is served via DHCP. Specify an alternate DNS-Search string here.
 			</td>
                      </tr>
                       <tr>
                        <td width="22%" valign="top" class="vncell">Domain-Searchlist</td>
                        <td width="78%" class="vtable">
-                         <input name="domainsearchlist" type="text" class="formfld" id="domainsearchlist" size="20" value="<?=htmlspecialchars($pconfig['domainsearchlist']);?>"><br>
+                         <input name="domainsearchlist" type="text" class="formfld unknown" id="domainsearchlist" size="20" value="<?=htmlspecialchars($pconfig['domainsearchlist']);?>"><br>
 			 DNS-Searchlist: the DHCP server can serve a list of domains to be searched.
 			</td>
                      </tr>                     
                       <tr>
                         <td width="22%" valign="top" class="vncell">Default lease time</td>
                         <td width="78%" class="vtable">
-                          <input name="deftime" type="text" class="formfld" id="deftime" size="10" value="<?=htmlspecialchars($pconfig['deftime']);?>">
+                          <input name="deftime" type="text" class="formfld unknown" id="deftime" size="10" value="<?=htmlspecialchars($pconfig['deftime']);?>">
                           seconds<br>
                           This is used for clients that do not ask for a specific
                           expiration time.<br>
@@ -477,7 +477,7 @@ function show_netboot_config() {
                       <tr>
                         <td width="22%" valign="top" class="vncell">Maximum lease time</td>
                         <td width="78%" class="vtable">
-                          <input name="maxtime" type="text" class="formfld" id="maxtime" size="10" value="<?=htmlspecialchars($pconfig['maxtime']);?>">
+                          <input name="maxtime" type="text" class="formfld unknown" id="maxtime" size="10" value="<?=htmlspecialchars($pconfig['maxtime']);?>">
                           seconds<br>
                           This is the maximum lease time for clients that ask
                           for a specific expiration time.<br>
@@ -487,7 +487,7 @@ function show_netboot_config() {
                       <tr>
                         <td width="22%" valign="top" class="vncell">Failover peer IP:</td>
                         <td width="78%" class="vtable">
-				<input name="failover_peerip" type="text" class="formfld" id="failover_peerip" size="20" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br>
+				<input name="failover_peerip" type="text" class="formfld host" id="failover_peerip" size="20" value="<?=htmlspecialchars($pconfig['failover_peerip']);?>"><br>
 				Leave blank to disable.  Enter the REAL address of the other machine.  Machines must be using CARP.
 			</td>
 		      </tr>
@@ -524,7 +524,7 @@ function show_netboot_config() {
 					<input valign="middle" type="checkbox" value="yes" name="ddnsupdate" id="ddnsupdate" <?php if($pconfig['ddnsupdate']) echo " checked"; ?>>&nbsp;
 					<b>Enable registration of DHCP client names in DNS.</b><br />
 					<p>
-					<input name="ddnsdomain" type="text" class="formfld" id="ddnsdomain" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomain']);?>"><br />
+					<input name="ddnsdomain" type="text" class="formfld unknown" id="ddnsdomain" size="20" value="<?=htmlspecialchars($pconfig['ddnsdomain']);?>"><br />
 					Note: Leave blank to disable dynamic DNS registration.<br />
 					Enter the dynamic DNS domain which will be used to register client names in the DNS server.
 				</div>
@@ -537,8 +537,8 @@ function show_netboot_config() {
 					<input type="button" onClick="show_ntp_config()" value="Advanced"></input> - Show NTP configuration</a>
 				</div>
 				<div id="showntp" style="display:none">
-					<input name="ntp1" type="text" class="formfld" id="ntp1" size="20" value="<?=htmlspecialchars($pconfig['ntp1']);?>"><br>
-					<input name="ntp2" type="text" class="formfld" id="ntp2" size="20" value="<?=htmlspecialchars($pconfig['ntp2']);?>">
+					<input name="ntp1" type="text" class="formfld unknown" id="ntp1" size="20" value="<?=htmlspecialchars($pconfig['ntp1']);?>"><br>
+					<input name="ntp2" type="text" class="formfld unknown" id="ntp2" size="20" value="<?=htmlspecialchars($pconfig['ntp2']);?>">
 				</div>
 			</td>
                       </tr>
@@ -549,7 +549,7 @@ function show_netboot_config() {
 					<input type="button" onClick="show_tftp_config()" value="Advanced"></input> - Show TFTP configuration</a>
 				</div>
 				<div id="showtftp" style="display:none">
-					<input name="tftp" type="text" class="formfld" id="tftp" size="50" value="<?=htmlspecialchars($pconfig['tftp']);?>"><br>
+					<input name="tftp" type="text" class="formfld unknown" id="tftp" size="50" value="<?=htmlspecialchars($pconfig['tftp']);?>"><br>
 					Leave blank to disable.  Enter a full hostname or IP for the TFTP server.
 				</div>
 			</td>
@@ -561,7 +561,7 @@ function show_netboot_config() {
 					<input type="button" onClick="show_ldap_config()" value="Advanced"></input> - Show LDAP configuration</a>
 				</div>
 				<div id="showldap" style="display:none">
-					<input name="ldap" type="text" class="formfld" id="ldap" size="80" value="<?=htmlspecialchars($pconfig['ldap']);?>"><br>
+					<input name="ldap" type="text" class="formfld unknown" id="ldap" size="80" value="<?=htmlspecialchars($pconfig['ldap']);?>"><br>
 					Leave blank to disable.  Enter a full URI for the LDAP server in the form ldap://ldap.example.com/dc=example,dc=com
 				</div>
 			</td>
@@ -577,13 +577,13 @@ function show_netboot_config() {
 					<b>Enables network booting.</b>
 					<p>
 					Enter the IP of the <b>next-server</b>
-          <input name="nextserver" type="text" class="formfld" id="nextserver" size="20" value="<?=htmlspecialchars($pconfig['nextserver']);?>">
+					<input name="nextserver" type="text" class="formfld unknown" id="nextserver" size="20" value="<?=htmlspecialchars($pconfig['nextserver']);?>">
 					and the filename					
-					<input name="filename" type="text" class="formfld" id="filename" size="20" value="<?=htmlspecialchars($pconfig['filename']);?>"><br>
+					<input name="filename" type="text" class="formfld unknown" id="filename" size="20" value="<?=htmlspecialchars($pconfig['filename']);?>"><br>
 					Note: You need both a filename and a boot server configured for this to work!
 				  <p>
 					Enter the <b>root-path</b>-string
-          <input name="rootpath" type="text" class="formfld" id="rootpath" size="90" value="<?=htmlspecialchars($pconfig['rootpath']);?>"><br>
+          <input name="rootpath" type="text" class="formfld unknown" id="rootpath" size="90" value="<?=htmlspecialchars($pconfig['rootpath']);?>"><br>
           Note: string-format: iscsi:(servername):(protocol):(port):(LUN):targetname
         </div>
 			</td>

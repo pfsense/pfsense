@@ -142,14 +142,14 @@ include("head.inc");
 	<tr> 
 	  <td width="22%" valign="top" class="vncellreq">Username</td>
 	  <td width="78%" class="vtable"> 
-		<?=$mandfldhtml;?><input name="username" type="text" class="formfld" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>"> 
+		<?=$mandfldhtml;?><input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>"> 
 		</td>
 	</tr>
 	<tr> 
 	  <td width="22%" valign="top" class="vncellreq">Password</td>
 	  <td width="78%" class="vtable"> 
-		<?=$mandfldhtml;?><input name="password" type="password" class="formfld" id="password" size="20"><br>
-		<?=$mandfldhtml;?><input name="password2" type="password" class="formfld" id="password2" size="20">
+		<?=$mandfldhtml;?><input name="password" type="password" class="formfld pwd" id="password" size="20"><br>
+		<?=$mandfldhtml;?><input name="password2" type="password" class="formfld pwd" id="password2" size="20">
 		&nbsp;(confirmation)<?php if (isset($id) && $a_user[$id]): ?><br>
         <span class="vexpl">If you want to change the users' password, 
         enter it here twice.</span><?php endif; ?>
@@ -158,14 +158,14 @@ include("head.inc");
 	<tr> 
 	  <td width="22%" valign="top" class="vncell">Full name</td>
 	  <td width="78%" class="vtable"> 
-		<input name="fullname" type="text" class="formfld" id="fullname" size="20" value="<?=htmlspecialchars($pconfig['fullname']);?>">
+		<input name="fullname" type="text" class="formfld unknown" id="fullname" size="20" value="<?=htmlspecialchars($pconfig['fullname']);?>">
 		<br>
 		<span class="vexpl">User's full name, for your own information only</span></td>
 	</tr>
 	<tr> 
 	  <td width="22%" valign="top" class="vncell">Expiration date</td>
 	  <td width="78%" class="vtable"> 
-		<input name="expirationdate" type="text" class="formfld" id="expirationdate" size="10" value="<?=$pconfig['expirationdate'];?>">
+		<input name="expirationdate" type="text" class="formfld unknown" id="expirationdate" size="10" value="<?=$pconfig['expirationdate'];?>">
 		<a href="javascript:NewCal('expirationdate','mmddyyyy')"><img src="/themes/<?php echo $g['theme']; ?>/images/icons/icon_cal.gif" width="16" height="16" border="0" alt="Pick a date"></a> 
 		<br> 
 		<span class="vexpl">Leave blank if the account shouldn't expire, otherwise enter the expiration date in the following format: mm/dd/yyyy</span></td>

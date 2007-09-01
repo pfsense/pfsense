@@ -102,14 +102,14 @@ include("head.inc");
 				<tr>
                   <td width="22%" valign="top" class="vncellreq">MAC address</td>
                   <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="mac" type="text" class="formfld" id="mac" size="17" value="<?=htmlspecialchars($pconfig['mac']);?>">
+                    <?=$mandfldhtml;?><input name="mac" type="text" class="formfld unknown" id="mac" size="17" value="<?=htmlspecialchars($pconfig['mac']);?>">
                     <br> 
                     <span class="vexpl">MAC address (6 hex octets separated by colons)</span></td>
                 </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable"> 
-                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
                 </tr>

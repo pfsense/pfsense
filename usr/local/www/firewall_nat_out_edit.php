@@ -300,7 +300,7 @@ function sourcesel_change() {
 	        <tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
-			<select name="interface" class="formfld">
+			<select name="interface" class="formselect">
 				<?php
 				$interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
 				for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
@@ -322,13 +322,13 @@ function sourcesel_change() {
                       <tr>
 		        <td>Type:&nbsp;&nbsp;</td>
 			<td>
-			    <select name="source_type" class="formfld" onChange="sourcesel_change()">
+			    <select name="source_type" class="formselect" onChange="sourcesel_change()">
                               <option value="any" <?php if ($pconfig['source'] == "any") echo "selected"; ?>>any</option>
                               <option value="network" <?php if ($pconfig['source'] != "any") echo "selected"; ?>>Network</option>
                             </select>
 			</td></tr>
                         <td>Address:&nbsp;&nbsp;</td>
-                        <td><input name="source" type="text" class="formfld" id="source" size="20" value="<?=htmlspecialchars($pconfig['source']);?>">/<select name="source_subnet" class="formfld" id="source_subnet">
+                        <td><input name="source" type="text" class="formfld unknown" id="source" size="20" value="<?=htmlspecialchars($pconfig['source']);?>">/<select name="source_subnet" class="formfld" id="source_subnet">
 <?php for ($i = 32; $i >= 0; $i--): ?>
                           <option value="<?=$i;?>"<?php if ($i == $pconfig['source_subnet']) echo " selected"; ?>><?=$i;?></option>
 <?php endfor; ?>
@@ -340,7 +340,8 @@ function sourcesel_change() {
                       </tr>
                       <tr>
                         <td>Source port:&nbsp;&nbsp;</td>
-                        <td><input name="sourceport" type="text" class="formfld" id="sourceport" size="5" value="<?=htmlspecialchars($pconfig['sourceport']);?>"> (leave blank for any)</td>
+                        <td><input name="sourceport" type="text" class="formfld unknown" id="sourceport" size="5" value="<?=htmlspecialchars($pconfig['sourceport']);?>"> (leave 
+blank for any)</td>
                       </tr>
                     </table></td>
                 </tr>
@@ -354,7 +355,7 @@ function sourcesel_change() {
                     <table border="0" cellspacing="1" cellpadding="1">
                       <tr>
                         <td>Type:&nbsp;&nbsp;</td>
-                        <td><select name="destination_type" class="formfld" onChange="typesel_change()">
+                        <td><select name="destination_type" class="formselect" onChange="typesel_change()">
                             <option value="any"<?php if ($pconfig['destination'] == "any") echo " selected"; ?>>
                             any</option>
                             <option value="network"<?php if ($pconfig['destination'] != "any") echo " selected"; ?>>
@@ -363,9 +364,9 @@ function sourcesel_change() {
                       </tr>
                       <tr>
                         <td>Address:&nbsp;&nbsp;</td>
-                        <td><input name="destination" type="text" class="formfld" id="destination" size="20" value="<?=htmlspecialchars($pconfig['destination']);?>">
+                        <td><input name="destination" type="text" class="formfld unknown" id="destination" size="20" value="<?=htmlspecialchars($pconfig['destination']);?>">
                           /
-                          <select name="destination_subnet" class="formfld" id="destination_subnet">
+                          <select name="destination_subnet" class="formselect" id="destination_subnet">
 <?php for ($i = 32; $i >= 0; $i--): ?>
                             <option value="<?=$i;?>"<?php if ($i == $pconfig['destination_subnet']) echo " selected"; ?>><?=$i;?></option>
 <?php endfor; ?>
@@ -378,7 +379,8 @@ function sourcesel_change() {
                       </tr>
                       <tr>
                         <td>Destination port:&nbsp;&nbsp;</td>
-                        <td><input name="dstport" type="text" class="formfld" id="dstport" size="5" value="<?=htmlspecialchars($pconfig['dstport']);?>"> (leave blank for any)</td>
+                        <td><input name="dstport" type="text" class="formfld unknown" id="dstport" size="5" value="<?=htmlspecialchars($pconfig['dstport']);?>"> (leave blank for 
+any)</td>
                       </tr>
                     </table>
 		  </td>
@@ -389,7 +391,7 @@ function sourcesel_change() {
 			<table border="0" cellspacing="1" cellpadding="1">
 			<tr>
 			  <td>Address:&nbsp;&nbsp;</td>
-			  <td><select name="target" class="formfld">
+			  <td><select name="target" class="formselect">
 				<option value=""<?php if (!$pconfig['target']) echo " selected"; ?>>Interface address</option>
 <?php	if (is_array($config['virtualip']['vip'])):
 		foreach ($config['virtualip']['vip'] as $sn): ?>
@@ -410,7 +412,7 @@ function sourcesel_change() {
 			</td></tr>
 			<tr>
                           <td>Port:&nbsp;&nbsp;</td>
-                          <td><input name="natport" type="text" class="formfld" id="natport" size="5" value="<?=htmlspecialchars($pconfig['natport']);?>"></td>
+                          <td><input name="natport" type="text" class="formfld unknown" id="natport" size="5" value="<?=htmlspecialchars($pconfig['natport']);?>"></td>
 			</tr>
 			<tr>
                           <td>Static-port:&nbsp;&nbsp;</td>
@@ -432,7 +434,7 @@ function sourcesel_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
           </tr>

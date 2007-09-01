@@ -364,7 +364,7 @@ include("head.inc");
     	<tr>
 			<td width="22%" valign="top" class="vncellreq">Action</td>
 			<td width="78%" class="vtable">
-				<select name="type" class="formfld">
+				<select name="type" class="formselect">
 					<?php $types = explode(" ", "Pass Block Reject"); foreach ($types as $type): ?>
 					<option value="<?=strtolower($type);?>" <?php if (strtolower($type) == strtolower($pconfig['type'])) echo "selected"; ?>>
 					<?=htmlspecialchars($type);?>
@@ -389,7 +389,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Interface</td>
 			<td width="78%" class="vtable">
-				<select name="interface" class="formfld">
+				<select name="interface" class="formselect">
 <?php
 					$interfaces = array('wan' => 'WAN', 'lan' => 'LAN', 'pptp' => 'PPTP', 'pppoe' => 'PPPOE', 'enc0' => 'IPSEC');
 					for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
@@ -406,7 +406,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Protocol</td>
 			<td width="78%" class="vtable">
-				<select name="proto" class="formfld" onchange="proto_change()">
+				<select name="proto" class="formselect" onchange="proto_change()">
 <?php
 				$protocols = explode(" ", "TCP UDP TCP/UDP ICMP ESP AH GRE IGMP any carp pfsync");
 				foreach ($protocols as $proto): ?>
@@ -420,7 +420,7 @@ include("head.inc");
 		<tr id="icmpbox" name="icmpbox">
 			<td valign="top" class="vncell">ICMP type</td>
 			<td class="vtable">
-				<select name="icmptype" class="formfld">
+				<select name="icmptype" class="formselect">
 <?php
 				$icmptypes = array(
 				"" => "any",
@@ -463,7 +463,7 @@ include("head.inc");
 					<tr>
 						<td>Type:&nbsp;&nbsp;</td>
 						<td>
-							<select name="srctype" class="formfld" onChange="typesel_change()">
+							<select name="srctype" class="formselect" onChange="typesel_change()">
 <?php
 								$sel = is_specialnet($pconfig['src']); ?>
 								<option value="any"     <?php if ($pconfig['src'] == "any") { echo "selected"; } ?>>any</option>
@@ -488,7 +488,7 @@ include("head.inc");
 						<td>Address:&nbsp;&nbsp;</td>
 						<td>
 							<input autocomplete='off' name="src" type="text" class="formfldalias" id="src" size="20" value="<?php if (!is_specialnet($pconfig['src'])) echo htmlspecialchars($pconfig['src']);?>"> /
-							<select name="srcmask" class="formfld" id="srcmask">
+							<select name="srcmask" class="formselect" id="srcmask">
 <?php						for ($i = 31; $i > 0; $i--): ?>
 								<option value="<?=$i;?>" <?php if ($i == $pconfig['srcmask']) echo "selected"; ?>><?=$i;?></option>
 <?php 						endfor; ?>
@@ -509,7 +509,7 @@ include("head.inc");
 					<tr>
 						<td>from:&nbsp;&nbsp;</td>
 						<td>
-							<select name="srcbeginport" class="formfld" onchange="src_rep_change();ext_change()">
+							<select name="srcbeginport" class="formselect" onchange="src_rep_change();ext_change()">
 								<option value="">(other)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['srcbeginport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
 <?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
@@ -522,7 +522,7 @@ include("head.inc");
 					<tr>
 						<td>to:</td>
 						<td>
-							<select name="srcendport" class="formfld" onchange="ext_change()">
+							<select name="srcendport" class="formselect" onchange="ext_change()">
 								<option value="">(other)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['srcendport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
 <?php							foreach ($wkports as $wkport => $wkportdesc): ?>
@@ -541,7 +541,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Source OS</td>
 			<td width="78%" class="vtable">OS Type:&nbsp;
-				<select name="os" id="os" class="formfld">
+				<select name="os" id="os" class="formselect">
 <?php
 		           $ostypes = array(
 						 "" => "any",
@@ -578,7 +578,7 @@ include("head.inc");
 					<tr>
 						<td>Type:&nbsp;&nbsp;</td>
 						<td>
-							<select name="dsttype" class="formfld" onChange="typesel_change()">
+							<select name="dsttype" class="formselect" onChange="typesel_change()">
 <?php
 								$sel = is_specialnet($pconfig['dst']); ?>
 								<option value="any" <?php if ($pconfig['dst'] == "any") { echo "selected"; } ?>>any</option>
@@ -603,7 +603,7 @@ include("head.inc");
 						<td>
 							<input name="dst" type="text" class="formfldalias" id="dst" size="20" value="<?php if (!is_specialnet($pconfig['dst'])) echo htmlspecialchars($pconfig['dst']);?>">
 							/
-							<select name="dstmask" class="formfld" id="dstmask">
+							<select name="dstmask" class="formselect" id="dstmask">
 <?php
 							for ($i = 31; $i > 0; $i--): ?>
 								<option value="<?=$i;?>" <?php if ($i == $pconfig['dstmask']) echo "selected"; ?>><?=$i;?></option>
@@ -622,7 +622,7 @@ include("head.inc");
 					<tr>
 						<td>from:&nbsp;&nbsp;</td>
 						<td>
-							<select name="dstbeginport" class="formfld" onchange="dst_rep_change();ext_change()">
+							<select name="dstbeginport" class="formselect" onchange="dst_rep_change();ext_change()">
 								<option value="">(other)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['dstbeginport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
 <?php 							foreach ($wkports as $wkport => $wkportdesc): ?>
@@ -635,7 +635,7 @@ include("head.inc");
 					<tr>
 						<td>to:</td>
 						<td>
-							<select name="dstendport" class="formfld" onchange="ext_change()">
+							<select name="dstendport" class="formselect" onchange="ext_change()">
 								<option value="">(other)</option>
 								<option value="any" <?php $bfound = 0; if ($pconfig['dstendport'] == "any") { echo "selected"; $bfound = 1; } ?>>any</option>
 <?php							foreach ($wkports as $wkport => $wkportdesc): ?>
@@ -815,7 +815,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">Description</td>
 			<td width="78%" class="vtable">
-				<input name="descr" type="text" class="formfld" id="descr" size="52" maxlength="52" value="<?=htmlspecialchars($pconfig['descr']);?>">
+				<input name="descr" type="text" class="formfld unknown" id="descr" size="52" maxlength="52" value="<?=htmlspecialchars($pconfig['descr']);?>">
 				<br />
 				<span class="vexpl">You may enter a description here for your reference (not parsed).</span>
 			</td>

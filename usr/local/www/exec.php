@@ -218,7 +218,7 @@ if (!isBlank($_POST['txtPHPCommand'])) {
 	</tr>  
     <tr>
       <td class="label" align="right">Command:</td>
-      <td class="type"><input id="txtCommand" name="txtCommand" type="text" size="80" value="<?=htmlspecialchars($_POST['txtCommand']);?>"></td>
+      <td class="type"><input id="txtCommand" name="txtCommand" type="text" class="formfld unknown" size="80" value="<?=htmlspecialchars($_POST['txtCommand']);?>"></td>
     </tr>
     <tr>
       <td valign="top">&nbsp;&nbsp;&nbsp;</td>
@@ -239,7 +239,7 @@ if (!isBlank($_POST['txtPHPCommand'])) {
     <tr>
       <td align="right">File to download:</td>
       <td>
-        <input name="dlPath" type="text" id="dlPath" size="50">
+        <input name="dlPath" type="text" class="formfld file" id="dlPath" size="50">
 	</td></tr>
     <tr>
       <td valign="top">&nbsp;&nbsp;&nbsp;</td>
@@ -256,7 +256,7 @@ if (!isBlank($_POST['txtPHPCommand'])) {
     <tr>
       <td align="right">File to upload:</td>
       <td valign="top" class="label">
-	<input name="ulfile" type="file" class="button" id="ulfile">
+	<input name="ulfile" type="file" class="formfld file" id="ulfile">
 	</td></tr>
     <tr>
       <td valign="top">&nbsp;&nbsp;&nbsp;</td>

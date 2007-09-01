@@ -104,7 +104,7 @@ include("head.inc");
 				<tr>
                   <td width="22%" valign="top" class="vncellreq">Direction</td>
                   <td width="78%" class="vtable"> 
-					<select name="dir" class="formfld">
+					<select name="dir" class="formselect">
 					<?php 
 					$dirs = explode(" ", "From To") ;
 					foreach ($dirs as $dir): ?>
@@ -120,14 +120,14 @@ include("head.inc");
 				<tr>
                   <td width="22%" valign="top" class="vncellreq">IP address</td>
                   <td width="78%" class="vtable"> 
-                    <?=$mandfldhtml;?><input name="ip" type="text" class="formfld" id="ip" size="17" value="<?=htmlspecialchars($pconfig['ip']);?>">
+                    <?=$mandfldhtml;?><input name="ip" type="text" class="formfld unknown" id="ip" size="17" value="<?=htmlspecialchars($pconfig['ip']);?>">
                     <br> 
                     <span class="vexpl">IP address</span></td>
                 </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable"> 
-                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
                 </tr>

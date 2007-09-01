@@ -286,42 +286,42 @@ function f(ta_id){
 		    <tr>
 		      <td width="35%" valign="top" class="vncell"><B>Country Code (2 Letters)</td>
 		      <td width="78%" class="vtable">
-			<input name="countrycode" value="<?=$countrycode?>">
+			<input name="countrycode" class="formfld unknown" value="<?=$countrycode?>">
 			</span></td>
 		    </tr>
 
 		    <tr>
 		      <td width="35%" valign="top" class="vncell"><B>State or Province name</td>
 		      <td width="78%" class="vtable">
-			<input name="stateorprovince" value="<?=$stateorprovince?>">
+			<input name="stateorprovince" class="formfld unknown" value="<?=$stateorprovince?>">
 			</span></td>
 		    </tr>
 
 		    <tr>
 		      <td width="35%" valign="top" class="vncell"><B>City name</td>
 		      <td width="78%" class="vtable">
-			<input name="cityname" value="<?=$cityname?>">
+			<input name="cityname" class="formfld unknown" value="<?=$cityname?>">
 			</span></td>
 		    </tr>
 
 		    <tr>
 		      <td width="35%" valign="top" class="vncell"><B>Organization name</td>
 		      <td width="78%" class="vtable">
-			<input name="orginizationname" value="<?=$orginizationname?>">
+			<input name="orginizationname" class="formfld unknown" value="<?=$orginizationname?>">
 			</span></td>
 		    </tr>
 
 		    <tr>
 		      <td width="35%" valign="top" class="vncell"><B>Organization department</td>
 		      <td width="78%" class="vtable">
-			<input name="orginizationdepartment" value="<?=$orginizationdepartment?>">
+			<input name="orginizationdepartment" class="formfld unknown" value="<?=$orginizationdepartment?>">
 			</span></td>
 		    </tr>
 
 		    <tr>
 		      <td width="35%" valign="top" class="vncell"><B>Common Name (Your name)</td>
 		      <td width="78%" class="vtable">
-			<input name="commonname" value="<?=$commonname?>">
+			<input name="commonname" class="formfld unknown" value="<?=$commonname?>">
 			</span></td>
 		    </tr>
 
@@ -329,7 +329,7 @@ function f(ta_id){
 		    <tr>
 		      <td width="35%" valign="top" class="vncell"><B>E-Mail address</td>
 		      <td width="78%" class="vtable">
-			<input name="email" value="<?=$email?>">
+			<input name="email" class="formfld unknown" value="<?=$email?>">
 			</span></td>
 		    </tr>
 		    -->

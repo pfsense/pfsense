@@ -105,7 +105,7 @@ include("head.inc");
 			  <tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
-		     <select name="interface" class="formfld">
+		     <select name="interface" class="formselect">
                       <?php $interfaces = array('lan' => 'LAN');
 					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 					    if (isset($config['interfaces']['opt' . $i]['enable']) &&
@@ -123,7 +123,7 @@ include("head.inc");
                 <tr>
 				  <td width="22%" valign="top" class="vncellreq">MAC address</td>
 				  <td width="78%" class="vtable">
-                      <input name="mac" type="text" class="formfld" id="mac" size="20" value="<?=htmlspecialchars($mac);?>">
+                      <input name="mac" type="text" class="formfld unknown" id="mac" size="20" value="<?=htmlspecialchars($mac);?>">
                       <br>
                       Enter a MAC address <span class="vexpl"> in the following format: xx:xx:xx:xx:xx:xx</span></td></tr>
 				<tr>

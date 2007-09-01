@@ -170,7 +170,7 @@ function enable_change(enable_over) {
 		<tr>
                   <td width="22%" valign="top" class="vncellreq">Bridge with</td>
                   <td width="78%" class="vtable">
-			<select name="bridge" class="formfld" id="bridge" onChange="enable_change(false)">
+			<select name="bridge" class="formselect" id="bridge" onChange="enable_change(false)">
 				  	<option <?php if (!$pconfig['bridge']) echo "selected";?> value="">none</option>
                       <?php $opts = array('wan' => "WAN");
 					  	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
@@ -188,9 +188,9 @@ function enable_change(enable_over) {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">IP address</td>
                   <td width="78%" class="vtable">
-                    <input name="ipaddr" type="text" class="formfld" id="hostname" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>">
+                    <input name="ipaddr" type="text" class="formfld unknown" id="hostname" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>">
                     /
-                    <select name="subnet" class="formfld" id="subnet">
+                    <select name="subnet" class="formselect" id="subnet">
 					<?php
 					for ($i = 32; $i > 0; $i--) {
 						if($i <> 31) {

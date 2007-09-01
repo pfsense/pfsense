@@ -228,7 +228,7 @@ function methodsel_change() {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Negotiation mode</td>
                         <td width="78%" class="vtable">
-					<select name="p1mode" class="formfld">
+					<select name="p1mode" class="formselect">
                       <?php $modes = explode(" ", "main aggressive"); foreach ($modes as $mode): ?>
                       <option value="<?=$mode;?>" <?php if ($mode == $pconfig['p1mode']) echo "selected"; ?>> 
                       <?=htmlspecialchars($mode);?>
@@ -240,19 +240,19 @@ function methodsel_change() {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">My identifier</td>
                         <td width="78%" class="vtable">
-					<select name="p1myidentt" class="formfld">
+					<select name="p1myidentt" class="formselect">
                       <?php foreach ($my_identifier_list as $mode => $modename): ?>
                       <option value="<?=$mode;?>" <?php if ($mode == $pconfig['p1myidentt']) echo "selected"; ?>> 
                       <?=htmlspecialchars($modename);?>
                       </option>
                       <?php endforeach; ?>
-                    </select> <input name="p1myident" type="text" class="formfld" id="p1myident" size="30" value="<?=$pconfig['p1myident'];?>"> 
+                    </select> <input name="p1myident" type="text" class="formfld unknown" id="p1myident" size="30" value="<?=$pconfig['p1myident'];?>"> 
                   </td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Encryption algorithm</td>
                         <td width="78%" class="vtable">
-					<select name="p1ealgo" class="formfld">
+					<select name="p1ealgo" class="formselect">
                       <?php foreach ($p1_ealgos as $algo => $algoname): ?>
                       <option value="<?=$algo;?>" <?php if ($algo == $pconfig['p1ealgo']) echo "selected"; ?>> 
                       <?=htmlspecialchars($algoname);?>
@@ -264,7 +264,7 @@ function methodsel_change() {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Hash algorithm</td>
                         <td width="78%" class="vtable">
-					<select name="p1halgo" class="formfld">
+					<select name="p1halgo" class="formselect">
                       <?php foreach ($p1_halgos as $algo => $algoname): ?>
                       <option value="<?=$algo;?>" <?php if ($algo == $pconfig['p1halgo']) echo "selected"; ?>> 
                       <?=htmlspecialchars($algoname);?>
@@ -276,7 +276,7 @@ function methodsel_change() {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">DH key group</td>
                         <td width="78%" class="vtable">
-					<select name="p1dhgroup" class="formfld">
+					<select name="p1dhgroup" class="formselect">
                       <?php $keygroups = explode(" ", "1 2 5"); foreach ($keygroups as $keygroup): ?>
                       <option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['p1dhgroup']) echo "selected"; ?>> 
                       <?=htmlspecialchars($keygroup);?>
@@ -289,13 +289,13 @@ function methodsel_change() {
                 <tr> 
                   <td width="22%" valign="top" class="vncell">Lifetime</td>
                         <td width="78%" class="vtable"> 
-                    <input name="p1lifetime" type="text" class="formfld" id="p1lifetime" size="20" value="<?=$pconfig['p1lifetime'];?>">
+                    <input name="p1lifetime" type="text" class="formfld unknown" id="p1lifetime" size="20" value="<?=$pconfig['p1lifetime'];?>">
                     seconds</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Authentication method</td>
                   <td width="78%" class="vtable">
-					<select name="p1authentication_method" class="formfld" onChange="methodsel_change()">
+					<select name="p1authentication_method" class="formselect" onChange="methodsel_change()">
                       <?php foreach ($p1_authentication_methods as $method => $methodname): ?>
                       <option value="<?=$method;?>" <?php if ($method == $pconfig['p1authentication_method']) echo "selected"; ?>> 
                       <?=htmlspecialchars($methodname);?>
@@ -328,7 +328,7 @@ function methodsel_change() {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Protocol</td>
                         <td width="78%" class="vtable">
-					<select name="p2proto" class="formfld">
+					<select name="p2proto" class="formselect">
                       <?php foreach ($p2_protos as $proto => $protoname): ?>
                       <option value="<?=$proto;?>" <?php if ($proto == $pconfig['p2proto']) echo "selected"; ?>> 
                       <?=htmlspecialchars($protoname);?>
@@ -363,7 +363,7 @@ function methodsel_change() {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">PFS key group</td>
                         <td width="78%" class="vtable">
-					<select name="p2pfsgroup" class="formfld">
+					<select name="p2pfsgroup" class="formselect">
                       <?php foreach ($p2_pfskeygroups as $keygroup => $keygroupname): ?>
                       <option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['p2pfsgroup']) echo "selected"; ?>> 
                       <?=htmlspecialchars($keygroupname);?>
@@ -375,7 +375,7 @@ function methodsel_change() {
                 <tr> 
                   <td width="22%" valign="top" class="vncell">Lifetime</td>
                         <td width="78%" class="vtable"> 
-                    <input name="p2lifetime" type="text" class="formfld" id="p2lifetime" size="20" value="<?=$pconfig['p2lifetime'];?>">
+                    <input name="p2lifetime" type="text" class="formfld unknown" id="p2lifetime" size="20" value="<?=$pconfig['p2lifetime'];?>">
                     seconds</td>
                 </tr>
                 <tr> 

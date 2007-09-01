@@ -124,7 +124,7 @@ include("head.inc");
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
-<select name="interface" class="formfld">
+			<select name="interface" class="formselect">
                       <?php $interfaces = array('lan' => 'LAN', 'wan' => 'WAN', 'pptp' => 'PPTP');
 					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 					  	$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
@@ -140,9 +140,9 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Destination network</td>
                   <td width="78%" class="vtable"> 
-                    <input name="network" type="text" class="formfld" id="network" size="20" value="<?=htmlspecialchars($pconfig['network']);?>"> 
+                    <input name="network" type="text" class="formfld unknown" id="network" size="20" value="<?=htmlspecialchars($pconfig['network']);?>"> 
 				  / 
-                    <select name="network_subnet" class="formfld" id="network_subnet">
+                    <select name="network_subnet" class="formselect" id="network_subnet">
                       <?php for ($i = 32; $i >= 1; $i--): ?>
                       <option value="<?=$i;?>" <?php if ($i == $pconfig['network_subnet']) echo "selected"; ?>>
                       <?=$i;?>
@@ -154,13 +154,13 @@ include("head.inc");
 				<tr>
                   <td width="22%" valign="top" class="vncellreq">Gateway</td>
                   <td width="78%" class="vtable"> 
-                    <input name="gateway" type="text" class="formfld" id="gateway" size="40" value="<?=htmlspecialchars($pconfig['gateway']);?>">
+                    <input name="gateway" type="text" class="formfld host" id="gateway" size="40" value="<?=htmlspecialchars($pconfig['gateway']);?>">
                     <br> <span class="vexpl">Gateway to be used to reach the destination network</span></td>
                 </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable"> 
-                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
                 </tr>

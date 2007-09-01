@@ -309,7 +309,7 @@ function show_mon_config() {
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld" id="descr" size="30" value="<?=htmlspecialchars($pconfig['descr']);?>">
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="30" value="<?=htmlspecialchars($pconfig['descr']);?>">
 					<br> <span class="vexpl">Enter a description (name) for the interface here.</span>
 		  </td>
 		</tr>
@@ -322,7 +322,7 @@ function show_mon_config() {
                 </tr>
                 <tr>
                   <td valign="middle" class="vncell"><strong>Type</strong></td>
-                  <td class="vtable"> <select name="type" class="formfld" id="type" onchange="type_change()">
+                  <td class="vtable"> <select name="type" class="formselect" id="type" onchange="type_change()">
                       <?php $opts = split(" ", "Static DHCP");
 				foreach ($opts as $opt): ?>
                       <option <?php if ($opt == $pconfig['type']) echo "selected";?>>
@@ -333,7 +333,7 @@ function show_mon_config() {
                 </tr>
                 <tr>
                   <td valign="top" class="vncell">MAC address</td>
-                  <td class="vtable"> <input name="spoofmac" type="text" class="formfld" id="spoofmac" size="30" value="<?=htmlspecialchars($pconfig['spoofmac']);?>">
+                  <td class="vtable"> <input name="spoofmac" type="text" class="formfld unknown" id="spoofmac" size="30" value="<?=htmlspecialchars($pconfig['spoofmac']);?>">
 		    <?php
 			$ip = getenv('REMOTE_ADDR');
 			$mac = `/usr/sbin/arp -an | grep {$ip} | cut -d" " -f4`;
@@ -349,7 +349,7 @@ function show_mon_config() {
                 </tr>
                 <tr>
                   <td valign="top" class="vncell">MTU</td>
-                  <td class="vtable"> <input name="mtu" type="text" class="formfld" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>">
+                  <td class="vtable"> <input name="mtu" type="text" class="formfld unknown" id="mtu" size="8" value="<?=htmlspecialchars($pconfig['mtu']);?>">
                     <br>
                     If you enter a value in this field, then MSS clamping for
                     TCP connections to the value entered above minus 40 (TCP/IP
@@ -367,7 +367,7 @@ function show_mon_config() {
 		<tr>
                   <td width="22%" valign="top" class="vncellreq">Bridge with</td>
                   <td width="78%" class="vtable">
-			<select name="bridge" class="formfld" id="bridge" onChange="enable_change(false)">
+			<select name="bridge" class="formselect" id="bridge" onChange="enable_change(false)">
 				  	<option <?php if (!$pconfig['bridge']) echo "selected";?> value="">none</option>
                       <?php $opts = array('lan' => "LAN", 'wan' => "WAN");
 					  	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
@@ -385,9 +385,9 @@ function show_mon_config() {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">IP address</td>
                   <td width="78%" class="vtable">
-                    <input name="ipaddr" type="text" class="formfld" id="ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>">
+                    <input name="ipaddr" type="text" class="formfld unknown" id="ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>">
                     /
-                	<select name="subnet" class="formfld" id="subnet">
+                	<select name="subnet" class="formselect" id="subnet">
 					<?php
 					for ($i = 32; $i > 0; $i--) {
 						if($i <> 31) {
@@ -449,7 +449,7 @@ function show_mon_config() {
                 </tr>
                 <tr>
                   <td valign="top" class="vncell">Hostname</td>
-                  <td class="vtable"> <input name="dhcphostname" type="text" class="formfld" id="dhcphostname" size="40" value="<?=htmlspecialchars($pconfig['dhcphostname']);?>">
+                  <td class="vtable"> <input name="dhcphostname" type="text" class="formfld unknown" id="dhcphostname" size="40" value="<?=htmlspecialchars($pconfig['dhcphostname']);?>">
                     <br>
                     The value in this field is sent as the DHCP client identifier
                     and hostname when requesting a DHCP lease. Some ISPs may require
@@ -457,7 +457,7 @@ function show_mon_config() {
                 </tr>
 		<tr>
 		  <td width="100" valign="top" class="vncellreq">Alias IP address</td>
-		  <td class="vtable"> <input name="alias-address" type="text" class="formfld" id="alias-address" size="20" value="<?=htmlspecialchars($pconfig['alias-address']);?>">
+		  <td class="vtable"> <input name="alias-address" type="text" class="formfld unknown" id="alias-address" size="20" value="<?=htmlspecialchars($pconfig['alias-address']);?>">
 		    <select name="alias-subnet" class="formselect" id="alias-subnet">
 		        <?php
 		        for ($i = 32; $i > 0; $i--) {

@@ -140,7 +140,7 @@ include("head.inc"); ?>
 			    <tr>
 				  <td width="17%" valign="top" class="vncellreq">Host Address</td>
 				  <td width="83%" class="vtable">
-                    <input name="host" type="text" class="formfld" id="host" size="20" value="<?=htmlspecialchars($host);?>">
+                    <input name="host" type="text" class="formfld host" id="host" size="20" value="<?=htmlspecialchars($host);?>">
 					<br/>This value is either the Source or Destination IP address. The packet capture will look for this address in either field.
 					<br/>This value can be a domain name or IP address.
 					<br/>If you leave this field blank all packets on the specified interface will be captured 
@@ -149,7 +149,7 @@ include("head.inc"); ?>
 				<tr>
 				  <td width="17%" valign="top" class="vncellreq">Port</td>
 				  <td width="83%" class="vtable">
-                    <input name="port" type="text" class="formfld" id="port" size="5" value="<?=$port;?>">
+                    <input name="port" type="text" class="formfld unknown" id="port" size="5" value="<?=$port;?>">
 					<br/>The port can be either the source or destination port. The packet capture will look for this port in either field.
 					<br/>Leave blank if you do not want to the capture to filter by port.
 					</td>
@@ -157,7 +157,7 @@ include("head.inc"); ?>
 				<tr>
 				  <td width="17%" valign="top" class="vncellreq">Packet Length</td>
 				  <td width="83%" class="vtable">
-                    <input name="snaplen" type="text" class="formfld" id="snaplen" size="5" value="<?=$snaplen;?>">
+                    <input name="snaplen" type="text" class="formfld unknown" id="snaplen" size="5" value="<?=$snaplen;?>">
 					<br/>The Packet length is the number of bytes the packet will capture for each payload. Default value is 1500.
 					<br/>This value should be the same as the MTU of the Interface selected above.
 					</td>
@@ -165,13 +165,13 @@ include("head.inc"); ?>
 				<tr>
 				  <td width="17%" valign="top" class="vncellreq">Count</td>
 				  <td width="83%" class="vtable">
-                    <input name="count" type="text" class="formfld" id="count" size="5" value="<?=$count;?>">
+                    <input name="count" type="text" class="formfld unknown" id="count" size="5" value="<?=$count;?>">
 					<br/>This is the number of packets the packet capture will grab. Default value is 100. <br/>Enter 0 (zero) for no count limit.
 				</tr>
 				<tr>
 				  <td width="17%" valign="top" class="vncellreq">Level of Detail</td>
 				  <td width="83%" class="vtable">
-                    <select name="detail" type="text" class="formfld" id="detail" size="1">
+                    <select name="detail" type="text" class="formselect" id="detail" size="1">
 						<option value="-q" <?php if ($detail == "-q") echo "selected"; ?>>Normal</option>
 						<option value="-v" <?php if ($detail == "-v") echo "selected"; ?>>Medium</option>
 						<option value="-vv" <?php if ($detail == "-vv") echo "selected"; ?>>High</option>

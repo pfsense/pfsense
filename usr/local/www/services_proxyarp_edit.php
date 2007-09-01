@@ -172,7 +172,7 @@ function typesel_change() {
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
-					<select name="interface" class="formfld">
+					<select name="interface" class="formselect">
                       <?php $interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
 					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 					  	$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
@@ -190,7 +190,7 @@ function typesel_change() {
                     <table border="0" cellspacing="0" cellpadding="0">
                       <tr> 
                         <td>Type:&nbsp;&nbsp;</td>
-                        <td><select name="type" class="formfld" onChange="typesel_change()">
+                        <td><select name="type" class="formselect" onChange="typesel_change()">
                             <option value="single" <?php if (!$pconfig['range_from'] && $pconfig['subnet_bits'] == 32) echo "selected"; ?>> 
                             Single address</option>
                             <option value="network" <?php if (!$pconfig['range_from'] && $pconfig['subnet_bits'] != 32) echo "selected"; ?>> 
@@ -201,9 +201,9 @@ function typesel_change() {
                       </tr>
                       <tr> 
                         <td>Address:&nbsp;&nbsp;</td>
-                        <td><input name="subnet" type="text" class="formfld" id="subnet" size="20" value="<?=htmlspecialchars($pconfig['subnet']);?>">
+                        <td><input name="subnet" type="text" class="formfld unknown" id="subnet" size="20" value="<?=htmlspecialchars($pconfig['subnet']);?>">
                   / 
-                          <select name="subnet_bits" class="formfld" id="select">
+                          <select name="subnet_bits" class="formselect" id="select">
                             <?php for ($i = 31; $i >= 0; $i--): ?>
                             <option value="<?=$i;?>" <?php if ($i == $pconfig['subnet_bits']) echo "selected"; ?>>
                             <?=$i;?>
@@ -214,9 +214,9 @@ function typesel_change() {
                       </tr>
                       <tr> 
                         <td>Range:&nbsp;&nbsp;</td>
-                        <td><input name="range_from" type="text" class="formfld" id="range_from" size="20" value="<?=htmlspecialchars($pconfig['range_from']);?>">
+                        <td><input name="range_from" type="text" class="formfld unknown" id="range_from" size="20" value="<?=htmlspecialchars($pconfig['range_from']);?>">
 - 
-                          <input name="range_to" type="text" class="formfld" id="range_to" size="20" value="<?=htmlspecialchars($pconfig['range_to']);?>">                          
+                          <input name="range_to" type="text" class="formfld unknown" id="range_to" size="20" value="<?=htmlspecialchars($pconfig['range_to']);?>">                          
                           </td>
                       </tr>
                     </table>
@@ -225,7 +225,7 @@ function typesel_change() {
 				<tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable"> 
-                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
                 </tr>

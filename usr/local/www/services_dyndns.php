@@ -174,7 +174,7 @@ function enable_change(enable_change) {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Service type</td>
                   <td width="78%" class="vtable">
-<select name="type" class="formfld" id="type">
+			<select name="type" class="formselect" id="type">
                       <?php
 				$types = explode(",", "DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit");
 				$vals = explode(" ", "dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit");
@@ -188,7 +188,7 @@ function enable_change(enable_change) {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Hostname</td>
                   <td width="78%" class="vtable">
-                    <input name="host" type="text" class="formfld" id="host" size="30" value="<?=htmlspecialchars($pconfig['host']);?>">
+                    <input name="host" type="text" class="formfld unknown" id="host" size="30" value="<?=htmlspecialchars($pconfig['host']);?>">
 		    <br>
 		    <span class="vexpl">
 		    <span class="red"><strong>Note:<br></strong>
@@ -200,7 +200,7 @@ function enable_change(enable_change) {
                 <tr>
                   <td width="22%" valign="top" class="vncell">MX</td>
                   <td width="78%" class="vtable">
-                    <input name="mx" type="text" class="formfld" id="mx" size="30" value="<?=htmlspecialchars($pconfig['mx']);?>">
+                    <input name="mx" type="text" class="formfld unknown" id="mx" size="30" value="<?=htmlspecialchars($pconfig['mx']);?>">
                     <br>
 					Note: With DynDNS service you can only use a hostname, not an IP address.
 					<br>
@@ -216,13 +216,13 @@ function enable_change(enable_change) {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Username</td>
                   <td width="78%" class="vtable">
-                    <input name="username" type="text" class="formfld" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
+                    <input name="username" type="text" class="formfld user" id="username" size="20" value="<?=htmlspecialchars($pconfig['username']);?>">
                   </td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Password</td>
                   <td width="78%" class="vtable">
-                    <input name="password" type="password" class="formfld" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
+                    <input name="password" type="password" class="formfld pwd" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
                   </td>
                 </tr>
                 <tr>
@@ -244,19 +244,19 @@ function enable_change(enable_change) {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Hostname</td>
                   <td width="78%" class="vtable">
-                    <input name="dnsupdate_host" type="text" class="formfld" id="dnsupdate_host" size="30" value="<?=htmlspecialchars($pconfig['dnsupdate_host']);?>">
+                    <input name="dnsupdate_host" type="text" class="formfld unknown" id="dnsupdate_host" size="30" value="<?=htmlspecialchars($pconfig['dnsupdate_host']);?>">
                   </td>
 				</tr>
                 <tr>
                   <td valign="top" class="vncellreq">TTL</td>
                   <td class="vtable">
-                    <input name="dnsupdate_ttl" type="text" class="formfld" id="dnsupdate_ttl" size="6" value="<?=htmlspecialchars($pconfig['dnsupdate_ttl']);?>">
+                    <input name="dnsupdate_ttl" type="text" class="formfld unknown" id="dnsupdate_ttl" size="6" value="<?=htmlspecialchars($pconfig['dnsupdate_ttl']);?>">
                   seconds</td>
                 </tr>
                 <tr>
                   <td valign="top" class="vncellreq">Key name</td>
                   <td class="vtable">
-                    <input name="dnsupdate_keyname" type="text" class="formfld" id="dnsupdate_keyname" size="30" value="<?=htmlspecialchars($pconfig['dnsupdate_keyname']);?>">
+                    <input name="dnsupdate_keyname" type="text" class="formfld unknown" id="dnsupdate_keyname" size="30" value="<?=htmlspecialchars($pconfig['dnsupdate_keyname']);?>">
                     <br>
                     This must match the setting on the DNS server.</td>
                 </tr>
@@ -270,7 +270,7 @@ function enable_change(enable_change) {
                 <tr>
                   <td valign="top" class="vncellreq">Key</td>
                   <td class="vtable">
-                    <input name="dnsupdate_keydata" type="text" class="formfld" id="dnsupdate_keydata" size="70" value="<?=htmlspecialchars($pconfig['dnsupdate_keydata']);?>">
+                    <input name="dnsupdate_keydata" type="text" class="formfld unknown" id="dnsupdate_keydata" size="70" value="<?=htmlspecialchars($pconfig['dnsupdate_keydata']);?>">
                     <br>
                     Paste an HMAC-MD5 key here.</td>
                 </tr>

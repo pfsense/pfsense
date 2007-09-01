@@ -159,7 +159,7 @@ include("head.inc");
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">MAC address</td>
                   <td width="78%" class="vtable"> 
-                    <input name="mac" type="text" class="formfld" id="mac" size="30" value="<?=htmlspecialchars($pconfig['mac']);?>">
+                    <input name="mac" type="text" class="formfld unknown" id="mac" size="30" value="<?=htmlspecialchars($pconfig['mac']);?>">
 		    <?php
 			$ip = getenv('REMOTE_ADDR');
 			$mac = `/usr/sbin/arp -an | grep {$ip} | cut -d" " -f4`;
@@ -173,20 +173,20 @@ include("head.inc");
                 <tr> 
                   <td width="22%" valign="top" class="vncell">IP address</td>
                   <td width="78%" class="vtable"> 
-                    <input name="ipaddr" type="text" class="formfld" id="ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>">
+                    <input name="ipaddr" type="text" class="formfld unknown" id="ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipaddr']);?>">
                     <br>
                     If no IP address is given, one will be dynamically allocated  from the pool.</td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">Hostname</td>
                   <td width="78%" class="vtable"> 
-                    <input name="hostname" type="text" class="formfld" id="hostname" size="20" value="<?=htmlspecialchars($pconfig['hostname']);?>">
+                    <input name="hostname" type="text" class="formfld unknown" id="hostname" size="20" value="<?=htmlspecialchars($pconfig['hostname']);?>">
                     <br> <span class="vexpl">Name of the host, without domain part.</span></td>
                 </tr>				
                 <tr> 
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable"> 
-                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>"> 
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>"> 
                     <br> <span class="vexpl">You may enter a description here 
                     for your reference (not parsed).</span></td>
                 </tr>

@@ -355,7 +355,7 @@ function methodsel_change() {
                 </tr>
 			   <tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
-                  <td width="78%" class="vtable"><select name="interface" class="formfld">
+                  <td width="78%" class="vtable"><select name="interface" class="formselect">
                       <?php 
                        $interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
 					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
@@ -381,7 +381,7 @@ function methodsel_change() {
                       <tr>
                         <td>Type:&nbsp;&nbsp;</td>
 						<td></td>
-                        <td><select name="localnettype" class="formfld" onChange="typesel_change()">
+                        <td><select name="localnettype" class="formselect" onChange="typesel_change()">
                             <?php $sel = is_specialnet($pconfig['localnet']); ?>
                             <option value="single" <?php if (($pconfig['localnetmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>>
                             Single host</option>
@@ -394,9 +394,9 @@ function methodsel_change() {
                       <tr>
                         <td>Address:&nbsp;&nbsp;</td>
 						<td><?=$mandfldhtmlspc;?></td>
-                        <td><input name="localnet" type="text" class="formfld" id="localnet" size="20" value="<?php if (!is_specialnet($pconfig['localnet'])) echo htmlspecialchars($pconfig['localnet']);?>">
+                        <td><input name="localnet" type="text" class="formfld unknown" id="localnet" size="20" value="<?php if (!is_specialnet($pconfig['localnet'])) echo htmlspecialchars($pconfig['localnet']);?>">
                           /
-                          <select name="localnetmask" class="formfld" id="localnetmask">
+                          <select name="localnetmask" class="formselect" id="localnetmask">
                             <?php for ($i = 31; $i >= 0; $i--): ?>
                             <option value="<?=$i;?>" <?php if ($i == $pconfig['localnetmask']) echo "selected"; ?>>
                             <?=$i;?>
@@ -409,9 +409,9 @@ function methodsel_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Remote subnet</td>
                   <td width="78%" class="vtable">
-                    <?=$mandfldhtml;?><input name="remotenet" type="text" class="formfld" id="remotenet" size="20" value="<?=$pconfig['remotenet'];?>">
+                    <?=$mandfldhtml;?><input name="remotenet" type="text" class="formfld unknown" id="remotenet" size="20" value="<?=$pconfig['remotenet'];?>">
                     /
-                    <select name="remotebits" class="formfld" id="remotebits">
+                    <select name="remotebits" class="formselect" id="remotebits">
                       <?php for ($i = 32; $i >= 0; $i--): ?>
                       <option value="<?=$i;?>" <?php if ($i == $pconfig['remotebits']) echo "selected"; ?>>
                       <?=$i;?>
@@ -422,14 +422,14 @@ function methodsel_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Remote gateway</td>
                   <td width="78%" class="vtable">
-                    <?=$mandfldhtml;?><input name="remotegw" type="text" class="formfld" id="remotegw" size="20" value="<?=$pconfig['remotegw'];?>">
+                    <?=$mandfldhtml;?><input name="remotegw" type="text" class="formfld unknown" id="remotegw" size="20" value="<?=$pconfig['remotegw'];?>">
                     <br>
                     Enter the public IP address of the remote gateway</td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
                 </tr>
@@ -443,7 +443,7 @@ function methodsel_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Negotiation mode</td>
                   <td width="78%" class="vtable">
-					<select name="p1mode" class="formfld">
+					<select name="p1mode" class="formfld unknown">
                       <?php $modes = explode(" ", "main aggressive"); foreach ($modes as $mode): ?>
                       <option value="<?=$mode;?>" <?php if ($mode == $pconfig['p1mode']) echo "selected"; ?>>
                       <?=htmlspecialchars($mode);?>
@@ -455,19 +455,19 @@ function methodsel_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">My identifier</td>
                   <td width="78%" class="vtable">
-					<select name="p1myidentt" class="formfld">
+					<select name="p1myidentt" class="formselect">
                       <?php foreach ($my_identifier_list as $mode => $modename): ?>
                       <option value="<?=$mode;?>" <?php if ($mode == $pconfig['p1myidentt']) echo "selected"; ?>>
                       <?=htmlspecialchars($modename);?>
                       </option>
                       <?php endforeach; ?>
-                    </select> <input name="p1myident" type="text" class="formfld" id="p1myident" size="30" value="<?=$pconfig['p1myident'];?>">
+                    </select> <input name="p1myident" type="text" class="formfld unknown" id="p1myident" size="30" value="<?=$pconfig['p1myident'];?>">
                   </td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Encryption algorithm</td>
                   <td width="78%" class="vtable">
-					<select name="p1ealgo" class="formfld">
+					<select name="p1ealgo" class="formselect">
                       <?php foreach ($p1_ealgos as $algo => $algoname): ?>
                       <option value="<?=$algo;?>" <?php if ($algo == $pconfig['p1ealgo']) echo "selected"; ?>>
                       <?=htmlspecialchars($algoname);?>
@@ -479,7 +479,7 @@ function methodsel_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Hash algorithm</td>
                   <td width="78%" class="vtable">
-					<select name="p1halgo" class="formfld">
+					<select name="p1halgo" class="formselect">
                       <?php foreach ($p1_halgos as $algo => $algoname): ?>
                       <option value="<?=$algo;?>" <?php if ($algo == $pconfig['p1halgo']) echo "selected"; ?>>
                       <?=htmlspecialchars($algoname);?>
@@ -491,7 +491,7 @@ function methodsel_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">DH key group</td>
                   <td width="78%" class="vtable">
-					<select name="p1dhgroup" class="formfld">
+					<select name="p1dhgroup" class="formselect">
                       <?php $keygroups = explode(" ", "1 2 5"); foreach ($keygroups as $keygroup): ?>
                       <option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['p1dhgroup']) echo "selected"; ?>>
                       <?=htmlspecialchars($keygroup);?>
@@ -504,13 +504,13 @@ function methodsel_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncell">Lifetime</td>
                   <td width="78%" class="vtable">
-                    <input name="p1lifetime" type="text" class="formfld" id="p1lifetime" size="20" value="<?=$pconfig['p1lifetime'];?>">
+                    <input name="p1lifetime" type="text" class="formfld unknown" id="p1lifetime" size="20" value="<?=$pconfig['p1lifetime'];?>">
                     seconds</td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Authentication method</td>
                   <td width="78%" class="vtable">
-					<select name="p1authentication_method" class="formfld" onChange="methodsel_change()">
+					<select name="p1authentication_method" class="formselect" onChange="methodsel_change()">
                       <?php foreach ($p1_authentication_methods as $method => $methodname): ?>
                       <option value="<?=$method;?>" <?php if ($method == $pconfig['p1authentication_method']) echo "selected"; ?>>
                       <?=htmlspecialchars($methodname);?>
@@ -522,7 +522,7 @@ function methodsel_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Pre-Shared Key</td>
                   <td width="78%" class="vtable">
-                    <?=$mandfldhtml;?><input name="p1pskey" type="text" class="formfld" id="p1pskey" size="40" value="<?=htmlspecialchars($pconfig['p1pskey']);?>">
+                    <?=$mandfldhtml;?><input name="p1pskey" type="text" class="formfld unknown" id="p1pskey" size="40" value="<?=htmlspecialchars($pconfig['p1pskey']);?>">
                   </td>
                 </tr>
                 <tr>
@@ -557,7 +557,7 @@ function methodsel_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Protocol</td>
                   <td width="78%" class="vtable">
-					<select name="p2proto" class="formfld">
+					<select name="p2proto" class="formselect">
                       <?php foreach ($p2_protos as $proto => $protoname): ?>
                       <option value="<?=$proto;?>" <?php if ($proto == $pconfig['p2proto']) echo "selected"; ?>>
                       <?=htmlspecialchars($protoname);?>
@@ -592,7 +592,7 @@ function methodsel_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">PFS key group</td>
                   <td width="78%" class="vtable">
-					<select name="p2pfsgroup" class="formfld">
+					<select name="p2pfsgroup" class="formselect">
                       <?php foreach ($p2_pfskeygroups as $keygroup => $keygroupname): ?>
                       <option value="<?=$keygroup;?>" <?php if ($keygroup == $pconfig['p2pfsgroup']) echo "selected"; ?>>
                       <?=htmlspecialchars($keygroupname);?>
@@ -604,7 +604,7 @@ function methodsel_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncell">Lifetime</td>
                   <td width="78%" class="vtable">
-                    <input name="p2lifetime" type="text" class="formfld" id="p2lifetime" size="20" value="<?=$pconfig['p2lifetime'];?>">
+                    <input name="p2lifetime" type="text" class="formfld unknown" id="p2lifetime" size="20" value="<?=$pconfig['p2lifetime'];?>">
                     seconds</td>
                 </tr>
                 <tr>
@@ -616,7 +616,7 @@ function methodsel_change() {
                 <tr>
                   <td width="22%" valign="top" class="vncell">Automatically ping host</td>
                   <td width="78%" class="vtable">
-                    <input name="pinghost" type="text" class="formfld" id="pinghost" size="20" value="<?=$pconfig['pinghost'];?>"> IP address</td>
+                    <input name="pinghost" type="text" class="formfld unknown" id="pinghost" size="20" value="<?=$pconfig['pinghost'];?>"> IP address</td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top">&nbsp;</td>

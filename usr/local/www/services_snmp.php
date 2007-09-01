@@ -263,7 +263,7 @@ function enable_change(whichone) {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Polling Port </td>
                   <td width="78%" class="vtable">
-                    <input name="pollport" type="text" class="formfld" id="pollport" size="40" value="<?=$pconfig['pollport'] ? htmlspecialchars($pconfig['pollport']) : htmlspecialchars(161);?>">
+                    <input name="pollport" type="text" class="formfld unknown" id="pollport" size="40" value="<?=$pconfig['pollport'] ? htmlspecialchars($pconfig['pollport']) : htmlspecialchars(161);?>">
                     <br>Enter the port to accept polling events on (default 161)</br>
 		  </td>
                 </tr>
@@ -271,21 +271,21 @@ function enable_change(whichone) {
                 <tr> 
                   <td width="22%" valign="top" class="vncell">System location</td>
                   <td width="78%" class="vtable"> 
-                    <input name="syslocation" type="text" class="formfld" id="syslocation" size="40" value="<?=htmlspecialchars($pconfig['syslocation']);?>"> 
+                    <input name="syslocation" type="text" class="formfld unknown" id="syslocation" size="40" value="<?=htmlspecialchars($pconfig['syslocation']);?>"> 
                   </td>
                 </tr>
 
                 <tr> 
                   <td width="22%" valign="top" class="vncell">System contact</td>
                   <td width="78%" class="vtable"> 
-                    <input name="syscontact" type="text" class="formfld" id="syscontact" size="40" value="<?=htmlspecialchars($pconfig['syscontact']);?>"> 
+                    <input name="syscontact" type="text" class="formfld unknown" id="syscontact" size="40" value="<?=htmlspecialchars($pconfig['syscontact']);?>"> 
                   </td>
                 </tr>
 
                 <tr> 
                   <td width="22%" valign="top" class="vncellreq">Read Community String</td>
                   <td width="78%" class="vtable"> 
-                    <input name="rocommunity" type="text" class="formfld" id="rocommunity" size="40" value="<?=htmlspecialchars($pconfig['rocommunity']);?>"> 
+                    <input name="rocommunity" type="text" class="formfld unknown" id="rocommunity" size="40" value="<?=htmlspecialchars($pconfig['rocommunity']);?>"> 
                     <br>In most cases, &quot;public&quot; is used here</br>
 		  </td>
                 </tr>
@@ -303,7 +303,7 @@ function enable_change(whichone) {
 		<tr>
 		  <td width="22%" valign="top" class="vncellreq">Write community string</td>
           <td width="78%" class="vtable">
-                    <input name="rwcommunity" type="text" class="formfld" id="rwcommunity" size="40" value="<?=htmlspecialchars($pconfig['rwcommunity']);?>">
+                    <input name="rwcommunity" type="text" class="formfld unknown" id="rwcommunity" size="40" value="<?=htmlspecialchars($pconfig['rwcommunity']);?>">
 		    <br>Please use something other then &quot;private&quot; here</br>
 		  </td>
                 </tr>
@@ -324,7 +324,7 @@ function enable_change(whichone) {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Trap server</td>
                   <td width="78%" class="vtable">
-                    <input name="trapserver" type="text" class="formfld" id="trapserver" size="40" value="<?=htmlspecialchars($pconfig['trapserver']);?>">
+                    <input name="trapserver" type="text" class="formfld unknown" id="trapserver" size="40" value="<?=htmlspecialchars($pconfig['trapserver']);?>">
                     <br>Enter trap server name</br>
 		  </td>
                 </tr>
@@ -332,7 +332,7 @@ function enable_change(whichone) {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Trap server port </td>
                   <td width="78%" class="vtable">
-                    <input name="trapserverport" type="text" class="formfld" id="trapserverport" size="40" value="<?=$pconfig['trapserverport'] ? htmlspecialchars($pconfig['trapserverport']) : htmlspecialchars(162);?>">
+                    <input name="trapserverport" type="text" class="formfld unknown" id="trapserverport" size="40" value="<?=$pconfig['trapserverport'] ? htmlspecialchars($pconfig['trapserverport']) : htmlspecialchars(162);?>">
                     <br>Enter the port to send the traps to (default 162)</br>
 		  </td>
                 </tr>
@@ -340,7 +340,7 @@ function enable_change(whichone) {
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Enter the SNMP trap string</td>
                   <td width="78%" class="vtable">
-                    <input name="trapstring" type="text" class="formfld" id="trapstring" size="40" value="<?=htmlspecialchars($pconfig['trapstring']);?>">
+                    <input name="trapstring" type="text" class="formfld unknown" id="trapstring" size="40" value="<?=htmlspecialchars($pconfig['trapstring']);?>">
                     <br>Trap string</br>
 		  </td>
                 </tr>

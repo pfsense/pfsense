@@ -152,7 +152,7 @@ function sf() { document.forms[0].savetopath.focus(); }
  <tr>
   <td>
 	<center>
-	Save/Load from path: <input size="42" id="savetopath" name="savetopath" value="<?php echo $savetopath; ?>">
+	Save/Load from path: <input size="42" id="savetopath" class="formfld unknown" name="savetopath" value="<?php echo $savetopath; ?>">
 	<input name="submit" type="submit"  class="button" id="Load" value="Load"> <input name="submit" type="submit"  class="button" id="Save" value="Save">
 	<hr noshade>
 	<?php if($_POST['highlight'] == "no"): ?>

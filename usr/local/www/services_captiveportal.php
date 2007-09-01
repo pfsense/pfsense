@@ -278,7 +278,7 @@ function enable_change(enable_change) {
 	<tr>
 	  <td width="22%" valign="top" class="vncellreq">Interface</td>
 	  <td width="78%" class="vtable">
-		<select name="cinterface" class="formfld" id="cinterface">
+		<select name="cinterface" class="formselect" id="cinterface">
 		  <?php $interfaces = array('lan' => 'LAN');
 		  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 			if (isset($config['interfaces']['opt' . $i]['enable']))
@@ -297,7 +297,8 @@ function enable_change(enable_change) {
 	  <td class="vtable">
 		<table cellpadding="0" cellspacing="0">
                  <tr>
-           			<td><input name="maxprocperip" type="text" class="formfld" id="maxprocperip" size="5" value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> per client IP address (0 = no limit)</td>
+           			<td><input name="maxprocperip" type="text" class="formfld unknown" id="maxprocperip" size="5" 
+value="<?=htmlspecialchars($pconfig['maxprocperip']);?>"> per client IP address (0 = no limit)</td>
                  </tr>
                </table>
 This setting limits the number of concurrent connections to the captive portal HTTP(S) server. This does not set how many users can be logged in
@@ -307,14 +308,14 @@ Default is 4 connections per client IP address, with a total maximum of 16 conne
 	<tr>
 	  <td valign="top" class="vncell">Idle timeout</td>
 	  <td class="vtable">
-		<input name="idletimeout" type="text" class="formfld" id="idletimeout" size="6" value="<?=htmlspecialchars($pconfig['idletimeout']);?>">
+		<input name="idletimeout" type="text" class="formfld unknown" id="idletimeout" size="6" value="<?=htmlspecialchars($pconfig['idletimeout']);?>">
 minutes<br>
 Clients will be disconnected after this amount of inactivity. They may log in again immediately, though. Leave this field blank for no idle timeout.</td>
 	</tr>
 	<tr>
 	  <td width="22%" valign="top" class="vncell">Hard timeout</td>
 	  <td width="78%" class="vtable">
-		<input name="timeout" type="text" class="formfld" id="timeout" size="6" value="<?=htmlspecialchars($pconfig['timeout']);?>">
+		<input name="timeout" type="text" class="formfld unknown" id="timeout" size="6" value="<?=htmlspecialchars($pconfig['timeout']);?>">
 		minutes<br>
 	  Clients will be disconnected after this amount of time, regardless of activity. They may log in again immediately, though. Leave this field blank for no hard timeout (not recommended unless an idle timeout is set).</td>
 	</tr>
@@ -328,7 +329,7 @@ Clients will be disconnected after this amount of inactivity. They may log in ag
 	<tr>
 	  <td valign="top" class="vncell">Redirection URL</td>
 	  <td class="vtable">
-		<input name="redirurl" type="text" class="formfld" id="redirurl" size="60" value="<?=htmlspecialchars($pconfig['redirurl']);?>">
+		<input name="redirurl" type="text" class="formfld url" id="redirurl" size="60" value="<?=htmlspecialchars($pconfig['redirurl']);?>">
 		<br>
 If you provide a URL here, clients will be redirected to that URL instead of the one they initially tried
 to access after they've authenticated.</td>
@@ -359,11 +360,11 @@ to access after they've authenticated.</td>
         <table cellpadding="0" cellspacing="0">
         <tr>
         <td>Default download</td>
-        <td><input type="text" class="formfld" name="bwdefaultdn" id="bwdefaultdn" size="10" value="<?=htmlspecialchars($pconfig['bwdefaultdn']);?>"> Kbit/s</td>
+        <td><input type="text" class="formfld unknown" name="bwdefaultdn" id="bwdefaultdn" size="10" value="<?=htmlspecialchars($pconfig['bwdefaultdn']);?>"> Kbit/s</td>
         </tr>
         <tr>
         <td>Default upload</td>
-        <td><input type="text" class="formfld" name="bwdefaultup" id="bwdefaultup" size="10" value="<?=htmlspecialchars($pconfig['bwdefaultup']);?>"> Kbit/s</td>
+        <td><input type="text" class="formfld unknown" name="bwdefaultup" id="bwdefaultup" size="10" value="<?=htmlspecialchars($pconfig['bwdefaultup']);?>"> Kbit/s</td>
         </tr></table>
         <br>
         If this option is set, the captive portal will restrict each user who logs in to the specified default bandwidth. RADIUS can override the default settings. Leave empty or set to 0 for no limit. You will <strong>need</strong> to enable the traffic shaper for this to be effective.</td>
@@ -396,17 +397,17 @@ to access after they've authenticated.</td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top">IP address</td>
-				<td class="vtable"><input name="radiusip" type="text" class="formfld" id="radiusip" size="20" value="<?=htmlspecialchars($pconfig['radiusip']);?>"><br>
+				<td class="vtable"><input name="radiusip" type="text" class="formfld unknown" id="radiusip" size="20" value="<?=htmlspecialchars($pconfig['radiusip']);?>"><br>
 				Enter the IP address of the RADIUS server which users of the captive portal have to authenticate against.</td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top">Port</td>
-				<td class="vtable"><input name="radiusport" type="text" class="formfld" id="radiusport" size="5" value="<?=htmlspecialchars($pconfig['radiusport']);?>"><br>
+				<td class="vtable"><input name="radiusport" type="text" class="formfld unknown" id="radiusport" size="5" value="<?=htmlspecialchars($pconfig['radiusport']);?>"><br>
 				 Leave this field blank to use the default port (1812).</td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top">Shared secret&nbsp;&nbsp;</td>
-				<td class="vtable"><input name="radiuskey" type="text" class="formfld" id="radiuskey" size="16" value="<?=htmlspecialchars($pconfig['radiuskey']);?>"><br>
+				<td class="vtable"><input name="radiuskey" type="text" class="formfld unknown" id="radiuskey" size="16" value="<?=htmlspecialchars($pconfig['radiuskey']);?>"><br>
 				Leave this field blank to not use a RADIUS shared secret (not recommended).</td>
 			</tr>
 			<tr>
@@ -417,16 +418,17 @@ to access after they've authenticated.</td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top">IP address</td>
-				<td class="vtable"><input name="radiusip2" type="text" class="formfld" id="radiusip2" size="20" value="<?=htmlspecialchars($pconfig['radiusip2']);?>"><br>
+				<td class="vtable"><input name="radiusip2" type="text" class="formfld unknown" id="radiusip2" size="20" value="<?=htmlspecialchars($pconfig['radiusip2']);?>"><br>
 				If you have a second RADIUS server, you can activate it by entering its IP address here.</td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top">Port</td>
-				<td class="vtable"><input name="radiusport2" type="text" class="formfld" id="radiusport2" size="5" value="<?=htmlspecialchars($pconfig['radiusport2']);?>"></td>
+				<td class="vtable"><input name="radiusport2" type="text" class="formfld unknown" id="radiusport2" size="5" value="<?=htmlspecialchars($pconfig['radiusport2']);?>"></td>
 			</tr>
 			<tr>
 				<td class="vncell" valign="top">Shared secret&nbsp;&nbsp;</td>
-				<td class="vtable"><input name="radiuskey2" type="text" class="formfld" id="radiuskey2" size="16" value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
+				<td class="vtable"><input name="radiuskey2" type="text" class="formfld unknown" id="radiuskey2" size="16" 
+value="<?=htmlspecialchars($pconfig['radiuskey2']);?>"></td>
 			</tr>
 			<tr>
 			  <td colspan="2" class="list" height="12"></td>
@@ -442,7 +444,7 @@ to access after they've authenticated.</td>
 			</tr>
 			<tr>
 			  <td class="vncell" valign="top">Accounting port</td>
-			  <td class="vtable"><input name="radiusacctport" type="text" class="formfld" id="radiusacctport" size="5" value="<?=htmlspecialchars($pconfig['radiusacctport']);?>"><br>
+			  <td class="vtable"><input name="radiusacctport" type="text" class="formfld unknown" id="radiusacctport" size="5" value="<?=htmlspecialchars($pconfig['radiusacctport']);?>"><br>
 			  Leave blank to use the default port (1813).</td>
 			  </tr>
 			<tr>
@@ -481,7 +483,7 @@ to access after they've authenticated.</td>
 			</tr>
 			<tr>
 				<td class="vncell">Shared secret</td>
-				<td class="vtable"><input name="radmac_secret" type="text" class="formfld" id="radmac_secret" size="16" value="<?=htmlspecialchars($pconfig['radmac_secret']);?>"></td>
+				<td class="vtable"><input name="radmac_secret" type="text" class="formfld unknown" id="radmac_secret" size="16" value="<?=htmlspecialchars($pconfig['radmac_secret']);?>"></td>
 			</tr>
 			<tr>
 			  <td colspan="2" class="list" height="12"></td>
@@ -526,7 +528,7 @@ to access after they've authenticated.</td>
 	<tr>
       <td valign="top" class="vncell">HTTPS server name </td>
       <td class="vtable">
-        <input name="httpsname" type="text" class="formfld" id="httpsname" size="30" value="<?=htmlspecialchars($pconfig['httpsname']);?>"><br>
+        <input name="httpsname" type="text" class="formfld unknown" id="httpsname" size="30" value="<?=htmlspecialchars($pconfig['httpsname']);?>"><br>
     This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate (otherwise, the client browser will most likely display a security warning). Make sure captive portal clients can resolve this name in DNS. </td>
 	  </tr>
 	<tr>
@@ -546,7 +548,7 @@ to access after they've authenticated.</td>
 	<tr>
 	  <td width="22%" valign="top" class="vncellreq">Portal page contents</td>
 	  <td width="78%" class="vtable">
-		<?=$mandfldhtml;?><input type="file" name="htmlfile" class="formfld" id="htmlfile"><br>
+		<?=$mandfldhtml;?><input type="file" name="htmlfile" class="formfld file" id="htmlfile"><br>
 		<?php
 			list($host) = explode(":", $_SERVER['HTTP_HOST']);
 			if(isset($config['captiveportal']['httpslogin'])) {
@@ -577,7 +579,7 @@ Example code for the form:<br>
 		error page<br>
 		contents</td>
 	  <td class="vtable">
-		<input name="errfile" type="file" class="formfld" id="errfile"><br>
+		<input name="errfile" type="file" class="formfld file" id="errfile"><br>
 		<?php if ($config['captiveportal']['page']['errtext']): ?>
 		<a href="?act=viewerrhtml" target="_blank">View current page</a>
 		  <br>

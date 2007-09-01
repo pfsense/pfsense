@@ -210,7 +210,7 @@ function enable_change(enable_over) {
                         <td width="22%" valign="top" class="vncell">Destination server</td>
                         <td width="78%" class="vtable">
 			<input name="proxydhcp" type="checkbox" value="yes" <?php if ($pconfig['proxydhcp']) echo "checked"; ?> onClick="enable_change(false)">  Proxy requests to DHCP server on WAN subnet
-                          <br><br><input name="server" type="text" class="formfld" id="server" size="20" value="<?=htmlspecialchars($pconfig['server']);?>">
+                          <br><br><input name="server" type="text" class="formfld unknown" id="server" size="20" value="<?=htmlspecialchars($pconfig['server']);?>">
                           <br>
 			  This is the IP address of the server to which the DHCP packet is relayed.  Select "Proxy requests to DHCP server on WAN subnet" to relay DHCP packets to the server that was used on the WAN interface.
                         </td>

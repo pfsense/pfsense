@@ -110,7 +110,7 @@ include("head.inc");
 				<tr>
                   <td width="22%" valign="top" class="vncellreq">Parent interface</td>
                   <td width="78%" class="vtable">
-                    <select name="if" class="formfld">
+                    <select name="if" class="formselect">
                       <?php
 					  foreach ($portlist as $ifn => $ifinfo)
 						if (is_jumbo_capable($ifn)) {
@@ -129,14 +129,14 @@ include("head.inc");
 				<tr>
                   <td valign="top" class="vncellreq">VLAN tag </td>
                   <td class="vtable">
-                    <input name="tag" type="text" class="formfld" id="tag" size="6" value="<?=htmlspecialchars($pconfig['tag']);?>">
+                    <input name="tag" type="text" class="formfld unknown" id="tag" size="6" value="<?=htmlspecialchars($pconfig['tag']);?>">
                     <br>
                     <span class="vexpl">802.1Q VLAN tag (between 1 and 4094) </span></td>
 			    </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
                 </tr>

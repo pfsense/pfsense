@@ -451,7 +451,7 @@ EOD;
   <tr>
     <td valign="top" class="vncellreq">Name</td>
     <td class="vtable">
-      <input name="name" type="text" id="name" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
+      <input name="name" type="text" id="name" class="formfld unknown" size="40" value="<?=htmlspecialchars($pconfig['name']);?>" />
       <br />
       <span class="vexpl">
         The name of the alias may only consist of the characters a-z, A-Z and 0-9.
@@ -462,7 +462,7 @@ EOD;
   <tr>
     <td width="22%" valign="top" class="vncell">Description</td>
     <td width="78%" class="vtable">
-      <input name="descr" type="text"  id="descr" size="40" value="<?=$pconfig['descr'];?>" />
+      <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=$pconfig['descr'];?>" />
       <br />
       <span class="vexpl">
         You may enter a description here for your reference (not parsed).
@@ -515,7 +515,7 @@ EOD;
 			?>
           <tr>
             <td>
-              <input name="address<?php echo $tracker; ?>" type="text"  id="address<?php echo $tracker; ?>" size="30" value="<?=htmlspecialchars($address);?>" />
+              <input name="address<?php echo $tracker; ?>" type="text" class="formfld unknown" id="address<?php echo $tracker; ?>" size="30" value="<?=htmlspecialchars($address);?>" />
             </td>
             <td>
 			        <select name="address_subnet<?php echo $tracker; ?>" class="formselect" id="address_subnet<?php echo $tracker; ?>">
@@ -526,7 +526,7 @@ EOD;
 			        </select>
 			      </td>
             <td>
-              <input name="detail<?php echo $tracker; ?>" type="text"  id="detail<?php echo $tracker; ?>" size="50" value="<?=$item4;?>" />
+              <input name="detail<?php echo $tracker; ?>" type="text" class="formfld unknown" id="detail<?php echo $tracker; ?>" size="50" value="<?=$item4;?>" />
             </td>
             <td>
     			  <?php

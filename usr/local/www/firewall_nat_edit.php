@@ -270,7 +270,7 @@ include("fbegin.inc"); ?>
 	  	<tr>
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
-					<select name="interface" class="formfld">
+					<select name="interface" class="formselect">
 						<?php
 						$interfaces = array('wan' => 'WAN', 'lan' => 'LAN', 'pptp' => 'PPTP', 'pppoe' => 'PPPOE');
 						for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
@@ -288,7 +288,7 @@ include("fbegin.inc"); ?>
 			    <tr>
                   <td width="22%" valign="top" class="vncellreq">External address</td>
                   <td width="78%" class="vtable">
-					<select name="extaddr" class="formfld">
+					<select name="extaddr" class="formselect">
 						<option value="" <?php if (!$pconfig['extaddr']) echo "selected"; ?>>Interface address</option>
 <?php					if (is_array($config['virtualip']['vip'])):
 						foreach ($config['virtualip']['vip'] as $sn): ?>
@@ -305,7 +305,7 @@ include("fbegin.inc"); ?>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Protocol</td>
                   <td width="78%" class="vtable">
-                    <select name="proto" class="formfld" onChange="proto_change(); check_for_aliases();">
+                    <select name="proto" class="formselect" onChange="proto_change(); check_for_aliases();">
                       <?php $protocols = explode(" ", "TCP UDP TCP/UDP GRE ESP"); foreach ($protocols as $proto): ?>
                       <option value="<?=strtolower($proto);?>" <?php if (strtolower($proto) == $pconfig['proto']) echo "selected"; ?>><?=htmlspecialchars($proto);?></option>
                       <?php endforeach; ?>
@@ -320,7 +320,7 @@ include("fbegin.inc"); ?>
                     <table border="0" cellspacing="0" cellpadding="0">
                       <tr>
                         <td>from:&nbsp;&nbsp;</td>
-                        <td><select name="beginport" class="formfld" onChange="ext_rep_change(); ext_change(); check_for_aliases();">
+                        <td><select name="beginport" class="formselect" onChange="ext_rep_change(); ext_change(); check_for_aliases();">
                             <option value="">(other)</option>
                             <?php $bfound = 0; foreach ($wkports as $wkport => $wkportdesc): ?>
                             <option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['beginport']) {
@@ -334,7 +334,7 @@ include("fbegin.inc"); ?>
                       </tr>
                       <tr>
                         <td>to:</td>
-                        <td><select name="endport" class="formfld" onChange="ext_change(); check_for_aliases();">
+                        <td><select name="endport" class="formselect" onChange="ext_change(); check_for_aliases();">
                             <option value="">(other)</option>
                             <?php $bfound = 0; foreach ($wkports as $wkport => $wkportdesc): ?>
                             <option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['endport']) {
@@ -363,7 +363,7 @@ include("fbegin.inc"); ?>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Local port</td>
                   <td width="78%" class="vtable">
-                    <select name="localbeginport" class="formfld" onChange="ext_change();check_for_aliases();">
+                    <select name="localbeginport" class="formselect" onChange="ext_change();check_for_aliases();">
                       <option value="">(other)</option>
                       <?php $bfound = 0; foreach ($wkports as $wkport => $wkportdesc): ?>
                       <option value="<?=$wkport;?>" <?php if ($wkport == $pconfig['localbeginport']) {
@@ -384,7 +384,7 @@ include("fbegin.inc"); ?>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable">
-                    <input name="descr" type="text" class="formfld" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
+                    <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">
                     <br> <span class="vexpl">You may enter a description here
                     for your reference (not parsed).</span></td>
                 </tr>

@@ -62,6 +62,7 @@ $pconfig['spoofmac'] = $optcfg['spoofmac'];
 $pconfig['mtu'] = $optcfg['mtu'];
 
 $pconfig['disableftpproxy'] = isset($optcfg['disableftpproxy']);
+$pconfig['use_rrd_gateway'] = $optcfg['use_rrd_gateway'];
 
 /* Wireless interface? */
 if (isset($optcfg['wireless'])) {
@@ -72,7 +73,8 @@ if (isset($optcfg['wireless'])) {
 if ($optcfg['ipaddr'] == "dhcp") {
 	$pconfig['type'] = "DHCP";
 	$pconfig['dhcphostname'] = $optcfg['dhcphostname'];
-	$pconfig['use_rrd_gateway'] = $optcfg['use_rrd_gateway'];
+	$pconfig['alias-address'] = $optcfg['alias-address'];
+	$pconfig['alias-subnet'] = $optcfg['alias-subnet'];
 } else {
 	$pconfig['type'] = "Static";
 	$pconfig['ipaddr'] = $optcfg['ipaddr'];
@@ -165,6 +167,13 @@ if ($_POST) {
 				}
 			}
 		}
+		if (($_POST['alias-address'] && !is_ipaddr($_POST['alias-address']))) {
+			$input_errors[] = "A valid alias IP address must be specified.";
+		}
+		if (($_POST['alias-subnet'] && !is_numeric($_POST['alias-subnet']))) {
+			$input_errors[] = "A valid alias subnet bit count must be specified.";
+		}
+
 	        if ($_POST['mtu'] && (($_POST['mtu'] < 576) || ($_POST['mtu'] > 1500))) {
 			$input_errors[] = "The MTU must be between 576 and 1500 bytes.";
 		}		
@@ -222,6 +231,8 @@ if ($_POST) {
 		} else if ($_POST['type'] == "DHCP") {
 			$optcfg['ipaddr'] = "dhcp";
 			$optcfg['dhcphostname'] = $_POST['dhcphostname'];
+			$optcfg['alias-address'] = $_POST['alias-address'];
+			$optcfg['alias-subnet'] = $_POST['alias-subnet'];
 		}
 
 		$optcfg['blockpriv'] = $_POST['blockpriv'] ? true : false;
@@ -444,6 +455,23 @@ function show_mon_config() {
                     and hostname when requesting a DHCP lease. Some ISPs may require
                     this (for client identification).</td>
                 </tr>
+		<tr>
+		  <td width="100" valign="top" class="vncellreq">Alias IP address</td>
+		  <td class="vtable"> <input name="alias-address" type="text" class="formfld" id="alias-address" size="20" value="<?=htmlspecialchars($pconfig['alias-address']);?>">
+		    <select name="alias-subnet" class="formselect" id="alias-subnet">
+		        <?php
+		        for ($i = 32; $i > 0; $i--) {
+		                if($i <> 31) {
+		                        echo "<option value=\"{$i}\" ";
+		                        if ($i == $pconfig['alias-subnet']) echo "selected";
+		                        echo ">" . $i . "</option>";
+		                }
+		        }
+		        ?>
+		    </select>
+		    The value in this field is used as a fixed alias IP address by the
+		    DHCP client.</td>
+		</tr>
                 <tr>
                   <td colspan="2" valign="top" height="16"></td>
                 </tr>		

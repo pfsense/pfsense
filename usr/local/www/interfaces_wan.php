@@ -134,6 +134,8 @@ $pconfig['bigpond_authdomain'] = $config['bigpond']['authdomain'];
 $pconfig['bigpond_minheartbeatinterval'] = $config['bigpond']['minheartbeatinterval'];
 
 $pconfig['dhcphostname'] = $wancfg['dhcphostname'];
+$pconfig['alias-address'] = $wancfg['alias-address'];
+$pconfig['alias-subnet'] = $wancfg['alias-subnet'];
 $pconfig['use_rrd_gateway'] = $wancfg['use_rrd_gateway'];
 
 if ($wancfg['ipaddr'] == "dhcp") {
@@ -243,6 +245,12 @@ if ($_POST) {
 	}
 	if (($_POST['subnet'] && !is_numeric($_POST['subnet']))) {
 		$input_errors[] = "A valid subnet bit count must be specified.";
+	}
+	if (($_POST['alias-address'] && !is_ipaddr($_POST['alias-address']))) {
+		$input_errors[] = "A valid alias IP address must be specified.";
+	}
+	if (($_POST['alias-subnet'] && !is_numeric($_POST['alias-subnet']))) {
+		$input_errors[] = "A valid alias subnet bit count must be specified.";
 	}
 	if (($_POST['gateway'] && !is_ipaddr($_POST['gateway']))) {
 		$input_errors[] = "A valid gateway must be specified.";
@@ -364,6 +372,8 @@ if ($_POST) {
 		} else if ($_POST['type'] == "DHCP") {
 			$wancfg['ipaddr'] = "dhcp";
 			$wancfg['dhcphostname'] = $_POST['dhcphostname'];
+			$wancfg['alias-address'] = $_POST['alias-address'];
+			$wancfg['alias-subnet'] = $_POST['alias-subnet'];
 		} else if ($_POST['type'] == "PPPoE") {
 			$wancfg['ipaddr'] = "pppoe";
 			$config['pppoe']['username'] = $_POST['username'];
@@ -794,6 +804,23 @@ function show_mon_config() {
                     The value in this field is sent as the DHCP client identifier
                     and hostname when requesting a DHCP lease. Some ISPs may require
                     this (for client identification).</td>
+                </tr>
+                <tr>
+                  <td width="100" valign="top" class="vncellreq">Alias IP address</td>
+                  <td class="vtable"> <input name="alias-address" type="text" class="formfld" id="alias-address" size="20" value="<?=htmlspecialchars($pconfig['alias-address']);?>">
+                    <select name="alias-subnet" class="formselect" id="alias-subnet">
+			<?php
+			for ($i = 32; $i > 0; $i--) {
+				if($i <> 31) {
+					echo "<option value=\"{$i}\" ";
+					if ($i == $pconfig['alias-subnet']) echo "selected";
+					echo ">" . $i . "</option>";
+				}
+			}
+			?>
+                    </select>
+                    The value in this field is used as a fixed alias IP address by the
+		    DHCP client.</td>
                 </tr>
                 <tr>
                   <td colspan="2" valign="top" height="16"></td>

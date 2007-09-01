@@ -984,6 +984,17 @@ interface "{$optif}" {
 
 EOD;
 
+if(is_ipaddr($optcfg['alias-address'])) {
+	$subnetmask = gen_subnet_mask($optcfg['alias-subnet']);
+	$dhclientconf .= <<<EOD
+alias {
+	interface  "{$optif}";
+	fixed-address {$optcfg['alias-address']};
+	option subnet-mask {$subnetmask};
+}
+
+EOD;
+}
 	fwrite($fd, $dhclientconf);
 	fclose($fd);
 
@@ -1027,6 +1038,18 @@ interface "{$realinterface}" {
 }
 
 EOD;
+
+if(is_ipaddr($optcfg['alias-address'])) {
+	$subnetmask = gen_subnet_mask($optcfg['alias-subnet']);
+	$dhclientconf .= <<<EOD
+alias {
+	interface  "{$optif}";
+	fixed-address {$optcfg['alias-address']};
+	option subnet-mask {$subnetmask};
+}
+
+EOD;
+}
 
 	fwrite($fd, $dhclientconf);
 	fclose($fd);
@@ -1075,6 +1098,17 @@ interface "{$wancfg['if']}" {
 
 EOD;
 
+if(is_ipaddr($wancfg['alias-address'])) {
+	$subnetmask = gen_subnet_mask($wancfg['alias-subnet']);
+	$dhclientconf .= <<<EOD
+alias {
+	interface  "{$wancfg['if']}";
+	fixed-address {$wancfg['alias-address']};
+	option subnet-mask {$subnetmask};
+}
+
+EOD;
+}
 	fwrite($fd, $dhclientconf);
 	fclose($fd);
 

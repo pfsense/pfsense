@@ -695,31 +695,44 @@ function filter_nat_rules_generate() {
 	} else {
 		/* standard outbound rules (one for each interface) */
 		update_filter_reload_status("Creating outbound NAT rules");
-
+		$target = get_current_wan_address($interface = "wan");
+		if(is_ipaddr($wancfg['alias-address'])) {
+			$aliastarget = $wancfg['alias-address'];
+			$aliassubnet = $wancfg['alias-subnet'];
+			$natrules .= filter_nat_rules_generate_if($wanif,
+				"{$lansa}/{$lancfg['subnet']}", null, "$aliastarget/$aliassubnet", null, $aliastarget, null, false);
+		}
 		$natrules .= filter_nat_rules_generate_if($wanif,
-			"{$lansa}/{$lancfg['subnet']}", 500, "", 500, null, 500, false);
+			"{$lansa}/{$lancfg['subnet']}", 500, "", 500, $target, 500, false);
 		$natrules .= filter_nat_rules_generate_if($wanif,
-			"{$lansa}/{$lancfg['subnet']}", 4500, "", 4500, null, 4500, false);
+			"{$lansa}/{$lancfg['subnet']}", 4500, "", 4500, $target, 4500, false);
 		$natrules .= filter_nat_rules_generate_if($wanif,
-			"{$lansa}/{$lancfg['subnet']}", 5060, "", 5060, null, 5060, false);
+			"{$lansa}/{$lancfg['subnet']}", 5060, "", 5060, $target, 5060, false);
 		$natrules .= filter_nat_rules_generate_if($wanif,
-			"{$lansa}/{$lancfg['subnet']}");
+			"{$lansa}/{$lancfg['subnet']}", null, "", null, $target, null, false);
 
 		$optints = array();
 		generate_optcfg_array($optints);
 
 		/* generate lan nat mappings for opts with a gateway opts */
-		foreach($optints as $oc) {
+		foreach($optints as $ocname => $oc) {
 			$opt_interface = $oc['if'];
 			if (interface_has_gateway("$opt_interface")) {
+				if(is_ipaddr($config['interfaces'][$ocname]['alias-address'])) {
+					$aliastarget = $config['interfaces'][$ocname]['alias-address'];
+					$aliassubnet = $config['interfaces'][$ocname]['alias-subnet'];
+					$natrules .= filter_nat_rules_generate_if($opt_interface,
+						"{$lansa}/{$lancfg['subnet']}", null, "$aliastarget/$aliassubnet", null, $aliastarget, null, false);
+				}
+				$target = get_current_wan_address($interface = "$ocname");
 				$natrules .= filter_nat_rules_generate_if($opt_interface,
-					"{$lansa}/{$lancfg['subnet']}", 500, "", 500, null, 500, false);
+					"{$lansa}/{$lancfg['subnet']}", 500, "", 500, $target, 500, false);
 				$natrules .= filter_nat_rules_generate_if($opt_interface,
-					"{$lansa}/{$lancfg['subnet']}", 4500, "", 4500, null, 4500, false);
+					"{$lansa}/{$lancfg['subnet']}", 4500, "", 4500, $target, 4500, false);
 				$natrules .= filter_nat_rules_generate_if($opt_interface,
-					"{$lansa}/{$lancfg['subnet']}", 5060, "", 5060, null, 5060, false);
+					"{$lansa}/{$lancfg['subnet']}", 5060, "", 5060, $target, 5060, false);
 				$natrules .= filter_nat_rules_generate_if($opt_interface,
-					"{$lansa}/{$lancfg['subnet']}");
+					"{$lansa}/{$lancfg['subnet']}", null, "", null, $target, null, false);
 			}
 		}
 
@@ -730,29 +743,42 @@ function filter_nat_rules_generate() {
 
 			if ((isset ($optcfg['enable'])) && (!$optcfg['bridge']) && (!interface_has_gateway("opt{$i}"))) {
 				$optsa = gen_subnet($optcfg['ipaddr'], $optcfg['subnet']);
-
+				$target = get_current_wan_address($interface = "opt$i");
+				if(is_ipaddr($wancfg['alias-address'])) {
+					$aliastarget = $wancfg['alias-address'];
+					$aliassubnet = $wancfg['alias-subnet'];
+					$natrules .= filter_nat_rules_generate_if($wanif,
+						"{$lansa}/{$lancfg['subnet']}", null, "$aliastarget/$aliassubnet", null, $aliastarget, null, false);
+				}
 				/* create outbound nat entries for primary wan */
 				$natrules .= filter_nat_rules_generate_if($wanif,
-					"{$optsa}/{$optcfg['subnet']}", 500, "", 500, null, 500, false);
+					"{$optsa}/{$optcfg['subnet']}", 500, "", 500, $target, 500, false);
 				$natrules .= filter_nat_rules_generate_if($wanif,
-					"{$optsa}/{$optcfg['subnet']}", 4500, "", 4500, null, 4500, false);
+					"{$optsa}/{$optcfg['subnet']}", 4500, "", 4500, $target, 4500, false);
 				$natrules .= filter_nat_rules_generate_if($wanif,
-					"{$optsa}/{$optcfg['subnet']}", 5060, "", 5060, null, 5060, false);
+					"{$optsa}/{$optcfg['subnet']}", 5060, "", 5060, $target, 5060, false);
 				$natrules .= filter_nat_rules_generate_if($wanif,
-					"{$optsa}/{$optcfg['subnet']}", null, "", null, null, null, isset($optcfg['nonat']));
+					"{$optsa}/{$optcfg['subnet']}", null, "", null, $target, null, isset($optcfg['nonat']));
 
 				/* create outbound nat entries for all opt wans */
-				foreach($optints as $oc) {
+				foreach($optints as $ocname => $oc) {
 					$opt_interface = $oc['if'];
 					if (interface_has_gateway("$opt_interface")) {
+						$target = get_current_wan_address($interface = "$ocname");
+						if(is_ipaddr($config['interfaces'][$ocname]['alias-address'])) {
+							$aliastarget = $config['interfaces'][$ocname]['alias-address'];
+							$aliassubnet = $config['interfaces'][$ocname]['alias-subnet'];
+							$natrules .= filter_nat_rules_generate_if($opt_interface,
+								"{$lansa}/{$lancfg['subnet']}", null, "$aliastarget/$aliassubnet", null, $aliastarget, null, false);
+						}
 						$natrules .= filter_nat_rules_generate_if($opt_interface,
-							"{$optsa}/{$optcfg['subnet']}", 500, "", 500, null, 500, false);
+							"{$optsa}/{$optcfg['subnet']}", 500, "", 500, $target, 500, false);
 						$natrules .= filter_nat_rules_generate_if($opt_interface,
-							"{$optsa}/{$optcfg['subnet']}", 4500, "", 4500, null, 4500, false);
+							"{$optsa}/{$optcfg['subnet']}", 4500, "", 4500, $target, 4500, false);
 						$natrules .= filter_nat_rules_generate_if($opt_interface,
-							"{$optsa}/{$optcfg['subnet']}", 5060, "", 5060, null, 5060, false);
+							"{$optsa}/{$optcfg['subnet']}", 5060, "", 5060, $target, 5060, false);
 						$natrules .= filter_nat_rules_generate_if($opt_interface,
-							"{$optsa}/{$optcfg['subnet']}", null, "", null, null, null, isset($optcfg['nonat']));
+							"{$optsa}/{$optcfg['subnet']}", null, "", null, $target, null, isset($optcfg['nonat']));
 					}
 				}
 			}
@@ -763,27 +789,29 @@ function filter_nat_rules_generate() {
 			$pptp_subnet = $g['pptp_subnet'];
 			if($config['pptp']['pptp_subnet'] <> "")
 				$pptp_subnet = $config['pptp']['pptp_subnet'];
+			$target = get_current_wan_address($interface = "wan");
 			$natrules .= filter_nat_rules_generate_if($wanif,
-				"{$pptpdcfg['remoteip']}/{$pptp_subnet}", 500, "", 500, null, 500, false);
+				"{$pptpdcfg['remoteip']}/{$pptp_subnet}", 500, "", 500, $target, 500, false);
 			$natrules .= filter_nat_rules_generate_if($wanif,
-				"{$pptpdcfg['remoteip']}/{$pptp_subnet}", 4500, "", 4500, null, 4500, false);
+				"{$pptpdcfg['remoteip']}/{$pptp_subnet}", 4500, "", 4500, $target, 4500, false);
 			$natrules .= filter_nat_rules_generate_if($wanif,
-				"{$pptpdcfg['remoteip']}/{$pptp_subnet}", 5060, "", 5060, null, 5060, false);
+				"{$pptpdcfg['remoteip']}/{$pptp_subnet}", 5060, "", 5060, $target, 5060, false);
 			$natrules .= filter_nat_rules_generate_if($wanif,
-				"{$pptpdcfg['remoteip']}/{$pptp_subnet}");
+				"{$pptpdcfg['remoteip']}/{$pptp_subnet}", null, "", null, $target, null, false);
 
 			/* generate nat mappings for opts with a gateway opts */
-			foreach($optints as $oc) {
+			foreach($optints as $ocname => $oc) {
 				$opt_interface = $oc['if'];
 				if ((is_private_ip($pptpdcfg['remoteip'])) && (interface_has_gateway($opt_interface))) {
+					$target = get_current_wan_address($interface = "$ocname");
 					$natrules .= filter_nat_rules_generate_if($opt_interface,
-						"{$pptpdcfg['remoteip']}/{$pptp_subnet}", 500, "", 500, null, 500, false);
+						"{$pptpdcfg['remoteip']}/{$pptp_subnet}", 500, "", 500, $target, 500, false);
 					$natrules .= filter_nat_rules_generate_if($opt_interface,
-						"{$pptpdcfg['remoteip']}/{$pptp_subnet}", 4500, "", 4500, null, 4500, false);
+						"{$pptpdcfg['remoteip']}/{$pptp_subnet}", 4500, "", 4500, $target, 4500, false);
 					$natrules .= filter_nat_rules_generate_if($opt_interface,
-						"{$pptpdcfg['remoteip']}/{$pptp_subnet}", 5060, "", 5060, null, 5060, false);
+						"{$pptpdcfg['remoteip']}/{$pptp_subnet}", 5060, "", 5060, $target, 5060, false);
 					$natrules .= filter_nat_rules_generate_if($opt_interface,
-						"{$pptpdcfg['remoteip']}/{$pptp_subnet}");
+						"{$pptpdcfg['remoteip']}/{$pptp_subnet}", null, "", null, $target, null, false);
 				}
 			}
 		}
@@ -793,27 +821,29 @@ function filter_nat_rules_generate() {
 			$pppoe_subnet = $g['pppoe_subnet'];
 			if($config['pppoe']['pppoe_subnet'] <> "")
 				$pppoe_subnet = $config['pppoe']['pppoe_subnet'];
+			$target = get_current_wan_address($interface = "wan");
 			$natrules .= filter_nat_rules_generate_if($wanif,
-				"{$pppoecfg['remoteip']}/{$pppoe_subnet}", 500, "", 500, null, 500, false);
+				"{$pppoecfg['remoteip']}/{$pppoe_subnet}", 500, "", 500, $target, 500, false);
 			$natrules .= filter_nat_rules_generate_if($wanif,
-				"{$pppoecfg['remoteip']}/{$pppoe_subnet}", 4500, "", 4500, null, 4500, false);
+				"{$pppoecfg['remoteip']}/{$pppoe_subnet}", 4500, "", 4500, $target, 4500, false);
 			$natrules .= filter_nat_rules_generate_if($wanif,
-				"{$pppoecfg['remoteip']}/{$pppoe_subnet}", 5060, "", 5060, null, 5060, false);
+				"{$pppoecfg['remoteip']}/{$pppoe_subnet}", 5060, "", 5060, $target, 5060, false);
 			$natrules .= filter_nat_rules_generate_if($wanif,
-				"{$pppoecfg['remoteip']}/{$pppoe_subnet}");
+				"{$pppoecfg['remoteip']}/{$pppoe_subnet}", null, "", null, $target, null, false);
 
 			/* generate nat mappings for opts with a gateway opts */
-			foreach($optints as $oc) {
+			foreach($optints as $ocname => $oc) {
 				$opt_interface = $oc['if'];
 				if ((is_private_ip($pppoecfg['remoteip'])) && (interface_has_gateway($opt_interface))) {
+					$target = get_current_wan_address($interface = "$ocname");
 					$natrules .= filter_nat_rules_generate_if($opt_interface,
-						"{$pppoecfg['remoteip']}/{$pppoe_subnet}", 500, "", 500, null, 500, false);
+						"{$pppoecfg['remoteip']}/{$pppoe_subnet}", 500, "", 500, $target, 500, false);
 					$natrules .= filter_nat_rules_generate_if($opt_interface,
-						"{$pppoecfg['remoteip']}/{$pppoe_subnet}", 4500, "", 4500, null, 4500, false);
+						"{$pppoecfg['remoteip']}/{$pppoe_subnet}", 4500, "", 4500, $target, 4500, false);
 					$natrules .= filter_nat_rules_generate_if($opt_interface,
-						"{$pppoecfg['remoteip']}/{$pppoe_subnet}", 5060, "", 5060, null, 5060, false);
+						"{$pppoecfg['remoteip']}/{$pppoe_subnet}", 5060, "", 5060, $target, 5060, false);
 					$natrules .= filter_nat_rules_generate_if($opt_interface,
-						"{$pppoecfg['remoteip']}/{$pppoe_subnet}");
+						"{$pppoecfg['remoteip']}/{$pppoe_subnet}", null, "", null, $target, null, false);
 				}
 			}
 		}
@@ -823,27 +853,29 @@ function filter_nat_rules_generate() {
 			foreach ($config['staticroutes']['route'] as $route) {
 				$netip = explode("/", $route['network']);
 				if ((! interface_has_gateway($route['interface'])) && (is_private_ip($netip[0]))) {
+					$target = get_current_wan_address($interface = "wan");
 					$natrules .= filter_nat_rules_generate_if($wanif,
-						"{$route['network']}", 500, "", 500, null, 500, false);
+						"{$route['network']}", 500, "", 500, $target, 500, false);
 					$natrules .= filter_nat_rules_generate_if($wanif,
-						"{$route['network']}", 4500, "", 4500, null, 4500, false);
+						"{$route['network']}", 4500, "", 4500, $target, 4500, false);
 					$natrules .= filter_nat_rules_generate_if($wanif,
-						"{$route['network']}", 5060, "", 5060, null, 5060, false);
+						"{$route['network']}", 5060, "", 5060, $target, 5060, false);
 					$natrules .= filter_nat_rules_generate_if($wanif,
-						"{$route['network']}", "", null);
+						"{$route['network']}", null, "", null, $target, null, false);
 				}
 				/* generate nat mapping for static routes on opts */
-				foreach($optints as $oc) {
+				foreach($optints as $ocname => $oc) {
 					$opt_interface = $oc['if'];
 					if ((! interface_has_gateway($route['interface'])) && (is_private_ip($netip[0])) && (interface_has_gateway($opt_interface))) {
+						$target = get_current_wan_address($interface = "$ocname");
 						$natrules .= filter_nat_rules_generate_if($opt_interface,
-							"{$route['network']}", 500, "", 500, null, 500, false);
+							"{$route['network']}", 500, "", 500, $target, 500, false);
 						$natrules .= filter_nat_rules_generate_if($opt_interface,
-							"{$route['network']}", 4500, "", 4500, null, 4500, false);
+							"{$route['network']}", 4500, "", 4500, $target, 4500, false);
 						$natrules .= filter_nat_rules_generate_if($opt_interface,
-							"{$route['network']}", 5060, "", 5060, null, 5060, false);
+							"{$route['network']}", 5060, "", 5060, $target, 5060, false);
 						$natrules .= filter_nat_rules_generate_if($opt_interface,
-							"{$route['network']}", "", null);
+							"{$route['network']}", null, "", null, $target, null, false);
 					}
 				}
 

@@ -36,9 +36,6 @@ $pconfig['domain'] = $config['system']['domain'];
 list($pconfig['dns1'],$pconfig['dns2']) = $config['system']['dnsserver'];
 
 $pconfig['dnsallowoverride'] = isset($config['system']['dnsallowoverride']);
-$pconfig['username'] = $config['system']['username'];
-if (!$pconfig['username'])
-	$pconfig['username'] = "admin";
 $pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
 if (!$pconfig['webguiproto'])
 	$pconfig['webguiproto'] = "http";
@@ -85,8 +82,8 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = split(" ", "hostname domain username");
-	$reqdfieldsn = split(",", "Hostname,Domain,Username");
+	$reqdfields = split(" ", "hostname domain");
+	$reqdfieldsn = split(",", "Hostname,Domain");
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
@@ -98,9 +95,6 @@ if ($_POST) {
 	}
 	if (($_POST['dns1'] && !is_ipaddr($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddr($_POST['dns2']))) {
 		$input_errors[] = "A valid IP address must be specified for the primary/secondary DNS server.";
-	}
-	if ($_POST['username'] && !preg_match("/^[a-zA-Z0-9]*$/", $_POST['username'])) {
-		$input_errors[] = "The username may only contain the characters a-z, A-Z and 0-9.";
 	}
 	if ($_POST['webguiport'] && (!is_numericint($_POST['webguiport']) ||
 			($_POST['webguiport'] < 1) || ($_POST['webguiport'] > 65535))) {
@@ -123,7 +117,6 @@ if ($_POST) {
 	if (!$input_errors) {
 		update_if_changed("hostname", $config['system']['hostname'], strtolower($_POST['hostname']));
 		update_if_changed("domain", $config['system']['domain'], strtolower($_POST['domain']));
-		update_if_changed("username", $config['system']['username'], $_POST['username']);
 
 		if (update_if_changed("webgui protocol", $config['system']['webgui']['protocol'], $_POST['webguiproto']))
 			$restart_webgui = true;

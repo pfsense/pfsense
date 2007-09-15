@@ -126,6 +126,7 @@ $wkports = array(3389 => "MS RDP",
 	1512 => "MS WINS",
 	1701 => "L2TP",
 	1723 => "PPTP",
+	1755 => "MMS/TCP",
 	1812 => "Radius",
 	1813 => "Radius-accounting",
 	3000 => "HBCI",
@@ -135,7 +136,8 @@ $wkports = array(3389 => "MS RDP",
 	5060 => "SIP",
 	5190 => "ICQ",
 	5900 => "VNC",
-	5999 => "CVSup");
+	5999 => "CVSup",
+	7000 => "MMS/UDP");
 
 $specialnets = array("wanip" => "WAN address", "lanip" => "LAN address", "lan" => "LAN net", "pptp" => "PPTP clients");
 

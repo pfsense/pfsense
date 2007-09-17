@@ -99,7 +99,7 @@ display_top_tabs($tab_array);
 	print "<td><b><font color='#ffffff'>CAPS</td>";
 	print "</tr>\n\n";
 
-	$states=split("\n",`/sbin/ifconfig {$if} list scan | grep -v "CHAN RATE"; /sbin/ifconfig {$if} list sta | grep -v "CHAN RATE"`);
+	$states=split("\n",`/sbin/ifconfig {$if} list scan | grep -v "CHAN RATE"`);
 
 	$counter=0;
 	foreach($states as $state) {

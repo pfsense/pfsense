@@ -2844,8 +2844,6 @@ function enable_rrd_graphing() {
 	$rrdrestore = "";
 	$rrdreturn = "";
 
-	$config['rrd']['enable'] = true;
-
 	if (isset ($config['rrd']['enable'])) {
 
 		/* create directory if needed */

@@ -994,6 +994,13 @@ function convert_config() {
 		$config['version'] = "2.9";
 	}
 
+	/* Convert 2.9 -> 3.0 */
+	if ($config['version'] <= 2.9) {
+		/* enable the rrd config setting by default */
+		$config['rrd']['enable'] = true;
+		$config['version'] = "3.0";
+ 	}
+
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
 }

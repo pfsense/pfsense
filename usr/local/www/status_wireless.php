@@ -86,7 +86,7 @@ display_top_tabs($tab_array);
 <table class="tabcont" colspan="3" cellpadding="3" width="100%">
 <?php
 
-if ($mode == 'bss') {
+
 	/* table header */
 	print "\n<tr><!-- " . count($state_split) . " -->";
 	print "<tr bgcolor='#990000'>";
@@ -99,7 +99,7 @@ if ($mode == 'bss') {
 	print "<td><b><font color='#ffffff'>CAPS</td>";
 	print "</tr>\n\n";
 
-	$states=split("\n",`/sbin/ifconfig {$if} list scan | grep -v "CHAN RATE"`);
+	$states=split("\n",`/sbin/ifconfig {$if} list scan | grep -v "CHAN RATE"; /sbin/ifconfig {$if} list sta | grep -v "CHAN RATE"`);
 
 	$counter=0;
 	foreach($states as $state) {
@@ -122,7 +122,9 @@ if ($mode == 'bss') {
 		print "</tr>\n";
 		print "<!-- $state_fixed -->\n";
 	}
-} elseif ($mode == 'hostap') {
+
+	print "</table><table class=\"tabcont\" colspan=\"3\" cellpadding=\"3\" width=\"100%\">";
+
 	/* table header */
 	print "\n<tr><!-- " . count($state_split) . " -->";
 	print "<tr bgcolor='#990000'>";
@@ -160,8 +162,7 @@ if ($mode == 'bss') {
 		print "</tr>\n";
 		print "<!-- $state_fixed -->\n";
 	}
-}
-
+	
 /* XXX: what stats to we get for adhoc mode? */ 
 
 ?>

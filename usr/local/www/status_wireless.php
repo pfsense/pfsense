@@ -106,18 +106,16 @@ if ($mode == 'bss') {
 		$state_fixed = str_replace("  ", " ", $state_fixed);
 		$state_fixed = str_replace("  ", " ", $state_fixed);
 		$state_split = split(" ", $state_fixed);
-		if($state_split[1] <> ""){
-			print "<tr>";
-			print "<td>{$state_split[0]}</td>";
-			print "<td>{$state_split[1]}</td>";
-			print "<td>{$state_split[2]}</td>";
-			print "<td>{$state_split[3]}</td>";
-			print "<td>{$state_split[4]}</td>";
-			print "<td>{$state_split[5]}</td>";
-			print "<td>{$state_split[6]}</td>";
-			print "</tr>\n";
-			print "<!-- $state_fixed -->\n";
-		}
+		print "<tr>";
+		print "<td>{$state_split[0]}</td>";
+		print "<td>{$state_split[1]}</td>";
+		print "<td>{$state_split[2]}</td>";
+		print "<td>{$state_split[3]}</td>";
+		print "<td>{$state_split[4]}</td>";
+		print "<td>{$state_split[5]}</td>";
+		print "<td>{$state_split[6]}</td>";
+		print "</tr>\n";
+		print "<!-- $state_fixed -->\n";
 	}
 } elseif ($mode == 'hostap') {
 	/* table header */

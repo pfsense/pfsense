@@ -105,6 +105,10 @@ if ($mode == 'bss') {
 		$state_fixed = str_replace("  ", " ", $state);
 		$state_fixed = str_replace("  ", " ", $state_fixed);
 		$state_fixed = str_replace("  ", " ", $state_fixed);
+		$state_fixed = str_replace("  ", " ", $state_fixed);
+		$state_fixed = str_replace("  ", " ", $state_fixed);
+		$state_fixed = str_replace("  ", " ", $state_fixed);
+		$state_fixed = str_replace("  ", " ", $state_fixed);
 		$state_split = split(" ", $state_fixed);
 		print "<tr>";
 		print "<td>{$state_split[0]}</td>";

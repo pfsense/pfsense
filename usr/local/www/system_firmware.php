@@ -55,6 +55,9 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 	unset($input_errors);
 	unset($sig_warning);
 
+	if($_POST['kerneltype']) 
+		system("echo {$_POST['kerneltype']} > /boot/kernel/pfsense_kernel.txt");
+
 	if (stristr($_POST['Submit'], "Enable"))
 		$mode = "enable";
 	else if (stristr($_POST['Submit'], "Disable"))
@@ -105,6 +108,10 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 						unlink("{$g['upload_path']}/firmware.tgz");
 					}
 				}
+			}
+
+			if(!file_exists("/boot/kernel/pfsense_kernel.txt")) { 
+				
 			}
 
             /* Check for input errors, firmware locks, warnings, then check for firmware if sig_override is set */
@@ -182,6 +189,18 @@ print_info_box($sig_warning);
 					<strong>Firmware image file: </strong>&nbsp;
 					<input name="ulfile" type="file" class="formfld">
                     <br><br>
+					  <?php
+				  		if(!file_exists("/boot/kernel/pfsense_kernel.txt")) {
+				  			if($g['platform'] == "pfSense") { 
+								echo "<select name='kerneltype'>'";
+								echo "<option value=''>Uniprocessor kernel</option>";
+								echo "<option value='SMP'>Multiprocessor kernel</option>";
+								echo "<option value='wrap'>Embedded kernel</option>";
+								echo "<option value='wrap'>Developers kernel</option>";
+								echo "</select>";
+							}
+						}
+					  ?>
 		    <input name="Submit" type="submit" class="formbtn" value="Upgrade firmware">
 				  <?php endif; else: ?>
 				    <strong>You must reboot the system before you can upgrade the firmware.</strong>

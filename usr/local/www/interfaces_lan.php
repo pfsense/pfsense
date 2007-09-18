@@ -126,6 +126,9 @@ if ($_POST) {
 
 		touch($d_landirty_path);
 
+		/* restart snmp so that it binds to correct address */
+		services_snmpd_configure();
+
 		if ($_POST['apply'] <> "") {
 			
 			unlink($d_landirty_path);

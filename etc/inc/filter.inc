@@ -1166,6 +1166,11 @@ function filter_nat_rules_generate() {
 
 								$ifname_real = convert_friendly_interface_to_friendly_descr(strtolower($ifname));
 
+								if($config['system']['reflectiontimeout']) 
+									$reflectiontimeout = $config['system']['reflectiontimeout'];
+								else 
+									$reflectiontimeout = "2000";											
+
 								switch($rule['protocol']) {
 
 									case "tcp/udp":
@@ -1185,10 +1190,6 @@ function filter_nat_rules_generate() {
 											$loc_pt_translated = $loc_pt;
 											$toadd_array[] = $loc_pt_translated;
 										}
-										if($config['system']['reflectiontimeout']) 
-											$reflectiontimeout = $config['system']['reflectiontimeout'];
-										else 
-											$reflectiontimeout = "2000";											
 										foreach($toadd_array as $tda){
 											fwrite($inetd_fd, "{$starting_localhost_port}\tstream\ttcp/udp\tnowait/0\tnobody\t/usr/bin/nc nc -u -w {$reflectiontimeout} {$target} {$tda}\n");
 									  		if($ifname_real)

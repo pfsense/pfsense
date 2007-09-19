@@ -45,8 +45,9 @@ include("head.inc");
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("SAD", false, "diag_ipsec_sad.php");
-	$tab_array[1] = array("SPD", true, "diag_ipsec_spd.php");
+	$tab_array[0] = array("Overview", false, "diag_ipsec.php");
+	$tab_array[1] = array("SAD", false, "diag_ipsec_sad.php");
+	$tab_array[2] = array("SPD", true, "diag_ipsec_spd.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

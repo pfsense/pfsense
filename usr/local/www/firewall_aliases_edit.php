@@ -113,10 +113,6 @@ if ($_POST) {
 		if (is_validaliasname($_POST['name']) == false)
 			$input_errors[] = "The alias name may only consist of the characters a-z, A-Z, 0-9, _.";
 	}
-	if ($_POST['type'] == "host")
-		if (!is_ipaddr($_POST['address'])) {
-			$input_errors[] = "A valid address must be specified.";
-		}
 	if ($_POST['type'] == "network") {
 		if (!is_ipaddr($_POST['address'])) {
 			$input_errors[] = "A valid address must be specified.";

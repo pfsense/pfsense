@@ -3721,11 +3721,11 @@ function find_dns_aliases() {
 		if(stristr($alias_value, " ")) {
 			$alias_split = split(" ", $alias_value);
 			foreach($alias_split as $as) {
-				if(is_hostname($as)) 
+				if(is_fqdn($as)) 
 					add_hostname_to_watch($as);			
 			}
 		} else {
-			if(is_hostname($alias_value)) 
+			if(is_fqdn($alias_value)) 
 				add_hostname_to_watch($alias_value);
 		}
 	}

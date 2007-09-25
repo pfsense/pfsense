@@ -3687,16 +3687,30 @@ function is_wan_interface_up($interface) {
 }
 
 function add_hostname_to_watch($hostname) {
-	error_reporting(0);
-	if(is_hostname($hostname)) {
-		$dnshost = gethostbyname($hostname);
-		if(!is_dir("/var/db/dnscache")) 
+	if(is_fqdn($hostname)) {
+		$domrecords = array();
+		$domips = array();
+		exec("host -t A $hostname", $domrecords, $rethost);
+		if($rethost == 0) {
+			foreach($domrecords as $domr) {
+				$doml = explode(" ", $domr);
+				$domip = $doml[3];
+				/* fill array with domain ip addresses */
+				if(is_ipaddr($domip)) {
+					$domips[] = $domip;
+				}
+			}
+		}
+		sort($domips);
+		if(!is_dir("/var/db/dnscache")) {
 			mkdir("/var/db/dnscache");
-		if($dnshost) 
-			if(is_ipaddr($dnshost))
-				exec("echo $dnshost > /var/db/dnscache/$hostname");
+		}
+		$contents = "";
+		if(! empty($domips)) {
+			$contents = implode("\n", $domips);
+		}
+		file_put_contents("/var/db/dnscache/$hostname", $contents);
 	}
-	error_reporting(1);
 }
 
 function find_dns_aliases() {

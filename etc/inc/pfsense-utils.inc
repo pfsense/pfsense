@@ -3700,15 +3700,18 @@ function add_hostname_to_watch($hostname) {
 function find_dns_aliases() {
 	global $config, $g;
 	foreach($config['aliases']['alias'] as $alias) {
-		if(stristr(" ", $alias)) {
-			$alias_split = split(" ", $alias);
+		$alias_value = $alias['address'];
+		$alias_name = $alias['name'];
+		echo $alias_value . "\n";
+		if(stristr($alias_value, " ")) {
+			$alias_split = split(" ", $alias_value);
 			foreach($alias_split as $as) {
 				if(is_hostname($as)) 
 					add_hostname_to_watch($as);			
 			}
 		} else {
-			if(is_hostname($alias)) 
-				add_hostname_to_watch($alias);
+			if(is_hostname($alias_value)) 
+				add_hostname_to_watch($alias_value);
 		}
 	}
 }

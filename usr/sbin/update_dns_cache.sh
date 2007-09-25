@@ -1,5 +1,7 @@
 #!/bin/sh
 
+mkdir -p cd /var/db/dnscache 
+
 while [ /bin/true ]; do
         cd /var/db/dnscache 
         needsfilterreload=0

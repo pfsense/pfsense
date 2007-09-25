@@ -1080,6 +1080,11 @@ function filter_nat_rules_generate() {
 			if(alias_expand($extaddr))
 				$extaddr = alias_expand($extaddr);
 
+			if(is_hostname($target)) 
+				add_hostname_to_watch($target);
+			if(is_hostname($extaddr)) 
+				add_hostname_to_watch($extaddr);
+
 			/*
 			 *    If FTP Proxy Helper is enabled and the
 			 *    operator has requested a port forward to
@@ -1244,6 +1249,7 @@ function filter_nat_rules_generate() {
 										$toadd_array = array();
 										if(is_alias($loc_pt)) {
 											$loc_pt_translated = alias_expand_value($loc_pt);
+											add_hostname_to_watch($loc_pt_translated);
 											if(stristr($loc_pt_translated, " ")) {
 												/* XXX: we should deal with multiple ports */
 												$loc_pt_translated_split = split(" ", $loc_pt_translated);
@@ -1274,6 +1280,7 @@ function filter_nat_rules_generate() {
 										$toadd_array = array();
 										if(is_alias($loc_pt)) {
 											$loc_pt_translated = alias_expand_value($loc_pt);
+											add_hostname_to_watch($loc_pt_translated);
 											if(stristr($loc_pt_translated, " ")) {
 												/* XXX: we should deal with multiple ports */
 												$loc_pt_translated_split = split(" ", $loc_pt_translated);

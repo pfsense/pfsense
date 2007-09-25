@@ -3685,4 +3685,14 @@ function is_wan_interface_up($interface) {
 	}
 	return false;
 }
+
+function add_hostname_to_watch($hostname) {
+	if(is_hostname($hostname)) {
+		$dnshost = gethostbyaddr($hostname);
+		if(!is_dir("/var/db/dnscache")) 
+			mkdir("/var/db/dnscache");
+		exec("echo $dnshost > /var/db/dnscache/$hostname");
+	}
+}
+
 ?>

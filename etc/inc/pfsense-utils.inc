@@ -3692,7 +3692,8 @@ function add_hostname_to_watch($hostname) {
 		$dnshost = gethostbyname($hostname);
 		if(!is_dir("/var/db/dnscache")) 
 			mkdir("/var/db/dnscache");
-		exec("echo $dnshost > /var/db/dnscache/$hostname");
+		if($dnshost) 
+			exec("echo $dnshost > /var/db/dnscache/$hostname");
 	}
 	error_reporting(1);
 }

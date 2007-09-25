@@ -3687,6 +3687,9 @@ function is_wan_interface_up($interface) {
 }
 
 function add_hostname_to_watch($hostname) {
+	if(!is_dir("/var/db/dnscache")) {
+		mkdir("/var/db/dnscache");
+	}
 	if(is_fqdn($hostname)) {
 		$domrecords = array();
 		$domips = array();
@@ -3702,9 +3705,6 @@ function add_hostname_to_watch($hostname) {
 			}
 		}
 		sort($domips);
-		if(!is_dir("/var/db/dnscache")) {
-			mkdir("/var/db/dnscache");
-		}
 		$contents = "";
 		if(! empty($domips)) {
 			$contents = implode("\n", $domips);
@@ -3740,6 +3740,9 @@ function is_fqdn($fqdn) {
 		$hostname = false;
 	}
 	if(preg_match("/^\./i", $fqdn)) {
+		$hostname = false;
+	}
+	if(preg_match("/\//i", $fqdn)) {
 		$hostname = false;
 	}
 	return($hostname);

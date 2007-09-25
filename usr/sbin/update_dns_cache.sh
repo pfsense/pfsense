@@ -7,7 +7,7 @@ while [ /bin/true ]; do
         needsfilterreload=0
         for FILE in *; do
                 OLDIP=`cat $FILE`
-                NEWIP=`host $FILE | awk '{ print $4 }'`
+                NEWIP=`host $FILE | grep -v NXDOMAIN | awk '{ print $4 }'`
                 if [ "$OLDIP" != "$NEWIP" ]; then
                         needsfilterreload=1
                 fi

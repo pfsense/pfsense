@@ -3717,4 +3717,18 @@ function find_dns_aliases() {
 	}
 }
 
+function is_fqdn($fqdn) {
+	$hostname = false;
+	if(preg_match("/[-A-Z0-9\.]+\.[-A-Z0-9\.]+/i", $fqdn)) {
+		$hostname = true;
+	}
+	if(preg_match("/\.\./", $fqdn)) {
+		$hostname = false;
+	}
+	if(preg_match("/^\./i", $fqdn)) {
+		$hostname = false;
+	}
+	return($hostname);
+}
+
 ?>

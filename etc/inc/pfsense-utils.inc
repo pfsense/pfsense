@@ -3693,7 +3693,8 @@ function add_hostname_to_watch($hostname) {
 		if(!is_dir("/var/db/dnscache")) 
 			mkdir("/var/db/dnscache");
 		if($dnshost) 
-			exec("echo $dnshost > /var/db/dnscache/$hostname");
+			if(is_ipaddr($dnshost))
+				exec("echo $dnshost > /var/db/dnscache/$hostname");
 	}
 	error_reporting(1);
 }

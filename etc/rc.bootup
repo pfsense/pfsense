@@ -324,6 +324,8 @@
 	if (isset($config['ipsec']['enable']) || isset($config['mobileclients']['enable'])) 
 		mwexec_bg("/usr/local/sbin/racoon_watch.sh");
 
+	/usr/sbin/update_dns_cache.sh &
+
 	/* done */
 	unlink("{$g['varrun_path']}/booting");
 	$g['booting'] = FALSE;

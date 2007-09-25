@@ -310,6 +310,8 @@ function filter_configure_sync() {
 
 	system_routing_configure();
 	
+	find_dns_aliases();
+	
 	update_filter_reload_status("Done");
 
 	return 0;
@@ -1079,11 +1081,6 @@ function filter_nat_rules_generate() {
 				$target = alias_expand($target);
 			if(alias_expand($extaddr))
 				$extaddr = alias_expand($extaddr);
-
-			if(is_hostname($target)) 
-				add_hostname_to_watch($target);
-			if(is_hostname($extaddr)) 
-				add_hostname_to_watch($extaddr);
 
 			/*
 			 *    If FTP Proxy Helper is enabled and the

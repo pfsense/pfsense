@@ -3697,4 +3697,20 @@ function add_hostname_to_watch($hostname) {
 	error_reporting(1);
 }
 
+function find_dns_aliases() {
+	global $config, $g;
+	foreach($config['aliases']['alias'] as $alias) {
+		if(stristr(" ", $alias)) {
+			$alias_split = split(" ", $alias);
+			foreach($alias_split as $as) {
+				if(is_hostname($as)) 
+					add_hostname_to_watch($as);			
+			}
+		} else {
+			if(is_hostname($alias)) 
+				add_hostname_to_watch($alias);
+		}
+	}
+}
+
 ?>

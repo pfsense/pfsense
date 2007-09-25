@@ -3702,7 +3702,6 @@ function find_dns_aliases() {
 	foreach($config['aliases']['alias'] as $alias) {
 		$alias_value = $alias['address'];
 		$alias_name = $alias['name'];
-		echo $alias_value . "\n";
 		if(stristr($alias_value, " ")) {
 			$alias_split = split(" ", $alias_value);
 			foreach($alias_split as $as) {

@@ -3707,7 +3707,9 @@ function add_hostname_to_watch($hostname) {
 		sort($domips);
 		$contents = "";
 		if(! empty($domips)) {
-			$contents = implode("\n", $domips);
+			foreach($domips as $ip) {
+				$contents .= "$ip\n";
+			}
 		}
 		file_put_contents("/var/db/dnscache/$hostname", $contents);
 	}

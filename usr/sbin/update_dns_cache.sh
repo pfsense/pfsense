@@ -17,6 +17,11 @@ while [ /bin/true ]; do
 			continue
 		fi
 		# We need to compare the files.
+		# We need to compare the files.
+		cmp -s /tmp/Njkd98u79.tmp $FILE
+		if [ "$?" -gt 0 ]; then
+			needsfilterreload=1
+		fi
 	done
 	if [ "$needsfilterreload" -gt 0 ]; then
 		/etc/rc.filter_configure_sync

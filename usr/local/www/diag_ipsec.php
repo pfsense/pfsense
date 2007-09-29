@@ -56,6 +56,10 @@ include("head.inc");
     <td>
 <?php
 
+if (!is_array($config['ipsec']['tunnel'])) {
+	$config['ipsec']['tunnel'] = array();
+}
+
 /* query SAD */
 $fd = @popen("/sbin/setkey -D", "r");
 $sad = array();

@@ -89,6 +89,11 @@ if ($fd) {
 		$sad[] = $cursa;
 	pclose($fd);
 }
+
+if (!is_array($config['ipsec']['tunnel'])) {
+	$config['ipsec']['tunnel'] = array();
+}
+
 ?>
 	<div id="mainarea">
             <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">

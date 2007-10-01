@@ -9,4 +9,10 @@
 		write_config();
 	}
 	setup_serial_port();
+	if(file_exists("/usr/local/www/index.html"))
+		unlink("/usr/local/www/index.html"); 
+	if(file_exists("/usr/local/www/fred.png"))
+		unlink("/usr/local/www/fred.png"); 
+	if(file_exists("/usr/local/www/dfuife.cgi"))
+		unlink("/usr/local/www/dfuife.cgi"); 
 ?>

@@ -203,9 +203,9 @@ print_info_box($sig_warning);
 								echo "<option value='wrap'>Embedded kernel</option>";
 								echo "<option value='wrap'>Developers kernel</option>";
 								echo "</select>";
+								echo "<br><br>";
 							}
 						}
-						echo "<br><br>";
 					  ?>
 		    <input name="Submit" type="submit" class="formbtn" value="Upgrade firmware">
 				  <?php endif; else: ?>

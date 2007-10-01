@@ -38,11 +38,12 @@ $ipsec_logfile = "{$g['varlog_path']}/ipsec.log";
 /* Create array with all IPSEC tunnel descriptions */
 $search = array();
 $replace = array();
-foreach($config['ipsec']['tunnel'] as $tunnel) {
-	$gateway = "{$tunnel['remote-gateway']}";
-	$search[] = "/(racoon: )([A-Z:].*?)({$gateway}\[[0-9].+\]|{$gateway})(.*)/i";
-	$replace[] = "$1<strong>[{$tunnel['descr']}]</strong>: $2$3$4";
-}
+if(is_array($config['ipsec']['tunnel']))
+	foreach($config['ipsec']['tunnel'] as $tunnel) {
+		$gateway = "{$tunnel['remote-gateway']}";
+		$search[] = "/(racoon: )([A-Z:].*?)({$gateway}\[[0-9].+\]|{$gateway})(.*)/i";
+		$replace[] = "$1<strong>[{$tunnel['descr']}]</strong>: $2$3$4";
+	}
 /* collect all our own ip addresses */
 exec("/sbin/ifconfig|/usr/bin/awk '/inet / {print $2}'", $ip_address_list);
 foreach($ip_address_list as $address) {

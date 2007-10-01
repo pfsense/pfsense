@@ -4,47 +4,36 @@
 
 	/* MiniUPnPd */
 
-	define('UPNP_CONFIG','/var/etc/miniupnpd.conf');
-
-	function upnp_notice ($msg) { syslog(LOG_NOTICE, "miniupnpd: {$msg}"); return; }
-	function upnp_warn ($msg) { syslog(LOG_WARNING, "miniupnpd: {$msg}"); return; }
+	function upnp_notice ($msg) { syslog(LOG_NOTICE, "miniupnpd: {$msg}"); }
+	function upnp_warn ($msg) { syslog(LOG_WARNING, "miniupnpd: {$msg}"); }
 
 	function upnp_running () {
-		if((int)exec("pgrep miniupnpd | wc -l") > 0)
+		if((int)exec('pgrep miniupnpd | wc -l') > 0)
 			return true;
 		return false;
 	}	
 
-	function upnp_config ($name) {
-		global $config;
-		if($config['installedpackages']['miniupnpd']['config'][0]["{$name}"])
-			return $config['installedpackages']['miniupnpd']['config'][0]["{$name}"];
-		return NULL;
-	}
-
-	function upnp_write_config($conf_file, $conf_text) {
-		$conf = fopen($conf_file, "w");
-		if(!$conf) {
-			upnp_warn("Could not open {$conf_file} for writing.");
-			echo "Could not open {$conf_file} for writing.";
+	function upnp_write_config($file, $text) {
+		$handle = fopen($file, 'w');
+		if(!$handle) {
+			upnp_warn("Could not open {$file} for writing.");
 			exit;
 		}
-		fwrite($conf, $conf_text);
-		fclose($conf);	
+		fwrite($handle, $text);
+		fclose($handle);
 	}
 
 	function upnp_uuid() {
 		/* md5 hash of wan mac */
-		$arp = explode(' ',exec('arp -an -i '.get_real_wan_interface()));
-		$uuid = md5($arp[3]);
+		$uuid = md5(exec('arp -an -i '.get_real_wan_interface().' | /usr/bin/cut -d " " -f4'));
 		/* put uuid in correct format 8-4-4-4-12 */
-		return substr($uuid,0,8)."-".substr($uuid,9,4)."-".substr($uuid,13,4)."-".substr($uuid,17,4)."-".substr($uuid,21,12);
+		return substr($uuid,0,8).'-'.substr($uuid,9,4).'-'.substr($uuid,13,4).'-'.substr($uuid,17,4).'-'.substr($uuid,21,12);
 	}
 
-	function upnp_validate_ip($ip,$check_cdir) {
+	function upnp_validate_ip($ip, $check_cdir) {
 		/* validate cdir */	
 		if($check_cdir)	{
-			$ip_array = explode("/",$ip);
+			$ip_array = explode('/', $ip);
 			if(count($ip_array) == 2) {
 				if($ip_array[1] < 1 || $ip_array[1] > 32)
 					return false;
@@ -55,16 +44,16 @@
 			$ip_array[] = $ip;
 
 		/* validate ip */
-		if(!eregi("^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$", $ip_array[0]))
+		if(!eregi('^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$', $ip_array[0]))
 			return false;
-		foreach(explode(".", $ip_array[0]) as $sub)
+		foreach(explode('.', $ip_array[0]) as $sub)
 			if($sub < 0 || $sub > 256)
 				return false;
 		return true;
 	}
 
 	function upnp_validate_port($port) {
-		foreach(explode("-", $port) as $sub)
+		foreach(explode('-', $port) as $sub)
 			if($sub < 0 || $sub > 65535)
 				return false;
 		return true;	
@@ -91,7 +80,7 @@
 	function validate_form_miniupnpd($post, $input_errors) {
 		if($post['iface_array'])
 			foreach($post['iface_array'] as $iface)
-				if($iface == "wan")
+				if($iface == 'wan')
 					$input_errors[] = 'It is a security risk to specify WAN in the \'Interface\' field';
 		if($post['overridewanip'] && !upnp_validate_ip($post['overridewanip'],false))
 			$input_errors[] = 'You must specify a valid ip address in the \'Override WAN address\' field';
@@ -129,16 +118,19 @@
 		global $config;
 		global $input_errors;
 
-		config_lock();	
+		config_lock();
 
-		$configtext = "ext_ifname=".get_real_wan_interface()."\n";
-		$configtext .= "port=2189\n";
+		$upnp_config = $config['installedpackages']['miniupnpd']['config'][0];
+		$config_file = '/var/etc/miniupnpd.conf';
 
-		$ifaces_active = "";
+		$config_text = "ext_ifname=".get_real_wan_interface()."\n";
+		$config_text .= "port=2189\n";
+
+		$ifaces_active = '';
 
 		/* since config is written before this file invoked we don't need to read post data */
-		if(upnp_config('enable') && upnp_config('iface_array'))
-			$iface_array = explode(',',upnp_config('iface_array'));
+		if($upnp_config['enable'] && $upnp_config['iface_array'])
+			$iface_array = explode(',', $upnp_config['iface_array']);
 
 		if($iface_array) {
 			foreach($iface_array as $iface) {
@@ -149,7 +141,7 @@
 					/* non enabled interfaces are displayed in list on miniupnpd settings page */
 					/* check that the interface has an ip address before adding parameters */
 					if($addr) {
-						$configtext .= "listening_ip={$addr}\n";
+						$config_text .= "listening_ip={$addr}\n";
 						if(!$ifaces_active) {
 							$webgui_ip = $addr;
 							$ifaces_active = $iface;
@@ -166,58 +158,58 @@
 
 			if($ifaces_active) {
 				/* override wan ip address, common for carp, etc */
-				if(upnp_config('overridewanip'))
-					$configtext .= "ext_ip=".upnp_config('overridewanip')."\n";
+				if($upnp_config['overridewanip'])
+					$config_text .= "ext_ip={$upnp_config['overridewanip']}\n";
 
 				/* if shaper connection speed defined use those values */
 				if($config['ezshaper']['step2']['download'] && $config['ezshaper']['step2']['upload']) {
 					$download = $config['ezshaper']['step2']['download']*1000;
 					$upload = $config['ezshaper']['step2']['upload']*1000;
 				} else {
-					$download = upnp_config('download')*1000;
-					$upload = upnp_config('upload')*1000;
+					$download = $upnp_config['download']*1000;
+					$upload = $upnp_config['upload']*1000;
 				}
 
 				/* set upload and download bitrates */
 				if($download && $upload) {
-					$configtext .= "bitrate_down={$download}\n";
-					$configtext .= "bitrate_up={$upload}\n";
+					$config_text .= "bitrate_down={$download}\n";
+					$config_text .= "bitrate_up={$upload}\n";
 				}
 				
 				/* enable logging of packets handled by miniupnpd rules */
-				if(upnp_config('logpackets'))
-					$configtext .= "packet_log=yes\n";
+				if($upnp_config['logpackets'])
+					$config_text .= "packet_log=yes\n";
 				
 				/* enable system uptime instead of miniupnpd uptime */
-				if(upnp_config('sysuptime'))
-					$configtext .= "system_uptime=yes\n";
+				if($upnp_config['sysuptime'])
+					$config_text .= "system_uptime=yes\n";
 
 				/* set webgui url */
 				if($config['system']['webgui']['protocol']) {
-					$configtext .= "presentation_url=".$config['system']['webgui']['protocol']."://{$webgui_ip}";
+					$config_text .= "presentation_url={$config['system']['webgui']['protocol']}://{$webgui_ip}";
 					if($config['system']['webgui']['port'])
-						$configtext .= ":".$config['system']['webgui']['port'];
-					$configtext .= "/\n";
+						$config_text .= ":{$config['system']['webgui']['port']}";
+					$config_text .= "/\n";
 				}
 
 				/* set uuid and serial */
-				$configtext .= "uuid=".upnp_uuid()."\n";
-				$configtext .= "serial=".strtoupper(substr(upnp_uuid(),0,8))."\n";
+				$config_text .= "uuid=".upnp_uuid()."\n";
+				$config_text .= "serial=".strtoupper(substr(upnp_uuid(),0,8))."\n";
 
 				/* set model number */
-				$configtext .= "model_number=".exec("cat /etc/version")."\n";
+				$config_text .= "model_number=".exec("/bin/cat /etc/version")."\n";
 	
 				/* upnp access restrictions */
 				for($i=1; $i<=4; $i++) {
-					if(upnp_config("permuser{$i}"))
-						$configtext .= upnp_config("permuser{$i}")."\n";
+					if($upnp_config["permuser{$i}"])
+						$config_text .= "{$upnp_config["permuser{$i}"]}\n";
 				}
 
-				if(upnp_config('permdefault'))
-					$configtext .= "deny 0-65535 0.0.0.0/0 0-65535\n";
+				if($upnp_config['permdefault'])
+					$config_text .= "deny 0-65535 0.0.0.0/0 0-65535\n";
 
 				/* write out the configuration */
-				upnp_write_config(UPNP_CONFIG,$configtext);
+				upnp_write_config($config_file, $config_text);
 				
 				/* if miniupnpd not running start it */
 				if(!upnp_running()) {
@@ -236,14 +228,14 @@
 			/* no parameters user does not want miniupnpd running */
 			/* lets stop the service and remove the rc file */
 
-			if(file_exists(UPNP_CONFIG)) {
-				if(!upnp_config('enable'))
+			if(file_exists($config_file)) {
+				if(!$upnp_config['enable'])
 					upnp_notice('Stopping service: miniupnpd disabled');
 				else
 					upnp_notice('Stopping service: no interfaces selected');				
 
 				upnp_action('stop');
-				unlink(UPNP_CONFIG);
+				unlink($config_file);
 			}
 		}
 

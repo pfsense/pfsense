@@ -49,15 +49,19 @@ if(file_exists($d_firmwarelock_path)) {
 	exit;
 }
 
+if($_POST['kerneltype']) {
+	if($_POST['kerneltype'] == "single") 
+		system("touch /boot/kernel/pfsense_kernel.txt");
+	else 
+		system("echo {$_POST['kerneltype']} > /boot/kernel/pfsense_kernel.txt");
+}
+
 /* Handle manual upgrade */
 if ($_POST && !file_exists($d_firmwarelock_path)) {
 
 	unset($input_errors);
 	unset($sig_warning);
-
-	if($_POST['kerneltype']) 
-		system("echo {$_POST['kerneltype']} > /boot/kernel/pfsense_kernel.txt");
-
+	
 	if (stristr($_POST['Submit'], "Enable"))
 		$mode = "enable";
 	else if (stristr($_POST['Submit'], "Disable"))
@@ -192,14 +196,16 @@ print_info_box($sig_warning);
 					  <?php
 				  		if(!file_exists("/boot/kernel/pfsense_kernel.txt")) {
 				  			if($g['platform'] == "pfSense") { 
-								echo "<select name='kerneltype'>'";
-								echo "<option value=''>Uniprocessor kernel</option>";
+								echo "Please select kernel type: ";
+								echo "<select name='kerneltype'>";
+								echo "<option value='single'>Uniprocessor kernel</option>";
 								echo "<option value='SMP'>Multiprocessor kernel</option>";
 								echo "<option value='wrap'>Embedded kernel</option>";
 								echo "<option value='wrap'>Developers kernel</option>";
 								echo "</select>";
 							}
 						}
+						echo "<br><br>";
 					  ?>
 		    <input name="Submit" type="submit" class="formbtn" value="Upgrade firmware">
 				  <?php endif; else: ?>

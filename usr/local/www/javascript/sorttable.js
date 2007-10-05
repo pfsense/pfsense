@@ -1,183 +1,350 @@
-addEvent(window, "load", sortables_init);
+/* $Id$ */
+/*
+ * sorttable.js - Renders standard HTML tables into sortable tables.
+ *
+ * Based on "sorttable" by Stuart Langridge, published under the MIT licence.
+ * Modified and extended by Daniel Berlin.
+ *
+ * Usage:
+ *  - All rows (except for those with class "sort_footer") should NOT contain <td>s with
+ *    the "colspan" property set. Otherwise sorting might not work correctly.
+ *
+ *   <table class="myClass sortable">		<-- Add class "sortable"
+ *    <tr>									<-- The first row will automatically
+ *     <td>Number</td>							be treated as the header line
+ *     <td>Value</td>
+ *     <td class="sort_ignore">...</td>		<-- Class "sort_ignore" prevents
+ *    </tr>										sorting by this column
+ *    <tr>
+ *     <td>1</td>
+ *     <td>Hello World</td>
+ *     <td>...</td>
+ *    </tr>
+ *    <tr>
+ *     <td>2</td>
+ *     <td>Bye World</td>
+ *     <td>...</td>
+ *    </tr>
+ *    <tr class="sort_footer">				<-- Class "sort_footer" excludes this line
+ *     <td>Footer</td>							from sorting (may appear several times)
+ *     <td colspan="2">...</td>				<-- In the footer(s), "colspan" is harmless
+ *    </tr>
+ *  </table>
+ */
 
-var SORT_COLUMN_INDEX;
+var ts_CASE_SENSITIVE = false;			//	<-- Set this to true to do case-sensitive sorting
 
-function sortables_init() {
-    // Find all tables with class sortable and make them sortable
-    if (!document.getElementsByTagName) return;
-    tbls = document.getElementsByTagName("table");
-    for (ti=0;ti<tbls.length;ti++) {
-        thisTbl = tbls[ti];
-        if (((' '+thisTbl.className+' ').indexOf("sortable") != -1) && (thisTbl.id)) {
-            //initTable(thisTbl.id);
-            ts_makeSortable(thisTbl);
-        }
-    }
+/*** Main ***/
+
+var ts_SORT_FUNCTION;
+var ts_COLUMN_INDEX;
+
+new ts_EventHandler(
+	window, "load",
+	function() {
+		if(! document.getElementsByTagName) return;
+
+		// Find all tables with class "sortable" and make them sortable
+		var tabs = document.getElementsByTagName("table");
+		for(var i = 0; i < tabs.length; i++)
+			if(ts_hasClass(tabs[i], "sortable"))
+				ts_tableMakeSortable(tabs[i]);
+	}
+);
+
+/*** Event Handlers ***/
+
+// Make the table sortable
+function ts_tableMakeSortable(table) {
+	if(table.rows && table.rows.length > 0) {
+		var firstRow = table.rows[0];
+	}
+	if(! firstRow) return;
+
+	// We have a first row: assume it's the header
+	for(var i = 0; i < firstRow.cells.length; i++) {
+		var cell = firstRow.cells[i];
+
+		// Ignore header cells with class "sort_ignore"
+		if(ts_hasClass(cell, "sort_ignore"))
+			continue;
+
+		// Make it clickable
+		new ts_EventHandler(cell, "click", ts_tableResort, cell);
+		ts_setCursor(cell, "pointer");
+
+		cell.innerHTML = ts_getInnerText(cell) +
+			'<span class="sortarrow" style="font-weight:bold;">&nbsp;&nbsp;&nbsp;</span>';
+	}
 }
 
-function ts_makeSortable(table) {
-    if (table.rows && table.rows.length > 0) {
-        var firstRow = table.rows[0];
-    }
-    if (!firstRow) return;
-    
-    // We have a first row: assume it's the header, and make its contents clickable links
-    for (var i=0;i<firstRow.cells.length;i++) {
-        var cell = firstRow.cells[i];
-        var txt = ts_getInnerText(cell);
-        cell.innerHTML = '<a href="#" class="sortheader" onclick="ts_resortTable(this);return false;">'+txt+'<span class="sortarrow">&nbsp;&nbsp;&nbsp;</span></a>';
-    }
+// Re-Sort the table
+function ts_tableResort() {
+	// Note: 'this' refers to the cell, the user clicked on
+
+	var tab = ts_getParentByTag(this, "table");
+	if(tab.rows.length <= 1) return;
+
+	var txt = ts_getInnerText(tab.rows[1].cells[this.cellIndex]);
+
+	// Determine, how we sort (the order of tests matters):
+	//  1. Case (in)sensitive (default)
+	ts_SORT_FUNCTION = ts_CASE_SENSITIVE ? ts_sortCaseSensitive : ts_sortCaseInsensitive;
+
+	//  2. Date
+	//  TODO: this needs to be extended to match a wider range of dates
+	if(txt.match(/^\d\d[\/-]\d\d[\/-]\d\d\d\d$/)) ts_SORT_FUNCTION = ts_sortDate;
+	if(txt.match(/^\d\d[\/-]\d\d[\/-]\d\d$/)    ) ts_SORT_FUNCTION = ts_sortDate;
+
+	//  3. Currency
+	//  Note: commented out, because we don't need it
+	//var regexp = new RegExp("^\s*[$" + String.fromCharCode(163, 165, 8364) + "]");
+	//if(regexp.test(txt)) ts_SORT_FUNCTION = ts_sortCurrency;
+
+	//  4. Numeric
+	if(txt.match(/^\s*[\d\.]+\s*$/)) ts_SORT_FUNCTION = ts_sortNumeric;
+
+	//  5. IP-Address
+	if(txt.match(/^\s*[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\s*$/)) ts_SORT_FUNCTION = ts_sortIpAddress;
+
+	ts_COLUMN_INDEX = this.cellIndex;
+
+	var bodyRows   = new Array();
+	var bottomRows = new Array();
+
+	for(var i = 1; i < tab.rows.length; i++)
+		if(ts_hasClass(tab.rows[i], "sort_footer"))
+			bottomRows.push(tab.rows[i]);
+		else
+			bodyRows.push(tab.rows[i]);
+			
+	bodyRows.sort(ts_sort);
+
+	var span = ts_getChildByTagAndClass(this, "span", "sortarrow");
+	if(span.getAttribute("sortdir") == "down") {
+		var arrow = "&nbsp;&nbsp;&uarr;";
+		span.setAttribute("sortdir", "up");
+		bodyRows.reverse();
+	}
+	else {
+		var arrow = "&nbsp;&nbsp;&darr;";
+		span.setAttribute("sortdir", "down");
+	}
+
+	// We appendChild rows that already exist to the <tbody>,
+	// so it moves them rather than creating new ones:
+	//  1. Append body-rows in sorted order
+	for(i = 0; i < bodyRows.length; i++)
+		tab.tBodies[0].appendChild(bodyRows[i]);
+
+	//  2. Append bottom line(s) in original order to the end
+	for(i = 0; i < bottomRows.length; i++)
+		tab.tBodies[0].appendChild(bottomRows[i]);
+
+	// Delete any other arrows there may be showing
+	var spans = document.getElementsByTagName("span");
+	for(var i = 0; i < spans.length; i++)
+		if(ts_hasClass(spans[i], "sortarrow") && ts_getParentByTag(spans[i], "table") == tab)
+			spans[i].innerHTML = '&nbsp;&nbsp;&nbsp;';
+
+	span.innerHTML = arrow;
 }
 
-function ts_getInnerText(el) {
-	if (typeof el == "string") return el;
-	if (typeof el == "undefined") { return el };
-	if (el.innerText) return el.innerText;	//Not needed but it is faster
+/*** Sort Functions ***/
+
+function ts_sort(a, b) {
+	if(typeof a.cells[ts_COLUMN_INDEX] == "undefined" ||
+	   typeof b.cells[ts_COLUMN_INDEX] == "undefined")
+		return 0;
+
+	return ts_SORT_FUNCTION(
+		ts_getInnerText(a.cells[ts_COLUMN_INDEX]),
+		ts_getInnerText(b.cells[ts_COLUMN_INDEX])
+	);
+}
+
+// 1.1. Case insensitive
+function ts_sortCaseInsensitive(a, b) {
+	return ts_sortCaseSensitive(
+		a.toLowerCase(), b.toLowerCase()
+	);
+}
+
+// 1.2. Case sensitive
+function ts_sortCaseSensitive(a, b) {
+	if(a == b) return  0;
+	if(a <  b) return -1;
+	return 1;
+}
+
+// 2. Date
+//  TODO: this needs to be extended to match a wider range of dates
+function ts_sortDate(a, b) {
+	var d1, d2;
+
+	// Y2k note: two digit years < 50 are treated as 20xx, >= 50 are treated as 19xx
+	if(a.length == 10)
+		d1 = a.substr(6, 4) + a.substr(3, 2) + a.substr(0, 2);
+	else {
+		var yr = a.substr(6, 2);
+		if(parseInt(yr) < 50) yr = "20" + yr;
+		else                  yr = "19" + yr;
+		d1 = yr + a.substr(3, 2) + a.substr(0, 2);
+	}
+	if(b.length == 10)
+		d2 = b.substr(6, 4) + b.substr(3, 2) + b.substr(0, 2);
+	else {
+		var yr = b.substr(6, 2);
+		if(parseInt(yr) < 50) yr = "20" + yr;
+		else                  yr = "19" + yr;
+		d2 = yr + b.substr(3, 2) + b.substr(0, 2);
+	}
+	if(d1 == d2) return  0;
+	if(d1 <  d2) return -1;
+	return 1;
+}
+
+// 3. Currency
+//    Note: commented out, because we don't need it
+/*
+function ts_sortCurrency(a, b) { 
+	a = a.replace(/[^0-9.]/g, "");
+	b = b.replace(/[^0-9.]/g, "");
+
+	return parseFloat(a) - parseFloat(b);
+}
+*/
+
+// 4. Numeric
+function ts_sortNumeric(a, b) { 
+	a = parseFloat(a); if(isNaN(a)) a = 0;
+	b = parseFloat(b); if(isNaN(b)) b = 0;
+
+	return a - b;
+}
+
+// 5. IP-Address
+function ts_sortIpAddress(a, b) {
+	var oa = a.split(".");
+	var ob = b.split(".");
+
+	for(var i = 0; i < 4; i++) {
+		if(parseInt(oa[i]) < parseInt(ob[i])) return -1;
+		if(parseInt(oa[i]) > parseInt(ob[i])) return  1;
+	}
+	return 0;
+}
+
+/*** Internal Functions ***/
+
+// Get a parentNode by it's tagName property
+function ts_getParentByTag(element, pTag) {
+	if(typeof element != "object")
+		return null;
+	else if(element.nodeType == 1 && element.tagName.toLowerCase() == pTag.toLowerCase())
+		return element;
+	else
+		return ts_getParentByTag(element.parentNode, pTag);
+}
+
+// Get a childnode by it's tagName property and class
+function ts_getChildByTagAndClass(element, pTag, pClass) {
+	if(typeof element != "object")
+		return null;
+
+	var childs = element.childNodes;
+	for(var i = 0; i < childs.length; i++)
+		if(childs[i].nodeType == 1 /* ELEMENT_NODE */             &&
+			childs[i].tagName.toLowerCase() == pTag.toLowerCase() &&
+			ts_hasClass(childs[i], pClass) >= 0)
+				return childs[i];
+
+	return null;
+}
+
+// Determine, whether an element has a specific class in it's className
+function ts_hasClass(element, eClass) {
+	if(! element.className)
+		return false;
+
+	if(element.className)
+		var classes = element.className.split(/\s+/g);
+	else if(element.hasAttribute && element.hasAttribute("class"))
+		var classes = element.getAttribute("class").split(/\s+/g);
+	else
+		return false;
+
+	for(var i = 0; i < classes.length; i++)
+		if(classes[i] == eClass)
+			return true;
+
+	return false;
+}
+
+// Get an element's innerText property
+function ts_getInnerText(element) {
+	if(typeof element == "string")
+		return element;
+	else if (typeof element == "undefined")
+		return "";
+
+	if(element.innerText) return element.innerText;
+
 	var str = "";
-	
-	var cs = el.childNodes;
-	var l = cs.length;
-	for (var i = 0; i < l; i++) {
-		switch (cs[i].nodeType) {
-			case 1: //ELEMENT_NODE
-				str += ts_getInnerText(cs[i]);
+	var childs = element.childNodes;
+	var l = childs.length;
+	for(var i = 0; i < l; i++) {
+		switch(childs[i].nodeType) {
+			case 1: // ELEMENT_NODE
+				str += ts_getInnerText(childs[i]);
 				break;
-			case 3:	//TEXT_NODE
-				str += cs[i].nodeValue;
+			case 3:	// TEXT_NODE
+				str += childs[i].nodeValue;
 				break;
 		}
 	}
 	return str;
 }
 
-function ts_resortTable(lnk) {
-    // get the span
-    var span;
-    for (var ci=0;ci<lnk.childNodes.length;ci++) {
-        if (lnk.childNodes[ci].tagName && lnk.childNodes[ci].tagName.toLowerCase() == 'span') span = lnk.childNodes[ci];
-    }
-    var spantext = ts_getInnerText(span);
-    var td = lnk.parentNode;
-    var column = td.cellIndex;
-    var table = getParent(td,'TABLE');
-    
-    // Work out a type for the column
-    if (table.rows.length <= 1) return;
-    var itm = ts_getInnerText(table.rows[1].cells[column]);
-    sortfn = ts_sort_caseinsensitive;
-    if (itm.match(/^\d\d[\/-]\d\d[\/-]\d\d\d\d$/)) sortfn = ts_sort_date;
-    if (itm.match(/^\d\d[\/-]\d\d[\/-]\d\d$/)) sortfn = ts_sort_date;
-    if (itm.match(/^[£$]/)) sortfn = ts_sort_currency;
-    if (itm.match(/^[\d\.]+$/)) sortfn = ts_sort_numeric;
-    SORT_COLUMN_INDEX = column;
-    var firstRow = new Array();
-    var newRows = new Array();
-    for (i=0;i<table.rows[0].length;i++) { firstRow[i] = table.rows[0][i]; }
-    for (j=1;j<table.rows.length;j++) { newRows[j-1] = table.rows[j]; }
+/* Class to add an event handler to an element
+ *  <element>   - element to add the event handler to    (Object)
+ *  <event>     - event to listen on                     (String)
+ *  <handler>   - function to execute if an event fires  (Function)
+ *  [<context>] - context to execute the handler in      (Object)
+ */
+function ts_EventHandler(element, event, handler, context) {
+	var self     = this;
+	this.context = typeof(context) == "object" ? context : null;
 
-    newRows.sort(sortfn);
+	event = event.toLowerCase();
+	if(event.substring(0, 2) == "on")
+		event = event.substring(2);
 
-    if (span.getAttribute("sortdir") == 'down') {
-        ARROW = '&nbsp;&nbsp;&uarr;';
-        newRows.reverse();
-        span.setAttribute('sortdir','up');
-    } else {
-        ARROW = '&nbsp;&nbsp;&darr;';
-        span.setAttribute('sortdir','down');
-    }
-    
-    // We appendChild rows that already exist to the tbody, so it moves them rather than creating new ones
-    // don't do sortbottom rows
-    for (i=0;i<newRows.length;i++) { if (!newRows[i].className || (newRows[i].className && (newRows[i].className.indexOf('sortbottom') == -1))) table.tBodies[0].appendChild(newRows[i]);}
-    // do sortbottom rows only
-    for (i=0;i<newRows.length;i++) { if (newRows[i].className && (newRows[i].className.indexOf('sortbottom') != -1)) table.tBodies[0].appendChild(newRows[i]);}
-    
-    // Delete any other arrows there may be showing
-    var allspans = document.getElementsByTagName("span");
-    for (var ci=0;ci<allspans.length;ci++) {
-        if (allspans[ci].className == 'sortarrow') {
-            if (getParent(allspans[ci],"table") == getParent(lnk,"table")) { // in the same table as us?
-                allspans[ci].innerHTML = '&nbsp;&nbsp;&nbsp;';
-            }
-        }
-    }
-        
-    span.innerHTML = ARROW;
-}
+	var evHandler = this.context
+		? function(ev) { handler.call(self.context, ev); }
+		: function(ev) { handler     (ev);               }
 
-function getParent(el, pTagName) {
-	if (el == null) return null;
-	else if (el.nodeType == 1 && el.tagName.toLowerCase() == pTagName.toLowerCase())	// Gecko bug, supposed to be uppercase
-		return el;
+	// W3C DOM, Level 2 (Event Specification)
+	if(element.addEventListener) {
+		element.addEventListener(event, evHandler, false);
+		return true;
+	}
+	// Microsoft Event Model
+	else if(element.attachEvent)
+		return element.attachEvent("on" + event, evHandler);
 	else
-		return getParent(el.parentNode, pTagName);
-}
-function ts_sort_date(a,b) {
-    // y2k notes: two digit years less than 50 are treated as 20XX, greater than 50 are treated as 19XX
-    aa = ts_getInnerText(a.cells[SORT_COLUMN_INDEX]);
-    bb = ts_getInnerText(b.cells[SORT_COLUMN_INDEX]);
-    if (aa.length == 10) {
-        dt1 = aa.substr(6,4)+aa.substr(3,2)+aa.substr(0,2);
-    } else {
-        yr = aa.substr(6,2);
-        if (parseInt(yr) < 50) { yr = '20'+yr; } else { yr = '19'+yr; }
-        dt1 = yr+aa.substr(3,2)+aa.substr(0,2);
-    }
-    if (bb.length == 10) {
-        dt2 = bb.substr(6,4)+bb.substr(3,2)+bb.substr(0,2);
-    } else {
-        yr = bb.substr(6,2);
-        if (parseInt(yr) < 50) { yr = '20'+yr; } else { yr = '19'+yr; }
-        dt2 = yr+bb.substr(3,2)+bb.substr(0,2);
-    }
-    if (dt1==dt2) return 0;
-    if (dt1<dt2) return -1;
-    return 1;
+		return false;
 }
 
-function ts_sort_currency(a,b) { 
-    aa = ts_getInnerText(a.cells[SORT_COLUMN_INDEX]).replace(/[^0-9.]/g,'');
-    bb = ts_getInnerText(b.cells[SORT_COLUMN_INDEX]).replace(/[^0-9.]/g,'');
-    return parseFloat(aa) - parseFloat(bb);
+// Set an element's cursor-style
+function ts_setCursor (element, type) {
+	if (! type) type = "auto";
+	/*@cc_on
+		// MSIE <= 5.5
+		@if (@_jscript_version <= 5.5)
+			if (type == "pointer") type = "hand";
+		@end
+	@*/
+
+	element.style.cursor = type;
 }
-
-function ts_sort_numeric(a,b) { 
-    aa = parseFloat(ts_getInnerText(a.cells[SORT_COLUMN_INDEX]));
-    if (isNaN(aa)) aa = 0;
-    bb = parseFloat(ts_getInnerText(b.cells[SORT_COLUMN_INDEX])); 
-    if (isNaN(bb)) bb = 0;
-    return aa-bb;
-}
-
-function ts_sort_caseinsensitive(a,b) {
-    aa = ts_getInnerText(a.cells[SORT_COLUMN_INDEX]).toLowerCase();
-    bb = ts_getInnerText(b.cells[SORT_COLUMN_INDEX]).toLowerCase();
-    if (aa==bb) return 0;
-    if (aa<bb) return -1;
-    return 1;
-}
-
-function ts_sort_default(a,b) {
-    aa = ts_getInnerText(a.cells[SORT_COLUMN_INDEX]);
-    bb = ts_getInnerText(b.cells[SORT_COLUMN_INDEX]);
-    if (aa==bb) return 0;
-    if (aa<bb) return -1;
-    return 1;
-}
-
-
-function addEvent(elm, evType, fn, useCapture)
-// addEvent and removeEvent
-// cross-browser event handling for IE5+,  NS6 and Mozilla
-// By Scott Andrew
-{
-  if (elm.addEventListener){
-    elm.addEventListener(evType, fn, useCapture);
-    return true;
-  } else if (elm.attachEvent){
-    var r = elm.attachEvent("on"+evType, fn);
-    return r;
-  } else {
-    alert("Handler could not be removed");
-  }
-} 

@@ -69,6 +69,7 @@ function ts_resortTable(lnk) {
     if (itm.match(/^\d\d[\/-]\d\d[\/-]\d\d$/)) sortfn = ts_sort_date;
     if (itm.match(/^[£$]/)) sortfn = ts_sort_currency;
     if (itm.match(/^[\d\.]+$/)) sortfn = ts_sort_numeric;
+    if (itm.match(/^\s*[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\s*$/)) sortfn = ts_sortIpAddress;
     SORT_COLUMN_INDEX = column;
     var firstRow = new Array();
     var newRows = new Array();
@@ -148,6 +149,18 @@ function ts_sort_numeric(a,b) {
     if (isNaN(bb)) bb = 0;
     return aa-bb;
 }
+
+function ts_sortIpAddress(a, b) {
+        var oa = a.split(".");
+        var ob = b.split(".");
+
+        for(var i = 0; i < 4; i++) {
+                if(parseInt(oa[i]) < parseInt(ob[i])) return -1;
+                if(parseInt(oa[i]) > parseInt(ob[i])) return  1;
+        }
+        return 0;
+}
+
 
 function ts_sort_caseinsensitive(a,b) {
     aa = ts_getInnerText(a.cells[SORT_COLUMN_INDEX]).toLowerCase();

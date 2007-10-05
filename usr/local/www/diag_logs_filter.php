@@ -109,6 +109,8 @@ function conv_clog($logfile, $tail = 50) {
 			$flent['proto'] = "IGMP";
 		else if(stristr(strtoupper($logent), "CARP") == true)
 			$flent['proto'] = "CARP";
+		else if(stristr(strtoupper($logent), "VRRP") == true)
+			$flent['proto'] = "VRRP";
 		else if(stristr(strtoupper($logent), "PFSYNC") == true)
 			$flent['proto'] = "PFSYNC";
 		else if(stristr($logent, "sack") == true)

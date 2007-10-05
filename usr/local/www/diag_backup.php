@@ -143,7 +143,7 @@ if ($_POST) {
 					} else {
 						restore_config_section($_POST['restorearea'], $rules);
 						filter_configure();
-						$savemsg = "The configuration area has been restored.  The firewall is now rebooting.";
+						$savemsg = "The configuration area has been restored.  You may need to reboot the firewall.";
 					}
 				} else {
 					$rules = file_get_contents($_FILES['conffile']['tmp_name']);

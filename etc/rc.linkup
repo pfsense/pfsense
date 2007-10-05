@@ -49,6 +49,8 @@
 			global $config;
 			log_error("Processing {$argument1} - {$argument2}");
 			$iface = convert_real_interface_to_friendly_interface_name($argument1);
+			if(!$iface) 
+				return;
 			if($config['interfaces'][$iface]['ipaddr'] <> "dhcp" and
 				$config['interfaces'][$iface]['ipaddr'] <> "pppoe" and
 				$config['interfaces'][$iface]['ipaddr'] <> "bigpond" and

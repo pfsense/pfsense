@@ -207,7 +207,7 @@ if ($_POST) {
 				$conf_file = "{$g['cf_conf_path']}/bak/config-" . strtotime($ver2restore) . ".xml";
                                 if (config_install($conf_file) == 0) {
 									$reboot_needed = true;
-                                    $savemsg = "The configuration has been restored. The firewall is now rebooting.";
+                                    $savemsg = "The configuration has been restored. You may need to reboot the firewall.";
                                 } else {
                                 	$input_errors[] = "The configuration could not be restored.";
                                 }

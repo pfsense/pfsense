@@ -174,6 +174,8 @@ function get_ipsec_tunnel_src($tunnel) {
 			$realinterface = convert_friendly_interface_to_real_interface_name('opt' . $j);
 			$iflabels['opt' . $j] = find_interface_ip($realinterface);
 		}
+		$realinterface = convert_friendly_interface_to_real_interface_name($if);
+		$interfaceip = find_interface_ip($realinterface);
 		$interfaceip = $iflabels[$tunnel['interface']];
 	} else {
 		$realinterface = convert_friendly_interface_to_real_interface_name($if);

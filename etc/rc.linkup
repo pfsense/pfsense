@@ -81,8 +81,9 @@
 				}
 				switch ($iface) {
 					case "wan":
-						if($config['interfaces'][$iface]['ipaddr'] <> "pppoe") {
-							/* do not reconfigure on hotplug events when using pppoe */
+						if($config['interfaces'][$iface]['ipaddr'] <> "pppoe" and
+							$config['interfaces'][$iface]['ipaddr'] <> "pptp") {
+							/* do not reconfigure on hotplug events when using pppoe or pptp */
 							log_error("HOTPLUG: Configuring wan interface {$argument1}");
 							interfaces_wan_configure();
 						}

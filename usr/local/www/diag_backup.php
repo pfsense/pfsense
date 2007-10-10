@@ -273,7 +273,7 @@ include("head.inc");
 						Open a pfSense configuration XML file and click the button below to restore the configuration. <br /><br /> Restore area: <?php spit_out_select_items("restorearea"); ?>
 						<p><input name="conffile" type="file" class="formfld unknown" id="conffile" size="40"></p>
 						<p><input name="Submit" type="submit" class="formbtn" id="restore" value="Restore configuration"></p>
-                      	<p><strong><span class="red">Note:</span></strong><br />The firewall will reboot after restoring the configuration.<br /></p>
+                      	<p><strong><span class="red">Note:</span></strong><br />The firewall may need a reboot after restoring the configuration.<br /></p>
 					</td>
 				</tr>
 				<?php if($config['installedpackages']['package'] != "") { ?>

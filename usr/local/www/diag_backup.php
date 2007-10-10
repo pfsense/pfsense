@@ -143,7 +143,7 @@ if ($_POST) {
 					} else {
 						restore_config_section($_POST['restorearea'], $rules);
 						filter_configure();
-						$savemsg = "The configuration area has been restored.  The firewall is now rebooting.";
+						$savemsg = "The configuration area has been restored.  The firewall may need to be rebooted.";
 					}
 				} else {
 					$rules = file_get_contents($_FILES['conffile']['tmp_name']);
@@ -273,7 +273,7 @@ include("head.inc");
 						Open a pfSense configuration XML file and click the button below to restore the configuration. <br /><br /> Restore area: <?php spit_out_select_items("restorearea"); ?>
 						<p><input name="conffile" type="file" class="formfld" id="conffile" size="40"></p>
 						<p><input name="Submit" type="submit" class="formbtn" id="restore" value="Restore configuration"></p>
-                      	<p><strong><span class="red">Note:</span></strong><br />The firewall will reboot after restoring the configuration.<br /></p>
+                      	<p><strong><span class="red">Note:</span></strong><br />The firewall may need to be rebooted after restoring the configuration.<br /></p>
 					</td>
 				</tr>
 				<?php if($config['installedpackages']['package'] != "") { ?>

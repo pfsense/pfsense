@@ -104,7 +104,9 @@ if ($fd) {
                 <td nowrap class="listhdrr">Status</td>
 	</tr>
 <?php
-foreach ($config['ipsec']['tunnel'] as $ipsec): ?>
+foreach ($config['ipsec']['tunnel'] as $ipsec) {
+	if(! $ipsec{'disabled'}) {
+?>
 	<tr>
 		<td class="listlr"><?=htmlspecialchars(get_ipsec_tunnel_src($ipsec));?>
 		<br/>
@@ -121,7 +123,10 @@ foreach ($config['ipsec']['tunnel'] as $ipsec): ?>
 		<td class="listr"><?=htmlspecialchars($ipsec['descr']);?></td>
 		<td class="listr"><?php echo output_ipsec_tunnel_status($ipsec); ?></td>
 	</tr>
-<?php endforeach; ?>
+<?php
+	}
+}
+?>
 <?php else: ?>
   <tr>
     <td>

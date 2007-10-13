@@ -1319,6 +1319,10 @@ EOD;
 			return;
 		}
 
+		if($lanif == "exit") {
+			exit;
+		}
+
 		if ($lanif === "a")
 			$lanif = autodetect_interface("LAN", $fp);
 		else if (!array_key_exists($lanif, $iflist)) {

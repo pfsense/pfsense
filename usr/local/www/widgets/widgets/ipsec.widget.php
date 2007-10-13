@@ -54,6 +54,11 @@
 		$tun_disabled = "false";
 		$foundsrc = false;
 		$founddst = false; 
+
+		if (isset($tunnel['disabled'])) {
+			$tun_disabled = "true";
+			continue;
+		}		
 		
 		if(output_ipsec_tunnel_status($tunnel)) {
 			/* tunnel is up */
@@ -65,9 +70,6 @@
 			$inactivecounter++;
 		}
 		
-		if (isset($tunnel['disabled'])) {
-			$tun_disabled = "true";
-		}		
 		$ipsec_detail_array[] = array('src' => $tunnel['interface'],
 					'dest' => $tunnel['remote-gateway'],
 					'remote-subnet' => $tunnel['remote-subnet'],

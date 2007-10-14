@@ -212,6 +212,7 @@ include("head.inc");
 			</table>
 		  <td>
                 </tr>
+		<tr>
 		    <td colspan="4">
 		      <p><span class="vexpl"><span class="red"><strong>Note:<br>
                       </strong></span>You can check your IPSEC status at <a href="diag_ipsec_sad.php">Status:IPSEC</a>.</span></p>

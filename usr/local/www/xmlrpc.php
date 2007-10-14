@@ -150,7 +150,7 @@ function filter_configure_xmlrpc($raw_params) {
 
 /*****************************/
 
-$check_firmware_version_doc = 'Basic XMLRPC wrapper for filter_configure. This function will return the output of check_firmware_version upon completion.';
+$check_firmware_version_doc = 'Basic XMLRPC wrapper for check_firmware_version. This function will return the output of check_firmware_version upon completion.';
 $check_firmware_version_sig = array(
 					array(
 						$XML_RPC_String,
@@ -159,7 +159,9 @@ $check_firmware_version_sig = array(
 				);
 
 function check_firmware_version_xmlrpc($raw_params) {
-	global $XML_RPC_String;
+	global $xmlrpc_g, $XML_RPC_String;
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
 	return new XML_RPC_Response(new XML_RPC_Value(check_firmware_version(false), $XML_RPC_String));
 }
 
@@ -190,6 +192,8 @@ $get_notices_sig = array(
 
 function get_notices_xmlrpc($raw_params) {
 	global $g, $xmlrpc_g;
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
 	require_once("notices.inc");
 	$params = array_pop(xmlrpc_params_to_php($raw_params));
 	if(!$params) {

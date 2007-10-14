@@ -195,7 +195,6 @@ function get_notices_xmlrpc($raw_params) {
 	$params = xmlrpc_params_to_php($raw_params);
 	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
 	require_once("notices.inc");
-	$params = array_pop(xmlrpc_params_to_php($raw_params));
 	if(!$params) {
 		$toreturn = get_notices();
 	} else {

@@ -254,7 +254,7 @@ function wireless_config_print() {
 		<tr>
 			<td valign="top" class="vncellreq">Standard</td>
 			<td class="vtable">
-			<select name="standard" class="formfld" id="standard">
+			<select name="standard" class="formselect" id="standard">
 				<?php
 				foreach($wl_modes as $wl_standard => $wl_channels) {
 					PRINT "<option ";
@@ -270,7 +270,7 @@ function wireless_config_print() {
 		<tr>
 			<td valign="top" class="vncellreq">Mode</td>
 			<td class="vtable">
-			<select name="mode" class="formfld" id="mode">
+			<select name="mode" class="formselect" id="mode">
 				<option <? if ($pconfig['mode'] == 'bss') echo "selected";?> value="bss">Infrastructure (BSS)</option>
 				<option <? if ($pconfig['mode'] == 'adhoc') echo "selected";?> value="adhoc">Ad-hoc (IBSS)</option>
 				<option <? if ($pconfig['mode'] == 'hostap') echo "selected";?> value="hostap">Access Point</option>
@@ -280,7 +280,7 @@ function wireless_config_print() {
 		<tr>
 			<td valign="top" class="vncellreq">802.11g OFDM Protection Mode</td>
 			<td class="vtable">
-			<select name="protmode" class="formfld" id="protmode">
+			<select name="protmode" class="formselect" id="protmode">
 				<option <? if ($pconfig['protmode'] == 'off') echo "selected";?> value="off">Protection mode off</option>
 				<option <? if ($pconfig['protmode'] == 'cts') echo "selected";?> value="cts">Protection mode CTS to self</option>
 				<option <? if ($pconfig['protmode'] == 'rtscts') echo "selected";?> value="rtscts">Protection mode RTS and CTS</option>
@@ -292,7 +292,7 @@ function wireless_config_print() {
 		</tr>
 		<tr>
 			<td valign="top" class="vncellreq">SSID</td>
-			<td class="vtable"><input name="ssid" type="text" class="formfld" id="ssid" size="20" value="<?=htmlspecialchars($pconfig['ssid']);?>">
+			<td class="vtable"><input name="ssid" type="text" class="formfld unknown" id="ssid" size="20" value="<?=htmlspecialchars($pconfig['ssid']);?>">
 			</td>
                 </tr>
 		<tr>
@@ -327,7 +327,7 @@ function wireless_config_print() {
                 <tr>
 			<td valign="top" class="vncellreq">Transmit power</td>
 			<td class="vtable">
-			<select name="txpower">
+			<select name="txpower" class="formselect" id="txpower">
 			<?
 				for($x = 99; $x > 0; $x--) {
 					if($pconfig["txpower"] == $x)
@@ -343,7 +343,7 @@ function wireless_config_print() {
 		</tr>
                 <tr>
 			<td valign="top" class="vncellreq">Channel</td>
-			<td class="vtable"><select name="channel" class="formfld" id="channel">
+			<td class="vtable"><select name="channel" class="formselect" id="channel">
 				<option <? if ($pconfig['channel'] == 0) echo "selected"; ?> value="0">Auto</option>
 				<?php
 				foreach($wl_modes as $wl_standard => $wl_channels) {
@@ -363,7 +363,7 @@ function wireless_config_print() {
 		</tr>
 		<tr>
 			<td valign="top" class="vncell">Distance setting</td>
-			<td class="vtable"><input name="distance" type="text" class="formfld" id="distance" size="5" value="<?=htmlspecialchars($pconfig['distance']);?>">
+			<td class="vtable"><input name="distance" type="text" class="formfld unknown" id="distance" size="5" value="<?=htmlspecialchars($pconfig['distance']);?>">
 			<br/>
 			Note: This field can be used to tune ACK/CTS timers to fit the distance between AP and Client<br/>
 			(measured in Meters and works only for Atheros based cards !)
@@ -381,22 +381,22 @@ function wireless_config_print() {
 		</tr>
 		<tr>
                         <td>Key 1:&nbsp;&nbsp;</td>
-                        <td> <input name="key1" type="text" class="formfld" id="key1" size="30" value="<?=htmlspecialchars($pconfig['key1']);?>"></td>
+                        <td> <input name="key1" type="text" class="formfld unknown" id="key1" size="30" value="<?=htmlspecialchars($pconfig['key1']);?>"></td>
                         <td align="center"> <input name="txkey" type="radio" value="1" <? if ($pconfig['txkey'] == 1) echo "checked";?>></td>
 		</tr>
 		<tr>
                         <td>Key 2:&nbsp;&nbsp;</td>
-                        <td> <input name="key2" type="text" class="formfld" id="key2" size="30" value="<?=htmlspecialchars($pconfig['key2']);?>"></td>
+                        <td> <input name="key2" type="text" class="formfld unknown" id="key2" size="30" value="<?=htmlspecialchars($pconfig['key2']);?>"></td>
                         <td align="center"> <input name="txkey" type="radio" value="2" <? if ($pconfig['txkey'] == 2) echo "checked";?>></td>
 		</tr>
 		<tr>
                         <td>Key 3:&nbsp;&nbsp;</td>
-                        <td> <input name="key3" type="text" class="formfld" id="key3" size="30" value="<?=htmlspecialchars($pconfig['key3']);?>"></td>
+                        <td> <input name="key3" type="text" class="formfld unknown" id="key3" size="30" value="<?=htmlspecialchars($pconfig['key3']);?>"></td>
                         <td align="center"> <input name="txkey" type="radio" value="3" <? if ($pconfig['txkey'] == 3) echo "checked";?>></td>
 		</tr>
 		<tr>
                         <td>Key 4:&nbsp;&nbsp;</td>
-                        <td> <input name="key4" type="text" class="formfld" id="key4" size="30" value="<?=htmlspecialchars($pconfig['key4']);?>"></td>
+                        <td> <input name="key4" type="text" class="formfld unknown" id="key4" size="30" value="<?=htmlspecialchars($pconfig['key4']);?>"></td>
                         <td align="center"> <input name="txkey" type="radio" value="4" <? if ($pconfig['txkey'] == 4) echo "checked";?>></td>
 		</tr>
 			</table>
@@ -417,7 +417,7 @@ function wireless_config_print() {
 			</tr>
 			<tr>
 			<td>PSK:&nbsp;&nbsp;</td>
-			<td><input name="passphrase" type="text" class="formfld" id="passphrase" size="66" value="<?=htmlspecialchars($pconfig['passphrase']);?>"></td>
+			<td><input name="passphrase" type="text" class="formfld unknown" id="passphrase" size="66" value="<?=htmlspecialchars($pconfig['passphrase']);?>"></td>
 			</tr>
 			</table>
 			<br/>Passphrase must be from 8 to 63 chars.
@@ -425,7 +425,7 @@ function wireless_config_print() {
 	        </tr>
 		<tr>
 			<td valign="top" class="vncell">WPA Mode</td>
-			<td class="vtable"><select name="wpa_mode" class="formfld" id="wpa_mode">
+			<td class="vtable"><select name="wpa_mode" class="formselect" id="wpa_mode">
 			<option <? if ($pconfig['wpa_mode'] == '1') echo "selected";?> value="1">WPA</option>
 			<option <? if ($pconfig['wpa_mode'] == '2') echo "selected";?> value="2">WPA2</option>
 			<option <? if ($pconfig['wpa_mode'] == '3') echo "selected";?> value="3">Both</option>
@@ -434,7 +434,7 @@ function wireless_config_print() {
 		</tr>
 		<tr>
 			<td valign="top" class="vncell">WPA Key Management Mode</td>
-			<td class="vtable"><select name="wpa_key_mgmt" class="formfld" id="wpa_key_mgmt">
+			<td class="vtable"><select name="wpa_key_mgmt" class="formselect" id="wpa_key_mgmt">
 			<option <? if ($pconfig['wpa_key_mgmt'] == 'WPA-PSK') echo "selected";?> value="WPA-PSK">Pre Shared Key</option>
 			<option <? if ($pconfig['wpa_key_mgmt'] == 'WPA-EAP') echo "selected";?> value="WPA-EAP">Extensible Authentication Protocol</option>
 			<option <? if ($pconfig['wpa_key_mgmt'] == 'WPA-PSK WPA-EAP') echo "selected";?> value="WPA-PSK WPA-EAP">Both</option>
@@ -447,7 +447,7 @@ function wireless_config_print() {
 			<td class="vtable"><input name="mac_acl_enable" type="checkbox" value="yes" class="formfld" id="mac_acl_enable" <? if ($pconfig['mac_acl_enable']) echo "checked"; ?>>
 			Setting this option will enable the use of a mac filterlist to allow/deny association based on mac address
 			<br/><br/>
-			<select name="macaddr_acl" class="formfld" id="macaddr_acl">
+			<select name="macaddr_acl" class="formselect" id="macaddr_acl">
                         <option <? if ($pconfig['macaddr_acl'] == '0') echo "selected";?> value="0">Allow</option>
 			<option <? if ($pconfig['macaddr_acl'] == '1') echo "selected";?> value="1">Deny</option>
 			<option <? if ($pconfig['macaddr_acl'] == '2') echo "selected";?> value="2">Radius</option>
@@ -460,7 +460,7 @@ function wireless_config_print() {
 		*/ ?>
 		<tr>
 			<td valign="top" class="vncell">Authentication</td>
-			<td class="vtable"><select name="auth_algs" class="formfld" id="auth_algs">
+			<td class="vtable"><select name="auth_algs" class="formselect" id="auth_algs">
 			<option <? if ($pconfig['auth_algs'] == '1') echo "selected";?> value="1">Open System Authentication</option>
 			<option <? if ($pconfig['auth_algs'] == '2') echo "selected";?> value="2">Shared Key Authentication</option>
 			<option <? if ($pconfig['auth_algs'] == '3') echo "selected";?> value="3">Both</option>
@@ -470,7 +470,7 @@ function wireless_config_print() {
 		</tr>
 		<tr>
 			<td valign="top" class="vncell">WPA Pairwise</td>
-			<td class="vtable"><select name="wpa_pairwise" class="formfld" id="wpa_pairwise">
+			<td class="vtable"><select name="wpa_pairwise" class="formselect" id="wpa_pairwise">
 			<option <? if ($pconfig['wpa_pairwise'] == 'CCMP TKIP') echo "selected";?> value="CCMP TKIP">Both</option>
 			<option <? if ($pconfig['wpa_pairwise'] == 'CCMP') echo "selected";?> value="CCMP">AES</option>
 			<option <? if ($pconfig['wpa_pairwise'] == 'TKIP') echo "selected";?> value="TKIP">TKIP</option>
@@ -479,7 +479,7 @@ function wireless_config_print() {
 		</tr>
 		<tr>
 			<td valign="top" class="vncell">Key Rotation</td>
-			<td class="vtable"><input name="wpa_group_rekey" type="text" class="formfld" id="wpa_group_rekey" size="30" value="<? echo $pconfig['wpa_group_rekey'] ? $pconfig['wpa_group_rekey'] : "60";?>">
+			<td class="vtable"><input name="wpa_group_rekey" type="text" class="formfld unknown" id="wpa_group_rekey" size="30" value="<? echo $pconfig['wpa_group_rekey'] ? $pconfig['wpa_group_rekey'] : "60";?>">
 			<br/>Allowed values are 1-9999 but should not be longer than Master Key Regeneration time.
 			</td>
 		</tr>

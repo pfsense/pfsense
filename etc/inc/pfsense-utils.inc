@@ -3717,7 +3717,7 @@ function add_hostname_to_watch($hostname) {
 
 function find_dns_aliases() {
 	global $config, $g;
-	foreach($config['aliases']['alias'] as $alias) {
+	foreach((array) $config['aliases']['alias'] as $alias) {
 		$alias_value = $alias['address'];
 		$alias_name = $alias['name'];
 		if(stristr($alias_value, " ")) {

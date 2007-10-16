@@ -2,11 +2,13 @@
 var rowname = new Array(99);
 var rowtype = new Array(99);
 var newrow  = new Array(99);
+var rowsize  = new Array(99);
 
 for (i = 0; i < 99; i++) {
 	rowname[i] = '';
 	rowtype[i] = '';
 	 newrow[i] = '';
+	 rowsize[i] = '25';
 }
 
 var field_counter_js = 0;
@@ -24,13 +26,13 @@ var addRowTo = (function() {
 	for (i = 0; i < field_counter_js; i++) {
 		td = d.createElement("td");
 		if(rowtype[i] == 'textbox') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input name='" + rowname[i] + totalrows + "'></input> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input size='" + rowsize[i] + "' name='" + rowname[i] + totalrows + "'></input> ";
 		} else if(rowtype[i] == 'select') {
 			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select name='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
 		} else if(rowtype[i] == 'checkbox') {
 			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input type='checkbox' name='" + rowname[i] + totalrows + "'></input> ";
 		} else if(rowtype[i] == 'input') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input size='8' name='" + rowname[i] + totalrows + "'></input> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input size='" + rowsize[i] + "' name='" + rowname[i] + totalrows + "'></input> ";
 		} else if(rowtype[i] == 'password') {
 			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input type='password' name='" + rowname[i] + totalrows + "'></input> ";
 		}

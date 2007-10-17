@@ -208,9 +208,9 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-<div id="save_button" style="display:none"><?php print_info_box_np("Assignment change detected, changes are not yet saved.", "save", "Save Changes"); ?></div>
 
 <form action="interfaces_assign.php" method="post" name="iform" id="iform">
+  <div id="save_button" style="display:none"><?php print_info_box_np("Assignment change detected, changes are not yet saved.", "save", "Save Changes"); ?></div>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
 <?php

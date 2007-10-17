@@ -29,119 +29,165 @@
 */
 
 require("guiconfig.inc");
-$pgtitle = "Diagnostics: ARP Table";
-include("head.inc");
-?>
-<body link="#000000" vlink="#000000" alink="#000000">
-<script src="/javascript/sorttable.js"></script>
-<? include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-        <tr>
-                <td>
+
+function leasecmp($a, $b) {
+	return strcmp($a[$_GET['order']], $b[$_GET['order']]);
+}
+
+function adjust_gmt($dt) {
+	$ts = strtotime($dt . " GMT");
+	return strftime("%Y/%m/%d %H:%M:%S", $ts);
+}
+
+function remove_duplicate($array, $field) {
+foreach ($array as $sub)
+	$cmp[] = $sub[$field];
+	$unique = array_unique($cmp);
+	foreach ($unique as $k => $rien)
+		$new[] = $array[$k];
+	return $new;
+}
+
+$leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";
+$awk = "/usr/bin/awk";
+/* this pattern sticks comments into a single array item */
+$cleanpattern = "'{ gsub(\"#.*\", \"\");} { gsub(\";\", \"\"); print;}'";
+/* We then split the leases file by } */
+$splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i; printf \"}\\n\";}'";
+
+/* stuff the leases file in a proper format into a array by line */
+exec("cat {$leasesfile} | {$awk} {$cleanpattern} | {$awk} {$splitpattern}", $leases_content);
+$leases_count = count($leases_content);
+
+$pools = array();
+$leases = array();
+$i = 0;
+$l = 0;
+$p = 0;
+// Put everything together again
+while($i < $leases_count) {
+        /* split the line by space */
+        $data = explode(" ", $leases_content[$i]);
+        /* walk the fields */
+        $f = 0;
+        $fcount = count($data);
+        /* with less then 20 fields there is nothing useful */
+        if($fcount < 20) {
+                $i++;
+                continue;
+        }
+        while($f < $fcount) {
+                switch($data[$f]) {
+                        case "failover":
+                                $pools[$p]['name'] = $data[$f+2];
+                                $pools[$p]['mystate'] = $data[$f+7];
+                                $pools[$p]['peerstate'] = $data[$f+14];
+                                $pools[$p]['mydate'] = $data[$f+10];
+                                $pools[$p]['mydate'] .= " " . $data[$f+11];
+                                $pools[$p]['peerdate'] = $data[$f+17];
+                                $pools[$p]['peerdate'] .= " " . $data[$f+18];
+                                $p++;
+                                $i++;
+                                continue 3;
+                        case "lease":
+                                $leases[$l]['ip'] = $data[$f+1];
+                                $leases[$l]['type'] = "dynamic";
+                                $f = $f+2;
+                                break;
+                        case "starts":
+                                $leases[$l]['start'] = $data[$f+2];
+                                $leases[$l]['start'] .= " " . $data[$f+3];
+                                $f = $f+3;
+                                break;
+                        case "ends":
+                                $leases[$l]['end'] = $data[$f+2];
+                                $leases[$l]['end'] .= " " . $data[$f+3];
+                                $f = $f+3;
+                                break;
+                        case "tstp":
+                                $f = $f+3;
+                                break;
+                        case "tsfp":
+                                $f = $f+3;
+                                break;
+                        case "atsfp":
+                                $f = $f+3;
+                                break;
+                        case "cltt":
+                                $f = $f+3;
+                                break;
+                        case "binding":
+                                switch($data[$f+2]) {
+                                        case "active":
+                                                $leases[$l]['act'] = "active";
+                                                break;
+                                        case "free":
+                                                $leases[$l]['act'] = "expired";
+                                                $leases[$l]['online'] = "offline";
+                                                break;
+                                        case "backup":
+                                                $leases[$l]['act'] = "reserved";
+                                                $leases[$l]['online'] = "offline";
+                                                break;
+                                }
+                                $f = $f+1;
+                                break;
+                        case "next":
+                                /* skip the next binding statement */
+                                $f = $f+3;
+                                break;
+                        case "hardware":
+                                $leases[$l]['mac'] = $data[$f+2];
+                                /* check if it's online and the lease is active */
+                                if($leases[$l]['act'] == "active") {
+                                        $online = exec("/usr/sbin/arp -an |/usr/bin/awk '/{$leases[$l]['ip']}/ {print}'|wc -l");
+                                        if ($online == 1) {
+                                                $leases[$l]['online'] = 'online';
+                                        } else {
+                                                $leases[$l]['online'] = 'offline';
+                                        }
+                                }
+                                $f = $f+2;
+                                break;
+                        case "client-hostname":
+                                if($data[$f+1] <> "") {
+                                        $leases[$l]['hostname'] = preg_replace('/"/','',$data[$f+1]);
+                                } else {
+                                        $hostname = gethostbyaddr($leases[$l]['ip']);
+                                        if($hostname <> "") {
+                                                $leases[$l]['hostname'] = $hostname;
+                                        }
+                                }
+                                $f = $f+1;
+                                break;
+                        case "uid":
+                                $f = $f+1;
+                                break;
+                }
+                $f++;
+        }
+        $l++;
+        $i++;
+}
+
+/* remove duplicate items by mac address */
+if(count($leases) > 0) {
+        $leases = remove_duplicate($leases,"ip");
+}
+
+if(count($pools) > 0) {
+        $pools = remove_duplicate($pools,"name");
+        asort($pools);
+}
 
 
-<?php
-
-$fp = @fopen("{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases","r");
-
-if ($fp) {
-
-	$return = array();
+// Put this in an easy to use form
+$dhcpmac = array();
+$dhcpip = array();
 	
-	while ($line = fgets($fp)) {
-		$matches = "";
-	
-		// Sort out comments
-		// C-style comments not supported!
-		if (preg_match("/^\s*[\r|\n]/", $line, $matches[0]) ||
-					preg_match("/^([^\"#]*)#.*$/", $line, $matches[1]) ||
-					preg_match("/^([^\"]*)\/\/.*$/", $line, $matches[2]) ||
-					preg_match("/\s*#(.*)/", $line, $matches[3]) ||
-					preg_match("/\\\"\176/", $line, $matches[4])
-			) {
-			$line = "";
-			continue;
-		}
-	
-		if (preg_match("/(.*)#(.*)/", $line, $matches))
-			$line = $matches[0];
-	
-		// Tokenize lines
-		do {
-			if (preg_match("/^\s*\"([^\"]*)\"(.*)$/", $line, $matches)) {
-				$line = $matches[2];
-				$return[] = array($matches[1], 0);
-			} else if (preg_match("/^\s*([{};])(.*)$/", $line, $matches)) {
-				$line = $matches[2];
-				$return[] = array($matches[0], 1);
-			} else if (preg_match("/^\s*([^{}; \t]+)(.*)$/", $line, $matches)) {
-				$line = $matches[2];
-				$return[] = array($matches[1], 0);
-			} else
-				break;
-	
-		} while($line);
-	
-		$lines++;
-	}
-	
-	fclose($fp);
-	
-	$leases = array();
-	$i = 0;
-	
-	// Put everything together again
-	while ($data = array_shift($return)) {
-		if ($data[0] == "next") {
-			$d = array_shift($return);
-		}
-		if ($data[0] == "lease") {
-			$d = array_shift($return);
-			$leases[$i]['ip'] = $d[0];
-		}
-		if ($data[0] == "client-hostname") {
-			$d = array_shift($return);
-			$leases[$i]['hostname'] = $d[0];
-		}
-		if ($data[0] == "hardware") {
-			$d = array_shift($return);
-			if ($d[0] == "ethernet") {
-				$d = array_shift($return);
-				$leases[$i]['mac'] = $d[0];
-			}
-		} else if ($data[0] == "starts") {
-			$d = array_shift($return);
-			$d = array_shift($return);
-			$leases[$i]['start'] = $d[0];
-			$d = array_shift($return);
-			$leases[$i]['start'] .= " " . $d[0];
-		} else if ($data[0] == "ends") {
-			$d = array_shift($return);
-			$d = array_shift($return);
-			$leases[$i]['end'] = $d[0];
-			$d = array_shift($return);
-			$leases[$i]['end'] .= " " . $d[0];
-		} else if ($data[0] == "binding") {
-			$d = array_shift($return);
-			if ($d[0] == "state") {
-				$d = array_shift($return);
-				$leases[$i]['act'] = $d[0];
-			}
-		} else if (($data[0] == "}") && ($data[1] == 1))		// End of group
-			$i++;
-	}
-	
-	// Put this in an easy to use form
-	$dhcpmac = array();
-	$dhcpip = array();
-	
-	foreach ($leases as $value) {
-		$dhcpmac[$value['mac']] = $value['hostname'];	
-		$dhcpip[$value['ip']] = $value['hostname'];	
-	}
-	
-	unset($data);
+foreach ($leases as $value) {
+	$dhcpmac[$value['mac']] = $value['hostname'];	
+	$dhcpip[$value['ip']] = $value['hostname'];	
 }
 
 exec("/usr/sbin/arp -an",$rawdata);
@@ -184,8 +230,17 @@ function getHostName($mac,$ip)
 		return "&nbsp;";	
 }
 
-?>
+$pgtitle = "Diagnostics: ARP Table";
+include("head.inc");
 
+?>
+<body link="#000000" vlink="#000000" alink="#000000">
+<script src="/javascript/sorttable.js"></script>
+<? include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+                <td>
 <table class="sortable" name="sortabletable" id="sortabletable" width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td class="listhdrr">IP address</td>

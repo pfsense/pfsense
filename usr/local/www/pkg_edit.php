@@ -355,10 +355,10 @@ if ($pkg['tabs'] <> "") {
 
 	      if($pkga['type'] == "input") {
 			if($pkga['size']) $size = " size='" . $pkga['size'] . "' ";
-			echo "<input " . $size . " name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
+			echo "<input " . $size . " id='" . $pkga['fieldname'] . "' name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
 			echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "password") {
-			echo "<input type='password' " . $size . " name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
+			echo "<input id='" . $pkga['fieldname'] . "' type='password' " . $size . " name='" . $pkga['fieldname'] . "' value='" . $value . "'>\n";
 			echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "select") {
                   $fieldname = $pkga['fieldname'];
@@ -374,7 +374,7 @@ if ($pkg['tabs'] <> "") {
                   $size = (isset($pkga['size']) ? "size=\"{$pkga['size']}\"" : '');
                   $onchange = (isset($pkga['onchange']) ? "onchange=\"{$pkga['onchange']}\"" : '');
 
-                  print("<select $multiple $size $onchange id=\"$fieldname\" name=\"$fieldname\">\n");
+                  print("<select id='" . $pkga['fieldname'] . "' $multiple $size $onchange id=\"$fieldname\" name=\"$fieldname\">\n");
                   foreach ($pkga['options']['option'] as $opt) {
                       $selected = '';
                       if (in_array($opt['value'], $items)) $selected = 'selected="selected"';
@@ -383,7 +383,7 @@ if ($pkg['tabs'] <> "") {
 
                   print("</select>\n<br />\n" . fixup_string($pkga['description']) . "\n");
 	      } else if($pkga['type'] == "vpn_selection") {
-		    echo "<select name='" . $vpn['name'] . "'>\n";
+		    echo "<select id='" . $pkga['fieldname'] . "' name='" . $vpn['name'] . "'>\n";
 		    foreach ($config['ipsec']['tunnel'] as $vpn) {
 			echo "\t<option value=\"" . $vpn['descr'] . "\">" . $vpn['descr'] . "</option>\n";
 		    }
@@ -394,7 +394,7 @@ if ($pkg['tabs'] <> "") {
 			if($value == "on") $checkboxchecked = " CHECKED";
 			if (isset($pkga['enablefields']) || isset($pkga['checkenablefields']))
 				$onclick = ' onclick="javascript:enablechange();"';
-			echo "<input type='checkbox' name='" . $pkga['fieldname'] . "'" . $checkboxchecked . $onclick . ">\n";
+			echo "<input id='" . $pkga['fieldname'] . "' type='checkbox' name='" . $pkga['fieldname'] . "'" . $checkboxchecked . $onclick . ">\n";
 			echo "<br>" . fixup_string($pkga['description']) . "\n";
 	      } else if($pkga['type'] == "textarea") {
 		  if($pkga['rows']) $rows = " rows='" . $pkga['rows'] . "' ";
@@ -599,18 +599,18 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $size) {
 	global $text;
 	echo "<td>\n";
 	if($type == "input") {
-		echo "<input size='" . $size . "' name='" . $fieldname . $trc . "' value='" . $value . "'>\n";
+		echo "<input size='" . $size . "' name='" . $fieldname . $trc . "' id='" . $fieldname . $trc . "' value='" . $value . "'>\n";
 	} else if($type == "checkbox") {
 		if($value)
-			echo "<input size='" . $size . "' type='checkbox' name='" . $fieldname . $trc . "' value='ON' CHECKED>\n";
+			echo "<input size='" . $size . "' type='checkbox' name='" . $fieldname . $trc . "' id='" . $fieldname . $trc . "' value='ON' CHECKED>\n";
 		else
-			echo "<input size='" . $size . "' type='checkbox' name='" . $fieldname . $trc . "' value='ON'>\n";
+			echo "<input size='" . $size . "' type='checkbox' name='" . $fieldname . $trc . "' id='" . $fieldname . $trc . "' value='ON'>\n";
 	} else if($type == "password") {
-		echo "<input size='" . $size . "' type='password' name='" . $fieldname . $trc . "' value='" . $value . "'>\n";
+		echo "<input size='" . $size . "' type='password' id='" . $fieldname . $trc . "' name='" . $fieldname . $trc . "' value='" . $value . "'>\n";
 	} else if($type == "textarea") {
-		echo "<textarea rows='2' cols='12' name='" . $fieldname . $trc . "'>" . $value . "</textarea>\n";
+		echo "<textarea rows='2' cols='12' id='" . $fieldname . $trc . "' name='" . $fieldname . $trc . "'>" . $value . "</textarea>\n";
 	} else if($type == "select") {
-		echo "<select name='" . $fieldname . $trc . "'>\n";
+		echo "<select name='" . $fieldname . $trc . "' id='" . $fieldname . $trc . "'>\n";
 		foreach($rowhelper['options']['option'] as $rowopt) {
 			$selected = "";
 			if($rowopt['value'] == $value) $selected = " SELECTED";

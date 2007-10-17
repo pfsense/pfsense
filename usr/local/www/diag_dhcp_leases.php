@@ -74,6 +74,19 @@ $splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i;
 exec("cat {$leasesfile} | {$awk} {$cleanpattern} | {$awk} {$splitpattern}", $leases_content);
 $leases_count = count($leases_content);
 
+exec("/usr/sbin/arp -an", $rawdata);
+$arpdata = array();
+foreach ($rawdata as $line) {
+	$elements = explode(' ',$line);
+	if ($elements[3] != "(incomplete)") {
+		$arpent = array();
+		$arpent['ip'] = trim(str_replace(array('(',')'),'',$elements[1]));
+		// $arpent['mac'] = trim($elements[3]);
+		// $arpent['interface'] = trim($elements[5]);
+	$arpdata[] = $arpent['ip'];
+	}
+}
+
 $pools = array();
 $leases = array();
 $i = 0;
@@ -155,13 +168,10 @@ while($i < $leases_count) {
 			case "hardware":
 				$leases[$l]['mac'] = $data[$f+2];
 				/* check if it's online and the lease is active */
-				if($leases[$l]['act'] == "active") {
-					$online = exec("/usr/sbin/arp -an |/usr/bin/awk '/{$leases[$l]['ip']}/ {print}'|wc -l");
-					if ($online == 1) {
-						$leases[$l]['online'] = 'online';
-					} else {
-						$leases[$l]['online'] = 'offline';
-					}
+				if (in_array($leases[$l]['ip'], $arpdata)) {
+					$leases[$l]['online'] = 'online';
+				} else {
+					$leases[$l]['online'] = 'offline';
 				}
 				$f = $f+2;
 				break;

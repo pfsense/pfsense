@@ -231,7 +231,7 @@ function verify_gzip_file($fname) {
 		return 1;
 }
 
-function print_info_box_np($msg) {
+function print_info_box_np($msg, $name="apply",$value="Apply changes") {
 	global $g;
 	echo "<table height=\"32\" width=\"100%\">\n";
 	echo "  <tr>\n";
@@ -242,9 +242,9 @@ function print_info_box_np($msg) {
 	echo "        </td>\n";
 	echo "        <td width='70%'><font color='white'><b>{$msg}</b></font>\n";
 	echo "        </td>";
-	if(stristr($msg, "apply") == true) {
+	if(stristr($msg, "apply") == true || stristr($msg, "save")) {
 		echo "         <td>";
-		echo "           <input name=\"apply\" type=\"submit\" class=\"formbtn\" id=\"apply\" value=\"Apply changes\">\n";
+		echo "           <input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\">\n";
 		echo "         </td>";
 	}
 	echo "        </tr></table>\n";

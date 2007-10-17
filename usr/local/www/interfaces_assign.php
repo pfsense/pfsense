@@ -208,6 +208,8 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
+<div id="save_button" style="display:none"><?php print_info_box_np("Assignment change detected, changes are not yet saved.", "save", "Save Changes"); ?></div>
+
 <form action="interfaces_assign.php" method="post" name="iform" id="iform">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
@@ -236,7 +238,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
   <tr> 
 	<td class="listlr" valign="middle"><strong><?=$ifdescr;?></strong></td>
 	  <td valign="middle" class="listr">
-		<select name="<?=$ifname;?>" class="formfld" id="<?=$ifname;?>">
+		<select onChange="document.getElementById('save_button').style.display='inline';" name="<?=$ifname;?>" class="formfld" id="<?=$ifname;?>">
 		  <?php foreach ($portlist as $portname => $portinfo): ?>
 		  <option value="<?=$portname;?>" <?php if ($portname == $iface['if']) echo "selected";?>> 
 		  <?php if ($portinfo['isvlan']) {
@@ -273,7 +275,6 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 </table>
 </div>
 <br>
-<input name="Submit" type="submit" class="formbtn" value="Save"><br><br>
 <p>
 </p>
 <ul>

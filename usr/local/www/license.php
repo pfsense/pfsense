@@ -63,7 +63,7 @@ include("head.inc");
               <br>
               Rob Whyte (<a href="mailto:rob@g-labs.com">rob@g-labs.com</a>)<br>
               &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">Idea/code bits
-              for encrypted webGUI passwords; minimalized SNMP agent</font></em><br>
+              for encrypted webConfigurator passwords; minimalized SNMP agent</font></em><br>
               <br>
               Petr Verner (<a href="mailto:verner@ipps.cz">verner@ipps.cz</a>)<br>
               &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">Advanced outbound
@@ -76,7 +76,7 @@ include("head.inc");
               Jim McBeath (<a href="mailto:monowall@j.jimmc.org">monowall@j.jimmc.org</a>)<br>
               &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">Filter rule patches
               (ordering, block/pass, disabled); better status page;<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;webGUI assign network ports page </font></em><br>
+              &nbsp;&nbsp;&nbsp;&nbsp;webConfigurator assign network ports page </font></em><br>
               <br>
               Chris Olive (<a href="mailto:chris@technologEase.com">chris@technologEase.com</a>)<br>
               &nbsp;&nbsp;&nbsp;&nbsp;<em><font color="#666666">enhanced &quot;execute

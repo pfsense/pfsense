@@ -160,7 +160,7 @@
 		<field>
             <fielddescr>Remote System Password</fielddescr>
             <fieldname>password</fieldname>
-            <description>Enter the webGUI password of the system that you would like to synchronize with.</description>
+            <description>Enter the webConfigurator password of the system that you would like to synchronize with.</description>
             <type>password</type>
 			<note>NOTE: You will not use the Synchronize to IP and password option on backup cluster members!</note>
 		</field>

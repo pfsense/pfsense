@@ -98,7 +98,7 @@ if ($_POST) {
 	}
 	if ($_POST['webguiport'] && (!is_numericint($_POST['webguiport']) ||
 			($_POST['webguiport'] < 1) || ($_POST['webguiport'] > 65535))) {
-		$input_errors[] = "A valid TCP/IP port must be specified for the webGUI port.";
+		$input_errors[] = "A valid TCP/IP port must be specified for the webConfigurator port.";
 	}
 	if (($_POST['password']) && ($_POST['password'] != $_POST['password2'])) {
 		$input_errors[] = "The passwords do not match.";
@@ -224,16 +224,16 @@ include("head.inc");
                       PPTP VPN clients, though.</span></p></td>
                 </tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncell">webGUI protocol</td>
+                  <td width="22%" valign="top" class="vncell">webConfigurator protocol</td>
                   <td width="78%" class="vtable"> <input name="webguiproto" type="radio" value="http" <?php if ($pconfig['webguiproto'] == "http") echo "checked"; ?>>
                     HTTP &nbsp;&nbsp;&nbsp; <input type="radio" name="webguiproto" value="https" <?php if ($pconfig['webguiproto'] == "https") echo "checked"; ?>>
                     HTTPS</td>
                 </tr>
                 <tr>
-                  <td valign="top" class="vncell">webGUI port</td>
+                  <td valign="top" class="vncell">webConfigurator port</td>
                   <td class="vtable"> <input name="webguiport" type="text" class="formfld unknown" id="webguiport" "size="5" value="<?=htmlspecialchars($config['system']['webgui']['port']);?>">
                     <br>
-                    <span class="vexpl">Enter a custom port number for the webGUI
+                    <span class="vexpl">Enter a custom port number for the webConfigurator
                     above if you want to override the default (80 for HTTP, 443
                     for HTTPS). Changes will take effect immediately after save.</span></td>
                 </tr>

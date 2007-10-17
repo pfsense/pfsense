@@ -73,7 +73,7 @@
 	}
 
 
-	## If it is the first time webGUI has been
+	## If it is the first time webConfigurator has been
 	## accessed since initial install show this stuff.
 	if(file_exists('/conf/trigger_initial_wizard')) {
 
@@ -394,7 +394,7 @@ EOD;
 $closehead = false;
 
 ## Set Page Title and Include Header
-$pgtitle = "pfSense webGUI";
+$pgtitle = "pfSense webConfigurator";
 include("head.inc");
 	
 	

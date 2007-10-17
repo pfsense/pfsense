@@ -243,7 +243,7 @@ function enable_change(enable_over) {
                     <ul>
                       <li>change the IP address of your computer</li>
                       <li>renew its DHCP lease</li>
-                      <li>access the webGUI with the new IP address</li>
+                      <li>access the webConfigurator with the new IP address</li>
 		      <li>be sure to add <a href="firewall_rules.php">firewall rules</a> to permit traffic through the interface.</li>
 		      <li>You also need firewall rules for an interface in bridged mode as the firewall acts as a filtering bridge.</li>
                     </ul>

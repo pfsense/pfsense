@@ -131,7 +131,7 @@ function shaper_rules_generate() {
     $rulei = 50000;
     
     /* add a rule to pass all traffic from/to the firewall,
-       so the user cannot lock himself out of the webGUI */
+       so the user cannot lock himself out of the webConfigurator */
     $shaperrules = "add $rulei set 4 pass all from $lanip to any\n"; $rulei++;
     $shaperrules .= "add $rulei set 4 pass all from any to $lanip\n"; $rulei++;
     

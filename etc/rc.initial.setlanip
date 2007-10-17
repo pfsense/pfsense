@@ -92,7 +92,7 @@
 
 	if ($config['system']['webgui']['protocol'] == "https") {
 
-		echo "\nDo you want to revert to HTTP as the webGUI protocol? (y/n) ";
+		echo "\nDo you want to revert to HTTP as the webConfigurator protocol? (y/n) ";
 
 		if (strcasecmp(chop(fgets($fp)), "y") == 0)
 			$config['system']['webgui']['protocol'] = "http";
@@ -109,7 +109,7 @@
 	echo <<<EOD
 
 The LAN IP address has been set to $lanip/$lanbits.
-You can now access the webGUI by opening the following URL
+You can now access the webConfigurator by opening the following URL
 in your web browser:
 
 http://$lanip/

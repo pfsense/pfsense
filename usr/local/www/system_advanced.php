@@ -404,7 +404,7 @@ include("head.inc");
 			<td colspan="2" class="list" height="12">&nbsp;</td>
 		</tr>
 		<tr>
-			<td colspan="2" valign="top" class="listtopic">webGUI SSL certificate/key</td>
+			<td colspan="2" valign="top" class="listtopic">webConfigurator SSL certificate/key</td>
 		</tr>
 		<tr>
 			<td width="22%" valign="top" class="vncell">Certificate</td>
@@ -470,7 +470,7 @@ include("head.inc");
                   <td width="78%" class="vtable">
                     <input name="polling_enable" type="checkbox" id="polling_enable" value="yes" <?php if ($pconfig['polling_enable']) echo "checked"; ?>>
                     <strong>Use device polling</strong><br>
-						Device polling is a technique that lets the system periodically poll network devices for new data instead of relying on interrupts. This prevents your webGUI, SSH, etc. from being inaccessible due to interrupt floods when under extreme load. Generally this is not recommended.
+						Device polling is a technique that lets the system periodically poll network devices for new data instead of relying on interrupts. This prevents your webConfigurator, SSH, etc. from being inaccessible due to interrupt floods when under extreme load. Generally this is not recommended.
 						Not all NICs support polling; see the pfSense homepage for a list of supported cards.
                   </td>
                 </tr>
@@ -507,13 +507,13 @@ include("head.inc");
 		</tr>
 <?php endif; ?>
 		<tr>
-			<td width="22%" valign="top" class="vncell">webGUI anti-lockout</td>
+			<td width="22%" valign="top" class="vncell">webConfigurator anti-lockout</td>
 			<td width="78%" class="vtable">
 				<input name="noantilockout" type="checkbox" id="noantilockout" value="yes" <?php if ($pconfig['noantilockout']) echo "checked"; ?> />
-				<strong>Disable webGUI anti-lockout rule</strong>
+				<strong>Disable webConfigurator anti-lockout rule</strong>
 				<br />
-				By default, access to the webGUI on the LAN interface is always permitted, regardless of the user-defined filter
-				rule set. Enable this feature to control webGUI access (make sure to have a filter rule in place that allows you
+				By default, access to the webConfigurator on the LAN interface is always permitted, regardless of the user-defined filter
+				rule set. Enable this feature to control webConfigurator access (make sure to have a filter rule in place that allows you
 				in, or you will lock yourself out!).
 				<br />
 				Hint: the &quot;set LAN IP address&quot; option in the console menu  resets this setting as well.

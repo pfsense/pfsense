@@ -2706,7 +2706,7 @@ EOD;
 
 			$ipfrules .= <<<EOD
 
-# make sure the user cannot lock himself out of the webGUI or SSH
+# make sure the user cannot lock himself out of the webConfigurator or SSH
 anchor "anti-lockout"
 pass in quick on $lanif from any to $lanip keep state label "anti-lockout web rule"
 

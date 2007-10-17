@@ -279,7 +279,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 <ul>
   <li><span class="vexpl">change the IP address of your computer</span></li>
   <li><span class="vexpl">renew its DHCP lease</span></li>
-  <li><span class="vexpl">access the webGUI with the new IP address</span></li>
+  <li><span class="vexpl">access the webConfigurator with the new IP address</span></li>
 </ul></td>
 	</tr>
 </table>

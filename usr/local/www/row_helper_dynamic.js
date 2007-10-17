@@ -26,15 +26,15 @@ var addRowTo = (function() {
 	for (i = 0; i < field_counter_js; i++) {
 		td = d.createElement("td");
 		if(rowtype[i] == 'textbox') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input size='" + rowsize[i] + "' name='" + rowname[i] + totalrows + "'></input> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input size='" + rowsize[i] + "' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
 		} else if(rowtype[i] == 'select') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select name='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><select name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'>" + newrow[i] + "</select> ";
 		} else if(rowtype[i] == 'checkbox') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input type='checkbox' name='" + rowname[i] + totalrows + "'></input> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input type='checkbox'name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
 		} else if(rowtype[i] == 'input') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input size='" + rowsize[i] + "' name='" + rowname[i] + totalrows + "'></input> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input size='" + rowsize[i] + "' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
 		} else if(rowtype[i] == 'password') {
-			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input type='password' name='" + rowname[i] + totalrows + "'></input> ";
+			td.innerHTML="<INPUT type='hidden' value='" + totalrows +"' name='" + rowname[i] + "_row-" + totalrows + "'></input><input type='password' name='" + rowname[i] + totalrows + "' id='" + rowname[i] + totalrows + "'></input> ";
 		}
 		tr.appendChild(td);
 	}

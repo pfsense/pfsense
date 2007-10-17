@@ -106,7 +106,7 @@ if (!is_array($config['ipsec']['tunnel'])) {
 	</tr>
 <?php
 foreach ($config['ipsec']['tunnel'] as $ipsec) {
-	if(! $ipsec['disabled']) {
+	if(! isset($ipsec['disabled'])) {
 ?>
 	<tr>
 		<td class="listlr"><?=htmlspecialchars(get_ipsec_tunnel_src($ipsec));?>

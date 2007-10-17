@@ -71,14 +71,14 @@ function get_pfstate() {
 	global $config;
 	$matches = "";
 	if (isset($config['system']['maximumstates']) and $config['system']['maximumstates'] > 0)
-	        $maxstates="/{$config['system']['maximumstates']}";
+	        $maxstates="{$config['system']['maximumstates']}";
 	else
-	        $maxstates="/10000";
+	        $maxstates=pfsense_default_state_size();
 	$curentries = `/sbin/pfctl -si |grep current`;
 	if (preg_match("/([0-9]+)/", $curentries, $matches)) {
 	     $curentries = $matches[1];
 	}
-	return $curentries . $maxstates;
+	return $curentries . "/" . $maxstates;
 }
 
 function has_temp() {

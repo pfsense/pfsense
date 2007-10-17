@@ -177,6 +177,9 @@ function filter_configure_sync() {
 	if ($config['system']['maximumstates'] <> "" && is_numeric($config['system']['maximumstates'])) {
 		/* User defined maximum states in Advanced menu. */
 		$rules .= "set limit states {$config['system']['maximumstates']}\n";
+	} else {
+	  $max_states = pfsense_default_state_size();
+	  $rules .= "set limit states {$max_states}\n";
 	}
 	$rules .= "\n";
 

@@ -626,7 +626,7 @@ include("head.inc");
 				<br />
 				<strong>Maximum number of connections to hold in the firewall state table.</strong>
 				<br />
-				<span class="vexpl">Note:  Leave this blank for the default of 10000</span>
+				<span class="vexpl">Note:  Leave this blank for the default.  On your system the default size is: <?= pfsense_default_state_size() ?></span>
 			</td>
 		</tr>
 		<tr>

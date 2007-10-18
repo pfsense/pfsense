@@ -27,8 +27,6 @@ function get_uptime() {
 	$boottime = $matches[1];
 	$uptime = time() - $boottime;
 
-	if ($uptime > 60)
-		$uptime += 30;
 	$updays = (int)($uptime / 86400);
 	$uptime %= 86400;
 	$uphours = (int)($uptime / 3600);

@@ -282,10 +282,12 @@ function system_routing_configure() {
 	}
 
 	if($dont_add_route == false) {
-		foreach($config['gateways']['gateway_item'] as $gateway) {
-	        	if(isset($gateway['defaultgw'])) {
-				$gatewayip = $gateway['gateway'];
-				$interfacegw = $gateway['interface'];
+		if(is_array($config['gateways'])) {
+			foreach($config['gateways']['gateway_item'] as $gateway) {
+		        	if(isset($gateway['defaultgw'])) {
+					$gatewayip = $gateway['gateway'];
+					$interfacegw = $gateway['interface'];
+				}
 			}
 		}
 		mwexec("/sbin/route add default " . escapeshellarg($gatewayip));
@@ -300,10 +302,12 @@ function system_routing_configure() {
 		}
 
 		foreach ($config['staticroutes']['route'] as $rtent) {
-			foreach($config['gateways']['gateway_item'] as $gateway) {
-				if($rtent['gateway'] == $gateway['name']) {
-					$gatewayip = $gateway['gateway'];
-					$interfacegw = $gateway['interface'];
+			if(is_array($config['gateways'])) {
+				foreach($config['gateways']['gateway_item'] as $gateway) {
+					if($rtent['gateway'] == $gateway['name']) {
+						$gatewayip = $gateway['gateway'];
+						$interfacegw = $gateway['interface'];
+					}
 				}
 			}
 			if(isset($rtent['interfacegateway'])) {

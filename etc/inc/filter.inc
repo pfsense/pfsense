@@ -1786,11 +1786,11 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						}
 					} else {
 						/* user picked a real gateway ip */
-						if(is_ipaddr($rule['gateway'])) {
-							$gatewayip = $rule['gateway'];
+						$gatewayip = lookup_gateway_ip_by_name($rule['gateway']);
+						if(is_ipaddr($gatewayip)) {
 							$int = guess_interface_from_ip($gatewayip);
-							$aline['route'] = " route-to ( " . guess_interface_from_ip($rule['gateway']) . " {$rule['gateway']} ) ";
-						}
+							$aline['route'] = " route-to ( " . guess_interface_from_ip($gatewayip) . " {$gatewayip} ) ";
+						}					
 					}
 				}
 			}

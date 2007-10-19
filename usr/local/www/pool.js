@@ -39,24 +39,6 @@ function AddServerToPool(form) {
 	    IntOrIp = form.ipaddr;
 	else
 	    IntOrIp = form.interface;
-	    
-	// Check items in "enabled" list
-	for(i = enabledSel.length - 1; i >= 0; i--)
-	{
-		if(enabledSel.options[i].value == IntOrIp.value) {
-			alert("IP Address Already In 'Enabled' List");
-			return true;
-		}
-	}
-
-	// Check items in "disabled" list
-	for(i = disabledSel.length - 1; i >= 0; i--)
-	{
-		if(disabledSel.options[i].value == IntOrIp.value) {
-			alert("IP Address Already In 'Disabled' List");
-			return true;
-		}
-	}
 
 	if (form.type.selectedIndex == 1) {
 		if (!form.monitorip.value) {

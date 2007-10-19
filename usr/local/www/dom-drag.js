@@ -10,7 +10,6 @@
  * activating links when finished dragging.
  * mmosier@astrolabe.com
  **************************************************/
-<?php
 /*
     The DragList drag and drop ordered lists implementation is available under the terms of the new BSD license.
    
@@ -48,7 +47,6 @@
    OTHERWISE)  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-?>
 
 var Drag = {
 
@@ -144,8 +142,8 @@ var Drag = {
 		nx = x + ((ex - o.lastMouseX) * (o.hmode ? 1 : -1));
 		ny = y + ((ey - o.lastMouseY) * (o.vmode ? 1 : -1));
 
-		if (o.xMapper)		nx = o.xMapper(y)
-		else if (o.yMapper)	ny = o.yMapper(x)
+		if (o.xMapper)      nx = o.xMapper(y);
+		else if (o.yMapper) ny = o.yMapper(x);
 
 		Drag.obj.root.style[o.hmode ? "left" : "right"] = nx + "px";
 		Drag.obj.root.style[o.vmode ? "top" : "bottom"] = ny + "px";
@@ -172,9 +170,10 @@ var Drag = {
 	{
 		document.onmousemove = null;
 		document.onmouseup   = null;
-		Drag.obj.root.onDragEnd(	parseInt(Drag.obj.root.style[Drag.obj.hmode ? "left" : "right"]), 
-									parseInt(Drag.obj.root.style[Drag.obj.vmode
-                                    ? "top" : "bottom"]), Drag.obj.root);
+		Drag.obj.root.onDragEnd(	
+		  parseInt(Drag.obj.root.style[Drag.obj.hmode ? "left" : "right"]), 
+			parseInt(Drag.obj.root.style[Drag.obj.vmode ? "top" : "bottom"]),
+			Drag.obj.root);
 		Drag.obj = null;
 	},
 

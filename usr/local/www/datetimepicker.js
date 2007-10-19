@@ -65,7 +65,7 @@ function NewCal(pCtrl,pFormat,pShowTime,pTimeMode)
 		var Sp1;//Index of Date Separator 1
 		var Sp2;//Index of Date Separator 2 
 		var tSp1;//Index of Time Separator 1
-		var tSp1;//Index of Time Separator 2
+		var tSp2;//Index of Time Separator 2
 		var strMonth;
 		var strDate;
 		var strYear;
@@ -75,7 +75,7 @@ function NewCal(pCtrl,pFormat,pShowTime,pTimeMode)
 		var strMinute;
 		var strSecond;
 		//parse month
-		Sp1=exDateTime.indexOf(DateSeparator,0)
+		Sp1=exDateTime.indexOf(DateSeparator,0);
 		Sp2=exDateTime.indexOf(DateSeparator,(parseInt(Sp1)+1));
 		
 		if ((Cal.Format.toUpperCase()=="DDMMYYYY") || (Cal.Format.toUpperCase()=="DDMMMYYYY"))
@@ -108,7 +108,7 @@ function NewCal(pCtrl,pFormat,pShowTime,pTimeMode)
 		//parse time
 		if (Cal.ShowTime==true)
 		{
-			tSp1=exDateTime.indexOf(":",0)
+			tSp1=exDateTime.indexOf(":",0);
 			tSp2=exDateTime.indexOf(":",(parseInt(tSp1)+1));
 			strHour=exDateTime.substring(tSp1,(tSp1)-2);
 			Cal.SetHour(strHour);
@@ -331,12 +331,11 @@ function SetHour(intHour)
 {	
 	var MaxHour;
 	var MinHour;
-	if (TimeMode==24)
-	{	MaxHour=23;MinHour=0}
-	else if (TimeMode==12)
-	{	MaxHour=12;MinHour=1}
-	else
-		alert("TimeMode can only be 12 or 24");		
+  switch (TimeMode) {
+    case 24: {	MaxHour=23;MinHour=0; break; }
+    case 12: {	MaxHour=12;MinHour=1; break; }
+    default: { alert("TimeMode can only be 12 or 24"); break;}
+  }
 	var HourExp=new RegExp("^\\d\\d$");
 	if (HourExp.test(intHour) && (parseInt(intHour,10)<=MaxHour) && (parseInt(intHour,10)>=MinHour))
 	{	

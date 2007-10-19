@@ -45,7 +45,7 @@ function actb_parse(n){
     for (i=0;i<p;i++){
         tobuild += n.substr(i,1);
     }
-    tobuild += ""
+    tobuild += "";
     for (i=p;i<t.length+p;i++){
         tobuild += n.substr(i,1);
     }
@@ -247,7 +247,7 @@ function actb_remake() {
         width = c.width;
     }
     if(navigator.appName == "Microsoft Internet Explorer") {
-        frame.width=width
+        frame.width=width;
         frame.height=height;
     }
 }
@@ -333,7 +333,7 @@ function actb_tocomplete(sndr,evt,arr){
             }
         }
         actb_pre = word;//actb_pos;
-    }else{ actb_pre = -1};
+    }else{ actb_pre = -1; }
 
     if (!sndr) sndr = evt.srcElement;
     actb_curr = sndr;

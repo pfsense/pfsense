@@ -121,9 +121,19 @@ if ($_POST) {
 		$gateway['interface'] = $_POST['interface'];
 		$gateway['name'] = $_POST['name'];
 		$gateway['gateway'] = $_POST['gateway'];
-		$gateway['defaultgw'] = $_POST['defaultgw'];
 		$gateway['monitor'] = $_POST['monitor'];
 		$gateway['descr'] = $_POST['descr'];
+
+		if($_POST['defaultgw'] == "yes") {
+			$i = 0;
+			foreach($a_gateways as $gw) {
+				unset($config['gateways'][$i]['defaultgw']);
+				$i++;
+			}
+			$gateway['defaultgw'] = true;
+		} else {
+			unset($gateway['defaultgw']);
+		}
 
 		if (isset($id) && $a_gateways[$id])
 			$a_gateways[$id] = $gateway;

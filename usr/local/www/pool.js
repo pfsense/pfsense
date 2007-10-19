@@ -32,13 +32,13 @@
  */
 function AddServerToPool(form) {
 
-    var IntOrIp
+  var IntOrIp;
 	var enabledSel = form['servers[]'];
 	var disabledSel = form['serversdisabled[]'];
 	if (form.type.selectedIndex == 0)
 	    IntOrIp = form.ipaddr;
 	else
-	    IntOrIp = form.interface;
+	    IntOrIp = form.iface;
 
 	if (form.type.selectedIndex == 1) {
 		if (!form.monitorip.value) {

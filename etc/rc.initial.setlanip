@@ -62,9 +62,15 @@
 	$config['interfaces']['lan']['ipaddr'] = $lanip;
 	$config['interfaces']['lan']['subnet'] = $lanbits;
 
-	echo "\nDo you want to enable the DHCP server on LAN [y|n]?  ";
+	do {
+    $good = false;
+	  echo "\nDo you want to enable the DHCP server on LAN [y|n]?  ";
+    $yn = strtolower(chop(fgets($fp)));
+    if ($yn[0] == "y" or $yn[0] == "n")
+      $good = true;
+  } while (!$good);
 
-	if (strcasecmp(chop(fgets($fp)), "y") == 0) {
+	if ($yn == "y") {
 		do {
 			echo "Enter the start address of the client address range: ";
 			$dhcpstartip = chop(fgets($fp));
@@ -92,9 +98,15 @@
 
 	if ($config['system']['webgui']['protocol'] == "https") {
 
-		echo "\nDo you want to revert to HTTP as the webConfigurator protocol? (y/n) ";
+  	do {
+      $good = false;
+  		echo "\nDo you want to revert to HTTP as the webConfigurator protocol? (y/n) ";
+      $yn = strtolower(chop(fgets($fp)));
+      if ($yn[0] == "y" or $yn[0] == "n")
+        $good = true;
+    } while (!$good);
 
-		if (strcasecmp(chop(fgets($fp)), "y") == 0)
+		if ($yn == "y")
 			$config['system']['webgui']['protocol'] = "http";
 	}
 

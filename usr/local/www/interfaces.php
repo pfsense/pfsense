@@ -68,6 +68,10 @@ function getMPDResetTimeFromConfig() {
 
 require("guiconfig.inc");
 
+if (!is_array($config['gateways']['gateway_item']))
+	$config['gateways']['gateway_item'] = array();
+$a_gateways = &$config['gateways']['gateway_item'];
+
 $wancfg = &$config['interfaces']['wan'];
 $optcfg = &$config['interfaces']['wan'];
 
@@ -136,7 +140,6 @@ $pconfig['bigpond_minheartbeatinterval'] = $config['bigpond']['minheartbeatinter
 $pconfig['dhcphostname'] = $wancfg['dhcphostname'];
 $pconfig['alias-address'] = $wancfg['alias-address'];
 $pconfig['alias-subnet'] = $wancfg['alias-subnet'];
-$pconfig['use_rrd_gateway'] = $wancfg['use_rrd_gateway'];
 
 if ($wancfg['ipaddr'] == "dhcp") {
 	$pconfig['type'] = "DHCP";
@@ -252,8 +255,15 @@ if ($_POST) {
 	if (($_POST['alias-subnet'] && !is_numeric($_POST['alias-subnet']))) {
 		$input_errors[] = "A valid alias subnet bit count must be specified.";
 	}
-	if (($_POST['gateway'] && !is_ipaddr($_POST['gateway']))) {
-		$input_errors[] = "A valid gateway must be specified.";
+	if ($_POST['gateway']) {
+		$match = false;
+		foreach($a_gateways as $gateway) {
+			if(in_array($_POST['gateway'], $gateway)) {
+				$match = true;
+			}
+		}
+		if(!$match)
+			$input_errors[] = "A valid gateway must be specified.";
 	}
 	if (($_POST['pointtopoint'] && !is_ipaddr($_POST['pointtopoint']))) {
 		$input_errors[] = "A valid point-to-point IP address must be specified.";
@@ -263,9 +273,6 @@ if ($_POST) {
 	}
 	if (($_POST['pppoe_idletimeout'] != "") && !is_numericint($_POST['pppoe_idletimeout'])) {
 		$input_errors[] = "The idle timeout value must be an integer.";
-	}
-	if (($_POST['use_rrd_gateway'] && !is_ipaddr($_POST['use_rrd_gateway']))) {
-		$input_errors[] = "A valid monitor IP address must be specified.";
 	}
 	if ($_POST['pppoe_resethour'] <> "" && !is_numericint($_POST['pppoe_resethour']) && 
 		$_POST['pppoe_resethour'] >= 0 && $_POST['pppoe_resethour'] <=23) {
@@ -356,11 +363,6 @@ if ($_POST) {
 			system_start_ftp_helpers();
 		} else {
 			system_start_ftp_helpers();
-		}
-
-		/* per interface rrd gateway monitor helper */
-		if($_POST['use_rrd_gateway'] <> "") {
-			$wancfg['use_rrd_gateway'] = $_POST['use_rrd_gateway'];
 		}
 
 		if ($_POST['type'] == "Static") {
@@ -788,7 +790,19 @@ function show_mon_config() {
                 </tr><?php endif; ?>
                 <tr>
                   <td valign="top" class="vncellreq">Gateway</td>
-                  <td class="vtable"> <input name="gateway" type="text" class="formfld unknown" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>">
+                  <td class="vtable"><select name="gateway" class="formselect" id="gateway">
+			<?php
+			foreach ($a_gateways as $gateway) {
+				if($gateway['interface'] == "wan") {
+			?>
+					<option value="<?=$gateway['name'];?>" <?php if ($gateway['name'] == $pconfig['gateway']) echo "selected"; ?>>
+					<?=htmlspecialchars($gateway['name']);?>
+					</option>
+			<?php
+				}
+			}
+			?>
+			</select> <br>
                   </td>
                 </tr>
                 <tr>
@@ -1007,22 +1021,6 @@ seconds<br>If no qualifying outgoing packets are transmitted for the specified n
 				<input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if ($pconfig['disableftpproxy']) echo "checked"; ?> onclick="enable_change(false)" />
 				<strong>Disable the userland FTP-Proxy application</strong>
 				<br />
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell">Monitor IP</td>
-			<td width="78%" class="vtable">
-				<div id="showmonbox">
-					<input type="button" onClick="show_mon_config()" value="Advanced"></input> - Show Monitor IP configuration</a>
-				</div>
-				<div id="showmon" style="display:none">
-					<input name="use_rrd_gateway" type="text" id="use_rrd_gateway" value="<?php echo ($wancfg['use_rrd_gateway']) ; ?>" />
-					<strong>Alternative monitor IP</strong> <br />
-					Enter a alternative address here to be used to monitor the link. This is used for the 
-					quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond 
-					to icmp requests.</strong>
-					<br />
-				</div>
 			</td>
 		</tr>
 		        <?php

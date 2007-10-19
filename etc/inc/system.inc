@@ -251,6 +251,46 @@ function system_routing_configure() {
 		unlink("{$g['vardb_path']}/routes.db");
 	}
 
+	/* if list */
+	$iflist = array("lan", "wan");
+	for ($i = 1; isset($config['interfaces']['opt' . $i]['enable']); $i++)
+		$iflist['opt' . $i] = "opt{$i}";
+
+	$dont_remove_route = false;
+	foreach ($iflist as $ifent => $ifname) {
+		/* do not process interfaces that will end up with gateways */
+		if($config['interfaces'][$ifname]['ipaddr'] == "dhcp" or
+			$config['interfaces'][$ifname]['ipaddr'] == "bigpond" or
+			$config['interfaces'][$ifname]['ipaddr'] == "pppoe" or
+			$config['interfaces'][$ifname]['ipaddr'] == "pptp")
+			$dont_remove_route = true;
+	}
+
+	if($dont_remove_route == false) {
+		/* remove default route */
+		mwexec("/sbin/route delete default");
+	}
+
+	$dont_add_route = false;
+	/* if OLSRD is enabled, allow WAN to house DHCP. */
+	if($config['installedpackages']['olsrd']) {
+		foreach($config['installedpackages']['olsrd']['config'] as $olsrd) {
+			if($olsrd['enabledyngw'] == "on") {
+				$dont_add_route = true;
+			}
+		}
+	}
+
+	if($dont_add_route == false) {
+		foreach($config['gateways']['gateway_item'] as $gateway) {
+	        	if(isset($gateway['defaultgw'])) {
+				$gatewayip = $gateway['gateway'];
+				$interfacegw = $gateway['interface'];
+			}
+		}
+		mwexec("/sbin/route add default " . escapeshellarg($gatewayip));
+	}
+
 	if (is_array($config['staticroutes']['route'])) {
 
 		$fd = fopen("{$g['vardb_path']}/routes.db", "w");
@@ -260,12 +300,18 @@ function system_routing_configure() {
 		}
 
 		foreach ($config['staticroutes']['route'] as $rtent) {
+			foreach($config['gateways']['gateway_item'] as $gateway) {
+				if($rtent['gateway'] == $gateway['name']) {
+					$gatewayip = $gateway['gateway'];
+					$interfacegw = $gateway['interface'];
+				}
+			}
 			if(isset($rtent['interfacegateway'])) {
 				mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
-					" -iface " . escapeshellarg(convert_friendly_interface_to_real_interface_name($rtent['interface'])));
+					" -iface " . escapeshellarg(convert_friendly_interface_to_real_interface_name($interfacegw)));
 			} else {
 				mwexec("/sbin/route add " . escapeshellarg($rtent['network']) .
-					" " . escapeshellarg($rtent['gateway']));
+					" " . escapeshellarg($gatewayip));
 			}
 			/* record route so it can be easily removed later (if necessary) */
 			fwrite($fd, $rtent['network'] . "\n");

@@ -3380,7 +3380,13 @@ function get_interface_gateway($interface) {
 		$gw = file_get_contents("{$g['tmp_path']}/{$realif}_router");
 		$gw = rtrim($gw);
 	} else {
-		$gw = $config['interfaces'][$interface]['gateway'];
+		foreach($config['gateways']['gateway_item'] as $gateway) {
+			if($gateway['name'] == $gateway['name']) {
+				$gatewayip = $gateway['gateway'];
+				$interfacegw = $gateway['interface'];
+			}
+		}
+		$gw = $gatewayip;
 	}
 	/* if wan is requested, return it */
 	if($interface == "wan")

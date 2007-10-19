@@ -34,8 +34,12 @@ require("guiconfig.inc");
 if (!is_array($config['staticroutes']['route']))
 	$config['staticroutes']['route'] = array();
 
+if (!is_array($config['gateways']['gateway_item']))
+	$config['gateways']['gateway_item'] = array();
+
 staticroutes_sort();
 $a_routes = &$config['staticroutes']['route'];
+$a_gateways = &$config['gateways']['gateway_item'];
 $changedesc = "Static Routes: ";
 
 if ($_POST) {
@@ -112,10 +116,20 @@ include("head.inc");
 	     <?php endif; ?>
 
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
+		<tr>
+		  <td>
+<?php
+			$tab_array = array();
+			$tab_array[0] = array("Gateways", false, "system_gateways.php");
+			$tab_array[1] = array("Routes", true, "system_routes.php");
+                        display_top_tabs($tab_array);
+?>
+		  </td>
+		</tr>
                 <tr>
-                  <td width="15%" class="listhdrr">Interface</td>
                   <td width="25%" class="listhdrr">Network</td>
                   <td width="20%" class="listhdrr">Gateway</td>
+                  <td width="15%" class="listhdrr">Interface</td>
                   <td width="30%" class="listhdr">Description</td>
                   <td width="10%" class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
@@ -126,26 +140,25 @@ include("head.inc");
 			</table>
 		  </td>
 		</tr>
-			  <?php $i = 0; foreach ($a_routes as $route): ?>
                 <tr>
+			<?php $i = 0; foreach ($a_routes as $route): ?>
                   <td class="listlr" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
-                    <?php
-				  $iflabels = array('lan' => 'LAN', 'wan' => 'WAN', 'pptp' => 'PPTP');
-				  for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
-				  	$iflabels['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
-				  echo htmlspecialchars($iflabels[$route['interface']]); ?>
-                  </td>
-                  <td class="listr" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
                     <?=strtolower($route['network']);?>
                   </td>
                   <td class="listr" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
-				  <?php
-					if(isset($route['interfacegateway'])) {
-						echo strtoupper($route['interface']) . " ";
-					} else {
-						echo strtolower($route['gateway']) . " ";
+			<?php
+				echo $route['gateway'] . " ";
+			?>
+                  </td>
+                  <td class="listr" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
+			<?php
+				foreach($a_gateways as $gateway) {
+					if($gateway['name'] == $route['gateway']) {
+						echo strtoupper($gateway['interface']) . " ";
 					}
-				  ?>
+				}
+
+			?>
                   </td>
                   <td class="listbg" ondblclick="document.location='system_routes_edit.php?id=<?=$i;?>';">
                     <font color="#FFFFFF"><?=htmlspecialchars($route['descr']);?>&nbsp;
@@ -161,7 +174,7 @@ include("head.inc");
 				<td><a href="system_routes_edit.php?dup=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 			   </tr>
 			</table>
-
+		  </td>
 		</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>

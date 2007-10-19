@@ -48,6 +48,10 @@ function remove_bad_chars($string) {
 	return preg_replace('/[^a-z|_|0-9]/i','',$string);
 }
 
+if (!is_array($config['gateways']['gateway_item']))
+	$config['gateways']['gateway_item'] = array();
+$a_gateways = &$config['gateways']['gateway_item'];
+
 $optcfg = &$config['interfaces']['opt' . $index];
 $optcfg['descr'] = remove_bad_chars($optcfg['descr']);
 
@@ -62,7 +66,6 @@ $pconfig['spoofmac'] = $optcfg['spoofmac'];
 $pconfig['mtu'] = $optcfg['mtu'];
 
 $pconfig['disableftpproxy'] = isset($optcfg['disableftpproxy']);
-$pconfig['use_rrd_gateway'] = $optcfg['use_rrd_gateway'];
 
 /* Wireless interface? */
 if (isset($optcfg['wireless'])) {
@@ -162,8 +165,15 @@ if ($_POST) {
 				if (($_POST['subnet'] && !is_numeric($_POST['subnet']))) {
 					$input_errors[] = "A valid subnet bit count must be specified.";
 				}
-				if($_POST['gateway'] <> "" && !is_ipaddr($_POST['gateway'])) {
-					$input_errors[] = "A valid gateway must be specified.";
+				if ($_POST['gateway']) {
+					$match = false;
+					foreach($a_gateways as $gateway) {
+						if(in_array($_POST['gateway'], $gateway)) {
+							$match = true;
+						}
+					}
+					if(!$match)
+						$input_errors[] = "A valid gateway must be specified.";
 				}
 			}
 		}
@@ -216,11 +226,6 @@ if ($_POST) {
 		$optcfg['descr'] = remove_bad_chars($_POST['descr']);
 		$optcfg['bridge'] = $_POST['bridge'];
 		$optcfg['enable'] = $_POST['enable'] ? true : false;
-
-		/* per interface rrd gateway monitor helper */
-		if($_POST['use_rrd_gateway'] <> "") {
-			$optcfg['use_rrd_gateway'] = $_POST['use_rrd_gateway'];
-		}
 
 		if ($_POST['type'] == "Static") {
 			$optcfg['ipaddr'] = $_POST['ipaddr'];
@@ -400,11 +405,20 @@ function show_mon_config() {
 				 </td>
 				</tr>
 		<tr>
-                  <td width="22%" valign="top" class="vncell">Gateway</td>
-                  <td width="78%" class="vtable">
-			<input name="gateway" value="<?php echo $pconfig['gateway']; ?>">
-			<br>
-			If you have multiple WAN connections, enter the next hop gateway (router) IP address here.  Otherwise, leave this option blank.
+		  <td valign="top" class="vncellreq">Gateway</td>
+		  <td class="vtable"><select name="gateway" class="formselect" id="gateway">
+			<?php
+			foreach ($a_gateways as $gateway) {
+				if($gateway['interface'] == "opt{$index}") {
+			?>
+				<option value="<?=$gateway['name'];?>" <?php if ($gateway['name'] == $pconfig['gateway']) echo "selected"; ?>>
+				<?=htmlspecialchars($gateway['name']);?>
+				</option>
+			<?php
+				}
+			}
+			?>
+			</select> <br>
 		  </td>
 		</tr>
                 <tr>
@@ -419,22 +433,6 @@ function show_mon_config() {
 				<input name="disableftpproxy" type="checkbox" id="disableftpproxy" value="yes" <?php if ($pconfig['disableftpproxy']) echo "checked"; ?> onclick="enable_change(false)" />
 				<strong>Disable the userland FTP-Proxy application</strong>
 				<br />
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell">Monitor IP</td>
-			<td width="78%" class="vtable">
-			<div id="showmonbox">
-				<input type="button" onClick="show_mon_config()" value="Advanced"></input> - Show Monitor IP configuration
-			</div>
-			<div id="showmon" style="display:none">
-				<input name="use_rrd_gateway" type="text" id="use_rrd_gateway" value="<?php echo ($optcfg['use_rrd_gateway']) ; ?>" />
-					<strong>Alternative monitor IP</strong> <br />
-					Enter a alternative address here to be used to monitor the link. This is used for the
-					quality RRD graphs as well as the load balancer entries. Use this if the gateway does not respond
-					to icmp requests.</strong>
-					<br />
-				</div>
 			</td>
 		</tr>
 				<?php /* Wireless interface? */

@@ -33,9 +33,12 @@ require("guiconfig.inc");
 
 if (!is_array($config['staticroutes']['route']))
 	$config['staticroutes']['route'] = array();
+if (!is_array($config['gateways']['gateway_item']))
+	$config['gateways']['gateway_item'] = array();
 
 staticroutes_sort();
 $a_routes = &$config['staticroutes']['route'];
+$a_gateways = &$config['gateways']['gateway_item'];
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
@@ -46,7 +49,6 @@ if (isset($_GET['dup'])) {
 }
 
 if (isset($id) && $a_routes[$id]) {
-	$pconfig['interface'] = $a_routes[$id]['interface'];
 	list($pconfig['network'],$pconfig['network_subnet']) = 
 		explode('/', $a_routes[$id]['network']);
 	$pconfig['gateway'] = $a_routes[$id]['gateway'];
@@ -62,8 +64,8 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "interface network network_subnet gateway");
-	$reqdfieldsn = explode(",", "Interface,Destination network,Destination network bit count,Gateway");		
+	$reqdfields = explode(" ", "network network_subnet gateway");
+	$reqdfieldsn = explode(",", "Destination network,Destination network bit count,Gateway");		
 	
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 	
@@ -73,8 +75,15 @@ if ($_POST) {
 	if (($_POST['network_subnet'] && !is_numeric($_POST['network_subnet']))) {
 		$input_errors[] = "A valid destination network bit count must be specified.";
 	}
-	if (($_POST['gateway'] && !is_ipaddr($_POST['gateway']))) {
-		$input_errors[] = "A valid gateway IP address must be specified.";
+	if ($_POST['gateway']) {
+		$match = false;
+		foreach($a_gateways as $gateway) {
+			if(in_array($_POST['gateway'], $gateway)) {
+				$match = true;
+			}
+		}
+		if(!$match)
+			$input_errors[] = "A valid gateway must be specified.";
 	}
 
 	/* check for overlaps */
@@ -91,7 +100,6 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$route = array();
-		$route['interface'] = $_POST['interface'];
 		$route['network'] = $osn;
 		$route['gateway'] = $_POST['gateway'];
 		$route['descr'] = $_POST['descr'];
@@ -121,22 +129,6 @@ include("head.inc");
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="system_routes_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr> 
-                  <td width="22%" valign="top" class="vncellreq">Interface</td>
-                  <td width="78%" class="vtable">
-			<select name="interface" class="formselect">
-                      <?php $interfaces = array('lan' => 'LAN', 'wan' => 'WAN', 'pptp' => 'PPTP');
-					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-					  	$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
-					  }
-					  foreach ($interfaces as $iface => $ifacename): ?>
-                      <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>> 
-                      <?=htmlspecialchars($ifacename);?>
-                      </option>
-                      <?php endforeach; ?>
-                    </select> <br>
-                    <span class="vexpl">Choose which interface this route applies to.</span></td>
-                </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Destination network</td>
                   <td width="78%" class="vtable"> 
@@ -151,13 +143,20 @@ include("head.inc");
                     </select>
                     <br> <span class="vexpl">Destination network for this static route</span></td>
                 </tr>
-				<tr>
+                <tr> 
                   <td width="22%" valign="top" class="vncellreq">Gateway</td>
-                  <td width="78%" class="vtable"> 
-                    <input name="gateway" type="text" class="formfld host" id="gateway" size="40" value="<?=htmlspecialchars($pconfig['gateway']);?>">
-                    <br> <span class="vexpl">Gateway to be used to reach the destination network</span></td>
+                  <td width="78%" class="vtable">
+			<select name="gateway" class="formselect">
+			<?php
+				foreach ($a_gateways as $gateway): ?>
+	                      <option value="<?=$gateway['name'];?>" <?php if ($gateway['name'] == $pconfig['gateway']) echo "selected"; ?>> 
+	                      <?=htmlspecialchars($gateway['name']);?>
+                      </option>
+                      <?php endforeach; ?>
+                    </select> <br>
+                    <span class="vexpl">Choose which gateway this route applies to.</span></td>
                 </tr>
-				<tr>
+		<tr>
                   <td width="22%" valign="top" class="vncell">Description</td>
                   <td width="78%" class="vtable"> 
                     <input name="descr" type="text" class="formfld unknown" id="descr" size="40" value="<?=htmlspecialchars($pconfig['descr']);?>">

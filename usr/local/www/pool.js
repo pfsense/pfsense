@@ -38,14 +38,6 @@ function AddServerToPool(form) {
 	    IntOrIp = form.ipaddr;
 	else
 	    IntOrIp = form.interface;
-	    
-	for(i = theSel.length - 1; i >= 0; i--)
-	{
-		if(theSel.options[i].value == IntOrIp.value) {
-			alert("IP Address Already In List");
-			return true;
-		}
-	}
 
 	if (form.type.selectedIndex == 1) {
 		if (!form.monitorip.value) {

@@ -210,9 +210,16 @@ function vpn_ipsec_configure($ipchg = false) {
 					}
 
 					/* add entry to host pinger */
-					if($tunnel['pinghost']) {
-						$pfd = fopen("/var/db/ipsecpinghosts","a");
-						$srcip = find_interface_ip($config['interfaces']['lan']['if']);
+					if ($tunnel['pinghost']) {
+						$pfd = fopen("/var/db/ipsecpinghosts", "a");
+          	$iflist = array("lan" => "LAN", "wan" => "WAN");
+          	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
+          		$iflist['opt' . $i] = "opt{$i}";
+
+            foreach ($iflist as $ifent => $ifname) {
+              if (ip_in_subnet(find_interface_ip($config['interfaces'][$ifname]['if']), $tunnel['local-subnet']))
+                $srcip = find_interface_ip($config['interfaces'][$ifname]['if']);
+            }
 						$dstip = $tunnel['pinghost'];
 						fwrite($pfd, "$srcip|$dstip|3\n");
 						fclose($pfd);

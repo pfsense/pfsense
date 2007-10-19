@@ -792,17 +792,19 @@ function show_mon_config() {
                   <td valign="top" class="vncellreq">Gateway</td>
                   <td class="vtable"><select name="gateway" class="formselect" id="gateway">
 			<?php
-			foreach ($a_gateways as $gateway) {
-				if($gateway['interface'] == "wan") {
+			if(count($a_gateways) > 0) {
+				foreach ($a_gateways as $gateway) {
+					if($gateway['interface'] == "wan") {
 			?>
 					<option value="<?=$gateway['name'];?>" <?php if ($gateway['name'] == $pconfig['gateway']) echo "selected"; ?>>
 					<?=htmlspecialchars($gateway['name']);?>
 					</option>
 			<?php
+					}
 				}
 			}
 			?>
-			</select> <br>
+			</select>Select a existing Gateway from the list or add one on the <a href="/system_gateways.php">Gateways</a> page<br>
                   </td>
                 </tr>
                 <tr>

@@ -194,7 +194,7 @@ function type_change(enable_change) {
 			//clearcombo();
 			document.iform.gatewayip.disabled = 1;
 			document.iform.ipaddr.style.display = "block";
-			document.iform.interface.style.display = "none";
+			document.iform.iface.style.display = "none";
 			document.iform.serversSelect.clear;
 			document.iform.monitorip.disabled = 1;
 			var monitorIpNote = document.getElementById("monitorIpNote");
@@ -220,7 +220,7 @@ function type_change(enable_change) {
 			//clearcombo();
 			document.iform.gatewayip.disabled = 0;
 			document.iform.ipaddr.style.display = "none";
-			document.iform.interface.style.display = "block";
+			document.iform.iface.style.display = "block";
 			document.iform.monitorip.disabled = 0;
 			document.iform.monitorip.value = "";
 			var monitorIpNote = document.getElementById("monitorIpNote");
@@ -344,7 +344,7 @@ function clearcombo(){
 			<td width="22%" valign="top" class="vncellreq"><div id="interfacename_text"></div></td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="ipaddr" type="text" size="16" style="float: left;">
-				<select id="interface" name="interface" style="float: left; display: none;">
+				<select id="iface" name="interface" style="float: left; display: none;">
 <?php
 					$interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
 					for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {

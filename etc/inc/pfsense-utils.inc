@@ -3769,4 +3769,19 @@ function pfsense_default_state_size() {
   return $max_states;
 }
 
+function lookup_gateway_ip_by_name($name) {
+	global $config;
+	if(is_array($config['gateways'])) {
+		foreach($config['gateways']['gateway_item'] as $gateway) {
+			if($gateway['name'] == "$name") {
+				$gatewayip = $gateway['gateway'];
+				$interfacegw = $gateway['interface'];
+				return($gatewayip);
+			}
+		}
+	} else {
+		return(false);
+	}
+}
+
 ?>

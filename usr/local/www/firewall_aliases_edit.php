@@ -163,7 +163,7 @@ if ($_POST) {
 		$alias['address'] = $_POST['address'];
 
 	$address = $alias['address'];
-	$final_address_detail = htmlentities($_POST['detail'], ENT_QUOTES, 'UTF-8');
+	$final_address_detail = mb_convert_encoding($_POST['detail'],"HTML-ENTITIES","auto");
   		if($final_address_detail <> "") {
 	       	$final_address_details .= $final_address_detail;
 	} else {
@@ -243,7 +243,7 @@ if ($_POST) {
 				   Pulling details here lets us only pull in details for valid
 				   address entries, saving us from having to track which ones to
 				   process later. */
-	       $comd = "\$final_address_detail = htmlentities( \$_POST['detail" . $x . "'], ENT_QUOTES, 'UTF-8' );";
+	       $comd = "\$final_address_detail = mb_convert_encoding(\$_POST['detail" . $x . "'],'HTML_ENTITIES','auto');";
 	       eval($comd);
 	       if($final_address_detail <> "") {
 	       $final_address_details .= $final_address_detail;
@@ -258,7 +258,7 @@ if ($_POST) {
 
 	if (!$input_errors) {
 		$alias['address'] = $address;
-		$alias['descr'] = htmlentities($_POST['descr'], ENT_QUOTES, 'UTF-8');
+		$alias['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
 		$alias['type'] = $_POST['type'];
 		$alias['detail'] = $final_address_details;
 
@@ -278,10 +278,10 @@ if ($_POST) {
 	//we received input errors, copy data to prevent retype
 	else
 	{
-		$pconfig['descr'] = htmlentities($_POST['descr'], ENT_QUOTES, 'UTF-8');
+		$pconfig['descr'] = mb_convert_encoding($_POST['descr'],"HTML-ENTITIES","auto");
 		$pconfig['address'] = $address;
 		$pconfig['type'] = $_POST['type'];
-		$pconfig['detail'] = $final_address_details;;
+		$pconfig['detail'] = $final_address_details;
 	}
 }
 

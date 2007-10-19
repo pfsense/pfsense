@@ -344,7 +344,7 @@ function clearcombo(){
 			<td width="22%" valign="top" class="vncellreq"><div id="interfacename_text"></div></td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="ipaddr" type="text" size="16" style="float: left;">
-				<select id="iface" name="interface" style="float: left; display: none;">
+				<select id="iface" name="iface" style="float: left; display: none;">
 <?php
 					$interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
 					for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {

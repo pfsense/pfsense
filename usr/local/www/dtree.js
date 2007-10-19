@@ -6,12 +6,12 @@ function navigate(url) {
 
 function getElById(idVal) {
   if (document.getElementById != null)
-    return document.getElementById(idVal)
+    return document.getElementById(idVal);
   if (document.all != null)
-    return document.all[idVal]
+    return document.all[idVal];
   
-  alert("Problem getting element by id")
-  return null
+  alert("Problem getting element by id");
+  return null;
 }
 
 
@@ -55,7 +55,7 @@ function Node(id, pid, name, url, title, target, icon, iconOpen, open , checkabl
 
 	this._p;
 
-};
+}
 
 // Tree object
 
@@ -81,7 +81,7 @@ function dTree(objName) {
 
 		inOrder				: false
 
-	}
+	};
 
 	this.icon = {
 
@@ -129,7 +129,7 @@ function dTree(objName) {
 
 	this.completed = false;
 
-};
+}
 
 
 
@@ -486,7 +486,7 @@ dTree.prototype.generate_checkedlist = function(id) {
 	}
 	
 	return retStr;
-}
+};
 
 // Toggle Open or close
 
@@ -514,7 +514,7 @@ dTree.prototype.oAll = function(status) {
 
 		if (this.aNodes[n]._hc && this.aNodes[n].pid != this.root.id) {
 
-			this.nodeStatus(status, n, this.aNodes[n]._ls)
+			this.nodeStatus(status, n, this.aNodes[n]._ls);
 
 			this.aNodes[n]._io = status;
 
@@ -586,7 +586,7 @@ dTree.prototype.closeLevel = function(node) {
 
 	}
 
-}
+};
 
 
 
@@ -608,7 +608,7 @@ dTree.prototype.closeAllChildren = function(node) {
 
 	}
 
-}
+};
 
 
 
@@ -661,19 +661,12 @@ dTree.prototype.clearCookie = function() {
 // [Cookie] Sets value in a cookie
 
 dTree.prototype.setCookie = function(cookieName, cookieValue, expires, path, domain, secure) {
-
 	document.cookie =
-
-		escape(cookieName) + '=' + escape(cookieValue)
-
-		+ (expires ? '; expires=' + expires.toGMTString() : '')
-
-		+ (path ? '; path=' + path : '')
-
-		+ (domain ? '; domain=' + domain : '')
-
-		+ (secure ? '; secure' : '');
-
+		escape(cookieName) + '=' + escape(cookieValue) +
+		(expires ? '; expires=' + expires.toGMTString() : '') +
+		(path ? '; path=' + path : '') +
+		(domain ? '; domain=' + domain : '') +
+		(secure ? '; secure' : '');
 };
 
 
@@ -734,12 +727,11 @@ dTree.prototype.isOpen = function(id) {
 
 	var aOpen = this.getCookie('co' + this.obj).split('.');
 
-	for (var n=0; n<aOpen.length; n++)
-
+	for (var n=0; n<aOpen.length; n++) {
 		if (aOpen[n] == id) return true;
+	}
 
 	return false;
-
 };
 
 
@@ -756,9 +748,9 @@ if (!Array.prototype.push) {
 
 		return this.length;
 
-	}
+	};
 
-};
+}
 
 if (!Array.prototype.pop) {
 
@@ -770,6 +762,6 @@ if (!Array.prototype.pop) {
 
 		return lastElement;
 
-	}
+	};
 
-};
+}

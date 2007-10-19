@@ -18,10 +18,11 @@ function fr_bgcolor(id) {
 }
 function fr_insline(id, on) {
 	var row = document.getElementById('fr' + id);
+  var prevrow;
 	if (id != 0) {
-		var prevrow = document.getElementById('fr' + (id-1));
+		prevrow = document.getElementById('fr' + (id-1));
 	} else {
-		var prevrow = document.getElementById('frheader');
+		prevrow = document.getElementById('frheader');
 	}
 
 	var cells = row.getElementsByTagName("td"); 

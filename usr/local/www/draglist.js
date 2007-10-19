@@ -15,7 +15,6 @@
 //     http://www.formvista.com/contact.html
 //
 // LICENSE: This file is governed by the new BSD license. For more information
-<?php
 /*
     The DragList drag and drop ordered lists implementation is available under the terms of the new BSD license.
    
@@ -53,7 +52,6 @@
    OTHERWISE)  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-?>
 //
 // REVISION HISTORY:
 //
@@ -188,13 +186,13 @@ fv_dragList.prototype.setup = function( orientation, itemTagName )
 			{
 			thisElem.style["top"] = "0px";
 			thisElem.style["left"] = "0px";
-			}
+			};
 
 		}	// end of for loop.
 
 	this.recalcOffsets( itemTagName );
 
-	}	// end of setup.
+	};	// end of setup.
 
 // ----------------------------------------------
 
@@ -216,7 +214,7 @@ fv_dragList.prototype.do_submit = function( formName, dragListRootId )
 	expr = "document." + formName + ".submit()";
 
 	eval( expr );
-	}
+	};
 
 // ----------------------------------------------
 // "Private" methods.
@@ -231,7 +229,7 @@ fv_dragList.prototype.recalcOffsets = function( itemTagName )
 		this.offsetsX[i] = listItems[i].offsetLeft;
 		this.offsetsY[i] = listItems[i].offsetTop;
 		}
-	}
+	};
 
 fv_dragList.prototype.getCurrentOffset = function(elem, itemTagName) 
 	{ 
@@ -244,7 +242,7 @@ fv_dragList.prototype.getCurrentOffset = function(elem, itemTagName)
 			return i;
 			}
 		}
-	}
+	};
 
 fv_dragList.prototype.getDivWidth = function(elem) 								  
 	{
@@ -259,7 +257,7 @@ fv_dragList.prototype.getDivWidth = function(elem)
 		}
 
 	return( value );
-	}
+	};
 
 fv_dragList.prototype.getDivHeight = function(elem) 
 	{
@@ -274,7 +272,7 @@ fv_dragList.prototype.getDivHeight = function(elem)
 		}
 
 	return( value );
-	}
+	};
 
 /**
 * return list of draggable items
@@ -290,7 +288,7 @@ fv_dragList.prototype.getListItems = function( itemTagName )
 	var listItems = this.listRoot.getElementsByTagName( itemTagName );
 
 	return( listItems );
-	}
+	};
 
 // end of draglist class definition.
 

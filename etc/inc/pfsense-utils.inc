@@ -3387,8 +3387,10 @@ function get_interface_gateway($interface) {
 					$interfacegw = $gateway['interface'];
 				}
 			}
+			$gw = $gatewayip;
+		} else {
+			$gw = $config['interfaces'][$interface]['gateway'];
 		}
-		$gw = $gatewayip;
 	}
 	/* if wan is requested, return it */
 	if($interface == "wan")

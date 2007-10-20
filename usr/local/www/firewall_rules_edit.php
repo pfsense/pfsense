@@ -760,9 +760,9 @@ include("head.inc");
 			/* build a list of gateways */
 			$gateways = array();
 			$gateways[] = "default"; // default to don't use this feature :)
-			foreach($config['interfaces'] as $int) {
-				if($int['gateway'] <> "")
-					$gateways[]=$int['gateway'];
+			foreach($config['gateways']['gateway_item'] as $gw_item) {
+			if($gw_item['gateway'] <> "")
+				$gateways[] = $gw_item['name'];
 			}
 ?>
 		<tr>
@@ -781,7 +781,8 @@ include("head.inc");
 					if ($gw == "default") {
 						echo "<option value=\"\" {$selected}>{$gw}</option>\n";
 					} else {
-						echo "<option value=\"{$gw}\" {$selected}>{$gw}</option>\n";
+						$gwip = lookup_gateway_ip_by_name($gw);
+						echo "<option value=\"{$gw}\" {$selected}>{$gw} - {$gwip}</option>\n";
 					}
 				}
 				if(is_array($config['load_balancer']['lbpool'])) {

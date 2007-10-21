@@ -3095,7 +3095,7 @@ function enable_rrd_graphing() {
 				if (!file_exists("$rrddbpath$ifname$wireless")) {
 					/* create rrd file if it does not exist */
 					log_error("Create RRD database $rrddbpath$ifname$wireless");
-					$rrdcreate = "$rrdtool create $rrddbpath$ifname$wireless --step $rrdtrafficinterval ";
+					$rrdcreate = "$rrdtool create $rrddbpath$ifname$wireless --step $rrdwirelessinterval ";
 					$rrdcreate .= "DS:snr:GAUGE:$wirelessvalid:0:1000 ";
 					$rrdcreate .= "DS:rate:GAUGE:$wirelessvalid:0:1000 ";
 					$rrdcreate .= "DS:channel:GAUGE:$wirelessvalid:0:1000 ";
@@ -3123,7 +3123,7 @@ function enable_rrd_graphing() {
 				$rrdupdatesh .= "\n";
 				$rrdupdatesh .= "# polling wireless for interface $ifname $realif \n";
 				$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$wireless N:\\\n";
-				$rrdupdatesh .= "`$ifconfig {$realif} list ap| $awk '{getline 2;print $3 \":\" $4 \":\" substr(\$5, 0, length(\$5)-2)}'`\n";
+				$rrdupdatesh .= "`$ifconfig {$realif} list ap| $awk 'gsub(\"M\", \"\") {getline 2;print substr(\$5, 0, length(\$5)-2) \":\" $4 \":\" $3}'`\n";
 			}
 
 			/* WAN interface only statistics */

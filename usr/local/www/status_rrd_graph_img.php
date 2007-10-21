@@ -353,19 +353,19 @@ elseif((strstr($curdatabase, "-wireless.rrd")) && (file_exists("$rrddbpath$curda
 		COMMENT:\"\\n\"\\
 		COMMENT:\"\t\t  maximum       average       current        period\\n\"\\
 		COMMENT:\"SNR\t\"\\
-		GPRINT:$curif-snr:MAX:'%7.2lf %s pps'\\
-		GPRINT:$curif-snr:AVERAGE:'%7.2lf %S pps'\\
-		GPRINT:$curif-snr:LAST:'%7.2lf %S pps'\\
+		GPRINT:$curif-snr:MAX:'%7.2lf %s dBi'\\
+		GPRINT:$curif-snr:AVERAGE:'%7.2lf %S dBi'\\
+		GPRINT:$curif-snr:LAST:'%7.2lf %S dBi'\\
 		COMMENT:\"\\n\"\\
-		COMMENT:\"RATE\t\"\\
-		GPRINT:$curif-rate:MAX:'%7.2lf %s pps'\\
-		GPRINT:$curif-rate:AVERAGE:'%7.2lf %S pps'\\
-		GPRINT:$curif-rate:LAST:'%7.2lf %S pps'\\
+		COMMENT:\"RATE\t\t\"\\
+		GPRINT:$curif-rate:MAX:'%7.2lf %s Mb '\\
+		GPRINT:$curif-rate:AVERAGE:'%7.2lf %S Mb '\\
+		GPRINT:$curif-rate:LAST:'%7.2lf %S Mb '\\
 		COMMENT:\"\\n\"\\
-		COMMENT:\"Channel\"\\
-		GPRINT:$curif-channel:MAX:'%7.2lf %s pps'\\
-		GPRINT:$curif-channel:AVERAGE:'%7.2lf %s pps'\\
-		GPRINT:$curif-channel:LAST:'%7.2lf %s pps'\\
+		COMMENT:\"Channel\t\"\\
+		GPRINT:$curif-channel:MAX:'%7.2lf %s    '\\
+		GPRINT:$curif-channel:AVERAGE:'%7.2lf %s    '\\
+		GPRINT:$curif-channel:LAST:'%7.2lf %s    '\\
         	COMMENT:\"\\n\"\\
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}

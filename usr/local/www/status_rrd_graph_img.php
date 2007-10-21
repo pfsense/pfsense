@@ -133,6 +133,7 @@ if(file_exists($rrdcolors)) {
 	$colorqueuesdropdown = array('000000','7B7B7B','999999','BBBBBB','CCCCCC','D9D9D9','EEEEEE','FFFFFF','CCCCCC');
 	$colorqualityrtt = array('990000','a83c3c','b36666','bd9090','cccccc','000000');
 	$colorqualityloss = "ee0000";
+	$colorwireless = array('990000','a83c3c','b36666');
 	$colorspamdtime = array('DDDDFF', 'AAAAFF', 'DDDDFF', '000066'); 
 	$colorspamdconn = array('00AA00BB', 'FFFFFFFF', '00660088', 'FFFFFF88', '006600');
 }
@@ -332,6 +333,39 @@ elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdat
 		GPRINT:$curif-pps_io:AVERAGE:'%7.2lf %s pps'\\
 		GPRINT:$curif-pps_io:LAST:'%7.2lf %s pps'\\
 		GPRINT:$curif-pps_t:AVERAGE:'%7.2lf %s pkts'\\
+        	COMMENT:\"\\n\"\\
+		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
+	}
+elseif((strstr($curdatabase, "-wireless.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+	/* define graphcmd for packets stats */
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png \\
+		--start -$seconds -e -$average \\
+		--vertical-label \"snr/channel/rate\" \\
+		--color SHADEA#eeeeee --color SHADEB#eeeeee \\
+		--title \"`hostname` - $prettydb - $hperiod - $havg average\" \\
+		--height 200 --width 620 -x \"$scale\" \\
+		DEF:$curif-snr=$rrddbpath$curdatabase:snr:AVERAGE \\
+		DEF:$curif-rate=$rrddbpath$curdatabase:rate:AVERAGE \\
+		DEF:$curif-channel=$rrddbpath$curdatabase:channel:AVERAGE \\
+		LINE1:$curif-snr#{$colorwireless[0]}:$curif-snr \\
+		LINE1:$curif-rate#{$colorwireless[1]}:$curif-rate \\
+		LINE1:$curif-channel#{$colorwireless[2]}:$curif-channel \\
+		COMMENT:\"\\n\"\\
+		COMMENT:\"\t\t  maximum       average       current        period\\n\"\\
+		COMMENT:\"SNR\t\"\\
+		GPRINT:$curif-snr:MAX:'%7.2lf %s pps'\\
+		GPRINT:$curif-snr:AVERAGE:'%7.2lf %S pps'\\
+		GPRINT:$curif-snr:LAST:'%7.2lf %S pps'\\
+		COMMENT:\"\\n\"\\
+		COMMENT:\"RATE\t\"\\
+		GPRINT:$curif-rate:MAX:'%7.2lf %s pps'\\
+		GPRINT:$curif-rate:AVERAGE:'%7.2lf %S pps'\\
+		GPRINT:$curif-rate:LAST:'%7.2lf %S pps'\\
+		COMMENT:\"\\n\"\\
+		COMMENT:\"Channel\"\\
+		GPRINT:$curif-channel:MAX:'%7.2lf %s pps'\\
+		GPRINT:$curif-channel:AVERAGE:'%7.2lf %s pps'\\
+		GPRINT:$curif-channel:LAST:'%7.2lf %s pps'\\
         	COMMENT:\"\\n\"\\
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}

@@ -71,6 +71,7 @@ rsort($databases);
 /* these boilerplate databases are required for the other menu choices */
 $dbheader = array("allgraphs-traffic.rrd",
 		"allgraphs-quality.rrd",
+		"allgraphs-wireless.rrd",
 		"allgraphs-packets.rrd",
 		"system-allgraphs.rrd",
 		"system-throughput.rrd",
@@ -111,6 +112,8 @@ include("head.inc");
 			        $tab_array[] = array("Quality", $tabactive, "status_rrd_graph.php?cat=quality");
 				if($curcat == "queues") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array("Queues", $tabactive, "status_rrd_graph.php?cat=queues");
+				if($curcat == "wireless") { $tabactive = True; } else { $tabactive = False; }
+			        $tab_array[] = array("Wireless", $tabactive, "status_rrd_graph.php?cat=wireless");
 				if($curcat == "settings") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array("Settings", $tabactive, "status_rrd_graph_settings.php");
 			        display_top_tabs($tab_array);

@@ -2873,6 +2873,7 @@ function enable_rrd_graphing() {
 	$packets = "-packets.rrd";
 	$states = "-states.rrd";
 	$quality = "-quality.rrd";
+	$quality = "-wireless.rrd";
 	$queues = "-queues.rrd";
 	$queuesdrop = "-queuesdrop.rrd";
 	$spamd = "-spamd.rrd";
@@ -2889,6 +2890,7 @@ function enable_rrd_graphing() {
 
 	$rrdtrafficinterval = 60;
 	$rrdqualityinterval = 60;
+	$rrdwirelessinterval = 60;
 	$rrdqueuesinterval = 60;
 	$rrdqueuesdropinterval = 60;
 	$rrdpacketsinterval = 60;
@@ -2899,6 +2901,7 @@ function enable_rrd_graphing() {
 
 	$trafficvalid = $rrdtrafficinterval * 2;
 	$qualityvalid = $rrdqualityinterval * 2;
+	$wirelessvalid = $rrdwirelessinterval * 2;
 	$queuesvalid = $rrdqueuesinterval * 2;
 	$queuesdropvalid = $rrdqueuesdropinterval * 2;
 	$packetsvalid = $rrdpacketsinterval * 2;
@@ -3085,6 +3088,42 @@ function enable_rrd_graphing() {
 				$rrdupdatesh .= "}\n\n";
 
 				$rrdupdatesh .= "get_quality_stats_{$ifname} &\n\n";
+			}
+
+			/* WIRELESS, set up the rrd file */
+			if($config['interfaces'][$ifname]['wireless']['mode'] == "bss") {
+				if (!file_exists("$rrddbpath$ifname$wireless")) {
+					/* create rrd file if it does not exist */
+					log_error("Create RRD database $rrddbpath$ifname$wireless");
+					$rrdcreate = "$rrdtool create $rrddbpath$ifname$wireless --step $rrdtrafficinterval ";
+					$rrdcreate .= "DS:snr:GAUGE:$wirelessvalid:0:1000 ";
+					$rrdcreate .= "DS:rate:GAUGE:$wirelessvalid:0:1000 ";
+					$rrdcreate .= "DS:channel:GAUGE:$wirelessvalid:0:1000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:5:1000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:60:1000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:720:1000 ";
+					$rrdcreate .= "RRA:AVERAGE:0.5:1440:1500 ";
+	
+					$rrdcreateoutput = array();
+					$rrdcreatereturn = "";
+
+					$rrdcreatel = exec("$rrdcreate 2>&1", $rrdcreateoutput, $rrdcreatereturn);
+					if ($rrdcreatereturn != 0) {
+						log_error("RRD create failed exited with $rrdcreatereturn, the
+								error is: $rrdcreateoutput[0]\n");
+					}
+				}
+
+				/* enter UNKNOWN values in the RRD so it knows we rebooted. */
+				if($g['booting']) {
+					exec("$rrdtool update $rrddbpath$ifname$wireless N:U:U:U");
+				}
+
+				$rrdupdatesh .= "\n";
+				$rrdupdatesh .= "# polling wireless for interface $ifname $realif \n";
+				$rrdupdatesh .= "$rrdtool update $rrddbpath$ifname$wireless N:\\\n";
+				$rrdupdatesh .= "`$ifconfig {$realif} list ap| $awk '{getline 2;print $3 \":\" $4 \":\" substr(\$5, 0, length(\$5)-2)}'`\n";
 			}
 
 			/* WAN interface only statistics */

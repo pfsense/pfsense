@@ -765,6 +765,14 @@ function step6_stepsubmitphpaction() {
 		    }
 		    $gamesplist[] = array('WoW', 'tcp', '3724', '3724', 'both');
 		}
+		
+		if($_POST['archlord'] != "") {
+		  /* ArchLord */
+		  $gamesplist[] = array('AL-1', 'tcp', '11000', '11000', 'both');
+		  $gamesplist[] = array('AL-2', 'tcp', '11002', '11002', 'both');
+		  $gamesplist[] = array('AL-3', 'tcp', '11008', '11008', 'both');
+		}
+		
 		if($_POST['gunzonline'] != "") {
 		    /* GunZ Online */
 		    $gamesplist[] = array('GunZOnline', 'udp', '7700', '7700', 'both');

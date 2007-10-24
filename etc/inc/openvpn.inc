@@ -140,7 +140,7 @@ function openvpn_validate_input($mode, $post, $input_errors) {
 		}
 		if (isset($post['use_shaper']) && $post['use_shaper'] != "") {
 			if (!is_numeric($post['use_shaper']))
-				$input_errors[] = 'The field \'Limit outgoing bandwith\' must be numeric.';
+				$input_errors[] = 'The field \'Limit outgoing bandwidth\' must be numeric.';
 		}
 
 	}

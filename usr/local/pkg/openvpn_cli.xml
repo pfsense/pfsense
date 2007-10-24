@@ -186,7 +186,7 @@
 		<field>
 			<fieldname>use_shaper</fieldname>
 			<fielddescr>Limit outgoing bandwidth</fielddescr>
-			<description>Maximum outgoing bandwith for this tunnel. Leave empty for no limit. The input value has to be something between 100 bytes/sec and 100 Mbytes/sec (entered as bytes per second).</description>
+			<description>Maximum outgoing bandwidth for this tunnel. Leave empty for no limit. The input value has to be something between 100 bytes/sec and 100 Mbytes/sec (entered as bytes per second).</description>
 			<type>input</type>
 		</field>
 		<field>

@@ -196,13 +196,13 @@ function plot_data(obj) {
     return handle_error();
 
   var diff_ugmt  = ugmt - last_ugmt;
-  if (last_ifin < ifin) {
+  if (last_ifin > ifin) {
     var diff_ifin  = ifin - last_ifin;
   } else {
     real_last_ifin = (4294967296 - last_ifin)
     var diff_ifin  = ifin + real_last_ifin;
   }
-  if (last_ifout < ifout) {
+  if (last_ifout > ifout) {
     var diff_ifout  = ifout - last_ifout;
   } else {
     real_last_ifout = (4294967296 - last_ifout)

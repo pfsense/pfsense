@@ -2873,7 +2873,7 @@ function enable_rrd_graphing() {
 	$packets = "-packets.rrd";
 	$states = "-states.rrd";
 	$quality = "-quality.rrd";
-	$quality = "-wireless.rrd";
+	$wireless = "-wireless.rrd";
 	$queues = "-queues.rrd";
 	$queuesdrop = "-queuesdrop.rrd";
 	$spamd = "-spamd.rrd";

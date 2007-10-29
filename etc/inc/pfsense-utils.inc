@@ -2887,6 +2887,7 @@ function enable_rrd_graphing() {
 	$php = "/usr/local/bin/php";
 	$top = "/usr/bin/top";
 	$spamd_gather = "/usr/local/bin/spamd_gather_stats.php";
+	$ifconfig = "/sbin/ifconfig";
 
 	$rrdtrafficinterval = 60;
 	$rrdqualityinterval = 60;

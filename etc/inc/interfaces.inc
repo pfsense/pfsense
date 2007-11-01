@@ -85,6 +85,18 @@ function interfaces_vlan_configure() {
 			/* invalidate interface cache */
 			get_interface_arr(true);
 
+			/*   all vlans need to spoof their parent mac address, too.  see
+			 *   ticket #1514: http://cvstrac.pfsense.com/tktview?tn=1514,33 
+			 */
+			foreach($config['interfaces'] as $interfaces) {
+				if($interfaces['if'] == $vlan['if']) {
+					if($interfaces['spoofmac']) {
+						mwexec("/sbin/ifconfig " . escapeshellarg($interfaces['if']) .
+							" link " . escapeshellarg($interfaces['spoofmac']));
+					}
+				}
+			}
+
 			/* make sure the parent interface is up */
 			mwexec("/sbin/ifconfig " . escapeshellarg($vlan['if']) . " up");
 

@@ -83,6 +83,13 @@ $pconfig['agentoption'] = isset($config['dhcrelay']['agentoption']);
 
 $ifcfg = $config['interfaces'][$if];
 
+/*   set the enabled flag which will tell us if DHCP server is enabled
+ *   on any interface.   We will use this to disable dhcp-relay since
+ *   the two are not compatible with each other.
+ */
+$dhcpd_enabled = false;
+foreach($config['dhcpd'] as $dhcp) 
+	if($dhcp['enable']) $dhcpd_enabled = true;
 
 if ($_POST) {
 
@@ -170,6 +177,15 @@ function enable_change(enable_over) {
 <form action="services_dhcp_relay.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
+<?php 
+	if ($dhcpd_enabled) {
+		echo "DHCP Server is currently enabled.  Cannot display dhcp-relay service while DHCP Server is enabled on any interface.";
+		include("fend.inc"); 
+		echo "</body>";
+		echo "</html>";
+		exit;
+	}
+?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>  
   <?php

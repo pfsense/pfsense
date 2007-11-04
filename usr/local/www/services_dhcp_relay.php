@@ -88,8 +88,9 @@ $ifcfg = $config['interfaces'][$if];
  *   the two are not compatible with each other.
  */
 $dhcpd_enabled = false;
-foreach($config['dhcpd'] as $dhcp) 
-	if($dhcp['enable']) $dhcpd_enabled = true;
+foreach($config['dhcpd'] as $dhcp) {
+	if(isset($dhcp['enable'])) $dhcpd_enabled = true;
+}
 
 if ($_POST) {
 
@@ -177,10 +178,9 @@ function enable_change(enable_over) {
 <form action="services_dhcp_relay.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
-
 <?php 
 	if ($dhcpd_enabled) {
-		echo "DHCP Server is currently enabled.  Cannot display dhcp-relay service while DHCP Server is enabled on any interface.";
+		echo "DHCP Server is currently enabled.  Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface.";
 		include("fend.inc"); 
 		echo "</body>";
 		echo "</html>";

@@ -81,6 +81,25 @@ $pconfig['netmask'] = $config['dhcpd'][$if]['netmask'];
 
 $ifcfg = $config['interfaces'][$if];
 
+/*   set the enabled flag which will tell us if DHCP relay is enabled
+ *   on any interface.   We will use this to disable DHCP server since
+ *   the two are not compatible with each other.
+ */
+
+$dhcrelay_enabled = false;
+$dhcrelaycfg = $config['dhcrelay'];
+
+if(is_array($dhcrelaycfg)) {
+	foreach ($dhcrelaycfg as $dhcrelayif => $dhcrelayifconf) {
+		if (isset($dhcrelayifconf['enable']) &&
+			(($dhcrelayif == "lan") ||
+			(isset($config['interfaces'][$dhcrelayif]['enable']) &&
+			$config['interfaces'][$dhcrelayif]['if'] && (!$config['interfaces'][$dhcrelayif]['bridge']))))
+			$dhcrelay_enabled = true;
+	}
+}
+
+
 if (!is_array($config['dhcpd'][$if]['staticmap'])) {
 	$config['dhcpd'][$if]['staticmap'] = array();
 }
@@ -310,6 +329,15 @@ function show_netboot_config() {
 <form action="services_dhcp.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
+<?php 
+	if ($dhcrelay_enabled) {
+		echo "DHCP Relay is currently enabled.  Cannot enable the DHCP Server service while the DHCP Relay is enabled on any interface.";
+		include("fend.inc"); 
+		echo "</body>";
+		echo "</html>";
+		exit;
+	}
+?>
 <?php if (file_exists($d_staticmapsdirty_path)): ?><p>
 <?php print_info_box_np("The static mapping configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
 <?php endif; ?>

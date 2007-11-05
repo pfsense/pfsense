@@ -2773,7 +2773,7 @@ EOD;
 
 	$ipfrules .= process_carp_rules();
 
-	$ipfrules .= "\n\n#PFTPX specific\n";
+	$ipfrules .= "\n\n# PFTPX specific\n";
 	foreach($used_pftpx_ports as $pftpx) 
 		$ipfrules .= "pass in quick on {$pftpx['interface']} inet proto tcp from any to 127.0.0.1 port {$pftpx['port']} keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
 

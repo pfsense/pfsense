@@ -1200,6 +1200,7 @@ function system_setup_sysctl() {
 
 	$sysctl = return_filename_as_array("/etc/sysctl.conf");
 	foreach($sysctl as $sysc) {
+		$sysc = rtrim($sysc);
 		if($sysc <> "")
 			mwexec("sysctl {$sysc} 2>/dev/null");
 	}

@@ -44,6 +44,10 @@ if($config['system']['shapertype'] <> "m0n0")
 
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
 $after_filter_configure_run = array();
+/*  hold the ports being used by pftpx to install the behind the scenes rule that 
+ *  forces traffic out the primary wan until multi-wan pftpx is all the rage.
+ */
+$used_pftpx_ports = array();
 
 function filter_pflog_start() {
 	global $config, $g;
@@ -601,7 +605,7 @@ function is_one_to_one_or_server_nat_rule($iptocheck) {
 }
 
 function filter_nat_rules_generate() {
-	global $config, $g, $after_filter_configure_run;
+	global $config, $g, $after_filter_configure_run, $used_pftpx_ports;
 
 	$wancfg = $config['interfaces']['wan'];
 	$lancfg = $config['interfaces']['lan'];
@@ -995,6 +999,10 @@ function filter_nat_rules_generate() {
 				}
 			}
 		if($ifname_lower) {
+			$temp_array_holder_pftpx = array();
+			$temp_array_holder_pftpx['port'] = $tmp_port;
+			$temp_array_holder_pftpx['interface'] = $tmp_interface;
+			$used_pftpx_ports[] = $temp_array_holder_pftpx;
 			$natrules .= "rdr on $tmp_interface proto tcp from any to any port 21 -> 127.0.0.1 port {$tmp_port}\n";
 			$natrules .= "rdr on $tmp_interface proto udp from any to any port tftp -> 127.0.0.1 port 6969\n";
 		}
@@ -2199,7 +2207,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 }
 
 function filter_rules_generate() {
-	global $config, $g, $table_cache;
+	global $config, $g, $table_cache, $used_pftpx_ports;
 
 	update_filter_reload_status("Creating default rules");
 
@@ -2313,7 +2321,6 @@ pass out quick on \$loopback all label "pass loopback"
 
 # package manager early specific hook
 anchor "packageearly"
-
 
 # carp
 anchor "carp"
@@ -2755,8 +2762,6 @@ pass in quick proto udp from any to any port = 5050 keep state label "BigPond he
 # package manager late specific hook
 anchor "packagelate"
 
-
-
 EOD;
 	}
 
@@ -2767,6 +2772,12 @@ EOD;
 	$ipfrules .= "anchor \"pftpx/*\"\n";
 
 	$ipfrules .= process_carp_rules();
+
+	$ipfrules .= "\n\n#PFTPX specific\n";
+	foreach($used_pftpx_ports as $pftpx) 
+		$ipfrules .= "pass in quick on {$pftpx['interface']} inet proto tcp from any to 127.0.0.1 port {$pftpx['port']} keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
+
+	$ipfrules .= "\n";
 
 	if (isset($config['filter']['rule'])) {
 		/* Pre-cache all our rules so we only have to generate them once */

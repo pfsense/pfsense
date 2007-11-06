@@ -175,7 +175,7 @@ failover peer "dhcp{$dhcpnum}" {
   port {$my_port};
   peer address {$dhcpifconf['failover_peerip']};
   peer port {$peer_port};
-  max-response-delay 60;
+  max-response-delay 10;
   max-unacked-updates 10;
   {$dhcpdconf_pri}
   load balance max seconds 3;

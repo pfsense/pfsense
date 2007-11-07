@@ -3,7 +3,6 @@
 touch /var/run/config.lock
 /etc/rc.conf_mount_rw
 
-
 KERNELTYPE=`cat /boot/kernel/pfsense_kernel.txt`
 if [ $KERNELTYPE = "wrap" ]; then
 	if [ -f /kernels/kernel_wrap.gz ]; then 
@@ -28,4 +27,6 @@ fi
 # Now turn on or off serial console as needed
 php -f /tmp/post_upgrade_command.php
 
+# Remove any previous MD5 sum files
+rm -f /root/*.md5
 

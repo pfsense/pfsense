@@ -77,9 +77,11 @@ switch ($command) {
 				if($source_md5 <> $file_md5) {
 					echo "\n\nMD5 checksum does not match.  Cancelling upgrade.\n\n";
 					fclose($fp);
+					exec("rm -f /root/*.md5");
 					die -1;
 				}
 				echo "\nMD5 checksum matches.\n";
+				exec("rm -f /root/*.md5");
 			}
 			if(file_exists("/root/firmware.tgz"))
 				do_upgrade("/root/firmware.tgz");
@@ -141,6 +143,7 @@ function do_upgrade($path) {
 	die;
 }
 
+exec("rm -f /root/*.md5");
 fclose($fp);
 
 ?>

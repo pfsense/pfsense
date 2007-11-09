@@ -16,6 +16,8 @@ $g['booting'] = false;
 function show_help() {
 	echo "\nExample commands:\n";
 	
+	echo "\nparse_config(true);  # reloads the \$config array\n";
+	
 	echo "\n/* to output a configuration array */\n";
 	echo "print_r(\$config);\n";
 	
@@ -77,13 +79,13 @@ $shell_active = true;
 echo "Type \"help\" to show common usage scnenarios.";
 
 while($shell_active == true) {
-        echo "\n\npfSense shell> ";
-        $command = chop(fgets($fp));
+        $command = readline("\n\npfSense shell: ");
         if($command == "exit") {
                 $shell_active = false;
                 echo "\n";
                 break;
 		}
+		readline_add_history($command);
 	    if($command == "help") {
 	    	show_help();
 	    	$command = "";
@@ -95,7 +97,8 @@ while($shell_active == true) {
 			$xxxyzyz = 0;
 			while($command <> "EOF") {
 				echo "pfSense multiline shell[$xxxyzyz]> ";
-		        $command = chop(fgets($fp));
+		        $command = readline("Command: ");
+		        readline_add_history($command);
 		        if($command == "help") 
 		        	show_help();
 		        if($command == "exit") 

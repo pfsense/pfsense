@@ -114,10 +114,6 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 				}
 			}
 
-			if(!file_exists("/boot/kernel/pfsense_kernel.txt")) { 
-				
-			}
-
             /* Check for input errors, firmware locks, warnings, then check for firmware if sig_override is set */
             if (!$input_errors && !file_exists($d_firmwarelock_path) && (!$sig_warning || $_POST['sig_override'])) {
                     if (file_exists("{$g['upload_path']}/firmware.tgz")) {
@@ -201,7 +197,7 @@ print_info_box($sig_warning);
 								echo "<option value='single'>Uniprocessor kernel</option>";
 								echo "<option value='SMP'>Multiprocessor kernel</option>";
 								echo "<option value='wrap'>Embedded kernel</option>";
-								echo "<option value='wrap'>Developers kernel</option>";
+								echo "<option value='Developers'>Developers kernel</option>";
 								echo "</select>";
 								echo "<br><br>";
 							}

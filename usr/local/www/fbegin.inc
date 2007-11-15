@@ -292,5 +292,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 		echo "</table>";
 		echo "</div>";
 	}
-
+	
 ?>
+
+<p class="pgtitle"><?=genhtmltitle($pgtitle);?></font></p>

@@ -2,43 +2,52 @@
 
 require_once("notices.inc");
 /* $Id$ */
-	function return_ext_menu($section) {
-		global $config;
-		$htmltext = "";
-		if($config['installedpackages']['menu'] <> "") {
-			foreach($config['installedpackages']['menu'] as $menuitem) {
-				if($menuitem['section'] != $section) continue;
-				if($menuitem['url'] <> "") {
-				 	$addresswithport = getenv("HTTP_HOST");
-					$colonpos = strpos($addresswithport, ":");
-					if ($colonpos !== False){
-						//my url is actually just the IP address of the pfsense box
-						$myurl = substr($addresswithport, 0, $colonpos);
-					}
-					else
-					{
-						$myurl = $addresswithport;
-					}
 
-					$description = str_replace('$myurl', $myurl, $menuitem['url']);
-				} else {
-					$description = '/pkg.php?xml=' . $menuitem['configfile'];
+function gentitle($title) {
+        global $navlevelsep;
+        return join($navlevelsep, $title);
+}
+
+function genhtmltitle($title) {
+        global $config;
+        return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . gentitle($title);
+}
+
+function return_ext_menu($section) {
+	global $config;
+	$htmltext = "";
+	if($config['installedpackages']['menu'] <> "") {
+		foreach($config['installedpackages']['menu'] as $menuitem) {
+			if($menuitem['section'] != $section) continue;
+			if($menuitem['url'] <> "") {
+			 	$addresswithport = getenv("HTTP_HOST");
+				$colonpos = strpos($addresswithport, ":");
+				if ($colonpos !== False){
+					//my url is actually just the IP address of the pfsense box
+					$myurl = substr($addresswithport, 0, $colonpos);
 				}
-				$htmltext .= '<li><a href="' . $description . ' "class="navlnk">' . $menuitem['name'] . '</a></li>' . "\n";
+				else
+				{
+					$myurl = $addresswithport;
+				}
+
+				$description = str_replace('$myurl', $myurl, $menuitem['url']);
+			} else {
+				$description = '/pkg.php?xml=' . $menuitem['configfile'];
 			}
+			$htmltext .= '<li><a href="' . $description . ' "class="navlnk">' . $menuitem['name'] . '</a></li>' . "\n";
 		}
-		return $htmltext;
 	}
+	return $htmltext;
+}
 
+/* NOTICE ACKNOWLEDGE CODE by Erik Kristensen */
+if ($_REQUEST['noticeaction'] == 'acknowledge') {
+	$notice_id = $_REQUEST['noticeid'];
+	close_notice($notice_id);
+}
+/**********************************************/
 
-
-
-	/* NOTICE ACKNOWLEDGE CODE by Erik Kristensen */
-	if ($_REQUEST['noticeaction'] == 'acknowledge') {
-		$notice_id = $_REQUEST['noticeid'];
-		close_notice($notice_id);
-	}
-	/**********************************************/
 ?>
 
 <div id="wrapper">

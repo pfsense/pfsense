@@ -3,11 +3,6 @@
 require_once("notices.inc");
 /* $Id$ */
 
-function gentitle($title) {
-        global $navlevelsep;
-        return join($navlevelsep, $title);
-}
-
 function genhtmltitle($title) {
         global $config;
         return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . gentitle($title);

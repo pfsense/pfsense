@@ -142,14 +142,13 @@ if ($_POST) {
 /* Simply take a copy of the array */
 $pconfig = $config['ovpn']['server'];
 
-$pgtitle = "VPN: OpenVPN";
+$pgtitle = array("VPN","OpenVPN");
 include("head.inc");
 
 ?>
 
 <?php include("fbegin.inc"); ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 <form action="vpn_openvpn.php" method="post" enctype="multipart/form-data" name="iform" id="iform">

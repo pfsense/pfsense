@@ -33,7 +33,7 @@
 
 require("guiconfig.inc");
 
-$pgtitle = "Status: DHCP leases";
+$pgtitle = array("Status","DHCP leases");
 include("head.inc");
 
 ?>
@@ -41,7 +41,6 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script src="/javascript/sorttable.js"></script>
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php
 
 function leasecmp($a, $b) {

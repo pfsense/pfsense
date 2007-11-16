@@ -28,15 +28,13 @@
 
 require_once("guiconfig.inc");
 require_once("system.inc");
-$pgtitle = "Restarting mini_httpd";
+$pgtitle = array("Restarting mini_httpd");
 include("head.inc");
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form>
 <?php include("fbegin.inc"); ?>
-
-<p class="pgtitle"><?php echo $pgtitle; ?></p>
 
 Mounting file systems read/write...
 <?php flush(); sleep(1); conf_mount_rw(); ?>

@@ -155,14 +155,13 @@ if ($_POST) {
 }
 
 
-$pgtitle = "Firewall: Shaper: Queues";
+$pgtitle = array("Firewall","Shaper","Queues");
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="firewall_shaper_queues.php" method="post">
 <script type="text/javascript" language="javascript" src="row_toggle.js"></script>
 <?php if ($input_errors) print_input_errors($input_errors); ?>

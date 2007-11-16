@@ -75,14 +75,13 @@ if(is_array($config['users'])){
 	}
 }
 
-$pgtitle = "Services: User Manager";
+$pgtitle = array("Services","User Manager");
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <script language="javascript" type="text/javascript" src="datetimepicker.js">
 //Date Time Picker script- by TengYong Ng of http://www.rainforestnet.com
 //Script featured on JavaScript Kit (http://www.javascriptkit.com)

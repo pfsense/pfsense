@@ -28,7 +28,7 @@
 
 require_once("guiconfig.inc");
 
-$pgtitle = "Diagnostics: Show States";
+$pgtitle = array("Diagnostics","Show States");
 include("head.inc");
 
 /* handle AJAX operations */
@@ -55,7 +55,6 @@ else {
 <script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
 <script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="diag_dump_states.php" method="get" name="iform">
 
 <script type="text/javascript">

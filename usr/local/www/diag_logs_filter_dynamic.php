@@ -155,7 +155,7 @@ function format_ipf_ip($ipfip) {
 
 $filterlog = conv_clog_filter($filter_logfile, $nentries);
 
-$pgtitle = "Diagnostics: System logs: Firewall";
+$pgtitle = array("Diagnostics","System logs","Firewall");
 include("head.inc");
 
 ?>

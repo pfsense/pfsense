@@ -59,14 +59,13 @@ if($_POST['disablecarp'] <> "") {
 
 $status = get_carp_status();
 
-$pgtitle = "Status: CARP (failover)";
+$pgtitle = array("Status","CARP (failover)");
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="carp_status.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 

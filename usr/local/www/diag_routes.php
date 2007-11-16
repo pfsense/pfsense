@@ -31,14 +31,13 @@
 
 include('guiconfig.inc');
 
-$pgtitle = 'Diagnostics: Routing tables';
+$pgtitle = array("Diagnostics","Routing tables");
 
 include('head.inc');
 
 ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 
 <div id="mainarea">
 <form action="diag_routes.php" method="post">

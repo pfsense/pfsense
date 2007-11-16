@@ -64,13 +64,12 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = "Services: Load Balancer: Virtual Servers";
+$pgtitle = array("Services","Load Balancer","Virtual Servers");
 include("head.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="load_balancer_virtual_server.php" method="post">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>

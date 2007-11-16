@@ -27,7 +27,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = "Firewall: Aliases: Import";
+$pgtitle = array("Firewall","Aliases","Import");
 
 require("guiconfig.inc");
 
@@ -59,7 +59,6 @@ include("head.inc");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <div id="niftyOutter">
 <form action="firewall_aliases_import.php" method="post" name="iform" id="iform">

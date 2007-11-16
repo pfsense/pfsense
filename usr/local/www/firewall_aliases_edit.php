@@ -31,7 +31,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = "Firewall: Aliases: Edit";
+$pgtitle = array("Firewall","Aliases","Edit");
 
 require("guiconfig.inc");
 
@@ -425,8 +425,6 @@ EOD;
 	rowtype[2] = "textbox";
 	rowsize[2] = "61";
 </script>
-
-<p class="pgtitle"><?=$pgtitle?></p>
 
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <div id="inputerrors"></div>

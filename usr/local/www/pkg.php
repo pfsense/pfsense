@@ -97,7 +97,7 @@ if($pkg['custom_php_global_functions'] <> "")
 if($pkg['custom_php_command_before_form'] <> "")
 	eval($pkg['custom_php_command_before_form']);
 
-$pgtitle = $title;
+$pgtitle = array($title);
 include("head.inc");
 
 ?>
@@ -106,7 +106,6 @@ include("head.inc");
 <?php
 include("fbegin.inc");
 ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="pkg.php" method="post">
 <? if($_GET['savemsg'] <> "") $savemsg = $_GET['savemsg']; ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>

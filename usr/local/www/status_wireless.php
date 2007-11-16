@@ -33,7 +33,7 @@ function gentitle_pkg($pgname) {
 	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
 }
 
-$pgtitle = "Diagnostics: Wireless Status";
+$pgtitle = array("Diagnostics","Wireless Status");
 include("head.inc");
 
 $if = $_POST['if'];
@@ -54,7 +54,6 @@ if($if == "") {
 <?php
 include("fbegin.inc");
 ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="status_wireless.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 

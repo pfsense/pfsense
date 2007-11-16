@@ -111,14 +111,13 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "Load Balancer: Virtual Server: Edit";
+$pgtitle = array("Load Balancer","Virtual Server","Edit");
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="load_balancer_virtual_server_edit.php" method="post" name="iform" id="iform">
 <script type="text/javascript" language="javascript" src="pool.js">

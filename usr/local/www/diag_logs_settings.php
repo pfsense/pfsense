@@ -92,7 +92,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "Status: System logs: Settings";
+$pgtitle = array("Status","System logs","Settings");
 include("head.inc");
 
 ?>
@@ -122,7 +122,6 @@ function enable_change(enable_over) {
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="diag_logs_settings.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>

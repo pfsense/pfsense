@@ -264,7 +264,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "System: Advanced functions";
+$pgtitle = array("System","Advanced functions");
 include("head.inc");
 
 ?>
@@ -272,7 +272,6 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="system_advanced.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>

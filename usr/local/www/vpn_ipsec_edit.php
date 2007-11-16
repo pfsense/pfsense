@@ -291,14 +291,13 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "VPN: IPsec: Edit tunnel";
+$pgtitle = array("VPN","IPsec","Edit tunnel");
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <script language="JavaScript">
 <!--
 function typesel_change() {

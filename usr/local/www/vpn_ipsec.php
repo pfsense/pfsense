@@ -82,7 +82,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = "VPN: IPsec";
+$pgtitle = array("VPN","IPsec");
 include("head.inc");
 
 ?>
@@ -90,7 +90,6 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="vpn_ipsec.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_ipsecconfdirty_path)): ?><p>

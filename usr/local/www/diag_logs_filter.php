@@ -173,13 +173,12 @@ function format_ipf_ip($ipfip) {
 	return $ip . ", port " . $port;
 }
 
-$pgtitle = "Status: System logs: Firewall";
+$pgtitle = array("Status","System logs","Firewall");
 include("head.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php

@@ -36,7 +36,6 @@ include("fbegin.inc");
 $pgtitle = "Status: CPU Graph";
 
 ?>
-<p><span class="pgtitle"><?=$pgtitle?></span>
 <div align="center">
 <embed src="graph_cpu.php" type="image/svg+xml"
 		width="550" height="275" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />

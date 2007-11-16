@@ -37,14 +37,13 @@ $sendto = "output";
 
 $todo = array();
 
-$pgtitle = "System: Package Manager: Install Package";
+$pgtitle = array("System","Package Manager","Install Package");
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="pkg_mgr_install.php" method="post">
 
 <?php if ($savemsg) print_info_box($savemsg); ?>

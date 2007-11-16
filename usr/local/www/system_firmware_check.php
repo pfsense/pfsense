@@ -37,13 +37,12 @@ if(isset($config['system']['disablefirmwarecheck']))
 	Header("Location: system_firmware.php");
 
 $versions = check_firmware_version();
-$pgtitle = "System: Firmware: Auto Update";
+$pgtitle = array("System","Firmware","Auto Update");
 include("head.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 		<SCRIPT>
 		<!--
 			function toggleTable (table, img) {

@@ -139,7 +139,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "Interfaces: LAN";
+$pgtitle = array("Interfaces","LAN");
 include("head.inc");
 
 ?>
@@ -160,7 +160,6 @@ function enable_change(enable_over) {
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <form action="interfaces_lan.php" method="post" name="iform" id="iform">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (file_exists($d_landirty_path)): ?><p>
 <?php print_info_box_np("The LAN configuration has been changed.<p>You must apply the changes in order for them to take effect.<p>Don't forget to adjust the DHCP Server range if needed before applying.");?><br>

@@ -528,7 +528,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "Interfaces: WAN";
+$pgtitle = array("Interfaces","WAN");
 $closehead = false;
 include("head.inc");
 
@@ -715,7 +715,6 @@ function show_mon_config() {
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
             <form action="interfaces_wan.php" method="post" name="iform" id="iform">

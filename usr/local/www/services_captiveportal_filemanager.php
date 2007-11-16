@@ -29,7 +29,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = "Services:Captive portal";
+$pgtitle = array("Services","Captive portal");
 
 require_once("guiconfig.inc");
 
@@ -102,7 +102,6 @@ include("head.inc");
 ?>
 <?php include("fbegin.inc"); ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="services_captiveportal_filemanager.php" method="post" enctype="multipart/form-data" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">

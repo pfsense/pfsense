@@ -149,14 +149,13 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "System: Gateways: Edit gateway";
+$pgtitle = array("System","Gateways","Edit gateway");
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
             <form action="system_gateways_edit.php" method="post" name="iform" id="iform">
               <table width="100%" border="0" cellpadding="6" cellspacing="0">

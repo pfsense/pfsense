@@ -44,13 +44,12 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "Diagnostics: Halt system";
+$pgtitle = array("Diagnostics","Halt system");
 include('head.inc');
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($rebootmsg): echo print_info_box($rebootmsg); else: ?>
       <form action="halt.php" method="post">
         <p><strong>Are you sure you want to halt the system?</strong></p>

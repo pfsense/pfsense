@@ -288,7 +288,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "Firewall: Shaper: Rules: Edit";
+$pgtitle = array("Firewall","Shaper","Rules","Edit");
 $closehead = false;
 include("head.inc");
 ?>
@@ -395,7 +395,6 @@ function dst_rep_change() {
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if (is_array($config['shaper']['queue']) && (count($config['shaper']['queue']) > 0)): ?>
             <form action="firewall_shaper_edit.php" method="post" name="iform" id="iform">

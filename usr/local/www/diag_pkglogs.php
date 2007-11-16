@@ -66,13 +66,12 @@ if(!$apkg) { // If we aren't looking for a specific package, locate the first pa
 	$i = $apkgid;
 }
 
-$pgtitle = "Status: Package logs";
+$pgtitle = array("Status","Package logs");
 include("head.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
   <ul id="tabnav">

@@ -91,7 +91,7 @@ if ($_GET['act'] == "del") {
        }
 }
 
-$pgtitle = "Services: DNS forwarder";
+$pgtitle = array("Services","DNS forwarder");
 include("head.inc");
 
 ?>
@@ -109,7 +109,6 @@ function enable_change(enable_over) {
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="services_dnsmasq.php" method="post" name="iform" id="iform">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_hostsdirty_path)): ?><p>

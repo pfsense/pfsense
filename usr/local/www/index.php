@@ -77,7 +77,7 @@
 	## accessed since initial install show this stuff.
 	if(file_exists('/conf/trigger_initial_wizard')) {
 
-		$pgtitle = 'pfSense first time setup';
+		$pgtitle = array("pfSense first time setup");
 		include('head.inc');
 
 		echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";

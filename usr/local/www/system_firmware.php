@@ -35,7 +35,7 @@ require_once("xmlrpc_client.inc");
 
 /* if upgrade in progress, alert user */
 if(file_exists($d_firmwarelock_path)) {
-	$pgtitle = "System: Firmware: Manual Update";
+	$pgtitle = array("System","Firmware","Manual Update");
 	include("head.inc");
 	echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
 	include("fbegin.inc");
@@ -135,7 +135,6 @@ include("head.inc");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if ($fwinfo <> "") print_info_box($fwinfo); ?>

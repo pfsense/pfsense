@@ -146,7 +146,7 @@ if($pkg['step'][$stepid]['stepbeforeformdisplay'] <> "") {
 	eval($pkg['step'][$stepid]['stepbeforeformdisplay']);
 }
 
-$pgtitle = $title;
+$pgtitle = array($title);
 include("head.inc");
 
 ?>

@@ -28,7 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = "Services:Captive portal";
+$pgtitle = array("Services","Captive portal");
 require("guiconfig.inc");
 
 if (!is_array($config['captiveportal']['passthrumac']))
@@ -72,7 +72,6 @@ include("head.inc");
 ?>
 <?php include("fbegin.inc"); ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="services_captiveportal_mac.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_passthrumacsdirty_path)): ?><p>

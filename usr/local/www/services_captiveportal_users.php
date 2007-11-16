@@ -30,7 +30,7 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-$pgtitle = "Services:Captive portal";
+$pgtitle = array("Services","Captive portal");
 require("guiconfig.inc");
 
 if (!is_array($config['captiveportal']['user'])) {
@@ -67,7 +67,6 @@ include("head.inc");
 ?>
 <?php include("fbegin.inc"); ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<p class="pgtitle"><?=$pgtitle?></p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php

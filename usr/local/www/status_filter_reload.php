@@ -30,7 +30,7 @@
 require_once("guiconfig.inc");
 require_once("functions.inc");
 
-$pgtitle = "Status: Filter Reload Status";
+$pgtitle = array("Status","Filter Reload Status");
 
 include("head.inc");
 
@@ -49,8 +49,6 @@ if($_GET['getstatus']) {
 <script src="/javascript/scriptaculous/scriptaculous.js" type="text/javascript"></script>
 
 <?php include("fbegin.inc"); ?>
-
-<p><span class="pgtitle"><?=$pgtitle;?></span></p>
 
 <div id="status" name="status" style="padding:5px; border:1px dashed #990000; background-color: #ffffff; color: #000000;">
 	<?php echo $status; ?>

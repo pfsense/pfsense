@@ -30,7 +30,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = "Firewall: Schedules: Edit";
+$pgtitle = array("Firewall","Schedules","Edit");
 require("guiconfig.inc");
 
 $starttimehr = 00;
@@ -728,9 +728,6 @@ EOD;
 
 
 <?php include("fbegin.inc");	echo $jscriptstr; ?>
-
-<p class="pgtitle"><?=$pgtitle?></p>
-
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <div id="inputerrors"></div>
 

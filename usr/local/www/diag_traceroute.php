@@ -30,12 +30,11 @@
 
 
 require("guiconfig.inc");
-$pgtitle = "Diagnostics: Traceroute";
+$pgtitle = array("Diagnostics","Traceroute");
 include("head.inc");
 ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 <? include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php
 
 define('MAX_TTL', 64);

@@ -59,14 +59,13 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "Status: Interfaces";
+$pgtitle = array("Status","Interfaces");
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <?php $i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
 		for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {

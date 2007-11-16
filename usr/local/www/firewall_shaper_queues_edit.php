@@ -238,7 +238,7 @@ if ($_POST) {
 	$attachtoqueue = $pconfig['attachtoqueue'];
 	$parent = $pconfig["parent"];
 
-$pgtitle = "Firewall: Shaper: Queues: Edit";
+$pgtitle = array("Firewall","Shaper","Queues","Edit");
 include("head.inc");
 
 ?>
@@ -291,7 +291,6 @@ function enable_attachtoqueue(enable_over) {
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 	<form action="firewall_shaper_queues_edit.php" method="post" name="iform" id="iform">
 	  <table width="100%" border="0" cellpadding="6" cellspacing="0">

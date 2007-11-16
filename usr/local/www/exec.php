@@ -50,7 +50,7 @@ $ScriptName = $HTTP_SERVER_VARS['SCRIPT_NAME'];
 $arrDT   = localtime();
 $intYear = $arrDT[5] + 1900;
 
-$pgtitle = "Diagnostics: Execute command";
+$pgtitle = array("Diagnostics","Execute command");
 include("head.inc");
 ?>
 
@@ -180,7 +180,6 @@ pre {
 </head>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php if (isBlank($_POST['txtCommand'])): ?>
 <p class="red"><strong>Note: this function is unsupported. Use it
 on your own risk!</strong></p>

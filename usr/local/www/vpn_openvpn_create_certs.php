@@ -149,7 +149,8 @@ if ($_POST) {
     fwrite($fd, "authorityKeyIdentifier=keyid:always,issuer:always\n");
     fclose($fd);
 
-$pgtitle = "VPN: OpenVPN: Create Certs";
+$pgtitle = array("VPN","OpenVPN","Create Certs");
+
 include("head.inc");
 
 ?>
@@ -176,7 +177,6 @@ function f(ta_id){
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="system_advanced_create_certs.php" method="post" name="iform" id="iform">
 
             <?php if ($input_errors) print_input_errors($input_errors); ?>

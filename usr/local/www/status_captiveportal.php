@@ -33,7 +33,7 @@ require("guiconfig.inc");
 
 $concurrent = `cat /var/db/captiveportal.db | wc -l`;
 
-$pgtitle = "Status: Captive portal ({$concurrent})";
+$pgtitle = array("Status: Captive portal ({$concurrent})");
 
 include("head.inc");
 
@@ -42,7 +42,6 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <script src="/javascript/sorttable.js"></script>
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php
 
 if ($_GET['act'] == "del") {

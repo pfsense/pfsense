@@ -176,7 +176,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "Load Balancer: Pool: Edit";
+$pgtitle = array("Load Balancer","Pool","Edit");
 include("head.inc");
 
 ?>
@@ -266,7 +266,6 @@ function clearcombo(){
 </script>
 
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
 	<form action="load_balancer_pool_edit.php" method="post" name="iform" id="iform">

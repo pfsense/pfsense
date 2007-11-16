@@ -162,13 +162,12 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = "VPN: IPsec: Mobile";
+$pgtitle = array("VPN","IPsec","Mobile");
 include("head.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <script language="JavaScript">
 <!--
 function methodsel_change() {

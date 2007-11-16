@@ -170,7 +170,7 @@ if($_GET['mode'] == "stopservice" && $_GET['service']) {
 /* batch mode, allow other scripts to call this script */
 if($_GET['batch']) exit;
 
-$pgtitle = "Status: Services";
+$pgtitle = array("Status","Services");
 include("head.inc");
 
 ?>
@@ -179,7 +179,6 @@ include("head.inc");
 <?php
 include("fbegin.inc");
 ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="status_services.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 

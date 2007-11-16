@@ -28,7 +28,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-$pgtitle = "Firewall: System: Tunables";
+$pgtitle = array("Firewall","System","Tunables");
 
 require("guiconfig.inc");
 
@@ -70,7 +70,6 @@ include("head.inc");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="firewall_virtual_ip.php" method="post">
 <div id="inputerrors"></div>
 <?php if ($input_errors) print_input_errors($input_errors); ?>

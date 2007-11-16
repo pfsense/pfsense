@@ -44,7 +44,7 @@ exec("/sbin/pfctl -aminiupnpd -sn", $rdr_entries, $pf_ret);
 $now = time();
 $year = date("Y");
 
-$pgtitle = "Status: UPnP Status";
+$pgtitle = array("Status","UPnP Status");
 include("head.inc");
 /* put your custom HTML head content here        */
 /* using some of the $pfSenseHead function calls */
@@ -54,7 +54,6 @@ include("head.inc");
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></font></p>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php
 if(!$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||

@@ -55,14 +55,13 @@ if ($_GET['if']) {
 	$ifnum = get_real_wan_interface();
 }
 
-$pgtitle = "Status: Traffic Graph";
+$pgtitle = array("Status","Traffic Graph");
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php
 $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
 

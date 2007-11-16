@@ -86,7 +86,7 @@ $styles = array('inverse' => 'Inverse',
 		'absolute' => 'Absolute');
 $periods = array("4h", "16h", "48h", "32d", "6m", "1y", "4y");
 
-$pgtitle = gettext("Status: RRD Graphs");
+$pgtitle = array("Status","RRD Graphs");
 include("head.inc");
 
 ?>

@@ -43,14 +43,13 @@ if ($_POST['clear']) {
 	exec("/usr/sbin/clog -i -s 262144 {$dhcpd_logfile}");
 }
 
-$pgtitle = "Status: System logs: DHCP";
+$pgtitle = array("Status","System logs","DHCP");
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php

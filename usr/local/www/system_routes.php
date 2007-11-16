@@ -91,14 +91,13 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = "System: Static Routes";
+$pgtitle = array("System","Static Routes");
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="system_routes.php" method="post">
 <input type="hidden" name="y1" value="1">
 <?php if ($savemsg) print_info_box($savemsg); ?>

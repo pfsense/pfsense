@@ -132,13 +132,12 @@ if (isset($_POST['del_x'])) {
         }
 }
 
-$pgtitle = "Firewall: NAT: Port Forward";
+$pgtitle = array("Firewall","NAT","Port Forward");
 include("head.inc");
 
 ?>
 <body link="#000000" vlink="#000000" alink="#000000">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></font></p>
 <form action="firewall_nat.php" method="post" name="iform">
 <script type="text/javascript" language="javascript" src="row_toggle.js">
 </script>

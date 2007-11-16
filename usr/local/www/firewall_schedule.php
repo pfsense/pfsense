@@ -31,7 +31,7 @@
 */
 
 
-$pgtitle = "Firewall: Schedules";
+$pgtitle = array("Firewall","Schedules");
 
 $dayArray = array ('Mon','Tues','Wed','Thur','Fri','Sat','Sun');
 $monthArray = array ('January','February','March','April','May','June','July','August','September','October','November','December');
@@ -79,7 +79,6 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <form action="firewall_schedule.php" method="post">
 	<table class="sortable" width="100%" border="0" cellpadding="0" cellspacing="0">

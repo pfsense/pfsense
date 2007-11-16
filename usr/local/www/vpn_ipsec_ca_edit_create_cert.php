@@ -44,7 +44,7 @@ preg_match('/\nO\=(.*)\n/', $openssl, $orginizationnameA);
 preg_match('/\nOU\=(.*)\n/', $openssl, $orginizationdepartmentA);
 preg_match('/\nCN\=(.*)\n/', $openssl, $commonnameA);
 
-$pgtitle = 'IPSEC: Certificate Authority: Create CertificatesS';
+$pgtitle = array("IPSEC","Certificate Authority","Create Certificates");
 
 $countrycode = $countrycodeA[1];
 $stateorprovince = $stateorprovinceA[1];
@@ -147,7 +147,6 @@ include("head.inc");
 ?>
 	<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <? include('fbegin.inc'); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 		<form action="vpn_ipsec_ca_edit_create_cert.php" method="post" name="iform" id="iform">
 <?
 	if($input_errors)

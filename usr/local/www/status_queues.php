@@ -51,14 +51,13 @@ foreach($pfctl_vsq_array as $pfctl) {
 			$a_queues[] = $match_array[1][0];	
 }
 
-$pgtitle = "Status: Traffic shaper: Queues";
+$pgtitle = array("Status","Traffic shaper","Queues");
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <?php
 if(!isset($config['shaper']['enable'])) {
 	echo "Traffic shaping is currently disabled.";

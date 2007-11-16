@@ -287,7 +287,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = "Services: DHCP server";
+$pgtitle = array("Services","DHCP server");
 include("head.inc");
 
 ?>
@@ -357,7 +357,6 @@ function show_netboot_config() {
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="services_dhcp.php" method="post" name="iform" id="iform">
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>

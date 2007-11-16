@@ -65,14 +65,13 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = "VPN: PPPoE: Users";
+$pgtitle = array("VPN","PPPoE","Users");
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <form action="vpn_pppoe_users.php" method="post">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (isset($config['pppoe']['radius']['enable']))

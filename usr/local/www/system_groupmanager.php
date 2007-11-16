@@ -79,8 +79,8 @@ function getAdminPageList() {
         $tmp['exec_raw.php'] = "Hidden: Exec Raw";
         $tmp['status.php'] = "Hidden: Detailed Status";
         $tmp['uploadconfig.php'] = "Hidden: Upload Configuration";
-        $tmp['index.php'] = "*Landing Page after Login";
-        $tmp['system_usermanager.php'] = "*User Password";
+        $tmp['index.php'] = "*Landing Page after Login/Dashboard";
+        $tmp['system_usermanager.php'] = "*User Password change portal";
         $tmp['diag_logs_settings.php'] = "Diagnostics: Logs: Settings";
         $tmp['diag_logs_vpn.php'] = "Diagnostics: Logs: PPTP VPN";
         $tmp['diag_logs_filter.php'] = "Diagnostics: Logs: Firewall";

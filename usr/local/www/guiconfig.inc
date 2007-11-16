@@ -87,6 +87,10 @@ $d_ovpnclidirty_path = "/tmp/ovpn-cli.dirty";
 /* used by progress bar */
 $lastseen = "-1";
 
+$navlevelsep = ": ";	/* navigation level separator string */
+$mandfldhtml = "";		/* display this before mandatory input fields */
+$mandfldhtmlspc = "";	/* same as above, but with spacing */
+
 if (file_exists($d_firmwarelock_path)) {
 	if (!$d_isfwfile) {
 		header("Location: system_firmware.php");
@@ -601,9 +605,15 @@ function sort_rule_by_queue_priority() {
 
 	usort($config['shaper']['rule'], "rqpcmp");
 }
-function gentitle($pgname) {
-	global $config;
-	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
+
+function gentitle($title) {
+	global $navlevelsep;
+	return join($navlevelsep, $title);
+}
+
+function genhtmltitle($title) {
+        global $config;
+        return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . gentitle($title);
 }
 
 /* update the changedesc and changecount(er) variables */

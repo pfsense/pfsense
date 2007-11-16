@@ -3,11 +3,6 @@
 require_once("notices.inc");
 /* $Id$ */
 
-function genhtmltitle($title) {
-        global $config;
-        return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . gentitle($title);
-}
-
 function return_ext_menu($section) {
 	global $config;
 	$htmltext = "";

@@ -608,7 +608,10 @@ function sort_rule_by_queue_priority() {
 
 function gentitle($title) {
 	global $navlevelsep;
-	return join($navlevelsep, $title);
+	if(!is_array($title))
+		return $title;
+	else
+		return join($navlevelsep, $title); 
 }
 
 function genhtmltitle($title) {

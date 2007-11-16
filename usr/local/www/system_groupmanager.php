@@ -57,7 +57,7 @@ function getAdminPageList() {
 		    		$titleendpos = strpos($contents,')',$titlepos);
 		    		if (($offset > 0) && ($titlepos > 0) && ($titleendpos > 0)) {
 		    			// Title found, extract it
-		    			$title = str_replace(',',':',str_replace(array('"'),'',substr($contents,++$titlepos,($titleendpos - $titlepos))));
+		    			$title = str_replace(',',': ',str_replace(array('"'),'',substr($contents,++$titlepos,($titleendpos - $titlepos))));
 		    			$tmp[$file] = trim($title);
 		    		}
 		    		else {

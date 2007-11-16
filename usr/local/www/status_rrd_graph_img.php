@@ -30,7 +30,7 @@
 
 require("guiconfig.inc");
 
-$pgtitle = array("System: RRD Graphs: Image viewer");
+$pgtitle = array("System","RRD Graphs","Image viewer");
 
 if ($_GET['database']) {
 	$curdatabase = $_GET['database'];

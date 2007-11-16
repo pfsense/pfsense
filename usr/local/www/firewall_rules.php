@@ -160,7 +160,6 @@ if (isset($_POST['del_x'])) {
 }
 $closehead = false;
 
-$pgtitle = "Firewall: Rules";
 include("head.inc");
 
 echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript/domTT/domLib.js\"></script>";

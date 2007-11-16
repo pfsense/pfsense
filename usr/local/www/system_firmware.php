@@ -128,7 +128,6 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
 	}
 }
 
-$pgtitle = "System: Firmware: Manual Update";
 include("head.inc");
 
 ?>

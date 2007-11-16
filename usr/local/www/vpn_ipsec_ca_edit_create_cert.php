@@ -141,7 +141,6 @@ if($_POST) {
 	fclose($fd);
 	conf_mount_ro();
 
-$pgtitle = "VPN: IPSec: Certificate Authority: Create Certificate";
 include("head.inc");
 
 ?>
@@ -189,13 +188,12 @@ include("head.inc");
 </html>
 <?
 } else { //if($_POST)
-$pgtitle = "VPN: IPSec: Certificate Authority: Create Certificate";
+
 include("head.inc");
 
 ?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <? include('fbegin.inc'); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 
 		<form action="vpn_ipsec_ca_edit_create_cert.php" method="post" name="iform" id="iform">
 			<table width="100%" border="0" cellpadding="6" cellspacing="0">

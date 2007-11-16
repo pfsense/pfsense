@@ -39,7 +39,6 @@ if(file_exists($d_firmwarelock_path)) {
 	include("head.inc");
 	echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
 	include("fbegin.inc");
-	echo "<p class=\"pgtitle\"><?=$pgtitle?></p>\n";
 	echo "<div>\n";
 	print_info_box("An upgrade is currently in progress.<p>The firewall will reboot when the operation is complete.<p><center><img src='/themes/{$g['theme']}/images/icons/icon_fw-update.gif'>");
 	echo "</div>\n";

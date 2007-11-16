@@ -88,6 +88,12 @@ function getAdminPageList() {
         $tmp['diag_logs_dhcp.php'] = "Diagnostics: Logs: DHCP";
         $tmp['diag_logs.php'] = "Diagnostics: Logs: System";
         
+        unset($tmp['system_groupmanager_edit.php']);
+        unset($tmp['firewall_rules_schedule_logic.php']);
+        unset($tmp['status_rrd_graph_img.php']);
+        unset($tmp['diag_new_states.php']);
+        unset($tmp['system_usermanager_edit.php']);
+        
         // Add appropriate descriptions for extensions, if they exist
         if(file_exists("extensions.inc")){
 	   	   include("extensions.inc");
@@ -245,6 +251,8 @@ if($_GET['act']=="new" || $_GET['act']=="edit"){
               <?php 
               foreach ($pages as $fname => $title) {
               	$identifier = str_replace('.php','',$fname);
+              	if(strlen($identifier)<9) 	
+              		continue;
               	?>
               	<tr><td class="listlr">
               	<input name="<?=$identifier?>" type="checkbox" id="<?=$identifier?>" value="yes" <?php if (in_array($fname,$pconfig['pages'])) echo "checked"; ?>></td>

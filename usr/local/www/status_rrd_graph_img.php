@@ -147,7 +147,7 @@ default:
 
 function humantime($timestamp){
 	$difference = $timestamp;
-	$periods = array("second", "minute", "hour", "day", "week", "month", "years", "decade");
+	$periods = array("second", "minute", "hour", "day", "week", "month", "year", "decade");
 	$lengths = array("60","60","24","7","4.35","12","10");
 	for($j = 0; $difference >= $lengths[$j]; $j++)
 		$difference /= $lengths[$j];

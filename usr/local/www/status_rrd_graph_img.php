@@ -354,7 +354,7 @@ elseif((strstr($curdatabase, "-wireless.rrd")) && (file_exists("$rrddbpath$curda
 		LINE1:$curif-channel#{$colorwireless[2]}:$curif-channel \\
 		COMMENT:\"\\n\"\\
 		COMMENT:\"\t\t  maximum       average       current        period\\n\"\\
-		COMMENT:\"SNR\t\"\\
+		COMMENT:\"SNR\t\t\"\\
 		GPRINT:$curif-snr:MAX:'%7.2lf %s dBi'\\
 		GPRINT:$curif-snr:AVERAGE:'%7.2lf %S dBi'\\
 		GPRINT:$curif-snr:LAST:'%7.2lf %S dBi'\\

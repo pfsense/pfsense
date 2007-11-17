@@ -79,7 +79,8 @@ function getAdminPageList() {
         $tmp['exec_raw.php'] = "Hidden: Exec Raw";
         $tmp['status.php'] = "Hidden: Detailed Status";
         $tmp['uploadconfig.php'] = "Hidden: Upload Configuration";
-        $tmp['index.php'] = "*Landing Page after Login/Dashboard";
+        $tmp[] = "index.php";
+        $tmp['index.php'] = "*After Login/Dashboard";
         $tmp['system_usermanager.php'] = "*User Password change portal";
         $tmp['diag_logs_settings.php'] = "Diagnostics: Logs: Settings";
         $tmp['diag_logs_vpn.php'] = "Diagnostics: Logs: PPTP VPN";
@@ -93,6 +94,20 @@ function getAdminPageList() {
         unset($tmp['status_rrd_graph_img.php']);
         unset($tmp['diag_new_states.php']);
         unset($tmp['system_usermanager_edit.php']);
+        
+        $tmp['pkg.php'] = "pfSense package manager";
+        $tmp['pkg_edit.php'] = "pfSense package manager edit";
+        $tmp['wizard.php'] = "pfSense wizard subsystem";
+        $tmp['ifstats.php'] = "Graph subsystem helper";
+        $tmp['license.php'] = "pfSense license";
+        $tmp['xmlrpc.php'] = "pfSense XMLRPC helper";
+        $tmp['graphs.php'] = "Graphing subsystem";
+        $tmp['headjs.php'] = "*Required for javascript";
+        
+        unset($tmp['progress.php']);
+        unset($tmp['stats.php']);
+        unset($tmp['phpinfo.php']);
+        unset($tmp['preload.php']);
         
         // Add appropriate descriptions for extensions, if they exist
         if(file_exists("extensions.inc")){
@@ -251,8 +266,6 @@ if($_GET['act']=="new" || $_GET['act']=="edit"){
               <?php 
               foreach ($pages as $fname => $title) {
               	$identifier = str_replace('.php','',$fname);
-              	if(strlen($identifier)<9) 	
-              		continue;
               	?>
               	<tr><td class="listlr">
               	<input name="<?=$identifier?>" type="checkbox" id="<?=$identifier?>" value="yes" <?php if (in_array($fname,$pconfig['pages'])) echo "checked"; ?>></td>

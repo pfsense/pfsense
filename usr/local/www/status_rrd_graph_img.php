@@ -241,7 +241,6 @@ elseif(strstr($curdatabase, "-throughput.rrd")) {
 		$graphcmd .= "\"CDEF:{$ifname}-in_bits={$ifname}-in_bytes,8,*\"  ";
 		$graphcmd .= "\"CDEF:{$ifname}-out_bits={$ifname}-out_bytes,8,*\" ";
 		$graphcmd .= "\"CDEF:{$ifname}-bits_io={$ifname}-in_bits,{$ifname}-out_bits,+\" ";
-		$graphcmd .= "\"CDEF:{$ifname}-out_bits_neg={$ifname}-out_bits,$multiplier,*\" ";
 		$graphcmd .= "\"CDEF:{$ifname}-bytes_in={$ifname}-in_bytes,0,$downstream,LIMIT,UN,0,{$ifname}-in_bytes,IF,$average,*\" ";
 		$graphcmd .= "\"CDEF:{$ifname}-bytes_out={$ifname}-out_bytes,0,$upstream,LIMIT,UN,0,{$ifname}-out_bytes,IF,$average,*\" ";
 		$graphcmd .= "\"CDEF:{$ifname}-bytes={$ifname}-bytes_in,{$ifname}-bytes_out,+\" ";
@@ -253,7 +252,7 @@ elseif(strstr($curdatabase, "-throughput.rrd")) {
 			$comma = ",";
 		}
 		$graphtputbi .= "{$comma}{$ifname}-in_bits";
-		$graphtputbo .= "{$comma}{$ifname}-out_bits_neg";
+		$graphtputbo .= "{$comma}{$ifname}-out_bits";
 		$graphtputbt .= "{$comma}{$ifname}-bits_io";
 		$graphtputbyi .= "{$comma}{$ifname}-bytes_in_t";
 		$graphtputbyo .= "{$comma}{$ifname}-bytes_out_t";
@@ -263,6 +262,7 @@ elseif(strstr($curdatabase, "-throughput.rrd")) {
 	$graphcmd .= "\"CDEF:tput-in_bits={$graphtputbi}{$operand}\" ";
 	$graphcmd .= "\"CDEF:tput-out_bits={$graphtputbo}{$operand}\" ";
 	$graphcmd .= "\"CDEF:tput-bits_io={$graphtputbt}{$operand}\" ";
+	$graphcmd .= "\"CDEF:tput-out_bits_neg=tput-out_bits,$multiplier,*\" ";
 	$graphcmd .= "\"CDEF:tput-bytes_in_t={$graphtputbyi}{$operand}\" ";
 	$graphcmd .= "\"CDEF:tput-bytes_out_t={$graphtputbyo}{$operand}\" ";
 	$graphcmd .= "\"CDEF:tput-bytes_t={$graphtputbyt}{$operand}\" ";

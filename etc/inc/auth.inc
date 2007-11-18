@@ -344,8 +344,16 @@ function session_auth($backing) {
       /* give the user a more detailed error message */
       if (isset($userindex[$_POST['usernamefld']])) {
         $_SESSION['Login_Error'] = "Wrong password";
+        if(isAjax()) {
+        	echo "showajaxmessage('Wrong password');";
+        	return;        	
+        }
       } else {
         $_SESSION['Login_Error'] = "User does not exist";
+        if(isAjax()) {
+        	echo "showajaxmessage('User does not exist');";
+        	return;
+        }
       }
     }
   }

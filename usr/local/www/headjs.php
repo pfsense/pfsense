@@ -82,7 +82,7 @@ function getHeadJS() {
       var responseText = resp.responseText;
       
       // debugging helper
-      alert(responseText);
+      // alert(responseText);
       
       if(responseText.indexOf('html') > 0) {
         /* somehow we have been fed an html page! */

@@ -146,6 +146,13 @@ function display_error_form($http_code, $desc) {
   global $config, $g;
   $g['theme'] = $config['theme'];
 
+	logout_session();
+
+	if(isAjax()) {
+		echo "Error: {$http_code} Description: {$desc}";
+		return;
+	}
+
   $htmlstr = <<<EOD
 <html>
   <head>

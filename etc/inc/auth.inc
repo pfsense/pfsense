@@ -36,6 +36,24 @@ require_once("functions.inc");
 $groupindex = index_groups();
 $userindex = index_users();
 
+function logout_session() {
+	global $_SESSION;
+	
+      if (hasLockAbility($_SESSION['Username'])) {
+        unlink_if_exists("{$g['tmp_path']}/webconfigurator.lock");
+      }
+
+      /* wipe out $_SESSION */
+      $_SESSION = array();
+
+      /* and destroy it */
+      session_destroy();
+
+      $scriptName = split("/", $_SERVER["SCRIPT_FILENAME"]);
+      $scriptElms = count($scriptName);
+      $scriptName = $scriptName[$scriptElms-1];
+}
+
 function &getSystemAdminNames() {
   global $config, $g, $userindex;
   $adminUsers = array();

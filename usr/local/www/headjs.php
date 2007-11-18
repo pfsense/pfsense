@@ -82,7 +82,7 @@ function getHeadJS() {
       var responseText = resp.responseText;
       
       // debugging helper
-      //alert(responseText);
+      alert(responseText);
       
       if(responseText.indexOf('html') > 0) {
         /* somehow we have been fed an html page! */
@@ -95,7 +95,14 @@ function getHeadJS() {
     
     /* this function will be called if an HTTP error will be triggered */
     function formFailure(resp) {
-      alert('An error occured while saving the data ' + resp.responseText);
+	    showajaxmessage(resp.responseText);
+		if($('submit'))
+		  $('submit').style.visibility = 'visible';
+		if($('cancelbutton'))
+		  $('cancelbutton').style.visibility = 'visible';
+		if($('loading'))
+		  $('loading').style.visibility = 'hidden';
+
     }
     
     function showajaxmessage(message) {

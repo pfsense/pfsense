@@ -124,7 +124,7 @@ if (!(isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']))) {
       header("HTTP/1.0 401 Unauthorized");
       header("Status: 401 Unauthorized");
 
-      echo display_error_form("401", "401 Unauthorized. Authorization required.");
+      echo display_error_form("401", "Unauthorized. You do not have access to the page {$pagereq}");
       exit;
     }
   }

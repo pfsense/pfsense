@@ -13,6 +13,15 @@ require("config.inc");
 echo ".";
 $g['booting'] = false;
 
+if(!function_exists("readline")) {
+	function readline() {
+		$fp = fopen('php://stdin', 'r');
+		$textinput = chop(fgets($fp));
+		fclose($fp);
+	}
+	return $textinput;
+}
+
 function more($text, $count=24) {
         $counter=0;
         $lines = split("\n", $text);
@@ -97,7 +106,7 @@ $pkg_interface='console';
 
 $shell_active = true;
 
-echo "Type \"help\" to show common usage scnenarios.";
+echo "Type \"help\" to show common usage scenarios.";
 
 while($shell_active == true) {
         $command = readline("\n\npfSense shell: ");

@@ -218,6 +218,7 @@ function display_error_form($http_code, $desc) {
   <body onload="page_load();">
     <div id="errordesc">
       <h1>&nbsp</h1>
+      <a href="/">
       <p id="errortext" style="vertical-align: middle; text-align: center;"><span style="color: #000000; font-weight: bold;">{$desc}</span></p>
     </div>
   </body>

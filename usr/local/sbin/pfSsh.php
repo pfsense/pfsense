@@ -13,11 +13,30 @@ require("config.inc");
 echo ".";
 $g['booting'] = false;
 
+function more($text) {
+        $counter=0;
+        $lines = split("\n", $text);
+        foreach($lines as $line) {
+                if($counter > 24) {
+                        echo "Press RETURN to continue ...";
+                        $fp = fopen('php://stdin', 'r');
+                        $pressreturn = chop(fgets($fp));
+                        fclose($fp);
+                        $counter = 0;
+                }
+                echo "{$line}\n";
+                $counter++;
+        }
+}
+
 function show_help() {
 	echo "\nExample commands:\n";
 	
 	echo "\nparse_config(true);  # reloads the \$config array\n";
-	
+
+	echo "\n\$temp = print_r(\$config, true);\n";
+	echo "more(\$temp);\n";
+
 	echo "\n/* to output a configuration array */\n";
 	echo "print_r(\$config);\n";
 	

@@ -151,8 +151,6 @@ function getHeadJS() {
         $('loading').style.visibility = 'hidden';
       if($('inputerrors'))
         window.scrollTo(0, 0);
-      if($('inputerrors'))
-        new Effect.Shake($('inputerrors'));
     }
   ";
 

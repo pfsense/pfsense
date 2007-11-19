@@ -127,7 +127,7 @@ function show_help() {
 	echo "write_config();\n";
 	
 	echo "\n/* to reboot the system after saving */\n";
-	echo "system_reboot_sync();";
+	echo "system_reboot_sync();\n";
 }
 
 $fp = fopen('php://stdin', 'r');

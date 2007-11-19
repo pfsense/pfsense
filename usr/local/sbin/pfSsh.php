@@ -197,7 +197,6 @@ while($shell_active == true) {
 			$command = $mlcommand;
 		}
 		if($command) {
-			echo $command . "\n";
 	        eval($command); 
 	    }
 }

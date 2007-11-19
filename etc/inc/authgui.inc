@@ -58,25 +58,6 @@ if (isset($_POST['scriptname']) && isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])
   exit;
 }
 
-/* TODO: Needs testing
-if ($_SESSION) {
-        if (isset($_SESSION['Pages'])) {
-                $pfPages = getPageObjectFromSession();
-        } else {
-                $pfPages = getPageObject($HTTP_SERVER_VARS['AUTH_USER']);
-                $pages =& $pfPages->getPages();
-                $pages_index =& $pfPages->getPagesIndex();
-                $allowed_pages_index =& $pfPages->getAllowedPagesIndex();
-
-                $_SESSION['Pages'] = serialize($pages);
-                $_SESSION['Pages_Index'] = serialize($pages_index);
-                $_SESSION['Allowed_Pages_Index'] = serialize($allowed_pages_index);
-        }
-} else {
-        $pfPages = getPageObject($HTTP_SERVER_VARS['AUTH_USER']);
-}
-*/
-
 // Once here, the user has authenticated with the web server.
 // Now, we give them access only to the appropriate pages for their group.
 if (!(isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']))) {
@@ -101,10 +82,10 @@ if (!(isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']))) {
 
   // If the user is attempting to hit the default page, set it to specifically look for /index.php.
   // Without this, any user would have access to the index page.
-  //if ($_SERVER['SCRIPT_NAME'] == '/')
-  //  $_SERVER['SCRIPT_NAME'] = $home;
-    if ($pagereq == "")
-    	$pagereq = str_replace('/', '', basename($_SERVER['SCRIPT_NAME']));
+  if ($_SERVER['SCRIPT_NAME'] == '/')
+  	$_SERVER['SCRIPT_NAME'] = $home;
+  if ($pagereq == "")
+	$pagereq = str_replace('/', '', basename($_SERVER['SCRIPT_NAME']));
 
   // Strip the leading / from the currently requested PHP page
   if (!in_array($pagereq,$allowed) && !in_array("ANY", $allowed)) {

@@ -95,7 +95,7 @@ if (!(isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']))) {
    * page, set $home to that page instead.
    */
   if (isset($_POST['scriptname']) && $_POST['scriptname'] <> "/" && $_POST['scriptname'] <> "/index.php") {
-    $home = str_replace('.php', '', basename($_POST['scriptname']));
+    $home = str_replace('/', '', basename($_POST['scriptname']));
     $pagereq = $home;
    }
 
@@ -104,7 +104,7 @@ if (!(isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']))) {
   //if ($_SERVER['SCRIPT_NAME'] == '/')
   //  $_SERVER['SCRIPT_NAME'] = $home;
     if ($pagereq == "")
-    	$pagereq = str_replace('.php', '', basename($_SERVER['SCRIPT_NAME']));
+    	$pagereq = str_replace('/', '', basename($_SERVER['SCRIPT_NAME']));
 
   // Strip the leading / from the currently requested PHP page
   if (!in_array($pagereq,$allowed) && !in_array("ANY", $allowed)) {

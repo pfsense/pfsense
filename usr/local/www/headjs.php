@@ -34,7 +34,7 @@ function getHeadJS() {
       //alert(Form.serialize($('iform')));
       
       if($('inputerrors'))
-        $('inputerrors').innerHTML = '';
+        $('inputerrors').innerHTML = '<center><b><i>Loading...</i></b></center>';
         
       /* dsh: Introduced because pkg_edit tries to set some hidden fields
        *      if executing submit's onclick event. Tho click gets deleted
@@ -126,8 +126,7 @@ function getHeadJS() {
       message_html = '<table height=\"32\" width=\"100%\"><tr><td>';
       message_html += '<div style=\"background-color:#990000\" id=\"redbox\">';
       message_html += '<table width=\"100%\"><tr><td width=\"8%\">';
-      message_html += '&nbsp;&nbsp;&nbsp;';
-      message_html += '<img style=\"vertical-align:middle\" src=\"/themes/{$g['theme']}/images/icons/icon_exclam.gif\" width=\"28\" height=\"32\" \/>';
+      message_html += '<img style=\"vertical-align:center\" src=\"/themes/{$g['theme']}/images/icons/icon_exclam.gif\" width=\"28\" height=\"32\" \/>';
       message_html += '<\/td><td width=\"70%\"><font color=\"white\">';
       message_html += '<b>' + message + '<\/b><\/font><\/td>';
 

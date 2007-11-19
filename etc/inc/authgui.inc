@@ -115,8 +115,7 @@ if (!(isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']))) {
       echo "||Access to AJAX has been disallowed for this user.";
       exit;
     }
-
-
+    
     if ($pagereq <> "" && (in_array($pagereq, $allowed) || in_array("ANY", $allowed))) {
       pfSenseHeader("{$home}");
       exit;
@@ -145,14 +144,10 @@ if (!(isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']))) {
 function display_error_form($http_code, $desc) {
   global $config, $g;
   $g['theme'] = $config['theme'];
-
-	logout_session();
-
 	if(isAjax()) {
 		echo "Error: {$http_code} Description: {$desc}";
 		return;
 	}
-
   $htmlstr = <<<EOD
 <html>
   <head>

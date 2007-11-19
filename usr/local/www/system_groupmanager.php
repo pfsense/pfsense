@@ -97,12 +97,20 @@ function getAdminPageList() {
         $tmp['pkg.php'] = "pfSense package manager";
         $tmp['pkg_edit.php'] = "pfSense package manager edit";
         $tmp['wizard.php'] = "pfSense wizard subsystem";
-        $tmp['ifstats.php'] = "Graph subsystem helper";
-        $tmp['license.php'] = "pfSense license";
-        $tmp['xmlrpc.php'] = "pfSense XMLRPC helper";
         $tmp['graphs.php'] = "Graphing subsystem";
         $tmp['headjs.php'] = "*Required for javascript";
-        
+
+		$tmp['ifstats.php'] = ("*Hidden: XMLRPC Interface Stats");
+		$tmp['license.php'] = ("*System: License");
+		$tmp['progress.php'] = ("*Hidden: No longer included");
+		$tmp['diag_logs_filter_dynamic.php'] = ("*Hidden: No longer included"); 
+		$tmp['preload.php'] = ("*Hidden: XMLRPC Preloader");
+		$tmp['xmlrpc.php'] = ("*Hidden: XMLRPC Library");        
+		
+		$tmp['functions.inc.php'] = ("Hidden: Ajax Helper 1");
+		$tmp['javascript.inc.php'] = ("Hidden: Ajax Helper 2 ");
+		$tmp['sajax.class.php'] = ("Hidden: Ajax Helper 3");
+
         unset($tmp['progress.php']);
         unset($tmp['stats.php']);
         unset($tmp['phpinfo.php']);

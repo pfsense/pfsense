@@ -25,6 +25,26 @@ $shell_cmds = array("alias", "alloc", "bg", "bind", "bindkey", "break",
      "uncomplete", "unhash", "unlimit", "unset", "unsetenv", "until", "wait", "where", "which",
      "while");
 
+function pipe_cmd($command, $text_to_pipe) {
+	$descriptorspec = array(
+	    0 => array("pipe", "r"),  // stdin
+	    1 => array("pipe", "w"),  // stdout
+	    2 => array("pipe", "w")); // stderr ?? instead of a file
+	
+	$fd = proc_open("$command", $descriptorspec, $pipes);
+	if (is_resource($fd)) {
+	        fwrite($pipes[0], "{$text_to_pipe}");
+	        fclose($pipes[0]);
+	        while($s= fgets($pipes[1], 1024)) {
+	          // read from the pipe
+	          $buffer .= $s;
+	        }
+	        fclose($pipes[1]);
+	        fclose($pipes[2]);
+	}
+	return $buffer;
+}
+
 if(!function_exists("readline")) {
 	function readline() {
 		$fp = fopen('php://stdin', 'r');
@@ -148,6 +168,10 @@ while($shell_active == true) {
         		}
         		$command = "";
 				break;
+        	case "!":
+        		system("$newcmd");
+        		$command = "";
+				break;				
         }
 	    if($command == "help") {
 	    	show_help();
@@ -173,6 +197,7 @@ while($shell_active == true) {
 			$command = $mlcommand;
 		}
 		if($command) {
+			echo $command . "\n";
 	        eval($command); 
 	    }
 }

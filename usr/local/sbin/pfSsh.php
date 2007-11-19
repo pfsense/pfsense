@@ -13,14 +13,16 @@ require("config.inc");
 echo ".";
 $g['booting'] = false;
 
-function more($text) {
+function more($text, $count=24) {
         $counter=0;
         $lines = split("\n", $text);
         foreach($lines as $line) {
-                if($counter > 24) {
+                if($counter > $count) {
                         echo "Press RETURN to continue ...";
                         $fp = fopen('php://stdin', 'r');
                         $pressreturn = chop(fgets($fp));
+                        if($pressreturn == "q" || $pressreturn == "quit") 
+                        	return; 
                         fclose($fp);
                         $counter = 0;
                 }

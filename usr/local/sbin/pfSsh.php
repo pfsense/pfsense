@@ -143,7 +143,7 @@ while($shell_active == true) {
         		}
         		system("$newcmd");
         		if($command_split[1] == "cd") {
-        			echo "\nChanging working directory to {$command_split[2]}.";
+        			echo "\nChanging working directory to {$command_split[2]}.\n";
         			chdir($command_split[2]);
         		}
         		$command = "";

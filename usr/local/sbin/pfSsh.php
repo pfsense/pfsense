@@ -13,6 +13,18 @@ require("config.inc");
 echo ".";
 $g['booting'] = false;
 
+$shell_cmds = array("alias", "alloc", "bg", "bind", "bindkey", "break", 
+     "breaksw", "builtins", "case", "cd", "chdir", "command", "complete", "continue", "default",
+     "dirs", "do", "done", "echo", "echotc", "elif", "else", "end", "endif", "endsw", "esac", "eval",
+     "exec", "exit", "export", "false", "fc", "fg", "filetest", "fi", "for", "foreach", "getopts",
+     "glob", "goto", "hash", "hashstat", "history", "hup", "if", "jobid", "jobs", "kill", "limit",
+     "local", "log", "login", "logout", "ls-F", "nice", "nohup", "notify", "onintr", "popd",
+     "printenv", "pushd", "pwd", "read", "readonly", "rehash", "repeat", "return", "sched", "set",
+     "setenv", "settc", "setty", "setvar", "shift", "source", "stop", "suspend", "switch",
+     "telltc", "test", "then", "time", "trap", "true", "type", "ulimit", "umask", "unalias",
+     "uncomplete", "unhash", "unlimit", "unset", "unsetenv", "until", "wait", "where", "which",
+     "while");
+
 if(!function_exists("readline")) {
 	function readline() {
 		$fp = fopen('php://stdin', 'r');
@@ -106,16 +118,37 @@ $pkg_interface='console';
 
 $shell_active = true;
 
-echo "Type \"help\" to show common usage scenarios.";
+echo "Welcome to the pfSense php shell system\n";
+echo "Written by Scott Ullrich (sullrich@gmail.com)\n";
+echo "\nType \"help\" to show common usage scenarios.\n";
 
 while($shell_active == true) {
-        $command = readline("\n\npfSense shell: ");
+        $command = readline("\npfSense shell: ");
         if($command == "exit") {
                 $shell_active = false;
                 echo "\n";
                 break;
 		}
 		readline_add_history($command);
+        $command_split = split(" ", $command);
+        $first_command = $command_split[0];
+        switch($first_command) {
+        	case "=":
+        		$newcmd = "";
+        		$counter = 0;
+        		foreach($command_split as $cs) {
+        			if($counter > 0)
+        				$newcmd .= " {$cs}";
+        			$counter++;
+        		}
+        		system("$newcmd");
+        		if($command_split[1] == "cd") {
+        			echo "\nChanging working directory to {$command_split[2]}.";
+        			chdir($command_split[2]);
+        		}
+        		$command = "";
+				break;
+        }
 	    if($command == "help") {
 	    	show_help();
 	    	$command = "";
@@ -140,7 +173,6 @@ while($shell_active == true) {
 			$command = $mlcommand;
 		}
 		if($command) {
-			echo "\n";
 	        eval($command); 
 	    }
 }

@@ -651,7 +651,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncell">Reflection Timeout</td>
 			<td width="78%" class="vtable">
-				<input name="reflectiontimeout" id="reflectiontimeout" <?php echo $config['system']['reflectiontimeout']; ?> />
+				<input name="reflectiontimeout" id="reflectiontimeout" value="<?php echo $config['system']['reflectiontimeout']; ?>" />
 				<strong>Enter value for Reflection timeout in seconds.</strong>
 			</td>
 		</tr>

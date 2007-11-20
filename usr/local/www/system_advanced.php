@@ -58,6 +58,7 @@ $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['polling_enable'] = isset($config['system']['polling']);
 $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
 $pconfig['disablenatreflection'] = $config['system']['disablenatreflection'];
+$pconfig['reflectiontimeout'] = $config['system']['reflectiontimeout'];
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
 $pconfig['disablescrub'] = isset($config['system']['disablescrub']);
 $pconfig['shapertype']             = $config['system']['shapertype'];
@@ -230,6 +231,8 @@ if ($_POST) {
 		} else {
 			unset($config['system']['disablenatreflection']);
 		}
+		
+		$config['system']['reflectiontimeout'] = $_POST['reflectiontimeout'];
 
 		// Traffic shaper
 		$config['system']['shapertype'] = $_POST['shapertype'];
@@ -643,6 +646,13 @@ include("head.inc");
 			<td width="78%" class="vtable">
 				<input name="disablenatreflection" type="checkbox" id="disablenatreflection" value="yes" <?php if (isset($config['system']['disablenatreflection'])) echo "checked"; ?> onclick="enable_change(false)" />
 				<strong>Disables the automatic creation of NAT redirect rules for access to your public IP addresses from within your internal networks.  Note: Reflection only works on port forward type items  and does not work for large ranges > 500 ports.</strong>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">Reflection Timeout</td>
+			<td width="78%" class="vtable">
+				<input name="reflectiontimeout" id="reflectiontimeout" <?php echo $config['system']['reflectiontimeout']; ?> />
+				<strong>Enter value for Reflection timeout in seconds.</strong>
 			</td>
 		</tr>
 		<tr>

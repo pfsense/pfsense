@@ -44,8 +44,8 @@ if($config['system']['shapertype'] <> "m0n0")
 
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
 $after_filter_configure_run = array();
-/*  hold the ports being used by pftpx to install the behind the scenes rule that 
- *  forces traffic out the primary wan until multi-wan pftpx is all the rage.
+/*  hold the ports being used by ftp-prxy to install the behind the scenes rule that 
+ *  forces traffic out the primary wan until multi-wan ftp-proxy is all the rage.
  */
 $used_pftpx_ports = array();
 
@@ -1120,7 +1120,7 @@ function filter_nat_rules_generate() {
 						} else {
 							$shaper_queue = "";
 						}
-						$after_filter_configure_run[] = "/usr/local/sbin/pftpx {$shaper_queue}-f {$target} -b {$external_address} -c 21 -g 21";
+						$after_filter_configure_run[] = "/usr/local/sbin/ftp-proxy {$shaper_queue}-R {$target} -b {$external_address} -p 21 -P 21";
 					}
 					$dontinstallrdr = true;
 				}

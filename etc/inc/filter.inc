@@ -2768,7 +2768,6 @@ EOD;
 	$ipfrules .= "\n# SSH lockout\n";
 	$ipfrules .= "block in log proto tcp from <sshlockout> to any port 22 label \"sshlockout\"\n\n";
 
-	$ipfrules .= "anchor \"ftpproxy\"\n";
 	$ipfrules .= "anchor \"ftp-proxy/*\"\n";
 
 	$ipfrules .= process_carp_rules();

@@ -1786,7 +1786,7 @@ function system_start_ftp_helpers() {
 			/* if ftp-proxy is already running then do not launch it again */
 			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/ftp-proxy {$shaper_queue} -p {$port}\" | grep -v grep | sed \"s/  */ /g\"");
 			if(!$helpers && $ip)
- 				mwexec("/usr/local/sbin/ftp-proxy {$shaper_queue} -p {$port} -P 8021 {$pftpxsourceaddr} {$ip}");
+ 				mwexec("/usr/local/sbin/ftp-proxy {$shaper_queue} -p {$port} {$pftpxsourceaddr} {$ip}");
 			if(!$ip)
 				mwexec("/usr/local/sbin/ftpsesame {$shaper_queue} -i $int");
 			$interface_counter++;

@@ -1717,7 +1717,7 @@ function system_start_ftp_helpers() {
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
 		$iflist['opt' . $i] = "opt{$i}";
 
-	/* loop through all interfaces and handle pftpx */
+	/* loop through all interfaces and handle ftp-proxy */
 	$interface_counter = 0;
 	if(isset($config['shaper']['enable'])) {
 		if(isset($config['ezshaper']['step5']['p2pcatchall'])) {
@@ -1730,7 +1730,7 @@ function system_start_ftp_helpers() {
 		$shaper_queue = "";
 	}
 	foreach ($iflist as $ifent => $ifname) {
-		/*    if the ftp proxy is disabled for this interface then kill pftpx
+		/*    if the ftp proxy is disabled for this interface then kill ftp-proxy
 		 *    instance and continue. note that the helpers for port forwards are
 		 *    launched in a  different sequence so we are filtering them out
 	         *    here by not including -c {$port} -g 8021 first.
@@ -1742,7 +1742,7 @@ function system_start_ftp_helpers() {
 		$port = 8021 + $interface_counter;
 		if(isset($config['interfaces'][$ifname]['disableftpproxy'])) {
 			/*    item is disabled.  lets ++ the interface counter and
-			 *    keep processing interfaces. kill pftpx if already
+			 *    keep processing interfaces. kill ftp-proxy if already
 			 *    running for this instance.
 			 */
 			$helpers = exec("/bin/ps awux | grep \"/usr/local/sbin/ftp-proxy {$shaper_queue} -p {$port}\" | grep -v grep | sed \"s/  */ /g\" | cut -f2 -d\" \"");

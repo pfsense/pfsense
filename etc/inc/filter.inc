@@ -619,13 +619,13 @@ function filter_nat_rules_generate() {
 
 	$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
 
-	$natrules .= "nat-anchor \"pftpx/*\"\n";
+	$natrules .= "nat-anchor \"ftp-proxy/*\"\n";
 
 	$natrules .= "nat-anchor \"natearly/*\"\n";
 	$natrules .= "nat-anchor \"natrules/*\"\n";
 
 	$natrules .= "# FTP proxy\n";
-	$natrules .= "rdr-anchor \"pftpx/*\"\n";
+	$natrules .= "rdr-anchor \"ftp-proxy/*\"\n";
 	$natrules .= "rdr-anchor \"tftp-proxy/*\"\n";
 
 	update_filter_reload_status("Creating 1:1 rules...");
@@ -932,7 +932,7 @@ function filter_nat_rules_generate() {
 		$iflist['opt' . $i] = "opt{$i}";
 	$interface_counter = 0;
 	$vpns_list = get_vpns_list();
-	/* prevent 1:1 ips from pftpx, they will be handled by ftp-sesame */
+	/* prevent 1:1 ips from ftp-proxy, they will be handled by ftp-sesame */
 	if($config['nat']['onetoone'])
 		foreach ($config['nat']['onetoone'] as $vipent)
 			$onetoone_list .= "{$vipent['internal']} ";
@@ -940,7 +940,7 @@ function filter_nat_rules_generate() {
 		$natrules .= "table <onetoonelist> { $onetoone_list }\n";
 	if($vpns_list)
 		$natrules .= "table <vpns> { $vpns_list }\n";
-	/* loop through all interfaces and handle pftpx redirections */
+	/* loop through all interfaces and handle ftp-proxy redirections */
 	foreach ($iflist as $ifent => $ifname) {
 		$ifname_lower = convert_friendly_interface_to_friendly_descr(strtolower($ifname));
 		$realif = convert_friendly_interface_to_real_interface_name(strtolower($ifname));
@@ -986,7 +986,7 @@ function filter_nat_rules_generate() {
 		$ifname_lower = strtolower(convert_friendly_interface_to_friendly_descr($ifname));
 		$vpns = get_vpns_list();
 		/* if the user has defined, include the alias so that we do not redirect ftp
-		   connections across the tunnels to pftpx */
+		   connections across the tunnels to ftp-proxy */
 		$int_ip = find_interface_ip($tmp_interface);
 		/* if interface lacks an ip, dont setup a rdr for ftp.  they are most likely on a bridged interface */
 		if($int_ip and $vpns_list)
@@ -1106,9 +1106,9 @@ function filter_nat_rules_generate() {
 					if(!$helpers) {
 						if($external_address == "")
 							$external_address = find_interface_ip(get_real_wan_interface());
-						/*   install a pftpx helper, do not set a rule.  also use the delay filter configure run
+						/*   install a ftp-proxy helper, do not set a rule.  also use the delay filter configure run
 						 *   routines because if this is the first bootup the filter is not completely configured
-						 *   and thus pf is not fully running.   otherwise we end up with: pftpx: pf is disabled
+						 *   and thus pf is not fully running.   otherwise we end up with: ftp-proxy: pf is disabled
 						 */
 						if(isset($config['shaper']['enable'])) {
 							if(isset($config['ezshaper']['step5']['p2pcatchall']))  {
@@ -2769,11 +2769,11 @@ EOD;
 	$ipfrules .= "block in log proto tcp from <sshlockout> to any port 22 label \"sshlockout\"\n\n";
 
 	$ipfrules .= "anchor \"ftpproxy\"\n";
-	$ipfrules .= "anchor \"pftpx/*\"\n";
+	$ipfrules .= "anchor \"ftp-proxy/*\"\n";
 
 	$ipfrules .= process_carp_rules();
 
-	$ipfrules .= "\n\n# PFTPX specific\n";
+	$ipfrules .= "\n\n# ftp-proxy specific\n";
 	foreach($used_pftpx_ports as $pftpx) 
 		$ipfrules .= "pass in quick on {$pftpx['interface']} inet proto tcp from any to 127.0.0.1 port {$pftpx['port']} keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
 

@@ -1,3 +1,4 @@
+! echo "===> Beginning restartftphelper."
 ! echo "Killing ftp-proxy if started..."
 = killall ftp-proxy
 ! echo "Killing pftpx if started..."
@@ -12,4 +13,4 @@ system_start_ftp_helpers();
 = ps awux | grep "pftpx"
 ! echo "Checking if ftpsesame is running..."
 = ps awux | grep "ftpsesame"
-! echo "Done."
+! echo "===> End of restartftphelper."

@@ -73,61 +73,68 @@ function more($text, $count=24) {
 }
 
 function show_help() {
-	echo "\nExample commands:\n";
-	
-	echo "\nparse_config(true);  # reloads the \$config array\n";
 
-	echo "\n\$temp = print_r(\$config, true);\n";
-	echo "more(\$temp);\n";
+$show_help_text = <<<EOF
+	Example commands:
+	
+	parse_config(true);  # reloads the \$config array
 
-	echo "\n/* to output a configuration array */\n";
-	echo "print_r(\$config);\n";
+	\$temp = print_r(\$config, true);
+	more(\$temp);
+
+	/* to output a configuration array */
+	print_r(\$config);
 	
-	echo "\n/* to output the interfaces configuration portion of the configuration */\n";
-	echo "print_r(\$config['interfaces']);\n";
+	/* to output the interfaces configuration portion of the configuration */
+	print_r(\$config['interfaces']);
 	
-	echo "\n/* to output the dhcp server configuration */\n";
-	echo "print_r(\$config['dhcpd']);\n";
+	/* to output the dhcp server configuration */
+	print_r(\$config['dhcpd']);
 	
-	echo "\n/* to enable multiline input mode */\n";
-	echo "multiline\n";
+	/* to enable multiline input mode */
+	multiline
 	
-	echo "\n/* to exit the php pfSense shell */\n";
-	echo "exit\n";
+	/* to exit the php pfSense shell */
+	exit
 	
-	echo "\n/* to output supported wireless modes for an interface */\n";
-	echo "print_r(get_wireless_modes(\"ath0\"));\n";
+	/* to output supported wireless modes for an interface */
+	print_r(get_wireless_modes(\"ath0\"));
 	
-	echo "\n/* to enable SSH */\n";
-	echo "\$config['system']['enablesshd'] = true;\n";
+	/* to enable SSH */
+	\$config['system']['enablesshd'] = true;
 	
-	echo "\n/* change OPTX to the OPT interface name such as BACKHAUL */\n";
-	echo "\$config['interfaces']['optx']['wireless']['standard'] = \"11a\";\n";
-	echo "\$config['interfaces']['optx']['wireless']['mode'] = \"hostap\";\n";
-	echo "\$config['interfaces']['optx']['wireless']['channel'] = \"6\";\n";
+	/* change OPTX to the OPT interface name such as BACKHAUL */
+	\$config['interfaces']['optx']['wireless']['standard'] = \"11a\
+	\$config['interfaces']['optx']['wireless']['mode'] = \"hostap\
+	\$config['interfaces']['optx']['wireless']['channel'] = \"6\
 	
-	echo "\n/* to enable dhcp server for an optx interface */\n";
-	echo "\$config['dhcpd']['optx']['enable'] = true;\n";
-	echo "\$config['dhcpd']['optx']['range']['from'] = \"192.168.31.100\";\n";
-	echo "\$config['dhcpd']['optx']['range']['to'] = \"192.168.31.150\";\n";
+	/* to enable dhcp server for an optx interface */
+	\$config['dhcpd']['optx']['enable'] = true;
+	\$config['dhcpd']['optx']['range']['from'] = \"192.168.31.100\
+	\$config['dhcpd']['optx']['range']['to'] = \"192.168.31.150\
 	
-	echo "\n/* to disable the firewall filter */\n";
-	echo "\$config['system']['disablefilter'] = true;\n";
+	/* to disable the firewall filter */
+	\$config['system']['disablefilter'] = true;
 	
-	echo "\n/* to enable an interface and set it for dhcp */\n";
-	echo "\$config['interfaces']['optx']['disabled'] = false;\n";
-	echo "\$config['interfaces']['optx']['ipaddr'] = \"dhcp\";\n";
+	/* to enable an interface and set it for dhcp */
+	\$config['interfaces']['optx']['disabled'] = false;
+	\$config['interfaces']['optx']['ipaddr'] = \"dhcp\
 	
-	echo "\n/* to enable an interface and set a static ip address */\n";
-	echo "\$config['interfaces']['wan']['disabled'] = false;\n";
-	echo "\$config['interfaces']['wan']['ipaddr'] = \"192.168.100.1\";\n";
-	echo "\$config['interfaces']['wan']['subnet'] = \"24\";\n";
+	/* to enable an interface and set a static ip address */
+	\$config['interfaces']['wan']['disabled'] = false;
+	\$config['interfaces']['wan']['ipaddr'] = \"192.168.100.1\
+	\$config['interfaces']['wan']['subnet'] = \"24\
 	
-	echo "\n/* to save out the new configuration (config.xml) */\n";
-	echo "write_config();\n";
+	/* to save out the new configuration (config.xml) */
+	write_config();
 	
-	echo "\n/* to reboot the system after saving */\n";
-	echo "system_reboot_sync();\n";
+	/* to reboot the system after saving */
+	system_reboot_sync();\n
+	
+EOF;
+
+	more($show_help_text);
+ 	
 }
 
 $fp = fopen('php://stdin', 'r');

@@ -156,14 +156,14 @@ while($shell_active == true) {
 			$playback_file = $command_split[1];
 			if(!$playback_file || !file_exists("/etc/phpshellsessions/{$playback_file}")) {
 				$command = "";
-				echo "\nCould not locate playback file.\n";
+				echo "Could not locate playback file.\n";
 			} else {
 				$playback_file_contents = file_get_contents("/etc/phpshellsessions/{$playback_file}");
 				$playback_file_split = split("\n", $playback_file_contents);
 				$playbackinprogress = true;
 				$dontunsetplaybacksplit = true;
 				$command = "";
-				echo "\n\nPlayback of file {$command_split[1]} started.\n";      			
+				echo "Playback of file {$command_split[1]} started.\n\n";      			
 			}
 		}	        
 		if($command) 
@@ -188,15 +188,16 @@ while($shell_active == true) {
 	        			$counter++;
 	        		}
 	        		if($playbackinprogress)
-	        			echo "\npfSense shell: {$command}\n\n";
+	        			echo "pfSense shell: {$command}\n\n";
 					if($recording) 
 						fwrite($recording_fd, $command . "\n");
 	        		system("$newcmd");
 	        		if($command_split[1] == "cd") {
-	        			echo "\nChanging working directory to {$command_split[2]}.\n";
+	        			echo "Changing working directory to {$command_split[2]}.\n";
 	        			chdir($command_split[2]);
 	        		}
 	        		$command = "";
+					echo "\n";
 					break;
 	        	case "!":
 	        		$newcmd = "";
@@ -207,6 +208,7 @@ while($shell_active == true) {
 	        			$counter++;
 	        		}	        	
 	        		system("$newcmd");
+	        		echo "\n";
 	        		$command = "";
 					break;				
 	        }
@@ -215,7 +217,7 @@ while($shell_active == true) {
 		    	$command = "";
 		    }
 			if($command == "multiline" or $command == "ml") {
-				echo "\nmultiline mode enabled.  enter EOF on a blank line to execute.\n\n";
+				echo "multiline mode enabled.  enter EOF on a blank line to execute.\n\n";
 				$command = "";
 				$mlcommand = "";
 				$xxxyzyz = 0;
@@ -238,10 +240,10 @@ while($shell_active == true) {
     				fclose($recording_fd);
     				$command = "";
     				conf_mount_ro();
-    				echo "\nRecording stopped.\n";
+    				echo "Recording stopped.\n";
     				$recording = false; 
     			} else {
-    				echo "\nNo recording session in progress.\n";
+    				echo "No recording session in progress.\n";
     				$command = "";
     			}
     		}
@@ -250,9 +252,9 @@ while($shell_active == true) {
     			safe_mkdir("/etc/phpshellsessions");
     			if($recording) 
     				conf_mount_ro();
-    			echo "\n==> Sessions available for playback are:\n\n";
+    			echo "==> Sessions available for playback are:\n\n";
     			system("cd /etc/phpshellsessions && ls /etc/phpshellsessions");
-    			echo "\n==> end of list.\n";
+    			echo "==> end of list.\n";
     			$command = "";
     		}
     		if($command_split[0] == "record") {
@@ -265,11 +267,11 @@ while($shell_active == true) {
 					safe_mkdir("/etc/phpshellsessions");
     				$recording_fd = fopen("/etc/phpshellsessions/{$command_split[1]}","w");
     				if(!$recording_fd) {
-    					echo "\nCould not start recording session.\n";
+    					echo "Could not start recording session.\n";
     					$command = "";
     				} else { 
     					$recording = true;
-    					echo "\nRecording of {$command_split[1]} started.\n";
+    					echo "Recording of {$command_split[1]} started.\n";
     					$command = "";
     				}
     			}
@@ -277,7 +279,7 @@ while($shell_active == true) {
 			if($command) {
 		        eval($command);
 		        if($playbackinprogress) 
-		        	echo "\npfSense shell: {$command}\n\n";
+		        	echo "pfSense shell: {$command}\n\n";
 		        if($recording) 
 		        	fwrite($recording_fd, $command . "\n"); 
 		    }

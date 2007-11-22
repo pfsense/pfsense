@@ -76,7 +76,11 @@ function show_help() {
 
 $show_help_text = <<<EOF
 	Example commands:
-	
+
+	startrecording <recordingfilename>
+	stoprecording <recordingfilename>
+	showrecordings
+
 	parse_config(true);  # reloads the \$config array
 
 	\$temp = print_r(\$config, true);

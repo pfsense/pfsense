@@ -238,6 +238,16 @@ while($shell_active == true) {
     				$command = "";
     			}
     		}
+    		if($command_split[0] == "showrecordings") {
+    			conf_mount_rw();
+    			safe_mkdir("/etc/phpshellsessions");
+    			if($recording) 
+    				conf_mount_ro();
+    			echo "\n==> Sessions available for playback are:\n\n";
+    			system("cd /etc/phpshellsessions && ls /etc/phpshellsessions");
+    			echo "\n==> end of list.\n";
+    			$command = "";
+    		}
     		if($command_split[0] == "record") {
     			if(!$command_split[1]) {
     				echo "usage: record playbackname\n";

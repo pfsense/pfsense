@@ -1,15 +1,24 @@
+! echo ""
 ! echo "Killing ftp-proxy if started..."
 = killall ftp-proxy
+! echo ""
 ! echo "Killing pftpx if started..."
 = killall pftpx
+! echo ""
 ! echo "Killing ftpsesame if started..."
 = killall ftpsesame
+! echo ""
 ! echo "Running php function system_start_ftp_helpers()..."
 system_start_ftp_helpers();
+! echo ""
 ! echo "Checking if ftp-proxy is running..."
 = ps awux | grep "ftp-proxy"
+! echo ""
 ! echo "Checking if pftpx is running..."
 = ps awux | grep "pftpx"
+! echo ""
 ! echo "Checking if ftpsesame is running..."
 = ps awux | grep "ftpsesame"
+! echo ""
 ! echo "Done."
+! echo ""

@@ -232,6 +232,7 @@ while($shell_active == true) {
     				$command = "";
     				conf_mount_ro();
     				echo "\nRecording stopped.\n";
+    				$recording = false; 
     			} else {
     				echo "\nNo recording session in progress.\n";
     				$command = "";
@@ -264,7 +265,7 @@ while($shell_active == true) {
 		        	fwrite($recording_fd, $command . "\n"); 
 		    }
 		}
-	unset($playback_file_contents);
-	unset($playback);
+		unset($playback_file_contents);
+		unset($playback);
 }
 

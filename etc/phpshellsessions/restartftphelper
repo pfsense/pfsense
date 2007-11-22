@@ -7,9 +7,9 @@
 ! echo "Running php function system_start_ftp_helpers()..."
 system_start_ftp_helpers();
 ! echo "Checking if ftp-proxy is running..."
-= ps awux | grep "pftpx|ftp-proxy"
+= ps awux | grep "ftp-proxy"
 ! echo "Checking if pftpx is running..."
-= ps awux | grep "pftpx|pftpx"
+= ps awux | grep "pftpx"
 ! echo "Checking if ftpsesame is running..."
-= ps awux | grep "pftpx|ftpsesame"
+= ps awux | grep "ftpsesame"
 ! echo "Done."

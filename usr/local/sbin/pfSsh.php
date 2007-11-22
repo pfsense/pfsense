@@ -156,14 +156,14 @@ while($shell_active == true) {
 			$playback_file = $command_split[1];
 			if(!$playback_file || !file_exists("/etc/phpshellsessions/{$playback_file}")) {
 				$command = "";
-				echo "Could not locate playback file.\n";
+				echo "\nCould not locate playback file.\n";
 			} else {
 				$playback_file_contents = file_get_contents("/etc/phpshellsessions/{$playback_file}");
 				$playback_file_split = split("\n", $playback_file_contents);
 				$playbackinprogress = true;
 				$dontunsetplaybacksplit = true;
 				$command = "";
-				echo "\nPlayback of file {$command_split[1]} started.\n";      			
+				echo "\n\nPlayback of file {$command_split[1]} started.\n";      			
 			}
 		}	        
 		if($command) 
@@ -188,7 +188,7 @@ while($shell_active == true) {
 	        			$counter++;
 	        		}
 	        		if($playbackinprogress)
-	        			echo "\npfSense shell: {$command}\n";
+	        			echo "\npfSense shell: {$command}\n\n";
 					if($recording) 
 						fwrite($recording_fd, $command . "\n");
 	        		system("$newcmd");
@@ -199,6 +199,13 @@ while($shell_active == true) {
 	        		$command = "";
 					break;
 	        	case "!":
+	        		$newcmd = "";
+	        		$counter = 0;
+	        		foreach($command_split as $cs) {
+	        			if($counter > 0)
+	        				$newcmd .= " {$cs}";
+	        			$counter++;
+	        		}	        	
 	        		system("$newcmd");
 	        		$command = "";
 					break;				
@@ -258,7 +265,7 @@ while($shell_active == true) {
 					safe_mkdir("/etc/phpshellsessions");
     				$recording_fd = fopen("/etc/phpshellsessions/{$command_split[1]}","w");
     				if(!$recording_fd) {
-    					echo "Could not start recording session.\n";
+    					echo "\nCould not start recording session.\n";
     					$command = "";
     				} else { 
     					$recording = true;
@@ -270,7 +277,7 @@ while($shell_active == true) {
 			if($command) {
 		        eval($command);
 		        if($playbackinprogress) 
-		        	echo "\npfSense shell: {$command}\n";
+		        	echo "\npfSense shell: {$command}\n\n";
 		        if($recording) 
 		        	fwrite($recording_fd, $command . "\n"); 
 		    }

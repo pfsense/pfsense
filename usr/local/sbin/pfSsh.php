@@ -108,32 +108,32 @@ $show_help_text = <<<EOF
 	\$config['system']['enablesshd'] = true;
 	
 	/* change OPTX to the OPT interface name such as BACKHAUL */
-	\$config['interfaces']['optx']['wireless']['standard'] = \"11a\
-	\$config['interfaces']['optx']['wireless']['mode'] = \"hostap\
-	\$config['interfaces']['optx']['wireless']['channel'] = \"6\
+	\$config['interfaces']['optx']['wireless']['standard'] = "11a"
+	\$config['interfaces']['optx']['wireless']['mode'] = "hostap"
+	\$config['interfaces']['optx']['wireless']['channel'] = "6"
 	
 	/* to enable dhcp server for an optx interface */
 	\$config['dhcpd']['optx']['enable'] = true;
-	\$config['dhcpd']['optx']['range']['from'] = \"192.168.31.100\
-	\$config['dhcpd']['optx']['range']['to'] = \"192.168.31.150\
+	\$config['dhcpd']['optx']['range']['from'] = "192.168.31.100"
+	\$config['dhcpd']['optx']['range']['to'] = "192.168.31.150"
 	
 	/* to disable the firewall filter */
 	\$config['system']['disablefilter'] = true;
 	
 	/* to enable an interface and set it for dhcp */
 	\$config['interfaces']['optx']['disabled'] = false;
-	\$config['interfaces']['optx']['ipaddr'] = \"dhcp\
+	\$config['interfaces']['optx']['ipaddr'] = "dhcp"
 	
 	/* to enable an interface and set a static ip address */
 	\$config['interfaces']['wan']['disabled'] = false;
-	\$config['interfaces']['wan']['ipaddr'] = \"192.168.100.1\
-	\$config['interfaces']['wan']['subnet'] = \"24\
+	\$config['interfaces']['wan']['ipaddr'] = "192.168.100.1"
+	\$config['interfaces']['wan']['subnet'] = "24"
 	
 	/* to save out the new configuration (config.xml) */
 	write_config();
 	
 	/* to reboot the system after saving */
-	system_reboot_sync();\n
+	system_reboot_sync();
 	
 EOF;
 

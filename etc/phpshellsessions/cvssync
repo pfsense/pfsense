@@ -1,0 +1,119 @@
+/*   cvs_sync
+ *   Written by Scott Ullrich
+ *   (C)2005 Scott Ullrich
+ *   Part of the pfSense project
+ *   For users of cvs accounts to keep your test machine up to date
+ */
+
+unlink_if_exists("/tmp/config.cache");
+
+$TMPDIR = "/root/pfSense/";
+$CODIR =  "/root/pfSenseCO/";
+
+if(!file_exists("/usr/local/bin/cvsup")) {
+	echo "Cannot find cvsup, pkg_add in progress...";
+	system("/usr/sbin/pkg_add -r http://www.pfsense.com/packages/All/cvsup-without-gui-16.1h_2.tbz");
+}
+
+if(!file_exists("/usr/bin/cvs")) {
+	echo "Cannot find cvs, fetching static cvs...";
+	system("fetch -o /usr/bin/cvs http://www.pfsense.com/~sullrich/extra/cvs");
+	system("chmod a+rx /usr/bin/cvs");
+}
+
+echo "\nPlease select which branch you would like:\n\n";
+echo "RELENG_1_2  - 1.2 Release branch\n";
+echo "RELENG_1    - 1.3 branch\n";
+echo "HEAD        - Main development branch\n";
+
+$branch = readline("\n> ");
+
+if($branch == "HEAD") {
+    echo "\n===> Checking out HEAD";
+    exec("mkdir -p $TMPDIR");
+    exec("cd $TMPDIR/.. && cvsup /etc/current-supfile");
+    exec("rm -rf /usr/local/www/includes/*");
+    exec("rm -rf /usr/local/www/javascript/*");
+	exec("find /usr/local/www -name \"*.js\" -exec rm {} \;");
+    exec("rm -rf $CODIR");
+    exec("mkdir -p $CODIR");
+    exec("mkdir -p /tmp/lighttpd/cache/compress/");
+    exec("cd $CODIR && cvs -d $TMPDIR co pfSense");
+} else if($branch == "RELENG_1_2") {
+    echo "\n===> Checking out RELENG_1_2\n";
+    exec("mkdir -p $TMPDIR");
+    exec("cd $TMPDIR/.. && cvsup /etc/current-supfile");
+    exec("rm -rf /usr/local/www/includes/*");
+    exec("rm -rf /usr/local/www/javascript/*");
+	exec("find /usr/local/www -name \"*.js\" -exec rm {} \;");
+    exec("rm -rf $CODIR");
+    exec("mkdir -p $CODIR");
+    exec("mkdir -p /tmp/lighttpd/cache/compress/");
+    exec("cd $CODIR && cvs -d $TMPDIR co -r RELENG_1_2 pfSense");
+
+} else if($branch == "RELENG_1") {
+    echo "\n===> Checking out RELENG_1\n";
+    exec("mkdir -p $TMPDIR");
+    exec("cd $TMPDIR/.. && cvsup /etc/current-supfile");
+    exec("rm -rf /usr/local/www/includes/*");
+    exec("rm -rf /usr/local/www/javascript/*");
+	exec("find /usr/local/www -name \"*.js\" -exec rm {} \;");
+    exec("rm -rf $CODIR");
+    exec("mkdir -p $CODIR");
+    exec("mkdir -p /tmp/lighttpd/cache/compress/");
+    exec("cd $CODIR && cvs -d $TMPDIR co -r RELENG_1 pfSense");
+} else {
+	echo "\nInvalid branch\n";
+	exit;
+}
+
+exec("cd ${CODIR}/ && find . -name CVS -exec rm -rf {} \; 2>/dev/null");
+exec("cd ${CODIR}/ && find . -name pfSense.tgz -exec rm {} \; 2>/dev/null");
+exec("rm -rf ${CODIR}/conf*");
+exec("rm ${CODIR}/pfSense/usr/local/www/trigger_initial_wizard 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/crontab 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/master.passwd 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/passwd 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/fstab 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/ttys 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/group 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/fstab 2>/dev/null");
+exec("rm ${CODIR}/pfSense/boot/device.hints 2>/dev/null");
+exec("rm ${CODIR}/pfSense/boot/loader.conf 2>/dev/null");
+exec("rm ${CODIR}/pfSense/boot/loader.rc 2>/dev/null");
+exec("rm -rf ${CODIR}/pfSense/conf/ 2>/dev/null");
+exec("rm -rf ${CODIR}/pfSense/cf/ 2>/dev/null");
+exec("rm -rf ${CODIR}/pfSense/root/.shrc");
+exec("rm -rf ${CODIR}/pfSense/root/.tcshrc");
+
+echo "Installing new files...";
+
+exec("cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -Uxpvf -)");
+
+echo "CVS Sync Complete";
+
+echo "Removing FAST-CGI temporary files...";
+exec("find /tmp -name \"*php*\" -exec rm -rf {} \;");
+
+exec("rm -rf /tmp/xcache/* 2>/dev/null");
+
+echo "Upgrading configuration...";
+
+convert_config();
+/* setup php.ini */
+convert_config();
+sync_webgui_passwords();
+
+echo "Restarting check_reload_status...";
+exec("killall check_reload_status");
+mwexec_bg("nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status &");
+
+echo "Configuring filter...";
+exec("/etc/rc.filter_configure_sync");
+exec("pfctl -f /tmp/rules.debug");
+
+echo "===> Checkout complete.  Your system is now sync'd.";
+
+exec("killall php");
+touch("/tmp/restart_webgui");
+

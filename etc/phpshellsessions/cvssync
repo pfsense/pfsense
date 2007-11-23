@@ -63,7 +63,7 @@ if (!in_array("$branch", $branches)) {
 	exit;
 }
 
-echo "\n===> Checking out $branch\n";
+echo "===> Checking out $branch\n";
 exec("mkdir -p /home/pfsense/$branch");
 system("cvsup /var/etc/pfSense-supfile");
 exec("rm -rf /usr/local/www/includes/*");

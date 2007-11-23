@@ -1,7 +1,7 @@
 /*   cvs_sync
  *   Written by Scott Ullrich
  *   (C)2005 Scott Ullrich
- *   Part of the pfSense project
+ *   Part of the pfSense project pfSsh.php subsystem
  *   For users of cvs accounts to keep your test machine up to date
  */
 
@@ -39,13 +39,18 @@ if(!file_exists("/usr/bin/cvs")) {
 
 global $argv;
 
+/* NOTE: Set branches here */
+$branches = array("HEAD" => "Main development branch",
+				  "RELENG_1" => "1.2 Release branch",
+				  "RELENG_1_2" => "1.3 development branch");
+
 if(!$argv[3]) {
 	echo "\nPlease select which branch you would like:\n\n";
-	echo "RELENG_1_2  - 1.2 Release branch\n";
-	echo "RELENG_1    - 1.3 branch\n";
-	echo "HEAD        - Main development branch\n";
-	
+	foreach($branches as $branchname => $branchdesc) {
+		echo "{$branchname} - {$branchdesc}\n";
+	}
 	$branch = readline("\n> ");
+	echo "\n";
 } else {
 	$branch = $argv[3];
 }
@@ -56,10 +61,13 @@ $CODIR =  "/home/pfsense/$branch";
 
 exec("mkdir -p /home/pfsense/$BRANCHTAG");
 
-$branches = array("HEAD","RELENG_1","RELENG_1_2");
-
-if (!in_array("$branch", $branches)) {
-	echo "Invalid branch.\n";
+$found = false;
+foreach($branches as $branchname => $branchdesc) {
+	if($branchname == $branch) 
+		$found = true;
+}
+if(!$found) {
+	echo "\nInvalid branch.\n";
 	exit;
 }
 

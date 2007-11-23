@@ -86,33 +86,34 @@ exec("rm -rf ${CODIR}/pfSense/cf/ 2>/dev/null");
 exec("rm -rf ${CODIR}/pfSense/root/.shrc");
 exec("rm -rf ${CODIR}/pfSense/root/.tcshrc");
 
-echo "Installing new files...";
+echo "Installing new files...\n";
 
 exec("cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -Uxpvf -)");
 
-echo "CVS Sync Complete";
+echo "CVS Sync Complete\n";
 
-echo "Removing FAST-CGI temporary files...";
+echo "Removing FAST-CGI temporary files...\n";
 exec("find /tmp -name \"*php*\" -exec rm -rf {} \;");
 
 exec("rm -rf /tmp/xcache/* 2>/dev/null");
 
-echo "Upgrading configuration...";
+echo "Upgrading configuration...\n";
 
 convert_config();
 /* setup php.ini */
 convert_config();
 sync_webgui_passwords();
 
-echo "Restarting check_reload_status...";
+echo "Restarting check_reload_status...\n";
 exec("killall check_reload_status");
-mwexec_bg("nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status &");
+mwexec_bg("nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status");
 
 echo "Configuring filter...";
 exec("/etc/rc.filter_configure_sync");
 exec("pfctl -f /tmp/rules.debug");
+echo "\n";
 
-echo "===> Checkout complete.  Your system is now sync'd.";
+echo "===> Checkout complete.  Your system is now sync'd.\n";
 
 exec("killall php");
 touch("/tmp/restart_webgui");

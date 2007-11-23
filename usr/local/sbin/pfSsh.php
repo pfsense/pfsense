@@ -168,6 +168,10 @@ $playback_file_split = array();
 $playbackbuffer = "";
 
 if($argv[1]=="playback" or $argv[1]=="run") { 
+	if(!file_exists("/etc/phpshellsessions/{$argv[2]}")) {
+		echo "Could not locate playback file.";
+		exit;
+	}
 	playback_file($argv[2]);
 	exit;
 }

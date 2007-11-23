@@ -156,6 +156,9 @@ echo "\nType \"help\" to show common usage scenarios.\n";
 $recording = false;
 $dontunsetplaybacksplit = false;
 
+$playback_file_split = array();
+$playbackbuffer = "";
+
 while($shell_active == true) {
 		if(!$playback_file_contents) { 
         	$command = readline("\npfSense shell: ");
@@ -176,11 +179,53 @@ while($shell_active == true) {
 				$command = "";
 				echo "Playback of file {$command_split[1]} started.\n\n";      			
 			}
-		}	        
+		}
+		// add command to playback area
 		if($command) 
-			$playback_file_split = array($command);
+			$playback_file_split[] = $command;
+		// check for multiline
+		$lastchar = returnlastchar($command);
+		if($lastchar == "\\") {
+			continue;
+		}
+		if(is_array($playback_file_split))
    		foreach($playback_file_split as $pfc) {
     		$command = $pfc;
+    		$lastchar = returnlastchar($command);
+    		if($lastchar == "\\") {
+				$playbackbuffer .= $command; 
+    			continue;
+    		} 
+    		if($playbackbuffer) {
+    			$firstchar = returnfirstchar($playbackbuffer); 
+    			if($firstchar == "!") {
+    				$commandstr = $playbackbuffer . "\n" . $command;
+    				$command = str_replace_all("!", "\n", $commandstr);
+    				$commandstr =  str_replace_all("\\", "", $command);
+	        		file_put_contents("/tmp/phpSh.sh", $commandstr);
+	        		exec("chmod a+rx /tmp/phpSh.sh");
+	        		system("/tmp/phpSh.sh");
+    				$playbackbuffer = "";
+    				$command = "";
+	    			continue;
+    			}
+    			if($firstchar == "=") {
+    				$commandstr = $playbackbuffer . "\n" . $command;
+    				$command = str_replace_all("!", "\n", $commandstr);
+    				$commandstr =  str_replace_all("\\", "", $command);
+	        		file_put_contents("/tmp/phpSh.sh", $commandstr);
+	        		exec("chmod a+rx /tmp/phpSh.sh");
+	        		system("/tmp/phpSh.sh");
+    				$playbackbuffer = "";
+    				$command = "";
+    				continue;
+    			}
+    			$playbackbuffernew = $playbackbuffer . "\n" . $command; 
+    			eval($playbackbuffernew);		
+    			$playbackbuffer = "";
+    			$playbackbuffernew = "";
+    			continue;
+    		}
 	        if($command == "exit") {
 	                $shell_active = false;
 	                echo "\n";
@@ -201,8 +246,10 @@ while($shell_active == true) {
 	        		if($playbackinprogress)
 	        			echo "pfSense shell: {$command}\n\n";
 					if($recording) 
-						fwrite($recording_fd, $command . "\n");
-	        		system("$newcmd");
+						fwrite($recording_fd, $command . "\n"); 
+	        		file_put_contents("/tmp/phpSh.sh", $newcmd);
+	        		exec("chmod a+rx /tmp/phpSh.sh");
+	        		system("/tmp/phpSh.sh");
 	        		if($command_split[1] == "cd") {
 	        			echo "Changing working directory to {$command_split[2]}.\n";
 	        			chdir($command_split[2]);
@@ -217,8 +264,10 @@ while($shell_active == true) {
 	        			if($counter > 0)
 	        				$newcmd .= " {$cs}";
 	        			$counter++;
-	        		}	        	
-	        		system("$newcmd");
+	        		}
+	        		file_put_contents("/tmp/phpSh.sh", $newcmd);
+	        		exec("chmod a+rx /tmp/phpSh.sh");
+	        		system("/tmp/phpSh.sh");
 	        		echo "\n";
 	        		$command = "";
 					break;				
@@ -227,25 +276,6 @@ while($shell_active == true) {
 		    	show_help();
 		    	$command = "";
 		    }
-			if($command == "multiline" or $command == "ml") {
-				echo "multiline mode enabled.  enter EOF on a blank line to execute.\n\n";
-				$command = "";
-				$mlcommand = "";
-				$xxxyzyz = 0;
-				while($command <> "EOF") {
-					echo "pfSense multiline shell[$xxxyzyz]> ";
-			        $command = readline("Command: ");
-			        readline_add_history($command);
-			        if($command == "help") 
-			        	show_help();
-			        if($command == "exit") 
-			        	die;
-			        if($command <> "EOF") 
-			        	$mlcommand .= $command;
-			        $xxxyzyz++;
-				}
-				$command = $mlcommand;
-			}
     		if($command_split[0] == "stoprecording" || $command_split[0] == "stoprecord" || $command_split[0] == "stop") {
     			if($recording) {
     				fclose($recording_fd);
@@ -295,7 +325,27 @@ while($shell_active == true) {
 		        	fwrite($recording_fd, $command . "\n"); 
 		    }
 		}
+		unset($playback_file_split);
 		unset($playback_file_contents);
 		unset($playback);
+		unset($command);
+}
+
+function returnlastchar($command) {
+	$commandlen = strlen($command);
+	$endofstring = substr($command, ($commandlen-1));
+	return $endofstring; 
+}
+
+function returnfirstchar($command) {
+	$commandlen = strlen($command);
+	$endofstring = substr($command, 0, 1);
+	return $endofstring; 
+}
+
+function str_replace_all($search,$replace,$subject) {
+	while(strpos($subject,$search)!==false) 
+		$subject = str_replace($search,$replace,$subject);
+	return $subject;
 }
 

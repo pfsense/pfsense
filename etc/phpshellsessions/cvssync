@@ -1,0 +1,133 @@
+/*   cvs_sync
+ *   Written by Scott Ullrich
+ *   (C)2005 Scott Ullrich
+ *   Part of the pfSense project pfSsh.php subsystem
+ *   For users of cvs accounts to keep your test machine up to date
+ */
+
+function create_supfile($branch) {
+
+	if($branch == "HEAD") 
+		$BRANCHTAG = ".";
+	else
+		$BRANCHTAG = $branch;
+
+	$supfile = "
+*default host=cvs.pfsense.com
+*default base=/home/pfsense/$branch
+*default release=cvs tag=$BRANCHTAG
+*default delete use-rel-suffix
+pfSense
+*default compress
+";
+
+	file_put_contents("/var/etc/pfSense-supfile", $supfile);
+}
+
+unlink_if_exists("/tmp/config.cache");
+
+if(!file_exists("/usr/local/bin/cvsup")) {
+	echo "Cannot find cvsup, pkg_add in progress...";
+	system("/usr/sbin/pkg_add -r http://www.pfsense.com/packages/All/cvsup-without-gui-16.1h_2.tbz");
+}
+
+if(!file_exists("/usr/bin/cvs")) {
+	echo "Cannot find cvs, fetching static cvs...";
+	system("fetch -o /usr/bin/cvs http://www.pfsense.com/~sullrich/extra/cvs");
+	system("chmod a+rx /usr/bin/cvs");
+}
+
+global $argv;
+
+/* NOTE: Set branches here */
+$branches = array("HEAD" => "Main development branch",
+				  "RELENG_1" => "1.2 Release branch",
+				  "RELENG_1_2" => "1.3 development branch");
+
+if(!$argv[3]) {
+	echo "\nPlease select which branch you would like:\n\n";
+	foreach($branches as $branchname => $branchdesc) {
+		echo "{$branchname} - {$branchdesc}\n";
+	}
+	$branch = readline("\n> ");
+	echo "\n";
+} else {
+	$branch = $argv[3];
+}
+
+create_supfile($branch);
+
+$CODIR =  "/home/pfsense/$branch";
+
+exec("mkdir -p /home/pfsense/$BRANCHTAG");
+
+$found = false;
+foreach($branches as $branchname => $branchdesc) {
+	if($branchname == $branch) 
+		$found = true;
+}
+if(!$found) {
+	echo "\nInvalid branch.\n";
+	exit;
+}
+
+echo "===> Checking out $branch\n";
+exec("mkdir -p /home/pfsense/$branch");
+system("cvsup /var/etc/pfSense-supfile");
+exec("rm -rf /usr/local/www/includes/*");
+exec("rm -rf /usr/local/www/javascript/*");
+exec("find /usr/local/www -name \"*.js\" -exec rm {} \;");
+
+exec("mkdir -p /tmp/lighttpd/cache/compress/");
+
+exec("cd ${CODIR}/ && find . -name CVS -exec rm -rf {} \; 2>/dev/null");
+exec("cd ${CODIR}/ && find . -name pfSense.tgz -exec rm {} \; 2>/dev/null");
+exec("rm -rf ${CODIR}/conf*");
+exec("rm ${CODIR}/pfSense/usr/local/www/trigger_initial_wizard 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/crontab 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/master.passwd 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/passwd 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/fstab 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/ttys 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/group 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/fstab 2>/dev/null");
+exec("rm ${CODIR}/pfSense/boot/device.hints 2>/dev/null");
+exec("rm ${CODIR}/pfSense/boot/loader.conf 2>/dev/null");
+exec("rm ${CODIR}/pfSense/boot/loader.rc 2>/dev/null");
+exec("rm -rf ${CODIR}/pfSense/conf/ 2>/dev/null");
+exec("rm -rf ${CODIR}/pfSense/cf/ 2>/dev/null");
+exec("rm -rf ${CODIR}/pfSense/root/.shrc");
+exec("rm -rf ${CODIR}/pfSense/root/.tcshrc");
+
+echo "Installing new files...\n";
+
+exec("cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -Uxpf -)");
+
+echo "CVS Sync Complete\n";
+
+echo "Removing FAST-CGI temporary files...\n";
+exec("find /tmp -name \"*php*\" -exec rm -rf {} \;");
+
+exec("rm -rf /tmp/xcache/* 2>/dev/null");
+
+echo "Upgrading configuration...\n";
+
+convert_config();
+/* setup php.ini */
+convert_config();
+sync_webgui_passwords();
+
+echo "Restarting check_reload_status...\n";
+exec("killall check_reload_status");
+mwexec_bg("nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status");
+
+echo "Configuring filter...";
+exec("/etc/rc.filter_configure_sync");
+exec("pfctl -f /tmp/rules.debug");
+echo "\n";
+
+echo "===> Checkout complete.  Your system is now sync'd.  Scripting terminating.\n";
+
+exec("killall php");
+touch("/tmp/restart_webgui");
+

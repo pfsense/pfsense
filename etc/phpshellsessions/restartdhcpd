@@ -1,0 +1,4 @@
+! echo "Killing dhcp server..."
+! killall dhcpd
+! echo "Restarting dhcp server..."
+services_dhcpd_configure();

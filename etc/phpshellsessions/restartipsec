@@ -1,0 +1,2 @@
+! echo "Restarting ipsec..."
+vpn_ipsec_configure();

@@ -167,8 +167,6 @@ $recording = false;
 $playback_file_split = array();
 $playbackbuffer = "";
 
-echo "Passing arguments to pfSense shell: {$argv[1]} {$argv[2]}\n"; 
-
 if($argv[1]=="playback" or $argv[1]=="run") { 
 	playback_file($argv[2]);
 	exit;

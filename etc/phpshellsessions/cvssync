@@ -5,10 +5,26 @@
  *   For users of cvs accounts to keep your test machine up to date
  */
 
-unlink_if_exists("/tmp/config.cache");
+function create_supfile($branch) {
 
-$TMPDIR = "/root/pfSense/";
-$CODIR =  "/root/pfSenseCO/";
+	if($branch == "HEAD") 
+		$BRANCHTAG = ".";
+	else
+		$BRANCHTAG = $branch;
+
+	$supfile = "
+*default host=cvs.pfsense.com
+*default base=/home/pfsense/$branch
+*default release=cvs tag=$BRANCHTAG
+*default delete use-rel-suffix
+pfSense
+*default compress
+";
+
+	file_put_contents("/var/etc/pfSense-supfile", $supfile);
+}
+
+unlink_if_exists("/tmp/config.cache");
 
 if(!file_exists("/usr/local/bin/cvsup")) {
 	echo "Cannot find cvsup, pkg_add in progress...";
@@ -28,44 +44,27 @@ echo "HEAD        - Main development branch\n";
 
 $branch = readline("\n> ");
 
-if($branch == "HEAD") {
-    echo "\n===> Checking out HEAD";
-    exec("mkdir -p $TMPDIR");
-    exec("cd $TMPDIR/.. && cvsup /etc/current-supfile");
-    exec("rm -rf /usr/local/www/includes/*");
-    exec("rm -rf /usr/local/www/javascript/*");
-	exec("find /usr/local/www -name \"*.js\" -exec rm {} \;");
-    exec("rm -rf $CODIR");
-    exec("mkdir -p $CODIR");
-    exec("mkdir -p /tmp/lighttpd/cache/compress/");
-    exec("cd $CODIR && cvs -d $TMPDIR co pfSense");
-} else if($branch == "RELENG_1_2") {
-    echo "\n===> Checking out RELENG_1_2\n";
-    exec("mkdir -p $TMPDIR");
-    exec("cd $TMPDIR/.. && cvsup /etc/current-supfile");
-    exec("rm -rf /usr/local/www/includes/*");
-    exec("rm -rf /usr/local/www/javascript/*");
-	exec("find /usr/local/www -name \"*.js\" -exec rm {} \;");
-    exec("rm -rf $CODIR");
-    exec("mkdir -p $CODIR");
-    exec("mkdir -p /tmp/lighttpd/cache/compress/");
-    exec("cd $CODIR && cvs -d $TMPDIR co -r RELENG_1_2 pfSense");
+create_supfile($branch);
 
-} else if($branch == "RELENG_1") {
-    echo "\n===> Checking out RELENG_1\n";
-    exec("mkdir -p $TMPDIR");
-    exec("cd $TMPDIR/.. && cvsup /etc/current-supfile");
-    exec("rm -rf /usr/local/www/includes/*");
-    exec("rm -rf /usr/local/www/javascript/*");
-	exec("find /usr/local/www -name \"*.js\" -exec rm {} \;");
-    exec("rm -rf $CODIR");
-    exec("mkdir -p $CODIR");
-    exec("mkdir -p /tmp/lighttpd/cache/compress/");
-    exec("cd $CODIR && cvs -d $TMPDIR co -r RELENG_1 pfSense");
-} else {
-	echo "\nInvalid branch\n";
+$CODIR =  "/home/pfsense/$branch";
+
+exec("mkdir -p /home/pfsense/$BRANCHTAG");
+
+$branches = array("HEAD","RELENG_1","RELENG_1_2");
+
+if (!in_array("$branch", $branches)) {
+	echo "Invalid branch.\n";
 	exit;
 }
+
+echo "\n===> Checking out $branch\n";
+exec("mkdir -p /home/pfsense/$branch");
+system("cvsup /var/etc/pfSense-supfile");
+exec("rm -rf /usr/local/www/includes/*");
+exec("rm -rf /usr/local/www/javascript/*");
+exec("find /usr/local/www -name \"*.js\" -exec rm {} \;");
+
+exec("mkdir -p /tmp/lighttpd/cache/compress/");
 
 exec("cd ${CODIR}/ && find . -name CVS -exec rm -rf {} \; 2>/dev/null");
 exec("cd ${CODIR}/ && find . -name pfSense.tgz -exec rm {} \; 2>/dev/null");
@@ -88,7 +87,7 @@ exec("rm -rf ${CODIR}/pfSense/root/.tcshrc");
 
 echo "Installing new files...\n";
 
-exec("cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -Uxpvf -)");
+exec("cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -Uxpf -)");
 
 echo "CVS Sync Complete\n";
 

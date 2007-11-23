@@ -11,6 +11,8 @@ require("functions.inc");
 echo ".";
 require("config.inc");
 echo ".";
+require("util.inc");
+echo ".";
 $g['booting'] = false;
 
 $shell_cmds = array("alias", "alloc", "bg", "bind", "bindkey", "break", 
@@ -75,6 +77,15 @@ function more($text, $count=24) {
 function show_help() {
 
 $show_help_text = <<<EOF
+
+	Enter a series of commands and then execute the set with "exec".
+	
+	For example:
+	echo "foo"; // php command
+	echo "foo2"; // php command
+	! echo "heh" # shell command
+	exec
+
 	Example commands:
 
 	startrecording <recordingfilename>
@@ -94,10 +105,7 @@ $show_help_text = <<<EOF
 	
 	/* to output the dhcp server configuration */
 	print_r(\$config['dhcpd']);
-	
-	/* to enable multiline input mode */
-	multiline
-	
+
 	/* to exit the php pfSense shell */
 	exit
 	
@@ -149,186 +157,93 @@ $pkg_interface='console';
 
 $shell_active = true;
 
-echo "Welcome to the pfSense php shell system\n";
-echo "Written by Scott Ullrich (sullrich@gmail.com)\n";
-echo "\nType \"help\" to show common usage scenarios.\n";
+if($argc < 2) {
+	echo "Welcome to the pfSense php shell system\n";
+	echo "Written by Scott Ullrich (sullrich@gmail.com)\n";
+	echo "\nType \"help\" to show common usage scenarios.\n\n";
+}
 
 $recording = false;
-$dontunsetplaybacksplit = false;
-
 $playback_file_split = array();
 $playbackbuffer = "";
 
+echo "Passing arguments to pfSense shell: {$argv[1]} {$argv[2]}\n"; 
+
+if($argv[1]=="playback" or $argv[1]=="run") { 
+	playback_file($argv[2]);
+	exit;
+}
+
 while($shell_active == true) {
-		if(!$playback_file_contents) { 
-        	$command = readline("\npfSense shell: ");
-			readline_add_history($command);
-	        $command_split = split(" ", $command);
-	        $first_command = $command_split[0];        	
-        }
-		if($command_split[0] == "playback" || $command_split[0] == "run") {
-			$playback_file = $command_split[1];
-			if(!$playback_file || !file_exists("/etc/phpshellsessions/{$playback_file}")) {
-				$command = "";
-				echo "Could not locate playback file.\n";
-			} else {
-				$playback_file_contents = file_get_contents("/etc/phpshellsessions/{$playback_file}");
-				$playback_file_split = split("\n", $playback_file_contents);
-				$playbackinprogress = true;
-				$dontunsetplaybacksplit = true;
-				$command = "";
-				echo "Playback of file {$command_split[1]} started.\n\n";      			
-			}
-		}
-		// add command to playback area
-		if($command) 
-			$playback_file_split[] = $command;
-		// check for multiline
-		$lastchar = returnlastchar($command);
-		if($lastchar == "\\") {
+	$command = readline("pfSense shell: ");
+	readline_add_history($command);
+    $command_split = split(" ", $command);
+    $first_command = $command_split[0];	
+	if($first_command == "playback" || $first_command == "run") {
+		$playback_file = $command_split[1];
+		if(!$playback_file || !file_exists("/etc/phpshellsessions/{$playback_file}")) {
+			$command = "";
+			echo "Could not locate playback file.\n";
+		} else {
+			$command = "";
+			echo "\nPlayback of file {$command_split[1]} started.\n\n";
+			playback_file("{$playback_file}");
 			continue;
 		}
-		if(is_array($playback_file_split))
-   		foreach($playback_file_split as $pfc) {
-    		$command = $pfc;
-    		$lastchar = returnlastchar($command);
-    		if($lastchar == "\\") {
-				$playbackbuffer .= $command; 
-    			continue;
-    		} 
-    		if($playbackbuffer) {
-    			$firstchar = returnfirstchar($playbackbuffer); 
-    			if($firstchar == "!") {
-    				$commandstr = $playbackbuffer . "\n" . $command;
-    				$command = str_replace_all("!", "\n", $commandstr);
-    				$commandstr =  str_replace_all("\\", "", $command);
-	        		file_put_contents("/tmp/phpSh.sh", $commandstr);
-	        		exec("chmod a+rx /tmp/phpSh.sh");
-	        		system("/tmp/phpSh.sh");
-    				$playbackbuffer = "";
-    				$command = "";
-	    			continue;
-    			}
-    			if($firstchar == "=") {
-    				$commandstr = $playbackbuffer . "\n" . $command;
-    				$command = str_replace_all("!", "\n", $commandstr);
-    				$commandstr =  str_replace_all("\\", "", $command);
-	        		file_put_contents("/tmp/phpSh.sh", $commandstr);
-	        		exec("chmod a+rx /tmp/phpSh.sh");
-	        		system("/tmp/phpSh.sh");
-    				$playbackbuffer = "";
-    				$command = "";
-    				continue;
-    			}
-    			$playbackbuffernew = $playbackbuffer . "\n" . $command; 
-    			eval($playbackbuffernew);		
-    			$playbackbuffer = "";
-    			$playbackbuffernew = "";
-    			continue;
-    		}
-	        if($command == "exit") {
-	                $shell_active = false;
-	                echo "\n";
-	                break;
-			}		
-			readline_add_history($command);
-	        $command_split = split(" ", $command);
-	        $first_command = $command_split[0];
-	        switch($first_command) {
-	        	case "=":
-	        		$newcmd = "";
-	        		$counter = 0;
-	        		foreach($command_split as $cs) {
-	        			if($counter > 0)
-	        				$newcmd .= " {$cs}";
-	        			$counter++;
-	        		}
-	        		if($playbackinprogress)
-	        			echo "pfSense shell: {$command}\n\n";
-					if($recording) 
-						fwrite($recording_fd, $command . "\n"); 
-	        		file_put_contents("/tmp/phpSh.sh", $newcmd);
-	        		exec("chmod a+rx /tmp/phpSh.sh");
-	        		system("/tmp/phpSh.sh");
-	        		if($command_split[1] == "cd") {
-	        			echo "Changing working directory to {$command_split[2]}.\n";
-	        			chdir($command_split[2]);
-	        		}
-	        		$command = "";
-					echo "\n";
-					break;
-	        	case "!":
-	        		$newcmd = "";
-	        		$counter = 0;
-	        		foreach($command_split as $cs) {
-	        			if($counter > 0)
-	        				$newcmd .= " {$cs}";
-	        			$counter++;
-	        		}
-	        		file_put_contents("/tmp/phpSh.sh", $newcmd);
-	        		exec("chmod a+rx /tmp/phpSh.sh");
-	        		system("/tmp/phpSh.sh");
-	        		echo "\n";
-	        		$command = "";
-					break;				
-	        }
-		    if($command == "help") {
-		    	show_help();
-		    	$command = "";
-		    }
-    		if($command_split[0] == "stoprecording" || $command_split[0] == "stoprecord" || $command_split[0] == "stop") {
-    			if($recording) {
-    				fclose($recording_fd);
-    				$command = "";
-    				conf_mount_ro();
-    				echo "Recording stopped.\n";
-    				$recording = false; 
-    			} else {
-    				echo "No recording session in progress.\n";
-    				$command = "";
-    			}
-    		}
-    		if($command_split[0] == "showrecordings") {
-    			conf_mount_rw();
-    			safe_mkdir("/etc/phpshellsessions");
-    			if($recording) 
-    				conf_mount_ro();
-    			echo "==> Sessions available for playback are:\n\n";
-    			system("cd /etc/phpshellsessions && ls /etc/phpshellsessions");
-    			echo "==> end of list.\n";
-    			$command = "";
-    		}
-    		if($command_split[0] == "record") {
-    			if(!$command_split[1]) {
-    				echo "usage: record playbackname\n";
-					$command = "";
-    			} else {
-    				/* time to record */
-    				conf_mount_rw();
-					safe_mkdir("/etc/phpshellsessions");
-    				$recording_fd = fopen("/etc/phpshellsessions/{$command_split[1]}","w");
-    				if(!$recording_fd) {
-    					echo "Could not start recording session.\n";
-    					$command = "";
-    				} else { 
-    					$recording = true;
-    					echo "Recording of {$command_split[1]} started.\n";
-    					$command = "";
-    				}
-    			}
-    		}
-			if($command) {
-		        eval($command);
-		        if($playbackinprogress) 
-		        	echo "pfSense shell: {$command}\n\n";
-		        if($recording) 
-		        	fwrite($recording_fd, $command . "\n"); 
-		    }
+	}
+	if($first_command == "exec" or $first_command == "exec;") {
+		playback_text($playbackbuffer);
+		$playbackbuffer = "";
+		continue;
+	}
+	if($first_command == "stoprecording" || $first_command == "stoprecord" || $first_command == "stop") {
+		if($recording) {
+			fwrite($recording_fd, $playbackbuffer);
+			fclose($recording_fd);
+			$command = "";
+			conf_mount_ro();
+			echo "Recording stopped.\n";
+			$recording = false; 
+		} else {
+			echo "No recording session in progress.\n";
+			$command = "";
 		}
-		unset($playback_file_split);
-		unset($playback_file_contents);
-		unset($playback);
-		unset($command);
+	}
+	if($first_command == "showrecordings") {
+		conf_mount_rw();
+		safe_mkdir("/etc/phpshellsessions");
+		if($recording) 
+			conf_mount_ro();
+		echo "==> Sessions available for playback are:\n\n";
+		system("cd /etc/phpshellsessions && ls /etc/phpshellsessions");
+		echo "==> end of list.\n";
+		$command = "";
+	}
+	if($first_command == "reset") {
+		$playbackbuffer = "";
+		echo "\nBuffer reset.\n\n";
+		continue;
+	}
+	if($first_command == "record") {
+		if(!$command_split[1]) {
+			echo "usage: record playbackname\n";
+			$command = "";
+		} else {
+			/* time to record */
+			conf_mount_rw();
+			safe_mkdir("/etc/phpshellsessions");
+			$recording_fd = fopen("/etc/phpshellsessions/{$command_split[1]}","w");
+			if(!$recording_fd) {
+				echo "Could not start recording session.\n";
+				$command = "";
+			} else { 
+				$recording = true;
+				echo "Recording of {$command_split[1]} started.\n";
+				$command = "";
+			}
+		}
+	}
+	$playbackbuffer .= $command . "\n";
 }
 
 function returnlastchar($command) {
@@ -347,5 +262,33 @@ function str_replace_all($search,$replace,$subject) {
 	while(strpos($subject,$search)!==false) 
 		$subject = str_replace($search,$replace,$subject);
 	return $subject;
+}
+
+function playback_text($playback_file_contents) {
+	$playback_file_split = split("\n", $playback_file_contents);
+	$playback_text = "";
+	$toquote = '"';
+	$toquotereplace = '\\"';	
+	foreach($playback_file_split as $pfs) {
+		$firstchar = returnfirstchar($pfs);
+		$currentline = $pfs;
+		if($firstchar == "!") {
+			/* XXX: encode " in $pfs */
+			$pfsa = str_replace($toquote, $toquotereplace, $currentline);
+			$playback_text .= str_replace("!", "system(\"", $pfsa) . "\");\n";
+		} else if ($firstchar == "=") {
+			/* XXX: encode " in $pfs */
+			$pfsa = str_replace($toquote, $toquotereplace, $currentline);
+			$currentline   .= str_replace("!", "system(\"", $pfsa) . "\");\n";
+		} else {
+			$playback_text .= $pfs . "\n";
+		}
+	}
+	eval($playback_text);
+}
+
+function playback_file($playback_file) {
+	$playback_file_contents = file_get_contents("/etc/phpshellsessions/{$playback_file}");
+	playback_text($playback_file_contents);
 }
 

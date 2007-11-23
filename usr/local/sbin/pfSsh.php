@@ -11,104 +11,285 @@ require("functions.inc");
 echo ".";
 require("config.inc");
 echo ".";
+require("util.inc");
+echo ".";
 $g['booting'] = false;
 
-function show_help() {
-	echo "\nExample commands:\n";
+$shell_cmds = array("alias", "alloc", "bg", "bind", "bindkey", "break", 
+     "breaksw", "builtins", "case", "cd", "chdir", "command", "complete", "continue", "default",
+     "dirs", "do", "done", "echo", "echotc", "elif", "else", "end", "endif", "endsw", "esac", "eval",
+     "exec", "exit", "export", "false", "fc", "fg", "filetest", "fi", "for", "foreach", "getopts",
+     "glob", "goto", "hash", "hashstat", "history", "hup", "if", "jobid", "jobs", "kill", "limit",
+     "local", "log", "login", "logout", "ls-F", "nice", "nohup", "notify", "onintr", "popd",
+     "printenv", "pushd", "pwd", "read", "readonly", "rehash", "repeat", "return", "sched", "set",
+     "setenv", "settc", "setty", "setvar", "shift", "source", "stop", "suspend", "switch",
+     "telltc", "test", "then", "time", "trap", "true", "type", "ulimit", "umask", "unalias",
+     "uncomplete", "unhash", "unlimit", "unset", "unsetenv", "until", "wait", "where", "which",
+     "while");
+
+function pipe_cmd($command, $text_to_pipe) {
+	$descriptorspec = array(
+	    0 => array("pipe", "r"),  // stdin
+	    1 => array("pipe", "w"),  // stdout
+	    2 => array("pipe", "w")); // stderr ?? instead of a file
 	
-	echo "\n/* to output a configuration array */\n";
-	echo "print_r(\$config);\n";
-	
-	echo "\n/* to output the interfaces configuration portion of the configuration */\n";
-	echo "print_r(\$config['interfaces']);\n";
-	
-	echo "\n/* to output the dhcp server configuration */\n";
-	echo "print_r(\$config['dhcpd']);\n";
-	
-	echo "\n/* to enable multiline input mode */\n";
-	echo "multiline\n";
-	
-	echo "\n/* to exit the php pfSense shell */\n";
-	echo "exit\n";
-	
-	echo "\n/* to output supported wireless modes for an interface */\n";
-	echo "print_r(get_wireless_modes(\"ath0\"));\n";
-	
-	echo "\n/* to enable SSH */\n";
-	echo "\$config['system']['enablesshd'] = true;\n";
-	
-	echo "\n/* change OPTX to the OPT interface name such as BACKHAUL */\n";
-	echo "\$config['interfaces']['optx']['wireless']['standard'] = \"11a\";\n";
-	echo "\$config['interfaces']['optx']['wireless']['mode'] = \"hostap\";\n";
-	echo "\$config['interfaces']['optx']['wireless']['channel'] = \"6\";\n";
-	
-	echo "\n/* to enable dhcp server for an optx interface */\n";
-	echo "\$config['dhcpd']['optx']['enable'] = true;\n";
-	echo "\$config['dhcpd']['optx']['range']['from'] = \"192.168.31.100\";\n";
-	echo "\$config['dhcpd']['optx']['range']['to'] = \"192.168.31.150\";\n";
-	
-	echo "\n/* to disable the firewall filter */\n";
-	echo "\$config['system']['disablefilter'] = true;\n";
-	
-	echo "\n/* to enable an interface and set it for dhcp */\n";
-	echo "\$config['interfaces']['optx']['disabled'] = false;\n";
-	echo "\$config['interfaces']['optx']['ipaddr'] = \"dhcp\";\n";
-	
-	echo "\n/* to enable an interface and set a static ip address */\n";
-	echo "\$config['interfaces']['wan']['disabled'] = false;\n";
-	echo "\$config['interfaces']['wan']['ipaddr'] = \"192.168.100.1\";\n";
-	echo "\$config['interfaces']['wan']['subnet'] = \"24\";\n";
-	
-	echo "\n/* to save out the new configuration (config.xml) */\n";
-	echo "write_config();\n";
-	
-	echo "\n/* to reboot the system after saving */\n";
-	echo "system_reboot_sync();";
+	$fd = proc_open("$command", $descriptorspec, $pipes);
+	if (is_resource($fd)) {
+	        fwrite($pipes[0], "{$text_to_pipe}");
+	        fclose($pipes[0]);
+	        while($s= fgets($pipes[1], 1024)) {
+	          // read from the pipe
+	          $buffer .= $s;
+	        }
+	        fclose($pipes[1]);
+	        fclose($pipes[2]);
+	}
+	return $buffer;
 }
 
-$fp = fopen('php://stdin', 'r');
+if(!function_exists("readline")) {
+	function readline() {
+		$fp = fopen('php://stdin', 'r');
+		$textinput = chop(fgets($fp));
+		fclose($fp);
+	}
+	return $textinput;
+}
+
+function more($text, $count=24) {
+        $counter=0;
+        $lines = split("\n", $text);
+        foreach($lines as $line) {
+                if($counter > $count) {
+                        echo "Press RETURN to continue ...";
+                        $fp = fopen('php://stdin', 'r');
+                        $pressreturn = chop(fgets($fp));
+                        if($pressreturn == "q" || $pressreturn == "quit") 
+                        	return; 
+                        fclose($fp);
+                        $counter = 0;
+                }
+                echo "{$line}\n";
+                $counter++;
+        }
+}
+
+function show_help() {
+
+$show_help_text = <<<EOF
+
+	Enter a series of commands and then execute the set with "exec".
+	
+	For example:
+	echo "foo"; // php command
+	echo "foo2"; // php command
+	! echo "heh" # shell command
+	exec
+
+	Example commands:
+
+	startrecording <recordingfilename>
+	stoprecording <recordingfilename>
+	showrecordings
+
+	parse_config(true);  # reloads the \$config array
+
+	\$temp = print_r(\$config, true);
+	more(\$temp);
+
+	/* to output a configuration array */
+	print_r(\$config);
+	
+	/* to output the interfaces configuration portion of the configuration */
+	print_r(\$config['interfaces']);
+	
+	/* to output the dhcp server configuration */
+	print_r(\$config['dhcpd']);
+
+	/* to exit the php pfSense shell */
+	exit
+	
+	/* to output supported wireless modes for an interface */
+	print_r(get_wireless_modes(\"ath0\"));
+	
+	/* to enable SSH */
+	\$config['system']['enablesshd'] = true;
+	
+	/* change OPTX to the OPT interface name such as BACKHAUL */
+	\$config['interfaces']['optx']['wireless']['standard'] = "11a";
+	\$config['interfaces']['optx']['wireless']['mode'] = "hostap";
+	\$config['interfaces']['optx']['wireless']['channel'] = "6";
+	
+	/* to enable dhcp server for an optx interface */
+	\$config['dhcpd']['optx']['enable'] = true;
+	\$config['dhcpd']['optx']['range']['from'] = "192.168.31.100";
+	\$config['dhcpd']['optx']['range']['to'] = "192.168.31.150";
+	
+	/* to disable the firewall filter */
+	\$config['system']['disablefilter'] = true;
+	
+	/* to enable an interface and set it for dhcp */
+	\$config['interfaces']['optx']['disabled'] = false;
+	\$config['interfaces']['optx']['ipaddr'] = "dhcp";
+	
+	/* to enable an interface and set a static ip address */
+	\$config['interfaces']['wan']['disabled'] = false;
+	\$config['interfaces']['wan']['ipaddr'] = "192.168.100.1";
+	\$config['interfaces']['wan']['subnet'] = "24";
+	
+	/* to save out the new configuration (config.xml) */
+	write_config();
+	
+	/* to reboot the system after saving */
+	system_reboot_sync();
+	
+EOF;
+
+	more($show_help_text);
+ 	
+}
 
 echo ".\n\n";
 
-$shell_active = true;
-
 $pkg_interface='console';
 
-echo "Type \"help\" to show common usage scnenarios.";
+$shell_active = true;
+
+if($argc < 2) {
+	echo "Welcome to the pfSense php shell system\n";
+	echo "Written by Scott Ullrich (sullrich@gmail.com)\n";
+	echo "\nType \"help\" to show common usage scenarios.\n\n";
+}
+
+$recording = false;
+$playback_file_split = array();
+$playbackbuffer = "";
+
+if($argv[1]=="playback" or $argv[1]=="run") { 
+	if(!file_exists("/etc/phpshellsessions/{$argv[2]}")) {
+		echo "Could not locate playback file.";
+		exit;
+	}
+	playback_file($argv[2]);
+	exit;
+}
 
 while($shell_active == true) {
-        echo "\n\npfSense shell> ";
-        $command = chop(fgets($fp));
-        if($command == "exit") {
-                $shell_active = false;
-                echo "\n";
-                break;
-		}
-	    if($command == "help") {
-	    	show_help();
-	    	$command = "";
-	    }
-		if($command == "multiline" or $command == "ml") {
-			echo "\nmultiline mode enabled.  enter EOF on a blank line to execute.\n\n";
+	$command = readline("pfSense shell: ");
+	readline_add_history($command);
+    $command_split = split(" ", $command);
+    $first_command = $command_split[0];	
+	if($first_command == "playback" || $first_command == "run") {
+		$playback_file = $command_split[1];
+		if(!$playback_file || !file_exists("/etc/phpshellsessions/{$playback_file}")) {
 			$command = "";
-			$mlcommand = "";
-			$xxxyzyz = 0;
-			while($command <> "EOF") {
-				echo "pfSense multiline shell[$xxxyzyz]> ";
-		        $command = chop(fgets($fp));
-		        if($command == "help") 
-		        	show_help();
-		        if($command == "exit") 
-		        	die;
-		        if($command <> "EOF") 
-		        	$mlcommand .= $command;
-		        $xxxyzyz++;
-			}
-			$command = $mlcommand;
+			echo "Could not locate playback file.\n";
+		} else {
+			$command = "";
+			echo "\nPlayback of file {$command_split[1]} started.\n\n";
+			playback_file("{$playback_file}");
+			continue;
 		}
-		if($command) {
-			echo "\n";
-	        eval($command); 
-	    }
+	}
+	if($first_command == "exec" or $first_command == "exec;") {
+		playback_text($playbackbuffer);
+		$playbackbuffer = "";
+		continue;
+	}
+	if($first_command == "stoprecording" || $first_command == "stoprecord" || $first_command == "stop") {
+		if($recording) {
+			fwrite($recording_fd, $playbackbuffer);
+			fclose($recording_fd);
+			$command = "";
+			conf_mount_ro();
+			echo "Recording stopped.\n";
+			$recording = false; 
+		} else {
+			echo "No recording session in progress.\n";
+			$command = "";
+		}
+	}
+	if($first_command == "showrecordings") {
+		conf_mount_rw();
+		safe_mkdir("/etc/phpshellsessions");
+		if($recording) 
+			conf_mount_ro();
+		echo "==> Sessions available for playback are:\n\n";
+		system("cd /etc/phpshellsessions && ls /etc/phpshellsessions");
+		echo "==> end of list.\n";
+		$command = "";
+	}
+	if($first_command == "reset") {
+		$playbackbuffer = "";
+		echo "\nBuffer reset.\n\n";
+		continue;
+	}
+	if($first_command == "record") {
+		if(!$command_split[1]) {
+			echo "usage: record playbackname\n";
+			$command = "";
+		} else {
+			/* time to record */
+			conf_mount_rw();
+			safe_mkdir("/etc/phpshellsessions");
+			$recording_fd = fopen("/etc/phpshellsessions/{$command_split[1]}","w");
+			if(!$recording_fd) {
+				echo "Could not start recording session.\n";
+				$command = "";
+			} else { 
+				$recording = true;
+				echo "Recording of {$command_split[1]} started.\n";
+				$command = "";
+			}
+		}
+	}
+	$playbackbuffer .= $command . "\n";
 }
+
+function returnlastchar($command) {
+	$commandlen = strlen($command);
+	$endofstring = substr($command, ($commandlen-1));
+	return $endofstring; 
+}
+
+function returnfirstchar($command) {
+	$commandlen = strlen($command);
+	$endofstring = substr($command, 0, 1);
+	return $endofstring; 
+}
+
+function str_replace_all($search,$replace,$subject) {
+	while(strpos($subject,$search)!==false) 
+		$subject = str_replace($search,$replace,$subject);
+	return $subject;
+}
+
+function playback_text($playback_file_contents) {
+	$playback_file_split = split("\n", $playback_file_contents);
+	$playback_text = "";
+	$toquote = '"';
+	$toquotereplace = '\\"';	
+	foreach($playback_file_split as $pfs) {
+		$firstchar = returnfirstchar($pfs);
+		$currentline = $pfs;
+		if($firstchar == "!") {
+			/* XXX: encode " in $pfs */
+			$pfsa = str_replace($toquote, $toquotereplace, $currentline);
+			$playback_text .= str_replace("!", "system(\"", $pfsa) . "\");\n";
+		} else if ($firstchar == "=") {
+			/* XXX: encode " in $pfs */
+			$pfsa = str_replace($toquote, $toquotereplace, $currentline);
+			$currentline   .= str_replace("!", "system(\"", $pfsa) . "\");\n";
+		} else {
+			$playback_text .= $pfs . "\n";
+		}
+	}
+	eval($playback_text);
+}
+
+function playback_file($playback_file) {
+	$playback_file_contents = file_get_contents("/etc/phpshellsessions/{$playback_file}");
+	playback_text($playback_file_contents);
+}
+
 

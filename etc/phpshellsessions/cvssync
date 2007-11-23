@@ -112,7 +112,7 @@ exec("/etc/rc.filter_configure_sync");
 exec("pfctl -f /tmp/rules.debug");
 echo "\n";
 
-echo "===> Checkout complete.  Your system is now sync'd.\n";
+echo "===> Checkout complete.  Your system is now sync'd.  Scripting terminating.\n";
 
 exec("killall php");
 touch("/tmp/restart_webgui");

@@ -38,23 +38,26 @@ if(!file_exists("/usr/bin/cvs")) {
 }
 
 global $argv;
+global $command_split;
 
 /* NOTE: Set branches here */
 $branches = array("HEAD" => "Main development branch",
 				  "RELENG_1" => "1.2 Release branch",
 				  "RELENG_1_2" => "1.3 development branch");
-
-if(!$argv[3]) {
-	echo "\nPlease select which branch you would like:\n\n";
-	foreach($branches as $branchname => $branchdesc) {
-		echo "{$branchname} - {$branchdesc}\n";
-	}
-	$branch = readline("\n> ");
-	echo "\n";
+if($command_split[3]) {
+	$branch = $command_split[3];
 } else {
-	$branch = $argv[3];
+	if(!$argv[3]) {
+		echo "\nPlease select which branch you would like:\n\n";
+		foreach($branches as $branchname => $branchdesc) {
+			echo "{$branchname} - {$branchdesc}\n";
+		}
+		$branch = readline("\n> ");
+		echo "\n";
+	} else {
+		$branch = $argv[3];
+	}
 }
-
 create_supfile($branch);
 
 $CODIR =  "/home/pfsense/$branch";

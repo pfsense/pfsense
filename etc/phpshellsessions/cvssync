@@ -98,6 +98,7 @@ exec("rm -rf ${CODIR}/pfSense/conf/ 2>/dev/null");
 exec("rm -rf ${CODIR}/pfSense/cf/ 2>/dev/null");
 exec("rm -rf ${CODIR}/pfSense/root/.shrc");
 exec("rm -rf ${CODIR}/pfSense/root/.tcshrc");
+exec("rm -f ${CODIR}/pfSense/etc/syslog.conf 2>/dev/null");
 
 echo "Installing new files...\n";
 

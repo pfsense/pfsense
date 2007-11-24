@@ -30,3 +30,7 @@ php -f /tmp/post_upgrade_command.php
 # Remove any previous MD5 sum files
 rm -f /root/*.md5
 
+# File moved to pfSense php shell (pfSsh.php)
+rm -rf /usr/local/sbin/cvs_sync.sh
+
+

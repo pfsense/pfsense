@@ -44,8 +44,9 @@ global $command_split;
 $branches = array("HEAD" => "Main development branch",
 				  "RELENG_1" => "1.2 Release branch",
 				  "RELENG_1_2" => "1.3 development branch");
-if($command_split[3]) {
-	$branch = $command_split[3];
+
+if($command_split[2]) {
+	$branch = $command_split[2];
 } else {
 	if(!$argv[3]) {
 		echo "\nPlease select which branch you would like:\n\n";

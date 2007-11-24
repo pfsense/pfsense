@@ -31,7 +31,7 @@ require("guiconfig.inc");
 
 if (($_GET['submit'] == "Load") && file_exists($_GET['savetopath'])) {
 	$fd = fopen($_GET['savetopath'], "r");
-	$content = fread($fd, filesize($_GET['savetopath']));
+	if ((filesize($_GET['savetopath']) != 0)) {  $content = fread($fd, filesize($_GET['savetopath'])); } else { $content = ""; }
 	fclose($fd);
 	$edit_area="";
 	$loadmsg = gettext("Loaded text from")." " . $_GET['savetopath'];
@@ -49,7 +49,7 @@ if (($_GET['submit'] == "Load") && file_exists($_GET['savetopath'])) {
 
 if (($_POST['submit'] == "Load") && file_exists($_POST['savetopath'])) {
 	$fd = fopen($_POST['savetopath'], "r");
-	$content = fread($fd, filesize($_POST['savetopath']));
+	if ((filesize($_POST['savetopath']) != "0")) {  $content = fread($fd, filesize($_POST['savetopath'])); } else { $content = ""; }
 	fclose($fd);
 	$edit_area="";
 	$loadmsg = "Loaded text from " . $_POST['savetopath'];

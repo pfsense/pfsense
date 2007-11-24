@@ -216,7 +216,7 @@ while($shell_active == true) {
 		safe_mkdir("/etc/phpshellsessions");
 		if($recording) 
 			conf_mount_ro();
-		echo "==> Sessions available for playback are:\n\n";
+		echo "==> Sessions available for playback are:\n";
 		system("cd /etc/phpshellsessions && ls /etc/phpshellsessions");
 		echo "==> end of list.\n";
 		$command = "";

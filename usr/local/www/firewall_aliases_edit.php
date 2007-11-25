@@ -159,7 +159,7 @@ if ($_POST) {
 		$alias['address'] = $_POST['address'];
 
 	$address = $alias['address'];
-	$final_address_detail = htmlentities($_POST['detail'], ENT_QUOTES, 'UTF-8');
+	$final_address_detail  =  mb_convert_encoding($_POST['detail'],"HTML-ENTITIES","auto");  
   		if($final_address_detail <> "") {
 	       	$final_address_details .= $final_address_detail;
 	} else {
@@ -239,7 +239,7 @@ if ($_POST) {
 				   Pulling details here lets us only pull in details for valid
 				   address entries, saving us from having to track which ones to
 				   process later. */
-	       $comd = "\$final_address_detail = mb_convert_encoding(\$_POST['detail" . $x . "'],'HTML_ENTITIES','auto');";
+	       $comd = "\$final_address_detail = mb_convert_encoding(\$_POST['detail" . $x . "'],'HTML-ENTITIES','auto');";
 	       eval($comd);
 	       if($final_address_detail <> "") {
 	       $final_address_details .= $final_address_detail;

@@ -169,6 +169,7 @@ require_once("notices.inc");
 							<li><a href="/services_dyndns.php" class="navlnk">Dynamic DNS</a></li>
 							<li><a href="/load_balancer_pool.php" class="navlnk">Load Balancer</a></li>
 							<li><a href="/pkg_edit.php?xml=olsrd.xml&id=0" class="navlnk">OLSR</a></li>
+							<li><a href="/vpn_pppoe.php" class="navlnk">PPPoE Server</a></li>
 							<li><a href="/pkg_edit.php?xml=routed/routed.xml&id=0" class="navlnk">RIP</a></li>
 							<li><a href="/services_snmp.php" class="navlnk">SNMP</a></li>
 							<li><a href="/pkg_edit.php?xml=miniupnpd.xml&id=0" class="navlnk">UPnP</a></li>
@@ -182,7 +183,6 @@ require_once("notices.inc");
 						<ul class="subdrop">
 							<li><a href="/vpn_ipsec.php" class="navlnk">IPsec</a></li>
 							<li><a href="/pkg.php?xml=openvpn.xml" class="navlnk">OpenVPN</a></li>
-							<li><a href="/vpn_pppoe.php" class="navlnk">PPPoE</a></li>
 							<li><a href="/vpn_pptp.php" class="navlnk">PPTP</a></li>
 							<?php echo return_ext_menu("VPN"); ?>
 						</ul>

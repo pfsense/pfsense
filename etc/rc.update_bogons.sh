@@ -18,5 +18,6 @@ if [ ! -f /tmp/bogons ]; then
 fi
 egrep -v "^192.168.0.0/16|^172.16.0.0/12|^10.0.0.0/8" /tmp/bogons > /etc/bogons
 /etc/rc.conf_mount_ro
-/sbin/pfctl -t bogons -T replace -f /etc/bogons
+RESULT=`/sbin/pfctl -t bogons -T replace -f /etc/bogons 2>&1`
 rm /tmp/bogons
+echo "Bogons file downloaded:  $RESULT" | logger

@@ -191,7 +191,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("VPN,"VPN PPTP");
+$pgtitle = array("VPN","VPN PPTP");
 include("head.inc");
 
 ?>

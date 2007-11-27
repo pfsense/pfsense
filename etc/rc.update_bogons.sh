@@ -4,11 +4,8 @@
 # Part of the pfSense project
 # www.pfsense.com
 
-# Grab a random value between 0-999.
-value=$RANDOM
-while [ $value -gt 999 ] ; do
-  value=$RANDOM
-done
+# Grab a random value 
+value=`hexdump -n1 -e\"%u\" /dev/random`
 
 # Sleep for that time.
 sleep $value

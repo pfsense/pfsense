@@ -545,7 +545,7 @@
 		</item>
 		<item>
 			<minute>1</minute>
-			<hour>*</hour>
+			<hour>1</hour>
 			<mday>1</mday>
 			<month>*</month>
 			<wday>*</wday>

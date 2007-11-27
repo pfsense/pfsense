@@ -11,7 +11,7 @@ value=`hexdump -n1 -e\"%u\" /dev/random`
 sleep $value
 
 /etc/rc.conf_mount_rw
-/usr/bin/fetch -q -o /tmp/bogons "http://www.pfsense.com/mirrors/bogon-bn-nonagg.txt"
+/usr/bin/fetch -q -o /tmp/bogons "http://files.pfsense.org/mirrors/bogon-bn-nonagg.txt"
 if [ ! -f /tmp/bogons ]; then
 	echo "Could not download http://www.pfsense.com/mirrors/bogon-bn-nonagg.txt" | logger
 	exit

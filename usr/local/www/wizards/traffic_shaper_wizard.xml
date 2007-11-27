@@ -651,9 +651,9 @@
 			<typehint>World of Warcraft</typehint>
 			<bindstofield>ezshaper->step6->wow</bindstofield>
                 </field>
-        <field>
-          <name>ArchLord</name>
-          <type>checkbox</type>
+                <field>
+                        <name>ArchLord</name>
+                        <type>checkbox</type>
 			<typehint>ArchLord</typehint>
 			<bindstofield>ezshaper->step6->archlord</bindstofield>
                 </field>                
@@ -684,7 +684,7 @@
                         <type>checkbox</type>
                         <typehint>Other networking protocols</typehint>
                         <description>This will help raise or lower the priority of other protocols higher than most traffic.</description>
-			<enablefields>AIM,AppleRemoteDesktop,DNS,HTTP,ICMP,ICQ,IMAP,IPSEC,IRC,Jabber,LotusNotes,MSN,MSRDP,MySqlServer,PCAnywhere,POP3,PPTP,RTSP,SMB,SMTP,SNMP,StreamingMP3,TeamSpeak,VNC,NNTP,CVSUP</enablefields>
+			<enablefields>AIM,AppleRemoteDesktop,DNS,HTTP,ICMP,ICQ,IMAP,IPSEC,IRC,Jabber,LotusNotes,MSN,MSRDP,MySqlServer,PCAnywhere,POP3,PPTP,RTSP,SMB,SMTP,SNMP,StreamingMP3,TeamSpeak,VNC,NNTP,CVSUP,HBCI</enablefields>
 			<donotdisable>true</donotdisable>
 			<bindstofield>ezshaper->step7->enable</bindstofield>
                 </field>
@@ -1239,6 +1239,26 @@
 				</option>
 			</options>
 			<typehint>CVSUP</typehint>
+                </field>
+                <field>
+			<name>HBCI</name>
+			<bindstofield>ezshaper->step7->hbci</bindstofield>
+			<type>select</type>
+			<options>
+				<option>
+					<name>Default priority</name>
+					<value>D</value>
+				</option>
+				<option>
+					<name>Higher priority</name>
+					<value>H</value>
+				</option>
+				<option>
+					<name>Lower priority</name>
+					<value>L</value>
+				</option>
+			</options>
+			<typehint>HBCI</typehint>
                 </field>
                 <field>
                         <name>Next</name>

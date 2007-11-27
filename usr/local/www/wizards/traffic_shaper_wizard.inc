@@ -771,7 +771,7 @@ function step6_stepsubmitphpaction() {
 		  $gamesplist[] = array('AL-1', 'tcp', '11000', '11000', 'both');
 		  $gamesplist[] = array('AL-2', 'tcp', '11002', '11002', 'both');
 		  $gamesplist[] = array('AL-3', 'tcp', '11008', '11008', 'both');
-		}
+		}		
 		
 		if($_POST['gunzonline'] != "") {
 		    /* GunZ Online */
@@ -1071,6 +1071,11 @@ function step7_stepsubmitphpaction() {
 		if($_POST['cvsup'] != "") {
 		    /* cvsup */
 		    $othersplist[] = array('cvs', 'tcp', '5999', '5999', 'both', $_POST['cvsup']);
+		}
+
+		if($_POST['hbci'] != "") {
+		    /* HBCI */
+		    $othersplist[] = array('HBCI', 'tcp', '3000', '3000', 'both', $_POST['hbci']);
 		}
 
 		/* XXX: add some more protocols here! */

@@ -5,7 +5,7 @@
 # www.pfsense.com
 
 # Grab a random value 
-value=`hexdump -n1 -e\"%u\" /dev/random`
+value=`od -A n -d -N2 /dev/random | awk '{print int(($1/65536)*2000)}'`
 
 # Sleep for that time.
 sleep $value

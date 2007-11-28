@@ -1134,6 +1134,16 @@ function convert_config() {
 
 	}
 
+	/* special case upgrades */
+	/* fix every minute crontab bogons entry */
+	$cron_item_count = count($config['cron']['item']);
+	for($x=0; $x<$cron_item_count; $x++) {
+	        if(stristr($config['cron']['item'][$x]['command'], "rc.update_bogons.sh")) {
+	                $config['cron']['item'][$x]['hour'] = "2";
+	         		write_config("Updated bogon update frequency to 2am");       
+			}
+	}
+
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
 }

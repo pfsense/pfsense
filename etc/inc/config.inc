@@ -492,9 +492,9 @@ function convert_config() {
 	for($x=0; $x<$cron_item_count; $x++) {
 		if(stristr($config['cron']['item'][$x]['command'], "rc.update_bogons.sh")) {
 			if($config['cron']['item'][$x]['hour'] == "*" ) {
-		        $config['cron']['item'][$x]['hour'] = "2";
-		 		write_config("Updated bogon update frequency to 2am");
-		 		log_error("Updated bogon update frequency to 2am");
+		        $config['cron']['item'][$x]['hour'] = "3";
+		 		write_config("Updated bogon update frequency to 3am");
+		 		log_error("Updated bogon update frequency to 3am");
 		 	}       
 		}
 	}

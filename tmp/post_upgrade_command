@@ -3,6 +3,11 @@
 touch /var/run/config.lock
 /etc/rc.conf_mount_rw
 
+PFSENSETYPE=`cat /etc/platform`
+if [ $PFSENSETYPE = "embedded" ]; then
+	cp /etc/ttys_wrap /etc/ttys
+fi
+
 KERNELTYPE=`cat /boot/kernel/pfsense_kernel.txt`
 if [ $KERNELTYPE = "wrap" ]; then
 	if [ -f /kernels/kernel_wrap.gz ]; then 
@@ -32,4 +37,5 @@ rm -f /root/*.md5
 
 # File moved to pfSense php shell (pfSsh.php)
 rm -rf /usr/local/sbin/cvs_sync.sh
+
 

@@ -57,7 +57,8 @@ if [ ! "$PLATFORM" = "cdrom" ] ; then
 	# to /cf/conf
 	if [ -d "/conf" ]; then
 		# If item is not a symlink then rm and recreate
-		if ! test -L /conf; then
+		CONFPOINTSTO=`readlink /conf` 
+		if ! test "x$CONFPOINTSTO" = "x/cf/conf"; then 
 			rm -rf /conf
 			ln -s /cf/conf /conf
 		fi

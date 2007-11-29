@@ -56,8 +56,11 @@ if [ ! "$PLATFORM" = "cdrom" ] ; then
 	# If /conf is a directory, convert it to a symlink
 	# to /cf/conf
 	if [ -d "/conf" ]; then
-		rm -rf /conf
-		ln -s /cf/conf /conf
+		# If item is not a symlink then rm and recreate
+		if ! test -L /conf; then
+			rm -rf /conf
+			ln -s /cf/conf /conf
+		fi
 	fi
 fi
 

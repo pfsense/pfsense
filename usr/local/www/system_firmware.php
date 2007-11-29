@@ -181,8 +181,9 @@ print_info_box($sig_warning);
 			  to be uploaded.<br>Click &quot;Upgrade firmware&quot;
               to start the upgrade process.</p>
 			  		<?php if ($g['platform'] == "embedded" or $g['platform'] == "cdrom"): ?>
-						echo "This platform cannot be upgraded.  Consider using option 13 from the console.";
-						exit;
+						This platform cannot be upgraded.  Consider using option 13 from the console.
+						<?php include("fend.inc"); ?>
+						<?php exit; ?>
 					<?php endif; ?>
                     <?php if (!file_exists($d_sysrebootreqd_path)): ?>
                     <?php if (!file_exists($d_fwupenabled_path)): ?>

@@ -237,7 +237,7 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
               <?=gettext("Indicates whether this is a system (aka non-deletable) user or a user created by a particular user.");?>
             </td>
           </tr>
-          <?php if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']) and $not_now == true): ?>
+          <?php if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])): ?>
           <tr>
             <td width="22%" valign="top" class="vncell"><?=gettext("User Privileges");?></td>
             <td width="78%" class="vtable">

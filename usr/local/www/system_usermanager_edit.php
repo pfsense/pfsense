@@ -216,14 +216,13 @@ $jscriptstr .= <<<EOD
 
 EOD;
 
-#$pfSenseHead->addScript($jscriptstr);
-#echo $pfSenseHead->getHTML();
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc"); ?>
+<?php echo $jscriptstr; ?>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <?php if ($savemsg) print_info_box($savemsg); ?>
             <form action="system_usermanager_edit.php" method="post" name="iform" id="iform">

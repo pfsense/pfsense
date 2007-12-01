@@ -34,11 +34,11 @@
 
 require("guiconfig.inc");
 // The page title for non-admins
-$pgtitle = "System: User Password";
+$pgtitle = array("System","User Password");
 
 if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
     // Page title for main admin
-    $pgtitle = "System: User Manager";
+    $pgtitle = array("System","User Manager");
 
     $id = $_GET['id'];
     if (isset($_POST['id']))
@@ -166,7 +166,6 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
 <?php include("fbegin.inc");?>
-<p class="pgtitle"><?=$pgtitle;?></p>
 <?php if ($input_errors) print_input_errors($input_errors);?>
 <?php if ($savemsg) print_info_box($savemsg);?>
   <table width="100%" border="0" cellpadding="0" cellspacing="0">

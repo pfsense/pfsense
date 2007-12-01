@@ -60,8 +60,12 @@ if ($_POST) {
 
 
 	if (!$input_errors) {
-		$pconfig['session_timeout'] = intval($_POST['session_timeout']);
 
+		if($_POST['session_timeout'] && $_POST['session_timeout'] != "0") 
+			$pconfig['session_timeout'] = intval($_POST['session_timeout']);
+		else 
+			unset($config['system']['webgui']['session_timeout']);
+			
 		write_config();
 
 		pfSenseHeader("system_usermanager_settings.php");

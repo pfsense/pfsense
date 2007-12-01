@@ -42,8 +42,15 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-	if ($_POST['session_timeout'] != "" && !is_numeric($_POST['session_timeout']))
-		$input_errors[] = gettext("Session timeout must be an integer with value 0 or greater.");
+	$timeout = intval($_POST['session_timeout']);
+	if ($timeout != "" && !is_numeric($timeout))
+		$input_errors[] = gettext("Session timeout must be an integer with value 1 or greater.");
+
+	if ($timeout < 1) 
+		$input_errors[] = gettext("Session timeout must be an integer with value 1 or greater.");
+	
+	if ($timeout > 999) 
+		$input_errors[] = gettext("Session timeout must be an integer with value 1 or greater.");
 
 	/* if this is an AJAX caller then handle via JSON */
 	if (isAjax() && is_array($input_errors)) {
@@ -53,7 +60,7 @@ if ($_POST) {
 
 
 	if (!$input_errors) {
-		$pconfig['session_timeout'] = $_POST['session_timeout'];
+		$pconfig['session_timeout'] = intval($_POST['session_timeout']);
 
 		write_config();
 

@@ -241,6 +241,22 @@ if($_GET['act']=="new" || $_GET['act']=="edit"){
         }
 	}
 ?>
+<script src="/javascript/scriptaculous/prototype.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+	function checkall() {
+        var el = document.getElementById('iform');
+        for (var i = 0; i < el.elements.length; i++) {
+          el.elements[i].checked = true;
+        }
+   	}
+   	function checknone() {
+        var el = document.getElementById('iform');
+        for (var i = 0; i < el.elements.length; i++) {
+          el.elements[i].checked = false;
+        }
+   	}
+</script>
 <form action="system_groupmanager.php" method="post" name="iform" id="iform">
           <table width="100%" border="0" cellpadding="6" cellspacing="0">
             <tr> 
@@ -274,6 +290,10 @@ if($_GET['act']=="new" || $_GET['act']=="edit"){
           marked with an * are strongly recommended for every group.</span>
 			  	</td>
 				</tr>
+				<tr><td colspan="4">
+		           <input type="button" name="types[]" value="Check All" onClick="checkall(); return false;"> 
+        		   <input type="button" name="types[]" value="Check None" onClick="checknone(); return false;">
+				</td></tr>
             <tr>
               <td colspan="2">
               <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -287,7 +307,7 @@ if($_GET['act']=="new" || $_GET['act']=="edit"){
               	$identifier = str_replace('.php','',$fname);
               	?>
               	<tr><td class="listlr">
-              	<input name="<?=$identifier?>" type="checkbox" id="<?=$identifier?>" value="yes" <?php if (in_array($fname,$pconfig['pages'])) echo "checked"; ?>></td>
+              	<input class="check" name="<?=$identifier?>" type="checkbox" id="<?=$identifier?>" value="yes" <?php if (in_array($fname,$pconfig['pages'])) echo "checked"; ?>></td>
               	<td class="listr"><?=$title?></td>
               	<td class="listr"><?=$fname?></td>
               	</tr>
@@ -347,4 +367,6 @@ if($_GET['act']=="new" || $_GET['act']=="edit"){
   </td>
   </tr>
   </table>
+  
+  
 <?php include("fend.inc"); ?>

@@ -129,11 +129,15 @@ if ($_POST) {
 			$t_privs[$id] = $priv;
 		else
 			$t_privs[] = $priv;
-
-    if ($priv['id'] == "hasshell") {
-      assignUID($user['name']);
-      assignGID($user['groupname']);
-    }
+	
+		$name = $config['system']['user'][$userid]['name'];
+		$groupname = $config['system']['user'][$userid]['groupname'];
+	
+	    if ($priv['id'] == "hasshell") {
+		  log_error("Assigning UID to $name / $groupname");
+	      assignUID($name);
+	      assignGID($groupname);
+	    }
 
 		write_config();
 

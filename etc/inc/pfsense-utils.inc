@@ -2457,7 +2457,7 @@ function sync_webgui_passwords() {
 
 	if ($config['system']['user']) {
 		$root =& getUNIXRoot();
-		$crypted_pw = $root['password'];
+		$crypted_pw = &$root['password'];
 	}
 
 	if (empty ($crypted_pw)) {

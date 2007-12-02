@@ -139,8 +139,12 @@ if ($_POST) {
 	      assignGID($groupname);
 	    }
 
-		write_config();
+	write_config();
 
+	/* sync usernames and password db */
+	$retval = system_password_configure();
+	sync_webgui_passwords();
+		
     $retval = 0;
     config_lock();
     config_unlock();

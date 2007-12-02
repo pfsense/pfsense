@@ -2157,13 +2157,6 @@ function display_top_tabs(& $tab_array) {
 	$groupindex = index_groups();
 	$userindex = index_users();
 
-	$auth_user_index = $userindex[$auth_user];
-	$auth_user_group_index = $groupindex[$config['system']['user'][$auth_user_index]['groupname']];
-
-	print_r($groupindex);
-	print_r($userindex);
-	print_r($HTTP_SERVER_VARS);
-
 	$allowed = array ();
 	$allowed[] = '';
 	if (!isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']))

@@ -207,7 +207,6 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							<?=output_menu_item("/diag_ipsec.php", "IPSec");?>
 							<?=output_menu_item("/status_slbd_pool.php", "Load Balancer");?>
 							<?php if($g['platform'] == "pfSense"): ?>
-							<?=output_menu_item("", "");?>
 							<?=output_menu_item("/diag_pkglogs.php", "Package Logs");?>
 							<?php endif; ?>
 							<?=output_menu_item("/status_queues.php", "Queues");?>

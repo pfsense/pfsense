@@ -2151,17 +2151,25 @@ function get_disk_info() {
 function display_top_tabs(& $tab_array) {
 	global $HTTP_SERVER_VARS;
 	global $config;
+	
+	$auth_user = $HTTP_SERVER_VARS['AUTH_USER'];
 
 	$groupindex = index_groups();
 	$userindex = index_users();
 
+	$auth_user_index = $userindex[$auth_user];
+	$auth_user_group_index = $groupindex[$config['system']['user'][$auth_user_index]['groupname']];
+
+	print_r($groupindex);
+	print_r($userindex);
+	print_r($HTTP_SERVER_VARS);
+
 	$allowed = array ();
-
 	$allowed[] = '';
-	if (!isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']) && isset ($config['system']['group'][$groupindex[$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['groupname']]]['pages'][0]['page'])) {
-		$allowed = & $config['system']['group'][$groupindex[$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['groupname']]]['pages'][0]['page'];
-	}
-
+	if (!isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']))
+	    if (isset($config['system']['group'][$groupindex[$config['system']['user'][$userindex[$auth_user]]['groupname']]]['pages'])) 
+			$allowed = &$config['system']['group'][$groupindex[$config['system']['user'][$userindex[$auth_user]]['groupname']]]['pages'];
+	
 	/*   does the user have access to this tab?
 	 *   master user has access to everything.
 	*   if the user does not have access, simply

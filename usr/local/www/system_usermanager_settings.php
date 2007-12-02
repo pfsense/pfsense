@@ -76,8 +76,6 @@ if ($_POST) {
 }
 
 include("head.inc");
-// XXX billm FIXME
-//echo $pfSenseHead->getHTML();
 ?>
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">

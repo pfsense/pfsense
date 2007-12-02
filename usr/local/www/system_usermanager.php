@@ -64,8 +64,9 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
     } else if ($_GET['act'] == "del" && $_GET['what'] == "priv") {
         if ($t_privs[$_GET['privid']]) {
             $privdeleted = $t_privs[$_GET['privid']]['id'];
-            unset($t_privs[$_GET['privid']]);
+            unset($a_user[$id]['priv'][$_GET['privid']]);
             write_config();
+            unset($t_privs[$_GET['privid']]);
             $_GET['act'] = "edit";
             $retval = 0;
             $savemsg = get_std_save_message($retval);

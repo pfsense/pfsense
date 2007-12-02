@@ -39,8 +39,32 @@ if(!function_exists("gettext")) {
 }
 
 if(!function_exists("pfSenseHeader")) {
-	function pfSenseHeader($location) {
-		header("Location: $location");
+	/****f* pfsense-utils/pfSenseHeader
+	 * NAME
+	 *   pfSenseHeader
+	 * INPUTS
+	 *   none
+	 * RESULT
+	 *   Javascript header change or browser Location:
+	 ******/
+	function pfSenseHeader($text) {
+	        global $_SERVER;
+	        if (isAjax()) {
+	                if ($_SERVER['HTTPS'] == "on")
+	                        $protocol = "https";
+	                else
+	                        $protocol = "http";
+	
+	                $port = ":{$_SERVER['SERVER_PORT']}";
+	                if ($_SERVER['SERVER_PORT'] == "80" && $protocol == "http")
+	                        $port = "";
+	                if ($_SERVER['SERVER_PORT'] == "443" && $protocol == "https")
+	                        $port = "";
+	                $complete_url = "{$protocol}://{$_SERVER['SERVER_NAME']}{$port}/{$text}";
+	                echo "\ndocument.location.href = '{$complete_url}';\n";
+	        } else {
+	                Header("Location: $text");
+	        }
 	}
 }
 /* END compatibility goo with HEAD */

@@ -484,7 +484,6 @@ echo $jscriptstr;
 
 
 <input type="hidden" value="" name="sequence" id="sequence">
-<p class="pgtitle">Dashboard&nbsp;&nbsp;&nbsp;
 <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="Click here to add widgets" style="cursor: pointer;" onmouseup="domTT_activate(this, event, 'content', document.getElementById('content1'), 'type', 'velcro', 'delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
 
 <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_info_pkg.gif" alt="Click here for help" style="cursor: help;" onmouseup="hideAllWidgets();domTT_activate(this, event, 'content', document.getElementById('welcome-div'), 'type', 'sticky', 'closeLink', '','delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />

@@ -118,10 +118,10 @@ include("head.inc");
 		<tr>
 		  <td>
 <?php
-			$tab_array = array();
-			$tab_array[0] = array("Gateways", false, "system_gateways.php");
-			$tab_array[1] = array("Routes", true, "system_routes.php");
-                        display_top_tabs($tab_array);
+		$tab_array = array();
+		$tab_array[0] = array("Gateways", false, "system_gateways.php");
+		$tab_array[1] = array("Static Routes", true, "system_routes.php");
+		display_top_tabs($tab_array);
 ?>
 		  </td>
 		</tr>

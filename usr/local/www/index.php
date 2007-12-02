@@ -394,7 +394,7 @@ EOD;
 $closehead = false;
 
 ## Set Page Title and Include Header
-$pgtitle = array("pfSense webConfigurator");
+$pgtitle = array("pfSense Dashboard");
 include("head.inc");
 	
 	

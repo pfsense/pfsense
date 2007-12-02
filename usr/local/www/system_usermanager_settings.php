@@ -68,6 +68,9 @@ if ($_POST) {
 			
 		write_config();
 
+		$retval = system_password_configure();
+		sync_webgui_passwords();
+
 		pfSenseHeader("system_usermanager_settings.php");
 	}
 }

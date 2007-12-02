@@ -33,6 +33,12 @@
  *
  */
 
+
+if(!$groupindex) 
+	$groupindex = index_groups();
+if(!$userindex)
+	$userindex = index_users();
+
 /****f* pfsense-utils/does_url_exist
  * NAME
  *   does_url_exist

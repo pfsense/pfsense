@@ -44,6 +44,8 @@
 				<strong><?php readfile("/etc/version"); ?></strong>
 				<br />
 				built on <?php readfile("/etc/version.buildtime"); ?>
+                <br />
+                <?=`uname -sr`?>				
 			</td>
 		</tr>
 		<tr>

@@ -2138,16 +2138,58 @@ function get_disk_info() {
  * NAME
  *   display_top_tabs - display tabs with rounded edges
  * INPUTS
- *   $text	- array of tabs
+ *   $text      - array of tabs
  * RESULT
  *   null
  ******/
-function display_top_tabs($tab_array) {
+function display_top_tabs(& $tab_array) {
+	global $HTTP_SERVER_VARS;
+	global $config;
+
+	$groupindex = index_groups();
+	$userindex = index_users();
+
+	$allowed = array ();
+
+	$allowed[] = '';
+	if (!isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']) && isset ($config['system']['group'][$groupindex[$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['groupname']]]['pages'][0]['page'])) {
+		$allowed = & $config['system']['group'][$groupindex[$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['groupname']]]['pages'][0]['page'];
+	}
+
+	/*   does the user have access to this tab?
+	 *   master user has access to everything.
+	*   if the user does not have access, simply
+	*   unset the tab item.
+	*/
+
+	if (!isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
+		$authorized = & $allowed;
+		$tab_temp = array ();
+		foreach ($tab_array as $ta) {
+			$link = $ta[2];
+			// TODO: humm what shall we do with pkg_edit.php and pkg.php?
+			if ((strpos($link, "pkg.php")) !== false || (strpos($link, "pkg_edit.php")) !== false) {
+				$pos_equal = strpos($link, "=");
+				$pos_xmlsuffix = strpos($link, ".xml");
+				$link = substr($link, $pos_equal +1, ($pos_xmlsuffix - $pos_equal +3));
+			}
+			// next check - what if the basename contains a query string?
+			if ((strpos($link, "?")) !== false) {
+				$pos_qmark = strpos($link, "?");
+				$link = substr($link, 0, $pos_qmark);
+			}
+			if (in_array(basename($link), $authorized))
+				$tab_temp[] = $ta;
+		}
+		unset ($tab_array);
+		$tab_array = & $tab_temp;
+	}
+
 	echo "<table cellpadding='0' cellspacing='0'>\n";
-	echo " <tr height='1'>\n";
+	echo " <tr>\n";
 	$tabscounter = 0;
 	foreach ($tab_array as $ta) {
-		if($ta[1] == true) {
+		if ($ta[1] == true) {
 			echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><div id='tabactive'></div></td>\n";
 		} else {
 			echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><div id='tabdeactive{$tabscounter}'></div></td>\n";
@@ -2156,19 +2198,19 @@ function display_top_tabs($tab_array) {
 	}
 	echo "</tr>\n<tr>\n";
 	foreach ($tab_array as $ta) {
-		if($ta[1] == true) {
-			echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
+		if ($ta[1] == true) {
+			echo "  <td height=\"15\" valign=\"middle\" bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
 			echo "&nbsp;&nbsp;&nbsp;";
-			echo "<font size='-12'>&nbsp;</td>\n";
+			echo "<font size='-12'>&nbsp;</font></B></td>\n";
 		} else {
-			echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><B>&nbsp;&nbsp;&nbsp;<a href='{$ta[2]}'>";
-			echo "<font color='white'>{$ta[0]}</a>&nbsp;&nbsp;&nbsp;";
-			echo "<font size='-12'>&nbsp;</td>\n";
+			echo "  <td height=\"15\" valign=\"middle\" bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"><B>&nbsp;&nbsp;&nbsp;<a href='{$ta[2]}'>";
+			echo "<font color='white'>{$ta[0]}</font></a>&nbsp;&nbsp;&nbsp;";
+			echo "<font size='-12'>&nbsp;</font></B></td>\n";
 		}
 	}
-	echo "</tr>\n<tr height='5px'>\n";
+	echo "</tr>\n<tr>\n";
 	foreach ($tab_array as $ta) {
-		if($ta[1] == true) {
+		if ($ta[1] == true) {
 			echo "  <td bgcolor='#EEEEEE' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"></td>\n";
 		} else {
 			echo "  <td bgcolor='#777777' onClick=\"document.location='{$ta[2]}'\" style=\"cursor: pointer;\"></td>\n";
@@ -2181,7 +2223,7 @@ function display_top_tabs($tab_array) {
 	echo "<script type=\"text/javascript\">";
 	echo "NiftyCheck();\n";
 	echo "Rounded(\"div#tabactive\",\"top\",\"#FFF\",\"#EEEEEE\",\"smooth\");\n";
-	for($x=0; $x<$tabscounter; $x++)
+	for ($x = 0; $x < $tabscounter; $x++)
 		echo "Rounded(\"div#tabdeactive{$x}\",\"top\",\"#FFF\",\"#777777\",\"smooth\");\n";
 	echo "</script>";
 }

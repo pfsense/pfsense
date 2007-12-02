@@ -55,8 +55,8 @@ function getHeadJS() {
   isset($HTTP_SERVER_VARS['AUTH_USER']) ? $loggedin = "var isLoggedIn = true;" : $loggedin = "var isLoggedIn = false;";
   $scriptElms = count($scriptName);
   $scriptName = $scriptName[$scriptElms-1];
-  $realScriptName = $_SERVER["SCRIPT_NAME"];
-
+  $realScriptName = str_replace("/", "", $_SERVER["SCRIPT_NAME"]);
+  
   $headjs .= "
        {$loggedin}
 
@@ -64,7 +64,7 @@ function getHeadJS() {
         var newInput = document.createElement('input');
         newInput.setAttribute('id', 'scriptname');
         newInput.setAttribute('name', 'scriptname');
-        newInput.setAttribute('value', '$realScriptName');
+        newInput.setAttribute('value', '{$realScriptName}');
         newInput.setAttribute('type', 'hidden');
 
         $('iform').appendChild(newInput);

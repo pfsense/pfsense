@@ -272,7 +272,7 @@ if($_GET['act']=="new" || $_GET['act']=="edit"){
               <?php if($inuse == false): ?>
                 <input name="groupname" type="text" class="formfld" id="groupname" size="20" value="<?=htmlspecialchars($pconfig['name']);?>"> 
               <?php else: ?>
-              	<?php echo $pconfig['name'] . "*"; ?>
+              	<?php echo $pconfig['name']; ?>
               	<input name="groupname" type="hidden" class="formfld" id="groupname" value="<?=htmlspecialchars($pconfig['name']);?>"> 
               <?php endif; ?>
                 </td>

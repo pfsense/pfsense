@@ -120,6 +120,7 @@ echo "Upgrading configuration...\n";
 convert_config();
 /* setup php.ini */
 convert_config();
+require_once("auth.inc");
 sync_webgui_passwords();
 
 echo "Restarting check_reload_status...\n";

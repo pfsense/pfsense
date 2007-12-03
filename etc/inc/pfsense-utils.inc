@@ -2228,7 +2228,7 @@ function display_top_tabs(& $tab_array) {
 				$link = substr($link, 0, $pos_qmark);
 			}
 			$authorized_text = print_r($allowed, true);
-			log_error("comparing " . basename($link) . " {$authorized_text}");
+//			log_error("comparing " . basename($link) . " {$authorized_text}");
 			if (in_array(basename($link), $authorized))
 				$tab_temp[] = $ta;
 		}

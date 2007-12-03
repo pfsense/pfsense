@@ -173,7 +173,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("VPN","PPPoE");
+$pgtitle = array("Services","PPPoE Server");
 include("head.inc");
 
 ?>

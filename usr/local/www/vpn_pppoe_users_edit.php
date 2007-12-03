@@ -111,7 +111,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array("VPN","PPPoE","User","Edit");
+$pgtitle = array("Services","PPPoE Server","User","Edit");
 include("head.inc");
 
 ?>

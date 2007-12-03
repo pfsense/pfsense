@@ -65,7 +65,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array("VPN","PPPoE","Users");
+$pgtitle = array("Services","PPPoE Server","Users");
 include("head.inc");
 
 ?>

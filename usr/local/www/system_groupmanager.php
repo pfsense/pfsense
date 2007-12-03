@@ -38,6 +38,7 @@ $pgtitle = array("System", "Group manager");
 // Returns an array of pages with their descriptions
 function getAdminPageList() {
 	global $g;
+	global $config;
 	
     $tmp = Array();
 
@@ -123,9 +124,8 @@ function getAdminPageList() {
 		
 		/* firewall rule view and edit entries for lan, wan, optX */
 		$iflist = array("lan" => "lan", "wan" => "wan");
-		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-			$iflist['opt' . $i] = strtolower($config['interfaces']['opt' . $i]['descr']);
-		}
+		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+			$iflist['opt' . $i] = "opt{$i}";
 
 		// Firewall Rules
 		foreach ($iflist as $ifent => $ifname) {

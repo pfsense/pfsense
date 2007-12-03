@@ -2145,21 +2145,9 @@ function get_disk_info() {
 function display_top_tabs(& $tab_array) {
 	global $HTTP_SERVER_VARS;
 	global $config;
-	global $allowed;
-	
-	$auth_user = $HTTP_SERVER_VARS['AUTH_USER'];
+	global $g;
+	$allowed = $g['privs'];
 
-	$groupindex = index_groups();
-	$userindex = index_users();
-
-	if(!$allowed) {
-		$allowed = array ();
-		$allowed[] = '';
-		if (isset($config['system']['group'][$groupindex[$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['groupname']]]['pages'])) {
-			$allowed = &$config['system']['group'][$groupindex[$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['groupname']]]['pages'];
-		}
-	}
-	
 	/*   does the user have access to this tab?
 	 *   master user has access to everything.
 	*   if the user does not have access, simply
@@ -3841,7 +3829,7 @@ function is_fqdn($fqdn) {
 	if(preg_match("/\.\./", $fqdn)) {
 		$hostname = false;
 	}
-	if(preg_match("/^\./i", $fqdn)) {
+	if(preg_match("/^\./i", $fqdn)) { 
 		$hostname = false;
 	}
 	if(preg_match("/\//i", $fqdn)) {

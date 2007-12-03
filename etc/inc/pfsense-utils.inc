@@ -33,12 +33,6 @@
  *
  */
 
-
-if(!$groupindex) 
-	$groupindex = index_groups();
-if(!$userindex)
-	$userindex = index_users();
-
 /****f* pfsense-utils/does_url_exist
  * NAME
  *   does_url_exist
@@ -2151,17 +2145,20 @@ function get_disk_info() {
 function display_top_tabs(& $tab_array) {
 	global $HTTP_SERVER_VARS;
 	global $config;
+	global $allowed;
 	
 	$auth_user = $HTTP_SERVER_VARS['AUTH_USER'];
 
 	$groupindex = index_groups();
 	$userindex = index_users();
 
-	$allowed = array ();
-	$allowed[] = '';
-	if (!isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']))
-	    if (isset($config['system']['group'][$groupindex[$config['system']['user'][$userindex[$auth_user]]['groupname']]]['pages'])) 
-			$allowed = &$config['system']['group'][$groupindex[$config['system']['user'][$userindex[$auth_user]]['groupname']]]['pages'];
+	if(!$allowed) {
+		$allowed = array ();
+		$allowed[] = '';
+		if (isset($config['system']['group'][$groupindex[$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['groupname']]]['pages'])) {
+			$allowed = &$config['system']['group'][$groupindex[$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['groupname']]]['pages'];
+		}
+	}
 	
 	/*   does the user have access to this tab?
 	 *   master user has access to everything.
@@ -2185,6 +2182,8 @@ function display_top_tabs(& $tab_array) {
 				$pos_qmark = strpos($link, "?");
 				$link = substr($link, 0, $pos_qmark);
 			}
+			$authorized_text = print_r($allowed, true);
+			log_error("comparing " . basename($link) . " {$authorized_text}");
 			if (in_array(basename($link), $authorized))
 				$tab_temp[] = $ta;
 		}

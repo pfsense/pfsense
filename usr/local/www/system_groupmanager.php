@@ -120,6 +120,17 @@ function getAdminPageList() {
         if(file_exists("extensions.inc")){
 	   	   include("extensions.inc");
 		}
+		
+		$iflist = array("lan" => "lan", "wan" => "wan");
+		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
+			$iflist['opt' . $i] = strtolower($config['interfaces']['opt' . $i]['descr']);
+		}
+		foreach ($iflist as $ifent => $ifname) {
+			$entryname = "firewall_rules.php?if={$ifname}";
+	        $tmp[$entryname] = ("Firewall Rules: " . $ifname);			
+			$entryname = "firewall_rules_edit.php?if={$ifname}";
+	        $tmp[$entryname] = ("Firewall Rules: Edit: " . $ifname);			
+		}
 
         asort($tmp);
         return $tmp;

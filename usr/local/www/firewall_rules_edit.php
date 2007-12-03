@@ -502,17 +502,29 @@ include("head.inc");
 								<option value="any"     <?php if ($pconfig['src'] == "any") { echo "selected"; } ?>>any</option>
 								<option value="single"  <?php if (($pconfig['srcmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>>Single host or alias</option>
 								<option value="network" <?php if (!$sel) echo "selected"; ?>>Network</option>
+								<?php if(have_ruleint_access("wan")): ?>
 								<option value="wanip" 	<?php if ($pconfig['src'] == "wanip") { echo "selected"; } ?>>WAN address</option>
+								<?php endif; ?>
+								<?php if(have_ruleint_access("lan")): ?>
 								<option value="lanip" 	<?php if ($pconfig['src'] == "lanip") { echo "selected"; } ?>>LAN address</option>
+								<?php endif; ?>
+								<?php if(have_ruleint_access("lan")): ?>
 								<option value="lan"     <?php if ($pconfig['src'] == "lan") { echo "selected"; } ?>>LAN subnet</option>
+								<?php endif; ?>
+								<?php if(have_ruleint_access("pptp")): ?>
 								<option value="pptp"    <?php if ($pconfig['src'] == "pptp") { echo "selected"; } ?>>PPTP clients</option>
+								<?php endif; ?>
+								<?php if(have_ruleint_access("pppoe")): ?>
 								<option value="pppoe"   <?php if ($pconfig['src'] == "pppoe") { echo "selected"; } ?>>PPPoE clients</option>
+								<?php endif; ?>								
 <?php
 								for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): ?>
+								<?php if(have_ruleint_access("opt{$i}")): ?>
 									<option value="opt<?=$i;?>" <?php if ($pconfig['src'] == "opt" . $i) { echo "selected"; } ?>><?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?> subnet</option>
 									<option value="opt<?=$i;?>ip"<?php if ($pconfig['src'] == "opt" . $i . "ip") { echo "selected"; } ?>>
 										<?=$config['interfaces']['opt' . $i]['descr']?> address
 									</option>
+								<?php endif; ?>
 <?php 							endfor; ?>
 							</select>
 						</td>
@@ -617,16 +629,29 @@ include("head.inc");
 								<option value="any" <?php if ($pconfig['dst'] == "any") { echo "selected"; } ?>>any</option>
 								<option value="single" <?php if (($pconfig['dstmask'] == 32) && !$sel) { echo "selected"; $sel = 1; } ?>>Single host or alias</option>
 								<option value="network" <?php if (!$sel) echo "selected"; ?>>Network</option>
+								<?php if(have_ruleint_access("wan")): ?>
 								<option value="wanip" <?php if ($pconfig['dst'] == "wanip") { echo "selected"; } ?>>WAN address</option>
+								<?php endif; ?>
+								<?php if(have_ruleint_access("lan")): ?>
 								<option value="lanip" <?php if ($pconfig['dst'] == "lanip") { echo "selected"; } ?>>LAN address</option>
+								<?php endif; ?>
+								<?php if(have_ruleint_access("lan")): ?>
 								<option value="lan" <?php if ($pconfig['dst'] == "lan") { echo "selected"; } ?>>LAN subnet</option>
+								<?php endif; ?>
+								<?php if(have_ruleint_access("pptp")): ?>
 								<option value="pptp" <?php if ($pconfig['dst'] == "pptp") { echo "selected"; } ?>>PPTP clients</option>
+								<?php endif; ?>
+								<?php if(have_ruleint_access("pppoe")): ?>
 								<option value="pppoe" <?php if ($pconfig['dst'] == "pppoe") { echo "selected"; } ?>>PPPoE clients</option>
+								<?php endif; ?>								
+								
 <?php 							for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++): ?>
+								<?php if(have_ruleint_access("opt{$i}")): ?>
 									<option value="opt<?=$i;?>" <?php if ($pconfig['dst'] == "opt" . $i) { echo "selected"; } ?>><?=htmlspecialchars($config['interfaces']['opt' . $i]['descr']);?> subnet</option>
 									<option value="opt<?=$i;?>ip"<?php if ($pconfig['dst'] == "opt" . $i . "ip") { echo "selected"; } ?>>
 										<?=$config['interfaces']['opt' . $i]['descr']?> address
 									</option>
+								<?php endif; ?>
 <?php 							endfor; ?>
 							</select>
 						</td>

@@ -65,6 +65,7 @@ if (!(isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']))) {
   if (isset($config['system']['group'][$groupindex[$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['groupname']]]['pages'])) {
     $allowed = &$config['system']['group'][$groupindex[$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['groupname']]]['pages'];
   }
+  $g['privs'] = $allowed;
 
   $group = $config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['groupname'];
   /* get the group homepage, to be able to forward

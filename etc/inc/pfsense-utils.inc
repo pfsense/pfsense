@@ -33,6 +33,25 @@
  *
  */
 
+/****f* pfsense-utils/have_ruleint_access
+ * NAME
+ *   have_ruleint_access
+ * INPUTS
+ *	 none
+ * RESULT
+ *   returns true if user has access to edit a specific firewall interface
+ ******/
+function have_ruleint_access($if) {
+	global $config, $g, $HTTP_SERVER_VARS;
+	$allowed = $g['privs'];
+	if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) 
+		return true;
+	$security_url = "firewall_rules.php?if=". strtolower($if);
+	if(in_array($security_url, $allowed)) 
+		return true;
+	return false;
+}
+
 /****f* pfsense-utils/does_url_exist
  * NAME
  *   does_url_exist

@@ -31,17 +31,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-function have_ruleint_access($if) {
-	global $config, $g, $HTTP_SERVER_VARS;
-	$allowed = $g['privs'];
-	if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) 
-		return true;
-	$security_url = "firewall_rules.php?if=". strtolower($if);
-	if(in_array($security_url, $allowed)) 
-		return true;
-	return false;
-}
-
 $pgtitle = array("Firewall", "Rules");
 require("guiconfig.inc");
 

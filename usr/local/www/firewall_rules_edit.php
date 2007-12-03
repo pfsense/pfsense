@@ -188,6 +188,15 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
+	/*  run through $_POST items encoding HTML entties so that the user
+	 *  cannot think he is slick and perform a XSS attack on the unwilling 
+	 */
+	foreach($_POST as $post) {
+		$newpost = mb_convert_encoding($post,"HTML-ENTITIES","auto");
+		if($newpost <> $post) 
+			$input_errors[] = "Invalid characters detected.  Please remove invalid characters and save again.";		
+	}
+
 	/* input validation */
 	$reqdfields = explode(" ", "type interface proto src dst");
 	$reqdfieldsn = explode(",", "Type,Interface,Protocol,Source,Destination");

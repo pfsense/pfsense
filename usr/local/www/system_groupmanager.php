@@ -121,16 +121,27 @@ function getAdminPageList() {
 	   	   include("extensions.inc");
 		}
 		
+		/* firewall rule view and edit entries for lan, wan, optX */
 		$iflist = array("lan" => "lan", "wan" => "wan");
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 			$iflist['opt' . $i] = strtolower($config['interfaces']['opt' . $i]['descr']);
 		}
 		foreach ($iflist as $ifent => $ifname) {
 			$entryname = "firewall_rules.php?if={$ifname}";
-	        $tmp[$entryname] = ("Firewall Rules: " . $ifname);			
+	        $tmp[$entryname] = ("Firewall: Rules: " . strtoupper($ifname));
 			$entryname = "firewall_rules_edit.php?if={$ifname}";
-	        $tmp[$entryname] = ("Firewall Rules: Edit: " . $ifname);			
+	        $tmp[$entryname] = ("Firewall: Rules: Edit: " . strtoupper($ifname));
 		}
+
+		/* additional firewal rules tab entries */
+		$entryname = "firewall_rules_edit.php?if=enc0";
+        $tmp[$entryname] = "Firewall: Rules: Edit: IPSEC";
+
+		$entryname = "firewall_rules_edit.php?if=pptp";
+        $tmp[$entryname] = "Firewall: Rules: Edit: PPTP";
+
+		$entryname = "firewall_rules_edit.php?if=pppoe";
+        $tmp[$entryname] = "Firewall: Rules: Edit: PPPoE";
 
         asort($tmp);
         return $tmp;

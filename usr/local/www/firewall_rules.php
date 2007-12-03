@@ -31,6 +31,17 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+function have_ruleint_access($if) {
+	global $config, $g, $HTTP_SERVER_VARS;
+	$allowed = $g['privs'];
+	if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) 
+		return true;
+	$security_url = "firewall_rules.php?if=". strtolower($if);
+	if(in_array($security_url, $allowed)) 
+		return true;
+	return false;
+}
+
 $pgtitle = array("Firewall", "Rules");
 require("guiconfig.inc");
 
@@ -44,22 +55,29 @@ $if = $_GET['if'];
 if ($_POST['if'])
 	$if = $_POST['if'];
 
-$iflist = array("lan" => "LAN", "wan" => "WAN");
+$iflist = array();
 
-for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-	$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
-}
+if(have_ruleint_access("lan")) 
+	$iflist['lan'] = "LAN";
+if(have_ruleint_access("wan")) 
+	$iflist['wan'] = "WAN";
+
+for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) 
+	if(have_ruleint_access("opt{$i}")) 
+		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 
 if ($config['pptpd']['mode'] == "server")
-	$iflist['pptp'] = "PPTP VPN";
+	if(have_ruleint_access("pptp")) 
+		$iflist['pptp'] = "PPTP VPN";
 
 if ($config['pppoe']['mode'] == "server")
-	$iflist['pppoe'] = "PPPoE VPN";
+	if(have_ruleint_access("pppoe")) 
+		$iflist['pppoe'] = "PPPoE VPN";
 
 /* add ipsec interfaces */
-if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable'])){ 
-	$iflist["enc0"] = "IPSEC";
-}
+if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable']))
+	if(have_ruleint_access("enc0")) 
+		$iflist["enc0"] = "IPSEC";
 
 if (!$if || !isset($iflist[$if]))
 	$if = "wan";

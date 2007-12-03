@@ -126,6 +126,8 @@ function getAdminPageList() {
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 			$iflist['opt' . $i] = strtolower($config['interfaces']['opt' . $i]['descr']);
 		}
+
+		// Firewall Rules
 		foreach ($iflist as $ifent => $ifname) {
 			$entryname = "firewall_rules.php?if={$ifname}";
 	        $tmp[$entryname] = ("Firewall: Rules: " . strtoupper($ifname));
@@ -142,6 +144,23 @@ function getAdminPageList() {
 
 		$entryname = "firewall_rules_edit.php?if=pppoe";
         $tmp[$entryname] = "Firewall: Rules: Edit: PPPoE";
+
+		// NAT Items
+		foreach ($iflist as $ifent => $ifname) {
+			$entryname = "firewall_nat.php?if={$ifname}";
+	        $tmp[$entryname] = ("Firewall: NAT: Port Forward " . strtoupper($ifname));
+			$entryname = "firewall_nat_edit.php?if={$ifname}";
+	        $tmp[$entryname] = ("Firewall: NAT: Port Forward: Edit: " . strtoupper($ifname));
+		}
+		/* additional nat tab entries */
+		$entryname = "firewall_nat_edit.php?if=enc0";
+        $tmp[$entryname] = "Firewall: NAT: Port Forward: Edit: IPSEC";
+        
+		$entryname = "firewall_nat_edit.php?if=pptp";
+        $tmp[$entryname] = "Firewall: NAT: Port Forward: Edit: PPTP";
+
+		$entryname = "firewall_nat_edit.php?if=pppoe";
+        $tmp[$entryname] = "Firewall: NAT: Port Forward: Edit: PPPoE";
 
         asort($tmp);
         return $tmp;

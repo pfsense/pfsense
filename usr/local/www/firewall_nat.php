@@ -182,6 +182,11 @@ include("head.inc");
 		  </td>
 		</tr>
 	<?php $nnats = $i = 0; foreach ($a_nat as $natent): ?>
+	<?php 
+		/* if user does not have access to edit an interface skip on to the next record */
+		if(!have_natpfruleint_access($natent['interface'])) 
+			continue;
+	?>
                 <tr valign="top" id="fr<?=$nnats;?>">
                   <td class="listt"><input type="checkbox" id="frc<?=$nnats;?>" name="rule[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$nnats;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
                   <td class="listt" align="center"></td>

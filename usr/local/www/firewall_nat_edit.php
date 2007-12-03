@@ -61,7 +61,7 @@ if (isset($id) && $a_nat[$id]) {
 	$pconfig['interface'] = "wan";
 }
 
-if($id) {
+if($id > -1) {
 	$if = $a_nat[$id]['interface'];
 	$security_url = "firewall_nat_edit.php?if=". strtolower($if);
 	if (!isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {

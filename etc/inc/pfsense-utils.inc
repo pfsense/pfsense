@@ -2506,7 +2506,8 @@ function sync_webgui_passwords() {
 
 	if (!$crypted_pw) {
 		log_error("Error: cannot determine root pwd in sync_webgui_passwords().\nRoot user struct follows:\n");
-		empty($root) ? log_error("Unable to determine root user!\n") : print_r($root);
+		if(!$root) 
+			 log_error("Unable to determine root user" . print_r($root, true));
 		log_error("Testing whether your system has the necessary users... ");
 		empty($config['system']['user']) ? log_error("users are missing.\n") : log_error("users found.\n");
 		return 1;

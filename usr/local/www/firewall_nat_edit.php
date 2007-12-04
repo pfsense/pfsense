@@ -80,9 +80,10 @@ if (isset($_GET['dup']))
 /*  run through $_POST items encoding HTML entties so that the user
  *  cannot think he is slick and perform a XSS attack on the unwilling 
  */
-foreach($_POST as $post) {
-	$newpost = mb_convert_encoding($post,"HTML-ENTITIES","auto");
-	if($newpost <> $post) 
+foreach ($_POST as $key => $value) {
+	$temp = $value;
+	$newpost = htmlentities($temp);
+	if($newpost <> $temp) 
 		$input_errors[] = "Invalid characters detected.  Please remove invalid characters and save again.";		
 }
 

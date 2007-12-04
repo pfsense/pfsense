@@ -84,7 +84,7 @@ foreach ($_POST as $key => $value) {
 	$temp = $value;
 	$newpost = htmlentities($temp);
 	if($newpost <> $temp) 
-		$input_errors[] = "Invalid characters detected.  Please remove invalid characters and save again.";		
+		$input_errors[] = "Invalid characters detected ($temp).  Please remove invalid characters and save again.";		
 }
 
 if ($_POST) {

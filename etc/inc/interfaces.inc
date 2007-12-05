@@ -1097,6 +1097,10 @@ function interfaces_wan_dhcp_configure() {
 
 	$dhclientconf .= <<<EOD
 interface "{$wancfg['if']}" {
+timeout 1200;
+retry 1;
+select-timeout 0;
+initial-interval 1;
 	{$dhclientconf_hostname}
 	script "/sbin/dhclient-script";
 }

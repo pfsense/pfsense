@@ -53,6 +53,7 @@ $pconfig['dnsupdate_keyname'] = $config['dnsupdate']['keyname'];
 $pconfig['dnsupdate_keytype'] = $config['dnsupdate']['keytype'];
 if (!$pconfig['dnsupdate_keytype'])
 	$pconfig['dnsupdate_keytype'] = "zone";
+$pconfig['dnsupdate_server'] = $config['dnsupdate']['server'];
 $pconfig['dnsupdate_usetcp'] = isset($config['dnsupdate']['usetcp']);
 
 if ($_POST) {
@@ -110,6 +111,7 @@ if ($_POST) {
 		$config['dnsupdate']['keyname'] = $_POST['dnsupdate_keyname'];
 		$config['dnsupdate']['keytype'] = $_POST['dnsupdate_keytype'];
 		$config['dnsupdate']['keydata'] = $_POST['dnsupdate_keydata'];
+		$config['dnsupdate']['server'] = $_POST['dnsupdate_server'];
 		$config['dnsupdate']['usetcp'] = $_POST['dnsupdate_usetcp'] ? true : false;
 
 		write_config();
@@ -152,6 +154,7 @@ function enable_change(enable_change) {
 	document.iform.dnsupdate_keytype[1].disabled = endis;
 	document.iform.dnsupdate_keytype[2].disabled = endis;
 	document.iform.dnsupdate_keydata.disabled = endis;
+	document.iform.dnsupdate_server.disabled = endis;
 	document.iform.dnsupdate_usetcp.disabled = endis;
 }
 //-->
@@ -272,6 +275,12 @@ function enable_change(enable_change) {
                     <input name="dnsupdate_keydata" type="text" class="formfld unknown" id="dnsupdate_keydata" size="70" value="<?=htmlspecialchars($pconfig['dnsupdate_keydata']);?>">
                     <br>
                     Paste an HMAC-MD5 key here.</td>
+		</tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncellreq">Server</td>
+                  <td width="78%" class="vtable">
+                    <input name="dnsupdate_server" type="text" class+"formfld" id="dnsupdate_server" size="30" value="<?=htmlspecialchars($pconfig['dnsupdate_server'])?>">
+                  </td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Protocol</td>

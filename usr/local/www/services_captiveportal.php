@@ -527,7 +527,7 @@ to access after they've authenticated.</td>
       <td valign="top" class="vncell">HTTPS server name </td>
       <td class="vtable">
         <input name="httpsname" type="text" class="formfld" id="httpsname" size="30" value="<?=htmlspecialchars($pconfig['httpsname']);?>"><br>
-    This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate (otherwise, the client browser will most likely display a security warning). Make sure captive portal clients can resolve this name in DNS. </td>
+    This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate (otherwise, the client browser will most likely display a security warning). Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on pfSense.. </td>
 	  </tr>
 	<tr>
       <td valign="top" class="vncell">HTTPS certificate</td>

@@ -293,7 +293,8 @@ function captiveportal_rules_generate() {
 	$cpifn = $config['captiveportal']['interface'];
 	$cpif = $config['interfaces'][$cpifn]['if'];
 	$cpip = $config['interfaces'][$cpifn]['ipaddr'];
-
+	$lanip = $config['interfaces']['lan']['ipaddr'];
+	
 	/* note: the captive portal daemon inserts all pass rules for authenticated
 	   clients as skipto 50000 rules to make traffic shaping work */
 
@@ -356,9 +357,17 @@ add 1204 set 1 pass icmp from any to $cpip in icmptype 0
 add 1300 set 1 pass udp from any to $cpip 53 in
 add 1301 set 1 pass udp from $cpip 53 to any out
 
+# allow access to our DNS forwarder if it incorrectly resolves the hostname to $lanip
+add 1300 set 1 pass udp from any to $lanip 53 in
+add 1301 set 1 pass udp from $lanip 53 to any out
+
 # allow access to our web server
 add 1302 set 1 pass tcp from any to $cpip 8000 in
 add 1303 set 1 pass tcp from $cpip 8000 to any out
+
+# allow access to lan web server incase the dns name resolves incorrectly to $lanip
+add 1302 set 1 pass tcp from any to $lanip 8000 in
+add 1303 set 1 pass tcp from $lanip 8000 to any out
 
 EOD;
 
@@ -366,6 +375,8 @@ EOD;
 		$cprules .= <<<EOD
 add 1304 set 1 pass tcp from any to $cpip 8001 in
 add 1305 set 1 pass tcp from $cpip 8001 to any out
+add 1302 set 1 pass tcp from any to $lanip 8001 in
+add 1303 set 1 pass tcp from $lanip 8001 to any out
 
 EOD;
 	}

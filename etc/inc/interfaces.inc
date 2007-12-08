@@ -989,6 +989,10 @@ function interfaces_opt_dhcp_configure($interface) {
  	$dhclientconf = "";
 
 	$dhclientconf .= <<<EOD
+timeout 1200;
+retry 1;
+select-timeout 0;
+initial-interval 1;
 interface "{$optif}" {
 	script "/sbin/dhclient-script";
 	{$dhclientconf_hostname}
@@ -1033,6 +1037,10 @@ function interfaces_dhcp_configure($interface) {
  	$dhclientconf = "";
 
 	$dhclientconf .= <<<EOD
+timeout 1200;
+retry 1;
+select-timeout 0;
+initial-interval 1;
 interface "{$realinterface}" {
 	{$dhclientconf_hostname}
 	script "/sbin/dhclient-script";
@@ -1080,6 +1088,10 @@ function interfaces_wan_dhcp_configure() {
  	$dhclientconf = "";
 
 	$dhclientconf .= <<<EOD
+timeout 1200;
+retry 1;
+select-timeout 0;
+initial-interval 1;
 interface "{$wancfg['if']}" {
 	{$dhclientconf_hostname}
 	script "/sbin/dhclient-script";

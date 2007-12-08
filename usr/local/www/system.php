@@ -230,9 +230,11 @@ include("head.inc");
                       	foreach($config['interfaces'] as $int) 
                       		if($int['gateway']) 	
                       			$multiwan = true;
-                      ?>                  
+                      	$ints = get_interface_list();
+                      ?>               
                       <input name="dns1" type="text" class="formfld unknown" id="dns1" size="20" value="<?=htmlspecialchars($pconfig['dns1']);?>">
                       <?php
+                      	$ints = get_interface_list();
                       	if($multiwan) {
                       		echo "<select name='dns1gwint'>\n";
                       		foreach($ints as $int) {

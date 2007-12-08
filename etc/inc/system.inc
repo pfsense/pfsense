@@ -94,11 +94,11 @@ EOFF;
 }
 
 function system_resolvconf_generate($dynupdate = false) {
-	global $config, $g;
-	if(isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "system_resolvconf_generate() being called $mt\n";
-	}
+		global $config, $g;
+		if(isset($config['system']['developerspew'])) {
+			$mt = microtime();
+			echo "system_resolvconf_generate() being called $mt\n";
+		}
 
         $syscfg = $config['system'];
 
@@ -113,32 +113,44 @@ function system_resolvconf_generate($dynupdate = false) {
         $havedns = false;
 
         if (isset($syscfg['dnsallowoverride'])) {
-                /* get dynamically assigned DNS servers (if any) */
-		$ns = array_unique(get_nameservers());
-		foreach($ns as $nameserver) {
-			if($nameserver) {
-				$resolvconf .= "nameserver $nameserver\n";
-				$havedns = true;
+			/* get dynamically assigned DNS servers (if any) */
+			$ns = array_unique(get_nameservers());
+			foreach($ns as $nameserver) {
+				if($nameserver) {
+					$resolvconf .= "nameserver $nameserver\n";
+					$havedns = true;
+				}
 			}
-		}
         }
         if (!$havedns && is_array($syscfg['dnsserver'])) {
-                foreach ($syscfg['dnsserver'] as $ns) {
-                        if ($ns) {
-                                $resolvconf .= "nameserver $ns\n";
-				$havedns = true;
+			foreach ($syscfg['dnsserver'] as $ns) {
+				if ($ns) {
+					$resolvconf .= "nameserver $ns\n";
+					$havedns = true;
+				}
 			}
-                }
-        }
+		}
 
         fwrite($fd, $resolvconf);
         fclose($fd);
 
         if (!$g['booting']) {
-                /* restart dhcpd (nameservers may have changed) */
-                if (!$dynupdate)
-                        services_dhcpd_configure();
+			/* restart dhcpd (nameservers may have changed) */
+			if (!$dynupdate)
+				services_dhcpd_configure();
         }
+
+		/* setup static routes for dns servers */
+		if($config['system']['dns1gwint']) {
+			$if = $config['system']['dns1gwint'];
+			$gw = $config['interfaces'][$if]['if'];
+			exec("route add {$syscfg['dnsserver'][0]} -gw {$gw}");
+		}
+		if($config['system']['dns2gwint']) {
+			$if = $config['system']['dns2gwint'];
+			$gw = $config['interfaces'][$if]['if'];
+			exec("route add {$syscfg['dnsserver'][1]} -gw {$gw}");
+		}
 
         return 0;
 }

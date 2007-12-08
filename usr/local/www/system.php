@@ -35,6 +35,9 @@ $pconfig['hostname'] = $config['system']['hostname'];
 $pconfig['domain'] = $config['system']['domain'];
 list($pconfig['dns1'],$pconfig['dns2']) = $config['system']['dnsserver'];
 
+$pconfig['dns1gwint'] = $config['system']['dns1gwint'];
+$pconfig['dns2gwint'] = $config['system']['dns2gwint'];
+
 $pconfig['dnsallowoverride'] = isset($config['system']['dnsallowoverride']);
 $pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
 if (!$pconfig['webguiproto'])
@@ -78,6 +81,10 @@ if ($_POST) {
 
 	$changecount++;
 
+	/* remove old static route if exists */
+	exec("route delete {$pconfig['dns1']}");
+	exec("route delete {$pconfig['dns2']}");
+	
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -141,11 +148,22 @@ if ($_POST) {
 
 		unset($config['system']['dnsallowoverride']);
 		$config['system']['dnsallowoverride'] = $_POST['dnsallowoverride'] ? true : false;
-                if ($_POST['password']) {
-                        $config['system']['password'] = crypt($_POST['password']);
+
+		if ($_POST['password']) {
+			$config['system']['password'] = crypt($_POST['password']);
 			update_changedesc("password changed via webConfigurator");
 			sync_webgui_passwords();
-                }
+		}
+
+		/* which interface should the dns servers resolve through? */
+		if($_POST['dns1gwint']) 
+			$config['system']['dns1gwint'] = $pconfig['dns1gwint'];
+		else 
+			unset($config['system']['dns1gwint']);
+		if($_POST['dns2gwint']) 
+			$config['system']['dns2gwint'] = $pconfig['dns2gwint'];
+		else
+			unset($config['system']['dns2gwint']);
 
 		if ($changecount > 0)
 			write_config($changedesc);
@@ -207,9 +225,43 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncell">DNS servers</td>
                   <td width="78%" class="vtable"> <p>
+                      <?php
+                      	$multiwan = false;
+                      	foreach($config['interfaces'] as $int) 
+                      		if($int['gateway']) 	
+                      			$multiwan = true;
+                      ?>                  
                       <input name="dns1" type="text" class="formfld unknown" id="dns1" size="20" value="<?=htmlspecialchars($pconfig['dns1']);?>">
+                      <?php
+                      	if($multiwan) {
+                      		echo "<select name='dns1gwint'>\n";
+                      		foreach($ints as $int) {
+                      			if($config['interfaces'][$int]['gateway']) {
+                      				$selected = "";
+                      				if($pconfig['dns1gwint'] == $int) 
+                      					$selected = " SELECTED";
+                      				echo "<option value='{$int}'{$selected}>{$int}></option>";
+                      			}
+                      		}
+                      		echo "</select>";
+                      	}
+                      ?>
                       <br>
                       <input name="dns2" type="text" class="formfld unknown" id="dns22" size="20" value="<?=htmlspecialchars($pconfig['dns2']);?>">
+                      <?php
+                      	if($multiwan) {
+                      		echo "<select name='dns1gwint'>\n";
+                      		foreach($ints as $int) {
+                      			if($config['interfaces'][$int]['gateway']) {
+                      				$selected = "";
+                      				if($pconfig['dns1gwint'] == $int) 
+                      					$selected = " SELECTED";
+                      				echo "<option value='{$int}'{$selected}>{$int}></option>";
+                      			}
+                      		}
+                      		echo "</select>";
+                      	}
+                      ?>
                       <br>
                       <span class="vexpl">IP addresses; these are also used for
                       the DHCP service, DNS forwarder and for PPTP VPN clients<br>

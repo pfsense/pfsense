@@ -225,48 +225,68 @@ include("head.inc");
                 <tr>
                   <td width="22%" valign="top" class="vncell">DNS servers</td>
                   <td width="78%" class="vtable"> <p>
+                  <table>
+                  	  <tr><td><b>DNS Server</td>
                       <?php
                       	$multiwan = false;
                       	foreach($config['interfaces'] as $int) 
                       		if($int['gateway']) 	
                       			$multiwan = true;
                       	$ints = get_interface_list();
-                      ?>               
+                      	if($multiwan) 
+                      		echo "<td><b>Use gateway</td>";
+                      ?>
+                      </tr>
+                      <tr>
+                      <td>            
                       <input name="dns1" type="text" class="formfld unknown" id="dns1" size="20" value="<?=htmlspecialchars($pconfig['dns1']);?>">
+                      </td>
                       <?php
                       	$ints = get_interface_list();
                       	if($multiwan) {
-                      		echo "<select name='dns1gwint'>\n";
+                      		echo "<td><select name='dns1gwint'>\n";
+                      		echo "<option></option>";
                       		foreach($ints as $int) {
-                      			if($config['interfaces'][$int]['gateway']) {
-                      				$selected = "";
-                      				if($pconfig['dns1gwint'] == $int) 
-                      					$selected = " SELECTED";
-                      				echo "<option value='{$int}'{$selected}>{$int}></option>";
+	                      		$friendly = $int['friendly'];
+                      			if($config['interfaces'][$friendly]['gateway']) {                   				
+	                   				$selected = "";
+	                   				if($pconfig['dns1gwint'] == $int) 
+	                   					$selected = " SELECTED";
+	                   				echo "<option value='{$friendly}'{$selected}>{$friendly}</option>";
                       			}
                       		}
                       		echo "</select>";
                       	}
-                      ?>
-                      <br>
+                      ?></td></tr> 
+                      <tr><td>
                       <input name="dns2" type="text" class="formfld unknown" id="dns22" size="20" value="<?=htmlspecialchars($pconfig['dns2']);?>">
+                      </td>
                       <?php
                       	if($multiwan) {
-                      		echo "<select name='dns1gwint'>\n";
+                      		echo "<td><select name='dns2gwint'>\n";
+                      		echo "<option></option>";
                       		foreach($ints as $int) {
-                      			if($config['interfaces'][$int]['gateway']) {
+	                      		$friendly = $int['friendly'];
+                      			if($config['interfaces'][$friendly]['gateway']) {                  				
                       				$selected = "";
-                      				if($pconfig['dns1gwint'] == $int) 
+                      				if($pconfig['dns2gwint'] == $int) 
                       					$selected = " SELECTED";
-                      				echo "<option value='{$int}'{$selected}>{$int}></option>";
+                      				echo "<option value='{$friendly}'{$selected}>{$friendly}</option>";
                       			}
                       		}
-                      		echo "</select>";
+                      		echo "</select></td>";
                       	}
                       ?>
+                      </tr>
+                      </table>
                       <br>
                       <span class="vexpl">IP addresses; these are also used for
-                      the DHCP service, DNS forwarder and for PPTP VPN clients<br>
+                      the DHCP service, DNS forwarder and for PPTP VPN clients.
+                      <br>
+                      <?php
+                      	if($multiwan) 
+                      		echo "<br/>In addition, select the gateway for each DNS server.  You should have a unique DNS server per gateway.<br/>";
+                      ?>
                       <br>
                       <input name="dnsallowoverride" type="checkbox" id="dnsallowoverride" value="yes" <?php if ($pconfig['dnsallowoverride']) echo "checked"; ?>>
                       <strong>Allow DNS server list to be overridden by DHCP/PPP

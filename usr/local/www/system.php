@@ -80,10 +80,6 @@ sort($timezonelist);
 if ($_POST) {
 
 	$changecount++;
-
-	/* remove old static route if exists */
-	exec("route delete {$pconfig['dns1']}");
-	exec("route delete {$pconfig['dns2']}");
 	
 	unset($input_errors);
 	$pconfig = $_POST;

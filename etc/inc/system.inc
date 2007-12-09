@@ -144,11 +144,13 @@ function system_resolvconf_generate($dynupdate = false) {
 		if($config['system']['dns1gwint']) {
 			$if = $config['system']['dns1gwint'];
 			$gw = $config['interfaces'][$if]['if'];
+			exec("route delete {$syscfg['dnsserver'][0]}");
 			exec("route add {$syscfg['dnsserver'][0]} -gw {$gw}");
 		}
 		if($config['system']['dns2gwint']) {
 			$if = $config['system']['dns2gwint'];
 			$gw = $config['interfaces'][$if]['if'];
+			exec("route delete {$syscfg['dnsserver'][1]}");
 			exec("route add {$syscfg['dnsserver'][1]} -gw {$gw}");
 		}
 

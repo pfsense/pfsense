@@ -226,54 +226,37 @@ include("head.inc");
                       <?php
                       	$multiwan = false;
                       	foreach($config['interfaces'] as $int) 
-                      		if($int['gateway']) 	
+                      		if($int['gateway']) 
                       			$multiwan = true;
                       	$ints = get_interface_list();
                       	if($multiwan) 
                       		echo "<td><b>Use gateway</td>";
                       ?>
                       </tr>
+<?php for($dnscounter=1; $dnscounter<5; $dnscounter++): ?>
                       <tr>
-                      <td>            
-                      <input name="dns1" type="text" class="formfld unknown" id="dns1" size="20" value="<?=htmlspecialchars($pconfig['dns1']);?>">
+                      <td>
+                      <input name="dns{$dnscounter}" type="text" class="formfld unknown" id="dns{$dnscounter}" size="20" value="<?=htmlspecialchars($pconfig['dns{$dnscounter}']);?>">
                       </td>
                       <?php
-                      	$ints = get_interface_list();
                       	if($multiwan) {
-                      		echo "<td><select name='dns1gwint'>\n";
-                      		echo "<option></option>";
+                      		echo "<td><select name='dns{$dnscounter}gwint'>\n";
+                      		echo "<option value=''>wan</option>";
                       		foreach($ints as $int) {
 	                      		$friendly = $int['friendly'];
-                      			if($config['interfaces'][$friendly]['gateway']) {                   				
+                      			if($config['interfaces'][$friendly]['gateway']) {
 	                   				$selected = "";
-	                   				if($pconfig['dns1gwint'] == $int) 
+	                   				if($pconfig['dns{$dnscounter}gwint'] == $int) 
 	                   					$selected = " SELECTED";
 	                   				echo "<option value='{$friendly}'{$selected}>{$friendly}</option>";
                       			}
                       		}
                       		echo "</select>";
                       	}
-                      ?></td></tr> 
-                      <tr><td>
-                      <input name="dns2" type="text" class="formfld unknown" id="dns22" size="20" value="<?=htmlspecialchars($pconfig['dns2']);?>">
-                      </td>
-                      <?php
-                      	if($multiwan) {
-                      		echo "<td><select name='dns2gwint'>\n";
-                      		echo "<option></option>";
-                      		foreach($ints as $int) {
-	                      		$friendly = $int['friendly'];
-                      			if($config['interfaces'][$friendly]['gateway']) {                  				
-                      				$selected = "";
-                      				if($pconfig['dns2gwint'] == $int) 
-                      					$selected = " SELECTED";
-                      				echo "<option value='{$friendly}'{$selected}>{$friendly}</option>";
-                      			}
-                      		}
-                      		echo "</select></td>";
-                      	}
                       ?>
+                      </td>
                       </tr>
+<?php endfor; ?>
                       </table>
                       <br>
                       <span class="vexpl">IP addresses; these are also used for

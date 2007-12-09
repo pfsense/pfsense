@@ -140,18 +140,17 @@ function system_resolvconf_generate($dynupdate = false) {
 				services_dhcpd_configure();
         }
 
-		/* setup static routes for dns servers */
-		if($config['system']['dns1gwint']) {
-			$if = $config['system']['dns1gwint'];
-			$gw = $config['interfaces'][$if]['if'];
-			exec("route delete {$syscfg['dnsserver'][0]}");
-			exec("route add {$syscfg['dnsserver'][0]} -gw {$gw}");
-		}
-		if($config['system']['dns2gwint']) {
-			$if = $config['system']['dns2gwint'];
-			$gw = $config['interfaces'][$if]['if'];
-			exec("route delete {$syscfg['dnsserver'][1]}");
-			exec("route add {$syscfg['dnsserver'][1]} -gw {$gw}");
+		for($dnscounter=1; $dnscounter<5; $dnscounter++) {
+			/* setup static routes for dns servers */
+			if($config['system']['dns{$dnscounter}gwint']) {
+				$if = $config['system']['dns{$dnscounter}gwint'];
+				if($if) { 
+					$gw = $config['interfaces'][$if]['if'];
+					$dnscountermo = $dnscounter - 1;
+					exec("route delete {$syscfg['dnsserver'][$dnscountermo]}");
+					exec("route add {$syscfg['dnsserver'][$dnscountermo]} -gw {$gw}");
+				}
+			}
 		}
 
         return 0;

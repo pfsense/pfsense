@@ -678,9 +678,13 @@ function system_generate_lighty_config($filename,
 			$captive_portal_mod_evasive = "evasive.max-conns-per-ip = {$maxprocperip}";
 		else
 			$captive_portal_mod_evasive = "";
+		$server_upload_dirs = "server.upload-dirs = ( \"/tmp/captiveportal/\" )\n";
+		exec("mkdir -p /tmp/captiveportal");
+		exec("chmod a-w /tmp/captiveportal");
 	} else {
 		$captive_portal_module = "";
 		$captive_portal_mod_evasive = "";
+		$server_upload_dirs = "server.upload-dirs = ( \"{$g['upload_path']}/\", \"/tmp/\", \"/var/\" )\n";
 	}
 
 	if($port <> "")
@@ -894,7 +898,7 @@ debug.log-file-not-found   = "disable"
 
 #server.network-backend = "writev"
 
-server.upload-dirs = ( "{$g['upload_path']}/", "/tmp/", "/var/" )
+{$server_upload_dirs}
 
 server.max-request-size = 2097152
 

@@ -616,7 +616,7 @@ function gentitle($title) {
 
 function genhtmltitle($title) {
         global $config;
-        return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . gentitle($title);
+        return gentitle($title);
 }
 
 /* update the changedesc and changecount(er) variables */

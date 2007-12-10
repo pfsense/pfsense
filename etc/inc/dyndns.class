@@ -118,7 +118,8 @@
 			if ($this->_detectChange() == FALSE) {
 				$this->_error(10);
 			} else {
-				if ($this->_dnsService == 'dyndns' ||
+				if ($this->_dnsService == 'dnsomatic' ||
+					$this->_dnsService == 'dyndns' ||
 					$this->_dnsService == 'dyndns-static' ||
 					$this->_dnsService == 'dyndns-custom' ||
 					$this->_dnsService == 'dhs' ||
@@ -374,14 +375,36 @@
 					curl_close($ch);
 					$this->_checkStatus($data);
 					break;
-                                case 'staticcling':
-                                        $needsIP = FALSE;
-                                        curl_setopt($ch, CURLOPT_URL, 'http://www.staticcling.org/update.html?login='.$this->_dnsUser.'&pass='.$this->_dnsPass);
-                                        $data = curl_exec($ch);
-                                        if (@curl_error($ch)) log_error("Curl error occured: " . curl_error($ch));
-                                        curl_close($ch);
-                                        $this->_checkStatus($data);
-                                        break;
+	            case 'staticcling':
+                    $needsIP = FALSE;
+                    curl_setopt($ch, CURLOPT_URL, 'http://www.staticcling.org/update.html?login='.$this->_dnsUser.'&pass='.$this->_dnsPass);
+                    $data = curl_exec($ch);
+                    if (@curl_error($ch)) log_error("Curl error occured: " . curl_error($ch));
+                    curl_close($ch);
+                    $this->_checkStatus($data);
+                    break;	                    
+				case 'dnsomatic':
+				
+					/* Example syntax 
+						https://username:password@updates.dnsomatic.com/nic/update?hostname=yourhostname&myip=ipaddress&wildcard=NOCHG&mx=NOCHG&backmx=NOCHG
+					*/
+					
+					$needsIP = FALSE;
+					log_error("DNS-O-Matic: DNS update() starting.");
+					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					$server = "https://" . $this->_dnsUser . ":" . $this->_dnsPass . "@updates.dnsomatic.com/nic/update?hostname=";
+					if($this->_dnsServer)
+						$server = $this->_dnsServer;
+					if($this->_dnsPort)
+						$port = ":" . $this->_dnsPort;
+					curl_setopt($ch, CURLOPT_URL, $server . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NOCHG');
+					$data = curl_exec($ch);
+					if (@curl_error($ch)) log_error("Request completed. DNS-O-Matic reported: " . curl_error($ch));
+					curl_close($ch);
+					$this->_checkStatus($data);
+					break;
 				default:
 					break;
 			}
@@ -396,6 +419,28 @@
 			log_error("DynDns: Current Service: {$this->_dnsService}");
 			$successful_update = false;
 			switch ($this->_dnsService) {
+				case 'dnsomatic':
+					if (preg_match('/badauth/i', $data)) {
+						$status = "DNS-O-Matic: The DNS-O-Matic username or password specified are incorrect. No updates will be distributed to services until this is resolved.";
+					} else if (preg_match('/notfqdn /i', $data)) {
+						$status = "DNS-O-Matic: The hostname specified is not a fully-qualified domain name. If no hostnames included, notfqdn will be returned once.";
+					} else if (preg_match('/nohost/i', $data)) {
+						$status = "DNS-O-Matic: The hostname passed could not be matched to any services configured. The service field will be blank in the return code.";
+					} else if (preg_match('/numhost/i', $data)) {
+						$status = "DNS-O-Matic: You may update up to 20 hosts. numhost is returned if you try to update more than 20 or update a round-robin.";	
+					} else if (preg_match('/abuse/i', $data)) {
+						$status = "DNS-O-Matic: The hostname is blocked for update abuse.";
+					} else if (preg_match('/good/i', $data)) {
+						$status = "DNS-O-Matic: (Success) IP Address Changed Successfully! (".$this->_dnsIP.")";
+						$successful_update = true;
+					} else if (preg_match('/dnserr/i', $data)) {
+						$status = "DNS-O-Matic: DNS error encountered. Stop updating for 30 minutes.";
+					} else {
+						$status = "DNS-O-Matic: (Unknown Response)";
+						log_error("DNS-O-Matic: PAYLOAD: {$data}");
+						$this->_debug($data);
+					}
+					break;
 				case 'dyndns':
 					if (preg_match('/notfqdn/i', $data)) {
 						$status = "phpDynDNS: (Error) Not A FQDN!";

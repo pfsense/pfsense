@@ -178,8 +178,8 @@ function enable_change(enable_change) {
                   <td width="78%" class="vtable">
 			<select name="type" class="formselect" id="type">
                       <?php
-				$types = explode(",", "DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit");
-				$vals = explode(" ", "dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit");
+				$types = explode(",", "DNS-O-Matic, DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit");
+				$vals = explode(" ", "dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit");
 				$j = 0; for ($j = 0; $j < count($vals); $j++): ?>
                       <option value="<?=$vals[$j];?>" <?php if ($vals[$j] == $pconfig['type']) echo "selected";?>>
                       <?=htmlspecialchars($types[$j]);?>
@@ -188,17 +188,17 @@ function enable_change(enable_change) {
                     </select></td>
 				</tr>
                 <tr>
-                  <td width="22%" valign="top" class="vncellreq">Hostname</td>
+                  <td width="22%" valign="top" class="vncellreq">Hostname/Interface</td>
                   <td width="78%" class="vtable">
                     <input name="host" type="text" class="formfld unknown" id="host" size="30" value="<?=htmlspecialchars($pconfig['host']);?>">
-		    <br>
-		    <span class="vexpl">
-		    <span class="red"><strong>Note:<br></strong>
-		    </span>
-			Enter the complete host/domain name.  example:  myhost.dyndns.org
-		    </span>
-                  </td>
-		</tr>
+                    <br>
+				    <span class="vexpl">
+				    <span class="red"><strong>Note:<br></strong>
+				    </span>
+					Enter the complete host/domain name.  example:  myhost.dyndns.org
+				    </span>
+		          </td>
+				</tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">MX</td>
                   <td width="78%" class="vtable">

@@ -297,8 +297,9 @@ function captiveportal_rules_generate() {
 	/* note: the captive portal daemon inserts all pass rules for authenticated
 	   clients as skipto 50000 rules to make traffic shaping work */
 
-	$cprules = "";
-
+	$cprules =  "add 500 set 1 allow pfsync from any to any";
+	$cprules .= "add 500 set 1 allow carp from any to any";
+	
 	/*   allow nat redirects to work  see
 	     http://cvstrac.pfsense.com/tktview?tn=651
 	 */

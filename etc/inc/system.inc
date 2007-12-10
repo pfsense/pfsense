@@ -681,10 +681,12 @@ function system_generate_lighty_config($filename,
 		$server_upload_dirs = "server.upload-dirs = ( \"/tmp/captiveportal/\" )\n";
 		exec("mkdir -p /tmp/captiveportal");
 		exec("chmod a-w /tmp/captiveportal");
+		$server_max_request_size = "384";
 	} else {
 		$captive_portal_module = "";
 		$captive_portal_mod_evasive = "";
 		$server_upload_dirs = "server.upload-dirs = ( \"{$g['upload_path']}/\", \"/tmp/\", \"/var/\" )\n";
+		$server_max_request_size = "2097152";
 	}
 
 	if($port <> "")
@@ -900,7 +902,7 @@ debug.log-file-not-found   = "disable"
 
 {$server_upload_dirs}
 
-server.max-request-size = 2097152
+{$server_max_request_size}
 
 {$fastcgi_config}
 

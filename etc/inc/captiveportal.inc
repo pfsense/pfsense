@@ -376,8 +376,8 @@ EOD;
 		$cprules .= <<<EOD
 add 1304 set 1 pass tcp from any to $cpip 8001 in
 add 1305 set 1 pass tcp from $cpip 8001 to any out
-add 1302 set 1 pass tcp from any to $lanip 8001 in
-add 1303 set 1 pass tcp from $lanip 8001 to any out
+add 1306 set 1 pass tcp from any to $lanip 8001 in
+add 1307 set 1 pass tcp from $lanip 8001 to any out
 
 EOD;
 	}
@@ -448,7 +448,12 @@ function captiveportal_prune_old() {
 
     $radiusservers = captiveportal_get_radius_servers();
 
-    for ($i = 0; $i < count($cpdb); $i++) {
+ 	/*  To make sure we iterate over ALL accounts on every run the count($cpdb) is moved outside of the loop. Otherwise
+     *  the loop would evalate count() on every iteration and since $i would increase and count() would decrement they
+     *  would meet before we had a chance to iterate over all accounts.
+     */
+    $no_users = count($cpdb);
+    for ($i = 0; $i < $no_users; $i++) {
 
         $timedout = false;
         $term_cause = 1;
@@ -474,6 +479,10 @@ function captiveportal_prune_old() {
         /* if an idle timeout is specified, get last activity timestamp from ipfw */
         if (!$timedout && $idletimeout) {
             $lastact = captiveportal_get_last_activity($cpdb[$i][1]);
+			/*  if the user has logged on but not sent any trafic they will never be logged out.
+			 *  We "fix" this by setting lastact to the login timestamp 
+			 */
+			$lastact = $lastact ? $lastact : $cpdb[$i][0];
             if ($lastact && ((time() - $lastact) >= $idletimeout)) {
                 $timedout = true;
                 $term_cause = 4; // Idle-Timeout
@@ -813,25 +822,37 @@ function captiveportal_get_radius_servers() {
         return false;
 }
 
-/* lock captive portal information, decide that the lock file is stale after
-   10 seconds */
+/* lock captive portal information, decide that the lock file is stale after 
+   10 minutes and EXIT the process to not risk dataloss, issue warning in syslog every 1 minutes */
 function captiveportal_lock() {
 
         global $lockfile;
 
-        $n = 0;
-        while ($n < 10) {
+        $n = 1;
+        while ($n) {
                 /* open the lock file in append mode to avoid race condition */
                 if ($fd = @fopen($lockfile, "x")) {
                         /* succeeded */
                         fclose($fd);
+						if($n > 10) {
+						    captiveportal_syslog("LOCKINFO: Waiting for lock for $n seconds/s!");
+						}
                         return;
                 } else {
                         /* file locked, wait and try again */
                         sleep(1);
-                        $n++;
+
+						if(($n % 60) == 0) {
+						    captiveportal_syslog("LOCKWARNING: waiting for lock for " . $n/60 . " minute/s!");
+						    if(($n % 600) == 0) {
+						        captiveportal_syslog("LOCKERROR: waiting for lock for 10 minute/s - EXITING PROCESS!");
+						        die("Can't get a lock");
+						    }
+					    }
                 }
+                $n++;
         }
+		/* we never get here */
 }
 
 /* unlock captive portal information file */
@@ -846,14 +867,23 @@ function captiveportal_unlock() {
 /* log successful captive portal authentication to syslog */
 /* part of this code from php.net */
 function captiveportal_logportalauth($user,$mac,$ip,$status, $message = null) {
+	$message = trim($message);
+	// Log it
+	if (!$message)
+		$message = "$status: $user, $mac, $ip";
+	else
+		$message = "$status: $user, $mac, $ip, $message";
+	captiveportal_syslog($message);
+	closelog();
+}
+
+/* log simple messages to syslog */
+function captiveportal_syslog($message) {
 	define_syslog_variables();
 	$message = trim($message);
 	openlog("logportalauth", LOG_PID, LOG_LOCAL4);
 	// Log it
-	if (!$message)
-	syslog(LOG_INFO, "$status: $user, $mac, $ip");
-	else
-	syslog(LOG_INFO, "$status: $user, $mac, $ip, $message");
+	syslog(LOG_INFO, $message);
 	closelog();
 }
 

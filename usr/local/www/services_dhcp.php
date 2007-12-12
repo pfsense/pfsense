@@ -630,7 +630,7 @@ function show_netboot_config() {
                             forwarder</a>, if enabled) </span><span class="vexpl">will
                             be assigned to clients by the DHCP server.<br>
                             <br>
-                            The DHCP lease table can be viewed on the <a href="diag_dhcp_leases.php">Diagnostics:
+                            The DHCP lease table can be viewed on the <a href="diag_dhcp_leases.php">Status:
                             DHCP leases</a> page.<br>
                             </span></p>
 			</td>

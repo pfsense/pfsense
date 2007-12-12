@@ -1,297 +1,138 @@
-#!/usr/local/bin/php -f
- 
-<?php
+/*   cvs_sync
+ *   Written by Scott Ullrich
+ *   (C)2005 Scott Ullrich
+ *   Part of the pfSense project pfSsh.php subsystem
+ *   For users of cvs accounts to keep your test machine up to date
+ */
 
-echo "Starting the pfSense shell system";
+function create_supfile($branch) {
 
-echo ".";
-require("globals.inc");
-$g['booting'] = true;
-require("functions.inc");
-echo ".";
-require("config.inc");
-echo ".";
-require("util.inc");
-echo ".";
-$g['booting'] = false;
+	if($branch == "HEAD") 
+		$BRANCHTAG = ".";
+	else
+		$BRANCHTAG = $branch;
 
-$shell_cmds = array("alias", "alloc", "bg", "bind", "bindkey", "break", 
-     "breaksw", "builtins", "case", "cd", "chdir", "command", "complete", "continue", "default",
-     "dirs", "do", "done", "echo", "echotc", "elif", "else", "end", "endif", "endsw", "esac", "eval",
-     "exec", "exit", "export", "false", "fc", "fg", "filetest", "fi", "for", "foreach", "getopts",
-     "glob", "goto", "hash", "hashstat", "history", "hup", "if", "jobid", "jobs", "kill", "limit",
-     "local", "log", "login", "logout", "ls-F", "nice", "nohup", "notify", "onintr", "popd",
-     "printenv", "pushd", "pwd", "read", "readonly", "rehash", "repeat", "return", "sched", "set",
-     "setenv", "settc", "setty", "setvar", "shift", "source", "stop", "suspend", "switch",
-     "telltc", "test", "then", "time", "trap", "true", "type", "ulimit", "umask", "unalias",
-     "uncomplete", "unhash", "unlimit", "unset", "unsetenv", "until", "wait", "where", "which",
-     "while");
+	$supfile = "
+*default host=cvs.pfsense.com
+*default base=/home/pfsense/$branch
+*default release=cvs tag=$BRANCHTAG
+*default delete use-rel-suffix
+pfSense
+*default compress
+";
 
-function pipe_cmd($command, $text_to_pipe) {
-	$descriptorspec = array(
-	    0 => array("pipe", "r"),  // stdin
-	    1 => array("pipe", "w"),  // stdout
-	    2 => array("pipe", "w")); // stderr ?? instead of a file
-	
-	$fd = proc_open("$command", $descriptorspec, $pipes);
-	if (is_resource($fd)) {
-	        fwrite($pipes[0], "{$text_to_pipe}");
-	        fclose($pipes[0]);
-	        while($s= fgets($pipes[1], 1024)) {
-	          // read from the pipe
-	          $buffer .= $s;
-	        }
-	        fclose($pipes[1]);
-	        fclose($pipes[2]);
+	file_put_contents("/var/etc/pfSense-supfile", $supfile);
+}
+
+unlink_if_exists("/tmp/config.cache");
+
+if(!file_exists("/usr/local/bin/cvsup")) {
+	echo "Cannot find cvsup, pkg_add in progress...";
+	system("/usr/sbin/pkg_add -r http://www.pfsense.com/packages/All/cvsup-without-gui-16.1h_2.tbz");
+}
+
+if(!file_exists("/usr/bin/cvs")) {
+	echo "Cannot find cvs, fetching static cvs...";
+	system("fetch -o /usr/bin/cvs http://www.pfsense.com/~sullrich/extra/cvs");
+	system("chmod a+rx /usr/bin/cvs");
+}
+
+global $argv;
+global $command_split;
+
+/* NOTE: Set branches here */
+$branches = array("HEAD" => "Main development branch",
+				  "RELENG_1" => "1.3 development branch",
+				  "RELENG_1_2" => "1.2 release branch");
+
+if($command_split[2]) {
+	$branch = $command_split[2];
+} else {
+	if(!$argv[3]) {
+		echo "\nPlease select which branch you would like:\n\n";
+		foreach($branches as $branchname => $branchdesc) {
+			echo "{$branchname} - {$branchdesc}\n";
+		}
+		$branch = readline("\n> ");
+		echo "\n";
+	} else {
+		$branch = $argv[3];
 	}
-	return $buffer;
 }
+create_supfile($branch);
 
-if(!function_exists("readline")) {
-	function readline() {
-		$fp = fopen('php://stdin', 'r');
-		$textinput = chop(fgets($fp));
-		fclose($fp);
-	}
-	return $textinput;
+$CODIR =  "/home/pfsense/$branch";
+
+exec("mkdir -p /home/pfsense/$BRANCHTAG");
+
+$found = false;
+foreach($branches as $branchname => $branchdesc) {
+	if($branchname == $branch) 
+		$found = true;
 }
-
-function more($text, $count=24) {
-        $counter=0;
-        $lines = split("\n", $text);
-        foreach($lines as $line) {
-                if($counter > $count) {
-                        echo "Press RETURN to continue ...";
-                        $fp = fopen('php://stdin', 'r');
-                        $pressreturn = chop(fgets($fp));
-                        if($pressreturn == "q" || $pressreturn == "quit") 
-                        	return; 
-                        fclose($fp);
-                        $counter = 0;
-                }
-                echo "{$line}\n";
-                $counter++;
-        }
-}
-
-function show_help() {
-
-$show_help_text = <<<EOF
-
-	Enter a series of commands and then execute the set with "exec".
-	
-	For example:
-	echo "foo"; // php command
-	echo "foo2"; // php command
-	! echo "heh" # shell command
-	exec
-
-	Example commands:
-
-	startrecording <recordingfilename>
-	stoprecording <recordingfilename>
-	showrecordings
-
-	parse_config(true);  # reloads the \$config array
-
-	\$temp = print_r(\$config, true);
-	more(\$temp);
-
-	/* to output a configuration array */
-	print_r(\$config);
-	
-	/* to output the interfaces configuration portion of the configuration */
-	print_r(\$config['interfaces']);
-	
-	/* to output the dhcp server configuration */
-	print_r(\$config['dhcpd']);
-
-	/* to exit the php pfSense shell */
-	exit
-	
-	/* to output supported wireless modes for an interface */
-	print_r(get_wireless_modes(\"ath0\"));
-	
-	/* to enable SSH */
-	\$config['system']['enablesshd'] = true;
-	
-	/* change OPTX to the OPT interface name such as BACKHAUL */
-	\$config['interfaces']['optx']['wireless']['standard'] = "11a";
-	\$config['interfaces']['optx']['wireless']['mode'] = "hostap";
-	\$config['interfaces']['optx']['wireless']['channel'] = "6";
-	
-	/* to enable dhcp server for an optx interface */
-	\$config['dhcpd']['optx']['enable'] = true;
-	\$config['dhcpd']['optx']['range']['from'] = "192.168.31.100";
-	\$config['dhcpd']['optx']['range']['to'] = "192.168.31.150";
-	
-	/* to disable the firewall filter */
-	\$config['system']['disablefilter'] = true;
-	
-	/* to enable an interface and set it for dhcp */
-	\$config['interfaces']['optx']['disabled'] = false;
-	\$config['interfaces']['optx']['ipaddr'] = "dhcp";
-	
-	/* to enable an interface and set a static ip address */
-	\$config['interfaces']['wan']['disabled'] = false;
-	\$config['interfaces']['wan']['ipaddr'] = "192.168.100.1";
-	\$config['interfaces']['wan']['subnet'] = "24";
-	
-	/* to save out the new configuration (config.xml) */
-	write_config();
-	
-	/* to reboot the system after saving */
-	system_reboot_sync();
-	
-EOF;
-
-	more($show_help_text);
- 	
-}
-
-$fp = fopen('php://stdin', 'r');
-
-echo ".\n\n";
-
-$pkg_interface='console';
-
-$shell_active = true;
-
-if($argc < 2) {
-	echo "Welcome to the pfSense php shell system\n";
-	echo "Written by Scott Ullrich (sullrich@gmail.com)\n";
-	echo "\nType \"help\" to show common usage scenarios.\n\n";
-}
-
-$recording = false;
-$playback_file_split = array();
-$playbackbuffer = "";
-
-if($argv[1]=="playback" or $argv[1]=="run") { 
-	if(!file_exists("/etc/phpshellsessions/{$argv[2]}")) {
-		echo "Could not locate playback file.";
-		exit;
-	}
-	playback_file($argv[2]);
+if(!$found) {
+	echo "\nInvalid branch.\n";
 	exit;
 }
 
-while($shell_active == true) {
-	$command = readline("pfSense shell: ");
-	readline_add_history($command);
-    $command_split = split(" ", $command);
-    $first_command = $command_split[0];	
-	if($first_command == "playback" || $first_command == "run") {
-		$playback_file = $command_split[1];
-		if(!$playback_file || !file_exists("/etc/phpshellsessions/{$playback_file}")) {
-			$command = "";
-			echo "Could not locate playback file.\n";
-		} else {
-			$command = "";
-			echo "\nPlayback of file {$command_split[1]} started.\n\n";
-			playback_file("{$playback_file}");
-			continue;
-		}
-	}
-	if($first_command == "exec" or $first_command == "exec;") {
-		playback_text($playbackbuffer);
-		$playbackbuffer = "";
-		continue;
-	}
-	if($first_command == "stoprecording" || $first_command == "stoprecord" || $first_command == "stop") {
-		if($recording) {
-			fwrite($recording_fd, $playbackbuffer);
-			fclose($recording_fd);
-			$command = "";
-			conf_mount_ro();
-			echo "Recording stopped.\n";
-			$recording = false; 
-		} else {
-			echo "No recording session in progress.\n";
-			$command = "";
-		}
-	}
-	if($first_command == "showrecordings") {
-		conf_mount_rw();
-		safe_mkdir("/etc/phpshellsessions");
-		if($recording) 
-			conf_mount_ro();
-		echo "==> Sessions available for playback are:\n";
-		system("cd /etc/phpshellsessions && ls /etc/phpshellsessions");
-		echo "==> end of list.\n";
-		$command = "";
-	}
-	if($first_command == "reset") {
-		$playbackbuffer = "";
-		echo "\nBuffer reset.\n\n";
-		continue;
-	}
-	if($first_command == "record") {
-		if(!$command_split[1]) {
-			echo "usage: record playbackname\n";
-			$command = "";
-		} else {
-			/* time to record */
-			conf_mount_rw();
-			safe_mkdir("/etc/phpshellsessions");
-			$recording_fd = fopen("/etc/phpshellsessions/{$command_split[1]}","w");
-			if(!$recording_fd) {
-				echo "Could not start recording session.\n";
-				$command = "";
-			} else { 
-				$recording = true;
-				echo "Recording of {$command_split[1]} started.\n";
-				$command = "";
-			}
-		}
-	}
-	$playbackbuffer .= $command . "\n";
-}
+echo "===> Checking out $branch\n";
+exec("mkdir -p /home/pfsense/$branch");
+system("cvsup /var/etc/pfSense-supfile");
+exec("rm -rf /usr/local/www/includes/*");
+exec("rm -rf /usr/local/www/javascript/*");
+exec("find /usr/local/www -name \"*.js\" -exec rm {} \;");
 
-function returnlastchar($command) {
-	$commandlen = strlen($command);
-	$endofstring = substr($command, ($commandlen-1));
-	return $endofstring; 
-}
+exec("mkdir -p /tmp/lighttpd/cache/compress/");
 
-function returnfirstchar($command) {
-	$commandlen = strlen($command);
-	$endofstring = substr($command, 0, 1);
-	return $endofstring; 
-}
+exec("cd ${CODIR}/ && find . -name CVS -exec rm -rf {} \; 2>/dev/null");
+exec("cd ${CODIR}/ && find . -name pfSense.tgz -exec rm {} \; 2>/dev/null");
+exec("rm -rf ${CODIR}/conf*");
+exec("rm ${CODIR}/pfSense/usr/local/www/trigger_initial_wizard 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/crontab 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/master.passwd 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/passwd 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/fstab 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/ttys 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/group 2>/dev/null");
+exec("rm ${CODIR}/pfSense/etc/fstab 2>/dev/null");
+exec("rm ${CODIR}/pfSense/boot/device.hints 2>/dev/null");
+exec("rm ${CODIR}/pfSense/boot/loader.conf 2>/dev/null");
+exec("rm ${CODIR}/pfSense/boot/loader.rc 2>/dev/null");
+exec("rm -rf ${CODIR}/pfSense/conf/ 2>/dev/null");
+exec("rm -rf ${CODIR}/pfSense/cf/ 2>/dev/null");
+exec("rm -rf ${CODIR}/pfSense/root/.shrc");
+exec("rm -rf ${CODIR}/pfSense/root/.tcshrc");
+exec("rm -f ${CODIR}/pfSense/etc/syslog.conf 2>/dev/null");
 
-function str_replace_all($search,$replace,$subject) {
-	while(strpos($subject,$search)!==false) 
-		$subject = str_replace($search,$replace,$subject);
-	return $subject;
-}
+echo "Installing new files...\n";
 
-function playback_text($playback_file_contents) {
-	$playback_file_split = split("\n", $playback_file_contents);
-	$playback_text = "";
-	$toquote = '"';
-	$toquotereplace = '\\"';	
-	foreach($playback_file_split as $pfs) {
-		$firstchar = returnfirstchar($pfs);
-		$currentline = $pfs;
-		if($firstchar == "!") {
-			/* XXX: encode " in $pfs */
-			$pfsa = str_replace($toquote, $toquotereplace, $currentline);
-			$playback_text .= str_replace("!", "system(\"", $pfsa) . "\");\n";
-		} else if ($firstchar == "=") {
-			/* XXX: encode " in $pfs */
-			$pfsa = str_replace($toquote, $toquotereplace, $currentline);
-			$currentline   .= str_replace("!", "system(\"", $pfsa) . "\");\n";
-		} else {
-			$playback_text .= $pfs . "\n";
-		}
-	}
-	eval($playback_text);
-}
+exec("cd $CODIR/pfSense ; tar -cpf - . | (cd / ; tar -Uxpf -)");
 
-function playback_file($playback_file) {
-	$playback_file_contents = file_get_contents("/etc/phpshellsessions/{$playback_file}");
-	playback_text($playback_file_contents);
-}
+echo "CVS Sync Complete\n";
 
+echo "Removing FAST-CGI temporary files...\n";
+exec("find /tmp -name \"*php*\" -exec rm -rf {} \;");
+
+exec("rm -rf /tmp/xcache/* 2>/dev/null");
+
+echo "Upgrading configuration...\n";
+
+convert_config();
+/* setup php.ini */
+convert_config();
+sync_webgui_passwords();
+
+echo "Restarting check_reload_status...\n";
+exec("killall check_reload_status");
+mwexec_bg("nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status");
+
+echo "Configuring filter...";
+exec("/etc/rc.filter_configure_sync");
+exec("pfctl -f /tmp/rules.debug");
+echo "\n";
+
+echo "===> Checkout complete.  Your system is now sync'd.  Scripting terminating.\n";
+
+exec("killall php");
+touch("/tmp/restart_webgui");
 

@@ -293,7 +293,8 @@ function captiveportal_rules_generate() {
 	$cpifn = $config['captiveportal']['interface'];
 	$cpif = $config['interfaces'][$cpifn]['if'];
 	$cpip = $config['interfaces'][$cpifn]['ipaddr'];
-
+	$lanip = $config['interfaces']['lan']['ipaddr'];
+	
 	/* note: the captive portal daemon inserts all pass rules for authenticated
 	   clients as skipto 50000 rules to make traffic shaping work */
 

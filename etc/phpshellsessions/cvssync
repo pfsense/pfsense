@@ -1,8 +1,7 @@
 /*   cvs_sync
  *   Written by Scott Ullrich
- *   (C)2005 Scott Ullrich
+ *   (C)2005-2007 Scott Ullrich
  *   Part of the pfSense project pfSsh.php subsystem
- *   For users of cvs accounts to keep your test machine up to date
  */
 
 function create_supfile($branch) {

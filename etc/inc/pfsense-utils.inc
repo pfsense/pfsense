@@ -2513,6 +2513,9 @@ function sync_webgui_passwords() {
 		return 1;
 	}
 
+	if(file_exists("/etc/pwd.db.tmp")) 
+		unlink("/etc/pwd.db.tmp");
+
 	mwexec("/usr/sbin/pwd_mkdb -d /etc -p /etc/master.passwd");
 	mwexec("/usr/sbin/pwd_mkdb -p /etc/master.passwd");
 	/* sync root */

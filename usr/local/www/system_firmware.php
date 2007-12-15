@@ -199,8 +199,8 @@ print_info_box($sig_warning);
 				  			if($g['platform'] == "pfSense") { 
 								echo "Please select kernel type: ";
 								echo "<select name='kerneltype'>";
-								echo "<option value='single'>Uniprocessor kernel</option>";
 								echo "<option value='SMP'>Multiprocessor kernel</option>";
+								echo "<option value='single'>Uniprocessor kernel</option>";
 								echo "<option value='wrap'>Embedded kernel</option>";
 								echo "<option value='Developers'>Developers kernel</option>";
 								echo "</select>";

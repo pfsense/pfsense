@@ -110,7 +110,10 @@ fi
 # have trouble overriding the PREFIX configure
 # argument since we build our packages in a
 # seperated PREFIX area
-ln -s / /tmp/tmp
+# Only create if symlink does not exist. 
+if [ ! -h /tmp/tmp ]; then
+    ln -hfs / /tmp/tmp
+fi
 
 # Malloc debugging check
 if [ ! -L /etc/malloc.conf ]; then

@@ -776,7 +776,7 @@ include("head.inc");
 					<p>
 					<table width="90%">
 						<tr><td width="25%"><ul><li>keep state</li></td><td>Works with all IP protocols.</ul></td></tr>
-						<tr><td width="25%"><ul><li>modulate state</li></td><td>Works only with TCP. pfSense will generate strong Initial Sequence Numbers (ISNs) for packets matching this rule.</li></ul></td></tr>
+						<tr><td width="25%"><ul><li>modulate state</li></td><td>Works only with TCP. {$g['product_name']} will generate strong Initial Sequence Numbers (ISNs) for packets matching this rule.</li></ul></td></tr>
 						<tr><td width="25%"><ul><li>synproxy state</li></td><td>Proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined.</ul></td></tr>
 						<tr><td width="25%"><ul><li>none</li></td><td>Do not use state mechanisms to keep track.  This is only useful if you're doing advanced queueing in certain situations.  Please check the documentation.</ul></td></tr>
 					</table>

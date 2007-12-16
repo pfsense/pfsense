@@ -77,7 +77,7 @@
 	## accessed since initial install show this stuff.
 	if(file_exists('/conf/trigger_initial_wizard')) {
 
-		$pgtitle = array("pfSense first time setup");
+		$pgtitle = array("{$g['product_name']} first time setup");
 		include('head.inc');
 
 		echo "<body link=\"#0000CC\" vlink=\"#0000CC\" alink=\"#0000CC\">\n";
@@ -85,10 +85,10 @@
 		echo "<center>\n";
 		echo "<img src=\"/themes/{$g['theme']}/images/logo.gif\" border=\"0\"><p>\n";
 		echo "<div \" style=\"width:700px;background-color:#ffffff\" id=\"nifty\">\n";
-		echo "Welcome to pfSense!<p>\n";
+		echo "Welcome to {$g['product_name']}!<p>\n";
 		echo "One moment while we start the initial setup wizard.<p>\n";
 		echo "Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal gui.<p>\n";
-		echo "To bypass the wizard, click on the pfSense wizard on the initial page.\n";
+		echo "To bypass the wizard, click on the {$g['product_name']} wizard on the initial page.\n";
 		echo "</div>\n";
 		echo "<meta http-equiv=\"refresh\" content=\"1;url=wizard.php?xml=setup_wizard.xml\">\n";
 		echo "<script type=\"text/javascript\">\n";
@@ -394,7 +394,7 @@ EOD;
 $closehead = false;
 
 ## Set Page Title and Include Header
-$pgtitle = array("pfSense Dashboard");
+$pgtitle = array("{$g['product_name']} Dashboard");
 include("head.inc");
 	
 	

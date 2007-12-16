@@ -2132,8 +2132,8 @@ function make_dirs($path, $mode = 0755) {
  * call_pfsense_method(): Call a method exposed by the pfsense.com XMLRPC server.
  */
 function call_pfsense_method($method, $params, $timeout = 0) {
-	$ip = gethostbyname('www.pfsense.com');
-	if($ip == "www.pfsense.com")
+	$ip = gethostbyname($g['product_website']);
+	if($ip == $g['product_website'])
 		return false;
 	global $g, $config;
 	$xmlrpc_base_url = $g['xmlrpcbaseurl'];
@@ -2157,8 +2157,8 @@ function call_pfsense_method($method, $params, $timeout = 0) {
  */
 function check_firmware_version($tocheck = "all", $return_php = true) {
 	global $g, $config;
-	$ip = gethostbyname('www.pfsense.com');
-	if($ip == "www.pfsense.com")
+	$ip = gethostbyname($g['product_website']);
+	if($ip == $g['product_website'])
 		return false;
 	$rawparams = array("firmware" => array("version" => trim(file_get_contents('/etc/version'))),
 		"kernel"   => array("version" => trim(file_get_contents('/etc/version_kernel'))),

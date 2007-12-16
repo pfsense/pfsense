@@ -135,7 +135,7 @@ function enable_altfirmwareurl(enable_over) {
 			<tr><td>Base URL:</td><td><input name="firmwareurl" type="input" class="formfld url" id="firmwareurl" size="64" value="<?php if($curcfg['alturl']['firmwareurl']) echo $curcfg['alturl']['firmwareurl']; else echo $g['xmlrpcbaseurl']; ?>"></td></tr>
 			<tr><td>Path:</td><td><input name="firmwarepath" type="input" class="formfld unknown"id="firmwarepath" size="64" value="<?php if($curcfg['alturl']['firmwarepath']) echo $curcfg['alturl']['firmwarepath']; else echo $g['xmlrpcpath']; ?>"></td></tr>
 			</table>
-			<span class="vexpl">This is where pfSense will check for newer firmware versions when the <a href="system_firmware_check.php">System: Firmware: Auto Update</a> page is viewed.</span></td>
+			<span class="vexpl">This is where {$g['product_name']} will check for newer firmware versions when the <a href="system_firmware_check.php">System: Firmware: Auto Update</a> page is viewed.</span></td>
 	</tr>
 	<script>enable_altfirmwareurl();</script>
 <!--

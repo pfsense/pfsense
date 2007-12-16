@@ -42,7 +42,7 @@ if($pkg_info) {
 	    $savemsg = "Unable to retrieve package info from {$g['xmlrpcbaseurl']}. Cached data will be used.";
 		$pkg_info = unserialize(@file_get_contents("{$g['tmp_path']}/pkg_info.cache"));
 	} else {
-		$savemsg = "Unable to communicate to pfSense.com.  Please check DNS, default gateway, etc.";
+		$savemsg = "Unable to communicate to {$g['product_website']}.  Please check DNS, default gateway, etc.";
 	}
 }
 
@@ -165,7 +165,7 @@ include("fbegin.inc");
 						if($index['maintainer'] != "") {
 							echo "<a href='mailto:{$index['maintainer']}'>{$index['maintainer']}</a>";
 						} else {
-							echo "Nobody. <a href='mailto:coreteam@pfsense.com'>Apply</a> for it!";
+							echo "Nobody. <a href='mailto:{$g['product_email']}'>Apply</a> for it!";
 						}
 					?>
                                 </td>

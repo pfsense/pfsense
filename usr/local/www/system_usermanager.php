@@ -437,7 +437,6 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
 
 <?php
     include("head.inc");
-    //echo $pfSenseHead->getHTML();
 ?>
 <?php include("fbegin.inc");?>
 <?php if ($input_errors) print_input_errors($input_errors);?>

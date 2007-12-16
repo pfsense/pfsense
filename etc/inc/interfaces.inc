@@ -536,7 +536,7 @@ function interfaces_wireless_configure($if, $wlcfg) {
 
 	$fd_set = fopen("/tmp/{$if}_setup.sh","w");
 	fwrite($fd_set, "#!/bin/sh\n");
-	fwrite($fd_set, "# pfSense wireless configuration script.\n\n");
+	fwrite($fd_set, "# {$g['product_name']} wireless configuration script.\n\n");
 
 	fwrite($fd_set, "# enable shell debugging\n");
 	fwrite($fd_set, "set -x\n");

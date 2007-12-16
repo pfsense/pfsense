@@ -95,9 +95,9 @@ function getAdminPageList() {
         unset($tmp['diag_new_states.php']);
         unset($tmp['system_usermanager_edit.php']);
         
-        $tmp['pkg.php'] = "pfSense package manager";
-        $tmp['pkg_edit.php'] = "pfSense package manager edit";
-        $tmp['wizard.php'] = "pfSense wizard subsystem";
+        $tmp['pkg.php'] = "{$g['prouct_name']} package manager";
+        $tmp['pkg_edit.php'] = "{$g['product_name']} package manager edit";
+        $tmp['wizard.php'] = "{$g['product_name']} wizard subsystem";
         $tmp['graphs.php'] = "Graphing subsystem";
         $tmp['headjs.php'] = "*Required for javascript";
 

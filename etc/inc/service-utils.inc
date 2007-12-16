@@ -36,7 +36,7 @@
 function write_rcfile($params) {
 	$fileprefix = "/usr/local/etc/rc.d/";
 	if(!(is_writable($fileprefix . $params['file']) or $params['start'])) return false;
-	$towrite .= "#!/bin/sh\n# This file was automatically generated\n# by the pfSense service handler.\n\n";
+	$towrite .= "#!/bin/sh\n# This file was automatically generated\n# by the {$g['product_website']} service handler.\n\n";
 	/* write our rc functions */
 	$towrite .= "rc_start() {\n\t" . $params['start'] . "\n}\n\n";
 	if($params['stop']) {

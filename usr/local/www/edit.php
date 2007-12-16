@@ -107,7 +107,7 @@ else
 	Exec+ v1.02-000 - Copyright 2001-2003, All rights reserved
 	Created by technologEase (http://www.technologEase.com).
 	(modified for m0n0wall by Manuel Kasper <mk@neon1.net>)
-        (modified for pfSense Edit/Save file by Scott Ullrich, Copyright 2004, 2005)
+        (modified for {$g['product_name']} Edit/Save file by Scott Ullrich, Copyright 2004, 2005)
 */
 
 // Function: is Blank

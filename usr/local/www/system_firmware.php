@@ -169,7 +169,7 @@ print_info_box($sig_warning);
 	<div id="mainarea">
               <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
                 <tr>
-		 <td colspan="2" class="listtopic">Invoke pfSense Manual Upgrade</td>
+		 <td colspan="2" class="listtopic">Invoke {$g['product_name']} Manual Upgrade</td>
 		</tr>
 		  <td width="22%" valign="baseline" class="vncell">&nbsp;</td>
                   <td width="78%" class="vtable">

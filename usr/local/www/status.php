@@ -162,7 +162,7 @@ defCmdT("vmstat -z","vmstat -z");
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
 
-$pgtitle = array("pfSense","status");
+$pgtitle = array("{$g['product_name']}","status");
 include("head.inc");
 
 ?>

@@ -167,7 +167,7 @@ if ($g['booting'] and !file_exists($g['cf_conf_path'] . "/config.xml")  ) {
 *******************************************************************************
 * FATAL ERROR                                                                 *
 * The device that contains the configuration file (config.xml) could not be   *
-* found. pfSense cannot continue booting.                                     *
+* found. {$g['product_name']} cannot continue booting.                                     *
 *******************************************************************************
 
 
@@ -316,8 +316,8 @@ function restore_backup($file) {
 		conf_mount_rw();
 		copy("$file","/cf/conf/config.xml");
 		unlink_if_exists("/tmp/config.cache");
-		log_error("pfSense is restoring the configuration $file");
-		file_notice("config.xml", "pfSense is restoring the configuration $file", "pfSenseConfigurator", "");
+		log_error("{$g['product_name']} is restoring the configuration $file");
+		file_notice("config.xml", "{$g['product_name']} is restoring the configuration $file", "pfSenseConfigurator", "");
 		conf_mount_ro();
 	}
 	config_unlock();
@@ -356,7 +356,7 @@ function parse_config_bootup() {
 						restore_backup("/cf/conf/backup/{$last_backup}");
 					}
 					if(!file_exists("{$g['conf_path']}/config.xml")) {
-						echo "XML configuration file not found.  pfSense cannot continue booting.\n";
+						echo "XML configuration file not found.  {$g['product_name']} cannot continue booting.\n";
 						mwexec("/sbin/halt");
 						exit;
 					}
@@ -389,9 +389,9 @@ function parse_config_bootup() {
 
 *******************************************************************************
 * WARNING!                                                                    *
-* The current configuration has been created with a newer version of pfSense  *
+* The current configuration has been created with a newer version of {$g['product_name']}  *
 * than this one! This can lead to serious misbehavior and even security       *
-* holes! You are urged to either upgrade to a newer version of pfSense or     *
+* holes! You are urged to either upgrade to a newer version of {$g['product_name']} or     *
 * revert to the default configuration immediately!                            *
 *******************************************************************************
 
@@ -1387,7 +1387,7 @@ function set_networking_interfaces_ports() {
 	if($avail < 115) {
 		echo "\n\n\n";
 		echo "DANGER!  WARNING!\n\n";
-		echo "pfSense requires *ATLEAST* 128 megs of ram to function correctly.\n";
+		echo "{$g['product_name']} requires *ATLEAST* 128 megs of ram to function correctly.\n";
 		echo "Only ($avail) megs of ram has been detected.\n";
 		echo "\nPress ENTER to continue.";
 		fgets($fp);
@@ -1440,13 +1440,13 @@ EOD;
 
 	echo <<<EOD
 
-*NOTE*  pfSense requires *ATLEAST* 2 assigned interfaces to function.
+*NOTE*  {$g['product_name']} requires *ATLEAST* 2 assigned interfaces to function.
         If you do not have two interfaces turn off the machine until
 	    you do.
 
 	    And now in ENGLISH.  If you do not have atleast two *REAL*
 	    network interface cards or one nic with multiple VLANS then
-	    pfSense *WILL NOT* run correctly.
+	    {$g['product_name']} *WILL NOT* run correctly.
 
 If you do not know the names of your interfaces, you may choose to use
 auto-detection... In that case, disconnect all interfaces now before

@@ -184,7 +184,6 @@ else {
 	</td>
   </tr>
 </table>
-<meta http-equiv="refresh" content="60;url=diag_dump_states.php?filter=<?php echo $_GET['filter']; ?>">
 
 <?php require("fend.inc"); ?>
 </body>

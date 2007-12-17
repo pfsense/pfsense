@@ -252,7 +252,5 @@ include("fbegin.inc");
 	Rounded("div#nifty","top","#FFF","#EEEEEE","smooth");
 </script>
 
-<meta http-equiv="refresh" content="120;url=<?php print $_SERVER['PHP_SELF']; ?>">
-
 </body>
 </html>

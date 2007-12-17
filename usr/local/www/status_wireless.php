@@ -172,6 +172,5 @@ display_top_tabs($tab_array);
 </table>
 
 <?php include("fend.inc"); ?>
-<meta http-equiv="refresh" content="120;url=<?php print $_SERVER['SCRIPT_NAME']; ?>?if=<?php echo $if; ?>">
 </body>
 </html>

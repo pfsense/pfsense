@@ -173,8 +173,6 @@ include("head.inc");
 	</table>
 </div>
 
-<meta http-equiv="refresh" content="60;url=<?php print $_SERVER['SCRIPT_NAME']; ?>">
-
 <?php include("fend.inc"); ?>
 
 

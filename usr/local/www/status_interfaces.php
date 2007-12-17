@@ -252,6 +252,4 @@ is kept disconnected.
 <p>
 <span class="red"><strong>Note:</strong></span> In/out counters will wrap at 32bit (4 Gigabyte) ! <br/>
 
-<meta http-equiv="refresh" content="120;url=<?php print $_SERVER['SCRIPT_NAME']; ?>">
-
 <?php include("fend.inc"); ?>

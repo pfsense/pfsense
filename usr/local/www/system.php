@@ -253,7 +253,7 @@ include("head.inc");
 <?php for($dnscounter=1; $dnscounter<5; $dnscounter++): ?>
                       <tr>
                       <td>
-                      <input name="dns<?php echo $dnscounter;?>" type="text" class="formfld unknown" id="dns<?php echo $dnscounter;?>" size="20" value="<?=htmlspecialchars($pconfig['dns' . $dnscounter]);?>">
+                      <input name="dns<?php echo $dnscounter;?>" type="text" class="formfld unknown" id="dns<?php echo $dnscounter;?>" size="20" value="<?=htmlspecialchars($pconfig['dns{$dnscounter}']);?>">
                       </td>
                       <?php
                       	if($multiwan) {

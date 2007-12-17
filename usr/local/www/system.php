@@ -33,10 +33,12 @@ require("guiconfig.inc");
 
 $pconfig['hostname'] = $config['system']['hostname'];
 $pconfig['domain'] = $config['system']['domain'];
-list($pconfig['dns1'],$pconfig['dns2']) = $config['system']['dnsserver'];
+list($pconfig['dns1'],$pconfig['dns2'],$pconfig['dns3'],$pconfig['dns4']) = $config['system']['dnsserver'];
 
 $pconfig['dns1gwint'] = $config['system']['dns1gwint'];
 $pconfig['dns2gwint'] = $config['system']['dns2gwint'];
+$pconfig['dns3gwint'] = $config['system']['dns3gwint'];
+$pconfig['dns4gwint'] = $config['system']['dns4gwint'];
 
 $pconfig['dnsallowoverride'] = isset($config['system']['dnsallowoverride']);
 $pconfig['webguiproto'] = $config['system']['webgui']['protocol'];
@@ -99,6 +101,9 @@ if ($_POST) {
 	if (($_POST['dns1'] && !is_ipaddr($_POST['dns1'])) || ($_POST['dns2'] && !is_ipaddr($_POST['dns2']))) {
 		$input_errors[] = "A valid IP address must be specified for the primary/secondary DNS server.";
 	}
+	if (($_POST['dns3'] && !is_ipaddr($_POST['dns3'])) || ($_POST['dns4'] && !is_ipaddr($_POST['dns4']))) {
+		$input_errors[] = "A valid IP address must be specified for the primary/secondary DNS server.";
+	}	
 	if ($_POST['webguiport'] && (!is_numericint($_POST['webguiport']) ||
 			($_POST['webguiport'] < 1) || ($_POST['webguiport'] > 65535))) {
 		$input_errors[] = "A valid TCP/IP port must be specified for the webConfigurator port.";
@@ -139,6 +144,10 @@ if ($_POST) {
 			$config['system']['dnsserver'][] = $_POST['dns1'];
 		if ($_POST['dns2'])
 			$config['system']['dnsserver'][] = $_POST['dns2'];
+		if ($_POST['dns3'])
+			$config['system']['dnsserver'][] = $_POST['dns3'];
+		if ($_POST['dns4'])
+			$config['system']['dnsserver'][] = $_POST['dns4'];
 
 		$olddnsallowoverride = $config['system']['dnsallowoverride'];
 
@@ -160,6 +169,14 @@ if ($_POST) {
 			$config['system']['dns2gwint'] = $pconfig['dns2gwint'];
 		else
 			unset($config['system']['dns2gwint']);
+		if($_POST['dns3gwint']) 
+			$config['system']['dns1gwint'] = $pconfig['dns3gwint'];
+		else 
+			unset($config['system']['dns3gwint']);
+		if($_POST['dns4gwint']) 
+			$config['system']['dns4gwint'] = $pconfig['dns4gwint'];
+		else
+			unset($config['system']['dns4gwint']);
 
 		if ($changecount > 0)
 			write_config($changedesc);

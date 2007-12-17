@@ -183,10 +183,8 @@ if ($_POST) {
 			$t++;
 		}
 	}
-	if (($_POST['remotegw'] && !is_ipaddr($_POST['remotegw']))) {
-		if(is_domain($_POST['remotegw']) == false)
-			$input_errors[] = "A valid remote gateway address must be specified.";
-	}
+	if (($_POST['remotegw'] && !is_ipaddr($_POST['remotegw']) && !is_domain($_POST['remotegw']))) 
+		$input_errors[] = "A valid remote gateway address or host name must be specified.";
 	if (($_POST['remotegw'] && is_ipaddr($_POST['remotegw']) && !isset($_POST['disabled']) )) {
 		$t = 0;
 		foreach($a_ipsec as $tunnel) {
@@ -423,7 +421,7 @@ function methodsel_change() {
                   <td width="78%" class="vtable">
                     <?=$mandfldhtml;?><input name="remotegw" type="text" class="formfld unknown" id="remotegw" size="20" value="<?=$pconfig['remotegw'];?>">
                     <br>
-                    Enter the public IP address of the remote gateway</td>
+                    Enter the public IP address or host name of the remote gateway</td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncell">Description</td>

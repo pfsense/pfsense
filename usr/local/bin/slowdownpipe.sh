@@ -5,5 +5,5 @@ cat - |   \
 while read line
 do
 	echo "$line"
-	sleep 0.005
+	sleep 0.01
 done

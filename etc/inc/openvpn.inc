@@ -341,6 +341,15 @@ EOD;
 			$openvpn_conf .= "push \"route $ip $mask\"\n";
 		}
 
+        if ($settings['bind_to_iface'] == 'on') {
+            $iface = $settings['interface'];
+            $iface = convert_friendly_interface_to_real_interface_name($iface);
+            $line = trim(shell_exec("ifconfig $iface | grep inet | grep -v inet6"));
+            list($dummy, $ip, $dummy2, $dummy3) = explode(' ', $line);
+
+            $openvpn_conf .= "local {$ip}\n";
+        }
+
 		// The port we'll listen at
 		$openvpn_conf .= "lport {$settings['local_port']}\n";
 
@@ -400,7 +409,6 @@ EOD;
 		$openvpn_conf .= "remote {$settings['serveraddr']} {$settings['serverport']}\n";
 
 		if ($settings['auth_method'] == 'pki') $openvpn_conf .= "client\n";
-
 		if ($settings['use_dynamicport']) $openvpn_conf .= "nobind\n";
 			else
 			// The port we'll listen at

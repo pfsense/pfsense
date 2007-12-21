@@ -64,6 +64,20 @@
 			</options>
 			<default_value>UDP</default_value>
 		</field>
+        <field>
+            <fieldname>bind_to_iface</fieldname>
+            <fielddescr>Bind to an interface</fielddescr>
+            <description>Check to bind on a specific network interface.</description>
+            <type>checkbox</type>
+            <enablefields>interface</enablefields>
+        </field>
+        <field>
+            <fieldname>interface</fieldname>
+            <fielddescr>Interface</fielddescr>
+            <description>The interface on which the OpenVPN daemon will listen.</description>
+            <type>interfaces_selection</type>
+            <default_value>wan</default_value>
+        </field>
 		<field>
 			<fieldname>dynamic_ip</fieldname>
 			<fielddescr>Dynamic IP</fielddescr>

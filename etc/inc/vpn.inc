@@ -727,11 +727,18 @@ EOD;
 				$clientip = long2ip(ip2long($pptpdcfg['remoteip']) + $i);
 				$ngif = "ng" . ($i + $starting_ng);
 
+				if(isset($pptpdcfg['radius']['radiusissueips']) && isset($pptpdcfg['radius']['enable'])) {
+					$isssue_ip_type = "set ipcp ranges {$pptpdcfg['localip']}/32 0.0.0.0/0";
+					$isssue_ip_type .="\n\tset ipcp yes radius-ip";
+				} else {
+					$isssue_ip_type = "set ipcp ranges {$pptpdcfg['localip']}/32 {$clientip}/32";
+				}
+
 				$mpdconf .=<<<EOD
 
 pt{$i}:
 	new -i {$ngif} pt{$i} pt{$i}
-	set ipcp ranges {$pptpdcfg['localip']}/32 {$clientip}/32
+	{$isssue_ip_type}
 	load pts
 
 EOD;

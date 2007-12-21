@@ -215,6 +215,7 @@ function enable_change(enable_over) {
 		document.iform.localip.disabled = 0;
 		document.iform.req128.disabled = 0;
 		document.iform.radiusenable.disabled = 0;
+		document.iform.radiusissueips.disabled = 0;
 		document.iform.wins.disabled = 0;
 		document.iform.n_pptp_units.disabled = 0;
 		document.iform.pptp_subnet.disabled = 0;	
@@ -247,6 +248,7 @@ function enable_change(enable_over) {
 			document.iform.radacct_enable.disabled = 1;
 			document.iform.radiusserver.disabled = 1;
 			document.iform.radiusserverport.disabled = 1;
+			document.iform.radiusissueips.disabled = 1;
 			document.iform.radiusserveracctport.disabled = 1;
 			document.iform.radiussecret.disabled = 1;
 			document.iform.radius_nasip.disabled = 1;	
@@ -266,6 +268,7 @@ function enable_change(enable_over) {
 		document.iform.radacct_enable.disabled = 1;
 		document.iform.radiusserver.disabled = 1;
 		document.iform.radiusserverport.disabled = 1;
+		document.iform.radiusissueips.disabled = 1;
 		document.iform.radiusserveracctport.disabled = 1;
 		document.iform.radiussecret.disabled = 1;
 		document.iform.radius_nasip.disabled = 1;	
@@ -385,6 +388,12 @@ function enable_change(enable_over) {
                     <br>
 
                    primary and secondary dns servers for pptp clients<br>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncell">RADIUS issued IP's</td>
+                  <td width="78%" valign="top" class="vtable">
+                      <input name="radiusissueips" value="yes" type="checkbox" class="formfld" id="radiusissueips"<?php if(isset($pconfig['radiusissueips'])) echo " checked=\"checked\""; ?> />
+                  </td>
                 </tr>
                 <tr> 
                   <td width="22%" valign="top" class="vncell">WINS Server</td>

@@ -85,7 +85,10 @@ if ($_POST) {
 			$a_vlans[] = $vlan;
 
 		write_config();
+		
+		touch($d_sysrebootreqd_path);
 
+		/* these appear to not work */		
 		interfaces_vlan_configure();
 		interfaces_lan_configure();
 		interfaces_wan_configure();

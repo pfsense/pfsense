@@ -37,3 +37,7 @@ PFSENSETYPE=`cat /etc/platform`
 if [ $PFSENSETYPE = "embedded" ]; then
 	cp /etc/ttys_wrap /etc/ttys
 fi
+
+if [ -f /usr/local/sbin/php ]; then
+	rm /usr/local/sbin/php
+fi

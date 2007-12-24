@@ -86,11 +86,17 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <form action="firewall_virtual_ip.php" method="post">
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_vipconfdirty_path)): ?><p>
-<?php print_info_box_np("The VIP configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
-<?php endif; ?>
+<?php 
+	if ($input_errors) 
+		print_input_errors($input_errors);
+	else
+	if ($savemsg) 
+		print_info_box($savemsg); 
+	else
+	if (file_exists($d_vipconfdirty_path))
+		print_info_box_np("The VIP configuration has been changed.<br>You must apply the changes in order for them to take effect.");
+?>
+<p>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
   <?php
@@ -179,7 +185,7 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	if ($_POST['apply']) {
-		if (file_exists("/tmp/carp_reboot_needed") == "del") {
+		if (file_exists("/tmp/carp_reboot_needed")) {
 			flush();
 			ob_flush();
 			usleep(1000);

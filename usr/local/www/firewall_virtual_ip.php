@@ -93,11 +93,17 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <form action="firewall_virtual_ip.php" method="post">
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if ($savemsg) print_info_box($savemsg); ?>
-<?php if (file_exists($d_vipconfdirty_path)): ?><p>
-<?php print_info_box_np("The VIP configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
-<?php endif; ?>
+<?php 
+	if ($input_errors) 
+		print_input_errors($input_errors);
+	else
+	if ($savemsg) 
+		print_info_box($savemsg); 
+	else
+	if (file_exists($d_vipconfdirty_path))
+		print_info_box_np("The VIP configuration has been changed.<br>You must apply the changes in order for them to take effect.");
+?>
+<br>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td class="tabnavtbl">
   <?php

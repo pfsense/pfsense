@@ -377,7 +377,7 @@ include("head.inc");
 				<strong>NAT encapsulated IPv6 packets (IP protocol 41/RFC2893) to:</strong>
 				<br /> <br />
 				<input name="ipv6nat_ipaddr" type="text" class="formfld" id="ipv6nat_ipaddr" size="20" value="<?=htmlspecialchars($pconfig['ipv6nat_ipaddr']);?>" />
-				&nbsp;(IP address)<span class="vexpl"><br /> Don't forget to add a firewall rule to permit IPv6 packets!</span>
+				&nbsp;(IP address)
 			</td>
 		</tr>
 		<tr>

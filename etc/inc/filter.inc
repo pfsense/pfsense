@@ -1337,10 +1337,12 @@ function generate_user_filter_rule_arr($rule, $ngcounter) {
 	$line = generate_user_filter_rule($rule, $ngcounter);
 	$ret['rule'] = $line;
 	$ret['interface'] = $rule['interface'];
-	if($rule['descr'] != "" and $line != "")
-		$ret['descr'] = "label \"USER_RULE: " . str_replace('"', '', $rule['descr']) . "\"";
-	else
-		$ret['descr'] = "label \"USER_RULE\"";
+	if ($line[0] != '#') {
+		if($rule['descr'] != "" and $line != "")
+			$ret['descr'] = "label \"USER_RULE: " . str_replace('"', '', $rule['descr']) . "\"";
+		else
+			$ret['descr'] = "label \"USER_RULE\"";
+	}
 	$ret['ackq'] = get_ack_queue($rule['interface']);
 
 	return $ret;
@@ -1393,7 +1395,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 
 		/* don't include disabled rules */
 		if (isset($rule['disabled'])) {
-			return "# rule " . $rule['descr'] . " disabled \n";
+			return "# rule " . $rule['descr'] . " disabled ";
 		}
 
 		$pptpdcfg = $config['pptpd'];
@@ -1431,6 +1433,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			if($config['pppoe']['n_pppoe_units'] <> "")
 				$nif = $config['pppoe']['n_pppoe_units'];
 			$ispppoe = true;
+		} else if(!isset($rule['interface'])) {
+			return '# Interface empty for rule: '.$rule['descr'];
 		} else {
 
 			/* Check to see if the interface is opt and in our opt list */

@@ -126,22 +126,6 @@ if ($_GET['act'] == "del") {
 		
 	unset($config['interfaces'][$id]);	/* delete the specified OPTn */
 
-	/* shift down other OPTn interfaces to get rid of holes */
-	$i = substr($id, 3); /* the number of the OPTn port being deleted */
-	$i++;
-	
-	/* look at the following OPTn ports */
-	while (is_array($config['interfaces']['opt' . $i])) {
-		$config['interfaces']['opt' . ($i - 1)] =
-			$config['interfaces']['opt' . $i];
-		
-		if ($config['interfaces']['opt' . ($i - 1)]['descr'] == "OPT" . $i)
-			$config['interfaces']['opt' . ($i - 1)]['descr'] = "OPT" . ($i - 1);
-		
-		unset($config['interfaces']['opt' . $i]);
-		$i++;
-	}
-
 	write_config();
 	
 	/*   move all the interfaces up.  for example:

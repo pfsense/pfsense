@@ -82,17 +82,18 @@ function services_dhcpd_configure() {
 
 	/* DHCP enabled on any interfaces? */
 	$dhcpdenable = false;
-	foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
-		if (isset($dhcpifconf['enable']) &&
-			(($dhcpif == "lan") ||
-			(isset($config['interfaces'][$dhcpif]['enable']) &&
-			$config['interfaces'][$dhcpif]['if'] && (!$config['interfaces'][$dhcpif]['bridge']))))
-			$dhcpdenable = true;
-		if (isset($dhcpifconf['enable']) &&
-			(($dhcpif == "wan") || (isset($config['interfaces'][$dhcpif]['enable']) &&
-			$config['interfaces'][$dhcpif]['if'] && (!$config['interfaces'][$dhcpif]['bridge']))))
-			$dhcpdenable = true;
-	}
+	if(is_array($dhcpdcfg))
+		foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
+			if (isset($dhcpifconf['enable']) &&
+				(($dhcpif == "lan") ||
+				(isset($config['interfaces'][$dhcpif]['enable']) &&
+				$config['interfaces'][$dhcpif]['if'] && (!$config['interfaces'][$dhcpif]['bridge']))))
+				$dhcpdenable = true;
+			if (isset($dhcpifconf['enable']) &&
+				(($dhcpif == "wan") || (isset($config['interfaces'][$dhcpif]['enable']) &&
+				$config['interfaces'][$dhcpif]['if'] && (!$config['interfaces'][$dhcpif]['bridge']))))
+				$dhcpdenable = true;
+		}
 
 	if (!$dhcpdenable)
 		return 0;

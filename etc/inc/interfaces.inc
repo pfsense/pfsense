@@ -37,6 +37,7 @@
 
 /* include all configuration functions */
 require_once("functions.inc");
+require_once("globals.inc");
 
 function interfaces_loopback_configure() {
 	mwexec("/sbin/ifconfig lo0 127.0.0.1");
@@ -45,15 +46,15 @@ function interfaces_loopback_configure() {
 }
 
 function interfaces_vlan_configure() {
-	global $config;
+	global $config, $g;
 
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 
 		/* devices with native VLAN support */
-		$vlan_native_supp = explode(" ", "bge em ixgb nge re ti txp vge");
+		$vlan_native_supp = $g['vlan_native_supp'];
 
 		/* devices with long frame support */
-		$vlan_long_supp = explode(" ", "bfe dc fxp gem hme le rl sis sk ste tl tx xl");
+		$vlan_long_frame = $g['vlan_long_frame'];
 
 		/* sweep through and axe old interfaces */
 		$vlan_count = get_number_of_vlan_interfaces();
@@ -77,7 +78,7 @@ function interfaces_vlan_configure() {
 
 			if (in_array($drvname, $vlan_native_supp))
 				$cmd .= " link0";
-			else if (in_array($drvname, $vlan_long_supp))
+			else if (in_array($drvname, $vlan_long_frame))
 				$cmd .= " mtu 1500";
 
 			mwexec($cmd);

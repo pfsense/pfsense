@@ -1256,7 +1256,7 @@ function set_networking_interfaces_ports() {
 	if($avail < 115) {
 		echo "\n\n\n";
 		echo "DANGER!  WARNING!\n\n";
-		echo "pfSense requires *ATLEAST* 128 megs of ram to function correctly.\n";
+		echo "pfSense requires *AT LEAST* 128 megs of ram to function correctly.\n";
 		echo "Only ($avail) megs of ram has been detected.\n";
 		echo "\nPress ENTER to continue.";
 		fgets($fp);
@@ -1309,18 +1309,16 @@ EOD;
 
 	echo <<<EOD
 
-*NOTE*  pfSense requires *ATLEAST* 2 assigned interfaces to function.
-        If you do not have two interfaces turn off the machine until
-	    you do.
+*NOTE*  pfSense requires *AT LEAST* 2 assigned interfaces to function.
+        If you do not have two interfaces you CANNOT continue. 
 
-	    And now in ENGLISH.  If you do not have atleast two *REAL*
-	    network interface cards or one nic with multiple VLANS then
-	    pfSense *WILL NOT* run correctly.
+        If you do not have at least two *REAL* network interface cards
+        or one interface with multiple VLANs then pfSense *WILL NOT*
+        function correctly.
 
 If you do not know the names of your interfaces, you may choose to use
-auto-detection... In that case, disconnect all interfaces now before
-hitting a.   The system will then prompt you to plug in each nic to
-autodetect.
+auto-detection. In that case, disconnect all interfaces now before
+hitting 'a' to initiate auto detection. 
 
 EOD;
 

@@ -98,6 +98,8 @@ if ($_POST) {
 			interfaces_optional_configure() takes about 5 seconds
 		*/
 		
+		mwexec("touch /tmp/vlanchanged");
+		
 		interfaces_vlan_configure();
 		interfaces_lan_configure();
 		interfaces_wan_configure();

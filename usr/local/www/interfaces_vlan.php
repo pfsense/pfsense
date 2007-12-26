@@ -95,7 +95,12 @@ include("head.inc");
 <?php include("fbegin.inc"); ?>
 <p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
-<?php if (file_exists($d_sysrebootreqd_path)) print_info_box("VLAN configuration has changed.  You must <a href='system_reboot.php'>reboot</a> for the changes to be applied."); ?>
+<?php if (file_exists("/tmp/vlanchanged")) { 
+	print_info_box("VLAN configuration has changed.  WARNING: You may need to <a href='system_reboot.php'>reboot</a> for
+		the changes to take effect.");
+	mwexec("/bin/rm /tmp/vlanchanged");
+}
+?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php

@@ -85,10 +85,19 @@ if ($_POST) {
 			$a_vlans[] = $vlan;
 
 		write_config();
-		
-		touch($d_sysrebootreqd_path);
 
-		/* these appear to not work */		
+		/* TODO sometime post-1.2 release
+		this does not always work, some systems require
+		a reboot before VLANs function properly
+		
+		This portion of code is also very slow, this is why
+		it takes a long time to add a new VLAN.
+		Benchmark_Timer on a 800 MHz VIA: 
+			interfaces_lan_configure() takes about 6 seconds 
+			interfaces_wan_configure() takes about 9.5 seconds
+			interfaces_optional_configure() takes about 5 seconds
+		*/
+		
 		interfaces_vlan_configure();
 		interfaces_lan_configure();
 		interfaces_wan_configure();

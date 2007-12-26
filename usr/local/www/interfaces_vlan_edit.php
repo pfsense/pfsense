@@ -86,6 +86,19 @@ if ($_POST) {
 
 		write_config();
 
+		/* TODO 
+		this does not always work, some systems require
+		a reboot before VLANs function properly. Suspect
+		FreeBSD driver issue.
+		
+		This portion of code is also very slow, this is why
+		it takes a long time to add a new VLAN.
+		Benchmark_Timer on a 800 MHz VIA: 
+			interfaces_lan_configure() takes about 6 seconds 
+			interfaces_wan_configure() takes about 9.5 seconds
+			interfaces_optional_configure() takes about 5 seconds
+		*/
+
 		interfaces_vlan_configure();
 		interfaces_lan_configure();
 		interfaces_wan_configure();

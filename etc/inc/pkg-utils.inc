@@ -56,7 +56,7 @@ if($g['platform'] == "pfSense") {
  *   
  ******/
 function remove_freebsd_package($packagestring) {
-	exec("cd /var/db/pkg && pkg_delete `ls | grep $packagestring`");
+	exec("cd /var/db/pkg && echo y | pkg_delete `ls | grep $packagestring`");
 }
 
 /****f* pkg-utils/is_package_installed
@@ -236,6 +236,7 @@ function uninstall_package_from_name($pkg_name) {
 	$todel = substr(reverse_strrchr($config['installedpackages']['package'][$id]['depends_on_package'], "."), 0, -1);
 	delete_package($todel, $pkg_name);
 	delete_package_xml($pkg_name);
+	remove_freebsd_package($pkg_name);
 }
 
 function force_remove_package($pkg_name) {
@@ -280,6 +281,7 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 					log_error("Could not locate {$include_file}.");
 					install_package($package['name']);
 					uninstall_package_from_name($package['name']);
+					remove_freebsd_package($package['name']);
 					install_package($package['name']);
 				}
 		}
@@ -301,6 +303,7 @@ function sync_package($pkg_name, $sync_depends = true, $show_message = false) {
 						log_error("Could not find {$item}. Reinstalling package.");
 						install_package($pkg_name);
 						uninstall_package_from_name($pkg_name);
+						remove_freebsd_package($pkg_name);						
 						install_package($pkg_name);
 					} else {
 						$item_config = parse_xml_config_pkg("/usr/local/pkg/" . $item, "packagegui");
@@ -728,9 +731,10 @@ function delete_package($pkg, $pkgid) {
 			require_once($pkg_config['include_file']);
 		}
 	}
-	$static_output .= "\Starting package deletion...\n";
+	$static_output .= "\nStarting package deletion for {$pkg_info['name']}...\n";
 	update_output_window($static_output);
 	delete_package_recursive($pkg);
+	remove_freebsd_package($pkg);
 	$static_output .= "done.\n";
 	update_output_window($static_output);
 	return;
@@ -740,6 +744,7 @@ function delete_package_recursive($pkg) {
 	$info = "";
 	exec("/usr/sbin/pkg_info -r " . $pkg . " 2>&1", $info);
 	exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_delete " . $pkg ." > /dev/null 2>&1");
+	remove_freebsd_package($pkg);
 	$pkgdb = "";
 	exec("/bin/ls /var/db/pkg", $pkgdb);
 	if(stristr($info[0], "can't find package") != false) return;

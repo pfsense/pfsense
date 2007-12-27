@@ -29,6 +29,8 @@
 */
 require("guiconfig.inc");
 $pconfig['session_timeout'] = &$config['system']['webgui']['session_timeout'];
+$pconfig['ldapserver'] = &$config['system']['webgui']['ldapserver'];
+$pconfig['backend'] = &$config['system']['webgui']['backend'];
 
 // Page title for main admin
 $pgtitle = array("System","User manager settings");
@@ -65,7 +67,17 @@ if ($_POST) {
 			$pconfig['session_timeout'] = intval($_POST['session_timeout']);
 		else 
 			unset($config['system']['webgui']['session_timeout']);
+		
+		if($_POST['ldapserver'])
+			$pconfig['ldapserver'] = $_POST['ldapserver'];
+		else
+			unset($pconfig['ldapserver']);
 			
+		if($_POST['backend'])
+			$pconfig['backend'] = $_POST['backend'];
+		else
+			unset($pconfig['backend']);
+		
 		write_config();
 
 		$retval = system_password_configure();
@@ -91,26 +103,47 @@ include("head.inc");
     $tab_array[] = array(gettext("Group"), false, "system_groupmanager.php");
     $tab_array[] = array(gettext("Settings"), true, "system_usermanager_settings.php");
     display_top_tabs($tab_array);
+
+/* Default to pfsense backend type if none is defined */
+if(!$pconfig['backend'])
+	$pconfig['backend'] = "pfsense";
+
 ?>
       </td>
     <tr>
        <td>
             <div id="mainarea">
             <form id="iform" name="iform" action="system_usermanager_settings.php" method="post">
-              <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
-                      <tr>
+              <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6">
+					<tr>
                         <td width="22%" valign="top" class="vncell">Session Timeout</td>
-                        <td width="78%" class="vtable"> <input name="session_timeout" id="session_timeout" type="text"size="20" class="formfld unknown" value="<?=htmlspecialchars($pconfig['session_timeout']);?>" />
+                        <td width="78%" class="vtable"> 
+							<input name="session_timeout" id="session_timeout" type="text"size="8" class="formfld unknown" value="<?=htmlspecialchars($pconfig['session_timeout']);?>" />
                           <br />
                           <?=gettext("Time in minutes to expire idle management sessions.");?><br />
-			</td>
+						</td>
                       </tr>
-
-                <tr>
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> <input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
-                  </td>
-                </tr>
+					<tr>
+                        <td width="22%" valign="top" class="vncell">Authentication backend</td>
+                        <td width="78%" class="vtable"> 
+							<select name='backend'>
+								<option value="pfsense"<?php if ($pconfig['backend'] == "pfsense") echo " SELECTED";?>>Built in</option>
+								<option value="ldap"<?php if ($pconfig['backend'] == "ldap") echo " SELECTED";?>>LDAP, Built in</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+                        <td width="22%" valign="top" class="vncell">LDAP Server:port</td>
+                        <td width="78%" class="vtable">
+							<input name="ldapserver" size="65" value="<?=htmlspecialchars($pconfig['ldapserver']);?>">
+							<br/>Example: ldap.example.org:339
+						</td>
+					</tr>
+                	<tr>
+                  		<td width="22%" valign="top">&nbsp;</td>
+                  		<td width="78%"> <input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />          						
+						</td>
+                	</tr>
               </table>
             </form>
             </div>

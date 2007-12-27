@@ -1,17 +1,17 @@
 #!/bin/sh
 
 # Standard note length
-NOTELENGTH="200"
+NOTELENGTH="25"
 
 # Embedded uses 100HZ
 if [ "$PFSENSETYPE" = "embedded" ]; then
-	NOTELENGTH="50"
+	NOTELENGTH="10"
 fi
 
 # Check for different HZ 
-HZ=`cat /boot/loader.conf | grep kern.hz | wc`
+HZ=`cat /boot/loader.conf | grep kern.hz | wc -l | awk '{ print $1 }'`
 if [ "$HZ" = "1" ]; then
-	NOTELENGTH="50"
+	NOTELENGTH="10"
 fi
 
 if [ -c "/dev/speaker" ]; then	

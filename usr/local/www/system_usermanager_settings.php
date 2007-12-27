@@ -32,6 +32,12 @@ $pconfig['session_timeout'] = &$config['system']['webgui']['session_timeout'];
 $pconfig['ldapserver'] = &$config['system']['webgui']['ldapserver'];
 $pconfig['backend'] = &$config['system']['webgui']['backend'];
 
+$pconfig['ldapbindun'] = &$config['system']['webgui']['ldapbindun'];
+$pconfig['ldapbindpw'] = &$config['system']['webgui']['ldapbindpw'];
+
+$pconfig['ldapfilter'] = &$config['system']['webgui']['ldapfilter'];
+$pconfig['ldapsearchbase'] = &$config['system']['webgui']['ldapsearchbase'];
+
 // Page title for main admin
 $pgtitle = array("System","User manager settings");
 
@@ -77,7 +83,27 @@ if ($_POST) {
 			$pconfig['backend'] = $_POST['backend'];
 		else
 			unset($pconfig['backend']);
-		
+
+		if($_POST['ldapbindun'])
+			$pconfig['ldapbindun'] = $_POST['ldapbindun'];
+		else
+			unset($pconfig['ldapbindun']);
+
+		if($_POST['ldapbindpw'])
+			$pconfig['ldapbindpw'] = $_POST['ldapbindpw'];
+		else
+			unset($pconfig['ldapbindpw']);
+
+		if($_POST['ldapfilter'])
+			$pconfig['ldapfilter'] = $_POST['ldapfilter'];
+		else
+			unset($pconfig['ldapfilter']);
+
+		if($_POST['ldapsearchbase'])
+			$pconfig['ldapsearchbase'] = $_POST['ldapsearchbase'];
+		else
+			unset($pconfig['ldapsearchbase']);
+
 		write_config();
 
 		$retval = system_password_configure();
@@ -139,6 +165,30 @@ if(!$pconfig['backend'])
 							<br/>Example: ldap.example.org:339
 						</td>
 					</tr>
+					<tr>
+                        <td width="22%" valign="top" class="vncell">LDAP Binding username</td>
+                        <td width="78%" class="vtable">
+							<input name="ldapbindun" size="65" value="<?=htmlspecialchars($pconfig['ldapbindun']);?>">
+						</td>
+					</tr>					
+					<tr>
+                        <td width="22%" valign="top" class="vncell">LDAP Binding password</td>
+                        <td width="78%" class="vtable">
+							<input name="ldapbindpw" size="65" value="<?=htmlspecialchars($pconfig['ldapbindpw']);?>">
+						</td>
+					</tr>
+					<tr>
+                        <td width="22%" valign="top" class="vncell">LDAP Filter</td>
+                        <td width="78%" class="vtable">
+							<input name="ldapfilter" size="65" value="<?=htmlspecialchars($pconfig['ldapfilter']);?>">
+						</td>
+					</tr>
+					<tr>
+                        <td width="22%" valign="top" class="vncell">LDAP Search base</td>
+                        <td width="78%" class="vtable">
+							<input name="ldapsearchbase" size="65" value="<?=htmlspecialchars($pconfig['ldapsearchbase']);?>">
+						</td>
+					</tr>					
                 	<tr>
                   		<td width="22%" valign="top">&nbsp;</td>
                   		<td width="78%"> <input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />          						

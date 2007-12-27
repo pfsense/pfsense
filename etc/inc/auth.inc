@@ -1,6 +1,9 @@
 <?php
 /* $Id$ */
 /*
+		Copyright (C) 2007, 2008 Scott Ullrich <sullrich@gmail.com>
+		All rights reserved.
+
         Copyright (C) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
         All rights reserved.
 
@@ -561,6 +564,41 @@ function passwd_backed($username, $passwd) {
     return true;
   else
     return false;
+}
+
+function ldap_backed($username, $passwd) {
+	global $config;
+	
+	$ldapserver = $config['system']['webgui']['ldapserver'];
+	$ldapsearchbase = $config['system']['webgui']['ldapsearchbase'];
+
+	if(!$ldapsearchbase) 
+		log_error("WARNING!  LDAP backend search base not defined.");
+
+	if(!$ldapserver) {
+		log_error("ERROR!  LDAP backend selected with no LDAP authentication server defined.  Defaulting to built-in htpasswd_backed()");
+		$status = htpasswd_backed($username, $passwd);
+		return $status;
+	}
+	
+	if (!($ldap = ldap_connect($ldapserver))) {
+	    log_error("ERROR!  LDAP could not connect to server {$ldapserver}.  Defaulting to built-in htpasswd_backed()");
+		$status = htpasswd_backed($username, $passwd);
+		return $status;	
+	}
+	
+	if (!($res = @ldap_bind($ldap, $ldapsearchbase, $passwd))) {
+	    log_error("ERROR!  LDAP could not bind to {$ldapserver} - {$dn}.  Defaulting to built-in htpasswd_backed()");
+		$status = htpasswd_backed($username, $passwd);
+		return $status;
+	}
+	
+	/* Time to close LDAP connection */
+	ldap_close($ldap);
+	
+	/* At this point we are binded to LDAP so the user was auth'd okay. */
+	return true;
+	
 }
 
 function htpasswd_backed($username, $passwd) {

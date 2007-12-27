@@ -1,6 +1,9 @@
 <?php
 /* $Id$ */
 /*
+		Copyright (C) 2007, 2008 Scott Ullrich <sullrich@gmail.com>
+		All rights reserved.
+
         Copyright (C) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
         All rights reserved.
 
@@ -34,20 +37,24 @@
 
 include_once("auth.inc");
 require_once("functions.inc");
-/* TODO: Needs testing... require_once("pages.inc"); */
 
-/* We only support htpasswd backed HTTP Basic auth right now
- * backing methods
+/* We only support htpasswd backed HTTP Basic auth and session
+ * based backing methods at the moment.
+ * 		session_auth - this will use session based authentication and timeout
+ *      htpasswd_backed - this uses the "standard" .htpasswd file
  *      passwd_backed - this will use the system passwd file in /etc
  *      radius_backed - this will allow you to use a radius server
- *      htpasswd_backed - this uses the "standard" .htpasswd file
  *      pam_backed - this uses the system's PAM facility .htpasswd file
  */
-//$auth_method="basic_auth";
 $auth_method="session_auth";
-$backing_method="htpasswd_backed";
 
-/* Authenticate user - exit if failed (we should have a callback for this maybe) */
+/* enable correct auth backend, default to htpasswd_backed */
+if($config['system']['webgui']['backend'] == "ldap")
+	$backing_method="ldap_backed";
+else
+	$backing_method="htpasswd_backed";
+
+/* Authenticate user - exit if failed */
 if (!$auth_method($backing_method)) { exit; }
 
 /* scriptname is set in headjs.php if the user did try to access a page other

@@ -801,7 +801,7 @@ function type_change(enable_change,enable_change_pptp) {
                 </tr>
                 <tr>
                   <td valign="top" class="vncellreq">Password</td>
-                  <td class="vtable"><input name="password" type="text" class="formfld" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
+                  <td class="vtable"><input name="password" type="password" class="formfld" id="password" size="20" value="<?=htmlspecialchars($pconfig['password']);?>">
                   </td>
                 </tr>
                 <tr>

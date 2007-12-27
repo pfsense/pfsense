@@ -4,13 +4,13 @@
 NOTELENGTH="200"
 
 # Embedded uses 100HZ
-if [ $PFSENSETYPE = "embedded" ]; then
+if [ "$PFSENSETYPE" = "embedded" ]; then
 	NOTELENGTH="50"
 fi
 
 # Check for different HZ 
 HZ=`cat /boot/loader.conf | grep kern.hz | wc`
-if [ "$HZ" -gt 0 ]; then
+if [ "$HZ" = "1" ]; then
 	NOTELENGTH="50"
 fi
 
@@ -29,4 +29,4 @@ if [ -c "/dev/speaker" ]; then
 			/usr/local/bin/beep -p 400 $NOTELENGTH
 			/usr/local/bin/beep -p 400 $NOTELENGTH
 		fi
-fi 
+fi

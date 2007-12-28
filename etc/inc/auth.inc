@@ -57,6 +57,27 @@ function logout_session() {
       $scriptName = $scriptName[$scriptElms-1];
 }
 
+function getAllowedGroups($logged_in_user) {
+	global $g, $config;
+	
+	$final_allowed = array();
+	
+	foreach($config['system']['user'] as $username) {
+		if($username['name'] = $logged_in_user) 
+			$allowed_groups  = explode(",", $username['groupname']);
+	}
+	
+	foreach($config['system']['group'] as $group) {
+		if(in_array($group['name'], $allowed_groups)) {
+			foreach($group['pages'] as $page) {
+				$allowed[] = $page;
+			}
+		}
+	}
+	
+	return $allowed;
+}
+
 function &getSystemAdminNames() {
   global $config, $g, $userindex;
   $adminUsers = array();

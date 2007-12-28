@@ -44,9 +44,8 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
     if (isset($_POST['id']))
         $id = $_POST['id'];
 
-    if (!is_array($config['system']['user'])) {
-        $config['system']['user'] = array();
-    }
+	if (!is_array($config['system']['user'])) 
+		$config['system']['user'] = array();
 
     admin_users_sort();
     $a_user = &$config['system']['user'];
@@ -110,9 +109,11 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
             }
         }
 
-        if ($pconfig['utype'] <> "system" && !isset($groupindex[$_POST['groupname']])) {
-            $input_errors[] = gettext("group does not exist, please define the group before assigning users.");
-        }
+		foreach($_POST['groupname'] as $groupname) {
+        	if ($pconfig['utype'] <> "system" && !isset($groupindex[$groupname])) {
+            	$input_errors[] = gettext("group {$groupname} does not exist, please define the group before assigning users.");
+        	}
+		}
 
         if (isset($config['system']['ssh']['sshdkeyonly']) &&
             empty($_POST['authorizedkeys'])) {
@@ -130,6 +131,8 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
             if (isset($id) && $a_user[$id])
                 $userent = $a_user[$id];
 
+
+
             /* the user did change his username */
             if ($_POST['usernamefld'] <> $_POST['oldusername']) {
                 $_SERVER['REMOTE_USER'] = $_POST['usernamefld'];
@@ -137,9 +140,10 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
 
             $userent['name'] = $_POST['usernamefld'];
             $userent['fullname'] = $_POST['fullname'];
-            if ($pconfig['utype'] <> "system") {
-              $userent['groupname'] = $_POST['groupname'];
-            }
+
+            if ($pconfig['utype'] <> "system") 
+				$userent['groupname'] = implode(",", $_POST['groupname']);
+
             isset($_POST['utype']) ? $userent['scope'] = $_POST['utype'] : $userent['scope'] = "system";
 
             if ($_POST['passwordfld1'])
@@ -189,7 +193,7 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
             if (isset($id) && $a_user[$id]) {
                 $pconfig['usernamefld'] = $a_user[$id]['name'];
                 $pconfig['fullname'] = $a_user[$id]['fullname'];
-                $pconfig['groupname'] = $a_user[$id]['groupname'];
+                $pconfig['groupname'] = split(",", $a_user[$id]['groupname']);
                 $pconfig['utype'] = $a_user[$id]['scope'];
                 $pconfig['authorizedkeys'] = base64_decode($a_user[$id]['authorizedkeys']);
             }
@@ -307,15 +311,15 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
           <tr>
             <td width="22%" valign="top" class="vncell"><?=gettext("Group Name");?></td>
             <td width="78%" class="vtable">
-              <select name="groupname" class="formselect" id="groupname" <?php if ($pconfig['utype'] == "system") { echo "disabled=\"disabled\" "; } ?>>
+              <select size="10" name="groupname[]" class="formselect" id="groupname" <?php if ($pconfig['utype'] == "system") { echo "disabled=\"disabled\" "; } ?> MULTIPLE>
               <?php foreach ($config['system']['group'] as $group): ?>
-                <option value="<?=$group['name'];?>" <?php if ($group['name'] == $pconfig['groupname']) { echo "selected"; } ?>>
+                <option value="<?=$group['name'];?>" <?php if (in_array($group['name'],$pconfig['groupname'])) { echo "selected"; } ?>>
                       <?=htmlspecialchars($group['name']);?>
                 </option>
               <?php endforeach;?>
               </select>
               <br />
-              <?=gettext("The admin group to which this user is assigned.");?>
+              <?=gettext("Hold down CTRL (pc)/COMMAND (mac) key to select multiple items");?>
             </td>
           </tr>
           <tr>
@@ -363,7 +367,10 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
           </td>
           <td class="listr"><?=htmlspecialchars($userent['fullname']);?>&nbsp;</td>
           <td class="listbg">
-            <font color="white"><?=htmlspecialchars($userent['groupname']);?></font>&nbsp;
+			<?php
+				$groupname = split(",", $userent['groupname']);
+			?>
+            <font color="white"><?=htmlspecialchars(implode(",",$groupname));?></font>&nbsp;
           </td>
           <td valign="middle" nowrap class="list">
             <a href="system_usermanager.php?act=edit&id=<?=$i;?>">

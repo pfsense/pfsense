@@ -68,11 +68,13 @@ if (isset($_POST['scriptname']) && isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])
 // Once here, the user has authenticated with the web server.
 // Now, we give them access only to the appropriate pages for their group.
 if (!(isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']))) {
-  $allowed[] = '';
-  if (isset($config['system']['group'][$groupindex[$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['groupname']]]['pages'])) {
-    $allowed = &$config['system']['group'][$groupindex[$config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['groupname']]]['pages'];
-  }
-  $g['privs'] = $allowed;
+	$g['privs'] = getAllowedGroups($HTTP_SERVER_VARS['AUTH_USER']);
+	$allowed = $g['privs'];
+	
+	$allowed_groups = print_r($g['privs'],true);
+	$fdny = fopen("/tmp/groups", "w");
+	fwrite($fdny, $allowed_groups);
+	fclose($fdny);
 
   $group = $config['system']['user'][$userindex[$HTTP_SERVER_VARS['AUTH_USER']]]['groupname'];
   /* get the group homepage, to be able to forward

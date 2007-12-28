@@ -587,7 +587,7 @@ function ldap_backed($username, $passwd) {
 		return $status;	
 	}
 	
-	if (!($res = @ldap_bind($ldap, $ldapsearchbase, $passwd))) {
+	if (!($res = @ldap_bind($ldap, $username, $passwd))) {
 	    log_error("ERROR!  LDAP could not bind to {$ldapserver} - {$dn}.  Defaulting to built-in htpasswd_backed()");
 		$status = htpasswd_backed($username, $passwd);
 		return $status;

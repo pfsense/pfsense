@@ -35,7 +35,7 @@ $pconfig['backend'] = &$config['system']['webgui']['backend'];
 $pconfig['ldapbindun'] = &$config['system']['webgui']['ldapbindun'];
 $pconfig['ldapbindpw'] = &$config['system']['webgui']['ldapbindpw'];
 
-$pconfig['ldapfilter'] = &$config['system']['webgui']['ldapfilter'];
+//$pconfig['ldapfilter'] = &$config['system']['webgui']['ldapfilter'];
 $pconfig['ldapsearchbase'] = &$config['system']['webgui']['ldapsearchbase'];
 
 // Page title for main admin
@@ -94,10 +94,12 @@ if ($_POST) {
 		else
 			unset($pconfig['ldapbindpw']);
 
+/*
 		if($_POST['ldapfilter'])
 			$pconfig['ldapfilter'] = $_POST['ldapfilter'];
 		else
 			unset($pconfig['ldapfilter']);
+*/
 
 		if($_POST['ldapsearchbase'])
 			$pconfig['ldapsearchbase'] = $_POST['ldapsearchbase'];
@@ -150,11 +152,11 @@ if(!$pconfig['backend'])
 						</td>
                       </tr>
 					<tr>
-                        <td width="22%" valign="top" class="vncell">Authentication backend</td>
+                        <td width="22%" valign="top" class="vncell">Authentication primary backend</td>
                         <td width="78%" class="vtable"> 
 							<select name='backend'>
-								<option value="pfsense"<?php if ($pconfig['backend'] == "pfsense") echo " SELECTED";?>>Built in</option>
-								<option value="ldap"<?php if ($pconfig['backend'] == "ldap") echo " SELECTED";?>>LDAP, Built in</option>
+								<option value="pfsense"<?php if ($pconfig['backend'] == "pfsense") echo " SELECTED";?>>pfSense</option>
+								<option value="ldap"<?php if ($pconfig['backend'] == "ldap") echo " SELECTED";?>>LDAP</option>
 							</select>
 						</td>
 					</tr>
@@ -177,12 +179,16 @@ if(!$pconfig['backend'])
 							<input name="ldapbindpw" size="65" value="<?=htmlspecialchars($pconfig['ldapbindpw']);?>">
 						</td>
 					</tr>
+<?php
+/*
 					<tr>
                         <td width="22%" valign="top" class="vncell">LDAP Filter</td>
                         <td width="78%" class="vtable">
 							<input name="ldapfilter" size="65" value="<?=htmlspecialchars($pconfig['ldapfilter']);?>">
 						</td>
 					</tr>
+*/
+?>
 					<tr>
                         <td width="22%" valign="top" class="vncell">LDAP Search base</td>
                         <td width="78%" class="vtable">

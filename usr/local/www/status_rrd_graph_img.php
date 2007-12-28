@@ -267,7 +267,7 @@ elseif(strstr($curdatabase, "-throughput.rrd")) {
 	$graphcmd .= "\"CDEF:tput-bytes_out_t={$graphtputbyo}{$operand}\" ";
 	$graphcmd .= "\"CDEF:tput-bytes_t={$graphtputbyt}{$operand}\" ";
 	$graphcmd .= "AREA:tput-in_bits#$colortrafficdown:in \\
-		$AREA:tput-out_bits#$colortrafficup:out \\
+		$AREA:tput-out_bits_neg#$colortrafficup:out \\
 		COMMENT:\"\\n\"\\
 		COMMENT:\"\t\t  maximum       average       current        period\\n\"\\
 		COMMENT:\"in\t\"\\

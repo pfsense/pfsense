@@ -519,7 +519,7 @@ function session_auth($backing) {
 }
 
 function pam_backed($username = "", $password = "") {
-  /* we do not support blank pwds, don't we? */
+  /* do not allow blank passwords */
   if ($username == "" || password == "") { return false; }
 
   if(! extension_loaded( 'pam_auth' )) {
@@ -587,11 +587,52 @@ function passwd_backed($username, $passwd) {
     return false;
 }
 
+function ldap_get_groups($username) {
+	global $config;
+	
+	$ldapserver = $config['system']['webgui']['ldapserver'];
+	$ldapbindun = $config['system']['webgui']['ldapbindun'];
+	$ldapbindpw = $config['system']['webgui']['ldapbindpw'];
+	$ldapfilter = $config['system']['webgui']['ldapfilter'];
+	$ldapsearchbase = $config['system']['webgui']['ldapsearchbase'];
+
+	if (!($ldap = ldap_connect($ldapserver))) {
+	    log_error("ERROR!  LDAP could not connect to server {$ldapserver}.  Defaulting to built-in htpasswd_backed()");
+		$status = htpasswd_backed($username, $passwd);
+		return $status;	
+	}
+
+	if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
+	    log_error("ERROR!  LDAP could not bind to {$ldapserver}.  Defaulting to built-in htpasswd_backed()");
+		$status = htpasswd_backed($username, $passwd);
+		return $status;
+	}
+
+	$search = ldap_search($ldap, $ldapsearchbase, $ldapfilter);
+	if(!$search) 
+		return array();
+
+	$info = ldap_get_entries($ldap, $search);
+
+	$temp = fopen("/tmp/groupentries", "w");
+	fwrite($temp, $info["count"] . " entries returned.");
+	fwrite($temp, print_r($info, true));
+	fclose($temp);
+	
+	/* Time to close LDAP connection */
+	ldap_close($ldap);
+	
+	return $info;
+}
+
 function ldap_backed($username, $passwd) {
 	global $config;
 	
 	$ldapserver = $config['system']['webgui']['ldapserver'];
 	$ldapsearchbase = $config['system']['webgui']['ldapsearchbase'];
+	$ldapbindun = $config['system']['webgui']['ldapbindun'];
+	$ldapbindpw = $config['system']['webgui']['ldapbindpw'];
+	$ldapfilter = $config['system']['webgui']['ldapfilter'];
 
 	if(!$ldapsearchbase) 
 		log_error("WARNING!  LDAP backend search base not defined.");
@@ -609,17 +650,15 @@ function ldap_backed($username, $passwd) {
 	}
 	
 	if (!($res = @ldap_bind($ldap, $username, $passwd))) {
-	    log_error("ERROR!  LDAP could not bind to {$ldapserver} - {$dn}.  Defaulting to built-in htpasswd_backed()");
+	    log_error("ERROR!  LDAP could not bind to {$ldapserver}.  Defaulting to built-in htpasswd_backed()");
 		$status = htpasswd_backed($username, $passwd);
 		return $status;
 	}
-	
-	/* Time to close LDAP connection */
-	ldap_close($ldap);
+
+	ldap_get_groups($username);
 	
 	/* At this point we are binded to LDAP so the user was auth'd okay. */
 	return true;
-	
 }
 
 function htpasswd_backed($username, $passwd) {

@@ -68,14 +68,17 @@ function getAllowedGroups($logged_in_user) {
 		$fdny = fopen("/tmp/groups","w");
 		fwrite($fdny, print_r($allowed, true));
 		fclose($fdny);
-		foreach($config['system']['group'] as $group) {
-			if(in_array($group['name'], $allowed_groups)) {
-				foreach($group['pages'] as $page) {
-					$allowed[] = $page;
-				}				
+		if(is_array($config['system']['group']) && is_array($allowed_groups)) {
+			foreach($config['system']['group'] as $group) {
+				if(in_array($group['name'], $allowed_groups)) {
+					foreach($group['pages'] as $page) {
+						$allowed[] = $page;
+					}				
+				}
 			}
 		}
-		return $allowed;
+		if(count($allowed)>1)
+			return $allowed;
 	}
 	
 	$final_allowed = array();
@@ -641,13 +644,15 @@ function ldap_get_groups($username) {
 	$search = ldap_search($ldap, $ldapsearchbase, $ldapfilter, array('memberOf'));
 
 	$info = ldap_get_entries($ldap, $search);
-
-    foreach($info[0]['memberof'] as $member) {
-            if(strstr($member, "CN=") !== false) {
-                    $membersplit = split(",", $member);
-                    $memberof[] = str_replace("CN=", "", $membersplit[0]);
-            }
-    }
+	
+	if(is_array($info[0]['memberof'])) {
+    	foreach($info[0]['memberof'] as $member) {
+            	if(strstr($member, "CN=") !== false) {
+                    	$membersplit = split(",", $member);
+                    	$memberof[] = str_replace("CN=", "", $membersplit[0]);
+            	}
+    	}
+	}
 	
 	/* Time to close LDAP connection */
 	ldap_close($ldap);

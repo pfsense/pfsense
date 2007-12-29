@@ -608,6 +608,49 @@ function passwd_backed($username, $passwd) {
     return false;
 }
 
+function ldap_get_user_ous() {
+	global $config, $g;
+	
+    $ldapserver = $config['system']['webgui']['ldapserver'];
+    $ldapbindun = $config['system']['webgui']['ldapbindun'];
+    $ldapbindpw = $config['system']['webgui']['ldapbindpw'];
+	$ldapsearchbase = "{$config['system']['webgui']['ldapsearchbase']}";
+
+    $ldapfilter = "(ou=*)";
+
+    if (!($ldap = ldap_connect($ldapserver))) {
+        log_error("ERROR!  ldap_get_groups() could not connect to server {$ldapserver}.  Defaulting to built-in htpasswd_backed()");
+            $status = htpasswd_backed($username, $passwd);
+            return $status;
+    }
+
+    ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+    ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+
+    if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
+        log_error("ERROR! ldap_get_groups() could not bind to {$ldapserver} - {$ldapfilter}.  Defaulting to built-in htpasswd_backed()");
+            $status = htpasswd_backed($username, $passwd);
+            return $status;
+    }
+
+    $search = ldap_search($ldap, $ldapsearchbase, $ldapfilter);
+
+    $info = ldap_get_entries($ldap, $search);
+
+	$ous = array();
+
+    foreach($info as $inf) {
+            $inf_split = split(",", $inf['dn']);
+            $ou = $inf_split[0];
+            $ou = str_replace("OU=","", $ou);
+			if($ou)
+				$ous[] = $ou;
+    }
+	
+	return $ous;
+	
+}
+
 function ldap_get_groups($username) {
 	global $config;
 	

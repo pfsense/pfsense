@@ -159,20 +159,22 @@ if(!$pconfig['backend'])
 								<option value="pfsense"<?php if ($pconfig['backend'] == "pfsense") echo " SELECTED";?>>pfSense</option>
 								<option value="ldap"<?php if ($pconfig['backend'] == "ldap") echo " SELECTED";?>>LDAP</option>
 							</select>
+							<br/>NOTE: login failures or server not available issues will fall back to pfSense internal users/group authentication.
 						</td>
 					</tr>
 					<tr>
                         <td width="22%" valign="top" class="vncell">LDAP Server:port</td>
                         <td width="78%" class="vtable">
 							<input name="ldapserver" size="65" value="<?=htmlspecialchars($pconfig['ldapserver']);?>">
-							<br/>Example: ldap.example.org:389
+							<br/>Example: ldaps://ldap.example.org:389 or ldap://ldap.example.org:389
 						</td>
 					</tr>
 					<tr>
                         <td width="22%" valign="top" class="vncell">LDAP Binding username</td>
                         <td width="78%" class="vtable">
 							<input name="ldapbindun" size="65" value="<?=htmlspecialchars($pconfig['ldapbindun']);?>">
-							Example: For Active Directory you would want to use format DOMAIN\username
+							<br/>This account must have read access to the user objects and be able to retrieve groups.
+							<br/>Example: For Active Directory you would want to use format DOMAIN\username
 						</td>
 					</tr>					
 					<tr>

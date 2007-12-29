@@ -60,6 +60,24 @@ function logout_session() {
 function getAllowedGroups($logged_in_user) {
 	global $g, $config;
 	
+	log_error("Getting groups for {$logged_in_user}.");
+	
+	/* return ldap groups if we are in ldap mode */
+	if($config['system']['webgui']['backend'] == "ldap") {
+		$allowed_groups = ldap_get_groups($logged_in_user);
+		$fdny = fopen("/tmp/groups","w");
+		fwrite($fdny, print_r($allowed, true));
+		fclose($fdny);
+		foreach($config['system']['group'] as $group) {
+			if(in_array($group['name'], $allowed_groups)) {
+				foreach($group['pages'] as $page) {
+					$allowed[] = $page;
+				}				
+			}
+		}
+		return $allowed;
+	}
+	
 	$final_allowed = array();
 	
 	foreach($config['system']['user'] as $username) {
@@ -313,7 +331,7 @@ function getGroupHomePage($group = "") {
 
 function isSystemAdmin($username = "") {
   global $groupindex, $userindex, $config, $g;
-
+ 
   if ($username == "") { return 0; }
 
   $gname = $config['system']['group'][$groupindex[$config['system']['user'][$userindex[$username]]['groupname']]]['name'];
@@ -590,72 +608,84 @@ function passwd_backed($username, $passwd) {
 function ldap_get_groups($username) {
 	global $config;
 	
+	if(!$username) 
+		return false;
+
+	if(stristr($username, "@")) {
+		$username_split=split("\@", $username);
+		$username = $username_split[0];		
+	}
+	
+	log_error("Getting LDAP groups for {$username}.");
+	
 	$ldapserver = $config['system']['webgui']['ldapserver'];
 	$ldapbindun = $config['system']['webgui']['ldapbindun'];
 	$ldapbindpw = $config['system']['webgui']['ldapbindpw'];
-	$ldapfilter = $config['system']['webgui']['ldapfilter'];
-	$ldapsearchbase = $config['system']['webgui']['ldapsearchbase'];
 
+	$ldapfilter = $config['system']['webgui']['ldapfilter'];
+	$ldapsearchbase = "CN=Users,{$config['system']['webgui']['ldapsearchbase']}";
+	$ldapfilter = str_replace("\$username", $username, $ldapfilter);
+	
 	if (!($ldap = ldap_connect($ldapserver))) {
-	    log_error("ERROR!  LDAP could not connect to server {$ldapserver}.  Defaulting to built-in htpasswd_backed()");
+	    log_error("ERROR!  ldap_get_groups() could not connect to server {$ldapserver}.  Defaulting to built-in htpasswd_backed()");
 		$status = htpasswd_backed($username, $passwd);
 		return $status;	
 	}
 
 	if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
-	    log_error("ERROR!  LDAP could not bind to {$ldapserver}.  Defaulting to built-in htpasswd_backed()");
+	    log_error("ERROR! ldap_get_groups() could not bind to {$ldapserver} - {$ldapfilter}.  Defaulting to built-in htpasswd_backed()");
 		$status = htpasswd_backed($username, $passwd);
 		return $status;
 	}
 
-	$search = ldap_search($ldap, $ldapsearchbase, $ldapfilter);
-	if(!$search) 
-		return array();
+	$search = ldap_search($ldap, $ldapsearchbase, $ldapfilter, array('memberOf'));
 
 	$info = ldap_get_entries($ldap, $search);
 
-	$temp = fopen("/tmp/groupentries", "w");
-	fwrite($temp, $info["count"] . " entries returned.");
-	fwrite($temp, print_r($info, true));
-	fclose($temp);
+    foreach($info[0]['memberof'] as $member) {
+            if(strstr($member, "CN=") !== false) {
+                    $membersplit = split(",", $member);
+                    $memberof[] = str_replace("CN=", "", $membersplit[0]);
+            }
+    }
 	
 	/* Time to close LDAP connection */
 	ldap_close($ldap);
 	
-	return $info;
+	log_error("Returning groups " . print_r($memberof,true) . " for user $username");
+	
+	return $memberof;
 }
 
 function ldap_backed($username, $passwd) {
 	global $config;
 	
+	if(!$username) 
+		return;
+	
 	$ldapserver = $config['system']['webgui']['ldapserver'];
-	$ldapsearchbase = $config['system']['webgui']['ldapsearchbase'];
 	$ldapbindun = $config['system']['webgui']['ldapbindun'];
 	$ldapbindpw = $config['system']['webgui']['ldapbindpw'];
-	$ldapfilter = $config['system']['webgui']['ldapfilter'];
-
-	if(!$ldapsearchbase) 
-		log_error("WARNING!  LDAP backend search base not defined.");
 
 	if(!$ldapserver) {
-		log_error("ERROR!  LDAP backend selected with no LDAP authentication server defined.  Defaulting to built-in htpasswd_backed()");
+		log_error("ERROR!  ldap_backed() backed selected with no LDAP authentication server defined.  Defaulting to built-in htpasswd_backed().     Visit System -> User Manager -> Settings.");
 		$status = htpasswd_backed($username, $passwd);
 		return $status;
 	}
 	
 	if (!($ldap = ldap_connect($ldapserver))) {
-	    log_error("ERROR!  LDAP could not connect to server {$ldapserver}.  Defaulting to built-in htpasswd_backed()");
+	    log_error("ERROR!  ldap_backed() could not connect to server {$ldapserver} - {$ldapfilter}.  Defaulting to built-in htpasswd_backed().     Visit System -> User Manager -> Settings.");
 		$status = htpasswd_backed($username, $passwd);
 		return $status;	
 	}
 	
 	if (!($res = @ldap_bind($ldap, $username, $passwd))) {
-	    log_error("ERROR!  LDAP could not bind to {$ldapserver}.  Defaulting to built-in htpasswd_backed()");
+	    log_error("ERROR!  ldap_backed() could not bind to {$ldapserver} - {$username} - {$passwd}.  Defaulting to built-in htpasswd_backed().    Visit System -> User Manager -> Settings.");
 		$status = htpasswd_backed($username, $passwd);
 		return $status;
 	}
-
-	ldap_get_groups($username);
+	
+	log_error("$username logged in via LDAP.");
 	
 	/* At this point we are binded to LDAP so the user was auth'd okay. */
 	return true;

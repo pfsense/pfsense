@@ -3,6 +3,9 @@
 /*
     part of pfSense (http://www.pfsense.org/)
 
+	Copyright (C) 2007 Scott Ullrich <sullrich@gmail.com>
+	All rights reserved.
+
     Copyright (C) 2007 Bill Marquette <bill.marquette@gmail.com>
     All rights reserved.
 
@@ -27,15 +30,15 @@
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 */
+
 require("guiconfig.inc");
+
 $pconfig['session_timeout'] = &$config['system']['webgui']['session_timeout'];
 $pconfig['ldapserver'] = &$config['system']['webgui']['ldapserver'];
 $pconfig['backend'] = &$config['system']['webgui']['backend'];
-
 $pconfig['ldapbindun'] = &$config['system']['webgui']['ldapbindun'];
 $pconfig['ldapbindpw'] = &$config['system']['webgui']['ldapbindpw'];
-
-//$pconfig['ldapfilter'] = &$config['system']['webgui']['ldapfilter'];
+$pconfig['ldapfilter'] = &$config['system']['webgui']['ldapfilter'];
 $pconfig['ldapsearchbase'] = &$config['system']['webgui']['ldapsearchbase'];
 
 // Page title for main admin
@@ -94,12 +97,10 @@ if ($_POST) {
 		else
 			unset($pconfig['ldapbindpw']);
 
-/*
 		if($_POST['ldapfilter'])
 			$pconfig['ldapfilter'] = $_POST['ldapfilter'];
 		else
 			unset($pconfig['ldapfilter']);
-*/
 
 		if($_POST['ldapsearchbase'])
 			$pconfig['ldapsearchbase'] = $_POST['ldapsearchbase'];
@@ -164,13 +165,14 @@ if(!$pconfig['backend'])
                         <td width="22%" valign="top" class="vncell">LDAP Server:port</td>
                         <td width="78%" class="vtable">
 							<input name="ldapserver" size="65" value="<?=htmlspecialchars($pconfig['ldapserver']);?>">
-							<br/>Example: ldap.example.org:339
+							<br/>Example: ldap.example.org:389
 						</td>
 					</tr>
 					<tr>
                         <td width="22%" valign="top" class="vncell">LDAP Binding username</td>
                         <td width="78%" class="vtable">
 							<input name="ldapbindun" size="65" value="<?=htmlspecialchars($pconfig['ldapbindun']);?>">
+							Example: For Active Directory you would want to use format DOMAIN\username
 						</td>
 					</tr>					
 					<tr>
@@ -179,22 +181,20 @@ if(!$pconfig['backend'])
 							<input name="ldapbindpw" size="65" value="<?=htmlspecialchars($pconfig['ldapbindpw']);?>">
 						</td>
 					</tr>
-<?php
-/*
 					<tr>
                         <td width="22%" valign="top" class="vncell">LDAP Filter</td>
                         <td width="78%" class="vtable">
 							<input name="ldapfilter" size="65" value="<?=htmlspecialchars($pconfig['ldapfilter']);?>">
+							<br/>Example: For Active Directory you would want to use (samaccountname=$username)
 						</td>
 					</tr>
-*/
-?>
 					<tr>
                         <td width="22%" valign="top" class="vncell">LDAP Search base</td>
                         <td width="78%" class="vtable">
 							<input name="ldapsearchbase" size="65" value="<?=htmlspecialchars($pconfig['ldapsearchbase']);?>">
+							<br/>Example: DC=pfsense,DC=com
 						</td>
-					</tr>					
+					</tr>
                 	<tr>
                   		<td width="22%" valign="top">&nbsp;</td>
                   		<td width="78%"> <input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />          						

@@ -35,10 +35,36 @@ $ldapbindun = $config['system']['webgui']['ldapbindun'];
 $ldapbindpw = $config['system']['webgui']['ldapbindpw'];
 
 $ldapfilter = $config['system']['webgui']['ldapfilter'];
+?>
 
+<html>
+  <HEAD>
+    <STYLE type="text/css">
+		TABLE { 
+			border-width: 1px 1px 1px 1px;
+			border-spacing: 0px;
+			border-style: solid solid solid solid;
+			border-color: gray gray gray gray;
+			border-collapse: separate;
+			background-color: collapse;
+ 		}
+		TD { 
+			border-width: 1px 1px 1px 1px;
+			border-spacing: 0px;
+			border-style: solid solid solid solid;
+			border-color: gray gray gray gray;
+			border-collapse: collapse;
+			background-color: white;
+		}
+    </STYLE>
+  </HEAD>	
+	<body>
+		<form method="post" name="iform" id="iform">
+			
+<?php
 echo "Testing pfSense LDAP settings... One moment please...<p/>";
 
-echo "<table>";
+echo "<table width='100%'>";
 
 echo "<tr><td>Attempting connection to {$ldapserver}</td><td>";
 if(ldap_test_connection()) 
@@ -63,7 +89,7 @@ echo "</table><p/>";
 
 if(is_array($ous)) {
 	echo "Organization units found:<p/>";
-	echo "<table border='1'>";
+	echo "<table width='100%'>";
 	foreach($ous as $ou) {
 		echo "<tr><td>" . $ou . "</td></tr>";
 	}
@@ -71,3 +97,9 @@ if(is_array($ous)) {
 }
 
 ?>
+			<p/>
+			<input type="Button" value="Close" onClick='Javascript:window.close();'>
+
+		</form>
+	</body>
+</html>

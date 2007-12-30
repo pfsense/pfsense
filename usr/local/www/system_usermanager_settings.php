@@ -124,7 +124,7 @@ include("head.inc");
 	if($save_and_test) {
 		echo "<script language='javascript'>\n";
 		echo "myRef = window.open('system_usermanager_settings_test.php','mywin', ";
-		echo "'left=20,top=20,width=500,height=500,toolbar=1,resizable=0');\n";
+		echo "'left=20,top=20,width=700,height=550,toolbar=1,resizable=0');\n";
 		echo "</script>\n";
 	}
 ?>

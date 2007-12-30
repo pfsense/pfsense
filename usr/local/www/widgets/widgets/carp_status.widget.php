@@ -26,6 +26,11 @@
     ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 */
+
+require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
+require_once("functions.inc");
+require_once("/usr/local/www/widgets/include/carp_status.inc");
 ?>
 <table bgcolor="#990000" width="100%" border="0" cellspacing="0" cellpadding="0">
 <?php

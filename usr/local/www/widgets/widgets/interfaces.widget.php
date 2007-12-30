@@ -30,9 +30,12 @@
         ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
         POSSIBILITY OF SUCH DAMAGE.
 */
-?>
+require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
+require_once("functions.inc");
+require_once("/usr/local/www/widgets/include/interfaces.inc");
 
-<?php $i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
+		$i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
 					for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 						$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
 					}?>
@@ -69,24 +72,33 @@
 				
 				
 				<?=htmlspecialchars($ifname);?></span></u></strong>
+				
 				</td>
 				<td width="70%"  class="listr">
-				
-				  <?php if ($ifinfo['dhcplink'] != "down" && $ifinfo['pppoelink'] != "down" && $ifinfo['pptplink'] != "down"){ ?>
-	                 <?php if($ifinfo['status'] == "up") { ?> 
-		                  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" />&nbsp; 
-		                  <? } else if ($ifinfo['status'] == "no carrier") { ?>
-		                  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" />&nbsp; 
-		                  <? }  else if ($ifinfo['status'] == "down") { ?>
-		                  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" />&nbsp; 
-		                  <? } else if ($ifinfo['status'] == "associated") { ?>
-		                  <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is associated" />&nbsp; 
-		                  <? } else { ?><?=htmlspecialchars($ifinfo['status']);
-				}?>				
+	                 <?php if($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") { ?> 
+	                 		<div id="<?php echo $ifname;?>-up" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" /></div>
+	                 		<div id="<?php echo $ifname;?>-down" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
+	                 		<div id="<?php echo $ifname;?>-block" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" /></div>
+	                 		&nbsp; 
+		                <? } else if ($ifinfo['status'] == "no carrier") { ?>
+		                  	<div id="<?php echo $ifname;?>-down" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
+		                  	<div id="<?php echo $ifname;?>-block" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" /></div>
+	                 		<div id="<?php echo $ifname;?>-up" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" /></div>
+	                 		&nbsp;
+						<? }  else if ($ifinfo['status'] == "down") { ?>
+		                	<div id="<?php echo $ifname;?>-block" style="display:inline" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_block.gif" title="<?=$ifname;?> is disabled" /></div>
+		                	<div id="<?php echo $ifname;?>-up" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_up.gif" title="<?=$ifname;?> is up" /></div>
+	                 		<div id="<?php echo $ifname;?>-down" style="display:none" ><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_interface_down.gif" title="<?=$ifname;?> is down" /></div>
+	                 		 &nbsp;
+		                <? } else { ?><?=htmlspecialchars($ifinfo['status']); }?>				
 				  <?php if ($ifinfo['ipaddr']){ ?>
-	                 <?=htmlspecialchars($ifinfo['ipaddr']);}?>&nbsp;                 
-		              <?=htmlspecialchars($ifinfo['media']);?>
-	            </tr><?php }
-			}
+	                 <div id="<?php echo $ifname;?>-ip" style="display:inline"><?=htmlspecialchars($ifinfo['ipaddr']);}?>&nbsp; 
+	                 <?php if ($ifinfo['dhcplink']) { ?>
+						(DHCP)<br>
+					 <? } ?></div>
+					 	               
+		             <div id="<?php echo $ifname;?>-media" style="display:inline"><?=htmlspecialchars($ifinfo['media']);?></div>
+		          </td></tr><?php 
+			}//end for each
 			?> 
 			</table>

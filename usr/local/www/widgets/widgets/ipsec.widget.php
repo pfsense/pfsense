@@ -30,11 +30,12 @@
         ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
         POSSIBILITY OF SUCH DAMAGE.
 */
+require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
+require_once("functions.inc");
+require_once("/usr/local/www/widgets/include/ipsec.inc");
 
-?>
-
-<div>&nbsp;</div>
-<?php
+	if (isset($config['ipsec']['tunnel'])){
 	$tab_array = array();
 	$tab_array[0] = array("Overview", true, "ipsec-Overview");
 	$tab_array[1] = array("Tunnel Status", false, "ipsec-tunnel");
@@ -47,38 +48,40 @@
 	$inactivecounter = 0;
 	
 	$ipsec_detail_array = array();
+		foreach ($config['ipsec']['tunnel'] as $tunnel){ 
+			$ipsecstatus = false;
+			
+			$tun_disabled = "false";
+			$foundsrc = false;
+			$founddst = false; 
 	
-	foreach ($config['ipsec']['tunnel'] as $tunnel){ 
-		$ipsecstatus = false;
-		
-		$tun_disabled = "false";
-		$foundsrc = false;
-		$founddst = false; 
-
-		if (isset($tunnel['disabled'])) {
-			$tun_disabled = "true";
-			continue;
-		}		
-		
-		if(output_ipsec_tunnel_status($tunnel)) {
-			/* tunnel is up */
-			$iconfn = "true";
-			$activecounter++;
-		} else {
-			/* tunnel is down */
-			$iconfn = "false";
-			$inactivecounter++;
+			if (isset($tunnel['disabled'])) {
+				$tun_disabled = "true";
+				continue;
+			}		
+			
+			if(output_ipsec_tunnel_status($tunnel)) {
+				/* tunnel is up */
+				$iconfn = "true";
+				$activecounter++;
+			} else {
+				/* tunnel is down */
+				$iconfn = "false";
+				$inactivecounter++;
+			}
+			
+			$ipsec_detail_array[] = array('src' => $tunnel['interface'],
+						'dest' => $tunnel['remote-gateway'],
+						'remote-subnet' => $tunnel['remote-subnet'],
+						'descr' => $tunnel['descr'],
+						'status' => $iconfn,
+						'disabled' => $tun_disabled);
 		}
-		
-		$ipsec_detail_array[] = array('src' => $tunnel['interface'],
-					'dest' => $tunnel['remote-gateway'],
-					'remote-subnet' => $tunnel['remote-subnet'],
-					'descr' => $tunnel['descr'],
-					'status' => $iconfn,
-					'disabled' => $tun_disabled);
 	}
 	
-?>
+	if (isset($config['ipsec']['tunnel'])){ ?>
+
+<div>&nbsp;</div>
 <div id="ipsec-Overview" style="display:block;background-color:#EEEEEE;">
 	<div>
 	  <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">	
@@ -180,6 +183,29 @@
 	  </tr>
 	</table>
 	</div>
-	</div>
+ </div>
+</div><?php //end ipsec tunnel
+}//end if tunnels are configured, else show code below
+else { ?>
+<div style="display:block">
+	 <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+	  <tr>
+	    <td colspan="4">
+			  <p>
+	        <span class="vexpl">
+	          <span class="red">
+	            <strong>
+	              Note: There are no configured IPSec Tunnels<br />
+	            </strong>
+	          </span>
+	          You can configure your IPSEC 
+	          <a href="vpn_ipsec.php">here</a>.
+	        </span>
+	      </p>
+		</td>
+	  </tr>
+	</table>
 </div>
+<? } ?>
+
 

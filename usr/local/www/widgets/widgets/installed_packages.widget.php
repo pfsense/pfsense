@@ -31,6 +31,11 @@
         POSSIBILITY OF SUCH DAMAGE.
 */
 
+require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
+require_once("functions.inc");
+require_once("/usr/local/www/widgets/include/installed_packages.inc");
+
 if(is_array($config['installedpackages']['package'])) {
 	foreach($config['installedpackages']['package'] as $instpkg) {
 		$tocheck[] = $instpkg['name'];

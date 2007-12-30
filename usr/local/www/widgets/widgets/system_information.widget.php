@@ -30,6 +30,12 @@
         ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
         POSSIBILITY OF SUCH DAMAGE.
 */
+
+require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
+require_once("functions.inc");
+require_once('notices.inc');
+
 ?>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -71,7 +77,13 @@
 		<tr>
 			<td width="25%" class="vncellt">Uptime</td>
 			<td width="75%" class="listr"><input style="border: 0px solid white;" size="30" name="uptime" id="uptime" value="<?= htmlspecialchars(get_uptime()); ?>" /></td>
-		</tr>			
+		</tr>
+        <tr>
+            <td width="25%" class="vncellt"><?=gettext("Current date/time");?></td>
+            <td width="75%" class="listr">
+                <div id="datetime"><?= date("D M j G:i:s T Y"); ?></div>
+            </td>
+        </tr>			
 		 <tr>
              <td width="30%" class="vncellt">DNS server(s)</td>
              <td width="70%" class="listr">

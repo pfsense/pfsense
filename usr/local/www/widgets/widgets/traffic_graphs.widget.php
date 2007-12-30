@@ -30,9 +30,11 @@
         ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
         POSSIBILITY OF SUCH DAMAGE.
 */
-?>
+require_once("guiconfig.inc");
+require_once("pfsense-utils.inc");
+require_once("functions.inc");
 
-<?php $i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
+	$i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
 					for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 						$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
 					}?>

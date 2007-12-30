@@ -608,7 +608,42 @@ function passwd_backed($username, $passwd) {
     return false;
 }
 
-function ldap_get_user_ous() {
+function ldap_test_connection() {
+	global $config, $g;
+
+	$ldapserver = $config['system']['webgui']['ldapserver'];
+	$ldapbindun = $config['system']['webgui']['ldapbindun'];
+	$ldapbindpw = $config['system']['webgui']['ldapbindpw'];
+
+	if (!($ldap = ldap_connect($ldapserver))) {
+		return false;
+	}
+
+	return true;
+}
+
+function ldap_test_bind() {
+	global $config, $g;
+
+    $ldapserver = $config['system']['webgui']['ldapserver'];
+    $ldapbindun = $config['system']['webgui']['ldapbindun'];
+    $ldapbindpw = $config['system']['webgui']['ldapbindpw'];
+
+    if (!($ldap = ldap_connect($ldapserver))) {
+		return false;
+    }
+
+    ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+    ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+
+    if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
+		return false;
+    }
+
+	return true;
+}
+
+function ldap_get_user_ous($show_complete_ou=false) {
 	global $config, $g;
 	
     $ldapserver = $config['system']['webgui']['ldapserver'];
@@ -640,11 +675,16 @@ function ldap_get_user_ous() {
 	$ous = array();
 
     foreach($info as $inf) {
+		if(!$show_complete_ou) {
             $inf_split = split(",", $inf['dn']);
             $ou = $inf_split[0];
             $ou = str_replace("OU=","", $ou);
-			if($ou)
-				$ous[] = $ou;
+		} else {
+			if($inf)
+				$ou = $inf['dn'];
+		}
+		if($ou)
+			$ous[] = $ou;
     }
 	
 	return $ous;

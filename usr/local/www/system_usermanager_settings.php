@@ -31,6 +31,9 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+if($_POST['savetest']) 
+	$save_and_test = true;
+	
 require("guiconfig.inc");
 
 $pconfig['session_timeout'] = &$config['system']['webgui']['session_timeout'];
@@ -46,7 +49,7 @@ $pgtitle = array("System","User manager settings");
 
 if ($_POST) {
 	unset($input_errors);
-
+	
 	/* input validation */
 	$reqdfields = explode(" ", "session_timeout");
 	$reqdfieldsn = explode(",", "Session Timeout");
@@ -62,12 +65,6 @@ if ($_POST) {
 	
 	if ($timeout > 999) 
 		$input_errors[] = gettext("Session timeout must be an integer with value 1 or greater.");
-
-	/* if this is an AJAX caller then handle via JSON */
-	if (isAjax() && is_array($input_errors)) {
-		input_errors2Ajax($input_errors);
-		exit;
-	}
 
 
 	if (!$input_errors) {
@@ -112,7 +109,6 @@ if ($_POST) {
 		$retval = system_password_configure();
 		sync_webgui_passwords();
 
-		pfSenseHeader("system_usermanager_settings.php");
 	}
 }
 
@@ -123,6 +119,16 @@ include("head.inc");
 <?php include("fbegin.inc");?>
 <?php if ($input_errors) print_input_errors($input_errors);?>
 <?php if ($savemsg) print_info_box($savemsg);?>
+
+<?php
+	if($save_and_test) {
+		echo "<script language='javascript'>\n";
+		echo "myRef = window.open('system_usermanager_settings_test.php','mywin', ";
+		echo "'left=20,top=20,width=500,height=500,toolbar=1,resizable=0');\n";
+		echo "</script>\n";
+	}
+?>
+
   <table width="100%" border="0" cellpadding="0" cellspacing="0">
     <tr>
       <td class="tabnavtbl">
@@ -199,7 +205,9 @@ if(!$pconfig['backend'])
 					</tr>
                 	<tr>
                   		<td width="22%" valign="top">&nbsp;</td>
-                  		<td width="78%"> <input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />          						
+                  		<td width="78%"> 
+							<input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />    
+	     					<input id="savetest" name="savetest" type="submit" class="formbtn" value="<?=gettext("Save and Test");?>" />    
 						</td>
                 	</tr>
               </table>
@@ -208,7 +216,6 @@ if(!$pconfig['backend'])
       </td>
     </tr>
   </table>
-
 <?php include("fend.inc");?>
 </body>
 </html>

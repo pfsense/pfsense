@@ -5,6 +5,9 @@ if(Connection_Aborted()) {
 }
 
 require_once("config.inc");
+require_once('guiconfig.inc');
+
+
 
 function get_stats() {
 	$stats['cpu'] = cpu_usage();
@@ -12,6 +15,9 @@ function get_stats() {
 	$stats['uptime'] = get_uptime();
 	$stats['states'] = get_pfstate();
 	$stats['temp'] = get_temp();
+	$stats['datetime'] = update_date_time();
+	$stats['interfacestatistics'] = get_interfacestats();
+	$stats['interfacestatus'] = get_interfacestatus();
 
 	$stats = join("|", $stats);
 
@@ -43,25 +49,25 @@ function get_uptime() {
 }
 
 function cpu_usage() {
-	$cpuTicks = explode(" ", `/sbin/sysctl -n kern.cp_time`);
-	sleep(1);
-	$cpuTicks2 = explode(" ", `/sbin/sysctl -n kern.cp_time`);
+	exec("sysctl -n kern.cp_time && sleep 1 && sysctl -n kern.cp_time",$cpuTicksEx);
+
+	$cpuTicks = explode(" ", $cpuTicksEx[0]);
+	$cpuTicks2 = explode(" ", $cpuTicksEx[1]);
 	
 	$diff = array();
-	$diff['user'] = ($cpuTicks2[0] - $cpuTicks[0]);
-	$diff['nice'] = ($cpuTicks2[1] - $cpuTicks[1]);
-	$diff['sys'] = ($cpuTicks2[2] - $cpuTicks[2]);
-	$diff['intr'] = ($cpuTicks2[3] - $cpuTicks[3]);
-	$diff['idle'] = ($cpuTicks2[4] - $cpuTicks[4]);
-	
-	//echo "<!-- user: {$diff['user']}  nice {$diff['nice']}  sys {$diff['sys']}  intr {$diff['intr']}  idle {$diff['idle']} -->";
-	$totalDiff = $diff['user'] + $diff['nice'] + $diff['sys'] + $diff['intr'] + $diff['idle'];
-	$totalused = $diff['user'] + $diff['nice'] + $diff['sys'] + $diff['intr'];
-		if (isset($totalused)&&$totalused <= 0) {
-			$totalused = 0.001;
-		}
-	$cpuUsage = floor(100 * ($totalused / $totalDiff));
-	
+    $diff['user'] = ($cpuTicks2[0] - $cpuTicks[0]);
+    $diff['nice'] = ($cpuTicks2[1] - $cpuTicks[1]);
+    $diff['sys'] = ($cpuTicks2[2] - $cpuTicks[2]);
+    $diff['intr'] = ($cpuTicks2[3] - $cpuTicks[3]);
+    $diff['idle'] = ($cpuTicks2[4] - $cpuTicks[4]);
+    
+    //echo "<!-- user: {$diff['user']}  nice {$diff['nice']}  sys {$diff['sys']}  intr {$diff['intr']}  idle {$diff['idle']} -->";
+    $totalDiff = $diff['user'] + $diff['nice'] + $diff['sys'] + $diff['intr'] + $diff['idle'];
+    $totalused = $diff['user'] + $diff['nice'] + $diff['sys'] + $diff['intr'];
+        if (isset($totalused)&&$totalused <= 0) {
+            $totalused = 0.001;
+        }
+    $cpuUsage = floor(100 * ($totalused / $totalDiff));
 	return $cpuUsage;
 }
 
@@ -140,5 +146,94 @@ function mem_usage()
 	$memUsage = round(($usedMem * 100) / $totalMem, 0);
 
 	return $memUsage;
+}
+
+function update_date_time() {
+	
+	$datetime = date("D M j G:i:s T Y");
+	return $datetime;
+}
+
+function get_interfacestats(){
+	
+	global $config;
+	//build interface list for widget use
+	$i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+		$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
+	}
+	$array_in_packets = array();
+	$array_out_packets = array();
+	$array_in_bytes = array();
+	$array_out_bytes = array();
+	$array_in_errors = array();
+	$array_out_errors = array();
+	$array_collisions = array();
+	$array_interrupt = array();
+	$new_data = "";
+	
+	//build data arrays
+	foreach ($ifdescrs as $ifdescr => $ifname){
+		$ifinfo = get_interface_info($ifdescr);	
+			$new_data .= "{$ifinfo['inpkts']},";
+			$new_data .= "{$ifinfo['outpkts']},";
+			$new_data .= format_bytes($ifinfo['inbytes']) . ",";
+			$new_data .= format_bytes($ifinfo['outbytes']) . ",";
+			if (isset($ifinfo['inerrs'])){
+				$new_data .= "{$ifinfo['inerrs']},";
+				$new_data .= "{$ifinfo['outerrs']},";
+			}
+			else{
+				$new_data .= "0,";
+				$new_data .= "0,";
+			}
+			if (isset($ifinfo['collisions']))
+				$new_data .= htmlspecialchars($ifinfo['collisions']) . ",";
+			else
+				$new_data .= "0,";
+		
+				
+		
+	}//end for
+	
+	return $new_data;
+
+}
+
+function get_interfacestatus(){
+	$data = "";
+	global $config;
+
+	//build interface list for widget use
+	$i = 0; $ifdescrs = array('wan' => 'WAN', 'lan' => 'LAN');
+	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
+		$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
+	}
+	
+	foreach ($ifdescrs as $ifdescr => $ifname){
+		$ifinfo = get_interface_info($ifdescr);
+		$data .= $ifname . ",";
+		if($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") {
+			$data .= "up";
+		}else if ($ifinfo['status'] == "no carrier") {
+			$data .= "down";
+		}else if ($ifinfo['status'] == "down") {
+			$data .= "block";
+		}
+		$data .= ",";
+		if ($ifinfo['ipaddr']){ 
+			$data .= htmlspecialchars($ifinfo['ipaddr']);
+			if ($ifinfo['dhcplink']) {
+				$data .= " (DHCP)";
+			}
+		}
+		$data .= ",";
+		if ($ifinfo['status'] != "down")
+			$data .= htmlspecialchars($ifinfo['media']);
+			
+		$data .= "~";
+		
+	}	
+	return $data;
 }
 

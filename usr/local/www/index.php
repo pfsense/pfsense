@@ -51,8 +51,8 @@
 	$oSajax->sajax_export("get_stats");
 	$oSajax->sajax_handle_client_request();
 	############################################################################
-
-
+	
+	
 	## Check to see if we have a swap space,
 	## if true, display, if false, hide it ...
 	if(file_exists("/usr/sbin/swapinfo")) {
@@ -191,57 +191,43 @@ foreach($phpincludefiles as $includename) {
 	include($directory . $includename);
 }
 
-//function to create widget tabs when called
-function display_widget_tabs(& $tab_array) {	
-	echo "<div id='tabs'>";
-	$tabscounter = 0;
-	foreach ($tab_array as $ta) {
-	$dashpos = strpos($ta[2],'-');
-	$tabname = $ta[2] . "-tab";
-	$tabclass = substr($ta[2],0,$dashpos);
-	$tabclass = $tabclass . "-class";
-		if ($ta[1] == true) {
-			$tabActive = "table-cell";
-			$tabNonActive = "none";
-		} 
-		else {
-			$tabActive = "none";
-			$tabNonActive = "table-cell";
-		}
-		echo "<div id='{$ta[2]}-active' class='{$tabclass}-tabactive' style='display:{$tabActive}; background-color:#EEEEEE; color:black;'>";
-		echo "<B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
-		echo "&nbsp;&nbsp;&nbsp;</B>";
-		echo "</div>";
-		
-		echo "<div id='{$ta[2]}-deactive' class='{$tabclass}-tabdeactive' style='display:{$tabNonActive}; background-color:#777777; color:white; cursor: pointer;' onClick=\"return changeTabDIV('{$ta[2]}')\">";
-		echo "<B>&nbsp;&nbsp;&nbsp;{$ta[0]}";
-		echo "&nbsp;&nbsp;&nbsp;</B>";
-		echo "</div>";
-	}
-	
-	echo "<script type=\"text/javascript\">";
-	echo "NiftyCheck();\n";
-	echo "Rounded(\"div.{$tabclass}-tabactive\",\"top\",\"#CCCCCC\",\"#EEEEEE\",\"smooth\");\n";
-	echo "Rounded(\"div.{$tabclass}-tabdeactive\",\"top\",\"#CCCCCC\",\"#777777\",\"smooth\");\n";
-	echo "</script>";
-	echo "</div>";
-}
-
 $jscriptstr = <<<EOD
 <script language="javascript" type="text/javascript">
 
+
+function widgetAjax(widget) {	
+			uri = "widgets/widgets/" + widget + ".widget.php";
+			var opt = {
+			    // Use GET
+			    method: 'get',
+				evalScripts: 'true',
+			    asynchronous: true,
+			    // Handle 404
+			    on404: function(t) {
+			        alert('Error 404: location "' + t.statusText + '" was not found.');
+			    },
+			    // Handle other errors
+			    onFailure: function(t) {
+			        alert('Error ' + t.status + ' -- ' + t.statusText);
+			    }
+			}
+			new Ajax.Updater(widget, uri, opt);
+		}
+
+
 function addDiv(selectedDiv){	
-	selectedDiv = selectedDiv + "-div";
-	textlink = d.getElementById(selectedDiv);
+	selectedDiv2 = selectedDiv + "-container";
+	d = document;
+	textlink = d.getElementById(selectedDiv2);
 	if (textlink.style.display != "none")
 	{
-		Effect.Shake(selectedDiv);	
+		Effect.Shake(selectedDiv2);	
 	}
 	else
 	{
-		Effect.Appear(selectedDiv, {duration:1});
-		d = document;	
-		selectIntLink = selectedDiv + "-input";
+		widgetAjax(selectedDiv);
+		Effect.Appear(selectedDiv2, {duration:1});
+		selectIntLink = selectedDiv2 + "-input";
 		textlink = d.getElementById(selectIntLink);
 		textlink.value = "show";	
 		showSave();
@@ -259,7 +245,7 @@ function configureDiv(selectedDiv){
 }
 
 function showDiv(selectedDiv,swapButtons){
-		//appear element
+	//appear element
     Effect.BlindDown(selectedDiv, {duration:1});      
     showSave();    
 	d = document;	
@@ -274,7 +260,7 @@ function showDiv(selectedDiv,swapButtons){
 		textlink.style.display = "none";
 
     }
-	selectIntLink = selectedDiv + "-div-input";
+	selectIntLink = selectedDiv + "-container-input";
 	textlink = d.getElementById(selectIntLink);
 	textlink.value = "show";	
     
@@ -294,7 +280,7 @@ function minimizeDiv(selectedDiv,swapButtons){
 		textlink = d.getElementById(selectIntLink);
 		textlink.style.display = "none";
     }  		
-	selectIntLink = selectedDiv + "-div-input";
+	selectIntLink = selectedDiv + "-container-input";
 	textlink = d.getElementById(selectIntLink);
 	textlink.value = "hide";	  
     
@@ -302,7 +288,7 @@ function minimizeDiv(selectedDiv,swapButtons){
 
 function closeDiv(selectedDiv){	
 	showSave();
-	selectedDiv = selectedDiv + "-div";
+	selectedDiv = selectedDiv + "-container";
 	Effect.Fade(selectedDiv, {duration:1});
 	d = document;
 	selectIntLink = selectedDiv + "-input";
@@ -423,9 +409,6 @@ echo $jscriptstr;
 	if(!file_exists("/usr/local/www/themes/{$g['theme']}/no_big_logo"))
 		echo "<center><img src=\"./themes/".$g['theme']."/images/logobig.jpg\"></center><br>";
 ?>
-
-<?php 
-	?>
 <div id="widgetcontainer" style="display:none">
 		<div id="content1"><h1>Available Widgets</h1><p><?php
 			$widgetfiles_add = $widgetfiles;
@@ -462,7 +445,7 @@ echo $jscriptstr;
 </div>
 
 <div id="welcomecontainer" style="display:none">
-		<div id="welcome-div">
+		<div id="welcome-container">
 			<h1>
 				<div style="float:left;width:80%;padding: 2px">
 					Welcome to the New Dashboard page!
@@ -486,7 +469,7 @@ echo $jscriptstr;
 <input type="hidden" value="" name="sequence" id="sequence">
 <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" alt="Click here to add widgets" style="cursor: pointer;" onmouseup="domTT_activate(this, event, 'content', document.getElementById('content1'), 'type', 'velcro', 'delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
 
-<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_info_pkg.gif" alt="Click here for help" style="cursor: help;" onmouseup="hideAllWidgets();domTT_activate(this, event, 'content', document.getElementById('welcome-div'), 'type', 'sticky', 'closeLink', '','delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
+<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_info_pkg.gif" alt="Click here for help" style="cursor: help;" onmouseup="hideAllWidgets();domTT_activate(this, event, 'content', document.getElementById('welcome-container'), 'type', 'sticky', 'closeLink', '','delay', 0, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');" />
 
 
 &nbsp;&nbsp;&nbsp;
@@ -605,8 +588,8 @@ echo $jscriptstr;
 		
 		?>
 		<div style="clear:both;"></div>
-		<div  id="<?php echo $widgetname;?>-div" class="widgetdiv" style="display:<?php echo $divdisplay; ?>;">
-			<input type="hidden" value="<?php echo $inputdisplay;?>" id="<?php echo $widgetname;?>-div-input" name="<?php echo $widgetname;?>-div-input">
+		<div  id="<?php echo $widgetname;?>-container" class="widgetdiv" style="display:<?php echo $divdisplay; ?>;">
+			<input type="hidden" value="<?php echo $inputdisplay;?>" id="<?php echo $widgetname;?>-container-input" name="<?php echo $widgetname;?>-container-input">
 			<div id="<?php echo $widgetname;?>topic" class="widgetheader" style="cursor:move">
 				<div style="float:left;">
 					<?php 
@@ -646,13 +629,9 @@ echo $jscriptstr;
 			</div>
 			<div id="<?php echo $widgetname;?>" style="display:<?php echo $display; ?>;">
 				<?php 
-					if (file_exists($directory . $widget))
+					if ($displayarray[$widgetcounter] != "close")
 					{
 						include($directory . $widget);
-					}
-					else 
-					{
-						echo "Widget does not exists in the widget folder. <br>Please reinstall the dashboard package to correct this issue.";	
 					}				
 				 ?>
 			</div>
@@ -684,7 +663,7 @@ echo $jscriptstr;
 	window.onload = function(in_event)
 	{		
 			hideAllWidgets();		    
-			domTT_activate('welcome1', null, 'x', 287, 'y', 107, 'content', document.getElementById('welcome-div'), 'type', 'sticky', 'closeLink', '','delay', 1000, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');		
+			domTT_activate('welcome1', null, 'x', 287, 'y', 107, 'content', document.getElementById('welcome-container'), 'type', 'sticky', 'closeLink', '','delay', 1000, 'fade', 'both', 'fadeMax', 100, 'styleClass', 'niceTitle');		
 	}
 	<?php } ?>
 	// <![CDATA[

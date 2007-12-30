@@ -35,6 +35,7 @@ $pconfig['hostname'] = $config['system']['hostname'];
 $pconfig['domain'] = $config['system']['domain'];
 list($pconfig['dns1'],$pconfig['dns2'],$pconfig['dns3'],$pconfig['dns4']) = $config['system']['dnsserver'];
 
+
 $pconfig['dns1gwint'] = $config['system']['dns1gwint'];
 $pconfig['dns2gwint'] = $config['system']['dns2gwint'];
 $pconfig['dns3gwint'] = $config['system']['dns3gwint'];
@@ -253,7 +254,7 @@ include("head.inc");
 <?php for($dnscounter=1; $dnscounter<5; $dnscounter++): ?>
                       <tr>
                       <td>
-                      <input name="dns<?php echo $dnscounter;?>" type="text" class="formfld unknown" id="dns<?php echo $dnscounter;?>" size="20" value="<?=htmlspecialchars($pconfig['dns{$dnscounter}']);?>">
+                      <input name="dns<?php echo $dnscounter;?>" type="text" class="formfld unknown" id="dns<?php echo $dnscounter;?>" size="20" value="<?php echo $pconfig['dns'.$dnscounter];?>">
                       </td>
                       <?php
                       	if($multiwan) {

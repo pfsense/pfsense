@@ -74,7 +74,6 @@ upload_max_filesize = 100M
 post_max_size = 100M
 html_errors = Off
 include_path = ".:/etc/inc:/usr/local/www:/usr/local/captiveportal:/usr/local/pkg"
-extension=apc.so
 extension=radius.so
 extension=ldap.so
 {$opcode_cacher}

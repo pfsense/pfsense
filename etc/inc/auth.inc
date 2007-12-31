@@ -335,6 +335,12 @@ function getGroupHomePage($group = "") {
 function isSystemAdmin($username = "") {
   global $groupindex, $userindex, $config, $g;
  
+  if($config['system']['webgui']['backend'] == "ldap") {
+	$groups = ldap_get_groups($username);
+	if(in_array("admins", $groups))
+		return true;
+  }
+
   if ($username == "") { return 0; }
 
   $gname = $config['system']['group'][$groupindex[$config['system']['user'][$userindex[$username]]['groupname']]]['name'];

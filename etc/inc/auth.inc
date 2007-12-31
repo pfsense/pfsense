@@ -68,6 +68,7 @@ function getAllowedGroups($logged_in_user) {
 		$fdny = fopen("/tmp/groups","w");
 		fwrite($fdny, print_r($allowed, true));
 		fclose($fdny);
+		$allowed = array();
 		if(is_array($config['system']['group']) && is_array($allowed_groups)) {
 			foreach($config['system']['group'] as $group) {
 				if(in_array($group['name'], $allowed_groups)) {
@@ -77,8 +78,7 @@ function getAllowedGroups($logged_in_user) {
 				}
 			}
 		}
-		if(count($allowed)>1)
-			return $allowed;
+		return $allowed;
 	}
 	
 	$final_allowed = array();

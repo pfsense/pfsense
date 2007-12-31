@@ -85,6 +85,10 @@ if($_POST) {
 <?php
 	$ous = ldap_get_user_ous(true);
 	$pconfig['ldapauthcontainers'] = split(";",$config['system']['webgui']['ldapauthcontainers']);
+	if(!is_array($ous)) {
+		echo "Sorry, we could not connect to the LDAP server.  Please try later.";
+		exit;
+	}
 	foreach($ous as $ou) {
 		if(in_array($ou, $pconfig['ldapauthcontainers']))
 			$CHECKED=" CHECKED";

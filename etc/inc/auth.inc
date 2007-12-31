@@ -723,6 +723,9 @@ function ldap_get_groups($username) {
 		$status = htpasswd_backed($username, $passwd);
 		return $status;	
 	}
+	
+    ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+    ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
 
 	if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
 	    log_error("ERROR! ldap_get_groups() could not bind to {$ldapserver} - {$ldapfilter}.  Defaulting to built-in htpasswd_backed()");
@@ -732,12 +735,8 @@ function ldap_get_groups($username) {
 
 	/* user specified login containers */
 	$ldac_split = split(";", $ldapauthcontainers);
-	foreach($ldac_split as $ldac) {
-		$search = ldap_search($ldap, $ldac, $ldapfilter, array('memberOf'));
-		if($search) 
-			break; // found the container
-	}
-
+	$search = ldap_search($ldap, $ldapsearchbase, $ldapfilter);
+	
 	if(!$search) {
 		log_error("ERROR!  Could not locate User group container for username {}$username}.");
 		log_error("        Please ensure that the needed container is defined in the ldap auth containers setting feature.");
@@ -745,6 +744,20 @@ function ldap_get_groups($username) {
 		return $status;	
 	}
 	
+	$info = ldap_get_entries($ldap, $search);
+
+	/* find home container */
+    foreach($info as $inf) {
+            $inf_split = split(",", $inf['dn']);
+            $ou = $inf_split[1];
+    }
+
+	if(!$ou) {
+		log_error("Could not resolve users home container for {$username}");
+		return false;
+	}
+
+	$search = ldap_search($ldap, $ou . "," . $ldapsearchbase, $ldapfilter, array('memberOf'));
 	$info = ldap_get_entries($ldap, $search);
 	
 	$memberof = array();
@@ -761,7 +774,9 @@ function ldap_get_groups($username) {
 	/* Time to close LDAP connection */
 	ldap_close($ldap);
 	
-	log_error("Returning groups " . print_r($memberof,true) . " for user $username");
+	$groups = print_r($memberof,true);
+	
+	log_error("Returning groups " . $groups  . " for user $username");
 	
 	return $memberof;
 }

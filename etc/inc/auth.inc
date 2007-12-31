@@ -743,6 +743,8 @@ function ldap_get_groups($username) {
 	
 	$info = ldap_get_entries($ldap, $search);
 	
+	$memberof = array();
+	
 	if(is_array($info[0]['memberof'])) {
     	foreach($info[0]['memberof'] as $member) {
             	if(strstr($member, "CN=") !== false) {

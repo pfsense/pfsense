@@ -33,8 +33,8 @@ require("guiconfig.inc");
 $ldapserver = $config['system']['webgui']['ldapserver'];
 $ldapbindun = $config['system']['webgui']['ldapbindun'];
 $ldapbindpw = $config['system']['webgui']['ldapbindpw'];
-
 $ldapfilter = $config['system']['webgui']['ldapfilter'];
+
 ?>
 
 <html>

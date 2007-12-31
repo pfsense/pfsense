@@ -212,7 +212,8 @@ if(!$pconfig['backend'])
 					<tr>
                         <td width="22%" valign="top" class="vncell">LDAP Authentication containers</td>
                         <td width="78%" class="vtable">
-							<input name="ldapauthcontainers" size="65" value="<?=htmlspecialchars($pconfig['ldapauthcontainers']);?>">
+							<input name="ldapauthcontainers" size="65" value="<?=htmlspecialchars($pconfig['ldapauthcontainers']);?>"> 
+							 <a href="javascript:if(openwindow('system_usermanager_settings_ldapacpicker.php') == false) alert('Popup blocker detected.  Action aborted.');" >Select</a>
 							<br/>NOTE: Comma separated.
 							<br/>EXAMPLE: CN=Users,DC=pfsense,DC=com;CN=OtherUsers,DC=pfsense,DC=com
 						</td>
@@ -233,3 +234,13 @@ if(!$pconfig['backend'])
 <?php include("fend.inc");?>
 </body>
 </html>
+<script language="javascript">
+function openwindow(url) {
+        var oWin = window.open(url,"pfSensePop","width=620,height=400,top=150,left=150");
+        if (oWin==null || typeof(oWin)=="undefined") {
+                return false;
+        } else {
+                return true;
+        }
+}
+</script>

@@ -709,8 +709,10 @@ function ldap_get_groups($username) {
 	$ldapbindpw = $config['system']['webgui']['ldapbindpw'];
 
 	$ldapfilter = $config['system']['webgui']['ldapfilter'];
-	$ldapsearchbase = "CN=Users,{$config['system']['webgui']['ldapsearchbase']}";
+	$ldapsearchbase = "{$config['system']['webgui']['ldapsearchbase']}";
 	$ldapfilter = str_replace("\$username", $username, $ldapfilter);
+	
+	$ldapauthcontainers = $config['system']['webgui']['ldapauthcontainers'];
 	
 	if (!($ldap = ldap_connect($ldapserver))) {
 	    log_error("ERROR!  ldap_get_groups() could not connect to server {$ldapserver}.  Defaulting to built-in htpasswd_backed()");
@@ -724,8 +726,21 @@ function ldap_get_groups($username) {
 		return $status;
 	}
 
-	$search = ldap_search($ldap, $ldapsearchbase, $ldapfilter, array('memberOf'));
+	/* user specified login containers */
+	$ldac_split = split(";", $ldapauthcontainers);
+	foreach($ldac_split as $ldac) {
+		$search = ldap_search($ldap, $ldac, $ldapfilter, array('memberOf'));
+		if($search) 
+			break; // found the container
+	}
 
+	if(!$search) {
+		log_error("ERROR!  Could not locate User group container for username {}$username}.");
+		log_error("        Please ensure that the needed container is defined in the ldap auth containers setting feature.");
+		$status = htpasswd_backed($username, $passwd);
+		return $status;	
+	}
+	
 	$info = ldap_get_entries($ldap, $search);
 	
 	if(is_array($info[0]['memberof'])) {

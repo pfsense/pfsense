@@ -43,6 +43,7 @@ $pconfig['ldapbindun'] = &$config['system']['webgui']['ldapbindun'];
 $pconfig['ldapbindpw'] = &$config['system']['webgui']['ldapbindpw'];
 $pconfig['ldapfilter'] = &$config['system']['webgui']['ldapfilter'];
 $pconfig['ldapsearchbase'] = &$config['system']['webgui']['ldapsearchbase'];
+$pconfig['ldapauthcontainers'] = &$config['system']['webgui']['ldapauthcontainers'];
 
 // Page title for main admin
 $pgtitle = array("System","User manager settings");
@@ -103,6 +104,11 @@ if ($_POST) {
 			$pconfig['ldapsearchbase'] = $_POST['ldapsearchbase'];
 		else
 			unset($pconfig['ldapsearchbase']);
+
+		if($_POST['ldapauthcontainers'])
+			$pconfig['ldapauthcontainers'] = $_POST['ldapauthcontainers'];
+		else
+			unset($pconfig['ldapauthcontainers']);
 
 		write_config();
 
@@ -203,6 +209,14 @@ if(!$pconfig['backend'])
 							<br/>Example: DC=pfsense,DC=com
 						</td>
 					</tr>
+					<tr>
+                        <td width="22%" valign="top" class="vncell">LDAP Authentication containers</td>
+                        <td width="78%" class="vtable">
+							<input name="ldapauthcontainers" size="65" value="<?=htmlspecialchars($pconfig['ldapauthcontainers']);?>">
+							<br/>NOTE: Comma separated.
+							<br/>EXAMPLE: CN=Users,DC=pfsense,DC=com;CN=OtherUsers,DC=pfsense,DC=com
+						</td>
+					</tr>					
                 	<tr>
                   		<td width="22%" valign="top">&nbsp;</td>
                   		<td width="78%"> 

@@ -337,8 +337,9 @@ function isSystemAdmin($username = "") {
  
   if($config['system']['webgui']['backend'] == "ldap") {
 	$groups = ldap_get_groups($username);
-	if(in_array("admins", $groups))
-		return true;
+	if(is_array($groups))
+		if(in_array("admins", $groups))
+			return true;
   }
 
   if ($username == "") { return 0; }

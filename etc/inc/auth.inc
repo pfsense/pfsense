@@ -680,7 +680,7 @@ function ldap_get_user_ous($show_complete_ou=false) {
             $ou = $inf_split[0];
             $ou = str_replace("OU=","", $ou);
 		} else {
-			if($inf)
+			if($inf['dn'])
 				$ou = $inf['dn'];
 		}
 		if($ou)

@@ -35,7 +35,9 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/ipsec.inc");
 
-	if (isset($config['ipsec']['tunnel'])){
+	if (isset($config['ipsec']['tunnel'])){?>
+	<div>&nbsp;</div>
+	<?php	
 	$tab_array = array();
 	$tab_array[0] = array("Overview", true, "ipsec-Overview");
 	$tab_array[1] = array("Tunnel Status", false, "ipsec-tunnel");
@@ -81,7 +83,6 @@ require_once("/usr/local/www/widgets/include/ipsec.inc");
 	
 	if (isset($config['ipsec']['tunnel'])){ ?>
 
-<div>&nbsp;</div>
 <div id="ipsec-Overview" style="display:block;background-color:#EEEEEE;">
 	<div>
 	  <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">	

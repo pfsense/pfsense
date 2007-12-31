@@ -674,18 +674,20 @@ function ldap_get_user_ous($show_complete_ou=false) {
 
 	$ous = array();
 
-    foreach($info as $inf) {
-		if(!$show_complete_ou) {
-            $inf_split = split(",", $inf['dn']);
-            $ou = $inf_split[0];
-            $ou = str_replace("OU=","", $ou);
-		} else {
-			if($inf['dn'])
-				$ou = $inf['dn'];
-		}
-		if($ou)
-			$ous[] = $ou;
-    }
+	if(is_array($info)) {
+	    foreach($info as $inf) {
+			if(!$show_complete_ou) {
+	            $inf_split = split(",", $inf['dn']);
+	            $ou = $inf_split[0];
+	            $ou = str_replace("OU=","", $ou);
+			} else {
+				if($inf['dn'])
+					$ou = $inf['dn'];
+			}
+			if($ou)
+				$ous[] = $ou;
+	    }
+	}
 	
 	$ous[] = "OU=Users," . $ldapsearchbase;
 	

@@ -169,7 +169,7 @@ if(!$pconfig['backend'])
                         <td width="78%" class="vtable"> 
 							<select name='backend'>
 								<option value="pfsense"<?php if ($pconfig['backend'] == "pfsense") echo " SELECTED";?>>pfSense</option>
-								<option value="ldap"<?php if ($pconfig['backend'] == "ldap") echo " SELECTED";?>>LDAP</option>
+								<option value="ldap"<?php if ($pconfig['backend'] == "ldap") echo " SELECTED";?>>LDAP (Active Directory)</option>
 							</select>
 							<br/>NOTE: login failures or server not available issues will fall back to pfSense internal users/group authentication.
 						</td>

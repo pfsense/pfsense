@@ -687,6 +687,8 @@ function ldap_get_user_ous($show_complete_ou=false) {
 			$ous[] = $ou;
     }
 	
+	$ous[] = "OU=Users," . $ldapsearchbase;
+	
 	return $ous;
 	
 }

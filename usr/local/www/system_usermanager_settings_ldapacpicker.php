@@ -54,6 +54,26 @@ if($_POST) {
 ?>
 
 <html>
+	<head>
+	    <STYLE type="text/css">
+			TABLE { 
+				border-width: 1px 1px 1px 1px;
+				border-spacing: 0px;
+				border-style: solid solid solid solid;
+				border-color: gray gray gray gray;
+				border-collapse: separate;
+				background-color: collapse;
+	 		}
+			TD { 
+				border-width: 0px 0px 0px 0px;
+				border-spacing: 0px;
+				border-style: solid solid solid solid;
+				border-color: gray gray gray gray;
+				border-collapse: collapse;
+				background-color: white;
+			}
+	    </STYLE>		
+	</head>
  <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
  <form method="post" action="system_usermanager_settings_ldapacpicker.php">	
 	<b>Please select which containers to Authenticate against:</b>
@@ -61,6 +81,7 @@ if($_POST) {
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
   	 <tr>
     	<td class="tabnavtbl">
+			<table width="100%">
 <?php
 	$ous = ldap_get_user_ous(true);
 	$pconfig['ldapauthcontainers'] = split(";",$config['system']['webgui']['ldapauthcontainers']);
@@ -69,9 +90,10 @@ if($_POST) {
 			$CHECKED=" CHECKED";
 		else 
 			$CHECKED="";
-		echo "<input type='checkbox' value='{$ou}' name='ou[]'{$CHECKED}> {$ou}<br/>\n";
+		echo "			<tr><td><input type='checkbox' value='{$ou}' name='ou[]'{$CHECKED}> {$ou}<br/></td></tr>\n";
 	}
 ?>	
+			</table>
       	</td>
      </tr>
 	</table>	

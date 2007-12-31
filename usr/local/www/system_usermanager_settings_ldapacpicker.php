@@ -89,12 +89,14 @@ if($_POST) {
 		echo "Sorry, we could not connect to the LDAP server.  Please try later.";
 		exit;
 	}
-	foreach($ous as $ou) {
-		if(in_array($ou, $pconfig['ldapauthcontainers']))
-			$CHECKED=" CHECKED";
-		else 
-			$CHECKED="";
-		echo "			<tr><td><input type='checkbox' value='{$ou}' name='ou[]'{$CHECKED}> {$ou}<br/></td></tr>\n";
+	if(is_array($ous)) {	
+		foreach($ous as $ou) {
+			if(in_array($ou, $pconfig['ldapauthcontainers']))
+				$CHECKED=" CHECKED";
+			else 
+				$CHECKED="";
+			echo "			<tr><td><input type='checkbox' value='{$ou}' name='ou[]'{$CHECKED}> {$ou}<br/></td></tr>\n";
+		}
 	}
 ?>	
 			</table>

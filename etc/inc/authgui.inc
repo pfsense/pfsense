@@ -68,10 +68,10 @@ if (isset($_POST['scriptname']) && isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])
 // Once here, the user has authenticated with the web server.
 // Now, we give them access only to the appropriate pages for their group.
 if (!(isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']))) {
-	$g['privs'] = getAllowedGroups($HTTP_SERVER_VARS['AUTH_USER']);
-	$allowed = $g['privs'];
+	$_SESSION['privs'] = getAllowedGroups($HTTP_SERVER_VARS['AUTH_USER']);
+	$allowed = $_SESSION['privs'];
 	
-	$allowed_groups = print_r($g['privs'],true);
+	$allowed_groups = print_r($_SESSION['privs'],true);
 	$fdny = fopen("/tmp/groups", "w");
 	fwrite($fdny, $allowed_groups);
 	fclose($fdny);

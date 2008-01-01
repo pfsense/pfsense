@@ -60,10 +60,19 @@ function logout_session() {
 function getAllowedGroups($logged_in_user) {
 	global $g, $config;
 	
+	$allowed = array();
+	$allowed_groups = array();
+	
 	log_error("Getting groups for {$logged_in_user}.");
 	
+	$local_user = false;
+	
+	foreach($config['system']['user'] as $username) 
+		if($username['name'] = $logged_in_user) 
+			$local_user = true;
+	
 	/* return ldap groups if we are in ldap mode */
-	if($config['system']['webgui']['backend'] == "ldap") {
+	if($config['system']['webgui']['backend'] == "ldap" && $local_user == false) {
 		$allowed_groups = ldap_get_groups($logged_in_user);
 		$fdny = fopen("/tmp/groups","w");
 		fwrite($fdny, print_r($allowed, true));
@@ -82,12 +91,12 @@ function getAllowedGroups($logged_in_user) {
 	}
 	
 	$final_allowed = array();
-	
+
 	foreach($config['system']['user'] as $username) {
-		if($username['name'] = $logged_in_user) 
+		if($username['name'] == $logged_in_user) 
 			$allowed_groups  = explode(",", $username['groupname']);
 	}
-	
+		
 	foreach($config['system']['group'] as $group) {
 		if(in_array($group['name'], $allowed_groups)) {
 			foreach($group['pages'] as $page) {
@@ -333,22 +342,34 @@ function getGroupHomePage($group = "") {
 }
 
 function isSystemAdmin($username = "") {
-  global $groupindex, $userindex, $config, $g;
- 
+  global $groupindex, $userindex, $config, $g, $_SESSION;
+
+  if($_SESSION['isSystemAdmin']) 
+	return $_SESSION['isSystemAdmin'];
+
   if($config['system']['webgui']['backend'] == "ldap") {
 	$groups = ldap_get_groups($username);
-	if(is_array($groups))
-		if(in_array("admins", $groups))
+	if(is_array($groups)){
+		if(in_array("admins", $groups)) {
+			$_SESSION['isSystemAdmin'] = true;
 			return true;
+		}
+	}
   }
 
-  if ($username == "") { return 0; }
+  if ($username == "") { 
+		$_SESSION['isSystemAdmin'] = false; 
+		return 0; 
+  }
 
   $gname = $config['system']['group'][$groupindex[$config['system']['user'][$userindex[$username]]['groupname']]]['name'];
 
   if (isset($gname)) {
+	$_SESSION['isSystemAdmin'] = $gname === $g["admin_group"];
     return ($gname === $g["admin_group"]);
   }
+
+  $_SESSION['isSystemAdmin'] = false; 
 
   return 0;
 }
@@ -761,7 +782,8 @@ function ldap_get_groups($username) {
 
 	if(!$ou) {
 		log_error("Could not resolve users home container for {$username}");
-		return false;
+		$status = htpasswd_backed($username, $passwd);
+		return $status;	
 	}
 
 	$search = ldap_search($ldap, $ou . "," . $ldapsearchbase, $ldapfilter, array('memberOf'));

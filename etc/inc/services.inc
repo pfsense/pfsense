@@ -113,6 +113,7 @@ function services_dhcpd_configure() {
 
 
 	$dhcpdconf = <<<EOD
+	
 option domain-name "{$syscfg['domain']}";
 option ldap-server code 95 = text;
 option domain-search-list code 119 = text;
@@ -122,6 +123,7 @@ log-facility local7;
 ddns-update-style none;
 one-lease-per-client true;
 deny duplicates;
+ping-check true;
 
 EOD;
 

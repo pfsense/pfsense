@@ -2452,21 +2452,15 @@ function cleanup_opt_interfaces_after_removal($opt_interface_num) {
 	unlink_if_exists("{$g['tmp_path']}/config.cache");
 	$config_file = file_get_contents("/cf/conf/config.xml");
 	/* loop through and reassign deleted items */
-	for ($i = 500; isset ($config['interfaces']['opt' . $i]); $i--) {
-		if ($i < $opt_interface_num)
-			break;
-		if ($i == $opt_interface_num) {
-			/* item should be deleted */
-			str_replace("opt" . $i, "optXXXX", $config_file);
-		}
+	$orig = array('opt'.$opt_interface_num,'OPT'.$opt_interface_num);
+	$repl = array('optXXXX','OPTXXXX');
+	for ($i = $opt_interface_num+1; isset ($config['interfaces']['opt' . $i]); $i++) {
+		array_push($orig,'opt'.$i);
+		array_push($repl,'opt'.($i -1));
+		array_push($orig,'OPT'.$i);
+		array_push($repl,'OPT'.($i -1));
 	}
-	/* loop through and reassign optional items */
-	for ($i = 500; isset ($config['interfaces']['opt' . $i]); $i--) {
-		if ($i < $opt_interface_num)
-			break;
-		/* replace opt$i with $i -1 */
-		str_replace("opt" . $i, "opt" . ($i -1), $config_file);
-	}
+	$config_file = str_replace($orig, $repl, $config_file);
 	$fd = fopen("/cf/conf/config.xml", "w");
 	fwrite($fd, $config_file);
 	fclose($fd);
@@ -2490,6 +2484,7 @@ function cleanup_opt_interfaces_after_removal($opt_interface_num) {
 			if($config['nat']['rule'][$x]['interface'] == "optXXXX")
 		 		unset($config['nat']['rule'][$x]['interface']);
 	}
+	write_config();
 	conf_mount_ro();
 	config_unlock();
 	return true;

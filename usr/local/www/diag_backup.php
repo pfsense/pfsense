@@ -48,7 +48,7 @@ function spit_out_select_items($area) {
 		<option VALUE="filter">Firewall Rules</option>
 		<option VALUE="nat">NAT</option>
 		<option VALUE="pptpd">PPTP Server</option>
-		<option VALUE="ipsec">IPSEC VPN</option>
+		<option VALUE="ipsec">IPsec VPN</option>
 		<option VALUE="captiveportal">Captive Portal</option>
 		<option VALUE="installedpackages">Package Manager</option>
 		<option VALUE="interfaces">Interfaces</option>

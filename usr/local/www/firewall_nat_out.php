@@ -205,7 +205,7 @@ include("head.inc");
               <tr>
                   <td class="vtable"><p>
                       <input name="advancedoripsec" type="radio" id="ipsecpassthru" value="ipsecpassthru" <?php if (isset($config['nat']['ipsecpassthru']['enable'])) echo "checked";?>>
-                      <strong><?=gettext("Automatic outbound NAT rule generation (IPSEC passthrough)");?></strong></p>
+                      <strong><?=gettext("Automatic outbound NAT rule generation (IPsec passthrough)");?></strong></p>
                   </td>
                 </tr>
                 <tr>

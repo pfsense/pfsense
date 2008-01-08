@@ -44,7 +44,7 @@ preg_match('/\nO\=(.*)\n/', $openssl, $orginizationnameA);
 preg_match('/\nOU\=(.*)\n/', $openssl, $orginizationdepartmentA);
 preg_match('/\nCN\=(.*)\n/', $openssl, $commonnameA);
 
-$pgtitle = array("IPSEC","Certificate Authority","Create Certificates");
+$pgtitle = array("IPsec","Certificate Authority","Create Certificates");
 
 $countrycode = $countrycodeA[1];
 $stateorprovince = $stateorprovinceA[1];

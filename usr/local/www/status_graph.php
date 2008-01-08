@@ -69,7 +69,7 @@ for ($j = 1; isset($config['interfaces']['opt' . $j]['enable']); $j++) {
 	$ifdescrs['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
 }
 if((isset($config['ipsec']['enable'])) || (isset($config['ipsec']['mobileclients']['enable']))) {
-	$ifdescrs['ipsec'] = "IPSEC";
+	$ifdescrs['ipsec'] = "IPsec";
 }
 
 ?>

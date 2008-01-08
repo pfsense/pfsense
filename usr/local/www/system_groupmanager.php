@@ -137,7 +137,7 @@ function getAdminPageList() {
 
 		/* additional firewal rules tab entries */
 		$entryname = "firewall_rules_edit.php?if=enc0";
-        $tmp[$entryname] = "Firewall: Rules: Edit: IPSEC";
+        $tmp[$entryname] = "Firewall: Rules: Edit: IPsec";
 
 		$entryname = "firewall_rules_edit.php?if=pptp";
         $tmp[$entryname] = "Firewall: Rules: Edit: PPTP";
@@ -154,7 +154,7 @@ function getAdminPageList() {
 		}
 		/* additional nat tab entries */
 		$entryname = "firewall_nat_edit.php?if=enc0";
-        $tmp[$entryname] = "Firewall: NAT: Port Forward: Edit: IPSEC";
+        $tmp[$entryname] = "Firewall: NAT: Port Forward: Edit: IPsec";
         
 		$entryname = "firewall_nat_edit.php?if=pptp";
         $tmp[$entryname] = "Firewall: NAT: Port Forward: Edit: PPTP";

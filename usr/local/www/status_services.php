@@ -272,7 +272,7 @@ if($config['installedpackages']['miniupnpd']['config'][0]['enable']) {
 
 if (isset($config['ipsec']['enable'])) {
 	$pconfig['name'] = "racoon";
-	$pconfig['description'] = gettext("IPSEC VPN");
+	$pconfig['description'] = gettext("IPsec VPN");
 	$services[] = $pconfig;
 	unset($pconfig);
 }

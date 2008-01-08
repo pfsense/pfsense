@@ -437,7 +437,7 @@ include("head.inc");
 					/* add ipsec interfaces */
 					if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable']))
 						if(have_ruleint_access("enc0")) 
-							$interfaces["enc0"] = "IPSEC";
+							$interfaces["enc0"] = "IPsec";
 
 					foreach ($interfaces as $iface => $ifacename): ?>
 						<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>><?=htmlspecialchars($ifacename);?></option>

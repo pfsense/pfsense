@@ -35,7 +35,7 @@ require("guiconfig.inc");
 
 $ipsec_logfile = "{$g['varlog_path']}/ipsec.log";
 
-/* Create array with all IPSEC tunnel descriptions */
+/* Create array with all IPsec tunnel descriptions */
 $search = array();
 $replace = array();
 if(is_array($config['ipsec']['tunnel']))
@@ -78,7 +78,7 @@ include("head.inc");
 	$tab_array[] = array("Firewall", false, "diag_logs_filter.php");
 	$tab_array[] = array("DHCP", false, "diag_logs_dhcp.php");
 	$tab_array[] = array("Portal Auth", false, "diag_logs_auth.php");
-	$tab_array[] = array("IPSEC VPN", true, "diag_logs_ipsec.php");
+	$tab_array[] = array("IPsec VPN", true, "diag_logs_ipsec.php");
 	$tab_array[] = array("PPTP VPN", false, "diag_logs_vpn.php");
 	$tab_array[] = array("Load Balancer", false, "diag_logs_slbd.php");
 	$tab_array[] = array("OpenVPN", false, "diag_logs_openvpn.php");

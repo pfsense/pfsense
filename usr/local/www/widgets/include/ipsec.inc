@@ -1,6 +1,6 @@
 <?php
 //set variable for custom title
-$ipsec_title = "IPSec";
+$ipsec_title = "IPsec";
 
 function get_ipsec_tunnel_sad() {
 	/* query SAD */

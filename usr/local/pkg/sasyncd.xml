@@ -10,7 +10,7 @@
 	<!-- Menu is where this packages menu will appear -->
 	<menu>
 	    <name>VPN failover</name>
-	    <tooltiptext>The sasyncd daemon synchronizes IPSec SA and SPD information between a number of failover IPsec gateways.  The most typical scenario is to run sasyncd on hosts also running isakmpd and sharing a common IP-address using carp.</tooltiptext>
+	    <tooltiptext>The sasyncd daemon synchronizes IPsec SA and SPD information between a number of failover IPsec gateways.  The most typical scenario is to run sasyncd on hosts also running isakmpd and sharing a common IP-address using carp.</tooltiptext>
 	    <section>Services</section>
 	    <configfile>sasyncd.xml</configfile>
 	</menu>
@@ -42,7 +42,7 @@
 		<url>vpn_ipsec_ca.php</url>
 	    </tab>
 	    <tab>
-		<text>Failover IPSEC</text>
+		<text>Failover IPsec</text>
 		<url>/pkg_edit.php?xml=sasyncd.xml&amp;id=0</url>
 		<active/>
 	    </tab>

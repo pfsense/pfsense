@@ -103,7 +103,7 @@ require_once("/usr/local/www/widgets/include/ipsec.inc");
 			              Note:<br />
 			            </strong>
 			          </span>
-			          You can configure your IPSEC 
+			          You can configure your IPsec 
 			          <a href="vpn_ipsec.php">here</a>.
 				</span>
 		      </p>
@@ -176,7 +176,7 @@ require_once("/usr/local/www/widgets/include/ipsec.inc");
 	              Note:<br />
 	            </strong>
 	          </span>
-	          You can configure your IPSEC 
+	          You can configure your IPsec 
 	          <a href="vpn_ipsec.php">here</a>.
 	        </span>
 	      </p>
@@ -196,10 +196,10 @@ else { ?>
 	        <span class="vexpl">
 	          <span class="red">
 	            <strong>
-	              Note: There are no configured IPSec Tunnels<br />
+	              Note: There are no configured IPsec Tunnels<br />
 	            </strong>
 	          </span>
-	          You can configure your IPSEC 
+	          You can configure your IPsec 
 	          <a href="vpn_ipsec.php">here</a>.
 	        </span>
 	      </p>

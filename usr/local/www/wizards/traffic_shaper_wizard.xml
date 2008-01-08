@@ -684,7 +684,7 @@
                         <type>checkbox</type>
                         <typehint>Other networking protocols</typehint>
                         <description>This will help raise or lower the priority of other protocols higher than most traffic.</description>
-			<enablefields>AIM,AppleRemoteDesktop,DNS,HTTP,ICMP,ICQ,IMAP,IPSEC,IRC,Jabber,LotusNotes,MSN,MSRDP,MySqlServer,PCAnywhere,POP3,PPTP,RTSP,SMB,SMTP,SNMP,StreamingMP3,TeamSpeak,VNC,NNTP,CVSUP,HBCI</enablefields>
+			<enablefields>AIM,AppleRemoteDesktop,DNS,HTTP,ICMP,ICQ,IMAP,IPsec,IRC,Jabber,LotusNotes,MSN,MSRDP,MySqlServer,PCAnywhere,POP3,PPTP,RTSP,SMB,SMTP,SNMP,StreamingMP3,TeamSpeak,VNC,NNTP,CVSUP,HBCI</enablefields>
 			<donotdisable>true</donotdisable>
 			<bindstofield>ezshaper->step7->enable</bindstofield>
                 </field>
@@ -925,7 +925,7 @@
 			<typehint>Microsoft Point to Point tunneling protocol</typehint>
                 </field>
                 <field>
-                        <name>IPSEC</name>
+                        <name>IPsec</name>
 			<type>select</type>
 			<bindstofield>ezshaper->step7->ipsec</bindstofield>
 			<options>
@@ -942,7 +942,7 @@
 					<value>L</value>
 				</option>
 			</options>
-			<typehint>IPSEC VPN traffic</typehint>
+			<typehint>IPsec VPN traffic</typehint>
                 </field>
                 <field>
                         <name>Multimedia/Streaming</name>

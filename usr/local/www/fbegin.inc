@@ -187,7 +187,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 					<li class="drop">
 						<div>VPN</div>
 						<ul class="subdrop">
-							<?=output_menu_item("/vpn_ipsec.php", "IPSec");?>
+							<?=output_menu_item("/vpn_ipsec.php", "IPsec");?>
 							<?=output_menu_item("/pkg.php?xml=openvpn.xml", "OpenVPN");?>
 							<?=output_menu_item("/vpn_pptp.php", "PPTP");?>
 							<?php echo return_ext_menu("VPN"); ?>
@@ -204,7 +204,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							<?=output_menu_item("/diag_dhcp_leases.php", "DHCP Leases");?>
 							<?=output_menu_item("/status_filter_reload.php", "Filter Reload");?>
 							<?=output_menu_item("/status_interfaces.php", "Interfaces");?>
-							<?=output_menu_item("/diag_ipsec.php", "IPSec");?>
+							<?=output_menu_item("/diag_ipsec.php", "IPsec");?>
 							<?=output_menu_item("/status_slbd_pool.php", "Load Balancer");?>
 							<?php if($g['platform'] == "pfSense"): ?>
 							<?=output_menu_item("/diag_pkglogs.php", "Package Logs");?>

@@ -936,10 +936,10 @@ function step7_stepsubmitphpaction() {
                 }
 
 		if($_POST['ipsec'] != "") {
-		    /* IPSEC */
-		    $othersplist[] = array('IPSEC', 'udp', '500', '500', 'both', $_POST['ipsec']);
-		    $othersplist[] = array('IPSEC', 'ah', '', '', 'both', $_POST['ipsec']);
-		    $othersplist[] = array('IPSEC', 'esp', '', '', 'both', $_POST['ipsec']);
+		    /* IPsec */
+		    $othersplist[] = array('IPsec', 'udp', '500', '500', 'both', $_POST['ipsec']);
+		    $othersplist[] = array('IPsec', 'ah', '', '', 'both', $_POST['ipsec']);
+		    $othersplist[] = array('IPsec', 'esp', '', '', 'both', $_POST['ipsec']);
 		}
 
 		if($_POST['streamingmp3'] != "") {

@@ -1004,7 +1004,7 @@ function convert_config() {
 		$rule_item['type'] = "pass";
 		$rule_item['source']['any'] = true;
 		$rule_item['destination']['any'] = true;
-		$rule_item['descr'] = "Permit IPSEC traffic.";
+		$rule_item['descr'] = "Permit IPsec traffic.";
 		$rule_item['statetype'] = "keep state";
 		$a_filter[] = $rule_item;
 		$config['version'] = "2.9";

@@ -3049,7 +3049,7 @@ function enable_rrd_graphing() {
 		);
 		$ifdescrs = get_interface_list(true, true, $vfaces);
 		$ifdescrs['enc0']['friendly'] = "ipsec";
-		$ifdescrs['enc0']['descr'] = "IPSEC";
+		$ifdescrs['enc0']['descr'] = "IPsec";
 		$ifdescrs['enc0']['up'] = true;
 
 		foreach ($ifdescrs as $realif => $ifdescr) {

@@ -2898,7 +2898,7 @@ EOD;
 			foreach ($config['ipsec']['tunnel'] as $tunnel) {
 				if(isset($tunnel['disabled']))
 					continue;
-				update_filter_reload_status("Creating IPSEC tunnel items {$tunnel['descr']}...");
+				update_filter_reload_status("Creating IPsec tunnel items {$tunnel['descr']}...");
 				/* if tunnel is disabled, lets skip to next item */
 				$ipsec_ips = array(get_current_wan_address($tunnel['interface']));
 				/* is this a dynamic dns hostname? */
@@ -2921,15 +2921,15 @@ EOD;
 							continue;
 						if(!$remote_gateway) 
 							continue;
-						$ipfrules .= "pass out quick on \${$iface} proto udp from any to {$remote_gateway} port = 500 keep state label \"IPSEC: {$tunnel['descr']} - outbound isakmp\"\n";
-						$ipfrules .= "pass in quick on \${$iface} proto udp from {$remote_gateway} to any port = 500 keep state label \"IPSEC: {$tunnel['descr']} - inbound isakmp\"\n";
+						$ipfrules .= "pass out quick on \${$iface} proto udp from any to {$remote_gateway} port = 500 keep state label \"IPsec: {$tunnel['descr']} - outbound isakmp\"\n";
+						$ipfrules .= "pass in quick on \${$iface} proto udp from {$remote_gateway} to any port = 500 keep state label \"IPsec: {$tunnel['descr']} - inbound isakmp\"\n";
 						if ($tunnel['p2']['protocol'] == 'esp') {
-							$ipfrules .= "pass out quick on \${$iface} proto esp from any to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound esp proto\"\n";
-							$ipfrules .= "pass in quick on \${$iface} proto esp from {$remote_gateway} to any keep state label \"IPSEC: {$tunnel['descr']} - inbound esp proto\"\n";
+							$ipfrules .= "pass out quick on \${$iface} proto esp from any to {$remote_gateway} keep state label \"IPsec: {$tunnel['descr']} - outbound esp proto\"\n";
+							$ipfrules .= "pass in quick on \${$iface} proto esp from {$remote_gateway} to any keep state label \"IPsec: {$tunnel['descr']} - inbound esp proto\"\n";
 						}
 						if ($tunnel['p2']['protocol'] == 'ah') {
-							$ipfrules .= "pass out quick on \${$iface} proto ah from any to {$remote_gateway} keep state label \"IPSEC: {$tunnel['descr']} - outbound ah proto\"\n";
-							$ipfrules .= "pass in quick on \${$iface} proto ah from {$remote_gateway} to any keep state label \"IPSEC: {$tunnel['descr']} - inbound ah proto\"\n";
+							$ipfrules .= "pass out quick on \${$iface} proto ah from any to {$remote_gateway} keep state label \"IPsec: {$tunnel['descr']} - outbound ah proto\"\n";
+							$ipfrules .= "pass in quick on \${$iface} proto ah from {$remote_gateway} to any keep state label \"IPsec: {$tunnel['descr']} - inbound ah proto\"\n";
 						}
 					}
 				}
@@ -2942,9 +2942,9 @@ EOD;
 		$ipseccfg = $config['ipsec'];
 		if (isset($ipseccfg['mobileclients']['enable'])) {
 			foreach($ifdescrs as $iface) {
-				$ipfrules .= "pass in quick on \${$iface} proto udp from any to any port = 500 keep state label \"IPSEC: Mobile - inbound isakmp\"\n";
-				$ipfrules .= "pass in quick on \${$iface} proto esp from any to any keep state label \"IPSEC: Mobile - inbound esp proto\"\n";
-				$ipfrules .= "pass in quick on \${$iface} proto ah from any to any  keep state label \"IPSEC: Mobile - inbound ah proto\"\n";
+				$ipfrules .= "pass in quick on \${$iface} proto udp from any to any port = 500 keep state label \"IPsec: Mobile - inbound isakmp\"\n";
+				$ipfrules .= "pass in quick on \${$iface} proto esp from any to any keep state label \"IPsec: Mobile - inbound esp proto\"\n";
+				$ipfrules .= "pass in quick on \${$iface} proto ah from any to any  keep state label \"IPsec: Mobile - inbound ah proto\"\n";
 			}
 		}
 	}
@@ -3067,7 +3067,7 @@ function create_firewall_outgoing_rules_to_itself() {
 		$ints = array();
 		$int = filter_translate_type_to_real_interface($ifname);
 		/* if the interface is pppoe, set the ng0 interface */
-		update_filter_reload_status("Creating IPSEC tunnel items {$tunnel['descr']}...");
+		update_filter_reload_status("Creating IPsec tunnel items {$tunnel['descr']}...");
 		$ip = find_interface_ip($int);
 		if ($config['interfaces'][$ifname]['ipaddr'] == "pppoe")
 			$int = " { " . filter_translate_type_to_real_interface($ifname) . " ng0 } ";
@@ -3154,7 +3154,7 @@ function create_firewall_outgoing_rules_to_itself() {
 	}
 
 	/* permit internal ipsec outbound traffic */
-	$rule .="pass out quick on \$enc0 keep state label \"IPSEC internal host to host\"";
+	$rule .="pass out quick on \$enc0 keep state label \"IPsec internal host to host\"";
 
 	return $rule;
 }

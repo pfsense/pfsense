@@ -1316,7 +1316,7 @@ EOD;
 	return 0;
 }
 
-/* Forcefully restart IPSEC
+/* Forcefully restart IPsec
  * This is required for when dynamic interfaces reload
  * For all other occasions the normal vpn_ipsec_configure()
  * will gracefully reload the settings without restarting
@@ -1341,7 +1341,7 @@ function vpn_ipsec_force_reload() {
 
 	/* if ipsec is enabled, start up again */
 	if (isset($ipseccfg['enable'])) {
-		log_error("Forcefully reloading IPSEC racoon daemon");
+		log_error("Forcefully reloading IPsec racoon daemon");
 		vpn_ipsec_configure();
 	}
 

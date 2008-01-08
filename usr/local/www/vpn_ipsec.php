@@ -214,7 +214,7 @@ include("head.inc");
 		<tr>
 		    <td colspan="4">
 		      <p><span class="vexpl"><span class="red"><strong>Note:<br>
-                      </strong></span>You can check your IPSEC status at <a href="diag_ipsec_sad.php">Status:IPSEC</a>.</span></p>
+                      </strong></span>You can check your IPsec status at <a href="diag_ipsec_sad.php">Status:IPsec</a>.</span></p>
 		  </td>
 		</tr>
               </table>

@@ -63,7 +63,7 @@ if ($_POST['clear']) {
 
 $ipsec_logarr = return_clog($ipsec_logfile, $nentries);
 
-$pgtitle = array("Status","System logs","IPSEC VPN");
+$pgtitle = array("Status","System logs","IPsec VPN");
 include("head.inc");
 
 ?>
@@ -93,7 +93,7 @@ include("head.inc");
 			<div id="mainarea">
 			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0">
 		  		<tr>
-					<td colspan="2" class="listtopic">Last <?=$nentries;?> IPSEC log entries</td>
+					<td colspan="2" class="listtopic">Last <?=$nentries;?> IPsec log entries</td>
 		  		</tr>
 				<?php
 				foreach($ipsec_logarr as $logent){

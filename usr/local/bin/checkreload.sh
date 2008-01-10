@@ -1,6 +1,6 @@
 #!/bin/sh
 
-CHECKRELOADSTATUS=`pgrep check_reload_status | grep -v grep | wc -l`
+CHECKRELOADSTATUS=`pgrep check_reload_status | wc -l`
 DATE=`date +%m-%d-%Y_at_%H%M%S`
 OUTFILE=/root/check_reload_status.log
 

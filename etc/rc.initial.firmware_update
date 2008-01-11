@@ -44,6 +44,9 @@ switch ($command) {
 		$status = does_url_exist($url);
 		if($status) {
 			conf_mount_rw();
+			touch($d_fwupenabled_path);
+			if(file_exists("/root/firmware.tgz"))
+				unlink("/root/firmware.tgz");
 			echo "\nFetching file size...\n";
 			$file_size = exec("fetch -s \"$url\"");
 			$file_size = trim($file_size, "\r");
@@ -98,6 +101,7 @@ switch ($command) {
 			die;
 		}
 		if(file_exists($path)) {
+			touch($d_fwupenabled_path);
 			do_upgrade($path);
 		} else {
 			echo "\nCould not find file.\n\n";

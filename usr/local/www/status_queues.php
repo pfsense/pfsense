@@ -59,7 +59,7 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <?php
-if(!isset($config['shaper']['enable'])) {
+if(!is_array($config['shaper']['queue'])) {
 	echo "Traffic shaping is currently disabled.";
 	include("fend.inc");
 	exit;	
@@ -76,7 +76,7 @@ if(!isset($config['shaper']['enable'])) {
 		      <tr><td bgcolor="#DDDDDD" colspan="7">&nbsp;</td></tr>
                       <tr valign="top">
                         <td bgcolor="#DDDDDD">
-                          <font color="#000000">&nbsp;&nbsp;&nbsp;<?echo "<a href=\"firewall_shaper_queues_edit.php?id={$queue}\">" . htmlspecialchars($queue) . "</a>";?>&nbsp;&nbsp;&nbsp;</td>
+                          <font color="#000000">&nbsp;&nbsp;&nbsp;<?echo "<a href=\"firewall_shaper.php?id={$queue}\">" . htmlspecialchars($queue) . "</a>";?>&nbsp;&nbsp;&nbsp;</td>
 			<td bgcolor="#DDDDDD">
 			<nobr>
 <?php

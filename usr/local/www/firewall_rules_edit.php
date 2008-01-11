@@ -115,6 +115,10 @@ if (isset($id) && $a_filter[$id]) {
 	/* Multi-WAN next-hop support */
 	$pconfig['gateway'] = $a_filter[$id]['gateway'];
 	
+	/* Shaper support */
+	$pconfig['defaultqueue'] = $a_filter[$id]['defaultqueue'];
+	$pconfig['ackqueue'] = $a_filter[$id]['ackqueue'];
+
 	//schedule support
 	$pconfig['sched'] = $a_filter[$id]['sched'];
 
@@ -288,6 +292,13 @@ if ($_POST) {
 		if( $_POST['proto'] != "tcp" )
 			$input_errors[] = "OS detection is only valid with protocol tcp.";
 
+	if ($_POST['ackqueue'] && $_POST['ackqueue'] != "none") {
+		if ($_POST['defaultqueue'] == "none" )
+			$input_errors[] = "You have to select a queue when you select an acknowledge queue too.";
+		else if ($_POST['ackqueue'] == $_POST['defaultqueue'])
+			$input_errors[] = "Acknokledge queue and Queue cannot be the same.";		
+	}
+
 	if (!$input_errors) {
 		$filterent = array();
 		$filterent['type'] = $_POST['type'];
@@ -345,6 +356,12 @@ if ($_POST) {
 
 		if ($_POST['gateway'] != "") {
 			$filterent['gateway'] = $_POST['gateway'];
+		}
+		
+		if (isset($_POST['defaultqueue']) && $_POST['defaultqueue'] != "none") {
+			$filterent['defaultqueue'] = $_POST['defaultqueue'];
+			if (isset($_POST['ackqueue']) && $_POST['ackqueue'] != "none")
+				$filterent['ackqueue'] = $_POST['ackqueue'];
 		}
 
 		if ($_POST['sched'] != "") {
@@ -880,6 +897,46 @@ include("head.inc");
 ?>
 				</select>
 				<p><strong>Leave as 'default' to use the system routing table.  Or choose a gateway to utilize policy based routing.</strong></p>
+			</td>
+		</tr>
+		<tr>
+			<td width="22%" valign="top" class="vncell">Ackqueue/Queue</td>
+			<td width="78%" class="vtable">
+			<select name="ackqueue">
+<?php
+	if (!is_array($altq_list_queues))
+		read_altq_config(); /* XXX: */
+		foreach ($GLOBALS['allqueue_list'] as $q) {
+			echo "<option value=\"$q\"";
+			if ($q == $pconfig['ackqueue']) {
+				$qselected = 1;
+				echo " SELECTED";
+			}
+			echo ">{$q}</option>"; 
+		}
+		echo "<option value=\"none\"";
+		if (!$qselected) echo " SELECTED";
+		echo " >none</option>";
+?>
+			</select> / 			
+			<select name="defaultqueue">
+<?php
+		$qselected = 0;
+		foreach ($GLOBALS['allqueue_list'] as $q) {
+			echo "<option value=\"$q\"";
+			if ($q == $pconfig['defaultqueue']) {
+				$qselected = 1;
+				echo " SELECTED";
+			}
+			echo ">{$q}</option>"; 
+		}
+		echo "<option value=\"none\"";
+		if (!$qselected) echo " SELECTED";
+		echo " >none</option>";
+?>
+			</select>
+				<br />
+				<span class="vexpl">Choose the Acknowledge Queue only if you have selected Queue.</span>
 			</td>
 		</tr>
 		<tr>

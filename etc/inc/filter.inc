@@ -5,6 +5,7 @@
 	Copyright (C) 2004-2006 Scott Ullrich
         Copyright (C) 2005 	Bill Marquette
 	Copyright (C) 2006 	Peter Allgeyer
+	Copyright (C) 2008 	Ermal Lu\xe7i
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -38,9 +39,7 @@
 require_once("functions.inc");
 require_once("pkg-utils.inc");
 require_once("notices.inc");
-
-if($config['system']['shapertype'] <> "m0n0")
-	require_once ("shaper.inc");
+require_once ("shaper.inc");
 
 /* holds the items that will be executed *AFTER* the filter is fully loaded */
 $after_filter_configure_run = array();
@@ -133,26 +132,10 @@ function filter_configure_sync() {
 	if($g['booting'] == true) echo ".";
 	update_filter_reload_status("Generating filter rules");
 	$pfrules = filter_rules_generate();
-
-	if (isset($config['shaper']['enable']) and $config['system']['shapertype'] <> "m0n0") {
-		/* generate altq interface setup parms */
-		if($g['booting'] == true) echo ".";
-		update_filter_reload_status("Generating ALTQ interfaces");
-		$altq_ints = filter_setup_altq_interfaces();
-		/* generate altq queues */
-		if($g['booting'] == true) echo ".";
-		update_filter_reload_status("Generating ALTQ queues");
-		$altq_queues = filter_generate_altq_queues($altq_ints);
-		/* generate altq rules */
-		if($g['booting'] == true) echo ".";
-		/* Setup a default rule that tags ALL packets as unshaped
-		 * we'll match only unshaped packets in the shaper code later
-		 * this allows the shaper to be first match
-		 */
-		$pf_altq_rules = "block in all tag unshaped label \"SHAPER: first match rule\"\n";
-		update_filter_reload_status("Generating ALTQ rules");
-		$pf_altq_rules .= filter_generate_pf_altq_rules();
-	}
+	/* generate altq */
+	if($g['booting'] == true) echo ".";
+	update_filter_reload_status("Generating ALTQ queues");
+	$altq_queues = filter_generate_altq_queues();
 
 	update_filter_reload_status("Loading filter rules");
 
@@ -212,13 +195,8 @@ function filter_configure_sync() {
 		$rules .= "scrub {$mssclamp}\n"; // reassemble all directions
 	}
 
-	if($config['system']['shapertype'] <> "m0n0") {
-		$rules.= "{$altq_ints}\n";
-		$rules.= "{$altq_queues}\n";
-	}
+	$rules.= "{$altq_queues}\n";
 	$rules.= "{$natrules}\n";
-	if($config['system']['shapertype'] <> "m0n0") 
-		$rules.= "{$pf_altq_rules}\n";
 	$rules.= "{$pfrules}\n";
 	fwrite($fd, $rules);
         fclose($fd);
@@ -1018,7 +996,6 @@ function filter_nat_rules_generate() {
 
 	if(file_exists("/var/etc/inetd.conf"))
 		mwexec("rm /var/etc/inetd.conf");
-	
 	touch("/var/etc/inetd.conf");
 
 	if (isset($config['nat']['rule'])) {
@@ -1110,17 +1087,11 @@ function filter_nat_rules_generate() {
 						 *   routines because if this is the first bootup the filter is not completely configured
 						 *   and thus pf is not fully running.   otherwise we end up with: ftp-proxy: pf is disabled
 						 */
-						if(isset($config['shaper']['enable'])) {
-							if(isset($config['ezshaper']['step5']['p2pcatchall']))  {
-								$shaper_queue = "-q qP2PUp ";
-							} else {
-								$upq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['outside_int']);
-								$shaper_queue = "-q {$upq}def ";
-							}
-						} else {
-							$shaper_queue = "";
-						}
-						$after_filter_configure_run[] = "/usr/local/sbin/ftp-proxy {$shaper_queue}-R {$target} -b {$external_address} -p 21 -P 21";
+						/* Get the ftp queue for this interface */
+						if (isset($config['interfaces'][$rule['interface']]['ftpqueue']))
+							$shaper_queue = $config['interfaces'][$rule['interface']]['ftpqueue'];
+						/* else default queue configured on shaper will get this */
+						$after_filter_configure_run[] = "/usr/local/sbin/pftpx {$shaper_queue} -f {$target} -b {$external_address} -c 21 -g 21";
 					}
 					$dontinstallrdr = true;
 				}
@@ -1375,7 +1346,6 @@ EOD;
 		require_once('clamav.inc');
 		$natrules .= clamav_generate_rules('nat');
 	}
-
 	if (is_package_installed('frickin') && file_exists('/usr/local/pkg/frickin.inc')) {
 		require_once ('frickin.inc');
 		$natrules .= frickin_generate_rules('nat');
@@ -1422,7 +1392,6 @@ function generate_user_filter_rule_arr($rule, $ngcounter) {
 		$ret['descr'] = "label \"USER_RULE: " . str_replace('"', '', $rule['descr']) . "\"";
 	else
 		$ret['descr'] = "label \"USER_RULE\"";
-	$ret['ackq'] = get_ack_queue($rule['interface']);
 
 	return $ret;
 }
@@ -2093,6 +2062,15 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				/* special reject packet */
 				$aline['flags'] .= "flags S/SA ";
 			}
+			
+			if ($type == "pass") {
+				if (isset($rule['defaultqueue'])) {
+					$aline['queue'] = " queue (".$rule['defaultqueue'];
+					if (isset($rule['ackqueue']))
+						$aline['queue'] .= ",".$rule['ackqueue'];
+					$aline['queue'] .= ") "; 
+				}
+			}
 	}
 
 	/* cache entries */
@@ -2155,7 +2133,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 	/* piece together the actual user rule */
 	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['reply'] .
 		$aline['route'] . $aline['prot'] . $aline['src'] . $aline['srcport'] . $aline['os'] . $aline['dst'] .
-		$aline['dstport'] . $aline['icmp-type'] . $aline['flags'];
+		$aline['dstport'] . $aline['icmp-type'] . $aline['flags'] . $aline['queue'];
 
 	/* is a time based rule schedule attached? */
 	if($rule['sched']) {
@@ -2628,7 +2606,6 @@ EOD;
 		if ($oc['ip'] && !(($oc['bridge'] || $isbridged) && isset($config['bridge']['filteringbridge'])))
 			$ipfrules .= filter_rules_spoofcheck_generate($on, $oc['if'], $oc['sa'], $oc['sn'], $log);
 	}
-	
 	$ipfrules .= "\nanchor \"spoofing\"\n";
 
 	/* block private networks on WAN? */
@@ -2675,7 +2652,7 @@ block in $log quick on \$wan from <bogons> to any label "block bogon networks fr
 EOD;
 	}
 
-if (!isset($config['shaper']['enable']) && !is_array($config['shaper']['queue']) and $config['system']['shapertype'] <> "m0n0") {
+if (!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) > 0) {
 
 	$ipfrules .= <<<EOD
 
@@ -2822,33 +2799,6 @@ EOD;
 			$ipfrules .= $table;
 		}
 
-		/* Shaper rules */
-		if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue']) && isset($config['filter']['rule']) and $config['system']['shapertype'] <> "m0n0")  {
-			
-			$ipfrules .= "\n# Anchors for rules that might be matched by queues\n";
-
-			/* This is ugly, but we generate one anchor per queue */
-			foreach ($config['shaper']['queue'] as $queue) {
-				update_filter_reload_status("Creating filter anchor for {$queue['name']} ...");
-				/* Add anchor to rules */
-				$ipfrules .= "anchor {$queue['name']} tagged {$queue['name']}\n";
-				$ipfrules .= "load anchor {$queue['name']} from \"{$g['tmp_path']}/{$queue['name']}.rules\"\n";
-				/* Create rules for anchors */
-				$fd = fopen("{$g['tmp_path']}/{$queue['name']}.rules", "w");
-				/* aliases don't recurse to anchors */
-				$line = filter_generate_aliases();
-				fwrite($fd, $line);
-				foreach($rule_arr as $rule) {
-					if($rule['ackq'] != "")
-					$line = "{$rule['rule']} queue ({$queue['name']}, {$rule['ackq']}) {$rule['descr']}\n";
-					else
-					$line = "{$rule['rule']} queue {$queue['name']} {$rule['descr']}\n";
-					fwrite($fd, $line);
-				}
-				fclose($fd);
-			}
-		}
-
 		$ipfrules .= "\n# User-defined rules follow\n";
 		/* Generate user rule lines */
 		foreach($rule_arr as $rule) {
@@ -2856,13 +2806,6 @@ EOD;
 			if (!isset($rule['disabled'])) {
 				$line = $rule['rule'];
 				if($line <> "") {
-					/* Add default queue if we're using the shaper */
-					if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue']) and $config['system']['shapertype'] <> "m0n0") {
-						$defq = find_default_queue($rule['interface']);
-						$ackq = $rule['ackq'];
-						if (($defq != "") and ($ackq != ""))
-							$line .= " queue ({$defq}, {$ackq}) ";
-					}
 					/* label */
 					$line .= " {$rule['descr']}";
 				}
@@ -3069,32 +3012,8 @@ function create_firewall_outgoing_rules_to_itself() {
 		/* if the interface is pppoe, set the ng0 interface */
 		update_filter_reload_status("Creating IPsec tunnel items {$tunnel['descr']}...");
 		$ip = find_interface_ip($int);
-		if ($config['interfaces'][$ifname]['ipaddr'] == "pppoe")
+		if ($config['interfaces'][$ifname]['ipaddr'] == "pppoe") {
 			$int = " { " . filter_translate_type_to_real_interface($ifname) . " ng0 } ";
-		if (isset($config['shaper']['enable']) && is_array($config['shaper']['queue']) and $config['system']['shapertype'] <> "m0n0") {
-			$ackq = get_ack_queue($ifname);
-			$defq = find_default_queue($ifname);
-			/* Handle all tagged packets */
-			foreach ($config['shaper']['queue'] as $queue) {
-				if(!filter_is_queue_being_used_on_interface($queue['name'], $ifname, 'out'))
-                	continue;
-				if ($ackq == "" || $defq == "") {
-					/* Shaper must not be enabled on this interface */
-					$q = "";
-				} else {
-					$q = "queue ({$queue['name']}, {$ackq})";
-				}
-				$rule .="pass out quick on {$int} all keep state tagged {$queue['name']} {$q} label \"let out anything from firewall host itself\"\n";
-			}
-			/* Handle untagged packets */
-			if ($ackq == "" || $defq == "") {
-				/* Shaper must not be enabled on this interface */
-				$q = "";
-			} else {
-				$q = "queue ({$defq}, {$ackq})";
-			}
-			$rule .="pass out quick on {$int} all keep state {$q} label \"let out anything from firewall host itself\"\n";
-		} else {
 			/* first add a rule for the real interface, then for ng0 */
 			$rule .="pass out quick on {$int} all keep state label \"let out anything from firewall host itself\"\n";
 		}

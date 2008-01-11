@@ -217,7 +217,6 @@ function parse_config($parse = false) {
 			die("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup.");
 		}
 	}
-	
 	if($g['booting']) echo ".";
 	config_lock();
 	if(!$parse) {
@@ -369,7 +368,6 @@ function parse_config_bootup() {
 			}
 		}
 	}
-
 	if(filesize("{$g['conf_path']}/config.xml") == 0) {
 		$last_backup = discover_last_backup();
 		if($last_backup) {
@@ -380,7 +378,6 @@ function parse_config_bootup() {
 			die("Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup.");
 		}
 	}
-	
 	parse_config(true);
 
 	if ((float)$config['version'] > (float)$g['latest_config']) {
@@ -498,7 +495,6 @@ function convert_config() {
 		 	}       
 		}
 	}
-	
 	if ($config['version'] == $g['latest_config'])
 		return;		/* already at latest version */
 
@@ -1144,9 +1140,17 @@ function convert_config() {
 
 			$config['version'] = "4.1";
 		}
-
 	}
 
+	/* Convert 4.1 -> 4.2 */
+        if ($config['version'] <= 4.0) {
+		if (isset($config['shaper']))
+                        unset($config['shaper']);
+                if (isset($config['ezshaper']))
+                        unset($config['ezshaper']);
+
+                $config['version'] = "4.2";
+	}
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
 }
@@ -1608,7 +1612,6 @@ EOD;
 EOD;
 
 		fclose($fp);
-
 		if($g['booting'])
 			return;
 
@@ -1730,16 +1733,6 @@ function system_start_ftp_helpers() {
 
 	/* loop through all interfaces and handle ftp-proxy */
 	$interface_counter = 0;
-	if(isset($config['shaper']['enable'])) {
-		if(isset($config['ezshaper']['step5']['p2pcatchall'])) {
-			$shaper_queue = "-q qP2PDown";
-		} else {
-			$downq = "q" . convert_friendly_interface_to_friendly_descr($config['ezshaper']['step2']['inside_int']);
-			$shaper_queue = "-q {$downq}def";
-		}
-	} else {
-		$shaper_queue = "";
-	}
 	foreach ($iflist as $ifent => $ifname) {
 		/*    if the ftp proxy is disabled for this interface then kill ftp-proxy
 		 *    instance and continue. note that the helpers for port forwards are
@@ -1750,6 +1743,11 @@ function system_start_ftp_helpers() {
 		if(stristr($ifname, "opt") <> false)
 			if(!isset($config['interfaces'][strtolower($ifname)]['enable']))
 				continue;
+
+		/* Get the ftp queue for this interface */
+		if (isset($config['shaper'][$ifname]['ftpqueue']))
+			$shaper_queue = $config['interfaces'][$ifname]['ftpqueue'];
+
 		$port = 8021 + $interface_counter;
 		if(isset($config['interfaces'][$ifname]['disableftpproxy'])) {
 			/*    item is disabled.  lets ++ the interface counter and
@@ -1837,6 +1835,7 @@ function cleanup_backupcache($revisions = 30) {
 				if($newxml == "-1") {
 					log_error("The backup cache file $backup is corrupted.  Unlinking.");
 					unlink($backup);
+					log_error("The backup cache file $backup is corrupted.  Unlinking.");
 					continue;
 				}
 				if($newxml['revision']['description'] == "")

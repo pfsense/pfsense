@@ -41,15 +41,11 @@
 		<field>
 			<name>Next</name>
 			<type>submit</type>
-			<warning>Going any further will wipe your existing shaper config!  If you do not wish to continue, please click the pfSense logo at the top to return to the webConfigurator.  Also note that currently the traffic shaper is not compatible with bridging.</warning>
+			<warning>Going any further will wipe your existing shaper config!  If you do not wish to continue, please click the pfSense logo at the top to return to the webConfigurator.</warning>
 		</field>
 	</fields>
 	<stepbeforeformdisplay>
-		/* Check to see if ALTQ can even be used */
-		if(!is_altq_capable($config['interfaces']['wan']['if']) or !is_altq_capable($config['interfaces']['lan']['if'])) {
-			$message="Either your LAN or WAN interface doesn't support ALTQ.  The wizard cannot continue.";
-			header("Location: /wizard.php?xml=traffic_shaper_wizard.xml&amp;stepid=7&amp;message={$message}");
-		}
+		step1_stepbeforeformdisplay();
 	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
 		step1_stepsubmitphpaction();
@@ -103,8 +99,8 @@
 		</field>
 	</fields>
 	<stepsubmitphpaction>
-		step2_stepsubmitphpaction();
-	</stepsubmitphpaction>
+                step2_stepsubmitphpaction();
+        </stepsubmitphpaction>
 	<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 </step>
 <step>
@@ -142,11 +138,7 @@
                                         <value>VoicePulse</value>
                                 </option>
                                 <option>
-                                        <name>Vonage</name>
-                                        <value>Vonage</value>
-                                </option>
-                                <option>
-                                        <name>Asterisk</name>
+                                        <name>Asterisk/Vonage</name>
                                         <value>Asterisk</value>
 				</option>
                                 <option>
@@ -164,92 +156,9 @@
 		</field>
 		<field>
                         <name>Bandwidth</name>
-                        <type>select</type>
-			<typehint>Total bandwidth guarantee for VOIP phone(s)</typehint>
-			<default>128</default>
+                        <type>input</type>
+			<typehint>Total bandwidth(in percentage %) guarantee for VOIP phone(s)</typehint>
 			<bindstofield>ezshaper->step3->bandwidth</bindstofield>
-			<options>
-                                <option>
-                                        <name>32Kbits/sec</name>
-                                        <value>32</value>
-                                </option>
-                                <option>
-                                        <name>64Kbits/sec</name>
-                                        <value>64</value>
-                                </option>
-                                <option>
-                                        <name>96Kbits/sec</name>
-                                        <value>96</value>
-                                </option>
-                                <option>
-                                        <name>128Kbits/sec</name>
-                                        <value>128</value>
-                                </option>
-                                <option>
-                                        <name>256Kbits/sec</name>
-                                        <value>256</value>
-                                </option>
-                                <option>
-                                        <name>384Kbits/sec</name>
-                                        <value>384</value>
-                                </option>
-                                <option>
-                                        <name>512Kbits/sec</name>
-                                        <value>512</value>
-                                </option>
-                                <option>
-                                        <name>768Kbits/sec</name>
-                                        <value>768</value>
-                                </option>
-                                <option>
-                                        <name>1024Kbits/sec</name>
-                                        <value>1024</value>
-                                </option>
-                                <option>
-                                        <name>1500Kbits/sec</name>
-                                        <value>1500</value>
-                                </option>
-                                <option>
-                                        <name>3000Kbits/sec</name>
-                                        <value>3000</value>
-                                </option>
-                                <option>
-                                        <name>4000Kbits/sec</name>
-                                        <value>4000</value>
-                                </option>
-                                <option>
-                                        <name>5000Kbits/sec</name>
-                                        <value>5000</value>
-                                </option>
-                                <option>
-                                        <name>6000Kbits/sec</name>
-                                        <value>6000</value>
-                                </option>
-                                <option>
-                                        <name>7000Kbits/sec</name>
-                                        <value>7000</value>
-                                </option>
-                                <option>
-                                        <name>8000Kbits/sec</name>
-                                        <value>8000</value>
-                                </option>
-                                <option>
-                                        <name>9000Kbits/sec</name>
-                                        <value>9000</value>
-                                </option>
-                                <option>
-                                        <name>10000Kbits/sec</name>
-                                        <value>10000</value>
-                                </option>
-                                <option>
-                                        <name>11000Kbits/sec</name>
-                                        <value>11000</value>
-                                </option>
-                                <option>
-                                        <name>12000Kbits/sec</name>
-                                        <value>12000</value>
-                                </option>
-			</options>
 		</field>
                 <field>
                         <name>Next</name>
@@ -273,7 +182,7 @@
                         <type>checkbox</type>
 			<typehint>Penalize IP or Alias</typehint>
                         <description>This will lower the priority of traffic from this IP or alias.</description>
-			<enablefields>Address,BandwidthUp,BandwidthDown</enablefields>
+			<enablefields>Address,Bandwidth</enablefields>
 			<bindstofield>ezshaper->step4->enable</bindstofield>
                 </field>
                 <field>
@@ -292,20 +201,12 @@
 			<message>IP Address field is non-blank and doesn't look like an IP address.</message>
 		</field>
                 <field>
-                        <name>BandwidthUp</name>
-                        <description>The upload limit in Kbits/second.</description>
+                        <name>Bandwidth</name>
+                        <description>The limit in percentage.</description>
                         <type>input</type>
 			<validate>^[0-9]*$</validate>
 			<message>Upload speed must be numerical</message>
-			<bindstofield>ezshaper->step4->bandwidthup</bindstofield>
-                </field>
-                <field>
-                        <name>BandwidthDown</name>
-                        <description>The download limit Kbits/second.</description>
-                        <type>input</type>
-			<validate>^[0-9]*$</validate>
-			<message>Download speed must be numerical</message>
-			<bindstofield>ezshaper->step4->bandwidthdown</bindstofield>
+			<bindstofield>ezshaper->step4->bandwidth</bindstofield>
                 </field>
                 <field>
                         <name>Next</name>
@@ -329,7 +230,7 @@
 			<type>checkbox</type>
 			<typehint>Lower priority of Peer-to-Peer traffic</typehint>
 			<description>This will lower the priority of P2P traffic below all other traffic.  Please check the items that you would like to prioritize lower than normal traffic.</description>
-			<enablefields>p2pCatchAll,BandwidthUp,BandwidthDown,Aimster,BitTorrent,BuddyShare,CuteMX,DCplusplus,dcc,DirectConnect,DirectFileExpress,EDonkey2000,FastTrack,Gnutella,grouper,hotComm,HotlineConnect,iMesh,Napster,OpenNap,Scour,Shareaza,SongSpy,WinMX</enablefields>
+			<enablefields>p2pCatchAll,Bandwidth,Aimster,BitTorrent,BuddyShare,CuteMX,DCplusplus,dcc,DirectConnect,DirectFileExpress,EDonkey2000,FastTrack,Gnutella,grouper,hotComm,HotlineConnect,iMesh,Napster,OpenNap,Scour,Shareaza,SongSpy,WinMX</enablefields>
 			<bindstofield>ezshaper->step5->enable</bindstofield>
 		</field>
 		<field>
@@ -347,20 +248,12 @@
 			<bindstofield>ezshaper->step5->p2pcatchall</bindstofield>
 		</field>
 		<field>
-			<name>BandwidthUp</name>
-			<description>The upload limit in Kbits/second.</description>
+			<name>Bandwidth</name>
+			<description>The upload limit in percentage.</description>
 			<type>input</type>
 			<validate>^[0-9]*$</validate>
-			<message>Upload speed must be numerical</message>
-			<bindstofield>ezshaper->step5->bandwidthup</bindstofield>
-		</field>
-		<field>
-			<name>BandwidthDown</name>
-			<description>The download limit Kbits/second.</description>
-			<type>input</type>
-			<validate>^[0-9]*$</validate>
-			<message>Download speed must be numerical</message>
-			<bindstofield>ezshaper->step5->bandwidthdown</bindstofield>
+			<message>Speed must be numerical and in percentage of parent</message>
+			<bindstofield>ezshaper->step5->bandwidth</bindstofield>
 		</field>
 		<field>
 			<name>Enable/Disable specific P2P protocols</name>
@@ -513,7 +406,7 @@
                         <type>checkbox</type>
                         <typehint>Prioritize network gaming traffic</typehint>
                         <description>This will raise the priority of gaming traffic to higher than most traffic.</description>
-			<enablefields>BattleNET,Battlefield2,CallOfDuty,Counterstrike,DeltaForce,DOOM3,EmpireEarth,Everquest,Everquest2,FarCry,GunZOnline,HalfLife,HalfLife2,Halo2,Lineage2,PlanetSide,QuakeIII,TigerWoods2004PS2,UnrealTournament,WolfensteinEnemyTerritory,WorldOfWarcraft,ArchLord,XBox360</enablefields>
+			<enablefields>BattleNET,Battlefield2,CallOfDuty,Counterstrike,DeltaForce,DOOM3,EmpireEarth,Everquest,Everquest2,FarCry,GunZOnline,HalfLife,HalfLife2,Halo2,Lineage2,PlanetSide,QuakeIII,TigerWoods2004PS2,UnrealTournament,WolfensteinEnemyTerritory,WorldOfWarcraft,XBox360</enablefields>
 			<donotdisable>true</donotdisable>
 			<bindstofield>ezshaper->step6->enable</bindstofield>
                 </field>
@@ -651,12 +544,6 @@
 			<typehint>World of Warcraft</typehint>
 			<bindstofield>ezshaper->step6->wow</bindstofield>
                 </field>
-                <field>
-                        <name>ArchLord</name>
-                        <type>checkbox</type>
-			<typehint>ArchLord</typehint>
-			<bindstofield>ezshaper->step6->archlord</bindstofield>
-                </field>                
 				<field>
 					<name>Xbox360</name>
 					<type>checkbox</type>
@@ -668,9 +555,6 @@
                         <type>submit</type>
                 </field>
         </fields>
-	<stepsubmitphpaction>
-		step6_stepsubmitphpaction();
-	</stepsubmitphpaction>
 	<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 </step>
 <step>
@@ -684,7 +568,7 @@
                         <type>checkbox</type>
                         <typehint>Other networking protocols</typehint>
                         <description>This will help raise or lower the priority of other protocols higher than most traffic.</description>
-			<enablefields>AIM,AppleRemoteDesktop,DNS,HTTP,ICMP,ICQ,IMAP,IPsec,IRC,Jabber,LotusNotes,MSN,MSRDP,MySqlServer,PCAnywhere,POP3,PPTP,RTSP,SMB,SMTP,SNMP,StreamingMP3,TeamSpeak,VNC,NNTP,CVSUP,HBCI</enablefields>
+			<enablefields>AIM,AppleRemoteDesktop,DNS,HTTP,ICMP,ICQ,IMAP,IPSEC,IRC,Jabber,LotusNotes,MSN,MSRDP,MySqlServer,PCAnywhere,POP3,PPTP,RTSP,SMB,SMTP,SNMP,StreamingMP3,TeamSpeak,VNC,NNTP,CVSUP</enablefields>
 			<donotdisable>true</donotdisable>
 			<bindstofield>ezshaper->step7->enable</bindstofield>
                 </field>
@@ -925,7 +809,7 @@
 			<typehint>Microsoft Point to Point tunneling protocol</typehint>
                 </field>
                 <field>
-                        <name>IPsec</name>
+                        <name>IPSEC</name>
 			<type>select</type>
 			<bindstofield>ezshaper->step7->ipsec</bindstofield>
 			<options>
@@ -942,7 +826,7 @@
 					<value>L</value>
 				</option>
 			</options>
-			<typehint>IPsec VPN traffic</typehint>
+			<typehint>IPSEC VPN traffic</typehint>
                 </field>
                 <field>
                         <name>Multimedia/Streaming</name>
@@ -1241,33 +1125,10 @@
 			<typehint>CVSUP</typehint>
                 </field>
                 <field>
-			<name>HBCI</name>
-			<bindstofield>ezshaper->step7->hbci</bindstofield>
-			<type>select</type>
-			<options>
-				<option>
-					<name>Default priority</name>
-					<value>D</value>
-				</option>
-				<option>
-					<name>Higher priority</name>
-					<value>H</value>
-				</option>
-				<option>
-					<name>Lower priority</name>
-					<value>L</value>
-				</option>
-			</options>
-			<typehint>HBCI</typehint>
-                </field>
-                <field>
                         <name>Next</name>
                         <type>submit</type>
                 </field>
         </fields>
-	<stepsubmitphpaction>
-		step7_stepsubmitphpaction();
-	</stepsubmitphpaction>
 	<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 </step>
 <step>
@@ -1289,9 +1150,6 @@
                         <type>submit</type>
                 </field>
 	</fields>
-	<stepbeforeformdisplay>
-		step8_stepbeforeformdisplay();
-	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
 		step8_stepsubmitphpaction();
 	</stepsubmitphpaction>

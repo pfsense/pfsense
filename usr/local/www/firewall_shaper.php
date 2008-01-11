@@ -1,202 +1,311 @@
 <?php
 /* $Id$ */
 /*
-    firewall_shaper.php
-    Copyright (C) 2004, 2005 Scott Ullrich
-    All rights reserved.
+	firewall_shaper.php
+	Copyright (C) 2004, 2005 Scott Ullrich
+	Copyright (C) 2008 Ermal Luçi
+	All rights reserved.
 
-    Originally part of m0n0wall (http://m0n0.ch/wall)
-    Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-    All rights reserved.
+	Originally part of m0n0wall (http://m0n0.ch/wall)
+	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	All rights reserved.
 
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice,
-       this list of conditions and the following disclaimer.
+	1. Redistributions of source code must retain the above copyright notice,
+	   this list of conditions and the following disclaimer.
 
-    2. Redistributions in binary form must reproduce the above copyright
-       notice, this list of conditions and the following disclaimer in the
-       documentation and/or other materials provided with the distribution.
+	2. Redistributions in binary form must reproduce the above copyright
+	   notice, this list of conditions and the following disclaimer in the
+	   documentation and/or other materials provided with the distribution.
 
-    THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-    AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-    OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-    POSSIBILITY OF SUCH DAMAGE.
+	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+	POSSIBILITY OF SUCH DAMAGE.
 */
 
 require("guiconfig.inc");
-
-/* redirect to wizard if shaper isn't already configured */
-if(isset($config['shaper']['enable'])) {
-	$pconfig['enable'] = TRUE;
-} else {
-	if(!is_array($config['shaper']['queue']))
-		Header("Location: wizard.php?xml=traffic_shaper_wizard.xml");
-}
-
-if (!is_array($config['shaper']['rule'])) {
-	$config['shaper']['rule'] = array();
-}
 
 if (!is_array($config['shaper']['queue'])) {
 	$config['shaper']['queue'] = array();
 }
 
-$a_shaper = &$config['shaper']['rule'];
-$a_queue = &$config['shaper']['queue'];
-
-function wipe_magic () {
-  global $config;
-
-  /* wipe previous */
-  unset($config['shaper']['queue']);
-  unset($config['shaper']['rule']);
-  $config['shaper']['enable'] = FALSE;
-}
-
-if ($_POST['remove'] or $_GET['remove']) {
-  wipe_magic();
-  $savemsg = '<p><span class="red"><strong>Note: The traffic shaper has been disabled.</strong></span><strong><br>';
-  touch($d_shaperconfdirty_path);
-  unset($config['shaper']['enable']);
-  write_config();
-  filter_configure();
-  Header("Location: index.php");
-  exit;
-}
-
-if ($_POST) {
-
-	if ($_POST['submit']) {
-		$pconfig = $_POST;
-		$config['shaper']['enable'] = $_POST['enable'] ? true : false;
-		write_config();
-	}
-
-	if ($_POST['apply'] || $_POST['submit']) {
-		$config['shaper']['enable'] = $_POST['enable'] ? true : false;
-		write_config();		
-		$retval = 0;
-		$savemsg = get_std_save_message($retval);
-		/* Setup pf rules since the user may have changed the optimization value */
-		config_lock();
-		$retval = filter_configure();
-		config_unlock();
-		if(stristr($retval, "error") <> true)
-		    $savemsg = get_std_save_message($retval);
-		else
-		    $savemsg = $retval;
-
-	        if(file_exists($d_shaperconfdirty_path))
-	          unlink($d_shaperconfdirty_path);
-	}
-}
-
-if (isset($_POST['del_x'])) {
-        /* delete selected rules */
-        if (is_array($_POST['rule']) && count($_POST['rule'])) {
-                foreach ($_POST['rule'] as $rulei) {
-                        unset($a_shaper[$rulei]);
-                }
-                write_config();
-                touch($d_natconfdirty_path);
-                header("Location: firewall_shaper.php");
-                exit;
+read_altq_config();
+	
+$tree = "<ul class=\"tree\" >";
+if (is_array($altq_list_queues)) {
+	foreach ($altq_list_queues as $altq) {
+        	$tree .= $altq->build_tree();
         }
+$tree .=  get_interface_list_to_show();
+}
+$tree .= "</ul>";
+
+/* 
+ * The whole logic in these code maybe can be specified.
+ * If you find a better way contact me :).
+ */
+
+if ($_GET) {
+	if ($_GET['queue'])
+        	$qname = trim($_GET['queue']);
+        if ($_GET['interface'])
+                $interface = trim($_GET['interface']);
+        if ($_GET['action'])
+                $action = $_GET['action'];
+}
+if ($_POST) {
+	if ($_POST['name'])
+        	$qname = trim($_POST['name']);
+        if ($_POST['interface'])
+                $interface = trim($_POST['interface']);
+	if ($_POST['parentqueue'])
+		$parentqueue = trim($_POST['parentqueue']);
 }
 
+if ($interface) {
+	$altq = $altq_list_queues[$interface];
+	if ($altq) {
+		$queue =& $altq->find_queue($interface, $qname);
+		if ($queue) {
+			if ($queue->GetEnabled())
+				$can_enable = true;
+			else
+				$can_enable = false;
+			if ($queue->CanHaveChilds() && $can_enable)
+				$can_add = true;
+			else
+				$can_add = false;
+		}
+	} else $addnewaltq = true;
+}
 
-if ($_GET['act'] == "down") {
-	if ($a_shaper[$_GET['id']] && $a_shaper[$_GET['id']+1]) {
-		$tmp = $a_shaper[$_GET['id']+1];
-		$a_shaper[$_GET['id']+1] = $a_shaper[$_GET['id']];
-		$a_shaper[$_GET['id']] = $tmp;
-		write_config();
-		touch($d_shaperconfdirty_path);
-		header("Location: firewall_shaper.php");
-		exit;
-	}
-} else if ($_GET['act'] == "up") {
-	if (($_GET['id'] > 0) && $a_shaper[$_GET['id']]) {
-		$tmp = $a_shaper[$_GET['id']-1];
-		$a_shaper[$_GET['id']-1] = $a_shaper[$_GET['id']];
-		$a_shaper[$_GET['id']] = $tmp;
-		write_config();
-		touch($d_shaperconfdirty_path);
-		header("Location: firewall_shaper.php");
-		exit;
-	}
-} else if ($_GET['act'] == "toggle") {
-	if ($a_shaper[$_GET['id']]) {
-		$a_shaper[$_GET['id']]['disabled'] = !isset($a_shaper[$_GET['id']]['disabled']);
-		write_config();
-		touch($d_shaperconfdirty_path);
-		header("Location: firewall_shaper.php");
-		exit;
-	}
-} else {
-	/* yuck - IE won't send value attributes for image buttons, while Mozilla does -
-	   so we use .x/.y to fine move button clicks instead... */
-	unset($movebtn);
-	foreach ($_POST as $pn => $pd) {
-		if (preg_match("/move_(\d+)_x/", $pn, $matches)) {
-			$movebtn = $matches[1];
+$output = "<div id=\"shaperarea\" style=\"position:relative\">";
+if ($queue) {
+$output .= "<tr><td valign=\"top\" class=\"vncellreq\"><br>";
+$output .= "Enable/Disable";
+$output .= "</td><td class=\"vncellreq\">";
+$output .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\"";
+if ($can_enable)
+        $output .=  " CHECKED";
+$output .= " ><span class=\"vexpl\"> Enable/Disable queue and its childs</span>";
+$output .= "</td></tr>";
+}
+$dontshow = false;
+$newqueue = false;
+
+if ($_GET) {
+	switch ($action) {
+	case "delete":
+			if ($queue) {
+				$queue->delete_queue();
+				write_config();
+				touch($d_shaperconfdirty_path);
+			}
+			header("Location: firewall_shaper.php");
+			exit;
+		break;
+	case "add":
+			/* XXX: Find better way because we shouldn't know about this */
+		if ($altq) {
+	                switch ($altq->GetScheduler()) {
+         	        case "PRIQ":
+                	        $q = new priq_queue();
+                        	break;
+                        case "HFSC":
+                         	$q = new hfsc_queue();
+                        	break;
+                        case "CBQ":
+                                $q = new cbq_queue();
+                        	break;
+                        default:
+                                /* XXX: Happens when sched==NONE?! */
+				$q = new altq_root_queue();
+                        	break;
+        		}
+		} else if ($addnewaltq) {
+			$q = new altq_root_queue();
+		} else 
+			$input_errors[] = "Could not create new queue/discipline!";
+
+			if ($q) {
+				$q->SetInterface($interface);
+				$output .= $q->build_form();
+				$output .= "<input type=\"hidden\" name=\"parentqueue\" id=\"parentqueue\"";
+				$output .= " value=\"".$qname."\">";
+                unset($q);
+				$newqueue = true;
+			}
+		break;
+		case "show":
+			if ($queue)  
+                        $output .= $queue->build_form();
+			else
+					$input_errors[] = "Queue not found!";
+		break;
+		case "enable":
+			if ($queue) {
+					$queue->SetEnabled("on");
+					$output .= $queue->build_form();
+					write_config();
+					touch($d_shaperconfdirty_path);
+			} else
+					$input_errors[] = "Queue not found!";
+		break;
+		case "disable":
+			if ($queue) {
+					$queue->SetEnabled("");
+					$output .= $queue->build_form();
+					write_config();
+					touch($d_shaperconfdirty_path);
+			} else
+					$input_errors[] = "Queue not found!";
+		break;
+		default:
+			$output .= "<p class=\"pgtitle\">" . $default_shaper_msg."</p>";
+			$dontshow = true;
 			break;
-		}
 	}
-	/* move selected rules before this rule */
-	if (isset($movebtn) && is_array($_POST['rule']) && count($_POST['rule'])) {
-		$a_shaper_new = array();
+} else if ($_POST) {
+	unset($input_errors);
 
-		/* copy all rules < $movebtn and not selected */
-		for ($i = 0; $i < $movebtn; $i++) {
-			if (!in_array($i, $_POST['rule']))
-				$a_shaper_new[] = $a_shaper[$i];
-		}
-
-		/* copy all selected rules */
-		for ($i = 0; $i < count($a_shaper); $i++) {
-			if ($i == $movebtn)
-				continue;
-			if (in_array($i, $_POST['rule']))
-				$a_shaper_new[] = $a_shaper[$i];
-		}
-
-		/* copy $movebtn rule */
-		if ($movebtn < count($a_shaper))
-			$a_shaper_new[] = $a_shaper[$movebtn];
-
-		/* copy all rules > $movebtn and not selected */
-		for ($i = $movebtn+1; $i < count($a_shaper); $i++) {
-			if (!in_array($i, $_POST['rule']))
-				$a_shaper_new[] = $a_shaper[$i];
-		}
-
-		$a_shaper = $a_shaper_new;
+	if ($addnewaltq) {
+		$altq =& new altq_root_queue();
+		$altq->SetInterface($interface);
+		$altq->ReadConfig($_POST);
+		unset($tmppath);
+		$tmppath[] = $altq->GetInterface();
+		$altq->SetLink(&$tmppath);	
+		$altq->wconfig();
+		$output .= $altq->build_form();
 		write_config();
-		touch($d_shaperconfdirty_path);
-		header("Location: firewall_shaper.php");
-		exit;
-	}
+  		touch($d_shaperconfdirty_path);
+	} else if ($parentqueue) { /* Add a new queue */
+		$qtmp =& $altq->find_queue($interface, $parentqueue);
+		if ($qtmp) {
+			$tmppath =& $qtmp->GetLink();
+			array_push($tmppath, $qname);
+			$tmp =& $qtmp->add_queue($interface, $_POST, &$tmppath);
+			array_pop($tmppath);
+			$output .= $tmp->build_form();
+			$tmp->wconfig();
+			$can_enable = true;
+			if ($tmp->CanHaveChilds() && $can_enable)
+				$can_add = true;
+			else
+				$can_add = false;
+			write_config();
+       		touch($d_shaperconfdirty_path);
+		} else
+			$input_errors[] = "Could not add new queue.";
+	} else if ($_POST['apply']) {
+                        write_config();
+
+                        $retval = 0;
+                        $savemsg = get_std_save_message($retval);
+                        /* Setup pf rules since the user may have changed the optimizat
+ion value */
+                        config_lock();
+                        $retval = filter_configure();
+                        config_unlock();
+                        if (stristr($retval, "error") <> true)
+                                $savemsg = get_std_save_message($retval);
+                        else
+                                $savemsg = $retval;
+
+			enable_rrd_graphing();
+
+            unlink($d_shaperconfdirty_path);
+			if ($queue)
+				$output .= $queue->build_form();
+			else
+				$output .= $default_shaper_message;
+
+			$dontshow = true;
+//                       header("Location: firewall_shaper.php");
+ //                      exit;
+	} else if ($queue) {
+                $queue->validate_input($_POST, &$input_errors);
+                if (!$input_errors) {
+                                $queue->update_altq_queue_data($_POST);
+                                $queue->wconfig();
+                        	$output .= $queue->build_form();
+							write_config();
+				       		touch($d_shaperconfdirty_path);
+                } else 
+					$input_errors[] = "Could not complete the request.";
+	} else 
+		$input_errors[] = "Ummmm nothing to do?!";
+} else {
+	$output .= "<p class=\"pgtitle\">" . $default_shaper_msg."</p>";
+	$dontshow = true;
+
 }
+	
 
-$pgtitle = array("Firewall","Shaper","Rules");
+	
+
+if (!$dontshow || $newqueue) {
+
+$output .= "<tr><td width=\"22%\" valign=\"top\" class=\"vncellreq\">";
+$output .= "Queue Actions";
+$output .= "</td><td valign=\"top\" class=\"vncellreq\" width=\"78%\">";
+
+$output .= "<input type=\"image\" src=\"";
+$output .= "./themes/".$g['theme']."/images/icons/icon_up.gif\"";
+$output .= " width=\"17\" height=\"17\" border=\"0\" title=\"Submit\" >";
+
+if ($can_add || $addnewaltq) {
+	$output .= "<a href=\"firewall_shaper.php?interface=";
+	$output .= $altq->GetInterface() . "&queue=";
+	$output .= $queue->GetQname() . "&action=add\">";
+	$output .= "<img src=\"";
+	$output .= "./themes/".$g['theme']."/images/icons/icon_plus.gif\"";
+	$output .= " width=\"17\" height=\"17\" border=\"0\" title=\"Add queue\">";
+	$output .= "</a>";
+	$output .= "<a href=\"firewall_shaper.php?interface=";
+	$output .= $altq->GetInterface() . "&queue=";
+	$output .= $queue->GetQname() . "&action=delete\">";
+	$output .= "<img src=\"";
+	$output .= "./themes/".$g['theme']."/images/icons/icon_minus.gif\"";
+	$output .= " width=\"17\" height=\"17\" border=\"0\" title=\"Delete a queue\">";
+	$output .= "</a>";  
+}
+$output .= "</td></tr>";
+$output .= "</div>";
+} 
+else 
+	$output .= "</div>";
+
+$pgtitle = "Firewall: Shaper: By Interface View";
+
 include("head.inc");
-
+if ($queue) {
+	echo "<script type=\"text/javascript\">";
+	echo $queue->build_javascript();
+	echo "</script>";
+}
 ?>
+<link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
+<script type="text/javascript" src="./tree/tree.js"></script>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<form action="firewall_shaper.php" method="post" name="iform">
-<script type="text/javascript" language="javascript" src="row_toggle.js">
-</script>
+<p class="pgtitle"><?=$pgtitle?></p>
+<div id="inputerrors"></div>
+<?php if ($input_errors) print_input_errors($input_errors); ?>
+
+<form action="firewall_shaper.php" method="post" name="form" id="form">
+
+<script type="text/javascript" language="javascript" src="row_toggle.js"></script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_shaperconfdirty_path)): ?><p>
 <?php print_info_box_np("The traffic shaper configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
@@ -205,133 +314,42 @@ include("head.inc");
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Rules", true, "firewall_shaper.php");
-	$tab_array[1] = array("Queues", false, "firewall_shaper_queues.php");
-	$tab_array[2] = array("EZ Shaper wizard", false, "wizard.php?xml=traffic_shaper_wizard.xml");
+	$tab_array[0] = array("Shaper", true, "firewall_shaper.php");
+	//$tab_array[1] = array("Level 2", false, "");
+	$tab_array[1] = array("EZ Shaper wizard", false, "wizard.php?xml=traffic_shaper_wizard.xml");
 	display_top_tabs($tab_array);
-?>  
+?>
   </td></tr>
   <tr>
     <td>
 	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="6" cellspacing="0">
-                <tr>
-                  <td class="vtable"><p>
-                      <input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable'] == "yes") echo "checked";?>>
-                      <strong>Enable traffic shaper<br>
-                      </strong></p></td>
-                </tr>
-                <tr>
-                  <td> 
-		  <input name="submit" type="submit" class="formbtn" value="Save"> 
-		  <input name="remove" type="submit" class="formbtn" id="remove" value="Remove Wizard"> 
-                  </td>
-		  
-                </tr>
-              </table>
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-                      <tr id="frheader">
-		        <td width="3%" class="list">&nbsp;</td>
-                        <td width="3%" class="list">&nbsp;</td>
-                        <td width="5%" class="listhdrrns">If</td>
-                        <td width="5%" class="listhdrrns">Proto</td>
-                        <td width="20%" class="listhdrr">Source</td>
-                        <td width="20%" class="listhdrr">Destination</td>
-                        <td width="15%" class="listhdrrns">Target</td>
-                        <td width="25%" class="listhdr">Description</td>
-                        <td width="10%" class="list"></td>
-                      </tr>
-                      <?php $nrules = $i = 0; foreach ($a_shaper as $shaperent): ?>
-                      <tr valign="top" id="fr<?=$nrules;?>">
-                        <td class="listt"><input type="checkbox" id="frc<?=$nrules;?>" name="rule[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$nrules;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
-                        <td class="listt" align="center"></td>
-                        <td class="listlr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_shaper_edit.php?id=<?=$i;?>';">
-                          <?php
-				  $dis = "";
-				  if (isset($shaperent['disabled'])) {
-				  	$dis = "_d";
-					$textss = "<span class=\"gray\">";
-					$textse = "</span>";
-				  } else {
-				  	$textss = $textse = "";
-				  }
-				  $iflabels = array('lan' => 'LAN', 'wan' => 'WAN', 'pptp' => 'PPTP');
-				  for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
-				  	$iflabels['opt' . $j] = $config['interfaces']['opt' . $j]['descr'];
-				  echo $textss . htmlspecialchars($iflabels[$shaperent['in-interface']]) . "->" . htmlspecialchars($iflabels[$shaperent['out-interface']]);
+			<tr>
+			<td width="25%" valign="top" algin="left">
+		<?	$tab_ar = array();
+        $tab_ar[0] = array("Interfaces", true, "firewall_shaper.php");
+        $tab_ar[1] = array("Queues", false, "firewall_shaper_queues.php");
+	display_top_tabs($tab_ar);
+        // customize later display_top_bar($tab_ar, "#A0000F", "#578100"); ?>
+			<?php
+				echo $tree; 
+			?>
+			</td>
+			<td width="75%" valign="top" align="center">
+			<table>
+			<?
+				echo $output;
+			?>	
+			</table>
 
-				  echo "<br>";
-				  echo "<a href=\"?act=toggle&id={$i}\">";
-				  if ($shaperent['direction'] == "in")
-				  	echo "<img src=\"./themes/".$g['theme']."/images/icons/icon_in{$dis}.gif\" width=\"11\" height=\"11\" border=\"0\" style=\"margin-top: 5px\" title=\"click to toggle enabled/disabled status\">";
-				  if ($shaperent['direction'] == "out")
-				  	echo "<img src=\"./themes/".$g['theme']."/images/icons/icon_out{$dis}.gif\" width=\"11\" height=\"11\" border=\"0\" style=\"margin-top: 5px\" title=\"click to toggle enabled/disabled status\">";
-
-				  echo "</a>" . $textse;;
-				  ?>
-                        </td>
-                        <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_shaper_edit.php?id=<?=$i;?>';">
-                          <?=$textss;?><?php if (isset($shaperent['protocol'])) echo strtoupper($shaperent['protocol']); else echo "*"; ?><?=$textse;?>
-                        </td>
-                        <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_shaper_edit.php?id=<?=$i;?>';"><?=$textss;?><?php echo htmlspecialchars(pprint_address($shaperent['source'])); ?>
-						<?php if ($shaperent['source']['port']): ?><br>
-						Port: <?=htmlspecialchars(pprint_port($shaperent['source']['port'])); ?>
-						<?php endif; ?><?=$textse;?>
-                        </td>
-                        <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_shaper_edit.php?id=<?=$i;?>';"><?=$textss;?><?php echo htmlspecialchars(pprint_address($shaperent['destination'])); ?>
-						<?php if ($shaperent['destination']['port']): ?><br>
-						Port: <?=htmlspecialchars(pprint_port($shaperent['destination']['port'])); ?>
-						<?php endif; ?><?=$textse;?>
-                        </td>
-                        <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_shaper_edit.php?id=<?=$i;?>';"><?=$textss;?>
-                          <?php
-							if (isset($shaperent['outqueue']) && isset($shaperent['inqueue'])) {
-								$desc = htmlspecialchars($shaperent['outqueue']);
-							    echo "<a href=\"firewall_shaper_queues_edit.php?id={$shaperent['outqueue']}\">{$desc}</a>";
-								$desc = htmlspecialchars($shaperent['inqueue']);
-							    echo "/<a href=\"firewall_shaper_queues_edit.php?id={$shaperent['inqueue']}\">{$desc}</a>";
-							}
-						  ?><?=$textse;?>
-                        </td>
-                        <td class="listbg" onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_shaper_edit.php?id=<?=$i;?>';"><font color="white">
-                          <?=$textss;?><?=htmlspecialchars($shaperent['descr']);?><?=$textse;?>
-                          &nbsp; </td>
-                        <td valign="middle" nowrap class="list"> <a href="firewall_shaper_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit rule" width="17" height="17" border="0"></a>
-                          <?php if ($i > 0): ?>
-                          <a href="firewall_shaper.php?act=up&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_up.gif" title="move up" width="17" height="17" border="0"></a>
-                          <?php else: ?>
-                          <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_up_d.gif" width="17" height="17" border="0">
-                          <?php endif; ?>
-			  <input name="move_<?=$i;?>" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" width="17" height="17" title="move selected rules before this rule" onMouseOver="fr_insline(<?=$nrules;?>, true)" onMouseOut="fr_insline(<?=$nrules;?>, false)"><br>
-			  
-			  <input name="del" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" title="delete selected mappings" onclick="return confirm('Do you really want to delete the selected mappings?')">
-			  
-                          <?php if (isset($a_shaper[$i+1])): ?>
-                          <a href="firewall_shaper.php?act=down&id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_down.gif" title="move down" width="17" height="17" border="0"></a>
-                          <?php else: ?>
-                          <img src="./themes/<?= $g['theme']; ?>/images/icons/icon_down_d.gif" width="17" height="17" border="0">
-                          <?php endif; ?>
-                          <a href="firewall_shaper_edit.php?dup=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="add a new rule based on this one" width="17" height="17" border="0"></a>
-                        </td>
-                      </tr>
-                      <?php $nrules++; $i++; endforeach; ?>
-                      <tr>
-                        <td class="list" colspan="8"></td>
-                        <td class="list"> <a href="firewall_shaper_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
-                      </tr>
-		      <tr>
-		    <td colspan="8"><p><span class="red"><strong>Note:</strong></span><strong><br>
-                    </strong>The first rule that matches a packet will be executed.<br>
-                    The following match patterns are not shown in the list above:
-                    IP packet length, TCP flags.<br>
-                    You can check the results of your queues at <a href="status_queues.php">Status:Queues</a>.</td>
-		    </tr>
+		      </td></tr>
                     </table>
 		</div>
 	  </td>
 	</tr>
 </table>
             </form>
-<?php include("fend.inc"); ?>
+<?php include("fend.inc"); 
+?>
 </body>
 </html>

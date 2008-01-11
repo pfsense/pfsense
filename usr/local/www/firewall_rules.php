@@ -242,13 +242,14 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                 <tr id="frheader">
                   <td width="3%" class="list">&nbsp;</td>
                   <td width="5%" class="list">&nbsp;</td>
-                  <td width="10%" class="listhdrr">Proto</td>
+                  <td width="6%" class="listhdrr">Proto</td>
                   <td width="15%" class="listhdrr">Source</td>
-                  <td width="10%" class="listhdrr">Port</td>
+                  <td width="7%" class="listhdrr">Port</td>
                   <td width="15%" class="listhdrr">Destination</td>
-                  <td width="10%" class="listhdrr">Port</td>
-				  <td width="5%" class="listhdrr">Gateway</td>
-				  <td width="5%" class="listhdrr">Schedule</td>
+                  <td width="7%" class="listhdrr">Port</td>
+		  <td width="5%" class="listhdrr">Gateway</td>
+		<td width="10%" class="listhdrr">Queue</td>
+		  <td width="5%" class="listhdrr">Schedule</td>
                   <td width="22%" class="listhdr">Description</td>
                   <td width="10%" class="list">
 			<table border="0" cellspacing="0" cellpadding="1">
@@ -282,6 +283,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listr" style="background-color: #e0e0e0">*</td>
+		<td class="listr" style="background-color: #e0e0e0">Default</td>
 	 		 <td class="listr" style="background-color: #e0e0e0">*</td>
                   <td class="listbg" style="background-color: #990000"><font color="white">Block private networks</td>
                   <td valign="middle" nowrap class="list">
@@ -576,6 +578,19 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';">
                     <?=$textss;?><?php if (isset($config['interfaces'][$filterent['gateway']]['descr'])) echo htmlspecialchars($config['interfaces'][$filterent['gateway']]['descr']); else  echo htmlspecialchars(pprint_port($filterent['gateway'])); ?><?=$textse;?>
                   </td>
+<td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';"><?=$textss;?>
+                          <?php
+							if (isset($filterent['ackqueue']) && isset($filterent['defaultqueue'])) {
+								$desc = $filterent['ackqueue'] ;
+							    echo "<a href=\"firewall_shaper_queues.php?queue={$filterent['ackqueue']}&action=show\">{$desc}</a>";
+								$desc = $filterent['defaultqueue'];
+							    echo "/<a href=\"firewall_shaper_queues.php?queue={$filterent['defaultqueue']}&action=show\">{$desc}</a>";
+							} else if (isset($filterent['defaultqueue'])) {
+								$desc = $filterent['defaultqueue'];
+							    echo "<a href=\"firewall_shaper_queues.php?queue={$filterent['defaultqueue']}&action=show\">{$desc}</a>"; }
+							else echo "none";
+						  ?><?=$textse;?>
+                        </td>
                   <td class="listr" onClick="fr_toggle(<?=$nrules;?>)" id="frd<?=$nrules;?>" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';"><font color="black">
                     <?php if ($printicon) { ?><img src="./themes/<?= $g['theme']; ?>/images/icons/<?php echo $image; ?>.gif" title="<?php echo $alttext;?>" border="0"><?php } ?>&nbsp;<?=$textss;?><?php echo $schedule_span_begin;?><?=htmlspecialchars($filterent['sched']);?><?php echo $schedule_span_end; ?><?=$textse;?>
                   </td>

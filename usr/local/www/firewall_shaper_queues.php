@@ -3,6 +3,7 @@
 /*
 	firewall_shaper_queues.php
 	Copyright (C) 2004, 2005 Scott Ullrich
+	Copyright (C) 2008 Ermal Luçi
 	All rights reserved.
 
 	Originally part of m0n0wall (http://m0n0.ch/wall)
@@ -41,130 +42,114 @@ if($_GET['reset'] <> "") {
 if (!is_array($config['shaper']['queue'])) {
 	$config['shaper']['queue'] = array();
 }
-$a_queues = &$config['shaper']['queue'];
 
-/* redirect to wizard if shaper isn't already configured */
-if(isset($config['shaper']['enable'])) {
-	$pconfig['enable'] = TRUE;
-} else {
-	if(!is_array($config['shaper']['queue']))
-		Header("Location: wizard.php?xml=traffic_shaper_wizard.xml");
+/* on HEAD it has to use vc_* api on variable_cache.inc */
+if (!is_array($GLOBALS['allqueue_list'])) {
+        $GLOBALS['allqueue_list'] = array();
 }
 
-$iflist = array("lan" => "LAN", "wan" => "WAN");
+/* XXX: NOTE: When dummynet is implemented these will be moved from here */
+read_altq_config();
 
-for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-	$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
+$tree = "<ul class=\"tree\" >";
+if (is_array($altq_list_queues)) {
+	foreach ($GLOBALS['allqueue_list'] as $queue) {
+        	$tree .= "<li><a href=\"firewall_shaper_queues.php?queue={$queue}&action=show\" >{$queue}</a></li>";
+        }
 }
+$tree .= "</ul>";
 
-if ($_POST['apply'] || $_POST['submit']) {
-	$config['shaper']['enable'] = true;
-	write_config();
+if ($_GET) {
+	if ($_GET['queue'])
+        	$qname = trim($_GET['queue']);
+        if ($_GET['interface'])
+                $interface = trim($_GET['interface']);
+        if ($_GET['action'])
+                $action = $_GET['action'];
 
-	$retval = 0;
-	$savemsg = get_std_save_message($retval);
-	/* Setup pf rules since the user may have changed the optimization value */
-	config_lock();
-	$retval = filter_configure();
-	config_unlock();
-	if(stristr($retval, "error") <> true)
-	    $savemsg = get_std_save_message($retval);
-	else
-	    $savemsg = $retval;
-
-	if(file_exists($d_shaperconfdirty_path))
-	  unlink($d_shaperconfdirty_path);
-}
-
-if ($_GET['act'] == "del") {
-	if ($a_queues[$_GET['id']]) {
-		/* check that no rule references this queue */
-		if (is_array($config['shaper']['rule'])) {
-			foreach ($config['shaper']['rule'] as $rule) {
-				if (isset($rule['targetqueue']) && ($rule['targetqueue'] == $_GET['id'])) {
-					$input_errors[] = "This queue cannot be deleted because it is still referenced by a rule.";
-					break;
-				}
+	switch ($action) {
+	case "delete":
+			$altq =& $altq_list_queues[$interface];
+			$qtmp =& $altq->find_queue("", $qname);
+			if ($qtmp) {
+				$qtmp->delete_queue(); 
+				write_config();
+				touch($d_shaperconfdirty_path);
 			}
-		}
-
-		if (!$input_errors) {
-			unset($a_queues[$_GET['id']]);
-
-			/* renumber all rules */
-			if (is_array($config['shaper']['rule'])) {
-				for ($i = 0; isset($config['shaper']['rule'][$i]); $i++) {
-					$currule = &$config['shaper']['rule'][$i];
-					if (isset($currule['targetqueue']) && ($currule['targetqueue'] > $_GET['id']))
-						$currule['targetqueue']--;
-				}
-			}
-
-			write_config();
-			touch($d_shaperconfdirty_path);
 			header("Location: firewall_shaper_queues.php");
 			exit;
-		}
+		break;
+	case "add":
+			/* 
+			 * XXX: WARNING: This returns the first it finds.
+			 * Maybe the user expects something else?!
+			 */
+			foreach ($altq_list_queues as $altq) {
+				$qtmp =& $altq->find_queue("", $qname);
+				if ($qtmp) {
+					$aq =& $altq_list_queues[$interface];
+					if ($aq) {
+						//$link =& get_reference_to_me_in_config(&$link);
+						$aq->copy_queue($interface, &$qtmp);
+						write_config();
+                        			touch($d_shaperconfdirty_path);
+						break;
+					}
+				}
+			}
+			header("Location: firewall_shaper_queues.php?queue=".$qname."&action=show");
+			exit;
+		break;
+	case "show":
+			$iflist = get_interface_list();
+			foreach ($iflist as $if) {
+				$altq = $altq_list_queues[$if['friendly']];
+				if ($altq) {
+					$qtmp =& $altq->find_queue("", $qname);
+					if ($qtmp) 
+						$output .= $qtmp->build_shortform();
+					else
+						$output .= build_iface_without_this_queue($if['friendly'], $qname);
+				} else 
+					$output .= build_iface_without_this_queue($if['friendly'], $qname);
+			}	
+		break;
 	}
 }
 
-if ($_POST) {
-        /* yuck - IE won't send value attributes for image buttons, while Mozilla does -
-           so we use .x/.y to fine move button clicks instead... */
-        unset($movebtn);
-        foreach ($_POST as $pn => $pd) {
-                if (preg_match("/move_(\d+)_x/", $pn, $matches)) {
-                        $movebtn = $matches[1];
-                        break;
-                }
-        }
-        /* move selected rules before this rule */
-        if (isset($movebtn) && is_array($_POST['queue']) && count($_POST['queue'])) {
-                $a_queue_new = array();
+if ($_POST['apply']) {
+          write_config();
 
-                /* copy all rules < $movebtn and not selected */
-                for ($i = 0; $i < $movebtn; $i++) {
-                        if (!in_array($i, $_POST['queue']))
-                                $a_queue_new[] = $a_queues[$i];
-                }
+          $retval = 0;
+         $savemsg = get_std_save_message($retval);
+        /* Setup pf rules since the user may have changed the optimization value */
 
-                /* copy all selected rules */
-                for ($i = 0; $i < count($a_queues); $i++) {
-                        if ($i == $movebtn)
-                                continue;
-                        if (in_array($i, $_POST['queue']))
-                                $a_queue_new[] = $a_queues[$i];
-                }
+                        config_lock();
+                        $retval = filter_configure();
+                        config_unlock();
+                        if (stristr($retval, "error") <> true)
+                                $savemsg = get_std_save_message($retval);
+                        else
+                                $savemsg = $retval;
 
-                /* copy $movebtn rule */
-                if ($movebtn < count($a_queues))
-                        $a_queue_new[] = $a_queues[$movebtn];
+			enable_rrd_graphing();
 
-                /* copy all rules > $movebtn and not selected */
-                for ($i = $movebtn+1; $i < count($a_queues); $i++) {
-                        if (!in_array($i, $_POST['queue']))
-                                $a_queue_new[] = $a_queues[$i];
-                }
-
-                $a_queues = $a_queue_new;
-                write_config();
-                touch($d_shaperconfdirty_path);
-                header("Location: firewall_shaper_queues.php");
-                exit;
-        }
+            unlink($d_shaperconfdirty_path);
 }
 
+$pgtitle = "Firewall: Shaper: By Queues View";
 
-$pgtitle = array("Firewall","Shaper","Queues");
 include("head.inc");
-
 ?>
+<link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
+<script type="text/javascript" src="./tree/tree.js"></script>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<form action="firewall_shaper_queues.php" method="post">
-<script type="text/javascript" language="javascript" src="row_toggle.js"></script>
+<p class="pgtitle"><?=$pgtitle?></p>
+<div id="inputerrors"></div>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
+<form action="firewall_shaper_queues.php" method="post" name="iform" id="iform">
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_shaperconfdirty_path)): ?><p>
 <?php print_info_box_np("The traffic shaper configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>
@@ -173,9 +158,9 @@ include("head.inc");
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Rules", false, "firewall_shaper.php");
-	$tab_array[1] = array("Queues", true, "firewall_shaper_queues.php");
-	$tab_array[2] = array("EZ Shaper wizard", false, "wizard.php?xml=traffic_shaper_wizard.xml");
+	$tab_array[0] = array("Shaper", false, "firewall_shaper.php");
+	//$tab_array[1] = array("Level 2", true, "");
+	$tab_array[1] = array("EZ Shaper wizard", false, "wizard.php?xml=traffic_shaper_wizard.xml");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -183,77 +168,29 @@ include("head.inc");
     <td>
 	<div id="mainarea">
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-		<tr id="frheader">
-                        <td width="3%" class="list">&nbsp;</td>
-                        <td width="0%" class="list">&nbsp;</td>
-			<td width="5%" class="listhdrr">Flags</td>
-                        <td width="5%" class="listhdrr">Priority</td>
-			<td width="5%" class="listhdr">Default</td>
-			<td width="5%" class="listhdr">Bandwidth</td>
-                        <td width="65%" class="listhdr">Name</td>
-                        <td width="10%" class="list">&nbsp;</td>
-                      </tr>
-                      <?php $i = 0; foreach ($a_queues as $queue): ?>
-                      <tr valign="top" id="fr<?=$i;?>">
-<td class="listt"><input type="checkbox" id="frc<?=$i;?>" name="queue[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$i;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>
-			<td class="listt" onClick="fr_toggle(<?=$i;?>)" id="frc<?=$i;?>" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">&nbsp;</td>
-			<td class="listr" onClick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
-<?php
-     if($queue['red'] <> "") echo " RED";
-     if($queue['rio'] <> "") echo " RIO";
-     if($queue['ecn'] <> "") echo " ECN";
-     if($queue['borrow'] <> "") echo " Borrow";
-     if(isset($queue['ack'])) echo "ACK"
-?>
-			&nbsp;
-			</td>
-                        <td class="listr" onClick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
-                          <?=$queue['priority'];?>&nbsp;
-			</td>
-			<td class="listr" onClick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
-			  <?php
-				if($queue['defaultqueue'] <> "") {
-					echo "Yes";
-				} else {
-					echo "No";
-				}
-			  ?>
-			</td>
-                        <td class="listr" onClick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
-                          <?=htmlspecialchars($queue['bandwidth']);?> <?=htmlspecialchars($queue['bandwidthtype']);?>
-                          &nbsp;
-			</td>
-                        <td class="listbg" onClick="fr_toggle(<?=$i;?>)" ondblclick="document.location='firewall_shaper_queues_edit.php?id=<?=$i;?>';">
-                          <font color="#FFFFFF"><?=htmlspecialchars($queue['name']);?>
-                          &nbsp;
-			</td>
-                        <td valign="middle" nowrap class="list">
-                          <table border="0" cellspacing="0" cellpadding="1">
-                            <tr>
-			      <td><input name="move_<?=$i;?>" type="image" src="./themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" width="17" height="17" title="move selected queue before this rule" onMouseOver="fr_insline(<?=$i;?>, true)" onMouseOut="fr_insline(<?=$i;?>, false)"></td>
-                              <td valign="middle"><a href="firewall_shaper_queues_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a></td>
-                              <td valign="middle"><a href="firewall_shaper_queues.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this queue?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
-                            </tr>
-                         </table>
-                        </td>
-                      </tr>
-                      <?php $i++; endforeach; $total_queues = $i; ?>
-                      <tr>
-                        <td class="list" colspan="7"></td>
-                        <td class="list">
-                          <table border="0" cellspacing="0" cellpadding="1">
-                            <tr>
-                              <td valign="middle"><a href="firewall_shaper_queues_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
-                            </tr>
-                          </table>
-                        </td>
-                      </tr>
-		      <tr><td colspan="7">
-		    <p>
-                    <strong><span class="red">Note:</span></strong><strong><br></strong>
-                      A queue can only be deleted if it is not referenced by any rules.<br>
-                      You can check the results of your queues at <a href="status_queues.php">Status:Queues</a>.
-		    </p>
+			<tr>
+			<td width="30%" valign="top" algin="left">
+		<?	$tab_ar = array();
+        $tab_ar[0] = array("By Interface", false, "firewall_shaper.php");
+        $tab_ar[1] = array("By Queues", true, "firewall_shaper_queues.php");
+        display_top_tabs($tab_ar); 
+                                echo $tree;
+                        ?>
+			</td></tr>
+		</table>
+			<td width="70%" valign="top" align="center">
+			<table class=\"tabcont\" width=\"80%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">
+		<tr><td>
+			<? 
+				if ($qname)
+        				echo "<pr class=\"pgtitle\">" . $qname . "</pr><br />";
+				echo "<table align=\"top\" class=\"tabcont\" width=\"80%\" border=\"0\" cellpadding=\"4\" cellspacing=\"0\">";
+				echo $output;
+				echo "</table>";
+			?>	
+			</td></tr>
+			</table>
+
 		      </td></tr>
                     </table>
 		</div>
@@ -261,6 +198,7 @@ include("head.inc");
 	</tr>
 </table>
             </form>
-<?php include("fend.inc"); ?>
+<?php include("fend.inc"); 
+?>
 </body>
 </html>

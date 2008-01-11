@@ -3228,21 +3228,18 @@ function enable_rrd_graphing() {
 			if ("$ifname" == "wan") {
 
 				/* QUEUES, set up the queues databases */
-				if (!is_array($config['shaper']['queue'])) {
-					$config['shaper']['queue'] = array ();
-				}
-				$a_queues = & $config['shaper']['queue'];
+				if (!is_array($GLOBALS['allqueue_list'])) 
+	                                read_altq_config();
 
-				if (isset ($config['shaper']['enable'])) {
+				if (is_array($config['shaper']['queue'])) {
 					if (!file_exists("$rrddbpath$ifname$queues")) {
 						/* create rrd file if it does not exist */
 						log_error("Create RRD database $rrddbpath$ifname$queues");
 						$rrdcreate = "$rrdtool create $rrddbpath$ifname$queues --step $rrdqueuesinterval ";
 						/* loop list of shaper queues */
 						$q = 0;
-						foreach ($a_queues as $queue) {
-							$name = $queue['name'];
-							$rrdcreate .= "DS:$name:COUNTER:$queuesvalid:0:$downstream ";
+						foreach ($GLOBALS['allqueue_list'] as $qname) {
+							$rrdcreate .= "DS:$qname:COUNTER:$queuesvalid:0:$downstream ";
 						}
 
 						$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
@@ -3264,9 +3261,8 @@ function enable_rrd_graphing() {
 						$rrdcreate = "$rrdtool create $rrddbpath$ifname$queuesdrop --step $rrdqueuesdropinterval ";
 						/* loop list of shaper queues */
 						$q = 0;
-						foreach ($a_queues as $queue) {
-							$name = $queue['name'];
-							$rrdcreate .= "DS:$name:COUNTER:$queuesdropvalid:0:$downstream ";
+						foreach ($GLOBALS['allqueue_list'] as $queue) {
+							$rrdcreate .= "DS:$queue:COUNTER:$queuesdropvalid:0:$downstream ";
 						}
 
 						$rrdcreate .= "RRA:AVERAGE:0.5:1:1000 ";
@@ -3285,11 +3281,11 @@ function enable_rrd_graphing() {
 						$rrdqcommand = "-t ";
 						$rrducommand = "N";
 						$q = 0;
-						foreach ($a_queues as $queue) {
+						foreach ($GLOBALS['allqueue_list'] as $queue) {
 							if($q == 0) {
-								$rrdqcommand .= "{$queue['name']}";
+								$rrdqcommand .= "{$queue}";
 							} else {
-								$rrdqcommand .= ":{$queue['name']}";
+								$rrdqcommand .= ":{$queue}";
 							}
 							$q++;
 							$rrducommand .= ":U";

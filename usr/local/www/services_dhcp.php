@@ -436,14 +436,14 @@ function show_netboot_config() {
                         <td width="78%" class="vtable">
                           <input name="dns1" type="text" class="formfld" id="dns1" size="20" value="<?=htmlspecialchars($pconfig['dns1']);?>"><br>
                           <input name="dns2" type="text" class="formfld" id="dns2" size="20" value="<?=htmlspecialchars($pconfig['dns2']);?>"><br>
-			  NOTE: leave blank to use the system default DNS servers.  This option is handy when your doing CARP+DHCP Failover, etc.
+			  NOTE: leave blank to use the system default DNS servers - this interface's IP if DNS forwarder is enabled, otherwise the servers configured on the General page.  
 			</td>
                       </tr>
                      <tr>
                        <td width="22%" valign="top" class="vncell">Gateway</td>
                        <td width="78%" class="vtable">
                          <input name="gateway" type="text" class="formfld" id="gateway" size="20" value="<?=htmlspecialchars($pconfig['gateway']);?>"><br>
-			 The default is to use the IP of the firewall as the gateway.  Specify an alternate gateway here if this is not the correct gateway for your network.
+			 The default is to use the IP on this interface of the firewall as the gateway.  Specify an alternate gateway here if this is not the correct gateway for your network.
 			</td>
                      </tr>
                       <tr>

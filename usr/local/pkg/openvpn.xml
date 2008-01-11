@@ -110,7 +110,7 @@
 		<field>
 			<fieldname>local_network</fieldname>
 			<fielddescr>Local network</fielddescr>
-			<description>This is the network that will be accessable from the remote endpoint. Expressed as a CIDR range. You may leave this blank you don't want to add a route to your network through this tunnel in the remote machine. This is generally set to your LAN network.</description>
+			<description>This is the network that will be accessable from the remote endpoint. Expressed as a CIDR range. You may leave this blank if you don't want to add a route to the local network through this tunnel on the remote machine. This is generally set to your LAN network.</description>
 			<type>input</type>
 		</field>
 		<field>

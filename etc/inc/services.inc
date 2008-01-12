@@ -445,6 +445,12 @@ function services_dyndns_reset() {
 		unlink("{$g['conf_path']}/ez-ipupdate.cache");
 		conf_mount_ro();
 	}
+	
+	if (file_exists("{$g['conf_path']}/dyndns.cache")) {
+		conf_mount_rw();
+		unlink("{$g['conf_path']}/dyndns.cache");
+		conf_mount_ro();
+	}
 
 	return 0;
 }

@@ -85,7 +85,7 @@ foreach ($ifdescrs as $ifn => $ifd) {
 ?>
 </select>
 </form>
-<p><span class="red"><strong>Note:</strong></span> the <a href="http://www.adobe.com/svg/viewer/install/" target="_blank">Adobe SVG Viewer</a> or Firefox 1.5 or newer is required to view the graph.
+<p><span class="red"><strong>Note:</strong></span> the <a href="http://www.adobe.com/svg/viewer/install/" target="_blank">Adobe SVG Viewer</a>, Firefox 1.5 or later or other browser supporting SVG is required to view the graph.
 <p><form method="post" action="status_graph.php">
 </form>
 <p>

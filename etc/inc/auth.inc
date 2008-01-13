@@ -59,6 +59,9 @@ function logout_session() {
 
 function getAllowedGroups($logged_in_user) {
 	global $g, $config;
+
+	if(!function_exists("ldap_connect"))
+		return;
 	
 	$allowed = array();
 	$allowed_groups = array();
@@ -346,6 +349,9 @@ function isSystemAdmin($username = "") {
 
   if($_SESSION['isSystemAdmin']) 
 	return $_SESSION['isSystemAdmin'];
+
+  if(!function_exists("ldap_connect"))
+	return;
 
   if($config['system']['webgui']['backend'] == "ldap") {
 	$groups = ldap_get_groups($username);
@@ -673,7 +679,10 @@ function ldap_test_bind() {
 
 function ldap_get_user_ous($show_complete_ou=false) {
 	global $config, $g;
-	
+
+	if(!function_exists("ldap_connect"))
+		return;
+
     $ldapserver = $config['system']['webgui']['ldapserver'];
     $ldapbindun = $config['system']['webgui']['ldapbindun'];
     $ldapbindpw = $config['system']['webgui']['ldapbindpw'];
@@ -725,6 +734,9 @@ function ldap_get_user_ous($show_complete_ou=false) {
 
 function ldap_get_groups($username) {
 	global $config;
+	
+	if(!function_exists("ldap_connect"))
+		return;
 	
 	if(!$username) 
 		return false;
@@ -815,7 +827,10 @@ function ldap_backed($username, $passwd) {
 	
 	if(!$username) 
 		return;
-	
+
+	if(!function_exists("ldap_connect"))
+		return;
+
 	$ldapserver = $config['system']['webgui']['ldapserver'];
 	$ldapbindun = $config['system']['webgui']['ldapbindun'];
 	$ldapbindpw = $config['system']['webgui']['ldapbindpw'];

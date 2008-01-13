@@ -56,16 +56,17 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
-	$timeout = intval($_POST['session_timeout']);
-	if ($timeout != "" && !is_numeric($timeout))
-		$input_errors[] = gettext("Session timeout must be an integer with value 1 or greater.");
+	if($_POST['session_timeout']) {
+		$timeout = intval($_POST['session_timeout']);
+		if ($timeout != "" && !is_numeric($timeout))
+			$input_errors[] = gettext("Session timeout must be an integer with value 1 or greater.");
 
-	if ($timeout < 1) 
-		$input_errors[] = gettext("Session timeout must be an integer with value 1 or greater.");
+		if ($timeout < 1) 
+			$input_errors[] = gettext("Session timeout must be an integer with value 1 or greater.");
 	
-	if ($timeout > 999) 
-		$input_errors[] = gettext("Session timeout must be an integer with value 1 or greater.");
-
+		if ($timeout > 999) 
+			$input_errors[] = gettext("Session timeout must be an integer with value 1 or greater.");
+	}
 
 	if (!$input_errors) {
 
@@ -153,7 +154,7 @@ if(!$pconfig['backend'])
 					<tr>
                         <td width="22%" valign="top" class="vncell">Session Timeout</td>
                         <td width="78%" class="vtable"> 
-							<input name="session_timeout" id="session_timeout" type="text"size="8" class="formfld unknown" value="<?=htmlspecialchars($pconfig['session_timeout']);?>" />
+							<input name="session_timeout" id="session_timeout" type="text" size="8" value="<?=htmlspecialchars($pconfig['session_timeout']);?>" />
                           <br />
                           <?=gettext("Time in minutes to expire idle management sessions.");?><br />
 						</td>
@@ -186,7 +187,7 @@ if(!$pconfig['backend'])
 					<tr>
                         <td width="22%" valign="top" class="vncell">LDAP Binding password</td>
                         <td width="78%" class="vtable">
-							<input name="ldapbindpw" size="65" value="<?=htmlspecialchars($pconfig['ldapbindpw']);?>">
+							<input name="ldapbindpw" type="password" size="65" value="<?=htmlspecialchars($pconfig['ldapbindpw']);?>">
 						</td>
 					</tr>
 					<tr>

@@ -634,16 +634,16 @@ EOD;
 				/* start dnswatch, if necessary */
 				if (count($dnswatch_list) > 0) {
 					$interval = 60;
-					if ($ipseccfg['dns-interval'])
+					if ($ipseccfg['dns-interval']) {
 						$interval = $ipseccfg['dns-interval'];
+					}
 			
 					$hostnames = "";
 					foreach ($dnswatch_list as $dns) {
 						$hostnames .= " " . escapeshellarg($dns);
-
-						mwexec("/usr/local/bin/dnswatch {$g['varrun_path']}/dnswatch-ipsec.pid $interval " .
-						escapeshellarg("/etc/rc.newipsecdns") . $hostnames);
 					}
+					mwexec("/usr/local/bin/dnswatch {$g['varrun_path']}/dnswatch-ipsec.pid $interval " .
+					escapeshellarg("/etc/rc.newipsecdns") . $hostnames);
 				}
 			}
 

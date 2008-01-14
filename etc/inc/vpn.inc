@@ -608,39 +608,43 @@ EOD;
 
 
 			if(is_process_running("racoon")) {
+				/* flush SPD entries */
+				mwexec("/sbin/setkey -FP");
+				$i = 0;
+				while($i < 2) {
+					/* load SPD */
+					mwexec("/bin/cat {$g['varetc_path']}/spd.conf | /usr/local/bin/slowdownpipe.sh | /sbin/setkey -c");
+					$i++;
+				}
 				/* We are already online, reload */
 				mwexec("/usr/bin/killall -HUP racoon");
-				// sleep(2);
-				/* flushie, flushie spds */
+			} else {
+				/* flush SA + SPD  entries*/
 				mwexec("/sbin/setkey -FP");
 				mwexec("/sbin/setkey -F");
-				/* load SPD */
-				mwexec("/bin/cat {$g['varetc_path']}/spd.conf | /usr/local/bin/slowdownpipe.sh | /sbin/setkey -c");
-				sleep(1);
-			} else {
+				$i = 0;
+				while($i < 2) {
+					/* load SPD */
+					mwexec("/bin/cat {$g['varetc_path']}/spd.conf | /usr/local/bin/slowdownpipe.sh | /sbin/setkey -c");
+					$i++;
+				}
 				/* start racoon */
 				mwexec("/usr/local/sbin/racoon -f {$g['varetc_path']}/racoon.conf");
-				/* sleep for a bit */
-				// sleep (2);
-				/* flushie, flushie spds */
-				mwexec("/sbin/setkey -FP");
-				mwexec("/sbin/setkey -F");
-				/* load SPD */
-				mwexec("/bin/cat {$g['varetc_path']}/spd.conf | /usr/local/bin/slowdownpipe.sh | /sbin/setkey -c");
-				sleep(1);
-			   /* start dnswatch, if necessary */
-			   if (count($dnswatch_list) > 0) {
-			           $interval = 60;
-			           if ($ipseccfg['dns-interval'])
-			                   $interval = $ipseccfg['dns-interval'];
+
+				/* start dnswatch, if necessary */
+				if (count($dnswatch_list) > 0) {
+					$interval = 60;
+					if ($ipseccfg['dns-interval'])
+						$interval = $ipseccfg['dns-interval'];
 			
-			           $hostnames = "";
-			           foreach ($dnswatch_list as $dns)
-			                   $hostnames .= " " . escapeshellarg($dns);
-			
-			           mwexec("/usr/local/bin/dnswatch {$g['varrun_path']}/dnswatch-ipsec.pid $interval " .
-			                   escapeshellarg("/etc/rc.newipsecdns") . $hostnames);
-			   }
+					$hostnames = "";
+					foreach ($dnswatch_list as $dns) {
+						$hostnames .= " " . escapeshellarg($dns);
+
+						mwexec("/usr/local/bin/dnswatch {$g['varrun_path']}/dnswatch-ipsec.pid $interval " .
+						escapeshellarg("/etc/rc.newipsecdns") . $hostnames);
+					}
+				}
 			}
 
 			if (is_array($ipseccfg['tunnel'])) {

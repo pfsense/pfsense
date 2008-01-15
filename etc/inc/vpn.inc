@@ -574,7 +574,7 @@ EOD;
 				mwexec("/sbin/setkey -FP");
 				mwexec("/sbin/setkey -F");
 				$i = 0;
-				while($i < 2) {
+				while($i < 4) {
 					/* load SPD */
 					mwexec("/bin/cat {$g['varetc_path']}/spd.conf | /usr/local/bin/slowdownpipe.sh | /sbin/setkey -c");
 					sleep(2);
@@ -587,7 +587,7 @@ EOD;
 				mwexec("/sbin/setkey -FP");
 				mwexec("/sbin/setkey -F");
 				$i = 0;
-				while($i < 2) {
+				while($i < 4) {
 					/* load SPD */
 					mwexec("/bin/cat {$g['varetc_path']}/spd.conf | /usr/local/bin/slowdownpipe.sh | /sbin/setkey -c");
 					sleep(2);

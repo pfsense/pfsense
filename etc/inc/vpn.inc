@@ -570,7 +570,7 @@ EOD;
 			if(is_process_running("racoon")) {
 				/* flush SPD entries */
 				mwexec("/sbin/setkey -FP");
-				// mwexec("/sbin/setkey -F");
+				mwexec("/sbin/setkey -F");
 				$i = 0;
 				while($i < 2) {
 					/* load SPD */

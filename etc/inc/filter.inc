@@ -1302,7 +1302,7 @@ EOD;
 	
 	if (is_package_installed('siproxd') && file_exists('/usr/local/pkg/sipproxd.inc')) {
 		require_once('sipproxd.inc');
-		$natrules .= squid_generate_rules('nat');
+		$natrules .= siproxd_generate_rules('nat');
 	}
 
 	$natrules .= process_carp_nat_rules();

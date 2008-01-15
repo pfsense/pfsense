@@ -1300,7 +1300,7 @@ EOD;
 		$natrules .= frickin_generate_rules('nat');
 	}
 	
-	if (is_package_installed('sipproxd') && file_exists('/usr/local/pkg/sipproxd.inc')) {
+	if (is_package_installed('siproxd') && file_exists('/usr/local/pkg/sipproxd.inc')) {
 		require_once('sipproxd.inc');
 		$natrules .= squid_generate_rules('nat');
 	}
@@ -2162,6 +2162,11 @@ function filter_rules_generate() {
 		$ipfrules .= frickin_generate_rules('filter');
 	}
 
+	if (is_package_installed('siproxd') && file_exists('/usr/local/pkg/sipproxd.inc')) {
+		require_once('sipproxd.inc');
+		$ipfrules .= siproxd_generate_rules('filter');
+	}
+	
 	/* if captive portal is enabled, ensure that access to this port
 	 * is allowed on a locked down interface
 	 */

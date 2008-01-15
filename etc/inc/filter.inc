@@ -2233,11 +2233,6 @@ function filter_rules_generate() {
 		$ipfrules .= clamav_generate_rules('filter');
 	}
 
-	if (is_package_installed('squid') && file_exists('/usr/local/pkg/squid.inc')) {
-		require_once('squid.inc');
-		$ipfrules .= squid_generate_rules('filter');
-	}
-
 	if (is_package_installed('clamav') && file_exists('/usr/local/pkg/clamav.inc')) {
 		require_once('clamav.inc');
 		$ipfrules .= clamav_generate_rules('filter');

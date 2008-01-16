@@ -59,8 +59,8 @@ include("head.inc");
 <table width="100%" border="0" cellpadding="0" cellspacing="0">  <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Remote", true, "diag_confbak.php");
-	$tab_array[1] = array("Local", false, "diag_backup.php");
+	$tab_array[0] = array("Config History", true, "diag_confbak.php");
+	$tab_array[1] = array("Backup/Restore", false, "diag_backup.php");
 	display_top_tabs($tab_array);
 ?>			
   </td></tr>

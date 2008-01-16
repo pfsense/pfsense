@@ -39,7 +39,6 @@ if (!is_array($config['shaper']['queue'])) {
 }
 
 read_altq_config();
-	
 $tree = "<ul class=\"tree\" >";
 if (is_array($altq_list_queues)) {
 	foreach ($altq_list_queues as $altq) {
@@ -88,19 +87,9 @@ if ($interface) {
 	} else $addnewaltq = true;
 }
 
-$output = "<div id=\"shaperarea\" style=\"position:relative\">";
-if ($queue) {
-$output .= "<tr><td valign=\"top\" class=\"vncellreq\"><br>";
-$output .= "Enable/Disable";
-$output .= "</td><td class=\"vncellreq\">";
-$output .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\"";
-if ($can_enable)
-        $output .=  " CHECKED";
-$output .= " ><span class=\"vexpl\"> Enable/Disable queue and its childs</span>";
-$output .= "</td></tr>";
-}
 $dontshow = false;
 $newqueue = false;
+$output_form = "";
 
 if ($_GET) {
 	switch ($action) {
@@ -138,23 +127,23 @@ if ($_GET) {
 
 			if ($q) {
 				$q->SetInterface($interface);
-				$output .= $q->build_form();
-				$output .= "<input type=\"hidden\" name=\"parentqueue\" id=\"parentqueue\"";
-				$output .= " value=\"".$qname."\">";
+				$output_form .= $q->build_form();
+				$output_form .= "<input type=\"hidden\" name=\"parentqueue\" id=\"parentqueue\"";
+				$output_form .= " value=\"".$qname."\">";
                 unset($q);
 				$newqueue = true;
 			}
 		break;
 		case "show":
 			if ($queue)  
-                        $output .= $queue->build_form();
+                        $output_form .= $queue->build_form();
 			else
 					$input_errors[] = "Queue not found!";
 		break;
 		case "enable":
 			if ($queue) {
 					$queue->SetEnabled("on");
-					$output .= $queue->build_form();
+					$output_form .= $queue->build_form();
 					write_config();
 					touch($d_shaperconfdirty_path);
 			} else
@@ -163,14 +152,14 @@ if ($_GET) {
 		case "disable":
 			if ($queue) {
 					$queue->SetEnabled("");
-					$output .= $queue->build_form();
+					$output_form .= $queue->build_form();
 					write_config();
 					touch($d_shaperconfdirty_path);
 			} else
 					$input_errors[] = "Queue not found!";
 		break;
 		default:
-			$output .= "<p class=\"pgtitle\">" . $default_shaper_msg."</p>";
+			$output_form .= "<p class=\"pgtitle\">" . $default_shaper_msg."</p>";
 			$dontshow = true;
 			break;
 	}
@@ -180,74 +169,108 @@ if ($_GET) {
 	if ($addnewaltq) {
 		$altq =& new altq_root_queue();
 		$altq->SetInterface($interface);
+		
+		switch ($altq->GetBwscale()) {
+				case "Mb":
+					$factor = 1000 * 1000;
+					brak;
+				case "Kb":
+					$factor = 1000;
+					break;
+				case "b":
+					$factor = 1;
+					break;
+				case "Gb":
+					$factor = 1000 * 1000 * 1000;
+					break;
+				case "%": /* We don't use it for root_XXX queues. */
+				default: /* XXX assume Kb by default. */
+					$factor = 1000;
+					break;
+			} 
+		$altq->SetAvailableBandwidth($altq->GetBandwidth() * $factor);
 		$altq->ReadConfig($_POST);
-		unset($tmppath);
-		$tmppath[] = $altq->GetInterface();
-		$altq->SetLink(&$tmppath);	
-		$altq->wconfig();
-		$output .= $altq->build_form();
-		write_config();
-  		touch($d_shaperconfdirty_path);
+		$altq->validate_input($_POST, &$input_errors);
+		if (!$input_errors) {
+			unset($tmppath);
+			$tmppath[] = $altq->GetInterface();
+			$altq->SetLink(&$tmppath);	
+			$altq->wconfig();
+			write_config();
+			touch($d_shaperconfdirty_path);
+			$can_enable = true;
+			$can_add = true;
+		}
+		$output_form .= $altq->build_form();
+
 	} else if ($parentqueue) { /* Add a new queue */
 		$qtmp =& $altq->find_queue($interface, $parentqueue);
 		if ($qtmp) {
 			$tmppath =& $qtmp->GetLink();
 			array_push($tmppath, $qname);
-			$tmp =& $qtmp->add_queue($interface, $_POST, &$tmppath);
-			array_pop($tmppath);
-			$output .= $tmp->build_form();
-			$tmp->wconfig();
-			$can_enable = true;
-			if ($tmp->CanHaveChilds() && $can_enable)
-				$can_add = true;
-			else
-				$can_add = false;
-			write_config();
-       		touch($d_shaperconfdirty_path);
+			$tmp =& $qtmp->add_queue($interface, $_POST, &$tmppath, &$input_errors);
+			if (!$input_errors) {
+				array_pop($tmppath);
+				$tmp->wconfig();
+				$can_enable = true;
+				if ($tmp->CanHaveChilds() && $can_enable)
+					$can_add = true;
+				else
+					$can_add = false;
+				write_config();
+				touch($d_shaperconfdirty_path);
+				$can_enable = true;
+				if ($altq->GetScheduler() != "PRIQ") /* XXX */
+					$can_add = true;
+			}
+			$output_form .= $tmp->build_form();			
 		} else
 			$input_errors[] = "Could not add new queue.";
 	} else if ($_POST['apply']) {
-                        write_config();
+			write_config();
 
-                        $retval = 0;
-                        $savemsg = get_std_save_message($retval);
-                        /* Setup pf rules since the user may have changed the optimizat
-ion value */
-                        config_lock();
-                        $retval = filter_configure();
-                        config_unlock();
-                        if (stristr($retval, "error") <> true)
-                                $savemsg = get_std_save_message($retval);
-                        else
-                                $savemsg = $retval;
+			$retval = 0;
+			$savemsg = get_std_save_message($retval);
+			
+			config_lock();
+			$retval = filter_configure();
+			config_unlock();
+			
+			if (stristr($retval, "error") <> true)
+					$savemsg = get_std_save_message($retval);
+			else
+					$savemsg = $retval;
 
 			enable_rrd_graphing();
 
             unlink($d_shaperconfdirty_path);
-			if ($queue)
-				$output .= $queue->build_form();
-			else
-				$output .= $default_shaper_message;
+			
+			if ($queue) {
+				$output_form .= $queue->build_form();
+				$dontshow = false;
+			}
+			else {
+				$output_form .= $default_shaper_message;
+				$dontshow = true;
+			}
 
-			$dontshow = true;
-//                       header("Location: firewall_shaper.php");
- //                      exit;
 	} else if ($queue) {
                 $queue->validate_input($_POST, &$input_errors);
                 if (!$input_errors) {
-                                $queue->update_altq_queue_data($_POST);
-                                $queue->wconfig();
-                        	$output .= $queue->build_form();
+                            $queue->update_altq_queue_data($_POST);
+                            $queue->wconfig();
 							write_config();
-				       		touch($d_shaperconfdirty_path);
-                } else 
-					$input_errors[] = "Could not complete the request.";
-	} else 
-		$input_errors[] = "Ummmm nothing to do?!";
+				touch($d_shaperconfdirty_path);
+				$dontshow = false;
+                } 
+				$output_form .= $queue->build_form();
+	} else  {
+		$output_form .= "<p class=\"pgtitle\">" . $default_shaper_msg."</p>";
+		$dontshow = true;
+	}
 } else {
-	$output .= "<p class=\"pgtitle\">" . $default_shaper_msg."</p>";
+	$output_form .= "<p class=\"pgtitle\">" . $default_shaper_msg."</p>";
 	$dontshow = true;
-
 }
 	
 
@@ -255,57 +278,89 @@ ion value */
 
 if (!$dontshow || $newqueue) {
 
-$output .= "<tr><td width=\"22%\" valign=\"top\" class=\"vncellreq\">";
-$output .= "Queue Actions";
-$output .= "</td><td valign=\"top\" class=\"vncellreq\" width=\"78%\">";
+$output_form .= "<tr><td width=\"22%\" valign=\"top\" class=\"vncellreq\">";
+$output_form .= "Queue Actions";
+$output_form .= "</td><td valign=\"top\" class=\"vncellreq\" width=\"78%\">";
 
-$output .= "<input type=\"image\" src=\"";
-$output .= "./themes/".$g['theme']."/images/icons/icon_up.gif\"";
-$output .= " width=\"17\" height=\"17\" border=\"0\" title=\"Submit\" >";
-
+/*
+$output_form .= "<input type=\"image\" src=\"";
+$output_form .= "./themes/".$g['theme']."/images/icons/icon_up.gif\"";
+$output_form .= " width=\"17\" height=\"17\" border=\"0\" title=\"Submit\" >";
+*/
+$output_form .= "<input type=\"submit\" name=\"Submit\" value=\"" . gettext("Save") . "\" class=\"formbtn\" />";
 if ($can_add || $addnewaltq) {
-	$output .= "<a href=\"firewall_shaper.php?interface=";
-	$output .= $altq->GetInterface() . "&queue=";
-	$output .= $queue->GetQname() . "&action=add\">";
-	$output .= "<img src=\"";
-	$output .= "./themes/".$g['theme']."/images/icons/icon_plus.gif\"";
-	$output .= " width=\"17\" height=\"17\" border=\"0\" title=\"Add queue\">";
-	$output .= "</a>";
-	$output .= "<a href=\"firewall_shaper.php?interface=";
-	$output .= $altq->GetInterface() . "&queue=";
-	$output .= $queue->GetQname() . "&action=delete\">";
-	$output .= "<img src=\"";
-	$output .= "./themes/".$g['theme']."/images/icons/icon_minus.gif\"";
-	$output .= " width=\"17\" height=\"17\" border=\"0\" title=\"Delete a queue\">";
-	$output .= "</a>";  
+	$output_form .= "<a href=\"firewall_shaper.php?interface=";
+	$output_form .= $interface; 
+	if ($queue) {
+		$output_form .= "&queue=" . $queue->GetQname();
+	}
+	$output_form .= "&action=add\">";
+	$output_form .= "<img src=\"";
+	$output_form .= "./themes/".$g['theme']."/images/icons/icon_plus.gif\"";
+	$output_form .= " width=\"17\" height=\"17\" border=\"0\" title=\"Add queue\">";
+	$output_form .= "</a>";
+	$output_form .= "<a href=\"firewall_shaper.php?interface=";
+	$output_form .= $interface . "&queue=";
+	if ($queue) {
+		$output_form .= "&queue=" . $queue->GetQname();
+	}
+	$output_form .= "&action=delete\">";
+	$output_form .= "<img src=\"";
+	$output_form .= "./themes/".$g['theme']."/images/icons/icon_minus.gif\"";
+	$output_form .= " width=\"17\" height=\"17\" border=\"0\"";
+	if ($queue)
+		$output_form .= " title=\"Delete a queue\">";
+	else
+		$output_form .= " title=\"Disable shaper on interface\">";
+	$output_form .= "</a>";  
 }
-$output .= "</td></tr>";
-$output .= "</div>";
+$output_form .= "</td></tr>";
+$output_form .= "</div>";
 } 
 else 
-	$output .= "</div>";
+	$output_form .= "</div>";
+
+$output = "<div id=\"shaperarea\" style=\"position:relative\">";
+if (!$dontshow) {
+if ($queue || $altq) {
+	$output .= "<tr><td valign=\"top\" class=\"vncellreq\"><br>";
+	$output .= "Enable/Disable";
+	$output .= "</td><td class=\"vncellreq\">";
+	$output .= " <input type=\"checkbox\" id=\"enabled\" name=\"enabled\"";
+	if ($queue)
+		if ($queue->GetEnabled())
+       			$output .=  " CHECKED";
+	else if ($altq)
+		if ($altq->GetEnabled())
+			$output .= " CHECKED";
+	$output .= " ><span class=\"vexpl\"> Enable/Disable queue and its childs</span>";
+	$output .= "</td></tr>";
+}
+}
+$output .= $output_form;
 
 $pgtitle = "Firewall: Shaper: By Interface View";
 
 include("head.inc");
-if ($queue) {
-	echo "<script type=\"text/javascript\">";
-	echo $queue->build_javascript();
-	echo "</script>";
-}
 ?>
+
+<body link="#0000CC" vlink="#0000CC" alink="#0000CC" >
 <link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 <script type="text/javascript" src="./tree/tree.js"></script>
+<?php
+if ($queue) {
+        echo "<script type=\"text/javascript\">";
+        echo $queue->build_javascript();
+        echo "</script>";
+}
 
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
+include("fbegin.inc"); 
+?>
 <div id="inputerrors"></div>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 
-<form action="firewall_shaper.php" method="post" name="form" id="form">
+<form action="firewall_shaper.php" method="post" id="iform" name="iform">
 
-<script type="text/javascript" language="javascript" src="row_toggle.js"></script>
 <?php if ($savemsg) print_info_box($savemsg); ?>
 <?php if (file_exists($d_shaperconfdirty_path)): ?><p>
 <?php print_info_box_np("The traffic shaper configuration has been changed.<br>You must apply the changes in order for them to take effect.");?><br>

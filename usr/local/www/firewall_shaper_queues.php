@@ -137,6 +137,16 @@ if ($_POST['apply']) {
             unlink($d_shaperconfdirty_path);
 }
 
+/* if this is an AJAX caller then handle via JSON */
+if(isAjax() && is_array($input_errors)) {
+        input_errors2Ajax($input_errors);
+        exit;
+}
+
+/* if ajax is calling, give them an update message */
+if(isAjax())
+        print_info_box_np($savemsg);
+
 $pgtitle = "Firewall: Shaper: By Queues View";
 
 include("head.inc");
@@ -144,9 +154,13 @@ include("head.inc");
 <link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 <script type="text/javascript" src="./tree/tree.js"></script>
 
+<?
+/* put your custom HTML head content here        */
+/* using some of the $pfSenseHead function calls */
+echo $pfSenseHead->getHTML();
+?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-<p class="pgtitle"><?=$pgtitle?></p>
 <div id="inputerrors"></div>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <form action="firewall_shaper_queues.php" method="post" name="iform" id="iform">
@@ -164,8 +178,8 @@ include("head.inc");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
-  <tr>
-    <td>
+  <tr> 
+    <td valign="top">
 	<div id="mainarea">
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 			<tr>
@@ -192,7 +206,6 @@ include("head.inc");
 			</table>
 
 		      </td></tr>
-                    </table>
 		</div>
 	  </td>
 	</tr>

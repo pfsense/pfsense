@@ -1,35 +1,36 @@
 <?php
 /*
-	Copyright (C) 2004, 2005 Scott Ullrich
-        Copyright (C) 2008 Ermal Lu\xe7i
-        All rights reserved.
+		Copyright (C) 2004, 2005 Scott Ullrich
+		Copyright (C) 2008 Ermal Luçi
+		All rights reserved.
 
-        Redistribution and use in source and binary forms, with or without
-        modification, are permitted provided that the following conditions are met:
+		Redistribution and use in source and binary forms, with or without
+		modification, are permitted provided that the following conditions are met:
 
-        1. Redistributions of source code must retain the above copyright notice,
-           this list of conditions and the following disclaimer.
+		1. Redistributions of source code must retain the above copyright notice,
+		   this list of conditions and the following disclaimer.
 
-        2. Redistributions in binary form must reproduce the above copyright
-           notice, this list of conditions and the following disclaimer in the
-           documentation and/or other materials provided with the distribution.
+		2. Redistributions in binary form must reproduce the above copyright
+		   notice, this list of conditions and the following disclaimer in the
+		   documentation and/or other materials provided with the distribution.
 
-        THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-        INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-        AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-        AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-        OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-        SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-        INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-        CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-        ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-        POSSIBILITY OF SUCH DAMAGE.
+		THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+		INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+		AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+		AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+		OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+		SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+		INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+		CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+		ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+		POSSIBILITY OF SUCH DAMAGE.
 */
 
 /* include all configuration functions */
 require_once("functions.inc");
 require_once("pkg-utils.inc");
 require_once("notices.inc");
+//require_once("guiconfig.inc");
 
 /*
  * I admit :) this is derived from xmplparse.inc StartElement()
@@ -37,20 +38,20 @@ require_once("notices.inc");
 function &get_reference_to_me_in_config(&$mypath) {
 	global $config;
 
-        $ptr =& $config['shaper'];
+		 $ptr =& $config['shaper'];
 	foreach ($mypath as $indeks) {
-                $ptr =& $ptr['queue'][$indeks];
-        }
+				$ptr =& $ptr['queue'][$indeks];
+		}
 
 	return $ptr;
 }
 function unset_object_by_reference(&$mypath) {
 	global $config;
 
-        $ptr =& $config['shaper'];
-        for ($i = 0; $i < count($mypath) - 1; $i++) {
-                $ptr =& $ptr['queue'][$mypath[$i]];
-        }
+		$ptr =& $config['shaper'];
+		for ($i = 0; $i < count($mypath) - 1; $i++) {
+				$ptr =& $ptr['queue'][$mypath[$i]];
+		}
 	unset($ptr['queue'][$mypath[$i]]);
 }
 
@@ -72,13 +73,13 @@ function clean_child_queues($type, $mypath) {
 		if (isset($ref['realtime2'])) unset($ref['realtime2']);
 		if (isset($ref['realtime3'])) unset($ref['realtime3']);
 		if (isset($ref['upperlimit'])) unset($ref['upperlimit']);
-                if (isset($ref['upperlimit1'])) unset($ref['upperlimit1']);
-                if (isset($ref['upperlimit2'])) unset($ref['upperlimit2']);
-                if (isset($ref['upperlimit3'])) unset($ref['upperlimit3']);
+				if (isset($ref['upperlimit1'])) unset($ref['upperlimit1']);
+				if (isset($ref['upperlimit2'])) unset($ref['upperlimit2']);
+				if (isset($ref['upperlimit3'])) unset($ref['upperlimit3']);
 		if (isset($ref['linkshare'])) unset($ref['linkshare']);
-                if (isset($ref['linkshare1'])) unset($ref['linkshare1']);
-                if (isset($ref['linkshare2'])) unset($ref['linkshare2']);
-                if (isset($ref['linkshare3'])) unset($ref['linkshare3']);	
+				if (isset($ref['linkshare1'])) unset($ref['linkshare1']);
+				if (isset($ref['linkshare2'])) unset($ref['linkshare2']);
+				if (isset($ref['linkshare3'])) unset($ref['linkshare3']);	
 		break;
 	}
 }
@@ -101,18 +102,25 @@ function cleanup_queue_from_rules($queue) {
 }
 
 class altq_root_queue {
-        var $interface;
-        var $tbrconfig ;
-        var $bandwidth;
-        var $bandwidthtype; /* b, Kb, Mb */
-        var $scheduler;
+		var $interface;
+		var $tbrconfig ;
+		var $bandwidth;
+		var $bandwidthtype; /* b, Kb, Mb */
+		var $scheduler;
 		var $qlimit;
-        var $queues = array();
+		var $queues = array();
 		var $qenabled;
 		var $link;
 		var $default_present; /* if we have a default queue set */
+		var $available_bw; /* in b/s */
 
-        /* Accesor functions */
+		/* Accesor functions */
+	function GetAvailableBandwidth() {
+		return $this->available_bw;
+	}
+	function SetAvailableBandwidth($bw) {
+		$this->available_bw = $bw;
+	}
 	function SetDefaultQueuePresent($value) {
 		$this->default_present = $value;
 	}
@@ -128,7 +136,7 @@ class altq_root_queue {
 	function GetEnabled() {
 		return $this->qenabled;
 	}
-	function SetEnabled($value = false) {
+	function SetEnabled($value) {
 		$this->qenabled = $value;
 	}
 	function CanHaveChilds() {
@@ -143,36 +151,36 @@ class altq_root_queue {
 	function SetQname($name) {
 		$this->interface = trim($name);
 	}
-        function GetInterface() {
-                return $this->interface;
-        }
-        function SetInterface($name) {
-                $this->interface = trim($name);
-        }
-        function GetTbrConfig() {
-                return $this->tbrconfig;
-        }
-        function SetTbrConfig($tbrconfig) {
-                $this->tbrconfig = $tbrconfig;
-        }
-        function GetBandwidth() {
-                return $this->bandwidth;
-        }
-        function SetBandwidth($bw) {
-                $this->bandwidth = trim($bw);
-        }
-        function GetBwscale() {
-                return $this->bandwidthtype;
-        }
-        function SetBwscale($bwscale) {
-                $this->bandwidthtype = $bwscale;
-        }
-        function GetScheduler() {
-                return $this->scheduler;
-        }
-        function SetScheduler($scheduler) {
-                $this->scheduler = trim($scheduler);
-        }
+	function GetInterface() {
+			return $this->interface;
+	}
+	function SetInterface($name) {
+			$this->interface = trim($name);
+	}
+	function GetTbrConfig() {
+			return $this->tbrconfig;
+	}
+	function SetTbrConfig($tbrconfig) {
+			$this->tbrconfig = $tbrconfig;
+	}
+	function GetBandwidth() {
+			return $this->bandwidth;
+	}
+	function SetBandwidth($bw) {
+			$this->bandwidth = trim($bw);
+	}
+	function GetBwscale() {
+			return $this->bandwidthtype;
+	}
+	function SetBwscale($bwscale) {
+			$this->bandwidthtype = $bwscale;
+	}
+	function GetScheduler() {
+			return $this->scheduler;
+	}
+	function SetScheduler($scheduler) {
+			$this->scheduler = trim($scheduler);
+	}
 	function GetQlimit() {
 		return $this->qlimit;
 	}
@@ -181,26 +189,86 @@ class altq_root_queue {
 	}
 	
 	function validate_input($data, &$input_errors) {
-	
-    	    do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
-
+		global $config; /* XXX: how to get info about interfaces?! */
+		
+		$reqfields[] = "bandwidth";
+		$reqdfieldsn[] = "Bandwidth";
+		$reqfields[] = "bandwidthtype";
+		$reqdfieldsn[] = "Bandwidthtype";
+		
+		//do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
+		
+		switch ($config['interfaces'][$this->GetQname()]['banwidthtype']) {
+				case "Mb":
+					$factor = 1000;
+					break;
+				case "Kb":
+					$factor = 1;
+					break;
+				case "b":
+					$factor = 1/1000;
+					break;
+				case "Gb":
+					$factor = 1000 * 1000;
+					break;
+				case "%":
+					$factor = intval($config['interfaces'][$this->GetQname()]['banwidth']) / 100;
+					break;
+				default: /* XXX */
+					$factor = 1;
+					break;
+			} 
+		switch ($data['banwidthtype']) {
+				case "Mb":
+					$myfactor = 1000;
+					brak;
+				case "Kb":
+					$myfactor = 1;
+					break;
+				case "b":
+					$myfactor = 1/1000;
+					break;
+				case "Gb":
+					$myfactor = 1000 * 1000;
+					break;
+				case "%":
+					$factor = intval($config['interfaces'][$this->GetQname()]['banwidth']) / 100;
+					break;					
+				default: /* XXX */
+					$myfactor = 1;
+					break;
+			} 
+		
+		if (isset($config['interface'][$this->GetQname()]['bandwidth'])) {
+		/*	if ($config['interface'][$this->GetQname()]['bandwidth'] * $factor <
+					$data['bandwidth'] * $myfactor)
+					$input_errors[] = "Bandwidth cannot be set higher than that of interface.";
+		*/
+		}
+		if ($data['bandwidth'] && (!is_numeric($data['bandwidth'])))
+						$input_errors[] = "Bandwidth must be an integer.";
+		if ($data['bandwidth'] < 0)
+						$input_errors[] = "Bandwidth cannot be negative.";
 		if ($data['qlimit'] && (!is_numeric($data['qlimit'])))
-                        $input_errors[] = "Qlimit must be an integer.";
+						$input_errors[] = "Qlimit must be an integer.";
+		if ($data['qlimit'] < 0)
+						$input_errors[] = "Qlimit must be an positive.";
 		if ($data['tbrconfig'] && (!is_numeric($data['tbrconfig'])))
-                        $input_errors[] = "Qlimit must be an integer.";
-
-        }
+						$input_errors[] = "Tbrsize must be an integer.";
+		if ($data['tbrconfig'] < 0)
+						$input_errors[] = "Tbrsize must be an positive.";
+	}
 
 
 	/* Implement this to shorten some code on the frontend page */
-        function ReadConfig(&$conf) {
+		function ReadConfig(&$conf) {
 			if (isset($conf['tbrconfig']))
-               	$this->SetTbrConfig($conf['tbrconfig']);
-            if ($conf['bandwidth']) {
-               	$this->SetBandwidth($conf['bandwidth']);
-	            if ($conf['bandwidthtype'])
-        	        $this->SetBwscale($conf['bandwidthtype']);
-            }
+				$this->SetTbrConfig($conf['tbrconfig']);
+			if ($conf['bandwidth'] <> "") {
+				$this->SetBandwidth($conf['bandwidth']);
+				if ($conf['bandwidthtype'] <> "")
+					$this->SetBwscale($conf['bandwidthtype']);
+			}
 		if (isset($conf['scheduler'])) {
 				if ($this->GetScheduler() != $conf['scheduler']) {
 					foreach ($this->queues as $q) {
@@ -208,13 +276,14 @@ class altq_root_queue {
 						$q->clean_queue($conf['scheduler']);
 					}
 				}
-                $this->SetScheduler($conf['scheduler']);
+				$this->SetScheduler($conf['scheduler']);
 			}
-		if (isset($conf['qlimit']))
+		if (isset($conf['qlimit']) && $conf['qlimit'] <> "")
 			$this->SetQlimit($conf['qlimit']);
 		if (isset($conf['name']))
 			$this->SetQname($conf['name']);		
-		$this->SetEnabled($conf['enabled']);
+		//if (isset($conf['enabled']) && $conf['enabled'] == "on")
+			$this->SetEnabled("on");
 
 	}
 	
@@ -225,70 +294,96 @@ class altq_root_queue {
 		$link = &get_reference_to_me_in_config($queue->GetLink());
 	
 		if ($link && $mylink) {
-                        if (!is_array($mylink['queue'][$queue->GetQname()]))
-                                $mylink['queue'][$queue->GetQname()] = array();
+				if (!is_array($mylink['queue'][$queue->GetQname()]))
+						$mylink['queue'][$queue->GetQname()] = array();
 
-                        foreach ($link as $key => $value)
-                                $mylink['queue'][$queue->GetQname()][$key] = $value;
-                }
+				foreach ($link as $key => $value)
+						$mylink['queue'][$queue->GetQname()][$key] = $value;
+		}
 	}
 
 
-        function &add_queue($interface, &$queue, &$path) {
+		function &add_queue($interface, &$queue, &$path, &$input_errors) {
 
-		if (!is_array($this->queues))
-			$this->queues = array();
-			
-		switch ($this->GetScheduler()) {
-			case "PRIQ":
-				$q =& new priq_queue();
-                       		break;
-                        case "HFSC":
-                        	$q =& new hfsc_queue();
-                        	break;
-                        case "CBQ":
-                                $q =& new cbq_queue();
-                	        break;
-                        default:
-				/* XXX: but should not happen anyway */ 
-				return;
-                        	break;
-                	}
-               	$q->ReadConfig($queue);
-		$q->SetLink($path);
-		$q->SetInterface($this->GetInterface());
-		$q->SetEnabled("on");
-		$q->SetParent(&$this);
-		$this->queues[$q->GetQname()] = &$q; 
-		$GLOBALS['allqueue_list'][] = $q->GetQname();
-		ref_on_altq_queue_list($this->GetQname(), $q->GetQname());
-		if (is_array($queue['queue'])) {
-			foreach ($queue['queue'] as $key1 => $que) {
-				array_push($path, $key1);
-                        	$q->add_queue($q->GetInterface(), &$que, &$path);
-				array_pop($path);
-                	}
+			if (!is_array($this->queues))
+				$this->queues = array();
+				
+			switch ($this->GetScheduler()) {
+				case "PRIQ":
+					$q =& new priq_queue();
+					break;
+				case "HFSC":
+					$q =& new hfsc_queue();
+					break;
+				case "CBQ":
+						$q =& new cbq_queue();
+					break;
+				default:
+					/* XXX: but should not happen anyway */ 
+					return;
+					break;
+			}
+			$q->SetLink($path);
+			$q->SetInterface($this->GetInterface());
+			$q->SetEnabled("on");
+			$q->SetParent(&$this);
+			$q->ReadConfig($queue);
+			switch ($q->GetBwscale()) {
+				case "Mb":
+					$factor = 1000;
+					brak;
+				case "Kb":
+					$factor = 1;
+					break;
+				case "b":
+					$factor = 1/1000;
+					break;
+				case "Gb":
+					$factor = 1000 * 1000;
+					break;
+				case "%":
+					$factor = $this->GetAvailableBandwidth() / 100;
+					break;
+				default: /* XXX */
+					$factor = 1;
+					break;
+			} 
+			$q->SetAvailableBandwidth($q->GetBandwidth() * $factor);
+			$this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $q->GetBandwidth() * $factor);
+			$q->validate_input($queue, $input_errors);
+			if (count($input_errors)) {
+				return $q;
+			}
+			$this->queues[$q->GetQname()] = &$q; 
+			$GLOBALS['allqueue_list'][] = $q->GetQname();
+			ref_on_altq_queue_list($this->GetQname(), $q->GetQname());
+			if (is_array($queue['queue'])) {
+				foreach ($queue['queue'] as $key1 => $que) {
+					array_push($path, $key1);
+								$q->add_queue($q->GetInterface(), &$que, &$path, $input_errors);
+					array_pop($path);
+						}
+			}
+	
+			return $q;
 		}
 
-		return $q;
-        }
-
-        /* interface here might be optional */
-        function &find_queue($interface, $qname) {
-		if ($qname == $this->GetQname()) {
-			return $this;
-                } 
-                        foreach ($this->queues as $q) {
-                                $result =& $q->find_queue("", $qname);
+		/* interface here might be optional */
+		function &find_queue($interface, $qname) {
+			if ($qname == $this->GetQname()) {
+				return $this;
+			} 
+			foreach ($this->queues as $q) {
+				$result =& $q->find_queue("", $qname);
 				if ($result)
 					return $result;
-                        }
-        }
+			}
+		}
 
 	function &find_parentqueue($interface, $qname) {
 		if ($qname == $interface) {
 			$result =  NULL;
-	 	} else if ($this->queues[$qname])	 {
+		} else if ($this->queues[$qname])	 {
 			$result = $this;
 		} else if ($this->GetScheduler() <> "PRIQ") {
 			foreach ($this->queues as $q) {
@@ -313,75 +408,101 @@ class altq_root_queue {
 		return $tree;
 	}
 	
-        function delete_queue() { 
+	function delete_queue() { 
 		foreach ($this->queues as $q)
-			$q->delete_queue();
+			$q->delete_queue();			
 		unset_object_by_reference($this->GetLink());
-         }
+	 }
 
-        /*
-         * First it spits:
-         * altq on $interface ..............
-         *      then it goes like
-         *      foreach ($queues as $qkey => $queue)
-         *              this->queues[$qkey]->build_rule();
-         */
-        function build_rules() {
-			if (count($this->queues) > 0 && $this->GetEnabled()) {
-                $rules = " altq on  " . convert_friendly_interface_to_real_interface_name($this->GetInterface());
-                if ($this->GetScheduler())
-                        $rules .= " ".strtolower($this->GetScheduler());
-                if ($this->GetBandwidth())
-                        $rules .= " bandwidth ".trim($this->GetBandwidth());
-                if ($this->GetBwscale())
-                        $rules .= $this->GetBwscale();
-		if ($this->GetTbrConfig())
-                        $rules .= " tbrsize ".$this->GetTbrConfig();
-                if (count($this->queues)) {
-			$i = count($this->queues);
-                        $rules .= " queue { ";
-                        foreach ($this->queues as $qkey => $qnone) {
-                                if ($i > 1) {
-                                        $i--;
-                                        $rules .= " {$qkey}, ";
-                                } else
-                                        $rules .= " {$qkey} ";
-                        }
-                        $rules .= " } \n";
-                        foreach ($this->queues as $q) {
-                                $rules .= $q->build_rules();
-                        }
-                }
+	/*
+	 * First it spits:
+	 * altq on $interface ..............
+	 *      then it goes like
+	 *      foreach ($queues as $qkey => $queue)
+	 *              this->queues[$qkey]->build_rule();
+	 */
+	function build_rules() {
+		if (count($this->queues) > 0 && $this->GetEnabled()) {
+			$rules = " altq on  " . convert_friendly_interface_to_real_interface_name($this->GetInterface());
+			if ($this->GetScheduler())
+					$rules .= " ".strtolower($this->GetScheduler());
+			if ($this->GetBandwidth())
+					$rules .= " bandwidth ".trim($this->GetBandwidth());
+			if ($this->GetBwscale())
+					$rules .= $this->GetBwscale();
+			if ($this->GetTbrConfig())
+					$rules .= " tbrsize ".$this->GetTbrConfig();
+			if (count($this->queues)) {
+					$i = count($this->queues);
+					$rules .= " queue { ";
+					foreach ($this->queues as $qkey => $qnone) {
+							if ($i > 1) {
+									$i--;
+									$rules .= " {$qkey}, ";
+							} else
+									$rules .= " {$qkey} ";
+					}
+					$rules .= " } \n";
+					foreach ($this->queues as $q) {
+							$rules .= $q->build_rules();
+					}
+			}
 		}
 		$rules .= " \n";
-                return $rules;
-        }
+		return $rules;
+	}
 
 	function build_javascript() {
-				$javascript = "<script type=\"text/javascript\">";
-                $javascript .= "function mySuspend() {";
-                $javascript .= "if (document.layers && document.layers['shaperarea'] != null);";
-                $javascript .= "document.layers['shaperarea'].visibility = 'hidden';";
-                $javascript .= "else if (document.all)";
-                $javascript .= "document.all['shaperarea'].style.visibility = 'hidden';";
-                $javascript .= "}";
+			$javascript = "<script type=\"text/javascript\">";
+			$javascript .= "function mySuspend() {";
+			$javascript .= "if (document.layers && document.layers['shaperarea'] != null);";
+			$javascript .= "document.layers['shaperarea'].visibility = 'hidden';";
+			$javascript .= "else if (document.all)";
+			$javascript .= "document.all['shaperarea'].style.visibility = 'hidden';";
+			$javascript .= "}";
 
-                $javascript .= "function myResume() {";
-                $javascript .= "if (document.layers && document.layers['shaperarea'] != null)";
-                $javascript .= "document.layers['shaperarea'].visibility = 'visible';";
-                $javascript .= "else if (document.all)";
-                $javascript .= "document.all['shaperarea'].style.visibility = 'visible';";
-                $javascript .= "}";
-				$javascript .= "</script>";
+			$javascript .= "function myResume() {";
+			$javascript .= "if (document.layers && document.layers['shaperarea'] != null)";
+			$javascript .= "document.layers['shaperarea'].visibility = 'visible';";
+			$javascript .= "else if (document.all)";
+			$javascript .= "document.all['shaperarea'].style.visibility = 'visible';";
+			$javascript .= "}";
+			$javascript .= "</script>";
 
-                return $javascript;
-        }
+			return $javascript;
+	}
 	
-        /*
-         * For requesting the parameters of the root queue
-         * to the user like the traffic wizard does.
-         */
-        function build_form() { 
+	function build_shortform() {
+			global $g;
+
+			$altq =& $this;
+			if ($altq)
+					$scheduler = ": " . $altq->GetScheduler();
+			$form = "<tr><td width=\"20%\" class=\"vtable\">";
+			$form .= "<a href=\"firewall_shaper.php?interface" . $this->GetInterface() . "&queue=". $this->GetInterface()."&action=show\">".$this->GetInterface().": ".$scheduler."</a>";
+			$form .= "</td></tr>";
+			$form .= "<tr>";
+			$form .= "<td width=\"50%\" class=\"vncellreq\">";
+			$form .= "Bandwidth: " . $this->GetBandwidth().$this->GetBwscale();
+			$form .= "</td><td width=\"50%\"></td></tr>";
+			$form .= "<tr><td width=\"20%\" class=\"vncellreq\">";
+			$form .= "<a href=\"firewall_shaper_queues.php?interface=";
+			$form .= $this->GetInterface() . "&queue=";
+			$form .= $this->GetQname() . "&action=delete\">";
+			$form .= "<img src=\"";
+			$form .= "./themes/".$g['theme']."/images/icons/icon_minus.gif\"";
+			$form .= " width=\"17\" height=\"17\" border=\"0\" title=\"Disable shaper on i
+nterface\">";
+			$form .= "<span>Disable shaper from interface</span></a></td></tr>";
+
+			return $form;
+
+	}
+		/*
+		 * For requesting the parameters of the root queue
+		 * to the user like the traffic wizard does.
+		 */
+	function build_form() { 
 		$form = "<tr><td valign=\"top\" class=\"vncellreq\"><br><span class=\"vexpl\">Name</span></td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<strong>".$this->GetQname()."</strong>";
@@ -390,19 +511,19 @@ class altq_root_queue {
 		$form .= "</td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<select id=\"scheduler\" name=\"scheduler\" class=\"formselect\">";
-                $form .= "<option value=\"HFSC\"";
+				$form .= "<option value=\"HFSC\"";
 		if ($this->GetScheduler() == "HFSC")
 			$form .= " selected=\"yes\"";
 		$form .= ">HFSC</option>";
-                $form .= "<option value=\"CBQ\"";
+				$form .= "<option value=\"CBQ\"";
 		if ($this->GetScheduler() == "CBQ")
-                        $form .= " selected=\"yes\"";
+						$form .= " selected=\"yes\"";
 		$form .= ">CBQ</option>";
-                $form .= "<option value=\"PRIQ\"";
+				$form .= "<option value=\"PRIQ\"";
 		if ($this->GetScheduler() == "PRIQ")
-                        $form .= " selected=\"yes\"";
+						$form .= " selected=\"yes\"";
 		$form .= ">PRIQ</option>";
-                $form .= "</select>";
+				$form .= "</select>";
 		$form .= "<br> <span class=\"vexpl\">";
 		$form .= "NOTE: changing this changes all queues underneath!";
 		$form .= " Beaware you can loose information.";
@@ -412,30 +533,30 @@ class altq_root_queue {
 		$form .= "</td><td class=\"vncellreq\">";
 		$form .= "<input type=\"text\" id=\"bandwidth\" name=\"bandwidth\" value=\"";
 		$form .= $this->GetBandwidth() . "\">"; 
-                $form .= "<select id=\"bandwidthtype\" name=\"bandwidthtype\" class=\"formselect\">";
-                $form .= "<option value=\"Kb\"";
+		$form .= "<select id=\"bandwidthtype\" name=\"bandwidthtype\" class=\"formselect\">";
+		$form .= "<option value=\"Kb\"";
 		if ($this->GetBwscale() == "Kb")
-			$form .= "selected=\"yes\"";
+			$form .= " selected=\"yes\"";
 		$form .= ">Kbit/s</option>";
-                $form .= "<option value=\"Mb\"";
+		$form .= "<option value=\"Mb\"";
 		if ($this->GetBwscale() == "Mb")
-                        $form .= "selected=\"yes\"";
-                $form .= ">Mbit/s</option>";
-                $form .= "<option value=\"\"";
-		if ($this->GetBwscale() == "b")
-                        $form .= "selected=\"yes\"";
-                $form .= ">Bit/s</option>";
+			$form .= " selected=\"yes\"";
+		$form .= ">Mbit/s</option>";
+		$form .= "<option value=\"Gb\"";
+		if ($this->GetBwscale() == "Gb")
+			$form .= " selected=\"yes\"";
+		$form .= ">Gbit/s</option>";		
 		$form .= "<option value=\"\"";
-                if ($this->GetBwscale() == "%")
-                        $form .= "selected=\"yes\"";
-                $form .= ">%</option>";
-                $form .= "</select>";
-                $form .= "</td></tr>";
+		if ($this->GetBwscale() == "b")
+			$form .= " selected=\"yes\"";
+		$form .= ">Bit/s</option>";
+		$form .= "</select>";
+		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"top\" class=\"vncellreq\">Queue Limit</td>";
-                $form .= "<td class=\"vncellreq\">";
-                $form .= "<input type=\"text\" id=\"qlimit\" name=\"qlimit\" value=\"";
-                $form .= $this->GetQlimit();
-                $form .= "\">";
+		$form .= "<td class=\"vncellreq\">";
+		$form .= "<input type=\"text\" id=\"qlimit\" name=\"qlimit\" value=\"";
+		$form .= $this->GetQlimit();
+		$form .= "\">";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"top\" class=\"vncellreq\">Tbr Size</td>";
 		$form .= "<td class=\"vncellreq\">";
@@ -446,7 +567,7 @@ class altq_root_queue {
 		$form .= "Adjusts the size, in bytes, of the token bucket regulator.";
 		$form .= "If not specified, heuristics based on the interface ";
 		$form .= "bandwidth are used to determine the size.";
-                $form .= "</span></td></tr>";
+				$form .= "</span></td></tr>";
 		$form .= "<input type=\"hidden\" id=\"interface\" name=\"interface\"";
 		$form .= " value=\"" . $this->GetInterface() . "\">";
 		$form .= "<input type=\"hidden\" id=\"name\" name=\"name\" value=\"".$this->GetQname()."\" >";
@@ -455,37 +576,37 @@ class altq_root_queue {
 		return $form;
 	}
 
-        function update_altq_queue_data(&$data) { 
+		function update_altq_queue_data(&$data) { 
 		$this->ReadConfig($data);
 	}
 	
-        /*
-         * Should call on each of it queues and subqueues
-         * the same function much like build_rules();
-         */
-        function wconfig() { 
-			$cflink = &get_reference_to_me_in_config($this->GetLink());
-			if (!is_array($cflink))
-				$cflink = array();
-			$cflink['interface'] = $this->GetInterface();	
-			$cflink['name'] = $this->GetQname();
-			$cflink['scheduler'] = $this->GetScheduler();
-			$cflink['bandwidth'] = $this->GetBandwidth();
-			$cflink['bandwidthtype'] = $this->GetBwscale();
-			$cflink['qlimit'] = $this->GetQlimit();
-			$cflink['tbrconfig'] = $this->GetTbrConfig();
-			$cflink['enabled'] = $this->GetEnabled();
-		}
+	/*
+	 * Should call on each of it queues and subqueues
+	 * the same function much like build_rules();
+	 */
+	function wconfig() { 
+		$cflink = &get_reference_to_me_in_config($this->GetLink());
+		if (!is_array($cflink))
+			$cflink = array();
+		$cflink['interface'] = $this->GetInterface();	
+		$cflink['name'] = $this->GetQname();
+		$cflink['scheduler'] = $this->GetScheduler();
+		$cflink['bandwidth'] = $this->GetBandwidth();
+		$cflink['bandwidthtype'] = $this->GetBwscale();
+		$cflink['qlimit'] = $this->GetQlimit();
+		$cflink['tbrconfig'] = $this->GetTbrConfig();
+		$cflink['enabled'] = $this->GetEnabled();
+	}
 
 }
 
 class priq_queue {
-        var $qname;
-        var $qinterface; 
-        var $qlimit;
-        var $qpriority;
-        var $description;
-        var $isparent;
+	var $qname;
+	var $qinterface; 
+	var $qlimit;
+	var $qpriority;
+	var $description;
+	var $isparent;
 	var $qbandwidth;
 	var $qbandwidthtype;
 	var $qdefault;
@@ -496,131 +617,138 @@ class priq_queue {
 	var $qenabled;
 	var $qparent;
 	var $link;
-	
-	/* This is here to help on form building and building rules/lists */
-        var $subqueues = array();
+	var $available_bw; /* in b/s */
 
-        /* Accesor functions */
-        function SetLink($link) {
-                $this->link = $link;
-        }
-        function GetLink() {
-                return $this->link;
-        }
+	/* This is here to help on form building and building rules/lists */
+		var $subqueues = array();
+
+	/* Accesor functions */
+	function GetAvailableBandwidth() {
+		return $this->available_bw;
+	}
+	function SetAvailableBandwidth($bw) {
+		$this->available_bw = $bw;
+	}
+	function SetLink($link) {
+			$this->link = $link;
+	}
+	function GetLink() {
+			return $this->link;
+	}
 	function &GetParent() {
 		return $this->qparent;
 	}
 	function SetParent(&$parent) {
 		$this->qparent = &$parent;
 	}
-        function GetEnabled() {
-                return $this->qenabled;
-        }
-        function SetEnabled($value) {
-                $this->qenabled = $value;
-        }
+	function GetEnabled() {
+			return $this->qenabled;
+	}
+	function SetEnabled($value) {
+			$this->qenabled = $value;
+	}
 	function CanHaveChilds() {
-                return false;
-        }
+			return false;
+	}
 	function CanBeDeleted() {
-                return true;
-        }
-        function GetQname() {
-                return $this->qname;
-        }
-        function SetQname($name) {
-                $this->qname = trim($name);
-        }
-        function GetBandwidth() {
-                return $this->qbandwidth;
-        }
-        function SetBandwidth($bandwidth) {
-                $this->qbandwidth = $bandwidth;
-        }
-        function GetInterface() {
-                return $this->qinterface;
-        }
-        function SetInterface($name) {
-                $this->qinterface = trim($name);
-        }
-        function GetQlimit() {
-                return $this->qlimit;
-        }
-        function SetQlimit($limit) {
-               	$this->qlimit = $limit;
-        }
-        function GetQpriority() {
-                return $this->qpriority;
-        }
-        function SetQpriority($priority) {
-                $this->qpriority = $priority;
-        }
-        function GetDescription() {
-                return $this->description;
-        }
-        function SetDescription($str) {
-                $this->descritpion = trim($str);
-        }
-        function GetFirstime() {
-                return $this->firsttime;
-        }
-        function SetFirsttime($number) {
-                $this->firsttime = $number;
-        }
-        function GetBwscale() {
-                return $this->qbandwidthtype;
-        }
-        function SetBwscale($scale) {
-               	$this->qbandwidthtype = $scale;
-        }
+			return true;
+	}
+	function GetQname() {
+			return $this->qname;
+	}
+	function SetQname($name) {
+			$this->qname = trim($name);
+	}
+	function GetBandwidth() {
+			return $this->qbandwidth;
+	}
+	function SetBandwidth($bandwidth) {
+			$this->qbandwidth = $bandwidth;
+	}
+	function GetInterface() {
+			return $this->qinterface;
+	}
+	function SetInterface($name) {
+			$this->qinterface = trim($name);
+	}
+	function GetQlimit() {
+			return $this->qlimit;
+	}
+	function SetQlimit($limit) {
+			$this->qlimit = $limit;
+	}
+	function GetQpriority() {
+			return $this->qpriority;
+	}
+	function SetQpriority($priority) {
+			$this->qpriority = $priority;
+	}
+	function GetDescription() {
+			return $this->description;
+	}
+	function SetDescription($str) {
+			$this->description = trim($str);
+	}
+	function GetFirstime() {
+			return $this->firsttime;
+	}
+	function SetFirsttime($number) {
+			$this->firsttime = $number;
+	}
+	function GetBwscale() {
+			return $this->qbandwidthtype;
+	}
+	function SetBwscale($scale) {
+			$this->qbandwidthtype = $scale;
+	}
 	function GetDefault() {
-                return $this->qdefault;
-        }
-        function SetDefault($value = false) {
-                $this->qdefault = $value;
-		altq_set_default_queue($this->GetInterface(), "true");
-        }
+			return $this->qdefault;
+	}
+	function SetDefault($value = false) {
+			$this->qdefault = $value;
+	altq_set_default_queue($this->GetInterface(), "true");
+	}
 	function GetRed() {
-                return $this->qred;
-        }
-        function SetRed($red = false) {
-                $this->qred = $red;
-        }
+			return $this->qred;
+	}
+	function SetRed($red = false) {
+			$this->qred = $red;
+	}
 	function GetRio() {
-                return $this->qrio;
-        }
-        function SetRio($rio = false) {
-                $this->qrio = $rio;
-        }
-	function GetEcn() {
-                return $this->qecn;
-        }
-        function SetEcn($ecn = false) {
-                $this->qecn = $ecn;
-        }
+			return $this->qrio;
+	}
+	function SetRio($rio = false) {
+			$this->qrio = $rio;
+	}
+function GetEcn() {
+			return $this->qecn;
+	}
+	function SetEcn($ecn = false) {
+			$this->qecn = $ecn;
+	}
 	function GetAck() {
-                return $this->qack;
-        }
-        function SetAck($ack = false) {
-                $this->qack = $ack;
-        }
+			return $this->qack;
+	}
+	function SetAck($ack = false) {
+			$this->qack = $ack;
+	}
 
 	function build_javascript() {
 		$javascript = "<script type=\"text/javascript\">";
 		$javascript .= "function mySuspend() { \n";
-                $javascript .= "if (document.layers && document.layers['shaperarea'] != null);\n";
-                $javascript .= "document.layers['shaperarea'].visibility = 'hidden';\n";
-                $javascript .= "else if (document.all)\n";
-                $javascript .= "document.all['shaperarea'].style.visibility = 'hidden';\n";
-                $javascript .= "}\n";
+		$javascript .= "if (document.layers && document.layers['shaperarea'] != null);\n";
+		$javascript .= "document.layers['shaperarea'].visibility = 'hidden';\n";
+		$javascript .= "else if (document.all)\n";
+		$javascript .= "document.all['shaperarea'].style.visibility = 'hidden';\n";
+		$javascript .= "}\n";
 
-                $javascript .= "function myResume() {\n";
-                $javascript .= "if (document.layers && document.layers['shaperarea'] != null)\n";
-                $javascript .= "document.layers['shaperarea'].visibility = 'visible';\n";
-                $javascript .= "else if (document.all)\n";
-                $javascript .= "document.all['shaperarea'].style.visibility = 'visible';\n";
-                $javascript .= "}\n";
-				$javascript .= "</script>";
+		$javascript .= "function myResume() {\n";
+		$javascript .= "if (document.layers && document.layers['shaperarea'] != null)\n";
+		$javascript .= "document.layers['shaperarea'].visibility = 'visible';\n";
+		$javascript .= "else if (document.all)\n";
+		$javascript .= "document.all['shaperarea'].style.visibility = 'visible';\n";
+		$javascript .= "}\n";
+		$javascript .= "</script>";
 		
 		return $javascript;
 	}
@@ -632,86 +760,87 @@ class priq_queue {
 	 function copy_queue($interface, &$queue) {
 		global $config;
 
-                $mylink = &get_reference_to_me_in_config($this->GetLink());
-                $copylink = &get_reference_to_me_in_config($queue->GetLink());
+		$mylink = &get_reference_to_me_in_config($this->GetLink());
+		$copylink = &get_reference_to_me_in_config($queue->GetLink());
 
-                if ($link && $mylink) {
-                        if (!is_array($mylink['queue'][$queue->GetQname()]))
-                                $mylink['queue'][$queue->GetQname()] = array();
+		if ($link && $mylink) {
+				if (!is_array($mylink['queue'][$queue->GetQname()]))
+						$mylink['queue'][$queue->GetQname()] = array();
 
-                        foreach ($link as $key => $value)
-                                $mylink['queue'][$queue->GetQname()][$key] = $value;
+				foreach ($link as $key => $value)
+						$mylink['queue'][$queue->GetQname()][$key] = $value;
 		}
 	 }
 
 	function clean_queue($sched) {
-                clean_child_queues($sched, $this->GetLink());
-                if (is_array($this->subqueues)) {
-                        foreach ($this->subqueues as $q)
-                                $q->clean_queue($sched);
-                }
-        }
+		clean_child_queues($sched, $this->GetLink());
+		if (is_array($this->subqueues)) {
+				foreach ($this->subqueues as $q)
+						$q->clean_queue($sched);
+				}
+		}
 
 
 		
 	function delete_queue() {
-                unref_on_altq_queue_list($this->GetQname());
-                if ($this->GetDefault())
-                        altq_set_default_queue($this->GetInterface(), "false");
-				cleanup_queue_from_rules($this->GetQname());
-                unset_object_by_reference($this->GetLink());
-        }
+		unref_on_altq_queue_list($this->GetQname());
+		if ($this->GetDefault())
+				altq_set_default_queue($this->GetInterface(), "false");
+		cleanup_queue_from_rules($this->GetQname());
+		unset_object_by_reference($this->GetLink());
+	}
 
 	 function &find_queue($interface, $qname) { 
 		if ($qname == $this->GetQname())
 			return $this; 
 	}
-	 function find_parentqueue($interface, $qname) { return; }
+	
+	function find_parentqueue($interface, $qname) { return; }
 		
-	 function validate_input($data, &$input_errors) {
-		do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
+	function validate_input($data, &$input_errors) {
+	
+		$reqfields[] = "name";
+		$erqfieldsn[] = "Name";
+		//do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
 		if ($data['priority'] && (!is_numeric($data['priority'])
-                        || ($data['priority'] < 1) || ($data['priority'] > 15))) {
-                	$input_errors[] = "The priority must be an integer between 1 and 15.";
- 	       }
+						|| ($data['priority'] < 1) || ($data['priority'] > 15))) {
+					$input_errors[] = "The priority must be an integer between 1 and 15.";
+		}
 		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) 
-                        $input_errors[] = "Queue limit must be an integer";
-		if ($data['bandwidth'] && (!is_numeric($data['bandwidth']))) 
-                        $input_errors[] = "Bandwidth must be an integer.";
-        	if (!preg_match("/^[a-zA-Z0-9_-]*$/", $data['name']))
-               	 $input_errors[] = "Queue names must be alphanumeric and _ or - only.";
+				$input_errors[] = "Queue limit must be an integer";
+		if ($data['qlimit'] < 0)
+				$input_errors[] = "Queue limit must be positive";
+		if (!preg_match("/^[a-zA-Z0-9_-]*$/", $data['name']))
+			 $input_errors[] = "Queue names must be alphanumeric and _ or - only.";
 		
-		
-		
-
 	}
 
-         function ReadConfig(&$q) {
-                if (isset($q['name']))
-                        $this->SetQname($q['name']);
-                if (isset($q['interface']))
-                        $this->SetInterface($q['interface']);
-                if ($q['bandwidth']) { 
-                        $this->SetBandwidth($q['bandwidth']);
-			if ($q['bandwidthtype'])
+	function ReadConfig(&$q) {
+		if (isset($q['name']))
+				$this->SetQname($q['name']);
+		if (isset($q['interface']))
+				$this->SetInterface($q['interface']);
+		if ($q['bandwidth'] <> "") {
+			$this->SetBandwidth($q['bandwidth']);
+			if ($q['bandwidthtype'] <> "")
 				$this->SetBwscale($q['bandwidthtype']);
 		}
-		if (isset($q['qlimit']))
-                	$this->SetQlimit($q['qlimit']);
-                if (isset($q['priority']))
-                        $this->SetQPriority($q['priority']);
-                if (isset($q['descritption']))
-                        $this->SetDescription($q['description']);
-		if ($q['ftpqueue'] == "on") 
+		if (isset($q['qlimit']) && $q['qlimit'] <> "")
+					$this->SetQlimit($q['qlimit']);
+				if (isset($q['priority']))
+						$this->SetQPriority($q['priority']);
+				if (isset($q['description']) && $q['description'] != "")
+						$this->SetDescription($q['description']);
+		if (isset($q['ftpqueue']) && $q['ftpqueue'] <> "") 
 			set_is_ftp_queue($this->GetInterface(), $this->GetQname());
 		$this->SetRed($q['red']);
 		$this->SetRio($q['rio']);
 		$this->SetEcn($q['ecn']);
 		$this->SetDefault($q['default']);
-		$this->SetEnabled($conf['enabled']);
+		$this->SetEnabled($q['enabled']);
 
-        }
+		}
 
 	function build_tree() {
 			$tree = " <li><a href=\"firewall_shaper.php?interface=". $this->GetInterface()."&queue=". $this->GetQname()."&action=show"; 
@@ -735,32 +864,32 @@ class priq_queue {
 			return $tree;
 		}
 		
-        /* Should return something like:
-         * queue $qname on $qinterface bandwidth ....
-         */
-        function build_rules() {
-                $pfq_rule = " queue ". $this->qname;
-                if ($this->GetInterface())
-                        $pfq_rule .= " on ".convert_friendly_interface_to_real_interface_name($this->GetInterface());
-                if ($this->GetQpriority())
-                        $pfq_rule .= " priority ".$this->GetQpriority();
-                if ($this->GetQlimit())
-                        $pfq_rule .= " qlimit " . $this->GetQlimit();
-                if ($this->GetRed() || $this->GetRio() || $this->GetEcn() || $this->GetDefault()) {
-                        $pfq_rule .= " priq ( ";
+		/* Should return something like:
+		 * queue $qname on $qinterface bandwidth ....
+		 */
+		function build_rules() {
+				$pfq_rule = " queue ". $this->qname;
+				if ($this->GetInterface())
+						$pfq_rule .= " on ".convert_friendly_interface_to_real_interface_name($this->GetInterface());
+				if ($this->GetQpriority())
+						$pfq_rule .= " priority ".$this->GetQpriority();
+				if ($this->GetQlimit())
+						$pfq_rule .= " qlimit " . $this->GetQlimit();
+				if ($this->GetRed() || $this->GetRio() || $this->GetEcn() || $this->GetDefault()) {
+						$pfq_rule .= " priq ( ";
 					if ($this->GetRed()) {
 						$comma = 1;
 						$pfq_rule .= " red ";
 					}
 					if ($this->GetRio()) {
 						if ($comma) 
-                	           	$pfq_rule .= " ,";
+								$pfq_rule .= " ,";
 						$comma = 1;
 						$pfq_rule .= " rio ";
 					}
 					if ($this->GetEcn()) {
 						if ($comma) 
-                	           	$pfq_rule .= " ,";
+								$pfq_rule .= " ,";
 						$comma = 1;
 						$pfq_rule .= " ecn ";
 					}	
@@ -770,52 +899,52 @@ class priq_queue {
 						$pfq_rule .= " default ";
 					}
 					$pfq_rule .= " ) ";
-        	    }
+				}
 	
 				$pfq_rule .= " \n";
-        
-		        return $pfq_rule;
-        }
+		
+				return $pfq_rule;
+		}
 
-        /*
-         * To return the html form to show to user
-         * for getting the parameters.
-         * Should do even for first time when the
-         * object is created and later when we may
-         * need to update it.
-         */
-        function build_form() {
-                $form .= "<tr>";
+		/*
+		 * To return the html form to show to user
+		 * for getting the parameters.
+		 * Should do even for first time when the
+		 * object is created and later when we may
+		 * need to update it.
+		 */
+		function build_form() {
+				$form .= "<tr>";
 		$form .= "<td width=\"22%\" valign=\"top\" class=\"vncellreq\">";
 		$form .= "Queue Name</td><td width=\"78%\" class=\"vtable\">";
 		$form .= "<input name=\"name\" type=\"text\" id=\"name\" class=\"formfld unknown\" size=\"15\" value=\"";
 		$form .= htmlspecialchars($this->GetQname());
 		$form .= "\">";
-                $form .= "<br> <span class=\"vexpl\">Enter the name of the queue here.  Do not use spaces and limit the size to 15 characters.";
-                $form .= "</span></td>";
+				$form .= "<br> <span class=\"vexpl\">Enter the name of the queue here.  Do not use spaces and limit the size to 15 characters.";
+				$form .= "</span></td>";
 		$form .= "</tr><tr>";
-                $form .= "<td width=\"22%\" valign=\"top\" class=\"vncellreq\">Priority</td>";
-                $form .= "<td width=\"78%\" class=\"vtable\"> <input name=\"priority\" type=\"text\" id=\"priority\" size=\"5\" value=\"";
-                $form .= htmlspecialchars($this->GetQpriority());
-                $form .= "\">";
-                $form .= "<br> <span class=\"vexpl\">For hfsc, the range is 0 to 7. The default is 1.  Hfsc queues with a higher priority are preferred in the case of overload.</span></td>";
-                $form .= "</tr>";
-                $form .= "</tr>";
-                $form .= "<td width=\"22%\" valign=\"top\" class=\"vncellreq\">Queue limit</td>";
-                $form .= "<td width=\"78%\" class=\"vtable\"> <input name=\"qlimit\" type=\"text\" id=\"qlimit\" size=\"5\" value=\"";
-                $form .= htmlspecialchars($this->GetQlimit());
-                $form .= "\">";
+				$form .= "<td width=\"22%\" valign=\"top\" class=\"vncellreq\">Priority</td>";
+				$form .= "<td width=\"78%\" class=\"vtable\"> <input name=\"priority\" type=\"text\" id=\"priority\" size=\"5\" value=\"";
+				$form .= htmlspecialchars($this->GetQpriority());
+				$form .= "\">";
+				$form .= "<br> <span class=\"vexpl\">For hfsc, the range is 0 to 7. The default is 1.  Hfsc queues with a higher priority are preferred in the case of overload.</span></td>";
+				$form .= "</tr>";
+				$form .= "</tr>";
+				$form .= "<td width=\"22%\" valign=\"top\" class=\"vncellreq\">Queue limit</td>";
+				$form .= "<td width=\"78%\" class=\"vtable\"> <input name=\"qlimit\" type=\"text\" id=\"qlimit\" size=\"5\" value=\"";
+				$form .= htmlspecialchars($this->GetQlimit());
+				$form .= "\">";
 		$form .= "<br> <span class=\"vexpl\">Queue limit in packet per second."; 
-                $form .= "</span></td>";
-                $form .= "<tr>";
-                $form .= "<td width=\"22%\" valign=\"top\" class=\"vncell\">Scheduler options</td>";
-                $form .= "<td width=\"78%\" class=\"vtable\">";
+				$form .= "</span></td>";
+				$form .= "<tr>";
+				$form .= "<td width=\"22%\" valign=\"top\" class=\"vncell\">Scheduler options</td>";
+				$form .= "<td width=\"78%\" class=\"vtable\">";
 		if ($this->GetDefault()) { 
-                $form .= "<input type=\"checkbox\" id=\"default\" CHECKED name=\"default\"";
+				$form .= "<input type=\"checkbox\" id=\"default\" CHECKED name=\"default\"";
 		$form .= "> Default queue<br>";
 		} else if (count($this->subqueues) < 1) {
 			$form .= "<input type=\"checkbox\" id=\"default\" name=\"default\"";
-                	$form .= "> Default queue<br>";
+					$form .= "> Default queue<br>";
 		}
 		/* XXX: TODO Add check to disable this if it has been set on another queue on this interface. */
 		$form .= "<input type=\"checkbox\" id=\"ftpqueue\" name=\"ftpqueue\" ";
@@ -823,29 +952,29 @@ class priq_queue {
 			$form .= " CHECKED";
 		$form .= ">Use this queue for the ftp proxy<br>";
 		/* XXX: TODO */
-                $form .= "<input type=\"checkbox\" id=\"red\" name=\"red\"";
-                if($this->GetRed()) 
+				$form .= "<input type=\"checkbox\" id=\"red\" name=\"red\"";
+				if($this->GetRed()) 
 			$form .=  " CHECKED";
 		$form .= "> <a target=\"_new\" href=\"http://www.openbsd.org/faq/pf/queueing.html#red\">Random Early Detection</a><br>";
-                $form .= "<input type=\"checkbox\" id=\"rio\" name=\"rio\"";
-                if($this->GetRio()) 
+				$form .= "<input type=\"checkbox\" id=\"rio\" name=\"rio\"";
+				if($this->GetRio()) 
 			$form .=  " CHECKED";
 		$form .= "> <a target=\"_new\" href=\"http://www.openbsd.org/faq/pf/queueing.html#rio\">Random Early Detection In and Out</a><br>";
-                $form .= "<input type=\"checkbox\" id=\"ecn\" name=\"ecn\"";
-                if($this->GetEcn()) 
+				$form .= "<input type=\"checkbox\" id=\"ecn\" name=\"ecn\"";
+				if($this->GetEcn()) 
 			$form .=  " CHECKED";
 		$form .= "> <a target=\"_new\" href=\"http://www.openbsd.org/faq/pf/queueing.html#ecn\">Explicit Congestion Notification</a><br>";
-                $form .= "<span class=\"vexpl\"><br>Select options for this queue";
-                $form .= "</tr><tr>";
+				$form .= "<span class=\"vexpl\"><br>Select options for this queue";
+				$form .= "</tr><tr>";
 		$form .= "<td width=\"22%\" class=\"vncellreq\">Description</td>";
 		$form .= "<td width=\"78%\" class=\"vtable\">";
 		$form .= "<input type=\"text\" name=\"description\" size=\"50%\" class=\"formfld unknown\" value=\"" . $this->GetDescription() . "\"  >";
 		$form .= "</td></tr>";
 		$form .= "<input type=\"hidden\" name=\"interface\" id=\"interface\"";
-                $form .= " value=\"".$this->GetInterface()."\">";
+				$form .= " value=\"".$this->GetInterface()."\">";
 
 		return $form;
-        }
+		}
 
 	function build_shortform() {
 		/* XXX: Hacks in site. Mostly layer violations!  */
@@ -855,11 +984,11 @@ class priq_queue {
 		if ($altq)
 			$scheduler = ": " . $altq->GetScheduler();
 		 $form = "<tr><td width=\"20%\" class=\"vtable\">";
-        $form .= "<a href=\"firewall_shaper.php?interface" . $this->GetInterface() . "&queue=" . $this->GetInterface()."&action=show\">".$this->GetInterface().": ".$scheduler."</a>";
-        $form .= "</td></tr>";
+		$form .= "<a href=\"firewall_shaper.php?interface" . $this->GetInterface() . "&queue=" . $this->GetInterface()."&action=show\">".$this->GetInterface().": ".$scheduler."</a>";
+		$form .= "</td></tr>";
 		/* 
 		 * XXX: Hack in sight maybe fix with a class that wraps all
- 		 * of this layer violations
+		 * of this layer violations
 		 */
 		$form .= "<tr>";
 		$form .= "<td width=\"50%\" class=\"vncellreq\">";
@@ -872,29 +1001,29 @@ class priq_queue {
 			$form .= "<tr><td class=\"vncellreq\">Default: on </td></tr>";
 		$form .= "<tr><td width=\"20%\" class=\"vncellreq\">";
 		$form .= "<a href=\"firewall_shaper_queues.php?interface=";
-        	$form .= $this->GetInterface() . "&queue=";
-        	$form .= $this->GetQname() . "&action=delete\">";
-        	$form .= "<img src=\"";
-        	$form .= "./themes/".$g['theme']."/images/icons/icon_minus.gif\"";
-        	$form .= " width=\"17\" height=\"17\" border=\"0\" title=\"Delete queue from interface\">";
-        	$form .= "<span>Delete queue from interface</span></a></td></tr>";
+			$form .= $this->GetInterface() . "&queue=";
+			$form .= $this->GetQname() . "&action=delete\">";
+			$form .= "<img src=\"";
+			$form .= "./themes/".$g['theme']."/images/icons/icon_minus.gif\"";
+			$form .= " width=\"17\" height=\"17\" border=\"0\" title=\"Delete queue from interface\">";
+			$form .= "<span>Delete queue from interface</span></a></td></tr>";
 		
 		return $form;
 
 	}
 
-        function update_altq_queue_data(&$q) { 
+		function update_altq_queue_data(&$q) { 
 		$this->ReadConfig($q);
 	}
 
-        function wconfig() {
-                $cflink =& get_reference_to_me_in_config($this->GetLink());
+		function wconfig() {
+				$cflink =& get_reference_to_me_in_config($this->GetLink());
 		if (!is_array($cflink))
 			$cflink = array();
 		$cflink['name'] = $this->GetQname();
-                $cflink['interface'] = $this->GetInterface();
-                $cflink['qlimit'] = $this->GetQlimit();
-                $cflink['priority'] = $this->GetQpriority();
+				$cflink['interface'] = $this->GetInterface();
+				$cflink['qlimit'] = $this->GetQlimit();
+				$cflink['priority'] = $this->GetQpriority();
 		$cflink['description'] = $this->GetDescription();
 		$cflink['enabled'] = $this->GetEnabled();
 		$cflink['default'] = $this->GetDefault();
@@ -905,149 +1034,247 @@ class priq_queue {
 }
 
 class hfsc_queue extends priq_queue {
-        /* realtime */
+		/* realtime */
 	var $realtime;
-        var $r_m1;
-        var $r_d;
-        var $r_m2;
-        /* linkshare */
+		var $r_m1;
+		var $r_d;
+		var $r_m2;
+		/* linkshare */
 	var $linkshare;
-        var $l_m1;
-        var $l_d;
-        var $l_m2;
-        /* upperlimit */
+		var $l_m1;
+		var $l_d;
+		var $l_m2;
+		/* upperlimit */
 	var $upperlimit;
-        var $u_m1;
-        var $u_d;
-        var $u_m2;
+		var $u_m1;
+		var $u_d;
+		var $u_m2;
 
-        /*
-         * HFSC can have nested queues.
-         */
+		/*
+		 * HFSC can have nested queues.
+		 */
 
 	function CanHaveChilds() {
-                return true;
-        }
-	function SetRealtime($r_m1, $r_d, $r_m2) {
-		$this->r_m1 = $r_m1;
-		$this->r_d = $r_d;
-		$this->r_m2 = $r_m2;
-		$this->realtime = "on";
-	}
-	function SetLinkshare($l_m1, $l_d, $l_m2) {
-		$this->l_m1 = $l_m1;
-		$this->l_d = $l_d;
-		$this->l_m2 = $l_m2;
-		$this->linkshare = "on";
-	}
-	function SetUpperlimit($u_m1, $u_d, $u_m2) {
-		$this->u_m1 = $u_m1;
-		$this->u_d = $u_d;
-		$this->u_m2 = $u_m2;
-		$this->upperlimit = "on";
-	}
+				return true;
+		}
 	function GetRealtime() {
-		return $this->realtime;
-	}
-	function GetR_m1() {
-		return $this->r_m1;
-	}
-	function GetR_d() {
-		return $this->r_d;
-	}
-	function GetR_m2() {
-		return $this->r_m2;
-	}
-	function GetLinkshare() {
-		return $this->linkshare;
-	}
-	function GetL_m1() {
-		return $this->l_m1;
-	}
-	function GetL_d() {
-		return $this->l_d;
-	}
-	function GetL_m2() {
-		return $this->l_m2;
-	}
-	function GetUpperlimit() {
-		return $this->upperlimit;
-	}
-	function GetU_m1() {
-		return $this->u_m1;
-	}
-	function GetU_d() {
-		return $this->u_d;
-	}
-	function GetU_m2() {
-		return $this->u_m2;
-	}
+           return $this->realtime;
+     }
+     function GetR_m1() {
+           return $this->r_m1;
+     }
+     function GetR_d() {
+           return $this->r_d;
+     }
+     function GetR_m2() {
+           return $this->r_m2;
+     }
+     function SetRealtime() {
+           $this->realtime = "on";
+     }
+     function SetR_m1($value) {
+           $this->r_m1 = $value;
+     }
+     function SetR_d($value) {
+           $this->r_d = $value;
+     }
+     function SetR_m2($value) {
+           $this->r_m2 = $value;
+     }
+     function GetLinkshare() {
+           return $this->linkshare;
+     }
+     function GetL_m1() {
+           return $this->l_m1;
+     }
+     function GetL_d() {
+           return $this->l_d;
+     }
+     function GetL_m2() {
+           return $this->l_m2;
+     }
+     function SetLinkshare() {
+           $this->linkshare = "on";
+     }
+     function SetL_m1($value) {
+           $this->l_m1 = $value;
+     }
+     function SetL_d($value) {
+           $this->l_d = $value;
+     }
+     function SetL_m2($value) {
+           $this->l_m2 = $value;
+     }
+     function GetUpperlimit() {
+           return $this->upperlimit;
+     }
+     function GetU_m1() {
+           return $this->u_m1;
+     }
+     function GetU_d() {
+           return $this->u_d;
+     }
+     function GetU_m2() {
+           return $this->u_m2;
+     }
+     function SetUpperlimit() {
+           $this->upperlimit = "on";
+     }
+     function SetU_m1($value) {
+           $this->u_m1 = $value;
+     }
+     function SetU_d($value) {
+           $this->u_d = $value;
+     }
+     function SetU_m2($value) {
+           $this->u_m2 = $value;
+     }
 
 
-        function &add_queue($interface, &$qname, &$path) {
 
-		if (!is_array($this->subqueues))
-                        $this->subqueues = array();
-		$q =& new hfsc_queue();
-		$q->ReadConfig($qname);
-		$this->subqueues[$q->GetQname()] =& $q; //new hfsc_queue();
-		$q->SetInterface($this->GetInterface());
-		$q->SetParent(&$this);
-		$q->SetEnabled("on");
-                $q->SetLink($path);
-                $this->subqueues[$q->GetQName()] = $q;
-		$GLOBALS['allqueue_list'][] = $q->GetQname();
-		ref_on_altq_queue_list($this->GetQname(), $q->GetQname());
-		if (is_array($qname['queue'])) {
-			foreach ($qname['queue'] as $key1 => $que) {
-				array_push($path, $key1);
-                        	$q->add_queue($q->GetInterface(), &$que, &$path);
-				array_pop($path);
+		function &add_queue($interface, &$qname, &$path, &$input_errors) {
+
+			if (!is_array($this->subqueues))
+							$this->subqueues = array();
+			$q =& new hfsc_queue();
+			$q->SetInterface($this->GetInterface());
+			$q->SetParent(&$this);
+			$this->CalculateRemainingBandwidth($qname['bandwidth'], $qname['bandwidthtype']);
+			$q->ReadConfig($qname);
+			$q->validate_input($qname, $input_errors);
+			if (count($input_errors)) {
+				return $q;
 			}
-                }
-
-		return $q;
-        }
-
-        function delete_queue() { 
-		unref_on_altq_queue_list($this->GetQname());
-		if ($this->GetDefault()) 
-			altq_set_default_queue($this->GetInterface(), "false");
-		cleanup_queue_from_rules($this->GetQname());
-		foreach ($this->subqueues as $q)
-			$q->delete_queue();
-		unset_object_by_reference($this->GetLink());
-        }
-
-        /*
-         * Should search even its childs
-         */
-        function &find_queue($interface, $qname) {
-                if ($qname == $this->GetQname()) 
-                        return $this;
+			$q->SetEnabled("on");
+			$q->SetLink($path);
+			switch ($q->GetBwscale()) {
+				case "Mb":
+					$factor = 1000;
+					brak;
+				case "Kb":
+					$factor = 1;
+					break;
+				case "b":
+					$factor = 1/1000;
+					break;
+				case "Gb":
+					$factor = 1000 * 1000;
+					break;
+				case "%":
+					$factor = $this->GetAvailableBandwidth() / 100;
+					break;
+				default: /* XXX */
+					$factor = 1;
+					break;
+			} 
+			$q->SetAvailableBandwidth($q->GetBandwidth() * $factor);
+			$this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $q->GetBandwidth() * $factor);			
+			$q->ReadConfig($qname);
+			$this->subqueues[$q->GetQname()] =& $q; //new hfsc_queue()
+			$GLOBALS['allqueue_list'][] = $q->GetQname();
+			ref_on_altq_queue_list($this->GetQname(), $q->GetQname());
+			if (is_array($qname['queue'])) {
+				foreach ($qname['queue'] as $key1 => $que) {
+					array_push($path, $key1);
+								$q->add_queue($q->GetInterface(), &$que, &$path, $input_errors);
+					array_pop($path);
+				}
+					}
 	
-               	foreach ($this->subqueues as $q) {
-                       	$result =& $q->find_queue("", $qname);
-			if ($result)
-                       	        return $result;
-               	}
-        }
+			return $q;
+		}
 
- 	function &find_parentqueue($interface, $qname) {
+		function delete_queue() { 
+			unref_on_altq_queue_list($this->GetQname());
+			if ($this->GetDefault()) 
+				altq_set_default_queue($this->GetInterface(), "false");
+			cleanup_queue_from_rules($this->GetQname());
+			$parent =& $this->GetParent();
+			$parent->CalculateRemainingBandwidth($this->GetBandwidth(), $this->GetBwscale(), "delete"); 			
+			foreach ($this->subqueues as $q)
+				$q->delete_queue();
+			unset_object_by_reference($this->GetLink());
+			}
+	
+			/*
+			 * Should search even its childs
+			 */
+			function &find_queue($interface, $qname) {
+					if ($qname == $this->GetQname()) 
+							return $this;
+		
+					foreach ($this->subqueues as $q) {
+							$result =& $q->find_queue("", $qname);
+				if ($result)
+									return $result;
+					}
+			}
+
+	function &find_parentqueue($interface, $qname) {
 		if ($this->subqueues[$qname]) 
 			return $this;
-                foreach ($this->subqueues as $q) {
-	                $result = $q->find_parentqueue("", $qname);
+				foreach ($this->subqueues as $q) {
+					$result = $q->find_parentqueue("", $qname);
 			if ($result)
 				return $result;
 		}
-        }
+		}
 	
 	function validate_input($data, &$input_errors) {
 		parent::validate_input($data, $input_errors);
-	
+		
+		$reqfields[] = "bandwidth";
+		$reqdfieldsn[] = "Bandwidth";
+		$reqfields[] = "bandwidthtype";
+		$reqdfieldsn[] = "Bandwidthtype";
+
+		//do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
+		
+		if ($data['bandwidth'] && (!is_numeric($data['bandwidth']))) 
+			$input_errors[] = "Bandwidth must be an integer.";			 
+
+		if ($data['bandwidth'] < 0)
+			$input_errors[] = "Bandwidth cannot be negative.";
+			
+		if ($data['bandwidthtype'] == "%") {
+		/*
+			if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0)
+				$input_errors[] = "Bandwidth in percentage should be between 1 and 100 bounds.";
+		*/
+		}
+		
+		$parent =& $this->GetParent();
+		switch ($data['bandwidthtype']) {
+				case "Mb":
+					$myfactor = 1000;
+					brak;
+				case "Kb":
+					$myfactor = 1;
+					break;
+				case "b":
+					$myfactor = 1/1000;
+					break;
+				case "Gb":
+					$myfactor = 1000 * 1000;
+					break;
+				case "%":
+					$myfactor = $parent->GetBandwidth() / 100;					
+				default: /* XXX */
+					$myfactor = 1;
+					break;
+			} 
+/*
+
+		if ($parent->GetAvailableBandwidth() < $data['bandwidth'] * $myfactor)
+			$input_errors[] = "Bandwidth greater than that of parent. Correct the error";		
+*/	
 		if ($data['priority'] > 7)
-                        $input_errors[] = "Priority must be an integer between 1 and 7.";
+						$input_errors[] = "Priority must be an integer between 1 and 7.";
+						
+		/* 
+		 * XXX: WARNING Some of this are not valid checks! 
+		 * We should check available bandwidth too for these values 
+		 *
 		if ($data['upperlimit1'] <> "" &&  $data['upperlimit2'] == "")
 				$input_errors[] = ("upperlimit service curve defined but missing burst (d) value");
 			if ($data['upperlimit2'] <> "" &&  $data['upperlimit1'] == "")
@@ -1078,27 +1305,53 @@ class hfsc_queue extends priq_queue {
 				$input_errors[] = ("realtime d value needs to be numeric");
 			if ($data['realtime3'] <> "" && !is_valid_shaperbw($data['realtime3']))
 				$input_errors[] = ("realtime m2 value needs to be Kb, Mb, Gb, or %");
+			*/
 
 	}
 
-        function ReadConfig(&$cflink) {
+		function ReadConfig(&$cflink) {
+		if (isset($cflink['linkshare']) && $cflink['linkshare'] <> "") {
+			if (isset($cflink['linkshare1']) && $cflink['linkshare1'] <> "") {
+				$this->SetL_m1($cflink['linkshare1']);
+                                $this->SetL_d($cflink['linkshare2']);
+				$this->SetLinkshare();
+			}
+			if (isset($cflink['linkshare3']) && $cflink['linkshare3'] <> "") {
+                                $this->SetL_m2($cflink['linkshare3']);
+				$this->SetLinkshare();
+			}
+		}
+		if (isset($cflink['realtime']) && $cflink['realtime'] <> "") {
+                        if (isset($cflink['realtime1']) && $cflink['realtime1'] <> "") {
+                                $this->SetR_m1($cflink['realtime1']);
+                                $this->SetR_d($cflink['realtime2']);
+				$this->SetRealtime();
+			}
+                        if (isset($cflink['realtime3']) && $cflink['realtime3'] <> "") {
+                                $this->SetR_m2($cflink['realtime3']);
+				$this->SetRealtime();
+			}
+		}
+		if (isset($cflink['upperlimit']) && $cflink['upperlimit'] <> "") {
+                        if (isset($cflink['upperlimit1']) && $cflink['upperlimit1'] <> "") {
+                                $this->SetU_m1($cflink['upperlimit1']);
+                                $this->SetU_d($cflink['upperlimit2']);
+				$this->SetUpperlimit();
+			}
+                        if (isset($cflink['upperlimit3']) && $cflink['upperlimit3'] <> "") {
+                                $this->SetU_m2($cflink['upperlimit3']);
+				$this->SetUpperlimit();
+			}
+		}
 		parent::ReadConfig($cflink);
-		if (isset($cflink['linkshare'])) {
-			$this->SetLinkshare($cflink['linkshare1'], $cflink['linkshare2'], $cflink['linkshare3']);
+
 		}
-		if (isset($cflink['realtime'])) {
-			$this->SetRealtime($cflink['realtime1'], $cflink['realtime2'], $cflink['realtime3']);
-		}
-		if (isset($cflink['upperlimit'])) {
-			$this->SetUpperlimit($cflink['upperlimit1'], $cflink['upperlimit2'], $cflink['upperlimit3']);
-		}
-        }
 
 	function build_tree() {
 		$tree = " <li><a href=\"firewall_shaper.php?interface=" . $this->GetInterface() ."&queue=" . $this->GetQname()."&action=show"; 
 		$tree .= "\" ";
 		if ($this->GetDefault())
-                                $tree .= " class=\"navlnk\"";
+								$tree .= " class=\"navlnk\"";
 		$tree .= " >" . $this->GetQname() . "</a>";
 		if (is_array($this->subqueues)) {
 			$tree .= "<ul>";
@@ -1111,258 +1364,287 @@ class hfsc_queue extends priq_queue {
 		return $tree;
 	}
 
-        /* Even this should take childs in consideration */
-        function build_rules() {
+		/* Even this should take childs in consideration */
+		function build_rules() {
 
-                $pfq_rule = " queue ". $this->qname;
-                if ($this->GetInterface())
-                        $pfq_rule .= " on ".convert_friendly_interface_to_real_interface_name($this->GetInterface());
+				$pfq_rule = " queue ". $this->qname;
+				if ($this->GetInterface())
+						$pfq_rule .= " on ".convert_friendly_interface_to_real_interface_name($this->GetInterface());
 		if ($this->GetBandwidth() && $this->GetBwscale())
-                        $pfq_rule .= " bandwidth ".trim($this->GetBandwidth()).$this->GetBwscale();
-                	
-                if ($this->GetQpriority())
-                        $pfq_rule .= " priority " . $this->GetQpriority();
+						$pfq_rule .= " bandwidth ".trim($this->GetBandwidth()).$this->GetBwscale();
+					
+				if ($this->GetQpriority())
+						$pfq_rule .= " priority " . $this->GetQpriority();
 				if ($this->GetQlimit())
 						$pfq_rule .= " qlimit " . $this->GetQlimit();
 		  if ($this->GetDefault() || $this->GetRed() || $this->GetRio() || $this->GetEcn() || $this->GetRealtime() || $this->GetLinkshare() || $this->GetUpperlimit()) {
-                        $pfq_rule .= " hfsc ( ";
+						$pfq_rule .= " hfsc ( ";
 						if ($this->GetRed()) {
-                                $comma = 1;
-                                $pfq_rule .= " red ";
-                        }
-                        if ($this->GetRio()) {
-                                if ($comma) 
-                                        $pfq_rule .= " ,";
-                                $comma = 1;
-                                $pfq_rule .= " rio ";
-                        }
-                        if ($this->GetEcn()) {
-                                if ($comma) 
-                                        $pfq_rule .= " ,";
-                                $comma = 1;
-                                $pfq_rule .= " ecn ";
-                        }
-                        if ($this->GetDefault()) {
-                                if ($comma)
-                                        $pfq_rule .= " ,";
 								$comma = 1;
-                                $pfq_rule .= " default ";
-                        }
+								$pfq_rule .= " red ";
+						}
+						if ($this->GetRio()) {
+								if ($comma) 
+										$pfq_rule .= " ,";
+								$comma = 1;
+								$pfq_rule .= " rio ";
+						}
+						if ($this->GetEcn()) {
+								if ($comma) 
+										$pfq_rule .= " ,";
+								$comma = 1;
+								$pfq_rule .= " ecn ";
+						}
+						if ($this->GetDefault()) {
+								if ($comma)
+										$pfq_rule .= " ,";
+								$comma = 1;
+								$pfq_rule .= " default ";
+						}
 
-                        if ($this->GetRealtime() )  {
+						if ($this->GetRealtime() <> "")  {
 				if ($comma) 
-                                	$pfq_rule .= " , ";
-			$pfq_rule .= "realtime ".$this->GetR_m1() . " " . $this->GetR_d()." ". $this->GetR_m2() ." ";
+									$pfq_rule .= " , ";
+				if ($this->GetR_m1()  <> "" && $this->GetR_d() <> "" && $this->GetR_m2() <> "")
+			$pfq_rule .= " realtime (".$this->GetR_m1() . ", " . $this->GetR_d().", ". $this->GetR_m2() .") ";
+				else  if ($this->GetR_m2() <> "")
+					$pfq_rule .= " realtime " . $this->GetR_m2();
 				$comma = 1;
 			}
-                        if ($this->GetLinkshare()) {
-                                if ($comma)
+						if ($this->GetLinkshare() <> "") {
+								if ($comma)
 					$pfq_rule .= " ,";
-			$pfq_rule .= " linkshare ".$this->GetL_m1(). " ". $this->GetL_d(). " ". $this->GetL_m2(). " ";
+				if ($this->GetL_m1() <> "" && $this->GetL_d() <> "" && $this->GetL_m2() <> "")
+			$pfq_rule .= " linkshare (".$this->GetL_m1(). ", ". $this->GetL_d(). ", ". $this->GetL_m2(). ") ";
+				else if ($this->GetL_m2() <> "")
+					$pfq_rule .= " linkshare " . $this->GetL_m2() . " ";
 				$comma = 1;
 			}
-                        if ($this->GetUpperlimit()) {
+						if ($this->GetUpperlimit() <> "") {
 				if ($comma)
 					$pfq_rule .= " ,";
-                            $pfq_rule .= " upperlimit ".$this->GetU_m1()." ". $this->GetU_d()." ". $this->GetU_m2(). " ";
+				if ($this->GetU_m1() <> "" && $this->GetU_d() <> "" && $this->GetU_m2() <> "")
+							$pfq_rule .= " upperlimit (".$this->GetU_m1().", ". $this->GetU_d().", ". $this->GetU_m2(). ") ";
+				else if ($this->GetU_m2() <> "")
+					$pfq_rule .= " upperlimit " . $this->GetU_m2() . " ";
 			}
-	                    $pfq_rule .= " )\n ";
+						$pfq_rule .= " )\n ";
 					}
 					if (count($this->subqueues)) {
-                        $i = count($this->subqueues);
-                        $pfq_rule .= " { ";
-                        foreach ($this->subqueues as $qkey => $qnone) {
-                                if ($i > 1) {
-                                        $i--;
-                                        $pfq_rule .= " {$qkey}, ";
-                                } else
-                                        $pfq_rule .= " {$qkey} ";
-		                        $pfq_rule .= " } \n";
-        		                foreach ($this->subqueues as $q)
-	                                $pfq_rule .= $q->build_rules();
-            		    }
-                	}
+						$i = count($this->subqueues);
+						$pfq_rule .= " { ";
+						foreach ($this->subqueues as $qkey => $qnone) {
+								if ($i > 1) {
+										$i--;
+										$pfq_rule .= " {$qkey}, ";
+								} else
+										$pfq_rule .= " {$qkey} ";
+								$pfq_rule .= " } \n";
+								foreach ($this->subqueues as $q)
+									$pfq_rule .= $q->build_rules();
+						}
+					}
 
 				 $pfq_rule .= " \n";
-            
-			    return $pfq_rule;
-        }
+			
+				return $pfq_rule;
+		}
 
 	function build_javascript() {
 		$javascript = parent::build_javascript();
 		$javascript .= "<script type=\"text/javascript\">";
 		$javascript .= "function enable_realtime(enable_over) { \n";
-        	$javascript .= "if (document.form.realtime.checked || enable_over) { \n";
-               	$javascript .= "document.form.realtime1.disabled = 0;\n";
-               	$javascript .= "document.form.realtime2.disabled = 0;\n";
-               	$javascript .= "document.form.realtime3.disabled = 0;\n";
-        	$javascript .= " } else { \n";
-               	$javascript .= "document.form.realtime1.disabled = 1;\n";
-               	$javascript .= "document.form.realtime2.disabled = 1;\n";
-               	$javascript .= "document.form.realtime3.disabled = 1;\n";
-        	$javascript .= " } \n";
+		$javascript .= "if (document.iform.realtime.checked || enable_over) { \n";
+		$javascript .= "document.iform.realtime1.disabled = 0;\n";
+		$javascript .= "document.iform.realtime2.disabled = 0;\n";
+		$javascript .= "document.iform.realtime3.disabled = 0;\n";
+		$javascript .= " } else { \n";
+		$javascript .= "document.iform.realtime1.disabled = 1;\n";
+		$javascript .= "document.iform.realtime2.disabled = 1;\n";
+		$javascript .= "document.iform.realtime3.disabled = 1;\n";
+		$javascript .= " } \n";
 		$javascript .= " } \n";
 		$javascript .= "function enable_linkshare(enable_over) { \n";
-        	$javascript .= "if (document.form.linkshare.checked || enable_over) { \n";
-               	$javascript .= "document.form.linkshare1.disabled = 0;\n";
-               	$javascript .= "document.form.linkshare2.disabled = 0;\n";
-               	$javascript .= "document.form.linkshare3.disabled = 0;\n";
-        	$javascript .= " } else { \n";
-               	$javascript .= "document.form.linkshare1.disabled = 1;\n";
-               	$javascript .= "document.form.linkshare2.disabled = 1;\n";
-               	$javascript .= "document.form.linkshare3.disabled = 1;\n";
-        	$javascript .= " } \n";
+		$javascript .= "if (document.iform.linkshare.checked || enable_over) { \n";
+		$javascript .= "document.iform.linkshare1.disabled = 0;\n";
+		$javascript .= "document.iform.linkshare2.disabled = 0;\n";
+		$javascript .= "document.iform.linkshare3.disabled = 0;\n";
+		$javascript .= " } else { \n";
+		$javascript .= "document.iform.linkshare1.disabled = 1;\n";
+		$javascript .= "document.iform.linkshare2.disabled = 1;\n";
+		$javascript .= "document.iform.linkshare3.disabled = 1;\n";
+		$javascript .= " } \n";
 		$javascript .= " } \n";
 		$javascript .= "function enable_upperlimit(enable_over) { \n";
-        	$javascript .= "if (document.form.upperlimit.checked || enable_over) { \n";
-               	$javascript .= "document.form.upperlimit1.disabled = 0;\n";
-               	$javascript .= "document.form.upperlimit2.disabled = 0;\n";
-               	$javascript .= "document.form.upperlimit3.disabled = 0;\n";
-        	$javascript .= " } else { \n";
-               	$javascript .= "document.form.upperlimit1.disabled = 1;\n";
-               	$javascript .= "document.form.upperlimit2.disabled = 1;\n";
-               	$javascript .= "document.form.upperlimit3.disabled = 1;\n";
-        	$javascript .= " } \n";
+		$javascript .= "if (document.iform.upperlimit.checked || enable_over) { \n";
+		$javascript .= "document.iform.upperlimit1.disabled = 0;\n";
+		$javascript .= "document.iform.upperlimit2.disabled = 0;\n";
+		$javascript .= "document.iform.upperlimit3.disabled = 0;\n";
+		$javascript .= " } else { \n";
+		$javascript .= "document.iform.upperlimit1.disabled = 1;\n";
+		$javascript .= "document.iform.upperlimit2.disabled = 1;\n";
+		$javascript .= "document.iform.upperlimit3.disabled = 1;\n";
+		$javascript .= " } \n";
 			
-			$javascript .= "} \n";
+		$javascript .= "} \n";
 		$javascript .= "</script>";
+
 		return $javascript;
 	}
 
-        function build_form() {
-                $form = "<tr>";
-                $form .= "<td valign=\"top\" class=\"vncellreq\">Bandwidth</td>";
-                $form .= "<td class=\"vtable\"> <input name=\"bandwidth\" id=\"bandwidth\" class=\"formfld unknown\" value=\"";
-                $form .= htmlspecialchars($this->GetBandwidth());
-                $form .= "\">";
-		$form .= "<select name=\"bandwidthtype\" id=\"bandwidthtype\" class=\"formselect\">";
-                $form .= "<option value=\"Mb\"";
-                if (stristr($this->GetBwscale(),"Mb"))
-                        $form .= " selected=\"yes\"";
-                $form .= ">Mbit/s</option>";
-                $form .= "<option value=\"Kb\"";
-                if (stristr($this->GetBwscale(),"Kb"))
-                        $form .= " selected=\"yes\"";
-                $form .= ">Kbit/s</option>";
-                $form .= "<option value=\"\"";
-                if (stristr($this->GetBwscale(),"b"))
-                        $form .= " selected=\"yes\"";
-                $form .= ">Bit/s</option>";
-		$form .= "<option value=\"\"";
-                if (stristr($this->GetBwscale(),"%"))
-                        $form .= " selected=\"yes\"";
-                $form .= ">%</option>";
-                $form .= "</select> <br>";
-                $form .= "<span class=\"vexpl\">Choose the amount of bandwidth for this queue";
-                $form .= "</span></td>";
-                $form .= parent::build_form();
-                $form .= "<tr>";
-                $form .= "<td width=\"22%\" valign=\"top\" class=\"vncellreq\">Service Curve (sc)</td>";
-                $form .= "<td width=\"78%\" class=\"vtable\">";
-                $form .= "<table>";
-                $form .= "<tr><td>&nbsp;</td><td><center>m1</center></td><td><center>d</center></td><td><center><b>m2</b></center></td></tr>";
-                $form .= "<tr><td><input type=\"checkbox\" id=\"upperlimit\" name=\"upperlimit\"";
-                if($this->GetUpperlimit()) 
-			$form .=  " CHECKED ";
-                $form .= "onChange=\"enable_upperlimit()\"> Upperlimit:</td><td><input size=\"6\" value=\"";
-                $form .= htmlspecialchars($this->GetU_m1());
-                $form .= "\" id=\"upperlimit1\" name=\"upperlimit1\" ";
+		function build_form() {
+				$form = "<tr>";
+				$form .= "<td valign=\"top\" class=\"vncellreq\">Bandwidth</td>";
+				$form .= "<td class=\"vtable\"> <input name=\"bandwidth\" id=\"bandwidth\" class=\"formfld unknown\" value=\"";
+				$form .= htmlspecialchars($this->GetBandwidth());
+				$form .= "\">";
+				$form .= "<select name=\"bandwidthtype\" id=\"bandwidthtype\" class=\"formselect\">";
+				$form .= "<option value=\"Gb\"";
+				if ($this->GetBwscale() == "Gb")
+						$form .= " selected=\"yes\"";
+				$form .= ">Gbit/s</option>";
+				$form .= "<option value=\"Mb\"";
+				if ($this->GetBwscale() == "Mb")
+						$form .= " selected=\"yes\"";
+				$form .= ">Mbit/s</option>";
+				$form .= "<option value=\"Kb\"";
+				if ($this->GetBwscale() == "Kb")
+						$form .= " selected=\"yes\"";
+				$form .= ">Kbit/s</option>";
+				$form .= "<option value=\"\"";
+				if ($this->GetBwscale() == "b")
+						$form .= " selected=\"yes\"";
+				$form .= ">Bit/s</option>";
+				$form .= "<option value=\"%\"";
+				if ($this->GetBwscale() == "%")
+						$form .= " selected=\"yes\"";
+				$form .= ">%</option>";
+				$form .= "</select> <br>";
+				$form .= "<span class=\"vexpl\">Choose the amount of bandwidth for this queue";
+				$form .= "</span></td>";
+				$form .= parent::build_form();
+				$form .= "<tr>";
+				$form .= "<td width=\"22%\" valign=\"top\" class=\"vncellreq\">Service Curve (sc)</td>";
+				$form .= "<td width=\"78%\" class=\"vtable\">";
+				$form .= "<table>";
+				$form .= "<tr><td>&nbsp;</td><td><center>m1</center></td><td><center>d</center></td><td><center><b>m2</b></center></td></tr>";
+				$form .= "<tr><td><input type=\"checkbox\" id=\"upperlimit\" name=\"upperlimit\"";
+				if($this->GetUpperlimit() <> "") 
+					$form .=  " CHECKED ";
+				$form .= "onChange=\"enable_upperlimit()\"> Upperlimit:</td><td><input size=\"6\" value=\"";
+				$form .= htmlspecialchars($this->GetU_m1());
+				$form .= "\" id=\"upperlimit1\" name=\"upperlimit1\" ";
+				if (!$this->GetUpperlimit()) $form .= " disabled";
+				$form .= "></td><td><input size=\"6\" value=\"";
+				$form .= htmlspecialchars($this->GetU_d());
+				$form .= "\" id=\"upperlimi2\" name=\"upperlimit2\" ";
 		if (!$this->GetUpperlimit()) $form .= " disabled";
 		$form .= "></td><td><input size=\"6\" value=\"";
-                $form .= htmlspecialchars($this->GetU_d());
-                $form .= "\" id=\"upperlimi2\" name=\"upperlimit2\" ";
-		if (!$this->GetUpperlimit()) $form .= " disabled";
-		$form .= "></td><td><input size=\"6\" value=\"";
-                $form .= htmlspecialchars($this->GetU_m2());
-                $form .= "\" id=\"upperlimit3\" name=\"upperlimit3\" ";
+				$form .= htmlspecialchars($this->GetU_m2());
+				$form .= "\" id=\"upperlimit3\" name=\"upperlimit3\" ";
 		if (!$this->GetUpperlimit()) $form .= " disabled";
 		$form .= "></td><td>The maximum allowed bandwidth for the queue.</td></tr>";
-                $form .= "<tr><td><input type=\"checkbox\" id=\"realtime\" name=\"realtime\"";
-                if($this->GetRealtime()) 
+				$form .= "<tr><td><input type=\"checkbox\" id=\"realtime\" name=\"realtime\"";
+				if($this->GetRealtime() <> "") 
 			$form .=  " CHECKED ";
-                $form .= "onChange=\"enable_realtime()\"> Real time:</td><td><input size=\"6\" value=\"";
-                $form .= htmlspecialchars($this->GetR_m1());
-                $form .= "\" id=\"realtime1\" name=\"realtime1\" ";
+				$form .= "onChange=\"enable_realtime()\"> Real time:</td><td><input size=\"6\" value=\"";
+				$form .= htmlspecialchars($this->GetR_m1());
+				$form .= "\" id=\"realtime1\" name=\"realtime1\" ";
 		if (!$this->GetRealtime()) $form .= " disabled";
 		$form .= "></td><td><input size=\"6\" value=\"";
-                $form .= htmlspecialchars($this->GetR_d());
-                $form .= "\" id=\"realtime2\" name=\"realtime2\" ";
+				$form .= htmlspecialchars($this->GetR_d());
+				$form .= "\" id=\"realtime2\" name=\"realtime2\" ";
 		if (!$this->GetRealtime()) $form .= " disabled";
 		$form .= "></td><td><input size=\"6\" value=\"";
-                $form .= htmlspecialchars($this->GetR_m2());
-                $form .= "\" id=\"realtime3\" name=\"realtime3\" ";
+				$form .= htmlspecialchars($this->GetR_m2());
+				$form .= "\" id=\"realtime3\" name=\"realtime3\" ";
 		if (!$this->GetRealtime()) $form .= " disabled";
 		$form .= "></td><td>The minimum required bandwidth for the queue.</td></tr>";
-                $form .= "<tr><td><input type=\"checkbox\" id=\"linkshare\" id=\"linkshare\" name=\"linkshare\"";
-                if($this->GetLinkshare()) 
+				$form .= "<tr><td><input type=\"checkbox\" id=\"linkshare\" id=\"linkshare\" name=\"linkshare\"";
+				if($this->GetLinkshare() <> "") 
 			$form .=  " CHECKED ";
-                $form .= "onChange=\"enable_linkshare()\"> Link share:</td><td><input size=\"6\" value=\"";
-                $form .= htmlspecialchars($this->GetL_m1());
-                $form .= "\" id=\"linkshare1\" name=\"linkshare1\" ";
+				$form .= "onChange=\"enable_linkshare()\"> Link share:</td><td><input size=\"6\" value=\"";
+				$form .= htmlspecialchars($this->GetL_m1());
+				$form .= "\" id=\"linkshare1\" name=\"linkshare1\" ";
 		if (!$this->GetLinkshare()) $form .= " disabled";
 		$form .= "></td><td><input size=\"6\" value=\"";
-                $form .= htmlspecialchars($this->GetL_d());
-                $form .= "\" id=\"linkshare2\" name=\"linkshare2\" ";
+				$form .= htmlspecialchars($this->GetL_d());
+				$form .= "\" id=\"linkshare2\" name=\"linkshare2\" ";
 		if (!$this->GetLinkshare()) $form .= " disabled";
 		$form .= "></td><td><input size=\"6\" value=\"";
-                $form .= htmlspecialchars($this->GetL_m2());
-                $form .= "\" id=\"linkshare3\" name=\"linkshare3\" ";
+				$form .= htmlspecialchars($this->GetL_m2());
+				$form .= "\" id=\"linkshare3\" name=\"linkshare3\" ";
 		if (!$this->GetLinkshare()) $form .= " disabled";
 		$form .= "></td><td>The bandwidth share of a backlogged queue - this overrides priority.</td></tr>";
-                $form .= "</table><br>";
-                $form .= "The format for service curve specifications is (m1, d, m2).  m2 controls";
-                $form .= "the bandwidth assigned to the queue.  m1 and d are optional and can be";
-                $form .= "used to control the initial bandwidth assignment.  For the first d milliseconds the queue gets the bandwidth given as m1, afterwards the value";
-                $form .= "given in m2.";
-                $form .= "</span></td>";
-                $form .= "</tr>";
+				$form .= "</table><br>";
+				$form .= "The format for service curve specifications is (m1, d, m2).  m2 controls";
+				$form .= "the bandwidth assigned to the queue.  m1 and d are optional and can be";
+				$form .= "used to control the initial bandwidth assignment.  For the first d milliseconds the queue gets the bandwidth given as m1, afterwards the value";
+				$form .= "given in m2.";
+				$form .= "</span></td>";
+				$form .= "</tr>";
 
-                return $form;
-        }
+				return $form;
+		}
 
 	function update_altq_queue_data(&$data) { 
 		$this->ReadConfig($data);
 	}
 
-        function wconfig() {
+	function wconfig() {
 		$cflink =& get_reference_to_me_in_config($this->GetLink());
-                if (!is_array($cflink))
-                        $cflink = array();
-                $cflink['name'] = $this->GetQname();
-                $cflink['interface'] = $this->GetInterface();
-                $cflink['qlimit'] = $this->GetQlimit();
-                $cflink['priority'] = $this->GetQpriority();
-                $cflink['description'] = $this->GetDescription();
-		$cflink['bandwidth'] = $this->GetBandwidth();
-                $cflink['bandwidthtype'] = $this->GetBwscale();
-		$cflink['enabled'] = $this->GetEnabled();
-		$cflink['default'] = $this->GetDefault();
-		$cflink['red'] = $this->GetRed();
-		$cflink['rio'] = $this->GetRio();
-		$cflink['ecn'] = $this->GetEcn();
-		if ($this->GetLinkshare()) {
-			$cflink['linkshare'] = "on";
-			$cflink['linkshare3'] = $this->GetL_m2();
-			$cflink['linkshare2'] = $this->GetL_d();
-			$cflink['linkshare1'] = $this->GetL_m1();
-		}
-		if ($this->GetRealtime()) {
-			$cflink['realtime'] = "on";
-			$cflink['realtime3'] = $this->GetR_m2();
-			$cflink['realtime2'] = $this->GetR_d();
-			$cflink['realtime1'] = $this->GetR_m1();
-		}
-		if ($this->GetUpperlimit()) {
-			$cflink['upperlimit'] = "on";
-			$cflink['upperlimit3'] = $this->GetU_m2();
-			$cflink['upperlimit2'] = $this->GetU_d();
-			$cflink['upperlimit1'] = $this->GetU_m1();
+		if (!is_array($cflink))
+			$cflink = array();
+			$cflink['name'] = $this->GetQname();
+			$cflink['interface'] = $this->GetInterface();
+			$cflink['qlimit'] = $this->GetQlimit();
+			$cflink['priority'] = $this->GetQpriority();
+			$cflink['description'] = $this->GetDescription();
+			$cflink['bandwidth'] = $this->GetBandwidth();
+			$cflink['bandwidthtype'] = $this->GetBwscale();
+			$cflink['enabled'] = $this->GetEnabled();
+			$cflink['default'] = $this->GetDefault();
+			$cflink['red'] = $this->GetRed();
+			$cflink['rio'] = $this->GetRio();
+			$cflink['ecn'] = $this->GetEcn();
+			if ($this->GetLinkshare() <> "" ) {
+				if ($this->GetL_m1() <> "") {
+					$cflink['linkshare1'] = $this->GetL_m1();
+					$cflink['linkshare2'] = $this->GetL_d();
+					$cflink['linkshare'] = "on";
+				}
+				if ($this->GetL_m2() <> "") {
+					$cflink['linkshare3'] = $this->GetL_m2();
+					$cflink['linkshare'] = "on";
+				}
+			}
+			if ($this->GetRealtime() <> "" ) {
+				if ($this->GetR_m1() <> "") {
+					$cflink['realtime1'] = $this->GetR_m1();
+					$cflink['realtime2'] = $this->GetR_d();
+					$cflink['realtime'] = "on";
+				}
+				if ($this->GetR_m2()) {
+					$cflink['realtime3'] = $this->GetR_m2();
+					$cflink['realtime'] = "on";
+				}
+			}
+			if ($this->GetUpperlimit() <> "") {
+				if ($this->GetU_m1() <> "") {
+					$cflink['upperlimit1'] = $this->GetU_m1();
+					$cflink['upperlimit2'] = $this->GetU_d();
+					$cflink['upperlimit'] = "on";
+				}
+				if ($this->GetU_m2()) {
+					$cflink['upperlimit3'] = $this->GetU_m2();
+					$cflink['upperlimit'] = "on";
+				}
+			}
 		}
 	}
-}
 
 class cbq_queue extends priq_queue {
-        var $qborrow;
+		var $qborrow;
 
 	function GetBorrow() {
 		return $this->qborrow;
@@ -1371,90 +1653,159 @@ class cbq_queue extends priq_queue {
 		$this->qborrow = $borrow;
 	}
 	function CanHaveChilds() {
-                return true;
-        }
+			return true;
+	}
 
-        function &add_queue($interface, &$qname, &$path) {
+	function &add_queue($interface, &$qname, &$path, &$input_errors) {
 
 		if (!is_array($this->subqueues))
-                        $this->subqueues = array();
+						$this->subqueues = array();
 		$q =& new cbq_queue();
-                $q->ReadConfig($qname);
 		$q->SetInterface($this->GetInterface());
 		$q->SetParent(&$this);
+		switch ($q->GetBwscale()) {
+			case "Mb":
+				$factor = 1000;
+				brak;
+			case "Kb":
+				$factor = 1;
+				break;
+			case "b":
+				$factor = 1/1000;
+				break;
+			case "Gb":
+				$factor = 1000 * 1000;
+				break;
+			case "%":
+				$factor = $this->GetAvailableBandwidth() / 100;
+				break;
+			default: /* XXX */
+				$factor = 1;
+				break;
+		} 
+		$q->SetAvailableBandwidth($q->GetBandwidth() * $factor);
+		$this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $q->GetBandwidth() * $factor);
+		$q->ReadConfig($qname);
+		$q->validate_input($qname, $input_errors);
+		if (count($input_errors)) {
+			return $q;
+		}
 		$q->SetEnabled("on");
-                $q->SetLink($path);
-                $this->subqueues[$q->GetQName()] = &$q;
+		$q->SetLink($path);
+		$this->subqueues[$q->GetQName()] = &$q;
 		$GLOBALS['allqueue_list'][] = $q->GetQname();
 		ref_on_altq_queue_list($this->GetQname(), $q->GetQname());
 		if (is_array($qname['queue'])) {
-                        foreach ($qname['queue'] as $key1 => $que) {
-                                array_push($path, $key1);
-                                $q->add_queue($q->GetInterface(), &$que, &$path);
-                                array_pop($path);
-                        }
-                }
+				foreach ($qname['queue'] as $key1 => $que) {
+						array_push($path, $key1);
+						$q->add_queue($q->GetInterface(), &$que, &$path, $input_errors);
+						array_pop($path);
+				}
+		}
 
 		return $q;
-        }
+		}
 	
-        /*
-         * Should search even its childs
-         */
-        function &find_queue($interface, $qname) {
-                if ($qname == $this->GetQname())
-                        return $this;
-               	foreach ($this->subqueues as $q) {
-                       	$result =& $q->find_queue("", $qname);
+		/*
+		 * Should search even its childs
+		 */
+		function &find_queue($interface, $qname) {
+				if ($qname == $this->GetQname())
+						return $this;
+				foreach ($this->subqueues as $q) {
+						$result =& $q->find_queue("", $qname);
 			if ($result)
-                               	return $result;
-               	}
-        }
+								return $result;
+				}
+		}
 
 	function &find_parentqueue($interface, $qname) {
-                if ($this->subqueues[$qname])
-                        return $this;
-                foreach ($this->subqueues as $q) {
-        	        $result = $q->find_parentqueue("", $qname);
+				if ($this->subqueues[$qname])
+						return $this;
+				foreach ($this->subqueues as $q) {
+					$result = $q->find_parentqueue("", $qname);
 			if ($result)
 				return $result;
 		}
-        }
+		}
 
 	function delete_all() {
 		if (count($this->subqueues)) {
-                foreach ($this->subqueues as $q) {
-                        $q->delete_all();
+				foreach ($this->subqueues as $q) {
+						$q->delete_all();
 			unset_object_by_reference($q->GetLink());
-                        unset($q);
-                }
-                unset($subqueues);
+						unset($q);
+				}
+				unset($subqueues);
 		}
-        }
+		}
 
-        function delete_queue() {
-		unref_on_altq_queue_list($this->GetQname());
-		if ($this->GetDefault())
-			altq_set_default_queue($this->GetInterface(), "false");
-		cleanup_queue_from_rules($this->GetQname());
-		foreach ($this->subqueues as $q)
-			$q->delete_queue();
-		unset_object_by_reference($this->subqueues[$qname]->GetLink());
-        }
+		function delete_queue() {
+			unref_on_altq_queue_list($this->GetQname());
+			if ($this->GetDefault())
+				altq_set_default_queue($this->GetInterface(), "false");
+			cleanup_queue_from_rules($this->GetQname());
+			foreach ($this->subqueues as $q)
+				$q->delete_queue();
+			$parent =& $this->GetParent();
+			$parent->CalculateRemainingBandwidth($this->GetBandwidth(), $this->GetBwscale(), "delete"); 			
+			unset_object_by_reference($this->subqueues[$qname]->GetLink());
+		}
 	
 	function validate_input($data, &$input_errors) {
 		parent::validate_input($data, $input_errors);
+		
 		if ($data['priority'] > 7)
-                        $input_errors[] = "Priority must be an integer between 1 and 7.
-";
-	}
+				$input_errors[] = "Priority must be an integer between 1 and 7.";
+		$reqfields[] = "bandwidth";
+		$reqdfieldsn[] = "Bandwidth";
+		$reqfields[] = "bandwidthtype";
+		$reqdfieldsn[] = "Bandwidthtype";
 
-        function ReadConfig(&$q) {
-                parent::ReadConfig($q);
+		//do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
+		
+		if ($data['bandwidth'] && (!is_numeric($data['bandwidth']))) 
+			$input_errors[] = "Bandwidth must be an integer.";			 
+
+		if ($data['bandwidth'] < 0)
+				$input_errors[] = "Bandwidth cannot be negative.";		
+				
+		if ($data['bandwidthtype'] == "%") {
+			if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0)
+				$input_errors[] = "Bandwidth in percentage should be between 1 and 100 bounds.";
+		}
+			
+		$parent =& $this->GetParent();
+		switch ($data['bandwidthtype']) {
+				case "Mb":
+					$myfactor = 1000;
+					brak;
+				case "Kb":
+					$myfactor = 1;
+					break;
+				case "b":
+					$myfactor = 1/1000;
+					break;
+				case "Gb":
+					$myfactor = 1000 * 1000;
+					break;
+				case "%":
+					$myfactor = $parent->GetBandwidth() / 100;										
+				default: /* XXX */
+					$myfactor = 1;
+					break;
+			} 
+/*
+		if ($parent->GetAvailableBandwidth() < $data['bandwidth'] * $myfactor)
+				$input_errors[] = "Bandwidth greater than that of parent. Correct the error";
+*/
+	}
+		function ReadConfig(&$q) {
+				parent::ReadConfig($q);
 		if ($q['borrow'])
 			$this->SetBorrow("on");
-        }
-        
+		}
+		
 	function build_javascript() {
 		return parent::build_javascript();
 	}
@@ -1463,7 +1814,7 @@ class cbq_queue extends priq_queue {
 		$tree = " <li><a href=\"firewall_shaper.php?interface=" . $this->GetInterface()."&queue=" . $this->GetQname()."&action=show"; 
 			$tree .= "\" ";
 			if ($this->GetDefault())
-                                $tree .= " class=\"navlnk\"";
+								$tree .= " class=\"navlnk\"";
 			$tree .= " >" . $this->GetQname() . "</a>";
 			if (is_array($this->subqueues)) {
 				$tree .= "<ul>";
@@ -1476,214 +1827,134 @@ class cbq_queue extends priq_queue {
 			return $tree;
 	}
 		
-        /* Even this should take childs in consideration */
-        function build_rules() {
+	/* Even this should take childs in consideration */
+	function build_rules() {
+		   $pfq_rule = "queue ". $this->qname;
+			if ($this->GetInterface())
+					$pfq_rule .= " on ".convert_friendly_interface_to_real_interface_name($this->GetInterface());
+			if ($this->GetBandwidth() && $this->GetBwscale())
+					$pfq_rule .= " bandwidth ".trim($this->GetBandwidth()).$this->GetBwscale();
+			if ($this->GetQpriority())
+					$pfq_rule .= " priority " . $this->GetQpriority();
+			if ($this->GetQlimit())
+					$pfq_rule .= " qlimit " . $this->GetQlimit();
+			if ($this->GetDefault() || $this->GetRed() || $this->GetRio() || $this->GetEcn() || $this->GetBorrow()) {
+				$pfq_rule .= " cbq ( ";
+				if ($this->GetRed()) {
+						$comma = 1;
+						$pfq_rule .= " red ";
+				}
+				if ($this->GetRio()) {
+						if ($comma) 
+								$pfq_rule .= " ,";
+						$comma = 1;
+						$pfq_rule .= " rio ";
+				}
+				if ($this->GetEcn()) {
+						if ($comma) 
+								$pfq_rule .= " ,";
+						$comma = 1;
+						$pfq_rule .= " ecn ";
+				}
+				if ($this->GetDefault()) {
+						if ($comma)
+								$pfq_rule .= " ,";
+						$comma = 1;
+						$pfq_rule .= " default ";
+				}
+				if ($this->GetBorrow()) {
+					if ($comma)
+						$pfq_rule .= ", ";
+					$pfq_rule .= " borrow ";
+				}
+				$pfq_rule .= " ) ";
+			} 
+			if (count($this->subqueues)) {
+					$i = count($this->subqueues);
+					$pfq_rule .= " { ";
+					foreach ($this->subqueues as $qkey => $qnone) {
+							if ($i > 1) {
+									$i--;
+									$pfq_rule .= " {$qkey}, ";
+							} else
+									$pfq_rule .= " {$qkey} ";
+					}
+					$pfq_rule .= " } \n";
+					foreach ($this->subqueues as $q)
+							$pfq_rule .= $q->build_rules();
+			}
 
-               $pfq_rule = "queue ". $this->qname;
-                if ($this->GetInterface())
-                        $pfq_rule .= " on ".convert_friendly_interface_to_real_interface_name($this->GetInterface());
-				if ($this->GetBandwidth() && $this->GetBwscale())
-                        $pfq_rule .= " bandwidth ".trim($this->GetBandwidth()).$this->GetBwscale();
-				if ($this->GetQpriority())
-                        $pfq_rule .= " priority " . $this->GetQpriority();
-				if ($this->GetQlimit())
-						$pfq_rule .= " qlimit " . $this->GetQlimit();
-		if ($this->GetDefault() || $this->GetRed() || $this->GetRio() || $this->GetEcn() || $this->GetBorrow()) {
-                        $pfq_rule .= " cbq ( ";
-			if ($this->GetRed()) {
-                                $comma = 1;
-                                $pfq_rule .= " red ";
-                        }
-                        if ($this->GetRio()) {
-                                if ($comma) 
-                                        $pfq_rule .= " ,";
-                                $comma = 1;
-                                $pfq_rule .= " rio ";
-                        }
-                        if ($this->GetEcn()) {
-                                if ($comma) 
-                                        $pfq_rule .= " ,";
-                                $comma = 1;
-                                $pfq_rule .= " ecn ";
-                        }
-                        if ($this->GetDefault()) {
-                                if ($comma)
-                                        $pfq_rule .= " ,";
-                                $comma = 1;
-                                $pfq_rule .= " default ";
-                        }
-                        if ($this->GetBorrow()) {
-							if ($comma)
-								$pfq_rule .= ", ";
-                            $pfq_rule .= " borrow ";
-						}
-                        $pfq_rule .= " ) ";
-	            } 
-		if (count($this->subqueues)) {
-                         $i = count($this->subqueues);
-                        $pfq_rule .= " { ";
-                        foreach ($this->subqueues as $qkey => $qnone) {
-                                if ($i > 1) {
-                                        $i--;
-                                        $pfq_rule .= " {$qkey}, ";
-                                } else
-                                        $pfq_rule .= " {$qkey} ";
-                        }
-                        $pfq_rule .= " } \n";
-                        foreach ($this->subqueues as $q)
-                                $pfq_rule .= $q->build_rules();
-                }
-		//}
-		 $pfq_rule .= " \n";
-                return $pfq_rule;
-        }
+			$pfq_rule .= " \n";
+			return $pfq_rule;
+	}
 
-        function build_form() {
-                $form = "<tr>";
-                $form .= "<td valign=\"top\" class=\"vncellreq\">Bandwidth</td>";
-                $form .= "<td class=\"vtable\"> <input name=\"bandwidth\" id=\"bandwidth\" class=\"formfld unknown\" value=\"";
-                if ($this->GetBandwidth() > 0)
-                        $form .= htmlspecialchars($this->GetBandwidth());
-                $form .= "\">";
+	function build_form() {
+		$form = "<tr>";
+		$form .= "<td valign=\"top\" class=\"vncellreq\">Bandwidth</td>";
+		$form .= "<td class=\"vtable\"> <input name=\"bandwidth\" id=\"bandwidth\" class=\"formfld unknown\" value=\"";
+		if ($this->GetBandwidth() > 0)
+				$form .= htmlspecialchars($this->GetBandwidth());
+		$form .= "\">";
 		$form .= "<select name=\"bandwidthtype\" id=\"bandwidthtype\" class=\"formselect\">";
-                $form .= "<option value=\"Mb\"";
-                if (stristr($this->GetBwscale(),"Mb"))
-                        $form .= " selected=\"yes\"";
-                $form .= ">Mbit/s</option>";
-                $form .= "<option value=\"Kb\"";
-                if (stristr($this->GetBwscale(),"Kb"))
-                        $form .= " selected=\"yes\"";
-                $form .= ">Kbit/s</option>";
-                $form .= "<option value=\"\"";
-                if (stristr($this->GetBwscale(),"b"))
-                        $form .= " selected=\"yes\"";
-                $form .= ">Bit/s</option>";
-                $form .= "<option value=\"\"";
-                if (stristr($this->GetBwscale(),"%"))
-                        $form .= " selected=\"yes\"";
-                $form .= ">%</option>";
-                $form .= "</select> <br>";
-                $form .= "<span class=\"vexpl\">Choose the amount of bandwidth for this
- queue";
-                $form .= "</span></td></tr>";
-                $form .= parent::build_form();
-                $form .= "<tr><td class=\"vncellreq\">Scheduler specific options</td>";
+		$form .= "<option value=\"Gb\"";
+		if ($this->GetBwscale() == "Gb")
+				$form .= " selected=\"yes\"";
+		$form .= ">Gbit/s</option>";
+		$form .= "<option value=\"Mb\"";
+		if ($this->GetBwscale() == "Mb")
+				$form .= " selected=\"yes\"";
+		$form .= ">Mbit/s</option>";
+		$form .= "<option value=\"Kb\"";
+		if ($this->GetBwscale() == "Kb")
+				$form .= " selected=\"yes\"";
+		$form .= ">Kbit/s</option>";
+		$form .= "<option value=\"\"";
+		if ($this->GetBwscale() == "b")
+				$form .= " selected=\"yes\"";
+		$form .= ">Bit/s</option>";
+		$form .= "<option value=\"%\"";
+		if ($this->GetBwscale() == "%")
+				$form .= " selected=\"yes\"";
+		$form .= ">%</option>";
+		$form .= "</select> <br>";
+		$form .= "<span class=\"vexpl\">Choose the amount of bandwidth for this queue";
+		$form .= "</span></td></tr>";
+		$form .= parent::build_form();
+		$form .= "<tr><td class=\"vncellreq\">Scheduler specific options</td>";
 		$form .= "<td class=\"vtable\"><input type=\"checkbox\" id=\"borrow\" name=\"borrow\"";
-                if($this->GetBorrow() == "on") 
-			$form .=  " CHECKED ";
-                $form .= "> Borrow from other queues when available<br></td></tr>";
+			if($this->GetBorrow() == "on") 
+		$form .=  " CHECKED ";
+		$form .= "> Borrow from other queues when available<br></td></tr>";
 
-                return $form;
-        }
+		return $form;
+	}
 
 	function update_altq_queue_data(&$data) { 
 		$this->ReadConfig($data);
 	}
 
-        function wconfig() {
+	function wconfig() {
 		$cflink =& get_reference_to_me_in_config($this->GetLink());
-                if (!is_array($cflink))
-                        $cflink = array();
-                $cflink['interface'] = $this->GetInterface();
-                $cflink['qlimit'] = $this->GetQlimit();
-                $cflink['priority'] = $this->GetQpriority();
-                $cflink['name'] = $this->GetQname();
-                $cflink['description'] = $this->GetDescription();
+				if (!is_array($cflink))
+						$cflink = array();
+				$cflink['interface'] = $this->GetInterface();
+				$cflink['qlimit'] = $this->GetQlimit();
+				$cflink['priority'] = $this->GetQpriority();
+				$cflink['name'] = $this->GetQname();
+				$cflink['description'] = $this->GetDescription();
 				$cflink['bandwidth'] = $this->GetBandwidth();
-                $cflink['bandwidthtype'] = $this->GetBwscale();
+				$cflink['bandwidthtype'] = $this->GetBwscale();
 				$cflink['enabled'] = $this->GetEnabled();
 				$cflink['default'] = $this->GetDefault();
 				$cflink['red'] = $this->GetRed();
 				$cflink['rio'] = $this->GetRio();
 				$cflink['ecn'] = $this->GetEcn();
 				$cflink['borrow'] = $this->GetBorrow();
-	}
+		}
 }
 
-/*
- * XXX: TODO Link dummynet(4) in the system. 
- */
 
 
-/*
- * List of respective objects!
- */
-$g_pipes_list = array();
-$g_queue_list = array();
-
-class dummynet_class {
-        var $buckets;
-        /* mask parameters */
-        var $dstip;
-        var $srcip;
-        var $dstport;
-        var $srcport;
-        var $dstip6;
-        var $srcip6;
-        var $flowid;
-        /* all masks */
-        var $dnall;
-
-        var $noerror;
-        var $plr;
-        var $queue;
-        var $queue_scale; /* b, Kb */
-        var $red; /* red or gred */
-        /* red parameters */
-        var $w_q;
-        var $min_th;
-        var $max_th;
-        var $max_p;
-
-        function GetBuckets() {
-                return $this->buckets;
-        }
-        function SetBuckets($buckets) {
-                $this->buckets = $buckets;
-        }
-        function GetPlr() {
-                return $this->plr;
-        }
-        function SetPlr($plr) {
-                $this->plr = $plr;
-        }
-       /* function GetBuckets() {
-                return $this->buckets;
-        }
-        function SetBuckets($buckets) {
-                $this->buckets = $buckets;
-        }
-	*/
-        /* Can be used or not */
-        function build_rules() { return; }
-        function build_form() { return; } 
-        function update_config() { return; }
-        function wconfig() { return; }
-}
-
-class dnpipe_class extends dummynet_class {
-        var $pipe_nr;
-        var $bandwidth;
-        var $delay;
-
-        function delete_pipe() { return; }
-        function build_rules() { return; }
-        function build_form() { return; }
-        function update_pipe() { return; }
-        function wconfig() { return; }
-}
-
-class dnqueue_class extends dummynet_class {
-        var $queue_nr;
-        var $pipe_parent;
-        var $weight;
-
-        function delete_queue() { return; }
-        function build_rules() { return; }
-        function build_form() { return; }
-        function update_queue() { return; }
-        function wconfig() { return; }
-}
 
 /*
  * XXX: TODO Make a class shaper to hide all these function
@@ -1762,21 +2033,25 @@ function read_altq_config() {
 		return;
 
 	foreach ($a_int as $key => $conf) {
-                $int = $conf['interface'];
-                $root =& new altq_root_queue();
-                $root->SetInterface($int);
-                $altq_list_queues[$root->GetInterface()] = &$root;
-                $root->ReadConfig($conf);
+				$int = $conf['interface'];
+				$root =& new altq_root_queue();
+				$root->SetInterface($int);
+				$altq_list_queues[$root->GetInterface()] = &$root;
+				$root->ReadConfig($conf);
 		array_push($path, $key);
 		$root->SetLink($path);
 		$GLOBALS['allqueue_list'][] = $root->GetQname();
 		if (is_array($conf['queue'])) {
 			foreach ($conf['queue'] as $key1 => $q) {
 				array_push($path, $key1);
-				$root->add_queue($root->GetInterface(), $q, &$path);
+				/* 
+				 * XXX: we compeletely ignore errors here but anyway we must have 
+				 *	checked them before so no harm should be come from this.
+				 */
+				$root->add_queue($root->GetInterface(), $q, &$path, $input_errors);
 				array_pop($path);
 			} 	
-                }
+				}
 		array_pop($path);
 	}
 }
@@ -1819,20 +2094,20 @@ function build_iface_without_this_queue($iface, $qname) {
 	global $g, $altq_list_queues;
 
 	$altq =& $altq_list_queues[$iface];
-                if ($altq)
-                        $scheduler = ": " . $altq->GetScheduler();
+				if ($altq)
+						$scheduler = ": " . $altq->GetScheduler();
 	$form = "<tr><td width=\"20%\" >";
 	$form .= "<a href=\"firewall_shaper.php?interface" . $iface . "&queue=" . $iface."&action=show\">".$iface.": ".$scheduler."</a>";
-        $form .= "</td></tr>";
-        $form .= "<tr><td width=\"100%\" class=\"vncellreq\">";
-        $form .= "<a href=\"firewall_shaper_queues.php?interface=";
-        $form .= $iface . "&queue=". $qname . "&action=add\">";
-        $form .= "<img src=\"";
-        $form .= "./themes/".$g['theme']."/images/icons/icon_plus.gif\"";
-        $form .= " width=\"17\" height=\"17\" border=\"0\" title=\"Activate queue on this interface\">";
-        $form .= " Activate queue on this interface</a></td></tr>";
+		$form .= "</td></tr>";
+		$form .= "<tr><td width=\"100%\" class=\"vncellreq\">";
+		$form .= "<a href=\"firewall_shaper_queues.php?interface=";
+		$form .= $iface . "&queue=". $qname . "&action=add\">";
+		$form .= "<img src=\"";
+		$form .= "./themes/".$g['theme']."/images/icons/icon_plus.gif\"";
+		$form .= " width=\"17\" height=\"17\" border=\"0\" title=\"Activate queue on this interface\">";
+		$form .= " Activate queue on this interface</a></td></tr>";
 
-        return $form;
+		return $form;
 
 }
 

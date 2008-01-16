@@ -68,9 +68,12 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']
 	if(have_ruleint_access("enc0")) 
 		$iflist["enc0"] = "IPsec";
 
-if (!$if || !isset($iflist[$if]))
-	foreach($iflist as $if => $ifname) 
-		break;
+if (!$if || !isset($iflist[$if])) {
+	if ("any" == $if)
+                $if = "GerneralRules";
+        else if ("FloatingRules" != $if)
+                $if = "wan";
+}
 
 $security_url = "firewall_rules.php?if=". strtolower($if);
 if (!isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
@@ -225,6 +228,11 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
   <?php
 	/* active tabs */
 	$tab_array = array();
+       if ("FloatingRules" == $if)
+                        $active = true;
+                else
+                        $active = false;
+        $tab_array[] = array("Floating Rules", $active, "firewall_rules.php?if=FloatingRules");
 	$tabscounter = 0; $i = 0; foreach ($iflist as $ifent => $ifname) {
 		if ($ifent == $if)
 			$active = true;
@@ -258,7 +266,9 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 					$nrules = 0;
 					for ($i = 0; isset($a_filter[$i]); $i++) {
 						$filterent = $a_filter[$i];
-						if ($filterent['interface'] != $if)
+						if ($filterent['interface'] != $if && !isset($filterent['floating']))
+                                                       continue;
+                                               if (isset($filterent['floating']) && "FloatingRules" != $if)
 							continue;
 						$nrules++;
 					}
@@ -328,8 +338,10 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
 <?php endif; ?>
 				<?php $nrules = 0; for ($i = 0; isset($a_filter[$i]); $i++):
 					$filterent = $a_filter[$i];
-					if ($filterent['interface'] != $if)
-						continue;
+					if ($filterent['interface'] != $if && !isset($filterent['floating']))
+                                               continue;
+                                        if (isset($filterent['floating']) && "FloatingRules" != $if)
+                                                continue;
 				?>
                 <tr valign="top" id="fr<?=$nrules;?>">
                   <td class="listt"><input type="checkbox" id="frc<?=$nrules;?>" name="rule[]" value="<?=$i;?>" onClick="fr_bgcolor('<?=$nrules;?>')" style="margin: 0; padding: 0; width: 15px; height: 15px;"></td>

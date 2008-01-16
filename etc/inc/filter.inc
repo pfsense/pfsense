@@ -1346,17 +1346,15 @@ EOD;
 		require_once('clamav.inc');
 		$natrules .= clamav_generate_rules('nat');
 	}
-	
 	if (is_package_installed('frickin') && file_exists('/usr/local/pkg/frickin.inc')) {
 		require_once ('frickin.inc');
 		$natrules .= frickin_generate_rules('nat');
 	}
+        if (is_package_installed('siproxd') && file_exists('/usr/local/pkg/sipproxd.inc')) {
+                require_once('sipproxd.inc');
+                $natrules .= siproxd_generate_rules('nat');
+        }
 
-	if (is_package_installed('siproxd') && file_exists('/usr/local/pkg/sipproxd.inc')) {
-		require_once('sipproxd.inc');
-		$natrules .= siproxd_generate_rules('nat');
-	}
-	
 	$natrules .= process_carp_nat_rules();
 
 	$natrules .= "# IMSpector rdr anchor\n";
@@ -1490,7 +1488,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		} else {
 
 			/* Check to see if the interface is opt and in our opt list */
-			if (strstr($rule['interface'], "opt")) {
+			if (!isset($rule['floating']) && strstr($rule['interface'], "opt")) {
  				if (!array_key_exists($rule['interface'], $optcfg)) {
 					$item = "";
 					foreach($optcfg as $oc) $item .= $oc['if'];
@@ -1577,13 +1575,19 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				$aline['type'] = $type;
 			}
 
-			/* ensure the direction is in */
-			$aline['direction'] = " in ";
+			if (isset($rule['floating']) && $rule['floating'] == "yes") {
+	                       	if ($rule['direction'] != "any")
+                               	$aline['direction'] = " " . $rule['direction'] . " ";
+        	       	} else {
+                        	/* ensure the direction is in */
+                        	$aline['direction'] = " in ";
+               		}
 
 			if (isset($rule['log']))
 				$aline['log'] = "log ";
 
-			$aline['quick'] = "quick ";
+			if (!isset($rule['floating']) || isset($rule['quick']))
+				$aline['quick'] = "quick ";
 
 			if ($ispptp) {
 				$aline['interface'] = "on \$pptp ";
@@ -1602,7 +1606,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					if(is_one_to_one_or_server_nat_rule($rule['destination']['address']))
 						$canadd = 0;
 				}
-				if($canadd == 0)
+				if($canadd == 0 && !isset($rule['floating']))
 					$aline['interface'] = "on \$" . convert_real_interface_to_friendly_descr($rule['interface']) . " ";
 			}
 
@@ -1780,14 +1784,14 @@ function generate_user_filter_rule($rule, $ngcounter) {
 
 			if (isset($rule['protocol'])) {
 				if($rule['protocol'] == "tcp/udp")
-					$aline['prot'] = "proto { tcp udp } ";
+					$aline['prot'] = " proto { tcp udp } ";
 				elseif($rule['protocol'] == "icmp")
-					$aline['prot'] = "inet proto icmp ";
+					$aline['prot'] = " inet proto icmp ";
 				else
-					$aline['prot'] = "proto {$rule['protocol']} ";
+					$aline['prot'] = " proto {$rule['protocol']} ";
 			} else {
 				if($rule['source']['port'] <> "" || $rule['destination']['port'] <> "") {
-					$aline['prot'] = "proto tcp ";
+					$aline['prot'] = " proto tcp ";
 				}
 			}
 
@@ -1878,9 +1882,9 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						$srcporta = $srcport[0];
 					if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
 						if(alias_expand($srcport[0]))
-							$aline['srcport'] = "port {$srcporta} ";
+							$aline['srcport'] = " port {$srcporta} ";
 						else
-							$aline['srcport'] = "port = {$srcporta} ";
+							$aline['srcport'] = " port = {$srcporta} ";
 					} else if (($srcport[0] == 1) && ($srcport[1] == 65535)) {
 						/* no need for a port statement here */
 					} else if ($srcport[1] == 65535) {
@@ -1890,12 +1894,12 @@ function generate_user_filter_rule($rule, $ngcounter) {
 					} else {
 						$srcport[0]--;
 						$srcport[1]++;
-						$aline['srcport'] = "port {$srcport[0]} >< {$srcport[1]} ";
+						$aline['srcport'] = " port {$srcport[0]} >< {$srcport[1]} ";
 					}
 				}
                                 /* OS signatures */
                                 if (($rule['protocol'] == "tcp") && ($rule['os'] <> ""))
-                                        $aline['os'] = "os {$rule['os']} ";
+                                        $aline['os'] = " os {$rule['os']} ";
 
 			}
 
@@ -1984,19 +1988,19 @@ function generate_user_filter_rule($rule, $ngcounter) {
 						$dstporta = $dstport[0];
 					if ((!$dstport[1]) || ($dstport[0] == $dstport[1])) {
 						if(alias_expand($dstport[0]))
-							$aline['dstport'] = "port {$dstporta} ";
+							$aline['dstport'] = " port {$dstporta} ";
 						else
 							$aline['dstport'] = "port = {$dstporta} ";
 					} else if (($dstport[0] == 1) && ($dstport[1] == 65535)) {
 						/* no need for a port statement here */
 					} else if ($dstport[1] == 65535) {
-						$aline['dstport'] = "port >= {$dstport[0]} ";
+						$aline['dstport'] = " port >= {$dstport[0]} ";
 					} else if ($dstport[0] == 1) {
-						$aline['dstport'] = "port <= {$dstport[1]} ";
+						$aline['dstport'] = " port <= {$dstport[1]} ";
 					}  else {
 						$dstport[0]--;
 						$dstport[1]++;
-						$aline['dstport'] = "port {$dstport[0]} >< {$dstport[1]} ";
+						$aline['dstport'] = " port {$dstport[0]} >< {$dstport[1]} ";
 					}
 				}
 			}
@@ -2006,6 +2010,13 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			}
 
 			if ($type == "pass") {
+
+				if (isset($rule['floating'])) {
+                       			if (isset($rule['tag']))
+                               			$aline['tag'] = $rule['tag'];
+                       			if (isset($rule['tagged']))
+                               			$aline['tagged'] = $rule['tagged'];
+               			}
 
 				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states']) )
 					if($rule['protocol'] == "tcp")
@@ -2107,8 +2118,8 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		$vpns = " to <vpns> ";
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['prot'] .
 			$aline['src'] . $aline['srcport'] . $aline['os'] . $vpns . $aline['dstport'].
-			$aline['icmp-type'] . $aline['flags'] .
-			" label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";
+			$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['flags'] . 
+			$aline['queue'] . " label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";
 		/* if list */
 		$iflist = array("lan", "wan");
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
@@ -2132,14 +2143,14 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		/* return the line */
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['prot'] .
 			$aline['src'] . $aline['srcport'] . $aline['os'] . $localnets . $aline['dstport'].
-			$aline['icmp-type'] . $aline['flags'] .
+			$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['flags'] . $aline['queue'] .
 			" label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";
 	}
 
 	/* piece together the actual user rule */
 	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['reply'] .
 		$aline['route'] . $aline['prot'] . $aline['src'] . $aline['srcport'] . $aline['os'] . $aline['dst'] .
-		$aline['dstport'] . $aline['icmp-type'] . $aline['flags'] . $aline['queue'];
+		$aline['dstport'] . $aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['flags'] . $aline['queue'];
 
 	/* is a time based rule schedule attached? */
 	if($rule['sched']) {
@@ -2233,6 +2244,11 @@ function filter_rules_generate() {
 		$ipfrules .= clamav_generate_rules('filter');
 	}
 
+	if (is_package_installed('squid') && file_exists('/usr/local/pkg/squid.inc')) {
+		require_once('squid.inc');
+		$ipfrules .= squid_generate_rules('filter');
+	}
+
 	if (is_package_installed('clamav') && file_exists('/usr/local/pkg/clamav.inc')) {
 		require_once('clamav.inc');
 		$ipfrules .= clamav_generate_rules('filter');
@@ -2242,11 +2258,10 @@ function filter_rules_generate() {
 		require_once ('frickin.inc');
 		$ipfrules .= frickin_generate_rules('filter');
 	}
-	
-	if (is_package_installed('siproxd') && file_exists('/usr/local/pkg/sipproxd.inc')) {
-		require_once('sipproxd.inc');
-		$ipfrules .= siproxd_generate_rules('filter');
-	}
+        if (is_package_installed('siproxd') && file_exists('/usr/local/pkg/sipproxd.inc')) {
+                require_once('sipproxd.inc');
+                $ipfrules .= siproxd_generate_rules('filter');
+        }
 
 	/* if captive portal is enabled, ensure that access to this port
 	 * is allowed on a locked down interface
@@ -2297,6 +2312,12 @@ block quick proto { tcp, udp } from any to any port = 0
 table <snort2c> persist
 block quick from <snort2c> to any label "Block snort2c hosts"
 block quick from any to <snort2c> label "Block snort2c hosts"
+
+#---------------------------------------------------------------------------
+# default deny rules
+#---------------------------------------------------------------------------
+block in $log all label "Default deny rule"
+block out $log all label "Default deny rule"
 
 # loopback
 anchor "loopback"
@@ -2486,7 +2507,7 @@ EOD;
 # allow access to DHCP server on {$on}
 anchor "dhcpserver{$friendly_on}"
 pass in quick on \${$friendly_on} proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server"
-pass in quick on \${$friendly_on} proto udp from any port = 68 to {$oc['ip']} port = 67 label "allow access to DHCP server"
+pass in quick  on \${$friendly_on} proto udp from any port = 68 to {$oc['ip']} port = 67 label "allow access to DHCP server"
 pass out quick on \${$friendly_on} proto udp from {$oc['ip']} port = 67 to any port = 68 label "allow access to DHCP server"
 
 EOD;
@@ -2749,7 +2770,7 @@ EOD;
 	}
 
 	$ipfrules .= "\n# SSH lockout\n";
-	$ipfrules .= "block in log proto tcp from <sshlockout> to any port 22 label \"sshlockout\"\n\n";
+	$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port 22 label \"sshlockout\"\n\n";
 
 	$ipfrules .= "anchor \"ftp-proxy/*\"\n";
 
@@ -2757,13 +2778,25 @@ EOD;
 
 	$ipfrules .= "\n\n# ftp-proxy specific\n";
 	foreach($used_pftpx_ports as $pftpx) 
-		$ipfrules .= "pass in quick on {$pftpx['interface']} inet proto tcp from any to 127.0.0.1 port {$pftpx['port']} keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
+		$ipfrules .= "pass in on {$pftpx['interface']} inet proto tcp from any to 127.0.0.1 port {$pftpx['port']} keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
 
 	$ipfrules .= "\n";
 
 	if (isset($config['filter']['rule'])) {
 		/* Pre-cache all our rules so we only have to generate them once */
 		$rule_arr = array();
+		/* 
+		 * XXX: This is a double pass but it needs to be this way.
+		 * to allow users to override floating rules.
+		 */
+		foreach ($config['filter']['rule'] as $rule) {
+ 	                update_filter_reload_status("Pre-caching information for {$rule['descr']} ...");
+        	        $line = "";
+                	if (!isset ($rule['disabled']) && !isset($rule['floating'])) {
+                        	$rule_arr[] = generate_user_filter_rule_arr($rule, 0);
+                	}
+
+		}
 		foreach ($config['filter']['rule'] as $rule) {
 			update_filter_reload_status("Pre-caching {$rule['descr']}...");
 			$line = "";
@@ -2899,9 +2932,9 @@ EOD;
 	}
 	$ipfrules .= <<<EOD
 
-pass in quick on $lanif inet proto tcp from any to \$loopback port 8021 keep state label "FTP PROXY: Allow traffic to localhost"
-pass in quick on $lanif inet proto tcp from any to \$loopback port 21 keep state label "FTP PROXY: Allow traffic to localhost"
-pass in quick on $wanif inet proto tcp from port 20 to ($wanif) port > 49000 user proxy flags S/SA keep state label "FTP PROXY: PASV mode data connection"
+pass in on $lanif inet proto tcp from any to \$loopback port 8021 keep state label "FTP PROXY: Allow traffic to localhost"
+pass in on $lanif inet proto tcp from any to \$loopback port 21 keep state label "FTP PROXY: Allow traffic to localhost"
+pass in on $wanif inet proto tcp from port 20 to ($wanif) port > 49000 user proxy flags S/SA keep state label "FTP PROXY: PASV mode data connection"
 
 EOD;
 
@@ -2914,8 +2947,8 @@ EOD;
 		$ftp_counter = "8022";
 		foreach($optcfg as $oc) {
 			if(!isset($oc['gateway']) && $oc['if'] <> "") {
-				$ipfrules .= "pass in quick on " . $oc['if'] . " inet proto tcp from any to \$loopback port {$ftp_counter} keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
-				$ipfrules .= "pass in quick on " . $oc['if'] . " inet proto tcp from any to \$loopback port 21 keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
+				$ipfrules .= "pass in on " . $oc['if'] . " inet proto tcp from any to \$loopback port {$ftp_counter} keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
+				$ipfrules .= "pass in on " . $oc['if'] . " inet proto tcp from any to \$loopback port 21 keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
 			}
 			$ftp_counter++;
 		}
@@ -2927,7 +2960,7 @@ EOD;
 # be sourced from the command port - 1 (typically port 20)
 # This workaround doesn't expose us to any extra risk as we'll still only allow
 # connections to the firewall on a port that ftp-proxy is listening on
-pass in quick on $wanif inet proto tcp from any to ($wanif) port > 49000 user proxy flags S/SA keep state label "FTP PROXY: RFC959 violation workaround"
+pass in on $wanif inet proto tcp from any to ($wanif) port > 49000 user proxy flags S/SA keep state label "FTP PROXY: RFC959 violation workaround"
 
 EODEOD;
 
@@ -2935,7 +2968,7 @@ EODEOD;
 			generate_optcfg_array($optcfg);
 			foreach($optcfg as $oc) {
 				if($oc['gateway'] <> "")
-					$ipfrules .= "pass in quick on {$oc['if']} inet proto tcp from any to ({$oc['if']}) port > 49000 user proxy flags S/SA keep state label \"FTP PROXY: RFC959 violation workaround\" \n";
+					$ipfrules .= "pass in on {$oc['if']} inet proto tcp from any to ({$oc['if']}) port > 49000 user proxy flags S/SA keep state label \"FTP PROXY: RFC959 violation workaround\" \n";
 			}
 		}
 	}
@@ -2947,12 +2980,6 @@ anchor "imspector"
 
 # uPnPd
 anchor "miniupnpd"
-
-#---------------------------------------------------------------------------
-# default deny rules 
-#---------------------------------------------------------------------------
-block in $log quick all label "Default deny rule"
-block out $log quick all label "Default deny rule"
 
 EOD;
 

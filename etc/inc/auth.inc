@@ -71,7 +71,7 @@ function getAllowedGroups($logged_in_user) {
 	$local_user = false;
 	
 	foreach($config['system']['user'] as $username) 
-		if($username['name'] = $logged_in_user) 
+		if($username['name'] == $logged_in_user) 
 			$local_user = true;
 	
 	/* return ldap groups if we are in ldap mode */
@@ -778,7 +778,7 @@ function ldap_get_groups($username) {
 	$search = ldap_search($ldap, $ldapsearchbase, $ldapfilter);
 	
 	if(!$search) {
-		log_error("ERROR!  Could not locate User group container for username {}$username}.");
+		log_error("ERROR!  Could not locate User group container for username {$username}.");
 		log_error("        Please ensure that the needed container is defined in the ldap auth containers setting feature.");
 		$status = htpasswd_backed($username, $passwd);
 		return $status;	

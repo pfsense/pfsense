@@ -9,9 +9,11 @@ if [ "$PFSENSETYPE" = "embedded" ]; then
 fi
 
 # Check for different HZ 
-HZ=`cat /boot/loader.conf | grep kern.hz | wc -l | awk '{ print $1 }'`
-if [ "$HZ" = "1" ]; then
-	NOTELENGTH="10"
+if [ /boot/loader.conf ]; then
+	HZ=`cat /boot/loader.conf | grep kern.hz | wc -l | awk '{ print $1 }'`
+	if [ "$HZ" = "1" ]; then
+		NOTELENGTH="10"
+	fi
 fi
 
 if [ -c "/dev/speaker" ]; then	

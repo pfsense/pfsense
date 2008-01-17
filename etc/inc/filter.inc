@@ -2679,7 +2679,7 @@ block in $log quick on \$wan from <bogons> to any label "block bogon networks fr
 EOD;
 	}
 
-if (!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) > 0) {
+if (!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 1) {
 
 	$ipfrules .= <<<EOD
 

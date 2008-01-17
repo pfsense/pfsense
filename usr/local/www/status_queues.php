@@ -51,7 +51,6 @@ foreach($pfctl_vsq_array as $pfctl) {
 		if(stristr($match_array[1][0],"root_")==false)
 			$a_queues[] = $match_array[1][0] . " on {$if}" ;	
 		else {
-			$if = stristr($match_array[1][0], "root_");
 			$if = preg_replace("(root_)", "", $if);
 			foreach ($config['interfaces'] as $ifkey => $ifdesc) {
 				if ($ifdesc['if'] == $if) {

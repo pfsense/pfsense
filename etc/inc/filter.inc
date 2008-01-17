@@ -1587,12 +1587,22 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				$aline['log'] = "log ";
 
 			if (!isset($rule['floating']) || isset($rule['quick']))
-				$aline['quick'] = "quick ";
+				$aline['quick'] = " quick ";
 
 			if ($ispptp) {
 				$aline['interface'] = "on \$pptp ";
 			} else if ($ispppoe) {
 				$aline['interface'] = "on \$pppoe ";
+			} else if (isset($rule['floating'])) {
+                 		if (isset($rule['interface']) && $rule['interface'] <> "") {
+                     			$interfaces = explode(",", $rule['interface']);
+		                       $aline['interface'] = " on { ";
+                		       foreach ($interfaces as $iface) {
+                             			$aline['interface'] .= " " .convert_friendly_interface_to_real_interface_name($iface) . " ";
+
+                 		       }
+                       			$aline['interface'] .= " }";
+             		    	}
 			} else {
 				// translate wan, man, lan, opt to real interface.
 				$interface = $rule['interface'];
@@ -2012,10 +2022,10 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			if ($type == "pass") {
 
 				if (isset($rule['floating'])) {
-                       			if (isset($rule['tag']))
-                               			$aline['tag'] = $rule['tag'];
-                       			if (isset($rule['tagged']))
-                               			$aline['tagged'] = $rule['tagged'];
+                       			if (isset($rule['tag']) && $rule['tag'] <> "")
+                               			$aline['tag'] = " tag " .$rule['tag']. " ";
+                       			if (isset($rule['tagged']) && $rule['tagged'] <> "")
+                               			$aline['tagged'] = " tagged " .$rule['tagged'] . " ";
                			}
 
 				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states']) )
@@ -2770,7 +2780,7 @@ EOD;
 	}
 
 	$ipfrules .= "\n# SSH lockout\n";
-	$ipfrules .= "block in log quick proto tcp from <sshlockout> to any port 22 label \"sshlockout\"\n\n";
+	$ipfrules .= "block in log proto tcp from <sshlockout> to any port 22 label \"sshlockout\"\n\n";
 
 	$ipfrules .= "anchor \"ftp-proxy/*\"\n";
 
@@ -2778,7 +2788,7 @@ EOD;
 
 	$ipfrules .= "\n\n# ftp-proxy specific\n";
 	foreach($used_pftpx_ports as $pftpx) 
-		$ipfrules .= "pass in on {$pftpx['interface']} inet proto tcp from any to 127.0.0.1 port {$pftpx['port']} keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
+		$ipfrules .= "pass in quick on {$pftpx['interface']} inet proto tcp from any to 127.0.0.1 port {$pftpx['port']} keep state label \"FTP PROXY: Allow traffic to localhost\"\n";
 
 	$ipfrules .= "\n";
 
@@ -3048,8 +3058,8 @@ function create_firewall_outgoing_rules_to_itself() {
 		if ($config['interfaces'][$ifname]['ipaddr'] == "pppoe") {
 			$int = " { " . filter_translate_type_to_real_interface($ifname) . " ng0 } ";
 			/* first add a rule for the real interface, then for ng0 */
+			$rule .="pass out quick on {$int} all keep state label \"let out anything from firewall host itself\"\n";
 		}
-		$rule .="pass out quick on {$int} all keep state label \"let out anything from firewall host itself\"\n";
 	}
 
 	update_filter_reload_status("Setting up bridging items");

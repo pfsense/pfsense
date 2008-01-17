@@ -45,10 +45,21 @@ $a_queues = array();
 
 $pfctl_vsq = `/sbin/pfctl -vsq`;
 $pfctl_vsq_array = split("\n", $pfctl_vsq);
+$if = "";
 foreach($pfctl_vsq_array as $pfctl) {
 	if (preg_match_all("/queue\s+(\w+)\s+/",$pfctl,$match_array))
 		if(stristr($match_array[1][0],"root_")==false)
-			$a_queues[] = $match_array[1][0];	
+			$a_queues[] = $match_array[1][0] . " on {$if}" ;	
+		else {
+			$if = stristr($match_array[1][0], "root_");
+			$if = preg_replace("(root_)", "", $if);
+			foreach ($config['interfaces'] as $ifkey => $ifdesc) {
+				if ($ifdesc['if'] == $if) {
+					$if = $ifkey;
+					break;
+				}
+			}
+		}
 }
 
 $pgtitle = array("Status","Traffic shaper","Queues");

@@ -3048,8 +3048,8 @@ function create_firewall_outgoing_rules_to_itself() {
 		if ($config['interfaces'][$ifname]['ipaddr'] == "pppoe") {
 			$int = " { " . filter_translate_type_to_real_interface($ifname) . " ng0 } ";
 			/* first add a rule for the real interface, then for ng0 */
-			$rule .="pass out quick on {$int} all keep state label \"let out anything from firewall host itself\"\n";
 		}
+		$rule .="pass out quick on {$int} all keep state label \"let out anything from firewall host itself\"\n";
 	}
 
 	update_filter_reload_status("Setting up bridging items");

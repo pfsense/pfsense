@@ -1,6 +1,7 @@
 <?php
 /*
-		Copyright (C) 2004, 2005 Scott Ullrich
+		Copyright (C) 2004, 2005 Scott Ullrich,
+		Copyright (C) 2005, 2006, 2007 Bill Marquette,
 		Copyright (C) 2008 Ermal Luçi
 		All rights reserved.
 

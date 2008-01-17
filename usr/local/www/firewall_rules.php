@@ -232,7 +232,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                         $active = true;
                 else
                         $active = false;
-        $tab_array[] = array("Floating Rules", $active, "firewall_rules.php?if=FloatingRules");
+        $tab_array[] = array("Floating", $active, "firewall_rules.php?if=FloatingRules");
 	$tabscounter = 0; $i = 0; foreach ($iflist as $ifent => $ifname) {
 		if ($ifent == $if)
 			$active = true;

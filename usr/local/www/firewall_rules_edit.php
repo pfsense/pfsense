@@ -77,6 +77,18 @@ if (isset($id) && $a_filter[$id]) {
 	else
 		$pconfig['type'] = $a_filter[$id]['type'];
 
+	if (isset($a_filter[$id]['floating']) || $if == "GeneralRuleS") {
+		$pconfig['floating'] = $a_filter[$id]['floating'];
+		if (isset($a_filter[$id]['interface']) && $a_filter[$id]['interface'] <> "") 
+			$pconfig['interface'] = $a_filter[$id]['interface'];
+	}
+	
+	if (isset($a_filter['floating'])) 
+		$pconfig['floating'] = "yes";
+
+	if (isset($a_filter[$id]['direction']))
+                $pconfig['direction'] = $a_filter[$id]['direction'];
+
 	if (isset($a_filter[$id]['protocol']))
 		$pconfig['proto'] = $a_filter[$id]['protocol'];
 	else
@@ -99,6 +111,13 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['disabled'] = isset($a_filter[$id]['disabled']);
 	$pconfig['log'] = isset($a_filter[$id]['log']);
 	$pconfig['descr'] = $a_filter[$id]['descr'];
+
+	if (isset($a_filter[$id]['tag'])) 
+		$pconfig['tag'] = $a_filter[$id]['tag'];
+	if (isset($a_filter[$id]['tagged']))
+        	$pconfig['tagged'] = $a_filter[$id]['tagged'];
+	if (isset($a_filter[$id]['quick']) && $a_filter[$id]['quick'])
+		$pconfig['quick'] = $a_filter[$id]['quick'];
 
 	/* advanced */
         $pconfig['max-src-nodes'] = $a_filter[$id]['max-src-nodes'];
@@ -198,14 +217,16 @@ if ($_POST) {
 	 */
 	foreach ($_POST as $key => $value) {
 		$temp = $value;
+		if (isset($_POST['floating']) && $key == "interface")
+			continue;
 		$newpost = htmlentities($temp);
 		if($newpost <> $temp) 
 			$input_errors[] = "Invalid characters detected ($temp).  Please remove invalid characters and save again.";
 	}
 
 	/* input validation */
-	$reqdfields = explode(" ", "type interface proto src dst");
-	$reqdfieldsn = explode(",", "Type,Interface,Protocol,Source,Destination");
+	$reqdfields = explode(" ", "type proto src dst");
+	$reqdfieldsn = explode(",", "Type,Protocol,Source,Destination");
 
 
 	if($_POST['statetype'] == "modulate state" or $_POST['statetype'] == "synproxy state") {
@@ -302,7 +323,22 @@ if ($_POST) {
 	if (!$input_errors) {
 		$filterent = array();
 		$filterent['type'] = $_POST['type'];
-		$filterent['interface'] = $_POST['interface'];
+		if (isset($_POST['interface'] ))
+			$filterent['interface'] = $_POST['interface'];
+
+		if ($if == "FloatingRules" || isset($_POST['floating'])) {
+			if (isset($_POST['tag']))
+				$filterent['tag'] = $_POST['tag'];
+			if (isset($_POST['tagged']))
+            			$filterent['tagged'] = $_POST['tagged'];
+			$filterent['direction'] = $_POST['direction'];
+			if (isset($_POST['quick']) && $_POST['quick'] <> "")
+				$filterent['quick'] = $_POST['quick'];
+			$filterent['floating'] = "yes";
+			if (isset($_POST['interface']) && count($_POST['interface']) > 0)  {
+					$filterent['interface'] = implode(",", $_POST['interface']);
+			}
+		}
 
 		/* Advanced options */
 		$filterent['max-src-nodes'] = $_POST['max-src-nodes'];
@@ -380,7 +416,10 @@ if ($_POST) {
 		write_config();
 		touch($d_filterconfdirty_path);
 
-		header("Location: firewall_rules.php?if=" . $_POST['interface']);
+		if (isset($_POST['floating']))
+			header("Location: firewall_rules.php?if=FloatingRules");
+		else
+			header("Location: firewall_rules.php?if=" . $_POST['interface']);
 		exit;
 	}
 }
@@ -426,11 +465,25 @@ include("head.inc");
 				<span class="vexpl">Set this option to disable this rule without removing it from the list.</span>
 			</td>
 		</tr>
+<?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
+		<tr>
+                        <td width="22%" valign="top" class="vncellreq"><?=gettext("Quick");?></td>
+                        <td width="78%" class="vtable">
+                                <input name="quick" type="checkbox" id="quick" value="yes" <?php if ($pconfig['quick']) echo "checked=\"checked\""; ?> />
+                                <strong><?=gettext("Apply the action immediately on match.");?></strong><br />
+                                <span class="vexpl"><?=gettext("Set this option if you need to apply this action to traffic that matches this rule immediately.");?></span>
+                        </td>
+                </tr>
+<? endif; ?>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Interface</td>
 			<td width="78%" class="vtable">
+<?php if ($if == "GeneralRules" || isset($pconfig['floating'])): ?>
+				<select name="interface[]" multiple="true" ="formselect" size="3">
+<? else: ?>
 				<select name="interface" class="formselect">
 <?php
+   endif;
 
 					$interfaces = array();
 					
@@ -457,13 +510,30 @@ include("head.inc");
 							$interfaces["enc0"] = "IPsec";
 
 					foreach ($interfaces as $iface => $ifacename): ?>
-						<option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>><?=htmlspecialchars($ifacename);?></option>
+						<option value="<?=$iface;?>" <?php if ($pconfig['interface'] <> "" && stristr($pconfig['interface'], $iface)) echo "selected"; ?>><?=gettext($ifacename);?></option>
 <?php 				endforeach; ?>
 				</select>
 				<br />
 				<span class="vexpl">Choose on which interface packets must come in to match this rule.</span>
 			</td>
 		</tr>
+<?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
+                <tr>
+                        <td width="22%" valign="top" class="vncellreq"><?=gettext("Direction");?></td>
+                        <td width="78%" class="vtable">
+                                 <select name="direction" class="formselect">
+                                  <?php      $directions = array('any', 'in', 'out');
+                                        foreach ($directions as $direction): ?>
+                                                <option value="<?=$direction;?>"
+                                                <?php if ($direction == $pconfig['direction']): ?>
+                                                        selected="selected" 
+						<?php endif; ?>
+                                                ><?=$direction;?></option>
+                  	                <?php endforeach; ?>      
+                                </select>
+                        </td>
+                <tr>
+<?php endif; ?>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Protocol</td>
 			<td width="78%" class="vtable">
@@ -750,12 +820,40 @@ include("head.inc");
 			</td>
 		</tr>
 		<tr>
+			<td width="22%" valign="top" class="vncellreq">Mark options</td>
+                        <td width="78%" class="vtable">
+<?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
+                <input type="hidden" id="floating" name="floating" value="floating">
+
+                                <input name="tag" id="tag" value="<?=htmlspecialchars($pconfig['tag']);?>">
+                                <br /><span class="vexpl"><?=gettext("You can mark a packet matching this rule and
+use this mark to match on other rules. It is called <b>Policy filtering</b>");?>
+                                </span><p>
+                                <input name="tagged" id="tagged" value="<?=htmlspecialchars($pconfig['tagged']);?>"
+>
+                                <br /><span class="vexpl"><?=gettext("You can match packet on a mark placed before
+on another rule.")?>
+                                </span> <p>
+<?php endif; ?>
+			</td>
+		</tr>
+		<tr>
 			<td width="22%" valign="top" class="vncell">Advanced Options</td>
 			<td width="78%" class="vtable">
 			<div id="aoadv" name="aoadv">
 				<input type="button" onClick="show_aodiv();" value="Advanced"> - Show advanced options
 			</div>
 			<div id="aodivmain" name="aodivmain" style="display:none">
+<?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
+		<input type="hidden" id="floating" name="floating" value="floating">
+
+				<input name="tag" id="tag" value="<?=htmlspecialchars($pconfig['tag']);?>"> 
+				<br /><span class="vexpl"><?=gettext("You can mark a packet matching this rule and use this mark to match on other rules. It is called <b>Policy filtering</b>");?>
+				</span><p>
+				<input name="tagged" id="tagged" value="<?=htmlspecialchars($pconfig['tagged']);?>">
+				<br /><span class="vexpl"><?=gettext("You can match packet on a mark placed before on another rule.")?>
+				</span> <p>
+<?php endif; ?>
 				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo $pconfig['max-src-nodes'] ?>"><br> Simultaneous client connection limit<p>
 				<input name="max-src-states" id="max-src-states" value="<?php echo $pconfig['max-src-states'] ?>"><br> Maximum state entries per host<p>
 				<input name="max-src-conn-rate" id="max-src-conn-rate" value="<?php echo $pconfig['max-src-conn-rate'] ?>"> /

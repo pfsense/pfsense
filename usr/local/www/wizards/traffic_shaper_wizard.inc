@@ -6,7 +6,7 @@
 
         Copyright (C) 2006 Bill Marquette - bill.marquette@gmail.com.
         Copyright (C) 2006 Scott Ullrich - sullrich@pfsense.com.
-	Copyright (C) 2008 Ermal Lu<E7>i
+	Copyright (C) 2008 Ermal Luçi
         All rights reserved.
 
         Redistribution and use in source and binary forms, with or without
@@ -74,6 +74,15 @@ function  step1_stepbeforeformdisplay() {
 			$field['options']['option'][] = $opts;
 			$field['bindstofield'] = "ezshaper->step2->{$if}->scheduler";
 			$fields[] = $field;
+
+			if ($if <> "wan" && $if <> "lan") {
+				$field = array();
+				$field['name'] = "${if}internal";
+				$field['type'] = "checkbox";
+				$field['typehint'] = "Is this internal or external interface?";
+                        	$field['bindstofield'] = "ezshaper->step2->{$if}->internal";
+				$fields[] = $field;
+			}
 
 			$field = array();
 			$field['name'] = $if;
@@ -605,9 +614,16 @@ $othersplist = array();
 	$altq_list_queues = array();
 	$tmppath = array();	
 
+	$interface_list = array(); /* This is used for the interfaces to place on rules. */
+	$interface_list[] = "lan"; /* We always have LAN */
+
 	foreach ($config['ezshaper']['step2'] as $ifkey => $if) {
 		if ($if['scheduler'] == "NONE")
 			continue;
+
+		if ($ifkey <> "wan" && $ifkey <> "lan" &&
+			$if['internal'] <> "")
+			$interface_list[] = $ifkey;
 			
 		$altq =& new altq_root_queue();
 
@@ -620,7 +636,6 @@ $othersplist = array();
 		array_push($tmppath, $ifkey);
 		$altq->SetLink($tmppath);
 		$altq->wconfig();
-
 
 		$sched = $if['scheduler'];
 		$voipbw =0;
@@ -929,12 +944,15 @@ $othersplist = array();
 		}
 		array_pop($tmppath);
 	}	
+
+	$strint = explode(",", $interface_list);
 			/* Rules */
 			if ($penalty) {
 				if( is_ipaddr($config['ezshaper']['step4']['address']) or is_alias($config['ezshaper']['step4']['address'])) {
 				    $rule = array();
 				    $rule['descr'] = gettext("Penalty Box");
-//				    $rule['interface'] = $altq->GetInterface();
+				    $rule['interface'] = $strint;
+				    $rule['direction'] = "in";
 //			    	$rule['source']['network'] = $altq->GetInterface();
 				    $rule['source']['any'] = TRUE;
 				    $rule['defaultqueue'] = "qOthersLow";
@@ -954,7 +972,8 @@ $othersplist = array();
 					/* create VOIP rules */
 					$rule = array();
 					$rule['descr'] = gettext("VOIP Adapter");
-	//			    $rule['interface'] = $altq->GetInterface();
+				    $rule['interface'] = $strint;
+					$rule['direction'] = "in";
 	//			    $rule['source']['network'] = $altq->GetInterface();
 					$rule['source']['any'] = TRUE;
 					$rule['defaultqueue'] = "qVoIP";
@@ -969,7 +988,8 @@ $othersplist = array();
 					/* create VOIP rules */
 					$rule = array();
 					$rule['descr'] = "DiffServ/Lowdelay/Upload";
-	//			    $rule['interface'] = $altq->GetInterface();
+				    $rule['interface'] = $strint;
+					$rule['direction'] = "in";
 	//			    $rule['source']['network'] = $altq->GetInterface();
 					$rule['source']['any'] = TRUE;
 					$rule['defaultqueue'] = "qVoIP";
@@ -986,7 +1006,8 @@ $othersplist = array();
 					foreach ($voiplist[$config['ezshaper']['step3']['provider']] as $voip) {
 						$rule = array();
 						$rule['defaultqueue'] = 'qVoIP';
-	// 			        $rule['interface'] = $altq->GetInterface();					
+	 			        $rule['interface'] = $strint;
+					$rule['direction'] = "in";
 	//		    	    $rule['source']['network'] = $altq->GetInterface();
 						$rule['source']['any'] = TRUE;
 						$rule['destination']['any'] = TRUE;
@@ -1010,7 +1031,8 @@ $othersplist = array();
 					foreach ($p2plist[$key] as $p2pclient) {
 						$rule = array();
 						$rule['defaultqueue'] = 'qP2P';
-	//					$rule['interface'] = $altq->GetInterface();
+						$rule['interface'] = $strint;
+						$rule['direction'] = "in";
 	//		    	    $rule['source']['network'] = $altq->GetInterface();
 						$rule['source']['any'] = TRUE;		
 						$rule['destination']['any'] = TRUE;
@@ -1035,7 +1057,8 @@ $othersplist = array();
 						$rule['defaultqueue'] = 'qGames';
 						if ($sched != "HFSC")
 						$rule['ackqueue'] = 'qACK';
-	//				    $rule['interface'] = $altq->GetInterface();
+					    $rule['interface'] = $strint;
+						$rule['direction'] = "in";
 	//		    	    $rule['source']['network'] = $altq->GetInterface();
 						$rule['source']['any'] = TRUE;
 						$rule['destination']['any'] = TRUE;
@@ -1082,7 +1105,8 @@ $othersplist = array();
 							$loop = 1;
 						}
 						if (!$loop) {
-	//	    			    $rule['interface'] = $altq->GetInterface();
+		    			    $rule['interface'] = $strint;
+						$rule['direction'] = "in";
 	//			    	    $rule['source']['network'] = $altq->GetInterface();
 							$rule['source']['any'] = TRUE;
 							$rule['destination']['any'] = TRUE;

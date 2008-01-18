@@ -77,7 +77,7 @@ if (isset($id) && $a_filter[$id]) {
 	else
 		$pconfig['type'] = $a_filter[$id]['type'];
 
-	if (isset($a_filter[$id]['floating']) || $if == "GeneralRuleS") {
+	if (isset($a_filter[$id]['floating']) || $if == "FloatingRules") {
 		$pconfig['floating'] = $a_filter[$id]['floating'];
 		if (isset($a_filter[$id]['interface']) && $a_filter[$id]['interface'] <> "") 
 			$pconfig['interface'] = $a_filter[$id]['interface'];
@@ -478,7 +478,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Interface</td>
 			<td width="78%" class="vtable">
-<?php if ($if == "GeneralRules" || isset($pconfig['floating'])): ?>
+<?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
 				<select name="interface[]" multiple="true" ="formselect" size="3">
 <? else: ?>
 				<select name="interface" class="formselect">

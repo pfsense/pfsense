@@ -520,6 +520,10 @@ if ($_POST) {
 		
 		/* sync filter configuration */
 		filter_configure();
+
+ 		/* set up static routes */
+		system_routing_configure();
+
 	}
 }
 ?>

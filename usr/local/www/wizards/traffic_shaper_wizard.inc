@@ -6,7 +6,7 @@
 
         Copyright (C) 2006 Bill Marquette - bill.marquette@gmail.com.
         Copyright (C) 2006 Scott Ullrich - sullrich@pfsense.com.
-	Copyright (C) 2008 Ermal Lu<E7>i
+	Copyright (C) 2008 Ermal Luçi
         All rights reserved.
 
         Redistribution and use in source and binary forms, with or without
@@ -952,6 +952,7 @@ $othersplist = array();
 				    $rule = array();
 				    $rule['descr'] = gettext("Penalty Box");
 				    $rule['interface'] = $strint;
+					$rule['direction'] = "in";
 //			    	$rule['source']['network'] = $altq->GetInterface();
 				    $rule['source']['any'] = TRUE;
 				    $rule['defaultqueue'] = "qOthersLow";
@@ -972,6 +973,7 @@ $othersplist = array();
 					$rule = array();
 					$rule['descr'] = gettext("VOIP Adapter");
 				    $rule['interface'] = $strint;
+					$rule['direction'] = "in";
 	//			    $rule['source']['network'] = $altq->GetInterface();
 					$rule['source']['any'] = TRUE;
 					$rule['defaultqueue'] = "qVoIP";
@@ -987,6 +989,7 @@ $othersplist = array();
 					$rule = array();
 					$rule['descr'] = "DiffServ/Lowdelay/Upload";
 				    $rule['interface'] = $strint;
+					$rule['direction'] = "in";
 	//			    $rule['source']['network'] = $altq->GetInterface();
 					$rule['source']['any'] = TRUE;
 					$rule['defaultqueue'] = "qVoIP";
@@ -1004,6 +1007,7 @@ $othersplist = array();
 						$rule = array();
 						$rule['defaultqueue'] = 'qVoIP';
 	 			        $rule['interface'] = $strint;
+						$rule['direction'] = "in";
 	//		    	    $rule['source']['network'] = $altq->GetInterface();
 						$rule['source']['any'] = TRUE;
 						$rule['destination']['any'] = TRUE;
@@ -1028,6 +1032,7 @@ $othersplist = array();
 						$rule = array();
 						$rule['defaultqueue'] = 'qP2P';
 						$rule['interface'] = $strint;
+						$rule['direction'] = "in";
 	//		    	    $rule['source']['network'] = $altq->GetInterface();
 						$rule['source']['any'] = TRUE;		
 						$rule['destination']['any'] = TRUE;
@@ -1053,6 +1058,7 @@ $othersplist = array();
 						if ($sched != "HFSC")
 						$rule['ackqueue'] = 'qACK';
 					    $rule['interface'] = $strint;
+						$rule['direction'] = "in";
 	//		    	    $rule['source']['network'] = $altq->GetInterface();
 						$rule['source']['any'] = TRUE;
 						$rule['destination']['any'] = TRUE;
@@ -1099,6 +1105,7 @@ $othersplist = array();
 							$loop = 1;
 						}
 						if (!$loop) {
+							$rule['direction'] = "in";
 		    			    $rule['interface'] = $strint;
 	//			    	    $rule['source']['network'] = $altq->GetInterface();
 							$rule['source']['any'] = TRUE;

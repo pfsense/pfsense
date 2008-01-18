@@ -77,7 +77,7 @@ if (isset($id) && $a_filter[$id]) {
 	else
 		$pconfig['type'] = $a_filter[$id]['type'];
 
-	if (isset($a_filter[$id]['floating']) || $if == "FloatingRules") {
+	if (isset($a_filter[$id]['floating']) || $if == "GeneralRuleS") {
 		$pconfig['floating'] = $a_filter[$id]['floating'];
 		if (isset($a_filter[$id]['interface']) && $a_filter[$id]['interface'] <> "") 
 			$pconfig['interface'] = $a_filter[$id]['interface'];
@@ -112,9 +112,9 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['log'] = isset($a_filter[$id]['log']);
 	$pconfig['descr'] = $a_filter[$id]['descr'];
 
-	if (isset($a_filter[$id]['tag'])) 
+	if (isset($a_filter[$id]['tag']) && $a_filter[$id]['tag'] <> "") 
 		$pconfig['tag'] = $a_filter[$id]['tag'];
-	if (isset($a_filter[$id]['tagged']))
+	if (isset($a_filter[$id]['tagged']) && $a_filter[$id]['tag'] <> "")
         	$pconfig['tagged'] = $a_filter[$id]['tagged'];
 	if (isset($a_filter[$id]['quick']) && $a_filter[$id]['quick'])
 		$pconfig['quick'] = $a_filter[$id]['quick'];
@@ -478,7 +478,7 @@ include("head.inc");
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Interface</td>
 			<td width="78%" class="vtable">
-<?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
+<?php if ($if == "GeneralRules" || isset($pconfig['floating'])): ?>
 				<select name="interface[]" multiple="true" ="formselect" size="3">
 <? else: ?>
 				<select name="interface" class="formselect">
@@ -844,16 +844,6 @@ on another rule.")?>
 				<input type="button" onClick="show_aodiv();" value="Advanced"> - Show advanced options
 			</div>
 			<div id="aodivmain" name="aodivmain" style="display:none">
-<?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
-		<input type="hidden" id="floating" name="floating" value="floating">
-
-				<input name="tag" id="tag" value="<?=htmlspecialchars($pconfig['tag']);?>"> 
-				<br /><span class="vexpl"><?=gettext("You can mark a packet matching this rule and use this mark to match on other rules. It is called <b>Policy filtering</b>");?>
-				</span><p>
-				<input name="tagged" id="tagged" value="<?=htmlspecialchars($pconfig['tagged']);?>">
-				<br /><span class="vexpl"><?=gettext("You can match packet on a mark placed before on another rule.")?>
-				</span> <p>
-<?php endif; ?>
 				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo $pconfig['max-src-nodes'] ?>"><br> Simultaneous client connection limit<p>
 				<input name="max-src-states" id="max-src-states" value="<?php echo $pconfig['max-src-states'] ?>"><br> Maximum state entries per host<p>
 				<input name="max-src-conn-rate" id="max-src-conn-rate" value="<?php echo $pconfig['max-src-conn-rate'] ?>"> /

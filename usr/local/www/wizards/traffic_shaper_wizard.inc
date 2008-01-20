@@ -605,10 +605,6 @@ $othersplist = array();
 		if ($if['scheduler'] == "NONE")
 			continue;
 
-		if ($ifkey <> "wan" && $ifkey <> "lan" &&
-			isset($if['internal']) && $if['internal'] <> "")
-			$interface_list[] = $ifkey;
-			
 		$altq =& new altq_root_queue();
 
 		$altq->SetInterface($ifkey);
@@ -668,7 +664,7 @@ $othersplist = array();
 			} else 
 				$games = false;
 			
-			if ($config['ezshaper']['step6']['enable']) {
+			if ($config['ezshaper']['step7']['enable']) {
 				$otherpriority = true;
 			} else 
 				$otherpriority = false;

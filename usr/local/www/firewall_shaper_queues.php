@@ -52,10 +52,8 @@ if (!is_array($GLOBALS['allqueue_list'])) {
 read_altq_config();
 
 $tree = "<ul class=\"tree\" >";
-if (is_array($altq_list_queues)) {
-	foreach ($GLOBALS['allqueue_list'] as $queue) {
-        	$tree .= "<li><a href=\"firewall_shaper_queues.php?queue={$queue}&action=show\" >{$queue}</a></li>";
-        }
+foreach ($GLOBALS['allqueue_list'] as $queue) {
+	$tree .= "<li><a href=\"firewall_shaper_queues.php?queue={$queue}&action=show\" >{$queue}</a></li>";
 }
 $tree .= "</ul>";
 
@@ -137,16 +135,6 @@ if ($_POST['apply']) {
             unlink($d_shaperconfdirty_path);
 }
 
-/* if this is an AJAX caller then handle via JSON */
-if(isAjax() && is_array($input_errors)) {
-        input_errors2Ajax($input_errors);
-        exit;
-}
-
-/* if ajax is calling, give them an update message */
-if(isAjax())
-        print_info_box_np($savemsg);
-
 $pgtitle = "Firewall: Shaper: By Queues View";
 
 include("head.inc");
@@ -154,11 +142,6 @@ include("head.inc");
 <link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 <script type="text/javascript" src="./tree/tree.js"></script>
 
-<?
-/* put your custom HTML head content here        */
-/* using some of the $pfSenseHead function calls */
-echo $pfSenseHead->getHTML();
-?>
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <div id="inputerrors"></div>
@@ -172,33 +155,25 @@ echo $pfSenseHead->getHTML();
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Shaper", false, "firewall_shaper.php");
-	//$tab_array[1] = array("Level 2", true, "");
-	$tab_array[1] = array("EZ Shaper wizard", false, "wizard.php?xml=traffic_shaper_wizard.xml");
+	$tab_array[0] = array("By Interface", false, "firewall_shaper.php");
+	$tab_array[1] = array("By Queue", true, "firewall_shaper_queues.ph");
+	$tab_array[2] = array("EZ Shaper wizard", false, "wizard.php?xml=traffic_shaper_wizard.xml");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
   <tr> 
     <td valign="top">
 	<div id="mainarea">
-              <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
-			<tr>
-			<td width="30%" valign="top" algin="left">
-		<?	$tab_ar = array();
-        $tab_ar[0] = array("By Interface", false, "firewall_shaper.php");
-        $tab_ar[1] = array("By Queues", true, "firewall_shaper_queues.php");
-        display_top_tabs($tab_ar); 
-                                echo $tree;
-                        ?>
-			</td></tr>
-		</table>
-			<td width="70%" valign="top" align="center">
-			<table class=\"tabcont\" width=\"80%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">
-		<tr><td>
+		<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+		<tr>
+		<td width="30%" valign="top" algin="left">
+                <?      echo $tree; ?>
+		</td>
+		<td width="70%" valign="top" align="center">
 			<? 
 				if ($qname)
         				echo "<pr class=\"pgtitle\">" . $qname . "</pr><br />";
-				echo "<table align=\"top\" class=\"tabcont\" width=\"80%\" border=\"0\" cellpadding=\"4\" cellspacing=\"0\">";
+				echo "<table align=\"center\" class=\"tabcont\" width=\"80%\" border=\"0\" cellpadding=\"4\" cellspacing=\"0\">";
 				echo $output;
 				echo "</table>";
 			?>	

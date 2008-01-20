@@ -3070,23 +3070,23 @@ function create_firewall_outgoing_rules_to_itself() {
 			/* first add a rule for the real interface, then for ng0 */
 			$int = " { " . filter_translate_type_to_real_interface($ifname) . " ng0 } ";
 		}
-		$rule .="pass out quick on {$int} all keep state label \"let out anything from firewall host itself\"\n";
+		$rule .="pass out on {$int} all keep state label \"let out anything from firewall host itself\"\n";
 	}
 
 	update_filter_reload_status("Setting up bridging items");
 	/* is bridging turned on? */
 	for($x=0; $x<10; $x++) {
 		if(does_interface_exist("bridge{$x}") == true)
-			$rule .="pass out quick on bridge{$x} all keep state label \"let out anything from firewall host itself\"\n";
+			$rule .="pass out on bridge{$x} all keep state label \"let out anything from firewall host itself\"\n";
 	}
 
 	update_filter_reload_status("Setting up pptp items");
 	if($config['pptpd']['mode'] == "server")
-		$rule .="pass out quick on \$pptp all keep state label \"let out anything from firewall host itself pptp\"\n";
+		$rule .="pass out on \$pptp all keep state label \"let out anything from firewall host itself pptp\"\n";
 
 	update_filter_reload_status("Setting up pppoe items");
 	if($config['pppoe']['mode'] == "server")
-		$rule .="pass out quick on \$pppoe all keep state label \"let out anything from firewall host itself pppoe\"\n";
+		$rule .="pass out on \$pppoe all keep state label \"let out anything from firewall host itself pppoe\"\n";
 
 	update_filter_reload_status("Setting up gif tunnels");
 	/* setup outgoing gif tunnels */
@@ -3094,40 +3094,40 @@ function create_firewall_outgoing_rules_to_itself() {
 	$number_of_gifs++;
 	for($x=0; $x<$number_of_gifs; $x++) {
 		if(does_interface_exist("gif{$x}") == true)
-			$rule .="pass out quick on gif{$x} all keep state label \"let out anything from firewall host itself ipsec gif\"\n";
+			$rule .="pass out on gif{$x} all keep state label \"let out anything from firewall host itself ipsec gif\"\n";
 	}
 
 	update_filter_reload_status("Setting up tun interfaces (openvpn)");
 	/* openvpn tun interfaces.  check for 100. */
 	for($x=0; $x<100; $x++) {
 		if(does_interface_exist("tun{$x}") == true) {
-			$rule .="pass out quick on tun{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
+			$rule .="pass out on tun{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
 			$friendlytunif = convert_real_interface_to_friendly_interface_name("tun{$x}");
 			/* If the interface has a gateway we do not add a pass in rule. */
 			/* Some people use a TUN tunnel with public IP as a Multiwan interface */
 			if(interface_has_gateway("tun{$x}")) {
 				$rule .= "# Not adding default pass in rule for interface $friendlytunif - tun{$x} with a gateway!";
 			} else {
-				$rule .="pass in quick on tun{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
+				$rule .="pass in on tun{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
 			}
 		}
 	}
 	for($x=0; $x<100; $x++) {
 		if(does_interface_exist("tap{$x}") == true) {
-			$rule .="pass out quick on tap{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
+			$rule .="pass out on tap{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
 			$friendlytapif = convert_real_interface_to_friendly_interface_name("tap{$x}");
 			/* If the interface has a gateway we do not add a pass in rule. */
 			/* Some people use a TAP tunnel with public IP as a Multiwan interface */
 			if(interface_has_gateway("tap{$x}")) {
 				$rule .= "# Not adding default pass in rule for interface $friendlytapif - tap{$x} with a gateway!";
 			} else {
-				$rule .="pass in quick on tap{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
+				$rule .="pass in on tap{$x} all keep state label \"let out anything from firewall host itself openvpn\"\n";
 			}
 		}
 	}
 
 	/* permit internal ipsec outbound traffic */
-	$rule .="pass out quick on \$enc0 keep state label \"IPsec internal host to host\"";
+	$rule .="pass out on \$enc0 keep state label \"IPsec internal host to host\"";
 
 	return $rule;
 }

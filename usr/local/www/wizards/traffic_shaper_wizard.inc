@@ -630,6 +630,7 @@ $othersplist = array();
 		$p2pcatchall = false;
 		$p2pcatchbw = 0;
 		$games = false;
+		$otherpriority = false;
 		/* Values are in percent */
 		if ($sched == "CBQ" || $sched == "HFSC") {
 			if ($config['ezshaper']['step3']['enable']) {
@@ -670,7 +671,7 @@ $othersplist = array();
 			if ($config['ezshaper']['step6']['enable']) {
 				$otherpriority = true;
 			} else 
-				$games = false;
+				$otherpriority = false;
 				
 			if ($voipbw + $penaltybw + $p2pcatchbw > 65) {
 				$message=gettext("Custom Bandwidths are greater than 65%. Please lower them for the wizard to continue.");

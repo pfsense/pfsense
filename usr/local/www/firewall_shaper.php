@@ -369,9 +369,9 @@ include("fbegin.inc");
   <tr><td>
 <?php
 	$tab_array = array();
-	$tab_array[0] = array("Shaper", true, "firewall_shaper.php");
-	//$tab_array[1] = array("Level 2", false, "");
-	$tab_array[1] = array("EZ Shaper wizard", false, "wizard.php?xml=traffic_shaper_wizard.xml");
+	$tab_array[0] = array("By Interface", true, "firewall_shaper.php");
+	$tab_array[1] = array("By Queue", false, "firewall_shaper_queues.php");
+	$tab_array[2] = array("EZ Shaper wizard", false, "wizard.php?xml=traffic_shaper_wizard.xml");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -381,11 +381,6 @@ include("fbegin.inc");
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
 			<tr>
 			<td width="25%" valign="top" algin="left">
-		<?	$tab_ar = array();
-        $tab_ar[0] = array("Interfaces", true, "firewall_shaper.php");
-        $tab_ar[1] = array("Queues", false, "firewall_shaper_queues.php");
-	display_top_tabs($tab_ar);
-        // customize later display_top_bar($tab_ar, "#A0000F", "#578100"); ?>
 			<?php
 				echo $tree; 
 			?>

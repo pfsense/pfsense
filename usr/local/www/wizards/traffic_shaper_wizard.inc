@@ -75,15 +75,6 @@ function  step1_stepbeforeformdisplay() {
 			$field['bindstofield'] = "ezshaper->step2->{$if}->scheduler";
 			$fields[] = $field;
 
-			if ($if != "wan" && $if != "lan") {
-				$field = array();
-				$field['name'] = "${if}internal";
-				$field['type'] = "checkbox";
-				$field['typehint'] = "Is this internal or external interface?";
-                        	$field['bindstofield'] = "ezshaper->step2->{$if}->internal";
-				$fields[] = $field;
-			}
-
 			$field = array();
 			$field['name'] = $if;
 			$field['type'] = "input";
@@ -591,10 +582,6 @@ $othersplist = array();
 	$othersplist['hbci'] = array();
 		/* HBCI  */
 		$othersplist['hbci'][] = array('HBCI', 'tcp', '3000', '3000', 'both');
-	$othersplist['p2pCatchAll'] = array();
-		$othersplist['p2pCatchAll'][] = array('p2pCatchAll', 'udp', '', '', 'both', '');
-		$othersplist['p2pCatchAll'][] = array('p2pCatchAll2', 'tcp', '', '', 'both', '');
-
 
 	/* 
 	 * Wipe previous config.
@@ -613,9 +600,6 @@ $othersplist = array();
 	unset($altq_list_queues);
 	$altq_list_queues = array();
 	$tmppath = array();	
-
-	$interface_list = array(); /* This is used for the interfaces to place on rules. */
-	$interface_list[] = "lan"; /* We always have LAN */
 
 	foreach ($config['ezshaper']['step2'] as $ifkey => $if) {
 		if ($if['scheduler'] == "NONE")
@@ -737,7 +721,10 @@ $othersplist = array();
 			else if ($sched == "HFSC")
 				$q =& new hfsc_queue();
 			$tmpcf = array();
-			$tmpcf['name'] = "qDefault";
+			if ($p2pcatchall)
+				$tmpcf['name'] = "qOthersDefault";
+			else
+				$tmpcf['name'] = "qDefault";
 			$tmpcf['priority'] = 3;
 			if (!$p2pcatchall)
 				$tmpcf['default'] = "on";
@@ -945,15 +932,12 @@ $othersplist = array();
 		array_pop($tmppath);
 	}	
 
-	$strint = implode(",", $interface_list);
 			/* Rules */
 			if ($penalty) {
 				if( is_ipaddr($config['ezshaper']['step4']['address']) or is_alias($config['ezshaper']['step4']['address'])) {
 				    $rule = array();
 				    $rule['descr'] = gettext("Penalty Box");
-				    //$rule['interface'] = $strint;
 					$rule['direction'] = "out";
-//			    	$rule['source']['network'] = $altq->GetInterface();
 				    $rule['source']['any'] = TRUE;
 				    $rule['defaultqueue'] = "qOthersLow";
 				    $rule['source']['address'] = $config['ezshaper']['step4']['address'];
@@ -972,9 +956,7 @@ $othersplist = array();
 					/* create VOIP rules */
 					$rule = array();
 					$rule['descr'] = gettext("VOIP Adapter");
-				    //$rule['interface'] = $strint;
 					$rule['direction'] = "out";
-	//			    $rule['source']['network'] = $altq->GetInterface();
 					$rule['source']['any'] = TRUE;
 					$rule['defaultqueue'] = "qVoIP";
 					$rule['source']['address'] = $config['ezshaper']['step3']['address'];
@@ -988,9 +970,7 @@ $othersplist = array();
 					/* create VOIP rules */
 					$rule = array();
 					$rule['descr'] = "DiffServ/Lowdelay/Upload";
-				    //$rule['interface'] = $strint;
 					$rule['direction'] = "out";
-	//			    $rule['source']['network'] = $altq->GetInterface();
 					$rule['source']['any'] = TRUE;
 					$rule['defaultqueue'] = "qVoIP";
 					$rule['source']['network'] = $altq->GetInterface();
@@ -1006,9 +986,7 @@ $othersplist = array();
 					foreach ($voiplist[$config['ezshaper']['step3']['provider']] as $voip) {
 						$rule = array();
 						$rule['defaultqueue'] = 'qVoIP';
-	 			        //$rule['interface'] = $strint;
 						$rule['direction'] = "out";
-	//		    	    $rule['source']['network'] = $altq->GetInterface();
 						$rule['source']['any'] = TRUE;
 						$rule['destination']['any'] = TRUE;
 						$rule['descr'] = "m_voip {$voip[0]} outbound";
@@ -1031,9 +1009,7 @@ $othersplist = array();
 					foreach ($p2plist[$key] as $p2pclient) {
 						$rule = array();
 						$rule['defaultqueue'] = 'qP2P';
-						//$rule['interface'] = $strint;
 						$rule['direction'] = "out";
-	//		    	    $rule['source']['network'] = $altq->GetInterface();
 						$rule['source']['any'] = TRUE;		
 						$rule['destination']['any'] = TRUE;
 						$rule['descr'] = "m_P2P {$p2pclient[0]} outbound";
@@ -1057,9 +1033,7 @@ $othersplist = array();
 						$rule['defaultqueue'] = 'qGames';
 						if ($sched != "HFSC")
 						$rule['ackqueue'] = 'qACK';
-					    //$rule['interface'] = $strint;
 						$rule['direction'] = "out";
-	//		    	    $rule['source']['network'] = $altq->GetInterface();
 						$rule['source']['any'] = TRUE;
 						$rule['destination']['any'] = TRUE;
 						$rule['floating'] = "yes";
@@ -1106,8 +1080,6 @@ $othersplist = array();
 						}
 						if (!$loop) {
 							$rule['direction'] = "out";
-		    			    //$rule['interface'] = $strint;
-	//			    	    $rule['source']['network'] = $altq->GetInterface();
 							$rule['source']['any'] = TRUE;
 							$rule['destination']['any'] = TRUE;
 							$rule['floating'] = "yes";

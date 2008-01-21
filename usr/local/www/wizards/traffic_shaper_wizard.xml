@@ -181,7 +181,7 @@
 				<name>Bandwidth</name>
 				<type>input</type>
 				<validate>^[0-9]*$</validate>
-				<typehint>Total bandwidth in percentage(%)(should be between 5 and 60) guarantee for VOIP traffic.</typehint>
+				<typehint>Total bandwidth in percentage(%)(should be between 5 and 40) guarantee for VOIP traffic.</typehint>
 				<bindstofield>ezshaper-&gt;step3-&gt;bandwidth</bindstofield>
 			</field>
 			<field>
@@ -224,7 +224,7 @@
 			</field>
 			<field>
 				<name>Bandwidth</name>
-				<description>The limit in percentage.</description>
+				<description>The limit in percentage (between 5% and 10%).</description>
 				<type>input</type>
 				<validate>^[0-9]*$</validate>
 				<message>Speed must be numerical and between 5 and 15 percent.</message>

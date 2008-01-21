@@ -627,16 +627,19 @@ $othersplist = array();
 		$p2pcatchbw = 0;
 		$games = false;
 		$otherpriority = false;
+		$remainbw = 100;
+		$steps = 7;	
 		/* Values are in percent */
-		if ($sched == "CBQ" || $sched == "HFSC") {
+		if ($sched == "CBQ" || $sched == "HFSC" || $sched == "PRIQ") {
 			if ($config['ezshaper']['step3']['enable']) {
 					$voip = true;
 					if ($config['ezshaper']['step3']['bandwidth'])
 						$voipbw = $config['ezshaper']['step3']['bandwidth'];
-					else
+					else 
 						$voipbw = 0;
 			} else {
 					$voipbw = 20;
+					$steps = $steps - 1;
 			}
 			if ($config['ezshaper']['step4']['enable']) {
 					$penalty = true;
@@ -644,6 +647,7 @@ $othersplist = array();
 			} else {
 					$penalty = false;
 					$penaltybw = 0;
+					$steps = $steps - 1;
 			}
 			if ($config['ezshaper']['step5']['enable']) {
 				$p2p = true;
@@ -658,30 +662,32 @@ $othersplist = array();
 				$p2p = false;
 				$p2pcatchall = false;
 				$p2pcatchbw = 0;
+				$steps = $steps - 1;
 			}
 			if ($config['ezshaper']['step6']['enable']) {
 				$games = true;
-			} else 
+			} else {
 				$games = false;
+				$steps = $steps - 1;
+			}
 			
 			if ($config['ezshaper']['step7']['enable']) {
 				$otherpriority = true;
-			} else 
+			} else  {
 				$otherpriority = false;
-				
+				$steps = $steps - 1;
+			}	
 			if ($voipbw + $penaltybw + $p2pcatchbw > 65) {
 				$message=gettext("Custom Bandwidths are greater than 65%. Please lower them for the wizard to continue.");
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=2&message={$message}");
 				exit;
 			}
 			$remainbw = 100 - $voipbw - $penaltybw - $p2pcatchbw;			
-		} else
-			$remainbw = 100; /* Needed?! */
+		} 
 
 		$factor = 0; 
-		
 		if ($sched == "PRIQ" || $sched == "CBQ" || $sched == "HFSC") {
-		//	if ($sched != "HFSC") {
+			if ($sched != "HFSC") {
 				if ($sched == "PRIQ")
 					$q =& new priq_queue();
 				else if ($sched == "CBQ")
@@ -692,25 +698,25 @@ $othersplist = array();
 				$tmpcf['red'] = "on";
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";
-					$tmpcf['bandwidth'] = $remainbw * 30/100; /* 30% bandwidth */
+					$tmpcf['bandwidth'] = $remainbw * 20/100; /* 20% bandwidth */
 					$tmpcf['bandwidthtype'] = "%";
-				} else if ($sched == "HFSC") {
-					$tmpcf['bandwidth'] = $remainbw * 30/100; /* 30% bandwidth */
+				} 
+				else if ($sched == "HFSC" && 0) {
+					$tmpcf['bandwidth'] = $remainbw * 20/100;
 					$tmpcf['bandwidthtype'] = "%";
 					$tmpcf['realtime'] = "on";
-					$tmpbw = $remainbw * 30/100; 
+					$tmpbw = $remainbw * 20/100; 
 					$tmpcf['reatlime3'] = "{$tmpbw}%";
 				}
 				array_push($tmppath, "qACK");
 				$qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
 				array_pop($tmppath);
 				$qtmp->wconfig();
-				
-				$factor = 30;
-				$remainbw = $remainbw - $remainbw * $factor / 100;
-		//	} 
+			} else { 
 			
-			/* NOTE: HFSC bandwidths are higher cause we don't have an ACK queue for it. */
+				/* NOTE: HFSC bandwidths are higher cause we don't have an ACK queue for it. */
+				$factor = 20 / $steps;
+			}
 			if ($sched == "PRIQ")
 				$q =& new priq_queue();
 			else if ($sched == "CBQ")
@@ -728,19 +734,16 @@ $othersplist = array();
 			$tmpcf['red'] = "on";
 			if ($sched == "CBQ") {
 				$tmpcf['borrow'] = "on";
-				$tmpcf['bandwidth'] = $remainbw * 7/(100 - factor); /* 13% bandwidth */
+				$tmpcf['bandwidth'] = $remainbw * (10 + $factor)/100; /* 10% bandwidth */
 				$tmpcf['bandwidthtype'] = "%";
 			} else if ($sched == "HFSC") {
-				$tmpcf['bandwidth'] = $remainbw * 7/(100 - factor); /* 13% bandwidth */
+				$tmpcf['bandwidth'] = $remainbw * (10 + $factor)/100; /* 10% bandwidth */
 				$tmpcf['bandwidthtype'] = "%";
 			}
 			array_push($tmppath, "qDefault");
 			$qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
 			array_pop($tmppath);
 			$qtmp->wconfig();
-
-			$factor = $factor + 7;
-			$remainbw = $remainbw - $remainbw * $factor / 100;
 
 			if ($p2p) {
 				if ($sched == "PRIQ")
@@ -764,19 +767,15 @@ $othersplist = array();
 					}
 					$tmpcf['default'] = "on";				
 					
-					$factor = p2pcatchbw;
-					$remainbw = $remainbw - $remainbw * $factor / 100;
 				} else {
 					if ($sched == "CBQ") {
 						$tmpcf['borrow'] = "on";
-						$tmpcf['bandwidth'] = $remainbw * 5/(100 - $factor); /* 5% bandwidth */
+						$tmpcf['bandwidth'] = $remainbw * (5 + $factor)/100; /* 5% bandwidth */
 						$tmpcf['bandwidthtype'] = "%";
 					} else if ($sched == "HFSC") {
-						$tmpcf['bandwidth'] = $remainbw * 5/(100 - $factor); /* 5% bandwidth */
+						$tmpcf['bandwidth'] = $remainbw * (5 + $factor)/100; /* 5% bandwidth */
 						$tmpcf['bandwidthtype'] = "%";
 					}
-					$factor = 5;
-					$remainbw = $remainbw - $remainbw * $factor / 100;
 				}
 				array_push($tmppath, "qP2P");
 				$qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
@@ -800,11 +799,8 @@ $othersplist = array();
 					if ($voipbw > 0)
 						$tmpcf['bandwidth'] = $voipbw;
 					else
-						$tmpcf['bandwidth'] = $remainbw * 20/(100 - $factor); /* 20% bandwidth */
+						$tmpcf['bandwidth'] = $remainbw * (25 + $factor)/100; /* 25% bandwidth */
 					$tmpcf['bandwidthtype'] = "%";
-
-					$factor = $voipbw;
-
 				} else if ($sched == "HFSC") {
 					if ($voipbw > 0) {
 						$tmpcf['realtime'] = "on";
@@ -812,29 +808,25 @@ $othersplist = array();
 						/* XXX: Don't know why PF does not allow only realtime set?! */
 						$tmpcf['bandwidth'] = "{$voipbw}";
 						$tmpcf['bandwidthtype'] = "%"; 
-						$factor = $voipbw;
+						$voipbw = $voipbw + 5;
+						$tmpcf['realtime1'] = "{$voipbw}%";
+						$tmpcf['realtime2'] = 30;
 					} else {
-						if (($remainbw * 20/(100 - $factor)) > 20)
-							$r1 = ($remainbw * 20/(100 - $factor)) + 5;
-						else 
-							$r1 = 20;
 						$tmpcf['realtime'] = "on";
+						$r1 = 25 + $factor;
+						$voipbw = ($remainbw * (20 + $factor)/100); /* 20% bandwidth */
 						$tmpcf['realtime1'] = "{$r1}%";
-						$tmpcf['realtime2'] = "50";
-						$voipbw = ($remainbw * 20/(100 - $factor)); /* 20% bandwidth */
+						$tmpcf['realtime2'] = "30";
 						$tmpcf['realtime3'] = "{$voipbw}%";
 						/* XXX: Don't know why PF does not allow only realtime set?! */
-						$tmpcf['bandwidth'] = "{$voipbw}";
+						$tmpcf['bandwidth'] = 20;
 						$tmpcf['bandwidthtype'] = "%";
-						$factor = $voipbw;
 					}
 				}
 				array_push($tmppath, "qVoIP");
 				$qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
 				array_pop($tmppath);
 				$qtmp->wconfig();
-					
-				$remainbw = $remainbw - $remainbw * $factor / 100;
 			}
 			
 			if ($games) {
@@ -850,19 +842,23 @@ $othersplist = array();
 				$tmpcf['red'] = "on";
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";
-					$tmpcf['bandwidth'] = $remainbw * 20/(100 - $factor); /* 20% bandwidth */
+					$tmpcf['bandwidth'] = $remainbw * (20 + $factor)/100; /* 20% bandwidth */
 					$tmpcf['bandwidthtype'] = "%";
 				} else if ($sched == "HFSC") {
-					$tmpcf['bandwidth'] = $remainbw * 20/(100 - $factor); /* 20% bandwidth */
+					$tmpcf['realtime'] = "on";
+                                        $g1 = 25 + $factor;
+                                        $gamesbw = ($remainbw * (20 + $factor)/100); /* 20% bandwidth */
+                                       	$tmpcf['realtime1'] = "{$g1}%";
+                                        $tmpcf['realtime2'] = "50";
+                                        $tmpcf['realtime3'] = "{$gamesbw}%";
+                                        /* XXX: Don't know why PF does not allow only realtime set?! */
+					$tmpcf['bandwidth'] = 20; /* 20% bandwidth */
 					$tmpcf['bandwidthtype'] = "%";
 				}
 				array_push($tmppath, "qGames");
 				$qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
 				array_pop($tmppath);
 				$qtmp->wconfig();
-				
-				$factor = 20;
-				$remainbw = $remainbw - $remainbw * $factor / 100;
 			}
 			
 			if ($otherpriority) {
@@ -878,10 +874,14 @@ $othersplist = array();
 				$tmpcf['red'] = "on";
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";
-					$tmpcf['bandwidth'] = $remainbw * 8/(100 - $factor); /* 8% bandwidth */
+					$tmpcf['bandwidth'] = $remainbw * (10 + $factor)/100; /* 10% bandwidth */
 					$tmpcf['bandwidthtype'] = "%";
 				} else if ($sched == "HFSC") {
-					$tmpcf['bandwidth'] = $remainbw * 8/(100 - $factor); /* 8% bandwidth */
+					$tmpcf['realtime'] = "on";
+					$otherbw = $remainbw * (10 + $factor)/100; /* 10% bandwidth */
+					$tmpcf['realtime1'] = "{$otherbw}%";
+					$tmpcf['realtime3'] = "{$otherbw}%";
+					$tmpcf['bandwidth'] = $otherbw;
 					$tmpcf['bandwidthtype'] = "%";
 				}
 				array_push($tmppath, "qOthersHigh");
@@ -889,8 +889,6 @@ $othersplist = array();
 				array_pop($tmppath);
 				$qtmp->wconfig();
 			
-				$factor = 8;
-				$remainbw = $remainbw - $remainbw * $factor / 100;
 
 				if ($sched == "PRIQ")
 					$q =& new priq_queue();
@@ -907,13 +905,13 @@ $othersplist = array();
 					if ($penalty)
 						$tmpcf['bandwidth'] = $penaltybw;
 					else
-						$tmpcf['bandwidth'] = $remainbw * 5/(100 - $factor); /* 5% bandwidth */
+						$tmpcf['bandwidth'] = $remainbw * (5 + $factor)/100; /* 5% bandwidth */
 					$tmpcf['bandwidthtype'] = "%";
 				} else if ($sched == "HFSC") {
 					if ($penalty)
 						$tmpcf['bandwidth'] = $penaltybw;
 					else
-						$tmpcf['bandwidth'] = $remainbw * 5/(100 - $factor); /* 5% bandwidth */
+						$tmpcf['bandwidth'] = $remainbw * (5 + $factor)/100; /* 5% bandwidth */
 					$tmpcf['bandwidthtype'] = "%";
 				}
 				array_push($tmppath, "qOthersLow");
@@ -1028,8 +1026,8 @@ $othersplist = array();
 					foreach ($gamesplist[$key] as $Gameclient) {
 						$rule = array();
 						$rule['defaultqueue'] = 'qGames';
-						if ($sched != "HFSC")
-						$rule['ackqueue'] = 'qACK';
+						if ($sched != "HFSC" && $Gameclient[1] == "tcp")
+							$rule['ackqueue'] = 'qACK';
 						$rule['direction'] = "out";
 						$rule['source']['any'] = TRUE;
 						$rule['destination']['any'] = TRUE;
@@ -1054,8 +1052,8 @@ $othersplist = array();
 						$rule = array();
 						switch ($val) {
 						case "H":
-								$rule['defaultqueue'] = 'qOthersHigh'; /* posted value H or L */
-									if ($sched != "HFSC")
+							$rule['defaultqueue'] = 'qOthersHigh'; /* posted value H or L */
+							if ($sched != "HFSC" && $val[1] == "tcp")
 								$rule['ackqueue'] = 'qACK';
 							$loop = 0;
 						break;
@@ -1067,7 +1065,7 @@ $othersplist = array();
 							if ($p2pcatchall) {
 								$loop = 0;
 								$rule['defaultqueue'] = 'qDefault';
-									if ($sched != "HFSC")
+								if ($sched != "HFSC" && $val[1] == "tcp")
 									$rule['ackqueue'] = 'qACK';
 							} else
 								$loop = 1; /* It automitaclly goes to default queue */

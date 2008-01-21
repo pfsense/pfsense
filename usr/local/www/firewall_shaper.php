@@ -102,6 +102,41 @@ if ($_GET) {
 			header("Location: firewall_shaper.php");
 			exit;
 		break;
+	case "resetall":
+			foreach ($altq_list_queues as $altq)
+				$altq->delete_all();
+			unset($altq_list_queues);
+			$altq_list_queues = array();
+			$tree = "<ul class=\"tree\" >";
+			$tree .= get_interface_list_to_show();
+			$tree .= "</ul>";
+			unset($config['shaper']['queue']);
+			unset($queue);
+			unset($altq);
+			$can_add = false;
+			$can_enable = false;
+			$dontshow = true;
+			foreach ($config['filter']['rule'] as $key => $rule) {
+				if (isset($rule['wizard']) && $rule['wizard'] == "yes")
+					unset($config['filter']['rule'][$key]);
+			}
+			write_config();
+			
+			$retval = 0;
+                        $savemsg = get_std_save_message($retval);
+
+                        config_lock();
+                        $retval = filter_configure();
+                        config_unlock();
+
+                        if (stristr($retval, "error") <> true)
+	                        $savemsg = get_std_save_message($retval);
+                        else
+       	                	$savemsg = $retval;
+			
+			$output_form = $default_shaper_message;
+
+		break;
 	case "add":
 			/* XXX: Find better way because we shouldn't know about this */
 		if ($altq) {
@@ -379,6 +414,13 @@ include("fbegin.inc");
     <td>
 	<div id="mainarea">
               <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
+<?php if (count($altq_list_queues) > 0): ?>
+                        <tr class="tabcont"><td width="25%" align="left">
+                                <a href="firewall_shaper.php?action=resetall" >
+                                        <input type="button" value="Remove Shaper" class="formbtn">
+                                </a>
+                        </td><td width="75%"> </td></tr>
+<? endif; ?>
 			<tr>
 			<td width="25%" valign="top" algin="left">
 			<?php

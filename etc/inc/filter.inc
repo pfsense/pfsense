@@ -2244,11 +2244,6 @@ function filter_rules_generate() {
 	$optcfg = array();
 	generate_optcfg_array($optcfg);
 
-	if (is_package_installed('squid') && file_exists('/usr/local/pkg/squid.inc')) {
-		require_once('squid.inc');
-		$ipfrules .= squid_generate_rules('filter');
-	}
-
 	if (is_package_installed('clamav') && file_exists('/usr/local/pkg/clamav.inc')) {
 		require_once('clamav.inc');
 		$ipfrules .= clamav_generate_rules('filter');
@@ -2455,8 +2450,6 @@ pass proto icmp from {$wanip} to any keep state
 
 EOD;
 
-if (!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 1) {
-
 	$ipfrules .= <<<EOD
 
 # let out anything from the firewall host itself and decrypted IPsec traffic
@@ -2465,8 +2458,6 @@ pass out on \$wan proto icmp keep state label "let out anything from firewall ho
 pass out on \$lan proto icmp keep state label "let out anything from firewall host itself"
 
 EOD;
-
-}
 
 	$ipfrules .= create_firewall_outgoing_rules_to_itself();
 

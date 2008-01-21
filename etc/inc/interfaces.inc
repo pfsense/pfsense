@@ -782,16 +782,9 @@ function find_dhclient_process($interface) {
 
 function interfaces_wan_configure() {
 	
-	require_once("Timer.php");
-	$timer = new Benchmark_Timer;
-
-	$timer->start();
-	
 	global $config, $g, $bridges_total;
 
 	$wancfg = $config['interfaces']['wan'];
-
-$timer->setMarker('marker1');
 
 	if(!$g['booting']) {
 		mute_kernel_msgs();
@@ -801,14 +794,12 @@ $timer->setMarker('marker1');
 
 		/* remove wanup file if it exists */
 		unlink_if_exists("{$g['tmp_path']}/wanup");
-$timer->setMarker('marker2');
 
 		/* kill PPPoE client (mpd) */
 		killbypid("{$g['varrun_path']}/mpd.pid");
 
 		/* wait for processes to die */
 		sleep(3);
-$timer->setMarker('marker3');
 		unlink_if_exists("{$g['varetc_path']}/dhclient_wan.conf");
 		unlink_if_exists("{$g['varetc_path']}/mpd.conf");
 		unlink_if_exists("{$g['varetc_path']}/mpd.links");
@@ -819,8 +810,6 @@ $timer->setMarker('marker3');
 	/* remove all addresses first */
 	while (mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " -alias") == 0);
 	mwexec("/sbin/ifconfig " . escapeshellarg($wancfg['if']) . " down");
-
-$timer->setMarker('marker4');
 
 	/* wireless configuration? */
 	if (is_array($wancfg['wireless']))
@@ -844,8 +833,6 @@ $timer->setMarker('marker4');
 			file_notice("MAC Address altered", "The INVALID MAC address (ff:ff:ff:ff:ff:ff) on interface {$wancfg['if']} has been automatically replaced with {$random_mac}", "Interfaces");
 		}
 	}
-
-$timer->setMarker('marker5');
 
 	/* media */
 	if ($wancfg['media'] || $wancfg['mediaopt']) {

@@ -804,12 +804,12 @@ $othersplist = array();
 				} else if ($sched == "HFSC") {
 					if ($voipbw > 0) {
 						$tmpcf['realtime'] = "on";
-						$tmpcf['realtime3'] = "{$voipbw}%";
+						$tmpcf['realtime1'] = "{$voipbw}%";
 						/* XXX: Don't know why PF does not allow only realtime set?! */
 						$tmpcf['bandwidth'] = "{$voipbw}";
 						$tmpcf['bandwidthtype'] = "%"; 
-						$voipbw = $voipbw + 5;
-						$tmpcf['realtime1'] = "{$voipbw}%";
+						$voipbw = $voipbw - 5;
+						$tmpcf['realtime3'] = "{$voipbw}%";
 						$tmpcf['realtime2'] = 30;
 					} else {
 						$tmpcf['realtime'] = "on";

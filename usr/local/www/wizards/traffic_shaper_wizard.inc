@@ -734,7 +734,7 @@ $othersplist = array();
 			$tmpcf['red'] = "on";
 			if ($sched == "CBQ") {
 				$tmpcf['borrow'] = "on";
-				$tmpcf['bandwidth'] = $remainbw * (10 + $factor)/100; /* 10% bandwidth */
+				$tmpcf['bandwidth'] = $remainbw * (10)/100; /* 10% bandwidth */
 				$tmpcf['bandwidthtype'] = "%";
 			} else if ($sched == "HFSC") {
 				$tmpcf['bandwidth'] = $remainbw * (10 + $factor)/100; /* 10% bandwidth */
@@ -770,7 +770,7 @@ $othersplist = array();
 				} else {
 					if ($sched == "CBQ") {
 						$tmpcf['borrow'] = "on";
-						$tmpcf['bandwidth'] = $remainbw * (5 + $factor)/100; /* 5% bandwidth */
+						$tmpcf['bandwidth'] = $remainbw * (5)/100; /* 5% bandwidth */
 						$tmpcf['bandwidthtype'] = "%";
 					} else if ($sched == "HFSC") {
 						$tmpcf['bandwidth'] = $remainbw * (5 + $factor)/100; /* 5% bandwidth */
@@ -799,7 +799,7 @@ $othersplist = array();
 					if ($voipbw > 0)
 						$tmpcf['bandwidth'] = $voipbw;
 					else
-						$tmpcf['bandwidth'] = $remainbw * (25 + $factor)/100; /* 25% bandwidth */
+						$tmpcf['bandwidth'] = $remainbw * (25)/100; /* 25% bandwidth */
 					$tmpcf['bandwidthtype'] = "%";
 				} else if ($sched == "HFSC") {
 					if ($voipbw > 0) {
@@ -842,7 +842,7 @@ $othersplist = array();
 				$tmpcf['red'] = "on";
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";
-					$tmpcf['bandwidth'] = $remainbw * (20 + $factor)/100; /* 20% bandwidth */
+					$tmpcf['bandwidth'] = $remainbw * (20)/100; /* 20% bandwidth */
 					$tmpcf['bandwidthtype'] = "%";
 				} else if ($sched == "HFSC") {
 					$tmpcf['realtime'] = "on";
@@ -874,7 +874,7 @@ $othersplist = array();
 				$tmpcf['red'] = "on";
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";
-					$tmpcf['bandwidth'] = $remainbw * (10 + $factor)/100; /* 10% bandwidth */
+					$tmpcf['bandwidth'] = $remainbw * (10)/100; /* 10% bandwidth */
 					$tmpcf['bandwidthtype'] = "%";
 				} else if ($sched == "HFSC") {
 					$tmpcf['realtime'] = "on";
@@ -905,7 +905,7 @@ $othersplist = array();
 					if ($penalty)
 						$tmpcf['bandwidth'] = $penaltybw;
 					else
-						$tmpcf['bandwidth'] = $remainbw * (5 + $factor)/100; /* 5% bandwidth */
+						$tmpcf['bandwidth'] = $remainbw * (5)/100; /* 5% bandwidth */
 					$tmpcf['bandwidthtype'] = "%";
 				} else if ($sched == "HFSC") {
 					if ($penalty)

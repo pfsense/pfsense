@@ -413,6 +413,17 @@ class altq_root_queue {
 		unset_object_by_reference($this->GetLink());
 	 }
 
+	function delete_all() {
+                if (count($this->queues)) {
+                        foreach ($this->queues as $q) {
+                        	$q->delete_all();
+                        	unset_object_by_reference($q->GetLink());
+                                unset($q);
+               		}
+        	        unset($this->queues);
+                }
+        }
+
 	/*
 	 * First it spits:
 	 * altq on $interface ..............
@@ -788,6 +799,17 @@ function GetEcn() {
 		cleanup_queue_from_rules($this->GetQname());
 		unset_object_by_reference($this->GetLink());
 	}
+	
+	function delete_all() {
+                if (count($this->subqueues)) {
+                        foreach ($this->subqueues as $q) {
+                                $q->delete_all();
+                                unset_object_by_reference($q->GetLink());
+                                unset($q);
+                        }
+                        unset($this->subqueues);
+                }
+        }
 
 	 function &find_queue($interface, $qname) { 
 		if ($qname == $this->GetQname())
@@ -1725,17 +1747,6 @@ class cbq_queue extends priq_queue {
 					$result = $q->find_parentqueue("", $qname);
 			if ($result)
 				return $result;
-		}
-		}
-
-	function delete_all() {
-		if (count($this->subqueues)) {
-				foreach ($this->subqueues as $q) {
-						$q->delete_all();
-			unset_object_by_reference($q->GetLink());
-						unset($q);
-				}
-				unset($subqueues);
 		}
 		}
 

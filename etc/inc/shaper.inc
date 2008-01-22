@@ -83,6 +83,78 @@ function clean_child_queues($type, $mypath) {
 	}
 }
 
+function get_bandwidthtype_scale($type) {
+        switch ($type) {
+        case "Gb":
+                $factor = 1000 * 1000 * 1000;
+        break;
+        case "Mb":
+                $factor = 1000 * 1000 * 1000;
+        break;
+        case "Kb":
+                $factor = 1000;
+        break;
+        case "b":
+        default:
+                $factor = 1;
+        break;
+        }
+        return $factor;
+}
+
+function get_hfsc_bandwidth($object, $bw) {
+	$pattern= "/[0-9]+/";
+        if (preg_match($pattern, $bw, $match))
+                $bw_1 = $match[0];
+        else
+                return 0;
+        $pattern= "/(Kb|Mb|Gb|%)/";
+        if (preg_match($pattern, $bw, $match)) {
+                switch ($match[0]) {
+                case '%':
+                        $bw_1 = $bw_1 / 100 * get_interface_bandwidth($object);
+                        break;
+                default:
+                        $bw_1 = $bw_1 * get_bandwidthtype_scale($match[0]);
+                        break;
+                }
+		return $bw_1;
+        } else
+                return 0;
+}
+
+function get_interface_bandwidth($object) {
+	global $altq_list_queues;
+
+        $int = $object->GetInterface();
+        $altq =& $altq_list_queues[$int];
+        if ($altq) {
+                $bw_3 = $altq->GetBandwidth();
+                $bw_3 = $bw_3 *  get_bandwidthtype_scale($altq->GetBwscale());
+		return $bw_3;
+        } else return 0;
+}
+
+/*
+ * This is duplicated here since we cannot include guiconfig.inc.
+ * Including it makes all stuff break.
+ */
+function shaper_do_input_validation($postdata, $reqdfields, $reqdfieldsn, $input_errors) {
+
+        /* check for bad control characters */
+        foreach ($postdata as $pn => $pd) {
+                if (is_string($pd) && preg_match("/[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]/", $pd)) {
+                        $input_errors[] = "The field '" . $pn . "' contains invalid characters.";
+                }
+        }
+
+        for ($i = 0; $i < count($reqdfields); $i++) {
+                if ($_POST[$reqdfields[$i]] == "") {
+                        $input_errors[] = "The field '" . $reqdfieldsn[$i] . "' is required.";
+                }
+        }
+}
+
 function cleanup_queue_from_rules($queue) {
 	global $config;
 
@@ -195,67 +267,35 @@ class altq_root_queue {
 		$reqfields[] = "bandwidthtype";
 		$reqdfieldsn[] = "Bandwidthtype";
 		
-		//do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
-		
-		switch ($config['interfaces'][$this->GetQname()]['banwidthtype']) {
-				case "Mb":
-					$factor = 1000;
-					break;
-				case "Kb":
-					$factor = 1;
-					break;
-				case "b":
-					$factor = 1/1000;
-					break;
-				case "Gb":
-					$factor = 1000 * 1000;
-					break;
-				case "%":
-					$factor = intval($config['interfaces'][$this->GetQname()]['banwidth']) / 100;
-					break;
-				default: /* XXX */
-					$factor = 1;
-					break;
-			} 
-		switch ($data['banwidthtype']) {
-				case "Mb":
-					$myfactor = 1000;
-					brak;
-				case "Kb":
-					$myfactor = 1;
-					break;
-				case "b":
-					$myfactor = 1/1000;
-					break;
-				case "Gb":
-					$myfactor = 1000 * 1000;
-					break;
-				case "%":
-					$factor = intval($config['interfaces'][$this->GetQname()]['banwidth']) / 100;
-					break;					
-				default: /* XXX */
-					$myfactor = 1;
-					break;
-			} 
+		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 		
 		if (isset($config['interface'][$this->GetQname()]['bandwidth'])) {
-		/*	if ($config['interface'][$this->GetQname()]['bandwidth'] * $factor <
-					$data['bandwidth'] * $myfactor)
-					$input_errors[] = "Bandwidth cannot be set higher than that of interface.";
-		*/
-		}
-		if ($data['bandwidth'] && (!is_numeric($data['bandwidth'])))
-						$input_errors[] = "Bandwidth must be an integer.";
-		if ($data['bandwidth'] < 0)
-						$input_errors[] = "Bandwidth cannot be negative.";
-		if ($data['qlimit'] && (!is_numeric($data['qlimit'])))
-						$input_errors[] = "Qlimit must be an integer.";
-		if ($data['qlimit'] < 0)
-						$input_errors[] = "Qlimit must be an positive.";
-		if ($data['tbrconfig'] && (!is_numeric($data['tbrconfig'])))
-						$input_errors[] = "Tbrsize must be an integer.";
-		if ($data['tbrconfig'] < 0)
-						$input_errors[] = "Tbrsize must be an positive.";
+                        switch($data['banwidthtype']) {
+                                case "%":
+                                        $myBw = $this->GetAvailableBandwidth() * $data['bandwidth'] / 100;
+                                        break;
+                                default:
+                                        $myBw = $data['bandwidth'] * get_bandwidthtype_scale($data['banwidthtype'])
+;
+                                        break;
+                        }
+
+                        if ($this->GetAvailableBandwidth() < $myBw)
+                                        $input_errors[] = "Bandwidth cannot be set higher than that of interface.";
+                }
+
+                if ($data['bandwidth'] && (!is_numeric($data['bandwidth'])))
+                                                $input_errors[] = "Bandwidth must be an integer.";
+                if ($data['bandwidth'] < 0)
+                                                $input_errors[] = "Bandwidth cannot be negative.";
+                if ($data['qlimit'] && (!is_numeric($data['qlimit'])))
+                                                $input_errors[] = "Qlimit must be an integer.";
+	 	if ($data['qlimit'] < 0)
+                                                $input_errors[] = "Qlimit must be an positive.";
+                if ($data['tbrconfig'] && (!is_numeric($data['tbrconfig'])))
+                                                $input_errors[] = "Tbrsize must be an integer.";
+                if ($data['tbrconfig'] < 0)
+                                                $input_errors[] = "Tbrsize must be an positive.";
 	}
 
 
@@ -327,32 +367,23 @@ class altq_root_queue {
 			$q->SetEnabled("on");
 			$q->SetParent(&$this);
 			$q->ReadConfig($queue);
-			switch ($q->GetBwscale()) {
-				case "Mb":
-					$factor = 1000;
-					brak;
-				case "Kb":
-					$factor = 1;
-					break;
-				case "b":
-					$factor = 1/1000;
-					break;
-				case "Gb":
-					$factor = 1000 * 1000;
-					break;
-				case "%":
-					$factor = $this->GetAvailableBandwidth() / 100;
-					break;
-				default: /* XXX */
-					$factor = 1;
-					break;
-			} 
-			$q->SetAvailableBandwidth($q->GetBandwidth() * $factor);
-			$this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $q->GetBandwidth() * $factor);
 			$q->validate_input($queue, $input_errors);
-			if (count($input_errors)) {
-				return $q;
-			}
+                 if (count($input_errors)) {
+                       return $q;
+                 }
+
+                 if (isset($q['bandwidth'])) {
+                         switch ($q['bandwidthtype']) {
+                         case "%":
+                                $q->SetAvailableBandwidth($this->GetAvailableBandwidth() -
+                                        ($this->GetAvailableBandwidth() * $q['bandwidth'] / 100));
+                                break;
+                        default:
+                                $q->SetAvailableBandwidth($this->GetAvailableBandwidth() -
+                                        ($q['bandwidth'] * get_bandwidthtype_scale($q['bandwdithtype'])));
+                                break;
+                        }
+                }
 			$this->queues[$q->GetQname()] = &$q; 
 			$GLOBALS['allqueue_list'][] = $q->GetQname();
 			ref_on_altq_queue_list($this->GetQname(), $q->GetQname());
@@ -822,7 +853,7 @@ function GetEcn() {
 	
 		$reqfields[] = "name";
 		$erqfieldsn[] = "Name";
-		//do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
+		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
 		if ($data['priority'] && (!is_numeric($data['priority'])
 						|| ($data['priority'] < 1) || ($data['priority'] > 15))) {
@@ -1168,29 +1199,17 @@ class hfsc_queue extends priq_queue {
 			}
 			$q->SetEnabled("on");
 			$q->SetLink($path);
-			switch ($q->GetBwscale()) {
-				case "Mb":
-					$factor = 1000;
-					brak;
-				case "Kb":
-					$factor = 1;
-					break;
-				case "b":
-					$factor = 1/1000;
-					break;
-				case "Gb":
-					$factor = 1000 * 1000;
-					break;
-				case "%":
-					$factor = $this->GetAvailableBandwidth() / 100;
-					break;
-				default: /* XXX */
-					$factor = 1;
-					break;
-			} 
-			$q->SetAvailableBandwidth($q->GetBandwidth() * $factor);
-			$this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $q->GetBandwidth() * $factor);			
-			$q->ReadConfig($qname);
+			switch($q->GetBwscale()) {
+                                case "%":
+                                        $myBw = $this->GetAvailableBandwidth() * $qname['bandwidth'] / 100;
+                                        break;
+                                default:
+                                        $myBw = $qname['bandwidth'] * get_bandwidthtype_scale($q->GetBwscale());
+                                        break;
+                        }
+                        $q->SetAvailableBandwidth($myBw);
+                        $this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $myBw);
+
 			$this->subqueues[$q->GetQname()] =& $q; //new hfsc_queue()
 			$GLOBALS['allqueue_list'][] = $q->GetQname();
 			ref_on_altq_queue_list($this->GetQname(), $q->GetQname());
@@ -1249,84 +1268,101 @@ class hfsc_queue extends priq_queue {
 		$reqfields[] = "bandwidthtype";
 		$reqdfieldsn[] = "Bandwidthtype";
 
-		//do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
+		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 		
-		if ($data['bandwidth'] && (!is_numeric($data['bandwidth']))) 
-			$input_errors[] = "Bandwidth must be an integer.";			 
+		if (isset($data['linkshare3']) && $data['linkshare3'] <> "") {
+		if ($data['bandwidth'] && (!is_numeric($data['bandwidth'])))
+                        $input_errors[] = "Bandwidth must be an integer.";
 
-		if ($data['bandwidth'] < 0)
-			$input_errors[] = "Bandwidth cannot be negative.";
-			
-		if ($data['bandwidthtype'] == "%") {
-		/*
-			if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0)
-				$input_errors[] = "Bandwidth in percentage should be between 1 and 100 bounds.";
-		*/
+                if ($data['bandwidth'] < 0)
+                        $input_errors[] = "Bandwidth cannot be negative.";
+
+                if ($data['bandwidthtype'] == "%") {
+                 if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0)
+                       $input_errors[] = "Bandwidth in percentage should be between 1 and 100 bounds.";
+                 }
+
+                $parent =& $this->GetParent();
+                switch ($data['bandwidthtype']) {
+                       case "%":
+                             $myBw = $parent->GetAvailableBandwidth() * $data['bandwidth'] / 100;
+                       default:
+                             $mybw = $data['bandwiddth'] * get_bandwidthtype_scale($data['bandwidthtype']);
+                             break;
+                }
+                if ($parent->GetAvailableBandwidth() < $myBw)
+                        $input_errors[] = "The sum of child bandwidths exceeds that of the parent.";
+                if ($data['priority'] > 7)
+                        $input_errors[] = "Priority must be an integer between 1 and 7.";
 		}
-		
-		$parent =& $this->GetParent();
-		switch ($data['bandwidthtype']) {
-				case "Mb":
-					$myfactor = 1000;
-					brak;
-				case "Kb":
-					$myfactor = 1;
-					break;
-				case "b":
-					$myfactor = 1/1000;
-					break;
-				case "Gb":
-					$myfactor = 1000 * 1000;
-					break;
-				case "%":
-					$myfactor = $parent->GetBandwidth() / 100;					
-				default: /* XXX */
-					$myfactor = 1;
-					break;
-			} 
-/*
 
-		if ($parent->GetAvailableBandwidth() < $data['bandwidth'] * $myfactor)
-			$input_errors[] = "Bandwidth greater than that of parent. Correct the error";		
-*/	
-		if ($data['priority'] > 7)
-						$input_errors[] = "Priority must be an integer between 1 and 7.";
-						
 		/* 
 		 * XXX: WARNING Some of this are not valid checks! 
 		 * We should check available bandwidth too for these values 
-		 *
+		 */
 		if ($data['upperlimit1'] <> "" &&  $data['upperlimit2'] == "")
-				$input_errors[] = ("upperlimit service curve defined but missing burst (d) value");
-			if ($data['upperlimit2'] <> "" &&  $data['upperlimit1'] == "")
-				$input_errors[] = ("upperlimit service curve defined but missing initial bandwidth (m1) value");
-			if ($data['upperlimit1'] <> "" && !is_valid_shaperbw($data['upperlimit1']))
-				$input_errors[] = ("upperlimit m1 value needs to be Kb, Mb, Gb, or %");
-			if ($data['upperlimit2'] <> "" && !is_numeric($data['upperlimit2']))
-				$input_errors[] = ("upperlimit d value needs to be numeric");
-			if ($data['upperlimit3'] <> "" && !is_valid_shaperbw($data['upperlimit3']))
-				$input_errors[] = ("upperlimit m2 value needs to be Kb, Mb, Gb, or %");
-			if ($data['linkshare1'] <> "" &&  $data['linkshare2'] == "")
-				$input_errors[] = ("linkshare service curve defined but missing burst (d) value");
-			if ($data['linkshare2'] <> "" &&  $data['linkshare1'] == "")
-				$input_errors[] = ("linkshare service curve defined but missing initial bandwidth (m1) value");
-			if ($data['linkshare1'] <> "" && !is_valid_shaperbw($data['linkshare1']))
-				$input_errors[] = ("linkshare m1 value needs to be Kb, Mb, Gb, or %");
-			if ($data['linkshare2'] <> "" && !is_numeric($data['linkshare2']))
-				$input_errors[] = ("linkshare d value needs to be numeric");
-			if ($data['linkshare3'] <> "" && !is_valid_shaperbw($data['linkshare3']))
-				$input_errors[] = ("linkshare m2 value needs to be Kb, Mb, Gb, or %");
-			if ($data['realtime1'] <> "" &&  $data['realtime2'] == "")
-				$input_errors[] = ("realtime service curve defined but missing burst (d) value");
-			if ($data['realtime2'] <> "" &&  $data['realtime1'] == "")
-				$input_errors[] = ("realtime service curve defined but missing initial bandwidth (m1) value");
-			if ($data['realtime1'] <> "" && !is_valid_shaperbw($data['realtime1']))
-				$input_errors[] = ("realtime m1 value needs to be Kb, Mb, Gb, or %");
-			if ($data['realtime2'] <> "" && !is_numeric($data['realtime2']))
-				$input_errors[] = ("realtime d value needs to be numeric");
-			if ($data['realtime3'] <> "" && !is_valid_shaperbw($data['realtime3']))
-				$input_errors[] = ("realtime m2 value needs to be Kb, Mb, Gb, or %");
-			*/
+			$input_errors[] = ("upperlimit service curve defined but missing (d) value");
+		if ($data['upperlimit2'] <> "" &&  $data['upperlimit1'] == "")
+			$input_errors[] = ("upperlimit service curve defined but missing initial bandwidth (m1) value");
+		if ($data['upperlimit1'] <> "" && !is_valid_shaperbw($data['upperlimit1']))
+			$input_errors[] = ("upperlimit m1 value needs to be Kb, Mb, Gb, or %");
+		if ($data['upperlimit2'] <> "" && !is_numeric($data['upperlimit2']))
+			$input_errors[] = ("upperlimit d value needs to be numeric");
+		if ($data['upperlimit3'] <> "" && !is_valid_shaperbw($data['upperlimit3']))
+			$input_errors[] = ("upperlimit m2 value needs to be Kb, Mb, Gb, or %");
+
+		if (isset($data['upperlimit']) && $data['upperlimit3'] <> "" && $data['upperlimit1'] <> "") {
+		$bw_1 = get_hfsc_bandwidth($this, $data['upperlimit1']);
+		$bw_2 = get_hfsc_bandwidth($this, $data['upperlimit3']);
+		if ($bw_1 < $bw_2) 
+			$input_errors[] = ("upperlimit m1 cannot be smaller than m2");
+
+		
+		if (get_interface_bandwidth($this) < (80/100 * ($bw_1+$bw_2)))
+			$input_errors[] = ("upperlimit specification excedd 80% of allowable allocation.");
+		}
+		if ($data['linkshare1'] <> "" &&  $data['linkshare2'] == "")
+			$input_errors[] = ("linkshare service curve defined but missing (d) value");
+		if ($data['linkshare2'] <> "" &&  $data['linkshare1'] == "")
+			$input_errors[] = ("linkshare service curve defined but missing initial bandwidth (m1) value");
+		if ($data['linkshare1'] <> "" && !is_valid_shaperbw($data['linkshare1']))
+			$input_errors[] = ("linkshare m1 value needs to be Kb, Mb, Gb, or %");
+		if ($data['linkshare2'] <> "" && !is_numeric($data['linkshare2']))
+			$input_errors[] = ("linkshare d value needs to be numeric");
+		if ($data['linkshare3'] <> "" && !is_valid_shaperbw($data['linkshare3']))
+			$input_errors[] = ("linkshare m2 value needs to be Kb, Mb, Gb, or %");
+		if ($data['realtime1'] <> "" &&  $data['realtime2'] == "")
+			$input_errors[] = ("realtime service curve defined but missing (d) value");
+		if ($data['realtime2'] <> "" &&  $data['realtime1'] == "")
+			$input_errors[] = ("realtime service curve defined but missing initial bandwidth (m1) value");
+
+		if (isset($data['linkshare']) && $data['linkshare3'] <> "" && $data['linkshare1'] <> "") {
+		$bw_1 = get_hfsc_bandwidth($this, $data['linkshare1']);
+                $bw_2 = get_hfsc_bandwidth($this, $data['linkshare3']);
+                if ($bw_1 < $bw_2)
+                        $input_errors[] = ("linkshare m1 cannot be smaller than m2");
+
+
+                if (get_interface_bandwidth($this) < (80/100 * ($bw_1+$bw_2)))
+                        $input_errors[] = ("linkshare specification excedd 80% of allowable allocation.");
+		}
+		if ($data['realtime1'] <> "" && !is_valid_shaperbw($data['realtime1']))
+			$input_errors[] = ("realtime m1 value needs to be Kb, Mb, Gb, or %");
+		if ($data['realtime2'] <> "" && !is_numeric($data['realtime2']))
+			$input_errors[] = ("realtime d value needs to be numeric");
+		if ($data['realtime3'] <> "" && !is_valid_shaperbw($data['realtime3']))
+			$input_errors[] = ("realtime m2 value needs to be Kb, Mb, Gb, or %");
+
+		if (isset($data['realtime']) && $data['realtime3'] <> "" && $data['realtime1'] <> "") {
+		$bw_1 = get_hfsc_bandwidth($this, $data['realtime1']);
+                $bw_2 = get_hfsc_bandwidth($this, $data['realtime3']);
+                if ($bw_1 < $bw_2)
+                        $input_errors[] = ("realtime m1 cannot be smaller than m2");
+
+
+                if (get_interface_bandwidth($this) < (80/100 * ($bw_1+$bw_2)))
+                        $input_errors[] = ("realtime specification excedd 80% of allowable allocation.");
+		}
 
 	}
 
@@ -1684,33 +1720,22 @@ class cbq_queue extends priq_queue {
 		$q =& new cbq_queue();
 		$q->SetInterface($this->GetInterface());
 		$q->SetParent(&$this);
-		switch ($q->GetBwscale()) {
-			case "Mb":
-				$factor = 1000;
-				brak;
-			case "Kb":
-				$factor = 1;
-				break;
-			case "b":
-				$factor = 1/1000;
-				break;
-			case "Gb":
-				$factor = 1000 * 1000;
-				break;
-			case "%":
-				$factor = $this->GetAvailableBandwidth() / 100;
-				break;
-			default: /* XXX */
-				$factor = 1;
-				break;
-		} 
-		$q->SetAvailableBandwidth($q->GetBandwidth() * $factor);
-		$this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $q->GetBandwidth() * $factor);
 		$q->ReadConfig($qname);
-		$q->validate_input($qname, $input_errors);
-		if (count($input_errors)) {
-			return $q;
-		}
+                $q->validate_input($qname, $input_errors);
+                if (count($input_errors)) {
+                        return $q;
+                }
+                switch ($q->GetBwscale()) {
+                        case "%":
+                                $myBw = $this->GetAvailableBandwidth() * $qname['bandwidth'] / 100;
+                                break;
+                        default:
+                                $myBw = $qname['bandwidth'] * get_bandwidthtype_scale($q->GetBwscale());
+                                break;
+                }
+                $q->SetAvailableBandwidth($myBw);
+                $this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $myBw);
+
 		$q->SetEnabled("on");
 		$q->SetLink($path);
 		$this->subqueues[$q->GetQName()] = &$q;
@@ -1772,43 +1797,31 @@ class cbq_queue extends priq_queue {
 		$reqfields[] = "bandwidthtype";
 		$reqdfieldsn[] = "Bandwidthtype";
 
-		//do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
+		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 		
-		if ($data['bandwidth'] && (!is_numeric($data['bandwidth']))) 
-			$input_errors[] = "Bandwidth must be an integer.";			 
+		if ($data['bandwidth'] && !is_numeric($data['bandwidth']))
+                 $input_errors[] = "Bandwidth must be an integer.";
 
-		if ($data['bandwidth'] < 0)
-				$input_errors[] = "Bandwidth cannot be negative.";		
-				
-		if ($data['bandwidthtype'] == "%") {
-			if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0)
-				$input_errors[] = "Bandwidth in percentage should be between 1 and 100 bounds.";
-		}
-			
-		$parent =& $this->GetParent();
-		switch ($data['bandwidthtype']) {
-				case "Mb":
-					$myfactor = 1000;
-					brak;
-				case "Kb":
-					$myfactor = 1;
-					break;
-				case "b":
-					$myfactor = 1/1000;
-					break;
-				case "Gb":
-					$myfactor = 1000 * 1000;
-					break;
-				case "%":
-					$myfactor = $parent->GetBandwidth() / 100;										
-				default: /* XXX */
-					$myfactor = 1;
-					break;
-			} 
-/*
-		if ($parent->GetAvailableBandwidth() < $data['bandwidth'] * $myfactor)
-				$input_errors[] = "Bandwidth greater than that of parent. Correct the error";
-*/
+
+           if ($data['bandwidth'] < 0)
+                       $input_errors[] = "Bandwidth cannot be negative.";
+
+
+           if ($data['bandwidthtype'] == "%") {
+                 if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0)
+                       $input_errors[] = "Bandwidth in percentage should be between 1 and 100 bounds.";
+           }
+
+           $parent =& $this->GetParent();
+           switch ($data['bandwidthtype']) {
+                       case "%":
+                             $myBw = $parent->GetAvailableBandwidth() * $data['bandwidth'] / 100;
+                       default:
+                             $mybw = $data['bandwiddth'] * get_bandwidthtype_scale($data['bandwidthtype']);
+                             break;
+           }
+                if ($parent->GetAvailableBandwidth() < $myBw)
+                        $input_errors[] = "The sum of child bandwidths exceeds that of the parent.";
 	}
 		function ReadConfig(&$q) {
 				parent::ReadConfig($q);

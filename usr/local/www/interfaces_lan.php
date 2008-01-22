@@ -268,6 +268,9 @@ if ($_POST['apply'] <> "") {
 	
 	/* sync filter configuration */
 	filter_configure();
+
+	/* set up static routes */
+	system_routing_configure();
 	
 	if(file_exists($d_landirty_path))
 		unlink($d_landirty_path);

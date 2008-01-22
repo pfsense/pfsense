@@ -1034,7 +1034,7 @@ function interfaces_dhcp_configure($interface) {
  	$dhclientconf = "";
 
 	$dhclientconf .= <<<EOD
-timeout 1200;
+timeout 60;
 retry 1;
 select-timeout 0;
 initial-interval 1;
@@ -1098,7 +1098,7 @@ function interfaces_wan_dhcp_configure() {
 
 	$dhclientconf .= <<<EOD
 interface "{$wancfg['if']}" {
-timeout 1200;
+timeout 60;
 retry 1;
 select-timeout 0;
 initial-interval 1;

@@ -698,14 +698,14 @@ $othersplist = array();
 				$tmpcf['red'] = "on";
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";
-					$tmpcf['bandwidth'] = $remainbw * 20/100; /* 20% bandwidth */
+					$tmpcf['bandwidth'] = round($remainbw * 20/100, 2); /* 20% bandwidth */
 					$tmpcf['bandwidthtype'] = "%";
 				} 
 				else if ($sched == "HFSC" && 0) {
-					$tmpcf['bandwidth'] = $remainbw * 20/100;
+					$tmpcf['bandwidth'] = round($remainbw * 20/100, 2);
 					$tmpcf['bandwidthtype'] = "%";
 					$tmpcf['realtime'] = "on";
-					$tmpbw = $remainbw * 20/100; 
+					$tmpbw = round($remainbw * 20/100, 2); 
 					$tmpcf['reatlime3'] = "{$tmpbw}%";
 				}
 				array_push($tmppath, "qACK");
@@ -734,10 +734,10 @@ $othersplist = array();
 			$tmpcf['red'] = "on";
 			if ($sched == "CBQ") {
 				$tmpcf['borrow'] = "on";
-				$tmpcf['bandwidth'] = $remainbw * (10)/100; /* 10% bandwidth */
+				$tmpcf['bandwidth'] = round($remainbw * (10)/100, 2); /* 10% bandwidth */
 				$tmpcf['bandwidthtype'] = "%";
 			} else if ($sched == "HFSC") {
-				$tmpcf['bandwidth'] = $remainbw * (10 + $factor)/100; /* 10% bandwidth */
+				$tmpcf['bandwidth'] = round($remainbw * (10 + $factor)/100, 2); /* 10% bandwidth */
 				$tmpcf['bandwidthtype'] = "%";
 			}
 			array_push($tmppath, "qDefault");
@@ -770,10 +770,10 @@ $othersplist = array();
 				} else {
 					if ($sched == "CBQ") {
 						$tmpcf['borrow'] = "on";
-						$tmpcf['bandwidth'] = $remainbw * (5)/100; /* 5% bandwidth */
+						$tmpcf['bandwidth'] = round($remainbw * (5)/100, 2); /* 5% bandwidth */
 						$tmpcf['bandwidthtype'] = "%";
 					} else if ($sched == "HFSC") {
-						$tmpcf['bandwidth'] = $remainbw * (5 + $factor)/100; /* 5% bandwidth */
+						$tmpcf['bandwidth'] = round($remainbw * (5 + $factor)/100, 2); /* 5% bandwidth */
 						$tmpcf['bandwidthtype'] = "%";
 					}
 				}
@@ -799,7 +799,7 @@ $othersplist = array();
 					if ($voipbw > 0)
 						$tmpcf['bandwidth'] = $voipbw;
 					else
-						$tmpcf['bandwidth'] = $remainbw * (25)/100; /* 25% bandwidth */
+						$tmpcf['bandwidth'] = round($remainbw * (25)/100, 2); /* 25% bandwidth */
 					$tmpcf['bandwidthtype'] = "%";
 				} else if ($sched == "HFSC") {
 					if ($voipbw > 0) {
@@ -814,7 +814,7 @@ $othersplist = array();
 					} else {
 						$tmpcf['realtime'] = "on";
 						$r1 = 25 + $factor;
-						$voipbw = ($remainbw * (20 + $factor)/100); /* 20% bandwidth */
+						$voipbw = round(($remainbw * (20 + $factor)/100), 2); /* 20% bandwidth */
 						$tmpcf['realtime1'] = "{$r1}%";
 						$tmpcf['realtime2'] = "30";
 						$tmpcf['realtime3'] = "{$voipbw}%";
@@ -842,12 +842,12 @@ $othersplist = array();
 				$tmpcf['red'] = "on";
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";
-					$tmpcf['bandwidth'] = $remainbw * (20)/100; /* 20% bandwidth */
+					$tmpcf['bandwidth'] = round($remainbw * (20)/100, 2); /* 20% bandwidth */
 					$tmpcf['bandwidthtype'] = "%";
 				} else if ($sched == "HFSC") {
 					$tmpcf['realtime'] = "on";
                                         $g1 = 25 + $factor;
-                                        $gamesbw = ($remainbw * (20 + $factor)/100); /* 20% bandwidth */
+                                        $gamesbw = round($remainbw * (20 + $factor)/100, 2); /* 20% bandwidth */
                                        	$tmpcf['realtime1'] = "{$g1}%";
                                         $tmpcf['realtime2'] = "50";
                                         $tmpcf['realtime3'] = "{$gamesbw}%";
@@ -874,11 +874,11 @@ $othersplist = array();
 				$tmpcf['red'] = "on";
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";
-					$tmpcf['bandwidth'] = $remainbw * (10)/100; /* 10% bandwidth */
+					$tmpcf['bandwidth'] = round($remainbw * (10)/100, 2); /* 10% bandwidth */
 					$tmpcf['bandwidthtype'] = "%";
 				} else if ($sched == "HFSC") {
 					$tmpcf['realtime'] = "on";
-					$otherbw = $remainbw * (10 + $factor)/100; /* 10% bandwidth */
+					$otherbw = round($remainbw * (10 + $factor)/100, 2); /* 10% bandwidth */
 					$tmpcf['realtime1'] = "{$otherbw}%";
 					$tmpcf['realtime3'] = "{$otherbw}%";
 					$tmpcf['bandwidth'] = $otherbw;
@@ -905,13 +905,13 @@ $othersplist = array();
 					if ($penalty)
 						$tmpcf['bandwidth'] = $penaltybw;
 					else
-						$tmpcf['bandwidth'] = $remainbw * (5)/100; /* 5% bandwidth */
+						$tmpcf['bandwidth'] = round($remainbw * (5)/100, 2); /* 5% bandwidth */
 					$tmpcf['bandwidthtype'] = "%";
 				} else if ($sched == "HFSC") {
 					if ($penalty)
 						$tmpcf['bandwidth'] = $penaltybw;
 					else
-						$tmpcf['bandwidth'] = $remainbw * (5 + $factor)/100; /* 5% bandwidth */
+						$tmpcf['bandwidth'] = round($remainbw * (5 + $factor)/100, 2); /* 5% bandwidth */
 					$tmpcf['bandwidthtype'] = "%";
 				}
 				array_push($tmppath, "qOthersLow");

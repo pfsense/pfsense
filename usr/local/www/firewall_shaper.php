@@ -317,11 +317,6 @@ $output_form .= "<tr><td width=\"22%\" valign=\"top\" class=\"vncellreq\">";
 $output_form .= "Queue Actions";
 $output_form .= "</td><td valign=\"top\" class=\"vncellreq\" width=\"78%\">";
 
-/*
-$output_form .= "<input type=\"image\" src=\"";
-$output_form .= "./themes/".$g['theme']."/images/icons/icon_up.gif\"";
-$output_form .= " width=\"17\" height=\"17\" border=\"0\" title=\"Submit\" >";
-*/
 $output_form .= "<input type=\"submit\" name=\"Submit\" value=\"" . gettext("Save") . "\" class=\"formbtn\" />";
 if ($can_add || $addnewaltq) {
 	$output_form .= "<a href=\"firewall_shaper.php?interface=";
@@ -330,9 +325,7 @@ if ($can_add || $addnewaltq) {
 		$output_form .= "&queue=" . $queue->GetQname();
 	}
 	$output_form .= "&action=add\">";
-	$output_form .= "<img src=\"";
-	$output_form .= "./themes/".$g['theme']."/images/icons/icon_plus.gif\"";
-	$output_form .= " width=\"17\" height=\"17\" border=\"0\" title=\"Add queue\">";
+	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"add\" value=\"Add Queue\">";
 	$output_form .= "</a>";
 	$output_form .= "<a href=\"firewall_shaper.php?interface=";
 	$output_form .= $interface . "&queue=";
@@ -340,13 +333,11 @@ if ($can_add || $addnewaltq) {
 		$output_form .= "&queue=" . $queue->GetQname();
 	}
 	$output_form .= "&action=delete\">";
-	$output_form .= "<img src=\"";
-	$output_form .= "./themes/".$g['theme']."/images/icons/icon_minus.gif\"";
-	$output_form .= " width=\"17\" height=\"17\" border=\"0\"";
+	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"delete\"";
 	if ($queue)
-		$output_form .= " title=\"Delete a queue\">";
+		$output_form .= " value=\"Delete a queue\">";
 	else
-		$output_form .= " title=\"Disable shaper on interface\">";
+		$output_form .= " value=\"Disable shaper on interface\">";
 	$output_form .= "</a>";  
 }
 $output_form .= "</td></tr>";

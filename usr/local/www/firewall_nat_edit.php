@@ -299,8 +299,8 @@ include("fbegin.inc"); ?>
 					</select>
 					<br />
                     <span class="vexpl">
-					If you want this rule to apply to another IP address than the IP address of the interface chosen above,
-					select it here (you need to define <a href="firewall_virtual_ip.php">Virtual IP</a> addresses on the first).  Also note that if you are trying to redirect connections on the LAN select the "any" option.</span></td>
+					If you want this rule to apply to another IP address than the address of the interface chosen above,
+					select it here (you need to define <a href="firewall_virtual_ip.php">Virtual IP</a> addresses first).  Note if you are redirecting connections on the LAN, select the "any" option.</span></td>
                 </tr>
                 <tr>
                   <td width="22%" valign="top" class="vncellreq">Protocol</td>

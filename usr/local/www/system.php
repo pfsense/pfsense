@@ -288,7 +288,7 @@ include("head.inc");
                       <input name="dnsallowoverride" type="checkbox" id="dnsallowoverride" value="yes" <?php if ($pconfig['dnsallowoverride']) echo "checked"; ?>>
                       <strong>Allow DNS server list to be overridden by DHCP/PPP
                       on WAN</strong><br>
-                      If this option is set, {$g['product_name']} will use DNS servers assigned
+                      If this option is set, <?php echo $g['product_name']; ?> will use DNS servers assigned
                       by a DHCP/PPP server on WAN for its own purposes (including
                       the DNS forwarder). They will not be assigned to DHCP and
                       PPTP VPN clients, though.</span></p></td>
@@ -357,7 +357,7 @@ include("head.inc");
 				}
 ?>
 					</select>
-					<strong>This will change the look and feel of {$g['product_name']}.</strong>
+					<strong>This will change the look and feel of <?php echo $g['product_name']; ?>.</strong>
 				</td>
 				</tr>
 				<tr>

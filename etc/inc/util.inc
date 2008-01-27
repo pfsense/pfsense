@@ -244,7 +244,7 @@ function is_portrange($portrange) {
 
 /* returns true if $val is a valid shaper bandwidth value */
 function is_valid_shaperbw($val) {
-	return (preg_match("/^[0-9]+(Kb|Mb|Gb|%)$/", $val));
+	return (preg_match("/^(\d+(?:\.\d+)?)([MKG]?b|%)$/", $val));
 }
 
 /*

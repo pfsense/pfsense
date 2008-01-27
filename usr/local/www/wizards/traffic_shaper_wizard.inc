@@ -887,7 +887,7 @@ $othersplist = array();
 			$tmpcf['enabled'] = "on";
 			If ($sched == "CBQ") {
 				$tmpcf['borrow'] = "on";
-				$tmpcf['bandwidth'] = round(pow(10, 0.8 * log(input_bw/$ifbw) + log(0.0558)), 2);
+				$tmpcf['bandwidth'] = $remainbw * 0.2;
 				$tmpcf['bandwidthtype'] = "%";
 			} 
 			else if ($sched == "HFSC") {

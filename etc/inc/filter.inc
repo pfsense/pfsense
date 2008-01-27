@@ -1645,8 +1645,15 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			}
 
 			/* do not process reply-to for gateway'd rules */
-			if(($rule['gateway'] == "") and ($ri != "") and ($rg != "") and (stristr($rule['interface'],"opt") == true)) {
-				$aline['reply'] = "reply-to (" . $ri . " " . $rg . ") ";
+			if(($rule['gateway'] == "") and (stristr($rule['interface'],"opt") == true)) {
+				foreach($config['gateways']['gateway_item'] as $gwy) {
+					if ($gwy['name'] == $config['interfaces'][$rule['interface']]['gateway']) {
+						$rg = $gwy['gateway'];
+						$aline['reply'] = "reply-to (" . $ri . " " . $rg . ") ";
+						break;
+					}
+				}
+
 			}
 
 			/* if user has selected a custom gateway, lets work with it */

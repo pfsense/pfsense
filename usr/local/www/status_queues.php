@@ -54,7 +54,11 @@ foreach($pfctl_vsq_array as $pfctl) {
 			$if = preg_replace("(root_)", "", $match_array[1][0]);
 			foreach ($config['interfaces'] as $ifkey => $ifdesc) {
 				if ($ifdesc['if'] == $if) {
-					$if = $ifkey;
+					if ($ifdesc['descr'] != "") {
+						$if = htmlspecialchars($ifdesc['descr']);
+					} else {
+						$if = strtoupper($ifkey);
+					}
 					break;
 				}
 			}

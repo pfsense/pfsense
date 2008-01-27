@@ -1635,7 +1635,13 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				$rg = file_get_contents("{$g['tmp_path']}/{$ri}_router");
 				$rg = rtrim($rg);
 			} elseif ($config['interfaces'][$rule['interface']]['gateway'] <> "")  {
-				$rg = $config['interfaces'][$rule['interface']]['gateway'];
+				$rgwy = $config['interfaces'][$rule['interface']]['gateway'];
+				foreach($config['gateways']['gateway_item'] as $gwy) {
+					if ($gwy['name'] == $rgw) {
+						$rg = $gwy['gateway'];
+						break;
+					}
+				}
 			}
 
 			/* do not process reply-to for gateway'd rules */

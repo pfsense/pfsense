@@ -39,11 +39,18 @@
 		<description>This wizard will guide you through setting up the pfSense traffic shaper.</description>
 		<fields>
 			<field>
+				<name>numberofconnections</name>
+				<type>input</type>
+				<validate>^[0-9]+$</validate>
+				<description>Number of connections you have</description>
+				<bindstofield>ezshaper->step1->numberofconnections</bindstofield>
+			</field>
+			<field>
 				<name>Next</name>
 				<type>submit</type>
 			</field>
 		</fields>
-		<stepbeforeformdisplay>step1_stepbeforeformdisplay();</stepbeforeformdisplay>
+		<stepsubmitphpaction>step1_submitphpaction();</stepsubmitphpaction>
 		<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 	</step>
 	<step>
@@ -51,7 +58,7 @@
 		<title>pfSense Traffic Shaper Wizard</title>
 		<description>Shaper configuration</description>
 		<javascriptafterformdisplay/>
-		<stepsubmitphpaction>                step2_stepsubmitphpaction();        </stepsubmitphpaction>
+		<stepsubmitphpaction>step2_stepsubmitphpaction();</stepsubmitphpaction>
 		<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 		<fields>
 			<field>
@@ -63,10 +70,6 @@
 				<type>select</type>
 				<typehint>Queueing discipline to apply on this interface</typehint>
 				<options>
-					<option>
-						<name>NONE</name>
-						<value>NONE</value>
-					</option>
 					<option>
 						<name>HFSC</name>
 						<value>HFSC</value>
@@ -86,7 +89,7 @@
 				<name>lan</name>
 				<type>input</type>
 				<typehint>Bandwidth in Kbit/sec on this interface</typehint>
-				<validate>^[0-9]*$</validate>
+				<validate>^[0-9]*([MKG]?b|%)$</validate>
 				<bindstofield>ezshaper-&gt;step2-&gt;lan-&gt;bandwidth</bindstofield>
 			</field>
 			<field>
@@ -94,10 +97,6 @@
 				<type>select</type>
 				<typehint>Queueing discipline to apply on this interface</typehint>
 				<options>
-					<option>
-						<name>NONE</name>
-						<value>NONE</value>
-					</option>
 					<option>
 						<name>HFSC</name>
 						<value>HFSC</value>
@@ -226,7 +225,7 @@
 				<name>Bandwidth</name>
 				<description>The limit in percentage (between 5% and 10%).</description>
 				<type>input</type>
-				<validate>^[0-9]*$</validate>
+				<validate>^[0-9]*%$</validate>
 				<message>Speed must be numerical and between 5 and 15 percent.</message>
 				<bindstofield>ezshaper-&gt;step4-&gt;bandwidth</bindstofield>
 			</field>
@@ -271,7 +270,7 @@
 				<name>Bandwidth</name>
 				<description>The limit in percentage.</description>
 				<type>input</type>
-				<validate>^[0-9]*$</validate>
+				<validate>^[0-9]*%$</validate>
 				<message>Speed must be numerical and in percentage of parent and between 5 and 10 perncent.</message>
 				<bindstofield>ezshaper-&gt;step5-&gt;bandwidth</bindstofield>
 			</field>

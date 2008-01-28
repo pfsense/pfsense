@@ -256,7 +256,7 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td width="15%" class="listhdrr">Destination</td>
                   <td width="7%" class="listhdrr">Port</td>
 		  <td width="5%" class="listhdrr">Gateway</td>
-		<td width="10%" class="listhdrr">Queue</td>
+		  <td width="10%" class="listhdrr">Queue</td>
 		  <td width="5%" class="listhdrr">Schedule</td>
                   <td width="22%" class="listhdr">Description</td>
                   <td width="10%" class="list">
@@ -639,8 +639,9 @@ echo "<script type=\"text/javascript\" language=\"javascript\" src=\"/javascript
                   <td class="list">&nbsp;</td>
                   <td class="list">&nbsp;</td>
                   <td class="list">&nbsp;</td>
-		 		  <td class="list">&nbsp;</td>
-				  <td class="list">&nbsp;</td>
+		  <td class="list">&nbsp;</td>
+		  <td class="list">&nbsp;</td>
+                  <td class="list">&nbsp;</td>
                   <td class="list">&nbsp;</td>
                   <td class="list">&nbsp;</td>
                   <td class="list">&nbsp;</td>

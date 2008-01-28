@@ -132,12 +132,10 @@ if ($_POST) {
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
 			$iflist['opt' . $i] = 'opt' . $i;
 		foreach($iflist as $if) {
-			$ww_subnet_ip = return_first_two_octets($config['interfaces'][$if]['ipaddr']);
-			$ww_subnet_bits = return_first_two_octets($config['interfaces'][$if]['subnet']);
-			if($ww_subnet_ip == $subnet_ip and $ww_subnet_bits == $_POST['subnet_bits']) {
+			$ww_subnet_ip = $config['interfaces'][$if]['ipaddr'];
+			$ww_subnet_bits = $config['interfaces'][$if]['subnet'];
+			if (ip_in_subnet($_POST['subnet'], gen_subnet($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits))
 				$found = true;
-				break;
-			}
 		}
 		if($found == false) {
 			$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;

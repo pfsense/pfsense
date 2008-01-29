@@ -105,12 +105,12 @@ function get_bandwidthtype_scale($type) {
 function get_hfsc_bandwidth($object, $bw) {
 	$pattern= "/[0-9]+/";
         if (preg_match($pattern, $bw, $match))
-                $bw_1 = $match[0];
+                $bw_1 = $match[1];
         else
                 return 0;
         $pattern= "/(b|Kb|Mb|Gb|%)/";
         if (preg_match($pattern, $bw, $match)) {
-                switch ($match[0]) {
+                switch ($match[1]) {
                 case '%':
                         $bw_1 = $bw_1 / 100 * get_interface_bandwidth($object);
                         break;

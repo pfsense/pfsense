@@ -72,7 +72,7 @@ if ($_GET['act'] == "del") {
 }
 
 if ($_POST['apply']) {
-	if (file_exists("/tmp/carp_reboot_needed") == "del") {
+	if (file_exists("/tmp/carp_reboot_needed")) {
 		$savemsg = "The firewall is now rebooting, please wait.";	
 		unlink_if_exists($d_vipconfdirty_path);
 	}
@@ -89,11 +89,9 @@ include("head.inc");
 <?php 
 	if ($input_errors) 
 		print_input_errors($input_errors);
-	else
-	if ($savemsg) 
+	else if ($savemsg) 
 		print_info_box($savemsg); 
-	else
-	if (file_exists($d_vipconfdirty_path))
+	else if (file_exists($d_vipconfdirty_path))
 		print_info_box_np("The VIP configuration has been changed.<br>You must apply the changes in order for them to take effect.");
 ?>
 <p>
@@ -200,8 +198,7 @@ if ($_POST) {
 			reset_carp();
 			$retval |= filter_configure();
 			config_unlock();
-
-			$savemsg = get_std_save_message($retval);
+			
 			unlink_if_exists($d_vipconfdirty_path);
 		}
 	}

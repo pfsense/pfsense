@@ -109,10 +109,12 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
             }
         }
 
-		foreach($_POST['groupname'] as $groupname) {
-        	if ($pconfig['utype'] <> "system" && !isset($groupindex[$groupname])) {
-            	$input_errors[] = gettext("group {$groupname} does not exist, please define the group before assigning users.");
-        	}
+		if(is_array($_POST['groupname'])) {
+			foreach($_POST['groupname'] as $groupname) {
+        		if ($pconfig['utype'] <> "system" && !isset($groupindex[$groupname])) {
+            		$input_errors[] = gettext("group {$groupname} does not exist, please define the group before assigning users.");
+        		}
+			}
 		}
 
         if (isset($config['system']['ssh']['sshdkeyonly']) &&

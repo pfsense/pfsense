@@ -67,7 +67,6 @@ function  step1_stepbeforeformdisplay() {
 		$field['type'] = "input";
 		$field['value'] = 1;
 		$field['typehint'] = "Number of internet connections you have. The valid range is 1-100.";
-		$field['validate'] = "/^[0-9]+$/";
 		$field['bindstofield'] = "ezshaper->step1->numberofconnections";
 		$fields[] = $field;
 
@@ -194,14 +193,12 @@ function step1_submitphpaction() {
 			$field['name'] = "conn{$i}upload";
 			$field['type'] = "input";
 			$field['typehint'] = "Upload bandwidth on this connection.";
-			$field['validate'] = "/^[0-9]*(Kb|Mb|Gb|%)$/";
 			$field['bindstofield'] = "ezshaper->step2->conn{$i}upload";
 			$fields[] = $field;
 
 			$field['name'] = "conn{$i}download";
 			$field['type'] = "input";
 			$field['typehint'] = "Download bandwidth on this connection.";
-			$field['validate'] = "/^[0-9]*(Kb|Mb|Gb|%)$/";
 			$field['bindstofield'] = "ezshaper->step2->conn{$i}download";
 			$fields[] = $field;
 
@@ -243,8 +240,8 @@ function step1_submitphpaction() {
 			$opts['value'] = "VoicePulse";
 			$field['options']['option'][] = $opts;
 			$opts = array();
-			$opts['name'] = "Asterisk";
-			$opts['value'] = "Asterisk/Vonage";
+			$opts['name'] = "Asterisk/Vonage";
+			$opts['value'] = "Asterisk";
 			$field['options']['option'][] = $opts;
 			$opts = array();
 			$opts['name'] = "PanasonicTDA";
@@ -266,7 +263,6 @@ function step1_submitphpaction() {
                         $field['name'] = "conn{$i}upload";
                         $field['type'] = "input";
                         $field['typehint'] = "Upload bandwidth guarantee for VOIP phone(s) on connection {$i}.";
-                        $field['validate'] = "/^[0-9]*(Kb|Mb|Gb|%)$/";
                         $field['bindstofield'] = "ezshaper->step3->conn{$i}upload";
                         $voipfields[] = $field;
 		}
@@ -274,7 +270,6 @@ function step1_submitphpaction() {
 			$field['name'] = "download";
 			$field['type'] = "input";
 			$field['typehint'] = "Download bandwidth guarantee for VOIP phone(s) on connections.";
-			$field['validate'] = "/^[0-9]*(Kb|Mb|Gb|%)$/";
 			$field['bindstofield'] = "ezshaper->step3->download";
 			$voipfields[] = $field;
 
@@ -292,6 +287,16 @@ function step2_stepsubmitphpaction() {
 				if ($_POST["conn{$i}interface"] == $_POST["conn{$j}interface"]) {
 					$message=gettext("You cannot select the same interface for connections {$i} and {$j}.");
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
+					exit;
+				}
+				if (!is_valid_shaperbw($_POST["conn{$i}upload"])) {
+					$message = gettext("Upload bandwidth of connection {$i} is not valid.");
+					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
+					exit;
+				}
+				if (!is_valid_shaperbw($_POST["conn{$i}download"])) {
+					$message = gettext("Download bandwidth of connection {$i} is not valid.");
+					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
 					exit;
 				}
 			}
@@ -349,6 +354,12 @@ function step3_stepsubmitphpaction() {
 
 	$steps = intval($config['ezshaper']['step1']['numberofconnections']);
 	for ($i = 0; $i < $steps; $i++) {
+			if ($_POST["conn{$i}upload"]) {
+			if (!is_valid_shaperbw($_POST["conn{$i}upload"])) {
+					$message = gettext("Upload bandwidth of connection {$i} is not valid.");
+					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=2&message={$message}");
+					exit;
+				}
 			/* XXX: NOTE: We are not checking the limit for download! */
 			$factor = wizard_get_bandwidthtype_scale(wizard_get_bwunit($config['ezshaper']['step2']["conn{$i}upload"]));
 			$ifbw = $factor * wizard_get_bw($config['ezshaper']['step2']["conn{$i}upload"]);	
@@ -358,6 +369,7 @@ function step3_stepsubmitphpaction() {
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=2&message={$message}");
 				exit;
 			}	
+		}
 	}
 }
 
@@ -365,16 +377,22 @@ function step4_stepsubmitphpaction() {
 		global $config;
 
 		if ( $_POST['enable'] ) {
-			if(!is_valid_shaperbw($_POST['bandwidth'])) {
-				$message="The posted value is not a valid bandwidth.";
-				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=3&message={$message}");	
-				exit;
-			}
 			if(!$_POST['bandwidth']) {
 				$message="You need to specify a value for bandwidth!";
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=3&message={$message}");
 				exit;
 			}
+			if(!is_valid_shaperbw($_POST['bandwidth'])) {
+				$message="The posted value is not a valid bandwidth.";
+				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=3&message={$message}");	
+				exit;
+			}
+			if (wizard_get_bwunit($_POST['bandwidth']) <> "%") {
+					$message = gettext("Only percentage bandwidth specification is allowed.");
+					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=3&message={$message}");
+					exit;
+			}
+			
 			$bw = wizard_get_bw($_POST['bandwidth']);
 			if($bw > 15 && $bw < 2) {
 				$message="Values should be between 2% and 15%!";
@@ -402,6 +420,11 @@ function step5_stepsubmitphpaction() {
 				$message="Posted value is not a valid bandwidth.";
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=4&message={$message}");
 
+			}
+			if (wizard_get_bwunit($_POST['bandwidth']) <> "%") {
+					$message = gettext("Only percentage bandwidth specification is allowed.");
+					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=4&message={$message}");
+					exit;
 			}
 		$bw = wizard_get_bw($_POST['bandwidth']);
 		if($bw > 15 && $bw < 2) {

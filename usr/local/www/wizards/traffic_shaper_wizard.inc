@@ -1487,7 +1487,7 @@ $othersplist = array();
 						$tmpcf['bandwidth'] = wizard_get_bw($penaltybw);
 						$tmpcf['bandwidthtype'] = wizard_get_bwunit($penaltybw);
 					} else {
-						$lsbw = $remainbw * 0.5;
+						$lsbw = $remainbw * 0.05;
 						$tmpcf['linkshare1'] = "{$lsbw}%"; /* 5% bandwidth */
 						$tmpcf['linkshare3'] = "{$lsbw}%"; /* 5% bandwidth */
 						$tmpcf['bandwidth'] = $lsbw;

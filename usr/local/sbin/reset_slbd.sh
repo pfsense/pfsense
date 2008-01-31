@@ -2,7 +2,7 @@
 
 for items in `ps auxcwwl | awk '/slbd/{print $3}'|awk -F"." '{print $1}'`
 do
-        if [ "$items" -gt "99" ]; then
+        if [ "$items" -gt "86" ]; then
                 killall slbd
 				sleep 2
                 killall -9 slbd

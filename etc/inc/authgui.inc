@@ -49,10 +49,26 @@ require_once("functions.inc");
 $auth_method="session_auth";
 
 /* enable correct auth backend, default to htpasswd_backed */
-if($config['system']['webgui']['backend'] == "ldap")
-	$backing_method="ldap_backed";
-else
-	$backing_method="htpasswd_backed";
+$ldapcase = $config['system']['webgui']['backend'];
+switch($ldapcase)
+{
+case ldap:
+     $backing_method="ldap_backed";
+     break;
+case ldapother:
+     $backing_method="ldap_backed";
+     break;
+default:
+    $backing_method="htpasswd_backed"; 
+}
+
+
+//if($config['system']['webgui']['backend'] == "ldap"){
+//	$backing_method="ldap_backed";
+//} elseif($config['system']['webgui']['backend'] == "ldapother")
+//        $backing_method="ldap_backed";
+//else
+//	$backing_method="htpasswd_backed";
 
 /* Authenticate user - exit if failed */
 if (!$auth_method($backing_method)) { exit; }

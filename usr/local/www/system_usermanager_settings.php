@@ -31,9 +31,9 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-if($_POST['savetest']) 
+if($_POST['savetest'])
 	$save_and_test = true;
-	
+
 require("guiconfig.inc");
 
 $pconfig['session_timeout'] = &$config['system']['webgui']['session_timeout'];
@@ -44,13 +44,15 @@ $pconfig['ldapbindpw'] = &$config['system']['webgui']['ldapbindpw'];
 $pconfig['ldapfilter'] = &$config['system']['webgui']['ldapfilter'];
 $pconfig['ldapsearchbase'] = &$config['system']['webgui']['ldapsearchbase'];
 $pconfig['ldapauthcontainers'] = &$config['system']['webgui']['ldapauthcontainers'];
+$pconfig['ldapgroupattribute'] = &$config['system']['webgui']['ldapgroupattribute'];
+$pconfig['ldapnameattribute'] = &$config['system']['webgui']['ldapnameattribute'];
 
 // Page title for main admin
 $pgtitle = array("System","User manager settings");
 
 if ($_POST) {
 	unset($input_errors);
-	
+
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
 
 	if($_POST['session_timeout']) {
@@ -58,25 +60,25 @@ if ($_POST) {
 		if ($timeout != "" && !is_numeric($timeout))
 			$input_errors[] = gettext("Session timeout must be an integer with value 1 or greater.");
 
-		if ($timeout < 1) 
+		if ($timeout < 1)
 			$input_errors[] = gettext("Session timeout must be an integer with value 1 or greater.");
-	
-		if ($timeout > 999) 
+
+		if ($timeout > 999)
 			$input_errors[] = gettext("Session timeout must be an integer with value 1 or greater.");
 	}
 
 	if (!$input_errors) {
 
-		if($_POST['session_timeout'] && $_POST['session_timeout'] != "0") 
+		if($_POST['session_timeout'] && $_POST['session_timeout'] != "0")
 			$pconfig['session_timeout'] = intval($_POST['session_timeout']);
-		else 
+		else
 			unset($config['system']['webgui']['session_timeout']);
-		
+
 		if($_POST['ldapserver'])
 			$pconfig['ldapserver'] = $_POST['ldapserver'];
 		else
 			unset($pconfig['ldapserver']);
-			
+
 		if($_POST['backend'])
 			$pconfig['backend'] = $_POST['backend'];
 		else
@@ -106,6 +108,16 @@ if ($_POST) {
 			$pconfig['ldapauthcontainers'] = $_POST['ldapauthcontainers'];
 		else
 			unset($pconfig['ldapauthcontainers']);
+
+		if($_POST['ldapgroupattribute'])
+			$pconfig['ldapgroupattribute'] = $_POST['ldapgroupattribute'];
+		else
+			unset($pconfig['ldapgroupattribute']);
+		if($_POST['ldapnameattribute'])
+			$pconfig['ldapnameattribute'] = $_POST['ldapnameattribute'];
+		else
+			unset($pconfig['ldapgroupattribute']);
+
 
 		write_config();
 
@@ -155,7 +167,7 @@ if(!$pconfig['backend'])
               <table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="6">
 					<tr>
                         <td width="22%" valign="top" class="vncell">Session Timeout</td>
-                        <td width="78%" class="vtable"> 
+                        <td width="78%" class="vtable">
 							<input name="session_timeout" id="session_timeout" type="text" size="8" value="<?=htmlspecialchars($pconfig['session_timeout']);?>" />
                           <br />
                           <?=gettext("Time in minutes to expire idle management sessions.");?><br />
@@ -163,10 +175,11 @@ if(!$pconfig['backend'])
                       </tr>
 					<tr>
                         <td width="22%" valign="top" class="vncell">Authentication primary backend</td>
-                        <td width="78%" class="vtable"> 
+                        <td width="78%" class="vtable">
 							<select name='backend'>
 								<option value="pfsense"<?php if ($pconfig['backend'] == "pfsense") echo " SELECTED";?>>pfSense</option>
 								<option value="ldap"<?php if ($pconfig['backend'] == "ldap") echo " SELECTED";?>>LDAP (Active Directory)</option>
+								<option value="ldapother"<?php if ($pconfig['backend'] == "ldapother") echo " SELECTED";?>>LDAP OTHER</option>
 							</select>
 							<br/>NOTE: login failures or server not available issues will fall back to pfSense internal users/group authentication.
 						</td>
@@ -183,9 +196,10 @@ if(!$pconfig['backend'])
                         <td width="78%" class="vtable">
 							<input name="ldapbindun" size="65" value="<?=htmlspecialchars($pconfig['ldapbindun']);?>">
 							<br/>This account must have read access to the user objects and be able to retrieve groups.
-							<br/>Example: For Active Directory you would want to use format DOMAIN\username
+							<br/>Example: For Active Directory you would want to use format DOMAIN\username or username@domain.
+							<br/>Example: eDirectory you would want to use format cn=username,ou=orgunit,o=org.
 						</td>
-					</tr>					
+					</tr>
 					<tr>
                         <td width="22%" valign="top" class="vncell">LDAP Binding password</td>
                         <td width="78%" class="vtable">
@@ -197,8 +211,26 @@ if(!$pconfig['backend'])
                         <td width="78%" class="vtable">
 							<input name="ldapfilter" size="65" value="<?=htmlspecialchars($pconfig['ldapfilter']);?>">
 							<br/>Example: For Active Directory you would want to use (samaccountname=$username)
+							<br/>Example: For eDirectory you would want to use (cn=$username)
 						</td>
 					</tr>
+					<tr>
+                        <td width="22%" valign="top" class="vncell">LDAP Naming Attribute</td>
+                        <td width="78%" class="vtable">
+							<input name="ldapnameattribute" size="65" value="<?=htmlspecialchars($pconfig['ldapnameattribute']);?>">
+							<br/>Example: For Active Directory you would want to use samaccountname.
+							<br/>Example: For eDirectory you would want to use CN.
+						</td>
+					</tr>
+					<tr>
+                        <td width="22%" valign="top" class="vncell">Group Membership Attribute Name</td>
+                        <td width="78%" class="vtable">
+							<input name="ldapgroupattribute" size="65" value="<?=htmlspecialchars($pconfig['ldapgroupattribute']);?>">
+							<br/>Example: For Active Directory you would want to use memberOf.
+							<br/>Example: For eDirectory you would want to use groupMembership.
+						</td>
+					</tr>
+
 					<tr>
                         <td width="22%" valign="top" class="vncell">LDAP Search base</td>
                         <td width="78%" class="vtable">
@@ -207,19 +239,20 @@ if(!$pconfig['backend'])
 						</td>
 					</tr>
 					<tr>
-                        <td width="22%" valign="top" class="vncell">LDAP Authentication containers</td>
+                        <td width="22%" valign="top" class="vncell">LDAP Authentication container</td>
                         <td width="78%" class="vtable">
-							<input name="ldapauthcontainers" size="65" value="<?=htmlspecialchars($pconfig['ldapauthcontainers']);?>"> 
+							<input name="ldapauthcontainers" size="65" value="<?=htmlspecialchars($pconfig['ldapauthcontainers']);?>">
 							 <a href="javascript:if(openwindow('system_usermanager_settings_ldapacpicker.php') == false) alert('Popup blocker detected.  Action aborted.');" >Select</a>
-							<br/>NOTE: Comma separated.
+							<br/>NOTE: Semi-Colon separated.
+							<br/>Only Supports one Container Currently!!!
 							<br/>EXAMPLE: CN=Users,DC=pfsense,DC=com;CN=OtherUsers,DC=pfsense,DC=com
 						</td>
 					</tr>
                 	<tr>
                   		<td width="22%" valign="top">&nbsp;</td>
-                  		<td width="78%"> 
-							<input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />    
-	     					<input id="savetest" name="savetest" type="submit" class="formbtn" value="<?=gettext("Save and Test");?>" />    
+                  		<td width="78%">
+							<input id="submit" name="Submit" type="submit" class="formbtn" value="<?=gettext("Save");?>" />
+	     					<input id="savetest" name="savetest" type="submit" class="formbtn" value="<?=gettext("Save and Test");?>" />
 						</td>
                 	</tr>
               </table>

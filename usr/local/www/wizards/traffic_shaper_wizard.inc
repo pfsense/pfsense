@@ -192,16 +192,62 @@ function step1_submitphpaction() {
 			$field = array();
 			$field['name'] = "conn{$i}upload";
 			$field['type'] = "input";
-			$field['typehint'] = "Upload bandwidth on this connection.";
 			$field['bindstofield'] = "ezshaper->step2->conn{$i}upload";
+			$field['combinefieldsbegin'] = "true";
 			$fields[] = $field;
 
+			$field = array();
+			$field['combinefieldsend'] = "true";	
+			$field['dontdisplayname'] = "true";
+			$field['dontcombinecells'] = "true";
+			$field['name'] = "conn{$i}uploadspeed";
+			$field['typehint'] = "Upload bandwidth on this connection.";
+                        $field['type'] = "select";
+                        $field['options']['option'] = array();
+                        $opts = array();
+                        $opts['value'] = "Kb";
+                        $opts['name'] = "Kbit/s";
+                        $field['options']['option'][] = $opts;
+                        $opts = array();
+                        $opts['value'] = "Mb";
+                        $opts['name'] = "Mbit/s";
+                        $field['options']['option'][] = $opts;
+                        $opts = array();
+                        $opts['value'] = "Gb";
+                        $opts['name'] = "Gbit/s";
+                        $field['options']['option'][] = $opts;
+                        $field['bindstofield'] = "ezshaper->step2->conn{$i}uploadspeed";
+                        $fields[] = $field;
+
+			$field = array();
 			$field['name'] = "conn{$i}download";
 			$field['type'] = "input";
-			$field['typehint'] = "Download bandwidth on this connection.";
 			$field['bindstofield'] = "ezshaper->step2->conn{$i}download";
+			$field['combinefieldsbegin'] = "true";
 			$fields[] = $field;
 
+			$field = array();
+                        $field['combinefieldsend'] = "true";
+                        $field['dontdisplayname'] = "true";
+                        $field['dontcombinecells'] = "true";
+                        $field['name'] = "conn{$i}downloadspeed";
+			$field['typehint'] = "Download bandwidth on this connection.";
+                        $field['type'] = "select";
+                        $field['options']['option'] = array();
+                        $opts = array();
+                        $opts['value'] = "Kb";
+                        $opts['name'] = "Kbit/s";
+                        $field['options']['option'][] = $opts;
+                        $opts = array();
+                        $opts['value'] = "Mb";
+                        $opts['name'] = "Mbit/s";
+                        $field['options']['option'][] = $opts;
+                        $opts = array();
+                        $opts['value'] = "Gb";
+                        $opts['name'] = "Gbit/s";
+                        $field['options']['option'][] = $opts;
+                        $field['bindstofield'] = "ezshaper->step2->conn{$i}downloadspeed";
+                        $fields[] = $field;
 		}
 		$field = array();
 		$field['name'] = "Next";
@@ -262,16 +308,67 @@ function step1_submitphpaction() {
 			$field = array();
                         $field['name'] = "conn{$i}upload";
                         $field['type'] = "input";
-                        $field['typehint'] = "Upload bandwidth guarantee for VOIP phone(s) on connection {$i}.";
                         $field['bindstofield'] = "ezshaper->step3->conn{$i}upload";
+			$field['combinefieldsbegin'] = "true";
+                        $voipfields[] = $field;
+
+			$field = array();
+                        $field['combinefieldsend'] = "true";
+                        $field['dontdisplayname'] = "true";
+                        $field['dontcombinecells'] = "true";
+                        $field['name'] = "conn{$i}uploadspeed";
+                        $field['typehint'] = "Upload bandwidth guarantee for VOIP phone(s) on connection {$i}.";
+                        $field['type'] = "select";
+                        $field['options']['option'] = array();
+                        $opts = array();
+                        $opts['value'] = "Kb";
+                        $opts['name'] = "Kbit/s";
+                        $field['options']['option'][] = $opts;
+                        $opts = array();
+                        $opts['value'] = "Mb";
+                        $opts['name'] = "Mbit/s";
+                        $field['options']['option'][] = $opts;
+                        $opts = array();
+                        $opts['value'] = "Gb";
+                        $opts['name'] = "Gbit/s";
+                        $field['options']['option'][] = $opts;
+                        $field['bindstofield'] = "ezshaper->step3->conn{$i}uploadspeed";
                         $voipfields[] = $field;
 		}
 			$field = array();
 			$field['name'] = "download";
 			$field['type'] = "input";
-			$field['typehint'] = "Download bandwidth guarantee for VOIP phone(s) on connections.";
 			$field['bindstofield'] = "ezshaper->step3->download";
+			$field['combinefieldsbegin'] = "true";
 			$voipfields[] = $field;
+
+			$field = array();
+                        $field['combinefieldsend'] = "true";
+                        $field['dontdisplayname'] = "true";
+                        $field['dontcombinecells'] = "true";
+                        $field['name'] = "downloadspeed";
+			$field['typehint'] = "Download bandwidth guarantee for VOIP phone(s) on connections.";
+                        $field['type'] = "select";
+                        $field['options']['option'] = array();
+                        $opts = array();
+                        $opts['value'] = "Kb";
+                        $opts['name'] = "Kbit/s";
+                        $field['options']['option'][] = $opts;
+                        $opts = array();
+                        $opts['value'] = "Mb";
+                        $opts['name'] = "Mbit/s";
+                        $field['options']['option'][] = $opts;
+                        $opts = array();
+                        $opts['value'] = "Gb";
+                        $opts['name'] = "Gbit/s";
+                        $field['options']['option'][] = $opts;
+                        $field['bindstofield'] = "ezshaper->step3->downloadspeed";
+                        $voipfields[] = $field;
+
+		$field = array();
+                $field['name'] = "Next";
+                $field['type'] = "submit";
+                $voipfields[] = $field;
 
 	wizard_write_config($cfgname, $pkg);
 	header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1");
@@ -289,53 +386,37 @@ function step2_stepsubmitphpaction() {
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
 					exit;
 				}
-				if (!is_valid_shaperbw($_POST["conn{$i}upload"])) {
+				if (!is_numeric($_POST["conn{$i}upload"])) {
 					$message = gettext("Upload bandwidth of connection {$i} is not valid.");
 					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
 					exit;
 				}
-				if (!is_valid_shaperbw($_POST["conn{$i}download"])) {
+				if (!is_numeric($_POST["conn{$i}download"])) {
 					$message = gettext("Download bandwidth of connection {$i} is not valid.");
 					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
 					exit;
 				}
+				$upbw = intval($_POST["conn{$i}upload"]);
+				$downbw = intval($_POST["conn{$i}download"]);
+				if ($upbw == 0 || $downbw = 0) {
+                                        $message = gettext("You cannot specify 0 bandwidth!")
+;
+                                        header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message
+={$message}");
+                                        exit;
+                                }
+				if ($upbw < 128 && $_POST["conn{$i}uploadscheduler"] == "Kb" && trim($_POST["downloadscheduler"]) == "CBQ") {
+					$message=gettext("We do not support Bandwidths smaller than 128Kbit/s for CBQ scheduler.");
+					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
+						exit;
+				}
+				if ($downbw < 128 && $_POST["conn{$i}downloadscheduler"] == "Kb" && trim($_POST["downloadscheduler"]) == "CBQ") {
+                                        $message=gettext("We do not support Bandwidths smaller than 128Kbit/s for CBQ scheduler.");
+                                        header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
+                                                exit;
+                                }
 			}
-			$if = trim(strtolower($_POST["conn{$i}interface"]));
-			$factor = wizard_get_bandwidthtype_scale($config['interfaces']['lan']['bandwidthtype']);
-			$ifbw = $factor * intval($config['interfaces']['lan']['bandwidth']);	
-			$input_bw = intval(wizard_calculate_bandwidth($ifbw, $_POST["conn{$i}download"]));
-			$sumdownloas += $input_bw;
-			if ($input_bw/1000 < 128 && trim($_POST["downloadscheduler"]) == "CBQ") {
-				$message=gettext("We do not support Bandwidths smaller than 128Kbit/s for CBQ scheduler.");
-				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
-					exit;
-			}
-			if ($ifbw < $input_bw) {
-				$message=gettext("You cannot set the download bandwidth of connection {$i} higher than the bandwidth of the interface.");
-				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
-				exit;
-			}
-		if (isset($config['interfaces'][$if]['bandwidth'])) {
-			$factor = wizard_get_bandwidthtype_scale($config['interfaces'][$if]['bandwidthtype']);
-			$ifbw = $factor * intval($config['interfaces'][$if]['bandwidth']);				
-			$input_bw = intval(wizard_calculate_bandwidth($ifbw, $_POST["conn{$i}upload"]));
-			if ($input_bw/1000 < 128 && trim($_POST["conn{$i}uploadscheduler"]) == "CBQ") {
-				$message=gettext("We do not support Bandwidths smaller than 128Kbit/s for CBQ scheduler.");
-				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
-					exit;
-			}
-			if ($ifbw < $input_bw) {
-				$message=gettext("You cannot set the upload bandwidth of connection {$i} higher than the bandwidth of the interface.");
-				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
-				exit;
-			}
-		}
 	}		
-	if ($ifbw < $sumdownloads) {
-		$message=gettext("The download speed sum of connections exceeds the bandwidth of LAN.");
-		header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
-		exit;
-	}
 }
 
 function step3_stepsubmitphpaction() {
@@ -355,15 +436,15 @@ function step3_stepsubmitphpaction() {
 	$steps = intval($config['ezshaper']['step1']['numberofconnections']);
 	for ($i = 0; $i < $steps; $i++) {
 			if ($_POST["conn{$i}upload"]) {
-			if (!is_valid_shaperbw($_POST["conn{$i}upload"])) {
+			if (!is_numeric($_POST["conn{$i}upload"])) {
 					$message = gettext("Upload bandwidth of connection {$i} is not valid.");
 					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=2&message={$message}");
 					exit;
 				}
-			/* XXX: NOTE: We are not checking the limit for download! */
-			$factor = wizard_get_bandwidthtype_scale(wizard_get_bwunit($config['ezshaper']['step2']["conn{$i}upload"]));
-			$ifbw = $factor * wizard_get_bw($config['ezshaper']['step2']["conn{$i}upload"]);	
-			$input_bw = wizard_calculate_bandwidth($ifbw, $_POST["conn{$i}upload"]);
+			$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
+			$ifbw = $factor * intval($config['ezshaper']['step2']["conn{$i}upload"]);	
+			$input_bw = wizard_get_bandwidthtype_scale($_POST["conn{$i}uploadspeed"]);
+			$input_bw *= intval($_POST["conn{$i}upload"]);
 			if ((0.8 * $ifbw) < $input_bw) {
 				$message=gettext("You cannot set the VoIP upload bandwidth on connection {$i} higher than 80% of the connection.");
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=2&message={$message}");
@@ -382,23 +463,24 @@ function step4_stepsubmitphpaction() {
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=3&message={$message}");
 				exit;
 			}
-			if(!is_valid_shaperbw($_POST['bandwidth'])) {
+			if(!is_numeric($_POST['bandwidth'])) {
 				$message="The posted value is not a valid bandwidth.";
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=3&message={$message}");	
 				exit;
 			}
+/*
 			if (wizard_get_bwunit($_POST['bandwidth']) <> "%") {
 					$message = gettext("Only percentage bandwidth specification is allowed.");
 					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=3&message={$message}");
 					exit;
 			}
-			
 			$bw = wizard_get_bw($_POST['bandwidth']);
 			if($bw > 15 && $bw < 2) {
 				$message="Values should be between 2% and 15%!";
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=3&message={$message}");
 				exit;
 			}
+*/		
 
 			if($_POST['address'] <> "" && !is_ipaddr($_POST['address'])) {
 				if(!is_alias($_POST['address'])) {
@@ -416,11 +498,12 @@ function step5_stepsubmitphpaction() {
 
 	if ( $_POST['enable'] ) {
 		if (isset($_POST['bandwidth'])) {
-			if(!is_valid_shaperbw($_POST['bandwidth'])) {
+			if(!is_numeric($_POST['bandwidth'])) {
 				$message="Posted value is not a valid bandwidth.";
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=4&message={$message}");
 
 			}
+/*
 			if (wizard_get_bwunit($_POST['bandwidth']) <> "%") {
 					$message = gettext("Only percentage bandwidth specification is allowed.");
 					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=4&message={$message}");
@@ -432,7 +515,7 @@ function step5_stepsubmitphpaction() {
 			header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=3&message={$message}");
 			exit;
 		}
-
+*/
 		} else {
 			if(!$_POST['bandwidth']) {
 				$message="You need to specify a value for bandwidth!  Values should be in percentage.";
@@ -812,10 +895,8 @@ $othersplist = array();
 	$steps = intval($config['ezshaper']['step1']['numberofconnections']);
 	$lanbw = 0;
 	for ($i = 0; $i < $steps; $i++) {
-		$down = $config['ezshaper']['step2']["conn{$i}download"];
-		$factor = wizard_get_bandwidthtype_scale($config['interfaces']['lan']['bandwidthtype']);
-		$ifbw = $factor * intval($config['interfaces']['lan']['bandwidth']);	
-		$input_bw = intval(wizard_calculate_bandwidth($ifbw, $down));
+		$down = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}downloadspeed"]);
+		$input_bw = intval($config['ezshaper']['step2']["conn{$i}download"]) * $down;
 		$lanbw += $input_bw;
 	}
 
@@ -825,8 +906,8 @@ $othersplist = array();
 
 		$altq->SetInterface($config['ezshaper']['step2']["conn{$i}interface"]);
 		$altq->SetScheduler($config['ezshaper']['step2']["conn{$i}uploadscheduler"]);
-		$altq->SetBandwidth(wizard_get_bw($config['ezshaper']['step2']["conn{$i}upload"]));
-		$altq->SetBwscale(wizard_get_bwunit($config['ezshaper']['step2']["conn{$i}upload"]));
+		$altq->SetBandwidth(intval($config['ezshaper']['step2']["conn{$i}upload"]));
+		$altq->SetBwscale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
 		$altq->SetEnabled("on");
 		$altq_list_queues[$altq->GetQname()] =& $altq;
 		array_push($tmppath, $config['ezshaper']['step2']["conn{$i}interface"]);
@@ -843,22 +924,23 @@ $othersplist = array();
 		$p2p = false;
 		$p2pcatchall = false;
 		$p2pcatchbw = 0;
+		$p2pcatchbwunit = "%";
 		$games = false;
 		$otherpriority = false;
 		$remainbw = 0;
+		$upfactor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
+                $upbw = intval($config['ezshaper']['step2']["conn{$i}upload"]) * $upfactor;
 
-		$factor = wizard_get_bandwidthtype_scale($config['interfaces'][$config['ezshaper']['step2']["conn{$i}interface"]]['bandwidthtype']);
-
-                $ifbw = $factor * intval($config['interfaces'][$config['ezshaper']['step2']["conn{$i}interface"]]['bandwidth']);
-                $input_bw = intval(wizard_calculate_bandwidth($ifbw, $config['ezshaper']['step2']["conn{$i}upload"]));
 			if ($config['ezshaper']['step3']['enable']) {
 					$voip = true;
 					$voipbw = $config['ezshaper']['step3']["conn{$i}upload"];
+					$voipbwunit = $config['ezshaper']['step3']["conn{$i}uploadspeed"];
 			}
 			if ($config['ezshaper']['step4']['enable']) {
 					$penalty = true;
 					$penaltybw = $config['ezshaper']['step4']['bandwidth'];
-					$remainbw += intval(wizard_get_bw($config['ezshaper']['step4']['bandwidth']));
+					$penaltybwunit = $config['ezshaper']['step4']['bandwidthunit'];
+					$remainbw += intval($config['ezshaper']['step4']['bandwidth']) * $config['ezshaper']['step4']['bandwidthunit'];
 			} else {
 					$penalty = false;
 					$penaltybw = 0;
@@ -868,7 +950,8 @@ $othersplist = array();
 				if ($config['ezshaper']['step5']['p2pcatchall']) {
 						$p2pcatchall = true;
 						$p2pcatchbw = $config['ezshaper']['step5']['bandwidth'];
-						$remainbw += intval(wizard_get_bw($config['ezshaper']['step5']['bandwidth']));
+						$p2pcatchbwunit = $config['ezshaper']['step5']['bandwidthunit'];
+						$remainbw += intval($config['ezshaper']['step5']['bandwidth']) * $config['ezshaper']['step5']['bandwidthunit'];
 				} else {
 						$p2pcatchall = false;
 						$p2pcatchbw = 0;
@@ -889,6 +972,7 @@ $othersplist = array();
 			} else  {
 				$otherpriority = false;
 			}	
+			$remainbw = round($remainbw / $upbw * 100, 2);
 			if ($remainbw > 0 && $remainbw > 30) {
 				$message=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=2&message={$message}");
@@ -978,17 +1062,17 @@ $othersplist = array();
 				if ($p2pcatchall) {
 					if ($sched == "CBQ") {
 						$tmpcf['borrow'] = "on";
-						$tmpcf['bandwidth'] = wizard_get_bw($p2pcatchbw);
-						$tmpcf['bandwidthtype'] = wizard_get_bwunit($p2pcatchbw);
+						$tmpcf['bandwidth'] = $p2pcatchbw;
+						$tmpcf['bandwidthtype'] = $p2pcatchbwunit;
 					} else if ($sched == "HFSC") {
 						$tmpcf['linkshare'] = "on";
-						$tmpcf['linkshare1'] = "{$p2pcatchbw}";
+						$tmpcf['linkshare1'] = "{$p2pcatchbw}{$p2pcatchbwunit}";
 						$tmpcf['linkshare2'] = 300;
-						$tmpcf['linkshare3'] = "{$p2pcatchbw}";
+						$tmpcf['linkshare3'] = "{$p2pcatchbw}{$p2pcatchbwunit}";
 						$tmpcf['upperlimit'] = "on";
-						$tmpcf['upperlimit3'] = "{$p2pcatchbw}";
-						$tmpcf['bandwidth'] = wizard_get_bw($p2pcatchbw);
-                                                $tmpcf['bandwidthtype'] = wizard_get_bwunit($p2pcatchbw);
+						$tmpcf['upperlimit3'] = "{$p2pcatchbw}{$p2pcatchbwunit}";
+						$tmpcf['bandwidth'] = $p2pcatchbw;
+                                                $tmpcf['bandwidthtype'] = $p2pcatchbwunit;
 					}
 					$tmpcf['default'] = "on";				
 					
@@ -998,7 +1082,14 @@ $othersplist = array();
 						$tmpcf['bandwidth'] = $remainbw * 0.05; /* 5% bandwidth */
 						$tmpcf['bandwidthtype'] = "%";
 					} else if ($sched == "HFSC") {
-						$tmpcf['bandwidth'] = $remainbw * 0.05; /* 5% bandwidth */
+						$tmpbw = $remainbw * 0.05; /* 5% bandwidth */
+						$tmpcf['linkshare'] = "on";
+                                                $tmpcf['linkshare1'] = "{$tmpbw}%";
+                                                $tmpcf['linkshare2'] = 300;
+                                                $tmpcf['linkshare3'] = "{$tmpbw}%";
+                                                $tmpcf['upperlimit'] = "on";
+                                                $tmpcf['upperlimit3'] = "{$tmpbw}%";
+                                                $tmpcf['bandwidth'] = $tmpbw;
 						$tmpcf['bandwidthtype'] = "%";
 					}
 				}
@@ -1025,22 +1116,22 @@ $othersplist = array();
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";
 					if ($voipbw > 0) {
-						$tmpcf['bandwidthtype'] = wizard_get_bwunit($voipbw);
-						$tmpcf['bandwidth'] = wizard_get_bw($voipbw);
+						$tmpcf['bandwidthtype'] = $voipbw;
+						$tmpcf['bandwidth'] = $voipbwunit;
 					} else {
-						$tmpcf['bandwidth'] = $remainbw * 0.25; /* 25% bandwidth */
+						$tmpcf['bandwidth'] = $remainbw * 0.2; /* 20% bandwidth */
 						$tmpcf['bandwidthtype'] = "%";
 					}
 				} else if ($sched == "HFSC") {
 					if ($voipbw > 0) {
-						$tmpcf['realtime3'] = "{$voipbw}";
+						$tmpcf['realtime3'] = "{$voipbw}{$voipbwunit}";
 					} else {
 						$voipbw = $remainbw * 0.20; /* 20% bandwidth */
 						$tmpcf['realtime3'] = "{$voipbw}%";
 					}
 					$tmpcf['realtime'] = "on";
 					$tmpcf['realtime2'] = "10";
-					$tmpcf['bandwidth'] = 25;
+					$tmpcf['bandwidth'] = 20;
 					$tmpcf['realtime1'] = "0b";
 					$tmpcf['bandwidthtype'] = "%";
 				}
@@ -1138,10 +1229,10 @@ $othersplist = array();
 					$tmpcf['bandwidthtype'] = "%";
 				} else if ($sched == "HFSC") {
 					if ($penalty) {
-						$tmpcf['linkshare3'] = $penaltybw;
-						$tmpcf['linkshare1'] = $penaltybw;
-						$tmpcf['bandwidth'] = wizard_get_bw($penaltybw);
-						$tmpcf['bandwidthtype'] = wizard_get_bwunit($penaltybw);
+						$tmpcf['linkshare3'] = "{$penaltybw}{$penaltybwunit}";
+						$tmpcf['linkshare1'] = "{$penaltybw}{$penaltybwunit}";
+						$tmpcf['bandwidth'] = $penaltybw;
+						$tmpcf['bandwidthtype'] = $penaltybwunit;
 					} else {
 						$lsbw = $remainbw * 0.05;
 						$tmpcf['linkshare1'] = "{$lsbw}%"; /* 5% bandwidth */
@@ -1191,19 +1282,18 @@ $othersplist = array();
 		$games = false;
 		$otherpriority = false;
 		$remainbw = 0;
-		$factor = wizard_get_bandwidthtype_scale($config['interfaces'][$config['ezshaper']['step2']["conn{$i}interface"]]["bandwidthtype"]);
-                $ifbw = $factor * intval($config['interfaces'][$config['ezshaper']['step2']["conn{$i}interface"]]["bandwidth"]);
-                $input_bw = intval(wizard_calculate_bandwidth($ifbw, $config['ezshaper']['step2']["conn{$i}upload"]));
-		/* Values are in percent */
-		if ($sched == "CBQ" || $sched == "HFSC" || $sched == "PRIQ") {
+		
+		
 			if ($config['ezshaper']['step3']['enable']) {
 					$voip = true;
 					$voipbw = $config['ezshaper']['step3']["download"];
+					$voipbwunit = $config['ezshaper']['step3']["downloadspeed"];
 			}
 			if ($config['ezshaper']['step4']['enable']) {
 					$penalty = true;
 					$penaltybw = $config['ezshaper']['step4']['bandwidth'];
-					$remainbw += intval(wizard_get_bw($config['ezshaper']['step4']['bandwidth']));
+					$penaltybwunit = $config['ezshaper']['step4']['bandwidthunit'];
+					$remainbw += intval($config['ezshaper']['step4']['bandwidth']) * $config['ezshaper']['step4']['bandwidthunit'];
 			} else {
 					$penalty = false;
 					$penaltybw = 0;
@@ -1213,7 +1303,8 @@ $othersplist = array();
 				if ($config['ezshaper']['step5']['p2pcatchall']) {
 						$p2pcatchall = true;
 						$p2pcatchbw = $config['ezshaper']['step5']['bandwidth'];
-						$remainbw += intval(wizard_get_bw($config['ezshaper']['step5']['bandwidth']));
+						$p2pcatchbwunit = $config['ezshaper']['step5']['bandwidthunit'];
+						$remainbw += intval($config['ezshaper']['step5']['bandwidth']) * $config['ezshaper']['step5']['bandwidthunit'];
 				} else {
 						$p2pcatchall = false;
 						$p2pcatchbw = 0;
@@ -1234,19 +1325,15 @@ $othersplist = array();
 			} else  {
 				$otherpriority = false;
 			}	
+			$remainbw = round($remainbw / $lanbw * 100, 2);
 			if ($remainbw > 0 && $remainbw > 30) {
-                                $message=gettext("Custom Bandwidths are greater than 30%. Please lower them for the
- wizard to continue.");
-                                header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=2&message={$message}");
+				$message=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
+				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=2&message={$message}");
+				exit;
+			} else {
+				$remainbw = 100 - $remainbw;
+			}
 
-                                exit;
-                        } else {
-                                $remainbw = 100 - $remainbw;
-                        }
-
-		} 
-
-		if ($sched == "PRIQ" || $sched == "CBQ" || $sched == "HFSC") {
 			if ($sched == "PRIQ")
 				$q =& new priq_queue();
 			else if ($sched == "CBQ")
@@ -1265,7 +1352,7 @@ $othersplist = array();
 			} 
 			else if ($sched == "HFSC") {
 				if ($ifbw > 0)
-					$lkbw = $remainbw * 0.2;
+					$lkbw = 0.20 * $remainbw;
 				else
 					$lkbw = 25;
 				$tmpcf['linkshare3'] = "{$lkbw}%";
@@ -1278,6 +1365,7 @@ $othersplist = array();
 			array_push($tmppath, "qACK");
 			$qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
 			array_pop($tmppath);
+			//echo "qACK <br />";
 			//var_dump($input_errors);
 			$qtmp->wconfig();
 
@@ -1308,6 +1396,7 @@ $othersplist = array();
 			array_push($tmppath, $tmpcf['name']);
 			$qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
 			array_pop($tmppath);
+			//echo "qDefault <br />";
 			//var_dump($input_errors);
 			$qtmp->wconfig();
 
@@ -1321,22 +1410,22 @@ $othersplist = array();
 				$tmpcf = array();
 				$tmpcf['name'] = "qP2P";
 				$tmpcf['priority'] = 1;
-				$tmpcf['enabled'] = "on";
 				$tmpcf['red'] = "on";
+				$tmpcf['enabled'] = "on";
 				if ($p2pcatchall) {
 					if ($sched == "CBQ") {
 						$tmpcf['borrow'] = "on";
-						$tmpcf['bandwidth'] = wizard_get_bw($p2pcatchbw);
-						$tmpcf['bandwidthtype'] = wizard_get_bwunit($p2pcatchbw);
+						$tmpcf['bandwidth'] = $p2pcatchbw;
+						$tmpcf['bandwidthtype'] = $p2pcatchbwunit;
 					} else if ($sched == "HFSC") {
 						$tmpcf['linkshare'] = "on";
-						$tmpcf['linkshare1'] = "{$p2pcatchbw}";
+						$tmpcf['linkshare1'] = "{$p2pcatchbw}{$p2pcatchbwunit}";
 						$tmpcf['linkshare2'] = 300;
-						$tmpcf['linkshare3'] = "{$p2pcatchbw}";
+						$tmpcf['linkshare3'] = "{$p2pcatchbw}{$p2pcatchbwunit}";
 						$tmpcf['upperlimit'] = "on";
-						$tmpcf['upperlimit3'] = "{$p2pcatchbw}";
-						$tmpcf['bandwidth'] = wizard_get_bw($p2pcatchbw);
-                                                $tmpcf['bandwidthtype'] = wizard_get_bwunit($p2pcatchbw);
+						$tmpcf['upperlimit3'] = "{$p2pcatchbw}{$p2pcatchbwunit}";
+						$tmpcf['bandwidth'] = $p2pcatchbw;
+                                                $tmpcf['bandwidthtype'] = $p2pcatchbwunit;
 					}
 					$tmpcf['default'] = "on";				
 					
@@ -1346,13 +1435,21 @@ $othersplist = array();
 						$tmpcf['bandwidth'] = $remainbw * 0.05; /* 5% bandwidth */
 						$tmpcf['bandwidthtype'] = "%";
 					} else if ($sched == "HFSC") {
-						$tmpcf['bandwidth'] = $remainbw * 0.05; /* 5% bandwidth */
+						$tmpbw = $remainbw * 0.05; /* 5% bandwidth */
+						$tmpcf['linkshare'] = "on";
+                                                $tmpcf['linkshare1'] = "{$tmpbw}%";
+                                                $tmpcf['linkshare2'] = 300;
+                                                $tmpcf['linkshare3'] = "{$tmpbw}%";
+                                                $tmpcf['upperlimit'] = "on";
+                                                $tmpcf['upperlimit3'] = "{$tmpbw}%";
+                                                $tmpcf['bandwidth'] = $tmpbw;
 						$tmpcf['bandwidthtype'] = "%";
 					}
 				}
 				array_push($tmppath, "qP2P");
 				$qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
 				array_pop($tmppath);
+				//echo "qP2P <br />";
 				//var_dump($input_errors);
 				$qtmp->wconfig();
 			}
@@ -1372,28 +1469,29 @@ $othersplist = array();
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";
 					if ($voipbw > 0) {
-						$tmpcf['bandwidthtype'] = wizard_get_bwunit($voipbw);
-						$tmpcf['bandwidth'] = wizard_get_bw($voipbw);
+						$tmpcf['bandwidthtype'] = $voipbw;
+						$tmpcf['bandwidth'] = $voipbwunit;
 					} else {
-						$tmpcf['bandwidth'] = $remainbw * 0.25; /* 25% bandwidth */
+						$tmpcf['bandwidth'] = $remainbw * 0.2; /* 20% bandwidth */
 						$tmpcf['bandwidthtype'] = "%";
 					}
 				} else if ($sched == "HFSC") {
 					if ($voipbw > 0) {
-						$tmpcf['realtime3'] = "{$voipbw}";
+						$tmpcf['realtime3'] = "{$voipbw}{$voipbwunit}";
 					} else {
 						$voipbw = $remainbw * 0.20; /* 20% bandwidth */
 						$tmpcf['realtime3'] = "{$voipbw}%";
 					}
 					$tmpcf['realtime'] = "on";
 					$tmpcf['realtime2'] = "10";
-					$tmpcf['bandwidth'] = 25;
+					$tmpcf['bandwidth'] = 20;
 					$tmpcf['realtime1'] = "0b";
 					$tmpcf['bandwidthtype'] = "%";
 				}
 				array_push($tmppath, "qVoIP");
 				$qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
 				array_pop($tmppath);
+				//echo "qVoIP <br />";
 				//var_dump($input_errors);
 				$qtmp->wconfig();
 			}
@@ -1408,8 +1506,8 @@ $othersplist = array();
 				$tmpcf = array();
 				$tmpcf['name'] = "qGames";
 				$tmpcf['priority'] = 5;
-				$tmpcf['red'] = "on";
 				$tmpcf['enabled'] = "on";
+				$tmpcf['red'] = "on";
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";
 					$tmpcf['bandwidth'] = $remainbw * 0.2; /* 20% bandwidth */
@@ -1426,6 +1524,7 @@ $othersplist = array();
 				array_push($tmppath, "qGames");
 				$qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
 				array_pop($tmppath);
+				//echo "qGames <br />";
 				//var_dump($input_errors);
 				$qtmp->wconfig();
 			}
@@ -1453,11 +1552,12 @@ $othersplist = array();
 					$tmpcf['linkshare2'] = 200;
 					$tmpcf['linkshare3'] = "{$otherbw}%";
 					$tmpcf['bandwidth'] = $otherbw;
-					$tmpcf['bandwidthype'] = "%";
+					$tmpcf['bandwidthtype'] = "%";
 				}
 				array_push($tmppath, "qOthersHigh");
 				$qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
 				array_pop($tmppath);
+				//echo "qHigh <br />";
 				//var_dump($input_errors);
 				$qtmp->wconfig();
 			
@@ -1482,10 +1582,10 @@ $othersplist = array();
 					$tmpcf['bandwidthtype'] = "%";
 				} else if ($sched == "HFSC") {
 					if ($penalty) {
-						$tmpcf['linkshare3'] = $penaltybw;
-						$tmpcf['linkshare1'] = $penaltybw;
-						$tmpcf['bandwidth'] = wizard_get_bw($penaltybw);
-						$tmpcf['bandwidthtype'] = wizard_get_bwunit($penaltybw);
+						$tmpcf['linkshare3'] = "{$penaltybw}{$penaltybwunit}";
+						$tmpcf['linkshare1'] = "{$penaltybw}{$penaltybwunit}";
+						$tmpcf['bandwidth'] = $penaltybw;
+						$tmpcf['bandwidthtype'] = $penaltybwunit;
 					} else {
 						$lsbw = $remainbw * 0.05;
 						$tmpcf['linkshare1'] = "{$lsbw}%"; /* 5% bandwidth */
@@ -1499,12 +1599,11 @@ $othersplist = array();
 				array_push($tmppath, "qOthersLow");
 				$qtmp =& $altq->add_queue($q, &$tmpcf, &$tmppath, $input_errors);
 				array_pop($tmppath);
-				
+				//echo "qLow <br />";
 				//var_dump($input_errors);
 				$qtmp->wconfig();
 			}
-		}
-		array_pop($tmppath);
+			array_pop($tmppath);
 
 /* End LAN bandwidth ------------------------------------------------------------------------------------- */
 
@@ -1680,47 +1779,6 @@ $othersplist = array();
 				}
 			}
 		write_config();
-}
-
-function wizard_calculate_bandwidth($ifbw, $bw) {
-	$match = array();
-        $pattern= "/^[0-9]+/";
-        if (preg_match($pattern, $bw, $match))
-                $bw_1 = intval($match[0]);
-        else
-                return 0;
-        $pattern= "/(b|Kb|Mb|Gb|%)/";
-     	$match = array(); 
-	if (preg_match($pattern, $bw, $match)) {
-                switch ($match[0]) {
-                case '%':
-                        $bw_1 = $bw_1 / 100 * $ifbw;
-                        break;
-                default:
-                        $bw_1 = $bw_1 * wizard_get_bandwidthtype_scale($match[0]);
-                        break;
-                }
-                return intval($bw_1);
-        } else
-                return 0;
-}
-
-function wizard_get_bwunit($bw) {
-	$match = array();
-        $pattern= "/(b|Kb|Mb|Gb|%)/";
-        if (preg_match($pattern, $bw, $match)) {
-                return $match[0];
-        } else
-                return "Kb"; /* XXX */
-}
-
-function wizard_get_bw($bw) {
-	$match = array();
-        $pattern= "/^[0-9]+/";
-        if (preg_match($pattern, $bw, $match))
-                return intval($match[0]);
-        else
-                return 0;
 }
 
 function wizard_get_bandwidthtype_scale($type) {

@@ -223,12 +223,44 @@
 			</field>
 			<field>
 				<name>Bandwidth</name>
-				<description>The limit in percentage (between 5% and 10%).</description>
 				<type>input</type>
-				<validate>^[0-9]*%$</validate>
-				<message>Speed must be numerical and between 5 and 15 percent.</message>
+				<validate>^[0-9]*$</validate>
+				<message>Speed must be numerical.</message>
 				<bindstofield>ezshaper-&gt;step4-&gt;bandwidth</bindstofield>
+				<combinefieldsbegin>true</combinefieldsbegin>
 			</field>
+			<field>
+				<combinefieldsend>true</combinefieldsend>
+				<dontdisplayname>true</dontdisplayname>
+				<dontcombinecells>true</dontcombinecells>
+				<donotdisable>true</donotdisable>
+                                <name>BandwidthSpeed</name>
+				<description>The limit you want to apply.</description>
+                                <type>select</type>
+				<options>
+				<option>
+                                        <name>%</name>
+                                        <value>%</value>
+                                </option>
+				<option>
+					<name>bit/s</name>
+					<value>b</value>
+				</option>
+				<option>
+					<name>Kilobit/s</name>
+					<value>Kb</value>
+				</option>
+				<option>
+					<name>Megabit/s</name>
+					<value>Mb</value>
+				</option>
+				<option>
+					<name>Gigabit/s</name>
+					<value>Gb</value>
+				</option>
+				</options>
+                                <bindstofield>ezshaper->step4->bandwidthunit</bindstofield>
+                        </field>
 			<field>
 				<name>Next</name>
 				<type>submit</type>
@@ -268,12 +300,44 @@
 			</field>
 			<field>
 				<name>Bandwidth</name>
-				<description>The limit in percentage.</description>
 				<type>input</type>
-				<validate>^[0-9]*%$</validate>
-				<message>Speed must be numerical and in percentage of parent and between 5 and 10 perncent.</message>
+				<validate>^[0-9]*$</validate>
+				<message>Speed must be numerical.</message>
 				<bindstofield>ezshaper-&gt;step5-&gt;bandwidth</bindstofield>
+				<combinefieldsbegin>true</combinefieldsbegin>
 			</field>
+			<field>
+                                <combinefieldsend>true</combinefieldsend>
+                                <dontdisplayname>true</dontdisplayname>
+                                <dontcombinecells>true</dontcombinecells>
+				<donotdisable>true</donotdisable>
+                                <name>BandwidthSpeed</name>
+                                <description>The limit you want to apply.</description>
+                                <type>select</type>
+                                <options>
+				<option>
+                                        <name>%</name>
+                                        <value>%</value>
+                                </option>
+                                <option>
+                                        <name>bit/s</name>
+					<value>b</value>
+                                </option>
+                                <option>
+                                        <name>Kilobit/s</name>
+					<value>Kb</value>
+                                </option>
+                                <option>
+                                        <name>Megabit/s</name>
+					<value>Mb</value>
+                                </option>
+                                <option>
+                                        <name>Gigabit/s</name>
+					<value>Gb</value>
+                                </option>
+                                </options>
+                                <bindstofield>ezshaper->step5->bandwidthunit</bindstofield>
+                        </field>
 			<field>
 				<name>Enable/Disable specific P2P protocols</name>
 				<type>listtopic</type>

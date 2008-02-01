@@ -2331,7 +2331,7 @@ block out $log all label "Default deny rule"
 #--------------------------------------------------------------------------
 # default LAN pass rule
 #--------------------------------------------------------------------------
-pass in on \$lan from $lan:network to any keep state
+pass in on \$lan from \$lan:network to any keep state
 
 # We use the mighty pf, we cannot be fooled.
 block quick proto { tcp, udp } from any port = 0 to any

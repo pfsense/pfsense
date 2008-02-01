@@ -613,26 +613,16 @@ EOD;
 				/* flush SPD entries */
 				mwexec("/sbin/setkey -FP");
 				mwexec("/sbin/setkey -F");
-				$i = 0;
-				while($i < 4) {
-					/* load SPD */
-					mwexec("/bin/cat {$g['varetc_path']}/spd.conf | /usr/local/bin/slowdownpipe.sh | /sbin/setkey -c");
-					sleep(2);
-					$i++;
-				}
+				/* load SPD */
+				mwexec("/sbin/setkey -f {$g['varetc_path']}/spd.conf");
 			} else {
 				/* start racoon */
 				mwexec("/usr/local/sbin/racoon -f {$g['varetc_path']}/racoon.conf");
 				/* flush SA + SPD  entries*/
 				mwexec("/sbin/setkey -FP");
 				mwexec("/sbin/setkey -F");
-				$i = 0;
-				while($i < 4) {
-					/* load SPD */
-					mwexec("/bin/cat {$g['varetc_path']}/spd.conf | /usr/local/bin/slowdownpipe.sh | /sbin/setkey -c");
-					sleep(2);
-					$i++;
-				}
+				/* load SPD */
+				mwexec("/sbin/setkey -f {$g['varetc_path']}/spd.conf");
 
 				/* start dnswatch, if necessary */
 				if (count($dnswatch_list) > 0) {

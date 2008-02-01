@@ -441,17 +441,6 @@
 	</nat>
 	<filter>
 		<!-- <tcpidletimeout></tcpidletimeout> -->
-		<rule>
-			<type>pass</type>
-			<descr>Default LAN -&gt; any</descr>
-			<interface>lan</interface>
-			<source>
-				<network>lan</network>
-			</source>
-			<destination>
-				<any/>
-			</destination>
-		</rule>
 		<!-- rule syntax:
 		<rule>
 			<disabled/>

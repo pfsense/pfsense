@@ -98,7 +98,7 @@
 		<item>
 			<desc>Disable CTRL+ALT+Delete reboot from keyboard.</desc>
 			<tunable>hw.syscons.kbd_reboot</tunable>
-			<value>1</value>
+			<value>0</value>
 		</item>		
 	</sysctl>
 	<system>

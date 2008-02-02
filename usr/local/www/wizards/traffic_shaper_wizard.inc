@@ -443,8 +443,8 @@ function step3_stepsubmitphpaction() {
 				}
 			$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
 			$ifbw = $factor * intval($config['ezshaper']['step2']["conn{$i}upload"]);	
-			$input_bw = wizard_get_bandwidthtype_scale($_POST["conn{$i}uploadspeed"]);
-			$input_bw *= intval($_POST["conn{$i}upload"]);
+			$factor = wizard_get_bandwidthtype_scale($_POST["conn{$i}uploadspeed"]);
+			$input_bw = $factor * intval($_POST["conn{$i}upload"]);
 			if ((0.8 * $ifbw) < $input_bw) {
 				$message=gettext("You cannot set the VoIP upload bandwidth on connection {$i} higher than 80% of the connection.");
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=2&message={$message}");
@@ -1614,7 +1614,7 @@ $othersplist = array();
 
 			/* Rules */
 			if ($penalty) {
-				if( is_ipaddr($config['ezshaper']['step4']['address']) or is_alias($config['ezshaper']['step4']['address'])) {
+				if( is_ipaddr($config['ezshaper']['step4']['address']) || is_alias($config['ezshaper']['step4']['address'])) {
 				    $rule = array();
 				    $rule['descr'] = gettext("Penalty Box");
 				    $rule['direction'] = "out";
@@ -1632,12 +1632,12 @@ $othersplist = array();
 
 			/* If user specifies an IP, we don't bother with providers */
 			if ($voip) {
-				if( is_ipaddr($config['ezshaper']['step3']['address']) or is_alias($config['ezshaper']['step3']['address'])) {
+				if( is_ipaddr($config['ezshaper']['step3']['address']) || is_alias($config['ezshaper']['step3']['address'])) {
 					/* create VOIP rules */
 					$rule = array();
 					$rule['descr'] = gettext("VOIP Adapter");
 					$rule['direction'] = "out";
-					$rule['source']['any'] = TRUE;
+					$rule['protocol'] = "udp";
 					$rule['defaultqueue'] = "qVoIP";
 					$rule['source']['address'] = $config['ezshaper']['step3']['address'];
 					$rule['destination']['any'] = TRUE;
@@ -1651,9 +1651,9 @@ $othersplist = array();
 					$rule = array();
 					$rule['descr'] = "DiffServ/Lowdelay/Upload";
 					$rule['direction'] = "out";
+					$rule['protocol'] = "udp";
 					$rule['source']['any'] = TRUE;
 					$rule['defaultqueue'] = "qVoIP";
-					$rule['source']['network'] = $altq->GetInterface();
 					$rule['destination']['any'] = TRUE;
 					$rule['iptos'] = "lowdelay";
 					$rule['floating'] = "yes";

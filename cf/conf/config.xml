@@ -95,6 +95,11 @@
 			<tunable>net.inet.ip.intr_queue_maxlen</tunable>
 			<value>1000</value>
 		</item>
+		<item>
+			<desc>Disable CTRL+ALT+Delete reboot from keyboard.</desc>
+			<tunable>hw.syscons.kbd_reboot</tunable>
+			<value>1</value>
+		</item>		
 	</sysctl>
 	<system>
 		<optimization>normal</optimization>

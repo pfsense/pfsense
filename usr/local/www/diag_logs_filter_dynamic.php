@@ -75,15 +75,17 @@ function conv_clog_filter($logfile, $tail = 50) {
 			break;
 
 		$log_split = "";
-		
-		//old reg ex
-		//preg_match("/(.*)\s.*\spf:\s.*\srule\s(.*)\(match\)\:\s(.*)\s\w+\son\s(\w+)\:\s(.*)\s>\s(.*)\:\s.*/", $logent, $log_split);
-		
-		preg_match("/(.*)\s.*\spf:\s.*\srule\s(.*)\(match\)\:\s(.*)\s\w+\son\s(\w+)\:\s.*\slength\:.*\s(.*)\s>\s(.*)\:\s.*/", $logent, $log_split);
 
+
+		preg_match("/(\b(?:\d{1,3}\.){3}\d{1,3}(\.\w+)?)\s.*\s(\b(?:\d{1,3}\.){3}\d{1,3}(\.\w+)?)/", $logent, $log_split);
+
+		$flent['src'] 		= convert_port_period_to_colon($log_split[1]);
+		$flent['dst'] 		= convert_port_period_to_colon($log_split[3]);
+
+		preg_match("/(.*)\s.*\spf:\s.*\srule\s(.*)\(match\)\:\s(.*)\s\w+\son\s(\w+)\:\s(.*)\s>\s(.*)\:\s.*/", $logent, $log_split);
+
+		$beforeupper = $logent;
 		$logent = strtoupper($logent);
-
-		$do_not_display = false;
 
 		if(stristr(strtoupper($logent), "UDP") == true)
 			$flent['proto'] = "UDP";
@@ -103,8 +105,12 @@ function conv_clog_filter($logfile, $tail = 50) {
 			$flent['proto'] = "IGMP";
 		else if(stristr(strtoupper($logent), "CARP") == true)
 			$flent['proto'] = "CARP";
+		else if(stristr(strtoupper($logent), "VRRP") == true)
+			$flent['proto'] = "VRRP";
 		else if(stristr(strtoupper($logent), "PFSYNC") == true)
 			$flent['proto'] = "PFSYNC";
+		else if(stristr($logent, "sack") == true)
+			$flent['proto'] = "TCP";
 		else
 			$flent['proto'] = "TCP";
 
@@ -118,19 +124,29 @@ function conv_clog_filter($logfile, $tail = 50) {
 		if($config['interfaces'][$friendly_int]['descr'] <> "")
 			$flent['interface'] = "{$config['interfaces'][$friendly_int]['descr']}";
 
-		$flent['src'] 		= convert_port_period_to_colon($log_split[5]);
-		$flent['dst'] 		= convert_port_period_to_colon($log_split[6]);
-
-		$flent['dst'] = str_replace(": NBT UDP PACKET(137)", "", $flent['dst']);
-
 		$tmp = split("/", $log_split[2]);
 		$flent['rulenum'] = $tmp[0];
 
-		$counter++;
-		$filterlog[] = $flent;
+		$shouldadd = true;
+
+		if(trim($flent['src']) == "")
+			$shouldadd = false;
+		if(trim($flent['dst']) == "")
+			$shouldadd = false;
+		if(trim($flent['time']) == "")
+			$shouldadd = false;
+
+		if($shouldadd == true) {
+			$counter++;
+			$filterlog[] = $flent;
+		} else {
+			if($g['debug']) {
+				log_error("There was a error parsing rule: $beforeupper .   Please report to mailing list or forum.");
+			}
+		}
 
 	}
-
+	
 	return $filterlog;
 }
 

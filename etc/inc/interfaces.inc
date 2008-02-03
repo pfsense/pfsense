@@ -437,6 +437,21 @@ function interfaces_carp_configure() {
 		if ($vip['mode'] == "carp") {
 			$vip_password = $vip['password'];
 			$vip_password = str_replace(" ", "", $vip_password);
+
+			/* ensure CARP IP really exists prior to loading up */
+			$found = false;
+			$iflist = array("lan", "wan");
+			for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
+				$iflist['opt' . $i] = 'opt' . $i;
+			foreach($iflist as $if) {
+				$ww_subnet_ip = $config['interfaces'][$if]['ipaddr'];
+				$ww_subnet_bits = $config['interfaces'][$if]['subnet'];
+				if (ip_in_subnet($vip['subnet'], gen_subnet($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits))
+					$found = true;
+			}
+			if($found == false)
+					continue;			
+			
 			/* create the carp interface and setup */
 			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " create");
 

@@ -72,9 +72,9 @@ require_once("/usr/local/www/widgets/include/log.inc");
 			$img = "/themes/metallic/images/icons/icon_block.gif";
 	?>
 	&nbsp;<img border="0" src="<?=$img;?>">&nbsp;</span>
-	<span class="log-interface-mini" ><?=htmlspecialchars(convert_real_interface_to_friendly_interface_name($filterent['interface']));?></span>
-	<span class="log-source-mini" ><?=htmlspecialchars($filterent['src']);?></span>
-	<span class="log-destination-mini" ><?=htmlspecialchars($filterent['dst']);?></span>
-	<span class="log-protocol-mini" ><?=htmlspecialchars($filterent['proto']);?></span>
+	<span class="log-interface-mini" ><?=htmlspecialchars(convert_real_interface_to_friendly_interface_name($filterent['interface']));?>&nbsp;</span>
+	<span class="log-source-mini" ><?=htmlspecialchars($filterent['src']);?>&nbsp;</span>
+	<span class="log-destination-mini" ><?=htmlspecialchars($filterent['dst']);?>&nbsp;</span>
+	<span class="log-protocol-mini" ><?=htmlspecialchars($filterent['proto']);?>&nbsp;</span>
 </div>
 <?php $counter++; endforeach; ?>

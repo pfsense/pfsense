@@ -712,7 +712,7 @@ function ldap_get_user_ous($show_complete_ou=false) {
     $ldapserver = $config['system']['webgui']['ldapserver'];
     $ldapbindun = $config['system']['webgui']['ldapbindun'];
     $ldapbindpw = $config['system']['webgui']['ldapbindpw'];
-	$ldapsearchbase = "{$config['system']['webgui']['ldapsearchbase']}";
+    $ldapsearchbase = "{$config['system']['webgui']['ldapsearchbase']}";
 
     $ldapfilter = "(ou=*)";
 
@@ -774,75 +774,47 @@ function ldap_get_groups($username) {
 	
 	log_error("Getting LDAP groups for {$username}.");
 	
-	$ldapserver = $config['system']['webgui']['ldapserver'];
-	$ldapbindun = $config['system']['webgui']['ldapbindun'];
-	$ldapbindpw = $config['system']['webgui']['ldapbindpw'];
-	$ldapfilter = $config['system']['webgui']['ldapfilter'];
-	$ldapsearchbase = "{$config['system']['webgui']['ldapsearchbase']}";
-	$ldapfilter = str_replace("\$username", $username, $ldapfilter);
-	$ldapauthcontainers = $config['system']['webgui']['ldapauthcontainers'];
+	$ldapserver         = $config['system']['webgui']['ldapserver'];
+	$ldapbindun         = $config['system']['webgui']['ldapbindun'];
+	$ldapbindpw         = $config['system']['webgui']['ldapbindpw'];
+	$ldapfilter         = $config['system']['webgui']['ldapfilter'];
+	$ldapfilter         = str_replace("\$username", $username, $ldapfilter);
 	$ldapgroupattribute = $config['system']['webgui']['ldapgroupattribute'];
- 
+	$ldapdn             = $_SESSION['ldapdn'];
+	 
         /*Convert attribute to lowercase.  php ldap arrays put everything in lowercase */
         $ldapgroupattribute = strtolower($ldapgroupattribute);
 
+	/* connect and see if server is up */
 	if (!($ldap = ldap_connect($ldapserver))) {
 	    log_error("ERROR!  ldap_get_groups() could not connect to server {$ldapserver}.  Defaulting to built-in htpasswd_backed()");
 		$status = htpasswd_backed($username, $passwd);
 		return $status;	
 	}
-	
-    ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-    ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+    
+        ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+        ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
 
+	/* bind as user that has rights to read group attributes */
 	if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
 	    log_error("ERROR! ldap_get_groups() could not bind to {$ldapserver} - {$ldapfilter}.  Defaulting to built-in htpasswd_backed()");
 		$status = htpasswd_backed($username, $passwd);
 		return $status;
 	}
 
-	/* user specified login containers */
-	$ldac_split = split(";", $ldapauthcontainers);
-	$search = ldap_search($ldap, $ldapsearchbase, $ldapfilter);
+	/* get groups from DN found */
+	/* use ldap_read instead of search so we don't have to do a bunch of extra work */
+	/* since we know the DN is in $_SESSION['ldapdn'] */
+	$search    = ldap_read($ldap, $ldapdn, "(objectclass=*)", array($ldapgroupattribute));
+        $info      = ldap_get_entries($ldap, $search);
+
+        $countem = $info["count"];	
+        $memberof = array();
 	
-	if(!$search) {
-		log_error("ERROR!  Could not locate User group container for username {$username}.");
-		log_error("        Please ensure that the needed container is defined in the ldap auth containers setting feature.");
-		$status = htpasswd_backed($username, $passwd);
-		return $status;	
-	}
-	
-	$info = ldap_get_entries($ldap, $search);
-
-	/* find home container */
-	if($info) {
-    	foreach($info as $inf) {
-            	$inf_split = split(",", $inf['dn']);
-            	$ou = $inf_split[1];
-    	}
-	}
-
-	if(!$ou) {
-		log_error("Could not resolve users home container for {$username}");
-		$status = htpasswd_backed($username, $passwd);
-		return $status;	
-	}
-
-    log_error("LDAPGroupAttribute ===== {$ldapgroupattribute}");
-	$search = ldap_search($ldap, $ldapauthcontainers, $ldapfilter, array($ldapgroupattribute));
-
-	if($search) {
-		$info = ldap_get_entries($ldap, $search);
-    	$countem = $info["count"];	
-	}
-	$memberof = array();
-	
-	log_error("USER HAS {$countem} LDAP Groups it is {$info[0][$ldapgroupattribute][0]}");
-
 	if(is_array($info[0][$ldapgroupattribute])) {
+
+    	/* Iterate through the groups and throw them into an array */
     	foreach($info[0][$ldapgroupattribute] as $member) {
-    	   //$member = strtoupper($member);
-    	   log_error("MEMBER===={$member}");
             	if(stristr($member, "CN=") !== false) {
                     	$membersplit = split(",", $member);
                     	$memberof[] = preg_replace("/CN=/i", "", $membersplit[0]);
@@ -868,43 +840,148 @@ function ldap_backed($username, $passwd) {
 
 	if(!function_exists("ldap_connect"))
 		return;
-
-	$ldapserver = $config['system']['webgui']['ldapserver'];
-	$ldapbindun = $config['system']['webgui']['ldapbindun'];
-	$ldapbindpw = $config['system']['webgui']['ldapbindpw'];
-        $ldapauthcont = $config['system']['webgui']['ldapauthcontainers'];   
-        $ldapnameattribute = $config['system']['webgui']['ldapnameattribute'];     
-    /* NEED TO FIGURE OUT LDAP TYPE */
-    $ldaptype = $config['system']['webgui']['backend'];
-    /********************************/
-
-	if(!$ldapserver) {
+    $adbindas = $username;
+    
+    if(stristr($username, "@")) {
+        $username_split=split("\@", $username);
+        $username = $username_split[0];        
+    }
+	$ldapserver         = $config['system']['webgui']['ldapserver'];
+	$ldapbindun         = $config['system']['webgui']['ldapbindun'];
+	$ldapbindpw         = $config['system']['webgui']['ldapbindpw'];
+        $ldapauthcont       = $config['system']['webgui']['ldapauthcontainers'];   
+        $ldapnameattribute  = $config['system']['webgui']['ldapnameattribute'];  
+        $ldapfilter         = $config['system']['webgui']['ldapfilter'];
+        $ldaptype           = $config['system']['webgui']['backend'];
+        $ldapfilter = str_replace("\$username", $username, $ldapfilter);
+        
+        /* first check if there is even an LDAP server populated */ 
+        if(!$ldapserver) {
 		log_error("ERROR!  ldap_backed() backed selected with no LDAP authentication server defined.  Defaulting to built-in htpasswd_backed().     Visit System -> User Manager -> Settings.");
 		$status = htpasswd_backed($username, $passwd);
 		return $status;
 	}
 	
+	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+    	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+
+	/* Make sure we can connect to LDAP */
 	if (!($ldap = ldap_connect($ldapserver))) {
 	    log_error("ERROR!  ldap_backed() could not connect to server {$ldapserver} - {$ldapfilter}.  Defaulting to built-in htpasswd_backed().     Visit System -> User Manager -> Settings.");
-		$status = htpasswd_backed($username, $passwd);
+		$status = htpasswd_backed($username, $passwd);		
 		return $status;	
 	}
-        /* TAKE AD INTO ACCOUNT */
-	if ($ldaptype == 'ldap'){
-	   $binduser = $username;
-	}
-	if ($ldaptype == 'ldapother'){
-	   $binduser = $ldapnameattribute.'='.$username.','.$ldapauthcont;
-	}
-	log_error("BINDUSER ==== {$binduser}");
-    	/************************/
-	
-	if (!($res = @ldap_bind($ldap, $binduser, $passwd))) {
-	    log_error("ERROR!  ldap_backed() could not bind to {$ldapserver} - {$username} - {$passwd}.  Defaulting to built-in htpasswd_backed().    Visit System -> User Manager -> Settings.");
+	/* ok, its up.  now, lets bind as the bind user so we can search it */
+	if (!($res = ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
+	    log_error("ERROR! ldap_get_groups() could not bind to {$ldapserver} - {$ldapfilter}.  Defaulting to built-in htpasswd_backed()");
 		$status = htpasswd_backed($username, $passwd);
 		return $status;
 	}
 	
+	/* Get LDAP Authcontainers and split em up. */
+        $ldac_split = split(";", $ldapauthcont);
+	
+	/* now count how many there are */
+	$containers = count($ldac_split);
+	log_error("Number of Containers to search is {$containers}");
+	
+	/* setup the usercount so we think we havn't found anyone yet */
+	$usercount  = 0;
+        
+        /******************************/
+        /* Currently LDAP Types are   */
+        /* LDAP = Active Directory    */
+        /* LDAPOTHER = eDir/Openldap  */
+        /******************************/      
+        
+        /*****************************************************************/
+	/* Now Active Directory We keep this seperate for future addons. */
+        /*****************************************************************/
+        /* Now LDAP other.  eDirectory or Netscape or Sunone or OpenLDAP */
+        /*****************************************************************/
+        /*  We First find the user based on username and filter          */
+        /*  Then, once we find the first occurance of that person        */
+        /*  We set seesion variables to ponit to the OU and DN of the    */
+        /*  Person.  To later be used by ldap_get_groups.                */
+        /*  that way we don't have to search twice.                      */
+        /*****************************************************************/
+	if ($ldaptype == 'ldap'){
+	   log_error("Now Searching for {$username} in Active directory.");
+	   /* Iterate through the user containers for search */
+	   for ($i=0;$i<$containers;$i++){
+		/* Make sure we just use the first user we find */
+		   log_error("Start searching in {$ldac_split[$i]} for {$ldapfilter}.");
+		   $search  = ldap_search($ldap,$ldac_split[$i],$ldapfilter);
+                   $info    = ldap_get_entries($ldap,$search);
+                   $matches = $info['count'];
+                   log_error("Matches Found = {$matches}");
+                   if ($matches == 1){
+		      $_SESSION['ldapdn'] = $info[0]['dn'];
+		      $_SESSION['ldapou'] = $ldac_split[$i];
+		      $ldapdn = $_SESSION['ldapdn'];
+                      $userou = $_SESSION['ldapou'];
+                      break;
+	           }
+	   }
+           if($matches = 1){
+              $binduser = $adbindas;
+              log_error("Going to login as {$username} - DN = {$_SESSION['ldapdn']} - OU is {$_SESSION['ldapou']}");
+	      } else {
+	      log_error("ERROR! Either LDAP search failed, or multiple users were found");
+	      log_error("ERROR! {$matches} Users Found");
+	      $status = htpasswd_backed($username, $passwd);
+	      return $status;                         
+	   }	   
+	}	
+
+        /*****************************************************************/
+        /* Now LDAP other.  eDirectory or Netscape or Sunone or OpenLDAP */
+        /*****************************************************************/
+        /*  We First find the user based on username and filter          */
+        /*  Then, once we find the first occurance of that person        */
+        /*  We set seesion variables to ponit to the OU and DN of the    */
+        /*  Person.  To later be used by ldap_get_groups.                */
+        /*  that way we don't have to search twice.                      */
+        /*****************************************************************/
+	if ($ldaptype == 'ldapother'){
+	   log_error("Now Searching for {$username} in LDAP.");
+	   /* Iterate through the user containers for search */
+	   for ($i=0;$i<$containers;$i++){
+		/* Make sure we just use the first user we find */
+		   log_error("Start searching in {$ldac_split[$i]} for {$ldapfilter}.");
+		   $search  = ldap_search($ldap,$ldac_split[$i],$ldapfilter);
+                   $info    = ldap_get_entries($ldap,$search);
+                   $matches = $info['count'];
+                   log_error("Matches Found = {$matches}.");
+                                      
+                   if ($matches == 1){
+		      $_SESSION['ldapdn'] = $info[0]['dn'];
+		      $_SESSION['ldapou'] = $ldac_split[$i];
+		      $ldapdn = $_SESSION['ldapdn'];
+                      $userou = $_SESSION['ldapou'];
+                      break;
+	           }
+	   }
+           if($matches == 1){
+              $binduser = $ldapnameattribute."=".$username.",".$userou;
+              log_error("Going to attemp LDAP login as {$username} - DN = {$_SESSION['ldapdn']}");
+	      } else {
+	      log_error("ERROR! Either LDAP search failed, or multiple users were found");
+	      log_error("ERROR! {$matches} Users Found");
+	      $status = htpasswd_backed($username, $passwd);
+	      return $status;                         
+	   }	   
+	}	
+		 
+       
+       /* Now lets bind as the user we found */
+       if (!($res = @ldap_bind($ldap, $binduser, $passwd))) {
+	   	    log_error("ERROR!  ldap_backed() could not bind to {$ldapserver} - {$username} - {$passwd}.  Defaulting to built-in htpasswd_backed().    Visit System -> User Manager -> Settings.");
+	   		$status = htpasswd_backed($username, $passwd);
+	   		return $status;
+	}
+	
+
 	log_error("$username logged in via LDAP.");
 	log_error("$binduser ldap name logged in via LDAP.");
 	/* At this point we are binded to LDAP so the user was auth'd okay. */

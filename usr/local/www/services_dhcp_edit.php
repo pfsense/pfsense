@@ -109,11 +109,6 @@ if ($_POST) {
 		$dynsubnet_end = ip2long($config['dhcpd'][$if]['range']['to']);
 		$lansubnet_start = (ip2long($ifcfg['ipaddr']) & gen_subnet_mask_long($ifcfg['subnet']));
 		$lansubnet_end = (ip2long($ifcfg['ipaddr']) | (~gen_subnet_mask_long($ifcfg['subnet'])));
-		
-		if ((ip2long($_POST['ipaddr']) >= $dynsubnet_start) &&
-				(ip2long($_POST['ipaddr']) <= $dynsubnet_end)) {
-			$input_errors[] = "Static IP address falls within the dynamic client range.";
-		}
 		if ((ip2long($_POST['ipaddr']) < $lansubnet_start) ||
 			(ip2long($_POST['ipaddr']) > $lansubnet_end)) {
 			$input_errors[] = "The IP address must lie in the {$ifcfg['descr']} subnet.";

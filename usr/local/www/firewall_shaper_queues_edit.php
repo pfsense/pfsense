@@ -329,7 +329,7 @@ function enable_attachtoqueue(enable_over) {
 	    </tr>
 	    <tr>
 	      <td width="22%" valign="top" class="vncellreq">Name</td>
-	      <td width="78%" class="vtable"> <input name="name" type="text" class="formfld" id="name" size="15" value="<?=htmlspecialchars($pconfig['name']);?>">
+	      <td width="78%" class="vtable"> <input name="name" type="text" class="formfld" id="name" size="15" maxlength="15" value="<?=htmlspecialchars($pconfig['name']);?>">
 		<br> <span class="vexpl">Enter the name of the queue here.  Do not use spaces and limit the size to 15 characters.
 		</span></td>
 	    </tr>

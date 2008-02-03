@@ -815,10 +815,12 @@ function ldap_get_groups($username) {
 	$info = ldap_get_entries($ldap, $search);
 
 	/* find home container */
-    foreach($info as $inf) {
-            $inf_split = split(",", $inf['dn']);
-            $ou = $inf_split[1];
-    }
+	if($info) {
+    	foreach($info as $inf) {
+            	$inf_split = split(",", $inf['dn']);
+            	$ou = $inf_split[1];
+    	}
+	}
 
 	if(!$ou) {
 		log_error("Could not resolve users home container for {$username}");

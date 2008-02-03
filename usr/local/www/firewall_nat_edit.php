@@ -200,9 +200,10 @@ if ($_POST) {
 			$filterent['descr'] = "NAT " . $_POST['descr'];
 			/*
 			 * Our firewall filter description may be no longer than
-			 * 63 characters, so don't let it be.
+			 * 63 characters, so don't let it be. (and take "NAT "
+			 * into account)
 			 */
-			$filterent['descr'] = substr("NAT " . $_POST['descr'], 0, 63);
+			$filterent['descr'] = substr("NAT " . $_POST['descr'], 0, 59);
 
 			$config['filter']['rule'][] = $filterent;
 

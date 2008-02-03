@@ -48,7 +48,8 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
 		$config['system']['user'] = array();
 
     admin_users_sort();
-    $a_user = &$config['system']['user'];
+    if (is_array($config['system']['user'])) 
+		$a_user = &$config['system']['user'];
     $t_privs = $a_user[$id]['priv'];
 
     if ($_GET['act'] == "del" && $_GET['what'] == "user") {

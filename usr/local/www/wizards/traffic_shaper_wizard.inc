@@ -872,6 +872,9 @@ $othersplist = array();
 	$othersplist['hbci'] = array();
 		/* HBCI  */
 		$othersplist['hbci'][] = array('HBCI', 'tcp', '3000', '3000', 'both');
+	$othersplist['slingbox'] = array();
+		$othersplist['slingbox'][] = array('Slingbox', 'tcp', '5001', '5001', 'both');
+		$othersplist['slingbox'][] = array('Slingbox', 'udp', '5001', '5001', 'both');
 
 	/* 
 	 * Wipe previous config.
@@ -1738,19 +1741,21 @@ $othersplist = array();
 						switch ($val) {
 						case "H":
 							$rule['defaultqueue'] = 'qOthersHigh'; /* posted value H or L */
-							if ($val[1] == "tcp")
+							if ($otherclient[1] == "tcp")
 								$rule['ackqueue'] = 'qACK';
 							$loop = 0;
 						break;
 						case "L":
-								$rule['defaultqueue'] = 'qOthersLow'; /* posted value H or L */
+							$rule['defaultqueue'] = 'qOthersLow'; /* posted value H or L */
+							if ($otherclient[1] == "tcp")
+                                                                $rule['ackqueue'] = 'qACK';
 							$loop = 0;
 						break;
 						case "D":
 							if ($p2pcatchall) {
 								$loop = 0;
 								$rule['defaultqueue'] = 'qOthersDefault';
-								if ($val[1] == "tcp")
+								if ($otherclient[1] == "tcp")
 									$rule['ackqueue'] = 'qACK';
 							} else
 								$loop = 1; /* It automitaclly goes to default queue */

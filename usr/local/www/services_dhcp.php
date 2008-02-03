@@ -130,14 +130,7 @@ if ($_POST) {
 		$reqdfieldsn = explode(",", "Range begin,Range end");
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, &$input_errors);
-
-		foreach($a_maps as $mapent) {
-			if(is_inrange($mapent['ipaddr'], $_POST['range_from'], $_POST['range_to'])) {
-				$input_errors[] = "{$mapent['ipaddr']} is inside the range you specified.";
-			}
-
-		}
-
+		
 		if (($_POST['range_from'] && !is_ipaddr($_POST['range_from']))) {
 			$input_errors[] = "A valid range must be specified.";
 		}

@@ -826,18 +826,18 @@ function ldap_get_groups($username) {
 		return $status;	
 	}
 
-
-        log_error("LDAPGroupAttribute ===== {$ldapgroupattribute}");
+    log_error("LDAPGroupAttribute ===== {$ldapgroupattribute}");
 	$search = ldap_search($ldap, $ldapauthcontainers, $ldapfilter, array($ldapgroupattribute));
 
-	$info = ldap_get_entries($ldap, $search);
-        $countem = $info["count"];	
+	if($search) {
+		$info = ldap_get_entries($ldap, $search);
+    	$countem = $info["count"];	
+	}
 	$memberof = array();
 	
-        log_error("USER HAS {$countem} LDAP Groups it is {$info[0][$ldapgroupattribute][0]}");
+	log_error("USER HAS {$countem} LDAP Groups it is {$info[0][$ldapgroupattribute][0]}");
 
 	if(is_array($info[0][$ldapgroupattribute])) {
-
     	foreach($info[0][$ldapgroupattribute] as $member) {
     	   //$member = strtoupper($member);
     	   log_error("MEMBER===={$member}");

@@ -387,6 +387,7 @@ if($_GET['act']=="new" || $_GET['act']=="edit"){
                     <?=htmlspecialchars($group['description']);?>&nbsp;
                   </td>
                   <td class="listbg">
+					<font color="white">
                     <?=count($group['pages']);?>&nbsp;
                   </td>
                   <td valign="middle" nowrap class="list"> <a href="system_groupmanager.php?act=edit&id=<?=$i; ?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" title="edit group" width="17" height="17" border="0"></a>

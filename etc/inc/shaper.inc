@@ -1124,6 +1124,9 @@ class hfsc_queue extends priq_queue {
      function SetRealtime() {
            $this->realtime = "on";
      }
+     function DisableRealtime() {
+           $this->realtime = "";
+     }
      function SetR_m1($value) {
            $this->r_m1 = $value;
      }
@@ -1135,6 +1138,9 @@ class hfsc_queue extends priq_queue {
      }
      function GetLinkshare() {
            return $this->linkshare;
+     }
+     function DisableLinkshare() {
+           $this->linkshare = "";
      }
      function GetL_m1() {
            return $this->l_m1;
@@ -1171,6 +1177,9 @@ class hfsc_queue extends priq_queue {
      }
      function SetUpperlimit() {
            $this->upperlimit = "on";
+     }
+     function DisableUpperlimit() {
+           $this->upperlimit = "";
      }
      function SetU_m1($value) {
            $this->u_m1 = $value;
@@ -1373,7 +1382,7 @@ class hfsc_queue extends priq_queue {
                                 $this->SetL_m2($cflink['linkshare3']);
 				$this->SetLinkshare();
 			}
-		}
+		} else $this->DisableLinkshare();
 		if (isset($cflink['realtime']) && $cflink['realtime'] <> "") {
                         if (isset($cflink['realtime1']) && $cflink['realtime1'] <> "") {
                                 $this->SetR_m1($cflink['realtime1']);
@@ -1384,7 +1393,7 @@ class hfsc_queue extends priq_queue {
                                 $this->SetR_m2($cflink['realtime3']);
 				$this->SetRealtime();
 			}
-		}
+		} else $this->DisableRealtime(); 
 		if (isset($cflink['upperlimit']) && $cflink['upperlimit'] <> "") {
                         if (isset($cflink['upperlimit1']) && $cflink['upperlimit1'] <> "") {
                                 $this->SetU_m1($cflink['upperlimit1']);
@@ -1395,7 +1404,7 @@ class hfsc_queue extends priq_queue {
                                 $this->SetU_m2($cflink['upperlimit3']);
 				$this->SetUpperlimit();
 			}
-		}
+		} else $this->DisableUpperlimit();
 		parent::ReadConfig($cflink);
 
 		}
@@ -1430,7 +1439,7 @@ class hfsc_queue extends priq_queue {
 						$pfq_rule .= " priority " . $this->GetQpriority();
 				if ($this->GetQlimit())
 						$pfq_rule .= " qlimit " . $this->GetQlimit();
-		  if ($this->GetDefault() || $this->GetRed() || $this->GetRio() || $this->GetEcn() || $this->GetRealtime() || $this->GetLinkshare() || $this->GetUpperlimit()) {
+		  if ($this->GetDefault() || $this->GetRed() || $this->GetRio() || $this->GetEcn() || $this->GetRealtime() <> "" || $this->GetLinkshare() <> "" || $this->GetUpperlimit() <> "") {
 						$pfq_rule .= " hfsc ( ";
 						if ($this->GetRed()) {
 								$comma = 1;
@@ -1582,20 +1591,20 @@ class hfsc_queue extends priq_queue {
 				$form .= "<table>";
 				$form .= "<tr><td>&nbsp;</td><td><center>m1</center></td><td><center>d</center></td><td><center><b>m2</b></center></td></tr>";
 				$form .= "<tr><td><input type=\"checkbox\" id=\"upperlimit\" name=\"upperlimit\"";
-				if($this->GetUpperlimit() <> "") 
+				if($this->GetUpperlimit()<> "") 
 					$form .=  " CHECKED ";
 				$form .= "onChange=\"enable_upperlimit()\"> Upperlimit:</td><td><input size=\"6\" value=\"";
 				$form .= htmlspecialchars($this->GetU_m1());
 				$form .= "\" id=\"upperlimit1\" name=\"upperlimit1\" ";
-				if (!$this->GetUpperlimit()) $form .= " disabled";
+				if ($this->GetUpperlimit() == "") $form .= " disabled";
 				$form .= "></td><td><input size=\"6\" value=\"";
 				$form .= htmlspecialchars($this->GetU_d());
 				$form .= "\" id=\"upperlimi2\" name=\"upperlimit2\" ";
-		if (!$this->GetUpperlimit()) $form .= " disabled";
+		if ($this->GetUpperlimit() == "") $form .= " disabled";
 		$form .= "></td><td><input size=\"6\" value=\"";
 				$form .= htmlspecialchars($this->GetU_m2());
 				$form .= "\" id=\"upperlimit3\" name=\"upperlimit3\" ";
-		if (!$this->GetUpperlimit()) $form .= " disabled";
+		if ($this->GetUpperlimit() == "") $form .= " disabled";
 		$form .= "></td><td>The maximum allowed bandwidth for the queue.</td></tr>";
 				$form .= "<tr><td><input type=\"checkbox\" id=\"realtime\" name=\"realtime\"";
 				if($this->GetRealtime() <> "") 
@@ -1603,15 +1612,15 @@ class hfsc_queue extends priq_queue {
 				$form .= "onChange=\"enable_realtime()\"> Real time:</td><td><input size=\"6\" value=\"";
 				$form .= htmlspecialchars($this->GetR_m1());
 				$form .= "\" id=\"realtime1\" name=\"realtime1\" ";
-		if (!$this->GetRealtime()) $form .= " disabled";
+		if ($this->GetRealtime() == "") $form .= " disabled";
 		$form .= "></td><td><input size=\"6\" value=\"";
 				$form .= htmlspecialchars($this->GetR_d());
 				$form .= "\" id=\"realtime2\" name=\"realtime2\" ";
-		if (!$this->GetRealtime()) $form .= " disabled";
+		if ($this->GetRealtime() == "") $form .= " disabled";
 		$form .= "></td><td><input size=\"6\" value=\"";
 				$form .= htmlspecialchars($this->GetR_m2());
 				$form .= "\" id=\"realtime3\" name=\"realtime3\" ";
-		if (!$this->GetRealtime()) $form .= " disabled";
+		if ($this->GetRealtime() == "") $form .= " disabled";
 		$form .= "></td><td>The minimum required bandwidth for the queue.</td></tr>";
 				$form .= "<tr><td><input type=\"checkbox\" id=\"linkshare\" id=\"linkshare\" name=\"linkshare\"";
 				if($this->GetLinkshare() <> "") 
@@ -1619,15 +1628,15 @@ class hfsc_queue extends priq_queue {
 				$form .= "onChange=\"enable_linkshare()\"> Link share:</td><td><input size=\"6\" value=\"";
 				$form .= htmlspecialchars($this->GetL_m1());
 				$form .= "\" id=\"linkshare1\" name=\"linkshare1\" ";
-		if (!$this->GetLinkshare()) $form .= " disabled";
+		if ($this->GetLinkshare() == "") $form .= " disabled";
 		$form .= "></td><td><input size=\"6\" value=\"";
 				$form .= htmlspecialchars($this->GetL_d());
 				$form .= "\" id=\"linkshare2\" name=\"linkshare2\" ";
-		if (!$this->GetLinkshare()) $form .= " disabled";
+		if ($this->GetLinkshare() == "") $form .= " disabled";
 		$form .= "></td><td><input size=\"6\" value=\"";
 				$form .= htmlspecialchars($this->GetL_m2());
 				$form .= "\" id=\"linkshare3\" name=\"linkshare3\" ";
-		if (!$this->GetLinkshare()) $form .= " disabled";
+		if ($this->GetLinkshare() == "") $form .= " disabled";
 		$form .= "></td><td>The bandwidth share of a backlogged queue - this overrides priority.</td></tr>";
 				$form .= "</table><br>";
 				$form .= "The format for service curve specifications is (m1, d, m2).  m2 controls";
@@ -1660,7 +1669,7 @@ class hfsc_queue extends priq_queue {
 			$cflink['red'] = $this->GetRed();
 			$cflink['rio'] = $this->GetRio();
 			$cflink['ecn'] = $this->GetEcn();
-			if ($this->GetLinkshare() <> "" ) {
+			if ($this->GetLinkshare() <> "") {
 				if ($this->GetL_m1() <> "") {
 					$cflink['linkshare1'] = $this->GetL_m1();
 					$cflink['linkshare2'] = $this->GetL_d();
@@ -1670,29 +1679,29 @@ class hfsc_queue extends priq_queue {
 					$cflink['linkshare3'] = $this->GetL_m2();
 					$cflink['linkshare'] = "on";
 				}
-			}
-			if ($this->GetRealtime() <> "" ) {
+			} else $cflink['linkshare'] = "";
+			if ($this->GetRealtime() <> "") {
 				if ($this->GetR_m1() <> "") {
 					$cflink['realtime1'] = $this->GetR_m1();
 					$cflink['realtime2'] = $this->GetR_d();
 					$cflink['realtime'] = "on";
 				}
-				if ($this->GetR_m2()) {
+				if ($this->GetR_m2() <> "") {
 					$cflink['realtime3'] = $this->GetR_m2();
 					$cflink['realtime'] = "on";
 				}
-			}
+			} else $cflink['realtime'] = "";
 			if ($this->GetUpperlimit() <> "") {
 				if ($this->GetU_m1() <> "") {
 					$cflink['upperlimit1'] = $this->GetU_m1();
 					$cflink['upperlimit2'] = $this->GetU_d();
 					$cflink['upperlimit'] = "on";
 				}
-				if ($this->GetU_m2()) {
+				if ($this->GetU_m2() <> "") {
 					$cflink['upperlimit3'] = $this->GetU_m2();
 					$cflink['upperlimit'] = "on";
 				}
-			}
+			} else $cflink['upperlimit'] = "";
 		}
 	}
 

@@ -873,8 +873,8 @@ $othersplist = array();
 		/* HBCI  */
 		$othersplist['hbci'][] = array('HBCI', 'tcp', '3000', '3000', 'both');
 	$othersplist['slingbox'] = array();
-		$othersplist['slingbox'][] = array('Slingbox', 'tcp', '5001', '5001', 'both');
-		$othersplist['slingbox'][] = array('Slingbox', 'udp', '5001', '5001', 'both');
+		$othersplist['slingbox'][] = array('Slingbox1', 'tcp', '5001', '5001', 'both');
+		$othersplist['slingbox'][] = array('Slingbox2', 'udp', '5001', '5001', 'both');
 
 	/* 
 	 * Wipe previous config.

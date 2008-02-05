@@ -9,7 +9,7 @@ if [ "$PFSENSETYPE" = "embedded" ]; then
 fi
 
 # Check for different HZ 
-if [ /boot/loader.conf ]; then
+if [ -f /boot/loader.conf ]; then
 	HZ=`cat /boot/loader.conf | grep kern.hz | wc -l | awk '{ print $1 }'`
 	if [ "$HZ" = "1" ]; then
 		NOTELENGTH="10"

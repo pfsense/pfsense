@@ -575,6 +575,8 @@ EOD;
 				mwexec("/sbin/setkey -F");
 				/* load SPD */
 				mwexec("/sbin/setkey -f {$g['varetc_path']}/spd.conf");
+				/* We are already online, reload */
+				mwexec("/usr/bin/killall -HUP racoon");
 			} else {
 				/* start racoon */
 				mwexec("/usr/local/sbin/racoon -f {$g['varetc_path']}/racoon.conf");
@@ -583,6 +585,8 @@ EOD;
 				mwexec("/sbin/setkey -F");
 				/* load SPD */
 				mwexec("/sbin/setkey -f {$g['varetc_path']}/spd.conf");
+				/* We are already online, reload */
+				mwexec("/usr/bin/killall -HUP racoon");
 			}
 		}
 	}

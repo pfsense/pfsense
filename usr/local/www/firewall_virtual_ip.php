@@ -78,6 +78,10 @@ if ($_POST['apply']) {
 	}
 }
 
+if ($_POST) {
+			unlink_if_exists($d_vipconfdirty_path);
+}
+
 $pgtitle = "Firewall: Virtual IP Addresses";
 include("head.inc");
 

@@ -605,9 +605,9 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncell">Disable Firewall</td>
 			<td width="78%" class="vtable">
 				<input name="disablefilter" type="checkbox" id="disablefilter" value="yes" <?php if (isset($config['system']['disablefilter'])) echo "checked"; ?> onclick="enable_change(false)" />
-				<strong>Disable the firewalls filter altogether.</strong>
+				<strong>Disable all packet filtering.</strong>
 				<br />
-				<span class="vexpl">Note:  This basically converts <?= $g['product_name'] ?> into a routing only platform!<br>
+				<span class="vexpl">Note:  This converts <?= $g['product_name'] ?> into a routing only platform!<br>
 				                    Note:  This will turn off NAT!
 				</span>
 			</td>

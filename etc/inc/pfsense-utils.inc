@@ -85,8 +85,9 @@ function have_ruleint_access($if) {
 	if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) 
 		return true;
 	$security_url = "firewall_rules.php?if=". strtolower($if);
-	if(in_array($security_url, $allowed)) 
-		return true;
+	if(is_array($allowed))
+		if(in_array($security_url, $allowed)) 
+			return true;
 	return false;
 }
 
@@ -2229,8 +2230,9 @@ function display_top_tabs(& $tab_array) {
 			}
 			$authorized_text = print_r($allowed, true);
 //			log_error("comparing " . basename($link) . " {$authorized_text}");
-			if (in_array(basename($link), $authorized))
-				$tab_temp[] = $ta;
+			if(is_array($authorized))
+				if (in_array(basename($link), $authorized))
+					$tab_temp[] = $ta;
 		}
 		unset ($tab_array);
 		$tab_array = & $tab_temp;

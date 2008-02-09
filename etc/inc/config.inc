@@ -1956,6 +1956,8 @@ function start_devd() {
 
 function is_interface_mismatch() {
 	global $config, $g;
+	if(!$config['interfaces']['lan']) 	
+		return false;
 	$lan_if = $config['interfaces']['lan']['if'];
 	$wan_if = get_real_wan_interface();
 	$do_assign = 0;

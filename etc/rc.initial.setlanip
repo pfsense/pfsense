@@ -163,6 +163,14 @@
 		unset($config['system']['webgui']['noantilockout']);
 	}
 
+	if($config['interfaces']['lan']) {
+		unset($config['dhcpd']['wan']);		
+	}
+
+	if(!$config['interfaces']['lan']) 	
+		unset($config['dhcpd']['lan']);
+	}
+
 	write_config(gettext("{$interface} IP configuration from console menu"));
 	interfaces_lan_configure();
 
@@ -182,5 +190,5 @@
 
 	fgets($fp);
 	fclose($fp);
-	
+		
 ?>

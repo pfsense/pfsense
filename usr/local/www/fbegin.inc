@@ -198,7 +198,6 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							<?=output_menu_item("/vpn_pppoe.php", "PPPoE Server");?>	
 							<?=output_menu_item("/pkg_edit.php?xml=routed/routed.xml&id=0", "RIP");?>	
 							<?=output_menu_item("/services_snmp.php", "SNMP");?>	
-							
 							<?php
 							if($config['interfaces']['lan']) {
 								/* no use for UPnP in single-interface deployments
@@ -207,7 +206,6 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 								output_menu_item("/pkg_edit.php?xml=miniupnpd.xml&id=0", "UPnP");	
 							}
 							?>
-							
 							<?=output_menu_item("/pkg_edit.php?xml=openntpd.xml&id=0", "OpenNTPD");?>	
 							<?=output_menu_item("/services_wol.php", "Wake on LAN");?>	
 							<?php echo return_ext_menu("Services"); ?>
@@ -243,7 +241,14 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							<?=output_menu_item("/status_services.php", "Services");?>
 							<?=output_menu_item("/diag_logs.php", "System Logs");?>
 							<?=output_menu_item("/status_graph.php?if=wan", "Traffic Graph");?>
-							<?=output_menu_item("/status_upnp.php", "UPnP");?>
+							<?php
+							if($config['interfaces']['lan']) {
+								/* no use for UPnP in single-interface deployments
+								remove to reduce user confusion
+								*/
+								output_menu_item("/status_upnp.php", "UPnP");	
+							}
+							?>
 							<?php $i = 0; $ifdescrs = array();
 							if (is_array($config['interfaces']['wan']['wireless']) &&
 								preg_match($g['wireless_regex'], $config['interfaces']['wan']['if']))

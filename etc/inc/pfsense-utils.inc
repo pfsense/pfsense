@@ -1417,7 +1417,7 @@ function does_interface_exist($interface) {
 	global $config;
 	$ints = get_interface_arr();
 
-	if($interface == "lan")
+	if(strtolower($interface) == "lan")
 		if(!$config['interfaces']['lan']) 
 			return false;
 

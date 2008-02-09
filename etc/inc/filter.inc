@@ -2552,17 +2552,29 @@ EOD;
 
 	if (!isset($config['system']['webgui']['noantilockout'])) {
 
-		if($config['interfaces']['lan']) 
+		if($config['interfaces']['lan']) {
 			if($lansa and $lansn) {
+				/* if antilockout is enabled, LAN exists and has
+                                  an IP and subnet mask assigned */
 				$ipfrules .= <<<EOD
 
 # make sure the user cannot lock himself out of the webConfigurator or SSH
 anchor "anti-lockout"
-pass in quick on $lanif from any to $lanip keep state label "anti-lockout web rule"
+pass in quick on $lanif from any to $lanip keep state label "anti-lockout rule"
 
 EOD;
+			}
+                } else {
+			/* single-interface deployment, add to WAN  */
+			$ipfrules .= <<<EOD
+
+# make sure the user cannot lock himself out of the webConfigurator or SSH
+anchor "anti-lockout"
+pass in quick on $wanif from any to $wanip keep state label "anti-lockout rule"
+EOD;
+
 		}
-	}
+        }
 
 	/* PPTPd enabled? */
 	if ($pptpdcfg['mode'] && ($pptpdcfg['mode'] != "off")) {

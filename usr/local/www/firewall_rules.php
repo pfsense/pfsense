@@ -46,8 +46,10 @@ if ($_POST['if'])
 
 $iflist = array();
 
-if(have_ruleint_access("lan")) 
-	$iflist['lan'] = "LAN";
+if($config['interfaces']['lan']) 
+	if(have_ruleint_access("lan")) 
+		$iflist['lan'] = "LAN";
+
 if(have_ruleint_access("wan")) 
 	$iflist['wan'] = "WAN";
 

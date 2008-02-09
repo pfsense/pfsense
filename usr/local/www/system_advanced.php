@@ -508,17 +508,23 @@ include("head.inc");
 			</td>
 		</tr>
 <?php endif; ?>
+<?php
+	if($config['interfaces']['lan']) 
+		$lockout_interface = "LAN";
+	else 
+		$lockout_interface = "WAN";
+?>
 		<tr>
 			<td width="22%" valign="top" class="vncell">webConfigurator anti-lockout</td>
 			<td width="78%" class="vtable">
 				<input name="noantilockout" type="checkbox" id="noantilockout" value="yes" <?php if ($pconfig['noantilockout']) echo "checked"; ?> />
 				<strong>Disable webConfigurator anti-lockout rule</strong>
 				<br />
-				By default, access to the webConfigurator on the LAN interface is always permitted, regardless of the user-defined filter
+				By default, access to the webConfigurator on the {$lockout_interface} interface is always permitted, regardless of the user-defined filter
 				rule set. Enable this feature to control webConfigurator access (make sure to have a filter rule in place that allows you
 				in, or you will lock yourself out!).
 				<br />
-				Hint: the &quot;set LAN IP address&quot; option in the console menu  resets this setting as well.
+				Hint: the &quot;set configure IP address&quot; option in the console menu  resets this setting as well.
 			</td>
 		</tr>
 		<tr>

@@ -62,12 +62,13 @@ for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 }
 
 /* set the starting interface */
-if($config['interfaces']['lan'])
+if($config['interfaces']['lan']) {
 	if (!$if || !isset($iflist[$if]))
 		$if = "lan";
-else 
+} else {
 	$if = "wan";
-	
+}
+
 $pconfig['range_from'] = $config['dhcpd'][$if]['range']['from'];
 $pconfig['range_to'] = $config['dhcpd'][$if]['range']['to'];
 $pconfig['deftime'] = $config['dhcpd'][$if]['defaultleasetime'];

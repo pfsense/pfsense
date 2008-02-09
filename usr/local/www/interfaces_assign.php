@@ -124,35 +124,45 @@ if ($_GET['act'] == "del") {
 	unset($config['interfaces'][$id]['enable']);
 	interfaces_optional_configure_if($i);   /* down the interface */
 		
-	unset($config['interfaces'][$id]);	/* delete the specified OPTn */
+	unset($config['interfaces'][$id]);	/* delete the specified OPTn or LAN*/
 
-	/* shift down other OPTn interfaces to get rid of holes */
-	$i = substr($id, 3); /* the number of the OPTn port being deleted */
-	$i++;
-	
-	/* look at the following OPTn ports */
-	while (is_array($config['interfaces']['opt' . $i])) {
-		$config['interfaces']['opt' . ($i - 1)] =
-			$config['interfaces']['opt' . $i];
-		
-		if ($config['interfaces']['opt' . ($i - 1)]['descr'] == "OPT" . $i)
-			$config['interfaces']['opt' . ($i - 1)]['descr'] = "OPT" . ($i - 1);
-		
-		unset($config['interfaces']['opt' . $i]);
+	if($id <> "lan") {
+		/* shift down other OPTn interfaces to get rid of holes */
 		$i++;
+	
+		/* look at the following OPTn ports */
+		while (is_array($config['interfaces']['opt' . $i])) {
+			$config['interfaces']['opt' . ($i - 1)] =
+				$config['interfaces']['opt' . $i];
+		
+			if ($config['interfaces']['opt' . ($i - 1)]['descr'] == "OPT" . $i)
+				$config['interfaces']['opt' . ($i - 1)]['descr'] = "OPT" . ($i - 1);
+		
+			unset($config['interfaces']['opt' . $i]);
+			$i++;
+		}
+	} else {
+		unset($config['interfaces']['lan']);
+		unset($config['dhcpd']['lan']);
 	}
 
 	write_config();
 	
-	/*   move all the interfaces up.  for example:
-	 *      opt1 --> opt1
-	 *	opt2 --> delete
-	 *	opt3 --> opt2
-         *      opt4 --> opt3
-         */
-	cleanup_opt_interfaces_after_removal($i);
-	
+	if($id <> "lan") {
+		/*   move all the interfaces up.  for example:
+	 	*      opt1 --> opt1
+	 	*		opt2 --> delete
+	 	*		opt3 --> opt2
+     	*      opt4 --> opt3
+     	*/
+		cleanup_opt_interfaces_after_removal($i);
+	}
+
 	parse_config(true);
+
+	if($config['interfaces']['lan']) {
+		unset($config['dhcpd']['wan']);		
+	}
 	
 	$savemsg = "Interface has been deleted.";
 
@@ -161,12 +171,18 @@ if ($_GET['act'] == "del") {
 if ($_GET['act'] == "add") {
 	/* find next free optional interface number */
 	$i = 1;
-	while (is_array($config['interfaces']['opt' . $i]))
-		$i++;
-	
-	$newifname = 'opt' . $i;
+	if(!$config['interfaces']['lan']) {
+		$newifname = "lan";
+		$descr = "LAN";
+	} else {
+		while (is_array($config['interfaces']['opt' . $i]))
+			$i++;
+		$newifname = 'opt' . $i;
+		$descr = "OPT";
+	}
+
 	$config['interfaces'][$newifname] = array();
-	$config['interfaces'][$newifname]['descr'] = "OPT" . $i;
+	$config['interfaces'][$newifname]['descr'] = "{$descr}" . $i;
 	
 	/* Find an unused port for this interface */
 	foreach ($portlist as $portname => $portinfo) {

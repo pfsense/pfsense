@@ -486,9 +486,11 @@ include("head.inc");
    endif;
 
 					$interfaces = array();
-					
-					if(have_ruleint_access("lan")) 
-						$interfaces['lan'] = "LAN";
+					if($config['interfaces']['lan']) {
+                                                /* only add LAN if it exists */
+        					if(have_ruleint_access("lan")) 
+        						$interfaces['lan'] = "LAN";                                                
+                                        }
 					if(have_ruleint_access("wan")) 
 						$interfaces['wan'] = "WAN";
 						

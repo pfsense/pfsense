@@ -251,7 +251,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 		</select>
 		</td>
 		<td valign="middle" class="list"> 
-		  <?php if (($ifname != 'lan') && ($ifname != 'wan')): ?>
+		  <?php if ($ifname != 'wan'): ?>
 		  <a href="interfaces_assign.php?act=del&id=<?=$ifname;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="delete interface" width="17" height="17" border="0"></a> 
 		  <?php endif; ?>
 		</td>

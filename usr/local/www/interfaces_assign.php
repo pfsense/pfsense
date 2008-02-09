@@ -147,6 +147,8 @@ if ($_GET['act'] == "del") {
 		unset($config['shaper']);
 		unset($config['ezshaper']);
 		unset($config['nat']);
+		system("rm /var/dhcpd/var/db/*");
+        services_dhcpd_configure();
 	}
 
 	write_config();

@@ -173,6 +173,8 @@
 		unset($config['shaper']);
 		unset($config['ezshaper']);
 		unset($config['nat']);
+		system("rm /var/dhcpd/var/db/*");
+        services_dhcpd_configure();
 	}
 
 	write_config(gettext("{$interface} IP configuration from console menu"));

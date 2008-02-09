@@ -1388,12 +1388,12 @@ function set_networking_interfaces_ports() {
 	$memory = get_memory();
 	$avail = $memory[0];
 
-	if($avail < 115) {
+	if($avail < $g['minimum_ram_warning']) {
 		echo "\n\n\n";
-		echo "DANGER!  WARNING!\n\n";
-		echo "{$g['product_name']} requires *AT LEAST* 128 megs of ram to function correctly.\n";
-		echo "Only ($avail) megs of ram has been detected.\n";
-		echo "\nPress ENTER to continue.";
+		echo "DANGER!  WARNING!  ACHTUNG!\n\n";
+		echo "{$g['product_name']} requires *AT LEAST* {$g['minimum_ram_warning_text']} ram to function correctly.\n";
+		echo "Only ({$avail}) megs of ram has been detected.\n";
+		echo "\nPress ENTER to continue. ";
 		fgets($fp);
 		echo "\n";
 	}
@@ -1444,39 +1444,18 @@ EOD;
 
 	echo <<<EOD
 
-*NOTE*  {$g['product_name']} requires *AT LEAST* 2 assigned interfaces to function.
+*NOTE*  {$g['product_name']} requires {$g['minimum_nic_count_text']} assigned interfaces to function.
         If you do not have two interfaces you CANNOT continue. 
 
-        If you do not have at least two *REAL* network interface cards
+        If you do not have at least {$g['minimum_nic_count']} *REAL* network interface cards
         or one interface with multiple VLANs then {$g['product_name']}
         *WILL NOT* function correctly.
 
 If you do not know the names of your interfaces, you may choose to use
 auto-detection. In that case, disconnect all interfaces now before
-hitting 'a' to initiate auto detection. 
+hitting 'a' to initiate auto detection.
 
 EOD;
-
-	do {
-		echo "\nEnter the LAN interface name or 'a' for auto-detection: ";
-		$lanif = chop(fgets($fp));
-		if ($lanif === "") {
-			fclose($fp);
-			return;
-		}
-
-		if($lanif == "exit") {
-			exit;
-		}
-
-		if ($lanif === "a")
-			$lanif = autodetect_interface("LAN", $fp);
-		else if (!array_key_exists($lanif, $iflist)) {
-			echo "\nInvalid interface name '{$lanif}'\n";
-			unset($lanif);
-			continue;
-		}
-	} while (!$lanif);
 
 	do {
 		echo "\nEnter the WAN interface name or 'a' for auto-detection: ";
@@ -1492,6 +1471,32 @@ EOD;
 			continue;
 		}
 	} while (!$wanif);
+
+	do {
+		echo "\nEnter the LAN interface name or 'a' for auto-detection: ";
+		$lanif = chop(fgets($fp));
+		if ($lanif === "") {
+			fclose($fp);
+			return;
+		}
+
+		if($lanif == "exit") {
+			exit;
+		}
+		
+		if($lanif == "") {
+			if($g['minimum_nic_count'] < 2) 
+				break;			
+		}
+
+		if ($lanif === "a")
+			$lanif = autodetect_interface("LAN", $fp);
+		else if (!array_key_exists($lanif, $iflist)) {
+			echo "\nInvalid interface name '{$lanif}'\n";
+			unset($lanif);
+			continue;
+		}
+	} while (!$lanif);
 
 	/* optional interfaces */
 	$i = 0;

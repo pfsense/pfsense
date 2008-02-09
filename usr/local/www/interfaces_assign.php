@@ -146,6 +146,7 @@ if ($_GET['act'] == "del") {
 		unset($config['dhcpd']['lan']);
 		unset($config['shaper']);
 		unset($config['ezshaper']);
+		unset($config['filter']['nat']);
 	}
 
 	write_config();

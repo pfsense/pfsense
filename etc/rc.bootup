@@ -144,13 +144,15 @@
 
 	/* set up VLAN virtual interfaces */
 	interfaces_vlan_configure();
-
-	/* set up LAN interface */
-	echo "Configuring LAN interface...";
-	mute_kernel_msgs();
-	interfaces_lan_configure();
-	unmute_kernel_msgs();
-	echo "done.\n";
+	
+	if($config['interfaces']['lan']) {
+		/* set up LAN interface */
+		echo "Configuring LAN interface...";
+		mute_kernel_msgs();
+		interfaces_lan_configure();
+		unmute_kernel_msgs();
+		echo "done.\n";
+	}
 
 	/* set up WAN interface */
 	echo "Configuring WAN interface...";

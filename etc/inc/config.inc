@@ -1485,8 +1485,10 @@ EOD;
 		}
 		
 		if($lanif == "") {
-			if($g['minimum_nic_count'] < 2) 
+			if($g['minimum_nic_count'] < 2) {
+				unset($config['interfaces']['lan']);
 				break;			
+			}
 		}
 
 		if ($lanif === "a")

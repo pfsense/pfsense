@@ -1415,6 +1415,10 @@ function get_interface_arr($flush = false) {
  */
 function does_interface_exist($interface) {
 	global $config;
+
+	if(!$interface)
+		return false;
+		
 	$ints = get_interface_arr();
 
 	if(strtolower($interface) == "lan")

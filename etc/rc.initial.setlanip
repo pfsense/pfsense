@@ -33,103 +33,158 @@
 	/* parse the configuration and include all functions used below */
 	require_once("config.inc");
 	require_once("functions.inc");
+	require_once("IPv6.inc");
 
 	$fp = fopen('php://stdin', 'r');
+	$addr_blank = false;
 
+	/* build an interface collection */
+	$ifdescrs = array ("wan");
+	for ($j = 1; isset ($config['interfaces']['opt' . $j]); $j++) {
+		if(isset($config['interfaces']['opt' . $j]['enable']))
+			$ifdescrs['opt' . $j] = filter_get_opt_interface_descr("opt" . $j);
+	}
+
+	/* grab interface that we will operate on */
+	echo "Available interfaces:\n\n";
+	$x=1;
+	foreach($ifdescrs as $iface) {
+		echo "{$x} - {$iface}\n";
+		$x++;
+	}
+	echo "Enter interface # that you would like to configure: ";
+	$intnum = chop(fgets($fp));
+	
+	if($intnum < 1) 
+		exit;
+	if($intnum > $j)
+		exit;
+		
+	$interface = $ifdescrs[$intnum];
+	if(!$interface) {
+		echo "Invalid interface!\n";
+		exit;
+	}
+		
 	do {
-		echo "\nEnter the new LAN IP address: ";
-		$lanip = chop(fgets($fp));
-		if ($lanip === "") {
-			fclose($fp);
-			exit(0);
+		
+		if($interface == "wan") {
+			echo gettext("Would you like to enable DHCP on the {$interface} Press <ENTER> or n for no:") . "\n> ";
+			$intdhcp = chop(fgets($fp));
+			if(strtolower($intdhcp) == "y" || strtolower($intdhcp) == "yes") {
+				$intip = "DHCP";
+				$intbits = "";
+				$isintdhcp = true;
+			} 
 		}
-	} while (!is_ipaddr($lanip));
-
-	echo "\nSubnet masks are entered as bit counts (as in CIDR notation) in pfSense.\n";
-	echo "e.g. 255.255.255.0 = 24\n";
-	echo "     255.255.0.0   = 16\n";
-	echo "     255.0.0.0     = 8\n\n";
-
-	do {
-		echo "Enter the new LAN subnet bit count: ";
-		$lanbits = chop(fgets($fp));
-		if ($lanbits === "") {
-			fclose($fp);
-			exit(0);
+		
+		if($isintdhcp == false or $interface <> "wan") {
+			do {
+				echo "\n" . gettext("Enter the new {$interface} IPv4 address.  Press <ENTER> for none:") . "\n> ";
+				$intip = chop(fgets($fp));
+				$addr_blank = false;
+			} while (!(is_ipaddr($intip) || $intip == ''));
 		}
-	} while (!is_numeric($lanbits) || ($lanbits < 1) || ($lanbits > 31));
 
-	$config['interfaces']['lan']['ipaddr'] = $lanip;
-	$config['interfaces']['lan']['subnet'] = $lanbits;
+	  	if ($intip != '') {
+	  		echo "\n" . gettext("Subnet masks are entered as bit counts (as in CIDR notation) in {$g['product_name']}.") . "\n";
+	  		echo "e.g. 255.255.255.0 = 24\n";
+	  		echo "     255.255.0.0   = 16\n";
+	  		echo "     255.0.0.0     = 8\n";
 
-	do {
-    $good = false;
-	  echo "\nDo you want to enable the DHCP server on LAN [y|n]?  ";
-    $yn = strtolower(chop(fgets($fp)));
-    if ($yn[0] == "y" or $yn[0] == "n")
-      $good = true;
-  } while (!$good);
+	  		do {
+	  			echo "\n" . gettext("Enter the new {$interface} IPv4 subnet bit count:") . "\n> ";
+	  			$intbits = chop(fgets($fp));
+	  		} while (!is_numeric($intbits) || ($intbits < 1) || ($intbits > 31));
+	  	} 
 
+	} while ($addr_blank);
+
+	$config['interfaces'][$interface]['ipaddr'] = $intip;
+	$config['interfaces'][$interface]['subnet'] = $intbits;
+	$config['interfaces'][$interface]['ipaddr_ipv6'] = $intip_ipv6;
+	$config['interfaces'][$interface]['subnet_ipv6'] = $intbits_ipv6;
+
+	if($interface <> "wan") {
+		do {
+	    $good = false;
+		  echo "\n" . gettext("Do you want to enable the DHCP server on {$interface} [y|n]?") . "  ";
+	    $yn = strtolower(chop(fgets($fp)));
+	    if ($yn[0] == "y" or $yn[0] == "n")
+	      $good = true;
+	  } while (!$good);
+	} else {
+		$yn = "n";
+	}
+
+	// TODO: Add DHCP IPv6 support
 	if ($yn == "y") {
 		do {
-			echo "Enter the start address of the client address range: ";
+			echo gettext("Enter the start address of the client address range:") . " ";
 			$dhcpstartip = chop(fgets($fp));
 			if ($dhcpstartip === "") {
 				fclose($fp);
 				exit(0);
 			}
-		} while (!is_ipaddr($dhcpstartip));
+		} while (!(is_ipaddr($dhcpstartip) || Net_IPv6::checkIPv6($dhcpstartip)));
 
 		do {
-			echo "Enter the end address of the client address range: ";
+			echo gettext("Enter the end address of the client address range:") . " ";
 			$dhcpendip = chop(fgets($fp));
 			if ($dhcpendip === "") {
 				fclose($fp);
 				exit(0);
 			}
-		} while (!is_ipaddr($dhcpendip));
+		} while (!(is_ipaddr($dhcpendip) || Net_IPv6::checkIPv6($dhcpendip)));
 
-		$config['dhcpd']['lan']['enable'] = true;
-		$config['dhcpd']['lan']['range']['from'] = $dhcpstartip;
-		$config['dhcpd']['lan']['range']['to'] = $dhcpendip;
+		$config['dhcpd'][$interface]['enable'] = true;
+		$config['dhcpd'][$interface]['range']['from'] = $dhcpstartip;
+		$config['dhcpd'][$interface]['range']['to'] = $dhcpendip;
 	} else {
-		unset($config['dhcpd']['lan']['enable']);
+		unset($config['dhcpd'][$interface]['enable']);
 	}
 
-	if ($config['system']['webgui']['protocol'] == "https") {
+	if($interface == "lan") {
 
-  	do {
-      $good = false;
-  		echo "\nDo you want to revert to HTTP as the webConfigurator protocol? (y/n) ";
-      $yn = strtolower(chop(fgets($fp)));
-      if ($yn[0] == "y" or $yn[0] == "n")
-        $good = true;
-    } while (!$good);
+		if ($config['system']['webgui']['protocol'] == "https") {
 
-		if ($yn == "y")
-			$config['system']['webgui']['protocol'] = "http";
+		  	do {
+		      $good = false;
+		  		echo "\n" . gettext("Do you want to revert to HTTP as the webConfigurator protocol? (y/n)") . " ";
+		      $yn = strtolower(chop(fgets($fp)));
+		      if ($yn[0] == "y" or $yn[0] == "n")
+		        $good = true;
+		    } while (!$good);
+
+			if ($yn == "y")
+				$config['system']['webgui']['protocol'] = "http";
+		}
+
+		if (isset($config['system']['webgui']['noantilockout'])) {
+			echo "\n" . gettext("Note: the anti-lockout rule on {$interface} has been re-enabled.") . "\n";
+			unset($config['system']['webgui']['noantilockout']);
+		}
+
 	}
 
-	if (isset($config['system']['webgui']['noantilockout'])) {
-		echo "\nNote: the anti-lockout rule on LAN has been re-enabled.\n";
-		unset($config['system']['webgui']['noantilockout']);
-	}
-
-	write_config("LAN IP configuration from console menu");
+	write_config(gettext("{$interface} IP configuration from console menu"));
 	interfaces_lan_configure();
 
-	echo <<<EOD
+	if ($intip != '') { 
+		echo "\n\n" . gettext('The IPv4 {$interface} address has been set to ') . "{$intip}/{$intbits}\n" ;
+		echo gettext('You can now access the webConfigurator by opening the following URL in your web browser:') . "\n";
+		echo "{$config['system']['webgui']['protocol']}://{$intip}/\n";
+	}
 
-The LAN IP address has been set to $lanip/$lanbits.
-You can now access the webConfigurator by opening the following URL
-in your web browser:
+	if ($intip_ipv6 != '') {
+		echo "\n" . gettext('The IPv6 {$interface} address has been set to ') . "{$intip_ipv6}/{$intbits_ipv6}\n" ;
+		echo gettext('You can now access the webConfigurator by opening the following URL in your web browser:') . "\n";
+		echo "{$config['system']['webgui']['protocol']}://[{$intip_ipv6}]/\n";
+	}
 
-http://$lanip/
-
-Press ENTER to continue.
-
-EOD;
+	echo "\n" . gettext('Press <ENTER> to continue.');
 
 	fgets($fp);
 	fclose($fp);
+	
 ?>

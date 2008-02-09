@@ -312,20 +312,28 @@ function filter_generate_aliases() {
 
 	$i = 0;
 
-	$lanip = find_interface_ip($config['interfaces']['lan']['if']);
+	if($config['interfaces']['lan']) 	
+		$lanip = find_interface_ip($config['interfaces']['lan']['if']);
+
 	$wanip = find_interface_ip(get_real_wan_interface());
 
-	$lan_aliases = " " . link_ip_to_carp_interface($lanip);
+	if($config['interfaces']['lan']) 	
+		$lan_aliases = " " . link_ip_to_carp_interface($lanip);
+	
 	$wan_aliases = " " . link_ip_to_carp_interface($wanip);
 
-	if(link_int_to_bridge_interface("lan"))
-		$lan_aliases .= " " . link_int_to_bridge_interface("lan");
+	if($config['interfaces']['lan']) {
+		if(link_int_to_bridge_interface("lan"))
+			$lan_aliases .= " " . link_int_to_bridge_interface("lan");
+	}
 	if(link_int_to_bridge_interface("wan"))
 		$wan_aliases .= " " . link_int_to_bridge_interface("wan");
 
 	$aliases .= "# System Aliases \n";
 	$aliases .= "loopback = \"{ lo0 }\"\n";
-	$aliases .= "lan = \"{ {$config['interfaces']['lan']['if']}{$lan_aliases} }\"\n";
+
+	if($config['interfaces']['lan']) 
+		$aliases .= "lan = \"{ {$config['interfaces']['lan']['if']}{$lan_aliases} }\"\n";
 
     if($config['interfaces']['wan']['ipaddr'] == "pppoe" or $config['interfaces']['wan']['ipaddr'] == "pptp") {
 		$aliases .= "ng0 = \"{ " . $config['interfaces']['wan']['if'] . " " . get_real_wan_interface() . " }\" \n";
@@ -586,17 +594,20 @@ function filter_nat_rules_generate() {
 	global $config, $g, $after_filter_configure_run, $used_pftpx_ports;
 
 	$wancfg = $config['interfaces']['wan'];
-	$lancfg = $config['interfaces']['lan'];
+
+	if($config['interfaces']['lan']) 
+		$lancfg = $config['interfaces']['lan'];
 
 	$pptpdcfg = $config['pptpd'];
 	$pppoecfg = $config['pppoe'];
 	$wanif = get_real_wan_interface();
 
-	$lanif = $config['interfaces']['lan']['if'];
-	$lanip = $config['interfaces']['lan']['ipaddr'];
-
-	$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
-
+	if($config['interfaces']['lan']) {
+		$lanif = $config['interfaces']['lan']['if'];
+		$lanip = $config['interfaces']['lan']['ipaddr'];
+		$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
+	}
+	
 	$natrules .= "nat-anchor \"ftp-proxy/*\"\n";
 
 	$natrules .= "nat-anchor \"natearly/*\"\n";
@@ -686,17 +697,20 @@ function filter_nat_rules_generate() {
 		if(is_ipaddr($wancfg['alias-address'])) {
 			$aliastarget = $wancfg['alias-address'];
 			$aliassubnet = $wancfg['alias-subnet'];
-			$natrules .= filter_nat_rules_generate_if($wanif,
-				"{$lansa}/{$lancfg['subnet']}", null, "$aliastarget/$aliassubnet", null, $aliastarget, null, false);
+			if($config['interfaces']['lan']) 
+				$natrules .= filter_nat_rules_generate_if($wanif,
+					"{$lansa}/{$lancfg['subnet']}", null, "$aliastarget/$aliassubnet", null, $aliastarget, null, false);
 		}
-		$natrules .= filter_nat_rules_generate_if($wanif,
-			"{$lansa}/{$lancfg['subnet']}", 500, "", 500, $target, 500, false);
-		$natrules .= filter_nat_rules_generate_if($wanif,
-			"{$lansa}/{$lancfg['subnet']}", 4500, "", 4500, $target, 4500, false);
-		$natrules .= filter_nat_rules_generate_if($wanif,
-			"{$lansa}/{$lancfg['subnet']}", 5060, "", 5060, $target, 5060, false);
-		$natrules .= filter_nat_rules_generate_if($wanif,
-			"{$lansa}/{$lancfg['subnet']}", null, "", null, $target, null, false);
+		if($config['interfaces']['lan']) {
+			$natrules .= filter_nat_rules_generate_if($wanif,
+				"{$lansa}/{$lancfg['subnet']}", 500, "", 500, $target, 500, false);
+			$natrules .= filter_nat_rules_generate_if($wanif,
+				"{$lansa}/{$lancfg['subnet']}", 4500, "", 4500, $target, 4500, false);
+			$natrules .= filter_nat_rules_generate_if($wanif,
+				"{$lansa}/{$lancfg['subnet']}", 5060, "", 5060, $target, 5060, false);
+			$natrules .= filter_nat_rules_generate_if($wanif,
+				"{$lansa}/{$lancfg['subnet']}", null, "", null, $target, null, false);
+		}
 
 		$optints = array();
 		generate_optcfg_array($optints);
@@ -708,18 +722,21 @@ function filter_nat_rules_generate() {
 				if(is_ipaddr($config['interfaces'][$ocname]['alias-address'])) {
 					$aliastarget = $config['interfaces'][$ocname]['alias-address'];
 					$aliassubnet = $config['interfaces'][$ocname]['alias-subnet'];
-					$natrules .= filter_nat_rules_generate_if($opt_interface,
-						"{$lansa}/{$lancfg['subnet']}", null, "$aliastarget/$aliassubnet", null, $aliastarget, null, false);
+					if($config['interfaces']['lan']) 
+						$natrules .= filter_nat_rules_generate_if($opt_interface,
+							"{$lansa}/{$lancfg['subnet']}", null, "$aliastarget/$aliassubnet", null, $aliastarget, null, false);
 				}
 				$target = get_current_wan_address($interface = "$ocname");
-				$natrules .= filter_nat_rules_generate_if($opt_interface,
-					"{$lansa}/{$lancfg['subnet']}", 500, "", 500, $target, 500, false);
-				$natrules .= filter_nat_rules_generate_if($opt_interface,
-					"{$lansa}/{$lancfg['subnet']}", 4500, "", 4500, $target, 4500, false);
-				$natrules .= filter_nat_rules_generate_if($opt_interface,
-					"{$lansa}/{$lancfg['subnet']}", 5060, "", 5060, $target, 5060, false);
-				$natrules .= filter_nat_rules_generate_if($opt_interface,
-					"{$lansa}/{$lancfg['subnet']}", null, "", null, $target, null, false);
+				if($config['interfaces']['lan']) {
+					$natrules .= filter_nat_rules_generate_if($opt_interface,
+						"{$lansa}/{$lancfg['subnet']}", 500, "", 500, $target, 500, false);
+					$natrules .= filter_nat_rules_generate_if($opt_interface,
+						"{$lansa}/{$lancfg['subnet']}", 4500, "", 4500, $target, 4500, false);
+					$natrules .= filter_nat_rules_generate_if($opt_interface,
+						"{$lansa}/{$lancfg['subnet']}", 5060, "", 5060, $target, 5060, false);
+					$natrules .= filter_nat_rules_generate_if($opt_interface,
+						"{$lansa}/{$lancfg['subnet']}", null, "", null, $target, null, false);
+				}
 			}
 		}
 
@@ -734,19 +751,21 @@ function filter_nat_rules_generate() {
 				if(is_ipaddr($wancfg['alias-address'])) {
 					$aliastarget = $wancfg['alias-address'];
 					$aliassubnet = $wancfg['alias-subnet'];
-					$natrules .= filter_nat_rules_generate_if($wanif,
-						"{$lansa}/{$lancfg['subnet']}", null, "$aliastarget/$aliassubnet", null, $aliastarget, null, false);
+					if($config['interfaces']['lan']) 
+						$natrules .= filter_nat_rules_generate_if($wanif,
+							"{$lansa}/{$lancfg['subnet']}", null, "$aliastarget/$aliassubnet", null, $aliastarget, null, false);
 				}
 				/* create outbound nat entries for primary wan */
-				$natrules .= filter_nat_rules_generate_if($wanif,
-					"{$optsa}/{$optcfg['subnet']}", 500, "", 500, $target, 500, false);
-				$natrules .= filter_nat_rules_generate_if($wanif,
-					"{$optsa}/{$optcfg['subnet']}", 4500, "", 4500, $target, 4500, false);
-				$natrules .= filter_nat_rules_generate_if($wanif,
-					"{$optsa}/{$optcfg['subnet']}", 5060, "", 5060, $target, 5060, false);
-				$natrules .= filter_nat_rules_generate_if($wanif,
-					"{$optsa}/{$optcfg['subnet']}", null, "", null, $target, null, isset($optcfg['nonat']));
-
+				if($config['interfaces']['lan'])  {
+					$natrules .= filter_nat_rules_generate_if($wanif,
+						"{$optsa}/{$optcfg['subnet']}", 500, "", 500, $target, 500, false);
+					$natrules .= filter_nat_rules_generate_if($wanif,
+						"{$optsa}/{$optcfg['subnet']}", 4500, "", 4500, $target, 4500, false);
+					$natrules .= filter_nat_rules_generate_if($wanif,
+						"{$optsa}/{$optcfg['subnet']}", 5060, "", 5060, $target, 5060, false);
+					$natrules .= filter_nat_rules_generate_if($wanif,
+						"{$optsa}/{$optcfg['subnet']}", null, "", null, $target, null, isset($optcfg['nonat']));
+				}
 				/* create outbound nat entries for all opt wans */
 				foreach($optints as $ocname => $oc) {
 					$opt_interface = $oc['if'];
@@ -755,8 +774,9 @@ function filter_nat_rules_generate() {
 						if(is_ipaddr($config['interfaces'][$ocname]['alias-address'])) {
 							$aliastarget = $config['interfaces'][$ocname]['alias-address'];
 							$aliassubnet = $config['interfaces'][$ocname]['alias-subnet'];
-							$natrules .= filter_nat_rules_generate_if($opt_interface,
-								"{$lansa}/{$lancfg['subnet']}", null, "$aliastarget/$aliassubnet", null, $aliastarget, null, false);
+							if($config['interfaces']['lan']) 
+								$natrules .= filter_nat_rules_generate_if($opt_interface,
+									"{$lansa}/{$lancfg['subnet']}", null, "$aliastarget/$aliassubnet", null, $aliastarget, null, false);
 						}
 						$natrules .= filter_nat_rules_generate_if($opt_interface,
 							"{$optsa}/{$optcfg['subnet']}", 500, "", 500, $target, 500, false);
@@ -905,7 +925,10 @@ function filter_nat_rules_generate() {
 
 	$natrules .= "\n# FTP Proxy/helper\n";
 	/* build an array of interfaces to work with */
-	$iflist = array("lan" => "LAN");
+	if($config['interfaces']['lan']) 
+		$iflist = array("lan" => "LAN");
+	else 
+		$iflist = array();
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
 		$iflist['opt' . $i] = "opt{$i}";
 	$interface_counter = 0;
@@ -1059,7 +1082,8 @@ function filter_nat_rules_generate() {
 			else
 				$natif = $config['interfaces'][$rule['interface']]['if'];
 
-			$lanif = $lancfg['if'];
+			if($config['interfaces']['lan']) 
+				$lanif = $lancfg['if'];
 
 			/*
 			 *   Expand aliases
@@ -1157,12 +1181,14 @@ function filter_nat_rules_generate() {
 			$rule_interface_ip = find_interface_ip($rule_friendly_if);
 			$rule_interface_subnet = $config['interfaces'][$rule['interface']]['subnet'];
 			$rule_subnet = gen_subnet($rule_interface_ip, $rule_interface_subnet);
-			if($rule['external-address'] == "any" and $rule['interface'] == "lan") {
-				$natrules .= "\n";
-				if($rule_friendly_if)
-					$natrules .= "no nat on {$rule_friendly_if} proto tcp from {$rule_friendly_if} to {$rule_subnet}/{$rule_interface_subnet}\n";
-				if($rule_friendly_if)
-					$natrules .= "nat on {$rule_friendly_if} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$extport[0]} -> {$rule_friendly_if}\n";
+			if($config['interfaces']['lan']) {
+				if($rule['external-address'] == "any" and $rule['interface'] == "lan") {
+					$natrules .= "\n";
+					if($rule_friendly_if)
+						$natrules .= "no nat on {$rule_friendly_if} proto tcp from {$rule_friendly_if} to {$rule_subnet}/{$rule_interface_subnet}\n";
+					if($rule_friendly_if)
+						$natrules .= "nat on {$rule_friendly_if} proto tcp from {$rule_subnet}/{$rule_interface_subnet} to {$target} port {$extport[0]} -> {$rule_friendly_if}\n";
+				}
 			}
 
 			if(!isset($config['system']['disablenatreflection'])) {
@@ -1427,16 +1453,17 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		update_filter_reload_status("Creating filter rules {$rule['descr']} ...");
 
 		$wancfg = $config['interfaces']['wan'];
-		$lancfg = $config['interfaces']['lan'];
+		if($config['interfaces']['lan']) {
+				$lancfg = $config['interfaces']['lan'];
+				$lanif = $lancfg['if'];
+				$lanip = $lancfg['ipaddr'];
+				$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
+				$lansn = $lancfg['subnet'];
+		}
 		$pptpdcfg = $config['pptpd'];
 		$pppoecfg = $config['pppoe'];
 
-		$lanif = $lancfg['if'];
 		$wanif = get_real_wan_interface();
-
-		$lanip = $lancfg['ipaddr'];
-		$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
-		$lansn = $lancfg['subnet'];
 
 		$int = "";
 
@@ -2144,7 +2171,10 @@ function generate_user_filter_rule($rule, $ngcounter) {
 			$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['flags'] . 
 			$aline['queue'] . " label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";
 		/* if list */
-		$iflist = array("lan", "wan");
+		if($config['interfaces']['lan'])
+			$iflist = array("lan", "wan");
+		else 
+			$iflist = array("wan");
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
 			$iflist['opt' . $i] = "opt{$i}";
 		/* build local networks list */
@@ -2235,23 +2265,26 @@ function filter_rules_generate() {
 	}
 
 	$wancfg = $config['interfaces']['wan'];
-	$lancfg = $config['interfaces']['lan'];
+	if($config['interfaces']['lan']) {
+		$lancfg = $config['interfaces']['lan'];
+		$lanif = $lancfg['if'];
+		$lanip = $lancfg['ipaddr'];
+		$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
+		$lansn = $lancfg['subnet'];
+	}
+
 	$pptpdcfg = $config['pptpd'];
 	$pppoecfg = $config['pppoe'];
 
-	$lanif = $lancfg['if'];
 	$wanif = get_real_wan_interface();
-
-	$lanip = $lancfg['ipaddr'];
-	$lansa = gen_subnet($lancfg['ipaddr'], $lancfg['subnet']);
-	$lansn = $lancfg['subnet'];
-
+	
 	$wanip = find_interface_ip(get_real_wan_interface());
 
-	if($lansa)
-		$lansa_sn_combo = "{$lansa}/{$lansn}";
-	else
-		$lansa_sn_combo = "192.168.1.1/32";
+	if($config['interfaces']['lan']) 
+		if($lansa)
+			$lansa_sn_combo = "{$lansa}/{$lansn}";
+		else
+			$lansa_sn_combo = "192.168.1.1/32";
 
 	/* optional interfaces */
 	$optcfg = array();
@@ -2378,9 +2411,10 @@ EOD;
 	}
 
 	/* install wan spoof check rule if lan address exists */
-	if($lansa) {
-		if(!isset($config['interfaces']['wan']['spoofmac'])) {
-			$ipfrules .= <<<EOD
+	if($config['interfaces']['lan']) 
+		if($lansa) {
+			if(!isset($config['interfaces']['wan']['spoofmac'])) {
+				$ipfrules .= <<<EOD
 
 # WAN spoof check
 anchor "wanspoof"
@@ -2397,9 +2431,9 @@ EOD;
 				if(isset($oc['enable']))
 					$ipfrules .= "block in $log quick on \$wan from {$oc['sa']}/{$oc['sn']} to any label \"interface spoof check\"\n";
 	}
-	
-if($config['interfaces']['lan']['bridge'] <> "wan" and $config['interfaces']['wan']['bridge'] <> "lan")
-	$ipfrules .= "block in $log quick on \$wan proto udp from any port = 67 to {$lansa_sn_combo} port = 68 label \"block dhcp client out wan\"\n";
+if($config['interfaces']['lan']) 	
+	if($config['interfaces']['lan']['bridge'] <> "wan" and $config['interfaces']['wan']['bridge'] <> "lan")
+		$ipfrules .= "block in $log quick on \$wan proto udp from any port = 67 to {$lansa_sn_combo} port = 68 label \"block dhcp client out wan\"\n";
 
 	$ipfrules .= <<<EOD
 
@@ -2410,17 +2444,20 @@ EOD;
 	/* LAN spoof check */
 	$lanbridge = false;
 	foreach($config['interfaces'] as $int)
-		if($int['bridge'] == "lan")
-			$lanbridge = true;
+		if($config['interfaces']['lan']) 
+			if($int['bridge'] == "lan")
+				$lanbridge = true;
 	$wanbridge = false;
 	foreach($config['interfaces'] as $int)
 		if($int['bridge'] == "wan")
 			$wanbridge = true;			
+
 	if($config['interfaces']['lan']['bridge'] == "wan") 
 		$wanbridge = true;
-			
-	if(!$lanbridge)
-		$ipfrules .= filter_rules_spoofcheck_generate('lan', $lanif, $lansa, $lansn, $log);
+
+	if($config['interfaces']['lan']) 			
+		if(!$lanbridge)
+			$ipfrules .= filter_rules_spoofcheck_generate('lan', $lanif, $lansa, $lansn, $log);
 
 	/* OPT spoof check */
 	foreach ($optcfg as $on => $oc) {
@@ -2468,10 +2505,14 @@ EOD;
 # let out anything from the firewall host itself and decrypted IPsec traffic
 pass out on $wanif all keep state label "let out anything from firewall host itself"
 pass out on \$wan proto icmp keep state label "let out anything from firewall host itself"
-pass out on \$lan proto icmp keep state label "let out anything from firewall host itself"
+
 
 EOD;
 
+
+	if($config['interfaces']['lan']) 
+		$ipfrules .= "pass out on \$lan proto icmp keep state label \"let out anything from firewall host itself\"\n";
+		
 	$ipfrules .= create_firewall_outgoing_rules_to_itself();
 
 	if($config['interfaces']['wan']['ipaddr'] == "pppoe")
@@ -2511,9 +2552,9 @@ EOD;
 
 	if (!isset($config['system']['webgui']['noantilockout'])) {
 
-		if($lansa and $lansn) {
-
-			$ipfrules .= <<<EOD
+		if($config['interfaces']['lan']) 
+			if($lansa and $lansn) {
+				$ipfrules .= <<<EOD
 
 # make sure the user cannot lock himself out of the webConfigurator or SSH
 anchor "anti-lockout"
@@ -2613,7 +2654,8 @@ EOD;
                         else
                                 $natif = $config['interfaces'][$rule['interface']]['if'];
 
-                        $lanif = $lancfg['if'];
+						if($config['interfaces']['lan']) 
+                        	$lanif = $lancfg['if'];
 
                         /*
                          *   Expand aliases
@@ -2626,8 +2668,11 @@ EOD;
 
                         if(!isset($config['system']['disablenatreflection'])) {
 
-                                /* if list */
-                                $iflist = array("lan" => "LAN");
+						/* if list */
+						if($config['interfaces']['lan']) 
+							$iflist = array("lan" => "LAN");
+						else 
+							$iflist = array();
                         for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
                                 $iflist['opt' . $i] = "opt{$i}";
 
@@ -2700,17 +2745,21 @@ EOD;
         
     if ($wancfg['ipaddr'] == "dhcp")
 		$ipfrules .= "anchor \"wandhcp\"";
-	
-	$ipfrules .= <<<EOD
+	if($config['interfaces']['lan']) 
+		$ipfrules .= <<<EOD
 
 # allow access to DHCP server on LAN
 anchor "dhcpserverlan"
 pass in on \$lan proto udp from any port = 68 to 255.255.255.255 port = 67 label "allow access to DHCP server on LAN"
 pass in on \$lan proto udp from any port = 68 to $lanip port = 67 label "allow access to DHCP server on LAN"
+pass out on \$lan proto udp from $lanip port = 67 to any port = 68 label "allow access to DHCP server on LAN"
+
+EOD;
+
+	$ipfrules .= <<<EOD
+
 # allow WAN to use DHCP leases
 pass in on \$wan proto udp from any port = 67 to any port = 68 label "allow dhcp client out wan"
-
-pass out on \$lan proto udp from $lanip port = 67 to any port = 68 label "allow access to DHCP server on LAN"
 
 EOD;
         
@@ -2880,12 +2929,15 @@ EOD;
 	update_filter_reload_status("Creating carp rules...");
 
 	$ipfrules .= "\n# VPN Rules\n";
-	$lan_ip = $config['interfaces']['lan']['ipaddr'];
-	$lan_subnet = $config['interfaces']['lan']['subnet'];
+	if($config['interfaces']['lan']) {
+		$lan_ip = $config['interfaces']['lan']['ipaddr'];
+		$lan_subnet = $config['interfaces']['lan']['subnet'];
+	}
 	$wanif = get_real_wan_interface();
 	$wan_ip = find_interface_ip($wanif);
 	if($wan_ip) {
-		$internal_subnet = gen_subnet($lan_ip, $lan_subnet) . "/" . $config['interfaces']['lan']['subnet'];
+		if($config['interfaces']['lan']) 
+			$internal_subnet = gen_subnet($lan_ip, $lan_subnet) . "/" . $config['interfaces']['lan']['subnet'];
 		/* Is IP Compression enabled? */
 		if(isset($config['ipsec']['ipcomp']))
 			exec("/sbin/sysctl net.inet.ipcomp.ipcomp_enable=1");
@@ -2956,11 +3008,15 @@ EOD;
 	$ipfrules .= <<<EOD
 # Support for allow limiting of TCP connections by establishment rate
 anchor "limitingesr"
-
-pass in on $lanif inet proto tcp from any to \$loopback port 8021 keep state label "FTP PROXY: Allow traffic to localhost"
-pass in on $lanif inet proto tcp from any to \$loopback port 21 keep state label "FTP PROXY: Allow traffic to localhost"
 pass in on $wanif inet proto tcp from port 20 to ($wanif) port > 49000 user proxy flags S/SA keep state label "FTP PROXY: PASV mode data connection"
 
+EOD;
+
+	if($config['interfaces']['lan']) 
+		$ipfrules .= <<<EOD
+
+		pass in on $lanif inet proto tcp from any to \$loopback port 8021 keep state label "FTP PROXY: Allow traffic to localhost"
+		pass in on $lanif inet proto tcp from any to \$loopback port 21 keep state label "FTP PROXY: Allow traffic to localhost"				
 EOD;
 
 	if(!isset($config['system']['disableftpproxy'])) {
@@ -3034,7 +3090,10 @@ function setup_logging_interfaces() {
 	}
 	$rules = "";
 	$i = 0;
-	$ifdescrs = array('wan', 'lan');
+	if($config['interfaces']['lan']) 
+		$ifdescrs = array('wan', 'lan');
+	else 
+		$ifdescrs = array('wan');
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 		$ifdescrs['opt' . $j] = "opt" . $j;
 	}
@@ -3058,7 +3117,10 @@ function create_firewall_outgoing_rules_to_itself() {
 	$i = 0;
 	$rule .= "# pass traffic from firewall -> out\n";
 	$rule .= "anchor \"firewallout\"\n";
-	$ifdescrs = array('wan', 'lan');
+	if($config['interfaces']['lan']) 
+		$ifdescrs = array('wan', 'lan');
+	else 
+		$ifdescrs = array('wan');
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
 		$ifdescrs['opt' . $j] = "opt" . $j;
 

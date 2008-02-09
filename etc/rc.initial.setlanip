@@ -168,7 +168,11 @@
 	}
 
 	if(!$config['interfaces']['lan']) 	
+		unset($config['interfaces']['lan']);
 		unset($config['dhcpd']['lan']);
+		unset($config['shaper']);
+		unset($config['ezshaper']);
+		unset($config['nat']);
 	}
 
 	write_config(gettext("{$interface} IP configuration from console menu"));

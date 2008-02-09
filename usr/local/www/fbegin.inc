@@ -171,7 +171,16 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							?>
 							<?=output_menu_item("/firewall_rules.php", "Rules");?>	
 							<?=output_menu_item("/firewall_schedule.php", "Schedules");?>	
-							<?=output_menu_item("{$shaper}", "Traffic Shaper");?>	
+							<?php
+							if($config['interfaces']['lan']) {
+								/* no use for traffic shaper in single-interface
+								  deployments
+								remove to reduce user confusion
+								*/
+								output_menu_item("{$shaper}", "Traffic Shaper");
+							}
+							?>
+														<?=?>	
 							<?=output_menu_item("/firewall_virtual_ip.php", "Virtual IPs");?>	
 							<?php echo return_ext_menu("Firewall"); ?>
 						</ul>
@@ -183,13 +192,22 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							<?=output_menu_item("/services_dnsmasq.php", "DNS Forwarder");?>	
 							<?=output_menu_item("/services_dhcp_relay.php", "DHCP Relay");?>	
 							<?=output_menu_item("/services_dhcp.php", "DHCP Server");?>	
-							<?=output_menu_item("/services_dyndns.php", "Dynamic DNS");?>	
+							<?=output_menu_item("/services_dyndns.php", "Dynamic DNS");?>
 							<?=output_menu_item("/load_balancer_pool.php", "Load Balancer");?>	
 							<?=output_menu_item("/pkg_edit.php?xml=olsrd.xml&id=0", "OLSR");?>	
 							<?=output_menu_item("/vpn_pppoe.php", "PPPoE Server");?>	
 							<?=output_menu_item("/pkg_edit.php?xml=routed/routed.xml&id=0", "RIP");?>	
 							<?=output_menu_item("/services_snmp.php", "SNMP");?>	
-							<?=output_menu_item("/pkg_edit.php?xml=miniupnpd.xml&id=0", "UPnP");?>	
+							
+							<?php
+							if($config['interfaces']['lan']) {
+								/* no use for UPnP in single-interface deployments
+								remove to reduce user confusion
+								*/
+								output_menu_item("/pkg_edit.php?xml=miniupnpd.xml&id=0", "UPnP");	
+							}
+							?>
+							
 							<?=output_menu_item("/pkg_edit.php?xml=openntpd.xml&id=0", "OpenNTPD");?>	
 							<?=output_menu_item("/services_wol.php", "Wake on LAN");?>	
 							<?php echo return_ext_menu("Services"); ?>

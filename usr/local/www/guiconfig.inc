@@ -769,7 +769,8 @@ function pconfig_to_address(&$adr, $padr, $pmask, $pnot=false, $pbeginport=0, $p
 
 function is_specialnet($net) {
         global $specialsrcdst;
-
+		if(!$net) 
+			return false;
         if (in_array($net, $specialsrcdst) || strstr($net, "opt"))
                 return true;
         else

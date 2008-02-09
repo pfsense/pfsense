@@ -46,8 +46,11 @@ if($config['installedpackages']['olsrd']) {
 	}
 }
 
-if(!$iflist)
-	$iflist = array("lan" => "LAN");
+if($config['interfaces']['lan'])
+	if(!$iflist)
+		$iflist = array("lan" => "LAN");
+else 
+	$iflist = array("wan" => $g['wan_interface_name']);
 
 for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 	$oc = $config['interfaces']['opt' . $i];

@@ -173,16 +173,16 @@ if ($_GET['act'] == "add") {
 	$i = 1;
 	if(!$config['interfaces']['lan']) {
 		$newifname = "lan";
-		$descr = "LAN";
+		$config['interfaces'][$newifname] = array();
+		$config['interfaces'][$newifname]['descr'] = "{$descr}";
 	} else {
 		while (is_array($config['interfaces']['opt' . $i]))
 			$i++;
 		$newifname = 'opt' . $i;
 		$descr = "OPT";
+		$config['interfaces'][$newifname] = array();
+		$config['interfaces'][$newifname]['descr'] = "{$descr}" . $i;
 	}
-
-	$config['interfaces'][$newifname] = array();
-	$config['interfaces'][$newifname]['descr'] = "{$descr}" . $i;
 	
 	/* Find an unused port for this interface */
 	foreach ($portlist as $portname => $portinfo) {
@@ -287,7 +287,8 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
   <?php endif; ?>
 </table>
 </div>
-<br>
+<br/>
+<input name="Submit" type="submit" class="formbtn" value="Save"><br><br>
 <p>
 </p>
 <ul>

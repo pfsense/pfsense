@@ -103,7 +103,11 @@ include("head.inc");
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
 <select name="interface" class="formfld">
-                      <?php $interfaces = array('lan' => 'LAN');
+                      <?php 
+						if($config['interfaces']['lan'])
+							$interfaces = array('lan' => 'LAN');
+						else 
+							$interfaces = array('WAN' => 'WAN');
 					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 					    if (isset($config['interfaces']['opt' . $i]['enable']) &&
 							!$config['interfaces']['opt' . $i]['bridge'])

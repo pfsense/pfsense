@@ -144,27 +144,23 @@
 		unset($config['dhcpd'][$interface]['enable']);
 	}
 
-	if($interface == "lan") {
+	if ($config['system']['webgui']['protocol'] == "https") {
 
-		if ($config['system']['webgui']['protocol'] == "https") {
+	  	do {
+	      $good = false;
+	  		echo "\n" . gettext("Do you want to revert to HTTP as the webConfigurator protocol? (y/n)") . " ";
+	      $yn = strtolower(chop(fgets($fp)));
+	      if ($yn[0] == "y" or $yn[0] == "n")
+	        $good = true;
+	    } while (!$good);
 
-		  	do {
-		      $good = false;
-		  		echo "\n" . gettext("Do you want to revert to HTTP as the webConfigurator protocol? (y/n)") . " ";
-		      $yn = strtolower(chop(fgets($fp)));
-		      if ($yn[0] == "y" or $yn[0] == "n")
-		        $good = true;
-		    } while (!$good);
+		if ($yn == "y")
+			$config['system']['webgui']['protocol'] = "http";
+	}
 
-			if ($yn == "y")
-				$config['system']['webgui']['protocol'] = "http";
-		}
-
-		if (isset($config['system']['webgui']['noantilockout'])) {
-			echo "\n" . gettext("Note: the anti-lockout rule on {$interface} has been re-enabled.") . "\n";
-			unset($config['system']['webgui']['noantilockout']);
-		}
-
+	if (isset($config['system']['webgui']['noantilockout'])) {
+		echo "\n" . gettext("Note: the anti-lockout rule on {$interface} has been re-enabled.") . "\n";
+		unset($config['system']['webgui']['noantilockout']);
 	}
 
 	write_config(gettext("{$interface} IP configuration from console menu"));

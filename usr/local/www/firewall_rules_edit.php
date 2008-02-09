@@ -934,10 +934,13 @@ on another rule.")?>
 			/* build a list of gateways */
 			$gateways = array();
 			$gateways[] = "default"; // default to don't use this feature :)
-			foreach($config['gateways']['gateway_item'] as $gw_item) {
-			if($gw_item['gateway'] <> "")
-				$gateways[] = $gw_item['name'];
+			if (is_array($config['gateways']['gateway_item'])) {
+				foreach($config['gateways']['gateway_item'] as $gw_item) {
+				if($gw_item['gateway'] <> "")
+					$gateways[] = $gw_item['name'];
+				}
 			}
+			
 ?>
 		<tr>
 			<td width="22%" valign="top" class="vncell">Gateway</td>

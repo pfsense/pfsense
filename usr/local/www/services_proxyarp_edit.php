@@ -172,7 +172,11 @@ function typesel_change() {
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable">
 					<select name="interface" class="formselect">
-                      <?php $interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
+                      <?php
+ 						if($config['interfaces']['lan'])
+							$interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
+						else 
+							$interfaces = array('wan' => 'WAN');
 					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 					  	$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 					  }

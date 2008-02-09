@@ -366,21 +366,23 @@ function enable_change(whichone) {
 		    <input name="hostres" type="checkbox" id="hostres" value="yes" <?php if ($pconfig['hostres']) echo "checked"; ?> >Host Resources
 		  </td>
 		</tr>
-                <tr> 
-                  <td width="22%" valign="top" class="vtable"></td>
-                  <td width="78%" class="vtable"> 
-                    <input name="bindlan" type="checkbox" value="yes" <?php if ($pconfig['bindlan']) echo "checked"; ?>> <strong>Bind to LAN interface only</strong>
-                    <br>
-                    This option can be useful when trying to access the SNMP agent
-                    by the LAN interface's IP address through a VPN tunnel terminated on the WAN interface.</td>
-                </tr>
-                <tr> 
-                  <td width="22%" valign="top">&nbsp;</td>
-                  <td width="78%"> 
-                    <input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change(true)"> 
-                  </td>
-                </tr>
-              </table>
+<?php if(!$config['interfaces']['lan']): ?>
+		 <tr> 
+		   <td width="22%" valign="top" class="vtable"></td>
+		   <td width="78%" class="vtable"> 
+		     <input name="bindlan" type="checkbox" value="yes" <?php if ($pconfig['bindlan']) echo "checked"; ?>> <strong>Bind to LAN interface only</strong>
+		     <br>
+		     This option can be useful when trying to access the SNMP agent
+		     by the LAN interface's IP address through a VPN tunnel terminated on the WAN interface.</td>
+		 </tr>
+<?php endif; ?>
+		 <tr> 
+		   <td width="22%" valign="top">&nbsp;</td>
+		   <td width="78%"> 
+		     <input name="Submit" type="submit" class="formbtn" value="Save" onClick="enable_change(true)"> 
+		   </td>
+		 </tr>
+		</table>
 </form>
 <script language="JavaScript">
 <!--

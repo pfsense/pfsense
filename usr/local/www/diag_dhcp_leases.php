@@ -303,7 +303,7 @@ foreach ($leases as $data) {
 					break;
 			}
 		} else {
-                	foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
+                	foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {	
                         	if (($lip >= ip2long($dhcpifconf['range']['from'])) && ($lip <= ip2long($dhcpifconf['range']['to']))) {
                                 	$data['if'] = $dhcpif;
                                 	break;

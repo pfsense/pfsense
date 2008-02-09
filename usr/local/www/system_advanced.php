@@ -635,12 +635,13 @@ include("head.inc");
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" /></td>
 		</tr>
+	<?php if($config['interfaces']['lan']): ?>
 		<tr>
 			<td colspan="2" class="list" height="12">&nbsp;</td>
 		</tr>
 		<tr>
 			<td colspan="2" valign="top" class="listtopic">Network Address Translation</td>
-		</tr>
+		</tr>		
 		<tr>
 			<td width="22%" valign="top" class="vncell">Disable NAT Reflection</td>
 			<td width="78%" class="vtable">
@@ -659,6 +660,8 @@ include("head.inc");
 			<td width="22%" valign="top">&nbsp;</td>
 			<td width="78%"><input name="Submit" type="submit" class="formbtn" value="Save" onclick="enable_change(true)" /></td>
 		</tr>
+<?php endif; ?>
+
 		<tr>
 			<td colspan="2" class="list" height="12">&nbsp;</td>
 		</tr>

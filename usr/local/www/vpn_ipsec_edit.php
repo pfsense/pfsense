@@ -35,7 +35,8 @@ if (!is_array($config['ipsec']['tunnel'])) {
 }
 $a_ipsec = &$config['ipsec']['tunnel'];
 
-$specialsrcdst = explode(" ", "lan");
+if($config['interfaces']['lan']) 
+		$specialsrcdst = explode(" ", "lan");
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
@@ -49,11 +50,13 @@ if (isset($id) && $a_ipsec[$id]) {
 	$pconfig['disabled'] = isset($a_ipsec[$id]['disabled']);
 	$pconfig['auto'] = isset($a_ipsec[$id]['auto']);
 
-	if (!isset($a_ipsec[$id]['local-subnet']))
-		$pconfig['localnet'] = "lan";
-	else
+	if (!isset($a_ipsec[$id]['local-subnet'])) {
+		if($config['interfaces']['lan']) 
+			$pconfig['localnet'] = "lan";
+	} else {
 		address_to_pconfig_vpn($a_ipsec[$id]['local-subnet'], $pconfig['localnet'], $pconfig['localnetmask']);
-
+	}
+	
 	if ($a_ipsec[$id]['interface'])
 		$pconfig['interface'] = $a_ipsec[$id]['interface'];
 	else
@@ -102,7 +105,8 @@ if (isset($id) && $a_ipsec[$id]) {
 } else {
 	/* defaults */
 	$pconfig['interface'] = "wan";
-	$pconfig['localnet'] = "lan";
+	if($config['interfaces']['lan']) 
+		$pconfig['localnet'] = "lan";
 	$pconfig['p1mode'] = "aggressive";
 	$pconfig['p1myidentt'] = "myaddress";
 	$pconfig['p1authentication_method'] = "pre_shared_key";
@@ -354,7 +358,10 @@ function methodsel_change() {
                   <td width="22%" valign="top" class="vncellreq">Interface</td>
                   <td width="78%" class="vtable"><select name="interface" class="formselect">
                       <?php 
-                       $interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
+						if($config['interfaces']['lan']) 
+                       		$interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
+						else 
+							$interfaces = array('wan' => 'WAN');
 					  for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 					  	$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 					  }
@@ -384,8 +391,10 @@ function methodsel_change() {
                             Single host</option>
                             <option value="network" <?php if (!$sel) echo "selected"; ?>>
                             Network</option>
-                            <option value="lan" <?php if ($pconfig['localnet'] == "lan") { echo "selected"; } ?>>
+							<?php if($config['interfaces']['lan']): ?>
+                            	<option value="lan" <?php if ($pconfig['localnet'] == "lan") { echo "selected"; } ?>>
                             LAN subnet</option>
+							<?php endif; ?>
                           </select></td>
                       </tr>
                       <tr>
@@ -626,7 +635,7 @@ function methodsel_change() {
                 </tr>
               </table>
 </form>
-<script language="JavaScript">
+<script lannguage="JavaScript">
 <!--
 typesel_change();
 methodsel_change();

@@ -357,7 +357,10 @@ function clearcombo(){
 				<input name="ipaddr" type="text" size="16" style="float: left;">
 				<select id="iface" name="iface" style="float: left; display: none;">
 <?php
-					$interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
+					if($config['interfaces']['lan'])
+						$interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
+					else 
+						$interfaces = array('wan' => 'WAN');
 					for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 						$interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 					}

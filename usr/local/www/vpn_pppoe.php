@@ -298,7 +298,10 @@ function enable_change(enable_over) {
 
 			<select name="interface" class="formselect" id="interface">
 			  <?php
-				$interfaces = array('lan' => 'LAN', 'wan' => 'WAN');
+				if($config['interfaces']['lan'])
+					$interfaces = array('wan' => 'WAN', 'lan' => 'LAN');
+				else 
+					$interfaces = array('wan' => 'WAN');
 				for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
 				      if (isset($config['interfaces']['opt' . $i]['enable']))
 					      $interfaces['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];

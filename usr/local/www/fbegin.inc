@@ -161,7 +161,14 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 						<div>Firewall</div>
 						<ul class="subdrop">
 							<?=output_menu_item("/firewall_aliases.php", "Aliases");?>	
-							<?=output_menu_item("/firewall_nat.php", "NAT");?>	
+							<?php
+							if($config['interfaces']['lan']) {
+								/* no use for NAT in single-interface deployments
+								remove to reduce user confusion
+								*/
+								output_menu_item("/firewall_nat.php", "NAT");	
+							}
+							?>
 							<?=output_menu_item("/firewall_rules.php", "Rules");?>	
 							<?=output_menu_item("/firewall_schedule.php", "Schedules");?>	
 							<?=output_menu_item("{$shaper}", "Traffic Shaper");?>	

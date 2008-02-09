@@ -1073,7 +1073,10 @@ function setup_polling() {
 		$supported_ints = array();
 
 	/* build an array of interfaces to work with */
-	$iflist = array("lan" => "LAN", "wan" => "WAN");
+	if($config['interfaces']['lan']) 
+		$iflist = array ("lan" => "LAN","wan" => "WAN");
+	else 
+		$iflist = array ("wan" => "WAN");	
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
 		$iflist['opt' . $i] = $config['interfaces']['opt' . $i]['descr'];
 
@@ -1107,7 +1110,11 @@ function setup_polling() {
 function setup_microcode() {
 	global $config;
 
-	$ifdescrs = array('wan', 'lan');
+	if($config['interfaces']['lan']) 
+		$ifdescrs = array('wan', 'lan');
+	else 
+		$ifdescrs = array('wan');
+
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 		$ifdescrs['opt' . $j] = "opt" . $j;
 	}
@@ -1263,7 +1270,11 @@ function link_carp_interface_to_parent($interface) {
 	global $config;
 	if($interface == "") return;
 
-	$ifdescrs = array('wan', 'lan');
+	if($config['interfaces']['lan']) 
+		$ifdescrs = array('wan', 'lan');
+	else 
+		$ifdescrs = array('wan');
+
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
 		$ifdescrs['opt' . $j] = "opt" . $j;
 
@@ -1293,7 +1304,11 @@ function link_ip_to_carp_interface($ip) {
 	global $config;
 	if($ip == "") return;
 
-	$ifdescrs = array('wan', 'lan');
+	if($config['interfaces']['lan']) 
+		$ifdescrs = array('wan', 'lan');
+	else 
+		$ifdescrs = array('wan');
+
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
 		$ifdescrs['opt' . $j] = "opt" . $j;
 
@@ -1462,7 +1477,10 @@ function get_friendly_interface_list_as_array() {
  */
 function find_ip_interface($ip) {
 	global $config;
-	$ifdescrs = array('wan', 'lan');
+	if($config['interfaces']['lan']) 
+		$ifdescrs = array('wan', 'lan');
+	else 
+		$ifdescrs = array('wan');
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++) {
 		$ifdescrs['opt' . $j] = "opt" . $j;
 	}
@@ -1753,8 +1771,10 @@ function convert_friendly_interface_to_real_interface_name($interface) {
 	if($config['interfaces'][$interface]['ipaddr'] == "pppoe")
 		return "ng0";
 	$lc_interface = strtolower($interface);
-	if($lc_interface == "lan") return $config['interfaces']['lan']['if'];
-	if($lc_interface == "wan") return $config['interfaces']['wan']['if'];
+	if($lc_interface == "lan")
+	 	return $config['interfaces']['lan']['if'];
+	if($lc_interface == "wan")
+	 	return $config['interfaces']['wan']['if'];
 	$ifdescrs = array();
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
 		$ifdescrs['opt' . $j] = "opt" . $j;
@@ -1772,7 +1792,10 @@ function convert_friendly_interface_to_real_interface_name($interface) {
  */
 function convert_real_interface_to_friendly_interface_name($interface) {
 	global $config;
-	$ifdescrs = array('wan', 'lan');
+	if($config['interfaces']['lan']) 
+		$ifdescrs = array('wan', 'lan');
+	else 
+		$ifdescrs = array('wan');
 	for ($j = 1; isset($config['interfaces']['opt' . $j]); $j++)
 		$ifdescrs['opt' . $j] = "opt" . $j;
 	foreach ($ifdescrs as $ifdescr => $ifname) {
@@ -2371,7 +2394,10 @@ function reload_interfaces_sync() {
 		log_error("Cleaning up Interfaces");
 
 	/* build an array of interfaces to work with */
-	$iflist = array("lan" => "LAN", "wan" => "WAN");
+	if($config['interfaces']['lan']) 
+		$iflist = array ("lan" => "LAN","wan" => "WAN");
+	else 
+		$iflist = array ("wan" => "WAN");
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
 		$iflist['opt' . $i] = "opt{$i}";
 
@@ -2749,7 +2775,11 @@ function reload_all_sync() {
 	$lan_if = $config['interfaces']['lan']['if'];
 
 	/* build an array of interfaces to work with */
-	$iflist = array("lan" => "LAN", "wan" => "WAN");
+	if($config['interfaces']['lan']) 
+		$iflist = array ("lan" => "LAN","wan" => "WAN");
+	else 
+		$iflist = array ("wan" => "WAN");
+
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
 		$iflist['opt' . $i] = "opt{$i}";
 

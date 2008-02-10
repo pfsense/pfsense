@@ -66,9 +66,14 @@ function getAllowedGroups($logged_in_user) {
 	$allowed = array();
 	$allowed_groups = array();
 	
+	$ldapon = $_SESSION['ldapon'];
 	log_error("Getting groups for {$logged_in_user}.");
 	
+	
+	
 	$local_user = false;
+	
+	log_error("Local_user = {$local_user}");
 	
 	foreach($config['system']['user'] as $username) 
 		if($username['name'] == $logged_in_user) 
@@ -674,7 +679,6 @@ function ldap_test_connection() {
 	$ldapserver = $config['system']['webgui']['ldapserver'];
 	$ldapbindun = $config['system']['webgui']['ldapbindun'];
 	$ldapbindpw = $config['system']['webgui']['ldapbindpw'];
-
 	if (!($ldap = ldap_connect($ldapserver))) {
 		return false;
 	}
@@ -688,14 +692,14 @@ function ldap_test_bind() {
     $ldapserver = $config['system']['webgui']['ldapserver'];
     $ldapbindun = $config['system']['webgui']['ldapbindun'];
     $ldapbindpw = $config['system']['webgui']['ldapbindpw'];
-
+    
     if (!($ldap = ldap_connect($ldapserver))) {
 		return false;
     }
 
     ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
     ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
-
+    
     if (!($res = @ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
 		return false;
     }
@@ -703,7 +707,7 @@ function ldap_test_bind() {
 	return true;
 }
 
-function ldap_get_user_ous($show_complete_ou=false) {
+function ldap_get_user_ous($show_complete_ou=true) {
 	global $config, $g;
 
 	if(!function_exists("ldap_connect"))
@@ -715,7 +719,6 @@ function ldap_get_user_ous($show_complete_ou=false) {
     $ldapsearchbase = "{$config['system']['webgui']['ldapsearchbase']}";
 
     $ldapfilter = "(ou=*)";
-
     if (!($ldap = ldap_connect($ldapserver))) {
         log_error("ERROR!  ldap_get_groups() could not connect to server {$ldapserver}.  Defaulting to built-in htpasswd_backed()");
             $status = htpasswd_backed($username, $passwd);
@@ -752,7 +755,7 @@ function ldap_get_user_ous($show_complete_ou=false) {
 	    }
 	}
 	
-	$ous[] = "OU=Users," . $ldapsearchbase;
+	$ous[] = "CN=Users," . $ldapsearchbase;
 	
 	return $ous;
 	
@@ -771,6 +774,10 @@ function ldap_get_groups($username) {
 		$username_split=split("\@", $username);
 		$username = $username_split[0];		
 	}
+        if(stristr($username, "\\")) {
+            $username_split=split("\\", $username);
+            $username = $username_split[0];        
+        }    
 	
 	log_error("Getting LDAP groups for {$username}.");
 	
@@ -846,6 +853,10 @@ function ldap_backed($username, $passwd) {
         $username_split=split("\@", $username);
         $username = $username_split[0];        
     }
+    if(stristr($username, "\\")) {
+            $username_split=split("\\", $username);
+            $username = $username_split[0];        
+    }    
 	$ldapserver         = $config['system']['webgui']['ldapserver'];
 	$ldapbindun         = $config['system']['webgui']['ldapbindun'];
 	$ldapbindpw         = $config['system']['webgui']['ldapbindpw'];
@@ -874,8 +885,9 @@ function ldap_backed($username, $passwd) {
 	/* ok, its up.  now, lets bind as the bind user so we can search it */
 	if (!($res = ldap_bind($ldap, $ldapbindun, $ldapbindpw))) {
 	    log_error("ERROR! ldap_get_groups() could not bind to {$ldapserver} - {$ldapfilter}.  Defaulting to built-in htpasswd_backed()");
+	        ldap_close($ldap);
 		$status = htpasswd_backed($username, $passwd);
-		return $status;
+	 	return $status;
 	}
 	
 	/* Get LDAP Authcontainers and split em up. */
@@ -918,18 +930,22 @@ function ldap_backed($username, $passwd) {
                    if ($matches == 1){
 		      $_SESSION['ldapdn'] = $info[0]['dn'];
 		      $_SESSION['ldapou'] = $ldac_split[$i];
+		      $_SESSION['ldapon'] = "true";
 		      $ldapdn = $_SESSION['ldapdn'];
                       $userou = $_SESSION['ldapou'];
                       break;
 	           }
 	   }
-           if($matches = 1){
+           if($matches == 1){
               $binduser = $adbindas;
               log_error("Going to login as {$username} - DN = {$_SESSION['ldapdn']} - OU is {$_SESSION['ldapou']}");
-	      } else {
+	      } 
+	   if($matches != 1){
 	      log_error("ERROR! Either LDAP search failed, or multiple users were found");
-	      log_error("ERROR! {$matches} Users Found");
+	      //log_error("ERROR! {$matches} Users Found");
 	      $status = htpasswd_backed($username, $passwd);
+	      $_SESSION['ldapon'] = "false";
+	      ldap_close($ldap);
 	      return $status;                         
 	   }	   
 	}	
@@ -957,6 +973,7 @@ function ldap_backed($username, $passwd) {
                    if ($matches == 1){
 		      $_SESSION['ldapdn'] = $info[0]['dn'];
 		      $_SESSION['ldapou'] = $ldac_split[$i];
+		      $_SESSION['ldapon'] = "true";
 		      $ldapdn = $_SESSION['ldapdn'];
                       $userou = $_SESSION['ldapou'];
                       break;
@@ -965,10 +982,13 @@ function ldap_backed($username, $passwd) {
            if($matches == 1){
               $binduser = $ldapnameattribute."=".$username.",".$userou;
               log_error("Going to attemp LDAP login as {$username} - DN = {$_SESSION['ldapdn']}");
-	      } else {
+	      }
+	   if($matches != 1){
 	      log_error("ERROR! Either LDAP search failed, or multiple users were found");
 	      log_error("ERROR! {$matches} Users Found");
 	      $status = htpasswd_backed($username, $passwd);
+	      ldap_close($ldap);
+	      $_SESSION['ldapon'] = "false";
 	      return $status;                         
 	   }	   
 	}	
@@ -978,13 +998,13 @@ function ldap_backed($username, $passwd) {
        if (!($res = @ldap_bind($ldap, $binduser, $passwd))) {
 	   	    log_error("ERROR!  ldap_backed() could not bind to {$ldapserver} - {$username} - {$passwd}.  Defaulting to built-in htpasswd_backed().    Visit System -> User Manager -> Settings.");
 	   		$status = htpasswd_backed($username, $passwd);
-	   		return $status;
+	  		return $status;
 	}
 	
 
 	log_error("$username logged in via LDAP.");
 	log_error("$binduser ldap name logged in via LDAP.");
-	/* At this point we are binded to LDAP so the user was auth'd okay. */
+	/* At this point we are bound to LDAP so the user was auth'd okay. */
 	return true;
 }
 

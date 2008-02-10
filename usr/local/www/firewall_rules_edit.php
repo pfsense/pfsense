@@ -822,8 +822,12 @@ include("head.inc");
 			</td>
 		</tr>
 		<tr>
-			<td width="22%" valign="top" class="vncellreq">Mark options</td>
-                        <td width="78%" class="vtable">
+			<td width="22%" valign="top" class="vncell">Advanced Options</td>
+			<td width="78%" class="vtable">
+			<div id="aoadv" name="aoadv">
+				<input type="button" onClick="show_aodiv();" value="Advanced"> - Show advanced options
+			</div>
+			<div id="aodivmain" name="aodivmain" style="display:none">
 <?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
                 <input type="hidden" id="floating" name="floating" value="floating">
 
@@ -837,15 +841,7 @@ use this mark to match on other rules. It is called <b>Policy filtering</b>");?>
 on another rule.")?>
                                 </span> <p>
 <?php endif; ?>
-			</td>
-		</tr>
-		<tr>
-			<td width="22%" valign="top" class="vncell">Advanced Options</td>
-			<td width="78%" class="vtable">
-			<div id="aoadv" name="aoadv">
-				<input type="button" onClick="show_aodiv();" value="Advanced"> - Show advanced options
-			</div>
-			<div id="aodivmain" name="aodivmain" style="display:none">
+
 				<input name="max-src-nodes" id="max-src-nodes" value="<?php echo $pconfig['max-src-nodes'] ?>"><br> Simultaneous client connection limit<p>
 				<input name="max-src-states" id="max-src-states" value="<?php echo $pconfig['max-src-states'] ?>"><br> Maximum state entries per host<p>
 				<input name="max-src-conn-rate" id="max-src-conn-rate" value="<?php echo $pconfig['max-src-conn-rate'] ?>"> /

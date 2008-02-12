@@ -308,7 +308,7 @@ function clearcombo(){
 			<td width="22%" valign="top" id="monitorport_text" class="vncellreq">Port</td>
 			<td width="78%" class="vtable" colspan="2">
 				<input name="port" type="text" <?if(isset($pconfig['port'])) echo "value=\"{$pconfig['port']}\"";?> size="16" maxlength="16"><br>
-				<div id="monitorport_desc">This is the port your servers are listening too.</div>
+				<div id="monitorport_desc">This is the port your servers are listening on.</div>
 			</td>
 		</tr>
 		<tr align="left">

@@ -117,30 +117,30 @@ sync_webgui_passwords();
 
 switch($_GET['mode']) {
 	case "delete":
-            $id = get_pkg_id($_GET['pkg']);
+            $id = get_pkg_id(htmlspecialchars($_GET['pkg']));
             $todel = substr(reverse_strrchr($config['installedpackages']['package'][$id]['depends_on_package'], "."), 0, -1);
-            delete_package($todel, $_GET['pkg']);
-            delete_package_xml($_GET['pkg']);
+            delete_package($todel, htmlspecialchars($_GET['pkg']));
+            delete_package_xml(htmlspecialchars($_GET['pkg']));
             update_status("Package deleted.");
             $static_output .= "\nPackage deleted.";
             update_output_window($static_output);
             break;
 	case "reinstallpkg":
-            $id = get_pkg_id($_GET['pkg']);
+            $id = get_pkg_id(htmlspecialchars($_GET['pkg']));
             $todel = substr(reverse_strrchr($config['installedpackages']['package'][$id]['depends_on_package'], "."), 0, -1);
-            delete_package($todel, $_GET['pkg']);
-            delete_package_xml($_GET['pkg']);
-            install_package($_GET['pkg']);
+            delete_package($todel, htmlspecialchars($_GET['pkg']));
+            delete_package_xml(htmlspecialchars($_GET['pkg']));
+            install_package(htmlspecialchars($_GET['pkg']));
             update_status("Package reinstalled.");
             $static_output .= "\n\nPackage reinstalled.";
-            start_service($_GET['pkg']);
+            start_service(htmlspecialchars($_GET['pkg']));
             update_output_window($static_output);
             break;
 	case "reinstallxml":
-            delete_package_xml($_GET['pkg']);
-            install_package($_GET['pkg']);
+            delete_package_xml(htmlspecialchars($_GET['pkg']));
+            install_package(htmlspecialchars($_GET['pkg']));
             $static_output .= "\n\nPackage reinstalled.";
-            start_service($_GET['pkg']);
+            start_service(htmlspecialchars($_GET['pkg']));
             update_output_window($static_output);
             break;
 	case "reinstallall":
@@ -158,16 +158,16 @@ switch($_GET['mode']) {
             }
             update_status("All packages reinstalled.");
             $static_output .= "\n\nAll packages reinstalled.";
-            start_service($_GET['pkg']);
+            start_service(htmlspecialchars($_GET['pkg']));
             update_output_window($static_output);
 	    break;
 	default:
-            $status = install_package($_GET['id']);
+            $status = install_package(htmlspecialchars($_GET['id']));
 	    if($status == -1) {
-		update_status("Installation of {$_GET['id']} FAILED!");
+		update_status("Installation of " . htmlspecialchars($_GET['id']) . " FAILED!");
                 $static_output .= "\n\nInstallation halted.";
 	    } else {
-			update_status("Installation of {$_GET['id']} completed.");
+			update_status("Installation of " . $_GET['id'] ." completed.");
 			$static_output .= "\n\nInstallation completed.   Please check to make sure that the package is configured from the respective menu then start the package.";
 	    }
 	    update_output_window($static_output);

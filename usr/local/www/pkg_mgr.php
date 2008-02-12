@@ -48,7 +48,7 @@ if($pkg_info) {
 
 if (! empty($_GET)) {
   if (isset($_GET['ver'])) {
-    $requested_version = $_GET['ver'];
+    $requested_version = htmlspecialchars($_GET['ver']);
   }
 }
 

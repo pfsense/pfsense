@@ -157,7 +157,7 @@ function convert_port_period_to_colon($addr) {
 	else
 		$newvar = $addr_split[0] . "." . $addr_split[1] . "." . $addr_split[2] . "." . $addr_split[3] . ":" . $addr_split[4];
 	if($newvar == "...")
-		return $addr;
+		return "";
 	return $newvar;
 }
 

@@ -34,14 +34,13 @@ function gentitle_pkg($pgname) {
 	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
 }
 
-$stepid = $_GET['stepid'];
+$stepid = htmlspecialchars($_GET['stepid']);
 if (isset($_POST['stepid']))
-    $stepid = $_POST['stepid'];
+    $stepid = htmlspecialchars($_POST['stepid']);
 if (!$stepid) $stepid = "0";
 
-// XXX: Make this input safe.
-$xml = $_GET['xml'];
-if($_POST['xml']) $xml = $_POST['xml'];
+$xml = htmlspecialchars($_GET['xml']);
+if($_POST['xml']) $xml = htmlspecialchars($_POST['xml']);
 
 if($xml == "") {
 	$xml = "not_defined";
@@ -232,9 +231,9 @@ function enablechange() {
     <tr><td colspan='2'>
 <?php
 	if ($_GET['message'] != "")
-		print_info_box($_GET['message']);
+		print_info_box(htmlspecialchars($_GET['message']));
 	if ($_POST['message'] != "")
-		print_info_box($_POST['message']);
+		print_info_box(htmlspecialchars($_POST['message']));
 ?></td></tr>
     <tr><td colspan='2'><center><b><?= fixup_string($description) ?></b></center></td></tr><tr><td>&nbsp;</td></tr>
     <?php

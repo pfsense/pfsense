@@ -54,7 +54,8 @@ if (isset($id) && $a_ipsec[$id]) {
 		if($config['interfaces']['lan']) 
 			$pconfig['localnet'] = "lan";
 	} else {
-		address_to_pconfig_vpn($a_ipsec[$id]['local-subnet'], $pconfig['localnet'], $pconfig['localnetmask']);
+		if($config['interfaces']['lan']) 
+			address_to_pconfig_vpn($a_ipsec[$id]['local-subnet'], $pconfig['localnet'], $pconfig['localnetmask']);
 	}
 	
 	if ($a_ipsec[$id]['interface'])

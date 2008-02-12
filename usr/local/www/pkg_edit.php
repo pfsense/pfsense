@@ -39,9 +39,8 @@ function gentitle_pkg($pgname) {
 	return $pfSense_config['system']['hostname'] . "." . $pfSense_config['system']['domain'] . " - " . $pgname;
 }
 
-// XXX: Make this input safe.
-$xml = $_GET['xml'];
-if($_POST['xml']) $xml = $_POST['xml'];
+$xml = htmlspecialchars($_GET['xml']);
+if($_POST['xml']) $xml = htmlspecialchars($_POST['xml']);
 
 if($xml == "") {
             print_info_box_np(gettext("ERROR: No package defined."));
@@ -68,7 +67,7 @@ $pgtitle      = $title;
 
 $id = $_GET['id'];
 if (isset($_POST['id']))
-	$id = $_POST['id'];
+	$id = htmlspecialchars($_POST['id']);
 
 if($pkg['custom_php_global_functions'] <> "")
         eval($pkg['custom_php_global_functions']);
@@ -80,7 +79,7 @@ if(!is_array($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['con
 $a_pkg = &$config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'];
 
 if($_GET['savemsg'] <> "")
-	$savemsg = $_GET['savemsg'];
+	$savemsg = htmlspecialchars($_GET['savemsg']);
 
 if($pkg['custom_php_command_before_form'] <> "")
 	eval($pkg['custom_php_command_before_form']);

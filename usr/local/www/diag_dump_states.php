@@ -31,11 +31,16 @@ require_once("guiconfig.inc");
 $pgtitle = array("Diagnostics","Show States");
 include("head.inc");
 
+$srcip  = htmlentities($_GET['srcip']);
+$dstip  = htmlentities($_GET['dstip']);
+$action = htmlentities($_GET['action']);
+$filter = htmlentities($_GET['filter']);
+
 /* handle AJAX operations */
 if($_GET['action']) {
-	if($_GET['action'] == "remove") {
-		$retval = mwexec("/sbin/pfctl -k '{$_GET['srcip']}' -k '{$_GET['dstip']}'");
-		echo "|{$_GET['srcip']}|{$_GET['dstip']}|{$retval}|";
+	if($action == "remove") {
+		$retval = mwexec("/sbin/pfctl -k '{$srcip}' -k '{$dstip}'");
+		echo "|{$srcip}|{$dstip}|{$retval}|";
 		exit;
 	}
 }

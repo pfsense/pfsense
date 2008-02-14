@@ -183,7 +183,7 @@
 			}
 			$wanip = find_interface_ip(get_real_wan_interface());	
 			if($wanip == $_POST["synchronizetoip"]) 
-				$input_errors[] = "CARP sync IP must be the backup firewall IP!  You cannot specify this firewalls IP in this location.";
+				$input_errors[] = "CARP sync IP must be the backup firewall's IP!  You cannot specify this firewall's IP in this location.";
 		}
 	</custom_php_validation_command>
 	<custom_add_php_command_late>

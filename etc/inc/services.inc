@@ -656,7 +656,7 @@ function services_dnsmasq_configure() {
 		//}
 
 		/* run dnsmasq */
-		mwexec("/usr/local/sbin/dnsmasq {$args}");
+		mwexec("/usr/local/sbin/dnsmasq --cache-size=5000 {$args}");
 
 		if ($g['booting'])
 			echo "done.\n";

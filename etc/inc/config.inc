@@ -86,6 +86,7 @@ if(file_exists("/cf/conf/config.xml")) {
 		$fd = fopen("/cf/conf/config.xml", "w");
 		fwrite($fd, $config_contents);
 		fclose($fd);
+		mwexec("sync");
 		conf_mount_ro();
 	}
 }
@@ -295,6 +296,7 @@ function generate_config_cache($config) {
 	$configcache = fopen($g['tmp_path'] . '/config.cache', "w");
 	fwrite($configcache, serialize($config));
 	fclose($configcache);
+	mwexec("sync");
 	conf_mount_ro();
 	config_unlock();
 	return true;
@@ -317,6 +319,7 @@ function restore_backup($file) {
 		unlink_if_exists("/tmp/config.cache");
 		log_error("{$g['product_name']} is restoring the configuration $file");
 		file_notice("config.xml", "{$g['product_name']} is restoring the configuration $file", "pfSenseConfigurator", "");
+		mwexec("sync");
 		conf_mount_ro();
 	}
 	config_unlock();
@@ -1208,6 +1211,7 @@ function write_config($desc="Unknown", $backup = true) {
 	}
 
 	if($g['booting'] <> true) {
+		mwexec("sync");
 		conf_mount_ro();
 	}
 
@@ -1259,6 +1263,7 @@ function reset_factory_defaults() {
 	/* call the wizard */
 	touch("/conf/trigger_initial_wizard");
 
+	mwexec("sync");
 	conf_mount_ro();
 	config_unlock();
 
@@ -1279,6 +1284,7 @@ function config_restore($conffile) {
 	$config = parse_config(true);
     write_config("Reverted to " . array_pop(explode("/", $conffile)) . ".", false);
 
+	mwexec("sync");
     conf_mount_ro();
     config_unlock();
 
@@ -1306,6 +1312,7 @@ function config_install($conffile) {
 	if(file_exists("{$g['tmp_path']}/config.cache"))
 		unlink("{$g['tmp_path']}/config.cache");
 
+	mwexec("sync");
     conf_mount_ro();
     config_unlock();
 
@@ -1875,6 +1882,7 @@ function cleanup_backupcache($revisions = 30) {
 		$bakout = fopen($g['cf_conf_path'] . '/backup/backup.cache', "w");
         fwrite($bakout, serialize($tocache));
 		fclose($bakout);
+		mwexec("sync");
 		conf_mount_ro();
 	}
 	if($g['booting']) {
@@ -1934,6 +1942,7 @@ function backup_config() {
     fwrite($bakout, serialize($backupcache));
     fclose($bakout);
 
+	mwexec("sync");
 	conf_mount_ro();
 
 	return true;

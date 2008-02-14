@@ -88,6 +88,7 @@ EOFF;
 		fwrite($fd, $php_ini);
 		fclose($fd);
 
+		mwexec("sync");
 		conf_mount_ro();
 		exec("sync");
 		config_unlock();
@@ -1055,6 +1056,7 @@ function system_timezone_configure() {
 	exec("LANG=C /usr/bin/tar xzfO /usr/share/zoneinfo.tgz " .
 		escapeshellarg($timezone) . " > /etc/localtime");
 
+	mwexec("sync");
 	conf_mount_ro();
 
 	if ($g['booting'])

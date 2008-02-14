@@ -105,6 +105,30 @@ function restore_config_section_xmlrpc($raw_params) {
 	return $xmlrpc_g['return']['true'];
 }
 
+
+/*****************************/
+
+
+$merge_config_section_doc = 'XMLRPC wrapper for merging package sections. This method must be called with two parameters: a string containing the local system\'s password and an array to merge into the system\'s config. This function returns true upon completion.';
+$merge_config_section_sig = array(
+					array(
+						$XML_RPC_Boolean,
+						$XML_RPC_String,
+						$XML_RPC_Struct
+					)
+				);
+
+function merge_installedpackages_section_xmlrpc($raw_params) {
+	global $config, $xmlrpc_g;
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
+	$config['installedpackages'] = array_merge($config['installedpackages'], $params[0]);
+	$mergedkeys = implode(",", array_keys($params[0]));
+	write_config("Merged in config ({$mergedkeys} sections) from XMLRPC client.");
+	return $xmlrpc_g['return']['true'];
+}
+
+
 /*****************************/
 
 

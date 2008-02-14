@@ -67,6 +67,53 @@ $XML_RPC_erruser = 200;
 
 /* EXPOSED FUNCTIONS */
 
+$exec_php_doc = 'XMLRPC wrapper for eval(). This method must be called with two parameters: a string containing the local system\'s password followed by the PHP code to evaluate.';
+$exec_php_sig = array(
+				array(
+					$XML_RPC_Boolean, // First signature element is return value.
+					$XML_RPC_String, // password
+					$XML_RPC_String, // shell code to exec
+				)
+			);
+
+
+function exec_php_xmlrpc($raw_params) {
+	global $config, $xmlrpc_g;
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
+	$exec_php = $params[0];
+	eval($exec_php);
+	return $xmlrpc_g['return']['true'];
+}
+
+
+
+/*****************************/
+
+
+$exec_shell_doc = 'XMLRPC wrapper for mwexec(). This method must be called with two parameters: a string containing the local system\'s password followed by an shell command to execute.';
+$exec_shell_sig = array(
+				array(
+					$XML_RPC_Boolean, // First signature element is return value.
+					$XML_RPC_String, // password
+					$XML_RPC_String, // shell code to exec
+				)
+			);
+
+
+function exec_shell_xmlrpc($raw_params) {
+	global $config, $xmlrpc_g;
+	$params = xmlrpc_params_to_php($raw_params);
+	if(!xmlrpc_auth($params)) return $xmlrpc_g['return']['authfail'];
+	$shell_cmd = $params[0];
+	mwexec($shell_cmd);
+	return $xmlrpc_g['return']['true'];
+}
+
+
+
+/*****************************/
+
 $backup_config_section_doc = 'XMLRPC wrapper for backup_config_section. This method must be called with two parameters: a string containing the local system\'s password followed by an array containing the keys to be backed up.';
 $backup_config_section_sig = array(
 				array(
@@ -246,6 +293,12 @@ function interfaces_carp_configure_xmlrpc($raw_params) {
 
 $server = new XML_RPC_Server(
         array(
+            'pfsense.exec_shell' 		=> array('function' => 'exec_shell_xmlrpc',
+							'signature' => $exec_shell_sig,
+							'docstring' => $exec_shell_doc),
+            'pfsense.exec_php'	 		=> array('function' => 'exec_php_xmlrpc',
+							'signature' => $exec_php_sig,
+							'docstring' => $exec_php_doc),	
             'pfsense.interfaces_carp_configure' => array('function' => 'interfaces_carp_configure_xmlrpc',
 							'signature' => $carp_configure_doc,
 							'docstring' => $carp_configure_sig),
@@ -261,6 +314,11 @@ $server = new XML_RPC_Server(
 	    'pfsense.merge_installedpackages_section_xmlrpc' => array('function' => 'merge_installedpackages_section_xmlrpc',
 							'signature' => $merge_config_section_sig,
 							'docstring' => $merge_config_section_doc),							
+
+	    'pfsense.merge_installedpackages_section_xmlrpc' => array('function' => 'merge_installedpackages_section_xmlrpc',
+							'signature' => $merge_config_section_sig,
+							'docstring' => $merge_config_section_doc),
+							
 	    'pfsense.filter_configure' => 	array('function' => 'filter_configure_xmlrpc',
 							'signature' => $filter_configure_sig,
 							'docstring' => $filter_configure_doc),

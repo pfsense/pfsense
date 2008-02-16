@@ -333,7 +333,9 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 			$allowed = &$config['system']['group'][$groupindex[$config['system']['user'][$userindex[$auth_user]]['groupname']]]['pages'];
 
 function output_menu_item($url, $name) {
-	global $auth_user, $groupindex, $userindex, $allowed, $HTTP_SERVER_VARS;
+	global $auth_user, $groupindex, $userindex, $allowed, $HTTP_SERVER_VARS, $allowed;
+	if(!$allowed)
+		$allowed = $_SESSION['privs'];	
 	if (!isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) 
 		if (!in_array(basename($url), $allowed))	
 			return;

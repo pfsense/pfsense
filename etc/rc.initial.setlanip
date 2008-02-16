@@ -33,7 +33,6 @@
 	/* parse the configuration and include all functions used below */
 	require_once("config.inc");
 	require_once("functions.inc");
-	require_once("IPv6.inc");
 
 	$fp = fopen('php://stdin', 'r');
 	$addr_blank = false;
@@ -102,9 +101,7 @@
 
 	$config['interfaces'][$interface]['ipaddr'] = $intip;
 	$config['interfaces'][$interface]['subnet'] = $intbits;
-	$config['interfaces'][$interface]['ipaddr_ipv6'] = $intip_ipv6;
-	$config['interfaces'][$interface]['subnet_ipv6'] = $intbits_ipv6;
-
+	
 	if($interface <> "wan") {
 		do {
 	    $good = false;
@@ -126,7 +123,7 @@
 				fclose($fp);
 				exit(0);
 			}
-		} while (!(is_ipaddr($dhcpstartip) || Net_IPv6::checkIPv6($dhcpstartip)));
+		} while (!(is_ipaddr($dhcpstartip)));
 
 		do {
 			echo gettext("Enter the end address of the client address range:") . " ";
@@ -135,7 +132,7 @@
 				fclose($fp);
 				exit(0);
 			}
-		} while (!(is_ipaddr($dhcpendip) || Net_IPv6::checkIPv6($dhcpendip)));
+		} while (!(is_ipaddr($dhcpendip)));
 
 		$config['dhcpd'][$interface]['enable'] = true;
 		$config['dhcpd'][$interface]['range']['from'] = $dhcpstartip;
@@ -167,7 +164,7 @@
 		unset($config['dhcpd']['wan']);		
 	}
 
-	if(!$config['interfaces']['lan']) 	
+	if(!$config['interfaces']['lan']) {
 		unset($config['interfaces']['lan']);
 		unset($config['dhcpd']['lan']);
 		unset($config['shaper']);
@@ -184,12 +181,6 @@
 		echo "\n\n" . gettext('The IPv4 {$interface} address has been set to ') . "{$intip}/{$intbits}\n" ;
 		echo gettext('You can now access the webConfigurator by opening the following URL in your web browser:') . "\n";
 		echo "{$config['system']['webgui']['protocol']}://{$intip}/\n";
-	}
-
-	if ($intip_ipv6 != '') {
-		echo "\n" . gettext('The IPv6 {$interface} address has been set to ') . "{$intip_ipv6}/{$intbits_ipv6}\n" ;
-		echo gettext('You can now access the webConfigurator by opening the following URL in your web browser:') . "\n";
-		echo "{$config['system']['webgui']['protocol']}://[{$intip_ipv6}]/\n";
 	}
 
 	echo "\n" . gettext('Press <ENTER> to continue.');

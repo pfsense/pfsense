@@ -115,6 +115,8 @@ function getAdminPageList() {
 		/* custom pkg.php items */
 		$tmp['pkg.php?xml=openvpn.xml'] = ("VPN: OpenVPN");
 		$tmp['pkg_edit.php?xml=carp_settings.xml&id=0'] = ("Services: CARP Settings: Edit");
+		$tmp['pkg_edit.php?xml=olsrd.xml&id=0'] = ("Services: OLSR");
+		$tmp['pkg_edit.php?xml=openntpd.xml&id=0'] = ("Services: NTP Server");
 		
 		/*  unset older openvpn scripts, we have a custom version
 		 *  included in CoreGUI */

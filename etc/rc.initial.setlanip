@@ -39,6 +39,8 @@
 
 	/* build an interface collection */
 	$ifdescrs = array ("wan");
+	if($config['interfaces']['lan']) 
+		$ifdescrs = array ("lan");
 	for ($j = 1; isset ($config['interfaces']['opt' . $j]); $j++) {
 		if(isset($config['interfaces']['opt' . $j]['enable']))
 			$ifdescrs['opt' . $j] = filter_get_opt_interface_descr("opt" . $j);
@@ -51,7 +53,7 @@
 		echo "{$x} - {$iface}\n";
 		$x++;
 	}
-	echo "Enter interface # that you would like to configure: ";
+	echo "\nEnter interface # that you would like to configure: ";
 	$intnum = chop(fgets($fp));
 	
 	if($intnum < 1) 

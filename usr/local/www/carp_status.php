@@ -162,7 +162,7 @@ include("head.inc");
         				</strong>
 						</span>
 						<br />
-						You can configure CARP-Settings <a href="pkg_edit.php?xml=carp_settings.xml&id=0">here</a>.
+						You can configure CARP settings <a href="pkg_edit.php?xml=carp_settings.xml&id=0">here</a>.
 						</span>
 						</p>
 					</td>

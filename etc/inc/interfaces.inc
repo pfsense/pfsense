@@ -453,9 +453,10 @@ function interfaces_carp_configure() {
 				if (ip_in_subnet($vip['subnet'], gen_subnet($ww_subnet_ip, $ww_subnet_bits) . "/" . $ww_subnet_bits))
 					$found = true;
 			}
-			if($found == false)
-					continue;			
-			
+			if($found == false) {
+				file_notice("CARP", "Sorry but we could not find a matching real interface subnet for the virtual IP address {$vip['subnet']}.", "Firewall: Virtual IP", "");
+				continue;
+			}			
 			/* create the carp interface and setup */
 			mwexec("/sbin/ifconfig carp" . $carp_instances_counter . " create");
 

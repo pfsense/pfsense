@@ -184,7 +184,10 @@
 	echo "\nPlease wait, saving your changes to {$interface}...";
 	write_config(gettext("{$interface} IP configuration from console menu"));
 	interfaces_lan_configure();
+	echo " Reloading filter...";
+	filter_configure_sync();
 	echo "\n";
+	
 	if ($intip != '') { 
 		echo "\n\n" . gettext("The IPv4 {$interface} address has been set to ") . "{$intip}/{$intbits}\n" ;
 		echo gettext('You can now access the webConfigurator by opening the following URL in your web browser:') . "\n";

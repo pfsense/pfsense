@@ -221,7 +221,7 @@ function get_radio_value(obj)
 }
 function enable_change(enable_over) {
 	var note = document.getElementById("typenote");
-	var carpnote = document.createTextNode("This should be the correct netmask.");
+	var carpnote = document.createTextNode("This is the network's subnet mask. It does not specify a CIDR range.");
 	var proxyarpnote = document.createTextNode("This is a CIDR block of proxy ARP addresses.");
         if ((get_radio_value(document.iform.mode) == "carp") || enable_over) {
                 document.iform.vhid.disabled = 0;

@@ -36,7 +36,12 @@ require("guiconfig.inc");
 // The page title for non-admins
 $pgtitle = array("System","User Password");
 
-if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
+/* Check for custom priv system_usermanager (no .php ending) */
+$allowed = $g['privs'];
+if (in_array("system_usermanager", $allowed))
+	$isAdminUser = true;
+
+if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']) or $isAdminUser) {
     // Page title for main admin
     $pgtitle = array("System","User Manager");
 
@@ -133,8 +138,6 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) {
 			$userent = "";
             if (isset($id) && $a_user[$id])
                 $userent = $a_user[$id];
-
-
 
             /* the user did change his username */
             if ($_POST['usernamefld'] <> $_POST['oldusername']) {

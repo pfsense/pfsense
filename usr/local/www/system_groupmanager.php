@@ -145,6 +145,14 @@ function getAdminPageList() {
 		$entryname = "firewall_rules_edit.php?if=pppoe";
         $tmp[$entryname] = "Firewall: Rules: Edit: PPPoE";
 
+		// User manager
+		$entryname = "system_usermanager.php";
+		$tmp[$entryname] = "System: Change Password";
+
+		// User manager
+		$entryname = "system_usermanager";
+		$tmp[$entryname] = "System: User Manager";
+
 		// NAT Items
 		foreach ($iflist as $ifent => $ifname) {
 			$entryname = "firewall_nat.php?if={$ifname}";

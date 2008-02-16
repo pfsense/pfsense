@@ -118,6 +118,8 @@ function getAdminPageList() {
 		$tmp['pkg_edit.php?xml=olsrd.xml&id=0'] = ("Services: OLSR");
 		$tmp['pkg_edit.php?xml=openntpd.xml&id=0'] = ("Services: NTP Server");
 		
+		$tmp['system_usermanager_settings_test.php'] = ("System: User Manager: Settings: Test LDAP");
+		
 		/*  unset older openvpn scripts, we have a custom version
 		 *  included in CoreGUI */
 	 	unset($tmp['vpn_openvpn.php']);
@@ -126,6 +128,8 @@ function getAdminPageList() {
 		unset($tmp['vpn_openvpn_srv.php']);
 		unset($tmp['vpn_openvpn_cli.php']);
 		unset($tmp['vpn_openvpn_ccd_edit.php']);
+		unset($tmp['phpconfig.php']);
+		unset($tmp['system_usermanager_settings_ldapacpicker.php']);
 		
         unset($tmp['progress.php']);
         unset($tmp['stats.php']);

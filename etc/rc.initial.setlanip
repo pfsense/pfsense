@@ -39,13 +39,18 @@
 
 	/* build an interface collection */
 	$ifdescrs = array ("wan");
-	if($config['interfaces']['lan']) 
-		$ifdescrs = array ("lan");
+	if($config['interfaces']['lan'])  {
+		$ifdescrs[] = "lan";
+	}
 	for ($j = 1; isset ($config['interfaces']['opt' . $j]); $j++) {
 		if(isset($config['interfaces']['opt' . $j]['enable']))
 			$ifdescrs['opt' . $j] = filter_get_opt_interface_descr("opt" . $j);
 	}
-
+	if($config['interfaces']['lan']) 
+		$j++;
+	// incriment for wan
+	$j++;
+	
 	/* grab interface that we will operate on */
 	echo "Available interfaces:\n\n";
 	$x=1;
@@ -61,7 +66,7 @@
 	if($intnum > $j)
 		exit;
 		
-	$interface = $ifdescrs[$intnum];
+	$interface = $ifdescrs[$intnum-1];
 	if(!$interface) {
 		echo "Invalid interface!\n";
 		exit;
@@ -180,9 +185,9 @@
 	interfaces_lan_configure();
 
 	if ($intip != '') { 
-		echo "\n\n" . gettext('The IPv4 {$interface} address has been set to ') . "{$intip}/{$intbits}\n" ;
+		echo "\n\n" . gettext("The IPv4 {$interface} address has been set to ") . "{$intip}/{$intbits}\n" ;
 		echo gettext('You can now access the webConfigurator by opening the following URL in your web browser:') . "\n";
-		echo "{$config['system']['webgui']['protocol']}://{$intip}/\n";
+		echo "		{$config['system']['webgui']['protocol']}://{$intip}/\n";
 	}
 
 	echo "\n" . gettext('Press <ENTER> to continue.');

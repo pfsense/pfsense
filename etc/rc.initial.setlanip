@@ -55,7 +55,7 @@
 	echo "Available interfaces:\n\n";
 	$x=1;
 	foreach($ifdescrs as $iface) {
-		echo "{$x} - {$iface}\n";
+		echo "{$x} - " . strtoupper($iface) . "}\n";
 		$x++;
 	}
 	echo "\nEnter interface # that you would like to configure: ";
@@ -181,9 +181,10 @@
         services_dhcpd_configure();
 	}
 
+	echo "\nPlease wait, saving your changes to {$interface}...";
 	write_config(gettext("{$interface} IP configuration from console menu"));
 	interfaces_lan_configure();
-
+	echo "\n";
 	if ($intip != '') { 
 		echo "\n\n" . gettext("The IPv4 {$interface} address has been set to ") . "{$intip}/{$intbits}\n" ;
 		echo gettext('You can now access the webConfigurator by opening the following URL in your web browser:') . "\n";

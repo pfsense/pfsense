@@ -112,6 +112,17 @@ function getAdminPageList() {
 		$tmp['javascript.inc.php'] = ("Hidden: Ajax Helper 2 ");
 		$tmp['sajax.class.php'] = ("Hidden: Ajax Helper 3");
 
+		$tmp['pkg.php?xml=openvpn.xml'] = ("VPN: OpenVPN");
+
+		/*  unset older openvpn scripts, we have a custom version
+		 *  included in CoreGUI */
+	 	unset($tmp['vpn_openvpn.php']);
+		unset($tmp['vpn_openvpn_crl.php']);
+		unset($tmp['vpn_openvpn_ccd.php']);
+		unset($tmp['vpn_openvpn_srv.php']);
+		unset($tmp['vpn_openvpn_cli.php']);
+		unset($tmp['vpn_openvpn_ccd_edit.php']);
+		
         unset($tmp['progress.php']);
         unset($tmp['stats.php']);
         unset($tmp['phpinfo.php']);
@@ -243,9 +254,7 @@ if ($_POST) {
 		unset($group['pages']);
 		foreach ($pages as $fname => $title) {
 			$identifier = str_replace('.php','',$fname);
-			if ($_POST[$identifier] == 'yes') {
-				$group['pages'][] = $fname;
-			}			
+			$group['pages'][] = $fname;
 		}		
 		
 		if (isset($id) && $a_group[$id])

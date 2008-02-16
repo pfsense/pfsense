@@ -32,14 +32,16 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+require("globals.inc");
 require("guiconfig.inc");
 // The page title for non-admins
 $pgtitle = array("System","User Password");
 
 /* Check for custom priv system_usermanager (no .php ending) */
 $allowed = $g['privs'];
-if (in_array("system_usermanager", $allowed))
-	$isAdminUser = true;
+if(is_array($allowed))
+	if (in_array("system_usermanager", $allowed))
+		$isAdminUser = true;
 
 if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']) or $isAdminUser) {
     // Page title for main admin

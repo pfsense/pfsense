@@ -95,7 +95,7 @@ function getAdminPageList() {
         unset($tmp['diag_new_states.php']);
         unset($tmp['system_usermanager_edit.php']);
         
-        $tmp['pkg.php'] = "{$g['prouct_name']} Package manager";
+        $tmp['pkg.php'] = "{$g['product_name']} Package manager";
         $tmp['pkg_edit.php'] = "{$g['product_name']} Package manager edit";
         $tmp['wizard.php'] = "{$g['product_name']} wizard subsystem";
         $tmp['graphs.php'] = "Graphing subsystem";

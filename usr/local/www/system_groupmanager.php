@@ -112,8 +112,10 @@ function getAdminPageList() {
 		$tmp['javascript.inc.php'] = ("Hidden: Ajax Helper 2 ");
 		$tmp['sajax.class.php'] = ("Hidden: Ajax Helper 3");
 
+		/* custom pkg.php items */
 		$tmp['pkg.php?xml=openvpn.xml'] = ("VPN: OpenVPN");
-
+		$tmp['pkg_edit.php?xml=carp_settings.xml&id=0'] = ("Services: CARP Settings: Edit");
+		
 		/*  unset older openvpn scripts, we have a custom version
 		 *  included in CoreGUI */
 	 	unset($tmp['vpn_openvpn.php']);

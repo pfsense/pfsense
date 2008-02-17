@@ -743,6 +743,7 @@ function delete_package($pkg, $pkgid) {
 }
 
 function delete_package_recursive($pkg) {
+	global $config, $g;
 	$info = "";
 	exec("/usr/sbin/pkg_info -r " . $pkg . " 2>&1", $info);
 	exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_delete " . $pkg ." > /dev/null 2>&1");

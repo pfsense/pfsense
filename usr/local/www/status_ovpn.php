@@ -98,6 +98,7 @@ function dump_log($type) {
 }
 
 ?>
+<?php include("head.inc"); ?>
 <?php include("fbegin.inc"); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0"><tr>
   <td colspan="6" class="listtopic"> 
@@ -117,6 +118,5 @@ function dump_log($type) {
 <br>
 <strong class="red">Note:<br>
 </strong>Please note that status entries are updated once every minute only.
-So don't bother about entries on this page being possibly too old!
 <?php include("fend.inc"); ?>
 

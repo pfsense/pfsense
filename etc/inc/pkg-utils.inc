@@ -755,10 +755,10 @@ function delete_package_recursive($pkg) {
 	remove_freebsd_package($pkg);
 	$pkgdb = "";
 	exec("/bin/ls /var/db/pkg", $pkgdb);
-	if(stristr($info[0], "can't find package") != false) return;
 	foreach($info as $line) {
 		$depend = trim(array_pop(explode(":", $line)));
-		if(in_array($depend, $pkgdb)) delete_package_recursive($depend);
+		if(in_array($depend, $pkgdb)) 
+			delete_package_recursive($depend);
 	}
 	return;
 }

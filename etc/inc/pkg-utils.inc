@@ -742,6 +742,11 @@ function delete_package($pkg, $pkgid) {
 
 function delete_package_recursive($pkg) {
 	global $config, $g;
+	$fd = fopen("{$g['tmp_path']}/y", "w");
+	for($line = 0; $line < 10; $line++) {
+		fwrite($fd, "y\n");
+	}
+	fclose($fd);
 	$info = "";
 	exec("/usr/sbin/pkg_info -r " . $pkg . " 2>&1", $info);
 	exec("cat {$g['tmp_path']}/y | /usr/sbin/pkg_delete " . $pkg ." > /dev/null 2>&1");
@@ -753,11 +758,6 @@ function delete_package_recursive($pkg) {
 		$depend = trim(array_pop(explode(":", $line)));
 		if(in_array($depend, $pkgdb)) delete_package_recursive($depend);
 	}
-	$fd = fopen("{$g['tmp_path']}/y", "w");
-	for($line = 0; $line < 10; $line++) {
-		fwrite($fd, "y\n");
-	}
-	fclose($fd);
 	return;
 }
 

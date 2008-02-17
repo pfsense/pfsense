@@ -61,8 +61,9 @@ function have_natonetooneruleint_access($if) {
  *   returns true if user has access to edit a specific firewall nat port forward interface
  ******/
 function have_natpfruleint_access($if) {
-	global $config, $g, $HTTP_SERVER_VARS;
-	$allowed = $g['privs'];
+	global $config, $g, $HTTP_SERVER_VARS, $allowed;
+	if(!$allowed)
+		$allowed = $g['privs'];
 	if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER'])) 
 		return true;
 	$security_url = "firewall_nat_edit.php?if=". strtolower($if);
@@ -2165,6 +2166,8 @@ function make_dirs($path, $mode = 0755) {
  * call_pfsense_method(): Call a method exposed by the pfsense.com XMLRPC server.
  */
 function call_pfsense_method($method, $params, $timeout = 0) {
+	global $g, $config;
+
 	$ip = gethostbyname($g['product_website']);
 	if($ip == $g['product_website'])
 		return false;
@@ -2253,7 +2256,9 @@ function display_top_tabs(& $tab_array) {
 			if ((strpos($link, "pkg.php")) !== false || (strpos($link, "pkg_edit.php")) !== false) {
 				$pos_equal = strpos($link, "=");
 				$pos_xmlsuffix = strpos($link, ".xml");
-				$link = substr($link, $pos_equal +1, ($pos_xmlsuffix - $pos_equal +3));
+				/* do we match an absolute url including ?xml= foo */
+				if(!in_array($link, $allowed)) 
+					$link = substr($link, $pos_equal +1, ($pos_xmlsuffix - $pos_equal +3));
 			}
 			// next check - what if the basename contains a query string?
 			if ((strpos($link, "?")) !== false) {

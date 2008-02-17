@@ -48,12 +48,12 @@ function dump_log($type) {
 			
 	$max = ($type == 'tun') ? 17 : 4;
 	for ($i = 0; $i < $max; $i++) {
-		if (file_exists("/var/log/openvpn_{$type}{$i}.log")) {
+		if (file_exists("/var/log/openvpn.log")) {
 
 			unset($string);
 			unset($logarr);
 			
-			exec("/bin/cat /var/log/openvpn_{$type}{$i}.log", $logarr);
+			exec("/bin/cat /var/log/openvpn.log", $logarr);
 	
 			foreach ($logarr as $logent) {
 				$logent = preg_split("/,/", $logent, 5);

@@ -88,8 +88,10 @@ switch ($command) {
 				echo "\nMD5 checksum matches.\n";
 				exec("rm -f /root/*.md5");
 			}
+			if(stristr($url,"bdiff"))
+				$type = "bdiff";			
 			if(file_exists("/root/firmware.tgz"))
-				do_upgrade("/root/firmware.tgz");
+				do_upgrade("/root/firmware.tgz", $type);
 		} else {
 			echo "\nCould not download update.\n\n";
 			fclose($fp);
@@ -102,9 +104,11 @@ switch ($command) {
 			fclose($fp);
 			die;
 		}
+		if(stristr($fp,"bdiff"))
+			$type = "bdiff";
 		if(file_exists($path)) {
 			touch($d_fwupenabled_path);
-			do_upgrade($path);
+			do_upgrade($path, $type);
 		} else {
 			echo "\nCould not find file.\n\n";
 			fclose($fp);
@@ -148,11 +152,14 @@ function check_for_kernel_file() {
 	}
 }
 
-function do_upgrade($path) {
+function do_upgrade($path, $type) {
 	global $fp;
 	check_for_kernel_file();
 	echo "\nOne moment please... Invoking firmware upgrade...\n";
-	exec("/etc/rc.firmware pfSenseupgrade $path");
+	if($type == "bdiff") 
+		exec("/etc/rc.firmware delta_update $path");
+	else 
+		exec("/etc/rc.firmware pfSenseupgrade $path");
 	unlink_if_exists($path);
 	die;
 }

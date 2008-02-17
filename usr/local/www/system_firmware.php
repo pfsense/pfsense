@@ -119,7 +119,10 @@ if ($_POST && !file_exists($d_firmwarelock_path)) {
                             /* fire up the update script in the background */
                             touch($d_firmwarelock_path);
                             $savemsg = "The firmware is now being updated. The firewall will reboot automatically.";
-                            mwexec_bg("/etc/rc.firmware pfSenseupgrade {$g['upload_path']}/firmware.tgz");
+							if(stristr($_FILES['ulfile']['tmp_name'],"bdiff"))
+                            	mwexec_bg("/etc/rc.firmware delta_update {$g['upload_path']}/firmware.tgz");
+							else 
+								mwexec_bg("/etc/rc.firmware pfSenseupgrade {$g['upload_path']}/firmware.tgz");
                     } else {
                             $savemsg = "Firmware image missing or other error, please try again.";
                     }

@@ -233,6 +233,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 							<?=output_menu_item("/status_interfaces.php", "Interfaces");?>
 							<?=output_menu_item("/diag_ipsec.php", "IPsec");?>
 							<?=output_menu_item("/status_slbd_pool.php", "Load Balancer");?>
+							<?=output_menu_item("/status_ovpn.php", "OpenVPN");?>
 							<?php if($g['platform'] == "pfSense"): ?>
 							<?=output_menu_item("/diag_pkglogs.php", "Package Logs");?>
 							<?php endif; ?>

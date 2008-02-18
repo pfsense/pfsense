@@ -260,7 +260,6 @@ class altq_root_queue {
 	}
 	
 	function validate_input($data, &$input_errors) {
-		global $config; /* XXX: how to get info about interfaces?! */
 		
 		$reqfields[] = "bandwidth";
 		$reqdfieldsn[] = "Bandwidth";
@@ -269,7 +268,6 @@ class altq_root_queue {
 		
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 		
-		if (isset($config['interface'][$this->GetQname()]['bandwidth'])) {
                         switch($data['banwidthtype']) {
                                 case "%":
                                         $myBw = $this->GetAvailableBandwidth() * intval($data['bandwidth']) / 100;
@@ -282,7 +280,7 @@ class altq_root_queue {
 
                         if ($this->GetAvailableBandwidth() < $myBw)
                                         $input_errors[] = "Bandwidth cannot be set higher than that of interface.";
-                }
+                
 
                 if ($data['bandwidth'] && (!is_numeric($data['bandwidth'])))
                                                 $input_errors[] = "Bandwidth must be an integer.";
@@ -375,15 +373,15 @@ class altq_root_queue {
                  if (isset($q['bandwidth'])) {
                          switch ($q['bandwidthtype']) {
                          case "%":
-                                $q->SetAvailableBandwidth($this->GetAvailableBandwidth() -
-                                        ($this->GetAvailableBandwidth() * $q['bandwidth'] / 100));
+                                $myBw = $this->GetAvailableBandwidth() * $q['bandwidth'] / 100;
                                 break;
                         default:
-                                $q->SetAvailableBandwidth($this->GetAvailableBandwidth() -
-                                        ($q['bandwidth'] * get_bandwidthtype_scale($q['bandwdithtype'])));
+                                $myBw = $q['bandwidth'] * get_bandwidthtype_scale($q['bandwdithtype']);
                                 break;
                         }
-                }
+                 	}
+			$q->SetAvailableBandwidth($myBw);
+                        $this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $myBw);
 			$this->queues[$q->GetQname()] = &$q; 
 			$GLOBALS['allqueue_list'][] = $q->GetQname();
 			ref_on_altq_queue_list($this->GetQname(), $q->GetQname());
@@ -439,8 +437,10 @@ class altq_root_queue {
 	}
 	
 	function delete_queue() { 
-		foreach ($this->queues as $q)
+		foreach ($this->queues as $q) 
 			$q->delete_queue();			
+		
+		$this->SetAvailableBandwidth($this->GetAvailableBandwidth() + $q->GetAvailableBandwidth());
 		unset_object_by_reference($this->GetLink());
 	 }
 
@@ -994,7 +994,7 @@ function GetEcn() {
 		if ($this->GetDefault()) { 
 				$form .= "<input type=\"checkbox\" id=\"default\" CHECKED name=\"default\"";
 		$form .= "> Default queue<br>";
-		} else if (count($this->subqueues) < 1) {
+		} else {
 			$form .= "<input type=\"checkbox\" id=\"default\" name=\"default\"";
 					$form .= "> Default queue<br>";
 		}
@@ -1200,22 +1200,22 @@ class hfsc_queue extends priq_queue {
 			$q =& new hfsc_queue();
 			$q->SetInterface($this->GetInterface());
 			$q->SetParent(&$this);
-			$this->CalculateRemainingBandwidth($qname['bandwidth'], $qname['bandwidthtype']);
 			$q->ReadConfig($qname);
 			$q->validate_input($qname, $input_errors);
 			if (count($input_errors)) {
 				return $q;
 			}
+			
 			$q->SetEnabled("on");
 			$q->SetLink($path);
-			switch($q->GetBwscale()) {
-                                case "%":
-                                        $myBw = $this->GetAvailableBandwidth() * $qname['bandwidth'] / 100;
-                                        break;
-                                default:
-                                        $myBw = $qname['bandwidth'] * get_bandwidthtype_scale($q->GetBwscale());
-                                        break;
-                        }
+			switch ($q->GetBwscale()) {
+                        case "%":
+                                $myBw = $this->GetAvailableBandwidth() * $qname['bandwidth'] / 100;
+                                break;
+                        default:
+                                $myBw = $qname['bandwidth'] * get_bandwidthtype_scale($q->GetBwscale());
+                                break;
+                	}
                         $q->SetAvailableBandwidth($myBw);
                         $this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $myBw);
 
@@ -1239,9 +1239,10 @@ class hfsc_queue extends priq_queue {
 				altq_set_default_queue($this->GetInterface(), "false");
 			cleanup_queue_from_rules($this->GetQname());
 			$parent =& $this->GetParent();
-			$parent->CalculateRemainingBandwidth($this->GetBandwidth(), $this->GetBwscale(), "delete"); 			
 			foreach ($this->subqueues as $q)
 				$q->delete_queue();
+			$this->SetAvailableBandwidth($this->GetAvailableBandwidth() + $q->GetAvailableBandwidth());
+
 			unset_object_by_reference($this->GetLink());
 			}
 	
@@ -1490,7 +1491,7 @@ class hfsc_queue extends priq_queue {
 				else if ($this->GetU_m2() <> "")
 					$pfq_rule .= " upperlimit " . $this->GetU_m2() . " ";
 			}
-						$pfq_rule .= " )\n ";
+					$pfq_rule .= " ) ";
 					}
 					if (count($this->subqueues)) {
 						$i = count($this->subqueues);
@@ -1787,8 +1788,8 @@ class cbq_queue extends priq_queue {
 			cleanup_queue_from_rules($this->GetQname());
 			foreach ($this->subqueues as $q)
 				$q->delete_queue();
+			$this->SetAvailableBandwidth($this->GetAvailableBandwidth() + $q->GetAvailableBandwidth());
 			$parent =& $this->GetParent();
-			$parent->CalculateRemainingBandwidth($this->GetBandwidth(), $this->GetBwscale(), "delete"); 			
 			unset_object_by_reference($this->subqueues[$qname]->GetLink());
 		}
 	

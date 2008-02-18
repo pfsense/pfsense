@@ -243,7 +243,7 @@ if ($_GET) {
 		if ($qtmp) {
 			$tmppath =& $qtmp->GetLink();
 			array_push($tmppath, $qname);
-			$tmp =& $qtmp->add_queue($interface, $_POST, &$tmppath, &$input_errors);
+			$tmp =& $qtmp->add_queue($interface, $_POST, $tmppath, &$input_errors);
 			if (!$input_errors) {
 				array_pop($tmppath);
 				$tmp->wconfig();

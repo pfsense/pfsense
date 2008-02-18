@@ -1464,6 +1464,8 @@ function guess_interface_from_ip($ipaddress) {
 
 function filter_opt_interface_to_real($opt) {
 	global $config;
+	if(isset($config['interfaces'][$opt]['pointtopoint']))
+		return "ppp0";
 	return $config['interfaces'][$opt]['if'];
 }
 
@@ -1509,6 +1511,8 @@ function find_ip_interface($ip) {
  */
 function filter_translate_type_to_real_interface($interface) {
 	global $config;
+	if(isset($config['interfaces'][$interface]['pointtopoint']))
+		return "ppp0";
 	if($config['interfaces'][$interface]['if'] <> "") {
 		return $config['interfaces'][$interface]['if'];
 	} else {
@@ -1780,6 +1784,8 @@ function convert_friendly_interface_to_real_interface_name($interface) {
 	global $config;
 	if($config['interfaces'][$interface]['ipaddr'] == "pppoe")
 		return "ng0";
+	if(isset($config['interfaces'][$interface]['pointtopoint']))
+		return "ppp0";
 	$lc_interface = strtolower($interface);
 	if($lc_interface == "lan")
 	 	return $config['interfaces']['lan']['if'];

@@ -394,7 +394,15 @@ function filter_generate_aliases() {
 			if($opt_carp_ints)
 				$aliases .= $opt_carp_ints;
 		}
-		$aliases .= " }\"\n";
+		$aliases .= " }\"\n";		
+		/* XXX TODO: below comment and subsequent two lines of code from
+                  Adam Lebsack <adam at holonyx dot com>
+                  I'm not sure what it means, marking this to look into.  cmb@
+                  
+                  add an alias, since much of the filter code is broken when it comes to
+		finding out the real interface */
+		if(preg_match("/^ppp_(.+)$/", $config['interfaces'][$ifname]['if'], $matches))
+			$aliases .= "{$config['interfaces'][$ifname]['if']} = \"ppp0\"\n";
 	}
 	$aliases .= "# User Aliases \n";
 	/* Setup pf groups */

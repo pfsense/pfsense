@@ -278,6 +278,10 @@ function interfaces_optional_configure_if($opti) {
 		if (is_array($optcfg['wireless']))
 			interfaces_wireless_configure($optcfg['if'], $optcfg['wireless']);
 
+		/* PPP configuration */
+		if (isset($optcfg['pointtopoint']))
+			interfaces_ppp_configure_if($optcfg);
+
 		/* MAC spoofing? */
 		if ($optcfg['spoofmac']) {
 			mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) .
@@ -365,6 +369,74 @@ function interfaces_optional_configure_if($opti) {
 	} else {
 		mwexec("/sbin/ifconfig " . escapeshellarg($optcfg['if']) . " delete down");
 	}
+	return 0;
+}
+
+function interfaces_ppp_configure_if($ifcfg) {
+	global $config;
+	
+	if(file_exists("/var/run/ppp0.pid")) {
+		$pid = file_get_contents("/var/run/ppp0.pid");
+		mwexec('kill $pid');
+	}
+	
+	mwexec("/sbin/ifconfig ppp0 down destroy");
+
+	$peerfile = "lcp-echo-failure 0\n";
+	$peerfile .= "lcp-echo-interval 0\n";
+	$peerfile .= "connect /etc/ppp/peers/ppp0-connect-chat\n";
+	//$peerfile .= "disconnect /etc/ppp/peers/ppp0-disconnect-chat\n";
+	$peerfile .= "/dev/{$ifcfg['serialport']}\n";
+	$peerfile .= "crtscts\n";
+	$peerfile .= "local\n";
+	$peerfile .= ":{$ifcfg['gateway']}\n";
+	$peerfile .= "noipdefault\n";
+	$peerfile .= "ipcp-accept-local\n";
+	$peerfile .= "novj\n";
+	$peerfile .= "nobsdcomp\n";
+	$peerfile .= "novjccomp\n";
+	$peerfile .= "nopcomp\n";
+	$peerfile .= "noaccomp\n";
+	$peerfile .= "noauth\n";
+	$peerfile .= "persist\n";
+	$peerfile .= "debug\n";
+	// KD - test
+	//$peerfile .= "defaultroute\n";
+	//$peerfile .= "nodetach\n";
+	// KD - so I know where to look!
+	$peerfile .= "# created by /etc/inc/interfaces.inc\n";
+	file_put_contents("/etc/ppp/peers/ppp0", $peerfile);
+
+	// Added single quotes to some strings below:
+	// the \rAT is *always* going to need it
+	// and the phone number on a GSM connection ends in a # char
+	// Kevin Dawson, 22 Jan 2008
+	// Refer Andrew Curtis
+			
+	$chatfile = "#!/bin/sh\n";
+	$chatfile .= "exec chat \\\n";
+	$chatfile .= "TIMEOUT 5 \\\n";
+	$chatfile .= "ECHO ON \\\n";
+	$chatfile .= "ABORT '\\nBUSY\\r' \\\n";
+	$chatfile .= "ABORT '\\nERROR\\r' \\\n";
+	$chatfile .= "ABORT '\\nNO ANSWER\\r' \\\n";
+	$chatfile .= "ABORT '\\nNO CARRIER\\r' \\\n";
+	$chatfile .= "ABORT '\\nNO DIALTONE\\r' \\\n";
+	$chatfile .= "ABORT '\\nRINGING\\r\\n\\r\\nRINGING\\r' \\\n";
+	// KD
+	$chatfile .= "'' '\\rAT' \\\n";
+	$chatfile .= "TIMEOUT 12 \\\n";
+	$chatfile .= "OK ATH \\\n";
+	$chatfile .= "OK ATE1 \\\n";
+	$chatfile .= "OK 'AT+CGDCONT=1,\"IP\",\"{$ifcfg['ap']}\"' \\\n";
+	// KD
+	$chatfile .= "OK 'ATD{$ifcfg['phone']}' \\\n";
+	$chatfile .= "TIMEOUT 22 \\\n";
+	$chatfile .= "CONNECT \"\" \\\n";
+	$chatfile .= "SAY \"\\nConnected.\"\n";
+	file_put_contents("/etc/ppp/peers/ppp0-connect-chat", $chatfile);
+	chmod("/etc/ppp/peers/ppp0-connect-chat", 0755);
+	mwexec("/sbin/ifconfig ppp0 create");
 	return 0;
 }
 
@@ -1635,6 +1707,20 @@ function get_number_of_vlan_interfaces() {
                 }
         }
         return "{$vlans_total}";
+}
+
+function get_number_of_ppp_interfaces() {
+        $ppps_total = 0;
+        $ppps = split("\n", `/sbin/ifconfig -a | /usr/bin/grep ppp | grep flags`);
+        foreach($ppps as $bridge) {
+                $match_array = "";
+                preg_match_all("/ppp(.*):/",$bridge,$match_array);
+                if($match_array[1][0] <> "") {
+                        if($match_array[1][0] > $ppps_total)
+                                $ppps_total = $match_array[1][0];
+                }
+        }
+        return "{$ppps_total}";
 }
 
 function get_next_available_bridge_interface() {

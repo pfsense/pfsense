@@ -1,10 +1,12 @@
 <?php
-/* $Id$ */
 /*
-	interfaces_vlan.php
-	part of m0n0wall (http://m0n0.ch/wall)
+	interfaces_lan.php
+	part of pfSense(http://pfsense.org)
 
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+	Originally written by Adam Lebsack <adam at holonyx dot com>
+	Changes by Chris Buechler <cmb at pfsense dot org> 
+	
+	Copyright (C) 2004-2008 BSD Perimeter LLC.
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -31,76 +33,77 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['vlans']['vlan']))
-	$config['vlans']['vlan'] = array();
+if (!is_array($config['ppps']['ppp']))
+	$config['ppps']['ppp'] = array();
 
-$a_vlans = &$config['vlans']['vlan'] ;
+$a_ppps = &$config['ppps']['ppp'] ;
 
-function vlan_inuse($num) {
+function ppp_inuse($num) {
 	global $config, $g;
 
-	if ($config['interfaces']['lan']['if'] == "vlan{$num}")
+	if ($config['interfaces']['lan']['if'] == "ppp{$num}")
 		return true;
-	if ($config['interfaces']['wan']['if'] == "vlan{$num}")
+	if ($config['interfaces']['wan']['if'] == "ppp{$num}")
 		return true;
 
 	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++) {
-		if ($config['interfaces']['opt' . $i]['if'] == "vlan{$num}")
+		if ($config['interfaces']['opt' . $i]['if'] == "ppp{$num}")
 			return true;
 	}
 
 	return false;
 }
 
-function renumber_vlan($if, $delvlan) {
-	if (!preg_match("/^vlan/", $if))
+function renumber_ppp($if, $delppp) {
+	if (!preg_match("/^ppp/", $if))
 		return $if;
 
-	$vlan = substr($if, 4);
-	if ($vlan > $delvlan)
-		return "vlan" . ($vlan - 1);
+	$ppp = substr($if, 4);
+	if ($ppp > $delppp)
+		return "ppp" . ($ppp - 1);
 	else
 		return $if;
 }
 
 if ($_GET['act'] == "del") {
 	/* check if still in use */
-	if (vlan_inuse($_GET['id'])) {
-		$input_errors[] = "This VLAN cannot be deleted because it is still being used as an interface.";
+	if (ppp_inuse($_GET['id'])) {
+		$input_errors[] = "This PPP interface cannot be deleted because it is still being used as an interface.";
 	} else {
-		unset($a_vlans[$_GET['id']]);
+		unset($a_ppps[$_GET['id']]);
 
-		/* renumber all interfaces that use VLANs */
-		$config['interfaces']['lan']['if'] = renumber_vlan($config['interfaces']['lan']['if'], $_GET['id']);
-		$config['interfaces']['wan']['if'] = renumber_vlan($config['interfaces']['wan']['if'], $_GET['id']);
+		/* renumber all interfaces that use PPP */
+		$config['interfaces']['lan']['if'] = renumber_ppp($config['interfaces']['lan']['if'], $_GET['id']);
+		$config['interfaces']['wan']['if'] = renumber_ppp($config['interfaces']['wan']['if'], $_GET['id']);
 		for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
-			$config['interfaces']['opt' . $i]['if'] = renumber_vlan($config['interfaces']['opt' . $i]['if'], $_GET['id']);
+			$config['interfaces']['opt' . $i]['if'] = renumber_ppp($config['interfaces']['opt' . $i]['if'], $_GET['id']);
 
 		write_config();
 
-		interfaces_vlan_configure();
+		interfaces_optional_configure();
 
-		header("Location: interfaces_vlan.php");
+		header("Location: interfaces_ppp.php");
 		exit;
 	}
 }
 
 
-$pgtitle = array("Interfaces","VLAN");
+$pgtitle = "Interfaces: PPP";
 include("head.inc");
 
 ?>
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
+<p class="pgtitle"><?=$pgtitle?></p>
 <?php if ($input_errors) print_input_errors($input_errors); ?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td>
 <?php
 	$tab_array = array();
 	$tab_array[0] = array("Interface assignments", false, "interfaces_assign.php");
-	$tab_array[1] = array("VLANs", true, "interfaces_vlan.php");
-	$tab_array[2] = array("PPP", false, "interfaces_ppp.php");
+	$tab_array[1] = array("VLANs", false, "interfaces_vlan.php");
+	$tab_array[2] = array("PPP", true, "interfaces_ppp.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>
@@ -110,38 +113,30 @@ include("head.inc");
 	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="20%" class="listhdrr">Interface</td>
-                  <td width="20%" class="listhdrr">VLAN tag</td>
+                  <td width="20%" class="listhdrr">Serial Port</td>
                   <td width="50%" class="listhdr">Description</td>
                   <td width="10%" class="list"></td>
 				</tr>
-			  <?php $i = 0; foreach ($a_vlans as $vlan): ?>
+			  <?php $i = 0; foreach ($a_ppps as $id => $ppp): ?>
                 <tr>
                   <td class="listlr">
-					<?=htmlspecialchars($vlan['if']);?>
+					ppp<?=htmlspecialchars($id);?>
                   </td>
                   <td class="listr">
-					<?=htmlspecialchars($vlan['tag']);?>
+					<?=htmlspecialchars($ppp['port']);?>
                   </td>
                   <td class="listbg">
 		    <font color="white">
-                    <?=htmlspecialchars($vlan['descr']);?>&nbsp;
+                    <?=htmlspecialchars($ppp['descr']);?>&nbsp;
 		    </font>
                   </td>
-                  <td valign="middle" nowrap class="list"> <a href="interfaces_vlan_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
-                     &nbsp;<a href="interfaces_vlan.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this VLAN?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
+                  <td valign="middle" nowrap class="list"> <a href="interfaces_ppp_edit.php?id=<?=$i;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_e.gif" width="17" height="17" border="0"></a>
+                     &nbsp;<a href="interfaces_ppp.php?act=del&id=<?=$i;?>" onclick="return confirm('Do you really want to delete this PPP interface?')"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" width="17" height="17" border="0"></a></td>
 				</tr>
 			  <?php $i++; endforeach; ?>
                 <tr>
                   <td class="list" colspan="3">&nbsp;</td>
-                  <td class="list"> <a href="interfaces_vlan_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
-				</tr>
-				<tr>
-				<td colspan="3" class="list"><p class="vexpl"><span class="red"><strong>
-				  Note:<br>
-				  </strong></span>
-				  Not all drivers/NICs support 802.1Q VLAN tagging properly. On cards that do not explicitly support it, VLAN tagging will still work, but the reduced MTU may cause problems. See the <?=$g['product_name']?> handbook for information on supported cards. </p>
-				  </td>
-				<td class="list">&nbsp;</td>
+                  <td class="list"> <a href="interfaces_ppp_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 				</tr>
               </table>
 	      </div>

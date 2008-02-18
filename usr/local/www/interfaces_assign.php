@@ -50,6 +50,17 @@ if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 	}
 }
 
+/* add PPP interfaces */
+if (is_array($config['ppps']['ppp']) && count($config['ppps']['ppp'])) {
+	$i = 0;
+	foreach ($config['ppps']['ppp'] as $ppp) {
+		$portname = 'ppp_' . basename($ppp['port']);
+		$portlist[$portname] = $ppp;
+		$portlist[$portname]['isppp'] = true;
+		$i++;
+	}
+}
+
 if ($_POST) {
 
 	unset($input_errors);
@@ -92,7 +103,11 @@ if ($_POST) {
 				
 				if (!is_array($ifport)) {
 					$config['interfaces'][$ifname]['if'] = $ifport;
-					
+					if (preg_match('/^ppp_(.+)$/', $ifport, $matches)) {
+						$config['interfaces'][$ifname]['pointtopoint'] = true;
+						$config['interfaces'][$ifname]['serialport'] = $matches[1];
+					}
+
 					/* check for wireless interfaces, set or clear ['wireless'] */
 					if (preg_match($g['wireless_regex'], $ifport)) {
 						if (!is_array($config['interfaces'][$ifname]['wireless']))
@@ -235,6 +250,7 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 	$tab_array = array();
 	$tab_array[0] = array("Interface assignments", true, "interfaces_assign.php");
 	$tab_array[1] = array("VLANs", false, "interfaces_vlan.php");
+	$tab_array[2] = array("PPP", false, "interfaces_ppp.php");
 	display_top_tabs($tab_array);
 ?>  
   </td></tr>
@@ -261,6 +277,11 @@ if(file_exists("/var/run/interface_mismatch_reboot_needed"))
 		  <option value="<?=$portname;?>" <?php if ($portname == $iface['if']) echo "selected";?>> 
 		  <?php if ($portinfo['isvlan']) {
 		  			$descr = "VLAN {$portinfo['tag']} on {$portinfo['if']}";
+					if ($portinfo['descr'])
+						$descr .= " (" . $portinfo['descr'] . ")";
+					echo htmlspecialchars($descr);
+				} elseif ($portinfo['isppp']) {
+					$descr = "PPP {$portinfo['port']}";
 					if ($portinfo['descr'])
 						$descr .= " (" . $portinfo['descr'] . ")";
 					echo htmlspecialchars($descr);

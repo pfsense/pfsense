@@ -84,6 +84,8 @@ if ($optcfg['ipaddr'] == "dhcp") {
 	$pconfig['subnet'] = $optcfg['subnet'];
 	$pconfig['gateway'] = $optcfg['gateway'];
 	$pconfig['pointtopoint'] = $optcfg['pointtopoint'];
+	$pconfig['ap'] = $optcfg['ap'];
+	$pconfig['phone'] = $optcfg['phone'];
 }
 
 if ($_POST) {
@@ -231,8 +233,11 @@ if ($_POST) {
 			$optcfg['ipaddr'] = $_POST['ipaddr'];
 			$optcfg['subnet'] = $_POST['subnet'];
 			$optcfg['gateway'] = $_POST['gateway'];
-			if (isset($optcfg['ispointtopoint']))
+			if (isset($optcfg['ispointtopoint'])) {
 				$optcfg['pointtopoint'] = $_POST['pointtopoint'];
+				$optcfg['ap'] = $_POST['ap'];
+				$optcfg['phone'] = $_POST['phone'];
+			}
 		} else if ($_POST['type'] == "DHCP") {
 			$optcfg['ipaddr'] = "dhcp";
 			$optcfg['dhcphostname'] = $_POST['dhcphostname'];
@@ -324,6 +329,30 @@ function show_mon_config() {
                 <tr>
                   <td colspan="2" valign="top" class="listtopic">General configuration</td>
                 </tr>
+		<?php if (isset($optcfg['pointtopoint'])): ?>
+			<tr>
+			  <td width="22%" valign="top" class="vncell">AP Hostname</td>
+			  <td width="78%" class="vtable">
+			    <input name="ap" type="text" class="formfld" id="ap" size="40" value="<?=htmlspecialchars($pconfig['ap']);?>">
+			</td>
+			</tr>
+			<tr>
+			  <td width="22%" valign="top" class="vncell">Phone Number</td>
+			  <td width="78%" class="vtable">
+			    <input name="phone" type="text" class="formfld" id="phone" size="40" value="<?=htmlspecialchars($pconfig['phone']);?>">
+			  </td>
+			</tr>
+			<tr>
+			  <td width="22%" valign="top" class="vncell">Remote IP</td>
+			  <td width="78%" class="vtable">
+			    <input name="gateway" type="text" class="formfld" id="gateway" size="40" value="<?=htmlspecialchars($pconfig['gateway']);?>">
+			  </td>
+			</tr>
+
+			<input name="type" type="hidden" value="Static">
+			<input name="ipaddr" type="hidden" value="0.0.0.0">
+			<input name="subnet" type="hidden" value="32">
+		<?php else: ?>
                 <tr>
                   <td valign="middle" class="vncell"><strong>Type</strong></td>
                   <td class="vtable"> <select name="type" class="formselect" id="type" onchange="type_change()">
@@ -422,6 +451,7 @@ function show_mon_config() {
 			</select>Select a existing Gateway from the list or add one on the <a href="/system_gateways.php">Gateways</a> page<br>
 		  </td>
 		</tr>
+		<?php endif;?>
                 <tr>
                   <td colspan="2" valign="top" height="16"></td>
                 </tr>

@@ -2246,6 +2246,8 @@ function display_top_tabs(& $tab_array) {
 	global $config;
 	global $g;
 	$allowed = $g['privs'];
+	if(!$allowed) 
+		$allowed = $_SESSION['privs'];
 
 	/*   does the user have access to this tab?
 	 *   master user has access to everything.

@@ -1491,6 +1491,7 @@ EOD;
 		if($lanif == "") {
 			if($g['minimum_nic_count'] < 2) {
 				unset($config['interfaces']['lan']);
+				write_config();
 				break;	
 			} else {
 				fclose($fp);
@@ -1511,6 +1512,7 @@ EOD;
 	$i = 0;
 	$optif = array();
 
+	if($config['interfaces']['lan']) 
 	while (1) {
 		if ($optif[$i])
 			$i++;

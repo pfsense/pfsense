@@ -111,7 +111,7 @@
 		<password>$1$dSJImFph$GvZ7.1UbuWu.Yb8etC0re.</password>
 		<timezone>Etc/UTC</timezone>
 		<time-update-interval>300</time-update-interval>
-		<timeservers>pool.ntp.org</timeservers>
+		<timeservers>0.pfsense.pool.ntp.org</timeservers>
 		<webgui>
 			<protocol>http</protocol>
 			<!--

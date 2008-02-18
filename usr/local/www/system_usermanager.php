@@ -175,7 +175,6 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']) or $isAdminUser == true) {
     }
 
     include("head.inc");
-    echo $pfSenseHead->getHTML();
 ?>
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">

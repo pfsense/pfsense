@@ -410,7 +410,11 @@ EOD;
 		fwrite($fd, $syslogconf);
 		fclose($fd);
 
-		$retval = mwexec("/usr/sbin/syslogd -s -f {$g['varetc_path']}/syslog.conf");
+		// Are we logging to a least one remote server ?
+		if(strpos($syslogconf, "@") != false)
+			$retval = mwexec("/usr/sbin/syslogd -s -f {$g['varetc_path']}/syslog.conf");
+		else
+			$retval = mwexec("/usr/sbin/syslogd -ss -f {$g['varetc_path']}/syslog.conf");
 
 	} else {
 		$retval = mwexec("/usr/sbin/syslogd -ss");

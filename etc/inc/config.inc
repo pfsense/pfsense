@@ -1973,7 +1973,8 @@ function is_interface_mismatch() {
 	/* we need to ignore the vlan interface checks) */
 	if (stristr($lan_if, "vlan") == false and stristr($wan_if, "vlan") == false) {
 		if (does_interface_exist($lan_if) == false)
-			$do_assign = 1;
+			if($g['minimum_nic_count'] > 1)
+				$do_assign = 1;
 		if ($config['interfaces']['wan']['ipaddr'] <> "pppoe" && $config['interfaces']['wan']['ipaddr'] <> "pptp" && $do_assign == 0)
 			if (does_interface_exist($wan_if) == false)
 				$do_assign = 1;

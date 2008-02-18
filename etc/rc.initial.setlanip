@@ -55,7 +55,7 @@
 	echo "Available interfaces:\n\n";
 	$x=1;
 	foreach($ifdescrs as $iface) {
-		echo "{$x} - " . strtoupper($iface) . "}\n";
+		echo "{$x} - " . strtoupper($iface) . "\n";
 		$x++;
 	}
 	echo "\nEnter interface # that you would like to configure: ";

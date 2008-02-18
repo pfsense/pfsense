@@ -88,8 +88,8 @@
 		echo "<div \" style=\"width:700px;background-color:#ffffff\" id=\"nifty\">\n";
 		echo "Welcome to pfSense!<p>\n";
 		echo "One moment while we start the initial setup wizard.<p>\n";
-		echo "Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal gui.<p>\n";
-		echo "To bypass the wizard, click on the pfSense wizard on the initial page.\n";
+		echo "Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal GUI.<p>\n";
+		echo "To bypass the wizard, click on the pfSense logo on the initial page.\n";
 		echo "</div>\n";
 		echo "<meta http-equiv=\"refresh\" content=\"1;url=wizard.php?xml=setup_wizard.xml\">\n";
 		echo "<script type=\"text/javascript\">\n";

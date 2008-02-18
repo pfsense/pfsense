@@ -932,13 +932,8 @@ function filter_nat_rules_generate() {
 	$natrules .= "\nno nat on \$wan to port tftp\n\n";
 
 	$natrules .= "\n# FTP Proxy/helper\n";
-	/* build an array of interfaces to work with */
-	if($config['interfaces']['lan']) 
-		$iflist = array("lan" => "LAN");
-	else 
-		$iflist = array();
-	for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
-		$iflist['opt' . $i] = "opt{$i}";
+	/* get array of interfaces to work with */
+        $iflist = get_interface_list();
 	$interface_counter = 0;
 	$vpns_list = get_vpns_list();
 	/* prevent 1:1 ips from ftp-proxy, they will be handled by ftp-sesame */
@@ -2687,12 +2682,7 @@ EOD;
                                 $extaddr = alias_expand($extaddr);
 
                         if(!isset($config['system']['disablenatreflection'])) {
-
-						/* if list */
-						if($config['interfaces']['lan']) 
-							$iflist = array("lan" => "LAN");
-						else 
-							$iflist = array();
+        			$iflist = get_interface_list();
                         for ($i = 1; isset($config['interfaces']['opt' . $i]); $i++)
                                 $iflist['opt' . $i] = "opt{$i}";
 

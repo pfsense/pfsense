@@ -1480,13 +1480,10 @@ EOD;
 	} while (!$wanif);
 
 	do {
-		echo "\nEnter the LAN interface name or 'a' for auto-detection: ";
+		echo "\nEnter the LAN interface name or 'a' for auto-detection \n" .
+			"(or nothing if finished): ";
 		$lanif = chop(fgets($fp));
-		if ($lanif === "") {
-			fclose($fp);
-			return;
-		}
-
+		
 		if($lanif == "exit") {
 			exit;
 		}
@@ -1494,7 +1491,10 @@ EOD;
 		if($lanif == "") {
 			if($g['minimum_nic_count'] < 2) {
 				unset($config['interfaces']['lan']);
-				break;			
+				break;	
+			} else {
+				fclose($fp);
+				return;
 			}
 		}
 
@@ -1559,15 +1559,11 @@ EOD;
 		}
 	}
 
-	echo <<<EOD
+	echo "The interfaces will be assigned as follows: \n\n";
 
-The interfaces will be assigned as follows:
-
-LAN  -> {$lanif}
-WAN  -> {$wanif}
-
-EOD;
-
+	if ($lanif != "")
+		echo "LAN  ->" . $lanif . "\n";
+	echo "WAN  ->" . $wanif . "\n";
 	for ($i = 0; $i < count($optif); $i++) {
 		echo "OPT" . ($i+1) . " -> " . $optif[$i] . "\n";
 	}

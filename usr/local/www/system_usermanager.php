@@ -32,18 +32,18 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-require("globals.inc");
 require("guiconfig.inc");
 // The page title for non-admins
 $pgtitle = array("System","User Password");
 
 /* Check for custom priv system_usermanager (no .php ending) */
+$isAdminUser = false;
 $allowed = $g['privs'];
 if(is_array($allowed))
 	if (in_array("system_usermanager", $allowed))
 		$isAdminUser = true;
 
-if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']) or $isAdminUser) {
+if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']) or $isAdminUser == true) {
     // Page title for main admin
     $pgtitle = array("System","User Manager");
 
@@ -175,6 +175,7 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']) or $isAdminUser) {
     }
 
     include("head.inc");
+    echo $pfSenseHead->getHTML();
 ?>
 
 <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
@@ -491,3 +492,4 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']) or $isAdminUser) {
 <?php include("fend.inc");?>
 </body>
 </html>
+

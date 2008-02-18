@@ -79,9 +79,12 @@ if ($interface) {
 				$can_enable = true;
 			else
 				$can_enable = false;
-			if ($queue->CanHaveChilds() && $can_enable)
-				$can_add = true;
-			else
+			if ($queue->CanHaveChilds() && $can_enable) {
+				if ($queue->GetDefault() <> "")
+					$can_add = false;
+				else
+					$can_add = true;
+			} else
 				$can_add = false;
 		}
 	} else $addnewaltq = true;
@@ -234,7 +237,10 @@ if ($_GET) {
 			write_config();
 			touch($d_shaperconfdirty_path);
 			$can_enable = true;
-			$can_add = true;
+			if ($queue->GetDefault() <> "")
+                             $can_add = false;
+                        else
+                             $can_add = true;
 		}
 		$output_form .= $altq->build_form();
 
@@ -248,15 +254,21 @@ if ($_GET) {
 				array_pop($tmppath);
 				$tmp->wconfig();
 				$can_enable = true;
-				if ($tmp->CanHaveChilds() && $can_enable)
-					$can_add = true;
-				else
+				if ($tmp->CanHaveChilds() && $can_enable) {
+					if ($queue->GetDefault() <> "")
+                             			$can_add = false;
+                        		else
+                             			$can_add = true;
+				} else
 					$can_add = false;
 				write_config();
 				touch($d_shaperconfdirty_path);
 				$can_enable = true;
 				if ($altq->GetScheduler() != "PRIQ") /* XXX */
-					$can_add = true;
+					if ($queue->GetDefault() <> "")
+                                                $can_add = false;
+                                        else
+                                                $can_add = true;
 			}
 			$output_form .= $tmp->build_form();			
 		} else

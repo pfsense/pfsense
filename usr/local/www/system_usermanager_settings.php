@@ -244,7 +244,7 @@ if(!$pconfig['backend'])
 							<select name='backend' id='backend' onchange='ldap_typechange()'>
 								<option value="pfsense"<?php if ($pconfig['backend'] == "pfsense") echo " SELECTED";?>>pfSense</option>
 								<option value="ldap"<?php if ($pconfig['backend'] == "ldap") echo " SELECTED";?>>LDAP (Active Directory)</option>
-								<option value="ldapother"<?php if ($pconfig['backend'] == "ldapother") echo " SELECTED";?>>LDAP OTHER</option>
+								<option value="ldapother"<?php if ($pconfig['backend'] == "ldapother") echo " SELECTED";?>>LDAP OTHER (eDir, etc)</option>
 							</select>
 							<br/>NOTE: login failures or server not available issues will fall back to pfSense internal users/group authentication.
 						</td>

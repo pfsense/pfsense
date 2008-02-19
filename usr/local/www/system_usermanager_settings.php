@@ -322,7 +322,7 @@ if(!$pconfig['backend'])
                         <td width="22%" valign="top" class="vncell">LDAP Authentication container</td>
                         <td width="78%" class="vtable">
 							<input name="ldapauthcontainers" id="ldapauthcontainers" size="65" value="<?=htmlspecialchars($pconfig['ldapauthcontainers']);?>">
-							 <a href="javascript:if(openwindow('system_usermanager_settings_ldapacpicker.php') == false) alert('Popup blocker detected.  Action aborted.');" >Select</a>
+							<input type="button" onClick="javascript:if(openwindow('system_usermanager_settings_ldapacpicker.php') == false) alert('Popup blocker detected.  Action aborted.');" value="Select"> 
 							<br/>NOTE: Semi-Colon separated.
 							<br/>Only Supports one Container Currently!!!
 							<br/>EXAMPLE: CN=Users,DC=pfsense,DC=com;CN=OtherUsers,DC=pfsense,DC=com

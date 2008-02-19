@@ -144,6 +144,71 @@ include("head.inc");
 	}
 ?>
 
+<script language="javascript">
+	function show_ldapfilter() {
+		document.getElementById("filteradv").innerHTML='';
+		aodiv = document.getElementById('filteradvdiv');
+		aodiv.style.display = "block";		
+	}
+	function show_ldapnaming(){
+		document.getElementById("namingattribute").innerHTML='';
+		aodiv = document.getElementById('ldapnamingdiv');
+		aodiv.style.display = "block";		
+	}
+	function show_groupmembership() {
+		document.getElementById("groupmembership").innerHTML='';
+		aodiv = document.getElementById('groupmembershipdiv');
+		aodiv.style.display = "block";		
+	}
+	function ldap_typechange() {
+        switch (document.iform.backend.selectedIndex) {
+            case 0:
+            	/* pfSense backend, disable all options */
+                document.iform.ldapfilter.disabled = 1;
+                document.iform.ldapnameattribute.disabled = 1;
+                document.iform.ldapgroupattribute.disabled = 1;
+                document.iform.ldapsearchbase.disabled = 1;
+                document.iform.ldapauthcontainers.disabled = 1;
+				document.iform.ldapserver.disabled = 1;
+				document.iform.ldapbindun.disabled = 1;
+				document.iform.ldapbindpw.disabled = 1;
+				document.iform.ldapfilter.value = "";
+				document.iform.ldapnameattribute.value = "";	
+				document.iform.ldapgroupattribute.value = "";
+				document.iform.ldapauthcontainers.value = "";
+				break;
+            case 1:
+            	/* A/D */
+                document.iform.ldapfilter.disabled = 0;
+                document.iform.ldapnameattribute.disabled = 0;
+                document.iform.ldapgroupattribute.disabled = 0;
+                document.iform.ldapsearchbase.disabled = 0;
+                document.iform.ldapauthcontainers.disabled = 0;
+				document.iform.ldapserver.disabled = 0;
+				document.iform.ldapbindun.disabled = 0;
+				document.iform.ldapbindpw.disabled = 0;
+				document.iform.ldapfilter.value = "(samaccountname=$username)";
+				document.iform.ldapnameattribute.value = "samaccountname";	
+				document.iform.ldapgroupattribute.value = "memberOf";
+				break;							
+            case 2:
+            	/* eDir */
+                document.iform.ldapfilter.disabled = 0;
+                document.iform.ldapnameattribute.disabled = 0;
+                document.iform.ldapgroupattribute.disabled = 0;
+                document.iform.ldapsearchbase.disabled = 0;
+                document.iform.ldapauthcontainers.disabled = 0;
+				document.iform.ldapserver.disabled = 0;
+				document.iform.ldapbindun.disabled = 0;
+				document.iform.ldapbindpw.disabled = 0;
+				document.iform.ldapfilter.value = "(cn=$username)";		
+				document.iform.ldapnameattribute.value = "CN";
+				document.iform.ldapgroupattribute.value = "groupMembership";
+				break;				
+		}
+	}
+</script>
+
   <table width="100%" border="0" cellpadding="0" cellspacing="0">
     <tr>
       <td class="tabnavtbl">
@@ -176,7 +241,7 @@ if(!$pconfig['backend'])
 					<tr>
                         <td width="22%" valign="top" class="vncell">Authentication primary backend</td>
                         <td width="78%" class="vtable">
-							<select name='backend'>
+							<select name='backend' id='backend' onchange='ldap_typechange()'>
 								<option value="pfsense"<?php if ($pconfig['backend'] == "pfsense") echo " SELECTED";?>>pfSense</option>
 								<option value="ldap"<?php if ($pconfig['backend'] == "ldap") echo " SELECTED";?>>LDAP (Active Directory)</option>
 								<option value="ldapother"<?php if ($pconfig['backend'] == "ldapother") echo " SELECTED";?>>LDAP OTHER</option>
@@ -187,14 +252,14 @@ if(!$pconfig['backend'])
 					<tr>
                         <td width="22%" valign="top" class="vncell">LDAP Server:port</td>
                         <td width="78%" class="vtable">
-							<input name="ldapserver" size="65" value="<?=htmlspecialchars($pconfig['ldapserver']);?>">
+							<input name="ldapserver" id="ldapserver" size="65" value="<?=htmlspecialchars($pconfig['ldapserver']);?>">
 							<br/>Example: ldaps://ldap.example.org:389 or ldap://ldap.example.org:389
 						</td>
 					</tr>
 					<tr>
                         <td width="22%" valign="top" class="vncell">LDAP Binding username</td>
                         <td width="78%" class="vtable">
-							<input name="ldapbindun" size="65" value="<?=htmlspecialchars($pconfig['ldapbindun']);?>">
+							<input name="ldapbindun" id="ldapbindun" size="65" value="<?=htmlspecialchars($pconfig['ldapbindun']);?>">
 							<br/>This account must have read access to the user objects and be able to retrieve groups.
 							<br/>Example: For Active Directory you would want to use format DOMAIN\username or username@domain.
 							<br/>Example: eDirectory you would want to use format cn=username,ou=orgunit,o=org.
@@ -203,31 +268,46 @@ if(!$pconfig['backend'])
 					<tr>
                         <td width="22%" valign="top" class="vncell">LDAP Binding password</td>
                         <td width="78%" class="vtable">
-							<input name="ldapbindpw" type="password" size="65" value="<?=htmlspecialchars($pconfig['ldapbindpw']);?>">
+							<input name="ldapbindpw" id="ldapbindpw" type="password" size="65" value="<?=htmlspecialchars($pconfig['ldapbindpw']);?>">
 						</td>
 					</tr>
 					<tr>
                         <td width="22%" valign="top" class="vncell">LDAP Filter</td>
                         <td width="78%" class="vtable">
-							<input name="ldapfilter" size="65" value="<?=htmlspecialchars($pconfig['ldapfilter']);?>">
-							<br/>Example: For Active Directory you would want to use (samaccountname=$username)
-							<br/>Example: For eDirectory you would want to use (cn=$username)
+							<div id="filteradv" name="filteradv">
+								<input type="button" onClick="show_ldapfilter();" value="Advanced"> - Show advanced options
+							</div>
+							<div id="filteradvdiv" name="filteradvdiv" style="display:none">	
+								<input name="ldapfilter" id="ldapfilter" size="65" value="<?=htmlspecialchars($pconfig['ldapfilter']);?>">
+								<br/>Example: For Active Directory you would want to use (samaccountname=$username)
+								<br/>Example: For eDirectory you would want to use (cn=$username)
+							</div>
 						</td>
 					</tr>
 					<tr>
                         <td width="22%" valign="top" class="vncell">LDAP Naming Attribute</td>
                         <td width="78%" class="vtable">
-							<input name="ldapnameattribute" size="65" value="<?=htmlspecialchars($pconfig['ldapnameattribute']);?>">
-							<br/>Example: For Active Directory you would want to use samaccountname.
-							<br/>Example: For eDirectory you would want to use CN.
+							<div id="namingattribute" name="namingattribute">
+								<input type="button" onClick="show_ldapnaming();" value="Advanced"> - Show advanced options
+							</div>
+							<div id="ldapnamingdiv" name="ldapnamingdiv" style="display:none">	
+								<input name="ldapnameattribute" id="ldapnameattribute" size="65" value="<?=htmlspecialchars($pconfig['ldapnameattribute']);?>">
+								<br/>Example: For Active Directory you would want to use samaccountname.
+								<br/>Example: For eDirectory you would want to use CN.
+							</div>
 						</td>
 					</tr>
 					<tr>
                         <td width="22%" valign="top" class="vncell">Group Membership Attribute Name</td>
                         <td width="78%" class="vtable">
-							<input name="ldapgroupattribute" size="65" value="<?=htmlspecialchars($pconfig['ldapgroupattribute']);?>">
-							<br/>Example: For Active Directory you would want to use memberOf.
-							<br/>Example: For eDirectory you would want to use groupMembership.
+							<div id="groupmembership" name="groupmembership">
+								<input type="button" onClick="show_groupmembership();" value="Advanced"> - Show advanced options
+							</div>
+							<div id="groupmembershipdiv" name="groupmembershipdiv" style="display:none">
+								<input name="ldapgroupattribute" id="ldapgroupattribute" size="65" value="<?=htmlspecialchars($pconfig['ldapgroupattribute']);?>">
+								<br/>Example: For Active Directory you would want to use memberOf.
+								<br/>Example: For eDirectory you would want to use groupMembership.
+							</div>
 						</td>
 					</tr>
 
@@ -241,7 +321,7 @@ if(!$pconfig['backend'])
 					<tr>
                         <td width="22%" valign="top" class="vncell">LDAP Authentication container</td>
                         <td width="78%" class="vtable">
-							<input name="ldapauthcontainers" size="65" value="<?=htmlspecialchars($pconfig['ldapauthcontainers']);?>">
+							<input name="ldapauthcontainers" id="ldapauthcontainers" size="65" value="<?=htmlspecialchars($pconfig['ldapauthcontainers']);?>">
 							 <a href="javascript:if(openwindow('system_usermanager_settings_ldapacpicker.php') == false) alert('Popup blocker detected.  Action aborted.');" >Select</a>
 							<br/>NOTE: Semi-Colon separated.
 							<br/>Only Supports one Container Currently!!!
@@ -265,13 +345,13 @@ if(!$pconfig['backend'])
 </body>
 </html>
 <script language="javascript">
-function openwindow(url) {
-        var oWin = window.open(url,"pfSensePop","width=620,height=400,top=150,left=150");
-        if (oWin==null || typeof(oWin)=="undefined") {
-                return false;
-        } else {
-                return true;
-        }
-}
+	function openwindow(url) {
+	        var oWin = window.open(url,"pfSensePop","width=620,height=400,top=150,left=150");
+	        if (oWin==null || typeof(oWin)=="undefined") {
+	                return false;
+	        } else {
+	                return true;
+	        }
+	}
 </script>
 

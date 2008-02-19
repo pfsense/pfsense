@@ -1490,7 +1490,8 @@ EOD;
 		
 		if($lanif == "") {
 			if($g['minimum_nic_count'] < 2) {
-				unset($config['interfaces']['lan']);				
+				unset($config['interfaces']['lan']);
+				unset($config['dhcpd']['lan']);
 				break;	
 			} else {
 				fclose($fp);
@@ -1616,7 +1617,7 @@ EOD;
 		for (; isset($config['interfaces']['opt' . ($i+1)]); $i++)
 			unset($config['interfaces']['opt' . ($i+1)]);
 
-		echo "Writing configuration...";
+		echo "\nWriting configuration...";
 		write_config();
 		echo "done.\n";
 
@@ -1739,7 +1740,8 @@ function system_start_ftp_helpers() {
 	require_once("interfaces.inc");
 	global $config, $g;
 
-	mwexec("/usr/bin/killall ftpsesame");
+	if(isvalidproc("ftpsesame"))
+		mwexec("/usr/bin/killall ftpsesame");
 
 	/* build an array of interfaces to work with */
 	$iflist = array("lan" => "lan");

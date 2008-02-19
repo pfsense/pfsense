@@ -1584,7 +1584,6 @@ You have chosen to remove the LAN interface.
 
 Would you like to remove the IP LAN address and
 unload the interface now? [y|n]? 
-
 EODD;
 
 				if (strcasecmp(chop(fgets($fp)), "y") == 0) 

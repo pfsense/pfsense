@@ -1490,8 +1490,7 @@ EOD;
 		
 		if($lanif == "") {
 			if($g['minimum_nic_count'] < 2) {
-				unset($config['interfaces']['lan']);
-				write_config();
+				unset($config['interfaces']['lan']);				
 				break;	
 			} else {
 				fclose($fp);
@@ -1576,8 +1575,10 @@ Do you want to proceed [y|n]?
 EOD;
 
 	if (strcasecmp(chop(fgets($fp)), "y") == 0) {
-
-		$config['interfaces']['lan']['if'] = $lanif;
+		if($lanif) 
+			$config['interfaces']['lan']['if'] = $lanif;
+		else 
+			unset($config['interfaces']['lan']['if']);
 		if (preg_match($g['wireless_regex'], $lanif)) {
 			if (!is_array($config['interfaces']['lan']['wireless']))
 				$config['interfaces']['lan']['wireless'] = array();
@@ -1615,7 +1616,9 @@ EOD;
 		for (; isset($config['interfaces']['opt' . ($i+1)]); $i++)
 			unset($config['interfaces']['opt' . ($i+1)]);
 
+		echo "Writing configuration...";
 		write_config();
+		echo "done.\n";
 
 		echo <<<EOD
 

@@ -1490,8 +1490,6 @@ EOD;
 		
 		if($lanif == "") {
 			if($g['minimum_nic_count'] < 2) {
-				unset($config['interfaces']['lan']);
-				unset($config['dhcpd']['lan']);
 				break;	
 			} else {
 				fclose($fp);
@@ -1576,10 +1574,13 @@ Do you want to proceed [y|n]?
 EOD;
 
 	if (strcasecmp(chop(fgets($fp)), "y") == 0) {
-		if($lanif) 
+		if($lanif) {
 			$config['interfaces']['lan']['if'] = $lanif;
-		else 
-			unset($config['interfaces']['lan']['if']);
+		} else {
+			unset($config['interfaces']['lan']);
+			unset($config['dhcpd']['lan']);			
+			unset($config['interfaces']['lan']['if']);			
+		}
 		if (preg_match($g['wireless_regex'], $lanif)) {
 			if (!is_array($config['interfaces']['lan']['wireless']))
 				$config['interfaces']['lan']['wireless'] = array();

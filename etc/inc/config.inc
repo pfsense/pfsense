@@ -1586,9 +1586,10 @@ Would you like to remove the IP LAN address and
 unload the interface now? [y|n]? 
 EODD;
 
-				if (strcasecmp(chop(fgets($fp)), "y") == 0) 
-					mwexec("/sbin/ifconfig delete " . $config['interfaces']['lan']);
-
+				if (strcasecmp(chop(fgets($fp)), "y") == 0) {
+					if($config['interfaces']['lan']['if'])
+						mwexec("/sbin/ifconfig delete " . $config['interfaces']['lan']['if']);
+				}
 				unset($config['interfaces']['lan']);
 				unset($config['dhcpd']['lan']);			
 				unset($config['interfaces']['lan']['if']);

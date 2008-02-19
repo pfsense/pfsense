@@ -456,6 +456,19 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']) or $isAdminUser == true) {
 <?php include("fbegin.inc");?>
 <?php if ($input_errors) print_input_errors($input_errors);?>
 <?php if ($savemsg) print_info_box($savemsg);?>
+<?php
+
+/* deterimine if user is not local to system */
+$islocal = false;
+foreach($config['system']['user'] as $user) 
+	$islocal = true;
+if($islocal == false) {
+	echo "Sorry, you cannot change the password for a LDAP user.";
+	include("fend.inc");
+	exit;
+}
+
+?>
   <body link="#000000" vlink="#000000" alink="#000000" onload="<?= $jsevents["body"]["onload"] ?>">
     <form action="system_usermanager.php" method="post" name="iform" id="iform">
       <table width="100%" border="0" cellpadding="6" cellspacing="0">

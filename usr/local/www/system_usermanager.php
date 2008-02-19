@@ -461,7 +461,8 @@ if (isSystemAdmin($HTTP_SERVER_VARS['AUTH_USER']) or $isAdminUser == true) {
 /* deterimine if user is not local to system */
 $islocal = false;
 foreach($config['system']['user'] as $user) 
-	$islocal = true;
+	if($user['name'] == $_SESSION['Username'])
+		$islocal = true;
 if($islocal == false) {
 	echo "Sorry, you cannot change the password for a LDAP user.";
 	include("fend.inc");

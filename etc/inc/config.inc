@@ -1577,9 +1577,22 @@ EOD;
 		if($lanif) {
 			$config['interfaces']['lan']['if'] = $lanif;
 		} else {
-			unset($config['interfaces']['lan']);
-			unset($config['dhcpd']['lan']);			
-			unset($config['interfaces']['lan']['if']);			
+
+echo <<<EODD
+
+You have chosen to remove the LAN interface.
+
+Would you like to remove the IP LAN address and
+unload the interface now? [y|n]? 
+
+EODD;
+
+				if (strcasecmp(chop(fgets($fp)), "y") == 0) 
+					mwexec("/sbin/ifconfig delete " . $config['interfaces']['lan']);
+
+				unset($config['interfaces']['lan']);
+				unset($config['dhcpd']['lan']);			
+				unset($config['interfaces']['lan']['if']);
 		}
 		if (preg_match($g['wireless_regex'], $lanif)) {
 			if (!is_array($config['interfaces']['lan']['wireless']))

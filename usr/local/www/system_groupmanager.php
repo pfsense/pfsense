@@ -75,7 +75,7 @@ function getAdminPageList() {
         $tmp['interfaces_opt.php'] = "Interfaces: Optional";
         $tmp['graph.php'] = "Diagnostics: Interface Traffic";
         $tmp['graph_cpu.php'] = "Diagnostics: CPU Utilization";
-        $tmp['exec.php'] = "Hidden: Exec";
+        $tmp['exec.php'] = "Command";
         $tmp['exec_raw.php'] = "Hidden: Exec Raw";
         $tmp['status.php'] = "Hidden: Detailed Status";
         $tmp['uploadconfig.php'] = "Hidden: Upload Configuration";

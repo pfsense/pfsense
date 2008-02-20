@@ -2620,8 +2620,8 @@ function sync_webgui_passwords() {
 					fwrite($fd, $user['password']);
 					pclose($fd);
 				} else {
-					log_error("Running: /usr/sbin/pw useradd -u {$user['uid']} -n {$user['name']} -c '{$user['fullname']}' -g {$user['groupname']} -G {$group} -H 0");
-					$fd = popen("/usr/sbin/pw useradd -u {$user['uid']} -n {$user['name']} -c '{$user['fullname']}' -g {$user['groupname']} -G {$group} -H 0", "w");
+					log_error("Running: /usr/sbin/pw useradd -u {$user['uid']} -n {$user['name']} -c '" . escape_shell_args($user['fullname']) . " -g {$user['groupname']} -G {$group} -H 0");
+					$fd = popen("/usr/sbin/pw useradd -u {$user['uid']} -n {$user['name']} -c " . escape_shell_args($user['fullname']) . " -g {$user['groupname']} -G {$group} -H 0", "w");
 					fwrite($fd, $user['password']);
 					pclose($fd);
 				}

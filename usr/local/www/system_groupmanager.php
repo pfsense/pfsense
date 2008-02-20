@@ -264,8 +264,10 @@ if ($_POST) {
 		$group['name'] = $_POST['groupname'];
 		$group['description'] = $_POST['description'];
 		unset($group['pages']);
+		
 		foreach ($pages as $fname => $title) {
-			$identifier = str_replace('.php','',$fname);
+			$identifier = str_replace('.php','XXXUMXXX',$fname);
+			$identifier = str_replace('.','XXXDOTXXX',$identifier);
 			if ($_POST[$identifier] == 'yes') {
 				$group['pages'][] = $fname;
 			}
@@ -376,7 +378,8 @@ if($_GET['act']=="new" || $_GET['act']=="edit"){
               </tr>
               <?php 
               foreach ($pages as $fname => $title) {
-              	$identifier = str_replace('.php','',$fname);x
+              	$identifier = str_replace('.php','XXXUMXXX',$fname);
+				$identifier = str_replace('.','XXXDOTXXX',$identifier);
               	?>
               	<tr><td class="listlr">
               	<input class="check" name="<?=$identifier?>" type="checkbox" id="<?=$identifier?>" value="yes" <?php if (in_array($fname,$pconfig['pages'])) echo "checked"; ?>></td>

@@ -2617,7 +2617,7 @@ function sync_webgui_passwords() {
 					fwrite($fd, $user['password']);
 					pclose($fd);
 				} else {
-					$fd = popen("/usr/sbin/pw useradd -u {$user['uid']} -n {$user['name']} -c '{$user['fullname']}' -g ${user['groupname']} -G {$group} -H 0", "w");
+					$fd = popen("/usr/sbin/pw useradd -u {$user['uid']} -n {$user['name']} -c '{$user['fullname']}' -g {$user['groupname']} -G {$group} -H 0", "w");
 					fwrite($fd, $user['password']);
 					pclose($fd);
 				}

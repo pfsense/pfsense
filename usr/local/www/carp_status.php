@@ -59,7 +59,7 @@ if($_POST['disablecarp'] <> "") {
 
 $status = get_carp_status();
 
-$pgtitle = array("Status","CARP (failover)");
+$pgtitle = array("Status","CARP");
 include("head.inc");
 
 ?>

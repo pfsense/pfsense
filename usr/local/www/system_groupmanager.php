@@ -87,6 +87,8 @@ function getAdminPageList() {
         $tmp['diag_logs_portal.php'] = "Diagnostics: Logs: Captive Portal";
         $tmp['diag_logs_dhcp.php'] = "Diagnostics: Logs: DHCP";
         $tmp['diag_logs.php'] = "Diagnostics: Logs: System";
+
+		$tmp['cg2.php'] = "CoreGUI GUI Manager";
         
         unset($tmp['system_groupmanager_edit.php']);
         unset($tmp['firewall_rules_schedule_logic.php']);

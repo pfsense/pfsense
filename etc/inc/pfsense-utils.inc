@@ -2598,9 +2598,11 @@ function sync_webgui_passwords() {
 					$group = $config['system']['group'][$groupindex[$groupname]];
 
 					if (isset($group) && is_array($group)) {
+						log_error("Running: /usr/sbin/pw groupadd -g {$group['gid']} -n {$group['name']}");
 						$fd = popen("/usr/sbin/pw groupadd -g {$group['gid']} -n {$group['name']}", "r");
 						pclose($fd);
 					} elseif (isAllowedToCopyFiles($user['name'])) {
+						log_error("Running: /usr/sbin/pw groupadd -g 100 -n scponly");
 						$fd = popen("/usr/sbin/pw groupadd -g 100 -n scponly", "r");
 						pclose($fd);
 					}
@@ -2613,10 +2615,12 @@ function sync_webgui_passwords() {
 				isSystemAdmin($user['name']) ? $group = "wheel" : $group = "staff";
 
 				if (strpos($pwread, "no such user") === false) {
+					log_error("Running: /usr/sbin/pw usermod -n {$user['name']} -g {$user['groupname']} -G {$group} -H 0");
 					$fd = popen("/usr/sbin/pw usermod -n {$user['name']} -g {$user['groupname']} -G {$group} -H 0", "w");
 					fwrite($fd, $user['password']);
 					pclose($fd);
 				} else {
+					log_error("Running: /usr/sbin/pw useradd -u {$user['uid']} -n {$user['name']} -c '{$user['fullname']}' -g {$user['groupname']} -G {$group} -H 0");
 					$fd = popen("/usr/sbin/pw useradd -u {$user['uid']} -n {$user['name']} -c '{$user['fullname']}' -g {$user['groupname']} -G {$group} -H 0", "w");
 					fwrite($fd, $user['password']);
 					pclose($fd);

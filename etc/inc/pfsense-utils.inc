@@ -2613,7 +2613,7 @@ function sync_webgui_passwords() {
 				isSystemAdmin($user['name']) ? $group = "wheel" : $group = "staff";
 
 				if (strpos($pwread, "no such user") === false) {
-					$fd = popen("/usr/sbin/pw usermod -n {$user['name']} -g ${user['groupname']} -G {$group} -H 0", "w");
+					$fd = popen("/usr/sbin/pw usermod -n {$user['name']} -g {$user['groupname']} -G {$group} -H 0", "w");
 					fwrite($fd, $user['password']);
 					pclose($fd);
 				} else {

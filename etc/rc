@@ -271,6 +271,9 @@ nohup /usr/bin/nice -n20 /usr/local/sbin/check_reload_status &
 # Start ping handler for every 240 seconds
 minicron 240 /var/run/ping_hosts.pid /etc/ping_hosts.sh
 
+chmod ug+rw /tmp/.
+chmod ug+rw /tmp/last_term_seen 
+
 echo "Bootup complete"
 
 /usr/local/bin/beep.sh start 2>&1 >/dev/null

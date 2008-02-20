@@ -377,27 +377,6 @@ function isSystemAdmin($username = "") {
   if(!function_exists("ldap_connect"))
 	return;
 
-/*  if($config['system']['webgui']['backend'] == "ldap") {
-	  log_error("Calling LDAP_GET_GROUPS from the second section");
-	$groups = ldap_get_groups($username);
-	if(is_array($groups)){
-		if(in_array("admins", $groups)) {
-			$_SESSION['isSystemAdmin'] = true;
-			return true;
-		}
-	}
-  }
-    if($config['system']['webgui']['backend'] == "ldapother") {
-	    log_error("Calling LDAP_GET_GROUPS from the first section");
-  	$groups = ldap_get_groups($username);
-  	if(is_array($groups)){
-  		if(in_array("admins", $groups)) {
-  			$_SESSION['isSystemAdmin'] = true;
-  			return true;
-  		}
-  	}
-  } */
-
   if ($username == "") { 
 		$_SESSION['isSystemAdmin'] = false; 
 		return 0; 

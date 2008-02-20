@@ -79,7 +79,6 @@ function getAdminPageList() {
         $tmp['exec_raw.php'] = "Hidden: Exec Raw";
         $tmp['status.php'] = "Hidden: Detailed Status";
         $tmp['uploadconfig.php'] = "Hidden: Upload Configuration";
-        $tmp[] = "index.php";
         $tmp['index.php'] = "*After Login/Dashboard";
         $tmp['system_usermanager.php'] = "*User Password change portal";
         $tmp['diag_logs_settings.php'] = "Diagnostics: Logs: Settings";

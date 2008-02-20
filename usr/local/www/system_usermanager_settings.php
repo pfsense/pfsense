@@ -324,7 +324,6 @@ if(!$pconfig['backend'])
 							<input name="ldapauthcontainers" id="ldapauthcontainers" size="65" value="<?=htmlspecialchars($pconfig['ldapauthcontainers']);?>">
 							<input type="button" onClick="javascript:if(openwindow('system_usermanager_settings_ldapacpicker.php') == false) alert('Popup blocker detected.  Action aborted.');" value="Select"> 
 							<br/>NOTE: Semi-Colon separated.
-							<br/>Only Supports one Container Currently!!!
 							<br/>EXAMPLE: CN=Users,DC=pfsense,DC=com;CN=OtherUsers,DC=pfsense,DC=com
 						</td>
 					</tr>

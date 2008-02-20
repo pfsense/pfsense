@@ -34,6 +34,8 @@
 
 require("guiconfig.inc");
 
+$pgtitle = array("Firewall","Traffic Shape");
+
 if (!is_array($config['shaper']['queue'])) {
 	$config['shaper']['queue'] = array();
 }

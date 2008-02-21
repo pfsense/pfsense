@@ -437,10 +437,10 @@ class altq_root_queue {
 	}
 	
 	function delete_queue() { 
-		foreach ($this->queues as $q) 
-			$q->delete_queue();			
-		
+		foreach ($this->queues as $q) {
 		$this->SetAvailableBandwidth($this->GetAvailableBandwidth() + $q->GetAvailableBandwidth());
+			$q->delete_queue();			
+		}
 		unset_object_by_reference($this->GetLink());
 	 }
 
@@ -1239,10 +1239,10 @@ class hfsc_queue extends priq_queue {
 				altq_set_default_queue($this->GetInterface(), "false");
 			cleanup_queue_from_rules($this->GetQname());
 			$parent =& $this->GetParent();
-			foreach ($this->subqueues as $q)
-				$q->delete_queue();
+			foreach ($this->subqueues as $q)  {
 			$this->SetAvailableBandwidth($this->GetAvailableBandwidth() + $q->GetAvailableBandwidth());
-
+				$q->delete_queue();
+			}
 			unset_object_by_reference($this->GetLink());
 			}
 	
@@ -1786,11 +1786,11 @@ class cbq_queue extends priq_queue {
 			if ($this->GetDefault())
 				altq_set_default_queue($this->GetInterface(), "false");
 			cleanup_queue_from_rules($this->GetQname());
-			foreach ($this->subqueues as $q)
-				$q->delete_queue();
+			foreach ($this->subqueues as $q) {
 			$this->SetAvailableBandwidth($this->GetAvailableBandwidth() + $q->GetAvailableBandwidth());
-			$parent =& $this->GetParent();
-			unset_object_by_reference($this->subqueues[$qname]->GetLink());
+				$q->delete_queue();
+			}
+			unset_object_by_reference($this->GetLink());
 		}
 	
 	function validate_input($data, &$input_errors) {

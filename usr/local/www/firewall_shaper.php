@@ -6,10 +6,6 @@
 	Copyright (C) 2008 Ermal Luçi
 	All rights reserved.
 
-	Originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 
@@ -34,22 +30,9 @@
 
 require("guiconfig.inc");
 
-$pgtitle = array("Firewall","Traffic Shape");
-
-if (!is_array($config['shaper']['queue'])) {
-	$config['shaper']['queue'] = array();
-}
+$pgtitle = array("Firewall","Traffic Shaper");
 
 read_altq_config();
-$tree = "<ul class=\"tree\" >";
-if (is_array($altq_list_queues)) {
-	foreach ($altq_list_queues as $altq) {
-        	$tree .= $altq->build_tree();
-        }
-$tree .=  get_interface_list_to_show();
-}
-$tree .= "</ul>";
-
 /* 
  * The whole logic in these code maybe can be specified.
  * If you find a better way contact me :).
@@ -76,19 +59,6 @@ if ($interface) {
 	$altq = $altq_list_queues[$interface];
 	if ($altq) {
 		$queue =& $altq->find_queue($interface, $qname);
-		if ($queue) {
-			if ($queue->GetEnabled())
-				$can_enable = true;
-			else
-				$can_enable = false;
-			if ($queue->CanHaveChilds() && $can_enable) {
-				if ($queue->GetDefault() <> "")
-					$can_add = false;
-				else
-					$can_add = true;
-			} else
-				$can_add = false;
-		}
 	} else $addnewaltq = true;
 }
 
@@ -239,10 +209,8 @@ if ($_GET) {
 			write_config();
 			touch($d_shaperconfdirty_path);
 			$can_enable = true;
-			if ($queue->GetDefault() <> "")
-                             $can_add = false;
-                        else
-                             $can_add = true;
+                        $can_add = true;
+			read_altq_config();
 		}
 		$output_form .= $altq->build_form();
 
@@ -256,8 +224,9 @@ if ($_GET) {
 				array_pop($tmppath);
 				$tmp->wconfig();
 				$can_enable = true;
+				read_altq_config();
 				if ($tmp->CanHaveChilds() && $can_enable) {
-					if ($queue->GetDefault() <> "")
+					if ($tmp->GetDefault() <> "")
                              			$can_add = false;
                         		else
                              			$can_add = true;
@@ -267,7 +236,7 @@ if ($_GET) {
 				touch($d_shaperconfdirty_path);
 				$can_enable = true;
 				if ($altq->GetScheduler() != "PRIQ") /* XXX */
-					if ($queue->GetDefault() <> "")
+					if ($tmp->GetDefault() <> "")
                                                 $can_add = false;
                                         else
                                                 $can_add = true;
@@ -311,6 +280,7 @@ if ($_GET) {
 							write_config();
 				touch($d_shaperconfdirty_path);
 				$dontshow = false;
+				read_altq_config();
                 } 
 				$output_form .= $queue->build_form();
 	} else  {
@@ -321,9 +291,29 @@ if ($_GET) {
 	$output_form .= "<p class=\"pgtitle\">" . $default_shaper_msg."</p>";
 	$dontshow = true;
 }
-	
 
-	
+if ($queue) {
+                        if ($queue->GetEnabled())
+                                $can_enable = true;
+                        else
+                                $can_enable = false;
+                        if ($queue->CanHaveChilds() && $can_enable) {
+                                if ($queue->GetDefault() <> "")
+                                        $can_add = false;
+                                else
+                                        $can_add = true;
+                        } else
+                                $can_add = false;
+}
+
+$tree = "<ul class=\"tree\" >";
+if (is_array($altq_list_queues)) {
+        foreach ($altq_list_queues as $altq) {
+                $tree .= $altq->build_tree();
+        }
+$tree .=  get_interface_list_to_show();
+}
+$tree .= "</ul>";
 
 if (!$dontshow || $newqueue) {
 

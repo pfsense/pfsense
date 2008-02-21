@@ -105,12 +105,30 @@ exec("cd $rrddbpath;/usr/bin/find -name *.rrd", $databases);
 rsort($databases);
 
 /* compare bytes/sec counters, divide bps by 8 */
-if (isset($config['ezshaper']['step2']['download'])) {
-	$downstream = (($config['ezshaper']['step2']['download']*1024)/8);
-	$upstream = (($config['ezshaper']['step2']['upload']*1024)/8);
-	$upif = $config['ezshaper']['step2']['outside_int'];
-	$downif = $config['ezshaper']['step2']['inside_int'];
+read_altq_config();
+if (is_array($altq_list_queues[$curif])) {
+	$altq =& $altq_list_queues[$curif];
+	switch ($altq->GetBwscale()) {
+        case "Gb":
+                $factor = 1000 * 1000 * 1000;
+        break;
+        case "Mb":
+                $factor = 1000 * 1000;
+        break;
+        case "Kb":
+                $factor = 1000;
+        break;
+        case "b":
+        default:
+                $factor = 1;
+        break;
+        }
+	$upstream = (($altq->GetBandwidth()*$factor)/8);
+	$downstream = $upstream; /* XXX: Ugly hack */
+	$upif = $curif;
+	$downif = "lan"; /* XXX should this be set to something else?! */
 } else {
+	$altq = array();
 	$downstream = 12500000;
 	$upstream = 12500000;
 	$upif = "wan";
@@ -488,12 +506,14 @@ elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdata
 		if (!is_array($config['shaper']['queue'])) {
 			$config['shaper']['queue'] = array();
 		}
-		$a_queues = &$config['shaper']['queue'];
+		if (count($altq) > 0) 
+			$a_queue =& $altq->get_queue_list($notused);
+		else
+			$a_queues = array();
 		$i = 0;
 		$t = 0;
 		foreach ($a_queues as $queue) {
-			$name = $queue['name'];
-			if((stristr($name, "$upif")) || (stristr($name, "up"))) {
+			$name = $queue->GetQname();
 				$color = "$colorqueuesup[$t]";
 				if($t > 0) { $stack = ":STACK"; }
 				$graphcmd .= "DEF:$name=$rrddbpath$curdatabase:$name:AVERAGE \\
@@ -503,22 +523,6 @@ elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdata
 					$AREA:$name-bits_out_neg#${color}:$name$stack \\";
 					$t++;
 					if($t > 7) { $t = 0; }
-			}
-		}
-		$graphcmd .= "COMMENT:\"\\n\" \\";
-		$stack = "";
-		foreach ($a_queues as $queue) {
-			$name = $queue['name'];
-			if((stristr($name, "$downif")) || (stristr($name, "down"))) {
-				$color = "$colorqueuesdown[$i]";
-				if($i > 0) { $stack = ":STACK"; }
-				$graphcmd .= "DEF:$name=$rrddbpath$curdatabase:$name:AVERAGE \\
-					\"CDEF:$name-bytes_in=$name,0,$downstream,LIMIT,UN,0,$name,IF\" \\
-					\"CDEF:$name-bits_in=$name-bytes_in,8,*\" \\
-					$AREA:$name-bits_in#${color}:$name$stack \\";
-					$i++;
-					if($i > 7) { $i = 0; }
-			}
 		}
 		$graphcmd .= "COMMENT:\"\\n\" \\";
 		$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
@@ -534,12 +538,14 @@ elseif((strstr($curdatabase, "-queuesdrop.rrd")) && (file_exists("$rrddbpath$cur
 		if (!is_array($config['shaper']['queue'])) {
 			$config['shaper']['queue'] = array();
 		}
-		$a_queues = &$config['shaper']['queue'];
+		if (count($altq) > 0) 
+                        $a_queue =& $altq->get_queue_list($notused);
+                else
+                        $a_queues = array();
 		$i = 0;
 		$t = 0;
 		foreach ($a_queues as $queue) {
-			$name = $queue['name'];
-			if((stristr($name, "$upif")) || (stristr($name, "up"))) {
+			$name = $queue->GetQname();
 				$color = "$colorqueuesdropup[$t]";
 				if($t > 0) { $stack = ":STACK"; }
 				$graphcmd .= "DEF:$name=$rrddbpath$curdatabase:$name:AVERAGE \\
@@ -549,22 +555,6 @@ elseif((strstr($curdatabase, "-queuesdrop.rrd")) && (file_exists("$rrddbpath$cur
 					$AREA:$name-bits_out_neg#${color}:$name \\";
 					$t++;
 					if($t > 7) { $t = 0; }
-			}
-		}
-		$graphcmd .= "COMMENT:\"\\n\" \\";
-		$stack = "";
-		foreach ($a_queues as $queue) {
-			$name = $queue['name'];
-			if((stristr($name, "$downif")) || (stristr($name, "down"))) {
-				$color = "$colorqueuesdropdown[$i]";
-				if($i > 0) { $stack = ":STACK"; }
-				$graphcmd .= "DEF:$name=$rrddbpath$curdatabase:$name:AVERAGE \\
-					\"CDEF:$name-bytes_in=$name,0,$downstream,LIMIT,UN,0,$name,IF\" \\
-					\"CDEF:$name-bits_in=$name-bytes_in,8,*\" \\
-					LINE1:$name-bits_in#${color}:$name \\";
-					$i++;
-					if($i > 7) { $i = 0; }
-			}
 		}
 		$graphcmd .= "COMMENT:\"\\n\" \\";
 		$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";

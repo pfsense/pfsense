@@ -340,6 +340,16 @@ class altq_root_queue {
 	}
 
 
+		function &get_queue_list($q = null) {
+			$qlist = array();
+
+			$qlist[$this->GetQname()] = & $this;
+			if (is_array($this->queues)) {
+				foreach ($this->queues as $queue)
+					$queue->get_queue_list(&$qlist);
+			}
+		}
+
 		function &add_queue($interface, &$queue, &$path, &$input_errors) {
 
 			if (!is_array($this->queues))
@@ -823,6 +833,14 @@ function GetEcn() {
 
 
 		
+        function &get_queue_list(&$qlist) {
+                        $qlist[$this->GetQname()] = & $this;
+                        if (is_array($this->subqueues)) {
+                                foreach ($this->subqueues as $queue)
+                                        $queue->get_queue_list(&$qlist);
+                        }
+        }
+
 	function delete_queue() {
 		unref_on_altq_queue_list($this->GetQname());
 		if ($this->GetDefault())

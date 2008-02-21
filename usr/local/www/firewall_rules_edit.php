@@ -995,7 +995,7 @@ on another rule.")?>
 <?php
 	if (!is_array($altq_list_queues))
 		read_altq_config(); /* XXX: */
-		foreach ($GLOBALS['allqueue_list'] as $q) {
+		foreach ($GLOBALS['unique_qlist'] as $q) {
 			echo "<option value=\"$q\"";
 			if ($q == $pconfig['ackqueue']) {
 				$qselected = 1;
@@ -1011,7 +1011,7 @@ on another rule.")?>
 			<select name="defaultqueue">
 <?php
 		$qselected = 0;
-		foreach ($GLOBALS['allqueue_list'] as $q) {
+		foreach ($GLOBALS['unique_qlist'] as $q) {
 			echo "<option value=\"$q\"";
 			if ($q == $pconfig['defaultqueue']) {
 				$qselected = 1;

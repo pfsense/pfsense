@@ -394,6 +394,7 @@ class altq_root_queue {
                         $this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $myBw);
 			$this->queues[$q->GetQname()] = &$q; 
 			$GLOBALS['allqueue_list'][] = $q->GetQname();
+			$GLOBALS['unique_qlist'][$q->GetQname()] = $q->GetQname(); 
 			ref_on_altq_queue_list($this->GetQname(), $q->GetQname());
 			if (is_array($queue['queue'])) {
 				foreach ($queue['queue'] as $key1 => $que) {
@@ -1239,6 +1240,7 @@ class hfsc_queue extends priq_queue {
 
 			$this->subqueues[$q->GetQname()] =& $q; //new hfsc_queue()
 			$GLOBALS['allqueue_list'][] = $q->GetQname();
+			$GLOBALS['unique_qlist'][$q->GetQname()] = $q->GetQname();
 			ref_on_altq_queue_list($this->GetQname(), $q->GetQname());
 			if (is_array($qname['queue'])) {
 				foreach ($qname['queue'] as $key1 => $que) {
@@ -1764,6 +1766,7 @@ class cbq_queue extends priq_queue {
 		$q->SetLink($path);
 		$this->subqueues[$q->GetQName()] = &$q;
 		$GLOBALS['allqueue_list'][] = $q->GetQname();
+		$GLOBALS['unique_qlist'][$q->GetQname()] = $q->GetQname();
 		ref_on_altq_queue_list($this->GetQname(), $q->GetQname());
 		if (is_array($qname['queue'])) {
 				foreach ($qname['queue'] as $key1 => $que) {
@@ -2075,6 +2078,7 @@ function read_altq_config() {
 	$altq_list_queues = array();
 	
 	$GLOBALS['allqueue_list'] = array();
+	$GLOBALS['unique_qlist'] = array();
 	
 	if (!is_array($config['shaper']['queue']))
 		return;

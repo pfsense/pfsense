@@ -1594,6 +1594,7 @@ EODD;
 				unset($config['interfaces']['lan']);
 				unset($config['dhcpd']['lan']);			
 				unset($config['interfaces']['lan']['if']);
+				unset($config['interfaces']['wan']['blockpriv']);
 		}
 		if (preg_match($g['wireless_regex'], $lanif)) {
 			if (!is_array($config['interfaces']['lan']['wireless']))

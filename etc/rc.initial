@@ -78,6 +78,7 @@ echo "10)  Filter Logs"
 echo "11)  Restart webConfigurator"
 echo "12)  pfSense PHP shell"
 echo "13)  Upgrade from console"
+echo "14)  Enable/Disable SSHD"
 for i in /var/db/pfi/capable_*; do
     if [ -f $i -a ! -L /cf/conf ]; then
 	echo "98)  Move configuration file to removable device"
@@ -138,7 +139,10 @@ case ${opmode} in
 13) 
 	php -f /etc/rc.initial.firmware_update
 	;;
-14)
+14) 
+		php -f /etc/rc.initial.toggle_sshd
+		;;	
+15)
 	/etc/rc.banner
 	;;
 98)

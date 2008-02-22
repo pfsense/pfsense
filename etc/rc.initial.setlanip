@@ -119,14 +119,20 @@
 	$config['interfaces'][$interface]['subnet'] = $intbits;
 	
 	if($interface <> "wan" || !$config['interfaces']['lan']) {
-		do {
-	    $good = false;
-		  $upperifname = strtoupper($interface);
-		  echo "\n" . gettext("Do you want to enable the DHCP server on {$upperifname}? [y|n]") . "  ";
-	    $yn = strtolower(chop(fgets($fp)));
-	    if ($yn[0] == "y" or $yn[0] == "n")
-	      $good = true;
-	  } while (!$good);
+		/* only allow DHCP server to be enabled when static IP is
+		  configured on this interface */
+		/* TODO:  is this inadequate because the new config isn't written
+		  out yet at this point?  */
+		if (is_ipaddr($config['interfaces']['$interface']['ipaddr'])) {
+			do {
+				$good = false;
+				$upperifname = strtoupper($interface);
+				echo "\n" . gettext("Do you want to enable the DHCP server on {$upperifname}? [y|n]") . "  ";
+				$yn = strtolower(chop(fgets($fp)));
+				if ($yn[0] == "y" or $yn[0] == "n")
+				$good = true;
+			} while (!$good);
+		}
 	} else {
 		$yn = "n";
 	}
@@ -155,6 +161,9 @@
 		$config['dhcpd'][$interface]['range']['from'] = $dhcpstartip;
 		$config['dhcpd'][$interface]['range']['to'] = $dhcpendip;
 	} else {
+		/* TODO - this line is causing a "Fatal error: Cannot unset
+		  string offsets in /etc/rc.initial.setlanip" on below line
+		  number */
 		unset($config['dhcpd'][$interface]['enable']);
 	}
 

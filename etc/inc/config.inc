@@ -1510,45 +1510,46 @@ EOD;
 	$i = 0;
 	$optif = array();
 
-	if($config['interfaces']['lan']) 
-	while (1) {
-		if ($optif[$i])
-			$i++;
-		$i1 = $i + 1;
-
-		if($config['interfaces']['opt' . $i1]['descr'])
-			echo "\nOptional interface {$i1} description found: {$config['interfaces']['opt' . $i1]['descr']}";
-
-		echo "\nEnter the Optional {$i1} interface name or 'a' for auto-detection\n" .
-			"(or nothing if finished): ";
-
-		$optif[$i] = chop(fgets($fp));
-
-		if ($optif[$i]) {
-			if ($optif[$i] === "a") {
-				$ad = autodetect_interface("Optional " . $i1, $fp);
-				if ($ad)
-					$optif[$i] = $ad;
-				else
+	if($lanif <> "") {
+		while (1) {
+			if ($optif[$i])
+				$i++;
+			$i1 = $i + 1;
+	
+			if($config['interfaces']['opt' . $i1]['descr'])
+				echo "\nOptional interface {$i1} description found: {$config['interfaces']['opt' . $i1]['descr']}";
+	
+			echo "\nEnter the Optional {$i1} interface name or 'a' for auto-detection\n" .
+				"(or nothing if finished): ";
+	
+			$optif[$i] = chop(fgets($fp));
+	
+			if ($optif[$i]) {
+				if ($optif[$i] === "a") {
+					$ad = autodetect_interface("Optional " . $i1, $fp);
+					if ($ad)
+						$optif[$i] = $ad;
+					else
+						unset($optif[$i]);
+				} else if (!array_key_exists($optif[$i], $iflist)) {
+					echo "\nInvalid interface name '{$optif[$i]}'\n";
 					unset($optif[$i]);
-			} else if (!array_key_exists($optif[$i], $iflist)) {
-				echo "\nInvalid interface name '{$optif[$i]}'\n";
+					continue;
+				}
+			} else {
 				unset($optif[$i]);
-				continue;
+				break;
 			}
-		} else {
-			unset($optif[$i]);
-			break;
 		}
 	}
-
+	
 	/* check for double assignments */
 	$ifarr = array_merge(array($lanif, $wanif), $optif);
-
+	
 	for ($i = 0; $i < (count($ifarr)-1); $i++) {
-		for ($j = ($i+1); $j < count($ifarr); $j++) {
-			if ($ifarr[$i] == $ifarr[$j]) {
-				echo <<<EOD
+	for ($j = ($i+1); $j < count($ifarr); $j++) {
+		if ($ifarr[$i] == $ifarr[$j]) {
+			echo <<<EOD
 
 Error: you cannot assign the same interface name twice!
 
@@ -1582,7 +1583,7 @@ echo <<<EODD
 
 You have chosen to remove the LAN interface.
 
-Would you like to remove the IP LAN address and
+Would you like to remove the LAN IP address and
 unload the interface now? [y|n]? 
 EODD;
 

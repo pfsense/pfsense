@@ -34,19 +34,44 @@ function killbypid($pidfile) {
 	sigkillbypid($pidfile, "TERM");
 }
 
+function isvalidpid($pid) {
+	$running = `ps -p $pid | wc -l`;
+	if(intval($running) > 1)
+		return true;
+	else 
+		return false;
+}
+
+function isvalidproc($proc) {
+	$running = `ps awux | grep $proc | grep -v grep | wc -l`;
+	if(intval($running) > 1)
+		return true;
+	else 
+		return false;
+}
+
 /* sigkill a process by pid file */
+/* return 1 for success and 0 for a failure */
 function sigkillbypid($pidfile, $sig) {
-	if (file_exists($pidfile)) {
+	if (is_file($pidfile)) {
 		$pid = trim(file_get_contents($pidfile));
-		mwexec("/bin/kill -s $sig {$pid}");
-	} else {
-		mwexec("/bin/kill -s $sig {$pidfile}");
+		if(isvalidpid($pid))
+			return mwexec("/bin/kill -s $sig {$pid}");
 	}
+
+	return 0;
+}
+
+/* kill a process by name */
+function sigkillbyname($procname, $sig) {
+	if(isvalidproc($procname))
+		return mwexec("/usr/bin/killall -{$sig} " . escapeshellarg($procname));
 }
 
 /* kill a process by name */
 function killbyname($procname) {
-	mwexec("/usr/bin/killall " . escapeshellarg($procname));
+	if(isvalidproc($procname))
+		mwexec("/usr/bin/killall " . escapeshellarg($procname));
 }
 
 /* return the subnet address given a host address and a subnet bit count */

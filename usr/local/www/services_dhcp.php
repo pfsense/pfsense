@@ -50,6 +50,10 @@ if($config['interfaces']['lan']) {
 	if(!$iflist)
 		$iflist = array("lan" => "LAN");
 } else {
+	/* if WAN is configured for anything other than static
+	  IP, do not allow DHCP server to be configured. */
+	if (!is_ipaddr($config['interfaces']['wan']['ipaddr']))
+		$singleif_nostaticip = true;
 	$iflist = array("wan" => strtoupper($g['wan_interface_name']));
 }
 
@@ -369,6 +373,13 @@ function show_netboot_config() {
 		echo "</body>";
 		echo "</html>";
 		exit;
+	}
+	if ($singleif_nostaticip) {
+		echo "<b>The DHCP Server can only be enabled on interfaces configured with static IP addresses. Your interface is not configured with a static IP.</b>";
+		include("fend.inc"); 
+		echo "</body>";
+		echo "</html>";
+		exit;		
 	}
 ?>
 <?php if (file_exists($d_staticmapsdirty_path)): ?><p>

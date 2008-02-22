@@ -42,24 +42,30 @@
 	if($config['interfaces']['lan'])  {
 		$ifdescrs[] = "lan";
 	}
-	for ($j = 1; isset ($config['interfaces']['opt' . $j]); $j++) {
+	for ($j = 0; isset ($config['interfaces']['opt' . $j]); $j++) {
 		if(isset($config['interfaces']['opt' . $j]['enable']))
 			$ifdescrs['opt' . $j] = filter_get_opt_interface_descr("opt" . $j);
 	}
 	if($config['interfaces']['lan']) 
 		$j++;
-	// incriment for wan
+	// increment for wan
 	$j++;
 	
-	/* grab interface that we will operate on */
-	echo "Available interfaces:\n\n";
-	$x=1;
-	foreach($ifdescrs as $iface) {
-		echo "{$x} - " . strtoupper($iface) . "\n";
-		$x++;
+	/* grab interface that we will operate on, unless there is only one
+	interface */
+	if ($j > 1) {
+		echo "Available interfaces:\n\n";
+		$x=1;
+		foreach($ifdescrs as $iface) {
+			echo "{$x} - " . strtoupper($iface) . "\n";
+			$x++;
+		}
+		echo "\nEnter the number of the interface you wish to configure: ";
+		$intnum = chop(fgets($fp));	
+	} else {
+		$intnum = $j;
 	}
-	echo "\nEnter interface # that you would like to configure: ";
-	$intnum = chop(fgets($fp));
+	
 	
 	if($intnum < 1) 
 		exit;
@@ -75,7 +81,8 @@
 	do {
 		
 		if($interface == "wan") {
-			echo gettext("Would you like to enable DHCP on the {$interface} Press <ENTER> or n for no:") . "\n> ";
+			$upperifname = strtoupper($interface);
+			echo gettext("Configure {$upperifname} interface via DHCP?  [y|n]") . "\n> ";
 			$intdhcp = chop(fgets($fp));
 			if(strtolower($intdhcp) == "y" || strtolower($intdhcp) == "yes") {
 				$intip = "DHCP";
@@ -86,33 +93,36 @@
 		
 		if($isintdhcp == false or $interface <> "wan") {
 			do {
-				echo "\n" . gettext("Enter the new {$interface} IPv4 address.  Press <ENTER> for none:") . "\n> ";
+				$upperifname = strtoupper($interface);
+				echo "\n" . gettext("Enter the new {$upperifname} IPv4 address.  Press <ENTER> for none:") . "\n> ";
 				$intip = chop(fgets($fp));
 				$addr_blank = false;
 			} while (!(is_ipaddr($intip) || $intip == ''));
+		  	if ($intip != '') {
+		  		echo "\n" . gettext("Subnet masks are entered as bit counts (as in CIDR notation) in {$g['product_name']}.") . "\n";
+		  		echo "e.g. 255.255.255.0 = 24\n";
+		  		echo "     255.255.0.0   = 16\n";
+		  		echo "     255.0.0.0     = 8\n";
+	
+		  		do {
+					$upperifname = strtoupper($interface);
+		  			echo "\n" . gettext("Enter the new {$upperifname} IPv4 subnet bit count:") . "\n> ";
+		  			$intbits = chop(fgets($fp));
+		  		} while (!is_numeric($intbits) || ($intbits < 1) || ($intbits > 31));
+		  	} 
 		}
 
-	  	if ($intip != '') {
-	  		echo "\n" . gettext("Subnet masks are entered as bit counts (as in CIDR notation) in {$g['product_name']}.") . "\n";
-	  		echo "e.g. 255.255.255.0 = 24\n";
-	  		echo "     255.255.0.0   = 16\n";
-	  		echo "     255.0.0.0     = 8\n";
-
-	  		do {
-	  			echo "\n" . gettext("Enter the new {$interface} IPv4 subnet bit count:") . "\n> ";
-	  			$intbits = chop(fgets($fp));
-	  		} while (!is_numeric($intbits) || ($intbits < 1) || ($intbits > 31));
-	  	} 
 
 	} while ($addr_blank);
 
 	$config['interfaces'][$interface]['ipaddr'] = $intip;
 	$config['interfaces'][$interface]['subnet'] = $intbits;
 	
-	if($interface <> "wan") {
+	if($interface <> "wan" || !$config['interfaces']['lan']) {
 		do {
 	    $good = false;
-		  echo "\n" . gettext("Do you want to enable the DHCP server on {$interface} [y|n]?") . "  ";
+		  $upperifname = strtoupper($interface);
+		  echo "\n" . gettext("Do you want to enable the DHCP server on {$upperifname}? [y|n]") . "  ";
 	    $yn = strtolower(chop(fgets($fp)));
 	    if ($yn[0] == "y" or $yn[0] == "n")
 	      $good = true;

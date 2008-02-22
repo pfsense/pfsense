@@ -34,11 +34,11 @@ require("config.inc");
 
 $fp = fopen('php://stdin', 'r');
 
-if (isset($config['system']['ssh']['enable'])) {
+if (isset($config['system']['enablesshd'])) {
 	echo "SSHD is currently enabled.  Would you like to disable? [y/n]? ";
 	$yn = chop(fgets($fp));
 	if ($yn[0] == "y") {
-		unset($config['system']['ssh']['enable']);
+		unset($config['system']['enablesshd']);
 		echo "\nWriting configuration...";
 		write_config();
 		echo "\n\nDisabling SSHD...";
@@ -46,11 +46,11 @@ if (isset($config['system']['ssh']['enable'])) {
 		echo "\n";
 	}
 	
-else {
+} else {
 	echo "SSHD is currently disabled.  Would you like to enable? [y/n]? ";
 	$yn = chop(fgets($fp));
 	if ($yn[0] == "y") {
-		$config['system']['ssh']['enable'] = true;
+		$config['system']['enablesshd'] = true;
 		echo "\nWriting configuration...";
 		write_config();
 		echo "\n\nEnabling SSHD...";
@@ -60,4 +60,3 @@ else {
 }
 
 fclose($fp);
-

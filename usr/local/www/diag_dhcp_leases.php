@@ -215,7 +215,7 @@ foreach($config['interfaces'] as $ifname => $ifarr) {
 			$slease['start'] = gmdate("M d Y H:i:s", time());
 			$slease['end'] = gmdate("M d Y H:i:s", time());
 			$slease['end'] = gmdate("M d Y H:i:s", strtotime('+5 minutes'));
-			$slease['hostname'] = $static['hostname'];
+			$slease['hostname'] = htmlentities($static['hostname']);
 			$slease['act'] = "static";
 			$online = exec("/usr/sbin/arp -an |/usr/bin/grep {$slease['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
 			if ($online == 1) {
@@ -317,7 +317,7 @@ foreach ($leases as $data) {
                 } else {
                 	echo "<td class=\"listr\">{$fspans}{$data['mac']}{$fspane}&nbsp;</td>\n";
                 }
-                echo "<td class=\"listr\">{$fspans}{$data['hostname']}{$fspane}&nbsp;</td>\n";
+                echo "<td class=\"listr\">{$fspans}"  . htmlentities($data['hostname']) . "{$fspane}&nbsp;</td>\n";
                 echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['start']) . "{$fspane}&nbsp;</td>\n";
                 echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['end']) . "{$fspane}&nbsp;</td>\n";
                 echo "<td class=\"listr\">{$fspans}{$data['online']}{$fspane}&nbsp;</td>\n";

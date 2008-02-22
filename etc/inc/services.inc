@@ -84,6 +84,9 @@ function services_dhcpd_configure() {
 	$dhcpdenable = false;
 	if(is_array($dhcpdcfg))
 		foreach ($dhcpdcfg as $dhcpif => $dhcpifconf) {
+			if($dhcpif == "lan") 
+				if(!$config['interfaces']['lan']) 	
+					continue;
 			if (isset($dhcpifconf['enable']) &&
 				(($dhcpif == "lan") ||
 				(isset($config['interfaces'][$dhcpif]['enable']) &&

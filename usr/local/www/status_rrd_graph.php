@@ -113,7 +113,7 @@ include("head.inc");
 			        $tab_array[] = array("Quality", $tabactive, "status_rrd_graph.php?cat=quality");
 				if($curcat == "queues") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array("Queues", $tabactive, "status_rrd_graph.php?cat=queues");
-				if($curcat == "queuesdrop") { $tabactive = True; } else { $tabactive = False; }
+				if($curcat == "queuedrops") { $tabactive = True; } else { $tabactive = False; }
                                 $tab_array[] = array("QueueDrops", $tabactive, "status_rrd_graph.php?cat=queuedrops");
 				if($curcat == "wireless") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array("Wireless", $tabactive, "status_rrd_graph.php?cat=wireless");

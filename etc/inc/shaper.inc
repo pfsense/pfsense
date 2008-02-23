@@ -541,7 +541,7 @@ class altq_root_queue {
 			$form .= $this->GetInterface() . "&queue=";
 			$form .= $this->GetQname() . "&action=delete\">";
 			$form .= "<img src=\"";
-			$form .= "./themes/".$g['theme']."/images/icons/icon_minus.gif\"";
+			$form .= "./themes/".$g['theme']."/images/icons/icon_x.gif\"";
 			$form .= " width=\"17\" height=\"17\" border=\"0\" title=\"Disable shaper on i
 nterface\">";
 			$form .= "<span>Disable shaper from interface</span></a></td></tr>";
@@ -1074,7 +1074,7 @@ function GetEcn() {
 			$form .= $this->GetInterface() . "&queue=";
 			$form .= $this->GetQname() . "&action=delete\">";
 			$form .= "<img src=\"";
-			$form .= "./themes/".$g['theme']."/images/icons/icon_minus.gif\"";
+			$form .= "./themes/".$g['theme']."/images/icons/icon_x.gif\"";
 			$form .= " width=\"17\" height=\"17\" border=\"0\" title=\"Delete queue from interface\">";
 			$form .= "<span>Delete queue from interface</span></a></td></tr>";
 		

@@ -6,10 +6,6 @@
 	Copyright (C) 2008 Ermal Luçi
 	All rights reserved.
 
-	Originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 
@@ -39,20 +35,14 @@ if($_GET['reset'] <> "") {
 	exit;
 }
 
-if (!is_array($config['shaper']['queue'])) {
-	$config['shaper']['queue'] = array();
-}
-
-/* on HEAD it has to use vc_* api on variable_cache.inc */
-if (!is_array($GLOBALS['allqueue_list'])) {
-        $GLOBALS['allqueue_list'] = array();
-}
-
-/* XXX: NOTE: When dummynet is implemented these will be moved from here */
 read_altq_config();
+$qlist =& get_unique_queue_list();
+
+if (!is_array($qlist)) 
+	$qlist = array();
 
 $tree = "<ul class=\"tree\" >";
-foreach ($GLOBALS['allqueue_list'] as $queue) {
+foreach ($qlist as $queue => $qkey) {
 	$tree .= "<li><a href=\"firewall_shaper_queues.php?queue={$queue}&action=show\" >{$queue}</a></li>";
 }
 $tree .= "</ul>";

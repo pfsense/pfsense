@@ -348,6 +348,7 @@ class altq_root_queue {
 				foreach ($this->queues as $queue)
 					$queue->get_queue_list(&$qlist);
 			}
+			return $qlist;
 		}
 
 		function &add_queue($interface, &$queue, &$path, &$input_errors) {
@@ -393,8 +394,6 @@ class altq_root_queue {
 			$q->SetAvailableBandwidth($myBw);
                         $this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $myBw);
 			$this->queues[$q->GetQname()] = &$q; 
-			$GLOBALS['allqueue_list'][] = $q->GetQname();
-			$GLOBALS['unique_qlist'][$q->GetQname()] = $q->GetQname(); 
 			ref_on_altq_queue_list($this->GetQname(), $q->GetQname());
 			if (is_array($queue['queue'])) {
 				foreach ($queue['queue'] as $key1 => $que) {
@@ -838,7 +837,7 @@ function GetEcn() {
                         $qlist[$this->GetQname()] = & $this;
                         if (is_array($this->subqueues)) {
                                 foreach ($this->subqueues as $queue)
-                                        $queue->get_queue_list(&$qlist);
+                                        $queue->get_queue_list($qlist);
                         }
         }
 
@@ -1239,8 +1238,6 @@ class hfsc_queue extends priq_queue {
                         $this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $myBw);
 
 			$this->subqueues[$q->GetQname()] =& $q; //new hfsc_queue()
-			$GLOBALS['allqueue_list'][] = $q->GetQname();
-			$GLOBALS['unique_qlist'][$q->GetQname()] = $q->GetQname();
 			ref_on_altq_queue_list($this->GetQname(), $q->GetQname());
 			if (is_array($qname['queue'])) {
 				foreach ($qname['queue'] as $key1 => $que) {
@@ -1765,8 +1762,6 @@ class cbq_queue extends priq_queue {
 		$q->SetEnabled("on");
 		$q->SetLink($path);
 		$this->subqueues[$q->GetQName()] = &$q;
-		$GLOBALS['allqueue_list'][] = $q->GetQname();
-		$GLOBALS['unique_qlist'][$q->GetQname()] = $q->GetQname();
 		ref_on_altq_queue_list($this->GetQname(), $q->GetQname());
 		if (is_array($qname['queue'])) {
 				foreach ($qname['queue'] as $key1 => $que) {
@@ -2037,6 +2032,35 @@ function altq_get_default_queue($interface) {
 		return $altq_tmp->GetDefaultQueuePresent(); 
 }
 
+function altq_check_default_queues() {
+	global $altq_list_queues;
+
+	$count = 0;
+	if (is_array($altq_list_queues)) {
+		foreach($altq_list_queues as $altq) {
+			if ($altq->GetDefaultQueuePresent())
+				$count++;
+		}
+	}
+	else  $count++;;
+	
+	return 0;
+}
+
+function &get_unique_queue_list() {
+	global $altq_list_queues;
+	
+	$qlist = array();
+	if (is_array($altq_list_queues)) {
+		foreach ($altq_list_queues as $altq) {
+			$tmplist =& $altq->get_queue_list();
+			foreach ($tmplist as $qname => $link)
+				$qlist[$qname] = $link;	
+		}
+	}
+	return $qlist;
+}
+
 function get_is_ftp_queue($interface, $qname) {
 	global $config;
 
@@ -2077,9 +2101,6 @@ function read_altq_config() {
 
 	$altq_list_queues = array();
 	
-	$GLOBALS['allqueue_list'] = array();
-	$GLOBALS['unique_qlist'] = array();
-	
 	if (!is_array($config['shaper']['queue']))
 		return;
 
@@ -2091,7 +2112,6 @@ function read_altq_config() {
 				$root->ReadConfig($conf);
 		array_push($path, $key);
 		$root->SetLink($path);
-		$GLOBALS['allqueue_list'][] = $root->GetQname();
 		if (is_array($conf['queue'])) {
 			foreach ($conf['queue'] as $key1 => $q) {
 				array_push($path, $key1);

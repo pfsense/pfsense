@@ -993,9 +993,11 @@ on another rule.")?>
 			<td width="78%" class="vtable">
 			<select name="ackqueue">
 <?php
-	if (!is_array($altq_list_queues))
 		read_altq_config(); /* XXX: */
-		foreach ($GLOBALS['unique_qlist'] as $q) {
+		$qlist =& get_unique_queue_list();
+		if (!is_array($qlist))
+			$qlist = array();
+		foreach ($qlist as $q => $qkey) {
 			echo "<option value=\"$q\"";
 			if ($q == $pconfig['ackqueue']) {
 				$qselected = 1;
@@ -1011,7 +1013,7 @@ on another rule.")?>
 			<select name="defaultqueue">
 <?php
 		$qselected = 0;
-		foreach ($GLOBALS['unique_qlist'] as $q) {
+		foreach ($qlist as $q => $qkey) {
 			echo "<option value=\"$q\"";
 			if ($q == $pconfig['defaultqueue']) {
 				$qselected = 1;

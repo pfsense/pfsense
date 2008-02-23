@@ -47,6 +47,8 @@ if ($_GET['option']) {
 		$curoption = "processor";
 	} else if($curcat == "queues") {
 		$curoption = "queues";
+	} else if($curcat == "queuedrops") {
+		$curoption = "queuedrops";
 	} else {
 		$curoption = "wan";
 	}
@@ -111,6 +113,8 @@ include("head.inc");
 			        $tab_array[] = array("Quality", $tabactive, "status_rrd_graph.php?cat=quality");
 				if($curcat == "queues") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array("Queues", $tabactive, "status_rrd_graph.php?cat=queues");
+				if($curcat == "queuesdrop") { $tabactive = True; } else { $tabactive = False; }
+                                $tab_array[] = array("QueueDrops", $tabactive, "status_rrd_graph.php?cat=queuedrops");
 				if($curcat == "wireless") { $tabactive = True; } else { $tabactive = False; }
 			        $tab_array[] = array("Wireless", $tabactive, "status_rrd_graph.php?cat=wireless");
 				if($curcat == "settings") { $tabactive = True; } else { $tabactive = False; }
@@ -141,11 +145,6 @@ include("head.inc");
 						$replace = array(" :: ", "", $friendly);
 						switch($curcat) {
 							case "system":
-								$optionc = str_replace($search, $replace, $optionc[1]);
-								echo "<option value=\"$optionc\"";
-								$prettyprint = ucwords(str_replace($search, $replace, $optionc));
-								break;
-							case "queues":
 								$optionc = str_replace($search, $replace, $optionc[1]);
 								echo "<option value=\"$optionc\"";
 								$prettyprint = ucwords(str_replace($search, $replace, $optionc));

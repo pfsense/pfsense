@@ -106,7 +106,7 @@ rsort($databases);
 
 /* compare bytes/sec counters, divide bps by 8 */
 read_altq_config();
-if (is_array($altq_list_queues[$curif])) {
+if ($altq_list_queues[$curif]) {
 	$altq =& $altq_list_queues[$curif];
 	switch ($altq->GetBwscale()) {
         case "Gb":
@@ -128,7 +128,7 @@ if (is_array($altq_list_queues[$curif])) {
 	$upif = $curif;
 	$downif = "lan"; /* XXX should this be set to something else?! */
 } else {
-	$altq = array();
+	$altq = null;
 	$downstream = 12500000;
 	$upstream = 12500000;
 	$upif = "wan";
@@ -503,17 +503,13 @@ elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdata
 		--color SHADEA#eeeeee --color SHADEB#eeeeee \\
 		--title \"`hostname` - $prettydb - $hperiod - $havg average\" \\
 		--height 200 --width 620 -x \"$scale\" \\";
-		if (!is_array($config['shaper']['queue'])) {
-			$config['shaper']['queue'] = array();
-		}
-		if (count($altq) > 0) 
-			$a_queue =& $altq->get_queue_list($notused);
+		if ($altq) 
+			$a_queues =& $altq->get_queue_list();
 		else
 			$a_queues = array();
 		$i = 0;
 		$t = 0;
-		foreach ($a_queues as $queue) {
-			$name = $queue->GetQname();
+		foreach ($a_queues as $name => $q) {
 				$color = "$colorqueuesup[$t]";
 				if($t > 0) { $stack = ":STACK"; }
 				$graphcmd .= "DEF:$name=$rrddbpath$curdatabase:$name:AVERAGE \\
@@ -527,7 +523,7 @@ elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdata
 		$graphcmd .= "COMMENT:\"\\n\" \\";
 		$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t`date +\"%b %d %H\:%M\:%S %Y\"`\"";
 	}
-elseif((strstr($curdatabase, "-queuesdrop.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+elseif((strstr($curdatabase, "-queuedrops.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for queuedrop stats */
 	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$interval.png \\
 		--start -$seconds -e -$average \\
@@ -535,17 +531,13 @@ elseif((strstr($curdatabase, "-queuesdrop.rrd")) && (file_exists("$rrddbpath$cur
 		--color SHADEA#eeeeee --color SHADEB#eeeeee \\
 		--title \"`hostname` - $prettydb - $hperiod - $havg average\" \\
 		--height 200 --width 620 -x \"$scale\" \\";
-		if (!is_array($config['shaper']['queue'])) {
-			$config['shaper']['queue'] = array();
-		}
-		if (count($altq) > 0) 
-                        $a_queue =& $altq->get_queue_list($notused);
+		if ($altq) 
+                        $a_queues =& $altq->get_queue_list();
                 else
                         $a_queues = array();
 		$i = 0;
 		$t = 0;
-		foreach ($a_queues as $queue) {
-			$name = $queue->GetQname();
+		foreach ($a_queues as $name => $q) {
 				$color = "$colorqueuesdropup[$t]";
 				if($t > 0) { $stack = ":STACK"; }
 				$graphcmd .= "DEF:$name=$rrddbpath$curdatabase:$name:AVERAGE \\

@@ -34,6 +34,27 @@
 	require_once("config.inc");
 	require_once("functions.inc");
 
+	function prompt_for_enable_dhcp_server() {
+		global $config, $fp;
+		if($interface == "wan") {
+			if($config['interfaces'['lan']) 
+				return "n";
+		}
+		/* only allow DHCP server to be enabled when static IP is
+		  configured on this interface */
+		if (is_ipaddr($config['interfaces']['$interface']['ipaddr'])) {
+			do {
+				$good = false;
+				$upperifname = strtoupper($interface);
+				echo "\n" . gettext("Do you want to enable the DHCP server on {$upperifname}? [y|n]") . "  ";
+				$yn = strtolower(chop(fgets($fp)));
+				if ($yn[0] == "y" or $yn[0] == "n")
+				$good = true;
+			} while (!$good);
+		}
+		return $yn;
+	}
+
 	$fp = fopen('php://stdin', 'r');
 	$addr_blank = false;
 
@@ -118,25 +139,8 @@
 	$config['interfaces'][$interface]['ipaddr'] = $intip;
 	$config['interfaces'][$interface]['subnet'] = $intbits;
 	
-	if($interface <> "wan" || !$config['interfaces']['lan']) {
-		/* only allow DHCP server to be enabled when static IP is
-		  configured on this interface */
-		/* TODO:  is this inadequate because the new config isn't written
-		  out yet at this point?  */
-		if (is_ipaddr($config['interfaces']['$interface']['ipaddr'])) {
-			do {
-				$good = false;
-				$upperifname = strtoupper($interface);
-				echo "\n" . gettext("Do you want to enable the DHCP server on {$upperifname}? [y|n]") . "  ";
-				$yn = strtolower(chop(fgets($fp)));
-				if ($yn[0] == "y" or $yn[0] == "n")
-				$good = true;
-			} while (!$good);
-		}
-	} else {
-		$yn = "n";
-	}
-
+	$yn = prompt_for_enable_dhcp_server();
+	
 	// TODO: Add DHCP IPv6 support
 	if ($yn == "y") {
 		do {

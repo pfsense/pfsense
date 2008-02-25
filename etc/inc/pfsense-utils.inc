@@ -3304,6 +3304,7 @@ function enable_rrd_graphing() {
                                                 $factor = 1;
                                                 break;
                                         }
+					$qbandwidth = $altq->GetBandwidth() * $factor;
 					$qlist =& $altq->get_queue_list($notused);
 					if (!file_exists("$rrddbpath$ifname$queues")) {
 						/* create rrd file if it does not exist */
@@ -3312,7 +3313,6 @@ function enable_rrd_graphing() {
 						/* loop list of shaper queues */
 						$q = 0;
 						foreach ($qlist as $qname => $q) {
-							$qbandwidth = $altq->GetBandwidth() * $factor;
 							$rrdcreate .= "DS:$qname:COUNTER:$queuesvalid:0:$qbandwidth ";
 						}
 
@@ -3336,7 +3336,6 @@ function enable_rrd_graphing() {
 						/* loop list of shaper queues */
 						$q = 0;
 						foreach ($qlist as $qname => $q) {
-                                                        $qbandwidth = $altq->GetBandwidth() * $factor;
 							$rrdcreate .= "DS:$qname:COUNTER:$queuesdropvalid:0:$qbandwidth ";
 						}
 
@@ -3356,12 +3355,11 @@ function enable_rrd_graphing() {
 						$rrdqcommand = "-t ";
 						$rrducommand = "N";
 						$q = 0;
-						foreach ($qlist as $q) {
-                                                        $queue = $q->GetQname();
+						foreach ($qlist as $qname => $q) {
 							if($q == 0) {
-								$rrdqcommand .= "{$queue}";
+								$rrdqcommand .= "{$qname}";
 							} else {
-								$rrdqcommand .= ":{$queue}";
+								$rrdqcommand .= ":{$qname}";
 							}
 							$q++;
 							$rrducommand .= ":U";

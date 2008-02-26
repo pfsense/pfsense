@@ -297,7 +297,8 @@ if ($queue) {
                                 $can_enable = true;
                         else
                                 $can_enable = false;
-                        if ($queue->CanHaveChilds() && $can_enable) {
+                        if ($queue->CanHaveChilds() && $can_enable && 
+				$altq->GetQname() <> $queue->GetQname()) {
                                 if ($queue->GetDefault() <> "")
                                         $can_add = false;
                                 else

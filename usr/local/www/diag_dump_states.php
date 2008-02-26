@@ -31,10 +31,10 @@ require_once("guiconfig.inc");
 $pgtitle = "Diagnostics: Show States";
 include("head.inc");
 
-$srcip  = htmlentities($_GET['srcip']);
-$dstip  = htmlentities($_GET['dstip']);
-$action = htmlentities($_GET['action']);
-$filter = htmlentities($_GET['filter']);
+$srcip  = escapeshellarg($_GET['srcip']);
+$dstip  = escapeshellarg($_GET['dstip']);
+$action = escapeshellarg($_GET['action']);
+$filter = escapeshellarg($_GET['filter']);
 
 /* handle AJAX operations */
 if($_GET['action']) {

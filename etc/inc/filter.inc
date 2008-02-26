@@ -2382,8 +2382,8 @@ block quick from any to <snort2c> label "Block snort2c hosts"
 
 # loopback
 anchor "loopback"
-pass in quick on \$loopback all label "pass loopback"
-pass out quick on \$loopback all label "pass loopback"
+pass in on \$loopback all label "pass loopback"
+pass out on \$loopback all label "pass loopback"
 
 # package manager early specific hook
 anchor "packageearly"

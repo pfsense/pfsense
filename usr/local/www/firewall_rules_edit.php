@@ -108,6 +108,9 @@ if (isset($id) && $a_filter[$id]) {
 		$pconfig['dstmask'], $pconfig['dstnot'],
 		$pconfig['dstbeginport'], $pconfig['dstendport']);
 
+	if ($a_filter[$id]['dscp'] <> "")
+		$pconfig['dscp'] = $a_filter[$id]['dscp'];
+
 	$pconfig['disabled'] = isset($a_filter[$id]['disabled']);
 	$pconfig['log'] = isset($a_filter[$id]['log']);
 	$pconfig['descr'] = $a_filter[$id]['descr'];
@@ -384,6 +387,10 @@ if ($_POST) {
                         $filterent['disabled'] = true;
                 else
                         unset($filterent['disabled']);
+		
+		if ($_POST['dscp'])
+			$filterent['dscp'] = $_POST['dscp'];
+
                 if ($_POST['log'])
                         $filterent['log'] = true;
                 else
@@ -812,6 +819,14 @@ include("head.inc");
 				</span>
 			</td>
 		</tr>
+                <tr>
+                        <td width="22%" valign="top" class="vncellreq">Diffserv Code Point</td>
+                        <td width="78%" class="vtable">
+                                <input name="dscp" id="dscp" value="<?=htmlspecialchars($pconfig['dscp']);?>">
+                                        <br />
+                                <span class="vexpl">Valid values are: af11, af12, af13, af21, af22, af23, af31, af32, af33, af41, af42, af43, EF, 1-64, 0x04-0xfc.</span>
+                        </td>
+                </tr>
 		<tr>
 			<td width="22%" valign="top" class="vncellreq">Log</td>
 			<td width="78%" class="vtable">

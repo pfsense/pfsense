@@ -2076,6 +2076,9 @@ function generate_user_filter_rule($rule, $ngcounter) {
                                			$aline['tagged'] = " tagged " .$rule['tagged'] . " ";
                			}
 
+				if (isset($rule['dscp']) && $rule['dscp'] <> "")
+					$aline['dscp'] = " dscp " . $rule['dscp'];
+
 				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states']) )
 					if($rule['protocol'] == "tcp")
 						$aline['flags'] = "flags S/SA ";
@@ -2176,7 +2179,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		$vpns = " to <vpns> ";
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['prot'] .
 			$aline['src'] . $aline['srcport'] . $aline['os'] . $vpns . $aline['dstport'].
-			$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['flags'] . 
+			$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['flags'] . $aline['dscp'].
 			$aline['queue'] . " label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";
 		/* if list */
 		if($config['interfaces']['lan'])
@@ -2204,14 +2207,16 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		/* return the line */
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['prot'] .
 			$aline['src'] . $aline['srcport'] . $aline['os'] . $localnets . $aline['dstport'].
-			$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['flags'] . $aline['queue'] .
+			$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['flags'] . 
+			$aline['dscp'] . $aline['queue'] .
 			" label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";
 	}
 
 	/* piece together the actual user rule */
 	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['reply'] .
 		$aline['route'] . $aline['prot'] . $aline['src'] . $aline['srcport'] . $aline['os'] . $aline['dst'] .
-		$aline['dstport'] . $aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['flags'] . $aline['queue'];
+		$aline['dstport'] . $aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['flags'] . 
+		$aline['dscp'] . $aline['queue'];
 
 	/* is a time based rule schedule attached? */
 	if($rule['sched']) {
@@ -2306,11 +2311,6 @@ function filter_rules_generate() {
 	if (is_package_installed('squid') && file_exists('/usr/local/pkg/squid.inc')) {
 		require_once('squid.inc');
 		$ipfrules .= squid_generate_rules('filter');
-	}
-
-	if (is_package_installed('clamav') && file_exists('/usr/local/pkg/clamav.inc')) {
-		require_once('clamav.inc');
-		$ipfrules .= clamav_generate_rules('filter');
 	}
 
 	if (is_package_installed('frickin') && file_exists('/usr/local/pkg/frickin.inc')) {

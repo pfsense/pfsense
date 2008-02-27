@@ -544,7 +544,7 @@ class altq_root_queue {
 			$form .= "./themes/".$g['theme']."/images/icons/icon_x.gif\"";
 			$form .= " width=\"17\" height=\"17\" border=\"0\" title=\"Disable shaper on i
 nterface\">";
-			$form .= "<span>Disable shaper from interface</span></a></td></tr>";
+			$form .= "<span>Disable shaper on interface</span></a></td></tr>";
 
 			return $form;
 
@@ -812,7 +812,7 @@ function GetEcn() {
 		global $config;
 
 		$mylink = &get_reference_to_me_in_config($this->GetLink());
-		$copylink = &get_reference_to_me_in_config($queue->GetLink());
+		$link = &get_reference_to_me_in_config($queue->GetLink());
 
 		if ($link && $mylink) {
 				if (!is_array($mylink['queue'][$queue->GetQname()]))
@@ -2175,19 +2175,19 @@ function build_iface_without_this_queue($iface, $qname) {
 		$form .= $iface . "&queue=". $qname . "&action=add\">";
 		$form .= "<img src=\"";
 		$form .= "./themes/".$g['theme']."/images/icons/icon_plus.gif\"";
-		$form .= " width=\"17\" height=\"17\" border=\"0\" title=\"Activate queue on this interface\">";
-		$form .= " Activate queue on this interface</a></td></tr>";
+		$form .= " width=\"17\" height=\"17\" border=\"0\" title=\"Clone shaper/queue on this interface\">";
+		$form .= " Clone shaper/queue on this interface</a></td></tr>";
 
 		return $form;
 
 }
 
 
-$default_shaper_msg =	"<tr><td width=\"80%\" >";
-$default_shaper_msg .= "<strong>Welcome to the pfSense Traffic Shaper.";
-$default_shaper_msg .= "The tree on the left helps you navigate through the";
-$default_shaper_msg .= "queues while the buttons at the bottom, which show actions, are activated accordingly";
-$default_shaper_ms .= " as allowed</strong>";
+$default_shaper_msg =	"<tr><td align=\"center\" width=\"80%\" >";
+$default_shaper_msg .= "<span class=\"vexpl\"><strong><p><b>Welcome to the pfSense Traffic Shaper.</b><br />";
+$default_shaper_msg .= "The tree on the left helps you navigate through the queues <br />";
+$default_shaper_msg .= "buttons at the bottom represent queue actions and are activated accordingly.";
+$default_shaper_ms .= " </p></strong></span>";
 $default_shaper_msg .= "</td></tr>";
 
 ?>

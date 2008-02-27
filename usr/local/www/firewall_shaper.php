@@ -297,9 +297,8 @@ if ($queue) {
                                 $can_enable = true;
                         else
                                 $can_enable = false;
-                        if ($queue->CanHaveChilds() && $can_enable && 
-				$altq->GetQname() <> $queue->GetQname()) {
-                                if ($queue->GetDefault() <> "")
+                        if ($queue->CanHaveChilds() && $can_enable) { 
+                                if ($altq->GetQname() <> $queue->GetQname() && $queue->GetDefault() <> "")
                                         $can_add = false;
                                 else
                                         $can_add = true;
@@ -330,7 +329,7 @@ if ($can_add || $addnewaltq) {
 		$output_form .= "&queue=" . $queue->GetQname();
 	}
 	$output_form .= "&action=add\">";
-	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"add\" value=\"Add Queue\">";
+	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"add\" value=\"Add new queue\">";
 	$output_form .= "</a>";
 	$output_form .= "<a href=\"firewall_shaper.php?interface=";
 	$output_form .= $interface . "&queue=";
@@ -340,7 +339,7 @@ if ($can_add || $addnewaltq) {
 	$output_form .= "&action=delete\">";
 	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"delete\"";
 	if ($queue)
-		$output_form .= " value=\"Delete a queue\">";
+		$output_form .= " value=\"Delete this queue\">";
 	else
 		$output_form .= " value=\"Disable shaper on interface\">";
 	$output_form .= "</a>";  
@@ -370,7 +369,7 @@ if ($queue || $altq) {
 }
 $output .= $output_form;
 
-$pgtitle = "Firewall: Shaper: By Interface View";
+//$pgtitle = "Firewall: Shaper: By Interface View";
 
 include("head.inc");
 ?>

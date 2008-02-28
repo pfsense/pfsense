@@ -30,6 +30,10 @@
 
 require("guiconfig.inc");
 
+if($_GET['reset'] <> "") {
+        mwexec("killall -9 pfctl php");
+}
+
 $pgtitle = array("Firewall","Traffic Shaper");
 
 read_altq_config();

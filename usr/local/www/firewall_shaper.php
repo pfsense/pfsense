@@ -32,6 +32,7 @@ require("guiconfig.inc");
 
 if($_GET['reset'] <> "") {
         mwexec("killall -9 pfctl php");
+	exit;
 }
 
 $pgtitle = array("Firewall","Traffic Shaper");

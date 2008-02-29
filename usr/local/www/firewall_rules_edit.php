@@ -486,7 +486,7 @@ include("head.inc");
 			<td width="22%" valign="top" class="vncellreq">Interface</td>
 			<td width="78%" class="vtable">
 <?php if ($if == "FloatingRules" || isset($pconfig['floating'])): ?>
-				<select name="interface[]" multiple="true" ="formselect" size="3">
+				<select name="interface[]" multiple="true" class="formselect" size="3">
 <? else: ?>
 				<select name="interface" class="formselect">
 <?php

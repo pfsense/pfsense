@@ -45,6 +45,10 @@ if($g['platform'] == "pfSense") {
 	safe_mkdir("/usr/local/pkg/pf");
 }
 
+$version = split("-", trim(file_get_contents("/etc/version")));
+$ver = split("\.", $version[0]);
+$g['version'] = intval($ver[1]);
+
 /****f* pkg-utils/remove_package
  * NAME
  *   remove_package - Removes package from FreeBSD if it exists

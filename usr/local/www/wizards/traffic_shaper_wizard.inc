@@ -405,12 +405,12 @@ function step2_stepsubmitphpaction() {
 ={$message}");
                                         exit;
                                 }
-				if ($upbw < 128 && $_POST["conn{$i}uploadscheduler"] == "Kb" && trim($_POST["downloadscheduler"]) == "CBQ") {
+				if ($upbw < 128 && $_POST["conn{$i}uploadspeed"] == "Kb" && trim($_POST["conn{$i}scheduler"]) == "CBQ") {
 					$message=gettext("We do not support Bandwidths smaller than 128Kbit/s for CBQ scheduler.");
 					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
 						exit;
 				}
-				if ($downbw < 128 && $_POST["conn{$i}downloadscheduler"] == "Kb" && trim($_POST["downloadscheduler"]) == "CBQ") {
+				if ($downbw < 128 && $_POST["conn{$i}downloadspeed"] == "Kb" && trim($_POST["downloadscheduler"]) == "CBQ") {
                                         $message=gettext("We do not support Bandwidths smaller than 128Kbit/s for CBQ scheduler.");
                                         header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
                                                 exit;
@@ -494,10 +494,9 @@ function step4_stepsubmitphpaction() {
 }
 
 function step5_stepsubmitphpaction() {
-		global $config;
 
 	if ( $_POST['enable'] ) {
-		if (isset($_POST['bandwidth'])) {
+		if (isset($_POST['bandwidth']) && $_POST['bandwidth'] <> "") {
 			if(!is_numeric($_POST['bandwidth'])) {
 				$message="Posted value is not a valid bandwidth.";
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=4&message={$message}");
@@ -516,13 +515,7 @@ function step5_stepsubmitphpaction() {
 			exit;
 		}
 */
-		} else {
-			if(!$_POST['bandwidth']) {
-				$message="You need to specify a value for bandwidth!  Values should be in percentage.";
-				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=4&message={$message}");
-
-			}
-		}
+		} 
 	}
 }
 

@@ -1671,24 +1671,27 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				$rg = rtrim($rg);
 			} elseif ($config['interfaces'][$rule['interface']]['gateway'] <> "")  {
 				$rgwy = $config['interfaces'][$rule['interface']]['gateway'];
-				foreach($config['gateways']['gateway_item'] as $gwy) {
-					if ($gwy['name'] == $rgw) {
+				if (is_array($config['gateways']['gateway_item'])) {
+                                    foreach($config['gateways']['gateway_item'] as $gwy) {
+                                        if ($gwy['name'] == $rgw) {
 						$rg = $gwy['gateway'];
 						break;
 					}
-				}
+                                    }
+                                }
 			}
 
 			/* do not process reply-to for gateway'd rules */
 			if(($rule['gateway'] == "") and (stristr($rule['interface'],"opt") == true)) {
-				foreach($config['gateways']['gateway_item'] as $gwy) {
-					if ($gwy['name'] == $config['interfaces'][$rule['interface']]['gateway']) {
-						$rg = $gwy['gateway'];
-						$aline['reply'] = "reply-to (" . $ri . " " . $rg . ") ";
-						break;
-					}
-				}
-
+				if (is_array($config['gateways']['gateway_item'])) {
+                                    foreach($config['gateways']['gateway_item'] as $gwy) {
+    					if ($gwy['name'] == $config['interfaces'][$rule['interface']]['gateway']) {
+    						$rg = $gwy['gateway'];
+    						$aline['reply'] = "reply-to (" . $ri . " " . $rg . ") ";
+    						break;
+                                            }
+                                    }
+                                }
 			}
 
 			/* if user has selected a custom gateway, lets work with it */

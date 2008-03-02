@@ -37,7 +37,7 @@
 	function prompt_for_enable_dhcp_server() {
 		global $config, $fp;
 		if($interface == "wan") {
-			if($config['interfaces'['lan']) 
+			if($config['interfaces']['lan']) 
 				return "n";
 		}
 		/* only allow DHCP server to be enabled when static IP is

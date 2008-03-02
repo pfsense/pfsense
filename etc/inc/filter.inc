@@ -2179,7 +2179,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		$vpns = " to <vpns> ";
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['prot'] .
 			$aline['src'] . $aline['srcport'] . $aline['os'] . $vpns . $aline['dstport'].
-			$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['flags'] . $aline['dscp'].
+			$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . $aline['flags'].
 			$aline['queue'] . " label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";
 		/* if list */
 		if($config['interfaces']['lan'])
@@ -2207,16 +2207,16 @@ function generate_user_filter_rule($rule, $ngcounter) {
 		/* return the line */
 		$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['prot'] .
 			$aline['src'] . $aline['srcport'] . $aline['os'] . $localnets . $aline['dstport'].
-			$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['flags'] . 
-			$aline['dscp'] . $aline['queue'] .
+			$aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . 
+			$aline['flags'] . $aline['queue'] .
 			" label \"NEGATE_ROUTE: Negate policy route for local network(s)\"\n";
 	}
 
 	/* piece together the actual user rule */
 	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] . $aline['reply'] .
 		$aline['route'] . $aline['prot'] . $aline['src'] . $aline['srcport'] . $aline['os'] . $aline['dst'] .
-		$aline['dstport'] . $aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['flags'] . 
-		$aline['dscp'] . $aline['queue'];
+		$aline['dstport'] . $aline['icmp-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . 
+		$aline['flags'] . $aline['queue'];
 
 	/* is a time based rule schedule attached? */
 	if($rule['sched']) {

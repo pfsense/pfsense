@@ -2080,7 +2080,7 @@ function generate_user_filter_rule($rule, $ngcounter) {
                			}
 
 				if (isset($rule['dscp']) && $rule['dscp'] <> "")
-					$aline['dscp'] = " dscp " . $rule['dscp'];
+					$aline['dscp'] = " dscp " . $rule['dscp'] . " ";
 
 				if( isset($rule['source-track']) or isset($rule['max-src-nodes']) or isset($rule['max-src-states']) )
 					if($rule['protocol'] == "tcp")

@@ -267,7 +267,12 @@ function system_routing_configure() {
 	}
 
 	/* if list */
-	$iflist = array("lan", "wan");
+	if ($config['interfaces']['lan']) {
+		$iflist = array("lan", "wan");	
+	} else {
+		$iflist = array("wan");
+	}
+	
 	for ($i = 1; isset($config['interfaces']['opt' . $i]['enable']); $i++)
 		$iflist['opt' . $i] = "opt{$i}";
 
@@ -305,6 +310,16 @@ function system_routing_configure() {
 				}
 			}
 			mwexec("/sbin/route add default " . escapeshellarg($gatewayip));
+		} else {
+			/* adding gateway for 1.2-style configs without the new
+			  gateway setup configured.
+			  Force WAN to be default gateway because that is the
+			  1.2 behavior.
+			*/
+			if (is_ipaddr($config['interfaces']['wan']['gateway'])) {
+				$gatewayip = $config['interfaces']['wan']['gateway'];
+				mwexec("/sbin/route add default " . escapeshellarg($gatewayip));
+			}
 		}
 	}
 

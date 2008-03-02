@@ -3588,7 +3588,7 @@ function get_interface_gateway($interface) {
 		$gw = file_get_contents("{$g['tmp_path']}/{$realif}_router");
 		$gw = rtrim($gw);
 	} else {
-		if(is_array($config['gateways'])) {
+		if(is_array($config['gateways']['gateway_item'])) {
 			foreach($config['gateways']['gateway_item'] as $gateway) {
 				if($gateway['name'] == $gateway['name']) {
 					$gatewayip = $gateway['gateway'];

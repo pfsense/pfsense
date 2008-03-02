@@ -297,7 +297,7 @@ function system_routing_configure() {
 	}
 
 	if($dont_add_route == false) {
-		if(is_array($config['gateways'])) {
+		if(is_array($config['gateways']['gateway_item'])) {
 			foreach($config['gateways']['gateway_item'] as $gateway) {
 		        	if(isset($gateway['defaultgw'])) {
 					$gatewayip = $gateway['gateway'];
@@ -317,7 +317,7 @@ function system_routing_configure() {
 		}
 
 		foreach ($config['staticroutes']['route'] as $rtent) {
-			if(is_array($config['gateways'])) {
+			if(is_array($config['gateways']['gateway_item'])) {
 				foreach($config['gateways']['gateway_item'] as $gateway) {
 					if($rtent['gateway'] == $gateway['name']) {
 						$gatewayip = $gateway['gateway'];

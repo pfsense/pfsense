@@ -18,6 +18,10 @@
 			<text>Client-specific configuration</text>
 			<url>/pkg.php?xml=openvpn_csc.xml</url>
 		</tab>
+		<tab>
+			<text>Certificate generation</text>
+			<url>/vpn_openvpn_create_certs.php</url>
+		</tab>
 	</tabs>
 	<adddeleteeditpagefields>
 		<columnitem>

@@ -340,7 +340,7 @@ function f(ta_id){
 			<input name="Submit" type="submit" class="formbtn" value="Save">
 		      </td>
 		    </tr>
-
+	</table>
     <?php include("fend.inc"); ?>
     </body>
     </html>

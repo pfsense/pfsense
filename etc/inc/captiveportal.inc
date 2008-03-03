@@ -285,6 +285,8 @@ EOD;
 		}
 	}
 
+    captiveportal_unlock();
+	
 	return 0;
 }
 

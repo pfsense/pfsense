@@ -152,6 +152,8 @@ if (isset($id) && $a_filter[$id]) {
 	$pconfig['src'] = "any";
 	$pconfig['dst'] = "any";
 }
+/* Allow the FlotingRules to work */
+$if = $pconfig['interface'];
 
 if (isset($_GET['dup']))
 	unset($id);

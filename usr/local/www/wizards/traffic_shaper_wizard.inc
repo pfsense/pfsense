@@ -86,7 +86,7 @@ function step1_submitphpaction() {
 			header("Location:wizard.php?xml=traffic_shaper_wizard.xml&stepid=0&message={$message}");
 			exit;
 		}			
-		if (intval($_POST['numberofconnections']) > 100 || intval($_POST['numberofconnections']) < 1) {
+		if (floatval($_POST['numberofconnections']) > 100 || floatval($_POST['numberofconnections']) < 1) {
 			$message=gettext("The number of connections supported is between 1 and 100.");
 			header("Location:wizard.php?xml=traffic_shaper_wizard.xml&stepid=0&message={$message}");
 			exit;
@@ -103,7 +103,7 @@ function step1_submitphpaction() {
 			$numberofinterfaces++;
 			$iflist[] = $if;
 		}
-		if ($numberofinterfaces < intval($_POST['numberofconnections'])) {
+		if ($numberofinterfaces < floatval($_POST['numberofconnections'])) {
 			$message=gettext("You have less interfaces than number of connections!");
 			header("Location:wizard.php?xml=traffic_shaper_wizard.xml&stepid=0&message={$message}");
 			exit;
@@ -378,7 +378,7 @@ function step2_stepsubmitphpaction() {
 	global $config;
 	$sumdownloads = 0;
 	
-	$steps = intval($config['ezshaper']['step1']['numberofconnections']);
+	$steps = floatval($config['ezshaper']['step1']['numberofconnections']);
 	for ($i = 0; $i < $steps; $i++) {
 			for ($j = $j; $j < $steps; $j++) {
 				if ($_POST["conn{$i}interface"] == $_POST["conn{$j}interface"]) {
@@ -396,8 +396,8 @@ function step2_stepsubmitphpaction() {
 					header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=1&message={$message}");
 					exit;
 				}
-				$upbw = intval($_POST["conn{$i}upload"]);
-				$downbw = intval($_POST["conn{$i}download"]);
+				$upbw = floatval($_POST["conn{$i}upload"]);
+				$downbw = floatval($_POST["conn{$i}download"]);
 				if ($upbw == 0 || $downbw = 0) {
                                         $message = gettext("You cannot specify 0 bandwidth!")
 ;
@@ -433,7 +433,7 @@ function step3_stepsubmitphpaction() {
 		}
 	}
 
-	$steps = intval($config['ezshaper']['step1']['numberofconnections']);
+	$steps = floatval($config['ezshaper']['step1']['numberofconnections']);
 	for ($i = 0; $i < $steps; $i++) {
 			if ($_POST["conn{$i}upload"]) {
 			if (!is_numeric($_POST["conn{$i}upload"])) {
@@ -442,9 +442,9 @@ function step3_stepsubmitphpaction() {
 					exit;
 				}
 			$factor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
-			$ifbw = $factor * intval($config['ezshaper']['step2']["conn{$i}upload"]);	
+			$ifbw = $factor * floatval($config['ezshaper']['step2']["conn{$i}upload"]);	
 			$factor = wizard_get_bandwidthtype_scale($_POST["conn{$i}uploadspeed"]);
-			$input_bw = $factor * intval($_POST["conn{$i}upload"]);
+			$input_bw = $factor * floatval($_POST["conn{$i}upload"]);
 			if ((0.8 * $ifbw) < $input_bw) {
 				$message=gettext("You cannot set the VoIP upload bandwidth on connection {$i} higher than 80% of the connection.");
 				header("Location: wizard.php?xml=traffic_shaper_wizard.xml&stepid=2&message={$message}");
@@ -526,8 +526,8 @@ function step8_stepsubmitphpaction() {
 		apply_all_choosen_items();
 
 		/* reset rrd queues */
-		system("rm -f /var/db/rrd/wan-queuesdrop.rrd");
-		system("rm -f /var/db/rrd/wan-queues.rrd");
+		system("rm -f /var/db/rrd/*queuedrops.rrd");
+		system("rm -f /var/db/rrd/*queues.rrd");
 		enable_rrd_graphing();
 
 		/* apply the new configuration to the system */
@@ -888,11 +888,11 @@ $othersplist = array();
 	$altq_list_queues = array();
 	$tmppath = array();	
 
-	$steps = intval($config['ezshaper']['step1']['numberofconnections']);
+	$steps = floatval($config['ezshaper']['step1']['numberofconnections']);
 	$lanbw = 0;
 	for ($i = 0; $i < $steps; $i++) {
 		$down = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}downloadspeed"]);
-		$input_bw = intval($config['ezshaper']['step2']["conn{$i}download"]) * $down;
+		$input_bw = $config['ezshaper']['step2']["conn{$i}download"] * $down;
 		$lanbw += $input_bw;
 	}
 
@@ -902,7 +902,7 @@ $othersplist = array();
 
 		$altq->SetInterface($config['ezshaper']['step2']["conn{$i}interface"]);
 		$altq->SetScheduler($config['ezshaper']['step2']["conn{$i}uploadscheduler"]);
-		$altq->SetBandwidth(intval($config['ezshaper']['step2']["conn{$i}upload"]));
+		$altq->SetBandwidth(floatval($config['ezshaper']['step2']["conn{$i}upload"]));
 		$altq->SetBwscale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
 		$altq->SetEnabled("on");
 		$altq_list_queues[$altq->GetQname()] =& $altq;
@@ -925,7 +925,7 @@ $othersplist = array();
 		$otherpriority = false;
 		$remainbw = 0;
 		$upfactor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
-                $upbw = intval($config['ezshaper']['step2']["conn{$i}upload"]) * $upfactor;
+                $upbw = floatval($config['ezshaper']['step2']["conn{$i}upload"]) * $upfactor;
 
 			if ($config['ezshaper']['step3']['enable']) {
 					$voip = true;
@@ -936,7 +936,7 @@ $othersplist = array();
 					$penalty = true;
 					$penaltybw = $config['ezshaper']['step4']['bandwidth'];
 					$penaltybwunit = $config['ezshaper']['step4']['bandwidthunit'];
-					$remainbw += intval($config['ezshaper']['step4']['bandwidth']) * $config['ezshaper']['step4']['bandwidthunit'];
+					$remainbw += floatval($config['ezshaper']['step4']['bandwidth']) * $config['ezshaper']['step4']['bandwidthunit'];
 			} else {
 					$penalty = false;
 					$penaltybw = 0;
@@ -947,7 +947,7 @@ $othersplist = array();
 						$p2pcatchall = true;
 						$p2pcatchbw = $config['ezshaper']['step5']['bandwidth'];
 						$p2pcatchbwunit = $config['ezshaper']['step5']['bandwidthunit'];
-						$remainbw += intval($config['ezshaper']['step5']['bandwidth']) * $config['ezshaper']['step5']['bandwidthunit'];
+						$remainbw += floatval($config['ezshaper']['step5']['bandwidth']) * $config['ezshaper']['step5']['bandwidthunit'];
 				} else {
 						$p2pcatchall = false;
 						$p2pcatchbw = 0;
@@ -1112,8 +1112,8 @@ $othersplist = array();
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";
 					if ($voipbw > 0) {
-						$tmpcf['bandwidthtype'] = $voipbw;
-						$tmpcf['bandwidth'] = $voipbwunit;
+						$tmpcf['bandwidth'] = $voipbw;
+						$tmpcf['bandwidthtype'] = $voipbwunit;
 					} else {
 						$tmpcf['bandwidth'] = $remainbw * 0.2; /* 20% bandwidth */
 						$tmpcf['bandwidthtype'] = "%";
@@ -1289,7 +1289,7 @@ $othersplist = array();
 					$penalty = true;
 					$penaltybw = $config['ezshaper']['step4']['bandwidth'];
 					$penaltybwunit = $config['ezshaper']['step4']['bandwidthunit'];
-					$remainbw += intval($config['ezshaper']['step4']['bandwidth']) * $config['ezshaper']['step4']['bandwidthunit'];
+					$remainbw += floatval($config['ezshaper']['step4']['bandwidth']) * $config['ezshaper']['step4']['bandwidthunit'];
 			} else {
 					$penalty = false;
 					$penaltybw = 0;
@@ -1300,7 +1300,7 @@ $othersplist = array();
 						$p2pcatchall = true;
 						$p2pcatchbw = $config['ezshaper']['step5']['bandwidth'];
 						$p2pcatchbwunit = $config['ezshaper']['step5']['bandwidthunit'];
-						$remainbw += intval($config['ezshaper']['step5']['bandwidth']) * $config['ezshaper']['step5']['bandwidthunit'];
+						$remainbw += floatval($config['ezshaper']['step5']['bandwidth']) * $config['ezshaper']['step5']['bandwidthunit'];
 				} else {
 						$p2pcatchall = false;
 						$p2pcatchbw = 0;
@@ -1465,8 +1465,8 @@ $othersplist = array();
 				if ($sched == "CBQ") {
 					$tmpcf['borrow'] = "on";
 					if ($voipbw > 0) {
-						$tmpcf['bandwidthtype'] = $voipbw;
-						$tmpcf['bandwidth'] = $voipbwunit;
+						$tmpcf['bandwidth'] = $voipbw;
+						$tmpcf['bandwidthtype'] = $voipbwunit;
 					} else {
 						$tmpcf['bandwidth'] = $remainbw * 0.2; /* 20% bandwidth */
 						$tmpcf['bandwidthtype'] = "%";
@@ -1795,7 +1795,7 @@ function wizard_get_bandwidthtype_scale($type) {
                 $factor = 1;
         break;
         }
-        return intval($factor);
+        return floatval($factor);
 }
 
 ?>

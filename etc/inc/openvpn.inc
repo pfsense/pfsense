@@ -166,11 +166,6 @@ function openvpn_validate_input($mode, $post, $input_errors) {
 	}
 	do_input_validation($post, $reqfields, $reqfieldsn, &$input_errors);
 
-//  if ($post['protocol'] != 'UDP') {
-//    if (!empty($post['tls']))
-//        $input_errors[] = 'TLS-authentication can only be used with protocol UDP';
-//        }
-
 	$value = trim($post['shared_key']);
 	$items = array();
 

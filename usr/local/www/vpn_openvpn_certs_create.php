@@ -183,12 +183,12 @@ if ($_POST) {
 	$ovpnkeys =& $config['openvpn']['keys'];
 	if (!is_array($ovpnkeys[$caname]))
 		$ovpnkeys[$caname] = array();
-	$ovpnkeys[$caname]['cakey'] = file_get_contents("$ovpncapath/$caname/ca.key");
-	$ovpnkeys[$caname]['cacert'] = file_get_contents("$ovpncapath/$caname/ca.crt");
-	$ovpnkeys[$caname]['sharedkey'] = file_get_contents("$ovpncapath/$caname/shared.key");
-	$ovpnkeys[$caname]['serverkey'] = file_get_contents("$ovpncapath/$caname/server.key");
-	$ovpnkeys[$caname]['servercert'] = file_get_contents("$ovpncapath/$caname/server.crt");
-	$ovpnkeys[$caname]['dh'] = file_get_contents("$ovpncapath/$caname/dh_params.dh");
+	$ovpnkeys[$caname]['ca.key'] = file_get_contents("$ovpncapath/$caname/ca.key");
+	$ovpnkeys[$caname]['ca.crt'] = file_get_contents("$ovpncapath/$caname/ca.crt");
+	$ovpnkeys[$caname]['shared.key'] = file_get_contents("$ovpncapath/$caname/shared.key");
+	$ovpnkeys[$caname]['server.key'] = file_get_contents("$ovpncapath/$caname/server.key");
+	$ovpnkeys[$caname]['server.crt'] = file_get_contents("$ovpncapath/$caname/server.crt");
+	$ovpnkeys[$caname]['dh_params.dh'] = file_get_contents("$ovpncapath/$caname/dh_params.dh");
 	write_config();
 } else { ?>
 	  				<tr>

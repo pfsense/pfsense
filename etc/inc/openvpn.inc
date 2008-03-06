@@ -627,7 +627,6 @@ function openvpn_restore_all_ciphers() {
 
 // Resync the configuration and restart the VPN
 function openvpn_resync($mode, $id) {
-	 openvpn_restore_all_ciphers();
 	openvpn_reconfigure($mode, $id);
 	openvpn_restart($mode, $id);
 }

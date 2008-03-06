@@ -591,18 +591,22 @@ function openvpn_resync_all() {
 	global $config;
 
 	foreach (array('server', 'client') as $mode) {
-		if (is_array($config['installedpackages']["openvpn$mode"]['config'])) {
-			foreach ($config['installedpackages']["openvpn$mode"]['config'] as $id => $settings)
-				openvpn_resync($mode, $id);
+		if ($config['installedpackages']["openvpn$mode"]) {
+			if (is_array($config['installedpackages']["openvpn$mode"]['config'])) {
+				foreach ($config['installedpackages']["openvpn$mode"]['config'] as $id => $settings)
+					openvpn_resync($mode, $id);
+			}
 		}
 	}
 
 	openvpn_create_cscdir();
-	if (is_array($config['installedpackages']['openvpncsc']['config'])) {
-		foreach ($config['installedpackages']['openvpncsc']['config'] as $id => $csc)
-			openvpn_resync_csc($id);
+	if ($config['installedpackages']['openvpncsc']) {
+		if (is_array($config['installedpackages']['openvpncsc']['config'])) {
+			foreach ($config['installedpackages']['openvpncsc']['config'] as $id => $csc)
+				openvpn_resync_csc($id);
+		}
 	}
-
+	
 	/* give speedy machines time to settle */
 	sleep(5);
 

@@ -278,6 +278,8 @@ extension=zlib.so
 
 EOF
 
+fi
+
 cp /usr/local/lib/php.ini /usr/local/etc/
 
 rm -f /cf/conf/backup/backup.cache

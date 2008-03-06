@@ -158,7 +158,7 @@
 		</field>
 		<field>
                         <fieldname>cipher</fieldname>
-                        <fielddescr>Certificates to apply<fielddescr>
+                        <fielddescr>Certificates to apply</fielddescr>
                         <description>Certificates generated from the certificate generation tab.</description>
                         <type>select</type>
                         <options>

@@ -157,68 +157,17 @@
 			<onchange>onAuthMethodChanged()</onchange>
 		</field>
 		<field>
-			<fieldname>shared_key</fieldname>
-			<fielddescr>Shared key</fielddescr>
-			<description>Paste your shared key here.</description>
-			<type>textarea</type>
-			<encoding>base64</encoding>
-			<rows>8</rows>
-			<cols>40</cols>
-		</field>
-		<field>
-			<fieldname>ca_cert</fieldname>
-			<fielddescr>CA certificate</fielddescr>
-			<description>Paste your CA certificate in X.509 format here.</description>
-			<type>textarea</type>
-			<encoding>base64</encoding>
-			<rows>8</rows>
-			<cols>40</cols>
-		</field>
-		<field>
-			<fieldname>server_cert</fieldname>
-			<fielddescr>Server certificate</fielddescr>
-			<description>Paste your server certificate in X.509 format here.</description>
-			<type>textarea</type>
-			<encoding>base64</encoding>
-			<rows>8</rows>
-			<cols>40</cols>
-		</field>
-		<field>
-			<fieldname>server_key</fieldname>
-			<fielddescr>Server key</fielddescr>
-			<description>Paste your server key in RSA format here.</description>
-			<type>textarea</type>
-			<encoding>base64</encoding>
-			<rows>8</rows>
-			<cols>40</cols>
-		</field>
-		<field>
-			<fieldname>dh_params</fieldname>
-			<fielddescr>DH parameters</fielddescr>
-			<description>Paste your Diffie Hellman parameters in PEM format here.</description>
-			<type>textarea</type>
-			<encoding>base64</encoding>
-			<rows>8</rows>
-			<cols>40</cols>
-		</field>
-		<field>
-			<fieldname>crl</fieldname>
-			<fielddescr>CRL</fielddescr>
-			<description>Paste your certificate revocation list (CRL) in PEM format here (optional).</description>
-			<type>textarea</type>
-			<encoding>base64</encoding>
-			<rows>8</rows>
-			<cols>40</cols>
-		</field>
-		<field>
-			<fieldname>tls</fieldname>
-			<fielddescr>TLS</fielddescr>
-			<description>Paste your HMAC signature (TLS) here (optional).</description>
-			<type>textarea</type>
-			<encoding>base64</encoding>
-			<rows>8</rows>
-			<cols>40</cols>
-		</field>
+                        <fieldname>cipher</fieldname>
+                        <fielddescr>Certificates to apply<fielddescr>
+                        <description>Certificates generated from the certificate generation tab.</description>
+                        <type>select</type>
+                        <options>
+                                <option>
+                                        <value>none</value>
+                                        <name>none</name>
+                                </option>
+                        </options>
+                </field>
 		<field>
 			<fieldname>dhcp_domainname</fieldname>
 			<fielddescr>DHCP-Opt.: DNS-Domainname</fielddescr>

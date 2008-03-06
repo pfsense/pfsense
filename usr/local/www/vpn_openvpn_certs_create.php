@@ -1,6 +1,7 @@
 <?php
+/* $Id$ */
 /*
-	vpn_openvpn_certs_create.php
+	vpn_openvpn_create_certs.php
 	part of pfSense
 
 	Copyright (C) 2004 Scott Ullrich
@@ -30,39 +31,24 @@
 
 require("guiconfig.inc");
 
-//$pgtitle = array("VPN", "OpenVPN Create Certs");
+$pgtitle = array("VPN", "OpenVPN Create Certs");
 $ovpncapath = $g['varetc_path']."/openvpn/certificates";
-/* XXX: hardcoded path */
+/* XXX: hardcoded path; worth making it a global?! */
 $easyrsapath = "/usr/local/share/openvpn/certificates";
 
 if ($_GET['ca']) {
-	//$openssl = file_get_contents("$ovpncapath/".trim($_GET['ca'])."/vars");
-    $openssl = "";
-    if(file_exists("$ovpncapath/".trim($_GET['ca'])."/vars")) {
-		$fd = fopen("$ovpncapath/".trim($_GET['ca'])."/vars", "r");
-		$tmp = fread($fd,8096);
-		$openssl .= $tmp;
-		fclose($fd);
-    
-	preg_match('/\nsetenv KEY_EXPIRE(.*)\n/', $openssl, $cakeyexpireA);
-	preg_match('/\nsetenv CA_EXPIRE(.*)\n/', $openssl, $caexpireA);
-	preg_match('/\nsetenv KEY_SIZE(.*)\n/', $openssl, $cakeysize);
-	preg_match('/\nsetenv KEY_COUNTRY(.*)\n/', $openssl, $countrycodeA);
-	preg_match('/\nsetenv KEY_SIZE(.*)\n/', $openssl, $cakeysize);
-	preg_match('/\nsetenv KEY_PROVINCE(.*)\n/', $openssl, $stateorprovinceA);
-	preg_match('/\nsetenv KEY_CITY(.*)\n/', $openssl, $citynameA);
-	preg_match('/\nsetenv KEY_ORG(.*)\n/', $openssl, $orginizationnameA);
-	preg_match('/\nsetenv KEY_EMAIL(.*)\n/', $openssl, $emailA);
-
-	$caname = trim($_GET['ca']);
-	$cakeysize = trim($cakeysizeA[1]);
-	$caexpire = trim($caexpireA[1]);
-	$cakeyexpire = trim($cakeyexpire[1]);
-    $countrycode=trim($countrycodeA[1]);
-    $stateorprovince=trim($stateorprovinceA[1]);
-    $cityname=trim($citynameA[1]);
-    $orginizationname=trim($orginizationnameA[1]);
-    $email = trim($emailA[1]);
+	if ($config['openvpn']['keys'][$_GET['ca']]) {
+		$data = $config['openvpn']['keys'][$_GET['ca']];
+		$caname = trim($_GET['ca']);
+		$cakeysize = $data['keysize'];
+		$caexpire = $data['caexpire'];
+		$cakeyexpire = $data['keyexpire'];
+   		$countrycode= $data['keycountry'];
+   	 	$stateorprovince= $data['keyprovince'];
+    	$cityname= $data['keyclient'];
+    	$orginizationname= $data['keyorg'];
+    	$email = $data['keyemail'];
+		$caclients = $data['caclients'];
 	} else
 		$input_errors[] = "Certificate does not exist.";
 }
@@ -129,19 +115,21 @@ if ($_POST) {
 	fwrite($fd, "$easyrsapath/pkitool --batch --server server \n");
 	fwrite($fd, "echo \"Creating DH Parms...\" \n"); 
 	fwrite($fd, "openssl dhparam -out $ovpncapath/$caname/dh_params.dh  $cakeysize \n");
-	fwrite($fd, "echo \"Creating Client Certificates...\" \n"); 
-	/* NOTE: i know that shel can do this too but i just do not care! */
-	$cmdclients = "";
-	for ($i = 0; $i < intval($caclients); $i++) {
-		$cmdclients .= "echo \"Creating client$i certificate...\" \n";
-		$cmdclients .= "$ovpncapath/pkitool --batch client$i \n";
+	if ($caclients && intval($caclients) > 0) {
+		fwrite($fd, "echo \"Creating Client Certificates...\" \n"); 
+		/* NOTE: i know that shel can do this too but i just do not care! */
+		$cmdclients = "";
+		for ($i = 0; $i < intval($caclients); $i++) {
+			$cmdclients .= "echo \"Creating client$i certificate...\" \n";
+			$cmdclients .= "$ovpncapath/pkitool --batch client$i \n";
+		}
+		fwrite($fd, "$cmdclients \n");
+		fwrite($fd, "cd $ovpncapath/$caname \n");
+		fwrite($fd, "tar czvf client_certificates.tar.gz $ovpncapath/$caname/ca.crt $ovpncapath/$caname/shared.key $ovpncapath/$caname/client* \n");
+		fwrite($fd, "echo \"Removing client certificates...\" \n");
+		fwrite($fd, "rm $ovpncapath/$caname/client* \n");
+		fwrite($fd, "cp $ovpncapath/client_certificates.tar.gz $ovpncapath/$caname/ \n");
 	}
-	fwrite($fd, "$cmdclients \n");
-	fwrite($fd, "cd $ovpncapath/$caname \n");
-	fwrite($fd, "tar czvf $ovpncapath/$caname/client_certificates.tar.gz $ovpncapath/$caname/ca.crt $ovpncapath/$caname/shared.key $ovpncapath/$caname/client* \n");
-	fwrite($fd, "echo \"Removing client certificates...\" \n");
-	fwrite($fd, "rm $ovpncapath/$caname/client* \n");
-	fwrite($fd, "cp $ovpncapath/client_certificates.tar.gz $ovpncapath/$caname/ \n");
 	fwrite($fd, "echo \"Done!\" \n");
 	fclose($fd);
 }
@@ -183,13 +171,46 @@ if ($_POST) {
 	$ovpnkeys =& $config['openvpn']['keys'];
 	if (!is_array($ovpnkeys[$caname]))
 		$ovpnkeys[$caname] = array();
+	/* vars */
+	$ovpnkeys[$caname]['KEYSIZE'] = $cakeysize;
+	$ovpnkeys[$caname]['KEYEXPIRE'] = $cakeyexpire;
+	$ovpnkeys[$caname]['CAEXPIRE'] = $caexpire;
+	$ovpnkeys[$caname]['KEYCOUNTRY'] = $countrycode;
+	$ovpnkeys[$caname]['KEYPROVINCE'] = $stateorprovince;
+	$ovpnkeys[$caname]['KEYCITY'] = $cityname;
+	$ovpnkeys[$caname]['KEYORG'] = $orginizationname;
+	$ovpnkeys[$caname]['KEYEMAIL'] = $email;
+	$ovpnkeys[$caname]['caclients'] = intval($caclients);
+	/* ciphers */
 	$ovpnkeys[$caname]['ca.key'] = file_get_contents("$ovpncapath/$caname/ca.key");
 	$ovpnkeys[$caname]['ca.crt'] = file_get_contents("$ovpncapath/$caname/ca.crt");
 	$ovpnkeys[$caname]['shared.key'] = file_get_contents("$ovpncapath/$caname/shared.key");
 	$ovpnkeys[$caname]['server.key'] = file_get_contents("$ovpncapath/$caname/server.key");
 	$ovpnkeys[$caname]['server.crt'] = file_get_contents("$ovpncapath/$caname/server.crt");
 	$ovpnkeys[$caname]['dh_params.dh'] = file_get_contents("$ovpncapath/$caname/dh_params.dh");
+	/* save it */
 	write_config();
+	/* XXX: Lets do some hacking now! This implies we are not on embedded platform!!! */
+	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/openvpn.xml", "packagegui");
+			$options =& $pkg_config['fields']['field'][11]['options']['option'];
+			if (!is_array($options)) 
+				$options = array();
+			$opt = array();
+			$opt['name'] = $caname;
+			$opt['value'] = $caname;
+			$options[] = $opt;
+
+			conf_mount_rw();
+	
+			$xmlcf = dump_xml_config_pkg($pkg_config, "packagegui");
+	    	/* write new configuration */
+    	    $fd = fopen("/usr/local/pkg/openvpn.xml", "w");
+	        if (!$fd)
+        	        die("Unable to open openvpn.xml for writing in write_config()\n");
+    	    fwrite($fd, $xmlcf);
+	        fclose($fd);
+	
+			conf_mount_ro();
 } else { ?>
 	  				<tr>
                       <td width="35%" valign="top" class="vncell"><B>Certificate Name</td>

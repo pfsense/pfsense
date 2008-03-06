@@ -146,7 +146,7 @@
 			<cols>40</cols>
 		</field>
 		<field>
-			<fieldname>ca_cert</fieldname>
+			<fieldname>ca.crt</fieldname>
 			<fielddescr>CA certificate</fielddescr>
 			<description>Paste the server's CA certificate in X.509 format here.</description>
 			<type>textarea</type>
@@ -155,7 +155,7 @@
 			<cols>40</cols>
 		</field>
 		<field>
-			<fieldname>client_cert</fieldname>
+			<fieldname>client.crt</fieldname>
 			<fielddescr>Client certificate</fielddescr>
 			<description>Paste your client certificate in X.509 format here.</description>
 			<type>textarea</type>
@@ -164,7 +164,7 @@
 			<cols>40</cols>
 		</field>
 		<field>
-			<fieldname>client_key</fieldname>
+			<fieldname>client.key</fieldname>
 			<fielddescr>Client key</fielddescr>
 			<description>Paste your client key in RSA format here.</description>
 			<type>textarea</type>

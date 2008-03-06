@@ -148,6 +148,8 @@ function openvpn_validate_input($mode, $post, $input_errors) {
 	if ($result = openvpn_validate_cidr($post['remote_network'], 'Remote network'))
 		$input_errors[] = $result;
 
+/* This are no more needed comment them from now and remove later */
+/*
 	if ($_POST['auth_method'] == 'shared_key') {
 		$reqfields[] = 'shared_key';
 		$reqfieldsn[] = 'Shared key';
@@ -165,33 +167,34 @@ function openvpn_validate_input($mode, $post, $input_errors) {
 		}
 	}
 	do_input_validation($post, $reqfields, $reqfieldsn, &$input_errors);
-
+*/
+if ($mode != "server") {
 	$value = trim($post['shared_key']);
 	$items = array();
 
 	if ($_POST['auth_method'] == 'shared_key') {
-		$items[] = array(	'field' => 'shared_key',
+		$items[] = array(	'field' => 'shared.key',
 					'string' => 'OpenVPN Static key V1',
 					'name' => 'Shared key');
 	}
 	else {
-		$items[] = array(	'field' => 'ca_cert',
+		$items[] = array(	'field' => 'ca.crt',
 					'string' => 'CERTIFICATE',
 					'name' => 'CA certificate');
-		$items[] = array(	'field' => "{$mode}_cert",
+		$items[] = array(	'field' => "{$mode}.crt",
 					'string' => 'CERTIFICATE',
 					'name' => "$Mode certificate");
-		$items[] = array(	'field' => "{$mode}_key",
+		$items[] = array(	'field' => "{$mode}.key",
 					'string' => 'RSA PRIVATE KEY',
 					'name' => "$Mode key");
 	  $items[] = array(	'field' => 'tls',
 		      'string' => 'OpenVPN Static key V1',
 		      'name' => 'TLS');
 		if ($mode == 'server') {
-			$items[] = array(	'field' => 'dh_params',
+			$items[] = array(	'field' => 'dh_param.dhs',
 						'string' => 'DH PARAMETERS',
 						'name' => 'DH parameters');
-			$items[] = array(	'field' => 'crl',
+			$items[] = array(	'field' => 'crlcrl',
 						'string' => 'X509 CRL',
 						'name' => 'CRL');
 		}
@@ -202,6 +205,7 @@ function openvpn_validate_input($mode, $post, $input_errors) {
 		if ($value && (!strstr($value, "-----BEGIN {$string}-----") || !strstr($value, "-----END {$string}-----")))
 			$input_errors[] = "The field '{$item['name']}' does not appear to be valid";
 	}
+}
 }
 
 
@@ -262,35 +266,10 @@ function openvpn_reconfigure($mode, $id) {
 
 	$lport = 1194 + $id;
 
-	// Set the keys up
-	// Note that the keys' extension is also the directive that goes to the config file
-	$base_file = $g['varetc_path'] . "/openvpn_{$mode}{$id}.";
-	$keys = array();
-	if ($settings['auth_method'] == 'shared_key')
-		$keys[] = array('field' => 'shared_key', 'ext'  => 'secret', 'directive' => 'secret');
-	else {
-		$keys[] = array('field' => 'ca_cert', 'ext' => 'ca', 'directive' => 'ca');
-		$keys[] = array('field' => "{$mode}_cert", 'ext' => 'cert', 'directive' => 'cert');
-		$keys[] = array('field' => "{$mode}_key", 'ext' => 'key', 'directive' => 'key');
-		if ($mode == 'server')
-			$keys[] = array('field' => 'dh_params', 'ext' => 'dh', 'directive' => 'dh');
-		if ($settings['crl'])
-			$keys[] = array('field' => 'crl', 'ext' => 'crl', 'directive' => 'crl-verify');
-		if ($settings['tls'])
-		  $keys[] = array('field' => 'tls', 'ext' => 'tls', 'directive' => 'tls-auth');
-
-	}
-	foreach($keys as $key) {
-		$filename = $base_file . $key['ext'];
-		file_put_contents($filename, base64_decode($settings[$key['field']]));
-		chown($filename, 'nobody');
-		chgrp($filename, 'nobody');
-	}
-
-	$pidfile = $g['varrun_path'] . "/openvpn_{$mode}{$id}.pid";
-	$proto = ($settings['protocol'] == 'UDP' ? 'udp' : "tcp-{$mode}");
-	$cipher = $settings['crypto'];
-	$openvpn_conf = <<<EOD
+        $pidfile = $g['varrun_path'] . "/openvpn_{$mode}{$id}.pid";
+        $proto = ($settings['protocol'] == 'UDP' ? 'udp' : "tcp-{$mode}");
+        $cipher = $settings['crypto'];
+        $openvpn_conf = <<<EOD
 writepid $pidfile
 #user nobody
 #group nobody
@@ -299,6 +278,7 @@ keepalive 10 60
 ping-timer-rem
 persist-tun
 persist-key
+/* NOTE: Make this tun$i so we can filter on the specific tun. */
 dev tun
 proto $proto
 cipher $cipher
@@ -436,11 +416,33 @@ EOD;
 		$openvpn_conf .= "route $ip $mask\n";
 	}
 
-	// Write the settings for the keys
-	foreach ($keys as $key)
-  if ($key['directive'] != 'tls-auth') {
-		$openvpn_conf .= $key['directive'] . ' ' . $base_file . $key['ext'] . "\n";
-    }
+        // Write the settings for the keys
+        // Set the keys up
+        $base_file = $g['varetc_path'] . "/openvpn/certificates/";
+        $keys = array();
+        if ($settings['auth_method'] == 'shared_key')
+                $keys[] = array('field' => 'shared_key', 'ext'  => 'secret', 'directive' => 'secret');
+        else {
+                $keys[] = array('field' => 'ca.crt', 'directive' => 'ca');
+                $keys[] = array('field' => "{$mode}.crt", 'directive' => 'cert');
+                $keys[] = array('field' => "{$mode}.key", 'directive' => 'key');
+                if ($mode == 'server')
+                        $keys[] = array('field' => 'dh_params.dh', 'directive' => 'dh');
+                if ($settings['crl'])
+                        $keys[] = array('field' => 'crl.crl', 'directive' => 'crl-verify');
+        }
+
+        foreach ($keys as $key) {
+                if ($mode == "server") {
+                        $openvpn_conf .= $key['directive'] . " " . $base_file . $settings['cipher'] . "/".$key['field'] . "\n";
+                } else {
+                        $filename = "$base_file/openvpn_{$mode}{$id}." . $key['field'];
+                        file_put_contents($filename, base64_decode($settings[$key['field']]));
+                        chown($filename, 'nobody');
+                        chgrp($filename, 'nobody');
+                        $openvpn_conf .= $key['directive'] . " $filename \n";
+                }
+        }
 
 	if ($settings['use_lzo']) $openvpn_conf .= "comp-lzo\n";
 
@@ -568,9 +570,51 @@ function openvpn_restart($mode, $id) {
 	touch("{$g['tmp_path']}/filter_dirty");
 }
 
+//Make ciphers ready for openvpn
+function openvpn_restore_all_ciphers() {
+        global $config, $g;
+
+        $ovpncapath = $g['varetc_path']."/openvpn/certificates";
+
+        if (is_array($config['openvpn']['keys'])) {
+                if (!is_dir($g['varetc_path']."/openvpn"))
+                        safe_mkdir($g['varetc_path']."/openvpn");
+                if (!is_dir($ovpncapath))
+                        safe_mkdir($ovpncapath);
+
+                /* XXX: hardcoded path; worth making it a global?! */
+                mwexec("cp -r /usr/local/share/openvpn/certificates ".$g['varetc_path']."/openvpn/");
+                if (!is_dir($ovpncapath)) {
+                        log_error("Failed to create environment for creating certificates. ");
+                } else {
+
+                        foreach ($config['openvpn']['keys'] as $caname => $ciphers) {
+                                if (!is_dir("$ovpncapath/$caname"))
+                                        safe_mkdir("$ovpncapath/$caname");
+
+                                $cfg = "";
+                                /* NOTE: vars; Do we need them restored?! */
+                                $cfg .= "setenv KEY_SIZE " .$ciphers['keysize'] ."\n";
+                                $cfg .= "setenv KEY_EXPIRE ".$ciphers['keyexpire'] ."\n";
+                                $cfg .= "setenv CA_EXPIRE " .$ciphers['caexpire'] . "\n";
+                                $cfg .= "setenv KEY_COUNTRY " .$ciphers['keycountry'] ."\n";
+                                $cfg .= "setenv KEY_RPOVINCE " .$ciphers['keyprovince'] . "\n";
+                                $cfg .= "setenv KEY_CITY " .$ciphers['keycity'] . "\n";
+                                $cfg .= "setenv KEY_ORG " .$ciphers['keyorg'] . "\n";
+                                $cfg .= "setenv KEY_EMAIL " .$ciphers['keyemail'] . "\n";
+                                file_put_contents("$ovpncapath/$caname/vars", $cfg);
+                                /* put ciphers back in their files */
+                                foreach ($ciphers as $filename => $value) {
+                                        file_put_contents("$ovpncapath/$caname/$filename", $value);
+                                }
+                        }
+                }
+        }
+}
 
 // Resync the configuration and restart the VPN
 function openvpn_resync($mode, $id) {
+	 openvpn_restore_all_ciphers();
 	openvpn_reconfigure($mode, $id);
 	openvpn_restart($mode, $id);
 }
@@ -589,6 +633,9 @@ function openvpn_create_cscdir() {
 // Resync and restart all VPNs
 function openvpn_resync_all() {
 	global $config;
+	$ovpncapath = $g['varetc_path']."/openvpn/certificates";
+
+ 	openvpn_restore_all_ciphers();
 
 	foreach (array('server', 'client') as $mode) {
 		if ($config['installedpackages']["openvpn$mode"]) {
@@ -623,17 +670,17 @@ function onAuthMethodChanged() {
 	var method = document.iform.auth_method;
 	var endis = (method.options[method.selectedIndex].value == 'shared_key');
 
-	document.iform.shared_key.disabled = !endis;
-	document.iform.ca_cert.disabled = endis;
-	document.iform.{$mode}_cert.disabled = endis;
-	document.iform.{$mode}_key.disabled = endis;
+	document.iform.shared.key.disabled = !endis;
+	document.iform.ca.crt.disabled = endis;
+	document.iform.{$mode}.crt.disabled = endis;
+	document.iform.{$mode}.key.disabled = endis;
     document.iform.tls.disabled = endis;
 
 EOD;
 	if ($mode == 'server') {
 		$javascript .= <<<EOD
-	document.iform.dh_params.disabled = endis;
-	document.iform.crl.disabled = endis;
+	document.iform.dh_params.dh.disabled = endis;
+	document.iform.crl.crl.disabled = endis;
 	document.iform.tls.disabled = endis;
 	document.iform.nopool.disabled = endis;
 	document.iform.local_network.disabled = endis;

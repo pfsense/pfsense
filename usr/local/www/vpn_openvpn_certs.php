@@ -30,7 +30,7 @@
 
 require("guiconfig.inc");
 
-//$pgtitle = array("OpenVPN", "Certificate management");
+$pgtitle = array("OpenVPN", "Certificate management");
 $ovpncapath = $g['varetc_path']."/openvpn/certificates";
 
 if ($_GET['reset']) {
@@ -51,6 +51,29 @@ if ($_GET['delete']) {
 			write_config();
 		}
 	}
+	/* XXX: Lets do some hacking now! This implies we are not on embedded platform!!! */
+	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/openvpn.xml", "packagegui");
+			$options =& $pkg_config['fields']['field'][11]['options']['option'];
+			if (is_array($options)) {
+				for ($i = 0; $i < count($options); $i++) {
+					if ($options[$i]['name'] == $caname) {
+						unset($options[$i]);
+						break;
+					}
+				}
+
+				conf_mount_rw();
+	
+				$xmlcf = dump_xml_config_pkg($pkg_config, "packagegui");
+		    	/* write new configuration */
+    		    $fd = fopen("/usr/local/pkg/openvpn.xml", "w");
+	        	if (!$fd)
+	        	        die("Unable to open openvpn.xml for writing in write_config()\n");
+    		    fwrite($fd, $xmlcf);
+	    	    fclose($fd);
+		
+				conf_mount_ro();
+			}
 }
 
 exec("cd ".$g['varetc_path']."/openvpn/certificates && /usr/bin/find . -type d -name \"[a-zA-Z0-9_]*\"", $certificates);
@@ -91,8 +114,10 @@ include("head.inc");
 					<td><a href="vpn_openvpn_certs.php?delete=<?=$cert;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete certificate");?>" width="17" height="17" border="0" alt="" /></a></td>
                     </tr>
  	<?php } ?>
-				<tr><td><a href="vpn_openvpn_certs_create.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new certificate");?> width="17" height="17" border="0" alt="" /></a></td></tr>
+				<tr><td><a href="vpn_openvpn_create_certs.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new certificate");?> width="17" height="17" border="0" alt="" /></a></td></tr>
 	</table>
     <?php include("fend.inc"); ?>
 </body>
 </html>
+
+

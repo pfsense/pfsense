@@ -114,7 +114,7 @@ include("head.inc");
 					<td><a href="vpn_openvpn_certs.php?delete=<?=$cert;?>"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" title="<?=gettext("delete certificate");?>" width="17" height="17" border="0" alt="" /></a></td>
                     </tr>
  	<?php } ?>
-				<tr><td><a href="vpn_openvpn_create_certs.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new certificate");?> width="17" height="17" border="0" alt="" /></a></td></tr>
+				<tr><td><a href="vpn_openvpn_certs_create.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add a new certificate");?> width="17" height="17" border="0" alt="" /></a></td></tr>
 	</table>
     <?php include("fend.inc"); ?>
 </body>

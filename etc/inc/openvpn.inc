@@ -689,8 +689,17 @@ function onAuthMethodChanged() {
     document.iform.tls.disabled = endis;
 
 EOD;
-	if ($mode != 'server') {
-	// Client mode
+	if ($mode == 'server') {
+		$javascript .= <<<EOD
+	document.iform.nopool.disabled = endis;
+	document.iform.local_network.disabled = endis;
+	document.iform.client2client.disabled = endis;
+	document.iform.maxclients.disabled = endis;
+
+EOD;
+	}
+
+	else { // Client mode
 		$javascript .= "\tdocument.iform.remote_network.disabled = !endis;\n";
 	}
 

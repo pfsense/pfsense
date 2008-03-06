@@ -433,7 +433,7 @@ EOD;
         }
 
         foreach ($keys as $key) {
-                if ($mode == "server") {
+                if ($mode == "server" && $settings['cipher'] != "none") {
                         $openvpn_conf .= $key['directive'] . " " . $base_file . $settings['cipher'] . "/".$key['field'] . "\n";
                 } else {
                         $filename = "$base_file/openvpn_{$mode}{$id}." . $key['field'];

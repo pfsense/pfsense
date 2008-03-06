@@ -190,27 +190,6 @@ if ($_POST) {
 	$ovpnkeys[$caname]['dh_params.dh'] = file_get_contents("$ovpncapath/$caname/dh_params.dh");
 	/* save it */
 	write_config();
-	/* XXX: Lets do some hacking now! This implies we are not on embedded platform!!! */
-	$pkg_config = parse_xml_config_pkg("/usr/local/pkg/openvpn.xml", "packagegui");
-			$options =& $pkg_config['fields']['field'][11]['options']['option'];
-			if (!is_array($options)) 
-				$options = array();
-			$opt = array();
-			$opt['name'] = $caname;
-			$opt['value'] = $caname;
-			$options[] = $opt;
-
-			conf_mount_rw();
-	
-			$xmlcf = dump_xml_config_pkg($pkg_config, "packagegui");
-	    	/* write new configuration */
-    	    $fd = fopen("/usr/local/pkg/openvpn.xml", "w");
-	        if (!$fd)
-        	        die("Unable to open openvpn.xml for writing in write_config()\n");
-    	    fwrite($fd, $xmlcf);
-	        fclose($fd);
-	
-			conf_mount_ro();
 } else { ?>
 	  				<tr>
                       <td width="35%" valign="top" class="vncell"><B>Certificate Name</td>

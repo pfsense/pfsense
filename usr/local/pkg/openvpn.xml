@@ -161,12 +161,7 @@
                         <fielddescr>Certificates to apply</fielddescr>
                         <description>Certificates generated from the certificate generation tab.</description>
                         <type>select</type>
-                        <options>
-                                <option>
-                                        <value>none</value>
-                                        <name>none</name>
-                                </option>
-                        </options>
+			<default_value>none</default_value>
                 </field>
 		<field>
 			<fieldname>dhcp_domainname</fieldname>

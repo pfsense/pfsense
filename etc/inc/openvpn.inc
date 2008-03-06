@@ -40,18 +40,31 @@ require_once('util.inc');
 
 // Return the list of ciphers OpenVPN supports
 function openvpn_get_ciphers($pkg) {
-		foreach ($pkg['fields']['field'] as $i => $field) {
-			if ($field['fieldname'] == 'crypto') break;
+	global $config;
+
+	foreach ($pkg['fields']['field'] as $i => $field) {
+		if ($field['fieldname'] == 'crypto') {
+			$option_array = &$pkg['fields']['field'][$i]['options']['option'];
+			$ciphers_out = shell_exec('openvpn --show-ciphers | grep "default key" | awk \'{print $1, "(" $2 "-" $3 ")";}\'');
+			$ciphers = explode("\n", trim($ciphers_out));
+			sort($ciphers);
+			foreach ($ciphers as $cipher) {
+				$value = explode(' ', $cipher);
+				$value = $value[0];
+				$option_array[] = array('value' => $value, 'name' => $cipher);
+			}
+		} 
+		if ($field['fieldname'] == 'cipher') {
+		        if (is_array($config['openvpn']['keys'])) {
+                		if (count($config['openvpn']['keys']) > 0) {
+					$option_array = &$pkg['fields']['field'][$i]['options']['option'];
+                        		foreach ($config['openvpn']['keys'] as $cipher => $none) {
+						$option_array[] = array('value' => $cipher, 'name' => $cipher);
+                       			}
+                		}
+        		}
 		}
-		$option_array = &$pkg['fields']['field'][$i]['options']['option'];
-		$ciphers_out = shell_exec('openvpn --show-ciphers | grep "default key" | awk \'{print $1, "(" $2 "-" $3 ")";}\'');
-		$ciphers = explode("\n", trim($ciphers_out));
-		sort($ciphers);
-		foreach ($ciphers as $cipher) {
-			$value = explode(' ', $cipher);
-			$value = $value[0];
-			$option_array[] = array('value' => $value, 'name' => $cipher);
-		}
+	}
 }
 
 

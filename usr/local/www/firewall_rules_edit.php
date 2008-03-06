@@ -524,7 +524,7 @@ include("head.inc");
 					if  ($config['installedpackages']["openvpnserver"] || $config['installedpackages']["openvpnclient"]) {
 					        if (is_array($config['installedpackages']["openvpnserver"]['config']) ||
                 					is_array($config['installedpackages']["openvpnclient"]['config']))
-        					$iflist["openvpn"] = "OpenVPN";
+        					$interfaces["openvpn"] = "OpenVPN";
 					}
 
 

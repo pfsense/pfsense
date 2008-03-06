@@ -72,7 +72,7 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']
 
 if (!$if || !isset($iflist[$if])) {
 	if ("any" == $if)
-                $if = "GerneralRules";
+                $if = "FloatingRules";
         else if ("FloatingRules" != $if)
                 $if = "wan";
 }

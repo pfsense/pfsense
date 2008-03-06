@@ -70,6 +70,13 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']
 	if(have_ruleint_access("enc0")) 
 		$iflist["enc0"] = "IPsec";
 
+/* add openvpn/tun interfaces */
+if  ($config['installedpackages']["openvpnserver"] || $config['installedpackages']["openvpnclient"]) {
+	if (is_array($config['installedpackages']["openvpnserver"]['config']) ||
+		is_array($config['installedpackages']["openvpnclient"]['config']))
+                	$iflist["openvpn"] = "OpenVPN";
+}
+
 if (!$if || !isset($iflist[$if])) {
 	if ("any" == $if)
                 $if = "FloatingRules";

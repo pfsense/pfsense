@@ -519,6 +519,14 @@ include("head.inc");
 					if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable']))
 						if(have_ruleint_access("enc0")) 
 							$interfaces["enc0"] = "IPsec";
+		
+					/* add openvpn/tun interfaces */
+					if  ($config['installedpackages']["openvpnserver"] || $config['installedpackages']["openvpnclient"]) {
+					        if (is_array($config['installedpackages']["openvpnserver"]['config']) ||
+                					is_array($config['installedpackages']["openvpnclient"]['config']))
+        					$iflist["openvpn"] = "OpenVPN";
+					}
+
 
 					foreach ($interfaces as $iface => $ifacename): ?>
 						<option value="<?=$iface;?>" <?php if ($pconfig['interface'] <> "" && stristr($pconfig['interface'], $iface)) echo "selected"; ?>><?=gettext($ifacename);?></option>

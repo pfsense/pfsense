@@ -459,7 +459,8 @@ function interfaces_carp_configure() {
 		mute_kernel_msgs();
 	}
 	/* suck in configuration items */
-	if($config['installedpackages']['carpsettings']['config']) {
+	if($config['installedpackages']['carpsettings']) 
+		if($config['installedpackages']['carpsettings']['config']) {
 		foreach($config['installedpackages']['carpsettings']['config'] as $carp) {
 			$pfsyncenabled = $carp['pfsyncenabled'];
 			$balanacing = $carp['balancing'];

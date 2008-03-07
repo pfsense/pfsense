@@ -58,67 +58,10 @@
 		<title>pfSense Traffic Shaper Wizard</title>
 		<description>Shaper configuration</description>
 		<javascriptafterformdisplay/>
+		<stepbeforeformdisplay>step2_stepbeforeformdisplay();</stepbeforeformdisplay>
 		<stepsubmitphpaction>step2_stepsubmitphpaction();</stepsubmitphpaction>
 		<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 		<fields>
-			<field>
-				<name>Setup network speeds</name>
-				<type>listtopic</type>
-			</field>
-			<field>
-				<name>lanscheduler</name>
-				<type>select</type>
-				<typehint>Queueing discipline to apply on this interface</typehint>
-				<options>
-					<option>
-						<name>HFSC</name>
-						<value>HFSC</value>
-					</option>
-					<option>
-						<name>CBQ</name>
-						<value>CBQ</value>
-					</option>
-					<option>
-						<name>PRIQ</name>
-						<value>PRIQ</value>
-					</option>
-				</options>
-				<bindstofield>ezshaper-&gt;step2-&gt;lan-&gt;scheduler</bindstofield>
-			</field>
-			<field>
-				<name>lan</name>
-				<type>input</type>
-				<typehint>Bandwidth in Kbit/sec on this interface</typehint>
-				<validate>^[0-9]*([MKG]?b|%)$</validate>
-				<bindstofield>ezshaper-&gt;step2-&gt;lan-&gt;bandwidth</bindstofield>
-			</field>
-			<field>
-				<name>wanscheduler</name>
-				<type>select</type>
-				<typehint>Queueing discipline to apply on this interface</typehint>
-				<options>
-					<option>
-						<name>HFSC</name>
-						<value>HFSC</value>
-					</option>
-					<option>
-						<name>CBQ</name>
-						<value>CBQ</value>
-					</option>
-					<option>
-						<name>PRIQ</name>
-						<value>PRIQ</value>
-					</option>
-				</options>
-				<bindstofield>ezshaper-&gt;step2-&gt;wan-&gt;scheduler</bindstofield>
-			</field>
-			<field>
-				<name>wan</name>
-				<type>input</type>
-				<typehint>Bandwidth in Kbit/sec on this interface</typehint>
-				<validate>^[0-9]*$</validate>
-				<bindstofield>ezshaper-&gt;step2-&gt;wan-&gt;bandwidth</bindstofield>
-			</field>
 			<field>
 				<name>Next</name>
 				<type>submit</type>
@@ -188,6 +131,7 @@
 				<type>submit</type>
 			</field>
 		</fields>
+		<stepbeforeformdisplay>step3_stepbeforeformdisplay();</stepbeforeformdisplay>
 		<stepsubmitphpaction>step3_stepsubmitphpaction();</stepsubmitphpaction>
 		<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
 	</step>

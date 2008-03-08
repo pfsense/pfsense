@@ -276,6 +276,9 @@ extension=zlib.so
 ;xdebug.remote_port = 17869
 ;xdebug.idekey = devphp
 
+apc.enabled="1"
+apc.enable_cli="1"
+apc.shm_size="25"
 
 EOF
 

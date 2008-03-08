@@ -179,8 +179,7 @@ if ($_REQUEST['noticeaction'] == 'acknowledge') {
 								*/
 								output_menu_item("{$shaper}", "Traffic Shaper");
 							}
-							?>
-														<?=?>	
+							?>	
 							<?=output_menu_item("/firewall_virtual_ip.php", "Virtual IPs");?>	
 							<?php echo return_ext_menu("Firewall"); ?>
 						</ul>

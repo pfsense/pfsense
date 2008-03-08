@@ -258,6 +258,7 @@ extension=sysvsem.so
 extension=sysvshm.so
 extension=tokenizer.so
 extension=xml.so
+extension=ldap.so
 extension=zlib.so
 
 ; standard PHP extensions currently beeing unused

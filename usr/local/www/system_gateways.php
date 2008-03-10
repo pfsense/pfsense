@@ -93,8 +93,11 @@ effect.");?><br>
 			$tab_array[1] = array("Routes", false, "system_routes.php");
 			display_top_tabs($tab_array);
 ?>
-		  </td>
-		</tr>
+</td></tr>
+ <tr>
+   <td>
+	<div id="mainarea">
+             <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="15%" class="listhdrr">Name</td>
                   <td width="15%" class="listhdrr">Interface</td>
@@ -165,10 +168,14 @@ effect.");?><br>
 				<td width="17"></td>
 				<td><a href="system_gateways_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 			   </tr>
+		                    </table>
+				  </td>
+		                </tr>
 			</table>
-		  </td>
-		</tr>
-              </table>
+			</div>
+			</td>
+		  </tr>
+		</table>
             </form>
 <?php include("fend.inc"); ?>
 </body>

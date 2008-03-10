@@ -123,8 +123,11 @@ include("head.inc");
 		$tab_array[1] = array("Static Routes", true, "system_routes.php");
 		display_top_tabs($tab_array);
 ?>
-		  </td>
-		</tr>
+</td></tr>
+ <tr>
+   <td>
+	<div id="mainarea">
+             <table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td width="25%" class="listhdrr">Network</td>
                   <td width="20%" class="listhdrr">Gateway</td>
@@ -184,10 +187,14 @@ include("head.inc");
 				<td width="17"></td>
 				<td><a href="system_routes_edit.php"><img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" width="17" height="17" border="0"></a></td>
 			   </tr>
+		                    </table>
+				  </td>
+		                </tr>
 			</table>
-		  </td>
-		</tr>
-              </table>
+			</div>
+			</td>
+		  </tr>
+		</table>
             </form>
 			<p><b>Note:</b>  Do not enter static routes for networks assigned on any interface of this firewall.  Static routes are only used for networks reachable via a different router, and not reachable via your default gateway.</p>
 <?php include("fend.inc"); ?>

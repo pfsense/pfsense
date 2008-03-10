@@ -760,6 +760,4 @@
 			<command>/usr/local/sbin/reset_slbd.sh</command>
 		</item>
 	</cron>
-	<installedpackages>
-	</installedpackages>
 </pfsense>

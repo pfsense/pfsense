@@ -30,10 +30,6 @@
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
-function gettext($text) {
-	return $text;
-}
-
 function gentitle_pkg($pgname) {
 	global $config;
 	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;

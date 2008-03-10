@@ -171,7 +171,15 @@ include("head.inc");
                       <option value="<?=$iface;?>" <?php if ($iface == $pconfig['interface']) echo "selected"; ?>> 
                       <?=htmlspecialchars($ifacename);?>
                       </option>
-                      <?php endforeach; ?>
+                      <?php 
+						endforeach;
+						if (is_package_installed("openbgpd") == 1) {
+							echo "<option value=\"bgpd\"";
+							if($pconfig['interface'] == "bgpd") 
+								echo " selected";
+							echo ">Use BGPD</option>";
+						}
+ 					  ?>
                     </select> <br>
                     <span class="vexpl">Choose which interface this gateway applies to.</span></td>
                 </tr>

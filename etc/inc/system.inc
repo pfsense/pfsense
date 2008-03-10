@@ -253,7 +253,8 @@ function system_routing_configure() {
 					$interfacegw = $gateway['interface'];
 				}
 			}
-			mwexec("/sbin/route add default " . escapeshellarg($gatewayip));
+			if($interfacegw <> "bgpd")
+				mwexec("/sbin/route add default " . escapeshellarg($gatewayip));
 		} else {
 			/* adding gateway for 1.2-style configs without the new
 			  gateway setup configured.

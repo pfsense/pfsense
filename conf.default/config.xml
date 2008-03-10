@@ -107,8 +107,6 @@
 		<domain>local</domain>
 		<dnsserver></dnsserver>
 		<dnsallowoverride/>
-		<username>admin</username>
-		<password>$1$dSJImFph$GvZ7.1UbuWu.Yb8etC0re.</password>
 		<group>
 			<name>admins</name>
 			<description>System Administrators</description>

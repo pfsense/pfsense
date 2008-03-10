@@ -73,9 +73,6 @@
 	parse_config_bootup();
 	echo "done.\n";
 
-	/* setup php.ini */
-	opcode_cache_configuration();
-
 	$lan_if = $config['interfaces']['lan']['if'];
 	$wan_if = get_real_wan_interface();
 

@@ -132,6 +132,6 @@ echo "\n";
 
 echo "===> Checkout complete.  Your system is now sync'd.  Scripting terminating.\n";
 
-exec("killall php");
 touch("/tmp/restart_webgui");
 
+exec("killall php");

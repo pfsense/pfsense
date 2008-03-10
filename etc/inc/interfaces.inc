@@ -587,10 +587,6 @@ function interfaces_carp_bring_up_final() {
 			$counter++;
 			echo ".";
 		}
-		for($x=0; $x<23; $x++) {
-			sleep(2);
-			echo ".";
-		}
 		echo " done.\n";
 	}
 	foreach ($viparr as $vip) {

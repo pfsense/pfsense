@@ -158,6 +158,17 @@ echo -n "."
 DISABLESYSLOGCLOG=`cat /cf/conf/config.xml | grep disablesyslogclog | wc -l | awk '{ print $1 }'`
 if [ ! "$PLATFORM" = "cdrom" ]; then
 	if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then 
+		touch /var/log/system.log
+		touch /var/log/filter.log
+		touch /var/log/dhcpd.log
+		touch /var/log/vpn.log
+		touch /var/log/openvpn.log
+		touch /var/log/portalauth.log
+		touch /var/log/ipsec.log
+		touch /var/log/slbd.log
+		touch /var/log/lighttpd.log
+		touch /var/log/ntpd.log
+	else 
 		# generate circular logfiles
 		clog -i -s 512144 /var/log/system.log
 		clog -i -s 512144 /var/log/filter.log
@@ -169,17 +180,6 @@ if [ ! "$PLATFORM" = "cdrom" ]; then
 		clog -i -s 65535 /var/log/slbd.log
 		clog -i -s 65535 /var/log/lighttpd.log
 		clog -i -s 65535 /var/log/ntpd.log
-	else 
-		touch /var/log/system.log
-		touch /var/log/filter.log
-		touch /var/log/dhcpd.log
-		touch /var/log/vpn.log
-		touch /var/log/openvpn.log
-		touch /var/log/portalauth.log
-		touch /var/log/ipsec.log
-		touch /var/log/slbd.log
-		touch /var/log/lighttpd.log
-		touch /var/log/ntpd.log
 	fi 
 fi
 

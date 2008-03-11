@@ -40,7 +40,12 @@ if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) {
-	exec("/usr/sbin/clog -i -s 262144 {$dhcpd_logfile}");
+	if(isset($config['system']['disablesyslogclog'])) {
+		unlink($dhcpd_logfile);
+		touch($dhcpd_logfile);
+	} else {
+		exec("/usr/sbin/clog -i -s 262144 {$dhcpd_logfile}");
+	}
 }
 
 $pgtitle = array("Status","System logs","DHCP");

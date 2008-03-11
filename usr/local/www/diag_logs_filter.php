@@ -49,9 +49,14 @@ if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) {
-	exec("killall syslogd");
-	exec("/usr/sbin/clog -i -s 512144 /var/log/filter.log");
-	system_syslogd_start();
+	if(isset($config['system']['disablesyslogclog'])) {
+		unlink("/var/log/filter.log");
+		touch("/var/log/filter.log");
+	} else {	
+		exec("killall syslogd");
+		exec("/usr/sbin/clog -i -s 512144 /var/log/filter.log");
+		system_syslogd_start();
+	}
 }
 
 /* format filter logs */

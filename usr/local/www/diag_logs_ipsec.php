@@ -56,9 +56,14 @@ if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) {
-	exec("killall syslogd");
-	exec("/usr/sbin/clog -i -s 262144 {$ipsec_logfile}");
-	system_syslogd_start();
+	if(isset($config['system']['disablesyslogclog'])) {
+		unlink($ipsec_logfile);
+		touch($ipsec_logfile);
+	} else {
+		exec("killall syslogd");
+		exec("/usr/sbin/clog -i -s 262144 {$ipsec_logfile}");
+		system_syslogd_start();
+	}
 }
 
 $ipsec_logarr = return_clog($ipsec_logfile, $nentries);

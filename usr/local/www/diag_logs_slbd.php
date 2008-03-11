@@ -39,9 +39,14 @@ if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) {
-	exec("killall syslogd");
-	exec("/usr/sbin/clog -i -s 262144 {$slbd_logfile}");
-	system_syslogd_start();
+	if(isset($config['system']['disablesyslogclog'])) {
+		unlink($slbd_logfile);
+		touch($slbd_logfile);
+	} else {
+		exec("killall syslogd");
+		exec("/usr/sbin/clog -i -s 262144 {$slbd_logfile}");
+		system_syslogd_start();
+	}
 }
 
 $pgtitle = array("Status","System logs","Load Balancer");

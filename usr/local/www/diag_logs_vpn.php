@@ -37,7 +37,12 @@ if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) {
-	exec("/usr/sbin/clog -i -s 65536 /var/log/vpn.log");
+	if(isset($config['system']['disablesyslogclog'])) {
+		unlink("/var/log/vpn.log");
+		touch("/var/log/vpn.log");
+	} else {	
+		exec("/usr/sbin/clog -i -s 65536 /var/log/vpn.log");
+	}
 	/* redirect to avoid reposting form data on refresh */
 	header("Location: diag_logs_vpn.php");
 	exit;

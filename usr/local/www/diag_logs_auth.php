@@ -38,7 +38,12 @@ if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) {
-	exec("/usr/sbin/clog -i -s 262144 {$portal_logfile}");
+	if(isset($config['system']['disablesyslogclog'])) {
+		unlink($portal_logfile);
+		touch($portal_logfile);
+	} else {
+		exec("/usr/sbin/clog -i -s 262144 {$portal_logfile}");
+	}
 }
 
 $pgtitle = array("Status","System logs","Portal Auth");

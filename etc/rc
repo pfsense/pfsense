@@ -155,28 +155,34 @@ rm /var/log/* 2>/dev/null
 rm -rf /var/run/*
 
 echo -n "."
-# generate circular logfiles
+DISABLESYSLOGCLOG=`cat /cf/conf/config.xml | grep disablesyslogclog | wc -l | awk '{ print $1 }'`
 if [ ! "$PLATFORM" = "cdrom" ]; then
-	clog -i -s 512144 /var/log/system.log
-	clog -i -s 512144 /var/log/filter.log
-	clog -i -s 65535 /var/log/dhcpd.log
-	clog -i -s 65535 /var/log/vpn.log
-	clog -i -s 65535 /var/log/openvpn.log
-	clog -i -s 65535 /var/log/portalauth.log
-	clog -i -s 65535 /var/log/ipsec.log
-	clog -i -s 65535 /var/log/slbd.log
-	clog -i -s 65535 /var/log/lighttpd.log
-	clog -i -s 65535 /var/log/ntpd.log
+	if [ "$DISABLESYSLOGCLOG" -lt "0" ]; then 
+		# generate circular logfiles
+		clog -i -s 512144 /var/log/system.log
+		clog -i -s 512144 /var/log/filter.log
+		clog -i -s 65535 /var/log/dhcpd.log
+		clog -i -s 65535 /var/log/vpn.log
+		clog -i -s 65535 /var/log/openvpn.log
+		clog -i -s 65535 /var/log/portalauth.log
+		clog -i -s 65535 /var/log/ipsec.log
+		clog -i -s 65535 /var/log/slbd.log
+		clog -i -s 65535 /var/log/lighttpd.log
+		clog -i -s 65535 /var/log/ntpd.log
+	fi 
 else
-    clog -i -s 65535 /var/log/system.log
-    clog -i -s 65535 /var/log/filter.log
-    clog -i -s 65535 /var/log/dhcpd.log
-    clog -i -s 65535 /var/log/vpn.log
-	clog -i -s 65535 /var/log/openvpn.log
-    clog -i -s 65535 /var/log/portalauth.log
-    clog -i -s 65535 /var/log/ipsec.log
-    clog -i -s 65535 /var/log/slbd.log
-	clog -i -s 65535 /var/log/ntpd.log
+	if [ "$DISABLESYSLOGCLOG" -lt "1" ]; then 
+		# generate circular logfiles
+	    clog -i -s 65535 /var/log/system.log
+	    clog -i -s 65535 /var/log/filter.log
+	    clog -i -s 65535 /var/log/dhcpd.log
+	    clog -i -s 65535 /var/log/vpn.log
+		clog -i -s 65535 /var/log/openvpn.log
+	    clog -i -s 65535 /var/log/portalauth.log
+	    clog -i -s 65535 /var/log/ipsec.log
+	    clog -i -s 65535 /var/log/slbd.log
+		clog -i -s 65535 /var/log/ntpd.log
+	fi
 fi
 
 # change permissions on newly created clog files.

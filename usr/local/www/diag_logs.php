@@ -40,9 +40,17 @@ if (!$nentries)
 	$nentries = 50;
 
 if ($_POST['clear']) {
-	exec("killall syslogd");
-	exec("/usr/sbin/clog -i -s 262144 {$system_logfile}");
-	system_syslogd_start();
+	if(isset($config['system']['disablesyslogclog'])) {
+		exec("killall syslogd");
+		unlink($syslog_logfile);
+		touch($syslog_logfile);
+		system_syslogd_start();
+	} else {  
+		exec("killall syslogd");
+		exec("/usr/sbin/clog -i -s 262144 {$system_logfile}");
+		system_syslogd_start();
+	}
+
 }
 
 if ($_GET['filtertext'])

@@ -639,7 +639,10 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 	if(is_array($grepinvert))
 		foreach($grepinvert as $agrep)
 			$grepline .= " | grep -v \"$agrep\"";
-	exec("/usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+	if($config['system']['disablesyslogclog']) 
+		exec("cat {$logfile}{$grepline} | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+	else 
+		exec("/usr/sbin/clog {$logfile}{$grepline} | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
     /* comment out debug code
     echo "<!-- /usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail} -->";
     */
@@ -672,7 +675,10 @@ function return_clog($logfile, $tail, $grepfor = "", $grepinvert = "", $grepreve
 	/* comment out debug code
 	echo "<!-- /usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail} -->";
 	*/
-	exec("/usr/sbin/clog {$logfile}{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+	if($config['system']['disablesyslogclog']) 
+		exec("cat {$logfile}{$grepline} | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
+	else 
+		exec("/usr/sbin/clog {$logfile}{$grepline} | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n {$tail}", $logarr);
 	return($logarr);
 }
 
@@ -822,6 +828,5 @@ function display_widget_tabs(& $tab_array) {
 	echo "</script>";
 	echo "</div>";
 }
-
 
 ?>

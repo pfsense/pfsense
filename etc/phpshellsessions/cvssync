@@ -117,8 +117,6 @@ exec("rm -rf /tmp/xcache/* 2>/dev/null");
 echo "Upgrading configuration...\n";
 
 convert_config();
-/* setup php.ini */
-convert_config();
 sync_webgui_passwords();
 
 echo "Restarting check_reload_status...\n";

@@ -35,14 +35,14 @@
 	require_once("functions.inc");
 
 	function prompt_for_enable_dhcp_server() {
-		global $config, $fp;
+		global $config, $fp, $interface;
 		if($interface == "wan") {
 			if($config['interfaces']['lan']) 
 				return "n";
 		}
 		/* only allow DHCP server to be enabled when static IP is
 		  configured on this interface */
-		if (is_ipaddr($config['interfaces']['$interface']['ipaddr'])) {
+		if (is_ipaddr($config['interfaces'][$interface]['ipaddr'])) {
 			do {
 				$good = false;
 				$upperifname = strtoupper($interface);
@@ -201,7 +201,7 @@
 		unset($config['ezshaper']);
 		unset($config['nat']);
 		system("rm /var/dhcpd/var/db/*");
-        services_dhcpd_configure();
+		services_dhcpd_configure();
 	}
 
 	$upperifname = strtoupper($interface);

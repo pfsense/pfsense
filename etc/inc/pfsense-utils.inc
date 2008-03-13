@@ -3197,6 +3197,7 @@ function enable_rrd_graphing() {
 			} else {
 				$rrdupdatesh .= "`$netstat -nbf link -I {$realif} | $awk '{getline 2;print \$5 \":\" \$8}'`\n";
 			}
+			/* FIXME: needs to use the monitor setting from the gateways array now */
 			/* if an alternative gateway is defined, use it */
 			if ($config['interfaces'][$ifname]['use_rrd_gateway'] <> "") {
 				$gatewayip = get_interface_gateway($ifname);

@@ -1156,15 +1156,17 @@ function convert_config() {
 		$i = 0;
 		$old_gateways = get_interfaces_with_gateway();
 		foreach($old_gateways as $ifname => $interface) {
-			$config['gateways'][$i][$ifname]['gateway'] = $config['interfaces'][$ifname]['gateway'];
-			$config['gateways'][$i][$ifname]['interface'] = $ifname;
-			$config['gateways'][$i][$ifname]['name'] = $ifname ."-". $config['interfaces'][$ifname]['gateway'];
-			if(is_ipaddr($config['interfaces'][$ifname]['use_rrd_gateway'])) {
-				$config['gateways'][$i][$ifname]['monitor'] = $config['interfaces'][$ifname]['use_rrd_gateway'];
-				unset($config['interfaces'][$ifname]['use_rrd_gateway']);
+			if(is_ipaddr($config['interfaces'][$ifname]['gateway'])) {
+				$config['gateways'][$i][$ifname]['gateway'] = $config['interfaces'][$ifname]['gateway'];
+				$config['gateways'][$i][$ifname]['interface'] = $ifname;
+				$config['gateways'][$i][$ifname]['name'] = $ifname ."-". $config['interfaces'][$ifname]['gateway'];
+				if(is_ipaddr($config['interfaces'][$ifname]['use_rrd_gateway'])) {
+					$config['gateways'][$i][$ifname]['monitor'] = $config['interfaces'][$ifname]['use_rrd_gateway'];
+					unset($config['interfaces'][$ifname]['use_rrd_gateway']);
+				}
+				$config['interfaces'][$ifname]['gateway'] = $config['gateways'][$i][$ifname]['name'];
+				$i++;
 			}
-			$config['interfaces'][$ifname]['gateway'] = $config['gateways'][$i][$ifname]['name'];
-			$i++;
 		}
 	}
 

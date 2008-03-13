@@ -967,13 +967,6 @@ function convert_config() {
  		$config['version'] = "2.6";
 	}
 
-	/* Convert 2.6 -> 2.7 */
-	if ($config['version'] <= 2.6) {
-		$config['interfaces']['wan']['use_rrd_gateway'] = $config['system']['use_rrd_gateway'];
-		unset($config['system']['use_rrd_gateway']);
-		$config['version'] = "2.7";
-	}
-
 	/* Convert 2.7 -> 2.8 */
 	if ($config['version'] <= 2.7) {
 		$founditem = false;
@@ -1154,6 +1147,27 @@ function convert_config() {
 
                 $config['version'] = "4.2";
 	}
+
+	/* Convert 4.2 -> 4.3 */
+        if ($config['version'] <= 4.1) {
+		/* migrate old interface gateway to the new gateways config */
+		$old_gateways = array();
+		$gateways = array();
+		$i = 0;
+		$old_gateways = get_interfaces_with_gateway();
+		foreach($old_gateways as $ifname => $interface) {
+			$config['gateways'][$i][$ifname]['gateway'] = $config['interfaces'][$ifname]['gateway'];
+			$config['gateways'][$i][$ifname]['interface'] = $ifname;
+			$config['gateways'][$i][$ifname]['name'] = $ifname ."-". $config['interfaces'][$ifname]['gateway'];
+			if(is_ipaddr($config['interfaces'][$ifname]['use_rrd_gateway'])) {
+				$config['gateways'][$i][$ifname]['monitor'] = $config['interfaces'][$ifname]['use_rrd_gateway'];
+				unset($config['interfaces'][$ifname]['use_rrd_gateway']);
+			}
+			$config['interfaces'][$ifname]['gateway'] = $config['gateways'][$i][$ifname]['name'];
+			$i++;
+		}
+	}
+
 	if ($prev_version != $config['version'])
 		write_config("Upgraded config version level from {$prev_version} to {$config['version']}");
 }

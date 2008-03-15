@@ -181,10 +181,9 @@ if [ ! "$PLATFORM" = "cdrom" ]; then
 		clog -i -s 65535 /var/log/lighttpd.log
 		clog -i -s 65535 /var/log/ntpd.log
 	fi 
+	# change permissions on newly created clog files.
+	chmod 0600 /var/log/system.log /var/log/filter.log /var/log/dhcpd.log /var/log/vpn.log /var/log/portalauth.log /var/log/slbd.log	
 fi
-
-# change permissions on newly created clog files.
-chmod 0600 /var/log/system.log /var/log/filter.log /var/log/dhcpd.log /var/log/vpn.log /var/log/portalauth.log /var/log/slbd.log
 
 echo -n "."
 DEVFS=`mount | grep devfs | wc -l | cut -d" " -f8`

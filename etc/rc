@@ -156,34 +156,32 @@ rm -rf /var/run/*
 
 echo -n "."
 DISABLESYSLOGCLOG=`cat /cf/conf/config.xml | grep disablesyslogclog | wc -l | awk '{ print $1 }'`
-if [ ! "$PLATFORM" = "cdrom" ]; then
-	if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then 
-		touch /var/log/system.log
-		touch /var/log/filter.log
-		touch /var/log/dhcpd.log
-		touch /var/log/vpn.log
-		touch /var/log/openvpn.log
-		touch /var/log/portalauth.log
-		touch /var/log/ipsec.log
-		touch /var/log/slbd.log
-		touch /var/log/lighttpd.log
-		touch /var/log/ntpd.log
-	else 
-		# generate circular logfiles
-		clog -i -s 512144 /var/log/system.log
-		clog -i -s 512144 /var/log/filter.log
-		clog -i -s 65535 /var/log/dhcpd.log
-		clog -i -s 65535 /var/log/vpn.log
-		clog -i -s 65535 /var/log/openvpn.log
-		clog -i -s 65535 /var/log/portalauth.log
-		clog -i -s 65535 /var/log/ipsec.log
-		clog -i -s 65535 /var/log/slbd.log
-		clog -i -s 65535 /var/log/lighttpd.log
-		clog -i -s 65535 /var/log/ntpd.log
-	fi 
-	# change permissions on newly created clog files.
-	chmod 0600 /var/log/system.log /var/log/filter.log /var/log/dhcpd.log /var/log/vpn.log /var/log/portalauth.log /var/log/slbd.log	
-fi
+if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then 
+	touch /var/log/system.log
+	touch /var/log/filter.log
+	touch /var/log/dhcpd.log
+	touch /var/log/vpn.log
+	touch /var/log/openvpn.log
+	touch /var/log/portalauth.log
+	touch /var/log/ipsec.log
+	touch /var/log/slbd.log
+	touch /var/log/lighttpd.log
+	touch /var/log/ntpd.log
+else 
+	# generate circular logfiles
+	clog -i -s 512144 /var/log/system.log
+	clog -i -s 512144 /var/log/filter.log
+	clog -i -s 65535 /var/log/dhcpd.log
+	clog -i -s 65535 /var/log/vpn.log
+	clog -i -s 65535 /var/log/openvpn.log
+	clog -i -s 65535 /var/log/portalauth.log
+	clog -i -s 65535 /var/log/ipsec.log
+	clog -i -s 65535 /var/log/slbd.log
+	clog -i -s 65535 /var/log/lighttpd.log
+	clog -i -s 65535 /var/log/ntpd.log
+fi 
+# change permissions on newly created clog files.
+chmod 0600 /var/log/system.log /var/log/filter.log /var/log/dhcpd.log /var/log/vpn.log /var/log/portalauth.log /var/log/slbd.log	
 
 echo -n "."
 DEVFS=`mount | grep devfs | wc -l | cut -d" " -f8`

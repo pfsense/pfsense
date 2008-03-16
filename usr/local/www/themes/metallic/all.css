@@ -380,7 +380,70 @@ table#marquee div#container div#scroller {
 }
 #navigation ul li.droplast {
 }
+#wzdtabcont {
+	float: left;
+	background-color: #FFFFFF;
+	color: #000000;
+	padding: 0;
+}
 
+ul#wzdnav {
+  font-size: 0.96em;
+  float: left;
+	width: 14.5em;
+  margin: 0;
+	padding-left: 18px;
+}
+
+ul#wzdnav li {
+  list-style: none;
+  margin: 0;
+	padding-bottom: 0.2em;
+  padding-left: 0;
+}
+
+ul#wzdnav a {
+  display: block;
+  padding: 0.3em;
+  font-weight: normal;
+}
+
+#wzdnavbold a {
+  display: block;
+  padding: 0.3em;
+  font-weight: bold ! important;
+}
+
+ul#wzdnav a:link {
+  color: black;
+	background-color: #eee;
+}
+
+ul#wzdnav a:visited {
+  color: #666;
+	background-color: #eee;
+}
+
+ul#wzdnav a:hover {
+  color: black;
+	background-color: white;
+}
+
+ul#wzdnav a:active {
+  color: white;
+	background-color: gray;
+}
+
+#graph {
+	position: relative;
+	z-index: 10;
+}
+
+#logoutbtn {
+  position: absolute;
+  left: 95%;
+  vertical-align: middle;
+}
 
 
 #graph {
@@ -408,7 +471,75 @@ table#marquee div#container div#scroller {
 	border-bottom: 1px solid #999999;
 }
 .formfld {
-
+  padding-left: 19px;
+  font-size: small;
+}
+.formselect {
+  font-size: 1.0em;
+}
+.langopt {
+  padding-left: 34px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+.saved {
+  /* background: url('/themes/nione/images/icons/icon_wzd_saved.png') no-repeat 0 1px #FFFFFF; */
+  list-style-image: url('/themes/metallic/images/icons/icon_wzd_saved.png') ! important;
+}
+.notsaved {
+  /* background: url('/themes/nione/images/icons/icon_wzd_nsaved.png') no-repeat 0 1px #FFFFFF; */
+  list-style-image: url('/themes/metallic/images/icons/icon_wzd_nsaved.png') ! important;
+}
+.en {
+  background: url('/themes/metallic/images/icons/icon_flag_en.png') no-repeat 0 1px #FFFFFF;
+}
+.de {
+  background: url('/themes/metallic/images/icons/icon_flag_de.png') no-repeat 0 1px #FFFFFF;
+}
+.es {
+  background: url('/themes/metallic/images/icons/icon_flag_es.png') no-repeat 0 1px #FFFFFF;
+}
+.pt_BR {
+  background: url('/themes/metallic/images/icons/icon_flag_pt_BR.png') no-repeat 0 1px #FFFFFF;
+}
+.host {
+  background: url('/themes/metallic/images/icons/icon_frmfld_host.png') no-repeat 0 1px #FFFFFF;
+}
+.search {
+  background: url('/themes/metallic/images/icons/icon_frmfld_search.png') no-repeat 0 1px #FFFFFF;
+}
+.file {
+  background: url('/themes/metallic/images/icons/icon_frmfld_file.png') no-repeat 0 1px #FFFFFF;
+}
+.mail {
+  background: url('/themes/metallic/images/icons/icon_frmfld_mail.png') no-repeat 0 1px #FFFFFF;
+}
+.imp {
+  background: url('/themes/metallic/images/icons/icon_frmfld_imp.png') no-repeat 0 1px #FFFFFF;
+}
+.pwd {
+  background: url('/themes/metallic/images/icons/icon_frmfld_pwd.png') no-repeat 0 1px #FFFFFF;
+}
+.user {
+  background: url('/themes/metallic/images/icons/icon_frmfld_user.png') no-repeat 0 1px #FFFFFF ;
+}
+.group {
+  background: url('/themes/metallic/images/icons/icon_frmfld_group.png') no-repeat 0 1px #FFFFFF;
+}
+.url {
+  background: url('/themes/metallic/images/icons/icon_frmfld_url.png') no-repeat 0 1px #FFFFFF;
+}
+.time {
+  background: url('/themes/metallic/images/icons/icon_frmfld_time.png') no-repeat 0 1px #FFFFFF;
+}
+.unknown {
+  background: url('/themes/metallic/images/icons/icon_frmfld_unknown.png') no-repeat 0 1px #FFFFFF;
+}
+.formfld_cert {
+  background: url('/themes/metallic/images/icons/icon_frmfld_cert.png') no-repeat 0 1px #FFFFFF;
+  padding-left: 28px;
+	font-family: Courier New, Courier, monospaced;
+	font-size: 11px;
 }
 .formfldalias {
 	background-color: #990000;
@@ -851,6 +982,65 @@ div#log span.log-protocol {
 	width: 5.5em;
 }
 /* END CSS FOR DYNAMIC LOG VIEWER */
+
+
+#login {
+	background: #cccccc;
+	border: 0px solid #666666;
+	margin: 5em auto;
+	padding: 0em;
+	width: 340px;
+}
+
+#login h1 {
+	background: url(images/misc/logon.png) no-repeat top left;
+	margin-top: 0;
+	display: block;
+	text-indent: -1000px;
+	height: 50px;
+	border-bottom: none;
+}
+
+#login p {
+	font-size: 1em;
+	font-weight: bold;
+	padding: 3px;
+	margin: 0em;
+	text-indent: 10px;
+}
+
+#login span {
+	font-size: 1em;
+	font-weight: bold;
+	width: 20%;
+	padding: 3px;
+	margin: 0em;
+	text-indent: 10px;
+}
+
+#login p#text {
+	font-size: 1em;
+	font-weight: normal;
+	padding: 3px;
+	margin: 0em;
+	text-indent: 10px;
+}
+
+#login #username, #password {
+	font-size: 1em;
+	width: 60%;
+	padding: 3px;
+	margin: 0em;
+}
+
+#login #submit {
+	font-size: 1em;
+	font-weight: bold;
+	padding: 3px;
+	margin: 0em;
+	text-indent: 10px;
+}
+
 
 /* Widget CSS */
 .widgetsubheader {

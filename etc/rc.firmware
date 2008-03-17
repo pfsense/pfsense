@@ -148,98 +148,91 @@ upgrade)
 		sh /etc/rc.reboot
 	fi
 	;;
-pfSenseupgrade)
-	# wait 5 seconds before beginning
-	sleep 5
-
-	# Sanity check - bail early if there's no firmware file!
-	if [ ! -r $IMG ]; then
-		echo "2nd parameter has not been passed or file does not exist. Exiting." | logger -p daemon.info -i -t Upgrade
-		exit
-	fi
-
-	backup_chflags
-	remove_chflags
-
-	#exec </dev/console >/dev/console 2>/dev/console
-
-	echo "Firmware upgrade in progress..."  | logger -p daemon.info -i -t Upgrade
-
-	# backup config
-	/bin/mkdir -p /tmp/configbak
-	cp -p /conf/* /tmp/configbak 2>/dev/null
-	# mount /cf
-	/etc/rc.conf_mount_rw
-	/sbin/mount -w -o noatime /cf 2>/dev/null
-	/sbin/mount -w -o noatime /   2>/dev/null
-
-	# tar explode image onto hd
-	echo "Installing $IMG." | logger -p daemon.info -i -t Upgrade
-	cd / && /usr/bin/tar xzUPf $IMG | logger -p daemon.info -i -t Upgrade
-	/usr/bin/find / -name CVS -exec rm -fr {} \;
-	echo "Image installed $IMG." | logger -p daemon.info -i -t Upgrade
-
-    # process custom image if its passed
-    if [ $# -eq 3 ]; then
-	    if [ -f $CUSTOMIMG ]; then
-	        echo "Custom image $CUSTOMIMG found." | logger -p daemon.info -i -t Upgrade
-	        echo "Custom image ($CUSTOMIMG) found."
-	        PWD_DIR=`pwd`
-	        cd / && /usr/bin/tar xzPUf $CUSTOMIMG | logger -p daemon.info -i -t Upgrade
-	        cd $PWD_DIR
-	        echo "Custom image $CUSTOMIMG installed." | logger -p daemon.info -i -t Upgrade
+	pfSenseupgrade)
+		# wait 5 seconds before beginning
+		sleep 5
+		# Sanity check - bail early if there's no firmware file!
+		if [ ! -r $IMG ]; then
+			echo "2nd parameter has not been passed or file does not exist. Exiting." | logger -p daemon.info -i -t Upgrade
+			exit
+		fi
+		backup_chflags
+		remove_chflags
+		exec </dev/console >/dev/console 2>/tmp_upgrade_in_progress
+		echo "Firmware upgrade in progress..."  | logger -p daemon.info -i -t Upgrade
+		# backup config
+		/bin/mkdir -p /tmp/configbak
+		cp -p /conf/* /tmp/configbak 2>/dev/null
+		# mount /cf
+		/etc/rc.conf_mount_rw
+		/sbin/mount -w -o noatime /cf 2>/dev/null
+		/sbin/mount -w -o noatime /   2>/dev/null
+		echo "Installing $IMG." | logger -p daemon.info -i -t Upgrade
+		for i in `/usr/bin/tar tvzf $IMG | egrep -v "(^d|_md5)" | nawk '{print $9;}'`;
+		 do
+			FILE=`basename ${i}`
+			echo "Working on ${FILE} - ${i}"
+			echo "Working on ${FILE} - ${i}" | logger -p daemon.info -i -t Upgrade
+			(cd /tmp && /usr/bin/tar xzf ${IMG} ${i})
+			echo "Installing /${i}" 
+			echo "Installing /${i}" | logger -p daemon.info -i -t Upgrade
+			/usr/bin/install -S /tmp/${i} /${i}
+			/bin/rm /tmp/${i}
+		done
+		/usr/bin/find / -name CVS -exec rm -fr {} \;
+		echo "Image installed $IMG." | logger -p daemon.info -i -t Upgrade
+	    # process custom image if its passed
+	    if [ $# -eq 3 ]; then
+		    if [ -f $CUSTOMIMG ]; then
+		        echo "Custom image $CUSTOMIMG found." | logger -p daemon.info -i -t Upgrade
+		        echo "Custom image ($CUSTOMIMG) found."
+		        PWD_DIR=`pwd`
+		        cd / && /usr/bin/tar xzPUf $CUSTOMIMG | logger -p daemon.info -i -t Upgrade
+		        cd $PWD_DIR
+		        echo "Custom image $CUSTOMIMG installed." | logger -p daemon.info -i -t Upgrade
+		    fi
 	    fi
-    fi
-
-	# restore config
-	cp -p /tmp/configbak/* /conf 2>/dev/null
-
-	# restore /etc symlinks
-	rm /etc/hosts
-	ln -s /var/etc/hosts /etc/hosts
-
-	restore_chflags
-
-	# Remove upgrade file
-	rm -f $IMG
-
-	rm -f /var/run/firmware.lock
-
-	/bin/sync
-	sleep 5
-
-	# remount /cf ro
-	rm -rf /etc/rc.conf
-	rm -rf /etc/motd
-	find / -name CVS -type d -exec rm {} \;
-	rm -rf /usr/savecore/*
-	/etc/rc.conf_mount_ro
-	/sbin/umount -f /cf 2>/dev/null
-	/sbin/mount -r /cf 2>/dev/null
-	/sbin/umount -f / 2>/dev/null
-	/sbin/mount -r / 2>/dev/null
-	if [ -e /etc/init_bootloader.sh ]; then
-		sh /etc/init_bootloader.sh
-	fi
-	/bin/sync
-	echo "Done." | logger -p daemon.info -i -t Upgrade
-
-	# If /tmp/post_upgrade_command exists after update
-	# then execute the command.
-	if [ -f /tmp/post_upgrade_command ]; then
-		sh /tmp/post_upgrade_command
-	fi
-
-	# If the archive has unpacked a file called
-	# /tmp/no_upgrade_reboot_required then do
-	# not reboot after upgrade.
-	if [ -f /tmp/no_upgrade_reboot_required ]; then
-		rm /tmp/no_upgrade_reboot_required
-	else
-		rm -f /var/run/config.lock
-		sh /etc/rc.reboot
-	fi
-	;;
+		# restore config
+		cp -p /tmp/configbak/* /conf 2>/dev/null
+		# restore /etc symlinks
+		rm /etc/hosts
+		ln -s /var/etc/hosts /etc/hosts
+		restore_chflags
+		rm -f /var/run/firmware.lock
+		# Remove upgrade file
+		rm -f $IMG
+		/bin/sync
+		sleep 5
+		# remount /cf ro
+		rm -rf /etc/rc.conf
+		rm -rf /etc/motd
+		find / -name CVS -type d -exec rm {} \;
+		rm -rf /usr/savecore/*
+		/etc/rc.conf_mount_ro
+		/sbin/umount -f /cf 2>/dev/null
+		/sbin/mount -r /cf 2>/dev/null
+		/sbin/umount -f / 2>/dev/null
+		/sbin/mount -r / 2>/dev/null
+		if [ -e /etc/init_bootloader.sh ]; then
+			sh /etc/init_bootloader.sh
+		fi
+		/bin/sync
+		echo "Done." | logger -p daemon.info -i -t Upgrade
+		# If /tmp/post_upgrade_command exists after update
+		# then execute the command.
+		if [ -f /tmp/post_upgrade_command ]; then
+			sh /tmp/post_upgrade_command
+		fi
+		# If the archive has unpacked a file called
+		# /tmp/no_upgrade_reboot_required then do
+		# not reboot after upgrade.
+		if [ -f /tmp/no_upgrade_reboot_required ]; then
+			rm /tmp/no_upgrade_reboot_required
+		else
+			rm -f /var/run/config.lock
+			sh /etc/rc.reboot
+		fi
+		;;
 delta_update)
 	backup_chflags
 	remove_chflags

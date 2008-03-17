@@ -167,17 +167,20 @@ upgrade)
 		/etc/rc.conf_mount_rw
 		/sbin/mount -w -o noatime /cf 2>/dev/null
 		/sbin/mount -w -o noatime /   2>/dev/null
-		echo "Installing $IMG." | logger -p daemon.info -i -t Upgrade
-		for i in `/usr/bin/tar tvzf $IMG | egrep -v "(^d|_md5)" | nawk '{print $9;}'`;
+		echo "Extracting $IMG." | logger -p daemon.info -i -t Upgrade
+		gzip -d $IMG
+		NEWIMG="`echo $IMG | sed 's/.tgz/.tar/'`"
+		echo "Installing $NEWIMG." | logger -p daemon.info -i -t Upgrade
+		for i in `/usr/bin/tar tvzf $NEWIMG | egrep -v "(^d|_md5)" | nawk '{print $9;}'`;
 		 do
 			FILE=`basename ${i}`
 			echo "Working on ${FILE} - /${i}"
 			echo "Working on ${FILE} - /${i}" | logger -p daemon.info -i -t Upgrade
-			(cd /tmp && /usr/bin/tar xzf ${IMG} ${i})
+			(cd /tmp && /usr/bin/tar xf ${NEWIMG} ${i})
 			echo "Installing /${i}" 
 			echo "Installing /${i}" | logger -p daemon.info -i -t Upgrade
 			/usr/bin/install -S /tmp/${i} /${i}	
-			chflags noschg /tmp/${i}.*
+			chflags noschg /tmp/${i}
 			/bin/rm -f /tmp/${i}
 		done
 		/usr/bin/find / -name CVS -exec rm -fr {} \;

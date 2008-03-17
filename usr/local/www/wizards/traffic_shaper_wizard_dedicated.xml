@@ -39,10 +39,14 @@
 		<description>This wizard will guide you through setting up the pfSense traffic shaper.</description>
 		<fields>
 			<field>
+				<type>listtopic</type>
+				<name>Traffic shaper Wizard</name>
+			</field>
+			<field>
 				<name>numberofconnections</name>
 				<type>input</type>
 				<validate>^[0-9]+$</validate>
-				<description>Number of local interfaces you have</description>
+				<description>Number of connections you have</description>
 				<bindstofield>ezshaper->step1->numberofconnections</bindstofield>
 			</field>
 			<field>
@@ -51,7 +55,7 @@
 			</field>
 		</fields>
 		<stepsubmitphpaction>step1_submitphpaction();</stepsubmitphpaction>
-		<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
+		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc</includefile>
 	</step>
 	<step>
 		<id>2</id>
@@ -60,7 +64,7 @@
 		<javascriptafterformdisplay/>
 		<stepbeforeformdisplay>step2_stepbeforeformdisplay();</stepbeforeformdisplay>
 		<stepsubmitphpaction>step2_stepsubmitphpaction();</stepsubmitphpaction>
-		<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
+		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc</includefile>
 		<fields>
 			<field>
 				<name>Next</name>
@@ -124,73 +128,8 @@
 				<type>input</type>
 				<validate>^[0-9]*$</validate>
 				<typehint>Total bandwidth in percentage(%)(should be between 5 and 40) guarantee for VOIP traffic.</typehint>
-				<bindstofield>ezshaper-&gt;step3-&gt;connupload</bindstofield>
-				<combinefieldsbegin>true</combinefieldsbegin>
+				<bindstofield>ezshaper-&gt;step3-&gt;bandwidth</bindstofield>
 			</field>
-			<field>
-				<combinefieldsend>true</combinefieldsend>
-				<dontdisplayname>true</dontdisplayname>
-				<dontcombinecells>true</dontcombinecells>
-				<donotdisable>true</donotdisable>
-               <name>Download Speed</name>
-				<description>The limit you want to apply.</description>
-                                <type>select</type>
-				<options>
-				<option>
-                    <name>%</name>
-                    <value>%</value>
-                </option>
-				<option>
-					<name>Kilobit/s</name>
-					<value>Kb</value>
-				</option>
-				<option>
-					<name>Megabit/s</name>
-					<value>Mb</value>
-				</option>
-				<option>
-					<name>Gigabit/s</name>
-					<value>Gb</value>
-				</option>
-				</options>
-                    <bindstofield>ezshaper->step4->connuploadspeed</bindstofield>
-              </field>
-			<field>
-				<name>Download Speed</name>
-				<type>input</type>
-				<validate>^[0-9]*$</validate>
-				<typehint>Total bandwidth in percentage(%)(should be between 5 and 40) guarantee for VOIP traffic.</typehint>
-				<bindstofield>ezshaper-&gt;step3-&gt;conndownload</bindstofield>
-				<combinefieldsbegin>true</combinefieldsbegin>
-			</field>
-			<field>
-				<combinefieldsend>true</combinefieldsend>
-				<dontdisplayname>true</dontdisplayname>
-				<dontcombinecells>true</dontcombinecells>
-				<donotdisable>true</donotdisable>
-               <name>Download Speed</name>
-				<description>The limit you want to apply.</description>
-                                <type>select</type>
-				<options>
-				<option>
-                    <name>%</name>
-                    <value>%</value>
-                </option>
-				<option>
-					<name>Kilobit/s</name>
-					<value>Kb</value>
-				</option>
-				<option>
-					<name>Megabit/s</name>
-					<value>Mb</value>
-				</option>
-				<option>
-					<name>Gigabit/s</name>
-					<value>Gb</value>
-				</option>
-				</options>
-                    <bindstofield>ezshaper->step4->conndownloadspeed</bindstofield>
-              </field>
 			<field>
 				<name>Next</name>
 				<type>submit</type>
@@ -198,7 +137,7 @@
 		</fields>
 		<stepbeforeformdisplay>step3_stepbeforeformdisplay();</stepbeforeformdisplay>
 		<stepsubmitphpaction>step3_stepsubmitphpaction();</stepsubmitphpaction>
-		<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
+		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc</includefile>
 	</step>
 	<step>
 		<id>4</id>
@@ -248,9 +187,9 @@
                                 <type>select</type>
 				<options>
 				<option>
-                    <name>%</name>
-                    <value>%</value>
-                </option>
+                                        <name>%</name>
+                                        <value>%</value>
+                                </option>
 				<option>
 					<name>bit/s</name>
 					<value>b</value>
@@ -276,7 +215,7 @@
 			</field>
 		</fields>
 		<stepsubmitphpaction>step4_stepsubmitphpaction();</stepsubmitphpaction>
-		<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
+		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc</includefile>
 	</step>
 	<step>
 		<id>5</id>
@@ -483,7 +422,7 @@
 			</field>
 		</fields>
 		<stepsubmitphpaction>step5_stepsubmitphpaction();</stepsubmitphpaction>
-		<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
+		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc</includefile>
 	</step>
 	<step>
 		<id>6</id>
@@ -645,7 +584,7 @@
 				<type>submit</type>
 			</field>
 		</fields>
-		<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
+		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc</includefile>
 	</step>
 	<step>
 		<id>7</id>
@@ -1239,7 +1178,7 @@
 				<type>submit</type>
 			</field>
 		</fields>
-		<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
+		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc</includefile>
 	</step>
 	<step>
 		<id>8</id>
@@ -1256,7 +1195,7 @@
 			</field>
 		</fields>
 		<stepsubmitphpaction>step8_stepsubmitphpaction();</stepsubmitphpaction>
-		<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
+		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc</includefile>
 	</step>
 	<step>
 		<id>9</id>
@@ -1267,7 +1206,7 @@
 				<type>submit</type>
 			</field>
 		</fields>
-		<includefile>/usr/local/www/wizards/traffic_shaper_wizard.inc</includefile>
+		<includefile>/usr/local/www/wizards/traffic_shaper_wizard_dedicated.inc</includefile>
 		<stepsubmitphpaction>step9_stepsubmitphpaction();</stepsubmitphpaction>
 	</step>
 </pfsensewizard>

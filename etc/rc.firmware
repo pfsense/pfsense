@@ -158,7 +158,6 @@ upgrade)
 		fi
 		backup_chflags
 		remove_chflags
-		exec </dev/console >/tmp_upgrade_in_progress 2>/tmp_upgrade_in_progress
 		echo "Firmware upgrade in progress..."  | logger -p daemon.info -i -t Upgrade
 		# backup config
 		/bin/mkdir -p /tmp/configbak

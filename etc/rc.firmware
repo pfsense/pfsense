@@ -220,6 +220,7 @@ upgrade)
 		if [ -e /etc/init_bootloader.sh ]; then
 			sh /etc/init_bootloader.sh
 		fi
+		rm $NEWIMG
 		/bin/sync
 		echo "Done." | logger -p daemon.info -i -t Upgrade
 		# If /tmp/post_upgrade_command exists after update

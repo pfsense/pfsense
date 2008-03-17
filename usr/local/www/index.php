@@ -196,29 +196,35 @@ $jscriptstr = <<<EOD
 
 
 function widgetAjax(widget) {	
-			uri = "widgets/widgets/" + widget + ".widget.php";
-			var opt = {
-			    // Use GET
-			    method: 'get',
-				evalScripts: 'true',
-			    asynchronous: true,
-			    // Handle 404
-			    on404: function(t) {
-			        alert('Error 404: location "' + t.statusText + '" was not found.');
-			    },
-			    // Handle other errors
-			    onFailure: function(t) {
-			        alert('Error ' + t.status + ' -- ' + t.statusText);
-			    }
-			}
-			new Ajax.Updater(widget, uri, opt);
-		}
+	uri = "widgets/widgets/" + widget + ".widget.php";
+	var opt = {
+	    // Use GET
+	    method: 'get',
+		evalScripts: 'true',
+	    asynchronous: true,
+	    // Handle 404
+	    on404: function(t) {
+	        alert('Error 404: location "' + t.statusText + '" was not found.');
+	    },
+	    // Handle other errors
+	    onFailure: function(t) {
+	        alert('Error ' + t.status + ' -- ' + t.statusText);
+	    },
+		onSuccess: function(t) {
+			widget2 = widget + "-loader";
+			Effect.Fade(widget2, {queue:'front'});
+			Effect.Appear(widget, {queue:'end'});			
+	    }	
+	}
+	new Ajax.Updater(widget, uri, opt);
+}
 
 
 function addDiv(selectedDiv){	
 	selectedDiv2 = selectedDiv + "-container";
 	d = document;
 	textlink = d.getElementById(selectedDiv2);
+	Effect.Appear(selectedDiv2, {duration:1});
 	if (textlink.style.display != "none")
 	{
 		Effect.Shake(selectedDiv2);	
@@ -226,7 +232,6 @@ function addDiv(selectedDiv){
 	else
 	{
 		widgetAjax(selectedDiv);
-		Effect.Appear(selectedDiv2, {duration:1});
 		selectIntLink = selectedDiv2 + "-input";
 		textlink = d.getElementById(selectIntLink);
 		textlink.value = "show";	
@@ -485,7 +490,7 @@ echo $jscriptstr;
 	$printed = false;
 	$firstprint = false;
 	?> 
-	<div id="col1" style="float:left;width:49%;padding: 2px;padding-bottom:40px">		
+	<div id="col1" style="float:left;width:50%;padding-bottom:40px">		
 	<?php
 	
 	if ($config['widgets']){
@@ -574,7 +579,7 @@ echo $jscriptstr;
 				$printed = true;
 				?>
 				</div>
-				<div id="col2" style="float:right;width:49%;padding: 2px;padding-bottom:40px">		
+				<div id="col2" style="float:right;width:50%;padding-bottom:40px">		
 				<?php
 			}
 		}
@@ -582,7 +587,7 @@ echo $jscriptstr;
 			$printed = true;
 			?>
 			</div>
-			<div id="col2" style="float:right;width:49%;padding: 2px;padding-bottom:40px">		
+			<div id="col2" style="float:right;width:50%;padding-bottom:40px">		
 			<?php
 		}
 		
@@ -627,12 +632,24 @@ echo $jscriptstr;
 				</div>
 				<div style="clear:both;"></div>
 			</div>
-			<div id="<?php echo $widgetname;?>" style="display:<?php echo $display; ?>;">
+			<?php if ($displayarray[$widgetcounter] != "show") { ?>
+			<div id="<?php echo $widgetname;?>-loader" style="display:<?php echo $display; ?>;"><br>
+					<div id="<?php echo $widgetname;?>-loader" style="display:<?php echo $display; ?>;">	
+						<center>
+							<img src="./themes/<?= $g['theme']; ?>/images/misc/widget_loader.gif" width=25 height=25 alt="Loading selected widget...">
+						</center>			
+					</div><br>
+			</div> <?php }
+			if ($displayarray[$widgetcounter] != "show") $display = none; ?>
+			<div id="<?php echo $widgetname;?>" style="display:<?php echo $display; ?>;">				
 				<?php 
 					if ($displayarray[$widgetcounter] != "close")
 					{
 						include($directory . $widget);
-					}				
+					}	
+					else
+					{ ?>
+					<?php } 
 				 ?>
 			</div>
 			<div style="clear:both;"></div>
@@ -647,7 +664,7 @@ echo $jscriptstr;
 			$printed = true;
 			?>
 			</div>
-			<div id="col2" style="float:right;width:49%;padding: 2px;padding-bottom:40px"></div>
+			<div id="col2" style="float:right;width:50%;padding-bottom:40px"></div>
 		
 			<?php } ?>
 	<div style="clear:both;"></div>

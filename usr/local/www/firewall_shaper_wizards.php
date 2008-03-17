@@ -35,7 +35,7 @@ if($_GET['reset'] <> "") {
 	exit;
 }
 
-$pgtitle = "Firewall: Traffic Shaper: Wizards";
+$pgtitle = array("Firewall", "Traffic Shaper", "Wizards");
 
 $wizards = array("Single Lan multi Wan" => "traffic_shaper_wizard.xml",
 									"Single Wan multi Lan" => "traffic_shaper_wizard_multi_lan.xml",
@@ -66,7 +66,7 @@ include("fbegin.inc");
 	$tab_array = array();
 	$tab_array[0] = array("By Interface", false, "firewall_shaper.php");
 	$tab_array[1] = array("By Queue", false, "firewall_shaper_queues.php");
-	$tab_array[2] = array("Shaper wizards", true, "firewall_shaper_wizards.php");
+	$tab_array[2] = array("Wizards", true, "firewall_shaper_wizards.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

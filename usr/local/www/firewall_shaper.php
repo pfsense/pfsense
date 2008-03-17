@@ -406,7 +406,7 @@ include("fbegin.inc");
 	$tab_array = array();
 	$tab_array[0] = array("By Interface", true, "firewall_shaper.php");
 	$tab_array[1] = array("By Queue", false, "firewall_shaper_queues.php");
-	$tab_array[2] = array("EZ Shaper wizard", false, "wizard.php?xml=traffic_shaper_wizard.xml");
+	$tab_array[2] = array("Wizards", false, "firewall_shaper_wizards.php");
 	display_top_tabs($tab_array);
 ?>
   </td></tr>

@@ -158,7 +158,7 @@ upgrade)
 		fi
 		backup_chflags
 		remove_chflags
-		exec </dev/console >/dev/console 2>/tmp_upgrade_in_progress
+		exec </dev/console >/tmp_upgrade_in_progress 2>/tmp_upgrade_in_progress
 		echo "Firmware upgrade in progress..."  | logger -p daemon.info -i -t Upgrade
 		# backup config
 		/bin/mkdir -p /tmp/configbak
@@ -171,8 +171,8 @@ upgrade)
 		for i in `/usr/bin/tar tvzf $IMG | egrep -v "(^d|_md5)" | nawk '{print $9;}'`;
 		 do
 			FILE=`basename ${i}`
-			echo "Working on ${FILE} - ${i}"
-			echo "Working on ${FILE} - ${i}" | logger -p daemon.info -i -t Upgrade
+			echo "Working on ${FILE} - /${i}"
+			echo "Working on ${FILE} - /${i}" | logger -p daemon.info -i -t Upgrade
 			(cd /tmp && /usr/bin/tar xzf ${IMG} ${i})
 			echo "Installing /${i}" 
 			echo "Installing /${i}" | logger -p daemon.info -i -t Upgrade

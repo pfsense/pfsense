@@ -9,7 +9,7 @@
 
 #CFDEVICE=`cat /var/etc/cfdevice`
 
-exec 3>&2 2>>/tmp/firmware_update.log
+#exec 3>&2 2>>/tmp/firmware_update.log
 
 export ACTION=$1
 export IMG=$2
@@ -72,10 +72,11 @@ binary_update() {
 		#echo "${i} file does not match intended final md5."
 		echo "${i} file does not match intended final md5." >> ${ERR_F}
 	   fi
-
-	   /bin/rm /tmp/patched/${FILE} >> ${ERR_F}
-	   /bin/rm /tmp/patches/${i} >> ${ERR_F}
-	   /bin/rm /tmp/patches/${i}.* >> ${ERR_F}
+		
+	   chflags noschg /tmp/patched/${FILE} /tmp/patches/${i} /tmp/patches/${i}.*
+	   /bin/rm -f /tmp/patched/${FILE} >> ${ERR_F}
+	   /bin/rm -f /tmp/patches/${i} >> ${ERR_F}
+	   /bin/rm -f /tmp/patches/${i}.* >> ${ERR_F}
 	done
 	/bin/rm -rf /tmp/patched /tmp/patches >> ${ERR_F}
 	restore_chflags
@@ -175,8 +176,9 @@ upgrade)
 			(cd /tmp && /usr/bin/tar xzf ${IMG} ${i})
 			echo "Installing /${i}" 
 			echo "Installing /${i}" | logger -p daemon.info -i -t Upgrade
-			/usr/bin/install -S /tmp/${i} /${i}
-			/bin/rm /tmp/${i}
+			/usr/bin/install -S /tmp/${i} /${i}	
+			chflags noschg /tmp/${i}.*
+			/bin/rm -f /tmp/${i}
 		done
 		/usr/bin/find / -name CVS -exec rm -fr {} \;
 		echo "Image installed $IMG." | logger -p daemon.info -i -t Upgrade

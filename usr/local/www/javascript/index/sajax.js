@@ -114,9 +114,9 @@ function updateInterfaces(x){
 function widgetActive(x){
 	var widget = document.getElementById(x + '-container');
 	if (widget.style.display != "none")
-		return TRUE;
+		return true;
 	else
-		return FALSE;
+		return false;
 }
 
 /* start ajax helper "thread" if not started */

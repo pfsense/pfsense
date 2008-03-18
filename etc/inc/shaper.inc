@@ -1505,10 +1505,10 @@ class hfsc_queue extends priq_queue {
 										$pfq_rule .= " {$qkey}, ";
 								} else
 										$pfq_rule .= " {$qkey} ";
+						}
 								$pfq_rule .= " } \n";
 								foreach ($this->subqueues as $q)
 									$pfq_rule .= $q->build_rules();
-						}
 					}
 
 				 $pfq_rule .= " \n";

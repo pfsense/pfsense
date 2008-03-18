@@ -1573,22 +1573,22 @@ function generate_user_filter_rule($rule, $ngcounter) {
 
 			if ($type != "pass" && $type != "block" && $type != "reject") {
 				/* default (for older rules) is pass */
-				$type = "pass";
+				$type = "pass ";
 			}
 
 			if ($type == "reject") {
 				/* special reject packet */
 				if ($rule['protocol'] == "tcp") {
-					$aline['type'] = "block return-rst";
+					$aline['type'] = "block return-rst ";
 				} else if ($rule['protocol'] == "udp") {
-					$aline['type'] = "block return-icmp";
+					$aline['type'] = "block return-icmp ";
 				} else if ($rule['protocol'] == "tcp/udp") {
-                                        $aline['type'] = "block return";
+                                        $aline['type'] = "block return ";
 				} else {
-					$aline['type'] = "block";
+					$aline['type'] = "block ";
 				}
 			} else {
-				$aline['type'] = $type;
+				$aline['type'] = $type . " ";
 			}
 
 			if (isset($rule['floating']) && $rule['floating'] == "yes") {

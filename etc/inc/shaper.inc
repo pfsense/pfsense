@@ -367,13 +367,13 @@ class altq_root_queue {
                        return $q;
                  }
 
-                 if (isset($q['bandwidth'])) {
-                         switch ($q['bandwidthtype']) {
+                 if (isset($queue['bandwidth'])) {
+                         switch ($queue['bandwidthtype']) {
                          case "%":
-                                $myBw = $this->GetAvailableBandwidth() * $q['bandwidth'] / 100;
+                                $myBw = $this->GetAvailableBandwidth() * $queue['bandwidth'] / 100;
                                 break;
                         default:
-                                $myBw = $q['bandwidth'] * get_bandwidthtype_scale($q['bandwdithtype']);
+                                $myBw = $queue['bandwidth'] * get_bandwidthtype_scale($q['bandwdithtype']);
                                 break;
                         }
                  	}

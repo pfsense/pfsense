@@ -37,10 +37,6 @@ if($_GET['reset'] <> "") {
 	exit;
 }
 
-if (!is_array($config['shaper']['queue'])) {
-	$config['shaper']['queue'] = array();
-}
-
 $a_queues = array();
 
 $pfctl_vsq = `/sbin/pfctl -vsq`;
@@ -73,8 +69,8 @@ include("head.inc");
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
 <?php
-if(!is_array($config['shaper']['queue'])) {
-	echo "Traffic shaping is currently disabled.";
+if(!is_array($config['shaper']['queue']) && count($config['shaper']['queue']) < 1) {
+	echo "Traffic shaping is not configured.";
 	include("fend.inc");
 	exit;	
 }

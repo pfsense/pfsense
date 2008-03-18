@@ -3181,23 +3181,29 @@ function carp_sync_xml($url, $password, $sections, $port = 80, $method = 'pfsens
 			XML_RPC_encode($xml)
 		);
 
-	log_error("Beginning XMLRPC sync to {$url}:{$port}.");
-	$msg = new XML_RPC_Message($method, $params);
-	$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
-	$cli->setCredentials('admin', $password);
-	if($g['debug']) $cli->setDebug(1);
-	/* send our XMLRPC message and timeout after 240 seconds */
-	$resp = $cli->send($msg, "240");
-	if(!$resp) {
-		$error = "A communications error occured while attempting XMLRPC sync with username admin {$url}:{$port}.";
-		log_error($error);
-		file_notice("sync_settings", $error, "Settings Sync", "");
-	} elseif($resp->faultCode()) {
-		$error = "An error code was received while attempting XMLRPC sync with username admin {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
-		log_error($error);
-		file_notice("sync_settings", $error, "Settings Sync", "");
-	} else {
-		log_error("XMLRPC sync successfully completed with {$url}:{$port}.");
+	$numberofruns = 0;
+	while($numberofruns < 2) {
+		log_error("Beginning XMLRPC sync to {$url}:{$port}.");
+		$msg = new XML_RPC_Message($method, $params);
+		$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
+		$cli->setCredentials('admin', $password);
+		if($numberofruns == 1)
+			$cli->setDebug(1);
+		/* send our XMLRPC message and timeout after 240 seconds */
+		$resp = $cli->send($msg, "240");
+		if(!$resp) {
+			$error = "A communications error occured while attempting XMLRPC sync with username admin {$url}:{$port}.";
+			log_error($error);
+			file_notice("sync_settings", $error, "Settings Sync", "");
+		} elseif($resp->faultCode()) {
+			$error = "An error code was received while attempting XMLRPC sync with username admin {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
+			log_error($error);
+			file_notice("sync_settings", $error, "Settings Sync", "");
+		} else {
+			log_error("XMLRPC sync successfully completed with {$url}:{$port}.");
+			$numberofruns = 3;
+		}
+		$numberofruns++;
 	}
 }
 

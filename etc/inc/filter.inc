@@ -1609,11 +1609,16 @@ function generate_user_filter_rule($rule, $ngcounter) {
 				$aline['interface'] = "on \$pptp ";
 			} else if ($ispppoe) {
 				$aline['interface'] = "on \$pppoe ";
+			} else if ($rule['interface'] == "openvpn") {
+				$aline['interface'] = "on tun ";
 			} else if (isset($rule['floating'])) {
                  		if (isset($rule['interface']) && $rule['interface'] <> "") {
                      			$interfaces = explode(",", $rule['interface']);
 		                       $aline['interface'] = " on { ";
                 		       foreach ($interfaces as $iface) {
+						if ($iface == "openvpn")
+							$aline['interface'] = " tun ";
+						else 
                              			$aline['interface'] .= " " .convert_friendly_interface_to_real_interface_name($iface) . " ";
 
                  		       }

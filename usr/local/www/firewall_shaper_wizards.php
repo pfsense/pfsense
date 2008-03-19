@@ -35,6 +35,29 @@ if($_GET['reset'] <> "") {
 	exit;
 }
 
+if ($_POST['apply']) {
+          write_config();
+
+          $retval = 0;
+         $savemsg = get_std_save_message($retval);
+        /* Setup pf rules since the user may have changed the optimization value */
+
+                        config_lock();
+                        $retval = filter_configure();
+                        config_unlock();
+                        if (stristr($retval, "error") <> true)
+                                $savemsg = get_std_save_message($retval);
+                        else
+                                $savemsg = $retval;
+
+                /* reset rrd queues */
+                system("rm -f /var/db/rrd/*queuedrops.rrd");
+                system("rm -f /var/db/rrd/*queues.rrd");
+                        enable_rrd_graphing();
+
+            unlink($d_shaperconfdirty_path);
+}
+
 $pgtitle = array("Firewall", "Traffic Shaper", "Wizards");
 
 $wizards = array("Single Lan multi Wan" => "traffic_shaper_wizard.xml",

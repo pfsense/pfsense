@@ -120,6 +120,9 @@ if ($_POST['apply']) {
                         else
                                 $savemsg = $retval;
 
+ 		/* reset rrd queues */
+                system("rm -f /var/db/rrd/*queuedrops.rrd");
+                system("rm -f /var/db/rrd/*queues.rrd");
 			enable_rrd_graphing();
 
             unlink($d_shaperconfdirty_path);

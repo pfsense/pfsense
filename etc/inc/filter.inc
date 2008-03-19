@@ -2873,7 +2873,7 @@ EOD;
 		foreach ($config['filter']['rule'] as $rule) {
  	                update_filter_reload_status("Pre-caching information for {$rule['descr']} ...");
         	        $line = "";
-                	if (!isset ($rule['disabled']) && !isset($rule['floating'])) {
+                	if (!isset ($rule['disabled']) && isset($rule['floating'])) {
                         	$rule_arr[] = generate_user_filter_rule_arr($rule, 0);
                 	}
 
@@ -2881,7 +2881,7 @@ EOD;
 		foreach ($config['filter']['rule'] as $rule) {
 			update_filter_reload_status("Pre-caching {$rule['descr']}...");
 			$line = "";
-			if (!isset($rule['disabled'])) {
+			if (!isset($rule['disabled'])&& !isset($rule['floating'])) {
 				if ($rule['interface'] == "pptp") {
 					/* we have a pptp rule but its turned off, ignore */
 					if(!$config['pptpd']['mode'] == "server")
